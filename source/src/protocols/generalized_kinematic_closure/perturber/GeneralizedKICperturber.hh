@@ -37,6 +37,7 @@
 #include <set>
 
 #include <core/grid/CartGrid.fwd.hh>
+#include <protocols/simple_moves/BBGaussianMover.fwd.hh>
 
 // How to add new perturber effects:
 // 1. Add a new entry in the perturber_effect enum list.
@@ -71,6 +72,7 @@ enum perturber_effect {
 	//randomize_rotamer
 
 	perturb_dihedral,
+	perturb_dihedral_bbg,
 
 	sample_cis_peptide_bond,
 
@@ -134,11 +136,12 @@ public:
 
 	/// @brief Applies the perturbation to the vectors of desired torsions, desired angles, and desired bond lengths.
 	///
-	/// @detailed
+	/// @details
 	///
 	/// @param[in] original_pose - The original pose.
 	/// @param[in] loop_pose - A pose consisting of just the loop to be perturbed, plus one residue on each side establishing the frame.
 	/// @param[in] residue_map - Mapping of (loop residue, original pose residue).
+	/// @param[in] tail_residue_map - Mapping of (tail residue in loop pose, original pose tail residue).
 	/// @param[in] atomlist - List of atoms (residue indices are based on the loop_pose).
 	/// @param[in,out] torsions - Desired torsions for each atom; can be set or altered by the apply() function.
 	/// @param[in,out] bondangles - Desired bond angles for each atom; can be set or altered by the apply() function.
@@ -147,17 +150,24 @@ public:
 		core::pose::Pose const &original_pose, //The original pose
 		core::pose::Pose const &loop_pose, //A pose consisting of just the loop to be perturbed, plus one residue on each side establishing the frame
 		utility::vector1< std::pair< core::Size, core::Size > > const &residue_map, //mapping of (loop residue, original pose residue)
+		utility::vector1< std::pair< core::Size, core::Size > > const &tail_residue_map, //mapping of (tail residue in loop pose, original pose tail residue)
 		utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
 		utility::vector1< core::Real > &torsions, //desired torsions for each atom (input/output)
 		utility::vector1< core::Real > &bondangles, //desired bond angle for each atom (input/output)
 		utility::vector1< core::Real > &bondlengths //desired bond length for each atom (input/output)
 	) const;
 
-
+	void init_bbgmover(
+		core::pose::Pose const &loop_pose,
+		utility::vector1< std::pair< core::Size, core::Size > > const &residue_map
+	);
 private:
 ////////////////////////////////////////////////////////////////////////////////
 //          PRIVATE VARIABLES                                                 //
 ////////////////////////////////////////////////////////////////////////////////
+
+	// @brief bbgmover
+	simple_moves::BBGaussianMoverOP bbgmover_;
 
 	/// @brief The effect of this perturber.  See the perturber_effect enum type
 	/// for more information.
@@ -181,7 +191,6 @@ private:
 	/// closed.  Some effects act on a list of residues, while others act on a
 	/// list of atoms.
 	utility::vector1 < utility::vector1 < core::id::NamedAtomID > > atoms_;
-
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PRIVATE FUNCTIONS                                                 //
@@ -255,8 +264,27 @@ private:
 	/// @param[in] residues - A vector of the indices of residues affected by this perturber.  Note that 
 	/// @param[in] atomlist - A vector of pairs of AtomID, xyz coordinate.  Residue indices are based on the loop pose, NOT the original pose.
 	/// @param[in] residue_map - A vector of pairs of (loop pose index, original pose index).
+	/// @param[in] tail_residue_map - A vector of pairs of (loop pose index of tail residue, original pose index of tail residue).
 	/// @param[in,out] torsions - A vector of desired torsions, some of which are randomized by this function.
 	void apply_randomize_alpha_backbone_by_rama(
+		core::pose::Pose const &original_pose,
+		core::pose::Pose const &loop_pose,
+		utility::vector1 <core::Size> const &residues,
+		utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
+		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map, //Mapping of (loop_pose, original_pose).
+		utility::vector1 < std::pair < core::Size, core::Size > > const &tail_residue_map, //Mapping of (tail residue in loop_pose, tail residue in original_pose).
+		utility::vector1< core::Real > &torsions //desired torsions for each atom (input/output)
+	) const;
+
+	/// @brief Applies a perturb_dihedral_bbg perturbation to a list of torsions.
+	/// @details Backbone Gaussian Perturbation
+	/// @param[in] original_pose - The input pose.
+	/// @param[in] loop_pose - A pose that is just the loop to be closed (possibly with other things hanging off of it).
+	/// @param[in] residues - A vector of the indices of residues affected by this perturber.  Note that 
+	/// @param[in] atomlist - A vector of pairs of AtomID, xyz coordinate.  Residue indices are based on the loop pose, NOT the original pose.
+	/// @param[in] residue_map - A vector of pairs of (loop pose index, original pose index).
+	/// @param[in,out] torsions - A vector of desired torsions, some of which are randomized by this function.
+	void apply_perturb_dihedral_bbg(
 		core::pose::Pose const &original_pose,
 		core::pose::Pose const &loop_pose,
 		utility::vector1 <core::Size> const &residues,
@@ -269,14 +297,16 @@ private:
 	/// @details This checks whether each residue specified is an alpha- or beta-amino acid.  If it is, it samples the cis version of the omega angle (if omega is in the chain of atoms).
 	/// @param[in] loop_pose - A pose that is just the loop to be closed (possibly with other things hanging off of it).
 	/// @param[in] atomlist - A vector of pairs of AtomID, xyz coordinate.  Residue indices are based on the loop pose, NOT the original pose.
-	/// @param[in] residues - A vector of the indices of residues affected by this perturber.  Note that 
+	/// @param[in] residues - A vector of the indices of residues affected by this perturber.
 	/// @param[in] residue_map - A vector of pairs of (loop pose index, original pose index).
+	/// @param[in] tail_residue_map - A vector of pairs of (loop pose index, original pose index).
 	/// @param[in,out] torsions - A vector of desired torsions, some of which are randomized by this function.
 	void apply_sample_cis_peptide_bond(
 		core::pose::Pose const &loop_pose,
 		utility::vector1 < std::pair < core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
 		utility::vector1 <core::Size> const &residues,
 		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map, //Mapping of (loop_pose, original_pose).
+		utility::vector1 < std::pair < core::Size, core::Size > > const &tail_residue_map, //Mapping of (tail residue in loop_pose, tail residue in original_pose).
 		utility::vector1< core::Real > &torsions //desired torsions for each atom (input/output)
 	) const;
 

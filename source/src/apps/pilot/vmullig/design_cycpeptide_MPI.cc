@@ -85,6 +85,12 @@
 		--Support for silent files now fully implemented.
 		--Added support for a user-defined list of additional atoms to use in RMSD
 		calculation.
+	Modified 29 June 2014 by VKM:
+		--Switching MPI_Ssend statements back to MPI_Send for significant performance boost on Blue Gene/Q.
+	Modified 22 August 2014 by VKM:
+		--Adding some features for Per to allow use to design for rigidity.  We need the following options:
+		--v_norepack_positions (positions that will not be repacked during the FastRelax steps.  These are automatically non-designable positions, too.)
+		--v_consider_all_replicates (allow all replicates of a given state to be used in evaluation of the funnel shape, rather than just the lowest-energy replicate).
 */
 
 #include <mpi.h>
@@ -97,8 +103,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <devel/init.hh>
-#include <core/pack/pack_rotamers.hh>
-//#include <core/pack/task/TaskFactory.hh>
+//#include <core/pack/pack_rotamers.hh>
+#include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/import_pose/import_pose.hh>
@@ -190,7 +196,6 @@ OPT_KEY( Boolean, v_cyclic) //Is this a cyclic peptide?
 OPT_KEY( Boolean, v_use_cyclic_permutations) //Should cyclic permutations of backbone dihedral vectors be tried?  Increases number of states n-fold, where n is the number of amino acids.
 OPT_KEY( Integer, v_cyclic_permutation_offset) //The size of the offsets, in residues, tried if the v_use_cyclic_permutations flag is activated.  1 by default.
 OPT_KEY( Boolean, v_strip_terminal_gly) //Should I strip off terminal glycine residues, if present?  False by default.
-//OPT_KEY( Boolean, v_preserve_cys ) //Should I refrain from mutating cysteine residues?  True by default.
 OPT_KEY( FileVector, v_PCAfiles) //List of PCA files, in the same order as pdb files.
 OPT_KEY( File, v_PCAfiles_list) //A text file with a list of PCA files.  Alternative to v_PCAfiles.
 OPT_KEY( File, v_PCAfile_native) //The PCA file for the design (target) state.
@@ -208,6 +213,8 @@ OPT_KEY( File, v_covalent_connections) //Covalent connectoins file.
 OPT_KEY( File, v_cst_file) //Constraints file
 OPT_KEY( String, v_native_tag) //The tag of the structure, read in from silent files, that will be counted as the positive design state.
 OPT_KEY( StringVector, v_extra_rms_atoms) //Extra atoms to use in the RMSD calculation.
+OPT_KEY( IntegerVector, v_norepack_positions) //Positions that will not be repacked during FastRelax steps.  These will also not be designed (i.e. no mutations will be permitted here).  Default empty list.
+OPT_KEY( Boolean, v_consider_all_replicates) //If true, then all replicates are considered in evaluating the objective function that estimates delta G.  If false, just the lowest-energy pose from each replicate is used.  False by default.
 
 void register_options() {
 	using namespace basic::options;
@@ -216,9 +223,9 @@ void register_options() {
 	utility::vector1<std::string> empty_filelist;
 	NEW_OPT( v_trialcount ,"" , 2000 );
 	NEW_OPT( v_relaxrounds ,"" , 1 );
-	NEW_OPT( v_MCtemperature ,"" , 1.0 );
-	NEW_OPT( v_kbt ,"" , 1.0 );
-	NEW_OPT( v_kbt_minimize, "", 1.0);
+	NEW_OPT( v_MCtemperature ,"The temperature for the application of the Metropolis criterion when searching sequence space. 1.0 by default." , 1.0 );
+	NEW_OPT( v_kbt ,"The Boltzmann temperature for estimating fractional population of the positive state (i.e. for scoring each sequence). 1.0 by default." , 1.0 );
+	NEW_OPT( v_kbt_minimize, "The Boltzmann temperature for the inner Monte Carlo search of backbone conformational space when minimizing each structure. 1.0 by default.", 1.0);
 	NEW_OPT( v_MCminimize_replicates, "", 5);
 	NEW_OPT( v_MCminimize_steps, "", 5);
 	NEW_OPT( v_bb_perturbation, "", 3.0);
@@ -237,13 +244,12 @@ void register_options() {
 	NEW_OPT( v_use_cyclic_permutations, "If true, cyclic permutations of the backbone conformations are tried.  Default false.  Requires -v_cyclic true if used.  This increases the number of conformations considered by a factor of N, where N is the number of amino acids in the sequence.", false);
 	NEW_OPT( v_cyclic_permutation_offset, "The size of the shift, in residues, that will be used when trying cyclic permutations if the -v_use_cyclic_permutations flag is specified.  1 by default.", 1);
 	NEW_OPT( v_strip_terminal_gly, "If true, terminal glycines (if present) are removed.  False by default.", false);
-	//NEW_OPT( v_preserve_cys, "If true, cysteine residues in the original structure are NOT mutated.  True by default.", true);
 	NEW_OPT( v_PCAfiles, "The list of optional PCA files.  If used, these must be specified in the order corresponding to states specified using the -in:file:s flag.  Default empty list (i.e. default unused).", empty_filelist);
 	NEW_OPT( v_PCAfiles_list, "A text file with a list of optional PCA files, as an alternative to the v_PCAfiles option.  If used, these must be specified in the order corresponding to states specified using the -in:file:s or -in:file:l flag.  Default unused.", "");
 	NEW_OPT( v_PCAfile_native, "The PCA file corresponding to the native state.  Must be specified if and only if PCA files are specified for other states.  Defaults to nothing (i.e. defaults to unused).", "");
 	NEW_OPT( v_allow_gly_mutation, "If true, mutations to glycine are permitted.  True by default.", true);
 	NEW_OPT( v_preserve_chirality, "If true, any D-amino acid positions in the input native structure remain D-amino acids when mutated.  Default true.  (Otherwise, all mutations are to L-amino acids).", true);
-	NEW_OPT( v_split_replicates_over_processes, "If true, different replicates of the backbone perturbation of a given structure can be handed to different processes.  This is useful on massively parallel architectures.  False by default (i.e. the same process handles all minimization of a given backbone conformation for a given sequence).", false);
+	NEW_OPT( v_split_replicates_over_processes, "If true, different replicates of the backbone perturbation of a given structure can be handed to different processes.  This is useful on massively parallel architectures.  True by default.", true);
 	NEW_OPT( v_savememory, "If true, only the master proc stores all states and PCA vectors; these are transmitted as needed to slave procs.  If false, each slave holds the full list.  True by default.", true);
 	NEW_OPT( v_scoreonly, "If true, this scores the input sequence and then exits.  False by default.", false);
 	NEW_OPT( v_disulfide_positions, "A list of positions that are disulfide-bonded, with pairs representing disulfide-bonded residues.  For example, -v_disulfide_positions 5 15 9 23 would mean that C5 and C15 are disulfide-linked, and C9 and C23 are disulfide-linked.  Listed positions must be cysteines, and must be in the -v_ignoreresidue list!  Default empty list.", empty_vector);
@@ -255,6 +261,9 @@ void register_options() {
 	NEW_OPT( v_cst_file, "An optional constraints file applied to all structures.  If used, constraints weights are automatically set to 1.0 unless otherwise specified in the weights file.  Not used if not specified.", "");
 	NEW_OPT( v_native_tag, "An alternative to -in:file:native for specifying the native state.  If this option is used with a string corresponding to a silent file tag, the silent file pose with that tag is used as the positive design state.  Default unused.", "");
 	NEW_OPT ( v_extra_rms_atoms, "A list of additional atoms to use in the RMSD calculation, in the format \"residue:atomname residue:atomname residue:atomname\".  For example, \"-v_extra_rms_atoms 7:SG 12:CG 12:CD 12:CE 12:NZ 14:OG\".  Default empty list.", "");
+	NEW_OPT( v_norepack_positions, "Positions that will not be repacked during FastRelax steps.  These will also not be designed (i.e. no mutations will be permitted here).  Default empty list.", empty_vector);
+	NEW_OPT( v_consider_all_replicates, "If true, then all replicates are considered in evaluating the objective function that estimates delta G.  If false, just the lowest-energy pose from each replicate is used.  False by default.", false);
+
 }
 
 //Functions to set the backbone dihedral angles of beta-amino acid peptides:
@@ -457,6 +466,12 @@ bool use_in_rmsd(
 	if(option[v_ignoreresidue_in_rms]().size()>0) { //Return false for residues that are to be ignored.
 		for(core::Size i=1; i<=option[v_ignoreresidue_in_rms]().size(); i++) {
 			if((core::Size)option[v_ignoreresidue_in_rms]()[i]==resno) return false;
+		}
+	}
+
+	if(option[v_norepack_positions]().size()>0) { //If positions that can't repack have been specified, these can't be mutated either.
+		for(core::Size i=1, imax=option[v_norepack_positions]().size(); i<=imax; ++i) {
+			if((core::Size)option[v_norepack_positions]()[i]==resno) return false;
 		}
 	}
 	
@@ -715,7 +730,8 @@ void perturb_bb_and_relax (
 	core::Size MCcounter = 0; //The counter for Monte Carlo trajectory steps.
 
 	//Variables and objects for Cartesian minimization:
-	core::Real cartweight = sfxn->get_weight(cart_bonded);
+	core::Real const cartweight = sfxn->get_weight(cart_bonded);
+	core::Real const procloseweight = sfxn->get_weight(pro_close);
 	core::optimization::MinimizerOptions minoptions("dfpmin_armijo_nonmonotone", 0.000001, true, false, false);
 	core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
 	mm->set_bb_true_range(1, pose.n_residue());
@@ -749,8 +765,8 @@ void perturb_bb_and_relax (
 				for(core::Size ir=1, nres=temppose.n_residue(), counter=1; ir<=nres; ir++) { //Loop through all residues.
 					if(!temppose.residue(ir).type().is_alpha_aa() && !temppose.residue(ir).type().is_beta_aa()) continue; //Skip non-amino acids for now
 					core::Size ntors=3; //Number of backbone torsions for this residue.
-					if(temppose.residue(ir).is_lower_terminus()) ntors--;
-					if(temppose.residue(ir).is_upper_terminus()) ntors-=2;
+					if(temppose.residue(ir).is_lower_terminus() || ir==1 || temppose.residue(ir).connected_residue_at_resconn(temppose.residue(ir).type().lower_connect_id())!=ir-1 ) ntors--; //if this is a lower terminus OR a noncanonical connection, remove phi
+					if(temppose.residue(ir).is_upper_terminus() || temppose.residue(ir).connected_residue_at_resconn(temppose.residue(ir).type().upper_connect_id())!=ir+1) ntors-=2; //if this is an upper terminus OR a noncanonical connection, remove psi and omega
 					if(temppose.residue(ir).type().is_beta_aa()) ntors++;
 
 					for(core::Size itors=1; itors<=ntors; itors++) { //Loop through this residue's torsions
@@ -789,9 +805,9 @@ void perturb_bb_and_relax (
 					}
 					//Normalize:
 					accumulator=sqrt(accumulator);
+					pertvect.resize(randvect.size());
 					for(core::Size i=1; i<=PCApertvect.size(); i++) {
 						PCApertvect[i] *= (core::Real)gausscoeff/accumulator;
-						pertvect.resize(randvect.size());
 						pertvect[i] = bb_perturbation_rand_fraction*randvect[i] + (1.0-bb_perturbation_rand_fraction)*PCApertvect[i];
 					}
 				} else pertvect = randvect; //If there are no PCA vectors, just use the random vector.
@@ -805,15 +821,19 @@ void perturb_bb_and_relax (
 				//Apply the perturbation
 				for(core::Size ir=1, nres=temppose.n_residue(), counter=1; ir<=nres; ir++) {
 					if(temppose.residue(ir).type().is_beta_aa()) { //beta-amino acid
-						if(!temppose.residue(ir).is_lower_terminus()) betapeptide_setphi(temppose, ir, pertvect[counter++]+temppose.residue(ir).mainchain_torsion(1)); //phi
+						if(!temppose.residue(ir).is_lower_terminus() && ir>1 && temppose.residue(ir).connected_residue_at_resconn(temppose.residue(ir).type().lower_connect_id())==ir-1 ) {
+							betapeptide_setphi(temppose, ir, pertvect[counter++]+temppose.residue(ir).mainchain_torsion(1)); //phi
+						}
 						betapeptide_settheta(temppose, ir, pertvect[counter++]+temppose.residue(ir).mainchain_torsion(2)); //theta
-						if(!temppose.residue(ir).is_upper_terminus()) {
+						if(!temppose.residue(ir).is_upper_terminus() && temppose.residue(ir).connected_residue_at_resconn(temppose.residue(ir).type().upper_connect_id())==ir+1) {
 							betapeptide_setpsi(temppose, ir, pertvect[counter++]+temppose.residue(ir).mainchain_torsion(3)); //psi
 							betapeptide_setomega(temppose, ir, pertvect[counter++]+temppose.residue(ir).mainchain_torsion(4)); //omega
 						}
 					} else if(temppose.residue(ir).type().is_alpha_aa()) { //alpha-amino acid
-						if(!temppose.residue(ir).is_lower_terminus()) temppose.set_phi(ir, pertvect[counter++]+temppose.phi(ir));
-						if(!temppose.residue(ir).is_upper_terminus()) {
+						if(!temppose.residue(ir).is_lower_terminus() && ir>1 && temppose.residue(ir).connected_residue_at_resconn(temppose.residue(ir).type().lower_connect_id())==ir-1 ) {
+							temppose.set_phi(ir, pertvect[counter++]+temppose.phi(ir));
+						}
+						if(!temppose.residue(ir).is_upper_terminus() && temppose.residue(ir).connected_residue_at_resconn(temppose.residue(ir).type().upper_connect_id())==ir+1) {
 							temppose.set_psi(ir, pertvect[counter++]+temppose.psi(ir));
 							temppose.set_omega(ir, pertvect[counter++]+temppose.omega(ir));
 						}
@@ -887,8 +907,10 @@ void perturb_bb_and_relax (
 
 			if(option[v_use_cartesian_min]()) { //If we're doing a final round of Cartesian minimization.
 				sfxn->set_weight(cart_bonded, 1.0); //Turn on cart_bonded.
+				sfxn->set_weight(pro_close, 0.0); //Turn off pro_close.
 				cminimizer.run(temppose, *mm, *sfxn, minoptions);
 				sfxn->set_weight(cart_bonded, cartweight); //Reset cart_bonded.
+				sfxn->set_weight(pro_close, procloseweight); //Reset pro_close.
 			}
 			(*sfxn)(temppose); //Score the relaxed pose copy without cart_bonded.
 
@@ -944,7 +966,7 @@ void vMPI_transmitpose(
 			core::id::AtomID curatom(ia, ir);
 			if(thisproc==sendingproc) {
 				atomxyz= pose.xyz(curatom);
-				MPI_Ssend(&atomxyz[0], 3, MPI_DOUBLE, receivingproc, 0, MPI_COMM_WORLD);
+				MPI_Send(&atomxyz[0], 3, MPI_DOUBLE, receivingproc, 0, MPI_COMM_WORLD);
 			} else if (thisproc==receivingproc) {
 				MPI_Recv(&atomxyz[0], 3, MPI_DOUBLE, sendingproc, 0, MPI_COMM_WORLD, &mpistatus);
 				pose.set_xyz(curatom, atomxyz);
@@ -1155,17 +1177,29 @@ void mutate_to_sequence (
 
 	for(core::Size ir=1; ir<=mypose.n_residue(); ir++) {
 		bool continue_on = false;
-		if(!force_mutation && option[v_ignoreresidue]().size()>0) { //Don't change residues in the ignore list.
-			for(core::Size i=1; i<=option[v_ignoreresidue]().size(); i++) {
-				if((core::Size)option[v_ignoreresidue][i]==ir) {
-					continue_on=true;
-					break; //out of the for loop
+		if(!force_mutation) {
+			if(option[v_ignoreresidue]().size()>0) {
+				//Don't change residues in the ignore list.
+				for(core::Size i=1; i<=option[v_ignoreresidue]().size(); i++) {
+					if((core::Size)option[v_ignoreresidue][i]==ir) {
+						continue_on=true;
+						break; //out of the for loop
+					}
 				}
 			}
-		} else if (force_mutation) {
+			if(!continue_on && option[v_norepack_positions]().size()>0) {
+				//Don't mutate residues that can't be repacked.
+				for(core::Size i=1, imax=option[v_norepack_positions]().size(); i<=imax; ++i) {
+					if((core::Size)option[v_norepack_positions]()[i]==ir) {
+						continue_on=true;
+						break; //out of the for loop
+					}
+				}
+			}
+		} else {
 			if(!mypose.residue(ir).type().is_polymer()) continue_on=true; //Don't mutate non-polymer positions.
 			if(!mypose.residue(ir).type().is_alpha_aa() && !mypose.residue(ir).type().is_beta_aa()) continue_on=true; //Don't mutate positions that aren't alpha or beta amino acids, for now.
-			if(mypose.residue(ir).name3()=="CYX" || mypose.residue(ir).name3()=="ASX" || mypose.residue(ir).name3()=="LYX") continue_on=true; //Ugly hack.  Fix this with something more general!
+			if(mypose.residue(ir).name3()=="CYX" || mypose.residue(ir).name3()=="ASX" || mypose.residue(ir).name3()=="LYX" || mypose.residue(ir).name3()=="ORX" || mypose.residue(ir).name3()=="GLX") continue_on=true; //Ugly hack.  Fix this with something more general!
 		}
 		if(continue_on) continue;
 
@@ -1218,7 +1252,7 @@ void transmit_additional_info (
 	double *dataarray = new double [numelements];
 	if(thisproc==fromproc) { //If this is the sending proc
 		for (core::Size i=1; i<=(core::Size)numelements; i++) dataarray[i-1]=(double)datavector[i]; //Store the data in the data array for transmission
-		MPI_Ssend(dataarray, numelements, MPI_DOUBLE, toproc, 0, MPI_COMM_WORLD); //Send the data
+		MPI_Send(dataarray, numelements, MPI_DOUBLE, toproc, 0, MPI_COMM_WORLD); //Send the data
 	} else if (thisproc==toproc) { //If this is the receiving proc
 		MPI_Recv(dataarray, numelements, MPI_DOUBLE, fromproc, 0, MPI_COMM_WORLD, &mpistatus); //Receive the data
 		datavector.resize(numelements); //Resize the vector to store the data
@@ -1264,7 +1298,7 @@ void receive_silent_struct (
 
 	//printf("Proc %i received string %s\n.", thisproc, received_string.c_str()); fflush(stdout); //DELETE ME.
 
-	io::silent::SilentFileData silentfiledata;
+	core::io::silent::SilentFileData silentfiledata;
 	silentfiledata.read_stream( received_istringstream, tagvector, true, "suppress_bitflip" );
 	pose.clear();
 	silentfiledata[silentfiledata.tags()[1]]->fill_pose(pose);
@@ -1289,7 +1323,7 @@ void transmit_silent_struct (
 ) {
 	if(thisproc!=fromproc) return; //Do nothing if this isn't the transmitting proc.
 
-	io::silent::SilentFileData silentfiledata;
+	core::io::silent::SilentFileData silentfiledata;
 	std::stringbuf sb;
 	std::ostream outstream(&sb);
 
@@ -1309,8 +1343,8 @@ void transmit_silent_struct (
 		MPI_Bcast(&strlength, 1, MPI_UNSIGNED_LONG, fromproc, MPI_COMM_WORLD); //Send the length of the string that I'm about to send.
 		MPI_Bcast(outchar, strlength, MPI_CHAR, fromproc, MPI_COMM_WORLD); //Send the data
 	} else { //if not broadcast (specific receiver)
-		MPI_Ssend(&strlength, 1, MPI_UNSIGNED_LONG, toproc, 0, MPI_COMM_WORLD); //Send the length of the string that I'm about to send.
-		MPI_Ssend(outchar, strlength, MPI_CHAR, toproc, 0, MPI_COMM_WORLD); //Send the data
+		MPI_Send(&strlength, 1, MPI_UNSIGNED_LONG, toproc, 0, MPI_COMM_WORLD); //Send the length of the string that I'm about to send.
+		MPI_Send(outchar, strlength, MPI_CHAR, toproc, 0, MPI_COMM_WORLD); //Send the data
 	}
 
 	delete [] outchar;
@@ -1328,7 +1362,7 @@ void transmit_silent_struct (
 	bool const broadcast
 ) {
 	if(thisproc!=fromproc) return; //Do nothing if this isn't the transmitting proc.
-	core::io::silent::SilentStructOP silentstruct = io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
+	core::io::silent::SilentStructOP silentstruct = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
 	silentstruct->fill_struct(pose, tag);
 	transmit_silent_struct( fromproc, toproc, thisproc, silentstruct, broadcast);
 	return;
@@ -1376,6 +1410,7 @@ void scoreall (
 	const core::Size numstates = option[v_split_replicates_over_processes]() ? option[v_MCminimize_replicates]() * totalstatecount : totalstatecount; //Number of states is multiplied by number of replicates iff the split over procs option is used.
 	//utility::vector1 < core::pose::Pose > positivepose_list;
 	core::Size lowestE_positivepose = 1;
+	core::Real lowestE_positivepose_energy = 0.0;
 
 	/********** PROC 0 SENDS AND RECEIVES JOBS **********/
 	if(procnum==0) {
@@ -1386,17 +1421,17 @@ void scoreall (
 			if(statecount>numstates) { //If we've exhausted the available states
 				//printf("Sending 0 to proc %i.\n", mpistat.MPI_SOURCE); fflush(stdout); //DELETE ME
 				mpibuffer=0; //Send "0" as a message to indicate that all states are exhausted.
-				MPI_Ssend(&mpibuffer, 1, MPI_INT, mpistat.MPI_SOURCE, 0, MPI_COMM_WORLD); //Send "0" to the slave that sent the query.
+				MPI_Send(&mpibuffer, 1, MPI_INT, mpistat.MPI_SOURCE, 0, MPI_COMM_WORLD); //Send "0" to the slave that sent the query.
 			} else { //If there are still states to send out to slave processes
 				mpibuffer=statecount;
-				MPI_Ssend(&mpibuffer, 1, MPI_INT, mpistat.MPI_SOURCE, 0, MPI_COMM_WORLD); //Send the number of the next uncalculated state to the slave that sent the query.
+				MPI_Send(&mpibuffer, 1, MPI_INT, mpistat.MPI_SOURCE, 0, MPI_COMM_WORLD); //Send the number of the next uncalculated state to the slave that sent the query.
 
 				if(option[v_savememory]()) {	//If procs aren't storing the full state list:
 					const core::Size thisstate = option[v_split_replicates_over_processes]() ? (core::Size)(div( (int)statecount-1, (int) option[v_MCminimize_replicates]() ).quot) + 1 : statecount;
 					//printf("Assigning state %i to proc %i.\n", (int)thisstate, (int)mpistat.MPI_SOURCE); fflush(stdout); //DELETE ME
 					//mpibuffer=allstates_master[thisstate].size();
 
-					//MPI_Ssend(&mpibuffer, 1, MPI_INT, mpistat.MPI_SOURCE, 0, MPI_COMM_WORLD); //Send the size of the allstates_master vector.					
+					//MPI_Send(&mpibuffer, 1, MPI_INT, mpistat.MPI_SOURCE, 0, MPI_COMM_WORLD); //Send the size of the allstates_master vector.					
 
 					//transmit_additional_info(0, mpistat.MPI_SOURCE, 0, mpibuffer, allstates_master[thisstate]); //Transmit the allstates_master vector (mpibuffer is still the size of the PCAvariances vector)
 
@@ -1405,7 +1440,7 @@ void scoreall (
 					if(option[v_PCAfiles].user() || option[v_PCAfiles_list].user()) { //If there are PCAfiles:
 						mpibuffer=PCAvariances[thisstate].size();
 
-						MPI_Ssend(&mpibuffer, 1, MPI_INT, mpistat.MPI_SOURCE, 0, MPI_COMM_WORLD); //Send the number of PCA vectors
+						MPI_Send(&mpibuffer, 1, MPI_INT, mpistat.MPI_SOURCE, 0, MPI_COMM_WORLD); //Send the number of PCA vectors
 						if(mpibuffer>0) { //(mpibuffer is still the size of the PCAvariances vector).
 							transmit_additional_info(0, mpistat.MPI_SOURCE, 0, mpibuffer, PCAvariances[thisstate]); //Transmit the PCA variances (mpibuffer is still the size of the PCAvariances vector).
 							const core::Size variancescount = (core::Size)mpibuffer;
@@ -1425,8 +1460,24 @@ void scoreall (
 
 		printf("Collecting computed energies from slave processes...\n"); fflush(stdout);
 
-		energyvals_current.resize(totalstatecount);
-		rmsvals_current.resize(totalstatecount);
+		if(option[v_consider_all_replicates]()) {
+			//If we're scoring ALL replicates (not just the lowest-energy one for each state), then
+			//these two vectors need to store values for all replicates, in the order state1-rep1,
+			//state1-rep2, state1-rep3... state1-repN, state2-rep1, state2-rep2... etc.
+			energyvals_current.resize(numstates);
+			rmsvals_current.resize(numstates);
+		} else {
+			//If we're scoring just the lowest-energy replicate for each state, then these two vectors
+			//just store one value per state, in order of state (state1, state2, state3... etc.)
+			energyvals_current.resize(totalstatecount);
+			rmsvals_current.resize(totalstatecount);
+		}
+
+		//********************************************************************************
+		//********************************************************************************
+		//TODO: REWRITE THIS SECTION TO ALLOW USE OF THE v_consider_all_replicates OPTION!
+		//********************************************************************************
+		//********************************************************************************
 
 		//These variables are necessary if minimizations are split over multiple processes:
 		core::Real curstate_curenergy, curstate_currms;
@@ -1435,19 +1486,29 @@ void scoreall (
 		if(option[v_split_replicates_over_processes]) { //If we ARE dividing replicates over different processes:
 			for(core::Size statecount=1; statecount<=numstates; statecount++) {
 				mpibuffer=1;
-				MPI_Ssend(&mpibuffer, 1, MPI_INT, procassignments[statecount], 0, MPI_COMM_WORLD); //Send an inquiry to the proc
+				MPI_Send(&mpibuffer, 1, MPI_INT, procassignments[statecount], 0, MPI_COMM_WORLD); //Send an inquiry to the proc
 				MPI_Recv(&curstate_curenergy, 1, MPI_DOUBLE, procassignments[statecount], 0, MPI_COMM_WORLD, &mpistat); //Recieve the energy from the proc
 				MPI_Recv(&curstate_currms, 1, MPI_DOUBLE, procassignments[statecount], 0, MPI_COMM_WORLD, &mpistat); //Recieve the rms from the proc
-				if((statecount - 1) % option[v_MCminimize_replicates]() == 0) { //If this is the first replicate for this state
-					curstate++; //Increment the number of the current state
-					energyvals_current[curstate] = curstate_curenergy; //Store the energy value as the state's energy value
-					rmsvals_current[curstate] = curstate_currms; //Store the rms as the state's rms
-					//printf("ping%i\n", curstate); fflush(stdout); //DELETE ME
-				} else { //If this is not the first replicate for this state
-					if(curstate_curenergy < energyvals_current[curstate]) { //Check whether this replicate returned a lower energy.  If so, overwrite the energy and rms for this state.
-						if(curstate==1) lowestE_positivepose = statecount; //If this is the first state, store the index of the lowest energy replicate
-						energyvals_current[curstate] = curstate_curenergy;
-						rmsvals_current[curstate] = curstate_currms;
+				if(option[v_consider_all_replicates]()) {
+					if((statecount-1) % option[v_MCminimize_replicates]() == 0) curstate++; //If this is the first replicate for this state, increment the current state
+					energyvals_current[statecount] = curstate_curenergy; //Store the energy value as the state's energy value
+					rmsvals_current[statecount] = curstate_currms; //Store the rms as the state's rms
+					if(curstate==1 && (statecount==1 || curstate_curenergy < lowestE_positivepose_energy)) { //Check whether this is the lowest-energy POSITIVE state encountered so far, and if so, store its index.
+						lowestE_positivepose_energy=curstate_curenergy;
+						lowestE_positivepose=statecount;
+					}
+				} else {
+					if((statecount - 1) % option[v_MCminimize_replicates]() == 0) { //If this is the first replicate for this state
+						curstate++; //Increment the number of the current state
+						energyvals_current[curstate] = curstate_curenergy; //Store the energy value as the state's energy value
+						rmsvals_current[curstate] = curstate_currms; //Store the rms as the state's rms
+						//printf("ping%i\n", curstate); fflush(stdout); //DELETE ME
+					} else { //If this is not the first replicate for this state
+						if(curstate_curenergy < energyvals_current[curstate]) { //Check whether this replicate returned a lower energy.  If so, overwrite the energy and rms for this state.
+							if(curstate==1) lowestE_positivepose = statecount; //If this is the first state, store the index of the lowest energy replicate
+							energyvals_current[curstate] = curstate_curenergy;
+							rmsvals_current[curstate] = curstate_currms;
+						}
 					}
 				}
 			}
@@ -1455,7 +1516,7 @@ void scoreall (
 		} else { //if we're NOT splitting replicates over different processes, preserve old behaviour: 
 			for(core::Size statecount=1; statecount<=procassignments.size(); statecount++) {
 				mpibuffer=1;
-				MPI_Ssend(&mpibuffer, 1, MPI_INT, procassignments[statecount], 0, MPI_COMM_WORLD); //Send an inquiry to the proc
+				MPI_Send(&mpibuffer, 1, MPI_INT, procassignments[statecount], 0, MPI_COMM_WORLD); //Send an inquiry to the proc
 				MPI_Recv(&energyvals_current[statecount], 1, MPI_DOUBLE, procassignments[statecount], 0, MPI_COMM_WORLD, &mpistat); //Recieve the energy from the proc
 				MPI_Recv(&rmsvals_current[statecount], 1, MPI_DOUBLE, procassignments[statecount], 0, MPI_COMM_WORLD, &mpistat); //Recieve the rms from the proc
 			}
@@ -1487,7 +1548,7 @@ void scoreall (
 		utility::vector1 < utility::vector1 < core::Real > > * curPCAmatrix;
 
 		do { //will keep doing until mpibuffer == 0
-			MPI_Ssend(&mpibuffer, 1, MPI_INT, 0, 0, MPI_COMM_WORLD); //Send an int as a query (the value doesn't matter).
+			MPI_Send(&mpibuffer, 1, MPI_INT, 0, 0, MPI_COMM_WORLD); //Send an int as a query (the value doesn't matter).
 			MPI_Recv(&mpibuffer, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &mpistat); //Recieve the next state to calculate from the master process.
 			if(mpibuffer==0) break; //Exit the do loop if the master process sends "0".
 
@@ -1575,8 +1636,8 @@ void scoreall (
 		if(energyvals_current.size() > 0) {
 			for(core::Size ii=1; ii<=energyvals_current.size(); ii++) {
 				MPI_Recv(&mpibuffer, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &mpistat); //Receive an inquiry from the master proc
-				MPI_Ssend(&energyvals_current[ii], 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD); //Send the energy value to the master proc
-				MPI_Ssend(&rmsvals_current[ii], 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD); //Send the energy value to the master proc
+				MPI_Send(&energyvals_current[ii], 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD); //Send the energy value to the master proc
+				MPI_Send(&rmsvals_current[ii], 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD); //Send the energy value to the master proc
 			} //Do this once for each energy value that this proc calculated.
 		}
 
@@ -1866,6 +1927,10 @@ int main(int argc, char *argv[]) {
 	//Message about splitting processes:
 	if(procnum==0 && option[v_split_replicates_over_processes]()) {
 		printf("The -v_split_replicates_over_processes option was used.  Replicates will be spit over processes.\n"); fflush(stdout);
+	} else {
+		if(procnum==0 && option[v_consider_all_replicates]()) {
+			printf("Error!  If the -v_consider_all_replicates option is used, then the -v_split_replicates_over_processes option must also be used."); fflush(stdout); exit(1);
+		}
 	}
 
 	//Message about saving memory:
@@ -1941,7 +2006,7 @@ int main(int argc, char *argv[]) {
 			for(core::Size i=1, imax=extra_rms_atoms.size(); i<=imax; ++i) {
 				printf("%lu\t%s\n", extra_rms_atoms[i].rsd(), extra_rms_atoms[i].atom().c_str());
 			}
-			fflush(stdout); //blon
+			fflush(stdout);
 		}
 	}
 
@@ -2001,9 +2066,25 @@ int main(int argc, char *argv[]) {
 	else if(option[v_allow_gly_mutation]()) all_betas+="G"; //Add glycine to the possible beta-mutations if the option to do so is set to "true" and the user hasn't specified a list.
 	char target_aa = 'X';
 
-	//Some movers that I'll use:
+	//The FastRelax mover that I'll use:
 	protocols::relax::FastRelax frlx(sfxn, option[v_relaxrounds]()); //Create the FastRelax mover and set it to do a number of repeats given by option[v_relaxrounds]() (and give it the score function).
-	//protocols::simple_moves::RepackSidechainsMover repack_sc(sfxn); //Create the RepackSidechains mover and set the score function.
+
+	{	// Add a taskoperation to frlx indicating which residues can be moved if the
+		// -v_norepack_positions option has been used.
+		using namespace core::pack::task;
+		using namespace core::pack::task::operation;
+		TaskFactoryOP frlx_tasks = new TaskFactory();
+		frlx_tasks->push_back(new RestrictToRepacking());
+		if(option[v_norepack_positions]().size()>0) {
+			//If the user has specified that certain positions should not repack, set up a task operation here.
+			PreventRepackingOP norepack = new PreventRepacking();
+			for(core::Size i=1, imax=option[v_norepack_positions]().size(); i<=imax; ++i) {
+				norepack->include_residue( option[v_norepack_positions]()[i] );
+			}
+			frlx_tasks->push_back( norepack );
+		}
+		frlx.set_task_factory( frlx_tasks );
+	}
 
 	//Out file prefix:
 	string outprefix;
@@ -2200,7 +2281,14 @@ int main(int argc, char *argv[]) {
 			if(option[v_ignoreresidue]().size()>0) { //Don't change residues in the ignore list.
 				bool continue_on = false;
 				for(core::Size i=1; i<=option[v_ignoreresidue]().size(); i++) {
-					if((core::Size)option[v_ignoreresidue][i]==ir) continue_on=true;
+					if((core::Size)option[v_ignoreresidue]()[i]==ir) continue_on=true;
+				}
+				if(continue_on) continue;
+			}
+			if(option[v_norepack_positions]().size()>0) { //Don't change residues in the list of residues that can't repack.
+				bool continue_on = false;
+				for(core::Size i=1, imax=option[v_norepack_positions]().size(); i<=imax; i++) {
+					if((core::Size)option[v_norepack_positions]()[i]==ir) continue_on=true;
 				}
 				if(continue_on) continue;
 			}
@@ -2251,14 +2339,18 @@ int main(int argc, char *argv[]) {
 	//More variables for random mutations:
 	utility::vector1 < core::Size > all_positions; //A vector of positions that can be mutated.
 	for (core::Size i = 1; i<=startingsequence.length(); i++) {
-		if(option[v_ignoreresidue].user()){
-			bool addme=true;
+		bool addme=true;
+		if(option[v_ignoreresidue]().size() > 0) {
 			for(core::Size j=1; j<=option[v_ignoreresidue].size(); j++) {
 				if((core::Size)option[v_ignoreresidue][j] == i) {addme = false; break;}
 			}
-			if(addme) all_positions.push_back(i);
 		}
-		else all_positions.push_back(i);
+		if(addme && option[v_norepack_positions]().size() > 0) {
+			for(core::Size j=1, jmax=option[v_norepack_positions]().size(); j<=jmax; ++j) {
+				if((core::Size)option[v_norepack_positions]()[j]==i) { addme=false; break; }
+			}
+		}
+		if(addme) all_positions.push_back(i);
 	}
 	if (procnum==0) {
 		printf("Mutations are possible at these positions:");
@@ -2507,7 +2599,16 @@ int main(int argc, char *argv[]) {
 		printf("Initial score = %.6f\n", sequence_score_initial);
 		printf("P(init) = %.6f\n", prob_initial);
 		printf("STATE\tRMSD\tENERGY\n");
-		for(core::Size i=1; i<=allfiles.size(); i++) printf("%s\t%.6f\t%.6f\n", allfiles[i].c_str(), rmsvals_initial[i], energyvals_initial[i]);
+		if(option[v_consider_all_replicates]()) {
+			core::Size j=1, k=1;
+			for(core::Size i=1, imax=energyvals_initial.size(); i<=imax; ++i) {
+				printf("%s_rep%lu\t%.6f\t%.6f\n", utility::file_basename(allfiles[j]).c_str(), k, rmsvals_initial[i], energyvals_initial[i]);
+				++k;
+				if((i-1) % (core::Size)option[v_MCminimize_replicates]() == 0) { ++j; k=1; }
+			}
+		} else {
+			for(core::Size i=1; i<=allfiles.size(); i++) printf("%s\t%.6f\t%.6f\n", utility::file_basename(allfiles[i]).c_str(), rmsvals_initial[i], energyvals_initial[i]);
+		}
 		printf("\n\n"); fflush(stdout);
 
 		char outfile[1024];
@@ -2631,7 +2732,15 @@ int main(int argc, char *argv[]) {
 						printf("FITNESS:\t%f\t%f\n", sequence_score_initial, sequence_score_current);
 						printf("P(DesignState):\t%f\t%f\n", prob_initial, prob);
 						printf("STATE\tRMSD\tENERGY\n");
-						for(core::Size i=1; i<=allfiles.size(); i++) printf("%s\t%.6f\t%.6f\n", utility::file_basename(allfiles[i]).c_str(), rmsvals_current[i], energyvals_current[i]);
+						if(option[v_consider_all_replicates]()) {
+							core::Size j=1, k=1;
+							for(core::Size i=1, imax=energyvals_current.size(); i<=imax; ++i) {
+								printf("%s_rep%lu\t%.6f\t%.6f\n", utility::file_basename(allfiles[j]).c_str(), k, rmsvals_current[i], energyvals_current[i]);
+								++k;
+								if((i-1) % (core::Size)option[v_MCminimize_replicates]() == 0) { ++j; k=1; }
+							}
+							for(core::Size i=1; i<=allfiles.size(); i++) printf("%s\t%.6f\t%.6f\n", utility::file_basename(allfiles[i]).c_str(), rmsvals_current[i], energyvals_current[i]);
+						}
 						printf("\n"); fflush(stdout);
 		
 						//Dump out a PDF:

@@ -78,7 +78,7 @@ GeneralizedKICCreator::mover_name()
 GeneralizedKIC::GeneralizedKIC():
 		//utility::pointer::ReferenceCount(),
 		Mover("GeneralizedKIC"),
-		effect_on_bonded_geometry_(0), //By default, this mover does not respect the geometry of bonds between the loop to be closed and anything else.
+		//effect_on_bonded_geometry_(0), //By default, this mover does not respect the geometry of bonds between the loop to be closed and anything else.
 		lower_anchor_connID_(0),
 		upper_anchor_connID_(0),
 		build_ideal_geometry_(false),
@@ -126,22 +126,29 @@ void GeneralizedKIC::apply (core::pose::Pose & pose)
 		utility_exit_with_message("Error!  GeneralizedKIC apply() function called without setting a loop to be closed.\n");
 	}
 
+	check_loop_residues_sensible( pose ); //Check that loop residues haven't been specified multiple times.
+	check_tail_residues_sensible( pose ); //Check that tail residues haven't been specified multiple times, and that the tail residues don't overlap with loop residues.
+
 	infer_anchor_connIDs(pose);
 
 	core::pose::Pose perturbedloop_pose; //A pose in which the perturbed loop will be stored.
 	//core::Size const loopsize = loopresidues_.size();
 	utility::vector1 < std::pair < core::Size, core::Size > > residue_map; //Map of < residue in perturbedloop_pose, residue in pose >
+	utility::vector1 < std::pair < core::Size, core::Size > > tail_residue_map; //Map of < tail residue in perturbedloop_pose, residue in pose >.
+	//Tail residues are residues that are not in the loop to be closed, but which "come along for the ride".
 
 	addloweranchor(perturbedloop_pose, pose);
-	addloopgeometry(perturbedloop_pose, pose, build_ideal_geometry_, effect_on_bonded_geometry_, residue_map);
+	addloopgeometry(perturbedloop_pose, pose, build_ideal_geometry_, residue_map);
 	addupperanchor(perturbedloop_pose, pose);
+	addtailgeometry(perturbedloop_pose, pose, build_ideal_geometry_, residue_map, tail_residue_map);
 
-	last_run_successful_ = doKIC(perturbedloop_pose, pose, residue_map);
+	last_run_successful_ = doKIC(perturbedloop_pose, pose, residue_map, tail_residue_map);
 	if(rosettascripts_filter_exists_) rosettascripts_filter_->set_value(last_run_successful_);
 
 	if(last_run_successful_) {
 		TR << "Closure successful." << std::endl; TR.flush();
-		copy_loop_pose_to_original( pose, perturbedloop_pose, residue_map);
+		//perturbedloop_pose.dump_pdb("temp.pdb"); //DELETE ME -- for debugging only
+		copy_loop_pose_to_original( pose, perturbedloop_pose, residue_map, tail_residue_map);
 	} else {
 		TR << "Closure unsuccessful." << std::endl; TR.flush();
 	}
@@ -205,6 +212,9 @@ GeneralizedKIC::parse_my_tag(
 		if ( (*tag_it)->getName() == "AddResidue" ) {
 				runtime_assert_string_msg( (*tag_it)->hasOption("res_index"), "RosettaScript parsing error: the <AddResidue> group within a <GeneralizedKIC> block must include a \"res_index=<index>\" statement.");
 				add_loop_residue( (*tag_it)->getOption<core::Size>("res_index", 0) );
+		} else if ( (*tag_it)->getName() == "AddTailResidue" ) {
+				runtime_assert_string_msg( (*tag_it)->hasOption("res_index"), "RosettaScript parsing error: the <AddTailResidue> group within a <GeneralizedKIC> block must include a \"res_index=<index>\" statement.");
+				add_tail_residue( (*tag_it)->getOption<core::Size>("res_index", 0) );
 		} else if ( (*tag_it)->getName() == "SetPivots" ) {
 				runtime_assert_string_msg( (*tag_it)->hasOption("res1"), "RosettaScript parsing error: the <SetPivots> group within a <GeneralizedKIC> block must include a \"res1=<index>\" statement.");
 				runtime_assert_string_msg( (*tag_it)->hasOption("res2"), "RosettaScript parsing error: the <SetPivots> group within a <GeneralizedKIC> block must include a \"res2=<index>\" statement.");
@@ -341,23 +351,81 @@ GeneralizedKIC::parse_my_tag(
 	return;
 }
 
+///
 /// @brief Add a residue (by index in the pose) to the list of residues making up the loop to be closed.
-/// This function checks that the index is within the range of indices in the pose, and that there is a
-/// geometric connection between this residue and the previous one in the list.
-void GeneralizedKIC::add_loop_residue( core::Size const residue_index /*, core::pose::Pose const &pose*/ )
+void GeneralizedKIC::add_loop_residue( core::Size const residue_index )
 {
+	runtime_assert_string_msg(residue_index!=0, "Cannot add residue index 0 to the list of loop residues!");
 	loopresidues_.push_back(residue_index);
-	TR << "Added residue " << residue_index << " to the list of residues to close by GeneralizedKIC.  List now has " << loopresidues_.size() << " residues in it." << std::endl;
+	TR.Debug << "Added residue " << residue_index << " to the list of residues to close by GeneralizedKIC.  List now has " << loopresidues_.size() << " residues in it." << std::endl;
 	return;
 }
 
-/// @brief Function to set the effect of this mover on parts of the pose that are covalently attached to
-/// the loop to be closed, but which aren't part of it.  Settings are:
-/// 0 -- Moves the loop only; can pull apart covalent bonds to anything outside of the loop that isn't
-///      an anchor point.
-/// 1 -- Moves the loop and anything downstream of the loop in the foldtree.  Can still pull apart
-/// 		 connections to non-child geometry.
-void GeneralizedKIC::set_mover_effect_on_bonded_geometry( core::Size const effect )
+/// @brief Add a residue (by index in the pose) to the list of residues making up the tails attached to
+/// the loop to be closed.
+/// @details  "Tails" are residues that are not part of the loop to be closed, but which are attached to
+/// the loop and which "come along for the ride" as the loop moves.
+void GeneralizedKIC::add_tail_residue( core::Size const residue_index )
+{
+	runtime_assert_string_msg(residue_index!=0, "Cannot add residue index 0 to the list of tail residues!");
+	tailresidues_.push_back(residue_index);
+	TR.Debug << "Added residue " << residue_index << " to the list of tail residues attached to the loop to close by GeneralizedKIC.  List now has " << tailresidues_.size() << " residues in it." << std::endl;
+	return;
+}
+
+/// @brief Check that loop residues haven't been specified multiple times.
+/// @details Also checks that the loop residues are all within the pose.
+void GeneralizedKIC::check_loop_residues_sensible( core::pose::Pose const &pose)
+{
+	if(loopresidues_.size()==0) return;
+	core::Size const nres = pose.n_residue();
+
+	for(core::Size ir=1, irmax=loopresidues_.size(); ir<=irmax; ++ir) {
+		runtime_assert_string_msg( loopresidues_[ir]>0 && loopresidues_[ir]<=nres, "One or more of the loop residue indices is not within the range of pose residue indices.  (This doesn't make sense -- check your input.)");
+		if(ir>1) {
+			for(core::Size jr=1; jr<ir; ++jr) {
+				runtime_assert_string_msg( loopresidues_[ir]!=loopresidues_[jr], "One or more of the loop residues was specified more than once.  (This doesn't make sense -- check your input.)" );
+			}
+		}
+	}
+
+	return;
+}
+
+/// @brief Check that tail residues haven't been specified multiple times,
+/// and that the tail residues don't overlap with loop residues.
+/// @details Also checks that the tail residues are all within the pose.
+void GeneralizedKIC::check_tail_residues_sensible( core::pose::Pose const &pose )
+{
+	if(tailresidues_.size()==0) return;
+	core::Size const nres = pose.n_residue();
+	core::Size const nloopresidues=loopresidues_.size();
+
+	for(core::Size ir=1, irmax=tailresidues_.size(); ir<=irmax; ++ir) {
+		runtime_assert_string_msg( tailresidues_[ir]>0 && tailresidues_[ir]<=nres, "One or more of the tail residue indices is not within the range of pose residue indices.  (This doesn't make sense -- check your input.)");
+		if(ir>1) {
+			for(core::Size jr=1; jr<ir; ++jr) {
+				runtime_assert_string_msg( tailresidues_[ir]!=tailresidues_[jr], "One or more of the tail residues was specified more than once.  (This doesn't make sense -- check your input.)" );
+			}
+		}
+		if(nloopresidues>0) {
+			for(core::Size jr=1; jr<=nloopresidues; ++jr) {
+				runtime_assert_string_msg( tailresidues_[ir]!=loopresidues_[jr], "One or more tail residues are ALSO part of the loop to be closed.  (This doesn't make sense -- check your input.)" );
+			}
+		}
+	}
+
+	return;
+}
+
+// @brief Function to set the effect of this mover on parts of the pose that are covalently attached to
+// the loop to be closed, but which aren't part of it.  Settings are:
+// 0 -- Moves the loop only; can pull apart covalent bonds to anything outside of the loop that isn't
+//      an anchor point.
+// 1 -- Moves the loop and anything downstream of the loop in the foldtree.  Can still pull apart
+// 		 connections to non-child geometry.
+// CURRENTLY DEPRECATED
+/*void GeneralizedKIC::set_mover_effect_on_bonded_geometry( core::Size const effect )
 {
 	if(effect > 1) {
 		utility_exit_with_message("Error!  GeneralizedKIC mover effect mode can only be set to 0 or 1.\n");
@@ -365,7 +433,7 @@ void GeneralizedKIC::set_mover_effect_on_bonded_geometry( core::Size const effec
 	effect_on_bonded_geometry_ = effect;
 
 	return;
-}
+}*/
 
 ///
 /// @brief Function to set the pivot atoms for kinematic closure:
@@ -668,7 +736,7 @@ void GeneralizedKIC::add_filter_parameter (std::string const &param_name, std::s
 /// attempt.  Successful closures from ALL attempts are then selected from by
 /// selectors.
 void GeneralizedKIC::set_closure_attempts( core::Size const attempts) { 
-	TR << "Closure attempts set to " << attempts << "." << std::endl;
+	TR.Debug << "Closure attempts set to " << attempts << "." << std::endl;
 	n_closure_attempts_=attempts;
 	return;
 }
@@ -678,7 +746,7 @@ void GeneralizedKIC::set_closure_attempts( core::Size const attempts) {
 /// The algorithm tries n_closure_attempts_ times if and only if at least one solution is found in the first
 /// ntries_before_giving_up_ attempts.
 void GeneralizedKIC::set_ntries_before_giving_up ( core::Size const ntries ) {
-	if(ntries!=0) TR << "The algorithm will give up if no closed solution is found in the first " << ntries << " attempts." << std::endl;
+	if(ntries!=0) TR.Debug << "The algorithm will give up if no closed solution is found in the first " << ntries << " attempts." << std::endl;
 	ntries_before_giving_up_=ntries;
 	return;
 }
@@ -825,7 +893,7 @@ void GeneralizedKIC::infer_anchor_connIDs(core::pose::Pose const &pose)
 	for(core::Size i=1; i<=lower_connID_count; ++i) { //Loop through all of the connections made by the first residue in the loop
 		if(pose.residue(lower_res).connection_incomplete(i)) continue; //If this connection isn't bonded to anything, go on to the next.
 		core::Size const other_res = pose.residue(lower_res).residue_connection_partner(i);
-		if(other_res!=0 && !is_in_list(other_res, loopresidues_)) { //If this connection is to something outside the loop, then we can set the lower_anchor_connID_ to this connection's ID.
+		if(other_res!=0 && !is_in_list(other_res, loopresidues_) && !is_in_list(other_res, tailresidues_) ) { //If this connection is to something outside the loop (that isn't a tail residue), then we can set the lower_anchor_connID_ to this connection's ID.
 			lower_anchor_connID_ = i;
 			break;
 		}
@@ -834,14 +902,18 @@ void GeneralizedKIC::infer_anchor_connIDs(core::pose::Pose const &pose)
 	for(core::Size i=1; i<=upper_connID_count; ++i) { //Loop through all of the connections made by the last residue in the loop
 		if(pose.residue(upper_res).connection_incomplete(i)) continue; //If this connection isn't bonded to anything, go on to the next.
 		core::Size const other_res = pose.residue(upper_res).residue_connection_partner(i);
-		if(other_res!=0 && !is_in_list(other_res, loopresidues_)) { //If this connection is to something outside the loop, then we can set the lower_anchor_connID_ to this connection's ID -- with one caveat:
+		if(other_res!=0 && !is_in_list(other_res, loopresidues_) && !is_in_list(other_res, tailresidues_) ) { //If this connection is to something outside the loop (that isn't a tail residue), then we can set the lower_anchor_connID_ to this connection's ID -- with one caveat:
 			if(loopsize == 1 && lower_anchor_connID_ == i) continue; //If this is a single-residue loop, then we don't want the same connection ID for the lower anchor and for the upper anchor.
 			upper_anchor_connID_ = i;
 			break;
 		}
 	}
 
-	//TR << "Auto-set lower_anchor_connID_ to " << lower_anchor_connID_ << " and upper_anchor_connID_ to " << upper_anchor_connID_ << "." << std::endl; //DELETE ME -- for debugging only
+	runtime_assert_string_msg( lower_anchor_connID_ !=0, "Unable to auto-assign a lower anchor for the loop to be closed.  Check that the first residue is connected to something that isn't in the loop to be closed and isn't a tail residue." );
+	runtime_assert_string_msg( upper_anchor_connID_ !=0, "Unable to auto-assign an upper anchor for the loop to be closed.  Check that the final residue is connected to something that isn't in the loop to be closed and isn't a tail residue." );
+
+	TR.Debug << "Auto-set lower_anchor_connID_ to " << lower_anchor_connID_ << " and upper_anchor_connID_ to " << upper_anchor_connID_ << "." << std::endl;
+	TR.Debug.flush();
 
 	return;
 }
@@ -866,13 +938,13 @@ void GeneralizedKIC::addloweranchor(
 	return;
 }
 
-/// @brief Add the loop geometry from the starting pose to the temporary pose used for kinematic closure.  This will also add the
-/// downstream geometry if effect_on_bonded_geom==1.  Finally, this will build ideal geometry if build_ideal==true.
+///
+/// @brief Add the loop geometry from the starting pose to the temporary pose used for kinematic closure.  This will build ideal geometry if build_ideal==true (NOT YET TESTED).
 void GeneralizedKIC::addloopgeometry(
 	core::pose::Pose &perturbedloop_pose,
 	core::pose::Pose const &pose,
 	bool const build_ideal,
-	core::Size const /*effect_on_bonded_geom*/,
+	//core::Size const effect_on_bonded_geom,
 	utility::vector1 < std::pair < core::Size, core::Size > > &residue_map
 ) {
 	core::Size const loopsize=loopresidues_.size();
@@ -927,6 +999,85 @@ void GeneralizedKIC::addloopgeometry(
 	return;
 }
 
+/// @brief Add the tail geometry from the starting pose to the temporary pose used for kinematic closure.  This will build ideal geometry if build_ideal==true (NOT YET TESTED).
+/// @details The tails are residues that are not part of the loop to be closed, but which are attached to them and which "come along for the ride" as the loop to be closed moves.
+/// This function MUST be called AFTER addloopgeometry().
+void GeneralizedKIC::addtailgeometry(
+	core::pose::Pose &perturbedloop_pose,
+	core::pose::Pose const &pose,
+	bool const build_ideal,
+	//core::Size const effect_on_bonded_geom,
+		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map,
+	utility::vector1 < std::pair < core::Size, core::Size > > &tail_residue_map
+) {
+	core::Size const tailsize = tailresidues_.size(); //Number of tail residues in the list.
+	core::Size const loopsize = loopresidues_.size() + 2; //Number of loop residues + 2 anchor residues.
+	if(tailsize==0) return; //If there are no tail residues, do nothing.
+
+	// Tail residues could be specified in any order -- not necessarily starting with what's connected to the loop.
+	// For this reason, we'll start by looping through and adding the tail residues that are directly attached to the loop, then the ones that are attached to those, and so on and so forth.
+	utility::vector1 <bool> tail_residue_added;
+	tail_residue_added.resize( tailsize , false ); //A vector of bools for whether residues have already been added to the pose or not.
+	core::Size residues_to_add = tailsize; //The number of residues we still have to add.
+	bool added_a_residue_this_round=false; //Keeps track of whether residues were added.  If a residue isn't added in a given round, it means that there exist residues in the list that aren't connected to the loop in any way.
+
+	while(residues_to_add>0) {
+		added_a_residue_this_round=false;
+
+		bool breaknow=false;
+		for(core::Size ir=1; ir<=tailsize; ++ir) { //Loop through the list of tail residues.
+			if(tail_residue_added[ir]) continue; //Skip ahead if we've already added this residue.
+
+			//If this is a residue that hasn't yet been added...
+			for(core::Size jr=2, jrmax=perturbedloop_pose.n_residue(); jr<=jrmax; ++jr) { //Loop through the residues already added, checking for a connection to this residue.  Start at 2 to skip the first anchor.
+				if (jr==loopsize) continue; //Skip the second anchor.
+				else { //going through loop residues or tail residues
+					if(pose.residue( tailresidues_[ir] ).is_bonded( get_original_pose_rsd(jr, ( (jr<loopsize)?residue_map:tail_residue_map )  ) )) {
+						--residues_to_add;
+						tail_residue_added[ir]=true;
+						//Add the residue:
+
+						core::conformation::ResidueOP rsd = pose.residue(tailresidues_[ir]).clone();
+						core::Size con=0, anchorres_pose=get_original_pose_rsd(jr, ( (jr<loopsize)?residue_map:tail_residue_map ) ), anchorcon=0; //The connection ID for this residue, the other residue's index in the original pose, and that residue's connection ID to this residue.
+
+						//Set con:
+						for(core::Size i=1, imax=pose.residue(tailresidues_[ir]).n_residue_connections(); i<=imax; ++i) { //Loop through this residue's connections
+							if(pose.residue(tailresidues_[ir]).residue_connection_partner(i)==anchorres_pose) {
+								con=i;
+								break;
+							}
+						}
+						runtime_assert_string_msg(con!=0, "Internal error (con==0) in GeneralizedKIC::addtailgeometry().  This shouldn't happen.  Consult a developer or an exorcist.")
+
+						//Set anchorcon:
+						for(core::Size i=1, imax=pose.residue(anchorres_pose).n_residue_connections(); i<=imax; ++i) {
+							if(pose.residue(anchorres_pose).residue_connection_partner(i)==tailresidues_[ir]) {
+								anchorcon=i;
+								break;
+							}
+						}
+						runtime_assert_string_msg(anchorcon!=0, "Internal error (anchorcon==0) in GeneralizedKIC::addtailgeometry().  This shouldn't happen.  Consult a developer or an exorcist.")
+
+						perturbedloop_pose.append_residue_by_bond((*rsd), build_ideal, con, jr, anchorcon, false, false);
+
+						tail_residue_map.push_back( std::pair<core::Size,core::Size>( perturbedloop_pose.n_residue(), tailresidues_[ir] )  );
+						
+						added_a_residue_this_round=true;
+						breaknow=true;
+						break;
+					}
+				}
+			} //for loop through residues already added.
+			if(breaknow) break;
+		}
+
+		runtime_assert_string_msg(added_a_residue_this_round, "Tail residues were specified that are neither directly connected to the loop to be closed, nor connected to that loop through other tail residues.  (Check your input!)");
+
+	}
+
+	return;
+}
+
 ///
 /// @brief Find the residue that is the anchor of the upper end of the loop that we're about to close and add it to the loop pose by a bond.
 void GeneralizedKIC::addupperanchor(
@@ -961,13 +1112,14 @@ void GeneralizedKIC::addupperanchor(
 }
 
 /// @brief Do the actual kinematic closure.
-/// @details Inputs are pose (the loop to be closed), original_pose (the reference pose, unchanged by operation), and residue_map (the mapping
-/// of residues from pose to original_pose).  Output is pose (the loop to be closed, in a new, closed conformation if successful) and a boolean
-/// value indicating success or failure.
+/// @details Inputs are pose (the loop to be closed), original_pose (the reference pose, unchanged by operation), residue_map (the mapping of
+/// residues from pose to original_pose) and tail_residue_map (the mapping of tail residues from pose to original_pose).  Output is pose (the
+/// loop to be closed, in a new, closed conformation if successful) and a boolean value indicating success or failure.
 bool GeneralizedKIC::doKIC(
 	core::pose::Pose &pose,
 	core::pose::Pose const &original_pose,
-	utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map		
+	utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map,
+	utility::vector1 < std::pair < core::Size, core::Size > > const &tail_residue_map	
 ) {
 	using namespace core::id;
 	using namespace numeric::kinematic_closure;
@@ -990,7 +1142,7 @@ bool GeneralizedKIC::doKIC(
 	core::Size total_solution_count=0;
 
 	for(core::Size iattempt = 1; (n_closure_attempts_>0 ? iattempt<=n_closure_attempts_ : true); ++iattempt) { //Loop for closure attempts
-		TR << "Generalized kinematic closure attempt " << iattempt << "." << std::endl;
+		TR.Debug << "Generalized kinematic closure attempt " << iattempt << "." << std::endl;
 
 		t_ang.push_back( utility::vector1 < utility::vector1<core::Real> > () );
 		b_ang.push_back( utility::vector1 < utility::vector1<core::Real> > () );
@@ -1008,13 +1160,13 @@ bool GeneralizedKIC::doKIC(
 		int nsol=0; //The number of solutions found.  This has to be an int.
 
 		//Perturb the lists of desired torsions, bond angles, and bond lengths using the perturberlist_.
-		apply_perturbations(pose, original_pose, residue_map, dt, da, db);
+		apply_perturbations(pose, original_pose, residue_map, tail_residue_map, dt, da, db);
 
 		//Do the actual closure:
 		bridgeObjects(atoms, dt, da, db, pivots, order, t_ang[iattempt], b_ang[iattempt], b_len[iattempt], nsol);
 
 		//Filter solutions found.  This decrements nsol as solutions are eliminated, and deletes solutions from the t_ang, b_ang, and b_len vectors.
-		if(nsol>0) filter_solutions(original_pose, pose, residue_map, atomlist_, t_ang[iattempt], b_ang[iattempt], b_len[iattempt], nsol );
+		if(nsol>0) filter_solutions(original_pose, pose, residue_map, tail_residue_map, atomlist_, t_ang[iattempt], b_ang[iattempt], b_len[iattempt], nsol );
 
 		total_solution_count += static_cast<core::Size>(nsol);
 		nsol_for_attempt[iattempt] = static_cast<core::Size>(nsol);
@@ -1026,7 +1178,7 @@ bool GeneralizedKIC::doKIC(
 	} //End loop for closure attempts
 
 	// Apply the selector here.  This ultimately picks a single solution and sets pose (the loop pose) to the conformation for that solution, but doesn't touch the original pose.
-	if(total_solution_count>0) select_solution ( pose, original_pose, residue_map, atomlist_, t_ang, b_ang, b_len, nsol_for_attempt, total_solution_count );
+	if(total_solution_count>0) select_solution ( pose, original_pose, residue_map, tail_residue_map, atomlist_, t_ang, b_ang, b_len, nsol_for_attempt, total_solution_count );
 
 	return (total_solution_count>0);
 }
@@ -1057,7 +1209,7 @@ void GeneralizedKIC::generate_atomlist(
 	for(core::Size ir=1, irmax=residue_map.size(); ir<=irmax; ++ir) { //Loop through all of the residues in the loop
 		core::Size const curres = residue_map[ir].first;
 		core::Size const prevres = (ir==1 ? 1 : residue_map[ir-1].first);
-		core::Size const nextres = (ir==irmax ? pose.n_residue() : residue_map[ir+1].first);
+		core::Size const nextres = (ir==irmax ? irmax+2 /*The second anchor*/ : residue_map[ir+1].first);
 		//TR << "curres=" << curres << " nextres=" << nextres << " prevres=" << prevres << std::endl; //DELETE ME
 
 		core::Size const prevconindex = get_connection(curres, prevres, pose);
@@ -1083,7 +1235,7 @@ void GeneralizedKIC::generate_atomlist(
 	} //Looping through the residues of the loop
 
 	{	//Scope 2: end with the AtomID of 3 atoms of the upper anchor connection point:
-		core::Size nres = pose.n_residue();
+		core::Size nres = loopresidues_.size()+2;
 		core::Size lastconindex = get_connection( nres, residue_map[residue_map.size()].first, pose );
 		core::Size lastconatomindex = pose.residue(nres).residue_connect_atom_index(lastconindex);
 		core::Size lastconatomindex_parent = (lastconatomindex==1 ? 2 : pose.residue(nres).atom_base(lastconatomindex) );
@@ -1193,9 +1345,9 @@ void GeneralizedKIC::pick_pivots(
 	runtime_assert_string_msg( pivots[3] > 4 && pivots[3] < totalatoms-3, "The third pivot atom was not found in the loop to be closed!" );
 
 	runtime_assert_string_msg( pivots[2] > pivots[1], "The second pivot cannot be before the first pivot." );
-	runtime_assert_string_msg( pivots[2] - pivots[1] > 1, "The second pivot atom cannot be bonded to the first pivot atom." );
+	runtime_assert_string_msg( pivots[2] - pivots[1] > 2, "There must be at least two atoms between the first and second pivot atoms." );
 	runtime_assert_string_msg( pivots[3] > pivots[2], "The third pivot cannot be before the second pivot." );
-	runtime_assert_string_msg( pivots[3] - pivots[2] > 1, "The third pivot atom cannot be bonded to the second pivot atom." );
+	runtime_assert_string_msg( pivots[3] - pivots[2] > 2, "There must be at least two atoms between the second and third pivot atoms." );
 
 	prune_extra_atoms(pivots);
 
@@ -1212,6 +1364,7 @@ void GeneralizedKIC::pick_pivots(
 /// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
 /// @param[in] original_pose -- A pose consisting of the full, original structure.
 /// @param[in] residue_map -- The mapping of (residue in loop_pose, residue in original_pose).
+/// @param[in] tail_residue_map -- The mapping of (tail residue in loop_pose, tail residue in original_pose).
 /// @param[in,out] torsions -- The desired torsion angles, potentially altered or overwritten by the perturbers.
 /// @param[in,out] bondangles -- The desired bond angles, potentially altered or overwritten by the perturbers.
 /// @param[in,out] bondlenghts -- The desired bond lengths, potentially altered or overwritten by the perturbers.
@@ -1219,6 +1372,7 @@ void GeneralizedKIC::apply_perturbations(
 	core::pose::Pose const &loop_pose,
 	core::pose::Pose const &original_pose,
 	utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map,
+	utility::vector1 < std::pair < core::Size, core::Size > > const &tail_residue_map,
 	utility::vector1 < core::Real > &torsions,
 	utility::vector1 < core::Real > &bondangles,
 	utility::vector1 < core::Real > &bondlengths
@@ -1231,7 +1385,10 @@ void GeneralizedKIC::apply_perturbations(
 
 	for(core::Size i=1; i<=nperturbers; ++i) { //Loop through, applying each perturber in turn.
 		//TR << "Applying perturber " << i << "." << std::endl;
-		perturberlist_[i]->apply(original_pose, loop_pose, residue_map, atomlist_, torsions, bondangles, bondlengths);
+		if (perturberlist_[i]->get_perturber_effect() == perturber::perturb_dihedral_bbg) {
+			perturberlist_[i]->init_bbgmover(loop_pose, residue_map);
+		}
+		perturberlist_[i]->apply(original_pose, loop_pose, residue_map, tail_residue_map, atomlist_, torsions, bondangles, bondlengths);
 	}
 
 	return;
@@ -1239,6 +1396,11 @@ void GeneralizedKIC::apply_perturbations(
 
 /// @brief Apply filters to the list of solutions, and proceed to eliminate any and all that fail to pass filters.
 /// @details This removes entries from the torsions, bondangles, and bondlengths lists, and decrements nsol (the number of solutions) appropriately.
+/// @param[in] original_pose -- A pose consisting of the full, original structure.
+/// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
+/// @param[in] residue_map -- The mapping of (residue in loop_pose, residue in original_pose).
+/// @param[in] tail_residue_map -- The mapping of (tail residue in loop_pose, tail residue in original_pose).
+/// @param[in] atomlist -- The list of atomIDs in the chain that was closed, plus their xyz coordinates from the original pose.
 /// @param[in,out] torsions -- The torsion angles returned by bridgeObjects, as a matrix of [solution #][torsion index].  Columns can be deleted by filters.
 /// @param[in,out] bondangles -- The bond angles returned by bridgeObjects, as a matrix of [solution #][bondangle index].  Columns can be deleted by filters.
 /// @param[in,out] bondlenghts -- The bond lengths returned by bridgeObjects, as a matrix of [solution #][bondlength index].  Columns can be deleted by filters.
@@ -1247,13 +1409,14 @@ void GeneralizedKIC::filter_solutions(
 	core::pose::Pose const &original_pose,
 	core::pose::Pose const &loop_pose,
 	utility::vector1 < std::pair <core::Size, core::Size> > const &residue_map,
+	utility::vector1 < std::pair <core::Size, core::Size> > const &tail_residue_map,
 	utility::vector1 < std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
 	utility::vector1 <utility::vector1<core::Real> > &torsions,
 	utility::vector1 <utility::vector1<core::Real> > &bondangles,
 	utility::vector1 <utility::vector1<core::Real> > &bondlengths,
 	int &nsol
 ) const {
-	TR << "Applying filters to GeneralizedKIC solutions." << std::endl;  TR.flush(); //DELETE ME.
+	TR.Debug << "Applying filters to GeneralizedKIC solutions." << std::endl;  TR.Debug.flush();
 
 	//Double-check that the value of nsol matches the size of the torsions, bondangles, and bondlenghts arrays (skipped in release mode, I think):
 	assert( torsions.size()==static_cast<core::Size>(nsol));
@@ -1266,12 +1429,13 @@ void GeneralizedKIC::filter_solutions(
 		TR.Warning << "Warning!  No filters specified for GeneralizedKIC mover." << std::endl;  TR.Warning.flush();
 		return;
 	}
+	
 	for(core::Size ifilter=1; ifilter<=nfilters; ++ifilter) { //Loop through all filters
 		if(nsol==0) break;
-		TR << "Applying " << filterlist_[ifilter]->get_this_filter_type_name() << " filter." << std::endl;
+		TR.Debug << "Applying " << filterlist_[ifilter]->get_this_filter_type_name() << " filter." << std::endl;
 		for(core::Size isolution=1; isolution<=static_cast<core::Size>(nsol); ++isolution) { //Loop through all of the solutions
 			//TR << "Applying filter " << ifilter << " to solution " << isolution << "." << std::endl;  TR.flush(); //DELETE ME
-			if(!filterlist_[ifilter]->apply(original_pose, loop_pose, residue_map, atomlist, torsions[isolution], bondangles[isolution], bondlengths[isolution])) { //If this filter returns false
+			if(!filterlist_[ifilter]->apply(original_pose, loop_pose, residue_map, tail_residue_map, atomlist, torsions[isolution], bondangles[isolution], bondlengths[isolution])) { //If this filter returns false
 				//TR << "Filter returned false.  Erasing solution " << isolution << "." << std::endl;  TR.flush(); //DELETE ME
 				torsions.erase( torsions.begin()+isolution-1 );
 				bondangles.erase( bondangles.begin()+isolution-1 );
@@ -1294,6 +1458,7 @@ void GeneralizedKIC::filter_solutions(
 /// @param[in,out] pose -- The loop to be closed.  This function puts it into its new, closed conformation.
 /// @param[in] original_pose -- The original pose.  Can be used for reference by selectors.
 /// @param[in] residue_map -- Mapping of (loop residue, original pose residue).
+/// @param[in] tail_residue_map -- Mapping of (tail residue index in pose, tail residue index in original_pose).
 /// @param[in] atomlist -- The list of (AtomID, original XYZ coordinates of atoms) representing the chain that was closed.
 /// @param[in] torsions -- Matrix of [closure attempt #][solution #][torsion #] with torsion values for each torsion angle in the chain.  A selector will pick one solution.
 /// @param[in] bondangles -- Matrix of [closure attempt #][solution #][angle #] with bond angle values for each bond angle in the chain.  A selector will pick one solution.
@@ -1304,6 +1469,7 @@ void GeneralizedKIC::select_solution (
 	core::pose::Pose &pose,
 	core::pose::Pose const &original_pose, //The original pose
 	utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map, //mapping of (loop residue, original pose residue)
+	utility::vector1 <std::pair <core::Size, core::Size> > const &tail_residue_map, //mapping of (tail residue index in pose, tail residue index in original_pose)
 	utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
 	utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions, //torsions for each atom 
 	utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles, //bond angle for each atom
@@ -1311,7 +1477,7 @@ void GeneralizedKIC::select_solution (
 	utility::vector1 <core::Size> const &nsol_for_attempt,
 	core::Size const total_solutions
 ) const {
-	selector_->apply(pose, original_pose, residue_map, atomlist, torsions, bondangles, bondlengths, nsol_for_attempt, total_solutions);
+	selector_->apply(pose, original_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths, nsol_for_attempt, total_solutions);
 	return;
 }
 
@@ -1326,21 +1492,21 @@ void GeneralizedKIC::prune_extra_atoms( utility::vector1 <core::Size> &pivots )
 	core::Size extra_at_end = totalatoms-4-pivots[3];
 
 	if(extra_at_start > 0 ) {
-		//TR << "Removing first " << extra_at_start << " atoms from the atom list." << std::endl ; //DELETE ME
-		atomlist_.erase( atomlist_.begin(), atomlist_.begin()+extra_at_start); //Erase the first extra_at_start atoms
+		//TR.Debug << "Removing first " << extra_at_start << " atoms from the atom list." << std::endl ; //DELETE ME
+		for(core::Size i=1; i<=extra_at_start; ++i) atomlist_.erase( atomlist_.begin() ); //Erase the first extra_at_start atoms
 		for(core::Size i=1; i<4; ++i) pivots[i] -= extra_at_start; //Update the pivot indices
 	}
 
 	if(extra_at_end > 0) {	
-		//TR << "Removing last " << extra_at_end << " atoms from the atom list." << std::endl ; //DELETE ME
-		atomlist_.erase(atomlist_.end()-extra_at_end, atomlist_.end()); //Erase the last extra_at_end atoms
+		//TR.Debug << "Removing last " << extra_at_end << " atoms from the atom list." << std::endl ; //DELETE ME
+		for(core::Size i=1; i<=extra_at_end; ++i) atomlist_.erase(atomlist_.end()-1); //Erase the last extra_at_end atoms
 	}
 
 	//DEBUGGING OUTPUT ONLY -- DELETE ME:
 	//for(core::Size i=1; i<=atomlist_.size(); ++i) {
-	//	TR << i << " atom=" << atomlist_[i].first.atomno() << " res=" << atomlist_[i].first.rsd() << std::endl;
+	//	TR.Debug << i << " atom=" << atomlist_[i].first.atomno() << " res=" << atomlist_[i].first.rsd() << std::endl;
 	//}
-	//TR.flush();
+	//TR.Debug.flush();
 
 	return;
 }

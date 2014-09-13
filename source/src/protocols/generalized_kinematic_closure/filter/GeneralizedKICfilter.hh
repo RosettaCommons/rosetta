@@ -135,6 +135,7 @@ public:
 	/// @param[in] original_pose -- The full, initial pose.
   /// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
 	/// @param[in] residue_map -- The mapping of (residue index in loop_pose, residue index in original_pose).
+	/// @param[in] tail_residue_map -- The mapping of (tail residue index in loop_pose, tail residue index in original_pose).
 	/// @param[in] atomlist -- A list of atoms making the chain that was closed by bridgeObjects, with residue indices corresponding to loop_pose.
   /// @param[in] torsions -- A vector of dihedral angles that the bridgeObjects function spat out.
   /// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
@@ -143,6 +144,7 @@ public:
 		core::pose::Pose const &original_pose,
 		core::pose::Pose const &loop_pose,
 		utility::vector1 < std::pair <core::Size, core::Size> > const &residue_map,
+		utility::vector1 < std::pair <core::Size, core::Size> > const &tail_residue_map,
 		utility::vector1 < std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
 		utility::vector1 < core::Real > const &torsions,
 		utility::vector1 < core::Real > const &bondangles,
@@ -186,10 +188,11 @@ private:
 
 	/// @brief Applies the loop_bump_check filter, which checks for clashes between the atoms in the chain
 	/// to be closed and the rest of the structure (or for clashes within these atoms).
-	/// @details Returns "true" for pass and "false" for fail.
+	/// @details Returns "true" for pass and "false" for fail.  Does NOT check for clashes with tail residues.
 	/// @param[in] original_pose -- The full, initial pose.
   /// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
 	/// @param[in] residue_map -- The mapping of (residue index in loop_pose, residue index in original_pose).
+	/// @param[in] tail_residue_map -- The mapping of (tail residue index in loop_pose, tail residue index in original_pose).
 	/// @param[in] atomlist -- A list of atoms making the chain that was closed by bridgeObjects, with residue indices corresponding to loop_pose.
   /// @param[in] torsions -- A vector of dihedral angles that the bridgeObjects function spat out.
   /// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
@@ -198,6 +201,7 @@ private:
 		core::pose::Pose const &original_pose,
 		core::pose::Pose const &loop_pose,
 		utility::vector1 < std::pair <core::Size, core::Size> > const &residue_map,
+		utility::vector1 < std::pair <core::Size, core::Size> > const &tail_residue_map,
 		utility::vector1 < std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
 		utility::vector1 < core::Real > const &torsions,
 		utility::vector1 < core::Real > const &bondangles,
@@ -217,6 +221,7 @@ private:
 	/// @param[in] original_pose -- The full, initial pose.
   /// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
 	/// @param[in] residue_map -- The mapping of (residue index in loop_pose, residue index in original_pose).
+	/// @param[in] tail_residue_map -- The mapping of (tail residue index in loop_pose, tail residue index in original_pose).
 	/// @param[in] atomlist -- A list of atoms making the chain that was closed by bridgeObjects, with residue indices corresponding to loop_pose.
   /// @param[in] torsions -- A vector of dihedral angles that the bridgeObjects function spat out.
   /// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
@@ -225,6 +230,7 @@ private:
 		core::pose::Pose const &original_pose,
 		core::pose::Pose const &loop_pose,
 		utility::vector1 < std::pair <core::Size, core::Size> > const &residue_map,
+		utility::vector1 < std::pair <core::Size, core::Size> > const &tail_residue_map,
 		utility::vector1 < std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
 		utility::vector1 < core::Real > const &torsions,
 		utility::vector1 < core::Real > const &bondangles,
