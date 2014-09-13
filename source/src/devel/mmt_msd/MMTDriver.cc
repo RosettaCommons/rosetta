@@ -242,7 +242,7 @@ void JobsForSequence::finalize_state_energies_and_npd_properties()
 				iter = jobs_[ ii ].npd_props().begin(),
 				iter_end = jobs_[ ii ].npd_props().end();
 				iter != iter_end; ++iter ) {
-			npd_properties_[ iter->first ] = npd_properties_[ core::Size(iter->second) ];
+			npd_properties_[ iter->first ] = npd_properties_[ iter->second ];
 		}
 	}
 }

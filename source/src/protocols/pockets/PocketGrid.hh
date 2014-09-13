@@ -20,7 +20,7 @@
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/scoring/func/XYZ_Func.fwd.hh>
+#include <core/scoring/constraints/XYZ_Func.fwd.hh>
 
 // Numeric Headers
 // AUTO-REMOVED #include <numeric/xyz.functions.hh>
@@ -314,9 +314,9 @@ public:
   bool isTooSmall() const;
   core::Vector whatIsTooSmall() const;
 
-	bool autoexpanding_pocket_eval( core::conformation::Residue const & central_rsd, core::scoring::func::XYZ_Func const & xyz_func, Size const total_residues, bool center_target=true, core::Real x=0.0, core::Real y=0.0, core::Real z=0.0 );
+	bool autoexpanding_pocket_eval( core::conformation::Residue const & central_rsd, core::scoring::constraints::XYZ_Func const & xyz_func, Size const total_residues, bool center_target=true, core::Real x=0.0, core::Real y=0.0, core::Real z=0.0 );
 
-	bool autoexpanding_pocket_eval( std::vector< core::conformation::ResidueOP > const & central_rsd, core::scoring::func::XYZ_Func const & xyz_func, Size const total_residues, bool center_target=true, core::Real x=0.0, core::Real y=0.0, core::Real z=0.0 );
+	bool autoexpanding_pocket_eval( std::vector< core::conformation::ResidueOP > const & central_rsd, core::scoring::constraints::XYZ_Func const & xyz_func, Size const total_residues, bool center_target=true, core::Real x=0.0, core::Real y=0.0, core::Real z=0.0 );
 
 	bool autoexpanding_pocket_eval( core::conformation::Residue const & central_rsd, core::pose::Pose const & inPose, bool center_target=true, core::Real x=0.0, core::Real y=0.0, core::Real z=0.0);
 

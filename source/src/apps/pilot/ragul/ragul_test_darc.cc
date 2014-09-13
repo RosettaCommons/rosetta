@@ -22,7 +22,7 @@
 
 //reqd minimization headers
 #include <protocols/simple_moves/ScoreMover.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
@@ -35,7 +35,6 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/pose/util.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -392,15 +391,15 @@ int main( int argc, char * argv [] ) {
 		  //setup scorefxn
 		  //scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(core::scoring::PRE_TALARIS_2013_STANDARD_WTS, core::scoring::SCORE12_PATCH) );
 		  //scoring::ScoreFunctionOP repack_scorefxn( ScoreFunctionFactory::create_score_function(core::scoring::PRE_TALARIS_2013_STANDARD_WTS, core::scoring::SCORE12_PATCH) );
-          core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
-          core::scoring::ScoreFunctionOP repack_scorefxn = core::scoring::get_score_function();
+          core::scoring::ScoreFunctionOP scorefxn(core::scoring::getScoreFunction());
+          core::scoring::ScoreFunctionOP repack_scorefxn(core::scoring::getScoreFunction());
 
 		  //Register calculators
 			std::string sasa_calc_name = "sasa";
 			std::string hbond_calc_name = "hbond";
 			std::string packstat_calc_name = "packstat";
 			std::string burunsat_calc_name = "burunsat";
-			core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy;
+			core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculator;
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( sasa_calc_name, sasa_calculator );
 			core::pose::metrics::PoseMetricCalculatorOP hb_calc = new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator();
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( hbond_calc_name, hb_calc );
@@ -418,7 +417,7 @@ int main( int argc, char * argv [] ) {
 			Real cst_weight = 1;
 
 			ConstraintSetOP cst_set( new ConstraintSet() );
-			core::scoring::func::HarmonicFuncOP spring = new core::scoring::func::HarmonicFunc( 0 /*mean*/, coord_sdev /*std-dev*/);
+			HarmonicFuncOP spring = new HarmonicFunc( 0 /*mean*/, coord_sdev /*std-dev*/);
 			conformation::Conformation const & conformation( bound_pose.conformation() );
 
 			// jk we need an anchor in order to use CoordinateConstraint !!!

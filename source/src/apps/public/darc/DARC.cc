@@ -12,7 +12,6 @@
 // Protocol Headers
 #include <devel/init.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/options/keys/fingerprint.OptionKeys.gen.hh>
 #include <core/pose/PDBInfo.hh>
 #include <protocols/pockets/PocketGrid.hh>
 #include <protocols/pockets/Fingerprint.hh>

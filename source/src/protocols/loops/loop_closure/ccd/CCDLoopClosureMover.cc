@@ -745,7 +745,7 @@ void CCDLoopClosureMover::compute_closure_metrics(
 		for ( core::uint j = 1; j<= n_mainchain_atoms; ++j ) {
 			TorsionID torsion_id( i, BB, j );
 			total_change_in_torsion_angle +=
-					fabs( subtract_degree_angles( starting_pose.torsion( torsion_id ), pose.torsion( torsion_id ) ) );
+					abs( subtract_degree_angles( starting_pose.torsion( torsion_id ), pose.torsion( torsion_id ) ) );
 		}
 	}
 

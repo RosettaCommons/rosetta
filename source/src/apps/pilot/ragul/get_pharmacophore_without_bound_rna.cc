@@ -26,7 +26,7 @@
 
 #include <protocols/simple_moves/ScoreMover.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
@@ -175,12 +175,12 @@ int main( int argc, char * argv [] ){
 
 	// We only want to find donors/acceptors that are solvent accessible
 
-	core::pose::metrics::PoseMetricCalculatorOP res_sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy;
+	core::pose::metrics::PoseMetricCalculatorOP res_sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculator;
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasaone", res_sasa_calculator );
 	basic::MetricValue< utility::vector1< core::Real > > ressasa;
 	protein_pose.metric( "sasaone", "residue_sasa", ressasa );
 
-	core::pose::metrics::PoseMetricCalculatorOP atm_sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy;
+	core::pose::metrics::PoseMetricCalculatorOP atm_sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculator;
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasatwo", atm_sasa_calculator );
 	basic::MetricValue< core::id::AtomID_Map< core::Real> > atmsasa;
 	protein_pose.metric( "sasatwo", "atom_sasa", atmsasa );

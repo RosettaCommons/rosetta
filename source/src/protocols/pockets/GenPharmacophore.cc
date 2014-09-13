@@ -12,6 +12,7 @@
 /// @author Ragul Gowthaman
 
 // Protocol Headers
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <basic/MetricValue.hh>
@@ -28,7 +29,7 @@
 
 #include <protocols/simple_moves/ScoreMover.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
@@ -45,8 +46,8 @@
 #include <basic/options/keys/gen_pharmacophore.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <protocols/pockets/GenPharmacophore.hh>
-#include <core/chemical/rna/util.hh>
-//#include <core/pose/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
+#include <core/pose/rna/RNA_Util.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -101,9 +102,11 @@
 #include <core/scoring/methods/ShortRangeTwoBodyEnergy.hh>
 #include <core/scoring/methods/ShortRangeTwoBodyEnergy.fwd.hh>
 #include <boost/algorithm/string.hpp>
+#include <boost/regex.hpp>
 
 using namespace core;
 using namespace std;
+using namespace boost;
 
 
 namespace protocols {
@@ -290,11 +293,11 @@ namespace protocols {
 
 						// We only want to find donors/acceptors that are solvent accessible
 
-						core::pose::metrics::PoseMetricCalculatorOP res_sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy;
+						core::pose::metrics::PoseMetricCalculatorOP res_sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculator;
 						core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasaone", res_sasa_calculator );
 						basic::MetricValue< utility::vector1< core::Real > > ressasa;
 						protein_pose.metric( "sasaone", "residue_sasa", ressasa );
-						core::pose::metrics::PoseMetricCalculatorOP atm_sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy;
+						core::pose::metrics::PoseMetricCalculatorOP atm_sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculator;
 						core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasatwo", atm_sasa_calculator );
 						basic::MetricValue< core::id::AtomID_Map< core::Real> > atmsasa;
 						protein_pose.metric( "sasatwo", "atom_sasa", atmsasa );
@@ -305,7 +308,17 @@ namespace protocols {
 						for ( Size j = 1, resnum = protein_pose.total_residue(); j <= resnum; ++j ) {
 								core::conformation::Residue const & rsd( protein_pose.conformation().residue(j) );
 
+								int offset = 9;
+								if (rsd.seqpos() < 72) offset=3;
+								offset=0;
 								int target=0;
+								core::Size total_atoms(0);
+								using namespace basic::options;
+								if (option[ OptionKeys::fingerprint::include_hydrogens ]()){
+										total_atoms = rsd.natoms();
+								} else {
+										total_atoms = rsd.nheavyatoms();
+								}
 
 								//fill in points that are ideal for a hydrogen acceptor with an O
 								for ( core::chemical::AtomIndices::const_iterator hnum  = rsd.Hpos_polar().begin(), hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
@@ -330,6 +343,9 @@ namespace protocols {
 								for ( core::chemical::AtomIndices::const_iterator anum  = rsd.accpt_pos().begin(), anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
 										Size const aatm( *anum );
 										// Skip buried residues
+										int offset = 9;
+										if (rsd.seqpos() < 72) offset=3;
+										offset=0;
 										if (atom_sasas(j, aatm) < 0.1) {
 												//std::cout<<rsd.seqpos()+offset<<" Acceptor "<<rsd.name()<<" "<<rsd.atom_name(aatm)<<" SASA "<<atom_sasas(j, aatm)<<" being ignored"<<std::endl;
 												continue;
@@ -341,17 +357,19 @@ namespace protocols {
 										numeric::xyzVector<core::Real> const & aatm_base2_xyz( rsd.xyz( rsd.abase2( aatm ) ) );
 										Hybridization const & hybrid( rsd.atom_type(aatm).hybridization() );
 
-										core::Real theta(0.0);
+										core::Real theta(0.0), step_size(0.0);
 										utility::vector1< core::Real > phi_list, phi_steps;
 										phi_steps.push_back(  0 );
 										switch( hybrid ) {
 												case SP2_HYBRID:
 														theta = 180.0 - 120.0;
+														step_size = 15.0;
 														phi_list.push_back(   0.0 );
 														phi_list.push_back( 180.0 );
 														break;
 												case SP3_HYBRID:
 														theta = 180.0 - 109.0;
+														step_size = 10.0;
 														phi_list.push_back( 120.0 );
 														phi_list.push_back( 240.0 );
 														break;
@@ -365,6 +383,7 @@ namespace protocols {
 																phi_steps.clear();
 																phi_steps.push_back( 0.0 );
 																phi_list.push_back( 0.0 ); // doesnt matter
+																step_size = 0.0; // doesnt matter
 																break;
 														}
 												default:
@@ -567,7 +586,7 @@ namespace protocols {
 
 						//find Hbond interactions and include it to the pharmacophore list
 						core::scoring::hbonds::HBondSet rna_hb_set;
-						scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
+						scoring::ScoreFunctionOP scorefxn(core::scoring::getScoreFunction());
 						(*scorefxn)(prot_rna_complex_pose);
 
 						assert( prot_rna_complex_pose.energies().residue_neighbors_updated() );
@@ -736,7 +755,7 @@ namespace protocols {
 
 						while (!inPDB_sstream.eof()) {
 								getline(inPDB_sstream, line);
-								boost::trim(line);
+								trim(line);
 								if (line.find("ATOM") == string::npos)
 										continue;
 
@@ -841,7 +860,7 @@ namespace protocols {
 								}
 
 								if (numRng >= num_ring) {
-										ofstream output((output_filename + "_" + boost::lexical_cast<string>(counter++) + ".pdb").c_str());
+										ofstream output((output_filename + "_" + lexical_cast<string>(counter++) + ".pdb").c_str());
 										for (s = 0; s < current.size(); s++)
 												output << current[s]->getContent();
 										output.close();

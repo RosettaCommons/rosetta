@@ -201,7 +201,7 @@ void AntibodyModelerProtocol::init_from_options() {
 		set_H3Filter ( option[ OptionKeys::antibody::h3_filter ]() );
 	}
 	if ( option[ OptionKeys::antibody::h3_filter_tolerance ].user() ) {
-		set_H3Filter_Tolerance( (Size)(option[ OptionKeys::antibody::h3_filter_tolerance ]())  );
+		set_H3Filter_Tolerance( option[ OptionKeys::antibody::h3_filter_tolerance ]()  );
 	}
 	if ( option[ OptionKeys::antibody::flank_residue_min ].user() ) {
 		set_flank_residue_min ( option[ OptionKeys::antibody::flank_residue_min ]() );
@@ -456,7 +456,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 		cdr_highres_refine_ -> set_h3_filter(h3_filter_);
 		cdr_highres_refine_ -> set_num_filter_tries(h3_filter_tolerance_);
 		cdr_highres_refine_ -> set_flank_relax(flank_residue_min_);
-		if (flank_residue_min_) cdr_highres_refine_->set_flank_size((core::Size)flank_residue_size_);
+		if (flank_residue_min_) cdr_highres_refine_->set_flank_size(flank_residue_size_);
 		cdr_highres_refine_ -> pass_start_pose(start_pose_);
 		cdr_highres_refine_ -> apply(pose);
 		//pose.dump_pdb("3rd_finish_h3_refine.pdb");

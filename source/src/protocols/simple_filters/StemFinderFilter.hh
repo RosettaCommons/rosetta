@@ -45,9 +45,9 @@ class StemFinder : public filters::Filter
 		void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & );
 
 		core::Real from_res() const{ return from_res_; }
-		void from_res( core::Real const r ){ from_res_ = (core::Size)r; }
+		void from_res( core::Real const r ){ from_res_ = r; }
 		core::Real to_res() const{ return to_res_; }
-		void to_res( core::Real const r ){ to_res_ = (core::Size)r; }
+		void to_res( core::Real const r ){ to_res_ = r; }
 		core::Real rmsd() const{ return rmsd_; }
 		void rmsd( core::Real const c ){ rmsd_ = c ;}
 

@@ -75,7 +75,7 @@ int main( int argc, char * argv [] )
 	string outpfx = input_pdb_name.substr(pfxsta, pfxend-pfxsta+1);
 
 	// create scoring function
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
+	core::scoring::ScoreFunctionOP scorefxn(core::scoring::getScoreFunction());
 
 	// impose coordinate constraint
 	Size const NRES = ps.total_residue();
@@ -86,7 +86,7 @@ int main( int argc, char * argv [] )
 		for(Size ii=1; ii<=rsd.nheavyatoms(); ++ii)
 			ps.add_constraint(new core::scoring::constraints::CoordinateConstraint(
 				core::id::AtomID(ii,i), core::id::AtomID(1,ANCHOR), rsd.xyz(ii),
-					new core::scoring::func::HarmonicFunc(0.0, COORD_SDV)));
+					new core::scoring::constraints::HarmonicFunc(0.0, COORD_SDV)));
 		}
 
 	scorefxn->set_weight(core::scoring::coordinate_constraint, 1.0);

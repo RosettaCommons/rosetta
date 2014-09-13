@@ -66,7 +66,8 @@ int main( int argc, char * argv [] )
 	core::import_pose::pose_from_pdb( bou_ps, input_pdb_name );
 
 	// create score function
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
+	core::scoring::ScoreFunctionOP scorefxn(
+		core::scoring::getScoreFunction());
 
 	// minimize bound pose, if requested
 	if(option[min_first]) {

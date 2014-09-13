@@ -182,7 +182,7 @@ SecondaryStructureFilter::set_blueprint( std::string const blueprint_file )
 	for ( core::Size strand=1; strand<=pairs.size(); ++strand ) {
 		core::Size const s1( pairs[strand]->s1() );
 		core::Size const s2( pairs[strand]->s2() );
-		int const shift( (int)(pairs[strand]->rgstr_shift()) );
+		int const shift( pairs[strand]->rgstr_shift() );
 		core::Size const len1( pairs[strand]->size1() );
 		core::Size const len2( pairs[strand]->size2() );
 		for ( core::Size res=1; res<=len1; ++res ) {

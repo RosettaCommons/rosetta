@@ -71,7 +71,8 @@ int main( int argc, char * argv [] )
 	core::import_pose::pose_from_pdb( ps, input_pdb_name );
 
 	// score pose
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
+	core::scoring::ScoreFunctionOP scorefxn(
+		core::scoring::getScoreFunction());
 
 	(*scorefxn)(ps);
 

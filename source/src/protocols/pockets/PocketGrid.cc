@@ -566,7 +566,7 @@ PocketGrid& PocketGrid::operator=(const PocketGrid& gr){
 
 PocketGrid::PocketGrid(){
 	if( !core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ){
-	core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy;
+	core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculator;
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 	}
   setup_default_options();
@@ -578,7 +578,7 @@ PocketGrid::PocketGrid( core::conformation::Residue const & central_rsd ) {
   using namespace basic::options;
   tag_=option[ OptionKeys::out::output_tag ]();
 	if( !core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ){
-		core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy;
+		core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculator;
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 	}
 }
@@ -589,7 +589,7 @@ PocketGrid::PocketGrid( std::vector< core::conformation::ResidueOP > const & cen
   using namespace basic::options;
   tag_=option[ OptionKeys::out::output_tag ]();
 	if( !core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ){
-	core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy;
+	core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculator;
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 	}
 }
@@ -600,7 +600,7 @@ PocketGrid::PocketGrid( std::vector< core::conformation::ResidueOP > const & cen
   using namespace basic::options;
   tag_=option[ OptionKeys::out::output_tag ]();
 	if( !core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ){
-		core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy;
+		core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculator;
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 	}
 }
@@ -611,7 +611,7 @@ PocketGrid::PocketGrid( std::vector< core::conformation::ResidueOP > const & cen
   using namespace basic::options;
   tag_=option[ OptionKeys::out::output_tag ]();
 	if( !core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ){
-		core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy;
+		core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculator;
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 	}
 }
@@ -1216,7 +1216,7 @@ void PocketGrid::newSearch(core::Size thr1, core::Size thr2, core::Size thr3, co
 
               //if it's a surface, we want to go back to the starting point and fill the solvents in as pockets
               else if (sps && isSurfacePoint(x,y,z)) break;
-              else if (!sps && (isSurfacePoint(x,y,z) || (grid_[x][y][z]==POCKET&&psp) || (grid_[x][y][z]==TP_POCKET&&psp) || (grid_[x][y][z]==EMPTY&&sps))){
+              else if ((!sps && isSurfacePoint(x,y,z) || (grid_[x][y][z]==POCKET&&psp) || (grid_[x][y][z]==TP_POCKET&&psp) || (grid_[x][y][z]==EMPTY&&sps))){
 
                 //if there is no EMPTY, then everything has been marked already.  No need to go further.
                 if (marked) break;
@@ -1850,9 +1850,9 @@ void PocketGrid::dumpTargetPocketsToFile( std::string const & output_filename ){
 		if (cit->points_.size()*pow(stepSize_,3)<minPockSize_) continue;
 		if (!cit->isTarget(numTargets_)) continue;
 		for (std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit){
-			if ( grid_[pit->x][pit->y][pit->z]==TP_POCKET )
+			if ( ( grid_[pit->x][pit->y][pit->z]==TP_POCKET ) ) 
 					outstream << pit->x << " " << pit->y << " " << pit->z << " TP_POCKET" << std::endl;
-				if ( grid_[pit->x][pit->y][pit->z]==TP_BURIED )
+				if ( ( grid_[pit->x][pit->y][pit->z]==TP_BURIED ) ) 
 					outstream << pit->x << " " << pit->y << " " << pit->z << " TP_BURIED" << std::endl;
 
 		}
@@ -1926,10 +1926,10 @@ void PocketGrid::dumpTargetPocketsToFile( std::string const & output_filename, n
 			newCoord(2) = (core::Size)std::floor((coord(2) - new_ycorn)/stepSize_ + .5);
 			newCoord(3) = (core::Size)std::floor((coord(3) - new_zcorn)/stepSize_ + .5);
 
-			if (  grid_[pit->x][pit->y][pit->z]==TP_POCKET )  {
+			if ( ( grid_[pit->x][pit->y][pit->z]==TP_POCKET ) ) {
 				outstream << newCoord(1) << " " << newCoord(2) << " " << newCoord(3) << " TP_POCKET" << std::endl;
 			}
-			if ( grid_[pit->x][pit->y][pit->z]==TP_BURIED )  {
+			if ( ( grid_[pit->x][pit->y][pit->z]==TP_BURIED ) ) {
 				outstream << newCoord(1) << " " << newCoord(2) << " " << newCoord(3) << " TP_BURIED" << std::endl;
 			}
 
@@ -2999,13 +2999,13 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 				if (closest<101.){
 					int txdim = (int) ceil(p1->x-p2->x/stepSize_)+(int)ceil(3./stepSize_);
 					core::Real txcorn=(core::Real)std::floor(std::min(p1->x,p2->x)-1.0);
-					int txoff = (int)floor((txcorn-xcorn_)/stepSize_ + 0.5);
+					int txoff = floor((txcorn-xcorn_)/stepSize_ + 0.5);
 					int tydim = (int) ceil(p1->y-p2->y/stepSize_)+(int)ceil(3./stepSize_);
 					core::Real tycorn=(core::Real)std::floor(std::min(p1->y,p2->y)-1.0);
-					int tyoff = (int)floor((tycorn-ycorn_)/stepSize_ + 0.5);
+					int tyoff = floor((tycorn-ycorn_)/stepSize_ + 0.5);
 					int tzdim = (int) ceil(p1->z-p2->z/stepSize_)+(int)ceil(3./stepSize_);
 					core::Real tzcorn=(core::Real)std::floor(std::min(p1->z,p2->z)-1.0);
-					int tzoff = (int)floor((tzcorn-zcorn_)/stepSize_ + 0.5);
+					int tzoff = floor((tzcorn-zcorn_)/stepSize_ + 0.5);
 					std::vector < std::vector < std::vector <PtType> > > tmpgrid_;
 					tmpgrid_.resize(txdim);
 					for (int tx=0;tx<txdim;tx++){
@@ -3030,9 +3030,9 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 					
 					//take away already exemplar points
 					int x,y,z;
-					x=(int)floor((p1->x - txcorn)/stepSize_ + 0.5);
-					y=(int)floor((p1->y - tycorn)/stepSize_ + 0.5);
-					z=(int)floor((p1->z - tzcorn)/stepSize_ + 0.5);
+					x=floor((p1->x - txcorn)/stepSize_ + 0.5);
+					y=floor((p1->y - tycorn)/stepSize_ + 0.5);
+					z=floor((p1->z - tzcorn)/stepSize_ + 0.5);
 					for (int tx=x-1;tx<x+1;tx++){		
 						if (tx<0) continue;
 						for (int ty=y-1;ty<y+1;ty++){		
@@ -3043,9 +3043,9 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 							}
 						}
 					}
-					x=(int)floor((p2->x - txcorn)/stepSize_ + 0.5);
-					y=(int)floor((p2->y - tycorn)/stepSize_ + 0.5);
-					z=(int)floor((p2->z - tzcorn)/stepSize_ + 0.5);
+					x=floor((p2->x - txcorn)/stepSize_ + 0.5);
+					y=floor((p2->y - tycorn)/stepSize_ + 0.5);
+					z=floor((p2->z - tzcorn)/stepSize_ + 0.5);
 					for (int tx=x-1;tx<x+1;tx++){		
 						if (tx<0) continue;
 						for (int ty=y-1;ty<y+1;ty++){		
@@ -3351,9 +3351,9 @@ void PocketGrid::write_pocketGrid_to_pdb( std::string const & output_filename ) 
 		outPDB_stream.open("highesp.pdb", std::ios::out);
 		Size count = 1;
 		core::Real prot_grid_dist;
-		for(int x=(int)(0+xskip),newx=0; x<(int)(xskip+xdim_); ++x,++newx){
-			for(int y=(int)(0+yskip),newy=0; y<(int)(yskip+ydim_); ++y,++newy){
-				for(int z=(int)(0+zskip),newz=0; z<(int)(zskip+zdim_); ++z,++newz){
+		for(int x=0+xskip,newx=0; x<(xskip+xdim_); ++x,++newx){
+			for(int y=0+yskip,newy=0; y<(yskip+ydim_); ++y,++newy){
+				for(int z=0+zskip,newz=0; z<(zskip+zdim_); ++z,++newz){
 
 					numeric::xyzVector<core::Real> grid_coord, prot_coord;
 					grid_coord.x() = newx * newG.espGrid_spacing_ + ( newG.espGrid_mid_.x() - ((static_cast<core::Real>(newG.espGrid_dim_.x()-1)/2) * newG.espGrid_spacing_) );
@@ -3567,9 +3567,9 @@ void PocketGrid::write_pocketGrid_to_pdb( std::string const & output_filename ) 
 		utility::io::ozstream outPDB_stream;
 		outPDB_stream.open("highesp.pdb", std::ios::out);
 		Size count = 1;
-		for(int x=(int)(0+xskip),newx=0; x<(int)(xskip+xdim_); ++x,++newx){
-			for(int y=(int)(0+yskip),newy=0; y<(int)(yskip+ydim_); ++y,++newy){
-				for(int z=(int)(0+zskip),newz=0; z<(int)(zskip+zdim_); ++z,++newz){
+		for(int x=0+xskip,newx=0; x<(xskip+xdim_); ++x,++newx){
+			for(int y=0+yskip,newy=0; y<(yskip+ydim_); ++y,++newy){
+				for(int z=0+zskip,newz=0; z<(zskip+zdim_); ++z,++newz){
 					//Assign potentials only for pocket points, all other points are set to zeroa
 					if ( grid_[newx][newy][newz]==POCKET || grid_[newx][newy][newz]==PO_SURF || grid_[newx][newy][newz]==PO_BURIED || grid_[newx][newy][newz]==T_SURFACE || grid_[newx][newy][newz]==ST_SURFACE || grid_[newx][newy][newz]==TP_POCKET || grid_[newx][newy][newz]==TP_SURF || grid_[newx][newy][newz]==TP_BURIED || grid_[newx][newy][newz]==PO_EDGE || grid_[newx][newy][newz]==TP_EDGE ) {
 
@@ -3607,7 +3607,7 @@ void PocketGrid::write_pocketGrid_to_pdb( std::string const & output_filename ) 
 						}else{
 							searchxmin=newx;
 						}
-						if (((unsigned long)newx) != newG.espGrid_dim_.x()-1) {
+						if (newx != newG.espGrid_dim_.x()-1) {
 							searchxmax=newx+1;
 						}else{
 							searchxmax=newx;
@@ -3617,7 +3617,7 @@ void PocketGrid::write_pocketGrid_to_pdb( std::string const & output_filename ) 
 						}else{
 							searchymin=newy;
 						}
-						if (((unsigned long)newy) != newG.espGrid_dim_.y()-1) {
+						if (newy != newG.espGrid_dim_.y()-1) {
 							searchymax=newy+1;
 						}else{
 						searchymax=newy;
@@ -3627,7 +3627,7 @@ void PocketGrid::write_pocketGrid_to_pdb( std::string const & output_filename ) 
 						}else{
 							searchzmin=z;
 						}
-						if (((unsigned long)newz) != newG.espGrid_dim_.z()-1) {
+						if (newz != newG.espGrid_dim_.z()-1) {
 							searchzmax=newz+1;
 						}else{
 							searchzmax=newz;
@@ -3636,7 +3636,7 @@ void PocketGrid::write_pocketGrid_to_pdb( std::string const & output_filename ) 
 						for (xx = searchxmin; xx<=searchxmax; ++xx){
 							for (yy = searchymin; yy<=searchymax; ++yy){
 								for (zz = searchzmin; zz<=searchzmax; ++zz){
-									if (xx==Size(newx) && yy==Size(newy) && zz==Size(newz)) continue;
+									if (xx==newx && yy==newy && zz==newz) continue;
 									if ( (grid_[xx][yy][zz] == HSURFACE) || (grid_[xx][yy][zz] == PSURFACE) || (grid_[xx][yy][zz] == T_SURFACE) || (grid_[xx][yy][zz] == ST_SURFACE) ){
 										//check whether the potentials exceed the max & min bounds
 										if ( oldG.espGrid_[xx][yy][zz] > max_esp ) {
@@ -3694,7 +3694,7 @@ void PocketGrid::write_pocketGrid_to_pdb( std::string const & output_filename ) 
 	}
 
 
-	bool PocketGrid::autoexpanding_pocket_eval( core::conformation::Residue const & central_rsd, core::scoring::func::XYZ_Func const & xyz_func, Size const total_residues, bool center_target, core::Real x, core::Real y, core::Real z ) {
+	bool PocketGrid::autoexpanding_pocket_eval( core::conformation::Residue const & central_rsd, core::scoring::constraints::XYZ_Func const & xyz_func, Size const total_residues, bool center_target, core::Real x, core::Real y, core::Real z ) {
       std::vector< core::conformation::ResidueOP > residues;
       residues.push_back(central_rsd.clone());
 		core::pose::Pose tmp_pose;
@@ -3714,7 +3714,7 @@ void PocketGrid::write_pocketGrid_to_pdb( std::string const & output_filename ) 
 
 
 
-	bool PocketGrid::autoexpanding_pocket_eval( std::vector< core::conformation::ResidueOP > const & central_rsds, core::scoring::func::XYZ_Func const & xyz_func, Size const total_residues, bool center_target, core::Real x, core::Real y, core::Real z ) {
+	bool PocketGrid::autoexpanding_pocket_eval( std::vector< core::conformation::ResidueOP > const & central_rsds, core::scoring::constraints::XYZ_Func const & xyz_func, Size const total_residues, bool center_target, core::Real x, core::Real y, core::Real z ) {
 		core::pose::Pose tmp_pose;
 		int term=1;
 		for ( Size j = 1, resnum = total_residues; j <= resnum; ++j ) {
@@ -4431,15 +4431,15 @@ void ElectrostaticpotentialGrid::get_DELPHI_espGrid_values( std::string const & 
 			}
 			if(linenum == 4){
 				std::string dimX = line.substr(2,3);
-				espGrid_dim_.x() = (core::Size)(atof(dimX.c_str()));
+				espGrid_dim_.x() = atof(dimX.c_str());
 			}
 			if(linenum == 5){
 				std::string dimY = line.substr(2,3);
-				espGrid_dim_.y() = (core::Size)(atof(dimY.c_str()));
+				espGrid_dim_.y() = atof(dimY.c_str());
 			}
 			if(linenum == 6){
 				std::string dimZ = line.substr(2,3);
-				espGrid_dim_.z() = (core::Size)(atof(dimZ.c_str()));
+				espGrid_dim_.z() = atof(dimZ.c_str());
 			}
 			if(linenum == 4){
 				std::string spacing = line.substr(7,12);
@@ -4480,7 +4480,7 @@ void ElectrostaticpotentialGrid::get_DELPHI_espGrid_values( std::string const & 
 		return;
 }
 
-ElectrostaticpotentialGrid::ElectrostaticpotentialGrid( std::string const & input_espGrid_filename, core::pose::Pose const &, PocketGrid const &, bool delphi ) {
+ElectrostaticpotentialGrid::ElectrostaticpotentialGrid( std::string const & input_espGrid_filename, core::pose::Pose const & protein, PocketGrid const & pocket_grid, bool delphi ) {
 
 	if(delphi==false){//Read as OpenEye ZAP grid
 		get_ZAP_espGrid_values( input_espGrid_filename );
@@ -4518,11 +4518,11 @@ void ElectrostaticpotentialGrid::get_oegrid_dimensions( std::string const & inpu
     }
     if(linenum == 3){
       std::string dimX = line.substr(6,6);
-      espGrid_dim_.x() = (core::Size)(atof(dimX.c_str()));
+      espGrid_dim_.x() = atof(dimX.c_str());
       std::string dimY = line.substr(13,6);
-      espGrid_dim_.y() = (core::Size)(atof(dimY.c_str()));
+      espGrid_dim_.y() = atof(dimY.c_str());
       std::string dimZ = line.substr(20,6);
-      espGrid_dim_.z() = (core::Size)(atof(dimZ.c_str()));
+      espGrid_dim_.z() = atof(dimZ.c_str());
     }
     if(linenum == 4){
       std::string spacing = line.substr(10,12);
@@ -4604,9 +4604,9 @@ void  ElectrostaticpotentialGrid::resize_espGrid_to_match_pocketGrid( std::strin
 		}
 	}
 
-	for(int x=(int)(0+xskip),newx=0; x<(int)(xskip+tmp_espGrid_dim.x()); ++x,++newx){
-		for(int y=(int)(0+yskip),newy=0; y<(int)(yskip+tmp_espGrid_dim.y()); ++y,++newy){
-			for(int z=(int)(0+zskip),newz=0; z<(int)(zskip+tmp_espGrid_dim.z()); ++z,++newz){
+	for(int x=0+xskip,newx=0; x<(xskip+tmp_espGrid_dim.x()); ++x,++newx){
+		for(int y=0+yskip,newy=0; y<(yskip+tmp_espGrid_dim.y()); ++y,++newy){
+			for(int z=0+zskip,newz=0; z<(zskip+tmp_espGrid_dim.z()); ++z,++newz){
 				tmp_espGrid[newx][newy][newz] = espGrid_[x][y][z];
 			}
 		}
@@ -4745,9 +4745,9 @@ void ElectrostaticpotentialGrid::mark_atom_espGrid_points( numeric::xyzVector<co
  maxY = std::min( floor( (ycen + radius) + 0.5 ), espGrid_dim_.y() -1.);
  maxZ = std::min( floor( (zcen + radius) + 0.5 ), espGrid_dim_.z() -1.);
 
- for (int xIter=(int)minX; xIter<=(int)maxX; ++xIter){
-   for (int yIter=(int)minY; yIter<=(int)maxY; ++yIter){
-		 for (int zIter=(int)minZ; zIter<=(int)maxZ; ++zIter){
+ for (int xIter=minX; xIter<=maxX; ++xIter){
+   for (int yIter=minY; yIter<=maxY; ++yIter){
+		 for (int zIter=minZ; zIter<=maxZ; ++zIter){
 			 core::Real xcoord = xIter * espGrid_spacing_ + ( espGrid_mid_.x() - ((static_cast<core::Real>(espGrid_dim_.x()+1)/2) * espGrid_spacing_) );
 			 core::Real ycoord = yIter * espGrid_spacing_ + ( espGrid_mid_.y() - ((static_cast<core::Real>(espGrid_dim_.y()+1)/2) * espGrid_spacing_) );
 			 core::Real zcoord = zIter * espGrid_spacing_ + ( espGrid_mid_.z() - ((static_cast<core::Real>(espGrid_dim_.z()+1)/2) * espGrid_spacing_) );
@@ -4888,7 +4888,7 @@ void ElectrostaticpotentialGrid::write_connollySurface_to_pdb( std::list< numeri
 
 }
 
-	void  ElectrostaticpotentialGrid::mark_buried_solvent_points( core::pose::Pose const &, std::list< numeric::xyzVector<core::Real> > const & ) {
+	void  ElectrostaticpotentialGrid::mark_buried_solvent_points( core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & surfacePoints_list ) {
 
 		bool found_protein;
 		for (Size iz=0; iz<espGrid_dim_.z(); ++iz){

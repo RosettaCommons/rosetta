@@ -83,6 +83,7 @@ sources = {
 		"PocketConstraint",
 		"PocketGrid",
     "PocketExemplarMultifunc",
+    "DarcElectrostatics",
 		"GenPharmacophore",
     "DarcParticleSwarmMinimizer",
 	],

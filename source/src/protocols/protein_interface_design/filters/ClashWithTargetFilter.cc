@@ -105,7 +105,7 @@ core::Size ClashWithTargetFilter::compute( core::pose::Pose const & pose ) const
   protocols::simple_filters::DdgFilter ddg = protocols::simple_filters::DdgFilter( clash_score_cutoff_, scorefxn, 1, 1);
 
   core::Real score = ddg.compute( pose_copy );
-  return (core::Size)score;
+  return score;
 	
   //typedef utility::pointer::owning_ptr< MotifGraftMover >  MotifGraftMoverOP;
 	//bool b_full_motif_bb_alignment=true;

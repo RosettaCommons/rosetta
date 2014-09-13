@@ -650,7 +650,7 @@ try {
 	core::import_pose::pose_from_pdb(mut_ps, mut_pdb_name);
 
 	// score poses
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
 	(*scorefxn)(ps);
 	(*scorefxn)(mut_ps);
 

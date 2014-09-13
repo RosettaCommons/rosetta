@@ -313,14 +313,14 @@ sources = {
 		"bou-min-ubo-nrg-jump",
 		"lig_rmsd",
 	],
-	#"pilot/skelow" : [
-		#"simon_minimize",
-		#"simon_pure_minimimize",
-		#"minimize_complex",
-		#"dummy2",
-		#"simon_superimpose",
-		#"hbonds",
-	#],
+	"pilot/skelow" : [
+		"simon_minimize",
+		"simon_pure_minimimize",
+		"minimize_complex",
+		"dummy2",
+		"simon_superimpose",
+		"hbonds",
+	],
 
  	"pilot/whitney" : [
 		#"whitney_identify_epitope",

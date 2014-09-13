@@ -486,7 +486,7 @@ BuildSheet::index_from_angle( core::Real angle, core::Real const max_value ) con
 	}
 	runtime_assert( angle <= max_value );
 	runtime_assert( angle >= 0.0 );
-	core::Size const val( core::Size(angle/max_value*num_cached_dihedrals_) );
+	core::Size const val( angle/max_value*num_cached_dihedrals_ );
 	runtime_assert( val+1 > 0 );
 	runtime_assert( val+1 <= num_cached_dihedrals_ );
 	return val+1;

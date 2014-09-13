@@ -57,9 +57,9 @@ public:
   core::Real DarcPSO_fp_compare_multiple_origin_( core::Size particle_inx, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, std::vector<basic::gpu::float4> & atoms, std::vector<basic::gpu::float4> & atom_maxmin_phipsi );
 	core::Real DarcPSO_elsts_score_( core::Size particle_inx, core::Size dim_x, core::Size dim_y, core::Size dim_z, core::Real mid_x, core::Real mid_y, core::Real mid_z, core::Real spacing, std::vector < std::vector < std::vector <core::Real> > > espGrid, std::vector < std::vector < std::vector <ElectrostaticpotentialGrid::PtType> > > typGrid, std::vector<basic::gpu::float4> & atom_coors_charge );
 
-	FingerprintManager & fpmanager_;
   NonPlaidFingerprint & nfp_;
   PlaidFingerprint & pfp_;
+	FingerprintManager & fpmanager_;
   core::Real missing_pt_;
   core::Real steric_;
   core::Real extra_pt_;
