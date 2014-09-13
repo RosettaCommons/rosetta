@@ -23,6 +23,7 @@
 #include <basic/options/option_macros.hh>
 #include <basic/options/after_opts.hh>
 #include <utility/excn/Exceptions.hh>
+
 #include <protocols/simple_moves/ScoreMover.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
@@ -257,7 +258,6 @@ int main( int argc, char * argv [] ){
 		devel::init(argc, argv);
 
 	//setup scorefxn
-
 		scoring::ScoreFunctionOP scorefxn = get_score_function();
 		scoring::ScoreFunctionOP repack_scorefxn = get_score_function();
 
@@ -327,7 +327,6 @@ int main( int argc, char * argv [] ){
 				}
 
 				ConstraintSetOP cst_set( new ConstraintSet() );
-
 				core::scoring::func::HarmonicFuncOP spring = new core::scoring::func::HarmonicFunc( 0 /*mean*/, coord_sdev /*std-dev*/);
 				conformation::Conformation const & conformation( bound_pose.conformation() );
 

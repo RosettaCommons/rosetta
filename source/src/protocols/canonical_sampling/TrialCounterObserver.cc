@@ -108,7 +108,7 @@ TrialCounterObserver::observe_after_metropolis(
 		counters_.count_accepted( move_type );
 	}
 	if ( mhm.current_trial() && mhm.current_trial() % io_stride_ == 0 ) {
-		core::Size output_ct( core::Size(floor( mhm.current_trial() / io_stride_ )) );
+		core::Size output_ct( floor( mhm.current_trial() / io_stride_ ) );
 		counters_.write_to_file( file_, mhm.output_name() + utility::to_string( output_ct ) );
 	}
 }

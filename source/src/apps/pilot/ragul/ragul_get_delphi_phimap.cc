@@ -88,7 +88,6 @@ OPT_KEY( Real, delphi_grid_spacing )
 static basic::Tracer TR( "apps.pilot.ragul_get_delphi_phimap.main" );
 
 int main( int argc, char * argv [] ) {
-
   try {
 
   NEW_OPT( protein, "protein file name", "protein.pdb" );
@@ -121,18 +120,6 @@ int main( int argc, char * argv [] ) {
   std::string const input_protein = option[ protein ];
   std::string const input_ligand = "temp";//change this
   std::string const input_eggshell_triplet = option[ ray_file ];
-
-  int particle_size = option[ num_particles ];
-  int run_size = option[ num_runs ];
-  core::Real const steric_wt = option[ steric_weight ];
-  core::Real const missing_pt_wt = option[ missing_point_weight ];
-  core::Real const extra_pt_wt = option[ extra_point_weight ];
-  core::Real const origin_space = option[ origin_cutoff ];
-  Size const esp_grid_size = option[ delphi_grid_size ];
-	core::Real const esp_grid_spacing = option[ delphi_grid_spacing ];
-	core::Real const esp_grid_midpoint_x = option[ delphi_grid_midpoint_x ];
-	core::Real const esp_grid_midpoint_y = option[ delphi_grid_midpoint_y ];
-	core::Real const esp_grid_midpoint_z = option[ delphi_grid_midpoint_z ];
 
   protocols::pockets::NonPlaidFingerprint npf;
   pose::Pose protein_pose;
@@ -170,7 +157,7 @@ int main( int argc, char * argv [] ) {
 		}
 	}
 
-	core::Real x_from_grd_cen, y_from_grd_cen, z_from_grd_cen, x_width, y_width, z_width;
+	core::Real x_width, y_width, z_width;
 	core::Real const cen_x = (maxx + minx)/2;
 	core::Real const cen_y = (maxy + miny)/2;
 	core::Real const cen_z = (maxz + minz)/2;
@@ -183,9 +170,10 @@ int main( int argc, char * argv [] ) {
 	std::cout<<"geometric_enter : "<<cen_x<<" "<<cen_y<<" "<<cen_z<<std::endl;
 	std::cout<<"width : "<<x_width<<" "<<y_width<<" "<<z_width<<std::endl;
 
-  } catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
-		return -1;
-  }
+        } catch ( utility::excn::EXCN_Base const & e ) {
+                std::cout << "caught exception " << e.msg() << std::endl;
+                return -1;
+        }
 	return 0;
+
 }

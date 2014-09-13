@@ -79,12 +79,10 @@ sources = {
 	"protocols/pockets": [
 		"Fingerprint",
 		"FingerprintMultifunc",
-		"MultiFingerprintMultifunc",
 		"PocketConstraint",
 		"PocketGrid",
     "PocketExemplarMultifunc",
     "DarcElectrostatics",
-		"GenPharmacophore",
     "DarcParticleSwarmMinimizer",
 	],
 	"protocols/pose_reporters": [

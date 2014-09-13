@@ -37,8 +37,7 @@ namespace constel {
 /// @remarks 1. It is assumed that the residues forming the constellation have
 ///   non-zero occupancy only for the atoms that belong to the constellation.
 ///   This is guaranteed if the residues forming the constellation were
-///   previously passed as arguments to function
-/// 	"SingResCnlCrea::zero_occ_for_deleted_atoms()".
+///   previously passed as arguments to function "zero_occ_for_deleted_atoms()".
 ///
 ///
 xyzVector<Real> cnl_com(vector1<Size> const &cnl, Pose const &ps) {

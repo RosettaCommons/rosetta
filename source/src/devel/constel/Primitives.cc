@@ -15,7 +15,6 @@
 /// @author Andrea Bazzoli
 
 #include <devel/constel/Primitives.hh>
-#include <devel/constel/SingResCnlCrea.hh>
 #include <devel/constel/MasterFilter.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -48,6 +47,158 @@ static basic::Tracer TR("devel.constel.Primitives");
 
 namespace devel {
 namespace constel {
+
+///
+/// @brief Returns the list of amino acid types that a given amino acid type can
+/// 	be reduced to.
+///
+/// @param[in] starting_aa the given amino acid type.
+///
+utility::vector1<char> list_allowable_mutations( char const starting_aa ) {
+
+	utility::vector1<char> allowed_list;
+
+	if ( starting_aa == 'G' ) return allowed_list;
+
+	// general cases
+	// anything other than Gly can become Gly, anything other than Gly/Ala can become Ala
+	allowed_list.push_back('G');
+	if ( starting_aa != 'A' ) {
+		allowed_list.push_back('A');
+	}
+
+	// special cases
+	// Thr can become Ser
+	if ( starting_aa == 'T' ) {
+		allowed_list.push_back('S');
+	}
+	// Ile can become Val
+	if ( starting_aa == 'I' ) {
+		allowed_list.push_back('V');
+	}
+	// Tyr can become Phe and Leu
+	if ( starting_aa == 'Y' ) {
+		allowed_list.push_back('F');
+		allowed_list.push_back('L');
+	}
+	// Phe can become Leu
+	if ( starting_aa == 'F' ) {
+		allowed_list.push_back('L');
+	}
+	// Trp can become Leu
+	if ( starting_aa ==	'W' ) {
+		allowed_list.push_back('L');
+	}
+
+	return allowed_list;
+}
+
+
+///
+/// @brief Sets occupancy to zero for a residue's non-constellation atoms.
+///
+/// @details Given a residue to be reduced to a smaller amino acid type, sets
+/// 	occupancy to zero for any atoms that don't need to be printed (those
+/// 	forming the new residue too) and sets occupancy to 1 for any atoms
+/// 	that *do* need to be printed (those forming the deleted constellation).
+///
+/// @param[out] pose pose to which the residue belongs.
+/// @param[in] seqpos index of the residue in the pose.
+/// @param[in] target_aa amino acid type that the residue has to be mutated
+/// 	into.
+///
+void zero_occ_for_deleted_atoms(Pose & pose, core::Size seqpos,
+	char const target_aa) {
+
+	char const starting_aa = core::chemical::oneletter_code_from_aa( pose.aa(seqpos) );
+
+	core::conformation::Residue const & rsd( pose.residue(seqpos) );
+
+	// we never need to print backbone atoms or hydrogens
+	for ( Size i=1; i<= rsd.natoms(); ++i ) {
+		pose.pdb_info()->occupancy( seqpos, i, 1 ); // to overwrite (rare) zero occ.
+		if ( rsd.atom_is_hydrogen(i) || rsd.atom_is_backbone(i) ) {
+			pose.pdb_info()->occupancy( seqpos, i, 0 );
+		}
+	}
+
+	// if it's a mutation to Gly, we're done
+	if ( target_aa == 'G' ) return;
+
+	// for anything other than a mutation to Gly, suppress the C-beta
+	pose.pdb_info()->occupancy( seqpos, rsd.atom_index("CB"), 0. );
+
+	// if it's a mutation to Ala, we're done
+	if ( target_aa == 'A' ) return;
+
+	// I-->V: suppress everything other than CD1
+	if ( ( starting_aa == 'I' ) && ( target_aa == 'V' ) ) {
+		Size atom_inx_to_keep = rsd.atom_index("CD1");
+		for ( Size i=1; i<= rsd.natoms(); ++i )
+			if ( i != atom_inx_to_keep )
+				pose.pdb_info()->occupancy( seqpos, i, 0. );
+		return;
+	}
+
+	// T-->S: suppress everything other than CG2
+	if ( ( starting_aa == 'T' ) && ( target_aa == 'S' ) ) {
+		Size atom_inx_to_keep = rsd.atom_index("CG2");
+		for ( Size i=1; i<= rsd.natoms(); ++i )
+			if ( i != atom_inx_to_keep )
+				pose.pdb_info()->occupancy( seqpos, i, 0. );
+		return;
+	}
+
+	// Y-->F: suppress everything other than OH
+	if ( ( starting_aa == 'Y' ) && ( target_aa == 'F' ) ) {
+    		Size atom_inx_to_keep = rsd.atom_index("OH");
+		for ( Size i=1; i<= rsd.natoms(); ++i )
+			if ( i != atom_inx_to_keep )
+				pose.pdb_info()->occupancy( seqpos, i, 0. );
+    		return;
+  	}
+
+	// Y-->L: suppress everything other than OH, CE1, CE2, CZ
+	if ( ( starting_aa == 'Y' ) && ( target_aa == 'L' ) ) {
+		Size inx1 = rsd.atom_index("OH");
+		Size inx2 = rsd.atom_index("CE1");
+		Size inx3 = rsd.atom_index("CE2");
+		Size inx4 = rsd.atom_index("CZ");
+		for ( Size i=1; i<= rsd.natoms(); ++i )
+			if ( (i != inx1) && (i != inx2) && (i != inx3) && (i !=inx4) )
+				pose.pdb_info()->occupancy( seqpos, i, 0. );
+		return;
+	}
+
+	// F-->L: suppress everything other than CE1, CE2, CZ
+	if ( ( starting_aa == 'F' ) && ( target_aa == 'L' ) ) {
+		Size inx1 = rsd.atom_index("CE1");
+		Size inx2 = rsd.atom_index("CE2");
+		Size inx3 = rsd.atom_index("CZ");
+		for ( Size i=1; i<= rsd.natoms(); ++i )
+			if ( (i != inx1) && (i != inx2) && (i != inx3) )
+				pose.pdb_info()->occupancy( seqpos, i, 0. );
+    		return;
+  	}
+
+	// W-->L: suppress everything other than NE1, CE2, CE3, CZ2, CZ3, CH2
+	if ( ( starting_aa == 'W' ) && ( target_aa == 'L' ) ) {
+		Size inx1 = rsd.atom_index("NE1");
+		Size inx2 = rsd.atom_index("CE2");
+		Size inx3 = rsd.atom_index("CE3");
+		Size inx4 = rsd.atom_index("CZ2");
+		Size inx5 = rsd.atom_index("CZ3");
+		Size inx6 = rsd.atom_index("CH2");
+		for ( Size i=1; i<= rsd.natoms(); ++i )
+			if ( (i != inx1) && (i != inx2) && (i != inx3) && (i != inx4) && (i != inx5) && (i != inx6) )
+				pose.pdb_info()->occupancy( seqpos, i, 0. );
+		return;
+	}
+
+	TR << "DANGER DANGER - COULD NOT MAKE REQUESTED MUTATION!!" << std::endl;
+	TR << "REQUESTED " << starting_aa << " TO " << target_aa << " BUT NO INFO ON WHAT ATOMS TO SUPPRESS....." << std::endl;
+	exit(1);
+}
 
 
 ///
@@ -84,14 +235,12 @@ void pair_constel_set_idx2(Size const i, Size const j, Pose const& pose_init) {
 	char aai = core::chemical::oneletter_code_from_aa(pose_init.aa(i));
 	int i_pdb_number = pose_init.pdb_info()->number(i);
 	char i_pdb_chain = pose_init.pdb_info()->chain(i);
-	utility::vector1<char> allowable_primary_mutations =
-		SingResCnlCrea::list_allowable_mutations(aai);
+	utility::vector1<char> allowable_primary_mutations = list_allowable_mutations(aai);
 
 	char aaj = core::chemical::oneletter_code_from_aa(pose_init.aa(j));
 	int j_pdb_number = pose_init.pdb_info()->number(j);
 	char j_pdb_chain = pose_init.pdb_info()->chain(j);
-	utility::vector1<char> allowable_secondary_mutations =
-		SingResCnlCrea::list_allowable_mutations(aaj);
+	utility::vector1<char> allowable_secondary_mutations = list_allowable_mutations(aaj);
 
 	utility::vector1<Size> cnl;
 	cnl.push_back(i);
@@ -104,13 +253,13 @@ void pair_constel_set_idx2(Size const i, Size const j, Pose const& pose_init) {
 
 		char aa_imut = allowable_primary_mutations.at(imut);
 		Pose primary_mut_pose = pose_init;
-		SingResCnlCrea::zero_occ_for_deleted_atoms( primary_mut_pose, i, aa_imut);
+		zero_occ_for_deleted_atoms( primary_mut_pose, i, aa_imut);
 
 		for ( Size jmut=1; jmut <= N2MUT; ++jmut ) {
 
 			char aa_jmut = allowable_secondary_mutations.at(jmut);
 			Pose secondary_mut_pose = primary_mut_pose;
-			SingResCnlCrea::zero_occ_for_deleted_atoms( secondary_mut_pose, j, aa_jmut);
+			zero_occ_for_deleted_atoms( secondary_mut_pose, j, aa_jmut);
 
 			if( MasterFilter::is_constel_valid( secondary_mut_pose, cnl ) ) {
 
@@ -148,12 +297,8 @@ void pair_constel_set_idx2(Size const i, Size const j, Pose const& pose_init) {
 /// 	- e is the second residue's end amino acid type
 /// 	- c is the second residue's chain in the input PDB file
 ///
-/// 	2. This function may set to zero the occupancy of additional atoms of the
-/// 		residues forming the constellation..
-///
 void out_pair_constel(ResMut const& mut1, ResMut const& mut2, int const cslnum, Pose& ps) {
 
-	// prepare file name
 	std::ostringstream outPDB_name;
 	outPDB_name.fill('0');
 
@@ -161,7 +306,6 @@ void out_pair_constel(ResMut const& mut1, ResMut const& mut2, int const cslnum, 
 		mut1.saa << std::setw(4) << mut1.pdbn << mut1.eaa << mut1.cid << "_" <<
 		mut2.saa << std::setw(4) << mut2.pdbn << mut2.eaa << mut2.cid << ".pdb";
 
-	// print header
 	utility::io::ozstream outPDB_stream;
 	outPDB_stream.open(outPDB_name.str(), std::ios::out);
 	outPDB_stream << "HEADER   CONST NUM " << cslnum <<
@@ -170,13 +314,6 @@ void out_pair_constel(ResMut const& mut1, ResMut const& mut2, int const cslnum, 
 		"  SECONDARY_MUTATION: " << mut2.cid << ':' << mut2.saa << mut2.pdbn <<
 			mut2.eaa << std::endl;
 
-	// check whether atoms must be stripped off the constellation
-	if(SingResCnlCrea::stripped()) {
-		SingResCnlCrea::strip_atoms(ps, mut1.psn, mut1.eaa);
-		SingResCnlCrea::strip_atoms(ps, mut2.psn, mut2.eaa);
-	}
-
-	// print constellation
 	core::io::pdb::FileData fd;
 	std::string data;
 	utility::vector1< core::Size > residues_to_print;
@@ -209,20 +346,17 @@ void triple_constel_set_idx3(Size const i, Size const j, Size const k,
 	char aai = oneletter_code_from_aa(pose_init.aa(i));
 	int i_pdb_number = pose_init.pdb_info()->number(i);
 	char i_pdb_chain = pose_init.pdb_info()->chain(i);
-	vector1<char> allowable_primary_mutations =
-		SingResCnlCrea::list_allowable_mutations(aai);
+	vector1<char> allowable_primary_mutations = list_allowable_mutations(aai);
 
 	char aaj = oneletter_code_from_aa(pose_init.aa(j));
 	int j_pdb_number = pose_init.pdb_info()->number(j);
 	char j_pdb_chain = pose_init.pdb_info()->chain(j);
-	vector1<char> allowable_secondary_mutations =
-		SingResCnlCrea::list_allowable_mutations(aaj);
+	vector1<char> allowable_secondary_mutations = list_allowable_mutations(aaj);
 
 	char aak = oneletter_code_from_aa(pose_init.aa(k));
 	int k_pdb_number = pose_init.pdb_info()->number(k);
 	char k_pdb_chain = pose_init.pdb_info()->chain(k);
-	vector1<char> allowable_tertiary_mutations =
-		SingResCnlCrea::list_allowable_mutations(aak);
+	vector1<char> allowable_tertiary_mutations = list_allowable_mutations(aak);
 
 	vector1<Size> cnl;
 	cnl.push_back(i);
@@ -238,19 +372,19 @@ void triple_constel_set_idx3(Size const i, Size const j, Size const k,
 
 		char aa_imut = allowable_primary_mutations.at(imut);
 		Pose primary_mut_pose = pose_init;
-		SingResCnlCrea::zero_occ_for_deleted_atoms( primary_mut_pose, i, aa_imut);
+		zero_occ_for_deleted_atoms( primary_mut_pose, i, aa_imut);
 
 		for ( Size jmut=1; jmut <= N2MUT; ++jmut ) {
 
 			char aa_jmut = allowable_secondary_mutations.at(jmut);
 			Pose secondary_mut_pose = primary_mut_pose;
-			SingResCnlCrea::zero_occ_for_deleted_atoms( secondary_mut_pose, j, aa_jmut);
+			zero_occ_for_deleted_atoms( secondary_mut_pose, j, aa_jmut);
 
 			for ( Size kmut=1; kmut <= N3MUT; ++kmut ) {
 
 				char aa_kmut = allowable_tertiary_mutations.at(kmut);
 				Pose tertiary_mut_pose = secondary_mut_pose;
-				SingResCnlCrea::zero_occ_for_deleted_atoms( tertiary_mut_pose, k, aa_kmut);
+				zero_occ_for_deleted_atoms( tertiary_mut_pose, k, aa_kmut);
 
 				if( MasterFilter::is_constel_valid( tertiary_mut_pose, cnl ) ) {
 
@@ -300,7 +434,6 @@ void triple_constel_set_idx3(Size const i, Size const j, Size const k,
 void out_triple_constel(ResMut const& mut1, ResMut const& mut2,
 	ResMut const& mut3, int const cslnum, Pose& ps) {
 
-	// prepare file name
 	std::ostringstream outPDB_name;
 	outPDB_name.fill('0');
 
@@ -309,7 +442,6 @@ void out_triple_constel(ResMut const& mut1, ResMut const& mut2,
 		mut2.saa << std::setw(4) << mut2.pdbn << mut2.eaa << mut2.cid << "_" <<
 		mut3.saa << std::setw(4) << mut3.pdbn << mut3.eaa << mut3.cid << ".pdb";
 
-	// print header
 	utility::io::ozstream outPDB_stream;
 	outPDB_stream.open(outPDB_name.str(), std::ios::out);
 	outPDB_stream << "HEADER CONST NUM " << cslnum <<
@@ -320,14 +452,6 @@ void out_triple_constel(ResMut const& mut1, ResMut const& mut2,
 		"  TERTIARY_MUTATION: " << mut3.cid << ':' << mut3.saa << mut3.pdbn <<
 			mut3.eaa << std::endl;
 
-	// check whether atoms must be stripped off the constellation
-	if(SingResCnlCrea::stripped()) {
-		SingResCnlCrea::strip_atoms(ps, mut1.psn, mut1.eaa);
-		SingResCnlCrea::strip_atoms(ps, mut2.psn, mut2.eaa);
-		SingResCnlCrea::strip_atoms(ps, mut3.psn, mut3.eaa);
-	}
-
-	// print constellation
 	core::io::pdb::FileData fd;
 	std::string data;
 	utility::vector1< core::Size > residues_to_print;

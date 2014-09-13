@@ -56,7 +56,7 @@ using cppdb::result;
 
 DbTrajectoryReader::DbTrajectoryReader() { // {{{1
 	db_session_ = basic::database::get_db_session();
-	job_id_ = core::Size(-1); // bazzoli: used cast to avoid warning
+	job_id_ = -1;
 }
 
 DbTrajectoryReader::DbTrajectoryReader(Size job_id) { // {{{1

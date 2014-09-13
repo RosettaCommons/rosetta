@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/pockets/Fingerprint.fwd.hh
-/// @brief  protocols::pockets::Fingerprint forward declarations header
+/// @file   protocols/pockets/DarcElectrostatics.fwd.hh
+/// @brief  protocols::pockets::DarcElectrostatics forward declarations header
 /// @author Ragul Gowthaman
 
 
-#ifndef INCLUDED_protocols_pockets_GenPharmacophore_fwd_hh
-#define INCLUDED_protocols_pockets_GenPharmacophore_fwd_hh
+#ifndef INCLUDED_protocols_pockets_DarcElectrostatics_fwd_hh
+#define INCLUDED_protocols_pockets_DarcElectrostatics_fwd_hh
 
 
 // Utility headers
@@ -24,9 +24,12 @@ namespace protocols {
 namespace pockets {
 
 // Forward
-class PharmacophopreBase;
+class DarcElectrostaticsBase;
+class DelphiElectrostatics;
 
-
+// Types
+typedef utility::pointer::owning_ptr< DelphiElectrostatics >  DelphiElectrostaticsOP;
+typedef utility::pointer::owning_ptr< DelphiElectrostatics const >  DelphiElectrostaticsCOP;
 
 } // namespace pockets
 } // namespace protocols

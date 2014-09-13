@@ -55,8 +55,8 @@ sources = {
                 "ZincSiteFinder",
 	],
 	"protocols/neighbor": [
-		"Neighborhood",
-	],
+   		"Neighborhood",
+    ],
 	"protocols/motifs": [
 		"BuildPosition",
 		"IRCollection",

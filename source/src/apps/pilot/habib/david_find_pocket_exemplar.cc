@@ -77,9 +77,7 @@ OPT_KEY( Real, rep_weight )
 
 
 int main( int argc, char * argv [] ) {
-
   try {
-
   NEW_OPT( num_runs, "no. of runs for PSO", 100 );
   NEW_OPT( num_particles, "no. of particles for PSO", 100 );
   NEW_OPT( num_carbons, "Number of carbon atoms in exemplar", 0 );
@@ -155,10 +153,11 @@ std::cout<<std::endl<<p_min[4]<<" "<<p_max[4]<<" "<<p_min[5]<<" "<<p_max[5]<<" "
   }
   outPDB_stream.close();
   outPDB_stream.clear();
-  } catch ( utility::excn::EXCN_Base const & e ) {
+
+        } catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-	}
-
+        }
 	return 0;
+
 }

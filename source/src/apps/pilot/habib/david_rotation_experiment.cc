@@ -209,9 +209,6 @@ main( int argc, char * argv [] )
     exit(1);
   }
 
-  core::Real constraint_pocket_score = 0;
-  core::Real largest_pocket_score = 0;
-
   for (int i=0; i<angles; ++i){
     core::Real x,y,z;
     if (i>0){
@@ -234,7 +231,6 @@ main( int argc, char * argv [] )
     input_pose.dump_pdb(rotpdbtag.str());
 
     pose::Pose rotated_pose(input_pose);
-
     numeric::xyzMatrix<core::Real> x_rot_mat( numeric::x_rotation_matrix_degrees(x) );
     numeric::xyzMatrix<core::Real> y_rot_mat( numeric::y_rotation_matrix_degrees(y) );
     numeric::xyzMatrix<core::Real> z_rot_mat( numeric::z_rotation_matrix_degrees(z) );

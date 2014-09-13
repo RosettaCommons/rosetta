@@ -68,8 +68,8 @@ BiasEnergy::Histogram<T>::Histogram( BiasEnergy::Histogram<T> const& other ) :
 template< typename T>
 void BiasEnergy::Histogram<T>::reset() {
 	for ( core::Size i = 0; i < ngrid_cells_; i++ ) {
-		data_[ i ] = int(0.0);
-		recv_buf_[ i ] = int(0.0);
+		data_[ i ] = 0.0;
+		recv_buf_[ i ] = 0.0;
 	}
 }
 
@@ -141,7 +141,7 @@ bool BiasEnergy::Histogram<T>::check_range( core::Real val ) const {
 template< typename T>
 core::Size BiasEnergy::Histogram<T>::cell_index( core::Real val ) const {
 	//max(1,min(ebin_num,ceil((Vtrial_unbiased-e_min)/grid_dE)));
-	int index( int(ceil(( val - grid_min_ ) / delta_grid_ )) );
+	int index( ceil(( val - grid_min_ ) / delta_grid_ ) );
 	runtime_assert( ngrid_cells_ > 1 );
 	runtime_assert( index >= 1 );
 	runtime_assert( index >= 1 && index <= (int) ngrid_cells_ );

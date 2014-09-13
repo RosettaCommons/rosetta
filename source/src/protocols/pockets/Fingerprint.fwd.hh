@@ -27,15 +27,12 @@ namespace pockets {
 class FingerprintBase;
 class NonPlaidFingerprint;
 class PlaidFingerprint;
-class FingerprintManager;
 
 // Types
 typedef utility::pointer::owning_ptr< NonPlaidFingerprint >  NonPlaidFingerprintOP;
 typedef utility::pointer::owning_ptr< NonPlaidFingerprint const >  NonPlaidFingerprintCOP;
 typedef utility::pointer::owning_ptr< PlaidFingerprint >  PlaidFingerprintOP;
 typedef utility::pointer::owning_ptr< PlaidFingerprint const >  PlaidFingerprintCOP;
-typedef utility::pointer::owning_ptr< FingerprintManager >  FingerprintManagerOP;
-typedef utility::pointer::owning_ptr< FingerprintManager const >  FingerprintManagerCOP;
 
 
 } // namespace pockets

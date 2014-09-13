@@ -88,7 +88,7 @@ using namespace protocols::simple_moves;
 
 OPT_KEY( String, central_relax_pdb_num )
 
-static basic::Tracer TR( "apps.public.make_exemplar.main" );
+static basic::Tracer TR( "apps.public.make_exemplar.main", basic::t_debug );
 
 /// General testing code
 int main( int argc, char * argv [] ) {
@@ -136,7 +136,7 @@ std::cout << "Pocket score (unweighted) is: " << comparison_pg.netTargetPocketVo
   std::stringstream out_exfname;
   out_exfname << comparison_pdb_name << tag << ".exemplar.pdb";
   //std::cout<<out_exfname.str() <<std::endl;
-	comparison_pg.dumpExemplarToFile( out_exfname.str() );
+	comparison_pg.dumpExemplarToFile( out_exfname.str() );	
 
 	//std::stringstream out_pfname;
 	//out_pfname << comparison_pdb_name << tag << ".pocket";
@@ -150,11 +150,11 @@ std::cout << "Pocket score (unweighted) is: " << comparison_pg.netTargetPocketVo
 	//		fout.clear();
 
 	TR << "Done!" << std::endl;
-  }
-	catch ( utility::excn::EXCN_Base const & e ) {
-		std::cerr << "caught exception " << e.msg() << std::endl;
-    return -1;
-  }
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+        return -1;
+    }
 	return 0;
+
 }
 

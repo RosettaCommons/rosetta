@@ -44,7 +44,7 @@ namespace constel {
 /// 	1. The residues forming the constellation have non-zero occupancy only for
 ///			the atoms that belong to the constellation. This is guaranteed if the
 ///			residues forming the constellation had their indexes previously passed
-/// 		as arguments to function "SingResCnlCrea::zero_occ_for_deleted_atoms()".
+/// 		as arguments to function "zero_occ_for_deleted_atoms()".
 ///
 /// @details
 /// 	1. For constellations formed by other than 2 residues, the function
@@ -141,7 +141,7 @@ bool FilterByIndoleCOO::sat(Pose const& ps,
 /// 	1. The residues forming the constellation have non-zero occupancy only for
 /// 		the atoms that belong to the constellation. This is guaranteed if the
 /// 		residues forming the constellation had their indexes previously passed
-/// 		as arguments to function "SingResCnlCrea::zero_occ_for_deleted_atoms()".
+/// 		as arguments to function "zero_occ_for_deleted_atoms()".
 ///
 /// @details
 /// 	1. For constellations formed by other than 2 residues, the function
@@ -220,7 +220,7 @@ bool FilterByTryptamine::sat(Pose const& ps,
 /// 	1. The residues forming the constellation have non-zero occupancy only for
 /// 		the atoms that belong to the constellation. This is guaranteed if the
 /// 		residues forming the constellation had their indexes previously passed
-/// 		as arguments to function "SingResCnlCrea::zero_occ_for_deleted_atoms()".
+/// 		as arguments to function "zero_occ_for_deleted_atoms()".
 ///
 /// @details
 /// 	1. For constellations formed by other than 2 residues, the function
@@ -299,7 +299,7 @@ bool FilterByAmphetamine::sat(Pose const& ps,
 /// 	1. The residues forming the constellation have non-zero occupancy only for
 /// 		the atoms that belong to the constellation. This is guaranteed if the
 /// 		residues forming the constellation had their indexes previously passed
-/// 		as arguments to function "SingResCnlCrea::zero_occ_for_deleted_atoms()".
+/// 		as arguments to function "zero_occ_for_deleted_atoms()".
 ///		2. All residues in the pose have all heavy atoms present (whether original
 /// 		or reconstructed).
 ///

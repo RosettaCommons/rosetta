@@ -88,7 +88,7 @@ string DbTrajectoryRecorderCreator::mover_name() { // {{{1
 
 DbTrajectoryRecorder::DbTrajectoryRecorder() // {{{1
 	: TrajectoryRecorder(),
-	  job_id_(core::Size(-1)) {} // bazzoli. Added cast to pass warning
+	  job_id_(-1) {}
 
 DbTrajectoryRecorder::DbTrajectoryRecorder(Size job_id) // {{{1
 	: TrajectoryRecorder(),

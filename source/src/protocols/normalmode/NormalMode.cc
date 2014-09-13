@@ -836,7 +836,7 @@ matrix of singular values W is output as a vector w[1..n].  The matrix V (not
 the transpose VT) is output as v[1..n][1..n].
 *******************************************************************************/
 {
-  Size flag, i, its, j, jj, k, l = 0, nm=0;
+  Size flag, i, its, j, jj, k, l = 0, nm;
   Real anorm,c,f,g,h,s,scale,x,y,z;
   
   //rv1 = dvector(1,n);

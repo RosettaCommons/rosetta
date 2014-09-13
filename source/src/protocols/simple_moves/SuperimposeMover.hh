@@ -43,7 +43,7 @@ public:
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 
-	void set_reference_pose( core::pose::Pose const & pose, Size start=1, Size end=0);
+	void set_reference_pose( core::pose::Pose const & pose, Size start=1, Size end=-1);
 	// Undefined, commenting out to fix PyRosetta build  void set_target_pose( Size start=1, Size end=-1);
 	void set_target_range( Size start, Size end );
 	

@@ -151,7 +151,7 @@ void GraftOneCDRLoop::apply( pose::Pose & pose_in ) {
 		preprocessing_script_version_ = option[ OptionKeys::antibody::preprocessing_script_version ]() ;
 	}
 
-	Size correction = 0;
+	Size correction ;
 	if(preprocessing_script_version_ == "R2_Perl") correction = 1;
 	if(preprocessing_script_version_ == "R3_Python") correction = 0;
 
