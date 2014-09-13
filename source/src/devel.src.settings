@@ -40,7 +40,7 @@ sources = {
 #		"ResidueMask",
 #    "SearchOptions",
 #		"SingResCnlCrea",
-  ],
+#  ],
 	"devel/coupled_sidechains": [
 		"CoupledSidechainProtocol2",
 	],
