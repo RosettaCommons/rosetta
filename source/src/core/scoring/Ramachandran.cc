@@ -218,6 +218,8 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 /// time they are requested -- To properly multi-thread this code, the
 /// function should nab a mutex so that no two threads try to execute
 /// the code at once.
+/// Note2 -- this function has been hackily patched to allow it to be used for
+/// D-amino acids. (VKM -- 21 Aug 2014).
 void
 Ramachandran::random_phipsi_from_rama(
 	AA const res_aa,
@@ -225,7 +227,16 @@ Ramachandran::random_phipsi_from_rama(
 	Real & psi
 ) const
 {
-	draw_random_phi_psi_from_cdf( cdf_[ res_aa ], phi, psi );
+	AA res_aa2 = res_aa;
+	core::Real phipsi_multiplier=1.0;
+	if(is_canonical_d_aminoacid(res_aa)) {
+		res_aa2=get_l_equivalent(res_aa);
+		phipsi_multiplier=-1.0;
+	}
+	draw_random_phi_psi_from_cdf( cdf_[ res_aa2 ], phi, psi );
+	phi *= phipsi_multiplier;
+	psi *= phipsi_multiplier;
+	return;
 }
 
 void

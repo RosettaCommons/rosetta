@@ -28,6 +28,7 @@
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray1D.hh>
+#include <ObjexxFCL/format.hh>
 
 // Numeric headers
 #include <numeric/constants.hh>
@@ -624,6 +625,10 @@ AtomTree::torsion_angle_dof_id(
 			TR.Error << "THETA1 " << theta1 << std::endl;
 			TR.Error << "THETA3 " << theta3 << std::endl;
 			TR.Error << "PHI2 " << phi2 << std::endl;
+			TR.Error << "Atom1 position " << ObjexxFCL::format::F(8,3,atom1->xyz().x()) << ObjexxFCL::format::F(8,3,atom1->xyz().y()) << ObjexxFCL::format::F(8,3,atom1->xyz().z()) << std::endl;
+			TR.Error << "Atom2 position " << ObjexxFCL::format::F(8,3,atom2->xyz().x()) << ObjexxFCL::format::F(8,3,atom2->xyz().y()) << ObjexxFCL::format::F(8,3,atom2->xyz().z()) << std::endl;
+			TR.Error << "Atom3 position " << ObjexxFCL::format::F(8,3,atom3->xyz().x()) << ObjexxFCL::format::F(8,3,atom3->xyz().y()) << ObjexxFCL::format::F(8,3,atom3->xyz().z()) << std::endl;
+			TR.Error << "Atom4 position " << ObjexxFCL::format::F(8,3,atom4->xyz().x()) << ObjexxFCL::format::F(8,3,atom4->xyz().y()) << ObjexxFCL::format::F(8,3,atom4->xyz().z()) << std::endl;
 
 			utility_exit_with_message( "AtomTree::torsion_angle_dof_id: angle range error" );
 

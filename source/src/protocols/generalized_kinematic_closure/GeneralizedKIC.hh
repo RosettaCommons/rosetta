@@ -69,26 +69,42 @@ public:
 		core::pose::Pose const &
 	);
 
+	///
 	/// @brief Add a residue (by index in the pose) to the list of residues making up the loop to be closed.
-	/// This function checks that the index is within the range of indices in the pose, and that there is a
-	/// geometric connection between this residue and the previous one in the list.
-	void add_loop_residue( core::Size const residue_index /*, core::pose::Pose const &pose*/ );
+	void add_loop_residue( core::Size const residue_index );
 
-	/// @brief Function to set the effect of this mover on parts of the pose that are covalently attached to
-	/// the loop to be closed, but which aren't part of it.  Settings are:
-	/// 0 -- Moves the loop only; can pull apart covalent bonds to anything outside of the loop that isn't
-	///      an anchor point.
-	/// 1 -- Moves the loop and anything downstream of the loop in the foldtree.  Can still pull apart
-  /// 		 connections to non-child geometry.
-	void set_mover_effect_on_bonded_geometry( core::Size const effect ); //TODO -- Make this do something.
+	/// @brief Add a residue (by index in the pose) to the list of residues making up the tails attached to
+	/// the loop to be closed.
+	/// @details  "Tails" are residues that are not part of the loop to be closed, but which are attached to
+	/// the loop and which "come along for the ride" as the loop moves.
+	void add_tail_residue( core::Size const residue_index );
 
-	/// @brief Function to get the effect of this mover on parts of the pose that are covalently attached to
-	/// the loop to be closed, but which aren't part of it.  Return values are:
-	/// 0 -- Moves the loop only; can pull apart covalent bonds to anything outside of the loop that isn't
-	///      an anchor point.
-	/// 1 -- Moves the loop and anything downstream of the loop in the foldtree.  Can still pull apart
-  /// 		 connections to non-child geometry.
-	core::Size get_mover_effect_on_bonded_geometry() { return effect_on_bonded_geometry_; }	
+	/// @brief Check that loop residues haven't been specified multiple times.
+	/// @details Also checks that the loop residues are all within the pose.
+	void check_loop_residues_sensible( core::pose::Pose const &pose);
+
+	/// @brief Check that tail residues haven't been specified multiple times,
+	/// and that the tail residues don't overlap with loop residues.
+	/// @details Also checks that the tail residues are all within the pose.
+	void check_tail_residues_sensible( core::pose::Pose const &pose );
+
+	// @brief Function to set the effect of this mover on parts of the pose that are covalently attached to
+	// the loop to be closed, but which aren't part of it.  Settings are:
+	// 0 -- Moves the loop only; can pull apart covalent bonds to anything outside of the loop that isn't
+	//      an anchor point.
+	// 1 -- Moves the loop and anything downstream of the loop in the foldtree.  Can still pull apart
+  // 		 connections to non-child geometry.
+	// CURRENTLY DEPRECATED
+	//void set_mover_effect_on_bonded_geometry( core::Size const effect ); //TODO -- Make this do something.
+
+	// @brief Function to get the effect of this mover on parts of the pose that are covalently attached to
+	// the loop to be closed, but which aren't part of it.  Return values are:
+	// 0 -- Moves the loop only; can pull apart covalent bonds to anything outside of the loop that isn't
+	//      an anchor point.
+	// 1 -- Moves the loop and anything downstream of the loop in the foldtree.  Can still pull apart
+  // 		 connections to non-child geometry.
+	// CURRENTLY DEPRECATED
+	//core::Size get_mover_effect_on_bonded_geometry() { return effect_on_bonded_geometry_; }	
 
 	/// @brief Set whether or not this mover builds ideal geometry for the loop, or uses the existing geometry,
 	/// imperfect bond lengths/angles and all.
@@ -300,11 +316,17 @@ private:
 	/// @brief The list of residues (as inidices of the original pose) making up the loop to be closed.
 	utility::vector1 < core::Size > loopresidues_;
 
-	/// @brief The effect of the GeneralizedKIC mover on geometry that is covalently bound to the loop
-	/// to be closed, but which is not part of that loop segment.  0 means that the mover will only
-	/// move the loop, possibly tearing apart covalent bonds to other parts of the pose.  1 means that
-  /// the mover will move the loop along with anything that is downstream in the FoldTree.
-	core::Size effect_on_bonded_geometry_;
+	///
+	/// @brief The list of tail residues (as indices of the original pose) that will "come along for the ride" as the
+	/// loop moves.  These must be attached to the original loop, either directly, or through other tail residues.
+	utility::vector1 < core::Size > tailresidues_;
+
+	// @brief The effect of the GeneralizedKIC mover on geometry that is covalently bound to the loop
+	// to be closed, but which is not part of that loop segment.  0 means that the mover will only
+	// move the loop, possibly tearing apart covalent bonds to other parts of the pose.  1 means that
+  // the mover will move the loop along with anything that is downstream in the FoldTree.
+	// CURRENTLY DEPRECATED
+	//core::Size effect_on_bonded_geometry_;
 
 	/// @brief The lower end of the loop to be closed is presumably connected to geometry that is not
 	/// moved by this mover.  However, the connection could be through backbone or sidechain.  The
@@ -454,14 +476,26 @@ private:
 		core::pose::Pose const &pose
 	);
 
-	/// @brief Add the loop geometry from the starting pose to the temporary pose used for kinematic closure.  This will also add the
-	/// downstream geometry if effect_on_bonded_geom==1.  Finally, this will build ideal geometry if build_ideal==true.
+	///
+	/// @brief Add the loop geometry from the starting pose to the temporary pose used for kinematic closure.  This will build ideal geometry if build_ideal==true (NOT YET TESTED).
 	void addloopgeometry(
 		core::pose::Pose &perturbedloop_pose,
 		core::pose::Pose const &pose,
 		bool const build_ideal,
-		core::Size const effect_on_bonded_geom,
+		//core::Size const effect_on_bonded_geom,
 		utility::vector1 < std::pair < core::Size, core::Size > > &residue_map
+	);
+
+	/// @brief Add the tail geometry from the starting pose to the temporary pose used for kinematic closure.  This will build ideal geometry if build_ideal==true (NOT YET TESTED).
+	/// @details The tails are residues that are not part of the loop to be closed, but which are attached to them and which "come along for the ride" as the loop to be closed moves.
+	/// This function MUST be called AFTER addloopgeometry().
+	void addtailgeometry(
+		core::pose::Pose &perturbedloop_pose,
+		core::pose::Pose const &pose,
+		bool const build_ideal,
+		//core::Size const effect_on_bonded_geom,
+		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map,
+		utility::vector1 < std::pair < core::Size, core::Size > > &tail_residue_map
 	);
 
 	///
@@ -472,13 +506,14 @@ private:
 	);
 
 	/// @brief Do the actual kinematic closure.
-	/// @details Inputs are pose (the loop to be closed), original_pose (the reference pose, unchanged by operation), and residue_map (the mapping
-	/// of residues from pose to original_pose).  Output is pose (the loop to be closed, in a new, closed conformation if successful) and a boolean
-	/// value indicating success or failure.
+	/// @details Inputs are pose (the loop to be closed), original_pose (the reference pose, unchanged by operation), residue_map (the mapping of
+	/// residues from pose to original_pose) and tail_residue_map (the mapping of tail residues from pose to original_pose).  Output is pose (the
+	/// loop to be closed, in a new, closed conformation if successful) and a boolean value indicating success or failure.
 	bool doKIC(
 		core::pose::Pose &pose,
 		core::pose::Pose const &original_pose,
-		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map		
+		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map,
+		utility::vector1 < std::pair < core::Size, core::Size > > const &tail_residue_map		
 	);
 
 	///
@@ -516,6 +551,7 @@ private:
 	/// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
 	/// @param[in] original_pose -- A pose consisting of the full, original structure.
 	/// @param[in] residue_map -- The mapping of (residue in loop_pose, residue in original_pose).
+	/// @param[in] tail_residue_map -- The mapping of (tail residue in loop_pose, tail residue in original_pose).
 	/// @param[in,out] torsions -- The desired torsion angles, potentially altered or overwritten by the perturbers.
 	/// @param[in,out] bondangles -- The desired bond angles, potentially altered or overwritten by the perturbers.
 	/// @param[in,out] bondlenghts -- The desired bond lengths, potentially altered or overwritten by the perturbers.
@@ -523,6 +559,7 @@ private:
 		core::pose::Pose const &loop_pose,
 		core::pose::Pose const &original_pose,
 		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map,
+		utility::vector1 < std::pair < core::Size, core::Size > > const &tail_residue_map,
 		utility::vector1 < core::Real > &torsions,
 		utility::vector1 < core::Real > &bondangles,
 		utility::vector1 < core::Real > &bondlengths
@@ -533,6 +570,7 @@ private:
 	/// @param[in] original_pose -- A pose consisting of the full, original structure.
 	/// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
 	/// @param[in] residue_map -- The mapping of (residue in loop_pose, residue in original_pose).
+	/// @param[in] tail_residue_map -- The mapping of (tail residue in loop_pose, tail residue in original_pose).
 	/// @param[in] atomlist -- The list of atomIDs in the chain that was closed, plus their xyz coordinates from the original pose.
 	/// @param[in,out] torsions -- The torsion angles returned by bridgeObjects, as a matrix of [solution #][torsion index].  Columns can be deleted by filters.
 	/// @param[in,out] bondangles -- The bond angles returned by bridgeObjects, as a matrix of [solution #][bondangle index].  Columns can be deleted by filters.
@@ -542,6 +580,7 @@ private:
 		core::pose::Pose const &original_pose,
 		core::pose::Pose const &loop_pose,
 		utility::vector1 < std::pair <core::Size, core::Size> > const &residue_map,
+		utility::vector1 < std::pair <core::Size, core::Size> > const &tail_residue_map,
 		utility::vector1 < std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
 		utility::vector1 <utility::vector1<core::Real> > &torsions,
 		utility::vector1 <utility::vector1<core::Real> > &bondangles,
@@ -554,6 +593,7 @@ private:
 	/// @param[in,out] pose -- The loop to be closed.  This function puts it into its new, closed conformation.
 	/// @param[in] original_pose -- The original pose.  Can be used for reference by selectors.
 	/// @param[in] residue_map -- Mapping of (loop residue, original pose residue).
+	/// @param[in] tail_residue_map -- Mapping of (tail residue index in pose, tail residue index in original_pose).
 	/// @param[in] atomlist -- The list of (AtomID, original XYZ coordinates of atoms) representing the chain that was closed.
 	/// @param[in] torsions -- Matrix of [closure attempt #][solution #][torsion #] with torsion values for each torsion angle in the chain.  A selector will pick one solution.
 	/// @param[in] bondangles -- Matrix of [closure attempt #][solution #][angle #] with bond angle values for each bond angle in the chain.  A selector will pick one solution.
@@ -564,6 +604,7 @@ private:
 		core::pose::Pose &pose,
 		core::pose::Pose const &original_pose, //The original pose
 		utility::vector1 <std::pair <core::Size, core::Size> > const &residue_map, //mapping of (loop residue, original pose residue)
+		utility::vector1 <std::pair <core::Size, core::Size> > const &tail_residue_map, //mapping of (tail residue index in pose, tail residue index in original_pose)
 		utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist, //list of atoms (residue indices are based on the loop_pose)
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions, //torsions for each atom 
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles, //bond angle for each atom

@@ -71,7 +71,8 @@ namespace generalized_kinematic_closure {
 	void copy_loop_pose_to_original (
 		core::pose::Pose &original_pose,
 		core::pose::Pose const &loop_pose,
-		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map
+		utility::vector1 < std::pair < core::Size, core::Size > > const &residue_map,
+		utility::vector1 < std::pair < core::Size, core::Size > > const &tail_residue_map
 	);
 
 	/// @brief Sets phi for an L-alpha amino acid, even if the nitrogen has a nonstandard connection.

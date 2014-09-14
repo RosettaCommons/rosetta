@@ -221,11 +221,12 @@ bool GeneralizedKICfilter::get_filter_param( std::string const &param_name, std:
 }
 
 /// @brief Apply this filter to ONE of the kinematic closure solutions produced by the bridgeObjects function,
-///        and return pass or fail.
-/// @detailed
+/// and return pass or fail.
+/// @details
 /// @param[in] original_pose -- The full, initial pose.
 /// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
 /// @param[in] residue_map -- The mapping of (residue index in loop_pose, residue index in original_pose).
+/// @param[in] tail_residue_map -- The mapping of (tail residue index in loop_pose, tail residue index in original_pose).
 /// @param[in] atomlist -- A list of atoms making the chain that was closed by bridgeObjects, with residue indices corresponding to loop_pose.
 /// @param[in] torsions -- A vector of dihedral angles that the bridgeObjects function spat out.
 /// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
@@ -234,22 +235,21 @@ bool GeneralizedKICfilter::apply(
 	core::pose::Pose const &original_pose,
 	core::pose::Pose const &loop_pose,
 	utility::vector1 < std::pair <core::Size, core::Size> > const &residue_map,
+	utility::vector1 < std::pair <core::Size, core::Size> > const &tail_residue_map,
 	utility::vector1 < std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
 	utility::vector1 < core::Real > const &torsions,
 	utility::vector1 < core::Real > const &bondangles,
 	utility::vector1 < core::Real > const &bondlengths
 ) const {
-	//TR << "Applying GeneralizedKICfilter..." << std::endl; TR.flush(); //DELETE ME
 
-	//utility::vector1 < core::Size > residues_loopindexed; //The list of residues, with indices based on loop_pose.  If necessary, will be generated.
 	utility::vector1 < utility::vector1 < core::id::AtomID > > AtomIDs_loopindexed; //The list of lists of AtomIDs, with indices based on loop_pose.  If necessary, will be generated.
 
 	switch(filtertype_) {
 		case loop_bump_check:
-			return apply_loop_bump_check( original_pose, loop_pose, residue_map, atomlist, torsions, bondangles, bondlengths);
+			return apply_loop_bump_check( original_pose, loop_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths);
 			break;
 		case atom_pair_distance:
-			return apply_atom_pair_distance( original_pose, loop_pose, residue_map, atomlist, torsions, bondangles, bondlengths);
+			return apply_atom_pair_distance( original_pose, loop_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths);
 			break;
 		default:
 			break;
@@ -267,13 +267,11 @@ bool GeneralizedKICfilter::apply(
 
 /// @brief Applies the loop_bump_check filter, which checks for clashes between the atoms in the chain
 /// to be closed and the rest of the structure (or for clashes within these atoms).
-/// @details Returns "true" for pass and "false" for fail.  This does NOT check for clashes within a
-/// residue -- only between residues.  However, if we're doing alpha- or beta- amino acids and the
-/// backbone carbonyl carbon is in the chain to be closed, then the carbonyl oxygen will also be
-/// checked for clashes.
+/// @details Returns "true" for pass and "false" for fail.  Does NOT check for clashes with tail residues.
 /// @param[in] original_pose -- The full, initial pose.
 /// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
 /// @param[in] residue_map -- The mapping of (residue index in loop_pose, residue index in original_pose).
+/// @param[in] tail_residue_map -- The mapping of (tail residue index in loop_pose, tail residue index in original_pose).
 /// @param[in] atomlist -- A list of atoms making the chain that was closed by bridgeObjects, with residue indices corresponding to loop_pose.
 /// @param[in] torsions -- A vector of dihedral angles that the bridgeObjects function spat out.
 /// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
@@ -282,6 +280,7 @@ bool GeneralizedKICfilter::apply_loop_bump_check(
 	core::pose::Pose const &original_pose,
 	core::pose::Pose const &loop_pose,
 	utility::vector1 < std::pair <core::Size, core::Size> > const &residue_map,
+	utility::vector1 < std::pair <core::Size, core::Size> > const &tail_residue_map,
 	utility::vector1 < std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
 	utility::vector1 < core::Real > const &torsions,
 	utility::vector1 < core::Real > const &bondangles,
@@ -328,13 +327,14 @@ bool GeneralizedKICfilter::apply_loop_bump_check(
 					for(core::Size i=1; i<=3; ++i) {
 						if(!atsfound[i] && pose.residue(ia_res).has(ats[i])) {
 							atomlist_prime.push_back( std::pair<AtomID, numeric::xyzVector<core::Real> > (AtomID( pose.residue(ia_res).atom_index(ats[i]), ia_res ), loop_pose.residue(ia_res).xyz(ats[i])) ); //Add the missing one of the three to the atom list
-							TR << "Adding the " << ats[i] << " atom for residue number " << ia_res << " in the chain of residues to be closed to the bump check." << std::endl; //DELETE ME
+							//TR.Debug << "Adding the " << ats[i] << " atom for residue number " << ia_res << " in the chain of residues to be closed to the bump check." << std::endl; //DELETE ME
 							break;
 						}
 					}
 				}
 			} //else if this is a CA atom
 		} //if alpha or beta amino acid
+		//TODO -- figure out what heavyatoms to add in the general case (not an alpha- or beta-amino acid).
 	}
 	
 
@@ -351,7 +351,7 @@ bool GeneralizedKICfilter::apply_loop_bump_check(
 			core::Size const ja_atomno=atomlist_prime[ja].first.atomno();
 			core::Real const ja_radius = pose.residue(ja_res).type().atom_type(ja_atomno).lj_radius();
 			if(pose.residue(ja_res).xyz(ja_atomno).distance_squared( pose.residue(ia_res).xyz(ia_atomno) )  < pow((ja_radius+ia_radius)*multiplier, 2) ) {
-				TR << "GeneralizedKICfilter::apply_loop_bump_check filter failed due to internal clash within loop that was closed." << std::endl;
+				TR.Debug << "GeneralizedKICfilter::apply_loop_bump_check filter failed due to internal clash within loop that was closed." << std::endl;
 				return false;
 			}
 		}
@@ -359,6 +359,7 @@ bool GeneralizedKICfilter::apply_loop_bump_check(
 		//Next, check external clashes:
 		for(core::Size jr=1; jr<=nres; ++jr) { //Loop through all residues of the main chain.
 			if(original_pose_residue_is_in_residue_map(jr, residue_map)) continue; //If this is a loop residue, we're already considering clashes to it, so skip loop residues.
+			if(original_pose_residue_is_in_residue_map(jr, tail_residue_map)) continue; //We won't consider clashes with tail residues.
 
 			//If this residue is connected to the residue containing the current loop atom, skip it.
 			core::Size const ia_original_res = get_original_pose_rsd(ia_res, residue_map);
@@ -378,14 +379,14 @@ bool GeneralizedKICfilter::apply_loop_bump_check(
 			for(core::Size ja=1, jamax=atoms_to_consider.size(); ja<=jamax; ++ja) { //Loop through the mainchain atoms.
 				core::Real const ja_radius = original_pose.residue(jr).type().atom_type( atoms_to_consider[ja] ).lj_radius();
 				if( original_pose.residue(jr).xyz( atoms_to_consider[ja] ).distance_squared( pose.residue(ia_res).xyz(ia_atomno) ) < pow((ja_radius+ia_radius)*multiplier, 2) ) {
-					TR << "GeneralizedKICfilter::apply_loop_bump_check filter failed due to external clash between loop that was closed and the rest of the structure." << std::endl;
+					TR.Debug << "GeneralizedKICfilter::apply_loop_bump_check filter failed due to external clash between loop that was closed and the rest of the structure." << std::endl;
 					return false;
 				}
 			}
 		}
 	}
 
-	TR << "GeneralizedKICfilter::apply_loop_bump_check() filter passed." << std::endl; TR.flush();
+	TR.Debug << "GeneralizedKICfilter::apply_loop_bump_check() filter passed." << std::endl; TR.Debug.flush();
 	return true;
 }
 
@@ -402,6 +403,7 @@ bool GeneralizedKICfilter::apply_loop_bump_check(
 /// @param[in] original_pose -- The full, initial pose.
 /// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
 /// @param[in] residue_map -- The mapping of (residue index in loop_pose, residue index in original_pose).
+/// @param[in] tail_residue_map -- The mapping of (tail residue index in loop_pose, tail residue index in original_pose).
 /// @param[in] atomlist -- A list of atoms making the chain that was closed by bridgeObjects, with residue indices corresponding to loop_pose.
 /// @param[in] torsions -- A vector of dihedral angles that the bridgeObjects function spat out.
 /// @param[in] bondangles -- A vector of bond angles that the bridgeObjects function spat out.
@@ -410,6 +412,7 @@ bool GeneralizedKICfilter::apply_atom_pair_distance(
 	core::pose::Pose const & original_pose,
 	core::pose::Pose const & loop_pose,
 	utility::vector1 < std::pair <core::Size, core::Size> > const & residue_map,
+	utility::vector1 < std::pair <core::Size, core::Size> > const & tail_residue_map,
 	utility::vector1 < std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const & atomlist,
 	utility::vector1 < core::Real > const & torsions,
 	utility::vector1 < core::Real > const & bondangles,
@@ -441,21 +444,21 @@ bool GeneralizedKICfilter::apply_atom_pair_distance(
 	core::pose::Pose looppose(loop_pose); //Make a copy of the loop pose
 	core::pose::Pose fullpose(original_pose); //Make a copy of the full pose
 	set_loop_pose (looppose, atomlist, torsions, bondangles, bondlengths); //Set the loop conformation using the torsions, bondangles, and bondlengths vectors.
-	copy_loop_pose_to_original( fullpose, looppose, residue_map); //Copy the loop conformation to the full pose.
+	copy_loop_pose_to_original( fullpose, looppose, residue_map, tail_residue_map); //Copy the loop conformation to the full pose.
 
 	if(fullpose.residue(res1).xyz(at1).distance_squared( fullpose.residue(res2).xyz(at2) ) > dist_cutoff_sq) {
 		if(!greaterthan) {
-			TR << "GeneralizedKICfilter::apply_atom_pair_distance filter() failed." << std::endl; TR.flush();
+			TR.Debug << "GeneralizedKICfilter::apply_atom_pair_distance filter() failed." << std::endl; TR.Debug.flush();
 			return false;
 		}
 	} else {
 		if(greaterthan) {
-			TR << "GeneralizedKICfilter::apply_atom_pair_distance filter() failed." << std::endl; TR.flush();
+			TR.Debug << "GeneralizedKICfilter::apply_atom_pair_distance filter() failed." << std::endl; TR.Debug.flush();
 			return false;
 		}
 	}
 
-	TR << "GeneralizedKICfilter::apply_atom_pair_distance filter() passed." << std::endl; TR.flush();
+	TR.Debug << "GeneralizedKICfilter::apply_atom_pair_distance filter() passed." << std::endl; TR.Debug.flush();
 	return true;
 }
 
