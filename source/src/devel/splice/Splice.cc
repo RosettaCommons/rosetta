@@ -491,6 +491,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 			} // fi template_file != ""
 			if (!from_res() && !to_res() &&protein_family_=="antibodies" &&ccd()/*this is for splice out*/) {//if user has not defined from res and to res then we use antibody disulfides as start and end points
 				utility::vector1<core::Size> cys_pos; //store all cysteine positions in the AB chain, I assume that the order is VL and then VH, Gideon Lapidoth
+				//TR << "DEBUG I'm now setting from_res and to_res according to the cysteines " << std::endl;
 				for (core::Size i = 1; i <= pose.total_residue(); ++i) {
 					if (pose.residue(i).has_variant_type(core::chemical::DISULFIDE)) {
 						cys_pos.push_back(i);
@@ -530,6 +531,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 			pose.conformation().detect_disulfides(); // just in case; but I think it's unnecessary
 
 			/// from_res/to_res can also be determined through task factory, by identifying the first and last residues that are allowed to design in this tf
+			
 			if (torsion_database_fname_ == "" && from_res() == 0 && to_res() == 0) { /// set the splice site dynamically according to the task factory
 				utility::vector1<core::Size> designable(
 						protocols::rosetta_scripts::residue_packer_states(pose, task_factory(), true/*designable*/,
@@ -582,8 +584,10 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				}
 				protocols::simple_moves::CutChainMover ccm;
 				core::Size source_pdb_cut(ccm.chain_cut(*source_pose_,nearest_to_from,nearest_to_to));
-				if (source_pdb_cut!=0 && !ignore_chain_break_)//found cut site in source pose
+				if (source_pdb_cut!=0 && !ignore_chain_break_){//found cut site in source pose
+					//(*source_pose_).dump_pdb("chain_break.pdb");  
 					utility_exit_with_message("found chain break in source PDB "+source_pdb_+",exiting\n");
+				}
 				TR << "nearest_to_from: " << nearest_to_from << " nearest_to_to: " << nearest_to_to << std::endl;
 				TR << "from_res():"<<from_res()<<"to_res():"<<to_res()<<std::endl;
 				residue_diff = nearest_to_to - nearest_to_from - (to_res() - from_res());
@@ -757,27 +761,38 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				if (segment_type_=="L3"){
 					llc.tail(1);
 					llc.loop_end(vl_vh_cut-1);
+					//TR << "DEBUG for L3 I set the end to " << vl_vh_cut-1 << std::endl;
 				}
 				else if (segment_type_=="H3"){
 						core::conformation::Conformation const & conf(pose.conformation());
 						llc.tail(1);
-						llc.loop_end(conf.chain_end(1)-2);//Asuming that the ligand is chain 2;
+						TR << "Loop end is " << conf.chain_end(1) << " residue diff " << residue_diff << std::endl;
+						if ( residue_diff < 0)
+							llc.loop_end(conf.chain_end(1)+residue_diff);
+						else
+							llc.loop_end(conf.chain_end(1));//Asuming that the ligand is chain 2;
+
+						//TR << "DEBUG For H3 I set the end to " << conf.chain_end(1) << std::endl;
+						
 				}
 				else
-					utility_exit_with_message("Attempting to copy c-ter tail stretch from source PDB but segment type is not H3 or L3. Failing\n");
+				utility_exit_with_message("Attempting to copy c-ter tail stretch from source PDB but segment type is not H3 or L3. Failing\n");
 				llc.delta(residue_diff);
 				tail_fold_tree(pose,vl_vh_cut,0/*chain_break*/);
 			}
 			else{
-			llc.loop_start(from_res());
-			llc.loop_end(cut_site);
-			llc.delta(residue_diff);
+				llc.loop_start(from_res());
+				llc.loop_end(cut_site);
+				llc.delta(residue_diff);
 			}
 			core::Size cut_vl_vh_after_llc(from_res() < vl_vh_cut ? vl_vh_cut + residue_diff : vl_vh_cut); //update cut site between vl and vh after loop insertion, only if the loop was inserted to the vl.
 			TR << "Foldtree before loop length change: " << pose.fold_tree() << std::endl;
 			TR<<"cut_site:"<<cut_site<<std::endl;
+			
+			//TR << "DEBUG: About to apply llc with start" << from_res() << " end: " << cut_site << " residue_diff " << residue_diff << std::endl; 
+
 			llc.apply(pose);
-		//	protocols::simple_moves::CutChainMover ccm;
+	  //	protocols::simple_moves::CutChainMover ccm;
 		//	core::Size cut_site_after_llc(ccm.chain_cut(pose,from_res(),to_res()+residue_diff));
 			if (boost::iequals(tail_segment_, "c"))
 				tail_fold_tree(pose,cut_vl_vh_after_llc,0);

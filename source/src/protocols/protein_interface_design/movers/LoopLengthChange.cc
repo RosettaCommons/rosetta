@@ -93,13 +93,15 @@ LoopLengthChange::apply( core::pose::Pose & pose )
 	core::kinematics::FoldTreeCOP ft( pose.fold_tree() );
 	core::Size jump_count( 0 );
   if( delta() < 0 ){
-    for( int del(0); del>delta(); --del ){
+    //TR << "DEBUG: I will try to delete residues" << std::endl;
+		for( int del(0); del>delta(); --del ){
     	//TR<<"loop_end -delta()+ del =" <<loop_end()-delta()+ del<<std::endl;
     	if( ft->is_jump_point( loop_end() + del ) ){
     					TR<<"LoopLengthChange called across a jump. I'm skipping the jump residue"<<std::endl;
     					jump_count++;
     				}
-      pose.delete_polymer_residue( loop_end() + del -delta()+ jump_count );
+      //TR << "DEBUG: I will now delete residue " << loop_end() + del -delta()+ jump_count << std::endl;
+			pose.delete_polymer_residue( loop_end() + del -delta()+ jump_count );
       //string res = static_cast<ostringstream*>( &(ostringstream() << loop_cut() - del + jump_count) )->str();
      // pose.dump_pdb("llc_res_"+res+".pdb");
 //			pose.conformation().insert_ideal_geometry_at_polymer_bond( loop_start() );
@@ -112,23 +114,30 @@ LoopLengthChange::apply( core::pose::Pose & pose )
 
     ResidueTypeSet const & residue_set( pose.residue( 1 ).residue_type_set() ); // residuetypeset is noncopyable
     ResidueCOP new_res = ResidueFactory::create_residue( residue_set.name_map( name_from_aa( aa_from_oneletter_code( 'A' ) ) ) );
-    core::Size count = 0;
-		for( core::Size leng(1); leng<=(core::Size) delta(); ++leng ){
-			//	TR<<"loop_end()- leng =" <<loop_end() - leng<<std::endl;
-    	if (tail_segment_){
-    		TR << "DEBUG: Now appending the " << count << "th residue to " << loop_end()+1 << " delta is " << delta() << std::endl;
-				pose.conformation().append_polymer_residue_after_seqpos( *new_res, loop_end()+1+count, true/*build_ideal*/);
-				
+		if (tail_segment_){
+			/* This will be ugly: For some reason you cannot use .append_polymer_residue_after_seqpos to add residues
+ *        to the very last position. Instead we are here adding n+1 residues to the second last position.  */
+			for( core::Size leng(1); leng<=(core::Size) delta() + 1; ++leng ){
+				pose.conformation().append_polymer_residue_after_seqpos( *new_res, loop_end()-2+leng, true/*build_ideal*/); // start growing the new loop from res loopEnd-1
 			}
+			// Now we need to delete the last residue
+			core::Size unwantedLastResidueNo =  loop_end()  + delta() + 1;
+			//TR << "Delta is " << delta() << std::endl;
+			//pose.dump_pdb("before_delete.pdb");
+			pose.conformation().delete_polymer_residue( unwantedLastResidueNo );
+			//pose.dump_pdb("after_delete.pdb");
+		}
 
-    	else
-    		pose.conformation().prepend_polymer_residue_before_seqpos( *new_res, loop_end()+1, true/*build_ideal*/);
-    	// string res = static_cast<ostringstream*>( &(ostringstream() << leng ))->str();
-    	//      pose.dump_pdb("llc_res_"+res+".pdb");
-    	//      pose.set_omega(loop_end()+leng-1,180.0);
-			++count;
+		else{
+			for( core::Size leng(1); leng<=(core::Size) delta(); ++leng ){
+				pose.conformation().prepend_polymer_residue_before_seqpos( *new_res, loop_end()+1, true/*build_ideal*/);
+				// string res = static_cast<ostringstream*>( &(ostringstream() << leng ))->str();
+				// pose.dump_pdb("llc_res_"+res+".pdb");
+				// pose.set_omega(loop_end()+leng-1,180.0);
+			}
+		}
 
-    }
+		
   }
   pose.update_residue_neighbors();
 	pose.pdb_info()->obsolete( true );
