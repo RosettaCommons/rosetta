@@ -21,7 +21,7 @@ using basic::Error;
 using basic::Warning;
 static basic::Tracer TR("devel.splice.AddFoldUnitMover");
 #include <utility/tag/Tag.hh>
-
+#include <core/util/SwitchResidueTypeSet.hh>
 // AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
 #include <core/conformation/Conformation.hh>
@@ -42,6 +42,7 @@ namespace splice {
 using namespace protocols;
 using namespace core;
 using namespace std;
+using utility::vector1;
 
 bool
 FoldUnitUtils::read_dbase(){
@@ -81,24 +82,50 @@ FoldUnitUtils::read_dbase(){
 		runtime_assert( pairs );
 		while( getline( pairs, line )){
 		  istringstream line_stream(line);
-			Size fragi, fragj;
-			line_stream >> fragi >> fragj;
+			Size fragi, fragj, overlap_length, overlap_rmsd;
+			line_stream >> fragi >> fragj >> overlap_length >> overlap_rmsd;
 			entry_pairs_.push_back( pair< Size, Size >( fragi, fragj ) );
+			overlap_length_.push_back( overlap_length );
+			overlap_rmsd_.push_back( overlap_rmsd );
 		}
 		pairs.close();
 		return true;
 }
 
+bool
+FoldUnitUtils::fragment_compatibility_check( core::Size const i, core::Size const j, vector1< pair< Size, Size > >::const_iterator it, Real const max_rmsd/*=10.0*/ ) const{
+	it = find( entry_pairs_.begin(), entry_pairs_.end(), pair< Size, Size >( i, j ));
+	if( it == entry_pairs_.end() )
+		return false;
+	if( overlap_rmsd_[ it - entry_pairs_.begin() + 1 ] > max_rmsd )
+		return false;
+	return true;
+}
+
+/// @add fragment to pose, taking care of overlaps between subsequence fragments
 void
-FoldUnitUtils::add_fragment_to_pose( core::pose::Pose & pose, core::Size const entry, bool const c_term ) const {
+FoldUnitUtils::add_fragment_to_pose( core::pose::Pose & pose, PoseFragmentInfo fragment_info, core::Size const entry, bool const c_term ) const {
+	ResidueBBDofs dofs = bbdofs_[ entry ];
+	Size const pose_fragments = fragment_info.size();
+	Size overlap( 0 );
+	if( pose_fragments ){ //check compatibility between fragments
+		Size const last_fragment = fragment_info[ pose_fragments ];
+		vector1< pair< Size, Size > >::const_iterator it;
+		fragment_compatibility_check( last_fragment, entry, it);
+		if( it == entry_pairs_.end() )
+			TR<<"requested to add fragment "<<entry<<" after fragment "<<last_fragment<<" but they are incompatible!"<<std::endl;
+		else{
+			overlap = overlap_length_[ it - entry_pairs_.begin() + 1 ];
+			TR<<"requested to add fragment "<<entry<<" after fragment "<<last_fragment<<" which are compatible. overlap is "<<overlap<<std::endl;
+		}
+	}
+
 	using namespace core::chemical;
 	using namespace core::conformation;
 
-	ResidueBBDofs dofs = bbdofs_[ entry ];
-
-  ResidueTypeSet const & residue_set( pose.residue( 1 ).residue_type_set() ); // residuetypeset is noncopyable
-	Size const start_pose_size = ( c_term ? pose.total_residue() : 1 );
-	for( Size resi = 1; resi <= dofs.size(); ++resi ){
+  ResidueTypeSet const & residue_set( pose.total_residue() ? pose.residue( 1 ).residue_type_set() : *ChemicalManager::get_instance()->residue_type_set( CENTROID ) ); // residuetypeset is noncopyable
+	Size const start_pose_size = ( c_term ? pose.total_residue() : 0 );
+	for( Size resi = 1 + overlap; resi <= dofs.size(); ++resi ){
 		ResidueCOP new_res = ResidueFactory::create_residue( residue_set.name_map( name_from_aa( aa_from_oneletter_code( dofs.aa_sequence()[ resi ] ) ) ) );
 		if( c_term )
   		pose.conformation().append_polymer_residue_after_seqpos( *new_res, pose.total_residue(), true/*build_ideal*/);
@@ -106,20 +133,22 @@ FoldUnitUtils::add_fragment_to_pose( core::pose::Pose & pose, core::Size const e
   		pose.conformation().prepend_polymer_residue_before_seqpos( *new_res, 1, true/*build_ideal*/);
 	}
 /// separate sequence length change from dihedral changes, b/c omega is not defined for the last residue
-	for( int resi = start_pose_size; resi <= (int) ( start_pose_size + dofs.size() ); ++resi ){
-		pose.set_phi( resi, dofs[ resi ].phi() );
-		pose.set_psi( resi, dofs[ resi ].psi() );
-		pose.set_omega( resi, dofs[ resi ].omega() );
+	for( Size resi = 1; resi <= dofs.size() - overlap; ++resi ){
+		pose.set_phi(   start_pose_size + resi, dofs[ start_pose_size + resi + overlap ].phi() );
+		pose.set_psi(   start_pose_size + resi, dofs[ start_pose_size + resi + overlap ].psi() );
+		pose.set_omega( start_pose_size + resi, dofs[ start_pose_size + resi + overlap ].omega() );
 	}
 }
 
 void
-FoldUnitUtils::replace_fragment_in_pose( core::pose::Pose & pose, core::Size const entry, core::Size const from_res, core::Size const to_res ) const {
+FoldUnitUtils::replace_fragment_in_pose( core::pose::Pose & pose, PoseFragmentInfo fragment_info, core::Size const entry, core::Size const fragment_num ) {
 	using namespace core::chemical;
 	using namespace core::conformation;
 
   ResidueTypeSet const & residue_set( pose.residue( 1 ).residue_type_set() ); // residuetypeset is noncopyable
 	ResidueBBDofs dofs = bbdofs_[ entry ];
+	Size from_res, to_res;
+	fragment_info.fragment_start_end( *this, fragment_num, from_res, to_res );
 	int const residue_diff = dofs.size() - ( to_res - from_res + 1 );
 	if( residue_diff < 0 ){
 		for( int i = 1; i >= residue_diff; --i )
@@ -130,12 +159,33 @@ FoldUnitUtils::replace_fragment_in_pose( core::pose::Pose & pose, core::Size con
 		for( Size i = 1; i <= ( Size ) residue_diff; ++i )
 			pose.append_polymer_residue_after_seqpos( *new_res, to_res, true );
 	}
-	for( Size resi = from_res; resi <= to_res + residue_diff; ++resi ){
-		ResidueCOP new_res = ResidueFactory::create_residue( residue_set.name_map( name_from_aa( aa_from_oneletter_code( dofs.aa_sequence()[ resi - from_res + 1 ] ) ) ) );
+
+	Size overlap_n( 0 ), overlap_c( 0 );
+	Size const prev_fragment = fragment_info[ fragment_num - 1 ];
+	Size const next_fragment = fragment_info[ fragment_num + 1 ];
+	vector1< pair< Size, Size > >::const_iterator it_n, it_c;
+	fragment_compatibility_check( prev_fragment, entry, it_n );
+	if( it_n == entry_pairs_.end() )
+		TR<<"requested to combine fragments "<<prev_fragment<<" and "<<entry<<" but they're incompatible!"<<std::endl;
+	else{
+		overlap_n = overlap_length_[ it_n - entry_pairs_.begin() + 1 ];
+		TR<<"requested to combine fragments "<< prev_fragment<<" and "<<entry<<" with overlap "<<overlap_n<<std::endl;
+	}
+	fragment_compatibility_check( entry, next_fragment, it_c );
+	if( it_c == entry_pairs_.end() )
+		TR<<"requested to combine fragments "<<entry<<" and "<<next_fragment<<" but they're incompatible!"<<std::endl;
+	else{
+		overlap_c = overlap_length_[ it_c - entry_pairs_.begin() + 1 ];
+		TR<<"requested to combine fragments "<< entry<<" and "<<next_fragment<<" with overlap "<<overlap_c<<std::endl;
+	}
+
+	for( Size resi = from_res + overlap_n; resi <= to_res + residue_diff - overlap_c; ++resi ){
+		Size const resi_in_dofs_array( resi - from_res + 1 );
+		ResidueCOP new_res = ResidueFactory::create_residue( residue_set.name_map( name_from_aa( aa_from_oneletter_code( dofs.aa_sequence()[ resi_in_dofs_array ] ) ) ) );
 		pose.replace_residue( resi, *new_res, false/*orient bb*/ );
-		pose.set_phi( resi, dofs[ resi ].phi() );
-		pose.set_psi( resi, dofs[ resi ].psi() );
-		pose.set_omega( resi, dofs[ resi ].omega() );
+		pose.set_phi(   resi, dofs[ resi_in_dofs_array ].phi() );
+		pose.set_psi(   resi, dofs[ resi_in_dofs_array ].psi() );
+		pose.set_omega( resi, dofs[ resi_in_dofs_array ].omega() );
 	}
 }
 
@@ -155,6 +205,7 @@ AddFoldUnitMoverCreator::mover_name()
 {
 	return "AddFoldUnit";
 }
+
 
 AddFoldUnitMover::AddFoldUnitMover(): moves::Mover("AddFoldUnit"),
 	fragment_dbase_( "" ),
@@ -250,6 +301,68 @@ PoseFragmentInfo::fragment_start_end( FoldUnitUtils & fuu, core::Size const frag
 	TR<<"Fragment "<<fragment<<" start: "<<start<<" end: "<<end<<std::endl;
 }
 
+core::Size
+PoseFragmentInfo::operator[]( core::Size const s ) { return fragment_map_[ s ]; }
+
+FoldUnitUtils::~FoldUnitUtils() {}
+
+PoseFragmentInfo::~PoseFragmentInfo() {}
+
+StartFreshMover::StartFreshMover() : Mover( "StartFresh" ), residue_type_set_( "CENTROID" ) {}
+StartFreshMover::~StartFreshMover() {}
+
+void
+StartFreshMover::apply( core::pose::Pose & pose ){
+	core::pose::Pose new_pose;
+
+	core::util::switch_to_residue_type_set( pose, residue_type_set_ );
+	pose = new_pose;
+}
+
+void
+StartFreshMover::parse_my_tag(
+    utility::tag::TagCOP tag,
+    basic::datacache::DataMap &,
+    protocols::filters::Filters_map const &,
+    protocols::moves::Movers_map const &,
+    core::pose::Pose const & ){
+	residue_type_set_ = tag->getOption< string >( "residue_type_set", "CENTROID" );
+	TR<<"residue_type_set: "<<residue_type_set()<<std::endl;
+}
+
+moves::MoverOP
+StartFreshMover::clone() const
+{
+	return new StartFreshMover( *this );
+}
+
+moves::MoverOP
+StartFreshMover::fresh_instance() const
+{
+	return new StartFreshMover;
+}
+
+std::string
+StartFreshMover::get_name() const {
+	return StartFreshMoverCreator::mover_name();
+}
+
+std::string
+StartFreshMoverCreator::keyname() const
+{
+	return StartFreshMoverCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+StartFreshMoverCreator::create_mover() const {
+	return new StartFreshMover;
+}
+
+std::string
+StartFreshMoverCreator::mover_name()
+{
+	return "StartFresh";
+}
 } // simple_moves
 } // protocols
 

@@ -25,7 +25,14 @@ namespace devel{
         typedef utility::pointer::owning_ptr< FoldUnitUtils > FoldUnitUtilsOP;
         typedef utility::pointer::owning_ptr< FoldUnitUtils const > FoldUnitUtilsCOP;
 
-    } // simple_moves
-} // protocols
+				class PoseFragmentInfo;
+        typedef utility::pointer::owning_ptr< PoseFragmentInfo > PoseFragmentInfoOP;
+        typedef utility::pointer::owning_ptr< PoseFragmentInfo const > PoseFragmentInfoCOP;
 
-#endif // INCLUDED_protocols_simple_moves_AddFoldUnitMover_fwd_hh
+				class StartFreshMover;
+        typedef utility::pointer::owning_ptr< StartFreshMover > StartFreshMoverOP;
+        typedef utility::pointer::owning_ptr< StartFreshMover const > StartFreshMoverCOP;
+    }
+}
+
+#endif
