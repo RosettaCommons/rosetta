@@ -729,9 +729,11 @@ def buildModules(paths, dest, include_paths, libpaths, runtime_libpaths, gccxml_
             if dir_name.find('.svn') >= 0: continue  # exclude all svn related namespaces
 
             if Options.build_all:
-                if exclude.isBanned(dir_name):
-                    if Options.verbose: print 'Dir %s is banned! Skipping...' % dir_name
-                    continue
+                pass
+                # Moved inside ModuleBuilder
+                # if exclude.isBanned(dir_name):
+                #     if Options.verbose: print 'Dir %s is banned! Skipping...' % dir_name
+                #     continue
             else:
                 if dir_name in IncludeDict:
                     if not IncludeDict[dir_name][0]:
@@ -1505,6 +1507,10 @@ class ModuleBuilder:
                     ] if os.path.isdir(path) else []
 
         #if path == 'rosetta': self.headers.append('_main_.hpp')  # special case for monolith main
+
+        if exclude.isBanned(path):
+            self.headers = []
+            if Options.verbose: print 'Dir %s is banned! Skipping...' % path
 
         self.headers.sort()
 
