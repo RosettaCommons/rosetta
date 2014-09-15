@@ -137,6 +137,9 @@ options = {
         # Enable HDF5 file stores
         "hdf5",
 
+	# Build with C++11
+	"cxx11",
+	
         # Build with the C++11 thread utilities enabled
         "cxx11thread",
 

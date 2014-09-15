@@ -617,7 +617,7 @@ settings = {
             "defines" : [
                 "NDEBUG",
                 "PYROSETTA",
-                'BOOST_THREAD_DONT_USE_CHRONO'
+                'BOOST_THREAD_DONT_USE_CHRONO',
             ],
         },
     },
@@ -1161,6 +1161,23 @@ settings = {
         },
     },
 
+    "gcc, cxx11" : {
+        "appends" : {
+            "flags" : {
+                "cxx" : [ "std=c++11" ],
+            },
+            "defines" : [
+                "CXX11",
+            ],
+        },
+        "removes" : {
+            "flags" : {
+                "cxx" : [ "std=c++98", "std=c++0x" ],
+            },
+            "defines" : [
+            ]
+        },
+    },
 
     "gcc, cxx11thread" : {
         "appends" : {
@@ -1939,6 +1956,24 @@ settings = {
 
 
     # extras ##################################################################
+
+    "clang, cxx11" : {
+        "appends" : {
+            "flags" : {
+                "cxx" : [ "std=c++11" ],
+            },
+            "defines" : [
+                "CXX11",
+            ],
+        },
+        "removes" : {
+            "flags" : {
+                "cxx" : [ "std=c++98", "std=c++0x" ],
+            },
+            "defines" : [
+            ],
+        },
+    },
 
     "clang, graphics" : {
         "appends" : {
