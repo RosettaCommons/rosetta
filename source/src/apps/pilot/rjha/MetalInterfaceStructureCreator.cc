@@ -148,7 +148,6 @@ main( int argc, char* argv[] )
 
 	core::pose::Pose partner1;
 	core::io::pdb::pose_from_pdb( partner1, basic::options::option[devel::MetalInterface::partner1].value() );
->>>>>>> origin/master
 	core::Size const partner1length = partner1.total_residue();
 
 	//combined partner1 and partner2 into RMS_target pose (their coordinates are generated from another program and are in some sense "correct")
