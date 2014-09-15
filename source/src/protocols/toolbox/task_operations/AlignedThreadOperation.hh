@@ -59,12 +59,16 @@ public:
 
 	std::string query_name() const{ return query_name_; }
 	void query_name( std::string const s ){ query_name_ = s; }
+	
+	std::string template_name() const{ return template_name_; }
+  void template_name( std::string const s ){ template_name_ = s; }
 
 	void start_res( core::Size const s ){ start_res_ = s ; }
 	core::Size start_res() const{ return start_res_;}
 private:
 	std::string alignment_file_; //dflt ""
 	std::string query_name_; //dflt "" ; the name of the sequence to thread on -s structure
+	std::string template_name_;
 	core::Size start_res_; //dflt 1; where does the alignment start
 };
 

@@ -48,6 +48,7 @@ AlignedThreadOperation::AlignedThreadOperation() :
 	parent(),
 	alignment_file_( "" ),
 	query_name_( "" ),
+	template_name_( "" ),
 	start_res_( 1 )
 {}
 
@@ -85,12 +86,19 @@ AlignedThreadOperation::apply( core::pose::Pose const & pose, core::pack::task::
 				query_seq += line;
 			}
 		}
-		else{
+		else if( line.substr(1, template_name().length() ) == template_name() ){
 			while( data ){
 				getline( data, line );
 				if( line[0] == '>' )
 					break;
 				template_seq += line;
+			}
+		}
+		else {
+			while( data ){
+				getline( data, line );
+				if( line[0] == '>' )
+					break;
 			}
 		}
 	}
@@ -119,6 +127,7 @@ AlignedThreadOperation::parse_tag( TagCOP tag , DataMap & )
 {
 	alignment_file( tag->getOption< std::string >("alignment_file" ) );
 	query_name( tag->getOption< std::string >("query_name" ));
+	template_name( tag->getOption< std::string >("template_name" ));
 	start_res( tag->getOption< core::Size >( "start_res", 1 ) );
 
 	TR<<"Aligned thread with options: alignment_file: "<<alignment_file()<<" query_name: "<<query_name()<<" start_res: "<<start_res()<<std::endl;
