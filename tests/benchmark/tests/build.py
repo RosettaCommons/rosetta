@@ -68,7 +68,7 @@ def run_test(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, 
     # re-running builds in case we got error - so we can get nice error message
     if res and tests[test].incremental:  res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, tests[test].command.format(compiler=compiler, jobs=1, extras=extras)), return_='tuple')
 
-    file(working_dir+'/build-log.txt', 'w').write(output)
+    file(working_dir+'/build-log.txt', 'w').write( 'Running: {}\n{}\n'.format(command_line, output) )
 
     res_code = _S_failed_ if res else _S_finished_
 
