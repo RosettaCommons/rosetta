@@ -32,6 +32,7 @@
 #include <devel/splice/SpliceSegment.hh>
 #include <devel/splice/TailSegmentMover.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
+#include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
 #include <devel/splice/SpliceCreator.hh>
 #include <utility/string_util.hh>
 #include <utility/exit.hh>
@@ -486,6 +487,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					runtime_assert(template_to_res);
 				}
 
+
 				from_res(template_from_res);
 				to_res(template_to_res);
 			} // fi template_file != ""
@@ -668,16 +670,16 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				nearest_to_to = dofs.size(); /// nearest_to_to and nearest_to_from are used below to compute the difference in residue numbers...
 				nearest_to_from = 1;
 				/// set from_res/to_res/cut_site on the incoming pose
-				if (template_file_ != "" && !skip_alignment() ) { /// according to the template pose
+				if (template_file_ != "" && !skip_alignment() && from_res() && to_res() ) { /// according to the template pose
 					//			to_res( from_res() + dofs.size() -1);
 					runtime_assert(from_res());
 					runtime_assert(to_res());
 					cut_site = dofs.cut_site() - dofs.start_loop() + from_res();
 					TR << "cut_size before randomize cut:" << cut_site << std::endl;
 				} // fi template_file != ""
-				else { /// according to the dofs array (taken from the dbase)
-					from_res(dofs.start_loop());
-					to_res(dofs.stop_loop());
+				else if (torsion_database_fname_ != "") {  /// according to the dofs array (taken from the dbase)
+					from_res(find_nearest_res(pose,pose,dofs.start_loop(),1));
+					to_res(find_nearest_res(pose,pose,dofs.stop_loop(),1));
 					cut_site = dofs.cut_site();
 					runtime_assert(from_res() && to_res() && cut_site);
 				}
@@ -766,14 +768,12 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				else if (segment_type_=="H3"){
 						core::conformation::Conformation const & conf(pose.conformation());
 						llc.tail(1);
-						TR << "Loop end is " << conf.chain_end(1) << " residue diff " << residue_diff << std::endl;
 						if ( residue_diff < 0)
 							llc.loop_end(conf.chain_end(1)+residue_diff);
 						else
 							llc.loop_end(conf.chain_end(1));//Asuming that the ligand is chain 2;
 
-						//TR << "DEBUG For H3 I set the end to " << conf.chain_end(1) << std::endl;
-						
+
 				}
 				else
 				utility_exit_with_message("Attempting to copy c-ter tail stretch from source PDB but segment type is not H3 or L3. Failing\n");
@@ -1087,6 +1087,14 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				}
 				TR << std::endl;
 
+				utility::vector1<core::Size> packable_residues = residue_packer_states(pose, tf, true, true);
+				TR << "Residues Allowed to Repack: "<< std::endl;
+				for (utility::vector1<core::Size>::const_iterator i(packable_residues.begin());
+						i != packable_residues.end(); ++i) {
+					TR << *i << "+";
+				}
+				TR << std::endl;
+
 				/*utility::vector1< core::Size > packable_residues = residue_packer_states (pose,tf, false, true);
 				 TR<<"Residues Allowed to Repack:"<<std::endl;
 				 for (utility::vector1<core::Size>::const_iterator i (packable_residues.begin()); i != packable_residues.end(); ++i) {
@@ -1300,6 +1308,37 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					tsm.apply(pose);
 
 				} //fi "tail_segment"
+				//Doing prm after ccd to resolve strain on sc, gideonla 100914
+				pose.remove_constraints();//remove coor/dih constraints before rtmin
+				add_sequence_constraints(pose);
+				if (rtmin()) {		//To prevent rtmin when not needed - Assaf Alon
+					TR<<"Score function before rtmin:"<<std::endl;
+					scorefxn()->show(pose);
+					TaskFactoryOP tf_in = new TaskFactory(*design_task_factory());
+					tf_in->push_back(new operation::NoRepackDisulfides);
+					if (conf.num_chains()>1)
+						tf_in->push_back(new PreventChainFromRepackingOperation(2));
+
+					PackerTaskOP ptask = tf_in()->create_task_and_apply_taskoperations(pose);
+					protocols::simple_moves::PackRotamersMover prm(scorefxn(), ptask);
+					utility::vector1<core::Size> Repackable_residues = residue_packer_states(pose, tf_in, 0, 1);
+					TR << "Residues Allowed to Repack: "<< std::endl;
+					for (utility::vector1<core::Size>::const_iterator i(Repackable_residues.begin());
+							i != Repackable_residues.end(); ++i) {
+						TR << *i << "+";
+					}
+					TR << std::endl;
+					prm.apply(pose);
+					/*TaskFactoryOP tf_rtmin = new TaskFactory(*tf);//this taskfactory (tf_rttmin) is only used here. I don't want to affect other places in splice, gideonla aug13
+					tf_rtmin->push_back(new operation::RestrictToRepacking()); //W don't rtmin to do design
+					ptask = tf_rtmin()->create_task_and_apply_taskoperations(pose);
+					protocols::simple_moves::RotamerTrialsMinMover rtmin(scorefxn(), *ptask);
+					rtmin.apply(pose);*/
+					if (debug_)
+						pose.dump_pdb(mover_name_+"_rtmin_after_ccd.pdb");
+					TR<<"Score functioin after rtmin:"<<std::endl;
+					scorefxn()->show(pose);
+				}
 				//pose.dump_pdb("after_tail_segemtn_mover.pdb");
 				/// following ccd, compute rmsd to source loop to ensure that you haven't moved too much. This is a pretty decent filter
 //				if( !superimposed() )
@@ -2567,19 +2606,20 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 			std::set_intersection(allowed_aas_names.begin(),allowed_aas_names.end(),aromatic_and_his.begin(),aromatic_and_his.end(),back_inserter(intersect));
 			TR<<"size of intersect is"<<intersect.size()<<std::endl;
 			if ((allowed_aas_names.size()==1) && (pose.residue(i).name3()!="GLY")&&(pose.residue(i).name3()==source_pose.residue(i+res_diff).name3())){//Apply when we have strict conservation
-				std::vector <core::Size> chi_vec;
-				chi_vec.clear();
+				//change chi to match the source pdb
 				for (core::Size chi=1;chi<source_pose.residue(i + res_diff).nchi();chi++){
 					core::Real const chi_curr=source_pose.chi(chi,i + res_diff);
 					pose.set_chi(chi,i,chi_curr);
-					utility::vector1< core::Size > const chiAtoms=pose.residue(i).chi_atoms(chi);//get chi atoms from chi angle so we can apply coordiante constraints
-					for (core::Size chiAtom=1;chiAtom<=4; chiAtom++){
+				}
+				for (core::Size atmnum=source_pose.residue(i + res_diff).first_sidechain_atom(); atmnum<=source_pose.residue(i + res_diff).natoms();atmnum++){
+						if (source_pose.residue(i + res_diff).atom_is_hydrogen(atmnum))
+							continue;
 						core::scoring::func::FuncOP coor_cont_fun = new core::scoring::func::HarmonicFunc(0.0, 1);
-						TR_constraints<<"Applying constraints to chi_atom:"<<chiAtoms[chiAtom]<<pose.residue(i).atom_name(chiAtoms[chiAtom])<<",of residue "<<pose.residue(i).name3()<<i<<std::endl;
-						cst.push_back(new core::scoring::constraints::CoordinateConstraint(core::id::AtomID(chiAtoms[chiAtom], i),anchor_atom, source_pose.residue(i + res_diff).xyz(chiAtoms[chiAtom]), coor_cont_fun));
+						TR_constraints<<"Applying constraints to atom:"<<pose.residue(i).atom_name(atmnum)<<",of residue "<<pose.residue(i).name3()<<i;
+						TR_constraints<<"Taking xyz coordinates from atom:"<<source_pose.residue(i + res_diff).xyz(atmnum)[0]<<"(x),"<<source_pose.residue(i + res_diff).xyz(atmnum)[1]<<"(y),"<<source_pose.residue(i + res_diff).xyz(atmnum)[2]<<"(z), pose atom xyz: "<<pose.residue(i).xyz(atmnum)[0]<<std::endl;
+						cst.push_back(new core::scoring::constraints::CoordinateConstraint(core::id::AtomID(atmnum, i),anchor_atom, source_pose.residue(i + res_diff).xyz(atmnum), coor_cont_fun));
 						pose.add_constraints(cst);
-					}//for chiAtom
-					}//for chi
+					}//for atom_it
 				using namespace std;
 				string String = static_cast<ostringstream*>( &(ostringstream() << i) )->str();
 				if (debug_)
@@ -2587,8 +2627,7 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 
 			}
 			else if ((intersect.size()==allowed_aas_names.size())&&(std::find(aromatic_and_his.begin(), aromatic_and_his.end(),source_pose.residue(i + res_diff).name1())!=aromatic_and_his.end())){//if same size then all allowed identities are in the aromatic vector
-				std::vector <core::Size> chi_vec;
-				chi_vec.clear();
+
 				for (core::Size chi=1;chi<source_pose.residue(i + res_diff).nchi();chi++){
 					core::Real const chi_curr=source_pose.chi(chi,i + res_diff);
 					pose.set_chi(chi,i,chi_curr);
