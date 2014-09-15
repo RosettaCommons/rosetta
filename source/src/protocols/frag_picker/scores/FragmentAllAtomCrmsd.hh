@@ -62,7 +62,8 @@ public:
 private:
 	std::string cached_scores_id_;
 	Size total_ref_resids_;
-	Size frag_resids_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// Size frag_resids_;
 	std::string query_sequence_;
 	pose::PoseOP reference_pose_;
 	pose::PoseOP fragment_pose_;

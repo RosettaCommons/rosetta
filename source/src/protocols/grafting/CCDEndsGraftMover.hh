@@ -107,7 +107,7 @@ public:
 public:
 	
 	std::string
-	get_name();
+	get_name() const;
 	
 	protocols::moves::MoverOP
 	clone() const;

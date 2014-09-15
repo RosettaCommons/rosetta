@@ -82,7 +82,8 @@ private:
 private:
 
 	core::Real zeta_;
-	core::Real epsilon_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// core::Real epsilon_;
 	core::Real indirect_numerator_; // (zeta - epsilon) / (zeta + epsilon)
 	core::Real epsilon_0_;
 	std::list<ChargeAtom> charge_atom_list_;

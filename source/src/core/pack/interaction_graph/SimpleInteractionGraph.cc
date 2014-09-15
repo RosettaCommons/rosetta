@@ -49,7 +49,7 @@ static basic::Tracer TR("core.pack.interaction_graph.SimpleInteractionGraph");
 SimpleNode::SimpleNode( Graph* owner, Size node_id ):
 	Node( owner, node_id  ),
 	moved_(false),
-	resnum_( node_id ),
+	// resnum_( node_id ),
 	current_one_body_energy_(0),
 	alternate_one_body_energy_(0)
 {
@@ -326,7 +326,7 @@ SimpleNode::calc_sc_radius( conformation::Residue const & res, Vector const & ce
 
 SimpleEdge::SimpleEdge( Graph* owner, Size res1, Size res2 ):
 	Edge( owner, res1, res2 ),
-	long_range_energies_exist_( false ),
+	// long_range_energies_exist_( false ),
 	current_energy_(0),
 	proposed_energy_(0)
 {
@@ -525,8 +525,8 @@ SimpleEdge::bb_bbE( Size ind1, Size ind2 ) const
 SimpleInteractionGraph::SimpleInteractionGraph() :
 	Graph(),
 	sfxn_(),
-	pose_(),
-	accumulated_ediff_(0)
+	pose_()
+	// accumulated_ediff_(0)
 {}
 
 SimpleInteractionGraph::~SimpleInteractionGraph() {}

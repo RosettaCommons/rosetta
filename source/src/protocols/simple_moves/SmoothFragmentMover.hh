@@ -109,7 +109,8 @@ private:
 	FragmentCostOP cost_;
 
 	// choose randomly fragments that are below cutoff_
-	core::Real cutoff_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// core::Real cutoff_;
 
 };
 

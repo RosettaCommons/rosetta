@@ -119,7 +119,8 @@ private:
 	MembraneData const & mpdata_;
 	
 	// icnlude penalties
-	bool penalties_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// bool penalties_;
 	
 	// Versioning
 	virtual

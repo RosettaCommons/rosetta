@@ -62,7 +62,8 @@ using core::Size;
 
 class TMalign {
 private:
-	char version[20];
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// char version[20];
 	double D0_MIN;
 	double Lnorm;                                           //normalization length
 	double score_d8, d0, d0_search, dcu0;                   //for TMscore search
@@ -85,9 +86,11 @@ private:
 	double d0_out_;
 
 	//argument variables
-	double Lnorm_ass, Lnorm_d0, d0_scale, d0A, d0B, d0u, d0a;
-	bool o_opt, a_opt, u_opt, d_opt, v_opt;
-	double TM3, TM4, TM5;
+	double d0A, d0B;
+	// KAB - below variables commented out (-Wunused-private-field) on 2014-09-11
+	// double Lnorm_ass, d0u, d0_scale, d0a, Lnorm_d0;
+	// bool o_opt, a_opt, u_opt, d_opt, v_opt;
+	// double TM3, TM4, TM5;
 
 public:
 	void PrintErrorAndQuit(std::string sErrorString) {

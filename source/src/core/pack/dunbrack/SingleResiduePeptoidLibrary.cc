@@ -55,7 +55,7 @@ namespace pack {
 namespace dunbrack {
 
 static basic::Tracer SRPL_TR("core.pack.dunbrack");
-static const Real MIN_ROT_PROB = 1.e-8;
+// static const Real MIN_ROT_PROB = 1.e-8; - KAB - unused variable
 
 Real const SingleResiduePeptoidLibrary::NEUTRAL_OMG = 180; // DOUG DOUG DOUG: Need to determine good values for peptoids
 Real const SingleResiduePeptoidLibrary::NEUTRAL_PHI = -90; // DOUG DOUG DOUG: Need to determine good values for peptoids

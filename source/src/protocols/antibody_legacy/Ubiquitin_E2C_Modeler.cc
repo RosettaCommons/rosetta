@@ -124,7 +124,7 @@ ubi_e2c_modeler::ubi_e2c_modeler() : Mover(),
 	fullatom_non_CSP_weight_( 1000.0 ),
 	cen_vdw_( 1.00 ),
 	cen_constraint_( 10.00 ),
-	full_vdw_( 1.00 ),
+  // full_vdw_( 1.00 ),
 	refinement_mode_( false ), // false for initial run
 	cov_bond_only_flag_( true ), // false for initial run
 	monoub_mode_( false ), // false for our model system ::: SET THIS TO FALSE

@@ -119,7 +119,8 @@ private:
 	core::Size lookup_radius_;
 	Pose const & pose1_,pose2_;
 	TermInfo lowers1_,uppers1_,lowers2_,uppers2_;
-	Real max_dis2_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// Real max_dis2_;
 	std::string outtag_;
 };
 
@@ -143,8 +144,11 @@ public:
 	core::Real score( Xforms const & x1, Xforms const & x2 ) const;
 	std::string type() const { return "ConstraintSetScore"; }
 private:
-	Pose const & pose1_,pose2_;
-	core::scoring::constraints::ConstraintSet const & cstset_;
+        // KAB - below variables commented out (-Wunused-private-field) on 2014-09-11
+        // Pose const & pose1_;
+	// Pose const & pose2_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// core::scoring::constraints::ConstraintSet const & cstset_;
 	core::scoring::constraints::ConstraintCOPs const csts_;
 	boost::unordered_map<core::id::AtomID,Vec,AtomIDHashFunction> start_coords_;
 };
@@ -199,7 +203,8 @@ public:
 private:
 	Scores scores_;
 	Reals weights_;
-  Real minscore_hack_,maxscore_hack_;
+  // KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+  // Real minscore_hack_,maxscore_hack_;
 
 };
 

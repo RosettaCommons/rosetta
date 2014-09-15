@@ -600,7 +600,7 @@ RotamericSingleResiduePeptoidLibrary< T >::find_another_representative_for_unlik
 		omgbin, phibin, psibin, omgbin_next, phibin_next, psibin_next, omg_alpha, phi_alpha, psi_alpha );
 
 	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T > > const & rotamers_array( rotamers( 	get_omg_from_rsd( rsd ) ) );
-	ObjexxFCL::FArray4D< Size > const & packed_rotno_2_sorted_rotno_array( packed_rotno_2_sorted_rotno( get_omg_from_rsd( rsd ) ) );
+	//ObjexxFCL::FArray4D< Size > const & packed_rotno_2_sorted_rotno_array( packed_rotno_2_sorted_rotno( get_omg_from_rsd( rsd ) ) );
 
 	Size packed_rotno = rotamers_array( omgbin, phibin, psibin, 1 ).packed_rotno();
 	packed_rotno_2_rotwell( packed_rotno, rotwell );

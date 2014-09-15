@@ -341,7 +341,7 @@ RigidBodyPerturbRandomJumpMover::apply(core::pose::Pose& pose)
 }
 
 std::string
-RigidBodyPerturbRandomJumpMover::get_name(){
+RigidBodyPerturbRandomJumpMover::get_name() const {
 	return "RigidBodyPerturbRandomJumpMover";
 }
 

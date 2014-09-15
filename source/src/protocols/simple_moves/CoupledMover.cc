@@ -228,7 +228,7 @@ void CoupledMover::set_rotation_std_dev( core::Real rotation_std_dev ) {
 	rotation_std_dev_ = rotation_std_dev; 
 	short_backrub_mover_->set_rotation_std_dev(rotation_std_dev);
 }
-void CoupledMover::set_input_pose( core::pose::PoseOP pose ) {
+void CoupledMover::set_input_pose( core::pose::PoseCOP pose ) {
 	short_backrub_mover_->set_input_pose(pose);
 }
 void CoupledMover::set_temperature( core::Real temperature ) {

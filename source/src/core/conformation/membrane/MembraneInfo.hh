@@ -223,7 +223,8 @@ private: // data
 	
 	// membrane residue number in the pose
 	core::Size membrane_rsd_num_;
-	core::Size anchoring_rsd_num_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// core::Size anchoring_rsd_num_;
 	
 	// membrane jump position
 	core::SSize membrane_jump_;

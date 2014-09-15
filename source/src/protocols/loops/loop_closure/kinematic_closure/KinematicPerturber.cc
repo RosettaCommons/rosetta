@@ -849,7 +849,7 @@ TorsionRestrictedKinematicPerturber::TorsionRestrictedKinematicPerturber(
 	// if the torsion string is lowercase we use cis, otherwise trans -- note that this flag is used by
 	// the parent::set_pose_after_closure function and thus needs to be set to true, otherwise omega
 	// will be ignored -- this should be fixed in the future though
-	sample_omega_for_pre_prolines_( true ),
+	// sample_omega_for_pre_prolines_( true ),
 	rama_( core::scoring::ScoringManager::get_instance()->get_Ramachandran() )
 {
 	set_kinmover( kinmover_in );

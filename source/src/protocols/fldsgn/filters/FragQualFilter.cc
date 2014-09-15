@@ -46,8 +46,8 @@ namespace filters {
 FragQualFilter::FragQualFilter():
 	Filter( "FragQual" ),
 	filtered_type_( "num_goodfrag" ),
-	filtered_value_( 0.0 ),
-	rmsd_cutoff_( 1.0 )
+	filtered_value_( 0.0 )
+	// rmsd_cutoff_( 1.0 )
 {}
 
 // @brief copy constructor
@@ -55,8 +55,8 @@ FragQualFilter::FragQualFilter( FragQualFilter const & rval ):
 	//utility::pointer::ReferenceCount(),
 	Super( rval ),
 	filtered_type_( rval.filtered_type_ ),
-	filtered_value_( rval.filtered_value_ ),
-	rmsd_cutoff_( 1.0 )
+	filtered_value_( rval.filtered_value_ )
+	// rmsd_cutoff_( 1.0 )
 {}
 
 // @brief set filtered value

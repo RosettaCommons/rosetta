@@ -131,7 +131,8 @@ private:
 	index_for_new_match( Real score );
 
 private:
-	Size const n_top_matches_to_keep_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// Size const n_top_matches_to_keep_;
 	bool const dspos1_mode_; // store matches or match_dspos1s?
 
 

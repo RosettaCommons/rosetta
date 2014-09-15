@@ -54,7 +54,7 @@ namespace canonical_sampling {
 namespace mc_convergence_checks {
 
   static basic::Tracer TR("HierarchicalLevel");
-  core::Real const MAX_RADIUS = 9999;
+  //core::Real const MAX_RADIUS = 9999; - KAB - unused variable
 
   using namespace basic;
 

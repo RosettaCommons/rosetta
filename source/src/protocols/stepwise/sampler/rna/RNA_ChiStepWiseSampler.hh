@@ -93,7 +93,8 @@ private:
 	ChiState base_state_;
 	PuckerState pucker_state_;
 	core::Real bin_size_, max_range_;
-	bool extra_chi_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// bool extra_chi_;
 
 	core::chemical::rna::RNA_FittedTorsionInfo const torsion_info_;
 };

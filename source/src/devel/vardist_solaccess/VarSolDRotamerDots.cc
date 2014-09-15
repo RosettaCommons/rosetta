@@ -708,8 +708,8 @@ void VarSolDRotamerDots::write_dot(
 
 
 VarSolDistSasaCalculator::VarSolDistSasaCalculator():
-	probe_radius_(0),
-	wobble_(0),
+	// probe_radius_(0),
+	// wobble_(0),
 	num_bytes_(21),
 	lg_masks_(0),
 	lg_angles_(0)
@@ -818,7 +818,7 @@ VarSolDistSasaCalculator::recompute( core::pose::Pose const & this_pose )
 
 	rotamer_dots_vec_.resize( this_pose.total_residue() );
 	residue_sasa_.resize( this_pose.total_residue() );
-	TR << "Initializing vSASA arrays with probe radius = " << probe_radius_ << " and wobble = " << wobble_ << std::endl;
+	// TR << "Initializing vSASA arrays with probe radius = " << probe_radius_ << " and wobble = " << wobble_ << std::endl;
 	for ( Size ii = 1; ii <= this_pose.total_residue(); ++ii ) {
 		rotamer_dots_vec_[ ii ] = new VarSolDRotamerDots(
 				new core::conformation::Residue(this_pose.residue( ii ) ), *this );
@@ -854,10 +854,10 @@ std::string LoadVarSolDistSasaCalculatorMoverCreator::keyname() const
 	return "LoadVarSolDistSasaCalculatorMover";
 }
 
-LoadVarSolDistSasaCalculatorMover::LoadVarSolDistSasaCalculatorMover(Real probe_radius, Real wobble) :
-	protocols::moves::Mover( "LoadVarSolDistSasaCalculatorMover" ),
-	probe_radius_(probe_radius),
-	wobble_(wobble)
+LoadVarSolDistSasaCalculatorMover::LoadVarSolDistSasaCalculatorMover(Real /*probe_radius*/, Real /*wobble*/) :
+	protocols::moves::Mover( "LoadVarSolDistSasaCalculatorMover" )
+	// probe_radius_(probe_radius),
+	// wobble_(wobble)
 {}
 
 LoadVarSolDistSasaCalculatorMover::~LoadVarSolDistSasaCalculatorMover()

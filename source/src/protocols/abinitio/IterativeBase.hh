@@ -353,7 +353,8 @@ private:
 	boost::hash<std::string> hasher;
 
 	///@brief even in centroid mode the end of abinitio will have a fast relax... enables cs-score and noe-assignment
-	bool recover_centroid_structure_for_pool_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// bool recover_centroid_structure_for_pool_;
 
 	std::string chemshift_column_;
 	bool bDoBetaJumping_;

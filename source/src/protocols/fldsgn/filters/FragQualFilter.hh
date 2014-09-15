@@ -134,7 +134,8 @@ private:
 
 	Real filtered_value_;
 
-	Real rmsd_cutoff_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// Real rmsd_cutoff_;
 
 
 };

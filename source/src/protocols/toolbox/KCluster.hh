@@ -190,7 +190,8 @@ private:
     ClusterNdxList center_ndx_; //the data ndx of each cluster center
     utility::vector1< KClusterElementOP > subclusters_; //array of sub-cluster
 
-	core::Size n_data_; //number of data
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// core::Size n_data_; //number of data
     core::Real max_distance_; //save the farest data's d
     core::Size max_dist_ndx_; //save the farest data's ndx
 

@@ -77,8 +77,8 @@ MPEnvEnergyCreator::score_types_for_method() const {
 /// @brief Default Constructor
 MPEnvEnergy::MPEnvEnergy() :
 	parent( new MPEnvEnergyCreator ),
-	mpdata_( ScoringManager::get_instance()->get_MembraneData() ),
-	penalties_( true )
+	mpdata_( ScoringManager::get_instance()->get_MembraneData() )
+	// penalties_( true )
 {}
 
 /// @brief Clone an Energy Method

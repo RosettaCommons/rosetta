@@ -44,18 +44,19 @@ public: //constructor / destructor
 
   ~EnzdesJobOutputter();
 
-	void final_pose( protocols::jd2::JobOP job, core::pose::Pose const & pose, std::string const tag );
+	virtual void final_pose( protocols::jd2::JobOP job, core::pose::Pose const & pose, std::string const & tag );
 
-	bool job_has_completed( protocols::jd2::JobOP job );
+	virtual bool job_has_completed( protocols::jd2::JobCOP job );
 
 protected: //Job Outputter interface
 
-  void scorefile(
-    protocols::jd2::JobCOP job,
-    core::pose::Pose const & pose,
-    std::string tag = "",
-    std::string scorefile = ""
- );
+	virtual void scorefile(
+			protocols::jd2::JobCOP job,
+			core::pose::Pose const & pose,
+			std::string tag = "",
+			std::string suffix_tag = "",
+			std::string scorefile = ""
+	);
 
 private: //data
 

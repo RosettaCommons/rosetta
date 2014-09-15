@@ -143,7 +143,8 @@ private:
 
 private:
 	bool moved_;
-	Size resnum_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// Size resnum_;
 	Real current_one_body_energy_;
 	Real alternate_one_body_energy_;
 
@@ -234,8 +235,10 @@ private:
 
 
 private:
-	bool short_range_energies_exist_; // only evaluate short-range energies for edges between nearby residues
-	bool long_range_energies_exist_; // only evaluate long range energies for edges that have them
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// bool short_range_energies_exist_; // only evaluate short-range energies for edges between nearby residues
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// bool long_range_energies_exist_; // only evaluate long range energies for edges that have them
 
 	Real current_energy_;
 	Real proposed_energy_;
@@ -316,7 +319,8 @@ private:
 
 	scoring::ScoreFunctionOP sfxn_;
 	pose::PoseCOP pose_;
-	Real accumulated_ediff_; //since data stored in energies
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// Real accumulated_ediff_; //since data stored in energies
   //object, need to subtract out diffs
 
 }; //SimpleInteractionGraph

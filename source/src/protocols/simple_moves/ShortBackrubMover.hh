@@ -65,7 +65,7 @@ public:
 	void set_resnum( core::Size resnum );
 	void set_rotation_std_dev( core::Real rotation_std_dev );
 	void set_randomize_resnum( bool randomize_resnum );
-	void set_input_pose( core::pose::PoseOP pose );
+	virtual void set_input_pose( core::pose::PoseCOP pose );
 	
 	// getters
 	core::Size get_resnum() const;

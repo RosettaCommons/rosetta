@@ -1352,8 +1352,8 @@ namespace motif_hash {
 	}
 
 
-	XfragSet::XfragSet(core::Real cartsize, core::Real cartresl, core::Real angleresl)
-	 : cart_size_(cartsize), cart_resl_(cartresl), angle_resl_(angleresl),
+	XfragSet::XfragSet(core::Real /*cartsize*/, core::Real cartresl, core::Real angleresl)
+	 : cart_resl_(cartresl), angle_resl_(angleresl),
 			hasher_(
 			numeric::geometry::BoundingBox<numeric::xyzVector<numeric::Real> >(
 				Vec(-basic::options::option[basic::options::OptionKeys::mh::hash_cart_size]()),

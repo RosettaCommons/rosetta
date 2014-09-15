@@ -196,7 +196,8 @@ private:
 	///@brief keep track wether cached scores in _archive_select_score_ are up-to-date
 	mutable bool scores_are_clean_; //false after add_evaluation or change of scorefxn_
 
-	mutable bool score_variations_are_clean_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// mutable bool score_variations_are_clean_;
 
 	///@brief local evaluation or is evaluation outsourced to slave nodes?
 	bool b_evaluate_incoming_decoys_;

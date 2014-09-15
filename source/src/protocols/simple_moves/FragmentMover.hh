@@ -49,8 +49,7 @@ class FragmentMover : public moves::MoveMapMover {
 public:
 	~FragmentMover();
 
-	///@brief choose and insert a fragment --> has to be overloaded
-	virtual void apply( core::pose::Pose& ) = 0;
+	using Parent::apply;
 
 	///@brief apply a fragment at pos to movemable dofs
 	virtual bool apply( core::pose::Pose&, Size pos ) const; // apply fragment at seqpos ( if possible )
@@ -142,6 +141,8 @@ public:
 
 	~ClassicFragmentMover();
 
+	using FragmentMover::apply;
+
 	/// @brief Applies classic fragment insertion based on a FragSet
 	///
 	/// example:
@@ -150,7 +151,7 @@ public:
 	///     ClassicFragmentMover
 	///     Pose
 	///     ConstantLengthFragSet
-	void apply( core::pose::Pose & );
+	virtual void apply( core::pose::Pose & );
 
 	virtual std::string get_name() const;
 	virtual void show(std::ostream & output=std::cout) const;

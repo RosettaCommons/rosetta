@@ -60,8 +60,8 @@ using namespace core;
 */
 
 JumpEvaluator::JumpEvaluator( pose::Pose const& native_pose, Size jump_nr ) :
-	evaluation::SingleValuePoseEvaluator< core::Real >( "RT_"+ObjexxFCL::string_of( jump_nr ) ),
-	jump_nr_( jump_nr )
+	evaluation::SingleValuePoseEvaluator< core::Real >( "RT_"+ObjexxFCL::string_of( jump_nr ) )
+	// jump_nr_( jump_nr )
 {
 	using namespace kinematics;
 	kinematics::Edge jump_edge = native_pose.fold_tree().jump_edge( jump_nr );

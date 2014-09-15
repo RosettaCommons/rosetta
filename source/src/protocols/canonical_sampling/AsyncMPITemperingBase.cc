@@ -66,15 +66,17 @@ namespace canonical_sampling {
 using namespace core;
 
 //int const mpi_LEVEL_INFORM = 1;
+int const mpi_size_XCHANGE_READY = 2;
+int const mpi_size_SWAP_INVITE = 1;
+int const mpi_size_FINISHED = 1;
+#ifdef USEMPI
 int const mpi_magic_number = 100;
 int const mpi_XCHANGE_READY = 1 + mpi_magic_number;
-int const mpi_size_XCHANGE_READY = 2;
-int const mpi_SWAP_INVITE = 2 + mpi_magic_number;
-int const mpi_size_SWAP_INVITE = 1;
 int const mpi_FINISHED = 3 + mpi_magic_number;
-int const mpi_size_FINISHED = 1;
 int const mpi_FINISHED_ACK = 4 + mpi_magic_number;
 int const mpi_size_FINISHED_ACK = 1;
+int const mpi_SWAP_INVITE = 2 + mpi_magic_number;
+#endif
 
 AsyncMPITemperingBase::AsyncMPITemperingBase() :
 	rank_( -1 ),

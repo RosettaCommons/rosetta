@@ -91,7 +91,9 @@ namespace motif_hash {
 	using numeric::geometry::hashing::Real6;
 
 	class ResPairMotif;
-	class MotifHit;
+	// KAB - commenting out class definition to remove warning:
+	// 'MotifHit' defined as a struct here but previously declared as a class [-Wmismatched-tags]
+	// class MotifHit;
 	class MotifHits;
 	class MotifRotamerSetOperation;
 	typedef utility::pointer::owning_ptr<MotifRotamerSetOperation      > MotifRotamerSetOperationOP;
@@ -364,7 +366,11 @@ public:
 		typedef numeric::geometry::hashing::SixDCoordinateBinner SixDCoordinateBinner;
 		typedef numeric::geometry::hashing::bin_index_hasher bin_index_hasher;
 		typedef boost::unordered_multimap< Key, Xfrag, bin_index_hasher > XfragMap;
-		double const cart_size_,cart_resl_,angle_resl_;
+
+		double const cart_resl_, angle_resl_;
+		// KAB - below variable commented out (-Wunused-private-field) on 2014-09-11
+		// double const cart_size_;
+
 		SixDCoordinateBinner hasher_;
 		XfragMap xfragmap_;
 		utility::vector1<Xfres> xfres_;

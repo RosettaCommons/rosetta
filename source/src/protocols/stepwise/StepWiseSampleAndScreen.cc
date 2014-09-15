@@ -80,7 +80,7 @@ namespace stepwise {
 
 		if ( verbose_ ) {
 			TR << "Running SampleAndScreen... " << std::endl;
-			TR << std::endl; sampler_->show( TR ); TR << std::endl;
+			TR << std::endl; sampler_->show( TR, 0 ); TR << std::endl;
 		}
 
 		Size n( 0 );

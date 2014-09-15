@@ -413,7 +413,8 @@ private:
 
 	//Benchmarking
 	bool extend_native_cdrs_;
-	bool benchmark_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// bool benchmark_;
 };
 }
 }

@@ -218,7 +218,7 @@ ShortBackrubMover::get_name() const {
 void ShortBackrubMover::set_resnum( core::Size resnum ) { resnum_ = resnum; }
 void ShortBackrubMover::set_rotation_std_dev( core::Real rotation_std_dev ) { rotation_std_dev_ = rotation_std_dev; }
 void ShortBackrubMover::set_randomize_resnum( bool randomize_resnum ) { randomize_resnum_ = randomize_resnum; }
-void ShortBackrubMover::set_input_pose( core::pose::PoseOP pose ) {
+void ShortBackrubMover::set_input_pose( core::pose::PoseCOP pose ) {
 	backrubmover_->set_input_pose(pose);
 }
 

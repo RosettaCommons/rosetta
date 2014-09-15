@@ -78,7 +78,10 @@ public:
 	) const;
 
 private:
-	double CTD,CLD,CTD2,CLD2,BIN;
+	double CLD, CLD2, BIN;
+	// KAB - below variables commented out (-Wunused-private-field) on 2014-09-11
+	// double CTD, CTD2;
+
 	xyzStripeHashPose *h1_,*h2_;
 };
 

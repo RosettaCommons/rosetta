@@ -26,6 +26,7 @@ public:
   virtual void apply( core::pose::Pose& ){}
 
   // This use of bool apply allows us to apply an aribtrary functi
+	using ClaimingMover::apply;
   virtual void apply( core::pose::Pose& pose, boost::function< void() > f ) {
     protocols::environment::DofUnlock activation( pose.conformation(), passport() );
     f();

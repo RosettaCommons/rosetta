@@ -46,7 +46,7 @@ public:
 	RigidBodyRandomTMHMover(core::Real max_trans, core::Real rotation_mag, core::Real translation_mag, core::Size tmhelix,
 							protocols::topology_broker::TopologyClaimerOP claimer);
 	void apply(core::pose::Pose& pose);
-	virtual std::string get_name();
+	virtual std::string get_name() const;
 	virtual ~RigidBodyRandomTMHMover();
 	
 private:

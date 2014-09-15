@@ -139,7 +139,8 @@ private:
 	ObjexxFCL::FArray3D< utility::vector1<numeric::xyzVector<core::Real> > > cubes_ca_;
 	numeric::xyzVector<core::Real> bbl_ca_;
 	numeric::xyzTriple< core::Size > cube_dim_ca_;
-	core::Real side_inv_ca_, neighbor_cutoff_ca_, neighbor_cutoff_sq_ca_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// core::Real side_inv_ca_, neighbor_cutoff_ca_, neighbor_cutoff_sq_ca_;
 
 };
 

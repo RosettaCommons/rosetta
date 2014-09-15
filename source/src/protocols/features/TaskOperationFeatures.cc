@@ -76,7 +76,7 @@ using core::pack::task::TaskFactoryOP;
 using core::pack::task::TaskFactoryCOP;
 using core::pack::task::TaskFactory;
 using core::pack::task::operation::TaskOperation;
-using utility::tag::TagPtr;
+using utility::tag::TagCOP;
 using cppdb::statement;
 using utility::vector1;
 using basic::Tracer;
@@ -182,7 +182,7 @@ TaskOperationFeatures::features_reporter_dependencies() const {
 
 void
 TaskOperationFeatures::parse_my_tag(
-	TagPtr const tag,
+	TagCOP tag,
 	DataMap & data,
 	Filters_map const & /*filters*/,
 	Movers_map const & /*movers*/,

@@ -182,7 +182,8 @@ private:
 	// weighting terms
 	core::Real const cen_vdw_;
 	core::Real const cen_constraint_;
-	core::Real const full_vdw_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// core::Real const full_vdw_;
 	core::Real full_constraint_; // depends on which mode being run
 	// mode
 	bool const refinement_mode_;

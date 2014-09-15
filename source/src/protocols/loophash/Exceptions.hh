@@ -44,11 +44,13 @@ class EXCN_DB_IO_Failed: public utility::excn::EXCN_Msg_Exception {
 class EXCN_Invalid_Hashmap: public utility::excn::EXCN_Msg_Exception {
  public:
   EXCN_Invalid_Hashmap( core::Size size ) :
-  utility::excn::EXCN_Msg_Exception( "Invalid hashmap of size " + utility::to_string( size ) + " requested." ),
-	size_( size ) {};
+  utility::excn::EXCN_Msg_Exception( "Invalid hashmap of size " + utility::to_string( size ) + " requested." )
+	// size_( size )
+{};
 
  private:
-  core::Size size_;
+  // KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+  // core::Size size_;
 };
 
 class EXCN_No_Extra_Data_To_Write: public utility::excn::EXCN_Msg_Exception {
@@ -72,14 +74,17 @@ class EXCN_bbdb_Merge_Failed: public utility::excn::EXCN_Msg_Exception {
   EXCN_bbdb_Merge_Failed( std::string reason ):
   utility::excn::EXCN_Msg_Exception( reason ) {};
 
-  EXCN_bbdb_Merge_Failed( bool masterlib_extra, bool secondlib_extra ):
-  utility::excn::EXCN_Msg_Exception( "LoopHashLibrary.extra_'s not equal" ),
-	masterlib_extra_( masterlib_extra ),
-	secondlib_extra_( secondlib_extra ) {};
+  EXCN_bbdb_Merge_Failed( bool /*masterlib_extra*/, bool /*secondlib_extra*/ ):
+  utility::excn::EXCN_Msg_Exception( "LoopHashLibrary.extra_'s not equal" )
+	// masterlib_extra_( masterlib_extra ),
+	// secondlib_extra_( secondlib_extra )
+{};
 
  private:
-  bool masterlib_extra_;
-  bool secondlib_extra_;
+  // KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+  // bool masterlib_extra_;
+  // KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+  // bool secondlib_extra_;
 };
 
 }  //namespace loophash

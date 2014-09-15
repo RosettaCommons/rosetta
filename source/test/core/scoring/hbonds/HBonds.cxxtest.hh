@@ -455,5 +455,5 @@ public:
 
 private:
 
-	Real TOLERATED_ERROR;
+	//Real TOLERATED_ERROR;
 };

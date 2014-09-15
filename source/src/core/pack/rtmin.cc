@@ -109,18 +109,18 @@ void reinitialize_mingraph_neighborhood_for_residue(
 
 
 RTMin::RTMin()
-	: minimize_ligand_chis_(true),
-		minimize_ligand_jumps_(false),
+	: // minimize_ligand_chis_(true),
+		// minimize_ligand_jumps_(false),
 		nonideal_(false),
 		cartesian_(false)
 {}
 
 RTMin::RTMin(
- 	bool minimize_ligand_chis,
- 	bool minimize_ligand_jumps
-) :
-	minimize_ligand_chis_(minimize_ligand_chis),
-	minimize_ligand_jumps_(minimize_ligand_jumps)
+ 	bool /*minimize_ligand_chis*/,
+ 	bool /*minimize_ligand_jumps*/
+) // :
+	// minimize_ligand_chis_(minimize_ligand_chis),
+	// minimize_ligand_jumps_(minimize_ligand_jumps)
 {}
 
 RTMin::~RTMin(){}

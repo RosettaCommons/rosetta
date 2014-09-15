@@ -75,7 +75,7 @@ void copy_residues(const Pose& src, Size start, Size stop, Pose* dst) {
 }
 
 Extender::Extender(core::sequence::SequenceAlignmentCOP alignment, int num_residues)
-    : alignment_(alignment), num_residues_(num_residues) {
+    : alignment_(alignment) {
   using core::id::SequenceMapping;
   using protocols::loops::Loops;
   using namespace basic::options;

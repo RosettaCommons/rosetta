@@ -419,7 +419,8 @@ private:
   Pose match1_;
   Pose match2_;
   Pose homodimer_with_matches_;
-  Size symmetric_packrot_iters_;
+  // KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+  // Size symmetric_packrot_iters_;
 
   Size zinc1_res_;
   Size zinc2_res_;

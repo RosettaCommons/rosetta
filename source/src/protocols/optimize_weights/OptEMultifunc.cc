@@ -106,6 +106,8 @@ OptEMultifunc::OptEMultifunc(
 		distribute_over_mpi_ = true;
 	}
 	//TR << "OptEMultifunc created on node " << mpi_rank_ << std::endl;
+#else
+	(void) mpi_nprocs_;
 #endif
 }
 
@@ -558,7 +560,7 @@ WrapperOptEMultifunc::WrapperOptEMultifunc(
 	//optE_dof_expressions_( optEfunc->fix_reference_energies() ? free_count : free_count + chemical::num_canonical_aas, 0 ),
 	//active_variables_( optE_dof_expressions_.size() ),
 	multifunc_( optEfunc ),
-	n_new_dofs_( 0 ),
+	// n_new_dofs_( 0 ),
 	n_real_dofs_( free_count )
 {
 	using namespace basic::options;

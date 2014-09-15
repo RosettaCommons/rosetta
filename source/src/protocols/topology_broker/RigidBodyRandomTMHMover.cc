@@ -144,7 +144,7 @@ RigidBodyRandomTMHMover::apply(core::pose::Pose& pose)
 }
 
 std::string
-RigidBodyRandomTMHMover::get_name()
+RigidBodyRandomTMHMover::get_name() const
 {
 	return "RigidBodyRandomTMHMover";
 }

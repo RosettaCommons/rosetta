@@ -31,11 +31,11 @@ namespace simple_filters {
 
 StructuralSimilarityEvaluator::StructuralSimilarityEvaluator(
 	utility::vector1< core::pose::Pose > const & poses,
-	std::string const & atom_name,
+	std::string const & /*atom_name*/,
 	std::string const & tag
 ) :
 	evaluation::SingleValuePoseEvaluator< core::Real >(tag),
-	atom_name_(atom_name),
+	// atom_name_(atom_name),
 	poses_(poses)
 {}
 

@@ -62,9 +62,9 @@ public:
 	bool
 	is_loop(std::string dssp_code);
 	
-	void
+	virtual void
 	parse_my_tag(
-		utility::tag::TagPtr const tag,
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,

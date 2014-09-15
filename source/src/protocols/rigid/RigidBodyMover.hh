@@ -213,7 +213,7 @@ public:
 			core::Real const& trans_mag_in,
 			core::Size const& num_jump_in);
 	void apply(core::pose::Pose& pose);
-	virtual std::string get_name();
+	virtual std::string get_name() const;
 
 	virtual ~RigidBodyPerturbRandomJumpMover();
 

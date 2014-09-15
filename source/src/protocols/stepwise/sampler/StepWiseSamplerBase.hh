@@ -81,6 +81,8 @@ public:
 	/// @brief Type of class (see enum in StepWiseSamplerTypes.hh)
 	virtual StepWiseSamplerType type() const = 0;
 
+	using moves::Mover::show;
+
 	/// @brief output summary of class
 	virtual
 	void show( std::ostream & out, Size const indent = 0 ) const {

@@ -61,7 +61,8 @@ public:
 	std::string & get_prediction_name() { return prediction_name_; }
 
 private:
-	Real minScoreAllowed_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// Real minScoreAllowed_;
 	std::string& query_;
 	core::fragment::SecondaryStructureOP query_ss_;
 	std::string prediction_name_;

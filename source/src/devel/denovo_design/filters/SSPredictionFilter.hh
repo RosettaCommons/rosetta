@@ -77,7 +77,8 @@ private:
 	/// @brief tells whether to use the psipred pass2 confidence values -- overrrides use_probability.
 	bool use_confidence_;
 	/// @brief should we report agreement with psipred, or fragment quality?
-	bool use_frag_qual_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// bool use_frag_qual_;
 	/// @brief should we use svm to estimate secondary structure?
 	bool use_svm_;
 	/// @brief what temperature should we be using doing a boltzmann sum?

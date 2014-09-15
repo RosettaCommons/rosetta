@@ -181,13 +181,16 @@ private:
 	core::Real BANGLE_MEAN_; // mean N-CA-C bond angle value from PDB
 	core::Real BANGLE_SD_; // N-CA-C bond angle standard deviation from PDB
 	core::Real BANGLE_MIN_; // min allowed N-CA-C bond angle sampled (otherwise softly enforced by normal distribution)
-	core::Real BANGLE_MAX_; // max allowed N-CA-C bond angle sampled (otherwise softly enforced by normal distribution)
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// core::Real BANGLE_MAX_; // max allowed N-CA-C bond angle sampled (otherwise softly enforced by normal distribution)
 
 	// omega angle sampling
 	core::Real OMEGA_MEAN_; // mean omega torsion from loop set
-	core::Real OMEGA_SCALE_FACTOR_; // chosen to reproduce observed double-exponential distribution in pdb loops
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// core::Real OMEGA_SCALE_FACTOR_; // chosen to reproduce observed double-exponential distribution in pdb loops
 
-	core::Real MAX_SAMPLE_ITS_; // maximum number of iterations in torsion / bond angle sampling loop
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// core::Real MAX_SAMPLE_ITS_; // maximum number of iterations in torsion / bond angle sampling loop
 	bool vary_bond_angles_; // should we vary bond angles
 	bool sample_nonpivot_torsions_; // should we sample non-pivot torsions (restricted to Ramachandran space)
 

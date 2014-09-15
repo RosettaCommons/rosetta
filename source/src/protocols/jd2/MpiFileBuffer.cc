@@ -352,6 +352,7 @@ void MpiFileBuffer::open_channel( Size slave, std::string const& filename, bool 
 #else
 void MpiFileBuffer::open_channel( Size , std::string const&, bool, Size& status ) {
 	status = 0;
+	(void) last_channel_;
 }
 #endif
 

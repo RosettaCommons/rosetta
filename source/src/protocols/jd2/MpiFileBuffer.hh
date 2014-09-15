@@ -90,7 +90,11 @@ private:
 	bool bSlaveCanOpenFile_;
 	bool bKeepFilesAlive_; //don't close files when no slaves want to write... probably speed up because not always reading from start
 	time_t seconds_to_keep_files_alive_;
+
+	#ifdef USEMPI
 	bool bStop_;
+	#endif
+
 	GarbageList garbage_collector_;
 	time_t last_garbage_collection_;
 	std::list< std::string > blocked_files_;

@@ -151,11 +151,9 @@ private:
 	core::Size
 	min_res_in_strand_;
 
-	core::Real
-	min_O_N_dis_;
-
-	core::Real
-	max_O_N_dis_;
+	// KAB - below variables commented out (-Wunused-private-field) on 2014-09-11
+	// core::Real min_O_N_dis_;
+	// core::Real max_O_N_dis_;
 
 	core::Real
 	min_C_O_N_angle_;

@@ -109,10 +109,10 @@ KinematicMover::KinematicMover() :
 	//BANGLE_MIN = BANGLE_MEAN - (2.0 * BANGLE_SD);
 	//BANGLE_MIN = 102.7284756;
 	//BANGLE_MIN = 98.86848; // (to coincide with mm_bend potential)
-	BANGLE_MAX_(118.9353622),
+  //BANGLE_MAX_(118.9353622),
 	//BANGLE_MAX = 115.07536; // (to coincide with mm_bend potential)
 	OMEGA_MEAN_(179.8),
-	OMEGA_SCALE_FACTOR_(2.375), // scale factor parameterized to reproduce pdb loop omega angles
+  //OMEGA_SCALE_FACTOR_(2.375), // scale factor parameterized to reproduce pdb loop omega angles
 	//OMEGA_SD=9.15;
 	//OMEGA_MIN = OMEGA_MEAN - (0.5 * OMEGA_SD);
 	//MAX_SAMPLE_ITS_(2000), // DJM: deprecated in favor of loops::max_kic_perturber_samples

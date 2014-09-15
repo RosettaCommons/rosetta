@@ -70,7 +70,7 @@ public:
 
 	void
 	parse_my_tag(
-		utility::tag::TagPtr const tag,
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
@@ -101,7 +101,8 @@ public:
 
 private:
 
-	bool run_once_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// bool run_once_;
 
 	//std::map<std::string, core::pack::task::TaskFactoryCOP> taskop_keys_factories_;
 

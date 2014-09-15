@@ -276,6 +276,9 @@ void MMTReceiver::sleep_a_bit()
 	std::chrono::nanoseconds dur( sleep_nsecs_ );
 	std::this_thread::sleep_for( dur );
 #endif
+#else
+	/// KAB - casting variable to void to avoid unused variable error
+	(void) sleep_max_;
 #endif
 }
 

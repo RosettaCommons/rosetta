@@ -58,7 +58,8 @@ public:
   virtual core::Real apply( core::pose::Pose& pose  ) const;
 
 private:
-	core::Size jump_nr_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// core::Size jump_nr_;
 	core::id::AtomID up_jump_atom_;
 	core::id::AtomID down_jump_atom_;
 	core::id::StubID down_stub_;

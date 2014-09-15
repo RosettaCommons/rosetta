@@ -61,8 +61,10 @@ public:
  	) const;
 
 private:
-	bool minimize_ligand_chis_;
-	bool minimize_ligand_jumps_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// bool minimize_ligand_chis_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// bool minimize_ligand_jumps_;
 	bool nonideal_;
 	bool cartesian_;
 };

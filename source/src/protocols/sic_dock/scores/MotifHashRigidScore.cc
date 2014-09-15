@@ -71,8 +71,8 @@ MotifHashRigidScore::MotifHashRigidScore(
 		xspp_(NULL),
 		ssinfo1_(NULL),
 		ssinfo2_(NULL),
-		nss1_(0),
-		nss2_(0),
+		// nss1_(0),
+		// nss2_(0),
 		reshash_(NULL),
 		nhashlookups_(0)
 {

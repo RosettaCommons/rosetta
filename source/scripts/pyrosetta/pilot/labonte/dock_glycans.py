@@ -33,11 +33,14 @@ from rosetta import init, Pose, pose_from_pdb, PyMOL_Mover, setup_foldtree, \
 from rosetta.protocols.rigid import RigidBodyPerturbMover, \
                                     RigidBodyRandomizeMover, \
                                     partner_upstream, partner_downstream
+from rosetta.core.scoring import non_peptide_heavy_atom_RMSD
+
 
 # Constants
 JUMP_NUM = 1
 STARTING_RAMP_DOWN_FACTOR = 3.25  # values used by Krishna
 STARTING_RAMP_UP_FACTOR = 0.45455  # values used by Krishna
+
 
 # Add custom MonteCarlo method.
 def _distance_criterion(self, pose, last_distance, last_pose):
@@ -295,6 +298,7 @@ if __name__ == '__main__':
         print ' Decoy', jd.current_num
         print '  Randomizing positions...'
         pose.assign(starting_pose)
+        print 'JUMP LENGTH:', pose.jump(JUMP_NUM).get_translation().length  # DEBUG
         if not args.local:
             randomizerA.apply(pose)
         randomizerB.apply(pose)

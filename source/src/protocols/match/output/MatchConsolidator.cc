@@ -233,7 +233,8 @@ BestMatchesCollection::BestMatchesCollection(
 	Size n_to_keep,
 	bool dspos1_mode
 ) :
-	n_top_matches_to_keep_( n_to_keep ),
+	// KAB - below line commented out when removing -Wunused-private-field on 2014-09-11
+	// n_top_matches_to_keep_( n_to_keep ),
 	dspos1_mode_( dspos1_mode ),
 	scores_heap_( n_to_keep ),
 	best_matches_( dspos1_mode ? 0 : n_to_keep ),

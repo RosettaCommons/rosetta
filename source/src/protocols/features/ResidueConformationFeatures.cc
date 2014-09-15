@@ -413,6 +413,7 @@ ResidueConformationFeatures::load_conformation(
 			Size seqpos;
 			Size chinum;
 			Real chiangle;
+			res_conformation >> seqpos >> chinum >> chiangle;
 			if(compact_residue_schema_)
 			{
 				set_coords_for_residue_from_compact_schema(db_session,struct_id,seqpos,pose);
@@ -421,7 +422,6 @@ ResidueConformationFeatures::load_conformation(
 				set_coords_for_residue(db_session,struct_id,seqpos,pose);
 
 			}
-			res_conformation >> seqpos >> chinum >> chiangle;
 			pose.set_chi(chinum,seqpos,chiangle);
 		}
 

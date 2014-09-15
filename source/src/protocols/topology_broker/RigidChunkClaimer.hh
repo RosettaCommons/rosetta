@@ -193,7 +193,8 @@ private:
 		Size new_nr_;
 
 		///@brief use loop-definition from alignment in ThreadingJob
-		bool bUseThreadingJobLoops_;
+		// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+		// bool bUseThreadingJobLoops_;
 		bool bAllowAdjacentJumps_;
 
 	};

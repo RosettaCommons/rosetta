@@ -71,6 +71,7 @@ public:
     init_str_( i_str )
   {}
 
+	using ToyMover::apply;
   void apply( Pose& pose, Size resid ){
     DofUnlock activation( pose.conformation(), passport() );
     if( move_ ) {

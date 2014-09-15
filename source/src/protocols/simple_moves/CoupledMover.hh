@@ -82,7 +82,7 @@ public:
 	void set_randomize_resnum( bool randomize_resnum );
 	void set_fix_backbone( bool fix_backbone );
 	void set_rotation_std_dev( core::Real rotation_std_dev );
-	void set_input_pose( core::pose::PoseOP pose );
+	virtual void set_input_pose( core::pose::PoseCOP pose );
 	void set_temperature( core::Real temperature );
 	void set_bias_sampling( bool bias_sampling );
 	void set_ligand_resnum( core::Size ligand_resnum );

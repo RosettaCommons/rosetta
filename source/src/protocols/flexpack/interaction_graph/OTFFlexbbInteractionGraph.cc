@@ -130,7 +130,7 @@ OTFFlexbbNode::bounding_radius_for_rotamers( int aatype, int bb ) const
 
 OTFFlexbbEdge::OTFFlexbbEdge( OTFFlexbbInteractionGraph * owner, int node1, int node2 ) :
 	parent( owner, node1, node2 ),
-	compute_bbbb_and_scbb_otf_( false ),
+	// compute_bbbb_and_scbb_otf_( false ),
 	lr_energies_exist_( false ),
 	pose_( get_otfflexbbig_owner()->get_pose() ),
 	sfxn_( get_otfflexbbig_owner()->get_scorefxn() )

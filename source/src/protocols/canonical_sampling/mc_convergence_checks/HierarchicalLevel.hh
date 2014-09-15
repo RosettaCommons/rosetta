@@ -291,7 +291,8 @@ private:
   core::Size num_clusters_in_level_;
   std::string filename_;
   core::Size next_free_address_index_;
-  bool first_time_writing_;
+  // KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+  // bool first_time_writing_;
 
   HierarchicalLevelOP next_level_;
 };

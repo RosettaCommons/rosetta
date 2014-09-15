@@ -200,7 +200,8 @@ private:
 	/// If this flag is "true" then the two tables below are not allocated, and instead
 	/// sc/bb and bb/bb energies are calculated alongside sc/sc energies in the OTF
 	/// calculations.  Slower, but uses less memory.
-	bool compute_bbbb_and_scbb_otf_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// bool compute_bbbb_and_scbb_otf_;
 
 	PackerEnergy all_vs_bb_energy_curr_conf_[ 2 ];
 	PackerEnergy procorr_curr_conf_[ 2 ];

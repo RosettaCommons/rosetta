@@ -327,9 +327,9 @@ class NoPoseXYX_Func : public core::scoring::func::XYZ_Func {
 		Pose const & pose2,
 		core::scoring::constraints::ConstraintSet const & cstset
 	):
-		pose1_(pose1),
-		pose2_(pose2),
-		cstset_(cstset),
+		// pose1_(pose1),
+		// pose2_(pose2),
+		// cstset_(cstset),
 		csts_(cstset.get_all_constraints())
 	{
 		using namespace core::scoring::constraints;
@@ -383,8 +383,7 @@ class NoPoseXYX_Func : public core::scoring::func::XYZ_Func {
 // }
 
 
-JointScore::JointScore():
-	minscore_hack_(-9e9)
+JointScore::JointScore()
 {}
 
 JointScore::JointScore(
@@ -392,8 +391,7 @@ JointScore::JointScore(
 	Reals weights
 ):
 	scores_(scores),
-	weights_(weights),
-	minscore_hack_(-9e9)
+	weights_(weights)
 {
 	if(scores_.size() != weights_.size()) utility_exit_with_message("bad score/weight");
 }

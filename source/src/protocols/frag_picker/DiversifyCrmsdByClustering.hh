@@ -47,7 +47,8 @@ public:
 
 private:
 	void copy_coordinates(FragmentCandidateOP src, ObjexxFCL::FArray2D_double & dst);
-	core::Real resulting_cutoff_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// core::Real resulting_cutoff_;
 	utility::vector1<ObjexxFCL::FArray2D_double> xyz_;
 	ObjexxFCL::FArray1D_double weights_;
 };

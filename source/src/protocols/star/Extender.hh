@@ -76,7 +76,8 @@ class Extender : private boost::noncopyable {
   core::sequence::SequenceAlignmentCOP alignment_;
   protocols::loops::LoopsOP unaligned_;
   protocols::loops::LoopsOP aligned_;
-  int num_residues_;
+  // KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+  // int num_residues_;
 
   core::fragment::SecondaryStructureCOP pred_ss_;
   utility::vector1<int> cutpoints_;

@@ -72,6 +72,8 @@ public:
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
+	using protocols::features::FeaturesReporter::load_into_pose;
+
 	/// @brief Load information from pose_conformations into pose
 	/// @param[in,out] ideal - true if structure is ideal, false if not
 	void

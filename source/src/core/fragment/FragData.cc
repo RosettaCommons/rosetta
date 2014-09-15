@@ -279,7 +279,7 @@ void AnnotatedFragData::copy(FragData const& frag_data)
 	startpos_ = frag_data.pdbpos();
 }
 
-FragDataOP AnnotatedFragData::generate_sub_fragment( Size start, Size stop ) {
+FragDataOP AnnotatedFragData::generate_sub_fragment( Size start, Size stop ) const {
 	runtime_assert( stop >= start );
 	runtime_assert( stop <= size() );
 	FragDataOP new_frag = new AnnotatedFragData(pdbid_, startpos_ + start - 1, chain_);

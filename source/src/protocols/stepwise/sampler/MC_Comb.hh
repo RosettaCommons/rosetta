@@ -65,7 +65,8 @@ public:
 	virtual std::string get_name() const { return "MC_Comb"; }
 
 private:
-	bool is_empty_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// bool is_empty_;
 	utility::vector1<MC_StepWiseSamplerOP> rotamer_list_;
 };
 

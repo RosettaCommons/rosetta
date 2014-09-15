@@ -209,7 +209,7 @@ public:
 	virtual void copy(FragData const& frag_data);
 
 	//@brief Generates a fragment referencing a subset of the given fragment, does not copy SRFD.
-	virtual FragDataOP generate_sub_fragment( Size start, Size stop );
+	virtual FragDataOP generate_sub_fragment( Size start, Size stop ) const;
 
 	virtual std::string pdbid() const  {
 		return pdbid_;

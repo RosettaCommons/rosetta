@@ -92,7 +92,7 @@ CCDEndsGraftMover::set_movemaps(MoveMapCOP scaffold_mm, MoveMapCOP insert_mm){
 }
 
 std::string
-CCDEndsGraftMover::get_name(){return "CCDEndsGraftMover";}
+CCDEndsGraftMover::get_name() const { return "CCDEndsGraftMover"; }
 
 protocols::moves::MoverOP
 CCDEndsGraftMoverCreator::create_mover() const {

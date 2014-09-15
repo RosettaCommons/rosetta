@@ -116,7 +116,8 @@ private:
 	protocols::features::ProteinSilentReportOP protein_silent_report_;
 	std::string database_name_;
 	std::string database_pq_schema_;
-	core::Size input_protocol_id_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// core::Size input_protocol_id_;
 	std::map< std::string, StructureID > tag_structures_;
 	std::map< std::string, std::set< core::Size > > tag_residues_;
 }; // DatabaseJobInputter

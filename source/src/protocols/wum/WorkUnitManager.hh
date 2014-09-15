@@ -131,8 +131,10 @@ class WorkUnitQueue_Swapped: public WorkUnitQueue {
 
 		// parameters
 		core::Size  memory_limit_;
-		core::Size  read_swap_limit_;
-		core::Size  clean_swap_limit_;
+		// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+		// core::Size  read_swap_limit_;
+		// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+		// core::Size  clean_swap_limit_;
 		core::Size  max_swap_buffer_size_;
 		// variables
 		core::Size  n_swap_total_;

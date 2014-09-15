@@ -55,7 +55,8 @@ public:
 	);
 	
 private:
-	core::Size num_cycles_to_print_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// core::Size num_cycles_to_print_;
 };
 
 } //sewing namespace

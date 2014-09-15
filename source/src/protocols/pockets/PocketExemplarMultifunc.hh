@@ -36,7 +36,12 @@ class PocketExemplarMultifunc : public core::optimization::Multifunc {
 public: // Constructor/Destructor
 
 	// Constructor
-	PocketExemplarMultifunc(std::string const input_pdb_name, std::string const resid, core::Real const c_rad, core::Real const rep_weight, utility::vector1<core::Real>& p_min, utility::vector1<core::Real>& p_max);
+	PocketExemplarMultifunc (std::string const input_pdb_name,
+			std::string const resid,
+			core::Real const c_rad,
+			core::Real const rep_weight,
+			utility::vector1<core::Real>& p_min,
+			utility::vector1<core::Real>& p_max);
 
 	/// @brief Destructor
 	virtual
@@ -54,7 +59,8 @@ public: // Methods
 	void
 	dfunc( core::optimization::Multivec const & vars, core::optimization::Multivec & dE_dvars ) const;
 
-	//using core::optimization::Multifunc::dump;
+	// This is required, otherwise you are shadowing a virtual function. ~Labonte
+	using core::optimization::Multifunc::dump;
 
 	/// @brief Error state reached; dump out current pdb.
 	virtual

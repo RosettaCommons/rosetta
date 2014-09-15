@@ -370,7 +370,8 @@ public:
 private:
 
 	bool vary_ca_bond_angles_;
-	bool sample_omega_for_pre_prolines_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// bool sample_omega_for_pre_prolines_;
 	core::conformation::torsion_bin_string predefined_torsions_;
 
 	core::scoring::Ramachandran const & rama_;

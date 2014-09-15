@@ -50,8 +50,10 @@ public:
 		Pose const & );
 
 private:
-	core::Real probe_radius_;
-	core::Real wobble_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// core::Real probe_radius_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// core::Real wobble_;
 
 };
 

@@ -110,7 +110,8 @@ private:
   utility::vector1< core::Real > initial_phis;
   utility::vector1< core::Real > initial_psis;
 
-  bool initialized_;
+  // KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+  // bool initialized_;
 
   std::string original_sequence_;
   utility::vector1< bool > insert_pos_;

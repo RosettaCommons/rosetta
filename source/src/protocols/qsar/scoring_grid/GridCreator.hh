@@ -36,7 +36,8 @@ public:
 	virtual GridBaseOP create_grid() const = 0;
 	virtual std::string keyname() const = 0;
 private:
-	core::Real weight_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// core::Real weight_;
 };
 
 typedef utility::pointer::owning_ptr<GridCreator> GridCreatorOP;

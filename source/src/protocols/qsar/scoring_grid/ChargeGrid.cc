@@ -79,7 +79,7 @@ std::string ChargeGridCreator::grid_name()
 ChargeGrid::ChargeGrid() :
 	SingleGrid("ChargeGrid"),
 	zeta_(4.0),
-	epsilon_(80.0),
+	// epsilon_(80.0),
 	indirect_numerator_( (4.0 - 80.0) / (4.0 + 80.0) ),
 	epsilon_0_(8.854187817E-12)
 {
@@ -89,7 +89,7 @@ ChargeGrid::ChargeGrid() :
 ChargeGrid::ChargeGrid(core::Real /*charge*/) :
 	SingleGrid("ChargeGrid"),
 	zeta_(4.0),
-	epsilon_(80),
+	// epsilon_(80),
 	indirect_numerator_( (4.0 - 80.0) / (4.0 + 80.0) ),
 	epsilon_0_(8.854187817E-12)
 {

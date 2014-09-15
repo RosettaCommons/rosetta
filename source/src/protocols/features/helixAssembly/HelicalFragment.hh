@@ -73,7 +73,8 @@ private:
 	core::Size start_;
 	core::Size end_;
 	std::string pdb_source_;
-	bool direction_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// bool direction_;
 	core::Real sasa_;
 	numeric::xyzVector<core::Real> com_;
 	numeric::xyzVector<core::Real> principal_component_;

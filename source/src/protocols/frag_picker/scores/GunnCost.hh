@@ -52,15 +52,16 @@ public:
 
 class GunnCost  {
 public:
-	GunnCost() : cutoff_(7.0) {}
-	GunnCost( core::Real cutoff ) : cutoff_( cutoff) {}
+	GunnCost() /*: cutoff_(7.0)*/ {}
+	GunnCost( core::Real /*cutoff*/ ) /*: cutoff_( cutoff)*/ {}
 	~GunnCost() {}
 
 	void compute_gunn( core::pose::Pose const& pose, core::Size begin, core::Size end, GunnTuple &data);
 	core::Real score_tuple( GunnTuple const& g1, GunnTuple const& g2 );
 
 private:
-	Real cutoff_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// Real cutoff_;
 //	utility::vector1< core::pose::PoseOP > various_length_poses_;
 };
 

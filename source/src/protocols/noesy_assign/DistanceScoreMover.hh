@@ -81,7 +81,8 @@ private:
 
 
 	//use this if we have a distance cutoff for each individual peak, based on the structural variation at that point.
-	bool individual_distance_cutoff_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// bool individual_distance_cutoff_;
 	typedef utility::vector1< core::Real > DistanceBoundVector;
 	typedef utility::vector1< DistanceBoundVector > AllStructureDistanceBoundVector;
 	AllStructureDistanceBoundVector all_dist_buf_;

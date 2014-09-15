@@ -95,8 +95,10 @@ private:
 	mutable bool tried_fullatom_pose_;
 	mutable bool tried_centroid_pose_;
 	std::string file_name_;
-	Size viol_level_;
-	core::Real threshold_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// Size viol_level_;
+	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
+	// core::Real threshold_;
 	Size max_seq_sep_;
 	Size constraints_combine_ratio_;
 	std::string cst_source_;

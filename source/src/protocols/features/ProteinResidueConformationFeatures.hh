@@ -72,6 +72,8 @@ public:
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
+	using protocols::features::FeaturesReporter::load_into_pose;
+
 	/// @param[in] ideal - Is the input structure ideal?
 	void
 	load_into_pose(
