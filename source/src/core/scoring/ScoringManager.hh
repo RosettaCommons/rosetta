@@ -33,7 +33,7 @@
 #include <core/scoring/CenHBPotential.fwd.hh>
 #include <core/scoring/MembranePotential.fwd.hh>
 #include <core/scoring/Membrane_FAPotential.fwd.hh> //pba
-#include <core/scoring/membrane/MembraneData.hh> 
+#include <core/scoring/membrane/MembraneData.hh>
 //#include <core/scoring/InterchainPotential.fwd.hh>
 #include <core/scoring/ProQPotential.fwd.hh>
 #include <core/scoring/SecondaryStructurePotential.fwd.hh>
@@ -172,7 +172,7 @@ public:
 
 	rna::RNA_TorsionPotential const & get_RNA_TorsionPotential() const;
 
-	rna::RNA_SuitePotential const & get_RNA_SuitePotential() const;
+	rna::RNA_SuitePotential const & get_RNA_SuitePotential( bool const calculate_suiteness_bonus = false ) const;
 
 	rna::chemical_shift::RNA_ChemicalShiftPotential const & get_RNA_ChemicalShiftPotential() const;
 
@@ -206,7 +206,7 @@ public:
 	WaterAdductHBondPotential const & get_WaterAdductHBondPotential() const;
 
 	MembranePotential const & get_MembranePotential() const;
-	
+
 	membrane::MembraneData const & get_MembraneData() const;
 
 	Membrane_FAPotential const & get_Membrane_FAPotential() const; //pba
@@ -322,6 +322,7 @@ private:
 	mutable rna::RNA_LowResolutionPotentialOP rna_low_resolution_potential_;
 	mutable rna::RNA_TorsionPotentialOP rna_torsion_potential_;
 	mutable rna::RNA_SuitePotentialOP rna_suite_potential_;
+	mutable rna::RNA_SuitePotentialOP rna_suite_potential_for_suiteness_bonus_;
 	mutable rna::chemical_shift::RNA_ChemicalShiftPotential * rna_chemical_shift_potential_;
 	mutable rna::data::RNA_DMS_PotentialOP rna_dms_potential_;
 	mutable rna::data::RNA_DMS_LowResolutionPotentialOP rna_dms_low_resolution_potential_;

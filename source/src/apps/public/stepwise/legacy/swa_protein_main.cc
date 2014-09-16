@@ -171,7 +171,6 @@ OPT_KEY( String, disulfide_file )
 OPT_KEY( String, centroid_weights )
 OPT_KEY( String, start_pdb )
 OPT_KEY( String, secstruct )
-OPT_KEY( Real, min_tolerance )
 OPT_KEY( IntegerVector, sample_res )
 OPT_KEY( IntegerVector, superimpose_res )
 OPT_KEY( IntegerVector, loop_bounds )
@@ -459,8 +458,8 @@ main( int argc, char * argv [] )
 	option.add_relevant( OptionKeys::stepwise::protein::centroid_screen );
 	option.add_relevant( OptionKeys::stepwise::skip_minimize );
 	option.add_relevant( OptionKeys::stepwise::protein::centroid_weights );
-	option.add_relevant( OptionKeys::stepwise::protein::min_type );
-	option.add_relevant( OptionKeys::stepwise::protein::min_tolerance );
+	option.add_relevant( OptionKeys::stepwise::min_type );
+	option.add_relevant( OptionKeys::stepwise::min_tolerance );
 	option.add_relevant( OptionKeys::stepwise::protein::ghost_loops );
 	option.add_relevant( OptionKeys::stepwise::dump );
 	option.add_relevant( OptionKeys::stepwise::protein::sample_beta );

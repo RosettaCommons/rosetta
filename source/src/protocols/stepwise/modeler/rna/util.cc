@@ -16,6 +16,9 @@
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh>
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_ResidueInfo.hh>
+#include <protocols/stepwise/modeler/rna/phosphate/util.hh>
+#include <protocols/stepwise/modeler/rna/sugar/util.hh>
+#include <protocols/stepwise/modeler/rna/bulge/util.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/output_util.hh>
@@ -441,7 +444,7 @@ namespace rna {
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
  	id::AtomID_Map < id::AtomID >
- 	create_alignment_id_map(	pose::Pose & mod_pose, pose::Pose const & ref_pose, utility::vector1< core::Size > const & rmsd_residue_list, bool const base_only ){
+ 	create_aligment_id_map_legacy(	pose::Pose & mod_pose, pose::Pose const & ref_pose, utility::vector1< core::Size > const & rmsd_residue_list, bool const base_only ){
  		using namespace chemical;
 
  		id::AtomID_Map < id::AtomID > atom_ID_map;
@@ -490,7 +493,7 @@ namespace rna {
 		}
 
 		//align current_pose to pose_output_list.
-		id::AtomID_Map < id::AtomID > const & alignment_atom_id_map = create_alignment_id_map( moving_pose, static_pose, working_best_alignment, base_only );
+		id::AtomID_Map < id::AtomID > const & alignment_atom_id_map = create_aligment_id_map_legacy( moving_pose, static_pose, working_best_alignment, base_only );
 		core::scoring::superimpose_pose( moving_pose, static_pose, alignment_atom_id_map );
 
 		if ( check_for_messed_up_structure( moving_pose, moving_tag ) ){
@@ -642,7 +645,7 @@ namespace rna {
 	check_instantiated_O2Prime_hydrogen( core::pose::Pose const & pose ){
 	  for ( core::Size i = 1; i <= pose.total_residue(); i++ ){
 			if ( !pose.residue_type( i ).is_RNA() ) continue;
-			runtime_assert( !pose.residue_type( i ).has_variant_type( "VIRTUAL_O2PRIME_HYDROGEN" ) );
+			runtime_assert( !pose.residue_type( i ).has_variant_type( chemical::VIRTUAL_O2PRIME_HYDROGEN ) );
 	  }
 	}
 
@@ -1066,11 +1069,11 @@ namespace rna {
 			if ( !pose.residue_type( seq_num ).is_RNA() ) continue;
 
 			// these are actually redundant with virtual 2'-OH atom-wise check below.
-			if ( pose.residue_type( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ) continue;
-			if ( pose.residue_type( seq_num ).has_variant_type( "VIRTUAL_RIBOSE" ) ) continue;
+			if ( pose.residue_type( seq_num ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) continue;
+			if ( pose.residue_type( seq_num ).has_variant_type( chemical::VIRTUAL_RIBOSE ) ) continue;
 
 			// allow for 2'-OH virtualization during packing. Decide during packer task setup, not in here.
-			//	if ( pose.residue_type( seq_num ).has_variant_type( "VIRTUAL_O2PRIME_HYDROGEN" ) ) continue;
+			//	if ( pose.residue_type( seq_num ).has_variant_type( chemical::VIRTUAL_O2PRIME_HYDROGEN ) ) continue;
 
 			core::conformation::Residue const & rsd = pose.residue( seq_num );
 			Size const at = rsd.first_sidechain_atom();
@@ -1254,7 +1257,7 @@ namespace rna {
 
 			if ( O2prime_pack_seq_num.has_value( seq_num ) &&
 					 pose.residue( seq_num ).is_RNA() &&
-					 ( pack_virtual_o2prime_hydrogen || !pose.residue_type( seq_num ).has_variant_type( "VIRTUAL_O2PRIME_HYDROGEN" ) ) )
+					 ( pack_virtual_o2prime_hydrogen || !pose.residue_type( seq_num ).has_variant_type( chemical::VIRTUAL_O2PRIME_HYDROGEN ) ) )
 				{ //pack this residue!
 
 					/*
@@ -1881,6 +1884,58 @@ figure_out_moving_rna_chain_breaks( pose::Pose const & pose,
 		rna_chain_break_gap_sizes.push_back( chain_break_gap_sizes[n] );
 	}
 }
+
+//////////////////////////////////////////////////////////////////////
+// this is reasonably sophisticated...
+//
+// * looks at base contacts -- at least 5 atoms in base contact some other residue.
+// * also checks if 2'-OH is H-bonded, and in that case, keeps backbone instantiated (just virtualize bases).
+// * checks if phosphate makes hydrogen bonds, and then keeps those instantiated.
+//
+// Good test case is second U in UUCG in 2KOC.pdb.
+//
+//  -- rhiju, 2014
+//////////////////////////////////////////////////////////////////////
+void
+virtualize_free_rna_moieties( pose::Pose & pose ){
+
+	utility::vector1< bool > base_makes_contact      = rna::bulge::detect_base_contacts( pose );
+	utility::vector1< bool > sugar_makes_contact     = rna::sugar::detect_sugar_contacts( pose );
+	utility::vector1< bool > phosphate_makes_contact = rna::phosphate::detect_phosphate_contacts( pose );
+
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		if ( !pose.residue_type( i ).is_RNA() ) continue;
+		if ( base_makes_contact[ i ] ) continue;
+
+		// base is virtual.
+		if ( sugar_makes_contact[ i ] ){
+			add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_BASE, i );
+			continue;
+		}
+
+		// base and sugar are virtual.
+		add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_RNA_RESIDUE, i );
+
+		// phosphate 5' to base
+		if ( i > 1 && phosphate_makes_contact[ i ] &&
+				 pose.residue_type( i-1 ).is_RNA() &&
+				 !pose.fold_tree().is_cutpoint(i-1) ){
+			rna::phosphate::setup_three_prime_phosphate_based_on_next_residue( pose, i-1 );
+		}
+
+		// phosphate 3' to base
+		if ( i < pose.total_residue() && !phosphate_makes_contact[ i+1 ] &&
+				 pose.residue_type( i+1 ).is_RNA() &&
+				 !pose.fold_tree().is_cutpoint( i ) ) {
+			add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_PHOSPHATE, i+1 );
+		}
+
+	}
+
+	TR.Debug << pose.annotated_sequence() << std::endl; // for debugging
+}
+
+
 
 } //rna
 } //modeler

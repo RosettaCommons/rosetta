@@ -101,7 +101,7 @@ namespace modeler {
 		do_prepacking( core::pose::Pose & pose );
 
 		void
-		do_modeler( core::pose::Pose & pose );
+		do_sampling( core::pose::Pose & pose );
 
 		void
 		do_minimizing( core::pose::Pose & pose );
@@ -112,7 +112,7 @@ namespace modeler {
 		figure_out_moving_res_list_from_most_distal_res( core::pose::Pose const & pose, Size const moving_res );
 
 		bool
-		modeler_successful();
+		sampling_successful();
 
 	private:
 

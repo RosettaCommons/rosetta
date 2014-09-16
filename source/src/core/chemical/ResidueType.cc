@@ -2775,6 +2775,20 @@ ResidueType::perform_checks()
 		checkspass=false;
 	}
 
+	for ( Size n = 1; n <= Hpol_index_.size(); n++ ) {
+		if ( !Hpos_polar_.has_value( Hpol_index_[n] ) ){
+			msg << "Hpos_polar " << atom_name( Hpol_index()[n] ) << " not in Hpol_index!?" << std::endl;
+			checkspass = false;
+		}
+	}
+
+	for ( Size n = 1; n <= Hpos_polar_.size(); n++ ) {
+		if ( !Hpol_index_.has_value( Hpos_polar_[n] ) ){
+			msg << "Hpol_index " << atom_name( Hpol_index()[n] ) << " not in Hpos_polar!?" << std::endl;
+			checkspass = false;
+		}
+	}
+
 	if(!checkspass) {
 		utility_exit_with_message(msg.str());
 	}

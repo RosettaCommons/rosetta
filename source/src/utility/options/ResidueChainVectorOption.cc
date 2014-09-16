@@ -17,6 +17,9 @@
 #include <utility/options/ResidueChainVectorOption.hh>
 #include <utility/string_util.hh>
 
+// ObjexxFCL headers
+#include <ObjexxFCL/char.functions.hh>
+
 namespace utility {
 namespace options {
 

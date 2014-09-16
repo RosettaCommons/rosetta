@@ -25,18 +25,22 @@
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/scoring_util.hh>
 #include <protocols/stepwise/modeler/protein/util.hh>
+#include <protocols/stepwise/modeler/polar_hydrogens/util.hh>
 #include <protocols/stepwise/legacy/modeler/protein/util.hh> // for output_pose_list, maybe should deprecate soon
+#include <protocols/farna/RNA_LoopCloser.hh>
+#include <protocols/simple_moves/ConstrainToIdealMover.hh>
+#include <core/id/AtomID.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <protocols/farna/RNA_LoopCloser.hh>
 #include <ObjexxFCL/format.hh>
 #include <utility/tools/make_vector1.hh>
 
@@ -78,16 +82,15 @@ namespace modeler {
 		working_fixed_res_( working_parameters->working_fixed_res() ),
 		working_calc_rms_res_( working_parameters->working_calc_rms_res() ), // only for output -- may deprecate.
 		vary_bond_geometry_( false ), // it remains unclear whether this is really different from cartesian.
-		allow_virtual_o2prime_hydrogens_( options->allow_virtual_side_chains() && !options_->o2prime_legacy_mode() ),
+		allow_virtual_o2prime_hydrogens_( options->allow_virtual_side_chains() && !options->o2prime_legacy_mode() ),
 		protein_ccd_closer_( new protein::loop_close::StepWiseProteinCCD_Closer( working_parameters ) )
 	{
 		set_native_pose( working_parameters->working_native_pose() );
 		runtime_assert( !options_->skip_coord_constraints() );
 		runtime_assert( !options_->skip_minimize() );
 		runtime_assert( !options_->move_jumps_between_chains() );
-		runtime_assert( pose_list.size() > 0 );
 		// note this choice -- found that 5 really is necessary for protein stepwise monte carlo. can't minimize all due to slowdown.
-		if ( options_->choose_random() && num_pose_minimize_ == 0 /*asking this class for default*/ ) {
+		if ( pose_list_.size() > 0 && options_->choose_random() && num_pose_minimize_ == 0 /*asking this class for default*/ ) {
 			num_pose_minimize_ =  ( protein::contains_protein( *pose_list[1] ) ? 5 : 1 );
 		}
 	}
@@ -108,8 +111,10 @@ namespace modeler {
 		do_clustering( pose );
 
 		// could probably deprecate soon, or at least use a function unified with RNA.
-		if ( options_->output_minimized_pose_list() ) stepwise::legacy::modeler::protein::output_pose_list( pose_list_, get_native_pose(),
-																																																				options_->silent_file(), working_calc_rms_res_ );
+		if ( options_->output_minimized_pose_list() ) {
+			stepwise::legacy::modeler::protein::output_pose_list( pose_list_, get_native_pose(),
+																														options_->silent_file(), working_calc_rms_res_ );
+		}
 	}
 
   //////////////////////////////////////////////////////////////////////////
@@ -137,20 +142,22 @@ namespace modeler {
 			if ( num_pose_minimize_ > 0 &&  n > num_pose_minimize_ ) break;
 
 			pose = *pose_list_[ n ];
-			Real const score_original = (*minimize_scorefxn_)( pose );
 			if ( options_->rm_virt_phosphate() ) rna::remove_all_virtual_phosphates( pose ); // ERRASER.
 
 			// The movemap has all dofs for "non-fixed residues" free to move.
-			get_move_map( mm, pose );
+			get_move_map_and_allow_insert( mm, pose );
 
 			// We can also let sidechains minimize in fixed-residues -- for
 			// speed only look at neighbors of moving residues.
 			let_neighboring_side_chains_minimize( mm, pose );
 
+			Real const score_original = (*minimize_scorefxn_)( pose );
+			//			minimize_scorefxn_->show( pose );
 			do_minimize( pose, mm );
 
 			close_chainbreaks( pose, mm );
 
+			//			minimize_scorefxn_->show( pose );
 			TR << "Score minimized from " << F(8,3, score_original) << " to " << F(8,3,(*minimize_scorefxn_)( pose )) << std::endl;
 			( *final_scorefxn_ )( pose );
 			output_pose_list.push_back( pose.clone() );
@@ -186,12 +193,23 @@ namespace modeler {
 	void
 	StepWiseMinimizer::do_minimize( pose::Pose & pose, kinematics::MoveMap & mm ){
 		rna::o2prime_trials( pose, minimize_scorefxn_, working_pack_res_, allow_virtual_o2prime_hydrogens_ );
+		if ( options_->vary_polar_hydrogen_geometry() )	polar_hydrogens::pack_polar_hydrogens( pose, allow_virtual_o2prime_hydrogens_ );
+
+		core::scoring::constraints::ConstraintSetOP save_pose_constraints = pose.constraint_set()->clone();
+		kinematics::MoveMap mm_save = mm;
+		setup_vary_bond_geometry( pose, mm ); // careful -- must only do once, or constraints will keep getting added...
 		if ( options_->cart_min() ) {
 			cartesian_minimizer_->run( pose, mm, *minimize_scorefxn_, *minimizer_options_ );
 		} else {
 			atom_tree_minimizer_->run( pose, mm, *minimize_scorefxn_, *minimizer_options_ );
 		}
+		pose.constraint_set( save_pose_constraints );
+		mm = mm_save;
+
+		//		minimize_scorefxn_->show( pose );
 		rna::o2prime_trials( pose, minimize_scorefxn_, working_pack_res_, allow_virtual_o2prime_hydrogens_ );
+		//		minimize_scorefxn_->show( pose );
+
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -216,11 +234,12 @@ namespace modeler {
 
   //////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseMinimizer::get_move_map( core::kinematics::MoveMap & mm, pose::Pose const & pose ){
+	StepWiseMinimizer::get_move_map_and_allow_insert( core::kinematics::MoveMap & mm, pose::Pose const & pose ){
 		utility::vector1< Size > working_minimize_res;
 		for ( Size n = 1; n <= pose.total_residue(); n++ ) { if (!working_fixed_res_.has_value( n )) working_minimize_res.push_back( n );}
 		bool const move_takeoff_torsions = !options_->disable_sampling_of_loop_takeoff();
-		movemap::figure_out_stepwise_movemap( mm, pose, working_minimize_res, move_takeoff_torsions );
+		allow_insert_ = new toolbox::AllowInsert( pose ); // can come in handy later...
+		movemap::figure_out_stepwise_movemap( mm, allow_insert_, pose, working_minimize_res, move_takeoff_torsions );
 		output_movemap( mm, pose, TR.Debug );
 	}
 
@@ -238,7 +257,6 @@ namespace modeler {
 		if ( working_pack_res_.size() == 0 ) {
 			working_pack_res_ = packer::figure_out_working_interface_res( pose, working_moving_res_ );
 		}
-
 		for ( Size n = 1; n <= working_pack_res_.size(); n++ ){
 			move_side_chain( mm, pose, working_pack_res_[n] );
 		}
@@ -256,7 +274,28 @@ namespace modeler {
 		} else if ( pose.residue(j).is_RNA() ){
 			mm.set( id::TorsionID( j, id::CHI, 4), true ); // 2'-OH.
 		}
+		// how about terminal phosphates?
+		if ( options_->vary_polar_hydrogen_geometry() ){
+			utility::vector1< Size > const & Hpos_polar = pose.residue( j ).Hpos_polar();
+			for ( Size q = 1; q <= Hpos_polar.size(); q++ )	allow_insert_->set( id::AtomID( Hpos_polar[q], j ), true );
+		}
 	}
+
+	////////////////////////////////////////////////////////////////////////////////////////
+	void
+	StepWiseMinimizer::setup_vary_bond_geometry( core::pose::Pose & pose, core::kinematics::MoveMap & mm ) {
+ 		if ( options_->vary_rna_bond_geometry() ) {
+			TR << TR.Magenta << "Performing variable geometry minimization for RNA backbone..." << TR.Reset << std::endl;
+			if ( !minimize_scorefxn_->has_nonzero_weight( core::scoring::bond_geometry ) ) minimize_scorefxn_->set_weight( core::scoring::bond_geometry, 1.0 );
+			simple_moves::setup_vary_rna_bond_geometry( mm, pose, allow_insert_, core::scoring::bond_geometry );
+		}
+		if ( options_->vary_polar_hydrogen_geometry() ){
+			TR << TR.Magenta << "Performing variable geometry minimization for polar hydrogens..." << TR.Reset << std::endl;
+			if ( !minimize_scorefxn_->has_nonzero_weight( core::scoring::bond_geometry ) ) minimize_scorefxn_->set_weight( core::scoring::bond_geometry, 1.0 );
+			simple_moves::setup_vary_polar_hydrogen_geometry( mm, pose, allow_insert_ );
+		}
+	}
+
 
 } //modeler
 } //stepwise

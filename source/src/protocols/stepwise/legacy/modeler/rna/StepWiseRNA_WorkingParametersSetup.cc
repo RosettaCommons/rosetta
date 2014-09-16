@@ -318,7 +318,7 @@ namespace rna {
 			TR.Debug << " special case of building loop outward...no fixed element. " << std::endl;
 
 			//Basically include every working_res as an alignment_res.....INCLUDING THE MOVING RES!
-			//Don't worry about virtual res, this is taken care of by the function create_alignment_id_map(). Parin Apr 23, 2010
+			//Don't worry about virtual res, this is taken care of by the function create_aligment_id_map_legacy(). Parin Apr 23, 2010
 			for ( Size full_seq_num = 1; full_seq_num <= is_working_res.size(); full_seq_num++ ){
 				if ( is_working_res[full_seq_num] == false ) continue;
 

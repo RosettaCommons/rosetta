@@ -64,7 +64,7 @@ namespace protein {
 		InputStreamWithResidueInfo( import_pose::pose_stream::PoseInputStreamOP pose_input_stream,
 																utility::vector1< Size > const & input_res);
 
-		virtual ~InputStreamWithResidueInfo();
+		~InputStreamWithResidueInfo();
 
 		import_pose::pose_stream::PoseInputStreamOP & pose_input_stream();
 		utility::vector1< Size > const & input_res();

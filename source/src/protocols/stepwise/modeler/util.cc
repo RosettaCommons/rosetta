@@ -568,9 +568,9 @@ merge_two_poses( pose::Pose & pose,
 	copy_dofs_match_atom_names( pose, pose2, res_map2, false /*backbone_only*/, false /*side_chain_only*/, false /*ignore_virtual*/ );
 
 	if ( fix_first_pose ){
-		align::superimpose_pose( pose, pose1, res_map1 );
+		align::superimpose_pose_legacy( pose, pose1, res_map1 );
 	} else {
-		align::superimpose_pose( pose, pose2, res_map2 );
+		align::superimpose_pose_legacy( pose, pose2, res_map2 );
 	}
 
 	return working_res;
@@ -741,7 +741,7 @@ slice( pose::Pose & sliced_out_pose,
 	std::map< Size, Size > res_map;
 	for ( Size n = 1; n <= slice_res.size(); n++ ) res_map[ n ] =  slice_res[ n ];
 	copy_dofs_match_atom_names( sliced_out_pose, pose, res_map, false /*backbone_only*/, false /*side_chain_only*/, false /*ignore_virtual*/ );
-	align::superimpose_pose( sliced_out_pose, pose, res_map );
+	align::superimpose_pose_legacy( sliced_out_pose, pose, res_map );
 
 }
 
@@ -1678,7 +1678,6 @@ get_unique_connection_res( pose::Pose const & pose,
 	if ( moving_res2 > 0 ) return moving_res2;
 	return pose.fold_tree().root();
 }
-
 
 } //modeler
 } //stepwise

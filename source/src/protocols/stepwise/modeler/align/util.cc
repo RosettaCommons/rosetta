@@ -95,99 +95,43 @@ namespace align {
 		if ( rmsd_screen > 0.0 ) pose_aligner.create_coordinate_constraints( pose, rmsd_screen );
 	}
 
-	///////////////////////////////////////////////////////////////////////
-	// superimpose_at_fixed_res used for 'final' superposition before output to disk.
-	///////////////////////////////////////////////////////////////////////
-	// minimal wrapper around PoseAligner.
-	void
-	superimpose_at_fixed_res( pose::Pose & pose, pose::Pose const & native_pose,
-														Real & rmsd, Size & natoms_rmsd,
-														bool skip_bulges ){
-
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// calculate rmsd for pose and any 'other poses', and add up in quadrature.
+	Real
+	superimpose_with_stepwise_aligner( pose::Pose & pose, pose::Pose const & native_pose,
+																		 bool const superimpose_over_all_instantiated /* = false */ ){
 		modeler::align::StepWisePoseAligner pose_aligner( native_pose );
-		pose_aligner.set_skip_bulges( skip_bulges );
-		pose_aligner.set_align_at_first_fixed_domain( false ); // this means look at all fixed res for alignment!
-		pose_aligner.set_superimpose_over_all_if_all_moving( true ); // important for visualizing 'from_scratch' builds
-		pose_aligner.apply( pose );
-		rmsd = pose_aligner.rmsd();
-		natoms_rmsd = pose_aligner.natoms_rmsd();
-		if ( natoms_rmsd  == 0 ){ // happens in rna_score -- superimpose over everything, rmsd computed over nothing.
-			rmsd = pose_aligner.superimpose_rmsd();
-			natoms_rmsd = pose_aligner.natoms_superimpose_rmsd();
-		}
+		pose_aligner.set_superimpose_over_all_instantiated( superimpose_over_all_instantiated );
+		return pose_aligner.get_rmsd_over_all_poses( pose ); // will include "other_poses"
 	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	Real
-	superimpose_at_fixed_res_and_get_all_atom_rmsd( pose::Pose & pose, pose::Pose const & native_pose,
-																									bool skip_bulges /* = false */) {
-		Real rmsd;
-		Size natoms_rmsd;
-		superimpose_at_fixed_res( pose, native_pose, rmsd, natoms_rmsd, skip_bulges );
-		return rmsd;
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// calculate rmsd for pose and any 'other poses', and add up in quadrature.
-	void
-	superimpose_recursively( pose::Pose & pose, pose::Pose const & native_pose,
-													 Real & rmsd, Size & natoms, bool skip_bulges = false ){
-
-		using namespace core::pose;
-		using namespace core::pose::full_model_info;
-
-		Real rmsd_pose;
-		Size natoms_pose;
-		superimpose_at_fixed_res( pose, native_pose, rmsd_pose, natoms_pose, skip_bulges );
-
-		Real const total_sd = ( rmsd * rmsd * natoms) + (rmsd_pose * rmsd_pose * natoms_pose );
-		natoms += natoms_pose;
-		if ( natoms > 0 ) {
-			rmsd = std::sqrt( total_sd / Real( natoms ) );
-		} else {
-			runtime_assert( std::abs( rmsd ) < 1e-5 );
-		}
-
-		utility::vector1< PoseOP > const & other_pose_list = nonconst_full_model_info( pose ).other_pose_list();
-		for ( Size n = 1; n <= other_pose_list.size(); n++ ){
-			superimpose_recursively( *( other_pose_list[ n ] ), native_pose, rmsd, natoms, skip_bulges );
-		}
-
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// calculate rmsd for pose and any 'other poses', and add up in quadrature.
-	Real
-	superimpose_recursively( pose::Pose & pose, pose::Pose const & native_pose ){
-		Real rmsd( 0.0 );
-		Size natoms( 0 );
-		superimpose_recursively( pose, native_pose, rmsd, natoms, false /*skip bulges*/ );
-		return rmsd;
-	}
-
 
 	///////////////////////////////////////////////////////////////////////////////////////////
 	// Following functions (superimpose_pose, creat_alignment_id_map) use legacy code
 	// for choosing which atoms to superimpose on -- but are called by InputStreamWithResidueInfo
-	// and a couple other classes that should probably ALL BE DEPRECATED. -- rhiju, 2014
+	// and a couple other classes that should probably ALL BE DEPRECATED.
+	//
+	// Almost all (perhaps all) choices in atoms for superimposition are nicely formalized in
+	//  StepwisePoseAligner -- switch over completely...
+	//
+	//   -- rhiju, 2014
 	///////////////////////////////////////////////////////////////////////////////////////////
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief  Superimpose mod_pose onto ref_pose using the mapping of residues from
 	/// mod_pose to ref_pose given by res_map. Simple wrapper around superimpose_pose using IDs.
 	Real
-	superimpose_pose(
+	superimpose_pose_legacy(
 									 pose::Pose & mod_pose,
 									 pose::Pose const & ref_pose,
 									 std::map< Size, Size > const & res_map )
 	{
-		id::AtomID_Map< id::AtomID > atom_ID_map = create_alignment_id_map( mod_pose, ref_pose, res_map );
+		id::AtomID_Map< id::AtomID > atom_ID_map = create_aligment_id_map_legacy( mod_pose, ref_pose, res_map );
 		return scoring::superimpose_pose( mod_pose, ref_pose, atom_ID_map );
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  	id::AtomID_Map< id::AtomID >
- 	create_alignment_id_map(	pose::Pose const & mod_pose,
+ 	create_aligment_id_map_legacy(	pose::Pose const & mod_pose,
 													pose::Pose const & ref_pose,
 													utility::vector1< core::Size > const & superimpose_res ){
 
@@ -198,12 +142,12 @@ namespace align {
 			res_map[ seq_num ] = seq_num;
 		}
 
-		return create_alignment_id_map( mod_pose, ref_pose, res_map );
+		return create_aligment_id_map_legacy( mod_pose, ref_pose, res_map );
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  	id::AtomID_Map< id::AtomID >
- 	create_alignment_id_map(	pose::Pose const & mod_pose,
+ 	create_aligment_id_map_legacy(	pose::Pose const & mod_pose,
 													pose::Pose const & ref_pose,
 													std::map< core::Size, core::Size > res_map ){
 

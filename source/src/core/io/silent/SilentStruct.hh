@@ -21,13 +21,13 @@
 // unit headers
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentEnergy.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.fwd.hh>
 
 #include <core/io/silent/SilentFileData.hh>
 
 // mini headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/full_model_info/FullModelParameters.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/sequence/AnnotatedSequence.hh>
 
@@ -295,13 +295,26 @@ namespace silent {
 
 		void set_residue_numbers( utility::vector1< Size > const & residue_numbers ){ residue_numbers_ = residue_numbers;}
 		void set_chains( utility::vector1< char > const & chains ){ chains_ = chains;}
+		void set_full_model_parameters( core::pose::full_model_info::FullModelParametersCOP setting ){ full_model_parameters_ = setting; }
+		core::pose::full_model_info::FullModelParametersCOP full_model_parameters() const{ return full_model_parameters_; }
 
 		void fill_struct_with_residue_numbers( pose::Pose const & pose );
 
+		void
+		fill_other_struct_list( pose::Pose const & pose );
+
 		void residue_numbers_into_pose( pose::Pose & pose ) const;
+
+		void full_model_info_into_pose( pose::Pose & pose ) const;
 
 		void
 		figure_out_residue_numbers_from_line( std::istream & line_stream );
+
+		utility::vector1< SilentStructOP > const & other_struct_list() const { return other_struct_list_; }
+
+		utility::vector1< SilentStructOP > & nonconst_other_struct_list() { return other_struct_list_; }
+
+		void add_other_struct( SilentStructOP silent_struct );
 
 		/// @brief Sets whether conversion from big-endian to little-endian (or the converse) should be forced
 		/// when a binary silent structure is initialized from lines.
@@ -338,7 +351,6 @@ namespace silent {
 		Size nres_;
 		std::string decoy_tag_;
 		core::sequence::AnnotatedSequence sequence_;
-		std::string full_sequence_; // only filled in some cases.
 
 		std::map< std::string, std::string > parent_remarks_map_; //Similar to silent_comments_ but this doesn't get outputted back to the silent_file.
 
@@ -350,6 +362,8 @@ namespace silent {
 
 		utility::vector1< Size > residue_numbers_; // can be derived from PDB info.
 		utility::vector1< char > chains_; // can be derived from PDB info.
+		utility::vector1< SilentStructOP > other_struct_list_;
+		core::pose::full_model_info::FullModelParametersCOP full_model_parameters_;
 
 	private:
 		/// @brief Updates the "score" entry in the silent_energies.

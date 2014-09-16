@@ -41,13 +41,13 @@ namespace monte_carlo {
 	public:
 
 		void
-		get_random_add_or_delete_element( pose::Pose const & pose,
-																			SWA_Move & swa_move );
+		get_add_or_delete_element( pose::Pose const & pose,
+															 SWA_Move & swa_move );
 
 		void
-		get_random_add_or_delete_element( pose::Pose const & pose,
-																			SWA_Move & swa_move,
-																			utility::vector1< Size > const & sample_res /*leave empty if no filter*/);
+		get_add_or_delete_element( pose::Pose const & pose,
+															 SWA_Move & swa_move,
+															 utility::vector1< Size > const & sample_res /*leave empty if no filter*/);
 
 		void
 		get_resample_move_elements( pose::Pose const & pose,
@@ -95,6 +95,9 @@ namespace monte_carlo {
 
 		void set_allow_shared_chains_in_dock_poses( bool const & setting ){ allow_shared_chains_in_dock_poses_ = setting; }
 		bool allow_shared_chains_in_dock_poses() const{ return allow_shared_chains_in_dock_poses_; }
+
+		void set_choose_random( bool const & setting ){ choose_random_ = setting; }
+		bool choose_random() const{ return choose_random_; }
 
 	private:
 
@@ -207,6 +210,7 @@ namespace monte_carlo {
 		bool only_dock_preexisting_chunks_;
 		bool allow_shared_chains_in_dock_poses_;
 		bool remodeler_;
+		bool choose_random_;
 	};
 
 } //monte_carlo

@@ -83,7 +83,8 @@ SetAtomTree::SetAtomTree() :
 	anchor_res_( "" ),
 	connect_from_( "" ),
 	host_chain_( 2 ),
-	fold_tree_( NULL )
+	fold_tree_( NULL ),
+	ab_fold_tree_( false ) // was not set explicitly originally!
 {
 	start_tree_at_chain_ = '\0';
 }
@@ -197,6 +198,7 @@ SetAtomTree::set_ab_fold_tree( core::pose::Pose & pose)
 	ft.clear();
 	protocols::simple_moves::CutChainMover ccm;
 	core::Size vl_vh_cut=ccm.chain_cut(pose);//find cut between VL/VH
+	runtime_assert( vl_vh_cut > 0 );
 	core::conformation::Conformation const & conf(pose.conformation());
 	utility::vector1<core::Size> cys_pos; //store all cysteine positions in the AB chain
 	//find all cysteines in the pose
@@ -205,6 +207,7 @@ SetAtomTree::set_ab_fold_tree( core::pose::Pose & pose)
 			cys_pos.push_back(i);
 		}
 	}
+
 	/// build simple ft for the cut
 	ft.add_edge(1, cys_pos[1], -1);
 	ft.add_edge(cys_pos[1], cys_pos[2], -1);

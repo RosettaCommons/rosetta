@@ -34,7 +34,9 @@ void
 output_to_silent_file( std::string const & out_tag,
 											 std::string const & silent_file,
 											 pose::Pose & pose,
-											 pose::PoseCOP native_pose );
+											 pose::PoseCOP native_pose,
+											 bool const superimpose_over_all_instantiated = false,
+											 bool const do_rms_fill_calculation = false );
 
 void
 output_to_silent_file( std::string const & out_tag,
@@ -45,6 +47,12 @@ void
 output_to_silent_file( std::string const & silent_file,
 											 utility::vector1< pose::PoseOP > & pose_list,
 											 pose::PoseCOP native_pose );
+
+void
+build_full_model( core::pose::Pose const & start_pose, core::pose::Pose & full_model_pose );
+
+core::pose::PoseOP
+build_full_model( pose::Pose const & start_pose );
 
 } //monte_carlo
 } //stepwise

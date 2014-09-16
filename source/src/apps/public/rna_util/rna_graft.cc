@@ -191,7 +191,7 @@ superimpose_pdb( pose::Pose & pose1 /* the 'parent pose'*/,
 
 		// now superimpose based on this subset. Copied from RNA_DeNovoProtocol.cc
 		id::AtomID_Map< id::AtomID > const & alignment_atom_id_map_native =
-			protocols::stepwise::modeler::align::create_alignment_id_map( pose2, pose1, superimpose_res_map ); // perhaps this should move to toolbox.
+			protocols::stepwise::modeler::align::create_aligment_id_map_legacy( pose2, pose1, superimpose_res_map ); // perhaps this should move to toolbox.
 		core::scoring::superimpose_pose( pose2, pose1, alignment_atom_id_map_native );
 	} else {
 		std::cout << "WARNING: no overlap residues found or specified (by -superimpose_res)!!!! " << std::endl;

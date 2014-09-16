@@ -25,6 +25,7 @@
 
 // ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>
+#include <ObjexxFCL/char.functions.hh>
 
 // C++ headers
 #include <cstdlib>
@@ -90,27 +91,22 @@ public: // Properties
 	/// @brief Is a string readable as this option's value type?
 	inline
 	bool
-	is_value( std::string const & value_str ) const
-	{
-		return ObjexxFCL::is_int( value_str );
+	is_value( std::string const & ) const {
+		return true;
 	}
-
 
 	/// @brief Is a string readable as this option's value type and a legal command line value?
 	inline
 	bool
-	is_cl_value( std::string const & value_str ) const
-	{
-		return is_value( value_str ) || ObjexxFCL::is_ints( value_str );
+	is_cl_value( std::string const & value_str ) const {
+		return ( ( value_str.empty() ) || ( ! ObjexxFCL::is_any_of( value_str[ 0 ], "-@" ) ) );
 	}
-
 
 	/// @brief Option type code string representation
 	inline
 	std::string
-	type_string() const
-	{
-		return "(I" + size_constraint_string() + ')';
+	type_string() const {
+		return "(S" + size_constraint_string() + ')';
 	}
 
 	// @brief Specialized function that converts tags like A:1-4 B:1-3 into a pair of  [1 2 3 4 1 2 3], [A A A A B B B]

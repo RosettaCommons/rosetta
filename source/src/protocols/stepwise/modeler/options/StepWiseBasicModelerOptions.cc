@@ -15,7 +15,6 @@
 
 #include <protocols/stepwise/modeler/options/StepWiseBasicModelerOptions.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/cluster.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -59,15 +58,12 @@ namespace options {
 	void
 	StepWiseBasicModelerOptions::initialize_variables(){
 		StepWiseBasicOptions::initialize_variables();
-		sampler_num_pose_kept_ = 0; // signal to use separate defaults in protein/RNA modeler
 		use_green_packer_ = false; // perhaps deprecate
 		verbose_ = false; // perhaps deprecate
 		choose_random_ = false;
 		dump_ = false;
-		cluster_rmsd_ = 0.0; // signal for clusterers to use their default value
 		skip_minimize_ = false;
 		disallow_realign_ = false;
-		choose_random_ = false;
 	}
 
 	/// @brief clone the options
@@ -77,21 +73,19 @@ namespace options {
 		return new StepWiseBasicModelerOptions( *this );
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////
-	StepWiseBasicModelerOptions &
-	StepWiseBasicModelerOptions::operator = ( StepWiseBasicModelerOptions const & src )
-	{
-		sampler_num_pose_kept_ = src.sampler_num_pose_kept_;
-		use_green_packer_ = src.use_green_packer_;
-		verbose_ = src.verbose_;
-		choose_random_ = src.choose_random_;
-		dump_ = src.dump_;
-		cluster_rmsd_ = src.cluster_rmsd_;
-		skip_minimize_ = src.skip_minimize_;
-		disallow_realign_ = src.disallow_realign_;
-		choose_random_ = src.choose_random_;
-		return *this;
-	}
+	// /////////////////////////////////////////////////////////////////////////////////////
+	// StepWiseBasicModelerOptions &
+	// StepWiseBasicModelerOptions::operator = ( StepWiseBasicModelerOptions const & src )
+	// {
+	// 	use_green_packer_ = src.use_green_packer_;
+	// 	verbose_ = src.verbose_;
+	// 	choose_random_ = src.choose_random_;
+	// 	dump_ = src.dump_;
+	// 	skip_minimize_ = src.skip_minimize_;
+	// 	disallow_realign_ = src.disallow_realign_;
+	// 	choose_random_ = src.choose_random_;
+	// 	return *this;
+	// }
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	void
@@ -99,14 +93,12 @@ namespace options {
 
 		StepWiseBasicOptions::initialize_from_command_line();
 
-		sampler_num_pose_kept_ = option[ basic::options::OptionKeys::stepwise::rna::sampler_num_pose_kept ]();
 		choose_random_ = option[ basic::options::OptionKeys::stepwise::choose_random ]() ;
 		if ( choose_random_ && num_pose_minimize() == 0 ) set_num_pose_minimize( 1 );
 		verbose_ = option[ OptionKeys::stepwise::VERBOSE ]();
 		use_green_packer_ = option[ basic::options::OptionKeys::stepwise::use_green_packer ]();
 		choose_random_ = option[ basic::options::OptionKeys::stepwise::choose_random ]() ;
 		dump_ = option[ basic::options::OptionKeys::stepwise::dump ]();
-		if ( option[ basic::options::OptionKeys::cluster::radius ].user() ) cluster_rmsd_ = option[ basic::options::OptionKeys::cluster::radius ]();
 		skip_minimize_ = option[ basic::options::OptionKeys::stepwise::skip_minimize ]();
 	}
 

@@ -281,7 +281,7 @@ ScoringManager::get_MembraneData() const
 	}
 	return *mp_base_potential_;
 }
-	
+
 ///////////////////////////////////////////////////////////////////////////////
 Membrane_FAPotential const &
 ScoringManager::get_Membrane_FAPotential() const //pba
@@ -419,12 +419,20 @@ ScoringManager::get_RNA_TorsionPotential() const
 
 ///////////////////////////////////////////////////////////////////////////////
 rna::RNA_SuitePotential const &
-ScoringManager::get_RNA_SuitePotential() const
+ScoringManager::get_RNA_SuitePotential( bool const calculate_suiteness_bonus /* = false */ ) const
 {
-	if (rna_suite_potential_ == 0 )
-	{
-		rna_suite_potential_ = new rna::RNA_SuitePotential();
+	if ( calculate_suiteness_bonus ){
+		if (rna_suite_potential_for_suiteness_bonus_ == 0 )
+			{
+				rna_suite_potential_for_suiteness_bonus_ = new rna::RNA_SuitePotential( true );
+			}
+		return *rna_suite_potential_for_suiteness_bonus_;
 	}
+
+	if (rna_suite_potential_ == 0 )
+		{
+			rna_suite_potential_ = new rna::RNA_SuitePotential( false );
+		}
 	return *rna_suite_potential_;
 }
 
@@ -1074,277 +1082,6 @@ ScoringManager::energy_method(
 	}
 
 	return method_creator_map_[ score_type ]->create_energy_method( options );
-
-	/* OLD WAY
-	using namespace methods;
-	switch( score_type ) {
-	case fa_atr:
-	case fa_rep:
-	case fa_sol:
-	case fa_intra_atr:
-	case fa_intra_rep:
-	case fa_intra_sol:
-		return new etable::EtableEnergy( *etable( options.etable_type() ), options );
-	case lk_hack:
-		return new methods::LK_hack( *etable( options.etable_type() ));
-	case lk_costheta:
-	case lk_polar:
-	case lk_nonpolar:
-		return new methods::LK_PolarNonPolarEnergy( *etable( options.etable_type() ));
-  case fa_mbenv:  //pba
-    return new methods::Fa_MbenvEnergy( *memb_etable( options.etable_type() ));
-  case fa_mbsolv: //pba
-    return new methods::Fa_MbsolvEnergy( *etable( options.etable_type() ), *memb_etable( options.etable_type() ));
-	case coarse_fa_atr:
-	case coarse_fa_rep:
-	case coarse_fa_sol:
-	case coarse_beadlj:
-		return new etable::CoarseEtableEnergy( *etable( options.etable_type() ), options,
-			coarse_etable( chemical::COARSE_TWO_BEAD ) );
-	case hbond_lr_bb:
-	case hbond_sr_bb:
-	case hbond_bb_sc:
-	case hbond_sr_bb_sc:
-	case hbond_lr_bb_sc:
-	case hbond_sc:
-		return new hbonds::HBondEnergy( options.hbond_options() );
-	case ch_bond:
-	case ch_bond_sc_sc:
-	case ch_bond_bb_sc:
-	case ch_bond_bb_bb:
-		return new hbonds::CarbonHBondEnergy();
-	case geom_sol:
-		return new hbonds::GeometricSolEnergy( options );
-	case occ_sol_fitted:
-		return new geometric_solvation::OccludedHbondSolEnergy( options );
-	case occ_sol_fitted_onebody:
-		return new geometric_solvation::OccludedHbondSolEnergy_onebody( options );
-	case occ_sol_exact:
-		return new geometric_solvation::ExactOccludedHbondSolEnergy(
-			basic::options::option[basic::options::OptionKeys::score::exact_occ_pairwise],
-			basic::options::option[basic::options::OptionKeys::score::exact_occ_split_between_res],
-			! basic::options::option[ basic::options::OptionKeys::score::exact_occ_self_res_no_occ ],
-			basic::options::option[basic::options::OptionKeys::score::exact_occ_radius_scaling] );
-	case dslf_ss_dst:
-	case dslf_cs_ang:
-	case dslf_ss_dih:
-	case dslf_ca_dih:
-	case dslf_cbs_ds:
-		return new disulfides::FullatomDisulfideEnergy( get_FullatomDisulfidePotential() );
-	case dslfc_cen_dst:
-	case dslfc_cb_dst:
-	case dslfc_ang:
-	case dslfc_cb_dih:
-	case dslfc_bb_dih:
-		return new disulfides::CentroidDisulfideEnergy( get_CentroidDisulfidePotential() );
-	case neigh_count:
-	case neigh_vect:
-	case neigh_vect_raw:
-		return new nv::NVscore();
-	case symE_bonus:
-		return new symDesign::symE();
-	case gb_elec:
-		return new methods::GenBornEnergy( options );
-	case fa_pair:
-	case fa_pair_aro_aro:
-	case fa_pair_aro_pol:
-	case fa_pair_pol_pol:
-		return new PairEnergy;
-	case fa_dun:
-		return new DunbrackEnergy;
-	case dna_chi:
-		return new dna::DNAChiEnergy;
-	case p_aa_pp:
-		return new P_AA_pp_Energy;
-	case pro_close:
-		return new ProClosureEnergy;
-	case h2o_intra:
-		return new WaterAdductIntraEnergy;
-	case h2o_hbond:
-		return new WaterAdductHBondEnergy;
-	case ref:
-		if ( options.has_method_weights( ref ) ) {
-			return new ReferenceEnergy( options.method_weights( ref ) );
-		} else {
-			return new ReferenceEnergy;
-		}
-	case rama:
-		return new RamachandranEnergy;
-	case rama2b:
-		return new RamachandranEnergy2B;
-	case omega:
-		return new OmegaTetherEnergy;
-	case chainbreak:
-		return new ChainbreakEnergy;
-	case linear_chainbreak:
-	case overlap_chainbreak:
-		return new LinearChainbreakEnergy;
-	case distance_chainbreak:
-		return new DistanceChainbreakEnergy;
-	case envsmooth:
-		return new EnvSmoothEnergy;
-	case e_pH:
-		return new pHEnergy;
-	case env:
-	case cbeta:
-		return new EnvEnergy;
-	case pair:
-	case cenpack:
-		return new CenPairEnergy;
-	case Menv:
-			return new MembraneEnvEnergy;
-	case Menv_non_helix:
-	case Menv_termini:
-	case Menv_tm_proj:
-		return new MembraneEnvPenalties;
-	case Mcbeta:
-			return new MembraneCbetaEnergy;
-	case Mpair:
-		return new MembraneCenPairEnergy;
-	case Mlipo:
-		return new MembraneLipo;
-	case interchain_env:
-	case interchain_contact:
-		return new InterchainEnvEnergy;
-	case interchain_pair:
-	case interchain_vdw:
-		return new InterchainPairEnergy;
-	case hs_pair:
-	case ss_pair:
-	case rsigma:
-	case sheet:
-		return new SecondaryStructureEnergy;
-	case rdc:
-		return new ResidualDipolarCouplingEnergy;
-	case rdc_rohl:
-		return new ResidualDipolarCouplingEnergy_Rohl;
-	case holes:
-	case holes_decoy:
-	case holes_resl:
-	case holes_min:
-		return new packing::HolesEnergy;
-	case dab_sasa:
-	case dab_sev:
-		return new packing::SurfVolEnergy;
-	case vdw:
-		return new VDW_Energy( options );
-	case hybrid_vdw:
-		return new HybridVDW_Energy();
-	case rna_rg:
-		return new rna::RG_Energy_RNA;
-	case rna_vdw:
-		return new rna::RNA_VDW_Energy;
-	case rna_base_pair:
-	case rna_base_axis:
-	case rna_base_stagger:
-	case rna_base_stack:
-	case rna_base_stack_axis:
-	case rna_base_pair_pairwise:
-	case rna_base_axis_pairwise:
-	case rna_base_stagger_pairwise:
-	case rna_base_stack_pairwise:
-	case rna_base_stack_axis_pairwise:
-	case rna_base_backbone:
-	case rna_backbone_backbone:
-	case rna_repulsive:
-		return new rna::RNA_PairwiseLowResolutionEnergy;
-	case fa_stack:
-		return new rna::RNA_FullAtomStackingEnergy;
-	case rna_torsion:
-	case rna_sugar_close:
-		return new rna::RNA_TorsionEnergy;
-	case rna_fa_atr_base:
-	case rna_fa_rep_base:
-		return new rna::RNA_LJ_BaseEnergy( *etable( options.etable_type() ) );
-  case dna_bb_torsion:
-  case dna_sugar_close:
-  case dna_base_distance:
-    return new dna::DNATorsionEnergy;
-	case rg:
-		return new RG_Energy_Fast;
-	case co:
-		return new ContactOrderEnergy;
-	case rms:
-		return new RMS_Energy;
-	case mm_twist:
-		return new MMTorsionEnergy;
-	case mm_bend:
-		return new MMBondAngleEnergy( options );
-//	case csd_torsion:
-//		return new CSD_TorsionEnergy();
-	case fa_cust_pair_dist:
-		return new custom_pair_distance::FullatomCustomPairDistanceEnergy;
-	case python:
-		return NULL;
-	case fa_elec:
-	case fa_elec_bb_bb:
-	case fa_elec_bb_sc:
-	case fa_elec_sc_sc:
-		return new elec::FA_ElecEnergy( options );
-	case fa_elec_rna_phos_phos:
-	case fa_elec_rna_phos_sugr:
-	case fa_elec_rna_phos_base:
-	case fa_elec_rna_sugr_sugr:
-	case fa_elec_rna_sugr_base:
-	case fa_elec_rna_base_base:
-		return new elec::RNA_FA_ElecEnergy( options );
-  case fa_elec_rna_phos_phos2:
-  case fa_elec_rna_phos_sugr2:
-  case fa_elec_rna_phos_base2:
-  case fa_elec_rna_sugr_sugr2:
-  case fa_elec_rna_sugr_base2:
-  case fa_elec_rna_base_base2:
-   return new elec::RNA_FA_ElecEnergy2( options );
-	case dna_bp:
-	case dna_bs:
-		return new DNA_BaseEnergy;
-	case dna_dr:
-		return new DirectReadoutEnergy;
-	case atom_pair_constraint:
-	case angle_constraint:
-	case dihedral_constraint:
-	case constant_constraint:
-	case coordinate_constraint:
-	case dof_constraint:
-	case res_type_constraint:
-	case backbone_stub_constraint:
-  case backbone_stub_linear_constraint:
-	case big_bin_constraint:
-	case rna_bond_geometry:
-		return new constraints::ConstraintsEnergy;
-	case suck:
-		return new SuckerEnergy;
-	case gauss:
-		return new GaussianOverlapEnergy;
-	case pack_stat:
-		return new PackStatEnergy;
-	case surface:
-		return new SurfaceEnergy;
-	case p_aa:
-		return new P_AA_Energy;
-	case unfolded:
-		if ( options.has_method_weights( unfolded ) ) {
-			return new UnfoldedStateEnergy( options.method_weights( unfolded ) );
-		} else {
-			return new UnfoldedStateEnergy;
-		}
-	case elec_dens_window:
-		return new ElecDensEnergy;
-	case elec_dens_whole_structure_ca:
-		return new ElecDensCenEnergy;
-	case elec_dens_whole_structure_allatom:
-		return new ElecDensAllAtomCenEnergy;
-	case peptide_bond:
-		return new PeptideBondEnergy;
-	case pcs:
-		return new pcs::PCS_Energy;
-	default:
-		utility_exit_with_message(
-			"no energymethod for this score_type " + name_from_score_type( score_type )
-		);
-	}
-	return 0;
-	*/
 }
 
 /// global etable_id

@@ -192,7 +192,7 @@ CCDLoopClosureMover::fresh_instance() const
 void
 CCDLoopClosureMover::apply( pose::Pose & pose )
 {
-	TR << "Closing loop " << loop_.start() << " " << loop_.stop() << std::endl;
+	if ( verbose_ ) TR << "Closing loop " << loop_.start() << " " << loop_.stop() << std::endl;
 	PROF_START( basic::CCD_CLOSE );
 
 	using std::endl;
@@ -374,6 +374,7 @@ CCDLoopClosureMover::init( protocols::loops::Loop const & loop, kinematics::Move
 	type("CCDLoopClosureMover");
 	loop_ = loop;
 	movemap_ = movemap;
+	verbose_ = true;
 
 	// These defaults are copied from Rosetta++: map_squence.cc::scored_frag_close()
 	max_per_move_torsion_delta_.resize( n_secondary_structure_types );

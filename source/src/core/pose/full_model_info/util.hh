@@ -117,6 +117,9 @@ namespace full_model_info {
 	Size
 	get_number_missing_residue_connections( pose::Pose & pose );
 
+	bool
+	check_all_residues_sampled( pose::Pose const & pose );
+
 
 } //full_model_info
 } //pose

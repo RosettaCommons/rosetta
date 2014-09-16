@@ -3,10 +3,10 @@ ATOM_TYPE_SET fa_standard
 ELEMENT_SET default
 MM_ATOM_TYPE_SET fa_standard
 
-../fa_standard/residue_types/nucleic/rna/RAD.params
-../fa_standard/residue_types/nucleic/rna/RCY.params
-../fa_standard/residue_types/nucleic/rna/RGU.params
-../fa_standard/residue_types/nucleic/rna/URA.params
+../fa_standard/residue_types/nucleic/rna_legacy/RAD.params
+../fa_standard/residue_types/nucleic/rna_legacy/RCY.params
+../fa_standard/residue_types/nucleic/rna_legacy/RGU.params
+../fa_standard/residue_types/nucleic/rna_legacy/URA.params
 ../fa_standard/residue_types/rosetta_specific/VRT.params
 ../fa_standard/residue_types/rosetta_specific/VRT1.params
 

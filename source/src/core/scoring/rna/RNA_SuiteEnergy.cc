@@ -17,6 +17,7 @@
 
 // Package Headers
 #include <core/scoring/ScoringManager.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/PeptideBondedEnergyContainer.hh>
 #include <core/scoring/Energies.hh>
@@ -38,6 +39,26 @@
 //Numeric Headers
 #include <numeric/deriv/dihedral_deriv.hh>
 
+///////////////////////////////////////////////////////////////////////////////////
+// Note:
+//
+// * The good stuff is in RNA_SuitePotential. Note that this potential is zero
+//   when torsions are 'on-rotamer' and then jump to high values 'off-rotamer'
+//   Values of on-rotamer bonuses can be set from files in suite_torsion directory/.
+//
+// * Does not currently include nu1,nu2,chi,2'-OH torsions -- just 'backbone',
+//    so still should combine this with rna_torsion_sc score term.
+//
+// * Also -- may be double counting of each sugar delta contribution? Talk to
+//    Fang about fix [ would need to subtract out log P(delta) ].
+//
+// * Recently revived Richardson-style suiteness computation to allow bonuses
+//    in those rotamers with relatively flat basins 'on-rotamer'.
+//
+//    -- rhiju, 2014
+//
+///////////////////////////////////////////////////////////////////////////////////
+
 namespace core {
 namespace scoring {
 namespace rna {
@@ -52,13 +73,15 @@ ScoreTypes
 RNA_SuiteEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
 	sts.push_back( rna_suite );
+	sts.push_back( suiteness_bonus );
 	return sts;
 }
 
 /// ctor
 RNA_SuiteEnergy::RNA_SuiteEnergy() :
 	parent( new RNA_SuiteEnergyCreator ),
-	rna_suite_potential_( ScoringManager::get_instance()->get_RNA_SuitePotential() )
+	rna_suite_potential_( ScoringManager::get_instance()->get_RNA_SuitePotential( false /*calculate_suiteness_bonus*/ ) ),
+	rna_suite_potential_for_suiteness_bonus_( ScoringManager::get_instance()->get_RNA_SuitePotential( true /*calculate_suiteness_bonus*/) )
 {}
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -94,6 +117,7 @@ RNA_SuiteEnergy::setup_for_scoring(
 			nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 		utility::vector1< ScoreType > s_types;
 		s_types.push_back( rna_suite );
+		s_types.push_back( suiteness_bonus );
 		LREnergyContainerOP new_dec = new PeptideBondedEnergyContainer( nres, s_types );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
@@ -104,11 +128,14 @@ RNA_SuiteEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
+	ScoreFunction const & scorefxn,
 	EnergyMap & emap
 ) const {
-	if ( rna_suite_potential_.eval_score( rsd1, rsd2, pose ) ) {
-		emap[ rna_suite ] += rna_suite_potential_.get_score();
+	if ( scorefxn.has_nonzero_weight( rna_suite ) && rna_suite_potential_.eval_score( rsd1, rsd2, pose ) ) {
+		emap[ rna_suite ]       += rna_suite_potential_.get_score();
+	}
+	if ( scorefxn.has_nonzero_weight( suiteness_bonus ) && rna_suite_potential_for_suiteness_bonus_.eval_score( rsd1, rsd2, pose ) ) {
+		emap[ suiteness_bonus ] += rna_suite_potential_for_suiteness_bonus_.get_score();
 	}
 }
 
@@ -124,16 +151,34 @@ RNA_SuiteEnergy::eval_residue_pair_derivatives(
 	utility::vector1<DerivVectorPair> & r1_atom_derivs,
 	utility::vector1<DerivVectorPair> & r2_atom_derivs
 ) const {
+
+	eval_residue_pair_derivatives( rsd1, rsd2, pose, weights[rna_suite], r1_atom_derivs, r2_atom_derivs, rna_suite_potential_ );
+	eval_residue_pair_derivatives( rsd1, rsd2, pose, weights[suiteness_bonus], r1_atom_derivs, r2_atom_derivs, rna_suite_potential_for_suiteness_bonus_ );
+
+}
+
+void
+RNA_SuiteEnergy::eval_residue_pair_derivatives(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	pose::Pose const & pose,
+	Real const & weight,
+	utility::vector1<DerivVectorPair> & r1_atom_derivs,
+	utility::vector1<DerivVectorPair> & r2_atom_derivs,
+	RNA_SuitePotential const & rna_suite_potential
+) const {
+
 	using namespace numeric::conversions;
 	using namespace core::chemical::rna;
 	using namespace core::pose::rna;
 	using namespace core::id;
 
-	if ( !rna_suite_potential_.eval_score( rsd1, rsd2, pose ) )	return;
+	if ( weight == 0.0 ) return;
+	if ( !rna_suite_potential.eval_score( rsd1, rsd2, pose ) )	return;
 
-	utility::vector1<Real> const & deriv( rna_suite_potential_.get_deriv() );
+	utility::vector1<Real> const & deriv( rna_suite_potential.get_deriv() );
 	utility::vector1<TorsionID> const & torsion_ids(
-			rna_suite_potential_.get_torsion_ids() );
+			rna_suite_potential.get_torsion_ids() );
 
 	conformation::Residue const & rsd_lo(
 			( rsd1.seqpos() < rsd2.seqpos() ) ? rsd1 : rsd2 );
@@ -155,14 +200,14 @@ RNA_SuiteEnergy::eval_residue_pair_derivatives(
 				// Not sure why the "degrees" is needed. But in practice it works
 				// correctly.
 				r_lo_derivs[ atom_ids[j].atomno() ].f1() +=
-						degrees( deriv[i] ) * f1s[j] * weights[rna_suite];
+						degrees( deriv[i] ) * f1s[j] * weight;
 				r_lo_derivs[ atom_ids[j].atomno() ].f2() +=
-						degrees( deriv[i] ) * f2s[j] * weights[rna_suite];
+						degrees( deriv[i] ) * f2s[j] * weight;
 			} else if ( atom_ids[j].rsd() == rsdnum_hi ) {
 				r_hi_derivs[ atom_ids[j].atomno() ].f1() +=
-						degrees( deriv[i] ) * f1s[j] * weights[rna_suite];
+						degrees( deriv[i] ) * f1s[j] * weight;
 				r_hi_derivs[ atom_ids[j].atomno() ].f2() +=
-						degrees( deriv[i] ) * f2s[j] * weights[rna_suite];
+						degrees( deriv[i] ) * f2s[j] * weight;
 			} else {
 				// Should not happen. Exit here just in case.
 				utility_exit_with_message("Invalid Torsion!!");

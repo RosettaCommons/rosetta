@@ -216,7 +216,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::rna::virtual_sugar_keep_base_fixed );
 		option.add_relevant( OptionKeys::stepwise::rna::force_centroid_interaction );
 		option.add_relevant( OptionKeys::stepwise::num_random_samples );
-		option.add_relevant( basic::options::OptionKeys::stepwise::rna::bulge_res );
+		option.add_relevant( basic::options::OptionKeys::full_model::rna::bulge_res );
 		option.add_relevant( basic::options::OptionKeys::full_model::rna::terminal_res );
 		option.add_relevant( OptionKeys::rna::corrected_geo );
 
