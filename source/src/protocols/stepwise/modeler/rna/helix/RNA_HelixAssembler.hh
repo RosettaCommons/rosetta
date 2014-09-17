@@ -21,11 +21,10 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/id/TorsionID.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/optimization/AtomTreeMinimizer.fwd.hh>
 #include <core/optimization/MinimizerOptions.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/id/TorsionID.fwd.hh>
 
 #include <core/types.hh>
 
@@ -62,7 +61,7 @@ public:
 	virtual std::string get_name() const;
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
-	void apply( core::pose::Pose & pose, std::string const & full_sequence_in );
+	void apply( core::pose::Pose & pose, std::string const & sequence );
 
 	void random_perturbation( bool const & setting ) { random_perturbation_ = setting; }
 
@@ -84,7 +83,7 @@ public:
 	void set_model_and_remove_capping_residues( bool setting ){ model_and_remove_capping_residues_ = setting; }
 
 	void
-	build_helix( core::pose::Pose & pose );
+	build_helix( core::pose::Pose & pose, std::string const & full_sequence );
 
 	core::pose::PoseOP
 	build_init_pose( std::string const & seq1, std::string const & seq2 );
@@ -98,7 +97,7 @@ private:
 	set_Aform_torsions( core::pose::Pose & pose, Size const & n ) const;
 
 	void
-	build_on_base_pair( core::pose::Pose & pose, Size const & n, std::string const & seq1, std::string const & seq2 ) const;
+	build_on_base_pair( core::pose::Pose & pose, Size const & n, char const & seq1, char const & seq2 ) const;
 
 	void
 	minimize_base_step( core::pose::Pose & pose, Size const n, core::scoring::ScoreFunctionOP scorefxn ) const;
@@ -107,13 +106,10 @@ private:
 	put_constraints_on_base_step( core::pose::Pose & pose, Size const & n ) const;
 
 	void
-	add_capping_base_pairs_to_full_sequence();
+	get_rid_of_capping_base_pairs( core::pose::Pose & pose ) const;
 
-	void
-	get_rid_of_capping_base_pairs( core::pose::Pose & pose );
-
-	void
-	figure_out_and_remove_dangling_ends();
+	std::string
+	figure_out_and_remove_dangling_ends( std::string const & full_sequence );
 
 	void
 	build_dangling_ends( core::pose::Pose & pose ) const;
@@ -134,10 +130,10 @@ private:
 	get_cutpoint( core::pose::Pose const & pose ) const;
 
 	void
-	append_Aform_residue( core::pose::Pose & pose, Size const & n, std::string const & nt ) const;
+	append_Aform_residue( core::pose::Pose & pose, Size const & n, char const & nt ) const;
 
 	void
-	prepend_Aform_residue( core::pose::Pose & pose, Size const & n, std::string const & nt ) const;
+	prepend_Aform_residue( core::pose::Pose & pose, Size const & n, char const & nt ) const;
 
 	void
 	perturb_torsion(
@@ -152,25 +148,7 @@ private:
 	minimize_prepend_res( core::pose::Pose & pose, Size const n ) const;
 
 	void
-	fill_chain_info( core::pose::Pose & pose );
-
-	std::string
-	get_sequence( core::Size const n );
-
-	void
-	remove_first_base_pair( std::string & full_sequence,
-													std::map< Size, std::string > & non_standard_residues,
-													std::string & sequence_helix1,
-													std::string & sequence_helix2 ) const;
-
-	void
-	remove_last_base_pair( std::string & full_sequence,
-												 std::map< Size, std::string > & non_standard_residues,
-												 std::string & sequence_helix1,
-												 std::string & sequence_helix2 ) const;
-
-	core::conformation::ResidueOP
-	get_residue( std::string const & nt ) const;
+	fill_chain_info( core::pose::Pose & pose, std::string const & full_sequence );
 
 private:
 
@@ -200,9 +178,6 @@ private:
 	std::string dangle_seq1_3prime_;
 	std::string dangle_seq2_5prime_;
 	std::string dangle_seq2_3prime_;
-
-	std::string full_sequence_;
-	std::map< core::Size, std::string > non_standard_residues_;
 
 }; // class RNA_HelixAssembler
 

@@ -20,9 +20,14 @@
 // mini headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
+
+// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
+// AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
+
+// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ Headers
 #include <iostream>
@@ -67,7 +72,7 @@ public:
 	);
 
 	// destructor
-	~BinarySilentStruct();
+	~BinarySilentStruct() {}
 
 	/// @brief Test if this BinarySilentStruct is equal to the given
 	/// BinarySilentStruct in terms of conformation.  Doesn't check
@@ -101,10 +106,6 @@ public:
 
 	/// @brief opposite of fill_pose
 	virtual void fill_struct( core::pose::Pose const & pose, std::string tag );
-
-	/// @brief for stepwise modeling, setup other_poses inside full_model_info
-	void
-	setup_other_poses( core::pose::Pose & pose, core::chemical::ResidueTypeSet const & residue_set ) const;
 
 	/// @brief print header information
 	virtual void print_header( std::ostream & out ) const;
@@ -183,7 +184,7 @@ private:
 	utility::vector1< char > secstruct_;
 
     utility::vector1< std::pair <core::id::NamedAtomID, core::id::NamedAtomID> > noncanonical_residue_connections_;
-
+    
 	utility::vector1< kinematics::RT > jumps_;
 	bool bJumps_use_IntraResStub_;
 	kinematics::FoldTree fold_tree_;

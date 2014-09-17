@@ -82,6 +82,8 @@ namespace options {
 		cluster_by_all_atom_rmsd_ = false;
 		pack_weights_ = "";
 		use_packer_instead_of_rotamer_trials_ = false;
+		min_type_ = "dfpmin_armijo_nonmonotone"; // used to be dfpmin
+		min_tolerance_ = 0.000025;
 		expand_loop_takeoff_ = false;
 		skip_coord_constraints_ = false;
 	}
@@ -117,6 +119,8 @@ namespace options {
 		cluster_by_all_atom_rmsd_ = src.cluster_by_all_atom_rmsd_;
 		pack_weights_ = src.pack_weights_;
 		use_packer_instead_of_rotamer_trials_ = src.use_packer_instead_of_rotamer_trials_;
+		min_type_ = src.min_type_;
+		min_tolerance_ = src.min_tolerance_;
 		expand_loop_takeoff_ = src.expand_loop_takeoff_;
 		skip_coord_constraints_ = src.skip_coord_constraints_;
 		frag_files_ = src.frag_files_;
@@ -147,6 +151,8 @@ namespace options {
 		ccd_close_ = option[ basic::options::OptionKeys::stepwise::protein::ccd_close ]();
 		cluster_by_all_atom_rmsd_ = option[ basic::options::OptionKeys::stepwise::protein::cluster_by_all_atom_rmsd ]();
 		use_packer_instead_of_rotamer_trials_ = option[ basic::options::OptionKeys::stepwise::protein::use_packer_instead_of_rotamer_trials ]();
+		min_type_ = option[ basic::options::OptionKeys::stepwise::protein::min_type ]();
+		min_tolerance_ = option[ basic::options::OptionKeys::stepwise::protein::min_tolerance ]();
 		expand_loop_takeoff_ = option[ basic::options::OptionKeys::stepwise::protein::expand_loop_takeoff ]() ;
 		skip_coord_constraints_ = option[ OptionKeys::stepwise::protein::skip_coord_constraints ]();
 		frag_files_ = option[ OptionKeys::in::file::frag_files ]();

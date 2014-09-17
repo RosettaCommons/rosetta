@@ -136,6 +136,12 @@ namespace options {
 		void set_use_packer_instead_of_rotamer_trials( bool const & setting ){ use_packer_instead_of_rotamer_trials_ = setting; }
 		bool use_packer_instead_of_rotamer_trials() const{ return use_packer_instead_of_rotamer_trials_; }
 
+		void set_min_type( std::string const & setting ){ min_type_ = setting; }
+		std::string min_type() const{ return min_type_; }
+
+		void set_min_tolerance( Real const & setting ){ min_tolerance_ = setting; }
+		Real min_tolerance() const{ return min_tolerance_; }
+
 		bool const & expand_loop_takeoff() const { return expand_loop_takeoff_; }
 		void set_expand_loop_takeoff( bool const & setting ){ expand_loop_takeoff_ = setting; }
 
@@ -180,6 +186,8 @@ namespace options {
 		std::string pack_weights_;
 		bool use_packer_instead_of_rotamer_trials_;
 
+		std::string min_type_;
+		Real min_tolerance_;
 		bool expand_loop_takeoff_;
 		bool skip_coord_constraints_;
 		utility::vector1< std::string > frag_files_;

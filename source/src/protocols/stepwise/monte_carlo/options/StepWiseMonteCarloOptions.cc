@@ -70,9 +70,7 @@ namespace options {
 		allow_virtual_side_chains_( false ),
 		n_sample_( 18 ),
 		protein_prepack_( false ),
-		o2prime_legacy_mode_( false ),
-		recover_low_( false ),
-		save_times_( false )
+		o2prime_legacy_mode_( false )
 	{
 		StepWiseBasicOptions::initialize_variables();
 		set_silent_file( "default.out" );
@@ -138,8 +136,6 @@ namespace options {
 		n_sample_ = src.n_sample_;
 		protein_prepack_ = src.protein_prepack_;
 		o2prime_legacy_mode_ = src.o2prime_legacy_mode_;
-		recover_low_ = src.recover_low_;
-		save_times_ = src.save_times_;
 		return *this;
 	}
 
@@ -167,7 +163,7 @@ namespace options {
 		set_from_scratch_frequency( option[ OptionKeys::stepwise::monte_carlo::from_scratch_frequency ]() );
 		set_allow_split_off( option[ OptionKeys::stepwise::monte_carlo::allow_split_off ]() );
 		set_temperature( option[ OptionKeys::stepwise::monte_carlo::temperature ]() );
-		set_bulge_res( option[ basic::options::OptionKeys::full_model::rna::bulge_res ]() );
+		set_bulge_res( option[ basic::options::OptionKeys::stepwise::rna::bulge_res ]() );
 		set_virtual_sugar_keep_base_fixed( option[ OptionKeys::stepwise::rna::virtual_sugar_keep_base_fixed ]() );
 		set_virtual_sugar_do_minimize( option[ OptionKeys::stepwise::rna::virtual_sugar_do_minimize ]() );
 		force_centroid_interaction_ = true; // note default is different from stepwise enumeration
@@ -180,8 +176,6 @@ namespace options {
 		rebuild_bulge_mode_ = option[ OptionKeys::stepwise::rna::rebuild_bulge_mode ]();
 		tether_jump_ = option[ OptionKeys::stepwise::rna::tether_jump ]();
 		o2prime_legacy_mode_ = option[ OptionKeys::stepwise::rna::o2prime_legacy_mode ]();
-		recover_low_ = option[ OptionKeys::stepwise::monte_carlo::recover_low ]();
-		save_times_ = option[ OptionKeys::stepwise::monte_carlo::save_times ]();
 		local_redock_only_ = option[ OptionKeys::stepwise::monte_carlo::local_redock_only ]();
 		skip_coord_constraints_ = option[ OptionKeys::stepwise::protein::skip_coord_constraints ]();
 		filter_native_big_bins_ = option[ OptionKeys::stepwise::protein::filter_native_big_bins ]();
@@ -192,24 +186,20 @@ namespace options {
 
 
 	//////////////////////////////////////////////////////////////////////////////////////
-	// Wait, would be smarter to just take advantage of clone(), right?
 	protocols::stepwise::modeler::options::StepWiseModelerOptionsOP
 	StepWiseMonteCarloOptions::setup_modeler_options() const{
 
-		using namespace protocols::stepwise::options;
 		using namespace protocols::stepwise::modeler::options;
 		StepWiseModelerOptionsOP options = new StepWiseModelerOptions;
-
-		// copy over StepWiseBasicOptions -- both StepWiseMonteCarloOptions and StepWiseModelerOptions inherit from it.
-		StepWiseBasicOptions & options_basic_new( *options );
-		StepWiseBasicOptions const & options_basic_this( *this );
-		options_basic_new = options_basic_this;
-
-		// general
+		options->set_silent_file( silent_file() );
+		options->set_sampler_silent_file( sampler_silent_file() );
 		options->set_choose_random( true );
-
-		// Might be smarter to inherit the following options from the same options parent class,
-		// instead of setting manually here, where we could forget something.
+		options->set_num_pose_minimize( 0 );
+		options->set_num_random_samples( num_random_samples() );
+		if ( num_pose_minimize() > 0 ) options->set_num_pose_minimize( num_pose_minimize() );
+		options->set_rmsd_screen( rmsd_screen() );
+		options->set_output_minimized_pose_list( output_minimized_pose_list() );
+		options->set_atr_rep_screen( atr_rep_screen() );
 
 		// protein-specific
 		options->set_skip_coord_constraints( skip_coord_constraints() );

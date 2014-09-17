@@ -33,22 +33,6 @@
 using namespace core::chemical::rna;
 using namespace core::pose::rna;
 
-/////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// This makes use of the RNA_SuiteName assignment framework in core/pose/rna/.
-//
-// It does *not* have derivatives, and the score term available is
-//
-//   0.0             (for dist7 < 1.0)
-//   dist7 - 1.0     (for dist7 > 1.0)
-//
-// Further development of differential score terms is in RNA_SuiteEnergy.cc &
-//  RNA_SuitePotential.cc, including differentiable suiteness. We could probably
-//  reconstitute this function in there as well.
-//
-/////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 namespace core {
 namespace scoring {
 namespace rna {

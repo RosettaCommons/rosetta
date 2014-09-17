@@ -54,7 +54,7 @@ public:
 	eval_intrares_energy(
 											 core::conformation::Residue const & rsd,
 											 pose::Pose const & pose
-											 );
+											 ) const;
 
 
 	Real
@@ -75,9 +75,6 @@ public:
 
 	//Real
 	//	compute_torsion_potential( Size const & torsion_number, Real const & value, Real const & delta, Real const & next_alpha ) const;
-
-	Real
-	intrares_side_chain_score() const{ return intrares_side_chain_score_; }
 
 	void set_verbose( bool const setting ){ verbose_ = setting; }
 
@@ -124,8 +121,6 @@ private:
 	bool const use_2prime_OH_potential_;
 	Real const syn_G_potential_bonus_;
 	chemical::rna::RNA_FittedTorsionInfoOP rna_fitted_torsion_info_;
-
-	Real intrares_side_chain_score_;
 
 };
 

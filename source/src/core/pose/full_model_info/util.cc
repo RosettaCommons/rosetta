@@ -567,17 +567,6 @@ check_full_model_info_OK( pose::Pose const & pose ){
 		return nmissing;
 	}
 
-	///////////////////////////////////////////////////////////////////////////////////////
-	bool
-	check_all_residues_sampled( pose::Pose const & pose ){
-		FullModelInfo const & full_model_info = const_full_model_info( pose );
-		utility::vector1< Size > const & fixed_domain_map =  full_model_info.fixed_domain_map();
-		utility::vector1< Size > const & res_list = full_model_info.res_list();
-		for ( Size i = 1; i <= res_list.size(); i++ ) {
-			if ( fixed_domain_map[ res_list[i] ] != 0 ) return false;
-		}
-		return true;
-	}
 
 } //full_model_info
 } //pose

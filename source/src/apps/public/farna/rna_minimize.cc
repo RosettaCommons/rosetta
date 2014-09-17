@@ -60,7 +60,6 @@
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 #include <utility/excn/Exceptions.hh>
 
@@ -163,6 +162,8 @@ rna_fullatom_minimize_test()
 			fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
 		}
 
+		std::cout << pose.fold_tree() << std::endl;
+
 		if ( option[OptionKeys::constraints::cst_fa_file].user() ) {
 			// Just Reads the first cst_file...
 			// Not sure why but the constraint depends on the start pose given.
@@ -222,7 +223,7 @@ rna_fullatom_minimize_test()
 			utility::vector1< Size > superimpose_res;
 			for ( Size k = 1; k <= pose.total_residue(); ++k ) superimpose_res.push_back( k );
 			core::id::AtomID_Map< id::AtomID > const & alignment_atom_id_map_native =
-				protocols::stepwise::modeler::align::create_aligment_id_map_legacy( pose, native_pose, superimpose_res ); // perhaps this should move to toolbox.
+				protocols::stepwise::modeler::align::create_alignment_id_map( pose, native_pose, superimpose_res ); // perhaps this should move to toolbox.
 			core::scoring::superimpose_pose( pose, native_pose, alignment_atom_id_map_native );
 			core::scoring::superimpose_pose( pose_init, native_pose, alignment_atom_id_map_native );
 		}
@@ -291,7 +292,6 @@ try {
 	option.add_relevant( OptionKeys::rna::deriv_check );
 	option.add_relevant( OptionKeys::constraints::cst_fa_file );
 	option.add_relevant( in::file::minimize_res );
-	option.add_relevant( score::weights );
 	option.add_relevant( out::pdb );
 	NEW_OPT( params_file, "Input file for pairings", "" );
 	NEW_OPT( one_torsion_test, "tracking down problem with geom_sol", false );

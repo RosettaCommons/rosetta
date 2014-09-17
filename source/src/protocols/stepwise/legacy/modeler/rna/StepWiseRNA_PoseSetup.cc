@@ -259,7 +259,7 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 	if ( output_pdb_ ) pose.dump_pdb( "modeler_pose.pdb" );
 
 	for ( Size n = 1; n <= working_native_virtual_res_list_.size(); n++ ){
-//			pose::add_variant_type_to_pose_residue( (*working_native_pose), chemical::VIRTUAL_RNA_RESIDUE, working_native_virtual_res_list_[n]);
+//			pose::add_variant_type_to_pose_residue( (*working_native_pose), "VIRTUAL_RNA_RESIDUE", working_native_virtual_res_list_[n]);
 		core::pose::rna::apply_virtual_rna_residue_variant_type( ( *working_native_pose ), working_native_virtual_res_list_[n], false /*apply_check*/ ) ;
 	}
 
@@ -711,14 +711,14 @@ StepWiseRNA_PoseSetup::add_terminal_res_repulsion( core::pose::Pose & pose ) con
 		Size const k = working_terminal_res[ i ];
 		Residue const & rsd1( pose.residue( k ) );
 		if ( rsd1.has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ){
-			TR.Debug << "rsd1.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ), seq_num = " << k << " Ignore terminal_res_repulsion distance constraint " << std::endl;
+			TR.Debug << "rsd1.has_variant_type( \"VIRTUAL_RNA_RESIDUE\" ), seq_num = " << k << " Ignore terminal_res_repulsion distance constraint " << std::endl;
 			continue;
 		}
 		for ( Size m = 1; m <= nres; m++ ) {
 
 			Residue const & rsd2( pose.residue( m ) );
 			if ( rsd2.has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
-				 TR.Debug << "rsd2.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ), seq_num = " << m << " Ignore terminal_res_repulsion distance constraint " << std::endl;
+				 TR.Debug << "rsd2.has_variant_type( \"VIRTUAL_RNA_RESIDUE\" ), seq_num = " << m << " Ignore terminal_res_repulsion distance constraint " << std::endl;
 				 continue;
 			}
 
@@ -925,7 +925,7 @@ StepWiseRNA_PoseSetup::apply_virtual_res_variant( pose::Pose & pose ) const {
 		}
 		core::pose::rna::apply_virtual_rna_residue_variant_type( pose, working_bulge_moving_res );
 
-//			pose::add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_RNA_RESIDUE, working_bulge_moving_res);
+//			pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_RNA_RESID#UE", working_bulge_moving_res);
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////
 
@@ -938,7 +938,7 @@ StepWiseRNA_PoseSetup::apply_virtual_res_variant( pose::Pose & pose ) const {
 
 		core::pose::rna::apply_virtual_rna_residue_variant_type( pose, full_to_sub[ seq_num] );
 
-//			pose::add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_RNA_RESIDUE, full_to_sub[ seq_num] );
+//			pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_RNA_RESID#UE", full_to_sub[ seq_num] );
 
 	}
 }

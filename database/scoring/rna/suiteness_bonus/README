@@ -1,7 +1,0 @@
-This folder stores parameters for the 'suiteness_bonus' score term.
-
-Allows assignment of bonuses, with coefficients provided in the files, and
- suiteness calculated according to Richardson scheme (including correct treatment
- of dominant vs. satellite rotamers).
-
-See also ../suite_potential folder for information on refits to centers as Gaussian Mixture models.

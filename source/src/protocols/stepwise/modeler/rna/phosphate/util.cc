@@ -20,7 +20,6 @@
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/id/TorsionID.hh>
-#include <core/id/NamedAtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -200,120 +199,6 @@ namespace phosphate {
 		phosphate_scorefxn->set_weight( scoring::hbond_lr_bb_sc, 3.0 ); // trying to increase accepts
 		phosphate_scorefxn->set_weight( scoring::hbond_sr_bb_sc, 3.0 ); // trying to increase accepts
 		return phosphate_scorefxn;
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	// Most of the following functions are helpers for PhosphateMover but are also
-	// useful in, e.g. deciding whether or not to virtualize phosphates in
-	// virtualize_free_rna_moieties()
-	bool
-	check_phosphate_contacts_donor( utility::vector1< Vector > const & op_xyz_list,
-																	utility::vector1< Vector > const & donor_atom_xyz_list,
-																	utility::vector1< Vector > const & donor_base_atom_xyz_list )
-	{
-		static Real const max_hbond_dist_cutoff2( 2.2 * 2.2 );
-		static Real const max_hbond_base_dist_cutoff2( 3.2 * 3.2 );
-		static Real const cos_angle_cutoff = -0.5;
-
-		for ( Size i = 1; i <= donor_atom_xyz_list.size(); i++ ){
-			for ( Size j = 1; j <= op_xyz_list.size(); j++ ){
-				Real const dist2 =  ( donor_atom_xyz_list[ i ] - op_xyz_list[ j ] ).length_squared();
-				if ( dist2 > max_hbond_dist_cutoff2 ) continue;
-
-				Real const dist_to_base2 =  ( donor_base_atom_xyz_list[ i ] - op_xyz_list[ j ] ).length_squared();
-				if ( dist_to_base2 > max_hbond_base_dist_cutoff2  ) continue;
-
-				Real const costheta = 	cos_of( donor_base_atom_xyz_list[i], donor_atom_xyz_list[i], op_xyz_list[j]  );
-				if ( costheta > cos_angle_cutoff ) continue;
-				//				TR << "dist! " << std::sqrt( dist2 ) << " to " << i << " out of " << donor_atom_xyz_list.size() << " and cos angle is " <<	costheta <<	std::endl;
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	bool
-	check_phosphate_contacts_donor( pose::Pose const & pose, Size const n ){
-		utility::vector1< Vector > op_xyz_list;
-		op_xyz_list.push_back( pose.residue( n ).xyz( " OP1" ) );
-		op_xyz_list.push_back( pose.residue( n ).xyz( " OP2" ) );
-
-		utility::vector1< Vector > donor_atom_xyz_list;
-		utility::vector1< Vector > donor_base_atom_xyz_list;
-		utility::vector1< Size > neighbor_copy_dofs; // dummy
-		get_phosphate_atom_and_neighbor_list( pose, PhosphateMove( n, FIVE_PRIME_PHOSPHATE ), donor_atom_xyz_list, donor_base_atom_xyz_list, neighbor_copy_dofs );
-
-		return check_phosphate_contacts_donor( op_xyz_list,
-																					 donor_atom_xyz_list,
-																					 donor_base_atom_xyz_list );
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	void
-	get_phosphate_atom_and_neighbor_list( core::pose::Pose const & pose,
-																				PhosphateMove const & phosphate_move_,
-																				utility::vector1< Vector > & donor_atom_xyz_list,
-																				utility::vector1< Vector > & donor_base_atom_xyz_list,
-																				utility::vector1< Size > & neighbor_copy_dofs ) {
-
-		static Real const  phosphate_takeoff_donor_distance_cutoff2( 8.0 * 8.0 );
-		static Real const  phosphate_nbr_distance_cutoff2( 12.0 * 12.0 );
-
-		donor_atom_xyz_list.clear();
-		donor_base_atom_xyz_list.clear();
-		neighbor_copy_dofs.clear();
-
-		Size const & n = phosphate_move_.rsd();
-		Vector const phosphate_takeoff_xyz = (phosphate_move_.terminus() == FIVE_PRIME_PHOSPHATE) ?
-			pose.residue( n ).xyz( " C5'" ) :
-			pose.residue( n ).xyz( " O3'" );
-
-		for ( Size m = 1; m <= pose.total_residue(); m++ ){
-
-			if ( ( pose.residue( m ).nbr_atom_xyz()  - phosphate_takeoff_xyz ).length_squared() > phosphate_nbr_distance_cutoff2 ) continue;
-			neighbor_copy_dofs.push_back( m );
-
-			core::chemical::AtomIndices Hpos_polar = pose.residue_type( m ).Hpos_polar();
-			for ( Size ii = 1; ii <= Hpos_polar.size(); ii++ ){
-				Size const & q = Hpos_polar[ ii ];
-				Vector const & donor_atom_xyz = pose.residue( m ).xyz( q );
-				if ( ( donor_atom_xyz - phosphate_takeoff_xyz ).length_squared() < phosphate_takeoff_donor_distance_cutoff2 ){
-					donor_atom_xyz_list.push_back( donor_atom_xyz );
-					Size  q_base = pose.residue_type(m).atom_base( q );
-					Vector const & donor_base_atom_xyz = pose.residue( m ).xyz( q_base );
-					donor_base_atom_xyz_list.push_back( donor_base_atom_xyz );
-				}
-			}
-		}
-
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	utility::vector1< bool >
-	detect_phosphate_contacts( pose::Pose const & pose ){
-		utility::vector1< bool > phosphate_makes_contact( pose.total_residue(), false );
-		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
-			if ( !pose.residue_type( i ).is_RNA() ) continue;
-			phosphate_makes_contact[ i ] = check_phosphate_contacts_donor( pose, i );
-		}
-		return phosphate_makes_contact;
-	}
-
-
-	//////////////////////////////////////////////////////////////////////
-	void
-	setup_three_prime_phosphate_based_on_next_residue( pose::Pose & pose, Size const n ) {
-		add_variant_type_to_pose_residue( pose, chemical::THREE_PRIME_PHOSPHATE, n );
-		runtime_assert( n < pose.total_residue() );
-		runtime_assert( pose.residue_type( n+1 ).is_RNA() );
-		runtime_assert( pose.residue_type( n+1 ).has_variant_type( chemical::VIRTUAL_PHOSPHATE ) ||
-										pose.residue_type( n+1 ).has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) );
-		pose.set_xyz( id::NamedAtomID( "YP  ", n ), pose.residue( n+1 ).xyz( " P  " ) );
-		pose.set_xyz( id::NamedAtomID( "YOP1", n ), pose.residue( n+1 ).xyz( " OP1" ) );
-		pose.set_xyz( id::NamedAtomID( "YOP2", n ), pose.residue( n+1 ).xyz( " OP2" ) );
-		pose.set_xyz( id::NamedAtomID( "YO5'", n ), pose.residue( n+1 ).xyz( " O5'" ) );
 	}
 
 } //phosphate

@@ -123,8 +123,8 @@ namespace modeler {
 		initialize( pose );
 
 		do_prepacking( pose );
-		do_sampling( pose );
-		if ( sampling_successful() ) do_minimizing( pose );
+		do_modeler( pose );
+		if ( modeler_successful() ) do_minimizing( pose );
 
 		reinitialize( pose );
 	}
@@ -155,7 +155,7 @@ namespace modeler {
 
 	////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseModeler::do_sampling( core::pose::Pose & pose ) {
+	StepWiseModeler::do_modeler( core::pose::Pose & pose ) {
 
 		StepWiseConnectionSampler stepwise_sampler( working_parameters_ );
 		stepwise_sampler.set_options( options_->get_sampler_options() ); // careful!
@@ -251,7 +251,7 @@ namespace modeler {
 
 	//////////////////////////////////////////////////////////////////////////////
 	bool
-	StepWiseModeler::sampling_successful() {
+	StepWiseModeler::modeler_successful() {
 		Size const num_sampled = pose_list_.size();
 		if ( num_sampled == 0 ){
 			TR << "WARNING! WARNING! WARNING! pose_list_.size() == 0! " << std::endl;

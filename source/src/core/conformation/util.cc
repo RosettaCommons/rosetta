@@ -795,7 +795,6 @@ build_polymer_edge(
 
 	id::AtomID first_anchor;
 	for ( int pos=start+dir; pos != stop + dir; pos += dir ) {
-		runtime_assert( pos > 0 );
 		conformation::Residue const & rsd( *residues[pos] );
 		int const anchor_pos( pos-dir );
 		Size anchor_atomno, root_atomno;
@@ -809,8 +808,8 @@ build_polymer_edge(
 		assert( anchor_atom && root_atom );
 		anchor_atom->insert_atom( root_atom() );
 		//std::cout << "build_polymer_edge: " << edge << ' ' <<  pos << ' ' << root_atomno << ' ' <<
-		//			anchor_pos << ' ' << anchor_atomno << std::endl;
-		//		if ( pos == start+dir ) first_anchor = AtomID( anchor_atomno, anchor_pos );
+		//	anchor_pos << ' ' << anchor_atomno << std::endl;
+		//if ( pos == start+dir ) first_anchor = AtomID( anchor_atomno, anchor_pos );
 	}
 	// 	if ( start != stop ) {
 	// 		std::cout << "TREE AFTER BEGIN: " << edge << std::endl;
@@ -865,7 +864,7 @@ get_root_atomno(
 	if ( dir == forward ) {
 		// N for proteins, P for DNA
 		if ( rsd.is_polymer() ) {
-			if ( rsd.is_lower_terminus() && rsd.mainchain_atoms().size() > 0) {
+			if ( rsd.is_lower_terminus() ) {
 				// this is a little strange to be folding through a terminal residue but kinematics doesn't
 				// have to correlate perfectly with chemical
 				return rsd.mainchain_atom(1);
@@ -877,7 +876,7 @@ get_root_atomno(
 		}
 	} else if ( dir == backward ) {
 		if ( rsd.is_polymer() ) {
-			if ( rsd.is_upper_terminus() && rsd.mainchain_atoms().size() > 0 ) {
+			if ( rsd.is_upper_terminus() ) {
 				// this is a little strange to be folding through a terminal residue but kinematics doesn't
 				// have to correlate perfectly with chemical
 				return rsd.mainchain_atom( rsd.mainchain_atoms().size() );
@@ -895,7 +894,7 @@ get_root_atomno(
 			// For non-polymeric ligands, match the ICOOR root.
 			// (This should minimize issues with matching trees.)
 			return rsd.type().atom_index( rsd.type().root_atom() );
-		} else if ( rsd.type().has_variant_type( chemical::N_ACETYLATION ) ) {
+		} else if ( rsd.type().has_variant_type( "N_ACETYLATION" ) ) {
 			return 1; // awful hack! want N-CA-C triad to stay put when one of these residues is at root.
 		} else {
 			// PB 10/29/07 - changing to use an interior mainchain atom

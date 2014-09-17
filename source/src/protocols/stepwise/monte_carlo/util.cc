@@ -16,20 +16,16 @@
 #include <protocols/stepwise/monte_carlo/util.hh>
 #include <protocols/stepwise/modeler/util.hh>
 #include <protocols/stepwise/modeler/align/util.hh>
-#include <protocols/stepwise/modeler/protein/InputStreamWithResidueInfo.hh>
-#include <protocols/stepwise/monte_carlo/StepWiseMonteCarlo.hh>
-#include <protocols/stepwise/monte_carlo/options/StepWiseMonteCarloOptions.hh>
-#include <protocols/stepwise/monte_carlo/mover/AddOrDeleteMover.hh>
 #include <core/types.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
+//#include <core/io/silent/BinarySilentStruct.hh> // should be able to unify later
 #include <core/io/silent/util.hh>
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/scoring/ScoreFunction.hh>
 
 //////////////////////////////////////////////////////////
 #include <ObjexxFCL/string.functions.hh>
@@ -77,35 +73,27 @@ void
 output_to_silent_file( std::string const & out_tag,
 											 std::string const & silent_file,
 											 pose::Pose & pose,
-											 pose::PoseCOP native_pose,
-											 bool const superimpose_over_all_instantiated /* = false */,
-											 bool const do_rms_fill_calculation /* = false */ ){
+											 pose::PoseCOP native_pose ){
 
   using namespace core::io::silent;
-  using namespace protocols::stepwise::modeler::align;
+  using namespace core::pose::full_model_info;
+  using namespace protocols::stepwise;
 
 	// output silent file.
 	static SilentFileData const silent_file_data;
 
-	Real rms( 0.0 ), rms_fill( 0.0 );
-	if ( native_pose != 0 ) {
-		// if built from scratch, make sure to superimpose over everything.
-		bool superimpose_over_all_instantiated_ = superimpose_over_all_instantiated || check_all_residues_sampled( pose );
-		rms = superimpose_with_stepwise_aligner( pose, *native_pose, superimpose_over_all_instantiated_ );
+	Real rms( 0.0 );
+	//Real rms_no_bulges ( 0.0 );
+	clearPoseExtraScores( pose );
 
-		if ( do_rms_fill_calculation ){
-			TR << TR.Blue << "Generating filled-in model for rms_fill... " << TR.Reset << std::endl;
-			PoseOP full_model_pose = build_full_model( pose );
-			rms_fill = superimpose_with_stepwise_aligner( *full_model_pose, *native_pose, superimpose_over_all_instantiated_ );
-		}
-	}
+	if ( native_pose )	rms = modeler::align::superimpose_recursively( pose, *native_pose );
 
 	BinarySilentStruct s( pose, out_tag );
 	s.add_string_value( "missing", ObjexxFCL::string_of( get_number_missing_residue_connections( pose ) ) );
 
-	if ( native_pose != 0 ) {
-		s.add_energy( "rms",      rms );
-		if ( do_rms_fill_calculation ) s.add_energy( "rms_fill", rms_fill );
+	if ( native_pose ) {
+		s.add_energy( "rms", rms );
+		//		s.add_energy( "non_bulge_rms", rms_no_bulges );
 	}
 
 	silent_file_data.write_silent_struct( s, silent_file, false /*score_only*/ );
@@ -131,29 +119,6 @@ output_to_silent_file( std::string const & silent_file,
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////
-// given pose, build in other residues in a deterministic manner. No optimization.
-// used to estimate 'rms_fill' in stepwise_monte_carlo.
-void
-build_full_model( pose::Pose const & start_pose, Pose & full_model_pose ){
-
-	// pretty inelegant -- using stepwise monte carlo object, since it has
-	// all the functionality we need. though we're not really doing monte carlo.
-	scoring::ScoreFunctionOP scorefxn = new scoring::ScoreFunction;
-	StepWiseMonteCarlo stepwise_monte_carlo( scorefxn );
-	options::StepWiseMonteCarloOptionsOP options = new options::StepWiseMonteCarloOptions;
-	options->set_skip_deletions( true );
-	stepwise_monte_carlo.set_options( options );
-	stepwise_monte_carlo.build_full_model( start_pose, full_model_pose );
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////
-core::pose::PoseOP
-build_full_model( pose::Pose const & start_pose ){
-	PoseOP full_model_pose = new Pose;
-	build_full_model( start_pose, *full_model_pose );
-	return full_model_pose;
-}
 
 } //monte_carlo
 } //stepwise

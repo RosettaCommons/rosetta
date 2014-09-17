@@ -87,7 +87,7 @@ RotamerSet_::build_rotamers(
 			allowed_end = the_task.residue_task( resid() ).allowed_residue_types_end();
 			allowed_iter != allowed_end; ++allowed_iter ) {
 		build_rotamers_for_concrete_virt( pose, scorefxn, the_task, *allowed_iter, packer_neighbor_graph, use_neighbor_context );
-		//std::cout << "Built rotamers for concrete " << (*allowed_iter)->name() << " seqpos " << resid() << " " << n_residue_types_ << std::endl;
+		//std::cout << "Built rotamers for " << (*allowed_iter)->name() << " seqpos " << resid() << " " << n_residue_types_ << std::endl;
 	}
 
 	if ( num_rotamers() == 0 ) {
@@ -418,7 +418,6 @@ RotamerSet_::build_rotamers_for_concrete(
 			push_back_rotamer( rot );
 		}
 
-		// virtual side-chains
 		// not ready for design yet.
 		if ( task.residue_task( resid() ).include_virtual_side_chain() ) {
 			if ( existing_residue.nchi() > 0 &&

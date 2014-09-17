@@ -796,8 +796,7 @@ FoldTree::add_edge(
 {
 	// jump out if self-edge, exception: a one residue pose (happens at setup of pdb-read)
 	if ( start == stop && !( start == 1 && edge_list_.empty() ) ) return;
-	runtime_assert( start > 0 );
-	runtime_assert( stop  > 0 );
+
 	new_topology = true; // book-keeping
 	edge_list_.push_back( Edge( start, stop, label ) );
 }
@@ -814,8 +813,6 @@ FoldTree::add_edge(
 {
 	// jump out if self-edge, exception: a one residue pose (happens at setup of pdb-read)
 	if ( start == stop && !( start == 1 && edge_list_.empty() ) ) return;
-	runtime_assert( start > 0 );
-	runtime_assert( stop  > 0 );
 	new_topology = true; // book-keeping
 	edge_list_.push_back( Edge( start, stop, start_atom, stop_atom ) );
 }

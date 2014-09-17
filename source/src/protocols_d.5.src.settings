@@ -188,10 +188,6 @@ sources = {
 	"SideChainCopier",
 	"util",
     ],
-    "protocols/stepwise/modeler/polar_hydrogens": [
-	"PolarHydrogenPacker",
-	"util",
-    ],
     "protocols/stepwise/modeler/protein": [
 	"InputStreamWithResidueInfo",
 	"MainChainTorsionSet",
@@ -221,7 +217,6 @@ sources = {
     "protocols/stepwise/modeler/rna/bulge/": [
 	"BulgeApplyMover",
 	"BulgeUnApplyMover",
-	"util",
     ],
     "protocols/stepwise/modeler/rna/helix": [
 	"RNA_HelixAssembler",

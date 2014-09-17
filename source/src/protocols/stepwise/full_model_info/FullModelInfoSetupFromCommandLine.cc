@@ -14,11 +14,9 @@
 
 
 #include <protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.hh>
-#include <protocols/stepwise/modeler/rna/util.hh> // for virtualize_free_rna_moieties
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
-#include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -108,10 +106,6 @@ namespace full_model_info {
 			align_pose = get_pdb_with_full_model_info(  option[ in::file::s ]()[1], rsd_set );
 		}
 		if ( native_pose == 0 && align_pose != 0 ) native_pose = align_pose;
-
-		if ( native_pose != 0 ) modeler::rna::virtualize_free_rna_moieties( *native_pose );
-		if ( align_pose != 0 )  modeler::rna::virtualize_free_rna_moieties( *align_pose );
-
 	}
 
 
@@ -269,8 +263,6 @@ namespace full_model_info {
 				found_info = true;
 			}
 			if ( n > 1 ) runtime_assert( found_info == found_info_in_previous_sequence );
-
-
 			if ( !found_info || resnum.size() == 1 /*happens with stray numbers*/ ){
 				resnum.clear();
 				chain = ' '; // unknown chain
@@ -282,50 +274,6 @@ namespace full_model_info {
 
 			found_info_in_previous_sequence  = found_info;
 		}
-	}
-
-	///////////////////////////////////////////////////////////////////////////////////////
-	// Converts sequences to one-letter-sequences, but outputs a map of any fullnames (as would be enclosed in brackets, like for Z[IGU]).
-	std::map< Size, std::string >
-	parse_out_non_standard_residues( vector1< core::sequence::SequenceOP > & fasta_sequences ){
-
-		std::map< Size, std::string > non_standard_residues;
-		vector1< core::sequence::SequenceOP > fasta_sequences_new;
-
-		Size offset( 0 );
-		for ( Size n = 1; n <= fasta_sequences.size(); n++ ){
-			std::string sequence = fasta_sequences[n]->sequence();
-			std::map< Size, std::string > non_standard_residues_local =	parse_out_non_standard_residues( sequence );
-
-			fasta_sequences_new.push_back( new core::sequence::Sequence( sequence, fasta_sequences[n]->id()) );
-			for ( std::map< Size, std::string >::iterator it = non_standard_residues_local.begin();
-						it != non_standard_residues_local.end(); it++ ){
-				non_standard_residues[ it->first + offset ] = it->second;
-			}
-
-			offset += sequence.size();
-		}
-
-		fasta_sequences = fasta_sequences_new;
-		return non_standard_residues;
-	}
-
-	///////////////////////////////////////////////////////////////////////////////////////
-	std::map< Size, std::string >
-	parse_out_non_standard_residues( std::string & sequence ) {
-		utility::vector1< std::string > fullname_list; // a vector of non-standard full names
-		std::vector< Size > oneletter_to_fullname_index; // for each one-letter sequence, zero means no fullname given
-		std::string one_letter_sequence;
-
-		parse_sequence( sequence, fullname_list, oneletter_to_fullname_index, one_letter_sequence );
-		sequence = one_letter_sequence;
-
-		std::map< Size, std::string > non_standard_residues;
-		for ( Size k = 1; k <= oneletter_to_fullname_index.size(); k++ ){
-			Size const pos = oneletter_to_fullname_index[ k - 1 ];
-			if ( pos > 0 )	non_standard_residues[ k ] = fullname_list[ pos ];
-		}
-		return non_standard_residues;
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////
@@ -341,9 +289,7 @@ namespace full_model_info {
 		}
 
 		std::string const fasta_file = option[ in::file::fasta ]()[1];
-		vector1< core::sequence::SequenceOP > fasta_sequences = core::sequence::read_fasta_file( fasta_file );
-		std::map< Size, std::string > non_standard_residues  = parse_out_non_standard_residues( fasta_sequences /*will reduce to one-letter*/ );
-
+		vector1< core::sequence::SequenceOP > const fasta_sequences = core::sequence::read_fasta_file( fasta_file );
 		std::string const desired_sequence           = get_concatenated_sequence( fasta_sequences );
 		vector1< Size > cutpoint_open_in_full_model  = get_cutpoints( fasta_sequences );
 
@@ -356,9 +302,8 @@ namespace full_model_info {
 
 		if ( option[ full_model::cutpoint_open ].user() ) cutpoint_open_in_full_model = full_model_parameters->conventional_to_full( option[ full_model::cutpoint_open ].resnum_and_chain() );
 		vector1< Size > extra_minimize_res = full_model_parameters->conventional_to_full( option[ full_model::extra_min_res ].resnum_and_chain() );
-		vector1< Size > sample_res  = full_model_parameters->conventional_to_full( option[ full_model::sample_res ].resnum_and_chain() ); //stuff that can be resampled.
+		vector1< Size > sample_res = full_model_parameters->conventional_to_full( option[ full_model::sample_res ].resnum_and_chain() ); //stuff that can be resampled.
 		vector1< Size > working_res = full_model_parameters->conventional_to_full( option[ full_model::working_res ].resnum_and_chain() ); //all working stuff
-		vector1< Size > bulge_res   = full_model_parameters->conventional_to_full( option[ full_model::rna::bulge_res ].resnum_and_chain() ); //not to be sampled.
 		vector1< Size > input_res_list; // will be filled in below.
 		bool const get_res_list_from_pdb = true; //!option[ in::file::input_res ].user();
 
@@ -421,7 +366,6 @@ namespace full_model_info {
 		}
 
 		if ( sample_res.size() == 0 ) sample_res = figure_out_sample_res( domain_map, working_res ); // everything that is not fixed is sampleable (unless -sample_res explicitly specified).
-		filter_out_bulge_res( sample_res, bulge_res );
 		if ( working_res.size() == 0 ) working_res = figure_out_working_res( domain_map, sample_res );
 		check_working_res( working_res, domain_map, sample_res );
 
@@ -433,7 +377,6 @@ namespace full_model_info {
 		full_model_parameters->set_parameter_as_res_list( CALC_RMS, full_model_parameters->conventional_to_full( option[ full_model::calc_rms_res ].resnum_and_chain() ) );
 		full_model_parameters->set_parameter_as_res_list( RNA_SYN_CHI,  full_model_parameters->conventional_to_full( option[ full_model::rna::force_syn_chi_res_list ].resnum_and_chain() ) );
 		full_model_parameters->set_parameter_as_res_list( RNA_TERMINAL, full_model_parameters->conventional_to_full( option[ full_model::rna::terminal_res ].resnum_and_chain() ) );
-		full_model_parameters->set_parameter_as_res_list( RNA_BULGE,  bulge_res );
 
 		for ( Size n = 1; n <= pose_pointers.size(); n++ ) {
 			Pose & pose = *pose_pointers[n];
@@ -715,18 +658,6 @@ namespace full_model_info {
 			}
 		}
 	}
-
-	void
-	filter_out_bulge_res(  utility::vector1< Size > & sample_res,
-												 utility::vector1< Size > const & bulge_res ) {
-		vector1< Size > sample_res_new;
-		for ( Size n = 1; n <= sample_res.size(); n++ ) {
-			if ( !bulge_res.has_value( sample_res[ n ] ) ) sample_res_new.push_back( sample_res[ n ] );
-		}
-		sample_res = sample_res_new;
-	}
-
-
 
 } //full_model_info
 } //stepwise

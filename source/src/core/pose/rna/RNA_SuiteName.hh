@@ -95,14 +95,7 @@ public:
 
 	RNA_SuiteAssignment assign(utility::vector1<Real> const & torsions_in) const;
 
-	RNA_SuiteAssignment assign(utility::vector1<Real> const & torsions_in,
-														 utility::vector1<Real> & deriv )	const;
-
 	RNA_SuiteAssignment assign(Pose const & pose, Size const res) const;
-
-	void
-	update_centers( utility::vector1< utility::vector1< Real > > const & centers,
-									utility::vector1< std::string > const & tags );
 
 	Real const
 		epsilonmin, epsilonmax,
@@ -124,37 +117,11 @@ private:
 
 	void init();
 
-	Size
-	get_classifier( utility::vector1< Real > const & torsions, bool & is_outlier ) const;
-
-	Size
-	get_classifier( utility::vector1< Real > const & torsions ) const;
-
 	Real distance_4d(utility::vector1<Real> const &torsion1, utility::vector1<Real> const &torsion2,
 			utility::vector1<Size> const & half_width) const;
 
 	Real distance_7d(utility::vector1<Real> const &torsion1, utility::vector1 <Real> const &torsion2,
-									 utility::vector1<Size> const & half_width) const;
-
-	Real distance_7d(
-									 utility::vector1<Real> const & torsion1,
-									 utility::vector1<Real> const & torsion2,
-									 utility::vector1<Size> const & half_width,
-									 utility::vector1<Real> & deriv // fill if non-empty
-									 ) const;
-
-	Real
-	get_suiteness( Real const & dist_7d ) const;
-
-	Real
-	get_suiteness_derivative( Real const & dist_7d ) const;
-
-	void
-	fill_suiteness_derivative_7d (
-		 utility::vector1< Real  > & deriv,
-		 utility::vector1< Real > const & torsions,
-		 utility::vector1< Real > const & torsions_center,
-		 utility::vector1< Real > const & half_width ) const;
+			utility::vector1<Size> const & half_width) const;
 
 	bool is_in_between( utility::vector1<Real> const & target,
 			utility::vector1<Real> const & dominant,
@@ -162,8 +129,8 @@ private:
 
 	//////////////////////////////////
 	RNA_SuiteAssignment const suite_undefined;
-	Real const dist_pow_;
-	utility::vector1<RNA_SuiteInfo> all_suites_;
+	Real const dist_pow;
+	utility::vector1<RNA_SuiteInfo> all_suites;
 	utility::vector1<Size> regular_half_width;
 	utility::vector1<std::string> dominant_suites;
 	utility::vector1<std::string> satellite_suites;

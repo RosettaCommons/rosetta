@@ -332,9 +332,7 @@ ChemicalManager::residue_type_set( std::string tag )
 			tag = "rna_prot_erraser";
 		} else if ( !use_corrected_rna_geo && use_RNA_and_protein ) {
 			utility_exit_with_message("cannot use -rna:rna_prot_erraser without -rna:corrected_geo");
-		} else {
-			tag = "rna_legacy";
-		}
+		} //final case - if both are false - leave tag as-is
 	} //if ( tag == "rna" ) {
 
 	ResidueTypeSets::const_iterator iter;

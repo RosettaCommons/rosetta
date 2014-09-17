@@ -46,9 +46,8 @@ namespace options {
 
 		StepWiseBasicOptionsOP clone() const;
 
-		// better to *not* define equality and use C++ in-built -- copies over everything. No need to clone().
-		// StepWiseBasicOptions &
-		// operator = ( StepWiseBasicOptions const & src );
+		StepWiseBasicOptions &
+		operator = ( StepWiseBasicOptions const & src );
 
 		/// @brief Initialize from the recursive "tag" structure.
 		virtual
@@ -61,17 +60,14 @@ namespace options {
 		std::string
 		type() const{ return "StepWiseBasicOptions";}
 
+		bool const & output_minimized_pose_list() const { return output_minimized_pose_list_; }
+		void set_output_minimized_pose_list( bool const & setting ){ output_minimized_pose_list_ = setting; }
+
 		std::string const & silent_file() const { return silent_file_; }
 		void set_silent_file( std::string const & setting ){ silent_file_ = setting; }
 
 		std::string const & sampler_silent_file() const { return sampler_silent_file_; }
 		void set_sampler_silent_file( std::string const & setting ){ sampler_silent_file_ = setting; }
-
-		core::Size const & sampler_num_pose_kept() const { return sampler_num_pose_kept_; }
-		void set_sampler_num_pose_kept( core::Size const & setting ){ sampler_num_pose_kept_ = setting; }
-
-		core::Real const & cluster_rmsd() const { return cluster_rmsd_; }
-		void set_cluster_rmsd( core::Real const & setting ){ cluster_rmsd_ = setting; }
 
 		core::Size const & num_pose_minimize() const { return num_pose_minimize_; }
 		void set_num_pose_minimize( core::Size const & setting ){ num_pose_minimize_ = setting; }
@@ -85,21 +81,6 @@ namespace options {
 		void set_rmsd_screen( core::Real const & setting ){ rmsd_screen_ = setting; }
 		core::Real rmsd_screen() const{ return rmsd_screen_; }
 
-		bool const & output_minimized_pose_list() const { return output_minimized_pose_list_; }
-		void set_output_minimized_pose_list( bool const & setting ){ output_minimized_pose_list_ = setting; }
-
-		void set_min_type( std::string const & setting ){ min_type_ = setting; }
-		std::string min_type() const{ return min_type_; }
-
-		void set_min_tolerance( core::Real const & setting ){ min_tolerance_ = setting; }
-		core::Real min_tolerance() const{ return min_tolerance_; }
-
-		bool const & vary_rna_bond_geometry() const { return vary_rna_bond_geometry_; }
-		void set_vary_rna_bond_geometry( bool const & setting ){ vary_rna_bond_geometry_ = setting; }
-
-		bool const & vary_polar_hydrogen_geometry() const { return vary_polar_hydrogen_geometry_; }
-		void set_vary_polar_hydrogen_geometry( bool const & setting ){ vary_polar_hydrogen_geometry_ = setting; }
-
 	protected:
 
 		void
@@ -111,18 +92,11 @@ namespace options {
 	private:
 
 		std::string silent_file_;
-		core::Size sampler_num_pose_kept_;
-		core::Real cluster_rmsd_;
 		core::Size num_pose_minimize_;
 		core::Size num_random_samples_;
 		bool atr_rep_screen_;
 		core::Real rmsd_screen_;
-
 		bool output_minimized_pose_list_;
-		std::string min_type_;
-		core::Real min_tolerance_;
-		bool vary_rna_bond_geometry_;
-		bool vary_polar_hydrogen_geometry_;
 		std::string sampler_silent_file_;
 
 	};

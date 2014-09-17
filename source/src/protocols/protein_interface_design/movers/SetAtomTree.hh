@@ -63,7 +63,7 @@ private :
 	std::string resnum_, connect_to_, anchor_res_, connect_from_; //as parsed
 	core::Size host_chain_; //dflt 2
 	core::kinematics::FoldTreeOP fold_tree_; // dflt NULL; if set just use it without any other options. Reading a foldtree from file parses the fold tree at parse time and then just applies it at apply.
-	bool ab_fold_tree_; //dflt false; NOOOOOOOOO. MUST SET BOOLS EXPLICITLY. SILLY C++.  Caught from integration test fail. --rhiju
+	bool ab_fold_tree_; //dflt false;
 };
 
 } // movers

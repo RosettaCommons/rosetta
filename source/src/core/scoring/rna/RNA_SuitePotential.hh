@@ -22,7 +22,6 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/TorsionID.hh>
-#include <core/pose/rna/RNA_SuiteName.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -39,7 +38,7 @@ namespace rna {
 class RNA_SuitePotential : public utility::pointer::ReferenceCount {
 
 public:
-	RNA_SuitePotential( bool const calculate_suiteness_bonus = false );
+	RNA_SuitePotential();
 
 	virtual ~RNA_SuitePotential();
 
@@ -58,33 +57,20 @@ public:
 	}
 
 private:
-
-	void eval_score(
-			utility::vector1<Real> const & torsions ) const;
-
-	void eval_suiteness_bonus(
-		  utility::vector1<Real> const & torsions ) const;
-
-	void eval_likelihood_potential(
-		  utility::vector1<Real> const & torsions ) const;
-
-	void regularize_torsions(
-			boost::numeric::ublas::vector<Real> & torsions ) const;
-
-void figure_out_offset();
-
-private:
 	Size const n_torsions_;
 	utility::vector1<Real> weights_;
 	utility::vector1< boost::numeric::ublas::vector<Real> > centers_;
-	utility::vector1<std::string> tags_;
 	boost::numeric::ublas::matrix<Real> inv_cov_;
 	Real offset_;
 	mutable Real score_;
 	mutable utility::vector1<Real> deriv_;
 	mutable utility::vector1<id::TorsionID> torsion_ids_;
-	bool const calculate_suiteness_bonus_;
-	pose::rna::RNA_SuiteNameOP rna_suite_name_;
+
+	void eval_score(
+			boost::numeric::ublas::vector<Real> const & torsions ) const;
+
+	void regularize_torsions(
+			boost::numeric::ublas::vector<Real> & torsions ) const;
 };
 
 } //rna

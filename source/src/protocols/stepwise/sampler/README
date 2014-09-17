@@ -7,19 +7,19 @@ The root path contains generic abstract base classes and simple base
 classes for inheritence and basic functionality.
 
 Some classes take multiple rotamer sampler instances and assemble them in
-linear of combinatorial way for complex tasks (e.g. StepWiseSamplerComb,
-StepWiseSamplerSizedAny).
+linear of combinatorial way for complex tasks (e.g. RotamerComb,
+RotamerSizedAny).
 
-The rna/ folder contains RNA specific StepWiseSampler sampler for backbone, sugar
+The rna/ folder contains RNA specific Rotamer sampler for backbone, sugar
 ring and chi angle.
 
 How to use
 ----------
-StepWiseSampler samplers apply new rotamer conformation to a pose until all rotamer
+Rotamer samplers apply new rotamer conformation to a pose until all rotamer
 has been navigated.
 
 Example code:
-RNA_SuiteStepWiseSampler sampler( ... ); //Declaration
+RNA_SuiteRotamer sampler( ... ); //Declaration
 //Varirous settings
 sampler.set_fast( true );
 sampler.set_random( false ); //Controls random sampling

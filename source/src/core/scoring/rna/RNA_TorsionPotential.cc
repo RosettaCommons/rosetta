@@ -124,8 +124,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 		use_new_potential_( false ),
 		use_2prime_OH_potential_( basic::options::option[ basic::options::OptionKeys::score::use_2prime_OH_potential ]() ),
 		syn_G_potential_bonus_( basic::options::option[ basic::options::OptionKeys::score::syn_G_potential_bonus ]() ),
-		rna_fitted_torsion_info_( new chemical::rna::RNA_FittedTorsionInfo ),
-	  intrares_side_chain_score_( 0.0 )
+		rna_fitted_torsion_info_( new chemical::rna::RNA_FittedTorsionInfo )
 	{
 		if ( basic::options::option[ basic::options::OptionKeys::score::rna_torsion_potential ].user() ){
 
@@ -165,7 +164,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 
 	//////////////////////////////////////////////////////////////////////////
 	Real
-	RNA_TorsionPotential::eval_intrares_energy( core::conformation::Residue const & rsd, pose::Pose const & pose )
+	RNA_TorsionPotential::eval_intrares_energy( core::conformation::Residue const & rsd, pose::Pose const & pose ) const
 	{
 		using core::id::TorsionID;
 		using numeric::principal_angle_degrees;
@@ -209,7 +208,6 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 			if ( verbose_ )  TR << "delta score " << delta_score << std::endl;
 		}
 
-		intrares_side_chain_score_ = 0.0; // saves info on just side-chain terms: CHI, NU2, NU1, O2H
 		if ( verbose_ )  TR << "Chi torsion" << std::endl;
 		if ( is_torsion_valid( pose, TorsionID( rsd.seqpos(), id::CHI, CHI - NUM_RNA_MAINCHAIN_TORSIONS ), verbose_, skip_chainbreak_torsions_ ) ) {
 			Real chi_score( 0.0 );
@@ -231,7 +229,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 				}
 			}
 			if ( rsd.aa() == core::chemical::na_rgu && syn_G_potential_bonus_ != 0.0 ) chi_score += chi_potential_syn_guanosine_bonus_->func( chi );
-			intrares_side_chain_score_ += chi_score;
+			score += chi_score;
 			if ( verbose_ )  TR << "chi score " << chi_score << std::endl;
 		}
 
@@ -239,7 +237,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 		if ( is_torsion_valid( pose, TorsionID( rsd.seqpos(), id::CHI, NU2 - NUM_RNA_MAINCHAIN_TORSIONS ), verbose_, skip_chainbreak_torsions_ ) ) {
 			Real const nu2_score = ( fade_delta_north_->func( delta ) * nu2_north_potential_->func( nu2 ) +
 															 fade_delta_south_->func( delta ) * nu2_south_potential_->func( nu2 ) ); //nu2
-			intrares_side_chain_score_  += nu2_score;
+			score += nu2_score;
 			if ( verbose_ )  TR << "nu2 score " << nu2_score << std::endl;
 		}
 
@@ -248,20 +246,18 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 		if ( is_torsion_valid( pose, TorsionID( rsd.seqpos(), id::CHI, NU1 - NUM_RNA_MAINCHAIN_TORSIONS ), verbose_, skip_chainbreak_torsions_ ) ) {
 			Real const nu1_score = ( fade_delta_north_->func( delta ) * nu1_north_potential_->func( nu1 ) +
 										fade_delta_south_->func( delta ) * nu1_south_potential_->func( nu1 ) ); //nu1
-			intrares_side_chain_score_ += nu1_score;
+			score += nu1_score;
 			if ( verbose_ )  TR << "nu1 score " << nu1_score << std::endl;
 		}
 
 		if ( use_2prime_OH_potential_ && use_new_potential_ && is_torsion_valid( pose, TorsionID( rsd.seqpos(), id::CHI, O2H - NUM_RNA_MAINCHAIN_TORSIONS ), verbose_, skip_chainbreak_torsions_ ) ) {
 			Real const o2h_score = ( fade_delta_north_->func( delta ) * o2h_north_potential_->func( o2h ) +
 															 fade_delta_south_->func( delta ) * o2h_south_potential_->func( o2h ) ); //o2h
-			intrares_side_chain_score_ += o2h_score;
+			score += o2h_score;
 			if ( verbose_ )  TR << "o2h score " << o2h_score << std::endl;
 		}
-		score += intrares_side_chain_score_;
 
 		/////////////////////// new 'packable phosphate' variants /////////////////
-		// These were experimental, but are actually not in use -- no longer supported.
 		chemical::rna::RNA_ResidueType rna_type = rsd.type().RNA_type();
 		if ( rna_type.chi_number_pseudoalpha() > 0 ){
 			Real const pseudoalpha = principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudoalpha() ) );
@@ -553,9 +549,6 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 
 				F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f1;
 				F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f2;
-
-				F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion_sc ] * f1;
-				F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion_sc ] * f2;
 			}
 
 			/////////////////////////////////////NU2//////////////////////////////////////////////////////
@@ -565,9 +558,6 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 
 				F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f1;
 				F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f2;
-
-				F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion_sc ] * f1;
-				F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion_sc ] * f2;
 			}
 
 			/////////////////////////////////////NU1//////////////////////////////////////////////////////
@@ -577,9 +567,6 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 
 				F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f1;
 				F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f2;
-
-				F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion_sc ] * f1;
-				F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion_sc ] * f2;
 			}
 
 			/////////////////////////////////O2H/////////////////////////////////////////////////////////
@@ -590,9 +577,6 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 
 				F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f1;
 				F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f2;
-
-				F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion_sc ] * f1;
-				F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion_sc ] * f2;
 			}
 
 			/////////////////////// new 'packable phosphate' variants /////////////////

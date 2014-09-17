@@ -19,7 +19,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.fwd.hh>
 #include <protocols/stepwise/modeler/align/StepWiseClusterer.fwd.hh>
-#include <protocols/stepwise/modeler/align/StepWisePoseAligner.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -56,11 +55,6 @@ namespace align {
 
 		void set_calc_rms_res( utility::vector1< core::Size > const & setting ){ calc_rms_res_ = setting; }
 
-		void set_silent_file( std::string const & setting ){ silent_file_ = setting; }
-
-		void set_do_checks( core::Size const & setting ){ do_checks_ = setting; }
-		void set_assume_atom_ids_invariant( core::Size const & setting ){ assume_atom_ids_invariant_ = setting; }
-
 		void
 		apply( core::pose::Pose const & pose );
 
@@ -89,13 +83,10 @@ namespace align {
 		core::Real rmsd_;
 		core::Real cluster_rmsd_;
 		core::Real score_diff_cut_;
-		bool do_checks_;
-		bool assume_atom_ids_invariant_;
 		bool initialized_;
 		Size count_;
 		std::string silent_file_;
 
-		StepWisePoseAlignerOP pose_aligner_;
 	};
 
 } //align

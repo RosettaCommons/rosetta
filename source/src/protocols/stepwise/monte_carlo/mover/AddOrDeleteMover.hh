@@ -65,9 +65,6 @@ public:
 	void
 	set_options( options::StepWiseMonteCarloOptionsCOP options );
 
-	void
-	set_choose_random( bool const setting ){ choose_random_ = setting; }
-
 private:
 
 	utility::vector1< Size >
@@ -80,7 +77,6 @@ private:
 	FromScratchMoverOP rna_from_scratch_mover_;
 	bool disallow_deletion_of_last_residue_;
 	SWA_MoveSelectorOP swa_move_selector_;
-	bool choose_random_;
 	options::StepWiseMonteCarloOptionsCOP options_;
 
 };

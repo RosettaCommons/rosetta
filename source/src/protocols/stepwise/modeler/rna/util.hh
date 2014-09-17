@@ -96,6 +96,10 @@ setup_suite_atom_id_map( pose::Pose const & pose_1,  ////Dec 23, 2011.
 
 
 // may be deprecatable soon -- in use by superimpose_pose, which may be replaced by StepWisePoseAligner,
+id::AtomID_Map < id::AtomID >
+create_alignment_id_map(	pose::Pose & mod_pose, pose::Pose const & ref_pose, utility::vector1< Size > const & rmsd_residue_list, bool const base_only = true );
+
+// may be deprecatable soon -- in use by superimpose_pose, which may be replaced by StepWisePoseAligner,
 void
 align_poses( pose::Pose & moving_pose,
 					  std::string const moving_tag,
@@ -323,8 +327,6 @@ figure_out_moving_rna_chain_breaks( core::pose::Pose const & pose,
 																		utility::vector1< core::Size > & rna_five_prime_chain_breaks,
 																		utility::vector1< core::Size > & rna_three_prime_chain_breaks,
 																		utility::vector1< core::Size > & rna_chain_break_gap_sizes );
-void
-virtualize_free_rna_moieties( pose::Pose & pose );
 
 } //rna
 } //modeler

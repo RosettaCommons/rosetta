@@ -48,9 +48,6 @@ namespace align {
 		void
 		apply( pose::Pose & pose );
 
-		Real
-		get_rmsd_over_all_poses( pose::Pose & pose );
-
 		void
 		initialize( pose::Pose const & pose );
 
@@ -58,17 +55,18 @@ namespace align {
 		get_rmsd_no_superimpose( pose::Pose const & pose,
 														 bool const check_align  = true );
 
-		Real
-		get_rmsd_no_superimpose( pose::Pose const & pose,
-														 pose::Pose const & pose_reference,
-														 bool const check_align  = true );
-
 		void
 		create_coordinate_constraints( pose::Pose & pose,
 																	 Real const rmsd_screen );
 
-		void set_superimpose_over_all_instantiated( bool const & setting ){ superimpose_over_all_instantiated_ = setting; }
-		bool superimpose_over_all_instantiated() const{ return superimpose_over_all_instantiated_; }
+		void set_skip_bulges( bool const & setting ){ skip_bulges_ = setting; }
+		bool skip_bulges() const{ return skip_bulges_; }
+
+		void set_align_at_first_fixed_domain( bool const & setting ){ align_at_first_fixed_domain_ = setting; }
+		bool align_at_first_fixed_domain() const{ return align_at_first_fixed_domain_; }
+
+		void set_superimpose_over_all_if_all_moving( bool const & setting ){ superimpose_over_all_if_all_moving_ = setting; }
+		bool superimpose_over_all_if_all_moving() const{ return superimpose_over_all_if_all_moving_; }
 
 		void set_root_partition_res( utility::vector1< Size > const & setting ){ root_partition_res_ = setting; }
 		void set_user_defined_calc_rms_res( utility::vector1< Size > const & setting ){ user_defined_calc_rms_res_ = setting; }
@@ -81,17 +79,10 @@ namespace align {
 
 		Real rmsd_over_alignment_atoms() const { return superimpose_rmsd_;}
 
-		bool check_matching_atom_names( pose::Pose const & pose1, pose::Pose const & pose2,
-																		bool const verbose = true );
-
-		bool check_matching_atom_names( pose::Pose const & pose1, pose::Pose const & pose2,
-																		std::map< id::AtomID, id::AtomID > const & atom_id_map, bool const verbose = true );
-
 	private:
 
-		void
-		superimpose_recursively( pose::Pose & pose,
-														 Real & rmsd_over_all, Size & natoms_over_all );
+		Real
+		superimpose_at_fixed_res( pose::Pose & pose );
 
 		Real
 		do_superimposition( pose::Pose & pose );
@@ -145,6 +136,7 @@ namespace align {
 																					 pose::Pose const & pose1,
 																					 pose::Pose const & pose2 ) const;
 
+
 		std::map< id::AtomID, id::AtomID > filter_virtual_atoms( std::map< id::AtomID, id::AtomID > const & atom_id_map,
 																														 pose::Pose const & pose );
 
@@ -152,6 +144,7 @@ namespace align {
 
 		pose::Pose const & reference_pose_;
 		pose::PoseOP reference_pose_local_;
+		bool skip_bulges_;
 		utility::vector1< Size > root_partition_res_;
 		utility::vector1< Size > user_defined_calc_rms_res_;
 
@@ -166,7 +159,8 @@ namespace align {
 		Real superimpose_rmsd_;
 
 		Real const check_alignment_tolerance_;
-		bool superimpose_over_all_instantiated_;
+		bool align_at_first_fixed_domain_;
+		bool superimpose_over_all_if_all_moving_;
 
 	};
 

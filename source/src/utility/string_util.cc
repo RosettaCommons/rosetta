@@ -456,11 +456,10 @@ std::string string_to_sha1(std::string const & input_string)
 // ObjexxFCL::get_ints(), I think.
 //
 std::string
-make_tag_with_dashes( utility::vector1< int > res_vector,
-											char const delimiter /* = ' ' */){
+make_tag_with_dashes( utility::vector1< int > res_vector ){
 	utility::vector1< char > chains;
 	for ( platform::Size n = 0; n < res_vector.size(); n++ ) chains.push_back( ' ' );
-	return make_tag_with_dashes( res_vector, chains, delimiter );
+	return make_tag_with_dashes( res_vector, chains );
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -469,8 +468,7 @@ make_tag_with_dashes( utility::vector1< int > res_vector,
 //
 std::string
 make_tag_with_dashes( utility::vector1< int > res_vector,
-											utility::vector1< char > chain_vector,
-											char const delimiter /* = ' ' */){
+											utility::vector1< char > chain_vector ){
 
   using namespace ObjexxFCL;
   std::string tag = "";
@@ -496,7 +494,7 @@ make_tag_with_dashes( utility::vector1< int > res_vector,
   chains_for_segments.push_back( last_chain );
 
   for (platform::Size n = 1; n <= res_vector_segments.size(); n++ ){
-    if ( n > 1 ) tag += delimiter;
+    if ( n > 1 ) tag += " ";
     std::pair< int, int > const & segment = res_vector_segments[n];
     if ( chains_for_segments[n] != '\0' &&
 				chains_for_segments[n] != ' '  &&
@@ -532,6 +530,7 @@ make_tag( utility::vector1< int > res_vector ){
 //
 //  #detailed  several kinds of tags are OK, including "A:1-5 B:20-22" and "A1-5 B20,21,22".
 //
+
 std::pair< std::vector< int >, std::vector< char > >
 get_resnum_and_chain( std::string const & s, bool & string_is_ok ){
 
@@ -539,8 +538,7 @@ get_resnum_and_chain( std::string const & s, bool & string_is_ok ){
   std::vector< int  > resnum;
   std::vector< char > chain;
 
-	std::string s_nocommas = replace_in( s, ",", " " ); // order of operations issue?
-  utility::vector1< std::string > const tags = utility::string_split( s_nocommas );
+  utility::vector1< std::string > const tags = utility::string_split( s );
   for ( platform::Size n = 1; n <= tags.size(); n++ ){
     string_is_ok = get_resnum_and_chain_from_one_tag( tags[n], resnum, chain );
     if ( !string_is_ok ) break;

@@ -68,7 +68,6 @@ ConstraintsEnergyCreator::score_types_for_method() const {
 	sts.push_back( big_bin_constraint );
 	sts.push_back( dunbrack_constraint );
 	sts.push_back( pocket_constraint );
-	sts.push_back( bond_geometry );
 	sts.push_back( rna_bond_geometry );
 	sts.push_back( metalhash_constraint );
 	return sts;

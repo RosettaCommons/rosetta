@@ -197,12 +197,6 @@ namespace options {
 		bool const & o2prime_legacy_mode() const { return o2prime_legacy_mode_; }
 		void set_o2prime_legacy_mode( bool const & setting ){ o2prime_legacy_mode_ = setting; }
 
-		bool const & recover_low() const { return recover_low_; }
-		void set_recover_low( bool const & setting ){ recover_low_ = setting; }
-
-		bool const & save_times() const { return save_times_; }
-		void set_save_times( bool const & setting ){ save_times_ = setting; }
-
 	private:
 
 		bool verbose_scores_;
@@ -242,8 +236,6 @@ namespace options {
 		Size n_sample_;
 		bool protein_prepack_;
 		bool o2prime_legacy_mode_;
-		bool recover_low_;
-		bool save_times_;
 	};
 
 } //options

@@ -52,7 +52,6 @@ ConstraintEdge::~ConstraintEdge()
 ConstraintEdge::ConstraintEdge( graph::Graph * owner, Size first_node_ind, Size second_node_ind)
 :
 	parent( owner, first_node_ind, second_node_ind ),
-	bond_geometry_energy_( 0.0 ),
 	rna_bond_geometry_energy_( 0.0 ),
 	atom_pair_constraint_energy_( 0.0 ),
 	coordinate_constraint_energy_( 0.0 ),
@@ -68,7 +67,6 @@ ConstraintEdge::ConstraintEdge( graph::Graph * owner, Size first_node_ind, Size 
 ConstraintEdge::ConstraintEdge( graph::Graph * owner, ConstraintEdge const & example_edge )
 :
 	parent( owner, example_edge.get_first_node_ind(), example_edge.get_second_node_ind() ),
-	bond_geometry_energy_( example_edge.bond_geometry_energy_ ),
 	rna_bond_geometry_energy_( example_edge.rna_bond_geometry_energy_ ),
 	atom_pair_constraint_energy_( example_edge.atom_pair_constraint_energy_ ),
 	coordinate_constraint_energy_( example_edge.coordinate_constraint_energy_ ),
@@ -85,7 +83,6 @@ ConstraintEdge::copy_from( graph::Edge const * source )
 {
 	ConstraintEdge const * cst_source = static_cast< ConstraintEdge const * > ( source );
 
-	bond_geometry_energy_ = cst_source->bond_geometry_energy_;
 	rna_bond_geometry_energy_ = cst_source->rna_bond_geometry_energy_;
 	atom_pair_constraint_energy_ = cst_source->atom_pair_constraint_energy_;
 	coordinate_constraint_energy_ = cst_source->coordinate_constraint_energy_;
@@ -110,17 +107,10 @@ ConstraintEdge::count_dynamic_memory() const
 }
 
 void
-ConstraintEdge::bond_geometry_energy( Energy setting )
-{
-	bond_geometry_energy_ = setting;
-}
-
-void
 ConstraintEdge::rna_bond_geometry_energy( Energy setting )
 {
 	rna_bond_geometry_energy_ = setting;
 }
-
 
 void
 ConstraintEdge::atom_pair_constraint_energy( Energy setting )
@@ -151,7 +141,7 @@ ConstraintEdge::backbone_stub_constraint_energy( Energy setting )
 {
 	backbone_stub_constraint_energy_ = setting;
 }
-
+	
 void
 ConstraintEdge::backbone_stub_linear_constraint_energy( Energy setting )
 {
@@ -163,19 +153,12 @@ ConstraintEdge::res_type_linking_constraint_energy( Energy setting )
 {
 	res_type_linking_constraint_energy_ = setting;
 }
-
-Energy
-ConstraintEdge::bond_geometry_energy() const
-{
-	return bond_geometry_energy_;
-}
-
+	
 Energy
 ConstraintEdge::rna_bond_geometry_energy() const
 {
 	return rna_bond_geometry_energy_;
 }
-
 
 Energy
 ConstraintEdge::atom_pair_constraint_energy() const
@@ -218,8 +201,8 @@ ConstraintEdge::res_type_linking_constraint_energy() const
 {
 	return res_type_linking_constraint_energy_;
 }
-
-
+	
+	
 
 void ConstraintEdge::energy_computed( bool setting )
 {

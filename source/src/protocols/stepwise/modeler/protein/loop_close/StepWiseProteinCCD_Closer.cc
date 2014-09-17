@@ -126,14 +126,12 @@ namespace loop_close {
 bool
 StepWiseProteinCCD_Closer::CCD_loop_close( core::pose::Pose & pose )
 {
-
 	// Lazy initialization of ccd_loop_closure_mover_
 	if ( ccd_loop_closure_mover_.get() == NULL ) {
 		ccd_loop_closure_mover_ = new loops::loop_closure::ccd::CCDLoopClosureMover();
 		ccd_loop_closure_mover_->max_cycles( 1000 );
 		ccd_loop_closure_mover_->tolerance( 0.001 );
 		ccd_loop_closure_mover_->check_rama_scores( false );
-		ccd_loop_closure_mover_->set_verbose( false );
 		ccd_loop_closure_mover_->rama()->max_rama_score_increase( 100.0 );
 
 		// FYI: I think anything over 180 is meaningless below. ~Labonte

@@ -35,7 +35,6 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/EnergyNames.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentStructFactory.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -112,7 +111,7 @@ SilentStruct& SilentStruct::operator= ( SilentStruct const& src ) {
 	scoreline_prefix_ = src.scoreline_prefix_;
 	residue_numbers_ = src.residue_numbers_;
 	chains_ = src.chains_;
-	full_model_parameters_ = src.full_model_parameters_;
+	full_sequence_ = src.full_sequence_;
 	return *this;
 }
 
@@ -194,7 +193,6 @@ void SilentStruct::finish_pose(
 	}
 
 	residue_numbers_into_pose( pose );
-	full_model_info_into_pose( pose );
 
   basic::datacache::BasicDataCache& cache = pose.data();
 
@@ -272,13 +270,7 @@ void SilentStruct::read_score_headers( std::string const& line, utility::vector1
 
 void
 SilentStruct::print_header( std::ostream & out ) const {
-	out << "SEQUENCE: ";
-	if ( full_model_parameters_ != 0 ) {
-		out << full_model_parameters_->full_sequence(); // better representative of full modeling problem
-	} else {
-		out << one_letter_sequence();
-	}
-	out << std::endl;
+	out << "SEQUENCE: " << one_letter_sequence() << std::endl;
 	print_score_header( out );
 }
 
@@ -329,7 +321,7 @@ SilentStruct::print_scores( std::ostream & out ) const {
 			}
 			out << " " << F( it->width(), precision(), it->value() * weight );
 		} else {
-			out << " " << std::setw( it->width() ) << it->string_value(); //  << " ";
+			out << " " << std::setw( it->width() ) << it->string_value()  << " ";
 		}
 	}
 
@@ -661,7 +653,6 @@ void SilentStruct::energies_from_pose( core::pose::Pose const & pose ) {
 	update_score();
 
 	// get arbitrary floating point scores from the map stored in the Pose data cache
-	// these can be accessed through setPoseExtraScore and getPoseExtraScore in core/pose/util.hh
 	if ( pose.data().has( CacheableDataType::ARBITRARY_FLOAT_DATA ) ) {
 		basic::datacache::CacheableStringFloatMapCOP data
 			= dynamic_cast< basic::datacache::CacheableStringFloatMap const * >
@@ -676,7 +667,7 @@ void SilentStruct::energies_from_pose( core::pose::Pose const & pose ) {
 			if ( iter->first == "score" ) continue;
 			SilentEnergy new_se(
 				iter->first, iter->second, 1.0,
-				static_cast< int > (iter->first.size() + 3) /* width */
+				static_cast< int > (iter->first.size() + 3)
 			);
 			tr.Trace << " score energy from pose-cache: " << iter->first << " " << iter->second << std::endl;
 			silent_energies_.push_back( new_se );
@@ -871,9 +862,35 @@ std::string SilentStruct::scoreline_prefix() const {
 
 std::string
 SilentStruct::one_letter_sequence() const {
-	//	if ( full_model_parameters_ != 0 ) return full_model_parameters_->full_sequence();
+	if ( full_sequence_.size() > 0 ) return full_sequence_;
 	return sequence().one_letter_sequence();
 }
+/*
+	//using core::pose::annotated_to_oneletter_sequence;
+	//return core::pose::annotated_to_oneletter_sequence( sequence () );
+	std::string annotated_seq = sequence();
+	std::string sequence("");
+	bool in_bracket = false;
+	for ( Size i = 0, ie = annotated_seq.length(); i < ie; ++i ) {
+		char c = annotated_seq[i];
+		if ( c == '[' ) {
+			in_bracket = true;
+			continue;
+		} else if ( c == ']' ) {
+			in_bracket = false;
+			continue;
+		} else {
+			if ( in_bracket ) {
+				continue;
+			} else {
+				sequence = sequence + c;
+			}
+		}
+	}
+	runtime_assert( ! in_bracket );
+	return sequence;
+}
+*/
 
 ///@ brief helper to detect fullatom input
 ///@ detail
@@ -1031,29 +1048,9 @@ SilentStruct::fill_struct_with_residue_numbers( pose::Pose const & pose ){
 	set_residue_numbers( residue_numbers );
 	set_chains( chains );
 
-}
-
-///////////////////////////////////////////////////////////////////////////
-void
-SilentStruct::fill_other_struct_list( pose::Pose const & pose ){
 	using namespace core::pose::full_model_info;
-	if ( !full_model_info_defined( pose ) ) return;
+	if ( full_model_info_defined( pose ) ) full_sequence_ = const_full_model_info( pose ).full_sequence();
 
-	utility::vector1< Size > dummy;
-	// if full_model_parameters is 'boring' don't save it.
-	FullModelParameters full_model_parameters_standard( pose, dummy );
-	if ( full_model_parameters_standard != *const_full_model_info( pose ).full_model_parameters() ) {
-		set_full_model_parameters( const_full_model_info( pose ).full_model_parameters() );
-	}
-
-	utility::vector1< core::pose::PoseOP > const & other_pose_list = core::pose::full_model_info::const_full_model_info( pose ).other_pose_list();
-	for ( Size n = 1; n <= other_pose_list.size(); n++ ){
-		SilentStructOP other_struct =  this->clone(); //SilentStructFactory::get_instance()->get_silent_struct( silent_struct_type_ );
-		other_struct->scoreline_prefix( "OTHER:" ); // prevents confusion when grepping file for "SCORE:"
-		other_struct->fill_struct( *other_pose_list[ n ], decoy_tag_ /*use same tag*/ );
-		other_struct->add_comment( "OTHER_POSE", ObjexxFCL::string_of( n ) ); // will be used as consistency check when read from disk.
-		add_other_struct( other_struct );
-	}
 }
 
 
@@ -1076,22 +1073,6 @@ SilentStruct::residue_numbers_into_pose( pose::Pose & pose ) const{
 	pdb_info->set_chains( chains_ );
 }
 
-///////////////////////////////////////////////////////////////////////////
-void
-SilentStruct::full_model_info_into_pose( pose::Pose & pose ) const {
-	using namespace core::pose::full_model_info;
-	if ( full_model_parameters_ == 0 )  return;
-
-	FullModelInfoOP full_model_info = new FullModelInfo( full_model_parameters_ );
-	if ( residue_numbers_.size() > 0 ){
-		full_model_info->set_res_list( full_model_parameters_->conventional_to_full( std::make_pair( residue_numbers_, chains_ ) ) );
-	} else {
-		utility::vector1< Size > res_list;
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) res_list.push_back( n );
-		full_model_info->set_res_list( res_list );
-	}
-	set_full_model_info( pose, full_model_info );
-}
 
 ///////////////////////////////////////////////////////////////////////////
 void
@@ -1139,10 +1120,6 @@ SilentStruct::figure_out_residue_numbers_from_line( std::istream & line_stream )
 	set_residue_numbers( residue_numbers );
 	set_chains( chains );
 }
-
-void
-SilentStruct::add_other_struct( SilentStructOP silent_struct ){ other_struct_list_.push_back( silent_struct ); }
-
 
 } // namespace silent
 } // namespace io

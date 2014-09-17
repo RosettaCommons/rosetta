@@ -313,7 +313,7 @@ namespace protein {
 
 		//can do an alignment too. Note that this does *not* happen by default. Need to set align_pose_to_import_pose = true.
 		if ( align_pose_to_import_pose ) {
-			id::AtomID_Map< id::AtomID > atom_ID_map = align::create_aligment_id_map_legacy( pose, import_pose, res_map );
+			id::AtomID_Map< id::AtomID > atom_ID_map = align::create_alignment_id_map( pose, import_pose, res_map );
 			scoring::superimpose_pose( pose, import_pose, atom_ID_map );
 		}
 

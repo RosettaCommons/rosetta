@@ -47,8 +47,11 @@ namespace align {
 																			 core::Real const rmsd_screen );
 
 	core::Real
-	superimpose_with_stepwise_aligner( core::pose::Pose & pose, core::pose::Pose const & native_pose,
-																		 bool superimpose_over_all_instantiated = false );
+	superimpose_at_fixed_res_and_get_all_atom_rmsd( core::pose::Pose & pose, core::pose::Pose const & native_pose,
+																									bool skip_bulges = false );
+
+	core::Real
+	superimpose_recursively( core::pose::Pose & pose, core::pose::Pose const & native_pose );
 
 	///////////////////////////////////////////////////////////////////////////////////////////
 	// Following functions (superimpose_pose, creat_alignment_id_map) use legacy code
@@ -58,7 +61,7 @@ namespace align {
 	/// @brief  Superimpose mod_pose onto ref_pose using the mapping of residues from
 	/// mod_pose to ref_pose given by res_map
 	core::Real
-	superimpose_pose_legacy(
+	superimpose_pose(
 									 core::pose::Pose & mod_pose,
 									 core::pose::Pose const & ref_pose,
 									 std::map< core::Size, core::Size > const & res_map
@@ -66,12 +69,12 @@ namespace align {
 
 	// This should be deprecated in favor of StepWisePoseAligner
 	core::id::AtomID_Map< core::id::AtomID >
- 	create_aligment_id_map_legacy(	core::pose::Pose const & mod_pose, core::pose::Pose const & ref_pose,
+ 	create_alignment_id_map(	core::pose::Pose const & mod_pose, core::pose::Pose const & ref_pose,
 														utility::vector1< core::Size > const & superimpose_res );
 
 	// This should be deprecated in favor of StepWisePoseAligner
  	core::id::AtomID_Map< core::id::AtomID >
- 	create_aligment_id_map_legacy(	core::pose::Pose const & mod_pose,
+ 	create_alignment_id_map(	core::pose::Pose const & mod_pose,
 														core::pose::Pose const & ref_pose,
 														std::map< core::Size, core::Size > res_map );
 

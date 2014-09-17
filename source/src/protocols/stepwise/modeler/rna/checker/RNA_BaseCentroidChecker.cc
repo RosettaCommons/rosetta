@@ -142,12 +142,12 @@ namespace checker {
 				// This is a "fixed" residue -- on the same side of the moving suite as the root.
 				fixed_residues_.push_back( seq_num );
 				is_fixed_res_( seq_num ) = true;
-				//				TR << "Fixed partition " << seq_num << std::endl;
+				//if ( verbose ) TR << "Fixed partition " << seq_num << std::endl;
 			} else {
 				if ( tether_jump_ && seq_num != working_parameters_->working_moving_res() ) continue;
 				moving_residues_.push_back( seq_num );
 				is_moving_res_( seq_num ) = true;
-				//				TR << "Moving partition " << seq_num << std::endl;
+				//				if ( verbose ) TR << "Moving partition " << seq_num << std::endl;
 			}
 		}
 

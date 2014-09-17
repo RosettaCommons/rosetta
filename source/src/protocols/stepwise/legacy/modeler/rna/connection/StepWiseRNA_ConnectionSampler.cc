@@ -435,7 +435,7 @@ StepWiseRNA_ConnectionSampler::initialize_poses_and_checkers( pose::Pose & pose 
 	add_virtual_O2Prime_hydrogen( *screening_pose_ );
 	phosphate::remove_terminal_phosphates( *screening_pose_ );
 	for ( Size n = 1; n <= cutpoints_closed_.size(); n++ ) {
-		add_variant_type_to_pose_residue( *screening_pose_, chemical::VIRTUAL_PHOSPHATE, cutpoints_closed_[n] + 1 ); // PS May 31, 2010 -- updated to all cutpoints by rhiju, feb. 2014
+		add_variant_type_to_pose_residue( *screening_pose_, "VIRTUAL_PHOSPHATE", cutpoints_closed_[n] + 1 ); // PS May 31, 2010 -- updated to all cutpoints by rhiju, feb. 2014
 	}
 	// VDW bin checker can take a while to set up... becomes rate-limiting in random.
 	if ( !options_->choose_random() ){
@@ -456,7 +456,7 @@ StepWiseRNA_ConnectionSampler::initialize_poses_and_checkers( pose::Pose & pose 
 	// virtual sugars even at residues that have instantiated sugars -- we can quickly screen this pose,
 	// and it provides the appropriate baseline atr/rep for checking contacts and clashes.
 	for ( Size n = 1; n <= residue_alternative_sets_.size(); n++ ){
-		pose::add_variant_type_to_pose_residue( *virt_sugar_screening_pose_, chemical::VIRTUAL_RIBOSE,
+		pose::add_variant_type_to_pose_residue( *virt_sugar_screening_pose_, "VIRTUAL_RIBOSE",
 																							residue_alternative_sets_[ n ].representative_seqpos() );
 	}
 	// following is to check atr/rep even on sugars that will remain virtualized.
@@ -466,7 +466,7 @@ StepWiseRNA_ConnectionSampler::initialize_poses_and_checkers( pose::Pose & pose 
 
 	// we will be checking clashes of even virtual sugars compared to no-sugar baseline.
 	for ( Size n = 1; n <= residue_alternative_sets_.size(); n++ ){
-		pose::remove_variant_type_from_pose_residue( *screening_pose_, chemical::VIRTUAL_RIBOSE,
+		pose::remove_variant_type_from_pose_residue( *screening_pose_, "VIRTUAL_RIBOSE",
 																								 residue_alternative_sets_[ n ].representative_seqpos() );
 	}
 
@@ -549,14 +549,14 @@ StepWiseRNA_ConnectionSampler::initialize_moving_residue_pose_list( pose::Pose c
 void
 StepWiseRNA_ConnectionSampler::reinstantiate_backbone_and_add_constraint_at_moving_res(	pose::Pose & pose, Size const & five_prime_chain_break_res )
 { //harmonic angle and distance constraints are used ONLY by chainbreak_screening
-	pose::remove_variant_type_from_pose_residue( pose, chemical::VIRTUAL_RIBOSE, moving_res_ ); //May 31, 2010
-	pose::remove_variant_type_from_pose_residue( pose, chemical::VIRTUAL_O2PRIME_HYDROGEN, moving_res_ );
+	pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", moving_res_ ); //May 31, 2010
+	pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_O2PRIME_HYDROGEN", moving_res_ );
 	if ( moving_res_ == ( five_prime_chain_break_res + 1 ) ){
-		pose::remove_variant_type_from_pose_residue( pose, chemical::VIRTUAL_PHOSPHATE, moving_res_ ); //this virtual_phosphate was added to pose at the beginning of this function.
+		pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", moving_res_ ); //this virtual_phosphate was added to pose at the beginning of this function.
 	}
 	add_harmonic_chain_break_constraint( pose, five_prime_chain_break_res );
-	runtime_assert( !pose.residue( five_prime_chain_break_res   ).has_variant_type( chemical::VIRTUAL_RIBOSE ) );
-	runtime_assert( !pose.residue( five_prime_chain_break_res+1 ).has_variant_type( chemical::VIRTUAL_RIBOSE ) );
+	runtime_assert( !pose.residue( five_prime_chain_break_res   ).has_variant_type( "VIRTUAL_RIBOSE" ) );
+	runtime_assert( !pose.residue( five_prime_chain_break_res+1 ).has_variant_type( "VIRTUAL_RIBOSE" ) );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

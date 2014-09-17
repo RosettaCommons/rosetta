@@ -891,7 +891,7 @@ setup_pose_setup_class( stepwise::modeler::working_parameters::StepWiseWorkingPa
 	}
 
 	stepwise_rna_pose_setup->set_virtual_res( option[ basic::options::OptionKeys::full_model::virtual_res ]() );
-	stepwise_rna_pose_setup->set_bulge_res( option[ basic::options::OptionKeys::full_model::rna::bulge_res ]() );
+	stepwise_rna_pose_setup->set_bulge_res( option[ basic::options::OptionKeys::stepwise::rna::bulge_res ]() );
 	stepwise_rna_pose_setup->set_native_pose( native_pose );
 	stepwise_rna_pose_setup->set_native_virtual_res( option[ basic::options::OptionKeys::stepwise::rna::native_virtual_res]() );
 	stepwise_rna_pose_setup->set_output_pdb( option[ OptionKeys::stepwise::dump ]() );

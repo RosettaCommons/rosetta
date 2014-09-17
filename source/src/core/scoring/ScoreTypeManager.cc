@@ -210,8 +210,6 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "coordinate_constraint" ] = coordinate_constraint;
 	name2score_type_[ "site_constraint" ] = site_constraint;
 	name2score_type_[ "metalhash_constraint" ] = metalhash_constraint;
-	name2score_type_[ "bond_geometry"] = bond_geometry;
-	name2score_type_[ "Hpol_bond_geometry"] = Hpol_bond_geometry;
 
 	name2score_type_[ "rama"    ] = rama;
 	name2score_type_[ "rama2b"  ] = rama2b;
@@ -281,12 +279,12 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "mp_termini" ] = MPTermini;
 	name2score_type_[ "mp_nonhelix" ] = MPNonHelix;
 	name2score_type_[ "mp_tmproj" ] = MPTMProj;
-
+	
 	// fullatom - added by @ralford 5/14/14
 	name2score_type_[ "fa_mpenv" ] = FaMPEnv;
 	name2score_type_[ "fa_mpsolv" ] = FaMPSolv;
 	name2score_type_[ "fa_mpenv_smooth" ] = FaMPEnvSmooth;
-
+	
 	name2score_type_[ "rg" ] = rg;
 	name2score_type_[ "rg_local" ] = rg_local;
 	name2score_type_[ "co" ] = co;
@@ -372,10 +370,8 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "num_stacks"] = num_stacks;
 
 	name2score_type_[ "rna_torsion"] = rna_torsion;
-	name2score_type_[ "rna_torsion_sc"] = rna_torsion_sc;
 	name2score_type_[ "rna_suite"] = rna_suite;
 	name2score_type_[ "rna_jr_suite"] = rna_jr_suite;
-	name2score_type_[ "suiteness_bonus"] = suiteness_bonus;
 	name2score_type_[ "rna_sugar_close"] = rna_sugar_close;
 	name2score_type_[ "rna_bond_geometry"] = rna_bond_geometry;
 	name2score_type_[ "rna_fa_atr_base"] = rna_fa_atr_base;

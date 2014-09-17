@@ -207,7 +207,7 @@ RigidBodySampler::~RigidBodySampler() {}
 	virtualize_o2prime( pose::Pose & pose ){
 		using namespace core::chemical;
 		for( Size i = 1; i <= pose.total_residue(); i++ ){
-		pose::add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_O2PRIME_HYDROGEN, i );
+		pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_O2PRIME_HYDROGEN", i );
 		}
 	}
 

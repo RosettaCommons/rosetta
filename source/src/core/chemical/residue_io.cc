@@ -34,7 +34,6 @@
 #include <core/kinematics/Stub.hh>
 
 // Basic headers
-#include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -151,16 +150,12 @@ read_topology_file(
 	chemical::ResidueTypeSetCAP rsd_type_set
 )
 {
-	std::string full_filename = filename;
-	if( ! utility::file::file_exists( full_filename ) ) {
-		full_filename =  basic::database::full_name( "chemical/residue_type_sets/fa_standard/residue_types/"+filename );
-		if( ! utility::file::file_exists( full_filename ) ) {
-			utility_exit_with_message("Cannot find file '"+filename+" or "+full_filename+"'");
-		}
+	if( ! utility::file::file_exists( filename ) ) {
+		utility_exit_with_message("Cannot find file '"+filename+"'");
 	}
-	utility::io::izstream data( full_filename.c_str() );
+	utility::io::izstream data( filename.c_str() );
 	if ( !data.good() ) {
-		utility_exit_with_message("Cannot open file '"+full_filename+"'");
+		utility_exit_with_message("Cannot open file '"+filename+"'");
 	}
 	return read_topology_file(data, atom_types, elements, mm_atom_types, orbital_atom_types, rsd_type_set);
 }

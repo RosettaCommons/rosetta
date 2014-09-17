@@ -40,7 +40,6 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/stepwise/modeler/util.hh>
-#include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/align/util.hh>
 #include <protocols/farna/RNA_StructureParameters.hh>
 #include <core/io/rna/RNA_DataReader.hh>
@@ -57,19 +56,17 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 
 #include <utility/excn/Exceptions.hh>
 
+OPT_KEY( String,  params_file )
 
 using namespace core;
 using namespace protocols;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
 
-OPT_KEY( String,  params_file )
 OPT_KEY( StringVector, original_input )
-OPT_KEY( Boolean, virtualize_free )
 
 ///////////////////////////////////////////////////////////////////////////////
 void
@@ -87,7 +84,7 @@ rna_score_test()
 	using namespace protocols::stepwise::full_model_info;
 
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD /*RNA*/ );
 
 	// input stream
 	PoseInputStreamOP input;
@@ -113,6 +110,7 @@ rna_score_test()
 		cleanup( native_pose );
 		native_exists = true;
 	}
+
 
 	// score function setup
 	core::scoring::ScoreFunctionOP scorefxn;
@@ -147,8 +145,6 @@ rna_score_test()
 		if ( option[ full_model::other_poses ].user() ) get_other_poses( other_poses, option[ full_model::other_poses ](), rsd_set );
 	}
 
-	// if trying to compute stem RMSD
-	protocols::farna::RNA_StructureParameters parameters;
 	core::io::rna::RNA_DataReader rna_data_reader( option[OptionKeys::rna::data_file ]() );
 	core::scoring::rna::data::RNA_ChemicalMappingEnergy rna_chemical_mapping_energy;
 	pose::Pose pose,start_pose;
@@ -162,35 +158,40 @@ rna_score_test()
 		input->fill_pose( pose, *rsd_set );
 		i++;
 
-		if ( option[ virtualize_free ]() ) protocols::stepwise::modeler::rna::virtualize_free_rna_moieties( pose ); // purely for testing.
+		protocols::farna::RNA_StructureParameters parameters;
+		if ( option[params_file].user() ) {
+			parameters.initialize(
+														pose, option[params_file],
+														basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat"),
+														false /*ignore_secstruct*/
+														);
+			// parameters.set_suppress_bp_constraint( 1.0 );
+			parameters.setup_base_pair_constraints( pose );
+			//rna_minimizer.set_allow_insert( parameters.allow_insert() );
+		}
 
 		if ( !option[ in::file::silent ].user() ) cleanup( pose );
 
-		if ( !full_model_info_defined( pose ) ){
-			if ( ! option[ original_input ].user() ) {
-				fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
+		if ( !option[ original_input ].user() ) {
+			fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
+		} else {
+			utility::vector1< Size > resnum;
+			core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
+
+			if ( pdb_info )	{
+				//std::cout << std::endl << "PDB Info available for this pose..." << std::endl << std::endl;
+				for ( Size n = 1; n <= pose.total_residue(); n++ ) resnum.push_back( pdb_info->number( n ) );
 			} else {
-				// allows for scoring of PDB along with 'other_poses' supplied from command line. Was used to test loop_close score term.
-				utility::vector1< Size > resnum;
-				core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
-				if ( pdb_info )	{
-					//std::cout << std::endl << "PDB Info available for this pose..." << std::endl << std::endl;
-					for ( Size n = 1; n <= pose.total_residue(); n++ ) resnum.push_back( pdb_info->number( n ) );
-				} else {
-					for ( Size n = 1; n <= pose.total_residue(); n++ ) resnum.push_back( n );
-				}
-				my_model->set_res_list( resnum );
-				my_model->set_other_pose_list( other_poses );
-				pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, my_model );
+				for ( Size n = 1; n <= pose.total_residue(); n++ ) resnum.push_back( n );
 			}
+
+			my_model->set_res_list( resnum );
+			my_model->set_other_pose_list( other_poses );
+			pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, my_model );
 		}
 
-		if ( option[params_file].user() ) {
-			parameters.initialize(pose, option[params_file],
-														basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat"),
-														false /*ignore_secstruct*/ );
-			parameters.setup_base_pair_constraints( pose );
-		}
+		// graphics viewer.
+		//if ( i == 1 ) protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
 		// do it
 		if ( ! option[ score::just_calc_rmsd]() && !rna_data_reader.has_reactivities() ){
@@ -203,9 +204,13 @@ rna_score_test()
 
 		if ( native_exists ){
 			//Real const rmsd      = all_atom_rmsd( native_pose, pose );
-			Real const rmsd = protocols::stepwise::modeler::align::superimpose_with_stepwise_aligner( pose, native_pose, option[ OptionKeys::stepwise::superimpose_over_all ]() );
+			Real const rmsd = protocols::stepwise::modeler::align::superimpose_at_fixed_res_and_get_all_atom_rmsd( pose, native_pose );
 			std::cout << "All atom rmsd over moving residues: " << tag << " " << rmsd << std::endl;
 			s.add_energy( "rms", rmsd );
+
+			// Real const rms_no_bulges = superimpose_at_fixed_res_and_get_all_atom_rmsd( pose, native_pose, true );
+			// std::cout << "All atom rmsd over non-bulged moving residues: " << tag << " " << rms_no_bulges << std::endl;
+			// s.add_energy( "non_bulge_rms", rms_no_bulges );
 
 			// Stem RMSD
 			if ( option[params_file].user() ) {
@@ -229,6 +234,11 @@ rna_score_test()
 
 		std::cout << "Outputting " << tag << " to silent file: " << silent_file << std::endl;
 		silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
+
+		//std::string const out_file =  tag + ".pdb";
+		//pose.dump_pdb( out_file );
+
+		//		pose.dump_pdb( "test.pdb" );
 
 	}
 
@@ -267,11 +277,9 @@ main( int argc, char * argv [] )
 				option.add_relevant( in::file::fasta );
 				option.add_relevant( in::file::input_res );
 				option.add_relevant( full_model::cutpoint_open );
-				option.add_relevant( score::weights );
 				option.add_relevant( score::just_calc_rmsd );
 				option.add_relevant( OptionKeys::rna::data_file );
 				NEW_OPT( original_input, "If you want to rescore the poses using the original FullModelInfo from a SWM run, input those original PDBs here", blank_string_vector );
-				NEW_OPT( virtualize_free, "virtualize no-contact bases (and attached no-contact sugars/phosphates)", false );
 				NEW_OPT( params_file, "Input file for pairings", "" );
 
         ////////////////////////////////////////////////////////////////////////////
@@ -280,7 +288,6 @@ main( int argc, char * argv [] )
         core::init::init(argc, argv);
 				option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" );
 				option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" );
-				option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RNA_RESIDUE" );
 
         ////////////////////////////////////////////////////////////////////////////
         // end of setup

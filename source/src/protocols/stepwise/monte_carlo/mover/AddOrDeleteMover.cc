@@ -48,14 +48,13 @@ namespace mover {
   //////////////////////////////////////////////////////////////////////////
   //constructor!
 	AddOrDeleteMover::AddOrDeleteMover( AddMoverOP rna_add_mover,
-																			DeleteMoverOP rna_delete_mover,
-																			FromScratchMoverOP rna_from_scratch_mover ) :
+																							DeleteMoverOP rna_delete_mover,
+																							FromScratchMoverOP rna_from_scratch_mover ) :
 		rna_add_mover_( rna_add_mover ),
 		rna_delete_mover_( rna_delete_mover ),
 		rna_from_scratch_mover_( rna_from_scratch_mover ),
 		disallow_deletion_of_last_residue_( false ),
-		swa_move_selector_( new SWA_MoveSelector ),
-		choose_random_( true )
+		swa_move_selector_( new SWA_MoveSelector )
 	{}
 
   //////////////////////////////////////////////////////////////////////////
@@ -99,10 +98,9 @@ namespace mover {
 		swa_move_selector_->set_allow_skip_bulge( options_->allow_skip_bulge() );
 		swa_move_selector_->set_from_scratch_frequency( options_->from_scratch_frequency() );
 		swa_move_selector_->set_intermolecular_frequency( options_->intermolecular_frequency() );
-		swa_move_selector_->set_choose_random( choose_random_ );
 
 		utility::vector1< Size > const actual_sample_res = figure_out_actual_sample_res( pose );
-		swa_move_selector_->get_add_or_delete_element( pose, swa_move, actual_sample_res );
+		swa_move_selector_->get_random_add_or_delete_element( pose, swa_move, actual_sample_res );
 
 		move_type = to_string( swa_move.move_type() );
 		std::transform(move_type.begin(), move_type.end(), move_type.begin(), ::tolower); // this is why we love C
@@ -119,8 +117,7 @@ namespace mover {
 		rna_delete_mover_->set_minimize_after_delete( !setting );
 	}
 
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	//  I think sample_res is now set correctly in FullModelInfoSetupFromCommandLine -- remove?
+	///////////////////////////////////////////////////////////////////////////////
 	utility::vector1< Size >
 	AddOrDeleteMover::figure_out_actual_sample_res( pose::Pose const & pose ) const{
 
@@ -130,8 +127,7 @@ namespace mover {
 			for ( Size n = 1; n <= full_sequence.size(); n++ )	sample_res.push_back( n );
 		}
 
-		// get rid of bulge_res -- this may now be defunct, actually, as bulge_res
-		// is set properly in FullModelInfoSetupFromCommandLine
+		// get rid of bulge_res.
 		utility::vector1< Size > actual_sample_res;
 		for ( Size n = 1; n <= sample_res.size(); n++ ){
 			if ( options_->bulge_res().has_value( sample_res[n] ) ) continue;

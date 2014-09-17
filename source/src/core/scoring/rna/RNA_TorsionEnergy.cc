@@ -48,7 +48,6 @@ ScoreTypes
 RNA_TorsionEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
 	sts.push_back( rna_torsion );
-	sts.push_back( rna_torsion_sc );
 	return sts;
 }
 
@@ -89,8 +88,9 @@ RNA_TorsionEnergy::eval_intrares_energy(
 		ScoreFunction const &,
 		EnergyMap & emap 	) const {
 
-	emap[ rna_torsion ]    += rna_torsion_potential_.eval_intrares_energy( rsd, pose );
-	emap[ rna_torsion_sc ] += rna_torsion_potential_.intrares_side_chain_score(); // evaluated at same time as above.
+	emap[ rna_torsion ] += rna_torsion_potential_.eval_intrares_energy( rsd, pose );
+	//	emap[ rna_sugar_close ] += rna_torsion_potential_->eval_sugar_close_energy( rsd1, rsd2, pose );
+
 
 }
 
@@ -110,6 +110,9 @@ RNA_TorsionEnergy::eval_atom_derivative(
 {
 
 	rna_torsion_potential_.eval_atom_derivative( id, pose, weights, F1, F2 );
+
+	// Hey, maybe RNA sugar close potential should be a DIFFERENT energy function now.
+	//	rna_torsion_potential_->eval_atom_derivative_sugar( id, pose, sfxn, weights, F1, F2 );
 
 }
 

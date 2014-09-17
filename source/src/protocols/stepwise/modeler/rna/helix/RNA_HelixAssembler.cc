@@ -13,14 +13,14 @@
 /// @author Rhiju Das
 
 #include <protocols/stepwise/modeler/rna/helix/RNA_HelixAssembler.hh>
-#include <protocols/stepwise/full_model_info/FullModelInfoSetupFromCommandLine.hh>
-#include <protocols/farna/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/PDBInfo.hh>
+#include <utility/vector1.hh>
 #include <core/chemical/AA.hh>
-#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+
+#include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -32,21 +32,20 @@
 #include <core/io/pdb/file_data.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
+#include <protocols/farna/util.hh>
+#include <basic/database/open.hh>
+
+//Minimizer stuff
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
+#include <numeric/xyzVector.hh>
+
 #include <core/types.hh>
+#include <ObjexxFCL/string.functions.hh>
+#include <basic/Tracer.hh>
 
 // External library headers
 #include <numeric/random/random.hh>
-#include <numeric/xyzVector.hh>
-
-#include <ObjexxFCL/string.functions.hh>
-
-#include <basic/database/open.hh>
-#include <basic/Tracer.hh>
-
-#include <utility/vector1.hh>
-
 
 //C++ headers
 #include <vector>
@@ -54,20 +53,6 @@
 #include <sstream>
 
 #include <core/pose/annotated_sequence.hh>
-
-///////////////////////////////////////////////////////////////////////////////////////
-//
-// Purpose: create an RNA helix with A-form torsions, but low in Rosetta energy.
-//
-//  * Uses a hacky weights file with high rna_torsion, otherwise helix gets wonky.
-//  * Updated to allow modeling of bulges & dangling ends.
-//  * Typically called through rna_helix.py available in Rosetta/tools/rna_tools/
-//
-// Note: does *not* currently guarantee symmetry, i.e. 5'-cc-3'/5'-gg-3' is not
-//       the exact same as 5'-gg-3'/5'-cc-3'. This is due to buildup strategy,
-//       which guarantees low energy but not much else.
-//
-///////////////////////////////////////////////////////////////////////////////////////
 
 using namespace core;
 using ObjexxFCL::string_of;
@@ -113,8 +98,7 @@ RNA_HelixAssembler::RNA_HelixAssembler():
 	perturb_amplitude_( 10.0 ),
 	scorefxn_( core::scoring::ScoreFunctionFactory::create_score_function( "stepwise/rna/rna_helix" ) ),
 	model_and_remove_capping_residues_( true ),
-	capping_residues_( "gc" ),
-	full_sequence_( "" )
+	capping_residues_( "gc" )
 {
 	Mover::type("RNA_HelixAssembler");
 	//	scorefxn_->set_weight( core::scoring::atom_pair_constraint, 5.0 );
@@ -169,84 +153,60 @@ void RNA_HelixAssembler::use_phenix_geo( bool const setting )
 
 ////////////////////////////////////////////////////////////////////////////////
 void
-RNA_HelixAssembler::apply( core::pose::Pose & pose, std::string const & full_sequence_in )
+RNA_HelixAssembler::apply( core::pose::Pose & pose, std::string const & full_sequence )
 {
 
-	// handle weird non-naturals, including g[IGU] for isoguanosine, etc.
-	full_sequence_ = full_sequence_in;
-	non_standard_residues_ = full_model_info::parse_out_non_standard_residues( full_sequence_ );
-
 	// figure out if there are dangling ends -- just extract helix portion.
-	figure_out_and_remove_dangling_ends();
+	std::string const sequence_helix = figure_out_and_remove_dangling_ends( full_sequence );
 
-	TR << "Will build helix sequence: " << full_sequence_ << std::endl;
+	TR << "Will build helix sequence: " << sequence_helix << std::endl;
 
 	// build helix portion only.
-	build_helix( pose );
+	build_helix( pose, sequence_helix );
 
 	// build on dangling ends.
 	build_dangling_ends( pose );
 
-	fill_chain_info( pose );
+	fill_chain_info( pose, full_sequence );
 
-}
-
-
-void
-RNA_HelixAssembler::add_capping_base_pairs_to_full_sequence()
-{
-	Size L( full_sequence_.size() );
-	std::string sequence1( full_sequence_.substr( 0, L/2 ) );
-	std::string sequence2( full_sequence_.substr( L/2, L/2 ) );
-
-	TR << "adding capping residues (g-c base pair)" << std::endl;
-	sequence1 = capping_residues_[0] + sequence1 + capping_residues_[1];
-	sequence2 = capping_residues_[0] + sequence2 + capping_residues_[1]; // will remove these base pairs later.
-	full_sequence_ = sequence1 + sequence2;
-
-	// full name info for isoguanosine, etc.
-	std::map< Size, std::string > non_standard_residues_new;
-	for ( std::map< Size, std::string >::iterator it = non_standard_residues_.begin(); it != non_standard_residues_.end(); it++ ) {
-		Size res( it->first );
-		if ( res <= L/2 )	{
-			non_standard_residues_new[ res + 1 ] = it->second;
-		} else {
-			non_standard_residues_new[ res + 3 ] = it->second;
-		}
-	}
-	non_standard_residues_ = non_standard_residues_new;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-std::string
-RNA_HelixAssembler::get_sequence( core::Size const n ){
-	std::string rsd( "" );
-	rsd += full_sequence_[ n-1 ];
-	if ( non_standard_residues_.find( n ) == non_standard_residues_.end() ) return rsd;
-	return rsd + "[" + non_standard_residues_[n] + "]";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void
-RNA_HelixAssembler::build_helix( core::pose::Pose & pose ){
+RNA_HelixAssembler::build_helix( core::pose::Pose & pose, std::string const & full_sequence ){
 
 	using namespace core::pose;
 	using namespace core::kinematics;
 	using namespace core::id;
 
-	if 	( model_and_remove_capping_residues_ ) add_capping_base_pairs_to_full_sequence();
+	Size seq_length( full_sequence.size() );
+	std::string sequence1( full_sequence.substr( 0, seq_length/2 ) );
+	std::string sequence2( full_sequence.substr( seq_length/2, seq_length ) );
 
-	Size const numres = full_sequence_.size() / 2;
+	if 	( model_and_remove_capping_residues_ ){
+		TR << "adding capping residues (g-c base pair)" << std::endl;
+		sequence1 = capping_residues_[0] + sequence1 + capping_residues_[1];
+		sequence2 = capping_residues_[0] + sequence2 + capping_residues_[1]; // will remove these base pairs later.
+	}
 
-	pose = *build_init_pose( get_sequence( 1 ), get_sequence( 2 * numres ) );
+
+  TR << "Sequence of first strand:  " << sequence1 << std::endl;
+	TR << "Sequence of second strand: " << sequence2 << std::endl;
+
+	Size const numres = sequence1.size();
+	assert( sequence2.size() == numres );
+
+	pose = *build_init_pose( sequence1.substr( 0, 1 ), sequence2.substr( numres-1, numres ) );
+
+	//	pose.dump_pdb( "helix_init.pdb" );
 
 	for ( Size n = 2; n <= numres; n++ ) {
 		TR << "Building on base pair: " << n << std::endl;
-		build_on_base_pair( pose, n, get_sequence( n ), get_sequence( 2 * numres - n + 1 ) );
+		build_on_base_pair( pose, n, sequence1[n-1], sequence2[numres-n]);
 		if ( dump_ ) pose.dump_pdb( "helix_extend" + string_of(n) + ".pdb" );
 
 		put_constraints_on_base_step( pose, n );
-		//TR << "Finished adding constraints..." << std::endl;
+        //TR << "Finished adding constraints..." << std::endl;
 
 		minimize_base_step( pose, n, scorefxn_ );
 
@@ -337,7 +297,7 @@ RNA_HelixAssembler::set_Aform_torsions( pose::Pose & pose, Size const & n ) cons
 
 /////////////////////////////////////////////////
 void
-RNA_HelixAssembler::build_on_base_pair( pose::Pose & pose, Size const & n, std::string const & seq1, std::string const & seq2 ) const {
+RNA_HelixAssembler::build_on_base_pair( pose::Pose & pose, Size const & n, char const & seq1, char const & seq2 ) const {
 
  	using namespace core::conformation;
  	using namespace core::chemical;
@@ -418,7 +378,7 @@ RNA_HelixAssembler::put_constraints_on_base_step( pose::Pose & pose, Size const 
 
 //////////////////////////////////////////////////////
 void
-RNA_HelixAssembler::get_rid_of_capping_base_pairs( pose::Pose & pose ) {
+RNA_HelixAssembler::get_rid_of_capping_base_pairs( pose::Pose & pose ) const {
 
 	using namespace core::kinematics;
 
@@ -444,81 +404,20 @@ RNA_HelixAssembler::get_rid_of_capping_base_pairs( pose::Pose & pose ) {
 
 	runtime_assert( get_cutpoint( pose ) == pose.total_residue()/2 );
 
-	std::string sequence_helix1( full_sequence_.substr( 0,      nres/2 ) );
-	std::string sequence_helix2( full_sequence_.substr( nres/2, nres ) );
-	remove_first_base_pair( full_sequence_, non_standard_residues_, sequence_helix1, sequence_helix2 );
-	remove_last_base_pair(  full_sequence_, non_standard_residues_, sequence_helix1, sequence_helix2 );
 }
 
-////////////////////////////////////////////////////////////////////////////////////////
-void
-RNA_HelixAssembler::remove_first_base_pair( std::string & full_sequence,
-																						std::map< Size, std::string > & non_standard_residues,
-																						std::string & sequence_helix1,
-																						std::string & sequence_helix2 ) const {
-	Size L = full_sequence.size()/2;
-	runtime_assert( L >= 2 );
-	full_sequence = full_sequence.substr( 1, full_sequence.size()-2 );
-	sequence_helix1 = sequence_helix1.substr( 1,  L-1 );
-	sequence_helix2 = sequence_helix2.substr( 0,  L-1 );
-
-	std::map< Size, std::string > non_standard_residues_new;
-	for ( std::map< Size, std::string >::iterator it = non_standard_residues.begin(); it != non_standard_residues.end(); it++ ) {
-		Size res( it->first );
-		if ( res > 1 || res < full_sequence_.size() )	non_standard_residues_new[ res-1 ] = it->second;
-	}
-	non_standard_residues = non_standard_residues_new;
-
-	Size const seq_length( full_sequence.size() );
-	runtime_assert( seq_length == 2*L - 2 );
-	runtime_assert( sequence_helix1 == full_sequence_.substr( 0, seq_length/2 ) );
-	runtime_assert( sequence_helix2 == full_sequence_.substr( seq_length/2, seq_length ) );
-}
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////
-void
-RNA_HelixAssembler::remove_last_base_pair( std::string & full_sequence,
-																					 std::map< Size, std::string > & non_standard_residues,
-																					 std::string & sequence_helix1,
-																					 std::string & sequence_helix2 ) const {
-	Size L = full_sequence.size()/2;
-	runtime_assert( L >= 2 );
-	full_sequence = full_sequence.substr( 0, L-1 ) + full_sequence.substr( L+1, L-1 ) ;
-	sequence_helix1 = sequence_helix1.substr( 0,  L-1 );
-	sequence_helix2 = sequence_helix2.substr( 1,  L-1 );
-
-	std::map< Size, std::string > non_standard_residues_new;
-	for ( std::map< Size, std::string >::iterator it = non_standard_residues.begin(); it != non_standard_residues.end(); it++ ) {
-		Size res( it->first );
-		if ( res < L  )	{
-			non_standard_residues_new[ res ] = it->second;
-		} else if ( res > (L + 1) ) {
-			non_standard_residues_new[ res - 2 ] = it->second;
-		}
-	}
-	non_standard_residues = non_standard_residues_new;
-
-	Size const seq_length( full_sequence.size() );
-	runtime_assert( seq_length == 2*L - 2 );
-	runtime_assert( sequence_helix1 == full_sequence_.substr( 0, seq_length/2 ) );
-	runtime_assert( sequence_helix2 == full_sequence_.substr( seq_length/2, seq_length ) );
-}
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // dangles are defined by nucleotides at either helix end which are "base-paired" to
 // gaps. Treat them separately.
 //
-void
-RNA_HelixAssembler::figure_out_and_remove_dangling_ends(){
+std::string
+RNA_HelixAssembler::figure_out_and_remove_dangling_ends( std::string const & full_sequence ){
 
-	Size const seq_length( full_sequence_.size() );
-	std::string const sequence1( full_sequence_.substr( 0, seq_length/2 ) );
-	std::string const sequence2( full_sequence_.substr( seq_length/2, seq_length ) );
+	Size const seq_length( full_sequence.size() );
+	std::string const sequence1( full_sequence.substr( 0, seq_length/2 ) );
+	std::string const sequence2( full_sequence.substr( seq_length/2, seq_length ) );
 
-	// sequence_helix1 & sequence_helix2 aren't really necessary anymore, but carry them forward
-	//  to run consistency checks...
 	std::string sequence_helix1( sequence1 );
 	std::string sequence_helix2( sequence2 );
 
@@ -530,29 +429,33 @@ RNA_HelixAssembler::figure_out_and_remove_dangling_ends(){
 	if ( is_blank_seq( sequence_helix1[ 0 ] ) ){
 		// can't have double gaps...
 		runtime_assert( !is_blank_seq( sequence_helix2[ sequence_helix2.size()-1 ] ) );
-		dangle_seq2_3prime_ = get_sequence( full_sequence_.size() ); //sequence_helix2[ sequence2.size()-1 ];
-		remove_first_base_pair( full_sequence_, non_standard_residues_, sequence_helix1, sequence_helix2 );
+		dangle_seq2_3prime_ = sequence_helix2[ sequence2.size()-1 ];
+		sequence_helix1 = sequence_helix1.substr( 1,  sequence_helix1.size()-1 );
+		sequence_helix2 = sequence_helix2.substr( 0,  sequence_helix2.size()-1 );
 	}
 
 	if ( is_blank_seq( sequence_helix1[ sequence_helix1.size()-1 ] ) ){
 		// can't have double gaps...
 		runtime_assert( !is_blank_seq( sequence_helix2[ 0 ] ) );
-		dangle_seq2_5prime_ = get_sequence( full_sequence_.size()/2 + 1 ); // sequence_helix2[ 0 ];
-		remove_last_base_pair( full_sequence_, non_standard_residues_, sequence_helix1, sequence_helix2 );
+		dangle_seq2_5prime_ = sequence_helix2[ 0 ];
+		sequence_helix1 = sequence_helix1.substr( 0,  sequence_helix1.size()-1 );
+		sequence_helix2 = sequence_helix2.substr( 1,  sequence_helix2.size()-1 );
 	}
 
 	if ( is_blank_seq( sequence_helix2[ 0 ] ) ){
 		// can't have double gaps...
 		runtime_assert( !is_blank_seq( sequence_helix1[ sequence_helix1.size()-1 ] ) );
-		dangle_seq1_3prime_ = get_sequence( full_sequence_.size()/2 ); //sequence_helix1[ sequence_helix1.size()-1  ];
-		remove_last_base_pair( full_sequence_, non_standard_residues_, sequence_helix1, sequence_helix2 );
+		dangle_seq1_3prime_ = sequence_helix1[ sequence_helix1.size()-1  ];
+		sequence_helix1 = sequence_helix1.substr( 0,  sequence_helix1.size()-1 );
+		sequence_helix2 = sequence_helix2.substr( 1,  sequence_helix2.size()-1 );
 	}
 
 	if ( is_blank_seq( sequence_helix2[ sequence_helix2.size()-1 ] ) ){
 		// can't have double gaps...
 		runtime_assert( !is_blank_seq( sequence_helix1[ 0 ] ) );
-		dangle_seq1_5prime_ = get_sequence( 1 ); //sequence_helix1[ 0  ];
-		remove_first_base_pair( full_sequence_, non_standard_residues_, sequence_helix1, sequence_helix2 );
+		dangle_seq1_5prime_ = sequence_helix1[ 0  ];
+		sequence_helix1 = sequence_helix1.substr( 1,  sequence_helix1.size()-1 );
+		sequence_helix2 = sequence_helix2.substr( 0,  sequence_helix2.size()-1 );
 	}
 
 	// can't have more than one dangle at the moment.
@@ -564,7 +467,9 @@ RNA_HelixAssembler::figure_out_and_remove_dangling_ends(){
 	runtime_assert( ! ( dangle_seq1_5prime_.size()>0 && dangle_seq2_3prime_.size()>0 ) );
 	runtime_assert( ! ( dangle_seq1_3prime_.size()>0 && dangle_seq2_5prime_.size()>0 ) );
 
-	runtime_assert( sequence_helix1.size() == sequence_helix2.size() );
+	std::string full_sequence_helix = sequence_helix1  + sequence_helix2;
+	return full_sequence_helix;
+
 }
 
 
@@ -582,7 +487,7 @@ RNA_HelixAssembler::build_dangling_ends( pose::Pose & pose ) const {
 void
 RNA_HelixAssembler::build_dangle_seq1_5prime( pose::Pose & pose, std::string const & dangle_seq ) const {
 	if ( dangle_seq.size() == 0 ) return;
-	prepend_Aform_residue( pose, 1, dangle_seq );
+	prepend_Aform_residue( pose, 1, dangle_seq[ 0 ] );
 	minimize_prepend_res( pose, 1 );
 }
 
@@ -591,7 +496,7 @@ void
 RNA_HelixAssembler::build_dangle_seq2_5prime( pose::Pose & pose, std::string const & dangle_seq ) const {
 	if ( dangle_seq.size() == 0 ) return;
 	Size const n = get_cutpoint( pose ); // boundary between two strands
-	prepend_Aform_residue( pose, n+1, dangle_seq );
+	prepend_Aform_residue( pose, n+1, dangle_seq[ 0 ] );
 	minimize_prepend_res( pose, n+1 );
 }
 
@@ -600,7 +505,7 @@ void
 RNA_HelixAssembler::build_dangle_seq1_3prime( pose::Pose & pose, std::string const & dangle_seq ) const {
 	if ( dangle_seq.size() == 0 ) return;
 	Size const n = get_cutpoint( pose ); // boundary between two strands
-	append_Aform_residue( pose, n, dangle_seq );
+	append_Aform_residue( pose, n, dangle_seq[ 0 ] );
 	minimize_append_res( pose, n+1 );
 }
 
@@ -609,7 +514,7 @@ void
 RNA_HelixAssembler::build_dangle_seq2_3prime( pose::Pose & pose, std::string const & dangle_seq ) const {
 	if ( dangle_seq.size() == 0 ) return;
 	Size const nres = pose.total_residue();
-	append_Aform_residue( pose, nres, dangle_seq );
+	append_Aform_residue( pose, nres, dangle_seq[ 0 ] );
 	minimize_append_res( pose, nres+1 );
 }
 
@@ -625,16 +530,8 @@ RNA_HelixAssembler::get_cutpoint( pose::Pose const & pose ) const {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
-core::conformation::ResidueOP
-RNA_HelixAssembler::get_residue( std::string const & nt ) const {
-	//	rsd1 =  ResidueFactory::create_residue( *(rsd_set_->aa_map( aa_from_oneletter_code( nt ) )[1] ) );
-	return core::conformation::ResidueFactory::create_residue(
-		    *core::pose::residue_types_from_sequence( nt, *rsd_set_, false /*auto_termini*/ )[1] );
-}
-
-////////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_HelixAssembler::append_Aform_residue( pose::Pose & pose, Size const & n, std::string const & nt ) const {
+RNA_HelixAssembler::append_Aform_residue( pose::Pose & pose, Size const & n, char const & nt ) const {
 
  	using namespace core::conformation;
  	using namespace core::chemical;
@@ -643,9 +540,9 @@ RNA_HelixAssembler::append_Aform_residue( pose::Pose & pose, Size const & n, std
 	runtime_assert( pose.fold_tree().is_cutpoint(n) || n == pose.total_residue() );
 
 	/////////////////////////////////////
-	ResidueOP rsd1 = get_residue( nt );
-	runtime_assert( rsd1->is_NA() );
+	ResidueOP rsd1( ResidueFactory::create_residue( *(rsd_set_->aa_map( aa_from_oneletter_code( nt ) )[1] ) ) );
 	pose.append_polymer_residue_after_seqpos( *rsd1, n, true /*build_ideal_geometry*/ );
+
 	pose.set_torsion( TorsionID( n, BB, 5), torsion_info_.epsilon_aform());
 	pose.set_torsion( TorsionID( n, BB, 6), torsion_info_.zeta_aform());
 	set_Aform_torsions( pose, n+1 );
@@ -668,7 +565,7 @@ RNA_HelixAssembler::append_Aform_residue( pose::Pose & pose, Size const & n, std
 
 ////////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_HelixAssembler::prepend_Aform_residue( pose::Pose & pose, Size const & n, std::string const & nt ) const {
+RNA_HelixAssembler::prepend_Aform_residue( pose::Pose & pose, Size const & n, char const & nt ) const {
 
  	using namespace core::conformation;
  	using namespace core::chemical;
@@ -676,8 +573,7 @@ RNA_HelixAssembler::prepend_Aform_residue( pose::Pose & pose, Size const & n, st
 
 	runtime_assert( n == 1 || pose.fold_tree().is_cutpoint(n-1) );
 
-	ResidueOP rsd2 = get_residue( nt );
-	runtime_assert( rsd2->is_NA() );
+	ResidueOP rsd2( ResidueFactory::create_residue( *(rsd_set_->aa_map( aa_from_oneletter_code( nt ) )[1] ) ) );
 	pose.prepend_polymer_residue_before_seqpos( *rsd2, n, true /*build_ideal_geometry*/ );
 
 	set_Aform_torsions( pose, n );
@@ -773,26 +669,30 @@ RNA_HelixAssembler::minimize_prepend_res( pose::Pose & pose, Size const n ) cons
 
 }
 
-/////////////////////////////////////////////////////////////////////////////////////
-// Could make chains distinct ('A' and 'B'), but this was causing
-// more confusion than it was worth. Better to have 'default' values (blank chains).
-/////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////
 void
-RNA_HelixAssembler::fill_chain_info( pose::Pose & pose ){
+RNA_HelixAssembler::fill_chain_info( pose::Pose & pose, std::string const & full_sequence ){
 
 	using namespace core::pose;
-	using namespace core::pose::full_model_info;
 
 	utility::vector1< char > chains;
-	for ( Size i = 1; i <= pose.total_residue(); i++ )	chains.push_back( ' ' );
+
+	Size const nres = full_sequence.size();
+
+	for ( Size i = 1; i <= (nres/2); i++ ){
+		if ( !is_blank_seq( full_sequence[i-1] ) ) chains.push_back( 'A' );
+	}
+
+	for ( Size i = (nres/2 + 1); i <= nres; i++ ){
+		if ( !is_blank_seq( full_sequence[i-1] ) ) chains.push_back( 'B' );
+	}
+
 	PDBInfoOP pdb_info = new PDBInfo( pose );
 	pdb_info->set_chains( chains );
 	pdb_info->obsolete( false ); // this is silly.
 
 	pose.pdb_info( pdb_info );
 
-	FullModelInfoOP full_model_info = new FullModelInfo( pose );
-	set_full_model_info( pose, full_model_info );
 }
 
 

@@ -1281,7 +1281,7 @@ Real
 rms_at_corresponding_atoms(
 	pose::Pose const & mod_pose,
 	pose::Pose const & ref_pose,
-	std::map< core::id::AtomID, core::id::AtomID > const & atom_id_map
+	std::map< core::id::AtomID, core::id::AtomID > atom_id_map
 )
 {
 	utility::vector1< Size > calc_rms_res;
@@ -1296,7 +1296,7 @@ Real
 rms_at_corresponding_atoms(
 	pose::Pose const & mod_pose,
 	pose::Pose const & ref_pose,
-	std::map< core::id::AtomID, core::id::AtomID > const & atom_id_map,
+	std::map< core::id::AtomID, core::id::AtomID > atom_id_map,
 	utility::vector1< Size > const & calc_rms_res
 )
 {
@@ -1333,7 +1333,7 @@ Real
 rms_at_all_corresponding_atoms(
         pose::Pose const & mod_pose,
         pose::Pose const & ref_pose,
-        std::map< core::id::AtomID, core::id::AtomID > const & atom_id_map
+        std::map< core::id::AtomID, core::id::AtomID > atom_id_map
 )
 {
 	utility::vector1< Vector > p1_coords, p2_coords;
@@ -1363,7 +1363,7 @@ Real
 rms_at_corresponding_atoms_no_super(
 	pose::Pose const & mod_pose,
 	pose::Pose const & ref_pose,
-	std::map< core::id::AtomID, core::id::AtomID > const & atom_id_map ){
+	std::map< core::id::AtomID, core::id::AtomID > atom_id_map ){
 
 	utility::vector1< Size > calc_rms_res;
 	for ( Size n = 1; n <= mod_pose.total_residue(); n++ ) calc_rms_res.push_back( n );
@@ -1375,7 +1375,7 @@ Real
 rms_at_corresponding_atoms_no_super(
 	pose::Pose const & mod_pose,
 	pose::Pose const & ref_pose,
-	std::map< core::id::AtomID, core::id::AtomID > const & atom_id_map,
+	std::map< core::id::AtomID, core::id::AtomID > atom_id_map,
 	utility::vector1< Size > const & calc_rms_res
 )
 {
@@ -1389,15 +1389,14 @@ rms_at_corresponding_atoms_no_super(
 
 		// We're passed an explicit map of atoms to match up. Presume that if there's a mismatch, it's intentional.
 		// But let people know about it to be safe.
-		// Commented this out, because even the .visible() lookup takes a non-negligible amount of time!
-		// if( tr.Debug.visible() &&
-		// 		( mod_pose.residue( (iter->first).rsd() ).atom_name(  (iter->first).atomno() ) !=
-		// 			ref_pose.residue( (iter->second).rsd() ).atom_name(  (iter->second).atomno() ) ) ) {
-		// 	conformation::Residue const & mod_res( mod_pose.residue( (iter->first).rsd() ) );
-		// 	conformation::Residue const & ref_res( ref_pose.residue( (iter->second).rsd() ) );
-		// 	tr.Debug << "Including distance between " << mod_res.name() << " " << mod_res.atom_name( (iter->first).atomno() )
-		// 			<< " and " << ref_res.name() << " " << ref_res.atom_name ( (iter->second).atomno() ) << " in rmsd calculation." << std::endl;
-		// }
+		if( tr.Debug.visible() &&
+				( mod_pose.residue( (iter->first).rsd() ).atom_name(  (iter->first).atomno() ) !=
+					ref_pose.residue( (iter->second).rsd() ).atom_name(  (iter->second).atomno() ) ) ) {
+			conformation::Residue const & mod_res( mod_pose.residue( (iter->first).rsd() ) );
+			conformation::Residue const & ref_res( ref_pose.residue( (iter->second).rsd() ) );
+			tr.Debug << "Including distance between " << mod_res.name() << " " << mod_res.atom_name( (iter->first).atomno() )
+					<< " and " << ref_res.name() << " " << ref_res.atom_name ( (iter->second).atomno() ) << " in rmsd calculation." << std::endl;
+		}
 
 		if ( !is_calc_rms[ (iter->first).rsd() ] ) continue;
 		if ( mod_pose.residue( (iter->first).rsd() ).is_virtual( (iter->first).atomno() ) ) continue;

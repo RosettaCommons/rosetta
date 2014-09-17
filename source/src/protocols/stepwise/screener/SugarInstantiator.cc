@@ -16,7 +16,6 @@
 #include <protocols/stepwise/screener/SugarInstantiator.hh>
 #include <protocols/stepwise/modeler/rna/sugar/SugarInstantiateMover.hh>
 #include <protocols/stepwise/modeler/rna/sugar/SugarVirtualizeMover.hh>
-#include <protocols/stepwise/modeler/rna/sugar/util.hh>
 #include <protocols/moves/CompositionMover.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
@@ -53,8 +52,29 @@ namespace screener {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
 	SugarInstantiator::check_moving_sugar( pose::Pose & pose, Size const moving_res ){
+
 		if ( !pose.residue( moving_res_ ).has_variant_type( core::chemical::VIRTUAL_RIBOSE ) ) return false; // nothing to do.
-		return detect_sugar_contacts( pose, moving_res, o2prime_instantiation_distance_cutoff_ );
+
+		bool instantiate_sugar( false );
+		Vector const & moving_O2prime_xyz = pose.residue( moving_res ).xyz( " O2'" );
+		for ( Size i = 1; i <= pose.total_residue(); i++ ){
+			if ( i == moving_res ) continue;
+			if ( pose.residue( i ).is_virtual_residue() ) continue;
+			for ( Size j = 1; j <= pose.residue( i ).nheavyatoms(); j++ ){
+				if ( pose.residue_type( i ).is_virtual( j ) ) continue;
+				if ( pose.residue_type( i ).heavyatom_is_an_acceptor( j ) ||
+						 pose.residue_type( i ).heavyatom_has_polar_hydrogens( j )  ){
+					Distance dist = ( pose.residue(i).xyz( j ) - moving_O2prime_xyz ).length();
+					//std::cout << "Distance to rsd " << i << "  atom " << pose.residue_type( i ).atom_name( j ) << ": " << dist << std::endl;
+					if ( dist < o2prime_instantiation_distance_cutoff_ ) {
+						instantiate_sugar = true; break;
+					}
+				}
+			} // atoms j
+			if ( instantiate_sugar ) break;
+		} // residues i
+
+		return instantiate_sugar;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////

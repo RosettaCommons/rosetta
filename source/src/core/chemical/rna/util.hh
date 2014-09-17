@@ -17,7 +17,6 @@
 #include <core/types.hh>
 
 #include <core/chemical/AA.hh>
-#include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
@@ -82,15 +81,15 @@ get_WC_atom( core::chemical::AA const & res_type );
 
 void
 get_watson_crick_base_pair_atoms(
-	 conformation::Residue const & rsd_type1,
-	 conformation::Residue const & rsd_type2,
+	 chemical::AA const & aa1,
+	 chemical::AA const & aa2,
 	 std::string & atom1,
 	 std::string & atom2 );
 
 void
 get_watson_crick_base_pair_atoms(
-	 conformation::Residue const & rsd_type1,
-	 conformation::Residue const & rsd_type2,
+	 chemical::AA const & aa1,
+	 chemical::AA const & aa2,
 	 utility::vector1< std::string > & atom_ids1,
 	 utility::vector1< std::string > & atom_ids2	 );
 

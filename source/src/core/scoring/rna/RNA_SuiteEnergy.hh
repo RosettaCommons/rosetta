@@ -99,7 +99,8 @@ public:
 	long_range_type() const { return methods::rna_suite_lr; }
 
 private:
-	virtual	Size version() const { return 1; }
+	virtual	Size version() const { return 0; }
+	RNA_SuitePotential const rna_suite_potential_;
 
 	bool get_f1_f2(
 		id::TorsionID const & torsion_id,
@@ -108,22 +109,6 @@ private:
 		utility::vector1< Vector > & f1s,
 		utility::vector1< Vector > & f2s
 	) const;
-
-	void
-	eval_residue_pair_derivatives(
-																conformation::Residue const & rsd1,
-																conformation::Residue const & rsd2,
-																pose::Pose const & pose,
-																Real const & weights,
-																utility::vector1<DerivVectorPair> & r1_atom_derivs,
-																utility::vector1<DerivVectorPair> & r2_atom_derivs,
-																RNA_SuitePotential const & rna_suite_potential ) const;
-
-private:
-
-	RNA_SuitePotential const rna_suite_potential_;
-  RNA_SuitePotential const rna_suite_potential_for_suiteness_bonus_;
-
 };
 
 } //rna

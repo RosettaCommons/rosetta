@@ -456,8 +456,8 @@ namespace mover {
 				if ( nucleoside_num_ > 0 ) rna_torsion_mover_->apply_random_nucleoside_torsion( pose, nucleoside_num_ );
 			}
 
-			// rna_torsion_mover_->sample_near_suite_torsion( pose, suite_num_, sample_range_large_);
-			// if ( nucleoside_num_ > 0 ) rna_torsion_mover_->sample_near_nucleoside_torsion( pose, nucleoside_num_, sample_range_large_);
+			rna_torsion_mover_->sample_near_suite_torsion( pose, suite_num_, sample_range_large_);
+			if ( nucleoside_num_ > 0 ) rna_torsion_mover_->sample_near_nucleoside_torsion( pose, nucleoside_num_, sample_range_large_);
 		}
 
 	}

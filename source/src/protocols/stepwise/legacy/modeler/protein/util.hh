@@ -40,8 +40,7 @@ namespace protein {
 	output_pose_list( utility::vector1< core::pose::PoseOP > pose_list,
 										core::pose::PoseCOP native_pose,
 										std::string const & silent_file,
-										utility::vector1< core::Size > const & working_calc_rms_res,
-										bool const overwrite = true );
+										utility::vector1< core::Size > const & working_calc_rms_res	);
 
 	void
 	output_silent_struct( core::pose::Pose const & pose, core::pose::PoseCOP const & native_pose_op,
@@ -53,7 +52,7 @@ namespace protein {
 	output_silent_struct( core::pose::Pose const & pose, core::pose::PoseCOP const & native_pose_op,
 												std::string const & silent_file, std::string const & tag,
 												core::io::silent::SilentFileDataOP sfd_in,
-												utility::vector1< core::Size > const & calc_rms_res );
+												utility::vector1< core::Size > const & calc_rms_res	);
 
 	core::Real get_pretend_psi_explicit( core::pose::Pose const & pose, core::Size const & res );
 

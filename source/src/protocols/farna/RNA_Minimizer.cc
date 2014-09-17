@@ -295,7 +295,16 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 	for ( Size n = 1; n <= extra_minimize_chi_res_.size(); n++ )	mm.set( id::TorsionID( extra_minimize_chi_res_[n], id::CHI, 1 ), true );
 
 	// vary bond geometry
-	if ( vary_bond_geometry_ ) simple_moves::setup_vary_rna_bond_geometry( mm, pose, allow_insert_ );
+	if ( vary_bond_geometry_ ) {
+		// Let additional degrees of freedom vary -- but apply constraints to stay near
+		// ideal bond lengths and angles!
+		protocols::simple_moves::ConstrainToIdealMover CTIMover;
+		core::kinematics::MoveMapOP mmop(mm.clone());
+		CTIMover.set_movemap(mmop);
+		CTIMover.set_AllowInsert(allow_insert_);
+		CTIMover.apply(pose);
+		mm = (*CTIMover.get_movemap());
+	}
 
 }
 

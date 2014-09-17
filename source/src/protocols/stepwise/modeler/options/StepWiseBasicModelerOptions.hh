@@ -41,8 +41,8 @@ namespace options {
 
 		StepWiseBasicModelerOptionsOP clone() const;
 
-		// StepWiseBasicModelerOptions &
-		// operator = ( StepWiseBasicModelerOptions const & src );
+		StepWiseBasicModelerOptions &
+		operator = ( StepWiseBasicModelerOptions const & src );
 
 		/// @brief Initialize from the recursive "tag" structure.
 		virtual
@@ -55,6 +55,9 @@ namespace options {
 		std::string
 		type() const{ return "StepWiseBasicModelerOptions";}
 
+		core::Size const & sampler_num_pose_kept() const { return sampler_num_pose_kept_; }
+		void set_sampler_num_pose_kept( core::Size const & setting ){ sampler_num_pose_kept_ = setting; }
+
 		bool const & use_green_packer() const { return use_green_packer_; }
 		void set_use_green_packer( bool const & setting ){ use_green_packer_ = setting; }
 
@@ -66,6 +69,9 @@ namespace options {
 
 		void set_dump( bool const & setting ){ dump_ = setting; }
 		bool dump() const{ return dump_; }
+
+		core::Real const & cluster_rmsd() const { return cluster_rmsd_; }
+		void set_cluster_rmsd( core::Real const & setting ){ cluster_rmsd_ = setting; }
 
 		void set_skip_minimize( bool const & setting ){ skip_minimize_ = setting; }
 		bool skip_minimize() const{ return skip_minimize_; }
@@ -83,10 +89,12 @@ protected:
 
 protected:
 
+		core::Size sampler_num_pose_kept_;
 		bool use_green_packer_;
 		bool verbose_;
 		bool choose_random_;
 		bool dump_;
+		core::Real cluster_rmsd_;
 		bool skip_minimize_;
 		bool disallow_realign_;
 

@@ -202,7 +202,7 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 
 		if ( options_->rm_virt_phosphate() ){ //Fang's electron density code
 			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-				pose::remove_variant_type_from_pose_residue( pose, chemical::VIRTUAL_PHOSPHATE, ii );
+				pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", ii );
 			}
 		}
 
@@ -233,7 +233,13 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 			TR << "Performing variable geometry minimization..." << std::endl;
 			ScoreFunctionOP scorefxn_vbg = scorefxn_->clone();
 			scorefxn_vbg->set_weight( rna_bond_geometry, 8.0 );
-			setup_vary_rna_bond_geometry( mm, pose, allow_insert_ );
+			protocols::simple_moves::ConstrainToIdealMover CTIMover;
+			core::kinematics::MoveMapOP mmop(mm.clone());
+			CTIMover.set_movemap(mmop);
+			CTIMover.set_AllowInsert(allow_insert_->clone());
+			CTIMover.apply(pose);
+			core::kinematics::MoveMap new_mm = (*CTIMover.get_movemap());
+			//CartesianMinimizer cartesian_minimizer;
 			if ( !options_->skip_minimize() ) minimizer.run( pose, new_mm, *(scorefxn_vbg ), options );
 		}
 		if ( !options_->skip_minimize() ) minimizer.run( pose, mm, *( scorefxn_ ), options );
@@ -388,7 +394,7 @@ StepWiseRNA_Minimizer::pass_all_pose_screens( core::pose::Pose & pose, std::stri
 			conformation::Residue const & five_prime_rsd = pose.residue( five_prime_chain_break_res );
 			Real const five_prime_delta = numeric::principal_angle_degrees( five_prime_rsd.mainchain_torsion( DELTA ) );
 
-			if ( ( five_prime_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) == false ) && ( five_prime_rsd.has_variant_type( chemical::VIRTUAL_RIBOSE ) == false ) ){
+			if ( ( five_prime_rsd.has_variant_type( "VIRTUAL_RNA_RESIDUE" ) == false ) && ( five_prime_rsd.has_variant_type( "VIRTUAL_RIBOSE" ) == false ) ){
 				if ( ( five_prime_delta > 1.0 && five_prime_delta < 179.00 ) == false ){
 
 					TR.Debug << "gap_size == 0, " << in_tag << " discarded: five_prime_chain_break_res = " << five_prime_chain_break_res << " five_prime_CB_delta = " << five_prime_delta << " is out of range " << std::endl;
@@ -399,7 +405,7 @@ StepWiseRNA_Minimizer::pass_all_pose_screens( core::pose::Pose & pose, std::stri
 			conformation::Residue const & three_prime_rsd = pose.residue( five_prime_chain_break_res + 1 );
 			Real const three_prime_delta = numeric::principal_angle_degrees( three_prime_rsd.mainchain_torsion( DELTA ) );
 
-			if ( ( three_prime_rsd.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) == false ) && ( three_prime_rsd.has_variant_type( chemical::VIRTUAL_RIBOSE ) == false ) ){
+			if ( ( three_prime_rsd.has_variant_type( "VIRTUAL_RNA_RESIDUE" ) == false ) && ( three_prime_rsd.has_variant_type( "VIRTUAL_RIBOSE" ) == false ) ){
 				if ( ( three_prime_delta > 1.0 && three_prime_delta < 179.00 ) == false ){
 					TR.Debug << "gap_size == 0, " << in_tag << " discarded: three_prime_chain_break_res = " << ( five_prime_chain_break_res + 1 ) << " three_prime_CB_delta = " << three_prime_delta << " is out of range " << std::endl;
 					pass_screen = false;
@@ -438,7 +444,7 @@ StepWiseRNA_Minimizer::pass_all_pose_screens( core::pose::Pose & pose, std::stri
 		pose::Pose native_pose = *( working_parameters_->working_native_pose() ); //Hard copy!
 
 		for ( Size i = 1; i <= native_pose.total_residue(); ++i ) {
-			pose::remove_variant_type_from_pose_residue( native_pose, chemical::VIRTUAL_PHOSPHATE, i );
+			pose::remove_variant_type_from_pose_residue( native_pose, "VIRTUAL_PHOSPHATE", i );
 		}
 		/////////////////////////////////////////////////////////
 

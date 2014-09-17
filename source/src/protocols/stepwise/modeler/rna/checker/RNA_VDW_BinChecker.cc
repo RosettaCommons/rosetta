@@ -444,7 +444,7 @@ namespace checker {
 
 		}
 
-		id::AtomID_Map < id::AtomID > alignment_atom_id_map = align::create_aligment_id_map_legacy(	VDW_rep_screen_pose, working_pose, res_map );
+		id::AtomID_Map < id::AtomID > alignment_atom_id_map = align::create_alignment_id_map(	VDW_rep_screen_pose, working_pose, res_map );
 
 
 		if ( verbose ) TR << "before superimpose_pose" << std::endl;

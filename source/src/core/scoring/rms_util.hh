@@ -542,21 +542,21 @@ Real
 rms_at_corresponding_atoms(
 	pose::Pose const & mod_pose,
 	pose::Pose const & ref_pose,
-	std::map< core::id::AtomID, core::id::AtomID > const & atom_id_map
+	std::map< core::id::AtomID, core::id::AtomID > atom_id_map
 													 );
 
 Real
 rms_at_all_corresponding_atoms(
         pose::Pose const & mod_pose,
         pose::Pose const & ref_pose,
-        std::map< core::id::AtomID, core::id::AtomID > const & atom_id_map
+        std::map< core::id::AtomID, core::id::AtomID > atom_id_map
 );
 
 Real
 rms_at_corresponding_atoms(
 	pose::Pose const & mod_pose,
 	pose::Pose const & ref_pose,
-	std::map< core::id::AtomID, core::id::AtomID > const & atom_id_map,
+	std::map< core::id::AtomID, core::id::AtomID > atom_id_map,
 	utility::vector1< Size > const & calc_rms_res
 													 );
 
@@ -564,13 +564,13 @@ Real
 rms_at_corresponding_atoms_no_super(
 	pose::Pose const & mod_pose,
 	pose::Pose const & ref_pose,
-	std::map< core::id::AtomID, core::id::AtomID > const & atom_id_map );
+	std::map< core::id::AtomID, core::id::AtomID > atom_id_map );
 
 Real
 rms_at_corresponding_atoms_no_super(
 	pose::Pose const & mod_pose,
 	pose::Pose const & ref_pose,
-	std::map< core::id::AtomID, core::id::AtomID > const & atom_id_map,
+	std::map< core::id::AtomID, core::id::AtomID > atom_id_map,
 	utility::vector1< Size > const & calc_rms_res
 																		);
 
