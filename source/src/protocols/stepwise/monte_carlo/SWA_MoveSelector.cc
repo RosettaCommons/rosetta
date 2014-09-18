@@ -93,7 +93,7 @@ namespace monte_carlo {
 			return;
 		}
 
-		swa_move = RG.random_element( swa_moves );
+		swa_move = numeric::random::rg().random_element( swa_moves );
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
