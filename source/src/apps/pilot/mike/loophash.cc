@@ -535,7 +535,7 @@ main( int argc, char * argv [] )
 	// this still allows us to make overall reproducible runs when settign a constant overall start seed.
 	core::Size random_sum=0;
 	for ( int i = 0; i < mpi_rank_; i ++ ){
-	  random_sum+=RG.random_range(1,65536)+rand()%65536;
+	  random_sum+=numeric::random::rg().random_range(1,65536)+rand()%65536;
 	}
 	TR << "Random Sum: " << random_sum    << std::endl;
 	TR << "Random:     " << numeric::random::rg().uniform()  << std::endl;
