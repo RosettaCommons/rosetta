@@ -150,7 +150,6 @@
 
 #include <numeric/NumericTraits.hh>
 
- static numeric::random::RandomGenerator RG(16621);
 
 using namespace core;
 using namespace protocols;
@@ -162,7 +161,7 @@ using utility::vector1;
 using std::string;
 using io::pdb::dump_pdb;
 
-basic::Tracer TR("apps.pilot.chrisk/pep_prep");
+static thread_local basic::Tracer TR( "apps.pilot.chrisk/pep_prep" );
 
 //parse cst line as: name1 res1 x y z x0 sd tol
 struct pep_coord_cst {
@@ -592,7 +591,7 @@ run_pep_prep()
 	for( Size peptide_loop = 1; peptide_loop <= n_peptides; ++peptide_loop ){
 
 		if( option[ pepspec::run_sequential ] ) ++pose_index;
-		else pose_index = static_cast< int >( RG.uniform() * pdb_filenames.size() + 1 );
+		else pose_index = static_cast< int >( numeric::random::rg().uniform() * pdb_filenames.size() + 1 );
 		std::string pdb_filename( pdb_filenames[ pose_index ] );
 		TR<<"Initializing "<< "prep_" + string_of( peptide_loop ) + ".pdb with " + pdb_filename << std::endl;
 		import_pose::pose_from_pdb( pose, pdb_filename );
@@ -1000,13 +999,13 @@ run_pep_prep()
 					AtomID( rsd2.atom_index( pep_anchor_stub2 ), pep_anchor ) ,
 					AtomID( rsd2.atom_index( pep_anchor_stub3 ), pep_anchor ) ) ;
 
-			Real jump_trans_x_div( jump_trans_vector_avg.x() + ( 2 * RG.uniform() - 1 ) * jump_trans_x_sd );
-			Real jump_trans_y_div( jump_trans_vector_avg.y() + ( 2 * RG.uniform() - 1 ) * jump_trans_y_sd );
-			Real jump_trans_z_div( jump_trans_vector_avg.z() + ( 2 * RG.uniform() - 1 ) * jump_trans_z_sd );
+			Real jump_trans_x_div( jump_trans_vector_avg.x() + ( 2 * numeric::random::rg().uniform() - 1 ) * jump_trans_x_sd );
+			Real jump_trans_y_div( jump_trans_vector_avg.y() + ( 2 * numeric::random::rg().uniform() - 1 ) * jump_trans_y_sd );
+			Real jump_trans_z_div( jump_trans_vector_avg.z() + ( 2 * numeric::random::rg().uniform() - 1 ) * jump_trans_z_sd );
 
-			Real jump_bond_angle_div( jump_bond_angle_avg + ( 2 * RG.uniform() - 1 ) * jump_bond_angle_sd );
-			Real jump_tor1_angle_div( jump_tor1_angle_avg + ( 2 * RG.uniform() - 1 ) * jump_tor1_angle_sd );
-			Real jump_tor2_angle_div( jump_tor2_angle_avg + ( 2 * RG.uniform() - 1 ) * jump_tor2_angle_sd );
+			Real jump_bond_angle_div( jump_bond_angle_avg + ( 2 * numeric::random::rg().uniform() - 1 ) * jump_bond_angle_sd );
+			Real jump_tor1_angle_div( jump_tor1_angle_avg + ( 2 * numeric::random::rg().uniform() - 1 ) * jump_tor1_angle_sd );
+			Real jump_tor2_angle_div( jump_tor2_angle_avg + ( 2 * numeric::random::rg().uniform() - 1 ) * jump_tor2_angle_sd );
 
 			Vector jump_trans_vector_div( jump_trans_x_div, jump_trans_y_div, jump_trans_z_div );
 			RT rt( jump_rot_matrix[1], jump_trans_vector_div );
@@ -1034,7 +1033,7 @@ run_pep_prep()
 		}
 		/////////////////////////////////////////////////////////
 
-		Size ref_index( static_cast< int >( RG.uniform() * n_ref_poses + 1 ) );
+		Size ref_index( static_cast< int >( numeric::random::rg().uniform() * n_ref_poses + 1 ) );
 		if( option[ pepspec::prep_use_ref_rotamers ] ){
 			pose.replace_residue( pep_anchor, ref_poses[ ref_index ].residue( ref_pep_anchors[ ref_index ] ), true );
 		}
@@ -1193,7 +1192,7 @@ run_pep_prep()
 			//from -n to +m
 			int begin( pep_begin - pep_anchor );
 			int end( pep_end - pep_anchor );
-			numeric::random::random_permutation( ref_indices, RG ); //shuffle ref poses
+			numeric::random::random_permutation( ref_indices, numeric::random::rg() ); //shuffle ref poses
 			for( Size i_ref = 1; i_ref <= n_ref_poses; ++i_ref ){
 				ref_index = ref_indices[ i_ref ];
 				Pose ref_pose( ref_poses[ ref_index ] );

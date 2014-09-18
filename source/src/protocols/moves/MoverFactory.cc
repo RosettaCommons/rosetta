@@ -37,9 +37,13 @@ namespace protocols {
 namespace moves {
 
 
-static basic::Tracer TR( "protocols.moves.MoverFactory" );
+static thread_local basic::Tracer TR( "protocols.moves.MoverFactory" );
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< MoverFactory * > MoverFactory::instance_( 0 );
+#else
 MoverFactory * MoverFactory::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

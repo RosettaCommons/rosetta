@@ -43,7 +43,7 @@ using namespace core;
 using namespace scoring::constraints;
 using namespace protocols::moves;
 
-static basic::Tracer TR( "protocols.seeded_abinitio.CAcstGenerator" );
+static thread_local basic::Tracer TR( "protocols.seeded_abinitio.CAcstGenerator" );
 
 	std::string
 	CAcstGeneratorCreator::keyname() const

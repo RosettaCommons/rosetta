@@ -104,7 +104,7 @@ using utility::file::FileName;
 
 
 // tracer - used to replace cout
-static basic::Tracer TR("ODDP");
+static thread_local basic::Tracer TR( "ODDP" );
 
 namespace protocols {
 namespace ncbb {

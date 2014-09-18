@@ -34,7 +34,7 @@
 namespace devel {
 namespace buns {
 
-static basic::Tracer TR( "devel.buns.BuriedUnsatHbondFilter2" );
+static thread_local basic::Tracer TR( "devel.buns.BuriedUnsatHbondFilter2" );
 
 protocols::filters::FilterOP
 BuriedUnsatHbondFilter2Creator::create_filter() const { return new BuriedUnsatHbondFilter2; }

@@ -78,7 +78,7 @@ main( int argc, char * argv [] )
 	using namespace protocols;
 	using namespace protocols::jobdist;
 	using namespace protocols::moves;
-	basic::Tracer TR("cluster_ligand_poses.main");
+	basic::Tracer TR( "cluster_ligand_poses.main" );
 
 	// Parses command line options and inits RNG.
 	// Doesn't seem to hurt to do it again if already done once (?)

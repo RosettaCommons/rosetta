@@ -55,8 +55,7 @@
 #include <utility/stream_util.hh>
 #include <basic/Tracer.hh>
 
-static numeric::random::RandomGenerator RG(1183103);
-static basic::Tracer TR( "protocols.hybridization.InsertChunkMover" );
+static thread_local basic::Tracer TR( "protocols.hybridization.InsertChunkMover" );
 
 using utility::operator <<;
 
@@ -109,7 +108,7 @@ bool InsertChunkMover::get_local_sequence_mapping(core::pose::Pose & pose,
 
 		//fpd pick a random downstream residue and steal it's position from a template
 		//fpd if anchor_insert_only_ is set, use the jump anchor position
-		core::Size seqpos_pose = RG.random_range(seqpos_start_, seqpos_stop_);
+		core::Size seqpos_pose = numeric::random::rg().random_range(seqpos_start_, seqpos_stop_);
 		if (anchor_insert_only_) {
 			seqpos_pose = pose.fold_tree().downstream_jump_residue( jump_number_ );
 		}
@@ -322,9 +321,10 @@ void InsertChunkMover::check_overlap(core::pose::Pose & pose) {
 	if (overlapped) {
 		utility::vector1< core::id::AtomID > ids;
 		utility::vector1< numeric::xyzVector<core::Real> > positions;
-		numeric::xyzVector<core::Real> trans(2.*RG.uniform()-1.,
-											 2.*RG.uniform()-1.,
-											 2.*RG.uniform()-1.);
+		numeric::xyzVector<core::Real> trans(
+			2.*numeric::random::rg().uniform()-1.,
+			2.*numeric::random::rg().uniform()-1.,
+			2.*numeric::random::rg().uniform()-1.);
 
 		for ( Size ires=seqpos_start_; ires<= seqpos_stop_; ++ires ) {
 			for ( Size iatom=1; iatom<= pose.residue_type(ires).natoms(); ++iatom ) { // use residue_type to prevent internal coord update

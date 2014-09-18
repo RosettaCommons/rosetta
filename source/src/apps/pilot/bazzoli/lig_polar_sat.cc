@@ -67,7 +67,7 @@ using core::Real;
 using utility::vector1;
 using numeric::xyzVector;
 
-static basic::Tracer TR( "apps.pilot.lig_polar_sat" );
+static thread_local basic::Tracer TR( "apps.pilot.lig_polar_sat" );
 
 
 ///

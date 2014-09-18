@@ -29,7 +29,7 @@
 // C++ Headers
 #include <cstdlib>
 
-static basic::Tracer TR( "core.membrane.geometry.EmbeddingDef" );
+static thread_local basic::Tracer TR( "core.membrane.geometry.EmbeddingDef" );
 
 namespace core {
 namespace membrane {

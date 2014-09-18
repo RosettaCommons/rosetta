@@ -57,7 +57,7 @@
 #endif
 
 
-static basic::Tracer tr("protocols.comparative_modeling.AlignRmsdTargetEvaluatorCreator");
+static thread_local basic::Tracer tr( "protocols.comparative_modeling.AlignRmsdTargetEvaluatorCreator" );
 
 namespace protocols {
 namespace comparative_modeling {

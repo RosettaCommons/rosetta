@@ -28,7 +28,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.modeler.rna.sugar.SugarModeling" );
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.rna.sugar.SugarModeling" );
 
 using namespace core::chemical::rna;
 

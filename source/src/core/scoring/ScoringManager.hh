@@ -98,7 +98,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -281,7 +282,13 @@ private:
 
 private:
 
+	/// @brief static data member holding pointer to the singleton class itself
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< ScoringManager * > instance_;
+#else
 	static ScoringManager * instance_;
+#endif
+
 
 	//private constructor
 	ScoringManager();

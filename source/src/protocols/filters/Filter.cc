@@ -30,7 +30,7 @@
 #include <core/pose/util.hh>
 
 
-static basic::Tracer TR("protocols.filters.Filter");
+static thread_local basic::Tracer TR( "protocols.filters.Filter" );
 
 namespace protocols {
 namespace filters {

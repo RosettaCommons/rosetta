@@ -52,7 +52,7 @@
 namespace protocols {
 namespace simple_moves {
 
-static basic::Tracer TR( "protocols.simple_moves.ModifyVariantTypeMover" );
+static thread_local basic::Tracer TR( "protocols.simple_moves.ModifyVariantTypeMover" );
 
 
 // ModifyVariantTypeMover; based on the protocols::moves::Mover basis class

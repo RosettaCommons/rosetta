@@ -86,8 +86,7 @@
 
 
 
-static basic::Tracer TR("main");
-static numeric::random::RandomGenerator RG(2537081);  // <- Magic number, do not change it (and dont try and use it anywhere else)
+static thread_local basic::Tracer TR( "main" );
 
 using namespace protocols::moves;
 using namespace core::scoring;
@@ -219,7 +218,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 		if( selection.size() > 0 ){
 			utility::vector1< core::Size > temp_selection = selection;
 			//std::random__shuffle( temp_selection.begin(), temp_selection.end());
-			numeric::random::random_permutation(temp_selection.begin(), temp_selection.end(), numeric::random::RG);
+			numeric::random::random_permutation(temp_selection.begin(), temp_selection.end(), numeric::random::rg());
 
 			start_res = std::max( core::Size(2), core::Size( temp_selection[1] ) );
 			stop_res  = std::min( core::Size(pose.total_residue()), core::Size(start_res + sampler_chunk_size - 1)  );
@@ -240,7 +239,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 
 		// choose up to "skim_size" of them
     //std::random_shuffle( lib_structs.begin(), lib_structs.end());
-    numeric::random::random_permutation(lib_structs.begin(), lib_structs.end(), numeric::random::RG);
+    numeric::random::random_permutation(lib_structs.begin(), lib_structs.end(), numeric::random::rg());
 
     std::vector< core::io::silent::SilentStructOP > select_lib_structs;
     for( core::Size k=0;k< std::min(skim_size, lib_structs.size() ) ;k++){
@@ -356,7 +355,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 
 		if( ( energy_diff_T >= 0.0 ) ) metropolis_replace = true; // energy of new is simply lower
 		else if ( (energy_diff_T/mpi_metropolis_temp_) > (-10.0) ){
-			core::Real random_float = RG.uniform();
+			core::Real random_float = numeric::random::rg().uniform();
 			if ( random_float < exp( energy_diff_T ) )  metropolis_replace = true;
 		}
 
@@ -539,7 +538,7 @@ main( int argc, char * argv [] )
 	  random_sum+=RG.random_range(1,65536)+rand()%65536;
 	}
 	TR << "Random Sum: " << random_sum    << std::endl;
-	TR << "Random:     " << RG.uniform()  << std::endl;
+	TR << "Random:     " << numeric::random::rg().uniform()  << std::endl;
 	TR << "Random2:     " << rand() << std::endl;
 #endif
 

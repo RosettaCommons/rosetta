@@ -38,7 +38,7 @@
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR( "protocols.simple_moves.HelicalPeptideLengthMover" );
+static thread_local basic::Tracer TR( "protocols.simple_moves.HelicalPeptideLengthMover" );
 
 // C++ Headers
 #include <sstream>

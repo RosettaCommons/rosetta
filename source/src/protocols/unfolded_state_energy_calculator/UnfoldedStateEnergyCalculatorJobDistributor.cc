@@ -36,7 +36,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 
 
-static basic::Tracer TR("protocols.UnfoldedStateEnergyCalculator.UnfoldedStateEnergyCalculatorJobDistributor");
+static thread_local basic::Tracer TR( "protocols.UnfoldedStateEnergyCalculator.UnfoldedStateEnergyCalculatorJobDistributor" );
 
 namespace protocols {
 namespace unfolded_state_energy_calculator {

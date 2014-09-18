@@ -63,8 +63,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer tr("protocols.general_abinitio",basic::t_info);
-static numeric::random::RandomGenerator RG(198121234);
+static thread_local basic::Tracer tr( "protocols.general_abinitio", basic::t_info );
 
 namespace protocols {
 namespace abinitio {

@@ -37,7 +37,7 @@
 #include <utility/vector1.hh>
 
 //// C++ headers
-static basic::Tracer TR("protocols.fldsgn.filters.HSSTripletFilter");
+static thread_local basic::Tracer TR( "protocols.fldsgn.filters.HSSTripletFilter" );
 
 namespace protocols {
 namespace fldsgn {

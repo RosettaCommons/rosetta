@@ -104,8 +104,7 @@ using namespace core::pack::dunbrack;
 using namespace core::pack::dunbrack::cenrot;
 
 //////////////////////////////////////////////////////////////////
-static numeric::random::RandomGenerator RG(62331911);
-basic::Tracer TR("pilot.wendao.cenrot");
+static thread_local basic::Tracer TR( "pilot.wendao.cenrot" );
 std::map<std::string, Real> masslst;
 
 utility::vector1<core::Size> nrecovery(20);

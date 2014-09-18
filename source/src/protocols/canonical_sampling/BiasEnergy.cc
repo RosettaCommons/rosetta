@@ -31,7 +31,7 @@
 //#include <math.h>
 //#include <iomanip>
 
-static basic::Tracer tr( "protocols.canonical_sampling.BiasEnergy" );
+static thread_local basic::Tracer tr( "protocols.canonical_sampling.BiasEnergy" );
 
 namespace protocols {
 namespace canonical_sampling {
@@ -62,8 +62,9 @@ BiasEnergy::BiasEnergy( core::Size stride, core::Real omega, core::Real gamma ) 
 
 BiasEnergy::~BiasEnergy() {
 	if ( protocols::jd2::jd2_used() ) {
-		protocols::jd2::JobOutputterOP job_outputter( protocols::jd2::JobDistributor::get_instance()->job_outputter() );
-		job_outputter->remove_output_observer( this );
+		// I have to say, it makes me a bit nervous assuming that the BiasEnergy is going to be destroyed
+		// before the current_job is.
+		protocols::jd2::JobDistributor::get_instance()->current_job()->remove_output_observer( this );
 	}
 }
 
@@ -94,8 +95,7 @@ void BiasEnergy::initialize_simulation(
 ) {
 	runtime_assert( bias_grid_ );
 	if ( protocols::jd2::jd2_used() ) {
-		protocols::jd2::JobOutputterOP job_outputter( protocols::jd2::JobDistributor::get_instance()->job_outputter() );
-		job_outputter->add_output_observer( this );
+		protocols::jd2::JobDistributor::get_instance()->current_job()->add_output_observer( this );
 	}
 	bias_grid_->reset();
 	count_grid_->reset();
@@ -115,8 +115,8 @@ BiasEnergy::finalize_simulation(
 	count_grid_->write_to_stream( os );
 }
 
-void BiasEnergy::add_values_to_job( core::pose::Pose const& pose, protocols::jd2::JobOP job ) const {
-	job->add_string_real_pair( "bias", evaluate( pose ) );
+void BiasEnergy::add_values_to_job( core::pose::Pose const & pose, protocols::jd2::Job & job ) const {
+	job.add_string_real_pair( "bias", evaluate( pose ) );
 }
 
 core::Real BiasEnergy::evaluate( core::pose::Pose const& pose ) const {

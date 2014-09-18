@@ -34,7 +34,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 
-static basic::Tracer TR( "core.conformation.membrane.LipidAccInfo" );
+static thread_local basic::Tracer TR( "core.conformation.membrane.LipidAccInfo" );
 
 /// @brief      Membrane Lipid Accessibility Data
 /// @details    Stores lipid accessibility data derived from OCTOPUS spanning file

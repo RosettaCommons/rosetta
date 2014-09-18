@@ -17,7 +17,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.modeler.protein.ProteinSideChainCopier" );
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.protein.ProteinSideChainCopier" );
 
 namespace protocols {
 namespace stepwise {

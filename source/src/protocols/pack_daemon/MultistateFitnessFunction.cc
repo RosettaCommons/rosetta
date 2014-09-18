@@ -42,7 +42,7 @@
 
 
 
-static basic::Tracer TR("protocols.pack_daemon.MultistateFitnessFunction");
+static thread_local basic::Tracer TR( "protocols.pack_daemon.MultistateFitnessFunction" );
 
 namespace protocols {
 namespace pack_daemon {

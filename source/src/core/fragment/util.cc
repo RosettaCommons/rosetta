@@ -73,8 +73,7 @@
 namespace core {
 namespace fragment {
 
-static basic::Tracer tr("core.fragment");
-static numeric::random::RandomGenerator RG(125923489);  // <- Magic number, do not change it!
+static thread_local basic::Tracer tr( "core.fragment" );
 
 using namespace ObjexxFCL::format;
 
@@ -246,8 +245,8 @@ merge_frags( FragSet const& good_frags, FragSet const& filling, Size min_nr_frag
 			FragID_List frag_ids;
 			flatten_list( fill_frames, frag_ids );
 			if ( bRandom ) {
-				numeric::random::random_permutation( frag_ids, RG );
-				numeric::random::random_permutation( frag_ids, RG ); //playing safe
+				numeric::random::random_permutation( frag_ids, numeric::random::rg() );
+				numeric::random::random_permutation( frag_ids, numeric::random::rg() ); //playing safe
 			}
 
 			for ( FragID_List::iterator it = frag_ids.begin(), eit = frag_ids.end();

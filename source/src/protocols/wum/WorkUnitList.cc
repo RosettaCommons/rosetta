@@ -23,7 +23,7 @@
 namespace protocols {
 namespace  wum {
 
-static basic::Tracer TR("WorkUnitList");
+static thread_local basic::Tracer TR( "WorkUnitList" );
 
 void WorkUnitList::register_work_unit( const std::string &name, WorkUnitBaseOP the_work_unit){
 	the_work_unit->set_wu_type( name );

@@ -44,8 +44,7 @@
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.hybridization.DomainAssembly" );
-static numeric::random::RandomGenerator RG(546131);
+static thread_local basic::Tracer TR( "protocols.hybridization.DomainAssembly" );
 
 namespace protocols {
 //namespace comparative_modeling {
@@ -117,10 +116,10 @@ DomainAssembly::DomainAssembly(
 		if (sum_weight > 1e-6) {
 			numeric::random::WeightedSampler weighted_sampler_;
 			weighted_sampler_.weights(weights_work);
-			ipose = pose_index_to_add[weighted_sampler_.random_sample(RG)];
+			ipose = pose_index_to_add[weighted_sampler_.random_sample(numeric::random::rg())];
 		}
 		else {
-			ipose = pose_index_to_add[RG.random_range(1,pose_index_to_add.size())];
+			ipose = pose_index_to_add[numeric::random::rg().random_range(1,pose_index_to_add.size())];
 		}
 
 		poses_.push_back(poses[ipose]);
@@ -507,8 +506,8 @@ DomainAssembly::run()
 			core::Size counter(0);
 			while ((*simple_scorefxn)(*full_length_pose) > unbound_score+10.) {
 				//TR << "Random translation " << (*simple_scorefxn)(*full_length_pose) << std::endl;
-				translate->step_size( max_step_size*RG.uniform() );
-				translation_axis = core::Vector(RG.uniform(),RG.uniform(),RG.uniform());
+				translate->step_size( max_step_size*numeric::random::rg().uniform() );
+				translation_axis = core::Vector(numeric::random::rg().uniform(),numeric::random::rg().uniform(),numeric::random::rg().uniform());
 				translate->trans_axis(translation_axis);
 				translate->apply( *full_length_pose );
 				counter++;
@@ -563,8 +562,8 @@ void DomainAssembly::apply(
 	core::pose::PoseOP lower_pose(pose1_);
 	core::pose::PoseOP higher_pose(pose2_);
 
-	int jump_pos1 = RG.random_range(1, lower_pose->total_residue());
-	int jump_pos2 = RG.random_range(lower_pose->total_residue()+1, lower_pose->total_residue()+higher_pose->total_residue());
+	int jump_pos1 = numeric::random::rg().random_range(1, lower_pose->total_residue());
+	int jump_pos2 = numeric::random::rg().random_range(lower_pose->total_residue()+1, lower_pose->total_residue()+higher_pose->total_residue());
 
 	core::kinematics::FoldTree ft = pose.fold_tree();
 	int jump_num = ft.new_jump(jump_pos1, jump_pos2, (int)lower_pose->total_residue()+1);

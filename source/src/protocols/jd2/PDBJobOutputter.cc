@@ -54,7 +54,7 @@
 
 
 
-static basic::Tracer TR("protocols.jd2.PDBJobOutputter");
+static thread_local basic::Tracer TR( "protocols.jd2.PDBJobOutputter" );
 
 namespace protocols {
 namespace jd2 {

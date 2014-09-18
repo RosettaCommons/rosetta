@@ -36,7 +36,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer TR("protocols.moves.TrialMover");
+static thread_local basic::Tracer TR( "protocols.moves.TrialMover" );
 
 //static basic::Tracer trDebug("protocols.moves.TrialMover", basic::t_debug );
 //MY_TRACERS("protocols.moves.TrialMover")

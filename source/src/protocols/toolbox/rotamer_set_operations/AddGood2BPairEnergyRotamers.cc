@@ -42,7 +42,7 @@ namespace protocols {
 namespace toolbox {
 namespace rotamer_set_operations {
 
-static basic::Tracer tr("protocols.toolbox.RotamerSetOperations.AddGood2BPairEnergyRotamers");
+static thread_local basic::Tracer tr( "protocols.toolbox.RotamerSetOperations.AddGood2BPairEnergyRotamers" );
 
 AddGood2BPairEnergyRotamers::AddGood2BPairEnergyRotamers(
 	Size seqpos,

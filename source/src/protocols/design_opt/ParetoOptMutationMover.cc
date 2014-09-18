@@ -62,7 +62,7 @@
 namespace protocols {
 namespace design_opt {
 
-static basic::Tracer TR( "protocols.design_opt.ParetoOptMutationMover" );
+static thread_local basic::Tracer TR( "protocols.design_opt.ParetoOptMutationMover" );
 using namespace core;
 using namespace chemical;
 using utility::vector1;

@@ -48,7 +48,7 @@
 namespace protocols {
 namespace features {
 
-static basic::Tracer TR("protocols.features.PdbDataFeatures");
+static thread_local basic::Tracer TR( "protocols.features.PdbDataFeatures" );
 
 using std::string;
 using std::max;

@@ -73,7 +73,7 @@
 
 
 
-static basic::Tracer tr("protocols.abinitio.Templates");
+static thread_local basic::Tracer tr( "protocols.abinitio.Templates" );
 using namespace core;
 using namespace basic;
 using namespace basic::options;
@@ -103,7 +103,6 @@ void protocols::abinitio::Templates::register_options() {
 namespace protocols {
 namespace abinitio {
 
-static numeric::random::RandomGenerator RG(12598234);  // <- Magic number, do not change it!
 
 using namespace core;
 using namespace jumping;

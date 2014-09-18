@@ -76,7 +76,7 @@ using std::endl;
 using core::import_pose::pose_from_pdb;
 using core::kinematics::Stub;
 
-static basic::Tracer TR("CXdock");
+static thread_local basic::Tracer TR( "CXdock" );
 static core::io::silent::SilentFileData sfd;
 
 OPT_1GRP_KEY( FileVector, cxdock, bench2 )

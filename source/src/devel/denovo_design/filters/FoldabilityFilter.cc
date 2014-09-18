@@ -63,7 +63,7 @@
 #endif
 
 
-static basic::Tracer TR("devel.denovo_design.filters.FoldabilityFilter");
+static thread_local basic::Tracer TR( "devel.denovo_design.filters.FoldabilityFilter" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

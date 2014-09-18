@@ -75,7 +75,7 @@
 #include <algorithm>
 #include <iostream>
 
-static basic::Tracer TR( "protocols.membrane.ddG.MembraneDDGMover" );
+static thread_local basic::Tracer TR( "protocols.membrane.ddG.MembraneDDGMover" );
 
 namespace protocols {
 namespace membrane {

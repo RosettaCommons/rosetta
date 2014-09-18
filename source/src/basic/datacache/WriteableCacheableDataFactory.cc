@@ -32,9 +32,13 @@ namespace basic {
 namespace datacache {
 
 
-static basic::Tracer tr( "basic.datacache.WriteableCacheableDataFactory", t_trace );
+static thread_local basic::Tracer tr( "basic.datacache.WriteableCacheableDataFactory", t_trace );
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< WriteableCacheableDataFactory * > WriteableCacheableDataFactory::instance_( 0 );
+#else
 WriteableCacheableDataFactory * WriteableCacheableDataFactory::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

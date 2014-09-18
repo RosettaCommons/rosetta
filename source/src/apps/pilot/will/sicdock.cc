@@ -74,7 +74,7 @@ using core::id::AtomID;
 	using core::import_pose::pose_from_pdb;
 	using namespace protocols::sic_dock;
 
-static basic::Tracer TR("sicdock");
+static thread_local basic::Tracer TR( "sicdock" );
 static core::io::silent::SilentFileData sfd;
 
 OPT_1GRP_KEY( FileVector, sicdock, bench2 )

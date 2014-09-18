@@ -44,7 +44,7 @@ namespace pack {
 namespace rotamer_set {
 
 
-static basic::Tracer TR("core.pack.rotamer_set.UnboundRotamersOperation");
+static thread_local basic::Tracer TR( "core.pack.rotamer_set.UnboundRotamersOperation" );
 
 
 UnboundRotamersOperation::UnboundRotamersOperation():

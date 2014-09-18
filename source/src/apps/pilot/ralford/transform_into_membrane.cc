@@ -40,7 +40,7 @@
 // C++ headers
 #include <iostream>
 
-static basic::Tracer TR( "apps.pilot.ralford.transform_into_membrane" );
+static thread_local basic::Tracer TR( "apps.pilot.ralford.transform_into_membrane" );
 
 /// @brief Main method
 int

@@ -41,7 +41,7 @@ namespace scores {
 // @brief Auto-generated virtual destructor
 AtomPairConstraintsData::~AtomPairConstraintsData() {}
 
-static basic::Tracer trAtomPairConstraintsScore(
+static thread_local basic::Tracer trAtomPairConstraintsScore(
 		"fragment.picking.scores.AtomPairConstraintsScore");
 
 /// @brief Prepare an AtomPair constraint - based score that utilizes some user-defined atoms.

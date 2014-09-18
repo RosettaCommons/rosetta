@@ -56,7 +56,7 @@ namespace scoring{
 namespace methods{
 namespace pcs2{
 
-basic::Tracer TR_PcsDataCenterManager("protocols.scoring.methods.pcs.PcsDataCenterManager");
+static thread_local basic::Tracer TR_PcsDataCenterManager( "protocols.scoring.methods.pcs.PcsDataCenterManager" );
 
 PcsDataCenterManager::PcsDataCenterManager(){
 

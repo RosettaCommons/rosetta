@@ -108,8 +108,7 @@
 namespace devel{
 namespace enzdes{
 
-static basic::Tracer tr("devel.enzdes.EnzdesRemodelProtocol");
-static numeric::random::RandomGenerator RG(23118);
+static thread_local basic::Tracer tr( "devel.enzdes.EnzdesRemodelProtocol" );
 
 EnzdesRemodelProtocol::EnzdesRemodelProtocol() : EnzdesFlexBBProtocol() {
 	this->reduced_sfxn_->set_weight(core::scoring::backbone_stub_constraint, 1.0 );
@@ -800,7 +799,7 @@ EnzdesRemodelMover::generate_secstruct_string( core::pose::Pose & pose ) const {
 
 	//A. if secondary structure strings in this mover have been set, we'll use one of these
 	if( user_provided_ss_.size() != 0 ){
-		std::string user_ss( user_provided_ss_[ RG.random_range(1, user_provided_ss_.size() ) ] );
+		std::string user_ss( user_provided_ss_[ numeric::random::rg().random_range(1, user_provided_ss_.size() ) ] );
 		tr << "picking user-provided ss_string " << user_ss << "... ";
 		return user_ss;
 	}
@@ -810,7 +809,7 @@ EnzdesRemodelMover::generate_secstruct_string( core::pose::Pose & pose ) const {
 		flex_region_->enz_loop_info()->ss_strings_specified() ) {
 
 		utility::vector1< std::string > const & possible_ss( flex_region_->enz_loop_info()->ss_strings() );
-		std::string new_ss( possible_ss[ RG.random_range(1, possible_ss.size() ) ] );
+		std::string new_ss( possible_ss[ numeric::random::rg().random_range(1, possible_ss.size() ) ] );
 		tr << "New secstruct (length " << new_ss.size() << ") for region " << region_to_remodel_ << " is " << new_ss << std::endl;
 		return new_ss;
 	}
@@ -830,7 +829,7 @@ EnzdesRemodelMover::generate_secstruct_string( core::pose::Pose & pose ) const {
 
 	//std::cerr << "rm min length is " << low_length << ", rm max length is " << high_length << std::endl;
 
-	core::Size new_length = RG.random_range( low_length, high_length );
+	core::Size new_length = numeric::random::rg().random_range( low_length, high_length );
 	core::Size old_length = flex_region_->length();
 
 	std::cout << "old length is " << old_length << ", new length is " << new_length << std::endl;
@@ -875,7 +874,7 @@ EnzdesRemodelMover::generate_secstruct_string( core::pose::Pose & pose ) const {
 	//std::cout << "new secstruct at second is " << new_secstruct << std::endl;
 
 	//3
-	core::Real prob = RG.uniform();
+	core::Real prob = numeric::random::rg().uniform();
 
 	if( prob > ss_similarity_probability_ ) new_secstruct[0] = 'L';
 
@@ -885,7 +884,7 @@ EnzdesRemodelMover::generate_secstruct_string( core::pose::Pose & pose ) const {
 
 	for( core::Size i = 1; i < temp_stop; ++i ){
 
-		prob = RG.uniform();
+		prob = numeric::random::rg().uniform();
 		//std::cout << "step " << i << ", prob is " << prob << ",   ";
 
 		if( prob > ss_similarity_probability_ ){
@@ -901,7 +900,7 @@ EnzdesRemodelMover::generate_secstruct_string( core::pose::Pose & pose ) const {
 
 	}
 
-	prob = RG.uniform();
+	prob = numeric::random::rg().uniform();
 
 	if( prob > ss_similarity_probability_ ) new_secstruct[ new_length - 1] = 'L';
 
@@ -944,7 +943,7 @@ EnzdesRemodelMover::apply_random_lowE_ligconf(
 		lowE_ligs.push_back( num_rots );
 
 		//now put a random one of the low scoring ligands into the pose
-		core::Size ranconf( lowE_ligs[ RG.random_range(1, lowE_ligs.size() )] );
+		core::Size ranconf( lowE_ligs[ numeric::random::rg().random_range(1, lowE_ligs.size() )] );
 		tr << "Putting a ligand with remodel region score " << remregion_scores[ ranconf ] << " (orig ligand had " << remregion_scores[ num_rots ] << ") into pose." << std::endl;
 		pose.replace_residue( all_ligands[lig_num ], *ligrots[ranconf], false );
 	} //loop over all ligands in the pose

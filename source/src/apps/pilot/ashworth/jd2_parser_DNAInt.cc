@@ -37,7 +37,7 @@ using namespace protocols;
 	using namespace jd2;
 	using namespace viewer;
 
-static basic::Tracer TR("apps.pilot.ashworth.jd2_parser");
+static thread_local basic::Tracer TR( "apps.pilot.ashworth.jd2_parser" );
 
 class DummyMover : public Mover {
 public:

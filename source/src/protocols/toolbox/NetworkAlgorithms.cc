@@ -32,7 +32,7 @@
 #include <utility/excn/Exceptions.hh>
 
 
-static basic::Tracer TR("protocols.toolbox.NetworkAlgorithms");
+static thread_local basic::Tracer TR( "protocols.toolbox.NetworkAlgorithms" );
 
 namespace protocols {
 namespace toolbox {

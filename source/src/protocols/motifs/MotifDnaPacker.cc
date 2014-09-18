@@ -119,7 +119,7 @@ using namespace ObjexxFCL;
 using basic::t_warning;
 using basic::t_info;
 using basic::t_debug;
-static basic::Tracer TR("devel.motifs.MotifDnaPacker");
+static thread_local basic::Tracer TR( "devel.motifs.MotifDnaPacker" );
 
 std::string
 MotifDnaPackerCreator::keyname() const

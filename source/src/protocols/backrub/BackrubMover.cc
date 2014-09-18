@@ -72,8 +72,7 @@
 using namespace core;
 using namespace core::pose;
 
-static numeric::random::RandomGenerator RG(2225782);
-static basic::Tracer TR("protocols.backrub.BackrubMover");
+static thread_local basic::Tracer TR( "protocols.backrub.BackrubMover" );
 
 namespace protocols {
 namespace backrub {
@@ -260,7 +259,7 @@ protocols::backrub::BackrubMover::apply(
 		segment_id = next_segment_id_;
 		next_segment_id_ = 0;
 	} else {
-		segment_id = RG.random_range(1, segments_.size());
+		segment_id = numeric::random::rg().random_range(1, segments_.size());
 	}
 
 	// record data about the move
@@ -1003,10 +1002,10 @@ protocols::backrub::BackrubMover::random_angle(
 
 	Real angle(0);
 	numeric::IntervalSet<Real> tau_intervals_rotation_angle_p;
-	Real const threshold(RG.uniform());
+	Real const threshold(numeric::random::rg().uniform());
 	for (Size i = 0; i < 100000; i++) {
 
-		angle = tau_intervals.random_point(RG);
+		angle = tau_intervals.random_point(numeric::random::rg());
 
 		Real min_angle_p = angle - angle_disp;
 		Real max_angle_p = angle + angle_disp;

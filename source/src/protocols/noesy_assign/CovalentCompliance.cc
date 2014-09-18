@@ -88,7 +88,11 @@ bool fall_back( core::id::NamedAtomID const& _atom1, core::id::NamedAtomID const
   // should be pretty good and we will see those NOEs recommended from there.
 }
 
-CovalentCompliance* CovalentCompliance::instance_( 0 );
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< CovalentCompliance * > CovalentCompliance::instance_( 0 );
+#else
+CovalentCompliance * CovalentCompliance::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

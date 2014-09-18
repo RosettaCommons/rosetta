@@ -29,8 +29,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer tr( "devel.replica_docking.TempWeightedMetropolisHastingsMover" );
-static numeric::random::RandomGenerator RG(29783409);
+static thread_local basic::Tracer tr( "devel.replica_docking.TempWeightedMetropolisHastingsMover" );
 using namespace protocols::canonical_sampling;
 
 namespace devel {
@@ -159,7 +158,7 @@ TempWeightedMetropolisHastingsMover::random_mover() const {
 		runtime_assert( current_weighted_sampler_.size() == overall_weights_.size() );
 		runtime_assert( current_weighted_sampler_.size() > 0 );
 	}
-	return mover_by_index( current_weighted_sampler_.random_sample(RG) ); // instead of using weighted_sampler_, we use current_weighted_sampler, which is a combination of overall_weights and tempweighted-weights.
+	return mover_by_index( current_weighted_sampler_.random_sample(numeric::random::rg()) ); // instead of using weighted_sampler_, we use current_weighted_sampler, which is a combination of overall_weights and tempweighted-weights.
 }
 
 } //moves

@@ -160,7 +160,6 @@
  using basic::Error;
  using basic::Warning;
 
- static numeric::random::RandomGenerator RG(16621);
 
 using namespace core;
 using namespace protocols;
@@ -570,7 +569,7 @@ RunPepSpec()
 
 		if( my_rank == 0 ){
 
-			numeric::random::random_permutation( all_all_pdb_filenames, numeric::random::RG );
+			numeric::random::random_permutation( all_all_pdb_filenames, numeric::random::rg() );
 			all_pdb_filenames = all_all_pdb_filenames;
 			all_pdb_filenames.resize( n_pdbs_per_block );
 
@@ -640,7 +639,7 @@ RunPepSpec()
 			//randomize pep sequence//
 			for(Size mut_site = pep_begin; mut_site <= pep_end; mut_site++){ //over all pep positions
 				int resindex;
-				resindex = static_cast< int > ( 20 * RG.uniform() + 1 );
+				resindex = static_cast< int > ( 20 * numeric::random::rg().uniform() + 1 );
 				chemical::make_sequence_change( mut_site, chemical::AA(resindex), pose );
 			}
 

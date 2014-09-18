@@ -51,7 +51,6 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace protocols::loophash;
 
-static numeric::random::RandomGenerator RG( 12322 ); //Magic number??
 
 protocols::loophash::LoopHashSamplerOP
 setup_LHsampler()

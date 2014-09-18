@@ -87,7 +87,7 @@ using core::pose::Pose;
 using core::scoring::ScoreFunctionOP;
 using namespace basic::options;
 
-basic::Tracer TR("cycgly_canonical");
+static thread_local basic::Tracer TR( "cycgly_canonical" );
 
 
 OPT_1GRP_KEY(Real,probabilities,localbb)

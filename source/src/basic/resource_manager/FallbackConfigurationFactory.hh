@@ -31,7 +31,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -98,7 +99,11 @@ private:
 #endif
 
 private:
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< FallbackConfigurationFactory * > instance_;
+#else
 	static FallbackConfigurationFactory * instance_;
+#endif
 
 	typedef std::map< std::string, FallbackConfigurationCreatorOP > FallbackConfigurationCreatorsMap;
 	bool throw_on_double_registration_;

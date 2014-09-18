@@ -112,7 +112,7 @@ static std::string const chr_chains("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<
 	using numeric::geometry::hashing::Real3;
 	using numeric::geometry::hashing::Real6;
 
-static basic::Tracer TR("helix_assembly");
+static thread_local basic::Tracer TR( "helix_assembly" );
 // options
 	// OPT_1GRP_KEY( Integer    , ha, ideal_helix_size                             )
 	// OPT_1GRP_KEY( Real       , ha, helix_match_rmsd                             )

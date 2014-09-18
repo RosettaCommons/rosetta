@@ -37,8 +37,7 @@ namespace rigid {
 
 int const NO_JUMP = 0;
 
-static basic::Tracer tr("protocols.rigid.UniformRigidBodyMover", basic::t_info);
-static numeric::random::RandomGenerator RG(434855);
+static thread_local basic::Tracer tr( "protocols.rigid.UniformRigidBodyMover", basic::t_info );
 
 using namespace core::environment;
 using namespace protocols::environment;
@@ -92,11 +91,11 @@ void UniformRigidBodyMover::apply( core::pose::Pose& pose ){
   xyzMatrix< core::Real> const rot=flexible_jump.get_rotation();
   xyzVector< core::Real> const trans=flexible_jump.get_translation();
 
-  xyzVector<core::Real> delta_trans = random_translation( translation_mag_, RG );
+  xyzVector<core::Real> delta_trans = random_translation( translation_mag_, numeric::random::rg() );
 
-  core::Real theta = random_rotation_angle<core::Real>( rotation_mag_, RG );
+  core::Real theta = random_rotation_angle<core::Real>( rotation_mag_, numeric::random::rg() );
 
-  xyzVector<core::Real> axis = random_point_on_unit_sphere<core::Real>( RG );
+  xyzVector<core::Real> axis = random_point_on_unit_sphere<core::Real>( numeric::random::rg() );
 
   xyzMatrix<core::Real> delta_rot = rotation_matrix_radians( axis, theta );
 

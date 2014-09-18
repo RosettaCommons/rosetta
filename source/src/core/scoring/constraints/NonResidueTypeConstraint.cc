@@ -35,7 +35,7 @@ namespace scoring {
 namespace constraints {
 
 
-static basic::Tracer non_residue_type_constraint_tracer("core.scoring.constraints.NonResidueTypeConstraint");
+static thread_local basic::Tracer non_residue_type_constraint_tracer( "core.scoring.constraints.NonResidueTypeConstraint" );
 
 
 NonResidueTypeConstraint::NonResidueTypeConstraint(

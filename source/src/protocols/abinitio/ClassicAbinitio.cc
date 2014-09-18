@@ -89,7 +89,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer tr("protocols.abinitio");
+static thread_local basic::Tracer tr( "protocols.abinitio" );
 
 using core::Real;
 using namespace core;

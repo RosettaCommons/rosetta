@@ -61,9 +61,9 @@ public:
 
 	// Shared initialization goes here.
 	void setUp() {
-		TR << "SETTING UP." << std::endl;
 		// load params for ligand
 		protocols_init();
+		TR << "SETTING UP." << std::endl;
 		// Residue definitions can't be supplied on the command line b/c
 		// the ResidueTypeSet is already initialized.
 		using namespace core::chemical;

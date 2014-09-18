@@ -77,10 +77,9 @@ namespace remodel{
 
 // Tracer instance for this file
 // Named after the original location of this code
-static basic::Tracer TR( "protocols.forge.remodel.RemodelGlobalFrame" );
+static thread_local basic::Tracer TR( "protocols.forge.remodel.RemodelGlobalFrame" );
 
 // RNG
-//static numeric::random::RandomGenerator RG( 342342 ); // magic number, don't change
 
 
 // @brief default constructor

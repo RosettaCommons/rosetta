@@ -451,7 +451,7 @@ bool pose_from_atom_tree_diff(
 	// start with pose as a copy of ref_pose:
 	pose = ref_pose; // deep copy
 
-	static basic::Tracer TR("core.import_pose.atom_tree_diffs.atom_tree_diff.pose_from_atom_tree_diff");
+	basic::Tracer TR( "core.import_pose.atom_tree_diffs.atom_tree_diff.pose_from_atom_tree_diff" );
 	while( in.good() ) {
 		std::string line, key;
 		getline(in, line);
@@ -644,7 +644,7 @@ void rms_error_with_noise(
 	using core::Real;
 	using basic::T;
 	using basic::Warning;
-	using numeric::random::RG;
+
 	using namespace core::id;
 	using namespace core::scoring;
 
@@ -675,9 +675,9 @@ void rms_error_with_noise(
 				Real tol = (is_backbone ? bb_tol : sc_tol);
 
 				// Introduce random error into our copy pose, +/- tol/2
-				pose.set_dof(dof_phi,   pose.dof(dof_phi)   + tol * (RG.uniform() - 0.5));
-				pose.set_dof(dof_theta, pose.dof(dof_theta) + tol * (RG.uniform() - 0.5));
-				pose.set_dof(dof_d,     pose.dof(dof_d)     + tol * (RG.uniform() - 0.5));
+				pose.set_dof(dof_phi,   pose.dof(dof_phi)   + tol * (numeric::random::rg().uniform() - 0.5));
+				pose.set_dof(dof_theta, pose.dof(dof_theta) + tol * (numeric::random::rg().uniform() - 0.5));
+				pose.set_dof(dof_d,     pose.dof(dof_d)     + tol * (numeric::random::rg().uniform() - 0.5));
 			}// end non-jump atom
 		}// end loop over atoms
 	}// end loop over residues

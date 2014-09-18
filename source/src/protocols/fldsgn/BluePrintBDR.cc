@@ -74,7 +74,7 @@ namespace protocols {
 namespace fldsgn {
 
 
-static basic::Tracer TR( "protocols.fldsgn.BluePrintBDR" );
+static thread_local basic::Tracer TR( "protocols.fldsgn.BluePrintBDR" );
 
 std::string
 BluePrintBDRCreator::keyname() const

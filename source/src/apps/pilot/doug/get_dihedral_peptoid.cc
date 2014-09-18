@@ -69,9 +69,9 @@
 #include <map>
 
 // tracer
-static basic::Tracer TR("PeptoidDihedralGrabber");
-static basic::Tracer TR_EX("ExperimentalRotamers");
-static basic::Tracer TR_IR("InterpolatedRotamers");
+static thread_local basic::Tracer TR( "PeptoidDihedralGrabber" );
+static thread_local basic::Tracer TR_EX( "ExperimentalRotamers" );
+static thread_local basic::Tracer TR_IR( "InterpolatedRotamers" );
 
 // local options
 basic::options::BooleanOptionKey const cyclic( "cyclic" );

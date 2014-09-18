@@ -56,8 +56,7 @@ namespace protocols {
 namespace generalized_kinematic_closure {
 namespace perturber {
 
-static numeric::random::RandomGenerator RG(40031);  // <- Magic number, do not change it!
-static basic::Tracer TR("protocols.generalized_kinematic_closure.perturber.GeneralizedKICperturber");
+static thread_local basic::Tracer TR( "protocols.generalized_kinematic_closure.perturber.GeneralizedKICperturber" );
 
 ///@brief Creator for GeneralizedKICperturber.
 GeneralizedKICperturber::GeneralizedKICperturber():
@@ -343,9 +342,9 @@ void GeneralizedKICperturber::apply_set_dihedral (
 		}
 		runtime_assert_string_msg(torsion_index > 0, "Error in GeneralizedKICperturber::apply_set_dihedral.  The dihedral angle specified was not found in the chain of atoms to be closed.");
 		if (effect==2) {
-			torsions[torsion_index] += RG.gaussian() * (separate_values ? inputvalues_real_[i] : inputvalues_real_[1]); //Add a randomly chosen value from a gaussian distribution of specified bredth.
+			torsions[torsion_index] += numeric::random::rg().gaussian() * (separate_values ? inputvalues_real_[i] : inputvalues_real_[1]); //Add a randomly chosen value from a gaussian distribution of specified bredth.
 		} else if(effect==1) { //randomizing torsions
-			torsions[torsion_index] = RG.uniform()*360.0; //Set the desired torsion to the user-specified value.
+			torsions[torsion_index] = numeric::random::rg().uniform()*360.0; //Set the desired torsion to the user-specified value.
 		} else if (effect==0) { //setting torsions
 			torsions[torsion_index] = (separate_values ? inputvalues_real_[i] : inputvalues_real_[1]); //Set the desired torsion to the user-specified value.
 		}
@@ -752,7 +751,7 @@ void GeneralizedKICperturber::apply_sample_cis_peptide_bond(
 			}
 
 			if(omegaindex!=0) { //If omega was found.
-				if(RG.uniform() < cis_prob) { //Die-roll to decide whether to set this to a cis peptide bond
+				if(numeric::random::rg().uniform() < cis_prob) { //Die-roll to decide whether to set this to a cis peptide bond
 					torsions[omegaindex]=0.0; //Set to a cis peptide bond.
 				}
 			} else { //Else if omega wasn't found:

@@ -75,7 +75,7 @@
 #include <vector>
 
 
-static basic::Tracer tr("protocols.abinitio.PairingStats");
+static thread_local basic::Tracer tr( "protocols.abinitio.PairingStats" );
 using namespace core;
 using namespace basic;
 using namespace basic::options;
@@ -91,7 +91,6 @@ void protocols::abinitio::PairingStatistics::register_options() {
 namespace protocols {
 namespace abinitio {
 
-static numeric::random::RandomGenerator RG(5651234);  // <- Magic number, do not change it!
 
 using namespace core;
 //using namespace jumping;
@@ -288,7 +287,7 @@ PairingStatistics::suggest_topology( std::string& topol_id ) const {
     } else {
       for ( top_max = 1; (top_max < nr_models) && weight( top_max ) > rank_cutoff; top_max++ ) {};
     }
-    Size const rg_topol ( static_cast< int >( RG.uniform() * top_max ) + 1 );
+    Size const rg_topol ( static_cast< int >( numeric::random::rg().uniform() * top_max ) + 1 );
     topol_id = ranked_model( rg_topol );
     runtime_assert( topol_id != "BOGUS" );
     tr.Info << "cutoff: " << rank_cutoff << " use topology ** " << rg_topol << ": " << topol_id << " ** to select pairings " << std::endl;

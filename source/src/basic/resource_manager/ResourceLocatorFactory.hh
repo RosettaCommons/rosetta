@@ -29,7 +29,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -97,7 +98,11 @@ private:
 	/// utility::thread::threadsafe_singleton
 	static ResourceLocatorFactory * create_singleton_instance();
 
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< ResourceLocatorFactory * > instance_;
+#else
 	static ResourceLocatorFactory * instance_;
+#endif
 
 	bool throw_on_double_registration_;
 	std::map< std::string, ResourceLocatorCreatorOP > creator_map_;

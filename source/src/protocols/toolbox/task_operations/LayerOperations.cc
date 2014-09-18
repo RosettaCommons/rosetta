@@ -53,7 +53,7 @@ using namespace basic::options::OptionKeys;
 using namespace core;
 
 
-static basic::Tracer TR("protocols.toolbox.LayerOperations");
+static thread_local basic::Tracer TR( "protocols.toolbox.LayerOperations" );
 
 namespace protocols {
 namespace toolbox {

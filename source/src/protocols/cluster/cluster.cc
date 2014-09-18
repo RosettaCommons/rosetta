@@ -69,8 +69,7 @@ using namespace pose;
 using namespace basic::options;
 using namespace evaluation;
 
-static basic::Tracer tr("protocols.cluster");
-static numeric::random::RandomGenerator RG(42032);
+static thread_local basic::Tracer tr( "protocols.cluster" );
 
 
 
@@ -393,7 +392,7 @@ void ClusterBase::add_structure( Pose & pose ) {
 void Cluster::shuffle(){
 	// fisher-yates
 	for(int i=member.size()-1; i>-1; i--) { 
-			 int j = RG.random_range(0, 100000000) % (i + 1);
+			 int j = numeric::random::rg().random_range(0, 100000000) % (i + 1);
 			 if(i != j) {
 				 std::swap(member[j], member[i]);
 			 }

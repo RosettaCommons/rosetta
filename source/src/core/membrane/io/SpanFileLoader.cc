@@ -40,7 +40,7 @@
 // C++ Headers
 #include <cstdlib>
 
-static basic::Tracer TR("Loader debug tracer: ");
+static thread_local basic::Tracer TR( "Loader debug tracer: " );
 
 namespace core {
 namespace membrane {

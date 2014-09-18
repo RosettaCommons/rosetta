@@ -93,7 +93,7 @@ using core::id::AtomID;
 using core::id::DOF_ID;
 using core::scoring::ScoreFunctionOP;
 
-static basic::Tracer TR("spiro");
+static thread_local basic::Tracer TR( "spiro" );
 
 struct PoseWrap {
 	PoseWrap() : hascst(false) {}

@@ -32,9 +32,13 @@
 namespace protocols {
 namespace rosetta_scripts {
 
-static basic::Tracer TR( "protocols.rosetta_scripts.PoseSelectorFactory" );
+static thread_local basic::Tracer TR( "protocols.rosetta_scripts.PoseSelectorFactory" );
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< PoseSelectorFactory * > PoseSelectorFactory::instance_( 0 );
+#else
 PoseSelectorFactory * PoseSelectorFactory::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

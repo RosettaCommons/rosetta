@@ -302,7 +302,7 @@ void writeScores(pose::Pose& workpose, pose::Pose& nativePose, const std::string
 int main (int argc, char** argv) {
     try {
 		devel::init(argc,argv);
-		basic::Tracer TR("protocols.moves.CycPep");
+		basic::Tracer TR( "protocols.moves.CycPep" );
 		Size nstruct = option[out::nstruct];
 		pose::Pose nativePose;
 		core::import_pose::pose_from_pdb(nativePose, basic::options::start_file());

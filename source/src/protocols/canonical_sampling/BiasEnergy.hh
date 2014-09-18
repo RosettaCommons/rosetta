@@ -99,7 +99,7 @@ class BiasEnergy : public ThermodynamicObserver, public protocols::jd2::JobOutpu
 
 	//for trajectory output...
 	virtual
-	void add_values_to_job( core::pose::Pose const& pose, protocols::jd2::JobOP ) const;
+	void add_values_to_job( core::pose::Pose const& pose, protocols::jd2::Job & ) const;
 
 #ifdef USEMPI
 	//in replica exchange

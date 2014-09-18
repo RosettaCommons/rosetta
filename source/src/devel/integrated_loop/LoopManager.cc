@@ -40,8 +40,7 @@ namespace protocols {
 namespace moves {
 
 
-static basic::Tracer TR("devel.IntegratedLoop.LoopManager");
-static numeric::random::RandomGenerator loopmanager_RG(45463);
+static thread_local basic::Tracer TR( "devel.IntegratedLoop.LoopManager" );
 using namespace core;
 
 //v typedef utility::vector1< protocols::Loop > Loops;
@@ -64,7 +63,7 @@ Loops LoopManager::LoopsToPerturb()
 
 	for ( LoopsIt it = LoopList_.begin(), it_end = LoopList_.end(); it != it_end; ++it )
 		{
-			float skip_rate_random = loopmanager_RG.uniform();
+			float skip_rate_random = numeric::random::rg().uniform();
 			std::cout << "skip_rate_random " << skip_rate_random << std::endl;
 			if( skip_rate_random > it->skip_rate() )
 				//				tmpLoops.push_back( VaryStems( VaryCutpoint( *it ) ) );

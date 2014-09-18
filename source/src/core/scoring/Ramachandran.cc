@@ -67,7 +67,6 @@ using namespace ObjexxFCL;
 namespace core {
 namespace scoring {
 
-static numeric::random::RandomGenerator rama_rg( 56546 );
 
 // @brief Auto-generated virtual destructor
 Ramachandran::~Ramachandran() {}
@@ -861,7 +860,7 @@ Ramachandran::draw_random_phi_psi_from_cdf(
 ) const
 {
 	// the bin index can be unpacked to give the phi and psi indices
-	Size bin_from_cdf = numeric::random::pick_random_index_from_cdf( cdf, rama_rg );
+	Size bin_from_cdf = numeric::random::pick_random_index_from_cdf( cdf, numeric::random::rg() );
 	--bin_from_cdf;
 
 	Size phi_ind = bin_from_cdf / n_psi_;

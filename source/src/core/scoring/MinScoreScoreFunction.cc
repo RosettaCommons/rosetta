@@ -25,7 +25,7 @@
 #include <basic/Tracer.hh>
 
 #include <limits>
-static basic::Tracer tr("core.scoring.MinScoreScoreFunction");
+static thread_local basic::Tracer tr( "core.scoring.MinScoreScoreFunction" );
 
 namespace core {
 namespace scoring {

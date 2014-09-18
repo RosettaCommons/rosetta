@@ -127,7 +127,7 @@ using basic::Error;
 using basic::Warning;
 
 
-static basic::Tracer tr("main");
+static thread_local basic::Tracer tr( "main" );
 
 OPT_KEY( File, hotspots )
 OPT_KEY( File, filter_hotspots1 )
@@ -293,8 +293,7 @@ ConstraintScoreCutoffFilterOP setup_hotspot_filter( core::pose::Pose const& pose
 int
 LoopBuild_main() {
 
-
-	basic::Tracer tr("protocols.loop_build.LoopBuild");
+	basic::Tracer tr( "protocols.loop_build.LoopBuild" );
 
 	using namespace basic::options;
 	using namespace core::scoring;

@@ -246,7 +246,7 @@
 // C++ headers
 
 
-basic::Tracer TR_PCS_main("apps.pilot.christophe.PCS_main");
+static thread_local basic::Tracer TR_PCS_main( "apps.pilot.christophe.PCS_main" );
 
 void run() {
 

@@ -68,7 +68,7 @@ using namespace basic::options::OptionKeys;
 using namespace protocols::membrane;
 using namespace core::membrane::geometry;
 
-static basic::Tracer TR( "apps.pilot.jkleman.mpdocking_setup" );
+static thread_local basic::Tracer TR( "apps.pilot.jkleman.mpdocking_setup" );
 
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -28,10 +28,8 @@
 
 class ReservoirSamplingTests : public CxxTest::TestSuite {
 public:
-	ReservoirSamplingTests() : rg_(8933) {
-		numeric::random::RandomGenerator::initializeRandomGenerators(
-			999, numeric::random::_RND_TestRun_, "mt19937"
-		);
+	ReservoirSamplingTests() {
+		numeric::random::rg().set_seed(	"mt19937", 999 );
 	}
 
 	// Shared initialization goes here.
@@ -56,7 +54,7 @@ public:
 		Size const total( 10000 );
 		for ( Size jj = 1; jj <= total; ++jj ) {
 			vector1< Size > sample = reservoir_sample< Size >(
-				original_vals, n_wanted, rg_
+				original_vals, n_wanted, numeric::random::rg()
 			);
 
 			for ( Size ii = 1; ii <= sample.size(); ++ii ) {
@@ -86,6 +84,4 @@ public:
 
 	}
 
-private:
-	numeric::random::RandomGenerator rg_;
 };

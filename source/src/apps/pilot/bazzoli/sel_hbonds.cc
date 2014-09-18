@@ -86,7 +86,7 @@
 #include <fstream>
 #include <string>
 
-static basic::Tracer TR( "apps.pilot.sel_hbonds.main" );
+static thread_local basic::Tracer TR( "apps.pilot.sel_hbonds.main" );
 
 using core::Size;
 using core::Real;

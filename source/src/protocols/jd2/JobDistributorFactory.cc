@@ -23,6 +23,7 @@
 #include <protocols/jd2/MPIWorkPoolJobDistributor.hh>
 #include <protocols/jd2/MPIFileBufJobDistributor.hh>
 #include <protocols/jd2/MPIMultiCommJobDistributor.hh>
+#include <protocols/jd2/MultiThreadedJobDistributor.hh>
 #include <protocols/jd2/archive/MPIArchiveJobDistributor.hh>
 
 #include <protocols/jd2/JobInputterFactory.hh>
@@ -107,6 +108,12 @@ JobDistributorFactory::create_job_distributor() {
 
 #ifdef BOINC
 	return new BOINCJobDistributor;
+#endif
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+	return new MultiThreadedJobDistributor;
+#endif
 #endif
 
 	if ( option[  OptionKeys::run::shuffle ]() ){

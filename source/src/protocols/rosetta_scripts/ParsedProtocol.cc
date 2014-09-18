@@ -66,10 +66,9 @@
 namespace protocols {
 namespace rosetta_scripts {
 
-static basic::Tracer TR( "protocols.rosetta_scripts.ParsedProtocol" );
-static basic::Tracer TR_call_order( "protocols.rosetta_scripts.ParsedProtocol_call_order" );
-static basic::Tracer TR_report( "protocols.rosetta_scripts.ParsedProtocol.REPORT" );
-static numeric::random::RandomGenerator RG(48569);
+static thread_local basic::Tracer TR( "protocols.rosetta_scripts.ParsedProtocol" );
+static thread_local basic::Tracer TR_call_order( "protocols.rosetta_scripts.ParsedProtocol_call_order" );
+static thread_local basic::Tracer TR_report( "protocols.rosetta_scripts.ParsedProtocol.REPORT" );
 
 typedef core::Real Real;
 typedef core::pose::Pose Pose;
@@ -107,16 +106,15 @@ ParsedProtocol::ParsedProtocol() :
 
 ParsedProtocol::~ParsedProtocol() {
 }
+
 /// @detailed Takes care of the docking, design and filtering moves. pre_cycle and pose_cycle can
 /// be setup in derived classes to setup variables before and after these cycles.
 void
 ParsedProtocol::apply( Pose & pose )
 {
 	if ( protocols::jd2::jd2_used() ) {
-		protocols::jd2::JobOutputterOP job_outputter( protocols::jd2::JobDistributor::get_instance()->job_outputter() );
-		job_outputter->add_output_observer( this );
+		protocols::jd2::JobDistributor::get_instance()->current_job()->add_output_observer( this );
 	}
-
 
 	try {
 
@@ -145,8 +143,7 @@ ParsedProtocol::apply( Pose & pose )
 					if( ! apply_filter( pose, *rmover_it) ) {
 //						final_score(pose);
 						if ( protocols::jd2::jd2_used() ) {
-							protocols::jd2::JobOutputterOP job_outputter( protocols::jd2::JobDistributor::get_instance()->job_outputter() );
-							job_outputter->remove_output_observer( this );
+							protocols::jd2::JobDistributor::get_instance()->current_job()->remove_output_observer( this );
 						}
 						return;
 					} else {
@@ -173,16 +170,14 @@ ParsedProtocol::apply( Pose & pose )
 		}
 
 		if ( protocols::jd2::jd2_used() ) {
-			protocols::jd2::JobOutputterOP job_outputter( protocols::jd2::JobDistributor::get_instance()->job_outputter() );
-			job_outputter->remove_output_observer( this );
+			protocols::jd2::JobDistributor::get_instance()->current_job()->remove_output_observer( this );
 		}
 
 	} catch( ... ) {
 
 		TR.Error << "Exception while processing procotol:" << std::endl;
 		if ( protocols::jd2::jd2_used() ) {
-			protocols::jd2::JobOutputterOP job_outputter( protocols::jd2::JobDistributor::get_instance()->job_outputter() );
-			job_outputter->remove_output_observer( this );
+			protocols::jd2::JobDistributor::get_instance()->current_job()->remove_output_observer( this );
 		}
 
 		throw;
@@ -229,23 +224,23 @@ ParsedProtocol::report_all( Pose const & pose ) const {
 }
 
 void
-ParsedProtocol::add_values_to_job( Pose const & pose, protocols::jd2::JobOP job ) const {
+ParsedProtocol::add_values_to_job( Pose const & pose, protocols::jd2::Job & job ) const {
 	for ( MoverFilterVector::const_iterator mover_it = movers_.begin();
        mover_it != movers_.end(); ++mover_it ) {
     if ( mover_it->report_filter_at_end_ ) {
       core::Real const filter_value( (*mover_it).second->report_sm( pose ) );
       if ( filter_value > -9999 ) {
-        job->add_string_real_pair((*mover_it).second->get_user_defined_name(), filter_value);
+        job.add_string_real_pair((*mover_it).second->get_user_defined_name(), filter_value);
       }
     }
   }
 }
 
 void
-ParsedProtocol::report_filters_to_job( Pose const & pose) const {
+ParsedProtocol::report_filters_to_job( Pose const & pose ) const {
 	using protocols::jd2::JobDistributor;
 	protocols::jd2::JobOP job_me( JobDistributor::get_instance()->current_job() );
-	add_values_to_job( pose, job_me );
+	add_values_to_job( pose, *job_me );
 }
 
 void
@@ -603,7 +598,7 @@ ParsedProtocol::sequence_protocol( Pose & pose,
 }
 
 void ParsedProtocol::random_order_protocol(Pose & pose){
-	numeric::random::random_permutation(movers_.begin(),movers_.end(),RG);
+	numeric::random::random_permutation(movers_.begin(),movers_.end(),numeric::random::rg());
   for ( MoverFilterVector::const_iterator it = movers_.begin(); it != movers_.end(); ++it ) {
     apply_mover( pose, *it );
     if ( !apply_filter( pose, *it ) ) {
@@ -634,7 +629,7 @@ ParsedProtocol::apply_probability( utility::vector1< core::Real > a ){
 }
 
 void ParsedProtocol::random_single_protocol(Pose & pose){
-	core::Real const random_num( RG.uniform() );
+	core::Real const random_num( numeric::random::rg().uniform() );
 	core::Real sum( 0.0 );
 	core::Size mover_index( 0 );
 	foreach( core::Real const probability, apply_probability() ){

@@ -65,7 +65,7 @@
 
 
 
-static basic::Tracer tr("protocols.abinitio.foldconstraints",basic::t_info);
+static thread_local basic::Tracer tr( "protocols.abinitio.foldconstraints", basic::t_info );
 
 using core::scoring::constraints::ConstraintSet;
 using core::scoring::constraints::ConstraintSetOP;

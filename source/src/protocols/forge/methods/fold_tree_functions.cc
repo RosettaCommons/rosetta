@@ -54,12 +54,11 @@ namespace forge {
 namespace methods {
 
 
-static numeric::random::RandomGenerator RG( 2557316 ); // magic number, don't change
 
 
 // Tracer instance for this file
 // Named after the original location of this code
-static basic::Tracer TR( "protocols.forge.methods.fold_tree_functions" );
+static thread_local basic::Tracer TR( "protocols.forge.methods.fold_tree_functions" );
 
 
 /// @brief enforce Edge has start <= stop (swap if necessary)
@@ -452,7 +451,7 @@ shift_jumps(
 
 		// pick fixed position for jump
 		if ( !fixed.empty() ) {
-			r2j[ i->first ] = fixed[ RG.random_range( 1, fixed.size() ) ];
+			r2j[ i->first ] = fixed[ numeric::random::rg().random_range( 1, fixed.size() ) ];
 		}
 	}
 
@@ -602,7 +601,7 @@ fold_tree_from_pose(
 
 				// everything is chemical, pick a jump point and be done
 				if ( !component_contains_ft_root ) {
-					Size const jump_point = RG.random_range( *nodes.begin(), *nodes.rbegin() );
+					Size const jump_point = numeric::random::rg().random_range( *nodes.begin(), *nodes.rbegin() );
 					ft.add_edge( Edge( ft_root, jump_point, ++jump_count ) );
 					uf.ds_union( jump_point, ft_root );
 				}
@@ -647,9 +646,9 @@ fold_tree_from_pose(
 					Size jump_point = ft_root;
 					if ( !subsection_contains_ft_root ) {
 						if ( fixed.empty() ) {
-							jump_point = RG.random_range( ss_begin, ss_end );
+							jump_point = numeric::random::rg().random_range( ss_begin, ss_end );
 						} else {
-							jump_point = fixed[ RG.random_range( 1, fixed.size() ) ];
+							jump_point = fixed[ numeric::random::rg().random_range( 1, fixed.size() ) ];
 						}
 					}
 
@@ -1089,7 +1088,7 @@ replace(
 				}
 
 			} else { // normal case
-				new_edge.stop() = fixed[ RG.random_range( 1, fixed.size() ) ];
+				new_edge.stop() = fixed[ numeric::random::rg().random_range( 1, fixed.size() ) ];
 			}
 
 			// split existing edge if necessary

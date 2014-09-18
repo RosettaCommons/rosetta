@@ -68,7 +68,7 @@ using utility::file::FileName;
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR("apps.pilot.yiliu.DC");
+static thread_local basic::Tracer TR( "apps.pilot.yiliu.DC" );
 
 
 ///////////////////////////////////////////////////////////////////////////////

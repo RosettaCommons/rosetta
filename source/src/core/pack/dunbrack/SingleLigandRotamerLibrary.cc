@@ -58,7 +58,7 @@ namespace pack {
 namespace dunbrack {
 
 
-static basic::Tracer TR("core.pack.dunbrack.SingleLigandRotamerLibrary");
+static thread_local basic::Tracer TR( "core.pack.dunbrack.SingleLigandRotamerLibrary" );
 
 
 // helper for debugging

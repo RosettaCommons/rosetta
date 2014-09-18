@@ -61,7 +61,7 @@ namespace protocols {
 namespace relax {
 
 
-static basic::Tracer TR("WorkUnit_BatchRelax");
+static thread_local basic::Tracer TR( "WorkUnit_BatchRelax" );
 
 
 ///  WorkUnit_BatchRelax

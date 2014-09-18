@@ -51,7 +51,7 @@ void register_options() {
 
 // #include "AbrelaxWithCutpoint.cc"
 
-static basic::Tracer trSaxs("SaxsSampler");
+static thread_local basic::Tracer trSaxs( "SaxsSampler" );
 
 int main(int argc, char * argv[]) {
     try {

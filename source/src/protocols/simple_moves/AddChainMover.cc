@@ -24,7 +24,7 @@
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR("protocols.simple_moves.AddChainMover");
+static thread_local basic::Tracer TR( "protocols.simple_moves.AddChainMover" );
 #include <utility/tag/Tag.hh>
 
 #include <core/pose/Pose.hh>
@@ -39,7 +39,6 @@ static basic::Tracer TR("protocols.simple_moves.AddChainMover");
 namespace protocols {
 namespace simple_moves {
 
-static numeric::random::RandomGenerator RG( 14082013 );
 
 std::string
 AddChainMoverCreator::keyname() const
@@ -90,7 +89,7 @@ void AddChainMover::add_new_chain( core::pose::Pose & pose ) const {// pose is p
     
     utility::vector1< std::string > const split_names( utility::string_split< std::string >( fname(), ',', std::string()) );
 	TR<<"Found "<<split_names.size()<<" file names"<<std::endl;
-	core::Size const random_num = (core::Size) (RG.uniform() * split_names.size()) + 1;
+	core::Size const random_num = (core::Size) (numeric::random::rg().uniform() * split_names.size()) + 1;
 	std::string const curr_fname( split_names[ random_num ] );
 	TR<<"choosing number: "<<random_num<<" "<<curr_fname<<std::endl;
     
@@ -122,7 +121,7 @@ void AddChainMover::swap_chain( core::pose::Pose & pose ) const {
     
     utility::vector1< std::string > const split_names( utility::string_split< std::string >( fname(), ',', std::string()) );
 	TR<<"Found "<<split_names.size()<<" file names"<<std::endl;
-	core::Size const random_num = (core::Size) (RG.uniform() * split_names.size()) + 1;
+	core::Size const random_num = (core::Size) (numeric::random::rg().uniform() * split_names.size()) + 1;
 	std::string const curr_fname( split_names[ random_num ] );
 	TR<<"choosing number: "<<random_num<<" "<<curr_fname<<std::endl;
     
@@ -227,7 +226,7 @@ AddChainMover::parse_my_tag(
 	if( random_access() ){
 		utility::vector1< std::string > const split_names( utility::string_split< std::string >( fname(), ',', std::string()) );
 		TR<<"Found "<<split_names.size()<<" file names"<<std::endl;
-//		core::Size const random_num = (core::Size) (RG.uniform() * split_names.size()) + 1;
+//		core::Size const random_num = (core::Size) (numeric::random::rg().uniform() * split_names.size()) + 1;
 //		TR<<"choosing number: "<<random_num<<" "<<split_names[ random_num ]<<std::endl;
 //		fname( split_names[ random_num ] );
 	}

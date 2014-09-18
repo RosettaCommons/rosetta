@@ -34,7 +34,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer tr("protocols.fldsgn.filters.NcontactsFilter");
+static thread_local basic::Tracer tr( "protocols.fldsgn.filters.NcontactsFilter" );
 
 namespace protocols {
 namespace fldsgn {

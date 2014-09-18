@@ -74,7 +74,7 @@ using core::Real;
 using core::pose::Pose;
 using std::string;
 
-static basic::Tracer TR("apps.pilot.lig_low_sasa.main");
+static thread_local basic::Tracer TR( "apps.pilot.lig_low_sasa.main" );
 
 
 ///

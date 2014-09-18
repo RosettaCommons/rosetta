@@ -305,7 +305,7 @@ write_new_respair_to_database(
 	if ( nexgeoms[5] > 1 ) { sweep_string += "_toru2d2"; }
 	if ( nexgeoms[6] > 1 ) { sweep_string += "_chi"; }
 
-	boost::uuids::basic_random_generator<numeric::random::RandomGenerator> uuids_rng(numeric::random::RG);
+	boost::uuids::basic_random_generator<numeric::random::RandomGenerator> uuids_rng(numeric::random::rg());
 
 	/// 2. insert into residue_pairs
 	boost::uuids::uuid respair_id = uuids_rng();
@@ -504,7 +504,7 @@ write_scores_and_hbond_geoms_to_database(
 {
 	using cppdb::statement;
 
-	boost::uuids::basic_random_generator<numeric::random::RandomGenerator> uuids_rng(numeric::random::RG);
+	boost::uuids::basic_random_generator<numeric::random::RandomGenerator> uuids_rng(numeric::random::rg());
 
 	// create a new conformation id for this residue pair
 	// and insert this conformation into the "conformations" table
@@ -628,7 +628,7 @@ populate_database_with_dummy_data(
 	don_names.push_back( "SER" ); don_names.push_back( "TYR" ); don_names.push_back( "HIS" ); don_names.push_back( "ARG" ); don_names.push_back( "LYS" ); don_names.push_back( "GLY" );
 	don_hbtypes.push_back( "HXL" ); don_hbtypes.push_back( "AHX" ); don_hbtypes.push_back( "IME" );don_hbtypes.push_back( "GDH" );don_hbtypes.push_back( "AMO" );don_hbtypes.push_back( "PBA" );
 
-	boost::uuids::basic_random_generator<numeric::random::RandomGenerator> uuids_rng(numeric::random::RG);
+	boost::uuids::basic_random_generator<numeric::random::RandomGenerator> uuids_rng(numeric::random::rg());
 
 
 	for ( core::Size ii = 1; ii <= acc_names.size(); ++ii ) {

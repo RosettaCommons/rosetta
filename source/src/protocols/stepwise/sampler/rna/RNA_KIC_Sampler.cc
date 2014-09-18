@@ -34,7 +34,7 @@ using namespace core;
 using namespace core::chemical::rna;
 using namespace core::pose::rna;
 using namespace protocols::stepwise::sampler::screener;
-static basic::Tracer TR( "protocols.sampler.rna.RNA_KIC_Sampler" );
+static thread_local basic::Tracer TR( "protocols.sampler.rna.RNA_KIC_Sampler" );
 
 namespace protocols {
 namespace stepwise {

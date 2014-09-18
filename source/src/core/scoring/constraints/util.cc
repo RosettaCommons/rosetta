@@ -44,10 +44,9 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-static numeric::random::RandomGenerator RG(42015512); // <- Magic number, do not change
 
 
-static basic::Tracer tr("core.scoring.constraints.util");
+static thread_local basic::Tracer tr( "core.scoring.constraints.util" );
 
 /// @brief Returns the weighted value of a normal distribution evaluated
 ///  with the given mean, sd, and x values. Returns zero if the weight is
@@ -175,7 +174,7 @@ std::string get_cst_file_option(){
 	using namespace basic::options;
 	utility::vector1< std::string>  cst_files = option[ OptionKeys::constraints::cst_file ]();
 	core::Size choice=1;
-	if ( cst_files.size() > 1 ) choice=core::Size( RG.random_range( 1,cst_files.size() ) );
+	if ( cst_files.size() > 1 ) choice=core::Size( numeric::random::rg().random_range( 1,cst_files.size() ) );
 	tr.Info << "Constraint choice: " << cst_files[choice] << std::endl;
 	return cst_files[choice];
 }
@@ -213,7 +212,7 @@ std::string get_cst_fa_file_option() {
 	utility::vector1< std::string> cst_files
 		= option[ OptionKeys::constraints::cst_fa_file ]();
 	core::Size choice=1;
-	if ( cst_files.size() > 1 ) choice=core::Size( RG.random_range( 2,cst_files.size() ) );
+	if ( cst_files.size() > 1 ) choice=core::Size( numeric::random::rg().random_range( 2,cst_files.size() ) );
 	tr.Info << "Constraint choice: " << cst_files[choice] << std::endl;
 	return cst_files[choice];
 }
@@ -483,7 +482,7 @@ bool combinable( Constraint const& cst, utility::vector1< Size > exclude_res ) {
 void choose_effective_sequence_separation( core::kinematics::ShortestPathInFoldTree const& sp, ConstraintCOPs& in ) {
 	for (	utility::vector1< ConstraintCOP >::const_iterator it = in.begin(); it != in.end(); ++it ) {
 		Constraint& cst = const_cast< Constraint& >( (**it) );
-		cst.choose_effective_sequence_separation( sp, RG );
+		cst.choose_effective_sequence_separation( sp, numeric::random::rg() );
 	}
 }
 
@@ -521,9 +520,9 @@ void combine_constraints(
 	utility::vector1< ConstraintCOP > out;
 	for ( SeqSepMap::iterator bin_it=seq_sep_map.begin(); bin_it != seq_sep_map.end(); ++bin_it ) {
 		// random permutation within bin... ensures random combination
-		random_permutation( bin_it->second, RG ); //I don't think a single pass of pairwise exchanges is enough to randomize the vector.
-		random_permutation( bin_it->second, RG );
-		random_permutation( bin_it->second, RG );
+		random_permutation( bin_it->second, numeric::random::rg() ); //I don't think a single pass of pairwise exchanges is enough to randomize the vector.
+		random_permutation( bin_it->second, numeric::random::rg() );
+		random_permutation( bin_it->second, numeric::random::rg() );
 
 		// combine bin
 		for (	utility::vector1< ConstraintCOP >::const_iterator it = bin_it->second.begin(); it != bin_it->second.end();
@@ -551,7 +550,7 @@ void combine_constraints(
 					}
 				}
 			} // ct > 0
-			combined_cst->choose_effective_sequence_separation( sp_in, RG );
+			combined_cst->choose_effective_sequence_separation( sp_in, numeric::random::rg() );
 			out.push_back( combined_cst );
 		}
 	}  // combination within bin
@@ -617,9 +616,9 @@ void skip_redundant_constraints( ConstraintCOPs& in, Size total_residue, Size in
 	utility::vector1< ConstraintCOP > out;
 	ObjexxFCL::FArray2D_int count_matrix( total_residue, total_residue, 0 );
 	using namespace numeric::random;
-	random_permutation( in, RG ); //I don't think a single pass of pairwise exchanges is enough to randomize the vector.
-	random_permutation( in, RG );
-	random_permutation( in, RG );
+	random_permutation( in, numeric::random::rg() ); //I don't think a single pass of pairwise exchanges is enough to randomize the vector.
+	random_permutation( in, numeric::random::rg() );
+	random_permutation( in, numeric::random::rg() );
 
 	for (	utility::vector1< ConstraintCOP >::const_iterator it = in.begin(); it != in.end(); ++it ) {
 		AmbiguousNMRConstraintCOP cst_in_casted;
@@ -676,7 +675,7 @@ void skip_redundant_constraints( ConstraintCOPs& in, Size total_residue, Size in
 void drop_constraints( ConstraintCOPs& in, core::Real drop_rate ) {
 	utility::vector1< ConstraintCOP > out;
 	for (	utility::vector1< ConstraintCOP >::const_iterator it = in.begin(); it != in.end(); ++it ) {
-		if ( RG.uniform() >= drop_rate ) {
+		if ( numeric::random::rg().uniform() >= drop_rate ) {
 			out.push_back( *it );
 		}
 	}

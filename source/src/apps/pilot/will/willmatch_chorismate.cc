@@ -79,7 +79,7 @@ typedef utility::vector1<core::Size> Sizes;
 typedef numeric::xyzVector<Real> Vec;
 typedef numeric::xyzMatrix<Real> Mat;
 
-static basic::Tracer TR("willmatch_chorismate");
+static thread_local basic::Tracer TR( "willmatch_chorismate" );
 
 
 

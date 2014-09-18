@@ -61,8 +61,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR( "protocols.backrub.BackrubSidechainMover" );
-static numeric::random::RandomGenerator RG(2772);
+static thread_local basic::Tracer TR( "protocols.backrub.BackrubSidechainMover" );
 
 namespace protocols {
 namespace backrub {
@@ -246,7 +245,7 @@ protocols::backrub::BackrubSidechainMover::apply(
   	update_segments(pose);
 	}
 
-	last_valid_segment_index_ =RG.random_range(1, valid_segments_.size());
+	last_valid_segment_index_ = numeric::random::rg().random_range(1, valid_segments_.size());
 	BackrubSegment const & segment(backrub_mover_->segment(valid_segments_[last_valid_segment_index_]));
 	core::Size middle_rsd = (segment.start_atomid().rsd() + segment.end_atomid().rsd())/2;
 

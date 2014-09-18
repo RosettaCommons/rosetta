@@ -65,7 +65,7 @@
 #include <vector>
 #include <fstream>
 
-static basic::Tracer tr("protocols.topo_broker.TMHTopologySampler");
+static thread_local basic::Tracer tr( "protocols.topo_broker.TMHTopologySampler" );
 
 namespace protocols{
 namespace topology_broker{
@@ -314,7 +314,7 @@ TMHTopologySamplerClaimer::pre_process(core::pose::Pose& pose)
 		assert(loop_end(span_index) != 0);
 
 		//put a cut at a random number in this loop
-		core::Size random_number = numeric::random::RG.random_range(loop_begin(span_index),loop_end(span_index));
+		core::Size random_number = numeric::random::rg().random_range(loop_begin(span_index),loop_end(span_index));
 		cuts_(span_index) = random_number;
 
 		if(tr.Debug.visible())
@@ -537,7 +537,7 @@ TMHTopologySamplerClaimer::move_spans(core::pose::Pose& pose)
 
 			//Get the vector of grid points and make sure it's the same size as the number of jumps	core::Size grid_point(0);
 			core::Size grid_point(0);
-			core::Size random_gp = numeric::random::RG.random_range(1,grid_points.size());
+			core::Size random_gp = numeric::random::rg().random_range(1,grid_points.size());
 			core::Vector desired_centroid(0.0,0.0,0.0);
 
 			grid_point = random_gp;

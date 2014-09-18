@@ -54,7 +54,7 @@ using ObjexxFCL::strip_whitespace;    // by reference
 using ObjexxFCL::rstripped_whitespace;// copy
 using ObjexxFCL::stripped_whitespace; // copy
 
-static basic::Tracer TR("core.io.pdb.HeaderInformation");
+static thread_local basic::Tracer TR( "core.io.pdb.HeaderInformation" );
 
 HeaderInformation::HeaderInformation() : utility::pointer::ReferenceCount(),
 	classification_(""),

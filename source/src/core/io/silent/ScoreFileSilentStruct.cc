@@ -46,7 +46,7 @@ namespace silent {
 
 using namespace ObjexxFCL;
 
-static basic::Tracer tr("core.io.silent.ScoreFileSilentStruct");
+static thread_local basic::Tracer tr( "core.io.silent.ScoreFileSilentStruct" );
 
 ScoreFileSilentStruct::ScoreFileSilentStruct(
 	core::pose::Pose const & pose,

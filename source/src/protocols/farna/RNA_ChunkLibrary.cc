@@ -46,8 +46,7 @@
 
 #include <utility/vector1.hh>
 
-static numeric::random::RandomGenerator RG(2380934);  // <- Magic number, do not change it!
-static basic::Tracer TR( "protocols.rna.RNA_ChunkLibrary" ) ;
+static thread_local basic::Tracer TR( "protocols.rna.RNA_ChunkLibrary" );
 
 namespace protocols {
 namespace farna {
@@ -321,11 +320,11 @@ namespace farna {
 		utility::vector1< Size > const indices_of_moving_chunks = get_indices_of_moving_chunks();
 		if ( indices_of_moving_chunks.size() == 0 ) return false;
 
-		Size const chunk_set_index = RG.random_element( indices_of_moving_chunks );
+		Size const chunk_set_index = numeric::random::rg().random_element( indices_of_moving_chunks );
 		ChunkSet const & chunk_set( *chunk_sets_[ chunk_set_index ] );
 		runtime_assert( chunk_set.num_chunks() > 1 );
 
-		Size const chunk_index = static_cast <int> ( RG.uniform() * chunk_set.num_chunks() ) + 1;
+		Size const chunk_index = static_cast <int> ( numeric::random::rg().uniform() * chunk_set.num_chunks() ) + 1;
 		chunk_set.insert_chunk_into_pose( pose, chunk_index, allow_insert_ );
 
 		return true;
@@ -493,7 +492,7 @@ namespace farna {
 
 			ChunkSet const & chunk_set( *chunk_sets_[ n ] );
 
-			Size chunk_index = static_cast<int>( RG.uniform() * chunk_set.num_chunks() ) + 1;
+			Size chunk_index = static_cast<int>( numeric::random::rg().uniform() * chunk_set.num_chunks() ) + 1;
 
 			// JUST FOR TESTING
 			if ( dump_pdb ) chunk_index = 1;

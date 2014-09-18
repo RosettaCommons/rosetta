@@ -41,9 +41,8 @@ RNA_JumpLibrary::~RNA_JumpLibrary() {}
 /// @details Auto-generated virtual destructor
 RNA_PairingTemplate::~RNA_PairingTemplate() {}
 
-static numeric::random::RandomGenerator RG(144621);  // <- Magic number, do not change it!
 
-static basic::Tracer tr( "protocols.rna.RNA_JumpLibrary" ) ;
+static thread_local basic::Tracer tr( "protocols.rna.RNA_JumpLibrary" );
 
 //@brief constructor
 RNA_PairingTemplate::RNA_PairingTemplate(
@@ -210,7 +209,7 @@ RNA_JumpLibrary::get_random_base_pair_jump(
 
   }
 
-  Size const index( static_cast<Size>( RG.uniform() * ntemplates )  + 1 );
+  Size const index( static_cast<Size>( numeric::random::rg().uniform() * ntemplates )  + 1 );
 
   core::kinematics::Jump j ( templates[ index ]->jump() );
   atom_name1 = templates[ index ]->atom_name1();

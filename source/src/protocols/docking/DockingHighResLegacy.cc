@@ -102,7 +102,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.docking.DockingHighRes");
+static thread_local basic::Tracer TR( "protocols.docking.DockingHighRes" );
 
 //     originally from dock_structure.cc Jeff Gray April 2001
 

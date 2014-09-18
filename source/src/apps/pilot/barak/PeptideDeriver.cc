@@ -69,7 +69,6 @@ using core::util::T;
 using core::util::Error;
 using core::util::Warning;
 
-static numeric::random::RandomGenerator RG( 26101976 ); // <- Magic number, do not change it!!!
 
 static core::util::Tracer TR( "PeptideDeriver" );
 

@@ -44,7 +44,11 @@ namespace operation {
 
 // special singleton functions
 // initialize
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< ResLvlTaskOperationFactory * > ResLvlTaskOperationFactory::instance_( 0 );
+#else
 ResLvlTaskOperationFactory * ResLvlTaskOperationFactory::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

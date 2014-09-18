@@ -17,7 +17,7 @@
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/util.hh>
-static basic::Tracer TR("protocols.simple_moves.LoadPDBMover");
+static thread_local basic::Tracer TR( "protocols.simple_moves.LoadPDBMover" );
 #include <utility/tag/Tag.hh>
 
 #include <core/pose/Pose.hh>

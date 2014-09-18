@@ -28,7 +28,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer tr( "protocols.forge.constraints.ConstraintFileRCG" );
+static thread_local basic::Tracer tr( "protocols.forge.constraints.ConstraintFileRCG" );
 
 namespace protocols{
 namespace forge{

@@ -24,7 +24,7 @@
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.sampler.protein.ProteinBetaAntiParallelStepWiseSampler" );
+static thread_local basic::Tracer TR( "protocols.sampler.protein.ProteinBetaAntiParallelStepWiseSampler" );
 
 using namespace core;
 

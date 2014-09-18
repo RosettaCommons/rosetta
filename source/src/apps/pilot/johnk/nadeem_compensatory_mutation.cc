@@ -46,7 +46,7 @@
 using namespace core;
 using namespace core::scoring;
 
-static basic::Tracer TR( "apps.pilot.nadeem_compensatory_mutation.main" );
+static thread_local basic::Tracer TR( "apps.pilot.nadeem_compensatory_mutation.main" );
 
 
 int

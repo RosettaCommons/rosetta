@@ -134,8 +134,7 @@ namespace protocols {
 //namespace comparative_modeling {
 namespace hybridization {
 
-static basic::Tracer TR("protocols.hybridization.CartesianSampler");
-static numeric::random::RandomGenerator RG(8403155);
+static thread_local basic::Tracer TR( "protocols.hybridization.CartesianSampler" );
 
 /////////////
 // creator
@@ -839,10 +838,10 @@ CartesianSampler::apply( Pose & pose ) {
 			i_frag_set = numeric::random::random_range(1, fragments_.size());
 
 			// pick insertion position
-			insert_pos = (int)frag_bias_[i_frag_set].random_sample(RG);
+			insert_pos = (int)frag_bias_[i_frag_set].random_sample(numeric::random::rg());
 			int ntries=50;
 			while (library_[i_frag_set].find(insert_pos) == library_[i_frag_set].end() && --ntries>0)
-				insert_pos = (int)frag_bias_[i_frag_set].random_sample(RG);
+				insert_pos = (int)frag_bias_[i_frag_set].random_sample(numeric::random::rg());
 
 			if (library_[i_frag_set].find(insert_pos) == library_[i_frag_set].end()) {
 				TR << "ERROR! Unable to find allowed fragment insert at " << insert_pos << " after 50 attempts.  Continuing." << std::endl;

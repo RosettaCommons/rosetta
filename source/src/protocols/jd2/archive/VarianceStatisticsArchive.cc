@@ -23,10 +23,9 @@
 #include <numeric/random/random.hh>
 
 
-static basic::Tracer tr("protocols.iterative.VarianceStatistics");
+static thread_local basic::Tracer tr( "protocols.iterative.VarianceStatistics" );
 using basic::mem_tr;
 
-static numeric::random::RandomGenerator RG(410142); // <- Magic number, do not change
 
 using core::Real;
 
@@ -55,9 +54,9 @@ bool VarianceStatisticsArchive::add_evaluated_structure(
 		return true;
 	}
 
-	if ( RG.uniform() < insertion_prob_ ) { //keep or not ?
+	if ( numeric::random::rg().uniform() < insertion_prob_ ) { //keep or not ?
 		//replace with random element
-		Size rg_pos( static_cast< int >( RG.uniform() * decoys().size() ) );
+		Size rg_pos( static_cast< int >( numeric::random::rg().uniform() * decoys().size() ) );
 		runtime_assert( rg_pos < decoys().size() );
 		SilentStructs::iterator it=decoys().begin();
 		while ( rg_pos-- > 0 ) {

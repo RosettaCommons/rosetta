@@ -50,7 +50,7 @@ using basic::Warning;
 namespace protocols {
 namespace ligand_docking {
 
-static basic::Tracer FinalMinimizer_tracer("protocols.ligand_docking.ligand_options.FinalMinimizer", basic::t_debug);
+static thread_local basic::Tracer FinalMinimizer_tracer( "protocols.ligand_docking.ligand_options.FinalMinimizer", basic::t_debug );
 
 std::string
 FinalMinimizerCreator::keyname() const

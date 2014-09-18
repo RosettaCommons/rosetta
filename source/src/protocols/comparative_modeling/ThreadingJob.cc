@@ -45,7 +45,7 @@ ThreadingJob::ThreadingJob(
 
 	//fpd  Make a transitve map from the template alignment to the template pdb seq
 	//fpd  Accounts for missing density in the PDB
-	static basic::Tracer tr("protocols.comparative_modeling.ThreadingJob");
+	basic::Tracer tr( "protocols.comparative_modeling.ThreadingJob" );
 	using namespace core::sequence;
 
 	SequenceOP query_sequence(

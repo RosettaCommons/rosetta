@@ -109,7 +109,7 @@ using utility::file::FileName;
 
 
 // tracer - used to replace cout
-static basic::Tracer TR("OopDesign");
+static thread_local basic::Tracer TR( "OopDesign" );
 
 // application specific options
 namespace oop_design {

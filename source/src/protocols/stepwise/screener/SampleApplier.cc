@@ -22,7 +22,7 @@
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-static basic::Tracer TR( "protocols.stepwise.screener.SampleApplier" );
+static thread_local basic::Tracer TR( "protocols.stepwise.screener.SampleApplier" );
 
 using namespace core;
 using namespace protocols::stepwise::sampler;

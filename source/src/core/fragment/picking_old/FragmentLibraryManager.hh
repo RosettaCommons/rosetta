@@ -23,7 +23,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -79,9 +80,12 @@ private:
 
 private: // data
 
-	/// @brief singleton instance
+	/// @brief static data member holding pointer to the singleton class itself
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< FragmentLibraryManager * > instance_;
+#else
 	static FragmentLibraryManager * instance_;
-
+#endif
 
 	// *** WARNING -- pointers for all libraries below must be
 	// initialized to NULL in constructor ***

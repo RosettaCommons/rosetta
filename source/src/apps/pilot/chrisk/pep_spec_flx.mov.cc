@@ -166,7 +166,6 @@
  using basic::Error;
  using basic::Warning;
 
- static numeric::random::RandomGenerator RG(16621);
 
 using namespace core;
 using namespace protocols;
@@ -766,7 +765,7 @@ initialize_peptide(
 	else if( option[ pep_spec::random_seq ] ){
 		for( Size mut_site = pep_begin; mut_site <= pep_end; mut_site++ ){
 			if(mut_site==pep_anchor) continue;
-			chemical::make_sequence_change( mut_site, chemical::AA( static_cast< int > ( 20 * RG.uniform() + 1 ) ), pose );
+			chemical::make_sequence_change( mut_site, chemical::AA( static_cast< int > ( 20 * numeric::random::rg().uniform() + 1 ) ), pose );
 		}
 	}
 	else if( !( option[ pep_spec::test_no_design ] ) ){
@@ -809,7 +808,7 @@ gen_pep_bb_sequential(
 			pose.set_omega( pep_begin, 180.0 );
 			pose.conformation().update_polymeric_connection( pep_begin );
 			pose.conformation().update_polymeric_connection( pep_begin + 1 );
-			if( option[ pep_spec::random_seq ] ) chemical::make_sequence_change( pep_begin, chemical::AA( static_cast< int > ( 20 * RG.uniform() + 1 ) ), pose );
+			if( option[ pep_spec::random_seq ] ) chemical::make_sequence_change( pep_begin, chemical::AA( static_cast< int > ( 20 * numeric::random::rg().uniform() + 1 ) ), pose );
 		}
 		if( i_res <= n_append ){
 			pose.append_polymer_residue_after_seqpos( *ala, pep_end, true );
@@ -817,7 +816,7 @@ gen_pep_bb_sequential(
 			pose.set_omega( pep_end - 1, 180.0 );
 			pose.conformation().update_polymeric_connection( pep_end );
 			pose.conformation().update_polymeric_connection( pep_end - 1 );
-			if( option[ pep_spec::random_seq ] ) chemical::make_sequence_change( pep_end, chemical::AA( static_cast< int > ( 20 * RG.uniform() + 1 ) ), pose );
+			if( option[ pep_spec::random_seq ] ) chemical::make_sequence_change( pep_end, chemical::AA( static_cast< int > ( 20 * numeric::random::rg().uniform() + 1 ) ), pose );
 		}
 		pose.update_residue_neighbors();
 		Size nres_pep( pep_end - pep_begin + 1 );
@@ -833,21 +832,21 @@ gen_pep_bb_sequential(
 			//choose an insertion position, index from 1
 			Size pos = 0;
 			while( true ){
-				pos = static_cast< int > ( nres_pep * RG.uniform() ) + 1;
+				pos = static_cast< int > ( nres_pep * numeric::random::rg().uniform() ) + 1;
 				if( is_insert[ pos ] ) break;
 			}
-			Size lib_pos(  static_cast< int > ( 20 * RG.uniform() ) + 1 );
+			Size lib_pos(  static_cast< int > ( 20 * numeric::random::rg().uniform() ) + 1 );
 			if( pos == ( pep_anchor - pep_begin + 1 ) || option[ pep_spec::random_seq ] ){
 				Size aa_index = aa2index( pose.residue( pep_begin + pos - 1 ).aa() );
 				if( aa_index > 0 ) lib_pos = aa_index;
 				else lib_pos = 1;
 			}
 			Size const nfrags( lib[ lib_pos ].size() );
-			int const frag_index( static_cast< int >( nfrags * RG.uniform() + 1 ) );
+			int const frag_index( static_cast< int >( nfrags * numeric::random::rg().uniform() + 1 ) );
 			lib[ lib_pos ][ frag_index ].insert( pose, pep_begin + pos - 1 );
 			//random perturb angles
-			pose.set_phi( pep_begin + pos - 1, pose.phi( pep_begin + pos - 1 ) + 1 * ( 2 * RG.uniform() - 1 ) );
-			pose.set_psi( pep_begin + pos - 1, pose.psi( pep_begin + pos - 1 ) + 1 * ( 2 * RG.uniform() - 1 ) );
+			pose.set_phi( pep_begin + pos - 1, pose.phi( pep_begin + pos - 1 ) + 1 * ( 2 * numeric::random::rg().uniform() - 1 ) );
+			pose.set_psi( pep_begin + pos - 1, pose.psi( pep_begin + pos - 1 ) + 1 * ( 2 * numeric::random::rg().uniform() - 1 ) );
 			dump_pdb( pose, "mov." + string_of( n_mov ) + ".pdb" ); ++n_mov;
 			if( mc_frag->boltzmann( pose ) ){
 				Real test_score( pose.energies().total_energies().dot( cen_scorefxn->weights() ) );
@@ -899,8 +898,8 @@ gen_pep_bb_frag(
 
 	//randomize backbone
 	for( Size seqpos = pep_begin; seqpos <= pep_end; ++seqpos ){
-		pose.set_phi( seqpos, RG.uniform() * 360.0 );
-		pose.set_psi( seqpos, RG.uniform() * 360.0 );
+		pose.set_phi( seqpos, numeric::random::rg().uniform() * 360.0 );
+		pose.set_psi( seqpos, numeric::random::rg().uniform() * 360.0 );
 		pose.set_omega( seqpos, 180.0 );
 	}
 
@@ -918,8 +917,8 @@ gen_pep_bb_frag(
 		mc_frag->set_temperature( temp );
 
 		//choose an insertion position, index from 1
-		Size pos(  static_cast< int > ( nres_pep * RG.uniform() ) + 1 );
-		Size lib_pos(  static_cast< int > ( 20 * RG.uniform() ) + 1 );
+		Size pos(  static_cast< int > ( nres_pep * numeric::random::rg().uniform() ) + 1 );
+		Size lib_pos(  static_cast< int > ( 20 * numeric::random::rg().uniform() ) + 1 );
 		//use actual aa if is anchor
 		if( option[ pep_spec::test_no_design ] || option[ pep_spec::input_seq ].user() || option[ pep_spec::random_seq ].user() || pos == ( pep_anchor - pep_begin + 1 ) ){
 			Size aa_index = aa2index( pose.residue( pep_begin + pos - 1 ).aa() );
@@ -928,11 +927,11 @@ gen_pep_bb_frag(
 		}
 
 		Size const nfrags( lib[ lib_pos ].size() );
-		int const frag_index( static_cast< int >( nfrags * RG.uniform() + 1 ) );
+		int const frag_index( static_cast< int >( nfrags * numeric::random::rg().uniform() + 1 ) );
 		lib[ lib_pos ][ frag_index ].insert( pose, pep_begin + pos - 1 );
 		//random perturb angles
-		pose.set_phi( pep_begin + pos - 1, pose.phi( pep_begin + pos - 1 ) + 1 * ( 2 * RG.uniform() - 1 ) );
-		pose.set_psi( pep_begin + pos - 1, pose.psi( pep_begin + pos - 1 ) + 1 * ( 2 * RG.uniform() - 1 ) );
+		pose.set_phi( pep_begin + pos - 1, pose.phi( pep_begin + pos - 1 ) + 1 * ( 2 * numeric::random::rg().uniform() - 1 ) );
+		pose.set_psi( pep_begin + pos - 1, pose.psi( pep_begin + pos - 1 ) + 1 * ( 2 * numeric::random::rg().uniform() - 1 ) );
 		if( mc_frag->boltzmann( pose ) ){
 			Real test_score( pose.energies().total_energies().dot( cen_scorefxn->weights() ) );
 			//need to do my own eval for <= because MC mover is < only
@@ -964,14 +963,14 @@ gen_pep_bb_frag_old(
 
 	for ( Size build_loop = 1; build_loop <= static_cast< int >( std::sqrt( n_build_loop ) ); ++build_loop ) {
 		// choose an insertion position
-		Size pos(  static_cast< int > ( nres_pep * RG.uniform() ) + 1 );
+		Size pos(  static_cast< int > ( nres_pep * numeric::random::rg().uniform() ) + 1 );
 		Size const nfrags( lib[ pos ].size() );
-		int const frag_index( static_cast< int >( nfrags * RG.uniform() + 1 ) );
+		int const frag_index( static_cast< int >( nfrags * numeric::random::rg().uniform() + 1 ) );
 		lib[ pos ][ frag_index ].insert( pose, pep_begin - 1 + pos );
 
 		//random perturb angles
-		pose.set_phi( pep_begin + pos - 1, pose.phi( pep_begin + pos - 1 ) + 2 * ( 2 * RG.uniform() - 1 ) );
-		pose.set_psi( pep_begin + pos - 1, pose.psi( pep_begin + pos - 1 ) + 2 * ( 2 * RG.uniform() - 1 ) );
+		pose.set_phi( pep_begin + pos - 1, pose.phi( pep_begin + pos - 1 ) + 2 * ( 2 * numeric::random::rg().uniform() - 1 ) );
+		pose.set_psi( pep_begin + pos - 1, pose.psi( pep_begin + pos - 1 ) + 2 * ( 2 * numeric::random::rg().uniform() - 1 ) );
 		if( mc_frag->boltzmann( pose ) ){
 			Real test_score( pose.energies().total_energies().dot( cen_scorefxn->weights() ) );
 			//need to do my own eval for <= because MC mover is < only
@@ -1014,9 +1013,9 @@ gen_pep_bb_rama(
 	MonteCarloOP mc_rama ( new MonteCarlo( pose, *cen_scorefxn, 2.0 ) );
 	for ( Size build_loop_inner = 1; build_loop_inner <= n_build_loop; ++build_loop_inner ) {
 		// choose an insertion position
-		Size pos(  static_cast< int > ( nres_pep * RG.uniform() ) + pep_begin );
+		Size pos(  static_cast< int > ( nres_pep * numeric::random::rg().uniform() ) + pep_begin );
 		Size rama_mover_index( 1 );
-		if( option[ pep_spec::random_rama_ss_type ] ) rama_mover_index = static_cast< int > ( RG.uniform() * rama_movers.size() + 1 );
+		if( option[ pep_spec::random_rama_ss_type ] ) rama_mover_index = static_cast< int > ( numeric::random::rg().uniform() * rama_movers.size() + 1 );
 		Real rama_phi, rama_psi;
 		if( option[ pep_spec::input_seq ].user() ){
 			chemical::AA actual_aa( aa_from_oneletter_code( pose.residue( pos ).name1() ) );
@@ -1024,9 +1023,9 @@ gen_pep_bb_rama(
 		}
 		else{
 			//use ala rama map 95% of time, use gly map 5%
-//			int resindex( static_cast< int > ( 20 * RG.uniform() + 1 ) );
+//			int resindex( static_cast< int > ( 20 * numeric::random::rg().uniform() + 1 ) );
 			chemical::AA aa( aa_from_oneletter_code( 'A' ) );
-			if( RG.uniform() > 0.95 ) aa = aa_from_oneletter_code( 'G' );
+			if( numeric::random::rg().uniform() > 0.95 ) aa = aa_from_oneletter_code( 'G' );
 			rama_movers[ rama_mover_index ].random_phipsi_from_rama( aa, rama_phi, rama_psi );
 		}
 		pose.set_phi( pos, rama_phi );
@@ -1138,12 +1137,12 @@ mutate_random_residue(
 	bool mutate( false );
 	Size seqpos( 0 );
 	while( !mutate ){
-		seqpos = static_cast< int >( RG.uniform() * is_mutable.size() + 1 );
+		seqpos = static_cast< int >( numeric::random::rg().uniform() * is_mutable.size() + 1 );
 		mutate = is_mutable[ seqpos ];
 	}
 
 	//pick rand aa and mutate
-	chemical::make_sequence_change( seqpos, chemical::AA( static_cast< int > ( 20 * RG.uniform() + 1 ) ), pose );
+	chemical::make_sequence_change( seqpos, chemical::AA( static_cast< int > ( 20 * numeric::random::rg().uniform() + 1 ) ), pose );
 
 	//rottrial seqpos only
 	pack::task::TaskFactoryOP mut_task_factory( new pack::task::TaskFactory );
@@ -1365,7 +1364,7 @@ RunPepSpec()
 
 		//load random start pdb//
 		if( option[ pep_spec::run_sequential ] ) ++pose_index;
-		else pose_index = static_cast< int >( RG.uniform() * pdb_filenames.size() + 1 );
+		else pose_index = static_cast< int >( numeric::random::rg().uniform() * pdb_filenames.size() + 1 );
 		std::string pdb_filename( pdb_filenames[ pose_index ] );
 		std::cout<<"Initializing "<< out_nametag + "_" + string_of( peptide_loop ) + " with " + pdb_filename << std::endl;
 		core::import_pose::pose_from_pdb( pose, pdb_filename );
@@ -1406,7 +1405,7 @@ RunPepSpec()
 		//if set interchain_contact, only use half the time
 /*
 		if( max_interchain_wt > 0 ){
-			if( RG.uniform() < 0.5 ) cen_scorefxn->set_weight( interchain_contact, 0 );
+			if( numeric::random::rg().uniform() < 0.5 ) cen_scorefxn->set_weight( interchain_contact, 0 );
 			else cen_scorefxn->set_weight( interchain_contact, max_interchain_wt );
 		}
 */
@@ -1420,11 +1419,11 @@ RunPepSpec()
 		for( Size i=1; i<= nres_pep; ++i ) {
 			Size seqpos( i + pep_begin - 1 );
 			std::string ss_seq( "L" );
-			Real ss_index( RG.uniform() );
+			Real ss_index( numeric::random::rg().uniform() );
 			if( ss_index < 0.25 ) ss_seq = "E";
 			else if( ss_index < 0.5 ) ss_seq = "H";
 			std::string frag_seq;
-			char aa( oneletter_code_from_aa( chemical::AA( 20 * RG.uniform() + 1 ) ) );
+			char aa( oneletter_code_from_aa( chemical::AA( 20 * numeric::random::rg().uniform() + 1 ) ) );
 			Real seq_wt( 0.0 );
 			if( option[ pep_spec::test_no_design ] || option[ pep_spec::input_seq ].user() || option[ pep_spec::random_seq ].user() ){
 				seq_wt = 1.0;

@@ -84,6 +84,7 @@ sources = {
 		"MPIMultiCommJobDistributor",
 		"MPIWorkPartitionJobDistributor",
 		"MPIWorkPoolJobDistributor",
+		"MultiThreadedJobDistributor",
 		"MultiThreadingJob",
 		"NoOutputJobOutputterCreator",
 		"Parser",

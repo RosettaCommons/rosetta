@@ -49,8 +49,7 @@ namespace loops {
 using namespace core;
 using namespace ObjexxFCL;
 
-static basic::Tracer tr("loops");
-static numeric::random::RandomGenerator RG(430);  // <- Magic number, do not change it (and dont try and use it anywhere else)
+static thread_local basic::Tracer tr( "loops" );
 
 Loops::Loops() : utility::pointer::ReferenceCount()
 {
@@ -89,7 +88,7 @@ Loops::Loops( utility::vector1< bool > const& selection,
     } else if( !selection[i] && prev ){
       assert( start != 0 );
       if( randomize_cutpoints ){
-        this->add_loop( protocols::loops::Loop( start, i, RG.random_range( (int) start+1, (int) i-1 ) ) );
+        this->add_loop( protocols::loops::Loop( start, i, numeric::random::rg().random_range( (int) start+1, (int) i-1 ) ) );
       } else {
         this->add_loop( protocols::loops::Loop( start, i, (i - start) / 2 ) );
       }
@@ -133,7 +132,7 @@ void Loops::read_loops_options()
             set_loop_file_name_and_reset( loop_files[ 1 ] );
             return;
         }
-    core::Size choice = core::Size( RG.random_range(1,( loop_files.size() ) ));
+    core::Size choice = core::Size( numeric::random::rg().random_range(1,( loop_files.size() ) ));
         // Why is this tr.Error and not like... tr.Info?
     tr.Error << "Loop choice: " << loop_files[ choice ] << "  " << choice << std::endl;
     set_loop_file_name_and_reset( loop_files[ choice ] );

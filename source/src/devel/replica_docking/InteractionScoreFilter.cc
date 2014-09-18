@@ -34,7 +34,7 @@
 namespace devel {
 namespace replica_docking {
 
-static basic::Tracer TR( "devel.replica_docking.InteractionScoreFilter" );
+static thread_local basic::Tracer TR( "devel.replica_docking.InteractionScoreFilter" );
 
 protocols::filters::FilterOP
 InteractionScoreFilterCreator::create_filter() const { return new InteractionScoreFilter; }

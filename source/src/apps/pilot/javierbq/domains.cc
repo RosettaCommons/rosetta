@@ -57,7 +57,7 @@ using namespace basic::options::OptionKeys;
 namespace boostx = boost::xpressive;
 namespace topology = protocols::fldsgn::topology;
 
-static basic::Tracer TR("domain_test");
+static thread_local basic::Tracer TR( "domain_test" );
 
 
 class Domain : public utility::pointer::ReferenceCount {

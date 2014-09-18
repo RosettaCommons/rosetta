@@ -48,9 +48,13 @@ using std::stringstream;
 using core::pose::Pose;
 using core::scoring::ScoreFunctionCOP;
 
-static basic::Tracer tr("protocols.rotamer_recovery.RotamerRecoveryFactory");
+static thread_local basic::Tracer tr( "protocols.rotamer_recovery.RotamerRecoveryFactory" );
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< RotamerRecoveryFactory * > RotamerRecoveryFactory::instance_( 0 );
+#else
 RotamerRecoveryFactory * RotamerRecoveryFactory::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

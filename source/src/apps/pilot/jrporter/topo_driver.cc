@@ -50,7 +50,7 @@
 #define TS_ASSERT_LESS_THAN( x, y ) TS_ASSERT( x < y );
 #define TS_TRACE( x ) std::cout << x << std::endl;
 
-static basic::Tracer tr("main");
+static thread_local basic::Tracer tr( "main" );
 
 class Tester : public protocols::environment::ClaimingMover {
 public:

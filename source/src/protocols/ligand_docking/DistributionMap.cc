@@ -24,7 +24,11 @@
 namespace protocols {
 namespace ligand_docking {
 
-DistributionMap* DistributionMap::instance_( 0 );
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< DistributionMap * > DistributionMap::instance_( 0 );
+#else
+DistributionMap * DistributionMap::instance_( 0 );
+#endif
 
 
 #ifdef MULTI_THREADED

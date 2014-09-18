@@ -160,7 +160,6 @@
  using basic::Error;
  using basic::Warning;
 
- static numeric::random::RandomGenerator RG(16621);
 
 using namespace core;
 using namespace protocols;
@@ -513,7 +512,7 @@ RunPepSpec()
 		for( Size peptide_loop = 1; peptide_loop <= pdb_filenames.size(); ++peptide_loop ){
 
 			Pose pose;
-			//std::string pdb_filename( pdb_filenames[ static_cast< int >( RG.uniform() * pdb_filenames.size() + 1 ) ] );
+			//std::string pdb_filename( pdb_filenames[ static_cast< int >( numeric::random::rg().uniform() * pdb_filenames.size() + 1 ) ] );
 			std::string pdb_filename( pdb_filenames[ peptide_loop ] );
 			core::import_pose::pose_from_pdb( pose, pdb_filename );
 
@@ -537,7 +536,7 @@ RunPepSpec()
 			//randomize pep sequence//
 			for(Size mut_site = pep_begin; mut_site <= pep_end; mut_site++){ //over all pep positions
 				int resindex;
-				resindex = static_cast< int > ( 20 * RG.uniform() + 1 );
+				resindex = static_cast< int > ( 20 * numeric::random::rg().uniform() + 1 );
 				chemical::make_sequence_change( mut_site, chemical::AA(resindex), pose );
 			}
 

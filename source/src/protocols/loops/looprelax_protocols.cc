@@ -88,12 +88,11 @@ using basic::Warning;
 
 namespace protocols {
 
-static basic::Tracer TR("protocols.looprelax_protocols");
+static thread_local basic::Tracer TR( "protocols.looprelax_protocols" );
 
 using namespace core;
 using io::pdb::dump_pdb;
 
-static numeric::random::RandomGenerator RG(431111);  // <- Magic number, do not change it!
 
 
 

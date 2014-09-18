@@ -75,7 +75,7 @@ using namespace core;
 using namespace conformation;
 using namespace chemical;
 // file-scope -- prob bad
-static basic::Tracer tt( "devel.dna.ProteinDNA_Relax", basic::t_info );
+static thread_local basic::Tracer tt( "devel.dna.ProteinDNA_Relax", basic::t_info );
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

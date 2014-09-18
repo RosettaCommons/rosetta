@@ -78,8 +78,7 @@
 #include <utility/vector0.hh>
 #include <utility/keys/Key3Vector.hh>
 
-static numeric::random::RandomGenerator RG(222578262);
-basic::Tracer TR("apps.backrub");
+static thread_local basic::Tracer TR( "apps.backrub" );
 
 OPT_1GRP_KEY(Integer, backrub, ntrials)
 OPT_1GRP_KEY(Real, backrub, sc_prob)
@@ -490,7 +489,7 @@ void BackrubProtocol::apply( core::pose::Pose& pose ){
 		std::string move_type;
 
 		// could use random mover for this...
-		core::Real move_prob = RG.uniform();
+		core::Real move_prob = numeric::random::rg().uniform();
 		if (move_prob > option[ backrub::sm_prob ] + option[ backrub::sc_prob ]) {
 			backrubmover_->apply(*pose_copy);
 			move_type = backrubmover_->type();

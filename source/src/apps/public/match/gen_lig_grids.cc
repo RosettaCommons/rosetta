@@ -78,7 +78,7 @@ OPT_KEY(Real, grid_lig_cutoff)
 OPT_KEY(Real, grid_bb_cutoff)
 OPT_KEY(Real, grid_active_res_cutoff)
 
-basic::Tracer TR("apps.public.match.gen_lig_grids");
+static thread_local basic::Tracer TR( "apps.public.match.gen_lig_grids" );
 
 inline void assure(std::ifstream& in, const char* filename = "")
 {

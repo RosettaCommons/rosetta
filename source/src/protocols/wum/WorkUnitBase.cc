@@ -38,7 +38,7 @@ namespace protocols {
 namespace wum {
 
 
-static basic::Tracer TR("WorkUnitBase");
+static thread_local basic::Tracer TR( "WorkUnitBase" );
 
 WorkUnitBase::WorkUnitBase ( )
 {

@@ -21,7 +21,7 @@
 #include <utility/stream_util.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.modeler.protein.loop_close.StepWiseProteinCCD_MultiPoseCloser" );
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.protein.loop_close.StepWiseProteinCCD_MultiPoseCloser" );
 
 ////////////////////////////////////////////////////////////////////////////////////
 //

@@ -67,7 +67,7 @@ using namespace core;
 using namespace pack::task;
 using protocols::jd2::JobDistributor;
 
-static basic::Tracer TR("protocols.docking.DockingEnsemblePrepackProtocol");
+static thread_local basic::Tracer TR( "protocols.docking.DockingEnsemblePrepackProtocol" );
 
 namespace protocols{
 namespace docking{

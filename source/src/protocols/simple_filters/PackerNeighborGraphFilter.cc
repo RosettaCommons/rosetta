@@ -37,7 +37,7 @@
 
 
 //// C++ headers
-static basic::Tracer tr("protocols.filters.PackerNeighborGraphFilter");
+static thread_local basic::Tracer tr( "protocols.filters.PackerNeighborGraphFilter" );
 
 namespace protocols {
 namespace simple_filters {

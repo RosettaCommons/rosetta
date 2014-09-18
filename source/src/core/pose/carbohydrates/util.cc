@@ -41,7 +41,7 @@
 
 
 // Construct tracer.
-static basic::Tracer TR("core.pose.carbohydrates.util");
+static thread_local basic::Tracer TR( "core.pose.carbohydrates.util" );
 
 
 namespace core {

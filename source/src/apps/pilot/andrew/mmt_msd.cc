@@ -109,7 +109,7 @@ OPT_1GRP_KEY( Integer, msd, n_worker_threads_per_process )
 
 using basic::t_info;
 using basic::t_debug;
-static basic::Tracer TR("apps.public.design.mpi_msd",t_info);
+static thread_local basic::Tracer TR( "apps.public.design.mpi_msd", t_info );
 
 /*class SimpleDGBindAggregateFunction : public protocols::pack_daemon::MultistateAggregateFunction
 {

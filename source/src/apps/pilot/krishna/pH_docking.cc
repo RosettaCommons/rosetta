@@ -70,7 +70,7 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 
-static basic::Tracer TR("apps.pilot.krishna.PhDocking");
+static thread_local basic::Tracer TR( "apps.pilot.krishna.PhDocking" );
 
 class PhDocking : public protocols::moves::Mover {
 

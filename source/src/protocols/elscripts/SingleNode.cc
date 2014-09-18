@@ -35,7 +35,7 @@ void lregister_SingleNode( lua_State * lstate ) {
 	];
 }
 
-static basic::Tracer TR("protocols.elscripts.SingleNode");
+static thread_local basic::Tracer TR( "protocols.elscripts.SingleNode" );
 
 SingleNode::SingleNode( boost::uint64_t mem_limit, boost::uint64_t reserved_mem, boost::uint64_t reserved_mem_multiplier) {
 	// here they share the same memory limit, which is wrong

@@ -39,7 +39,7 @@ using namespace basic::options::OptionKeys;
 
 bool discontinued_upper(core::pose::Pose const & pose, Size const seqpos) {
 	core::Real N_C_cutoff(2.0);
-	
+
 	if (seqpos == 1) return true;
 	if (!pose.residue_type(seqpos).is_polymer()) return true;
 	if (!pose.residue_type(seqpos-1).is_polymer()) return true;
@@ -53,7 +53,7 @@ bool discontinued_upper(core::pose::Pose const & pose, Size const seqpos) {
 
 bool discontinued_lower(core::pose::Pose const & pose, Size const seqpos) {
 	core::Real N_C_cutoff(2.0);
-	
+
 	if (seqpos == pose.total_residue()) return true;
 	if (!pose.residue_type(seqpos).is_polymer()) return true;
 	if (!pose.residue_type(seqpos+1).is_polymer()) return true;
@@ -64,14 +64,14 @@ bool discontinued_lower(core::pose::Pose const & pose, Size const seqpos) {
 	}
 	return false;
 }
-	
+
 enum AlignOption { all_chunks, random_chunk };
-	
+
 std::list < Size >
 downstream_residues_from_jump(core::pose::Pose const & pose, Size const jump_number) {
 	std::list < Size > residue_list;
 	utility::vector1< Edge > edges = pose.fold_tree().get_outgoing_edges(pose.fold_tree().jump_edge(jump_number).stop());
-	
+
 	for (Size i_edge = 1; i_edge <= edges.size(); ++i_edge) {
 		if ( !edges[i_edge].is_polymer() ) continue;
 		Size start = edges[i_edge].start() <= edges[i_edge].stop() ? edges[i_edge].start() : edges[i_edge].stop();
@@ -79,23 +79,23 @@ downstream_residues_from_jump(core::pose::Pose const & pose, Size const jump_num
 		for ( Size ires = start; ires <= stop; ++ires ) {
 			residue_list.push_back(ires);
 		}
-		
+
 	}
 	residue_list.sort();
 	residue_list.unique();
 	return residue_list;
 }
-	
+
 class AlignChunkMover: public protocols::moves::Mover
 {
 public:
-	
-AlignChunkMover(numeric::random::RandomGenerator & RG) : 
+
+AlignChunkMover(numeric::random::RandomGenerator & RG) :
 	RG_(RG), registry_shift_(0), reset_torsion_unaligned_(true), align_to_ss_only_(true), copy_ss_torsion_only_(false), secstruct_('L')
 {
 	align_trial_counter_.clear();
 }
-	
+
 // atom_map: from mod_pose to ref_pose
 void
 get_superposition_transformation(
@@ -113,18 +113,18 @@ get_superposition_transformation(
 		for ( Size iatom=1; iatom<= mod_pose.residue(ires).natoms(); ++iatom ) {
 			AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
 			if (!aid.valid()) continue;
-			
+
 			++total_mapped_atoms;
 		}
 	}
-	
+
 	preT = postT = numeric::xyzVector< core::Real >(0,0,0);
 	if (total_mapped_atoms <= 2) {
 		R.xx() = R.yy() = R.zz() = 1;
 		R.xy() = R.yx() = R.zx() = R.zy() = R.yz() = R.xz() = 0;
 		return;
 	}
-	
+
 	ObjexxFCL::FArray2D< core::Real > final_coords( 3, total_mapped_atoms );
 	ObjexxFCL::FArray2D< core::Real > init_coords( 3, total_mapped_atoms );
 	preT = postT = numeric::xyzVector< core::Real >(0,0,0);
@@ -134,19 +134,19 @@ get_superposition_transformation(
 			AtomID const & aid( atom_map[ id::AtomID( iatom,ires ) ] );
 			if (!aid.valid()) continue;
 			++atomno;
-			
+
 			numeric::xyzVector< core::Real > x_i = mod_pose.residue(ires).atom(iatom).xyz();
 			preT += x_i;
 			numeric::xyzVector< core::Real > y_i = ref_pose.xyz( aid );
 			postT += y_i;
-			
+
 			for (int j=0; j<3; ++j) {
 				init_coords(j+1,atomno) = x_i[j];
 				final_coords(j+1,atomno) = y_i[j];
 			}
 		}
 	}
-	
+
 	preT /= (float) total_mapped_atoms;
 	postT /= (float) total_mapped_atoms;
 	for (int i=1; i<=(int)total_mapped_atoms; ++i) {
@@ -155,13 +155,13 @@ get_superposition_transformation(
 			final_coords(j+1,i) -= postT[j];
 		}
 	}
-	
+
 	// get optimal superposition
 	// rotate >init< to >final<
 	ObjexxFCL::FArray1D< numeric::Real > ww( total_mapped_atoms, 1.0 );
 	ObjexxFCL::FArray2D< numeric::Real > uu( 3, 3, 0.0 );
 	numeric::Real ctx;
-	
+
 	numeric::model_quality::findUU( init_coords, final_coords, ww, total_mapped_atoms, uu, ctx );
 	R.xx( uu(1,1) ); R.xy( uu(2,1) ); R.xz( uu(3,1) );
 	R.yx( uu(1,2) ); R.yy( uu(2,2) ); R.yz( uu(3,2) );
@@ -177,7 +177,7 @@ apply_transform(
 { // translate xx2 by COM and fill in the new ref_pose coordinates
 	utility::vector1< core::id::AtomID > ids;
 	utility::vector1< numeric::xyzVector<core::Real> > positions;
-	
+
 	Vector x2;
 	FArray2D_double xx2;
 	FArray1D_double COM(3);
@@ -192,21 +192,21 @@ apply_transform(
 	}
 	mod_pose.batch_set_xyz(ids,positions);
 }
-	
+
 void align_chunk(core::pose::Pose & pose) {
 	std::list <Size> residue_list;
 	for (Size ires_pose=seqpos_start_; ires_pose<=seqpos_stop_; ++ires_pose) {
 		residue_list.push_back(ires_pose);
 	}
-	
+
 	numeric::xyzMatrix< core::Real > R;
 	numeric::xyzVector< core::Real > preT;
 	numeric::xyzVector< core::Real > postT;
-	
+
 	get_superposition_transformation( pose, *template_pose_, atom_map_, R, preT, postT );
 	apply_transform( pose, residue_list, R, preT, postT );
 }
-	
+
 void set_template(core::pose::PoseCOP template_pose,
 				  std::map <core::Size, core::Size> const & sequence_alignment ) {
 	template_pose_ = template_pose;
@@ -215,11 +215,11 @@ void set_template(core::pose::PoseCOP template_pose,
 
 void set_aligned_chunk(core::pose::Pose const & pose, Size const jump_number) {
 	jump_number_ = jump_number;
-	
+
 	std::list < Size > downstream_residues = downstream_residues_from_jump(pose, jump_number_);
 	seqpos_start_ = downstream_residues.front();
 	seqpos_stop_ = downstream_residues.back();
-	
+
 	// make sure it is continuous, may not be necessary if the function gets expanded to handle more than 1 chunk
 	assert(downstream_residues.size() == (seqpos_stop_ - seqpos_start_ + 1));
 }
@@ -227,14 +227,14 @@ void set_aligned_chunk(core::pose::Pose const & pose, Size const jump_number) {
 void set_reset_torsion_unaligned(bool reset_torsion_unaligned) {
 	reset_torsion_unaligned_ = reset_torsion_unaligned;
 }
-	
+
 void steal_torsion_from_template(core::pose::Pose & pose) {
-	basic::Tracer TR("pilot.yfsong.util");
+	basic::Tracer TR( "pilot.yfsong.util" );
 	using namespace ObjexxFCL::format;
 	for (Size ires_pose=seqpos_start_; ires_pose<=seqpos_stop_; ++ires_pose) {
 		if (reset_torsion_unaligned_) {
 			pose.set_omega(ires_pose, 180);
-			
+
 			if (secstruct_ == 'H') {
 				pose.set_phi(ires_pose,	 -60);
 				pose.set_psi(ires_pose,	 -45);
@@ -244,7 +244,7 @@ void steal_torsion_from_template(core::pose::Pose & pose) {
 				pose.set_psi(ires_pose,	  130);
 			}
 		}
-		
+
 		if (sequence_alignment_local_.find(ires_pose) != sequence_alignment_local_.end()) {
 			core::Size jres_template = sequence_alignment_local_.find(ires_pose)->second;
 			if ( !discontinued_upper(*template_pose_,jres_template) ) {
@@ -256,7 +256,7 @@ void steal_torsion_from_template(core::pose::Pose & pose) {
 				pose.set_psi(ires_pose,	template_pose_->psi(jres_template));
 			}
 			pose.set_omega(ires_pose,	template_pose_->omega(jres_template));
-			
+
 			while (ires_pose > align_trial_counter_.size()) {
 				align_trial_counter_.push_back(0);
 			}
@@ -265,7 +265,7 @@ void steal_torsion_from_template(core::pose::Pose & pose) {
 		TR.Debug << "torsion: " << I(4,ires_pose) << F(8,3, pose.phi(ires_pose)) << F(8,3, pose.psi(ires_pose)) << std::endl;
 	}
 }
-	
+
 bool get_local_sequence_mapping(core::pose::Pose const & pose,
 								int registry_shift = 0,
 								Size MAX_TRIAL = 10 )
@@ -275,12 +275,12 @@ bool get_local_sequence_mapping(core::pose::Pose const & pose,
 		++counter;
 		sequence_alignment_local_.clear();
 		core::pose::initialize_atomid_map( atom_map_, pose, core::id::BOGUS_ATOM_ID );
-		
+
 		core::Size seqpos_pose = RG_.random_range(seqpos_start_, seqpos_stop_);
 
 		if (sequence_alignment_.find(seqpos_pose+registry_shift) == sequence_alignment_.end()) continue;
 		core::Size seqpos_template = sequence_alignment_.find(seqpos_pose+registry_shift)->second;
-		
+
 		if(align_to_ss_only_) {
 			if (template_pose_->secstruct(seqpos_template) == 'L') continue;
 		}
@@ -288,7 +288,7 @@ bool get_local_sequence_mapping(core::pose::Pose const & pose,
 			secstruct_ = template_pose_->secstruct(seqpos_template);
 		}
 
-		
+
 		core::Size atom_map_count = 0;
 		for (Size ires_pose=seqpos_pose; ires_pose>=seqpos_start_; --ires_pose) {
 			int jres_template = ires_pose + seqpos_template - seqpos_pose;
@@ -299,7 +299,7 @@ bool get_local_sequence_mapping(core::pose::Pose const & pose,
 			if(copy_ss_torsion_only_) {
 				if (template_pose_->secstruct(jres_template) == 'L') continue;
 			}
-			
+
 			sequence_alignment_local_[ires_pose] = jres_template;
 			core::id::AtomID const id1( pose.residue_type(ires_pose).atom_index("CA"), ires_pose );
 			core::id::AtomID const id2( template_pose_->residue_type(jres_template).atom_index("CA"), jres_template );
@@ -309,53 +309,53 @@ bool get_local_sequence_mapping(core::pose::Pose const & pose,
 		for (Size ires_pose=seqpos_pose+1; ires_pose<=seqpos_stop_; ++ires_pose) {
 			int jres_template = ires_pose + seqpos_template - seqpos_pose;
 			if (discontinued_lower(*template_pose_,jres_template)) break;
-			
+
 			if ( jres_template <= 0 || jres_template > template_pose_->total_residue() ) continue;
 			if ( !template_pose_->residue_type(jres_template).is_protein() ) continue;
 			if(copy_ss_torsion_only_) {
 				if (template_pose_->secstruct(jres_template) == 'L') continue;
 			}
-			
+
 			sequence_alignment_local_[ires_pose] = jres_template;
 			core::id::AtomID const id1( pose.residue_type(ires_pose).atom_index("CA"), ires_pose );
 			core::id::AtomID const id2( template_pose_->residue_type(jres_template).atom_index("CA"), jres_template );
 			atom_map_[ id1 ] = id2;
 			++atom_map_count;
 		}
-		
+
 		if (atom_map_count >=3) {
 			return true;
 		}
 	}
-	return false;	
+	return false;
 }
-	
+
 void set_registry_shift(int registry_shift) {
 	registry_shift_ = registry_shift;
 }
-	
+
 Size trial_counter(Size ires) {
 	if (ires <= align_trial_counter_.size()) {
-		return align_trial_counter_[ires];	
+		return align_trial_counter_[ires];
 	}
 	return 0;
 }
-	
+
 void
 apply(core::pose::Pose & pose) {
 	// apply alignment
 	bool success = get_local_sequence_mapping(pose, registry_shift_);
 	if (!success) return;
-	
+
 	steal_torsion_from_template(pose);
 	align_chunk(pose);
 }
-	
+
 std::string
 get_name() const {
 	return "AlignChunkMover";
 }
-	
+
 private:
 	numeric::random::RandomGenerator & RG_;
 	core::pose::PoseCOP template_pose_;
@@ -371,7 +371,7 @@ private:
 	bool reset_torsion_unaligned_; // reset torsion of unaligned region to the default value for the given secondary structure
 	bool align_to_ss_only_; // only use the secondary structure portion to align to the template
 	bool copy_ss_torsion_only_; // only copy the secondary structure information from the template
-	
+
 	std::map <core::Size, core::Size> sequence_alignment_local_;
 	core::id::AtomID_Map< core::id::AtomID > atom_map_; // atom map for superposition
 	utility::vector1 <Size> align_trial_counter_;
@@ -379,7 +379,7 @@ private:
 
 class MultiTemplateAlignChunkMover: public protocols::moves::Mover
 {
-	
+
 public:
 MultiTemplateAlignChunkMover(numeric::random::RandomGenerator & RG,
 							 utility::vector1 < core::pose::PoseOP > const & template_poses,
@@ -393,7 +393,7 @@ align_chunk_(RG_),
 max_registry_shift_input_(max_registry_shift)
 {
 	bool alignment_from_template = option[challenge::aligned]();
-	
+
 	// set up secstruct chunks
 	template_ss_chunks_.clear();
 	template_ss_chunks_.resize(template_poses_.size());
@@ -401,7 +401,7 @@ max_registry_shift_input_(max_registry_shift)
 		// find ss chunks in template
 		template_ss_chunks_[i_template] = extract_secondary_structure_chunks(*template_poses_[i_template]);
 	}
-	
+
 	Size count = 0;
 	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
 		if (template_ss_chunks_[i_template].size() != 0) ++count;
@@ -409,7 +409,7 @@ max_registry_shift_input_(max_registry_shift)
 	if (count == 0) {
 		utility_exit_with_message("Template structures need at least one secondary structure for this protocol");
 	}
-	
+
 	sequence_alignments_.clear();
 	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
 		std::map <core::Size, core::Size> sequence_alignment;
@@ -423,7 +423,7 @@ max_registry_shift_input_(max_registry_shift)
 					chunk_mapping[i] = option[challenge::chunk_mapping]()[i];
 				}
 			}
-			
+
 			get_alignment_from_chunk_mapping(chunk_mapping, template_ss_chunks_[i_template], ss_chunks_pose, sequence_alignment);
 		}
 		sequence_alignments_.push_back(sequence_alignment);
@@ -438,7 +438,7 @@ get_alignment_from_template(core::pose::PoseCOP const template_pose, std::map <c
 	}
 }
 
-	
+
 void
 get_alignment_from_chunk_mapping(std::map <core::Size, core::Size> const & chunk_mapping,
 								 Loops const template_ss_chunks,
@@ -449,11 +449,11 @@ get_alignment_from_chunk_mapping(std::map <core::Size, core::Size> const & chunk
 	for (Size i_chunk_pose = 1; i_chunk_pose <= target_ss_chunks.size(); ++i_chunk_pose) {
 		if (chunk_mapping.find(i_chunk_pose) == chunk_mapping.end()) continue;
 		core::Size j_chunk_template = chunk_mapping.find(i_chunk_pose)->second;
-		
+
 		Size respos_mid_pose = (target_ss_chunks[i_chunk_pose].start() + target_ss_chunks[i_chunk_pose].stop()) / 2;
 		Size respos_mid_template = (template_ss_chunks[j_chunk_template].start() + template_ss_chunks[j_chunk_template].stop()) / 2;
 		int offset = respos_mid_template - respos_mid_pose;
-		
+
 		using namespace ObjexxFCL::format;
 		if (target_ss_chunks[i_chunk_pose].length() <= template_ss_chunks[j_chunk_template].length()) {
 			max_registry_shift_[i_chunk_pose] = max_registry_shift_input_ + template_ss_chunks[j_chunk_template].length() - target_ss_chunks[i_chunk_pose].length();
@@ -471,10 +471,10 @@ get_alignment_from_chunk_mapping(std::map <core::Size, core::Size> const & chunk
 		}
 	}
 }
-	
+
 void pick_random_template() {
 	assert(template_poses_.size() != 0);
-	
+
 	template_number_ = 0;
 	while (!template_number_) {
 		template_number_ = RG_.random_range(1, template_poses_.size());
@@ -487,9 +487,9 @@ void pick_random_chunk(core::pose::Pose & pose) {
 }
 
 Size trial_counter(Size ires) {
-	return align_chunk_.trial_counter(ires);	
+	return align_chunk_.trial_counter(ires);
 }
-	
+
 void
 apply(core::pose::Pose & pose) {
 	max_registry_shift_.resize(pose.num_jump(), max_registry_shift_input_);
@@ -497,14 +497,14 @@ apply(core::pose::Pose & pose) {
 	// pick a random template
 	pick_random_template();
 	align_chunk_.set_template(template_poses_[template_number_], sequence_alignments_[template_number_]);
-	
+
 	// random chunk or loop all chunks
 	if (align_option_ == random_chunk) {
 		// pick a random jump
 		pick_random_chunk(pose);
 		align_chunk_.set_aligned_chunk(pose, jump_number_);
 		align_chunk_.set_reset_torsion_unaligned(false);
-		
+
 		// apply alignment
 		int registry_shift = RG_.random_range(-max_registry_shift_[jump_number_], max_registry_shift_[jump_number_]);
 		align_chunk_.set_registry_shift(registry_shift);
@@ -514,7 +514,7 @@ apply(core::pose::Pose & pose) {
 		// loop over all jumps
 		for (core::Size jump_number=1; jump_number<=pose.num_jump(); ++jump_number) {
 			align_chunk_.set_aligned_chunk(pose, jump_number);
-			
+
 			// apply alignment
 			int registry_shift = RG_.random_range(-max_registry_shift_[jump_number], max_registry_shift_[jump_number]);
 			align_chunk_.set_registry_shift(registry_shift);
@@ -527,18 +527,18 @@ std::string
 get_name() const {
 	return "MultiTemplateAlignChunkMover";
 }
-	
+
 private:
 	AlignChunkMover align_chunk_;
 	numeric::random::RandomGenerator & RG_;
 	AlignOption align_option_;
-	
+
 	utility::vector1 < core::pose::PoseCOP > template_poses_;
 	utility::vector1 < Loops > template_ss_chunks_;
 	utility::vector1 < std::map <core::Size, core::Size> > sequence_alignments_;
 	Size max_registry_shift_input_;
 	utility::vector1 < Size > max_registry_shift_;
-	
+
 	Size template_number_; // the jump to be realigned
 	Size jump_number_; // the jump to be realigned
 }; //class MultiTemplateAlignChunkMover
@@ -548,13 +548,13 @@ class CustomStarTreeMover: public protocols::moves::Mover
 void
 apply(core::pose::Pose & pose)
 {
-	basic::Tracer TR("pilot.yfsong.util");
+	basic::Tracer TR( "pilot.yfsong.util" );
 	if ( ! option[ OptionKeys::in::file::psipred_ss2 ].user() ) {
 		utility_exit_with_message("Error in reading psipred_ss2 file, is the -in:file:psipred_ss2 flag set correctly?");
 	}
 	bool check_psipred = set_secstruct_from_psipred_ss2(pose);
 	assert (check_psipred);
-	
+
 	// Build the star fold tree, identify jumps
 	if (option[challenge::ss].user()) {
 		ss_chunks_pose_ = extract_secondary_structure_chunks( pose, option[challenge::ss]() );
@@ -569,7 +569,7 @@ apply(core::pose::Pose & pose)
 	TR.Debug << "Target loops: " << pose.total_residue() << std::endl;
 	TR.Debug << loops_pose_ << std::endl;
 	TR.flush();
-	
+
 	/*
 	if (option[challenge::virtual_loop]()) {
 		set_loops_to_virt_ala(pose, loops_pose_);
@@ -586,7 +586,7 @@ apply(core::pose::Pose & pose)
 			//Size new_start = (ss_chunks_pose_[i-1].stop() + 1);
 			chunks[i].set_start( new_start );
 		}
-		
+
 		if (i==chunks.num_loop()) {
 			chunks[i].set_stop(pose.total_residue());
 		}
@@ -597,7 +597,7 @@ apply(core::pose::Pose & pose)
 	}
 	TR.Debug << "Chunks: " << pose.total_residue() << std::endl;
 	TR.Debug << chunks << std::endl;
-	
+
 	StarTreeBuilder builder;
 	if (chunks.num_loop() > 0) {
 		builder.set_up(chunks, &pose);
@@ -605,7 +605,7 @@ apply(core::pose::Pose & pose)
 	TR.Debug << pose.fold_tree() << std::endl;
 	protocols::nonlocal::add_cutpoint_variants(&pose);
 }
-	
+
 std::string
 get_name() const {
 	return "CustomStarTreeMover";
@@ -615,7 +615,7 @@ private:
 	Loops loops_pose_;
 
 }; // class CustomStarTreeMover
-	
+
 	/// @brief A Mover that insert fragments to the loop region
 class CustomFragmentMover: public protocols::moves::Mover
 {
@@ -673,30 +673,30 @@ numeric::random::RandomGenerator & RG_;
 utility::vector1< core::fragment::FragSetOP > frag_libs_;
 utility::vector1< utility::vector1< Size > > frag_insert_pos_weights_;
 };
-	
+
 class HelixMover: public protocols::moves::Mover
 {
 public:
 	HelixMover(numeric::random::RandomGenerator & RG) : RG_(RG)
 	{
 	}
-	
+
 	numeric::xyzVector<core::Real>
 	get_helix_center(core::pose::Pose const & pose, Size const ires) {
 		assert(ires > 1 && ires < pose.total_residue());
 		for (Size i = ires-1; i<=ires+1; ++i) {
 			assert(pose.residue_type(i).is_protein());
 		}
-		
+
 		numeric::xyzVector<core::Real> center_vect = pose.residue(ires-1).xyz("CA") + pose.residue(ires+1).xyz("CA") - 2.*pose.residue(ires).xyz("CA");
 		center_vect.normalize();
 		numeric::xyzVector<core::Real> helix_center = pose.residue(ires).xyz("CA") + center_vect * 2.3;
 		return helix_center;
-		
+
 		//using namespace ObjexxFCL::format;
 		//std::cout << "ATOM   9999  X   DUM A 999    " << F(8,3,helix_center.x())<< F(8,3,helix_center.y())<< F(8,3,helix_center.z()) << std::endl;
 	}
-	
+
 	bool
 	get_helix_centers(core::pose::Pose const & pose, Size const seqpos_start, Size const seqpos_stop,
 					  utility::vector1< numeric::xyzVector<core::Real> > & helix_centers)
@@ -709,14 +709,14 @@ public:
 			if (pose.secstruct(ires-1) == 'H' &&
 				pose.secstruct(ires)   == 'H' &&
 				pose.secstruct(ires+1) == 'H') {
-				
+
 				helix_centers[ires] = get_helix_center(pose, ires);
 				updated[ires] = true;
 				++counts;
 			}
 		}
 		if (counts < 4) return false;
-		
+
 		// extrapolate helix center from the edge of helices, does not follow the trace of protein anymore
 		bool updating = true;
 		while (updating) {
@@ -757,7 +757,7 @@ public:
 		}
 		return true;
 	}
-	
+
 bool
 get_helix_vectors(core::pose::Pose const & pose,
 				  Size const seqpos_start, Size const seqpos_stop,
@@ -765,12 +765,12 @@ get_helix_vectors(core::pose::Pose const & pose,
 	utility::vector1< numeric::xyzVector<core::Real> > helix_centers(pose.total_residue());
 	bool success = get_helix_centers(pose,seqpos_start,seqpos_stop,helix_centers);
 	if (!success) return false;
-	
+
 	for (Size ires=seqpos_start; ires<seqpos_stop; ++ires) {
 		helix_vectors[ires] = helix_centers[ires+1] - helix_centers[ires];
 	}
 	helix_vectors[seqpos_stop] = helix_vectors[seqpos_stop-1];
-	
+
 	//smooth
 	//smoothed_helix_vectors.resize(helix_length);
 	/*
@@ -789,19 +789,19 @@ get_helix_vectors(core::pose::Pose const & pose,
 	 */
 	return true;
 }
-	
+
 	void
 	slide_non_ideal_helix(core::pose::Pose & pose, Size const seqpos_start, Size const seqpos_stop, core::Real const distance)
 	{
 		utility::vector1< numeric::xyzVector<core::Real> > helix_vectors(pose.total_residue());
 		bool success = get_helix_vectors(pose, seqpos_start, seqpos_stop, helix_vectors);
 		if (!success) return;
-		
+
 		if (distance > 0) {
 			for (Size ires = seqpos_start; ires < seqpos_stop; ++ires) {
 				helix_vectors[ires] += helix_vectors[ires+1];
 				helix_vectors[ires].normalize();
-			}		
+			}
 		}
 		else {
 			for (Size ires = seqpos_stop; ires > seqpos_start; ++ires) {
@@ -809,7 +809,7 @@ get_helix_vectors(core::pose::Pose const & pose,
 				helix_vectors[ires].normalize();
 			}
 		}
-		
+
 		// apply transformation to each residue in the chain
 		utility::vector1< core::id::AtomID > ids;
 		utility::vector1< numeric::xyzVector<core::Real> > positions;
@@ -822,7 +822,7 @@ get_helix_vectors(core::pose::Pose const & pose,
 		}
 		pose.batch_set_xyz(ids,positions);
 	}
-	
+
 	void
 	apply(core::pose::Pose & pose)
 	{
@@ -830,7 +830,7 @@ get_helix_vectors(core::pose::Pose const & pose,
 		std::list < Size > downstream_residues = downstream_residues_from_jump(pose, jump_number);
 		Size seqpos_start = downstream_residues.front();
 		Size seqpos_stop = downstream_residues.back();
-		
+
 		Real distance = 2. * RG_.uniform();
 		slide_non_ideal_helix(pose, seqpos_start, seqpos_stop, distance);
 	}
@@ -838,12 +838,12 @@ get_helix_vectors(core::pose::Pose const & pose,
 	get_name() const {
 		return "HelixMover";
 	}
-	
+
 private:
 	numeric::random::RandomGenerator & RG_;
-	
+
 }; //class HelixMover
-	
+
 } // pilot
 } // apps
 

@@ -22,8 +22,7 @@
 #include <numeric/random/random.hh>
 
 using namespace core;
-static basic::Tracer TR( "protocols.sampler.MC_OneTorsion" );
-static numeric::random::RandomGenerator RG( 2558493 );  // Magic number
+static thread_local basic::Tracer TR( "protocols.sampler.MC_OneTorsion" );
 
 namespace protocols {
 namespace stepwise {
@@ -44,10 +43,10 @@ MC_OneTorsion::MC_OneTorsion(
 ///////////////////////////////////////////////////////////////////////////
 void MC_OneTorsion::operator++() {
 	if ( uniform_modeler() ) {
-		active_angle_ = RG.uniform() * (angle_max_ - angle_min_) + angle_min_;
+		active_angle_ = numeric::random::rg().uniform() * (angle_max_ - angle_min_) + angle_min_;
 		regularize_angle( active_angle_ );
 	} else {
-		active_angle_ = RG.gaussian() * stdev_ + stored_angle_;
+		active_angle_ = numeric::random::rg().gaussian() * stdev_ + stored_angle_;
 		if ( check_angle_in_range( active_angle_ ) ) {
 			regularize_angle( active_angle_ );
 		} else {

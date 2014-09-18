@@ -39,7 +39,7 @@
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR( "apps.pilot.ralford.score_mp_pose" );
+static thread_local basic::Tracer TR( "apps.pilot.ralford.score_mp_pose" );
 
 void*
 my_main( void* )

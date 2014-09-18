@@ -1,4 +1,3 @@
-// Project Headers
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 sw=2 noet:
 //
@@ -80,40 +79,40 @@
 /**@brief This is a protocol... **/
 namespace protocols
 {
-	/**@brief ...that lives inside of motif_grafting... **/
-	namespace motif_grafting
-	{
-		/**@brief ...and belongs to the movers class... **/
-		namespace movers
-		{
-			/**@brief Global class rosetta protocols tracer**/
-			static basic::Tracer TR( "protocols.motif_grafting.movers.MotifGraftMover" ); 
+/**@brief ...that lives inside of motif_grafting... **/
+namespace motif_grafting
+{
+/**@brief ...and belongs to the movers class... **/
+namespace movers
+{
+/**@brief Global class rosetta protocols tracer**/
+static thread_local basic::Tracer TR( "protocols.motif_grafting.movers.MotifGraftMover" );
 			
+
+MotifGraftMover::MotifGraftMover()
+{
+	gp_b_is_first_run_ = true;
+}
 			
-			MotifGraftMover::MotifGraftMover()
-			{
-				gp_b_is_first_run_ = true;
-			}
-			
-			/**@brief MotifGraftMover parameters and options initializer**/
-			void MotifGraftMover::init_parameters(
-			std::string const & s_contextStructure,
-			std::string const & s_motif,
-			core::Real  const & r_RMSD_tolerance,
-			core::Real  const & r_NC_points_RMSD_tolerance,
-			core::Size  const & i_clash_score_cutoff,
-			std::string const & s_combinatory_fragment_size_delta,
-			std::string const & s_max_fragment_replacement_size_delta,
-			std::string const & s_clash_test_residue,
-			std::string const & s_hotspots,
-			bool              & b_full_motif_bb_alignment,
-			bool        const & b_allow_independent_alignment_per_fragment,
-			bool        const & b_graft_only_hotspots_by_sidechain_replacement,
-			bool        const & b_only_allow_if_N_point_match_aa_identity,
-			bool        const & b_only_allow_if_C_point_match_aa_identity,
-			bool        const & b_revert_graft_to_native_sequence,
-			bool        const & b_allow_repeat_same_graft_output)
-			{
+/**@brief MotifGraftMover parameters and options initializer**/
+void MotifGraftMover::init_parameters(
+	std::string const & s_contextStructure,
+	std::string const & s_motif,
+	core::Real  const & r_RMSD_tolerance,
+	core::Real  const & r_NC_points_RMSD_tolerance,
+	core::Size  const & i_clash_score_cutoff,
+	std::string const & s_combinatory_fragment_size_delta,
+	std::string const & s_max_fragment_replacement_size_delta,
+	std::string const & s_clash_test_residue,
+	std::string const & s_hotspots,
+	bool              & b_full_motif_bb_alignment,
+	bool        const & b_allow_independent_alignment_per_fragment,
+	bool        const & b_graft_only_hotspots_by_sidechain_replacement,
+	bool        const & b_only_allow_if_N_point_match_aa_identity,
+	bool        const & b_only_allow_if_C_point_match_aa_identity,
+	bool        const & b_revert_graft_to_native_sequence,
+	bool        const & b_allow_repeat_same_graft_output)
+{
 				//Parse the arguments in the global space variables
 				MotifGraftMover::parse_my_string_arguments_and_cast_to_globalPrivateSpaceVariables(
 					s_contextStructure,

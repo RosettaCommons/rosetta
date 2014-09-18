@@ -47,7 +47,7 @@
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
 //// C++ headers
-static basic::Tracer tr("protocols.fldsgn.filters.CoreDunbrackFilter");
+static thread_local basic::Tracer tr( "protocols.fldsgn.filters.CoreDunbrackFilter" );
 
 namespace protocols {
 namespace fldsgn {

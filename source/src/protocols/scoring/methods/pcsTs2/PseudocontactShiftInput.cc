@@ -57,7 +57,7 @@ namespace scoring{
 namespace methods{
 namespace pcsTs2{
 
-basic::Tracer TR_PCS_d_i_Ts2("protocols.scoring.methods.pcsTs2.PCS_data_input_Ts2");
+static thread_local basic::Tracer TR_PCS_d_i_Ts2( "protocols.scoring.methods.pcsTs2.PCS_data_input_Ts2" );
 
 PCS_line_data_Ts2::PCS_line_data_Ts2(PCS_line_data_Ts2 const & other):
 	residue_num_(other.residue_num_),

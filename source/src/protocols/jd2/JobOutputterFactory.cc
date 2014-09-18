@@ -35,9 +35,13 @@
 namespace protocols {
 namespace jd2 {
 
-static basic::Tracer TR( "protocols.jd2.JobOutputterFactory" );
+static thread_local basic::Tracer TR( "protocols.jd2.JobOutputterFactory" );
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< JobOutputterFactory * > JobOutputterFactory::instance_( 0 );
+#else
 JobOutputterFactory * JobOutputterFactory::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

@@ -77,7 +77,7 @@ void register_options() {
 }
 
 
-static basic::Tracer TR("protocols.jd2.JobDistributor");
+static thread_local basic::Tracer TR( "protocols.jd2.JobDistributor" );
 
 //multithreaded case requires specia
 ///end parser interface, start Job Distributor interface/////////////
@@ -131,12 +131,11 @@ std::string current_output_filename() {
 
 void
 write_score_tracer( core::pose::Pose const& pose_in, std::string tracer_point ) {
-	static basic::Tracer tr_score("protocols.jd2.score", basic::t_info, true /*muted by default*/ );
+	basic::Tracer tr_score("protocols.jd2.score", basic::t_info, true /*muted by default*/ );
 
 	if ( !tr_score.visible() ) return;
 
-	JobDistributor* jd
-	 = JobDistributor::get_instance();
+	JobDistributor* jd = JobDistributor::get_instance();
 
   if ( !jd || !jd->job_outputter()) {
     tr_score.Warning << "can't output intermediate pose if not running with  jobdistributor ( jd2 / 2008 )" << std::endl;

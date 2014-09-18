@@ -69,7 +69,7 @@
 #include <sstream>
 
 
-static basic::Tracer tr("protocols.toolbox.match_enzdes_util.EnzConstraintParameters");
+static thread_local basic::Tracer tr( "protocols.toolbox.match_enzdes_util.EnzConstraintParameters" );
 
 namespace protocols {
 namespace toolbox{

@@ -46,7 +46,7 @@
 #endif
 
 
-static basic::Tracer TR("protocols.denovo_design.ExposedHydrophobicsFilter");
+static thread_local basic::Tracer TR( "protocols.denovo_design.ExposedHydrophobicsFilter" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

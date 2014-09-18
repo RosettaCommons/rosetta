@@ -44,7 +44,7 @@ namespace core {
 namespace import_pose {
 
 /// @brief special Tracer instance acting as special param for all traced_dump_pdb functions
-extern basic::Tracer TR_dump_pdb_dummy;
+/// extern basic::Tracer TR_dump_pdb_dummy;
 
 void
 read_all_poses(

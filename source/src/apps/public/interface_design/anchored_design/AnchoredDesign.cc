@@ -33,7 +33,7 @@ using basic::Error;
 using basic::Warning;
 
 //replaces cout
-static basic::Tracer TR("apps.public.interface_design.anchored_design.AnchoredDesign");
+static thread_local basic::Tracer TR( "apps.public.interface_design.anchored_design.AnchoredDesign" );
 
 ///@brief main method for anchored design.  most activity in the movers.
 int

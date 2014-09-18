@@ -108,10 +108,10 @@ using basic::T;
 using basic::Warning;
 using basic::Error;
 
-basic::Tracer TRnat("rot_anl.nat");
-basic::Tracer TRmin("rot_anl.min");
-basic::Tracer TRrtmin("rot_anl.rtmin");
-basic::Tracer TRscmove("rot_anl.scmove");
+static thread_local basic::Tracer TRnat( "rot_anl.nat" );
+static thread_local basic::Tracer TRmin( "rot_anl.min" );
+static thread_local basic::Tracer TRrtmin( "rot_anl.rtmin" );
+static thread_local basic::Tracer TRscmove( "rot_anl.scmove" );
 
 //Map of the atoms that are used in each motif
 std::map < std::string, utility::vector1< std::string > > sc_rmsd_AtomIDs(

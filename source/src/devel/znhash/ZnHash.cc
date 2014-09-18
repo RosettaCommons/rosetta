@@ -55,7 +55,7 @@ namespace znhash {
 /// @details Auto-generated virtual destructor
 ZnHash::~ZnHash() {}
 
-basic::Tracer TR( "devel.znhash.ZnHash" );
+static thread_local basic::Tracer TR( "devel.znhash.ZnHash" );
 
 ZnMatchData::ZnMatchData() :
 	res1_(0),

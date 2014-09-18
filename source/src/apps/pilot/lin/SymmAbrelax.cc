@@ -112,7 +112,7 @@ using utility::vector1;
 using std::string;
 using core::import_pose::pose_from_pdb;
 
-basic::Tracer TR( "apps.pilot.lin.symmabrelax" );
+static thread_local basic::Tracer TR( "apps.pilot.lin.symmabrelax" );
 
 
 void

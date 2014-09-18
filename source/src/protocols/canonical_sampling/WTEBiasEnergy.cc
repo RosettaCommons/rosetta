@@ -18,7 +18,6 @@
 #include <core/scoring/Energies.hh>
 
 //static basic::Tracer tr( "protocols.canonical_sampling.BiasEnergy" );
-//static numeric::random::RandomGenerator RG(2592747);
 
 namespace protocols {
 namespace canonical_sampling {

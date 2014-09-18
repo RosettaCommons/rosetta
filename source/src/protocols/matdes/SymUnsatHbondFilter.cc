@@ -70,7 +70,7 @@
 namespace protocols {
 namespace matdes {
 
-static basic::Tracer TR( "protocols.matdes.SymUnsatHbondFilter" );
+static thread_local basic::Tracer TR( "protocols.matdes.SymUnsatHbondFilter" );
 
 
 // @brief default constructor

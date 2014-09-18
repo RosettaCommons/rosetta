@@ -40,7 +40,7 @@
 namespace protocols {
 namespace nonlocal {
 
-static basic::Tracer TR("protocols.nonlocal.HelixRotate");
+static thread_local basic::Tracer TR( "protocols.nonlocal.HelixRotate" );
 
 HelixRotate::HelixRotate() {
 	initialize(protocols::loops::Loop(), 0.0);

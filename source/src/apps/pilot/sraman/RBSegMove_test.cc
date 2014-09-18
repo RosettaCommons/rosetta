@@ -62,7 +62,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-basic::Tracer TR("rbsegmove_test");
+static thread_local basic::Tracer TR( "rbsegmove_test" );
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

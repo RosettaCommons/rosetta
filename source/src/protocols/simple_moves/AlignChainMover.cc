@@ -16,7 +16,7 @@
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.simple_moves.AlignChainMover" );
+static thread_local basic::Tracer TR( "protocols.simple_moves.AlignChainMover" );
 
 #include <utility/tag/Tag.hh>
 #include <boost/foreach.hpp>

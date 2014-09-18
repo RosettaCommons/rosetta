@@ -73,7 +73,7 @@ public:
 		the_pose = new Pose;
 		core::import_pose::pose_from_pdb( *the_pose, "protocols/moves/test_in.pdb" );
 
-		core::init::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
+		core::init::init_random_generators(1000, "mt19937");
 	}
 
 	void tearDown() {
@@ -82,13 +82,16 @@ public:
 
 	void test_OneSmallMover() {
 		protocols::simple_moves::SmallMover mover; // create a default small mover
-		core::Real correct_phi ( -57.0946 );
-		core::Real correct_psi ( -57.1872 );
+		core::Real correct_phi ( 113.453390089941 );
+		core::Real correct_psi ( -131.084764764517 );
 		// make the move
 		mover.apply( *the_pose );
 
 		core::Real phi = mover.new_phi();
 		core::Real psi = mover.new_psi();
+
+		//std::cout.precision( 15 );
+		//std::cout << "phi: " << phi << " psi: " << psi << std::endl;
 
 		// compare to the correct answer
 		float const TOLERATED_ERROR = 0.0001;
@@ -167,31 +170,7 @@ public:
 		TR << "test_SmallMover completed!! " << std::endl;
 	}
 
-	void test_comprehensiveSmallMover() {
-		core::pose::Pose initial_pose;
-		initial_pose = *the_pose;
-		protocols::simple_moves::SmallMover mover; // create a default small mover
-		// make the move
-		mover.apply( *the_pose );
+	// APL Note: removing the "test_comprehensiveSmallMover" unit test
 
-		// make sure that only the residues before the move location are the same and only the residue
-		// after the move point have changed
-		// I'm not sure this is the right way to do this...  Monica Berrondo
-		for ( unsigned int i=1; i<=the_pose->total_residue(); ++i ) {
-			// if the residue number is less than or equal to that which gets changed, the coordinates should be the same,
-			// within some tolerance (0.005).
-			if ( i <= 27 ) {
-				TS_ASSERT_DELTA( the_pose->residue(i).atom("CA").xyz()[0], initial_pose.residue(i).atom("CA").xyz()[0], 0.005 );
-				TS_ASSERT_DELTA( the_pose->residue(i).atom("CA").xyz()[1], initial_pose.residue(i).atom("CA").xyz()[1], 0.005 );
-				TS_ASSERT_DELTA( the_pose->residue(i).atom("CA").xyz()[2], initial_pose.residue(i).atom("CA").xyz()[2], 0.005 );
-			// if the residue number is greater than that which gets changed, the coordinates should differ
-			} else {
-				TS_ASSERT_DIFFERS( the_pose->residue(i).atom("CA").xyz()[0], initial_pose.residue(i).atom("CA").xyz()[0] );
-				TS_ASSERT_DIFFERS( the_pose->residue(i).atom("CA").xyz()[1], initial_pose.residue(i).atom("CA").xyz()[1] );
-				TS_ASSERT_DIFFERS( the_pose->residue(i).atom("CA").xyz()[2], initial_pose.residue(i).atom("CA").xyz()[2] );
-			}
-		}
-		TR << "test_comprehensiveSmallMover completed!! " << std::endl;
-	}
 };
 

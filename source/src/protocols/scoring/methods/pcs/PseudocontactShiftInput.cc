@@ -58,7 +58,7 @@ namespace scoring{
 namespace methods{
 namespace pcs{
 
-basic::Tracer TR_PCS_d_i("protocols.scoring.methods.pcs.PCS_data_input");
+static thread_local basic::Tracer TR_PCS_d_i( "protocols.scoring.methods.pcs.PCS_data_input" );
 
 PCS_line_data::PCS_line_data() :
 	residue_num_(0),
@@ -309,7 +309,12 @@ PCS_data_input_manager::get_input_data(utility::vector1<std::string> const & fil
 	return(pcs_d_i);
 }
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< PCS_data_input_manager * > PCS_data_input_manager::instance_( 0 );
+#else
 PCS_data_input_manager * PCS_data_input_manager::instance_( 0 );
+#endif
+
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

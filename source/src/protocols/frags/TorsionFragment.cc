@@ -57,7 +57,7 @@ using namespace core::conformation;
 using std::endl;
 using std::string;
 using utility::vector1;
-static basic::Tracer TR( "protocols.frags.TorsionFragment" );
+static thread_local basic::Tracer TR( "protocols.frags.TorsionFragment" );
 
 typedef utility::vector1< core::Size > Sizes;
 
@@ -519,7 +519,7 @@ TorsionFragmentMover::apply( pose::Pose & pose )
 	if ( check_ss_lengths_this_time ) save_pose = pose;
 	while ( ntries < 1000 ) {
 		++ntries;
-		Size const window( numeric::random::RG.random_element( windows ) );
+		Size const window( numeric::random::rg().random_element( windows ) );
 		Size const nfrags = lib[ window ].size();
 		if ( nfrags <= 0 ) continue;
 		Size const nn( static_cast< int > ( numeric::random::uniform() * nfrags ) + 1 );
@@ -1057,7 +1057,7 @@ insert_random_fragments_in_flexible_protein_regions(
 	for ( vector1< Size >::const_iterator size= frag_sizes.begin(); size!= frag_sizes.end(); ++size ) {
 		Size const frag_size( *size );
 		protocols::frags::TorsionFragmentLibrary const & lib( frag_lib.library( frag_size ) );
-		numeric::random::random_permutation( all_positions, numeric::random::RG );
+		numeric::random::random_permutation( all_positions, numeric::random::rg() );
 		for ( Sizes::const_iterator pos = all_positions.begin(); pos != all_positions.end(); ++pos ) {
 			Size const i( *pos );
 			if ( i+frag_size-1 > nres ) continue;

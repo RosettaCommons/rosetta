@@ -26,7 +26,7 @@ namespace loggers {
 using namespace std;
 using core::pose::Pose;
 
-static basic::Tracer TR("protocols.loop_modeling.loggers.ProgressBar");
+static thread_local basic::Tracer TR( "protocols.loop_modeling.loggers.ProgressBar" );
 
 ProgressBar::ProgressBar(string label) : label_(label) {}
 

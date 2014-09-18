@@ -64,7 +64,7 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-static basic::Tracer TR("coiled_coil");
+static thread_local basic::Tracer TR( "coiled_coil" );
 
 using core::Size;
 using core::Real;

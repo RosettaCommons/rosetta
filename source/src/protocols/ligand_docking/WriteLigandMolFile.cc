@@ -37,7 +37,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-basic::Tracer write_ligand_tracer("protocols.ligand_docking.WriteLigandMolFile");
+static thread_local basic::Tracer write_ligand_tracer( "protocols.ligand_docking.WriteLigandMolFile" );
 
 std::string
 WriteLigandMolFileCreator::keyname() const

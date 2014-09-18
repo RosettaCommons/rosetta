@@ -48,8 +48,7 @@
 
 // Project Headers
 
-static basic::Tracer tr("protocols.topo_broker.fold_and_dock",basic::t_info);
-static numeric::random::RandomGenerator RG(24278234);
+static thread_local basic::Tracer tr( "protocols.topo_broker.fold_and_dock", basic::t_info );
 
 namespace protocols {
 namespace topology_broker {

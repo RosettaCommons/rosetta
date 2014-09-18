@@ -53,7 +53,7 @@
 namespace devel {
 namespace cutoutdomain {
 
-static basic::Tracer TR( "devel.cutoutdomain.CutOutDomain" );
+static thread_local basic::Tracer TR( "devel.cutoutdomain.CutOutDomain" );
 
 std::string
 CutOutDomainCreator::keyname() const
@@ -132,7 +132,7 @@ CutOutDomain::find_nearest_res( core::pose::Pose const & source, core::pose::Pos
       nearest_res = i;
     }
   }
-  static basic::Tracer TR("This is nearest_res");
+static thread_local basic::Tracer TR( "This is nearest_res" );
 
       TR<<nearest_res<<std::endl;
   if( min_dist <= 10.0 ) return nearest_res;

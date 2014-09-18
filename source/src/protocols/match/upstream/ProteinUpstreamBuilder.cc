@@ -52,7 +52,7 @@ namespace upstream {
 /// @details Auto-generated virtual destructor
 FullChiSampleSet::~FullChiSampleSet() {}
 
-static basic::Tracer TR( "protocols.match.upstream.ProteinUpstreamBuilder" );
+static thread_local basic::Tracer TR( "protocols.match.upstream.ProteinUpstreamBuilder" );
 
 /// dummy return value
 BuildSet b;

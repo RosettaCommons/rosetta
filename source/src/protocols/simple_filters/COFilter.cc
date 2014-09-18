@@ -37,7 +37,7 @@
 
 
 //// C++ headers
-static basic::Tracer tr("protocols.filters.COFilter");
+static thread_local basic::Tracer tr( "protocols.filters.COFilter" );
 
 namespace protocols {
 namespace simple_filters {

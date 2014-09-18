@@ -36,8 +36,7 @@ namespace rbsegment_relax {
 
 using namespace core;
 
-static numeric::random::RandomGenerator rbseg_RG(18632);
-static basic::Tracer TR("protocols::moves::RBSegmentMover");
+static thread_local basic::Tracer TR( "protocols::moves::RBSegmentMover" );
 
 std::string
 RBSegmentMover::get_name() const {
@@ -214,10 +213,10 @@ RBSegment const & RBSegmentMover::getResidueRange() {
 ///////////////////////////////////////////
 void  GaussianRBSegmentMover::apply( core::pose::Pose & pose ) {
 	// random rotation ...
-	applyRotation( pose , sigma_rot*rbseg_RG.gaussian() , sigma_rot*rbseg_RG.gaussian() , sigma_rot*rbseg_RG.gaussian() );
+	applyRotation( pose , sigma_rot*numeric::random::rg().gaussian() , sigma_rot*numeric::random::rg().gaussian() , sigma_rot*numeric::random::rg().gaussian() );
 
 	// ... and translation
-	numeric::xyzVector< Real > trans(sigma_trans*rbseg_RG.gaussian() , sigma_trans*rbseg_RG.gaussian() , sigma_trans*rbseg_RG.gaussian());
+	numeric::xyzVector< Real > trans(sigma_trans*numeric::random::rg().gaussian() , sigma_trans*numeric::random::rg().gaussian() , sigma_trans*numeric::random::rg().gaussian());
 	applyTranslation( pose , trans );
 }
 
@@ -251,8 +250,8 @@ void GaussianRBSegmentMover::getCoordinateTransformation(
 ///////////////////////////////////////////
 void SequenceShiftMover::apply( core::pose::Pose & pose ) {
 	// pick a direction at random
-	int dir = (rbseg_RG.random_range(0,1))? -1 : 1;
-	int mag = rbseg_RG.random_range(1,magnitude_);
+	int dir = (numeric::random::rg().random_range(0,1))? -1 : 1;
+	int mag = numeric::random::rg().random_range(1,magnitude_);
 
 	apply( pose, dir*mag);
 }
@@ -605,13 +604,13 @@ SequenceShiftMover::get_name() const {
 void HelicalGaussianMover::apply( core::pose::Pose & pose )
 {
 	// if the segment is not simple (i.e. contains >1 continuous segment) output error msg
-	Real displacement_Z( sigAxisT_*rbseg_RG.gaussian() );
-	Real displacement_X( sigOffAxisT_*rbseg_RG.gaussian() );
-	Real displacement_Y( sigOffAxisT_*rbseg_RG.gaussian() );
+	Real displacement_Z( sigAxisT_*numeric::random::rg().gaussian() );
+	Real displacement_X( sigOffAxisT_*numeric::random::rg().gaussian() );
+	Real displacement_Y( sigOffAxisT_*numeric::random::rg().gaussian() );
 
-	Real displacement_alpha( sigAxisR_*rbseg_RG.gaussian() );
-	Real displacement_beta ( sigOffAxisR_*rbseg_RG.gaussian() );
-	Real displacement_gamma( sigOffAxisR_*rbseg_RG.gaussian() );
+	Real displacement_alpha( sigAxisR_*numeric::random::rg().gaussian() );
+	Real displacement_beta ( sigOffAxisR_*numeric::random::rg().gaussian() );
+	Real displacement_gamma( sigOffAxisR_*numeric::random::rg().gaussian() );
 
 	TR.Debug << "HelicalGaussianMover::apply() ["
 	         << displacement_X << "," << displacement_Y << "," << displacement_Z << ","
@@ -705,13 +704,13 @@ void HelicalGaussianMover::getCoordinateTransformation(
 ////////////////////////
 void StrandTwistingMover::apply( core::pose::Pose & pose )
 {
-	Real displacement_Z( sigAxisT_*rbseg_RG.gaussian() );
-	Real displacement_X( sigOffAxisT_*rbseg_RG.gaussian() );
-	Real displacement_Y( sigOffAxisT_*rbseg_RG.gaussian() );
+	Real displacement_Z( sigAxisT_*numeric::random::rg().gaussian() );
+	Real displacement_X( sigOffAxisT_*numeric::random::rg().gaussian() );
+	Real displacement_Y( sigOffAxisT_*numeric::random::rg().gaussian() );
 
-	Real displacement_alpha( sigAxisR_*rbseg_RG.gaussian() );
-	Real displacement_beta ( sigOffAxisR_*rbseg_RG.gaussian() );
-	Real displacement_gamma( sigOffAxisR_*rbseg_RG.gaussian() );
+	Real displacement_alpha( sigAxisR_*numeric::random::rg().gaussian() );
+	Real displacement_beta ( sigOffAxisR_*numeric::random::rg().gaussian() );
+	Real displacement_gamma( sigOffAxisR_*numeric::random::rg().gaussian() );
 
 	TR.Debug << "StrandTwistingMover::apply() ["
 	         << displacement_X << "," << displacement_Y << "," << displacement_Z << ","

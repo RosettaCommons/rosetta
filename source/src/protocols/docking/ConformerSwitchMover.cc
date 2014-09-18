@@ -55,9 +55,8 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static numeric::random::RandomGenerator RG(38627226);
 
-static basic::Tracer TR("protocols.docking.ConformerSwitchMover");
+static thread_local basic::Tracer TR( "protocols.docking.ConformerSwitchMover" );
 
 namespace protocols {
 namespace docking {
@@ -119,12 +118,12 @@ void ConformerSwitchMover::apply( core::pose::Pose & pose )
 	// to use a random conformer, random_conformer must be set to true
 	if ( !random_conformer_ && lowres_filter_->apply( pose ) ){		//only calculate partition function if filters are passed
 		GenerateProbTable( pose );
-		core::Real rand_num( RG.uniform() );
+		core::Real rand_num( numeric::random::rg().uniform() );
 		for (Size i = 1; i <= ensemble_->size(); i++){
 			if( (rand_num >= prob_table_[i]) ) conf_num++;
 		}
 	} else {
-		conf_num = RG.random_range( 1, ensemble_->size() );
+		conf_num = numeric::random::rg().random_range( 1, ensemble_->size() );
 	}
 
 	TR << "Switching partner with conformer: " << conf_num << std::endl;

@@ -60,7 +60,7 @@
 
 
 
-static basic::Tracer TR("surface_app");
+static thread_local basic::Tracer TR( "surface_app" );
 
 using namespace core;
 using namespace protocols;

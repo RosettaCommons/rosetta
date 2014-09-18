@@ -60,7 +60,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static basic::Tracer TR( "protocols.simple_filters.AlaScan" );
+static thread_local basic::Tracer TR( "protocols.simple_filters.AlaScan" );
 
 protocols::filters::FilterOP
 AlaScanFilterCreator::create_filter() const { return new AlaScan; }

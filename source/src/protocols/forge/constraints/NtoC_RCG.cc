@@ -36,7 +36,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer TR( "protocols.forge.constraints.NtoC_RCG" );
+static thread_local basic::Tracer TR( "protocols.forge.constraints.NtoC_RCG" );
 
 namespace protocols{
 namespace forge{

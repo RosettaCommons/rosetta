@@ -69,7 +69,7 @@ namespace task {
 /// @details Auto-generated virtual destructor
 ResfileCommand::~ResfileCommand() {}
 
-static basic::Tracer TR("core.pack.task.ResfileReader");
+static thread_local basic::Tracer TR( "core.pack.task.ResfileReader" );
 
 using std::string;
 using std::endl;

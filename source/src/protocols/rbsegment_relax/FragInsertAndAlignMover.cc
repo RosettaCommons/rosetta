@@ -57,8 +57,7 @@ namespace rbsegment_relax {
 
 using namespace core;
 
-static numeric::random::RandomGenerator rbseg_RG(18633);
-static basic::Tracer TR("FragInsertAndAlignMover");
+static thread_local basic::Tracer TR( "FragInsertAndAlignMover" );
 
 
 FragInsertAndAlignMover::FragInsertAndAlignMover() {}

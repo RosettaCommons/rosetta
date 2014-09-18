@@ -39,8 +39,8 @@ Func::~Func() {}
 
 void
 Func::read_data( std::istream& ) {
-	 basic::Tracer tr("core.scoring.constraints.Func" );
-	 tr.Warning << " Base clase Func::read_data stubbed out ---  virtual function not overloaded " << std::endl;
+	basic::Tracer tr( "core.scoring.constraints.Func" );
+	tr.Warning << " Base clase Func::read_data stubbed out ---  virtual function not overloaded " << std::endl;
 }
 
 Real

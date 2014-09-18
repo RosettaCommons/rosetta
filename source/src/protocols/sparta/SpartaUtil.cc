@@ -51,7 +51,7 @@
 
 //Auto Headers
 #endif
-static basic::Tracer tr("protocols.sparta");
+static thread_local basic::Tracer tr( "protocols.sparta" );
 
 namespace protocols {
 namespace sparta {

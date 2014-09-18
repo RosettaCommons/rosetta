@@ -92,7 +92,7 @@ using utility::to_string;
 using numeric::constants::f::pi;
 using numeric::constants::f::pi_2;
 
-static basic::Tracer TR("protocols.toolbox.PoseMetricCalculators.SemiExplicitWaterUnsatisfiedPolarsCalculator");
+static thread_local basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.SemiExplicitWaterUnsatisfiedPolarsCalculator" );
 
 namespace protocols{
 namespace toolbox {

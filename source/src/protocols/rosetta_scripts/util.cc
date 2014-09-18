@@ -47,7 +47,7 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 
-static basic::Tracer TR( "protocols.RosettaScripts.util" );
+static thread_local basic::Tracer TR( "protocols.RosettaScripts.util" );
 
 namespace protocols {
 namespace rosetta_scripts {

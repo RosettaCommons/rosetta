@@ -50,7 +50,7 @@
 #include <utility/vector0.hh>
 
 
-static basic::Tracer TR( "protocols.jd2.parser.FragmentReader" );
+static thread_local basic::Tracer TR( "protocols.jd2.parser.FragmentReader" );
 
 
 namespace protocols {

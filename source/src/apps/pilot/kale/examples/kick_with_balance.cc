@@ -30,7 +30,7 @@ using namespace devel::balanced_kic;
 
 // Global Variables {{{1
 
-basic::Tracer TR("apps.pilot.kale");
+static thread_local basic::Tracer TR( "apps.pilot.kale" );
 
 // }}}1
 

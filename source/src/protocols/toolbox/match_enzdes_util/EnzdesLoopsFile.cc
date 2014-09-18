@@ -31,7 +31,7 @@
 
 
 
-static basic::Tracer tr("protocols.enzdes.EnzdesLoopsFile");
+static thread_local basic::Tracer tr( "protocols.enzdes.EnzdesLoopsFile" );
 
 namespace protocols {
 namespace toolbox {

@@ -60,7 +60,7 @@
 #endif
 
 
-static basic::Tracer tr("apps.public.enzdes.enzyme_design");
+static thread_local basic::Tracer tr( "apps.public.enzdes.enzyme_design" );
 
 using namespace core;
 
@@ -86,7 +86,7 @@ main( int argc, char * argv [])
 	//#ifndef USEMPI
 	// Reduce read contention between processes by randomizing the order in which structures are processed
 	// Do not randomize, though, if job distribution is controlled by MPI
-	//numeric::random::random_permutation( input_jobs, numeric::random::RG );
+	//numeric::random::random_permutation( input_jobs, numeric::random::rg() );
 	//#endif
 
 	protocols::jobdist::PlainPdbJobDistributor jobdist( input_jobs );

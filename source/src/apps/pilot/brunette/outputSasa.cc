@@ -51,7 +51,7 @@ using core::Size;
 using core::Real;
 using core::pose::Pose;
 
-basic::Tracer tr( "ouputSasa" );
+static thread_local basic::Tracer tr( "ouputSasa" );
 
 vector1< Real> calc_sasa(Pose const & pose, Real pore_radius){
 	// define atom_map for main-chain and CB

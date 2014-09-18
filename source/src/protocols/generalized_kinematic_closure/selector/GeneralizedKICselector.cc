@@ -55,8 +55,7 @@ namespace protocols {
 namespace generalized_kinematic_closure {
 namespace selector {
 
-static basic::Tracer TR("protocols.generalized_kinematic_closure.selector.GeneralizedKICselector");
-static numeric::random::RandomGenerator RG(9980002);  // <- Magic number, do not change it!
+static thread_local basic::Tracer TR( "protocols.generalized_kinematic_closure.selector.GeneralizedKICselector" );
 
 ///@brief Creator for GeneralizedKICselector.
 GeneralizedKICselector::GeneralizedKICselector():
@@ -227,7 +226,7 @@ void GeneralizedKICselector::apply_random_selector(
 	core::Size &chosen_attempt_number,
 	core::Size &chosen_solution
 ) const {
-	core::Size solutionnumber = static_cast<core::Size>(RG.random_range(1, total_solutions)); //Pick a random solution
+	core::Size solutionnumber = static_cast<core::Size>(numeric::random::rg().random_range(1, total_solutions)); //Pick a random solution
 
 	core::Size accumulator=0;
 	for(core::Size i=1, imax=nsol_for_attempt.size(); i<=imax; ++i) {
@@ -320,7 +319,7 @@ void GeneralizedKICselector::apply_lowest_energy_selector(
 		bool breaknow=false;
 		while(!breaknow) {
 			//Pick a random number from 0 to 1:
-			core::Real const randnum = RG.uniform();
+			core::Real const randnum = numeric::random::rg().uniform();
 			core::Size counter=0;
 			core::Real accumulator = 0.0;
 			//Loop through all solutions, accumulate the normalized Boltzmann factors, and break when we reach the bin

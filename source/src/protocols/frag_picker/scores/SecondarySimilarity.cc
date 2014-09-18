@@ -36,7 +36,7 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-static basic::Tracer trSecondarySimilarity(
+static thread_local basic::Tracer trSecondarySimilarity(
 		"protocols.frag_picker.scores.SecondarySimilarity");
 
 bool SecondarySimilarity::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) {

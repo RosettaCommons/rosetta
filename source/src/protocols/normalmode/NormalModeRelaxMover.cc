@@ -54,12 +54,11 @@
 //#include <core/io/pdb/pose_io.hh>
 //#include <sys/time.h>
 
-static basic::Tracer TR("protocols.normalmode.NormalModeRelaxMover");
+static thread_local basic::Tracer TR( "protocols.normalmode.NormalModeRelaxMover" );
 
 namespace protocols{
 namespace normalmode{
 
-static numeric::random::RandomGenerator RG( 151234 ); //Magic number??
 
 void
 NormalModeRelaxMover::set_harmonic_constants( Real const k_uniform )
@@ -124,7 +123,7 @@ NormalModeRelaxMover::set_random_mode( Size const nmode,
   Real scalesum( 0.0 );
   for( Size i = 1; i <= nmode; ++i ){
 		// Multiply scale by its importance
-		Real scale1 = RG.uniform();
+		Real scale1 = numeric::random::rg().uniform();
 		if( select_option.compare("probabilistic") ==  0 ){
 			scale1 *= importance_portion*NM().get_importance( i ) + (1.0 - importance_portion);
 		}

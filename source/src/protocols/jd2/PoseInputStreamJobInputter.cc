@@ -38,7 +38,7 @@
 #include <core/kinematics/Jump.hh>
 
 
-static basic::Tracer tr("protocols.jd2.PoseInputStreamJobInputter");
+static thread_local basic::Tracer tr( "protocols.jd2.PoseInputStreamJobInputter" );
 
 namespace protocols {
 namespace jd2 {

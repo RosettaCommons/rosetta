@@ -65,8 +65,7 @@ using namespace core;
 using ObjexxFCL::string_of;
 using utility::operator<<;
 
-static numeric::random::RandomGenerator RG(539155021);  // <- Magic number, do not change it!
-static basic::Tracer TR( "protocols.stepwise.modeler.util" );
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.util" );
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -1058,7 +1057,9 @@ switch_focus_among_poses_randomly( pose::Pose & pose, scoring::ScoreFunctionOP s
 	Size const num_other_poses = const_full_model_info( pose ).other_pose_list().size();
 	if ( force_switch ) runtime_assert( num_other_poses > 0 );
 
-	Size const focus_pose_idx = force_switch ? RG.random_range( 1, num_other_poses ) : RG.random_range( 0, num_other_poses );
+	Size const focus_pose_idx = force_switch ?
+		numeric::random::rg().random_range( 1, num_other_poses ) :
+		numeric::random::rg().random_range( 0, num_other_poses );
 	if ( focus_pose_idx == 0 ) return false;
 
 	Real const score_before_switch_focus = ( scorefxn != 0 ) ? (*scorefxn)( pose ) : 0.0;

@@ -102,9 +102,8 @@
 typedef numeric::xyzVector<Real> Vec;
 typedef numeric::xyzMatrix<Real> Mat;
 
-static basic::Tracer TR("smhybrid");
+static thread_local basic::Tracer TR( "smhybrid" );
 
-static numeric::random::RandomGenerator RG(60542);
 
 string & replace_string(string & s, string const & f, string const & r) {
 	size_t i = s.find(f);
@@ -2253,7 +2252,7 @@ public:
 	void apply( core::pose::Pose & pose ) {
 		using namespace core::pack::dunbrack;
 		ChiVector chis;
-		lib_->assign_random_rotamer_with_bias(pose.residue(residue_),scratch_,RG,chis,true);
+		lib_->assign_random_rotamer_with_bias(pose.residue(residue_),scratch_,numeric::random::rg(),chis,true);
 		for(Size i = 1; i <= chis.size(); ++i)	{
 			pose.set_chi(i,residue_,chis[i]);
 		}

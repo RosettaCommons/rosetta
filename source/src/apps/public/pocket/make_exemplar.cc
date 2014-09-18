@@ -88,7 +88,7 @@ using namespace protocols::simple_moves;
 
 OPT_KEY( String, central_relax_pdb_num )
 
-static basic::Tracer TR( "apps.public.make_exemplar.main", basic::t_debug );
+static thread_local basic::Tracer TR( "apps.public.make_exemplar.main", basic::t_debug );
 
 /// General testing code
 int main( int argc, char * argv [] ) {

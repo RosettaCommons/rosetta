@@ -63,7 +63,7 @@ using utility::vector1;
 using cppdb::statement;
 using cppdb::result;
 
-static basic::Tracer TR( "protocols.features.LoopAnchorFeatures" );
+static thread_local basic::Tracer TR( "protocols.features.LoopAnchorFeatures" );
 
 LoopAnchorFeatures::LoopAnchorFeatures() :
 	FeaturesReporter(),

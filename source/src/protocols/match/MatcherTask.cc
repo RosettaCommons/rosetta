@@ -60,7 +60,7 @@
 namespace protocols {
 namespace match {
 
-static basic::Tracer TR( "protocols.match.MatcherTask" );
+static thread_local basic::Tracer TR( "protocols.match.MatcherTask" );
 
 MatcherTask::MatcherTask() :
 	enumerate_ligand_rotamers_( false ),

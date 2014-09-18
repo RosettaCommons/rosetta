@@ -72,7 +72,7 @@ int
 main( int argc, char* argv[] ) {
 	try {
 
-	basic::Tracer tr("james.add_calcium");
+	basic::Tracer tr( "james.add_calcium" );
 	// options, random initialization
 	devel::init( argc, argv );
 

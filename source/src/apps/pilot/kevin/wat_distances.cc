@@ -47,7 +47,7 @@
 using basic::Error;
 using basic::Warning;
 using basic::T;
-static basic::Tracer TR("apps.pilot.kevin.wat_distances");
+static thread_local basic::Tracer TR( "apps.pilot.kevin.wat_distances" );
 
 using namespace core;
 using namespace core::pose::metrics;

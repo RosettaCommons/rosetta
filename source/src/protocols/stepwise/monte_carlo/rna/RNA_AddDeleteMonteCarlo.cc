@@ -52,9 +52,8 @@ using core::Real;
 //  StepWiseMonteCarlo
 //////////////////////////////////////////////////////////////////////////
 
-static numeric::random::RandomGenerator RG(29111);  // <- Magic number, do not change it!
 
-static basic::Tracer TR( "protocols.stepwise.monte_carlo.rna.RNA_AddDeleteMonteCarlo" ) ;
+static thread_local basic::Tracer TR( "protocols.stepwise.monte_carlo.rna.RNA_AddDeleteMonteCarlo" );
 
 namespace protocols {
 namespace stepwise {
@@ -104,7 +103,7 @@ namespace rna {
 
 		for (Size count = 1; count <= num_cycles_; count++) {
 
-			Real const random_number = RG.uniform();
+			Real const random_number = numeric::random::rg().uniform();
 
 			move_type = "";
 
@@ -116,7 +115,7 @@ namespace rna {
 
 			if ( move_type.size() == 0 /*no move yet!*/ && random_number  < 0.8 ){
 
-				Real const random_number2 = RG.uniform();
+				Real const random_number2 = numeric::random::rg().uniform();
 				if ( random_number2  < 0.5 ){
 					move_type = "sml";
 					rna_torsion_mover_->apply( pose, move_type, sample_range_small_ );

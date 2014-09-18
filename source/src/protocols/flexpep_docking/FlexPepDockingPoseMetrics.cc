@@ -55,7 +55,7 @@ using basic::Error;
 using basic::Warning;
 using core::pose::Pose;
 
-static basic::Tracer TR("FlexPepDockingPoseMetrics");
+static thread_local basic::Tracer TR( "FlexPepDockingPoseMetrics" );
 
 namespace protocols {
 namespace flexpep_docking {

@@ -41,7 +41,7 @@
 namespace protocols {
 namespace simple_moves {
 
-static basic::Tracer TR("protocols.simple_moves.PDBReloadMover");
+static thread_local basic::Tracer TR( "protocols.simple_moves.PDBReloadMover" );
 
 std::string
 PDBReloadMoverCreator::keyname() const

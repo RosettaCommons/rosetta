@@ -63,7 +63,7 @@
 #include <string>
 
 
-static basic::Tracer tr("protocols.jumping");
+static thread_local basic::Tracer tr( "protocols.jumping" );
 
 using core::Real;
 using namespace core;
@@ -73,7 +73,6 @@ using namespace ObjexxFCL;
 namespace protocols {
 namespace jumping {
 
-static numeric::random::RandomGenerator RG(9238);  // <- Magic number, do not change it, huaah hah ha!
 
 BasePairingLibrary::~BasePairingLibrary() {}
 
@@ -509,7 +508,7 @@ PairingLibrary::get_random_beta_sheet_jump(
 
 	const int ntemplates ( templates.size() );
 
-	int const index( static_cast<int>( RG.uniform() * ntemplates ) );
+	int const index( static_cast<int>( numeric::random::rg().uniform() * ntemplates ) );
 	const PairingTemplate &t ( templates[ index ] );
 
 	return t.rt_;
@@ -534,14 +533,14 @@ PairingLibrary::get_random_beta_sheet_jump(
 
 		const int ntemplates ( templates.size() );
 		if(ntemplates>0) {
-			int const index( static_cast<int>( RG.uniform() * ntemplates ) );
+			int const index( static_cast<int>( numeric::random::rg().uniform() * ntemplates ) );
 			const PairingTemplate &t ( templates[ index ] );
 			return t.rt_;
 		} else { // use the generic key
 			std::cout << "No key found for " << pos1 << ' ' << pos2 << " using the generic template\n";
 			const PairingTemplateList & templates_generic( pairings_.find( generic_key )->second );
 			const int ntemplates_generic ( templates_generic.size() );
-			int const index( static_cast<int>( RG.uniform() * ntemplates_generic) );
+			int const index( static_cast<int>( numeric::random::rg().uniform() * ntemplates_generic) );
 			const PairingTemplate &t ( templates[ index ] );
 			return t.rt_;
 		}
@@ -568,7 +567,7 @@ PairingLibrary::get_random_beta_sheet_jump(
 
 		const int ntemplates ( templates.size() );
 		if(ntemplates>0) {
-			int const index( static_cast<int>( RG.uniform() * ntemplates ) );
+			int const index( static_cast<int>( numeric::random::rg().uniform() * ntemplates ) );
 			const PairingTemplate &t ( templates[ index ] );
 			std::cout << jump_number << "\n";
 			std::cout << t.rt_;
@@ -589,7 +588,7 @@ PairingLibrary::get_random_beta_sheet_jump(
 			std::cout << "No key found for " << pos1 << ' ' << pos2 << " using the generic template\n";
 			const PairingTemplateList & templates_generic( pairings_.find( generic_key )->second );
 			const int ntemplates_generic ( templates_generic.size() );
-			int const index( static_cast<int>( RG.uniform() * ntemplates_generic) );
+			int const index( static_cast<int>( numeric::random::rg().uniform() * ntemplates_generic) );
 			const PairingTemplate &t ( templates[ index ] );
 			std::cout << jump_number << "\n";
 			std::cout << t.rt_;
@@ -714,7 +713,12 @@ PairingLibrary::generate_jump_frags(
 		} // loop over orientations and pleatings
 } // method
 
-StandardPairingLibrary* StandardPairingLibrary::instance_( 0 );
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< StandardPairingLibrary * > StandardPairingLibrary::instance_( 0 );
+#else
+StandardPairingLibrary * StandardPairingLibrary::instance_( 0 );
+#endif
+
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

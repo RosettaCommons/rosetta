@@ -58,7 +58,7 @@ using utility::make_tag_with_dashes;
 //
 //////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.DeleteMover" ) ;
+static thread_local basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.DeleteMover" );
 
 namespace protocols {
 namespace stepwise {

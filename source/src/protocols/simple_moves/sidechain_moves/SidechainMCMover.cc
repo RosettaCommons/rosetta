@@ -75,8 +75,7 @@ using namespace basic;
 using namespace protocols::moves;
 
 
-static numeric::random::RandomGenerator Rg(38627227);
-static basic::Tracer TR("protocols.simple_moves.sidechain_moves.SidechainMCMover");
+static thread_local basic::Tracer TR( "protocols.simple_moves.sidechain_moves.SidechainMCMover" );
 
 namespace protocols {
 namespace simple_moves {
@@ -216,7 +215,7 @@ SidechainMCMover::apply(
 		core::Size rand_res;
 		do {
 			//pick residue, respecting underlying packer task
-			rand_res = packed_residues()[Rg.random_range(1, packed_residues().size())];
+			rand_res = packed_residues()[ numeric::random::rg().random_range(1, packed_residues().size()) ];
 		}while ( pose.residue( rand_res ).name1() == 'P'); //SidechainMover cannot sample proline rotamers? (is this true?)
 
 		core::conformation::ResidueOP new_state( new core::conformation::Residue( pose.residue( rand_res ) ) );
@@ -330,7 +329,7 @@ SidechainMCMover::pass_metropolis(core::Real delta_energy , core::Real last_prop
 	core::Real boltz_factor = delta_energy / temperature_;
 	core::Real probability = std::exp( std::min( 40.0, std::max( -40.0, boltz_factor ))) *  last_proposal_density_ratio ;
 
-	if( probability < 1 && Rg.uniform() >= probability ) {
+	if( probability < 1 && numeric::random::rg().uniform() >= probability ) {
 		current_ntrial_++;
 		if ( TR.visible( basic::t_debug )) {
 			TR.Debug << "delta energy is " << delta_energy << " probability: " << probability << " accepted: FALSE " << std::endl;

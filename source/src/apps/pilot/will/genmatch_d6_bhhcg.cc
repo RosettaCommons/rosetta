@@ -110,7 +110,7 @@
 using core::kinematics::Stub;
 using protocols::scoring::ImplicitFastClashCheck;
 
-static basic::Tracer TR("genmatch_d6_bpy");
+static thread_local basic::Tracer TR( "genmatch_d6_bpy" );
 
 
 

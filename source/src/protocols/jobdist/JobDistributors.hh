@@ -96,8 +96,6 @@ If you got this message, something is wrong with your build settings.
 namespace protocols {
 namespace jobdist {
 
-extern basic::Tracer JobDistributorTracer;
-
 ///@brief Coordinates processing of jobs across multiple Rosetta processes.
 ///
 ///@details

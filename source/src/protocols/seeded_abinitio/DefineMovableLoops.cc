@@ -52,7 +52,7 @@
 
 using namespace core;
 using namespace protocols::seeded_abinitio;
-static basic::Tracer TR( "protocols.seeded_abinitio.DefineMovableLoops" );
+static thread_local basic::Tracer TR( "protocols.seeded_abinitio.DefineMovableLoops" );
 
 
 namespace protocols {

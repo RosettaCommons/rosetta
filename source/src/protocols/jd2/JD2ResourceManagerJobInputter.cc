@@ -78,7 +78,7 @@ using std::endl;
 using std::string;
 using std::stringstream;
 
-static basic::Tracer tr("protocols.jd2.JD2ResourceManagerJobInputter");
+static thread_local basic::Tracer tr( "protocols.jd2.JD2ResourceManagerJobInputter" );
 
 
 

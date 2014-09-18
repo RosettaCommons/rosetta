@@ -62,7 +62,7 @@ template< class DecoyIterator >
 void CrossPeakList::update_decoy_compatibility_score( DecoyIterator const& decoys_begin, DecoyIterator const& decoys_end ) {
   using namespace core;
   using namespace basic;
-  static basic::Tracer tr("devel.noesy_assign.crosspeaks");
+  basic::Tracer tr( "devel.noesy_assign.crosspeaks" );
 
   if ( decoys_begin == decoys_end ) return;
 
@@ -102,7 +102,7 @@ template < class DecoyIterator >
 void CrossPeakList::calibrate( DecoyIterator const& begin, DecoyIterator const& end ) {
   using namespace core;
   using namespace basic;
-  static basic::Tracer tr("protocols.noesy_assign.crosspeaks");
+  basic::Tracer tr( "protocols.noesy_assign.crosspeaks" );
 
   PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
   bool const structure_independent_calibration( params.calibration_target_ > 1.0 || begin == end );

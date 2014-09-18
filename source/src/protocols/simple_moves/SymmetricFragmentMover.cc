@@ -35,13 +35,12 @@
 namespace protocols {
 namespace simple_moves {
 
-static numeric::random::RandomGenerator RG(43389);  // <- Magic number, do not change it!
 
 using namespace core;
 using namespace fragment;
 using namespace basic;
 
-static basic::Tracer tr("protocols.simple_moves.FragmentMover");
+static thread_local basic::Tracer tr( "protocols.simple_moves.FragmentMover" );
 
 std::string
 SymmetricFragmentMover::get_name() const {

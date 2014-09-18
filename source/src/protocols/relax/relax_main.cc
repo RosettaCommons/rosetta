@@ -60,7 +60,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer tr("protocols.relax");
+static thread_local basic::Tracer tr( "protocols.relax" );
 
 using namespace core;
 ////////////////////////////////////////////////////////////////////////////////////////////////////

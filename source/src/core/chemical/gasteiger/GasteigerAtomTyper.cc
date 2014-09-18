@@ -47,7 +47,7 @@ namespace core {
 namespace chemical {
 namespace gasteiger {
 
-static basic::Tracer TR("core.chemical.gasteiger.GasteigerAtomTypeSet");
+static thread_local basic::Tracer TR( "core.chemical.gasteiger.GasteigerAtomTypeSet" );
 
 void
 PossibleAtomTypesForAtom::gasteiger_atom_type_set( GasteigerAtomTypeSetCOP GASTEIGER_ATOM_TYPE_SET ) {

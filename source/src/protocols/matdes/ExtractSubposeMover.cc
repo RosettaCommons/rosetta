@@ -40,7 +40,7 @@
 #include <utility/vector1.hh>
 
 using basic::Warning;
-static basic::Tracer TR("protocols.matdes.ExtractSubposeMover");
+static thread_local basic::Tracer TR( "protocols.matdes.ExtractSubposeMover" );
 
 namespace protocols {
 namespace matdes {

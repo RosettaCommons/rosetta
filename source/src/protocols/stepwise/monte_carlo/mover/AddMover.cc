@@ -55,9 +55,8 @@ using namespace protocols::stepwise::modeler;
 //  and jump-addition moves are actually identical.
 //
 //////////////////////////////////////////////////////////////////////////
-static numeric::random::RandomGenerator RG(2555512);  // <- Magic number, do not change it!
 
-static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.AddMover" ) ;
+static thread_local basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.AddMover" );
 
 namespace protocols {
 namespace stepwise {

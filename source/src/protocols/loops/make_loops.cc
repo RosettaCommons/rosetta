@@ -42,7 +42,7 @@ using utility::vector1;
 using basic::t_info;
 using basic::t_debug;
 using basic::t_trace;
-static basic::Tracer TR( "protocols.loops.make_loops", t_info );
+static thread_local basic::Tracer TR( "protocols.loops.make_loops", t_info );
 
 void add_loop(
 	Size seg_begin,

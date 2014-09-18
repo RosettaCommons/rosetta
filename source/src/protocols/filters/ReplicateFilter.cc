@@ -31,7 +31,7 @@
 namespace protocols {
 namespace filters {
 
-static basic::Tracer TR( "protocols.filters.ReplicateFilter" );
+static thread_local basic::Tracer TR( "protocols.filters.ReplicateFilter" );
 
 ///@brief default ctor
 ReplicateFilter::ReplicateFilter() :

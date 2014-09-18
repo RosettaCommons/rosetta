@@ -40,7 +40,7 @@
 using namespace core;
 using namespace core::scoring;
 
-static basic::Tracer TR( "protocols.protein_interface_design.parse_filters" );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.parse_filters" );
 
 namespace protocols {
 namespace protein_interface_design {

@@ -83,7 +83,7 @@ public:
 	void report_filters_to_job( Pose const & pose ) const;  // as above but reports to job object
 	//as above but is called directly from JobOutputter via Observer pattern
 	virtual
-	void add_values_to_job( Pose const & pose, protocols::jd2::JobOP ) const;
+	void add_values_to_job( Pose const & pose, protocols::jd2::Job & ) const;
 
 
 //	void report_all_sm( std::map< std::string, core::Real > & score_map, Pose const & pose ) const; // ditto, but outputs filter values into score_map object

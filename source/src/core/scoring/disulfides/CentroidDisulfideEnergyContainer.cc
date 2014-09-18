@@ -37,7 +37,7 @@ namespace core {
 namespace scoring {
 namespace disulfides {
 
-static basic::Tracer TR("core.scoring.disulfides.CentroidDisulfideEnergyContainer");
+static thread_local basic::Tracer TR( "core.scoring.disulfides.CentroidDisulfideEnergyContainer" );
 
 /// @brief constructor
 CentroidDisulfideNeighborIterator::CentroidDisulfideNeighborIterator(

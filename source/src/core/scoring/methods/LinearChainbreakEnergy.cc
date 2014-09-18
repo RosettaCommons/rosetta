@@ -53,7 +53,7 @@ namespace scoring {
 namespace methods {
 
 using core::Size;
-static basic::Tracer tr("core.scoring.LinearChainbreak", basic::t_info);
+static thread_local basic::Tracer tr( "core.scoring.LinearChainbreak", basic::t_info );
 
   LinearChainbreakEnergy::LinearChainbreakEnergy()
     : parent(new LinearChainbreakEnergyCreator) {

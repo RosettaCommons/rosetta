@@ -80,9 +80,9 @@
 
 
 
-basic::Tracer TM("TMemory");
+static thread_local basic::Tracer TM( "TMemory" );
 
-basic::Tracer TR_("global");
+static thread_local basic::Tracer TR_( "global" );
 
 
 void TracerDiskSpaceTest(void)
@@ -129,7 +129,7 @@ int main( int argc, char * argv [] )
 {
 	try {
 
-		basic::Tracer TR("main");
+		basic::Tracer TR( "main" );
 
 		using namespace core;
 		using namespace basic::options::OptionKeys;

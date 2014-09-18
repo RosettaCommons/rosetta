@@ -74,7 +74,7 @@ typedef utility::vector1<core::Real> Sizes;
 typedef numeric::xyzVector<Real> Vec;
 typedef numeric::xyzMatrix<Real> Mat;
 
-static basic::Tracer TR("disulf_stat");
+static thread_local basic::Tracer TR( "disulf_stat" );
 
 int main (int argc, char *argv[]) {
 

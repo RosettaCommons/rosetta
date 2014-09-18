@@ -130,7 +130,7 @@ using protocols::scoring::ImplicitFastClashCheck;
 using core::pose::Pose;
 using core::conformation::ResidueOP;
 
-static basic::Tracer TR("CXdock");
+static thread_local basic::Tracer TR( "CXdock" );
 static core::io::silent::SilentFileData sfd;
 
 // computes the fast slide-into-contact between point counds pa & pb

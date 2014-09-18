@@ -63,7 +63,7 @@
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-static basic::Tracer TR("apps.pilot.krishna.mtransferase");
+static thread_local basic::Tracer TR( "apps.pilot.krishna.mtransferase" );
 
 class mtransferase : public protocols::moves::Mover {
 

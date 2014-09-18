@@ -64,7 +64,6 @@ OPT_1GRP_KEY(IntegerVector, fpd, loopres1)
 
 namespace myspace {
 
-static numeric::random::RandomGenerator RG( 12322 ); //Magic number??
 
 using namespace core;
 
@@ -302,7 +301,7 @@ test_bbgauss( pose::Pose const pose,
 		pose_work = pose;
 
 		for( Size istep = 1; istep <= nstep_per_trj; ++istep ){
-			Real prob = RG.uniform();
+			Real prob = numeric::random::rg().uniform();
 			Real proposal_density_ratio( 1.0 );
 			std::string movetype;
 

@@ -53,7 +53,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -183,7 +184,12 @@ private:
 	static PCS_data_input_manager * create_singleton_instance();
 
 private:
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< PCS_data_input_manager * > instance_;
+#else
 	static PCS_data_input_manager * instance_;
+#endif
+
 	std::map<std::string, PCS_data_input> file_2_data_map_;
 
 #ifdef MULTI_THREADED

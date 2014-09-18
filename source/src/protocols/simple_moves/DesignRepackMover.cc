@@ -76,9 +76,8 @@ using namespace core;
 
 using namespace core::scoring;
 
-static basic::Tracer TR( "protocols.simple_moves.DesignRepackMover" );
+static thread_local basic::Tracer TR( "protocols.simple_moves.DesignRepackMover" );
 
-static numeric::random::RandomGenerator RG( 150845 ); // <- Magic number, do not change it!!!
 
 namespace protocols {
 namespace simple_moves {

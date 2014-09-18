@@ -45,7 +45,7 @@
 #include <time.h>
 #include <string>
 
-static basic::Tracer TR("HelicalAssembly");
+static thread_local basic::Tracer TR( "HelicalAssembly" );
 
 //double diffclock(clock_t clock1,clock_t clock2)
 //{

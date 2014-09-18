@@ -66,7 +66,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace basic::options::OptionKeys::motifs;
 
-static basic::Tracer TR( "incorporate_motifs" );
+static thread_local basic::Tracer TR( "incorporate_motifs" );
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////

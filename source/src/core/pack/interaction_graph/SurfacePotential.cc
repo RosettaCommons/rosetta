@@ -76,7 +76,7 @@ namespace interaction_graph {
 
 //#define FILE_DEBUG 1
 
-static basic::Tracer TR("core.pack.interaction_graph.SurfacePotential");
+static thread_local basic::Tracer TR( "core.pack.interaction_graph.SurfacePotential" );
 
 const core::Size SurfacePotential::MAX_PATCH_SURFACE_AREA = 1200;
 const core::Real SurfacePotential::MAX_SURFACE_ENERGY = 25.0;
@@ -90,7 +90,11 @@ const core::Real SurfacePotential::MAX_HPATCH_SCORE = 100.0;
 const core::Size SurfacePotential::HPATCH_SCORE_BIN_SIZE = 50;
 
 /// @brief set initial value as no instance
-SurfacePotential* SurfacePotential::instance_( 0 );
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< SurfacePotential * > SurfacePotential::instance_( 0 );
+#else
+SurfacePotential * SurfacePotential::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

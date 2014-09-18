@@ -48,7 +48,7 @@ namespace core {
 namespace pack {
 namespace interaction_graph {
 
-basic::Tracer T("core.pack.interaction_graph.interaction_graph_factory", basic::t_info );
+static thread_local basic::Tracer T( "core.pack.interaction_graph.interaction_graph_factory", basic::t_info );
 
 InteractionGraphBaseOP
 InteractionGraphFactory::create_interaction_graph(

@@ -65,7 +65,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("apps.public.interface_design.anchored_design.AnchorFinder");
+static thread_local basic::Tracer TR( "apps.public.interface_design.anchored_design.AnchorFinder" );
 
 basic::options::IntegerOptionKey const window_size("window_size");
 basic::options::RealOptionKey const loopness("loopness");

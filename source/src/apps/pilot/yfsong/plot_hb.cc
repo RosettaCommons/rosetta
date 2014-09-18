@@ -51,7 +51,7 @@ namespace plot_hb {
 	//	basic::options::BooleanOptionKey show_poly("plot_hb:show_poly");
 }
 
-static basic::Tracer tr("apps.pilot.yfsong.plot_hb");
+static thread_local basic::Tracer tr( "apps.pilot.yfsong.plot_hb" );
 
 int
 main (int argc, char *argv[]){

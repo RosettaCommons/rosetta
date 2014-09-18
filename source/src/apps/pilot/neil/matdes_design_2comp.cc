@@ -87,7 +87,7 @@
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <basic/MetricValue.hh>
 
-static basic::Tracer TR("2comp_design");
+static thread_local basic::Tracer TR( "2comp_design" );
 
 using std::string;
 using ObjexxFCL::string_of;

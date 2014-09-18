@@ -172,20 +172,7 @@ evaluation::PoseEvaluatorsCOP JobOutputter::evaluators() const {
 
 void JobOutputter::call_output_observers( core::pose::Pose const& pose, JobOP job  ) const {
 	if ( !job ) return;
-	for ( JobOutputterObservers::const_iterator it = output_observers_.begin();
-				it != output_observers_.end();
-				++it ) {
-		(*it)->add_values_to_job( pose, job );
-	}
-}
-
-void JobOutputter::add_output_observer( JobOutputterObserverAP an_observer ) {
-	output_observers_.insert( an_observer );
-}
-
-
-void JobOutputter::remove_output_observer( JobOutputterObserverAP an_observer ) {
-	output_observers_.erase( an_observer );
+	job->call_output_observers( pose );
 }
 
 } // jd2

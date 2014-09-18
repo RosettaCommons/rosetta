@@ -156,7 +156,6 @@
 
 
 
-static numeric::random::RandomGenerator RG(12321); // <- Magic number, do not change it!!!
 
 
 
@@ -177,7 +176,7 @@ static numeric::random::RandomGenerator RG(12321); // <- Magic number, do not ch
 // using namespace ObjexxFCL::format;
 // using core::import_pose::pose_from_pdb;
 // using io::pdb::dump_pdb; // deprecated though
-basic::Tracer TR( "apps.pilot.phil.symtest" );
+static thread_local basic::Tracer TR( "apps.pilot.phil.symtest" );
 
 
 

@@ -143,10 +143,9 @@ using namespace utility;
 
 using utility::vector1;
 
-basic::Tracer TR("protocols.optimize_weights.IterativeOptEDriver");
-basic::Tracer TR_VERBOSE("protocols.optimize_weights.IterativeOptEDriver.verbose");
+static thread_local basic::Tracer TR( "protocols.optimize_weights.IterativeOptEDriver" );
+static thread_local basic::Tracer TR_VERBOSE( "protocols.optimize_weights.IterativeOptEDriver.verbose" );
 
-static numeric::random::RandomGenerator optE_RG(10193);
 
 void attach_debugger();
 
@@ -1926,7 +1925,7 @@ void IterativeOptEDriver::intialize_free_and_fixed_energy_terms() {
 		if ( MPI_rank_ == 0 ) {
 			//for ( Size ii = 1; ii <= n_score_types; ++ii ) {
 			//	if ( free_parameters_[ (ScoreType) ii ] != 0.0 ) {
-			//		free_parameters_[ (ScoreType) ii ] = optE_RG.uniform() + 0.01; // random non-zero starting point
+			//		free_parameters_[ (ScoreType) ii ] = numeric::random::rg().uniform() + 0.01; // random non-zero starting point
 			//	}
 			//}
 			Real const rpp_refs[20] = {
@@ -5119,14 +5118,14 @@ IterativeOptEDriver::initialize_free_and_fixed( core::scoring::EnergyMap & free_
 			} else if ( line_tokens.size() == 1 && ! option[ optE::design_first ].user() ) {
 				// free value randomized
 				ScoreType free_score_type = ScoreTypeManager::score_type_from_name( line_tokens[ 1 ] );
-				free_parameters[ free_score_type ] = optE_RG.uniform();
+				free_parameters[ free_score_type ] = numeric::random::rg().uniform();
 			} else if ( line_tokens.size() == 2 ) {
 				ScoreType free_score_type = ScoreTypeManager::score_type_from_name( line_tokens[ 1 ] );
 				Real free_starting_weight = utility::from_string( line_tokens[ 2 ], Real(0.0) );
 				free_parameters[ free_score_type ] = free_starting_weight;
 				if ( option[ optE::randomly_perturb_starting_free_weights ].user() && free_parameters[ free_score_type ] != 0.0 ) {
 					Real perturb_range = option[ optE::randomly_perturb_starting_free_weights ]();
-					free_parameters[ free_score_type ] += 2 * perturb_range * optE_RG.uniform() - perturb_range;
+					free_parameters[ free_score_type ] += 2 * perturb_range * numeric::random::rg().uniform() - perturb_range;
 					if ( free_parameters[ free_score_type ] == 0.0 ) {
 						free_parameters[ free_score_type ] = 0.0001; // correct if we should accidentally end up here.
 					}

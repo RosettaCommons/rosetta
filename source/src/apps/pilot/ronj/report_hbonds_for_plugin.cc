@@ -73,7 +73,7 @@ using namespace ObjexxFCL::format;
 
 using utility::vector1;
 
-basic::Tracer TR("apps.pilot.ronj.report_hbonds_for_plugin");
+static thread_local basic::Tracer TR( "apps.pilot.ronj.report_hbonds_for_plugin" );
 
 
 // The following macros expand to the following.  They basically add these options to the Options system.

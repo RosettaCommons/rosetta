@@ -93,7 +93,6 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static numeric::random::RandomGenerator RG(54323); // <- Magic number, do not change it!!!
 
 using namespace core;
 //using namespace protocols;
@@ -102,9 +101,9 @@ using utility::vector1;
 using std::string;
 
 
-static basic::Tracer tt( "demo.phil.analyze_dna", basic::t_trace );
-static basic::Tracer td( "demo.phil.analyze_dna", basic::t_debug );
-static basic::Tracer ti( "demo.phil.analyze_dna", basic::t_info  );
+static thread_local basic::Tracer tt( "demo.phil.analyze_dna", basic::t_trace );
+static thread_local basic::Tracer td( "demo.phil.analyze_dna", basic::t_debug );
+static thread_local basic::Tracer ti( "demo.phil.analyze_dna", basic::t_info );
 
 
 

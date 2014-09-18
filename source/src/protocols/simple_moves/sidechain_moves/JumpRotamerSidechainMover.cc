@@ -56,8 +56,7 @@
 using namespace core;
 using namespace core::pose;
 
-static numeric::random::RandomGenerator RG(18451125);
-static basic::Tracer tr("protocols.simple_moves.sidechain_moves.JumpRotamerSidechainMover");
+static thread_local basic::Tracer tr( "protocols.simple_moves.sidechain_moves.JumpRotamerSidechainMover" );
 
 namespace protocols {
 namespace simple_moves {
@@ -147,7 +146,7 @@ JumpRotamerSidechainMover::make_chi_move(
 
 	/// select a random rotamer
  	Size rotnum;
-	Real rand = RG.uniform();
+	Real rand = numeric::random::rg().uniform();
 	//if ( rand <=0 ){
 	//tr.Debug << "RG.uniform is " << rand << std::endl;}
 	Real const inv_nrot( 1.0/rotamers.size() );
@@ -168,8 +167,8 @@ JumpRotamerSidechainMover::make_chi_move(
 		rotnum -= 1;
 	}
 	runtime_assert( rotnum >= 1 && rotnum <= rotamers.size() );
-  //rotamer_sample_data[rotnum].assign_random_chi(last_chi_angles_,RG);
-  rotamers[rotnum].assign_random_chi( new_chi, RG, temperature() );
+  //rotamer_sample_data[rotnum].assign_random_chi(last_chi_angles_,numeric::random::rg());
+  rotamers[rotnum].assign_random_chi( new_chi, numeric::random::rg(), temperature() );
 }
 
 ///all angles in degree

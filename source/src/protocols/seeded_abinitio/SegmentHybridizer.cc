@@ -96,9 +96,8 @@
 namespace protocols {
 namespace seeded_abinitio {
 
-static basic::Tracer TR( "protocols.seeded_abinitio.movers.SegmentHybridizer" );
-static basic::Tracer TR_ccd( "protocols.seeded_abinitio.movers.SegmentHybridizer_ccd" );
-static numeric::random::RandomGenerator RG(1245273);
+static thread_local basic::Tracer TR( "protocols.seeded_abinitio.movers.SegmentHybridizer" );
+static thread_local basic::Tracer TR_ccd( "protocols.seeded_abinitio.movers.SegmentHybridizer_ccd" );
 
 std::string
 SegmentHybridizerCreator::keyname() const

@@ -25,7 +25,7 @@
 // C++ Headers
 #include <string>
 
-static basic::Tracer TR( "protocols.rosetta_scripts.PosePropertyReporter" );
+static thread_local basic::Tracer TR( "protocols.rosetta_scripts.PosePropertyReporter" );
 
 namespace protocols {
 namespace rosetta_scripts {

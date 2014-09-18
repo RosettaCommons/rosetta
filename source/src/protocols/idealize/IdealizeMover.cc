@@ -77,7 +77,7 @@ namespace idealize {
 
 using namespace core;
 
-static basic::Tracer TR( "protocols.idealize.IdealizeMover" );
+static thread_local basic::Tracer TR( "protocols.idealize.IdealizeMover" );
 
 std::string
 IdealizeMoverCreator::keyname() const

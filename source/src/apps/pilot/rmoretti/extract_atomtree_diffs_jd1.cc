@@ -112,7 +112,7 @@ main( int argc, char * argv [] )
 	using namespace protocols;
 	using namespace protocols::jobdist;
 	using namespace protocols::moves;
-	basic::Tracer TR("extract_atomtree_diffs.main");
+	basic::Tracer TR( "extract_atomtree_diffs.main" );
 
 	// Parses command line options and inits RNG.
 	// Doesn't seem to hurt to do it again if already done once (?)
@@ -121,7 +121,7 @@ main( int argc, char * argv [] )
 	time_t overall_start_time = time(NULL);
 	utility::vector1< BasicJobOP > input_jobs = load_s_and_l();
 	// Reduce read contention between processes by randomizing the order in which structures are processed
-	numeric::random::random_permutation( input_jobs, numeric::random::RG );
+	numeric::random::random_permutation( input_jobs, numeric::random::rg() );
 	PlainPdbJobDistributor jobdist( input_jobs );
 
 	// A "native" pose for the diff reference point.

@@ -32,7 +32,7 @@ namespace core
 namespace indexed_structure_store
 {
 
-static basic::Tracer TR("core.indexed_structure_store.H5FragmentStoreBackend");
+static thread_local basic::Tracer TR( "core.indexed_structure_store.H5FragmentStoreBackend" );
 
 #ifdef ROSETTA_FLOAT
 #define RealPredType PredType::NATIVE_FLOAT

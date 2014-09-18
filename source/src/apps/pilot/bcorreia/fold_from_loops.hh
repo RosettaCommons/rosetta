@@ -33,7 +33,7 @@
 using namespace core;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
-static basic::Tracer TRA( "fold_from_loops", basic::t_info );
+static thread_local basic::Tracer TRA( "fold_from_loops", basic::t_info );
 
 
 

@@ -2,7 +2,7 @@ void KinematicMover::apply( core::pose::Pose & pose ) {
 	// Variable definitions {{{1
 	using numeric::conversions::radians;
 	using numeric::conversions::degrees;
-	using numeric::random::RG;
+
 	using core::id::AtomID;
 
 	last_move_succeeded_=false;
@@ -248,7 +248,7 @@ void KinematicMover::apply( core::pose::Pose & pose ) {
 		
 		// Put the solutions in random order, since the first one encountered that 
 		// passes the filters is accepted.
-		numeric::random::random_permutation(pos.begin(), pos.end(), RG);
+		numeric::random::random_permutation( pos.begin(), pos.end(), numeric::random::rg() );
 		// }}}1
 		
 		for (Size i=nsol; i>=1; i--) {

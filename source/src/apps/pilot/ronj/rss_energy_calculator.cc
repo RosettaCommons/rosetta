@@ -71,7 +71,7 @@
 #include <core/pose/util.hh>
 
 
-static basic::Tracer TR("rss_energy_calculator");
+static thread_local basic::Tracer TR( "rss_energy_calculator" );
 
 using namespace core;
 using namespace protocols;

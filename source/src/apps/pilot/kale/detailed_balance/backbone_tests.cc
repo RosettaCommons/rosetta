@@ -98,7 +98,7 @@ using protocols::kinematic_closure::solution_pickers::RandomSolutions;
 using protocols::simple_moves::sidechain_moves::SidechainMover;
 using protocols::simple_moves::sidechain_moves::SidechainMoverOP;
 
-basic::Tracer TR("apps.pilot.kale.monte_carlo");
+static thread_local basic::Tracer TR( "apps.pilot.kale.monte_carlo" );
 
 // Options {{{1
 OPT_2GRP_KEY(File, kale, in, pdb)
@@ -448,7 +448,7 @@ class OutputManager { // {{{1
 			cout << "Pivots:         " << sampler.first_index << "/"
 			                           << sampler.cut_index << "/"
 			                           << sampler.last_index << endl;
-			cout << "Random Seed:    " << numeric::random::RG.get_seed() << endl;
+			cout << "Random Seed:    " << numeric::random::rg().get_seed() << endl;
 			cout << "Iterations:     " << sampler.iterations << endl;
 			cout << "Temperature:    " << sampler.temperature << endl;
 

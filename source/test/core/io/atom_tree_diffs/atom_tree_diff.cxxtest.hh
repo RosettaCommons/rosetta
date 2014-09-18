@@ -62,7 +62,7 @@ void test_save_and_restore()
 	//test::UTracer UT("core/io/atom_tree_diffs/atom_tree_diff_test.u", &TR);
 
 	/// Init random generators system to insure that random number sequence is the same for each run.
-	core::init::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
+	core::init::init_random_generators(1000, "mt19937");
 
 
 	pose::Pose start_pose( create_test_in_pdb_pose()), modified_pose, restored_pose;
@@ -70,15 +70,15 @@ void test_save_and_restore()
 	//UTRACE << pose.fold_tree() << std::endl;
 
 	// Randomize the pose a little
-	using numeric::random::RG;
+	using numeric::random::rg;
 	modified_pose = start_pose; // make a copy
 	for(int i = 0; i < 20; ++i) {
-		Size rsd_no = RG.random_range( 1, modified_pose.total_residue() );
-		modified_pose.set_phi( rsd_no, 10*RG.gaussian() + modified_pose.phi(rsd_no) );
-		modified_pose.set_psi( rsd_no, 10*RG.gaussian() + modified_pose.psi(rsd_no) );
+		Size rsd_no = rg().random_range( 1, modified_pose.total_residue() );
+		modified_pose.set_phi( rsd_no, 10*rg().gaussian() + modified_pose.phi(rsd_no) );
+		modified_pose.set_psi( rsd_no, 10*rg().gaussian() + modified_pose.psi(rsd_no) );
 		Size num_chi = modified_pose.residue(rsd_no).nchi();
 		for(Size j = 1; j < num_chi; ++j) {
-			modified_pose.set_chi( j, rsd_no, 10*RG.gaussian() + modified_pose.chi(j, rsd_no) );
+			modified_pose.set_chi( j, rsd_no, 10*rg().gaussian() + modified_pose.chi(j, rsd_no) );
 		}
 	}
 
@@ -90,7 +90,7 @@ void test_save_and_restore()
 	// Now mutate it a little for good measure (can't do RMS to orig after this)
 	for(int i = 0; i < 10; ++i) {
 		// Don't mutate the ends because they're variant residue types
-		Size rsd_no = RG.random_range( 2, modified_pose.total_residue()-1 );
+		Size rsd_no = rg().random_range( 2, modified_pose.total_residue()-1 );
 		using namespace core::conformation;
 		ResidueOP newres = ResidueFactory::create_residue(
 			modified_pose.residue(rsd_no).residue_type_set().name_map("LYS"),
@@ -99,7 +99,7 @@ void test_save_and_restore()
 		// Change chi angles for mutated res away from their default values
 		Size num_chi = modified_pose.residue(rsd_no).nchi();
 		for(Size j = 1; j < num_chi; ++j) {
-			modified_pose.set_chi( j, rsd_no, 90*RG.gaussian() + modified_pose.chi(j, rsd_no) );
+			modified_pose.set_chi( j, rsd_no, 90*rg().gaussian() + modified_pose.chi(j, rsd_no) );
 		}
 	}
 

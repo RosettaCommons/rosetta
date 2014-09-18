@@ -34,7 +34,7 @@
 #include <utility/excn/Exceptions.hh>
 
 
-static basic::Tracer TR("devel.denovo_design.calculators.ResidueCentralityCalculator");
+static thread_local basic::Tracer TR( "devel.denovo_design.calculators.ResidueCentralityCalculator" );
 
 namespace devel {
 namespace denovo_design {

@@ -38,8 +38,7 @@
 
 using namespace protocols::stepwise::modeler;
 
-static numeric::random::RandomGenerator RG(239145021);  // <- Magic number, do not change it!
-static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.ResampleMover" );
+static thread_local basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.ResampleMover" );
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -94,7 +93,7 @@ namespace mover {
 		swa_move_selector_->get_resample_move_elements( pose, swa_moves );
 
 		if ( swa_moves.size() == 0 ) return false;
-		SWA_Move const & swa_move = RG.random_element( swa_moves );
+		SWA_Move const & swa_move = numeric::random::rg().random_element( swa_moves );
 
 		return apply( pose, swa_move, move_type );
 	}
@@ -155,7 +154,7 @@ namespace mover {
 		bool did_mutation( false );
 		// based on 'n' in full_model_info.full_sequence
 		if ( move_element_size == 1 ) did_mutation = mutate_res_if_allowed( pose, full_to_sub( swa_move.moving_res(), pose ) );
-		bool just_min_after_mutation = ( did_mutation && ( RG.uniform() < options_->just_min_after_mutation_frequency() ) );
+		bool just_min_after_mutation = ( did_mutation && ( numeric::random::rg().uniform() < options_->just_min_after_mutation_frequency() ) );
 
 		if ( just_min_after_mutation ) {
 			stepwise_modeler_->set_moving_res_and_reset( 0 );
@@ -265,7 +264,7 @@ namespace mover {
 				if ( chains[ root_res ] != chains[ move_res ] ) possible_jump_pairs.push_back( std::make_pair( root_res, move_res ) );
 			}
 		}
-		std::pair< Size, Size > const new_jump_pair = RG.random_element( possible_jump_pairs );
+		std::pair< Size, Size > const new_jump_pair = numeric::random::rg().random_element( possible_jump_pairs );
 		Size const new_reference_res = new_jump_pair.first;
 		Size const new_remodel_res   = new_jump_pair.second;
 

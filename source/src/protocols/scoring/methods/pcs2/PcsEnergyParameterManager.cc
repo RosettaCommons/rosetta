@@ -62,7 +62,7 @@ namespace scoring {
 namespace methods {
 namespace pcs2 {
 
-basic::Tracer TR_PcsEnergyParameterManager("protocols.scoring.methods.pcs.PcsEnergyParameterManager");
+static thread_local basic::Tracer TR_PcsEnergyParameterManager( "protocols.scoring.methods.pcs.PcsEnergyParameterManager" );
 
 #ifdef MULTI_THREADED
 #ifdef CXX11
@@ -112,25 +112,23 @@ PcsEnergyParameterManager::re_init(){
 	std::cerr <<"CHECKING c 0 = " << pcs_e_p_all_.size() << std::endl;
 }
 
-PcsEnergyParameterManager::PcsEnergyParameterManager(PcsEnergyParameterManager const & other){
+// singletons shouldn't have copy constructors PcsEnergyParameterManager::PcsEnergyParameterManager(PcsEnergyParameterManager const & other)
+// singletons shouldn't have copy constructors {
+// singletons shouldn't have copy constructors 	pcs_e_p_all_ = other.pcs_e_p_all_;
+// singletons shouldn't have copy constructors 	vec_filename_all_ = other.vec_filename_all_;
+// singletons shouldn't have copy constructors 	vec_individual_weight_all_ = other.vec_individual_weight_all_;
+// singletons shouldn't have copy constructors }
 
-	instance_ = other.instance_;
-	pcs_e_p_all_ = other.pcs_e_p_all_;
-	vec_filename_all_ = other.vec_filename_all_;
-	vec_individual_weight_all_ = other.vec_individual_weight_all_;
-}
-
-PcsEnergyParameterManager&
-PcsEnergyParameterManager::operator=( PcsEnergyParameterManager const & other ){
-
-	if ( this != &other ) {
-		instance_ = other.instance_;
-		pcs_e_p_all_ = other.pcs_e_p_all_;
-		vec_filename_all_ = other.vec_filename_all_;
-		vec_individual_weight_all_ = other.vec_individual_weight_all_;
-	}
-	return *this;
-}
+// singletons shouldn't have assignment operators PcsEnergyParameterManager&
+// singletons shouldn't have assignment operators PcsEnergyParameterManager::operator=( PcsEnergyParameterManager const & other ){
+// singletons shouldn't have assignment operators 	if ( this != &other ) {
+// singletons shouldn't have assignment operators 		instance_ = other.instance_;
+// singletons shouldn't have assignment operators 		pcs_e_p_all_ = other.pcs_e_p_all_;
+// singletons shouldn't have assignment operators 		vec_filename_all_ = other.vec_filename_all_;
+// singletons shouldn't have assignment operators 		vec_individual_weight_all_ = other.vec_individual_weight_all_;
+// singletons shouldn't have assignment operators 	}
+// singletons shouldn't have assignment operators 	return *this;
+// singletons shouldn't have assignment operators }
 
 std::ostream &
 operator<<(std::ostream& out, const PcsEnergyParameterManager &me){
@@ -181,8 +179,12 @@ PcsEnergyParameterManager::get_PcsEnergyParameter_for(core::Size i_multi_data){
 	return(pcs_e_p_all_[i_multi_data]);
 }
 
-
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< PcsEnergyParameterManager * > PcsEnergyParameterManager::instance_( 0 );
+#else
 PcsEnergyParameterManager * PcsEnergyParameterManager::instance_( 0 );
+#endif
+
 
 } // PCS
 } // methods

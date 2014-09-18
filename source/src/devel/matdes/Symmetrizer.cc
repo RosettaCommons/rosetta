@@ -40,9 +40,8 @@
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <numeric/random/random.hh>
 
-static basic::Tracer TR("devel.matdes.Symmetrizer");
+static thread_local basic::Tracer TR( "devel.matdes.Symmetrizer" );
 
-static numeric::random::RandomGenerator RG(432156);
 
 namespace devel {
 namespace matdes {
@@ -100,9 +99,9 @@ Symmetrizer::get_angle() {
 	if(explore_grid_ || sampling_mode_ == "grid" )
 		return SymmetrizerSampler::get_instance().get_angle();
 	else if(sampling_mode_ == "uniform")
-		return angle_min_ + ( angle_max_ - angle_min_) * RG.uniform();
+		return angle_min_ + ( angle_max_ - angle_min_) * numeric::random::rg().uniform();
 	else if(sampling_mode_ == "gaussian")
-		return angle_ + angle_delta_ * RG.gaussian();
+		return angle_ + angle_delta_ * numeric::random::rg().gaussian();
 	else
 		return angle_;
 }
@@ -113,9 +112,9 @@ Symmetrizer::get_radial_disp() {
 	if(explore_grid_ || sampling_mode_ == "grid" )
 		return SymmetrizerSampler::get_instance().get_radial_disp();
 	else if(sampling_mode_ == "uniform") 
-		return radial_disp_min_ + ( radial_disp_max_ - radial_disp_min_) * RG.uniform();
+		return radial_disp_min_ + ( radial_disp_max_ - radial_disp_min_) * numeric::random::rg().uniform();
 	else if(sampling_mode_ == "gaussian")
-		return radial_disp_ + radial_disp_delta_ * RG.gaussian();
+		return radial_disp_ + radial_disp_delta_ * numeric::random::rg().gaussian();
 	else
 		return radial_disp_;
 }

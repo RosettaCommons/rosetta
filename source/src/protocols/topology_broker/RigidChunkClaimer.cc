@@ -63,8 +63,7 @@
 
 
 
-static basic::Tracer tr("protocols.topo_broker", basic::t_info);
-static numeric::random::RandomGenerator RG(188428234);
+static thread_local basic::Tracer tr( "protocols.topo_broker", basic::t_info );
 
 namespace protocols {
 namespace topology_broker {
@@ -198,7 +197,7 @@ void RigidChunkClaimer::select_parts() {
 		++attempts;
 		for ( loops::Loops::const_iterator it = rigid_core_.begin(), eit = rigid_core_.end();
 					it != eit; ++it ) {
-			if ( RG.uniform() >= it->skip_rate() )  {
+			if ( numeric::random::rg().uniform() >= it->skip_rate() )  {
 				current_rigid_core_.push_back( *it );
 			}
 		}

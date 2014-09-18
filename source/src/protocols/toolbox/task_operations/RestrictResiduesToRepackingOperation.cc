@@ -48,7 +48,7 @@
 
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictResiduesToRepackingOperation" );
+static thread_local basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictResiduesToRepackingOperation" );
 
 namespace protocols {
 	namespace toolbox {

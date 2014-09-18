@@ -75,7 +75,7 @@
 using basic::Error;
 using basic::Warning;
 using basic::T;
-static basic::Tracer TR("buns_stats");
+static thread_local basic::Tracer TR( "buns_stats" );
 
 basic::options::RealOptionKey const AHdist_opkey("AHdist");
 basic::options::RealOptionKey const AHD_opkey("AHD");

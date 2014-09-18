@@ -28,7 +28,7 @@ namespace frag_picker {
 namespace quota {
 
 
-static basic::Tracer trTorsionBinPool(
+static thread_local basic::Tracer trTorsionBinPool(
 		"protocols.frag_picker.quota.TorsionBinPool");
 
 SecondaryStructurePool::~TorsionBinPool() {}

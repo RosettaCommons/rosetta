@@ -40,7 +40,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static basic::Tracer interface_builder_tracer("protocols.ligand_docking.ligand_options.InterfaceBuilder", basic::t_debug);
+static thread_local basic::Tracer interface_builder_tracer( "protocols.ligand_docking.ligand_options.InterfaceBuilder", basic::t_debug );
 
 InterfaceBuilder::InterfaceBuilder():
 		ReferenceCount(),

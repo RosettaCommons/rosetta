@@ -39,7 +39,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -141,8 +142,11 @@ private:
 
 private:
 
-
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< GridManager * > instance_;
+#else
 	static GridManager * instance_;
+#endif
 
 	std::map<std::string,GridMap> grid_map_cache_;
 

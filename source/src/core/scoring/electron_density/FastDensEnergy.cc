@@ -82,7 +82,7 @@ FastDensEnergyCreator::score_types_for_method() const {
 
 using namespace core::scoring::methods;
 
-static basic::Tracer TR("core.scoring.electron_density.FastDensEnergy");
+static thread_local basic::Tracer TR( "core.scoring.electron_density.FastDensEnergy" );
 
 inline core::Real SQ( core::Real N ) { return N*N; }
 

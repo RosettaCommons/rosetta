@@ -68,8 +68,7 @@
 namespace devel {
 namespace loop_creation {
 	
-static basic::Tracer TR( "protocols.loophash.LoophashLoopInserter" );
-static numeric::random::RandomGenerator RG(28015830); // <- Magic number, do not chainge it!!!!!
+static thread_local basic::Tracer TR( "protocols.loophash.LoophashLoopInserter" );
 
 //****CREATOR METHODS****//
 std::string

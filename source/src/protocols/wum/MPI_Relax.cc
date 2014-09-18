@@ -45,7 +45,7 @@ namespace protocols {
 namespace wum {
 
 
-static basic::Tracer TR("MPI_Relax");
+static thread_local basic::Tracer TR( "MPI_Relax" );
 
 void
 MPI_Relax::init_master(){

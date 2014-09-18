@@ -110,7 +110,7 @@ OPT_1GRP_KEY( String, msd, seed_sequence_using_correspondence_file )
 
 using basic::t_info;
 using basic::t_debug;
-static basic::Tracer TR("apps.public.design.mpi_msd",t_info);
+static thread_local basic::Tracer TR( "apps.public.design.mpi_msd", t_info );
 
 /*class SimpleDGBindAggregateFunction : public protocols::pack_daemon::MultistateAggregateFunction
 {

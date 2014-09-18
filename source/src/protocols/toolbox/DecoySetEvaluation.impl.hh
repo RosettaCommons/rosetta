@@ -33,7 +33,7 @@ namespace toolbox {
 
 template< typename SilentStructIterator >
 void DecoySetEvaluation::push_back_CA_xyz_from_silent_file( Size n_decoys_in, SilentStructIterator begin, SilentStructIterator end, bool store_energies ) {
-  static basic::Tracer _impl_tr("protocols.toolbox.DecoySetEvaluation");
+static thread_local basic::Tracer _impl_tr( "protocols.toolbox.DecoySetEvaluation" );
 
   Size n_new_decoys( n_decoys_in );
 

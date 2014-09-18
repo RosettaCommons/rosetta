@@ -42,7 +42,7 @@
 #include <utility/options/BooleanVectorOption.hh>
 
 
-static basic::Tracer tr("protocols.fldsgn.NcontactsCalculator");
+static thread_local basic::Tracer tr( "protocols.fldsgn.NcontactsCalculator" );
 
 namespace protocols {
 namespace fldsgn {

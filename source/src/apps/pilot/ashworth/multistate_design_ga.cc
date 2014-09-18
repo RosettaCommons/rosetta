@@ -55,7 +55,7 @@ using utility::string_split;
 using basic::t_info;
 using basic::t_debug;
 using basic::t_trace;
-static basic::Tracer TR("app.ga",t_info);
+static thread_local basic::Tracer TR( "app.ga", t_info );
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh> // lead_zero_string_of

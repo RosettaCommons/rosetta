@@ -69,9 +69,9 @@
 
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR("apps.pilot.stranges_test.sasa_calcs_test");
-static basic::Tracer TR2("CalcOutput");
-static basic::Tracer TRdebug("sasa_calc_debug");
+static thread_local basic::Tracer TR( "apps.pilot.stranges_test.sasa_calcs_test" );
+static thread_local basic::Tracer TR2( "CalcOutput" );
+static thread_local basic::Tracer TRdebug( "sasa_calc_debug" );
 
 
 using namespace core;

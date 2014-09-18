@@ -68,7 +68,7 @@
 
 #include <core/import_pose/import_pose.hh>
 
-static basic::Tracer TR("InterfaceMutMaker");
+static thread_local basic::Tracer TR( "InterfaceMutMaker" );
 
 using namespace core;
 using namespace utility;

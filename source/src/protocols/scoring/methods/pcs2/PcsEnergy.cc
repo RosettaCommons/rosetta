@@ -95,7 +95,7 @@ PcsEnergyCreator::score_types_for_method() const {
 	return sts;
 }
 
-basic::Tracer TR_PcsEnergy("protocols.scoring.methods.pcs.PcsEnergy");
+static thread_local basic::Tracer TR_PcsEnergy( "protocols.scoring.methods.pcs.PcsEnergy" );
 
 void
 PcsEnergy::indicate_required_context_graphs( utility::vector1< bool > & ) const{

@@ -36,7 +36,6 @@
 #include <map>
 
 
-static numeric::random::RandomGenerator RG(245099111);  // <- Magic number, do not change it!
 
 using namespace core;
 using core::Real;
@@ -46,7 +45,7 @@ using core::Real;
 // updates the pose full_model_info object.
 //////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "protocols.stepwise.monte_carlo.rna.RNA_TorsionMover" ) ;
+static thread_local basic::Tracer TR( "protocols.stepwise.monte_carlo.rna.RNA_TorsionMover" );
 
 namespace protocols {
 namespace stepwise {
@@ -91,7 +90,7 @@ namespace rna {
 																				 Real const & sample_range ){
 
 		using namespace pose::full_model_info;
-		Size const random_idx = int( RG.uniform() * moving_res_list.size() ) + 1;
+		Size const random_idx = int( numeric::random::rg().uniform() * moving_res_list.size() ) + 1;
 		Size const i = moving_res_list[ random_idx ];
 
 		SWA_MoveSelector swa_move_selector;
@@ -111,7 +110,7 @@ namespace rna {
 			if ( attachment.attachment_type() == BOND_TO_PREVIOUS ) suite_num = i - 1;
 			else suite_num = i;
 
-			if ( RG.uniform() < 0.5) {
+			if ( numeric::random::rg().uniform() < 0.5) {
 				sample_near_suite_torsion( pose, suite_num, sample_range);
 				move_type += "-nuc-suite";
 			} else {
@@ -125,18 +124,18 @@ namespace rna {
 			runtime_assert( attachments.size() == 2 );
 
 			// don't do anything super-crazy -- either do previous suite, current nucleoside, or next suite.
-			Real const random_number = RG.uniform();
+			Real const random_number = numeric::random::rg().uniform();
 
 			if ( random_number < 0.6 ){
 
 				Size suite_num( 0 );
-				if ( RG.uniform() < 0.5) {
+				if ( numeric::random::rg().uniform() < 0.5) {
 					suite_num= i-1;
 				} else {
 					suite_num= i;
 				}
 
-				if ( RG.uniform() < 0.5) {
+				if ( numeric::random::rg().uniform() < 0.5) {
 					sample_near_suite_torsion( pose, suite_num, sample_range);
 					//move_type += "-suite" + string_of(suite_num);
 					move_type += "-suite";
@@ -170,11 +169,11 @@ RNA_TorsionMover::sample_near_suite_torsion(utility::vector1< Real > & torsion_l
 	//	static const Real delta_north = rna_fitted_torsion_info_.delta_north();
 	//	static const Real delta_south = rna_fitted_torsion_info_.delta_south();
 
-	torsion_list[1] += RG.gaussian() * stddev;
-	torsion_list[2] += RG.gaussian() * stddev;
-	torsion_list[3] += RG.gaussian() * stddev;
-	torsion_list[4] += RG.gaussian() * stddev;
-	torsion_list[5] += RG.gaussian() * stddev;
+	torsion_list[1] += numeric::random::rg().gaussian() * stddev;
+	torsion_list[2] += numeric::random::rg().gaussian() * stddev;
+	torsion_list[3] += numeric::random::rg().gaussian() * stddev;
+	torsion_list[4] += numeric::random::rg().gaussian() * stddev;
+	torsion_list[5] += numeric::random::rg().gaussian() * stddev;
 
 }
 
@@ -187,11 +186,11 @@ RNA_TorsionMover::sample_near_nucleoside_torsion(utility::vector1< Real > & tors
 	static const Real delta_north = rna_fitted_torsion_info_.delta_north();
 	static const Real delta_south = rna_fitted_torsion_info_.delta_south();
 
-	if (RG.uniform() < 0.2) {
-		torsion_list[1]  = (RG.uniform() < 0.5) ? delta_south : delta_north;
+	if (numeric::random::rg().uniform() < 0.2) {
+		torsion_list[1]  = (numeric::random::rg().uniform() < 0.5) ? delta_south : delta_north;
 	}
 
-	torsion_list[2] += RG.gaussian() * stddev;
+	torsion_list[2] += numeric::random::rg().gaussian() * stddev;
 	if (torsion_list[2] > 360) {
 		torsion_list[2] -= 360;
 	} else if (torsion_list[2] <=  0) {
@@ -251,11 +250,11 @@ RNA_TorsionMover::apply_random_nucleoside_torsion( pose::Pose & pose,
 
 	utility::vector1< Real > torsion_set;
 
-	bool north_pucker = (RG.uniform() < 0.5) ? true : false;
+	bool north_pucker = (numeric::random::rg().uniform() < 0.5) ? true : false;
 
 	Size chi_rotamer = 1;
 	// could be syn if purine.
-	if ( chemical::rna::is_purine( pose.residue( moving_res ) ) && RG.uniform() < 0.5 ) chi_rotamer = 2;
+	if ( chemical::rna::is_purine( pose.residue( moving_res ) ) && numeric::random::rg().uniform() < 0.5 ) chi_rotamer = 2;
 
 	if ( north_pucker ){
 		torsion_set.push_back( rna_fitted_torsion_info_.delta_north() );
@@ -280,10 +279,10 @@ RNA_TorsionMover::apply_random_suite_torsion( pose::Pose & pose,
 	Real const epsilon =  ( north_pucker ) ? rna_fitted_torsion_info_.gaussian_parameter_set_epsilon_north()[1].center : rna_fitted_torsion_info_.gaussian_parameter_set_epsilon_south()[1].center;
 	torsion_set.push_back( epsilon );
 
-	Size const alpha_rotamer = int( 3 * RG.uniform() ) + 1;
+	Size const alpha_rotamer = int( 3 * numeric::random::rg().uniform() ) + 1;
 	Real const alpha = rna_fitted_torsion_info_.gaussian_parameter_set_alpha()[ alpha_rotamer ].center;
 
-	Size const zeta_rotamer = int( 2 * RG.uniform() ) + 1;
+	Size const zeta_rotamer = int( 2 * numeric::random::rg().uniform() ) + 1;
 	Real zeta;
 	if ( alpha_rotamer == 1 ){
 		zeta = rna_fitted_torsion_info_.gaussian_parameter_set_zeta_alpha_sc_minus()[ zeta_rotamer ].center;
@@ -297,7 +296,7 @@ RNA_TorsionMover::apply_random_suite_torsion( pose::Pose & pose,
 	torsion_set.push_back( alpha );
 	torsion_set.push_back( rna_fitted_torsion_info_.gaussian_parameter_set_beta()[1].center );
 
-	Size const gamma_rotamer = int( 3 * RG.uniform() ) + 1;
+	Size const gamma_rotamer = int( 3 * numeric::random::rg().uniform() ) + 1;
 	torsion_set.push_back( rna_fitted_torsion_info_.gaussian_parameter_set_gamma()[gamma_rotamer].center );
 
 	apply_suite_torsion( torsion_set, pose, moving_suite );
@@ -389,7 +388,7 @@ RNA_TorsionMover::crankshaft_alpha_gamma( pose::Pose & pose, Size const moving_s
 
 	Real alpha = pose.torsion( alpha_torsion_id );
 	Real gamma = pose.torsion( gamma_torsion_id );
-	Real const perturb = RG.gaussian() * sample_range;
+	Real const perturb = numeric::random::rg().gaussian() * sample_range;
 
 	alpha += perturb;
 	gamma -= perturb;

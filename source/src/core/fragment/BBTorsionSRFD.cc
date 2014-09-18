@@ -31,7 +31,7 @@
 namespace core {
 namespace fragment {
 
-static basic::Tracer tr("core.fragment");
+static thread_local basic::Tracer tr( "core.fragment" );
 
 /// @brief copy assignment
 BBTorsionSRFD & BBTorsionSRFD::operator =( BBTorsionSRFD const & rval ) {

@@ -55,8 +55,7 @@ using namespace core;
 using namespace fragment;
 using namespace basic;
 
-static numeric::random::RandomGenerator RG(6273);  // <- Magic number, do not change it!
-static basic::Tracer tr("protocols.simple_moves.ResTypeFragmentMover");
+static thread_local basic::Tracer tr( "protocols.simple_moves.ResTypeFragmentMover" );
 
 ResTypeFragmentMover::ResTypeFragmentMover(core::fragment::FragSetCOP fragset):ClassicFragmentMover(fragset, "ResTypeFragmentMover"){}
 

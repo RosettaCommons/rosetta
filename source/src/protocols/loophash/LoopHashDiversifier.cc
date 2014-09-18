@@ -68,7 +68,7 @@ using std::string;
 using core::scoring::ScoreFunction;
 using core::scoring::ScoreFunctionOP;
 
-static basic::Tracer TR( "protocols.loophash.LoopHashDiversifier" );
+static thread_local basic::Tracer TR( "protocols.loophash.LoopHashDiversifier" );
 
 ///****Creator Methods****///
 std::string
@@ -273,7 +273,7 @@ LoopHashDiversifier::apply( Pose & pose )
 				TR << "Found " << nstructs << " alternative states in time: " << endtime - starttime << std::endl;
 
 			//Shuffle the loophash structures
-	//		numeric::random::random_permutation(lib_structs.begin(), lib_structs.end(), numeric::random::RG);
+	//		numeric::random::random_permutation(lib_structs.begin(), lib_structs.end(), numeric::random::rg());
 
 			std::vector< std::pair< Real, SilentStructOP > > cen_scored_structs;
 			for(std::vector< SilentStructOP >::const_iterator struct_it = lib_structs.begin();

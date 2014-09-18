@@ -50,7 +50,7 @@ namespace scores {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer trJCoupling(
+static thread_local basic::Tracer trJCoupling(
 		"protocols.frag_picker.scores.JCoupling");
 
 JCoupling::JCoupling(Size priority, Real lowest_acceptable_value, bool use_lowest,

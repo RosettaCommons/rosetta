@@ -52,7 +52,7 @@ namespace hotspot_hashing
 namespace movers
 {
 
-static basic::Tracer TR( "protocols.hotspot_hashing.movers.PlaceSurfaceProbe" );
+static thread_local basic::Tracer TR( "protocols.hotspot_hashing.movers.PlaceSurfaceProbe" );
 
 PlaceSurfaceProbe::PlaceSurfaceProbe() :
 	  protocols::moves::Mover("PlaceSurfaceProbe"),

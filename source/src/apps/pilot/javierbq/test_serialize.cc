@@ -37,7 +37,7 @@ using namespace core;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer TR("serialization_test");
+static thread_local basic::Tracer TR( "serialization_test" );
 
 class ThisApplication {
     public:

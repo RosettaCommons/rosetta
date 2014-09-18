@@ -142,8 +142,7 @@
 
 #define foreach BOOST_FOREACH
 
-static basic::Tracer TR( "protocols.hybridization.HybridizeSetup" );
-static numeric::random::RandomGenerator RG(541930);
+static thread_local basic::Tracer TR( "protocols.hybridization.HybridizeSetup" );
 
 namespace protocols {
 namespace hybridization {
@@ -357,13 +356,13 @@ void HybridizeSetup::pick_starting_template()
 		for (Size i=1; i<=starting_templates_.size(); ++i) {
 			weighted_sampler.add_weight(template_weights_[starting_templates_[i]]);
 		}
-		Size k = weighted_sampler.random_sample(RG);
+		Size k = weighted_sampler.random_sample(numeric::random::rg());
 		initial_template_index_ = starting_templates_[k];
 	}
 	else {
 		numeric::random::WeightedSampler weighted_sampler;
 		weighted_sampler.weights(template_weights_);
-		initial_template_index_ = weighted_sampler.random_sample(RG);
+		initial_template_index_ = weighted_sampler.random_sample(numeric::random::rg());
 	}
 }
 
@@ -538,7 +537,7 @@ HybridizeSetup::expand_domains_to_full_length(utility::vector1 < utility::vector
 						cut_options.push_back(ires);
 					}
 				}
-				Size cut = cut_options[RG.random_range(1,cut_options.size())];
+				Size cut = cut_options[numeric::random::rg().random_range(1,cut_options.size())];
 
 				domains[idomain][iloop].set_stop(cut-1);
 				domains[jdomain][jloop].set_start(cut);

@@ -21,7 +21,7 @@
 namespace protocols {
 namespace  wum {
 
-static basic::Tracer TR("MoverList");
+static thread_local basic::Tracer TR( "MoverList" );
 
 void MoverList::register_mover( const std::string &name, moves::MoverCOP the_mover){
 	mover_list_[ name ] = the_mover;

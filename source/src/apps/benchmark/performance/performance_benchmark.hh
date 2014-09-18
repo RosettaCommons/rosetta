@@ -21,7 +21,7 @@
 #include <vector>
 #include <string>
 
-static basic::Tracer TR("benchmark");
+static thread_local basic::Tracer TR( "benchmark" );
 
 
 class PerformanceBenchmark

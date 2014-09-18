@@ -54,9 +54,8 @@
 using namespace core;
 using basic::T;
 
-static basic::Tracer TR( "protocols.coarse_rna.coarse_rna_fragment_mover" ) ;
+static thread_local basic::Tracer TR( "protocols.coarse_rna.coarse_rna_fragment_mover" );
 
-static numeric::random::RandomGenerator RG(22811440);  // <- Magic number, do not change it!
 
 namespace protocols {
 namespace coarse_rna {
@@ -253,7 +252,7 @@ CoarseRNA_Fragments::~CoarseRNA_Fragments() {}
 			utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 		}
 
-		Size const which_frag = static_cast <Size> ( RG.uniform() * num_frags) + 1;
+		Size const which_frag = static_cast <Size> ( numeric::random::rg().uniform() * num_frags) + 1;
 
 		return (*source_positions)[ which_frag ];
 

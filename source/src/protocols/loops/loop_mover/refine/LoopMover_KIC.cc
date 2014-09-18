@@ -100,8 +100,7 @@ namespace refine {
 using namespace core;
 using namespace core::conformation;
 
-static numeric::random::RandomGenerator RG(84888);
-static basic::Tracer TR("protocols.loops.loop_mover.refine.LoopMover_Refine_KIC");
+static thread_local basic::Tracer TR( "protocols.loops.loop_mover.refine.LoopMover_Refine_KIC" );
 
 LoopMover_Refine_KIC::LoopMover_Refine_KIC() : LoopMover()
 {
@@ -574,7 +573,7 @@ void LoopMover_Refine_KIC::apply(
 
 			// choose a random loop for both rounds
 			//Loops::const_iterator it( loops_.one_random_loop() );
-			Size loop_ind = RG.random_range(1, loops()->size());
+			Size loop_ind = numeric::random::rg().random_range(1, loops()->size());
 			Loops one_loop;
 			//one_loop.add_loop( it );
 			one_loop.add_loop( ( *loops() )[ loop_ind ] );
@@ -606,14 +605,14 @@ void LoopMover_Refine_KIC::apply(
 
 				// AS: the previous implementation had a "history bias" towards the N-terminus of the loop, as the start pivot can be anywhere between begin_loop and end_loop-2, while the choice of the end pivot depends on the start pivot
 				if ( option[ OptionKeys::loops::legacy_kic ]() || j % 2 == 0 ) {
-					kic_start = RG.random_range(begin_loop,end_loop-2);
+					kic_start = numeric::random::rg().random_range(begin_loop,end_loop-2);
 					// choose a random end residue so the length is >= 3, <= min(loop_end, start+maxlen)
-					kic_end = RG.random_range(kic_start+2, std::min((kic_start+max_seglen_ - 1), end_loop));
+					kic_end = numeric::random::rg().random_range(kic_start+2, std::min((kic_start+max_seglen_ - 1), end_loop));
 					Size middle_offset = (kic_end - kic_start) / 2;
 					kic_middle = kic_start + middle_offset;
 				} else {
-					kic_end = RG.random_range(begin_loop+2,end_loop);
-					kic_start = RG.random_range(std::max((kic_end - std::min(max_seglen_, kic_end) + 1), begin_loop), kic_end-2);
+					kic_end = numeric::random::rg().random_range(begin_loop+2,end_loop);
+					kic_start = numeric::random::rg().random_range(std::max((kic_end - std::min(max_seglen_, kic_end) + 1), begin_loop), kic_end-2);
 					Size middle_offset = (kic_end - kic_start) / 2;
 					kic_middle = kic_start + middle_offset;
 				}

@@ -35,7 +35,7 @@
 
 
 
-static basic::Tracer tr("protocols.noesy_assign.resonances");
+static thread_local basic::Tracer tr( "protocols.noesy_assign.resonances" );
 
 using core::Real;
 using namespace core;

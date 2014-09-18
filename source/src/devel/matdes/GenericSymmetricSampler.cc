@@ -38,9 +38,8 @@
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <numeric/random/random.hh>
 
-static basic::Tracer TR("devel.matdes.GenericSymmetricSampler");
+static thread_local basic::Tracer TR( "devel.matdes.GenericSymmetricSampler" );
 
-static numeric::random::RandomGenerator RG(432154);
 
 namespace devel {
 namespace matdes {

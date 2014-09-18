@@ -42,12 +42,11 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR( "protocols.simple_moves.RandomOmegaFlipMover" );
+static thread_local basic::Tracer TR( "protocols.simple_moves.RandomOmegaFlipMover" );
 
 namespace protocols {
 namespace simple_moves {
 
-static numeric::random::RandomGenerator RG(123456789);
 
 RandomOmegaFlipMover::RandomOmegaFlipMover() :
 	Mover("RandomOmegaFlipMover"),
@@ -81,7 +80,7 @@ RandomOmegaFlipMover::apply( core::pose::Pose & pose )
 	if ( torsion_id_list_.size() ) {
 
 		// randomly select a free torsion
-		Size tor_num( RG.random_range( 1, torsion_id_list_.size() ) );
+		Size tor_num( numeric::random::rg().random_range( 1, torsion_id_list_.size() ) );
 
 		// calc new value
 		Real old_tor( pose.conformation().torsion( torsion_id_list_[ tor_num ] ) );

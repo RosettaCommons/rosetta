@@ -123,7 +123,6 @@ OPT_1GRP_KEY(Boolean,docking_parallel,use_cst)
 OPT_1GRP_KEY(String,docking_parallel,patchdock_file_prefix)
 OPT_1GRP_KEY(Integer,docking_parallel,num_master)
 
-static numeric::random::RandomGenerator RG(616);
 
 void read_patchdock_entry( utility::vector1< utility::vector1 <double> > &saved_transformations_, string patchdock_fname_ )
 {

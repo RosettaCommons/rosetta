@@ -37,7 +37,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -223,7 +224,12 @@ private:
 	void fill_metadata();
 
 private:
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< QuaternionGridManager * > instance_;
+#else
 	static QuaternionGridManager * instance_;
+#endif
+
 	utility::vector1<QuatDBMetadata> by_size_,by_radius_,by_cover_;
 	std::map<std::string,QuaternionGridCAP> grids_;
 };

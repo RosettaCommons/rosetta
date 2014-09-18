@@ -36,7 +36,7 @@ using basic::Error;
 using basic::Warning;
 
 
-static basic::Tracer TR("protocols.toolbox.SelectResiduesByLayer");
+static thread_local basic::Tracer TR( "protocols.toolbox.SelectResiduesByLayer" );
 
 namespace protocols {
 namespace toolbox {

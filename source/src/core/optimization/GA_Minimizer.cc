@@ -28,16 +28,15 @@
 namespace core {
 namespace optimization {
 
-static basic::Tracer TR("core.optimization.GA_Minimizer");
+static thread_local basic::Tracer TR( "core.optimization.GA_Minimizer" );
 
-static numeric::random::RandomGenerator RG(740);  /// <- Magic number, do not change it!
 
 using core::Size;
 
 /// Return true with given probability
 static bool yes_no_random(Real probability)
 {
-	if( RG.uniform() < probability ) return true;
+	if( numeric::random::rg().uniform() < probability ) return true;
 	else return false;
 }
 
@@ -74,7 +73,7 @@ EItem GA_Minimizer::randomize(const EItem& sit, int &time)
 		EItem t = sit;  t.tag = 'r';
 		for(Size j=1; j<=t.v.size(); j++)
 			// Original: Random::DoubleUniformRandom()*2. - 1.;
-			t.v[j] = sit.v[j] + RG.uniform()*2. - 1.;
+			t.v[j] = sit.v[j] + numeric::random::rg().uniform()*2. - 1.;
 
 		t.r = func_(t.v);
 
@@ -107,7 +106,7 @@ EItem GA_Minimizer::loop(std::vector<EItem> & pop, int &time)
 			for(int i=0; i<10; i++) {
 				EItem t = pop[0];  t.tag = 'r';
 				for(Size j=1; j<=t.v.size(); j++)
-					t.v[j] = RG.uniform()*2. - 1.; //Random::DoubleUniformRandom()*2. - 1.;
+					t.v[j] = numeric::random::rg().uniform()*2. - 1.; //Random::DoubleUniformRandom()*2. - 1.;
 
 				t.r = func_(t.v);
 
@@ -156,7 +155,7 @@ void GA_Minimizer::step(std::vector<EItem> &pop, int &c_time, int &mres, EItem &
 			int last_i = pop.size();
 			pop.push_back(pop[i]);
 
-			int i2 = RG.random_range(0, i_ev-1);  //Random::RangeRandom(i_ev);
+			int i2 = numeric::random::rg().random_range(0, i_ev-1);  //Random::RangeRandom(i_ev);
 			if( i2 != i ) cross_over(pop[last_i], pop[i], pop[i2]);
 		}
 	}
@@ -197,9 +196,9 @@ void GA_Minimizer::mutate(EItem &V)
 {
 	for(Size i=1; i<=V.v.size(); i++) {
 		if( yes_no_random( mutation_probability_ ) ) {
-			double r = RG.gaussian() + .7; //Random::NormalRandom(1, .7);
+			double r = numeric::random::rg().gaussian() + .7; //Random::NormalRandom(1, .7);
 			V.v[i] *= r * 1.0;
-			//V.v[i] += RG.gaussian();
+			//V.v[i] += numeric::random::rg().gaussian();
 		}
 	}
 	V.tag='m';

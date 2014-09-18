@@ -29,7 +29,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -79,8 +80,12 @@ private:
 #endif
 
 private:
-
+	/// @brief static data member holding pointer to the singleton class itself
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< ConstraintFactory * > instance_;
+#else
 	static ConstraintFactory * instance_;
+#endif
 
 	typedef std::map< std::string, scoring::constraints::ConstraintCreatorCOP > ConstraintCreatorMap;
 	ConstraintCreatorMap cst_types_;

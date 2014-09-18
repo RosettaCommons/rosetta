@@ -75,7 +75,7 @@ NormalModeMinimizerCreator::mover_name()
 
 ////////////
 
-static basic::Tracer nma_tr( "protocols.normalmode",  basic::t_debug);
+static thread_local basic::Tracer nma_tr( "protocols.normalmode", basic::t_debug );
 
 
 NormalModeMinimizer::NormalModeMinimizer() {

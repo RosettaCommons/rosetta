@@ -41,7 +41,6 @@
 
 
 using namespace ObjexxFCL;
-static numeric::random::RandomGenerator sab_RG(42454); // <- Magic number, do not change it!!!
 
 namespace core {
 namespace pack {
@@ -348,7 +347,7 @@ bool SimAnnealerBase::pass_metropolis( core::PackerEnergy previous_energy, core:
 	/// call this every time, for better numerical stability. Otherwise delta_energies ~ 0 can lead to
 	/// instability in the number of calls to the random number generator
 
-	core::PackerEnergy const rg_uniform( sab_RG.uniform() );
+	core::PackerEnergy const rg_uniform( numeric::random::rg().uniform() );
 
 	if ( delta_energy < 0 ) {
 		return true;

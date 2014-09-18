@@ -21,8 +21,7 @@
 // Numeric Headers
 #include <numeric/random/random.hh>
 
-static basic::Tracer TR( "protocols.sampler.StepWiseSamplerAny" );
-static numeric::random::RandomGenerator RG( 2565849 );  // Magic number
+static thread_local basic::Tracer TR( "protocols.sampler.StepWiseSamplerAny" );
 
 using namespace core;
 
@@ -87,7 +86,7 @@ void StepWiseSamplerAny::operator++() {
 
 	if ( random() ) {
 		if ( is_weighted_ ) {
-			Real const rand = RG.uniform();
+			Real const rand = numeric::random::rg().uniform();
 			for ( Size i = 1; i <= cdf_.size(); ++i ) {
 				if ( rand <= cdf_[i] ) {
 					curr_rotamer_ = i;
@@ -95,7 +94,7 @@ void StepWiseSamplerAny::operator++() {
 				}
 			}
 		} else {
-			curr_rotamer_ = RG.random_range( 1, rotamer_list_.size() );
+			curr_rotamer_ = numeric::random::rg().random_range( 1, rotamer_list_.size() );
 		}
 		if ( has_empty_ && !rotamer_list_[curr_rotamer_]->not_end() ) ++( *this );
 		++( *rotamer_list_[curr_rotamer_] );

@@ -41,8 +41,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.geometry.RB_geometry");
-static numeric::random::RandomGenerator RG(62451); // <- Magic number, do not change it!!!
+static thread_local basic::Tracer TR( "protocols.geometry.RB_geometry" );
 
 using namespace ObjexxFCL;
 
@@ -64,10 +63,10 @@ random_reorientation_matrix(const double phi_range, const double psi_range)
 {
 	// a genuine rotation matrix which will randomly reorient the coord sys.
 	// from Euler theorem
-	const double phi( phi_range * RG.uniform() ); // degrees
-	const double psi( psi_range * RG.uniform() ); // degrees
+	const double phi( phi_range * numeric::random::rg().uniform() ); // degrees
+	const double psi( psi_range * numeric::random::rg().uniform() ); // degrees
 	const double theta(
-		numeric::conversions::degrees( std::acos(numeric::sin_cos_range( 1.0 - 2.0 *RG.uniform() ) ) )
+		numeric::conversions::degrees( std::acos(numeric::sin_cos_range( 1.0 - 2.0 * numeric::random::rg().uniform() ) ) )
 	); // degrees
 
 	TR << "random_reorientation_matrix phi: " << phi << " psi: " << psi << " theta: " << theta << std::endl;

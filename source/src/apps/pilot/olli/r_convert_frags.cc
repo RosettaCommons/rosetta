@@ -61,9 +61,8 @@ void register_options() {
 	NEW_OPT( loop, "only accept frags within loop definition", "loop.dat" );
 }
 
-static numeric::random::RandomGenerator RG(489923);  // <- Magic number, do not change it!
 
-static basic::Tracer tr("main");
+static thread_local basic::Tracer tr( "main" );
 int main( int argc, char** argv ) {
 	try{
   register_options();
@@ -87,7 +86,7 @@ int main( int argc, char** argv ) {
     FragID_Iterator eit= orig_frags->end();
     for ( ; it!=eit; ++it ) {
       if ( option[ skip_rate ]() <= 1.0 ) { //throw out fragments
-				Real r = RG.uniform();
+				Real r = numeric::random::rg().uniform();
 				if ( r > option[ skip_rate ]() ) { //keep fragment
 					new_frags->add( *it );
 				}

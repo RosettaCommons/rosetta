@@ -44,8 +44,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static numeric::random::RandomGenerator RG(956732);
-static basic::Tracer TR( "protocols.simple_moves.oop.OopPuckMover" );
+static thread_local basic::Tracer TR( "protocols.simple_moves.oop.OopPuckMover" );
 
 
 using namespace core;

@@ -56,7 +56,6 @@ namespace protocols {
 namespace loops {
 namespace loop_mover {
 
-static numeric::random::RandomGenerator RG(47537); // <- Magic number, do not change it!!!
 
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
@@ -352,7 +351,7 @@ void IndependentLoopMover::select_loops( Loops & selected_loops ){
 	// randomize order if required
 	if ( random_order_ ) {
 		//std::random__shuffle( comb_loops.v_begin(), comb_loops.v_end() );
-		numeric::random::random_permutation( comb_loops.v_begin(), comb_loops.v_end(), RG);
+		numeric::random::random_permutation( comb_loops.v_begin(), comb_loops.v_end(), numeric::random::rg());
 	}
 
 	selected_loops = comb_loops;

@@ -113,7 +113,6 @@ using std::string;
 OPT_1GRP_KEY(String,read_pose_jump_orientation_repack,outtag)
 OPT_1GRP_KEY(RealVector,read_pose_jump_orientation_repack,jump_orientation)
 
-static numeric::random::RandomGenerator RG(616);
 
 void transform_pose( core::pose::Pose & pose,utility::vector1<core::Real> const & t )
 {

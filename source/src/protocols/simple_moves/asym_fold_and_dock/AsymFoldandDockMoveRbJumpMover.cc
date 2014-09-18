@@ -42,8 +42,7 @@ namespace protocols {
 namespace simple_moves {
 namespace asym_fold_and_dock {
 
-static basic::Tracer TR("protocols.simple_moves.symmetry.AsymFoldandDockMoveRbJumpMover");
-static numeric::random::RandomGenerator RG(44525243); // <- Magic number, do not change it!!!
+static thread_local basic::Tracer TR( "protocols.simple_moves.symmetry.AsymFoldandDockMoveRbJumpMover" );
 
 AsymFoldandDockMoveRbJumpMover::AsymFoldandDockMoveRbJumpMover( core::Size chain_start )
 	: protocols::moves::Mover("AsymFoldandDockMoveRbJumpMover"), chain_start_( chain_start )
@@ -84,8 +83,8 @@ AsymFoldandDockMoveRbJumpMover::find_new_jump_residue( core::pose::Pose & pose )
 	TR << "The anchor residues are at residue " << residue_that_builds_anchor  << " : " << anchor_start << std::endl;
 
 	//Looking in central half of each segment -- pick a random point.
-  Size anchor_chain1 = static_cast<Size>( RG.uniform() * (chain_start_) ) + 1;
-	Size anchor_chain2 = static_cast<Size>( RG.uniform() * (nres_flexible_segment) ) +
+  Size anchor_chain1 = static_cast<Size>( numeric::random::rg().uniform() * (chain_start_) ) + 1;
+	Size anchor_chain2 = static_cast<Size>( numeric::random::rg().uniform() * (nres_flexible_segment) ) +
     chain_start_ + 1;
 
   if ( basic::options::option[ basic::options::OptionKeys::fold_and_dock::set_anchor_at_closest_point ] )

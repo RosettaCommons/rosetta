@@ -34,7 +34,7 @@
 #include <basic/Tracer.hh>
 
 using basic::Warning;
-static basic::Tracer TR("protocols.simple_moves.symmetry.TaskAwareSymMinMover");
+static thread_local basic::Tracer TR( "protocols.simple_moves.symmetry.TaskAwareSymMinMover" );
 
 namespace protocols {
 namespace simple_moves {

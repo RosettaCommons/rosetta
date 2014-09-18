@@ -29,7 +29,7 @@
 #include <algorithm>
 #include <cmath>
 
-static basic::Tracer TR("protocols.UnfoldedStateEnergyCalculator.UnfoldedStateEnergyCalculatorUtil");
+static thread_local basic::Tracer TR( "protocols.UnfoldedStateEnergyCalculator.UnfoldedStateEnergyCalculatorUtil" );
 
 namespace protocols {
 namespace unfolded_state_energy_calculator {

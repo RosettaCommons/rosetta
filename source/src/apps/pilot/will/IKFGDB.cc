@@ -116,7 +116,7 @@ typedef numeric::xyzVector<Real> Vec;
 typedef numeric::xyzMatrix<Real> Mat;
 typedef utility::vector1<Vec> Vecs;
 
-static basic::Tracer TR("IKFGDB");
+static thread_local basic::Tracer TR( "IKFGDB" );
 
 inline Real const sqr(Real const r) { return r*r; }
 

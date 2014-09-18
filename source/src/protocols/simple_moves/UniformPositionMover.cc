@@ -37,7 +37,7 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
 
-static basic::Tracer TR( "protocols.simple_moves.UniformPositionMover" );
+static thread_local basic::Tracer TR( "protocols.simple_moves.UniformPositionMover" );
 
 namespace protocols {
 namespace simple_moves {

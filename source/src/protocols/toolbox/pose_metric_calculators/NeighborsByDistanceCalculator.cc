@@ -40,7 +40,7 @@
 //C++ headers
 //#include <set>
 
-static basic::Tracer TR("protocols.toolbox.PoseMetricCalculators.NeighborsByDistanceCalculator");
+static thread_local basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.NeighborsByDistanceCalculator" );
 
 namespace protocols{
 namespace toolbox {

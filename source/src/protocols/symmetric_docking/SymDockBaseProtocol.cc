@@ -29,8 +29,7 @@
 namespace protocols {
 namespace symmetric_docking {
 
-static basic::Tracer TR("protocols.symmetric_docking.SymDockBaseProtocol");
-//static numeric::random::RandomGenerator my_RG(85000); // <- Magic number, do not change it!!! Need to find out wgat to use here!!!!!!
+static thread_local basic::Tracer TR( "protocols.symmetric_docking.SymDockBaseProtocol" );
 
 SymDockBaseProtocol::SymDockBaseProtocol() :
 	Mover()

@@ -27,7 +27,7 @@
 // c++ headers
 #include <iostream>
 
-static basic::Tracer TR("apps.pilot.doug.number_of_residuetypes");
+static thread_local basic::Tracer TR( "apps.pilot.doug.number_of_residuetypes" );
 
 int
 main( int argc, char * argv [] )

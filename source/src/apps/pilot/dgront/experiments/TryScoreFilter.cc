@@ -57,7 +57,7 @@
 
 
 
-basic::Tracer TR("TryScoreFilter");
+static thread_local basic::Tracer TR( "TryScoreFilter" );
 
 OPT_KEY( String, score_name )
 OPT_KEY( Real, cutoff )

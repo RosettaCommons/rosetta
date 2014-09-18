@@ -43,7 +43,7 @@
 #include <protocols/evaluation/util.hh>
 #include <utility/vector1.hh>
 
-static basic::Tracer tr("protocols.evalution.RMSD");
+static thread_local basic::Tracer tr( "protocols.evalution.RMSD" );
 
 namespace protocols {
 namespace simple_filters {

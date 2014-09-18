@@ -35,7 +35,7 @@
 
 
 //// C++ headers
-static basic::Tracer tr("protocols.filters.PackStatFilter");
+static thread_local basic::Tracer tr( "protocols.filters.PackStatFilter" );
 
 namespace protocols {
 namespace simple_filters {

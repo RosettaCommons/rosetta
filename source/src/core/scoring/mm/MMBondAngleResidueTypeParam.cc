@@ -34,7 +34,7 @@
 
 // C++ headers
 
-static basic::Tracer TR("core.mm.MMBondAngleResidueTypeParam");
+static thread_local basic::Tracer TR( "core.mm.MMBondAngleResidueTypeParam" );
 
 
 namespace core {

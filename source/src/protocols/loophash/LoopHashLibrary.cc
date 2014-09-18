@@ -73,7 +73,7 @@ using namespace protocols::frag_picker;
 namespace protocols {
 namespace loophash {
 
-static basic::Tracer TR("LoopHashLibrary");
+static thread_local basic::Tracer TR( "LoopHashLibrary" );
 
 
 LoopHashLibrary::LoopHashLibrary( const utility::vector1< core::Size > &init_sizes, const core::Size num_partitions,
@@ -494,7 +494,7 @@ LoopHashLibrary::apply( core::pose::Pose& pose )
 		TR.Info << "FOUND " << lib_structs.size() << " alternative states in time: " << endtime2 - starttime2 << std::endl;
 
 		//std::random__shuffle( lib_structs.begin(), lib_structs.end());
-		numeric::random::random_permutation(lib_structs.begin(), lib_structs.end(), numeric::random::RG);
+		numeric::random::random_permutation( lib_structs.begin(), lib_structs.end(), numeric::random::rg() );
 
 		std::vector< core::io::silent::SilentStructOP > select_lib_structs;
 
@@ -785,7 +785,7 @@ LoopHashLibrary::get_all(
 			// Now go through the chosen loops in random order
 			core::Size explore_count = 0;
 			//std::random__shuffle( filter_leap_index_bucket.begin(), filter_leap_index_bucket.end());
-			numeric::random::random_permutation(filter_leap_index_bucket.begin(), filter_leap_index_bucket.end(), numeric::random::RG);
+			numeric::random::random_permutation( filter_leap_index_bucket.begin(), filter_leap_index_bucket.end(), numeric::random::rg() );
 
 			for(	std::vector < core::Size >::const_iterator it = filter_leap_index_bucket.begin();
 					it != filter_leap_index_bucket.end();

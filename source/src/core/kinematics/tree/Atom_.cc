@@ -40,7 +40,7 @@ namespace core {
 namespace kinematics {
 namespace tree {
 
-static basic::Tracer TR("core.kinematics.tree.Atom_");
+static thread_local basic::Tracer TR( "core.kinematics.tree.Atom_" );
 
 void
 Atom_::set_weak_ptr_to_self(

@@ -66,7 +66,7 @@ namespace pack {
 using core::conformation::symmetry::SymmetryInfoCOP;
 using core::conformation::symmetry::SymmetricConformation;
 
-static basic::Tracer tt("core.pack.pack_rotamers",basic::t_info );
+static thread_local basic::Tracer tt( "core.pack.pack_rotamers", basic::t_info );
 
 // @begin pack_rotamers
 // @details Wraps the two very distinct and separate stages of rotamer packing, which are factored so that they may be called asynchronously.  Use this wrapper as a base model for higher-level packing routines (such as pack_rotamers_loop)

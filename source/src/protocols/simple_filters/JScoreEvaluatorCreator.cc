@@ -52,7 +52,7 @@
 #endif
 
 
-static basic::Tracer tr("protocols.evalution.JScoreEvaluatorCreator");
+static thread_local basic::Tracer tr( "protocols.evalution.JScoreEvaluatorCreator" );
 
 namespace protocols {
 namespace simple_filters {

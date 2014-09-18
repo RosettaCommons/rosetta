@@ -63,8 +63,7 @@ namespace rbsegment_relax {
 
 using namespace core;
 
-static numeric::random::RandomGenerator rbseg_RG(186331);
-static basic::Tracer TR("protocols::moves::RBSegmentMover");
+static thread_local basic::Tracer TR( "protocols::moves::RBSegmentMover" );
 
 
 //

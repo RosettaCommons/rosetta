@@ -35,7 +35,7 @@
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobOutputter.hh>
 
-static basic::Tracer TR("apps.pilot.nmarze.elliptical_ip");
+static thread_local basic::Tracer TR( "apps.pilot.nmarze.elliptical_ip" );
 
 
 /////////////////////////////////////////////////////////////////////////////////

@@ -87,7 +87,7 @@ using core::Real;
 using utility::vector1;
 using numeric::xyzVector;
 
-static basic::Tracer TR( "apps.pilot.cnl_env_delta_state_pol" );
+static thread_local basic::Tracer TR( "apps.pilot.cnl_env_delta_state_pol" );
 
 
 ///

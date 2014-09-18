@@ -63,7 +63,7 @@ using namespace core::scoring;
 using namespace core::optimization;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer TR( "apps.pilot.chet_trp_to_gly.main" );
+static thread_local basic::Tracer TR( "apps.pilot.chet_trp_to_gly.main" );
 
 
 void do_minimization(

@@ -48,7 +48,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
-static basic::Tracer tr("protocols.docking.DockSetupMover");
+static thread_local basic::Tracer tr( "protocols.docking.DockSetupMover" );
 
 using namespace core;
 

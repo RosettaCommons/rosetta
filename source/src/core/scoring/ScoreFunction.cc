@@ -77,7 +77,7 @@
 //Auto Headers
 #include <core/scoring/EnergyGraph.hh>
 
-static basic::Tracer tr("core.scoring");
+static thread_local basic::Tracer tr( "core.scoring" );
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;

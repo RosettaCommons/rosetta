@@ -53,7 +53,7 @@ using namespace basic::options::OptionKeys;
 
 OPT_KEY( String, ref_decoy )
 
-static basic::Tracer TR( "apps.pilot.johnk_recompute_score_and_rmsd.main" );
+static thread_local basic::Tracer TR( "apps.pilot.johnk_recompute_score_and_rmsd.main" );
 
 
 /// General testing code

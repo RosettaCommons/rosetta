@@ -50,7 +50,6 @@ using namespace core;
 using basic::T;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
-static numeric::random::RandomGenerator RG(1277320);  // <- Magic number, do not change it!
 
 namespace protocols {
 namespace farna {
@@ -87,7 +86,7 @@ MultipleDomainMover::get_name() const {
 Size
 MultipleDomainMover::apply_and_return_jump( core::pose::Pose & pose )
 {
-  Size const n = static_cast<Size> ( RG.uniform() * num_domains_ ) + 1;
+  Size const n = static_cast<Size> ( numeric::random::rg().uniform() * num_domains_ ) + 1;
 	return apply_at_domain( pose, n );
 }
 

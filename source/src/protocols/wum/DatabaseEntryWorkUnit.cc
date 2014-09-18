@@ -28,7 +28,7 @@
 #include <string>
 #include <map>
 
-static basic::Tracer TR("DatabaseEntryWorkUnit");
+static thread_local basic::Tracer TR( "DatabaseEntryWorkUnit" );
 
 namespace protocols{
 namespace wum{

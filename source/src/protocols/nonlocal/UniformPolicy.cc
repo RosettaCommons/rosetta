@@ -31,7 +31,6 @@
 namespace protocols {
 namespace nonlocal {
 
-static numeric::random::RandomGenerator RG(330);
 
 UniformPolicy::UniformPolicy(core::fragment::FragSetCOP fragments)
     : Policy(fragments) {}
@@ -39,7 +38,7 @@ UniformPolicy::UniformPolicy(core::fragment::FragSetCOP fragments)
 core::Size UniformPolicy::choose(const core::fragment::Frame& frame,
                                  const core::pose::Pose&) {
   assert(frame.nr_frags() > 0);
-  return RG.random_range(1, frame.nr_frags());
+  return numeric::random::rg().random_range(1, frame.nr_frags());
 }
 
 }  // namespace nonlocal

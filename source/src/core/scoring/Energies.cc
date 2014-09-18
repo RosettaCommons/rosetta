@@ -63,7 +63,7 @@
 
 
 
-static basic::Tracer tr("core.scoring.Energies");
+static thread_local basic::Tracer tr( "core.scoring.Energies" );
 
 using namespace ObjexxFCL::format;
 

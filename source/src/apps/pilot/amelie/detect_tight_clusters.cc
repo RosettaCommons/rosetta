@@ -94,8 +94,7 @@ const core::Size rot_trials_iterations = 10;
 const core::Size env_quality_check_dist = 6; // no zero-occupancy or Rosetta-rebuilt atoms within this distance of any cluster atom
 const core::Size backrub_iterations = 10;
 
-basic::Tracer TR("apps.pilot.amelie.detect_tight_clusters");
-static numeric::random::RandomGenerator RG(35468412);
+static thread_local basic::Tracer TR( "apps.pilot.amelie.detect_tight_clusters" );
 
 OPT_1GRP_KEY(Boolean, detect_tight_clusters, generate_output_structures) // (no semicolon here!) -- this would generate huge amounts of output, so by default it runs silently, only reporting which residues are involved in clusters
 OPT_1GRP_KEY(Boolean, detect_tight_clusters, require_renumbered_structures) // requires numbering to match length of structures -- hack for making the output work with external tools like OSCARstar, but has some drawbacks (see below)
@@ -488,7 +487,7 @@ void repack_cluster(
 					core::Real proposal_density_ratio(1); // only relevant for detailed balance, I think
 
 					// could use random mover for this...
-					core::Real move_prob = RG.uniform();
+					core::Real move_prob = numeric::random::rg().uniform();
 					if (move_prob > option[ detect_tight_clusters::backrub_sc_prob ]) {
 						//TR << " backrub mover! " << move_prob << std::endl;
 
@@ -511,7 +510,7 @@ void repack_cluster(
 						 core::Size middle_resnum(static_cast<core::Size>((segment.start_atomid().rsd() + segment.end_atomid().rsd())*.5));
 						 //TR << "Simultaneous move for segment: " << segment.start_atomid() << segment.end_atomid() << " middle: " << middle_resnum << std::endl;
 						 if (sidechainmover.residue_packed()[middle_resnum]) {
-						 if (RG.uniform() < option[ backrub::backrub_sc_prob ]) {
+						 if (numeric::random::rg().uniform() < option[ backrub::backrub_sc_prob ]) {
 						 sidechainmover.next_resnum(middle_resnum);
 						 //TR << "next_resnum before: " << sidechainmover.next_resnum() << std::endl;
 						 sidechainmover.apply(*pose);

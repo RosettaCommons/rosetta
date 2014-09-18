@@ -85,10 +85,10 @@ find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & targ
       min_dist = dist;
       nearest_res = i;
     }
-  }
-  static basic::Tracer TR("This is nearest_res");
+	}
+	basic::Tracer TR( "This is nearest_res" );
 
-      TR<<nearest_res<<std::endl;
+	TR<<nearest_res<<std::endl;
   if( min_dist <= 10.0 ) return nearest_res;
   else return 0;
 }
@@ -106,7 +106,7 @@ main( int argc, char * argv [] )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace basic::options::OptionKeys::cutoutdomain;
-	static basic::Tracer TR("CutOutDomain:");
+	basic::Tracer TR( "CutOutDomain:" );
 
    option.add_relevant( OptionKeys::cutoutdomain::start                       );
 

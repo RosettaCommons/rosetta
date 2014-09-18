@@ -94,9 +94,9 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.analysis.InterfaceAnalyzerMover");
-static basic::Tracer TRinterface("protocols.analysis.InterfaceAnalyzerMover.interface_selection");
-static basic::Tracer TRhbonds("protocols.analysis.InterfaceAnalyzerMover.missing_hbonds");
+static thread_local basic::Tracer TR( "protocols.analysis.InterfaceAnalyzerMover" );
+static thread_local basic::Tracer TRinterface( "protocols.analysis.InterfaceAnalyzerMover.interface_selection" );
+static thread_local basic::Tracer TRhbonds( "protocols.analysis.InterfaceAnalyzerMover.missing_hbonds" );
 
 
 

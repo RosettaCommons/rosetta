@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file
-/// @brief 
+/// @brief
 /// @author Yifan Song
 
 #include <protocols/hybridization/BackboneTorsionSampler.hh>
@@ -62,8 +62,7 @@
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.hybridization.BackboneTorsionSampler" );
-static numeric::random::RandomGenerator RG(5694684);
+static thread_local basic::Tracer TR( "protocols.hybridization.BackboneTorsionSampler" );
 
 namespace protocols {
 namespace hybridization {
@@ -89,35 +88,35 @@ void BackboneTorsionSampler::local_perturb(core::pose::Pose pose, core::Real max
     for (Size ires=1; ires <= pose.total_residue(); ++ires) {
         n_torsion += 2; // for now
     }
-    Size perturbed_torsion = RG.random_range(1, n_torsion);
+    Size perturbed_torsion = numeric::random::rg().random_range(1, n_torsion);
     Size perturbed_residue = (perturbed_torsion + 1)/2;
-    core::Real delta = (2.* RG.uniform() - 1.) * max_delta_torsion;
+    core::Real delta = (2.* numeric::random::rg().uniform() - 1.) * max_delta_torsion;
     if ( (perturbed_torsion - (perturbed_residue-1)*2) == 1 ) {
         pose.set_phi(perturbed_residue, pose.phi(perturbed_residue) + delta);
     }
     else {
-        //core::Real psi = (2.* RG.uniform() - 1.) * max_delta_torsion + pose.psi(perturbed_residue);
+        //core::Real psi = (2.* numeric::random::rg().uniform() - 1.) * max_delta_torsion + pose.psi(perturbed_residue);
         pose.set_psi(perturbed_residue, pose.psi(perturbed_residue) + delta);
     }
-    
+
     core::Real variance(3.);
     int next_torsion = perturbed_torsion;
     while (next_torsion == (int) perturbed_torsion) {
-        next_torsion = floor( perturbed_res_ + variance*RG.gaussian() + 0.5 );
+			next_torsion = floor( perturbed_res_ + variance*numeric::random::rg().gaussian() + 0.5 );
     }
-    
+
     if ( next_torsion >= 1 && next_torsion <= (int) pose.total_residue() * 2 ) {
         Size next_perturbed_residue = (next_torsion + 1)/2;
         if ( (next_torsion - (next_perturbed_residue-1)*2) == 1 ) {
             pose.set_phi(next_perturbed_residue, pose.phi(next_perturbed_residue) - delta);
         }
         else {
-            //core::Real psi = (2.* RG.uniform() - 1.) * max_delta_torsion + pose.psi(next_perturbed_residue);
+            //core::Real psi = (2.* numeric::random::rg().uniform() - 1.) * max_delta_torsion + pose.psi(next_perturbed_residue);
             pose.set_psi(next_perturbed_residue, pose.psi(next_perturbed_residue) - delta);
         }
     }
 }
-    
+
 void BackboneTorsionSampler::perturb(core::pose::Pose & pose,
                                      core::Size level, // level 1 is the base
                                      core::Real max_delta_torsion,
@@ -126,29 +125,29 @@ void BackboneTorsionSampler::perturb(core::pose::Pose & pose,
                                      bool repack,
                                      bool minimize) {
     if (level == 1){
-        perturbed_res_ = RG.random_range(1, pose.total_residue());
+        perturbed_res_ = numeric::random::rg().random_range(1, pose.total_residue());
     }
     for (core::Size ires=1; ires <= pose.total_residue() ; ++ires) {
         if (local != 0) {
             if ( abs((int) ires - (int) perturbed_res_) > (int) ((local - 1) * level/2)) continue;
         }
-        
+
         if (pose.residue_type(ires).is_protein()) {
             core::Real phi(0), psi(0);
             if (level == 1 && rama_biased) {
                 core::scoring::Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran();
-                
+
                 rama.random_phipsi_from_rama( pose.residue_type(ires).aa(), phi, psi);
             }
             else {
-                phi = (2.* RG.uniform() - 1.) * max_delta_torsion + pose.phi(ires);
-                psi = (2.* RG.uniform() - 1.) * max_delta_torsion + pose.psi(ires);
+                phi = (2.* numeric::random::rg().uniform() - 1.) * max_delta_torsion + pose.phi(ires);
+                psi = (2.* numeric::random::rg().uniform() - 1.) * max_delta_torsion + pose.psi(ires);
             }
             pose.set_phi(ires, phi);
             pose.set_psi(ires, psi);
         }
     }
-    
+
     pose.conformation().detect_disulfides();
     if (repack) {
         pack_full_repack_->apply(pose);
@@ -158,7 +157,7 @@ void BackboneTorsionSampler::perturb(core::pose::Pose & pose,
         minimizer_->run( pose, mm_, *scorefxn_, *options_ );
     }
 }
-    
+
 void BackboneTorsionSampler::apply( core::pose::Pose & pose ) {
     //core::pack::task::TaskFactoryOP local_tf = new core::pack::task::TaskFactory();
     //local_tf->push_back(new core::pack::task::operation::RestrictToRepacking());
@@ -173,14 +172,14 @@ void BackboneTorsionSampler::apply( core::pose::Pose & pose ) {
 	}
     pack_full_repack_ = new protocols::simple_moves::PackRotamersMover( scorefxn_, task );
     //task->show_all_residue_tasks();
-    
+
     pose.conformation().detect_disulfides();
 
     // initialize monte carlo
     utility::vector1<protocols::moves::MonteCarloOP> mc(n_nested_+1);
     utility::vector1<core::Size> ncycles(n_nested_+1);
     utility::vector1<core::Size> counters(n_nested_+1, 0);
-    
+
     perturbed_res_ = 0;
     for (core::Size i_nest=1; i_nest<=n_nested_+1; ++i_nest) {
         mc[i_nest]= new protocols::moves::MonteCarlo( pose, *scorefxn_, temperature_ );
@@ -199,7 +198,7 @@ void BackboneTorsionSampler::apply( core::pose::Pose & pose ) {
     minimizer_ = new core::optimization::AtomTreeMinimizer();
     //minimizer_ = new core::optimization::CartesianMinimizer();
 	options_ =  new core::optimization::MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
-	
+
 	options_->max_iter(10);
 	mm_.set_bb  ( true );
 	mm_.set_chi ( true );
@@ -239,7 +238,7 @@ void BackboneTorsionSampler::apply( core::pose::Pose & pose ) {
                 perturb(pose, i_nest, 5., 0, false, true, true);
             }
         }
-        
+
         core::Real score=(*scorefxn_)(pose);
         if (native_ && native_->total_residue()) {
             core::Real gdtmm(0.);
@@ -250,22 +249,22 @@ void BackboneTorsionSampler::apply( core::pose::Pose & pose ) {
 		}
 
         mc[i_nest]->boltzmann(pose, "BackboneTorsionSampler");
-        
+
         if (n_nested_ != 0) {
             while (true) {
                 if (counters[i_nest] >= ncycles[i_nest]) {
                     counters[i_nest] = 0;
                     mc[i_nest]->show_scores();
                     mc[i_nest]->show_counters();
-                    
+
                     mc[i_nest]->recover_low(pose);
 
                     --i_nest;
                     ++counters[i_nest];
-                    
+
                     (*scorefxn_)(pose);
                     mc[i_nest]->boltzmann(pose, "BackboneTorsionSampler");
-                    
+
                     if (i_nest == 1) {
                         perturb(pose, i_nest, 0., local_, true, false, false);
                     }
@@ -288,13 +287,13 @@ void BackboneTorsionSampler::apply( core::pose::Pose & pose ) {
                     break;
                 }
             }
-            
+
             if (counters[1] >= ncycles[1]) {
                 break;
             }
         }
         //TR << counters[1] << " " << counters[2] << std::endl;
-        
+
         if (dump_snapshots_) {
             ++snapshot_counter;
             if ( snapshot_counter % snapshot_interval_ == 0 ) {
@@ -307,7 +306,7 @@ void BackboneTorsionSampler::apply( core::pose::Pose & pose ) {
             }
         }
     }
-    
+
     for (core::Size i_nest=1; i_nest<=n_nested_+1; ++i_nest) {
         mc[i_nest]->show_scores();
         mc[i_nest]->show_counters();
@@ -340,7 +339,7 @@ BackboneTorsionSampler::parse_my_tag(
 ) {
     core::Size start_res = 1;
     core::Size stop_res = pose.total_residue();
-    
+
     if( tag->hasOption( "start_res" ) ) start_res = tag->getOption< core::Size >( "start_res" );
     if( tag->hasOption( "stop_res" ) ) stop_res = tag->getOption< core::Size >( "stop_res" );
     for (core::Size ires=start_res; ires<=stop_res; ++ires) {
@@ -350,7 +349,7 @@ BackboneTorsionSampler::parse_my_tag(
         native_ = new core::pose::Pose;
         core::import_pose::pose_from_pdb( *native_, tag->getOption< std::string >( "native" ) );
     }
-    
+
     //String const  user_defined_mover_name_( tag->getOption< String >( "mover_name" ,""));
 	//Movers_map::const_iterator  find_mover ( movers.find( user_defined_mover_name_ ));
 	//if( find_mover == movers.end() && user_defined_mover_name_ != "" ) {
@@ -363,7 +362,7 @@ BackboneTorsionSampler::parse_my_tag(
     if( tag->hasOption( "temp" ) ) temperature_ = tag->getOption< core::Real >( "temp" );
     local_ = tag->getOption< core::Size >( "local" , 0);
     n_nested_ = tag->getOption< core::Size >( "nested" , 2);
-    
+
     if( tag->hasOption( "scorefxn" ) ) {
 		std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn" ) );
 		set_scorefunction ( (datamap.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name ))->clone() );

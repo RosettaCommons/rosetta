@@ -81,7 +81,6 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static numeric::random::RandomGenerator RG(16423); // <- Magic number, do not change it!!!
 
 using namespace core;
 //using namespace protocols;
@@ -93,7 +92,7 @@ using std::endl;
 using io::pdb::dump_pdb;
 using namespace ObjexxFCL::format;
 
-basic::Tracer tt( "demo.phil.dna_design_test", basic::t_info );
+static thread_local basic::Tracer tt( "demo.phil.dna_design_test", basic::t_info );
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // rescale phosphate charges by desired amount
@@ -212,7 +211,7 @@ design_test()
 	vector1< string > files( start_files() );
 
 	// permute files so that all 8 processes won't be on the large PDBs at the same time
-	numeric::random::random_permutation( files, RG );
+	numeric::random::random_permutation( files, numeric::random::rg() );
 
 	for ( Size n=1; n<= files.size(); ++n ) {
 		std::string const & filename( files[n] );

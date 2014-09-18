@@ -55,7 +55,7 @@ utility::vector1<std::string>& RDCScore::rdc_atoms() {
 	return rdc_atoms_;
 }
 
-static basic::Tracer trRDCScore("fragment.picking.scores.RDCScore");
+static thread_local basic::Tracer trRDCScore( "fragment.picking.scores.RDCScore" );
 
 /// @param priority - the priority for this scoring method. The lower the priority, the later the score will be evaluated
 /// Because a fragment may be discarded when a score is too low, the most accurate && meaningful scores should have the highest priority

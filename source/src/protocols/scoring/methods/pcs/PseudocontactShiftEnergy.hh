@@ -57,7 +57,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -144,7 +145,11 @@ public:
 	get_instance();
 
 private:
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< PCS_Energy_parameters_manager * > instance_;
+#else
 	static PCS_Energy_parameters_manager * instance_;
+#endif
 
 	PCS_Energy_parameters_manager();
 

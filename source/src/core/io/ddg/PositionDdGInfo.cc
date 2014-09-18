@@ -55,7 +55,6 @@
 
 
 
-static numeric::random::RandomGenerator RG(86979347); // <- Magic number, do not change it!!!
 
 
 namespace core {

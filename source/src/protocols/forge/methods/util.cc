@@ -72,8 +72,7 @@ namespace methods {
 
 
 // static
-static basic::Tracer TR( "protocols.forge.methods.util" );
-static numeric::random::RandomGenerator RG( 2211990 ); // magic number, don't change
+static thread_local basic::Tracer TR( "protocols.forge.methods.util" );
 
 
 /// @brief perform union( root, i ) for all 'i' within the closed interval
@@ -187,7 +186,7 @@ interval_to_loop( protocols::forge::build::Interval const & interval ) {
 
 	// pick a cutpoint fully inside the loop so that there is always
 	// at least one moveable residue on each side
-	Size const cut = RG.random_range( interval.left, interval.right - 1 );
+	Size const cut = numeric::random::rg().random_range( interval.left, interval.right - 1 );
 
 	return Loop( interval.left, interval.right, cut );
 }
@@ -235,7 +234,7 @@ fold_tree_from_loops(
 		if ( fixed_bb.size() == 0 ) {
 			root = 1;
 		} else {
-			root = fixed_bb[ RG.random_range( 1, fixed_bb.size() ) ];
+			root = fixed_bb[ numeric::random::rg().random_range( 1, fixed_bb.size() ) ];
 		}
 	}
 

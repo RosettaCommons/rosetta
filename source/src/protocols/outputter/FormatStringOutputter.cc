@@ -23,7 +23,7 @@
 namespace protocols {
 namespace outputter {
 
-static basic::Tracer TR("protocols.outputter.FormatStringOutputter");
+static thread_local basic::Tracer TR( "protocols.outputter.FormatStringOutputter" );
 
 #ifdef USELUA
 void lregister_FormatStringOutputter( lua_State * lstate ) {

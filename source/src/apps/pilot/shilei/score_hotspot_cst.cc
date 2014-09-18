@@ -81,7 +81,7 @@
 
 // C++ headers
 
-static basic::Tracer TR( "apps.pilot_apps.shilei.score_hotspot_cst" );
+static thread_local basic::Tracer TR( "apps.pilot_apps.shilei.score_hotspot_cst" );
 
 typedef core::Size Size;
 typedef core::Real Real;

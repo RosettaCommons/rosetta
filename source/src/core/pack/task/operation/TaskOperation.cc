@@ -49,7 +49,7 @@ void lregister_TaskOperation( lua_State * lstate ) {
 }
 #endif
 
-static basic::Tracer TR("core.pack.task.operation.TaskOperation");
+static thread_local basic::Tracer TR( "core.pack.task.operation.TaskOperation" );
 
 TaskOperation::~TaskOperation() {}
 

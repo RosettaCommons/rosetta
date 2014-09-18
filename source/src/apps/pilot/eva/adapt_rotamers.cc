@@ -50,9 +50,8 @@
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static numeric::random::RandomGenerator RG( 25051978 ); // <- Magic number, do not change it!!!
 
-static basic::Tracer TR( "apps.pilot.eva.adapt_rotamers" );
+static thread_local basic::Tracer TR( "apps.pilot.eva.adapt_rotamers" );
 
 using namespace core;
 using namespace protocols::protein_interface_design;

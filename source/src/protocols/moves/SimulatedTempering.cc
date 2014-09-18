@@ -28,8 +28,7 @@
 // C++ Headers
 #include <cmath>
 
-static basic::Tracer TR("protocols.moves.SimulatedTempering");
-static numeric::random::RandomGenerator RG( 5646486 );
+static thread_local basic::Tracer TR( "protocols.moves.SimulatedTempering" );
 
 using namespace core;
 using namespace core::pose;
@@ -79,7 +78,7 @@ bool SimulatedTempering::boltzmann( Pose & pose ) {
 	// Metropolis criterion
 	if (
 		new_score <= cached_score_ ||
-		RG.uniform() < exp( ( cached_score_ - new_score ) / temperature() )
+		numeric::random::rg().uniform() < exp( ( cached_score_ - new_score ) / temperature() )
 	) {
 		cached_score_ = new_score;
 		return true;
@@ -99,7 +98,7 @@ bool SimulatedTempering::t_jump() {
 	} else if ( temp_id_ == temperatures_.size() ) {
 		--new_temp_id;
 	} else {
-		if ( RG.uniform() < 0.5 ) {
+		if ( numeric::random::rg().uniform() < 0.5 ) {
 			++new_temp_id;
 		} else {
 			--new_temp_id;
@@ -118,7 +117,7 @@ bool SimulatedTempering::t_jump() {
 		weights_[new_temp_id] - weights_[temp_id_]
 	);
 
-	if ( log_prob >= 0 || RG.uniform() < exp( log_prob ) ) {
+	if ( log_prob >= 0 || numeric::random::rg().uniform() < exp( log_prob ) ) {
 		temp_id_ = new_temp_id;
 		return true;
 	}

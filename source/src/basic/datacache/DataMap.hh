@@ -34,7 +34,7 @@
 namespace basic {
 namespace datacache {
 
-static basic::Tracer TR_hh( "basic.datacache.DataMap_hh" );
+static thread_local basic::Tracer TR_hh( "basic.datacache.DataMap_hh" );
 
 /// @brief general-purpose store for any reference-count derived object
 

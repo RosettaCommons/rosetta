@@ -56,7 +56,6 @@
 
 
 
-numeric::random::RandomGenerator RG(1907465); // <- Magic number, do not change it!!!
 
 
 namespace protocols {

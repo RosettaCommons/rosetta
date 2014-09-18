@@ -73,7 +73,7 @@ namespace loop_build {
 
 int
 LoopBuild_main( bool  ) {
-	basic::Tracer TR("protocols.loop_build.LoopBuild");
+	basic::Tracer TR( "protocols.loop_build.LoopBuild" );
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -82,7 +82,7 @@ LoopBuild_main( bool  ) {
 	using namespace core::chemical;
 	using namespace core::id;
 	using namespace jobdist;
-	
+
 	//using namespace basic::resource_manager;
 
 	std::string remodel            ( option[ OptionKeys::loops::remodel ]() );

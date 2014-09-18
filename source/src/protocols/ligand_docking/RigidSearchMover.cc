@@ -34,8 +34,7 @@
 	#include <ctime>
 #endif
 
-static basic::Tracer TR("protocols.ligand_docking.RigidSearchMover", basic::t_debug);
-static numeric::random::RandomGenerator mc_RG(32900); // <- Magic number, do not change it!!!
+static thread_local basic::Tracer TR( "protocols.ligand_docking.RigidSearchMover", basic::t_debug );
 
 namespace protocols {
 namespace ligand_docking {
@@ -113,7 +112,7 @@ void RigidSearchMover::apply(core::pose::Pose & pose)
 		if( deltaE < 0 ) {
 			// copied from MonteCarlo::boltzmann()
 			Real const boltz = std::max(-40.0, deltaE / temperature_);
-			if( mc_RG.uniform() >= std::exp(boltz) ) { // rejected!
+			if( numeric::random::rg().uniform() >= std::exp(boltz) ) { // rejected!
 				pose.set_jump( jump_id_, last_accepted_jump );
 				continue;
 			}

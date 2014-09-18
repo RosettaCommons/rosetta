@@ -613,7 +613,7 @@ static ResourceOptionsRegistrator< core::membrane::io::LipoFileOptionsCreator > 
 
 #endif
 
-static basic::Tracer TR("core.init");
+static thread_local basic::Tracer TR( "core.init" );
 
 using namespace numeric::random;
 using namespace basic::options;
@@ -644,6 +644,16 @@ init_options(int argc, char * argv []) {
 #ifdef BOINC
 	std::cerr << "Loaded options.... ok " << std::endl;std::cerr.flush();
 #endif
+
+}
+
+/// @brief After the tracers have been initialized, now go back and modify some of the
+/// values in the options system based on (hard coded) inter-flag relationships.
+/// Some of these relationships are set in the basic::options::process() function, some
+/// of them are handled in this .cc file.
+void
+init_complex_options()
+{
 	process();
 #ifdef BOINC
 	std::cerr << "Processed options.... ok " << std::endl; std::cerr.flush();
@@ -683,6 +693,14 @@ init_tracers(){
 
 	// Adding Tracer::flush_all_tracers to list of exit-callbacks so all tracer output got flush out when utility_exit is used.
 	utility::add_exit_callback(basic::Tracer::flush_all_tracers);
+
+	// Compute the visibility of all tracers that have been constructed up to this point but
+	// and that have not been able to compute their visibility because the options system
+	// was not yet online.  Now that the options system has been initialized, go back through
+	// and initialize the visibilities for all of those Tracers.  All tracers constructed after
+	// this point will compute their visibilities in their constructors.
+	basic::Tracer::calculate_tracer_visibilities();
+
 }
 
 
@@ -889,26 +907,23 @@ init_random_number_generators(){
 		 option[ run::rng ]  );
 	 */
 #ifdef BOINC
-	std::cerr << "Initializing random generators... ok " << std::endl;std::cerr.flush();
+	std::cerr << "Initializing random generators... ok " << std::endl; std::cerr.flush();
 #endif
-	init_random_generators(real_seed, _RND_NormalRun_, option[ run::rng ]);
+	init_random_generators(real_seed, option[ run::rng ]);
 
-	srand( time(NULL) );  // seed default random generator, this will expose all code that use non approved random methods
+	// seed default random generator, this will hopefully expose all code that use
+	// non-approved random methods -- assuming that code is invoked in an integration
+	// test
+	srand( time(NULL) );
 }
 
 /// @brief Initialize random generator systems (and send debug io to tracer with seed/mode info).
-void init_random_generators(int const start_seed, RND_RunType run_type, std::string const & RGtype)
+void init_random_generators(int const start_seed, std::string const & RGtype)
 {
-	if( run_type == _RND_TestRun_ ) {
-		T("core.init.random") << "RandomGenerator:init: _RND_TestRun_ mode, seed=" << start_seed <<
-			" RG_type=" << RGtype << std::endl;
-	}
-	else {
-		T("core.init.random") << "RandomGenerator:init: Normal mode, seed=" << start_seed <<
-			" RG_type=" << RGtype << std::endl;
-	}
+	T("core.init.random") << "RandomGenerator:init: Normal mode, seed=" << start_seed <<
+		" RG_type=" << RGtype << std::endl;
 
-	RandomGenerator::initializeRandomGenerators(start_seed, run_type, RGtype);
+	numeric::random::rg().set_seed( RGtype, start_seed );
 }
 
 
@@ -1039,6 +1054,11 @@ void init(int argc, char * argv [])
 
     //Tracers control output to std::cout and std::cerr
     init_tracers();
+
+		// Invoke basic::options::process() which holds a set of complex logic
+		// for option system modifications; this function requires that the
+		// tracers first be initialized.
+		init_complex_options();
 
     //Initialize the latest and greatest score function parameters
 		init_score_function_corrections();

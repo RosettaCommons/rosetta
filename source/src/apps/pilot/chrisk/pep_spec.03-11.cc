@@ -151,7 +151,6 @@
  using basic::Error;
  using basic::Warning;
 
- static numeric::random::RandomGenerator RG(16621);
 
 using namespace core;
 using namespace protocols;
@@ -629,7 +628,7 @@ RunPepSpec()
 	for( Size peptide_loop = 1; peptide_loop <= n_peptides; ++peptide_loop ){	//LOOP how many final peps
 
 		//load random start pdb and cst//
-		int pose_index( static_cast< int >( RG.uniform() * poses.size() + 1 ) );
+		int pose_index( static_cast< int >( numeric::random::rg().uniform() * poses.size() + 1 ) );
 		std::cout<<"!! Initializing "<< option[ out::file::o ] + "_" + string_of( peptide_loop ) + " with " + pdb_filenames[ pose_index ] << std::endl;
 		pose = poses[ pose_index ];
 		std::string cst_filename;
@@ -670,10 +669,10 @@ RunPepSpec()
 				mc_frag->reset( pose );
 				for ( Size build_loop_inner = 1; build_loop_inner <= static_cast< int >( std::sqrt( n_build_loop ) ); ++build_loop_inner ) {
 					// choose an insertion position
-					Size pos(  static_cast< int > ( nres_pep * RG.uniform() ) + 1 );
+					Size pos(  static_cast< int > ( nres_pep * numeric::random::rg().uniform() ) + 1 );
 
 					Size const nfrags( lib[ pos ].size() );
-					int const frag_index( static_cast< int >( nfrags * RG.uniform() + 1 ) );
+					int const frag_index( static_cast< int >( nfrags * numeric::random::rg().uniform() + 1 ) );
 					lib[ pos ][ frag_index ].insert( pose, pep_begin - 1 + pos );
 
 					mc_frag->boltzmann( pose );
@@ -699,10 +698,10 @@ RunPepSpec()
 		MonteCarloOP mc_extend ( new MonteCarlo( pose, *cen_scorefxn, 2.0 ) );
 		for ( Size build_loop = 1; build_loop <= n_build_loop; ++build_loop ) {
 				// choose an insertion position
-				Size pos(  static_cast< int > ( RG.uniform() + 1 ) * ( nres_pep_cg - 1 ) + 1 );
+				Size pos(  static_cast< int > ( numeric::random::rg().uniform() + 1 ) * ( nres_pep_cg - 1 ) + 1 );
 
 				Size const nfrags( lib[ 1 ].size() );
-				int const frag_index( static_cast< int >( nfrags * RG.uniform() + 1 ) );
+				int const frag_index( static_cast< int >( nfrags * numeric::random::rg().uniform() + 1 ) );
 				lib[ 1 ][ frag_index ].insert( pose, pep_begin - 1 + pos );
 
 				mc_extend->boltzmann( pose );
@@ -895,7 +894,7 @@ RunPepSpec()
 			}
 
 /*
-			if( option[ pep_spec::ramp ] && RG.uniform() < option[ pep_spec::ramp_prob ] ){
+			if( option[ pep_spec::ramp ] && numeric::random::rg().uniform() < option[ pep_spec::ramp_prob ] ){
 				std::cout << "!! Ramping fa_rep for " << option[ out::file::o ] + "_" + string_of( peptide_loop ) + "_" + string_of( cgrelax_loop ) + ".pdb" << std::endl;
 				if( option[ pep_spec::test_dump_all_ramp ] ) dump_efactor_pdb( pose, full_scorefxn,  option[ out::file::o ] + "_" + string_of( peptide_loop ) + "_preramp.pdb" );
 //				core::scoring::ScoreFunctionOP clash_scorefxn( full_scorefxn );
@@ -934,7 +933,7 @@ RunPepSpec()
 				for(Size mut_site = pep_begin; mut_site <= pep_end; mut_site++){ //over all pep positions
 					if(mut_site==pep_anchor) continue;
 					int resindex;
-					resindex = static_cast< int > ( 20 * RG.uniform() + 1 );
+					resindex = static_cast< int > ( 20 * numeric::random::rg().uniform() + 1 );
 					chemical::make_sequence_change( mut_site, chemical::AA(resindex), pose );
 				}
 			}
@@ -1047,9 +1046,9 @@ RunPepSpec()
 						MonteCarloOP mc_pep_cen ( new MonteCarlo( pep_eval_pose, *pep_cen_scorefxn, 2.0 ) );
 						mc_pep_cen->reset( pep_eval_pose );
 						for ( Size pep_build_loop = 1; pep_build_loop <= n_build_loop; ++pep_build_loop ){
-							Size pep_seqpos(  static_cast< int > ( nres_pep * RG.uniform() ) + 1 );
+							Size pep_seqpos(  static_cast< int > ( nres_pep * numeric::random::rg().uniform() ) + 1 );
 							Size pep_rama_mover_index( 1 );
-							if( option[ pep_spec::random_rama_ss_type ] ) pep_rama_mover_index = static_cast< int > ( RG.uniform() * pep_rama_movers.size() + 1 );
+							if( option[ pep_spec::random_rama_ss_type ] ) pep_rama_mover_index = static_cast< int > ( numeric::random::rg().uniform() * pep_rama_movers.size() + 1 );
 							Real pep_rama_phi, pep_rama_psi;
 							chemical::AA pep_aa( aa_from_oneletter_code( pep_eval_pose.residue( pep_seqpos ).name1() ) );
 							pep_rama_movers[ pep_rama_mover_index ].random_phipsi_from_rama( pep_aa, pep_rama_phi, pep_rama_psi );

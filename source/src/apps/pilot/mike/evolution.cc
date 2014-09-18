@@ -54,7 +54,6 @@
 
 // Auto-header: duplicate removed #include <numeric/random/random.hh>
 
-static numeric::random::RandomGenerator test_RG(1254); // <- Magic number, do not change it!!!
 
 #include <basic/Tracer.hh>
 

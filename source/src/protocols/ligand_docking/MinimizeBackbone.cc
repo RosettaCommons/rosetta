@@ -59,12 +59,11 @@ using basic::Warning;
 #include <utility/excn/Exceptions.hh>
 #include <boost/foreach.hpp>
 
-static numeric::random::RandomGenerator my_RG(4376910); // 4376910 is just a random seed
 
 namespace protocols {
 namespace ligand_docking {
 
-static basic::Tracer minimize_backbone_tracer("protocols.ligand_docking.ligand_options.MinimizeBackbone", basic::t_debug);
+static thread_local basic::Tracer minimize_backbone_tracer( "protocols.ligand_docking.ligand_options.MinimizeBackbone", basic::t_debug );
 
 std::string
 MinimizeBackboneCreator::keyname() const
@@ -267,7 +266,7 @@ utility::vector1< protocols::loops::Loop> MinimizeBackbone::add_cut_points(
 
 		runtime_assert( cut_start <= cut_end );
 
-		core::Size cutpt = Size(my_RG.random_range(cut_start, cut_end)); // cut is made between cutpt and cutpt+1
+		core::Size cutpt = Size(numeric::random::rg().random_range(cut_start, cut_end)); // cut is made between cutpt and cutpt+1
 
 		loops.push_back(protocols::loops::Loop(start, stop, cutpt));
 		// also need to set up residue variants so chainbreak score works correctly!

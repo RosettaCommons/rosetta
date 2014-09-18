@@ -28,7 +28,7 @@ namespace quota {
 
 using namespace core;
 
-static basic::Tracer trQuotaConfig(
+static thread_local basic::Tracer trQuotaConfig(
 		"protocols.frag_picker.quota.QuotaConfig");
 
 QuotaConfig::QuotaConfig(std::string file_name) {

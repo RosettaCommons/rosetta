@@ -98,7 +98,7 @@ LK_BallEnergyCreator::score_types_for_method() const {
 
 
 
-static basic::Tracer TR("core.scoring.methods.LK_BallEnergy");
+static thread_local basic::Tracer TR( "core.scoring.methods.LK_BallEnergy" );
 
 Real const LK_BallEnergy::ramp_width_A2_( 5.0 );
 

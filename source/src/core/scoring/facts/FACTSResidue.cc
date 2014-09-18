@@ -57,7 +57,7 @@
 #include <cassert>
 #include <utility/assert.hh>
 
-static basic::Tracer TR("core.scoring.FACTSPotential");
+static thread_local basic::Tracer TR( "core.scoring.FACTSPotential" );
 
 # define Math_PI 3.14159265358979323846
 

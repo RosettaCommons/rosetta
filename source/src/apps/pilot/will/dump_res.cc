@@ -74,7 +74,7 @@
 
 using numeric::conversions::radians;
 
-static basic::Tracer TR("dump_res");
+static thread_local basic::Tracer TR( "dump_res" );
 
 using core::Size;
 using core::Real;

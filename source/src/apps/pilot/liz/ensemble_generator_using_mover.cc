@@ -102,7 +102,6 @@ using basic::Error;
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
-numeric::random::RandomGenerator RG(15434); // <- Magic number, do not change it!!!
 int
 main( int argc, char* argv [] )
 {

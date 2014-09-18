@@ -76,7 +76,7 @@ public:
 						const char *fileTracerOut=0, const char * tracerChannelsList=0) {
 		//TR_I << "MoversTest: Testing " << mover->type().c_str() << "...\n";
 
-		core::init::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
+		core::init::init_random_generators(1000, "mt19937");
 
 		const std::string original_file_name( fileIn );
 		const std::string tmp_file_name = std::string(fileOut) + "._tmp_";

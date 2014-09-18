@@ -131,7 +131,7 @@ using utility::file::FileName;
 //
 
 // tracer - used to replace cout
-static basic::Tracer TR("HDDM");
+static thread_local basic::Tracer TR( "HDDM" );
 
 // application specific options
 namespace hddm {

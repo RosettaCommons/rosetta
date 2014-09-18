@@ -93,7 +93,7 @@ RmsdSimpleFilter::fresh_instance() const
 	return new RmsdSimpleFilter();
 }
 
-static basic::Tracer TR( "protocols.protein_interface_design.filters.RmsdSimpleFilter" );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.RmsdSimpleFilter" );
 
 core::Real
 RmsdSimpleFilter::compute( core::pose::Pose const & pose ) const

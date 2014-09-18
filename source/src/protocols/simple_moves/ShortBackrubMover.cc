@@ -44,8 +44,8 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.simple_moves.ShortBackrubMover");
-static numeric::random::RandomGenerator RG(415609);
+static thread_local basic::Tracer TR( "protocols.simple_moves.ShortBackrubMover" );
+//static numeric::random::RandomGenerator RG(415609);
 
 namespace protocols {
 namespace simple_moves {
@@ -129,11 +129,11 @@ ShortBackrubMover::apply( core::pose::Pose & pose )
 {
 	if (resnum_ == 0)
 		randomize_resnum_ = true;
-		
+
 	if (randomize_resnum_) {
-		resnum_ = RG.random_range(3, pose.total_residue()-2);
+		resnum_ = numeric::random::rg().random_range(3, pose.total_residue()-2);
 	}
-	
+
 	// only perform move if not adjacent to the end of the chain
 	if (core::Size(resnum_-2) > 1 && core::Size(resnum_+2) < pose.total_residue()) {
 		utility::vector1<core::Size> pivot_residues;
@@ -141,8 +141,8 @@ ShortBackrubMover::apply( core::pose::Pose & pose )
 		backrubmover_->clear_segments();
 		pivot_atoms.push_back("CA");
 		core::Size start, mid, end;
-		
-		// adjust backrub pivots if a proline is at i-1 
+
+		// adjust backrub pivots if a proline is at i-1
 		if (pose.residue(resnum_-1).name1() == 'P' && pose.residue(resnum_+1).name1() != 'P') {
 			pivot_residues.push_back(resnum_-2);
 			pivot_residues.push_back(resnum_-1); // proline
@@ -153,7 +153,7 @@ ShortBackrubMover::apply( core::pose::Pose & pose )
 			end = resnum_ + 1;
 			backrubmover_->add_mainchain_segments(pivot_residues, pivot_atoms, 3, 34);
 		}
-		
+
 		// adjust backrub pivots if a proline is at i+1
 		else if (pose.residue(resnum_+1).name1() == 'P' && pose.residue(resnum_-1).name1() != 'P') {
 			pivot_residues.push_back(resnum_-1);
@@ -164,7 +164,7 @@ ShortBackrubMover::apply( core::pose::Pose & pose )
 			mid = resnum_;
 			end = resnum_ + 2;
 			backrubmover_->add_mainchain_segments(pivot_residues, pivot_atoms, 3, 34);
-		}	
+		}
 		else {
 			pivot_residues.push_back(resnum_-1);
 			pivot_residues.push_back(resnum_);
@@ -174,26 +174,26 @@ ShortBackrubMover::apply( core::pose::Pose & pose )
 			end = resnum_ + 1;
 			backrubmover_->add_mainchain_segments(pivot_residues, pivot_atoms, 3, 7);
 		}
-		
+
 		core::Vector last_start_o = pose.residue(start).xyz("O");
 		core::Vector last_mid_o = pose.residue(mid).xyz("O");
-		
+
 		// if we encountered prolines, there will only be one backrub segment
 		// calculate a random rotation angle using a gaussian
-		// apply the rotation to the pose 
+		// apply the rotation to the pose
 		if (backrubmover_->num_segments() == 1) {
-			core::Real rotation_angle = rotation_std_dev_ * RG.gaussian();
+			core::Real rotation_angle = rotation_std_dev_ * numeric::random::rg().gaussian();
 			backrubmover_->set_next_angle(numeric::conversions::radians(rotation_angle));
 			backrubmover_->set_next_segment_id(1);
 			backrubmover_->apply(pose);
 		}
-		
+
 		// if we did not encounter prolines, there will be three backrub segments
 		// calculate a random rotation angle using a gaussian
 		// apply the rotation to the pose
 		// adjust the peptide bonds to minimize the movement of carbonyl oxygens
 		else if (backrubmover_->num_segments() == 3) {
-			core::Real rotation_angle = rotation_std_dev_ * RG.gaussian();
+			core::Real rotation_angle = rotation_std_dev_ * numeric::random::rg().gaussian();
 			backrubmover_->set_next_angle(numeric::conversions::radians(rotation_angle));
 			backrubmover_->set_next_segment_id(2);
 			backrubmover_->apply(pose);
@@ -204,7 +204,7 @@ ShortBackrubMover::apply( core::pose::Pose & pose )
 			backrubmover_->apply(pose);
 			backrubmover_->set_next_angle(seg3_dihedral);
 			backrubmover_->set_next_segment_id(3);
-			backrubmover_->apply(pose);	
+			backrubmover_->apply(pose);
 		}
 	}
 }

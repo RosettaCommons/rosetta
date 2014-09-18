@@ -47,7 +47,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -293,7 +294,11 @@ private:
 	//utility::vector1< core::scoring::constraints::ConstraintCOP > favor_native_constraints_;
 
 	//a static version for generic access
-	static EnzConstraintIO * generic_instance_;
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< EnzConstraintIO * > instance_;
+#else
+	static EnzConstraintIO * instance_;
+#endif
 
 };  // class EnzConstraintIO
 

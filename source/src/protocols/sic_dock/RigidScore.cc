@@ -35,7 +35,7 @@ namespace sic_dock {
 
 protocols::loophash::LoopHashLibraryOP LinkerScore::loop_hash_library_ = NULL;
 
-static basic::Tracer TR( "protocols.sic_dock.RigidScore" );
+static thread_local basic::Tracer TR( "protocols.sic_dock.RigidScore" );
 
 using core::Size;
 using core::Real;

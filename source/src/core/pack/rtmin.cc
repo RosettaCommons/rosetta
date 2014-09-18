@@ -90,9 +90,8 @@ namespace pack {
 
 using namespace ObjexxFCL::format;
 
-static numeric::random::RandomGenerator rtmin_RG(206025); // <- Magic number, do not change it!!!
 
-static basic::Tracer TR( "core.pack.rtmin" );
+static thread_local basic::Tracer TR( "core.pack.rtmin" );
 
 //forward dec
 utility::vector1< uint >
@@ -173,7 +172,7 @@ RTMin::rtmin(
 	utility::vector1< bool > active_residue_has_been_visited( pose.total_residue(), false );
 
 	utility::vector1< Size > active_residues = pack::repackable_residues_dup( *input_task );
-	numeric::random::random_permutation( active_residues, rtmin_RG );
+	numeric::random::random_permutation( active_residues, numeric::random::rg() );
 
 	utility::vector1< conformation::ResidueCOP > bgres( pose.total_residue() );
 	graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, scfxn, input_task );
@@ -544,7 +543,7 @@ RTMin::rtmin(
 	pose.update_residue_neighbors();
 
 	utility::vector1< uint > residues_for_trials( repackable_residues_dup( *input_task ));
-	random_permutation( residues_for_trials, rtmin_RG );
+	random_permutation( residues_for_trials, numeric::random::rg() );
 
 	task::PackerTaskOP rottrial_task( input_task->clone() );
 	rottrial_task->set_bump_check( false );

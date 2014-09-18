@@ -45,7 +45,7 @@
 #include <map>
 #include <sstream>
 
-static basic::Tracer TR("protocols.docking.util");
+static thread_local basic::Tracer TR( "protocols.docking.util" );
 
 namespace protocols {
 namespace docking {

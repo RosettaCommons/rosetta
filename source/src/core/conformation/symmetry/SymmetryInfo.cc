@@ -49,7 +49,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("core.conformation.SymmetryInfo");
+static thread_local basic::Tracer TR( "core.conformation.SymmetryInfo" );
 
 namespace core {
 namespace conformation {

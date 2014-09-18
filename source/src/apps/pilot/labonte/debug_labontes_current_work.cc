@@ -52,7 +52,6 @@
 //#include <algorithm>
 
 // Construct random-number generator.
-static numeric::random::RandomGenerator RG( 21 );  // the 6th triangular number
 
 
 int main(int argc, char *argv[])

@@ -37,7 +37,7 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
-static basic::Tracer TR("protocols.toolbox.PoseMetricCalculators.NeighborhoodByDistanceCalculator");
+static thread_local basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.NeighborhoodByDistanceCalculator" );
 using basic::Error;
 using basic::Warning;
 

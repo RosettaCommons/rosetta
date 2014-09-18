@@ -56,8 +56,7 @@
 using namespace core;
 using namespace core::pose;
 
-static numeric::random::RandomGenerator RG(18611125);
-static basic::Tracer TR("protocols.simple_moves.sidechain_moves.PerturbRotamerSidechainMover");
+static thread_local basic::Tracer TR( "protocols.simple_moves.sidechain_moves.PerturbRotamerSidechainMover" );
 
 namespace protocols {
 namespace simple_moves {
@@ -155,7 +154,7 @@ PerturbRotamerSidechainMover::make_chi_move(
 
 	new_chi=old_chi;
 	//TR << " max_rot_num is " << max_rot_num << std::endl;
-	rotamers[ max_rot_num ].assign_random_chi( new_chi, RG, temperature_ );
+	rotamers[ max_rot_num ].assign_random_chi( new_chi, numeric::random::rg(), temperature_ );
 	//TR << " new chi is " << new_chi << std::endl;
 }
 

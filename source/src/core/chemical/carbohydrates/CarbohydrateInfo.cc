@@ -39,7 +39,7 @@
 
 
 // Construct tracer.
-static basic::Tracer TR("core.chemical.carbohydrates.CarbohydrateInfo");
+static thread_local basic::Tracer TR( "core.chemical.carbohydrates.CarbohydrateInfo" );
 
 
 namespace core {

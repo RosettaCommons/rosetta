@@ -84,7 +84,7 @@ ElectronDensity::~ElectronDensity() {}
 
 using basic::T;
 using basic::Tracer;
-basic::Tracer TR("core.scoring.electron_density.ElectronDensity");
+static thread_local basic::Tracer TR( "core.scoring.electron_density.ElectronDensity" );
 
 #ifdef GL_GRAPHICS
 // protect access to density from viewer thread

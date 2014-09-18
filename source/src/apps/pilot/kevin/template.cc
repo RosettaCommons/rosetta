@@ -46,7 +46,7 @@
 //using basic::Error;
 //using basic::Warning;
 //using basic::T;
-static basic::Tracer TR("kevin.sandbox");
+static thread_local basic::Tracer TR( "kevin.sandbox" );
 
 
 //using namespace basic::options;

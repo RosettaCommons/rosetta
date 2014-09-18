@@ -47,7 +47,7 @@
 //Req'd on WIN32
 #include <basic/datacache/WriteableCacheableMap.hh>
 
-static basic::Tracer tr("protocols.abinitio.abscript.ConstraintPreparer", basic::t_info);
+static thread_local basic::Tracer tr( "protocols.abinitio.abscript.ConstraintPreparer", basic::t_info );
 
 namespace protocols {
 namespace abinitio {

@@ -19,7 +19,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
-static basic::Tracer TR("protocols.simple_moves.ResetBaselineMover");
+static thread_local basic::Tracer TR( "protocols.simple_moves.ResetBaselineMover" );
 #include <utility/tag/Tag.hh>
 
 #include <core/pose/Pose.hh>

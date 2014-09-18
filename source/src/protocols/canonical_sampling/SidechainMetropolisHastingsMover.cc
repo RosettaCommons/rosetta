@@ -65,8 +65,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer tr( "protocols.canonical_sampling.SidechainSidechainMetropolisHastingsMover" );
-static numeric::random::RandomGenerator RG(61257547);
+static thread_local basic::Tracer tr( "protocols.canonical_sampling.SidechainSidechainMetropolisHastingsMover" );
 
 namespace protocols {
 namespace canonical_sampling {
@@ -116,7 +115,7 @@ SidechainMetropolisHastingsMover::pass_metropolis(core::Real delta_energy, core:
 						 << " lpd= " << last_proposal_density_ratio << std::endl;
 	}
 	core::Real probability = std::exp( std::min( 40.0, std::max( -40.0, boltz_factor ))) *  last_proposal_density_ratio ;
-	if ( probability < 1 && RG.uniform() >= probability ) {
+	if ( probability < 1 && numeric::random::rg().uniform() >= probability ) {
 		return false;
 	} else {
 		return true;

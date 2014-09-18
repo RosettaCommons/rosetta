@@ -19,7 +19,7 @@
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSampler.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.screener.StubApplier" );
+static thread_local basic::Tracer TR( "protocols.stepwise.screener.StubApplier" );
 
 using namespace core;
 using namespace protocols::stepwise::sampler;

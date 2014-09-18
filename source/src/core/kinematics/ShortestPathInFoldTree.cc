@@ -60,7 +60,7 @@ namespace kinematics {
 /// @details Auto-generated virtual destructor
 ShortestPathInFoldTree::~ShortestPathInFoldTree() {}
 
-static basic::Tracer tr("core.kinematics.ShortestPathInFoldTree",basic::t_info);
+static thread_local basic::Tracer tr( "core.kinematics.ShortestPathInFoldTree", basic::t_info );
 
 
 /// @detail cs-tor

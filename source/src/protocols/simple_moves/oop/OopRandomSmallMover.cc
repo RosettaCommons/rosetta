@@ -44,8 +44,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static numeric::random::RandomGenerator RG(956734);
-static basic::Tracer TR( "protocols.simple_moves.oop.OopRandomSmallMover" );
+static thread_local basic::Tracer TR( "protocols.simple_moves.oop.OopRandomSmallMover" );
 
 
 using namespace core;
@@ -82,11 +81,11 @@ void OopRandomSmallMover::apply( core::pose::Pose & pose ){
 
 
 	//kdrew: randomly choose position from oop_seq_positions
-	core::Size random_pos = oop_seq_positions_[int(RG.uniform()*oop_seq_positions_.size())+1];
+	core::Size random_pos = oop_seq_positions_[int(numeric::random::rg().uniform()*oop_seq_positions_.size())+1];
 
 	oop::OopMoverOP oop_mover ( new oop::OopMover( random_pos ) );
 	Real small_angle = max_small_angle_/2.0; ///< this is max_angle/2, which is the deviation from the angle input
-	Real phi_angle = basic::periodic_range( pose.phi( random_pos ) - small_angle + RG.uniform() * max_small_angle_, 360.0 );
+	Real phi_angle = basic::periodic_range( pose.phi( random_pos ) - small_angle + numeric::random::rg().uniform() * max_small_angle_, 360.0 );
 	//kdrew: no phi angle for n-terms, angle that gets changed is CYP-N-Ca-C
 	if( pose.residue_type( random_pos ).is_lower_terminus() )
 	{ 
@@ -96,10 +95,10 @@ void OopRandomSmallMover::apply( core::pose::Pose & pose ){
 		AtomID aidC( pose.residue(random_pos).atom_index("C"), random_pos );
 
 		Real CYP_N_Ca_C_angle = degrees( pose.conformation().torsion_angle( aidCYP, aidN, aidCA, aidC ) ); 
-        phi_angle = basic::periodic_range( CYP_N_Ca_C_angle - small_angle + RG.uniform() * max_small_angle_, 360.0 ) - 180.0; 
+        phi_angle = basic::periodic_range( CYP_N_Ca_C_angle - small_angle + numeric::random::rg().uniform() * max_small_angle_, 360.0 ) - 180.0; 
 	}
 
-	Real psi_angle = basic::periodic_range( pose.psi( random_pos ) - small_angle + RG.uniform() * max_small_angle_, 360.0 );
+	Real psi_angle = basic::periodic_range( pose.psi( random_pos ) - small_angle + numeric::random::rg().uniform() * max_small_angle_, 360.0 );
 	oop_mover->set_phi( phi_angle );
 	oop_mover->set_psi( psi_angle );
 	oop_mover->apply( pose );

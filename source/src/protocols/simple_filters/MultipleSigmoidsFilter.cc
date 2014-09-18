@@ -33,7 +33,7 @@
 namespace protocols{
 namespace simple_filters {
 
-static basic::Tracer TR( "protocols.simple_filters.MultipleSigmoids" );
+static thread_local basic::Tracer TR( "protocols.simple_filters.MultipleSigmoids" );
 using namespace protocols::filters;
 
 protocols::filters::FilterOP

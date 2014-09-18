@@ -38,7 +38,7 @@ PoseBallsLite::~PoseBallsLite() {}
 
 using namespace ObjexxFCL;
 
-static basic::Tracer TR("core.scoring.packing.PoseBallsLite");
+static thread_local basic::Tracer TR( "core.scoring.packing.PoseBallsLite" );
 
 inline core::Real sqr ( core::Real x ) {
 	return x*x;

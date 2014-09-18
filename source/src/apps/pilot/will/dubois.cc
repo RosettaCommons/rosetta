@@ -72,7 +72,7 @@
 
 using numeric::conversions::radians;
 
-static basic::Tracer TR("dubois");
+static thread_local basic::Tracer TR( "dubois" );
 
 using core::Size;
 using core::Real;

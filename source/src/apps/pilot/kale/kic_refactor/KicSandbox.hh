@@ -128,7 +128,7 @@ KicSandbox::KicSandbox(int argc, char *argv[]) {
 	cout << "Structure:     " << pdb_path << endl;
 	cout << "Loop Indices:  " << loop_indices[1] << " to "
 	                          << loop_indices[2] << endl;
-	cout << "Random Seed:   " << numeric::random::RG.get_seed() << endl;
+	cout << "Random Seed:   " << numeric::random::rg().get_seed() << endl;
 	cout << "Iterations:    " << iterations[1] << "/"
 	                          << iterations[2] << "/"
 	                          << iterations[3] << endl;

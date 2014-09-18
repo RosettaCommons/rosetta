@@ -78,7 +78,7 @@ using basic::t_error;
 using basic::t_info;
 using basic::t_debug;
 using basic::t_trace;
-static basic::Tracer TR("protocols.dna.DnaInterfaceMultiStateDesign",t_info);
+static thread_local basic::Tracer TR( "protocols.dna.DnaInterfaceMultiStateDesign", t_info );
 
 std::string
 DnaInterfaceMultiStateDesignCreator::keyname() const

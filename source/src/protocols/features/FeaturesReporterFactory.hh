@@ -38,7 +38,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -102,7 +103,11 @@ private:
 
 private:
 
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< FeaturesReporterFactory * > instance_;
+#else
 	static FeaturesReporterFactory * instance_;
+#endif
 
 	typedef std::map< std::string, protocols::features::FeaturesReporterCreatorCOP > FeaturesReporterCreatorMap;
 	FeaturesReporterCreatorMap types_;

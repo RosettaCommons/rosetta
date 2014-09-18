@@ -46,7 +46,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
 
-static basic::Tracer tr("core.io.constraints");
+static thread_local basic::Tracer tr( "core.io.constraints" );
 
 namespace protocols {
 namespace constraints_additional {

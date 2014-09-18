@@ -35,7 +35,7 @@ namespace simple_filters {
 using namespace core;
 using namespace core::scoring;
 
-static basic::Tracer TR( "protocols.simple_filters.ResidueCountFilter" );
+static thread_local basic::Tracer TR( "protocols.simple_filters.ResidueCountFilter" );
 
 protocols::filters::FilterOP
 ResidueCountFilterCreator::create_filter() const { return new ResidueCountFilter; }

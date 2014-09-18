@@ -71,8 +71,7 @@
 
 
 
-static basic::Tracer tr("protocols.general_abinitio",basic::t_info);
-static numeric::random::RandomGenerator RG(1871221234);
+static thread_local basic::Tracer tr( "protocols.general_abinitio", basic::t_info );
 
 namespace protocols {
 namespace abinitio {
@@ -97,7 +96,7 @@ void LoopJumpFoldCst::select_loops(
   while (loops_out.size() == 0 && ntries++ < 50) {
     for ( loops::Loops::const_iterator it = loops_.begin(), eit = loops_.end();
 	  it != eit; ++it ) {
-      if ( RG.uniform() >= it->skip_rate() )  {
+      if ( numeric::random::rg().uniform() >= it->skip_rate() )  {
 	loops_out.push_back( *it );
       }
     }

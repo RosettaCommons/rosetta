@@ -48,8 +48,7 @@
 
 using namespace core;
 
-static basic::Tracer TR( "protocols.coarse_rna.coarse_rna_loop_closer" ) ;
-static numeric::random::RandomGenerator RG(2289440);  // <- Magic number, do not change it!
+static thread_local basic::Tracer TR( "protocols.coarse_rna.coarse_rna_loop_closer" );
 using ObjexxFCL::format::I;
 using ObjexxFCL::format::F;
 using core::id::AtomID;
@@ -360,7 +359,7 @@ CoarseRNA_LoopCloser::figure_out_pivot_res_and_scratch_res(){
 	// two more to go.
 	for ( Size n = 1; n <= 2; n++ ){
 
-		Size const which_pivot = static_cast<int>( RG.uniform() * total_pivots ) + 1;
+		Size const which_pivot = static_cast<int>( numeric::random::rg().uniform() * total_pivots ) + 1;
 		Size count( 0 );
 
 		for ( Size i = 1; i <= pivots_selected.size(); i++ ) {
@@ -823,7 +822,7 @@ CoarseRNA_LoopCloser::apply_solutions( core::pose::Pose & pose ){
 	} else {
 
 		assert( choose_random_solution_ );
-		Size const n = static_cast<int>( nsol_ * RG.uniform() ) + 1;
+		Size const n = static_cast<int>( nsol_ * numeric::random::rg().uniform() ) + 1;
 		fill_solution( pose, n );
 
 	}

@@ -63,7 +63,7 @@ namespace rotamer_set {
 
 using namespace ObjexxFCL;
 
-basic::Tracer TR( "protocols.flexpack.rotamer_set.FlexbbRotamerSets" );
+static thread_local basic::Tracer TR( "protocols.flexpack.rotamer_set.FlexbbRotamerSets" );
 
 FlexbbRotamerSets::FlexbbRotamerSets( core::pack::task::PackerTaskCOP task )
 	: task_( task )

@@ -49,7 +49,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer TR("antibody.metrics");
+static thread_local basic::Tracer TR( "antibody.metrics" );
 using namespace core;
 
 namespace protocols {

@@ -47,7 +47,6 @@ using basic::resource_manager::ResourceDescription;
 using basic::resource_manager::ResourceTag;
 using basic::resource_manager::ResourceOptionsTag;
 
-static numeric::random::RandomGenerator RG(1701);
 
 
 SurfaceVectorFallbackConfiguration::SurfaceVectorFallbackConfiguration()

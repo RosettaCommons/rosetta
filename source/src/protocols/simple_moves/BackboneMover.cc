@@ -48,12 +48,11 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.simple_moves.BackboneMover");
+static thread_local basic::Tracer TR( "protocols.simple_moves.BackboneMover" );
 
 namespace protocols {
 namespace simple_moves {
 
-static numeric::random::RandomGenerator RG(90);
 
 using namespace core;
 
@@ -205,7 +204,7 @@ void BackboneMover::apply( core::pose::Pose & pose )
 			}
 
 			//choose a random position from the list of positions previously chose to be candidate positions
-			std::pair< int, Real > const & random_pos( pos_list_[ static_cast< int >( RG.uniform() * pos_list_.size() + 1 ) ] );
+			std::pair< int, Real > const & random_pos( pos_list_[ static_cast< int >( numeric::random::rg().uniform() * pos_list_.size() + 1 ) ] );
 			resnum_ = random_pos.first;
 			set_angles( random_pos.second );
 
@@ -266,7 +265,7 @@ bool BackboneMover::check_rama() {
 	if ( new_rama_score_ > old_rama_score_ ) {
 		Real const boltz_factor = (old_rama_score_-new_rama_score_)/temperature_;
 		Real const probability = std::exp(std::max(Real(-40.0),boltz_factor) );
-		if ( RG.uniform() >= probability ) return( false );
+		if ( numeric::random::rg().uniform() >= probability ) return( false );
 	}
 	return( true );
 }
@@ -409,10 +408,10 @@ bool SmallMover::make_move( core::pose::Pose & pose )
 	conformation::Residue const & current_rsd( pose.residue(resnum_) );
 
 	old_phi_ = pose.phi(resnum_);
-	new_phi_ = basic::periodic_range( old_phi_ - small_angle_ + RG.uniform() * big_angle_, 360.0 );
+	new_phi_ = basic::periodic_range( old_phi_ - small_angle_ + numeric::random::rg().uniform() * big_angle_, 360.0 );
 
 	old_psi_ = pose.psi(resnum_);
-	new_psi_ = basic::periodic_range( old_psi_ - small_angle_ + RG.uniform() * big_angle_, 360.0 );
+	new_psi_ = basic::periodic_range( old_psi_ - small_angle_ + numeric::random::rg().uniform() * big_angle_, 360.0 );
 
 	// Always accept carbohydrate moves for now....
 	if ( current_rsd.is_protein() && current_rsd.aa() != chemical::aa_unk ) {
@@ -572,7 +571,7 @@ bool protocols::simple_moves::ShearMover::make_move( core::pose::Pose & pose )
 	conformation::Residue const & current_rsd( pose.residue(resnum_) );
 	conformation::Residue const & prev_rsd( pose.residue(resnum_-1) );
 
-	Real shear_delta = small_angle_ - RG.uniform() * big_angle_;
+	Real shear_delta = small_angle_ - numeric::random::rg().uniform() * big_angle_;
 	// save current phi and psi
 	old_phi_ = pose.phi(resnum_);
 	new_phi_ = basic::periodic_range( old_phi_ - shear_delta, 360.0 );

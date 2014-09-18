@@ -78,7 +78,7 @@ OPT_1GRP_KEY(Boolean, sampling, dump_loops_only )
 namespace protocols{
 namespace moves {
 
-static basic::Tracer tr("protocols.moves.CanonicalSamplingMover");
+static thread_local basic::Tracer tr( "protocols.moves.CanonicalSamplingMover" );
 
 bool protocols::moves::CanonicalSamplingMover::options_registered_( false );
 

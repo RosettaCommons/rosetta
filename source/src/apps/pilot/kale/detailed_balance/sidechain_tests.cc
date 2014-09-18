@@ -72,7 +72,7 @@ using protocols::simple_moves::sidechain_moves::SidechainMover;
 using protocols::simple_moves::sidechain_moves::SidechainMoverOP;
 using protocols::loops::Loop;
 
-basic::Tracer TR("apps.pilot.kale.monte_carlo");
+static thread_local basic::Tracer TR( "apps.pilot.kale.monte_carlo" );
 
 // Options {{{1
 OPT_2GRP_KEY(File, kale, in, pdb)
@@ -158,7 +158,7 @@ class OutputManager { // {{{1
 		void write_header() { // {{{2
 			cout << "Peptide:        " << sampler.pdb_path << endl;
 			cout << "Iterations:     " << sampler.iterations << endl;
-			cout << "Random Seed:    " << numeric::random::RG.get_seed() << endl;
+			cout << "Random Seed:    " << numeric::random::rg().get_seed() << endl;
 
 			log_pivots << sampler.first_residue << " ";
 			log_pivots << 0 << " ";

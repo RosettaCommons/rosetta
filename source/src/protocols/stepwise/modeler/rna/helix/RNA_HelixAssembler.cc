@@ -58,7 +58,7 @@ using namespace core;
 using ObjexxFCL::string_of;
 using basic::T;
 
-static basic::Tracer TR( "protocols.stepwise.modeler.rna.helix.RNA_HelixAssembler" ) ;
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.rna.helix.RNA_HelixAssembler" );
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
@@ -68,7 +68,6 @@ namespace modeler {
 namespace rna {
 namespace helix {
 
-static numeric::random::RandomGenerator RG(17720);  // <- Magic number, do not change it!
 
 // silly helper function
 bool
@@ -606,7 +605,7 @@ RNA_HelixAssembler::perturb_torsion(
 	utility::vector1<id::TorsionID> const & id_list
 ) const {
 	for (Size i = 1; i <= id_list.size(); ++i) {
-		pose.set_torsion( id_list[i], pose.torsion(id_list[i]) + perturb_amplitude_ * RG.gaussian() );
+		pose.set_torsion( id_list[i], pose.torsion(id_list[i]) + perturb_amplitude_ * numeric::random::rg().gaussian() );
 	}
 }
 //////////////////////////////////////////////////////////////////////////////////

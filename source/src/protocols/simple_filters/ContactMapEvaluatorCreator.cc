@@ -57,7 +57,7 @@
 #endif
 
 
-static basic::Tracer tr("protocols.evalution.ContactMapEvaluatorCreator");
+static thread_local basic::Tracer tr( "protocols.evalution.ContactMapEvaluatorCreator" );
 
 namespace protocols {
 namespace simple_filters {

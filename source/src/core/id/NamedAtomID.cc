@@ -24,7 +24,7 @@
 // C++ headers
 #include <ostream>
 
-static basic::Tracer tr("core.id.NamedAtomID",basic::t_info);
+static thread_local basic::Tracer tr( "core.id.NamedAtomID", basic::t_info );
 
 namespace core {
 namespace id {

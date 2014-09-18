@@ -34,7 +34,7 @@
 //Auto Headers
 #include <core/conformation/Residue.hh>
 
-static basic::Tracer TR( "protocols.protein_interface_design.movers.InterfaceRecapitulationMover" );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.InterfaceRecapitulationMover" );
 
 bool
 protocols::protein_interface_design::ReportPSSMDifferences::load_pssm_data(

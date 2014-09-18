@@ -47,7 +47,7 @@ using namespace core;
 using namespace core::scoring;
 using namespace ObjexxFCL::format;
 
-static basic::Tracer TR( "protocols.simple_filters.NMerPSSMEnergyFilter" );
+static thread_local basic::Tracer TR( "protocols.simple_filters.NMerPSSMEnergyFilter" );
 
 protocols::filters::FilterOP
 NMerPSSMEnergyFilterCreator::create_filter() const { return new NMerPSSMEnergyFilter; }

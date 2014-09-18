@@ -78,7 +78,7 @@ namespace chemical {
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
-static basic::Tracer tr("core.chemical.ResidueType");
+static thread_local basic::Tracer tr( "core.chemical.ResidueType" );
 
 // must be a better place for this, probably already exists!
 inline

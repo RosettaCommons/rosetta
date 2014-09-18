@@ -21,7 +21,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.legacy.screener.RNA_LegacyNativeRMSD_Screener" );
+static thread_local basic::Tracer TR( "protocols.stepwise.legacy.screener.RNA_LegacyNativeRMSD_Screener" );
 
 using namespace protocols::stepwise::modeler::rna;
 

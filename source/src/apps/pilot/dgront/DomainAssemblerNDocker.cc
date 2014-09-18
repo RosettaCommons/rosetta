@@ -62,7 +62,7 @@
 #include <core/pose/annotated_sequence.hh>
 
 
-basic::Tracer TR("protocols::DommainAssemblerNDocker");
+static thread_local basic::Tracer TR( "protocols::DommainAssemblerNDocker" );
 
 OPT_1GRP_KEY( String, assembly, cfg )
 

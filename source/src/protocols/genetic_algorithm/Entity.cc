@@ -98,7 +98,11 @@ EntityElementCreator::~EntityElementCreator() {}
 
 /// Entity Element Factory
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< EntityElementFactory * > EntityElementFactory::instance_( 0 );
+#else
 EntityElementFactory * EntityElementFactory::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

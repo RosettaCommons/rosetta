@@ -34,7 +34,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -84,7 +85,12 @@ private:
 	static ResFilterFactory * create_singleton_instance();
 
 private:
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< ResFilterFactory * > instance_;
+#else
 	static ResFilterFactory * instance_;
+#endif
+
 	ResFilterCreatorMap filter_creator_map_;
 
 };

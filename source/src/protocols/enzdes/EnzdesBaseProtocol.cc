@@ -80,7 +80,7 @@
 namespace protocols{
 namespace enzdes{
 
-static basic::Tracer tr("protocols.enzdes.EnzdesBaseProtocol");
+static thread_local basic::Tracer tr( "protocols.enzdes.EnzdesBaseProtocol" );
 
 EnzdesBaseProtocol::EnzdesBaseProtocol():
 	LigandBaseProtocol(),

@@ -50,12 +50,11 @@ using namespace core;
 using namespace devel::cartesian_frags;
 using utility::vector1;
 
-static basic::Tracer tt( "devel.dna.base_movers", basic::t_trace );
-static basic::Tracer td( "devel.dna.base_movers", basic::t_debug );
-static basic::Tracer ti( "devel.dna.base_movers", basic::t_info );
-static basic::Tracer tw( "devel.dna.base_movers", basic::t_warning );
+static thread_local basic::Tracer tt( "devel.dna.base_movers", basic::t_trace );
+static thread_local basic::Tracer td( "devel.dna.base_movers", basic::t_debug );
+static thread_local basic::Tracer ti( "devel.dna.base_movers", basic::t_info );
+static thread_local basic::Tracer tw( "devel.dna.base_movers", basic::t_warning );
 
-static numeric::random::RandomGenerator RG(53423); // <- Magic number, do not change it!!!
 
 /// @details  Setup a pointgraph for later use in dma calcs
 conformation::PointGraphOP
@@ -154,7 +153,7 @@ make_base_pair_move(
 		++ntries;
 
 		// make a random basepair fragment insertion
-		Size const nn( static_cast< int >( top_nn * RG.uniform() ) + 1 );
+		Size const nn( static_cast< int >( top_nn * numeric::random::rg().uniform() ) + 1 );
 		bps[ frag_devs[ nn ].second ].insert( pose.conformation(), offsets );
 
 		//
@@ -274,7 +273,7 @@ make_base_step_move(
 		++ntries;
 
 		// make a random basepair fragment insertion
-		Size const nn( static_cast< int >( top_nn * RG.uniform() ) + 1 );
+		Size const nn( static_cast< int >( top_nn * numeric::random::rg().uniform() ) + 1 );
 		bss[ frag_devs[ nn ].second ].insert( pose.conformation(), offsets );
 
 		//

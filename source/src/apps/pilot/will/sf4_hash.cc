@@ -109,7 +109,7 @@
 
 using core::kinematics::Stub;
 
-static basic::Tracer TR("sf4_hash");
+static thread_local basic::Tracer TR( "sf4_hash" );
 
 struct MyRT {
 	Vec trans;

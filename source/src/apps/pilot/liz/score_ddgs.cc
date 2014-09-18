@@ -63,7 +63,6 @@
 
 #include <basic/Tracer.hh>
 
-//numeric::random::RandomGenerator RG(154446); // <- Magic number, do not change it!!!
 using namespace core;
 using namespace scoring;
 using namespace protocols;

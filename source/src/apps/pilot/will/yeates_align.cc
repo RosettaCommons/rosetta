@@ -48,7 +48,7 @@
 #include <apps/pilot/will/will_util.ihh>
 
 
-static basic::Tracer TR("yeates_align");
+static thread_local basic::Tracer TR( "yeates_align" );
 
 
 using core::pose::Pose;

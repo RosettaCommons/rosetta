@@ -27,12 +27,16 @@
 #include <boost/function.hpp>
 
 
-static basic::Tracer TR("devel.matdes.SymmetrizerSampler");
+static thread_local basic::Tracer TR( "devel.matdes.SymmetrizerSampler" );
 
 namespace devel {
 namespace matdes {
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< SymmetrizerSampler * > SymmetrizerSampler::instance_( 0 );
+#else
 SymmetrizerSampler * SymmetrizerSampler::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

@@ -78,7 +78,7 @@
 
 
 
-static basic::Tracer tr("protocols.abinitio.StrandConstraints");
+static thread_local basic::Tracer tr( "protocols.abinitio.StrandConstraints" );
 using namespace core;
 using namespace basic;
 
@@ -94,7 +94,6 @@ StrandConstraints::~StrandConstraints() {}
 Size register_cutoff( 5 );
 Size residue_cutoff( 5 );
 
-//static numeric::random::RandomGenerator RG(1123123544);  // <- Magic number, do not change it!
 typedef utility::vector1< Size > SizeList;
 bool AlternativePairings::compatible( core::scoring::dssp::StrandPairing const& strand_pairing ) const {
   if ( pairings_.size() == 0 ) return true;

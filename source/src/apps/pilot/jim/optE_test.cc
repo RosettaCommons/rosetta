@@ -133,7 +133,6 @@ using utility::vector1;
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-static numeric::random::RandomGenerator optE_RG(10193);
 
 utility::vector1< std::string >
 get_native_pdb_names();
@@ -367,13 +366,13 @@ simple_opte_test()
 	*/
 
 	EnergyMap rand_emap;
-	rand_emap[ vdw ] = optE_RG.uniform();
-	rand_emap[ env ] = optE_RG.uniform();
-	rand_emap[ pair ] = optE_RG.uniform();
-	rand_emap[ cbeta ] = optE_RG.uniform();
-	rand_emap[ rama ] = optE_RG.uniform();
-	rand_emap[ p_aa_pp ] = optE_RG.uniform();
-	rand_emap[ cenpack ] = optE_RG.uniform();
+	rand_emap[ vdw ] = numeric::random::rg().uniform();
+	rand_emap[ env ] = numeric::random::rg().uniform();
+	rand_emap[ pair ] = numeric::random::rg().uniform();
+	rand_emap[ cbeta ] = numeric::random::rg().uniform();
+	rand_emap[ rama ] = numeric::random::rg().uniform();
+	rand_emap[ p_aa_pp ] = numeric::random::rg().uniform();
+	rand_emap[ cenpack ] = numeric::random::rg().uniform();
 
 	scorefxn.set_weight( vdw,     rand_emap[ vdw ] );
 	scorefxn.set_weight( env,     rand_emap[ env ] );
@@ -919,13 +918,13 @@ initialize_free_and_fixed(
 	core::scoring::EnergyMap & fixed_parameters
 )
 {
-	free_parameters[ vdw ] = optE_RG.uniform();
-	//free_parameters[ env ] = optE_RG.uniform();
-	free_parameters[ pair ] = optE_RG.uniform();
-	//free_parameters[ cbeta ] = optE_RG.uniform();
-	free_parameters[ rama ] = optE_RG.uniform();
-	free_parameters[ p_aa_pp ] = optE_RG.uniform();
-	free_parameters[ cenpack ] = optE_RG.uniform();
+	free_parameters[ vdw ] = numeric::random::rg().uniform();
+	//free_parameters[ env ] = numeric::random::rg().uniform();
+	free_parameters[ pair ] = numeric::random::rg().uniform();
+	//free_parameters[ cbeta ] = numeric::random::rg().uniform();
+	free_parameters[ rama ] = numeric::random::rg().uniform();
+	free_parameters[ p_aa_pp ] = numeric::random::rg().uniform();
+	free_parameters[ cenpack ] = numeric::random::rg().uniform();
 
 	for ( Size ii = 1; ii <= n_score_types; ++ii ) {
 		if ( free_parameters[ (ScoreType) ii ] != 0 ) {

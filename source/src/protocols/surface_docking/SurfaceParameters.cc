@@ -30,7 +30,7 @@
 // Basic Headers
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR("protocols.surfaceDocking.SurfaceParameters");
+static thread_local basic::Tracer TR( "protocols.surfaceDocking.SurfaceParameters" );
 
 namespace protocols {
 namespace surface_docking {

@@ -30,7 +30,7 @@ namespace toolbox {
 using namespace ObjexxFCL;
 using namespace format;
 
-static basic::Tracer tr("protocols.cluster",basic::t_info);
+static thread_local basic::Tracer tr( "protocols.cluster", basic::t_info );
 
 
 using namespace core;

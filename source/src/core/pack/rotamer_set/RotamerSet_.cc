@@ -58,7 +58,7 @@ namespace core {
 namespace pack {
 namespace rotamer_set {
 
-static basic::Tracer tt("core.pack.rotamer_set.RotamerSet_",basic::t_info );
+static thread_local basic::Tracer tt( "core.pack.rotamer_set.RotamerSet_", basic::t_info );
 
 RotamerSet_::RotamerSet_()
 :
@@ -405,7 +405,7 @@ RotamerSet_::build_rotamers_for_concrete(
 
 		// Do we include the current residue?
 		if ( task.include_current( resid() ) && existing_residue.name() == concrete_residue->name() ) {
-			tt.Debug << " Including current rotamer: " <<
+			 tt.Debug << " Including current rotamer: " <<
 					existing_residue.name() << ' ' << existing_residue.seqpos() << std::endl;
 			ResidueOP rot = existing_residue.create_rotamer();
 			push_back_rotamer( rot );

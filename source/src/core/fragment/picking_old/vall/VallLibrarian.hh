@@ -231,15 +231,20 @@ public: // library operations
 	/// @return true if creation successful, false otherwise (e.g. no VallFragmentEval or VallFragmentGen found)
 	template< typename LessThan >
 	bool catalog( VallLibrary const & library, LessThan const & lt ) {
+		basic::Tracer TR( "core.fragment.picking_old.vall.VallLibrarian" );
 		pre_catalog_ops( library );
 
-		TR_.Debug << "Cataloging " << library.size() << " residues in fragment library..." << std::endl;
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "Cataloging " << library.size() << " residues in fragment library..." << std::endl;
+		}
 
 		time_t time_start = time( NULL );
 		bool const status = Super::catalog( library, lt );
 		time_t time_end = time( NULL );
 
-		TR_.Debug << "... done.  " << scores().size() << " scores filed.  Time elapsed: " << ( time_end - time_start ) << " seconds." << std::endl;
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "... done.  " << scores().size() << " scores filed.  Time elapsed: " << ( time_end - time_start ) << " seconds." << std::endl;
+		}
 
 		post_catalog_ops( library );
 
@@ -297,25 +302,17 @@ public: // concept translation
 
 private: // additional catalog methods
 
-
 	/// @brief this function runs before main routine in catalog() starts
 	void pre_catalog_ops( VallLibrary const & library );
 
-
 	/// @brief this function runs after main routine catalog() finishes
 	void post_catalog_ops( VallLibrary const & library );
-
 
 private: // data
 
 
 	/// @brief flag controls preallocation of score container, default true
 	bool preallocate_;
-
-
-	/// @brief static Tracer instance for this class
-	static basic::Tracer TR_;
-
 
 };
 

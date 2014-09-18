@@ -35,7 +35,7 @@ namespace protocols {
 namespace canonical_sampling{
 namespace mc_convergence_checks {
 
-static basic::Tracer tr("MPIBPool_ConvergenceCheck");
+static thread_local basic::Tracer tr( "MPIBPool_ConvergenceCheck" );
 
   //
   core::Size MPIBPool_RMSD::master_node_;

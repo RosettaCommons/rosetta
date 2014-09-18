@@ -78,7 +78,7 @@ using namespace scoring::constraints;
 using namespace core::fragment;
 
 
-static basic::Tracer TR("FoldFromLoops_function");
+static thread_local basic::Tracer TR( "FoldFromLoops_function" );
 
 
 bool is_loop (

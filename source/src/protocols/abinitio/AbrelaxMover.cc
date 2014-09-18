@@ -67,9 +67,8 @@
 
 #include <protocols/moves/PyMolMover.hh>
 
-static basic::Tracer tr("protocols.general_abinitio", basic::t_info);
+static thread_local basic::Tracer tr( "protocols.general_abinitio", basic::t_info );
 
-static numeric::random::RandomGenerator RG(1981221134);
 
 namespace protocols {
 namespace abinitio {
@@ -251,12 +250,12 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 	// kidnap sampling_protocols's checkpointer - this could ultimately be a singleton i guess
 	checkpoint::CheckPointer &checkpoints = sampling_protocol()->get_checkpoints();
 
-	// need to save RG states such that choices for constraints and fold-tree are the same.
+	// need to save numeric::random::rg() states such that choices for constraints and fold-tree are the same.
 	if( ! checkpoints.recover_checkpoint( pose, get_current_tag(), "rg_state") ){
 		checkpoints.checkpoint( pose, get_current_tag(), "rg_state");
 	}
 
-	checkpoints.debug( get_current_tag(), "rg_state", RG.uniform() );
+	checkpoints.debug( get_current_tag(), "rg_state", numeric::random::rg().uniform() );
 	if ( sampling_protocol() ) sampling_protocol()->set_current_tag( get_current_tag() );
 	if ( closure_protocol() )  closure_protocol()->set_current_tag( get_current_tag() );
 	if ( relax_protocol() )    relax_protocol()->set_current_tag( get_current_tag() );

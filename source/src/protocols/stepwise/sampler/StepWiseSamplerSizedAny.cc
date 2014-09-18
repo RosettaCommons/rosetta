@@ -21,8 +21,7 @@
 // Numeric Headers
 #include <numeric/random/random.hh>
 
-static numeric::random::RandomGenerator RG( 256019 );  // Magic number
-static basic::Tracer TR( "protocols.sampler.StepWiseSamplerSizedAny" );
+static thread_local basic::Tracer TR( "protocols.sampler.StepWiseSamplerSizedAny" );
 
 using namespace core;
 
@@ -71,7 +70,7 @@ void StepWiseSamplerSizedAny::reset() {
 void StepWiseSamplerSizedAny::operator++() {
 	runtime_assert( not_end() );
 	if ( random() ) {
-		id_ = RG.random_range( 1, size() );
+		id_ = numeric::random::rg().random_range( 1, size() );
 		curr_state_ = id2state( id() );
 	} else {
 		++id_;

@@ -28,7 +28,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.legacy.modeler.StepWiseLegacyConnectionSampler" );
+static thread_local basic::Tracer TR( "protocols.stepwise.legacy.modeler.StepWiseLegacyConnectionSampler" );
 
 using namespace core;
 using namespace protocols::stepwise::modeler::rna;

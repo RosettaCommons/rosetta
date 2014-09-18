@@ -119,12 +119,11 @@ using basic::Warning;
 
 using ObjexxFCL::lead_zero_string_of;
 
-static numeric::random::RandomGenerator RG( 101079 );
 
 namespace protocols {
 namespace hotspot_hashing {
 typedef platform::Size Size;
-basic::Tracer TR( "protocols.hotspot_hashing");
+static thread_local basic::Tracer TR( "protocols.hotspot_hashing" );
 
 HotspotStubSet::HotspotStubSet() :
 	ReferenceCount(),
@@ -628,7 +627,7 @@ void HotspotStubSet::remove_random_stubs_from_set( int const num_to_remove ){
 		to_remove.push_back( i );
 
 	//std::random__shuffle( to_remove.begin(), to_remove.end() );
-	numeric::random::random_permutation(to_remove.begin(), to_remove.end(), numeric::random::RG);
+	numeric::random::random_permutation( to_remove.begin(), to_remove.end(), numeric::random::rg() );
 
 	std::vector< HotspotStubOP > stubs_to_remove;
 	for( int i = 1; i <= num_to_remove; ++i )
@@ -986,7 +985,7 @@ HotspotStubOP
 HotspotStubSet::random_stub()
 {
 	core::Size const stubset_size( size() );
-	core::Size const random_element( ( core::Size )( RG.uniform() * stubset_size ) + 1 );
+	core::Size const random_element( ( core::Size )( numeric::random::rg().uniform() * stubset_size ) + 1 );
 
 	runtime_assert( random_element <= stubset_size );
 	core::Size access_point( random_element );
@@ -1012,7 +1011,7 @@ HotspotStubSet::random_stub( std::string const resname )
 {
 	std::multimap<core::Real,HotspotStubOP > stubs = retrieve( resname );
 	core::Size const subset_size( stubs.size() );
-	core::Size const random_element( ( core::Size ) ( RG.uniform() * subset_size ) + 1 );
+	core::Size const random_element( ( core::Size ) ( numeric::random::rg().uniform() * subset_size ) + 1 );
 
 	runtime_assert( random_element <= subset_size );
 	std::multimap<core::Real,HotspotStubOP>::iterator hs_it;

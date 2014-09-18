@@ -153,10 +153,9 @@ using basic::T;
 using basic::Warning;
 using basic::Error;
 
-basic::Tracer TR("chrisk.byres_data");
-basic::Tracer TR_unsat ("chrisk.unsat_calc");
+static thread_local basic::Tracer TR( "chrisk.byres_data" );
+static thread_local basic::Tracer TR_unsat( "chrisk.unsat_calc" );
 
-static numeric::random::RandomGenerator RG(2718);
 
 //local options
 namespace byres_data
@@ -479,12 +478,12 @@ append_rsd_by_hbond_jump_near_atom(
 	Size batm( pose.residue( acc_pos ).atom_base( aatm ) );
 
 	//random distance within window
-	Real AH_dist( dist_min + RG.uniform() * ( dist_max - dist_min ) );
+	Real AH_dist( dist_min + numeric::random::rg().uniform() * ( dist_max - dist_min ) );
 	Real AHD_ang( 180.0 ); //angle from acc -> donor
 	//BAH angle depends on hybridization
 	Real BAH_ang( get_ideal_BAH_angle( pose.residue( acc_pos ), aatm ) ); //angle from acc_base -> hydrogen
 	//pick a random chi angle
-	Real BAHD_chi( RG.uniform() * 360.0 );
+	Real BAHD_chi( numeric::random::rg().uniform() * 360.0 );
 
 	//set translation
 	jump.random_trans( AH_dist );
@@ -767,7 +766,7 @@ append_rsd_by_jump_near_atom(
 	Jump jump( pose.jump( jump_number ) );
 
 	//set jump distance as random val from dist_min to dist_max
-	Real jump_dist( dist_min + RG.uniform() * ( dist_max - dist_min ) );
+	Real jump_dist( dist_min + numeric::random::rg().uniform() * ( dist_max - dist_min ) );
 	jump.random_trans( jump_dist );
 	//set jump rotation as random matrix
 	jump.set_rotation( protocols::geometry::random_reorientation_matrix( 360, 360 ) );

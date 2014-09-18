@@ -51,8 +51,7 @@ namespace core {
 namespace kinematics {
 
 using namespace id;
-static numeric::random::RandomGenerator RG(62457); // <- Magic number, do not change it!!!
-static basic::Tracer TR( "core.kinematics.util");
+static thread_local basic::Tracer TR( "core.kinematics.util" );
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -114,7 +113,7 @@ pick_loopy_cutpoint(
 )
 {
 
-	float r = RG.uniform() * cut_bias_sum( n_res );
+	float r = numeric::random::rg().uniform() * cut_bias_sum( n_res );
 
 	int cutpoint( 0 );
 

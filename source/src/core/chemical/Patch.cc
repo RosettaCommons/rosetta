@@ -179,7 +179,7 @@ Patch::~Patch() {}
 /// @details Auto-generated virtual destructor
 PatchCase::~PatchCase() {}
 
-static basic::Tracer tr("core.chemical");
+static thread_local basic::Tracer tr( "core.chemical" );
 
 /// @brief the string used to generate new residue names
 std::string const PATCH_LINKER( ":" );

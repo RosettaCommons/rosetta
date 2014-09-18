@@ -60,8 +60,7 @@
 #include <boost/foreach.hpp>
 
 //Auto Headers
-static numeric::random::RandomGenerator RG(43135);
-static basic::Tracer TR("protocols.loops.loop_closure.kinematic_closure.KinematicMover");
+static thread_local basic::Tracer TR( "protocols.loops.loop_closure.kinematic_closure.KinematicMover" );
 
 using namespace numeric::kinematic_closure;
 using namespace core;
@@ -281,7 +280,7 @@ bool KinematicMover::check_rama(Real old_rama_score, Real new_rama_score) {
 	if ( new_rama_score > old_rama_score ) {
 		Real const boltz_factor = (old_rama_score - new_rama_score)/temperature_;
 		Real const probability = std::exp(std::max(Real(-40.0),boltz_factor) );
-		if ( RG.uniform() >= probability ) return( false );
+		if ( numeric::random::rg().uniform() >= probability ) return( false );
 	}
 	return( true );
 }
@@ -361,7 +360,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 	//scoring::Ramachandran const & rama( core::scoring::ScoringManager::get_instance()->get_Ramachandran() );
 	using numeric::conversions::radians;
 	using numeric::conversions::degrees;
-	using numeric::random::RG;
+
 	using core::id::AtomID;
 	last_move_succeeded_=false;
 
@@ -393,10 +392,10 @@ void KinematicMover::apply( core::pose::Pose & pose )
 	if (pose.residue(start_res_).is_lower_terminus()) {
 		// make a copy of the lower terminal residue
 		conformation::ResidueOP nterm_copy( conformation::ResidueFactory::create_residue(
-																						  pose.conformation().residue(start_res_).type(),
-																						  pose.conformation().residue(start_res_),
-																						  pose.conformation(),
-																						  false ) );
+			pose.conformation().residue(start_res_).type(),
+			pose.conformation().residue(start_res_),
+			pose.conformation(),
+			false ) );
 		// now create another residue of the same type to prepend
 		conformation::ResidueOP pre_nterm( conformation::ResidueFactory::create_residue(
 																						pose.residue(start_res_).type() ) );
@@ -423,10 +422,10 @@ void KinematicMover::apply( core::pose::Pose & pose )
 	if (pose.residue(end_res_).is_upper_terminus()) {
 		// make a copy of the upper terminal residue
 		conformation::ResidueOP cterm_copy( conformation::ResidueFactory::create_residue(
-																						  pose.conformation().residue(end_res_).type(),
-																						  pose.conformation().residue(end_res_),
-																						  pose.conformation(),
-																						  false ) );
+			pose.conformation().residue(end_res_).type(),
+			pose.conformation().residue(end_res_),
+			pose.conformation(),
+			false ) );
 
 		// now create another residue of the same type to append
 		conformation::ResidueOP post_cterm( conformation::ResidueFactory::create_residue(
@@ -597,7 +596,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 		}
 
 		//std::random__shuffle(pos.begin(), pos.end());
-		numeric::random::random_permutation(pos.begin(), pos.end(), RG); //Put the solutions in random order, since the first one encountered that passes the filters is accepted.
+		numeric::random::random_permutation(pos.begin(), pos.end(), numeric::random::rg()); //Put the solutions in random order, since the first one encountered that passes the filters is accepted.
 
 		// Look for solutions passing NaN, Rama, bump checks and eventual filters
 		for (Size i=nsol; i>=1; i--) {

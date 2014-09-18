@@ -70,6 +70,7 @@
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.hh>
 
+// This should be removed.
 #define PI 3.1415926535897932384626433832795
 #define CNCa_ANGLE 121.7
 #define CNH_ANGLE 119.15
@@ -197,7 +198,6 @@ int main(int argc, char *argv[]) {
 	using namespace chemical;
 	using namespace conformation;
 
-	numeric::random::RandomGenerator RG( 923749 ); //Random generator and seed
 
 	printf("Starting test_cyclic_rama.cc\n");
 	printf("Pilot app created 5 February 2014 by Vikram K. Mulligan, Baker Laboratory.\n");

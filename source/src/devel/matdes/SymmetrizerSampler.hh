@@ -20,7 +20,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -64,7 +65,12 @@ private:
 	static SymmetrizerSampler * create_singleton_instance();
 
 private:
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< SymmetrizerSampler * > instance_;
+#else
 	static SymmetrizerSampler * instance_;
+#endif
+
 
 	Real angle_min_;
 	Real angle_max_;

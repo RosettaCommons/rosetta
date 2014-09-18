@@ -36,7 +36,7 @@
 #include <string>
 #include <map>
 
-static basic::Tracer TR("protocols.wum.DatabaseQueryWorkUnitManager");
+static thread_local basic::Tracer TR( "protocols.wum.DatabaseQueryWorkUnitManager" );
 
 namespace protocols{
 namespace wum{

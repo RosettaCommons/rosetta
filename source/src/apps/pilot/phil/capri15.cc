@@ -152,7 +152,6 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static numeric::random::RandomGenerator RG(93530); // <- Magic number, do not change it!!!
 
 using namespace core;
 using namespace protocols;
@@ -164,7 +163,7 @@ using std::endl;
 using io::pdb::dump_pdb;
 
 
-static basic::Tracer TR( "apps.pilot.phil.loop_model"  );
+static thread_local basic::Tracer TR( "apps.pilot.phil.loop_model" );
 
 ////////////////////////////////////////////////
 // danger USING ////////////////////////////////
@@ -952,7 +951,7 @@ trim_dock_rebuild_relax_test()
 	/// shuffle file lists
 	utility::vector1< Size > protein_index;
 	for ( Size i=1; i<= protein_files.size(); ++i ) protein_index.push_back(i);
-	numeric::random::random_permutation( protein_index, RG );
+	numeric::random::random_permutation( protein_index, numeric::random::rg() );
 
 	for ( Size k=1; k<= nstruct; ++k ) {
 

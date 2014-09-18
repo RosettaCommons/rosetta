@@ -47,7 +47,7 @@
 
 //Auto Headers
 #include <core/graph/Graph.hh>
-static basic::Tracer TR("protocols.flxbb.InterlockAroma");
+static thread_local basic::Tracer TR( "protocols.flxbb.InterlockAroma" );
 
 namespace protocols{
 namespace flxbb{

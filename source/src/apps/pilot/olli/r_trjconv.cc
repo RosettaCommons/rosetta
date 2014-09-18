@@ -83,7 +83,7 @@
 // AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 
-basic::Tracer tracer("r_trjconv");
+static thread_local basic::Tracer tracer( "r_trjconv" );
 
 using namespace core;
 using namespace protocols;

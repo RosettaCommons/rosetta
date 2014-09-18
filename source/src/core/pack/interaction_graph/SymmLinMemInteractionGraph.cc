@@ -38,7 +38,7 @@ namespace core {
 namespace pack {
 namespace interaction_graph {
 
-static basic::Tracer T("core.pack.interaction_graph.symmlinmem_ig", basic::t_error );
+static thread_local basic::Tracer T( "core.pack.interaction_graph.symmlinmem_ig", basic::t_error );
 
 /// @brief For testing the symmlinmemIG, you'll want to set this to true
 bool const debug = { false };

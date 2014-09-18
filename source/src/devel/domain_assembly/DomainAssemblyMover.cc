@@ -131,7 +131,7 @@ DomainAssemblyMover::apply( core::pose::Pose & pose )
 
 void
 DomainAssemblyMover::evaluate_pose( core::pose::Pose const & pose) const {
-	basic::Tracer TR("devel.domain_assembly.DomainAssemblyMover");
+	basic::Tracer TR( "devel.domain_assembly.DomainAssemblyMover" );
 
 	core::Real sum_sq = target_rmsd( pose );
 
@@ -196,7 +196,7 @@ DomainAssemblyMover::run_centroid_stage( core::pose::Pose & pose )
 	Size inside_steps_stage2 ( 100 );
 	Size outside_steps_stage2 ( 20 );
 
-	basic::Tracer TR("DomainAssemblyMover::run_centroid_stage");
+	basic::Tracer TR( "DomainAssemblyMover::run_centroid_stage" );
 
 	core::pose::Pose const saved_input_pose( pose ); //used to return sidechains later
 	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );

@@ -52,7 +52,6 @@
 
 //static basic::Tracer tr("protocols\.simple_filter\.RPF_ScoreEvaluator");
 
-//static numeric::random::RandomGenerator RG(5512489);  // <- Magic number, do not change it!
 
 namespace protocols {
 namespace simple_filters {

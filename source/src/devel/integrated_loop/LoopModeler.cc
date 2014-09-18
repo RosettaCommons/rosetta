@@ -57,9 +57,8 @@ using namespace core;
 namespace protocols {
 namespace moves {
 
-static basic::Tracer TR("devel.IntegratedLoop.LoopModeler");
+static thread_local basic::Tracer TR( "devel.IntegratedLoop.LoopModeler" );
 
-static numeric::random::RandomGenerator loopmover_RG(28463);
 
 //v typedef utility::vector1< protocols::Loop > Loops;
 //v typedef utility::vector1< protocols::Loop >::iterator LoopsIt;

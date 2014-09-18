@@ -72,9 +72,8 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-static numeric::random::RandomGenerator RG(11141980);
 
-static basic::Tracer TR("protocols.antibody.CDRH3Modeler");
+static thread_local basic::Tracer TR( "protocols.antibody.CDRH3Modeler" );
 
 namespace protocols {
 namespace antibody_legacy {
@@ -578,7 +577,7 @@ void CDRH3Modeler::antibody_modeling_insert_ter() {
 
 	loop_begin = antibody_in_.cdrh_[3][1];
 	cutpoint = antibody_in_.cdrh_[3][1] + 1;
-	random_H3_ter = RG.random_range( 1, H3_base_library.size() );
+	random_H3_ter = numeric::random::rg().random_range( 1, H3_base_library.size() );
 	//H3_ter = H3_base_library.begin();
 
 	loop_end = antibody_in_.cdrh_[3][2] + 1;
@@ -717,7 +716,7 @@ void CDRH3Modeler::scored_frag_close (
 	Real const ccd_threshold( 0.1);
 	Size h3_attempts(0);
 	Real h3_fraction = 0.75; // 75% of loops are required to be H3's
-	Real current_h3_prob = RG.uniform();;
+	Real current_h3_prob = numeric::random::rg().uniform();;
 	bool H3_found_ever(false);
 	bool loop_found(false);
 	Size total_cycles(0);
@@ -801,7 +800,7 @@ void CDRH3Modeler::scored_frag_close (
 				mc->boltzmann( pose_in );
 			}
 
-			if ( (c2 > cycles2/2 && RG.uniform() * cycles2 < c2) ||
+			if ( (c2 > cycles2/2 && numeric::random::rg().uniform() * cycles2 < c2) ||
 			        ( trimmed_cdr_h3.size() <= 5) ) {
 				// in 2nd half of simulation, start trying to close the loop:
 				CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover( trimmed_cdr_h3, cdrh3_map );

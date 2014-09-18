@@ -44,7 +44,7 @@
 namespace protocols {
 namespace hotspot_hashing {
 
-static basic::Tracer TR( "protocols.hotspot_hashing.SICSearchPattern" ); 
+static thread_local basic::Tracer TR( "protocols.hotspot_hashing.SICSearchPattern" );
 
 SICPatternAtTransform::SICPatternAtTransform(
     core::pose::Pose const & source_pose,

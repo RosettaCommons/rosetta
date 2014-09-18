@@ -105,7 +105,7 @@ AtomPairFuncList::add_interaction( atoms_and_func_struct const & interacting_pai
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 
-static basic::Tracer tr("core.scoring.custom_pair_distance.FullatomCustomPairDistanceEnergy");
+static thread_local basic::Tracer tr( "core.scoring.custom_pair_distance.FullatomCustomPairDistanceEnergy" );
 
 // constructor
 FullatomCustomPairDistanceEnergy::FullatomCustomPairDistanceEnergy() :

@@ -37,7 +37,7 @@
 #include <utility/tag/Tag.hh>
 
 
-static basic::Tracer TR("protocols.grafting.CCDEndsGraftMover");
+static thread_local basic::Tracer TR( "protocols.grafting.CCDEndsGraftMover" );
 
 
 namespace protocols {

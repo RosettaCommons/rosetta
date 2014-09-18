@@ -44,7 +44,7 @@
 #include <numeric/random/random.hh>
 #include <utility/tag/Tag.hh>
 
-static basic::Tracer TR( "devel.denovo_design.task_operations.HighestEnergyRegion" );
+static thread_local basic::Tracer TR( "devel.denovo_design.task_operations.HighestEnergyRegion" );
 
 namespace devel {
 namespace denovo_design {

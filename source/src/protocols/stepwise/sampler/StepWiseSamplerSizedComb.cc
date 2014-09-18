@@ -22,8 +22,7 @@
 // Numeric Headers
 #include <numeric/random/random.hh>
 
-static numeric::random::RandomGenerator RG( 250199 );  // Magic number
-static basic::Tracer TR( "protocols.sampler.StepWiseSamplerSizedComb" );
+static thread_local basic::Tracer TR( "protocols.sampler.StepWiseSamplerSizedComb" );
 
 using namespace core;
 
@@ -95,7 +94,7 @@ void StepWiseSamplerSizedComb::reset() {
 void StepWiseSamplerSizedComb::operator++() {
 	runtime_assert( not_end() );
 	if ( random() ) {
-		id_ = RG.random_range( 1, size() );
+		id_ = numeric::random::rg().random_range( 1, size() );
 	} else {
 		++id_;
 	}

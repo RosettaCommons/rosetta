@@ -67,7 +67,7 @@
 
 using core::Real;
 
-basic::Tracer TRps("packstat");
+static thread_local basic::Tracer TRps( "packstat" );
 
 using namespace core::scoring::packstat;
 

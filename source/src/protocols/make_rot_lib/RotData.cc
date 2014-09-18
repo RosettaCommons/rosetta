@@ -19,7 +19,7 @@
 namespace protocols {
 namespace make_rot_lib {
 
-static basic::Tracer TR("protocols.make_rot_lib.RotData");
+static thread_local basic::Tracer TR( "protocols.make_rot_lib.RotData" );
 
 RotData::RotData( core::Size NumChi, core::Size NumCluster ) :
   phi_( 0 ),

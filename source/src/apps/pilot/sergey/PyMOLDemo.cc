@@ -35,7 +35,7 @@
 #include <stdio.h>
 #include <cstring>
 
-basic::Tracer TR("PyMOLDemo");
+static thread_local basic::Tracer TR( "PyMOLDemo" );
 
 
 #include <unistd.h>

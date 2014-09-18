@@ -30,7 +30,7 @@ namespace vall {
 
 
 // static initialization
-basic::Tracer VallLibrarian::TR_( "core.fragment.picking_old.vall.VallLibrarian" );
+static thread_local basic::Tracer TR( "core.fragment.picking_old.vall.VallLibrarian" );
 
 
 /// @brief default constructor
@@ -81,17 +81,17 @@ VallLibrarian::FragDataOPs VallLibrarian::fragments(
 	Scores::const_iterator begin = scores().begin() + ( from - 1 );
 	Scores::const_iterator end = scores().begin() + to;
 
-	TR_ << "best fragment:   " << ( *begin ) << std::endl;
-	TR_ << "worst fragment:  " << ( *( end - 1) ) << std::endl;
+	TR << "best fragment:   " << ( *begin ) << std::endl;
+	TR << "worst fragment:  " << ( *( end - 1) ) << std::endl;
 
 	core::Real max_allowed_score( basic::options::option[ basic::options::OptionKeys::frags::picking_old_max_score ].value() ); 
 	//flo debug
-	//TR_ << "allscores: ";
+	//TR << "allscores: ";
 	core::Size num_frags_picked(1);
 	//for( Scores::const_iterator tmp_it( scores().begin() + ( from - 1 ) ); tmp_it != scores().begin() + to -1; ++tmp_it, ++hack ){
-	//	TR_ << "(" << hack << "/" << *tmp_it << "),";
+	//	TR << "(" << hack << "/" << *tmp_it << "),";
 	//}
-	//TR_ << std::endl;
+	//TR << std::endl;
 	//debug over
 
 	for ( Scores::const_iterator i = begin; i != end; ++i, ++num_frags_picked ) {
@@ -101,10 +101,10 @@ VallLibrarian::FragDataOPs VallLibrarian::fragments(
 		}
 		else {
 			if( fdl.size() == 0 ){ //in case every fragment was too bad we only take the first to prevent crash
-				TR_ << "no fragments had good score, only picking 1. this is probably a bad sign..." << std::endl;
+				TR << "no fragments had good score, only picking 1. this is probably a bad sign..." << std::endl;
 				fdl.push_back( extent_to_fragdata( begin->extent_begin, begin->extent_end,this_score, srfd_type ) );
 			}
-			else TR_ << "fragments with bad score (" << this_score << ") observed after fragment " << num_frags_picked << ", skipping everything afterwards." << std::endl;
+			else TR << "fragments with bad score (" << this_score << ") observed after fragment " << num_frags_picked << ", skipping everything afterwards." << std::endl;
 			break;
 		}
 	}

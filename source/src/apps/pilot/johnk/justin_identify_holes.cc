@@ -49,7 +49,7 @@ using namespace basic::options::OptionKeys;
 
 //OPT_KEY( String, ref_decoy )
 
-static basic::Tracer TR( "apps.pilot.justin_identify_holes.main" );
+static thread_local basic::Tracer TR( "apps.pilot.justin_identify_holes.main" );
 
 /// General testing code
 int

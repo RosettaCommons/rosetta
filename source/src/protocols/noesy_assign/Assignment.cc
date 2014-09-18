@@ -47,7 +47,7 @@
 #include <string>
 
 
-static basic::Tracer tr("protocols.noesy_assign.assignment");
+static thread_local basic::Tracer tr( "protocols.noesy_assign.assignment" );
 
 PeakAssignment::PeakAssignment( CrossPeakAP cp, core::Size assign_spin1, core::Size assign_spin2 )
   : crosspeak_( cp ),

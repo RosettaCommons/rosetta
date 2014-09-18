@@ -50,8 +50,8 @@ namespace protocols {
 namespace topology_broker {
 	
 
-static basic::Tracer TR("protocols.moves.RigidBodyMover");
-static basic::Tracer TRBM("protocols.moves.RigidBodyMover");
+static thread_local basic::Tracer TR( "protocols.moves.RigidBodyMover" );
+static thread_local basic::Tracer TRBM( "protocols.moves.RigidBodyMover" );
 
 RigidBodyRandomTMHMover::RigidBodyRandomTMHMover(){}
 RigidBodyRandomTMHMover::~RigidBodyRandomTMHMover(){}
@@ -76,7 +76,7 @@ void
 RigidBodyRandomTMHMover::apply(core::pose::Pose& pose)
 {
 	//Choose a random jump
-	core::Size random_jump_num = static_cast<core::Size>(numeric::random::RG.random_range(1,num_jump_));
+	core::Size random_jump_num = static_cast<core::Size>(numeric::random::rg().random_range(1,num_jump_));
 	if(TR.Trace.visible()){TR.Trace << "random_jump chosen:  " << random_jump_num << " " << pose.fold_tree().jump_edge(random_jump_num).start() << " " <<
 		pose.fold_tree().jump_edge(random_jump_num).stop() << std::endl;}
 	

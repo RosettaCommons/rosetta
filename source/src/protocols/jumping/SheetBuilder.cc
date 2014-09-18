@@ -54,8 +54,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer tr("protocols.jumping");
-static numeric::random::RandomGenerator RG(14934);  // <- Magic number, do not change
+static thread_local basic::Tracer tr( "protocols.jumping" );
 
 namespace protocols {
 namespace jumping {
@@ -153,7 +152,7 @@ SheetBuilder::~SheetBuilder() {}
 ///@brief simply random choice of pairing from pool
 void
 SheetBuilder::choose_next_pairing( FArray3D_int& sheet_pairing, Size pairing, Size sheet ) const {
-  int const	p = static_cast< int >( RG.uniform() * pairings_.size() ) + 1;
+  int const	p = static_cast< int >( numeric::random::rg().uniform() * pairings_.size() ) + 1;
 	//	tr.Trace << "Picked pairing " << p << " out of " << pairings_.size() << std::endl;
 	runtime_assert( p>=1 && p<= (int) pairings_.size() );
   // you should replace sheet_pairing with array of Pairings!!!!!

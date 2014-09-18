@@ -32,8 +32,7 @@ namespace movers {
 using namespace std;
 using namespace core::scoring;
 
-static basic::Tracer TR( "protocols.protein_interface_design.movers.PatchdockTransform" );
-static numeric::random::RandomGenerator RG( 2117818 );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.PatchdockTransform" );
 
 std::string
 PatchdockTransformCreator::keyname() const
@@ -67,7 +66,7 @@ PatchdockTransform::apply( core::pose::Pose & pose )
 	  core::Size const actual_last_entry( std::min( pd_reader()->to_entry(), pd_reader()->number_of_patchdock_entries() ) );
     TR<<"sampling a number between "<<pd_reader()->from_entry()<<" and "<<actual_last_entry<<std::endl;
 
-    pd_reader()->patchdock_entry_num( ( core::Size ) floor( RG.uniform() * ( actual_last_entry - pd_reader()->from_entry() + 1 ) ) + pd_reader()->from_entry() );
+    pd_reader()->patchdock_entry_num( ( core::Size ) floor( numeric::random::rg().uniform() * ( actual_last_entry - pd_reader()->from_entry() + 1 ) ) + pd_reader()->from_entry() );
 		TR<<"Patchdock entry: "<<pd_reader()->patchdock_entry_num()<<std::endl;
 	}
 	protocols::protein_interface_design::Transformation t( pd_reader()->read_patchdock_entry() );

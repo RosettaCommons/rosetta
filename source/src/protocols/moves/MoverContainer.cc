@@ -35,13 +35,12 @@
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 
-static basic::Tracer tr("protocols.moves.MoverContainer");
+static thread_local basic::Tracer tr( "protocols.moves.MoverContainer" );
 
 
 namespace protocols {
 namespace moves {
 
-static numeric::random::RandomGenerator RG(114);  // <- Mike's Magic number, do not change it (and dont try and use it anywhere else) !!! what a retarded system ... %-|
 
 using namespace core;
 using basic::T;
@@ -181,7 +180,7 @@ void RandomMover::apply( core::pose::Pose & pose )
 	for(Size i=0;i< nmoves_; i++)
 	{
 		// choose a move
-		Real movechoice = RG.uniform()*weight_sum;
+		Real movechoice = numeric::random::rg().uniform()*weight_sum;
 		Real sum=0.0;
 		for(m=0;m< movers_.size(); m++){
 			if(movechoice < sum) break;

@@ -33,7 +33,6 @@
 // C++ headers
 #include <cmath>
 
-
 namespace core {
 namespace pose {
 namespace rna {

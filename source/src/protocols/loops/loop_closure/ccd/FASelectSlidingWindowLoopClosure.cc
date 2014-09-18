@@ -86,8 +86,7 @@ namespace ccd {
 using namespace core;
 using namespace pose;
 
-//static numeric::random::RandomGenerator RG(4189);  // <- Magic number, do not change it!
-static basic::Tracer tr("protocols.loops.loop_closure.ccd.FASelectSlidingWindowLoopClosure");
+static thread_local basic::Tracer tr( "protocols.loops.loop_closure.ccd.FASelectSlidingWindowLoopClosure" );
 
 const Real REALLY_BAD_SCORE ( 1000000000.0 );
 

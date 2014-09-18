@@ -161,7 +161,6 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-//static numeric::random::RandomGenerator RG(12323); // <- Magic number, do not change it!!!
 
 using namespace core;
 using namespace protocols;
@@ -184,8 +183,8 @@ using io::pdb::dump_pdb; // but deprecated
 ////////////////////////////////////////////////
 
 
-static basic::Tracer ti( "demo.phil.dna_spec_test", basic::t_info );
-static basic::Tracer tt( "demo.phil.dna_spec_test", basic::t_trace );
+static thread_local basic::Tracer ti( "demo.phil.dna_spec_test", basic::t_info );
+static thread_local basic::Tracer tt( "demo.phil.dna_spec_test", basic::t_trace );
 
 
 ///////////////////////////////////////////////////////////////////////////////

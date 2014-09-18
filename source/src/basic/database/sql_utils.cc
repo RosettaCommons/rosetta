@@ -187,8 +187,7 @@ using namespace utility::sql_database;
 namespace basic {
 namespace database {
 
-static basic::Tracer TR( "basic.database.sql_utils" );
-static numeric::random::RandomGenerator RG(345264);
+static thread_local basic::Tracer TR( "basic.database.sql_utils" );
 
 
 
@@ -577,7 +576,7 @@ safely_read_from_database(
 				Sleep(1000);
 #else
 				//Sleep some amount between 100-2000 ms
-				usleep(100+1900*RG.uniform());
+				usleep(100+1900*numeric::random::rg().uniform());
 #endif
 			}else
 			{

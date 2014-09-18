@@ -36,7 +36,7 @@
 #include <cmath>
 #include <iomanip>
 
-static basic::Tracer tr("protocols.noesy_assign.calibration");
+static thread_local basic::Tracer tr( "protocols.noesy_assign.calibration" );
 
 using core::Real;
 using namespace core;

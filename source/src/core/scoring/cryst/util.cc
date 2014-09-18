@@ -27,7 +27,7 @@ namespace core {
 namespace scoring {
 namespace cryst {
 
-static basic::Tracer TS( "core.scoring.cryst.util" );
+static thread_local basic::Tracer TS( "core.scoring.cryst.util" );
 
 
 ///////

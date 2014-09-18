@@ -38,7 +38,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-static basic::Tracer tr("core.scoring.methods");
+static thread_local basic::Tracer tr( "core.scoring.methods" );
 
 core::Real get_residue_weight_by_ss(
 	const char ss

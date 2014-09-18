@@ -68,8 +68,7 @@
 namespace protocols {
 namespace matdes {
 
-static basic::Tracer TR( "protocols.matdes.MatDesGreedyOptMutationMover" );
-static numeric::random::RandomGenerator RG( 21378 );
+static thread_local basic::Tracer TR( "protocols.matdes.MatDesGreedyOptMutationMover" );
 using namespace core;
 using namespace chemical;
 using utility::vector1;
@@ -539,7 +538,7 @@ calc_pareto_front(
 	if( div ){
 		for( Size i = 1; i <= n; ++i ){
 			for( Size k = 1; k <= d; ++k ){
-				coords[ i ][ k ] += ( ( RG.uniform() - 0.5 ) * coord_perts[ k ] );
+				coords[ i ][ k ] += ( ( numeric::random::rg().uniform() - 0.5 ) * coord_perts[ k ] );
 			}	
 		}
 	}
@@ -719,7 +718,7 @@ MatDesGreedyOptMutationMover::apply( core::pose::Pose & pose )
 
 		  //now randomize the sequence position order?
 		if( shuffle_order() ){
-			numeric::random::random_permutation( seqpos_aa_vals_vec_.begin(), seqpos_aa_vals_vec_.end(), RG );
+			numeric::random::random_permutation( seqpos_aa_vals_vec_.begin(), seqpos_aa_vals_vec_.end(), numeric::random::rg() );
 			TR<<"Combining shuffled mutations… " << std::endl;
 		}
 		else TR<<"Combining sorted mutations… " << std::endl;

@@ -113,8 +113,7 @@
 
 #include <basic/prof.hh>
 
-static numeric::random::RandomGenerator RG(62331900);
-basic::Tracer TR("pilot.wendao.bbmc");
+static thread_local basic::Tracer TR( "pilot.wendao.bbmc" );
 
 //params for all
 OPT_1GRP_KEY(Integer, mc, ntrials) //how many steps
@@ -204,9 +203,9 @@ using namespace protocols::simple_moves;
 // 	    //select four hinge
 // 	    //for lysozyme, 104-117
 // 	    Real rA, rB, rC, rD;
-// 	    if (RG.uniform()<0.5) {
-// 	    	Size Ns(RG.uniform()*2+1);
-// 		    Real randn = RG.uniform();
+// 	    if (numeric::random::rg().uniform()<0.5) {
+// 	    	Size Ns(numeric::random::rg().uniform()*2+1);
+// 		    Real randn = numeric::random::rg().uniform();
 // 		    rA = Size(randn*(15.0-3.0*Ns))+104;
 // 		    rB = rA+Ns;
 // 		    rC = rB+Ns;
@@ -1061,7 +1060,7 @@ my_main( void* )
 		std::string move_type("fake");
 		Real proposal_density_ratio=1.0;
 		//random number
-		core::Real prob = RG.uniform();
+		core::Real prob = numeric::random::rg().uniform();
 
 		//choose one
 		if ( prob > sm_prob + backrub_prob + conrot_prob + sc_prob + fast_sc_prob ) { //bbg

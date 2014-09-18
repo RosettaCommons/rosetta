@@ -60,9 +60,8 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static numeric::random::RandomGenerator RG( 26101976 ); // <- Magic number, do not change it!!!
 
-static basic::Tracer TR( "BuildPeptide" );
+static thread_local basic::Tracer TR( "BuildPeptide" );
 
 using namespace core;
 using namespace basic::options;

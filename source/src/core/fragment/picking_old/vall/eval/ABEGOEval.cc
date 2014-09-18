@@ -38,9 +38,8 @@ namespace eval {
 
 
 // static initialization
-static numeric::random::RandomGenerator RG( 131572 ); // magic number, don't change
 
-static basic::Tracer TR( "core.fragment.picking_old.vall.eval.ABEGOEval" );
+static thread_local basic::Tracer TR( "core.fragment.picking_old.vall.eval.ABEGOEval" );
 
 
 /// @brief default constructor
@@ -149,7 +148,7 @@ bool ABEGOEval::eval_impl(
 
 	// finalize scores
 	if ( randomize_ ) {
-		fs.score += ( RG.uniform() * 0.001 );
+		fs.score += ( numeric::random::rg().uniform() * 0.001 );
 	}
 
 	return true;

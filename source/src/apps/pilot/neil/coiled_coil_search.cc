@@ -51,7 +51,7 @@
 
 #include <apps/pilot/will/will_util.hh>
 
-static basic::Tracer TR("coiled_coil_search");
+static thread_local basic::Tracer TR( "coiled_coil_search" );
 
 
 using core::pose::Pose;

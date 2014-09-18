@@ -25,6 +25,7 @@
 #include <protocols/jd2/Parser.fwd.hh>
 
 #include <protocols/moves/Mover.fwd.hh>
+#include <protocols/moves/MoverStatus.hh>
 
 #include <core/pose/Pose.fwd.hh>
 
@@ -33,7 +34,10 @@
 
 #include <protocols/jd2/Job.fwd.hh>
 #include <utility/vector1.hh>
+
+// C++ headers
 #include <string>
+#include <ctime>
 
 #ifdef WIN32
 	#include <protocols/jd2/Job.hh>
@@ -42,7 +46,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -98,12 +103,16 @@ public:
 	void
 	go( protocols::moves::MoverOP mover, JobOutputterOP jo );
 
-	/// @brief Movers may ask their controlling job distributor for information about the current job. They may also load
-	/// information into this job for later output.
+	/// @brief Movers may ask their controlling job distributor for information about the current job.
+	/// They may also write information to this job for later output, though this use is now discouraged
+	/// as the addition of the MultiplePoseMover now means that a single job may include several
+	/// separate trajectories.
+	virtual
 	JobOP
 	current_job() const;
 
 	/// @brief Movers may ask their controlling job distributor for the output name as defined by the Job and JobOutputter.
+	virtual
 	std::string
 	current_output_name() const;
 
@@ -133,7 +142,6 @@ public:
 	core::Size total_nr_jobs() const {
 		return jobs_.size();
 	}
-
 
 	/// @brief integer access - which job are we on?
 	core::Size current_job_id() const;
@@ -170,6 +178,11 @@ protected:
 
 	void end_critical_section();
 
+	/// @brief For derived classes that wish to invoke JobDistributor functions
+	/// which use the current_job_ and current_job_id_ member variables.  Note
+	/// that until those functions complete, it would be a bad idea for another
+	/// thread to change current_job_.
+	void set_current_job_by_index( core::Size curr_job_index );
 
 protected:
 	/// @brief this function updates the current_job_id_ and current_job_ fields.  The boolean return states whether or not
@@ -229,9 +242,41 @@ protected:
 	clear_current_job_output();
 
 	/// @brief This function got called when job is not yet finished and got termitated abnormaly (ctrl-c, kill etc).
-	///        when implimenting it in subclasses make sure to delete all in-progress-data that your job spawn.
+	///        when implimenting it in subclasses make sure to delete all in-progress-data that your job spawns.
 	virtual void handle_interrupt() = 0;
 
+	/// @brief Send a message to the screen indicating that the parser is in use and that the mover that's been
+	/// input to go_main will not be used, but instead will be replaced by the Mover created by the parser.
+	void check_for_parser_in_go_main();
+
+	/// @brief Is the parser in use?
+	bool using_parser() const;
+
+	bool
+	run_one_job(
+		protocols::moves::MoverOP & mover,
+		time_t allstarttime,
+		std::string & last_inner_job_tag,
+		std::string & last_output_tag,
+		core::Size & last_batch_id,
+		core::Size & retries_this_job,
+		bool first_job
+	);
+
+	/// @brief After the construction of the pose for this job, check the command line to determine
+	/// if the pymol observer should be attached to it.
+	void setup_pymol_observer( core::pose::Pose & pose );
+
+	/// @brief After a job has finished running, figure out from the MoverStatus whether the pose
+	/// should be written to disk (or wherever) along with any other poses that the mover might
+	/// have generated along the way.
+	void write_output_from_job(
+		core::pose::Pose & pose,
+		protocols::moves::MoverOP mover_copy,
+		protocols::moves::MoverStatus status,
+		core::Size jobtime,
+		core::Size & retries_this_job
+	);
 
 private:
 
@@ -253,7 +298,11 @@ private:
 	/// @brief access into jobs_ bector indicating the previous job.  Used with the -jd2:delete_old_poses option for deleting unnecessary poses
 	core::Size last_completed_job_;
 
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< JobDistributor * > instance_;
+#else
 	static JobDistributor * instance_;
+#endif
 
 	///BATCH interface:
 	/// @details the BATCH interface of the JobDistributor is used to allow consecutive execution of a set of jobs with different flags

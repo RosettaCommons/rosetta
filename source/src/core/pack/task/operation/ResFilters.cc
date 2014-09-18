@@ -36,7 +36,7 @@ namespace pack {
 namespace task {
 namespace operation {
 
-static basic::Tracer TR("core.pack.task.operation.ResFilters");
+static thread_local basic::Tracer TR( "core.pack.task.operation.ResFilters" );
 
 ResFilterComposition::ResFilterComposition() :
 	parent(),

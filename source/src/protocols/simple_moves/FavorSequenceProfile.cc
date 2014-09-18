@@ -49,7 +49,7 @@ using namespace core;
 using namespace std;
 using namespace core::scoring;
 
-static basic::Tracer TR( "protocols.simple_moves.FavorSequenceProfile" );
+static thread_local basic::Tracer TR( "protocols.simple_moves.FavorSequenceProfile" );
 
 std::string FavorSequenceProfileCreator::keyname() const
 {

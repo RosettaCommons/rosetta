@@ -57,7 +57,7 @@ using namespace protocols::jobdist;
 using namespace protocols::moves;
 
 
-basic::Tracer TT( "ncontact" );
+static thread_local basic::Tracer TT( "ncontact" );
 
 namespace ncontact
 {

@@ -130,7 +130,7 @@
 	typedef numeric::xyzMatrix<Real> Mat;
 	typedef utility::vector1<Vec> Vecs;
 
-static basic::Tracer TR("test_ikrs");
+static thread_local basic::Tracer TR( "test_ikrs" );
 
 core::io::silent::SilentFileData sfd;
 

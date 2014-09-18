@@ -47,7 +47,7 @@
 
 #include <utility/exit.hh>
 
-static basic::Tracer TR("protocols.antibody.design.AntibodyDesignMover");
+static thread_local basic::Tracer TR( "protocols.antibody.design.AntibodyDesignMover" );
 namespace protocols{
 namespace antibody {
 namespace design {

@@ -93,9 +93,8 @@ using core::id::DOF_ID;
 using core::scoring::ScoreFunctionOP;
 
 
-static basic::Tracer TR("bpy");
+static thread_local basic::Tracer TR( "bpy" );
 
-static numeric::random::RandomGenerator RG(6054212);
 
 struct PoseWrap {
 	PoseWrap() : hascst(false) {}
@@ -257,7 +256,7 @@ public:
 	void apply( core::pose::Pose & pose ) {
 		using namespace core::pack::dunbrack;
 		ChiVector chis;
-		lib_->assign_random_rotamer_with_bias(pose.residue(residue_),scratch_,RG,chis,true);
+		lib_->assign_random_rotamer_with_bias(pose.residue(residue_),scratch_,numeric::random::rg(),chis,true);
 		for(size_t i = 1; i <= chis.size(); ++i)	{
 			pose.set_chi(i,residue_,chis[i]);
 		}

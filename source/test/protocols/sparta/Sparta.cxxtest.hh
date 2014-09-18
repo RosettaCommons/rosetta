@@ -23,7 +23,6 @@
 #include <utility/vector0.hh>
 
 
-static numeric::random::RandomGenerator rg(840184); // <- Magic number, do not change it!!!
 using namespace protocols::sparta;
 using namespace ObjexxFCL;
 

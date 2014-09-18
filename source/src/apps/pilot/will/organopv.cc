@@ -103,9 +103,8 @@
 #include <apps/pilot/will/mynamespaces.ihh>
 
 
-static basic::Tracer TR("organopv");
+static thread_local basic::Tracer TR( "organopv" );
 
-static numeric::random::RandomGenerator RG(765456);
 
 
 void add_apc(core::pose::Pose & pose, core::id::AtomID aid1, core::id::AtomID aid2, core::Real mean, core::Real sd,

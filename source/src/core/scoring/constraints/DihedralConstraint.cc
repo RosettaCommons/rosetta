@@ -36,7 +36,7 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-static basic::Tracer TR("core.io.constraints");
+static thread_local basic::Tracer TR( "core.io.constraints" );
 
 /////////////////////////////////////////////////////////////////////////////
 // contributions for a term that looks like

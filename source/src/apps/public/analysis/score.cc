@@ -77,7 +77,7 @@
 using namespace core;
 using namespace basic::options;
 
-static basic::Tracer TR("protocols.moves.ScoreMover");
+static thread_local basic::Tracer TR( "protocols.moves.ScoreMover" );
 
 namespace score_app { BooleanOptionKey linmin( "score_app:linmin" );
 											BooleanOptionKey superimpose_to_native( "score_app:superimpose_to_native" );	}

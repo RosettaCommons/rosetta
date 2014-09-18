@@ -24,8 +24,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer TR("protocols.ReplicaExchangeMC");
-static numeric::random::RandomGenerator re_RG(1801); // <- Magic number, do not change it!!!
+static thread_local basic::Tracer TR( "protocols.ReplicaExchangeMC" );
 
 namespace protocols {
 namespace moves {
@@ -165,7 +164,7 @@ void ReplicaExchangeMC::build_temperature_list(double *elist)
 					 << std::endl;
 				//TR << "Delta=" << delta << " Prob=" << probability << std::endl;
 
-        if (re_RG.uniform()<probability)
+        if (numeric::random::rg().uniform()<probability)
         {
 						TR << "Switch:" << Tlist_[exchange_schedule[nlist][i].first+1] << "<==>" << Tlist_[exchange_schedule[nlist][i].second+1] << std::endl;
             //switch

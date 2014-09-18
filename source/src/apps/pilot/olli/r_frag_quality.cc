@@ -78,7 +78,7 @@
 #include <core/kinematics/AtomTree.hh>
 
 
-static basic::Tracer tr("main");
+static thread_local basic::Tracer tr( "main" );
 
 
 class ThisApplication  {

@@ -53,7 +53,7 @@
 // AUTO-REMOVED #include <fstream>
 
 
-static basic::Tracer tr_control("protocols.topology_broker.PseudocontactShiftEnergyController_Ts1");
+static thread_local basic::Tracer tr_control( "protocols.topology_broker.PseudocontactShiftEnergyController_Ts1" );
 
 namespace protocols {
 namespace topology_broker {

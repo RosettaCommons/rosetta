@@ -93,7 +93,7 @@ using namespace basic::options::OptionKeys;
 #define DEG2RAD 0.0174532925199433
 #define RAD2DEG 57.295779513082323
 
-static basic::Tracer TR("cryst.design");
+static thread_local basic::Tracer TR( "cryst.design" );
 
 OPT_1GRP_KEY(String, crystdock, spacegroup)
 OPT_1GRP_KEY(Real, crystdock, A)

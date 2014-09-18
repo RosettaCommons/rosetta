@@ -46,12 +46,11 @@
 #include <utility/vector0.hh>
 
 
-static basic::Tracer tr("protocols.abinitio.Templates");
+static thread_local basic::Tracer tr( "protocols.abinitio.Templates" );
 
 namespace protocols {
 namespace abinitio {
 
-static numeric::random::RandomGenerator RG(1259812489);  // <- Magic number, do not change it!
 
 using namespace core;
 using namespace fragment;
@@ -100,8 +99,8 @@ TemplateJumpSetup::create_jump_sample() const {
 		strand_ids.push_back( i );
 	}
 
-	numeric::random::random_permutation( strand_ids, RG );
-	numeric::random::random_permutation( strand_ids, RG ); //want it really random
+	numeric::random::random_permutation( strand_ids, numeric::random::rg() );
+	numeric::random::random_permutation( strand_ids, numeric::random::rg() ); //want it really random
 	tr.Debug << "total weight: " << total_weight << " size: " << target_strands.size() << "strand_ids.size(): "
 					 << strand_ids.size()
 					 << " permutated sequence: ";
@@ -109,7 +108,7 @@ TemplateJumpSetup::create_jump_sample() const {
 	tr.Debug << std::endl;
 
 	// take first 2..nr_strands strand_ids
-	Size const rg_nrstrands( std::min( static_cast< int >( RG.uniform() * (target_strands.size()) ) + 2 , (int) target_strands.size() ) );
+	Size const rg_nrstrands( std::min( static_cast< int >( numeric::random::rg().uniform() * (target_strands.size()) ) + 2 , (int) target_strands.size() ) );
 	tr.Debug << "random choice:  aim for selection of " << rg_nrstrands << std::endl;
 	core::scoring::dssp::PairingList target_pairings;
 	Size nstrand_selected( 0 );
@@ -131,7 +130,7 @@ TemplateJumpSetup::create_jump_sample() const {
 				possible_pairings.push_back( possible_pairings[ i ] );
 			}
 		}
-		Size const rg_pairing( static_cast< int > ( RG.uniform() * possible_pairings.size() ) + 1 );
+		Size const rg_pairing( static_cast< int > ( numeric::random::rg().uniform() * possible_pairings.size() ) + 1 );
 		tr.Debug << "RANDOM: choose pairing " << rg_pairing << std::endl;
 		//check if pairing is in templates...
 		bool found( false );
@@ -158,7 +157,7 @@ TemplateJumpSetup::create_jump_sample() const {
 		// is a very short sequence separation?
 		if ( std::abs( (int) it->Pos2() - (int) it->Pos1() ) < 15 ) {
 			tr.Debug << "pairing " << *it << " is close in sequence..." << std::endl;
-			if ( RG.uniform() < 0.2 ) {
+			if ( numeric::random::rg().uniform() < 0.2 ) {
 				tr.Debug << "selected with 20% chance " << std::endl;
 				final_selection.push_back( *it );
 			} else ignore = true;
@@ -184,9 +183,9 @@ TemplateJumpSetup::create_jump_sample() const {
 
 	if ( helix_pairings_.size() ) {
 		Size const nr_helix_jumps(
-				std::min( static_cast< int >( (RG.uniform()+0.3) * ( helix_pairings_.size() ) + 1 ), (int) helix_pairings_.size() ) );
+				std::min( static_cast< int >( (numeric::random::rg().uniform()+0.3) * ( helix_pairings_.size() ) + 1 ), (int) helix_pairings_.size() ) );
 		core::scoring::dssp::PairingList perm = helix_pairings_;
-		numeric::random::random_permutation( perm , RG );
+		numeric::random::random_permutation( perm , numeric::random::rg() );
 		for ( Size i = 1; i<= nr_helix_jumps; i++ ) {
 			final_selection.push_back( helix_pairings_[ i ] );
 		}
@@ -326,14 +325,14 @@ FixTemplateJumpSetup::create_jump_sample() const {
 
 #if 0
 	// take first 2..nr_strands strand_ids
-	Size const rg_nrstrands( std::min( static_cast< int >( RG.uniform() * (target_strands.size()) ) + 2 , (int) target_strands.size() ) );
+	Size const rg_nrstrands( std::min( static_cast< int >( numeric::random::rg().uniform() * (target_strands.size()) ) + 2 , (int) target_strands.size() ) );
 	tr.Debug << "random choice:  aim for selection of " << rg_nrstrands << std::endl;
 	core::scoring::dssp::PairingList target_pairings;
 	Size nstrand_selected( 0 );
 	for ( Size i = 1; i<= target_strands.size(); i++ ) {
 		//decide if we pair this strand:
 		Real weight( strand_stats_->strand_weight( target_strands.strand_pairing( strand_ids[ i ] ) ) );
-		if ( total_weight > 0 && weight*rg_nrstrands / total_weight < RG.uniform() ) continue;
+		if ( total_weight > 0 && weight*rg_nrstrands / total_weight < numeric::random::rg().uniform() ) continue;
 		nstrand_selected++;
 		tr.Debug << "pre-selected " << target_strands.strand_pairing( strand_ids[ i ] ) << std::endl;
 		core::scoring::dssp::PairingList possible_pairings;
@@ -348,7 +347,7 @@ FixTemplateJumpSetup::create_jump_sample() const {
 				possible_pairings.push_back( possible_pairings[ i ] );
 			}
 		}
-		Size const rg_pairing( static_cast< int > ( RG.uniform() * possible_pairings.size() ) + 1 );
+		Size const rg_pairing( static_cast< int > ( numeric::random::rg().uniform() * possible_pairings.size() ) + 1 );
 		tr.Debug << "RANDOM: choose pairing " << rg_pairing << std::endl;
 		//check if pairing is in templates...
 		bool found( false );

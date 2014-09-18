@@ -26,7 +26,7 @@
 namespace protocols {
 namespace inputter {
 
-static basic::Tracer TR("protocols.inputter.PDBInputter");
+static thread_local basic::Tracer TR( "protocols.inputter.PDBInputter" );
 
 #ifdef USELUA
 void lregister_PDBInputter( lua_State * lstate ) {

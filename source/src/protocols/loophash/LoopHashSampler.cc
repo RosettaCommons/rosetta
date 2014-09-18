@@ -46,7 +46,7 @@
 namespace protocols {
 namespace loophash {
 
-  static basic::Tracer TR("LocalHashSampler");
+static thread_local basic::Tracer TR( "LocalHashSampler" );
 
 LoopHashSampler::LoopHashSampler(
 	LoopHashLibraryOP library,
@@ -324,7 +324,7 @@ struct FilterBucket {
 
 					// treat the fragments in a random order so shuffle them up
 					//std::random__shuffle( filter_leap_index_bucket.begin(), filter_leap_index_bucket.end());
-					numeric::random::random_permutation(filter_leap_index_bucket.begin(), filter_leap_index_bucket.end(), numeric::random::RG);
+					numeric::random::random_permutation(filter_leap_index_bucket.begin(), filter_leap_index_bucket.end(), numeric::random::rg());
 					
 					// Now create models and check rms after insertion
 					for(  std::vector < FilterBucket >::const_iterator it = filter_leap_index_bucket.begin();

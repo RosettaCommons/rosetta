@@ -39,7 +39,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/cyclization.OptionKeys.gen.hh>
 
-static basic::Tracer TR("Cyclization");
+static thread_local basic::Tracer TR( "Cyclization" );
 
 int
 main( int argc, char * argv [] )

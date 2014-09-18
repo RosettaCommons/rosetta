@@ -54,7 +54,7 @@ typedef protocols::contact_map::ContactMap ContactMap;
 
 
 // declare variables that need to be accessed outside the main routine
-basic::Tracer tr("contactMap");
+static thread_local basic::Tracer tr( "contactMap" );
 
 // Method to process region definition string into a vector of initialized ContactMap movers
 utility::vector1<ContactMap> processRegions(std::string region_def, core::pose::Pose const & pose) {

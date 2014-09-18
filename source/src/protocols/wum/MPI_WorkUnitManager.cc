@@ -56,8 +56,7 @@ using namespace ObjexxFCL::format;
 namespace protocols {
 namespace wum {
 
-static basic::Tracer TR("MPI_WUM");
-static numeric::random::RandomGenerator RG(23765);
+static thread_local basic::Tracer TR( "MPI_WUM" );
 
 int mpi_rank(){
 	int mpi_rank_=0;

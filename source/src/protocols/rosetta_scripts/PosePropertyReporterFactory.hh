@@ -39,7 +39,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -116,7 +117,12 @@ private:
 #endif
 
 private:
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< PosePropertyReporterFactory * > instance_;
+#else
 	static PosePropertyReporterFactory * instance_;
+#endif
+
 	PosePropertyReporterMap reporter_creator_map_;
 };
 

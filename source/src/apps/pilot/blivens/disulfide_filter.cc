@@ -43,7 +43,7 @@ using namespace basic::options::OptionKeys;
 #include <core/import_pose/import_pose.hh>
 
 #include <basic/Tracer.hh>
-basic::Tracer TR( "pilot_apps.blivens.disulfide_filter" );
+static thread_local basic::Tracer TR( "pilot_apps.blivens.disulfide_filter" );
 
 int
 usage(char* msg)

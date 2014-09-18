@@ -50,7 +50,7 @@ BOOST_IS_MPI_DATATYPE(HelixAssemblyJob)
 // C++ headers
 #include <stdio.h>
 
-static basic::Tracer TR("mpi_sewing");
+static thread_local basic::Tracer TR( "mpi_sewing" );
 
 // run protocol
 int

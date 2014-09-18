@@ -41,7 +41,7 @@
 
 
 using basic::Warning;
-static basic::Tracer TR("protocols.jd2.FileSystemJobDistributor");
+static thread_local basic::Tracer TR( "protocols.jd2.FileSystemJobDistributor" );
 
 namespace protocols {
 namespace jd2 {
@@ -101,6 +101,7 @@ core::Size get_min_nstruct_index_checkpoint_file(){
 core::Size
 FileSystemJobDistributor::get_new_job_id()
 {
+
 	if( basic::options::option[ basic::options::OptionKeys::out::overwrite ].value()  &&
   		basic::options::option[ basic::options::OptionKeys::run::multiple_processes_writing_to_one_directory ].value() ){
 		utility_exit_with_message("ambiguous, cannot have both -out::overwrite and -run::multiple_processes_writing_to_one_directory");

@@ -36,7 +36,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -106,7 +107,13 @@ private:
 
 private:
 
+	/// @brief static data member holding pointer to the singleton class itself
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< LoopsDefinerFactory * > instance_;
+#else
 	static LoopsDefinerFactory * instance_;
+#endif
+
 	LoopsDefinerCreatorMap types_;
 };
 

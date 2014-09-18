@@ -55,7 +55,7 @@ using namespace core;
 
 using basic::Warning;
 using basic::t_warning;
-static basic::Tracer TR("protocols.simple_moves.MinPackMover");
+static thread_local basic::Tracer TR( "protocols.simple_moves.MinPackMover" );
 
 
 std::string

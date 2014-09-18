@@ -30,7 +30,7 @@
 namespace protocols {
 namespace frag_picker {
 
-static basic::Tracer trPdbFilter("protocols.frag_picker.PdbIdChunkFilter");
+static thread_local basic::Tracer trPdbFilter( "protocols.frag_picker.PdbIdChunkFilter" );
 
 void PdbIdChunkFilter::load_pdb_id_from_file(std::string file_name) {
 

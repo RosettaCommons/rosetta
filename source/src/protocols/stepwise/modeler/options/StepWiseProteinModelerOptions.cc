@@ -26,7 +26,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.modeler.options.StepWiseProteinModelerOptions" );
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.options.StepWiseProteinModelerOptions" );
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

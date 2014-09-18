@@ -54,7 +54,9 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
+
 // Utility thread headers
 #include <utility/thread/ReadWriteMutex.hh>
 #endif
@@ -146,6 +148,13 @@ private:
 	/// @brief private singleton creation function to be used with
 	/// utility::thread::threadsafe_singleton
 	static ChemicalManager * create_singleton_instance();
+
+	/// @brief static data member holding pointer to the singleton class itself
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< ChemicalManager * > instance_;
+#else
+	static ChemicalManager * instance_;
+#endif
 
 	/// @brief Go and create an atom type set.  Should be called only after it's been
 	/// determined safe (and neccessary) to construct it.

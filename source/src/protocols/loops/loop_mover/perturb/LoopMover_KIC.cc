@@ -99,8 +99,7 @@ namespace perturb {
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
 
-static numeric::random::RandomGenerator RG(42444);
-static basic::Tracer TR("protocols.loops.loop_mover.perturb.LoopMover_Perturb_KIC");
+static thread_local basic::Tracer TR( "protocols.loops.loop_mover.perturb.LoopMover_Perturb_KIC" );
 
 LoopMover_Perturb_KIC::LoopMover_Perturb_KIC() :
 	IndependentLoopMover()
@@ -517,19 +516,19 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 				if (option[ OptionKeys::loops::always_remodel_full_loop ]()) { // warning: for long loops this could be extremely inefficient
 					kic_start = loop_begin;
 					kic_end = loop_end;
-					kic_middle = RG.random_range(kic_start+2, kic_end-2);
+					kic_middle = numeric::random::rg().random_range(kic_start+2, kic_end-2);
 				} else { // randomly selected sub-segments
 					// AS Oct 2012: in the previous KIC implementation there was a directional bias here, as the start pivot is always selected first, which means that the C-terminal part of the loop is sampled more than the N-terminal part
 					if ( option[ OptionKeys::loops::legacy_kic ]() || j % 2 == 0 ) {
-						kic_start = RG.random_range(loop_begin,loop_end-2);
+						kic_start = numeric::random::rg().random_range(loop_begin,loop_end-2);
 						// choose a random end residue so the length is >= 3, <= min(loop_end, start+maxlen)
-						kic_end = RG.random_range(kic_start+2, std::min((kic_start+max_seglen_ - 1), loop_end));
+						kic_end = numeric::random::rg().random_range(kic_start+2, std::min((kic_start+max_seglen_ - 1), loop_end));
 						Size middle_offset = (kic_end - kic_start) / 2;
 						kic_middle = kic_start + middle_offset;
 					} else {
 						//tr() << " -- selection starting from the end of the loop -- " << std::endl;
-						kic_end = RG.random_range(loop_begin+2,loop_end);
-						kic_start = RG.random_range(std::max((kic_end - std::min(max_seglen_, kic_end) + 1), loop_begin), kic_end-2);
+						kic_end = numeric::random::rg().random_range(loop_begin+2,loop_end);
+						kic_start = numeric::random::rg().random_range(std::max((kic_end - std::min(max_seglen_, kic_end) + 1), loop_begin), kic_end-2);
 						Size middle_offset = (kic_end - kic_start) / 2;
 						kic_middle = kic_start + middle_offset;
 					}

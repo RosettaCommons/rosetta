@@ -70,7 +70,7 @@
 #include <iostream>
 
 
-static basic::Tracer tr("protocols.abinitio");
+static thread_local basic::Tracer tr( "protocols.abinitio" );
 
 using core::Real;
 using namespace core;
@@ -747,8 +747,7 @@ bool FragmentSampler::check_loops(core::pose::Pose& pose)
 	//not all loops had hits in loophash DB
 	if(use_fuzzy_filter == true)
 	{
-		static numeric::random::RandomGenerator RG(483915);
-		core::Real rg_value = RG.uniform();
+		core::Real rg_value = numeric::random::rg().uniform();
 		//return filter=true (continue folding) at rate set by user or default rate of 0.5
 		if(rg_value <= filter_acceptance_rate)
 		{

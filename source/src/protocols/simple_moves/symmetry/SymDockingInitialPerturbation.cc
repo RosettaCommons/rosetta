@@ -54,7 +54,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.simple_moves_symmetry.SymDockingInitialPerturbation");
+static thread_local basic::Tracer TR( "protocols.simple_moves_symmetry.SymDockingInitialPerturbation" );
 static core::Size trans ( 1 ), rot ( 2 );
 
 using namespace core;
@@ -64,7 +64,6 @@ namespace protocols {
 namespace simple_moves{
 namespace symmetry {
 
-static numeric::random::RandomGenerator RG(4227034);
 
 // Symmetric version of initial perturbation on one of the partners
 // the type of perturbation is defined in the options
@@ -723,7 +722,7 @@ void SequentialSymmetrySlider::init()
 			slide_order_.push_back( (*it).first );
 		}
 	}
-	numeric::random::random_permutation( slide_order_, RG );
+	numeric::random::random_permutation( slide_order_, numeric::random::rg() );
 }
 
 void SequentialSymmetrySlider::select_jump()
@@ -824,7 +823,7 @@ void RandomSymmetrySlider::select_jump()
 		}
 	}
 	if ( !allowed.empty() )
-		set_current_jump( RG.random_element( allowed ) );
+		set_current_jump( numeric::random::rg().random_element( allowed ) );
 }
 
 }

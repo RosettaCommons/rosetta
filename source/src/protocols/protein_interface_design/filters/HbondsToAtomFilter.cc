@@ -77,13 +77,12 @@ using namespace core;
 using namespace core::scoring;
 using namespace ObjexxFCL::format;
 
-static numeric::random::RandomGenerator RG( 140846 ); // <- Magic number, do not change it!!!
 
 namespace protocols {
 namespace protein_interface_design {
 namespace filters {
 
-static basic::Tracer TR( "protocols.protein_interface_design.filters.HbondsToAtomFilter" );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.HbondsToAtomFilter" );
 using core::pose::Pose;
 
 protocols::filters::FilterOP

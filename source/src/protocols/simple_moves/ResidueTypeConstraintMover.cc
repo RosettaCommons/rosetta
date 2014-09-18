@@ -28,7 +28,7 @@
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.simple_moves.ResidueTypeConstraintMover" );
+static thread_local basic::Tracer TR( "protocols.simple_moves.ResidueTypeConstraintMover" );
 
 namespace protocols {
 namespace simple_moves {

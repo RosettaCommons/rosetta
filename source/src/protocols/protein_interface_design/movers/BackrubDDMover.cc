@@ -88,8 +88,7 @@ namespace protocols {
 namespace protein_interface_design {
 namespace movers {
 
-static basic::Tracer TR( "protocols.protein_interface_design.BackrubDDMover" );
-static numeric::random::RandomGenerator RG( 1581948 );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.BackrubDDMover" );
 
 typedef core::Real Real;
 typedef core::pose::Pose Pose;
@@ -362,7 +361,7 @@ BackrubDDMover::apply( Pose & pose )
 		std::string move_type;
 
 		// could use random mover for this...
-		core::Real const move_prob( RG.uniform() );
+		core::Real const move_prob( numeric::random::rg().uniform() );
 		if ( move_prob > small_move_prob_ + bbg_move_prob_ + sidechain_move_prob_ ) {
 			backrub_mover.apply( pose );
 			move_type = backrub_mover.type();

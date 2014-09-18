@@ -44,7 +44,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("core.optimization.LineMinimizer");
+static thread_local basic::Tracer TR( "core.optimization.LineMinimizer" );
 
 namespace core {
 namespace optimization {
@@ -60,58 +60,58 @@ func_1d::dump( Real displacement ) {
 	return _func.dump( _starting_point, _eval_point );
 }
 
-	static basic::Tracer TR( "core.optimization.LineMinimizer" );
+static thread_local basic::Tracer TR( "core.optimization.LineMinimizer" );
 
 
-	// Functor'ed up version of accurate line minimization
-	/////////////////////////////////////////////////////////////////////////////
-	Real
-	BrentLineMinimization::operator()(
-		Multivec & current_position,
-		Multivec & search_direction
-	)
-	{
-		int const problem_size( current_position.size() );
+// Functor'ed up version of accurate line minimization
+/////////////////////////////////////////////////////////////////////////////
+Real
+BrentLineMinimization::operator()(
+	Multivec & current_position,
+	Multivec & search_direction
+)
+{
+	int const problem_size( current_position.size() );
 
-		_num_linemin_calls++;
+	_num_linemin_calls++;
 
-		Real AX, XX, BX, FA, FX, FB;
+	Real AX, XX, BX, FA, FX, FB;
 
-		// check magnitude of derivative
-		Real derivmax = 0.0;
-		for ( int i = 1; i <= problem_size; ++i ) {
-			if ( std::abs(search_direction[i]) > std::abs(derivmax) ) {
-					derivmax = search_direction[i];
-			}
+	// check magnitude of derivative
+	Real derivmax = 0.0;
+	for ( int i = 1; i <= problem_size; ++i ) {
+		if ( std::abs(search_direction[i]) > std::abs(derivmax) ) {
+				derivmax = search_direction[i];
 		}
+	}
 
-		if ( std::abs(derivmax) <= .0001 ) {
-			Real final_value =_func(current_position);
-			return final_value; // deriv = 0, return value
-		}
+	if ( std::abs(derivmax) <= .0001 ) {
+		Real final_value =_func(current_position);
+		return final_value; // deriv = 0, return value
+	}
 
-		// Construct the one-dimensional projection of the function
-		func_1d this_line_func( current_position, search_direction, _func );
+	// Construct the one-dimensional projection of the function
+	func_1d this_line_func( current_position, search_direction, _func );
 
-		// initial step sizes from our options
-		AX = _ax;
-		XX = _xx; // initial range for bracketing
-		BX = _bx; // now set in namespace in  minimize_set_func
+	// initial step sizes from our options
+	AX = _ax;
+	XX = _xx; // initial range for bracketing
+	BX = _bx; // now set in namespace in  minimize_set_func
 
-		MNBRAK(AX,XX,BX,FA,FX,FB,this_line_func);
+	MNBRAK(AX,XX,BX,FA,FX,FB,this_line_func);
 
-		Real final_value = BRENT(AX,XX,BX,FA,FX,FB,_tolerance,this_line_func);
+	Real final_value = BRENT(AX,XX,BX,FA,FX,FB,_tolerance,this_line_func);
 
-		for ( int j = 1; j <= problem_size; ++j ) {
-			search_direction[j] *= _last_accepted_step;
-			current_position[j] += search_direction[j];
-		}
+	for ( int j = 1; j <= problem_size; ++j ) {
+		search_direction[j] *= _last_accepted_step;
+		current_position[j] += search_direction[j];
+	}
 
 //		TR.Info << "Linemin used " << this_line_func.get_eval_count() <<
 //				" function calls" << std::endl;
 
-		return final_value;
-	}
+	return final_value;
+}
 
 	/////////////////////////////////////////////////////////////////////////////
 	void

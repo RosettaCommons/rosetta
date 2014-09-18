@@ -52,7 +52,7 @@ using namespace core;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer TR("sasa");
+static thread_local basic::Tracer TR( "sasa" );
 
 class ThisApplication  {
 public:

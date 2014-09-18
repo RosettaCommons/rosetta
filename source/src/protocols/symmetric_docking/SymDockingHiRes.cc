@@ -102,7 +102,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.symmetric_docking.SymDockingHiRes");
+static thread_local basic::Tracer TR( "protocols.symmetric_docking.SymDockingHiRes" );
 
 using namespace core;
 

@@ -56,7 +56,7 @@
 
 
 //// C++ headers
-static basic::Tracer TR("protocols.matdes.ClashCheckFilter");
+static thread_local basic::Tracer TR( "protocols.matdes.ClashCheckFilter" );
 
 namespace protocols {
 namespace matdes {

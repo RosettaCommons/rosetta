@@ -109,8 +109,7 @@ using core::import_pose::pose_from_pdb;
 double annealTemperature(double initialTemp, double finalTemp, int step, int totalsteps, int numAnnealCycles);
 void setup_fragment_mover(core::pose::Pose &_pose,    protocols::loops::Loop &_loop,   vector<vector<protocols::moves::MoverOP> > &_bbMovers, string _polyAminoAcidOverride);
 unsigned int hd(const std::string& s1, const std::string& s2); // hamming distance
-static basic::Tracer TR("flexibleLoopDesign");
-static numeric::random::RandomGenerator RG(222578262);
+static thread_local basic::Tracer TR( "flexibleLoopDesign" );
 
 
 
@@ -354,7 +353,7 @@ int main( int argc, char * argv[] ) {
 
 	  // Modify system (loop conformation)
 	  for (core::uint c = 0; c < ccds.size();c++){
-	      int randomLoopSize = RG.random_range(0,bbMovers[c].size()-1);
+	      int randomLoopSize = numeric::random::rg().random_range(0,bbMovers[c].size()-1);
 
 	      cout << "Fragment insertion on loop "<<c<<" index of fragment size(0=3,1=9): "<<randomLoopSize<<endl;
 	      bbMovers[c][randomLoopSize]->apply(pose);

@@ -60,7 +60,7 @@
 #include <set>
 
 
-static basic::Tracer tr("protocols.noesy_assign.assignments");
+static thread_local basic::Tracer tr( "protocols.noesy_assign.assignments" );
 
 using core::Real;
 using namespace core;

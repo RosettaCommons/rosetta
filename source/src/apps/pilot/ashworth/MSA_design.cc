@@ -36,7 +36,7 @@
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
 
 #include <basic/Tracer.hh>
-static basic::Tracer TR("apps.pilot.MSA_design");
+static thread_local basic::Tracer TR( "apps.pilot.MSA_design" );
 
 // Utility Headers
 #include <utility/io/izstream.hh>

@@ -81,7 +81,7 @@ using utility::sql_database::sessionOP;
 using utility::tag::TagCOP;
 using cppdb::statement;
 
-static basic::Tracer tr("protocols.features.ProteinRMSDNoSuperpositionFeatures");
+static thread_local basic::Tracer tr( "protocols.features.ProteinRMSDNoSuperpositionFeatures" );
 
 string
 ProteinRMSDNoSuperpositionFeatures::type_name() const { return "ProteinRMSDNoSuperpositionFeatures"; }

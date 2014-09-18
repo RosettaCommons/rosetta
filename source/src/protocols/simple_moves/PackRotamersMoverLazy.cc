@@ -49,7 +49,7 @@ using namespace scoring;
 
 using basic::Warning;
 using basic::t_warning;
-static basic::Tracer TR("protocols.simple_moves.PackRotamersMoverLazy");
+static thread_local basic::Tracer TR( "protocols.simple_moves.PackRotamersMoverLazy" );
 
 PackRotamersMoverLazy::PackRotamersMoverLazy(
 		ScoreFunctionCOP scorefxn,

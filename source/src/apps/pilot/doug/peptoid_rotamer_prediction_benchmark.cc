@@ -71,7 +71,7 @@
 #include <map>
 
 // tracer
-static basic::Tracer TR("PeptoidRotamerRecoverer");
+static thread_local basic::Tracer TR( "PeptoidRotamerRecoverer" );
 
 // local options
 basic::options::BooleanOptionKey const cyclic( "cyclic" );

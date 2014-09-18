@@ -31,7 +31,7 @@
 #include <utility/io/mpistream.hh>
 
 
-static basic::Tracer trace("rescore_fragments");
+static thread_local basic::Tracer trace( "rescore_fragments" );
 
 using namespace core;
 using namespace core::fragment;

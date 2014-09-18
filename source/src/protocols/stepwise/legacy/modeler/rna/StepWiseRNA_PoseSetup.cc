@@ -76,7 +76,7 @@ using namespace protocols::stepwise::modeler::rna;
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "protocols.stepwise.legacy.modeler.rna.StepWiseRNA_PoseSetup" ) ;
+static thread_local basic::Tracer TR( "protocols.stepwise.legacy.modeler.rna.StepWiseRNA_PoseSetup" );
 
 namespace protocols {
 namespace stepwise {

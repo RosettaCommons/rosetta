@@ -84,7 +84,7 @@ void LoopRelaxThreadingMover::apply( core::pose::Pose & pose ) {
 	replonly.apply( pose );
 
 	using core::Size;
-	basic::Tracer tr("protocols.threading");
+	basic::Tracer tr( "protocols.threading" );
 	// looprelax
 	protocols::comparative_modeling::ThreadingJobCOP job = dynamic_cast< protocols::comparative_modeling::ThreadingJob const * >(
 		JobDistributor::get_instance()->current_job()->inner_job().get()

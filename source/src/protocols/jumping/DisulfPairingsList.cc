@@ -46,7 +46,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer tr("protocols.jumping");
+static thread_local basic::Tracer tr( "protocols.jumping" );
 
 using core::Real;
 using namespace core;
@@ -64,7 +64,6 @@ DisulfPairing::DisulfPairing( ObjexxFCL::FArray1A_int data) {
 	ss_type     = data(4);
 }
 
-//static numeric::random::RandomGenerator RG(132238);  // <- Magic number, do not change it, huaah hah ha!
 void read_pairing_list( std::string disulf_pairing_file, DisulfPairingsList& disulf_pairings)
 {
   	utility::io::izstream disulf_pairing_stream( disulf_pairing_file );

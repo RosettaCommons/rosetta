@@ -27,7 +27,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -78,8 +79,12 @@ private:
 	static SequenceFactory * create_singleton_instance();
 
 private:
-
+	/// @brief static data member holding pointer to the singleton class itself
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< SequenceFactory * > instance_;
+#else
 	static SequenceFactory * instance_;
+#endif
 
 	typedef std::map< std::string, SequenceCreatorCOP > SequenceCreatorMap;
 	SequenceCreatorMap seq_types_;

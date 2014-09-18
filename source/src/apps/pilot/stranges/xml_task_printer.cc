@@ -48,7 +48,7 @@
 // Job distributor
 #include <protocols/jd2/JobDistributor.hh>
 
-static basic::Tracer TR("XMLprinter");
+static thread_local basic::Tracer TR( "XMLprinter" );
 
 using namespace core;
 using namespace protocols;

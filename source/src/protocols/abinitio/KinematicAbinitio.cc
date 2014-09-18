@@ -99,8 +99,7 @@
 #include <utility/vector1.hh>
 
 
-static numeric::random::RandomGenerator RG(198243);  // <- Magic number, do not change it!
-static basic::Tracer tr("protocols.abinitio",basic::t_info);
+static thread_local basic::Tracer tr( "protocols.abinitio", basic::t_info );
 
 using namespace core;
 using scoring::constraints::ConstraintSet;
@@ -381,7 +380,7 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 		if ( option[ resample::min_max_start_seq_sep ].user() ) {
 			Real const min_sep( option[ resample::min_max_start_seq_sep ]()[ 1 ] );
 			Real const max_sep( option[ resample::min_max_start_seq_sep ]()[ 2 ] );
-			Real r = RG.uniform();
+			Real r = numeric::random::rg().uniform();
 			Real val = r/(max_sep-min_sep)+min_sep;
 			set_seq_sep_stage1( val );
 			if ( val > 0.5 ) set_seq_sep_stage3( val ); //hard-coded number replace later
@@ -445,7 +444,7 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 						if ( local_skip > 1.0 ) local_skip = 1.0;
 					} catch ( std::bad_cast ){};
 				}
-				Real r = RG.uniform();
+				Real r = numeric::random::rg().uniform();
 				if ( r > skip_rate*local_skip ) { //keep constraint
 					tr.Trace << "keep constraint";
 					(*it)->show_def( tr.Trace, pose );

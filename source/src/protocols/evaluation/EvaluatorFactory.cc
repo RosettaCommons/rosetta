@@ -50,9 +50,13 @@ using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
 using utility::tag::TagCOP;
 
-static basic::Tracer tr("protocols.evaluator.EvaluatorFactory");
+static thread_local basic::Tracer tr( "protocols.evaluator.EvaluatorFactory" );
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< EvaluatorFactory * > EvaluatorFactory::instance_( 0 );
+#else
 EvaluatorFactory * EvaluatorFactory::instance_( 0 );
+#endif
 
 
 #ifdef MULTI_THREADED
@@ -132,7 +136,8 @@ EvaluatorFactory::add_evaluators(
 
 void
 EvaluatorFactory::add_all_evaluators(
-	MetaPoseEvaluator & eval ) {
+	MetaPoseEvaluator & eval
+) {
 
 	for(EvaluatorCreatorMap::const_iterator type = types_.begin(), type_end = types_.end(); type != type_end; ++type) {
 		type->second->add_evaluators(eval);

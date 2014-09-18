@@ -76,7 +76,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR("antibody.AntibodyInfo");
+static thread_local basic::Tracer TR( "antibody.AntibodyInfo" );
 
 namespace protocols {
 namespace antibody {

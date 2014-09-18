@@ -89,7 +89,7 @@ OPT_KEY( String, comparison_relax_pdb_num )
 OPT_KEY( String, template_pdb_name )
 OPT_KEY( String, contact_list )
 
-static basic::Tracer TR( "apps.pilot.karen_pocket_compare.main" );
+static thread_local basic::Tracer TR( "apps.pilot.karen_pocket_compare.main" );
 
 //set to store pdb info keys
 std::set <std::string> interface;

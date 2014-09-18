@@ -81,8 +81,7 @@ void compare_mingraph_and_energy_graph(
 	scoring::MinimizationGraph const & mingraph
 );
 
-static basic::Tracer TR("core.pack.min_pack",basic::t_info );
-static numeric::random::RandomGenerator RG(22307);
+static thread_local basic::Tracer TR( "core.pack.min_pack", basic::t_info );
 
 scmin::SCMinMinimizerMapOP
 create_scmin_minimizer_map(
@@ -576,7 +575,7 @@ pass_metropolis(
 {
 	/// call this every time, for better numerical stability. Otherwise delta_energies ~ 0 can lead to
 	/// instability in the number of calls to the random number generator
-	core::PackerEnergy const rg_uniform( RG.uniform() );
+	core::PackerEnergy const rg_uniform( numeric::random::rg().uniform() );
 
 	if ( deltaE < 0 ) {
 		return true;
@@ -711,7 +710,7 @@ assign_random_rotamers(
 	/// of waiting until each residue has an assigned rotamer.
 	for ( Size ii = 1; ii <= rotsets->nmoltenres(); ++ii ) {
 		Size const ii_resid = rotsets->moltenres_2_resid( ii );
-		Size const ii_rotamer_on_moltenres = static_cast< Size > ( rotsets->nrotamers_for_moltenres( ii ) * RG.uniform() + 1 );
+		Size const ii_rotamer_on_moltenres = static_cast< Size > ( rotsets->nrotamers_for_moltenres( ii ) * numeric::random::rg().uniform() + 1 );
 
 		/// This is an aborted call; this function knows not to attempt to minimize until curr_state has
 		/// no unassigned residues.
@@ -889,7 +888,7 @@ min_pack_optimize(
 		Real ii_temperature = temps[ ii ];
 		/// 6.
 		for ( Size jj = 1, jj_end = n_inner_iterations( ii_temperature, rotsets->nrotamers() ); jj <= jj_end; ++jj ) {
-			Size const jj_ranrotamer = static_cast< Size > ( rotsets->nrotamers() * RG.uniform() + 1 );
+			Size const jj_ranrotamer = static_cast< Size > ( rotsets->nrotamers() * numeric::random::rg().uniform() + 1 );
 			Size const jj_moltenres_id = rotsets->moltenres_for_rotamer( jj_ranrotamer );
 			Size const jj_resid = rotsets->moltenres_2_resid(  jj_moltenres_id );
 			Size const jj_rotamer_state_on_moltenres = rotsets->rotid_on_moltenresidue( jj_ranrotamer );
@@ -1135,14 +1134,14 @@ assign_random_continuous_rotamer(
 		/// resatc.idealize_active_restype(); -- need this if we ever allow the input sidechain!
 		if ( rotset.get_n_baserotamers_for_rotblock( ran_rotblock_for_ranrot ) != 0 ) {
 			// i.e. not gly or ala.
-			Real rand_btw_0_and_1 = RG.uniform();
+			Real rand_btw_0_and_1 = numeric::random::rg().uniform();
 			Size const ran_baserot_ind = rotset.pick_baserotamer_from_rotblock( ran_rotblock_for_ranrot, rand_btw_0_and_1 );
 			dunbrack::DunbrackRotamerSampleData const & rotdata =
 				rotset.baserotamer_data( ran_rotblock_for_ranrot, ran_baserot_ind );
 			/// OK: now, sample the dunbrack chi
 			for ( Size ii = 1; ii <= rotdata.nchi(); ++ii ) {
 				/// First attempt strategy: sample uniformly +/- 1 standard deviation
-				Real const iichi_randval = RG.uniform();
+				Real const iichi_randval = numeric::random::rg().uniform();
 				Real const iisd = rotdata.chi_sd()[ ii ];
 				resatc.set_chi( ii, rotdata.chi_mean()[ii] - iisd + 2 * iisd * iichi_randval );
 			}
@@ -1161,9 +1160,9 @@ assign_random_continuous_rotamer(
 				iichi_sdev = ii_chi_extra_samples[ ii_chi_extra_samples.size() ];
 			}
 
-			Real rand_btw_0_and_1 = RG.uniform();
+			Real rand_btw_0_and_1 = numeric::random::rg().uniform();
 			Size sample = static_cast< Size > ( ii_chi_samples.size() * rand_btw_0_and_1 ) + 1;
-			Real sample_dev = RG.uniform();
+			Real sample_dev = numeric::random::rg().uniform();
 			resatc.set_chi( ii_chi, ii_chi_samples[ sample ] - iichi_sdev + 2 * sample_dev * iichi_sdev );
 		}
 		resatc.update_residue();
@@ -1230,7 +1229,7 @@ off_rotamer_pack_optimize(
 		Size const jj_end = n_inner_iterations( ii_temperature, n_sample_rots );
 		for ( Size jj = 1; jj <= jj_end; ++jj ) {
 
-			Size const random_sample_rot = static_cast< Size > ( n_sample_rots * RG.uniform() + 1 );
+			Size const random_sample_rot = static_cast< Size > ( n_sample_rots * numeric::random::rg().uniform() + 1 );
 			Size const ran_moltres = rotsets.moltenres_for_sample_rot( random_sample_rot );
 			Size const ran_res = rotsets.moltenresid_2_resid( ran_moltres );
 			Size const ranrot_on_moltenres = rotsets.full_sample_rot_index_2_moltenres_sample_rot_index( random_sample_rot );

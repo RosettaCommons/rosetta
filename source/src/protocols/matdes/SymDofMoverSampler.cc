@@ -35,12 +35,16 @@
 // C++ headers
 #include <string>
 
-static basic::Tracer TR("protocols.matdes.SymDofMoverSampler");
+static thread_local basic::Tracer TR( "protocols.matdes.SymDofMoverSampler" );
 
 namespace protocols {
 namespace matdes {
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< SymDofMoverSampler * > SymDofMoverSampler::instance_( 0 );
+#else
 SymDofMoverSampler * SymDofMoverSampler::instance_( 0 );
+#endif
 
 SymDofMoverSampler::SymDofMoverSampler():
 	sym_dof_names_(),

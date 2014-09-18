@@ -36,7 +36,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static basic::Tracer hbond_donor_tracer( "protocols.ligand_docking.HBondDonorFilter" );
+static thread_local basic::Tracer hbond_donor_tracer( "protocols.ligand_docking.HBondDonorFilter" );
 
 bool
 HBondDonorFilter::apply( core::pose::Pose const & pose ) const {

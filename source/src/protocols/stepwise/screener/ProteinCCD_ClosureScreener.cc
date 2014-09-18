@@ -21,7 +21,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.screener.ProteinCCD_ClosureScreener" );
+static thread_local basic::Tracer TR( "protocols.stepwise.screener.ProteinCCD_ClosureScreener" );
 
 using protocols::simple_moves::TorsionSetMover;
 

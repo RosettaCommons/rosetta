@@ -42,7 +42,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-basic::Tracer TR("apps.score_interface");
+static thread_local basic::Tracer TR( "apps.score_interface" );
 
 void register_metrics() {
 

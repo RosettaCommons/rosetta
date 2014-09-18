@@ -31,7 +31,7 @@
 //Auto Headers
 #include <core/conformation/Conformation.hh>
 
-static basic::Tracer TR("core.scoring.constraints.SiteConstraint");
+static thread_local basic::Tracer TR( "core.scoring.constraints.SiteConstraint" );
 
 namespace core {
 namespace scoring {

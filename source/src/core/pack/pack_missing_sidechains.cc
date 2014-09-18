@@ -40,7 +40,7 @@
 // ObjexxFCL headers
 
 
-static basic::Tracer TR("core.pack.pack_missing_sidechains");
+static thread_local basic::Tracer TR( "core.pack.pack_missing_sidechains" );
 
 namespace core {
 namespace pack {

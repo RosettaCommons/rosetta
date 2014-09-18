@@ -37,7 +37,11 @@ namespace picking_old {
 
 
 // static initialization
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< FragmentLibraryManager * > FragmentLibraryManager::instance_( 0 );
+#else
 FragmentLibraryManager * FragmentLibraryManager::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

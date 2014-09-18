@@ -28,14 +28,11 @@
 class RandomSystemTests : public CxxTest::TestSuite
 {
 public:
-	RandomSystemTests() : RG(8934) {}
-
-	numeric::random::RandomGenerator RG;
+	RandomSystemTests() {}
 
 	// Shared initialization goes here.
 	void setUp() {
-		numeric::random::RandomGenerator::initializeRandomGenerators(999,
-								 numeric::random::_RND_TestRun_, "mt19937");
+		numeric::random::rg().set_seed( "mt19937", 999 );
 	}
 
 	// Shared finalization goes here.
@@ -46,7 +43,7 @@ public:
 	// ------------------------------------------ //
 	/// @brief test how Uniform distribution is
 	void test_Uniform() {
-		numeric::random::RandomGenerator::initializeRandomGenerators(999, numeric::random::_RND_TestRun_, "mt19937");
+		numeric::random::rg().set_seed("mt19937", 999);
 
 		const int size = 5000;  ///< size of array where we store all uniform numbers
 		const int N = 20100100; //< number of trials
@@ -56,7 +53,7 @@ public:
 		int min_ind = size/2;
 		int max_ind = size/2;
 		for(int i=0; i<N; i++) {
-			double r = RG.uniform();
+			double r = numeric::random::rg().uniform();
 			int ind = int( r * double(size-1e-10) );
 			if( min_ind > ind ) {
 				min_ind = ind;
@@ -90,15 +87,15 @@ public:
 		std::vector<double> V1(size), V2(size);
 
 		std::ostringstream oss;
-		numeric::random::RandomGenerator::saveAllStates(oss);
+		numeric::random::rg().saveState(oss);
 		for(int i = 0; i < size; i++) {
-			V1[i] = RG.uniform();
+			V1[i] = numeric::random::rg().uniform();
 		}
 
 		std::istringstream iss( oss.str() );
-		numeric::random::RandomGenerator::restoreAllStates(iss);
+		numeric::random::rg().restoreState(iss);
 		for(int i = 0; i < size; i++) {
-			V2[i] = RG.uniform();
+			V2[i] = numeric::random::rg().uniform();
 		}
 
 		TS_ASSERT_EQUALS(V1, V2); // vector == is element-wise
@@ -108,7 +105,7 @@ public:
 	/// @brief test that number from generator mt19937 are the same
 	void test_mt19937() {
 		const int NumbersToTest = 10000;
-		numeric::random::RandomGenerator::initializeRandomGenerators(999, numeric::random::_RND_TestRun_, "mt19937");
+		numeric::random::rg().set_seed("mt19937", 999);
 
 		// UTracer log file
 		test::UTracer  UT("numeric/mt19937.u");
@@ -116,7 +113,7 @@ public:
 		UT << std::setprecision(16);
 
 		for(int i=0; i<NumbersToTest; i++) {
-			UT << RG.uniform() << std::endl;
+			UT << numeric::random::rg().uniform() << std::endl;
 		}
 	}
 };

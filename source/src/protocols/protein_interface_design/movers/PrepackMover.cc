@@ -55,7 +55,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static basic::Tracer TR( "protocols.protein_interface_design.movers.PrepackMover" );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.PrepackMover" );
 
 std::string
 PrepackMoverCreator::keyname() const

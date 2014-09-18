@@ -71,10 +71,9 @@ namespace perturb {
 
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
-static basic::Tracer TR("protocols.loops.loop_mover.perturb.LoopMover_Perturb_QuickCCD_Moves");
+static thread_local basic::Tracer TR( "protocols.loops.loop_mover.perturb.LoopMover_Perturb_QuickCCD_Moves" );
 
 
-static numeric::random::RandomGenerator RG(42862);
 
 
 LoopMover_Perturb_QuickCCD_Moves::LoopMover_Perturb_QuickCCD_Moves() :

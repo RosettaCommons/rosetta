@@ -63,8 +63,7 @@ using namespace core::scoring;
 
 using utility::vector1;
 
-static basic::Tracer TR("sctrials");
-static numeric::random::RandomGenerator RG(95857392);
+static thread_local basic::Tracer TR( "sctrials" );
 
 class Benchmark : public moves::Mover {
 

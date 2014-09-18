@@ -68,9 +68,8 @@ namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; 
 using namespace core;
 using basic::T;
 
-static numeric::random::RandomGenerator RG(19920);  // <- Magic number, do not change it!
 
-static basic::Tracer TR( "protocols.rna.RNA_Relaxer" ) ;
+static thread_local basic::Tracer TR( "protocols.rna.RNA_Relaxer" );
 
 namespace protocols {
 namespace farna {
@@ -177,7 +176,7 @@ RNA_Relaxer::find_fragment_by_simple_rmsd_cutoff( pose::Pose & pose )
 	//Find a fragment to try... don't want to deviate too much from the input pose.
 	pose::Pose start_pose = pose;
 
-	Size const frag_size = static_cast <int> ( RG.uniform() * max_frag_size_ ) + 1;
+	Size const frag_size = static_cast <int> ( numeric::random::rg().uniform() * max_frag_size_ ) + 1;
 
 	for (Size n = 1; n <= num_find_fragment_tries_ ; n++ ) {
 
@@ -213,7 +212,7 @@ RNA_Relaxer::lores_monte_carlo( pose::Pose & pose )
 
 	for( Size i=1; i <= lores_monte_carlo_rounds ; ++i ) {
 
-		Size const frag_size = static_cast <int> ( RG.uniform() * max_frag_size_ ) + 1;
+		Size const frag_size = static_cast <int> ( numeric::random::rg().uniform() * max_frag_size_ ) + 1;
 		rna_fragment_mover_->random_fragment_insertion( pose, frag_size );
 		lores_monte_carlo_->boltzmann( pose, "frag" + SS(frag_size) );
 

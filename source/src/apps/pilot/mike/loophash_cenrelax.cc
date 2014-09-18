@@ -96,7 +96,7 @@
 
 
 
-static basic::Tracer TR("main");
+static thread_local basic::Tracer TR( "main" );
 
 using namespace protocols::moves;
 using namespace core::scoring;
@@ -201,7 +201,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
     TR.Info << "FOUND " << lib_structs.size() << " alternative states in time: " << endtime2 - starttime2 << std::endl;
 
     //std::random_shuffle( lib_structs.begin(), lib_structs.end());
-    numeric::random::random_permutation(lib_structs.begin(), lib_structs.end(), numeric::random::RG);
+    numeric::random::random_permutation(lib_structs.begin(), lib_structs.end(), numeric::random::rg());
 
     std::vector< core::io::silent::SilentStructOP > select_lib_structs;
 

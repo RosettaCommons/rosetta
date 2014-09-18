@@ -96,7 +96,7 @@ using namespace core;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-basic::Tracer TR( "pilot_apps.jcorn.hotspot_hash");
+static thread_local basic::Tracer TR( "pilot_apps.jcorn.hotspot_hash" );
 
 // routine to benchmark score existing contacts as if they were found by hashing
 void benchmark_contacts ( pose::Pose const & start_pose, scoring::ScoreFunctionOP scorefxn )

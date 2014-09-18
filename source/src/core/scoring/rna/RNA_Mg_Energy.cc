@@ -45,7 +45,7 @@
 using ObjexxFCL::format::I;
 using namespace core::chemical::rna;
 
-static basic::Tracer tr( "core.scoring.rna.RNA_Mg_Energy" );
+static thread_local basic::Tracer tr( "core.scoring.rna.RNA_Mg_Energy" );
 
 namespace core {
 namespace scoring {

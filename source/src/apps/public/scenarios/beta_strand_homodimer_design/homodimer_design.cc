@@ -104,7 +104,7 @@
 
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR("apps.public.beta_strand_homodimer_design.homodimer_design");
+static thread_local basic::Tracer TR( "apps.public.beta_strand_homodimer_design.homodimer_design" );
 
 using namespace core;
 using namespace utility;

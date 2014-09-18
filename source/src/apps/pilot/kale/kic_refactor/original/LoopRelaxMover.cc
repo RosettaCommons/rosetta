@@ -322,7 +322,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	// this typedef belongs in its own .fwd.hh file.
 	//typedef utility::pointer::owning_ptr< loops::IndependentLoopMover > loops::IndependentLoopMoverOP;
 
-	basic::Tracer TR("protocols.looprelax");
+	basic::Tracer TR( "protocols.looprelax" );
 
 	TR << "==== Loop protocol: ================================================="
 		<< std::endl;

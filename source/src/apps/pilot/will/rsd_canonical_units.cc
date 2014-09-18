@@ -51,7 +51,7 @@
 #include <apps/pilot/will/will_util.ihh>
 #include <apps/pilot/will/mynamespaces.ihh>
 
-static basic::Tracer TR("rsd_canonical_units");
+static thread_local basic::Tracer TR( "rsd_canonical_units" );
 
 int main(int argc, char *argv[]) {
 

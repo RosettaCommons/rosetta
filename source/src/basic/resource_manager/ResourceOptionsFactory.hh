@@ -30,7 +30,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -97,7 +98,11 @@ private:
 	static ResourceOptionsFactory * create_singleton_instance();
 
 private:
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< ResourceOptionsFactory * > instance_;
+#else
 	static ResourceOptionsFactory * instance_;
+#endif
 
 	bool throw_on_double_registration_;
 

@@ -87,7 +87,6 @@ using io::pdb::dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
-static numeric::random::RandomGenerator RG(239105221);  // <- Magic number, do not change it!
 
 OPT_KEY( IntegerVector, sample_res )
 OPT_KEY( IntegerVector, design_res )
@@ -190,7 +189,7 @@ erraser_monte_carlo()
 
 	for ( Size n = 1; n <= Size( option[ cycles ]() ); n++ ){
 
-		Size const erraser_res = RG.random_element( sample_res_list );
+		Size const erraser_res = numeric::random::rg().random_element( sample_res_list );
 		bool const did_mutation = mutate_res_if_allowed( pose, erraser_res );
 
 

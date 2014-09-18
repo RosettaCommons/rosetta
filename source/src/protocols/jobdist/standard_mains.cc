@@ -90,8 +90,7 @@ namespace jobdist {
 
 typedef utility::pointer::owning_ptr< BaseJobDistributor > BaseJobDistributorOP;
 
-basic::Tracer TR("protocols.jobdist.main");
-static numeric::random::RandomGenerator RG(32342524);
+static thread_local basic::Tracer TR( "protocols.jobdist.main" );
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -308,7 +307,7 @@ int universal_main(
 
 		// create joblist
 		for ( core::io::silent::SilentFileData::iterator iter = sfd.begin(), end = sfd.end(); iter != end; ++iter ) {
-			if( RG.uniform() < thinout_factor ){
+			if( numeric::random::rg().uniform() < thinout_factor ){
 				//std::cout << "Thinout: Skipping " << iter->decoy_tag() << std::endl;
 				continue; // ignore structures if thinout is required!
 			}
@@ -545,7 +544,7 @@ int universal_main(
 		jobdist->startup();
 		while( jobdist->next_job(curr_job, curr_nstruct) ) {
 
-			if( RG.uniform() < thinout_factor ){
+			if( numeric::random::rg().uniform() < thinout_factor ){
 				//std::cout << "Thinout: Skipping " << curr_job->output_tag(curr_nstruct) << std::endl;
 				continue; // ignore structures if thinout is required!
 			}
@@ -697,7 +696,7 @@ int main_plain_mover(
 	// Reduce read contention between processes by randomizing the order in which structures are processed
 	// Do not randomize, though, if job distribution is controlled by MPI
 	if( random_permutation ) {
-		numeric::random::random_permutation( input_jobs, numeric::random::RG );
+		numeric::random::random_permutation( input_jobs, numeric::random::rg() );
 	}
 #endif
 	BasicJobOP curr_job, prev_job;
@@ -800,7 +799,7 @@ int main_plain_pdb_mover(
 #ifndef USEMPI
 	// Reduce read contention between processes by randomizing the order in which structures are processed
 	// Do not randomize, though, if job distribution is controlled by MPI
-	numeric::random::random_permutation( input_jobs, numeric::random::RG );
+	numeric::random::random_permutation( input_jobs, numeric::random::rg() );
 #endif
 
 	BaseJobDistributorOP jobdist;
@@ -910,7 +909,7 @@ int main_atom_tree_diff_mover(
 	time_t overall_start_time = time(NULL);
 	utility::vector1< BasicJobOP > input_jobs = load_s_and_l();
 	// Reduce read contention between processes by randomizing the order in which structures are processed
-	numeric::random::random_permutation( input_jobs, numeric::random::RG );
+	numeric::random::random_permutation( input_jobs, numeric::random::rg() );
 	AtomTreeDiffJobDistributor jobdist( input_jobs, "silent.out" );
 
 	BasicJobOP curr_job, prev_job;

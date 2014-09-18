@@ -47,7 +47,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static basic::Tracer TR( "protocols.protein_interface_design.movers.DesignMinimizeHbonds" );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.DesignMinimizeHbonds" );
 
 std::string
 DesignMinimizeHbondsCreator::keyname() const

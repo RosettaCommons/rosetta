@@ -64,8 +64,7 @@
 using namespace core;
 using namespace core::pose;
 
-static numeric::random::RandomGenerator RG(38256225);
-static basic::Tracer tr("protocols.simple_moves.sidechain_moves.SidechainMoverBase");
+static thread_local basic::Tracer tr( "protocols.simple_moves.sidechain_moves.SidechainMoverBase" );
 
 namespace protocols {
 namespace simple_moves {
@@ -192,7 +191,7 @@ SidechainMoverBase::initialize_simulation(
 core::Size SidechainMoverBase::suggest_residue_number( pose::Pose const& pose ) const {
 	core::Size resid;
 	do { //pick residue, respecting underlying packer task
-		resid = packed_residues_[ RG.random_range(1, packed_residues_.size()) ];
+		resid = packed_residues_[ numeric::random::rg().random_range(1, packed_residues_.size()) ];
 	} while ( pose.residue( resid ).name1() == 'P'); //SidechainMover cannot sample proline rotamers? (is this true?)
 	return resid;
 }

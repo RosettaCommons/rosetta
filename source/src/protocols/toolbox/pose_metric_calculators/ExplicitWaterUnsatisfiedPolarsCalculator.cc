@@ -78,8 +78,7 @@ namespace pose_metric_calculators {
 	using namespace optimization;
 	using utility::vector1;
 
-	static basic::Tracer TR("protocols.toolbox.PoseMetricCalculators.ExplicitWaterUnsatisfiedPolarsCalculator");
-	static numeric::random::RandomGenerator RG(2718);
+static thread_local basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.ExplicitWaterUnsatisfiedPolarsCalculator" );
 
 	///@brief default constructor sets shell_cutoff to 4.0. 
 	ExplicitWaterUnsatisfiedPolarsCalculator::ExplicitWaterUnsatisfiedPolarsCalculator( ScoreFunctionOP scorefxn ):
@@ -146,7 +145,7 @@ append_rsd_by_jump_near_atom(
   Jump jump( pose.jump( jump_number ) );
 
   //set jump distance as random val from dist_min to dist_max
-  Real jump_dist( dist_min + RG.uniform() * ( dist_max - dist_min ) );
+  Real jump_dist( dist_min + numeric::random::rg().uniform() * ( dist_max - dist_min ) );
   jump.random_trans( jump_dist );
   //set jump rotation as random matrix
   jump.set_rotation( protocols::geometry::random_reorientation_matrix( 360, 360 ) );

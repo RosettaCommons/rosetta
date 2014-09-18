@@ -34,7 +34,7 @@
 
 
 
-static basic::Tracer TR( "protocols.topology.StrandPairing" );
+static thread_local basic::Tracer TR( "protocols.topology.StrandPairing" );
 
 using namespace core;
 typedef std::string String;

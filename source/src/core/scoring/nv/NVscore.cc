@@ -63,7 +63,7 @@ NVscoreCreator::score_types_for_method() const {
 }
 
 
-static basic::Tracer TR("core.scoring.NVscore");
+static thread_local basic::Tracer TR( "core.scoring.NVscore" );
 
 
 NVscore::NVscore() :

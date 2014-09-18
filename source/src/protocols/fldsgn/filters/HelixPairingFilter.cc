@@ -41,7 +41,7 @@
 
 
 //// C++ headers
-static basic::Tracer TR("protocols.fldsgn.filters.HelixPairingFilter");
+static thread_local basic::Tracer TR( "protocols.fldsgn.filters.HelixPairingFilter" );
 
 namespace protocols {
 namespace fldsgn {

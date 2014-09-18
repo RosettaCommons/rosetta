@@ -41,7 +41,7 @@
 
 
 
-static basic::Tracer tr("core.LocalCoordinateConstraint");
+static thread_local basic::Tracer tr( "core.LocalCoordinateConstraint" );
 
 namespace core {
 namespace scoring {

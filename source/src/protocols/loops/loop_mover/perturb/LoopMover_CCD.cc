@@ -92,8 +92,7 @@ namespace perturb {
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
 
-static numeric::random::RandomGenerator RG(42478);
-static basic::Tracer TR("protocols.loops.loop_mover.perturb.LoopMover_Perturb_CCD");
+static thread_local basic::Tracer TR( "protocols.loops.loop_mover.perturb.LoopMover_Perturb_CCD" );
 
 //constructors
 LoopMover_Perturb_CCD::LoopMover_Perturb_CCD() :

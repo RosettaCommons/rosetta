@@ -217,7 +217,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.relax.FastRelax");
+static thread_local basic::Tracer TR( "protocols.relax.FastRelax" );
 
 using namespace core;
 using namespace core::io::silent;

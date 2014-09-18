@@ -68,8 +68,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 using namespace core;
-static basic::Tracer TR( "devel.DenovoProteinDesign.SequenceFitnessMover" );
-// static numeric::random::RandomGenerator RG(MAKEMEANUMBERIFYOUNEEDME);
+static thread_local basic::Tracer TR( "devel.DenovoProteinDesign.SequenceFitnessMover" );
 
 namespace devel {
 namespace denovo_protein_design {

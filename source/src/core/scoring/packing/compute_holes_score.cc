@@ -48,7 +48,7 @@
 #endif
 #endif
 
-static basic::Tracer TR("core.scoring.packing.compute_holes_score");
+static thread_local basic::Tracer TR( "core.scoring.packing.compute_holes_score" );
 
 namespace core {
 namespace scoring {

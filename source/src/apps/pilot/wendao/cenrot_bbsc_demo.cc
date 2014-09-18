@@ -106,8 +106,7 @@ using namespace core::pack::dunbrack;
 using namespace core::pack::dunbrack::cenrot;
 
 //////////////////////////////////////////////////////////////////
-static numeric::random::RandomGenerator RG(62331911);
-basic::Tracer TR("pilot.wendao.cenrot");
+static thread_local basic::Tracer TR( "pilot.wendao.cenrot" );
 
 void relax_cenrot_pose(core::pose::PoseOP &native_pose,
 	core::pose::Pose & p, std::string const &tag);

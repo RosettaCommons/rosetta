@@ -163,7 +163,7 @@ inline void core_init()
 }
 
 inline void initialize_rng() {
-	core::init::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
+	core::init::init_random_generators(1000, "mt19937");
 }
 
 #endif

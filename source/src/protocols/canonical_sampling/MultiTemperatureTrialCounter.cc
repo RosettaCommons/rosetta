@@ -24,7 +24,7 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
-static basic::Tracer tr("protocols.canonical_sampling.MultiTemperatureTrialCounter");
+static thread_local basic::Tracer tr( "protocols.canonical_sampling.MultiTemperatureTrialCounter" );
 
 namespace protocols {
 namespace canonical_sampling {

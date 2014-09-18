@@ -60,7 +60,7 @@
 #include <core/scoring/Membrane_FAPotential.fwd.hh>
 #include <core/scoring/MembranePotential.hh>
 
-static basic::Tracer tr("core.scoring.DipolarCoupling");
+static thread_local basic::Tracer tr( "core.scoring.DipolarCoupling" );
 
 namespace core {
 namespace scoring {

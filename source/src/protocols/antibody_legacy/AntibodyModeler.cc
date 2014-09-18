@@ -99,13 +99,12 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.AntibodyModeler");
+static thread_local basic::Tracer TR( "protocols.AntibodyModeler" );
 
 namespace protocols {
 namespace antibody_legacy {
 // Aroop's Magic number, do not change it
 // (and dont try and use it anywhere else)
-// static numeric::random::RandomGenerator RG(22849821);
 
 using namespace core;
 

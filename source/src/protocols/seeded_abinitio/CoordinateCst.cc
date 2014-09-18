@@ -61,8 +61,8 @@ using namespace core;
 using namespace scoring::constraints;
 using namespace protocols::moves;
 
-static basic::Tracer TR( "protocols.seeded_abinitio.CoordinateCst" );
-static basic::Tracer TR_debug( "CoordinateCst.Debug" );
+static thread_local basic::Tracer TR( "protocols.seeded_abinitio.CoordinateCst" );
+static thread_local basic::Tracer TR_debug( "CoordinateCst.Debug" );
 
 std::string
 CoordinateCstCreator::keyname() const

@@ -40,7 +40,7 @@
 //C++
 #include <cstdio>
 
-static basic::Tracer TR("NodePairRmsdCalculator");
+static thread_local basic::Tracer TR( "NodePairRmsdCalculator" );
 
 struct node_data
 {

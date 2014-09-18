@@ -46,7 +46,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static basic::Tracer energy_per_residue_filter_tracer( "protocols.simple_filters.EnergyPerResidueFilter" );
+static thread_local basic::Tracer energy_per_residue_filter_tracer( "protocols.simple_filters.EnergyPerResidueFilter" );
 
 protocols::filters::FilterOP
 EnergyPerResidueFilterCreator::create_filter() const { return new EnergyPerResidueFilter; }

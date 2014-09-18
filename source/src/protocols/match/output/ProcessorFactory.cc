@@ -69,7 +69,7 @@ namespace protocols {
 namespace match {
 namespace output {
 
-static basic::Tracer TR( "protocols.match.output.ProcessorFactory" );
+static thread_local basic::Tracer TR( "protocols.match.output.ProcessorFactory" );
 
 ProcessorFactory::ProcessorFactory() {}
 

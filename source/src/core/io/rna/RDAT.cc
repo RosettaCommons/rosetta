@@ -25,7 +25,7 @@
 #include <utility/string_util.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-static basic::Tracer TR( "core.scoring.rna.data.RDAT" );
+static thread_local basic::Tracer TR( "core.scoring.rna.data.RDAT" );
 using namespace ObjexxFCL;
 using namespace utility;
 

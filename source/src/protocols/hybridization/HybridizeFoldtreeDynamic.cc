@@ -59,8 +59,7 @@
 //Auto Headers
 #include <core/conformation/Conformation.hh>
 
-static basic::Tracer TR( "protocols.hybridization.HybridizeFoldtreeDynamic" );
-static numeric::random::RandomGenerator RG(65433);
+static thread_local basic::Tracer TR( "protocols.hybridization.HybridizeFoldtreeDynamic" );
 
 namespace protocols {
 namespace hybridization {
@@ -128,7 +127,7 @@ utility::vector1 < core::Size > HybridizeFoldtreeDynamic::decide_cuts(core::pose
 						}
 					}
 					if (candidates.size())
-						cut = candidates[RG.random_range(1,candidates.size())];
+						cut = candidates[numeric::random::rg().random_range(1,candidates.size())];
 				}
 			}
 			else if ( cut_point_decision == "combine" ) {

@@ -37,10 +37,9 @@
 
 
 // Construct tracers.
-static basic::Tracer TR("protocols.simple_moves.RingConformationMover");
+static thread_local basic::Tracer TR( "protocols.simple_moves.RingConformationMover" );
 
 // Construct random-number generator.
-static numeric::random::RandomGenerator RG(17);  // the 7th prime
 
 
 namespace protocols {
@@ -162,7 +161,7 @@ RingConformationMover::apply(Pose & input_pose)
 
 	TR << "Applying " << get_name() << " to pose...." << endl;
 
-	core::uint const i = core::uint(RG.uniform() * residue_list_.size() + 1);
+	core::uint const i = core::uint(numeric::random::rg().uniform() * residue_list_.size() + 1);
 	core::uint const res_num = residue_list_[i];
 	Residue const & res = input_pose.residue(res_num);
 

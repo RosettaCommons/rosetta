@@ -386,7 +386,7 @@ namespace silent {
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
-static basic::Tracer pss_tr("core.io.silent");
+static thread_local basic::Tracer pss_tr( "core.io.silent" );
 
 //explciit instantiation
 

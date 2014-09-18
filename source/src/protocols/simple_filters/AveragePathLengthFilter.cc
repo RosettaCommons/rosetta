@@ -31,7 +31,7 @@ namespace simple_filters {
 using namespace core;
 using namespace core::scoring;
 
-static basic::Tracer TR( "protocols.simple_filters.AveragePathLengthFilter" );
+static thread_local basic::Tracer TR( "protocols.simple_filters.AveragePathLengthFilter" );
 
 protocols::filters::FilterOP
 AveragePathLengthFilterCreator::create_filter() const { return new AveragePathLengthFilter; }

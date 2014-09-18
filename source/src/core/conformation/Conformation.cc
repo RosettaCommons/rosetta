@@ -84,7 +84,7 @@
 using basic::T;
 
 
-static basic::Tracer TR("core.conformation.Conformation");
+static thread_local basic::Tracer TR( "core.conformation.Conformation" );
 
 
 namespace core {
@@ -240,7 +240,7 @@ Conformation::debug_residue_torsions( bool verbose ) const
 
 	update_residue_coordinates();
 	update_residue_torsions();
-	basic::Tracer my_tracer( "core.conformation", basic::t_warning );
+static thread_local basic::Tracer my_tracer( "core.conformation", basic::t_warning );
 
 	if ( verbose ) {
 		int width = 14;

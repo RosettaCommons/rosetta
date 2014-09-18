@@ -66,8 +66,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer tr( "protocols.canonical_sampling.ParallelTempering" );
-static numeric::random::RandomGenerator RG(3227547);
+static thread_local basic::Tracer tr( "protocols.canonical_sampling.ParallelTempering" );
 
 
 bool protocols::canonical_sampling::ParallelTempering::options_registered_( false );
@@ -313,7 +312,7 @@ ParallelTempering::shuffle_temperatures( double *energies ) {
 
 		++exchange_attempts_[ex[i]];
 
-		if ( RG.uniform() < std::min( 1.0, std::exp( std::max(-40.0, -delta) ) ) ) {
+		if ( numeric::random::rg().uniform() < std::min( 1.0, std::exp( std::max(-40.0, -delta) ) ) ) {
 			Size tmp;
 
 			//Swap tlevel

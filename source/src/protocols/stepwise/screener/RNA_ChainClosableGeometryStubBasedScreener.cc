@@ -26,7 +26,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.screener.RNA_ChainClosableGeometryStubBasedScreener" );
+static thread_local basic::Tracer TR( "protocols.stepwise.screener.RNA_ChainClosableGeometryStubBasedScreener" );
 
 using namespace core;
 

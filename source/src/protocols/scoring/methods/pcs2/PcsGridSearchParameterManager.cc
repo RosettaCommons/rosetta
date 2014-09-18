@@ -52,14 +52,18 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-static basic::Tracer TR_PcsGridSearchParameterManager("protocols.scoring.methods.pcs.PcsGridSearchParameterManager");
+static thread_local basic::Tracer TR_PcsGridSearchParameterManager( "protocols.scoring.methods.pcs.PcsGridSearchParameterManager" );
 
 namespace protocols{
 namespace scoring{
 namespace methods{
 namespace pcs2{
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< PcsGridSearchParameterManager * > PcsGridSearchParameterManager::instance_( 0 );
+#else
 PcsGridSearchParameterManager * PcsGridSearchParameterManager::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

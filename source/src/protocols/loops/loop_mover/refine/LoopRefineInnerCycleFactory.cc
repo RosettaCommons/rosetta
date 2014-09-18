@@ -49,7 +49,7 @@ using std::string;
 using utility::tools::make_vector1;
 using utility::vector1;
 
-static basic::Tracer TR("protocols.loops.loop_mover.refine.LoopRefineInnerCycleFactory");
+static thread_local basic::Tracer TR( "protocols.loops.loop_mover.refine.LoopRefineInnerCycleFactory" );
 vector1< vector1< string > > LoopRefineInnerCycleFactory::loop_refine_inner_cycle_name_to_string_;
 
 void LoopRefineInnerCycleFactory::setup_known_types()
@@ -71,7 +71,11 @@ void LoopRefineInnerCycleFactory::setup_known_types()
 ////////////////////////////////////////////// BOILER PLATE CODE //////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< LoopRefineInnerCycleFactory * > LoopRefineInnerCycleFactory::instance_( 0 );
+#else
 LoopRefineInnerCycleFactory * LoopRefineInnerCycleFactory::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

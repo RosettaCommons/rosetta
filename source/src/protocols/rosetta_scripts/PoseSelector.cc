@@ -32,7 +32,7 @@
 // C++ Headers
 #include <string>
 
-static basic::Tracer TR( "protocols.rosetta_scripts.PoseSelector" );
+static thread_local basic::Tracer TR( "protocols.rosetta_scripts.PoseSelector" );
 
 namespace protocols {
 namespace rosetta_scripts {

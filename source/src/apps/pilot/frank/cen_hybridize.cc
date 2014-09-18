@@ -90,7 +90,7 @@
 
 #include <boost/unordered/unordered_map.hpp>
 
-static basic::Tracer TR("cen_hyb");
+static thread_local basic::Tracer TR( "cen_hyb" );
 
 OPT_1GRP_KEY(FileVector, fpd, templates)
 OPT_1GRP_KEY(FileVector, fpd, fragments)

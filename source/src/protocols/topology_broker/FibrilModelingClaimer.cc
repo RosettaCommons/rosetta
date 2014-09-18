@@ -51,8 +51,7 @@
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
 
-static basic::Tracer tr("protocols.topo_broker.fibril_modeling",basic::t_info);
-static numeric::random::RandomGenerator RG(332483344);
+static thread_local basic::Tracer tr( "protocols.topo_broker.fibril_modeling", basic::t_info );
 
 namespace protocols {
 namespace topology_broker {

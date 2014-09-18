@@ -67,10 +67,9 @@
 
 #include <numeric/random/random.hh>
 
-static numeric::random::RandomGenerator RG(48921231);  // <- Magic number, do not change it!
 
 
-static basic::Tracer tr("main");
+static thread_local basic::Tracer tr( "main" );
 
 using namespace core;
 using namespace protocols;
@@ -136,7 +135,7 @@ public:
 			ConstraintCOPs all_constraints = cstset_->get_all_constraints();
 			ConstraintSetOP filtered_cstset = new ConstraintSet;
 			for ( ConstraintCOPs::const_iterator it = all_constraints.begin(); it != all_constraints.end(); ++it ) {
-				Real r = RG.uniform();
+				Real r = numeric::random::rg().uniform();
 				if ( r < option[ skip ] ) {
 					filtered_cstset->add_constraint( *it );
 				}

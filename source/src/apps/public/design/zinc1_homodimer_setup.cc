@@ -49,7 +49,7 @@ using basic::Error;
 using basic::Warning;
 //using numeric::conversions::degrees;
 
-static basic::Tracer TR("apps.public.design.zinc1_homodimer_setup");
+static thread_local basic::Tracer TR( "apps.public.design.zinc1_homodimer_setup" );
 
 typedef numeric::xyzVector<core::Real> point;
 typedef point axis;

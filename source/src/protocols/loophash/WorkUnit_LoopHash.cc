@@ -59,7 +59,7 @@ namespace protocols {
 namespace loophash {
 
 
-static basic::Tracer TR("WorkUnit_LoopHash");
+static thread_local basic::Tracer TR( "WorkUnit_LoopHash" );
 
 
 

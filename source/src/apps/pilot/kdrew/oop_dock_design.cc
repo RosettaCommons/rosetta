@@ -143,7 +143,7 @@ using utility::file::FileName;
 //
 
 // tracer - used to replace cout
-static basic::Tracer TR("ODDM");
+static thread_local basic::Tracer TR( "ODDM" );
 
 // application specific options
 namespace oddm {

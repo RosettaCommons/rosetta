@@ -33,7 +33,7 @@ using namespace chemical;
 using namespace kinematics;
 using namespace conformation;
 
-static basic::Tracer TR( "protocols.dna.SeparateDnaFromNonDna", basic::t_info );
+static thread_local basic::Tracer TR( "protocols.dna.SeparateDnaFromNonDna", basic::t_info );
 
 std::string
 SeparateDnaFromNonDnaCreator::keyname() const

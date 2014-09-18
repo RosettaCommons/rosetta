@@ -126,9 +126,8 @@ namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; 
 namespace protocols {
 namespace farna {
 
-static numeric::random::RandomGenerator RG(144620);  // <- Magic number, do not change it!
 
-static basic::Tracer TR( "protocols.farna.RNA_StructureParameters" ) ;
+static thread_local basic::Tracer TR( "protocols.farna.RNA_StructureParameters" );
 
 using namespace core;
 
@@ -747,8 +746,8 @@ RNA_StructureParameters::sample_alternative_chain_connection( pose::Pose & pose,
 	}
 
 	while( !success && ntries++ < MAX_TRIES ){
-		Size jump_pos1 = RG.random_element( res_list1 );
-		Size jump_pos2 = RG.random_element( res_list2 );
+		Size jump_pos1 = numeric::random::rg().random_element( res_list1 );
+		Size jump_pos2 = numeric::random::rg().random_element( res_list2 );
 		jump_points( 1, which_jump_in_list ) = std::min( jump_pos1, jump_pos2 );
 		jump_points( 2, which_jump_in_list ) = std::max( jump_pos1, jump_pos2 );
 		success = fold_tree.tree_from_jumps_and_cuts( pose.total_residue(), num_jumps,
@@ -864,7 +863,7 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 			if ( obligate_cut_points.has_value( base_pair_step.i() ) ) continue;
 			if ( obligate_cut_points.has_value( base_pair_step.j() ) ) continue;
 			// flip a coin
-			if ( RG.random_range( 0, 1 ) ){
+			if ( numeric::random::rg().random_range( 0, 1 ) ){
 				obligate_cut_points.push_back( base_pair_step.i() );
 			} else {
 				obligate_cut_points.push_back( base_pair_step.j() );
@@ -917,7 +916,7 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 		Size count( 0 );
 
 		for (Size n = 1; n <= num_obligate_pairing_sets ; n++ ){
-			Size const pairing_index_in_stem( static_cast<Size>( RG.uniform() * obligate_pairing_sets[n].size() )  + 1 );
+			Size const pairing_index_in_stem( static_cast<Size>( numeric::random::rg().uniform() * obligate_pairing_sets[n].size() )  + 1 );
 			Size const which_pairing = obligate_pairing_sets[n][pairing_index_in_stem];
 			count++;
 			jump_points(1, count) = rna_pairing_list_[which_pairing].pos1;
@@ -931,8 +930,8 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 		for (Size n = 1; n <= num_chain_connections ; n++ ){
 			utility::vector1 < Size > const & res_list1( chain_connections_[n].first );
 			utility::vector1 < Size > const & res_list2( chain_connections_[n].second);
-			Size jump_pos1 = RG.random_element( res_list1 );
-			Size jump_pos2 = RG.random_element( res_list2 );
+			Size jump_pos1 = numeric::random::rg().random_element( res_list1 );
+			Size jump_pos2 = numeric::random::rg().random_element( res_list2 );
 			count++;
 			jump_points(1, count) =  std::min( jump_pos1, jump_pos2 );
 			jump_points(2, count) =  std::max( jump_pos1, jump_pos2 );
@@ -954,7 +953,7 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 		while ( count < num_pairings_to_force ) {
 
 			// Find a random pairing among what's remaining.
-			Size const set_index( static_cast<Size>( RG.uniform() * num_sets_left )  + 1 );
+			Size const set_index( static_cast<Size>( numeric::random::rg().uniform() * num_sets_left )  + 1 );
 			Size m( 0 ), set_count( 0 );
 			for (m = 1; m <= num_stem_pairing_sets; m++ ){
 				if ( !used_set( m ) ) {
@@ -967,7 +966,7 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 				utility_exit_with_message( "Problem with pairing search "+I(3,num_stem_pairing_sets)+" "+I(3,m) );
 			}
 
-			Size const pairing_index_in_set( static_cast<Size>( RG.uniform() * stem_pairing_sets[m].size() )  + 1 );
+			Size const pairing_index_in_set( static_cast<Size>( numeric::random::rg().uniform() * stem_pairing_sets[m].size() )  + 1 );
 			Size const which_pairing = stem_pairing_sets[m][pairing_index_in_set];
 
 			//			std::cout  << "USING SET: " << m  << " ==> " << pairing_index_in_set << std::endl;
@@ -1145,7 +1144,7 @@ RNA_StructureParameters::random_jump_change( pose::Pose & pose ) const
 
 	while ( ntries++ < MAX_TRIES ){
 		// Randomly pick one.
-		which_jump = static_cast<Size>( RG.uniform() * num_jump ) + 1 ;
+		which_jump = static_cast<Size>( numeric::random::rg().uniform() * num_jump ) + 1 ;
 
 		// Check that we can actually insert here. At least one of the jump partners
 		// should allow moves. (I guess the other one can stay fixed).

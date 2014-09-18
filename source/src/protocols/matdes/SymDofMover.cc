@@ -47,9 +47,8 @@
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <utility/vector1.hh>
 
-static basic::Tracer TR("protocols.matdes.SymDofMover");
+static thread_local basic::Tracer TR( "protocols.matdes.SymDofMover" );
 
-static numeric::random::RandomGenerator RG(832156);
 
 namespace protocols {
 namespace matdes {
@@ -131,9 +130,9 @@ SymDofMover::get_angles() {
 	else {
 		for (Size i = 1; i <= sym_dof_names.size(); i++) {
 			if(sampling_mode_ == "uniform") {
-				angles.push_back(angles_[i] + angles_range_min_[i] + ( angles_range_max_[i] - angles_range_min_[i]) * RG.uniform());
+				angles.push_back(angles_[i] + angles_range_min_[i] + ( angles_range_max_[i] - angles_range_min_[i]) * numeric::random::rg().uniform());
 			} else if(sampling_mode_ == "gaussian") {
-				angles.push_back(angles_[i] + angle_deltas_[i] * RG.gaussian());
+				angles.push_back(angles_[i] + angle_deltas_[i] * numeric::random::rg().gaussian());
 			} else {
 				angles.push_back(angles_[i]);
 			}
@@ -158,9 +157,9 @@ SymDofMover::get_radial_disps() {
 	else {
 		for (Size i = 1; i <= sym_dof_names.size(); i++) {
 			if(sampling_mode_ == "uniform") {
-				radial_disps.push_back(radial_disps_[i] + radial_offsets_[i] + radial_disps_range_min_[i] + ( radial_disps_range_max_[i] - radial_disps_range_min_[i]) * RG.uniform());
+				radial_disps.push_back(radial_disps_[i] + radial_offsets_[i] + radial_disps_range_min_[i] + ( radial_disps_range_max_[i] - radial_disps_range_min_[i]) * numeric::random::rg().uniform());
 			} else if(sampling_mode_ == "gaussian") {
-				radial_disps.push_back(radial_disps_[i] + radial_offsets_[i] + radial_disp_deltas_[i] * RG.gaussian());
+				radial_disps.push_back(radial_disps_[i] + radial_offsets_[i] + radial_disp_deltas_[i] * numeric::random::rg().gaussian());
 			} else {
 				radial_disps.push_back(radial_disps_[i] + radial_offsets_[i]);
 			}

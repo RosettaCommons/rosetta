@@ -72,7 +72,7 @@
 namespace protocols {
 namespace pack_daemon {
 
-static basic::Tracer TR("protocols.pack_daemon.PackDaemon");
+static thread_local basic::Tracer TR( "protocols.pack_daemon.PackDaemon" );
 
 PackDaemon::PackDaemon() :
 	include_background_energies_( true ),

@@ -59,7 +59,7 @@ namespace protocols {
 		
 		using namespace core;
 		
-		static basic::Tracer TR( "protocols.seeded_abinitio.SeedSetupMover" );
+static thread_local basic::Tracer TR( "protocols.seeded_abinitio.SeedSetupMover" );
 		
 		std::string
 		SeedSetupMoverCreator::keyname() const

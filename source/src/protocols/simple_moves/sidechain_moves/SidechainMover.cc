@@ -62,8 +62,7 @@
 using namespace core;
 using namespace core::pose;
 
-static numeric::random::RandomGenerator RG(38627225);
-static basic::Tracer TR("protocols.simple_moves.sidechain_moves.SidechainMover");
+static thread_local basic::Tracer TR( "protocols.simple_moves.sidechain_moves.SidechainMover" );
 
 namespace protocols {
 namespace simple_moves {
@@ -310,7 +309,7 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue )
 	// select a residue type
 	core::chemical::ResidueTypeCOP residue_type;
 	do {
-		Size const restypenum(RG.random_range(1, residue_types.size()));
+		Size const restypenum(numeric::random::rg().random_range(1, residue_types.size()));
 		core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter iter(residue_types.begin());
 		for (Size i = 1; i < restypenum; ++i) ++iter;
 		residue_type = *iter;
@@ -344,7 +343,7 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue )
 	/// At the moment, the ligand rotamer library does not respond to the assign_random_rotamer_with_bias
 	/// method, so this is an ok check.
 
-	core::Real move_type_prob( RG.uniform() );
+	core::Real move_type_prob( numeric::random::rg().uniform() );
 	if ( move_type_prob > prob_uniform_  && residue_dunbrack_library) { //set up rotamer library stuff
 		//p_within_rot or p_jump_rots or p_random_pert_to_current
 		core::Real const phi( residue_dunbrack_library->get_phi_from_rsd( *input_residue ) );
@@ -384,7 +383,7 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue )
 			TR.Debug << "making a uniform jump " << std::endl;
 		}
 		for ( Size ii = 1; ii <= last_nchi_; ++ii ) {
-			last_chi_angles_[ ii ] = RG.uniform() * 360.0 - 180.0;
+			last_chi_angles_[ ii ] = numeric::random::rg().uniform() * 360.0 - 180.0;
 		}
 		last_uniform_ = true;
 	}
@@ -485,7 +484,7 @@ SidechainMover::make_rotwell_jump(
 		TR.Debug << "making a rot-well jump " << std::endl;
 	}
 	// choose a random rotamer according to its probability
-	core::Real random_prob = RG.uniform();
+	core::Real random_prob = numeric::random::rg().uniform();
 
   //yuan, 01/06/10
   //modify the rotprob, if want to sample at different temperature
@@ -517,8 +516,8 @@ SidechainMover::make_rotwell_jump(
 		// (and interpolation introduced a tiny bit of numerical noise).
 		if ( rotnum == rotamer_sample_data.size() ) break;
 	}
-	//rotamer_sample_data[rotnum].assign_random_chi(last_chi_angles_,RG);
-	rotamer_sample_data[rotnum].assign_random_chi(last_chi_angles_, RG, std::sqrt(sampling_temperature_/temperature0_));
+	//rotamer_sample_data[rotnum].assign_random_chi(last_chi_angles_,numeric::random::rg());
+	rotamer_sample_data[rotnum].assign_random_chi(last_chi_angles_, numeric::random::rg(), std::sqrt(sampling_temperature_/temperature0_));
 	for(unsigned int ii = 1; ii <= last_chi_angles_.size(); ii++){
 		last_chi_angles_[ii] = basic::periodic_range( last_chi_angles_[ii], 360.0 );
 	}
@@ -540,7 +539,7 @@ SidechainMover::preturb_rot_and_dunbrack_eval( core::conformation::ResidueOP inp
 		/// apl -- unused -- core::Real proposed_move_dunbrack_probability = -1;
 		/// apl -- unused -- core::Real before_pert_prob = 0;
 		do {
-			perturb_chi( RG, max_deviation, previous_chi_angles, new_chi_angles );
+			perturb_chi( numeric::random::rg(), max_deviation, previous_chi_angles, new_chi_angles );
  // new_chi_angles.resize( previous_chi_angles.size() );
  // for(unsigned int chi_i = 1; chi_i <= previous_chi_angles.size(); chi_i++)
 	//{
@@ -548,7 +547,7 @@ SidechainMover::preturb_rot_and_dunbrack_eval( core::conformation::ResidueOP inp
  // }
 
 		}
-		while( !dunbrack_accept( RG, *input_residue, previous_chi_angles, new_chi_angles ) );
+		while( !dunbrack_accept( numeric::random::rg(), *input_residue, previous_chi_angles, new_chi_angles ) );
 		if ( preserve_detailed_balance_ ) {
 			TR << "ERROR: you cannot specify accept_according_to_dunbrack_ and preserve_detailed_balance_ both as true!" << std::endl;
 			TR << "Recommend rerunning with 'random perturb current' frequency set to zero." << std::endl;
@@ -581,12 +580,12 @@ SidechainMover::perturb_rot_within_well(
 		}
 	}
 	last_withinrot_ = true;
-	rotamer_sample_data[rotnum].assign_random_chi(last_chi_angles_,RG);
+	rotamer_sample_data[rotnum].assign_random_chi(last_chi_angles_,numeric::random::rg());
 	for(unsigned int ii = 1; ii <= last_chi_angles_.size(); ii++){
 		last_chi_angles_[ii] = basic::periodic_range(last_chi_angles_[ii],360.0);
 	}
 	//residue_rotamer_library->assign_random_rotamer_with_bias(
-	//	pose.residue( resnum ), *scratch_, RG,
+	//	pose.residue( resnum ), *scratch_, numeric::random::rg(),
 	//	last_chi_angles_, true );
 
 }
@@ -617,7 +616,7 @@ SidechainMover::apply(
 		resnum = next_resnum_;
 		next_resnum_ = 0;
 	} else {
-		resnum = packed_residues_[RG.random_range(1, packed_residues_.size())];
+		resnum = packed_residues_[ numeric::random::rg().random_range(1, packed_residues_.size()) ];
 	}
 	conformation::ResidueOP newresidue = new conformation::Residue( pose.residue( resnum ) );
 	if ( TR.visible( basic::t_debug )) {
@@ -1068,7 +1067,7 @@ SidechainMover::update_type()
 
 	//Size chinum(1);
 	// use Dunbrack statistics to bias chi angle sampling
-	//if (RG.uniform() > prob_uniform_ && residue_dunbrack_library) {
+	//if (numeric::random::rg().uniform() > prob_uniform_ && residue_dunbrack_library) {
 	//
 	//	// get indices of the phi and psi bins, plus extra information we don't need
 	//	Size phibin, psibin, phibin_next, psibin_next;
@@ -1077,7 +1076,7 @@ SidechainMover::update_type()
 	//		phibin_next, psibin_next, phi_err, psi_err);
 
 	//	// choose a random rotamer according to its probability
-	//	Real accprob = RG.uniform();
+	//	Real accprob = numeric::random::rg().uniform();
 	//	for (Size rotnum = 1; rotnum <= residue_dunbrack_library->nrots_per_bin(); rotnum++) {
 	//
 	//		core::pack::dunbrack::DunbrackRotamer< core::pack::dunbrack::FOUR > rotamer(
@@ -1092,7 +1091,7 @@ SidechainMover::update_type()
 	//		TR.Debug << "Using rotamer " << rotnum << ": ";
 	//		for ( ; chinum <= residue_dunbrack_library->nchi_aa(); ++chinum) {
 	//			TR.Debug << " " << rotamer.chi_mean(chinum) << "(" << rotamer.chi_sd(chinum) << ")";
-	//			last_chi_angles_[chinum] = radians(RG.gaussian()*rotamer.chi_sd(chinum) + rotamer.chi_mean(chinum));
+	//			last_chi_angles_[chinum] = radians(numeric::random::rg().gaussian()*rotamer.chi_sd(chinum) + rotamer.chi_mean(chinum));
 	//			pose.set_chi(chinum, resnum, degrees(last_chi_angles_[chinum]));
 	//		}
 	//		TR.Debug << std::endl;
@@ -1104,7 +1103,7 @@ SidechainMover::update_type()
 
 	// any/all remaning chi angles are chosen uniformly
 	//for ( ; chinum <= residue_type->nchi(); ++chinum) {
-	//	last_chi_angles_[chinum] = RG.uniform()*numeric::constants::d::pi_2 - numeric::constants::d::pi;
+	//	last_chi_angles_[chinum] = numeric::random::rg().uniform()*numeric::constants::d::pi_2 - numeric::constants::d::pi;
 	//	pose.set_chi(chinum, resnum, degrees(last_chi_angles_[chinum]));
 	//}
 

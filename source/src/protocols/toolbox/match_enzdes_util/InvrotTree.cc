@@ -45,7 +45,7 @@ namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
-static basic::Tracer tr( "protocols.toolbox.match_enzdes_util.InvrotTree" );
+static thread_local basic::Tracer tr( "protocols.toolbox.match_enzdes_util.InvrotTree" );
 
 
 InvrotTree::InvrotTree()

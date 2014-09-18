@@ -152,6 +152,7 @@ bool inlist (
 	return false;
 }
 
+
 /**********
   MAIN!!!
 **********/
@@ -167,7 +168,6 @@ int main(int argc, char *argv[]) {
 	using namespace chemical;
 	using namespace conformation;
 
-	numeric::random::RandomGenerator RG( 923749 ); //Random generator and seed
 
 	printf("Starting make_truecyclicpeptide.\n");
 	printf("Pilot app created 31 May 2013 by Vikram K. Mulligan, Baker Laboratory.\n");
@@ -373,7 +373,7 @@ int main(int argc, char *argv[]) {
 		//If a fraction of residues should be valines, mutate temp_alapose accordingly:
 		if(option[valfraction].user()) {
 			for(core::Size ir=1; ir<=temp_alapose.n_residue(); ir++) {
-				if(RG.uniform() < option[valfraction]()) {
+				if(numeric::random::rg().uniform() < option[valfraction]()) {
 					string aaname = "VAL";
 					if( core::chemical::is_D_aa( temp_alapose.residue(ir).aa() ) ) aaname="DVAL";
 					protocols::simple_moves::MutateResidue mutres(ir, aaname);
@@ -385,8 +385,8 @@ int main(int argc, char *argv[]) {
 		//Randomize backbone:
 		//TODO -- randomly sample cis-pro if there are prolines.
 		for(core::Size ir=1; ir<=4; ir++) {
-			if(ir>1) temp_alapose.set_phi(ir, ((core::Real)RG.uniform()-0.5)*360.0);
-			if(ir<4) temp_alapose.set_psi(ir, ((core::Real)RG.uniform()-0.5)*360.0);
+			if(ir>1) temp_alapose.set_phi(ir, ((core::Real)numeric::random::rg().uniform()-0.5)*360.0);
+			if(ir<4) temp_alapose.set_psi(ir, ((core::Real)numeric::random::rg().uniform()-0.5)*360.0);
 		}
 		temp_alapose.update_residue_neighbors();
 
@@ -411,7 +411,7 @@ int main(int argc, char *argv[]) {
 						mutres.apply(temppose);
 					}
 				} else { //The rest of the residues must still be mutated
-					if(RG.uniform() < option[valfraction]()) {
+					if(numeric::random::rg().uniform() < option[valfraction]()) {
 						string aaname = "VAL";
 						if( core::chemical::is_D_aa( temppose.residue(ir).aa() ) ) aaname="DVAL";
 						protocols::simple_moves::MutateResidue mutres(ir, aaname);

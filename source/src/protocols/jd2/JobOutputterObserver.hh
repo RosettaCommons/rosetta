@@ -25,7 +25,7 @@ namespace jd2 {
 class JobOutputterObserver {
 public:
 	virtual
-	void add_values_to_job( core::pose::Pose const& pose, protocols::jd2::JobOP ) const = 0;
+	void add_values_to_job( core::pose::Pose const& pose, protocols::jd2::Job & ) const = 0;
 };
 
 #include <utility/pointer/access_ptr.hh>

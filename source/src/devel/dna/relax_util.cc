@@ -49,12 +49,11 @@ using namespace core;
 using namespace ObjexxFCL;
 using utility::vector1;
 
-static basic::Tracer tt( "devel.dna.relax_util", basic::t_trace );
-static basic::Tracer td( "devel.dna.relax_util", basic::t_debug );
-static basic::Tracer ti( "devel.dna.relax_util", basic::t_info );
-static basic::Tracer tw( "devel.dna.relax_util", basic::t_warning );
+static thread_local basic::Tracer tt( "devel.dna.relax_util", basic::t_trace );
+static thread_local basic::Tracer td( "devel.dna.relax_util", basic::t_debug );
+static thread_local basic::Tracer ti( "devel.dna.relax_util", basic::t_info );
+static thread_local basic::Tracer tw( "devel.dna.relax_util", basic::t_warning );
 
-static numeric::random::RandomGenerator RG(53783); // <- Magic number, do not change it!!!
 
 /// @details  Add constraints to the pose's constraint set that try to keep the dna chain connected
 
@@ -117,7 +116,7 @@ choose_random_base_pair( pose::Pose const & pose )
 		if ( partner[i] > i ) bps.push_back( i );
 	}
 	assert( bps.size() );
-	return bps[ static_cast< int >( RG.uniform() * bps.size() ) + 1 ];
+	return bps[ static_cast< int >( numeric::random::rg().uniform() * bps.size() ) + 1 ];
 }
 
 
@@ -134,7 +133,7 @@ choose_random_base_step_jump( pose::Pose const & pose )
 		}
 	}
 	assert( bs.size() );
-	return bs[ static_cast< int >( RG.uniform() * bs.size() ) + 1 ];
+	return bs[ static_cast< int >( numeric::random::rg().uniform() * bs.size() ) + 1 ];
 }
 
 

@@ -54,7 +54,7 @@ namespace pack {
 namespace dunbrack {
 namespace cenrot {
 
-static basic::Tracer TR("core.pack.dunbrack.cenrot");
+static thread_local basic::Tracer TR( "core.pack.dunbrack.cenrot" );
 
 Size const SingleResidueCenrotLibrary::N_PHIPSI_BINS = 36;
 Real const SingleResidueCenrotLibrary::PHIPSI_BINRANGE = 10.0;

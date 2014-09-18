@@ -22,7 +22,7 @@
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-static basic::Tracer TR("core.scoring.constraints.SquareWall2Func");
+static thread_local basic::Tracer TR( "core.scoring.constraints.SquareWall2Func" );
 
 // C++ Headers
 

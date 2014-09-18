@@ -80,8 +80,7 @@ namespace loops {
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
 
-basic::Tracer tt( "protocols.loops.loops_main" );
-static numeric::random::RandomGenerator RG(31413);
+static thread_local basic::Tracer tt( "protocols.loops.loops_main" );
 
 
 void read_loop_fragments(

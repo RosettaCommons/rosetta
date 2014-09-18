@@ -61,7 +61,7 @@ using basic::Error;
 #include <protocols/moves/MoverStatistics.hh>
 
 
-static basic::Tracer TR("loops_from_density_main");
+static thread_local basic::Tracer TR( "loops_from_density_main" );
 
 namespace loops_from_density { RealOptionKey frac_loop( "loops_from_density:frac_loop" ); }
 namespace loops_from_density { RealOptionKey frac_rigid( "loops_from_density:frac_rigid" ); }

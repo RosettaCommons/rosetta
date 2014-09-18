@@ -36,7 +36,7 @@
 namespace protocols {
 namespace md {
 
-static basic::Tracer TR("protocols.md");
+static thread_local basic::Tracer TR( "protocols.md" );
 
 void
 MDBase::set_constraint(	Real const sdev )

@@ -40,7 +40,7 @@
 
 //Auto Headers
 #include <core/scoring/ScoreFunction.fwd.hh>
-static basic::Tracer tr("protocols.features.DatabaseJobOutputter");
+static thread_local basic::Tracer tr( "protocols.features.DatabaseJobOutputter" );
 
 namespace protocols {
 namespace features {

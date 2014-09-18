@@ -73,7 +73,7 @@
 
 using numeric::conversions::radians;
 
-static basic::Tracer TR("dubois_graft");
+static thread_local basic::Tracer TR( "dubois_graft" );
 
 using core::Size;
 using core::Real;

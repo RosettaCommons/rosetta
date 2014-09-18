@@ -56,8 +56,7 @@ namespace rigid {
 
 using namespace core;
 
-static numeric::random::RandomGenerator RG(67729);
-static basic::Tracer TR("protocols.moves.PoseMembraneRigidBodyMover");
+static thread_local basic::Tracer TR( "protocols.moves.PoseMembraneRigidBodyMover" );
 
 /// move pose into a membrane/*
 MovePoseToMembraneCenterMover::MovePoseToMembraneCenterMover() : moves::Mover("MovePoseToMembraneCenterMover")
@@ -160,7 +159,7 @@ MembraneCenterPerturbationMover::MembraneCenterPerturbationMover( core::Real con
 void MembraneCenterPerturbationMover::apply( core::pose::Pose & pose )
 {
 	Vector const membrane_normal( scoring::MembraneEmbed_from_pose( pose ).normal() );
-	Real random_translation (trans_mag_ * (2.*RG.uniform()-1.));
+	Real random_translation (trans_mag_ * (2.*numeric::random::rg().uniform()-1.));
 	Vector const trans_vect = random_translation * membrane_normal;
 
 	MovePoseToMembraneCenterMover move_pose_to_membrane_mover;
@@ -196,9 +195,9 @@ void MembraneNormalPerturbationMover::apply( core::pose::Pose & pose )
 	Vector x_axis (test_vec.cross(membrane_normal).normalize());
 	Vector y_axis (membrane_normal.cross(x_axis).normalize());
 
-	Real random_angle (numeric::conversions::radians(360.) * RG.uniform());
+	Real random_angle (numeric::conversions::radians(360.) * numeric::random::rg().uniform());
 	Vector random_axis (cos(random_angle) * x_axis + sin(random_angle) * y_axis);
-	Real random_rotation_angle (rotation_mag_ * RG.uniform());
+	Real random_rotation_angle (rotation_mag_ * numeric::random::rg().uniform());
 
 	MovePoseToMembraneCenterMover move_pose_to_membrane_mover;
 	move_pose_to_membrane_mover.apply(pose);

@@ -72,8 +72,7 @@ using basic::Warning;
 namespace protocols {
 namespace rbsegment_relax {
 
-static basic::Tracer TR("protocols.rbsegment_relax.IdealizeHelices");
-static numeric::random::RandomGenerator RG(8411111);
+static thread_local basic::Tracer TR( "protocols.rbsegment_relax.IdealizeHelices" );
 
 using namespace protocols;
 using namespace core;
@@ -134,7 +133,7 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 
 		for (core::uint j = start_i+2; j <= stop_i - 2; ++j) {
 			if (pose.residue(j).aa() == core::chemical::aa_pro) {
-				if (RG.uniform() <= 0.5) {
+				if (numeric::random::rg().uniform() <= 0.5) {
 					if (start_i < j - 10) corrected_helices.push_back( std::make_pair( start_i, j - 6 ) );
 					start_i = j - 2;
 				}

@@ -48,7 +48,7 @@
 namespace protocols{
 namespace features{
 
-static basic::Tracer TR("protocols.features.BatchFeatures");
+static thread_local basic::Tracer TR( "protocols.features.BatchFeatures" );
 
 using std::string;
 using std::stringstream;

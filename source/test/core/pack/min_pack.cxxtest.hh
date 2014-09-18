@@ -51,7 +51,6 @@ static basic::Tracer TR("core.pack.scmin.SCMinMultifunc.cxxtest");
 
 using namespace core;
 
-static numeric::random::RandomGenerator rtminRG( 10502 ); // <- Magic number, do not change it!!!
 
 class min_pack_Tests : public CxxTest::TestSuite
 {

@@ -68,11 +68,9 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static numeric::random::RandomGenerator RG(12321); // <- Magic number, do not change it!!!
 
 //typedef utility::pointer::owning_ptr< BaseJobDistributor< BasicJobOP > > BaseJobDistributorOP
-basic::Tracer TR("pilot_apps.FlexPepDock");
-//static numeric::random::RandomGenerator JDRG(32342524); // magic number copied from Job Distributor
+static thread_local basic::Tracer TR( "pilot_apps.FlexPepDock" );
 
 
 

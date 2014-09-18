@@ -40,7 +40,7 @@ using namespace core::pose;
 namespace protocols {
 namespace loophash {
 
-static basic::Tracer TR("LocalInserter");
+static thread_local basic::Tracer TR( "LocalInserter" );
 
 /// @details Auto-generated virtual destructor
 LocalInserter::~LocalInserter() {}

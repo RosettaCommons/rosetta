@@ -61,7 +61,7 @@
 
 using namespace protocols::protein_interface_design;
 
-static basic::Tracer TR( "protocols.protein_interface_design.movers.PlacementMinimizationMover" );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.PlacementMinimizationMover" );
 
 namespace protocols {
 namespace protein_interface_design {

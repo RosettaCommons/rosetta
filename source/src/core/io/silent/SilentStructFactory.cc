@@ -39,11 +39,16 @@ namespace core {
 namespace io {
 namespace silent {
 
-static basic::Tracer tr("core.io.silent");
+static thread_local basic::Tracer tr( "core.io.silent" );
 
 /// @details Private constructor insures correctness of singleton.
 SilentStructFactory::SilentStructFactory() {}
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< SilentStructFactory * > SilentStructFactory::instance_( 0 );
+#else
+SilentStructFactory * SilentStructFactory::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11
@@ -58,7 +63,6 @@ std::mutex & SilentStructFactory::singleton_mutex() { return singleton_mutex_; }
 /// @brief static function to get the instance of ( pointer to) this singleton class
 SilentStructFactory * SilentStructFactory::get_instance()
 {
-	static SilentStructFactory * instance_( 0 );
 
 	boost::function< SilentStructFactory * () > creator = boost::bind( &SilentStructFactory::create_singleton_instance );
 	utility::thread::safely_create_singleton( creator, instance_ );

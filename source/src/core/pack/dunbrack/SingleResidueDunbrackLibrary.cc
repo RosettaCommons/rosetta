@@ -61,7 +61,7 @@ namespace core {
 namespace pack {
 namespace dunbrack {
 
-static basic::Tracer SRDL_TR("core.pack.dunbrack");
+static thread_local basic::Tracer SRDL_TR( "core.pack.dunbrack" );
 
 Real const SingleResidueDunbrackLibrary::NEUTRAL_PHI = -90; // R++ value.  Roland Dunbrack suggests -60.
 Real const SingleResidueDunbrackLibrary::NEUTRAL_PSI = 130; // R++ value.  Roland Dunbrack suggests  60.
@@ -726,15 +726,14 @@ SingleResidueDunbrackLibrary::hokey_template_workaround()
 	srsrdl_2.get_all_rotamer_samples( 0.0, 0.0 );
 
 
-	numeric::random::RandomGenerator RG(1);
 	ChiVector chiv;
 
-	rsrdl_1.assign_random_rotamer_with_bias( rsd, pose, scratch, RG, chiv, true );
-	rsrdl_2.assign_random_rotamer_with_bias( rsd, pose, scratch, RG, chiv, true );
-	rsrdl_3.assign_random_rotamer_with_bias( rsd, pose, scratch, RG, chiv, true );
-	rsrdl_4.assign_random_rotamer_with_bias( rsd, pose, scratch, RG, chiv, true );
-	srsrdl_1.assign_random_rotamer_with_bias( rsd, pose, scratch, RG, chiv, true );
-	srsrdl_2.assign_random_rotamer_with_bias( rsd, pose, scratch, RG, chiv, true );
+	rsrdl_1.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
+	rsrdl_2.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
+	rsrdl_3.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
+	rsrdl_4.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
+	srsrdl_1.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
+	srsrdl_2.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
 
 	rsrdl_1.get_probability_for_rotamer( 0.0, 0.0, 1 );
 	rsrdl_2.get_probability_for_rotamer( 0.0, 0.0, 1 );

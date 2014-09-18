@@ -47,7 +47,7 @@
 
 // ObjexxFCL Headers
 
-static basic::Tracer tr("protocols.abinitio.abscript.AbscriptStageMover", basic::t_info);
+static thread_local basic::Tracer tr( "protocols.abinitio.abscript.AbscriptStageMover", basic::t_info );
 
 namespace protocols {
 namespace abinitio {

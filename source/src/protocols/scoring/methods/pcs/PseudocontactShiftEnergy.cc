@@ -94,7 +94,7 @@ PseudocontactShiftEnergyCreator::score_types_for_method() const {
 	return sts;
 }
 
-basic::Tracer TR_PCS_Energy("protocols.scoring.methods.pcs.PCS_Energy");
+static thread_local basic::Tracer TR_PCS_Energy( "protocols.scoring.methods.pcs.PCS_Energy" );
 
 void
 PCS_Energy::indicate_required_context_graphs( utility::vector1< bool > & ) const{
@@ -789,7 +789,12 @@ PCS_Energy_parameters_manager::get_vector_weight() const{
 	return vec_individual_weight_;
 }
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< PCS_Energy_parameters_manager * > PCS_Energy_parameters_manager::instance_( 0 );
+#else
 PCS_Energy_parameters_manager * PCS_Energy_parameters_manager::instance_( 0 );
+#endif
+
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

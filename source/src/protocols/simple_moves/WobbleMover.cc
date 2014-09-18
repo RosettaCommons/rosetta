@@ -36,12 +36,11 @@
 
 // C++ headers
 
-static basic::Tracer TR("protocol.abinitio.WobbleMover");
+static thread_local basic::Tracer TR( "protocol.abinitio.WobbleMover" );
 
 namespace protocols {
 namespace simple_moves {
 
-static numeric::random::RandomGenerator RG(490);  // <- Magic number, do not change it!
 
 using namespace core;
 using namespace fragment;
@@ -124,7 +123,7 @@ bool WobbleMover::apply_fragment (
  		} else if ( frame.start() <= buffer_length_ ) { //close to start of pose: cut at Cterm
 			cut_Cterm = true;
 		}	else { //otherwise random direction
-			cut_Cterm = RG.uniform() >= 0.5 ;
+			cut_Cterm = numeric::random::rg().uniform() >= 0.5 ;
 		};
 
 		if ( cut_Cterm ) {

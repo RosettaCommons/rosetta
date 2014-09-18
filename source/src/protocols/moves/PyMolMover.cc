@@ -64,13 +64,13 @@
 namespace protocols {
 namespace moves {
 
-static basic::Tracer TR("protocols.moves.PyMolMover");
+static thread_local basic::Tracer TR( "protocols.moves.PyMolMover" );
 
-//static numeric::random::RandomGenerator RG(9636236);
 
-/// We using independent RG which is not connected to RNG system because we do not want PyMOL to interfere with other Rosetta systems.
+/// We using independent numeric::random::rg() which is not connected to RNG system because we do not want PyMOL to interfere with other Rosetta systems.
 /// I.e creating and using PyMOL mover should not change any trajectories of the running program even in production mode.
-numeric::random::uniform_RG_OP getRG()
+numeric::random::uniform_RG_OP
+getRG()
 {
 	static numeric::random::uniform_RG_OP RG = 0;
 

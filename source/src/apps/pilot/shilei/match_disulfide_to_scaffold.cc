@@ -43,7 +43,7 @@
 #include <core/scoring/disulfides/FullatomDisulfideEnergyContainer.hh>
 #include <core/scoring/Energies.hh>
 
-static basic::Tracer TR( "apps.pilot_apps.shilei.match_disulfide_to_scaffold" );
+static thread_local basic::Tracer TR( "apps.pilot_apps.shilei.match_disulfide_to_scaffold" );
 
 OPT_1GRP_KEY(Integer,match_disulfide_to_scaffold,cdsf_max_res)
 OPT_1GRP_KEY(String,match_disulfide_to_scaffold,input_disulfide)

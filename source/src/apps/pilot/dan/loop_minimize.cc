@@ -71,7 +71,7 @@
 
 using namespace core;
 
-static basic::Tracer TR("procotols.looprelax");
+static thread_local basic::Tracer TR( "procotols.looprelax" );
 
 // some functions copied from loops_main (they were private)
 

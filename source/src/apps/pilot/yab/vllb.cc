@@ -48,7 +48,7 @@
 
 
 
-static basic::Tracer TR( "apps.pilot.yab.vllb" );
+static thread_local basic::Tracer TR( "apps.pilot.yab.vllb" );
 
 
 void * ligand_test( void * ) {

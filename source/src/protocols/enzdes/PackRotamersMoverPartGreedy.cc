@@ -52,8 +52,7 @@ using namespace scoring;
 
 using basic::Warning;
 using basic::t_warning;
-static basic::Tracer TR("protocols.enzdes.PackRotamersMoverPartGreedy");
-static numeric::random::RandomGenerator trg_RG(10805); // <- Magic number, do not change it!!!
+static thread_local basic::Tracer TR( "protocols.enzdes.PackRotamersMoverPartGreedy" );
 
 std::string
 PackRotamersMoverPartGreedyCreator::keyname() const
@@ -181,7 +180,7 @@ PackRotamersMoverPartGreedy::apply( Pose & pose )
   }
   runtime_assert(target_residues_.size()>0);
   //randomly shuffle targets
-  random_permutation( target_residues_ , trg_RG );
+  random_permutation( target_residues_ , numeric::random::rg() );
   //Make sure target residues are held fixed
    for( utility::vector1< core::Size >::const_iterator pos_it = target_residues_.begin(); pos_it != target_residues_.end(); ++pos_it ){
 	task_->nonconst_residue_task( *pos_it ).prevent_repacking();

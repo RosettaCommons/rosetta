@@ -35,7 +35,7 @@
 namespace core {
 namespace sequence {
 
-static basic::Tracer tr( "core.sequence.ChemicalShiftSequence" );
+static thread_local basic::Tracer tr( "core.sequence.ChemicalShiftSequence" );
 
 void ChemicalShiftSequence::read_from_file(
 	utility::file::FileName const & fn

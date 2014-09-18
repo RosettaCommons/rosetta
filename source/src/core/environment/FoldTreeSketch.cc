@@ -38,8 +38,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
-static numeric::random::RandomGenerator RG(624581); // <- Magic number, do not change it!!!
-static basic::Tracer tr("core.environment.FoldTreeSketch", basic::t_info);
+static thread_local basic::Tracer tr( "core.environment.FoldTreeSketch", basic::t_info );
 
 namespace core {
 namespace environment {
@@ -292,7 +291,7 @@ core::Size FoldTreeSketch::insert_cut( utility::vector1< Real > const& bias ){
     throw EXCN_FTSketchGraph( "Cut bias array sum <= 0.0" );
   }
 
-  core::Real rand = RG.uniform() * sum;
+  core::Real rand = numeric::random::rg().uniform() * sum;
 
   for( Size seqpos = 1; seqpos <= nres(); ++seqpos ){
     rand -= bias[seqpos];
@@ -337,7 +336,7 @@ std::set< core::Size > FoldTreeSketch::remove_cycles( utility::vector1< Real > c
     }
 
     // use a randomly generated number [0, sum] to choose which peptide edge to cut
-    core::Real rand = RG.uniform() * sum;
+    core::Real rand = numeric::random::rg().uniform() * sum;
     for( Size cycle_id = 1; cycle_id <= cycle.size(); ++cycle_id ){
       Size seqpos = cycle[cycle_id];
       rand -= bias[ seqpos ];

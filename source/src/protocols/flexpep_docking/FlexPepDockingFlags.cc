@@ -35,7 +35,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer TR("protocols.flexPepDocking.FlexPepDockingFlags");
+static thread_local basic::Tracer TR( "protocols.flexPepDocking.FlexPepDockingFlags" );
 
 using namespace protocols::flexpep_docking;
 

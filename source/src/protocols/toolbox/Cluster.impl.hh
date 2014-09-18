@@ -33,7 +33,7 @@
 namespace protocols {
 namespace toolbox {
 
-static basic::Tracer _impl_tr("protocols.toolbox.cluster");
+static thread_local basic::Tracer _impl_tr( "protocols.toolbox.cluster" );
 
 template< typename SilentStructIterator, typename StructureContainer >
 void cluster_silent_structs(

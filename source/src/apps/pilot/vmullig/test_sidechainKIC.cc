@@ -104,7 +104,6 @@ int main(int argc, char *argv[]) {
 
 	//using namespace protocols::toolbox::match_enzdes_util; //Florian's stuff
 
-	numeric::random::RandomGenerator RG( 663321 ); //Random generator and seed
 
 	printf("Starting test_sidechainKIC.cc\n");
 	printf("Pilot app created 20 March 2014 by Vikram K. Mulligan, Baker Laboratory.\n");

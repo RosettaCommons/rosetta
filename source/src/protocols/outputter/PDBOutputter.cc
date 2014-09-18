@@ -20,7 +20,7 @@
 namespace protocols {
 namespace outputter {
 
-static basic::Tracer TR("protocols.outputter.PDBOutputter");
+static thread_local basic::Tracer TR( "protocols.outputter.PDBOutputter" );
 
 #ifdef USELUA
 void lregister_PDBOutputter( lua_State * lstate ) {

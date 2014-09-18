@@ -68,9 +68,8 @@ namespace rigid {
 
 using namespace core;
 
-static basic::Tracer TR("protocols.moves.RigidBodyMover");
-static basic::Tracer TRBM("protocols.moves.RigidBodyMover");
-static numeric::random::RandomGenerator RG(43225);
+static thread_local basic::Tracer TR( "protocols.moves.RigidBodyMover" );
+static thread_local basic::Tracer TRBM( "protocols.moves.RigidBodyMover" );
 
 // Large rotational perturbations produce a distribution of orientations
 // that are neither uniform nor similar to the input orientation.
@@ -249,7 +248,7 @@ RigidBodyPerturbMover::apply( core::pose::Pose & pose )
 	// Want to update our center of rotation every time we take a step.
 	// baseclass jump is chosen at random from movable jumps every apply
 	rb_jump_ = ( movable_jumps_.size() > 1 ) ?
-		RG.random_element( movable_jumps_ )
+		numeric::random::rg().random_element( movable_jumps_ )
 		: movable_jumps_[1];
 
 	TR.Trace << "Set movable jump #" << rb_jump_ << std::endl;
@@ -335,7 +334,7 @@ RigidBodyPerturbRandomJumpMover::RigidBodyPerturbRandomJumpMover(
 void
 RigidBodyPerturbRandomJumpMover::apply(core::pose::Pose& pose)
 {
-	core::Size random_jump_num = static_cast<core::Size>(numeric::random::RG.random_range(1,num_jump_));
+	core::Size random_jump_num = static_cast<core::Size>(numeric::random::rg().random_range(1,num_jump_));
 	RigidBodyPerturbMover RBMover(random_jump_num,rot_mag_in_,trans_mag_in_);
 	RBMover.apply(pose);
 }
@@ -455,7 +454,7 @@ RigidBodyPerturbNoCenterMover::apply( core::pose::Pose & pose )
 {
 	// set baseclass rb_jump_ randomly from list of movable jumps
 	if ( movable_jumps_.size() > 1 ) {
-		rb_jump_ = RG.random_element( movable_jumps_ );
+		rb_jump_ = numeric::random::rg().random_element( movable_jumps_ );
 	} else if ( movable_jumps_.size() == 1 ) {
 		rb_jump_ = movable_jumps_[1];
 	} else {
@@ -637,7 +636,7 @@ RigidBodySpinMover::apply( core::pose::Pose & pose )
 			 << rot_center_.z() << std::endl;
 	// comments for set_rb_center() explain which stub to use when!
 	flexible_jump.set_rb_center( dir_, downstream_stub, rot_center_ );
-	flexible_jump.rotation_by_axis( upstream_stub, spin_axis_, rot_center_, 360.0f*RG.uniform() );
+	flexible_jump.rotation_by_axis( upstream_stub, spin_axis_, rot_center_, 360.0f*numeric::random::rg().uniform() );
 		TRBM << "Spin: " << "Jump (after):  " << flexible_jump << std::endl;
 	pose.set_jump( rb_jump_, flexible_jump );
 	protocols::geometry::centroids_by_jump(pose, rb_jump_, dummy_up, dummy_down);
@@ -865,7 +864,10 @@ UniformSphereTransMover::~UniformSphereTransMover() {}
 
 void UniformSphereTransMover::reset_trans_axis(){
 	do {
-		trans_axis_.assign( step_size_*2*(RG.uniform()-0.5), step_size_*2*(RG.uniform()-0.5), step_size_*2*(RG.uniform()-0.5) );
+		trans_axis_.assign(
+			step_size_*2*(numeric::random::rg().uniform()-0.5),
+			step_size_*2*(numeric::random::rg().uniform()-0.5),
+			step_size_*2*(numeric::random::rg().uniform()-0.5) );
 		random_step_ = trans_axis_.length();
 	} while( random_step_ > step_size_ );
 	trans_axis_.normalize();
@@ -932,7 +934,7 @@ void RigidBodyDofRandomizeMover::apply( core::pose::Pose & pose )
 		if ( dof_.allow_dof(i) && ( dof_.has_range1(i) || dof_.has_range1_lower(i) ) ) {
 			core::Real new_trans(0);
 			if ( dof_.has_range1(i) ) {
-				new_trans = RG.uniform()*(dof_.range1_upper(i) - dof_.range1_lower(i) ) + dof_.range1_lower(i);
+				new_trans = numeric::random::rg().uniform()*(dof_.range1_upper(i) - dof_.range1_lower(i) ) + dof_.range1_lower(i);
 			} else {
 				new_trans = dof_.range1_lower(i);
 			}
@@ -964,7 +966,7 @@ void RigidBodyDofRandomizeMover::apply( core::pose::Pose & pose )
 		//	randomize each rotational dof independently
 		if ( dof_.allow_dof(i) && dof_.has_range1(i) ) {
 			numeric::xyzMatrix< Real > rot;
-			core::Real angle = RG.uniform()*(dof_.range1_upper(i) - dof_.range1_lower(i) ) + dof_.range1_lower(i);
+			core::Real angle = numeric::random::rg().uniform()*(dof_.range1_upper(i) - dof_.range1_lower(i) ) + dof_.range1_lower(i);
 
 			if ( i == X_ANGLE_DOF ) rot = numeric::x_rotation_matrix_degrees(angle);
 			if ( i == Y_ANGLE_DOF ) rot = numeric::y_rotation_matrix_degrees(angle);
@@ -1121,7 +1123,7 @@ RigidBodyDofTransMover::RigidBodyDofTransMover(
 		T("protocols.moves.rigid_body") << "[WARNING] no movable jumps!" << std::endl;
 		return;
 	}
-	rb_jump_ = RG.random_element( trans_jumps );
+	rb_jump_ = numeric::random::rg().random_element( trans_jumps );
 	std::map< Size, core::conformation::symmetry::SymDof >::iterator jump_iterator =
 		dofs.find( rb_jump_ );
 	if ( jump_iterator == dofs.end() ) {
@@ -1249,7 +1251,7 @@ void RigidBodyDofSeqTransMover::apply( core::pose::Pose & pose )
   end = rb_jumps_.end();
 
   //random__shuffle(rb_jumps_.begin(), rb_jumps_.end() );
-    numeric::random::random_permutation(rb_jumps_.begin(), rb_jumps_.end(), numeric::random::RG);
+    numeric::random::random_permutation(rb_jumps_.begin(), rb_jumps_.end(), numeric::random::rg());
 
   for ( it = start; it != end; ++it ) {
     jump_iterator = dofs_.find( *it );
@@ -1335,7 +1337,7 @@ void RigidBodyDofRandomTransMover::apply( core::pose::Pose & pose )
   end = rb_jumps_.end();
 
   //random__shuffle(rb_jumps_.begin(), rb_jumps_.end() );
-  numeric::random::random_permutation(rb_jumps_.begin(), rb_jumps_.end(), numeric::random::RG);
+  numeric::random::random_permutation(rb_jumps_.begin(), rb_jumps_.end(), numeric::random::rg());
 
 	int jump_;
 	if ( rb_jumps_.size() < 1 ) return;
@@ -1412,7 +1414,7 @@ RigidBodyDofPerturbMover::RigidBodyDofPerturbMover(
     T("protocols.moves.rigid_body") << "[WARNING] no movable jumps!" << std::endl;
     return;
   }
-  rb_jump_ = RG.random_element( moving_jumps );
+  rb_jump_ = numeric::random::rg().random_element( moving_jumps );
 	std::map< Size, core::conformation::symmetry::SymDof >::iterator jump_iterator =
 																				dofs.find( rb_jump_ );
 	if ( jump_iterator == dofs.end() ) {
@@ -1529,7 +1531,7 @@ void RigidBodyDofSeqPerturbMover::apply( core::pose::Pose & pose )
 	end = rb_jumps_.end();
 	// Shuffle the order by which we visit the jumps
 	//random__shuffle(rb_jumps_.begin(), rb_jumps_.end() );
-	numeric::random::random_permutation(rb_jumps_.begin(), rb_jumps_.end(), numeric::random::RG);
+	numeric::random::random_permutation(rb_jumps_.begin(), rb_jumps_.end(), numeric::random::rg());
 	// Iterate over all available translation jumps
 	// and do a translation for its allowd translation dofs
 	for ( it = start; it != end; ++it ) {

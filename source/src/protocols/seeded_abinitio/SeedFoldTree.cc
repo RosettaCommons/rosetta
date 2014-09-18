@@ -56,8 +56,7 @@
 using namespace core::scoring;
 using namespace protocols::seeded_abinitio;
 
-static basic::Tracer TR( "protocols.seeded_abinitio.SeedFoldTree" );
-static numeric::random::RandomGenerator RG(124523); // <- Magic number, do not change it!!!
+static thread_local basic::Tracer TR( "protocols.seeded_abinitio.SeedFoldTree" );
 
 namespace protocols{
 	namespace seeded_abinitio{
@@ -193,7 +192,7 @@ Size define_cut_point_stochasticly (
 
 	int low = 1;
 	int high = loopy_regions.size();
-	core::Size ran = RG.random_range( low, high ); // todo: bias more for center
+	core::Size ran = numeric::random::rg().random_range( low, high ); // todo: bias more for center
 	core::Size cutpoint = loopy_regions[ ran ] + start_fold_pose -1 ;
 
 	TR.Debug <<"random number: "<< ran << ", number from loop container: " << loopy_regions[ran]<< ", adjusting by " << start_fold_pose - 1 <<", cutpoint: " << cutpoint << std::endl;

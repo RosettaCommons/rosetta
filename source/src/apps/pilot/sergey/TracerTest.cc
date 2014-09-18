@@ -78,9 +78,9 @@
 
 
 
-basic::Tracer TM("TMemory");
+static thread_local basic::Tracer TM( "TMemory" );
 
-basic::Tracer TR_("global");
+static thread_local basic::Tracer TR_( "global" );
 
 
 void TracerDiskSpaceTest(void)
@@ -139,8 +139,8 @@ std::ostream& operator <<(std::ostream &tr, AA)
 
 void test_Tracer()
 {
-	basic::Tracer TR("core.TTest");
-	basic::Tracer TR2("core.TTest.T2");
+	basic::Tracer TR( "core.TTest" );
+	basic::Tracer TR2( "core.TTest.T2" );
 
 	TR.Fatal   << "Some Fatal Error here... " << "000 " << std::endl;
 	TR.Fatal   << "2222 Fatal Error here... " << "___ " << std::endl;
@@ -235,7 +235,7 @@ int main( int argc, char * argv [] )
 
 	try {
 
-	basic::Tracer TR("main");
+	basic::Tracer TR( "main" );
 
 	using namespace core;
 	using namespace basic::options::OptionKeys;

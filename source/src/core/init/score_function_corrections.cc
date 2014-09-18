@@ -90,7 +90,7 @@ pre_talaris_2013_behavior_settings::pre_talaris_2013_behavior_settings() :
 
 pre_talaris_2013_behavior_settings const restore_sc12_settings;
 
-static basic::Tracer TR( "core.init.score_function_corrections" );
+static thread_local basic::Tracer TR( "core.init.score_function_corrections" );
 
 void
 init_revert_to_pre_talaris_2013_mistake() {

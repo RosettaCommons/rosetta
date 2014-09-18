@@ -65,8 +65,8 @@
 
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
-static basic::Tracer TR("protocols.antibody.GraftMover");
-static basic::Tracer TRO("protocols.antibody.GraftOneMover");
+static thread_local basic::Tracer TR( "protocols.antibody.GraftMover" );
+static thread_local basic::Tracer TRO( "protocols.antibody.GraftOneMover" );
 
 namespace protocols {
 namespace antibody_legacy {

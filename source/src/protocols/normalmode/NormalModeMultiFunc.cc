@@ -45,7 +45,7 @@
 #include <utility/vector1.hh>
 #include <cmath>
 
-static basic::Tracer TR("protocols.normalmode.NormalModeMultiFunc");
+static thread_local basic::Tracer TR( "protocols.normalmode.NormalModeMultiFunc" );
 
 namespace protocols {
 namespace normalmode {

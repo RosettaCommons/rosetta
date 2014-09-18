@@ -44,7 +44,7 @@
 
 using namespace core;
 
-static basic::Tracer TR( "protocols.stepwise.legacy.modeler.protein.StepWiseProteinConnectionSampler" );
+static thread_local basic::Tracer TR( "protocols.stepwise.legacy.modeler.protein.StepWiseProteinConnectionSampler" );
 
 namespace protocols {
 namespace stepwise {

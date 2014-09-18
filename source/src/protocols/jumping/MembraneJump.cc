@@ -56,8 +56,7 @@ namespace jumping {
 MembraneJump::~MembraneJump() {}
 using namespace core;
 using namespace fragment;
-static basic::Tracer tr("protocols.jumping.MembraneJump");
-	static numeric::random::RandomGenerator RG(750107);  // <- Magic number, do not change it!
+static thread_local basic::Tracer tr( "protocols.jumping.MembraneJump" );
 
 //default constructor
 MembraneJump::MembraneJump()
@@ -122,7 +121,7 @@ MembraneJump::setup_fold_tree(core::pose::Pose & pose, core::Size njumps)
 	}
 
 	while(selected_pairings_.size()<njumps && tries < 10) {
-		Size index=static_cast< int >(RG.uniform()*pairings_.size()+1);
+		Size index=static_cast< int >(numeric::random::rg().uniform()*pairings_.size()+1);
 		std::cout << "Tries : " << tries << " " << index << ' ' << pairings_[index].Pos1()  << ' ' << tmh(pairings_[index].Pos1()) << ' ' << pairings_[index].Pos2() << ' ' << tmh(pairings_[index].Pos2()) <<std::endl;
 		bool check_compatible=true;
 

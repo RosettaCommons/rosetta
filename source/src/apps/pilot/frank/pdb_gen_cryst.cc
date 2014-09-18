@@ -101,7 +101,7 @@ inline double min_mod(double x,double y) {
 	return r;
 }
 
-static basic::Tracer TR("cryst.gen");
+static thread_local basic::Tracer TR( "cryst.gen" );
 
 //missing string printf
 //this is safe and convenient but not exactly efficient

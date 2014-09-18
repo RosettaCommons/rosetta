@@ -23,7 +23,7 @@
 namespace protocols {
 namespace outputter {
 
-static basic::Tracer TR("protocols.outputter.SilentFileOutputter");
+static thread_local basic::Tracer TR( "protocols.outputter.SilentFileOutputter" );
 
 #ifdef USELUA
 void lregister_SilentFileOutputter( lua_State * lstate ) {

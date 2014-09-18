@@ -39,7 +39,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -116,7 +117,11 @@ private:
 	static FilterFactory * create_singleton_instance();
 
 private:
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< FilterFactory * > instance_;
+#else
 	static FilterFactory * instance_;
+#endif
 
 	FilterMap filter_creator_map_;
 

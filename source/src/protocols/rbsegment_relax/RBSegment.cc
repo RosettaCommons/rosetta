@@ -42,9 +42,8 @@ namespace rbsegment_relax {
 
 using namespace core;
 
-basic::Tracer TR_seg("RBSegment");
+static thread_local basic::Tracer TR_seg( "RBSegment" );
 
-static numeric::random::RandomGenerator RG(431112);  // <- Magic number, do not change it!
 
 /////////////////////
 ///@brief helper function
@@ -357,7 +356,7 @@ void select_RBsegments(
 	if (nRBSegs == 1)
 		k=1;
 	else
-		k = RG.random_range(1, nRBSegs);
+		k = numeric::random::rg().random_range(1, nRBSegs);
 
 	rbsegs_selected.push_back( rbsegs_in[k] );
 

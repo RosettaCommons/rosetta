@@ -48,9 +48,13 @@ using std::pair;
 using std::stringstream;
 using core::pose::Pose;
 
-static basic::Tracer tr("protocols.loops.LoopMoverFactory");
+static thread_local basic::Tracer tr( "protocols.loops.LoopMoverFactory" );
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< LoopMoverFactory * > LoopMoverFactory::instance_( 0 );
+#else
 LoopMoverFactory * LoopMoverFactory::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

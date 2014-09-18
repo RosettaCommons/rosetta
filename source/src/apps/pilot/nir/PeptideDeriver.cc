@@ -81,7 +81,6 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static numeric::random::RandomGenerator RG( 26101976 ); // <- Magic number, do not change it!!!
 
 namespace peptide_deriver {
 	basic::options::StringOptionKey chain_to_derive_from("peptide_deriver:chain_to_derive_from");
@@ -90,7 +89,7 @@ namespace peptide_deriver {
 	basic::options::StringOptionKey dump_peptide_pdb("peptide_deriver:dump_peptide_pdb");
 }
 
-static basic::Tracer TR( "PeptideDeriver" );
+static thread_local basic::Tracer TR( "PeptideDeriver" );
 
 using namespace core;
 using namespace basic::options;

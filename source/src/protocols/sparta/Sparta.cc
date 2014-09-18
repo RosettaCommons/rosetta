@@ -75,7 +75,7 @@
 namespace protocols {
 namespace sparta {
 
-static basic::Tracer tr("protocols.sparta");
+static thread_local basic::Tracer tr( "protocols.sparta" );
 
 bool protocols::sparta::Sparta::options_registered_( false );
 

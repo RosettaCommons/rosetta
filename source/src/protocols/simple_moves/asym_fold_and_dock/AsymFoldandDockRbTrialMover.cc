@@ -38,7 +38,7 @@ namespace protocols {
 namespace simple_moves {
 namespace asym_fold_and_dock {
 
-static basic::Tracer TR("protocols.simple_moves.symmetry.AsymFoldandDockRbTrialMover");
+static thread_local basic::Tracer TR( "protocols.simple_moves.symmetry.AsymFoldandDockRbTrialMover" );
 
 AsymFoldandDockRbTrialMover::AsymFoldandDockRbTrialMover() :
 	protocols::moves::Mover( "AsymFoldandDockRbTrialMover" ),

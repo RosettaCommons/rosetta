@@ -72,7 +72,7 @@ typedef std::vector< OptionKey const * > KeyVec;
 
 
 // static
-static basic::Tracer TR( "apps.pilot.yab.ufv" );
+static thread_local basic::Tracer TR( "apps.pilot.yab.ufv" );
 
 
 void fill_required_options( KeyVec & keys ) {

@@ -87,7 +87,7 @@ using core::kinematics::Stub;
 using core::conformation::ResidueOP;
 
 
-static basic::Tracer TR("pentcb");
+static thread_local basic::Tracer TR( "pentcb" );
 static core::io::silent::SilentFileData sfd;
 
 #include <apps/pilot/will/sicfast.ihh>

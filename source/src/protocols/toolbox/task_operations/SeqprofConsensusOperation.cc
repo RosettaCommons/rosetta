@@ -52,7 +52,7 @@
 #include <boost/foreach.hpp>
 
 
-static basic::Tracer tr("protocols.toolbox.task_operations.SeqprofConsensusOperation");
+static thread_local basic::Tracer tr( "protocols.toolbox.task_operations.SeqprofConsensusOperation" );
 
 namespace protocols{
 namespace toolbox{

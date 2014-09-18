@@ -30,7 +30,7 @@
 
 using namespace core::pose::full_model_info;
 
-static basic::Tracer TR( "core.scoring.methods.FreeMoietyEnergy", basic::t_info );
+static thread_local basic::Tracer TR( "core.scoring.methods.FreeMoietyEnergy", basic::t_info );
 
 namespace core {
 namespace scoring {

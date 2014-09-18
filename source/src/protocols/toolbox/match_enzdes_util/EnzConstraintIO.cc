@@ -59,13 +59,17 @@
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
 
-static basic::Tracer tr("protocols.toolbox.match_enzdes_util.EnzConstraintIO");
+static thread_local basic::Tracer tr( "protocols.toolbox.match_enzdes_util.EnzConstraintIO" );
 
 namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
-EnzConstraintIO * EnzConstraintIO::generic_instance_( 0 );
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< EnzConstraintIO * > EnzConstraintIO::instance_( 0 );
+#else
+EnzConstraintIO * EnzConstraintIO::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11
@@ -81,8 +85,8 @@ std::mutex & EnzConstraintIO::singleton_mutex() { return singleton_mutex_; }
 EnzConstraintIO * EnzConstraintIO::get_instance()
 {
 	boost::function< EnzConstraintIO * () > creator = boost::bind( &EnzConstraintIO::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, generic_instance_ );
-	return generic_instance_;
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
 }
 
 EnzConstraintIO *

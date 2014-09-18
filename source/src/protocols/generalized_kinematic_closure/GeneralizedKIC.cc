@@ -49,12 +49,11 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static numeric::random::RandomGenerator RG(8313093);  // <- Magic number, do not change it!
 
 namespace protocols {
 namespace generalized_kinematic_closure {
 
-static basic::Tracer TR("protocols.generalized_kinematic_closure.GeneralizedKIC");
+static thread_local basic::Tracer TR( "protocols.generalized_kinematic_closure.GeneralizedKIC" );
 
 std::string
 GeneralizedKICCreator::keyname() const
@@ -497,18 +496,18 @@ void GeneralizedKIC::close_bond (
 
 	add_perturber("set_dihedral");
 	add_atomset_to_perturber_atomset_list(atomset); //If only two atoms are given, the perturber infers the other two needed to define the dihedral as the upstream and downstream atoms in the atom list.
-	add_value_to_perturber_value_list( ( randomize_this_torsion ? RG.uniform()*360.0 : torsion) );
+	add_value_to_perturber_value_list( ( randomize_this_torsion ? numeric::random::rg().uniform()*360.0 : torsion) );
 	if(randomize_flanking_torsions) {
 		utility::vector1 < NamedAtomID > atomset2;
 		atomset2.push_back( NamedAtomID(at1_before, rsd1_before) );
 		atomset2.push_back( NamedAtomID(at1, rsd1) );
 		add_atomset_to_perturber_atomset_list(atomset2);
-		add_value_to_perturber_value_list(RG.uniform()*360.0);
+		add_value_to_perturber_value_list(numeric::random::rg().uniform()*360.0);
 		atomset2.clear();
 		atomset2.push_back( NamedAtomID(at2, rsd2) );
 		atomset2.push_back( NamedAtomID(at2_after, rsd2_after) );
 		add_atomset_to_perturber_atomset_list(atomset2);
-		add_value_to_perturber_value_list(RG.uniform()*360.0);
+		add_value_to_perturber_value_list(numeric::random::rg().uniform()*360.0);
 	}
 
 	add_perturber("set_bondangle");

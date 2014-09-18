@@ -65,7 +65,7 @@ namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; 
 //Auto using namespaces end
 
 
-static basic::Tracer tr( "core.scoring.geometric_solvation.OccludedHbondSolEnergy_onebody" );
+static thread_local basic::Tracer tr( "core.scoring.geometric_solvation.OccludedHbondSolEnergy_onebody" );
 
 namespace core {
 namespace scoring {

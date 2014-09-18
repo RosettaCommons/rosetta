@@ -37,7 +37,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer TR("core.scoring.symE");
+static thread_local basic::Tracer TR( "core.scoring.symE" );
 
 namespace core {
 namespace scoring {

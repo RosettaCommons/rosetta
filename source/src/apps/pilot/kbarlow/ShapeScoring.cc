@@ -18,7 +18,7 @@
 
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 
-basic::Tracer TR("ShapeScoring");
+static thread_local basic::Tracer TR( "ShapeScoring" );
 
 //using namespace core::pack
 //using namespace core::pack::task;

@@ -19,8 +19,7 @@
 #include <numeric/random/random.hh>
 #include <utility/exit.hh>
 
-static numeric::random::RandomGenerator RG(8401368);
-static basic::Tracer TR( "protocols.hybridization.WeightedFragmentSmoothTrialMover" );
+static thread_local basic::Tracer TR( "protocols.hybridization.WeightedFragmentSmoothTrialMover" );
 
 namespace protocols {
 namespace hybridization {
@@ -80,9 +79,9 @@ void WeightedFragmentSmoothTrialMover::apply(core::pose::Pose & pose)
 	while ( !success && ( nfail < 100 ) ) {
 
 		// pick fragment set
-		core::Size i_frag_set = RG.random_range(1, frag_libs_.size());
+		core::Size i_frag_set = numeric::random::rg().random_range(1, frag_libs_.size());
 		// pick insertion position
-		core::Size insert_pos = weighted_sampler_[i_frag_set].random_sample(RG);
+		core::Size insert_pos = weighted_sampler_[i_frag_set].random_sample(numeric::random::rg());
 
 		core::fragment::ConstFrameIterator frame_it = frag_libs_[i_frag_set]->begin();
 		std::advance(frame_it, insert_pos-1);
@@ -121,7 +120,7 @@ void WeightedFragmentSmoothTrialMover::apply(core::pose::Pose & pose)
 			}
 			frag_num = minfrag;
 		} else {
-			frag_num = goodfrag[ static_cast< int >( RG.uniform() * goodfrag.size() )+1 ];
+			frag_num = goodfrag[ static_cast< int >( numeric::random::rg().uniform() * goodfrag.size() )+1 ];
 		}
 		frame_it->apply( frag_num, pose );
 		success = true;

@@ -41,7 +41,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static basic::Tracer TR( "protocols.simple_filters.InterfaceBindingEnergyDensityFilter" );
+static thread_local basic::Tracer TR( "protocols.simple_filters.InterfaceBindingEnergyDensityFilter" );
 
 protocols::filters::FilterOP
 InterfaceBindingEnergyDensityFilterCreator::create_filter() const { return new InterfaceBindingEnergyDensityFilter; }

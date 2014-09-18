@@ -28,7 +28,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -46,6 +47,14 @@ private:
 	/// @brief private singleton creation function to be used with
 	/// utility::thread::threadsafe_singleton
 	static SilentStructFactory * create_singleton_instance();
+
+	/// @brief static data member holding pointer to the singleton class itself
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< SilentStructFactory * > instance_;
+#else
+	static SilentStructFactory * instance_;
+#endif
+
 public:
 	static SilentStructFactory * get_instance();
 

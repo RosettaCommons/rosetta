@@ -26,7 +26,7 @@
 
 using namespace core;
 
-static basic::Tracer TR( "protocols.stepwise.modeler.constraint_util" );
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.constraint_util" );
 
 ///////////////////////////////////////////////////////////////////////////////
 // these functions are pretty old -- will be souped up when I revive constraints

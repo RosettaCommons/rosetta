@@ -53,7 +53,7 @@
 //Auto Headers
 #include <utility/vector1.hh>
 
-static basic::Tracer tr("protocols.jd2.MPIArchiveJobDistributor");
+static thread_local basic::Tracer tr( "protocols.jd2.MPIArchiveJobDistributor" );
 using basic::mem_tr;
 
 namespace protocols {
@@ -332,7 +332,7 @@ bool notify_first( true ); ///buffer hasn't been used yet?
 /// send JOB_COMPLETION message to Archive if a message is in the message queue.
 void MPIArchiveJobDistributor::_notify_archive() {
 	PROF_START( basic::MPI_NOTIFY_ARCHIVE );
-	static basic::Tracer notification_tracer("protocols.jd2.notifications");
+	basic::Tracer notification_tracer( "protocols.jd2.notifications" );
 
 	//nothing in queue?
 	if ( pending_notifications_.size() == 0 ) return;

@@ -42,7 +42,7 @@
 
 
 
-static basic::Tracer TR("protocols.kinmatchFunGroupTK");
+static thread_local basic::Tracer TR( "protocols.kinmatchFunGroupTK" );
 
 namespace protocols {
 namespace kinmatch {

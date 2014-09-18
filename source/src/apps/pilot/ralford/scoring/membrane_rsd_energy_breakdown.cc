@@ -48,7 +48,7 @@
 
 #include <string>
 
-static basic::Tracer TR("apps.pilot.ralford.membrane_rsd");
+static thread_local basic::Tracer TR( "apps.pilot.ralford.membrane_rsd" );
 
 /// NOTE: Commenting out things that I am not yet allowing....
 

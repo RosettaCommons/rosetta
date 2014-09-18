@@ -114,7 +114,6 @@ using utility::tools::make_vector1;
 typedef  numeric::xyzMatrix< Real > Matrix;
 
 static const chemical::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
-static numeric::random::RandomGenerator RG(5075);  // <- Magic number, do not change it!
 
 typedef utility::vector1<float> float_vec;
 typedef boost::array<float,5> Backbone_Torsion;
@@ -391,7 +390,7 @@ setup_pose ( pose::Pose & pose){
 /////////////////////////////////
 void
 random_angle(float & angle, Real const lower_bound = -180, Real const upper_bound = 180) {
-	angle = RG.uniform() * (upper_bound - lower_bound) + lower_bound;
+	angle = numeric::random::rg().uniform() * (upper_bound - lower_bound) + lower_bound;
 	if (angle < -180) {
 		angle += 360;
 	} else if (angle >= 180) {
@@ -403,12 +402,12 @@ void
 random_delta(float & angle) {
 	static const float delta_north = rna_fitted_torsion_info.delta_north();
 	static const float delta_south = rna_fitted_torsion_info.delta_south();
-	angle = (RG.uniform() < 0.5) ? delta_north : delta_south;
+	angle = (numeric::random::rg().uniform() < 0.5) ? delta_north : delta_south;
 }
 /////////////////////////////////
 void
 gaussian_angle_move(float & angle, Real const stdev) {
-	angle += RG.gaussian() * stdev;
+	angle += numeric::random::rg().gaussian() * stdev;
 	if (angle < -180) {
 		angle += 360;
 	} else if (angle >= 180) {
@@ -427,7 +426,7 @@ nucleoside_sampling( Nucleoside_Torsion & nucleoside,
 
 	static std::pair < Backbone_Torsion,  Nucleoside_Torsion > const ideal_torsions = ideal_A_form_torsions();
 
-	if ( pucker_prob != 0 && (pucker_prob == 1 || RG.uniform() < pucker_prob) ) {
+	if ( pucker_prob != 0 && (pucker_prob == 1 || numeric::random::rg().uniform() < pucker_prob) ) {
 		random_delta( nucleoside[0] );
  	}
 
@@ -773,7 +772,7 @@ MC_run () {
 			score_new = (*scorefxn)( pose );
 		}
 
-		if (kT < 0 || score_new < score || RG.uniform() < exp( (score - score_new) / kT )) {
+		if (kT < 0 || score_new < score || numeric::random::rg().uniform() < exp( (score - score_new) / kT )) {
 			data_list[kT_id].push_back( float(current_count) );
 			data_list[kT_id].push_back( score );
 			if (is_save_torsions) get_torsion_list(data_list[kT_id], backbones, nucleosides, len1);
@@ -796,17 +795,17 @@ MC_run () {
 
 		if (kT_id_max == 1) continue; //Only one kT, skip the T-jumping stage.
 
-		if (RG.uniform() < exchange_rate) {
+		if (numeric::random::rg().uniform() < exchange_rate) {
 			++n_exch;
 			if ( kT_id_max == 2 ) { //only 2 kTs
 				kT_id_new = (kT_id == 1) ? 2 : 1;
 			} else {
-				kT_id_new = (RG.uniform() < 0.5) ? kT_id + 1 : kT_id - 1;
+				kT_id_new = (numeric::random::rg().uniform() < 0.5) ? kT_id + 1 : kT_id - 1;
 				if (kT_id_new < 1 || kT_id_new > kT_id_max) continue;
 			}
 			kT_new = kTs[kT_id_new];
 			log_prob = ( (kT < 0) ? 0 : (score / kT) ) - ( (kT_new < 0) ? 0 : (score / kT_new) ) + weights[kT_id_new] - weights[kT_id];
-			if (log_prob > 0 || RG.uniform() < exp (log_prob) ) { //check if we want to exchange kT
+			if (log_prob > 0 || numeric::random::rg().uniform() < exp (log_prob) ) { //check if we want to exchange kT
 				++n_acpt_exch;
 				kT_id = kT_id_new;
 				kT = kT_new;

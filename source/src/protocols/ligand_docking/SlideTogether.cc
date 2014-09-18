@@ -35,7 +35,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static basic::Tracer slide_together_tracer("protocols.ligand_docking.ligand_options.slide_together");
+static thread_local basic::Tracer slide_together_tracer( "protocols.ligand_docking.ligand_options.slide_together" );
 
 std::string
 SlideTogetherCreator::keyname() const

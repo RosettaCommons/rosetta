@@ -46,7 +46,7 @@ namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; 
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.analysis.packstat");
+static thread_local basic::Tracer TR( "protocols.analysis.packstat" );
 using namespace core;
 
 namespace protocols {

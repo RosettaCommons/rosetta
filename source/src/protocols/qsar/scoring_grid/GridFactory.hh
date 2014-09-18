@@ -29,7 +29,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -96,7 +97,12 @@ private:
 	static GridFactory * create_singleton_instance();
 
 private:
-	static GridFactory * instance_ ;
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< GridFactory * > instance_;
+#else
+	static GridFactory * instance_;
+#endif
+
 	GridMap grid_creator_map_;
 
 };

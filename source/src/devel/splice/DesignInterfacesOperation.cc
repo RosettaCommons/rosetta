@@ -60,7 +60,7 @@
 
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR( "devel.splice.DesignInterfacesOperation" );
+static thread_local basic::Tracer TR( "devel.splice.DesignInterfacesOperation" );
 
 namespace devel {
 namespace splice {

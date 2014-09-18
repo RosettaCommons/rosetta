@@ -25,7 +25,6 @@
 #include <utility/vector1.hh>
 
 
-static numeric::random::RandomGenerator my_RG(6172008); // <- Magic number, do not change it!!!
 
 namespace core {
 namespace optimization {
@@ -85,7 +84,7 @@ ParticleOPs ParticleSwarmMinimizer::run(Size num_cycles, Multifunc & f_fitness, 
 	for(Size i = 1; i <= num_part; ++i) {
 		ParticleOP p = new Particle(size_);
 		for(Size j = 1; j <= size_; ++j) {
-			p->p_[j] = p_min_[j] + my_RG.uniform()*p_range_[j];
+			p->p_[j] = p_min_[j] + numeric::random::rg().uniform()*p_range_[j];
 		}
 		// debugging output
 		/*std::cout << "PSM: created new particle: dofs: [ ";
@@ -106,10 +105,9 @@ ParticleOPs ParticleSwarmMinimizer::run(Size num_cycles, Multifunc & f_fitness, 
 	for(Size i = 1; i <= num_part; ++i) {
 		ParticleOP p = new Particle(size_);
 		for(Size j = 1; j <= size_; ++j) {
-			p->p_[j] = init_values[j] + my_RG.uniform() - my_RG.uniform(); // want to go up *and* down by a little bit
-			//p->p_[j] = init_values[j] + ( my_RG.uniform() - my_RG.uniform() ) / p_range_[j]; // want to go up *and* down by a tiny bit
+			p->p_[j] = init_values[j] + numeric::random::rg().uniform() - numeric::random::rg().uniform(); // want to go up *and* down by a little bit
 			// init values should never be outside min/max range
-			if ( p->p_[j] < p_min_[j] ) { p->p_[j] = my_RG.uniform(); }
+			if ( p->p_[j] < p_min_[j] ) { p->p_[j] = numeric::random::rg().uniform(); }
 			else if ( p->p_[j] > p_max_[j] ) { p->p_[j] = p_max_[j]; }
 		}
 		// debugging output
@@ -185,18 +183,18 @@ void ParticleSwarmMinimizer::run(Size num_cycles, Multifunc & f_fitness, Particl
 				Real const pi = p->p_[i];
 
 				Real vi = ( C_inertia*p->v_[i]
-						+ my_RG.uniform()*C_pbest_*(p->pbest()[i] - pi)
-						+ my_RG.uniform()*C_lbest_*(lbest->p_[i] - pi)
-						+ my_RG.uniform()*C_gbest_*(gbest->p_[i] - pi) );
+						+ numeric::random::rg().uniform()*C_pbest_*(p->pbest()[i] - pi)
+						+ numeric::random::rg().uniform()*C_lbest_*(lbest->p_[i] - pi)
+						+ numeric::random::rg().uniform()*C_gbest_*(gbest->p_[i] - pi) );
 
 				// sometimes particles react too quickly, or move too fast to their local/global best and end up
 				// getting stuck at 0.0.
 				// slow down how fast the particles move, but not by imposing a speed limit but instead by
 				// throttling them when they decide on their new speed.
 				/* Real vi = ( C_inertia*p->v_[i]
-						+ my_RG.uniform()*C_pbest_*(p->pbest()[i] - pi)
-						+ my_RG.uniform()*C_lbest_*(lbest->p_[i] - pi)
-						+ my_RG.uniform()*C_gbest_*(gbest->p_[i] - pi) ) * ( ( p_range_[i] ) / num_cycles ); */
+						+ numeric::random::rg().uniform()*C_pbest_*(p->pbest()[i] - pi)
+						+ numeric::random::rg().uniform()*C_lbest_*(lbest->p_[i] - pi)
+						+ numeric::random::rg().uniform()*C_gbest_*(gbest->p_[i] - pi) ) * ( ( p_range_[i] ) / num_cycles ); */
 
 				Real const vmax = v_max_[i];
 				if( vi > vmax )

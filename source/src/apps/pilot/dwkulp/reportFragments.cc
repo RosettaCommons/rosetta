@@ -110,8 +110,7 @@ typedef utility::pointer::owning_ptr< AnnotatedFragData const > AnnotatedFragDat
 
 void get_fragment_sets(core::pose::Pose &_pose, string _polyAminoAcidSequence,   utility::vector1<core::fragment::ConstantLengthFragSetOP> &fragSets);
 
-static basic::Tracer TR("reportFragments");
-static numeric::random::RandomGenerator RG(222578262);
+static thread_local basic::Tracer TR( "reportFragments" );
 
 
 

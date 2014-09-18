@@ -102,8 +102,7 @@ main( int argc, char * argv [] )
 
 #include <protocols/viewer/viewers.hh>
 
-static basic::Tracer tr("r_fold_cst");
-static numeric::random::RandomGenerator RG(31235111);  // <- Magic number, do not change it!
+static thread_local basic::Tracer tr( "r_fold_cst" );
 
 using namespace core;
 using namespace protocols;

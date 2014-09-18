@@ -46,7 +46,7 @@ typedef numeric::xyzVector<core::Real> point;
 using basic::Error;
 using basic::Warning;
 using basic::T;
-static basic::Tracer TR("apps.pilot.kevin.khxtal_water_bunsat");
+static thread_local basic::Tracer TR( "apps.pilot.kevin.khxtal_water_bunsat" );
 
 
 using namespace core;

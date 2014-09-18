@@ -8,7 +8,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/import_pose/import_pose.hh>
 
-basic::Tracer TR("apps.pilot.kale.examples");
+static thread_local basic::Tracer TR( "apps.pilot.kale.examples" );
 
 using namespace core;
 

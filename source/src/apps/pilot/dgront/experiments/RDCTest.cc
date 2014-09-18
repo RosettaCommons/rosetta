@@ -44,7 +44,7 @@
 #include <utility/excn/Exceptions.hh>
 
 
-static basic::Tracer trace("RDCTest");
+static thread_local basic::Tracer trace( "RDCTest" );
 
 using namespace core;
 using namespace core::scoring;

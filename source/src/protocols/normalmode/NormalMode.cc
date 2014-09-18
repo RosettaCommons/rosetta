@@ -33,7 +33,7 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-static basic::Tracer TR("protocols.normalmode.NormalMode");
+static thread_local basic::Tracer TR( "protocols.normalmode.NormalMode" );
 
 namespace protocols {
 namespace normalmode {

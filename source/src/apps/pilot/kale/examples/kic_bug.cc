@@ -103,7 +103,7 @@ public:
 
 int main(int argc, char** argv) {
 	devel::init(argc, argv);
-	numeric::random::RG.set_seed(2);
+	numeric::random::rg().set_seed(2);
 
 	pose::Pose pose;
 	string input_pdb = "cycle.pdb";

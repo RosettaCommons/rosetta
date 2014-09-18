@@ -42,7 +42,7 @@ using ObjexxFCL::format::I;
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.toolbox.AllowInsert" );
+static thread_local basic::Tracer TR( "protocols.toolbox.AllowInsert" );
 
 using namespace core;
 using core::id::AtomID;

@@ -46,7 +46,7 @@
 
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR( "protocols.toolbox.task_operations.RestrictToAlignedSegmentsOperation" );
+static thread_local basic::Tracer TR( "protocols.toolbox.task_operations.RestrictToAlignedSegmentsOperation" );
 
 namespace protocols {
 namespace toolbox{

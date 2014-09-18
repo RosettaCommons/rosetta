@@ -43,7 +43,7 @@
 using namespace ObjexxFCL;
 
 #ifndef NDEBUG
-static basic::Tracer TR("core.pack.annealer.FixbbSimAnnealer");
+static thread_local basic::Tracer TR( "core.pack.annealer.FixbbSimAnnealer" );
 #endif
 
 namespace core {

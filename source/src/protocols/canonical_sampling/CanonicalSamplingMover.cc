@@ -105,7 +105,7 @@
 namespace protocols{
 namespace canonical_sampling {
 
-static basic::Tracer tr("protocols.canonical_sampling.CanonicalSamplingMover");
+static thread_local basic::Tracer tr( "protocols.canonical_sampling.CanonicalSamplingMover" );
 
 bool protocols::canonical_sampling::CanonicalSamplingMover::options_registered_( false );
 

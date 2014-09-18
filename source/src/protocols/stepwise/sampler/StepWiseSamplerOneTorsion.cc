@@ -23,8 +23,7 @@
 #include <numeric/random/random.hh>
 
 using namespace core;
-static basic::Tracer TR( "protocols.sampler.StepWiseSamplerOneTorsion" );
-static numeric::random::RandomGenerator RG( 2560199 );  // Magic number
+static thread_local basic::Tracer TR( "protocols.sampler.StepWiseSamplerOneTorsion" );
 
 namespace protocols {
 namespace stepwise {

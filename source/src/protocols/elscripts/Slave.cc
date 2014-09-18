@@ -35,7 +35,7 @@ void lregister_Slave( lua_State * lstate ) {
 	];
 }
 
-static basic::Tracer TR("protocols.elscripts.Slave");
+static thread_local basic::Tracer TR( "protocols.elscripts.Slave" );
 
 Slave::Slave( int master, boost::uint64_t mem_limit, boost::uint64_t reserved_mem, boost::uint64_t reserved_mem_multiplier) :
 	master_(master),

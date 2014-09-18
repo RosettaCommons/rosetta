@@ -43,7 +43,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -121,7 +122,11 @@ private:
 	InterchainPotential( InterchainPotential const & src );
 	InterchainPotential & operator = ( InterchainPotential const & rhs );
 
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< InterchainPotential * > instance_;
+#else
 	static InterchainPotential * instance_;
+#endif
 
 	// const-ref to scoring database
 	core::scoring::AtomVDW const & atom_vdw_;

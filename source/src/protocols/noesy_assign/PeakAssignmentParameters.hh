@@ -28,7 +28,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -55,7 +56,13 @@ public:
   static void reset();
 private:
   void set_options_from_cmdline( core::Size cycle = 0 );
-  static PeakAssignmentParameters* instance_;
+	/// Singleton instance pointer
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< PeakAssignmentParameters * > instance_;
+#else
+	static PeakAssignmentParameters * instance_;
+#endif
+
   core::Size cycle_selector_;
 
 

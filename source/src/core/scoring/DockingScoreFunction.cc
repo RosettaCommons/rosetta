@@ -26,7 +26,7 @@
 #include <core/scoring/Energies.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer tr("core.scoring.DockingScoreFunction");
+static thread_local basic::Tracer tr( "core.scoring.DockingScoreFunction" );
 
 namespace core {
 namespace scoring {

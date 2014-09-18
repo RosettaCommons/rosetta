@@ -53,7 +53,7 @@
 namespace core {
 namespace fragment {
 
-static basic::Tracer tr("core.io.fragments");
+static thread_local basic::Tracer tr( "core.io.fragments" );
 
 FragFactory FragmentIO::frag_factory_;
 FragmentIO::FragFileCache FragmentIO::frag_cache_;

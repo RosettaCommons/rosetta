@@ -48,7 +48,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -337,7 +338,11 @@ private:
 
 private:
 	/// @brief static data member holding pointer to the singleton class itself
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< RotamerDotsRadiusData * > instance_;
+#else
 	static RotamerDotsRadiusData * instance_;
+#endif
 
 	utility::vector1< Real > ROSETTA_SASA_radii_;
 	utility::vector1< Real > NACCESS_SASA_radii_;

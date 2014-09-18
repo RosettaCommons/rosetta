@@ -56,8 +56,7 @@
 using namespace core;
 using namespace core::pose;
 
-static numeric::random::RandomGenerator RG(18615125);
-static basic::Tracer TR("protocols.simple_moves.sidechain_moves.PerturbChiSidechainMover");
+static thread_local basic::Tracer TR( "protocols.simple_moves.sidechain_moves.PerturbChiSidechainMover" );
 
 namespace protocols {
 namespace simple_moves {
@@ -138,10 +137,10 @@ PerturbChiSidechainMover::make_chi_move(
 	new_chi.resize( old_chi.size() );
 	for ( Size i = 1; i <= old_chi.size(); i++) {
 		if ( !gaussian_ ) {
-			Real rand = RG.uniform();
+			Real rand = numeric::random::rg().uniform();
 			new_chi[ i ] = basic::periodic_range( (( 2.0*rand-1.0 )*magnitude_ + old_chi[ i ]) , 360.0 );
 		} else {
-			new_chi[ i ] = basic::periodic_range( old_chi[i] + RG.gaussian()*magnitude_, 360.0 );
+			new_chi[ i ] = basic::periodic_range( old_chi[i] + numeric::random::rg().gaussian()*magnitude_, 360.0 );
 		}
 	}
 }

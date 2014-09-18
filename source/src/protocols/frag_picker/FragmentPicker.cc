@@ -105,7 +105,7 @@ using namespace protocols::frag_picker::scores;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer tr("protocols.frag_picker.FragmentPicker");
+static thread_local basic::Tracer tr( "protocols.frag_picker.FragmentPicker" );
 
 FragmentPicker::~FragmentPicker() {}
 
@@ -672,7 +672,15 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 			for (Size pos = 1; pos <= qPosi_to_run[j].size(); ++pos) std::cout << " " << qPosi_to_run[j][pos];
 			std::cout << std::endl;
 #if defined MULTI_THREADED && defined CXX11
-			threads.push_back(std::thread(&FragmentPicker::nonlocal_pairs_at_positions, this, qPosi_to_run[j], fragment_size, skip_position, fragment_set, thread_pairs[j]));
+			threads.push_back( std::thread( boost::bind(
+				&FragmentPicker::nonlocal_pairs_at_positions,
+				this,
+				boost::ref(qPosi_to_run[j]),
+				fragment_size,
+				boost::ref(skip_position),
+				boost::ref(fragment_set),
+				boost::ref(thread_pairs[j]))));
+			//&FragmentPicker::nonlocal_pairs_at_positions, this, qPosi_to_run[j], fragment_size, skip_position, fragment_set, thread_pairs[j]));
 #elif defined USE_BOOST_THREAD
 			threads.create_thread(boost::bind(&FragmentPicker::nonlocal_pairs_at_positions, this, boost::ref(qPosi_to_run[j]), fragment_size, boost::ref(skip_position),
 				boost::ref(fragment_set), boost::ref(thread_pairs[j])));

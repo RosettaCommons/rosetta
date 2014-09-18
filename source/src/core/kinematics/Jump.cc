@@ -48,7 +48,6 @@
 namespace core {
 namespace kinematics {
 
-static numeric::random::RandomGenerator jump_RG(62454); // <- Magic number, do not change it!!!
 
 //static const utility::vector1<double> ZERO( 6, 0.0 );
 
@@ -152,14 +151,14 @@ Jump::random_trans( const float dist_in )
 	using numeric::conversions::degrees;
 	using numeric::sin_cos_range;
 
-	const Real theta( 360.0 * jump_RG.uniform());
-	const Real phi( degrees( std::acos(sin_cos_range(1.0-2.0*jump_RG.uniform()))));
+	const Real theta( 360.0 * numeric::random::rg().uniform());
+	const Real phi( degrees( std::acos(sin_cos_range(1.0-2.0*numeric::random::rg().uniform()))));
 	const Real dist( dist_in );
 
 	fold_in_rb_deltas();
 	rt_.set_translation( dist * (
-												y_rotation_matrix_degrees(phi) *
-												z_rotation_matrix_degrees(theta) ).col_z() );
+		y_rotation_matrix_degrees(phi) *
+		z_rotation_matrix_degrees(theta) ).col_z() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -169,8 +168,8 @@ utility::vector1<Real>
 Jump::gaussian_move(int const dir, float const trans_mag, float const rot_mag) {
 	fold_in_rb_deltas(); // clear rb_delta
 	for ( int i = 1; i <= 3; ++i ) {
-		set_rb_delta( i, dir, Real( trans_mag * jump_RG.gaussian() ) );
-		set_rb_delta( i+3, dir, Real( rot_mag * jump_RG.gaussian() ) );
+		set_rb_delta( i, dir, Real( trans_mag * numeric::random::rg().gaussian() ) );
+		set_rb_delta( i+3, dir, Real( rot_mag * numeric::random::rg().gaussian() ) );
 	}
 	utility::vector1<Real> this_rb_delta =  get_rb_delta(dir);
 	fold_in_rb_deltas();
@@ -186,7 +185,7 @@ Jump::gaussian_move_single_rb(
 )
 {
   fold_in_rb_deltas(); // clear rb_delta
-  set_rb_delta( rb, dir, Real( mag * jump_RG.gaussian() ) );
+  set_rb_delta( rb, dir, Real( mag * numeric::random::rg().gaussian() ) );
   fold_in_rb_deltas();
 }
 

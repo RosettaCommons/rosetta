@@ -73,9 +73,8 @@ namespace loophash {
 
 using namespace protocols::wum;
 
-static basic::Tracer TR("MPI.LHR");
+static thread_local basic::Tracer TR( "MPI.LHR" );
 
-static numeric::random::RandomGenerator RG(9788321);  // <- Magic number, do not change it (and dont try and use it anywhere else)
 
 MPI_LoopHashRefine::MPI_LoopHashRefine( char machine_letter ):
 	MPI_WorkUnitManager( machine_letter ),
@@ -118,7 +117,7 @@ MPI_LoopHashRefine::set_defaults(){
 	TR << "IDENT: " << ident_string_ << std::endl;
 
 	// make sure the state saves are randomly staggered - otherwise all the masters dump several hundred megs at once!
-	last_save_state_ = time(NULL)  + core::Size( RG.uniform()  * (core::Real) save_state_interval_) ;
+	last_save_state_ = time(NULL)  + core::Size( numeric::random::rg().uniform()  * (core::Real) save_state_interval_) ;
 	TR << "Interlace dumps: " << last_save_state_ << "  " << time(NULL)  << "  " << last_save_state_ - time(NULL) << "  " << save_state_interval_ << "  " << std::endl;
 }
 
@@ -391,7 +390,7 @@ MPI_LoopHashRefine::add_structure_to_library_single_replace( core::io::silent::S
 
 		if( ( energy_diff_T >= 0.0 ) ) metropolis_replace = true; // energy of new is simply lower
 		else if ( energy_diff_T/mpi_metropolis_temp_ > (-10.0) ){	// exp(-10) ~ 0, so check this before trying to evaluate exp(-100) and getting NaN
-			core::Real random_float = RG.uniform();
+			core::Real random_float = numeric::random::rg().uniform();
 			if ( random_float < exp( energy_diff_T/mpi_metropolis_temp_ ) )  metropolis_replace = true;
 		}
 		total_metropolis_++;

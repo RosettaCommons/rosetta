@@ -96,7 +96,7 @@
 #include <iterator>
 
 
-static basic::Tracer TR("InterfaceStrandFinder");
+static thread_local basic::Tracer TR( "InterfaceStrandFinder" );
 
 using namespace core;
 using namespace utility;

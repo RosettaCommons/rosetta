@@ -22,7 +22,7 @@
 #include <utility/string_util.hh>
 
 using basic::t_info;
-static basic::Tracer TR("app.andrew.mpi_test",t_info);
+static thread_local basic::Tracer TR( "app.andrew.mpi_test", t_info );
 
 
 int main( int argc, char ** argv )

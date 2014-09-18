@@ -65,8 +65,7 @@ using namespace utility;
 namespace protocols {
 namespace fibril {
 
-static basic::Tracer TR("protocols.moves.symmetry.fibril_util");
-  //static numeric::random::RandomGenerator RG(40811111); // <- Magic number, do not change it!!!
+static thread_local basic::Tracer TR( "protocols.moves.symmetry.fibril_util" );
 
 //lin functions for xyz coordinate
 bool

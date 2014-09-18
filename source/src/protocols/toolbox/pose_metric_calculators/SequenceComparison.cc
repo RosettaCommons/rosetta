@@ -91,7 +91,7 @@ namespace protocols{
 namespace toolbox{
 namespace pose_metric_calculators{
 
-static basic::Tracer TR("seqrecovery");
+static thread_local basic::Tracer TR( "seqrecovery" );
 
 using namespace core;
 using namespace protocols;

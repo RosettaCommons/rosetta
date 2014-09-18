@@ -19,7 +19,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.screener.PhosphateScreener" );
+static thread_local basic::Tracer TR( "protocols.stepwise.screener.PhosphateScreener" );
 
 namespace protocols {
 namespace stepwise {

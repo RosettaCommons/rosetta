@@ -148,7 +148,6 @@
 #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
- static numeric::random::RandomGenerator RG(16621);
 
 using namespace core;
 using namespace protocols;
@@ -172,7 +171,7 @@ using namespace protocols::moves;
 using namespace id;
 using namespace protocols::frags;
 
-basic::Tracer TR("apps.pilot.chrisk/pepspec");
+static thread_local basic::Tracer TR( "apps.pilot.chrisk/pepspec" );
 
 
 Size prot_chain( 0 );
@@ -243,7 +242,7 @@ myMC::roll(
 	else{
 		Real dE = score - last_score;
 		Real p = std::exp( -1 * dE / temp );
-		if( RG.uniform() < p ) accept_ = true;
+		if( numeric::random::rg().uniform() < p ) accept_ = true;
 	}
 	if( accept_ ){
 		last_pose = pose;
@@ -923,7 +922,7 @@ set_pep_csts(
 		Size seqpos( pep_cst.pep_pos + pep_anchor );
 		if( seqpos < pep_begin ) continue;
 		if( seqpos > pep_end ) break;
-		if( RG.uniform() > option[ pepspec::p_homol_csts ] ) continue;
+		if( numeric::random::rg().uniform() > option[ pepspec::p_homol_csts ] ) continue;
 		Vector pep_cst_vector;
 		pep_cst_vector.x( pep_cst.x );
 		pep_cst_vector.y( pep_cst.y );
@@ -1016,8 +1015,8 @@ make_1mer_frags(
 		std::string ss_string( "L" );
 		if( option[ pepspec::ss_type ].user() ) ss_string = std::string( option[ pepspec::ss_type ] );
 		else{
-			if( RG.uniform() < 0.1 ) ss_string = "H";
-			else if( RG.uniform() > 0.9 ) ss_string = "S";
+			if( numeric::random::rg().uniform() < 0.1 ) ss_string = "H";
+			else if( numeric::random::rg().uniform() > 0.9 ) ss_string = "S";
 		}
 		//get fraglist from ss or ss and seq
 		if( option[ pepspec::input_seq ].user() && seq[ j - 1 ] != 'X' ){
@@ -1064,8 +1063,8 @@ gen_pep_bb_sequential(
 		Size this_prepend( n_prepend );
 		Size this_append( n_append );
 		if( option[ pepspec::gen_pep_bb_sequential ] || !option[ pepspec::homol_csts ].user() ){
-			this_prepend = static_cast< int >( RG.uniform() * ( n_prepend - n_prepended + 1 ) );
-			this_append = static_cast< int >( RG.uniform() * ( n_append - n_appended + 1 ) );
+			this_prepend = static_cast< int >( numeric::random::rg().uniform() * ( n_prepend - n_prepended + 1 ) );
+			this_append = static_cast< int >( numeric::random::rg().uniform() * ( n_append - n_appended + 1 ) );
 		}
 
 		std::string this_input_seq( input_seq );
@@ -1149,15 +1148,15 @@ gen_pep_bb_sequential(
 				//choose an insertion position = seqpos
 				Size insert_peppos = 0;
 				while( true ){
-					insert_peppos = static_cast< int > ( nres_pep * RG.uniform() ) + 1;
+					insert_peppos = static_cast< int > ( nres_pep * numeric::random::rg().uniform() ) + 1;
 					if( is_insert[ insert_peppos ] ) break;
 				}
 				Size insert_seqpos( pep_begin + insert_peppos - 1 );
 */
 				frag_mover.apply( pose );
 				//random perturb angles +/- 1 degree
-//				pose.set_phi( insert_seqpos, pose.phi( insert_seqpos ) + 1 * ( 2 * RG.uniform() - 1 ) );
-//				pose.set_psi( insert_seqpos, pose.psi( insert_seqpos ) + 1 * ( 2 * RG.uniform() - 1 ) );
+//				pose.set_phi( insert_seqpos, pose.phi( insert_seqpos ) + 1 * ( 2 * numeric::random::rg().uniform() - 1 ) );
+//				pose.set_psi( insert_seqpos, pose.psi( insert_seqpos ) + 1 * ( 2 * numeric::random::rg().uniform() - 1 ) );
 
 				if( mc_frag->boltzmann( pose ) ){
 					Real test_score( pose.energies().total_energies().dot( cen_scorefxn->weights() ) );
@@ -1310,12 +1309,12 @@ mutate_random_residue(
 	bool mutate( false );
 	Size seqpos( 0 );
 	while( !mutate ){
-		seqpos = static_cast< int >( RG.uniform() * is_mutable.size() + 1 );
+		seqpos = static_cast< int >( numeric::random::rg().uniform() * is_mutable.size() + 1 );
 		mutate = is_mutable[ seqpos ];
 	}
 
 	//pick rand aa and mutate
-	make_sequence_change( seqpos, chemical::AA( static_cast< int > ( 20 * RG.uniform() + 1 ) ), pose );
+	make_sequence_change( seqpos, chemical::AA( static_cast< int > ( 20 * numeric::random::rg().uniform() + 1 ) ), pose );
 
 	//rottrial seqpos only
 	pack::task::TaskFactoryOP mut_task_factory( new pack::task::TaskFactory );
@@ -1632,7 +1631,7 @@ RunPepSpec()
 
 		//load random start pdb//
 		if( option[ pepspec::run_sequential ] ) ++pose_index;
-		else pose_index = static_cast< int >( RG.uniform() * pdb_filenames.size() + 1 );
+		else pose_index = static_cast< int >( numeric::random::rg().uniform() * pdb_filenames.size() + 1 );
 		std::string pdb_filename( pdb_filenames[ pose_index ] );
 		TR<<"Initializing "<< out_nametag + "_" + string_of( peptide_loop ) + " with " + pdb_filename << std::endl;
 		import_pose::pose_from_pdb( pose, pdb_filename );
@@ -1651,7 +1650,7 @@ RunPepSpec()
 			pep_chain = 2;
 			pep_begin = pose.conformation().chain_begin( pep_chain );
 			pep_end = pose.conformation().chain_end( pep_chain );
-			pep_anchor = pep_begin + static_cast< int >( ( pose.conformation().chain_end( pep_chain ) -  pose.conformation().chain_begin( pep_chain ) ) * RG.uniform() );
+			pep_anchor = pep_begin + static_cast< int >( ( pose.conformation().chain_end( pep_chain ) -  pose.conformation().chain_begin( pep_chain ) ) * numeric::random::rg().uniform() );
 		}
 
 		if( pep_anchor == 0 ) utility_exit_with_message( "pep_chain / pep_anchor combo not found\n" );
@@ -1815,7 +1814,7 @@ RunPepSpec()
 				for( Size mut_site = pep_begin; mut_site <= pep_end; ++mut_site ){
 					if( mut_site==pep_anchor ) continue;
 					int resindex;
-					resindex = static_cast< int > ( 20 * RG.uniform() + 1 );
+					resindex = static_cast< int > ( 20 * numeric::random::rg().uniform() + 1 );
 					make_sequence_change( mut_site, chemical::AA(resindex), pose );
 				}
 			}

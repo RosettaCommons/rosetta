@@ -41,7 +41,7 @@ namespace enzdes {
 //initializing static member variable
 std::map< std::string, toolbox::match_enzdes_util::EnzConstraintIOOP > AddOrRemoveMatchCsts::cstfile_map_;
 
-static basic::Tracer tr("protocols.enzdes.AddorRemoveCsts");
+static thread_local basic::Tracer tr( "protocols.enzdes.AddorRemoveCsts" );
 
 std::string
 AddOrRemoveMatchCstsCreator::keyname() const

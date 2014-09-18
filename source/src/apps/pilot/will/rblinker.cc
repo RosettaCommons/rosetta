@@ -59,9 +59,8 @@
 using core::kinematics::Stub;
 using core::conformation::Residue;
 
-static basic::Tracer TR("rblinker");
+static thread_local basic::Tracer TR( "rblinker" );
 
-static numeric::random::RandomGenerator RG(8334046);
 
 inline void xform_pose( core::pose::Pose & pose, Stub const & s ) {
 	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
@@ -698,7 +697,7 @@ void* doit(void*) {
 
 		Real const boltz_factor = ( lastscore - score ) / option[rblinker::temp]();
 		Real const probability = std::exp( std::min (40.0, std::max(-40.0,boltz_factor)) );
-		if ( RG.uniform() < probability ) {
+		if ( numeric::random::rg().uniform() < probability ) {
 			naccept++;
 			lastscore = score;
 			last1 = lnk1;

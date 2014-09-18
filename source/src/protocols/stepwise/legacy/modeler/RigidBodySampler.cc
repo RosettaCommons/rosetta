@@ -54,7 +54,7 @@
 using namespace core;
 using core::Real;
 
-static basic::Tracer TR( "protocols.stepwise.legacy.modeler.RigidBodySampler" ) ;
+static thread_local basic::Tracer TR( "protocols.stepwise.legacy.modeler.RigidBodySampler" );
 using numeric::conversions::radians;
 using numeric::conversions::degrees;
 

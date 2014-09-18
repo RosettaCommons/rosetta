@@ -42,7 +42,7 @@
 
 
 
-static basic::Tracer TR( "apps.pilot.kinematic_relax_test.main" );
+static thread_local basic::Tracer TR( "apps.pilot.kinematic_relax_test.main" );
 
 void*
 my_main( void* )

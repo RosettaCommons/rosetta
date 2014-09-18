@@ -21,7 +21,7 @@
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR("protocols.simple_moves.PSSM2BfactorMover");
+static thread_local basic::Tracer TR( "protocols.simple_moves.PSSM2BfactorMover" );
 #include <utility/tag/Tag.hh>
 
 // AUTO-REMOVED #include <core/chemical/AtomType.hh>

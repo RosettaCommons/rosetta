@@ -102,7 +102,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("FlexPepDockingProtocol");
+static thread_local basic::Tracer TR( "FlexPepDockingProtocol" );
 using namespace core;
 using namespace ObjexxFCL;
 

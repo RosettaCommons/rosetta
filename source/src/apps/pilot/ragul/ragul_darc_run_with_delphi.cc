@@ -85,7 +85,7 @@ OPT_KEY( Integer, delphi_grid_size )
 OPT_KEY( Real, delphi_grid_spacing )
 
 
-static basic::Tracer TR( "apps.pilot.ragul_run_darc_with_input_eggshell.main" );
+static thread_local basic::Tracer TR( "apps.pilot.ragul_run_darc_with_input_eggshell.main" );
 
 int main( int argc, char * argv [] ) {
   try {
@@ -460,7 +460,11 @@ int main( int argc, char * argv [] ) {
 
 		// calculate and store total metrics for bound and unbound poses
 		core::Real bound_energy = 0.0, unbound_energy = 0.0, Interface_Energy = 0.0;
+<<<<<<< HEAD
+		//core::Real bound_sasa = 0.0, unbound_sasa = 0.0, Total_BSA = 0.0;
+=======
 		//core::Real bound_sasa = 0.0, unbound_sasa = 0.0, core::Real Total_BSA = 0.0; // unused-but-set-variable
+>>>>>>> master
 		core::Size  bound_hb = 0,   unbound_hb = 0, Interface_HB = 0;
 		core::Real bound_packstat = 0.0, unbound_packstat = 0.0, Total_packstats = 0.0;
 		core::Size  bound_unsat = 0, unbound_unsat = 0, Interface_unsat = 0;
@@ -471,9 +475,15 @@ int main( int argc, char * argv [] ) {
 		Interface_Energy = bound_energy - unbound_energy;
 
 		//delta sasa calculation
+<<<<<<< HEAD
+		bound_pose.metric(sasa_calc_name,"total_sasa",tot_sasa_mval);
+		//bound_sasa = tot_sasa_mval.value();
+		unbound_pose.metric(sasa_calc_name,"total_sasa",tot_sasa_mval);
+=======
 		//bound_pose.metric(sasa_calc_name,"total_sasa",tot_sasa_mval);
 		//bound_sasa = tot_sasa_mval.value();
 		//unbound_pose.metric(sasa_calc_name,"total_sasa",tot_sasa_mval);
+>>>>>>> master
 		//unbound_sasa = tot_sasa_mval.value();
 		//Total_BSA = unbound_sasa - bound_sasa;
 

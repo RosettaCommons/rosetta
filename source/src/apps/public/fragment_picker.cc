@@ -36,7 +36,7 @@
 
 #include <utility/excn/Exceptions.hh>
 
-static basic::Tracer trace("fragment_picker");
+static thread_local basic::Tracer trace( "fragment_picker" );
 
 using namespace core;
 using namespace core::fragment;

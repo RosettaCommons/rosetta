@@ -92,8 +92,7 @@ using namespace basic;
 using namespace protocols::moves;
 using namespace protocols;
 
-static numeric::random::RandomGenerator Rg(38621127);
-static basic::Tracer tr("devel.coupled_sidechains.CoupledSidechainProtocol");
+static thread_local basic::Tracer tr( "devel.coupled_sidechains.CoupledSidechainProtocol" );
 
 OPT_1GRP_KEY(Integer,rotamers,observer_stride)
 OPT_1GRP_KEY(Real,rotamers,unif)

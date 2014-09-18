@@ -33,7 +33,7 @@ namespace clusters {
 	using core::Real;
 	using core::Size;
 
-static basic::Tracer TR("protocols.antibody.clusters");
+static thread_local basic::Tracer TR( "protocols.antibody.clusters" );
 
 std::string
 get_pose_cis_trans_conformation(core::pose::Pose const & pose, core::Size const start, core::Size const end){

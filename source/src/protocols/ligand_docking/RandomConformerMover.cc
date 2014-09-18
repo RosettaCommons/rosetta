@@ -30,7 +30,6 @@
 
 #include <utility/vector1.hh>
 
-static numeric::random::RandomGenerator my_RG(810106); // <- Magic number, do not change it!!! That's Ian Davis's thing- not sure why
 
 namespace protocols {
 namespace ligand_docking {
@@ -81,7 +80,7 @@ void RandomConformerMover::apply( core::pose::Pose & pose )
 	//	conformers.push_back(curr_copy);
 	//}
 	// Choose one at random
-	ResidueOP selected_res = conformers[ my_RG.random_range(1, conformers.size()) ];
+	ResidueOP selected_res = conformers[ numeric::random::rg().random_range(1, conformers.size()) ];
 	// Residue library has already superimpose residues appropriately, so don't orient again
 	pose.replace_residue(resid_, *selected_res, false /*orient backbone*/);
 }

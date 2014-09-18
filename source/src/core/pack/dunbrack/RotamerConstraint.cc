@@ -46,7 +46,7 @@ namespace dunbrack {
 using namespace scoring;
 using namespace scoring::constraints;
 
-static basic::Tracer TR("core.pack.dunbrack.RotamerConstraint");
+static thread_local basic::Tracer TR( "core.pack.dunbrack.RotamerConstraint" );
 
 
 void load_unboundrot(pose::Pose & pose)

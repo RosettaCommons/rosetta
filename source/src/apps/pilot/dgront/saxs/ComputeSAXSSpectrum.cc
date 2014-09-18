@@ -36,7 +36,7 @@
 
 using namespace core;
 
-static basic::Tracer trRescoreSAXS("ComputeSAXSSpectrum");
+static thread_local basic::Tracer trRescoreSAXS( "ComputeSAXSSpectrum" );
 
 
 void register_options() {

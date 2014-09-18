@@ -55,8 +55,7 @@
 #include <boost/algorithm/string.hpp>
 
 
-static basic::Tracer TR("antibody.design.AntibodyGraftDesinger");
-static numeric::random::RandomGenerator RG(1365421);
+static thread_local basic::Tracer TR( "antibody.design.AntibodyGraftDesinger" );
 
 namespace protocols{
 namespace antibody{
@@ -66,7 +65,7 @@ namespace design{
 	using namespace protocols::antibody::clusters;
 	using namespace core;
 	using core::Size;
-	
+
 AntibodyGraftDesignMover::AntibodyGraftDesignMover(AntibodyInfoOP ab_info):
 	graft_mover_(NULL),
 	scorefxn_(NULL)
@@ -103,7 +102,7 @@ AntibodyGraftDesignMover::~AntibodyGraftDesignMover(){}
 void
 AntibodyGraftDesignMover::set_defaults(){
 	///Conservative defaults.  Defaults here are also read and set from a database file.  To allow run-time manipulations and testing.
-	
+
 	set_cdr_range(CDRNameEnum_start, CDRNameEnum_total, true);
 	set_mintype_range(CDRNameEnum_start, CDRNameEnum_total, minimize);
 	set_min_rb_range(CDRNameEnum_start, CDRNameEnum_total, false);
@@ -113,7 +112,7 @@ AntibodyGraftDesignMover::set_defaults(){
 	set_cdr_cluster_centers_only_range(CDRNameEnum_start, CDRNameEnum_total, false);
 	set_cdr_min_length_range(CDRNameEnum_start, CDRNameEnum_total, 1);
 	set_cdr_max_length_range(CDRNameEnum_start, CDRNameEnum_total, 50); //Something absurd.
-	read_instructions(instruction_path_);//Any settings found in this file override these defaults. 
+	read_instructions(instruction_path_);//Any settings found in this file override these defaults.
 }
 
 void
@@ -195,7 +194,7 @@ AntibodyGraftDesignMover::set_cluster_range(
 	for (core::SSize i=cluster_start; i<=cluster_end; ++i){
 		CDRClusterEnum cluster = static_cast<CDRClusterEnum>(i);
 		if (setting==true){
-			
+
 			cdr_instructions_[cdr].leave_out_clusters.push_back(cluster);
 		}
 		else{
@@ -264,11 +263,11 @@ AntibodyGraftDesignMover::set_cdr_stay_in_native_cluster(const CDRNameEnum cdr, 
 void
 AntibodyGraftDesignMover::set_cdr_range_stay_in_native_cluster(
 
-				const CDRNameEnum cdr_start, 
+				const CDRNameEnum cdr_start,
 				const CDRNameEnum cdr_end,
 				const bool setting)
 {
-	
+
 	for (core::SSize i=cdr_start; i<=cdr_end; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		cdr_instructions_[cdr].stay_native_cluster = setting;
@@ -322,7 +321,7 @@ AntibodyGraftDesignMover::set_cdr_max_length_range(const CDRNameEnum cdr_start,c
 
 void
 AntibodyGraftDesignMover::set_cdr_cluster_centers_only(const CDRNameEnum cdr, bool setting){
-	cdr_instructions_[cdr].cluster_centers_only = setting; 
+	cdr_instructions_[cdr].cluster_centers_only = setting;
 }
 
 void
@@ -337,7 +336,7 @@ void
 AntibodyGraftDesignMover::setup_native_clusters(pose::Pose & pose){
 
 	ab_info_->setup_CDR_clusters(pose);
-	
+
 	for (Size i=1; i<=CDRNameEnum_total; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		native_clusters_[cdr] = ab_info_->get_CDR_cluster(cdr);
@@ -349,7 +348,7 @@ AntibodyGraftDesignMover::initialize_cdr_set(){
 	AntibodyDatabaseManagerOP manager = new AntibodyDatabaseManager();
 	std::pair< CDRSet,  CDRClusterMap > result_pair = manager->load_cdrs_for_grafting(ab_info_, cdr_instructions_, pdbmap_);
 	cdr_set_ = result_pair.first; cdr_cluster_map_ = result_pair.second;
-	
+
 }
 
 void
@@ -360,9 +359,9 @@ AntibodyGraftDesignMover::read_instructions(std::string instruction_path){
 
 void
 AntibodyGraftDesignMover::fix_pdb_info(pose::Pose & pose, CDRNameEnum cdr, CDRClusterEnum cluster, core::Size original_start, core::Size original_pdb_end) {
-  
+
 	//using core::pose::PDBInfo;
-  
+
 	//PDBInfo should not be obsolete when calling this function.
 	//PDBInfo & pdbinfo = *pose.pdb_info();
 	core::Size cdr_length = ab_info_->get_cluster_length(cluster);
@@ -370,7 +369,7 @@ AntibodyGraftDesignMover::fix_pdb_info(pose::Pose & pose, CDRNameEnum cdr, CDRCl
 	core::Size pdb_num_start = pose.pdb_info()->number(original_start);
 	core::Size pdb_num_end = original_pdb_end;
 	core::Size original_end = original_start+cdr_length+1;
-  
+
 	//Starting residues
 	for (core::Size i = 1; i<=ceil(result); ++i){
 		core::Size pdb_num = pdb_num_start+i;
@@ -379,7 +378,7 @@ AntibodyGraftDesignMover::fix_pdb_info(pose::Pose & pose, CDRNameEnum cdr, CDRCl
 		TR.Debug << "Set PDBInfo: "<< pose_num<<": "<< pdb_num << " "<<  chain <<std::endl;
 		pose.pdb_info()->set_resinfo(pose_num, chain , pdb_num);
 	}
-  
+
 	//Ending residues
 	for (core::Size i = 1; i<=floor(result); ++i){
 		core::Size pdb_num = pdb_num_end-i;
@@ -389,7 +388,7 @@ AntibodyGraftDesignMover::fix_pdb_info(pose::Pose & pose, CDRNameEnum cdr, CDRCl
 		pose.pdb_info()->set_resinfo(pose_num, chain , pdb_num);
 	}
 }
- 
+
 void
 AntibodyGraftDesignMover::set_default_graft_settings(){
 	graft_mover_->set_cycles(20);
@@ -403,7 +402,7 @@ AntibodyGraftDesignMover::set_default_graft_settings(){
 
 void
 AntibodyGraftDesignMover::extend_native_cdrs(pose::Pose & pose, vector1<CDRNameEnum>& cdrs_to_design) {
-	
+
 	for (core::Size i = 1; i <= cdrs_to_design.size(); ++i){
 		TR << "Randomizing native CDR structure: "<< ab_info_->get_CDR_name(cdrs_to_design[i]) << std::endl;
 		modeler_->extend_CDR(pose, cdrs_to_design[i]);
@@ -413,23 +412,23 @@ AntibodyGraftDesignMover::extend_native_cdrs(pose::Pose & pose, vector1<CDRNameE
 
 bool
 AntibodyGraftDesignMover::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Size index){
-	
+
 	//Get CDR start/end in PDBInfo is now dynamic.  As long as pdb_info is not obsolete
 	//This should go into a log, we should figure out how to have this info written to the resulting file.
 	TR << "Grafting CDR from cluster " << ab_info_->get_cluster_name(cdr_cluster_map_[cdr][index]) << " fragment "<< pdbmap_[cdr][index] << std::endl;
-	
+
 	core::Size start = ab_info_->get_CDR_start(cdr, pose)-1;
 	core::Size end = ab_info_->get_CDR_end(cdr, pose)+1;
 	//core::Size original_pdb_end = pose.pdb_info()->number(end);
-	
+
 	graft_mover_->set_insert_region(start, end);
 	//(cdr_set_[cdr][index])->dump_pdb("piece.pdb");
 
 	if (cdr==h3){
-		//graft_mover_->set_scaffold_flexibility(3, 3);	
+		//graft_mover_->set_scaffold_flexibility(3, 3);
 		graft_mover_->set_cycles(40);
 	}
-	
+
 	//If the superposition is really wacky for some reason, we can get chainbreaks.  To overcome this,:
 	//Next - need to min on a jump or multiple jumps as this adaptation does not always work - but it will take too many cycles to use normal graft algorithm.
 	core::Size max_attempts = 1;
@@ -439,8 +438,8 @@ AntibodyGraftDesignMover::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Siz
 		graft_mover_->set_piece(piece, overhang_, overhang_);
 		//graft_mover_->superimpose_overhangs_heavy(temp_pose, ca_only , true); //Superimposes first heavy atoms of overhang
 		graft_mover_->apply(temp_pose);
-		
-		
+
+
 		//Is there a chainbreak?
 		bool cb = false;
 		core::Real cb_score;
@@ -453,7 +452,7 @@ AntibodyGraftDesignMover::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Siz
 				break;
 			}
 		}
-		
+
 		//Increase sampling to do a better graft
 		if (cb && i <  max_attempts){
 			TR << "Linear chainbreak found from graft. Increasing flexibility." << std::endl;
@@ -470,29 +469,29 @@ AntibodyGraftDesignMover::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Siz
 			set_default_graft_settings();
 			TR << "Could not close graft for CDR after adaptation...  Skipping." << std::endl;
 			TR << "Value: " << cb_score << std::endl;
-			return false;		
+			return false;
 		}
 		else{
 			//Success
 			pose = temp_pose;
 			set_default_graft_settings();
 			break;
-		}	
+		}
 	} // End graft adaptation
 
 	pose.pdb_info()->copy(*((cdr_set_[cdr][index])->pdb_info()), 1 + overhang_, (cdr_set_[cdr][index])->total_residue()-overhang_, start+1);
 	pose.pdb_info()->obsolete(false);
-	
+
 	TR << "PDBInfo Set" << std::endl;
 	modeler_->set_cdr_only(cdr, true);
-	
-	
+
+
 	//Remove old CDR constraints.  (No need to make local copy due to MC holding the lowest pose - if we go back, constraints will be there.)
 	pose.remove_constraints(constraint_map_[cdr], true);
 	core::Size start_res = ab_info_->get_CDR_start(cdr, pose);
 	core::Size end_res = ab_info_->get_CDR_end(cdr, pose);
 	core::scoring::constraints::remove_constraints_of_type(pose, "CoordinateConstraint", start_res, end_res);
-	
+
 	//Add new post-graft CDR constraints or coordinate constraints if unknown cluster.
 	bool constraint_result = protocols::antibody::add_harmonic_cluster_constraint(ab_info_, pose, cdr_cluster_map_[cdr][index], constraint_map_[cdr]);
 	bool use_coordinate_constraints = !constraint_result;
@@ -502,13 +501,13 @@ AntibodyGraftDesignMover::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Siz
 		TR << "Adding coordinate constraints for "<< ab_info_->get_CDR_name(cdr) << std::endl;
 		core::scoring::constraints::add_coordinate_constraints(pose, start_res, end_res, .5 /* just a little give */, false /* include_sc */);
 	}
-	
-	
+
+
 	///Relax CDR if in instructions + the constraint was successfully added.
 	vector1< char > antigen_chains = ab_info_->get_antigen_chains();
 	std::string antigen(antigen_chains.begin(), antigen_chains.end());
 	std::string dock_chains = modeler_->get_ab_dock_chains()+"_"+antigen;
-	
+
 	TR << "Beginning post-graft min" << std::endl;
 	if (initial_perturb_){
 		core::kinematics::FoldTree ft = pose.fold_tree();
@@ -519,30 +518,30 @@ AntibodyGraftDesignMover::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Siz
 		perturber->apply(pose);
 		pose.fold_tree(ft);
 	}
-	
+
 	if (pack_post_graft_ && cdr_instructions_[cdr].mintype != no_min){
 		modeler_->repack_CDRs_and_neighbors(pose);
 	}
-	
+
 	if (dock_post_graft_){
 		for (core::Size i = 1; i<= dock_rounds_; i++){
-			
+
 			//Control this from cmd line
 			//Perturb if command-line options are set: At the very least, we slide into contact with the antibody.
-			
-			
+
+
 			modeler_->dock_LH_A_low_res(pose, false /*repack_interface*/ ); // This should change once the minimization does some neighbor detection.
-			modeler_->dock_LH_A_high_res(pose, 3 /*first cycles*/, 10 /*second_cycles*/); //Normal DockMCM is 4/45.  This should mainly just be quick to fix overlap from low_res dock.  
+			modeler_->dock_LH_A_high_res(pose, 3 /*first cycles*/, 10 /*second_cycles*/); //Normal DockMCM is 4/45.  This should mainly just be quick to fix overlap from low_res dock.
 		}
 	}
-	
-	
-	
+
+
+
 	bool rb_min = cdr_instructions_[cdr].min_rb;
-	
+
 	//I would have liked to control this via a RosettaScript, read in during the run.  But, members in Sarels lab say this is not possible yet.
 	if (cdr_instructions_[cdr].mintype == relax){
-		
+
 		if (cdr_instructions_[cdr].min_neighbor_sc){
 			modeler_->relax_cdrs_and_neighbor_sc(pose, false, rb_min, dock_chains);
 		}
@@ -566,7 +565,7 @@ AntibodyGraftDesignMover::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Siz
 	else {
 		//graft_mover_->repack_connection_and_residues_in_movemap(pose, scorefxn_);
 	}
-	
+
 	if (rb_min_post_graft_){
 		modeler_->minimize_interface(pose, dock_chains, true /* min_interface */);
 	}
@@ -576,15 +575,15 @@ AntibodyGraftDesignMover::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Siz
 
 void
 AntibodyGraftDesignMover::check_for_top_designs(pose::Pose & pose){
-	
+
 	//Can be refactored to use utility::TopScoreSelector
 	//From mc algorithm, you can have multiple poses that are equivalent...
 	core::Real score = (*scorefxn_)(pose);
-	
+
 
 	vector1<core::Real>::iterator score_it = top_scores_.begin();
 	vector1<pose::PoseOP>::iterator pose_it = top_designs_.begin();
-	
+
 	if (top_scores_.size()==0){
 		top_scores_.push_back(score);
 		top_designs_.push_back(new Pose());
@@ -613,24 +612,24 @@ AntibodyGraftDesignMover::check_for_top_designs(pose::Pose & pose){
 	}
 
 	//mc_->eval_lowest_score_pose(pose, false, true);
-	
+
 }
 
 ///@brief Gets a list of vectors whose indexes correspond to CDRNameEnum, and whose values correspond to the cdr_set index.  If the value is 0, it means no cdr in set.
 vector1< vector1 < Size > >
 AntibodyGraftDesignMover::get_cdr_set_index_list(){
-	vector1< vector1< Size > > index_list; 
+	vector1< vector1< Size > > index_list;
 	vector1<core::Size> cdr_set_totals(6, 0);
-	
+
 	for (core::SSize i=CDRNameEnum_start; i<=CDRNameEnum_total; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		cdr_set_totals[i] = cdr_set_[cdr].size();
 	}
-	
+
 	vector1< Size > dummy_index(6, 0);
 	get_all_graft_permutations(cdr_set_totals, index_list, dummy_index, 1);
 	return index_list;
-	
+
 }
 
 void
@@ -641,13 +640,13 @@ AntibodyGraftDesignMover::run_basic_mc_algorithm(pose::Pose& pose, vector1<CDRNa
 	top_designs_.push_back(new Pose());
 	*(top_designs_[1]) = pose;
 	mc_->set_last_accepted_pose(pose);
-	
+
 	for (core::Size i = 1; i <= graft_rounds_; ++i){
 		TR << "Graft round: " << i <<std::endl;
-		
-		CDRNameEnum cdr_type = cdrs_to_design[RG.random_range(1, cdrs_to_design.size())];
-		core::Size cdr_index = RG.random_range(1, cdr_set_[cdr_type].size());
-		
+
+		CDRNameEnum cdr_type = cdrs_to_design[numeric::random::rg().random_range(1, cdrs_to_design.size())];
+		core::Size cdr_index = numeric::random::rg().random_range(1, cdr_set_[cdr_type].size());
+
 		bool graft_successful = graft_cdr(pose, cdr_type, cdr_index);
 		if ( graft_successful ){
 			check_for_top_designs(pose);
@@ -657,7 +656,7 @@ AntibodyGraftDesignMover::run_basic_mc_algorithm(pose::Pose& pose, vector1<CDRNa
 			pose = mc_->last_accepted_pose();
 		}
 	}
-	
+
 	mc_->recover_low(pose);
 	mc_->show_counters();
 }
@@ -665,18 +664,18 @@ AntibodyGraftDesignMover::run_basic_mc_algorithm(pose::Pose& pose, vector1<CDRNa
 void
 AntibodyGraftDesignMover::run_deterministic_graft_algorithm(pose::Pose & pose,vector1<CDRNameEnum>& cdrs_to_design){
 	//Note:  Not feasible with >= 4 CDRs to try at each position. Should not be used with docking on.
-	
+
 	/*
 	vector1< vector1< Size > > cdr_index_list = get_cdr_set_index_list();
-	
+
 	TR << "Running deterministic graft algorithm on  " << cdr_index_list.size() << " permutations. " << std::endl;
 	for (core::Size i = 1; i <= cdr_index_list.size(); ++i){
 		TR << "Graft round: " << i << std::endl;
 		pose::Pose trial_pose = pose;
-		
+
 		//Graft each CDR in the index from the starting pose.  Same order every time.
 		//All grafts should be closed for this to be OK.
-		
+
 		for (core::Size x = 1; x <= 6; ++x) {
 			if (cdr_index_list[i][x] != 0){
 				CDRNameEnum cdr = static_cast<CDRNameEnum>(x);
@@ -690,13 +689,13 @@ AntibodyGraftDesignMover::run_deterministic_graft_algorithm(pose::Pose & pose,ve
 			check_for_top_designs(trial_pose);
 			mc_->eval_lowest_score_pose(trial_pose, false, true);
 		}
-		
+
 	} //End grafting
 	*/
-	
+
 	//Temporary fix to deterministically graft one CDR.  Needs to be fixed correctly soon.
 	CDRNameEnum cdr = cdrs_to_design[1];
-	
+
 	for (core::Size i = 1; i <= cdr_set_[cdr].size(); ++i){
 		TR << "Graft round: " << i << std::endl;
 		pose::Pose trial_pose = pose;
@@ -709,7 +708,7 @@ AntibodyGraftDesignMover::run_deterministic_graft_algorithm(pose::Pose & pose,ve
 		check_for_top_designs(trial_pose);
 		mc_->eval_lowest_score_pose(trial_pose, false, true);
 	}
-	
+
 	mc_->recover_low(pose);
 	mc_->show_counters();
 }
@@ -720,21 +719,21 @@ AntibodyGraftDesignMover::apply(pose::Pose & pose){
 	if (! protocols::antibody::clusters::check_if_pose_renumbered_for_clusters(pose)){
 		utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  Please see Antibody Design documentation.");
 	}
-	
+
 	//Create Instances.  Make sure everything is ready to begin.
 	if (!scorefxn_){
 		scorefxn_ = core::scoring::get_score_function(true);
 	}
 	if (scorefxn_->get_weight(core::scoring::dihedral_constraint) == 0.0){
-		scorefxn_->set_weight(core::scoring::dihedral_constraint, 1.0);	
+		scorefxn_->set_weight(core::scoring::dihedral_constraint, 1.0);
 	}
-	
+
 	//Print setup options.  Will be moved to Show
 	// -> Everything set
 	// -> Total number of grafts
 	// -> Total number of CDRs
 	// -> Total number of CDR pieces per CDR
-	
+
 	//Will go in SHOW.
 	TR << "///////////////////////////////////////////////////////////////////////////////////////////////////////////////" <<std::endl;
 	for (core::Size i=1; i<=6; ++i){
@@ -765,14 +764,14 @@ AntibodyGraftDesignMover::apply(pose::Pose & pose){
 	if (cdr_set_.empty()){
 		initialize_cdr_set();
 	}
-	
+
 	//Reinitialize.  Need to figure out how to do this properly via JD.
 	top_designs_.clear();
 	top_scores_.clear();
-	
+
 	//List of CDRs to graft.
 	vector1< CDRNameEnum > cdrs_to_design;
-	
+
 	for (core::Size i=1; i<=CDRNameEnum_total; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		if (cdr_instructions_[cdr].graft && cdr_set_[cdr].size() != 0){
@@ -780,39 +779,39 @@ AntibodyGraftDesignMover::apply(pose::Pose & pose){
 		}
 	}
 	//Choose one.
-	
+
 	if (cdrs_to_design.size() == 0){
 		TR << "All CDRs fixed for low res graft designer or there are no CDRs in the set...." << std::endl;
 		//Make sure our top designs has something in it for the antibody designer.
 		check_for_top_designs(pose);
 		return;
 	}
-	
+
 	if (extend_native_cdrs_){
 		extend_native_cdrs(pose, cdrs_to_design);
 	}
 	graft_mover_ = new CCDEndsGraftMover(ab_info_->get_CDR_start(cdrs_to_design[1], pose)-1, ab_info_->get_CDR_end(cdrs_to_design[1], pose)+1);
-	
+
 	//TR << "Superimposing ALL CDRs to graft onto target."<<std::endl;
 	//for (core::Size i=1; i<=cdrs_to_design.size(); ++i){
 		//CDRNameEnum cdr = cdrs_to_design[i];
 		//core::Size start = ab_info_->get_CDR_start(cdr, pose)-1;
 		//core::Size end = ab_info_->get_CDR_end(cdr, pose)+1;
-		
-		
+
+
 		//for (core::Size pose_i = 1; pose_i <= cdr_set_[cdr].size(); ++pose_i){
 		//	graft_mover_->set_insert_region(start, end);
 		//	graft_mover_->set_piece(*(cdr_set_[cdr][pose_i]), overhang_, overhang_);
 		//	graft_mover_->superimpose_overhangs_heavy(pose, false , false); //Superimposes first 4 atoms (Should be BB only then.)
 		//}
 	//}
-	
+
 	//Graft Settings.  Get optimal here!
 	set_default_graft_settings();
-	
-	
+
+
 	modeler_->set_scorefunction(scorefxn_);
-	
+
 	total_permutations_ = 1;
 	for (core::Size i=1; i<=cdrs_to_design.size(); ++i){
 		total_permutations_ *= cdr_set_[cdrs_to_design[i]].size();
@@ -822,13 +821,13 @@ AntibodyGraftDesignMover::apply(pose::Pose & pose){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		TR << "/// "<<ab_info_->get_CDR_name(cdr)<<" "<<cdr_set_[cdr].size()<<std::endl;
 	}
-	
+
 	TR <<"Total possible CDR combinations: "<< total_permutations_ << std::endl;
 	mc_ = new protocols::moves::MonteCarlo(pose, *scorefxn_, 1.0);
-	
+
 	core::Real native_score = (*scorefxn_)(pose);
 	scorefxn_->show(pose);
-	
+
 	//if ((total_permutations_ <= graft_rounds_) && (use_deterministic_algorithm_ == true)  && (graft_rounds_ <= 10000)){
 	//	run_deterministic_graft_algorithm(pose);
 	//}
@@ -840,16 +839,16 @@ AntibodyGraftDesignMover::apply(pose::Pose & pose){
 		//run_random_graft_algorithm(pose, cdrs_to_design);
 		run_basic_mc_algorithm(pose, cdrs_to_design);
 	}
-	
+
 	TR << "Native Pose: " << native_score << std::endl;
 	TR << "Final Pose: " << (*scorefxn_)(pose) << std::endl;
 	for (core::Size i = 2; i<= top_scores_.size(); ++i){
 		TR << "Top Ensemble " << i << " : " << (*scorefxn_)(*top_designs_[i]) << std::endl;
 	}
-	
+
 	//Reinitialize ab_info clusters
 	//ab_info_->setup_CDR_clusters(pose);
-	
+
 }
 
 ////////////////////////////////////////////// Boiler Plate ///////////////////////////////////////////////////////////////////////////////////////////////////////////////

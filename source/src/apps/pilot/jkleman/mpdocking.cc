@@ -79,7 +79,7 @@ using namespace core::pose;
 using namespace core::conformation;
 using namespace core::conformation::membrane;
 
-static basic::Tracer TR( "apps.pilot.jkleman.mpdocking" );
+static thread_local basic::Tracer TR( "apps.pilot.jkleman.mpdocking" );
 
 ////////////////////////////////////////////////////////////////////////////////
 //////////////////////////// HEADER ////////////////////////////////////////////

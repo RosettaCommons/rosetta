@@ -48,7 +48,7 @@
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>
 
-static basic::Tracer TR( "protocols.electron_density.BfactorFittingMover" );
+static thread_local basic::Tracer TR( "protocols.electron_density.BfactorFittingMover" );
 
 namespace protocols {
 namespace electron_density {

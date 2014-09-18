@@ -68,8 +68,7 @@ namespace ccd {
 using namespace core;
 using namespace pose;
 
-static numeric::random::RandomGenerator RG(9781212);  // <- Magic number, do not change it!
-static basic::Tracer tr("protocols.loops.loop_closure.ccd.LoopClosure");
+static thread_local basic::Tracer tr( "protocols.loops.loop_closure.ccd.LoopClosure" );
 
 LoopClosure::LoopClosure(
   fragment::FragSetCOP fragset,
@@ -222,7 +221,7 @@ LoopClosure::do_frag_cycles( pose::Pose &pose ) const {
 	  frag_trial.apply( pose );
 		if ( bRampChainbreak_ && ( i % 20 == 0 ) ) ramp_chainbreak( i, cycles_ );
 		if ( i % 10 ==0 ) tr.Trace << "loop-frag-trials: iterations: " << i << std::endl;
-    if ( ccd_trial && i > cycles_/2 && ( RG.uniform() * cycles_ ) < i ) {
+    if ( ccd_trial && i > cycles_/2 && ( numeric::random::rg().uniform() * cycles_ ) < i ) {
 			     ccd_trial->apply( pose );
     }
   }

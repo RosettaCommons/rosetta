@@ -21,7 +21,7 @@
 // AUTO-REMOVED #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.FilterMover" );
+static thread_local basic::Tracer TR( "protocols.FilterMover" );
 
 //
 #include <string>

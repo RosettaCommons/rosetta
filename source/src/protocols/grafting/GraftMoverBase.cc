@@ -48,7 +48,7 @@
 
 
 
-static basic::Tracer TR("protocols.grafting.GraftMoverBase");
+static thread_local basic::Tracer TR( "protocols.grafting.GraftMoverBase" );
 
 namespace protocols {
 namespace grafting {

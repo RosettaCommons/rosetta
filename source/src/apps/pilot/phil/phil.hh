@@ -99,7 +99,7 @@ template< class T >
 T const &
 random_element( utility::vector1< T > const & v )
 {
-	return numeric::random::RG.random_element( v );
+	return numeric::random::rg().random_element( v );
 }
 
 // using std::string;

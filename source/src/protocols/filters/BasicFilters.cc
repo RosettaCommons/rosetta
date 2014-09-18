@@ -44,8 +44,7 @@
 #include <utility/string_util.hh>
 
 //// C++ headers
-static basic::Tracer TR("protocols.filters.Filter");
-static numeric::random::RandomGenerator RG( 140789 ); // <- Magic number, do not change it!!!
+static thread_local basic::Tracer TR( "protocols.filters.Filter" );
 
 namespace protocols {
 namespace filters {
@@ -69,7 +68,7 @@ StochasticFilter::apply( Pose const & ) const
 {
 	if( confidence_ >= 0.999 ) return true;
 
-	core::Real const random_number( RG.uniform() );
+	core::Real const random_number( numeric::random::rg().uniform() );
 	if( random_number <= confidence_ ) {
 		TR<<"stochastic filter returning false"<<std::endl;
 		return false;

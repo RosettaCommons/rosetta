@@ -45,7 +45,7 @@ public:
 	virtual ~DummyObserver() {};
 
 	virtual
-	void add_values_to_job( core::pose::Pose const&, protocols::jd2::JobOP ) const {
+	void add_values_to_job( core::pose::Pose const &, protocols::jd2::Job & ) const {
 		call_counter_++;
 	}
 
@@ -76,17 +76,17 @@ public:
 		JobOP job = new Job( new InnerJob( "job", 1 ) , 1 );
 		job_outputter.call_output_observers( pose, job  );
 		TS_ASSERT( observer1.call_counter_ == 0 );
-		job_outputter.add_output_observer( &observer1 );
-		job_outputter.add_output_observer( &observer2 );
-		job_outputter.add_output_observer( &observer3 );
+		job->add_output_observer( &observer1 );
+		job->add_output_observer( &observer2 );
+		job->add_output_observer( &observer3 );
 		job_outputter.call_output_observers( pose, job  );
 		TS_ASSERT( observer1.call_counter_ == 1 );
 		TS_ASSERT( observer2.call_counter_ == 1 );
 		TS_ASSERT( observer3.call_counter_ == 1 );
 		//adding them twice should still only lead to a single call
-		job_outputter.add_output_observer( &observer1 );
-		job_outputter.add_output_observer( &observer2 );
-		job_outputter.add_output_observer( &observer3 );
+		job->add_output_observer( &observer1 );
+		job->add_output_observer( &observer2 );
+		job->add_output_observer( &observer3 );
 		job_outputter.call_output_observers( pose, job  );
 		TS_ASSERT( observer1.call_counter_ == 2 );
 		TS_ASSERT( observer2.call_counter_ == 2 );
@@ -98,9 +98,9 @@ public:
 		TS_ASSERT( observer2.call_counter_ == 0 );
 		TS_ASSERT( observer3.call_counter_ == 0 );
 		//removing them should stop them from being called
-		job_outputter.remove_output_observer( &observer1 );
-		job_outputter.remove_output_observer( &observer2 );
-		job_outputter.remove_output_observer( &observer3 );
+		job->remove_output_observer( &observer1 );
+		job->remove_output_observer( &observer2 );
+		job->remove_output_observer( &observer3 );
 		job_outputter.call_output_observers( pose, job  );
 		TS_ASSERT( observer1.call_counter_ == 0 );
 		TS_ASSERT( observer2.call_counter_ == 0 );

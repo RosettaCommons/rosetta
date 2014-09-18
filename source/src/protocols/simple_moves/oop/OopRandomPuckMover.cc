@@ -45,8 +45,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static numeric::random::RandomGenerator RG(956733);
-static basic::Tracer TR( "protocols.simple_moves.oop.OopRandomPuckMover" );
+static thread_local basic::Tracer TR( "protocols.simple_moves.oop.OopRandomPuckMover" );
 
 
 using namespace core;
@@ -84,10 +83,10 @@ void OopRandomPuckMover::apply( core::pose::Pose & pose ){
 	}//for
 
 	//kdrew: randomly choose position from oop_seq_positions
-	core::Size random_pos = oop_seq_positions_[int(RG.uniform()*oop_seq_positions_.size())+1];
+	core::Size random_pos = oop_seq_positions_[int(numeric::random::rg().uniform()*oop_seq_positions_.size())+1];
 
 	//kdrew: randomly choose conformation up, down or small angle move
-	std::string random_pucker = available_moves_[int(RG.uniform()*available_moves_.size())+1];
+	std::string random_pucker = available_moves_[int(numeric::random::rg().uniform()*available_moves_.size())+1];
 
 	runtime_assert ( random_pucker == "OOP_PUCK_PLUS" || random_pucker == "OOP_PUCK_MINUS" );
 	TR << random_pucker <<std::endl;

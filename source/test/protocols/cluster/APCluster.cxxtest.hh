@@ -27,7 +27,6 @@
 
 
 static basic::Tracer TR("protocols.cluster.APClusterTest.cxxtest");
-static numeric::random::RandomGenerator rg(840187); // <- Magic number, do not change it!!!
 
 
 using namespace protocols::cluster;
@@ -49,7 +48,7 @@ public:
 	void test_cluster_random_3D_points() {
 		vector1< Vector > pts;
 		for(Size i = 1; i <= 1000; ++i) {
-			pts.push_back( Vector( 10*rg.uniform(), 10*rg.uniform(), 10*rg.uniform() ) );
+			pts.push_back( Vector( 10*numeric::random::rg().uniform(), 10*numeric::random::rg().uniform(), 10*numeric::random::rg().uniform() ) );
 		}
 
 		// These get us reasonably close to convergence, but also run pretty fast.

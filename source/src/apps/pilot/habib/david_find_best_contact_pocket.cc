@@ -70,7 +70,7 @@ using namespace basic::options::OptionKeys;
 OPT_KEY( String, contact_list )
 OPT_KEY( Integer, num_angles )
 
-static basic::Tracer TR( "apps.pilot.david_recompute_score_and_rmsd.main" );
+static thread_local basic::Tracer TR( "apps.pilot.david_recompute_score_and_rmsd.main" );
 bool is_interface_residue (core::pose::Pose const & pose, core::Size resno);
 
 //set to store pdb info keys

@@ -22,7 +22,7 @@
 #include <basic/Tracer.hh>
 #include <string>
 
-static basic::Tracer TR( "protocols.rna.BasePairStepLibrary" ) ;
+static thread_local basic::Tracer TR( "protocols.rna.BasePairStepLibrary" );
 
 namespace protocols {
 namespace farna {

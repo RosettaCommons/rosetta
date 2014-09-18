@@ -35,8 +35,7 @@ namespace protocols {
 namespace ligand_docking {
 
 
-static basic::Tracer TR("protocols.ligand_docking.grid_functions", basic::t_debug);
-static numeric::random::RandomGenerator my_RG(810329); // <- Magic number, do not change it!!!
+static thread_local basic::Tracer TR( "protocols.ligand_docking.grid_functions", basic::t_debug );
 
 
 /// @details If score exceeds max_score, stop counting and return (faster).
@@ -237,7 +236,7 @@ void rotamers_for_trials(
 
 	// Because scoring is so "coarse", with many conformers possibly getting the same score,
 	// it's important to try them in random order to avoid biases.
-	numeric::random::random_permutation(conformers_out, my_RG);
+	numeric::random::random_permutation(conformers_out, numeric::random::rg());
 }
 
 

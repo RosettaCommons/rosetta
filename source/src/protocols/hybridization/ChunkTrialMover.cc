@@ -44,8 +44,7 @@
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
-static numeric::random::RandomGenerator RG(57029435);
-static basic::Tracer TR( "protocols.hybridization.ChunkTrialMover" );
+static thread_local basic::Tracer TR( "protocols.hybridization.ChunkTrialMover" );
 
 namespace protocols {
 namespace hybridization {
@@ -232,7 +231,7 @@ void ChunkTrialMover::pick_random_template()
 	set_template(0);
 	int ntrials=500;
 	while (!template_number() && --ntrials>0) {
-		set_template( RG.random_range(1, template_poses_.size()) );
+		set_template( numeric::random::rg().random_range(1, template_poses_.size()) );
 		if (template_chunks_[template_number()].size() == 0 || ignore_template_indices_.count(template_number())) set_template(0);
 	}
 	if (ntrials == 0) {
@@ -259,7 +258,7 @@ ChunkTrialMover::pick_random_chunk(core::pose::Pose & pose)
 	
     while ( !chosen_good_jump && ntrials>0 ) {
         --ntrials;
-		jump_number_ = RG.random_range(1, pose.num_jump());
+		jump_number_ = numeric::random::rg().random_range(1, pose.num_jump());
         core::Size jump_residue_pose = pose.fold_tree().downstream_jump_residue(jump_number_);
 
         if (pose.residue(jump_residue_pose).aa() == core::chemical::aa_vrt) {
@@ -322,7 +321,7 @@ ChunkTrialMover::apply(core::pose::Pose & pose) {
 		align_chunk_.set_aligned_chunk(pose, jump_number_, false);
 
 		// apply alignment
-		//int registry_shift = RG.random_range(-max_registry_shift_[jump_number_], max_registry_shift_[jump_number_]);
+		//int registry_shift = numeric::random::rg().random_range(-max_registry_shift_[jump_number_], max_registry_shift_[jump_number_]);
         int registry_shift = 0;
 		align_chunk_.set_registry_shift(registry_shift);
 		align_chunk_.apply(pose);
@@ -343,7 +342,7 @@ ChunkTrialMover::apply(core::pose::Pose & pose) {
 			if (is_jump_affect_moveable_residue) {
                 align_chunk_.set_aligned_chunk(pose, jump_number, true);
                 // apply alignment
-                //int registry_shift = RG.random_range(-max_registry_shift_[jump_number], max_registry_shift_[jump_number]);
+                //int registry_shift = numeric::random::rg().random_range(-max_registry_shift_[jump_number], max_registry_shift_[jump_number]);
                 int registry_shift = 0;
                 align_chunk_.set_registry_shift(registry_shift);
                 align_chunk_.apply(pose);

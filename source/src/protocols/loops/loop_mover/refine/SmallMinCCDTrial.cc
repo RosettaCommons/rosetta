@@ -52,7 +52,7 @@
 // C++ headers
 #include <fstream>
 
-static basic::Tracer TR("protocols.loops.loop_mover.refine.SmallMinCCDTrial");
+static thread_local basic::Tracer TR( "protocols.loops.loop_mover.refine.SmallMinCCDTrial" );
 
 namespace protocols {
 namespace loops {

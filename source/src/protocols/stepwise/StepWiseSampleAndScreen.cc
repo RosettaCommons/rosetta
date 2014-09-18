@@ -26,7 +26,7 @@
 #include <basic/Tracer.hh>
 #include <algorithm>
 
-static basic::Tracer TR( "protocols.stepwise.StepWiseSampleAndScreen" );
+static thread_local basic::Tracer TR( "protocols.stepwise.StepWiseSampleAndScreen" );
 
 using namespace core;
 

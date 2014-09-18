@@ -65,7 +65,7 @@ std::string PocketConstraintCreator::keyname() const
 }
 
 
-static basic::Tracer TR("core.scoring.constraints.PocketConstraint");
+static thread_local basic::Tracer TR( "core.scoring.constraints.PocketConstraint" );
 
 void PocketConstraint::init(core::pose::Pose const & pose){
 	using namespace basic::options;

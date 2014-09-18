@@ -64,7 +64,7 @@ namespace build {
 
 // Tracer instance for this file
 // Named after the original location of this code
-static basic::Tracer TR( "protocols.forge.build.BuildManager" );
+static thread_local basic::Tracer TR( "protocols.forge.build.BuildManager" );
 
 
 /// @brief default constructor

@@ -55,7 +55,7 @@ OPT_KEY( String, interface_list )
 OPT_KEY( String, first_structure )
 OPT_KEY( String, second_structure )
 
-static basic::Tracer TR( "apps.pilot.karen_compare_pocket_rmsd.main" );
+static thread_local basic::Tracer TR( "apps.pilot.karen_compare_pocket_rmsd.main" );
 
 //set to store pdb info keys
 std::set <std::string> interface;

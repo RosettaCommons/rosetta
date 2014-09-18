@@ -30,7 +30,11 @@ namespace protocols {
 namespace jd2 {
 namespace parser {
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< DataLoaderFactory * > DataLoaderFactory::instance_( 0 );
+#else
 DataLoaderFactory * DataLoaderFactory::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

@@ -35,7 +35,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -92,8 +93,11 @@ private:
 
 private:
 
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< RotamerRecoveryFactory * > instance_;
+#else
 	static RotamerRecoveryFactory * instance_;
-
+#endif
 
 	typedef std::map< std::string, protocols::rotamer_recovery::RRProtocolCreatorCOP > RRProtocolCreatorMap;
 	RRProtocolCreatorMap protocol_types_;

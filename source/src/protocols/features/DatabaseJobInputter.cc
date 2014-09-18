@@ -50,7 +50,7 @@
 #include <string>
 #include <sstream>
 
-static basic::Tracer tr("protocols.features.DatabaseJobInputter");
+static thread_local basic::Tracer tr( "protocols.features.DatabaseJobInputter" );
 
 namespace protocols {
 namespace features {

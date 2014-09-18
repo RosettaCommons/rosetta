@@ -123,7 +123,7 @@ TrajectoryReportToDBCreator::mover_name()
 	return "TrajectoryReportToDB";
 }
 
-static basic::Tracer TR("protocols.features.TrajectoryReportToDB");
+static thread_local basic::Tracer TR( "protocols.features.TrajectoryReportToDB" );
 
 moves::MoverOP
 TrajectoryReportToDB::fresh_instance() const { return new TrajectoryReportToDB; }

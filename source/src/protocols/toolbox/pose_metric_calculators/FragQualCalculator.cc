@@ -51,7 +51,7 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 
 
-static basic::Tracer TR("protocols.toolbox.PoseMetricCalculators.FragQualCalculator");
+static thread_local basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.FragQualCalculator" );
 
 namespace protocols {
 namespace toolbox {

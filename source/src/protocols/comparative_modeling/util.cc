@@ -76,8 +76,7 @@ namespace comparative_modeling {
 using utility::vector1;
 using std::string;
 
-static numeric::random::RandomGenerator RG(298211);
-static basic::Tracer tr("protocols.comparative_modeling.util");
+static thread_local basic::Tracer tr( "protocols.comparative_modeling.util" );
 
 core::sequence::SequenceAlignment alignment_from_cmd_line() {
 	using namespace basic::options;
@@ -632,18 +631,18 @@ void randomize_selected_atoms(
 			if ( query_pose.residue( pos ).atom_is_hydrogen( atomj ) ) continue;
 			if ( *it ) { //entry is missng == true
 				core::Vector ai(
-					900.000 + RG.uniform()*100.000,
-					900.000 + RG.uniform()*100.000,
-					900.000 + RG.uniform()*100.000
+					900.000 + numeric::random::rg().uniform()*100.000,
+					900.000 + numeric::random::rg().uniform()*100.000,
+					900.000 + numeric::random::rg().uniform()*100.000
 				);
 				query_pose.set_xyz( core::id::AtomID( atomj, pos ), ai );
 				//now randomize also attached hydrogens
 				for ( Size atom_nr = query_pose.residue( pos ).attached_H_begin( atomj );
 							atom_nr <= query_pose.residue( pos ).attached_H_end( atomj ); ++atom_nr ) {
 					core::Vector ai(
-							900.000 + RG.uniform()*100.000,
-							900.000 + RG.uniform()*100.000,
-							900.000 + RG.uniform()*100.000
+							900.000 + numeric::random::rg().uniform()*100.000,
+							900.000 + numeric::random::rg().uniform()*100.000,
+							900.000 + numeric::random::rg().uniform()*100.000
 					);
 					query_pose.set_xyz( core::id::AtomID( atom_nr, pos ), ai );
 				}

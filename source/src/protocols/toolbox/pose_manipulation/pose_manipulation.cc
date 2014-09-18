@@ -62,8 +62,8 @@ namespace protocols {
 namespace toolbox {
 namespace pose_manipulation{
 
-static basic::Tracer TR("protocols.toolbox.pose_manipulation");
-static basic::Tracer TR_DI("protocols.toolbox.pose_manipulation.insert_pose_into_pose");
+static thread_local basic::Tracer TR( "protocols.toolbox.pose_manipulation" );
+static thread_local basic::Tracer TR_DI( "protocols.toolbox.pose_manipulation.insert_pose_into_pose" );
 using basic::T;
 using basic::Error;
 using basic::Warning;

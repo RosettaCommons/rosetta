@@ -16,10 +16,12 @@
 #include <devel/splice/AddFoldUnitCreator.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
+
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR("devel.splice.AddFoldUnitMover");
+static thread_local basic::Tracer TR("devel.splice.AddFoldUnitMover");
+
 #include <utility/tag/Tag.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 // AUTO-REMOVED #include <core/chemical/AtomType.hh>

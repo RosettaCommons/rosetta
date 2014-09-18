@@ -57,7 +57,7 @@ using namespace utility::libsvm;
 namespace protocols {
 namespace helix_capper {
 
-	static basic::Tracer TR("HelixNCapperMover");
+static thread_local basic::Tracer TR( "HelixNCapperMover" );
 
 	HelixNCapperMover::HelixNCapperMover() { setup_svm(); }
 	HelixNCapperMover::HelixNCapperMover(

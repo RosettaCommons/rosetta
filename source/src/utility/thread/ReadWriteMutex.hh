@@ -21,9 +21,9 @@
 #ifdef CXX11
 
 // C++11 Headers
-#include <thread>
 #include <atomic>
 #include <condition_variable>
+#include <mutex>
 
 namespace utility {
 namespace thread {

@@ -38,7 +38,7 @@ namespace loops {
 /// @details Auto-generated virtual destructor
 LoopsFileData::~LoopsFileData() {}
 
-static basic::Tracer tr("protocols.loops.LoopsFileIO");
+static thread_local basic::Tracer tr( "protocols.loops.LoopsFileIO" );
 bool JSONFormattedLoopsFileReader::initialized_( false );
 utility::vector1<std::string> JSONFormattedLoopsFileReader::valid_loop_file_keys_;
 

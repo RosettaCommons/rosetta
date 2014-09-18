@@ -74,7 +74,7 @@ using basic::Error;
 using basic::Warning;
 using namespace ObjexxFCL;
 
-static basic::Tracer TR("core.conformation.Interface");
+static thread_local basic::Tracer TR( "core.conformation.Interface" );
 
 namespace protocols {
 namespace scoring {

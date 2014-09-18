@@ -14,6 +14,7 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
+#include <test/core/init_util.hh>
 
 // Unit headers
 #include <numeric/types.hh>
@@ -27,14 +28,12 @@
 #include <cassert>
 
 
-static basic::Tracer TR( "numeric.interpolation.spline.bicubic_interpolation_function_cxxtest_hh" );
+//static basic::Tracer TR( "numeric.interpolation.spline.bicubic_interpolation_function_cxxtest_hh" );
 
 // --------------- Test Class --------------- //
 
 using namespace numeric;
 class bicubic_interpolation_function_tests : public CxxTest::TestSuite {
-
-
 
 public:
 	//shared data
@@ -148,7 +147,7 @@ void bicubic_interpolation(
 		+dx3m *( -( 3 * dym * dym - 1) * d4dx2y200 + ( 3 * dyp * dyp - 1) * d4dx2y201 ) * binwy_over6
 		+dx3p *( -( 3 * dym * dym - 1) * d4dx2y210 + ( 3 * dyp * dyp - 1) * d4dx2y211 ) * binwy_over6;
 
-	TR << "bicubic interpolation " << val << " " << dvaldx << " " << dvaldy << std::endl;
+	//TR << "bicubic interpolation " << val << " " << dvaldx << " " << dvaldy << std::endl;
 }
 
 
@@ -195,7 +194,7 @@ void bicubic_interpolation(
        valxp, dvaldxxp, dvaldyxp
     );
 
-    TR << "dvaldx analytic " << dvaldx << " and numeric " << (valxp-valxm)/(2*delta) << std::endl;
+    //TR << "dvaldx analytic " << dvaldx << " and numeric " << (valxp-valxm)/(2*delta) << std::endl;
     TS_ASSERT_DELTA( dvaldx, (valxp-valxm)/(2*delta), 1e-6 );
 
 
@@ -219,7 +218,7 @@ void bicubic_interpolation(
        valyp, dvaldxyp, dvaldyyp
     );
 
-    TR << "dvaldy analytic " << dvaldy << " and numeric " << (valyp-valym)/(2*delta) << std::endl;
+    //TR << "dvaldy analytic " << dvaldy << " and numeric " << (valyp-valym)/(2*delta) << std::endl;
     TS_ASSERT_DELTA( dvaldy, (valyp-valym)/(2*delta), 1e-6 );
 
 

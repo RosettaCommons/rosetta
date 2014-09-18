@@ -43,7 +43,7 @@ namespace protocols {
 namespace simple_moves {
 namespace symmetry {
 
-static basic::Tracer TR("protocols.simple_moves.symmetry.DetectSymmetry");
+static thread_local basic::Tracer TR( "protocols.simple_moves.symmetry.DetectSymmetry" );
 
 // creators
 std::string

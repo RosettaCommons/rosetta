@@ -31,7 +31,7 @@
 
 using namespace core;
 
-static basic::Tracer trRescorePDDF("RescorePDDF");
+static thread_local basic::Tracer trRescorePDDF( "RescorePDDF" );
 
 
 OPT_1GRP_KEY( Boolean, saxs, show_pddf )

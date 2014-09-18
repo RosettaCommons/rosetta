@@ -85,7 +85,7 @@
 
 #include <devel/init.hh>
 
-static basic::Tracer tr("apps.pilot.TMHTopologySampler");
+static thread_local basic::Tracer tr( "apps.pilot.TMHTopologySampler" );
 
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
@@ -269,7 +269,7 @@ using basic::options::option;
 
 	for (core::Size i=1; i<=ncycles; ++i)
 	{
-		core::Size random_jump_num = static_cast<core::Size>(numeric::random::RG.random_range(1,njumps));
+		core::Size random_jump_num = static_cast<core::Size>(numeric::random::rg().random_range(1,njumps));
 		tr.Debug << "random_jump_num:  " << random_jump_num << std::endl;
 		protocols::rigid::RigidBodyPerturbMover mover(random_jump_num,rotation_mag,translation_mag);
 		mover.apply(pose);

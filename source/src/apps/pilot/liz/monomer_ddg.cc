@@ -77,7 +77,6 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static numeric::random::RandomGenerator RG(15430); // <- Magic number, do not change it!!!
 
 using namespace core;
 using namespace scoring;

@@ -19,7 +19,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.screener.PoseSelectionScreener" );
+static thread_local basic::Tracer TR( "protocols.stepwise.screener.PoseSelectionScreener" );
 
 using namespace core;
 

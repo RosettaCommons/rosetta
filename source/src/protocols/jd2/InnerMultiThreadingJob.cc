@@ -29,7 +29,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer TR("protocols.jd2.InnerMultiThreadingJob");
+static thread_local basic::Tracer TR( "protocols.jd2.InnerMultiThreadingJob" );
 
 namespace protocols {
 namespace jd2 {

@@ -44,7 +44,6 @@
 using namespace core;
 using namespace core::pose;
 
-static numeric::random::RandomGenerator RG ( 656840 ); // <- Magic number
 using core::id::AtomID;
 using core::id::NamedAtomID;
 using core::id::DOF_ID;
@@ -55,7 +54,7 @@ using numeric::angle_radians;
 using numeric::principal_angle;
 using numeric::dihedral_radians;
 
-static basic::Tracer TR( "protocols.sampler.rna.RNA_KinematicCloser" );
+static thread_local basic::Tracer TR( "protocols.sampler.rna.RNA_KinematicCloser" );
 
 namespace protocols {
 namespace stepwise {

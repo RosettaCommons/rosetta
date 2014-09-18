@@ -76,7 +76,7 @@ using namespace core::scoring;
 using namespace core::optimization;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer TR( "apps.pilot.constellation_list.main" );
+static thread_local basic::Tracer TR( "apps.pilot.constellation_list.main" );
 
 
 utility::vector1<char> list_allowable_mutations( char const starting_aa ) {

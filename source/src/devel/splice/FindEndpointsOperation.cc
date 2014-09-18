@@ -33,7 +33,7 @@
 
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR( "devel.splice.FindEndpointsOperation" );
+static thread_local basic::Tracer TR( "devel.splice.FindEndpointsOperation" );
 
 namespace devel {
 namespace splice {

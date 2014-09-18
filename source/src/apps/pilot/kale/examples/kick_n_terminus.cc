@@ -32,7 +32,6 @@ using core::Size;
 using core::Real;
 
 // Global Variables {{{1
-static numeric::random::RandomGenerator RG(431375);
 
 OPT_1GRP_KEY(Boolean, kale, terminus)
 
@@ -65,9 +64,9 @@ void make_random_perturbation( // {{{1
 	Size last_torsion = problem.torsion_angles.size() - 3;
 
 	for(Size i = first_torsion; i <= last_torsion; /* increment in loop */) {
-			Real phi = 360 * RG.uniform() - 180;
-			Real psi = 360 * RG.uniform() - 180;
-			Real omega = 360 * RG.uniform() - 180;
+			Real phi = 360 * numeric::random::rg().uniform() - 180;
+			Real psi = 360 * numeric::random::rg().uniform() - 180;
+			Real omega = 360 * numeric::random::rg().uniform() - 180;
 
 			problem.torsion_angles[i++] = phi;
 			problem.torsion_angles[i++] = psi;
@@ -81,7 +80,7 @@ void pick_random_solution( // {{{1
 		SolutionList const &solutions,
 		ClosureSolution const *&solution) {
 
-	Size index = RG.random_range(1, solutions.size());
+	Size index = numeric::random::rg().random_range(1, solutions.size());
 	solution = &solutions[index];
 }
 // }}}1
@@ -91,7 +90,7 @@ void devel_main(int argc, char** argv) { // {{{1
 	NEW_OPT(kale::terminus, "Attempt to close the N-terminus.", false);
 
 	devel::init(argc, argv);
-	RG.set_seed(0);
+	numeric::random::rg().set_seed(0);
 
 	pose::Pose pose;
 	string input_pdb, output_pdb;
@@ -304,7 +303,7 @@ void protocols_main(int argc, char** argv) { // {{{1
 	NEW_OPT(kale::terminus, "Attempt to close the N-terminus.", false);
 
 	devel::init(argc, argv);
-	RG.set_seed(0);
+	numeric::random::rg().set_seed(0);
 
 	pose::Pose pose;
 	string input_pdb, output_pdb;

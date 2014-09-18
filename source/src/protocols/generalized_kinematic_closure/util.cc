@@ -42,7 +42,6 @@
 #include <utility/excn/Exceptions.hh>
 #include <core/pose/Pose.hh>
 
-static numeric::random::RandomGenerator RG(632923);  // <- Magic number, do not change it!
 
 using basic::T;
 using basic::Error;
@@ -51,7 +50,7 @@ using basic::Warning;
 namespace protocols {
 namespace generalized_kinematic_closure {
 
-static basic::Tracer TR("protocols.generalized_kinematic_closure.util");
+static thread_local basic::Tracer TR( "protocols.generalized_kinematic_closure.util" );
 
 ///
 /// @brief Function to determine whether a value is in a list.

@@ -41,7 +41,7 @@
 
 
 //// C++ headers
-static basic::Tracer tr("protocols.fldsgn.filters.SecondaryStructureFilter");
+static thread_local basic::Tracer tr( "protocols.fldsgn.filters.SecondaryStructureFilter" );
 
 namespace protocols {
 namespace fldsgn {

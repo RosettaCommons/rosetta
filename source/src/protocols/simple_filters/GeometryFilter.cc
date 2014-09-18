@@ -64,7 +64,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static basic::Tracer TR( "protocols.simple_filters.GeometryFilter" );
+static thread_local basic::Tracer TR( "protocols.simple_filters.GeometryFilter" );
 
 protocols::filters::FilterOP
 GeometryFilterCreator::create_filter() const { return new GeometryFilter; }

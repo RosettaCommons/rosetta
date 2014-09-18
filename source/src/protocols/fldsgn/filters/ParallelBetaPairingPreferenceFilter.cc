@@ -39,7 +39,7 @@
 #include <boost/lexical_cast.hpp>
 
 //// C++ headers
-static basic::Tracer TR("protocols.fldsgn.filters.ParallelBetaPairingPreferenceFilter");
+static thread_local basic::Tracer TR( "protocols.fldsgn.filters.ParallelBetaPairingPreferenceFilter" );
 
 namespace protocols {
 namespace fldsgn {

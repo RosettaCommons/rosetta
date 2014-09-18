@@ -30,7 +30,11 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< ConstraintFactory * > ConstraintFactory::instance_( 0 );
+#else
 ConstraintFactory * ConstraintFactory::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

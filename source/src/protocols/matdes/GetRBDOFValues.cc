@@ -48,7 +48,7 @@
 
 
 //// C++ headers
-static basic::Tracer TR("protocols.matdes.GetRBDOFValues");
+static thread_local basic::Tracer TR( "protocols.matdes.GetRBDOFValues" );
 
 namespace protocols {
 namespace matdes {

@@ -28,8 +28,7 @@
 #include <protocols/boinc/boinc.hh>
 #endif
 
-static basic::Tracer tr( "protocols.canonical_sampling.BiasedMonteCarlo" );
-//static numeric::random::RandomGenerator RG(2592747);
+static thread_local basic::Tracer tr( "protocols.canonical_sampling.BiasedMonteCarlo" );
 
 namespace protocols {
 namespace canonical_sampling {

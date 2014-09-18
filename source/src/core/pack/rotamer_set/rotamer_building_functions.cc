@@ -84,9 +84,8 @@ namespace core {
 namespace pack {
 namespace rotamer_set {
 
-static numeric::random::RandomGenerator RG(32241); // <- Magic number, do not change it!!!
 
-static basic::Tracer tt("core.pack.rotamer_set.rotamer_building_functions",basic::t_info );
+static thread_local basic::Tracer tt( "core.pack.rotamer_set.rotamer_building_functions", basic::t_info );
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -482,7 +481,7 @@ build_random_dna_rotamers(
 			utility::vector1< Real > e(4);
 			Real dot1(0.0), dot2(0.0);
 			for ( int i=1; i<= 4; ++i ) {
-				e[i] = max_rotation - 2*RG.uniform()*max_rotation;
+				e[i] = max_rotation - 2*numeric::random::rg().uniform()*max_rotation;
 				dot1 += e[i] * v1[i];
 				dot2 += e[i] * v2[i];
 			}
@@ -514,7 +513,7 @@ build_random_dna_rotamers(
 			if ( true ) { // chi
 				TorsionID const id ( seqpos, CHI, 1 );
 				TorsionID const id0(  resid, CHI, 1 );
-				mini_pose.set_torsion( id, pose.torsion( id0 ) + max_rotation - 2*RG.uniform()*max_rotation );
+				mini_pose.set_torsion( id, pose.torsion( id0 ) + max_rotation - 2*numeric::random::rg().uniform()*max_rotation );
 			}
 
 			rotamers.push_back( mini_pose.residue(seqpos).clone() );

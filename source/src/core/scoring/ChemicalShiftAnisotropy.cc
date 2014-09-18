@@ -59,7 +59,7 @@
 #include <core/scoring/Membrane_FAPotential.fwd.hh>
 #include <core/scoring/MembranePotential.hh>
 
-static basic::Tracer tr("core.scoring.ChemicalShiftAnisotropy");
+static thread_local basic::Tracer tr( "core.scoring.ChemicalShiftAnisotropy" );
 
 namespace core {
 namespace scoring {

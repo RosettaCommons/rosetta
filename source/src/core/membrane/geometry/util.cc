@@ -54,7 +54,7 @@
 #include <cstdlib>
 #include <cmath>
 
-static basic::Tracer TR( "core.membrane.geometry.util" );
+static thread_local basic::Tracer TR( "core.membrane.geometry.util" );
 
 using basic::Error;
 using basic::Warning;

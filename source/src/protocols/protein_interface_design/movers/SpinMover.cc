@@ -38,8 +38,7 @@ namespace movers {
 
 using namespace protocols::moves;
 
-static numeric::random::RandomGenerator RG(12454); // <- Magic number, do not change it!!!
-static basic::Tracer TR( "protocols.protein_interface_design.movers.SpinMover" );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.SpinMover" );
 
 std::string SpinMoverCreator::keyname() const
 {
@@ -97,7 +96,7 @@ SpinMover::apply( core::pose::Pose & pose )
 
 
 	numeric::xyzVector<double> reference_center = pose.residue(downstream_res).atom(downstream_atom).xyz();
-	curr_jump.rotation_by_axis( downstream_stub, axis, reference_center, 360.0f*RG.uniform() /*degrees*/ );
+	curr_jump.rotation_by_axis( downstream_stub, axis, reference_center, 360.0f*numeric::random::rg().uniform() /*degrees*/ );
 	TR<<"new jump: " << curr_jump<<std::endl;
 	 TR<<"new fold-tree: "<< pose.fold_tree()<<std::endl;
 	pose.set_jump( jump_num_, curr_jump );

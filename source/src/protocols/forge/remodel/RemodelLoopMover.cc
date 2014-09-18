@@ -119,10 +119,9 @@ namespace remodel {
 
 // Tracer instance for this file
 // Named after the original location of this code
-static basic::Tracer TR( "protocols.forge.remodel.RemodelLoopMover" );
+static thread_local basic::Tracer TR( "protocols.forge.remodel.RemodelLoopMover" );
 
 // RNG
-static numeric::random::RandomGenerator RG( 9788221 ); // magic number, don't change
 
 /// @brief default constructor
 RemodelLoopMover::RemodelLoopMover() :
@@ -512,8 +511,8 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
     Loop & loop = *l;
 			for (int i = loop.start(); i<= loop.stop(); i++){
 				for (Size rep = 0; rep < repeat_number; rep++){
-					repeat_pose.set_phi( i+(segment_length*rep), RG.uniform());
-					repeat_pose.set_psi( i+(segment_length*rep), RG.uniform());
+					repeat_pose.set_phi( i+(segment_length*rep), numeric::random::rg().uniform());
+					repeat_pose.set_psi( i+(segment_length*rep), numeric::random::rg().uniform());
 			}
 		}
 	}
@@ -1639,7 +1638,7 @@ void RemodelLoopMover::loophash_stage(
 		TR << std::endl;
 
 		//not doing shuffle for now
-		//numeric::random::random_permutation( leap_index_list.begin(), leap_index_list.end(), RG );
+		//numeric::random::random_permutation( leap_index_list.begin(), leap_index_list.end(), numeric::random::rg() );
 
 		Size lh_frag_count = leap_index_list.size();
 		if (leap_index_list.size() == 0){
@@ -1717,10 +1716,10 @@ void RemodelLoopMover::loophash_stage(
 			// fragments
 			if(option[OptionKeys::remodel::lh_filter_string].user() ) {
 			for ( std::vector< BackboneSegment >::iterator i = bs_vec_.begin(), ie = bs_vec_.end(); i != ie; ++i) {
-			//if ( loop.is_terminal( pose ) || RG.uniform() * n_standard_cycles > ( outer + simultaneous_cycles() ) || pose.fold_tree().num_cutpoint() == 0 ) {
+			//if ( loop.is_terminal( pose ) || numeric::random::rg().uniform() * n_standard_cycles > ( outer + simultaneous_cycles() ) || pose.fold_tree().num_cutpoint() == 0 ) {
 
 					//again, no shuffling in early development stage
-					//random_permutation( bs_vec_.begin(), bs_vec_.end(), RG );
+					//random_permutation( bs_vec_.begin(), bs_vec_.end(), numeric::random::rg() );
 
 						std::vector<core::Real> phi = (*i).phi();
 						std::vector<core::Real> psi = (*i).psi();
@@ -1934,7 +1933,7 @@ void RemodelLoopMover::abinitio_stage(
 		}
 		for ( Size inner = 1; inner <= max_inner_cycles; ++inner ) {
 			// fragments
-			random_permutation( frag_movers.begin(), frag_movers.end(), RG );
+			random_permutation( frag_movers.begin(), frag_movers.end(), numeric::random::rg() );
 			for ( FragmentMoverOPs::iterator i = frag_movers.begin(), ie = frag_movers.end(); i != ie; ++i ) {
 				if(option[OptionKeys::remodel::repeat_structure].user()){
 					(*i)->apply( repeat_pose_ );
@@ -2330,9 +2329,9 @@ void RemodelLoopMover::simultaneous_stage(
 
 		for ( Size inner = 1; inner <= max_inner_cycles; ++inner ) {
 
-			if ( RG.uniform() * n_standard_cycles > outer || pose.fold_tree().num_cutpoint() == 0 ) {
+			if ( numeric::random::rg().uniform() * n_standard_cycles > outer || pose.fold_tree().num_cutpoint() == 0 ) {
 				// fragments
-				random_permutation( frag_movers.begin(), frag_movers.end(), RG );
+				random_permutation( frag_movers.begin(), frag_movers.end(), numeric::random::rg() );
 				for ( FragmentMoverOPs::iterator i = frag_movers.begin(), ie = frag_movers.end(); i != ie; ++i ) {
 					if(option[OptionKeys::remodel::repeat_structure].user()){
 						(*i)->apply( repeat_pose_ );
@@ -2345,7 +2344,7 @@ void RemodelLoopMover::simultaneous_stage(
 				}
 			} else {
 				// per-loop ccd
-				random_permutation( loops_to_model->v_begin(), loops_to_model->v_end(), RG );
+				random_permutation( loops_to_model->v_begin(), loops_to_model->v_end(), numeric::random::rg() );
 				for ( Loops::const_iterator l = loops_to_model->begin(), le = loops_to_model->end(); l != le; ++l ) {
 					if ( !l->is_terminal( pose ) ) {
 						CCDLoopClosureMover ccd_mover( *l, core::kinematics::MoveMapCOP( new MoveMap( movemap ) ) );
@@ -2600,8 +2599,8 @@ void RemodelLoopMover::independent_stage(
 
 			for ( Size inner = 1; inner <= max_inner_cycles; ++inner ) {
 				// fragments
-				if ( loop.is_terminal( pose ) || RG.uniform() * n_standard_cycles > ( outer + simultaneous_cycles() ) || pose.fold_tree().num_cutpoint() == 0 ) {
-					random_permutation( frag_movers.begin(), frag_movers.end(), RG );
+				if ( loop.is_terminal( pose ) || numeric::random::rg().uniform() * n_standard_cycles > ( outer + simultaneous_cycles() ) || pose.fold_tree().num_cutpoint() == 0 ) {
+					random_permutation( frag_movers.begin(), frag_movers.end(), numeric::random::rg() );
 					for ( FragmentMoverOPs::iterator i = frag_movers.begin(), ie = frag_movers.end(); i != ie; ++i ) {
 						if(option[OptionKeys::remodel::repeat_structure].user()){
 							(*i)->apply( repeat_pose_ );
@@ -2855,9 +2854,9 @@ void RemodelLoopMover::boost_closure_stage(
 			}
 
 			for ( Size inner = 1; inner <= max_inner_cycles; ++inner ) {
-				if ( (!frag1_movers.empty() && RG.uniform() < frag_mover_probability) || pose.fold_tree().num_cutpoint() == 0 ) { // 1-mer insertions
+				if ( (!frag1_movers.empty() && numeric::random::rg().uniform() < frag_mover_probability) || pose.fold_tree().num_cutpoint() == 0 ) { // 1-mer insertions
 
-					random_permutation( frag1_movers.begin(), frag1_movers.end(), RG );
+					random_permutation( frag1_movers.begin(), frag1_movers.end(), numeric::random::rg() );
 					for ( FragmentMoverOPs::iterator i = frag1_movers.begin(), ie = frag1_movers.end(); i != ie; ++i ) {
 						if(option[OptionKeys::remodel::repeat_structure].user()){
 							(*i)->apply( repeat_pose_ );
@@ -2959,7 +2958,7 @@ loops::LoopsOP RemodelLoopMover::determine_loops_to_model( Pose & pose ) {
 	}
 
 	// shuffle the order
-	random_permutation( loops_to_model->v_begin(), loops_to_model->v_end(), RG );
+	random_permutation( loops_to_model->v_begin(), loops_to_model->v_end(), numeric::random::rg() );
 
 	return loops_to_model;
 }

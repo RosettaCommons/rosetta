@@ -43,7 +43,11 @@ using std::stringstream;
 using std::endl;
 using std::setw;
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< ResourceManager * > ResourceManager::instance_( 0 );
+#else
 ResourceManager * ResourceManager::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

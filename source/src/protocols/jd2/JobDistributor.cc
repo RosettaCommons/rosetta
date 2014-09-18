@@ -73,7 +73,7 @@
 
 namespace protocols {
 namespace jd2 {
-static basic::Tracer tr("protocols.jd2.JobDistributor");
+static thread_local basic::Tracer tr( "protocols.jd2.JobDistributor" );
 } //jd2
 } //protocols
 
@@ -108,7 +108,11 @@ static basic::Tracer tr("protocols.jd2.JobDistributor");
 namespace protocols {
 namespace jd2 {
 
-JobDistributor * JobDistributor::instance_ = 0; //this pointer starts null
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< JobDistributor * > JobDistributor::instance_( 0 );
+#else
+JobDistributor * JobDistributor::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11
@@ -269,395 +273,37 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 	time_t const allstarttime = time(NULL);
 	core::Size tried_jobs(0); //did we try any jobs?
 
-	protocols::moves::MoverOP mover_copy(mover);
 	std::string last_inner_job_tag, last_output_tag;
 	core::Size last_batch_id = 0; //this will trigger a mover->fresh_instance if we run with batches
 	core::Size retries_this_job(0);
 	bool first_job(true);
 
-	bool using_parser(false);
-	if (parser_)
-	{ //if not NULL, we have a parser
-		using_parser = true;
-		tr.Info
-				<< "Parser is present.  Input mover will be overwritten with whatever the parser creates."
-				<< std::endl;
-	}PROF_START( basic::JD2);
+	check_for_parser_in_go_main();
+	PROF_START( basic::JD2);
 
-	while (obtain_new_job())
-	{
-		core::pose::Pose pose;
-#ifdef BOINC_GRAPHICS
-		// attach boinc graphics pose observer
-		protocols::boinc::Boinc::attach_graphics_current_pose_observer( pose );
-#endif
-
+	while ( obtain_new_job() ) {
 		++tried_jobs; //yes, we tried at least one job
-
-		//timing information
-		time_t const jobstarttime = time(NULL);
-		core::Size const elapsedtime(jobstarttime - allstarttime);
-
-		if ((option[OptionKeys::run::maxruntime].user())
-				&& (option[OptionKeys::run::maxruntime]() > 0)
-				&& (option[OptionKeys::run::maxruntime]() < int(elapsedtime)))
-		{
-
-			basic::Error() << "Run terminating because runtime of "
-					<< elapsedtime << " s exceeded maxruntime of "
-					<< option[OptionKeys::run::maxruntime]() << " s "
-					<< std::endl;
-			break; //let it clean up in case there's useful prof information or something
-		}
-
-		// setup profiling
-		evaluation::TimeEvaluatorOP run_time(NULL);
-		if (!option[OptionKeys::run::no_prof_info_in_silentout])
-		{
-			job_outputter_->add_evaluation(run_time =
-					new evaluation::TimeEvaluator); //just don't use this in integration tests!
-		}
-
-		tr.Debug << "Starting job " << job_outputter_->output_name(current_job_)
-				<< std::endl; //x seconds?
-
-		//Get a copy of the starting pose - this must be done early because the pose is read in on first use, we need to
-		//guaruntee it's been read in before the Parser gets a stab at it
-		pose.data().clear();
-		try
-		{
-			// Can we add the PyMOL mover here?
-			if (option[OptionKeys::run::show_simulation_in_pymol].user())
-			{
-				//Control what the observer gets attached to
-				if (option[OptionKeys::run::update_pymol_on_energy_changes_only]() &&
-						option[OptionKeys::run::update_pymol_on_conformation_changes_only]())
-				{
-					tr.Warning << "PyMol updates for both only energy and only conformation set to true"
-							"Attaching observer as general pose observer instead" << std::endl;
-					moves::AddPyMolObserver(
-						pose,
-						option[OptionKeys::run::keep_pymol_simulation_history](),
-						option[OptionKeys::run::show_simulation_in_pymol].value());
-
-				}
-				else if (option[OptionKeys::run::update_pymol_on_energy_changes_only]())
-				{
-
-					moves::AddPyMolObserver_to_energies(
-						pose,
-						option[OptionKeys::run::keep_pymol_simulation_history](),
-						option[OptionKeys::run::show_simulation_in_pymol].value());
-				}
-				else if (option[OptionKeys::run::update_pymol_on_conformation_changes_only]())
-				{
-
-					moves::AddPyMolObserver_to_conformation(
-						pose,
-						option[OptionKeys::run::keep_pymol_simulation_history](),
-						option[OptionKeys::run::show_simulation_in_pymol].value());
-				}
-				else
-				{
-					moves::AddPyMolObserver(
-						pose,
-						option[OptionKeys::run::keep_pymol_simulation_history](),
-						option[OptionKeys::run::show_simulation_in_pymol].value());
-				}
-
-			}
-			job_inputter_->pose_from_job(pose, current_job_);
-
-#ifdef BOINC_GRAPHICS
-			// attach boinc graphics pose observer
-			// do it here because pose_from_job may replace the pose conformation
-			protocols::boinc::Boinc::attach_graphics_current_pose_observer( pose );
-#endif
-
-		} catch (utility::excn::EXCN_RosettaScriptsOption& excn) {
-			// KAB - A RosettaScripts option exception is thrown when there is a problem
-			//       in the parsed script, which is used for all inputs. As it therefore
-			//       doesn't make sense to continue onto any other inputs, we reraise the
-			//       exception here.
-			throw;
-		} catch (utility::excn::EXCN_Base& excn)
-		{
-			basic::Error()
-					<< "ERROR: Exception caught by JobDistributor while trying to get pose from job "
-					<< "'" << job_outputter_->output_name(current_job_) << "'" << std::endl
-					<< excn << std::endl;
-			basic::Error()
-					<< "Treating failure as bad input; canceling similar jobs"
-					<< std::endl;
-			remove_bad_inputs_from_job_list();
-			job_failed(pose, false);
-			continue;
-		}
-
-		//These if statements determine whether a new creation of the mover is appropriate
-		bool reinitialize_new_input(false);
-		bool new_input(false);
-		if (current_job_->input_tag() != last_inner_job_tag)
-		{
-			//this means we have just changed inputs - the next pdb on -l, etc
-			tr.Debug << "new input detected, is: " << current_job_->input_tag()
-					<< ", last was: " << last_inner_job_tag << std::endl;
-			last_inner_job_tag = current_job_->input_tag();
-			new_input = true;
-
-			//do we need to reinitialize because of the new input? - yes if mover says, or cmdline says
-			if (mover
-					&& (mover->reinitialize_for_new_input()
-							|| option[OptionKeys::run::reinitialize_mover_for_new_input]))
-			{
-				reinitialize_new_input = true;
-			} //if we need to reinitialize
-
-		} //if the input pose is about to change
-
-		// Are we on a new output structure? (Or are we repeating a failed job?)
-		if( job_outputter_->output_name(current_job_) != last_output_tag ) {
-			last_output_tag = job_outputter_->output_name(current_job_);
-			retries_this_job = 0;
-		}
-
-		if (option[OptionKeys::jd2::delete_old_poses].user())
-		{
-			//to improve jd2 memory performance, we will delete the last
-			//input's starting pose. (Previous to this, jd2 never deleted
-			//input poses and would accumulate memory over large input sets
-			//- not a memory leak but certainly a nasty spot in the
-			//basement.) SML 8/7/09
-
-			//This was applied in r32237 but it had problems with special
-			//uses of the job distributor and it was reverted. This should
-			//probably be applied by default, once the issues with the
-			//special uses are worked out.
-
-			if (!first_job && last_completed_job_ != 0)
-			{
-				tr.Debug << "deleting pose from job " << last_completed_job_ <<std::endl;
-				jobs_[last_completed_job_]->inner_job_nonconst()->set_pose(
-						NULL);
-			}
-		}
-		//delete pointer to pose of last input; if that was last pointer
-		//to pose (and it should have been) this will free the memory
-
-
-		if (current_batch_id() != last_batch_id)
-		{
-			tr.Debug << "new batch detected: get fresh instance from mover"
-					<< std::endl;
-			new_input = true;
-			reinitialize_new_input = true;
-			last_batch_id = current_batch_id();
-		}
-
-		//for regular movers, reinitialize if desired
-		if (!using_parser
-				&& (reinitialize_new_input || mover->reinitialize_for_each_job()
-						|| option[OptionKeys::run::reinitialize_mover_for_each_job]))
-		{
-			tr.Trace << "reinitializing the mover" << std::endl;
-			PROF_STOP( basic::JD2);
-			PROF_START( basic::JD2_INIT_MOVER);
-			mover_copy = mover->fresh_instance();
-			PROF_STOP( basic::JD2_INIT_MOVER);
-			PROF_START( basic::JD2);
-		}
-		else if (using_parser)
-		{ //call the parser
-			tr.Trace << "Allowing the Parser to create a new Mover if desired"
-					<< std::endl;
-			try
-			{
-				parser_->generate_mover_from_job(current_job_, mover_copy,
-						new_input);
-			} catch (utility::excn::EXCN_RosettaScriptsOption& excn) {
-				// KAB - A RosettaScripts option exception is thrown when there is a problem
-				//       in the parsed script, which is used for all inputs. As it therefore
-				//       doesn't make sense to continue onto any other inputs, we reraise the
-				//       exception here.
-				throw;
-			} catch (utility::excn::EXCN_Base& excn)
-			{
-				basic::Error()
-					<< "ERROR: Exception caught by JobDistributor while trying to get pose from job '"
-					<< job_outputter_->output_name(current_job_) << "'" << std::endl
-					<< excn
-					<< std::endl;
-				basic::Error()
-					<< "Treating failure as bad input; canceling similar jobs"
-					<< std::endl;
-				remove_bad_inputs_from_job_list();
-				job_failed(pose, false);
-				continue;
-			}
-			//the Parser might have modified the starting pose (with constraints) - so we'll refresh our copy
-			job_inputter_->pose_from_job(pose, current_job_);
-
-#ifdef BOINC_GRAPHICS
-			// attach boinc graphics pose observer
-			// do it here because pose_from_job may replace the pose conformation
-			protocols::boinc::Boinc::attach_graphics_current_pose_observer( pose );
-#endif
-#ifdef GL_GRAPHICS
-			//nonboinc viewer
-			protocols::viewer::add_conformation_viewer( pose.conformation(), "start_pose" );
-#endif
-
-		}
-		else
-		{
-			tr.Trace << "not reinitializing mover" << std::endl;
-			//mover_copy = mover; //This breaks when reinitializing only on new input, because non-reinitializing cycles will
-			//revert to the wrong place.  If a mover_copy = something is desireable for all options, we need a second
-			//mover_copy.
-		}
-
-		//use the mover
-		mover_copy->reset_status();
-		// clear old string info from previous apply calls
-		mover_copy->clear_info();
-		if (run_time)
-			run_time->reset(); //reset clock of TimeEvaluator
-
-		// notify JobOutputter of starting pose, for comparison purposes and/or as interface for initializing evaluators. (Currently does nothing in the base class.)
-		job_outputter_->starting_pose(pose);
-
-		protocols::moves::MoverStatus status;
-		PROF_STOP( basic::JD2);
-		try
-		{
-			if (basic::options::option[basic::options::OptionKeys::out::std_IO_exit_error_code]()
-					> 0)
-				std::cout.exceptions(std::ios_base::badbit);
-
-			tr.Debug << "run mover... " << std::endl;
-			mover_copy->set_current_tag(
-					job_outputter_->output_name(current_job_));
-			mover_copy->apply(pose);
-			status = mover_copy->get_last_move_status();
-			// Job collects (optional) string info from the mover.
-			// This info may be output later by a JobOutputter.
-			current_job_->add_strings(mover_copy->info());
-
-		} catch (std::ios_base::failure& ex)
-		{
-			std::cerr << "std::IO error detected... exiting..." << std::endl; // We can not longer use Tracer's at this point
-			std::exit(
-					basic::options::option[basic::options::OptionKeys::out::std_IO_exit_error_code]()); // Using pure exit instead of utility_exit_with_status to avoid recursion
-
-		} catch (utility::excn::EXCN_BadInput& excn)
-		{
-			tr.Error
-					<< "\n\n[ERROR] Exception caught by JobDistributor for job "
-					<< job_outputter_->output_name(current_job_) << excn
-					<< std::endl;
-			status = protocols::moves::FAIL_BAD_INPUT;
-
-		} catch (utility::excn::EXCN_Base& excn)
-		{
-			tr.Error
-					<< "\n\n[ERROR] Exception caught by JobDistributor for job "
-					<< job_outputter_->output_name(current_job_) << excn
-					<< std::endl;
-			status = protocols::moves::FAIL_DO_NOT_RETRY;
-		}
-		std::cout.exceptions(std::ios_base::goodbit); // Disabling std::IO exceptions
-
-		PROF_START( basic::JD2);
-		core::Size jobtime(time(NULL) - jobstarttime);
-
-		begin_critical_section();
-		PROF_START( basic::JD2_OUTPUT);
-		// check cases: SUCCESS, FAIL_RETRY, FAIL_DO_NOT_RETRY, FAIL_BAD_INPUT
-		if (status == protocols::moves::MS_SUCCESS)
-		{
-			last_completed_job_ = current_job_id_;
-			// tr.Info << job_outputter_->output_name( current_job_ ) << " reported success in " << jobtime << " seconds" << std::endl;
-
-			std::string tag;
-			core::Size i_additional_pose = 1;
-			core::pose::PoseOP additional_pose( mover_copy->get_additional_output() );
-			if(additional_pose) {
-				// Attach tag to main pose as well for consistent numbering
-				std::ostringstream s;
-                                s << i_additional_pose;
-				tag = s.str();
-				++i_additional_pose;
-			}
-
-			// Output main pose
-			job_succeeded(pose, jobtime, tag);
-
-			// Collect additional poses from mover
-			while(additional_pose) {
-				std::ostringstream s;
-				s << i_additional_pose;
-				job_succeeded_additional_output(*additional_pose, s.str());
-				++i_additional_pose;
-	 			additional_pose = mover_copy->get_additional_output();
-			}
-		}
-		else if (status == protocols::moves::FAIL_RETRY)
-		{
-			using namespace basic::options::OptionKeys::jd2;
-			++retries_this_job;
-			if (option[ntrials].user()
-					&& (retries_this_job >= (core::Size) option[ntrials].value()))
-			{
-				//this represents too many FAIL_RETRY - we will roll over into FAIL_DO_NOT_RETRY
-				tr.Warning << job_outputter_->output_name(current_job_)
-						<< " reported failure " << retries_this_job
-						<< " times and will no longer retry (permanent failure)"
-						<< std::endl;
-				job_failed(pose, false /* will not retry */);
-			}
-			else
-			{
-				mark_current_job_id_for_repetition();
-				tr.Warning << job_outputter_->output_name(current_job_)
-						<< " reported failure and will retry" << std::endl;
-				job_failed(pose, true /* will retry */);
-			}
-		}
-		else if (status == protocols::moves::FAIL_DO_NOT_RETRY)
-		{
-			tr.Warning << job_outputter_->output_name(current_job_)
-					<< " reported failure and will NOT retry" << std::endl;
-			job_failed(pose, false /* will not retry */);
-		}
-		else if (status == protocols::moves::FAIL_BAD_INPUT)
-		{
-			tr.Warning << job_outputter_->output_name(current_job_)
-					<< " reported that its input was bad and will not retry"
-					<< std::endl;
-			remove_bad_inputs_from_job_list();
-			job_failed(pose, false /*will not retry */);
-		}
-		end_critical_section();
-		current_job_finished();
-		PROF_STOP( basic::JD2_OUTPUT);
-		basic::prof_show();
+		bool keep_going =
+			run_one_job( mover, allstarttime, last_inner_job_tag, last_output_tag, last_batch_id, retries_this_job, first_job );
 		first_job = false; //we've finished one by now, and are no longer on the first job edge case
-	}PROF_STOP( basic::JD2);
+		if ( ! keep_going ) break;
+	} PROF_STOP( basic::JD2);
+
 	note_all_jobs_finished();
-	if (batches_.size())
-	{
+	if (batches_.size()) {
 		tr.Info << jobs_.size() << " jobs in last batch... in total ";
-	}
-	else
-	{
+	} else {
 		tr.Info << jobs_.size() << " jobs considered, ";
 	}
 	tr.Info << tried_jobs << " jobs attempted in "
-			<< (time(NULL) - allstarttime) << " seconds" << std::endl;
-	if (tried_jobs == 0)
+		<< (time(NULL) - allstarttime) << " seconds" << std::endl;
+	if (tried_jobs == 0) {
 		tr.Info << "no jobs were attempted, did you forget to pass -overwrite?"
-				<< std::endl;
+			<< std::endl;
+	}
+
 	job_outputter_->flush(); //This call forces out any unprinted data
+
 	basic::prof_show();
 	if ( tried_jobs != 0 ) {
 		// We had a successful run - show any options which were set by the user, but not accessed.
@@ -693,33 +339,25 @@ bool JobDistributor::obtain_new_job(bool reconsider_current_job)
 		--current_job_id_;
 
 	if (batches_.size() == 0
-			|| get_current_batch() != BatchJobInputter::BOGUS_BATCH_ID)
-	{ //batches can be cancelled during computation
+			|| get_current_batch() != BatchJobInputter::BOGUS_BATCH_ID) {
+		//batches can be cancelled during computation
 		current_job_id_ = get_new_job_id(); //if no batches are present, or current batch still valid
-	}
-	else
-	{
+	} else {
 		current_job_id_ = 0; //batch got cancelled... jump to end of batch....
 	}
 
-	if (current_job_id_ == 0)
-	{
-		if (next_batch())
-		{ //query if there is a new batch to run after this one has finished
+	if (current_job_id_ == 0) {
+		if (next_batch()) { //query if there is a new batch to run after this one has finished
 			current_job_id_ = 0;
 			return obtain_new_job(); //set to first job of new batch... --- if batch is already computed fully this migh call next_batch() !
 		}
 		return false;
-	}
-	else if (current_job_id_ <= jobs_.size())
-	{
+	} else if (current_job_id_ <= jobs_.size()) {
 		current_job_ = jobs_[current_job_id_];
 		return true;
-	}
-	else
-	{
+	}	else {
 		utility_exit_with_message(
-				"JobDistributor: nonexistent job returned in obtain_new_job()");
+			"JobDistributor: nonexistent job returned in obtain_new_job()");
 		return false;
 	}
 }
@@ -775,12 +413,396 @@ void JobDistributor::clear_current_job_output()
 	jobs_[current_job_id_] = current_job_->copy_without_output(); //is this unsafe?  should be its own function? MT: It is now!
 }
 
+void
+JobDistributor::check_for_parser_in_go_main() {
+	if ( parser_ ) { //if not NULL, we have a parser
+		tr.Info
+			<< "Parser is present.  Input mover will be overwritten with whatever the parser creates."
+			<< std::endl;
+	}
+}
+
+bool JobDistributor::using_parser() const {
+	return parser_;
+}
+
+bool
+JobDistributor::run_one_job(
+	protocols::moves::MoverOP & mover,
+	time_t const allstarttime,
+	std::string & last_inner_job_tag,
+	std::string & last_output_tag,
+	core::Size & last_batch_id,
+	core::Size & retries_this_job,
+	bool first_job
+)
+{
+	using namespace basic::options;
+
+	protocols::moves::MoverOP mover_copy(mover);
+	core::pose::Pose pose;
+#ifdef BOINC_GRAPHICS
+	// attach boinc graphics pose observer
+	protocols::boinc::Boinc::attach_graphics_current_pose_observer( pose );
+#endif
+
+
+	//timing information
+	time_t const jobstarttime = time(NULL);
+	core::Size const elapsedtime(jobstarttime - allstarttime);
+
+	if ((option[OptionKeys::run::maxruntime].user())
+			&& (option[OptionKeys::run::maxruntime]() > 0)
+			&& (option[OptionKeys::run::maxruntime]() < int(elapsedtime)))
+	{
+
+		basic::Error() << "Run terminating because runtime of "
+				<< elapsedtime << " s exceeded maxruntime of "
+				<< option[OptionKeys::run::maxruntime]() << " s "
+				<< std::endl;
+		return false; //let it clean up in case there's useful prof information or something
+	}
+
+	// setup profiling
+	evaluation::TimeEvaluatorOP run_time(NULL);
+	if (!option[OptionKeys::run::no_prof_info_in_silentout]) {
+		job_outputter_->add_evaluation(run_time =	new evaluation::TimeEvaluator); //just don't use this in integration tests!
+	}
+
+	tr.Debug << "Starting job " << job_outputter_->output_name( current_job_ ) << std::endl;
+
+	//Get a copy of the starting pose - this must be done early because the pose is read in on first use, we need to
+	//guaruntee it's been read in before the Parser gets a stab at it
+	pose.data().clear();
+	try {
+
+		setup_pymol_observer( pose );
+		job_inputter_->pose_from_job(pose, current_job_);
+
+#ifdef BOINC_GRAPHICS
+		// attach boinc graphics pose observer
+		// do it here because pose_from_job may replace the pose conformation
+		protocols::boinc::Boinc::attach_graphics_current_pose_observer( pose );
+#endif
+
+	} catch ( utility::excn::EXCN_RosettaScriptsOption& excn ) {
+		// KAB - A RosettaScripts option exception is thrown when there is a problem
+		//       in the parsed script, which is used for all inputs. As it therefore
+		//       doesn't make sense to continue onto any other inputs, we reraise the
+		//       exception here.
+		throw;
+	} catch (utility::excn::EXCN_Base& excn) {
+		basic::Error()
+				<< "ERROR: Exception caught by JobDistributor while trying to get pose from job "
+				<< "'" << job_outputter_->output_name(current_job_) << "'" << std::endl
+				<< excn << std::endl;
+		basic::Error()
+				<< "Treating failure as bad input; canceling similar jobs"
+				<< std::endl;
+		remove_bad_inputs_from_job_list();
+		job_failed(pose, false);
+		return true;
+	}
+
+	//These if statements determine whether a new creation of the mover is appropriate
+	bool reinitialize_new_input(false);
+	bool new_input(false);
+	if ( current_job_->input_tag() != last_inner_job_tag ) {
+		//this means we have just changed inputs - the next pdb on -l, etc
+		tr.Debug << "new input detected, is: " << current_job_->input_tag()
+				<< ", last was: " << last_inner_job_tag << std::endl;
+		last_inner_job_tag = current_job_->input_tag();
+		new_input = true;
+
+		//do we need to reinitialize because of the new input? - yes if mover says, or cmdline says
+		if (mover
+				&& (mover->reinitialize_for_new_input()
+				|| option[OptionKeys::run::reinitialize_mover_for_new_input]))
+		{
+			reinitialize_new_input = true;
+		} //if we need to reinitialize
+
+	} //if the input pose is about to change
+
+	// Are we on a new output structure? (Or are we repeating a failed job?)
+	if( job_outputter_->output_name(current_job_) != last_output_tag ) {
+		last_output_tag = job_outputter_->output_name(current_job_);
+		retries_this_job = 0;
+	}
+
+	if (option[OptionKeys::jd2::delete_old_poses].user()) {
+		//to improve jd2 memory performance, we will delete the last
+		//input's starting pose. (Previous to this, jd2 never deleted
+		//input poses and would accumulate memory over large input sets
+		//- not a memory leak but certainly a nasty spot in the
+		//basement.) SML 8/7/09
+
+		//This was applied in r32237 but it had problems with special
+		//uses of the job distributor and it was reverted. This should
+		//probably be applied by default, once the issues with the
+		//special uses are worked out.
+
+		if (!first_job && last_completed_job_ != 0) {
+			tr.Debug << "deleting pose from job " << last_completed_job_ << std::endl;
+			jobs_[last_completed_job_]->inner_job_nonconst()->set_pose( 0 );
+		}
+	}
+	//delete pointer to pose of last input; if that was last pointer
+	//to pose (and it should have been) this will free the memory
+
+
+	if (current_batch_id() != last_batch_id) {
+		tr.Debug << "new batch detected: get fresh instance from mover"
+				<< std::endl;
+		new_input = true;
+		reinitialize_new_input = true;
+		last_batch_id = current_batch_id();
+	}
+
+	//for regular movers, reinitialize if desired
+	if ( ! using_parser()
+			&& ( reinitialize_new_input || mover->reinitialize_for_each_job()
+			|| option[OptionKeys::run::reinitialize_mover_for_each_job] ))
+	{
+		tr.Trace << "reinitializing the mover" << std::endl;
+		PROF_STOP( basic::JD2);
+		PROF_START( basic::JD2_INIT_MOVER);
+		mover_copy = mover->fresh_instance();
+		mover = mover_copy; // save the fresh instance of this mover for reuse.
+		PROF_STOP( basic::JD2_INIT_MOVER);
+		PROF_START( basic::JD2);
+	} else if ( using_parser() ) { //call the parser
+		tr.Trace << "Allowing the Parser to create a new Mover if desired"
+				<< std::endl;
+		try {
+			parser_->generate_mover_from_job(current_job_, pose, mover_copy, new_input);
+			mover = mover_copy; // save the mover generated by the parser
+		} catch (utility::excn::EXCN_RosettaScriptsOption& excn) {
+			// KAB - A RosettaScripts option exception is thrown when there is a problem
+			//       in the parsed script, which is used for all inputs. As it therefore
+			//       doesn't make sense to continue onto any other inputs, we reraise the
+			//       exception here.
+			throw;
+		} catch (utility::excn::EXCN_Base& excn) {
+			basic::Error()
+				<< "ERROR: Exception caught by JobDistributor while trying to get pose from job '"
+				<< job_outputter_->output_name(current_job_) << "'" << std::endl
+				<< excn
+				<< std::endl;
+			basic::Error()
+				<< "Treating failure as bad input; canceling similar jobs"
+				<< std::endl;
+			remove_bad_inputs_from_job_list();
+			job_failed(pose, false);
+			return true;
+		}
+
+		// the Parser might have modified the starting pose (with constraints) - so we'll refresh our copy
+		job_inputter_->pose_from_job(pose, current_job_);
+
+#ifdef BOINC_GRAPHICS
+		// attach boinc graphics pose observer
+		// do it here because pose_from_job may replace the pose conformation
+		protocols::boinc::Boinc::attach_graphics_current_pose_observer( pose );
+#endif
+#ifdef GL_GRAPHICS
+		//nonboinc viewer
+		protocols::viewer::add_conformation_viewer( pose.conformation(), "start_pose" );
+#endif
+
+	} else {
+		tr.Trace << "not reinitializing mover" << std::endl;
+		//mover_copy = mover; //This breaks when reinitializing only on new input, because non-reinitializing cycles will
+		//revert to the wrong place.  If a mover_copy = something is desireable for all options, we need a second
+		//mover_copy.
+	}
+
+	//use the mover
+	mover_copy->reset_status();
+	// clear old string info from previous apply calls
+	mover_copy->clear_info();
+	if (run_time) {
+		run_time->reset(); //reset clock of TimeEvaluator
+	}
+
+	// notify JobOutputter of starting pose, for comparison purposes and/or as interface for initializing evaluators. (Currently does nothing in the base class.)
+	job_outputter_->starting_pose(pose);
+
+	protocols::moves::MoverStatus status;
+	PROF_STOP( basic::JD2);
+	try {
+		if (basic::options::option[basic::options::OptionKeys::out::std_IO_exit_error_code]()	> 0) {
+			std::cout.exceptions(std::ios_base::badbit);
+		}
+
+		tr.Debug << "run mover... " << std::endl;
+		mover_copy->set_current_tag( job_outputter_->output_name(current_job_) );
+
+		///////////////////////
+		//////// APPLY ////////
+		///////////////////////
+		mover_copy->apply(pose);
+
+		status = mover_copy->get_last_move_status();
+		// Job collects (optional) string info from the mover.
+		// This info may be output later by a JobOutputter.
+		current_job_->add_strings(mover_copy->info());
+
+	} catch (std::ios_base::failure& ex) {
+		std::cerr << "std::IO error detected... exiting..." << std::endl; // We can not longer use Tracer's at this point
+		// Using pure exit instead of utility_exit_with_status to avoid infinite recursion
+		std::exit( basic::options::option[basic::options::OptionKeys::out::std_IO_exit_error_code]());
+
+	} catch (utility::excn::EXCN_BadInput& excn) {
+		tr.Error
+			<< "\n\n[ERROR] Exception caught by JobDistributor for job "
+			<< job_outputter_->output_name(current_job_) << excn
+			<< std::endl;
+		status = protocols::moves::FAIL_BAD_INPUT;
+
+	} catch (utility::excn::EXCN_Base& excn) {
+		tr.Error
+			<< "\n\n[ERROR] Exception caught by JobDistributor for job "
+			<< job_outputter_->output_name(current_job_) << excn
+			<< std::endl;
+		status = protocols::moves::FAIL_DO_NOT_RETRY;
+	}
+	std::cout.exceptions(std::ios_base::goodbit); // Disabling std::IO exceptions
+
+	PROF_START( basic::JD2);
+	core::Size jobtime(time(NULL) - jobstarttime);
+
+	write_output_from_job( pose, mover_copy, status, jobtime, retries_this_job );
+
+	current_job_finished();
+
+	PROF_STOP( basic::JD2_OUTPUT);
+	basic::prof_show();
+
+	return true;
+}
+
+void JobDistributor::setup_pymol_observer( core::pose::Pose & pose )
+{
+	using namespace basic::options;
+
+	if (option[OptionKeys::run::show_simulation_in_pymol].user()) {
+		//Control what the observer gets attached to
+		if (option[OptionKeys::run::update_pymol_on_energy_changes_only]() &&
+				option[OptionKeys::run::update_pymol_on_conformation_changes_only]()) {
+			tr.Warning << "PyMol updates for both only energy and only conformation set to true"
+				"Attaching observer as general pose observer instead" << std::endl;
+			moves::AddPyMolObserver(
+				pose,
+				option[OptionKeys::run::keep_pymol_simulation_history](),
+				option[OptionKeys::run::show_simulation_in_pymol].value());
+
+		} else if (option[OptionKeys::run::update_pymol_on_energy_changes_only]()) {
+
+			moves::AddPyMolObserver_to_energies(
+				pose,
+				option[OptionKeys::run::keep_pymol_simulation_history](),
+				option[OptionKeys::run::show_simulation_in_pymol].value());
+		} else if (option[OptionKeys::run::update_pymol_on_conformation_changes_only]()) {
+
+			moves::AddPyMolObserver_to_conformation(
+				pose,
+				option[OptionKeys::run::keep_pymol_simulation_history](),
+				option[OptionKeys::run::show_simulation_in_pymol].value());
+		} else {
+			moves::AddPyMolObserver(
+				pose,
+				option[OptionKeys::run::keep_pymol_simulation_history](),
+				option[OptionKeys::run::show_simulation_in_pymol].value());
+		}
+
+	}
+}
+
+void JobDistributor::write_output_from_job(
+	core::pose::Pose & pose,
+	protocols::moves::MoverOP mover_copy,
+	protocols::moves::MoverStatus status,
+	core::Size jobtime,
+	core::Size & retries_this_job
+)
+{
+	using namespace basic::options;
+
+	begin_critical_section();
+
+	PROF_START( basic::JD2_OUTPUT);
+	// check cases: SUCCESS, FAIL_RETRY, FAIL_DO_NOT_RETRY, FAIL_BAD_INPUT
+	if ( status == protocols::moves::MS_SUCCESS) {
+		last_completed_job_ = current_job_id_;
+		// tr.Info << job_outputter_->output_name( current_job_ ) << " reported success in " << jobtime << " seconds" << std::endl;
+
+		std::string tag;
+		core::Size i_additional_pose = 1;
+		core::pose::PoseOP additional_pose( mover_copy->get_additional_output() );
+		if ( additional_pose ) {
+			// Attach tag to main pose as well for consistent numbering
+			std::ostringstream s;
+			s << i_additional_pose;
+			tag = s.str();
+			++i_additional_pose;
+		}
+
+		// Output main pose
+		job_succeeded(pose, jobtime, tag);
+
+		// Collect additional poses from mover
+		while(additional_pose) {
+			std::ostringstream s;
+			s << i_additional_pose;
+			job_succeeded_additional_output(*additional_pose, s.str());
+			++i_additional_pose;
+ 			additional_pose = mover_copy->get_additional_output();
+		}
+	} else if (status == protocols::moves::FAIL_RETRY) {
+		using namespace basic::options::OptionKeys::jd2;
+		++retries_this_job;
+		if ( option[ntrials].user()
+				&& (retries_this_job >= (core::Size) option[ntrials].value())) {
+			//this represents too many FAIL_RETRY - we will roll over into FAIL_DO_NOT_RETRY
+			tr.Warning << job_outputter_->output_name(current_job_)
+					<< " reported failure " << retries_this_job
+					<< " times and will no longer retry (permanent failure)"
+					<< std::endl;
+			job_failed(pose, false /* will not retry */);
+		} else {
+			mark_current_job_id_for_repetition();
+			tr.Warning << job_outputter_->output_name(current_job_)
+					<< " reported failure and will retry" << std::endl;
+			job_failed(pose, true /* will retry */);
+		}
+	} else if (status == protocols::moves::FAIL_DO_NOT_RETRY) {
+		tr.Warning << job_outputter_->output_name(current_job_)
+				<< " reported failure and will NOT retry" << std::endl;
+		job_failed(pose, false /* will not retry */);
+	} else if (status == protocols::moves::FAIL_BAD_INPUT) {
+		tr.Warning << job_outputter_->output_name(current_job_)
+				<< " reported that its input was bad and will not retry"
+				<< std::endl;
+		remove_bad_inputs_from_job_list();
+		job_failed(pose, false /*will not retry */);
+	}
+
+	end_critical_section();
+}
+
 void JobDistributor::begin_critical_section()
 {
 }
 
 void JobDistributor::end_critical_section()
 {
+}
+
+void JobDistributor::set_current_job_by_index( core::Size curr_job_index )
+{
+	current_job_ = jobs_[ curr_job_index ];
+	current_job_id_ = curr_job_index;
 }
 
 //////////////////////protected accessor functions////////////////////

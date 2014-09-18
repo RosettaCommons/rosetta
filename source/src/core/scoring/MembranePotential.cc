@@ -71,8 +71,7 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 
-static basic::Tracer TR("core.scoring.MembranePotential");
-static numeric::random::RandomGenerator RG(280628);  // <- Magic number, do not change it!
+static thread_local basic::Tracer TR( "core.scoring.MembranePotential" );
 
 namespace core {
 namespace scoring {
@@ -772,7 +771,7 @@ MembranePotential::compute_membrane_embedding(pose::Pose & pose) const
 			{
 				if ( Membed_init_ ) break; //pba no mb embed optimization; just intial guess
 				temperature = 2.0/cycles;
-				if(RG.uniform()<0.5) // change center
+				if(numeric::random::rg().uniform()<0.5) // change center
 				{
 					rigid_perturb_vector(trial_center,center_mag);
 				}
@@ -807,7 +806,7 @@ MembranePotential::compute_membrane_embedding(pose::Pose & pose) const
 					++counter;
 					Real const boltz_factor=(accepted_score-score)/temperature;
 					Real const probability = std::exp( std::min ((core::Real)40.0, std::max((core::Real)-40.0,boltz_factor)) );
-					if(RG.uniform()<probability)
+					if(numeric::random::rg().uniform()<probability)
 					{
 						accepted_score=score;
 						accepted_center=trial_center;
@@ -844,7 +843,7 @@ MembranePotential::compute_membrane_embedding(pose::Pose & pose) const
 	// {
 	// 	// find residue in the middle of transmembrane region
 	// 	// pick a random transmembrane segment
-	// 	Size ihelix = int(RG.uniform() * topology.tmhelix() + 1.);
+	// 	Size ihelix = int(numeric::random::rg().uniform() * topology.tmhelix() + 1.);
 	// 	Size jump_res (int(0.5 * (topology.span_begin(ihelix) + topology.span_end(ihelix))));
 	//
 	// 	// create a residue, fullatom or centroid

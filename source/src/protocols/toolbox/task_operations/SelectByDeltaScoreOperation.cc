@@ -47,7 +47,7 @@
 
 // C++ Headers
 
-static basic::Tracer TR("protocols.toolbox.task_operations.SelectByDeltaScoreOperation" );
+static thread_local basic::Tracer TR( "protocols.toolbox.task_operations.SelectByDeltaScoreOperation" );
 
 namespace protocols {
 namespace toolbox {

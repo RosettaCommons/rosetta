@@ -31,7 +31,7 @@
 #include <mpi.h>
 #endif
 
-static basic::Tracer TR("main");
+static thread_local basic::Tracer TR( "main" );
 
 
 // MPI headers

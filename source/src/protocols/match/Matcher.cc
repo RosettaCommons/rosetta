@@ -83,8 +83,7 @@
 namespace protocols {
 namespace match {
 
-static basic::Tracer TR( "protocols.match.Matcher" );
-static numeric::random::RandomGenerator RG(6527);
+static thread_local basic::Tracer TR( "protocols.match.Matcher" );
 
 /// Construction and Destruction
 Matcher::Matcher() :
@@ -2302,7 +2301,7 @@ Matcher::subsample_hits(
 					// pick a random number between 0 and len-1 and increment through the list of hits
 					// that many times to pick a single random hit.
 					std::list< Hit const * >::const_iterator hit_iter = matches[ ii ].begin();
-					Size nsteps = static_cast< Size > ( RG.uniform() * len );
+					Size nsteps = static_cast< Size > ( numeric::random::rg().uniform() * len );
 					for ( Size jj = 1; jj <= nsteps; ++jj ) ++hit_iter;
 					subsamples[ ii ].push_back( * hit_iter );
 				}
@@ -2324,7 +2323,7 @@ Matcher::subsample_hits(
 						// pick a random number between 0 and len-1 and increment through the list of hits
 						// that many times to pick a single random hit.
 						std::list< Hit const * >::const_iterator hit_iter = builditer->second.begin();
-						Size nsteps = static_cast< Size > ( RG.uniform() * len );
+						Size nsteps = static_cast< Size > ( numeric::random::rg().uniform() * len );
 						for ( Size jj = 1; jj <= nsteps; ++jj ) ++hit_iter;
 						subsamples[ ii ].push_back( * hit_iter );
 					}

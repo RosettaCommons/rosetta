@@ -115,8 +115,7 @@
 namespace protocols {
 namespace abinitio {
 
-static basic::Tracer tr("main");
-static numeric::random::RandomGenerator RG(82397823);  // <- Magic number, do not change it!
+static thread_local basic::Tracer tr( "main" );
 using namespace core;
 class Application {
 public:

@@ -22,7 +22,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -70,6 +71,14 @@ private:
 	void map_orbital_name_to_enum();
 
 private:
+	/// @brief static data member holding pointer to the singleton class itself
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< OrbitalTypeMapper * > instance_;
+#else
+	static OrbitalTypeMapper * instance_;
+#endif
+
+
 	std::map<std::string, orbital_type_enum> orbital_type_2_enum_;
 
 };

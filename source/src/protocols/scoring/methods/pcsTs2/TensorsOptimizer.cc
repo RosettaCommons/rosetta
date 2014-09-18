@@ -56,7 +56,7 @@ namespace scoring{
 namespace methods{
 namespace pcsTs2{
 
-basic::Tracer TR_tsr_opt_Ts2("protocols.scoring.methods.pcsTs2.TensorsOptimizer_Ts2");
+static thread_local basic::Tracer TR_tsr_opt_Ts2( "protocols.scoring.methods.pcsTs2.TensorsOptimizer_Ts2" );
 
 
 TensorsOptimizer_Ts2::TensorsOptimizer_Ts2(PCS_data_Ts2 const & pcs_d):

@@ -74,12 +74,11 @@
 namespace protocols{
 namespace md{
 
-static basic::Tracer TR("protocols.md.Cartesian");
+static thread_local basic::Tracer TR( "protocols.md.Cartesian" );
 
 using namespace devel::md;
 using namespace core::optimization;
 
-static numeric::random::RandomGenerator RG( 51853218 ); //Magic number??
 
 // creator
 std::string
@@ -449,7 +448,7 @@ void CartesianMD::initialize_velocity( core::Real const &temperature )
 		// pass Virtual atoms
 		if ( mass_[i_atm] < 1e-3 ) continue;
 
-    vel_[i_dof] = sqrt(2.0*temperature*Boltzmann/mass_[i_atm])*RG.gaussian();
+    vel_[i_dof] = sqrt(2.0*temperature*Boltzmann/mass_[i_atm])*numeric::random::rg().gaussian();
 		acc_[i_dof] = 0.0;
   }
 }

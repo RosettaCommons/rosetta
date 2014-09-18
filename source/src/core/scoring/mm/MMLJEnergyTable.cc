@@ -48,7 +48,7 @@ namespace mm {
 /// @details Auto-generated virtual destructor
 MMLJEnergyTable::~MMLJEnergyTable() {}
 
-static basic::Tracer TR("core.scoring.mm.MMLJEnergyTable");
+static thread_local basic::Tracer TR( "core.scoring.mm.MMLJEnergyTable" );
 
 MMLJEnergyTable::MMLJEnergyTable() :
   max_dist_(49.0),

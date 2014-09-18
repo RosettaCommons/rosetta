@@ -37,8 +37,7 @@ namespace loops {
 /// @details Auto-generated virtual destructor
 Loop::~Loop() {}
 
-static basic::Tracer tr("protocols.loops.Loop");
-static numeric::random::RandomGenerator RG(429);  // <- Magic number, do not change it (and don't try and use it anywhere else)
+static thread_local basic::Tracer tr( "protocols.loops.Loop" );
 
 /// @brief switch DOF_Type for residues in loop. id::CHI, id::BB --- don't use
 /// with id::JUMP

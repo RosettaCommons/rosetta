@@ -42,7 +42,7 @@
 
 
 
-static basic::Tracer tr("core.io.constraints");
+static thread_local basic::Tracer tr( "core.io.constraints" );
 
 namespace core {
 namespace scoring {

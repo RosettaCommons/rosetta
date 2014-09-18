@@ -65,7 +65,6 @@ using basic::Error;
 using basic::Warning;
 
 
-static numeric::random::RandomGenerator RG(12321); // <- Magic number, do not change it!!!
 
 
 ///////////////////////////////////////////////////////////////////////////////

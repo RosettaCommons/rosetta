@@ -49,7 +49,7 @@
 //C++
 // AUTO-REMOVED #include <iterator>
 
-static basic::Tracer tr("protocols.jd2.Archive");
+static thread_local basic::Tracer tr( "protocols.jd2.Archive" );
 using basic::mem_tr;
 // Utility headers
 #include <basic/options/option_macros.hh>

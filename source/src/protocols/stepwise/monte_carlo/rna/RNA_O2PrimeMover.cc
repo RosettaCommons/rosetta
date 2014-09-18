@@ -29,7 +29,6 @@
 #include <numeric/random/random.hh>
 
 
-static numeric::random::RandomGenerator RG(845099111);  // <- Magic number, do not change it!
 
 using namespace core;
 using core::Real;
@@ -39,7 +38,7 @@ using core::Real;
 // updates the pose full_model_info object.
 //////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "protocols.stepwise.monte_carlo.rna.RNA_O2PrimeMover" ) ;
+static thread_local basic::Tracer TR( "protocols.stepwise.monte_carlo.rna.RNA_O2PrimeMover" );
 
 namespace protocols {
 namespace stepwise {
@@ -95,7 +94,7 @@ namespace rna {
 		}
 
 		if ( o2prime_res > 0 ) {
-			Real const random_number2 = RG.uniform();
+			Real const random_number2 = numeric::random::rg().uniform();
 			if ( random_number2  < 0.5 ){
 				move_type = "sml-o2prime";
 				sample_near_o2prime_torsion( pose, o2prime_res, sample_range_small_);
@@ -119,7 +118,7 @@ namespace rna {
 	RNA_O2PrimeMover::sample_near_o2prime_torsion( pose::Pose & pose, Size const moving_res, Real const sample_range){
 		id::TorsionID o2prime_torsion_id( moving_res, id::CHI, 4 );
 		Real o2prime_torsion = pose.torsion( o2prime_torsion_id ); //get
-		o2prime_torsion += RG.gaussian() * sample_range; //sample_near
+		o2prime_torsion += numeric::random::rg().gaussian() * sample_range; //sample_near
 		pose.set_torsion( o2prime_torsion_id, o2prime_torsion ); // apply
 	}
 
@@ -127,7 +126,7 @@ namespace rna {
 	Size
 	RNA_O2PrimeMover::get_random_o2prime_residue( pose::Pose & pose ){
 		// pick at random from whole pose -- a quick initial stab.
-		Size const o2prime_num = int( pose.total_residue() * RG.uniform() ) + 1;
+		Size const o2prime_num = int( pose.total_residue() * numeric::random::rg().uniform() ) + 1;
 		return o2prime_num;
 	}
 
@@ -186,7 +185,7 @@ namespace rna {
 		}
 		if (res_list.size()==0) return 0; //nothing to move!
 
-		Size const o2prime_idx_within_res_list = int(  res_list.size() * RG.uniform() ) + 1;
+		Size const o2prime_idx_within_res_list = int(  res_list.size() * numeric::random::rg().uniform() ) + 1;
 		Size const o2prime_num = res_list[ o2prime_idx_within_res_list ];
 		return o2prime_num;
 	}

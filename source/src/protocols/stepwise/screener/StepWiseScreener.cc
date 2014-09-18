@@ -17,7 +17,7 @@
 #include <protocols/moves/CompositionMover.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.screener.StepWiseScreener" );
+static thread_local basic::Tracer TR( "protocols.stepwise.screener.StepWiseScreener" );
 
 namespace protocols {
 namespace stepwise {

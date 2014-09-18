@@ -43,7 +43,7 @@
 
 using basic::T;
 
-static basic::Tracer tr("core.scoring.ScoreFunctionFactory");
+static thread_local basic::Tracer tr( "core.scoring.ScoreFunctionFactory" );
 
 namespace core {
 namespace scoring {

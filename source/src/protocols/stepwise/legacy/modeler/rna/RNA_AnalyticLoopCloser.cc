@@ -49,7 +49,6 @@
 
 using namespace core;
 
-static numeric::random::RandomGenerator RG ( 26640 ); // <- Magic number, do not change it!
 using ObjexxFCL::format::I;
 using ObjexxFCL::format::F;
 using core::id::AtomID;
@@ -62,7 +61,7 @@ using numeric::angle_radians;
 using numeric::principal_angle;
 using numeric::dihedral_radians;
 
-static basic::Tracer TR( "protocols.stepwise.legacy.modeler.rna.RNA_AnalyticLoopCloser" );
+static thread_local basic::Tracer TR( "protocols.stepwise.legacy.modeler.rna.RNA_AnalyticLoopCloser" );
 
 namespace protocols {
 namespace stepwise {
@@ -380,7 +379,7 @@ RNA_AnalyticLoopCloser::apply_solutions ( core::pose::Pose & pose ) {
 		fill_solution ( pose, best_sol );
 	} else {
 		assert ( choose_random_solution_ );
-		Size const n = static_cast< int > ( nsol_ * RG.uniform() ) + 1;
+		Size const n = static_cast< int > ( nsol_ * numeric::random::rg().uniform() ) + 1;
 		fill_solution ( pose, n );
 	}
 }

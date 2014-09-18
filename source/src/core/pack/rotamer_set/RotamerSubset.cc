@@ -32,7 +32,7 @@ namespace core {
 namespace pack {
 namespace rotamer_set {
 
-static basic::Tracer tt("core.pack.rotamer_set.RotamerSubset",basic::t_info );
+static thread_local basic::Tracer tt( "core.pack.rotamer_set.RotamerSubset", basic::t_info );
 
 RotamerSubset::RotamerSubset(
 	RotamerSet & src_rotset,

@@ -47,8 +47,7 @@
 #include <string>
 #include <algorithm>
 
-static numeric::random::RandomGenerator RG(10321155);  // Magic Number
-static basic::Tracer tr("protocols.jd2.SilentFileJobOutputter");
+static thread_local basic::Tracer tr( "protocols.jd2.SilentFileJobOutputter" );
 
 namespace protocols {
 namespace jd2 {
@@ -264,7 +263,7 @@ core::io::silent::SilentStructOP SilentFileJobOutputter::dump_pose(
 	tr.Debug << "adding struct " << ss->decoy_tag() << std::endl;
 	tr.Debug << "have " << saved_structs_.size() << ", buffering " << n_to_buffer_ << std::endl;
 	core::Real rand;
-	if ( random_flush_frequency_ < 1.0 ) rand=RG.uniform();
+	if ( random_flush_frequency_ < 1.0 ) rand = numeric::random::rg().uniform();
 	else rand=0.0;
 	if ( saved_structs_.size() >= n_to_buffer_ && random_flush_frequency_ >= rand ) {
 		write_all_structs();

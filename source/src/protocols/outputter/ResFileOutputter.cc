@@ -28,7 +28,7 @@
 namespace protocols {
 namespace outputter {
 
-static basic::Tracer TR("protocols.outputter.ResFileOutputter");
+static thread_local basic::Tracer TR( "protocols.outputter.ResFileOutputter" );
 
 #ifdef USELUA
 void lregister_ResFileOutputter( lua_State * lstate ) {

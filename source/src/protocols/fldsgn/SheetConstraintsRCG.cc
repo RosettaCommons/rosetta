@@ -44,7 +44,7 @@
 // C++ headers
 #include <cmath>
 
-static basic::Tracer TR( "protocols.fldsgn.SheetConstraintsRCG" );
+static thread_local basic::Tracer TR( "protocols.fldsgn.SheetConstraintsRCG" );
 
 namespace protocols{
 namespace fldsgn{

@@ -82,7 +82,7 @@
 #include <protocols/simple_filters/RotamerBoltzmannWeight.hh>
 //Auto Headers
 
-static basic::Tracer TR("des_pos_ddG");
+static thread_local basic::Tracer TR( "des_pos_ddG" );
 
 using std::string;
 using ObjexxFCL::string_of;

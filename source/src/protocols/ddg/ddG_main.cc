@@ -76,7 +76,7 @@
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR("pilot_apps.fix_bb_monomer_ddg");
+static thread_local basic::Tracer TR( "pilot_apps.fix_bb_monomer_ddg" );
 
 
 //numeric::random::RandomGenerator RG(54324); // <- Magic number, do not change it!!!

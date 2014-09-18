@@ -39,7 +39,7 @@
 namespace protocols {
 namespace moves {
 
-basic::Tracer tr("protocols.TrialMover");
+static thread_local basic::Tracer tr( "protocols.TrialMover" );
 	
 using namespace core;
 

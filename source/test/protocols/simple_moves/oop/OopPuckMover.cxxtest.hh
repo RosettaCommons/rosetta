@@ -80,13 +80,13 @@ public:
 		//kdrew: create new residue type set with oop patches included, cannot use chemical manager residue type set singleton because already initialized without oop patches
 		std::string const directory( basic::database::full_name( "chemical/residue_type_sets/fa_standard/" ) );
 		std::string const tag( "fa_standard" );
-		chemical::ResidueTypeSetCAP residue_set = new chemical::ResidueTypeSet( tag, directory ); 
+		chemical::ResidueTypeSetCAP residue_set = new chemical::ResidueTypeSet( tag, directory );
 
 		// read pdb file
 		core::import_pose::pose_from_pdb( pose, *residue_set, "protocols/simple_moves/oop/oop_test.pdb" );
 		//scoring::constraints::add_fa_constraints_from_cmdline_to_pose(pose);
 
-		core::init::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
+		core::init::init_random_generators(1000, "mt19937");
 	}
 
 	void tearDown() {
@@ -274,4 +274,3 @@ public:
 		TR << "test_OopPuckMoverSmall completed!! " << std::endl;
 	}
 };
-

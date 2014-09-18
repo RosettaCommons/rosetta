@@ -44,9 +44,13 @@ using std::stringstream;
 using utility::vector1;
 
 
-static basic::Tracer tr("protocols.loops.loops_definers.LoopsDefinerFactory");
+static thread_local basic::Tracer tr( "protocols.loops.loops_definers.LoopsDefinerFactory" );
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< LoopsDefinerFactory * > LoopsDefinerFactory::instance_( 0 );
+#else
 LoopsDefinerFactory * LoopsDefinerFactory::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

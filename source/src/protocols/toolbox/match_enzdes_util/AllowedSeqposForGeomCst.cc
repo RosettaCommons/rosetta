@@ -39,7 +39,7 @@ namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
-static basic::Tracer TR( "protocols.toolbox.match_enzdes_util.AllowedSeqposForGeomCst" );
+static thread_local basic::Tracer TR( "protocols.toolbox.match_enzdes_util.AllowedSeqposForGeomCst" );
 
 AllowedSeqposForGeomCst::AllowedSeqposForGeomCst(
   utility::vector1< utility::vector1< Size > > const & seqpos_for_geomcst )

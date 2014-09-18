@@ -78,7 +78,7 @@ using basic::Warning;
 namespace protocols {
 namespace checkpoint {
 
-basic::Tracer TR("protocols::checkpoint");
+static thread_local basic::Tracer TR( "protocols::checkpoint" );
 
 using namespace core;
 
@@ -249,7 +249,7 @@ void CheckPointer::checkpoint(
 	{
 		FileBuffer new_file( checkpoint_id + ".rng.state.gz", true /*gzipped*/ );
 		std::stringstream ss_stream;
-		numeric::random::RandomGenerator::saveAllStates( ss_stream );
+		numeric::random::rg().saveState( ss_stream );
 		new_file.set_contents( ss_stream.str() );
 		file_buffer.push_back( new_file );
 	}
@@ -366,7 +366,7 @@ bool CheckPointer::recover_checkpoint(
 	if (utility::file::file_exists( checkpoint_id + ".rng.state.gz" )) {
 		TR.Info << "Read random number state. " << std::endl;
 		utility::io::izstream izs(checkpoint_id + ".rng.state.gz");
-		numeric::random::RandomGenerator::restoreAllStates(izs);
+		numeric::random::rg().restoreState(izs);
 		izs.close();
 	} else {
 		utility_exit_with_message("Random generator state not found for checkpoint " + checkpoint_id + " even though the silent file is there. " );

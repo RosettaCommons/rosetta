@@ -73,7 +73,7 @@ using namespace basic::options::OptionKeys;
 typedef std::string String;
 
 
-static basic::Tracer TR("foldptn");
+static thread_local basic::Tracer TR( "foldptn" );
 
 class ThisApplication  {
 public:

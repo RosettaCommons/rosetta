@@ -51,7 +51,7 @@
 
 
 
-static basic::Tracer tr("protocols.toolbox.match_enzdes_util.EnzCstTemplateRes");
+static thread_local basic::Tracer tr( "protocols.toolbox.match_enzdes_util.EnzCstTemplateRes" );
 
 namespace protocols {
 namespace toolbox {

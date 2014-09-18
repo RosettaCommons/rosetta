@@ -47,8 +47,7 @@ namespace environment {
 
 std::string const NOT_SET = "[NOT_SET]";
 
-static basic::Tracer tr( "protocols.environment.ScriptCM", basic::t_info );
-static numeric::random::RandomGenerator RG( 9143235 );
+static thread_local basic::Tracer tr( "protocols.environment.ScriptCM", basic::t_info );
 
 using namespace core::environment;
 using namespace protocols::environment;

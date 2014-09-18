@@ -112,7 +112,7 @@ namespace symmetric_docking {
 using namespace core;
 using namespace ObjexxFCL;
 
-static basic::Tracer TR("protocols.symmetric_docking.SymDockProtocol");
+static thread_local basic::Tracer TR( "protocols.symmetric_docking.SymDockProtocol" );
 
 void SymDock_main() {
 	using namespace protocols::simple_moves::symmetry;

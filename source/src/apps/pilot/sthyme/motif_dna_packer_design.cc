@@ -39,7 +39,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-static basic::Tracer TR("apps.pilot.motif_dna_packer_design");
+static thread_local basic::Tracer TR( "apps.pilot.motif_dna_packer_design" );
 
 // Utility Headers
 // AUTO-REMOVED #include <utility/io/ozstream.hh>

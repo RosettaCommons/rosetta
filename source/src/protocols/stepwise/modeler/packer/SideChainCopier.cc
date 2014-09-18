@@ -21,7 +21,7 @@
 #include <core/pose/copydofs/util.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.modeler.packer.SideChainCopier" );
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.packer.SideChainCopier" );
 
 namespace protocols {
 namespace stepwise {

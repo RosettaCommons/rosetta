@@ -64,7 +64,7 @@ IRmsdFilter::clone() const {
 	return new IRmsdFilter( *this );
 }
 
-static basic::Tracer TR( "protocols.protein_interface_design.filters.IRmsdFilter" );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.IRmsdFilter" );
 core::Real
 IRmsdFilter::compute( core::pose::Pose const & pose ) const
 {

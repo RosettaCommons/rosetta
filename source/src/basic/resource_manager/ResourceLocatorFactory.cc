@@ -33,7 +33,11 @@ namespace resource_manager {
 /// @details Auto-generated virtual destructor
 ResourceLocatorFactory::~ResourceLocatorFactory() {}
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< ResourceLocatorFactory * > ResourceLocatorFactory::instance_( 0 );
+#else
 ResourceLocatorFactory * ResourceLocatorFactory::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

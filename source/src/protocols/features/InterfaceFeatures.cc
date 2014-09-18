@@ -41,7 +41,7 @@
 
 #include <cppdb/frontend.h>
 
-static basic::Tracer TR("protocols.InterfaceFeatures");
+static thread_local basic::Tracer TR( "protocols.InterfaceFeatures" );
 
 namespace protocols {
 namespace features {

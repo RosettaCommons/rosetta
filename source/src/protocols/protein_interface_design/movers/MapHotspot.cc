@@ -69,7 +69,7 @@ using namespace core;
 using namespace std;
 using namespace protocols::moves;
 
-static basic::Tracer TR( "protocols.protein_interface_design.movers.MapHotspot" );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.MapHotspot" );
 
 std::string
 MapHotspotCreator::keyname() const

@@ -62,8 +62,7 @@
 namespace protocols {
 namespace design_opt {
 
-static basic::Tracer TR( "protocols.design_opt.PointMutationCalculator" );
-static numeric::random::RandomGenerator RG( 54 );
+static thread_local basic::Tracer TR( "protocols.design_opt.PointMutationCalculator" );
 using namespace core;
 using namespace chemical;
 using utility::vector1;

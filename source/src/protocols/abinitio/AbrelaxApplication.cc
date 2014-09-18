@@ -204,8 +204,7 @@
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 
-static basic::Tracer tr("protocols.abinitio.AbrelaxApplication");
-static numeric::random::RandomGenerator RG(423464);  // <- Magic number, do not change it!
+static thread_local basic::Tracer tr( "protocols.abinitio.AbrelaxApplication" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///@details registering of options that are relevant for AbrelaxApplication
@@ -752,9 +751,9 @@ void AbrelaxApplication::insert_template_frags( core::pose::Pose &pose, kinemati
 	if ( option[ templates::fix_frag_file ].user() ) {
 		FrameList fix_frames;
 		fragment::FragmentIO().read_data( option[ templates::fix_frag_file ](), fix_frames );
-		Size const frame_id ( static_cast< int >( RG.uniform() * fix_frames.size() ) + 1 );
+		Size const frame_id ( static_cast< int >( numeric::random::rg().uniform() * fix_frames.size() ) + 1 );
 		FrameOP frame( fix_frames[ frame_id ] );
-		Size const frag_id ( static_cast< int >( RG.uniform() * frame->nr_frags() ) + 1 );
+		Size const frag_id ( static_cast< int >( numeric::random::rg().uniform() * frame->nr_frags() ) + 1 );
 		frame->apply( frag_id, pose );
 
 		std::ofstream out( "big_frags.log", std::ios_base::out | std::ios_base::app );
@@ -1671,7 +1670,7 @@ bool AbrelaxApplication::check_filters( core::pose::Pose & pose ) {
 	if ( !basic::options::option[ basic::options::OptionKeys::abinitio::use_filters ]() ) return true;
 	if ( option[ basic::options::OptionKeys::filters::disable_all_filters ]() ) return true; //makes a lot of sense IMHO
 
-	// apply RG, contact-order and sheet filters
+	// apply numeric::random::rg(), contact-order and sheet filters
 	protocols::simple_filters::RGFilter    rg_filter;
 	protocols::simple_filters::COFilter    co_filter;
 	protocols::simple_filters::SheetFilter sh_filter;
@@ -1838,11 +1837,11 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 			relax::ClassicRelax().setPoseExtraScore( fold_pose );
 		}
 
-		// need to save RG states such that choices for constraints and fold-tree are the same.
+		// need to save numeric::random::rg() states such that choices for constraints and fold-tree are the same.
 		if( ! abrelax_checkpoints_.recover_checkpoint( fold_pose, jobdist.get_current_output_tag(), "rg_state") ){
 			abrelax_checkpoints_.checkpoint( fold_pose, jobdist.get_current_output_tag(), "rg_state");
 		}
-		abrelax_checkpoints_.debug( jobdist.get_current_output_tag(), "rg_state", RG.uniform() );
+		abrelax_checkpoints_.debug( jobdist.get_current_output_tag(), "rg_state", numeric::random::rg().uniform() );
 
 		// perturb phi/psi randomly -- should be different each run
 		if ( option[ OptionKeys::abinitio::perturb ].user() ) {

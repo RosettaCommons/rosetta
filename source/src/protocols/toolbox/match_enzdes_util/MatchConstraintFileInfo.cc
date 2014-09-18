@@ -65,7 +65,7 @@
 
 
 
-static basic::Tracer tr("protocols.toolbox.match_enzdes_util.MatchConstraintFileIfo");
+static thread_local basic::Tracer tr( "protocols.toolbox.match_enzdes_util.MatchConstraintFileIfo" );
 
 namespace protocols {
 namespace toolbox{

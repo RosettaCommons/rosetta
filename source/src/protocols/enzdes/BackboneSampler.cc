@@ -62,8 +62,7 @@
 namespace protocols {
 namespace enzdes {
 
-static basic::Tracer TR( "protocols.enzdes.BackboneSampler" );
-static numeric::random::RandomGenerator RG( 6172774 );
+static thread_local basic::Tracer TR( "protocols.enzdes.BackboneSampler" );
 
 std::string
 BackboneSamplerCreator::keyname() const

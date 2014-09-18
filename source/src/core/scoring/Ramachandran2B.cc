@@ -61,12 +61,11 @@ using namespace ObjexxFCL;
 namespace core {
 namespace scoring {
 
-static numeric::random::RandomGenerator rama2b_rg( 56547 );
 
 // @brief Auto-generated virtual destructor
 Ramachandran2B::~Ramachandran2B() {}
 
-basic::Tracer T("core.scoring.Ramachandran2B");
+static thread_local basic::Tracer T( "core.scoring.Ramachandran2B" );
 
 Real const Ramachandran2B::binw_( 10.0 );
 
@@ -877,7 +876,7 @@ Ramachandran2B::draw_random_phi_psi_from_cdf(
 ) const
 {
 	// the bin index can be unpacked to give the phi and psi indices
-	Size bin_from_cdf = numeric::random::pick_random_index_from_cdf( cdf, rama2b_rg );
+	Size bin_from_cdf = numeric::random::pick_random_index_from_cdf( cdf, numeric::random::rg() );
 	--bin_from_cdf;
 
 	Size phi_ind = bin_from_cdf / n_psi_;

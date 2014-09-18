@@ -43,7 +43,7 @@
 
 
 
-static basic::Tracer TR("pick_lowestscore_pose");
+static thread_local basic::Tracer TR( "pick_lowestscore_pose" );
 
 typedef core::Size Size;
 typedef core::Real Real;

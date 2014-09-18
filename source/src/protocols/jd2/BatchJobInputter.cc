@@ -34,7 +34,7 @@
 
 // option key includes
 
-static basic::Tracer tr("protocols.jd2.BatchJobInputter");
+static thread_local basic::Tracer tr( "protocols.jd2.BatchJobInputter" );
 
 namespace protocols {
 namespace jd2 {

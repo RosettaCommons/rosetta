@@ -25,7 +25,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.modeler.protein.loop_close.util" );
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.protein.loop_close.util" );
 
 namespace protocols {
 namespace stepwise {

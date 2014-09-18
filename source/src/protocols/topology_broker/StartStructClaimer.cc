@@ -52,11 +52,9 @@
 
 //// C++ headers
 
-static numeric::random::RandomGenerator RG(199234234);
 
 
-static basic::Tracer tr("protocols.topo_broker",basic::t_info);
-//static numeric::random::RandomGenerator RG(181134);
+static thread_local basic::Tracer tr( "protocols.topo_broker", basic::t_info );
 
 namespace protocols {
 namespace topology_broker {
@@ -149,14 +147,14 @@ void StartStructClaimer::initialize_dofs(
 
 		if ( bb_ptr ) {
 			Size pos( (platform::Size) bb_ptr->global_position() );
-			pose.set_phi( pos, pose.phi( pos ) + RG.gaussian()*perturb_ );
-			pose.set_psi( pos, pose.psi( pos ) + RG.gaussian()*perturb_ );
+			pose.set_phi( pos, pose.phi( pos ) + numeric::random::rg().gaussian()*perturb_ );
+			pose.set_psi( pos, pose.psi( pos ) + numeric::random::rg().gaussian()*perturb_ );
 		}
 
 		/*if ( (*it)->type() == claims::DofClaim::BB ) {
 			Size pos( (*it)->pos( 1 ) );
-			pose.set_phi( pos, pose.phi( pos ) + RG.gaussian()*perturb_ );
-			pose.set_psi( pos, pose.psi( pos ) + RG.gaussian()*perturb_ );
+			pose.set_phi( pos, pose.phi( pos ) + numeric::random::rg().gaussian()*perturb_ );
+			pose.set_psi( pos, pose.psi( pos ) + numeric::random::rg().gaussian()*perturb_ );
 		}*/
 	}
 }

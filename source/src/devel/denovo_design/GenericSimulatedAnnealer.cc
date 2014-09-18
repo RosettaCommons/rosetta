@@ -35,12 +35,11 @@
 #include <fstream>
 #include <boost/foreach.hpp>
 
-static basic::Tracer TR("devel.denovo_design.GenericSimulatedAnnealer");
+static thread_local basic::Tracer TR( "devel.denovo_design.GenericSimulatedAnnealer" );
 
 namespace devel {
 namespace denovo_design {
 
-static numeric::random::RandomGenerator sa_RG(34823); // <- Magic number, do not change it!!!
 
 std::string
 GenericSimulatedAnnealerCreator::keyname() const
@@ -634,7 +633,7 @@ GenericSimulatedAnnealer::boltzmann_result( core::pose::Pose & pose )
 {
 	utility::vector1< core::Real > randoms;
 	for ( core::Size i=1; i<=filters().size(); ++i ) {
-		randoms.push_back( sa_RG.uniform() );
+		randoms.push_back( numeric::random::rg().uniform() );
 	}
 	return boltzmann_result( pose, randoms );
 }

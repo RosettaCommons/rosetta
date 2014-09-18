@@ -54,7 +54,7 @@ namespace core {
 namespace pack {
 namespace dunbrack {
 
-static basic::Tracer SRPL_TR("core.pack.dunbrack");
+static thread_local basic::Tracer SRPL_TR( "core.pack.dunbrack" );
 // static const Real MIN_ROT_PROB = 1.e-8; - KAB - unused variable
 
 Real const SingleResiduePeptoidLibrary::NEUTRAL_OMG = 180; // DOUG DOUG DOUG: Need to determine good values for peptoids
@@ -666,13 +666,12 @@ SingleResiduePeptoidLibrary::hokey_template_workaround()
 	rsrdl_3.get_all_rotamer_samples( 0.0, 0.0, 0.0 );
 	rsrdl_4.get_all_rotamer_samples( 0.0, 0.0, 0.0 );
 
-	numeric::random::RandomGenerator RG(1);
 	ChiVector chiv;
 
-	rsrdl_1.assign_random_rotamer_with_bias( rsd, pose, scratch, RG, chiv, true );
-	rsrdl_2.assign_random_rotamer_with_bias( rsd, pose, scratch, RG, chiv, true );
-	rsrdl_3.assign_random_rotamer_with_bias( rsd, pose, scratch, RG, chiv, true );
-	rsrdl_4.assign_random_rotamer_with_bias( rsd, pose, scratch, RG, chiv, true );
+	rsrdl_1.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
+	rsrdl_2.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
+	rsrdl_3.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
+	rsrdl_4.assign_random_rotamer_with_bias( rsd, pose, scratch, numeric::random::rg(), chiv, true );
 
 	rsrdl_1.get_probability_for_rotamer( 0.0, 0.0, 0.0, 1 );
 	rsrdl_2.get_probability_for_rotamer( 0.0, 0.0, 0.0, 1 );

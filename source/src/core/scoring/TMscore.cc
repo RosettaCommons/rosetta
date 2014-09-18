@@ -49,7 +49,7 @@
 namespace core{
 namespace scoring{
 
-static basic::Tracer TR("core.scoring.TMscore");
+static thread_local basic::Tracer TR( "core.scoring.TMscore" );
 
 using namespace ObjexxFCL;
 

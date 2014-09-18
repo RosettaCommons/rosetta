@@ -88,8 +88,7 @@ using namespace core;
 using namespace core::scoring;
 using namespace ObjexxFCL::format;
 
-static basic::Tracer TR( "protocols.enzdes.EnzFilters" );
-static numeric::random::RandomGenerator RG( 14084760 ); // <- Magic number, do not change it!!!
+static thread_local basic::Tracer TR( "protocols.enzdes.EnzFilters" );
 
 namespace protocols {
 namespace enzdes {

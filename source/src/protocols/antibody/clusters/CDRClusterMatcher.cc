@@ -37,7 +37,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/lexical_cast.hpp>
 
-static basic::Tracer TR("protocols.antibody.cluster.CDRClusterMatcher");
+static thread_local basic::Tracer TR( "protocols.antibody.cluster.CDRClusterMatcher" );
 
 namespace protocols{
 namespace antibody {

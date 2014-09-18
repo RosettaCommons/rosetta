@@ -30,7 +30,7 @@
 
 #include <utility/vector1.hh>
 
-static basic::Tracer TR("protocols.jd2.InnerJob");
+static thread_local basic::Tracer TR( "protocols.jd2.InnerJob" );
 
 namespace protocols {
 namespace jd2 {

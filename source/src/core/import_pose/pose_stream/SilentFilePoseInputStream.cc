@@ -46,7 +46,7 @@ namespace core {
 namespace import_pose {
 namespace pose_stream {
 
-static basic::Tracer tr( "core.io.pose_stream" );
+static thread_local basic::Tracer tr( "core.io.pose_stream" );
 
 typedef std::string string;
 typedef utility::file::FileName FileName;
@@ -206,7 +206,7 @@ SilentFilePoseInputStream::next_struct()
 
 
 void SilentFilePoseInputStream::read_all_files_() {
-	static basic::Tracer tr("core.io.pose_stream.silent");
+	basic::Tracer tr( "core.io.pose_stream.silent" );
 	using utility::vector1;
 
 	if (record_source_) sfd_->set_record_source( true );

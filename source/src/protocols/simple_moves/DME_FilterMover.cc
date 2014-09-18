@@ -28,7 +28,7 @@
 // Random number generator
 // AUTO-REMOVED #include <numeric/random/random.hh>
 
-static basic::Tracer TR( "protocols.DME_FilterMover" );
+static thread_local basic::Tracer TR( "protocols.DME_FilterMover" );
 
 //
 #include <string>

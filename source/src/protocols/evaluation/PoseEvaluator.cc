@@ -50,7 +50,7 @@ void PoseEvaluator::apply(  io::silent::SilentStruct &pss) const {
 
 void MetaPoseEvaluator::apply( pose::Pose& pose, std::string tag, io::silent::SilentStruct &pss) const {
 	for ( EvaluatorList::const_iterator it=evaluators_.begin(), eit=evaluators_.end();
-	it!=eit; ++it ) {
+			it!=eit; ++it ) {
 		(*it)->apply( pose, tag, pss );
 	}
 }

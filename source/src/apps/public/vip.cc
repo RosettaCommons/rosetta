@@ -38,7 +38,7 @@
 
 
 #include <basic/Tracer.hh>
-static basic::Tracer TR("VIP");
+static thread_local basic::Tracer TR( "VIP" );
 
 //utilities
 #include <protocols/jd2/JobDistributor.hh>

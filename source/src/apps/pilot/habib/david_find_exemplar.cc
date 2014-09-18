@@ -82,7 +82,7 @@ using namespace protocols::rigid;
 
 
 
-static basic::Tracer TR( "apps.pilot.david_pocket_compare.main" );
+static thread_local basic::Tracer TR( "apps.pilot.david_pocket_compare.main" );
 
 /// General testing code
 int main( int argc, char * argv [] ) {

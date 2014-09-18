@@ -32,7 +32,7 @@
 namespace protocols {
 namespace frag_picker {
 
-static basic::Tracer trBestTotalScoreSelector(
+static thread_local basic::Tracer trBestTotalScoreSelector(
 		"protocols.frag_picker.BestTotalScoreSelector");
 
 void BestTotalScoreSelector::select_fragments(

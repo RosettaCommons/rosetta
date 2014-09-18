@@ -82,7 +82,7 @@ typedef point axis;
 using namespace core;
 using basic::Warning;
 
-static basic::Tracer TR("apps.public.design.zinc1_homodimer_design");
+static thread_local basic::Tracer TR( "apps.public.design.zinc1_homodimer_design" );
 
 basic::options::IntegerOptionKey const lowres_symmetric_design_cycles( "lowres_symmetric_design_cycles" );
 basic::options::IntegerOptionKey const highres_symmetric_design_cycles( "highres_symmetric_design_cycles" );

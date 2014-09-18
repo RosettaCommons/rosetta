@@ -32,7 +32,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -45,7 +46,12 @@ class PcsGridSearchParameterManager{
 
 private:
 
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< PcsGridSearchParameterManager * > instance_;
+#else
 	static PcsGridSearchParameterManager * instance_;
+#endif
+
 	utility::vector1<PcsGridSearchParameter> grid_s_p_all_;
 
 	PcsGridSearchParameterManager();

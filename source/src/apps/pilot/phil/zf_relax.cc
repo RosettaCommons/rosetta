@@ -109,7 +109,6 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static numeric::random::RandomGenerator RG(54893); // <- Magic number, do not change it!!!
 
 using namespace core;
 //using namespace protocols;
@@ -118,10 +117,10 @@ using utility::vector1;
 using std::string;
 
 
-static basic::Tracer tt( "demo.phil.zf_relax", basic::t_trace );
-static basic::Tracer td( "demo.phil.zf_relax", basic::t_debug );
-static basic::Tracer ti( "demo.phil.zf_relax", basic::t_info );
-static basic::Tracer tw( "demo.phil.zf_relax", basic::t_warning );
+static thread_local basic::Tracer tt( "demo.phil.zf_relax", basic::t_trace );
+static thread_local basic::Tracer td( "demo.phil.zf_relax", basic::t_debug );
+static thread_local basic::Tracer ti( "demo.phil.zf_relax", basic::t_info );
+static thread_local basic::Tracer tw( "demo.phil.zf_relax", basic::t_warning );
 
 
 
@@ -428,7 +427,7 @@ zf_relax_test()
 	}
 
 	// randomize the order of the input files:
-	//numeric::random::random_permutation( input_files, RG );
+	//numeric::random::random_permutation( input_files, numeric::random::rg() );
 
 	// the simulation pose
 	Pose pose;

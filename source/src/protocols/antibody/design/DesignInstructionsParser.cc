@@ -33,7 +33,7 @@
 
 #include <boost/algorithm/string.hpp>
 
-static basic::Tracer TR("antibody.design.DesignInstructionsParser");
+static thread_local basic::Tracer TR( "antibody.design.DesignInstructionsParser" );
 
 namespace protocols {
 namespace antibody {

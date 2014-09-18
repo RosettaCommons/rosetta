@@ -94,7 +94,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.ub_e2c.ubi_e2c_modeler");
+static thread_local basic::Tracer TR( "protocols.ub_e2c.ubi_e2c_modeler" );
 
 namespace protocols {
 namespace ub_e2c {
@@ -102,7 +102,6 @@ namespace ub_e2c {
 #ifndef WIN32
 // Aroop's Magic number, do not change it
 // (and dont try and use it anywhere else)
-static numeric::random::RandomGenerator RG(22849284);
 
 using namespace core;
 using namespace core::scoring;
@@ -1228,7 +1227,7 @@ ubi_e2c_modeler::init_k48r_perturbation(
 			                    temperature_;
 			Real probability = std::exp( std::min (40.0, std::max(-40.0,
 			                                       boltz_factor)));
-			Real random = RG.uniform();
+			Real random = numeric::random::rg().uniform();
 			if( (current_CSP_score < last_accepted_CSP_score) ||
 			        ( random < probability ) ) {
 				last_accepted_CSP_score = current_CSP_score;
@@ -1315,7 +1314,7 @@ ubi_e2c_modeler::initial_perturbation(
 
 	trim_cter( without_cter );
 
-	Real k48r_vs_d77 = RG.uniform();
+	Real k48r_vs_d77 = numeric::random::rg().uniform();
 	if( k48r_vs_d77 < 0.5 ) {
 		k48r_swap_ = false;
 		init_k48r_perturbation( without_cter );
@@ -1485,7 +1484,7 @@ ubi_e2c_modeler::centroid_mode_perturbation(
 		                    temperature_;
 		Real probability = std::exp( std::min (40.0, std::max(-40.0,
 		                                       boltz_factor)));
-		Real random = RG.uniform();
+		Real random = numeric::random::rg().uniform();
 		if( (current_CSP_score < last_accepted_CSP_score) ||
 		        ( random < probability ) ) {
 			last_accepted_CSP_score = current_CSP_score;
@@ -1642,7 +1641,7 @@ ubi_e2c_modeler::fullatom_mode_perturbation(
 		                    temperature_;
 		Real probability = std::exp( std::min (40.0, std::max(-40.0,
 		                                       boltz_factor)));
-		Real random = RG.uniform();
+		Real random = numeric::random::rg().uniform();
 		if( ( current_CSP_score < last_accepted_CSP_score ) ||
 		        ( random < probability ) ) {
 			last_accepted_CSP_score = current_CSP_score;
@@ -2294,7 +2293,7 @@ ubi_e2c_modeler::optimize_cov_bond(
 		                    temperature_;
 		Real probability = std::exp( std::min (40.0, std::max(-40.0,
 		                                       boltz_factor)));
-		Real random = RG.uniform();
+		Real random = numeric::random::rg().uniform();
 		if( ( current_CSP_score < last_accepted_CSP_score ) ||
 		        ( random < probability ) ) {
 			last_accepted_CSP_score = current_CSP_score;
@@ -2743,7 +2742,7 @@ ubi_e2c_modeler::monoub_first_perturbation(
 		                    temperature_;
 		Real probability = std::exp( std::min (40.0, std::max(-40.0,
 		                                       boltz_factor)));
-		Real random = RG.uniform();
+		Real random = numeric::random::rg().uniform();
 		if( (current_CSP_score < last_accepted_CSP_score) ||
 		        ( random < probability ) ) {
 			last_accepted_CSP_score = current_CSP_score;
@@ -2860,7 +2859,7 @@ ubi_e2c_modeler::monoub_centroid_mode_perturbation(
 		                    temperature_;
 		Real probability = std::exp( std::min (40.0, std::max(-40.0,
 		                                       boltz_factor)));
-		Real random = RG.uniform();
+		Real random = numeric::random::rg().uniform();
 		if( (current_CSP_score < last_accepted_CSP_score) ||
 		        ( random < probability ) ) {
 			last_accepted_CSP_score = current_CSP_score;
@@ -2981,7 +2980,7 @@ ubi_e2c_modeler::monoub_fullatom_mode_perturbation(
 		                    temperature_;
 		Real probability = std::exp( std::min (40.0, std::max(-40.0,
 		                                       boltz_factor)));
-		Real random = RG.uniform();
+		Real random = numeric::random::rg().uniform();
 		if( ( current_CSP_score < last_accepted_CSP_score ) ||
 		        ( random < probability ) ) {
 			last_accepted_CSP_score = current_CSP_score;

@@ -61,7 +61,7 @@
 
 using namespace core;
 
-basic::Tracer TR("pilot_apps.calibrate_pdb_via_sidechain_optimization");
+static thread_local basic::Tracer TR( "pilot_apps.calibrate_pdb_via_sidechain_optimization" );
 
 OPT_1GRP_KEY(Boolean, calibrate_pdb, no_repacking)
 OPT_1GRP_KEY(Boolean, calibrate_pdb, no_rottrials)

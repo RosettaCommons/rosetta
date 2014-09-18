@@ -31,7 +31,7 @@
 
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR( "protocols.toolbox.TaskOperations.LinkResidues" );
+static thread_local basic::Tracer TR( "protocols.toolbox.TaskOperations.LinkResidues" );
 
 namespace protocols {
 namespace toolbox {

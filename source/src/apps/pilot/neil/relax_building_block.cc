@@ -77,7 +77,7 @@
 #include <protocols/relax/FastRelax.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 
-static basic::Tracer TR("relax_building_block");
+static thread_local basic::Tracer TR( "relax_building_block" );
 
 using std::string;
 using ObjexxFCL::string_of;

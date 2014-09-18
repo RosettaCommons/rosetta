@@ -44,7 +44,7 @@
 
 
 
-static basic::Tracer TR("jd2test");
+static thread_local basic::Tracer TR( "jd2test" );
 
 ///local mover for testing purposes
 class JDtestmover : public protocols::moves::Mover {

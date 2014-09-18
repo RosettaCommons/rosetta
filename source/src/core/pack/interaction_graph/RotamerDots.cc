@@ -54,10 +54,10 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-static basic::Tracer TR_DS("core.pack.interaction_graph.RotamerDots.DotSphere");
-static basic::Tracer TR_RD("core.pack.interaction_graph.RotamerDots.RotamerDots");
-static basic::Tracer TR_RDC("core.pack.interaction_graph.RotamerDots.RotamerDotsCache");
-static basic::Tracer TR_RDRD("core.pack.interaction_graph.RotamerDots.RotamerDotsRadiusData");
+static thread_local basic::Tracer TR_DS( "core.pack.interaction_graph.RotamerDots.DotSphere" );
+static thread_local basic::Tracer TR_RD( "core.pack.interaction_graph.RotamerDots.RotamerDots" );
+static thread_local basic::Tracer TR_RDC( "core.pack.interaction_graph.RotamerDots.RotamerDotsCache" );
+static thread_local basic::Tracer TR_RDRD( "core.pack.interaction_graph.RotamerDots.RotamerDotsRadiusData" );
 
 
 using namespace ObjexxFCL::format;
@@ -1613,7 +1613,11 @@ RotamerDots::initialize_dot_coords( utility::vector1< core::Vector > & dot_coord
 //----------------------------------------------------------------------------//
 
 /// @brief set initial value as no instance
-RotamerDotsRadiusData* RotamerDotsRadiusData::instance_( 0 );
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< RotamerDotsRadiusData * > RotamerDotsRadiusData::instance_( 0 );
+#else
+RotamerDotsRadiusData * RotamerDotsRadiusData::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

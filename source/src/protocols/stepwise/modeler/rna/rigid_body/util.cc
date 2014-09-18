@@ -61,7 +61,7 @@
 using namespace core;
 using namespace core::chemical::rna;
 
-static basic::Tracer TR( "protocols.stepwise.modeler.rna.rigid_body.util" ) ;
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.rna.rigid_body.util" );
 
 namespace protocols {
 namespace stepwise {

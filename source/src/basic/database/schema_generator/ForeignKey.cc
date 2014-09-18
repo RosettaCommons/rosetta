@@ -24,7 +24,7 @@
 // C++ Headers
 #include <string>
 
-static basic::Tracer TR("utility.sql_database.ForeignKey");
+static thread_local basic::Tracer TR( "utility.sql_database.ForeignKey" );
 
 
 // Utility Headers

@@ -30,9 +30,13 @@
 namespace core {
 namespace sequence {
 
-static basic::Tracer tr("core.sequence.SequenceFactory");
+static thread_local basic::Tracer tr( "core.sequence.SequenceFactory" );
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< SequenceFactory * > SequenceFactory::instance_( 0 );
+#else
 SequenceFactory * SequenceFactory::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

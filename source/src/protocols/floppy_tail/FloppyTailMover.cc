@@ -85,7 +85,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.floppy_tail.FloppyTail");
+static thread_local basic::Tracer TR( "protocols.floppy_tail.FloppyTail" );
 
 namespace protocols {
 namespace floppy_tail {

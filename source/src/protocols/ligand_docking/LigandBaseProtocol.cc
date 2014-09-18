@@ -87,8 +87,7 @@ namespace ligand_docking {
 using namespace ObjexxFCL;
 
 
-static basic::Tracer TR("protocols.ligand_docking.LigandBaseProtocol");
-static numeric::random::RandomGenerator my_RG(810323); // <- Magic number, do not change it!!!
+static thread_local basic::Tracer TR( "protocols.ligand_docking.LigandBaseProtocol" );
 
 
 LigandBaseProtocol::LigandBaseProtocol():
@@ -376,7 +375,7 @@ core::Vector LigandBaseProtocol::choose_desired_centroid(
 	// Choose desired centroid:  either -start_from or the current position.
 	core::Vector desired_centroid;
 	if( !start_from_pts.empty() ) {
-		int const which_triple = numeric::random::RG.random_range(1, start_from_pts.size());
+		int const which_triple = numeric::random::rg().random_range(1, start_from_pts.size());
 		desired_centroid = start_from_pts[ which_triple ];
 	} else {
 		core::Vector dummy;
@@ -903,7 +902,7 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 				Size const cut_start = ( pose.residue(start).is_terminus() ? start+1 : start );
 				Size const cut_end = ( pose.residue(stop).is_terminus() ? stop-2 : stop-1 );
 				runtime_assert( cut_start <= cut_end );
-				Size cutpt = Size( my_RG.random_range(cut_start, cut_end) ); // cut is made between cutpt and cutpt+1
+				Size cutpt = Size( numeric::random::rg().random_range(cut_start, cut_end) ); // cut is made between cutpt and cutpt+1
 				// Can't use this function while iterating -- invalidates the iterators!
 				//f.new_jump( max(e_start,start-1), min(e_stop,stop+1), cutpt );
 				//loops.push_back( Loop( max(e_start,start-1), min(e_stop,stop+1), cutpt ) );

@@ -61,7 +61,7 @@ namespace jumping {
 using namespace core;
 using namespace fragment;
 
-static basic::Tracer tr("protocols.jumping");
+static thread_local basic::Tracer tr( "protocols.jumping" );
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void

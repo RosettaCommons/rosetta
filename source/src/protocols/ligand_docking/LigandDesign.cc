@@ -49,12 +49,11 @@
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 
-static numeric::random::RandomGenerator RG(42224);
 
 namespace protocols {
 namespace ligand_docking {
 
-static basic::Tracer ligand_design_tracer("protocols.ligand_docking.LigandDesign", basic::t_debug);
+static thread_local basic::Tracer ligand_design_tracer( "protocols.ligand_docking.LigandDesign", basic::t_debug );
 
 std::string
 LigandDesignCreator::keyname() const
@@ -173,7 +172,7 @@ core::Size
 random_connection(core::conformation::ResidueCOP residue){
 	//find connections that are incomplete
 	utility::vector1<core::Size> incomplete_connections= get_incomplete_connections(residue);
-	return RG.random_element(incomplete_connections);
+	return numeric::random::rg().random_element(incomplete_connections);
 }
 
 // should be a helper function of residue class
@@ -218,8 +217,8 @@ LigandDesign::apply( core::pose::Pose & pose )
 	core::Size end = pose.conformation().chain_end(chain_id);
 	while(grow(pose, start, end)){
 		utility::vector1<core::Size> unconnected_residues = find_unconnected_residues(pose, start,end);
-		core::Size const & grow_from= RG.random_element(unconnected_residues);
-		core::conformation::ResidueCOP const growth= RG.random_element(fragments_);;
+		core::Size const & grow_from= numeric::random::rg().random_element(unconnected_residues);
+		core::conformation::ResidueCOP const growth= numeric::random::rg().random_element(fragments_);;
 		core::Size grow_from_connection= random_connection(&pose.residue(grow_from));
 		core::Size growth_connection= random_connection(growth);
 		pose.append_residue_by_bond(*growth, true, growth_connection, grow_from, grow_from_connection);

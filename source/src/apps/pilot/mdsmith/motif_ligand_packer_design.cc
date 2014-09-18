@@ -39,7 +39,7 @@ using namespace protocols::dna;
 
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
-static basic::Tracer TR("apps.pilot.motif_dna_packer_design");
+static thread_local basic::Tracer TR( "apps.pilot.motif_dna_packer_design" );
 
 #include <core/import_pose/import_pose.hh> // Need since refactor
 

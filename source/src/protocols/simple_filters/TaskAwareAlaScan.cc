@@ -68,7 +68,7 @@
 #include <protocols/simple_filters/TaskAwareAlaScanCreator.hh>
 
 
-static basic::Tracer TR( "protocols.simple_filters.TaskAwareAlaScan" );
+static thread_local basic::Tracer TR( "protocols.simple_filters.TaskAwareAlaScan" );
 
 namespace protocols {
 namespace simple_filters {

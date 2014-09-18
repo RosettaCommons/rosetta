@@ -72,7 +72,7 @@ namespace protocols {
 namespace motif_hash {
 
 // static data
-	static basic::Tracer TR("protocols.motif_hash");
+static thread_local basic::Tracer TR( "protocols.motif_hash" );
 
 // types
 

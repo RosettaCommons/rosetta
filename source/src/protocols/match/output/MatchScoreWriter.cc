@@ -31,7 +31,7 @@
 #include <fstream>
 
 // Construct tracer.
-static basic::Tracer TR("protocols.match.output.MatchScoreWriter");
+static thread_local basic::Tracer TR( "protocols.match.output.MatchScoreWriter" );
 
 namespace protocols {
 namespace match {

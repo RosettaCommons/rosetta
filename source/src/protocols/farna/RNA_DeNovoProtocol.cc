@@ -110,9 +110,8 @@ using namespace core;
 namespace protocols {
 namespace farna {
 
-static numeric::random::RandomGenerator RG(12320);  // <- Magic number, do not change it!
 
-static basic::Tracer TR( "protocols.rna.RNA_DeNovoProtocol" ) ;
+static thread_local basic::Tracer TR( "protocols.rna.RNA_DeNovoProtocol" );
 
 RNA_DeNovoProtocol::RNA_DeNovoProtocol(
 	 Size const nstruct,
@@ -994,13 +993,13 @@ RNA_DeNovoProtocol::RNA_move_trial( pose::Pose & pose ) {
 	//     junctions based on previous models stored in silent files
 	//
 
-	if  ( RG.uniform() < jump_change_frequency_ )  {
+	if  ( numeric::random::rg().uniform() < jump_change_frequency_ )  {
 		//Following returns early if there are no jumps.
 		random_jump_trial( pose );
 	} else {
 
 		bool did_a_trial( false );
-		if ( RG.uniform() < chunk_coverage_ ) {
+		if ( numeric::random::rg().uniform() < chunk_coverage_ ) {
 			did_a_trial = random_chunk_trial( pose );
 		}
 
@@ -1024,7 +1023,7 @@ RNA_DeNovoProtocol::random_jump_trial( pose::Pose & pose ) {
 	//	(*denovo_scorefxn_)( pose );
 	//	denovo_scorefxn_->show( std::cout, pose );
 
-	if ( rigid_body_mover_ &&  RG.uniform() < 0.8 /*totally arbitrary*/ ){
+	if ( rigid_body_mover_ &&  numeric::random::rg().uniform() < 0.8 /*totally arbitrary*/ ){
 		rigid_body_mover_->apply( pose );
 		success = true; /* rigid body mover is from docking  */
 		move_type = "rigid_body";

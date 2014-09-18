@@ -48,7 +48,7 @@
 #include <basic/options/keys/pH.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-static basic::Tracer TR("apps.pilot.krishna.PhProtocol");
+static thread_local basic::Tracer TR( "apps.pilot.krishna.PhProtocol" );
 
 class PhProtocol : public protocols::moves::Mover {
 

@@ -30,7 +30,7 @@
 namespace basic {
 namespace datacache {
 
-static basic::Tracer TR( "basic.datacache.DataMap" );
+static thread_local basic::Tracer TR( "basic.datacache.DataMap" );
 
 DataMap::DataMap() {}
 DataMap::~DataMap() {}

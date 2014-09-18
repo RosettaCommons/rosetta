@@ -62,7 +62,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.docking.DockingLowResEnsemble");
+static thread_local basic::Tracer TR( "protocols.docking.DockingLowResEnsemble" );
 
 using namespace core;
 

@@ -54,7 +54,7 @@
 #include <basic/database/open.hh>
 
 
-static basic::Tracer TR("RosettaHoles");
+static thread_local basic::Tracer TR( "RosettaHoles" );
 
 
 

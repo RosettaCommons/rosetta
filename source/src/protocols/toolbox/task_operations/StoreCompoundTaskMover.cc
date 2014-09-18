@@ -44,7 +44,7 @@
 // Boost Headers
 #include <boost/foreach.hpp>
 
-static basic::Tracer TR("protocols.toolbox.task_operations.StoreCompoundTaskMover");
+static thread_local basic::Tracer TR( "protocols.toolbox.task_operations.StoreCompoundTaskMover" );
 
 namespace protocols {
 namespace toolbox {

@@ -30,7 +30,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static basic::Tracer TR( "protocols.protein_interface_design.movers.FavorNativeResiduePreCycle" );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.FavorNativeResiduePreCycle" );
 
 std::string FavorNativeResiduePreCycleCreator::keyname() const
 {

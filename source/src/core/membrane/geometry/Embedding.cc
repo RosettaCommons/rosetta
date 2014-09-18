@@ -44,7 +44,7 @@
 #include <string>
 #include <cstdlib>
 
-static basic::Tracer TR( "core.membrane.geometry.Embedding" );
+static thread_local basic::Tracer TR( "core.membrane.geometry.Embedding" );
 
 namespace core {
 namespace membrane {

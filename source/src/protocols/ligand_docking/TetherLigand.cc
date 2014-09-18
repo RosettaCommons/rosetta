@@ -44,7 +44,7 @@ using basic::Warning;
 namespace protocols {
 namespace ligand_docking {
 
-static basic::Tracer tether_ligand_tracer("protocols.ligand_docking.ligand_options.Tether_ligand", basic::t_debug);
+static thread_local basic::Tracer tether_ligand_tracer( "protocols.ligand_docking.ligand_options.Tether_ligand", basic::t_debug );
 
 TetherLigand::TetherLigand(){}
 

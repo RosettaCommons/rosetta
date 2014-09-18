@@ -35,7 +35,7 @@
 namespace devel {
 namespace sewing {
 	
-static basic::Tracer TR("BundlePairRmsdWorkUnit");
+static thread_local basic::Tracer TR( "BundlePairRmsdWorkUnit" );
 
 using namespace std;
 

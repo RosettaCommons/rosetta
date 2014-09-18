@@ -37,7 +37,7 @@ using namespace protocols::loops::loop_closure;
 
 // Global Variables {{{1
 
-basic::Tracer TR("apps.pilot.kale");
+static thread_local basic::Tracer TR( "apps.pilot.kale" );
 
 // Application {{{1
 

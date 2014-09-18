@@ -1300,6 +1300,8 @@ void jitterloop (
 	return;
 }
 
+static 	numeric::random::RandomGenerator RG( 847322 ); //Random generator and seed
+
 //MAIN
 int main( int argc, char * argv [] ) {
 
@@ -1309,7 +1311,6 @@ int main( int argc, char * argv [] ) {
 
 	printf("Starting design_truecycpeptide_fromstub.cc\nFile created 21 Oct 2013 by Vikram K. Mulligan.\n\n"); fflush(stdout);
 
-	numeric::random::RandomGenerator RG( 847322 ); //Random generator and seed
 
 	register_options();
 	devel::init(argc, argv);

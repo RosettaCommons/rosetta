@@ -44,7 +44,7 @@
 #include <ObjexxFCL/format.hh>
 #include <fstream>
 
-static basic::Tracer TR("frag2profile");
+static thread_local basic::Tracer TR( "frag2profile" );
 
 typedef core::Size Size;
 typedef std::string String;

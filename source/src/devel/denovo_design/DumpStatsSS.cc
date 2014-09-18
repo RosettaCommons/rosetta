@@ -43,7 +43,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static basic::Tracer TR( "devel/denovo_design/movers/DumpStatsSS" );
+static thread_local basic::Tracer TR( "devel/denovo_design/movers/DumpStatsSS" );
 
 std::string
 DumpStatsSSCreator::keyname() const

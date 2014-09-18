@@ -63,7 +63,7 @@ using core::Real;
 // files.
 //////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "protocols.stepwise.modeler.protein.loop_close.StepWiseProteinKIC_LoopBridger" ) ;
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.protein.loop_close.StepWiseProteinKIC_LoopBridger" );
 
 namespace protocols {
 namespace stepwise {

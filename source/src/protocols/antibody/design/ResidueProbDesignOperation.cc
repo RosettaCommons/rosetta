@@ -24,8 +24,7 @@
 
 
 
-static basic::Tracer TR( "protocols.toolbox.TaskOperations.ResidueProbDesignOperation" );
-static numeric::random::RandomGenerator RG(136548);
+static thread_local basic::Tracer TR( "protocols.toolbox.TaskOperations.ResidueProbDesignOperation" );
 
 namespace protocols {
 namespace antibody {
@@ -242,7 +241,7 @@ ResidueProbDesignOperation::apply(core::pose::Pose const & pose, core::pack::tas
 		
 		for (Size picks = 1; picks <= picking_rounds_; ++picks){
 			
-			core::Size aa_num = sampler.random_sample(RG);
+			core::Size aa_num = sampler.random_sample(numeric::random::rg());
 			allowed_aminos[aa_num] = true;
 		}
 		

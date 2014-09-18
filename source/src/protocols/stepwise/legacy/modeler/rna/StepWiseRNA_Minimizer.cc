@@ -93,8 +93,7 @@ using namespace protocols::stepwise::modeler::rna;
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-static numeric::random::RandomGenerator RG(3892128);
-static basic::Tracer TR( "protocols.stepwise.legacy.modeler.rna.StepWiseRNA_Minimizer" ) ;
+static thread_local basic::Tracer TR( "protocols.stepwise.legacy.modeler.rna.StepWiseRNA_Minimizer" );
 
 namespace protocols {
 namespace stepwise {
@@ -177,7 +176,7 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 	scorefxn_->show( TR.Debug, dummy_pose );
 
 	bool vary_bond_geometry( false );
-	if ( allow_variable_bond_geometry_ && ( RG.uniform() < vary_bond_geometry_frequency_ ) ) {
+	if ( allow_variable_bond_geometry_ && ( numeric::random::rg().uniform() < vary_bond_geometry_frequency_ ) ) {
 		vary_bond_geometry = true;
 	}
 

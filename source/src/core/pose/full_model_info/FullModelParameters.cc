@@ -24,7 +24,7 @@
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-static basic::Tracer TR( "core.pose.full_model_info.FullModelParameters" );
+static thread_local basic::Tracer TR( "core.pose.full_model_info.FullModelParameters" );
 
 namespace core {
 namespace pose {

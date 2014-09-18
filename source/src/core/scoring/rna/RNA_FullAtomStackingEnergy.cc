@@ -48,7 +48,7 @@
 
 // C++
 
-static basic::Tracer tr( "core.scoring.rna.RNA_FullAtomStackingEnergy" );
+static thread_local basic::Tracer tr( "core.scoring.rna.RNA_FullAtomStackingEnergy" );
 using namespace core::chemical::rna;
 
 namespace core {

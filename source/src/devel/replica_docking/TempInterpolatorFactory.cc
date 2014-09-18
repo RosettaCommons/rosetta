@@ -31,19 +31,24 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-static basic::Tracer tr("devel.replica_docking.TempInterpolatorFactory");
+static thread_local basic::Tracer tr( "devel.replica_docking.TempInterpolatorFactory" );
 
 namespace devel {
 namespace replica_docking {
 
 
-static basic::Tracer TR( "devel.replica_docking.TempInterpolatorFactory" );
+static thread_local basic::Tracer TR( "devel.replica_docking.TempInterpolatorFactory" );
 
 TempInterpolatorFactory::TempInterpolatorFactory(){}
 
 TempInterpolatorFactory::~TempInterpolatorFactory(){}
 
-TempInterpolatorFactory * TempInterpolatorFactory::instance_( 0 );
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< TempInterpolatorFactory * > TempInterpolatorFactory::instance_( 0 );
+#else
+TempInterpolatorFactory* TempInterpolatorFactory::instance_( 0 );
+#endif
+
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

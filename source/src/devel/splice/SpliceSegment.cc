@@ -32,7 +32,7 @@
 namespace devel {
 namespace splice {
 
-static basic::Tracer TR( "devel.splice.SpliceSegment" );
+static thread_local basic::Tracer TR( "devel.splice.SpliceSegment" );
 
 using namespace core::sequence;
 using namespace std;

@@ -46,7 +46,7 @@
 // option key includes
 
 
-static basic::Tracer tr("protocols.environment.EnvClaim",basic::t_info);
+static thread_local basic::Tracer tr( "protocols.environment.EnvClaim", basic::t_info );
 
 namespace protocols {
 namespace environment {

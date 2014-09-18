@@ -38,7 +38,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static basic::Tracer add_hydrogens_tracer("protocols.ligand_docking.LigandDesign", basic::t_debug);
+static thread_local basic::Tracer add_hydrogens_tracer( "protocols.ligand_docking.LigandDesign", basic::t_debug );
 
 std::string
 AddHydrogensCreator::keyname() const

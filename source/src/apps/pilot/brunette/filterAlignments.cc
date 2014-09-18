@@ -76,7 +76,7 @@
 #include <iostream>
 #include <fstream>
 
-basic::Tracer tr( "filterAlignments" );
+static thread_local basic::Tracer tr( "filterAlignments" );
 using std::string;
 using std::map;
 using std::multimap;

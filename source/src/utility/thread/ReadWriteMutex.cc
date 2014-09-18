@@ -51,7 +51,7 @@ void ReadWriteMutex::obtain_write_lock()
 	std::unique_lock< std::recursive_mutex > prevent_more_reads( read_lock_ );
 	std::unique_lock< std::recursive_mutex > no_more_readers( write_lock_ );
 
-	not_being_read_.wait( no_more_readers, [ &read_counter_ ]() { return read_counter_.load() == 0; } );
+	not_being_read_.wait( no_more_readers, [ this ]() { return this->read_counter_.load() == 0; } );
 
 	// Ok, we now have both the read and the write locks and the read counter is at 0.
 	// Release the mutexes without unlocking them and exit this function

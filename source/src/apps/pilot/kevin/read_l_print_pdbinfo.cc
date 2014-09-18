@@ -75,7 +75,7 @@
 using basic::Error;
 using basic::Warning;
 using basic::T;
-static basic::Tracer TR("apps.pilot.kevin.buns");
+static thread_local basic::Tracer TR( "apps.pilot.kevin.buns" );
 
 //basic::options::BooleanOptionKey const use_varsoldist_sasa_calc( "use_varsoldist_sasa_calc" );
 //basic::options::BooleanOptionKey const water_dist_H( "water_dist_H_cutoff" );

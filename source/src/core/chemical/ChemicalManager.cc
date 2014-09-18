@@ -87,7 +87,7 @@
 namespace core {
 namespace chemical {
 
-static basic::Tracer TR("core.chemical.ChemicalManager");
+static thread_local basic::Tracer TR( "core.chemical.ChemicalManager" );
 
 //
 
@@ -104,12 +104,15 @@ std::mutex & ChemicalManager::singleton_mutex()
 #endif
 #endif
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< ChemicalManager * > ChemicalManager::instance_( 0 );
+#else
+ChemicalManager* ChemicalManager::instance_( 0 );
+#endif
+
 /// @brief static function to get the instance of ( pointer to) this singleton class
 ChemicalManager * ChemicalManager::get_instance()
 {
-	/// @brief set initial value as no instance
-	static ChemicalManager* instance_( 0 );
-
 	boost::function< ChemicalManager * () > creator = boost::bind( &ChemicalManager::create_singleton_instance );
 	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;

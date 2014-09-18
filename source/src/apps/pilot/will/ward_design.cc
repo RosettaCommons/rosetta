@@ -73,7 +73,7 @@
 
 using numeric::conversions::radians;
 
-static basic::Tracer TR("ward_design");
+static thread_local basic::Tracer TR( "ward_design" );
 
 using core::Size;
 using core::Real;

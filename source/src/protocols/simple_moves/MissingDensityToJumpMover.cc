@@ -46,7 +46,7 @@ using basic::Warning;
 
 namespace protocols {
 namespace simple_moves {
-static basic::Tracer TR("protocols.mover.MissingDensityToJumpMover");
+static thread_local basic::Tracer TR( "protocols.mover.MissingDensityToJumpMover" );
 
 // Default constructor
 MissingDensityToJumpMover::MissingDensityToJumpMover(): protocols::moves::Mover( MissingDensityToJumpMover::get_name() )

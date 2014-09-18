@@ -40,13 +40,12 @@
 #include <iostream>
 
 using namespace ObjexxFCL;
-static numeric::random::RandomGenerator FBBCRSA_RG(63546); // <- Magic number, do not change it!!!
 
 namespace core {
 namespace pack {
 namespace annealer {
 
-static basic::Tracer TR("core.pack.annealer.FixbbLinkingRotamerSimAnnealer",basic::t_info );
+static thread_local basic::Tracer TR( "core.pack.annealer.FixbbLinkingRotamerSimAnnealer", basic::t_info );
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @begin FixbbLinkingRotamerSimAnnealer::FixbbLinkingRotamerSimAnnealer()
@@ -278,7 +277,7 @@ void FixbbLinkingRotamerSimAnnealer::run()
 			int ranrotamer = -1;
 			bool invalid_rotamer = false;
 			while (!invalid_rotamer){
-				ranrotamer = static_cast<int>( FBBCRSA_RG.random_range(1, allrot ));
+				ranrotamer = static_cast<int>( numeric::random::rg().random_range(1, allrot ));
 				if (rot_valid[ ranrotamer ]){
 					invalid_rotamer = true;
 				}

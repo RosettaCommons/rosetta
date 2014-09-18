@@ -42,7 +42,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.modeler.StepWiseMinimizer" );
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.StepWiseMinimizer" );
 using ObjexxFCL::format::F;
 using utility::tools::make_vector1;
 

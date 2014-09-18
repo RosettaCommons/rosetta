@@ -48,8 +48,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.moves.MonteCarlo");
-static numeric::random::RandomGenerator mc_RG(62452); // <- Magic number, do not change it!!!
+static thread_local basic::Tracer TR( "protocols.moves.MonteCarlo" );
 
 namespace protocols {
 namespace moves {
@@ -402,7 +401,7 @@ MonteCarlo::boltzmann(
 	Real const boltz_factor =  -score_delta / temperature_ + inner_score_temperature_delta;
 	Real const probability = std::exp( std::min (40.0, std::max(-40.0,boltz_factor)) ) * proposal_density_ratio;
 	if ( probability < 1 ) {
-		if ( mc_RG.uniform() >= probability ) {
+		if ( numeric::random::rg().uniform() >= probability ) {
 			mc_accepted_ = MCA_rejected; // rejected
 			autotemp_reject();
 			return false; // rejected

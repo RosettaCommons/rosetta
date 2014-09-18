@@ -50,9 +50,8 @@ using basic::Warning;
 using core::pose::Pose;
 
 
-static numeric::random::RandomGenerator RG(12321); // <- Magic number, do not change it!!!
 
-static basic::Tracer TR("pilot_app.phoshporylate_position");
+static thread_local basic::Tracer TR( "pilot_app.phoshporylate_position" );
 
 
 

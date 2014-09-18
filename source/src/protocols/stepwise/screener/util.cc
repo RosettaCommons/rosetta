@@ -20,7 +20,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.screener.util" );
+static thread_local basic::Tracer TR( "protocols.stepwise.screener.util" );
 
 namespace protocols {
 namespace stepwise {

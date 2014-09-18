@@ -18,7 +18,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.screener.Scorer" );
+static thread_local basic::Tracer TR( "protocols.stepwise.screener.Scorer" );
 
 namespace protocols {
 namespace stepwise {

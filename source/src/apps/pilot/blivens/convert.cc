@@ -46,7 +46,7 @@ using namespace basic::options::OptionKeys;
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-basic::Tracer TR( "pilot_apps.blivens.convert" );
+static thread_local basic::Tracer TR( "pilot_apps.blivens.convert" );
 
 int
 usage(char* msg)

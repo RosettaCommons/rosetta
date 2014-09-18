@@ -19,7 +19,7 @@
 #include <cmath>
 #include <utility/vector1.hh>
 
-static basic::Tracer TR( "core.util.ABEGOManager" );
+static thread_local basic::Tracer TR( "core.util.ABEGOManager" );
 
 namespace core {
 namespace util {

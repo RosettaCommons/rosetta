@@ -93,7 +93,7 @@ using basic::Warning;
 namespace protocols {
 namespace hybridization {
 
-static basic::Tracer TR("protocols.electron_density.util");
+static thread_local basic::Tracer TR( "protocols.electron_density.util" );
 
 using namespace protocols;
 using namespace core;

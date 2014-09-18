@@ -34,7 +34,7 @@
 
 using namespace core;
 
-basic::Tracer TR("apps.pilot.kale.examples.XyzFromPose");
+static thread_local basic::Tracer TR( "apps.pilot.kale.examples.XyzFromPose" );
 
 int main(int argc, char* argv[]) {
 		devel::init(argc, argv);

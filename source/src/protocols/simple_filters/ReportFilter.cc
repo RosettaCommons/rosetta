@@ -33,7 +33,7 @@ namespace simple_filters {
 using namespace core;
 using namespace core::scoring;
 
-static basic::Tracer TR( "protocols.simple_filters.ReportFilter" );
+static thread_local basic::Tracer TR( "protocols.simple_filters.ReportFilter" );
 
 protocols::filters::FilterOP
 ReportFilterCreator::create_filter() const { return new ReportFilter; }

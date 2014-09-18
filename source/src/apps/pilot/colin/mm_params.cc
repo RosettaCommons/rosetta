@@ -48,7 +48,7 @@
 #include <utility/excn/Exceptions.hh>
 
 
-static basic::Tracer TR("mm_params");
+static thread_local basic::Tracer TR( "mm_params" );
 
 OPT_1GRP_KEY(Boolean, mm_params, use_residue_type_theta0)
 OPT_1GRP_KEY(StringVector, mm_params, central_atoms_to_score)

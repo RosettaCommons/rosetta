@@ -67,7 +67,7 @@
 #include <utility/file/FileName.hh>
 #include <utility/file/file_sys_util.hh>
 
-static basic::Tracer TR("antibody.util");
+static thread_local basic::Tracer TR( "antibody.util" );
 
 
 using namespace core;

@@ -20,7 +20,7 @@
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 
-static basic::Tracer TR( "protocols.stepwise.screener.NativeRMSD_Screener" );
+static thread_local basic::Tracer TR( "protocols.stepwise.screener.NativeRMSD_Screener" );
 using namespace core;
 
 namespace protocols {

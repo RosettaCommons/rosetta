@@ -38,7 +38,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -86,7 +87,12 @@ private:
 	static GridInfo * create_singleton_instance();
 
 private:
+	/// @brief static data member holding pointer to the singleton class itself
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< GridInfo * > instance_;
+#else
 	static GridInfo * instance_;
+#endif
 
 	// private member data
 	core::Size xnum_points_, ynum_points_, znum_points_;
@@ -135,7 +141,13 @@ private:
 	static WaterWeightGridSet * create_singleton_instance();
 
 private:
+	/// @brief static data member holding pointer to the singleton class itself
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< WaterWeightGridSet * > instance_;
+#else
 	static WaterWeightGridSet * instance_;
+#endif
+
 
 	// private member data
 	std::map< hbonds::HBEvalType, std::vector < std::vector < std::vector <core::Real> > > > all_water_weights_;
@@ -240,8 +252,9 @@ private:
 	// the price to reallocate memory every time. Making it member data keeps it persistent,
 	// but then we can't alter it in const member functions. For this reason, it's mutable...
 	mutable std::vector < std::vector < std::vector <bool> > > occluded_sites_;
-virtual
-core::Size version() const;
+
+	virtual
+	core::Size version() const;
 
 };
 

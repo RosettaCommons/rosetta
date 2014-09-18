@@ -35,7 +35,7 @@ namespace protocols {
 namespace ligand_docking {
 
 
-static basic::Tracer TR("protocols.ligand_dock.ResidueTorsionRestraints", basic::t_debug);
+static thread_local basic::Tracer TR( "protocols.ligand_dock.ResidueTorsionRestraints", basic::t_debug );
 
 
 ResidueTorsionRestraints::ResidueTorsionRestraints(

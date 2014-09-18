@@ -36,7 +36,7 @@
 
 #include <numeric/xyz.functions.hh>
 
-static basic::Tracer TR("core.scoring.disulfides.CentroidDisulfidePotential");
+static thread_local basic::Tracer TR( "core.scoring.disulfides.CentroidDisulfidePotential" );
 
 
 using namespace core;

@@ -27,7 +27,7 @@
 
 
 
-static basic::Tracer TRG("protocols.antibody.GraftOneCDRLoop");
+static thread_local basic::Tracer TRG( "protocols.antibody.GraftOneCDRLoop" );
 
 namespace protocols {
 namespace antibody {

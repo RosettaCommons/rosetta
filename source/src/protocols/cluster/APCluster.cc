@@ -23,7 +23,7 @@
 // AUTO-REMOVED
 #include <cstdio>
 
-static basic::Tracer TR("protocols.cluster.APCluster");
+static thread_local basic::Tracer TR( "protocols.cluster.APCluster" );
 
 namespace protocols {
 namespace cluster {

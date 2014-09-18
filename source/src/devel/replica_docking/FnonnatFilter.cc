@@ -38,7 +38,7 @@
 
 
 
-static basic::Tracer TR( "devel.replica_docking.FnonnatFilter" );
+static thread_local basic::Tracer TR( "devel.replica_docking.FnonnatFilter" );
 
 namespace devel {
 namespace replica_docking {

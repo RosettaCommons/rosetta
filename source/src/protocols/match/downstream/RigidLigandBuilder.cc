@@ -46,7 +46,7 @@ namespace protocols {
 namespace match {
 namespace downstream {
 
-static basic::Tracer TR( "protocols.match.downstream.RigidLigandBuilder" );
+static thread_local basic::Tracer TR( "protocols.match.downstream.RigidLigandBuilder" );
 
 RigidLigandBuilder::RigidLigandBuilder() :
 	parent(),

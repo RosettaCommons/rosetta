@@ -72,8 +72,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer tr( "protocols.canonical_sampling.HamiltonianExchange" );
-static numeric::random::RandomGenerator RG(2592747);
+static thread_local basic::Tracer tr( "protocols.canonical_sampling.HamiltonianExchange" );
 
 
 bool protocols::canonical_sampling::HamiltonianExchange::options_registered_( false );
@@ -399,7 +398,7 @@ HamiltonianExchange::temperature_move( pose::Pose& MPI_ONLY( pose ) ) {
 		Real const deltaE1( scores[ 0 ] - score - bias_score );
 		Real const deltaE2( scores[ 1 ] - new_score - new_bias_score );
 		Real const delta( invT1*deltaE1 - invT2*deltaE2 );
-		Real const r( RG.uniform() );
+		Real const r( numeric::random::rg().uniform() );
 		swap = r < std::min( 1.0, std::exp( std::max(-40.0, -delta) ) ) ? 1 : 0;
 		MPI_Send( &swap, 1, MPI_INT, exchange_partner, mpi_LEVEL_DECISION, mpi_comm() );
 		//tr.Trace << "decision: "<< F( 4,2, invT1) << " " << F( 4,2,invT2) << " "<< F( 4,2, deltaE1 )

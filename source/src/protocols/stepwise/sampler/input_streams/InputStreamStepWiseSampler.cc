@@ -19,7 +19,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.sampler.input_streams.InputStreamStepWiseSampler" );
+static thread_local basic::Tracer TR( "protocols.sampler.input_streams.InputStreamStepWiseSampler" );
 
 namespace protocols {
 namespace stepwise {

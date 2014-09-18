@@ -44,8 +44,7 @@
 //Req'd on WIN32
 #include <basic/datacache/WriteableCacheableMap.hh>
 
-static numeric::random::RandomGenerator RG(249845846);
-static basic::Tracer tr("protocols.abinitio.abscript.StructPerturberCM", basic::t_info);
+static thread_local basic::Tracer tr( "protocols.abinitio.abscript.StructPerturberCM", basic::t_info );
 
 namespace protocols {
 namespace abinitio {
@@ -109,13 +108,13 @@ void StructPerturberCM::apply( core::pose::Pose& pose ){
     for( Size i = 1; i <= pose.total_residue(); ++i ){
       for( DofPassport::const_iterator it = passport()->begin();
            it != passport()->end(); ++it ){
-        pose.set_dof( *it, pose.dof( *it) + ( RG.gaussian() * magnitude_ ) );
+        pose.set_dof( *it, pose.dof( *it) + ( numeric::random::rg().gaussian() * magnitude_ ) );
       }
     }
   } else {
     for( Size i = 1; i <= pose.total_residue(); ++i ){
-        pose.set_phi( i, pose.phi( i ) + RG.gaussian() * magnitude_ );
-        pose.set_psi( i, pose.psi( i ) + RG.gaussian() * magnitude_ );
+        pose.set_phi( i, pose.phi( i ) + numeric::random::rg().gaussian() * magnitude_ );
+        pose.set_psi( i, pose.psi( i ) + numeric::random::rg().gaussian() * magnitude_ );
     }
   }
 }

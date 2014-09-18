@@ -79,7 +79,7 @@
 namespace protocols {
 namespace star {
 
-static basic::Tracer TR("protocols.star.StarAbinitio");
+static thread_local basic::Tracer TR( "protocols.star.StarAbinitio" );
 
 typedef utility::vector1<double> Probabilities;
 

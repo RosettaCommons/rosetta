@@ -36,7 +36,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -85,7 +86,12 @@ private:
 	/// utility::thread::threadsafe_singleton
 	static ResLvlTaskOperationFactory * create_singleton_instance();
 
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< ResLvlTaskOperationFactory * > instance_;
+#else
 	static ResLvlTaskOperationFactory * instance_;
+#endif
+
 	RLTOC_Map rltoc_map_;
 
 };

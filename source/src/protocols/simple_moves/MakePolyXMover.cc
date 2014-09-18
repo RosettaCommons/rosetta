@@ -28,7 +28,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer TR( "protocols.simple_moves.MakePolyXMover" );
+static thread_local basic::Tracer TR( "protocols.simple_moves.MakePolyXMover" );
 
 namespace protocols {
 namespace simple_moves {

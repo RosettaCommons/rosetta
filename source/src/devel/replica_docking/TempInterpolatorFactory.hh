@@ -33,7 +33,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -84,7 +85,11 @@ private:
 	TempInterpolatorFactory const & operator = ( TempInterpolatorFactory const & );
 
 private:
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< TempInterpolatorFactory * > instance_;
+#else
 	static TempInterpolatorFactory * instance_;
+#endif
 
 };
 

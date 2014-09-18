@@ -49,8 +49,7 @@
 using namespace std;
 using namespace core;
 
-static basic::Tracer TR("protocols.kcluster");
-static numeric::random::RandomGenerator RG(2831); // <- Magic number, do not change it!!!
+static thread_local basic::Tracer TR( "protocols.kcluster" );
 
 namespace protocols {
 namespace toolbox {
@@ -597,7 +596,7 @@ void KMedoid::init(KClusterElementOP c, Size first)
 						}
 						else
 						{
-								newcenter = c->get_data_ndx(static_cast<int>( RG.uniform() * nd + 1 ));
+								newcenter = c->get_data_ndx(static_cast<int>( numeric::random::rg().uniform() * nd + 1 ));
 						}
 
             Size flag = i;
@@ -822,7 +821,7 @@ void GreedyKCenter::init(KClusterElementOP c, Size first)
 		}
 		else
 		{
-				center = c->get_data_ndx(static_cast< int >( RG.uniform() * c->get_ndata() + 1 ));
+				center = c->get_data_ndx(static_cast< int >( numeric::random::rg().uniform() * c->get_ndata() + 1 ));
 		}
     //debug
     //TR << "Rand: " << center << endl;

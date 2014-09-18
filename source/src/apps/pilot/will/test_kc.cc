@@ -54,7 +54,7 @@ typedef utility::vector1<int> ints;
 typedef utility::vector1<Real> reals;
 typedef utility::vector1<Vec>  vecs;
 
-static basic::Tracer TR("test_kc");
+static thread_local basic::Tracer TR( "test_kc" );
 
 vector1<reals> vecs2vv(vecs const & v) {
 	vector1<reals> vv;
@@ -236,7 +236,7 @@ void test_kc() {
 	//scoring::Ramachandran const & rama( core::scoring::ScoringManager::get_instance()->get_Ramachandran() );
 	using numeric::conversions::radians;
 	using numeric::conversions::degrees;
-	using numeric::random::RG;
+
 	using core::id::AtomID;
 	using core::pose::Pose;
 	using namespace numeric::kinematic_closure;

@@ -127,7 +127,6 @@ OPT_KEY( RealVector, kT_list )
 OPT_KEY( RealVector, ST_weight_list )
 
 static const chemical::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
-static numeric::random::RandomGenerator RG(5075);  // <- Magic number, do not change it!
 
 typedef std::pair< unsigned int, float[4]> RNA_scores; //count, total_score, hbond_sc, fa_stack, rna_torsion
 typedef std::pair< core::Size, utility::vector1< utility::vector1< Real > > > Torsions;
@@ -250,7 +249,7 @@ initialize_o2prime_pack( pose::Pose const & pose,
 //////////////////////////////////
 Real
 create_random_angle_from_range(Real lower_bound = 0, Real upper_bound = 360) {
-	return RG.uniform() * (upper_bound - lower_bound) + lower_bound;
+	return numeric::random::rg().uniform() * (upper_bound - lower_bound) + lower_bound;
 }
 //////////////////////////////////
 Real
@@ -262,7 +261,7 @@ create_random_angle_from_range_list(utility::vector1< std::pair <Real, Real> > c
 		range_sum += range_size;
 		range_edge_list.push_back(range_sum);
 	}
-	Real angle = RG.uniform() * range_sum;
+	Real angle = numeric::random::rg().uniform() * range_sum;
 
 	for (Size i = 1; i <= range_list.size(); ++i) {
 		if (angle > range_edge_list[i]) continue;
@@ -286,7 +285,7 @@ create_random_torsions(utility::vector1< Real > & torsion_list, bool const modif
 	const Real epsilon = create_random_angle_from_range();
 	const Real zeta    = create_random_angle_from_range();
 	const Real chi     = create_random_angle_from_range();
-	const Real delta   = (modify_pucker && RG.uniform() < 0.5) ? delta_north : delta_south;
+	const Real delta   = (modify_pucker && numeric::random::rg().uniform() < 0.5) ? delta_north : delta_south;
 
 	torsion_list.clear();
 	torsion_list.push_back(epsilon);
@@ -311,13 +310,13 @@ sample_near_current_torsion(utility::vector1< Real > & torsion_list,
 
 	for (Size i = 1; i <= 7; ++i) {
 		if (i == 6) {
-			if (modify_pucker && RG.uniform() < 0.2) {
-				torsion_list[i]  = (RG.uniform() < 0.5) ? delta_north : delta_south;
+			if (modify_pucker && numeric::random::rg().uniform() < 0.2) {
+				torsion_list[i]  = (numeric::random::rg().uniform() < 0.5) ? delta_north : delta_south;
 			}
 
 		} else {
 			if (cyclic) {
-				torsion_list[i] += RG.gaussian() * stddev;
+				torsion_list[i] += numeric::random::rg().gaussian() * stddev;
 				while (true) {
 					if (torsion_list[i] > upper_bound[i]) {
 						torsion_list[i] -= upper_bound[i];
@@ -331,7 +330,7 @@ sample_near_current_torsion(utility::vector1< Real > & torsion_list,
 				}
 
 			} else {
-				new_torsion = torsion_list[i] + RG.gaussian() * stddev;
+				new_torsion = torsion_list[i] + numeric::random::rg().gaussian() * stddev;
 				if (new_torsion <= upper_bound[i] && new_torsion > lower_bound[i]) {
 					torsion_list[i] = new_torsion;
 				}
@@ -725,7 +724,7 @@ double_helix_test(){
 			score_new = (*scorefxn)( pose );
 		}
 
-		if (is_kT_inf || score_new < score || RG.uniform() < exp( (score - score_new) / kT_sys )) {
+		if (is_kT_inf || score_new < score || numeric::random::rg().uniform() < exp( (score - score_new) / kT_sys )) {
 			score = score_new;
 			suite_torsion = suite_torsion_new;
 			++n_accpet;
@@ -962,7 +961,7 @@ helix_ST(){
 			score_new = (*scorefxn)( pose );
 		}
 
-		if (is_kT_inf || score_new < score || RG.uniform() < exp( (score - score_new) / kT_sys )) {
+		if (is_kT_inf || score_new < score || numeric::random::rg().uniform() < exp( (score - score_new) / kT_sys )) {
 			score = score_new;
 			suite_torsion = suite_torsion_new;
 			++n_accpet;
@@ -996,15 +995,15 @@ helix_ST(){
 		++hist[kT_id][bin];
 
 		//Try changing kT
-		if (RG.uniform() < 0.2) {
+		if (numeric::random::rg().uniform() < 0.2) {
 			++n_exchange;
-			(RG.uniform() < 0.5) ? new_kT_id = kT_id + 1 : new_kT_id = kT_id - 1;
+			(numeric::random::rg().uniform() < 0.5) ? new_kT_id = kT_id + 1 : new_kT_id = kT_id - 1;
 			if (new_kT_id < 1 || new_kT_id > n_temp) continue;
 			new_kT = kT_sys_list[new_kT_id];
 			beta_old = (kT_sys > 999) ? 0 : (1.0 / kT_sys);
 			beta_new = (new_kT > 999) ? 0 : (1.0 / new_kT);
 			log_prob = - (beta_new - beta_old) * score + (weight_list[new_kT_id] - weight_list[kT_id]);
-			if (log_prob > 0 || RG.uniform() < exp (log_prob) ) { //check if we want to exchange kT
+			if (log_prob > 0 || numeric::random::rg().uniform() < exp (log_prob) ) { //check if we want to exchange kT
 				scores_list[kT_id].push_back(current_scores);
 				current_scores.first = 1;
 				++n_accp_exch;

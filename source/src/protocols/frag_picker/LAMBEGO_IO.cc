@@ -28,7 +28,7 @@ namespace frag_picker {
 
 using namespace core;
 
-static basic::Tracer tracer("protocols.frag_picker.LAMBEGO_IO");
+static thread_local basic::Tracer tracer( "protocols.frag_picker.LAMBEGO_IO" );
 
 LAMBEGO_IO::LAMBEGO_IO() {
 	bin_names_.push_back( 'L' );

@@ -60,8 +60,7 @@ namespace core {
 namespace io {
 namespace silent {
 
-static basic::Tracer tr("core.io.silent.SilentFileData");
-static numeric::random::RandomGenerator RG(21458);
+static thread_local basic::Tracer tr( "core.io.silent.SilentFileData" );
 
 SilentFileData::~SilentFileData() {
 	clear_structure_map();
@@ -539,7 +538,7 @@ SilentFileData::_read_file(
 		runtime_assert( n_wanted <= all_tags.size() );
 
 		tags_wanted = numeric::random::reservoir_sample< string >(
-			all_tags, n_wanted, RG
+			all_tags, n_wanted, numeric::random::rg()
 		);
 		tr.Debug << "selected " << tags_wanted.size() << " tags from " <<
 			all_tags.size() << std::endl;

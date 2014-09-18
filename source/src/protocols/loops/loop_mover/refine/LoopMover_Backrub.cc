@@ -76,9 +76,8 @@ namespace refine {
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
 
-static numeric::random::RandomGenerator RG(42678);
 
-static basic::Tracer TR("protocols.loops..LoopMover_Refine_Backrub");
+static thread_local basic::Tracer TR( "protocols.loops..LoopMover_Refine_Backrub" );
 
 LoopMover_Refine_Backrub::LoopMover_Refine_Backrub() :
 	LoopMover()

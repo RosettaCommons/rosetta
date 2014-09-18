@@ -47,7 +47,7 @@ namespace scores {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer trRDCScore(
+static thread_local basic::Tracer trRDCScore(
 	"protocols.frag_picker.scores.RDCScore");
 
 

@@ -47,12 +47,11 @@
 #include <utility/excn/Exceptions.hh>
 #include <core/conformation/Conformation.hh>
 
-static numeric::random::RandomGenerator RG(12341288);
 
 namespace protocols {
 namespace ligand_docking {
 
-static basic::Tracer grow_ligand_tracer("protocols.ligand_docking.GrowLigand", basic::t_debug);
+static thread_local basic::Tracer grow_ligand_tracer( "protocols.ligand_docking.GrowLigand", basic::t_debug );
 
 std::string
 GrowLigandCreator::keyname() const
@@ -157,9 +156,9 @@ GrowLigand::apply( core::pose::Pose & pose )
 		unconnected_residues=find_unconnected_residues(pose, start, end);
 	}
 
-	core::Size grow_from = RG.random_element(unconnected_residues);
+	core::Size grow_from = numeric::random::rg().random_element(unconnected_residues);
 	core::Size grow_from_connection= random_connection(&pose.residue(grow_from));
-	core::conformation::ResidueCOP growth = RG.random_element(fragments_);
+	core::conformation::ResidueCOP growth = numeric::random::rg().random_element(fragments_);
 	core::Size growth_connection= random_connection(growth);
 	bool const build_ideal_geometry= true;
 	bool const start_new_chain = false;

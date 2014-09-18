@@ -48,7 +48,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static basic::Tracer TR( "protocols.protein_interface_design.movers.SaveAndRetrieveSidechains" );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.SaveAndRetrieveSidechains" );
 
 std::string
 SaveAndRetrieveSidechainsCreator::keyname() const

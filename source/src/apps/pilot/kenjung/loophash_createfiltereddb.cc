@@ -44,7 +44,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core;
 using namespace protocols::loophash;
-static basic::Tracer TR("main");
+static thread_local basic::Tracer TR( "main" );
 
 
 // MPI headers

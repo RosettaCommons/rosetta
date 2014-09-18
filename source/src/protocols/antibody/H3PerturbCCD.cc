@@ -60,7 +60,6 @@
 
 
 
-static numeric::random::RandomGenerator RG(21141980);
 
 
 
@@ -69,7 +68,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.antibody.H3PerturbCCD");
+static thread_local basic::Tracer TR( "protocols.antibody.H3PerturbCCD" );
 
 
 
@@ -190,7 +189,7 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
 
 	// params
 	Size h3_attempts(0);
-	Real current_h3_prob = RG.uniform();
+	Real current_h3_prob = numeric::random::rg().uniform();
 	TR<<"current_h3_prob="<<current_h3_prob<<std::endl;
 
 	Size frag_size(0);
@@ -302,7 +301,7 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
 
 			// TODO:
 			// JQX: this "RG.uniform() * num_cycles2 < c2" is so weird, not sure what Aroop really wants to do
-			if ( (c2 > num_cycles2/2 && RG.uniform() * num_cycles2 < c2) || ( trimmed_cdr_h3.size() <= 5) ) {
+			if ( (c2 > num_cycles2/2 && numeric::random::rg().uniform() * num_cycles2 < c2) || ( trimmed_cdr_h3.size() <= 5) ) {
 				// in 2nd half of simulation, start trying to close the loop:
 				CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover( trimmed_cdr_h3, cdrh3_map );
 				protocols::moves::RepeatMoverOP ccd_cycle;

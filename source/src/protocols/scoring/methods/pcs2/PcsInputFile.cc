@@ -58,7 +58,7 @@ namespace scoring{
 namespace methods{
 namespace pcs2{
 
-basic::Tracer TR_PcsInputFile("protocols.scoring.methods.pcs.PcsInputFile");
+static thread_local basic::Tracer TR_PcsInputFile( "protocols.scoring.methods.pcs.PcsInputFile" );
 
 PcsInputFile::PcsInputFile():
 	filename_(""), weight_(0)

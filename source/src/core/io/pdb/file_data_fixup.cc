@@ -67,7 +67,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 // Tracer instance for this file
-static basic::Tracer TR("core.io.pdb.file_data_fixup");
+static thread_local basic::Tracer TR( "core.io.pdb.file_data_fixup" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // useful utility scripts for fixing up residue and atom names.

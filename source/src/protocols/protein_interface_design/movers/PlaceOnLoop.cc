@@ -62,7 +62,6 @@
 #include <basic/options/keys/OptionKeys.hh>
 
 
-static numeric::random::RandomGenerator RG( 14071789 );
 
 namespace protocols {
 namespace protein_interface_design {
@@ -73,7 +72,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceOnLoop" );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceOnLoop" );
 
 std::string
 PlaceOnLoopCreator::keyname() const
@@ -202,7 +201,7 @@ PlaceOnLoop::loop_length( core::pose::Pose & pose )
 	core::scoring::constraints::ConstraintCOPs saved_bb_constraints = protocols::hotspot_hashing::remove_hotspot_constraints_from_pose( pose );
 	Pose const saved_pose( pose );
 	curr_loop_end_ = loop_end_;
-	numeric::random::random_permutation( delta_length_.begin(), delta_length_.end(), RG );
+	numeric::random::random_permutation( delta_length_.begin(), delta_length_.end(), numeric::random::rg() );
 	bool loop_closed( false );
 	int const delta( *delta_length_.begin() );
 	TR<<"changing loop length by "<<delta<<std::endl;

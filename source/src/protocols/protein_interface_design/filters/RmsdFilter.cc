@@ -98,7 +98,7 @@ RmsdFilter::clone() const {
 	return new RmsdFilter( *this );
 }
 
-static basic::Tracer TR( "protocols.protein_interface_design.filters.RmsdFilter" );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.RmsdFilter" );
 core::Real
 RmsdFilter::compute( core::pose::Pose const & pose ) const
 {

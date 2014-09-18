@@ -50,7 +50,7 @@ namespace fragment {
 
 using namespace kinematics;
 
-static basic::Tracer tr("core.fragments");
+static thread_local basic::Tracer tr( "core.fragments" );
 // preliminary reader method --- reads classic rosetta++ frag files
 
 

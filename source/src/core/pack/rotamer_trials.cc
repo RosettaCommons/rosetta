@@ -69,9 +69,8 @@ namespace pack {
 typedef conformation::symmetry::SymmetricConformation SymmetricConformation;
 typedef conformation::symmetry::SymmetryInfo SymmetryInfo;
 
-static numeric::random::RandomGenerator rottrials_RG(10801); // <- Magic number, do not change it!!!
 
-static basic::Tracer TR( "core.pack.rotamer_trials" );
+static thread_local basic::Tracer TR( "core.pack.rotamer_trials" );
 
 utility::vector1< uint >
 symmetric_repackable_residues(
@@ -104,7 +103,7 @@ rotamer_trials(
 	utility::vector1< uint > residues_for_trials( repackable_residues( *input_task ));
 	// Replace this random shuffle with one based on rosetta's RNG
 	//random__shuffle(residues_for_trials.begin(), residues_for_trials.end() );
-	random_permutation( residues_for_trials, rottrials_RG );
+	random_permutation( residues_for_trials, numeric::random::rg() );
 
 	task::PackerTaskOP rottrial_task( input_task->clone() );
 
@@ -218,7 +217,7 @@ symmetric_rotamer_trials(
 	utility::vector1< uint > residues_for_trials( symmetric_repackable_residues( *input_task, pose ));
 	// Replace this random shuffle with one based on rosetta's RNG
 	//random__shuffle(residues_for_trials.begin(), residues_for_trials.end() );
-	random_permutation( residues_for_trials, rottrials_RG );
+	random_permutation( residues_for_trials, numeric::random::rg() );
 
 	task::PackerTaskOP rottrial_task( input_task->clone() );
 

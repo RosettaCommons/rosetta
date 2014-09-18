@@ -26,7 +26,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.legacy.modeler.protein.StepWiseProteinMultiPosePacker" );
+static thread_local basic::Tracer TR( "protocols.stepwise.legacy.modeler.protein.StepWiseProteinMultiPosePacker" );
 
 using namespace ObjexxFCL; // AUTO USING NS
 using namespace core;

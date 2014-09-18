@@ -33,7 +33,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -113,8 +114,16 @@ private:
 
 private:
   void load_database_table();
-  static MethylNameLibrary* instance_;
+
+	/// Singleton instance pointer
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< MethylNameLibrary * > instance_;
+#else
+	static MethylNameLibrary * instance_;
+#endif
+
   typedef std::map< core::chemical::AA, MethylNames > MethylNameTable;
+
   MethylNameTable methyl_names_;
 };
 

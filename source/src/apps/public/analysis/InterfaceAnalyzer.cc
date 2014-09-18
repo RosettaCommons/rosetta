@@ -42,7 +42,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("apps.public.analysis.InterfaceAnalyzer");
+static thread_local basic::Tracer TR( "apps.public.analysis.InterfaceAnalyzer" );
 
 //define local options
 basic::options::IntegerOptionKey const jumpnum("jumpnum");

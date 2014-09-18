@@ -38,7 +38,7 @@ namespace core {
 namespace scoring {
 namespace geometric_solvation {
 
-static basic::Tracer tr("core.scoring.DatabaseOccSolEne");
+static thread_local basic::Tracer tr( "core.scoring.DatabaseOccSolEne" );
 
 
 /// @details ctor, reads data file. Need to configure to allow alternate tables/atom_sets

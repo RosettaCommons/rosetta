@@ -78,7 +78,7 @@ namespace canonical_sampling {
 int
 canonical_sampling_main(){
 
-	basic::Tracer tr("src.apps.pilot.liz.test_canonical_mover");
+	basic::Tracer tr( "src.apps.pilot.liz.test_canonical_mover" );
 
   using namespace protocols::moves;
 	using namespace basic;

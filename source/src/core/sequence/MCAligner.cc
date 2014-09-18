@@ -37,7 +37,6 @@
 namespace core {
 namespace sequence {
 
-	static numeric::random::RandomGenerator align_RG(31882); // <- Magic number (tex's birthday), do not change it!!!
 
 	SequenceAlignment MCAligner::align(
 		SequenceOP seq_y,
@@ -87,7 +86,7 @@ namespace sequence {
 				Real mm_prob   ( exp( -1 * single_mm     / kT() ) );
 
 				Real const partition( u_gap_prob + l_gap_prob + mm_prob );
-				Real const rand_prob( align_RG.uniform() );
+				Real const rand_prob( numeric::random::rg().uniform() );
 				//Real const rand_prob( numeric::random::uniform() );
 				u_gap_prob /= partition;
 				l_gap_prob /= partition;

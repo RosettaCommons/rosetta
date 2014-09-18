@@ -93,8 +93,8 @@ namespace protocols {
 namespace protein_interface_design {
 namespace movers {
 
-static basic::Tracer TR( "protocols.moves.LoopRemodelFromCommandLine" );
-static basic::Tracer TR_report( "protocols.moves.LoopRemodelFromCommandLine.REPORT" );
+static thread_local basic::Tracer TR( "protocols.moves.LoopRemodelFromCommandLine" );
+static thread_local basic::Tracer TR_report( "protocols.moves.LoopRemodelFromCommandLine.REPORT" );
 
 std::string
 LoopMoverFromCommandLineCreator::keyname() const

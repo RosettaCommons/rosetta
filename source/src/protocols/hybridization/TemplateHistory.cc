@@ -26,7 +26,7 @@ namespace protocols {
 //namespace comparative_modeling {
 namespace hybridization {
 
-static basic::Tracer TZ("protocols.hybridization.TemplateHistory");
+static thread_local basic::Tracer TZ( "protocols.hybridization.TemplateHistory" );
 
 TemplateHistory::TemplateHistory( core::pose::Pose &pose ) {
 	// initialize to identity mapping

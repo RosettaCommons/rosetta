@@ -41,7 +41,7 @@
 
 
 
-static basic::Tracer TR("protocols.antibody_metrics");
+static thread_local basic::Tracer TR( "protocols.antibody_metrics" );
 
 
 //namespaces

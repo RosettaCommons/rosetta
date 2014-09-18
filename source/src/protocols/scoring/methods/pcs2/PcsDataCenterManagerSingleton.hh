@@ -44,7 +44,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -72,7 +73,11 @@ private:
 private:
 
   utility::vector1<PcsDataCenter> PCS_data_all_;
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< PcsDataCenterManagerSingleton * > instance_;
+#else
 	static PcsDataCenterManagerSingleton * instance_;
+#endif
 
 public:
 	static PcsDataCenterManagerSingleton *

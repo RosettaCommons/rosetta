@@ -43,7 +43,7 @@
 
 
 //// C++ headers
-static basic::Tracer tr("protocols.fldsgn.filters.SheetTopologyFilter");
+static thread_local basic::Tracer tr( "protocols.fldsgn.filters.SheetTopologyFilter" );
 
 namespace protocols {
 namespace fldsgn {

@@ -28,7 +28,7 @@
 
 // ObjexxFCL Headers
 
-static basic::Tracer tr("protocols.environment.movers.JumpSampleData", basic::t_info);
+static thread_local basic::Tracer tr( "protocols.environment.movers.JumpSampleData", basic::t_info );
 
 static std::string TYPE_NAME() { return "JumpSampleData"; }
 

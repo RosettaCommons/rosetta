@@ -27,7 +27,7 @@
 #include <basic/options/option.hh>
 #include <cmath>
 
-basic::Tracer TR("anglestats");
+static thread_local basic::Tracer TR( "anglestats" );
 
 ////////////////////////////////////////////////////////
 void *

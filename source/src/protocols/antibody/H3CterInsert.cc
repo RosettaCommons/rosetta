@@ -37,9 +37,8 @@
 
 
 
-static numeric::random::RandomGenerator RG(19810606);
 
-static basic::Tracer TR("protocols.antibody.H3CterInsert");
+static thread_local basic::Tracer TR( "protocols.antibody.H3CterInsert" );
 using namespace core;
 
 
@@ -134,7 +133,7 @@ void H3CterInsert::apply(pose::Pose & pose) {
 
 		fragment::FragData f;
 		Size random_H3_ter(0);
-		random_H3_ter = RG.random_range( 1, H3_base_library_.size() );
+		random_H3_ter = numeric::random::rg().random_range( 1, H3_base_library_.size() );
 		f = H3_base_library_[ random_H3_ter ];
 		//    TR<<H3_base_library_.size()<<std::endl;
 		// f = H3_base_library_[ 1 ]; //JQX: a test case to match R2_Antibody

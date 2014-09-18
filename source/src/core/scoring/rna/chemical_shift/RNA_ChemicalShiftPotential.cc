@@ -49,7 +49,7 @@
 
 // C++
 
-static basic::Tracer TR( "core.scoring.rna.chemical_shift.RNA_ChemicalShiftPotential" );
+static thread_local basic::Tracer TR( "core.scoring.rna.chemical_shift.RNA_ChemicalShiftPotential" );
 
 namespace core {
 namespace scoring {

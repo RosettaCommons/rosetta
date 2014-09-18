@@ -47,7 +47,7 @@
 
 
 
-static basic::Tracer TR("gpu_score_test");
+static thread_local basic::Tracer TR( "gpu_score_test" );
 
 
 OPT_1GRP_KEY( Integer, gpu, numthreads_per_workunit )

@@ -30,7 +30,7 @@
 namespace protocols{
 namespace simple_filters {
 
-static basic::Tracer residue_burial_filter_tracer( "protocols.simple_filters.ResidueBurialFilter" );
+static thread_local basic::Tracer residue_burial_filter_tracer( "protocols.simple_filters.ResidueBurialFilter" );
 
 ResidueBurialFilter::ResidueBurialFilter() :
 	Filter( "ResidueBurial" ),

@@ -36,7 +36,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static basic::Tracer atom_tracer( "protocols.ligand_docking.AtOOomCountFilter" );
+static thread_local basic::Tracer atom_tracer( "protocols.ligand_docking.AtOOomCountFilter" );
 
 bool
 AtomCountFilter::apply( core::pose::Pose const & pose ) const {

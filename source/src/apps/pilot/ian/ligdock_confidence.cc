@@ -75,7 +75,7 @@ main( int argc, char * argv [] )
 	using namespace protocols;
 	using namespace protocols::jobdist;
 	using namespace protocols::moves;
-	basic::Tracer TR("ligdock_confidence.main");
+	basic::Tracer TR( "ligdock_confidence.main" );
 
 	// Parses command line options and inits RNG.
 	// Doesn't seem to hurt to do it again if already done once (?)

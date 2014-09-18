@@ -58,7 +58,7 @@ namespace PB_potential {
 	basic::options::IntegerVectorOptionKey no_charge_on_chain("PB_potential:no_charge_on_chain");
 }
 
-static basic::Tracer TR("pilot.yfsong.PB_potential");
+static thread_local basic::Tracer TR( "pilot.yfsong.PB_potential" );
 
 
 class PBPotentialMover : public protocols::moves::Mover {

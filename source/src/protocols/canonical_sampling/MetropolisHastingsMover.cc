@@ -70,8 +70,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer tr( "protocols.canonical_sampling.MetropolisHastingsMover" );
-static numeric::random::RandomGenerator RG(638767547);
+static thread_local basic::Tracer tr( "protocols.canonical_sampling.MetropolisHastingsMover" );
 
 namespace protocols {
 namespace canonical_sampling {
@@ -424,7 +423,7 @@ MetropolisHastingsMover::last_move() const {
 /// via the weight argument to the @ref add_mover() method.
 ThermodynamicMoverOP
 MetropolisHastingsMover::random_mover() const {
-	return movers_[weighted_sampler_.random_sample(RG)];
+	return movers_[weighted_sampler_.random_sample(numeric::random::rg())];
 }
 
 /// @details Specify a weight to control how often this mover should be 

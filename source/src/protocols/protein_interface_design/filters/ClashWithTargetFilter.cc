@@ -72,7 +72,7 @@ ClashWithTargetFilter::clone() const {
 	return new ClashWithTargetFilter( *this );
 }
 
-static basic::Tracer TR( "protocols.protein_interface_design.filters.ClashWithTargetFilter" );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.ClashWithTargetFilter" );
 
 core::Size ClashWithTargetFilter::compute( core::pose::Pose const & pose ) const
 {

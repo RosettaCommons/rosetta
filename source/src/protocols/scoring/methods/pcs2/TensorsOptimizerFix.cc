@@ -57,7 +57,7 @@ namespace scoring{
 namespace methods{
 namespace pcs2{
 
-basic::Tracer TR_TensorsOptimizerFix("protocols.scoring.methods.pcs.TensorsOptimizerFix");
+static thread_local basic::Tracer TR_TensorsOptimizerFix( "protocols.scoring.methods.pcs.TensorsOptimizerFix" );
 
 TensorsOptimizerFix::TensorsOptimizerFix(PcsDataCenter const & pcs_d_c/*, core::Real xM, core::Real yM, core::Real zM*/):
 		pcs_d_c_(pcs_d_c)//, xM_(xM), yM_(yM), zM_(zM)

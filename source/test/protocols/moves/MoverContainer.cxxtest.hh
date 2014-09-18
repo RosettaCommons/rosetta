@@ -142,7 +142,7 @@ public:
  				initialize_from_commandline_w_db( commandline );
 		}
 
-		core::init::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
+		core::init::init_random_generators(1000, "mt19937");
 	}
 
 	void tearDown() {

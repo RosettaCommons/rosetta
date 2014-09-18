@@ -78,7 +78,7 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-static basic::Tracer tr("protocols.jumping");
+static thread_local basic::Tracer tr( "protocols.jumping" );
 
 using core::Real;
 using namespace core;
@@ -92,7 +92,6 @@ namespace jumping {
 /// @details Auto-generated virtual destructor
 BaseDisulfPairingLibrary::~BaseDisulfPairingLibrary() {}
 
-static numeric::random::RandomGenerator RG(12345);  // <- Magic number, do not change it, huaah hah ha!
 	// P.S. I GOT DIBBS ON 12345 SO IT IS ALL MINE - Robert
 
 //------------------------------------------------------------------------------
@@ -474,7 +473,12 @@ DisulfPairingLibrary::generate_jump_frags(
 	}
 } // method
 
-StandardDisulfPairingLibrary* StandardDisulfPairingLibrary::instance_( 0 );
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< StandardDisulfPairingLibrary * > StandardDisulfPairingLibrary::instance_( 0 );
+#else
+StandardDisulfPairingLibrary * StandardDisulfPairingLibrary::instance_( 0 );
+#endif
+
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

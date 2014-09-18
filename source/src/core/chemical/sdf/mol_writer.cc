@@ -40,7 +40,7 @@ namespace core {
 namespace chemical {
 namespace sdf {
 
-static basic::Tracer tr("core.chemical.sdf.mol_writer");
+static thread_local basic::Tracer tr( "core.chemical.sdf.mol_writer" );
 
 
 using std::setfill;

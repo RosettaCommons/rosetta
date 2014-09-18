@@ -73,8 +73,7 @@ namespace idealize {
 using namespace core;
 using namespace ObjexxFCL;
 
-static numeric::random::RandomGenerator RG(76223);
-static basic::Tracer TR( "protocols.idealize" );
+static thread_local basic::Tracer TR( "protocols.idealize" );
 
 /// helper
 void
@@ -231,7 +230,7 @@ basic_idealize(
 	}
 
 	while ( !pos_list.empty() ) {
-		Size const seqpos( pos_list[ static_cast< Size >( RG.uniform() * pos_list.size() + 1 ) ] );
+		Size const seqpos( pos_list[ static_cast< Size >( numeric::random::rg().uniform() * pos_list.size() + 1 ) ] );
 		pos_list.erase( std::find( pos_list.begin(), pos_list.end(), seqpos ) );
 
 		// idealize the mainchain + sidechain

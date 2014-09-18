@@ -36,8 +36,9 @@ namespace core {
 namespace io {
 namespace pdb {
 
-/// @brief special Tracer instance acting as special param for all traced_dump_pdb functions
-extern basic::Tracer TR_dump_pdb_dummy;
+// APL: This tracer is not used anywhere besides this file -- I'm removing it.
+// @brief special Tracer instance acting as special param for all traced_dump_pdb functions
+// extern basic::Tracer TR_dump_pdb_dummy;
 
 /// @brief Writes pdb data for the given residue, incrementing atom_number counter
 void

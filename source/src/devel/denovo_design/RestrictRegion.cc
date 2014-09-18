@@ -62,7 +62,7 @@
 #include <protocols/boinc/boinc.hh>
 #endif
 
-static basic::Tracer TR("devel.denovo_design.RestrictRegion");
+static thread_local basic::Tracer TR( "devel.denovo_design.RestrictRegion" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

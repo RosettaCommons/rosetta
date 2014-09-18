@@ -39,7 +39,7 @@
 using namespace core;
 using namespace ObjexxFCL;
 
-static basic::Tracer trAllCrmsd("AllCrmsd");
+static thread_local basic::Tracer trAllCrmsd( "AllCrmsd" );
 
 
 OPT_1GRP_KEY( Boolean, saxs, show_pddf )

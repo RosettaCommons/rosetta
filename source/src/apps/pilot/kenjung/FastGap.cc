@@ -66,7 +66,7 @@ using utility::vector1;
 using core::Size;
 using std::string;
 
-static basic::Tracer TR("main");
+static thread_local basic::Tracer TR( "main" );
 
 std::map< std::string, core::pose::Pose > poses_from_cmd_line(utility::vector1< std::string > const & fn_list){
 

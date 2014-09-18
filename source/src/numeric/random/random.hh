@@ -25,10 +25,11 @@
 #include <numeric/random/random.fwd.hh>
 
 // Package headers
-#include <numeric/random/uniform.hh>
+#include <numeric/random/uniform.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
 #include <iostream>
@@ -55,53 +56,44 @@ namespace random {
 
 class RandomGenerator;
 
+/// @brief Return the one-per-thread "singleton" random generator.
+RandomGenerator & rg();
 
-// Single static random generator functions/object for convenience
-// Use them only for benchmark unrelated tasks.
-extern RandomGenerator RG;
-double uniform(void);
-double gaussian(void);
+/// @brief Generate a random number between 0 and 1.  Threadsafe since each thread
+/// uses its own random generator.
+double uniform();
+
+/// @brief Generate a random number pulled from a standard normal -- i.e. mean of
+/// zero and standard deviation of 1.  Threadsafe since each thread uses its own
+/// random generator
+double gaussian();
+
+/// @brief Return a number uniformly drawn from the inclusive range between low
+/// and high.  Threadsafe since each thread uses its own random generator.
 int random_range(int low, int high);
 
-// Forward
-class uniform_RG;
-
-/// @brief Different type of initialization scheme:
-/// _RND_NormalRun_ - all instances of RandomGenerator will be pointing to just one
-///   generator. This is main production mode. We do not use multiple generators here
-///   because putting many generators will effectively produce long-range correlations
-///   between random numbers obtained from different places of program. (By
-///   using N generators instead of one we effectively reducing dimensionality
-///   of random generator by at least N. Now take in to account number of
-///   nodes in computer cluster and its look like we can quickly run in to
-///   trouble even with 600 dimensional Mersenne twister.)
-///   Somewhat helpful presentation on this topic: "Don't Trust Parallel Monte Carlo!" by
-///   Peter Hellekalek, available online at: http://random.mat.sbg.ac.at/~peter/pads98.ps
-///
-/// _RND_TestRun_ - each instance of RandomGenerator will have its own generator with its
-///   own seed. We using this approach because we trying to increase stability of
-///   unit test / performance tests / scientific test.
-///   WARNING: This mode design specifically for testing purpose and SHOULD NOT be used
-///   in production environment (see comment above).
-enum RND_RunType { _RND_NormalRun_, _RND_TestRun_ };
 
 /// @brief Random number generator system
-class RandomGenerator
+class RandomGenerator : public utility::pointer::ReferenceCount
 {
 private:
-	// RandomGenerators must be initialized with a magicNumber.
-	RandomGenerator(); // Unimplemented private -- do not use.
+	// Private to force the instantiation of a RandomGenerator through the rg() function.
+	RandomGenerator();
+
 	// Do not make copies of RandomGenerators - pass by reference instead.
 	RandomGenerator( RandomGenerator const & ); // Unimplemented private -- do not use.
+
+	friend RandomGenerator & rg();
+
 public:
-	RandomGenerator(int const magicNumber);
+
 	~RandomGenerator();
 
 	/// Return from range [0, 1] (?) uniform random number
 	///
 	/// The implementation of random_range leads me to believe this is
 	/// actually [0, 1), like most other random number generators.  -IWD
-	inline double uniform() { return generator->getRandom(); }
+	double uniform();
 
 	/// @brief Get Gaussian distribution random number
 	double gaussian();
@@ -110,31 +102,22 @@ public:
 	int random_range( int low, int high );
 
 	/// @brief Return the seed used by this RNG.
-	int get_seed() { return generator->getSeed(); }
+	int get_seed() const;
+
+	/// @brief Set the seed and the generator type synchronously.
+	/// Currently the two supported generator types are "standard"
+	/// and "mt19937" with the latter being the recommended form.
+	void set_seed( std::string const & generator_type, int seed );
 
 	/// @brief Return the seed used by this RNG.
-	void set_seed(int seed) { generator->setSeed(seed); }
+	void set_seed( int seed );
 
 	void saveState(std::ostream & out);
 
 	void restoreState(std::istream & in);
 
-		// Static functions
-	/// init all rundom number generators in program, must be called after main()
-	///  start executing
-	static void	initializeRandomGenerators(
-		int const start_seed,
-		RND_RunType run_type,
-		std::string const & type = ""
-	);
-
-	///@brief Saves the state of all random number generators to given stream.
-	static void saveAllStates(std::ostream & out);
-
-	///@brief Restores the state of all random number generators from given stream.
-	static void restoreAllStates(std::istream & in);
-
-  /// return a random element from a utility::vector1
+  /// @brief return a random element from a utility::vector1.  What is
+	/// this function doing inside the RandomGenerator class?
 	template< class T >
 	T const &
 	random_element( utility::vector1< T > const & v )
@@ -147,28 +130,25 @@ public: // implement the boost Uniform Random Generator concept
 
 	typedef double result_type;
 
+	// Maybe this should call uniform() instead?
 	double operator()() { return gaussian(); }
 
 	double min() const { return 0; }
 	double max() const { return 1; }
 
 private: // Fields
-	int seed_offset; /// Our magic number goes there
 
-	utility::pointer::owning_ptr<uniform_RG> generator;
+	//int seed_offset_; /// Our magic number goes there
 
-	/// flags for Gaussian generation
-	bool gaussian_iset;
-	double gaussian_gset;
+	uniform_RG_OP generator_;
 
+	/// data for Gaussian generation
+	bool   gaussian_iset_;
+	double gaussian_gset_;
 
-	static std::vector<RandomGenerator*> &allGenerators();
-
-	static utility::pointer::owning_ptr<uniform_RG> createIntNumberGenerator(
-		std::string const & type
-	);
 }; // RandomGenerator
 
+typedef utility::pointer::owning_ptr< RandomGenerator > RandomGeneratorOP;
 
 } // namespace random
 } // namespace numeric

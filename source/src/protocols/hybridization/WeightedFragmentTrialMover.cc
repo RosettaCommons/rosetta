@@ -19,7 +19,6 @@
 #include <numeric/random/random.hh>
 #include <utility/exit.hh>
 
-static numeric::random::RandomGenerator RG(8401848);
 
 namespace protocols {
 namespace hybridization {
@@ -72,15 +71,15 @@ void WeightedFragmentTrialMover::update_sampler_weights( utility::vector1< core:
 void WeightedFragmentTrialMover::apply(core::pose::Pose & pose)
 {
 	// pick fragment set
-	Size i_frag_set = RG.random_range(1, frag_libs_.size());
+	Size i_frag_set = numeric::random::rg().random_range(1, frag_libs_.size());
 	// pick insertion position
-	Size insert_pos = weighted_sampler_[i_frag_set].random_sample(RG);
+	Size insert_pos = weighted_sampler_[i_frag_set].random_sample(numeric::random::rg());
 
 	core::fragment::ConstFrameIterator frame_it = frag_libs_[i_frag_set]->begin();
 	advance(frame_it, insert_pos-1);
 	core::Size nr_frags = frame_it->nr_frags();
 	if (nr_frags_ && nr_frags_ < nr_frags) nr_frags = nr_frags_;
-	Size i_frag = RG.random_range(1, nr_frags);
+	Size i_frag = numeric::random::rg().random_range(1, nr_frags);
 
 	frame_it->apply( i_frag, pose );
 }

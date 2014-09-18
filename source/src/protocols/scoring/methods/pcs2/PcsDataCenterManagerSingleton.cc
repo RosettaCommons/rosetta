@@ -54,7 +54,7 @@ namespace scoring{
 namespace methods{
 namespace pcs2{
 
-basic::Tracer TR_PcsDataCenterManagerSingleton("protocols.scoring.methods.pcs.PcsDataCenterManagerSingleton");
+static thread_local basic::Tracer TR_PcsDataCenterManagerSingleton( "protocols.scoring.methods.pcs.PcsDataCenterManagerSingleton" );
 
 PcsDataCenterManagerSingleton::PcsDataCenterManagerSingleton(PcsEnergyParameterManager & pcs_e_p_m){
 
@@ -108,8 +108,12 @@ PcsDataCenterManagerSingleton::get_n_multi_data() const{
 	return (PCS_data_all_.size());
 }
 
-
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< PcsDataCenterManagerSingleton * > PcsDataCenterManagerSingleton::instance_( 0 );
+#else
 PcsDataCenterManagerSingleton * PcsDataCenterManagerSingleton::instance_( 0 );
+#endif
+
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

@@ -42,7 +42,7 @@
 
 
 
-static basic::Tracer tr("protocols");
+static thread_local basic::Tracer tr( "protocols" );
 using namespace core;
 
 void

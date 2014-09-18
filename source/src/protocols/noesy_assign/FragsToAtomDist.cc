@@ -64,8 +64,7 @@
 #include <string>
 //#include <iostream>
 
-static numeric::random::RandomGenerator RG(482136);
-static basic::Tracer tr("protocols.noesy_assign.FragsToAtomDist");
+static thread_local basic::Tracer tr( "protocols.noesy_assign.FragsToAtomDist" );
 
 core::Real half_adjust( core::Real in ) {
 	return floor(in+0.5);
@@ -504,7 +503,7 @@ void FragsToAtomDist::compute_average_distances(core::Size cycles,core::Size dum
 			for ( core::Size cycle = 1; cycle<=cycles; cycle++ )	{
 				//better select rsd randomly
 				//for ( Size irsd = 1; irsd<=short_size; irsd++) {
-				Size const irsd( RG.random_range(1, short_size) );
+				Size const irsd( numeric::random::rg().random_range(1, short_size) );
 				core::conformation::Residue const& rsd( short_pose.residue( irsd ));
 				core::Size const n_chi_angles(rsd.nchi());
 				old_chi=rsd.chi();
@@ -524,7 +523,7 @@ void FragsToAtomDist::compute_average_distances(core::Size cycles,core::Size dum
 				if ( score_new > score_old ) {
 					core::Real Delta_score(score_new - score_old);
 					core::Real p( exp( -1*Delta_score ) );
-					if ( RG.uniform() > p) {
+					if ( numeric::random::rg().uniform() > p) {
 						for (core::Size ichi = 1; ichi<=n_chi_angles; ichi++) {
 							short_pose.set_chi(ichi,irsd,old_chi[ ichi ]);
 						}

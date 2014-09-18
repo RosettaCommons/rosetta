@@ -43,11 +43,15 @@ namespace pack {
 namespace task {
 namespace operation {
 
-static basic::Tracer TR("core.pack.task.operation.TaskOperationFactory");
+static thread_local basic::Tracer TR( "core.pack.task.operation.TaskOperationFactory" );
 
 // special singleton functions
 // initialize
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< TaskOperationFactory * > TaskOperationFactory::instance_( 0 );
+#else
 TaskOperationFactory * TaskOperationFactory::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

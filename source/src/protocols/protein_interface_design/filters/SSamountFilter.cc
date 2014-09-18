@@ -97,7 +97,7 @@ SSamountFilter::clone() const {
 	return new SSamountFilter( *this );
 }
 
-static basic::Tracer TR( "protocols.protein_interface_design.filters.SSamountFilter" );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.SSamountFilter" );
 core::Real
 SSamountFilter::compute( core::pose::Pose const & pose ) const
 {

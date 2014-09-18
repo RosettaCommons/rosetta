@@ -36,12 +36,11 @@
 #include <boost/foreach.hpp>
 #include <utility/vector0.hh>
 
-static numeric::random::RandomGenerator RG( 21051979 );
 
 
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR( "protocols.toolbox.TaskOperations.DatabaseThread" );
+static thread_local basic::Tracer TR( "protocols.toolbox.TaskOperations.DatabaseThread" );
 
 namespace protocols {
 namespace toolbox {
@@ -130,7 +129,7 @@ DatabaseThread::pick_sequence_from_database( core::pose::Pose const & pose ) con
 		utility_exit_with_message("no entries with correct length were found in the database: " + database_fname_ );
 	}
 	TR<<"Finished reading database "<<database_fname_<<" with "<<sized_database.size()<<" entries of length "<<segment_length<<std::endl;
-	core::Size const entry=RG.uniform() * sized_database.size() + 1;
+	core::Size const entry = numeric::random::rg().uniform() * sized_database.size() + 1;
 	TR<<"Picked the sequence:"<<std::endl;
 	TR<<sized_database[entry]<<std::endl;
 	return sized_database[entry];

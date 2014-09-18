@@ -45,7 +45,7 @@
 
 
 //// C++ headers
-static basic::Tracer TR("protocols.fldsgn.filters.HelixKinkFilter");
+static thread_local basic::Tracer TR( "protocols.fldsgn.filters.HelixKinkFilter" );
 
 namespace protocols {
 namespace fldsgn {

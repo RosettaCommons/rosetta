@@ -38,7 +38,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core;
 
-static basic::Tracer trJCouplingIO("protocols.frag_picker.TalosReader");
+static thread_local basic::Tracer trJCouplingIO( "protocols.frag_picker.TalosReader" );
 
 
 void JCouplingIO::read(std::string const & file_name) {

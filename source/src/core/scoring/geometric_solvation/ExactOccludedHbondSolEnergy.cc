@@ -76,7 +76,7 @@
 
 //Vector dummy_res_energy_vector_;
 
-static basic::Tracer TR( "core.scoring.geometric_solvation.ExactOccludedHbondSolEnergy" );
+static thread_local basic::Tracer TR( "core.scoring.geometric_solvation.ExactOccludedHbondSolEnergy" );
 
 namespace core {
 namespace scoring {
@@ -121,7 +121,11 @@ core::Real const max_possible_LK = { -5 };
 core::Real const LK_MATCHING_WEIGHT_EXACT = { 0.387829 };
 core::Real const SKIP_HBONDER_CUT = { -0.1 };
 
-GridInfo* GridInfo::instance_( 0 );
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< GridInfo * > GridInfo::instance_( 0 );
+#else
+GridInfo * GridInfo::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11
@@ -147,9 +151,11 @@ GridInfo::create_singleton_instance()
 	return new GridInfo;
 }
 
-
-WaterWeightGridSet* WaterWeightGridSet::instance_( 0 );
-
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< WaterWeightGridSet * > WaterWeightGridSet::instance_( 0 );
+#else
+WaterWeightGridSet * WaterWeightGridSet::instance_( 0 );
+#endif
 
 // private constructor
 GridInfo::GridInfo() {

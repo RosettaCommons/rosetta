@@ -60,7 +60,7 @@ using namespace scoring;
 using core::pack::task::PackerTaskOP;
 
 
-static basic::Tracer TR("protocols.simple_moves.MinMover");
+static thread_local basic::Tracer TR( "protocols.simple_moves.MinMover" );
 
 std::string
 MinMoverCreator::keyname() const

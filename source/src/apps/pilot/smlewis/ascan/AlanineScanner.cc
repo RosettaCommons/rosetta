@@ -68,7 +68,7 @@ using basic::Error;
 using basic::Warning;
 
 //replaces cout
-static basic::Tracer TR("apps.pilot.smlewis.AlanineScanner");
+static thread_local basic::Tracer TR( "apps.pilot.smlewis.AlanineScanner" );
 
 //local options
 namespace local{

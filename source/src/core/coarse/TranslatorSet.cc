@@ -38,7 +38,7 @@ using basic::Warning;
 namespace core {
 namespace coarse {
 
-static basic::Tracer TR("core.coarse.TranslatorSet");
+static thread_local basic::Tracer TR( "core.coarse.TranslatorSet" );
 
 using namespace chemical;
 

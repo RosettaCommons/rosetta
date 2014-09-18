@@ -100,7 +100,7 @@ namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; 
 
 
 
-static basic::Tracer tr("protocols.membrane.abinitio",basic::t_info);
+static thread_local basic::Tracer tr( "protocols.membrane.abinitio", basic::t_info );
 
 
 using core::Real;

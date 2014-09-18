@@ -153,7 +153,7 @@ SymAtomTreeMinimizer::run(
 	// we may not really need all these extra function evaluations
 	// good for diagnostics though
 
-	static basic::Tracer core_optimize( "core.optimize",  basic::t_debug);
+	basic::Tracer core_optimize( "core.optimize", basic::t_debug );
 	core_optimize << "SymAtomTreeMinimizer::run: nangles= " << sym_min_map.nangles() <<
 		" start_score: " << F(12,3,start_score) <<
 		" start_func: "  << F(12,3,start_func ) <<

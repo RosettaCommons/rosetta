@@ -260,7 +260,7 @@ main( int argc, char * argv [] )
 	using namespace protocols::jobdist;
 	using namespace protocols::moves;
 	using namespace protocols::ligand_docking;
-	basic::Tracer TR("ligand_dock.main");
+	basic::Tracer TR( "ligand_dock.main" );
 
 	// Build overall docking protocol Mover
 	LigandDockProtocolOP dockingProtocol = new LigandDockProtocol();
@@ -298,7 +298,7 @@ main( int argc, char * argv [] )
 		input_jobs = load_s_and_l();
 		// Reduce read contention between processes by randomizing the order in which structures are processed
 		// Don't want to do this with silent file input -- slows access and screws up reference structure tracking.
-		numeric::random::random_permutation( input_jobs, numeric::random::RG );
+		numeric::random::random_permutation( input_jobs, numeric::random::rg() );
 	}
 	std::string outfile = "silent.out";
 	if( option[ out::file::silent].user() ) outfile = option[ out::file::silent];

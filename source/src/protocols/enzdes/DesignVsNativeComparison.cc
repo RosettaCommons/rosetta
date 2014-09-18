@@ -43,7 +43,7 @@
 
 
 
-static basic::Tracer tr("protocols.enzdes.DesignVsNativeComparison");
+static thread_local basic::Tracer tr( "protocols.enzdes.DesignVsNativeComparison" );
 
 namespace protocols {
 namespace enzdes {

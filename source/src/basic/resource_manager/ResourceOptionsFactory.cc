@@ -36,7 +36,11 @@
 namespace basic {
 namespace resource_manager {
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< ResourceOptionsFactory * > ResourceOptionsFactory::instance_( 0 );
+#else
 ResourceOptionsFactory * ResourceOptionsFactory::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

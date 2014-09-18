@@ -45,7 +45,7 @@ namespace scoring {
 namespace constraints {
 
 
-static basic::Tracer TR("core.scoring.constraints.BackboneStubLinearConstraint");
+static thread_local basic::Tracer TR( "core.scoring.constraints.BackboneStubLinearConstraint" );
 
 utility::pointer::owning_ptr< AngleConstraint > BackboneStubLinearConstraint::ang_cst_(0);
 

@@ -62,7 +62,8 @@
 namespace protocols {
 namespace pockets {
 
-	static basic::Tracer TR("core.grid.Pockets.PocketGrid", basic::t_debug);
+static thread_local basic::Tracer TR( "core.grid.Pockets.PocketGrid", basic::t_debug );
+
 
 // Visual Studio is more particular about implicit upconversion than gcc
 #ifdef _WIN32
@@ -2629,7 +2630,6 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 				numeric::xyzVector<core::Real> aatm_base_xyz( rsd.xyz( rsd.atom_base( aatm ) ) );
 				numeric::xyzVector<core::Real> const & aatm_base2_xyz( rsd.xyz( rsd.abase2( aatm ) ) );
 				Hybridization const & hybrid( rsd.atom_type(aatm).hybridization() );
-
 				core::Real theta(0.0);
 				utility::vector1< core::Real > phi_list, phi_steps;
 				phi_steps.push_back( 0 );

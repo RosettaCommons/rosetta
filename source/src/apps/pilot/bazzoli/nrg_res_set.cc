@@ -60,7 +60,7 @@ using basic::options::option;
 using core::Size;
 
 
-static basic::Tracer TR( "apps.pilot.nrg_res_set" );
+static thread_local basic::Tracer TR( "apps.pilot.nrg_res_set" );
 
 
 ///

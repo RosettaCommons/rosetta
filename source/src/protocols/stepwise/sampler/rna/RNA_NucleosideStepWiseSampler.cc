@@ -27,7 +27,7 @@
 
 using namespace core;
 using namespace core::chemical::rna;
-static basic::Tracer TR( "protocols.sampler.rna.RNA_NucleosideStepWiseSampler" );
+static thread_local basic::Tracer TR( "protocols.sampler.rna.RNA_NucleosideStepWiseSampler" );
 
 namespace protocols {
 namespace stepwise {

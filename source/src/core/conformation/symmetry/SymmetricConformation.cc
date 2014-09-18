@@ -42,7 +42,7 @@ namespace core {
 namespace conformation {
 namespace symmetry {
 
-static basic::Tracer TR("core.conformation.symmetry.Conformation");
+static thread_local basic::Tracer TR( "core.conformation.symmetry.Conformation" );
 
 /// @brief  Default CTOR
 SymmetricConformation::SymmetricConformation():

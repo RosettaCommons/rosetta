@@ -44,7 +44,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 
 
-static basic::Tracer TR("protocols.UnfoldedStateEnergyCalculator.UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor");
+static thread_local basic::Tracer TR( "protocols.UnfoldedStateEnergyCalculator.UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor" );
 
 namespace protocols {
 namespace unfolded_state_energy_calculator {

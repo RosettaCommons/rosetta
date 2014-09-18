@@ -14,7 +14,7 @@
 #include <cmath>
 #include <basic/Tracer.hh>
 
-static basic::Tracer tr( "devel.replica_docking.TempInterpolator" );
+static thread_local basic::Tracer tr( "devel.replica_docking.TempInterpolator" );
 
 namespace devel {
 namespace replica_docking {

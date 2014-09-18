@@ -25,7 +25,7 @@ namespace protocols {
 namespace protein_interface_design {
 namespace filters {
 
-static basic::Tracer TR( "protocols.protein_interface_design.filters.RelativeSegmentFilter" );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.RelativeSegmentFilter" );
 
 using core::pose::Pose;
 

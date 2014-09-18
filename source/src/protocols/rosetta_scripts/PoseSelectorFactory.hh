@@ -38,7 +38,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -115,7 +116,12 @@ private:
 #endif
 
 private:
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< PoseSelectorFactory * > instance_;
+#else
 	static PoseSelectorFactory * instance_;
+#endif
+
 	PoseSelectorMap poseselector_creator_map_;
 };
 

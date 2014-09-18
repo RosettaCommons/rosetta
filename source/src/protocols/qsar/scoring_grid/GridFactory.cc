@@ -28,7 +28,12 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-GridFactory * GridFactory::instance_(0);
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< GridFactory * > GridFactory::instance_( 0 );
+#else
+GridFactory * GridFactory::instance_( 0 );
+#endif
+
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

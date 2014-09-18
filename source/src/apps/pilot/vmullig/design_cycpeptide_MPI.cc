@@ -1876,6 +1876,7 @@ void parsefilelist (
 	lfile.close();
 }
 
+
 //MAIN
 int main(int argc, char *argv[]) {
 	using namespace std;
@@ -1885,7 +1886,6 @@ int main(int argc, char *argv[]) {
 	using namespace core::pose;
 	using namespace core::id;
 
-	numeric::random::RandomGenerator RG( 923749 ); //Random generator and seed
 
 	//Initialize MPI:
 	int procnum, totalprocs; //The current process number and the total number of processes.
@@ -2581,7 +2581,7 @@ int main(int argc, char *argv[]) {
 	if (procnum==0) printf("Scoring starting sequence.\n");
 	scoreall(procnum, totalprocs, totalstatecount, PCAvectorcomponentcount,
 		currentsequence, dpositions, betapositions, allstates_master, disulf_positions,
-		energyvals_initial, rmsvals_initial, positive_master, positive_current, RG,
+		energyvals_initial, rmsvals_initial, positive_master, positive_current, numeric::random::rg(),
 		frlx, sfxn, PCAvariances, PCAmatrices, extra_rms_atoms);
 
 	//Vars for sequence scores:
@@ -2690,7 +2690,7 @@ int main(int argc, char *argv[]) {
 			//Send the sequence out to all procs and do the energy-minimization for all states
 			scoreall (procnum, totalprocs, totalstatecount, PCAvectorcomponentcount,
 				currentsequence, dpositions, betapositions, allstates_master, disulf_positions,
-				energyvals_current, rmsvals_current, positive_master, positive_current, RG,
+				energyvals_current, rmsvals_current, positive_master, positive_current, numeric::random::rg(),
 				frlx, sfxn, PCAvariances, PCAmatrices, extra_rms_atoms);
 
 			if(procnum==0) {
@@ -2706,7 +2706,7 @@ int main(int argc, char *argv[]) {
 					acceptmutation = true;
 				} else { //if the score is greater than the last one accepted
 					//Decide whether or not to accept here based on the Metropolis criterion.
-					if( exp(-(sequence_score_current-sequence_score_lastaccept)/option[v_MCtemperature]()) > RG.uniform() ) acceptmutation = true;
+					if( exp(-(sequence_score_current-sequence_score_lastaccept)/option[v_MCtemperature]()) > numeric::random::rg().uniform() ) acceptmutation = true;
 				}
 
 				//Accept the mutation.

@@ -86,7 +86,7 @@
 #include <time.h>
 #include <algorithm>
 
-static basic::Tracer tr("devel.dna.MotifLoopBuild");
+static thread_local basic::Tracer tr( "devel.dna.MotifLoopBuild" );
 
 //using namespace basic::options;
 using namespace protocols;
@@ -95,7 +95,6 @@ using namespace devel::dna;
 using namespace basic::options;
 
 
-static numeric::random::RandomGenerator RG(46117);
 
 MotifLoopBuild::MotifLoopBuild()
 {
@@ -308,7 +307,7 @@ void MotifLoopBuild::build_inv_rots( core::pose::Pose pose )
 
             do {
                 motifOP_iter = motif_lib.begin();
-                num = RG.random_range(1,  motif_lib.nmotifs()) ;
+                num = numeric::random::rg().random_range(1,  motif_lib.nmotifs()) ;
                 std::advance(motifOP_iter, num);
 
             }

@@ -71,7 +71,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
 
-static basic::Tracer TR( "apps.pilot.rhiju.pack_phosphates" );
+static thread_local basic::Tracer TR( "apps.pilot.rhiju.pack_phosphates" );
 
 OPT_KEY( Boolean, icoor_test )
 OPT_KEY( Boolean, pack_all_phosphates )

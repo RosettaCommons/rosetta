@@ -59,7 +59,7 @@
 #include <protocols/toolbox/task_operations/RestrictToMoveMapChiOperation.hh>
 #include <utility/vector0.hh>
 
-static basic::Tracer TR("protocols.flxbb.FlxbbDesign");
+static thread_local basic::Tracer TR( "protocols.flxbb.FlxbbDesign" );
 
 using namespace core;
 using namespace core::pack::task::operation;

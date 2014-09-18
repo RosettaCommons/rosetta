@@ -53,7 +53,7 @@
 using basic::Error;
 using basic::Warning;
 using basic::T;
-static basic::Tracer TR("apps.pilot.bder.ZincSiteEvaluator");
+static thread_local basic::Tracer TR( "apps.pilot.bder.ZincSiteEvaluator" );
 
 typedef numeric::xyzVector<core::Real> point;
 typedef point axis;

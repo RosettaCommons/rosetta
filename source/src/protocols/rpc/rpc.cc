@@ -88,7 +88,7 @@ void pose_energies_to_json( core::pose::Pose const & pose, utility::json_spirit:
 
 // RPC Class
 
-static basic::Tracer TR("rpc");
+static thread_local basic::Tracer TR( "rpc" );
 using namespace utility::json_spirit;
 
 

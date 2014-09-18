@@ -75,12 +75,11 @@ namespace loops {
 namespace loop_mover {
 namespace perturb {
 
-static basic::Tracer TR("protocols.loops.loop_mover.perturb.LoopMover_Perturb_QuickCCD");
+static thread_local basic::Tracer TR( "protocols.loops.loop_mover.perturb.LoopMover_Perturb_QuickCCD" );
 
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
 
-static numeric::random::RandomGenerator RG(42863);
 
 //constructors
 

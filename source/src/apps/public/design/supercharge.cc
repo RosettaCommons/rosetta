@@ -99,7 +99,7 @@
 using basic::Error;
 using basic::Warning;
 using basic::T;
-static basic::Tracer TR("apps.public.design.supercharge");
+static thread_local basic::Tracer TR( "apps.public.design.supercharge" );
 
 using namespace core;
 typedef core::pose::Pose Pose;

@@ -93,7 +93,7 @@ namespace jumping {
 using namespace core;
 using namespace ObjexxFCL;
 
-static basic::Tracer tr("protocols.jumping");
+static thread_local basic::Tracer tr( "protocols.jumping" );
 
 JumpSample::JumpSample( JumpSetup const& def ) :
   total_residue_( def.total_residue() ),

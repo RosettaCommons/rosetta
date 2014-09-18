@@ -70,8 +70,8 @@ namespace pcs{
 
 using namespace ObjexxFCL;
 
-basic::Tracer TR_pcs_d_p_l("protocols.scoring.methods.pcs.PCS_data_per_lanthanides");
-basic::Tracer TR_pcs_d("protocols.scoring.methods.pcs.PCS_data");
+static thread_local basic::Tracer TR_pcs_d_p_l( "protocols.scoring.methods.pcs.PCS_data_per_lanthanides" );
+static thread_local basic::Tracer TR_pcs_d( "protocols.scoring.methods.pcs.PCS_data" );
 
 PCS_data_per_lanthanides::~PCS_data_per_lanthanides(){
 }

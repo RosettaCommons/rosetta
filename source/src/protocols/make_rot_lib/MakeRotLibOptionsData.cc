@@ -34,7 +34,7 @@
 namespace protocols {
 namespace make_rot_lib {
 
-static basic::Tracer TR("protocols.make_rot_lib.MakeRotLibOptionsData");
+static thread_local basic::Tracer TR( "protocols.make_rot_lib.MakeRotLibOptionsData" );
 
 /// @brief Reads in options file. Parses it twice. Stores data.
 MakeRotLibOptionsData::MakeRotLibOptionsData( std::string filename ) :

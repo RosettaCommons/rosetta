@@ -44,7 +44,7 @@ namespace protocols{
 namespace forge{
 namespace remodel{
 
-static basic::Tracer TR("protocols.forge.remodel.RemodelEnzdesCstModule");
+static thread_local basic::Tracer TR( "protocols.forge.remodel.RemodelEnzdesCstModule" );
 
 RemodelEnzdesCstModule::RemodelEnzdesCstModule(RemodelData external_data) 
 	: protocols::toolbox::match_enzdes_util::EnzConstraintIO(core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ))

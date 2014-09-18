@@ -43,8 +43,7 @@
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static numeric::random::RandomGenerator RG(456732);
-static basic::Tracer TR( "protocols.rigid.RollMover" );
+static thread_local basic::Tracer TR( "protocols.rigid.RollMover" );
 
 using namespace core;
 
@@ -73,7 +72,7 @@ void RollMover::apply( core::pose::Pose & pose ){
 		}
 	}
 	
-	angle_ = min_angle_ + ( max_angle_ - min_angle_ ) * RG.uniform();
+	angle_ = min_angle_ + ( max_angle_ - min_angle_ ) * numeric::random::rg().uniform();
 	numeric::xyzMatrix< core::Real > rotation_matrix( numeric::rotation_matrix_degrees(axis_, angle_ ) );
 	//move to origin
 	for ( core::Size i =start_res_; i <= stop_res_; ++i ) {

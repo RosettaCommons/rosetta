@@ -27,7 +27,7 @@ namespace core {
 namespace pack {
 namespace task {
 
-static basic::Tracer tr("core.pack.task.IGEdgeReweightContainer");
+static thread_local basic::Tracer tr( "core.pack.task.IGEdgeReweightContainer" );
 
 IGEdgeReweighter::~IGEdgeReweighter() {}
 

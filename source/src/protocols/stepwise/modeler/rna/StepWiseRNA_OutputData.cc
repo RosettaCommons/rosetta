@@ -78,7 +78,7 @@
 
 using namespace core;
 
-static basic::Tracer TR( "protocols.stepwise.modeler.rna.StepWiseRNA_OutputData" );
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.rna.StepWiseRNA_OutputData" );
 
 namespace protocols {
 namespace stepwise {

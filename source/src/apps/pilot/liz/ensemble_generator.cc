@@ -64,7 +64,6 @@
 
 #include <basic/Tracer.hh>
 
-numeric::random::RandomGenerator RG(1548761031); // <- Magic number, do not change it!!!
 
 #include <core/types.hh>
 

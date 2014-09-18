@@ -57,7 +57,7 @@
 
 
 
-static basic::Tracer tr("core.scoring.dssp");
+static thread_local basic::Tracer tr( "core.scoring.dssp" );
 
 using namespace core;
 using namespace basic;

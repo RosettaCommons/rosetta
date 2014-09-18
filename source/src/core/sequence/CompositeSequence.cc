@@ -30,7 +30,7 @@
 namespace core {
 namespace sequence {
 
-static basic::Tracer tr( "core.sequence.CompositeSequence" );
+static thread_local basic::Tracer tr( "core.sequence.CompositeSequence" );
 
 std::ostream & operator<<(
 	std::ostream & out, const CompositeSequence & p

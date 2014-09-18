@@ -71,7 +71,7 @@
 //Auto Headers
 
 
-static basic::Tracer TR("enumeration_test");
+static thread_local basic::Tracer TR( "enumeration_test" );
 
 
 

@@ -67,7 +67,7 @@
 namespace protocols {
 namespace frag_picker {
 
-static basic::Tracer trFragmentCandidate(
+static thread_local basic::Tracer trFragmentCandidate(
 		"protocols.frag_picker.FragmentCandidate");
 
 const std::string FragmentCandidate::unknown_pool_name_ = "UNKNOWN_POOL_NAME";

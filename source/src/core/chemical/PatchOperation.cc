@@ -40,8 +40,8 @@ namespace chemical {
 /// @details Auto-generated virtual destructor
 PatchOperation::~PatchOperation() {}
 
-static basic::Tracer tr("core.chemical");
-static basic::Tracer TR_PatchOperations("core.chemical.PatchOperations.hh");
+static thread_local basic::Tracer tr( "core.chemical" );
+static thread_local basic::Tracer TR_PatchOperations( "core.chemical.PatchOperations.hh" );
 
 DeleteAtom::DeleteAtom( std::string const & atom_name_in ) :
 	atom_name_( atom_name_in )

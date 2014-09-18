@@ -40,7 +40,7 @@
 namespace protocols {
 namespace elscripts {
 
-static basic::Tracer TR("protocols.elscripts.Master");
+static thread_local basic::Tracer TR( "protocols.elscripts.Master" );
 
 void lregister_Master( lua_State * lstate ) {
 	lregister_BaseRole( lstate );

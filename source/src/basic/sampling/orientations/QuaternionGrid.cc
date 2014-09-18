@@ -51,7 +51,11 @@ using namespace std;
 
 
 /// @brief set initial value as no instance
-QuaternionGridManager* QuaternionGridManager::instance_( 0 );
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< QuaternionGridManager * > QuaternionGridManager::instance_( 0 );
+#else
+QuaternionGridManager * QuaternionGridManager::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

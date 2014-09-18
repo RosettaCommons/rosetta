@@ -57,7 +57,6 @@
 
 // C++ headers
 
-static numeric::random::RandomGenerator RG(5419348);
 
 namespace protocols {
 namespace simple_moves {
@@ -70,7 +69,7 @@ using namespace numeric::conversions;
 using core::pose::Pose;
 using core::conformation::Residue;
 
-static basic::Tracer TR( "protocols.simple_moves.SetTorsion" );
+static thread_local basic::Tracer TR( "protocols.simple_moves.SetTorsion" );
 
 std::string
 SetTorsionCreator::keyname() const
@@ -99,7 +98,7 @@ SetTorsion::SetTorsion() :
 core::Real
 SetTorsion::angle(core::Size iset) const {
     if (angle_[iset] == "random") {
-        return 360.*RG.uniform()-180.;
+			return 360.*numeric::random::rg().uniform()-180.;
     }
     else {
         return boost::lexical_cast<core::Real>(angle_[iset]);
@@ -117,7 +116,7 @@ utility::vector1<core::Size> SetTorsion::residue_list(core::Size iset, core::pos
         // shouldn't get here, do nothing
     }
     else if (residues_[iset] == "random") {
-        Size res_num = RG.random_range(1, pose.total_residue());
+        Size res_num = numeric::random::rg().random_range(1, pose.total_residue());
         residue_numbers.push_back(res_num);
         if (extending_[iset] != 0) {
             for (int ishift = 1; ishift <= (int)extending_[iset]; ++ishift) {
@@ -181,7 +180,7 @@ void SetTorsion::apply( Pose & pose ) {
     core::scoring::Ramachandran const & rama = core::scoring::ScoringManager::get_instance()->get_Ramachandran();
     Size picked_set(1);
     if (random_set_) {
-        picked_set = RG.random_range(1, n_torsion_sets());
+        picked_set = numeric::random::rg().random_range(1, n_torsion_sets());
     }
     for (core::Size iset=1; iset<=n_torsion_sets(); ++iset) {
         if (random_set_) {

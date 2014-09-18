@@ -193,8 +193,7 @@
 
 
 
-static basic::Tracer tr("protocols.abinitio.JumpSpecificAbrelax");
-static numeric::random::RandomGenerator RG(423465);  // <- Magic number, do not change it!
+static thread_local basic::Tracer tr( "protocols.abinitio.JumpSpecificAbrelax" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //Definition of new OptionKeys
@@ -805,9 +804,9 @@ void JumpSpecificAbrelax::insert_template_frags( core::pose::Pose &pose, kinemat
 	if ( option[ templates::fix_frag_file ].user() ) {
 		FrameList fix_frames;
 		fragment::FragmentIO().read( option[ templates::fix_frag_file ](), fix_frames );
-		Size const frame_id ( static_cast< int >( RG.uniform() * fix_frames.size() ) + 1 );
+		Size const frame_id ( static_cast< int >( numeric::random::rg().uniform() * fix_frames.size() ) + 1 );
 		FrameOP frame( fix_frames[ frame_id ] );
-		Size const frag_id ( static_cast< int >( RG.uniform() * frame->nr_frags() ) + 1 );
+		Size const frag_id ( static_cast< int >( numeric::random::rg().uniform() * frame->nr_frags() ) + 1 );
 		frame->apply( frag_id, pose );
 
 		std::ofstream out( "big_frags.log", std::ios_base::out | std::ios_base::app );
@@ -1674,7 +1673,7 @@ bool JumpSpecificAbrelax::check_filters( core::pose::Pose & pose ) {
 	if ( !basic::options::option[ basic::options::OptionKeys::abinitio::use_filters ]() ) return true;
 	if ( option[ basic::options::OptionKeys::filters::disable_all_filters ]() ) return true; //makes a lot of sense IMHO
 
-	// apply RG, contact-order and sheet filters
+	// apply radius of gyration, contact-order and sheet filters
 	protocols::simple_filters::RGFilter    rg_filter;
 	protocols::simple_filters::COFilter    co_filter;
 	protocols::simple_filters::SheetFilter sh_filter;
@@ -1761,7 +1760,7 @@ void JumpSpecificAbrelax::fold() {
 		// retrieve starting pose
 		pose::Pose fold_pose ( init_pose );
 
-		//need to save RG states such that choices for constraints and fold-tree are the same.
+		//need to save numeric::random::rg() states such that choices for constraints and fold-tree are the same.
 		// in this case a successful recover doesn't mean that we want to skip folding..
 		// rather there will be a checkpoint later on containing the structure to go on: e.g., checkpoint in stage3
 		abrelax_checkpoints_.recover_checkpoint( fold_pose, jobdist.get_current_output_tag(), "abrelax_rg_state");

@@ -45,7 +45,7 @@
 
 
 
-static basic::Tracer TR( "protocols.fldsgn.potentials.sspot.HSPairPotential", basic::t_info );
+static thread_local basic::Tracer TR( "protocols.fldsgn.potentials.sspot.HSPairPotential", basic::t_info );
 
 namespace protocols {
 namespace fldsgn {

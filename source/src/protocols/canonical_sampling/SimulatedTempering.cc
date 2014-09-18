@@ -66,8 +66,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer tr( "protocols.canonical_sampling.SimulatedTempering" );
-static numeric::random::RandomGenerator RG(6127547);
+static thread_local basic::Tracer tr( "protocols.canonical_sampling.SimulatedTempering" );
 
 
 bool protocols::canonical_sampling::SimulatedTempering::options_registered_( false );
@@ -185,9 +184,9 @@ SimulatedTempering::temperature_move( core::Real score ) {
 	Size new_temp( current_temp() );
 	Size const nlevels( n_temp_levels() );
 	if ( temperature_jumps_ ) {
-		new_temp=RG.random_range( 1, nlevels );
+		new_temp=numeric::random::rg().random_range( 1, nlevels );
 	} else {
-		Real const r1( RG.uniform() );
+		Real const r1( numeric::random::rg().uniform() );
 		if ( r1 > 0.5+self_transition_*0.5 ) {
 			++new_temp;
 		} else if ( r1 < 0.5-self_transition_*0.5 ) {
@@ -203,7 +202,7 @@ SimulatedTempering::temperature_move( core::Real score ) {
 		Real const prefac( weights_[ new_temp ]/weights_[ current_temp() ] );
 		Real const temp_ratio =
 			(temperature() - temperature( new_temp ))/(temperature() * temperature( new_temp ));
-		if ( RG.uniform() < std::min( 1.0, prefac*std::exp(-(score+score_offset_)*temp_ratio) )) {
+		if ( numeric::random::rg().uniform() < std::min( 1.0, prefac*std::exp(-(score+score_offset_)*temp_ratio) )) {
 			set_current_temp( new_temp );
 			real_temp = temperature();
 			tr.Debug << "set new temperature to level " << new_temp << " T=" << real_temp << std::endl;

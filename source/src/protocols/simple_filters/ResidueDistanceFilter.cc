@@ -29,7 +29,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static basic::Tracer residue_distance_filter_tracer( "protocols.simple_filters.ResidueDistanceFilter" );
+static thread_local basic::Tracer residue_distance_filter_tracer( "protocols.simple_filters.ResidueDistanceFilter" );
 
 protocols::filters::FilterOP
 ResidueDistanceFilterCreator::create_filter() const { return new ResidueDistanceFilter; }

@@ -75,10 +75,10 @@ LoopBuilder::LoopBuilder() { // {{{1
 
 	max_attempts_ = option[OptionKeys::loops::max_kic_build_attempts]();
 
-	// The rama check currently works by comparing the generated torsions to the 
-	// input torsions.  Since the purpose of loop rebuilding is to forget 
-	// everything about the input structure, the rama check shouldn't be used.  
-	// One motivation for changing the rama check to use a static threshold (in 
+	// The rama check currently works by comparing the generated torsions to the
+	// input torsions.  Since the purpose of loop rebuilding is to forget
+	// everything about the input structure, the rama check shouldn't be used.
+	// One motivation for changing the rama check to use a static threshold (in
 	// addition to simplicity) is that it could be used here.
 
 	FilteredSolutionsOP solution_picker = new FilteredSolutions;
@@ -96,7 +96,7 @@ LoopBuilder::LoopBuilder() { // {{{1
 	register_nested_loop_mover(kic_mover_);
 	register_nested_loop_mover(minimizer_);
 }
-    
+
 void LoopBuilder::use_fragments( // {{{1
 		utility::vector1<core::fragment::FragSetCOP> const & frag_libs) {
 
@@ -104,17 +104,17 @@ void LoopBuilder::use_fragments( // {{{1
 	using protocols::kinematic_closure::perturbers::RamaPerturber;
 	using protocols::kinematic_closure::perturbers::FragmentPerturber;
 
-	// Note that a RamaPerturber is added just before the FragmentPerturber.  
-	// This is very important for benchmark runs seeking to recover the input 
-	// structure.  The FragmentPerturber will use a fragment even if it only 
-	// overlaps with the region being sampled by one residue.  When this happens, 
-	// KIC will often generate loops that are quite similar to the input loop.  
-	// For the benchmarks mentioned above, where the input loop is also the 
+	// Note that a RamaPerturber is added just before the FragmentPerturber.
+	// This is very important for benchmark runs seeking to recover the input
+	// structure.  The FragmentPerturber will use a fragment even if it only
+	// overlaps with the region being sampled by one residue.  When this happens,
+	// KIC will often generate loops that are quite similar to the input loop.
+	// For the benchmarks mentioned above, where the input loop is also the
 	// target loop, this is a subtle but effective form of cheating.
 	//
-	// In production runs, the RamaPerturber doesn't really need to be here.  But 
-	// there's also no reason for it not to be here, since it takes a negligible 
-	// amount of time to run.  And it's probably best to use the same algorithm 
+	// In production runs, the RamaPerturber doesn't really need to be here.  But
+	// there's also no reason for it not to be here, since it takes a negligible
+	// amount of time to run.  And it's probably best to use the same algorithm
 	// in the production runs as in the benchmark runs.
 
 	kic_mover_->clear_perturbers();
@@ -134,7 +134,7 @@ void LoopBuilder::parse_my_tag( // {{{1
 }
 
 bool LoopBuilder::do_apply(Pose & pose, Loop const & loop) { // {{{1
-	basic::Tracer tr("protocols.loop_modeling.LoopBuilder");
+	basic::Tracer tr( "protocols.loop_modeling.LoopBuilder" );
 
 	// Only attempt to rebuild loops that are marked as "extended".
 
@@ -146,7 +146,7 @@ bool LoopBuilder::do_apply(Pose & pose, Loop const & loop) { // {{{1
 	minimizer_->set_loop(loop);
 
 	// Make a strong effort to rebuild the loop with KIC.
-	
+
 	for (Size i = 1; i <= max_attempts_ && ! kic_mover_->was_successful(); i++) {
 		tr << "Loop building attempt: " << i << endl;
 		kic_mover_->apply(pose);

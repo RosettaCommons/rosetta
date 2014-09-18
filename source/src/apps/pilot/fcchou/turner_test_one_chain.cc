@@ -129,7 +129,6 @@ OPT_KEY( RealVector, ST_weight_list )
 OPT_KEY( Real, exchange_rate )
 
 static const chemical::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
-static numeric::random::RandomGenerator RG(245075);  // <- Magic number, do not change it!
 
 
 //////////Binary IO////////////////
@@ -313,7 +312,7 @@ initialize_o2prime_pack( pose::Pose const & pose,
 //////////////////////////////////
 Real
 create_random_angle_from_range(Real lower_bound = 0, Real upper_bound = 360) {
-	return RG.uniform() * (upper_bound - lower_bound) + lower_bound;
+	return numeric::random::rg().uniform() * (upper_bound - lower_bound) + lower_bound;
 }
 //////////////////////////////////
 Real
@@ -325,7 +324,7 @@ create_random_angle_from_range_list(utility::vector1< std::pair <Real, Real> > c
 		range_sum += range_size;
 		range_edge_list.push_back(range_sum);
 	}
-	Real angle = RG.uniform() * range_sum;
+	Real angle = numeric::random::rg().uniform() * range_sum;
 
 	for (Size i = 1; i <= range_list.size(); ++i) {
 		if (angle > range_edge_list[i]) continue;
@@ -349,7 +348,7 @@ create_random_suite_torsion(utility::vector1< Real > & torsion_list) {
 	const Real epsilon = create_random_angle_from_range();
 	const Real zeta    = create_random_angle_from_range();
 	const Real chi     = create_random_angle_from_range();
-	const Real delta   = (RG.uniform() < 0.5) ? delta_north : delta_south;
+	const Real delta   = (numeric::random::rg().uniform() < 0.5) ? delta_north : delta_south;
 
 	torsion_list.clear();
 	torsion_list.push_back(epsilon);
@@ -368,7 +367,7 @@ create_random_nucleoside_torsion(utility::vector1< Real > & torsion_list) {
 
 	//Sample all ranges
 	const Real chi     = create_random_angle_from_range();
-	const Real delta   = (RG.uniform() < 0.5) ? delta_north : delta_south;
+	const Real delta   = (numeric::random::rg().uniform() < 0.5) ? delta_north : delta_south;
 
 	torsion_list.clear();
 	torsion_list.push_back(delta);
@@ -380,14 +379,14 @@ sample_near_suite_torsion(utility::vector1< Real > & torsion_list, Real const st
 	static const Real delta_north = rna_fitted_torsion_info.delta_north();
 	static const Real delta_south = rna_fitted_torsion_info.delta_south();
 
-	torsion_list[1] += RG.gaussian() * stddev;
-	torsion_list[2] += RG.gaussian() * stddev;
-	torsion_list[3] += RG.gaussian() * stddev;
-	torsion_list[4] += RG.gaussian() * stddev;
-	torsion_list[5] += RG.gaussian() * stddev;
-	torsion_list[7] += RG.gaussian() * stddev;
-	if (RG.uniform() < 0.2) {
-		torsion_list[6]  = (RG.uniform() < 0.5) ? delta_north : delta_south;
+	torsion_list[1] += numeric::random::rg().gaussian() * stddev;
+	torsion_list[2] += numeric::random::rg().gaussian() * stddev;
+	torsion_list[3] += numeric::random::rg().gaussian() * stddev;
+	torsion_list[4] += numeric::random::rg().gaussian() * stddev;
+	torsion_list[5] += numeric::random::rg().gaussian() * stddev;
+	torsion_list[7] += numeric::random::rg().gaussian() * stddev;
+	if (numeric::random::rg().uniform() < 0.2) {
+		torsion_list[6]  = (numeric::random::rg().uniform() < 0.5) ? delta_north : delta_south;
 	}
 	for (Size i = 1; i <= torsion_list.size(); ++i) {
 		if (torsion_list[i] > 360) {
@@ -403,10 +402,10 @@ sample_near_nucleoside_torsion(utility::vector1< Real > & torsion_list, Real con
 	static const Real delta_north = rna_fitted_torsion_info.delta_north();
 	static const Real delta_south = rna_fitted_torsion_info.delta_south();
 
-	if (RG.uniform() < 0.2) {
-		torsion_list[1]  = (RG.uniform() < 0.5) ? delta_south : delta_north;
+	if (numeric::random::rg().uniform() < 0.2) {
+		torsion_list[1]  = (numeric::random::rg().uniform() < 0.5) ? delta_south : delta_north;
 	}
-	torsion_list[2] += RG.gaussian() * stddev;
+	torsion_list[2] += numeric::random::rg().gaussian() * stddev;
 
 	if (torsion_list[2] > 360) {
 		torsion_list[2] -= 360;
@@ -577,7 +576,7 @@ one_chain_MC_sampling(){
 			score_new = (*scorefxn)( pose );
 		}
 
-		if (is_kT_inf || score_new <= score || RG.uniform() < exp( (score - score_new) / kT_sys )) {
+		if (is_kT_inf || score_new <= score || numeric::random::rg().uniform() < exp( (score - score_new) / kT_sys )) {
 			score = score_new;
 			nucleoside_torsion = nucleoside_torsion_new;
 			suite_torsion = suite_torsion_new;
@@ -802,7 +801,7 @@ one_chain_ST_MC () {
 			score_new = (*scorefxn)( pose );
 		}
 
-		if (is_kT_inf || score_new <= score || RG.uniform() < exp( (score - score_new) / kT_sys )) {
+		if (is_kT_inf || score_new <= score || numeric::random::rg().uniform() < exp( (score - score_new) / kT_sys )) {
 			score = score_new;
 			nucleoside_torsion = nucleoside_torsion_new;
 			suite_torsion = suite_torsion_new;
@@ -829,15 +828,15 @@ one_chain_ST_MC () {
 		++hist[bin];
 
 		//Try changing kT
-		if (RG.uniform() < exchange_rate_) {
+		if (numeric::random::rg().uniform() < exchange_rate_) {
 			++n_exchange;
-			(RG.uniform() < 0.5) ? new_kT_id = kT_id + 1 : new_kT_id = kT_id - 1;
+			(numeric::random::rg().uniform() < 0.5) ? new_kT_id = kT_id + 1 : new_kT_id = kT_id - 1;
 			if (new_kT_id < 1 || new_kT_id > n_temp) continue;
 			new_kT = kT_sys_list[new_kT_id];
 			beta_old = (kT_sys > 999) ? 0 : (1.0 / kT_sys);
 			beta_new = (new_kT > 999) ? 0 : (1.0 / new_kT);
 			log_prob = - (beta_new - beta_old) * score + (weight_list[new_kT_id] - weight_list[kT_id]);
-			if (log_prob > 0 || RG.uniform() < exp (log_prob) ) { //check if we want to exchange kT
+			if (log_prob > 0 || numeric::random::rg().uniform() < exp (log_prob) ) { //check if we want to exchange kT
 				++n_accp_exch;
 				kT_id = new_kT_id;
 				kT_sys = new_kT;
@@ -1026,7 +1025,7 @@ one_chain_SWA_cluster(){
 			score_new = (*scorefxn)( pose );
 		}
 
-		if (is_kT_inf || score_new <= score || RG.uniform() < exp( (score - score_new) / kT_sys )) {
+		if (is_kT_inf || score_new <= score || numeric::random::rg().uniform() < exp( (score - score_new) / kT_sys )) {
 			score = score_new;
 			nucleoside_torsion = nucleoside_torsion_new;
 			suite_torsion = suite_torsion_new;
@@ -1425,7 +1424,7 @@ one_chain_torsion_cluster(){
 			score_new = (*scorefxn)( pose );
 		}
 
-		if (is_kT_inf || score_new <= score || RG.uniform() < exp( (score - score_new) / kT_sys )) {
+		if (is_kT_inf || score_new <= score || numeric::random::rg().uniform() < exp( (score - score_new) / kT_sys )) {
 			score = score_new;
 			nucleoside_torsion = nucleoside_torsion_new;
 			suite_torsion = suite_torsion_new;

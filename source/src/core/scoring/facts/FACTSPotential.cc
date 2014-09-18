@@ -53,7 +53,7 @@
 #include <cassert>
 #include <utility/assert.hh>
 
-static basic::Tracer TR("core.scoring.FACTSPotential");
+static thread_local basic::Tracer TR( "core.scoring.FACTSPotential" );
 
 using namespace std;
 

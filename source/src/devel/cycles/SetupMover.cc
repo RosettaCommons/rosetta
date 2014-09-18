@@ -24,7 +24,7 @@ namespace cycles {
 
 using namespace core;
 
-static basic::Tracer TR ("devel.cycles.SetupMover");
+static thread_local basic::Tracer TR( "devel.cycles.SetupMover" );
 
 SetupMover::SetupMover() {}
 

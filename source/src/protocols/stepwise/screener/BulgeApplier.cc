@@ -21,7 +21,7 @@
 #include <protocols/moves/CompositionMover.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.screener.BulgeApplier" );
+static thread_local basic::Tracer TR( "protocols.stepwise.screener.BulgeApplier" );
 
 using namespace protocols::stepwise::modeler::rna::checker;
 

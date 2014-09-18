@@ -18,7 +18,7 @@
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.modeler.working_parameters.StepWiseBasicWorkingParameters" );
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.working_parameters.StepWiseBasicWorkingParameters" );
 
 using namespace core;
 

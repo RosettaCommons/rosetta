@@ -80,7 +80,7 @@
 using basic::Error;
 using basic::Warning;
 using basic::T;
-static basic::Tracer TR("apps.pilot.kevin.buns");
+static thread_local basic::Tracer TR( "apps.pilot.kevin.buns" );
 
 basic::options::FileVectorOptionKey const nat_list_opkey("nat_list");
 basic::options::FileVectorOptionKey const rlx_list_opkey("rlx_list");

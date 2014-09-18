@@ -39,7 +39,7 @@
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR( "apps.pilot.ralford.read_mp_pose_from_seq" );
+static thread_local basic::Tracer TR( "apps.pilot.ralford.read_mp_pose_from_seq" );
 
 void*
 my_main( void* )

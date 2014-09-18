@@ -46,7 +46,7 @@
 
 
 //// C++ headers
-static basic::Tracer TR("protocols.matdes.SaveResfileToDiskFilter");
+static thread_local basic::Tracer TR( "protocols.matdes.SaveResfileToDiskFilter" );
 
 namespace protocols {
 namespace simple_filters {

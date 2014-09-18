@@ -58,7 +58,7 @@ using namespace core::conformation;
 using namespace core::conformation::membrane;
 using namespace core::membrane::geometry;
 
-static basic::Tracer TR( "apps.pilot.jkleman.spanfile_from_pdb" );
+static thread_local basic::Tracer TR( "apps.pilot.jkleman.spanfile_from_pdb" );
 
 ////////////////////////////////////////////////////////////////////////////////
 // vector show function

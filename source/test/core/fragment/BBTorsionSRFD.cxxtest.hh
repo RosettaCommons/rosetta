@@ -17,6 +17,7 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
+#include <test/core/init_util.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -47,10 +48,9 @@ class BBTorsionSRFDTest : public CxxTest::TestSuite {
  public:
 	void setUp() {
 		// contains cartesian coordinates
+		core_init();
 		fragments_ = FragmentIO().read_data("core/fragment/aat049603_05.200_v1_3.gz");
-		fragments_->region_simple(fragments_->min_pos(),
-															fragments_->max_pos(),
-															frames_);
+		fragments_->region_simple( fragments_->min_pos(), fragments_->max_pos(), frames_ );
 	}
 
 	void tearDown() {}

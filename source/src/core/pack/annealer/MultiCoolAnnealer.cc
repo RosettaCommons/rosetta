@@ -43,13 +43,12 @@
 #include <ctime>
 #endif
 
-static numeric::random::RandomGenerator mca_RG(42411); // <- Magic number, do not change it!!!
 
 namespace core {
 namespace pack {
 namespace annealer {
 
-static basic::Tracer TR( "core.pack.annealer.MultiCoolAnnealer" );
+static thread_local basic::Tracer TR( "core.pack.annealer.MultiCoolAnnealer" );
 
 using namespace ObjexxFCL;
 using namespace pack::interaction_graph;

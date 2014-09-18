@@ -64,7 +64,7 @@ namespace forge {
 namespace components {
 
 
-static basic::Tracer TR( "protocols.forge.components.BDR" );
+static thread_local basic::Tracer TR( "protocols.forge.components.BDR" );
 
 
 /// @brief default constructor

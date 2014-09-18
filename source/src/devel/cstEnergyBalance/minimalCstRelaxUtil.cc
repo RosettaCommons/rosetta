@@ -100,7 +100,7 @@
 namespace devel {
 namespace cstEnergyBalance {
 
-basic::Tracer tr( "minimalCstRelaxUtil" );
+static thread_local basic::Tracer tr( "minimalCstRelaxUtil" );
 
 using core::pose::Pose;
 using core::Size;

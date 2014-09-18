@@ -56,8 +56,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static numeric::random::RandomGenerator RG(953732);
-static basic::Tracer TR( "protocols.simple_moves.hbs.HbsRandomSmallMover" );
+static thread_local basic::Tracer TR( "protocols.simple_moves.hbs.HbsRandomSmallMover" );
 
 
 using namespace core;
@@ -89,12 +88,12 @@ void HbsRandomSmallMover::apply( core::pose::Pose & pose ){
 	runtime_assert ( hbs_post_pos != 1 );
 
 	//kdrew: randomly choose position from hbs_seq_positions
-	//core::Size random_pos = hbs_post_pos + int(RG.uniform()*(hbs_length_-3))+1;
-	core::Size random_pos = hbs_pre_pos+int(RG.uniform()*(hbs_length_-1))+1;
+	//core::Size random_pos = hbs_post_pos + int(numeric::random::rg().uniform()*(hbs_length_-3))+1;
+	core::Size random_pos = hbs_pre_pos+int(numeric::random::rg().uniform()*(hbs_length_-1))+1;
 	
 	hbs::HbsMoverOP hbs_mover ( new hbs::HbsMover( random_pos ) );
 	Real small_angle = max_small_angle_/2.0; ///< this is max_angle/2, which is the deviation from the angle input
-	Real phi_angle = basic::periodic_range( pose.phi( random_pos ) - small_angle + RG.uniform() * max_small_angle_, 360.0 );
+	Real phi_angle = basic::periodic_range( pose.phi( random_pos ) - small_angle + numeric::random::rg().uniform() * max_small_angle_, 360.0 );
 	//kdrew: no phi angle for n-terms, angle that gets changed is CYH-N-Ca-C
 	if( pose.residue_type( random_pos ).is_lower_terminus() )
 	{ 
@@ -104,10 +103,10 @@ void HbsRandomSmallMover::apply( core::pose::Pose & pose ){
 		AtomID aidC( pose.residue(random_pos).atom_index("C"), random_pos );
 
 		Real CYH_N_Ca_C_angle = degrees( pose.conformation().torsion_angle( aidCYH, aidN, aidCA, aidC ) ); 
-        phi_angle = basic::periodic_range( CYH_N_Ca_C_angle - small_angle + RG.uniform() * max_small_angle_, 360.0 ) - 180.0; 
+        phi_angle = basic::periodic_range( CYH_N_Ca_C_angle - small_angle + numeric::random::rg().uniform() * max_small_angle_, 360.0 ) - 180.0; 
 	}
 
-	Real psi_angle = basic::periodic_range( pose.psi( random_pos ) - small_angle + RG.uniform() * max_small_angle_, 360.0 );
+	Real psi_angle = basic::periodic_range( pose.psi( random_pos ) - small_angle + numeric::random::rg().uniform() * max_small_angle_, 360.0 );
 	hbs_mover->set_phi( phi_angle );
 	hbs_mover->set_psi( psi_angle );
 	hbs_mover->apply( pose );

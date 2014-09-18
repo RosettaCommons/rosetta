@@ -65,7 +65,7 @@ using namespace core;
 using namespace fragment;
 using namespace ObjexxFCL;
 
-static basic::Tracer tr("protocols.jumping");
+static thread_local basic::Tracer tr( "protocols.jumping" );
 
 
 FragSetOP
@@ -202,7 +202,6 @@ fill_tags_( FArray1D_int& tags, Size fill_pos, int tag, Size nres ) {
 
 
 // Utility headers
-static numeric::random::RandomGenerator RG(489134);  // <- Magic number, do not change it!
 
 JumpSample
 JumpSelector::create_jump_sample( ) const {
@@ -215,7 +214,7 @@ JumpSelector::create_jump_sample( ) const {
 	// 0 for free regions
 	runtime_assert( min_loop_length_ > 0 );
 
-	Size nr_jumps = nr_jumps_min_ + static_cast< int >( RG.uniform() * (nr_jumps_max_-nr_jumps_min_) );
+	Size nr_jumps = nr_jumps_min_ + static_cast< int >( numeric::random::rg().uniform() * (nr_jumps_max_-nr_jumps_min_) );
 	tr.Info << "generate " << nr_jumps << "jumps for following secstruct:\n";
 	tr.Info << secstruct_ << std::endl;
 
@@ -363,7 +362,7 @@ JumpSelector::create_jump_sample( ) const {
 	JumpSetup my_jumps( nres );
 	for ( JumpList::const_iterator it = jump_list.begin(), eit = jump_list.end();
 				it!=eit; ++it ) {
-		int cut_frame_num = static_cast< int >( RG.uniform() * cut_pool_it->size() ) + 1;
+		int cut_frame_num = static_cast< int >( numeric::random::rg().uniform() * cut_pool_it->size() ) + 1;
 		tr.Trace << "chosen jump-cut: " << it->start_ << " " << it->end_ << " cut:" << (*cut_pool_it)[cut_frame_num].start_
 						 << " " << (*cut_pool_it)[cut_frame_num].end_ << std::endl;
 		my_jumps.add_jump( *it, (*cut_pool_it)[cut_frame_num] );
@@ -378,7 +377,7 @@ JumpSelector::select_random() const {
 	//	Size Nsample = 100000;
 	//	for ( int ii=1; ii < Nsample; ii++ ) {
 
-	Real ran = RG.uniform() * total_weight_;
+	Real ran = numeric::random::rg().uniform() * total_weight_;
 	Real cumsum = 0.0;
 	const_iterator it = begin();
 	const_iterator eit = end();

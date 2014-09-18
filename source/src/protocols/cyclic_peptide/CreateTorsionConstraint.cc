@@ -40,7 +40,7 @@
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.cyclic_peptide.CreateTorsionConstraint" );
+static thread_local basic::Tracer TR( "protocols.cyclic_peptide.CreateTorsionConstraint" );
 
 namespace protocols {
 namespace cyclic_peptide {

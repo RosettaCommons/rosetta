@@ -70,8 +70,7 @@
 #include <apps/pilot/yfsong/util.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR("pilot.yfsong.challenge");
-static numeric::random::RandomGenerator RG(482136);
+static thread_local basic::Tracer TR( "pilot.yfsong.challenge" );
 
 namespace challenge {
 	basic::options::FileVectorOptionKey template_structure("challenge:template_structure");
@@ -357,7 +356,7 @@ void align_backbone_by_chunk(core::pose::Pose & pose, core::Size const residue_s
 	core::Size counter = 0;
 	while (counter < MAX_TRIAL) {
 		++counter;
-		core::Size random_res = RG.random_range(residue_seq_start, residue_seq_end);
+		core::Size random_res = numeric::random::rg().random_range(residue_seq_start, residue_seq_end);
 		core::Size seqpos_model = random_res+registry_shift;
 
 		if (seqpos_alignment.find(seqpos_model) == seqpos_alignment.end()) continue;
@@ -659,7 +658,7 @@ extract_ss_chunks_from_alignment_counts(utility::vector1 <core::Real> alignment_
 
 core::Size
 pick_random_template() {
-	core::Size i_template = RG.random_range(1, template_structures_.size());
+	core::Size i_template = numeric::random::rg().random_range(1, template_structures_.size());
 	if (template_ss_chunks_[i_template].size() != 0) return i_template;
 	else return 0;
 }
@@ -743,14 +742,14 @@ void realign(core::pose::Pose & pose) {
 	using namespace ObjexxFCL::format;
 	TR << "template " << I(4, i_template) << std::endl;
 
-	core::Size jump_number = RG.random_range(1, pose.num_jump());
+	core::Size jump_number = numeric::random::rg().random_range(1, pose.num_jump());
 
 	std::list < Size > downstream_residues = downstream_residues_from_jump(pose, jump_number);
 	Size seqpos_start=downstream_residues.front();
 	Size seqpos_end=downstream_residues.back();
 
 	int max_registry_shift = 1;
-	int registry_shift = RG.random_range(-max_registry_shift, max_registry_shift);
+	int registry_shift = numeric::random::rg().random_range(-max_registry_shift, max_registry_shift);
 	align_backbone_by_chunk(pose, seqpos_start, seqpos_end, *(template_structures_[i_template]), seqpos_alignments_[i_template], registry_shift);
 }
 
@@ -913,7 +912,7 @@ my_main( void* ) {
 	if (basic::options::option[ basic::options::OptionKeys::constraints::cst_file ].user()) {
 		whole_sequence->add_mover(new protocols::simple_moves::ConstraintSetMover());
 	}
-	apps::pilot::SampleSecondaryStructureAlignmentMover * sample_ss ( new apps::pilot::SampleSecondaryStructureAlignmentMover(RG, template_filenames) );
+	apps::pilot::SampleSecondaryStructureAlignmentMover * sample_ss ( new apps::pilot::SampleSecondaryStructureAlignmentMover(numeric::random::rg(), template_filenames) );
 	whole_sequence->add_mover(sample_ss);
 
 	if (basic::options::option[ challenge::close_loops ]) {

@@ -36,7 +36,7 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-static basic::Tracer TR( "protocols.jd2.parser.FragSetLoader" );
+static thread_local basic::Tracer TR( "protocols.jd2.parser.FragSetLoader" );
 
 namespace protocols {
 namespace jd2 {

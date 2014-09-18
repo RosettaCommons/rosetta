@@ -20,7 +20,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -62,7 +63,13 @@ private:
 	static SinXOverX * create_singleton_instance();
 
 private:
-	static SinXOverX* instance_;
+	/// @brief static data member holding pointer to the singleton class itself
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< SinXOverX * > instance_;
+#else
+	static SinXOverX * instance_;
+#endif
+
 	static utility::vector1<Real> sin_x_over_x_;
 
 };

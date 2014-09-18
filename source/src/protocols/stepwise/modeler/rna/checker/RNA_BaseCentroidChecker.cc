@@ -37,7 +37,7 @@ using basic::T;
 using core::Real;
 using ObjexxFCL::format::F;
 
-static basic::Tracer TR( "protocols.stepwise.modeler.rna.checker.RNA_BaseCentroidChecker" );
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.rna.checker.RNA_BaseCentroidChecker" );
 
 namespace protocols {
 namespace stepwise {

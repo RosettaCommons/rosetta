@@ -44,7 +44,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("apps.pilot.smlewis.InterfaceAnalyzer");
+static thread_local basic::Tracer TR( "apps.pilot.smlewis.InterfaceAnalyzer" );
 
 //define local options
 basic::options::IntegerOptionKey const jumpnum("jumpnum");

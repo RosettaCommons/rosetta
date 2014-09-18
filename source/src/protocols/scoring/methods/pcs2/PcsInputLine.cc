@@ -54,7 +54,7 @@ namespace scoring{
 namespace methods{
 namespace pcs2{
 
-basic::Tracer TR_PcsInputLine("protocols.scoring.methods.pcs.PcsInputLine");
+static thread_local basic::Tracer TR_PcsInputLine( "protocols.scoring.methods.pcs.PcsInputLine" );
 
 PcsInputLine::PcsInputLine() :
 	residue_num_(0),

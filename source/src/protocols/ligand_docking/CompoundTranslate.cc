@@ -42,7 +42,7 @@ using basic::Warning;
 namespace protocols {
 namespace ligand_docking {
 
-static basic::Tracer translate_tracer("protocols.ligand_docking.CompoundTranslate", basic::t_debug);
+static thread_local basic::Tracer translate_tracer( "protocols.ligand_docking.CompoundTranslate", basic::t_debug );
 
 
 std::string
@@ -167,7 +167,7 @@ CompoundTranslate::parse_my_tag(
 
 void CompoundTranslate::apply(core::pose::Pose & pose) {
 	if(randomize_order_)
-		numeric::random::random_permutation(translates_, numeric::random::RG);
+		numeric::random::random_permutation(translates_, numeric::random::rg());
 
 	std::set<core::Size> chains_to_translate;
 

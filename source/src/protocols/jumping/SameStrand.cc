@@ -62,8 +62,7 @@ namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; 
 //#include <cstdlib>
 //#include <string>
 //#include <vector>
-static basic::Tracer tr("protocols.jumping");
-static numeric::random::RandomGenerator RG(92384);  // <- Magic number, do not change
+static thread_local basic::Tracer tr( "protocols.jumping" );
 
 namespace protocols {
 namespace jumping {
@@ -150,7 +149,7 @@ SameStrand::do_same_strand( ) const {
 					k_strand = ( strand_sum_(k) - strand_sum_(k-1) ) / strand_ceiling;
 					loop = 1.0 - k_strand;
 					if ( loop < 0.3 ) loop = 0.0;
-					r = RG.uniform();
+					r = numeric::random::rg().uniform();
 					if ( r < loop ) {
 						same_strand_(pos1,pos2) = false;
 					}

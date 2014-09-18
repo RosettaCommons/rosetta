@@ -149,7 +149,6 @@ namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; 
 
 
 
-//static numeric::random::RandomGenerator RG(12323); // <- Magic number, do not change it!!!
 
 
 ////////////////////////////////////////////////
@@ -165,9 +164,9 @@ namespace OK = OptionKeys;
 using utility::vector1;
 using std::string;
 
-static basic::Tracer tw( "demo.phil.motif_scan", basic::t_warning );
+static thread_local basic::Tracer tw( "demo.phil.motif_scan", basic::t_warning );
 //static basic::Tracer td( "demo.phil.motif_scan", basic::t_debug );
-static basic::Tracer tt( "demo.phil.motif_scan", basic::t_trace );
+static thread_local basic::Tracer tt( "demo.phil.motif_scan", basic::t_trace );
 
 
 ///////////////////////////////////////////////////////////////////////////////

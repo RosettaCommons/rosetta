@@ -86,7 +86,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.relax.ClassicRelax");
+static thread_local basic::Tracer TR( "protocols.relax.ClassicRelax" );
 
 using namespace core;
 using io::pdb::dump_pdb;

@@ -29,7 +29,7 @@
 #include <basic/Tracer.hh>
 
 
-static basic::Tracer tr( "core.scoring.rna.RNA_Mg_KnowledgeBasedPotential" );
+static thread_local basic::Tracer tr( "core.scoring.rna.RNA_Mg_KnowledgeBasedPotential" );
 
 namespace core {
 namespace scoring {

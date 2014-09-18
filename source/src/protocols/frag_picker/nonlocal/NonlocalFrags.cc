@@ -65,7 +65,6 @@
 #include <sstream>
 #include <fstream>
 
-static numeric::random::RandomGenerator RG(10420);  // Magic Number
 
 namespace protocols {
 namespace frag_picker {
@@ -73,7 +72,7 @@ namespace nonlocal {
 
 using namespace core;
 
-static basic::Tracer TR("protocols.frag_picker.nonlocal.NonlocalFrags");
+static thread_local basic::Tracer TR( "protocols.frag_picker.nonlocal.NonlocalFrags" );
 
 void NonlocalFrags::register_options() {
   using namespace basic::options;

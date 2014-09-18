@@ -44,7 +44,7 @@
 // C++ headers
 #include <fstream>
 
-static basic::Tracer TR("protocols.loops.loop_mover.refine.RepackTrial");
+static thread_local basic::Tracer TR( "protocols.loops.loop_mover.refine.RepackTrial" );
 using namespace core;
 
 namespace protocols {

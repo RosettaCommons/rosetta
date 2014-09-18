@@ -38,7 +38,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static basic::Tracer heavy_atom_tracer( "protocols.ligand_docking.HeavyAtomFilter" );
+static thread_local basic::Tracer heavy_atom_tracer( "protocols.ligand_docking.HeavyAtomFilter" );
 
 bool
 HeavyAtomFilter::apply( core::pose::Pose const & pose ) const {

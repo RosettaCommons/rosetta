@@ -49,7 +49,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
-static basic::Tracer TR( "protocols.loops.loop_closure.ccd.CCDLoopClosureMover" );
+static thread_local basic::Tracer TR( "protocols.loops.loop_closure.ccd.CCDLoopClosureMover" );
 
 namespace protocols {
 namespace loops {

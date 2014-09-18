@@ -102,7 +102,11 @@ namespace scoring {
 
 
 ///////////////////////////////////////////////////////////////////////////////
-ScoringManager* ScoringManager::instance_( 0 );
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< ScoringManager * > ScoringManager::instance_( 0 );
+#else
+ScoringManager * ScoringManager::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

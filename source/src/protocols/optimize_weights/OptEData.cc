@@ -80,7 +80,7 @@ PNatRotOptERotamerData::~PNatRotOptERotamerData() {}
 /// @details Auto-generated virtual destructor
 PNatAAOptERotamerData::~PNatAAOptERotamerData() {}
 
-static basic::Tracer TR("protocols.optimize_weights.OptEData");
+static thread_local basic::Tracer TR( "protocols.optimize_weights.OptEData" );
 
 ///@begin (ostream operator for OptERotamerDataOP)
 ///@author ashworth

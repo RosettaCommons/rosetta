@@ -101,7 +101,7 @@ using utility::file::FileName;
 
 
 // tracer - used to replace cout
-static basic::Tracer TR("HbsDesign");
+static thread_local basic::Tracer TR( "HbsDesign" );
 
 // application specific options
 namespace hbs_design {

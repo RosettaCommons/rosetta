@@ -78,7 +78,7 @@
 using namespace core;
 using basic::T;
 
-static basic::Tracer TR( "protocols.rna.RNA_Minimizer" ) ;
+static thread_local basic::Tracer TR( "protocols.rna.RNA_Minimizer" );
 
 namespace protocols {
 namespace farna {

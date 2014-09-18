@@ -43,7 +43,7 @@
 namespace protocols {
 namespace genetic_algorithm {
 
-static basic::Tracer TR("protocols.genetic_algorithm");
+static thread_local basic::Tracer TR( "protocols.genetic_algorithm" );
 
 GeneticAlgorithmBase::GeneticAlgorithmBase() :
 	utility::pointer::ReferenceCount(),

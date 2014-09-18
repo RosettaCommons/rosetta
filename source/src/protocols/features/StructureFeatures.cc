@@ -54,7 +54,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 
-static basic::Tracer TR("protocols.features.StructureFeatures");
+static thread_local basic::Tracer TR( "protocols.features.StructureFeatures" );
 
 namespace protocols{
 namespace features{

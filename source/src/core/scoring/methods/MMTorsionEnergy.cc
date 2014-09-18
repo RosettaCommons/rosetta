@@ -58,7 +58,7 @@ MMTorsionEnergyCreator::score_types_for_method() const {
 }
 
 
-static basic::Tracer TR("core.scoring.methods.MMTorsionEnergy");
+static thread_local basic::Tracer TR( "core.scoring.methods.MMTorsionEnergy" );
 
 
 typedef std::pair< mm::mm_torsion_atom_quad, core::Real > mm_torsion_atom_quad_angle_pair;

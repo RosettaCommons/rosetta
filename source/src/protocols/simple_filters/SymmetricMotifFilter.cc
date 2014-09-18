@@ -54,7 +54,7 @@ namespace protocols {
 namespace simple_filters {
 
 // tracer
-static basic::Tracer TR( "protocols.simple_filters.SymmetricMotifFilter" );
+static thread_local basic::Tracer TR( "protocols.simple_filters.SymmetricMotifFilter" );
 
 // creator
 protocols::filters::FilterOP

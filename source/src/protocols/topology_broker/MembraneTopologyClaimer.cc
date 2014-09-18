@@ -51,8 +51,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer TR("protocols.topo_broker.membrane_topology",basic::t_info);
-static numeric::random::RandomGenerator RG(786137);
+static thread_local basic::Tracer TR( "protocols.topo_broker.membrane_topology", basic::t_info );
 
 namespace protocols {
 namespace topology_broker {
@@ -209,7 +208,7 @@ void MembraneTopologyClaimer::addVirtualResAsRootMembrane( core::pose::Pose & po
 
 	// find residue in the middle of transmembrane region
 	// pick a random transmembrane segment
-	Size ihelix = int(RG.uniform() * topology.tmhelix() + 1.);
+	Size ihelix = int(numeric::random::rg().uniform() * topology.tmhelix() + 1.);
 	core::Size jump_res = (int(0.5 * (topology.span_begin(ihelix) + topology.span_end(ihelix))));
 
 	// create a virtual residue, fullatom or centroid

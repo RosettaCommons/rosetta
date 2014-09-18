@@ -33,7 +33,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -93,7 +94,11 @@ private:
 #endif
 
 private:
-  static WriteableCacheableDataFactory* instance_;
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< WriteableCacheableDataFactory * > instance_;
+#else
+	static WriteableCacheableDataFactory * instance_;
+#endif
 
   WriteableCacheableDataMap data_creator_map_;
 

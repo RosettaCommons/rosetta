@@ -55,10 +55,9 @@ namespace remodel{
 
 // Tracer instance for this file
 // Named after the original location of this code
-static basic::Tracer TR( "protocols.forge.remodel.RemodelAccumulator" );
+static thread_local basic::Tracer TR( "protocols.forge.remodel.RemodelAccumulator" );
 
 // RNG
-//static numeric::random::RandomGenerator RG( 9788221 ); // magic number, don't change
 
 
 /// @brief default constructor

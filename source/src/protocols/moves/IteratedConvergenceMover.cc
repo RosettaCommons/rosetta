@@ -38,7 +38,7 @@
 namespace protocols {
 namespace moves {
 
-static basic::Tracer TR("protocols.moves.IteratedConvergenceMover");
+static thread_local basic::Tracer TR( "protocols.moves.IteratedConvergenceMover" );
 
 std::string
 IteratedConvergenceMoverCreator::keyname() const

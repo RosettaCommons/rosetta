@@ -55,8 +55,7 @@ using namespace std;
 using core::Size;
 using core::Real;
 
-static numeric::random::RandomGenerator RG(43134);
-static basic::Tracer TR("protocols.loops.loop_closure.kinematic_closure.KinematicPerturber");
+static thread_local basic::Tracer TR( "protocols.loops.loop_closure.kinematic_closure.KinematicPerturber" );
 
 KinematicPerturber::KinematicPerturber() :
 	max_sample_iterations_( basic::options::option[ basic::options::OptionKeys::loops::max_kic_perturber_samples ]() )
@@ -185,15 +184,15 @@ void TorsionSamplingKinematicPerturber::perturb_beta_residue (
 
 	switch (beta_residue_type) {
 		case 1: //Case 1 -- perturb using the minima of the Ramachandran cube of beta-3-alanine.
-			randindex = RG.random_range(1, phi_minima.size()); //Pick a random minimum.  Note: all minima are treated as being equally probable.
-			phi = phi_minima[randindex] + wellwidth*RG.gaussian();
-			theta = theta_minima[randindex] + wellwidth*RG.gaussian();
-			psi = psi_minima[randindex] + wellwidth*RG.gaussian();
+			randindex = numeric::random::rg().random_range(1, phi_minima.size()); //Pick a random minimum.  Note: all minima are treated as being equally probable.
+			phi = phi_minima[randindex] + wellwidth*numeric::random::rg().gaussian();
+			theta = theta_minima[randindex] + wellwidth*numeric::random::rg().gaussian();
+			psi = psi_minima[randindex] + wellwidth*numeric::random::rg().gaussian();
 			break;
 		default: //Case zero -- perturb all angles totally randomly
-			phi = RG.uniform() * 360.0;
-			theta = RG.uniform() * 360.0;
-			psi = RG.uniform() * 360.0;
+			phi = numeric::random::rg().uniform() * 360.0;
+			theta = numeric::random::rg().uniform() * 360.0;
+			psi = numeric::random::rg().uniform() * 360.0;
 			break;
 	}
 
@@ -236,7 +235,7 @@ TorsionSamplingKinematicPerturber::perturb_chain(
 
 		//Looping over all CA angles:
 		for(core::Size ir = startres, curatom = pvatom1; ir<=endres; ++ir) {
-			if( !kinmover()->is_beta_aminoacid(pose.residue(ir)) /*Add checks here as other backbones are added*/ ) bond_ang[curatom] = bangle_min + RG.uniform() * bangle_sd; //Shouldn't this be bangle_avg() + RG.gaussian() * bangle_sd?
+			if( !kinmover()->is_beta_aminoacid(pose.residue(ir)) /*Add checks here as other backbones are added*/ ) bond_ang[curatom] = bangle_min + numeric::random::rg().uniform() * bangle_sd; //Shouldn't this be bangle_avg() + RG.gaussian() * bangle_sd?
 			curatom += kinmover()->count_bb_atoms_in_residue(pose, ir);
 		}
 	} //if( vary_ca_bond_angles_ )
@@ -277,7 +276,7 @@ TorsionSamplingKinematicPerturber::perturb_chain(
 				i++; //phi
 				if(kinmover()->is_beta_aminoacid(pose.residue(cur_res))) i++; //theta
 				i++; //psi
-				torsions[i++] = ( static_cast<int>( RG.uniform()*2 ) ? (core::chemical::is_canonical_D_aa(pose.residue(cur_res).aa()) ? -1.0 : 1.0 ) * OMEGA_MEAN : 0.0 );  // flip a coin -- either 179.8 (trans) or 0.0 (cis).  If it's a D-amino acid, it's multiplied by -1.0 if it's a D-Pro.
+				torsions[i++] = ( static_cast<int>( numeric::random::rg().uniform()*2 ) ? (core::chemical::is_canonical_D_aa(pose.residue(cur_res).aa()) ? -1.0 : 1.0 ) * OMEGA_MEAN : 0.0 );  // flip a coin -- either 179.8 (trans) or 0.0 (cis).  If it's a D-amino acid, it's multiplied by -1.0 if it's a D-Pro.
 
 			} else {
 				i += kinmover()->count_bb_atoms_in_residue(pose, cur_res); //Increment i by the number of torsion angles in this residue.
@@ -298,12 +297,12 @@ TorsionSamplingKinematicPerturber::perturb_chain(
 			i++; //psi
 			core::Real trans_prob = 1;
 			if ( pose.aa( cur_res+1 ) == core::chemical::aa_pro || pose.aa( cur_res+1 ) == core::chemical::aa_dpr ) { //L- or D-proline
-				trans_prob = RG.uniform();
+				trans_prob = numeric::random::rg().uniform();
 			}
 			if ( trans_prob < cis_prob_threshold ) {
 				torsions[i++] = 0; // there's very little variation -- currently not captured here at all
 			} else { // trans
-				torsions[i++] = (core::chemical::is_canonical_D_aa(pose.residue(cur_res).aa()) ? -1.0 : 1.0 ) * (OMEGA_MEAN + RG.gaussian() * OMEGA_STDDEV); //Multiply by -1 if the current residue is D
+				torsions[i++] = (core::chemical::is_canonical_D_aa(pose.residue(cur_res).aa()) ? -1.0 : 1.0 ) * (OMEGA_MEAN + numeric::random::rg().gaussian() * OMEGA_STDDEV); //Multiply by -1 if the current residue is D
 			}
 		}
 	}
@@ -462,7 +461,7 @@ VicinitySamplingKinematicPerturber::perturb_chain(
 
 		//what is this iterating over?
 		for( Size i = 5; i <= pvatom3; i+=3 ) {
-			bond_ang[ i ] = bangle_min + RG.uniform() * bangle_sd;
+			bond_ang[ i ] = bangle_min + numeric::random::rg().uniform() * bangle_sd;
 		}
 	}
 
@@ -477,8 +476,8 @@ VicinitySamplingKinematicPerturber::perturb_chain(
 
 			core::Real rama_phi, rama_psi;
 
-			rama_phi = pose.phi( cur_res ) + degree_vicinity_ * RG.gaussian();
-			rama_psi = pose.psi( cur_res ) + degree_vicinity_ * RG.gaussian();
+			rama_phi = pose.phi( cur_res ) + degree_vicinity_ * numeric::random::rg().gaussian();
+			rama_psi = pose.psi( cur_res ) + degree_vicinity_ * numeric::random::rg().gaussian();
 
 			torsions[i++]=rama_phi; // phi
 			torsions[i++]=rama_psi; // psi
@@ -684,7 +683,7 @@ NeighborDependentTorsionSamplingKinematicPerturber::perturb_chain(
 		core::Real bangle_sd( kinmover()->BANGLE_SD() );
 
 		for( Size i = 5; i <= pvatom3; i+=3 ) {
-			bond_ang[ i ] = bangle_min + RG.uniform() * bangle_sd;
+			bond_ang[ i ] = bangle_min + numeric::random::rg().uniform() * bangle_sd;
 			//TR << "replacing CA bond angle at " << (kinmover()->start_res()+int((i-4)/3)) << std::endl;
 		}
 	}
@@ -703,7 +702,7 @@ NeighborDependentTorsionSamplingKinematicPerturber::perturb_chain(
 
 			// currently we don't really have data for both neighbors together
 			// -- for now, do a coin flip on which one to use, though later we should implement this such that each side has an individual perturber, and we call both with equal likelihood (should have fewer ifs)
-			static_cast<int>( RG.uniform()*2 ) ? rama_.random_phipsi_from_rama_left(pose.aa(cur_res-1), pose.aa(cur_res),rama_phi, rama_psi) : rama_.random_phipsi_from_rama_right(pose.aa(cur_res), pose.aa(cur_res+1), rama_phi, rama_psi);
+			static_cast<int>( numeric::random::rg().uniform()*2 ) ? rama_.random_phipsi_from_rama_left(pose.aa(cur_res-1), pose.aa(cur_res),rama_phi, rama_psi) : rama_.random_phipsi_from_rama_right(pose.aa(cur_res), pose.aa(cur_res+1), rama_phi, rama_psi);
 
 			torsions[i++]=rama_phi; // phi
 			torsions[i++]=rama_psi; // psi
@@ -725,7 +724,7 @@ NeighborDependentTorsionSamplingKinematicPerturber::perturb_chain(
 
 			if ( pose.aa( cur_res+1 ) == core::chemical::aa_pro ) {
 
-				core::Real rand_omega = ( static_cast<int>( RG.uniform()*2 ) ? OMEGA_MEAN : 0.0 );  // flip a coin -- either 179.8 (trans) or 0.0 (cis)
+				core::Real rand_omega = ( static_cast<int>( numeric::random::rg().uniform()*2 ) ? OMEGA_MEAN : 0.0 );  // flip a coin -- either 179.8 (trans) or 0.0 (cis)
 
 				i++; //phi
 				i++; //psi
@@ -878,7 +877,7 @@ TorsionRestrictedKinematicPerturber::perturb_chain(
 		core::Real bangle_sd( kinmover()->BANGLE_SD() );
 
 		for( Size i = 5; i <= pvatom3; i+=3 ) {
-			bond_ang[ i ] = bangle_min + RG.uniform() * bangle_sd;
+			bond_ang[ i ] = bangle_min + numeric::random::rg().uniform() * bangle_sd;
 			//TR << "replacing CA bond angle at " << (kinmover()->start_res()+int((i-4)/3)) << std::endl;
 		}
 	}
@@ -930,7 +929,7 @@ TorsionRestrictedKinematicPerturber::perturb_chain(
 
 			} else { // trans
 				if ( basic::options::option[ basic::options::OptionKeys::loops::kic_omega_sampling ]() ) {
-					rand_omega = OMEGA_MEAN + RG.gaussian() * OMEGA_STDDEV;
+					rand_omega = OMEGA_MEAN + numeric::random::rg().gaussian() * OMEGA_STDDEV;
 				}
 			}
 			i++; //phi
@@ -1116,7 +1115,7 @@ BaseTabooPerturber::refill_torsion_string_vector()
 			torsion_bins_for_pos.push_back( ppo_torbin_X );
 		}
 
-		numeric::random::random_permutation(torsion_bins_for_pos.begin(), torsion_bins_for_pos.end(), numeric::random::RG);
+		numeric::random::random_permutation(torsion_bins_for_pos.begin(), torsion_bins_for_pos.end(), numeric::random::rg());
 		torsion_bins_per_position[i] = torsion_bins_for_pos;
 	}
 
@@ -1196,7 +1195,7 @@ BaseTabooPerturber::perturb_chain(
 
 		//what is this iterating over?
 		for ( Size i = 5; i <= pvatom3; i+=3 ) {
-			bond_ang[ i ] = bangle_min + RG.uniform() * bangle_sd;
+			bond_ang[ i ] = bangle_min + numeric::random::rg().uniform() * bangle_sd;
 			//TR << "replacing CA bond angle at " << (kinmover()->start_res()+int((i-4)/3)) << std::endl;
 		}
 	}
@@ -1243,7 +1242,7 @@ BaseTabooPerturber::perturb_chain(
 
 			if ( pose.aa( cur_res+1 ) == core::chemical::aa_pro ) {
 
-				core::Real rand_omega = ( static_cast<int>( RG.uniform()*2 ) ? OMEGA_MEAN : 0.0 );  // flip a coin -- either 179.8 (trans) or 0.0 (cis)
+				core::Real rand_omega = ( static_cast<int>( numeric::random::rg().uniform()*2 ) ? OMEGA_MEAN : 0.0 );  // flip a coin -- either 179.8 (trans) or 0.0 (cis)
 
 				/*
 				 if ( islower(torsion_string[(i-4)/3 + torsion_string_offset]) ) { // actually at the moment this is impossible... use random value instead?
@@ -1276,12 +1275,12 @@ BaseTabooPerturber::perturb_chain(
 			i++; //psi
 			core::Real trans_prob = 1;
 			if ( pose.aa( cur_res+1 ) == core::chemical::aa_pro ) {
-				trans_prob = RG.uniform();
+				trans_prob = numeric::random::rg().uniform();
 			}
 			if ( trans_prob < cis_prob_threshold ) {
 				torsions[i++] = 0; // there's very little variation -- currently not captured here at all
 			} else { // trans
-				torsions[i++] = OMEGA_MEAN + RG.gaussian() * OMEGA_STDDEV;
+				torsions[i++] = OMEGA_MEAN + numeric::random::rg().gaussian() * OMEGA_STDDEV;
 			}
 		}
 	}
@@ -1441,7 +1440,7 @@ NeighborDependentTabooSamplingKinematicPerturber::get_random_phi_psi_for_residue
 		rama_.random_phipsi_from_rama_by_torsion_bin_right( pose.aa(resid), pose.aa(resid+1), phi, psi, remapped_torbin );
 	} else if ( resid == kinmover()->loop_end() ) {
 		rama_.random_phipsi_from_rama_by_torsion_bin_left( pose.aa(resid-1), pose.aa(resid), phi, psi, remapped_torbin );
-	} else if ( static_cast<int>( RG.uniform()*2 ) ) {
+	} else if ( static_cast<int>( numeric::random::rg().uniform()*2 ) ) {
 		rama_.random_phipsi_from_rama_by_torsion_bin_right( pose.aa(resid), pose.aa(resid+1), phi, psi, remapped_torbin );
 	} else {
 		rama_.random_phipsi_from_rama_by_torsion_bin_left( pose.aa(resid-1), pose.aa(resid), phi, psi, remapped_torbin );

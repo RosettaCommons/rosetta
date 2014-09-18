@@ -41,7 +41,7 @@
 
 
 
-static basic::Tracer TR("isct_test");
+static thread_local basic::Tracer TR( "isct_test" );
 
 using core::Size;
 using core::Real;

@@ -32,7 +32,7 @@
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer TR( "protocols.stepwise.modeler.options.StepWiseRNA_ModelerOptions" );
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.options.StepWiseRNA_ModelerOptions" );
 
 namespace protocols {
 namespace stepwise {

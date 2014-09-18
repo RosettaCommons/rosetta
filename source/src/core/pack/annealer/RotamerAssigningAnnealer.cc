@@ -36,7 +36,6 @@
 
 
 using namespace ObjexxFCL;
-static numeric::random::RandomGenerator RG(62456); // <- Magic number, do not change it!!!
 
 namespace core {
 namespace pack {
@@ -177,7 +176,7 @@ int RotamerAssigningAnnealer::pick_a_rotamer( int cycle )
 	if ( quench() ){
 		num =  mod( cycle - 1, (int) num_rots_to_pack());
 		if (num == 0){
-			numeric::random::random_permutation( rot_to_pack_, RG );
+			numeric::random::random_permutation( rot_to_pack_, numeric::random::rg() );
 		}
 		ranrotamer = rot_to_pack_.at(num);
 		//bk if start of run and start_with_current is true then first nres
@@ -195,7 +194,7 @@ int RotamerAssigningAnnealer::pick_a_rotamer( int cycle )
 		}
 		++current_to_pick_;
 	}else{
-		ranrotamer = rot_to_pack_.at(static_cast<int>( num_rots_to_pack() * RG.uniform() ));
+		ranrotamer = rot_to_pack_.at(static_cast<int>( num_rots_to_pack() * numeric::random::rg().uniform() ));
 	}
 	//std::cerr << "ranrotamer: " << ranrotamer << " total: " << current_rot_index_.size() << std::endl;
 	return ranrotamer;
@@ -203,7 +202,7 @@ int RotamerAssigningAnnealer::pick_a_rotamer( int cycle )
 
 int RotamerAssigningAnnealer::pick_a_rotamer_for_node( int node ) const
 {
-	return rots_for_nodes_[node][ static_cast<int> ( rots_for_nodes_[ node ].size() * RG.uniform() + 1 ) ];
+	return rots_for_nodes_[node][ static_cast<int> ( rots_for_nodes_[ node ].size() * numeric::random::rg().uniform() + 1 ) ];
 }
 
 void RotamerAssigningAnnealer::set_assign_state_to_all_nodes_immediately( bool setting )

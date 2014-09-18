@@ -168,10 +168,10 @@ public:
 
 		packrotamersmover.apply(pose);
 
-		Real start_score = sfxn(pose);
+		Real final_score = sfxn(pose);
 		//std::cout.precision(15);
-		//std::cout << start_score << std::endl;
-		TS_ASSERT_DELTA(start_score, -11.0590348142147, 1e-12);
+		//std::cout << final_score << std::endl;
+		TS_ASSERT_DELTA( final_score, -11.2961651753465, 1e-12 );
 	}
 
 	void test_cen_rot_atomtree_min()

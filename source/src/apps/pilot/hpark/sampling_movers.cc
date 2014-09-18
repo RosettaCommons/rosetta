@@ -27,7 +27,6 @@
 
 namespace myspace {
 
-static numeric::random::RandomGenerator RG( 12322 ); //Magic number??
 
 using namespace core;
 

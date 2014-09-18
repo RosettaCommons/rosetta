@@ -136,8 +136,7 @@ using namespace core::pack::dunbrack;
 using namespace core::pack::dunbrack::cenrot;
 
 //////////////////////////////////////////////////////////////////
-static numeric::random::RandomGenerator RG(62331911);
-basic::Tracer TR("pilot.wendao.cenrotjd2");
+static thread_local basic::Tracer TR( "pilot.wendao.cenrotjd2" );
 
 utility::vector1<core::Size> nrecovery(20);
 utility::vector1<core::Size> n_total(20);
@@ -336,7 +335,7 @@ private:
 			return samples[1];
 		}
 		else {
-			return samples[RG.random_range(1,nrot)];
+			return samples[numeric::random::rg().random_range(1,nrot)];
 		}
 	}
 
@@ -355,7 +354,7 @@ public:
 
 		//pick random res other than GLY/ALA
 		do {
-			mobile_index = RG.random_range(1, nres);
+			mobile_index = numeric::random::rg().random_range(1, nres);
 		} while(pose.residue(mobile_index).aa()==aa_gly || pose.residue(mobile_index).aa()==aa_ala);
 
 		//get random sample
@@ -421,7 +420,7 @@ public:
 		for (Size i=1; i<=mc_steps_; i++) {
 			std::string move_type("fake");
 			Real proposal_density_ratio=1.0;
-			core::Real prob = RG.uniform();
+			core::Real prob = numeric::random::rg().uniform();
 
 			if ( prob > sc_prob_ ) { //bbg
 				bbgmover_->apply(pose);

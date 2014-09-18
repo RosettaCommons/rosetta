@@ -30,7 +30,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -108,7 +109,11 @@ private:
 
 private:
 	/// @brief static data member holding pointer to the singleton class itself
-	static SurfacePotential* instance_;
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< SurfacePotential * > instance_;
+#else
+	static SurfacePotential * instance_;
+#endif
 
 	// outer vector holds AA's; inner vector holds neighbor counts. Residues always have at least 1 neighbor because
 	// num_neighbors_counting_self() is always used to determine number of neighbors

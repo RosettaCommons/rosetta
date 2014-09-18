@@ -32,7 +32,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -101,7 +102,11 @@ private:
 	static JobOutputterFactory * create_singleton_instance();
 
 private:
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< JobOutputterFactory * > instance_;
+#else
 	static JobOutputterFactory * instance_;
+#endif
 
 	JobOutputterMap job_outputter_creator_map_;
 

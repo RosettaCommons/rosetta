@@ -119,7 +119,6 @@ using basic::Error;
 namespace protocols {
 namespace simple_moves {
 
-static numeric::random::RandomGenerator rg(15433); // <- Magic number, do not change it!!!
 
 ShakeStructureMover::ShakeStructureMover() :
 	protocols::moves::Mover("ShakeStructureMover"),

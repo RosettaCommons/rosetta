@@ -41,7 +41,7 @@
 
 
 
-static basic::Tracer TR("protocols.antibody.ModelCDRH3");
+static thread_local basic::Tracer TR( "protocols.antibody.ModelCDRH3" );
 
 using namespace core;
 

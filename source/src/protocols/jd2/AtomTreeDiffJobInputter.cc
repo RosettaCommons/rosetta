@@ -39,7 +39,7 @@
 
 
 
-static basic::Tracer tr("protocols.jd2.AtomTreeDiffJobInputter");
+static thread_local basic::Tracer tr( "protocols.jd2.AtomTreeDiffJobInputter" );
 
 namespace protocols {
 namespace jd2 {

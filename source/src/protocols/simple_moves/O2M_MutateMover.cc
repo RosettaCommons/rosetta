@@ -36,7 +36,7 @@
 namespace protocols{
 namespace simple_moves{
 
-static basic::Tracer TR( "protocols.simple_moves.O2M_MutateMover" );
+static thread_local basic::Tracer TR( "protocols.simple_moves.O2M_MutateMover" );
 
 void O2M_MutateMover::apply( core::io::serialization::PipeMap & pmap)
 {

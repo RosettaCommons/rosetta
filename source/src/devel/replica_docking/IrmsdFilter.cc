@@ -38,7 +38,7 @@
 
 
 
-static basic::Tracer TR( "devel.replica_docking.IrmsdFilter" );
+static thread_local basic::Tracer TR( "devel.replica_docking.IrmsdFilter" );
 
 namespace devel {
 namespace replica_docking {

@@ -32,8 +32,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer TR("protocols.jd2.ShuffleFileSystemJobDistributor");
-static numeric::random::RandomGenerator RG(10419);  // Magic Number
+static thread_local basic::Tracer TR( "protocols.jd2.ShuffleFileSystemJobDistributor" );
 
 
 namespace protocols {
@@ -68,7 +67,7 @@ ShuffleFileSystemJobDistributor::get_new_job_id()
 	if( next_random_job_ == 0 ){
 		scrambled_job_order_.clear();
 		for( int i=0; i < basic::options::option[ basic::options::OptionKeys::out::nstruct ].value() ; i++ ){
-			scrambled_job_order_.push_back( RG.random_range(1,jobs.size() ) );
+			scrambled_job_order_.push_back( numeric::random::rg().random_range(1,jobs.size() ) );
 		}
 
 

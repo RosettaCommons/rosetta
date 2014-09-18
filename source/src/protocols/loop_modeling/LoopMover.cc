@@ -32,7 +32,7 @@ using core::scoring::ScoreFunctionOP;
 using core::scoring::ScoreFunctionCOP;
 using core::kinematics::FoldTree;
 
-static basic::Tracer TR("protocols.loop_modeling.LoopMover");
+static thread_local basic::Tracer TR( "protocols.loop_modeling.LoopMover" );
 
 LoopMover::LoopMover()  // {{{1
 	: trust_fold_tree_(false),

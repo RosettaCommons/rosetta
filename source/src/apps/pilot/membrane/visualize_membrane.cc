@@ -44,7 +44,7 @@
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR( "apps.pilot.membrane.visualize_membrane" );
+static thread_local basic::Tracer TR( "apps.pilot.membrane.visualize_membrane" );
 
 void create_MPpose(){
  

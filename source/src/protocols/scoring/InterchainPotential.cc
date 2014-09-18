@@ -53,14 +53,18 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TC("protocols.scoring.InterchainPotential");
+static thread_local basic::Tracer TC( "protocols.scoring.InterchainPotential" );
 
 
 namespace protocols {
 namespace scoring {
 
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< InterchainPotential * > InterchainPotential::instance_( 0 );
+#else
 InterchainPotential * InterchainPotential::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

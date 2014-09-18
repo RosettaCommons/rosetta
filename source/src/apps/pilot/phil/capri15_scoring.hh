@@ -130,7 +130,6 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-//static numeric::random::RandomGenerator RG(93530); // <- Magic number, do not change it!!!
 
 using namespace core;
 using namespace protocols;

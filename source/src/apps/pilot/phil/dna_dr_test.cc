@@ -143,7 +143,6 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-//static numeric::random::RandomGenerator RG(12323); // <- Magic number, do not change it!!!
 
 using namespace core;
 using namespace protocols;
@@ -155,7 +154,7 @@ using std::endl;
 using io::pdb::dump_pdb;
 
 
-static basic::Tracer tt( "demo.phil.dna_dr_test", basic::t_info );
+static thread_local basic::Tracer tt( "demo.phil.dna_dr_test", basic::t_info );
 
 ///////////////////////////////////////////////////////////////////////////////
 

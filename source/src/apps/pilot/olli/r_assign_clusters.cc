@@ -48,7 +48,7 @@
 #include <utility/excn/EXCN_Base.hh>
 #include <numeric/random/random.hh>
 
-static basic::Tracer tr("main");
+static thread_local basic::Tracer tr( "main" );
 
 using namespace core;
 using namespace protocols;

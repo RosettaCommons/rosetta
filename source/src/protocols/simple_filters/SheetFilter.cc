@@ -52,7 +52,7 @@
 
 
 
-static basic::Tracer tr("protocols.simple_filters.SheetFilter");
+static thread_local basic::Tracer tr( "protocols.simple_filters.SheetFilter" );
 
 using core::Real;
 using namespace core;

@@ -45,7 +45,7 @@
 #include <cstdlib>
 #include <algorithm> 
 
-static basic::Tracer TR("mp_sfxn_integration"); 
+static thread_local basic::Tracer TR( "mp_sfxn_integration" );
 
 /// @brief Main Function
 int main( int argc, char* argv[] )

@@ -71,7 +71,6 @@
 // Platform Headers
 #include <platform/types.hh>
 
-static numeric::random::RandomGenerator RG(86759999);
 
 #include <basic/Tracer.hh>
 using basic::T;
@@ -79,7 +78,7 @@ using basic::Warning;
 using basic::Error;
 
 // tracer
-static basic::Tracer TZ("pilot_apps::ca_to_allatom");
+static thread_local basic::Tracer TZ( "pilot_apps::ca_to_allatom" );
 
 // C++ headers
 #include <fstream>

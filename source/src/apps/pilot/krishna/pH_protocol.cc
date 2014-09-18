@@ -64,7 +64,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer TR("apps.pilot.krishna.PhProtocol");
+static thread_local basic::Tracer TR( "apps.pilot.krishna.PhProtocol" );
 
 class PhProtocol : public protocols::moves::Mover {
 

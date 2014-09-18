@@ -80,7 +80,7 @@ using basic::Warning;
 namespace protocols {
 namespace cryst {
 
-static basic::Tracer TR("protocols.cryst.cryst_movers");
+static thread_local basic::Tracer TR( "protocols.cryst.cryst_movers" );
 
 using namespace protocols;
 using namespace core;

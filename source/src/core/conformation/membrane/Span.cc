@@ -29,7 +29,7 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
-static basic::Tracer TR( "core.conformation.membrane.Span" );
+static thread_local basic::Tracer TR( "core.conformation.membrane.Span" );
 
 namespace core {
 namespace conformation {

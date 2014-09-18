@@ -48,7 +48,7 @@
 namespace protocols {
 namespace comparative_modeling {
 
-static basic::Tracer tr("protocols.comparative_modeling.ThreadingJobInputter");
+static thread_local basic::Tracer tr( "protocols.comparative_modeling.ThreadingJobInputter" );
 
 std::map< std::string, utility::vector1< core::Size > > read_extra_residues(
 	utility::vector1< std::string > const & fns

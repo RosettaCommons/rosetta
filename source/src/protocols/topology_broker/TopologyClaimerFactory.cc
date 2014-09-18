@@ -59,13 +59,17 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-static basic::Tracer tr("protocols.topo_broker", basic::t_info);
+static thread_local basic::Tracer tr( "protocols.topo_broker", basic::t_info );
 
 namespace protocols {
 namespace topology_broker {
 
 // Singleton initialization
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< TopologyClaimerFactory * > TopologyClaimerFactory::instance_( 0 );
+#else
 TopologyClaimerFactory * TopologyClaimerFactory::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

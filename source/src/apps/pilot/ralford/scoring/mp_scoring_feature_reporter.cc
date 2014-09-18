@@ -56,7 +56,7 @@
 
 using namespace core::conformation;
 
-static basic::Tracer TR("mp_scoring_features_reporter"); 
+static thread_local basic::Tracer TR( "mp_scoring_features_reporter" );
 
 /// @brief Compute Sasa
 core::Real compute_sasa( core::pose::PoseOP pose, core::Size resnum ) {

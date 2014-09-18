@@ -48,9 +48,8 @@
 using namespace core;
 using basic::T;
 
-static numeric::random::RandomGenerator RG(22220);  // <- Magic number, do not change it!
 
-static basic::Tracer TR( "protocols.rna.RNA_FragmentMover" ) ;
+static thread_local basic::Tracer TR( "protocols.rna.RNA_FragmentMover" );
 
 namespace protocols {
 namespace farna {
@@ -247,7 +246,7 @@ RNA_FragmentMover::random_fragment_insertion(
 	// Make this insertion stuff a class before checking in?
 	update_insert_map( pose );
 	if ( num_insertable_residues_ == 0) return 0; // nothing to do
-	Size const position_index = static_cast <int> ( RG.uniform() * num_insertable_residues_ ) + 1;
+	Size const position_index = static_cast <int> ( numeric::random::rg().uniform() * num_insertable_residues_ ) + 1;
 	Size const position = insert_map_[ position_index ];
 
 	//	std::cout << " --- Trying fragment! at " << position << std::endl;

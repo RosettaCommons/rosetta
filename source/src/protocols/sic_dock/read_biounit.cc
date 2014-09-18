@@ -36,7 +36,7 @@
  #include <numeric/xyzVector.hh>
 
 // static data
- static basic::Tracer TR("protocols.sic_dock.read_biounit");
+static thread_local basic::Tracer TR( "protocols.sic_dock.read_biounit" );
 
 // types
  using std::string;

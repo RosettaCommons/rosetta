@@ -62,7 +62,7 @@ LRmsdFilter::clone() const {
 	return new LRmsdFilter( *this );
 }
 
-static basic::Tracer TR( "protocols.protein_interface_design.filters.LRmsdFilter" );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.LRmsdFilter" );
 core::Real
 LRmsdFilter::compute( core::pose::Pose const & pose ) const
 {

@@ -60,8 +60,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.SurfaceDocking.FullatomRelaxMover");
-static numeric::random::RandomGenerator RG(27510);
+static thread_local basic::Tracer TR( "protocols.SurfaceDocking.FullatomRelaxMover" );
 
 namespace protocols {
 namespace surface_docking {
@@ -112,7 +111,7 @@ void FullatomRelaxMover::setup_defaults()
 	}
 	else
 	{
-		encounter_cycle_= RG.random_range(1,5);
+		encounter_cycle_= numeric::random::rg().random_range(1,5);
 	}
 	
 	if ( basic::options::option[ basic::options::OptionKeys::run::test_cycles ] )

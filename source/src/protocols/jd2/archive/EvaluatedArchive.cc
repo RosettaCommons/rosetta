@@ -51,7 +51,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer tr("protocols.jd2.Archive");
+static thread_local basic::Tracer tr( "protocols.jd2.Archive" );
 
 //OPT_1GRP_KEY( Real, iterative, chainbreak_evaluator_exponent )
 //OPT_1GRP_KEY( Boolean, iterative, simulate_bg4_cbtreatment )

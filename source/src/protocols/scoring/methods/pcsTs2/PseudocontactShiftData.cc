@@ -63,8 +63,8 @@ namespace pcsTs2{
 
 using namespace ObjexxFCL;
 
-basic::Tracer TR_pcs_d_p_l_Ts2("protocols.scoring.methods.pcsTs2.PCS_data_per_lanthanides_Ts2");
-basic::Tracer TR_pcs_d_Ts2("protocols.scoring.methods.pcsTs2.PCS_data_Ts2");
+static thread_local basic::Tracer TR_pcs_d_p_l_Ts2( "protocols.scoring.methods.pcsTs2.PCS_data_per_lanthanides_Ts2" );
+static thread_local basic::Tracer TR_pcs_d_Ts2( "protocols.scoring.methods.pcsTs2.PCS_data_Ts2" );
 
 PCS_data_per_lanthanides_Ts2::~PCS_data_per_lanthanides_Ts2(){
 }

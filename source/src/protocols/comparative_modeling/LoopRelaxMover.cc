@@ -312,7 +312,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	// this typedef belongs in its own .fwd.hh file.
 	//typedef utility::pointer::owning_ptr< loops::IndependentLoopMover > loops::IndependentLoopMoverOP;
 
-	basic::Tracer TR("protocols.looprelax");
+	basic::Tracer TR( "protocols.looprelax" );
 
 	TR << "==== Loop protocol: ================================================="
 		<< std::endl;
@@ -344,7 +344,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	}
 
 	evaluation::MetaPoseEvaluatorOP evaluator = new evaluation::MetaPoseEvaluator;
-	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluator);
+	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators( *evaluator );
 	evaluator->add_evaluation(
 		new simple_filters::SelectRmsdEvaluator( native_pose, "_native" )
 	);

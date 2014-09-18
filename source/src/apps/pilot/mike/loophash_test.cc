@@ -58,8 +58,7 @@
 #include <mpi.h>
 #endif
 
-static basic::Tracer TR("main");
-static numeric::random::RandomGenerator RG(4623835);  // <- Magic number, do not change it (and dont try and use it anywhere else)
+static thread_local basic::Tracer TR( "main" );
 
 
 // MPI headers
@@ -122,9 +121,9 @@ using namespace id;
 
 	// make an alpha helix
 	for( core::Size ir = 1; ir < sample_pose.total_residue(); ir ++ ) {
-		sample_pose.set_phi( ir, RG.uniform()*360.0 - 180.0 );
-		sample_pose.set_psi( ir, RG.uniform()*360.0 - 180.0 );
-		sample_pose.set_omega( ir, RG.uniform()*360.0 - 180.0 );
+		sample_pose.set_phi( ir, numeric::random::rg().uniform()*360.0 - 180.0 );
+		sample_pose.set_psi( ir, numeric::random::rg().uniform()*360.0 - 180.0 );
+		sample_pose.set_omega( ir, numeric::random::rg().uniform()*360.0 - 180.0 );
 	}
 
 	sample_pose.dump_pdb("testout.pdb");

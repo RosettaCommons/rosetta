@@ -52,7 +52,7 @@
 #endif
 
 
-static basic::Tracer tr("protocols.evalution.JumpNrEvaluatorCreator");
+static thread_local basic::Tracer tr( "protocols.evalution.JumpNrEvaluatorCreator" );
 
 namespace protocols {
 namespace simple_filters {

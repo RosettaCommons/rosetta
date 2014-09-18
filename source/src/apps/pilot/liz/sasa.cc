@@ -71,8 +71,6 @@
 
 #include <basic/Tracer.hh>
 
-//numeric::random::RandomGenerator RG(15431); // <- Magic number, do not change it!!!
-
 #include <core/scoring/sasa.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoringManager.hh>

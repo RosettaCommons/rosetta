@@ -66,8 +66,7 @@
 
 namespace core {
 namespace scoring {
-	//static numeric::random::RandomGenerator RG(280628);  // <- Magic number, do not change it!
-static basic::Tracer TR("core.scoring.ProQPotential");
+static thread_local basic::Tracer TR( "core.scoring.ProQPotential" );
 
 ProQPotential::ProQPotential()
 {

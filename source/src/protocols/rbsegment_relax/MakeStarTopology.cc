@@ -45,7 +45,7 @@ using basic::Warning;
 namespace protocols {
 namespace rbsegment_relax {
 
-static basic::Tracer TR("protocols.cryst.cryst_movers");
+static thread_local basic::Tracer TR( "protocols.cryst.cryst_movers" );
 
 using namespace protocols;
 using namespace core;

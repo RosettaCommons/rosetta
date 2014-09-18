@@ -55,7 +55,7 @@
 #endif
 
 
-static basic::Tracer tr("protocols.evalution.CamShiftEvaluatorCreator");
+static thread_local basic::Tracer tr( "protocols.evalution.CamShiftEvaluatorCreator" );
 
 namespace protocols {
 namespace simple_filters {

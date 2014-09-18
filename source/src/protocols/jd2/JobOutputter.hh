@@ -42,7 +42,9 @@
 namespace protocols {
 namespace jd2 {
 
-///@details the JobOutputter class is responsible for dealing with output, as well as determining what jobs have already been output and what sort of name is associated with a job.  Derived classes will be responsible for output such as PDBS, PDBS.tar.gz and silent files.
+/// @details the JobOutputter class is responsible for dealing with output, as well as determining what
+/// jobs have already been output and what sort of name is associated with a job.  Derived classes will
+/// be responsible for output such as PDBS, PDBS.tar.gz and silent files.
 class JobOutputter : public utility::pointer::ReferenceCount
 {
 public:
@@ -110,15 +112,12 @@ public:
 
 	///@brief call all output_observers
 	void call_output_observers( core::pose::Pose const& pose, JobOP job ) const;
-	void add_output_observer( JobOutputterObserverAP an_observer );
-	void remove_output_observer( JobOutputterObserverAP old_observer );
 	void set_defaults();
 
 private:
 
   evaluation::PoseEvaluatorsOP evaluators_;
-	typedef std::set< JobOutputterObserverAP > JobOutputterObservers;
-	JobOutputterObservers output_observers_;
+
 	//////////////////////////////// end evaluator interface /////////////////////////////////////////
 
 protected:

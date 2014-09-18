@@ -53,7 +53,6 @@
 #define REPORTCYCLES3(c0,m0,c1,m1,c2,m2)        " Cycles:\t" << c0 << "/" << m0 << "\t" << c1 << "/" << m1 << "\t" << c2 << "/" << m2
 #define REPORTCYCLES4(c0,m0,c1,m1,c2,m2,c3,m3)  " Cycles:\t" << c0 << "/" << m0 << "\t" << c1 << "/" << m1 << "\t" << c2 << "/" << m2 << "\t" << c3 << "/" << m3
 
-static numeric::random::RandomGenerator RG(386226);
 
 namespace devel {
 
@@ -156,7 +155,7 @@ namespace devel {
 					(*pose) = (*pose_init);
 
 					vector<Loop> loops_shuffled = loops; // need a list of all loops not just anchored loops
-					numeric::random::random_permutation(loops_shuffled.begin(),loops_shuffled.end(),RG);
+					numeric::random::random_permutation(loops_shuffled.begin(),loops_shuffled.end(),numeric::random::rg());
 
 					//g.setUseNb(false);
 
@@ -242,7 +241,7 @@ namespace devel {
 					pose->energies().show_total_headers( cout ); cout << endl;
 					pose->energies().show_totals( cout ); cout << endl;
 
-					const int k_rand_loop = RG.random_range(0,INT_MAX) % loops.size(); // this is biased towards shorter loops
+					const int k_rand_loop = numeric::random::rg().random_range(0,INT_MAX) % loops.size(); // this is biased towards shorter loops
 
 					const Loop& loop = loops[k_rand_loop];
 
@@ -307,7 +306,7 @@ namespace devel {
     void Protocol::phase_hires() {
       // let's do this in a random order
       vector<Loop> loops_shuffled = loops;
-      numeric::random::random_permutation(loops_shuffled.begin(),loops_shuffled.end(),RG);
+      numeric::random::random_permutation(loops_shuffled.begin(),loops_shuffled.end(),numeric::random::rg());
 
       Mover mover(pose.get());
       core::optimization::AtomTreeMinimizer atm;

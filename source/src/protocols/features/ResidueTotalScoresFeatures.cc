@@ -76,7 +76,7 @@ using basic::database::safely_write_to_database;
 using utility::sql_database::sessionOP;
 using cppdb::statement;
 
-static basic::Tracer TR( "protocols.features.ResidueTotalScoresFeatures" );
+static thread_local basic::Tracer TR( "protocols.features.ResidueTotalScoresFeatures" );
 
 ResidueTotalScoresFeatures::ResidueTotalScoresFeatures() :
 	scfxn_(get_score_function())

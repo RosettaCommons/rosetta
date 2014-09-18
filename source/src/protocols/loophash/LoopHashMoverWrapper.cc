@@ -73,7 +73,7 @@ using std::string;
 using core::scoring::ScoreFunction;
 using core::scoring::ScoreFunctionOP;
 
-static basic::Tracer TR( "protocols.loophash.LoopHashMoverWrapper" );
+static thread_local basic::Tracer TR( "protocols.loophash.LoopHashMoverWrapper" );
 
 std::string
 LoopHashMoverWrapperCreator::keyname() const
@@ -164,7 +164,7 @@ LoopHashMoverWrapper::apply( Pose & pose )
 	Size nstructs = lib_structs.size();
 	TR << "Found " << nstructs << " alternative states in time: " << endtime - starttime << std::endl;
 	//std::random__shuffle( lib_structs.begin(), lib_structs.end() );
-	numeric::random::random_permutation(lib_structs.begin(), lib_structs.end(), numeric::random::RG);
+	numeric::random::random_permutation( lib_structs.begin(), lib_structs.end(), numeric::random::rg() );
 
 	std::vector< std::pair< Real, SilentStructOP > > cen_scored_structs;
 	BOOST_FOREACH( SilentStructOP structure, lib_structs ){

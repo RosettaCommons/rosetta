@@ -152,7 +152,7 @@ public:
 		the_pose = new Pose;
 		core::import_pose::pose_from_pdb( *the_pose, "protocols/moves/test_in.pdb" );
 
-		core::init::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
+		core::init::init_random_generators(1000, "mt19937");
 	}
 
 	void tearDown() {

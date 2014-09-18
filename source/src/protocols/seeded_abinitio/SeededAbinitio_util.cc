@@ -76,7 +76,7 @@
 #include <map>
 #include <algorithm>
 
-static basic::Tracer TR( "seeded_abinitio.SeededAbinitio_util" );
+static thread_local basic::Tracer TR( "seeded_abinitio.SeededAbinitio_util" );
 
 namespace protocols {
 	namespace seeded_abinitio{

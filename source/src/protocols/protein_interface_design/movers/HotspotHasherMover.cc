@@ -45,7 +45,7 @@ using namespace std;
 using namespace core::scoring;
 using namespace protocols::moves;
 
-static basic::Tracer TR( "protocols.protein_interface_design.movers.HotspotHasherMover" );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.HotspotHasherMover" );
 
 std::string
 HotspotHasherMoverCreator::keyname() const

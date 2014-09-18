@@ -51,13 +51,12 @@
 namespace protocols {
 namespace simple_moves {
 
-static numeric::random::RandomGenerator RG(489);  // <- Magic number, do not change it!
 
 using namespace core;
 using namespace fragment;
 using namespace basic;
 
-static basic::Tracer tr("protocols.simple_moves.FragmentMover");
+static thread_local basic::Tracer tr( "protocols.simple_moves.FragmentMover" );
 
 FragmentMover::~FragmentMover() {}
 
@@ -256,12 +255,12 @@ bool ClassicFragmentMover::choose_fragment(
 	for ( Size nfail = 1; nfail <= 100; nfail ++ ) {
 
 		//choose frame
-		frame_num = static_cast< int >( RG.uniform() * frames.size() ) + 1;
+		frame_num = static_cast< int >( numeric::random::rg().uniform() * frames.size() ) + 1;
 		Size N ( frames[ frame_num ]->nr_frags() );
 
 		//choose frag_num in frame
 		if ( N >= 1 ) { // nr_frags is indexed starting at 1
-			frag_num = static_cast< int >( RG.uniform() * N ) + 1;
+			frag_num = static_cast< int >( numeric::random::rg().uniform() * N ) + 1;
 			return true;
 		}
 	}
@@ -286,7 +285,7 @@ ClassicFragmentMover::set_defaults() {
 //		if ( total_insert+frag_length != pose.total_residue() ||  r <= std::exp( -( end_dist / end_bias ) ) ) {
 // the question of total_insert+frag_length == pose.total_residue() doesn't make sense if different frag_lengths are involved
 bool ClassicFragmentMover::end_bias_check( core::pose::Pose const& pose, Size begin ) const {
-	Real r = RG.uniform();
+	Real r = numeric::random::rg().uniform();
 	// classic bias
 	// Real const end_bias ( 60.0 );
 	// Real end_dist = std::abs( begin - ( pose.total_residue() / 2.0 ) );
@@ -351,7 +350,7 @@ bool ClassicFragmentMover::choose_window_start( pose::Pose const& pose, Size, Si
 	Size nfail ( 0 );
 	while ( nfail < 100 ) {
 
-		begin = insert_map_[ static_cast< int >( RG.uniform() * total_insert  ) + 1 ];
+		begin = insert_map_[ static_cast< int >( numeric::random::rg().uniform() * total_insert  ) + 1 ];
 		//tr.Trace << "window start " << begin << std::endl;
 		/// apl -- distance that the center of the fragment window is from the center of the protein
 		/// apl -- SOON

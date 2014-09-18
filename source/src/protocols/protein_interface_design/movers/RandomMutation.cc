@@ -49,8 +49,7 @@ namespace movers {
 using namespace std;
 using namespace core::scoring;
 
-static basic::Tracer TR( "protocols.protein_interface_design.movers.RandomMutation" );
-static numeric::random::RandomGenerator RG( 2111918 );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.RandomMutation" );
 
 std::string
 RandomMutationCreator::keyname() const
@@ -112,7 +111,7 @@ RandomMutation::apply( core::pose::Pose & pose )
 		TR.Warning << "WARNING: No residues are listed as designable." << std::endl;
 		return;
 	}
-	core::Size const random_entry = being_designed[ (core::Size) floor( RG.uniform() * being_designed.size() )+1 ];
+	core::Size const random_entry = being_designed[ (core::Size) floor( numeric::random::rg().uniform() * being_designed.size() )+1 ];
   typedef list< ResidueTypeCOP > ResidueTypeCOPList;
   ResidueTypeCOPList const & allowed( task->residue_task( random_entry ).allowed_residue_types() );
   utility::vector1< AA > allow_temp;
@@ -122,7 +121,7 @@ RandomMutation::apply( core::pose::Pose & pose )
     	allow_temp.push_back( t->aa() );
 	}
 
-  AA const target_aa( allow_temp[ (core::Size) floor( RG.uniform() * allow_temp.size() ) + 1 ] );
+  AA const target_aa( allow_temp[ (core::Size) floor( numeric::random::rg().uniform() * allow_temp.size() ) + 1 ] );
   utility::vector1< bool > allowed_aas;
   allowed_aas.clear();
   allowed_aas.assign( num_canonical_aas, false );

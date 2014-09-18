@@ -28,7 +28,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <mutex>
+#include <atomic>
 #endif
 #endif
 
@@ -83,7 +84,11 @@ private:
 
 private:
 	/// Singleton instance pointer
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< DataLoaderFactory * > instance_;
+#else
 	static DataLoaderFactory * instance_;
+#endif
 
 	LoaderMap dataloader_creator_map_;
 

@@ -68,7 +68,7 @@
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR( "apps.pilot.ralford.membrane_pose_test" );
+static thread_local basic::Tracer TR( "apps.pilot.ralford.membrane_pose_test" );
 
 /// @brief   Top Level Testing for Constructing Membrane Proteins
 /// @details Runs applications with debug tracers contianing expected data. Will eventually

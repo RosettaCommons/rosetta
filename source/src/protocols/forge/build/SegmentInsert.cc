@@ -50,8 +50,7 @@ namespace build {
 
 
 // static for this file
-static numeric::random::RandomGenerator RG( 101381274 ); // magic number, don't change
-static basic::Tracer TR( "protocols.forge.build.SegmentInsert" );
+static thread_local basic::Tracer TR( "protocols.forge.build.SegmentInsert" );
 
 
 /// @brief default constructor
@@ -885,7 +884,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 	} else { // either choice is possible
 
 		if ( insert_connection_scheme == RANDOM_SIDE ) {
-			if ( RG.uniform() < 0.5 ) {
+			if ( numeric::random::rg().uniform() < 0.5 ) {
 				insert_connection_scheme = N;
 			} else {
 				insert_connection_scheme = C;
@@ -967,7 +966,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 				Size const largest_possible_cut_position = keep_known_bb_torsions_at_junctions_ ? interval_.right - 1 : interval_.right;
 
 				if ( flanking_right_nres() > 0 ) {
-					new_cutpoint = RG.random_range( interval_.right - flanking_right_nres(), largest_possible_cut_position );
+					new_cutpoint = numeric::random::rg().random_range( interval_.right - flanking_right_nres(), largest_possible_cut_position );
 				} else { // flanking_right_nres == 0
 					new_cutpoint = interval_.right;
 				}
@@ -975,7 +974,7 @@ void SegmentInsert::modify_impl( Pose & pose ) {
 			}
 			case C: {
 				if ( flanking_left_nres() > 0 ) {
-					new_cutpoint = RG.random_range( interval_.left, interval_.left + flanking_left_nres() - 1 );
+					new_cutpoint = numeric::random::rg().random_range( interval_.left, interval_.left + flanking_left_nres() - 1 );
 				} else {
 					assert( interval_.left > 1 ); // safety, should never happen
 					new_cutpoint = interval_.left - 1;

@@ -101,7 +101,7 @@ namespace pilot{
 namespace momeara{
 
 
-	static basic::Tracer tr("core.scoring.hbonds.HBondDatabase");
+static thread_local basic::Tracer tr( "core.scoring.hbonds.HBondDatabase" );
 
 	void register_options() {
 		OPT(out::prefix);

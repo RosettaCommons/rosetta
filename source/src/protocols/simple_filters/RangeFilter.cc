@@ -33,7 +33,7 @@
 #include <utility/vector1.hh>
 
 //// C++ headers
-static basic::Tracer tr("protocols.filters.RangeFilter");
+static thread_local basic::Tracer tr( "protocols.filters.RangeFilter" );
 
 namespace protocols {
 namespace simple_filters {

@@ -31,6 +31,9 @@
 #include <utility/pointer/ReferenceCount.fwd.hh>
 #include <utility/pointer/owning_ptr.functions.hh>
 #include <utility/pointer/owning_ptr.fwd.hh>
+
+#include <utility/thread/backwards_thread_local.hh>
+
 #include <cassert>
 #include <cstddef>
 #include <iosfwd>
@@ -71,6 +74,7 @@ template <class CharT, class Traits = std::char_traits<CharT> >
 class basic_otstream : public std::basic_ostream<CharT, Traits>, public utility::pointer::ReferenceCount
 {
 protected: /// Inner class declaration
+
 	/// @brief Wrapper class for std::stringbuf
 	template <class _CharT, class _Traits = std::char_traits<_CharT> >
 	class basic_tstringbuf : public std::basic_stringbuf<_CharT, _Traits> {
@@ -102,7 +106,10 @@ public:
 	}
 
 protected:
+
 	/// @brief notification that flush function was called and inner buffer should be outputed.
+	/// This is the mechanims by which the std::basic_stringbuf base class communicates with the
+	/// Tracer and TracerProxy objects.
 	virtual void t_flush(std::string const &) { assert("basic_otstream::t_flush"); };
 
 private:
@@ -156,18 +163,20 @@ class Tracer :  public otstream
 public:
 
 	/// @brief Create Tracer object with given channel and priority
-	Tracer(std::string const & channel="", TracerPriority priority=t_info, bool muted_by_default=false);
+	Tracer(
+		std::string const & channel = "",
+		TracerPriority priority = t_info,
+		bool muted_by_default = false
+	);
 
 	virtual ~Tracer();
 
 	/// @brief re-init using data from another tracer object.
-	void init(Tracer const & tr);
+	void init( Tracer const & tr );
 
 	/// @brief flush tracer buffer and flush buffers of all
 	///        sub-channels ie: Fatal, Error, Warning, Info, Debug, Trace
 	void flush_all_channels();
-
-
 
 	typedef std::ostream * OstreamPointer;
 
@@ -180,22 +189,22 @@ public:
 	/// @brief set ios hook for all tracer io operation.
 	/// @param monitoring_channels_list is space separated list of channels.
 	//static void set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list);
-	static void set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list, bool raw=true);
+	static void set_ios_hook( otstreamOP tr, std::string const & monitoring_channels_list, bool raw=true );
 
 	static std::string const & get_all_channels_string();  // PyRosetta helper function
 
 	/// @brief Is this tracer currently visible?.
-	bool visible() const;
+	bool visible() const { return visible_; }
 
 	/// @brief is this tracer visible, if it used the given priority value?
 	bool visible( int priority ) const;
 
 	/// @brief get/set tracer priority level.
-	int priority() { return priority_; }
-	Tracer & operator ()(int priority);
+	int priority() const { return priority_; }
+	Tracer & operator () (int priority);
 	void priority(int priority);
 
-	std::string const& channel() { return channel_; }
+	std::string const & channel() const { return channel_; }
 
 	/// @brief get/set tracer options - global options for Tracer IO.
 	static TracerOptions & tracer_options() { return tracer_options_; }
@@ -206,20 +215,34 @@ public:
 
 	static void flush_all_tracers();
 
+	/// @brief This function should be invoked after the options system has been
+	/// initialized, so that the visibility for all tracers that have so far been
+	/// constructed and have been waiting for the options system to be initialized
+	/// can now have their visibility calculated.  After this function completes,
+	/// all newly-constructed Tracers will calculate their visibility in their
+	/// constructors.  Visibility is no longer be calculated on a just-in-time
+	/// basis and stored in mutable data members.
+	static void calculate_tracer_visibilities();
+
 public: /// Inner Classes
 	 /// @brief Small inner class acting as a proxy to an object that hold it.
 	class TracerProxy : public otstream // std::ostringstream //
 	{
 	public:
-		TracerProxy(Tracer &tracer, int priority, std::string const &channel) :
-			tracer_(tracer), priority_(priority), channel_(channel), visible_(true), visibility_calculated_(false) {}
+		TracerProxy( Tracer & tracer, int priority, std::string const & channel );
 
 		virtual ~TracerProxy();
 
-		bool visible() const;
+		/// @brief determine the visibility of the proxy
+		void calculate_visibility();
+		/// @brief Adding this function to get around unused class data member warnings; you should
+		/// never have to worry about whether the visibility for a TracerProxy has been calculated.
+		bool visibility_calculated() const { return visibility_calculated_; }
+		bool visible() const { return visible_; }
 
 	protected:
-		virtual void t_flush(std::string const &);
+
+		virtual void t_flush( std::string const & );
 
 	private:
 		Tracer & tracer_;
@@ -230,17 +253,18 @@ public: /// Inner Classes
 		std::string channel_;
 
 		/// @brief is channel visible?
-		mutable bool visible_;
+		bool visible_;
 
 		/// @brief is channel visibility already calculated?
-		mutable bool visibility_calculated_;
+		bool visibility_calculated_;
 	};
 
 	/// @brief channels with predefined priority levels.
 	TracerProxy Fatal, Error, Warning, Info, Debug, Trace;
 
 	/// @brief pre-created objects to hold various ASCII CSI codes, treat them as almost-const's
-	///        Codes below is all Hogwarts-approved magic numbers, so do not modify them. For reference see: http://en.wikipedia.org/wiki/ANSI_escape_code#CSI_codes
+	///        Codes below is all Hogwarts-approved magic numbers, so do not modify them.
+	///        For reference see: http://en.wikipedia.org/wiki/ANSI_escape_code#CSI_codes
 	static CSI_Sequence Reset, Bold, Underline,
 		  Black,   Red,   Green,   Yellow,   Blue,   Magenta,   Cyan,   White,
 		bgBlack, bgRed, bgGreen, bgYellow, bgBlue, bgMagenta, bgCyan, bgWhite;
@@ -251,21 +275,48 @@ protected:
 
 private: /// Functions
 	/// @brief copy constructor.
-	Tracer(Tracer const & tr);
+	Tracer( Tracer const & tr );
 
 
 	/// @brief return true if channel is inside vector, some logic apply.
-	static bool in(utility::vector1<std::string> const &, std::string const channel, bool strict);
+	static
+	bool
+	in( utility::vector1<std::string> const &, std::string const channel, bool strict );
 
 	/// @brief calculate channel priority with hierarchy in mind.
-	static bool calculate_tracer_level(utility::vector1<std::string> const & v, std::string const ch, bool strict, int &res);
+	static
+	bool
+	calculate_tracer_level(
+		utility::vector1<std::string> const & v,
+		std::string const ch,
+		bool strict,
+		int &res
+	);
+
+	/// @brief Tracers must register themselves with the static array of all tracers so
+	/// that they can be flushed en masse if need be.  This function is thread safe.
+	static
+	void
+	register_tracer( Tracer * tracer );
 
 	template <class out_stream>
-	void prepend_channel_name( out_stream& sout, std::string const &str);
+	void prepend_channel_name( out_stream & sout, std::string const &str );
 
 	/// @brief calcualte visibility of the current object depending of the channel name and priority.
-	void calculate_visibility(void) const;
-	static void calculate_visibility(std::string const &channel, int priority, bool &visible, bool &muted, int &mute_level_, bool muted_by_default);
+	void calculate_visibility();
+
+	/// @brief Adding this function to get around unused class data member warnings; you should
+	/// never have to worry about whether the visibility for a Tracer has been calculated.
+	bool visibility_calculated() const { return visibility_calculated_; }
+
+	static void calculate_visibility(
+		std::string const & channel,
+		int    priority,
+		bool & visible,
+		bool & muted,
+		int  & mute_level_,
+		bool   muted_by_default
+	);
 
 	/// @brief Output a message in a manner that is safe if the Tracers/output are poorly initialized.
 	static void safe_output(std::string const &);
@@ -279,13 +330,13 @@ private: /// Data members
 	int priority_;
 
 	/// @brief channel muted priority level (above which level is channel muted), calculated using user suppied -level and -levels options
-	mutable int mute_level_;
+	int mute_level_;
 
 	/// @brief is channel visible?
-	mutable bool visible_;
+	bool visible_;
 
 	/// @brief is channel muted ?
-	mutable bool muted_;
+	bool muted_;
 
 	/// @brief is channel muted by default?
 	bool muted_by_default_;
@@ -294,39 +345,48 @@ private: /// Data members
 	bool begining_of_the_line_;
 
 	/// @brief is channel visibility already calculated?
-	mutable bool visibility_calculated_;
-
-	/// @brief system priority level
-	//mutable int level_;
+	bool visibility_calculated_;
 
 	/// static data members
 	/// @brief link to Tracer like object where all output for selecting channels should go.
-	static otstreamOP &ios_hook();
+	static otstreamOP & ios_hook();
 
 	/// @brief should the ios_hook_ the raw output?
 	static bool & ios_hook_raw_();
 
 	/// @brief list of channels for which outout should be redirected.
-	static utility::vector1<std::string> monitoring_list_;
-
+	static utility::vector1< std::string > monitoring_list_;
 
 	/// @brief global option collection for Tracer IO.
 	static TracerOptions tracer_options_;
 
+	static bool initial_tracers_visibility_calculated_;
 
 	/// @brief global super mute flag that allow to mute all io no matter what.
-	static bool &super_mute_();
+	static bool & super_mute_();
 
 	/// @which Mpi rank is this process
 	static int mpi_rank_;
-
-	/// @brief static collection of all Tracer objects
-	static std::vector< Tracer * > & all_tracers();
 
 	/// @brief T is special function for assign tracer property on the static object.
 	friend Tracer & T(std::string const &, TracerPriority);
 };
 
+/// @brief Simple singleton class to hold the all_tracers_ array, which
+/// otherwise suffers from funky double-construction problems when declared
+/// as a static data member of Tracer.
+class TracerManager {
+public:
+	static TracerManager * get_instance();
+	std::vector< Tracer * > & all_tracers();
+
+private:
+	TracerManager();
+
+private:
+	static TracerManager * instance_;
+	std::vector< Tracer * > all_tracers_;
+};
 
 /// @brief T is special function for assign tracer property on the static object.
 Tracer & T(std::string const & channel, TracerPriority priority=t_info);

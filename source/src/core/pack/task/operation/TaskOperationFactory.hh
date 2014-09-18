@@ -40,7 +40,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -102,7 +103,12 @@ private:
 	static TaskOperationFactory * create_singleton_instance();
 
 private:
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< TaskOperationFactory * > instance_;
+#else
 	static TaskOperationFactory * instance_;
+#endif
+
 	TaskOperationCreatorMap task_operation_creator_map_;
 };
 

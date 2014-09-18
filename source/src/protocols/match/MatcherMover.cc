@@ -51,7 +51,7 @@
 namespace protocols {
 namespace match {
 
-static basic::Tracer tr( "protocols.match.MatcherMover" );
+static thread_local basic::Tracer tr( "protocols.match.MatcherMover" );
 
 
 std::string

@@ -72,7 +72,7 @@
 //#include <basic/options/keys/pick.OptionKeys.gen.hh>
 
 
-static basic::Tracer tr("main");
+static thread_local basic::Tracer tr( "main" );
 
 
 OPT_1GRP_KEY( File, pick, f )

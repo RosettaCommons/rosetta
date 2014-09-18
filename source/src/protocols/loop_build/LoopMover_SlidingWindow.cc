@@ -57,11 +57,10 @@
 namespace protocols {
 namespace loop_build {
 
-static basic::Tracer TR("protocols.loop_build.LoopMover_SlidingWindow");
+static thread_local basic::Tracer TR( "protocols.loop_build.LoopMover_SlidingWindow" );
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
 
-static numeric::random::RandomGenerator RG(10003);
 
 
 LoopMover_SlidingWindow::LoopMover_SlidingWindow() :

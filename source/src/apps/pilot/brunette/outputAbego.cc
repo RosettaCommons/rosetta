@@ -51,7 +51,7 @@ using core::Size;
 using core::Real;
 using core::pose::Pose;
 
-basic::Tracer tr( "ouputAbego" );
+static thread_local basic::Tracer tr( "ouputAbego" );
 
 int main( int argc, char * argv [] ) {
 	try{

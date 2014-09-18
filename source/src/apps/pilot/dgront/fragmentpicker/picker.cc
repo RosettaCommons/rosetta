@@ -38,7 +38,7 @@
 #include <utility/io/mpistream.hh>
 
 
-static basic::Tracer trace("picker");
+static thread_local basic::Tracer trace( "picker" );
 
 using namespace core;
 using namespace core::fragment;

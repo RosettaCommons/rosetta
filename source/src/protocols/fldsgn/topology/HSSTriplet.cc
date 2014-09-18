@@ -26,7 +26,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer TR( "protocols.topology.HSSTriplet" );
+static thread_local basic::Tracer TR( "protocols.topology.HSSTriplet" );
 
 namespace protocols {
 namespace fldsgn {

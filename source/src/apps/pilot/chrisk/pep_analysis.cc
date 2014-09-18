@@ -148,7 +148,6 @@
  using basic::Error;
  using basic::Warning;
 
- static numeric::random::RandomGenerator RG(16621);
 
 using namespace core;
 using namespace protocols;

@@ -60,7 +60,7 @@
 #include <utility/excn/Exceptions.hh>
 
 
-static basic::Tracer tr("pilotapps.flo.EnzdesFixBB");
+static thread_local basic::Tracer tr( "pilotapps.flo.EnzdesFixBB" );
 
 using namespace core;
 
@@ -88,7 +88,7 @@ main( int argc, char * argv [])
 	//#ifndef USEMPI
 	// Reduce read contention between processes by randomizing the order in which structures are processed
 	// Do not randomize, though, if job distribution is controlled by MPI
-	//numeric::random::random_permutation( input_jobs, numeric::random::RG );
+	//numeric::random::random_permutation( input_jobs, numeric::random::rg() );
 	//#endif
 
 	PlainPdbJobDistributor jobdist( input_jobs );

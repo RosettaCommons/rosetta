@@ -47,7 +47,6 @@ using basic::resource_manager::ResourceDescription;
 using basic::resource_manager::ResourceTag;
 using basic::resource_manager::ResourceOptionsTag;
 
-static numeric::random::RandomGenerator RG(1337);
 
 
 LoopsFileFallbackConfiguration::LoopsFileFallbackConfiguration()
@@ -107,7 +106,7 @@ LoopsFileFallbackConfiguration::get_loops_filename_from_options() const
 	{
 		throw utility::excn::EXCN_Msg_Exception("The fallback LoopsFile resource option has no loops files associated with it! Was the option omitted from the command line?");
 	}
-	core::Size const which_loops_file( loops_files.size() == 1 ? 1 : core::Size( RG.random_range(1,( loops_files.size() ))));
+	core::Size const which_loops_file( loops_files.size() == 1 ? 1 : core::Size( numeric::random::rg().random_range(1,( loops_files.size() ))));
 	return loops_files[ which_loops_file ];
 }
 

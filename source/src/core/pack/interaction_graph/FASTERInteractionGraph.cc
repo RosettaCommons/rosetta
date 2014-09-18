@@ -45,7 +45,6 @@ namespace core {
 namespace pack {
 namespace interaction_graph {
 
-static numeric::random::RandomGenerator RG(6425); // <- Magic number, do not change it!!!
 
 /// @brief main constructor, no default or copy constructors
 ///
@@ -425,7 +424,7 @@ void FASTERNode::partial_assign_state_with_lowest_one_body_energy()
 
 void FASTERNode::partial_assign_relaxed_state( Real prob )
 {
-	bool accept = prob < 1.0 ? (RG.uniform() < prob) : true;
+	bool accept = prob < 1.0 ? (numeric::random::rg().uniform() < prob) : true;
 
 	if ( accept ) {
 		partial_assign_state( relaxed_state_ );
@@ -749,7 +748,7 @@ int FASTERNode::get_random_neighbor()
 {
 	if (get_num_incident_edges() == 0 ) return 0;
 
-	int ran_neighbor = ((int) (RG.uniform() * get_num_incident_edges() )) + 1;
+	int ran_neighbor = ((int) (numeric::random::rg().uniform() * get_num_incident_edges() )) + 1;
 	return get_index_of_adjacent_node( ran_neighbor );
 }
 

@@ -46,7 +46,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer TR("protocols.toolbox.PoseMetricCalculators.SaltBridgeCalculator");
+static thread_local basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.SaltBridgeCalculator" );
 
 namespace protocols{
 namespace toolbox {

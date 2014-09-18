@@ -21,7 +21,7 @@
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR("protocols.simple_moves.SwitchResidueTypeSetMover");
+static thread_local basic::Tracer TR( "protocols.simple_moves.SwitchResidueTypeSetMover" );
 #include <utility/tag/Tag.hh>
 
 // AUTO-REMOVED #include <core/chemical/AtomType.hh>

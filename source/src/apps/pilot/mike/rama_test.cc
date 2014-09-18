@@ -62,7 +62,7 @@ using namespace core::scoring;
 
 using utility::vector1;
 
-static basic::Tracer TR("rama_test");
+static thread_local basic::Tracer TR( "rama_test" );
 
 class RamaTestMover : public moves::Mover {
 

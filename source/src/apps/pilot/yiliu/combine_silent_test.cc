@@ -73,7 +73,7 @@ using namespace core;
 using namespace core::chemical;
 using utility::file::FileName;
 using utility::vector1;
-static basic::Tracer TR("apps.pilot.yiliu.silent");
+static thread_local basic::Tracer TR( "apps.pilot.yiliu.silent" );
 
 int
 main( int argc, char* argv [] ) {

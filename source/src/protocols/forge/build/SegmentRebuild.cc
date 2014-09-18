@@ -59,7 +59,6 @@ namespace forge {
 namespace build {
 
 
-static numeric::random::RandomGenerator RG( 313222 ); // magic number, don't change
 
 
 /// @brief default constructor
@@ -611,7 +610,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 
 		// assign cutpoint, -1 ensures the cut happens internal to the range
 		// TODO: consider using sec.struct to preferentially select a cutpoint
-		Size cut_index = RG.random_range( 1, r_types.size() - 1);
+		Size cut_index = numeric::random::rg().random_range( 1, r_types.size() - 1);
 
 		//in order to synchronize all cutting, unfortunately this has to be in this
 		//file

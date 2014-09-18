@@ -84,7 +84,7 @@
 // AUTO-REMOVED #include <utility/io/ozstream.hh>
 //Auto Headers
 
-static basic::Tracer TR("design_symm");
+static thread_local basic::Tracer TR( "design_symm" );
 
 using std::string;
 using ObjexxFCL::string_of;

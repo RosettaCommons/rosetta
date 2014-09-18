@@ -56,7 +56,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("core.mm.MMBondLengthLibrary");
+static thread_local basic::Tracer TR( "core.mm.MMBondLengthLibrary" );
 
 /// @details Construct a MMBondLengthLibrary instant from a filename string and constant access pointer to an MMAtomTypeSet
 MMBondLengthLibrary::MMBondLengthLibrary(

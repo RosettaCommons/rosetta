@@ -70,7 +70,7 @@ using basic::Warning;
 
 using namespace core::membrane;
 
-static basic::Tracer TR( "apps.pilot.ralford.mpframework_integration" );
+static thread_local basic::Tracer TR( "apps.pilot.ralford.mpframework_integration" );
 
 /// Testing Utility Functions /////////////
 core::Size get_ddG( core::pose::Pose & mp_pose, core::pose::Pose & non_mp_pose, core::scoring::ScoreType type ) {

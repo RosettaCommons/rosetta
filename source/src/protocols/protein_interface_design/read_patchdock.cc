@@ -47,8 +47,7 @@ using namespace core::scoring;
 using basic::options::option;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer TR( "protocols.protein_interface_design.read_patchdock" );
-static numeric::random::RandomGenerator RG( 15031972 ); // <- Magic number, do not change it!!!
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.read_patchdock" );
 
 struct Transformation
 {
@@ -231,7 +230,7 @@ PatchdockReader::read_patchdock( std::string & input_tag, std::string & native_t
 		core::Size const actual_last_entry( std::min( to_entry(), number_of_entries ) );
 		TR<<"sampling a number between "<<from_entry()<<" and "<<actual_last_entry<<std::endl;
 
-		patchdock_entry_num_ = ( core::Size ) floor( RG.uniform() * ( actual_last_entry - from_entry() + 1 ) ) + from_entry();
+		patchdock_entry_num_ = ( core::Size ) floor( numeric::random::rg().uniform() * ( actual_last_entry - from_entry() + 1 ) ) + from_entry();
 		runtime_assert( patchdock_entry_num_ <= actual_last_entry );
 		runtime_assert( patchdock_entry_num_ >= from_entry() );
 		std::stringstream ss;

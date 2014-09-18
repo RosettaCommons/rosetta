@@ -43,7 +43,7 @@
 #include <utility/vector0.hh>
 
 
-static basic::Tracer TR("protocols.toolbox.task_operations.JointSequenceOperation");
+static thread_local basic::Tracer TR( "protocols.toolbox.task_operations.JointSequenceOperation" );
 
 namespace protocols{
 namespace toolbox{

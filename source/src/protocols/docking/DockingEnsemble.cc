@@ -56,8 +56,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static numeric::random::RandomGenerator RG(2357892);
-static basic::Tracer TR("protocols.moves.DockingEnsemble");
+static thread_local basic::Tracer TR( "protocols.moves.DockingEnsemble" );
 
 namespace protocols {
 namespace docking {

@@ -48,7 +48,7 @@ namespace evaluation {
 /// @details Auto-generated virtual destructor
 PCA::~PCA() {}
 
-static basic::Tracer tr("protocols.evaluation.PCA",basic::t_info);
+static thread_local basic::Tracer tr( "protocols.evaluation.PCA", basic::t_info );
 
 using namespace core;
 

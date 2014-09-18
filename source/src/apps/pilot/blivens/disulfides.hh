@@ -38,7 +38,7 @@ using namespace core;
 using namespace std;
 using utility::vector1;
 
-static basic::Tracer TR_apps_pilot_blivens_disulfides_hh("apps.pilot.blivens.disulfides");
+static thread_local basic::Tracer TR_apps_pilot_blivens_disulfides_hh( "apps.pilot.blivens.disulfides" );
 
 /*! @brief Determines the distance between two residues.
  *  @param atom The atom to measure from within each residue, eg "CA"

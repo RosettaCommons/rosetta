@@ -48,7 +48,7 @@ namespace core {
 namespace import_pose {
 namespace pose_stream {
 
-static basic::Tracer tr( "core.io.pose_stream" );
+static thread_local basic::Tracer tr( "core.io.pose_stream" );
 
 typedef std::string string;
 typedef utility::file::FileName FileName;
@@ -72,7 +72,7 @@ void LazySilentFilePoseInputStream::fill_pose(
 		);
 	}
 
-	static basic::Tracer tr( "core.io.pose_stream.lazy_silent_file" );
+	basic::Tracer tr( "core.io.pose_stream.lazy_silent_file" );
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -117,7 +117,7 @@ void LazySilentFilePoseInputStream::fill_pose(
 		);
 	}
 
-	static basic::Tracer tr( "core.io.pose_stream.lazy_silent_file" );
+	basic::Tracer tr( "core.io.pose_stream.lazy_silent_file" );
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

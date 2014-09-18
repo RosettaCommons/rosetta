@@ -74,7 +74,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 
-basic::Tracer TR("bcorreia_fold_from_loops");
+static thread_local basic::Tracer TR( "bcorreia_fold_from_loops" );
 
 
 

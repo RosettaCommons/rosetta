@@ -71,7 +71,7 @@ namespace core {
 namespace scoring {
 namespace packstat {
 
-basic::Tracer TRcs("protocols.packstat");
+static thread_local basic::Tracer TRcs( "protocols.packstat" );
 
 typedef numeric::xyzMatrix<PackstatReal> Rot;
 typedef std::pair< numeric::xyzMatrix<PackstatReal>, numeric::xyzMatrix<PackstatReal> > RotPair;

@@ -46,7 +46,7 @@ using namespace core;
 using namespace core::scoring;
 using namespace ObjexxFCL::format;
 
-static basic::Tracer TR( "protocols.simple_filters.ResidueSetChainEnergyFilter" );
+static thread_local basic::Tracer TR( "protocols.simple_filters.ResidueSetChainEnergyFilter" );
 
 protocols::filters::FilterOP
 ResidueSetChainEnergyFilterCreator::create_filter() const { return new ResidueSetChainEnergyFilter; }

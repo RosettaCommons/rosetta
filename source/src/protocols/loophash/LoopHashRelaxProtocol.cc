@@ -82,8 +82,7 @@
 
 
 
-static basic::Tracer TR("LocalHashRelaxProtocol");
-static numeric::random::RandomGenerator RG(7590021);  // <- Magic number, do not change it (and dont try and use it anywhere else)
+static thread_local basic::Tracer TR( "LocalHashRelaxProtocol" );
 
 
 namespace protocols {

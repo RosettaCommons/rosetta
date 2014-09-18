@@ -59,7 +59,7 @@
 
 #include <core/scoring/geometric_solvation/GeometricSolEnergyEvaluator.hh>
 
-static basic::Tracer TR( "core.scoring.geometric_solvation.GeometricSolEnergyEvaluator" );
+static thread_local basic::Tracer TR( "core.scoring.geometric_solvation.GeometricSolEnergyEvaluator" );
 
 using namespace core::scoring::hbonds;
 using namespace ObjexxFCL::format;

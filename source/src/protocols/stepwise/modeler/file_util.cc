@@ -19,7 +19,7 @@
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.modeler.file_util" );
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.file_util" );
 
 namespace protocols {
 namespace stepwise {

@@ -22,7 +22,7 @@
 #include <numeric/xyzVector.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.modeler.rna.checker.RNA_ChainClosableGeometryChecker" );
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.rna.checker.RNA_ChainClosableGeometryChecker" );
 
 namespace protocols {
 namespace stepwise {

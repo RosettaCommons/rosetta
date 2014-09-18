@@ -57,7 +57,7 @@ using namespace basic::options::OptionKeys;
 
 OPT_KEY( String, chain_for_destabilization )
 
-static basic::Tracer TR( "apps.pilot.whitney_specificity_switch.main" );
+static thread_local basic::Tracer TR( "apps.pilot.whitney_specificity_switch.main" );
 
 
 /// General testing code

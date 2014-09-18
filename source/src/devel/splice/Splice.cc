@@ -128,16 +128,16 @@
 #include <protocols/toolbox/superimpose.hh>
 
 namespace devel {
-	namespace splice {
+namespace splice {
 
-	using namespace core::conformation;
+using namespace core::conformation;
 
-		static basic::Tracer TR("devel.splice.Splice");
-		static basic::Tracer TR_ccd("devel.splice.Splice_ccd");
-		static basic::Tracer TR_constraints("devel.splice.Splice_constraints");
-		static basic::Tracer TR_pssm("devel.splice.Splice_pssm");
-		static basic::Tracer TR_min("devel.splice.Splice_min");
-		static numeric::random::RandomGenerator RG(78289);
+static thread_local basic::Tracer TR( "devel.splice.Splice" );
+static thread_local basic::Tracer TR_ccd( "devel.splice.Splice_ccd" );
+static thread_local basic::Tracer TR_constraints( "devel.splice.Splice_constraints" );
+static thread_local basic::Tracer TR_pssm( "devel.splice.Splice_pssm" );
+static thread_local basic::Tracer TR_min( "devel.splice.Splice_min" );
+
 		std::string SpliceCreator::keyname() const {
 			return SpliceCreator::mover_name();
 		}
@@ -338,7 +338,7 @@ namespace devel {
 				}
 				TR << "Found " << dbase_subset_.size() << " entries in the torsion dbase that match the length criteria"
 						<< std::endl;
-				numeric::random::random_permutation(dbase_subset_.begin(), dbase_subset_.end(), RG);
+				numeric::random::random_permutation(dbase_subset_.begin(), dbase_subset_.end(), numeric::random::rg());
 				current_dbase_entry_ = dbase_subset_.begin();
 				load_from_checkpoint();
 				first_pass_ = false;
@@ -361,11 +361,11 @@ namespace devel {
 				if (database_pdb_entry_ == "") //randomize dbase entry
 					{
 							TR << "The dbase_subset size is " << dbase_subset_.size() << std::endl;
-							core::Size entry_no_to_choose = (core::Size) (RG.uniform() * dbase_subset_.size() + 1);
+							core::Size entry_no_to_choose = (core::Size) (numeric::random::rg().uniform() * dbase_subset_.size() + 1);
 							TR << "trying to pick entry " << entry_no_to_choose << std::endl;
 							dbase_entry = dbase_subset_[ entry_no_to_choose ];
 					}
-				//dbase_entry = ( core::Size )( RG.uniform() * dbase_subset_.size() + 1 );
+				//dbase_entry = ( core::Size )( numeric::random::rg().uniform() * dbase_subset_.size() + 1 );
 				else { // look for the pdb_entry name
 					for (core::Size count = 1; count <= dbase_subset_.size(); ++count) {
 						if (torsion_database_[dbase_subset_[count]].source_pdb() == database_pdb_entry_) {
@@ -723,8 +723,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					TR.Debug << source_pose_->residue(i).name1() << " ";
 				}
 				TR << std::endl;
-
-				cut_site = loop_positions_in_source[(core::Size) (RG.uniform() * loop_positions_in_source.size())]
+				cut_site = loop_positions_in_source[(core::Size) (numeric::random::rg().uniform() * loop_positions_in_source.size())]
 						- nearest_to_from + from_res();
 				TR << "Cut site on source PDB: "<< cut_site+ nearest_to_from -from_res()<<std::endl;
 				TR << "Cut placed at: " << cut_site << std::endl;

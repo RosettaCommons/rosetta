@@ -40,7 +40,7 @@ using namespace basic::options;
 using namespace protocols::moves;
 using namespace devel::balanced_kic;
 
-basic::Tracer TR("apps.pilot.kale.monte_carlo");
+static thread_local basic::Tracer TR( "apps.pilot.kale.monte_carlo" );
 
 // Options {{{1
 OPT_2GRP_KEY(File, kale, in, pdb)
@@ -277,7 +277,7 @@ class OutputManager { // {{{1
 			cout << "Pivots:        " << sampler.first_index << "/"
 				                        << sampler.cut_index << "/"
 																<< sampler.last_index << endl;
-			cout << "Random Seed:   " << numeric::random::RG.get_seed() << endl;
+			cout << "Random Seed:   " << numeric::random::rg().get_seed() << endl;
 			cout << "Iterations:    " << sampler.iterations << endl;
 			cout << "Temperature:   " << sampler.temperature << endl;
 

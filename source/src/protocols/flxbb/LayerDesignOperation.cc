@@ -80,7 +80,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core;
 
-static basic::Tracer TR("protocols.flxbb.LayerDesignOperation");
+static thread_local basic::Tracer TR( "protocols.flxbb.LayerDesignOperation" );
 
 namespace protocols {
 namespace flxbb {

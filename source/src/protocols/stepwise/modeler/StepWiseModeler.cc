@@ -52,7 +52,7 @@
 #include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosureChecker.hh>
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
 
-static basic::Tracer TR( "protocols.stepwise.modeler.StepWiseModeler" );
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.StepWiseModeler" );
 
 using namespace core;
 using namespace core::pose;

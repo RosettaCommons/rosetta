@@ -52,7 +52,7 @@ using basic::t_warning;
 using basic::t_info;
 using basic::t_debug;
 using basic::t_trace;
-static basic::Tracer TR("protocols.constraints_additional.SequenceCouplingConstraint");
+static thread_local basic::Tracer TR( "protocols.constraints_additional.SequenceCouplingConstraint" );
 
 SequenceCouplingConstraint::SequenceCouplingConstraint()
 	: Constraint( res_type_constraint ),

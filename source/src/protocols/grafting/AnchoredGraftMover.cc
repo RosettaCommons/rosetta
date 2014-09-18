@@ -63,7 +63,7 @@
 #include <utility/PyAssert.hh>
 #include <utility/tag/Tag.hh>
 
-static basic::Tracer TR("protocols.grafting.AnchoredGraftMover");
+static thread_local basic::Tracer TR( "protocols.grafting.AnchoredGraftMover" );
 namespace protocols {
 namespace grafting {
 	using namespace core::scoring;

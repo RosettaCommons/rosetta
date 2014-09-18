@@ -101,7 +101,7 @@
 namespace protocols{
 namespace enzdes{
 
-static basic::Tracer tr("protocols.enzdes.EnzdesFlexBBProtocol");
+static thread_local basic::Tracer tr( "protocols.enzdes.EnzdesFlexBBProtocol" );
 
 EnzdesFlexBBProtocol::~EnzdesFlexBBProtocol() {}
 

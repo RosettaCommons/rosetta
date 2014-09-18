@@ -45,7 +45,7 @@
 #include <cstdlib>
 #include <algorithm> 
 
-static basic::Tracer TR("membrane_fa_scorefxn");
+static thread_local basic::Tracer TR( "membrane_fa_scorefxn" );
 
 using namespace protocols;
 

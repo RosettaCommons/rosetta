@@ -25,7 +25,7 @@
 // basic headers
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR("apps.pilot.the_developer.my_app");
+static thread_local basic::Tracer TR( "apps.pilot.the_developer.my_app" );
 
 int
 main( int argc, char * argv [] )

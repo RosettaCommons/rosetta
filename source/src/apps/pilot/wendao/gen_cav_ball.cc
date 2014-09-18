@@ -75,7 +75,7 @@ using namespace ObjexxFCL::format;
 using namespace numeric;
 using namespace utility;
 
-basic::Tracer TR("apps.pilot.wendao.gen_cav_ball");
+static thread_local basic::Tracer TR( "apps.pilot.wendao.gen_cav_ball" );
 
 #define MAXCAVN 9
 #define MAXRESD 10.0

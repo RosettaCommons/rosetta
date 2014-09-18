@@ -33,7 +33,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer tr("core.scoring.dssp");
+static thread_local basic::Tracer tr( "core.scoring.dssp" );
 
 namespace core {
 namespace scoring {
@@ -76,7 +76,6 @@ Pairing::generate_reversed() const {
 	p.reverse();
 	return p;
 }
-//static numeric::random::RandomGenerator RG(132238);  // <- Magic number, do not change it, huaah hah ha!
 void read_pairing_list( std::string pairing_file, PairingsList& pairings)
 {
   	utility::io::izstream pairing_stream( pairing_file );

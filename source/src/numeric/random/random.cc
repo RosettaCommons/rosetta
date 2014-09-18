@@ -11,18 +11,12 @@
 /// @file   src/numeric/random/random.cc
 /// @brief  Random number generator system
 /// @author Sergey Lyskov (Sergey.Lyskov@jhu.edu)
-///
-/// @remarks
-///  @li -
-///
-
 
 // Unit headers
 #include <numeric/random/random.hh>
 
 // Package headers
 #include <numeric/random/uniform.hh>
-//#include <numeric/random/ran3.hh>
 #include <numeric/random/mt19937.hh>
 
 // Utility headers
@@ -36,24 +30,34 @@
 namespace numeric {
 namespace random {
 
-RandomGenerator RG(0);
+#ifdef CXX11
+// Use a "thread_local" declaration to ensure that the each thread has its own
+// random_generator pointer.
+thread_local RandomGeneratorOP random_generator( 0 );
+#else
+static RandomGeneratorOP random_generator( 0 );
+#endif
 
-double uniform(void) { return RG.uniform(); }
-double gaussian(void) { return RG.gaussian(); }
-int random_range(int low, int high) { return RG.random_range(low, high); }
+RandomGenerator & rg()
+{
+	// If you want thread saftety mechanisms but don't want to use C++11 (foldit?) then
+	// you'll want to edit this logic.
+	if ( random_generator == 0 ) {
+		random_generator = new RandomGenerator;
+	}
+	return *random_generator;
+}
+
+double uniform() { return rg().uniform(); }
+double gaussian() { return rg().gaussian(); }
+int random_range(int low, int high) { return rg().random_range(low, high); }
 
 
 using namespace std;
 
-vector<RandomGenerator*> &RandomGenerator::allGenerators()
-{
-	static vector<RandomGenerator*> * allGen = new vector<RandomGenerator*>;
-	return *allGen;
-}
-
-
 /// uniform_RG factory
-uniform_RG * createRG(string const & type )
+uniform_RG_OP
+createRG(string const & type )
 {
 	if( type == "standard" ) return new standard_RG();
 	//if( type == "ran3" ) return new ran3_RG();
@@ -63,92 +67,19 @@ uniform_RG * createRG(string const & type )
 	return 0;
 }
 
-
-void RandomGenerator::initializeRandomGenerators(int const _start_seed, RND_RunType run_type,
-												 string const & RGtype)
-{
-	uint32_t start_seed(_start_seed);
-
-	if( run_type == _RND_TestRun_ ) {
-		for(Size i=0; i<allGenerators().size(); i++) {
-			uint32_t offset(allGenerators()[i]->seed_offset);
-			offset += start_seed;
-
-			allGenerators()[i]->generator = createRG(RGtype);
-
-			//allGenerators()[i]->generator->setSeed(allGenerators()[i]->seed_offset+start_seed);
-			///^ ToDo: fix possible int overflow here
-
-			allGenerators()[i]->generator->setSeed(offset);
-		}
-	}
-	else { // Normal run, we use only one generator here then
-		utility::pointer::owning_ptr<uniform_RG> RG = createRG(RGtype);
-		for(Size i=0; i<allGenerators().size(); i++) allGenerators()[i]->generator = RG;
-		RG->setSeed(start_seed);
-	}
-}
-
-void RandomGenerator::saveState(std::ostream & out)
-{
-	out << " " << seed_offset;
-	out << " " << gaussian_iset;
-	// Cast raw bits to int for perfect precision:
-	out << " " << *((uint64_t*) &gaussian_gset);
-	generator->saveState(out);
-	out << "\n";
-}
-
-void RandomGenerator::restoreState(std::istream & in)
-{
-	in >> seed_offset;
-	in >> gaussian_iset;
-	// Cast raw bits from int for perfect precision:
-	uint64_t gset_bits = 0;
-	in >> gset_bits;
-	gaussian_gset = *((double*) &gset_bits);
-	generator->restoreState(in);
-}
-
-void RandomGenerator::saveAllStates(std::ostream & out)
-{
-	for(Size i=0; i<allGenerators().size(); i++) {
-		allGenerators()[i]->saveState(out);
-	}
-}
-
-void RandomGenerator::restoreAllStates(std::istream & in)
-{
-	for(Size i=0; i<allGenerators().size(); i++) {
-		allGenerators()[i]->restoreState(in);
-	}
-}
-
-RandomGenerator::RandomGenerator(int const magicNumber) :
-	seed_offset(magicNumber),
-	gaussian_iset( true ),
-	gaussian_gset( 0 )
-{
-	for ( Size i = 0; i < allGenerators().size(); i++ ) { //< checking for magic number dublicate
-		if ( allGenerators()[i]->seed_offset == magicNumber ) {
-			cerr << "Duplicate magic number in random object initialization! Number:"
-				 << magicNumber << endl;
-			utility_exit();
-		}
-	}
-	allGenerators().push_back(this);
-}
+RandomGenerator::RandomGenerator() :
+	gaussian_iset_( true ),
+	gaussian_gset_( 0 )
+{}
 
 RandomGenerator::~RandomGenerator()
-{
-	for(Size i = 0; i < allGenerators().size(); i++) {
-		if( allGenerators()[i] == this ) {
-			allGenerators().erase(allGenerators().begin() + i);
-			break;
-		}
-	}
-}
+{}
 
+
+double
+RandomGenerator::uniform() {
+	return generator_->getRandom();
+}
 
 /// @brief
 /// SL: this is function is ported from old Rosetta++.
@@ -165,19 +96,19 @@ double RandomGenerator::gaussian()
 	double v1, v2, rsq, fac;
 
 	double rgaussian; // Return value
-	if ( gaussian_iset ) {
+	if ( gaussian_iset_ ) {
 		do {
 			v1 = 2.0f * uniform() - 1.0f;
 			v2 = 2.0f * uniform() - 1.0f;
 			rsq = ( v1 * v1 ) + ( v2 * v2 );
 		} while ( rsq >= 1.0 || rsq == 0.0 );
 		fac = std::sqrt(-(2.0*std::log(rsq)/rsq));
-		gaussian_gset = v1*fac;
+		gaussian_gset_ = v1*fac;
 		rgaussian = v2*fac;
-		gaussian_iset = false;
+		gaussian_iset_ = false;
 	} else {
-		rgaussian = gaussian_gset;
-		gaussian_iset = true;
+		rgaussian = gaussian_gset_;
+		gaussian_iset_ = true;
 	}
 //	std::cout << "NR Gaussian: " << gaussian << std::endl;
 	return rgaussian;
@@ -201,6 +132,45 @@ int RandomGenerator::random_range(int low, int high)
 	return ( static_cast< int >( range * numeric::random::uniform() ) + low );
 }
 
+int RandomGenerator::get_seed() const
+{
+	return generator_->getSeed();
+}
+
+void
+RandomGenerator::set_seed(
+	std::string const & generator_type,
+	int seed
+)
+{
+	generator_ = createRG( generator_type );
+	generator_->setSeed( seed );
+}
+
+
+void RandomGenerator::set_seed( int seed ) {
+	generator_->setSeed(seed);
+}
+
+void RandomGenerator::saveState(std::ostream & out)
+{
+	//out << " " << seed_offset;
+	out << " " << gaussian_iset_;
+	// Cast raw bits to int for perfect precision:
+	out << " " << *((uint64_t*) &gaussian_gset_);
+	generator_->saveState(out);
+	out << "\n";
+}
+
+void RandomGenerator::restoreState(std::istream & in)
+{
+	in >> gaussian_iset_;
+	// Cast raw bits from int for perfect precision:
+	uint64_t gset_bits = 0;
+	in >> gset_bits;
+	gaussian_gset_ = *((double*) &gset_bits);
+	generator_->restoreState(in);
+}
 
 } // namespace random
 } // namespace numeric

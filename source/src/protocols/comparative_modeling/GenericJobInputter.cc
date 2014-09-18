@@ -39,7 +39,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 
-static basic::Tracer tr("protocols.comparative_modeling.GenericJobInputter");
+static thread_local basic::Tracer tr( "protocols.comparative_modeling.GenericJobInputter" );
 
 namespace protocols {
 namespace comparative_modeling {

@@ -86,7 +86,7 @@ OPT_1GRP_KEY( Real, zn_match_symmdock, final_cstscore_limit )
 OPT_1GRP_KEY( Boolean, zn_match_symmdock, require_3H )
 OPT_1GRP_KEY( Boolean, zn_match_symmdock, preserve_input_virtual_atoms )
 
-static basic::Tracer TR("apps.pilot.andrew.zn_match_symmdock");
+static thread_local basic::Tracer TR( "apps.pilot.andrew.zn_match_symmdock" );
 
 
 void initialize_initalizeZNcst(

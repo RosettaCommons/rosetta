@@ -86,8 +86,7 @@ using namespace basic;
 using namespace protocols::moves;
 using namespace protocols;
 
-static numeric::random::RandomGenerator Rg(38621127);
-static basic::Tracer tr("devel.coupled_sidechains.CoupledSidechainProtocol");
+static thread_local basic::Tracer tr( "devel.coupled_sidechains.CoupledSidechainProtocol" );
 
 OPT_1GRP_KEY(Integer,rotamers,traj_interval)
 OPT_1GRP_KEY(Integer,rotamers,score_interval)
@@ -382,7 +381,7 @@ CoupledSidechainProtocol::pass_metropolis(core::Real delta_energy , core::Real l
 
 	core::Real boltz_factor = delta_energy / temperature_;
 	core::Real probability = std::exp( std::min( 40.0, std::max( -40.0, boltz_factor ))) *  last_proposal_density_ratio ;
-	if ( probability < 1 && Rg.uniform() >= probability ) {
+	if ( probability < 1 && numeric::random::rg().uniform() >= probability ) {
 		current_ntrial_++;
 		return false;
 	} else {

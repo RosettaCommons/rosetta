@@ -16,6 +16,7 @@
 
 //unit headers
 #include <protocols/jd2/Job.fwd.hh>
+#include <protocols/jd2/JobOutputterObserver.hh>
 // AUTO-REMOVED #include <protocols/jd2/InnerJob.fwd.hh>
 
 //project headers
@@ -29,6 +30,7 @@
 #include <string>
 #include <list>
 #include <map>
+#include <set>
 
 #include <utility/vector1.hh>
 
@@ -69,11 +71,11 @@ public:
 	///same location
 	friend
 	bool
-	operator==(Job const & a, Job const & b);
+	operator == ( Job const & a, Job const & b );
 
 	friend
 	bool
-	operator!=(Job const & a, Job const & b);
+	operator != ( Job const & a, Job const & b );
 
 
 	virtual
@@ -82,7 +84,7 @@ public:
 
 	friend
 	std::ostream &
-	operator<< ( std::ostream & out, const Job & job );
+	operator << ( std::ostream & out, const Job & job );
 
 
 	///@brief access to inner-job ... use is discouraged - use sparingly!
@@ -173,6 +175,10 @@ public:
 
 	void set_bad(bool value = true);
 
+	void add_output_observer( JobOutputterObserverAP an_observer );
+	void remove_output_observer( JobOutputterObserverAP old_observer );
+	void call_output_observers( core::pose::Pose const & pose );
+
 private:
 	//InnerJobCOP inner_job() const;
 	//bookkeeping data
@@ -198,6 +204,9 @@ private:
 	//Oliver??
 
 	bool completed_;
+
+	typedef std::set< JobOutputterObserverAP > JobOutputterObservers;
+	JobOutputterObservers output_observers_;
 
 }; // Job
 

@@ -31,7 +31,7 @@ namespace protocols {
 namespace frag_picker {
 namespace quota {
 
-static basic::Tracer trSecondaryStructurePool(
+static thread_local basic::Tracer trSecondaryStructurePool(
 		"protocols.frag_picker.quota.SecondaryStructurePool");
 
 /// @brief Creates a pool of a given size and name

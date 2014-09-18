@@ -30,10 +30,9 @@
 #include <utility/file/file_sys_util.hh>
 
 
-static basic::Tracer tr("protocols.iterative.HedgeArchive");
+static thread_local basic::Tracer tr( "protocols.iterative.HedgeArchive" );
 using basic::mem_tr;
 
-static numeric::random::RandomGenerator RG(12983472); // <- Magic number, do not change
 
 using core::Real;
 
@@ -58,7 +57,7 @@ void HedgeArchive::incorporate_batch( core::Size batch_id ) {
 	sorted_decoys.sort();
 	Size ind_max( static_cast< Size > ( sorted_decoys.size()*score_cut_per_batch_ ) );
 	for ( SilentStructs::const_iterator sit = sorted_decoys.begin(); sit != sorted_decoys.end() && ind_max>0; ++sit ) {
-		if ( RG.uniform() < (1-add_fuzzy_) ) {
+		if ( numeric::random::rg().uniform() < (1-add_fuzzy_) ) {
 			set_max_nstruct( static_cast<Size>(1e6) );
 			tr.Debug << "add decoy from batch " << batch_id << std::endl;
 			add_structure_at_position( decoys().end(), sit->second, NULL );
@@ -127,8 +126,8 @@ void HedgeArchive::collect( jd2::archive::Batch const& batch, core::io::silent::
   for ( core::Size i=1; i<=decoys().size(); ++i ) {
     indices[i]=i<=batch.nstruct();
   }
-  numeric::random::random_permutation(indices, RG);
-  numeric::random::random_permutation(indices, RG);
+  numeric::random::random_permutation(indices, numeric::random::rg());
+  numeric::random::random_permutation(indices, numeric::random::rg());
   core::Size i=1;
   start_decoys.reserve( batch.nstruct() );
   for ( Parent::SilentStructs::const_iterator it = decoys().begin(); it != decoys().end(); ++it, ++i ) {

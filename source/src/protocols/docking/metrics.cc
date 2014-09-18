@@ -45,7 +45,7 @@
 #include <protocols/simple_filters/DdgFilter.hh>
 
 
-static basic::Tracer TR("protocols.docking.DockingProtocol.metrics");
+static thread_local basic::Tracer TR( "protocols.docking.DockingProtocol.metrics" );
 
 using namespace core;
 

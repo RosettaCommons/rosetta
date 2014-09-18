@@ -50,7 +50,7 @@
 using namespace core;
 using core::Real;
 
-static basic::Tracer TR( "protocols.stepwise.modeler.align.StepWiseLegacyClusterer" ) ;
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.align.StepWiseLegacyClusterer" );
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 

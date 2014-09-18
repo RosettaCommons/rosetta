@@ -29,7 +29,7 @@
 #include <protocols/antibody/util.hh>
 
 #include <basic/Tracer.hh>
-static basic::Tracer TRC("protocols.antibody.CloseOneCDRLoop");
+static thread_local basic::Tracer TRC( "protocols.antibody.CloseOneCDRLoop" );
 
 namespace protocols {
 namespace antibody {

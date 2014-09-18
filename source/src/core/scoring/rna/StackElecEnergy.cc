@@ -71,7 +71,7 @@ using namespace ObjexxFCL::format;
 ////////////////////////////////////////////////////////////////////////////////////
 
 // C++
-static basic::Tracer tr( "core.scoring.rna.StackElecEnergy" );
+static thread_local basic::Tracer tr( "core.scoring.rna.StackElecEnergy" );
 
 namespace core {
 namespace scoring {

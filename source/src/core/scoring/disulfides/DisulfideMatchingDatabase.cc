@@ -34,7 +34,7 @@
 
 #include <core/kinematics/Jump.hh>
 
-static basic::Tracer TR("core.scoring.disulfides.CentroidMatchingDatabase");
+static thread_local basic::Tracer TR( "core.scoring.disulfides.CentroidMatchingDatabase" );
 
 
 using namespace core;

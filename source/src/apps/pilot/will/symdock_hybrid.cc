@@ -49,7 +49,7 @@
 #include <apps/pilot/will/will_util.ihh>
 #include <utility/vector1.hh>
 
-static basic::Tracer TR("symdock_hybrid");
+static thread_local basic::Tracer TR( "symdock_hybrid" );
 
 
 using core::pose::Pose;

@@ -48,8 +48,8 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.simple_moves.BoltzmannRotamerMover");
-static numeric::random::RandomGenerator RG(415608);
+static thread_local basic::Tracer TR( "protocols.simple_moves.BoltzmannRotamerMover" );
+//static numeric::random::RandomGenerator RG(415608);
 bool compare_values(
 	const std::pair<core::Size, core::Real> &lhs,
 	const std::pair<core::Size, core::Real> &rhs) {
@@ -149,20 +149,20 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 	if( show_packer_task_ ) {
 		TR << *ptask;
 	}
-	
-	if (resnum_ == 0) 
+
+	if (resnum_ == 0)
 		randomize_resnum_ = true;
-		
+
 	if (randomize_resnum_) {
 		utility::vector1< core::Size > move_positions;
 		for(core::Size i = 1; i <= ptask->total_residue(); i++) {
 			if ( ptask->pack_residue(i) || ptask->design_residue(i) )
 				move_positions.push_back(i);
 		}
-		core::Size random_index = RG.random_range(1, move_positions.size());
+		core::Size random_index = numeric::random::rg().random_range(1, move_positions.size());
 		resnum_ = move_positions[random_index];
 	}
-	
+
 	// generate rotamers for position resnum_
 	pose.update_residue_neighbors();
 	ptask->set_bump_check( true );
@@ -182,7 +182,7 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 	utility::vector1< utility::vector1<std::pair<core::Size, core::Real> > > boltzmann_factors;
 	utility::vector1<core::Real> rotamer_partition_funtions;
 	core::Real final_rot_id = 1;
-		
+
 	// if resnum_ is in a protein, do the following:
 	// 1) calculate boltzmann weighted probability for each rotamer
 	// 2) use probabilities to select one rotamer for each amino acid
@@ -190,11 +190,11 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 	// 4) use probabilities to select an amino acid
 	// 5) replace resnum_ with the selected rotamer / amino acid
 	if (pose.residue(resnum_).is_protein()) {
-			
+
 		boltzmann_factors.resize( core::chemical::num_canonical_aas );
 		rotamer_partition_funtions.resize( core::chemical::num_canonical_aas, 0.0 );
 		core::PackerEnergy init_score = one_body_energies[rotset->id_for_current_rotamer()];
-		
+
 		// iterator over each rotamer
 		for(core::Size i = 1; i <= one_body_energies.size(); i++) {
 			core::chemical::AA aa_type = (*rotset->rotamer(i)).type().aa();
@@ -208,7 +208,7 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 
 		utility::vector1<std::pair<core::Size, core::Real> > selected_rotamers;
 		core::Real amino_acid_partition_function = 0.0;
-		
+
 		// select rotamer for each amino acid
 		core::Size aa_count = 0;
 		for(core::Size aa_type = 1; aa_type <= boltzmann_factors.size(); aa_type++) {
@@ -219,13 +219,13 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 				amino_acid_partition_function += boltzmann_factors[aa_type][rot].second;
 			}
 		}
-		
+
 		// select an amino acid and get the id of its selected rotamer
 		core::Real final_aa = select_rotamer(selected_rotamers, amino_acid_partition_function);
 		final_rot_id = selected_rotamers[final_aa].first;
 
 	}
-	
+
 	// if resnum_ is not in a protein, do the following:
 	// 1) calculate boltzmann weighted probability for each rotamer
 	// 2) use probabilities to select one rotamer for each amino acid
@@ -234,7 +234,7 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 		boltzmann_factors.resize( 1 );
 		rotamer_partition_funtions.resize( 1, 0.0 );
 		core::PackerEnergy init_score = one_body_energies[rotset->id_for_current_rotamer()];
-		
+
 		// iterator over rotamers
 		for(core::Size i = 1; i <= one_body_energies.size(); i++) {
 			core::Real boltzmann_factor = std::exp((init_score - one_body_energies[i]) / temperature_);
@@ -243,16 +243,16 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 				boltzmann_factors[1].push_back(std::make_pair(i, boltzmann_factor));
 			}
 		}
-		
+
 		// select a rotamer and get its id
 		core::Real rot = select_rotamer(boltzmann_factors[1], rotamer_partition_funtions[1]);
 		final_rot_id = boltzmann_factors[1][rot].first;
 	}
-	
+
 	// replace resnum_ with the selected rotamer
 	core::conformation::ResidueOP newresidue(  rotset->rotamer( final_rot_id )->clone() );
 	pose.replace_residue (resnum_, *newresidue, false );
-	
+
 }
 
 std::string
@@ -288,7 +288,7 @@ BoltzmannRotamerMover::select_rotamer(
 	}
 	std::sort(boltzmann_probs.begin(), boltzmann_probs.end(), compare_values);
 	core::Real rotnum = 0;
-	core::Real random_prob = RG.uniform();
+	core::Real random_prob = numeric::random::uniform();
 	while ( random_prob > 0 ) {
 		rotnum++;
 		random_prob -= boltzmann_probs[rotnum].second;

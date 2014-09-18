@@ -31,7 +31,7 @@ using core::Size;
 namespace protocols {
 namespace inputter {
 
-static basic::Tracer TR("protocols.inputter.FastaInputter");
+static thread_local basic::Tracer TR( "protocols.inputter.FastaInputter" );
 
 #ifdef USELUA
 void lregister_FastaInputter( lua_State * lstate ) {

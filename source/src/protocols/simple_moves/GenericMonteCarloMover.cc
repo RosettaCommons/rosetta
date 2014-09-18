@@ -63,9 +63,8 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 ///////////////////////////////////////////////////
-static basic::Tracer TR("protocols.simple_moves.GenericMonteCarloMover");
-static basic::Tracer TR_energies("protocols.simple_moves.GenericMonteCarloMover.individual_energies");
-static numeric::random::RandomGenerator mc_RG(61452); // <- Magic number, do not change it!!!
+static thread_local basic::Tracer TR( "protocols.simple_moves.GenericMonteCarloMover" );
+static thread_local basic::Tracer TR_energies( "protocols.simple_moves.GenericMonteCarloMover.individual_energies" );
 
 using namespace core;
 
@@ -663,7 +662,7 @@ GenericMonteCarloMover::boltzmann( Pose & pose, utility::vector1< core::Real > c
 			  Real const boltz_factor = ( last_accepted_score() - provisional_score[1] ) / temperature_;
 			  Real const probability = std::exp( std::min (40.0, std::max(-40.0,boltz_factor)) );
 			  if ( random_nums[1] < probability ) {
-				//if ( mc_RG.uniform() < probability ) {
+				//if ( numeric::random::rg().uniform() < probability ) {
 				  mc_status = MCA_accepted_thermally; // accepted thermally
 			  }
 		  }
@@ -938,7 +937,7 @@ GenericMonteCarloMover::generate_random() const {
 		vec_size = 1;
 	}
 	for ( core::Size i=1; i<=vec_size; ++i ) {
-		randoms.push_back( mc_RG.uniform() );
+		randoms.push_back( numeric::random::rg().uniform() );
 	}
 	return randoms;
 }

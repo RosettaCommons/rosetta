@@ -51,8 +51,7 @@ using namespace numeric;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer TR("protocols.simple_moves.BBGaussianMover");
-static numeric::random::RandomGenerator RG(6233); //Magic Number
+static thread_local basic::Tracer TR( "protocols.simple_moves.BBGaussianMover" );
 
 namespace protocols {
 namespace simple_moves {
@@ -386,12 +385,12 @@ void BBGaussianMover::pivot_range_randomly(Pose &pose, Size i, Size to)
     for (;i<=to;i++)
     {
         Real old_phi_ = pose.phi(i);
-        Real new_phi_ = basic::periodic_range( old_phi_ + RG.gaussian() * big_angle_, 360.0 );
-        //Real new_phi_ = basic::periodic_range( old_phi_ + RG.uniform() * big_angle_, 360.0 );
+        Real new_phi_ = basic::periodic_range( old_phi_ + numeric::random::rg().gaussian() * big_angle_, 360.0 );
+        //Real new_phi_ = basic::periodic_range( old_phi_ + numeric::random::rg().uniform() * big_angle_, 360.0 );
 
         Real old_psi_ = pose.psi(i);
-        Real new_psi_ = basic::periodic_range( old_psi_ + RG.gaussian() * big_angle_, 360.0 );
-        //Real new_psi_ = basic::periodic_range( old_psi_ + RG.uniform() * big_angle_, 360.0 );
+        Real new_psi_ = basic::periodic_range( old_psi_ + numeric::random::rg().gaussian() * big_angle_, 360.0 );
+        //Real new_psi_ = basic::periodic_range( old_psi_ + numeric::random::rg().uniform() * big_angle_, 360.0 );
 
         pose.set_phi( i, new_phi_ );
         pose.set_psi( i, new_psi_ );
@@ -454,7 +453,7 @@ core::Real BBGaussianMover::get_L_move(Pose &pose)
 {
     //gerate a Gaussian dx vector
     Vector delta(n_dof_angle_);
-    for (Size i=1; i<=n_dof_angle_; i++) delta[i] = RG.gaussian();
+    for (Size i=1; i<=n_dof_angle_; i++) delta[i] = numeric::random::rg().gaussian();
 
     //calculate d^2 = delta^2
     Real d2=0.0;
@@ -577,7 +576,7 @@ void BBGaussianMover::apply(Pose &pose)
     }
     else {
         Size left=0;
-        Size ndx = static_cast< int >( RG.uniform()*available_seg_list_.size()+1 );
+        Size ndx = static_cast< int >( numeric::random::rg().uniform()*available_seg_list_.size()+1 );
         left = available_seg_list_[ ndx ].first;
         resnum_ = available_seg_list_[ ndx ].second;
 

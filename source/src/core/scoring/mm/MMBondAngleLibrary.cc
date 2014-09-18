@@ -59,7 +59,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("core.mm.MMBondAngleLibrary");
+static thread_local basic::Tracer TR( "core.mm.MMBondAngleLibrary" );
 
 /// @details Construct a MMBondAngleLibrary instant from a filename string and constant access pointer to an MMAtomTypeSet
 MMBondAngleLibrary::MMBondAngleLibrary(

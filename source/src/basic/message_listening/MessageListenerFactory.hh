@@ -24,8 +24,11 @@
 
 #ifdef MULTI_THREADED
 #ifdef CXX11
+
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
+
 #endif
 #endif
 
@@ -63,8 +66,12 @@ private:
 	static MessageListenerFactory * create_singleton_instance();
 
 private:
-
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< MessageListenerFactory * > instance_;
+#else
 	static MessageListenerFactory * instance_;
+#endif
+
 	std::map<listener_tags, MessageListenerOP> listeners_;
 
 };

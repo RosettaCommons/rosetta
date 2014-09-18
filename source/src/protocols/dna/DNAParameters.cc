@@ -30,7 +30,6 @@
 
 #include <numeric/random/random.hh>
 
-static numeric::random::RandomGenerator RG( 10662001 );
 
 using utility::vector1;
 
@@ -189,13 +188,13 @@ DNAParameters::find_partner( core::Size resid ) const
 core::Size
 DNAParameters::random_basepair() const
 {
-	return unique_basepairs_[ RG.random_range(1, unique_basepairs_.size() ) ];
+	return unique_basepairs_[ numeric::random::rg().random_range(1, unique_basepairs_.size() ) ];
 }
 
 core::Size
 DNAParameters::random_basestep() const
 {
-	return unique_basestep_starts_[ RG.random_range(1, unique_basestep_starts_.size() ) ];
+	return unique_basestep_starts_[ numeric::random::rg().random_range(1, unique_basestep_starts_.size() ) ];
 }
 
 // More or less trying to mimic the functionality of Phil's code in scoring::dna with as

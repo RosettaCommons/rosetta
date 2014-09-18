@@ -46,8 +46,11 @@
 
 #ifdef MULTI_THREADED
 #ifdef CXX11
+
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
+
 #endif
 #endif
 
@@ -333,7 +336,11 @@ private:
 #endif
 
 private:
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< ResourceManager * > instance_;
+#else
 	static ResourceManager * instance_;
+#endif
 
 	typedef std::map< ResourceTag, ResourceOP > ResourcesMap;
 	ResourcesMap resources_;

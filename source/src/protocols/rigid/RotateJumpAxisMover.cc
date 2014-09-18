@@ -45,8 +45,7 @@
 using basic::Error;
 using basic::Warning;
 
-static numeric::random::RandomGenerator RG(11001001); //it means #116, not 201, get it?
-static basic::Tracer TR( "protocols.rigid.RotateJumpAxisMover" );
+static thread_local basic::Tracer TR( "protocols.rigid.RotateJumpAxisMover" );
 
 namespace protocols {
 namespace rigid {
@@ -96,7 +95,7 @@ RotateJumpAxisMover::get_name() const {
 }
 
 core::Angle RotateJumpAxisMover::calc_angle()
-{	return numeric::conversions::radians(lower_angle_ + ((upper_angle_ - lower_angle_) * RG.uniform())); }
+{	return numeric::conversions::radians(lower_angle_ + ((upper_angle_ - lower_angle_) * numeric::random::rg().uniform())); }
 
 ///@details random angle constructor.  rb_jump_num is the number of the jump.  Magic numbers 180 and -179.9999999... maintain the uniform range.  I'm sure there's a better way to get [180, -180) but I can't figure out what it is.
 RotateJumpAxisMover::RotateJumpAxisMover( core::Size const rb_jump_num )

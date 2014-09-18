@@ -38,15 +38,14 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static numeric::random::RandomGenerator RG(54323); // <- Magic number, do not change it!!!
 
 using namespace core;
 
 //using utility::vector1;
 
-basic::Tracer TT( "pilot_apps.jcorn.two_chain_interface", basic::t_trace );
-basic::Tracer TD( "pilot_apps.jcorn.two_chain_interface", basic::t_debug );
-basic::Tracer TI( "pilot_apps.jcorn.two_chain_interface", basic::t_info  );
+static thread_local basic::Tracer TT( "pilot_apps.jcorn.two_chain_interface", basic::t_trace );
+static thread_local basic::Tracer TD( "pilot_apps.jcorn.two_chain_interface", basic::t_debug );
+static thread_local basic::Tracer TI( "pilot_apps.jcorn.two_chain_interface", basic::t_info );
 
 class TwoChainInterface {
 

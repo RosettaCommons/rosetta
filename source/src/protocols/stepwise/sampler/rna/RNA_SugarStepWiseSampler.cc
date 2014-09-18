@@ -31,15 +31,14 @@
 using namespace core;
 using namespace core::chemical::rna;
 using namespace core::pose::rna;
-static basic::Tracer TR( "protocols.sampler.rna.RNA_SugarStepWiseSampler" );
-static numeric::random::RandomGenerator RG( 256199 );  // Magic number
+static thread_local basic::Tracer TR( "protocols.sampler.rna.RNA_SugarStepWiseSampler" );
 
 namespace protocols {
 namespace stepwise {
 namespace sampler {
 namespace rna {
 
-static basic::Tracer TR("protocols.sampler.rna.RNA_SugarStepWiseSampler");
+static thread_local basic::Tracer TR( "protocols.sampler.rna.RNA_SugarStepWiseSampler" );
 //////////////////////////////////////////////////////////////////////////////////////////
 // Constructor
 RNA_SugarStepWiseSampler::RNA_SugarStepWiseSampler(

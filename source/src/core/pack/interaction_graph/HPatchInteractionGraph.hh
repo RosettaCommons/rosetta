@@ -84,12 +84,12 @@ exposed_hydrophobic_data
 };
 
 /// Tracer instance for this file
-static basic::Tracer TR_NODE("core.pack.hpatchig.node");
-static basic::Tracer TR_EDGE("core.pack.hpatchig.edge");
-static basic::Tracer TR_BGNODE("core.pack.hpatchig.bgnode");
-static basic::Tracer TR_BGEDGE("core.pack.hpatchig.bgedge");
-static basic::Tracer TR_HIG("core.pack.hpatchig.ig");
-static basic::Tracer TR_STATS("core.pack.hpatchig.stats");
+static thread_local basic::Tracer TR_NODE( "core.pack.hpatchig.node" );
+static thread_local basic::Tracer TR_EDGE( "core.pack.hpatchig.edge" );
+static thread_local basic::Tracer TR_BGNODE( "core.pack.hpatchig.bgnode" );
+static thread_local basic::Tracer TR_BGEDGE( "core.pack.hpatchig.bgedge" );
+static thread_local basic::Tracer TR_HIG( "core.pack.hpatchig.ig" );
+static thread_local basic::Tracer TR_STATS( "core.pack.hpatchig.stats" );
 
 
 template < typename V, typename E, typename G > class HPatchNode;

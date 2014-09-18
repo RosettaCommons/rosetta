@@ -36,10 +36,9 @@
 
 
 // Construct tracer.
-static basic::Tracer TR("core.chemical.RingConformerSet");
+static thread_local basic::Tracer TR( "core.chemical.RingConformerSet" );
 
 // Construct random-number generator.
-static numeric::random::RandomGenerator RG(28);  // the 2nd perfect number
 
 
 namespace core {
@@ -264,7 +263,7 @@ RingConformerSet::get_lowest_energy_conformer() const
 RingConformer const &
 RingConformerSet::get_random_conformer() const
 {
-	uint i = uint(RG.uniform() * degenerate_conformers_.size() + 1);
+	uint i = uint(numeric::random::rg().uniform() * degenerate_conformers_.size() + 1);
 
 	return degenerate_conformers_[i];
 }

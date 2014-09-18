@@ -52,9 +52,8 @@
 using namespace core;
 using namespace core::scoring;
 
-static basic::Tracer TR( "protocols.enzdes.EnzRepackMinimize" );
+static thread_local basic::Tracer TR( "protocols.enzdes.EnzRepackMinimize" );
 
-static numeric::random::RandomGenerator RG( 150847 ); // <- Magic number, do not change it!!!
 
 namespace protocols {
 namespace enzdes {

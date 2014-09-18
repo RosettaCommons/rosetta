@@ -19,7 +19,7 @@ namespace cycles {
 
 using namespace core;
 
-static basic::Tracer tr ("devel.cycles.ReindexingMover");
+static thread_local basic::Tracer tr( "devel.cycles.ReindexingMover" );
 
 ReindexingMover::ReindexingMover(Size offset) { offset_ = offset; } 
 

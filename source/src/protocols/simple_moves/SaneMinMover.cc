@@ -31,7 +31,7 @@
 namespace protocols {
 namespace simple_moves {
 
-static basic::Tracer TR("protocols.simple_moves.SaneMinMover");
+static thread_local basic::Tracer TR( "protocols.simple_moves.SaneMinMover" );
 
 std::string
 SaneMinMoverCreator::keyname() const {

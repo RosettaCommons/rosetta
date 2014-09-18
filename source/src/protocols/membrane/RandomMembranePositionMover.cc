@@ -37,8 +37,7 @@
 #include <numeric/random/random.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.membrane.RandomMembranePositionMover" );
-static numeric::random::RandomGenerator RG(689729);
+static thread_local basic::Tracer TR( "protocols.membrane.RandomMembranePositionMover" );
 
 namespace protocols {
 namespace membrane {
@@ -123,7 +122,7 @@ RandomPositionRotationMover::apply( Pose & pose ) {
 	// Compute random rotation
 	Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
 	current_normal.normalize();
-	Real theta = 2*RG.uniform() * rot_mag_;
+	Real theta = 2*numeric::random::rg().uniform() * rot_mag_;
 
 	// Apply Uniform Rotation
 	UniformPositionRotationMoverOP rotate = new UniformPositionRotationMover( theta, current_normal, rb_jump_ );
@@ -212,7 +211,7 @@ RandomPositionTranslationMover::apply( Pose & pose ) {
 	// Compute new posiiton based on random translation
 	Vector current_center( pose.conformation().membrane_info()->membrane_center() );
 	Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
-	Vector delta_trans = 2*RG.uniform()-1 * trans_mag_ * current_normal;
+	Vector delta_trans = 2*numeric::random::rg().uniform()-1 * trans_mag_ * current_normal;
 	Vector new_position = current_center + delta_trans;
 
 	// Apply translation

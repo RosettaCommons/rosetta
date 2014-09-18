@@ -49,8 +49,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR( "protocols.loops.loop_closure.kinematic_closure.KinematicWrapper" );
-static numeric::random::RandomGenerator RG(171528);
+static thread_local basic::Tracer TR( "protocols.loops.loop_closure.kinematic_closure.KinematicWrapper" );
 
 namespace protocols {
 namespace loops {
@@ -74,14 +73,14 @@ void KinematicWrapper::apply( core::pose::Pose & pose ){
 		// AS: the previous implementation had a "history bias" towards the N-terminus of the loop, as the start pivot can be anywhere between begin_loop and end_loop-2, while the choice of the end pivot depends on the start pivot 
 		// note that this implementation does not consider length restrictions for the loop, so it probably shouldn't be used for whole-protein ensemble generation -- this should be incorporated before putting the KinematicWrapper in charge of all pivot selections, including those from refine/LoopMover_KIC
 		if ( basic::options::option[ basic::options::OptionKeys::loops::legacy_kic ]() || counter % 2 == 0 ) {
-			alc_start_in_vec = RG.random_range(1,npos-2); //choose a random spot in allowed vector, but not near the end
+			alc_start_in_vec = numeric::random::rg().random_range(1,npos-2); //choose a random spot in allowed vector, but not near the end
 			alc_start = allowed_positions_[alc_start_in_vec]; //store it as start
-			alc_end_in_vec = RG.random_range(alc_start_in_vec+2, npos); //chose a post-start spot in allowed vector
+			alc_end_in_vec = numeric::random::rg().random_range(alc_start_in_vec+2, npos); //chose a post-start spot in allowed vector
 			alc_end = allowed_positions_[alc_end_in_vec]; //store it as end
 		} else {
-			alc_end_in_vec = RG.random_range(3, npos); //chose a a random spot in allowed vector, but not near the start
+			alc_end_in_vec = numeric::random::rg().random_range(3, npos); //chose a a random spot in allowed vector, but not near the start
 			alc_end = allowed_positions_[alc_end_in_vec]; //store it as end
-			alc_start_in_vec = RG.random_range(1,alc_end_in_vec-2); //choose a spot somewhere before the end position
+			alc_start_in_vec = numeric::random::rg().random_range(1,alc_end_in_vec-2); //choose a spot somewhere before the end position
 			alc_start = allowed_positions_[alc_start_in_vec]; //store it as start
 		}
 		core::Size middle_offset = (alc_end - alc_start) / 2; //pick the natural middle between the two

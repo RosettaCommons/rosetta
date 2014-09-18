@@ -62,7 +62,7 @@
 
 
 
-static basic::Tracer TR("bur_nodon_tyr");
+static thread_local basic::Tracer TR( "bur_nodon_tyr" );
 
 using namespace core;
 using namespace protocols;

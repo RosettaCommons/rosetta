@@ -41,7 +41,7 @@
 namespace devel {
 namespace loop_creation {
 
-static basic::Tracer TR( "devel.loop_creation.KICLoopCloser" );
+static thread_local basic::Tracer TR( "devel.loop_creation.KICLoopCloser" );
 
 //****CREATOR METHODS****//
 std::string

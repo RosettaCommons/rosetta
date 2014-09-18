@@ -33,9 +33,8 @@
 #include <map>
 #include <numeric/random/random.hh>
 
-static numeric::random::RandomGenerator RG(239111);  // <- Magic number, do not change it!
 
-static basic::Tracer TR( "protocols.stepwise.monte_carlo.SWA_MoveSelector" );
+static thread_local basic::Tracer TR( "protocols.stepwise.monte_carlo.SWA_MoveSelector" );
 
 using namespace core;
 using namespace core::pose::full_model_info;
@@ -76,9 +75,9 @@ namespace monte_carlo {
 		using namespace core::pose::full_model_info;
 
 		utility::vector1< SWA_Move > swa_moves;
-		if ( RG.uniform() < intermolecular_frequency_ ) {
+		if ( numeric::random::rg().uniform() < intermolecular_frequency_ ) {
 			get_intermolecular_add_and_delete_elements( pose, swa_moves, sample_res ); // docking
-		} else if ( RG.uniform() < from_scratch_frequency_ ){
+		} else if ( numeric::random::rg().uniform() < from_scratch_frequency_ ){
 			get_from_scratch_add_and_delete_elements( pose, swa_moves, sample_res ); // docking
 		}
 		if ( swa_moves.size() == 0  ) get_intramolecular_add_and_delete_elements( pose, swa_moves, sample_res ); // folding

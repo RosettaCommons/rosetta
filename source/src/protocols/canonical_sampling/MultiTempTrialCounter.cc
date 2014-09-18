@@ -31,7 +31,7 @@
 // External headers
 #include <boost/foreach.hpp>
 
-static basic::Tracer tr("protocols.canonical_sampling.MultiTempTrialCounter");
+static thread_local basic::Tracer tr( "protocols.canonical_sampling.MultiTempTrialCounter" );
 
 namespace protocols {
 namespace canonical_sampling {

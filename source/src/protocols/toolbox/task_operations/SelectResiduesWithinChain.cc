@@ -35,7 +35,7 @@
 
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR( "protocols.toolbox.TaskOperations.SelectResiduesWithinChainOperation" );
+static thread_local basic::Tracer TR( "protocols.toolbox.TaskOperations.SelectResiduesWithinChainOperation" );
 
 namespace protocols {
 namespace toolbox {

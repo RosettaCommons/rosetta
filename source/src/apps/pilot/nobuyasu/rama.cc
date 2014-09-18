@@ -35,7 +35,7 @@
 
 #include <fstream>
 
-static basic::Tracer TR("rama");
+static thread_local basic::Tracer TR( "rama" );
 
 typedef core::Size Size;
 typedef std::string String;

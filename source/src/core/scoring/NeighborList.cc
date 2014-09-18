@@ -40,7 +40,7 @@
 namespace core {
 namespace scoring {
 
-static basic::Tracer tr("core.scoring.NeighborList");
+static thread_local basic::Tracer tr( "core.scoring.NeighborList" );
 
 NeighborList::NeighborList(
 	kinematics::DomainMap const & domain_map_in,

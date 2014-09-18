@@ -45,7 +45,7 @@
 //#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR("protocols.antibody.design.AntibodySeqDesignMover");
+static thread_local basic::Tracer TR( "protocols.antibody.design.AntibodySeqDesignMover" );
 
 namespace protocols {
 namespace antibody {

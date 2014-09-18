@@ -105,7 +105,7 @@ public:
 
 		// init/reset seeds in all RG objects we have to do this inside the test it self function since
 		// user could request to run just one single test.
-		core::init::init_random_generators(1101, numeric::random::_RND_TestRun_, "mt19937");
+		core::init::init_random_generators(1101, "mt19937");
 
 		scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 

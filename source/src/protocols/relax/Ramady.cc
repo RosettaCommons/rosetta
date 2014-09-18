@@ -43,7 +43,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR("protocols.relax.Ramady");
+static thread_local basic::Tracer TR( "protocols.relax.Ramady" );
 
 namespace protocols {
 namespace relax {

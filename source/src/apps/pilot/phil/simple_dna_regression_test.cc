@@ -147,7 +147,6 @@
 
 
 
-//static numeric::random::RandomGenerator RG(12323); // <- Magic number, do not change it!!!
 
 using namespace core;
 using namespace protocols;
@@ -170,7 +169,7 @@ using core::import_pose::pose_from_pdb;
 ////////////////////////////////////////////////
 
 
-static basic::Tracer TR( "apps.pilot.phil.simple_dna_regression_test" );
+static thread_local basic::Tracer TR( "apps.pilot.phil.simple_dna_regression_test" );
 
 /// @details  Show details of the internal DNA geometry
 void

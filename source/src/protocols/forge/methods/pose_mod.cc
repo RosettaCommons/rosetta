@@ -48,7 +48,7 @@ namespace forge {
 namespace methods {
 
 
-static basic::Tracer TR( "protocols.forge.methods.pose_mod" );
+static thread_local basic::Tracer TR( "protocols.forge.methods.pose_mod" );
 
 
 /// @brief add cutpoint variants at a specific position

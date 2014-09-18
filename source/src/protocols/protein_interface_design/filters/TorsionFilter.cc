@@ -31,8 +31,8 @@ namespace protocols {
 namespace protein_interface_design{
 namespace filters {
 
-static basic::Tracer TR( "protocols.protein_interface_design.filters.Torsion" );
-static basic::Tracer TR_database( "protocols.protein_interface_design.filters.Torsion_database" );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.Torsion" );
+static thread_local basic::Tracer TR_database( "protocols.protein_interface_design.filters.Torsion_database" );
 
 ///@brief default ctor
 Torsion::Torsion() :

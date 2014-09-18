@@ -23,7 +23,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "core.pose.copydofs.util" );
+static thread_local basic::Tracer TR( "core.pose.copydofs.util" );
 
 namespace core {
 namespace pose {

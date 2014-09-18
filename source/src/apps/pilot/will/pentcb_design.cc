@@ -116,7 +116,7 @@ using protocols::scoring::ImplicitFastClashCheck;
 using core::pose::Pose;
 using core::conformation::ResidueOP;
 
-static basic::Tracer TR("pentcb");
+static thread_local basic::Tracer TR( "pentcb" );
 static core::io::silent::SilentFileData sfd;
 
 

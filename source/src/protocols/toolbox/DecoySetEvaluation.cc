@@ -94,7 +94,7 @@ namespace toolbox {
 
 using namespace ObjexxFCL;
 
-static basic::Tracer tr("protocols.toolbox.DecoySetEvaluation",basic::t_info);
+static thread_local basic::Tracer tr( "protocols.toolbox.DecoySetEvaluation", basic::t_info );
 
 using namespace core;
 using namespace numeric::model_quality; //for rms functions

@@ -42,7 +42,7 @@
 // C++ Headers
 #include <cstdlib>
 
-static basic::Tracer TR( "protocols.docking.membrane.MPDockingMover" );
+static thread_local basic::Tracer TR( "protocols.docking.membrane.MPDockingMover" );
 
 namespace protocols {
 namespace docking {

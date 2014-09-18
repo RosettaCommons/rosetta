@@ -33,7 +33,7 @@
 namespace protocols {
 namespace sparta {
 
-static basic::Tracer tr("protocols.sparta");
+static thread_local basic::Tracer tr( "protocols.sparta" );
 using namespace core;
 
 using namespace std;

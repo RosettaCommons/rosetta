@@ -55,7 +55,7 @@
 // AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/rdc.OptionKeys.gen.hh>
 
-static basic::Tracer tr("core.scoring.ResidualDipolarCouplingRigidSegments");
+static thread_local basic::Tracer tr( "core.scoring.ResidualDipolarCouplingRigidSegments" );
 
 namespace protocols {
 namespace scoring {

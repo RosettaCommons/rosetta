@@ -126,9 +126,8 @@ SilentStructStore::~SilentStructStore() {}
 
 
 
-  static basic::Tracer TR("SilentStructStore");
+static thread_local basic::Tracer TR( "SilentStructStore" );
 
-  static numeric::random::RandomGenerator RG(1931333);  // <- Magic number, do not change it (and dont try and use it anywhere else)
 
   void
   SilentStructStore::clear()
@@ -248,7 +247,7 @@ SilentStructStore::~SilentStructStore() {}
   // @brief GEt a random structure
   SilentStructCOP SilentStructStore::get_struct_random() const{
     if( store_.size() == 0 ) runtime_assert(false);
-    core::Size choice=core::Size( RG.random_range(0,(store_.size()-1)));
+    core::Size choice=core::Size( numeric::random::rg().random_range(0,(store_.size()-1)));
 		runtime_assert( choice < store_.size() );
     return store_[ choice ];
   }

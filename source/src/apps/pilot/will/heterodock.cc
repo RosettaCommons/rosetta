@@ -69,7 +69,7 @@ using utility::vector1;
 using std::endl;
 using core::import_pose::pose_from_pdb;
 
-static basic::Tracer TR("heterodock");
+static thread_local basic::Tracer TR( "heterodock" );
 static core::io::silent::SilentFileData sfd;
 
 OPT_1GRP_KEY( FileVector, heterodock, dockpairs     )

@@ -54,7 +54,7 @@ using basic::Warning;
 namespace protocols {
 namespace ligand_docking {
 
-static basic::Tracer start_from_tracer("protocols.ligand_docking.ligand_options.Start_from", basic::t_debug);
+static thread_local basic::Tracer start_from_tracer( "protocols.ligand_docking.ligand_options.Start_from", basic::t_debug );
 
 std::string
 StartFromCreator::keyname() const
@@ -204,7 +204,7 @@ void StartFrom::apply(core::pose::Pose & pose){
 	}
 	
 	assert(!starting_points_.empty() || !potential_starting_positions_.empty());
-	int const starting_point_index= numeric::random::RG.random_range(1, starting_points_.size());
+	int const starting_point_index= numeric::random::rg().random_range(1, starting_points_.size());
 
 	if(!core::pose::has_chain(chain_,pose))
 	{

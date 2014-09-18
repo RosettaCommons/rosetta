@@ -51,8 +51,8 @@
 
 
 
-static basic::Tracer tr("protocols.noesy_assign.crosspeaks");
-static basic::Tracer tr_labels("protocols.noesy_assign.crosspeaks.labels");
+static thread_local basic::Tracer tr( "protocols.noesy_assign.crosspeaks" );
+static thread_local basic::Tracer tr_labels( "protocols.noesy_assign.crosspeaks.labels" );
 using core::Real;
 using namespace core;
 using namespace basic;

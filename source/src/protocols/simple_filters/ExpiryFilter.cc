@@ -25,7 +25,7 @@ namespace simple_filters {
 using namespace core;
 using namespace core::scoring;
 
-static basic::Tracer TR( "protocols.simple_filters.ExpiryFilter" );
+static thread_local basic::Tracer TR( "protocols.simple_filters.ExpiryFilter" );
 
 protocols::filters::FilterOP
 ExpiryFilterCreator::create_filter() const { return new ExpiryFilter; }

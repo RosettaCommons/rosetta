@@ -47,12 +47,11 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-static numeric::random::RandomGenerator RG(10402);  // Magic Number
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer trProfScore(
+static thread_local basic::Tracer trProfScore(
 		"protocols.frag_picker.scores.ScoreEValuator");
 
 void ScoreEValuator::do_caching(VallChunkOP chunk) {
@@ -85,8 +84,8 @@ bool ScoreEValuator::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) 
 	}
 
 	for (Size i_rand = 1; i_rand <= max_rand_; ++i_rand) {
-		numeric::random::random_permutation(columnsQ.begin(), columnsQ.end(), RG);
-		numeric::random::random_permutation(columnsV.begin(), columnsV.end(), RG);
+		numeric::random::random_permutation(columnsQ.begin(), columnsQ.end(), numeric::random::rg());
+		numeric::random::random_permutation(columnsV.begin(), columnsV.end(), numeric::random::rg());
 		Real s = 0;
 		for (Size i = 1; i <= columnsQ.size(); i++) {
 			s = scores_[columnsQ[i]][columnsV[i]];

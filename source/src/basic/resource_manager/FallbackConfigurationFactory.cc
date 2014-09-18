@@ -30,7 +30,11 @@
 namespace basic {
 namespace resource_manager {
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< FallbackConfigurationFactory * > FallbackConfigurationFactory::instance_( 0 );
+#else
 FallbackConfigurationFactory * FallbackConfigurationFactory::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

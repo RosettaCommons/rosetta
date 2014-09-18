@@ -31,7 +31,7 @@ namespace canonical_sampling {
 using namespace std;
 using protocols::moves::MoverOP;
 
-static basic::Tracer tr( "protocols.canonical_sampling.ProgressBar" );
+static thread_local basic::Tracer tr( "protocols.canonical_sampling.ProgressBar" );
 // }}}1
 
 string ProgressBarObserverCreator::keyname() const { // {{{1

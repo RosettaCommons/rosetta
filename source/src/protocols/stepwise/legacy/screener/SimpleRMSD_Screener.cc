@@ -20,7 +20,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.legacy.screener.SimpleRMSD_Screener" );
+static thread_local basic::Tracer TR( "protocols.stepwise.legacy.screener.SimpleRMSD_Screener" );
 
 namespace protocols {
 namespace stepwise {

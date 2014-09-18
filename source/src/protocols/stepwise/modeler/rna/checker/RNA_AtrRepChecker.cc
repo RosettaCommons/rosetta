@@ -32,7 +32,7 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-static basic::Tracer TR( "protocols.stepwise.modeler.rna.checker.RNA_AtrRepChecker" ) ;
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.rna.checker.RNA_AtrRepChecker" );
 
 namespace protocols {
 namespace stepwise {

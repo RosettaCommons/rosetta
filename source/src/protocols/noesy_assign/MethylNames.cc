@@ -30,14 +30,18 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-static basic::Tracer tr("protocols.noesy_assign.crosspeaks");
+static thread_local basic::Tracer tr( "protocols.noesy_assign.crosspeaks" );
 
 namespace protocols {
 namespace noesy_assign {
 
 using namespace core;
 
-MethylNameLibrary* MethylNameLibrary::instance_( 0 );
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< MethylNameLibrary * > MethylNameLibrary::instance_( 0 );
+#else
+MethylNameLibrary * MethylNameLibrary::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

@@ -47,7 +47,7 @@
 #include <numeric/xyz.functions.hh>
 #include <utility/tag/Tag.hh>
 
-static basic::Tracer TR( "protocols.membrane.SetMembranePositionMover" );
+static thread_local basic::Tracer TR( "protocols.membrane.SetMembranePositionMover" );
 
 namespace protocols {
 namespace membrane {

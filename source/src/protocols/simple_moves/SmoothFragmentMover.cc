@@ -50,7 +50,6 @@ namespace simple_moves {
 /// @details Auto-generated virtual destructor
 FragmentCost::~FragmentCost() {}
 
-static numeric::random::RandomGenerator RG(345);  // <- Magic number, do not change it!
 
 using namespace core;
 
@@ -133,7 +132,7 @@ SmoothFragmentMover::choose_fragment(
 		frame_num = minfrag.first;
 		frag_num = minfrag.second;
 	} else {
-		FragID choice = goodfrag[ static_cast< int >( RG.uniform() * goodfrag.size() )+1 ];
+		FragID choice = goodfrag[ static_cast< int >( numeric::random::rg().uniform() * goodfrag.size() )+1 ];
 		frame_num = choice.first;
 		frag_num = choice.second;
 	}

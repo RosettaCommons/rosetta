@@ -36,7 +36,7 @@
 
 
 
-static basic::Tracer TRG("protocols.antibody.GraftedStemOptimizer");
+static thread_local basic::Tracer TRG( "protocols.antibody.GraftedStemOptimizer" );
 
 namespace protocols {
 namespace antibody {

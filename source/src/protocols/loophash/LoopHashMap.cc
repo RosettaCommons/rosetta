@@ -89,7 +89,7 @@ namespace loophash {
 
 
 
-static basic::Tracer TR("LoopHashMap");
+static thread_local basic::Tracer TR( "LoopHashMap" );
 
 
 

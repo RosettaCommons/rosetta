@@ -64,7 +64,7 @@ using namespace basic::options::OptionKeys;
 OPT_KEY( Integer, central_relax_pdb_num )
 OPT_KEY( String, central_relax_chain )
 
-static basic::Tracer TR( "apps.pilot.whitney_local_backrub.main" );
+static thread_local basic::Tracer TR( "apps.pilot.whitney_local_backrub.main" );
 
 /// General testing code
 int

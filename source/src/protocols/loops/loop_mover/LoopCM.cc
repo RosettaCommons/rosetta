@@ -49,7 +49,7 @@ namespace protocols {
 namespace loops {
 namespace loop_mover {
 
-static basic::Tracer tr( "protocols.loops.loop_mover.LoopCM", basic::t_info );
+static thread_local basic::Tracer tr( "protocols.loops.loop_mover.LoopCM", basic::t_info );
 
 // creator
 std::string

@@ -26,7 +26,7 @@ namespace frag_picker {
 
 using namespace core;
 
-static basic::Tracer trDiversifyDihedralsSelector(
+static thread_local basic::Tracer trDiversifyDihedralsSelector(
                 "protocols.frag_picker.DiversifyDihedralsSelector");
 
 

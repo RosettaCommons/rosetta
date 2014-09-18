@@ -40,7 +40,7 @@ using namespace basic::options::OptionKeys;
 namespace protocols {
 namespace loophash {
 
-	static basic::Tracer TR("BackboneDB");
+static thread_local basic::Tracer TR( "BackboneDB" );
 
 	short RealAngleToShort( core::Real angle ){
 		while( angle > 180.0) angle -= 360.0;

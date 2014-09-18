@@ -76,7 +76,11 @@ PeakAssignmentParameters::create_singleton_instance()
 
 bool PeakAssignmentParameters::options_registered_( false );
 
-PeakAssignmentParameters* PeakAssignmentParameters::instance_( NULL );
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< PeakAssignmentParameters * > PeakAssignmentParameters::instance_( 0 );
+#else
+PeakAssignmentParameters * PeakAssignmentParameters::instance_( 0 );
+#endif
 
 /// @details DANGER DANGER DANGER! NOT IN ANY WAY THREADSAFE!!!
 void
@@ -90,14 +94,23 @@ PeakAssignmentParameters*
 PeakAssignmentParameters::get_nonconst_instance() {
   if ( instance_ ) return instance_;
   instance_ = new PeakAssignmentParameters;
+#if defined CXX11 && defined MULTI_THREADED
+  instance_.load()->set_options_from_cmdline();
+#else
   instance_->set_options_from_cmdline();
+#endif
   return instance_;
 }
 
+/// @details DANGER DANGER DNAGER: Completely thread unsafe.
 void PeakAssignmentParameters::set_cycle( core::Size cycle ) {
 	if ( instance_ ) delete instance_;
 	instance_ = new PeakAssignmentParameters;
-	instance_->set_options_from_cmdline( cycle );
+#if defined CXX11 && defined MULTI_THREADED
+  instance_.load()->set_options_from_cmdline( cycle );
+#else
+  instance_->set_options_from_cmdline( cycle );
+#endif
 }
 
 void PeakAssignmentParameters::register_options() {
@@ -183,7 +196,7 @@ void PeakAssignmentParameters::register_options() {
 }
 
 
-static basic::Tracer tr("protocols.noesy_assign.parameters");
+static thread_local basic::Tracer tr( "protocols.noesy_assign.parameters" );
 
 
 void PeakAssignmentParameters::set_options_from_cmdline( core::Size cycle_selector ) {

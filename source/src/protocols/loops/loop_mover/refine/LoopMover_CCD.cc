@@ -85,8 +85,7 @@ namespace refine {
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
 
-static numeric::random::RandomGenerator RG(84846);
-static basic::Tracer TR("protocols.loops.loop_mover.refine.LoopMover_Refine_CCD");
+static thread_local basic::Tracer TR( "protocols.loops.loop_mover.refine.LoopMover_Refine_CCD" );
 
 Real const CHAINBREAK_SCORE_RAMP_FACTOR = 10./3.;
 

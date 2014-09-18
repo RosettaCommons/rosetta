@@ -53,7 +53,7 @@ namespace scores {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer trRmsScore(
+static thread_local basic::Tracer trRmsScore(
 		"protocols.frag_picker.scores.FragmentCrmsd");
 
 FragmentCrmsd::~FragmentCrmsd() {}

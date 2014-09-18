@@ -53,7 +53,7 @@
 #include <utility/vector1.hh>
 #include <basic/database/open.hh>
 
-static basic::Tracer TR("protocols.relax.CentroidRelax");
+static thread_local basic::Tracer TR( "protocols.relax.CentroidRelax" );
 namespace protocols {
 namespace relax {
     using namespace basic::options;

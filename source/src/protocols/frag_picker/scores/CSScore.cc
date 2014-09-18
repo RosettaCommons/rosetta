@@ -46,7 +46,7 @@ namespace scores {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer trCSScore(
+static thread_local basic::Tracer trCSScore(
 		"protocols.frag_picker.scores.CSScore");
 
 

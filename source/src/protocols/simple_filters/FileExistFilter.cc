@@ -26,7 +26,7 @@ namespace simple_filters {
 using namespace core;
 using namespace core::scoring;
 
-static basic::Tracer TR( "protocols.simple_filters.FileExistFilter" );
+static thread_local basic::Tracer TR( "protocols.simple_filters.FileExistFilter" );
 
 protocols::filters::FilterOP
 FileExistFilterCreator::create_filter() const { return new FileExistFilter; }

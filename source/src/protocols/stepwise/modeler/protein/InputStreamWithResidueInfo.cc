@@ -48,7 +48,7 @@
 using namespace core;
 using core::Real;
 
-static basic::Tracer TR( "protocols.stepwise.modeler.protein.InputStreamWithResidueInfo" );
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.protein.InputStreamWithResidueInfo" );
 
 ///////////////////////////////////////////////////////////////////////////////////
 //

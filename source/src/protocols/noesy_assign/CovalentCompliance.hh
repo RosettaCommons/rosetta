@@ -32,7 +32,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -70,7 +71,13 @@ private:
 #endif
 
 private:
-  static CovalentCompliance* instance_;
+	/// Singleton instance pointer
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< CovalentCompliance * > instance_;
+#else
+	static CovalentCompliance * instance_;
+#endif
+
   FragsToAtomDistOP covalent_distances_;
 };
 

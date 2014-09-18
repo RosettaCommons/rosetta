@@ -119,7 +119,7 @@
 using core::kinematics::Stub;
 using protocols::scoring::ImplicitFastClashCheck;
 
-static basic::Tracer TR("genmatch");
+static thread_local basic::Tracer TR( "genmatch" );
 
 
 inline Real sqr(Real const r) { return r*r; }

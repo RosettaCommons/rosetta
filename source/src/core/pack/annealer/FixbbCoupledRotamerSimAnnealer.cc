@@ -46,13 +46,12 @@
 #include <core/pack/rotamer_set/FixbbRotamerSets.hh>
 
 using namespace ObjexxFCL;
-static numeric::random::RandomGenerator FBBCRSA_RG(63556); // <- Magic number, do not change it!!!
 
 namespace core {
 namespace pack {
 namespace annealer {
 
-static basic::Tracer TR("core.pack.annealer.FixbbCoupledRotamerSimAnnealer",basic::t_info );
+static thread_local basic::Tracer TR( "core.pack.annealer.FixbbCoupledRotamerSimAnnealer", basic::t_info );
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @begin FixbbCoupledRotamerSimAnnealer::FixbbCoupledRotamerSimAnnealer()
@@ -261,7 +260,7 @@ void FixbbCoupledRotamerSimAnnealer::run()
 						++tries;
 						if ( tries > 1000 ) TR.Trace << "tries: " << tries << '\n';
 						// pick a new rotamer at the other position
-						other_rotamer_state = static_cast<int>( other_nrotamers * FBBCRSA_RG.uniform() + 1 );
+						other_rotamer_state = static_cast<int>( other_nrotamers * numeric::random::rg().uniform() + 1 );
 						other_rotamer = other_rotamer_set->rotamer( other_rotamer_state );
 
 						if ( (*matcher)(*new_rotamer, *other_rotamer ) ) {

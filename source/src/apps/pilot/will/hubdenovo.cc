@@ -155,7 +155,7 @@ void register_options() {
 
 static core::io::silent::SilentFileData sfd;
 
-static basic::Tracer TR("hubdenovo");
+static thread_local basic::Tracer TR( "hubdenovo" );
 
 // bool hocstcmp (std::pair<Size,Size> i, std::pair<Size,Size> j) {
 // 	return abs(i.first-i.second) < abs(j.first-j.second);

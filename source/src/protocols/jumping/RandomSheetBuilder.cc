@@ -67,8 +67,7 @@
 //#include <vector>
 
 
-static basic::Tracer tr("protocols.jumping");
-static numeric::random::RandomGenerator RG(1422934);  // <- Magic number, do not change
+static thread_local basic::Tracer tr( "protocols.jumping" );
 
 namespace protocols {
 namespace jumping {
@@ -153,7 +152,7 @@ RandomSheetBuilder::RandomSheetBuilder( core::fragment::SecondaryStructureOP ss,
 //default do nothing always use input_sheet_sizes_ as sheet_sizes_.
 SheetBuilder::SheetTopology RandomSheetBuilder::create_new_random_topol() const
 {
-	Size num_sheets = std::max( 1, static_cast< int >( RG.uniform() * (input_sheet_sizes_.size() + 1) ) );
+	Size num_sheets = std::max( 1, static_cast< int >( numeric::random::rg().uniform() * (input_sheet_sizes_.size() + 1) ) );
 	tr.Debug << "random choice: num_sheets: " << num_sheets << std::endl;
 
 	// generate random sequence from 1 .. N
@@ -162,8 +161,8 @@ SheetBuilder::SheetTopology RandomSheetBuilder::create_new_random_topol() const
 		strand_ids.push_back( i );
 	}
 
-	numeric::random::random_permutation( strand_ids, RG );
-	numeric::random::random_permutation( strand_ids, RG ); //want it really random
+	numeric::random::random_permutation( strand_ids, numeric::random::rg() );
+	numeric::random::random_permutation( strand_ids, numeric::random::rg() ); //want it really random
 
 	tr.Debug << "strand_ids.size(): "
 					 << strand_ids.size() << " ";
@@ -174,7 +173,7 @@ SheetBuilder::SheetTopology RandomSheetBuilder::create_new_random_topol() const
 	Size trials = 20;
 	while ( new_sheet_sizes.size() < num_sheets && trials-- > 0 ) {
 		for ( Size i = 1; i<=strand_ids.size() && new_sheet_sizes.size()<num_sheets; i++ ) {
-			int nr( static_cast< int >( RG.uniform() * input_sheet_sizes_[ strand_ids[ i ] ] ) + 1 );
+			int nr( static_cast< int >( numeric::random::rg().uniform() * input_sheet_sizes_[ strand_ids[ i ] ] ) + 1 );
 			if ( nr > 0 ) {
 				new_sheet_sizes.push_back( nr );
 			}

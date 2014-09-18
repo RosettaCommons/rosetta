@@ -52,39 +52,99 @@ public:
 	RosettaScriptsParser();
 	virtual ~RosettaScriptsParser();
 
+	/// @brief Open the file given by xml_fname and construct a mover representing
+	/// the script contained in that file. If new_input is true, run the APPLY_TO_POSE
+	/// block on the input mover.  If both new_input and guarantee_new_mover are false,
+	/// then the input mover is considered up-to-date and the file is not re-read.
 	virtual
 	bool
-	generate_mover_from_pose( protocols::jd2::JobCOP job, core::pose::Pose & pose, protocols::moves::MoverOP & mover, bool new_input, std::string const xml_fname );
+	generate_mover_from_pose(
+		protocols::jd2::JobCOP job,
+		core::pose::Pose & pose,
+		protocols::moves::MoverOP & mover,
+		bool new_input,
+		std::string const xml_fname,
+		bool guarantee_new_mover = false
+	);
 
-	MoverOP generate_mover_for_protocol(Pose & pose, bool & modified_pose, utility::tag::TagCOP protocol_tag);
+	MoverOP
+	generate_mover_for_protocol(
+		Pose & pose,
+		bool & modified_pose,
+		utility::tag::TagCOP protocol_tag
+	);
 
 	//@brief Temporary hook into parsing machinery with pose reference
-	MoverOP parse_protocol_tag(Pose & pose, utility::tag::TagCOP protocol_tag);
+	MoverOP parse_protocol_tag( Pose & pose, utility::tag::TagCOP protocol_tag );
 
 	//@brief Temporary hook into parsing machinery w/o pose reference.
-	MoverOP parse_protocol_tag(utility::tag::TagCOP protocol_tag);
+	MoverOP parse_protocol_tag( utility::tag::TagCOP protocol_tag );
 
 	void register_factory_prototypes();
-	
-	void instantiate_filter(utility::tag::TagCOP const & tag_ptr, basic::datacache::DataMap & data, protocols::filters::Filters_map & filters, protocols::moves::Movers_map & movers, core::pose::Pose & pose);
-	void instantiate_mover(utility::tag::TagCOP const & tag_ptr, basic::datacache::DataMap & data, protocols::filters::Filters_map & filters, protocols::moves::Movers_map & movers, core::pose::Pose & pose);
-	void instantiate_taskoperation(utility::tag::TagCOP const & tag_ptr, basic::datacache::DataMap & data, protocols::filters::Filters_map & filters, protocols::moves::Movers_map & movers, core::pose::Pose & pose);
 
-	utility::tag::TagCOP find_rosettascript_tag(utility::tag::TagCOP rootTag, const std::string & section_name, const std::string & option_name, const std::string & option_value);
-	
-	void import_tags(std::set< ImportTagName > & import_tag_names, utility::tag::TagCOP & my_tag, basic::datacache::DataMap & data, protocols::filters::Filters_map & filters, protocols::moves::Movers_map & movers, core::pose::Pose & pose);
-	
+	void instantiate_filter(
+		utility::tag::TagCOP const & tag_ptr,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map & filters,
+		protocols::moves::Movers_map & movers,
+		core::pose::Pose & pose
+	);
+
+	void instantiate_mover(
+		utility::tag::TagCOP const & tag_ptr,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map & filters,
+		protocols::moves::Movers_map & movers,
+		core::pose::Pose & pose
+	);
+
+	void instantiate_taskoperation(
+		utility::tag::TagCOP const & tag_ptr,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map & filters,
+		protocols::moves::Movers_map & movers,
+		core::pose::Pose & pose
+	);
+
+	utility::tag::TagCOP
+	find_rosettascript_tag(
+		utility::tag::TagCOP rootTag,
+		const std::string & section_name,
+		const std::string & option_name,
+		const std::string & option_value
+	);
+
+	void import_tags(
+		std::set< ImportTagName > & import_tag_names,
+		utility::tag::TagCOP & my_tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map & filters,
+		protocols::moves::Movers_map & movers,
+		core::pose::Pose & pose
+	);
+
 private:
 
 	static
 	void
-	substitute_variables_in_stream( std::istream & in, utility::options::StringVectorOption const& script_vars, std::stringstream & out);
+	substitute_variables_in_stream(
+		std::istream & in,
+		utility::options::StringVectorOption const& script_vars,
+		std::stringstream & out
+	);
 
 	int
-	process_includes( utility::tag::TagCOP root_tag, int & processed_includes );
+	process_includes(
+		utility::tag::TagCOP root_tag,
+		int & processed_includes
+	);
 
 	void
-	process_include_xml( utility::tag::TagCOP tag, utility::vector0 < utility::tag::TagOP > & tags_from_includes, int & processed_includes );
+	process_include_xml(
+		utility::tag::TagCOP tag,
+		utility::vector0 < utility::tag::TagOP > & tags_from_includes,
+		int & processed_includes
+	);
 
 }; // Parser
 

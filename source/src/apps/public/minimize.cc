@@ -70,8 +70,7 @@ using namespace core::scoring;
 
 using utility::vector1;
 
-static basic::Tracer TR("minimize");
-static numeric::random::RandomGenerator RG(91240391);
+static thread_local basic::Tracer TR( "minimize" );
 
 class Minimize : public moves::Mover {
 

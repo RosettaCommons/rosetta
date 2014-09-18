@@ -74,7 +74,7 @@ using basic::options::option;
 typedef numeric::xyzVector<Real> Vec;
 typedef numeric::xyzMatrix<Real> Mat;
 
-static basic::Tracer TR("dunscores");
+static thread_local basic::Tracer TR( "dunscores" );
 
 
 

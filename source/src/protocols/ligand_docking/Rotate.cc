@@ -49,7 +49,7 @@ using basic::Warning;
 namespace protocols {
 namespace ligand_docking {
 
-static basic::Tracer rotate_tracer("protocols.ligand_docking.ligand_options.rotate", basic::t_debug);
+static thread_local basic::Tracer rotate_tracer( "protocols.ligand_docking.ligand_options.rotate", basic::t_debug );
 
 std::string
 RotateCreator::keyname() const
@@ -202,7 +202,7 @@ void Rotate::rotate_ligand(
 	core::Size chain_begin = pose.conformation().chain_begin(rotate_info_.chain_id);
 	utility::vector1< Ligand_info> ligands= create_random_rotations(grid, mover, pose, chain_begin);
 
-	core::Size const jump_choice=  (core::Size) numeric::random::RG.random_range(1, ligands.size());
+	core::Size const jump_choice=  (core::Size) numeric::random::rg().random_range(1, ligands.size());
 	{
 		pose.set_jump(rotate_info_.jump_id, ligands[jump_choice].jump);
 

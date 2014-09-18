@@ -53,7 +53,7 @@
 namespace core {
 namespace conformation {
 
-static basic::Tracer TR("core.conformation.Residue");
+static thread_local basic::Tracer TR( "core.conformation.Residue" );
 
 /// @details Constructor from residue type; sets coords to ideal values
 /// create a residue of type residue_type_in.

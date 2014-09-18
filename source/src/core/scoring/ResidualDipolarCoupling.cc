@@ -62,7 +62,7 @@
 #include <numeric/random/random.fwd.hh>
 #include <numeric/NumericTraits.hh>
 
-static basic::Tracer tr("core.scoring.ResidualDipolarCoupling");
+static thread_local basic::Tracer tr( "core.scoring.ResidualDipolarCoupling" );
 
 namespace core {
 namespace scoring {

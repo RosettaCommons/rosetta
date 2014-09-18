@@ -77,8 +77,7 @@
 namespace protocols {
 namespace matdes {
 
-static basic::Tracer TR( "protocols.matdes.MatDesPointMutationCalculator" );
-static numeric::random::RandomGenerator RG( 51423 );
+static thread_local basic::Tracer TR( "protocols.matdes.MatDesPointMutationCalculator" );
 using namespace core;
 using namespace chemical;
 using utility::vector1;

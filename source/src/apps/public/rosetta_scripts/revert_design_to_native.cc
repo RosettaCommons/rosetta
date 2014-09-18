@@ -59,7 +59,7 @@ namespace revert_app
 	BooleanOptionKey post_repack( "revert_app:post_repack" );
 }
 
-static basic::Tracer TR( "apps.public.rosetta_scripts.revert_design_to_native" );
+static thread_local basic::Tracer TR( "apps.public.rosetta_scripts.revert_design_to_native" );
 
 ///////////////////////////////////////////////////////////////////////////////
 int

@@ -45,9 +45,8 @@ namespace protocols {
 namespace flexpack {
 namespace annealer {
 
-static numeric::random::RandomGenerator RG(62458); // <- Magic number, do not change it!!!
 
-basic::Tracer TR("protocols.flexpack.annealer.FlexbbSimAnnealer");
+static thread_local basic::Tracer TR( "protocols.flexpack.annealer.FlexbbSimAnnealer" );
 
 FlexbbSimAnnealer::FlexbbSimAnnealer(
 	ObjexxFCL::FArray1D_int & bestrotamer_at_seqpos,
@@ -448,10 +447,10 @@ FlexbbSimAnnealer::pick_a_rotamer(
 	if ( quench() ) {
 		num = numeric::mod<Size>( (outercycle - 1) * inner_loop_iteration_limit + innercycle - 1, accessible_state_list.size() ) + 1;
 		if (num == 1 ) {
-			numeric::random::random_permutation( accessible_state_list, RG );
+			numeric::random::random_permutation( accessible_state_list, numeric::random::rg() );
 		}
 	} else {
-		num = static_cast< Size > ( RG.uniform() * accessible_state_list.size() ) + 1;
+		num = static_cast< Size > ( numeric::random::rg().uniform() * accessible_state_list.size() ) + 1;
 	}
 	return accessible_state_list[ num ];
 }

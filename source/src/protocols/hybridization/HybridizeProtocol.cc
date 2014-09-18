@@ -152,8 +152,7 @@
 
 #include <string>
 
-static basic::Tracer TR( "protocols.hybridization.HybridizeProtocol" );
-static numeric::random::RandomGenerator RG(541938);
+static thread_local basic::Tracer TR( "protocols.hybridization.HybridizeProtocol" );
 
 namespace protocols {
 namespace hybridization {
@@ -296,7 +295,7 @@ HybridizeProtocol::init() {
 
 	if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
 		utility::vector1< std::string > cst_files = option[ OptionKeys::constraints::cst_fa_file ]();
-		core::Size choice = core::Size( RG.random_range( 1, cst_files.size() ) );
+		core::Size choice = core::Size( numeric::random::rg().random_range( 1, cst_files.size() ) );
 		fa_cst_fn_ = cst_files[choice];
 		TR.Info << "Fullatom Constraint choice: " << fa_cst_fn_ << std::endl;
 	}
@@ -525,8 +524,8 @@ HybridizeProtocol::initialize_and_sample_loops(
 
 		// setup fragment movers
 		protocols::simple_moves::ClassicFragmentMoverOP frag3mover, frag9mover;
-		core::fragment::FragSetOP frags_small = fragments_small_[RG.random_range(1,fragments_small_.size())];
-		core::fragment::FragSetOP frags_big = fragments_big_[RG.random_range(1,fragments_big_.size())];
+		core::fragment::FragSetOP frags_small = fragments_small_[numeric::random::rg().random_range(1,fragments_small_.size())];
+		core::fragment::FragSetOP frags_big = fragments_big_[numeric::random::rg().random_range(1,fragments_big_.size())];
 		TR.Info << "FRAGMENTS small max length: " << frags_small->max_frag_length() << std::endl;
 		TR.Info << "FRAGMENTS big max length: " << frags_big->max_frag_length() << std::endl;
 		frag3mover = new protocols::simple_moves::ClassicFragmentMover( frags_small, mm_loop );
@@ -711,13 +710,13 @@ void HybridizeProtocol::pick_starting_template(core::Size & initial_template_ind
 		for (Size i=1; i<=starting_templates_.size(); ++i) {
 			weighted_sampler.add_weight(template_weights_[starting_templates_[i]]);
 		}
-		Size k = weighted_sampler.random_sample(RG);
+		Size k = weighted_sampler.random_sample(numeric::random::rg());
 		initial_template_index = starting_templates_[k];
 	}
 	else {
 		numeric::random::WeightedSampler weighted_sampler;
 		weighted_sampler.weights(template_weights_);
-		initial_template_index = weighted_sampler.random_sample(RG);
+		initial_template_index = weighted_sampler.random_sample(numeric::random::rg());
 	}
 	Size cluster_id = template_clusterID_[initial_template_index];
 
@@ -762,8 +761,8 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	check_and_create_fragments( pose );
 
 	// select random fragments if given variable lengths
-	core::fragment::FragSetOP frags_small = fragments_small_[RG.random_range(1,fragments_small_.size())];
-	core::fragment::FragSetOP frags_big = fragments_big_[RG.random_range(1,fragments_big_.size())];
+	core::fragment::FragSetOP frags_small = fragments_small_[numeric::random::rg().random_range(1,fragments_small_.size())];
+	core::fragment::FragSetOP frags_big = fragments_big_[numeric::random::rg().random_range(1,fragments_big_.size())];
 	TR.Info << "FRAGMENTS small max length: " << frags_small->max_frag_length() << std::endl;
 	TR.Info << "FRAGMENTS big max length: " << frags_big->max_frag_length() << std::endl;
 
@@ -931,7 +930,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		// An empty string is treated as equivalent to "NONE"
 
 		// fold tree hybridize
-		if (RG.uniform() < stage1_probability_) {
+		if (numeric::random::rg().uniform() < stage1_probability_) {
 			for ( core::Size repeatstage1=0; repeatstage1 < jump_move_repeat_; ++repeatstage1 ) {
 				std::string cst_fn = template_cst_fn_[initial_template_index];
 
@@ -1255,7 +1254,7 @@ HybridizeProtocol::expand_domains_to_full_length(utility::vector1 < utility::vec
 						cut_options.push_back(ires);
 					}
 				}
-				Size cut = cut_options[RG.random_range(1,cut_options.size())];
+				Size cut = cut_options[numeric::random::rg().random_range(1,cut_options.size())];
 
 				domains[idomain][iloop].set_stop(cut-1);
 				domains[jdomain][jloop].set_start(cut);

@@ -54,7 +54,7 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-static basic::Tracer tr("core.scoring.constraints.ConstraintsIO");
+static thread_local basic::Tracer tr( "core.scoring.constraints.ConstraintsIO" );
 
 namespace core {
 namespace scoring {
@@ -92,7 +92,12 @@ ConstraintFactory & ConstraintIO::get_cst_factory(void) {
 	return * ConstraintFactory::get_instance();
 }
 
-ConstraintIO* ConstraintIO::instance_ = 0;
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< ConstraintIO * > ConstraintIO::instance_( 0 );
+#else
+ConstraintIO * ConstraintIO::instance_( 0 );
+#endif
+
 func::FuncFactory ConstraintIO::func_factory_;
 //ConstraintFactory ConstraintIO::cst_factory_;
 

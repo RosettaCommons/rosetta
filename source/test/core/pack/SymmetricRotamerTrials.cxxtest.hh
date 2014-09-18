@@ -111,7 +111,7 @@ void do_symmetric_rotamer_trials(bool /*with_minimization*/, test::UTracer & UT)
 
 	// init/reset seeds in all RG objects we have to do this inside the test it self function since
 	// user could request to run just one singel test.
-	core::init::init_random_generators(1101, numeric::random::_RND_TestRun_, "mt19937");
+	core::init::init_random_generators(1101, "mt19937");
 
 	SymmetricScoreFunction scorefxn;
 	scorefxn.set_weight( fa_atr, 0.80 );

@@ -80,7 +80,7 @@
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer TR("main");
+static thread_local basic::Tracer TR( "main" );
 
 
 class ThisApplication  {

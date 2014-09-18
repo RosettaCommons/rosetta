@@ -27,7 +27,7 @@ using core::pose::sort_pose_by_score;
 using namespace protocols::stepwise::modeler;
 using namespace protocols::stepwise::modeler::rna;
 
-static basic::Tracer TR( "protocols.stepwise.legacy.modeler.rna.StepWiseRNA_PoseSelection" ) ;
+static thread_local basic::Tracer TR( "protocols.stepwise.legacy.modeler.rna.StepWiseRNA_PoseSelection" );
 
 namespace protocols {
 namespace stepwise {

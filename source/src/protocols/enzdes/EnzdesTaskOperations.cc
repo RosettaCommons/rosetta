@@ -76,7 +76,7 @@
 namespace protocols{
 namespace enzdes {
 
-static basic::Tracer tr("protocols.enzdes.EnzdesTaskOperations");
+static thread_local basic::Tracer tr( "protocols.enzdes.EnzdesTaskOperations" );
 
 SetCatalyticResPackBehavior::SetCatalyticResPackBehavior():
 	fix_catalytic_aa_(basic::options::option[basic::options::OptionKeys::enzdes::fix_catalytic_aa]),

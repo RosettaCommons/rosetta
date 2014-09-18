@@ -31,7 +31,11 @@ namespace saxs {
 
 utility::vector1<Real> SinXOverX::sin_x_over_x_;
 
-SinXOverX* SinXOverX::instance_( 0 );
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< SinXOverX * > SinXOverX::instance_( 0 );
+#else
+SinXOverX * SinXOverX::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11
@@ -58,9 +62,7 @@ SinXOverX::create_singleton_instance()
 }
 
 SinXOverX::SinXOverX() {
-
     fill_sin_x_over_x_table();
-    instance_ = this;
 }
 
 void SinXOverX::fill_sin_x_over_x_table() {

@@ -1119,6 +1119,7 @@ Options = Option_Group( '',
 		Option( 'delete_old_poses', 'Boolean', default = 'false', desc = 'Delete poses after they have been processed.  For jobs that process a large number of structures, the memory consumed by old poses is wasteful.', ),# NOTE: This option should probably be used by default, however it may have issues with special uses of the job distributor.  Once these issues are resolved, either enable it by default, or just do it with out asking.
 		Option( 'resource_definition_files', 'FileVector', desc = 'Specify all the jobs and all of their resources to the new JD2ResourceManager system', ),
 		Option( 'checkpoint_file', 'File', desc='write/read nstruct-based checkpoint files to the desired filename.' ),
+		Option( 'nthreads', 'Integer', desc='The maximum number of threads to run at once using the MultiThreadedJobDistributor' ),
 	), # jd2
 
 	# score function settings  -----------------------------------------------------------
@@ -4551,7 +4552,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 ## --------------------------  FRAGMENT PICKING --------------
 	Option_Group( 'frags',
-#		Option( 'j', 'Integer', desc='Number of threads to use'),
+		Option( 'j', 'Integer', desc='Number of threads to use'),
 		Option( 'filter_JC', 'Boolean',
 			desc='Filter J-coupling values in the dynamic range ', default='false'),
 

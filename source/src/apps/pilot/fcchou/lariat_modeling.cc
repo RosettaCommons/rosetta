@@ -76,7 +76,6 @@ using namespace basic::options;
 using numeric::conversions::radians;
 using numeric::conversions::degrees;
 
-static numeric::random::RandomGenerator RG(5075);  // <- Magic number, do not change it!
 
 utility::vector1 < utility::vector1 < Real > >
 get_torsion_set( Pose const & pose )
@@ -140,10 +139,10 @@ update_torsion_set( utility::vector1 < utility::vector1 < Real > > & torsion_set
 		for (Size j = 1; j <= torsion_set[i].size(); ++j) {
 			if (i == 1 && (j == 1 || j == 2) )  {
 				continue;
-			} else if ( j == 6 && RG.uniform() < 0.2) {
-				torsion_set[i][j] = (RG.uniform() < 0.5) ? 82 : 130;
+			} else if ( j == 6 && numeric::random::rg().uniform() < 0.2) {
+				torsion_set[i][j] = (numeric::random::rg().uniform() < 0.5) ? 82 : 130;
 			} else {
-				torsion_set[i][j] += RG.gaussian() * stdev;
+				torsion_set[i][j] += numeric::random::rg().gaussian() * stdev;
 			}
 			if ( torsion_set[i][j] > 180 ) torsion_set[i][j] -= 360;
 			if ( torsion_set[i][j] < -180 ) torsion_set[i][j] += 360;
@@ -227,7 +226,7 @@ lariat_modeling ()
 			update_torsion_set( torsion_set_new, stdev );
 			apply_torsion_set(pose, torsion_set_new);
 			score_new = (*scorefxn) (pose);
-			if (score_new < score || RG.uniform() < exp( (score - score_new) / kT) ){
+			if (score_new < score || numeric::random::rg().uniform() < exp( (score - score_new) / kT) ){
 				score = score_new;
 				torsion_set = torsion_set_new;
 				++n_accept;
@@ -252,7 +251,7 @@ lariat_modeling ()
 		update_torsion_set( torsion_set_new, stdev );
 		apply_torsion_set(pose, torsion_set_new);
 		score_new = (*scorefxn) (pose);
-		if (score_new < score || RG.uniform() < exp( (score - score_new) / kT) ){
+		if (score_new < score || numeric::random::rg().uniform() < exp( (score - score_new) / kT) ){
 			++n_accept;
 			score = score_new;
 			torsion_set = torsion_set_new;

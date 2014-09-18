@@ -61,7 +61,7 @@
 namespace protocols {
 namespace simple_moves {
 
-static basic::Tracer TR("protocols.simple_moves.CutChainMover");
+static thread_local basic::Tracer TR( "protocols.simple_moves.CutChainMover" );
 
 std::string
 CutChainMoverCreator::keyname() const

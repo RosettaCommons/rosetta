@@ -91,7 +91,7 @@ using namespace ObjexxFCL::format;
 namespace devel {
 namespace dna {
 
-basic::Tracer TR("devel.dna.util");
+static thread_local basic::Tracer TR( "devel.dna.util" );
 
 ///////////////////////////////////////////////////////////////////////////////
 void

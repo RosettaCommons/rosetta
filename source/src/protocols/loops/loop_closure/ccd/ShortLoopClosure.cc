@@ -73,9 +73,8 @@ namespace ccd {
 using namespace core;
 using namespace pose;
 
-static basic::Tracer tr("protocols.loops.loop_closure.ccd.ShortLoopClosure");
+static thread_local basic::Tracer tr( "protocols.loops.loop_closure.ccd.ShortLoopClosure" );
 
-//static numeric::random::RandomGenerator RG(1341412);  // <- Magic number, do not change it!
 
 //c'stor
 ShortLoopClosure::ShortLoopClosure(

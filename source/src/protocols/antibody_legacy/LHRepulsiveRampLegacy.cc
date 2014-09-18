@@ -76,7 +76,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.antibody.LHRepulsiveRampLegacy");
+static thread_local basic::Tracer TR( "protocols.antibody.LHRepulsiveRampLegacy" );
 
 
 using namespace core;

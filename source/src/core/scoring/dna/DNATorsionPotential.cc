@@ -51,7 +51,7 @@
 #include <basic/Tracer.hh>
 #include <numeric/conversions.hh>
 #include <iostream>
-static basic::Tracer tr( "core.scoring.dna.DNATorsionPotential" );
+static thread_local basic::Tracer tr( "core.scoring.dna.DNATorsionPotential" );
 
 namespace core {
 namespace scoring {

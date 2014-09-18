@@ -18,7 +18,7 @@
 #include <core/pose/util.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.screener.TagDefinition" );
+static thread_local basic::Tracer TR( "protocols.stepwise.screener.TagDefinition" );
 
 namespace protocols {
 namespace stepwise {

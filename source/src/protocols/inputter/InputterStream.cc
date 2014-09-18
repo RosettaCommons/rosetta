@@ -23,7 +23,7 @@
 namespace protocols {
 namespace inputter {
 
-static basic::Tracer TR("protocols.inputter.InputterStream");
+static thread_local basic::Tracer TR( "protocols.inputter.InputterStream" );
 
 #ifdef USELUA
 void lregister_InputterStream( lua_State * lstate ) {

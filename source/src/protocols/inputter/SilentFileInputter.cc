@@ -25,7 +25,7 @@
 namespace protocols {
 namespace inputter {
 
-static basic::Tracer TR("protocols.inputter.SilentFileInputter");
+static thread_local basic::Tracer TR( "protocols.inputter.SilentFileInputter" );
 
 #ifdef USELUA
 void lregister_SilentFileInputter( lua_State * lstate ) {

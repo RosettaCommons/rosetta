@@ -46,7 +46,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
-static basic::Tracer TR("gpu_linker");
+static thread_local basic::Tracer TR( "gpu_linker" );
 
 
 OPT_1GRP_KEY( Integer, gpu, numthreads_per_workunit )

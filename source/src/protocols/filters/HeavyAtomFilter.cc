@@ -34,7 +34,7 @@
 namespace protocols {
 namespace filters {
 
-static basic::Tracer heavy_atom_tracer( "protocols.filters.HeavyAtomFilter" );
+static thread_local basic::Tracer heavy_atom_tracer( "protocols.filters.HeavyAtomFilter" );
 
 bool
 HeavyAtomFilter::apply( core::pose::Pose const & pose ) const {

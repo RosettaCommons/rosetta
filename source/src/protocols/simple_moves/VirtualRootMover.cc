@@ -33,7 +33,7 @@
 namespace protocols {
 namespace simple_moves {
 
-static basic::Tracer TR("protocols.simple_moves.VirtualRootMover");
+static thread_local basic::Tracer TR( "protocols.simple_moves.VirtualRootMover" );
 
 std::string
 VirtualRootMoverCreator::keyname() const

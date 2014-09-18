@@ -88,7 +88,7 @@ PattersonCorrEnergyCreator::score_types_for_method() const {
 inline core::Real SQ( core::Real N ) { return N*N; }
 
 using namespace core::scoring::methods;
-static basic::Tracer TR("core.scoring.electron_density.PattersonCorrEnergy");
+static thread_local basic::Tracer TR( "core.scoring.electron_density.PattersonCorrEnergy" );
 
 methods::LongRangeEnergyType
 PattersonCorrEnergy::long_range_type() const { return patterson_corr_energy; }

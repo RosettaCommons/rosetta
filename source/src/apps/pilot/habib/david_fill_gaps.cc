@@ -70,7 +70,7 @@ using namespace core::scoring;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer TR( "apps.pilot.david_recompute_score_and_rmsd.main" );
+static thread_local basic::Tracer TR( "apps.pilot.david_recompute_score_and_rmsd.main" );
 
 
 OPT_KEY( String, fa_file )

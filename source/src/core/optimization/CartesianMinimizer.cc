@@ -47,7 +47,7 @@ using namespace ObjexxFCL::format;
 namespace core {
 namespace optimization {
 
-static basic::Tracer TR("core.optimization.CartesianMinimizer");
+static thread_local basic::Tracer TR( "core.optimization.CartesianMinimizer" );
 
 CartesianMinimizer::CartesianMinimizer()
 {}
@@ -122,7 +122,7 @@ CartesianMinimizer::run(
 
 	// we may not really need all these extra function evaluations
 	// good for diagnostics though
-	static basic::Tracer core_optimize( "core.optimize",  basic::t_debug);
+	basic::Tracer core_optimize( "core.optimize", basic::t_debug );
 	core_optimize << "CartesianMinimizer::run: ndofs= " << min_map.ndofs() <<
 		" start_score: " << F(12,3,start_score) <<
 		" start_func: "  << F(12,3,start_func ) <<

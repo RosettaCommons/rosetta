@@ -70,7 +70,7 @@
 //tracers
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR("apps.pilot.rjha");
+static thread_local basic::Tracer TR( "apps.pilot.rjha" );
 
 //local options
 namespace local{

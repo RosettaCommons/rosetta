@@ -105,8 +105,7 @@
 
 #include <basic/prof.hh>
 
-static numeric::random::RandomGenerator RG(62331900);
-basic::Tracer TR("pilot.wendao.bbmc");
+static thread_local basic::Tracer TR( "pilot.wendao.bbmc" );
 
 //params for all
 OPT_1GRP_KEY(Integer, mc, ntrials) //how many steps
@@ -741,7 +740,7 @@ my_main( void* )
 		string move_type("fake");
 		Real proposal_density_ratio=1.0;
 		//random number
-		core::Real prob = RG.uniform();
+		core::Real prob = numeric::random::rg().uniform();
 
 		//choose one
 		if ( prob > sm_prob + backrub_prob + conrot_prob + sc_prob + fast_sc_prob ) { //bbg

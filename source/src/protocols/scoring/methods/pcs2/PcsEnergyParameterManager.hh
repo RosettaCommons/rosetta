@@ -40,7 +40,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -88,7 +89,12 @@ private:
 	PcsEnergyParameterManager&
 	operator=( PcsEnergyParameterManager const & other );
 
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< PcsEnergyParameterManager * > instance_;
+#else
 	static PcsEnergyParameterManager * instance_;
+#endif
+
 	utility::vector1<PcsEnergyParameter> pcs_e_p_all_;
 	utility::vector1<std::string> vec_filename_all_;
 	utility::vector1<core::Real> vec_individual_weight_all_;

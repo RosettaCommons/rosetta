@@ -36,7 +36,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static basic::Tracer complete_connections_tracer( "protocols.ligand_docking.CompleteConnectionsFilter" );
+static thread_local basic::Tracer complete_connections_tracer( "protocols.ligand_docking.CompleteConnectionsFilter" );
 
 bool
 CompleteConnectionsFilter::apply( core::pose::Pose const & pose ) const {

@@ -69,7 +69,7 @@ using basic::Warning;
 namespace protocols {
 namespace rbsegment_relax {
 
-static basic::Tracer TR("protocols.rbsegment_relax.OptimizeThreading");
+static thread_local basic::Tracer TR( "protocols.rbsegment_relax.OptimizeThreading" );
 
 using namespace protocols;
 using namespace core;

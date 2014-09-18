@@ -124,10 +124,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-static basic::Tracer tr("protocols.iterative");
+static thread_local basic::Tracer tr( "protocols.iterative" );
 using basic::mem_tr;
 
-static numeric::random::RandomGenerator RG(428342); // <- Magic number, do not change
 
 using core::Real;
 using namespace core;
@@ -318,7 +317,6 @@ void warn_obsolete_flags() {
 namespace protocols {
 namespace abinitio {
 
-static numeric::random::RandomGenerator RG(42089);  // <- rg needed for CEN2FULLATOM_NON_POOL_DECOYS
 
 using namespace jd2::archive;
 
@@ -1172,7 +1170,7 @@ void IterativeBase::gen_resample_stage2( jd2::archive::Batch& batch ) {
 
 	///write flags and broker-file
 	if ( start_decoys.size() ) {
-		numeric::random::random_permutation( start_decoys, RG ); //permute to get rid of high fluctuation in acceptance rate
+		numeric::random::random_permutation( start_decoys, numeric::random::rg() ); //permute to get rid of high fluctuation in acceptance rate
 		batch.set_has_silent_in();
 		core::io::silent::SilentFileData sfd;
 		for ( SilentStructVector::const_iterator
@@ -1475,7 +1473,7 @@ void IterativeBase::collect_hedgeing_decoys_from_batches(
 			Size ind_max( static_cast< Size > ( score_cut_decoys.size()*score_cut_per_batch ) );
 			for ( std::list< std::pair< core::Real, core::io::silent::SilentStructOP > >::const_iterator sit = score_cut_decoys.begin();
 						sit != score_cut_decoys.end(); ++sit ) {
-				if ( RG.uniform() < ( percentage_per_batch / score_cut_per_batch ) ) {
+				if ( numeric::random::rg().uniform() < ( percentage_per_batch / score_cut_per_batch ) ) {
 					start_decoys.push_back( sit->second );
 				}
 				if ( --ind_max <= 1 ) break;

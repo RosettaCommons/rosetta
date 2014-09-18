@@ -33,7 +33,7 @@ namespace jd2 {
 using namespace core;
 using namespace utility::io::mpi_stream;
 
-static basic::Tracer tr("protocols.jd2.MpiFileBuffer");
+static thread_local basic::Tracer tr( "protocols.jd2.MpiFileBuffer" );
 using basic::mem_tr;
 
 MpiFileBuffer::MpiFileBuffer( Size file_buf_rank )

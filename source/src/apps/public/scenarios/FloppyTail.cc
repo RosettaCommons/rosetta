@@ -22,7 +22,7 @@
 #include <basic/Tracer.hh>
 #include <utility/excn/Exceptions.hh>
 
-static basic::Tracer TR("apps.public.scenarios.FloppyTail");
+static thread_local basic::Tracer TR( "apps.public.scenarios.FloppyTail" );
 
 int main( int argc, char* argv[] )
 {

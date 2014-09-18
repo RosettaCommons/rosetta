@@ -19,6 +19,7 @@
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobInputter.hh>
+#include <protocols/jd2/JobOutputterObserver.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -35,7 +36,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer TR("protocols.jd2.Job");
+static thread_local basic::Tracer TR( "protocols.jd2.Job" );
 
 namespace protocols {
 namespace jd2 {
@@ -161,6 +162,27 @@ bool Job::bad() const {
 
 void Job::set_bad(bool value)  {
 	inner_job_->set_bad( value );
+}
+
+
+
+void Job::add_output_observer( JobOutputterObserverAP an_observer ) {
+	output_observers_.insert( an_observer );
+}
+
+
+void Job::remove_output_observer( JobOutputterObserverAP an_observer ) {
+	output_observers_.erase( an_observer );
+}
+
+void Job::call_output_observers( core::pose::Pose const & pose )
+{
+	for ( JobOutputterObservers::const_iterator
+			it     = output_observers_.begin(),
+			it_end = output_observers_.end();
+			it != it_end; ++it ) {
+		(*it)->add_values_to_job( pose, *this );
+	}
 }
 
 

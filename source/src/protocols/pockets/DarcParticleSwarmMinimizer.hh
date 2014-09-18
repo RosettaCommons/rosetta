@@ -40,13 +40,13 @@ public:
 		pfp_( pfp_in ),
 		missing_pt_(missing_point_weight),
 		steric_(steric_weight),
-		extra_pt_(extra_point_weight){};
+		extra_pt_(extra_point_weight){}
 
-  ~DarcParticleSwarmMinimizer() {};
+  ~DarcParticleSwarmMinimizer() {}
 
   void score_all_particles(core::optimization::Multifunc & f_fitness, core::optimization::ParticleOPs & particles);
 
-  private:
+private:
 
   void fill_atom_arrays_( core::Size particle_inx, core::conformation::ResidueCOP ligand_rsd, std::vector<basic::gpu::float4> & atoms, std::vector<basic::gpu::float4> & atom_maxmin_phipsi, std::vector<basic::gpu::float4> & ligand_maxmin_phipsi );
   core::Real DarcPSO_fp_compare_( core::Size particle_inx, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, std::vector<basic::gpu::float4> & atoms, std::vector<basic::gpu::float4> & atom_maxmin_phipsi );

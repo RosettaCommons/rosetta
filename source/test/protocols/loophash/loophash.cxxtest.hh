@@ -32,7 +32,6 @@
 #include <numeric/random/random.hh>
 
 static basic::Tracer TR("protocols.loophash.loophash.cxxtest");
-static numeric::random::RandomGenerator RG(7299984);  // <- Magic number, do not change it (and dont try and use it anywhere else)
 
 namespace {
 
@@ -61,9 +60,9 @@ class LoophashTest: public CxxTest::TestSuite {
 
 		// make an alpha helix
 		for( core::Size ir = 1; ir < sample_pose.total_residue(); ir ++ ) {
-			sample_pose.set_phi( ir, RG.uniform()*360.0 - 180.0 );
-			sample_pose.set_psi( ir, RG.uniform()*360.0 - 180.0 );
-			sample_pose.set_omega( ir, RG.uniform()*360.0 - 180.0 );
+			sample_pose.set_phi( ir, numeric::random::rg().uniform()*360.0 - 180.0 );
+			sample_pose.set_psi( ir, numeric::random::rg().uniform()*360.0 - 180.0 );
+			sample_pose.set_omega( ir, numeric::random::rg().uniform()*360.0 - 180.0 );
 		}
 		
 		TR << "Importing test pose ..." << std::endl;

@@ -44,9 +44,8 @@
 namespace protocols {
 namespace ligand_docking {
 
-static numeric::random::RandomGenerator RG(23459);
 
-static basic::Tracer transform_tracer("protocols.ligand_docking.Transform");
+static thread_local basic::Tracer transform_tracer( "protocols.ligand_docking.Transform" );
 
 std::string TransformCreator::keyname() const
 {
@@ -146,14 +145,14 @@ void Transform::parse_my_tag
 	transform_info_.repeats = tag->getOption<core::Size>("repeats",1);
 	optimize_until_score_is_negative_ = tag->getOption<bool>("optimize_until_score_is_negative",false);
 	initial_perturb_ = tag->getOption<core::Real>("initial_perturb",0.0);
-    
+
 
 	if(tag->hasOption("rmsd"))
 	{
 		check_rmsd_ = true;
 		transform_info_.rmsd = tag->getOption<core::Real>("rmsd");
 	}
-	
+
 	if(tag->hasOption("sampled_space_file"))
 	{
 		output_sampled_space_ = true;
@@ -176,7 +175,7 @@ void Transform::apply(core::pose::Pose & pose)
 	core::conformation::Residue original_residue = pose.residue(begin);
 	core::chemical::ResidueType residue_type = pose.residue_type(begin);
 
-	
+
 	grid_manager->initialize_all_grids(center);
 	grid_manager->update_grids(pose,center);
 
@@ -212,7 +211,7 @@ void Transform::apply(core::pose::Pose & pose)
 		core::Size cycle = 1;
 		bool not_converged = true;
 		core::conformation::UltraLightResidue ligand_residue(&pose.residue(begin));
-        
+
 		//For benchmarking purposes it is sometimes desirable to translate the ligand
 		//away from the starting point before beginning a trajectory.
 		if(initial_perturb_ > 0.0)
@@ -244,7 +243,7 @@ void Transform::apply(core::pose::Pose & pose)
 			//during each move either move the ligand or try a new conformer (if there is more than one conformer)
 			if(ligand_conformers_.size() > 1)
 			{
-				if(RG.uniform() >= 0.5)
+				if(numeric::random::rg().uniform() >= 0.5)
 				{
 					transform_ligand(ligand_residue);
 				}else
@@ -283,7 +282,7 @@ void Transform::apply(core::pose::Pose & pose)
 			{
 				ligand_residue = last_accepted_ligand_residue;
 				rejected_moves++;
-			}else if(probability < 1 && RG.uniform() >= probability)  //reject the new pose
+			}else if(probability < 1 && numeric::random::rg().uniform() >= probability)  //reject the new pose
 			{
 				ligand_residue = last_accepted_ligand_residue;
 				rejected_moves++;
@@ -310,12 +309,12 @@ void Transform::apply(core::pose::Pose & pose)
 			{
 				//transform_tracer << "not accepting new pose" << std::endl;
 			}
-			
+
 		}
 		core::Real accept_ratio =(core::Real)accepted_moves/((core::Real)accepted_moves
 		+(core::Real)rejected_moves);
 		transform_tracer <<"percent acceptance: "<< accepted_moves << " " << accept_ratio<<" " << rejected_moves <<std::endl;
-		
+
 		jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("Transform_accept_ratio", accept_ratio);
 		best_ligand.update_conformation(best_pose.conformation());
 	}
@@ -325,26 +324,26 @@ void Transform::apply(core::pose::Pose & pose)
 		sampled_space.close();
 	}
 	pose = best_pose;
-	
+
 	transform_tracer << "Accepted pose with grid score: " << best_score << std::endl;
-	
+
 }
 
-    
+
 void Transform::translate_ligand(core::conformation::UltraLightResidue & residue, core::Real distance)
 {
 	core::Vector translation(
-		distance*RG.uniform(),
-		distance*RG.uniform(),
-		distance*RG.uniform());
+		distance*numeric::random::rg().uniform(),
+		distance*numeric::random::rg().uniform(),
+		distance*numeric::random::rg().uniform());
 
 	core::Real angle = 360;
 
 	numeric::xyzMatrix<core::Real> rotation(
-		numeric::z_rotation_matrix_degrees( angle*RG.uniform() ) * (
-			numeric::y_rotation_matrix_degrees( angle*RG.uniform() ) *
-			numeric::x_rotation_matrix_degrees( angle*RG.uniform() ) ));
-    
+		numeric::z_rotation_matrix_degrees( angle*numeric::random::rg().uniform() ) * (
+		numeric::y_rotation_matrix_degrees( angle*numeric::random::rg().uniform() ) *
+		numeric::x_rotation_matrix_degrees( angle*numeric::random::rg().uniform() ) ));
+
 	residue.transform(rotation,translation);
 }
 void Transform::transform_ligand(core::conformation::UltraLightResidue & residue)
@@ -356,14 +355,14 @@ void Transform::transform_ligand(core::conformation::UltraLightResidue & residue
 	}
 
 	core::Vector translation(
-		transform_info_.move_distance*RG.gaussian(),
-		transform_info_.move_distance*RG.gaussian(),
-		transform_info_.move_distance*RG.gaussian());
+		transform_info_.move_distance*numeric::random::rg().gaussian(),
+		transform_info_.move_distance*numeric::random::rg().gaussian(),
+		transform_info_.move_distance*numeric::random::rg().gaussian());
 
 	numeric::xyzMatrix<core::Real> rotation(
-		numeric::z_rotation_matrix_degrees( transform_info_.angle*RG.gaussian() ) * (
-			numeric::y_rotation_matrix_degrees( transform_info_.angle*RG.gaussian() ) *
-			numeric::x_rotation_matrix_degrees( transform_info_.angle*RG.gaussian() ) ));
+		numeric::z_rotation_matrix_degrees( transform_info_.angle*numeric::random::rg().gaussian() ) * (
+		numeric::y_rotation_matrix_degrees( transform_info_.angle*numeric::random::rg().gaussian() ) *
+		numeric::x_rotation_matrix_degrees( transform_info_.angle*numeric::random::rg().gaussian() ) ));
 
 	residue.transform(rotation,translation);
 }
@@ -371,7 +370,7 @@ void Transform::transform_ligand(core::conformation::UltraLightResidue & residue
 void Transform::change_conformer(core::conformation::UltraLightResidue & residue)
 {
 	assert(ligand_conformers_.size());
-	core::Size index_to_select = RG.random_range(1,ligand_conformers_.size());
+	core::Size index_to_select = numeric::random::rg().random_range(1,ligand_conformers_.size());
 	core::conformation::UltraLightResidue new_residue(ligand_conformers_[index_to_select]);
 	new_residue.align_to_residue(residue);
 	residue = new_residue;
@@ -391,19 +390,19 @@ void Transform::dump_conformer(core::conformation::UltraLightResidue & residue, 
 		output <<outline <<std::endl;
 	}
 }
-	
+
 bool Transform::check_rmsd(core::conformation::UltraLightResidue const & start, core::conformation::UltraLightResidue const& current) const
 {
 	assert(start.natoms() == current.natoms());
-	
+
 	core::Real total_distance =0.0;
 	for(core::Size atomno = 1; atomno <= start.natoms();++atomno)
 	{
 		total_distance += start[atomno].distance(current[atomno]);
 	}
-	
+
 	core::Real rmsd = sqrt(total_distance/start.natoms());
-	
+
 	if(rmsd <= transform_info_.rmsd)
 	{
 		return true;
@@ -411,7 +410,7 @@ bool Transform::check_rmsd(core::conformation::UltraLightResidue const & start, 
 	{
 		return false;
 	}
-	
+
 }
 }
 }

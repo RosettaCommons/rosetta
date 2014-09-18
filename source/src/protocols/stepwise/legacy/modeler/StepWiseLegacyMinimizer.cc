@@ -34,7 +34,7 @@
 #include <utility/tools/make_vector1.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.legacy.modeler.StepWiseLegacyMinimizer" );
+static thread_local basic::Tracer TR( "protocols.stepwise.legacy.modeler.StepWiseLegacyMinimizer" );
 
 using namespace core;
 using namespace protocols::stepwise::modeler::rna;

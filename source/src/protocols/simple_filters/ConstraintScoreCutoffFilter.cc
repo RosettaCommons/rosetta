@@ -54,7 +54,7 @@
 
 
 //// C++ headers
-static basic::Tracer tr("protocols.filters.ConstraintScoreCutoffFilter");
+static thread_local basic::Tracer tr( "protocols.filters.ConstraintScoreCutoffFilter" );
 
 namespace protocols {
 namespace simple_filters {

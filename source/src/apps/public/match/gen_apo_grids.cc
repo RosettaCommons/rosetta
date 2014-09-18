@@ -90,7 +90,7 @@ using namespace ObjexxFCL::format;
 using namespace numeric;
 using namespace utility;
 
-basic::Tracer TR("apps.public.match.gen_apo_grids");
+static thread_local basic::Tracer TR( "apps.public.match.gen_apo_grids" );
 
 #define MAXCAVN 6
 #define MAXRESD 5.0

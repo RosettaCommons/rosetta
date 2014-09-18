@@ -41,7 +41,7 @@
 #include <iostream>
 #include <cstdlib> 
 
-static basic::Tracer TR( "apps.pilot.jkleman.mpframework_test" );
+static thread_local basic::Tracer TR( "apps.pilot.jkleman.mpframework_test" );
 
 using namespace numeric;
 using namespace protocols::moves;

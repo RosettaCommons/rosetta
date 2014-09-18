@@ -69,7 +69,7 @@
 	// #include <boost/serialization/hash_collections_save_imp.hpp>
 	// #include <boost/serialization/hash_collections_load_imp.hpp>
 
-static basic::Tracer TR("motif_hash_util");
+static thread_local basic::Tracer TR( "motif_hash_util" );
 
 
 

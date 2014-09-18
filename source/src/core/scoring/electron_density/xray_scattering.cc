@@ -26,7 +26,7 @@
 
 using basic::T;
 using basic::Tracer;
-static basic::Tracer TR("core.scoring.electron_density.xray_scattering");
+static thread_local basic::Tracer TR( "core.scoring.electron_density.xray_scattering" );
 
 
 namespace core {

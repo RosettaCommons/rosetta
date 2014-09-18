@@ -39,7 +39,7 @@ namespace core {
 namespace pack {
 namespace interaction_graph {
 
-static basic::Tracer T("core.pack.interaction_graph.otf_ig", basic::t_error );
+static thread_local basic::Tracer T( "core.pack.interaction_graph.otf_ig", basic::t_error );
 
 /// @brief main constructor, no default or copy constructors
 ///

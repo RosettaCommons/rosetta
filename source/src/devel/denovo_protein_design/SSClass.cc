@@ -32,7 +32,7 @@ namespace denovo_protein_design{
 
 using namespace core;
 
-static basic::Tracer tr("SS");
+static thread_local basic::Tracer tr( "SS" );
 
 
 

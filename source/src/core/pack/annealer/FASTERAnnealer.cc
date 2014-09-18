@@ -38,7 +38,6 @@ namespace core {
 namespace pack {
 namespace annealer {
 
-static numeric::random::RandomGenerator RG(133780); // <- Magic number, do not change it!!!
 
 FASTERAnnealer::FASTERAnnealer(
 	ObjexxFCL::FArray1D_int & bestrotamer_at_seqpos,
@@ -317,7 +316,7 @@ FASTERAnnealer::dBR()
 {
 	core::PackerEnergy last_energy = ig_->get_energy_current_state_assignment();
 	for (int ii = 1; ii < 10000; ++ii) {
-		int node1 = ((int) ( RG.uniform() * num_nodes_)) + 1;
+		int node1 = ((int) ( numeric::random::rg().uniform() * num_nodes_)) + 1;
 		int node2 = ig_->get_random_neighbor_for_node( node1 );
 
 		if (node2 == 0) continue;
@@ -491,7 +490,7 @@ int
 FASTERAnnealer::pick_rotamer_for_node( int node )
 {
 	int num_states_for_node = ig_->get_num_states_for_node( node );
-	int rand_state = ((int) ( RG.uniform() * num_states_for_node ) ) + 1;
+	int rand_state = ((int) ( numeric::random::rg().uniform() * num_states_for_node ) ) + 1;
 	return rand_state;
 }
 
@@ -506,7 +505,7 @@ void
 FASTERAnnealer::shuffle_sBR_rotamers()
 {
 	progress_through_sBR_ = -1;
-	numeric::random::random_permutation( sBR_rotamers_.begin(), sBR_rotamers_.end(), RG );
+	numeric::random::random_permutation( sBR_rotamers_.begin(), sBR_rotamers_.end(), numeric::random::rg() );
 }
 
 int

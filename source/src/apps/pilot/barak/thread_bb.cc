@@ -54,9 +54,8 @@ using basic::Warning;
 using core::pose::Pose;
 
 
-static numeric::random::RandomGenerator RG(12321); // <- Magic number, do not change it!!!
 
-static basic::Tracer TR("thread_bb");
+static thread_local basic::Tracer TR( "thread_bb" );
 
 
 

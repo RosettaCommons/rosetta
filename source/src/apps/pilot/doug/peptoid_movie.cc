@@ -54,7 +54,7 @@
 #include <string>
 
 // tracer
-static basic::Tracer TR("apps.pilot.doug");
+static thread_local basic::Tracer TR( "apps.pilot.doug" );
 
 // simple PeptoidMoveMover class
 class PeptiodMovieMover: public protocols::moves::Mover {

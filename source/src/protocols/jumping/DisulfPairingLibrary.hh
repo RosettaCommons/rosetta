@@ -56,7 +56,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -165,7 +166,13 @@ private:
 	/// utility::thread::threadsafe_singleton
 	static StandardDisulfPairingLibrary * create_singleton_instance();
 private:
-	static StandardDisulfPairingLibrary* instance_;
+	/// @brief static data member holding pointer to the singleton class itself
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< StandardDisulfPairingLibrary * > instance_;
+#else
+	static StandardDisulfPairingLibrary * instance_;
+#endif
+
 };
 
 

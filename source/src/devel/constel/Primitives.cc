@@ -43,7 +43,7 @@
 using core::Real;
 
 
-static basic::Tracer TR("devel.constel.Primitives");
+static thread_local basic::Tracer TR( "devel.constel.Primitives" );
 
 namespace devel {
 namespace constel {

@@ -41,7 +41,7 @@
 //#include <string>
 //#include <sstream>
 
-static basic::Tracer TR("protocols.jd2.AtomTreeDiffJobOutputter");
+static thread_local basic::Tracer TR( "protocols.jd2.AtomTreeDiffJobOutputter" );
 
 namespace protocols {
 namespace jd2 {

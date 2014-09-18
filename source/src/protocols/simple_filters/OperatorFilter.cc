@@ -36,7 +36,7 @@
 namespace protocols{
 namespace simple_filters {
 
-static basic::Tracer TR( "protocols.simple_filters.Operator" );
+static thread_local basic::Tracer TR( "protocols.simple_filters.Operator" );
 using namespace protocols::filters;
 
 protocols::filters::FilterOP

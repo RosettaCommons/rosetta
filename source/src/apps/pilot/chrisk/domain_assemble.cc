@@ -140,9 +140,8 @@ using basic::T;
 using basic::Warning;
 using basic::Error;
 
-basic::Tracer TR("chrisk");
+static thread_local basic::Tracer TR( "chrisk" );
 
-static numeric::random::RandomGenerator RG(2718);
 
 //local options
 namespace chrisk

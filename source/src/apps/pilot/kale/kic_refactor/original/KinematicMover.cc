@@ -286,7 +286,6 @@ void KinematicMover::apply( core::pose::Pose & pose ) // {{{1
 	//scoring::Ramachandran const & rama( core::scoring::ScoringManager::get_instance()->get_Ramachandran() );
 	using numeric::conversions::radians;
 	using numeric::conversions::degrees;
-	using numeric::random::RG;
 	using core::id::AtomID;
 	last_move_succeeded_=false;
 
@@ -520,7 +519,8 @@ void KinematicMover::apply( core::pose::Pose & pose ) // {{{1
 		}
 		
 		//std::random__shuffle(pos.begin(), pos.end());
-		numeric::random::random_permutation(pos.begin(), pos.end(), RG); //Put the solutions in random order, since the first one encountered that passes the filters is accepted.
+		//Put the solutions in random order, since the first one encountered that passes the filters is accepted.
+		numeric::random::random_permutation( pos.begin(), pos.end(), numeric::random::rg() );
 		
 		// Look for solutions passing NaN, Rama, bump checks and eventual filters
 		for (Size i=nsol; i>=1; i--) {

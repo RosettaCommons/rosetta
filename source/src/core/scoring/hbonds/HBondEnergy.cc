@@ -203,7 +203,7 @@ void HBondResPairMinData::set_res2_data( HBondResidueMinDataCOP dat ) { res2_dat
 //	}
 //}
 
-static basic::Tracer tr("core.scoring.hbonds.HbondEnergy");
+static thread_local basic::Tracer tr( "core.scoring.hbonds.HbondEnergy" );
 
 /// @details This must return a fresh instance of the HBondEnergy class,
 /// never an instance already in use

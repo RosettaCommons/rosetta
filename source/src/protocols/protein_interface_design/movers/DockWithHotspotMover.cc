@@ -69,7 +69,7 @@ using namespace std;
 using core::pose::Pose;
 using core::conformation::Residue;
 
-static basic::Tracer TR( "protocols.protein_interface_design.movers.DockWithHotspotMover" );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.DockWithHotspotMover" );
 
 std::string
 DockWithHotspotMoverCreator::keyname() const

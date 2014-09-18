@@ -49,7 +49,7 @@
 // C++ Headers
 #include <cstdlib>
 
-static basic::Tracer TR( "core.scoring.membrane.FaMPEnvEnergy" );
+static thread_local basic::Tracer TR( "core.scoring.membrane.FaMPEnvEnergy" );
 
 namespace core {
 namespace scoring {

@@ -106,7 +106,7 @@
 #endif
 
 
-static basic::Tracer TR("main");
+static thread_local basic::Tracer TR( "main" );
 
 using namespace protocols::moves;
 using namespace core::scoring;
@@ -122,7 +122,6 @@ using namespace protocols::loophash;
 namespace protocols {
 namespace loophash {
 
-static numeric::random::RandomGenerator RG(9479); // <- Magic number, do not change it!!!
 
 void
 Mover_LoopHashRefine::apply( core::pose::Pose& pose )
@@ -199,7 +198,7 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
 
 			// Choose a set of structures to refine/relax
 			//std::random__shuffle( lib_structs.begin(), lib_structs.end());
-			numeric::random::random_permutation(lib_structs.begin(), lib_structs.end(), numeric::random::RG);
+			numeric::random::random_permutation(lib_structs.begin(), lib_structs.end(), numeric::random::rg());
 
 			std::vector< core::io::silent::SilentStructOP > select_lib_structs;
 			for( core::Size k=0;k< std::min<core::Size>(skim_size, lib_structs.size() ) ;k++){

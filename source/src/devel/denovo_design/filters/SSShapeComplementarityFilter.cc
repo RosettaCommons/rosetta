@@ -53,7 +53,7 @@
 #endif
 
 
-static basic::Tracer TR("devel.denovo_design.SSShapeComplementarityFilter");
+static thread_local basic::Tracer TR( "devel.denovo_design.SSShapeComplementarityFilter" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

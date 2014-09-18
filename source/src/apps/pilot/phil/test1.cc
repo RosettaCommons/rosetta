@@ -111,7 +111,6 @@
 #include <string>
 
 
-static numeric::random::RandomGenerator RG(12321); // <- Magic number, do not change it!!!
 
 
 ////////////////////////////////////////////////
@@ -131,7 +130,7 @@ using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 using core::import_pose::pose_from_pdb;
 using io::pdb::dump_pdb; // deprecated though
-basic::Tracer tt( "demo.phil.test1", basic::t_trace );
+static thread_local basic::Tracer tt( "demo.phil.test1", basic::t_trace );
 
 ///////////////////////////////////////////////////////////////////////////////
 std::ostream &
@@ -813,7 +812,7 @@ simple_loop_modeling_test()
 			// choose an insertion position
 			int pos;
 			while ( true ) {
-				pos = static_cast< int > ( ( nres - frag_size + 1 ) * RG.uniform() + 1 );
+				pos = static_cast< int > ( ( nres - frag_size + 1 ) * numeric::random::rg().uniform() + 1 );
 				bool allowed( true );
 				for ( Size k=0; k< frag_size; ++k ) {
 					if ( !( mm.get( TorsionID( pos+k, BB,   phi_torsion ) ) &&
@@ -828,7 +827,7 @@ simple_loop_modeling_test()
 
 			// choose a fragment
 			Size const nfrags( lib[ pos ].size() );
-			int const nn( static_cast< int >( nfrags * RG.uniform() + 1 ) );
+			int const nn( static_cast< int >( nfrags * numeric::random::rg().uniform() + 1 ) );
 
 			// make move
 			lib[pos][nn].insert( pose, pos );
@@ -2213,7 +2212,7 @@ void
 simple_benchmark()
 {
 	// this should improve stability of the tests
-	core::init::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
+	core::init::init_random_generators( 1000, "mt19937" );
 
 	//ccd_test(  );
 	//exit(0);

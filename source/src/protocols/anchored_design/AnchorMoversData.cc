@@ -79,8 +79,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR( "protocols.AnchoredDesign.AnchorMoversData" );
-static numeric::random::RandomGenerator RG(10505);
+static thread_local basic::Tracer TR( "protocols.AnchoredDesign.AnchorMoversData" );
 
 namespace protocols{
 namespace anchored_design{
@@ -312,7 +311,7 @@ void protocols::anchored_design::AnchorMoversData::pick_new_cutpoints(bool reset
 core::Size protocols::anchored_design::AnchorMoversData::pick_new_cutpoint( core::Size const loopstart, core::Size const loopend ){
 	core::Size newcutpoint(0);
 	do{
-		newcutpoint = (loopstart) + int( RG.uniform()*(loopend-loopstart+1) );
+		newcutpoint = (loopstart) + int( numeric::random::rg().uniform()*(loopend-loopstart+1) );
 	}	while( ((anchor_->start()) <= newcutpoint) && ((anchor_->end()) >= newcutpoint) ); //the cutpoint is in the anchor
 	return newcutpoint;
 }

@@ -34,7 +34,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer TR( "protocols.DsspMover" );
+static thread_local basic::Tracer TR( "protocols.DsspMover" );
 
 namespace protocols {
 namespace moves {

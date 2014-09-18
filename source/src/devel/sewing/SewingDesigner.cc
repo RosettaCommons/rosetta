@@ -105,7 +105,7 @@ using utility::vector1;
 using core::Size;
 using std::string;
 
-static basic::Tracer TR( "protocols.loophash.SewingDesigner" );
+static thread_local basic::Tracer TR( "protocols.loophash.SewingDesigner" );
 
 /****CREATOR FUNCTIONS*****/
 protocols::moves::MoverOP

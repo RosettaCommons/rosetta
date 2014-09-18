@@ -60,7 +60,7 @@ namespace hotspot_hashing
 namespace movers
 {
 
-static basic::Tracer TR( "protocols.hotspot_hashing.movers.PlaceProbeMover" ); 
+static thread_local basic::Tracer TR( "protocols.hotspot_hashing.movers.PlaceProbeMover" );
 
 PlaceProbeMover::PlaceProbeMover() :
     residue_name_(""),

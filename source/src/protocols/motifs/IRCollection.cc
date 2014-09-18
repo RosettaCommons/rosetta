@@ -50,7 +50,7 @@
 namespace protocols {
 namespace motifs {
 
-	static basic::Tracer irt( "protocols.motifs.IRCollection", basic::t_info );
+static thread_local basic::Tracer irt( "protocols.motifs.IRCollection", basic::t_info );
 
 	IRCollection::IRCollection() {}
 

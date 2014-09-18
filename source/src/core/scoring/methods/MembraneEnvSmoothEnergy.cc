@@ -40,7 +40,7 @@ namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; 
 //Auto using namespaces end
 
 // C++
-static basic::Tracer TR("core.scoring.methods.MembraneEnvSmoothEnergy",basic::t_info);
+static thread_local basic::Tracer TR( "core.scoring.methods.MembraneEnvSmoothEnergy", basic::t_info );
 
 namespace core {
 namespace scoring {

@@ -26,7 +26,7 @@
 #include <core/pose/util.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.screener.AnchorSugarScreener" );
+static thread_local basic::Tracer TR( "protocols.stepwise.screener.AnchorSugarScreener" );
 
 using namespace protocols::stepwise::modeler::rna::sugar;
 using namespace protocols::stepwise::modeler::rna::checker;

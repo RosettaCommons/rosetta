@@ -50,7 +50,7 @@ namespace scoring{
 namespace methods{
 namespace pcs2{
 
-basic::Tracer TR_PcsInputCenterManager("protocols.scoring.methods.pcs.PcsInputCenterManager");
+static thread_local basic::Tracer TR_PcsInputCenterManager( "protocols.scoring.methods.pcs.PcsInputCenterManager" );
 
 PcsInputCenterManager::PcsInputCenterManager(){
 	TR_PcsInputCenterManager << "Empty constructor called" << std::endl;
@@ -123,7 +123,11 @@ PcsInputCenterManager::get_PcsInputCenter_for(utility::vector1<std::string> cons
 	return(pcs_i_c);
 }
 
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< PcsInputCenterManager * > PcsInputCenterManager::instance_( 0 );
+#else
 PcsInputCenterManager * PcsInputCenterManager::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

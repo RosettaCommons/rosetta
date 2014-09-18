@@ -30,7 +30,7 @@
 namespace core {
 namespace chemical {
 
-static basic::Tracer tr("core.chemical");
+static thread_local basic::Tracer tr( "core.chemical" );
 
 
 MMAtomTypeSet::MMAtomTypeSet():

@@ -67,8 +67,7 @@
 
 // option key includes
 
-static basic::Tracer tr("protocols.topo_broker",basic::t_info);
-static numeric::random::RandomGenerator RG(1882234234);
+static thread_local basic::Tracer tr( "protocols.topo_broker", basic::t_info );
 
 namespace protocols {
 namespace topology_broker {
@@ -238,9 +237,9 @@ void CoordConstraintClaimer::generate_constraints( pose::Pose const& cst_pose ) 
 			id::AtomID cst_atomID( cst_pose.residue_type(pos).atom_index("CA"), pos );
 			id::StubID cst_fix_stub_ID( pose::named_stub_id_to_stub_id( id::NamedStubID( "N","CA","C", root_ ), cst_pose ) );
 			Vector ai(
-						 RG.uniform()*perturb_,
-						 RG.uniform()*perturb_,
-						 RG.uniform()*perturb_
+						 numeric::random::rg().uniform()*perturb_,
+						 numeric::random::rg().uniform()*perturb_,
+						 numeric::random::rg().uniform()*perturb_
 			);
 			Vector xyz( rsd.xyz( cst_atomID.atomno() ) + ai );
 			if ( bLocal_ ) {

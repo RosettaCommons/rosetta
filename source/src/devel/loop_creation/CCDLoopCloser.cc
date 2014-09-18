@@ -45,7 +45,7 @@
 namespace devel {
 namespace loop_creation {
 
-static basic::Tracer TR( "devel.loop_creation.CCDLoopCloser" );
+static thread_local basic::Tracer TR( "devel.loop_creation.CCDLoopCloser" );
 
 //****CREATOR METHODS****//
 std::string

@@ -33,7 +33,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.monte_carlo.util" );
+static thread_local basic::Tracer TR( "protocols.stepwise.monte_carlo.util" );
 
 using ObjexxFCL::lead_zero_string_of;
 using namespace core;

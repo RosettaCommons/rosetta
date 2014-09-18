@@ -44,7 +44,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("apps.public.interface_design.anchored_design.AnchoredPDBCreator");
+static thread_local basic::Tracer TR( "apps.public.interface_design.anchored_design.AnchoredPDBCreator" );
 
 namespace basic{ namespace options{ namespace OptionKeys{
 namespace AnchoredPDBCreator{

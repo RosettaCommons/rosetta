@@ -76,7 +76,7 @@
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 #include <protocols/simple_moves/ddG.hh>
 
-static basic::Tracer TR("matdes::design");
+static thread_local basic::Tracer TR( "matdes::design" );
 
 using std::string;
 using ObjexxFCL::string_of;

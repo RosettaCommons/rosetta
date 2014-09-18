@@ -33,9 +33,13 @@
 namespace basic{
 namespace message_listening{
 
-static basic::Tracer TR("basic.message_listening.MessageListenerFactory");
+static thread_local basic::Tracer TR( "basic.message_listening.MessageListenerFactory" );
 
-MessageListenerFactory* MessageListenerFactory::instance_(0);
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< MessageListenerFactory * > MessageListenerFactory::instance_( 0 );
+#else
+MessageListenerFactory * MessageListenerFactory::instance_( 0 );
+#endif
 
 #ifdef MULTI_THREADED
 #ifdef CXX11

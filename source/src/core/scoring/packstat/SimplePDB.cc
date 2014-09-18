@@ -23,7 +23,7 @@
 #include <core/scoring/packstat/AtomRadiusMap.hh>
 #include <utility/vector1.hh>
 
-static basic::Tracer TR("protocols.packstat.SimplePDB");
+static thread_local basic::Tracer TR( "protocols.packstat.SimplePDB" );
 
 namespace core {
 namespace scoring {

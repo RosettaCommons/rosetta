@@ -36,7 +36,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -108,7 +109,13 @@ private:
 
 private:
 
+	/// @brief static data member holding pointer to the singleton class itself
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< LoopRefineInnerCycleFactory * > instance_;
+#else
 	static LoopRefineInnerCycleFactory * instance_;
+#endif
+
 	static utility::vector1< utility::vector1< std::string > > loop_refine_inner_cycle_name_to_string_;
 	// TODO: Add a std::map< std::string, LoopRefineInnerCycleName > to allow for commandline or RosettaScripts based selection.
 	//       core/scoring/ScoreTypeManager.cc has an example of setting something like this up

@@ -35,7 +35,7 @@
 
 #include <utility/vector1.hh>
 
-static basic::Tracer TR("main");
+static thread_local basic::Tracer TR( "main" );
 
 // Read to go protocols - these are slow to init:
 protocols::loophash::LoopHashLibraryOP loop_hash_library;

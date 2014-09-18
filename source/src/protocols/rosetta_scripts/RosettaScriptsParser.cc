@@ -81,7 +81,7 @@ using namespace core;
 using namespace moves;
 using namespace jd2;
 
-static basic::Tracer TR( "protocols.rosetta_scripts.RosettaScriptsParser" );
+static thread_local basic::Tracer TR( "protocols.rosetta_scripts.RosettaScriptsParser" );
 
 RosettaScriptsParser::RosettaScriptsParser() :
 	Parser()
@@ -94,49 +94,68 @@ RosettaScriptsParser::~RosettaScriptsParser(){}
 typedef utility::tag::TagCOP TagCOP;
 typedef utility::tag::TagOP TagOP;
 
-/// @details Uses the Tag interface to the xml reader library in boost to parse an xml file that contains design
-/// protocol information. A sample protocol file can be found in src/pilot/apps/sarel/dock_design.protocol.
+/// @details Uses the Tag interface to the xml reader library in boost to parse
+/// an xml file that contains design protocol information. A sample protocol
+/// file can be found in src/pilot/apps/sarel/dock_design.protocol.
+///
 /// INCLUDES allows inclusion of additional module files (in XML format).
-/// SCOREFXNS provides a way to define scorefunctions as they are defined in the rosetta database, using the
-/// weights/patch convenctions. Several default scorefunctions are preset and can be used without defining them
-/// explicitly.
-/// FILTERS defines a set of filters that can be used together with the dockdesign movers to prune out poses that
-/// don't meet certain criteria
+///
+/// SCOREFXNS provides a way to define scorefunctions as they are defined in the
+/// rosetta database, using the weights/patch convenctions. Several default
+/// scorefunctions are preset and can be used without defining them explicitly.
+///
+/// FILTERS defines a set of filters that can be used together with the
+/// dockdesign movers to prune out poses that don't meet certain criteria
+///
 /// MOVERS defines the movers that will be used
-/// PROTOCOLS is the only order-sensitive section where subsequent movers and filters are expected to be defined.
-/// These movers and filters were defined in the previous two sections. The order in which the protocols are
-/// specified by the user will be maintained by the DockDesign mover.
-/// APPLY_TO_POSE This section allows for certain movers to be applied to the pose prior to starting the DockDesign
-/// protocol. For instance, these movers could set constraints, such as favor_native_residue. In this case, for
-/// example, the weights of res_type_constraint in all of the scorefunctions that are defined in SCOREFXNS or by
-/// default are set to 1.0, but can be changed by the user globally (in the definition of the weight on the constraint),
-/// or in particular for each of the scorefunctions by changing the relevant term (which is set by default to the
-/// global value).
-/// OUTPUT is a section which allows the XML control of how things are output
-/// Notice that the order of the sections by which the protocol is written doesn't matter, BUT the order of the
-/// mover-filter pairs in PROTOCOLS section does matter.
+///
+/// PROTOCOLS is the only order-sensitive section where subsequent movers and
+/// filters are expected to be defined. These movers and filters were defined
+/// in the previous two sections. The order in which the protocols are specified
+/// by the user will be maintained by the DockDesign mover.
+///
+/// APPLY_TO_POSE This section allows for certain movers to be applied to the
+/// pose prior to starting the DockDesign protocol. For instance, these movers
+/// could set constraints, such as favor_native_residue. In this case, for
+/// example, the weights of res_type_constraint in all of the scorefunctions
+/// that are defined in SCOREFXNS or by default are set to 1.0, but can be
+/// changed by the user globally (in the definition of the weight on the
+/// constraint), or in particular for each of the scorefunctions by changing
+/// the relevant term (which is set by default to the global value).
+///
+/// OUTPUT is a section which allows the XML control of how things are output.
+/// Notice that the order of the sections by which the protocol is written
+/// doesn't matter, BUT the order of the mover-filter pairs in PROTOCOLS section
+/// does matter.
 bool
-RosettaScriptsParser::generate_mover_from_pose( JobCOP, Pose & pose, MoverOP & in_mover, bool new_input, std::string const xml_fname ){
+RosettaScriptsParser::generate_mover_from_pose(
+	JobCOP,
+	Pose & pose,
+	MoverOP & in_mover,
+	bool new_input,
+	std::string const xml_fname,
+	bool guarantee_new_mover
+)
+{
 
 	bool modified_pose( false );
 
-	if( !new_input ) return modified_pose;
+	if( !new_input && !guarantee_new_mover ) return modified_pose;
 
 	std::string const dock_design_filename( xml_fname == "" ? option[ OptionKeys::parser::protocol ] : xml_fname );
 	TR << "dock_design_filename=" << dock_design_filename << std::endl;
 	utility::io::izstream fin;
 	fin.open(dock_design_filename.c_str() );
-	if( !fin.good() ){
+	if ( !fin.good() ) {
 		utility_exit_with_message("Unable to open Rosetta Scripts XML file: '" + dock_design_filename + "'.");
 	}
 
 	TagCOP tag;
-	if( option[ OptionKeys::parser::script_vars ].user() ) {
+	if ( option[ OptionKeys::parser::script_vars ].user() ) {
 		std::stringstream fin_sub;
 		substitute_variables_in_stream(fin, option[ OptionKeys::parser::script_vars ], fin_sub);
 		tag = utility::tag::Tag::create( fin_sub );
-		}
-	else {
+	} else {
 		tag = utility::tag::Tag::create(fin);
 	}
 
@@ -145,12 +164,12 @@ RosettaScriptsParser::generate_mover_from_pose( JobCOP, Pose & pose, MoverOP & i
 	TR << tag;
 	TR.flush();
 	runtime_assert( tag->getName() == "dock_design" || tag->getName() == "ROSETTASCRIPTS" );
-	
-	if(tag->getName() == "dock_design") {
+
+	if ( tag->getName() == "dock_design" ) {
 		TR << "<dock_design> tag is deprecated; please use <ROSETTASCRIPTS> instead." << std::endl;
 	}
 
-	in_mover = generate_mover_for_protocol(pose, modified_pose, tag);
+	in_mover = generate_mover_for_protocol( pose, modified_pose, tag );
 
 	return modified_pose;
 }
@@ -184,7 +203,11 @@ MoverOP RosettaScriptsParser::parse_protocol_tag(TagCOP protocol_tag)
 	return mover;
 }
 
-MoverOP RosettaScriptsParser::generate_mover_for_protocol(Pose & pose, bool & modified_pose, TagCOP tag)
+MoverOP RosettaScriptsParser::generate_mover_for_protocol(
+	Pose & pose,
+	bool & modified_pose,
+	TagCOP tag
+)
 {
 	protocols::rosetta_scripts::ParsedProtocolOP protocol( new protocols::rosetta_scripts::ParsedProtocol );
 
@@ -192,13 +215,13 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(Pose & pose, bool & mo
 	protocols::filters::Filters_map filters;
 	basic::datacache::DataMap data; // abstract objects, such as scorefunctions, to be used by filter and movers
 	std::set< ImportTagName > import_tag_names;
-	
+
 	MoverOP mover;
 
 	typedef std::pair< std::string const, MoverOP > StringMover_pair;
 	typedef std::pair< std::string const, protocols::filters::FilterOP > StringFilter_pair;
 
-//setting up some defaults
+	//setting up some defaults
 	protocols::filters::FilterOP true_filter = new protocols::filters::TrueFilter;
 	protocols::filters::FilterOP false_filter = new protocols::filters::FalseFilter;
 	filters.insert( StringFilter_pair( "true_filter", true_filter ) );
@@ -207,14 +230,14 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(Pose & pose, bool & mo
 	MoverOP null_mover = new protocols::moves::NullMover();
 	movers.insert( StringMover_pair( "null", null_mover) );
 
-// default scorefxns
-	ScoreFunctionOP commandline_sfxn = core::scoring::get_score_function();
-	ScoreFunctionOP talaris2013 = ScoreFunctionFactory::create_score_function(TALARIS_2013);
-	ScoreFunctionOP score12 = ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS, SCORE12_PATCH );
-	ScoreFunctionOP docking_score = ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS, DOCK_PATCH );
-	ScoreFunctionOP soft_rep = ScoreFunctionFactory::create_score_function( SOFT_REP_DESIGN_WTS );
+	// default scorefxns
+	ScoreFunctionOP commandline_sfxn  = core::scoring::get_score_function();
+	ScoreFunctionOP talaris2013       = ScoreFunctionFactory::create_score_function(TALARIS_2013);
+	ScoreFunctionOP score12           = ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS, SCORE12_PATCH );
+	ScoreFunctionOP docking_score     = ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS, DOCK_PATCH );
+	ScoreFunctionOP soft_rep          = ScoreFunctionFactory::create_score_function( SOFT_REP_DESIGN_WTS );
 	ScoreFunctionOP docking_score_low = ScoreFunctionFactory::create_score_function( "interchain_cen" );
-	ScoreFunctionOP score4L = ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );
+	ScoreFunctionOP score4L           = ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );
 
 	data.add( "scorefxns", "commandline", commandline_sfxn );
 	data.add( "scorefxns", "talaris2013", talaris2013 );
@@ -225,7 +248,11 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(Pose & pose, bool & mo
 	data.add( "scorefxns", "score4L", score4L );
 	//default scorefxns end
 
-	/// Data Loaders
+	// Data Loaders -- each data loader handles one of the top-level blocks of a
+	// rosetta script.  These blocks are handled by the RosettaScriptsParser itself;
+	// other data loaders may be registered with the DataLoaderFactory at load time
+	// so that arbitrary data, living in any library, can be loaded into the DataMap
+	// through the XML interface.
 	std::set< std::string > non_data_loader_tags;
 	non_data_loader_tags.insert( "INCLUDES" );
 	non_data_loader_tags.insert( "MOVERS" );
@@ -235,7 +262,7 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(Pose & pose, bool & mo
 	non_data_loader_tags.insert( "OUTPUT" );
 	non_data_loader_tags.insert( "IMPORT" );
 
-	/// Load includes from separate files; nodes will be merged into the tag tree
+	// Load includes from separate files; nodes will be merged into the tag tree
 	{
 		int processed_includes = 0;
 		if( process_includes( tag, processed_includes ) ) {
@@ -243,8 +270,8 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(Pose & pose, bool & mo
 		}
 	}
 
-	/// Load in data into the basic::datacache::DataMap object.  All tags beside those listed
-	/// in the non_data_loader_tags set are considered DataLoader tags.
+	// Load in data into the basic::datacache::DataMap object.  All tags beside those listed
+	// in the non_data_loader_tags set are considered DataLoader tags.
 	TagCOPs const all_tags = tag->getTags();
 	for ( Size ii = 0; ii < all_tags.size(); ++ii ) {
 		using namespace parser;
@@ -254,8 +281,9 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(Pose & pose, bool & mo
 		loader->load_data( pose, iitag, data );
 	}
 
-	if ( !tag->hasTag("PROTOCOLS") )
+	if ( !tag->hasTag("PROTOCOLS") ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("parser::protocol file must specify PROTOCOLS section");
+	}
 
 	// Round 1: Import previously defined filters and movers
 	BOOST_FOREACH( TagCOP const curr_tag, all_tags ){
@@ -283,7 +311,7 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(Pose & pose, bool & mo
 				import_tag_names.insert(std::make_pair("FILTERS", filter_name));
 			}
 		}//fi filters
-		
+
 		if(curr_tag->hasOption("movers")) {
 			// Import movers
 			std::string movers_str( curr_tag->getOption<std::string>("movers") );
@@ -299,17 +327,17 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(Pose & pose, bool & mo
 	// Attempt to find and import requested objects; throws exception on failure
 	if(import_tag_names.size() > 0)
 		import_tags(import_tag_names, tag, data, filters, movers, pose);
-	
+
 	// Round 2: Process definitions in this ROSETTASCRIPTS block
 	BOOST_FOREACH( TagCOP const curr_tag, all_tags ){
-		
-		///// APPLY TO POSE
-		if ( curr_tag->getName() == "APPLY_TO_POSE" ) { // section is not mandatory
-			/// apply to pose may affect all of the scorefxn definitions below, so it is called first.
-			TagCOPs const apply_tags( curr_tag->getTags() );
-			//bool has_profile( false ); // This mutual-exclusion check has been disabled., has_fnr( false ); // to see that the user hasn't turned both on by mistake
 
-			BOOST_FOREACH(TagCOP apply_tag_ptr, apply_tags){
+		///// APPLY TO POSE
+		if ( curr_tag->getName() == "APPLY_TO_POSE" ) {
+			// section is not mandatory
+			// apply to pose may affect all of the scorefxn definitions below, so it is called first.
+			TagCOPs const apply_tags( curr_tag->getTags() );
+
+			BOOST_FOREACH( TagCOP apply_tag_ptr, apply_tags ) {
 				std::string const mover_type( apply_tag_ptr->getName() );
 				MoverOP new_mover( MoverFactory::get_instance()->newMover( apply_tag_ptr, data, filters, movers, pose ) );
 				runtime_assert( new_mover );
@@ -321,7 +349,7 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(Pose & pose, bool & mo
 				}
 
 				modified_pose = true;
-			} /// done applyt_tag_it
+			} // done apply_tag_ptr
 
 		}//  fi apply_to_pose
 		TR.flush();
@@ -469,12 +497,12 @@ void RosettaScriptsParser::process_include_xml(
 
 ///@brief Instantiate a new filter and add it to the list of defined filters for this ROSETTASCRIPTS block
 void RosettaScriptsParser::instantiate_filter(
-	TagCOP const & tag_ptr, 
-	basic::datacache::DataMap & data, 
-	protocols::filters::Filters_map & filters, 
-	Movers_map & movers, 
+	TagCOP const & tag_ptr,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map & filters,
+	Movers_map & movers,
 	core::pose::Pose & pose
-) {	
+) {
 	std::string const type( tag_ptr->getName() );
 	if ( ! tag_ptr->hasOption("name") )
 		throw utility::excn::EXCN_RosettaScriptsOption("Can't define unnamed Filter of type " + type);
@@ -492,12 +520,12 @@ void RosettaScriptsParser::instantiate_filter(
 
 ///@brief Instantiate a new mover and add it to the list of defined movers for this ROSETTASCRIPTS block
 void RosettaScriptsParser::instantiate_mover(
-	TagCOP const & tag_ptr, 
-	basic::datacache::DataMap & data, 
-	protocols::filters::Filters_map & filters, 
-	Movers_map & movers, 
+	TagCOP const & tag_ptr,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map & filters,
+	Movers_map & movers,
 	core::pose::Pose & pose
-) {	
+) {
 	std::string const type( tag_ptr->getName() );
 	if ( ! tag_ptr->hasOption("name") )
 		throw utility::excn::EXCN_RosettaScriptsOption("Can't define unnamed Mover of type " + type);
@@ -516,18 +544,18 @@ void RosettaScriptsParser::instantiate_mover(
 
 ///@brief Instantiate a new task operation (used in IMPORT tag)
 void RosettaScriptsParser::instantiate_taskoperation(
-	TagCOP const & tag_ptr, 
-	basic::datacache::DataMap & data, 
+	TagCOP const & tag_ptr,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map & /*filters*/,
-	Movers_map & /*movers*/, 
+	Movers_map & /*movers*/,
 	core::pose::Pose & /*pose*/
-) {	
+) {
 	using namespace core::pack::task::operation;
 
 	std::string const type( tag_ptr->getName() );
 	if ( ! tag_ptr->hasOption("name") )
 		throw utility::excn::EXCN_RosettaScriptsOption("Can't define unnamed TaskOperation of type " + type);
-	
+
 	std::string const user_defined_name( tag_ptr->getOption<std::string>("name") );
 	if ( data.has( "task_operations", user_defined_name ) )
 		throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation with name \"" + user_defined_name + "\" (of type " + type + ") already exists.");
@@ -576,10 +604,10 @@ TagCOP RosettaScriptsParser::find_rosettascript_tag(
 /// in the order they were originally defined elsewhere in the script
 void RosettaScriptsParser::import_tags(
 	std::set< ImportTagName > & import_tag_names,
-	utility::tag::TagCOP & my_tag, 
-	basic::datacache::DataMap & data, 
-	protocols::filters::Filters_map & filters, 
-	protocols::moves::Movers_map & movers, 
+	utility::tag::TagCOP & my_tag,
+	basic::datacache::DataMap & data,
+	protocols::filters::Filters_map & filters,
+	protocols::moves::Movers_map & movers,
 	core::pose::Pose & pose
 ) {
 	// Process all parent ROSETTASCRIPTS tags, one at a time
@@ -590,15 +618,15 @@ void RosettaScriptsParser::import_tags(
 		do {
 			curr_level_tag = curr_level_tag->getParent();
 		} while(curr_level_tag && curr_level_tag->getName() != "ROSETTASCRIPTS");
-		
+
 		if(!curr_level_tag)
 			break; // No ROSETTASCRIPTS tag to import from
-			
+
 		TR.Debug << "Importing from tag: " << curr_level_tag << std::endl;
-		
+
 		// Check what we'd like to import from it
 		BOOST_FOREACH( TagCOP tag, curr_level_tag->getTags() ) {
-		
+
 			if(tag->getName() == "TASKOPERATIONS") {
 				BOOST_FOREACH( TagCOP taskoperation_tag, tag->getTags() ) {
 					std::string taskoperation_name( taskoperation_tag->getOption<std::string>("name") );
@@ -621,7 +649,7 @@ void RosettaScriptsParser::import_tags(
 					}
 				}
 			}
-				
+
 			if(tag->getName() == "MOVERS") {
 				BOOST_FOREACH( TagCOP mover_tag, tag->getTags() ) {
 					std::string mover_name( mover_tag->getOption<std::string>("name") );
@@ -639,15 +667,15 @@ void RosettaScriptsParser::import_tags(
 			}
 
 		} //BOOST_FOREACH curr_level_tag->getTags()
-		
+
 		if(import_tag_names.size() <= 0)
 			break; // All done
-		
+
 		// Go up the tree
 		curr_level_tag = curr_level_tag->getParent();
-		
+
 	} while( curr_level_tag ); //do
-	
+
 	// Check if there are any remaining imports that could not be satisfied
 	BOOST_FOREACH( ImportTagName import_tag, import_tag_names ) {
 		std::string msg("Failed to import " + import_tag.second + " from " + import_tag.first);

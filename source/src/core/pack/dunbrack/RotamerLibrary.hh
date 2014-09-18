@@ -60,7 +60,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -374,7 +375,12 @@ private:
 	static RotamerLibrary * create_singleton_instance();
 
 private:
-	static RotamerLibrary * rotamer_library_;
+
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< RotamerLibrary * > instance_;
+#else
+	static RotamerLibrary * instance_;
+#endif
 
 private:
 

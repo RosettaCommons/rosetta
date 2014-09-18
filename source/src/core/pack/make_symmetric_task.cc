@@ -35,7 +35,7 @@
 #include <basic/Tracer.hh>
 
 
-static basic::Tracer TR("core.pack.make_symmetric_task");
+static thread_local basic::Tracer TR( "core.pack.make_symmetric_task" );
 
 namespace core {
 namespace pack {

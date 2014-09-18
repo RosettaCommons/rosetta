@@ -212,6 +212,8 @@ void jitter_and_minimize (
 	return;
 }
 
+static 	numeric::random::RandomGenerator RG( 923749 ); //Random generator and seed
+
 int main( int argc, char * argv [] ) {
 
 	using namespace protocols;
@@ -230,7 +232,6 @@ int main( int argc, char * argv [] ) {
 	printf("Starting make_ideal_betapeptide.cc\nFile created 4 January 2013 by Vikram K. Mulligan\n\n");
 	fflush(stdout);
 
-	numeric::random::RandomGenerator RG( 923749 ); //Random generator and seed
 
 	register_options();
 	devel::init(argc, argv);

@@ -76,7 +76,6 @@ using namespace protocols::loophash;
 
 namespace myspace{
 
-static numeric::random::RandomGenerator RG( 12322 ); //Magic number??
 
 ///  Evaluator
 Evaluator::Evaluator(){}
@@ -275,7 +274,7 @@ Scheduler::run_NM( pose::Pose &pose, std::string const mode )
 		if( mode.compare("mix") == 0) {
 			NMmover_->set_random_mode( 10, "probabilistic", 0.3 );
 			Real pert_scale = ( (max_scale_ - min_scale_)*RG.uniform() + min_scale_ ); // -5.0 ~ 5.0, abs > 1.0
-			if( RG.uniform() < 0.5 ) pert_best *= -1.0;
+			if( numeric::random::rg().uniform() < 0.5 ) pert_best *= -1.0;
 
 			NMmover_->set_extrapolate_scale( pert_best );
 			NMmover_->apply( pose_tmp );
@@ -449,14 +448,14 @@ Scheduler::pick_hashing_res( pose::Pose const &pose,
 	Size const nres( pose.total_residue() );
 	
 	if( mode.compare("random") == 0 ){
-		return (Size)(RG.uniform()*(nres-looplen_)) + 1;
+		return (Size)(numeric::random::rg().uniform()*(nres-looplen_)) + 1;
 
 	} else if ( mode.compare("looponly") == 0 ){
 		Size const maxiter = 10;
 
 		for( int Lcount_cut = looplen_-4; Lcount_cut != loopcut_; --Lcount_cut ){
 			for( Size iter = 1; iter <= maxiter; ++iter ){
-				Size ires = (Size)(RG.uniform()*(nres-looplen_)) + 1;
+				Size ires = (Size)(numeric::random::rg().uniform()*(nres-looplen_)) + 1;
 				Lcount = 0;
 				for( Size shift = 0; shift < looplen_; ++shift ){
 					if( pose.secstruct( ires+shift ) == 'L' ) Lcount++;
@@ -597,7 +596,7 @@ Scheduler::run_combine( pose::Pose &pose,
 
 		// Select randomly either LH or NM
 		bool run_lh( true );
-		if( RG.uniform() > lh_portion ) run_lh = false;
+		if( numeric::random::rg().uniform() > lh_portion ) run_lh = false;
 
 		if( run_lh ){
 			Size Lcount;

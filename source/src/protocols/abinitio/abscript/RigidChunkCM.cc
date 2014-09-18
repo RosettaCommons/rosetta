@@ -54,8 +54,7 @@
 //Req'd on WN32
 #include <basic/datacache/WriteableCacheableMap.hh>
 
-static numeric::random::RandomGenerator RG(1892476846);
-static basic::Tracer tr("protocols.abinitio.abscript.RigidChunkCM", basic::t_info);
+static thread_local basic::Tracer tr( "protocols.abinitio.abscript.RigidChunkCM", basic::t_info );
 
 namespace protocols {
 namespace abinitio {
@@ -455,7 +454,7 @@ loops::Loops RigidChunkCM::select_parts( loops::Loops const& rigid_core, core::S
 
   for( Size attempts = 1; attempts <= 50 && current_rigid_core.size() != 0; ++attempts ) {
     for ( loops::Loops::const_iterator it = rigid_core.begin(); it != rigid_core.end(); ++it ) {
-      if ( RG.uniform() >= it->skip_rate() )  {
+      if ( numeric::random::rg().uniform() >= it->skip_rate() )  {
         current_rigid_core.push_back( *it );
       }
     }

@@ -114,11 +114,10 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer T_design("protocols.AnchoredDesign.AnchoredDesignMover");
-static basic::Tracer T_perturb("protocols.AnchoredDesign.AnchoredPerturbMover");
-static basic::Tracer T_refine("protocols.AnchoredDesign.AnchoredRefineMover");
-static basic::Tracer T_shared("protocols.AnchoredDesign.Anchor_Movers");
-static numeric::random::RandomGenerator RG(37633224); //that's the combination on my luggage!
+static thread_local basic::Tracer T_design( "protocols.AnchoredDesign.AnchoredDesignMover" );
+static thread_local basic::Tracer T_perturb( "protocols.AnchoredDesign.AnchoredPerturbMover" );
+static thread_local basic::Tracer T_refine( "protocols.AnchoredDesign.AnchoredRefineMover" );
+static thread_local basic::Tracer T_shared( "protocols.AnchoredDesign.Anchor_Movers" );
 
 namespace protocols{
 namespace anchored_design{
@@ -506,7 +505,7 @@ void AnchoredDesignMover::randomize_input_sequence(core::pose::Pose & pose ) con
 
 			//now that that's out of the way, pick a ResidueType at random
 			core::Size const num_types(types.size());
-			core::Size const chosen_type_index(RG.random_range(1, num_types));
+			core::Size const chosen_type_index(numeric::random::rg().random_range(1, num_types));
 			ResidueLevelTask::ResidueTypeCOPListIter iter = types.begin();
 			for(core::Size add(1); add<chosen_type_index; ++add) ++iter;
 			core::chemical::ResidueTypeCOP chosen_type(*iter);
@@ -593,10 +592,10 @@ void AnchoredDesignMover::perturb_anchor( core::pose::Pose & pose ) const {
 	core::id::AtomID const anchor_ID(core::id::AtomID(CA, anchor));
 	core::Vector const original_anchor_xyz(pose.xyz(anchor_ID));
 
-	//We want to make a change of plus or minus one angstrom.  RG.uniform returns a range of 0 to 1, so the formula 2N-1 converts it to a range of -1 to 1 perturbation - we add this to the original coordinate.
-	core::Real const new_x(translation.x() + ((RG.uniform()*2.0) - 1.0));
-	core::Real const new_y(translation.y() + ((RG.uniform()*2.0) - 1.0));
-	core::Real const new_z(translation.z() + ((RG.uniform()*2.0) - 1.0));
+	//We want to make a change of plus or minus one angstrom.  numeric::random::rg().uniform returns a range of 0 to 1, so the formula 2N-1 converts it to a range of -1 to 1 perturbation - we add this to the original coordinate.
+	core::Real const new_x(translation.x() + ((numeric::random::rg().uniform()*2.0) - 1.0));
+	core::Real const new_y(translation.y() + ((numeric::random::rg().uniform()*2.0) - 1.0));
+	core::Real const new_z(translation.z() + ((numeric::random::rg().uniform()*2.0) - 1.0));
 
 	T_design << "perturb_anchor: old/new, x->y->z\n"
 					 << translation.x() << " " << new_x << "\n"

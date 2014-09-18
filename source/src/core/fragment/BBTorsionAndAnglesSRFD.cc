@@ -31,7 +31,7 @@
 namespace core {
 namespace fragment {
 
-static basic::Tracer tr("core.fragment.BBTorsionAndAnglesSRFD");
+static thread_local basic::Tracer tr( "core.fragment.BBTorsionAndAnglesSRFD" );
 
 bool BBTorsionAndAnglesSRFD::apply( pose::Pose& pose, Size seqpos ) const {
     bool const success ( Parent::apply( pose, seqpos ) );

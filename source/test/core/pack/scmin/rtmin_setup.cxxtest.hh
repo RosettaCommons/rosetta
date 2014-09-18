@@ -103,7 +103,6 @@ static basic::Tracer TR("core.pack.scmin.SCMinMultifunc.cxxtest");
 
 using namespace core;
 
-static numeric::random::RandomGenerator rtminRG( 10501 ); // <- Magic number, do not change it!!!
 
 class rtmin_setup_Tests : public CxxTest::TestSuite
 {
@@ -206,7 +205,7 @@ public:
 		utility::vector1< bool > active_residue_has_been_visited( pose.total_residue(), false );
 
 		utility::vector1< Size > active_residues = pack::repackable_residues( *task );
-		numeric::random::random_permutation( active_residues, rtminRG );
+		numeric::random::random_permutation( active_residues, numeric::random::rg() );
 
 		utility::vector1< conformation::ResidueCOP > bgres( pose.total_residue() );
 		graph::GraphOP packer_neighbor_graph = pack::create_packer_graph( pose, *scorefxn, task );

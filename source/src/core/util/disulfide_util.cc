@@ -65,7 +65,7 @@ using core::pack::task::PackerTaskOP;
 using core::scoring::ScoreFunctionOP;
 using core::kinematics::MoveMap;
 using core::kinematics::MoveMapOP;
-static basic::Tracer TR( "protocols.toolbox.disulfide_util" );
+static thread_local basic::Tracer TR( "protocols.toolbox.disulfide_util" );
 
 /// @details A convenience function for calling \c core::util:: rebuild_disulfide() with
 ///  only a single disulfide bond

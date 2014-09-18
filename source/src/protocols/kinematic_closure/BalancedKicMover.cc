@@ -34,7 +34,6 @@
 #include <limits>
 
 // Global Names {{{1
-static numeric::random::RandomGenerator RG(48291);
 
 using namespace std;
 using core::id::TorsionID;

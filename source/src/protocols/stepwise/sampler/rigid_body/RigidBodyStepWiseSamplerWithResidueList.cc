@@ -18,7 +18,7 @@
 #include <protocols/stepwise/sampler/copy_dofs/ResidueListStepWiseSampler.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.sampler.rigid_body.RigidBodyStepWiseSamplerWithResidueList" );
+static thread_local basic::Tracer TR( "protocols.sampler.rigid_body.RigidBodyStepWiseSamplerWithResidueList" );
 
 using namespace protocols::stepwise::sampler::copy_dofs;
 

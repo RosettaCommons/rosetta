@@ -47,7 +47,7 @@
 #include <basic/Tracer.hh>
 
 
-static basic::Tracer TR("protocols.antibody.SnugDock");
+static thread_local basic::Tracer TR( "protocols.antibody.SnugDock" );
 using namespace core;
 
 namespace protocols {

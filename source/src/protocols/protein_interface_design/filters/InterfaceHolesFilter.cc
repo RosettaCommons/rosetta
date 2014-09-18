@@ -33,7 +33,7 @@ namespace protein_interface_design {
 namespace filters {
 
 
-static basic::Tracer TR( "protocols.protein_interface_design.filters.InterfaceHolesFilter" );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.InterfaceHolesFilter" );
 core::Real
 InterfaceHolesFilter::compute( core::pose::Pose const & pose ) const
 {

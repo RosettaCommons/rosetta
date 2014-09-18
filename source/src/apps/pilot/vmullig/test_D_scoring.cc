@@ -93,6 +93,7 @@ void register_options() {
 	//NEW_OPT( dpositions, "The positions at which a D-alanine should be placed.  Default empty list.", emptyintlist);
 }
 
+
 /**********
   MAIN!!!
 **********/
@@ -107,8 +108,6 @@ int main(int argc, char *argv[]) {
 	using namespace core;
 	using namespace chemical;
 	using namespace conformation;
-
-	numeric::random::RandomGenerator RG( 923749 ); //Random generator and seed
 
 	printf("Starting test_D_scoring.cc\n");
 	printf("Pilot app created 23 Jun 2013 by Vikram K. Mulligan, Baker Laboratory.\n");

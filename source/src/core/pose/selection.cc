@@ -36,7 +36,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 
-static basic::Tracer TR( "core.pose.selection" );
+static thread_local basic::Tracer TR( "core.pose.selection" );
 
 namespace core {
 namespace pose {

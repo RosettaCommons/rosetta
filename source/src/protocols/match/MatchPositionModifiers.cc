@@ -54,7 +54,7 @@
 namespace protocols {
 namespace match {
 
-static basic::Tracer tr( "protocols.match.MatchPositionModifiers" );
+static thread_local basic::Tracer tr( "protocols.match.MatchPositionModifiers" );
 
 /// @brief "factory" function to create the match position modifiers
 MatchPositionModifierCOP

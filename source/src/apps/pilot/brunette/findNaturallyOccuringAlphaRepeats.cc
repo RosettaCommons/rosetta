@@ -71,7 +71,7 @@ using utility::vector1;
 using core::Size;
 using core::Real;
 
-basic::Tracer tr( "alphaRepeatIdenfier" );
+static thread_local basic::Tracer tr( "alphaRepeatIdenfier" );
 
 void avg_ca_position(
 	const core::pose::Pose& pose,

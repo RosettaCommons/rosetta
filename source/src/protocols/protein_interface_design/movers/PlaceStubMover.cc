@@ -90,11 +90,10 @@
 #include <protocols/simple_moves/DesignRepackMover.hh>
 using namespace core::scoring;
 
-static basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceStubMover" );
-static basic::Tracer stats_TR( "STATS.PlaceStubMover" );
-static basic::Tracer TR_debug( "DEBUG.PlaceStubMover" );
+static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceStubMover" );
+static thread_local basic::Tracer stats_TR( "STATS.PlaceStubMover" );
+static thread_local basic::Tracer TR_debug( "DEBUG.PlaceStubMover" );
 
-static numeric::random::RandomGenerator RG( 10101979 ); // <- Magic number, do not change it!!!
 
 namespace protocols {
 namespace protein_interface_design {
@@ -619,7 +618,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 	core::pose::Pose const saved_pose( pose ); //saved after minimization
 	saved_prevent_repacking_ = prevent_repacking();
 	saved_placed_stubs_ = placed_stubs_;
-	numeric::random::random_permutation( stub_set_->begin(), stub_set_->end(), RG );// randomly shuffling stubs so that the selection doesn't repeat the same stub order each time
+	numeric::random::random_permutation( stub_set_->begin(), stub_set_->end(), numeric::random::rg() );// randomly shuffling stubs so that the selection doesn't repeat the same stub order each time
 	HotspotStubSet::Hs_vec::iterator stub_it( stub_set_->begin() );
 	std::vector< core::Size > host_positions;
 	if( task_factory() ){
@@ -645,7 +644,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 
 		// next, place the stub on a position in the host chain that is close enough
 		// randomize the order of placement on host residues to encourage diversity
-		numeric::random::random_permutation( host_positions.begin(), host_positions.end(), RG );
+		numeric::random::random_permutation( host_positions.begin(), host_positions.end(), numeric::random::rg() );
 		for( std::vector< core::Size >::const_iterator host_pos_it = host_positions.begin(); host_pos_it!=host_positions.end(); ++host_pos_it) {
 			using namespace core::conformation;
 			core::Size const res( *host_pos_it );

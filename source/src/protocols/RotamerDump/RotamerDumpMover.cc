@@ -49,7 +49,7 @@
 namespace protocols {
 namespace RotamerDump {
 
-static basic::Tracer RotamerTracer("protocols.RotamerDump.RotamerDumpMover");
+static thread_local basic::Tracer RotamerTracer( "protocols.RotamerDump.RotamerDumpMover" );
 
 RotamerDumpMover::RotamerDumpMover(core::pack::task::TaskFactoryOP task_factory,
 		core::scoring::ScoreFunctionOP score_function) :

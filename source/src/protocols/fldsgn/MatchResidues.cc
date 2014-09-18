@@ -47,7 +47,7 @@
 #include "boost/assign.hpp"
 
 
-static basic::Tracer TR("protocols.fldsgn.MatchResidues");
+static thread_local basic::Tracer TR( "protocols.fldsgn.MatchResidues" );
 
 namespace protocols {
 namespace fldsgn {

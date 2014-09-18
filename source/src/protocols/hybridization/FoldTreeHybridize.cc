@@ -123,8 +123,7 @@
 #include <set>
 #include <list>
 
-static numeric::random::RandomGenerator RG(42136);
-static basic::Tracer TR( "protocols.hybridization.FoldTreeHybridize" );
+static thread_local basic::Tracer TR( "protocols.hybridization.FoldTreeHybridize" );
 
 namespace protocols {
 namespace hybridization {

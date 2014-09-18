@@ -31,7 +31,6 @@
 
 #include <ObjexxFCL/string.functions.hh>
 
-numeric::random::RandomGenerator RG(897987987);
 
 using core::Real;
 using namespace utility::query;
@@ -72,9 +71,9 @@ void test_real() {
 // some dummy structure link something from a silent file
 struct SomeThing {
 	SomeThing() {
-		scores_["score"]  = RG.uniform() * 100.0;
-		scores_["fa_atr"] = RG.uniform() * 100.0;
-		scores_["fa_rep"] = RG.uniform() * 100.0;
+		scores_["score"]  = numeric::random::rg().uniform() * 100.0;
+		scores_["fa_atr"] = numeric::random::rg().uniform() * 100.0;
+		scores_["fa_rep"] = numeric::random::rg().uniform() * 100.0;
 	}
 	Real get_score(std::string s) { return scores_[s]; }
 	std::map<string,Real> scores_;

@@ -27,8 +27,7 @@
 using namespace core;
 using namespace core::chemical::rna;
 
-static basic::Tracer TR( "protocols.sampler.rna.RNA_MC_Sugar" );
-static numeric::random::RandomGenerator RG( 4864698 );  // Magic number
+static thread_local basic::Tracer TR( "protocols.sampler.rna.RNA_MC_Sugar" );
 
 namespace protocols {
 namespace stepwise {
@@ -58,7 +57,7 @@ void RNA_MC_Sugar::init() {
 ///////////////////////////////////////////////////////////////////////////
 void RNA_MC_Sugar::operator++() {
 	runtime_assert( is_init() );
-	if ( flip_rate_ != 0 && RG.uniform() < flip_rate_ ) {
+	if ( flip_rate_ != 0 && numeric::random::rg().uniform() < flip_rate_ ) {
 		active_pucker_state_ = ( stored_pucker_state_ == NORTH ) ? SOUTH : NORTH;
 	} else {
 		active_pucker_state_ = stored_pucker_state_;

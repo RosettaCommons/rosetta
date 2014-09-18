@@ -122,14 +122,9 @@ std::vector<PerformanceBenchmark *> & PerformanceBenchmark::allBenchmarks()
 double PerformanceBenchmark::execute(Real scaleFactor)
 {
 	/// Reseting RG system before each performance run.
-	numeric::random::RandomGenerator::initializeRandomGenerators(
-		 1000, numeric::random::_RND_TestRun_, "mt19937");
+	numeric::random::rg().set_seed( "mt19937", 1000 );
 
 	TR << "Setting up "<< name() << "..." << std::endl;
-	//for(int i=0; i<3; i++) {
-	//	std::cout << "X i="<< i << " R=" << numeric::random::uniform() << std::endl;
-	//}
-
 	setUp();
 
 	double t;

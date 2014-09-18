@@ -21,7 +21,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -72,7 +73,11 @@ private:
 #endif
 
 private:
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< SymDofMoverSampler * > instance_;
+#else
 	static SymDofMoverSampler * instance_;
+#endif
 
 	utility::vector1<std::string> sym_dof_names_;
 	utility::vector1<Real> angles_;

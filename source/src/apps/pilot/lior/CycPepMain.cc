@@ -146,11 +146,9 @@ using basic::T;
 using namespace protocols::jobdist;
 using basic::Error;
 using basic::Warning;
-static numeric::random::RandomGenerator RG(12321); // <- Magic number, do not change it!!!
 
 //typedef utility::pointer::owning_ptr< BaseJobDistributor< BasicJobOP > > BaseJobDistributorOP
-basic::Tracer TR("pilot_apps.CycPepModeler");
-//static numeric::random::RandomGenerator JDRG(32342524); // magic number copied from Job Distributor
+static thread_local basic::Tracer TR( "pilot_apps.CycPepModeler" );
 
 // copied from
 int distribute_jobs(protocols::moves::Mover& mover, bool random_permutation)
@@ -162,7 +160,7 @@ int distribute_jobs(protocols::moves::Mover& mover, bool random_permutation)
   // Reduce read contention between processes by randomizing the order in which structures are processed
   // Do not randomize, though, if job distribution is controlled by MPI
   if( random_permutation ) {
-    numeric::random::random_permutation( input_jobs, numeric::random::RG );
+    numeric::random::random_permutation( input_jobs, numeric::random::rg() );
   }
 #endif
 

@@ -29,7 +29,7 @@
 using namespace core;
 using namespace core::chemical::rna;
 using namespace core::pose::rna;
-static basic::Tracer TR( "protocols.sampler.rna.RNA_SuiteStepWiseSampler" );
+static thread_local basic::Tracer TR( "protocols.sampler.rna.RNA_SuiteStepWiseSampler" );
 
 namespace protocols {
 namespace stepwise {

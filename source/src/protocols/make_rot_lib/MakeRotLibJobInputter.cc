@@ -47,7 +47,7 @@
 namespace protocols {
 namespace make_rot_lib {
 
-static basic::Tracer TR("protocols.make_rot_lib.MakeRotLibJobInputter");
+static thread_local basic::Tracer TR( "protocols.make_rot_lib.MakeRotLibJobInputter" );
 
 protocols::make_rot_lib::MakeRotLibJobInputter::MakeRotLibJobInputter() :
 	jd2::JobInputter()

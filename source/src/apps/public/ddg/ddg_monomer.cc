@@ -76,10 +76,9 @@
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR("apps.public.ddg.ddg_monomer");
+static thread_local basic::Tracer TR( "apps.public.ddg.ddg_monomer" );
 
 
-//static numeric::random::RandomGenerator RG(54324); // <- Magic number, do not change it!!!
 
 using namespace core;
 using namespace scoring;

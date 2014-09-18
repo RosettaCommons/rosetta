@@ -63,7 +63,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.antibody.H3RefineCCD");
+static thread_local basic::Tracer TR( "protocols.antibody.H3RefineCCD" );
 
 using namespace core;
 namespace protocols {

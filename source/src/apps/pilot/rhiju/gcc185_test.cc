@@ -139,7 +139,6 @@ using core::util::T;
 using core::util::Error;
 using core::util::Warning;
 
-//static numeric::random::RandomGenerator RG(12321); // <- Magic number, do not change it!!!
 
 using namespace core;
 using namespace protocols;

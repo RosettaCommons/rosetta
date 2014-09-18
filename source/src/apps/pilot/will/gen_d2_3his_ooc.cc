@@ -107,7 +107,7 @@ typedef numeric::xyzVector<Real> Vec;
 typedef numeric::xyzMatrix<Real> Mat;
 typedef utility::vector1<Vec> Vecs;
 
-static basic::Tracer TR("gen_d2");
+static thread_local basic::Tracer TR( "gen_d2" );
 
 
 inline Real const sqr(Real const r) { return r*r; }

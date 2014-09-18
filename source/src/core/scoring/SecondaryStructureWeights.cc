@@ -28,7 +28,6 @@
 namespace core {
 namespace scoring {
 
-static numeric::random::RandomGenerator ss_weights_RG(82645);
 
 SecondaryStructureWeights::~SecondaryStructureWeights() {}
 
@@ -62,8 +61,8 @@ SecondaryStructureWeights::setup_parallel_antiparallel_weights(
 {
 	if ( randomize_weights ) {
 		// Choose whether to weight up parallel or antiparallel
-		Real randomnumber = ss_weights_RG.uniform();
-		Real randomweight = 10.0 * ss_weights_RG.uniform(); // Pretty drastic reweighting...
+		Real randomnumber = numeric::random::rg().uniform();
+		Real randomweight = 10.0 * numeric::random::rg().uniform(); // Pretty drastic reweighting...
 		if ( randomnumber < 0.5 ){
 			set_parallel_weight( randomweight );
 			set_antiparallel_weight( 1.0/randomweight );

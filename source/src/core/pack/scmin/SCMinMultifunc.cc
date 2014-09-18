@@ -50,7 +50,7 @@ namespace core {
 namespace pack {
 namespace scmin {
 
-static basic::Tracer TR("core.pack.scmin.SCMinMultifunc");
+static thread_local basic::Tracer TR( "core.pack.scmin.SCMinMultifunc" );
 
 
 SCMinMultifunc::SCMinMultifunc(

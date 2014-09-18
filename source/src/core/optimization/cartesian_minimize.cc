@@ -57,7 +57,7 @@ using namespace ObjexxFCL::format;
 namespace core {
 namespace optimization {
 
-static basic::Tracer TR("core.optimization");
+static thread_local basic::Tracer TR( "core.optimization" );
 
 /////////////////////////////////////////////////////////////////////////////
 /// @detailed

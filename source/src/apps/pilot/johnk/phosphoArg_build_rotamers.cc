@@ -64,7 +64,7 @@ OPT_KEY( Real, match_distance_cutoff )
 OPT_KEY( Real, phosphate_force_constant )
 OPT_KEY( Boolean, do_minimization )
 
-static basic::Tracer TR( "apps.pilot.phosphoArg_build_rotamers.main" );
+static thread_local basic::Tracer TR( "apps.pilot.phosphoArg_build_rotamers.main" );
 
 
 int

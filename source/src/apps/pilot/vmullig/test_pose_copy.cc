@@ -108,7 +108,6 @@ int main(int argc, char *argv[]) {
 	using namespace chemical;
 	using namespace conformation;
 
-	numeric::random::RandomGenerator RG( 923749 ); //Random generator and seed
 
 	printf("Starting test_pose_copy.cc\n");
 	printf("Pilot app created 17 April 2014 by Vikram K. Mulligan, Baker Laboratory.\n");

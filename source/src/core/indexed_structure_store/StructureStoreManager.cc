@@ -36,7 +36,7 @@ namespace indexed_structure_store
 
 using namespace basic::options;
 
-static basic::Tracer TR("core.indexed_structure_store.StructureStoreManager");
+static thread_local basic::Tracer TR( "core.indexed_structure_store.StructureStoreManager" );
 
 StructureStoreManager::StructureStoreManager() 
 {

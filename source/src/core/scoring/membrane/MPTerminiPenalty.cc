@@ -46,7 +46,7 @@
 // C++ Headers
 #include <cstdlib>
 
-static basic::Tracer TR("core.scoring.membrane.MPTerminiPenalty");
+static thread_local basic::Tracer TR( "core.scoring.membrane.MPTerminiPenalty" );
 
 namespace core {
 namespace scoring {

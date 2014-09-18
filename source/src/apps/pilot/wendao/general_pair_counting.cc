@@ -78,8 +78,7 @@ using namespace core::pack::dunbrack;
 using namespace core::pack::dunbrack::cenrot;
 
 // declare
-static numeric::random::RandomGenerator RG(62331911);
-basic::Tracer TR("pilot.wendao.cenrot");
+static thread_local basic::Tracer TR( "pilot.wendao.cenrot" );
 utility::vector1<std::string> rot_type_list;
 utility::vector1<Size> rot_list_num;
 

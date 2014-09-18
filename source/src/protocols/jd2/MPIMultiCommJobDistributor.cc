@@ -48,7 +48,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer tr("protocols.jd2.MPIMultiCommJobDistributor");
+static thread_local basic::Tracer tr( "protocols.jd2.MPIMultiCommJobDistributor" );
 
 namespace protocols {
 namespace jd2 {

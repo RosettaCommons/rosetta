@@ -77,9 +77,8 @@ namespace loophash {
 
 using namespace protocols::wum;
 
-static basic::Tracer TR("MPI.LHR.Master");
+static thread_local basic::Tracer TR( "MPI.LHR.Master" );
 
-static numeric::random::RandomGenerator RG(3893251);  // <- Magic number, do not change it (and dont try and use it anywhere else)
 
 void
 MPI_LoopHashRefine_Master::set_defaults(){
@@ -351,7 +350,7 @@ MPI_LoopHashRefine_Master::add_relax_batch( SilentStructStore &start_decoys ){
 
 		// Mix up the order
     //std::random__shuffle( new_wu->decoys().begin(), new_wu->decoys().end());
-    numeric::random::random_permutation(new_wu->decoys().begin(), new_wu->decoys().end(), numeric::random::RG);
+    numeric::random::random_permutation(new_wu->decoys().begin(), new_wu->decoys().end(), numeric::random::rg());
 
 		// make sure the chunk size doesnt exceed batch_relax_absolute_max_
 		core::Size chunk_size = new_wu->decoys().size();

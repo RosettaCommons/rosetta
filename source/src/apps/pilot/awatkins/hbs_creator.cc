@@ -102,7 +102,7 @@ using utility::file::FileName;
 //kdrew: this app adds hbs patches to the given pdb strucure
 
 // tracer - used to replace cout
-static basic::Tracer TR("HBS_Creator");
+static thread_local basic::Tracer TR( "HBS_Creator" );
 
 void
 setup_pert_foldtree(

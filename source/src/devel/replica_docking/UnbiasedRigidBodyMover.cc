@@ -39,8 +39,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer tr( "devel.replica_docking.UnbiasedRigidBodyMover" );
-static numeric::random::RandomGenerator rigid_RG(24205385);
+static thread_local basic::Tracer tr( "devel.replica_docking.UnbiasedRigidBodyMover" );
 
 namespace devel {
 namespace replica_docking {
@@ -142,7 +141,7 @@ void UnbiasedRigidBodyPerturbNoCenterMover::apply( core::pose::Pose& pose ) {
 
   // set baseclass rb_jump_ randomly from list of movable jumps
   if ( movable_jumps_.size() > 1 ) {
-    rb_jump_ = rigid_RG.random_element( movable_jumps_ );
+    rb_jump_ = numeric::random::rg().random_element( movable_jumps_ );
   } else if ( movable_jumps_.size() == 1 ) {
     rb_jump_ = movable_jumps_[1];
     tr.Debug <<"set rb_jump_ movable_jumps_[1]" << std::endl;
@@ -158,9 +157,13 @@ void UnbiasedRigidBodyPerturbNoCenterMover::apply( core::pose::Pose& pose ) {
   numeric::xyzMatrix< core::Real> const rot=flexible_jump.get_rotation();
   numeric::xyzVector< core::Real> const trans=flexible_jump.get_translation();
 
-  numeric::xyzVector<core::Real> delta_trans/*(0.0245597,-0.181304,-0.276021);*/( trans_mag_*rigid_RG.gaussian(), trans_mag_*rigid_RG.gaussian(), trans_mag_*rigid_RG.gaussian() );
-  core::Real theta = numeric::random::random_rotation_angle( rot_mag_, rigid_RG );
-  numeric::xyzVector<core::Real> axis = numeric::random::random_point_on_unit_sphere< core::Real >( rigid_RG );
+	/*old delta trans? (0.0245597,-0.181304,-0.276021);*/
+  numeric::xyzVector<core::Real> delta_trans(
+		trans_mag_*numeric::random::rg().gaussian(),
+		trans_mag_*numeric::random::rg().gaussian(),
+		trans_mag_*numeric::random::rg().gaussian() );
+  core::Real theta = numeric::random::random_rotation_angle( rot_mag_, numeric::random::rg() );
+  numeric::xyzVector<core::Real> axis = numeric::random::random_point_on_unit_sphere< core::Real >( numeric::random::rg() );
 	tr.Info << "axis=["<<axis.x() <<" "<<axis.y()<<" "<<axis.z()<<"]"<<std::endl;
   numeric::xyzMatrix<core::Real> delta_rot = numeric::rotation_matrix_radians( axis, theta );
   flexible_jump.set_translation( delta_trans + trans );

@@ -64,8 +64,7 @@
 namespace devel {
 namespace loop_creation {
 
-static basic::Tracer TR( "protocols.loophash.FragmentLoopInserter" );
-static numeric::random::RandomGenerator RG(7235646);
+static thread_local basic::Tracer TR( "protocols.loophash.FragmentLoopInserter" );
 
 //****CREATOR METHODS****//
 std::string
@@ -244,7 +243,7 @@ FragmentLoopInserter::find_loop_fragments(
 	if(low_rms_frags.size()==0){
 		utility_exit_with_message("No low-rmsd loop fragments found. Try increasing max rmsd");
 	}
-	numeric::random::random_permutation(low_rms_frags,RG);
+	numeric::random::random_permutation(low_rms_frags,numeric::random::rg());
 }
 
 void

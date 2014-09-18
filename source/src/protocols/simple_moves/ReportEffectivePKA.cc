@@ -61,7 +61,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
-static basic::Tracer TR( "protocols.simple_moves.ReportEffectivePKA" );
+static thread_local basic::Tracer TR( "protocols.simple_moves.ReportEffectivePKA" );
 
 namespace protocols {
 namespace simple_moves {

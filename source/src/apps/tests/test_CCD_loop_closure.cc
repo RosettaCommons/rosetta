@@ -56,7 +56,6 @@ using namespace core::conformation;
 
 
 // Construct random-number generator.
-static numeric::random::RandomGenerator RG( 21 );  // the 6th triangular number
 
 
 // Constants
@@ -109,8 +108,8 @@ void
 randomly_open_pose_loop( Pose & pose, Loop const & loop )
 {
 	for ( core::uint i = loop.start(); i <= loop.stop(); ++i ) {
-		pose.set_phi( i, RG.uniform() * 360 );
-		pose.set_psi( i, RG.uniform() * 360 );
+		pose.set_phi( i, numeric::random::rg().uniform() * 360 );
+		pose.set_psi( i, numeric::random::rg().uniform() * 360 );
 	}
 }
 

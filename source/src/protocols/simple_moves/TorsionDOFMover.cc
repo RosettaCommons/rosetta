@@ -41,8 +41,7 @@
 using basic::Error;
 using basic::Warning;
 
-static numeric::random::RandomGenerator RG(14331701);
-static basic::Tracer TR( "protocols.simple_moves.TorsionDOFMover" );
+static thread_local basic::Tracer TR( "protocols.simple_moves.TorsionDOFMover" );
 
 namespace protocols {
 namespace simple_moves {
@@ -179,7 +178,7 @@ TorsionDOFMover::get_name() const {
 
 ///@brief calculate angle for perturbation - call to RNG
 core::Angle TorsionDOFMover::calc_angle()
-{	return numeric::conversions::radians(lower_angle_ + ((upper_angle_ - lower_angle_) * RG.uniform())); }
+{	return numeric::conversions::radians(lower_angle_ + ((upper_angle_ - lower_angle_) * numeric::random::rg().uniform())); }
 
 ///@brief calculate mmt score for the moving bond
 ///This is the stupidest possible method - score the whole pose.  It would be much better if this could directly use MMTorsionEnergy to calculate about just the one bond in question, but I can't figure out how to reliably look up exactly the set of residues modified by this torsion (remember that changing this 4-body torsion affects other 4-bodies with a shared central bond).
@@ -194,7 +193,7 @@ bool TorsionDOFMover::boltzmann( core::Energy const pre_score, core::Energy cons
 	if ( post_score > pre_score ) {
 		core::Real const boltz_factor = ((pre_score - post_score)/temp_);
 		core::Real const probability = std::exp(std::max(core::Real(-40.0),boltz_factor) );
-		if ( RG.uniform() >= probability ) return false;
+		if ( numeric::random::rg().uniform() >= probability ) return false;
 	}
 
 	//TR << "accepting" << std::endl;

@@ -71,7 +71,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-static basic::Tracer TR("core.scoring.elec.FA_ElecEnergy");
+static thread_local basic::Tracer TR( "core.scoring.elec.FA_ElecEnergy" );
 
 /////////////////////////////////////////////////////////////////////////////////////////
 ///

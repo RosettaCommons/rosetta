@@ -43,8 +43,7 @@
 // option key includes
 
 
-static basic::Tracer tr("protocols.topo_broker",basic::t_info);
-//static numeric::random::RandomGenerator RG(181134);
+static thread_local basic::Tracer tr( "protocols.topo_broker", basic::t_info );
 
 namespace protocols {
 namespace topology_broker {

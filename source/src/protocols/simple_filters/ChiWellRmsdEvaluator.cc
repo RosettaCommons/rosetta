@@ -47,7 +47,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-static basic::Tracer tr("protocols.evaluation.RMSD");
+static thread_local basic::Tracer tr( "protocols.evaluation.RMSD" );
 namespace protocols {
 namespace simple_filters {
 using namespace core;

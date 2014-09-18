@@ -49,7 +49,7 @@
 
 #include <utility/excn/Exceptions.hh>
 
-basic::Tracer TR("call_saxs_score");
+static thread_local basic::Tracer TR( "call_saxs_score" );
 
 using namespace core;
 

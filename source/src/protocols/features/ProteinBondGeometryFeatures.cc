@@ -56,7 +56,7 @@ using core::pose::Pose;
 using utility::vector1;
 using utility::sql_database::sessionOP;
 
-static basic::Tracer TR("protocols.features.ProteinBondGeometry");
+static thread_local basic::Tracer TR( "protocols.features.ProteinBondGeometry" );
 
 ProteinBondGeometryFeatures::ProteinBondGeometryFeatures(){
 	// if flag _or_ energy method wants a linear potential, make the potential linear - ptc: just the flag here

@@ -68,9 +68,8 @@ using core::kinematics::Stub;
 using core::conformation::Residue;
 using core::Real;
 
-static basic::Tracer TR("rblinker2_overlay_bound");
+static thread_local basic::Tracer TR( "rblinker2_overlay_bound" );
 
-// static numeric::random::RandomGenerator RG(8334046);
 //
 // inline void xform_pose( core::pose::Pose & pose, Stub const & s ) {
 // 	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {

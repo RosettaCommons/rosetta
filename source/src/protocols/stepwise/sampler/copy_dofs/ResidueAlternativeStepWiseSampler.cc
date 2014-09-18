@@ -20,7 +20,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.sampler.copy_dofs.ResidueAlternativeStepWiseSampler" );
+static thread_local basic::Tracer TR( "protocols.sampler.copy_dofs.ResidueAlternativeStepWiseSampler" );
 
 using namespace core;
 using namespace core::conformation;

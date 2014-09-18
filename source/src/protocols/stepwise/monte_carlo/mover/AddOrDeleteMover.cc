@@ -37,7 +37,7 @@ using namespace core::pose::full_model_info;
 //  as to whether to add or delete nucleotide and chunks, and where.
 //////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.AddOrDeleteMover" ) ;
+static thread_local basic::Tracer TR( "protocols.stepwise.monte_carlo.mover.AddOrDeleteMover" );
 
 namespace protocols {
 namespace stepwise {

@@ -22,7 +22,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.sampler.protein.ProteinFragmentStepWiseSampler" );
+static thread_local basic::Tracer TR( "protocols.sampler.protein.ProteinFragmentStepWiseSampler" );
 
 ///////////////////////////////////////////////////////////////////
 //

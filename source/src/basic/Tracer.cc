@@ -69,7 +69,35 @@
 
 #include <cstdio>
 
+#ifdef CXX11
+#ifdef MULTI_THREADED
+
+#include <mutex>
+
+#endif
+#endif
+
+
 namespace basic {
+
+bool Tracer::initial_tracers_visibility_calculated_( false );
+
+TracerManager * TracerManager::instance_( 0 );
+
+#ifdef CXX11
+#ifdef MULTI_THREADED
+
+/// @brief This mutex ensures that any time static data is read from or written to by
+/// a tracer object, that the thread gets exclusive access to it.
+/// In particular, the all_tracers_ array and the initial_tracers_visibility_calculated_
+/// booleal need to be carefully locked so that multiple threads do not try to
+/// initialize Tracers simultaneously, or try to inialize a Tracer while another thread
+/// is calling calculate_tracer_visibilities().
+std::recursive_mutex tracer_static_data_mutex;
+
+#endif
+#endif
+
 
 CSI_Sequence::CSI_Sequence(std::string sequence_)
 {
@@ -109,7 +137,7 @@ bool &Tracer::ios_hook_raw_()	// uninitilized, we will set correct output during
 	return raw;
 }
 
-utility::vector1<std::string> Tracer::monitoring_list_;
+utility::vector1< std::string > Tracer::monitoring_list_;
 
 
 //std::string const Tracer::AllChannels("_Really_Unique_String_Object_To_Identify_All_Tracer_Channels__qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM");
@@ -136,20 +164,33 @@ CSI_Sequence Tracer::Reset("\x1b[0m"), Tracer::Bold("\x1b[1m"), Tracer::Underlin
 	  Tracer::Black("\x1b[30m"),   Tracer::Red("\x1b[31m"),   Tracer::Green("\x1b[32m"),   Tracer::Yellow("\x1b[33m"),   Tracer::Blue("\x1b[34m"),   Tracer::Magenta("\x1b[35m"),   Tracer::Cyan("\x1b[36m"),   Tracer::White("\x1b[37m"),
 	Tracer::bgBlack("\x1b[40m"), Tracer::bgRed("\x1b[41m"), Tracer::bgGreen("\x1b[42m"), Tracer::bgYellow("\x1b[43m"), Tracer::bgBlue("\x1b[44m"), Tracer::bgMagenta("\x1b[45m"), Tracer::bgCyan("\x1b[46m"), Tracer::bgWhite("\x1b[47m");
 
-/// return visibility of TracerProxy object.
-bool Tracer::TracerProxy::visible() const
+Tracer::TracerProxy::TracerProxy(
+	Tracer & tracer,
+	int priority,
+	std::string const & channel
+) :
+	tracer_(tracer),
+	priority_(priority),
+	channel_(channel),
+	visible_(true),
+	visibility_calculated_(false)
+{}
+
+
+void
+Tracer::TracerProxy::calculate_visibility()
 {
-	if( !visibility_calculated_ ) {
-		bool muted;  int mute_level;
-		calculate_visibility(channel_, priority_, visible_, muted, mute_level, tracer_.muted_by_default_);
-	}
-	return visible_;
+	bool muted;  int mute_level;
+	Tracer::calculate_visibility( channel_, priority_, visible_, muted, mute_level, tracer_.muted_by_default_ );
+	visibility_calculated_ = true;
 }
 
 
 /// Flush inner buffer: send it to bound Tracer object, and clean it.
 void Tracer::TracerProxy::t_flush(std::string const & s)
 {
+	assert( visibility_calculated_ );
+
 	int pr = tracer_.priority();
 	tracer_.priority(priority_);
 	tracer_ << s;
@@ -163,20 +204,37 @@ Tracer::TracerProxy::~TracerProxy()
 	/// Do nothing here - contents will get flushed in Tracer destructor.
 }
 
-
-/// @details static collection of all Tracer objects
-std::vector< Tracer * > & Tracer::all_tracers()
-{
-	static std::vector< Tracer * > * allTr = new std::vector< Tracer * >;
-	return *allTr;
-}
-
 void Tracer::flush_all_tracers()
 {
-	for(std::vector<Tracer *>::iterator it=all_tracers().begin(); it < all_tracers().end(); ++it) {
+#ifdef CXX11
+#ifdef MULTI_THREADED
+	std::lock_guard< std::recursive_mutex > lock( tracer_static_data_mutex );
+#endif
+#endif
+
+	std::vector< Tracer * > & all_tracers( TracerManager::get_instance()->all_tracers() );
+	for ( std::vector<Tracer *>::iterator it = all_tracers.begin();
+				it != all_tracers.end(); ++it ) {
 		(*it)->flush_all_channels();
 	}
+
 }
+
+void
+Tracer::calculate_tracer_visibilities()
+{
+#ifdef CXX11
+#ifdef MULTI_THREADED
+	std::lock_guard< std::recursive_mutex > lock( tracer_static_data_mutex );
+#endif
+#endif
+	initial_tracers_visibility_calculated_ = true;
+	std::vector< Tracer * > & all_tracers( TracerManager::get_instance()->all_tracers() );
+	for ( platform::Size ii = 0; ii < all_tracers.size(); ++ii ) {
+		all_tracers[ ii ]->calculate_visibility();
+	}
+}
+
 
 
 /// @details Constructor of Tracer object.
@@ -185,29 +243,45 @@ void Tracer::flush_all_tracers()
 /// Such calculation should be done later, whe first IO operation happend.
 /// @todo Default Tracer level should probably be modified to t_info here and in options defn.
 Tracer::Tracer(std::string const & channel, TracerPriority priority, bool muted_by_default) :
-	Fatal(*this,   t_fatal, channel),
-	Error(*this,   t_error, channel),
-	Warning(*this, t_warning, channel),
-	Info(*this,    t_info, channel),
-	Debug(*this,   t_debug, channel),
-	Trace(*this,   t_trace, channel),
-	mute_level_(-1), visible_(true), muted_( false ), muted_by_default_(muted_by_default),
-	begining_of_the_line_(true), visibility_calculated_(false)
+	Fatal(   *this, t_fatal,   channel ),
+	Error(   *this, t_error,   channel ),
+	Warning( *this, t_warning, channel ),
+	Info(    *this, t_info,    channel ),
+	Debug(   *this, t_debug,   channel ),
+	Trace(   *this, t_trace,   channel ),
+	mute_level_(-1),
+	visible_(true),
+	muted_( false ),
+	muted_by_default_(muted_by_default),
+	begining_of_the_line_(true),
+	visibility_calculated_(false)
 {
 	channel_ = channel;
 	priority_ = priority;
 
-	all_tracers().push_back(this);
+#ifdef CXX11
+#ifdef MULTI_THREADED
+	std::lock_guard< std::recursive_mutex > lock( tracer_static_data_mutex );
+#endif
+#endif
+
+	if ( initial_tracers_visibility_calculated_ ) {
+		calculate_visibility();
+	}
+
+	TracerManager::get_instance()->all_tracers().push_back( this );
+
 }
 
 Tracer::~Tracer()
 {
 	/// We could not gurantee that option system was not deleted already, so we must disable
 	/// options access. However we don't want channel to withhold any output since it can be important.
-    /// We check if anything still present in channel buffer, and if it is - print it contents with warning.
+	/// We check if anything still present in channel buffer, and if it is - print it contents with warning.
 
-	std::vector< otstream* > v = utility::tools::make_vector< otstream* >(this, &Fatal, &Error, &Warning,
- 															 &Info, &Debug, &Trace);
+	std::vector< otstream* > v = utility::tools::make_vector< otstream* >(
+		this, &Fatal, &Error, &Warning,
+ 		&Info, &Debug, &Trace);
 
 	//bool need_flush = false;
 	for(size_t i=0; i<v.size(); i++) {
@@ -218,18 +292,22 @@ Tracer::~Tracer()
 		}
 	}
 
-	for(int i = all_tracers().size()-1; i >= 0; --i) {
-		if( this == all_tracers()[i] ) all_tracers().erase( all_tracers().begin()+i);
-	}
+#ifdef CXX11
+#ifdef MULTI_THREADED
+	std::lock_guard< std::recursive_mutex > lock( tracer_static_data_mutex );
+#endif
+#endif
 
-	/* for(std::vector< Tracer * >::iterator it=all_tracers().begin(); it < all_tracers().end(); ++it) {
-		if( this == *it ) { all_tracers().erase( it ); break; }
-	} */
+	//std::cout << "Erasing tracer: " << channel_ << std::endl;
+	std::vector< Tracer * > & all_tracers( TracerManager::get_instance()->all_tracers() );
+	std::vector< Tracer * >::iterator iter_this = std::find( all_tracers.begin(), all_tracers.end(), this );
+	assert( iter_this != all_tracers.end() );
+	all_tracers.erase( iter_this );
 }
 
 
 ///  @details re-init using data from another tracer object.
-void Tracer::init(Tracer const & tr)
+void Tracer::init( Tracer const & tr )
 {
 	channel_ = tr.channel_;
 	priority_ = tr.priority_;
@@ -239,12 +317,24 @@ void Tracer::init(Tracer const & tr)
 	mute_level_ = -1;
 	begining_of_the_line_ = true;
 	visibility_calculated_ = false;
+
+#ifdef CXX11
+#ifdef MULTI_THREADED
+	std::lock_guard< std::recursive_mutex > lock( tracer_static_data_mutex );
+#endif
+#endif
+
+	if ( initial_tracers_visibility_calculated_ ) {
+		calculate_visibility();
+	}
+
 }
 
 void Tracer::flush_all_channels()
 {
-	std::vector< otstream* > v = utility::tools::make_vector< otstream* >(this, &Fatal, &Error, &Warning,
-															 &Info, &Debug, &Trace);
+	std::vector< otstream* > v = utility::tools::make_vector< otstream* >(
+		this, &Fatal, &Error, &Warning,
+		&Info, &Debug, &Trace);
 
 	for(size_t i=0; i<v.size(); i++) {
 		v[i]->flush();
@@ -252,19 +342,15 @@ void Tracer::flush_all_channels()
 }
 
 bool Tracer::visible( int priority ) const {
-	if (!visibility_calculated_) calculate_visibility();
 
 	if ( muted_ ) return false;
 	if ( priority > mute_level_ ) return false;
 	return true;
+
 }
 
-bool Tracer::visible() const {
-	if (!visibility_calculated_) calculate_visibility();
-	return visible_;
-}
-
-Tracer & Tracer::operator ()(int priority)
+Tracer &
+Tracer::operator ()(int priority)
 {
 	this->priority(priority);
 	return *this;
@@ -273,7 +359,7 @@ Tracer & Tracer::operator ()(int priority)
 void Tracer::priority(int priority)
 {
 	priority_ = priority;
-	if (visibility_calculated_) {
+	if ( visibility_calculated_ ) {
 		/*
 		#ifdef EXPERIMENTAL_TRACER_FEATURES
 			muted_ = priority >= mute_level_;
@@ -285,10 +371,16 @@ void Tracer::priority(int priority)
 }
 
 
-/// @details Calculate visibility of current Tracer object.
-void Tracer::calculate_visibility() const
+/// @details Calculate visibility of current Tracer object and all of its proxies
+void Tracer::calculate_visibility()
 {
 	calculate_visibility(channel_, priority_, visible_, muted_, mute_level_, muted_by_default_);
+	Fatal.calculate_visibility();
+	Error.calculate_visibility();
+	Warning.calculate_visibility();
+	Info.calculate_visibility();
+	Debug.calculate_visibility();
+	Trace.calculate_visibility();
 	visibility_calculated_ = true;
 
 }
@@ -296,24 +388,28 @@ void Tracer::calculate_visibility() const
 
 /// @details Calculate visibility (static version) of current Tracer object using channel name and priority.
 /// result stored in 'muted' and 'visible'.
-void Tracer::calculate_visibility(std::string const &channel, int priority, bool &visible, bool &muted, int &mute_level_, bool muted_by_default)
+void Tracer::calculate_visibility(
+	std::string const & channel,
+	int    priority,
+	bool & visible,
+	bool & muted,
+	int  & mute_level_,
+	bool   muted_by_default
+)
 {
 	visible = false;
-	if( in(tracer_options_.muted, "all", true) ) {
-		if( in(tracer_options_.unmuted, channel, false) ) visible = true;
+	if ( in(tracer_options_.muted, "all", true) ) {
+		if ( in(tracer_options_.unmuted, channel, false) ) visible = true;
 		else visible = false;
-	}
-	else {
+	} else {
 		if( in(tracer_options_.unmuted, "all", true) ) {
 			if( in(tracer_options_.muted, channel, false) ) visible = false;
 			else visible = true;
-		}
-		else {  /// default bechavior: unmute unless muted_by_default is true
+		} else {  /// default bechavior: unmute unless muted_by_default is true
 			if( muted_by_default ) {
 				if( in(tracer_options_.unmuted, channel, false) ) visible = true;
 				else visible = false;
-			}
-			else {
+			} else {
 				if( in(tracer_options_.muted, channel, false) ) visible = false;
 				else visible = true;
 			}
@@ -440,7 +536,8 @@ bool Tracer::calculate_tracer_level(utility::vector1<std::string> const & v, std
 /// @dtails Write the contents of str to sout prepending the channel
 /// name on each line if the print_channel_name flag is set.
 template <class out_stream>
-void Tracer::prepend_channel_name( out_stream & sout, std::string const &str){
+void Tracer::prepend_channel_name( out_stream & sout, std::string const &str )
+{
 	if ( tracer_options_.print_channel_name ){
 		std::string s = str;
 		begining_of_the_line_ = true;
@@ -468,8 +565,7 @@ void Tracer::prepend_channel_name( out_stream & sout, std::string const &str){
 /// @details Inform Tracer that is contents was modified, and IO is in order.
 void Tracer::t_flush(std::string const &str)
 {
-	if( !visibility_calculated_ ) calculate_visibility();
-
+	assert( visibility_calculated_ );
 	if( ios_hook() && ios_hook().get()!=this &&
 		( in(monitoring_list_, channel_, false) || in(monitoring_list_, get_all_channels_string(), true ) ) ) {
 		if (ios_hook_raw_() || visible() ){
@@ -485,7 +581,8 @@ void Tracer::t_flush(std::string const &str)
 
 
 /// @details Return reference to static Tracer object (after setting it channel and priority).
-Tracer & T(std::string const & channel, TracerPriority priority)
+Tracer &
+T(std::string const & channel, TracerPriority priority)
 {
 	static Tracer * t = new Tracer();
 	t->channel_ = channel;
@@ -515,12 +612,31 @@ Tracer & T(std::string const & channel, TracerPriority priority)
 /// useful to get the non-raw output in applications like using the
 /// jd2 with MPI, where the output each job should match the output if
 /// it was run on a single processor.
-void Tracer::set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list, bool raw)
+void Tracer::set_ios_hook(
+	otstreamOP tr,
+	std::string const & monitoring_channels_list,
+	bool raw
+)
 {
 	ios_hook() = tr;
 	monitoring_list_ = utility::split(monitoring_channels_list);
 	ios_hook_raw_() = raw;
 }
+
+TracerManager *
+TracerManager::get_instance() {
+	if ( instance_ == 0 ) {
+		instance_ = new TracerManager;
+	}
+	return instance_;
+}
+
+std::vector< Tracer * > &
+TracerManager::all_tracers() {
+	return all_tracers_;
+}
+
+TracerManager::TracerManager() {}
 
 void PyTracer::t_flush(std::string const &str)
 {

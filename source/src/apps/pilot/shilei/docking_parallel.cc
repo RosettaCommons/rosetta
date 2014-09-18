@@ -121,7 +121,6 @@ OPT_1GRP_KEY(Boolean,docking_parallel,swap)
 OPT_1GRP_KEY(Real,docking_parallel,swap_factor)
 OPT_1GRP_KEY(Boolean,docking_parallel,restart)
 
- static numeric::random::RandomGenerator RG(616);
 
 ///////////////////////////////////////////////////////////////////////////////
 int dump_pose_diff(core::pose::Pose const & pose,core::pose::Pose const & ref_pose, utility::vector1< double > & message)  {
@@ -486,13 +485,13 @@ void run_parallel_docking() {
 	else{ //Add a metropolis rule for using new poses or original poses
 		core::Real Isc_now=protocols::docking::calc_interaction_energy(pose,docking_scorefxn_high_,movable_jumps_);
 		core::Real Isc_previous=protocols::docking::calc_interaction_energy(previous_pose,docking_scorefxn_high_,movable_jumps_);
-		if ( Isc_now-Isc_previous <= 0 || std::exp( -1 * (Isc_now-Isc_previous) / temp ) > RG.uniform() ) {
+		if ( Isc_now-Isc_previous <= 0 || std::exp( -1 * (Isc_now-Isc_previous) / temp ) > numeric::random::rg().uniform() ) {
 			//accept and update previous_pose
-          		//std::cout <<"Rank "<< my_rank << " accepting currentE: " << Isc_now << " previous E: " << Isc_previous << " ratio: " << std::exp( -1 * (Isc_now-Isc_previous)) << " random " << RG.uniform() << std::endl;
+          		//std::cout <<"Rank "<< my_rank << " accepting currentE: " << Isc_now << " previous E: " << Isc_previous << " ratio: " << std::exp( -1 * (Isc_now-Isc_previous)) << " random " << numeric::random::rg().uniform() << std::endl;
 			previous_pose=pose;
 		} else {
 			//not accept and don't update previous_pose
-          		//std::cout <<"Rank "<< my_rank << " NOT accepting currentE: " << Isc_now << " previous E: " << Isc_previous << " ratio: " << std::exp( -1 * (Isc_now-Isc_previous)) <<" random " << RG.uniform() << std::endl;
+          		//std::cout <<"Rank "<< my_rank << " NOT accepting currentE: " << Isc_now << " previous E: " << Isc_previous << " ratio: " << std::exp( -1 * (Isc_now-Isc_previous)) <<" random " << numeric::random::rg().uniform() << std::endl;
 			pose=previous_pose;
 		}
 	} //use the current pose

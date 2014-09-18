@@ -28,7 +28,7 @@
 #include <numeric/xyz.functions.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.modeler.rna.phosphate.util" );
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.rna.phosphate.util" );
 
 using namespace core;
 

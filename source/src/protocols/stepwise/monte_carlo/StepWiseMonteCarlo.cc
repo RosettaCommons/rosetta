@@ -50,8 +50,7 @@ using namespace protocols::stepwise::modeler;
 using namespace protocols::stepwise::monte_carlo::mover;
 using namespace protocols::stepwise::monte_carlo::rna;
 
-static numeric::random::RandomGenerator RG(2391021);  // <- Magic number, do not change it!
-static basic::Tracer TR( "protocols.stepwise.monte_carlo.StepWiseMonteCarlo" );
+static thread_local basic::Tracer TR( "protocols.stepwise.monte_carlo.StepWiseMonteCarlo" );
 using ObjexxFCL::lead_zero_string_of;
 
 //////////////////////////////////////////////////////////////////////////
@@ -124,10 +123,10 @@ StepWiseMonteCarlo::do_main_loop( pose::Pose & pose ){
 
 		if ( success ) before_move_score = display_progress( pose, k+1 );
 
-		if ( RG.uniform() < options_->switch_focus_frequency() ) switch_focus_among_poses_randomly( pose );
+		if ( numeric::random::rg().uniform() < options_->switch_focus_frequency() ) switch_focus_among_poses_randomly( pose );
 
-		set_minimize_single_res( RG.uniform() <= options_->minimize_single_res_frequency() );
-		if ( RG.uniform() < options_->add_delete_frequency() ) {
+		set_minimize_single_res( numeric::random::rg().uniform() <= options_->minimize_single_res_frequency() );
+		if ( numeric::random::rg().uniform() < options_->add_delete_frequency() ) {
 			success = add_or_delete_mover_->apply( pose, move_type );
 		} else {
 			success = resample_mover_->apply( pose, move_type );

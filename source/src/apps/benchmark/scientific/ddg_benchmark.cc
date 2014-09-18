@@ -79,7 +79,6 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static numeric::random::RandomGenerator RG(946571); // <- Magic number, do not change it!!!
 
 using namespace core;
 using namespace basic;
@@ -88,7 +87,7 @@ using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
 typedef std::vector<Real> ddGs;
-static basic::Tracer TR("apps.pilot.yiliu.ddg");
+static thread_local basic::Tracer TR( "apps.pilot.yiliu.ddg" );
 
 ///////////////////////////////////////////////////////////////////////////////
 // YAML helper function

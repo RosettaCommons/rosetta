@@ -742,7 +742,7 @@ void initsyms(){
 	}
 
 //////////////////////////////// UTILITY CRAP //////////////////////////{
-	static basic::Tracer TR("symdock_enum");
+static thread_local basic::Tracer TR( "symdock_enum" );
 
 
 /////////////////////////// TCDOCK MISC ////////////////////////////////{

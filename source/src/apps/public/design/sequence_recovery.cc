@@ -70,7 +70,7 @@
 
 
 
-static basic::Tracer TR("sequence_recovery");
+static thread_local basic::Tracer TR( "sequence_recovery" );
 
 using namespace core;
 using namespace protocols;

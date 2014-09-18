@@ -89,8 +89,7 @@ namespace protocols {
 namespace ligand_docking {
 
 
-static numeric::random::RandomGenerator my_RG(4049988); // <- Magic number, do not change it!!!
-static basic::Tracer TR("protocols.ligand_docking.LigandDockProtocol");
+static thread_local basic::Tracer TR( "protocols.ligand_docking.LigandDockProtocol" );
 
 
 LigandDockProtocol::LigandDockProtocol():
@@ -429,19 +428,19 @@ LigandDockProtocol::shear_min_protocol(
 		// First, dumb version:  compensating changes in two dihedrals, but without checking that they're 1 bond apart!
 		// For one test case (1GWX), this is significantly better than dumb version 2, below.
 		core::Real const max_angle = 90.0; // 10 is too small, 180 is too large
-		core::Real const angle_delta = max_angle * 2. * (my_RG.uniform() - 0.5);
-		core::Size const chi1 = my_RG.random_range(1, lig_rsd.nchi());
-		core::Size const chi2 = my_RG.random_range(1, lig_rsd.nchi());
+		core::Real const angle_delta = max_angle * 2. * (numeric::random::rg().uniform() - 0.5);
+		core::Size const chi1 = numeric::random::rg().random_range(1, lig_rsd.nchi());
+		core::Size const chi2 = numeric::random::rg().random_range(1, lig_rsd.nchi());
 		pose.set_chi(chi1, lig_id, lig_rsd.chi(chi1) + angle_delta);
 		pose.set_chi(chi2, lig_id, lig_rsd.chi(chi2) - angle_delta);
 
 		//// Second dumb version:  uncorrelated changes in 1-3 angles
 		//core::Real const max_angle = 90.0;
-		//core::Size const num_pert( my_RG.random_range(1, 3) );
+		//core::Size const num_pert( numeric::random::rg().random_range(1, 3) );
 		//core::conformation::Residue const & lig_rsd = pose.residue(lig_id);
 		//for(core::Size i = 1; i <= num_pert; ++i) {
-		//	core::Real const angle_delta = max_angle * 2. * (my_RG.uniform() - 0.5);
-		//	core::Size const chi1 = my_RG.random_range(1, lig_rsd.nchi());
+		//	core::Real const angle_delta = max_angle * 2. * (numeric::random::rg().uniform() - 0.5);
+		//	core::Size const chi1 = numeric::random::rg().random_range(1, lig_rsd.nchi());
 		//	pose.set_chi(chi1, lig_id, lig_rsd.chi(chi1) + angle_delta);
 		//}
 
@@ -656,7 +655,7 @@ LigandDockProtocol::optimize_orientation3(
 
 	if( !perfect_rsds.empty() ) {
 		// Found multiple diverse and high-quality poses.  Choose one at random.
-		core::Size which_perfect = (core::Size) numeric::random::RG.random_range(1, perfect_rsds.size());
+		core::Size which_perfect = (core::Size) numeric::random::rg().random_range(1, perfect_rsds.size());
 		// If we have constraints, take the perfect pose with the best constraint score
 		if( score_csts ) {
 			core::Real min_cstscore = 1e99;

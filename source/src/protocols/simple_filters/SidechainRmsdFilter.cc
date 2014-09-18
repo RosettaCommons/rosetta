@@ -38,7 +38,7 @@
 namespace protocols {
 namespace simple_filters {
 
-static basic::Tracer sidechain_rmsd_filter_tracer( "protocols.simple_filters.SidechainRmsdFilter" );
+static thread_local basic::Tracer sidechain_rmsd_filter_tracer( "protocols.simple_filters.SidechainRmsdFilter" );
 
 protocols::filters::FilterOP
 SidechainRmsdFilterCreator::create_filter() const { return new SidechainRmsdFilter; }

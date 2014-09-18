@@ -43,7 +43,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR( "protocols.simple_moves.chiral.ChiralMover" );
+static thread_local basic::Tracer TR( "protocols.simple_moves.chiral.ChiralMover" );
 
 using namespace core;
 using namespace conformation;

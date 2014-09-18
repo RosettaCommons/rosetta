@@ -38,7 +38,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.legacy.modeler.protein.StepWiseProteinModeler" );
+static thread_local basic::Tracer TR( "protocols.stepwise.legacy.modeler.protein.StepWiseProteinModeler" );
 
 using namespace core;
 using utility::tools::make_vector1;

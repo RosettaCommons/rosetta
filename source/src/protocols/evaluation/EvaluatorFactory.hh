@@ -38,7 +38,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -97,7 +98,11 @@ private:
 
 private:
 
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< EvaluatorFactory * > instance_;
+#else
 	static EvaluatorFactory * instance_;
+#endif
 
 	// This is a vector rather than a map so the canonical order of the
 	// evaluators is determined by how they are inserted.

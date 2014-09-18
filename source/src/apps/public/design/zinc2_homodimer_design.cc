@@ -61,7 +61,7 @@
 using basic::Error;
 using basic::Warning;
 using basic::T;
-static basic::Tracer TR("apps.pilot.bder.zinc2_homodimer_design");
+static thread_local basic::Tracer TR( "apps.pilot.bder.zinc2_homodimer_design" );
 
 typedef numeric::xyzVector<core::Real> point;
 typedef point axis;

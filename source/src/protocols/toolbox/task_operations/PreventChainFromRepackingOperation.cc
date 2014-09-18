@@ -37,7 +37,7 @@
 
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR( "protocols.toolbox.TaskOperations.PreventChainFromRepackingOperation" );
+static thread_local basic::Tracer TR( "protocols.toolbox.TaskOperations.PreventChainFromRepackingOperation" );
 
 namespace protocols {
 namespace toolbox {

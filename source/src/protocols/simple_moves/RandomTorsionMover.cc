@@ -42,12 +42,11 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR( "protocols.simple_moves.RandomTorsionMover" );
+static thread_local basic::Tracer TR( "protocols.simple_moves.RandomTorsionMover" );
 
 namespace protocols {
 namespace simple_moves {
 
-static numeric::random::RandomGenerator RG(12345678);
 
 RandomTorsionMover::RandomTorsionMover() :
 	Mover("RandomTorsionMover"),
@@ -90,11 +89,11 @@ RandomTorsionMover::apply( core::pose::Pose & pose )
 		for ( Size i(1); i <= num_moves_; ++i ) {
 
 			// randomly select a free torsion
-			Size tor_num( RG.random_range( 1, torsion_id_list_.size() ) );
+			Size tor_num( numeric::random::rg().random_range( 1, torsion_id_list_.size() ) );
 
 			// calc randomly purturbed value
 			Real old_tor( pose.conformation().torsion( torsion_id_list_[ tor_num ] ) );
-			Real new_tor( periodic_range( old_tor - ( max_angle_ / 2 ) + ( RG.uniform() * max_angle_ ), 360.0 ) );
+			Real new_tor( periodic_range( old_tor - ( max_angle_ / 2 ) + ( numeric::random::rg().uniform() * max_angle_ ), 360.0 ) );
 
 			//TR << "DEBUG: Setting torsion " << torsion_id_list_[tor_num].rsd() << " " << torsion_id_list_[tor_num].type() << " " << torsion_id_list_[tor_num].torsion() << " from " << old_tor << " to " << new_tor <<  std::endl;
 

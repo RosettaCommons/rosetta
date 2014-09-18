@@ -43,7 +43,7 @@
 
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictIdentitiesAtAlignedPositionsOperation" );
+static thread_local basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictIdentitiesAtAlignedPositionsOperation" );
 
 namespace protocols {
 namespace toolbox {

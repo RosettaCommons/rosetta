@@ -161,7 +161,6 @@
  using basic::Error;
  using basic::Warning;
 
- static numeric::random::RandomGenerator RG(16621);
 
 using namespace core;
 using namespace protocols;
@@ -608,11 +607,11 @@ gen_pep_bb_frag(
 	MonteCarloOP mc_frag ( new MonteCarlo( pose, *cen_scorefxn, 2.0 ) );
 	for ( Size build_loop_inner = 1; build_loop_inner <= n_build_loop; ++build_loop_inner ) {
 		//choose an insertion position
-		Size pos(  static_cast< int > ( nres_pep * RG.uniform() ) + 1 );
-		Size lib_pos(  static_cast< int > ( 20 * RG.uniform() ) + 1 );
+		Size pos(  static_cast< int > ( nres_pep * numeric::random::rg().uniform() ) + 1 );
+		Size lib_pos(  static_cast< int > ( 20 * numeric::random::rg().uniform() ) + 1 );
 
 		Size const nfrags( lib[ lib_pos ].size() );
-		int const frag_index( static_cast< int >( nfrags * RG.uniform() + 1 ) );
+		int const frag_index( static_cast< int >( nfrags * numeric::random::rg().uniform() + 1 ) );
 		lib[ lib_pos ][ frag_index ].insert( pose, pep_begin - 1 + pos );
 		if( mc_frag->boltzmann( pose ) ){
 			Real test_score( pose.energies().total_energies().dot( cen_scorefxn->weights() ) );
@@ -656,9 +655,9 @@ gen_pep_bb_rama(
 	MonteCarloOP mc_rama ( new MonteCarlo( pose, *cen_scorefxn, 2.0 ) );
 	for ( Size build_loop_inner = 1; build_loop_inner <= n_build_loop; ++build_loop_inner ) {
 		// choose an insertion position
-		Size pos(  static_cast< int > ( nres_pep * RG.uniform() ) + pep_begin );
+		Size pos(  static_cast< int > ( nres_pep * numeric::random::rg().uniform() ) + pep_begin );
 		Size rama_mover_index( 1 );
-		if( option[ pep_spec::random_rama_ss_type ] ) rama_mover_index = static_cast< int > ( RG.uniform() * rama_movers.size() + 1 );
+		if( option[ pep_spec::random_rama_ss_type ] ) rama_mover_index = static_cast< int > ( numeric::random::rg().uniform() * rama_movers.size() + 1 );
 		Real rama_phi, rama_psi;
 		if( option[ pep_spec::use_input_seq ] ){
 			chemical::AA actual_aa( aa_from_oneletter_code( pose.residue( pos ).name1() ) );
@@ -666,9 +665,9 @@ gen_pep_bb_rama(
 		}
 		else{
 			//use ala rama map 95% of time, use gly map 5%
-//			int resindex( static_cast< int > ( 20 * RG.uniform() + 1 ) );
+//			int resindex( static_cast< int > ( 20 * numeric::random::rg().uniform() + 1 ) );
 			chemical::AA aa( aa_from_oneletter_code( 'A' ) );
-			if( RG.uniform() > 0.95 ) aa = aa_from_oneletter_code( 'G' );
+			if( numeric::random::rg().uniform() > 0.95 ) aa = aa_from_oneletter_code( 'G' );
 			rama_movers[ rama_mover_index ].random_phipsi_from_rama( aa, rama_phi, rama_psi );
 		}
 		pose.set_phi( pos, rama_phi );
@@ -776,8 +775,8 @@ RunPepSpec()
 
 		Pose pose( start_pose );
 		ResidueOP ala( ResidueFactory::create_residue( rsd_set.name_map( "ALA" ) ) );
-		Size n_append( static_cast< int >( 6 * RG.uniform() + 1 ) );
-		Size n_prepend( static_cast< int >( 6 * RG.uniform() + 1 ) );
+		Size n_append( static_cast< int >( 6 * numeric::random::rg().uniform() + 1 ) );
+		Size n_prepend( static_cast< int >( 6 * numeric::random::rg().uniform() + 1 ) );
 		if( option[ pep_spec::n_append ].user() ) n_append =  option[ pep_spec::n_append ];
 		if( option[ pep_spec::n_prepend ].user() ) n_prepend =  option[ pep_spec::n_prepend ];
 
@@ -797,7 +796,7 @@ RunPepSpec()
 		//rsd type
 		for( Size mut_site = pep_begin; mut_site <= pep_end; mut_site++ ){
 			if( option[ pep_spec::cg_res_type ].user() ) chemical::make_sequence_change( mut_site, chemical::aa_from_name( cg_res_type ), pose );
-			else chemical::make_sequence_change( mut_site, chemical::AA( static_cast< int > ( 20 * RG.uniform() + 1 ) ), pose );
+			else chemical::make_sequence_change( mut_site, chemical::AA( static_cast< int > ( 20 * numeric::random::rg().uniform() + 1 ) ), pose );
 		}
 
 		//gen fold tree//
@@ -846,7 +845,7 @@ RunPepSpec()
 		//randomize pep sequence//
 		for(Size mut_site = pep_begin; mut_site <= pep_end; mut_site++){ //over all pep positions
 			int resindex;
-			resindex = static_cast< int > ( 20 * RG.uniform() + 1 );
+			resindex = static_cast< int > ( 20 * numeric::random::rg().uniform() + 1 );
 			chemical::make_sequence_change( mut_site, chemical::AA(resindex), pose );
 //			chemical::make_sequence_change( mut_site, chemical::aa_from_oneletter_code( 'G' ), pose );
 		}

@@ -31,7 +31,7 @@ namespace core {
 namespace scoring {
 namespace dna {
 
-static basic::Tracer TR("core.scoring.dna.setup");
+static thread_local basic::Tracer TR( "core.scoring.dna.setup" );
 
 void
 set_base_partner(

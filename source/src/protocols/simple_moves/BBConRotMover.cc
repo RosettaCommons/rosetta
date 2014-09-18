@@ -58,8 +58,7 @@ using namespace numeric;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static basic::Tracer TR("protocols.simple_moves.BBConRotMover");
-static numeric::random::RandomGenerator RG(19500606); //Magic Number
+static thread_local basic::Tracer TR( "protocols.simple_moves.BBConRotMover" );
 
 namespace protocols {
 namespace simple_moves {
@@ -124,7 +123,7 @@ bool BBConRotMover::make_move(Pose &pose)
 		//using numeric::constants::d::pi_2;
 
     setup_list(pose);
-    int ndx=static_cast< int >( RG.uniform()*available_seg_list_.size()+1 );
+    int ndx=static_cast< int >( numeric::random::rg().uniform()*available_seg_list_.size()+1 );
 
     Size left = available_seg_list_[ ndx ].first;
     resnum_ = available_seg_list_[ ndx ].second;
@@ -435,7 +434,7 @@ core::Real BBConRotMover::get_L_move(Pose &segment)
 
     //gerate a Gaussian dx vector
     Vector delta(n_dof_angle_);
-    for (Size i=1; i<=n_dof_angle_; i++) delta[i]=RG.gaussian();
+    for (Size i=1; i<=n_dof_angle_; i++) delta[i]=numeric::random::rg().gaussian();
     //Debug: no angle changes
     //for (Size i=7; i<=n_dof_angle_; i++) delta[i]=0;
 

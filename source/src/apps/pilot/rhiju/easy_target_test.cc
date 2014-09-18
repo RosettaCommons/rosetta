@@ -186,7 +186,6 @@ OPT_1GRP_KEY(Real, backrub, mc_kt)
 OPT_1GRP_KEY(Real, backrub, mm_bend_weight)
 
 
-static numeric::random::RandomGenerator RG(22257);
 
 //////////////////////////////////////////////////////////////////
 Size
@@ -1443,7 +1442,7 @@ backrub_protocol( pose::Pose const & native_pose, pose::PoseOP & pose, scoring::
 			std::string move_type;
 
 			// could use random mover for this...
-			if (RG.uniform() > option[ backrub::sc_prob ]) {
+			if (numeric::random::rg().uniform() > option[ backrub::sc_prob ]) {
 				backrubmover.apply(*pose);
 				move_type = backrubmover.type();
 			} else {

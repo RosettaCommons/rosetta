@@ -91,8 +91,7 @@ using namespace core;
 using namespace basic::options;
 using namespace ObjexxFCL;
 
-static basic::Tracer TR("protocols.moves.ScoreMover");
-static numeric::random::RandomGenerator your_RG(74120);  /// <- Magic number, do not change it!
+static thread_local basic::Tracer TR( "protocols.moves.ScoreMover" );
 
 namespace score_app { BooleanOptionKey linmin( "score_app:linmin" ); }
 
@@ -193,10 +192,10 @@ L1:
         // Perturb current local min x0 to x1 and then minimize to get a "new" local min
 
 		for ( core::Size i = 1; i <= N; ++i ) {
-			x1_phi(i)=lm_phi(i,nlm)+maxpert*(your_RG.uniform()*2.-1.);
-			x1_psi(i)=lm_psi(i,nlm)+maxpert*(your_RG.uniform()*2.-1.);
-			x1_chi(i)=lm_chi(i,nlm)+maxpert*(your_RG.uniform()*2.-1.);		//perturb chi by multiples of 60 deg?
-			x1_omega(i)=lm_omega(i,nlm);  //  +maxpert*(your_RG.uniform()*2.-1.);
+			x1_phi(i)=lm_phi(i,nlm)+maxpert*(numeric::random::rg().uniform()*2.-1.);
+			x1_psi(i)=lm_psi(i,nlm)+maxpert*(numeric::random::rg().uniform()*2.-1.);
+			x1_chi(i)=lm_chi(i,nlm)+maxpert*(numeric::random::rg().uniform()*2.-1.);		//perturb chi by multiples of 60 deg?
+			x1_omega(i)=lm_omega(i,nlm);  //  +maxpert*(numeric::random::rg().uniform()*2.-1.);
 			pose.set_phi(i, x1_phi(i) );
 			pose.set_psi(i, x1_psi(i) );
             if ( chino <= pose.residue( i ).nchi() ){

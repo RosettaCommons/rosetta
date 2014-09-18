@@ -42,7 +42,7 @@ using namespace core;
 using namespace core::pose;
 using namespace core::pose::metrics;
 
-static basic::Tracer TR("protocols/toolbox/PoseMetricCalculators/NonlocalContactsCalculator");
+static thread_local basic::Tracer TR( "protocols/toolbox/PoseMetricCalculators/NonlocalContactsCalculator" );
 
 namespace protocols{
 namespace toolbox {

@@ -30,7 +30,6 @@
 #include <utility/vector1.hh>
 #include <cmath>
 
-static numeric::random::RandomGenerator my_RG(6172108); // <- Magic number, do not change it!!!
 
 namespace protocols {
 namespace pockets {

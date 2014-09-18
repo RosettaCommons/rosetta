@@ -112,10 +112,9 @@ using std::string;
 using std::iostream;
 
 // Tracer instance for this file
-static basic::Tracer TR("core.io.pdb.file_data");
+static thread_local basic::Tracer TR( "core.io.pdb.file_data" );
 
 // random number generator for randomizing missing density coordinates
-static numeric::random::RandomGenerator RG(231411);  // <- Magic number, do not change it!
 
 
 ResidueInformation::ResidueInformation() :
@@ -809,9 +808,9 @@ FileData::randomize_missing_coords( AtomInformation & ai ) const {
 		TR << "Randomized: " << ai.name << " " << ai.resName << "  " << ai.resSeq << std::endl;
 		//v		if ( ai.name == " N  " || ai.name == " CA " || ai.name == " C  " ||
 		//v			ai.name == " O  " || ai.name == " CB " ) {
-		ai.x = ai.x + 900.000 + RG.uniform()*100.000;
-		ai.y = ai.y + 900.000 + RG.uniform()*100.000;
-		ai.z = ai.z + 900.000 + RG.uniform()*100.000;
+		ai.x = ai.x + 900.000 + numeric::random::rg().uniform()*100.000;
+		ai.y = ai.y + 900.000 + numeric::random::rg().uniform()*100.000;
+		ai.z = ai.z + 900.000 + numeric::random::rg().uniform()*100.000;
 		//v		}
 	}
 	return;

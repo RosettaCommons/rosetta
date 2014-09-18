@@ -163,7 +163,6 @@ typedef  numeric::xyzMatrix< Real > Matrix;
 //  encapsulate -- move into a namespace? lay out plans for others?
 //
 
-static numeric::random::RandomGenerator RG(2391121);  // <- Magic number, do not change it!
 
 
 // A lot of these options should be placed into an 'official' namespace

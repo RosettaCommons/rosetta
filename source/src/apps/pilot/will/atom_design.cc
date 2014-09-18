@@ -80,7 +80,7 @@
 
 using numeric::conversions::radians;
 
-static basic::Tracer TR("atom_design");
+static thread_local basic::Tracer TR( "atom_design" );
 
 using core::Size;
 using core::Real;

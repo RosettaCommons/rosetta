@@ -56,7 +56,7 @@
 namespace devel {
 namespace sewing {
 
-static basic::Tracer TR("BridgeFragmentMover");
+static thread_local basic::Tracer TR( "BridgeFragmentMover" );
 
 BridgeFragmentMover::BridgeFragmentMover(utility::vector1<core::fragment::FragSetOP> frag_sets):
 frag_sets_(frag_sets),

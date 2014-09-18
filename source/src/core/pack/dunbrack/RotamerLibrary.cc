@@ -78,7 +78,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("core.pack.dunbrack");
+static thread_local basic::Tracer TR( "core.pack.dunbrack" );
 
 /*
 	 rearrange the dunbrack arrays:
@@ -98,6 +98,12 @@ static basic::Tracer TR("core.pack.dunbrack");
 namespace core {
 namespace pack {
 namespace dunbrack {
+
+#if defined MULTI_THREADED && defined CXX11
+std::atomic< RotamerLibrary * > RotamerLibrary::instance_( 0 );
+#else
+RotamerLibrary * RotamerLibrary::instance_( 0 );
+#endif
 
 /// @brief helper that'll determine the rotamer bins for a residue by asking its associated
 /// rotamer library for that information.
@@ -320,9 +326,6 @@ rotamer_from_chi_02(
 // removed pser and rna
 //
 
-//// RotamerLibrary
-RotamerLibrary * RotamerLibrary::rotamer_library_( 0 );
-
 #ifdef MULTI_THREADED
 #ifdef CXX11
 
@@ -337,8 +340,8 @@ std::mutex & RotamerLibrary::singleton_mutex() { return singleton_mutex_; }
 RotamerLibrary & RotamerLibrary::get_instance()
 {
 	boost::function< RotamerLibrary * () > creator = boost::bind( &RotamerLibrary::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, rotamer_library_ );
-	return *rotamer_library_;
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return *instance_;
 }
 
 RotamerLibrary *

@@ -80,9 +80,8 @@
 using namespace core;
 using namespace core::chemical::rna;
 
-static numeric::random::RandomGenerator RG(129384);  // <- Magic number, do not change it!
 
-static basic::Tracer TR( "protocols.stepwise.modeler.rna.util" );
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.rna.util" );
 
 namespace protocols {
 namespace stepwise {
@@ -1620,7 +1619,7 @@ show_scorefxn_weight_lines( core::scoring::ScoreFunctionOP const & scorefxn, std
 
 		std::string const rna_chars = "acgu";
 		if ( newrestype == 'n' ){
-			newrestype = rna_chars[ RG.random_range( 1, rna_chars.size() ) - 1 ];
+			newrestype = rna_chars[ numeric::random::rg().random_range( 1, rna_chars.size() ) - 1 ];
 			TR << "Choosing random nucleotide: " << newrestype << std::endl;
 		}
 
@@ -1639,7 +1638,7 @@ show_scorefxn_weight_lines( core::scoring::ScoreFunctionOP const & scorefxn, std
 		utility::vector1< Size > const sub_to_full = get_res_list_from_full_model_info( pose );
 		std::string const full_sequence = full_model_info.full_sequence();
 
-		if ( RG.uniform() < mutation_frequency) {
+		if ( numeric::random::rg().uniform() < mutation_frequency) {
 
 			char nt = full_sequence[ sub_to_full[ mutate_res ] - 1 ];
 			choose_random_if_unspecified_nucleotide( nt );

@@ -67,7 +67,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core::optimization;
 
-static basic::Tracer TR( "apps.pilot.johnk_test_geosol_minimization.main" );
+static thread_local basic::Tracer TR( "apps.pilot.johnk_test_geosol_minimization.main" );
 
 /// General testing code
 int

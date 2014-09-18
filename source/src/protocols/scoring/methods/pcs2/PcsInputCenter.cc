@@ -57,7 +57,7 @@ namespace scoring{
 namespace methods{
 namespace pcs2{
 
-basic::Tracer TR_PcsInputCenter("protocols.scoring.methods.pcs.PcsInputCenter");
+static thread_local basic::Tracer TR_PcsInputCenter( "protocols.scoring.methods.pcs.PcsInputCenter" );
 
 PcsInputCenter::PcsInputCenter(){
 	utility_exit_with_message( "You shouldn't call the empty constructor for PcsInputCenter class" );

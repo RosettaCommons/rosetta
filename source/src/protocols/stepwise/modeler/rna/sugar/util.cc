@@ -35,7 +35,7 @@
 #include <utility/stream_util.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "protocols.stepwise.modeler.rna.sugar.util" );
+static thread_local basic::Tracer TR( "protocols.stepwise.modeler.rna.sugar.util" );
 
 namespace protocols {
 namespace stepwise {

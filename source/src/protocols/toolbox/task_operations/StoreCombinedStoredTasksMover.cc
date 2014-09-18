@@ -43,7 +43,7 @@
 
 // ObjexxFCL Headers
 
-static basic::Tracer TR("protocols.toolbox.task_operations.StoreCombinedStoredTasksMover");
+static thread_local basic::Tracer TR( "protocols.toolbox.task_operations.StoreCombinedStoredTasksMover" );
 
 namespace protocols {
 namespace toolbox {

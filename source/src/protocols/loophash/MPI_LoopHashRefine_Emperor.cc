@@ -65,9 +65,8 @@ namespace loophash {
 
 using namespace protocols::wum;
 
-static basic::Tracer TR("MPI.LHR.Emperor");
+static thread_local basic::Tracer TR( "MPI.LHR.Emperor" );
 
-static numeric::random::RandomGenerator RG(1248321);  // <- Magic number, do not change it (and dont try and use it anywhere else)
 
 
 void

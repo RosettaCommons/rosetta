@@ -21,7 +21,8 @@
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
-#include <thread>
+#include <atomic>
+#include <mutex>
 #endif
 #endif
 
@@ -61,7 +62,12 @@ private:
 	static DistributionMap * create_singleton_instance();
 
 private:
-	static DistributionMap* instance_; // pointer to the singleton class
+#if defined MULTI_THREADED && defined CXX11
+	static std::atomic< DistributionMap * > instance_;
+#else
+	static DistributionMap * instance_;
+#endif
+
 	std::map< std::string, Distribution > distribution_map_;
 
 

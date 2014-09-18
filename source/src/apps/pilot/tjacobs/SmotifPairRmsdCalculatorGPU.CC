@@ -55,7 +55,7 @@
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/string_util.hh>
 
-static basic::Tracer TR("BundlePairRmsdCalculator");
+static thread_local basic::Tracer TR( "BundlePairRmsdCalculator" );
 
 static int BLOCK_SIZE = 512;
 

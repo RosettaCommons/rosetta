@@ -67,7 +67,7 @@
 
 
 
-basic::Tracer TR("apps.ig_dump");
+static thread_local basic::Tracer TR( "apps.ig_dump" );
 
 int
 main( int argc, char * argv [] )

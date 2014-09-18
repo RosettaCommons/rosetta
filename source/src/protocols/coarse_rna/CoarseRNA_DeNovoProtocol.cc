@@ -89,9 +89,8 @@ using basic::T;
 namespace protocols {
 namespace coarse_rna {
 
-static numeric::random::RandomGenerator RG(129920);  // <- Magic number, do not change it!
 
-static basic::Tracer TR( "protocols.coarse_rna.coarse_rna_denovo_protocol" ) ;
+static thread_local basic::Tracer TR( "protocols.coarse_rna.coarse_rna_denovo_protocol" );
 
 CoarseRNA_DeNovoProtocol::CoarseRNA_DeNovoProtocol(
 	 Size const nstruct,
@@ -333,7 +332,7 @@ CoarseRNA_DeNovoProtocol::output_to_silent_file( core::pose::Pose & pose, std::s
 void
 CoarseRNA_DeNovoProtocol::RNA_move_trial( pose::Pose & pose ) {
 
-	if ( RG.uniform() < domain_move_frequency_ ) {
+	if ( numeric::random::rg().uniform() < domain_move_frequency_ ) {
 		random_domain_move_trial( pose );
 	} else {
 		random_fragment_trial( pose );

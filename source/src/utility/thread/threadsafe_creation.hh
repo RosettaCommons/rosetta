@@ -53,21 +53,32 @@ template < class T >
 void
 safely_create_singleton(
 	boost::function< T * () > creation_func,
+#if defined MULTI_THREADED && defined CXX11
+	std::atomic< T * > & instance
+#else
 	T * & instance
+#endif
 ) {
 
 #ifdef MULTI_THREADED
 #ifdef CXX11
 	// threadsafe version that uses c++11 interface
-	if ( ! instance ) {
+	// taken from http://preshing.com/20130930/double-checked-locking-is-fixed-in-cpp11/
+	T * local_instance = instance.load( std::memory_order_relaxed );
+	std::atomic_thread_fence( std::memory_order_acquire );
+	if ( ! local_instance ) {
 		std::lock_guard< std::mutex > lock( T::singleton_mutex() );
+		local_instance = instance.load( std::memory_order_relaxed );
 		if ( ! instance ) {
-			instance = creation_func();
+			local_instance = creation_func();
+			instance.store( local_instance, std::memory_order_relaxed );
+			std::atomic_thread_fence( std::memory_order_release );
 		}
 	}
 #else
   // ok, multithreaded w/o cxx11
 	// not actually threadsafe!
+	// http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html
 	if ( ! instance ) {
 		instance = creation_func();
 	}

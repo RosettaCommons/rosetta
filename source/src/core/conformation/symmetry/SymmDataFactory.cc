@@ -24,7 +24,7 @@ namespace core {
 namespace conformation {
 namespace symmetry {
 
-static basic::Tracer TR("core.conformation.symmetry.symmdatafactory");
+static thread_local basic::Tracer TR( "core.conformation.symmetry.symmdatafactory" );
 
 SymmDataOP
 SymmDataFactory::create_symm_data()

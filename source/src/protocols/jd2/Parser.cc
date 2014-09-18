@@ -33,27 +33,46 @@ namespace jd2 {
 
 protocols::jd2::Parser::~Parser(){}
 
-///@details the impetus for this function is that Parser is a friend of the InnerJob class and can modify the pose - actual mover generation/pose updating is handled by derived classes.
+/// @details the impetus for this function is that Parser is a friend of the
+/// InnerJob class and can modify the pose - actual mover generation/pose
+/// updating is handled by derived classes. Now, if the generate_mover_from_pose
+/// function modifies the input pose as part of the APPLY_TO_POSE block, then
+/// the modified Pose will be stored in the input Job, but only so long as
+/// allow_job_update is true.
 void
-protocols::jd2::Parser::generate_mover_from_job( JobOP job, protocols::moves::MoverOP & mover, bool new_input ){
+protocols::jd2::Parser::generate_mover_from_job(
+	JobOP job,
+	core::pose::Pose & pose,
+	protocols::moves::MoverOP & mover,
+	bool new_input,
+	bool allow_job_update,
+	bool guarantee_new_mover
+){
 
-	//unpackage job
-	core::pose::Pose pose( *(job->get_pose()) );
 
-    std::stringstream err_msg;
-    err_msg
-			<< "Attempting to initiate job distribution for "
-			<< "input job '" << job->input_tag() << "', "
-			<< "but the generated pose has no residues."
-			<< "make sure you specified a valid input PDB, silent file "
-			<< "or database.";
+	std::stringstream err_msg;
+	err_msg
+		<< "Attempting to initiate job distribution for "
+		<< "input job '" << job->input_tag() << "', "
+		<< "but the generated pose has no residues."
+		<< "make sure you specified a valid input PDB, silent file "
+		<< "or database.";
 
-    runtime_assert_string_msg( pose.total_residue() > 0, err_msg.str() );
+	runtime_assert_string_msg( pose.total_residue() > 0, err_msg.str() );
 
-	//returns true if there was a pose change (NOT if the mover changed)
-	if ( generate_mover_from_pose( job, pose, mover, new_input, ""/*xml_fname, this means go to options system*/ ) ){
-		//repackage pose into job
-		job->inner_job_nonconst()->set_pose( core::pose::PoseCOP( new core::pose::Pose(pose) ) );
+	// generate_mover_from_pose returns true if there was a pose change
+	// (i.e. NOT if only the mover changed)
+	if ( generate_mover_from_pose( job, pose, mover, new_input,
+			"" /*empty xml_fname, this means go to options system*/,
+			guarantee_new_mover ) ){
+
+		if ( allow_job_update && new_input ) {
+			// Store the modified pose into the job.  This is done only if new_input is true even if
+			// generate_mover_from_pose modified the input pose and if allow_job_update is true.
+
+			job->inner_job_nonconst()->set_pose( pose.clone() );
+		}
+
 	}
 
 	return;

@@ -67,7 +67,7 @@ using namespace basic::options::OptionKeys;
 using namespace core::scoring::constraints;
 using namespace core::chemical;
 
-basic::Tracer tr("brunette.predictedCstFilter");
+static thread_local basic::Tracer tr( "brunette.predictedCstFilter" );
 
 
 

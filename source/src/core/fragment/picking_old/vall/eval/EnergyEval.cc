@@ -35,9 +35,8 @@ namespace eval {
 
 
 // static initialization
-static numeric::random::RandomGenerator RG( 167872 ); // magic number, don't change
 
-static basic::Tracer TR( "core.fragment.picking_old.vall.eval.EnergyEval" );
+static thread_local basic::Tracer TR( "core.fragment.picking_old.vall.eval.EnergyEval" );
 
 
 /// @brief default constructor
@@ -124,7 +123,7 @@ bool EnergyEval::eval_impl(
 	fs.score += score_function_->score( pose_ );
 
 	if ( randomize_ ) {
-		fs.score += ( RG.uniform() * 0.000001 );
+		fs.score += ( numeric::random::rg().uniform() * 0.000001 );
 	}
 
 	return true;

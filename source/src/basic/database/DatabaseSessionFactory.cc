@@ -23,7 +23,7 @@
 namespace basic {
 namespace database {
 
-static basic::Tracer TR("basic.database.databaseSessionFactory");
+static thread_local basic::Tracer TR( "basic.database.databaseSessionFactory" );
 
 utility::sql_database::sessionOP
 DatabaseSessionFactory::create_database_session()

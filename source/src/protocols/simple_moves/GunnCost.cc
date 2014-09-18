@@ -50,7 +50,7 @@ namespace simple_moves {
 
 using namespace core;
 
-static basic::Tracer trGunnCost("protocols.FragmentMover.GunnCost");
+static thread_local basic::Tracer trGunnCost( "protocols.FragmentMover.GunnCost" );
 
 GunnCost::GunnCost() : FragmentCost( "GunnCost", 7.0 /*cutoff*/ ), frag_cache_("GunnCost")  {}
 GunnCost::GunnCost( core::Real cutoff ) :  FragmentCost( "GunnCost", cutoff ), frag_cache_("GunnCost")  {}

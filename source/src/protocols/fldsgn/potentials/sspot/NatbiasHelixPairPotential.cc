@@ -26,7 +26,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer TR("protocols.fldsgn.potentials.sspot.NatbiasHelixPairPotential", basic::t_info);
+static thread_local basic::Tracer TR( "protocols.fldsgn.potentials.sspot.NatbiasHelixPairPotential", basic::t_info );
 
 namespace protocols {
 namespace fldsgn {

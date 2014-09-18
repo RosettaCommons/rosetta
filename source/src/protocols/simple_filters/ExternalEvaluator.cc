@@ -59,9 +59,8 @@
 
 // C++ headers
 
-static basic::Tracer tr("protocols.simple_filter.ExternalEvaluator");
+static thread_local basic::Tracer tr( "protocols.simple_filter.ExternalEvaluator" );
 
-static numeric::random::RandomGenerator RG(5512489);  // <- Magic number, do not change it!
 
 namespace protocols {
 namespace simple_filters {
@@ -112,7 +111,7 @@ ExternalEvaluator::ExternalEvaluator( std::string tag, std::string command )
 		sub_work_dir = string( buf )+"_"+tmp_file_name; //get rid of newline
 		pclose( get_dir );
 	}
-	sub_work_dir = sub_work_dir+"_"+ ObjexxFCL::string_of( RG.random_range(0, 999999) );
+	sub_work_dir = sub_work_dir+"_"+ ObjexxFCL::string_of( numeric::random::rg().random_range(0, 999999) );
   // set npes and rank based on whether we are using MPI or not
 #ifdef USEMPI
 	int rank_;
