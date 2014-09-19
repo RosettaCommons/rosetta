@@ -241,15 +241,6 @@ settings = {
         },
     },
 
-    "gcc, 4.8" : {
-        "appends" : {
-            "flags" : {
-                "warn" : [ "Wno-uninitialized", ],
-            },
-        },
-    },
-
-
     # OSs & architecures ######################################################
 
     "gcc, linux" : {
