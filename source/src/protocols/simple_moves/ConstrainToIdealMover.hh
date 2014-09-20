@@ -59,6 +59,7 @@ public:
 	ConstrainToIdealMover & operator=(ConstrainToIdealMover const & rhs);
 	virtual ~ConstrainToIdealMover();
 
+	using Mover::apply;
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 
