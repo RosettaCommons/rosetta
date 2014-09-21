@@ -389,7 +389,7 @@ namespace serialization {
 					std::string type_name;
 					read_binary(type_name, buf);
 // chain
-					unsigned int chainid;
+					unsigned int chainid(0);
 					read_binary(chainid, buf);
 					bool const is_lower_terminus( j==1 || chainid != prevchain );
 // new residue
@@ -407,10 +407,10 @@ namespace serialization {
 						pose.conformation().insert_chain_ending( pose.total_residue() - 1 );
 					}
 // atoms xyz
-					unsigned int natoms;
+					unsigned int natoms(0);
 					read_binary(natoms, buf);
 					for (size_t k = 1; k <= natoms; ++ k) {
-						core::Vector xyz;
+						core::Vector xyz(0.0, 0.0, 0.0);
 						read_binary(xyz, buf);
 						atom_vec.push_back(std::make_pair(id::AtomID(k, j), xyz));
 					}
@@ -426,7 +426,7 @@ namespace serialization {
 				pose.fold_tree( f );
 // jumps
 				check_binary_chars("JUMP", buf);
-				unsigned int jumps;
+				unsigned int jumps(0);
 				read_binary(jumps, buf);
 				utility::vector1< kinematics::Jump > jumpsv;
 				for (size_t j = 1; j <= jumps; ++ j) {
