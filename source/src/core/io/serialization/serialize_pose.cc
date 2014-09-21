@@ -134,7 +134,7 @@ namespace serialization {
 	void
 		read_binary(bool & x, BUFFER & buf)
 	{
-		char x_char;
+		char x_char(0);
 		read_bytes(x_char, buf);
 		x = (x_char != 0x00);
 	}
@@ -192,7 +192,7 @@ namespace serialization {
 	void
 		read_binary(utility::vector1_bool & x, BUFFER & buf)
 	{
-		unsigned int size;
+		unsigned int size(0);
 		read_binary(size, buf);
 
 		x.resize(size);
@@ -215,7 +215,7 @@ namespace serialization {
 	void
 		read_binary(std::vector<std::string> & x, BUFFER & buf)
 	{
-		unsigned int size;
+		unsigned int size(0);
 		read_binary(size, buf);
 
 		x.resize(size);
@@ -238,12 +238,12 @@ namespace serialization {
 	void
 		read_binary(std::string & x, BUFFER & buf)
 	{
-		unsigned int size;
+		unsigned int size(0);
 		read_binary(size, buf);
 
 		x.resize(size);
 		for (unsigned int ii = 0; ii < x.size(); ++ ii) {
-			char x_ii;
+			char x_ii(0);
 			read_binary(x_ii, buf);
 			x[ii] = x_ii;
 		}
@@ -447,7 +447,7 @@ namespace serialization {
 				check_binary_chars("SSTR", buf);
 				check_binary_unsigned_int(pose.total_residue(), buf);
 				for (size_t j = 1; j <= pose.total_residue(); ++ j) {
-					char sstr;
+					char sstr(0);
 					read_binary(sstr, buf);
 					pose.set_secstruct(j, sstr);
 				}

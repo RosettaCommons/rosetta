@@ -160,6 +160,8 @@ void GeneralizedKICfilter::add_filter_param( std::string const &param_name, std:
 /// @details Returns false if the parameter couldn't be found.
 bool GeneralizedKICfilter::get_filter_param( std::string const &param_name, core::Real &outvalue ) const
 {
+	outvalue = 0.0; // Dummy value to suppress uninitialize warning (-Werror=maybe-uninitialized)
+
 	core::Size const listsize = filter_params_real_.size();
 	if(!listsize) return false;
 	for(core::Size i=1; i<=listsize; ++i) {
@@ -176,6 +178,8 @@ bool GeneralizedKICfilter::get_filter_param( std::string const &param_name, core
 /// @details Returns false if the parameter couldn't be found.
 bool GeneralizedKICfilter::get_filter_param( std::string const &param_name, core::Size &outvalue ) const
 {
+	outvalue = 0; // Dummy value to suppress uninitialize warning (-Werror=maybe-uninitialized)
+
 	core::Size const listsize = filter_params_size_.size();
 	if(!listsize) return false;
 	for(core::Size i=1; i<=listsize; ++i) {
@@ -192,6 +196,8 @@ bool GeneralizedKICfilter::get_filter_param( std::string const &param_name, core
 /// @details Returns false if the parameter couldn't be found.
 bool GeneralizedKICfilter::get_filter_param( std::string const &param_name, bool &outvalue ) const
 {
+	outvalue = false; // Dummy value to suppress uninitialize warning (-Werror=maybe-uninitialized)
+
 	core::Size const listsize = filter_params_bool_.size();
 	if(!listsize) return false;
 	for(core::Size i=1; i<=listsize; ++i) {
@@ -336,7 +342,7 @@ bool GeneralizedKICfilter::apply_loop_bump_check(
 		} //if alpha or beta amino acid
 		//TODO -- figure out what heavyatoms to add in the general case (not an alpha- or beta-amino acid).
 	}
-	
+
 
 	//Loop through atoms in atomlist_prime list:
 	for(core::Size ia=1, iamax=atomlist_prime.size(); ia<=iamax; ++ia) {
@@ -371,7 +377,7 @@ bool GeneralizedKICfilter::apply_loop_bump_check(
 				}
 			}
 			if(is_connected_to_loop_rsd) continue;
-			
+
 			utility::vector1<core::Size> atoms_to_consider = original_pose.residue(jr).mainchain_atoms();
 			if( (original_pose.residue(jr).type().is_alpha_aa() || original_pose.residue(jr).type().is_beta_aa()) && original_pose.residue(jr).has("CB")) {
 				atoms_to_consider.push_back( original_pose.residue(jr).atom_index("CB") ); //Also consider clashes with the beta carbon, if present.

@@ -74,7 +74,7 @@ libs)
         Build and install executables in bin/ directory if current
         working directory is a sub-directory mini. -D options tells
         scons to iteratively search towards the root for SConstruct
-        file. The # sign is an alias for the top build directory.  
+        file. The # sign is an alias for the top build directory.
 
     scons bin
     scons bin pilot_apps_all
@@ -84,7 +84,7 @@ libs)
 
     scons bin my
     scons bin my_pilot_apps
-        Build restricted set of pilot_apps and devel sources listed in 
+        Build restricted set of pilot_apps and devel sources listed in
         src/pilot_apps.src.settings.my and src/devel.src.settings.my
 
     scons bin/exec
@@ -109,6 +109,5 @@ libs)
     python external/scons-local/scons.py
         Use the version of scons that is distributed with mini
         (Hint: use if scons is not installed on system)
-        
-+5
 
++5

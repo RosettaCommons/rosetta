@@ -1657,7 +1657,7 @@ void MolecularDynamics::doMinimising(
 	//float TargetTemp=startTemp;
 
 	float current_energy;
-	float m_OldEnergy;
+	float m_OldEnergy(0.0);
 
 	for( Step = 0; Step < Steps; Step ++ ){
 		pose::Pose pose2( *pose);
