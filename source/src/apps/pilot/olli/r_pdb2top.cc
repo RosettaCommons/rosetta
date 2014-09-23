@@ -158,7 +158,7 @@ int main( int argc, char** argv ) {
 	if ( option[ in::top ].user() ) {
 
 		utility::io::izstream is( option[ in::top ] );
-		PairingStatisticsOP ps = new PairingStatistics;
+		PairingStatisticsOP ps( new PairingStatistics );
 		is >> *ps;
 		tr.Debug << *ps << std::endl;
 		std::string model;
@@ -170,7 +170,7 @@ int main( int argc, char** argv ) {
 		}
 		if ( option[ in::ref_top ].user() ) { ///Compute a compatibility score
 			utility::io::izstream is( option[ in::ref_top ] );
-			PairingStatisticsOP ref_ps = new PairingStatistics;
+			PairingStatisticsOP ref_ps( new PairingStatistics );
 			is >> *ref_ps;
 			std::string ref_model;
 			PairingList ref_pl;

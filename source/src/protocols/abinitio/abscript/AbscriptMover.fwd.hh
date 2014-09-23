@@ -24,8 +24,8 @@ namespace abinitio {
 namespace abscript{
 
 class AbscriptMover;
-typedef utility::pointer::owning_ptr< AbscriptMover > AbscriptMoverOP;
-typedef utility::pointer::owning_ptr< AbscriptMover const > AbscriptMoverCOP;
+typedef utility::pointer::shared_ptr< AbscriptMover > AbscriptMoverOP;
+typedef utility::pointer::shared_ptr< AbscriptMover const > AbscriptMoverCOP;
 
 } // abscript
 } // abinitio

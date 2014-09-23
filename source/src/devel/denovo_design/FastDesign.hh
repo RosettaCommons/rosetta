@@ -43,7 +43,7 @@ namespace denovo_design {
 
 struct FilterParams {
 	FilterParams() {
-		filter = 0;
+		filter.reset();
 		use_tolerance = false;
 		use_threshold = false;
 		threshold = 0.0;

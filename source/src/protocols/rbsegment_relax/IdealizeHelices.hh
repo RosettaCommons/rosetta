@@ -34,7 +34,7 @@ namespace rbsegment_relax {
 class IdealizeHelicesMover : public moves::Mover {
 public:
 	IdealizeHelicesMover() : Mover(), cst_weight_(1.0), cst_width_(0.0) {
-		scorefxn_ = new core::scoring::ScoreFunction();
+		scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
 		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth");
 		scorefxn_->set_weight( core::scoring::coordinate_constraint , cst_weight_ );
 	}

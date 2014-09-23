@@ -50,7 +50,7 @@ using namespace ObjexxFCL::format;
 static thread_local basic::Tracer TR( "protocols.simple_filters.NMerPSSMEnergyFilter" );
 
 protocols::filters::FilterOP
-NMerPSSMEnergyFilterCreator::create_filter() const { return new NMerPSSMEnergyFilter; }
+NMerPSSMEnergyFilterCreator::create_filter() const { return protocols::filters::FilterOP( new NMerPSSMEnergyFilter ); }
 
 std::string
 NMerPSSMEnergyFilterCreator::keyname() const { return "NMerPSSMEnergy"; }

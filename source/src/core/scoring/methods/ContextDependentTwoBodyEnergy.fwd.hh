@@ -25,8 +25,8 @@ namespace scoring {
 namespace methods {
 
 class ContextDependentTwoBodyEnergy;
-typedef utility::pointer::owning_ptr< ContextDependentTwoBodyEnergy > ContextDependentTwoBodyEnergyOP;
-typedef utility::pointer::owning_ptr< ContextDependentTwoBodyEnergy const > ContextDependentTwoBodyEnergyCOP;
+typedef utility::pointer::shared_ptr< ContextDependentTwoBodyEnergy > ContextDependentTwoBodyEnergyOP;
+typedef utility::pointer::shared_ptr< ContextDependentTwoBodyEnergy const > ContextDependentTwoBodyEnergyCOP;
 
 } // methods
 } // scoring

@@ -22,8 +22,8 @@ namespace chemical {
 
 class Orbital;
 
-typedef  utility::pointer::owning_ptr< Orbital >  OrbitalOP;
-typedef  utility::pointer::owning_ptr< Orbital const >  OrbitalCOP;
+typedef  utility::pointer::shared_ptr< Orbital >  OrbitalOP;
+typedef  utility::pointer::shared_ptr< Orbital const >  OrbitalCOP;
 typedef  utility::vector1< OrbitalOP >  OrbitalOPs;
 typedef  utility::vector1< OrbitalCOP >  OrbitalCOPs;
 

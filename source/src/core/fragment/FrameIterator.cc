@@ -51,7 +51,7 @@ namespace core {
 namespace fragment {
 
 ConstFrameIterator::ConstFrameIterator( FrameIteratorWorker_OP it ) : it_( it ) {}
-ConstFrameIterator::ConstFrameIterator() : it_( NULL ) {}
+ConstFrameIterator::ConstFrameIterator() : it_( /* NULL */ ) {}
 ConstFrameIterator::~ConstFrameIterator() {}
 
 bool ConstFrameIterator::operator != ( ConstFrameIterator const& fi) const {

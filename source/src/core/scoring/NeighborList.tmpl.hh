@@ -500,7 +500,7 @@ NeighborList::setup(
 
 	/// Detect residue neighbors
 	utility::vector1< bool > residue_mask = pose.conformation().get_residue_mask();
-	core::conformation::PointGraphOP residue_point_graph = new core::conformation::PointGraph;
+	core::conformation::PointGraphOP residue_point_graph( new core::conformation::PointGraph );
 	core::conformation::residue_point_graph_from_conformation( pose.conformation(), *residue_point_graph );
 	core::conformation::find_neighbors_restricted<core::conformation::PointGraphVertexData,core::conformation::PointGraphEdgeData>(
 		residue_point_graph,

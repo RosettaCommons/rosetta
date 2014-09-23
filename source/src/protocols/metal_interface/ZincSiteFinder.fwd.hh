@@ -23,8 +23,8 @@ namespace metal_interface{
 
 //Forwards and OP typedefs
 class ZincSiteFinder;
-typedef utility::pointer::owning_ptr< ZincSiteFinder > ZincSiteFinderOP;
-typedef utility::pointer::owning_ptr< ZincSiteFinder const > ZincSiteFinderCOP;
+typedef utility::pointer::shared_ptr< ZincSiteFinder > ZincSiteFinderOP;
+typedef utility::pointer::shared_ptr< ZincSiteFinder const > ZincSiteFinderCOP;
 
 }//metal_interface
 }//protocols

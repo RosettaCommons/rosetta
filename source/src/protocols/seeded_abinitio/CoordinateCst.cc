@@ -72,7 +72,7 @@ CoordinateCstCreator::keyname() const
 
 protocols::moves::MoverOP
 CoordinateCstCreator::create_mover() const {
-	return new CoordinateCst;
+	return protocols::moves::MoverOP( new CoordinateCst );
 }
 
 std::string
@@ -201,7 +201,7 @@ void add_coordinate_constraints(
 	core::id::AtomID const anchor_atom( core::id::AtomID( pose.residue( anchor_resnum ).atom_index( anchor_atom_name ), anchor_resnum ) );
 
 	if( !coord_cst_func ) {
-		coord_cst_func = new core::scoring::func::HarmonicFunc( 0.0, 0.0 );
+		coord_cst_func = core::scoring::func::HarmonicFuncOP( new core::scoring::func::HarmonicFunc( 0.0, 0.0 ) );
 	}
 	coord_cst_func->sd( coord_sdev );
 
@@ -214,11 +214,11 @@ void add_coordinate_constraints(
 		TR<<"Coordinate-constraining residue " << pose.residue( res ).name() << " " << res <<std::endl;
 		///core::chemical::ResidueType rsd_type( pose.residue( res ).type() );
 		Size atomindex =  pose.residue( res ).atom_index( atom_name );
-		cst.push_back( new CoordinateConstraint(
+		cst.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new CoordinateConstraint(
 			core::id::AtomID( atomindex, res ),
 			anchor_atom,
 			pose.residue( res ).xyz( atomindex ),
-			coord_cst_func));
+			coord_cst_func) ));
 		cst = pose.add_constraints( cst );
 	}
 }
@@ -271,7 +271,7 @@ CoordinateCst::apply( pose::Pose & pose )
 	}
 
 
-	core::scoring::func::HarmonicFuncOP coord_cst_func = new core::scoring::func::HarmonicFunc( 0.0, 0.0 );
+	core::scoring::func::HarmonicFuncOP coord_cst_func( new core::scoring::func::HarmonicFunc( 0.0, 0.0 ) );
 	add_coordinate_constraints( pose, constrain_residues_set, anchor_res, stddev_, anchor_atom_id_, atom_id_, coord_cst_func );
 
 }//end apply

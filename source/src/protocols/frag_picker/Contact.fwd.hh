@@ -24,8 +24,8 @@ namespace frag_picker {
 /// @brief forward declaration for Contact
 class Contact;
 
-typedef utility::pointer::owning_ptr<Contact> ContactOP;
-typedef utility::pointer::owning_ptr<Contact const> ContactCOP;
+typedef utility::pointer::shared_ptr<Contact> ContactOP;
+typedef utility::pointer::shared_ptr<Contact const> ContactCOP;
 
 } // frag_picker
 } // protocols

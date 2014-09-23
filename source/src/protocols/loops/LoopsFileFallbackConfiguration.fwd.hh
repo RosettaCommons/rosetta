@@ -20,8 +20,8 @@ namespace protocols {
 namespace loops {
 
 class LoopsFileFallbackConfiguration;
-typedef utility::pointer::owning_ptr< LoopsFileFallbackConfiguration > LoopsFileFallbackConfigurationOP;
-typedef utility::pointer::owning_ptr< LoopsFileFallbackConfiguration const > LoopsFileFallbackConfigurationCOP;
+typedef utility::pointer::shared_ptr< LoopsFileFallbackConfiguration > LoopsFileFallbackConfigurationOP;
+typedef utility::pointer::shared_ptr< LoopsFileFallbackConfiguration const > LoopsFileFallbackConfigurationCOP;
 
 } // loops
 } // protocols

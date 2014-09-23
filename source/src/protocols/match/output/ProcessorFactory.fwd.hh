@@ -25,8 +25,8 @@ namespace match {
 namespace output {
 
 class ProcessorFactory;
-typedef utility::pointer::owning_ptr< ProcessorFactory > ProcessorFactoryOP;
-typedef utility::pointer::owning_ptr< ProcessorFactory const > ProcessorFactoryCOP;
+typedef utility::pointer::shared_ptr< ProcessorFactory > ProcessorFactoryOP;
+typedef utility::pointer::shared_ptr< ProcessorFactory const > ProcessorFactoryCOP;
 
 }
 }

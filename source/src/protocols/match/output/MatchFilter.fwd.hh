@@ -25,13 +25,13 @@ namespace output {
 
 class MatchFilter;
 
-typedef utility::pointer::owning_ptr< MatchFilter > MatchFilterOP;
-typedef utility::pointer::owning_ptr< MatchFilter const > MatchFilterCOP;
+typedef utility::pointer::shared_ptr< MatchFilter > MatchFilterOP;
+typedef utility::pointer::shared_ptr< MatchFilter const > MatchFilterCOP;
 
 class StateAccumulatingMatchFilter;
 
-typedef utility::pointer::owning_ptr< StateAccumulatingMatchFilter > StateAccumulatingMatchFilterOP;
-typedef utility::pointer::owning_ptr< StateAccumulatingMatchFilter const > StateAccumulatingMatchFilterCOP;
+typedef utility::pointer::shared_ptr< StateAccumulatingMatchFilter > StateAccumulatingMatchFilterOP;
+typedef utility::pointer::shared_ptr< StateAccumulatingMatchFilter const > StateAccumulatingMatchFilterCOP;
 
 }
 }

@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class OrbitalsFeatures;
-typedef utility::pointer::owning_ptr< OrbitalsFeatures > OrbitalsFeaturesOP;
-typedef utility::pointer::owning_ptr< OrbitalsFeatures const > OrbitalsFeaturesCOP;
+typedef utility::pointer::shared_ptr< OrbitalsFeatures > OrbitalsFeaturesOP;
+typedef utility::pointer::shared_ptr< OrbitalsFeatures const > OrbitalsFeaturesCOP;
 
 }//features namespace
 }//protocols namespace

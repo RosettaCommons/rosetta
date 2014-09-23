@@ -23,8 +23,8 @@ namespace scoring {
 namespace loop_graph {
 	
 	class LoopCycle;
-	typedef utility::pointer::owning_ptr< LoopCycle > LoopCycleOP;
-	typedef utility::pointer::owning_ptr< LoopCycle const > LoopCycleCOP;
+	typedef utility::pointer::shared_ptr< LoopCycle > LoopCycleOP;
+	typedef utility::pointer::shared_ptr< LoopCycle const > LoopCycleCOP;
 	
 } //loop_graph 
 } //scoring 

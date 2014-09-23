@@ -65,8 +65,8 @@ public: // tests
 		std::string symm_def("core/scoring/symmetry/sym_def.dat");
 		make_symmetric_pose(symm_pose, symm_def);
 
-		ScoreFunctionOP scfxn = new ScoreFunction();
-		ScoreFunctionOP symm_scfxn = new SymmetricScoreFunction();
+		ScoreFunctionOP scfxn( new ScoreFunction() );
+		ScoreFunctionOP symm_scfxn( new SymmetricScoreFunction() );
 
 		TS_ASSERT(!is_symmetric(pose));
 		TS_ASSERT(!is_symmetric(*scfxn));

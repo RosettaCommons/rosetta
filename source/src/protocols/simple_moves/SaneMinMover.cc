@@ -40,7 +40,7 @@ SaneMinMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SaneMinMoverCreator::create_mover() const {
-	return new SaneMinMover;
+	return protocols::moves::MoverOP( new SaneMinMover );
 }
 
 std::string
@@ -113,13 +113,13 @@ SaneMinMover::get_name() const {
 	return SaneMinMoverCreator::mover_name();
 }
 
-protocols::moves::MoverOP SaneMinMover::clone() const { return new protocols::simple_moves::SaneMinMover( *this ); }
+protocols::moves::MoverOP SaneMinMover::clone() const { return protocols::moves::MoverOP( new protocols::simple_moves::SaneMinMover( *this ) ); }
 
 void SaneMinMover::set_defaults_() {
 	cartesian_   = false;
-	movemap_     = new core::kinematics::MoveMap;
+	movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
 	scorefxn_    = core::scoring::get_score_function();
-	min_options_ = new core::optimization::MinimizerOptions( "dfpmin", 1e-2, true, false, false );
+	min_options_ = core::optimization::MinimizerOptionsOP( new core::optimization::MinimizerOptions( "dfpmin", 1e-2, true, false, false ) );
 }
 
 } // moves

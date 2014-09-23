@@ -62,7 +62,7 @@ FragmentMover::~FragmentMover() {}
 
 /// @brief Empty constructor
 FragmentMover::FragmentMover(std::string type) {
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	movemap->set_bb(true); // standard MoveMap
 
   set_movemap( movemap );
@@ -74,7 +74,7 @@ FragmentMover::FragmentMover(
 	std::string type ) :
 	fragset_( fragset )
 {
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	movemap->set_bb( true ); //standard movemap
 
 	set_movemap( movemap );
@@ -181,7 +181,7 @@ ClassicFragmentMover::ClassicFragmentMover(
 ClassicFragmentMover::ClassicFragmentMover(
 	core::fragment::ConstantLengthFragSet const & fragset,
 	core::kinematics::MoveMap const & movemap
-)	: FragmentMover(fragset.clone(), new core::kinematics::MoveMap(movemap), "ClassicFragmentMover" )
+)	: FragmentMover(fragset.clone(), core::kinematics::MoveMapCOP( new core::kinematics::MoveMap(movemap) ), "ClassicFragmentMover" )
 {
 	set_defaults();
 }
@@ -234,13 +234,13 @@ ClassicFragmentMover::show(std::ostream & output) const
 protocols::moves::MoverOP
 ClassicFragmentMover::clone() const
 {
-	return new ClassicFragmentMover(*this);
+	return protocols::moves::MoverOP( new ClassicFragmentMover(*this) );
 }
 
 protocols::moves::MoverOP
 ClassicFragmentMover::fresh_instance() const
 {
-	return new ClassicFragmentMover();
+	return protocols::moves::MoverOP( new ClassicFragmentMover() );
 }
 
 //return a fragnum for given Frame, overload to make other choices

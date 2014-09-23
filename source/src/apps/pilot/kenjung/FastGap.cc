@@ -100,7 +100,7 @@ main( int argc, char * argv [] )
 
     	typedef std::map< string, Pose >::iterator iter;
     	for( iter it = input_poses.begin(), end = input_poses.end(); it != end; ++it ) {
-    			FastGapMoverOP fastgap = new FastGapMover();
+    			FastGapMoverOP fastgap( new FastGapMover() );
     			fastgap->apply(it->second);
     			// dump resulting pdb
     			string m = it->first + ".closed.pdb";

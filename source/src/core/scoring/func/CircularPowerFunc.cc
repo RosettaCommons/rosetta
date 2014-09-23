@@ -38,7 +38,7 @@ CircularPowerFunc::CircularPowerFunc(
 
 FuncOP
 CircularPowerFunc::clone() const {
-	return new CircularPowerFunc( *this );
+	return FuncOP( new CircularPowerFunc( *this ) );
 }
 
 Real

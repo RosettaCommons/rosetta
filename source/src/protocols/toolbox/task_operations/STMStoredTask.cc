@@ -50,12 +50,12 @@ bool STMStoredTask::has_task( const std::string task_name ) const { return ( tas
 
 basic::datacache::CacheableDataOP
 STMStoredTask::clone() const {
-  return new STMStoredTask ( *this );
+  return basic::datacache::CacheableDataOP( new STMStoredTask ( *this ) );
 }
 
 basic::datacache::CacheableDataOP
 STMStoredTask::fresh_instance() const {
-  return new STMStoredTask;
+  return basic::datacache::CacheableDataOP( new STMStoredTask );
 }
 
 } // task_operations

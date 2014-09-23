@@ -26,10 +26,10 @@ namespace conformation {
 
 class Residue;
 
-typedef  utility::pointer::access_ptr< Residue >  ResidueAP;
-typedef  utility::pointer::access_ptr< Residue const >  ResidueCAP;
-typedef  utility::pointer::owning_ptr< Residue >  ResidueOP;
-typedef  utility::pointer::owning_ptr< Residue const >  ResidueCOP;
+typedef  utility::pointer::weak_ptr< Residue >  ResidueAP;
+typedef  utility::pointer::weak_ptr< Residue const >  ResidueCAP;
+typedef  utility::pointer::shared_ptr< Residue >  ResidueOP;
+typedef  utility::pointer::shared_ptr< Residue const >  ResidueCOP;
 
 typedef  utility::vector1< ResidueOP >  ResidueOPs;
 typedef  utility::vector1< ResidueCOP >  ResidueCOPs;

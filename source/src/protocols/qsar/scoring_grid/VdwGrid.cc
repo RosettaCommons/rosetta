@@ -45,7 +45,7 @@ std::string VdwGridCreator::keyname() const
 
 GridBaseOP VdwGridCreator::create_grid(utility::tag::TagCOP tag) const
 {
-	GridBaseOP vdw_grid= new VdwGrid();
+	GridBaseOP vdw_grid( new VdwGrid() );
 
 	vdw_grid->parse_my_tag(tag);
 
@@ -54,7 +54,7 @@ GridBaseOP VdwGridCreator::create_grid(utility::tag::TagCOP tag) const
 
 GridBaseOP VdwGridCreator::create_grid() const
 {
-	return new VdwGrid();
+	return GridBaseOP( new VdwGrid() );
 }
 
 
@@ -222,7 +222,7 @@ utility::json_spirit::Value VdwGrid::serialize()
 void VdwGrid::deserialize(utility::json_spirit::mObject data)
 {
 	cutoff_ = data["cutoff"].get_real();
-	numeric::interpolation::spline::InterpolatorOP interp = new numeric::interpolation::spline::SimpleInterpolator;
+	numeric::interpolation::spline::InterpolatorOP interp( new numeric::interpolation::spline::SimpleInterpolator );
 	interp->deserialize(data["spline"].get_obj());
 	lj_spline_ = interp;
 	SingleGrid::deserialize(data["base_data"].get_obj());

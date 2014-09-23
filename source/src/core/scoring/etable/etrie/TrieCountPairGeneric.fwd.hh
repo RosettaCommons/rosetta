@@ -23,8 +23,8 @@ namespace etrie {
 
 class TrieCountPairGeneric;
 
-typedef utility::pointer::owning_ptr< TrieCountPairGeneric > TrieCountPairGenericOP;
-typedef utility::pointer::owning_ptr< TrieCountPairGeneric const > TrieCountPairGenericCOP;
+typedef utility::pointer::shared_ptr< TrieCountPairGeneric > TrieCountPairGenericOP;
+typedef utility::pointer::shared_ptr< TrieCountPairGeneric const > TrieCountPairGenericCOP;
 
 } // namespace etrie
 } // namespace etable

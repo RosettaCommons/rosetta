@@ -25,8 +25,8 @@ namespace refine {
 // Forward
 class LoopMover_Refine_KIC;
 
-typedef utility::pointer::owning_ptr< LoopMover_Refine_KIC > LoopMover_Refine_KICOP;
-typedef utility::pointer::owning_ptr< LoopMover_Refine_KIC const > LoopMover_Refine_KICCOP;
+typedef utility::pointer::shared_ptr< LoopMover_Refine_KIC > LoopMover_Refine_KICOP;
+typedef utility::pointer::shared_ptr< LoopMover_Refine_KIC const > LoopMover_Refine_KICCOP;
 
 } //namespace refine
 } //namespace loop_mover

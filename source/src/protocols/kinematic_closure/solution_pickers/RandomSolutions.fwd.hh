@@ -18,8 +18,8 @@ namespace solution_pickers {
 
 class RandomSolutions;
 
-typedef utility::pointer::owning_ptr<RandomSolutions> RandomSolutionsOP;
-typedef utility::pointer::owning_ptr<RandomSolutions const> RandomSolutionsCOP;
+typedef utility::pointer::shared_ptr<RandomSolutions> RandomSolutionsOP;
+typedef utility::pointer::shared_ptr<RandomSolutions const> RandomSolutionsCOP;
 
 }
 }

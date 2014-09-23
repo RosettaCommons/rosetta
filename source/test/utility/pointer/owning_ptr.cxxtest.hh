@@ -54,7 +54,7 @@ public:
 
 int Atom_::nAtoms = 0;
 
-typedef  utility::pointer::owning_ptr< Atom_ >  AtomP_;
+typedef  utility::pointer::shared_ptr< Atom_ >  AtomP_;
 typedef  std::set< AtomP_ >  Atoms_;
 
 
@@ -114,7 +114,7 @@ class OwningPtrTests : public CxxTest::TestSuite {
 	public:
 
 	/// @brief Explicit owning pointer
-	void test_owning_ptr_explicit() {
+	void test_shared_ptr_explicit() {
 		Atom_ * Cp = new Atom_( 12.0, 0.0 ); // Raw heap pointer
 		TS_ASSERT_EQUALS( Atom_::nAtoms, 1 );
 		TS_ASSERT( Cp->ref_count() == 0 );
@@ -132,7 +132,7 @@ class OwningPtrTests : public CxxTest::TestSuite {
 	}
 
 	/// @brief Containers
-	void test_owning_ptr_containers() {
+	void test_shared_ptr_containers() {
 		Atom_ * Cp = new Atom_( 13.0, 0.0 ); // Raw heap pointer
 		Atom_ * Hp = new Atom_( 1.0, 0.0 ); // Raw heap pointer
 		TS_ASSERT( Atom_::nAtoms == 2 );

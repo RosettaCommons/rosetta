@@ -438,7 +438,7 @@ LoopHashMap::setup( core::Size loop_size)
 	bin_widths[5] = angle_multiplier*loop_size;
 	bin_widths[6] = angle_multiplier*loop_size;
 
-	hash_ = new numeric::geometry::hashing::SixDCoordinateBinner( bounding_box, euler_offsets, bin_widths );
+	hash_ = numeric::geometry::hashing::SixDCoordinateBinnerOP( new numeric::geometry::hashing::SixDCoordinateBinner( bounding_box, euler_offsets, bin_widths ) );
 	// initialize the radial tree
 	hash_->tree_init(option[lh::max_radius]());
 }

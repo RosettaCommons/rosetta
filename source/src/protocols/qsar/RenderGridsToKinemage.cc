@@ -45,7 +45,7 @@ std::string RenderGridsToKinemageCreator::keyname() const
 
 moves::MoverOP RenderGridsToKinemageCreator::create_mover() const
 {
-	return new RenderGridsToKinemage;
+	return moves::MoverOP( new RenderGridsToKinemage );
 }
 
 std::string RenderGridsToKinemageCreator::mover_name()
@@ -101,7 +101,7 @@ RenderGridsToKinemage::~RenderGridsToKinemage()
 
 protocols::moves::MoverOP RenderGridsToKinemage::clone() const
 {
-	return new RenderGridsToKinemage(*this);
+	return protocols::moves::MoverOP( new RenderGridsToKinemage(*this) );
 }
 
 std::string RenderGridsToKinemage::get_name() const

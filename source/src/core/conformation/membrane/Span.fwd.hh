@@ -29,8 +29,8 @@ namespace conformation {
 namespace membrane {
 
 class Span;
-typedef utility::pointer::owning_ptr< Span > SpanOP;
-typedef utility::pointer::owning_ptr< Span const > SpanCOP;
+typedef utility::pointer::shared_ptr< Span > SpanOP;
+typedef utility::pointer::shared_ptr< Span const > SpanCOP;
             
 } // membrane
 } // conformation

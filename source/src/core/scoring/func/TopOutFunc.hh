@@ -31,7 +31,7 @@ public:
 		x0_( x0_in ), weight_( weight_in), limit_( limit_in ) {}
 
 	FuncOP
-	clone() const { return new TopOutFunc( *this ); }
+	clone() const { return FuncOP( new TopOutFunc( *this ) ); }
 
 	Real func( Real const x ) const;
 	Real dfunc( Real const x ) const;

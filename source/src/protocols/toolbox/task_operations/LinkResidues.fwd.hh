@@ -22,8 +22,8 @@ namespace task_operations {
 
 class LinkResidues;
 
-typedef utility::pointer::owning_ptr< LinkResidues > LinkResiduesOP;
-typedef utility::pointer::owning_ptr< LinkResidues const > LinkResiduesCOP;
+typedef utility::pointer::shared_ptr< LinkResidues > LinkResiduesOP;
+typedef utility::pointer::shared_ptr< LinkResidues const > LinkResiduesCOP;
 
 } //namespace protocols
 } //namespace toolbox

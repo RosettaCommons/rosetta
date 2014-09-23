@@ -95,7 +95,7 @@ public:
 		using protocols::rigid::RotateJumpAxisMoverOP;
 		using protocols::rigid::RotateJumpAxisMover;
 		core::Angle degrees(10);
-		RotateJumpAxisMoverOP RJA_mover = new RotateJumpAxisMover(rb_jump, degrees);
+		RotateJumpAxisMoverOP RJA_mover( new RotateJumpAxisMover(rb_jump, degrees) );
 
 		/////////////////////////run
 		RJA_mover->apply(pose);
@@ -111,7 +111,7 @@ public:
 		using protocols::rigid::RotateJumpAxisMoverOP;
 		using protocols::rigid::RotateJumpAxisMover;
 		core::Angle upper(30), lower(20);
-		RotateJumpAxisMoverOP RJA_mover = new RotateJumpAxisMover(rb_jump, lower, upper);
+		RotateJumpAxisMoverOP RJA_mover( new RotateJumpAxisMover(rb_jump, lower, upper) );
 
 		/////////////////////////run
 		RJA_mover->apply(pose);
@@ -126,7 +126,7 @@ public:
 		////////////////////////RJAmover///////////////////////////////////////////////
 		using protocols::rigid::RotateJumpAxisMoverOP;
 		using protocols::rigid::RotateJumpAxisMover;
-		RotateJumpAxisMoverOP RJA_mover = new RotateJumpAxisMover(rb_jump);
+		RotateJumpAxisMoverOP RJA_mover( new RotateJumpAxisMover(rb_jump) );
 
 		/////////////////////////run
 		RJA_mover->apply(pose);
@@ -142,7 +142,7 @@ public:
 		using protocols::rigid::RotateJumpAxisMoverOP;
 		using protocols::rigid::RotateJumpAxisMover;
 		core::Angle degrees(10);
-		RotateJumpAxisMoverOP RJA_mover = new RotateJumpAxisMover(rb_jump, degrees);
+		RotateJumpAxisMoverOP RJA_mover( new RotateJumpAxisMover(rb_jump, degrees) );
 
 		//notice this should still produce the same structure as the 10 degree test above!
 

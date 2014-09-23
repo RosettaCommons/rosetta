@@ -23,8 +23,8 @@ namespace frag_picker {
 
 class FragmentComparatorBase;
 
-typedef utility::pointer::owning_ptr<FragmentComparatorBase> FragmentComparatorBaseOP;
-typedef utility::pointer::owning_ptr<FragmentComparatorBase const> FragmentComparatorBaseCOP;
+typedef utility::pointer::shared_ptr<FragmentComparatorBase> FragmentComparatorBaseOP;
+typedef utility::pointer::shared_ptr<FragmentComparatorBase const> FragmentComparatorBaseCOP;
 
 } // frag_picker
 } // protocols

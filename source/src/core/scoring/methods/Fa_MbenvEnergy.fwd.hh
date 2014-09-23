@@ -22,7 +22,7 @@ namespace methods {
 
 class Fa_MbenvEnergy;
 
-typedef utility::pointer::owning_ptr< Fa_MbenvEnergy > Fa_MbenvEnergyOP;
+typedef utility::pointer::shared_ptr< Fa_MbenvEnergy > Fa_MbenvEnergyOP;
 
 } // methods
 } // scoring

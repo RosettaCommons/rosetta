@@ -45,10 +45,10 @@ public:
 	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
 	virtual filters::FilterOP clone() const {
-		return new AtomicContactFilter( *this );
+		return filters::FilterOP( new AtomicContactFilter( *this ) );
 	}
 	virtual filters::FilterOP fresh_instance() const{
-		return new AtomicContactFilter();
+		return filters::FilterOP( new AtomicContactFilter() );
 	}
 
 	virtual ~AtomicContactFilter(){};

@@ -1753,7 +1753,7 @@ show_scorefxn_weight_lines( core::scoring::ScoreFunctionOP const & scorefxn, std
 		AtomID const C5_id( rsd2.atom_index( "C5'" ), three_prime_res );
 
 		// distance from O3' to C5'
-		cst_set->add_constraint( new AtomPairConstraint( O3_id, C5_id, distance_func ) );
+		cst_set->add_constraint( ConstraintCOP( new AtomPairConstraint( O3_id, C5_id, distance_func ) ) );
 
 		pose.constraint_set( cst_set );
 
@@ -1808,13 +1808,13 @@ show_scorefxn_weight_lines( core::scoring::ScoreFunctionOP const & scorefxn, std
 		//		runtime_assert( !pose.residue( O5_id.rsd() ).is_virtual( O5_id.atomno() ) );
 
 		// distance from O3' to P
-		cst_set->add_constraint( new AtomPairConstraint( O3_id, P_id, distance_func ) );
+		cst_set->add_constraint( ConstraintCOP( new AtomPairConstraint( O3_id, P_id, distance_func ) ) );
 
 		// angle at O3'
-		cst_set->add_constraint( new AngleConstraint( C3_id, O3_id, P_id, O3_angle_func ) );
+		cst_set->add_constraint( ConstraintCOP( new AngleConstraint( C3_id, O3_id, P_id, O3_angle_func ) ) );
 
 		// angle at P
-		cst_set->add_constraint( new AngleConstraint( O3_id, P_id, O5_id,  P_angle_func ) );
+		cst_set->add_constraint( ConstraintCOP( new AngleConstraint( O3_id, P_id, O5_id,  P_angle_func ) ) );
 
 		pose.constraint_set( cst_set );
 	}

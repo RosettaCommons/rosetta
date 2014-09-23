@@ -50,8 +50,8 @@ public:
 	void set_use_constraints( bool flag, core::Real cutoff=1.0 ); /// @brief add docking constraints
 	bool apply( core::pose::Pose const & pose ) const;
 	void report( std::ostream & out, core::pose::Pose const & pose) const;
-	protocols::filters::FilterOP clone() const { return new DockingLowResFilter( *this ); }
-	protocols::filters::FilterOP fresh_instance() const { return new DockingLowResFilter(); }
+	protocols::filters::FilterOP clone() const { return protocols::filters::FilterOP( new DockingLowResFilter( *this ) ); }
+	protocols::filters::FilterOP fresh_instance() const { return protocols::filters::FilterOP( new DockingLowResFilter() ); }
 
 private:
 	bool use_constraints_;            /// @brief boolean to indicate if constraints are used
@@ -78,7 +78,7 @@ public:
 	bool apply( core::pose::Pose const & pose ) const;
 	//core::Real report_interface_score() const { return interface_score_; } // only valid after apply()
 	protocols::filters::FilterOP clone() const;
-	protocols::filters::FilterOP fresh_instance() const { return new DockingHighResFilter(); }
+	protocols::filters::FilterOP fresh_instance() const { return protocols::filters::FilterOP( new DockingHighResFilter() ); }
 
 private:
 	DockJumps movable_jumps_;

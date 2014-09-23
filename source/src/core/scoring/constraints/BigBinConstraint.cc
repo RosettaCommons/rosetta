@@ -116,15 +116,9 @@ void BigBinConstraint::read_def(
 				omega_lower_, omega_upper_, sdev_, "omega_" + string_of(bin_), two_pi
 		) );
 
-		ConstraintOP phi_cst(
-			new DihedralConstraint( C0_, N1_, CA1_, C1_, phi_func )
-		);
-		ConstraintOP psi_cst(
-			new DihedralConstraint( N1_, CA1_, C1_, N2_, psi_func )
-		);
-		ConstraintOP omega_cst(
-			new DihedralConstraint( CA1_, C1_, N2_, CA2_, omega_func )
-		);
+		ConstraintOP phi_cst( new DihedralConstraint( C0_, N1_, CA1_, C1_, phi_func ) );
+		ConstraintOP psi_cst( new DihedralConstraint( N1_, CA1_, C1_, N2_, psi_func ) );
+		ConstraintOP omega_cst( new DihedralConstraint( CA1_, C1_, N2_, CA2_, omega_func ) );
 
 		my_csts_.push_back( phi_cst );
 		my_csts_.push_back( psi_cst );

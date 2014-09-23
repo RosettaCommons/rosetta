@@ -45,7 +45,7 @@ methods::EnergyMethodOP
 BurialEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new BurialEnergy;
+	return methods::EnergyMethodOP( new BurialEnergy );
 }
 
 ScoreTypes
@@ -65,7 +65,7 @@ BurialEnergy::setup_for_scoring(
 /// clone
 EnergyMethodOP
 BurialEnergy::clone() const {
-	return new BurialEnergy;
+	return EnergyMethodOP( new BurialEnergy );
 }
 
 /////////////////////////////////////////////////////////////////////////////

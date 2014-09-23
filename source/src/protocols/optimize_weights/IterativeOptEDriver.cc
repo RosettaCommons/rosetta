@@ -167,7 +167,7 @@ public:
 	virtual
 	core::pack::task::operation::TaskOperationOP
 	clone() const {
-		return new ScaleAnnealerTemperatureOperation( *this );
+		return core::pack::task::operation::TaskOperationOP( new ScaleAnnealerTemperatureOperation( *this ) );
 	}
 
 	virtual
@@ -200,10 +200,10 @@ private:
 IterativeOptEDriver::IterativeOptEDriver() :
 	ligand_repack_pdbs_(),
 	ligand_repack_native_poses_(),
-	decoy_discrim_data_( 0 ),
-	ligand_discrim_data_( NULL ),
-	dG_binding_data_( NULL ),
-	ddG_bind_optE_data_( NULL ),
+	decoy_discrim_data_( /* 0 */ ),
+	ligand_discrim_data_( /* NULL */ ),
+	dG_binding_data_( /* NULL */ ),
+	ddG_bind_optE_data_( /* NULL */ ),
 	include_count_( 0 ),
 	fixed_count_( 0 ),
 	free_count_( 0 ),
@@ -226,7 +226,7 @@ IterativeOptEDriver::IterativeOptEDriver() :
 	using_unfolded_energy_term_( false )
 {
 	// default task factory, generates 'vanilla' PackerTasks
-	task_factory_ = new core::pack::task::TaskFactory;
+	task_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory );
 
 	// load custom TaskOperations according to an xml-like utility::tag file
 	if ( option[ optE::parse_tagfile ].user() ) {
@@ -236,7 +236,7 @@ IterativeOptEDriver::IterativeOptEDriver() :
 	// else use default TaskOperation(s)
 	} else if ( ! option[ optE::design_with_minpack ] ) {
 		using core::pack::task::operation::TaskOperationCOP;
-		task_factory_->push_back( new pack::task::operation::InitializeFromCommandline );
+		task_factory_->push_back( TaskOperationCOP( new pack::task::operation::InitializeFromCommandline ) );
 	}
 
 	int mpi_rank( 0 ), mpi_nprocs( 1 );
@@ -286,7 +286,7 @@ IterativeOptEDriver::~IterativeOptEDriver() {}
 void
 IterativeOptEDriver::task_factory( core::pack::task::TaskFactoryCOP tf )
 {
-	task_factory_ = new core::pack::task::TaskFactory( *tf );
+	task_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory( *tf ) );
 }
 
 ///
@@ -949,10 +949,10 @@ IterativeOptEDriver::compute_rotamer_energies_for_assigned_pdbs()
 
 	if ( MPI_rank_ == 0 ) TR << "compute_rotamer_energies_for_assigned_pdbs(): entered method" << std::endl;
 
-	optE_data_ = new OptEData; // get rid of old optEdata...
+	optE_data_ = OptEDataOP( new OptEData ); // get rid of old optEdata...
 
 	if ( MPI_rank_ == 0 && option[ optE::constrain_weights ].user() ) {
-		ConstraintedOptimizationWeightFuncOP cst = new ConstraintedOptimizationWeightFunc( free_score_list_ );
+		ConstraintedOptimizationWeightFuncOP cst( new ConstraintedOptimizationWeightFunc( free_score_list_ ) );
 		std::string cstfilename = option[ optE::constrain_weights ]();
 		std::ifstream input( cstfilename.c_str() );
 		cst->initialize_constraints_from_file( input );
@@ -1235,7 +1235,7 @@ IterativeOptEDriver::collect_decoy_discrimination_data()
 			}
 		}
 
-		decoy_discrim_data_ = new OptEData;
+		decoy_discrim_data_ = OptEDataOP( new OptEData );
 
 		ScoreFunctionOP scorefxn = create_unweighted_scorefunction();
 		ScoreFunctionOP weighted_sfxn = create_weighted_scorefunction();
@@ -1261,7 +1261,7 @@ IterativeOptEDriver::collect_decoy_discrimination_data()
 		for ( Size ii = 1; ii <= decdisc_native_decoy_pairs_.size(); ++ii ) {
 
 
-			PNatStructureOptEDataOP structure_data = new PNatStructureOptEData;
+			PNatStructureOptEDataOP structure_data( new PNatStructureOptEData );
 			if ( option[ optE::n_top_natives_to_optimize ].user() ) {
 				structure_data->n_top_natives_to_score( option[ optE::n_top_natives_to_optimize ] );
 			}
@@ -1482,7 +1482,7 @@ IterativeOptEDriver::single_structure_data_for_pose(
 	for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
 		fixed_data[ kk ] = pose.energies().total_energies()[ fixed_score_list_[ kk ] ];
 	}
-	SingleStructureDataOP ssd = new SingleStructureData( free_data, fixed_data );
+	SingleStructureDataOP ssd( new SingleStructureData( free_data, fixed_data ) );
 	core::Real native_rms = core::scoring::CA_rmsd( crystal_native, pose );
 	ssd->rms( native_rms );
 	ssd->tag( structure_tag );
@@ -1649,7 +1649,7 @@ IterativeOptEDriver::collect_ligand_discrimination_data()
 
 	if ( ligand_discrim_data_ == 0 ) {
 
-		ligand_discrim_data_ = new OptEData;
+		ligand_discrim_data_ = OptEDataOP( new OptEData );
 
 		/// Refactor this
 		ScoreFunctionOP scorefxn = create_unweighted_scorefunction();
@@ -1658,7 +1658,7 @@ IterativeOptEDriver::collect_ligand_discrimination_data()
 		//std::ofstream scorelog( scorelog_name.c_str() );
 
 		for ( Size ii = 1; ii <= ligand_native_decoy_pairs_.size(); ++ii ) {
-			PNatLigPoseOptEDataOP structure_data = new PNatLigPoseOptEData;
+			PNatLigPoseOptEDataOP structure_data( new PNatLigPoseOptEData );
 
 			{//scope
 				utility::file::FileName cryst_fname( ligand_crystal_natives_[ ii ] );
@@ -1737,7 +1737,7 @@ IterativeOptEDriver::collect_ligand_discrimination_data()
 				for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
 					fixed_data[ kk ] = emap[ fixed_score_list_[ kk ] ];
 				}
-				SingleStructureDataOP ssd = new SingleStructureData( free_data, fixed_data );
+				SingleStructureDataOP ssd( new SingleStructureData( free_data, fixed_data ) );
 				structure_data->add_native( ssd );
 				//std::cout << "Adding native, size = " << structure_data->size() << std::endl;
 			}
@@ -1778,7 +1778,7 @@ IterativeOptEDriver::collect_ligand_discrimination_data()
 				for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk ) {
 					fixed_data[ kk ] = emap[ fixed_score_list_[ kk ] ];
 				}
-				SingleStructureDataOP ssd = new SingleStructureData( free_data, fixed_data );
+				SingleStructureDataOP ssd( new SingleStructureData( free_data, fixed_data ) );
 				if ( structure_data->size() != 0 ) structure_data->add_decoy( ssd );
 				//std::cout << "Adding decoy, size = " << structure_data->size() << std::endl;
 			}
@@ -2005,13 +2005,13 @@ void IterativeOptEDriver::optimize_weights()
 
 	// Create an "optE data minimizer" object
 	// Do the actual weight optimization
-	OptEMultifuncOP opt_min_ptr = new OptEMultifunc(
+	OptEMultifuncOP opt_min_ptr( new OptEMultifunc(
 		*optE_data_, fixed_parameters_,
 		(int) free_count_,
 		free_score_list_,
 		fixed_score_list_,
 		before_minimization_reference_energies_,
-		component_weights_ );
+		component_weights_ ) );
 	OptEMultifunc & opt_min( * opt_min_ptr );
 
 
@@ -2047,7 +2047,7 @@ void IterativeOptEDriver::optimize_weights()
 		Size ndofs = start_dofs.size();
 		if ( option[ optE::wrap_dof_optimization ].user() ) {
 			if ( outer_loop_counter_ == 1 ) {
-				wrapped_opt_min_ = new WrapperOptEMultifunc();
+				wrapped_opt_min_ = WrapperOptEMultifuncOP( new WrapperOptEMultifunc() );
 				wrapped_opt_min_->init(
 					free_score_list_, (int) free_count_,
 					fixed_score_list_, fixed_parameters_,
@@ -2537,7 +2537,7 @@ void IterativeOptEDriver::write_new_scorefile()
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	optE_data_ = 0; /// clear memory!
+	optE_data_.reset(); /// clear memory!
 
 	if ( MPI_rank_ == 0 ) {
 
@@ -2996,7 +2996,7 @@ IterativeOptEDriver::free_weights_and_refEs_from_vars(
 ScoreFunctionOP
 IterativeOptEDriver::configure_new_scorefunction() const
 {
-	ScoreFunctionOP scorefxn = new ScoreFunction;
+	ScoreFunctionOP scorefxn( new ScoreFunction );
 	if ( option[ optE::optE_soft_rep ].user() ) {
 		methods::EnergyMethodOptions options( scorefxn->energy_method_options() );
 		options.etable_type( FA_STANDARD_SOFT );
@@ -3695,14 +3695,14 @@ IterativeOptEDriver::get_nat_aa_opte_data(
 
 		if ( option[ optE::optimize_pssm ] && resi <= pssm_data_.size() ) {
 			if ( pssm_data_[ resi ].first == native_pose.residue( resi ).aa() ) {
-				PSSMOptEPositionDataOP data = new PSSMOptEPositionData;
+				PSSMOptEPositionDataOP data( new PSSMOptEPositionData );
 				data->set_pssm_probabilities( pssm_data_[ resi ].second );
 				this_pos_data = data;
 			} else {
 				std::cerr << "Warning position " << resi << " in " << pdb_name << " pssm data does not match native amino acid: ";
 				std::cerr << pssm_data_[ resi ].first << " vs " << native_pose.residue( resi ).aa()  << std::endl;
 				std::cerr << "Falling back on PNatAAOptEPositionData" << std::endl;
-				this_pos_data = new PNatAAOptEPositionData;
+				this_pos_data = PNatAAOptEPositionDataOP( new PNatAAOptEPositionData );
 			}
 		} else {
 			if ( option[ optE::optimize_pssm ]() ) {
@@ -3715,11 +3715,11 @@ IterativeOptEDriver::get_nat_aa_opte_data(
 			// get to the code that deals with the unfolded state energy.
 			// Note: This special position data class is not compatible with PSSM optimization.
 			if ( using_unfolded_energy_term_ ) {
-				this_pos_data = new NestedEnergyTermPNatAAOptEPositionData;
-				(dynamic_cast< protocols::optimize_weights::NestedEnergyTermPNatAAOptEPositionData * >( this_pos_data() ))->set_unfolded_energy_emap_vector( e );
+				this_pos_data = PNatAAOptEPositionDataOP( new NestedEnergyTermPNatAAOptEPositionData );
+				(utility::pointer::dynamic_pointer_cast< protocols::optimize_weights::NestedEnergyTermPNatAAOptEPositionData > ( this_pos_data ))->set_unfolded_energy_emap_vector( e );
 
 			} else {
-				this_pos_data = new PNatAAOptEPositionData;
+				this_pos_data = PNatAAOptEPositionDataOP( new PNatAAOptEPositionData );
 			}
 		}
 
@@ -3772,7 +3772,7 @@ IterativeOptEDriver::get_nat_aa_opte_data(
 			}
 
 			// the data held inside a PNatAAOptERotamerData object is the two vectors we just set above and the amino acid type
-			PNatAAOptERotamerDataOP new_rot_line = new PNatAAOptERotamerData( (*rotset->rotamer( jj )).aa(), jj, energy_info, fixed_energy_info );
+			PNatAAOptERotamerDataOP new_rot_line( new PNatAAOptERotamerData( (*rotset->rotamer( jj )).aa(), jj, energy_info, fixed_energy_info ) );
 
 			// this rotamer line information gets added to the PNatAAOptEPositionData object created above
 			this_pos_data->add_rotamer_line_data( new_rot_line );
@@ -3872,10 +3872,10 @@ IterativeOptEDriver::get_nat_rot_opte_data(
 			core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( pose.residue_type( resi ) ) );
 
 		runtime_assert( dynamic_cast< SingleResidueDunbrackLibrary const * > ( srlib.get() ) );
-		SingleResidueDunbrackLibraryCOP srdlib( static_cast< SingleResidueDunbrackLibrary const * > ( srlib() ));
+		SingleResidueDunbrackLibraryCOP srdlib( utility::pointer::static_pointer_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const > ( srlib ));
 
 
-		PNatRotOptEPositionDataOP this_pos_data = new PNatRotOptEPositionData;
+		PNatRotOptEPositionDataOP this_pos_data( new PNatRotOptEPositionData );
 		this_pos_data->aa() = pose.residue( resi ).aa();
 		std::string tag_to_assign =
 			pdb_name + " " +
@@ -3941,12 +3941,11 @@ IterativeOptEDriver::get_nat_rot_opte_data(
 
 			rot_index_vector.resize( rot_wells.size() );
 
-			PNatRotOptERotamerDataOP new_rot_line =
-				new PNatRotOptERotamerData(
+			PNatRotOptERotamerDataOP new_rot_line( new PNatRotOptERotamerData(
 				rot_index_vector,
 				rotset->rotamer( jj )->chi(),
 				free_energy_info,
-				fixed_energy_info );
+				fixed_energy_info ) );
 
 			this_pos_data->add_rotamer_line_data( new_rot_line );
 		}
@@ -4096,7 +4095,7 @@ IterativeOptEDriver::make_simple_ssd_from_pdb( std::string const & pdb_filename,
 			fixed_data[ kk ] = structure.energies().total_energies()[ fixed_score_list_[ kk ] ];
 	}
 
-	SingleStructureDataOP ssd = new SingleStructureData( free_data, fixed_data );
+	SingleStructureDataOP ssd( new SingleStructureData( free_data, fixed_data ) );
 	return ssd;
 }
 
@@ -4114,12 +4113,12 @@ IterativeOptEDriver::collect_dG_of_binding_data()
 	using namespace basic::options::OptionKeys;
 
 	if ( dG_binding_data_ == 0 ) {
-		dG_binding_data_ = new OptEData();
+		dG_binding_data_ = OptEDataOP( new OptEData() );
 		ScoreFunctionOP sfxn = create_unweighted_scorefunction();
 
 		bool const no_fa_rep = option[ optE::pretend_no_ddG_repulsion ]();
 		for ( Size ii = 1; ii <= dG_bound_unbound_pairs_.size(); ++ii ) {
-			DGBindOptEDataOP dg_data = new DGBindOptEData();
+			DGBindOptEDataOP dg_data( new DGBindOptEData() );
 			dg_data->deltaG_bind( dG_binding_[ ii ] );
 			dg_data->bound_struct(   make_simple_ssd_from_pdb( dG_bound_unbound_pairs_[ ii ].first,  sfxn, no_fa_rep ) );
 			dg_data->unbound_struct( make_simple_ssd_from_pdb( dG_bound_unbound_pairs_[ ii ].second, sfxn, no_fa_rep ) );
@@ -4149,7 +4148,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 	using namespace basic::options::OptionKeys;
 
 	if ( ddG_mutation_data_ == 0 ) {
-		ddG_mutation_data_ = new OptEData;
+		ddG_mutation_data_ = OptEDataOP( new OptEData );
 
 		// rescore wt's less often
 		std::map< std::string, std::pair< SingleStructureDataOP, std::string > > structure_map;
@@ -4181,9 +4180,9 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 			// If not for this special check, then we'll always be creating the standard position data objects and won't ever
 			// get to the code that deals with the unfolded state energy.
 			if ( using_unfolded_energy_term_ ) {
-				ddg_data = new NestedEnergyTermDDGMutationOptEData;
+				ddg_data = DDGMutationOptEDataOP( new NestedEnergyTermDDGMutationOptEData );
 			} else {
-				ddg_data = new DDGMutationOptEData;
+				ddg_data = DDGMutationOptEDataOP( new DDGMutationOptEData );
 			}
 
 			// save the experimental ddg for this wt/mut list-of-files pair
@@ -4327,7 +4326,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 						if ( !option[ optE::pretend_no_ddG_repulsion ] || fixed_score_list_[ kk ] != fa_rep )
 							fixed_data[ kk ] = wt_structure.energies().total_energies()[ fixed_score_list_[ kk ] ];
 					}
-					SingleStructureDataOP ssd = new SingleStructureData( free_data, fixed_data );
+					SingleStructureDataOP ssd( new SingleStructureData( free_data, fixed_data ) );
 					ddg_data->add_wt( ssd );
 					structure_map[ wts()+wt_pdb_names[ jj ] ] = std::make_pair( ssd, wt_seq );
 
@@ -4341,7 +4340,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 						if ( jj == 1 ) {
 							EnergyMap e;
 							unfE_potential.pose_raw_unfolded_state_energymap( wt_structure, e );
-							(dynamic_cast< protocols::optimize_weights::NestedEnergyTermDDGMutationOptEData * >( ddg_data() ))->set_wt_unfolded_energies_emap( e );
+							(utility::pointer::dynamic_pointer_cast< protocols::optimize_weights::NestedEnergyTermDDGMutationOptEData > ( ddg_data ))->set_wt_unfolded_energies_emap( e );
 							structure_energy_map[ wts()+wt_pdb_names[ jj ] ] = e;
 						}
 					}
@@ -4360,8 +4359,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 
 					if ( using_unfolded_energy_term_ ) {
 						if ( jj == 1 ) {
-							(dynamic_cast< protocols::optimize_weights::NestedEnergyTermDDGMutationOptEData * >(
-								ddg_data() ))->set_wt_unfolded_energies_emap( structure_energy_map[ wts()+wt_pdb_names[ jj ] ] );
+							(utility::pointer::dynamic_pointer_cast< protocols::optimize_weights::NestedEnergyTermDDGMutationOptEData > ( ddg_data ))->set_wt_unfolded_energies_emap( structure_energy_map[ wts()+wt_pdb_names[ jj ] ] );
 						}
 					}
 
@@ -4423,7 +4421,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 					if ( !option[ optE::pretend_no_ddG_repulsion ] || fixed_score_list_[ kk ] != fa_rep )
 						fixed_data[ kk ] = mut_structure.energies().total_energies()[ fixed_score_list_[ kk ] ];
 				}
-				SingleStructureDataOP ssd = new SingleStructureData( free_data, fixed_data );
+				SingleStructureDataOP ssd( new SingleStructureData( free_data, fixed_data ) );
 				ddg_data->add_mutant( ssd );
 
 				// See note above for explanation of what's needed to correctly handle the unfolded state energy
@@ -4431,7 +4429,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 					if ( jj == 1 ) {
 						EnergyMap e;
 						unfE_potential.pose_raw_unfolded_state_energymap( mut_structure, e );
-						(dynamic_cast< protocols::optimize_weights::NestedEnergyTermDDGMutationOptEData * >( ddg_data() ))->set_mut_unfolded_energies_emap( e );
+						(utility::pointer::dynamic_pointer_cast< protocols::optimize_weights::NestedEnergyTermDDGMutationOptEData > ( ddg_data ))->set_mut_unfolded_energies_emap( e );
 					}
 				}
 
@@ -4504,7 +4502,7 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 	using namespace basic::options::OptionKeys;
 
 	if ( ddG_bind_optE_data_ == 0 ) {
-		ddG_bind_optE_data_ = new OptEData;
+		ddG_bind_optE_data_ = OptEDataOP( new OptEData );
 
 		// rescore wt's less often
 		std::map< std::string, std::pair< SingleStructureDataOP, std::string > > structure_map;
@@ -4527,7 +4525,7 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 		// this can make a big difference in energies depending on what the weight on the fa_rep or hbond term, etc, is.
 		for ( Size ii = 1; ii <= ddG_bind_files_.size(); ++ii ) {
 
-			DDGBindOptEDataOP ddg_bind_position_data = new DDGBindOptEData;
+			DDGBindOptEDataOP ddg_bind_position_data( new DDGBindOptEData );
 
 			// save the experimental ddg for this wt/mut list-of-files pair
 			ddg_bind_position_data->set_experimental_ddg_bind( ddGs_binding_[ ii ] );
@@ -4633,7 +4631,7 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 						structure_bestfarep_map[ wt_complexes_list_file()+wt_complex_pdb_names[ jj ] ] = best_wt_complex_rep;
 					}
 
-					SingleStructureDataOP ssd = new SingleStructureData( free_data, fixed_data );
+					SingleStructureDataOP ssd( new SingleStructureData( free_data, fixed_data ) );
 					ddg_bind_position_data->add_wt_complex( ssd );
 					structure_map[ wt_complexes_list_file()+wt_complex_pdb_names[ jj ] ] = std::make_pair( ssd, wt_complex_seq );
 
@@ -4688,7 +4686,7 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 					}
 				}
 
-				SingleStructureDataOP ssd = new SingleStructureData( free_data, fixed_data );
+				SingleStructureDataOP ssd( new SingleStructureData( free_data, fixed_data ) );
 				ddg_bind_position_data->add_mutant_complex( ssd );
 			}
 
@@ -4721,7 +4719,7 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 					for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk )
 						{ fixed_data[ kk ] = wt_unbounded.energies().total_energies()[ fixed_score_list_[ kk ] ]; }
 
-					SingleStructureDataOP ssd = new SingleStructureData( free_data, fixed_data );
+					SingleStructureDataOP ssd( new SingleStructureData( free_data, fixed_data ) );
 					ddg_bind_position_data->add_wt_unbounds( ssd );
 					structure_map[ wt_unbounds_list_file()+wt_unbounded_pdb_names[ jj ] ] = std::make_pair( ssd, wt_complex_seq ); // use the wt_complex_seq here
 
@@ -4757,7 +4755,7 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 				for ( Size kk = 1; kk <= fixed_score_list_.size(); ++kk )
 					{ fixed_data[ kk ] = mut_unbounded.energies().total_energies()[ fixed_score_list_[ kk ] ]; }
 
-				SingleStructureDataOP ssd = new SingleStructureData( free_data, fixed_data );
+				SingleStructureDataOP ssd( new SingleStructureData( free_data, fixed_data ) );
 				ddg_bind_position_data->add_mutant_unbounds( ssd );
 			}
 
@@ -4854,8 +4852,8 @@ IterativeOptEDriver::measure_sequence_recovery(
 
 	//ScoreFunctionOP sfxn2 = ScoreFunctionFactory::create_score_function( get_scorefile_name() );
 	using core::pack::task::operation::TaskOperationCOP;
-	TaskFactoryOP task_factory_for_design = new TaskFactory( *task_factory_ );
-	task_factory_for_design->push_back( new ScaleAnnealerTemperatureOperation( sfxn->weights()[ fa_atr ] / 0.8 ) );
+	TaskFactoryOP task_factory_for_design( new TaskFactory( *task_factory_ ) );
+	task_factory_for_design->push_back( TaskOperationCOP( new ScaleAnnealerTemperatureOperation( sfxn->weights()[ fa_atr ] / 0.8 ) ) );
 
 	if ( MPI_rank_ == 0 )
 		if ( sfxn->get_weight( scoring::surface ) != 0.0 )
@@ -4865,12 +4863,12 @@ IterativeOptEDriver::measure_sequence_recovery(
 	protocols::moves::MoverOP design_mover;
 
 	if ( option[ optE::design_with_minpack ]) {
-		protocols::simple_moves::MinPackMoverOP minpack_mover = new protocols::simple_moves::MinPackMover;
+		protocols::simple_moves::MinPackMoverOP minpack_mover( new protocols::simple_moves::MinPackMover );
 		minpack_mover->task_factory( task_factory_for_design );
 		minpack_mover->score_function( sfxn );
 		design_mover = minpack_mover;
 	} else {
-		protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
+		protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
 		pack_mover->task_factory( task_factory_for_design );
 		pack_mover->score_function( sfxn );
 		design_mover = pack_mover;
@@ -5005,10 +5003,10 @@ IterativeOptEDriver::measure_rotamer_recovery(
 
 	using namespace core::pack::task;
 	using core::pack::task::operation::TaskOperationCOP;
-	TaskFactoryOP task_factory_for_repacking = new TaskFactory( *task_factory_ );
-	task_factory_for_repacking->push_back( new operation::RestrictToRepacking );
+	TaskFactoryOP task_factory_for_repacking( new TaskFactory( *task_factory_ ) );
+	task_factory_for_repacking->push_back( TaskOperationCOP( new operation::RestrictToRepacking ) );
 
-	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
+	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
 	pack_mover->task_factory( task_factory_for_repacking );
 	pack_mover->score_function( sfxn );
 
@@ -5351,10 +5349,10 @@ IterativeOptEDriver::repack_and_minimize_pose(
 	using core::pack::task::operation::TaskOperationCOP;
 	
 	protocols::simple_moves::PackRotamersMover packer( sfxn );
-	TaskFactoryOP factory = new TaskFactory;
-	factory->push_back( new operation::RestrictToRepacking );
-	factory->push_back( new operation::IncludeCurrent );
-	factory->push_back( new operation::InitializeExtraRotsFromCommandline );
+	TaskFactoryOP factory( new TaskFactory );
+	factory->push_back( TaskOperationCOP( new operation::RestrictToRepacking ) );
+	factory->push_back( TaskOperationCOP( new operation::IncludeCurrent ) );
+	factory->push_back( TaskOperationCOP( new operation::InitializeExtraRotsFromCommandline ) );
 	packer.task_factory( factory );
 
 	packer.apply( pose );
@@ -5432,14 +5430,14 @@ IterativeOptEDriver::copy_native_packertask_logic(core::pose::Pose native_pose,
 																									core::pose::Pose context_pose,
 																									core::pack::task::TaskFactoryOP native_taskfactory){
 	using namespace core::pack::task;
-	TaskFactoryOP context_taskfactory = new TaskFactory;
+	TaskFactoryOP context_taskfactory( new TaskFactory );
 	std::string context_tagfile( option[ optE::constant_logic_taskops_file ]() );
 
 	read_tagfile_to_taskfactory(context_tagfile, context_taskfactory);
 	PackerTaskOP context_task = context_taskfactory->create_task_and_apply_taskoperations( context_pose );
 
 	// Lock the task to the starting pose
-	operation::TaskOperationOP mimic_nat_task_op = new operation::ReplicateTask(native_pose, native_taskfactory);
+	operation::TaskOperationOP mimic_nat_task_op( new operation::ReplicateTask(native_pose, native_taskfactory) );
 	mimic_nat_task_op->apply( context_pose, *(context_task) );
 
 	return context_task;

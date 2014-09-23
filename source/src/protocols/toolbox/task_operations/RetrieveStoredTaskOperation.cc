@@ -66,13 +66,13 @@ RetrieveStoredTaskOperation::~RetrieveStoredTaskOperation() {}
 core::pack::task::operation::TaskOperationOP
 RetrieveStoredTaskOperationCreator::create_task_operation() const
 {
-	return new RetrieveStoredTaskOperation;
+	return core::pack::task::operation::TaskOperationOP( new RetrieveStoredTaskOperation );
 }
 
 // @brief copy constructor
 core::pack::task::operation::TaskOperationOP RetrieveStoredTaskOperation::clone() const
 {
-	return new RetrieveStoredTaskOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new RetrieveStoredTaskOperation( *this ) );
 }
 
 // @brief apply function
@@ -82,8 +82,7 @@ RetrieveStoredTaskOperation::apply( core::pose::Pose const & pose, core::pack::t
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::STM_STORED_TASKS ) ) {
 		utility_exit_with_message("Your pose does not have CacheableData of type STM_STORED_TASKS");
 	} else {
-		protocols::toolbox::task_operations::STMStoredTask const & stored_tasks = *( static_cast< protocols::toolbox::task_operations::STMStoredTask const* >( 
-			             pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS )() ) );
+		protocols::toolbox::task_operations::STMStoredTask const & stored_tasks = *( utility::pointer::static_pointer_cast< protocols::toolbox::task_operations::STMStoredTask const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS ) ) );
 		if (!stored_tasks.has_task(task_name_)) {
 			utility_exit_with_message("No stored task with the name " + task_name_ + " found");
 		} else {

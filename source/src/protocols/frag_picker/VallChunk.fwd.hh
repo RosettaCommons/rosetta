@@ -24,10 +24,10 @@ namespace frag_picker {
 /// @brief forward declaration for VallChunk
 class VallChunk;
 
-typedef utility::pointer::owning_ptr<VallChunk> VallChunkOP;
-typedef utility::pointer::owning_ptr<VallChunk const> VallChunkCOP;
-typedef utility::pointer::access_ptr<VallChunk> VallChunkAP;
-typedef utility::pointer::access_ptr<VallChunk const> VallChunkCAP;
+typedef utility::pointer::shared_ptr<VallChunk> VallChunkOP;
+typedef utility::pointer::shared_ptr<VallChunk const> VallChunkCOP;
+typedef utility::pointer::weak_ptr<VallChunk> VallChunkAP;
+typedef utility::pointer::weak_ptr<VallChunk const> VallChunkCAP;
 
 } // frag_picker
 } // protocols

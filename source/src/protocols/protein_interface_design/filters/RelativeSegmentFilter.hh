@@ -40,10 +40,10 @@ public :
 	RelativeSegmentFilter() : Filter( "RelativeSegment" ) {}
 	bool apply( core::pose::Pose const & pose ) const;
 	FilterOP clone() const {
-		return new RelativeSegmentFilter( *this );
+		return FilterOP( new RelativeSegmentFilter( *this ) );
 	}
 	FilterOP fresh_instance() const{
-		return new RelativeSegmentFilter();
+		return FilterOP( new RelativeSegmentFilter() );
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;

@@ -23,7 +23,7 @@ namespace symmetry {
 
 class SymmetricRotamerSetFactory;
 
-typedef utility::pointer::owning_ptr< SymmetricRotamerSetFactory > SymmetricRotamerSetFactoryOP;
+typedef utility::pointer::shared_ptr< SymmetricRotamerSetFactory > SymmetricRotamerSetFactoryOP;
 
 }
 }

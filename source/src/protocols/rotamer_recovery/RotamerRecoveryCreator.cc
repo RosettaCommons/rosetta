@@ -45,7 +45,7 @@ using std::string;
 RRProtocolOP
 RRProtocolReferenceStructureCreator::create_protocol(
 ) const {
-	return new RRProtocolReferenceStructure;
+	return RRProtocolOP( new RRProtocolReferenceStructure );
 }
 
 string
@@ -57,7 +57,7 @@ RRProtocolReferenceStructureCreator::type_name() const {
 RRProtocolOP
 RRProtocolRTMinCreator::create_protocol(
 ) const {
-	return new RRProtocolRTMin;
+	return RRProtocolOP( new RRProtocolRTMin );
 }
 
 string
@@ -69,7 +69,7 @@ RRProtocolRTMinCreator::type_name() const {
 RRProtocolOP
 RRProtocolRotamerTrialsCreator::create_protocol(
 ) const {
-	return new RRProtocolRotamerTrials;
+	return RRProtocolOP( new RRProtocolRotamerTrials );
 }
 
 string
@@ -81,7 +81,7 @@ RRProtocolRotamerTrialsCreator::type_name() const {
 RRProtocolOP
 RRProtocolMinPackCreator::create_protocol(
 ) const {
-	return new RRProtocolMinPack;
+	return RRProtocolOP( new RRProtocolMinPack );
 }
 
 string
@@ -93,7 +93,7 @@ RRProtocolMinPackCreator::type_name() const {
 RRProtocolOP
 RRProtocolPackRotamersCreator::create_protocol(
 ) const {
-	return new RRProtocolPackRotamers;
+	return RRProtocolOP( new RRProtocolPackRotamers );
 }
 
 string
@@ -105,7 +105,7 @@ RRProtocolPackRotamersCreator::type_name() const {
 RRProtocolOP
 RRProtocolRelaxCreator::create_protocol(
 ) const {
-	return new RRProtocolRelax;
+	return RRProtocolOP( new RRProtocolRelax );
 }
 
 string
@@ -122,7 +122,7 @@ RRProtocolMoverCreator::type_name() const {
 RRProtocolOP
 RRProtocolMoverCreator::create_protocol(
 ) const {
-	return new RRProtocolMover;
+	return RRProtocolOP( new RRProtocolMover );
 }
 
 /// Protocols /////
@@ -130,7 +130,7 @@ RRProtocolMoverCreator::create_protocol(
 RRComparerOP
 RRComparerAutomorphicRMSDCreator::create_comparer(
 ) const {
-	return new RRComparerAutomorphicRMSD;
+	return RRComparerOP( new RRComparerAutomorphicRMSD );
 }
 
 string
@@ -143,7 +143,7 @@ RRComparerAutomorphicRMSDCreator::type_name() const {
 RRComparerOP
 RRComparerRotBinsCreator::create_comparer(
 ) const {
-	return new RRComparerRotBins;
+	return RRComparerOP( new RRComparerRotBins );
 }
 
 string
@@ -155,7 +155,7 @@ RRComparerRotBinsCreator::type_name() const {
 RRComparerOP
 RRComparerChiDiffCreator::create_comparer(
 ) const {
-	return new RRComparerChiDiff;
+	return RRComparerOP( new RRComparerChiDiff );
 }
 
 string
@@ -167,7 +167,7 @@ RRComparerChiDiffCreator::type_name() const {
 RRComparerOP
 RRComparerElecDensDiffCreator::create_comparer(
 ) const {
-	return new RRComparerElecDensDiff;
+	return RRComparerOP( new RRComparerElecDensDiff );
 }
 
 string
@@ -179,7 +179,7 @@ RRComparerElecDensDiffCreator::type_name() const {
 RRReporterOP
 RRReporterSimpleCreator::create_reporter(
 ) const {
-	return new RRReporterSimple;
+	return RRReporterOP( new RRReporterSimple );
 }
 
 string
@@ -193,7 +193,7 @@ RRReporterSimpleCreator::type_name() const {
 RRReporterOP
 RRReporterHumanCreator::create_reporter(
 ) const {
-	return new RRReporterHuman;
+	return RRReporterOP( new RRReporterHuman );
 }
 
 string
@@ -205,7 +205,7 @@ RRReporterHumanCreator::type_name() const {
 RRReporterOP
 RRReporterSQLiteCreator::create_reporter(
 ) const {
-	return new RRReporterSQLite;
+	return RRReporterOP( new RRReporterSQLite );
 }
 
 string

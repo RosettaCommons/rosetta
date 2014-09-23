@@ -23,8 +23,8 @@ namespace methods {
 
 class NMerSVMEnergy;
 
-typedef utility::pointer::owning_ptr< NMerSVMEnergy > NMerSVMEnergyOP;
-typedef utility::pointer::owning_ptr< NMerSVMEnergy const > NMerSVMEnergyCOP;
+typedef utility::pointer::shared_ptr< NMerSVMEnergy > NMerSVMEnergyOP;
+typedef utility::pointer::shared_ptr< NMerSVMEnergy const > NMerSVMEnergyCOP;
 
 } // methods
 } // scoring

@@ -29,7 +29,7 @@ namespace features {
 SaltBridgeFeaturesCreator::SaltBridgeFeaturesCreator() {}
 SaltBridgeFeaturesCreator::~SaltBridgeFeaturesCreator() {}
 FeaturesReporterOP SaltBridgeFeaturesCreator::create_features_reporter() const {
-	return new SaltBridgeFeatures;
+	return FeaturesReporterOP( new SaltBridgeFeatures );
 }
 
 std::string SaltBridgeFeaturesCreator::type_name() const {

@@ -88,8 +88,8 @@ public:
 
 	std::string get_name() const { return "BfactorFitting"; }
 
-	moves::MoverOP clone() const { return new BfactorFittingMover( *this ); }
-	moves::MoverOP fresh_instance() const { return new BfactorFittingMover; }
+	moves::MoverOP clone() const { return moves::MoverOP( new BfactorFittingMover( *this ) ); }
+	moves::MoverOP fresh_instance() const { return moves::MoverOP( new BfactorFittingMover ); }
 
 	virtual void
 	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & );

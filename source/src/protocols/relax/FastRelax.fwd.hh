@@ -28,11 +28,11 @@ namespace relax {
 class FastRelax;
 
 // Types
-typedef  utility::pointer::owning_ptr< FastRelax >  FastRelaxOP;
-typedef  utility::pointer::owning_ptr< FastRelax const >  FastRelaxCOP;
+typedef  utility::pointer::shared_ptr< FastRelax >  FastRelaxOP;
+typedef  utility::pointer::shared_ptr< FastRelax const >  FastRelaxCOP;
 
-typedef  utility::pointer::access_ptr< FastRelax >  FastRelaxAP;
-typedef  utility::pointer::access_ptr< FastRelax const >  FastRelaxCAP;
+typedef  utility::pointer::weak_ptr< FastRelax >  FastRelaxAP;
+typedef  utility::pointer::weak_ptr< FastRelax const >  FastRelaxCAP;
 
 
 } // namespace kinematics

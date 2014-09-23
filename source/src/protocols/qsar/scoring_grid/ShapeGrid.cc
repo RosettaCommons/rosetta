@@ -52,7 +52,7 @@ std::string ShapeGridCreator::keyname() const
 
 GridBaseOP ShapeGridCreator::create_grid(utility::tag::TagCOP tag) const
 {
-	GridBaseOP shape_grid= new ShapeGrid();
+	GridBaseOP shape_grid( new ShapeGrid() );
 
 	shape_grid->parse_my_tag(tag);
 
@@ -61,7 +61,7 @@ GridBaseOP ShapeGridCreator::create_grid(utility::tag::TagCOP tag) const
 
 GridBaseOP ShapeGridCreator::create_grid() const
 {
-	return new ShapeGrid();
+	return GridBaseOP( new ShapeGrid() );
 }
 
 
@@ -96,7 +96,7 @@ void ShapeGrid::refresh(core::pose::Pose const & pose, core::Vector const & )
 	utility::vector1<utility::pointer::ReferenceCountOP> data_list;
 	for(core::Size residue_index = 1; residue_index <= pose.n_residue(); ++residue_index)
 	{
-		core::conformation::ResidueOP residue = new core::conformation::Residue(pose.residue(residue_index));
+		core::conformation::ResidueOP residue( new core::conformation::Residue(pose.residue(residue_index)) );
 		if(residue->chain() == chain_id)
 		{
 			continue;
@@ -226,7 +226,7 @@ core::Real ShapeGrid::get_point_score(numeric::kdtree::KDPointList const & neare
 		numeric::kdtree::KDPointOP kd_point(*it);
 		//This is a bit dangerous
 		utility::pointer::ReferenceCountOP data_pointer(kd_point->data());
-		core::conformation::ResidueOP residue(dynamic_cast<core::conformation::Residue *>(data_pointer.get()));
+		core::conformation::ResidueOP residue(utility::pointer::dynamic_pointer_cast< core::conformation::Residue > ( data_pointer ));
 		
 		core::Vector ca(residue->xyz("CA"));
 		core::Vector cb;
@@ -315,7 +315,7 @@ void ShapeGrid::load_kbp_data()
 	
 
 	//The base and resolution don't really matter here because I'm just using this class as a convenient 3D array
-	KBPGridOP empty_array = new core::grid::CartGrid<core::Real>;
+	KBPGridOP empty_array( new core::grid::CartGrid<core::Real> );
 	empty_array->setBase(0.0, 0.0, 0.0);
 	empty_array->setDimensions(25,25,25,1.0,1.0,1.0);
 	empty_array->setupZones();
@@ -328,7 +328,7 @@ void ShapeGrid::load_kbp_data()
 		utility::json_spirit::mArray current_res_data(res_data->get_array());
 		std::string resname(current_res_data[0].get_str());
 		
-		KBPGridOP current_array = new core::grid::CartGrid<core::Real>;
+		KBPGridOP current_array( new core::grid::CartGrid<core::Real> );
 		empty_array->clone(*current_array);
 		
 		

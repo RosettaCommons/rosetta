@@ -28,18 +28,18 @@ namespace membrane {
 
 /// @brief Membrane Position Rotation/Translation Mover (by stub & jump)
 class SetMembranePositionMover;
-typedef utility::pointer::owning_ptr< SetMembranePositionMover > SetMembranePositionMoverOP;
-typedef utility::pointer::owning_ptr< SetMembranePositionMover const > SetMembranePositionMoverCOP;
+typedef utility::pointer::shared_ptr< SetMembranePositionMover > SetMembranePositionMoverOP;
+typedef utility::pointer::shared_ptr< SetMembranePositionMover const > SetMembranePositionMoverCOP;
 
 /// @brief Membrane Position Rotation Mover (by jump)
 class SetMembraneNomalMover;
-typedef utility::pointer::owning_ptr< SetMembraneNomalMover > SetMembraneNomalMoverOP;
-typedef utility::pointer::owning_ptr< SetMembraneNomalMover const > SetMembraneNomalMoverCOP;
+typedef utility::pointer::shared_ptr< SetMembraneNomalMover > SetMembraneNomalMoverOP;
+typedef utility::pointer::shared_ptr< SetMembraneNomalMover const > SetMembraneNomalMoverCOP;
 
 /// @brief Memrbane Position Translaiton Mover (by stub)
 class SetMembraneCenterMover;
-typedef utility::pointer::owning_ptr< SetMembraneCenterMover > SetMembraneCenterMoverOP;
-typedef utility::pointer::owning_ptr< SetMembraneCenterMover const > SetMembraneCenterMoverCOP;
+typedef utility::pointer::shared_ptr< SetMembraneCenterMover > SetMembraneCenterMoverOP;
+typedef utility::pointer::shared_ptr< SetMembraneCenterMover const > SetMembraneCenterMoverCOP;
 		
 } // membrane
 } // protocols

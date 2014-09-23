@@ -174,7 +174,7 @@ public:
 class NATRO : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return new NATRO; }
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new NATRO ); }
 
 	virtual
 	void initialize_from_tokens(
@@ -196,7 +196,7 @@ public:
 class NATAA : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return new NATAA; }
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new NATAA ); }
 
 	virtual
 	void initialize_from_tokens(
@@ -218,7 +218,7 @@ public:
 class ALLAA : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return new ALLAA; }
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new ALLAA ); }
 
 	virtual
 	void initialize_from_tokens(
@@ -240,7 +240,7 @@ public:
 class ALLAAxc : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return new ALLAAxc; }
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new ALLAAxc ); }
 
 	virtual
 	void initialize_from_tokens(
@@ -262,7 +262,7 @@ public:
 class ALLAAwc : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return new ALLAAwc; }
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new ALLAAwc ); }
 
 	virtual
 	void initialize_from_tokens(
@@ -284,7 +284,7 @@ public:
 class PIKAA : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return new PIKAA; }
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new PIKAA ); }
 
 	virtual
 	void initialize_from_tokens(
@@ -309,7 +309,7 @@ private:
 class PIKNA : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return new PIKNA; }
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new PIKNA ); }
 
 	virtual
 	void initialize_from_tokens(
@@ -333,7 +333,7 @@ private:
 class PIKRNA : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return new PIKRNA; }
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new PIKRNA ); }
 
 	virtual
 	void initialize_from_tokens(
@@ -357,7 +357,7 @@ private:
 class NOTAA : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return new NOTAA; }
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new NOTAA ); }
 
 	virtual
 	void initialize_from_tokens(
@@ -381,7 +381,7 @@ private:
 class EMPTY : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return new EMPTY; }
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new EMPTY ); }
 
 	virtual
 	void initialize_from_tokens(
@@ -403,7 +403,7 @@ public:
 class RESET : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return new RESET; }
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new RESET ); }
 
 	virtual
 	void initialize_from_tokens(
@@ -425,7 +425,7 @@ public:
 class POLAR : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return new POLAR; }
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new POLAR ); }
 
 	virtual
 	void initialize_from_tokens(
@@ -448,7 +448,7 @@ public:
 class APOLAR : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return new APOLAR; }
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new APOLAR ); }
 
 	virtual
 	void initialize_from_tokens(
@@ -470,7 +470,7 @@ public:
 class APOLA : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return new APOLA; }
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new APOLA ); }
 
 	virtual
 	void initialize_from_tokens(
@@ -496,7 +496,7 @@ public:
 class EX : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return new EX; }
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new EX ); }
 
 	virtual
 	void initialize_from_tokens(
@@ -522,7 +522,7 @@ private:
 class NC : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return new NC; }
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new NC ); }
 
 	virtual
 	void initialize_from_tokens(
@@ -546,7 +546,7 @@ private:
 class EX_CUTOFF : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return new EX_CUTOFF; }
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new EX_CUTOFF ); }
 
 	virtual
 	void initialize_from_tokens(
@@ -571,7 +571,7 @@ private:
 class USE_INPUT_SC : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return new USE_INPUT_SC; }
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new USE_INPUT_SC ); }
 
 	virtual
 	void initialize_from_tokens(
@@ -595,7 +595,7 @@ public:
 class AUTO : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return new AUTO; }
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new AUTO ); }
 
 	virtual
 	void initialize_from_tokens(
@@ -619,7 +619,7 @@ public:
 class SCAN : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return new SCAN; }
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new SCAN ); }
 
 	virtual
 	void initialize_from_tokens(
@@ -648,7 +648,7 @@ public:
 class TARGET : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return new TARGET; }
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new TARGET ); }
 
 	virtual
 	void initialize_from_tokens(
@@ -674,7 +674,7 @@ private:
 class NO_ADDUCTS : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return new NO_ADDUCTS; }
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new NO_ADDUCTS ); }
 
 	virtual
 	void initialize_from_tokens(
@@ -696,7 +696,7 @@ public:
 class FIX_HIS_TAUTOMER : public ResfileCommand
 {
 public:
-	virtual ResfileCommandOP clone() const { return new FIX_HIS_TAUTOMER; }
+	virtual ResfileCommandOP clone() const { return ResfileCommandOP( new FIX_HIS_TAUTOMER ); }
 
 	virtual
 	void initialize_from_tokens(

@@ -49,7 +49,7 @@ PDBTrajectoryRecorderCreator::keyname() const {
 
 protocols::moves::MoverOP
 PDBTrajectoryRecorderCreator::create_mover() const {
-	return new PDBTrajectoryRecorder;
+	return protocols::moves::MoverOP( new PDBTrajectoryRecorder );
 }
 
 std::string
@@ -79,13 +79,13 @@ PDBTrajectoryRecorder::operator=( PDBTrajectoryRecorder const & /* other */ )
 protocols::moves::MoverOP
 PDBTrajectoryRecorder::clone() const
 {
-	return new protocols::canonical_sampling::PDBTrajectoryRecorder( *this );
+	return protocols::moves::MoverOP( new protocols::canonical_sampling::PDBTrajectoryRecorder( *this ) );
 }
 
 protocols::moves::MoverOP
 PDBTrajectoryRecorder::fresh_instance() const
 {
-	return new PDBTrajectoryRecorder;
+	return protocols::moves::MoverOP( new PDBTrajectoryRecorder );
 }
 
 std::string

@@ -24,8 +24,8 @@ namespace symmetry {
 // Forward
 class SymmetricEnergies;
 
-typedef utility::pointer::owning_ptr< SymmetricEnergies       > SymmetricEnergiesOP;
-typedef utility::pointer::owning_ptr< SymmetricEnergies const > SymmetricEnergiesCOP;
+typedef utility::pointer::shared_ptr< SymmetricEnergies       > SymmetricEnergiesOP;
+typedef utility::pointer::shared_ptr< SymmetricEnergies const > SymmetricEnergiesCOP;
 
 }	// namespace symmetry
 } // namespace pose

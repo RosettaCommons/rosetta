@@ -73,7 +73,7 @@ class ProteinSCSamplerTests : public CxxTest::TestSuite {
 		using namespace core;
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		OriginalBackboneBuildPointOP res2bp = new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 );
+		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
 		DunbrackSCSampler dunsampler;
 		DunbrackSCSampler::DunbrackRotamerSampleDataVector samps1(
@@ -136,7 +136,7 @@ class ProteinSCSamplerTests : public CxxTest::TestSuite {
 		using namespace core;
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		OriginalBackboneBuildPointOP res2bp = new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 );
+		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
 		DunbrackSCSampler dunsampler_symm, dunsampler_desymm;
 		dunsampler_desymm.set_desymmeterize( true );

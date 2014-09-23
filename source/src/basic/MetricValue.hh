@@ -45,7 +45,7 @@ public:
 	// note: MetricValueBase must have a virtual function so that it will be polymorphic
 	// (specifically to allow dynamic casting)
 	virtual ~MetricValueBase() {};
-	virtual MetricValueBaseOP clone() const { runtime_assert(false); return new MetricValueBase; }
+	virtual MetricValueBaseOP clone() const { runtime_assert(false); return MetricValueBaseOP( new MetricValueBase ); }
 };
 
 

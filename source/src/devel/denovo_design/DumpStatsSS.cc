@@ -53,7 +53,7 @@ DumpStatsSSCreator::keyname() const
 
 protocols::moves::MoverOP
 DumpStatsSSCreator::create_mover() const {
-	return new DumpStatsSS;
+	return protocols::moves::MoverOP( new DumpStatsSS );
 }
 
 std::string
@@ -64,7 +64,7 @@ DumpStatsSSCreator::mover_name()
 
 DumpStatsSS::DumpStatsSS():
 	protocols::moves::Mover( DumpStatsSSCreator::mover_name() ),
-  scorefxn_(0)
+  scorefxn_(/* 0 */)
 {}
 
 DumpStatsSS::DumpStatsSS(DumpStatsSS const &rval):
@@ -150,12 +150,12 @@ DumpStatsSS::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &
 		scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
 	}
 	psipred_cmd_ = tag->getOption<std:: string > ("cmd", "");
-  psipred_interface_ = new devel::denovo_design::filters::PsiPredInterface( psipred_cmd_ );
-	ss_predictor_ = new protocols::ss_prediction::SS_predictor( "HLE" );
+  psipred_interface_ = filters::PsiPredInterfaceOP( new devel::denovo_design::filters::PsiPredInterface( psipred_cmd_ ) );
+	ss_predictor_ = protocols::ss_prediction::SS_predictorOP( new protocols::ss_prediction::SS_predictor( "HLE" ) );
   std::string blueprint_file = tag->getOption< std::string >( "blueprint", "" );
   if ( blueprint_file != "" ) {
 		TR << "Dssp-derived secondary structure will be overridden by user specified blueprint file." << std::endl;
-		blueprint_ = new protocols::jd2::parser::BluePrint( blueprint_file );
+		blueprint_ = protocols::jd2::parser::BluePrintOP( new protocols::jd2::parser::BluePrint( blueprint_file ) );
 		if ( ! blueprint_ ) {
 				utility_exit_with_message("There was an error getting the blueprint file   loaded.");
 		}

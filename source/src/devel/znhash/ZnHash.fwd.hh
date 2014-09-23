@@ -28,14 +28,14 @@ class ZnMatchData;
 class ZnCoordinationScorer;
 class ZnCoordinationConstraint;
 
-typedef utility::pointer::owning_ptr< ZnHash > ZnHashOP;
-typedef utility::pointer::owning_ptr< ZnHash const > ZnHashCOP;
+typedef utility::pointer::shared_ptr< ZnHash > ZnHashOP;
+typedef utility::pointer::shared_ptr< ZnHash const > ZnHashCOP;
 
-typedef utility::pointer::owning_ptr< ZnCoordinationScorer > ZnCoordinationScorerOP;
-typedef utility::pointer::owning_ptr< ZnCoordinationScorer const > ZnCoordinationScorerCOP;
+typedef utility::pointer::shared_ptr< ZnCoordinationScorer > ZnCoordinationScorerOP;
+typedef utility::pointer::shared_ptr< ZnCoordinationScorer const > ZnCoordinationScorerCOP;
 
-typedef utility::pointer::owning_ptr< ZnCoordinationConstraint > ZnCoordinationConstraintOP;
-typedef utility::pointer::owning_ptr< ZnCoordinationConstraint const > ZnCoordinationConstraintCOP;
+typedef utility::pointer::shared_ptr< ZnCoordinationConstraint > ZnCoordinationConstraintOP;
+typedef utility::pointer::shared_ptr< ZnCoordinationConstraint const > ZnCoordinationConstraintCOP;
 
 }
 }

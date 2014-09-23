@@ -23,8 +23,8 @@ namespace protocols {
 namespace symmetric_docking {
 
 class SymFoldandDockMoveRbJumpMover;
-typedef utility::pointer::owning_ptr< SymFoldandDockMoveRbJumpMover > SymFoldandDockMoveRbJumpMoverOP;
-typedef utility::pointer::owning_ptr< SymFoldandDockMoveRbJumpMover const > SymFoldandDockMoveRbJumpMoverCOP;
+typedef utility::pointer::shared_ptr< SymFoldandDockMoveRbJumpMover > SymFoldandDockMoveRbJumpMoverOP;
+typedef utility::pointer::shared_ptr< SymFoldandDockMoveRbJumpMover const > SymFoldandDockMoveRbJumpMoverCOP;
 
 } // symmetric_docking
 } // rosetta

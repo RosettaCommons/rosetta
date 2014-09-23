@@ -68,7 +68,7 @@ protected:
 
 public:
 	ConstraintSetOP clone() const {
-		return new MaxSeqSepConstraintSet ( *this );
+		return ConstraintSetOP( new MaxSeqSepConstraintSet ( *this ) );
 	};
 
 	virtual ConstraintSetOP remapped_clone(

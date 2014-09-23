@@ -232,7 +232,7 @@ Entity::operator = ( Entity const & rhs ) {
 
 Entity::~Entity(){}
 
-Entity::OP Entity::clone() const { return new Entity(*this); }
+Entity::OP Entity::clone() const { return Entity::OP( new Entity(*this) ); }
 
 void Entity::set_traits_size(
 	core::Size size/*,

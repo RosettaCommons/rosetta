@@ -58,7 +58,7 @@ SequenceCouplingConstraint::SequenceCouplingConstraint()
 	: Constraint( res_type_constraint ),
 		seqpos1_(0),
 		seqpos2_(0),
-		sequence_coupling_(NULL)
+		sequence_coupling_(/* NULL */)
 {}
 
 SequenceCouplingConstraint::SequenceCouplingConstraint(
@@ -88,7 +88,7 @@ SequenceCouplingConstraint::~SequenceCouplingConstraint() {}
 
 ConstraintOP
 SequenceCouplingConstraint::clone() const {
-	return new SequenceCouplingConstraint( *this );
+	return ConstraintOP( new SequenceCouplingConstraint( *this ) );
 }
 
 ///@details one line definition "SequenceProfile resindex profilefilename" (profilefilename can also be set to "none" in the constraints file, and specified by -in::file::pssm)
@@ -133,7 +133,7 @@ SequenceCouplingConstraint::read_def(
 
 	// if filename is not "none" by this point, read it even if sequence_coupling_ is not currently NULL
 	if ( coupling_filename != "none" ) {
-		sequence_coupling_= new SequenceCoupling;
+		sequence_coupling_ = SequenceCouplingOP( new SequenceCoupling );
 		sequence_coupling_->read_from_file( FileName(coupling_filename) );
 	}
 

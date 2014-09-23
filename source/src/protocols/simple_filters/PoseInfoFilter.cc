@@ -99,7 +99,7 @@ void PoseInfoFilter::parse_my_tag( utility::tag::TagCOP const,
 }
 
 protocols::filters::FilterOP
-PoseInfoFilterCreator::create_filter() const { return new PoseInfoFilter; }
+PoseInfoFilterCreator::create_filter() const { return protocols::filters::FilterOP( new PoseInfoFilter ); }
 
 std::string
 PoseInfoFilterCreator::keyname() const { return "PoseInfo"; }

@@ -145,9 +145,9 @@ public:
 class Entity : public utility::pointer::ReferenceCount {
 
 public:
-	typedef utility::pointer::owning_ptr< Entity > OP;
-	typedef utility::pointer::owning_ptr< Entity const > COP;
-	typedef utility::pointer::access_ptr< Entity const > CAP;
+	typedef utility::pointer::shared_ptr< Entity > OP;
+	typedef utility::pointer::shared_ptr< Entity const > COP;
+	typedef utility::pointer::weak_ptr< Entity const > CAP;
 	typedef utility::vector1< COP > COPs;
 	typedef utility::vector1< CAP > CAPs;
 
@@ -191,8 +191,8 @@ std::ostream & operator << ( std::ostream & os, Entity const & entity );
 ///@brief for sorting owning pointers by that to which they point
 template <typename T>
 bool lt_OP_deref(
-	utility::pointer::owning_ptr<T> const & a,
-	utility::pointer::owning_ptr<T> const & b
+	utility::pointer::shared_ptr<T> const & a,
+	utility::pointer::shared_ptr<T> const & b
 )
 {
 	if ( !a && !b ) return false;
@@ -204,8 +204,8 @@ bool lt_OP_deref(
 ///@brief for assessing equality between owning pointers by that to which they point
 template <typename T>
 bool eq_OP_deref(
-	utility::pointer::owning_ptr<T> const & a,
-	utility::pointer::owning_ptr<T> const & b
+	utility::pointer::shared_ptr<T> const & a,
+	utility::pointer::shared_ptr<T> const & b
 )
 {
 	if ( !a && !b ) return true;

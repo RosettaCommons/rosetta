@@ -363,7 +363,7 @@ RigidBodyPerturbNoCenterMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 RigidBodyPerturbNoCenterMoverCreator::create_mover() const {
-	return new RigidBodyPerturbNoCenterMover;
+	return protocols::moves::MoverOP( new RigidBodyPerturbNoCenterMover );
 }
 
 std::string
@@ -373,7 +373,7 @@ RigidBodyPerturbNoCenterMoverCreator::mover_name() {
 
 moves::MoverOP
 RigidBodyPerturbNoCenterMover::clone() const {
-	return new RigidBodyPerturbNoCenterMover(*this);
+	return moves::MoverOP( new RigidBodyPerturbNoCenterMover(*this) );
 }
 
 RigidBodyPerturbNoCenterMover::RigidBodyPerturbNoCenterMover() :
@@ -805,12 +805,12 @@ RigidBodyTransMover::parse_my_tag( utility::tag::TagCOP tag,
 
 moves::MoverOP
 RigidBodyTransMover::clone() const {
-	return new RigidBodyTransMover(*this);
+	return moves::MoverOP( new RigidBodyTransMover(*this) );
 }
 
 moves::MoverOP
 RigidBodyTransMover::fresh_instance() const {
-	return new RigidBodyTransMover;
+	return moves::MoverOP( new RigidBodyTransMover );
 }
 
 
@@ -821,7 +821,7 @@ RigidBodyTransMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 RigidBodyTransMoverCreator::create_mover() const {
-	return new RigidBodyTransMover;
+	return protocols::moves::MoverOP( new RigidBodyTransMover );
 }
 
 std::string

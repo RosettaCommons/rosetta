@@ -64,7 +64,7 @@ EnzdesFixBBProtocol::apply(
 	//set the native pose if requested
 	if( ! basic::options::option[basic::options::OptionKeys::in::file::native].user() ){
 
-		core::pose::PoseOP natpose = new core::pose::Pose( pose );
+		core::pose::PoseOP natpose( new core::pose::Pose( pose ) );
 		(*scorefxn_)( *natpose );
 		this->set_native_pose( natpose );
 	}
@@ -100,7 +100,7 @@ EnzdesFixBBProtocol::apply(
 	if(basic::options::option[basic::options::OptionKeys::enzdes::cst_predock])
 	{
 		//design_pack_task =  create_enzdes_pack_task( pose );
-		PredesignPerturbMoverOP predock = new PredesignPerturbMover();
+		PredesignPerturbMoverOP predock( new PredesignPerturbMover() );
     predock->set_ligand( get_ligand_id(pose, pose.num_jump()) );
     predock->apply(pose);
     (*scorefxn_)( pose );
@@ -158,7 +158,7 @@ EnzdesFixBBProtocol::apply(
 		(*scorefxn_)( pose );
 		repack_task = create_enzdes_pack_task( pose, false ); //remake task in case the ligand has moved a lot
 		tr.Info << "Starting after design unconstrained repack/minimization... " << std::endl;
-		protocols::simple_moves::PackRotamersMoverOP enzdes_repack = new protocols::simple_moves::PackRotamersMover(scorefxn_, repack_task);
+		protocols::simple_moves::PackRotamersMoverOP enzdes_repack( new protocols::simple_moves::PackRotamersMover(scorefxn_, repack_task) );
 		enzdes_repack->apply( pose );
 
 		if(basic::options::option[basic::options::OptionKeys::enzdes::cst_min]) cst_minimize(pose, repack_task);
@@ -182,7 +182,7 @@ EnzdesFixBBProtocol::apply(
 		tr.Info << "Starting ligand docking... " << std::endl;
 		remove_enzdes_constraints( pose, false );
 		//write stuff for ligand docking protocol
-		protocols::ligand_docking::LigandDockProtocolOP dock_lig_protocol = new protocols::ligand_docking::LigandDockProtocol();
+		protocols::ligand_docking::LigandDockProtocolOP dock_lig_protocol( new protocols::ligand_docking::LigandDockProtocol() );
 		dock_lig_protocol->apply( pose );
 
 		add_pregenerated_enzdes_constraints( pose );

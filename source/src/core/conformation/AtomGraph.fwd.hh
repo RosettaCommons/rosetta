@@ -21,7 +21,7 @@ namespace core {
 namespace conformation {
 
 typedef graph::UpperEdgeGraph<AtomGraphVertexData, AtomGraphEdgeData> AtomGraph;
-typedef utility::pointer::owning_ptr<AtomGraph > AtomGraphOP;
+typedef utility::pointer::shared_ptr<AtomGraph > AtomGraphOP;
 
 }
 }

@@ -27,8 +27,8 @@ namespace filters {
 class Torsion;
 
 // Types
-typedef utility::pointer::owning_ptr< Torsion >  TorsionOP;
-typedef utility::pointer::owning_ptr< Torsion const >  TorsionCOP;
+typedef utility::pointer::shared_ptr< Torsion >  TorsionOP;
+typedef utility::pointer::shared_ptr< Torsion const >  TorsionCOP;
 
 } // namespace filters
 } //namespace protein_interface_design

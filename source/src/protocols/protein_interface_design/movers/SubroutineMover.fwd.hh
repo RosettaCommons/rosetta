@@ -23,8 +23,8 @@ namespace movers {
 
 class SubroutineMover;
 
-typedef utility::pointer::owning_ptr< SubroutineMover > SubroutineMoverOP;
-typedef utility::pointer::owning_ptr< SubroutineMover const > SubroutineMoverCOP;
+typedef utility::pointer::shared_ptr< SubroutineMover > SubroutineMoverOP;
+typedef utility::pointer::shared_ptr< SubroutineMover const > SubroutineMoverCOP;
 
 } } }
 

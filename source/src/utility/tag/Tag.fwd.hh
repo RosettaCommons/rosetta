@@ -22,11 +22,11 @@ namespace utility {
 namespace tag {
 
 class Tag;
-typedef utility::pointer::owning_ptr< Tag > TagPtr;
-typedef utility::pointer::owning_ptr< Tag > TagOP;
-typedef utility::pointer::owning_ptr< Tag const > TagCOP;
-typedef utility::pointer::access_ptr< Tag > TagAP;
-typedef utility::pointer::access_ptr< Tag const > TagCAP;
+typedef utility::pointer::shared_ptr< Tag > TagPtr;
+typedef utility::pointer::shared_ptr< Tag > TagOP;
+typedef utility::pointer::shared_ptr< Tag const > TagCOP;
+typedef utility::pointer::weak_ptr< Tag > TagAP;
+typedef utility::pointer::weak_ptr< Tag const > TagCAP;
 
 }
 }

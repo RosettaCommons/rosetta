@@ -25,11 +25,11 @@ create_sasa_method(SasaMethodEnum /*method*/, core::Real probe_radius, SasaRadii
 	
 //	switch(method){
 //		case LeGrand:
-			return new LeGrandSasa(probe_radius, radii_set);
+			return SasaMethodOP( new LeGrandSasa(probe_radius, radii_set) );
 //	}
 	
 	
-return new LeGrandSasa(probe_radius, radii_set);
+return SasaMethodOP( new LeGrandSasa(probe_radius, radii_set) );
 }
 	
 	

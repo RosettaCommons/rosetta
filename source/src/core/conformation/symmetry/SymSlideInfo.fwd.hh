@@ -20,8 +20,8 @@ namespace conformation {
 namespace symmetry {
 
 class SymSlideInfo;
-typedef utility::pointer::owning_ptr< SymSlideInfo > SymSlideInfoOP;
-typedef utility::pointer::owning_ptr< SymSlideInfo const > SymSlideInfoCOP;
+typedef utility::pointer::shared_ptr< SymSlideInfo > SymSlideInfoOP;
+typedef utility::pointer::shared_ptr< SymSlideInfo const > SymSlideInfoCOP;
 
 } // symmetry
 } // conformation

@@ -195,7 +195,7 @@ private:
 	core::pose::Pose target;
 };
 
-typedef utility::pointer::owning_ptr< APDBCMover > APDBCMoverOP;
+typedef utility::pointer::shared_ptr< APDBCMover > APDBCMoverOP;
 
 int main( int argc, char* argv[] )
 {
@@ -210,7 +210,7 @@ int main( int argc, char* argv[] )
 
 	devel::init(argc, argv);
 
-	protocols::jd2::JobDistributor::get_instance()->go(new APDBCMover);
+	protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new APDBCMover ));
 
 	TR << "************************d**o**n**e**************************************" << std::endl;
 

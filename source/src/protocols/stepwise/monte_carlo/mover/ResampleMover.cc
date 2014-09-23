@@ -57,8 +57,8 @@ namespace mover {
 	//Constructor
 	ResampleMover::ResampleMover(	protocols::stepwise::modeler::StepWiseModelerOP stepwise_modeler ):
 		stepwise_modeler_( stepwise_modeler ),
-		swa_move_selector_( new SWA_MoveSelector ),
-		options_( new options::StepWiseMonteCarloOptions ),
+		swa_move_selector_( SWA_MoveSelectorOP( new SWA_MoveSelector ) ),
+		options_( options::StepWiseMonteCarloOptionsCOP( new options::StepWiseMonteCarloOptions ) ),
 		minimize_single_res_( false ),
 		slide_intermolecular_jumps_( true )
 	{}

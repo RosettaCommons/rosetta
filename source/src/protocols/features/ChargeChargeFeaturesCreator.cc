@@ -26,7 +26,7 @@ namespace features {
 ChargeChargeFeaturesCreator::ChargeChargeFeaturesCreator() {}
 ChargeChargeFeaturesCreator::~ChargeChargeFeaturesCreator() {}
 FeaturesReporterOP ChargeChargeFeaturesCreator::create_features_reporter() const {
-	return new ChargeChargeFeatures;
+	return FeaturesReporterOP( new ChargeChargeFeatures );
 }
 
 std::string ChargeChargeFeaturesCreator::type_name() const {

@@ -70,7 +70,7 @@ public:
 	GenBornResidueInfoOP
 	clone() const
 	{
-		return new GenBornResidueInfo( *this );
+		return GenBornResidueInfoOP( new GenBornResidueInfo( *this ) );
 	}
 
 
@@ -161,7 +161,7 @@ public:
 	basic::datacache::CacheableDataOP
 	clone() const
 	{
-		return new GenBornPoseInfo( *this );
+		return basic::datacache::CacheableDataOP( new GenBornPoseInfo( *this ) );
 	}
 
 	///
@@ -266,7 +266,7 @@ public:
 	basic::datacache::CacheableDataOP
 	clone() const
 	{
-		return new GenBornRotamerSetInfo( *this );
+		return basic::datacache::CacheableDataOP( new GenBornRotamerSetInfo( *this ) );
 	}
 
 	///

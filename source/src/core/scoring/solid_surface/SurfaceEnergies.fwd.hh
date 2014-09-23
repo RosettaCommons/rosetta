@@ -24,8 +24,8 @@ namespace scoring {
 namespace solid_surface {
 
 class SurfaceEnergies;
-typedef utility::pointer::owning_ptr< SurfaceEnergies       > SurfaceEnergiesOP;
-typedef utility::pointer::owning_ptr< SurfaceEnergies const > SurfaceEnergiesCOP;
+typedef utility::pointer::shared_ptr< SurfaceEnergies       > SurfaceEnergiesOP;
+typedef utility::pointer::shared_ptr< SurfaceEnergies const > SurfaceEnergiesCOP;
 
 } // namespace solid_surface
 } // namespace scoring

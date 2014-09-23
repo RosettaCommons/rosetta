@@ -19,7 +19,7 @@ namespace protocols {
 namespace symmetric_docking {
 
 class SymRestrictTaskForDocking;
-typedef utility::pointer::owning_ptr< SymRestrictTaskForDocking > SymRestrictTaskForDockingOP;
+typedef utility::pointer::shared_ptr< SymRestrictTaskForDocking > SymRestrictTaskForDockingOP;
 
 }
 }

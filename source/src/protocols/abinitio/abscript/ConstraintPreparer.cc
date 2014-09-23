@@ -64,7 +64,7 @@ ConstraintPreparerCreator::keyname() const {
 
 protocols::moves::MoverOP
 ConstraintPreparerCreator::create_mover() const {
-  return new ConstraintPreparer;
+  return protocols::moves::MoverOP( new ConstraintPreparer );
 }
 
 std::string
@@ -79,9 +79,9 @@ ConstraintPreparer::ConstraintPreparer():
   skip_redundant_width_( 1 ),
   rand_drop_rate_( 0.0 ),
   reprepare_( false ),
-  combine_exclude_res_(0), //initialize vector of zero size, will get resized later.
+  combine_exclude_res_(/* 0 */), //initialize vector of zero size, will get resized later.
   filename_(""),
-  constraints_( NULL )
+  constraints_( /* NULL */ )
 {}
 
 claims::EnvClaims ConstraintPreparer::yield_claims( core::pose::Pose const&,
@@ -101,7 +101,7 @@ void ConstraintPreparer::prepare( core::pose::Pose& pose, core::Real ){
 
   try{
     // it's not great that this is re-loaded each time, but it's safe and doesn't get called that often.
-    constraints_ = ConstraintIO::get_instance()->read_constraints( cst_file(), new ConstraintSet, pose );
+    constraints_ = ConstraintIO::get_instance()->read_constraints( cst_file(), ConstraintSetOP( new ConstraintSet ), pose );
   } catch ( utility::excn::EXCN_Msg_Exception e ) {
     throw utility::excn::EXCN_BadInput( get_name() + " encountered problem loading constraint file '"
                                         + cst_file() + "' : " + e.msg() );

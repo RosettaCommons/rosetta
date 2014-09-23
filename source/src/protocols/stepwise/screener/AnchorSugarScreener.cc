@@ -136,7 +136,7 @@ AnchorSugarScreener::add_mover( moves::CompositionMoverOP update_mover, moves::C
 	if ( anchor_sugar_modeling_.bulge_res > 0 ) res_map[ anchor_sugar_modeling_.bulge_res     ] = anchor_sugar_modeling_.bulge_res;
 	res_map[ anchor_sugar_modeling_.reference_res ] = anchor_sugar_modeling_.reference_res;
 
-	simple_moves::CopyDofMoverOP copy_dof_mover = new simple_moves::CopyDofMover( anchor_sugar_modeling_pose, res_map );
+	simple_moves::CopyDofMoverOP copy_dof_mover( new simple_moves::CopyDofMover( anchor_sugar_modeling_pose, res_map ) );
 	update_mover->add_mover( copy_dof_mover );
 	restore_mover->add_mover( 0 );
 }

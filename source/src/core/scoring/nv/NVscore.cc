@@ -50,7 +50,7 @@ methods::EnergyMethodOP
 NVscoreCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new NVscore;
+	return methods::EnergyMethodOP( new NVscore );
 }
 
 ScoreTypes
@@ -82,7 +82,7 @@ NVscore::NVscore() :
 
 methods::EnergyMethodOP NVscore::clone() const
 {
-	return new NVscore(*this);
+	return methods::EnergyMethodOP( new NVscore(*this) );
 }
 
 

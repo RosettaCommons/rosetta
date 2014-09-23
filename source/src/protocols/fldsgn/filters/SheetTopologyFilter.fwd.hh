@@ -27,8 +27,8 @@ namespace filters {
 class SheetTopologyFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< SheetTopologyFilter >  SheetTopologyFilterOP;
-typedef utility::pointer::owning_ptr< SheetTopologyFilter const >  SheetTopologyFilterCOP;
+typedef utility::pointer::shared_ptr< SheetTopologyFilter >  SheetTopologyFilterOP;
+typedef utility::pointer::shared_ptr< SheetTopologyFilter const >  SheetTopologyFilterCOP;
 
 } // namespace protocols
 } // namespace fldsgn

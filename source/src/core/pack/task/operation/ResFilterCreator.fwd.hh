@@ -25,8 +25,8 @@ namespace operation {
 
 class ResFilterCreator;
 
-typedef utility::pointer::owning_ptr< ResFilterCreator > ResFilterCreatorOP;
-typedef utility::pointer::owning_ptr< ResFilterCreator const > ResFilterCreatorCOP;
+typedef utility::pointer::shared_ptr< ResFilterCreator > ResFilterCreatorOP;
+typedef utility::pointer::shared_ptr< ResFilterCreator const > ResFilterCreatorCOP;
 
 }
 }

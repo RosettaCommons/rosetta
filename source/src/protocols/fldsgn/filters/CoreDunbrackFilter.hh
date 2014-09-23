@@ -80,10 +80,10 @@ public:// virtual constructor
 
 
 	// @brief make clone
-	virtual FilterOP clone() const { return new CoreDunbrackFilter( *this ); }
+	virtual FilterOP clone() const { return FilterOP( new CoreDunbrackFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const {	return new CoreDunbrackFilter(); }
+	virtual FilterOP fresh_instance() const {	return FilterOP( new CoreDunbrackFilter() ); }
 
 
 public:// mutator

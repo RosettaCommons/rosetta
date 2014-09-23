@@ -64,7 +64,7 @@ public:
 
 	/// @brief Clone Cacheable Data
 	basic::datacache::CacheableDataOP clone() const {
-		return new MembraneEmbed( *this );
+		return basic::datacache::CacheableDataOP( new MembraneEmbed( *this ) );
 	}
 
 	/// @brief Compute Size of MP (??)

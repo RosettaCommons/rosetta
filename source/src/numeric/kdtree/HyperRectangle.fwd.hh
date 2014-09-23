@@ -20,7 +20,7 @@ namespace numeric {
 namespace kdtree {
 
 class HyperRectangle;
-typedef utility::pointer::owning_ptr< HyperRectangle > HyperRectangleOP;
+typedef utility::pointer::shared_ptr< HyperRectangle > HyperRectangleOP;
 
 } // kdtree
 } // numeric

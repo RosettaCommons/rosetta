@@ -137,7 +137,7 @@ ubi_e2c_modeler::~ubi_e2c_modeler() {}
 
 //clone
 protocols::moves::MoverOP ubi_e2c_modeler::clone() const {
-	return( new ubi_e2c_modeler() );
+	return( protocols::moves::MoverOP( new ubi_e2c_modeler() ) );
 }
 
 void ubi_e2c_modeler::set_default() {
@@ -646,8 +646,7 @@ void ubi_e2c_modeler::apply( pose::Pose & pose_in ) {
 	}
 	*/
 
-	protocols::simple_moves::ConstraintSetMoverOP mtsl_constraint =
-	    new protocols::simple_moves::ConstraintSetMover();
+	protocols::simple_moves::ConstraintSetMoverOP mtsl_constraint( new protocols::simple_moves::ConstraintSetMover() );
 	mtsl_constraint->apply( pose_in );
 
 	const pose::Pose start_pose( pose_in );
@@ -822,11 +821,11 @@ ubi_e2c_modeler::setup_move_maps() {
 	using namespace kinematics;
 
 	if( init_all_dof_map_ ) {
-		all_dof_map_ = new MoveMap( *init_all_dof_map_ );
-		k48r_docking_map_ = new MoveMap( *init_k48r_docking_map_ );
-		d77_docking_map_ = new MoveMap( *init_d77_docking_map_ );
-		docking_map_ = new MoveMap( *init_docking_map_ );
-		flex_cter_map_ = new MoveMap( *init_flex_cter_map_ );
+		all_dof_map_ = core::kinematics::MoveMapOP( new MoveMap( *init_all_dof_map_ ) );
+		k48r_docking_map_ = core::kinematics::MoveMapOP( new MoveMap( *init_k48r_docking_map_ ) );
+		d77_docking_map_ = core::kinematics::MoveMapOP( new MoveMap( *init_d77_docking_map_ ) );
+		docking_map_ = core::kinematics::MoveMapOP( new MoveMap( *init_docking_map_ ) );
+		flex_cter_map_ = core::kinematics::MoveMapOP( new MoveMap( *init_flex_cter_map_ ) );
 
 		TR << "UBI Reinitializing Move Maps" << std::endl;
 		return;
@@ -837,28 +836,28 @@ ubi_e2c_modeler::setup_move_maps() {
 	bool bb = false;
 	bool chi = true;
 
-	k48r_docking_map_ = new MoveMap();
+	k48r_docking_map_ = core::kinematics::MoveMapOP( new MoveMap() );
 	k48r_docking_map_->clear();
 	k48r_docking_map_->set_chi( chi );
 	k48r_docking_map_->set_bb( bb );
 	k48r_docking_map_->set_jump( e2_k48r_jump_, true );
 	k48r_docking_map_->set_jump( e2_d77_jump_, false );
 
-	d77_docking_map_ = new MoveMap();
+	d77_docking_map_ = core::kinematics::MoveMapOP( new MoveMap() );
 	d77_docking_map_->clear();
 	d77_docking_map_->set_chi( chi );
 	d77_docking_map_->set_bb( bb );
 	d77_docking_map_->set_jump( e2_k48r_jump_, false );
 	d77_docking_map_->set_jump( e2_d77_jump_, true );
 
-	docking_map_ = new MoveMap();
+	docking_map_ = core::kinematics::MoveMapOP( new MoveMap() );
 	docking_map_->clear();
 	docking_map_->set_chi( chi );
 	docking_map_->set_bb( bb );
 	docking_map_->set_jump( e2_k48r_jump_, true );
 	docking_map_->set_jump( e2_d77_jump_, true );
 
-	flex_cter_map_ = new MoveMap();
+	flex_cter_map_ = core::kinematics::MoveMapOP( new MoveMap() );
 	flex_cter_map_->clear();
 	flex_cter_map_->set_chi( chi );
 	flex_cter_map_->set_bb( bb );
@@ -875,7 +874,7 @@ ubi_e2c_modeler::setup_move_maps() {
 		flex_cter_map_->set_bb( d77_end_ - ( flex_cter_ + 2 ), true );
 	}
 
-	all_dof_map_ = new MoveMap();
+	all_dof_map_ = core::kinematics::MoveMapOP( new MoveMap() );
 	all_dof_map_->clear();
 	all_dof_map_->set_chi( chi );
 	all_dof_map_->set_bb( bb );
@@ -993,11 +992,11 @@ ubi_e2c_modeler::initial_cter_perturbation(
 
 	SequenceMoverOP perturb_min_cter( new SequenceMover() );
 
-	protocols::simple_moves::BackboneMoverOP small_mover =	new protocols::simple_moves::SmallMover(ub_cter_map,
-	        temperature_, 8 );
+	protocols::simple_moves::BackboneMoverOP small_mover( new protocols::simple_moves::SmallMover(ub_cter_map,
+	        temperature_, 8 ) );
 	small_mover->angle_max( 90.0 );
-	protocols::simple_moves::BackboneMoverOP shear_mover =	new protocols::simple_moves::ShearMover(ub_cter_map,
-	        temperature_, 8 );
+	protocols::simple_moves::BackboneMoverOP shear_mover( new protocols::simple_moves::ShearMover(ub_cter_map,
+	        temperature_, 8 ) );
 
 	shear_mover->angle_max( 90.0 );
 
@@ -1009,10 +1008,10 @@ ubi_e2c_modeler::initial_cter_perturbation(
 	perturb_min_cter->add_mover( min_mover );
 
 	MonteCarloOP mc;
-	mc = new moves::MonteCarlo( pose_in, *lowres_cst_scorefxn_,temperature_);
-	TrialMoverOP cter_pert_trial = new TrialMover( perturb_min_cter, mc );
+	mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *lowres_cst_scorefxn_,temperature_) );
+	TrialMoverOP cter_pert_trial( new TrialMover( perturb_min_cter, mc ) );
 	RepeatMoverOP cter_cycle;
-	cter_cycle = new RepeatMover( cter_pert_trial, 40 ); // cycles
+	cter_cycle = RepeatMoverOP( new RepeatMover( cter_pert_trial, 40 ) ); // cycles
 	cter_cycle->apply( pose_in );
 	mc->recover_low( pose_in );
 
@@ -1131,7 +1130,7 @@ ubi_e2c_modeler::init_k48r_perturbation(
 
 	// make starting perturbations based on command-line flags
 	DockingInitialPerturbationOP init_e2_mono_ub_dock( new
-	        DockingInitialPerturbation( e2_k48r_jump_,true/*slide into contact*/));
+	        DockingInitialPerturbation( e2_k48r_jump_,true/*slide into contact*/) );
 	// pose_in.dump_pdb( "pre.pdb" );
 	if( higher_d77_pert_mode_ && k48r_swap_ ) {
 		rigid::RigidBodyPerturbMover mover( e2_k48r_jump_,
@@ -1151,11 +1150,11 @@ ubi_e2c_modeler::init_k48r_perturbation(
 		        rigid::RigidBodyPerturbNoCenterMover( e2_k48r_jump_, 10.0, // rot_magnitude
 		                1.0 ) ); // trans_magnitude_
 		MonteCarloOP mc;
-		mc = new moves::MonteCarlo( e2_k48r, *dock_lowres_scorefxn_,
-		                            temperature_ );
-		TrialMoverOP dock_trial = new TrialMover( dock_e2_mono_ub, mc );
+		mc = MonteCarloOP( new moves::MonteCarlo( e2_k48r, *dock_lowres_scorefxn_,
+		                            temperature_ ) );
+		TrialMoverOP dock_trial( new TrialMover( dock_e2_mono_ub, mc ) );
 		Size const cycles( 50 );
-		RepeatMoverOP rbp_cycle = new RepeatMover( dock_trial, cycles );
+		RepeatMoverOP rbp_cycle( new RepeatMover( dock_trial, cycles ) );
 		rbp_cycle->apply( e2_k48r );
 		mc->recover_low( e2_k48r );
 	}
@@ -1184,12 +1183,11 @@ ubi_e2c_modeler::init_k48r_perturbation(
 		init_e2_mono_ub_dock->apply( pose_in );
 	{
 		// dock movers
-		rigid::RigidBodyPerturbNoCenterMoverOP dock_e2_mono_ub(
-		    new	rigid::RigidBodyPerturbNoCenterMover( e2_k48r_jump_, 10.0, // rot_magnitude
+		rigid::RigidBodyPerturbNoCenterMoverOP dock_e2_mono_ub( new	rigid::RigidBodyPerturbNoCenterMover( e2_k48r_jump_, 10.0, // rot_magnitude
 		            1.0 ) ); // trans_magnitude_
 
 		setup_complex_fold_tree( pose_in, true );
-		protocols::scoring::InterfaceInfoOP tri_interface = new protocols::scoring::InterfaceInfo( e2_k48r_jump_ );
+		protocols::scoring::InterfaceInfoOP tri_interface( new protocols::scoring::InterfaceInfo( e2_k48r_jump_ ) );
 		tri_interface->add_jump( e2_d77_jump_ );
 		pose_in.data().set( core::pose::datacache::CacheableDataType::INTERFACE_INFO, tri_interface );
 		Real score = ( *dock_lowres_scorefxn_ )( pose_in );
@@ -1207,7 +1205,7 @@ ubi_e2c_modeler::init_k48r_perturbation(
 		Real lowest_CSP_score = last_accepted_CSP_score;
 		setup_simple_fold_tree( jumppoint1, cutpoint, jumppoint2, nres,
 		                        pose_in);
-		protocols::scoring::InterfaceInfoOP one_interface = new protocols::scoring::InterfaceInfo( e2_k48r_jump_ );
+		protocols::scoring::InterfaceInfoOP one_interface( new protocols::scoring::InterfaceInfo( e2_k48r_jump_ ) );
 		pose_in.data().set( core::pose::datacache::CacheableDataType::INTERFACE_INFO, one_interface );
 		pose::Pose best_CSP_pose( pose_in );
 		pose::Pose lowest_CSP_score_pose( pose_in );
@@ -1305,7 +1303,7 @@ ubi_e2c_modeler::initial_perturbation(
 
 	TR << "UBI Initial Perturbation" << std::endl;
 
-	protocols::scoring::InterfaceInfoOP one_interface = new protocols::scoring::InterfaceInfo( e2_k48r_jump_ );
+	protocols::scoring::InterfaceInfoOP one_interface( new protocols::scoring::InterfaceInfo( e2_k48r_jump_ ) );
 	pose_in.data().set( core::pose::datacache::CacheableDataType::INTERFACE_INFO, one_interface );
 
 	// initial_cter_perturbation( pose_in );
@@ -1358,7 +1356,7 @@ ubi_e2c_modeler::initial_perturbation(
 	current_ubi_cov_bond_dist = d77_lys_CA.distance( k48r_gly_CA );
 
 	// Resetting Interfaces to three
-	protocols::scoring::InterfaceInfoOP tri_interface = new protocols::scoring::InterfaceInfo( e2_k48r_jump_ );
+	protocols::scoring::InterfaceInfoOP tri_interface( new protocols::scoring::InterfaceInfo( e2_k48r_jump_ ) );
 	tri_interface->add_jump( e2_d77_jump_ );
 	pose_in.data().set( core::pose::datacache::CacheableDataType::INTERFACE_INFO, tri_interface );
 
@@ -1380,7 +1378,7 @@ ubi_e2c_modeler::centroid_mode_perturbation(
 
 	setup_complex_fold_tree( pose_in );
 
-	protocols::scoring::InterfaceInfoOP tri_interface = new protocols::scoring::InterfaceInfo( e2_k48r_jump_ );
+	protocols::scoring::InterfaceInfoOP tri_interface( new protocols::scoring::InterfaceInfo( e2_k48r_jump_ ) );
 	tri_interface->add_jump( e2_d77_jump_ );
 	pose_in.data().set( core::pose::datacache::CacheableDataType::INTERFACE_INFO, tri_interface );
 
@@ -1403,11 +1401,9 @@ ubi_e2c_modeler::centroid_mode_perturbation(
 
 	// movers
 	// dock movers
-	rigid::RigidBodyPerturbNoCenterMoverOP dock_e2_k48r(
-	    new rigid::RigidBodyPerturbNoCenterMover( e2_k48r_jump_, 5.0, // rot_magnitude
+	rigid::RigidBodyPerturbNoCenterMoverOP dock_e2_k48r( new rigid::RigidBodyPerturbNoCenterMover( e2_k48r_jump_, 5.0, // rot_magnitude
 	            0.7 ) ); // trans_magnitude_
-	rigid::RigidBodyPerturbNoCenterMoverOP dock_k48r_d77(
-	    new	rigid::RigidBodyPerturbNoCenterMover( e2_d77_jump_, 5.0, // rot_magnitude
+	rigid::RigidBodyPerturbNoCenterMoverOP dock_k48r_d77( new	rigid::RigidBodyPerturbNoCenterMover( e2_d77_jump_, 5.0, // rot_magnitude
 	            0.7 ) ); // trans_magnitude_
 
 	RandomMoverOP docker( new RandomMover() );
@@ -1420,15 +1416,15 @@ ubi_e2c_modeler::centroid_mode_perturbation(
 		//////////Small/ShearMovers//////////////////////////////////////
 		SequenceMoverOP perturb_min_cter( new SequenceMover() );
 
-		protocols::simple_moves::BackboneMoverOP small_mover =	new protocols::simple_moves::SmallMover( flex_cter_map_,
-		        temperature_, 5 /*n_moves*/ );
+		protocols::simple_moves::BackboneMoverOP small_mover( new protocols::simple_moves::SmallMover( flex_cter_map_,
+		        temperature_, 5 /*n_moves*/ ) );
 		small_mover->angle_max( 90.0 );
 
-		protocols::simple_moves::BackboneMoverOP shear_mover =	new protocols::simple_moves::ShearMover( flex_cter_map_,
-		        temperature_, 5 /*n_moves*/ );
+		protocols::simple_moves::BackboneMoverOP shear_mover( new protocols::simple_moves::ShearMover( flex_cter_map_,
+		        temperature_, 5 /*n_moves*/ ) );
 		shear_mover->angle_max( 90.0 );
 
-		protocols::simple_moves::MinMoverOP min_mover(new protocols::simple_moves::MinMover(flex_cter_map_, lowres_cst_scorefxn_,
+		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(flex_cter_map_, lowres_cst_scorefxn_,
 		        "linmin",	min_tolerance_,	nb_list_, false /*deriv_check*/,
 		        false /* non verbose-deriv-check, default*/ ) );
 
@@ -1437,11 +1433,11 @@ ubi_e2c_modeler::centroid_mode_perturbation(
 		perturb_min_cter->add_mover( min_mover );
 
 		MonteCarloOP c_ter_mc;
-		c_ter_mc = new moves::MonteCarlo( pose_in, *lowres_cst_scorefxn_,
-		                                  temperature_ );
-		TrialMoverOP cter_pert_trial = new TrialMover( perturb_min_cter,
-		        c_ter_mc );
-		cter_cycle = new RepeatMover( cter_pert_trial, 10 ); // cycles
+		c_ter_mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *lowres_cst_scorefxn_,
+		                                  temperature_ ) );
+		TrialMoverOP cter_pert_trial( new TrialMover( perturb_min_cter,
+		        c_ter_mc ) );
+		cter_cycle = RepeatMoverOP( new RepeatMover( cter_pert_trial, 10 ) ); // cycles
 	}
 
 	//SequenceMoverOP dock_n_perturb( new SequenceMover() );
@@ -1521,43 +1517,43 @@ ubi_e2c_modeler::fullatom_mode_perturbation(
 
 	SequenceMoverOP fullatom_optimizer( new SequenceMover() ); // **MAIN**
 
-	protocols::simple_moves::PackRotamersMoverOP pack_interface_repack = new protocols::simple_moves::PackRotamersMover(
-	    pack_scorefxn_ );
+	protocols::simple_moves::PackRotamersMoverOP pack_interface_repack( new protocols::simple_moves::PackRotamersMover(
+	    pack_scorefxn_ ) );
 	pack_interface_repack->task_factory(tf_);
 
 	//fullatom_optimizer->add_mover( pack_interface_repack ); // **MAIN**
 	//pack_interface_repack->apply( pose_in );
 
 	//set up minimizer movers
-	protocols::simple_moves::MinMoverOP k48r_dock_min_mover = new protocols::simple_moves::MinMover( k48r_docking_map_,
-	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ );
-	protocols::simple_moves::MinMoverOP d77_dock_min_mover = new protocols::simple_moves::MinMover( d77_docking_map_,
-	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ );
-	protocols::simple_moves::MinMoverOP dock_min_mover = new protocols::simple_moves::MinMover( docking_map_,
-	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ );
-	protocols::simple_moves::MinMoverOP flex_cter_min_mover = new protocols::simple_moves::MinMover( flex_cter_map_,
-	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ );
-	protocols::simple_moves::MinMoverOP all_dof_min_mover = new protocols::simple_moves::MinMover( all_dof_map_,
-	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ );
+	protocols::simple_moves::MinMoverOP k48r_dock_min_mover( new protocols::simple_moves::MinMover( k48r_docking_map_,
+	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
+	protocols::simple_moves::MinMoverOP d77_dock_min_mover( new protocols::simple_moves::MinMover( d77_docking_map_,
+	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
+	protocols::simple_moves::MinMoverOP dock_min_mover( new protocols::simple_moves::MinMover( docking_map_,
+	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
+	protocols::simple_moves::MinMoverOP flex_cter_min_mover( new protocols::simple_moves::MinMover( flex_cter_map_,
+	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
+	protocols::simple_moves::MinMoverOP all_dof_min_mover( new protocols::simple_moves::MinMover( all_dof_map_,
+	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
 
-	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin = new protocols::simple_moves::RotamerTrialsMinMover(
-	    pack_scorefxn_, tf_ );
+	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin( new protocols::simple_moves::RotamerTrialsMinMover(
+	    pack_scorefxn_, tf_ ) );
 
 	// set up rigid body movers
 	Real trans_magnitude = 0.1; // default high-res docking values
 	Real rot_magnitude = 5.0; // default high-res docking values
-	rigid::RigidBodyPerturbMoverOP k48r_perturb = new rigid::RigidBodyPerturbMover(
+	rigid::RigidBodyPerturbMoverOP k48r_perturb( new rigid::RigidBodyPerturbMover(
 	    e2_k48r_jump_, rot_magnitude, trans_magnitude , rigid::partner_downstream,
-	    true );
-	rigid::RigidBodyPerturbMoverOP d77_perturb = new rigid::RigidBodyPerturbMover(
+	    true ) );
+	rigid::RigidBodyPerturbMoverOP d77_perturb( new rigid::RigidBodyPerturbMover(
 	    e2_d77_jump_, rot_magnitude, trans_magnitude, rigid::partner_downstream,
-	    true );
+	    true ) );
 
-	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover(
-	    pack_scorefxn_, tf_ );
+	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover(
+	    pack_scorefxn_, tf_ ) );
 
 	MonteCarloOP mc;
-	mc=new moves::MonteCarlo( pose_in, *dockfa_cst_scorefxn_,temperature_);
+	mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *dockfa_cst_scorefxn_,temperature_) );
 
 	// cter movers
 
@@ -1565,11 +1561,11 @@ ubi_e2c_modeler::fullatom_mode_perturbation(
 	//////////Small/ShearMovers//////////////////////////////////////
 	SequenceMoverOP perturb_min_cter( new SequenceMover() );
 
-	protocols::simple_moves::BackboneMoverOP small_mover =	new protocols::simple_moves::SmallMover( flex_cter_map_,
-	        temperature_,	5 );
+	protocols::simple_moves::BackboneMoverOP small_mover( new protocols::simple_moves::SmallMover( flex_cter_map_,
+	        temperature_,	5 ) );
 	small_mover->angle_max( 5.0 );
-	protocols::simple_moves::BackboneMoverOP shear_mover =	new protocols::simple_moves::ShearMover( flex_cter_map_,
-	        temperature_,	5 );
+	protocols::simple_moves::BackboneMoverOP shear_mover( new protocols::simple_moves::ShearMover( flex_cter_map_,
+	        temperature_,	5 ) );
 	shear_mover->angle_max( 5.0 );
 
 	perturb_min_cter->add_mover( small_mover );
@@ -1577,8 +1573,8 @@ ubi_e2c_modeler::fullatom_mode_perturbation(
 	perturb_min_cter->add_mover( pack_rottrial );
 	perturb_min_cter->add_mover( flex_cter_min_mover );
 
-	TrialMoverOP cter_pert_trial = new TrialMover( perturb_min_cter, mc );
-	cter_mover_rot = new RepeatMover( cter_pert_trial, 10 ); // cycles
+	TrialMoverOP cter_pert_trial( new TrialMover( perturb_min_cter, mc ) );
+	cter_mover_rot = RepeatMoverOP( new RepeatMover( cter_pert_trial, 10 ) ); // cycles
 
 	SequenceMoverOP cter_mover_repack( new SequenceMover() );
 	cter_mover_repack->add_mover( cter_mover_rot );
@@ -1690,16 +1686,16 @@ ubi_e2c_modeler::initial_repack(
 	TR << "UBI Initial Repack" << std::endl;
 
 	moves::MonteCarloOP mc;
-	mc = new moves::MonteCarlo( pose_in, *pack_scorefxn_, temperature_ );
+	mc = moves::MonteCarloOP( new moves::MonteCarlo( pose_in, *pack_scorefxn_, temperature_ ) );
 
 	setup_packer_task( pose_in );
 	// restrict_to_interfacial_loop_packing( pose_in );
 
-	protocols::simple_moves::PackRotamersMoverOP pack_interface_repack = new protocols::simple_moves::PackRotamersMover(
-	    pack_scorefxn_ );
+	protocols::simple_moves::PackRotamersMoverOP pack_interface_repack( new protocols::simple_moves::PackRotamersMover(
+	    pack_scorefxn_ ) );
 	pack_interface_repack->task_factory(tf_);
-	TrialMoverOP pack_interface_and_loops_trial = new TrialMover(
-	    pack_interface_repack, mc );
+	TrialMoverOP pack_interface_and_loops_trial( new TrialMover(
+	    pack_interface_repack, mc ) );
 
 	if( !refinement_mode_ )
 		pack_interface_and_loops_trial->apply( pose_in );
@@ -1718,27 +1714,25 @@ ubi_e2c_modeler::setup_packer_task(
 
 
 	if( init_task_factory_ ) {
-		tf_ = new TaskFactory( *init_task_factory_ );
+		tf_ = core::pack::task::TaskFactoryOP( new TaskFactory( *init_task_factory_ ) );
 		TR << "UBI Reinitializing Packer Task" << std::endl;
 		return;
 	} else
-		tf_ = new TaskFactory;
+		tf_ = core::pack::task::TaskFactoryOP( new TaskFactory );
 
 	TR << "UBI Setting Up Packer Task" << std::endl;
 
-	tf_->push_back( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueLacksProperty("PROTEIN") ) ) );
-	tf_->push_back( new InitializeFromCommandline );
-	tf_->push_back( new IncludeCurrent );
-	tf_->push_back( new RestrictToRepacking );
-	tf_->push_back( new NoRepackDisulfides );
+	tf_->push_back( TaskOperationCOP( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueLacksProperty("PROTEIN") ) ) ) );
+	tf_->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
+	tf_->push_back( TaskOperationCOP( new IncludeCurrent ) );
+	tf_->push_back( TaskOperationCOP( new RestrictToRepacking ) );
+	tf_->push_back( TaskOperationCOP( new NoRepackDisulfides ) );
 
 	// incorporating Ian's UnboundRotamer operation.
 	// note that nothing happens if unboundrot option is inactive!
-	pack::rotamer_set::UnboundRotamersOperationOP unboundrot =
-	    new pack::rotamer_set::UnboundRotamersOperation();
+	pack::rotamer_set::UnboundRotamersOperationOP unboundrot( new pack::rotamer_set::UnboundRotamersOperation() );
 	unboundrot->initialize_from_command_line();
-	operation::AppendRotamerSetOP unboundrot_operation =
-	    new operation::AppendRotamerSet( unboundrot );
+	operation::AppendRotamerSetOP unboundrot_operation( new operation::AppendRotamerSet( unboundrot ) );
 	tf_->push_back( unboundrot_operation );
 	// adds scoring bonuses for the "unbound" rotamers, if any
 	core::pack::dunbrack::load_unboundrot( pose_in );
@@ -1770,7 +1764,7 @@ ubi_e2c_modeler::restrict_to_interfacial_loop_packing(
 	utility::vector1_size rb_jumps;
 	rb_jumps.push_back( e2_k48r_jump_ );
 	rb_jumps.push_back( e2_d77_jump_ );
-	tf_->push_back( new protocols::toolbox::task_operations::RestrictToInterface( rb_jumps, loop_residues) );
+	tf_->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterface( rb_jumps, loop_residues) ) );
 
 	TR << "UBI Done: Restricting To Interface" << std::endl;
 	return;
@@ -1822,17 +1816,14 @@ ubi_e2c_modeler::calc_interaction_energy(
 	Real trans_magnitude = 1000;
 	if( dimer ) {
 		set_e2g2_diubi_fold_tree( complex_pose );
-		rigid::RigidBodyTransMoverOP translate_away_diubi (
-		    new rigid::RigidBodyTransMover( complex_pose, 1 ) );
+		rigid::RigidBodyTransMoverOP translate_away_diubi( new rigid::RigidBodyTransMover( complex_pose, 1 ) );
 		translate_away_diubi->step_size( trans_magnitude );
 		separate->add_mover( translate_away_diubi );
 	} else {
 		setup_complex_fold_tree( complex_pose );
-		rigid::RigidBodyTransMoverOP translate_away_k48r (
-		    new rigid::RigidBodyTransMover( complex_pose, e2_k48r_jump_ ) );
+		rigid::RigidBodyTransMoverOP translate_away_k48r( new rigid::RigidBodyTransMover( complex_pose, e2_k48r_jump_ ) );
 		translate_away_k48r->step_size( trans_magnitude );
-		rigid::RigidBodyTransMoverOP translate_away_d77 (
-		    new rigid::RigidBodyTransMover( complex_pose, e2_d77_jump_ ) );
+		rigid::RigidBodyTransMoverOP translate_away_d77( new rigid::RigidBodyTransMover( complex_pose, e2_d77_jump_ ) );
 		translate_away_d77->step_size( 0.00 - trans_magnitude );
 		separate->add_mover( translate_away_k48r );
 		separate->add_mover( translate_away_d77 );
@@ -2157,7 +2148,7 @@ ubi_e2c_modeler::evaluate_native( pose::Pose & pose_in ) {
 	setup_key_residues( pose_in );
 	setup_complex_fold_tree( pose_in );
 
-	protocols::scoring::InterfaceInfoOP tri_interface = new protocols::scoring::InterfaceInfo( e2_k48r_jump_ );
+	protocols::scoring::InterfaceInfoOP tri_interface( new protocols::scoring::InterfaceInfo( e2_k48r_jump_ ) );
 	tri_interface->add_jump( e2_d77_jump_ );
 	pose_in.data().set( core::pose::datacache::CacheableDataType::INTERFACE_INFO, tri_interface );
 
@@ -2187,7 +2178,7 @@ ubi_e2c_modeler::evaluate_native( pose::Pose & pose_in ) {
 	TR << "Native Pack Score    : " << score << std::endl;
 
 	setup_packer_task( pose_in );
-	protocols::simple_moves::PackRotamersMoverOP repack = new protocols::simple_moves::PackRotamersMover(	pack_score );
+	protocols::simple_moves::PackRotamersMoverOP repack( new protocols::simple_moves::PackRotamersMover(	pack_score ) );
 	repack->task_factory( tf_ );
 	repack->apply( pose_in );
 
@@ -2200,8 +2191,7 @@ ubi_e2c_modeler::evaluate_native( pose::Pose & pose_in ) {
 	set_e2g2_diubi_fold_tree( start_pose );
 
 	Real trans_magnitude = 1000;
-	rigid::RigidBodyTransMoverOP translate_away_diubi (
-	    new rigid::RigidBodyTransMover( start_pose, 1 ) );
+	rigid::RigidBodyTransMoverOP translate_away_diubi( new rigid::RigidBodyTransMover( start_pose, 1 ) );
 	translate_away_diubi->step_size( trans_magnitude );
 
 	Real bound_energy = ( *dockfa_score )( start_pose );
@@ -2236,32 +2226,32 @@ ubi_e2c_modeler::optimize_cov_bond(
 
 	setup_complex_fold_tree( pose_in );
 
-	protocols::scoring::InterfaceInfoOP tri_interface = new protocols::scoring::InterfaceInfo( e2_k48r_jump_ );
+	protocols::scoring::InterfaceInfoOP tri_interface( new protocols::scoring::InterfaceInfo( e2_k48r_jump_ ) );
 	tri_interface->add_jump( e2_d77_jump_ );
 	pose_in.data().set( core::pose::datacache::CacheableDataType::INTERFACE_INFO, tri_interface );
 
 	setup_packer_task( pose_in );
 
-	protocols::simple_moves::PackRotamersMoverOP packer = new protocols::simple_moves::PackRotamersMover(	pack_cst_scorefxn_ );
+	protocols::simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover(	pack_cst_scorefxn_ ) );
 	packer->task_factory(tf_);
 
 	//set up minimizer
-	protocols::simple_moves::MinMoverOP flex_cter_min_mover = new protocols::simple_moves::MinMover( flex_cter_map_,
-	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ );
+	protocols::simple_moves::MinMoverOP flex_cter_min_mover( new protocols::simple_moves::MinMover( flex_cter_map_,
+	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
 
-	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover(
-	    pack_cst_scorefxn_, tf_ );
+	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover(
+	    pack_cst_scorefxn_, tf_ ) );
 
 	flex_cter_min_mover->apply( pose_in ); // **REAL** MINIMIZE C TER
 
 	// cter movers
 	SequenceMoverOP perturb_min_cter( new SequenceMover() );
 
-	protocols::simple_moves::BackboneMoverOP small_mover =	new protocols::simple_moves::SmallMover( flex_cter_map_,
-	        temperature_,	5 );
+	protocols::simple_moves::BackboneMoverOP small_mover( new protocols::simple_moves::SmallMover( flex_cter_map_,
+	        temperature_,	5 ) );
 	small_mover->angle_max( 5.0 );
-	protocols::simple_moves::BackboneMoverOP shear_mover =	new protocols::simple_moves::ShearMover( flex_cter_map_,
-	        temperature_,	5 );
+	protocols::simple_moves::BackboneMoverOP shear_mover( new protocols::simple_moves::ShearMover( flex_cter_map_,
+	        temperature_,	5 ) );
 	shear_mover->angle_max( 5.0 );
 
 	perturb_min_cter->add_mover( small_mover );
@@ -2430,8 +2420,7 @@ void ubi_e2c_modeler::monoub_apply( pose::Pose & pose_in ) {
 
 	TR << "UBI Mono Ubi Apply Start" << std::endl;
 
-	protocols::simple_moves::ConstraintSetMoverOP mtsl_constraint =
-	    new protocols::simple_moves::ConstraintSetMover();
+	protocols::simple_moves::ConstraintSetMoverOP mtsl_constraint( new protocols::simple_moves::ConstraintSetMover() );
 	mtsl_constraint->apply( pose_in );
 
 	const pose::Pose start_pose( pose_in );
@@ -2551,9 +2540,9 @@ ubi_e2c_modeler::monoub_setup_move_maps() {
 	using namespace kinematics;
 
 	if( init_all_dof_map_ ) {
-		monoub_all_dof_map_ = new MoveMap( *init_monoub_all_dof_map_ );
-		monoub_docking_map_ = new MoveMap( *init_monoub_docking_map_ );
-		monoub_flex_cter_map_ = new MoveMap( *init_monoub_flex_cter_map_ );
+		monoub_all_dof_map_ = core::kinematics::MoveMapOP( new MoveMap( *init_monoub_all_dof_map_ ) );
+		monoub_docking_map_ = core::kinematics::MoveMapOP( new MoveMap( *init_monoub_docking_map_ ) );
+		monoub_flex_cter_map_ = core::kinematics::MoveMapOP( new MoveMap( *init_monoub_flex_cter_map_ ) );
 
 		TR << "UBI Mono Ubi Reinitializing Move Maps" << std::endl;
 		return;
@@ -2564,13 +2553,13 @@ ubi_e2c_modeler::monoub_setup_move_maps() {
 	bool bb = false;
 	bool chi = true;
 
-	monoub_docking_map_ = new MoveMap();
+	monoub_docking_map_ = core::kinematics::MoveMapOP( new MoveMap() );
 	monoub_docking_map_->clear();
 	monoub_docking_map_->set_chi( chi );
 	monoub_docking_map_->set_bb( bb );
 	monoub_docking_map_->set_jump( 1, true );
 
-	monoub_flex_cter_map_ = new MoveMap();
+	monoub_flex_cter_map_ = core::kinematics::MoveMapOP( new MoveMap() );
 	monoub_flex_cter_map_->clear();
 	monoub_flex_cter_map_->set_chi( chi );
 	monoub_flex_cter_map_->set_bb( bb );
@@ -2579,7 +2568,7 @@ ubi_e2c_modeler::monoub_setup_move_maps() {
 		monoub_flex_cter_map_->set_bb( monoub_end_ - i, true );
 	}
 
-	monoub_all_dof_map_ = new MoveMap();
+	monoub_all_dof_map_ = core::kinematics::MoveMapOP( new MoveMap() );
 	monoub_all_dof_map_->clear();
 	monoub_all_dof_map_->set_chi( chi );
 	monoub_all_dof_map_->set_bb( bb );
@@ -2670,11 +2659,11 @@ ubi_e2c_modeler::monoub_initial_cter_perturbation(
 
 	SequenceMoverOP perturb_min_cter( new SequenceMover() );
 
-	protocols::simple_moves::BackboneMoverOP small_mover =	new protocols::simple_moves::SmallMover( ub_cter_map,
-	        temperature_, 8 );
+	protocols::simple_moves::BackboneMoverOP small_mover( new protocols::simple_moves::SmallMover( ub_cter_map,
+	        temperature_, 8 ) );
 	small_mover->angle_max( 90.0 );
-	protocols::simple_moves::BackboneMoverOP shear_mover =	new protocols::simple_moves::ShearMover( ub_cter_map,
-	        temperature_, 8 );
+	protocols::simple_moves::BackboneMoverOP shear_mover( new protocols::simple_moves::ShearMover( ub_cter_map,
+	        temperature_, 8 ) );
 
 	shear_mover->angle_max( 90.0 );
 
@@ -2686,10 +2675,10 @@ ubi_e2c_modeler::monoub_initial_cter_perturbation(
 	perturb_min_cter->add_mover( min_mover );
 
 	MonteCarloOP mc;
-	mc = new moves::MonteCarlo( pose_in, *lowres_cst_scorefxn_,temperature_);
-	TrialMoverOP cter_pert_trial = new TrialMover( perturb_min_cter, mc );
+	mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *lowres_cst_scorefxn_,temperature_) );
+	TrialMoverOP cter_pert_trial( new TrialMover( perturb_min_cter, mc ) );
 	RepeatMoverOP cter_cycle;
-	cter_cycle = new RepeatMover( cter_pert_trial, 40 ); // cycles
+	cter_cycle = RepeatMoverOP( new RepeatMover( cter_pert_trial, 40 ) ); // cycles
 	cter_cycle->apply( pose_in );
 	mc->recover_low( pose_in );
 
@@ -2712,7 +2701,7 @@ ubi_e2c_modeler::monoub_first_perturbation(
 
 	// make starting perturbations based on command-line flags
 	DockingInitialPerturbationOP init_e2_mono_ub_dock( new
-	        DockingInitialPerturbation( 1 ,true/*slide into contact*/));
+	        DockingInitialPerturbation( 1 ,true/*slide into contact*/) );
 	// pose_in.dump_pdb( "pre.pdb" );
 	init_e2_mono_ub_dock->apply( pose_in );
 
@@ -2721,7 +2710,7 @@ ubi_e2c_modeler::monoub_first_perturbation(
 	        rigid::RigidBodyPerturbNoCenterMover( 1 , 10.0, // rot_magnitude
 	                1.0 ) ); // trans_magnitude_
 
-	protocols::scoring::InterfaceInfoOP one_interface = new protocols::scoring::InterfaceInfo( 1 );
+	protocols::scoring::InterfaceInfoOP one_interface( new protocols::scoring::InterfaceInfo( 1 ) );
 	pose_in.data().set( core::pose::datacache::CacheableDataType::INTERFACE_INFO, one_interface );
 	Real score = ( *dock_lowres_scorefxn_ )( pose_in );
 	Real current_CSP_fraction = monoub_CSP_fraction( pose_in );
@@ -2770,7 +2759,7 @@ ubi_e2c_modeler::monoub_initial_perturbation(
 
 	TR << "UBI Mono Ubi Initial Perturbation" << std::endl;
 
-	protocols::scoring::InterfaceInfoOP one_interface = new protocols::scoring::InterfaceInfo( 1 );
+	protocols::scoring::InterfaceInfoOP one_interface( new protocols::scoring::InterfaceInfo( 1 ) );
 	pose_in.data().set( core::pose::datacache::CacheableDataType::INTERFACE_INFO, one_interface );
 
 	monoub_first_perturbation( pose_in );
@@ -2794,7 +2783,7 @@ ubi_e2c_modeler::monoub_centroid_mode_perturbation(
 
 	monoub_fold_tree( pose_in );
 
-	protocols::scoring::InterfaceInfoOP interface = new protocols::scoring::InterfaceInfo( 1 );
+	protocols::scoring::InterfaceInfoOP interface( new protocols::scoring::InterfaceInfo( 1 ) );
 	pose_in.data().set( core::pose::datacache::CacheableDataType::INTERFACE_INFO, interface );
 
 	monoub_initial_perturbation( pose_in );
@@ -2815,28 +2804,28 @@ ubi_e2c_modeler::monoub_centroid_mode_perturbation(
 		//////////Small/ShearMovers//////////////////////////////////////
 		SequenceMoverOP perturb_min_cter( new SequenceMover() );
 
-		protocols::simple_moves::BackboneMoverOP small_mover =	new protocols::simple_moves::SmallMover( monoub_flex_cter_map_,
-		        temperature_, 5 /*n_moves*/ );
+		protocols::simple_moves::BackboneMoverOP small_mover( new protocols::simple_moves::SmallMover( monoub_flex_cter_map_,
+		        temperature_, 5 /*n_moves*/ ) );
 		small_mover->angle_max( 90.0 );
 
-		protocols::simple_moves::BackboneMoverOP shear_mover =	new protocols::simple_moves::ShearMover( monoub_flex_cter_map_,
-		        temperature_, 5 /*n_moves*/ );
+		protocols::simple_moves::BackboneMoverOP shear_mover( new protocols::simple_moves::ShearMover( monoub_flex_cter_map_,
+		        temperature_, 5 /*n_moves*/ ) );
 		shear_mover->angle_max( 90.0 );
 
-		protocols::simple_moves::MinMoverOP min_mover(new protocols::simple_moves::MinMover( monoub_flex_cter_map_,
+		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( monoub_flex_cter_map_,
 		        lowres_cst_scorefxn_, "linmin",	min_tolerance_,	nb_list_,
-		        false /*deriv_check*/,false /* non verbose-deriv-check,default*/));
+		        false /*deriv_check*/,false /* non verbose-deriv-check,default*/) );
 
 		perturb_min_cter->add_mover( small_mover );
 		perturb_min_cter->add_mover( shear_mover );
 		perturb_min_cter->add_mover( min_mover );
 
 		MonteCarloOP c_ter_mc;
-		c_ter_mc = new moves::MonteCarlo( pose_in, *lowres_cst_scorefxn_,
-		                                  temperature_ );
-		TrialMoverOP cter_pert_trial = new TrialMover( perturb_min_cter,
-		        c_ter_mc );
-		cter_cycle = new RepeatMover( cter_pert_trial, 10 ); // cycles
+		c_ter_mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *lowres_cst_scorefxn_,
+		                                  temperature_ ) );
+		TrialMoverOP cter_pert_trial( new TrialMover( perturb_min_cter,
+		        c_ter_mc ) );
+		cter_cycle = RepeatMoverOP( new RepeatMover( cter_pert_trial, 10 ) ); // cycles
 	}
 
 	docker->add_mover( dock_e2_monoub, 0.75 );
@@ -2891,32 +2880,32 @@ ubi_e2c_modeler::monoub_fullatom_mode_perturbation(
 
 	SequenceMoverOP fullatom_optimizer( new SequenceMover() ); // **MAIN**
 
-	protocols::simple_moves::PackRotamersMoverOP pack_interface_repack = new protocols::simple_moves::PackRotamersMover(
-	    pack_scorefxn_ );
+	protocols::simple_moves::PackRotamersMoverOP pack_interface_repack( new protocols::simple_moves::PackRotamersMover(
+	    pack_scorefxn_ ) );
 	pack_interface_repack->task_factory(tf_);
 
 	//set up minimizer movers
-	protocols::simple_moves::MinMoverOP monoub_dock_min_mover = new protocols::simple_moves::MinMover( monoub_docking_map_,
-	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ );
-	protocols::simple_moves::MinMoverOP flex_cter_min_mover = new protocols::simple_moves::MinMover( monoub_flex_cter_map_,
-	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ );
-	protocols::simple_moves::MinMoverOP all_dof_min_mover = new protocols::simple_moves::MinMover( monoub_all_dof_map_,
-	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ );
+	protocols::simple_moves::MinMoverOP monoub_dock_min_mover( new protocols::simple_moves::MinMover( monoub_docking_map_,
+	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
+	protocols::simple_moves::MinMoverOP flex_cter_min_mover( new protocols::simple_moves::MinMover( monoub_flex_cter_map_,
+	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
+	protocols::simple_moves::MinMoverOP all_dof_min_mover( new protocols::simple_moves::MinMover( monoub_all_dof_map_,
+	        dockfa_cst_min_scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
 
-	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin = new protocols::simple_moves::RotamerTrialsMinMover(
-	    pack_scorefxn_, tf_ );
+	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin( new protocols::simple_moves::RotamerTrialsMinMover(
+	    pack_scorefxn_, tf_ ) );
 
 	// set up rigid body movers
 	Real trans_magnitude = 0.1; // default high-res docking values
 	Real rot_magnitude = 5.0; // default high-res docking values
-	rigid::RigidBodyPerturbMoverOP monoub_perturb = new rigid::RigidBodyPerturbMover(
+	rigid::RigidBodyPerturbMoverOP monoub_perturb( new rigid::RigidBodyPerturbMover(
 	    1, rot_magnitude, trans_magnitude , rigid::partner_downstream,
-	    true );
-	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover(
-	    pack_scorefxn_, tf_ );
+	    true ) );
+	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover(
+	    pack_scorefxn_, tf_ ) );
 
 	MonteCarloOP mc;
-	mc = new moves::MonteCarlo( pose_in, *dockfa_cst_scorefxn_,temperature_);
+	mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *dockfa_cst_scorefxn_,temperature_) );
 
 	// cter movers
 
@@ -2924,11 +2913,11 @@ ubi_e2c_modeler::monoub_fullatom_mode_perturbation(
 	//////////Small/ShearMovers//////////////////////////////////////
 	SequenceMoverOP perturb_min_cter( new SequenceMover() );
 
-	protocols::simple_moves::BackboneMoverOP small_mover =	new protocols::simple_moves::SmallMover( monoub_flex_cter_map_,
-	        temperature_,	5 );
+	protocols::simple_moves::BackboneMoverOP small_mover( new protocols::simple_moves::SmallMover( monoub_flex_cter_map_,
+	        temperature_,	5 ) );
 	small_mover->angle_max( 5.0 );
-	protocols::simple_moves::BackboneMoverOP shear_mover =	new protocols::simple_moves::ShearMover( monoub_flex_cter_map_,
-	        temperature_,	5 );
+	protocols::simple_moves::BackboneMoverOP shear_mover( new protocols::simple_moves::ShearMover( monoub_flex_cter_map_,
+	        temperature_,	5 ) );
 	shear_mover->angle_max( 5.0 );
 
 	perturb_min_cter->add_mover( small_mover );
@@ -2936,8 +2925,8 @@ ubi_e2c_modeler::monoub_fullatom_mode_perturbation(
 	perturb_min_cter->add_mover( pack_rottrial );
 	perturb_min_cter->add_mover( flex_cter_min_mover );
 
-	TrialMoverOP cter_pert_trial = new TrialMover( perturb_min_cter, mc );
-	cter_mover_rot = new RepeatMover( cter_pert_trial, 10 ); // cycles
+	TrialMoverOP cter_pert_trial( new TrialMover( perturb_min_cter, mc ) );
+	cter_mover_rot = RepeatMoverOP( new RepeatMover( cter_pert_trial, 10 ) ); // cycles
 
 	SequenceMoverOP cter_mover_repack( new SequenceMover() );
 	cter_mover_repack->add_mover( cter_mover_rot );
@@ -3019,8 +3008,7 @@ ubi_e2c_modeler::monoub_calc_interaction_energy(
 	Real trans_magnitude = 1000;
 
 	monoub_fold_tree( complex_pose );
-	rigid::RigidBodyTransMoverOP translate_away_ubi (
-	    new rigid::RigidBodyTransMover( complex_pose, 1 ) );
+	rigid::RigidBodyTransMoverOP translate_away_ubi( new rigid::RigidBodyTransMover( complex_pose, 1 ) );
 	translate_away_ubi->step_size( trans_magnitude );
 	separate->add_mover( translate_away_ubi );
 

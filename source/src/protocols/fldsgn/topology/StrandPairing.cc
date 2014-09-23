@@ -171,7 +171,7 @@ StrandPairing::~StrandPairing(){}
 StrandPairingOP
 StrandPairing::clone()
 {
-	return new StrandPairing( *this );
+	return StrandPairingOP( new StrandPairing( *this ) );
 }
 
 
@@ -421,7 +421,7 @@ StrandPairingSet::StrandPairingSet():
 	spairset_name_( "" ),
 	num_strands_( 0 ),
 	finalized_( false ),
-	empty_( new StrandPairing )
+	empty_( StrandPairingOP( new StrandPairing ) )
 {}
 
 
@@ -431,7 +431,7 @@ StrandPairingSet::StrandPairingSet( StrandPairings const & strand_pairings ):
 	spairset_name_( "" ),
 	num_strands_( 0 ),
 	finalized_( false ),
-	empty_( new StrandPairing )
+	empty_( StrandPairingOP( new StrandPairing ) )
 {
 	finalize();
 }
@@ -442,7 +442,7 @@ StrandPairingSet::StrandPairingSet( String const & spairstring, SS_Info2_COP con
 	spairset_name_( "" ),
 	num_strands_( 0 ),
 	finalized_( false ),
-	empty_( new StrandPairing )
+	empty_( StrandPairingOP( new StrandPairing ) )
 {
 	if( spairstring == "" ) {
 		return;
@@ -451,7 +451,7 @@ StrandPairingSet::StrandPairingSet( String const & spairstring, SS_Info2_COP con
 	utility::vector1< String > spairs( utility::string_split( spairstring, ';' ) );
 	for( utility::vector1< String >::const_iterator iter = spairs.begin(); iter != spairs.end() ; ++iter) {
 		String spair( *iter );
-		StrandPairingOP sp = new StrandPairing( spair );
+		StrandPairingOP sp( new StrandPairing( spair ) );
 		if( ssinfo ) {
 			sp->redefine_begin_end( ssinfo );
 		}
@@ -466,7 +466,7 @@ StrandPairingSet::StrandPairingSet( SS_Info2 const & ssinfo, DimerPairings const
 	spairset_name_( "" ),
 	num_strands_( 0 ),
 	finalized_( false ),
-	empty_( new StrandPairing )
+	empty_( StrandPairingOP( new StrandPairing ) )
 {
 	initialize_by_dimer_pairs( ssinfo, dimer_pairs );
 }
@@ -493,7 +493,7 @@ StrandPairingSet::~StrandPairingSet(){}
 StrandPairingSetOP
 StrandPairingSet::clone() const
 {
-	return new StrandPairingSet( *this );
+	return StrandPairingSetOP( new StrandPairingSet( *this ) );
 }
 
 
@@ -794,7 +794,7 @@ StrandPairingSet::initialize_by_dimer_pairs( SS_Info2 const & ssinfo, DimerPairi
 
 		StrandPairingOP & spop = map_strand_pairings_[ istrand ][ jstrand ];
 		if( spop == 0 ){
-			spop = new StrandPairing( istrand, jstrand, 0, dp.orient() );
+			spop = StrandPairingOP( new StrandPairing( istrand, jstrand, 0, dp.orient() ) );
 			strand_pairings_.push_back( spop );
 		}
 

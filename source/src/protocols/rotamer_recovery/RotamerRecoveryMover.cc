@@ -31,7 +31,7 @@ RotamerRecoveryMoverCreator::keyname() const
 
 moves::MoverOP
 RotamerRecoveryMoverCreator::create_mover() const {
-	return new RotamerRecoveryMover;
+	return moves::MoverOP( new RotamerRecoveryMover );
 }
 
 std::string
@@ -138,13 +138,13 @@ namespace rotamer_recovery {
 static Tracer TR("protocol.rotamer_recovery.RotamerRecoveryMover");
 
 RotamerRecoveryMover::RotamerRecoveryMover() :
-	rotamer_recovery_( NULL ),
-	scfxn_(NULL),
-	task_factory_(new TaskFactory)
+	rotamer_recovery_( /* NULL */ ),
+	scfxn_(/* NULL */),
+	task_factory_(core::pack::task::TaskFactoryOP( new TaskFactory ))
 {
 	using core::pack::task::operation::TaskOperationCOP;
-	task_factory_->push_back( new InitializeFromCommandline );
-	task_factory_->push_back( new RestrictToRepacking );
+	task_factory_->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
+	task_factory_->push_back( TaskOperationCOP( new RestrictToRepacking ) );
 }
 
 RotamerRecoveryMover::RotamerRecoveryMover(
@@ -215,13 +215,13 @@ RotamerRecoveryMover::get_name() const {
 
 MoverOP
 RotamerRecoveryMover::fresh_instance() const {
-	return new RotamerRecoveryMover;
+	return MoverOP( new RotamerRecoveryMover );
 }
 
 
 MoverOP
 RotamerRecoveryMover::clone() const {
-	return new RotamerRecoveryMover( *this );
+	return MoverOP( new RotamerRecoveryMover( *this ) );
 }
 
 void
@@ -249,7 +249,7 @@ RotamerRecoveryMover::parse_my_tag(
 	if(tag->hasOption("mover") || tag->hasOption("mover_name")){
 		MoverOP mover = parse_mover(tag->hasOption("mover") ?
 			tag->getOption<string>("mover") : tag->getOption<string>("mover_name"), movers);
-		protocol = new RRProtocolMover(mover);
+		protocol = RRProtocolOP( new RRProtocolMover(mover) );
 	} else {
 		protocol = factory->get_rotamer_recovery_protocol(tag->getOption<string>("protocol", "RRProtocolMinPack"));
 	}
@@ -261,7 +261,7 @@ RotamerRecoveryMover::parse_my_tag(
 		factory->get_rotamer_recovery_reporter(
 			tag->getOption<string>("reporter", "RRReporterSimple")));
 
-	rotamer_recovery_ = new RotamerRecovery(protocol, comparer, reporter);
+	rotamer_recovery_ = rotamer_recovery::RotamerRecoveryOP( new RotamerRecovery(protocol, comparer, reporter) );
 }
 
 ScoreFunctionOP

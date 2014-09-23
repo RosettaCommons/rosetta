@@ -24,8 +24,8 @@ namespace abinitio {
 namespace abscript {
 
 class StructPerturberCM;
-typedef utility::pointer::owning_ptr< StructPerturberCM > StructPerturberCMOP;
-typedef utility::pointer::owning_ptr< StructPerturberCM const > StructPerturberCMCOP;
+typedef utility::pointer::shared_ptr< StructPerturberCM > StructPerturberCMOP;
+typedef utility::pointer::shared_ptr< StructPerturberCM const > StructPerturberCMCOP;
 
 } // abscript
 } // abinitio

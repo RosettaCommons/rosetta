@@ -20,8 +20,8 @@ namespace matdes {
 
 class SymDofMover;
 
-typedef utility::pointer::owning_ptr< SymDofMover > SymDofMoverOP;
-typedef utility::pointer::owning_ptr< SymDofMover const > SymDofMoverCOP;
+typedef utility::pointer::shared_ptr< SymDofMover > SymDofMoverOP;
+typedef utility::pointer::shared_ptr< SymDofMover const > SymDofMoverCOP;
 
 
 } // matdes

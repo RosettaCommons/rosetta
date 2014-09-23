@@ -70,7 +70,7 @@ core::Real getMLweight( core::scoring::ScoreFunction & scorefxn, core::pose::Pos
 
 	// create two scorefunctions, one experimental only, one rosetta only
 	core::scoring::ScoreFunctionOP rosetta_scorefxn = scorefxn.clone(); //core::scoring::get_score_function();
-	core::scoring::ScoreFunctionOP xtal_scorefxn = new core::scoring::ScoreFunction();
+	core::scoring::ScoreFunctionOP xtal_scorefxn( new core::scoring::ScoreFunction() );
 
 	rosetta_scorefxn->set_weight( core::scoring::xtal_ml, 0.0 );
 	xtal_scorefxn->set_weight( core::scoring::xtal_ml, 1.0 );
@@ -199,7 +199,7 @@ core::Real getMLweight_cart( core::scoring::ScoreFunction & scorefxn, core::pose
 
 	// create two scorefunctions, one experimental only, one rosetta only
 	core::scoring::ScoreFunctionOP rosetta_scorefxn  = scorefxn.clone();//core::scoring::get_score_function();
-	core::scoring::ScoreFunctionOP xtal_scorefxn = new core::scoring::ScoreFunction();
+	core::scoring::ScoreFunctionOP xtal_scorefxn( new core::scoring::ScoreFunction() );
 
 	rosetta_scorefxn->set_weight( core::scoring::xtal_ml, 0.0 );
 	xtal_scorefxn->set_weight( core::scoring::xtal_ml, 1.0 );

@@ -21,8 +21,8 @@ namespace core {
 namespace sequence {
 
 class DerivedSequenceMapping;
-typedef utility::pointer::owning_ptr< DerivedSequenceMapping > DerivedSequenceMappingOP;
-typedef utility::pointer::owning_ptr< DerivedSequenceMapping const > DerivedSequenceMappingCOP;
+typedef utility::pointer::shared_ptr< DerivedSequenceMapping > DerivedSequenceMappingOP;
+typedef utility::pointer::shared_ptr< DerivedSequenceMapping const > DerivedSequenceMappingCOP;
 
 
 }

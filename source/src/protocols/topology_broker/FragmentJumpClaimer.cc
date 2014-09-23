@@ -64,8 +64,8 @@ namespace topology_broker {
 using namespace core;
 
 FragmentJumpClaimer::FragmentJumpClaimer() :
-	jump_def_( NULL ),
-	init_mover_( NULL ),
+	jump_def_( /* NULL */ ),
+	init_mover_( /* NULL */ ),
 	bKeepJumpsFromInputPose_( true )
 {
 	set_bInitDofs( true ); //we want to initialize jumps
@@ -74,7 +74,7 @@ FragmentJumpClaimer::FragmentJumpClaimer() :
 FragmentJumpClaimer::FragmentJumpClaimer( jumping::BaseJumpSetupOP jump_def, std::string const& tag, weights::AbinitioMoverWeightOP weight ) :
 	FragmentClaimer( NULL, tag, weight ),
 	jump_def_ ( jump_def ),
-	init_mover_( NULL ),
+	init_mover_( /* NULL */ ),
 	bKeepJumpsFromInputPose_( true )
 {
 	set_bInitDofs( true ); //we want to initialize jumps
@@ -95,7 +95,7 @@ FragmentJumpClaimer::~FragmentJumpClaimer() {}
 
 TopologyClaimerOP FragmentJumpClaimer::clone() const
 {
-	return new FragmentJumpClaimer( *this );
+	return TopologyClaimerOP( new FragmentJumpClaimer( *this ) );
 }
 
 
@@ -183,10 +183,10 @@ void FragmentJumpClaimer::init_jumps() {
 			(*jump_frame)->steal( input_pose_ );
 		}
 
-		core::fragment::FragSetOP jump_frags = new core::fragment::OrderedFragSet;
+		core::fragment::FragSetOP jump_frags( new core::fragment::OrderedFragSet );
 		jump_frags->add( jump_frames );
 
-		init_mover_ = new simple_moves::ClassicFragmentMover( jump_frags, movemap_ );
+		init_mover_ = simple_moves::ClassicFragmentMoverOP( new simple_moves::ClassicFragmentMover( jump_frags, movemap_ ) );
 		init_mover_->type( mover_tag() );
 		init_mover_->set_check_ss( false ); // this doesn't make sense with jump fragments
 		init_mover_->enable_end_bias_check( false ); //no sense for discontinuous fragments
@@ -210,13 +210,13 @@ void FragmentJumpClaimer::generate_claims( claims::DofClaims& new_claims,
 	if ( jump_def_ ) {
 		jump_frags = jump_def_->generate_jump_frags( current_jumps_, *movemap_ );
 
-		simple_moves::ClassicFragmentMoverOP jump_mover = new simple_moves::ClassicFragmentMover( jump_frags, movemap_ );
+		simple_moves::ClassicFragmentMoverOP jump_mover( new simple_moves::ClassicFragmentMover( jump_frags, movemap_ ) );
 		jump_mover->type( mover_tag() );
 		jump_mover->set_check_ss( false ); // this doesn't make sense with jump fragments
 		jump_mover->enable_end_bias_check( false ); //no sense for discontinuous fragments
 		set_mover( jump_mover );
 	} else {
-		jump_frags = new core::fragment::OrderedFragSet;
+		jump_frags = fragment::FragSetOP( new core::fragment::OrderedFragSet );
 		core::fragment::FrameList jump_frames;
 		current_jumps_.generate_jump_frames( jump_frames, *movemap_ );
 		jump_frags->add( jump_frames );
@@ -247,14 +247,14 @@ void FragmentJumpClaimer::generate_claims( claims::DofClaims& new_claims,
 			if ( 2 == (*it)->nr_res_affected( jump_mm ) ) {
 				//that is our jump-fragment
 				found_frame = true;
-				new_claims.push_back( new claims::JumpClaim( get_self_weak_ptr(), local_up, local_dn, up_atom, down_atom, claims::DofClaim::INIT ) );
+				new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::JumpClaim( get_self_weak_ptr(), local_up, local_dn, up_atom, down_atom, claims::DofClaim::INIT ) ) );
 				kinematics::MoveMap bb_mm;
 				bb_mm.set_bb( false );
 				bb_mm.set_bb( up, true );
-				if ( 2 == (*it)->nr_res_affected( bb_mm ) ) 	new_claims.push_back( new claims::BBClaim( get_self_weak_ptr(), local_up ) ); //up jump always counted
+				if ( 2 == (*it)->nr_res_affected( bb_mm ) ) 	new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::BBClaim( get_self_weak_ptr(), local_up ) ) ); //up jump always counted
 				bb_mm.set_bb( down, true );
 				bb_mm.set_bb( up, false);
-				if ( 2 == (*it)->nr_res_affected( bb_mm ) ) 	new_claims.push_back( new claims::BBClaim( get_self_weak_ptr(), local_dn ) ); //up jump always counted
+				if ( 2 == (*it)->nr_res_affected( bb_mm ) ) 	new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::BBClaim( get_self_weak_ptr(), local_dn ) ) ); //up jump always counted
 				break;
 			}
 		}

@@ -106,7 +106,7 @@ void FileBuffer::dump(){
 bool pose_to_binary_silent_file( std::ostream &output, const std::string &tag, const pose::Pose &pose ){
 	using namespace io::silent;
 	SilentFileData outsfd;
-	SilentStructOP pss = new BinarySilentStruct;
+	SilentStructOP pss( new BinarySilentStruct );
 	pss->fill_struct( pose, tag );
 
 	pss->print_header( output );

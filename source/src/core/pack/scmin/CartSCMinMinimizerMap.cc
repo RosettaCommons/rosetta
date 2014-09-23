@@ -35,7 +35,7 @@ namespace core {
 namespace pack {
 namespace scmin {
 
-optimization::DOF_NodeOP dummy_nodeop(new optimization::DOF_Node(id::DOF_ID(),NULL));
+optimization::DOF_NodeOP dummy_nodeop( new optimization::DOF_Node(id::DOF_ID(),NULL) );
 
 
 CartSCMinMinimizerMap::CartSCMinMinimizerMap() :

@@ -45,7 +45,7 @@ SilentFileOptionsCreator::~SilentFileOptionsCreator() {}
 
 ResourceOptionsOP
 SilentFileOptionsCreator::create_options() const {
-	return new SilentFileOptions;
+	return ResourceOptionsOP( new SilentFileOptions );
 }
 
 string

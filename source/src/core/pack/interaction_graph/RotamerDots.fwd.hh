@@ -25,11 +25,11 @@ class RotamerDots;
 class RotamerDotsCache;
 class InvRotamerDots;
 
-typedef utility::pointer::owning_ptr< RotamerDots > RotamerDotsOP;
-typedef utility::pointer::owning_ptr< RotamerDots const > RotamerDotsCOP;
+typedef utility::pointer::shared_ptr< RotamerDots > RotamerDotsOP;
+typedef utility::pointer::shared_ptr< RotamerDots const > RotamerDotsCOP;
 
-typedef utility::pointer::owning_ptr< InvRotamerDots > InvRotamerDotsOP;
-typedef utility::pointer::owning_ptr< InvRotamerDots const > InvRotamerDotsCOP;
+typedef utility::pointer::shared_ptr< InvRotamerDots > InvRotamerDotsOP;
+typedef utility::pointer::shared_ptr< InvRotamerDots const > InvRotamerDotsCOP;
 
 
 } // interaction_graph

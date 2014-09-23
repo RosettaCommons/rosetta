@@ -113,10 +113,10 @@ Minimize::Minimize() :
 Minimize::~Minimize() {}
 
 MoverOP Minimize::clone() const {
-	return new Minimize( *this );
+	return MoverOP( new Minimize( *this ) );
 }
 MoverOP Minimize::fresh_instance() const {
-	return new Minimize;
+	return MoverOP( new Minimize );
 }
 
 void
@@ -169,7 +169,7 @@ main( int argc, char * argv [] )
 
 	devel::init(argc, argv);
 
-	MoverOP protocol = new Minimize();
+	MoverOP protocol( new Minimize() );
 	protocols::jd2::JobDistributor::get_instance()->go( protocol );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

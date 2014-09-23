@@ -73,7 +73,7 @@ public: // test functions
 		using namespace core::import_pose;
 
 		// Load in pose from pdb
-        PoseOP pose = new Pose();
+        PoseOP pose( new Pose() );
         pose_from_pdb( *pose, "core/conformation/membrane/1AFO_AB.pdb" );
 		
 		// get info from pose
@@ -83,7 +83,7 @@ public: // test functions
 		Real thickness = 12.5;
 		
 		// create object
-		topo_from_pdb_ = new SpanningTopology( zcoord_, chainID_, thickness );
+		topo_from_pdb_ = SpanningTopologyOP( new SpanningTopology( zcoord_, chainID_, thickness ) );
 
 		// check topology
 		TS_ASSERT_EQUALS( topo_from_pdb_->total_spans(), 2 );
@@ -101,7 +101,7 @@ public: // test functions
 		TS_TRACE("Test constructor from spanfile");
 
 		// create object
-		topo_from_spanfile_ = new SpanningTopology( "core/conformation/membrane/1AFO_AB.span", 80 );
+		topo_from_spanfile_ = SpanningTopologyOP( new SpanningTopology( "core/conformation/membrane/1AFO_AB.span", 80 ) );
 		
 		// check topology
 		TS_ASSERT_EQUALS( topo_from_spanfile_->total_spans(), 2 );
@@ -141,29 +141,29 @@ public: // test functions
 		TS_TRACE("Test whether Span crosses the membrane");
 		
 		// check specific spans for first helix
-		SpanOP span1 = new Span(  1, 10 );
+		SpanOP span1( new Span(  1, 10 ) );
 		TS_ASSERT_EQUALS( topo_from_spanfile_->spanning( zcoord_, span1 ), 0 );
 		
-		SpanOP span2 = new Span( 10, 20 );
+		SpanOP span2( new Span( 10, 20 ) );
 		TS_ASSERT_EQUALS( topo_from_spanfile_->spanning( zcoord_, span2 ), 0 );
 
-		SpanOP span3 = new Span( 15, 27 );
+		SpanOP span3( new Span( 15, 27 ) );
 		TS_ASSERT_EQUALS( topo_from_spanfile_->spanning( zcoord_, span3 ), 1 );
 
-		SpanOP span4 = new Span( 27, 40 );
+		SpanOP span4( new Span( 27, 40 ) );
 		TS_ASSERT_EQUALS( topo_from_spanfile_->spanning( zcoord_, span4 ), 0 );
 		
 		// check specific spans for second helix
-		SpanOP span5 = new Span( 40, 41 );
+		SpanOP span5( new Span( 40, 41 ) );
 		TS_ASSERT_EQUALS( topo_from_spanfile_->spanning( zcoord_, span5 ), 1 );
 		
-		SpanOP span6 = new Span( 41, 56 );
+		SpanOP span6( new Span( 41, 56 ) );
 		TS_ASSERT_EQUALS( topo_from_spanfile_->spanning( zcoord_, span6 ), 0 );
 		
-		SpanOP span7 = new Span( 57, 68 );
+		SpanOP span7( new Span( 57, 68 ) );
 		TS_ASSERT_EQUALS( topo_from_spanfile_->spanning( zcoord_, span7 ), 1 );
 		
-		SpanOP span8 = new Span( 66, 80 );
+		SpanOP span8( new Span( 66, 80 ) );
 		TS_ASSERT_EQUALS( topo_from_spanfile_->spanning( zcoord_, span8 ), 0 );
 		
 		TS_TRACE("Finished testing whether span crosses the membrane.");

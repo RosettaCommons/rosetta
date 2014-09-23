@@ -88,7 +88,7 @@ namespace protocols {
 
 		protocols::moves::MoverOP
 		GrowPeptidesCreator::create_mover() const {
-			return new GrowPeptides();
+			return protocols::moves::MoverOP( new GrowPeptides() );
 		}
 
 		std::string
@@ -276,8 +276,8 @@ void GrowPeptides::apply (core::pose::Pose & pose ){
 
 		if( fetch_foldtree ){
 			TR<<"generate a foldtree through SeedFoldTree, and get cutpoints" << std::endl;
-			core::pose::PoseOP tmp_seed_target_poseOP = new core::pose::Pose( pose );
-			SeedFoldTreeOP seed_ft_generator = new SeedFoldTree();
+			core::pose::PoseOP tmp_seed_target_poseOP( new core::pose::Pose( pose ) );
+			SeedFoldTreeOP seed_ft_generator( new SeedFoldTree() );
 			seed_ft_generator->ddg_based( ddg() );
 			seed_ft_generator->scorefxn( scorefxn_ );
 			seed_ft_generator->anchor_specified(anchor_specified_);
@@ -387,7 +387,7 @@ void GrowPeptides::apply (core::pose::Pose & pose ){
 /// @details putting a LengthEventCollector into the pose
 void
 GrowPeptides::setup_cached_observers( core::pose::Pose & pose ){
-	core::pose::datacache::LengthEventCollectorOP lencollect = new core::pose::datacache::LengthEventCollector();
+	core::pose::datacache::LengthEventCollectorOP lencollect( new core::pose::datacache::LengthEventCollector() );
 	pose.observer_cache().set( core::pose::datacache::CacheableObserverType::LENGTH_EVENT_COLLECTOR, lencollect );
 }
 
@@ -444,7 +444,7 @@ GrowPeptides::parse_my_tag(
 
 	if( tag->hasOption( "template_pdb" ) ){
 		std::string const template_pdb_fname( tag->getOption< std::string >( "template_pdb" ));
-		template_pdb_ =  new core::pose::Pose ;
+		template_pdb_ = core::pose::PoseOP( new core::pose::Pose ) ;
 		core::import_pose::pose_from_pdb( *template_pdb_, template_pdb_fname );
 		TR<<"read in a template pdb with " <<template_pdb_->total_residue() <<"residues"<<std::endl;
 		template_presence = true;
@@ -465,7 +465,7 @@ GrowPeptides::parse_my_tag(
 		if( template_presence )
 			curr_pose_ = template_pdb_;
 		else
-			curr_pose_ = new pose::Pose( pose );
+			curr_pose_ = core::pose::PoseOP( new pose::Pose( pose ) );
 
 		anchor_specified_ = false;
 

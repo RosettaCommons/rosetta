@@ -37,8 +37,8 @@ public:
 	virtual std::string keyname() const = 0;
 };
 
-typedef utility::pointer::owning_ptr< PosePropertyReporterCreator > PosePropertyReporterCreatorOP;
-typedef utility::pointer::owning_ptr< PosePropertyReporterCreator const > PosePropertyReporterCreatorCOP;
+typedef utility::pointer::shared_ptr< PosePropertyReporterCreator > PosePropertyReporterCreatorOP;
+typedef utility::pointer::shared_ptr< PosePropertyReporterCreator const > PosePropertyReporterCreatorCOP;
 
 } //namespace rosetta_scripts
 } //namespace protocols

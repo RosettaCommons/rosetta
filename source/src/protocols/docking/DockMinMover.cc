@@ -45,10 +45,10 @@ DockMinMover::DockMinMover() : DockingHighRes()
 {
 	//need to set this up with default values;
 	set_default();
-	mc_= new MonteCarlo( *scorefxn(), 0.8 );
-	protocols::simple_moves::MinMoverOP min_mover =new protocols::simple_moves::MinMover
-				( movemap_, scorefxn(), min_type_, min_tolerance_, nb_list_ );
-	minimize_trial_ = new TrialMover( min_mover, mc_ );
+	mc_ = moves::MonteCarloOP( new MonteCarlo( *scorefxn(), 0.8 ) );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover
+				( movemap_, scorefxn(), min_type_, min_tolerance_, nb_list_ ) );
+	minimize_trial_ = moves::TrialMoverOP( new TrialMover( min_mover, mc_ ) );
 }
 
 DockMinMover::DockMinMover(
@@ -57,10 +57,10 @@ DockMinMover::DockMinMover(
 ) : DockingHighRes(movable_jumps, scorefxn, scorefxn) {
 	//need to set this up with default values;
 	set_default();
-	mc_= new MonteCarlo( *scorefxn, 0.8 );
-	protocols::simple_moves::MinMoverOP min_mover =new protocols::simple_moves::MinMover
-				( movemap_, scorefxn, min_type_, min_tolerance_, nb_list_ );
-	minimize_trial_ = new TrialMover( min_mover, mc_ );
+	mc_ = moves::MonteCarloOP( new MonteCarlo( *scorefxn, 0.8 ) );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover
+				( movemap_, scorefxn, min_type_, min_tolerance_, nb_list_ ) );
+	minimize_trial_ = moves::TrialMoverOP( new TrialMover( min_mover, mc_ ) );
 }
 
 
@@ -74,9 +74,9 @@ DockMinMover::DockMinMover(
 	//need to set this up with default values;
 	set_default();
 	mc_=mc;
-	protocols::simple_moves::MinMoverOP min_mover =new protocols::simple_moves::MinMover
-			    ( movemap_, scorefxn, min_type_, min_tolerance_, nb_list_ );
-	minimize_trial_ = new TrialMover( min_mover, mc_ );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover
+			    ( movemap_, scorefxn, min_type_, min_tolerance_, nb_list_ ) );
+	minimize_trial_ = moves::TrialMoverOP( new TrialMover( min_mover, mc_ ) );
 }
 
 
@@ -97,9 +97,9 @@ DockMinMover::DockMinMover(
 	min_tolerance_=min_tolerance;
 	nb_list_=nb_list;
 	mc_=mc;
-	protocols::simple_moves::MinMoverOP min_mover =new protocols::simple_moves::MinMover
-				( movemap_, scorefxn, min_type_, min_tolerance_, nb_list_ );
-	minimize_trial_ = new TrialMover( min_mover, mc_ );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover
+				( movemap_, scorefxn, min_type_, min_tolerance_, nb_list_ ) );
+	minimize_trial_ = moves::TrialMoverOP( new TrialMover( min_mover, mc_ ) );
 }
 
 DockMinMover::~DockMinMover(){}
@@ -110,7 +110,7 @@ void DockMinMover::set_default() {
   using namespace basic::options::OptionKeys::docking; // quick hack by rhiju -- later feed this in through dockingprotocol
 
 	//sets up default movemap
-	movemap_ = new kinematics::MoveMap();
+	movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap() );
 	movemap_->set_chi( false );
 	movemap_->set_bb( false );
 	for( DockJumps::const_iterator it = movable_jumps().begin(); it != movable_jumps().end(); ++it ) {

@@ -23,8 +23,8 @@ namespace stepwise {
 namespace screener {
 	
 	class VDW_BinScreener;
-	typedef utility::pointer::owning_ptr< VDW_BinScreener > VDW_BinScreenerOP;
-	typedef utility::pointer::owning_ptr< VDW_BinScreener const > VDW_BinScreenerCOP;
+	typedef utility::pointer::shared_ptr< VDW_BinScreener > VDW_BinScreenerOP;
+	typedef utility::pointer::shared_ptr< VDW_BinScreener const > VDW_BinScreenerCOP;
 	
 } //screener
 } //stepwise

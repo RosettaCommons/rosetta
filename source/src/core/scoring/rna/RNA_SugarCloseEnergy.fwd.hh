@@ -25,8 +25,8 @@ namespace rna {
 
 class RNA_SugarCloseEnergy;
 
-typedef utility::pointer::owning_ptr< RNA_SugarCloseEnergy > RNA_SugarCloseEnergyOP;
-typedef utility::pointer::owning_ptr< RNA_SugarCloseEnergy const > RNA_SugarCloseEnergyCOP;
+typedef utility::pointer::shared_ptr< RNA_SugarCloseEnergy > RNA_SugarCloseEnergyOP;
+typedef utility::pointer::shared_ptr< RNA_SugarCloseEnergy const > RNA_SugarCloseEnergyCOP;
 
 } //rna
 } //scoring

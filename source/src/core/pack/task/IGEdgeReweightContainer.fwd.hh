@@ -23,11 +23,11 @@ namespace task {
 class IGEdgeReweighter;
 class IGEdgeReweightContainer;
 
-typedef utility::pointer::owning_ptr< IGEdgeReweighter > IGEdgeReweighterOP;
-typedef utility::pointer::owning_ptr< IGEdgeReweighter const > IGEdgeReweighterCOP;
+typedef utility::pointer::shared_ptr< IGEdgeReweighter > IGEdgeReweighterOP;
+typedef utility::pointer::shared_ptr< IGEdgeReweighter const > IGEdgeReweighterCOP;
 
-typedef utility::pointer::owning_ptr< IGEdgeReweightContainer > IGEdgeReweightContainerOP;
-typedef utility::pointer::owning_ptr< IGEdgeReweightContainer const > IGEdgeReweightContainerCOP;
+typedef utility::pointer::shared_ptr< IGEdgeReweightContainer > IGEdgeReweightContainerOP;
+typedef utility::pointer::shared_ptr< IGEdgeReweightContainer const > IGEdgeReweightContainerCOP;
 
 } //task
 } //pack

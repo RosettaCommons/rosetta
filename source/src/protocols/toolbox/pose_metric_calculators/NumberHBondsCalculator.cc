@@ -73,7 +73,7 @@ NumberHBondsCalculator::NumberHBondsCalculator( std::set< core::Size > special_r
 {}
 
 
-core::pose::metrics::PoseMetricCalculatorOP NumberHBondsCalculator::clone() const { return new NumberHBondsCalculator(); }
+core::pose::metrics::PoseMetricCalculatorOP NumberHBondsCalculator::clone() const { return core::pose::metrics::PoseMetricCalculatorOP( new NumberHBondsCalculator() ); }
 
 void
 NumberHBondsCalculator::lookup(

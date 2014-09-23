@@ -558,7 +558,7 @@ PNatAAOptEPositionData::read_from_file( std::ifstream & infile )
 			energies.push_back( val );
 		}
 		runtime_assert( !energies.empty() );
-		PNatAAOptERotamerDataOP new_rot_data = new PNatAAOptERotamerData( aa, rotnum, energies, fixed_energies );
+		PNatAAOptERotamerDataOP new_rot_data( new PNatAAOptERotamerData( aa, rotnum, energies, fixed_energies ) );
 		add_rotamer_line_data( new_rot_data );
 	}
 }
@@ -648,8 +648,7 @@ PNatAAOptEPositionData::read_from_binary_file( std::ifstream & infile )
 		}
 		runtime_assert( !energies.empty() );
 
-		PNatAAOptERotamerDataOP rot_data =
-			new PNatAAOptERotamerData( rot_aa, rot_number, energies, fixed_energies );
+		PNatAAOptERotamerDataOP rot_data( new PNatAAOptERotamerData( rot_aa, rot_number, energies, fixed_energies ) );
 		add_rotamer_line_data( rot_data );
 	}
 }
@@ -4096,27 +4095,27 @@ OptEPositionDataFactory::create_position_data( OptEPositionDataType const type )
 {
 	switch ( type ) {
 		case prob_native_amino_acid :
-			return new PNatAAOptEPositionData;
+			return OptEPositionDataOP( new PNatAAOptEPositionData );
 		case prob_native_amino_acid_with_unfolded_energy :
-			return new NestedEnergyTermPNatAAOptEPositionData;
+			return OptEPositionDataOP( new NestedEnergyTermPNatAAOptEPositionData );
 		case pssm_data :
-			return new PSSMOptEPositionData;
+			return OptEPositionDataOP( new PSSMOptEPositionData );
 		case prob_native_rotamer :
-			return new PNatRotOptEPositionData;
+			return OptEPositionDataOP( new PNatRotOptEPositionData );
 		case prob_native_structure :
-			return new PNatStructureOptEData;
+			return OptEPositionDataOP( new PNatStructureOptEData );
 		case prob_native_ligand_pose :
-			return new PNatLigPoseOptEData;
+			return OptEPositionDataOP( new PNatLigPoseOptEData );
 		case dG_binding_correlation :
-			return new DGBindOptEData;
+			return OptEPositionDataOP( new DGBindOptEData );
 		case ddG_mutation_correlation :
-			return new DDGMutationOptEData;
+			return OptEPositionDataOP( new DDGMutationOptEData );
 		case ddG_mutation_correlation_with_unfolded_energy :
-			return new NestedEnergyTermDDGMutationOptEData;
+			return OptEPositionDataOP( new NestedEnergyTermDDGMutationOptEData );
 		case ddG_bind_correlation :
-			return new DDGBindOptEData;
+			return OptEPositionDataOP( new DDGBindOptEData );
 		case constrained_optimization_weight_func:
-			return new ConstraintedOptimizationWeightFunc;
+			return OptEPositionDataOP( new ConstraintedOptimizationWeightFunc );
 	}
 	return 0;
 }

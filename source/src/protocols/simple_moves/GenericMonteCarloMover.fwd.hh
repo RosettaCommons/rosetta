@@ -23,8 +23,8 @@ namespace protocols {
 namespace simple_moves {
 
 class GenericMonteCarloMover;
-typedef utility::pointer::owning_ptr< GenericMonteCarloMover >  GenericMonteCarloMoverOP;
-typedef utility::pointer::owning_ptr< GenericMonteCarloMover const >  GenericMonteCarloMoverCOP;
+typedef utility::pointer::shared_ptr< GenericMonteCarloMover >  GenericMonteCarloMoverOP;
+typedef utility::pointer::shared_ptr< GenericMonteCarloMover const >  GenericMonteCarloMoverCOP;
 
 
 } // namespace simple_moves

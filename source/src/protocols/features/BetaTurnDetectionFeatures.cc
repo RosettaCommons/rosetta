@@ -113,9 +113,9 @@ BetaTurnDetectionFeatures::write_beta_turns_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt());
-	Column residue_begin("residue_begin", new DbInteger());
-	Column turn_type("turn_type", new DbText());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column residue_begin("residue_begin", DbDataTypeOP( new DbInteger() ));
+	Column turn_type("turn_type", DbDataTypeOP( new DbText() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);

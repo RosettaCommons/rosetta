@@ -113,13 +113,13 @@ class UBQ_GTPaseMover : public protocols::moves::Mover {
 public:
 	UBQ_GTPaseMover()
 	: init_for_input_yet_(false),
-		fullatom_scorefunction_(NULL),
-		task_factory_(NULL),
-		amide_mm_(NULL),
+		fullatom_scorefunction_(/* NULL */),
+		task_factory_(/* NULL */),
+		amide_mm_(/* NULL */),
 		loop_(), //we want default ctor
 		atomIDs(8, core::id::BOGUS_ATOM_ID ),
 		InterfaceSasaDefinition_("InterfaceSasaDefinition_" + 1),
-		IAM_(new protocols::analysis::InterfaceAnalyzerMover),
+		IAM_(protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover )),
 		GTPase_lys_(0)
 	{
 		//set up fullatom scorefunction
@@ -133,7 +133,7 @@ public:
 		using namespace protocols::toolbox::pose_metric_calculators;
 		//magic number: chains 1 and 2; set up interface SASA calculator
 		if( !CalculatorFactory::Instance().check_calculator_exists( InterfaceSasaDefinition_ ) ){
-			CalculatorFactory::Instance().register_calculator( InterfaceSasaDefinition_, new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator(core::Size(1), core::Size(2)));
+			CalculatorFactory::Instance().register_calculator( InterfaceSasaDefinition_, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator(core::Size(1), core::Size(2)) ));
 		}
 
 		IAM_->set_use_centroid_dG(false);
@@ -275,7 +275,7 @@ public:
 
 		//setup MoveMaps
 		//small/shear behave improperly @ the last residue - psi is considered nonexistent and the wrong phis apply.
-		amide_mm_ = new core::kinematics::MoveMap;
+		amide_mm_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
 		for( core::Size i(1), ntailres(basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::n_tail_res]); i<ntailres; ++i){ //slightly irregular < comparison because C-terminus is functionally zero-indexed
 			amide_mm_->set_bb((complexlength-i), true);
 		}
@@ -300,15 +300,15 @@ public:
 		//setup of TaskFactory
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;
-		task_factory_ = new TaskFactory;
-		task_factory_->push_back( new InitializeFromCommandline );
+		task_factory_ = core::pack::task::TaskFactoryOP( new TaskFactory );
+		task_factory_->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
 		if ( basic::options::option[ basic::options::OptionKeys::packing::resfile ].user() ) {
-			task_factory_->push_back( new ReadResfile );
+			task_factory_->push_back( TaskOperationCOP( new ReadResfile ) );
 		}
 		//task_factory_->push_back( new protocols::toolbox::task_operations::RestrictToInterfaceOperation );
-		task_factory_->push_back( new IncludeCurrent );
+		task_factory_->push_back( TaskOperationCOP( new IncludeCurrent ) );
 		//prevent repacking at linkage lysine!
-		PreventRepackingOP prevent(new PreventRepacking);
+		PreventRepackingOP prevent( new PreventRepacking );
 		prevent->include_residue(GTPase_lys_);
 		task_factory_->push_back(prevent);
 
@@ -316,8 +316,8 @@ public:
 			using core::pose::metrics::PoseMetricCalculatorOP;
 			std::string const interface_calc("UBQGTPase_InterfaceNeighborDefinitionCalculator");
 			std::string const neighborhood_calc("UBQGTPase_NeighborhoodByDistanceCalculator");
-			core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc, new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(2)) );
-			core::pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc, new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_posns ) );
+			core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(2)) ) );
+			core::pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc, PoseMetricCalculatorOP( new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_posns ) ) );
 
 			//this is the constructor parameter for the calculator - pairs of calculators and calculations to perform
 			utility::vector1< std::pair< std::string, std::string> > calcs_and_calcns;
@@ -325,7 +325,7 @@ public:
 			calcs_and_calcns.push_back(std::make_pair(neighborhood_calc, "neighbors"));
 
 			using protocols::toolbox::task_operations::RestrictByCalculatorsOperation;
-			task_factory_->push_back(new RestrictByCalculatorsOperation( calcs_and_calcns ));
+			task_factory_->push_back(TaskOperationCOP( new RestrictByCalculatorsOperation( calcs_and_calcns ) ));
 
 		} else {
 			//functions, etc here use UBQ/E2 nomenclature until I can extract it out
@@ -419,13 +419,13 @@ public:
 				TR.Error << "removed a PoseMetricCalculator " << calc << ", track down why" << std::endl;
 			}
 			using core::pose::metrics::PoseMetricCalculatorOP;
-			core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc, new protocols::toolbox::pose_metric_calculators::InterGroupNeighborsCalculator(vector_of_pairs) );
+			core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc, PoseMetricCalculatorOP( new protocols::toolbox::pose_metric_calculators::InterGroupNeighborsCalculator(vector_of_pairs) ) );
 
 			//now that calculator exists, add the sucker to the TaskFactory via RestrictByCalculatorsOperation
 			utility::vector1< std::pair< std::string, std::string> > calculators_used;
 			std::pair< std::string, std::string> IGNC_cmd( calc, "neighbors" );
 			calculators_used.push_back( IGNC_cmd );
-			task_factory_->push_back( new protocols::toolbox::task_operations::RestrictByCalculatorsOperation( calculators_used ) );
+			task_factory_->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictByCalculatorsOperation( calculators_used ) ) );
 
 		}
 
@@ -456,12 +456,12 @@ public:
 		MonteCarloOP mc( new MonteCarlo( pose, *fullatom_scorefunction_, option[ refine_temp ].value() ) );
 
 		//////////////////////////Small/ShearMovers////////////////////////////////////////////////////////
-		protocols::simple_moves::BackboneMoverOP small_mover = new protocols::simple_moves::SmallMover(amide_mm_, 0.8, 1);
+		protocols::simple_moves::BackboneMoverOP small_mover( new protocols::simple_moves::SmallMover(amide_mm_, 0.8, 1) );
 		small_mover->angle_max( 'H', 4.0 );
 		small_mover->angle_max( 'E', 4.0 );
 		small_mover->angle_max( 'L', 4.0 );
 
-		protocols::simple_moves::BackboneMoverOP shear_mover = new protocols::simple_moves::ShearMover(amide_mm_, 0.8, 1);
+		protocols::simple_moves::BackboneMoverOP shear_mover( new protocols::simple_moves::ShearMover(amide_mm_, 0.8, 1) );
 		shear_mover->angle_max( 'H', 4.0 );
 		shear_mover->angle_max( 'E', 4.0 );
 		shear_mover->angle_max( 'L', 4.0 );
@@ -481,21 +481,21 @@ public:
 		// DOF_mover_chi2->set_angle_range(-180, 180);
 		// DOF_mover_chi2->tries(1000);
 
-		protocols::simple_moves::TorsionDOFMoverOP DOF_mover_isopeptide(new protocols::simple_moves::TorsionDOFMover);
+		protocols::simple_moves::TorsionDOFMoverOP DOF_mover_isopeptide( new protocols::simple_moves::TorsionDOFMover );
 		DOF_mover_isopeptide->set_DOF(atomIDs[3], atomIDs[4], atomIDs[5], atomIDs[6]);
 		DOF_mover_isopeptide->check_mmt(true);
 		DOF_mover_isopeptide->temp(0.4);
 		DOF_mover_isopeptide->set_angle_range(-180, 180);
 		DOF_mover_isopeptide->tries(1000);
 
-		protocols::simple_moves::TorsionDOFMoverOP DOF_mover_psi(new protocols::simple_moves::TorsionDOFMover);
+		protocols::simple_moves::TorsionDOFMoverOP DOF_mover_psi( new protocols::simple_moves::TorsionDOFMover );
 		DOF_mover_psi->set_DOF(atomIDs[4], atomIDs[5], atomIDs[6], atomIDs[7]);
 		DOF_mover_psi->check_mmt(true);
 		DOF_mover_psi->temp(0.4);
 		DOF_mover_psi->set_angle_range(-180, 180);
 		DOF_mover_psi->tries(1000);
 
-		protocols::simple_moves::TorsionDOFMoverOP DOF_mover_phi(new protocols::simple_moves::TorsionDOFMover);
+		protocols::simple_moves::TorsionDOFMoverOP DOF_mover_phi( new protocols::simple_moves::TorsionDOFMover );
 		DOF_mover_phi->set_DOF(atomIDs[5], atomIDs[6], atomIDs[7], atomIDs[8]);
 		DOF_mover_phi->check_mmt(true);
 		DOF_mover_phi->temp(0.4);
@@ -510,7 +510,7 @@ public:
 		SC_task->restrict_to_residues(repack_residues);
 		SC_task->restrict_to_repacking(); //SCmover will design, oops
 		//and the mover
-		protocols::simple_moves::sidechain_moves::SidechainMoverOP SC_mover(new protocols::simple_moves::sidechain_moves::SidechainMover() );
+		protocols::simple_moves::sidechain_moves::SidechainMoverOP SC_mover( new protocols::simple_moves::sidechain_moves::SidechainMover() );
 		SC_mover->set_change_chi_without_replacing_residue(true);
 		SC_mover->set_task(SC_task);
 
@@ -537,7 +537,7 @@ public:
 
 			using protocols::loops::loop_closure::kinematic_closure::KinematicWrapperOP;
 			using protocols::loops::loop_closure::kinematic_closure::KinematicWrapper;
-			KinematicWrapperOP kin_wrapper( new KinematicWrapper(kin_mover, loop_));
+			KinematicWrapperOP kin_wrapper( new KinematicWrapper(kin_mover, loop_) );
 
 			backbone_mover->add_mover(kin_wrapper, 5);
 
@@ -546,17 +546,17 @@ public:
 		/////////////////////////minimize backbone DOFs//////////////////////////////////////////////
 		using protocols::simple_moves::MinMoverOP;
 		using protocols::simple_moves::MinMover;
-		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover(
+		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(
 			amide_mm_,
 			fullatom_scorefunction_,
 			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
 			0.01,
-			true /*use_nblist*/ );
+			true /*use_nblist*/ ) );
 
 		/////////////////////////////////rotamer trials mover///////////////////////////////////////////
 		using protocols::simple_moves::RotamerTrialsMoverOP;
 		using protocols::simple_moves::EnergyCutRotamerTrialsMover;
-		protocols::simple_moves::RotamerTrialsMoverOP rt_mover(new protocols::simple_moves::EnergyCutRotamerTrialsMover(
+		protocols::simple_moves::RotamerTrialsMoverOP rt_mover( new protocols::simple_moves::EnergyCutRotamerTrialsMover(
 				fullatom_scorefunction_,
 				task_factory_,
 				mc,
@@ -571,23 +571,23 @@ public:
 				backbone_mover,
 				RT_min_seq,
 				fullatom_scorefunction_,
-				20.0));
+				20.0) );
 
 		///////////////////////////////repack///////////////////////////////////////////////
-		protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
+		protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
 		pack_mover->task_factory( task_factory_ );
 		pack_mover->score_function( fullatom_scorefunction_ );
 
-		protocols::simple_moves::MinMoverOP min_mover_pack = new protocols::simple_moves::MinMover(
+		protocols::simple_moves::MinMoverOP min_mover_pack( new protocols::simple_moves::MinMover(
 			amide_mm_,
 			fullatom_scorefunction_,
 			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
 			0.01,
-			true /*use_nblist*/ );
+			true /*use_nblist*/ ) );
 
 		using protocols::simple_moves::TaskAwareMinMoverOP;
 		using protocols::simple_moves::TaskAwareMinMover;
-		protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover = new protocols::simple_moves::TaskAwareMinMover(min_mover_pack, task_factory_);
+		protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover( new protocols::simple_moves::TaskAwareMinMover(min_mover_pack, task_factory_) );
 
 		/////////////////////////////////////////refine loop///////////////////////////////////////////
 
@@ -677,7 +677,7 @@ public:
 	virtual
 	protocols::moves::MoverOP
 	fresh_instance() const {
-		return new UBQ_GTPaseMover;
+		return protocols::moves::MoverOP( new UBQ_GTPaseMover );
 	}
 
 	virtual
@@ -718,7 +718,7 @@ private:
 	utility::vector1< core::Size > extra_bodies_chains_;
 };
 
-typedef utility::pointer::owning_ptr< UBQ_GTPaseMover > UBQ_GTPaseMoverOP;
+typedef utility::pointer::shared_ptr< UBQ_GTPaseMover > UBQ_GTPaseMoverOP;
 
 int main( int argc, char* argv[] )
 {
@@ -732,7 +732,7 @@ try {
 		|| basic::options::option[ basic::options::OptionKeys::in::file::silent ].user())
 		utility_exit_with_message("do not use an input PDB with this protocol (program uses internally); use -UBQpdb and -GTPasepdb instead");
 
-	protocols::jd2::JobDistributor::get_instance()->go(new UBQ_GTPaseMover);
+	protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new UBQ_GTPaseMover ));
 
 	basic::prof_show();
 	TR << "************************d**o**n**e**************************************" << std::endl;

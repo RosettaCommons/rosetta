@@ -39,7 +39,7 @@ namespace quota {
 
 typedef LazySortedVector1<std::pair<FragmentCandidateOP,
                 scores::FragmentScoreMapOP>, CompareByScoreCombination> BoundedQuotaContainer;
-typedef utility::pointer::owning_ptr<BoundedQuotaContainer>
+typedef utility::pointer::shared_ptr<BoundedQuotaContainer>
 		BoundedQuotaContainerOP;
 
 /// @brief represents a single pool used by quota selector
@@ -100,7 +100,7 @@ public:
 	/// @brief Inserts candidates from another Collector for a give position in the query
 	/// Candidates may or may not get inserted depending on the candidate
 	void insert(Size, CandidatesCollectorOP collector) {
-		SecondaryStructurePoolOP c = dynamic_cast<SecondaryStructurePool*> (collector());
+		SecondaryStructurePoolOP c = utility::pointer::dynamic_pointer_cast< protocols::frag_picker::quota::SecondaryStructurePool > ( collector );
 		if (c == 0)
 			utility_exit_with_message("Cant' cast candidates' collector to SecondaryStructurePool.");
 		ScoredCandidatesVector1 & content = c->get_candidates(0);

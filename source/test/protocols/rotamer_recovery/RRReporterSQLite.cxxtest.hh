@@ -227,15 +227,14 @@ public:
 		utility::file::file_delete(features_db_fname);
     utility::sql_database::sessionOP features_db_session(
       get_db_session(features_db_fname));
-    protocols::features::ReportToDBOP rr_features(
-      new protocols::features::ReportToDB(
+    protocols::features::ReportToDBOP rr_features( new protocols::features::ReportToDB(
         features_db_session, "rr_features", "Rotamer Recovery Features",
-        true, 2000));
+        true, 2000) );
 
     rr_features->add_features_reporter(
-      new protocols::features::ResidueFeatures());
+      FeaturesReporterOP( new protocols::features::ResidueFeatures() ));
     rr_features->add_features_reporter(
-      new protocols::features::HBondFeatures(scfxn));
+      FeaturesReporterOP( new protocols::features::HBondFeatures(scfxn) ));
 
 		std::string results_db_fname(
       "RRReporterSQLite__test_RRReporterSQLite_features_results.db3");

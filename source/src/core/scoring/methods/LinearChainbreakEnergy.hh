@@ -87,7 +87,7 @@ public:
 
 	/// clone
 	virtual EnergyMethodOP clone() const {
-		return new LinearChainbreakEnergy(*this);
+		return EnergyMethodOP( new LinearChainbreakEnergy(*this) );
 	}
 
 	/// called at the end of energy evaluation

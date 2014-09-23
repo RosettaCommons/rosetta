@@ -57,7 +57,7 @@ public:
   ~FloatingResonance();
 
 	virtual ResonanceOP clone() {
-		return new FloatingResonance( *this );
+		return ResonanceOP( new FloatingResonance( *this ) );
 	}
 
 	virtual core::Real pmatch( core::Real peakfreq, core::Real error, FoldResonance const& folder ) const;

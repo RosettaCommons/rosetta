@@ -23,8 +23,8 @@ namespace abinitio {
 
 //forward declaration for class
 class Template;
-typedef utility::pointer::owning_ptr< Template > TemplateOP;
-typedef utility::pointer::owning_ptr< Template const > TemplateCOP;
+typedef utility::pointer::shared_ptr< Template > TemplateOP;
+typedef utility::pointer::shared_ptr< Template const > TemplateCOP;
 
 
 }

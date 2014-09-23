@@ -24,8 +24,8 @@ class OTFFlexbbNode;
 class OTFFlexbbEdge;
 class OTFFlexbbInteractionGraph;
 
-typedef utility::pointer::owning_ptr< OTFFlexbbInteractionGraph > OTFFlexbbInteractionGraphOP;
-typedef utility::pointer::owning_ptr< OTFFlexbbInteractionGraph const > OTFFlexbbInteractionGraphCOP;
+typedef utility::pointer::shared_ptr< OTFFlexbbInteractionGraph > OTFFlexbbInteractionGraphOP;
+typedef utility::pointer::shared_ptr< OTFFlexbbInteractionGraph const > OTFFlexbbInteractionGraphCOP;
 
 }
 }

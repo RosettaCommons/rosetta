@@ -38,7 +38,7 @@ TaskFactory::TaskFactory( TaskFactory const & src)
 
 TaskFactoryOP TaskFactory::clone() const
 {
-	return new TaskFactory(*this);
+	return TaskFactoryOP( new TaskFactory(*this) );
 }
 
 TaskFactory::~TaskFactory() {}
@@ -62,7 +62,7 @@ TaskFactory::modify_task( core::pose::Pose const & pose, PackerTaskOP task ) con
 PackerTaskOP
 TaskFactory::create_task_and_apply_taskoperations( pose::Pose const & pose ) const
 {
-	PackerTaskOP task = new PackerTask_( pose );
+	PackerTaskOP task( new PackerTask_( pose ) );
 	modify_task( pose, task );
 	return task;
 }
@@ -98,7 +98,7 @@ TaskFactory::create_packer_task(
 	pose::Pose const & pose
 )
 {
-	return new PackerTask_( pose );
+	return PackerTaskOP( new PackerTask_( pose ) );
 }
 
 void

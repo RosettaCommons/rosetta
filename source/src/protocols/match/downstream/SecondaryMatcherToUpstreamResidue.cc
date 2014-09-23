@@ -82,7 +82,7 @@ SecondaryMatcherToUpstreamResidue::~SecondaryMatcherToUpstreamResidue() {}
 DownstreamAlgorithmOP
 SecondaryMatcherToUpstreamResidue::clone() const
 {
-	return new SecondaryMatcherToUpstreamResidue( *this );
+	return DownstreamAlgorithmOP( new SecondaryMatcherToUpstreamResidue( *this ) );
 }
 
 /// @details This DownstreamAlgorithm structures it's iteration over the target hits
@@ -364,7 +364,7 @@ SecondaryMatcherToUpstreamResidue::prepare_for_match_enumeration( Matcher const 
 		std::map< Size2Tuple, HitPtrListOP >::const_iterator list_iter =
 			my_hits_for_target_hit_map_.find( target_hit );
 		if ( list_iter == my_hits_for_target_hit_map_.end() ) {
-			my_hits_for_target_hit_map_[ target_hit ] = new HitPtrList;
+			my_hits_for_target_hit_map_[ target_hit ] = utility::pointer::shared_ptr<class numeric::kdtree::WrappedPrimitive<class std::list<const class protocols::match::Hit *, class std::allocator<const class protocols::match::Hit *> > > >( new HitPtrList );
 			list_iter = my_hits_for_target_hit_map_.find( target_hit );
 			//std::cout << "add to map " << target_hit[ 1 ] << " " << target_hit[ 2 ] << std::endl;
 		}
@@ -459,7 +459,7 @@ SecondaryMatcherToUpstreamResidue::prepare_for_hit_generation(
 	target_hits_end_ = matcher.hits( target_geomcst_id_ ).end();
 
 	/// Initialize the target_geomcst_coords_ object;
-	target_geomcst_coords_ = new TargetRotamerCoords;
+	target_geomcst_coords_ = TargetRotamerCoordsOP( new TargetRotamerCoords );
 	upstream::UpstreamBuilderCOP usbuilder = matcher.upstream_builder( target_geomcst_id_ );
 
 	Size n_target_restypes = usbuilder->n_restypes_to_build();

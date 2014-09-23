@@ -21,12 +21,12 @@ namespace resource_manager{
 namespace locator {
 
 class NullStream;
-typedef utility::pointer::owning_ptr< NullStream > NullStreamOP;
-typedef utility::pointer::owning_ptr< NullStream const > NullStreamCOP;
+typedef utility::pointer::shared_ptr< NullStream > NullStreamOP;
+typedef utility::pointer::shared_ptr< NullStream const > NullStreamCOP;
 
 class NullResourceLocator;
-typedef utility::pointer::owning_ptr< NullResourceLocator > NullResourceLocatorOP;
-typedef utility::pointer::owning_ptr< NullResourceLocator const > NullResourceLocatorCOP;
+typedef utility::pointer::shared_ptr< NullResourceLocator > NullResourceLocatorOP;
+typedef utility::pointer::shared_ptr< NullResourceLocator const > NullResourceLocatorCOP;
 
 }// namespace
 }// namespace

@@ -40,10 +40,10 @@ public:
 	ResidueIEFilter( ResidueIEFilter const &init );
 	bool apply( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const {
-		return new ResidueIEFilter( *this );
+		return filters::FilterOP( new ResidueIEFilter( *this ) );
 	}
 	filters::FilterOP fresh_instance() const{
-		return new ResidueIEFilter();
+		return filters::FilterOP( new ResidueIEFilter() );
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;

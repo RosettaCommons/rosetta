@@ -59,7 +59,7 @@ std::set< core::id::DOF_ID >::const_iterator DofPassport::begin() const {
 //Movemap Config
 
 MoveMapOP DofPassport::render_movemap() const {
-  kinematics::MoveMapOP mm = new kinematics::MoveMap();
+  kinematics::MoveMapOP mm( new kinematics::MoveMap() );
   this->render_movemap( mm );
   return mm;
 }

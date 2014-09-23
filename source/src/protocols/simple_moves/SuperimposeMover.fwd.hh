@@ -22,8 +22,8 @@ namespace simple_moves{
 
 //Forwards and OP typedefs
 class SuperimposeMover;
-typedef utility::pointer::owning_ptr< SuperimposeMover > SuperimposeMoverOP;
-typedef utility::pointer::owning_ptr< SuperimposeMover const > SuperimposeMoverCOP;
+typedef utility::pointer::shared_ptr< SuperimposeMover > SuperimposeMoverOP;
+typedef utility::pointer::shared_ptr< SuperimposeMover const > SuperimposeMoverCOP;
 
 }//moves
 }//protocols

@@ -22,8 +22,8 @@ namespace protocols {
 namespace hybridization {
 
 class WeightedFragmentSmoothTrialMover;
-typedef utility::pointer::owning_ptr< WeightedFragmentSmoothTrialMover > WeightedFragmentSmoothTrialMoverOP;
-typedef utility::pointer::owning_ptr< WeightedFragmentSmoothTrialMover const > WeightedFragmentSmoothTrialMoverCOP;
+typedef utility::pointer::shared_ptr< WeightedFragmentSmoothTrialMover > WeightedFragmentSmoothTrialMoverOP;
+typedef utility::pointer::shared_ptr< WeightedFragmentSmoothTrialMover const > WeightedFragmentSmoothTrialMoverCOP;
 
 } // hybridization
 } // protocols

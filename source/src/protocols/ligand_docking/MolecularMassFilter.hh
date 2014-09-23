@@ -55,11 +55,11 @@ public:
 
 	bool apply( core::pose::Pose const & pose ) const;
 	protocols::filters::FilterOP clone() const {
-		return new MolecularMassFilter( *this );
+		return protocols::filters::FilterOP( new MolecularMassFilter( *this ) );
 	}
 
 	protocols::filters::FilterOP fresh_instance() const{
-		return new MolecularMassFilter();
+		return protocols::filters::FilterOP( new MolecularMassFilter() );
 	}
 
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose );

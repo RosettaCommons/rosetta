@@ -57,7 +57,7 @@ methods::EnergyMethodOP
 MPLipoEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 	) const {
-	return new MPLipoEnergy;
+	return methods::EnergyMethodOP( new MPLipoEnergy );
 }
 
 /// @brief Return MPLipo Score type associated with method
@@ -72,7 +72,7 @@ MPLipoEnergyCreator::score_types_for_method() const {
 
 /// @brief Constructor
 MPLipoEnergy::MPLipoEnergy() :
-	parent( new MPLipoEnergyCreator ),
+	parent( EnergyMethodCreatorOP( new MPLipoEnergyCreator ) ),
 	mpdata_( ScoringManager::get_instance()->get_MembraneData() )
 {}
 
@@ -81,7 +81,7 @@ MPLipoEnergy::MPLipoEnergy() :
 EnergyMethodOP
 MPLipoEnergy::clone() const
 {
-	return new MPLipoEnergy();
+	return EnergyMethodOP( new MPLipoEnergy() );
 }
 
 // Scoring Methods /////////////////////////////////////////////////

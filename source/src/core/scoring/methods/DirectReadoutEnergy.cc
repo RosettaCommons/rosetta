@@ -54,7 +54,7 @@ methods::EnergyMethodOP
 DirectReadoutEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new DirectReadoutEnergy;
+	return methods::EnergyMethodOP( new DirectReadoutEnergy );
 }
 
 ScoreTypes
@@ -76,7 +76,7 @@ DirectReadoutEnergy::DirectReadoutEnergy() :
 EnergyMethodOP
 DirectReadoutEnergy::clone() const
 {
-	return new DirectReadoutEnergy();
+	return EnergyMethodOP( new DirectReadoutEnergy() );
 }
 
 /// @details  Totally inefficient implementation to avoid defining nbr-ness

@@ -47,7 +47,7 @@ ImportPoseOptionsCreator::~ImportPoseOptionsCreator() {}
 
 basic::resource_manager::ResourceOptionsOP
 ImportPoseOptionsCreator::create_options() const {
-	return new ImportPoseOptions;
+	return basic::resource_manager::ResourceOptionsOP( new ImportPoseOptions );
 }
 
 ///@detail NOTE: This creator creates an options type called

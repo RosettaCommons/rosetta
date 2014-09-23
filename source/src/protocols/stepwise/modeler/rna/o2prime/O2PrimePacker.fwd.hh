@@ -25,8 +25,8 @@ namespace rna {
 namespace o2prime {
 	
 	class O2PrimePacker;
-	typedef utility::pointer::owning_ptr< O2PrimePacker > O2PrimePackerOP;
-	typedef utility::pointer::owning_ptr< O2PrimePacker const > O2PrimePackerCOP;
+	typedef utility::pointer::shared_ptr< O2PrimePacker > O2PrimePackerOP;
+	typedef utility::pointer::shared_ptr< O2PrimePacker const > O2PrimePackerCOP;
 	
 } //o2prime
 } //rna

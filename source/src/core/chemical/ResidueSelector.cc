@@ -60,7 +60,7 @@ residue_selector_single_from_line( std::string const & line )
 			l >> aa;
 		}
 		//std::cout << "AAline: " << aas.size() << ' ' << line << std::endl;
-		if ( !aas.empty() ) return new Selector_AA( aas, desired_result );
+		if ( !aas.empty() ) return ResidueSelectorSingleOP( new Selector_AA( aas, desired_result ) );
 
 	} else if ( tag == "NAME3" ) {
 		std::string name3;
@@ -70,7 +70,7 @@ residue_selector_single_from_line( std::string const & line )
 			name3s.push_back( name3 );
 			l >> name3;
 		}
-		if( !name3s.empty() )  return new Selector_NAME3( name3s, desired_result );
+		if( !name3s.empty() )  return ResidueSelectorSingleOP( new Selector_NAME3( name3s, desired_result ) );
 
 	} else if ( tag == "PROPERTY" ) {
 		std::string property;
@@ -80,7 +80,7 @@ residue_selector_single_from_line( std::string const & line )
 			properties.push_back( property );
 			l >> property;
 		}
-		if ( !properties.empty() ) return new Selector_PROPERTY( properties, desired_result );
+		if ( !properties.empty() ) return ResidueSelectorSingleOP( new Selector_PROPERTY( properties, desired_result ) );
 
 	} else if ( tag == "VARIANT_TYPE" ) {
 		std::string variant_type;
@@ -90,19 +90,19 @@ residue_selector_single_from_line( std::string const & line )
 			variant_types.push_back( variant_type );
 			l >> variant_type;
 		}
-		if ( !variant_types.empty() ) return new Selector_VARIANT_TYPE( variant_types, desired_result );
+		if ( !variant_types.empty() ) return ResidueSelectorSingleOP( new Selector_VARIANT_TYPE( variant_types, desired_result ) );
 
 	} else if (tag == "UPPER_POSITION") {  // This is the position label at which the upper connection is attached.
 		uint position;
 		l >> position;
 		if (position) {
-			return new Selector_UPPER_POSITION(position, desired_result);
+			return ResidueSelectorSingleOP( new Selector_UPPER_POSITION(position, desired_result) );
 		}
 
 	} else if ( tag == "CMDLINE_SELECTOR" ) {
 		std::string selector_string;
 		l >> selector_string; // if one wants AND logical operation make this a vector of selector_strings...
-		if ( !selector_string.empty() ) return new Selector_CMDFLAG( selector_string, desired_result );
+		if ( !selector_string.empty() ) return ResidueSelectorSingleOP( new Selector_CMDFLAG( selector_string, desired_result ) );
 	}
 	std::cout << "residue_selector_single: unrecognized line: " << line << std::endl;
 	return 0;

@@ -23,14 +23,14 @@ namespace hbonds {
 
 class HBond;
 
-typedef utility::pointer::owning_ptr< HBond > HBondOP;
-typedef utility::pointer::owning_ptr< HBond const > HBondCOP;
+typedef utility::pointer::shared_ptr< HBond > HBondOP;
+typedef utility::pointer::shared_ptr< HBond const > HBondCOP;
 
 
 class HBondSet;
 
-typedef utility::pointer::owning_ptr< HBondSet > HBondSetOP;
-typedef utility::pointer::owning_ptr< HBondSet const > HBondSetCOP;
+typedef utility::pointer::shared_ptr< HBondSet > HBondSetOP;
+typedef utility::pointer::shared_ptr< HBondSet const > HBondSetCOP;
 
 
 } // namespace hbonds

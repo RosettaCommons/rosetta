@@ -52,7 +52,7 @@ public:
 
 	/// @brief Clone this object
 	virtual protocols::moves::MoverOP clone() const {
-		return new MultipleDomainMover(*this);
+		return protocols::moves::MoverOP( new MultipleDomainMover(*this) );
 	}
 
 	/// @brief Apply the loop-rebuild protocol to the input pose

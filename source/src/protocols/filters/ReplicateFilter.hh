@@ -38,10 +38,10 @@ public:
   core::Real compute( core::pose::Pose const & pose ) const;
 
 	virtual protocols::filters::FilterOP clone() const {
-		return new ReplicateFilter( *this );
+		return protocols::filters::FilterOP( new ReplicateFilter( *this ) );
 	}
 	virtual protocols::filters::FilterOP fresh_instance() const{
-		return new ReplicateFilter();
+		return protocols::filters::FilterOP( new ReplicateFilter() );
 	}
 
 	virtual ~ReplicateFilter(){};

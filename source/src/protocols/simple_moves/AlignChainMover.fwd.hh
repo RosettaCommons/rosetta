@@ -19,8 +19,8 @@ namespace protocols {
 namespace simple_moves {
 
 class AlignChainMover;
-typedef utility::pointer::owning_ptr< AlignChainMover > AlignChainMoverOP;
-typedef utility::pointer::owning_ptr< AlignChainMover const > AlignChainMoverCOP;
+typedef utility::pointer::shared_ptr< AlignChainMover > AlignChainMoverOP;
+typedef utility::pointer::shared_ptr< AlignChainMover const > AlignChainMoverCOP;
 
 } // simple_moves
 } // protocols

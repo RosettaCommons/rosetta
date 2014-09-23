@@ -47,7 +47,7 @@ AlignEndsMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 AlignEndsMoverCreator::create_mover() const {
-	return new AlignEndsMover;
+	return protocols::moves::MoverOP( new AlignEndsMover );
 }
 
 std::string
@@ -64,7 +64,7 @@ AlignEndsMover::AlignEndsMover(): moves::Mover("AlignEnds"),
 	max_strands_( 10 ),
 	odd_( true ),
 	even_( true ),
-	template_pose_( NULL ),
+	template_pose_( /* NULL */ ),
 	stagger_( 0 ),
 	parallel_( true ),
 	chain_( 1 ),
@@ -251,13 +251,13 @@ AlignEndsMover::get_name() const {
 moves::MoverOP
 AlignEndsMover::clone() const
 {
-	return new AlignEndsMover( *this );
+	return moves::MoverOP( new AlignEndsMover( *this ) );
 }
 
 moves::MoverOP
 AlignEndsMover::fresh_instance() const
 {
-	return new AlignEndsMover;
+	return moves::MoverOP( new AlignEndsMover );
 }
 
 void

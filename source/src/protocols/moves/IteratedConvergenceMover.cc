@@ -48,7 +48,7 @@ IteratedConvergenceMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 IteratedConvergenceMoverCreator::create_mover() const {
-	return new IteratedConvergenceMover;
+	return protocols::moves::MoverOP( new IteratedConvergenceMover );
 }
 
 std::string
@@ -162,14 +162,14 @@ IteratedConvergenceMover::parse_my_tag(
 MoverOP
 IteratedConvergenceMover::fresh_instance() const
 {
-	return new IteratedConvergenceMover;
+	return MoverOP( new IteratedConvergenceMover );
 }
 
 ///@brief required in the context of the parser/scripting scheme
 MoverOP
 IteratedConvergenceMover::clone() const
 {
-	return new IteratedConvergenceMover( *this );
+	return MoverOP( new IteratedConvergenceMover( *this ) );
 }
 
 // setters

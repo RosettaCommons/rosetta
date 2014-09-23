@@ -23,8 +23,8 @@ namespace kinematics {
 
 // Forward
 class MoveMap;
-typedef utility::pointer::owning_ptr< MoveMap > MoveMapOP;
-typedef utility::pointer::owning_ptr< MoveMap const > MoveMapCOP;
+typedef utility::pointer::shared_ptr< MoveMap > MoveMapOP;
+typedef utility::pointer::shared_ptr< MoveMap const > MoveMapCOP;
 
 } // namespace kinematics
 } // namespace core

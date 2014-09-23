@@ -52,7 +52,7 @@ methods::EnergyMethodOP
 MMBondLengthEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return new MMBondLengthEnergy( options );
+	return methods::EnergyMethodOP( new MMBondLengthEnergy( options ) );
 }
 
 ScoreTypes
@@ -80,7 +80,7 @@ MMBondLengthEnergy::~MMBondLengthEnergy() {}
 EnergyMethodOP
 MMBondLengthEnergy::clone() const
 {
-	return new MMBondLengthEnergy( *this );
+	return EnergyMethodOP( new MMBondLengthEnergy( *this ) );
 }
 
 ///

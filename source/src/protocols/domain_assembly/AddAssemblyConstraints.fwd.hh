@@ -22,8 +22,8 @@ namespace protocols {
 namespace domain_assembly {
 
 class AddAssemblyConstraints;
-typedef utility::pointer::owning_ptr< AddAssemblyConstraints > AddAssemblyConstraintsOP;
-typedef utility::pointer::owning_ptr< AddAssemblyConstraints const > AddAssemblyConstraintsCOP;
+typedef utility::pointer::shared_ptr< AddAssemblyConstraints > AddAssemblyConstraintsOP;
+typedef utility::pointer::shared_ptr< AddAssemblyConstraints const > AddAssemblyConstraintsCOP;
 
 
 }//namespace domain_assembly

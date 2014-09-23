@@ -22,8 +22,8 @@ namespace task_operations {
 
 class ThreadSequenceOperation;
 
-typedef utility::pointer::owning_ptr< ThreadSequenceOperation > ThreadSequenceOperationOP;
-typedef utility::pointer::owning_ptr< ThreadSequenceOperation const > ThreadSequenceOperationCOP;
+typedef utility::pointer::shared_ptr< ThreadSequenceOperation > ThreadSequenceOperationOP;
+typedef utility::pointer::shared_ptr< ThreadSequenceOperation const > ThreadSequenceOperationCOP;
 
 } //namespace protocols
 } //namespace toolbox

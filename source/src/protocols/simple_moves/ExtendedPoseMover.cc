@@ -85,11 +85,11 @@ void ExtendedPoseMover::residue_type_set(const std::string& residue_type_set) {
 }
 
 protocols::moves::MoverOP ExtendedPoseMover::clone() const {
-  return new protocols::simple_moves::ExtendedPoseMover(*this);
+  return protocols::moves::MoverOP( new protocols::simple_moves::ExtendedPoseMover(*this) );
 }
 
 protocols::moves::MoverOP ExtendedPoseMover::fresh_instance() const {
-  return new protocols::simple_moves::ExtendedPoseMover();
+  return protocols::moves::MoverOP( new protocols::simple_moves::ExtendedPoseMover() );
 }
 
 void ExtendedPoseMover::parse_my_tag(const utility::tag::TagCOP tag,

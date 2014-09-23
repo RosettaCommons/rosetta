@@ -28,11 +28,11 @@ namespace topology_broker {
 class CutBiasClaimer;
 
 // Types
-typedef  utility::pointer::owning_ptr< CutBiasClaimer >  CutBiasClaimerOP;
-typedef  utility::pointer::owning_ptr< CutBiasClaimer const >  CutBiasClaimerCOP;
+typedef  utility::pointer::shared_ptr< CutBiasClaimer >  CutBiasClaimerOP;
+typedef  utility::pointer::shared_ptr< CutBiasClaimer const >  CutBiasClaimerCOP;
 
-typedef  utility::pointer::access_ptr< CutBiasClaimer >  CutBiasClaimerAP;
-typedef  utility::pointer::access_ptr< CutBiasClaimer const >  CutBiasClaimerCAP;
+typedef  utility::pointer::weak_ptr< CutBiasClaimer >  CutBiasClaimerAP;
+typedef  utility::pointer::weak_ptr< CutBiasClaimer const >  CutBiasClaimerCAP;
 
 
 } // namespace kinematics

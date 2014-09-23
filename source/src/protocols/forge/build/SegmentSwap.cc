@@ -93,7 +93,7 @@ SegmentSwap & SegmentSwap::operator =( SegmentSwap const & rval ) {
 
 /// @brief clone this object
 BuildInstructionOP SegmentSwap::clone() const {
-	return new SegmentSwap( *this );
+	return BuildInstructionOP( new SegmentSwap( *this ) );
 }
 
 
@@ -333,7 +333,7 @@ void SegmentSwap::modify_impl( Pose & pose ) {
 	if ( swap_in_.pdb_info().get() != NULL ) {
 
 		if ( pose.pdb_info().get() == NULL ) {
-			pose.pdb_info( new PDBInfo( pose ) );
+			pose.pdb_info( PDBInfoOP( new PDBInfo( pose ) ) );
 		}
 
 		// force obsolete

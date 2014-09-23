@@ -24,8 +24,8 @@ namespace upstream {
 
 class UpstreamResTypeGeometry;
 
-typedef utility::pointer::owning_ptr< UpstreamResTypeGeometry > UpstreamResTypeGeometryOP;
-typedef utility::pointer::owning_ptr< UpstreamResTypeGeometry const > UpstreamResTypeGeometryCOP;
+typedef utility::pointer::shared_ptr< UpstreamResTypeGeometry > UpstreamResTypeGeometryOP;
+typedef utility::pointer::shared_ptr< UpstreamResTypeGeometry const > UpstreamResTypeGeometryCOP;
 
 
 }

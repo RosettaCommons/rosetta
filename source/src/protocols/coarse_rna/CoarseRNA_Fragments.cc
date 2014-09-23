@@ -93,7 +93,7 @@ CoarseRNA_Fragments::~CoarseRNA_Fragments() {}
 			import_pose::pose_from_pdb( pose, *rsd_set, frag_source_file_ );
 			protocols::farna::figure_out_secstruct( pose );
 			frag_source_secstruct_ = protocols::farna::get_rna_secstruct( pose );
-			frag_source_pose_ = new MiniPose( pose );
+			frag_source_pose_ = core::pose::MiniPoseOP( new MiniPose( pose ) );
 		} else {
 
 			// Figure out correspondence: P,S,CEN,X,Y --> 1,2,3,4,5. Hopefully!
@@ -131,7 +131,7 @@ CoarseRNA_Fragments::~CoarseRNA_Fragments() {}
 			//		std::cout << "SIZE     ! " << all_res_coords.size() << std::endl;
 			//		std::cout << "SEQUENCE ! " << sequence << std::endl;
 			//		std::cout << "SECSTRUCT! " << frag_source_secstruct_ << std::endl;
-			frag_source_pose_ = new MiniPose( all_res_coords, FoldTree( all_res_coords.size() ), sequence );
+			frag_source_pose_ = core::pose::MiniPoseOP( new MiniPose( all_res_coords, FoldTree( all_res_coords.size() ), sequence ) );
 
 		}
 
@@ -175,7 +175,7 @@ CoarseRNA_Fragments::~CoarseRNA_Fragments() {}
 
 		using namespace protocols::farna;
 
-		SourcePositionsOP source_positions = new SourcePositions;
+		SourcePositionsOP source_positions( new SourcePositions );
 
 		std::string const RNA_string = key.first;
 		std::string const RNA_secstruct_string = key.second;

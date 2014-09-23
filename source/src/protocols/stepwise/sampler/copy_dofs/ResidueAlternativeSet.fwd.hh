@@ -24,8 +24,8 @@ namespace sampler {
 namespace copy_dofs {
 	
 	class ResidueAlternativeSet;
-	typedef utility::pointer::owning_ptr< ResidueAlternativeSet > ResidueAlternativeSetOP;
-	typedef utility::pointer::owning_ptr< ResidueAlternativeSet const > ResidueAlternativeSetCOP;
+	typedef utility::pointer::shared_ptr< ResidueAlternativeSet > ResidueAlternativeSetOP;
+	typedef utility::pointer::shared_ptr< ResidueAlternativeSet const > ResidueAlternativeSetCOP;
 	
 } //copy_dofs
 } //sampler

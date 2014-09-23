@@ -19,8 +19,8 @@ namespace protocols {
 namespace nonlocal {
 
 class Policy;
-typedef utility::pointer::owning_ptr<Policy> PolicyOP;
-typedef utility::pointer::owning_ptr<Policy const> PolicyCOP;
+typedef utility::pointer::shared_ptr<Policy> PolicyOP;
+typedef utility::pointer::shared_ptr<Policy const> PolicyCOP;
 
 }  // namespace nonlocal
 }  // namespace protocols

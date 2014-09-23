@@ -61,7 +61,7 @@ GraftedStemOptimizer::init() {
 
 	stem_size_        = 4;
 	deep_optimization_ = true;
-	cdr_loop_    = new loops::Loop( ab_info_->get_CDR_loop(cdr_name_) );
+	cdr_loop_ = loops::LoopOP( new loops::Loop( ab_info_->get_CDR_loop(cdr_name_) ) );
 }
 
 
@@ -103,8 +103,8 @@ GraftedStemOptimizer::setup_protocol(pose::Pose & pose) {
 	/// Small_Mover and Shear_Mover
 	Real high_move_temp = 2.00;
 	Size n_small_moves = 5 ;
-	BackboneMoverOP small_mover = new SmallMover( get_stem_movemap(pose,"NC"), high_move_temp, n_small_moves );
-	BackboneMoverOP shear_mover = new ShearMover( get_stem_movemap(pose,"NC"), high_move_temp, n_small_moves );
+	BackboneMoverOP small_mover( new SmallMover( get_stem_movemap(pose,"NC"), high_move_temp, n_small_moves ) );
+	BackboneMoverOP shear_mover( new ShearMover( get_stem_movemap(pose,"NC"), high_move_temp, n_small_moves ) );
 	small_mover->angle_max( 'H', 2.0 );
 	small_mover->angle_max( 'E', 5.0 );
 	small_mover->angle_max( 'L', 6.0 );
@@ -116,23 +116,23 @@ GraftedStemOptimizer::setup_protocol(pose::Pose & pose) {
 	loops::Loop Nter_stem(cdr_loop_->start()-stem_size_, cdr_loop_->start()+stem_size_-1, cdr_loop_->start()-1);
 	loops::Loop Cter_stem(cdr_loop_->stop()-stem_size_+1, cdr_loop_->stop()+stem_size_, cdr_loop_->stop() );
 	using namespace loops::loop_closure::ccd;
-	CCDLoopClosureMoverOP close_Nter_stem=new CCDLoopClosureMover(Nter_stem, get_stem_movemap(pose, "N"));
+	CCDLoopClosureMoverOP close_Nter_stem( new CCDLoopClosureMover(Nter_stem, get_stem_movemap(pose, "N")) );
 	close_Nter_stem->tolerance( 0.001 );
-	CCDLoopClosureMoverOP close_Cter_stem=new CCDLoopClosureMover(Cter_stem, get_stem_movemap(pose, "C"));
+	CCDLoopClosureMoverOP close_Cter_stem( new CCDLoopClosureMover(Cter_stem, get_stem_movemap(pose, "C")) );
 	close_Cter_stem->tolerance( 0.001 );
 
 	/// Rotamer_Trial_Mover
-	RotamerTrialsMoverOP rotamer_trial_mover = new RotamerTrialsMover( scorefxn_, get_stem_taskfactory(pose, "NC") );
+	RotamerTrialsMoverOP rotamer_trial_mover( new RotamerTrialsMover( scorefxn_, get_stem_taskfactory(pose, "NC") ) );
 
 	/// Pack_Rotamers_Mover
-	PackRotamersMoverOP repack = new PackRotamersMover( scorefxn_ );
+	PackRotamersMoverOP repack( new PackRotamersMover( scorefxn_ ) );
 	repack->task_factory( get_stem_taskfactory(pose, "NC") );
 
 	/// Min_Mover
-	MinMoverOP min_mover = new MinMover( get_stem_movemap(pose, "NC"), scorefxn_, "dfpmin_armijo_nonmonotone", 0.001, true );
+	MinMoverOP min_mover( new MinMover( get_stem_movemap(pose, "NC"), scorefxn_, "dfpmin_armijo_nonmonotone", 0.001, true ) );
 
 	/// Sequence_Mover
-	optimize_stems_ = new moves::SequenceMover();
+	optimize_stems_ = moves::SequenceMoverOP( new moves::SequenceMover() );
 
 	if(deep_optimization_) {
 		optimize_stems_ -> add_mover(small_mover);
@@ -196,9 +196,9 @@ GraftedStemOptimizer::apply( pose::Pose & pose ) {
 	Real const gamma = std::pow( (last_temp/init_temp), (1.0/inner_cycles));
 	Real temperature = init_temp;
 
-	mc_ = new moves::MonteCarlo( pose, *scorefxn_, temperature );
+	mc_ = moves::MonteCarloOP( new moves::MonteCarlo( pose, *scorefxn_, temperature ) );
 	mc_->reset( pose ); // monte carlo reset
-	moves::TrialMoverOP optimize_trial = new moves::TrialMover(optimize_stems_, mc_);
+	moves::TrialMoverOP optimize_trial( new moves::TrialMover(optimize_stems_, mc_) );
 
 
 	for(Size i = 1; i <= outer_cycles; i++) {
@@ -251,7 +251,7 @@ kinematics::FoldTreeOP
 GraftedStemOptimizer::get_N_C_stems_foldtree( pose::Pose const & pose ) const  {
 	using namespace core::kinematics;
 
-	FoldTreeOP ft = new FoldTree();
+	FoldTreeOP ft( new FoldTree() );
 	ft ->clear();
 
 	const Size  jumppoint1=cdr_loop_->start()-stem_size_-1;
@@ -290,7 +290,7 @@ kinematics::FoldTreeOP
 GraftedStemOptimizer::get_Nstem_foldtree( pose::Pose const & pose ) const  {
 	using namespace core::kinematics;
 
-	FoldTreeOP ft = new FoldTree();
+	FoldTreeOP ft( new FoldTree() );
 	ft ->clear();
 
 	const Size  jumppoint1=cdr_loop_->start()-stem_size_-1;
@@ -311,7 +311,7 @@ kinematics::FoldTreeOP
 GraftedStemOptimizer::get_Cstem_foldtree( pose::Pose const & pose ) const  {
 	using namespace core::kinematics;
 
-	FoldTreeOP ft = new FoldTree();
+	FoldTreeOP ft( new FoldTree() );
 	ft ->clear();
 
 	const Size  jumppoint3=cdr_loop_->stop();
@@ -334,7 +334,7 @@ kinematics::MoveMapOP
 GraftedStemOptimizer::get_stem_movemap( pose::Pose const & pose, std::string const & type, bool const & include_nb_sc ) const  {
 	using namespace core::kinematics;
 
-	MoveMapOP mm = new MoveMap();
+	MoveMapOP mm( new MoveMap() );
 	mm->clear();
 
 	mm->set_chi( false );
@@ -381,7 +381,7 @@ GraftedStemOptimizer::get_stem_movemap( pose::Pose const & pose, std::string con
 
 pack::task::TaskFactoryOP
 GraftedStemOptimizer::get_stem_taskfactory( pose::Pose & pose, std::string const & type, bool const & include_nb_sc ) const  {
-	pack::task::TaskFactoryOP tf = new pack::task::TaskFactory();
+	pack::task::TaskFactoryOP tf( new pack::task::TaskFactory() );
 	tf->clear();
 
 	tf= setup_packer_task(pose);
@@ -405,7 +405,7 @@ GraftedStemOptimizer::get_stem_taskfactory( pose::Pose & pose, std::string const
 
 	using namespace protocols::toolbox::task_operations;
 	using namespace core::pack::task::operation;
-	tf->push_back( new RestrictToInterface(sc_is_packable) );
+	tf->push_back( TaskOperationCOP( new RestrictToInterface(sc_is_packable) ) );
 
 	//tf->create_task_and_apply_taskoperations(pose);
 	//pack::task::PackerTaskOP my_task(tf->create_task_and_apply_taskoperations(pose));

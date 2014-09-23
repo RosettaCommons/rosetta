@@ -26,8 +26,8 @@ namespace pcs2{
 
 class PcsDataCenter;
 
-typedef utility::pointer::owning_ptr< PcsDataCenter > PcsDataCenterOP;
-typedef utility::pointer::owning_ptr< PcsDataCenter const > PcsDataCenterCOP;
+typedef utility::pointer::shared_ptr< PcsDataCenter > PcsDataCenterOP;
+typedef utility::pointer::shared_ptr< PcsDataCenter const > PcsDataCenterCOP;
 
 }//namespace pcs2
 }//namespace methods

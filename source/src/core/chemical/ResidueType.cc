@@ -102,8 +102,8 @@ ResidueType::ResidueType(
 		elements_( elements ),
 		mm_atom_types_( mm_atom_types ),
 		orbital_types_( orbital_types),
-		conformer_set_(NULL),
-		residue_type_set_( 0 ),
+		conformer_set_(/* NULL */),
+		residue_type_set_( /* 0 */ ),
 		graph_(),
 		orbitals_(),
 		nheavyatoms_(0),
@@ -116,7 +116,7 @@ ResidueType::ResidueType(
 		ncaa_rotlib_n_rots_( 0 ),
 		use_peptoid_rotlib_( false ),
 		peptoid_rotlib_n_rots_( 0 ),
-		properties_( new ResidueProperties( this ) ),
+		properties_( ResiduePropertiesOP( new ResidueProperties( this ) ) ),
 		aa_( aa_unk ),
 		rotamer_aa_( aa_unk ),
 		backbone_aa_( aa_unk ),
@@ -134,7 +134,7 @@ ResidueType::ResidueType(
 		upper_connect_id_( 0 ),
 		n_non_polymeric_residue_connections_( 0 ),
 		n_polymeric_residue_connections_( 0 ),
-		carbohydrate_info_(NULL),
+		carbohydrate_info_(/* NULL */),
 		nbr_atom_indices_( 0 ),
 		finalized_(false),
 		nondefault_(false),
@@ -219,7 +219,7 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 		peptoid_rotlib_path_( residue_type.peptoid_rotlib_path_),
 		peptoid_rotlib_n_rots_( residue_type.peptoid_rotlib_n_rots_ ),
 		peptoid_rotlib_n_bins_per_rot_(residue_type.peptoid_rotlib_n_bins_per_rot_),
-		properties_( new ResidueProperties( *residue_type.properties_, this ) ),
+		properties_( ResiduePropertiesOP( new ResidueProperties( *residue_type.properties_, this ) ) ),
 		aa_( residue_type.aa_ ),
 		rotamer_aa_( residue_type.rotamer_aa_ ),
 		backbone_aa_( residue_type.backbone_aa_ ),
@@ -2720,18 +2720,18 @@ ResidueType::update_derived_data()
 		// for the time being is to set the proper RingConformerSet, I'll just leave it as a local variable here.
 		// ~Labonte
 		Size ring_size = nu_atoms_indices_.size() + 2;
-		conformer_set_ = new RingConformerSet( ring_size );
+		conformer_set_ = RingConformerSetOP( new RingConformerSet( ring_size ) );
 	}
 
 	if( properties_->has_property( RNA ) ){ //reinitialize and RNA derived data.
 		//Reinitialize rna_residue_type_ object! This also make sure rna_residue_type_ didn't inherit anything from the previous update!
 		//It appears that the rna_residue_type_ is shared across multiple ResidueType object, if the rna_residue_type_ is not reinitialized here!
-		rna_residue_type_ = new core::chemical::rna::RNA_ResidueType;
+		rna_residue_type_ = core::chemical::rna::RNA_ResidueTypeOP( new core::chemical::rna::RNA_ResidueType );
 		//update_last_controlling_chi is treated separately for RNA case. Parin Sripakdeevong, June 26, 2011
 		rna_residue_type_->rna_update_last_controlling_chi( get_self_weak_ptr(), last_controlling_chi_, atoms_last_controlled_by_chi_);
 		rna_residue_type_->update_derived_rna_data( get_self_weak_ptr() );
 	} else if ( properties_->has_property( CARBOHYDRATE ) ) {
-		carbohydrate_info_ = new chemical::carbohydrates::CarbohydrateInfo( get_self_weak_ptr() );
+		carbohydrate_info_ = core::chemical::carbohydrates::CarbohydrateInfoOP( new chemical::carbohydrates::CarbohydrateInfo( get_self_weak_ptr() ) );
 		update_last_controlling_chi();
 	} else {
 		update_last_controlling_chi();

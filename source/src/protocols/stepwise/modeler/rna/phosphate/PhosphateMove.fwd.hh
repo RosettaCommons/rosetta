@@ -25,8 +25,8 @@ namespace rna {
 namespace phosphate {
 	
 	class PhosphateMove;
-	typedef utility::pointer::owning_ptr< PhosphateMove > PhosphateMoveOP;
-	typedef utility::pointer::owning_ptr< PhosphateMove const > PhosphateMoveCOP;
+	typedef utility::pointer::shared_ptr< PhosphateMove > PhosphateMoveOP;
+	typedef utility::pointer::shared_ptr< PhosphateMove const > PhosphateMoveCOP;
 	
 } //phosphate
 } //rna

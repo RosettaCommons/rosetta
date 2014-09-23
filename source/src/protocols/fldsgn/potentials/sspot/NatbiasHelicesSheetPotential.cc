@@ -37,8 +37,8 @@ namespace sspot {
 
 /// @Brief default constructor
 NatbiasHelicesSheetPotential::NatbiasHelicesSheetPotential():
-	hss3set_( NULL ),
-	hpairset_( NULL )
+	hss3set_( /* NULL */ ),
+	hpairset_( /* NULL */ )
 {
 	set_params();
 }
@@ -46,7 +46,7 @@ NatbiasHelicesSheetPotential::NatbiasHelicesSheetPotential():
 /// @brief value constructor
 NatbiasHelicesSheetPotential::NatbiasHelicesSheetPotential( HSSTripletSetOP const hss3set ):
 	hss3set_( hss3set ),
-	hpairset_( NULL )
+	hpairset_( /* NULL */ )
 {
 	set_params();
 }

@@ -24,8 +24,8 @@ namespace quota {
 
 class ABEGO_SS_Pool;
 
-typedef utility::pointer::owning_ptr<ABEGO_SS_Pool> ABEGO_SS_PoolOP;
-typedef utility::pointer::owning_ptr<ABEGO_SS_Pool const> ABEGO_SS_PoolCOP;
+typedef utility::pointer::shared_ptr<ABEGO_SS_Pool> ABEGO_SS_PoolOP;
+typedef utility::pointer::shared_ptr<ABEGO_SS_Pool const> ABEGO_SS_PoolCOP;
 
 } // quota
 } // frag_picker

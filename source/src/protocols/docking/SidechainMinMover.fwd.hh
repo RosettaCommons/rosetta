@@ -20,12 +20,12 @@ namespace protocols {
 namespace docking {
 
 class SidechainMinMover;
-typedef utility::pointer::owning_ptr< SidechainMinMover > SidechainMinMoverOP;
-typedef utility::pointer::owning_ptr< SidechainMinMover > SidechainMinMoverCOP;
+typedef utility::pointer::shared_ptr< SidechainMinMover > SidechainMinMoverOP;
+typedef utility::pointer::shared_ptr< SidechainMinMover > SidechainMinMoverCOP;
 
 class InterfaceSidechainMinMover;
-typedef utility::pointer::owning_ptr< InterfaceSidechainMinMover > InterfaceSidechainMinMoverOP;
-typedef utility::pointer::owning_ptr< InterfaceSidechainMinMover > InterfaceSidechainMinMoverCOP;
+typedef utility::pointer::shared_ptr< InterfaceSidechainMinMover > InterfaceSidechainMinMoverOP;
+typedef utility::pointer::shared_ptr< InterfaceSidechainMinMover > InterfaceSidechainMinMoverCOP;
 
 }
 }

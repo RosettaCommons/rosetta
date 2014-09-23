@@ -65,7 +65,7 @@ LHRepulsiveRamp::~LHRepulsiveRamp() {}
 
 //clone
 protocols::moves::MoverOP LHRepulsiveRamp::clone() const {
-	return( new LHRepulsiveRamp() );
+	return( protocols::moves::MoverOP( new LHRepulsiveRamp() ) );
 }
 
 
@@ -153,7 +153,7 @@ void LHRepulsiveRamp::apply( pose::Pose & pose ) {
 		temp_dock_scorefxn->set_weight( core::scoring::fa_rep, rep_weight );
 
 
-		docking::DockMCMCycleOP dockmcm_cyclemover = new docking::DockMCMCycle( jump_, temp_dock_scorefxn, pack_scorefxn_ );
+		docking::DockMCMCycleOP dockmcm_cyclemover( new docking::DockMCMCycle( jump_, temp_dock_scorefxn, pack_scorefxn_ ) );
 		//TODO: print scoring function in apply and move "new" out
 		dockmcm_cyclemover->set_rot_magnitude(rot_mag_);
 		dockmcm_cyclemover->set_task_factory(tf_);
@@ -185,11 +185,11 @@ std::string LHRepulsiveRamp::get_name() const {
 }
 
 void LHRepulsiveRamp::set_task_factory(pack::task::TaskFactoryCOP tf) {
-	tf_ = new pack::task::TaskFactory(*tf);
+	tf_ = pack::task::TaskFactoryOP( new pack::task::TaskFactory(*tf) );
 }
 
 void LHRepulsiveRamp::set_move_map(kinematics::MoveMapCOP movemap) {
-	movemap_ = new kinematics::MoveMap(*movemap);
+	movemap_ = kinematics::MoveMapOP( new kinematics::MoveMap(*movemap) );
 }
 
 

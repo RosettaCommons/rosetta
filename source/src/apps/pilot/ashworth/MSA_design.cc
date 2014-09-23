@@ -99,30 +99,30 @@ MSA_design(
 			utility_exit_with_message("a cst file must be specified by the option -constraints::cst_file, or a sequence profile must be specified by the option -in::file::pssm.");
 		}
 		// add constraints to bias design toward a sequence profile
-		SequenceProfileOP profile = new SequenceProfile;
+		SequenceProfileOP profile( new SequenceProfile );
 		utility::file::FileName filename( option[ OptionKeys::in::file::pssm ]().front() );
 		profile->read_from_checkpoint( filename );
 
 		for ( Size seqpos(1), end( pose->total_residue() ); seqpos <= end; ++seqpos ) {
 			// add individual profile constraint for each residue position
 			// because of the underlying constraint implementation, this enures that the constraint is a context-independent 1-body energy, or (intra)residue constraint
-			pose->add_constraint( new core::scoring::constraints::SequenceProfileConstraint( *pose, seqpos, profile ) );
+			pose->add_constraint( scoring::constraints::ConstraintCOP( new core::scoring::constraints::SequenceProfileConstraint( *pose, seqpos, profile ) ) );
 		}
 	} else {
 	  std::string cst_file( option[ OptionKeys::constraints::cst_file ]().front() );
 	  ConstraintSetOP cst_set =
-			ConstraintIO::get_instance()->read_constraints_new( cst_file, new ConstraintSet, *pose );
+			ConstraintIO::get_instance()->read_constraints_new( cst_file, ConstraintSetOP( new ConstraintSet ), *pose );
 		pose->constraint_set( cst_set );
 	}
 
 
 	// the PackerTask tells the Packer how to pack sidechains
 	TaskFactory tf;
-	tf.push_back( new InitializeFromCommandline );
+	tf.push_back( TaskOperationCOP( new InitializeFromCommandline ) );
 	if ( option[ OptionKeys::packing::resfile ].user() ) {
-		tf.push_back( new ReadResfile );
+		tf.push_back( TaskOperationCOP( new ReadResfile ) );
 	}
-	tf.push_back( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueHasProperty("DNA") ) ) );
+	tf.push_back( TaskOperationCOP( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueHasProperty("DNA") ) ) ) );
 	PackerTaskCOP ptask = tf.create_task_and_apply_taskoperations( *pose );
 
 	// run the "Packer" (design sidechains)
@@ -185,7 +185,7 @@ MSA_design_main( void* )
 			continue;
 		}
 		std::cout << std::endl;
-		pose::PoseOP pose = new pose::Pose;
+		pose::PoseOP pose( new pose::Pose );
 		protocols::viewer::add_conformation_viewer( pose->conformation(), "Main Pose" );
 		core::import_pose::pose_from_pdb( *pose, *filename );
 		MSA_design( pose );

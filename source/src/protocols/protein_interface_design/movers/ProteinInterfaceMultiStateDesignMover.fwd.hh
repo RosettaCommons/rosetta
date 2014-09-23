@@ -20,8 +20,8 @@ namespace protocols {
 namespace dna {
 
 class ProteinInterfaceMultiStateDesignMover;
-typedef utility::pointer::owning_ptr< ProteinInterfaceMultiStateDesignMover > ProteinInterfaceMultiStateDesignMoverOP;
-typedef utility::pointer::owning_ptr< ProteinInterfaceMultiStateDesignMover const > ProteinInterfaceMultiStateDesignMoverCOP;
+typedef utility::pointer::shared_ptr< ProteinInterfaceMultiStateDesignMover > ProteinInterfaceMultiStateDesignMoverOP;
+typedef utility::pointer::shared_ptr< ProteinInterfaceMultiStateDesignMover const > ProteinInterfaceMultiStateDesignMoverCOP;
 
 } // namespace dna
 } // namespace protocols

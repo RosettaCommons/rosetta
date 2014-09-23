@@ -57,7 +57,7 @@ public: // test functions
         core_init();
         
         // Load in pose from pdb
-        pose_ = new Pose();
+        pose_ = core::pose::PoseOP( new Pose() );
         pose_from_pdb( *pose_, "protocols/membrane/1C3W_TR_A.pdb" );
         
 		// Initialize Spans from spanfile
@@ -67,7 +67,7 @@ public: // test functions
 		Vector center( 0, 0, 0 );
 		Vector normal( 0, 0, 1 );
 		
-		AddMembraneMoverOP add_memb = new AddMembraneMover( center, normal, spanfile, 1 );
+		AddMembraneMoverOP add_memb( new AddMembraneMover( center, normal, spanfile, 1 ) );
 		add_memb->apply( *pose_ );
 		
 	}

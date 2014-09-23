@@ -87,7 +87,7 @@ void test_simple_min()
 	pose::Pose start_pose(create_test_in_pdb_pose());
 	//core::import_pose::pose_from_pdb( start_pose, "core/optimization/test_in.pdb" );
 
-	kinematics::MoveMapOP mm = new kinematics::MoveMap;
+	kinematics::MoveMapOP mm( new kinematics::MoveMap );
 
 	// setup moving dofs
 	for ( int i=30; i<= 35; ++i ) {
@@ -96,10 +96,10 @@ void test_simple_min()
 	}
 
 	// setup the options
-	scoring::ScoreFunctionOP scorefxn = new scoring::ScoreFunction;
+	scoring::ScoreFunctionOP scorefxn( new scoring::ScoreFunction );
 
 	AtomTreeMinimizer minimizer;
-	MinimizerOptionsOP min_options = new MinimizerOptions( "linmin", 10.0, true, true, false );
+	MinimizerOptionsOP min_options( new MinimizerOptions( "linmin", 10.0, true, true, false ) );
 
 // non-core level code has no place in a "core" test!
 // furthermore, core does not (and should not) link the protocols lib!
@@ -226,7 +226,7 @@ void test_simple_min()
 				pose.fold_tree( f );
 			}
 
-			kinematics::MoveMapOP mm2 = new kinematics::MoveMap;
+			kinematics::MoveMapOP mm2( new kinematics::MoveMap );
 			mm2->set_jump( 1, true );
 
 			TR << "MINTEST: atr-rep-sol jumpmin" << std::endl;
@@ -277,11 +277,11 @@ void test_simple_min()
 	pose = start_pose;
 
 	// set the moving dofs
-	kinematics::MoveMapOP mm1 = new kinematics::MoveMap;
-	kinematics::MoveMapOP mm2 = new kinematics::MoveMap;
-	kinematics::MoveMapOP mm3 = new kinematics::MoveMap;
-	kinematics::MoveMapOP mm4 = new kinematics::MoveMap;
-	kinematics::MoveMapOP mm5 = new kinematics::MoveMap;
+	kinematics::MoveMapOP mm1( new kinematics::MoveMap );
+	kinematics::MoveMapOP mm2( new kinematics::MoveMap );
+	kinematics::MoveMapOP mm3( new kinematics::MoveMap );
+	kinematics::MoveMapOP mm4( new kinematics::MoveMap );
+	kinematics::MoveMapOP mm5( new kinematics::MoveMap );
 	// single backbone
 	mm1->set_bb( 4, true );
 
@@ -308,7 +308,7 @@ void test_simple_min()
 	scorefxn->set_weight( scoring::fa_atr, 0.80 );
 
 	pose.dump_pdb( "before.pdb" );
-	MinimizerOptionsOP min_options2 = new MinimizerOptions( "dfpmin", 0.001, true, true, false );
+	MinimizerOptionsOP min_options2( new MinimizerOptions( "dfpmin", 0.001, true, true, false ) );
 	minimizer.run( pose, *mm1, *scorefxn, *min_options2 );
 
 	pose.dump_pdb( "after1.pdb" );

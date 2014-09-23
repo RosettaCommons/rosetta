@@ -386,7 +386,7 @@ class UpperEdgeGraph : public utility::pointer::ReferenceCount
 public:
 	typedef UEVertex< V, E >                         VertexClass;
 	typedef UEEdge< V, E >                           EdgeClass;
-	typedef utility::vector1< utility::pointer::owning_ptr< VertexClass > > VertexVector;
+	typedef utility::vector1< utility::pointer::shared_ptr< VertexClass > > VertexVector;
 	typedef typename utility::vector1< UEEdge< V, E > >::iterator      UpperEdgeListIter;
 	typedef typename utility::vector1< UEEdge< V, E > >::const_iterator UpperEdgeListConstIter;
 
@@ -485,7 +485,7 @@ private:
 		if ( vertices_.size() != num_vertices_ ) vertices_.resize( num_vertices_ );
 		for ( platform::Size ii = 1; ii <= num_vertices_; ++ii )
 		{
-			vertices_[ ii ] = utility::pointer::owning_ptr< UEVertex< V, E > >( new UEVertex< V, E >( this, ii ));
+			vertices_[ ii ] = utility::pointer::shared_ptr< UEVertex< V, E > >( new UEVertex< V, E >( this, ii ));
 			//vertices_[ ii ]->set_index_and_owner( ii, this );
 			//vertices_[ ii ]->reserve_edge_space();
 		}

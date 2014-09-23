@@ -22,22 +22,22 @@ namespace scoring {
 namespace methods {
 
 class ResidueCartBondedParameters;
-typedef  utility::pointer::access_ptr< ResidueCartBondedParameters > ResidueCartBondedParametersAP;
-typedef  utility::pointer::access_ptr< ResidueCartBondedParameters const > ResidueCartBondedParametersCAP;
-typedef  utility::pointer::owning_ptr< ResidueCartBondedParameters > ResidueCartBondedParametersOP;
-typedef  utility::pointer::owning_ptr< ResidueCartBondedParameters const > ResidueCartBondedParametersCOP;
+typedef  utility::pointer::weak_ptr< ResidueCartBondedParameters > ResidueCartBondedParametersAP;
+typedef  utility::pointer::weak_ptr< ResidueCartBondedParameters const > ResidueCartBondedParametersCAP;
+typedef  utility::pointer::shared_ptr< ResidueCartBondedParameters > ResidueCartBondedParametersOP;
+typedef  utility::pointer::shared_ptr< ResidueCartBondedParameters const > ResidueCartBondedParametersCOP;
 
 class IdealParametersDatabase;
-typedef  utility::pointer::access_ptr< IdealParametersDatabase > IdealParametersDatabaseAP;
-typedef  utility::pointer::access_ptr< IdealParametersDatabase const > IdealParametersDatabaseCAP;
-typedef  utility::pointer::owning_ptr< IdealParametersDatabase > IdealParametersDatabaseOP;
-typedef  utility::pointer::owning_ptr< IdealParametersDatabase const > IdealParametersDatabaseCOP;
+typedef  utility::pointer::weak_ptr< IdealParametersDatabase > IdealParametersDatabaseAP;
+typedef  utility::pointer::weak_ptr< IdealParametersDatabase const > IdealParametersDatabaseCAP;
+typedef  utility::pointer::shared_ptr< IdealParametersDatabase > IdealParametersDatabaseOP;
+typedef  utility::pointer::shared_ptr< IdealParametersDatabase const > IdealParametersDatabaseCOP;
 
 class CartesianBondedEnergy;
-typedef  utility::pointer::access_ptr< CartesianBondedEnergy > CartesianBondedEnergyAP;
-typedef  utility::pointer::access_ptr< CartesianBondedEnergy const > CartesianBondedEnergyCAP;
-typedef  utility::pointer::owning_ptr< CartesianBondedEnergy > CartesianBondedEnergyOP;
-typedef  utility::pointer::owning_ptr< CartesianBondedEnergy const > CartesianBondedEnergyCOP;
+typedef  utility::pointer::weak_ptr< CartesianBondedEnergy > CartesianBondedEnergyAP;
+typedef  utility::pointer::weak_ptr< CartesianBondedEnergy const > CartesianBondedEnergyCAP;
+typedef  utility::pointer::shared_ptr< CartesianBondedEnergy > CartesianBondedEnergyOP;
+typedef  utility::pointer::shared_ptr< CartesianBondedEnergy const > CartesianBondedEnergyCOP;
 
 } // namespace methods
 } // namespace scoring

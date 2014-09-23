@@ -63,7 +63,7 @@ int main( int argc, char * argv [] ) {
     		ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
 		while(input.has_another_pose()){
 			core::pose::PoseOP input_poseOP;
-			input_poseOP = new core::pose::Pose();
+			input_poseOP = core::pose::PoseOP( new core::pose::Pose() );
 			input.fill_pose(*input_poseOP,*rsd_set);
 			std::string tag = core::pose::tag_from_pose(*input_poseOP);
         		std::string outFile = (tag + ".abego");

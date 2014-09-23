@@ -44,10 +44,10 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const {
-		return new NetChargeFilter( *this );
+		return filters::FilterOP( new NetChargeFilter( *this ) );
 	}
 	filters::FilterOP fresh_instance() const{
-		return new NetChargeFilter();
+		return filters::FilterOP( new NetChargeFilter() );
 	}
 
   core::pack::task::TaskFactoryOP task_factory() const;

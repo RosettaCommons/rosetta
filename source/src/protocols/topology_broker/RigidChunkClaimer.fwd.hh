@@ -28,11 +28,11 @@ namespace topology_broker {
 class RigidChunkClaimer;
 
 // Types
-typedef  utility::pointer::owning_ptr< RigidChunkClaimer >  RigidChunkClaimerOP;
-typedef  utility::pointer::owning_ptr< RigidChunkClaimer const >  RigidChunkClaimerCOP;
+typedef  utility::pointer::shared_ptr< RigidChunkClaimer >  RigidChunkClaimerOP;
+typedef  utility::pointer::shared_ptr< RigidChunkClaimer const >  RigidChunkClaimerCOP;
 
-typedef  utility::pointer::access_ptr< RigidChunkClaimer >  RigidChunkClaimerAP;
-typedef  utility::pointer::access_ptr< RigidChunkClaimer const >  RigidChunkClaimerCAP;
+typedef  utility::pointer::weak_ptr< RigidChunkClaimer >  RigidChunkClaimerAP;
+typedef  utility::pointer::weak_ptr< RigidChunkClaimer const >  RigidChunkClaimerCAP;
 
 
 } // namespace kinematics

@@ -84,7 +84,7 @@ ParsedProtocolCreator::keyname() const
 
 protocols::moves::MoverOP
 ParsedProtocolCreator::create_mover() const {
-	return new ParsedProtocol;
+	return protocols::moves::MoverOP( new ParsedProtocol );
 }
 
 std::string
@@ -95,11 +95,11 @@ ParsedProtocolCreator::mover_name()
 
 ParsedProtocol::ParsedProtocol() :
 	protocols::moves::Mover( "ParsedProtocol" ),
-	final_scorefxn_( 0 ), // By default, don't rescore with any scorefunction.
+	final_scorefxn_( /* 0 */ ), // By default, don't rescore with any scorefunction.
 	mode_("sequence"),
 	last_attempted_mover_idx_( 0 ),
 	report_call_order_( false ),
-	last_mover_(NULL),
+	last_mover_(/* NULL */),
 	resume_support_(false)
 {
 }
@@ -117,7 +117,7 @@ ParsedProtocol::apply( Pose & pose )
 	);
 	
 	if ( protocols::jd2::jd2_used() ) {
-		protocols::jd2::JobDistributor::get_instance()->current_job()->add_output_observer( this );
+		protocols::jd2::JobDistributor::get_instance()->current_job()->add_output_observer( this_weak_ptr );
 	}
 
 	try {
@@ -147,7 +147,7 @@ ParsedProtocol::apply( Pose & pose )
 					if( ! apply_filter( pose, *rmover_it) ) {
 //						final_score(pose);
 						if ( protocols::jd2::jd2_used() ) {
-							protocols::jd2::JobDistributor::get_instance()->current_job()->remove_output_observer( this );
+							protocols::jd2::JobDistributor::get_instance()->current_job()->remove_output_observer( this_weak_ptr );
 						}
 						return;
 					} else {
@@ -174,14 +174,14 @@ ParsedProtocol::apply( Pose & pose )
 		}
 
 		if ( protocols::jd2::jd2_used() ) {
-			protocols::jd2::JobDistributor::get_instance()->current_job()->remove_output_observer( this );
+			protocols::jd2::JobDistributor::get_instance()->current_job()->remove_output_observer( this_weak_ptr );
 		}
 
 	} catch( ... ) {
 
 		TR.Error << "Exception while processing procotol:" << std::endl;
 		if ( protocols::jd2::jd2_used() ) {
-			protocols::jd2::JobDistributor::get_instance()->current_job()->remove_output_observer( this );
+			protocols::jd2::JobDistributor::get_instance()->current_job()->remove_output_observer( this_weak_ptr );
 		}
 
 		throw;
@@ -346,7 +346,7 @@ parse_mover_subtag( utility::tag::TagCOP const tag_ptr,
     mover_to_add = new_mover;
     mover_name = "OnTheFly("+tag_ptr->getName()+")";
   } else {
-    mover_to_add = new NullMover();
+    mover_to_add = MoverOP( new NullMover() );
     mover_name = "NULL_MOVER";
   }
 
@@ -409,7 +409,7 @@ ParsedProtocol::parse_my_tag(
 			}
 			filter_to_add = find_filter->second;
 		} else {
-			filter_to_add = new protocols::filters::TrueFilter;
+			filter_to_add = protocols::filters::FilterOP( new protocols::filters::TrueFilter );
 		}
 
 		TR << "added mover \"" << mover_name << "\" with filter \"" << filter_name << "\"" << std::endl;

@@ -23,8 +23,8 @@ namespace grafting {
 /// @brief  
 class GraftMoverBase;
 
-typedef utility::pointer::owning_ptr<GraftMoverBase> GraftMoverBaseOP;
-typedef utility::pointer::owning_ptr<GraftMoverBase const> GraftMoverBaseCOP;
+typedef utility::pointer::shared_ptr<GraftMoverBase> GraftMoverBaseOP;
+typedef utility::pointer::shared_ptr<GraftMoverBase const> GraftMoverBaseCOP;
 
 }}  // namespace grafting_protocls
 

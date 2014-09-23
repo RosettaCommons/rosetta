@@ -22,8 +22,8 @@ namespace trie {
 
 class TrieCountPairBase;
 
-typedef utility::pointer::owning_ptr< TrieCountPairBase > TrieCountPairBaseOP;
-typedef utility::pointer::owning_ptr< TrieCountPairBase const > TrieCountPairBaseCOP;
+typedef utility::pointer::shared_ptr< TrieCountPairBase > TrieCountPairBaseOP;
+typedef utility::pointer::shared_ptr< TrieCountPairBase const > TrieCountPairBaseCOP;
 
 
 } // namespace trie

@@ -21,8 +21,8 @@ namespace protocols {
 namespace simple_moves {
 
 class MonteCarloTest;
-typedef utility::pointer::owning_ptr< MonteCarloTest >  MonteCarloTestOP;
-typedef utility::pointer::owning_ptr< MonteCarloTest const >  MonteCarloTestCOP;
+typedef utility::pointer::shared_ptr< MonteCarloTest >  MonteCarloTestOP;
+typedef utility::pointer::shared_ptr< MonteCarloTest const >  MonteCarloTestCOP;
 
 
 } // namespace moves

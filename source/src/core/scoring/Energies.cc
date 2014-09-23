@@ -74,7 +74,7 @@ Energies::Energies()
 : utility::pointer::ReferenceCount(),
 	size_(0),
 	owner_( 0 ),
-	energy_graph_( new EnergyGraph ),
+	energy_graph_( EnergyGraphOP( new EnergyGraph ) ),
 	context_graphs_( scoring::num_context_graph_types, 0 ),
 	externally_required_context_graphs_( scoring::num_context_graph_types, false ),
 	required_context_graphs_( scoring::num_context_graph_types, false ),
@@ -82,17 +82,17 @@ Energies::Energies()
 	long_range_energy_containers_( scoring::methods::n_long_range_types, 0 ),
 	use_nblist_(false),
 	use_nblist_auto_update_(false),
-	minimization_graph_( 0 ),
+	minimization_graph_( /* 0 */ ),
 	residue_total_energies_uptodate_( false ),
 	residue_total_energy_uptodate_( false ),
 	total_energy_( 0.0 ),
-	scorefxn_info_( new ScoreFunctionInfo ),
+	scorefxn_info_( scoring::ScoreFunctionInfoOP( new ScoreFunctionInfo ) ),
 	scorefxn_weights_(),
 	scoring_(false),
 	energy_state_( BAD ),
 	graph_state_( BAD ),
 	data_cache_( EnergiesCacheableDataType::num_cacheable_data_types ),
-	point_graph_( 0 )
+	point_graph_( /* 0 */ )
 {}
 
 
@@ -101,7 +101,7 @@ Energies::Energies( Energies const & other )
 : utility::pointer::ReferenceCount(),
 	size_( other.size_ ),
 	owner_( 0 ),
-	energy_graph_( new EnergyGraph( *other.energy_graph_ ) ),
+	energy_graph_( EnergyGraphOP( new EnergyGraph( *other.energy_graph_ ) ) ),
 	context_graphs_( scoring::num_context_graph_types, 0 ),
 	externally_required_context_graphs_( other.externally_required_context_graphs_ ),
 	required_context_graphs_( other.required_context_graphs_ ),
@@ -118,14 +118,14 @@ Energies::Energies( Energies const & other )
 	total_energies_( other.total_energies_ ),
 	total_energy_( other.total_energy_ ),
 	finalized_energies_( other.finalized_energies_ ),
-	scorefxn_info_( new ScoreFunctionInfo( *(other.scorefxn_info_) )),
+	scorefxn_info_( scoring::ScoreFunctionInfoOP( new ScoreFunctionInfo( *(other.scorefxn_info_) ) )),
 	scorefxn_weights_( other.scorefxn_weights_ ),
 	domain_map_( other.domain_map_ ),
 	scoring_( other.scoring_ ),
 	energy_state_( other.energy_state_ ),
 	graph_state_( other.graph_state_ ),
 	data_cache_( other.data_cache_ ),
-	point_graph_( 0 )
+	point_graph_( /* 0 */ )
 {
 	copy_nblists( other );
 	copy_context_graphs( other );
@@ -155,7 +155,7 @@ Energies::operator = ( Energies const & rhs )
 	if ( *scorefxn_info_ == *rhs.scorefxn_info_ ) {
 		// noop; sfxn info matches, so no need to duplicate the score function.
 	} else {
-		scorefxn_info_ =  new ScoreFunctionInfo( *(rhs.scorefxn_info_));
+		scorefxn_info_ = scoring::ScoreFunctionInfoOP( new ScoreFunctionInfo( *(rhs.scorefxn_info_)) );
 	}
 	scorefxn_weights_ = rhs.scorefxn_weights_;
 	domain_map_ =  rhs.domain_map_;
@@ -197,7 +197,7 @@ Energies::~Energies()
 EnergiesOP
 Energies::clone() const
 {
-  return new Energies( *this );
+  return EnergiesOP( new Energies( *this ) );
 }
 
 
@@ -783,7 +783,7 @@ Energies::clear()
 	domain_map_.clear();
 	size_ = 0;
 
-	set_scorefxn_info( new ScoreFunctionInfo );
+	set_scorefxn_info( scoring::ScoreFunctionInfoOP( new ScoreFunctionInfo ) );
 	scorefxn_weights_.zero();
 	return;
 }
@@ -805,7 +805,7 @@ Energies::reset_nblist()
 	graph_state_ = MOD;
 
 	/// APL destroy the minimization graph
-	minimization_graph_ = 0;
+	minimization_graph_.reset();
 
 	structure_has_moved( size_ );
 }
@@ -1162,7 +1162,7 @@ Energies::update_neighbor_links(
 	//	std::endl;
 
 	if ( point_graph_ == 0 ) {
-		point_graph_ = new core::conformation::PointGraph;
+		point_graph_ = conformation::PointGraphOP( new core::conformation::PointGraph );
 	}
 	fill_point_graph( pose, point_graph_ );
 
@@ -1287,7 +1287,7 @@ Energies::require_context_graph_( scoring::ContextGraphType type, bool external 
 
 		using namespace graph;
 
-		core::conformation::PointGraphOP point_graph = new core::conformation::PointGraph;
+		core::conformation::PointGraphOP point_graph( new core::conformation::PointGraph );
 		fill_point_graph( *owner_, point_graph );
 		for ( uint ii = 1, ii_end = size_; ii <= ii_end; ++ii ) {
 			Distance const iiradius( owner_->residue_type( ii ).nbr_radius() );

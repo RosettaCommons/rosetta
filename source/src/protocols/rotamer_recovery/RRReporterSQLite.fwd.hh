@@ -21,8 +21,8 @@ namespace protocols{
 namespace rotamer_recovery{
 
 class RRReporterSQLite;
-typedef utility::pointer::owning_ptr< RRReporterSQLite > RRReporterSQLiteOP;
-typedef utility::pointer::owning_ptr< RRReporterSQLite const > RotamerReporterSQLiteCOP;
+typedef utility::pointer::shared_ptr< RRReporterSQLite > RRReporterSQLiteOP;
+typedef utility::pointer::shared_ptr< RRReporterSQLite const > RotamerReporterSQLiteCOP;
 
 }//rotamer_recovery
 }//protocols

@@ -220,8 +220,8 @@ public:
 			core::Size atomno) const = 0;
 };
 
-typedef utility::pointer::owning_ptr< Predicate > PredicateOP;
-typedef utility::pointer::owning_ptr< Predicate const > PredicateCOP;
+typedef utility::pointer::shared_ptr< Predicate > PredicateOP;
+typedef utility::pointer::shared_ptr< Predicate const > PredicateCOP;
 
 class IsProteinCAPredicate: public Predicate {
 public:

@@ -84,7 +84,7 @@ BluePrintBDRCreator::keyname() const
 
 protocols::moves::MoverOP
 BluePrintBDRCreator::create_mover() const {
-	return new BluePrintBDR;
+	return protocols::moves::MoverOP( new BluePrintBDR );
 }
 
 std::string
@@ -97,7 +97,7 @@ BluePrintBDRCreator::mover_name()
 /// @brief default constructor
 BluePrintBDR::BluePrintBDR() :
 	Super( "BluePrintBDR" ),
-	blueprint_( NULL ),
+	blueprint_( /* NULL */ ),
 	sfx_( core::scoring::ScoreFunctionFactory::create_score_function( "fldsgn_cen" ) ),
 	loop_mover_str_( "RemodelLoopMover" ),
 	use_fullmer_( false ),
@@ -114,8 +114,8 @@ BluePrintBDR::BluePrintBDR() :
 	rmdl_attempts_( 1 ),
 	use_poly_val_( true ),
 	tell_vlb_to_not_touch_fold_tree_(false),
-	invrot_tree_(NULL),
-	enzcst_io_(NULL)
+	invrot_tree_(/* NULL */),
+	enzcst_io_(/* NULL */)
 {
 	rcgs_.clear();
 }
@@ -139,8 +139,8 @@ BluePrintBDR::BluePrintBDR( String const & filename, bool const ss_from_blueprin
 	rmdl_attempts_( 1 ),
 	use_poly_val_( true ),
 	tell_vlb_to_not_touch_fold_tree_(false),
-	invrot_tree_(NULL),
-	enzcst_io_(NULL)
+	invrot_tree_(/* NULL */),
+	enzcst_io_(/* NULL */)
 {
 	set_blueprint( filename );
 	rcgs_.clear();
@@ -166,8 +166,8 @@ BluePrintBDR::BluePrintBDR( BluePrintOP const & blueprintOP, bool const ss_from_
 	rmdl_attempts_( 1 ),
 	use_poly_val_( true ),
 	tell_vlb_to_not_touch_fold_tree_(false),
-	invrot_tree_(NULL),
-	enzcst_io_(NULL)
+	invrot_tree_(/* NULL */),
+	enzcst_io_(/* NULL */)
 {
 	rcgs_.clear();
 }
@@ -199,7 +199,7 @@ BluePrintBDR::BluePrintBDR( BluePrintBDR const & rval ) :
 	rcgs_( rval.rcgs_ )
 {
 	if ( rval.vlb_.get() ) {
-		vlb_ = new VarLengthBuild( *rval.vlb_ );
+		vlb_ = VarLengthBuildOP( new VarLengthBuild( *rval.vlb_ ) );
 	}
 }
 
@@ -210,14 +210,14 @@ BluePrintBDR::~BluePrintBDR() {}
 BluePrintBDR::MoverOP
 BluePrintBDR::clone() const
 {
-	return new BluePrintBDR( *this );
+	return BluePrintBDR::MoverOP( new BluePrintBDR( *this ) );
 }
 
 /// @brief create this type of object
 BluePrintBDR::MoverOP
 BluePrintBDR::fresh_instance() const
 {
-	return new BluePrintBDR();
+	return BluePrintBDR::MoverOP( new BluePrintBDR() );
 }
 
 /// @brief the centroid level score function, default "remodel_cen"
@@ -236,7 +236,7 @@ BluePrintBDR::add_instruction( BuildInstructionOP bi )
 
 	// additional instruction means we'll need a new re-init the VLB, so
 	// go ahead and drop the existing one
-	vlb_ = 0;
+	vlb_.reset();
 }
 
 
@@ -269,7 +269,7 @@ BluePrintBDR::scorefunction( ScoreFunctionOP sfx )
 void
 BluePrintBDR::set_blueprint( String const & filename )
 {
-	blueprint_ = new BluePrint( filename );
+	blueprint_ = BluePrintOP( new BluePrint( filename ) );
 }
 
 /// @brief use blueprint
@@ -367,10 +367,10 @@ BluePrintBDR::set_instruction_blueprint( Pose const & pose )
 				}
 				TR << "SegmentInsert left " << left	<< ", right: " << right
 					 << ", ss: " << ss << ", aa:" << aa << ", pdb:" << insert_name << std::endl;
-				add_instruction( new SegmentInsert( Interval( left, right ), ss, aa, insert_pose ) );
+				add_instruction( BuildInstructionOP( new SegmentInsert( Interval( left, right ), ss, aa, insert_pose ) ) );
 			} else {
 				TR << "SegmentRebuild left: " << left << ", right: " << right << ", ss: " << ss << ", aa:" << aa << std::endl;
-				add_instruction( new SegmentRebuild( Interval( left, right ), ss, aa ) );
+				add_instruction( BuildInstructionOP( new SegmentRebuild( Interval( left, right ), ss, aa ) ) );
 			}
 
 			flag = false;
@@ -406,7 +406,7 @@ BluePrintBDR::set_instruction_blueprint( Pose const & pose )
 			right = blueprint_->resnum( blueprint_->total_residue() );
 			runtime_assert( right <= pose.total_residue() );
 		}
-		add_instruction( new SegmentRebuild( Interval( left, right ), ss, aa ) );
+		add_instruction( BuildInstructionOP( new SegmentRebuild( Interval( left, right ), ss, aa ) ) );
 		TR << "SegmentRebuild left: " << left << ", right: " << right << ", ss: " << ss << ", aa:" << aa << std::endl;
 	}
 
@@ -422,16 +422,16 @@ void
 BluePrintBDR::setup_invrot_tree_in_vlb( VarLengthBuild & vlb, Pose & pose  ) const
 {
 
-	toolbox::match_enzdes_util::AllowedSeqposForGeomCstOP allowed_seqpos = new protocols::toolbox::match_enzdes_util::AllowedSeqposForGeomCst();
+	toolbox::match_enzdes_util::AllowedSeqposForGeomCstOP allowed_seqpos( new protocols::toolbox::match_enzdes_util::AllowedSeqposForGeomCst() );
 	//stupid: apparently we have to make a copy of the pose on the heap for
 	//the initialization of allowed_seqpos to work
 	core::pose::PoseOP posecopy( new core::pose::Pose( pose ) );
 	allowed_seqpos->initialize_from_command_line( posecopy ); //this could be moved somewhere else to only initialize once, but probably not that important
-	toolbox::match_enzdes_util::AlignPoseToInvrotTreeMoverOP setup_align_pose( new toolbox::match_enzdes_util::AlignPoseToInvrotTreeMover( invrot_tree_, allowed_seqpos ));
+	toolbox::match_enzdes_util::AlignPoseToInvrotTreeMoverOP setup_align_pose( new toolbox::match_enzdes_util::AlignPoseToInvrotTreeMover( invrot_tree_, allowed_seqpos ) );
 	setup_align_pose->set_add_target_to_pose( true );
 	setup_align_pose->set_geomcst_for_superposition_from_enz_io( enzcst_io_);
 
-	toolbox::match_enzdes_util::AlignPoseToInvrotTreeMoverOP run_align_pose( new toolbox::match_enzdes_util::AlignPoseToInvrotTreeMover( invrot_tree_, allowed_seqpos ));
+	toolbox::match_enzdes_util::AlignPoseToInvrotTreeMoverOP run_align_pose( new toolbox::match_enzdes_util::AlignPoseToInvrotTreeMover( invrot_tree_, allowed_seqpos ) );
 	run_align_pose->set_geomcst_for_superposition_from_enz_io( enzcst_io_);
 
 	forge::constraints::InvrotTreeRCGOP invrot_rcg( new forge::constraints::InvrotTreeRCG( invrot_tree_, allowed_seqpos ) );
@@ -573,7 +573,7 @@ bool BluePrintBDR::centroid_build(
 	// Run VLB to build the new section, if no segments have been added/deleted
 	// we use the same VLB so that fragment caching works properly
 	if ( !vlb_.get() ) {
-		vlb_ = new VarLengthBuild( manager_ );
+		vlb_ = VarLengthBuildOP( new VarLengthBuild( manager_ ) );
 	}
 
 	// set weight of constraints
@@ -583,17 +583,17 @@ bool BluePrintBDR::centroid_build(
 	}
 
 	if( constraints_NtoC_ > 0.0 ){
-		NtoC_RCGOP rcg = new NtoC_RCG;
+		NtoC_RCGOP rcg( new NtoC_RCG );
 		vlb_->add_rcg( rcg );
 	}
 
 	if( constraints_sheet_ > 0.0 ){
-		SheetConstraintsRCGOP rcg = new SheetConstraintsRCG( blueprint_, constraints_sheet_ );
+		SheetConstraintsRCGOP rcg( new SheetConstraintsRCG( blueprint_, constraints_sheet_ ) );
 		vlb_->add_rcg( rcg );
 	}
 
 	if( constraint_file_ != "" ){
-		ConstraintFileRCGOP cst = new ConstraintFileRCG( constraint_file_ );
+		ConstraintFileRCGOP cst( new ConstraintFileRCG( constraint_file_ ) );
 		vlb_->add_rcg( cst );
 	}
 
@@ -687,7 +687,7 @@ BluePrintBDR::parse_my_tag(
 	// set scorefxn
 	String const sfxn ( tag->getOption<String>( "scorefxn", "" ) );
 	if( sfxn != "" ) {
-		sfx_ = data.get< ScoreFunction * >( "scorefxns", sfxn );
+		sfx_ = data.get_ptr<ScoreFunction>( "scorefxns", sfxn );
 		TR << "score function, " << sfxn << ", is used. " << std::endl;
 	}
 
@@ -740,7 +740,7 @@ BluePrintBDR::parse_my_tag(
 		String cstfilename = tag->getOption<String>( "invrot_tree", "");
 		toolbox::match_enzdes_util::EnzConstraintIOOP enzcst_io( new toolbox::match_enzdes_util::EnzConstraintIO( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) ) );
 		enzcst_io->read_enzyme_cstfile( cstfilename );
-		invrot_tree_ = new protocols::toolbox::match_enzdes_util::TheozymeInvrotTree( enzcst_io );
+		invrot_tree_ = protocols::toolbox::match_enzdes_util::InvrotTreeOP( new protocols::toolbox::match_enzdes_util::TheozymeInvrotTree( enzcst_io ) );
 		invrot_tree_->generate_targets_and_inverse_rotamers();
 		enzcst_io_ = enzcst_io;
 

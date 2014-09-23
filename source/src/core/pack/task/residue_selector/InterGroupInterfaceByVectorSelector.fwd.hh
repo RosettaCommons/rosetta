@@ -24,8 +24,8 @@ namespace residue_selector {
 
 class InterGroupInterfaceByVectorSelector;
 
-typedef utility::pointer::owning_ptr< InterGroupInterfaceByVectorSelector > InterGroupInterfaceByVectorSelectorOP;
-typedef utility::pointer::owning_ptr< InterGroupInterfaceByVectorSelector const > InterGroupInterfaceByVectorSelectorCOP;
+typedef utility::pointer::shared_ptr< InterGroupInterfaceByVectorSelector > InterGroupInterfaceByVectorSelectorOP;
+typedef utility::pointer::shared_ptr< InterGroupInterfaceByVectorSelector const > InterGroupInterfaceByVectorSelectorCOP;
 
 } //namespace residue_selector
 } //namespace task

@@ -22,8 +22,8 @@ namespace protocols {
 namespace moves {
 
 class ChangeFoldTreeMover;
-typedef utility::pointer::owning_ptr< ChangeFoldTreeMover > ChangeFoldTreeMoverOP;
-typedef utility::pointer::owning_ptr< ChangeFoldTreeMover const > ChangeFoldTreeMoverCOP;
+typedef utility::pointer::shared_ptr< ChangeFoldTreeMover > ChangeFoldTreeMoverOP;
+typedef utility::pointer::shared_ptr< ChangeFoldTreeMover const > ChangeFoldTreeMoverCOP;
 
 } // moves
 } // rosetta

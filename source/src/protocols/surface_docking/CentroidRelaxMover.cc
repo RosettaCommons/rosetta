@@ -68,13 +68,13 @@ CentroidRelaxMover::~CentroidRelaxMover() {}
 protocols::moves::MoverOP
 CentroidRelaxMover::clone() const
 	{
-		return new CentroidRelaxMover(*this);
+		return protocols::moves::MoverOP( new CentroidRelaxMover(*this) );
 	}
 	
 protocols::moves::MoverOP
 CentroidRelaxMover::fresh_instance() const
 	{
-		return new CentroidRelaxMover();
+		return protocols::moves::MoverOP( new CentroidRelaxMover() );
 	}
 	
 void CentroidRelaxMover::show(std::ostream & output) const
@@ -101,7 +101,7 @@ void CentroidRelaxMover::setup_defaults()
 void CentroidRelaxMover::setup_movers( const core::pose::Pose & pose)
 	{
 	// Setting Common Parameters for movers
-	core::kinematics::MoveMapOP move_map = new core::kinematics::MoveMap();
+	core::kinematics::MoveMapOP move_map( new core::kinematics::MoveMap() );
 	move_map->set_bb( true );
 	Real tolerance=0.01;// for minimizer
 
@@ -109,27 +109,27 @@ void CentroidRelaxMover::setup_movers( const core::pose::Pose & pose)
 	//Creating smallMove; temperature_ : explanation;
 	//          nnmoves_ : number of residues to move(Robin thinks its a
 	//          good idea to change this based on length of peptide !!!!
-	simple_moves::SmallMoverOP small_mover = new simple_moves::SmallMover(move_map ,kT_,nmoves_/2);
+	simple_moves::SmallMoverOP small_mover( new simple_moves::SmallMover(move_map ,kT_,nmoves_/2) );
 	small_mover->angle_max(30); // max angle deviation.
 	//Default Values copied from  MinMover.cc
-	simple_moves::MinMoverOP small_min_mover = new simple_moves::MinMover(move_map ,
-                      score_low_res_,small_min_type_,tolerance,true,false,false);
+	simple_moves::MinMoverOP small_min_mover( new simple_moves::MinMover(move_map ,
+                      score_low_res_,small_min_type_,tolerance,true,false,false) );
         //smallsequenceMover_ =
 	///     new moves::SequenceMover(smallmover_,smallminmover_);
-	moves::SequenceMoverOP small_sequence_mover = new moves::SequenceMover();
+	moves::SequenceMoverOP small_sequence_mover( new moves::SequenceMover() );
 	small_sequence_mover->add_mover(small_mover);
 	small_sequence_mover->add_mover(small_min_mover);
 
 	//Setting up shearTrialMover
 	//Creating smallMove; temperature_ : explanation;
 	//nnmoves_ : number of residues to move
-	simple_moves::ShearMoverOP shear_mover =new simple_moves::ShearMover(move_map ,kT_,nmoves_);
+	simple_moves::ShearMoverOP shear_mover( new simple_moves::ShearMover(move_map ,kT_,nmoves_) );
 	shear_mover->angle_max(30);
 	//Default Values copied from  MinMover.cc
-	simple_moves::MinMoverOP shear_min_mover = new simple_moves::MinMover(move_map ,score_low_res_,
-	                 shear_min_type_,tolerance,true,false,false);
+	simple_moves::MinMoverOP shear_min_mover( new simple_moves::MinMover(move_map ,score_low_res_,
+	                 shear_min_type_,tolerance,true,false,false) );
 	
-	moves::SequenceMoverOP shear_sequence_mover = new moves::SequenceMover();
+	moves::SequenceMoverOP shear_sequence_mover( new moves::SequenceMover() );
 	shear_sequence_mover->add_mover(shear_mover);
 	shear_sequence_mover->add_mover(shear_min_mover);
 
@@ -137,15 +137,13 @@ void CentroidRelaxMover::setup_movers( const core::pose::Pose & pose)
 	// To init the final part of min_trial_small & mini_trial_shear mover
 	// Creating a global mc object that can be used by both
 	// small_min_trial_mover() and shear_min_trial_mover()
-	monte_carlo_ = new moves::MonteCarlo(pose,*score_low_res_,kT_);
+	monte_carlo_ = moves::MonteCarloOP( new moves::MonteCarlo(pose,*score_low_res_,kT_) );
 	//smallTrialMover
 	TR << "Finalizing small Movers" << std::endl;
-	small_trial_min_mover_ =
-		   new moves::TrialMover(small_sequence_mover ,monte_carlo_);
+	small_trial_min_mover_ = moves::TrialMoverOP( new moves::TrialMover(small_sequence_mover ,monte_carlo_) );
 	//shearTrialMover
 	TR << "Finalizing shear Movers" << std::endl;
-	shear_trial_min_mover_ =
-	           new moves::TrialMover(shear_sequence_mover ,monte_carlo_);
+	shear_trial_min_mover_ = moves::TrialMoverOP( new moves::TrialMover(shear_sequence_mover ,monte_carlo_) );
 	}
 
 void CentroidRelaxMover::apply(pose::Pose & pose)

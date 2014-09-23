@@ -28,15 +28,15 @@ namespace abinitio {
 class KinematicTaskControl;
 
 // Types
-typedef  utility::pointer::owning_ptr< KinematicTaskControl >  KinematicTaskControlOP;
-typedef  utility::pointer::owning_ptr< KinematicTaskControl const >  KinematicTaskControlCOP;
+typedef  utility::pointer::shared_ptr< KinematicTaskControl >  KinematicTaskControlOP;
+typedef  utility::pointer::shared_ptr< KinematicTaskControl const >  KinematicTaskControlCOP;
 
 // Forward
 class LoopJumpFoldCst;
 
 // Types
-typedef  utility::pointer::owning_ptr< LoopJumpFoldCst >  LoopJumpFoldCstOP;
-typedef  utility::pointer::owning_ptr< LoopJumpFoldCst const >  LoopJumpFoldCstCOP;
+typedef  utility::pointer::shared_ptr< LoopJumpFoldCst >  LoopJumpFoldCstOP;
+typedef  utility::pointer::shared_ptr< LoopJumpFoldCst const >  LoopJumpFoldCstCOP;
 
 } // namespace kinematics
 } // namespace core

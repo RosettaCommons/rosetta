@@ -24,8 +24,8 @@ namespace sasa {
 
 class SasaMethod;
 	
-	typedef utility::pointer::owning_ptr< SasaMethod> SasaMethodOP;
-	typedef utility::pointer::owning_ptr< SasaMethod const> SasaMethodCOP; 
+	typedef utility::pointer::shared_ptr< SasaMethod> SasaMethodOP;
+	typedef utility::pointer::shared_ptr< SasaMethod const> SasaMethodCOP; 
 	
 	
 

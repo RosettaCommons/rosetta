@@ -30,8 +30,8 @@ namespace filters {
 class SSPredictionFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< SSPredictionFilter > SSPredictionFilterOP;
-typedef utility::pointer::owning_ptr< SSPredictionFilter const > SSPredictionFilterCOP;
+typedef utility::pointer::shared_ptr< SSPredictionFilter > SSPredictionFilterOP;
+typedef utility::pointer::shared_ptr< SSPredictionFilter const > SSPredictionFilterCOP;
 
 }
 }

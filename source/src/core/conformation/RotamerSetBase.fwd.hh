@@ -25,8 +25,8 @@ namespace conformation {
 
 class RotamerSetBase;
 
-typedef utility::pointer::owning_ptr< RotamerSetBase > RotamerSetBaseOP;
-typedef utility::pointer::owning_ptr< RotamerSetBase const > RotamerSetBaseCOP;
+typedef utility::pointer::shared_ptr< RotamerSetBase > RotamerSetBaseOP;
+typedef utility::pointer::shared_ptr< RotamerSetBase const > RotamerSetBaseCOP;
 
 } // namespace conformation
 } // namespace core

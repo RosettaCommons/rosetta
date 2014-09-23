@@ -40,7 +40,7 @@ namespace interaction_graph {
 /// @details This must return a fresh instance of the HPatchEnergy class, never an instance already in use
 scoring::methods::EnergyMethodOP
 HPatchEnergyCreator::create_energy_method( scoring::methods::EnergyMethodOptions const & ) const {
-	return new HPatchEnergy;
+	return scoring::methods::EnergyMethodOP( new HPatchEnergy );
 }
 
 scoring::ScoreTypes
@@ -58,7 +58,7 @@ HPatchEnergy::HPatchEnergy() :
 
 scoring::methods::EnergyMethodOP
 HPatchEnergy::clone() const {
-	return new HPatchEnergy();
+	return scoring::methods::EnergyMethodOP( new HPatchEnergy() );
 }
 
 

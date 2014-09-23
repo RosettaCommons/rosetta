@@ -24,8 +24,8 @@ namespace frag_picker {
 /// @brief forward declaration for VallResidue
 class VallResidue;
 
-typedef utility::pointer::owning_ptr<VallResidue> VallResidueOP;
-typedef utility::pointer::owning_ptr<VallResidue const> VallResidueCOP;
+typedef utility::pointer::shared_ptr<VallResidue> VallResidueOP;
+typedef utility::pointer::shared_ptr<VallResidue const> VallResidueCOP;
 
 } // frag_picker
 } // protocols

@@ -75,10 +75,10 @@ public:
  			torsions.push_back(pose.omega(i));
 		}
 
-		kin_mover = new protocols::loops::loop_closure::kinematic_closure::KinematicMover();
+		kin_mover = protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP( new protocols::loops::loop_closure::kinematic_closure::KinematicMover() );
 		kin_mover_cap = protocols::loops::loop_closure::kinematic_closure::KinematicMoverCAP( kin_mover );
 
-		VsamplingKP = new protocols::loops::loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber(kin_mover_cap);
+		VsamplingKP = protocols::loops::loop_closure::kinematic_closure::VicinitySamplingKinematicPerturberOP( new protocols::loops::loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber(kin_mover_cap) );
 		kin_mover->set_perturber(VsamplingKP);
 	}
 

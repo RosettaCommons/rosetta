@@ -40,7 +40,7 @@ class ProteinInterfaceMultiStateDesignMover : public protocols::simple_moves::Pa
 public:
 	typedef multistate_design::PosType PosType;
 	typedef core::pack::task::PackerTaskCOP PackerTaskCOP;
-	typedef utility::pointer::owning_ptr< genetic_algorithm::GeneticAlgorithm >
+	typedef utility::pointer::shared_ptr< genetic_algorithm::GeneticAlgorithm >
 		GeneticAlgorithmOP;
 
 public:

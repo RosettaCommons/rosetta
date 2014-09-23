@@ -156,7 +156,7 @@ namespace comparative_modeling {
 
 //constructors
 LoopRelaxMover::LoopRelaxMover() : moves::Mover(),
-	guarded_loops_( new loops::GuardedLoopsFromFile )
+	guarded_loops_( loops::GuardedLoopsFromFileOP( new loops::GuardedLoopsFromFile ) )
 {
 	set_defaults_();
 }
@@ -179,7 +179,7 @@ LoopRelaxMover::LoopRelaxMover(
 	intermedrelax_( intermedrelax ),
 	refine_( refine ),
 	relax_( relax ),
-	guarded_loops_( new loops::GuardedLoopsFromFile( loops ))
+	guarded_loops_( loops::GuardedLoopsFromFileOP( new loops::GuardedLoopsFromFile( loops ) ))
 {}
 
 // BE WARNED: THIS CONSTRUCTOR DOES NOT CALL SET_DEFAULTS().
@@ -200,7 +200,7 @@ LoopRelaxMover::LoopRelaxMover(
 	intermedrelax_( intermedrelax ),
 	refine_( refine ),
 	relax_( relax ),
-	guarded_loops_( new loops::GuardedLoopsFromFile( loops_from_file ))
+	guarded_loops_( loops::GuardedLoopsFromFileOP( new loops::GuardedLoopsFromFile( loops_from_file ) ))
 {}
 
 LoopRelaxMover::LoopRelaxMover(
@@ -344,10 +344,10 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			);
 	}
 
-	evaluation::MetaPoseEvaluatorOP evaluator = new evaluation::MetaPoseEvaluator;
+	evaluation::MetaPoseEvaluatorOP evaluator( new evaluation::MetaPoseEvaluator );
 	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators( *evaluator );
 	evaluator->add_evaluation(
-		new simple_filters::SelectRmsdEvaluator( native_pose, "_native" )
+		PoseEvaluatorOP( new simple_filters::SelectRmsdEvaluator( native_pose, "_native" ) )
 	);
 
 #ifdef BOINC_GRAPHICS
@@ -473,7 +473,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 			quick_ccd.get_checkpoints()->set_type("InitialBuild");
 			quick_ccd.set_current_tag( curr_job_tag );
-			quick_ccd.set_native_pose( new core::pose::Pose ( native_pose ) );
+			quick_ccd.set_native_pose( PoseCOP( new core::pose::Pose ( native_pose ) ) );
 			quick_ccd.set_scorefxn( cen_scorefxn_ );
 			quick_ccd.set_build_attempts_( 1 );
 			quick_ccd.set_grow_attempts_( 0 );
@@ -608,8 +608,8 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 						temp_cycles = 3;
 					}
 
-					LoopBuilderOP builder = new LoopBuilder;
-					LoopProtocolOP protocol = new LoopProtocol;
+					LoopBuilderOP builder( new LoopBuilder );
+					LoopProtocolOP protocol( new LoopProtocol );
 
 					if (kic_with_fragments) {
 						builder->use_fragments(frag_libs());
@@ -633,7 +633,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					if ( ! build_only ) {
 						TR << "Beginning centroid-mode KIC sampling..." << endl;
 
-						KicMoverOP kic_mover = new KicMover;
+						KicMoverOP kic_mover( new KicMover );
 
 						if (kic_with_fragments) {
 							kic_mover->clear_perturbers();
@@ -647,7 +647,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 						protocol->set_temp_cycles(temp_cycles);
 						protocol->set_mover_cycles(1);
 						protocol->add_mover(kic_mover);
-						protocol->add_mover(new MinimizationRefiner);
+						protocol->add_mover(LoopMoverOP( new MinimizationRefiner ));
 						protocol->add_logger(LoggerOP( new ProgressBar("Perturb: ") ));
 						protocol->apply(pose);
 					}
@@ -675,8 +675,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
           }
  */
           // DJM: need to cast this as IndependentLoopMover to set strict loops to true.
-					loops::loop_mover::IndependentLoopMoverOP remodel_mover( static_cast< loops::loop_mover::IndependentLoopMover * >
-						( loops::LoopMoverFactory::get_instance()->create_loop_mover( remodel(), loops ).get() ) );
+					loops::loop_mover::IndependentLoopMoverOP remodel_mover( utility::pointer::static_pointer_cast< loops::loop_mover::IndependentLoopMover > ( loops::LoopMoverFactory::get_instance()->create_loop_mover( remodel(), loops ) ) );
 					core::kinematics::FoldTree f_orig=pose.fold_tree();
 					if ( !remodel_mover ) {
 						utility_exit_with_message( "Error: no remodel mover defined!" );
@@ -698,7 +697,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					}
 					remodel_mover->get_checkpoints()->set_type("Remodel");
 					remodel_mover->set_current_tag( curr_job_tag );
-					remodel_mover->set_native_pose( new Pose( native_pose ) );
+					remodel_mover->set_native_pose( PoseCOP( new Pose( native_pose ) ) );
 					remodel_mover->apply( pose );
 
 					if ( remodel() == "perturb_kic" ) { //DJM: skip this struct if initial closure fails
@@ -895,8 +894,8 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					if ( coordconstraint_segments.is_loop_residue( i ) ) {
 						Residue const & nat_i_rsd( constraint_target_pose.residue(i) );
 						for ( Size ii = 1; ii<=nat_i_rsd.last_backbone_atom(); ++ii ) {
-							core::scoring::func::FuncOP fx = new core::scoring::func::HarmonicFunc( 0.0, coord_sdev );
-							pose.add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,rootres), nat_i_rsd.xyz( ii ), fx ) );
+							core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) );
+							pose.add_constraint( scoring::constraints::ConstraintCOP( new CoordinateConstraint( AtomID(ii,i), AtomID(1,rootres), nat_i_rsd.xyz( ii ), fx ) ) );
 						}
 
 						// now cst symmetry mates
@@ -919,8 +918,8 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					if( coordconstraint_segments.is_loop_residue( i ) ) {
 						Residue const & nat_i_rsd( constraint_target_pose.residue(i) );
 						for ( Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
-							core::scoring::func::FuncOP fx = new BoundFunc( 0, cst_width, coord_sdev, "xyz" );
-							pose.add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,rootres), nat_i_rsd.xyz( ii ), fx ) );
+							core::scoring::func::FuncOP fx( new BoundFunc( 0, cst_width, coord_sdev, "xyz" ) );
+							pose.add_constraint( scoring::constraints::ConstraintCOP( new CoordinateConstraint( AtomID(ii,i), AtomID(1,rootres), nat_i_rsd.xyz( ii ), fx ) ) );
 						}
 						// now cst symmetry mates
 						// if (symm_info) {
@@ -964,11 +963,11 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			pose.conformation().detect_disulfides();
 			using namespace core::pack::task;
 			using namespace core::pack::task::operation;
-			TaskFactoryOP tf = new TaskFactory;
-			tf->push_back( new NoRepackDisulfides );
-			tf->push_back( new InitializeFromCommandline );
-			tf->push_back( new IncludeCurrent );
-			tf->push_back( new RestrictToRepacking );
+			TaskFactoryOP tf( new TaskFactory );
+			tf->push_back( TaskOperationCOP( new NoRepackDisulfides ) );
+			tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
+			tf->push_back( TaskOperationCOP( new IncludeCurrent ) );
+			tf->push_back( TaskOperationCOP( new RestrictToRepacking ) );
 			PackerTaskOP taskstd = tf->create_task_and_apply_taskoperations( pose );
 			core::pose::symmetry::make_residue_mask_symmetric( pose, needToRepack );
 			             // does nothing if pose is not symm
@@ -1126,13 +1125,13 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			if ( debug ) pose.dump_pdb(curr_job_tag + "_before_refine.pdb");
 			if ( refine() == "refine_ccd" ) {
 				loops::loop_mover::refine::LoopMover_Refine_CCD refine_ccd( loops, fa_scorefxn_ );
-				refine_ccd.set_native_pose( new core::pose::Pose ( native_pose ) );
+				refine_ccd.set_native_pose( PoseCOP( new core::pose::Pose ( native_pose ) ) );
 				refine_ccd.apply( pose );
 			} else
 			if ( refine() == "refine_kic" ) {
 				//loops.remove_terminal_loops( pose );
 				loops::loop_mover::refine::LoopMover_Refine_KIC refine_kic( loops, fa_scorefxn_ );
-				refine_kic.set_native_pose( new core::pose::Pose ( native_pose ) );
+				refine_kic.set_native_pose( PoseCOP( new core::pose::Pose ( native_pose ) ) );
 				refine_kic.apply( pose );
 			} else
 			if ( refine() == "refine_kic_refactor" || refine() == "refine_kic_with_fragments") {
@@ -1179,8 +1178,8 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					repack_period = option[OptionKeys::loops::repack_period]();
 				}
 
-				LoopProtocolOP protocol = new LoopProtocol;
-				KicMoverOP kic_mover = new KicMover;
+				LoopProtocolOP protocol( new LoopProtocol );
+				KicMoverOP kic_mover( new KicMover );
 
 				if (kic_with_fragments) {
 					kic_mover->add_perturber(kinematic_closure::perturbers::PerturberOP( new BondAnglePerturber ));
@@ -1193,9 +1192,9 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 				protocol->set_temp_cycles(temp_cycles);
 				protocol->set_mover_cycles(2);
 				protocol->add_mover(kic_mover);
-				protocol->add_mover(new PeriodicMover(LoopMoverOP( new RepackingRefiner ), repack_period));
-				protocol->add_mover(new RotamerTrialsRefiner);
-				protocol->add_mover(new MinimizationRefiner);
+				protocol->add_mover(LoopMoverOP( new PeriodicMover(LoopMoverOP( new RepackingRefiner ), repack_period) ));
+				protocol->add_mover(LoopMoverOP( new RotamerTrialsRefiner ));
+				protocol->add_mover(LoopMoverOP( new MinimizationRefiner ));
 				protocol->add_logger(LoggerOP( new ProgressBar("Refine:  ") ));
 				protocol->apply(pose);
 			}
@@ -1503,7 +1502,7 @@ LoopRelaxMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 LoopRelaxMoverCreator::create_mover() const {
-	return new LoopRelaxMover;
+	return protocols::moves::MoverOP( new LoopRelaxMover );
 }
 
 std::string

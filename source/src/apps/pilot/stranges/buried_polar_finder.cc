@@ -123,7 +123,7 @@ public:
 	virtual core::Size satisfaction_cutoff( std::string atom_type );
 
 	virtual MoverOP clone() const {
-		return new CalcsTestMover( *this );
+		return MoverOP( new CalcsTestMover( *this ) );
 	}
 
 	virtual	MoverOP	fresh_instance() const {
@@ -357,9 +357,9 @@ void CalcsTestMover::register_calculators(){
 		<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
 		if ( basic::options::option[ basic::options::OptionKeys::bpf::variable_sasa_radii ] ) {
-			CalculatorFactory::Instance().register_calculator( Sasa_, new devel::vardist_solaccess::VarSolDistSasaCalculator );
+			CalculatorFactory::Instance().register_calculator( Sasa_, PoseMetricCalculatorOP( new devel::vardist_solaccess::VarSolDistSasaCalculator ) );
 		} else {
-			CalculatorFactory::Instance().register_calculator( Sasa_, new simple_calculators::SasaCalculatorLegacy );
+			CalculatorFactory::Instance().register_calculator( Sasa_, PoseMetricCalculatorOP( new simple_calculators::SasaCalculatorLegacy ) );
 		}
 
 	}
@@ -369,7 +369,7 @@ void CalcsTestMover::register_calculators(){
 		Warning() << "In InterfaceAnalyzerMover, calculator " << NumberHBonds_
 			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
-		CalculatorFactory::Instance().register_calculator( NumberHBonds_, new NumberHBondsCalculator);
+		CalculatorFactory::Instance().register_calculator( NumberHBonds_, PoseMetricCalculatorOP( new NumberHBondsCalculator ));
 	}
 
 	BuriedUnsatisfiedPolars_ = "BuriedUnsatisfiedPolars_" + name;
@@ -377,7 +377,7 @@ void CalcsTestMover::register_calculators(){
 		Warning() << "In InterfaceAnalyzerMover, calculator " << BuriedUnsatisfiedPolars_
 			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
-		CalculatorFactory::Instance().register_calculator(  BuriedUnsatisfiedPolars_, new BuriedUnsatisfiedPolarsCalculator(Sasa_, NumberHBonds_));
+		CalculatorFactory::Instance().register_calculator(  BuriedUnsatisfiedPolars_, PoseMetricCalculatorOP( new BuriedUnsatisfiedPolarsCalculator(Sasa_, NumberHBonds_) ));
 	}
 
 	return;
@@ -418,7 +418,7 @@ main( int argc, char * argv [] )
 	// init
 	devel::init(argc, argv);
 
-	protocols::jd2::JobDistributor::get_instance()->go( new CalcsTestMover );
+	protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new CalcsTestMover ) );
 
 	std::cout << "Done! -------------------------------"<< std::endl;
 

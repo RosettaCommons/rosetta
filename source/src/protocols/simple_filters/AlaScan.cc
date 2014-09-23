@@ -63,7 +63,7 @@ namespace simple_filters {
 static thread_local basic::Tracer TR( "protocols.simple_filters.AlaScan" );
 
 protocols::filters::FilterOP
-AlaScanFilterCreator::create_filter() const { return new AlaScan; }
+AlaScanFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AlaScan ); }
 
 std::string
 AlaScanFilterCreator::keyname() const { return "AlaScan"; }

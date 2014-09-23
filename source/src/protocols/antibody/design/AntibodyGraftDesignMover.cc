@@ -67,13 +67,13 @@ namespace design{
 	using core::Size;
 
 AntibodyGraftDesignMover::AntibodyGraftDesignMover(AntibodyInfoOP ab_info):
-	graft_mover_(NULL),
-	scorefxn_(NULL)
+	graft_mover_(/* NULL */),
+	scorefxn_(/* NULL */)
 {
 	overhang_ = 3;
 	ab_info_=ab_info;
 	max_linear_chainbreak_ = .6;
-	modeler_ = new AntibodyDesignModeler(ab_info_);
+	modeler_ = AntibodyDesignModelerOP( new AntibodyDesignModeler(ab_info_) );
 	if (ab_info_->get_current_AntibodyNumberingScheme()!="AHO_Scheme" && ab_info_->get_current_CDRDefinition() != "North"){
 		utility_exit_with_message("Antibody Design Protocol requires AHO_scheme and North definitions");
 	}
@@ -82,13 +82,13 @@ AntibodyGraftDesignMover::AntibodyGraftDesignMover(AntibodyInfoOP ab_info):
 }
 
 AntibodyGraftDesignMover::AntibodyGraftDesignMover(AntibodyInfoOP ab_info, std::string instruction_path) :
-	graft_mover_(NULL),
-	scorefxn_(NULL)
+	graft_mover_(/* NULL */),
+	scorefxn_(/* NULL */)
 {
 	overhang_ = 3;
 	ab_info_=ab_info;
 	max_linear_chainbreak_ = .35;
-	modeler_ = new AntibodyDesignModeler(ab_info_);
+	modeler_ = AntibodyDesignModelerOP( new AntibodyDesignModeler(ab_info_) );
 	if (ab_info_->get_current_AntibodyNumberingScheme()!="AHO_Scheme" && ab_info_->get_current_CDRDefinition() != "North"){
 		utility_exit_with_message("Antibody Design Protocol requires AHO_scheme and North definitions");
 	}
@@ -345,7 +345,7 @@ AntibodyGraftDesignMover::setup_native_clusters(pose::Pose & pose){
 
 void
 AntibodyGraftDesignMover::initialize_cdr_set(){
-	AntibodyDatabaseManagerOP manager = new AntibodyDatabaseManager();
+	AntibodyDatabaseManagerOP manager( new AntibodyDatabaseManager() );
 	std::pair< CDRSet,  CDRClusterMap > result_pair = manager->load_cdrs_for_grafting(ab_info_, cdr_instructions_, pdbmap_);
 	cdr_set_ = result_pair.first; cdr_cluster_map_ = result_pair.second;
 
@@ -513,7 +513,7 @@ AntibodyGraftDesignMover::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Siz
 		core::kinematics::FoldTree ft = pose.fold_tree();
 		vector1< int > movable_jumps(1, 1);
 		protocols::docking::setup_foldtree(pose, dock_chains, movable_jumps);
-		protocols::docking::DockingInitialPerturbationOP perturber = new protocols::docking::DockingInitialPerturbation(1, true /* slide */);
+		protocols::docking::DockingInitialPerturbationOP perturber( new protocols::docking::DockingInitialPerturbation(1, true /* slide */) );
 
 		perturber->apply(pose);
 		pose.fold_tree(ft);
@@ -586,7 +586,7 @@ AntibodyGraftDesignMover::check_for_top_designs(pose::Pose & pose){
 
 	if (top_scores_.size()==0){
 		top_scores_.push_back(score);
-		top_designs_.push_back(new Pose());
+		top_designs_.push_back(utility::pointer::shared_ptr<class core::pose::Pose>( new Pose() ));
 		*(top_designs_[top_designs_.size()]) = pose;
 	}
 	else{
@@ -594,7 +594,7 @@ AntibodyGraftDesignMover::check_for_top_designs(pose::Pose & pose){
 		for (core::Size i = 1; i<=top_scores_.size(); ++i){
 			if (score <= top_scores_[i]){
 				top_scores_.insert(score_it+i-1, score);
-				top_designs_.insert(pose_it+i-1, new Pose());
+				top_designs_.insert(pose_it+i-1, utility::pointer::shared_ptr<class core::pose::Pose>( new Pose() ));
 				*(top_designs_[i]) = pose;
 				inserted = true;
 				break;
@@ -602,7 +602,7 @@ AntibodyGraftDesignMover::check_for_top_designs(pose::Pose & pose){
 		}
 		if (! inserted && top_scores_.size() < num_top_designs_){
 			top_scores_.push_back(score);
-			top_designs_.push_back(new Pose());
+			top_designs_.push_back(utility::pointer::shared_ptr<class core::pose::Pose>( new Pose() ));
 			*(top_designs_[top_designs_.size()]) = pose;
 		}
 		else if ( inserted && top_scores_.size() > num_top_designs_){
@@ -637,7 +637,7 @@ AntibodyGraftDesignMover::run_basic_mc_algorithm(pose::Pose& pose, vector1<CDRNa
 	TR << "Running basic monte carlo algorithm " << std::endl;
 
 	top_scores_.push_back((*scorefxn_)(pose));
-	top_designs_.push_back(new Pose());
+	top_designs_.push_back(utility::pointer::shared_ptr<class core::pose::Pose>( new Pose() ));
 	*(top_designs_[1]) = pose;
 	mc_->set_last_accepted_pose(pose);
 
@@ -790,7 +790,7 @@ AntibodyGraftDesignMover::apply(pose::Pose & pose){
 	if (extend_native_cdrs_){
 		extend_native_cdrs(pose, cdrs_to_design);
 	}
-	graft_mover_ = new CCDEndsGraftMover(ab_info_->get_CDR_start(cdrs_to_design[1], pose)-1, ab_info_->get_CDR_end(cdrs_to_design[1], pose)+1);
+	graft_mover_ = CCDEndsGraftMoverOP( new CCDEndsGraftMover(ab_info_->get_CDR_start(cdrs_to_design[1], pose)-1, ab_info_->get_CDR_end(cdrs_to_design[1], pose)+1) );
 
 	//TR << "Superimposing ALL CDRs to graft onto target."<<std::endl;
 	//for (core::Size i=1; i<=cdrs_to_design.size(); ++i){
@@ -823,7 +823,7 @@ AntibodyGraftDesignMover::apply(pose::Pose & pose){
 	}
 
 	TR <<"Total possible CDR combinations: "<< total_permutations_ << std::endl;
-	mc_ = new protocols::moves::MonteCarlo(pose, *scorefxn_, 1.0);
+	mc_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo(pose, *scorefxn_, 1.0) );
 
 	core::Real native_score = (*scorefxn_)(pose);
 	scorefxn_->show(pose);

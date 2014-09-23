@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class ProteinRMSDFeatures;
-typedef utility::pointer::owning_ptr< ProteinRMSDFeatures > ProteinRMSDFeaturesOP;
-typedef utility::pointer::owning_ptr< ProteinRMSDFeatures const > ProteinRMSDFeaturesCOP;
+typedef utility::pointer::shared_ptr< ProteinRMSDFeatures > ProteinRMSDFeaturesOP;
+typedef utility::pointer::shared_ptr< ProteinRMSDFeatures const > ProteinRMSDFeaturesCOP;
 
 }//features
 }//protocols

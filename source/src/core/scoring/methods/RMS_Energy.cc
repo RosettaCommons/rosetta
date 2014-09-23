@@ -57,7 +57,7 @@ methods::EnergyMethodOP
 RMS_EnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new RMS_Energy;
+	return methods::EnergyMethodOP( new RMS_Energy );
 }
 
 ScoreTypes
@@ -91,7 +91,7 @@ RMS_Energy::RMS_Energy() :
 EnergyMethodOP
 RMS_Energy::clone() const
 {
-	return new RMS_Energy();
+	return EnergyMethodOP( new RMS_Energy() );
 }
 
 

@@ -68,11 +68,11 @@ public:
         using namespace core::scoring;
 
         // Create a membrane pose
-        AddMembraneMoverOP mp = new AddMembraneMover();
+        AddMembraneMoverOP mp( new AddMembraneMover() );
         mp->apply(pose); 
 
         // Create new scoring function from membrane score weights
-        ScoreFunctionOP sfxn = new ScoreFunction();
+        ScoreFunctionOP sfxn( new ScoreFunction() );
 
         sfxn->set_weight( MPEnv, 1.0);
         sfxn->set_weight( MPPair, 1.0);
@@ -92,7 +92,7 @@ public:
     }
 };
 
-typedef utility::pointer::owning_ptr< MembraneSfxnMover > MembraneSfxnMoverOP;
+typedef utility::pointer::shared_ptr< MembraneSfxnMover > MembraneSfxnMoverOP;
 
 /// @brief Main Function
 int main( int argc, char* argv[] )
@@ -114,7 +114,7 @@ int main( int argc, char* argv[] )
 
         // Initialize Membrane protein From Membrane Mover
 
-        MembraneSfxnMoverOP mp = new MembraneSfxnMover();
+        MembraneSfxnMoverOP mp( new MembraneSfxnMover() );
         JobDistributor::get_instance()->go(mp);
 
     } catch ( utility::excn::EXCN_Base const & e ) {

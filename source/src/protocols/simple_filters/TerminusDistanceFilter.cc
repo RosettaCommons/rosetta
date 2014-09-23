@@ -63,7 +63,7 @@ namespace simple_filters {
 static thread_local basic::Tracer TR( "protocols.simple_filters.TerminusDistanceFilter" );
 
 protocols::filters::FilterOP
-TerminusDistanceFilterCreator::create_filter() const { return new TerminusDistanceFilter; }
+TerminusDistanceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new TerminusDistanceFilter ); }
 
 std::string
 TerminusDistanceFilterCreator::keyname() const { return "TerminusDistance"; }

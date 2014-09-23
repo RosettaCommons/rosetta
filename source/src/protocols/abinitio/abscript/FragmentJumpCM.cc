@@ -85,7 +85,7 @@ FragmentJumpCMCreator::keyname() const {
 
 protocols::moves::MoverOP
 FragmentJumpCMCreator::create_mover() const {
-  return new FragmentJumpCM;
+  return protocols::moves::MoverOP( new FragmentJumpCM );
 }
 
 std::string
@@ -163,7 +163,7 @@ claims::EnvClaims FragmentJumpCM::yield_claims( core::pose::Pose const& pose,
     std::set< WriteableCacheableDataOP > const& data_set = map->find( "JumpSampleData" )->second;
 
     BOOST_FOREACH( WriteableCacheableDataOP data_ptr, data_set ){
-      JumpSampleDataOP jumpdata_ptr = dynamic_cast< JumpSampleData* >( data_ptr.get() );
+      JumpSampleDataOP jumpdata_ptr = utility::pointer::dynamic_pointer_cast< protocols::abinitio::abscript::JumpSampleData > ( data_ptr );
       assert( jumpdata_ptr );
 
       if( jumpdata_ptr->moverkey() == moverkey() ){
@@ -199,7 +199,7 @@ claims::EnvClaims FragmentJumpCM::yield_claims( core::pose::Pose const& pose,
 
   // cache the result as a WriteableCacheable in the pose DataCache for later retrieval.
   // this is important for the restarting feature in Abinitio.
-  JumpSampleDataOP data = new JumpSampleData( moverkey(), jump_sample );
+  JumpSampleDataOP data( new JumpSampleData( moverkey(), jump_sample ) );
   (*map)[ data->datatype() ].insert( data );
 
   return build_claims( selection, jump_sample );
@@ -221,10 +221,10 @@ claims::EnvClaims FragmentJumpCM::build_claims( utility::vector1< bool > const& 
 
     std::string jump_name = get_name() + "Jump" + utility::to_string( i );
 
-    claims::JumpClaimOP jclaim = new claims::JumpClaim( this_ptr,
+    claims::JumpClaimOP jclaim( new claims::JumpClaim( this_ptr,
                                                         jump_name,
                                                         LocalPosition( "BASE", up ),
-                                                        LocalPosition( "BASE", dn ) );
+                                                        LocalPosition( "BASE", dn ) ) );
     if( initialize() ){
       jclaim->strength( claims::MUST_CONTROL, claims::CAN_CONTROL );
     } else {
@@ -240,8 +240,8 @@ claims::EnvClaims FragmentJumpCM::build_claims( utility::vector1< bool > const& 
 
     // Jump Fragments make the mover into a bit of an access primadonna because jump fragments
     // include torsions from the residues at takeoff and landing
-    claims::TorsionClaimOP tclaim_up = new claims::TorsionClaim( this_ptr, LocalPosition( "BASE", up ) );
-    claims::TorsionClaimOP tclaim_dn = new claims::TorsionClaim( this_ptr, LocalPosition( "BASE", dn ) );
+    claims::TorsionClaimOP tclaim_up( new claims::TorsionClaim( this_ptr, LocalPosition( "BASE", up ) ) );
+    claims::TorsionClaimOP tclaim_dn( new claims::TorsionClaim( this_ptr, LocalPosition( "BASE", dn ) ) );
 
     tclaim_up->strength( claims::CAN_CONTROL, claims::CAN_CONTROL );
     tclaim_dn->strength( claims::CAN_CONTROL, claims::CAN_CONTROL );
@@ -268,16 +268,16 @@ void FragmentJumpCM::set_topology( std::string const& ss_info_file,
   jumping::SheetBuilder::SheetTopology sheets;
   sheets.push_back( n_sheets );
 
-  core::fragment::SecondaryStructureOP ss_def = new core::fragment::SecondaryStructure;
+  core::fragment::SecondaryStructureOP ss_def( new core::fragment::SecondaryStructure );
   ss_def->read_psipred_ss2( ss_info_file );
 
   core::scoring::dssp::PairingList pairlist;
   core::scoring::dssp::read_pairing_list( pairing_file, pairlist );
 
   if( bRandomSheets ){
-    jump_def_ = new jumping::RandomSheetBuilder( ss_def, pairlist, sheets );
+    jump_def_ = jumping::BaseJumpSetupOP( new jumping::RandomSheetBuilder( ss_def, pairlist, sheets ) );
   } else {
-    jump_def_ = new jumping::SheetBuilder( ss_def, pairlist, sheets );
+    jump_def_ = jumping::BaseJumpSetupOP( new jumping::SheetBuilder( ss_def, pairlist, sheets ) );
   }
 
   // Fail faster with better information on bad topology files.
@@ -307,14 +307,14 @@ void FragmentJumpCM::set_topology( std::string const& topol_filename ){
   if ( !is.good() )
     throw utility::excn::EXCN_FileNotFound(" Topology file '" + topol_filename +"' not found." );
 
-  abinitio::PairingStatisticsOP ps = new abinitio::PairingStatistics;
+  abinitio::PairingStatisticsOP ps( new abinitio::PairingStatistics );
   is >> *ps;
   tr.Info << *ps << std::endl;
-  core::fragment::SecondaryStructureOP ss_def = new core::fragment::SecondaryStructure;
+  core::fragment::SecondaryStructureOP ss_def( new core::fragment::SecondaryStructure );
   ss_def->extend( 10000 ); //Set number of residues to unreasonably large.
   core::scoring::dssp::PairingList helix_pairings; // helix pairings not used, required by BaseJumpSetup.
 
-  jump_def_ = new abinitio::TemplateJumpSetup( NULL, ss_def, ps, helix_pairings );
+  jump_def_ = jumping::BaseJumpSetupOP( new abinitio::TemplateJumpSetup( NULL, ss_def, ps, helix_pairings ) );
 
   // Fail faster with better information on bad topology files.
   jumping::JumpSample jump_sample;
@@ -328,7 +328,7 @@ void FragmentJumpCM::set_topology( std::string const& topol_filename ){
 
 void FragmentJumpCM::setup_fragments( jumping::JumpSample const& jump_sample ) {
 
-  core::kinematics::MoveMapOP dummy_mm = new core::kinematics::MoveMap;
+  core::kinematics::MoveMapOP dummy_mm( new core::kinematics::MoveMap );
   dummy_mm->set_bb( true );
   dummy_mm->set_jump( true );
 
@@ -336,7 +336,7 @@ void FragmentJumpCM::setup_fragments( jumping::JumpSample const& jump_sample ) {
   if( jump_def_ ){
     jump_frags = jump_def_->generate_jump_frags( jump_sample, *dummy_mm );
   } else {
-    jump_frags = new core::fragment::OrderedFragSet;
+    jump_frags = core::fragment::FragSetOP( new core::fragment::OrderedFragSet );
     core::fragment::FrameList jump_frames;
     jump_sample.generate_jump_frames( jump_frames, *dummy_mm );
     jump_frags->add( jump_frames );
@@ -344,8 +344,7 @@ void FragmentJumpCM::setup_fragments( jumping::JumpSample const& jump_sample ) {
 
 
   if( !mover() ){
-    simple_moves::ClassicFragmentMoverOP mover =
-    new simple_moves::ClassicFragmentMover( jump_frags, dummy_mm );
+    simple_moves::ClassicFragmentMoverOP mover( new simple_moves::ClassicFragmentMover( jump_frags, dummy_mm ) );
     mover->set_check_ss( false ); //for some reason it's all 'L' notated, which causes a rejection of fragments...
     mover->enable_end_bias_check( false );
     set_mover( mover );
@@ -377,11 +376,11 @@ jumping::JumpSample FragmentJumpCM::calculate_jump_sample() const {
 }
 
 moves::MoverOP FragmentJumpCM::fresh_instance() const {
-  return new FragmentJumpCM();
+  return moves::MoverOP( new FragmentJumpCM() );
 }
 
 moves::MoverOP FragmentJumpCM::clone() const{
-  return new FragmentJumpCM( *this );
+  return moves::MoverOP( new FragmentJumpCM( *this ) );
 }
 
 } // abscript

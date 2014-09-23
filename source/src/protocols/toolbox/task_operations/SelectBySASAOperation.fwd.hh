@@ -21,8 +21,8 @@ namespace task_operations {
 
 class SelectBySASAOperation;
 
-typedef utility::pointer::owning_ptr< SelectBySASAOperation > SelectBySASAOperationOP;
-typedef utility::pointer::owning_ptr< SelectBySASAOperation const > SelectBySASAOperationCOP;
+typedef utility::pointer::shared_ptr< SelectBySASAOperation > SelectBySASAOperationOP;
+typedef utility::pointer::shared_ptr< SelectBySASAOperation const > SelectBySASAOperationCOP;
 
 } //namespace task_operations
 } //namespace toolbox

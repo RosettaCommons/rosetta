@@ -93,7 +93,7 @@ FlexPacker::apply(
 
 	scorefxn_->setup_for_packing( pose, task_->repacking_residues(), task_->designing_residues() );
 
-	rotamer_set::FlexbbRotamerSetsOP flex_rotsets = new rotamer_set::FlexbbRotamerSets( task_ );
+	rotamer_set::FlexbbRotamerSetsOP flex_rotsets( new rotamer_set::FlexbbRotamerSets( task_ ) );
 
 	flex_rotsets->set_frames( pose, frames_ );
 
@@ -127,9 +127,9 @@ FlexPacker::apply(
 	tr << std::endl;
 	PackerEnergy bestE (0);
 
-	annealer::FlexbbSimAnnealerOP annealer = new annealer::FlexbbSimAnnealer(
+	annealer::FlexbbSimAnnealerOP annealer( new annealer::FlexbbSimAnnealer(
 		bestrotamer_at_seqpos, bestE, false /*start_with_current*/, flex_ig,
-		flex_rotsets, current_rot_index, false, rot_freq);
+		flex_rotsets, current_rot_index, false, rot_freq) );
 
 	tr << "FlexbbIG Memory Use: " << flex_ig->getTotalMemoryUsage() << " bytes " << std::endl;
 	OtherContextScoreFunction oc_sfxn( pose );

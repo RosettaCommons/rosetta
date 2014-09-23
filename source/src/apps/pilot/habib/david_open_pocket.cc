@@ -166,15 +166,15 @@ main( int argc, char * argv [] )
 		std::cout << "Starting trajectory: " << traj << std::endl;
 
 		// set up BackrubMover and read from the database
-		protocols::backrub::BackrubMoverOP backrubmover=new protocols::backrub::BackrubMover();
+		protocols::backrub::BackrubMoverOP backrubmover( new protocols::backrub::BackrubMover() );
 		backrubmover->branchopt().read_database();
 
 		// Create Owning Pointer for pose
-		pose::PoseOP relax_poseOP ( new pose::Pose() );
+		pose::PoseOP relax_poseOP( new pose::Pose() );
 		*relax_poseOP = input_pose;
 
 		// Setup MC
-		protocols::moves::MonteCarloOP mc= new protocols::moves::MonteCarlo(*relax_poseOP, *scorefxn, mc_kT );
+		protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo(*relax_poseOP, *scorefxn, mc_kT ) );
 		mc->reset(*relax_poseOP);
 
 		//clear segments and set the input pose
@@ -216,7 +216,7 @@ main( int argc, char * argv [] )
 
 		std::string move_type = backrubmover->type();
 
-		protocols::moves::TrialMoverOP backrub_trial = new TrialMover (backrubmover, mc);
+		protocols::moves::TrialMoverOP backrub_trial( new TrialMover (backrubmover, mc) );
 		core::pack::task::PackerTaskOP repack_task( pack::task::TaskFactory::create_packer_task( *relax_poseOP ) );
                 repack_task->set_bump_check( false );
                 repack_task->initialize_from_command_line();
@@ -226,15 +226,15 @@ main( int argc, char * argv [] )
                 }
                 repack_task->restrict_to_residues( allow_moving );
 
-		protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover( scorefxn, *repack_task);
-		protocols::moves::TrialMoverOP pack_rottrial_trial = new TrialMover (pack_rottrial, mc);
+		protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover( scorefxn, *repack_task) );
+		protocols::moves::TrialMoverOP pack_rottrial_trial( new TrialMover (pack_rottrial, mc) );
 
-		protocols::moves::SequenceMoverOP repack_step = new SequenceMover;
+		protocols::moves::SequenceMoverOP repack_step( new SequenceMover );
         	repack_step->add_mover( pack_rottrial_trial );
 
 
 
-		protocols::moves::CycleMoverOP backrub_cycle  = new CycleMover;
+		protocols::moves::CycleMoverOP backrub_cycle( new CycleMover );
 		int repack_period_=1;
 	        for ( Size i=0; (int)i<repack_period_; ++i ) backrub_cycle->add_mover( backrub_trial );
         	backrub_cycle->add_mover( repack_step );

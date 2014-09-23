@@ -58,12 +58,12 @@ RestrictChainToRepackingOperation::~RestrictChainToRepackingOperation() {}
 core::pack::task::operation::TaskOperationOP
 RestrictChainToRepackingOperationCreator::create_task_operation() const
 {
-	return new RestrictChainToRepackingOperation;
+	return core::pack::task::operation::TaskOperationOP( new RestrictChainToRepackingOperation );
 }
 
 core::pack::task::operation::TaskOperationOP RestrictChainToRepackingOperation::clone() const
 {
-	return new RestrictChainToRepackingOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new RestrictChainToRepackingOperation( *this ) );
 }
 
 void

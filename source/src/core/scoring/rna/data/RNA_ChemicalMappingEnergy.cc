@@ -54,7 +54,7 @@ namespace data {
 methods::EnergyMethodOP
 RNA_ChemicalMappingEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
-) const {	return new RNA_ChemicalMappingEnergy; }
+) const {	return methods::EnergyMethodOP( new RNA_ChemicalMappingEnergy ); }
 
 ScoreTypes
 RNA_ChemicalMappingEnergyCreator::score_types_for_method() const {
@@ -78,7 +78,7 @@ RNA_ChemicalMappingEnergy::~RNA_ChemicalMappingEnergy()
 methods::EnergyMethodOP
 RNA_ChemicalMappingEnergy::clone() const
 {
-	return new RNA_ChemicalMappingEnergy();
+	return methods::EnergyMethodOP( new RNA_ChemicalMappingEnergy() );
 }
 
 /////////////////////////////////////////////////////////////////////////////

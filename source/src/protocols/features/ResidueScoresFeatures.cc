@@ -124,12 +124,12 @@ ResidueScoresFeatures::write_residue_scores_1b_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column batch_id("batch_id", new DbInteger());
-	Column struct_id("struct_id", new DbBigInt());
-	Column resNum("resNum", new DbInteger());
-	Column score_type_id("score_type_id", new DbInteger());
-	Column score_value("score_value", new DbReal());
-	Column context_dependent("context_dependent", new DbInteger());
+	Column batch_id("batch_id", DbDataTypeOP( new DbInteger() ));
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column resNum("resNum", DbDataTypeOP( new DbInteger() ));
+	Column score_type_id("score_type_id", DbDataTypeOP( new DbInteger() ));
+	Column score_value("score_value", DbDataTypeOP( new DbReal() ));
+	Column context_dependent("context_dependent", DbDataTypeOP( new DbInteger() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(batch_id);
@@ -170,13 +170,13 @@ ResidueScoresFeatures::write_residue_scores_2b_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column batch_id("batch_id", new DbInteger());
-	Column struct_id("struct_id", new DbBigInt());
-	Column resNum1("resNum1", new DbInteger());
-	Column resNum2("resNum2", new DbInteger());
-	Column score_type_id("score_type_id", new DbInteger());
-	Column score_value("score_value", new DbReal());
-	Column context_dependent("context_dependent", new DbInteger());
+	Column batch_id("batch_id", DbDataTypeOP( new DbInteger() ));
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column resNum1("resNum1", DbDataTypeOP( new DbInteger() ));
+	Column resNum2("resNum2", DbDataTypeOP( new DbInteger() ));
+	Column score_type_id("score_type_id", DbDataTypeOP( new DbInteger() ));
+	Column score_value("score_value", DbDataTypeOP( new DbReal() ));
+	Column context_dependent("context_dependent", DbDataTypeOP( new DbInteger() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(batch_id);
@@ -227,13 +227,13 @@ ResidueScoresFeatures::write_residue_scores_lr_2b_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column batch_id("batch_id", new DbInteger());
-	Column struct_id("struct_id", new DbBigInt());
-	Column resNum1("resNum1", new DbInteger());
-	Column resNum2("resNum2", new DbInteger());
-	Column score_type_id("score_type_id", new DbInteger());
-	Column score_value("score_value", new DbReal());
-	Column context_dependent("context_dependent", new DbInteger());
+	Column batch_id("batch_id", DbDataTypeOP( new DbInteger() ));
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column resNum1("resNum1", DbDataTypeOP( new DbInteger() ));
+	Column resNum2("resNum2", DbDataTypeOP( new DbInteger() ));
+	Column score_type_id("score_type_id", DbDataTypeOP( new DbInteger() ));
+	Column score_value("score_value", DbDataTypeOP( new DbReal() ));
+	Column context_dependent("context_dependent", DbDataTypeOP( new DbInteger() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(batch_id);
@@ -297,7 +297,7 @@ ResidueScoresFeatures::parse_my_tag(
 ) {
 	if(tag->hasOption("scorefxn")){
 		string const scorefxn_name(tag->getOption<string>("scorefxn"));
-		scfxn_ = data.get<ScoreFunction*>("scorefxns", scorefxn_name);
+		scfxn_ = data.get_ptr<ScoreFunction>("scorefxns", scorefxn_name);
 	} else {
 		stringstream error_msg;
 		error_msg
@@ -411,8 +411,8 @@ ResidueScoresFeatures::insert_one_body_residue_score_rows(
 	insert_onebody.add_column("score_value");
 	insert_onebody.add_column("context_dependent");
 
-	RowDataBaseOP batch_id_data(new RowData<Size>("batch_id", batch_id));
-	RowDataBaseOP struct_id_data(new RowData<StructureID>("struct_id", struct_id));
+	RowDataBaseOP batch_id_data( new RowData<Size>("batch_id", batch_id) );
+	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id", struct_id) );
 
 	EnergyMap emap;
 
@@ -420,22 +420,18 @@ ResidueScoresFeatures::insert_one_body_residue_score_rows(
 		if(!check_relevant_residues( relevant_residues, resNum )) continue;
 		Residue const & rsd( pose.residue(resNum) );
 
-		RowDataBaseOP resNum_data(
-			new RowData<Size>("resNum", resNum));
+		RowDataBaseOP resNum_data( new RowData<Size>("resNum", resNum) );
 
 		{ // Context Independent One Body Energies
-			RowDataBaseOP context_dependent_data(
-				new RowData<bool>("context_dependent", false));
+			RowDataBaseOP context_dependent_data( new RowData<bool>("context_dependent", false) );
 
 			emap.clear();
 			scfxn_->eval_ci_1b(rsd, pose, emap);
 			for(ScoreTypes::const_iterator st = ci_1b.begin(), ste = ci_1b.end(); st != ste; ++st){
 				if(!emap[*st]) continue;
 
-				RowDataBaseOP score_type_id_data(
-					new RowData<Size>("score_type_id", *st));
-				RowDataBaseOP score_value_data(
-					new RowData<Real>("score_value", emap[*st]));
+				RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", *st) );
+				RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[*st]) );
 
 				insert_onebody.add_row(
 					make_vector(
@@ -444,8 +440,7 @@ ResidueScoresFeatures::insert_one_body_residue_score_rows(
 			}
 		}
 		{ // Context Dependent One Body Energies
-			RowDataBaseOP context_dependent_data(
-				new RowData<bool>("context_dependent", true));
+			RowDataBaseOP context_dependent_data( new RowData<bool>("context_dependent", true) );
 
 			emap.clear();
 			scfxn_->eval_cd_1b(rsd, pose, emap);
@@ -455,10 +450,8 @@ ResidueScoresFeatures::insert_one_body_residue_score_rows(
 
 				if(!emap[*st]) continue;
 
-				RowDataBaseOP score_type_id_data(
-					new RowData<Size>("score_type_id", *st));
-				RowDataBaseOP score_value_data(
-					new RowData<Real>("score_value", emap[*st]));
+				RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", *st) );
+				RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[*st]) );
 
 				insert_onebody.add_row(
 					make_vector(
@@ -499,8 +492,8 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 	insert_twobody.add_column("score_value");
 	insert_twobody.add_column("context_dependent");
 
-	RowDataBaseOP batch_id_data(new RowData<Size>("batch_id", batch_id));
-	RowDataBaseOP struct_id_data(new RowData<StructureID>("struct_id", struct_id));
+	RowDataBaseOP batch_id_data( new RowData<Size>("batch_id", batch_id) );
+	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id", struct_id) );
 
 	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
 		Residue const & rsd( pose.residue(resNum) );
@@ -526,25 +519,20 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 
 			Residue const & otherRsd( pose.residue(otherResNum) );
 
-			RowDataBaseOP resNum1_data(
-				new RowData<Size>("resNum1", resNum1));
-			RowDataBaseOP resNum2_data(
-				new RowData<Size>("resNum2", resNum2));
+			RowDataBaseOP resNum1_data( new RowData<Size>("resNum1", resNum1) );
+			RowDataBaseOP resNum2_data( new RowData<Size>("resNum2", resNum2) );
 
 			{ // Context Independent Two Body Energies
 
-				RowDataBaseOP context_dependent_data(
-					new RowData<bool>("context_dependent", false));
+				RowDataBaseOP context_dependent_data( new RowData<bool>("context_dependent", false) );
 
 				emap.clear();
 				scfxn_->eval_ci_2b(rsd, otherRsd, pose, emap);
 				for(ScoreTypes::const_iterator st = ci_2b.begin(), ste = ci_2b.end(); st != ste; ++st){
 					if(!emap[*st]) continue;
 
-					RowDataBaseOP score_type_id_data(
-						new RowData<Size>("score_type_id", *st));
-					RowDataBaseOP score_value_data(
-						new RowData<Real>("score_value", emap[*st]));
+					RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", *st) );
+					RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[*st]) );
 
 					insert_twobody.add_row(
 						make_vector(
@@ -554,18 +542,15 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 				}
 			}
 			{ // Context Dependent Two Body Energies
-				RowDataBaseOP context_dependent_data(
-					new RowData<bool>("context_dependent", true));
+				RowDataBaseOP context_dependent_data( new RowData<bool>("context_dependent", true) );
 
 				EnergyMap emap;
 				scfxn_->eval_cd_2b(rsd, otherRsd, pose, emap);
 				for(ScoreTypes::const_iterator st = cd_2b.begin(), ste = cd_2b.end(); st != ste; ++st){
 					if(!emap[*st]) continue;
 
-					RowDataBaseOP score_type_id_data(
-						new RowData<Size>("score_type_id", *st));
-					RowDataBaseOP score_value_data(
-						new RowData<Real>("score_value", emap[*st]));
+					RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", *st) );
+					RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[*st]) );
 
 					insert_twobody.add_row(
 						make_vector(
@@ -601,14 +586,13 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 	insert_twobody_longrange.add_column("score_value");
 	insert_twobody_longrange.add_column("context_dependent");
 
-	RowDataBaseOP batch_id_data(new RowData<Size>("batch_id", batch_id));
-	RowDataBaseOP struct_id_data(new RowData<StructureID>("struct_id", struct_id));
+	RowDataBaseOP batch_id_data( new RowData<Size>("batch_id", batch_id) );
+	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id", struct_id) );
 
 	EnergyMap emap;
 
 	{ // Context Independent Long Range Two Body Energies
-		RowDataBaseOP context_dependent_data(
-			new RowData<bool>("context_dependent", false));
+		RowDataBaseOP context_dependent_data( new RowData<bool>("context_dependent", false) );
 
 		for(ScoreFunction::CI_LR_2B_Methods::const_iterator
 					iter = scfxn_->ci_lr_2b_methods_begin(),
@@ -641,10 +625,8 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 					emap.zero();
 					rni->retrieve_energy( emap );
 
-					RowDataBaseOP resNum1_data(
-						new RowData<Size>("resNum1", resNum1));
-					RowDataBaseOP resNum2_data(
-						new RowData<Size>("resNum2", resNum2));
+					RowDataBaseOP resNum1_data( new RowData<Size>("resNum1", resNum1) );
+					RowDataBaseOP resNum2_data( new RowData<Size>("resNum2", resNum2) );
 
 					for(
 						ScoreTypes::const_iterator
@@ -652,10 +634,8 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 						st != ste; ++st ){
 						if(!emap[*st]) continue;
 
-						RowDataBaseOP score_type_id_data(
-							new RowData<Size>("score_type_id", *st));
-						RowDataBaseOP score_value_data(
-							new RowData<Real>("score_value", emap[*st]));
+						RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", *st) );
+						RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[*st]) );
 
 						insert_twobody_longrange.add_row(
 							make_vector(
@@ -670,8 +650,7 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 	/////////////////////////////////////////////////////
 	///  Context Dependent Long Range Two Body methods
 	{
-		RowDataBaseOP context_dependent_data(
-			new RowData<bool>("context_dependent", true));
+		RowDataBaseOP context_dependent_data( new RowData<bool>("context_dependent", true) );
 
 		for(ScoreFunction::CD_LR_2B_Methods::const_iterator
 					iter = scfxn_->cd_lr_2b_methods_begin(),
@@ -705,10 +684,8 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 					emap.zero();
 					rni->retrieve_energy( emap );
 
-					RowDataBaseOP resNum1_data(
-						new RowData<Size>("resNum1", resNum1));
-					RowDataBaseOP resNum2_data(
-						new RowData<Size>("resNum2", resNum2));
+					RowDataBaseOP resNum1_data( new RowData<Size>("resNum1", resNum1) );
+					RowDataBaseOP resNum2_data( new RowData<Size>("resNum2", resNum2) );
 
 					for(
 						ScoreTypes::const_iterator
@@ -716,10 +693,8 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 						st != ste; ++st ){
 						if(!emap[*st]) continue;
 
-						RowDataBaseOP score_type_id_data(
-							new RowData<Size>("score_type_id", *st));
-						RowDataBaseOP score_value_data(
-							new RowData<Real>("score_value", emap[*st]));
+						RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id", *st) );
+						RowDataBaseOP score_value_data( new RowData<Real>("score_value", emap[*st]) );
 
 						insert_twobody_longrange.add_row(
 							make_vector(

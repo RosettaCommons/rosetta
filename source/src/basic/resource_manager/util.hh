@@ -35,13 +35,12 @@ namespace resource_manager {
 using std::stringstream;
 
 template< class ResourceType >
-utility::pointer::owning_ptr< ResourceType >
+utility::pointer::shared_ptr< ResourceType >
 get_resource(
 	ResourceDescription const & resource_description
 ) {
-	utility::pointer::owning_ptr< ResourceType > resource(
-		dynamic_cast< ResourceType * >(
-			ResourceManager::get_instance()->get_resource(resource_description)() ));
+	utility::pointer::shared_ptr< ResourceType > resource(
+		utility::pointer::dynamic_pointer_cast< ResourceType > ( ResourceManager::get_instance()->get_resource(resource_description) ));
 
 	if(!resource){
 		stringstream err_msg;

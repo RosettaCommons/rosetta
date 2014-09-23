@@ -23,8 +23,8 @@ namespace movers{
 
 //Forwards and OP typedefs
 class PlaceOnLoop;
-typedef utility::pointer::owning_ptr< PlaceOnLoop > PlaceOnLoopOP;
-typedef utility::pointer::owning_ptr< PlaceOnLoop const > PlaceOnLoopCOP;
+typedef utility::pointer::shared_ptr< PlaceOnLoop > PlaceOnLoopOP;
+typedef utility::pointer::shared_ptr< PlaceOnLoop const > PlaceOnLoopCOP;
 
 }//movers
 }//protein_interface_design

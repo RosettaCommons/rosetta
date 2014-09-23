@@ -116,7 +116,7 @@ FibrilModelingClaimer::make_fibril( pose::Pose & pose )
 
 	// Setup symmetry if we have not already done it
 	if ( !core::pose::symmetry::is_symmetric( pose ) ) {
-		protocols::fibril::SetupForFibrilMoverOP setup_mover = new protocols::fibril::SetupForFibrilMover;
+		protocols::fibril::SetupForFibrilMoverOP setup_mover( new protocols::fibril::SetupForFibrilMover );
 		if( bAlign_ ) {
 		  setup_mover->align( pose, input_pose_ , rigid_core_, input_rigid_core_ );
 		}
@@ -144,16 +144,16 @@ FibrilModelingClaimer::add_mover(
 	core::Real move_anchor_weight(1.0), rb_weight, slide_weight;
 
 	if( option( move_anchor_points ).user() ) {
-		moves::MoverOP move_anchor_mover =	new symmetric_docking::SymFoldandDockMoveRbJumpMover;
+		moves::MoverOP move_anchor_mover( new symmetric_docking::SymFoldandDockMoveRbJumpMover );
 		random_mover.add_mover( move_anchor_mover, move_anchor_weight );
 	}
 
 	rb_weight = option( rigid_body_frequency );
-	moves::MoverOP rb_trial_mover =	new symmetric_docking::SymFoldandDockRbTrialMover( scorefxn.get_self_ptr() );
+	moves::MoverOP rb_trial_mover( new symmetric_docking::SymFoldandDockRbTrialMover( scorefxn.get_self_ptr() ) );
 	random_mover.add_mover( rb_trial_mover, rb_weight );
 
 	slide_weight = option( slide_contact_frequency );
-	moves::MoverOP slide_mover = new symmetric_docking::SymFoldandDockSlideTrialMover;
+	moves::MoverOP slide_mover( new symmetric_docking::SymFoldandDockSlideTrialMover );
   random_mover.add_mover( slide_mover, slide_weight );
 
 }
@@ -175,7 +175,7 @@ void FibrilModelingClaimer::initialize_dofs(
   //SymmetricConformation & symm_conf (
 	//     dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
-  kinematics::MoveMapOP movemap = new kinematics::MoveMap();
+  kinematics::MoveMapOP movemap( new kinematics::MoveMap() );
   movemap->set_bb( true );
   movemap->set_jump( false );
 	core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
@@ -192,8 +192,8 @@ void FibrilModelingClaimer::generate_claims( claims::DofClaims& new_claims ) {
   // Set all cuts to real cuts. We don't want to close any of them...
 	utility::vector1< int > cuts( input_pose_.conformation().fold_tree().cutpoints() );
 	for ( Size i = 1; i <= cuts.size(); ++i ) {
-    new_claims.push_back( new claims::CutClaim( get_self_weak_ptr(), std::make_pair( Parent::label(), cuts[i]),
-																								claims::DofClaim::INIT /* for now... eventually CAN_INIT ? */ ) );
+    new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::CutClaim( get_self_weak_ptr(), std::make_pair( Parent::label(), cuts[i]),
+																								claims::DofClaim::INIT /* for now... eventually CAN_INIT ? */ ) ) );
   }
 }
 

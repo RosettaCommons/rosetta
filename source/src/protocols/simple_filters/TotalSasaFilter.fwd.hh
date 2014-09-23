@@ -21,8 +21,8 @@ namespace simple_filters {
 
 class TotalSasaFilter;
 
-typedef utility::pointer::owning_ptr< TotalSasaFilter > TotalSasaFilterOP;
-typedef utility::pointer::owning_ptr< TotalSasaFilter const > TotalSasaFilterCOP;
+typedef utility::pointer::shared_ptr< TotalSasaFilter > TotalSasaFilterOP;
+typedef utility::pointer::shared_ptr< TotalSasaFilter const > TotalSasaFilterCOP;
 
 }
 }

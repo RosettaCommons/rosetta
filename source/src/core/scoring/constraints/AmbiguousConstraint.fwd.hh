@@ -23,8 +23,8 @@ namespace constraints {
 
 class AmbiguousConstraint;
 
-typedef utility::pointer::owning_ptr< AmbiguousConstraint > AmbiguousConstraintOP;
-typedef utility::pointer::owning_ptr< AmbiguousConstraint const > AmbiguousConstraintCOP;
+typedef utility::pointer::shared_ptr< AmbiguousConstraint > AmbiguousConstraintOP;
+typedef utility::pointer::shared_ptr< AmbiguousConstraint const > AmbiguousConstraintCOP;
 
 }
 }

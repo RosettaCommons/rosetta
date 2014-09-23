@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class PairFeatures;
-typedef utility::pointer::owning_ptr< PairFeatures > PairFeaturesOP;
-typedef utility::pointer::owning_ptr< PairFeatures const > PairFeaturesCOP;
+typedef utility::pointer::shared_ptr< PairFeatures > PairFeaturesOP;
+typedef utility::pointer::shared_ptr< PairFeatures const > PairFeaturesCOP;
 
 }// namespace
 }// namespace

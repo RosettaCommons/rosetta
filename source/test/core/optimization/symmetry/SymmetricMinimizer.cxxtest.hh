@@ -135,7 +135,7 @@ public:
 		core::pose::symmetry::make_symmetric_pose( pose );
 
 		scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
-		scoring::symmetry::SymmetricScoreFunctionOP sym_scorefxn = dynamic_cast< scoring::symmetry::SymmetricScoreFunction * > ( scorefxn() );
+		scoring::symmetry::SymmetricScoreFunctionOP sym_scorefxn = utility::pointer::dynamic_pointer_cast< scoring::symmetry::SymmetricScoreFunction > ( scorefxn );
 
 		//std::cout << "Symmetric score c2: " << (* scorefxn )( pose ) << std::endl;
 		//std::cout << "Symmetric score before: " << (* scorefxn )( pose ) << std::endl;
@@ -144,7 +144,7 @@ public:
 		assert( conformation::symmetry::is_symmetric( SymmConf ) );
 		SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
-		kinematics::MoveMapOP mm = new kinematics::MoveMap;
+		kinematics::MoveMapOP mm( new kinematics::MoveMap );
 		mm->set_bb( true ); mm->set_chi( true ); mm->set_jump( true );
 		core::pose::symmetry::make_symmetric_movemap( pose, *mm );
 
@@ -181,12 +181,12 @@ public:
 		//pose.dump_pdb( "c3b_before_min.pdb" );
 
 		scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
-		scoring::symmetry::SymmetricScoreFunctionOP sym_scorefxn = dynamic_cast< scoring::symmetry::SymmetricScoreFunction * > ( scorefxn() );
+		scoring::symmetry::SymmetricScoreFunctionOP sym_scorefxn = utility::pointer::dynamic_pointer_cast< scoring::symmetry::SymmetricScoreFunction > ( scorefxn );
 
 		//std::cout << "Symmetric score c3: " << (* scorefxn )( pose ) << std::endl;
 		//std::cout << "Symmetric score before: " << (* scorefxn )( pose ) << std::endl;
 
-		kinematics::MoveMapOP mm = new kinematics::MoveMap;
+		kinematics::MoveMapOP mm( new kinematics::MoveMap );
 		mm->set_bb( true ); mm->set_chi( true ); mm->set_jump( true );
 		core::pose::symmetry::make_symmetric_movemap( pose, *mm );
 
@@ -294,7 +294,7 @@ public:
 		core::pose::symmetry::make_symmetric_pose( pose );
 		//pose.dump_pdb( "fibril_before_min.pdb" );
 
-		SymmetricScoreFunctionOP sym_scorefxn = new SymmetricScoreFunction;
+		SymmetricScoreFunctionOP sym_scorefxn( new SymmetricScoreFunction );
 		scoring::ScoreFunctionOP scorefxn = sym_scorefxn;
 
 		for ( Size ii = 1; ii <= (Size) end_of_score_type_enumeration; ++ii ) {
@@ -310,7 +310,7 @@ public:
 		assert( conformation::symmetry::is_symmetric( SymmConf ) );
 		SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
-		kinematics::MoveMapOP mm = new kinematics::MoveMap;
+		kinematics::MoveMapOP mm( new kinematics::MoveMap );
 		mm->set_bb( true ); mm->set_chi( true ); mm->set_jump( true );
 		core::pose::symmetry::make_symmetric_movemap( pose, *mm );
 
@@ -367,12 +367,12 @@ public:
 		assert( conformation::symmetry::is_symmetric( SymmConf ) );
 		SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
-		kinematics::MoveMapOP mm = new kinematics::MoveMap;
+		kinematics::MoveMapOP mm( new kinematics::MoveMap );
 		mm->set_bb( true ); mm->set_chi( true ); mm->set_jump( true );
 		core::pose::symmetry::make_symmetric_movemap( pose, *mm );
 
 		SymAtomTreeMinimizer minimizer;
-		MinimizerOptionsOP min_options = new MinimizerOptions( "dfpmin", 0.001, true, true, false );
+		MinimizerOptionsOP min_options( new MinimizerOptions( "dfpmin", 0.001, true, true, false ) );
 		minimizer.run( pose, *mm, *scorefxn, *min_options );
 
 		//std::cout << "Symmetric score after: " << (* scorefxn )( pose ) << std::endl;
@@ -409,7 +409,7 @@ public:
 		core::import_pose::pose_from_pdb( start_pose, "core/scoring/symmetry/test_in.pdb" );
 		core::pose::symmetry::make_symmetric_pose( start_pose );
 
-		kinematics::MoveMapOP mm = new kinematics::MoveMap;
+		kinematics::MoveMapOP mm( new kinematics::MoveMap );
 
 		// setup moving dofs
 		for ( int i=10; i<= 15; ++i ) {
@@ -418,10 +418,10 @@ public:
 		}
 
 		// setup the options
-		scoring::ScoreFunctionOP scorefxn = new scoring::symmetry::SymmetricScoreFunction;
+		scoring::ScoreFunctionOP scorefxn( new scoring::symmetry::SymmetricScoreFunction );
 
 		SymAtomTreeMinimizer minimizer;
-		MinimizerOptionsOP min_options = new MinimizerOptions( "linmin", 10.0, true, true, false );
+		MinimizerOptionsOP min_options( new MinimizerOptions( "linmin", 10.0, true, true, false ) );
 
 	// non-core level code has no place in a "core" test!
 	// furthermore, core does not (and should not) link the protocols lib!
@@ -536,7 +536,7 @@ public:
 			scorefxn->set_weight( scoring::fa_rep, 0.44 );
 			scorefxn->set_weight( scoring::fa_sol, 0.65 );
 
-			kinematics::MoveMapOP mm2 = new kinematics::MoveMap;
+			kinematics::MoveMapOP mm2( new kinematics::MoveMap );
 			mm2->set_jump( true );
 			core::pose::symmetry::make_symmetric_movemap( start_pose, *mm2 );
 
@@ -583,11 +583,11 @@ public:
 		pose = start_pose;
 
 		// set the moving dofs
-		kinematics::MoveMapOP mm1 = new kinematics::MoveMap;
-		kinematics::MoveMapOP mm2 = new kinematics::MoveMap;
-		kinematics::MoveMapOP mm3 = new kinematics::MoveMap;
-		kinematics::MoveMapOP mm4 = new kinematics::MoveMap;
-		kinematics::MoveMapOP mm5 = new kinematics::MoveMap;
+		kinematics::MoveMapOP mm1( new kinematics::MoveMap );
+		kinematics::MoveMapOP mm2( new kinematics::MoveMap );
+		kinematics::MoveMapOP mm3( new kinematics::MoveMap );
+		kinematics::MoveMapOP mm4( new kinematics::MoveMap );
+		kinematics::MoveMapOP mm5( new kinematics::MoveMap );
 		// single backbone
 		mm1->set_bb( 4, true );
 
@@ -614,7 +614,7 @@ public:
 		scorefxn->set_weight( scoring::fa_atr, 0.80 );
 
 		pose.dump_pdb( "before.pdb" );
-		MinimizerOptionsOP min_options2 = new MinimizerOptions( "dfpmin", 0.001, true, true, false );
+		MinimizerOptionsOP min_options2( new MinimizerOptions( "dfpmin", 0.001, true, true, false ) );
 		minimizer.run( pose, *mm1, *scorefxn, *min_options2 );
 
 		pose.dump_pdb( "after1.pdb" );

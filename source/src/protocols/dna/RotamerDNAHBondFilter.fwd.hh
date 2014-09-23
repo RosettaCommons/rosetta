@@ -20,7 +20,7 @@ namespace protocols {
 namespace dna {
 
 class  RotamerDNAHBondFilter;
-typedef utility::pointer::owning_ptr< RotamerDNAHBondFilter > RotamerDNAHBondFilterOP;
+typedef utility::pointer::shared_ptr< RotamerDNAHBondFilter > RotamerDNAHBondFilterOP;
 
 }
 }

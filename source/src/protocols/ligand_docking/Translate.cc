@@ -57,7 +57,7 @@ TranslateCreator::keyname() const
 
 protocols::moves::MoverOP
 TranslateCreator::create_mover() const {
-	return new Translate;
+	return protocols::moves::MoverOP( new Translate );
 }
 
 std::string
@@ -94,11 +94,11 @@ Translate::Translate(Translate const & that):
 Translate::~Translate() {}
 
 protocols::moves::MoverOP Translate::clone() const {
-	return new Translate( *this );
+	return protocols::moves::MoverOP( new Translate( *this ) );
 }
 
 protocols::moves::MoverOP Translate::fresh_instance() const {
-	return new Translate;
+	return protocols::moves::MoverOP( new Translate );
 }
 
 std::string Translate::get_name() const{
@@ -168,7 +168,7 @@ void Translate::apply(core::pose::Pose & pose) {
 	qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();
 	if(grid_manager->size() == 0)
 	{
-		utility::pointer::owning_ptr<core::grid::CartGrid<int> > const grid = make_atr_rep_grid_without_ligands(pose, center, chain_ids_to_exclude_);
+		utility::pointer::shared_ptr<core::grid::CartGrid<int> > const grid = make_atr_rep_grid_without_ligands(pose, center, chain_ids_to_exclude_);
 		translate_ligand(grid, translate_info_.jump_id, pose);// move ligand to a random point in binding pocket
 	}else
 	{
@@ -190,7 +190,7 @@ void Translate::apply(core::pose::Pose & pose) {
 }
 
 void Translate::uniform_translate_ligand(
-		const utility::pointer::owning_ptr<core::grid::CartGrid<int> >  & grid,
+		const utility::pointer::shared_ptr<core::grid::CartGrid<int> >  & grid,
 		const core::Size jump_id,
 		core::pose::Pose & pose
 ){
@@ -247,7 +247,7 @@ void Translate::uniform_translate_ligand(
 }
 
 void Translate::gaussian_translate_ligand(
-		const utility::pointer::owning_ptr<core::grid::CartGrid<int> >  & grid,
+		const utility::pointer::shared_ptr<core::grid::CartGrid<int> >  & grid,
 		const core::Size jump_id,
 		core::pose::Pose & pose
 ){
@@ -290,7 +290,7 @@ void Translate::gaussian_translate_ligand(
 }
 
 void Translate::translate_ligand(
-		const utility::pointer::owning_ptr<core::grid::CartGrid<int> >  & grid,
+		const utility::pointer::shared_ptr<core::grid::CartGrid<int> >  & grid,
 		const core::Size jump_id,
 		core::pose::Pose & pose
 ) {
@@ -311,14 +311,14 @@ void Translate::translate_ligand(core::Size const jump_id,core::pose::Pose & pos
 	protocols::rigid::RigidBodyMoverOP translate_mover;
 	if(translate_info_.distribution == Uniform){
 		translate_tracer.Debug<< "making a uniform translator of up to "<< translate_info_.angstroms<<" angstroms"<< std::endl;
-		translate_mover= new protocols::rigid::UniformSphereTransMover( jump_id, translate_info_.angstroms);
+		translate_mover = protocols::rigid::RigidBodyMoverOP( new protocols::rigid::UniformSphereTransMover( jump_id, translate_info_.angstroms) );
 	}
 	else if(translate_info_.distribution == Gaussian){
 		translate_tracer.Debug<< "making a Gaussian translator of up to "<< translate_info_.angstroms<<" angstroms";
-		translate_mover= new protocols::rigid::RigidBodyPerturbMover ( jump_id, 0 /*rotation*/, translate_info_.angstroms);
+		translate_mover = protocols::rigid::RigidBodyMoverOP( new protocols::rigid::RigidBodyPerturbMover ( jump_id, 0 /*rotation*/, translate_info_.angstroms) );
 	}
 
-	RandomConformerMoverOP conformer_mover = new RandomConformerMover(residue_id);
+	RandomConformerMoverOP conformer_mover( new RandomConformerMover(residue_id) );
 
 	core::pose::Pose  orig_pose(pose);
 	translate_tracer.Debug << "time to cycle: " << translate_info_.cycles << std::endl;

@@ -57,7 +57,7 @@ ExtractSubposeMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 ExtractSubposeMoverCreator::create_mover() const {
-	return new ExtractSubposeMover;
+	return protocols::moves::MoverOP( new ExtractSubposeMover );
 }
 
 std::string
@@ -86,12 +86,12 @@ ExtractSubposeMover::ExtractSubposeMover(const ExtractSubposeMover& rval) :
 
 protocols::moves::MoverOP 
 ExtractSubposeMover::clone() const {
-	return new ExtractSubposeMover( *this );
+	return protocols::moves::MoverOP( new ExtractSubposeMover( *this ) );
 }
 
 protocols::moves::MoverOP 
 ExtractSubposeMover::fresh_instance() const {
-	return new ExtractSubposeMover();
+	return protocols::moves::MoverOP( new ExtractSubposeMover() );
 }
 
 void

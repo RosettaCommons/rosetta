@@ -27,8 +27,8 @@ namespace filters {
 class HelixKinkFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< HelixKinkFilter >  HelixKinkFilterOP;
-typedef utility::pointer::owning_ptr< HelixKinkFilter const >  HelixKinkFilterCOP;
+typedef utility::pointer::shared_ptr< HelixKinkFilter >  HelixKinkFilterOP;
+typedef utility::pointer::shared_ptr< HelixKinkFilter const >  HelixKinkFilterCOP;
 
 } // namespace protocols
 } // namespace fldsgn

@@ -27,8 +27,8 @@ namespace optimize_weights {
 
 DGBindOptEData::DGBindOptEData():
 	deltaG_bind_(0),
-	bound_(NULL),
-	unbound_(NULL)
+	bound_(/* NULL */),
+	unbound_(/* NULL */)
 {
 }
 

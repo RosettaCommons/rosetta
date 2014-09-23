@@ -99,7 +99,7 @@ static Tracer TR("protocols.features.RotamerRecoveryFeatures");
 
 RotamerRecoveryFeatures::RotamerRecoveryFeatures() :
 	scfxn_(get_score_function()),
-	reporter_(new RRReporterSQLite() ),
+	reporter_(protocols::rotamer_recovery::RRReporterSQLiteOP( new RRReporterSQLite() ) ),
 	protocol_(),
 	comparer_(),
 	task_factory_()
@@ -110,7 +110,7 @@ RotamerRecoveryFeatures::RotamerRecoveryFeatures() :
 RotamerRecoveryFeatures::RotamerRecoveryFeatures(
 	ScoreFunctionOP scfxn) :
 	scfxn_(scfxn),
-	reporter_(new RRReporterSQLite() ),
+	reporter_(protocols::rotamer_recovery::RRReporterSQLiteOP( new RRReporterSQLite() ) ),
 	protocol_(),
 	comparer_(),
 	task_factory_()
@@ -171,7 +171,7 @@ RotamerRecoveryFeatures::parse_my_tag(
 		MoverOP mover = parse_mover(tag->hasOption("mover") ?
 			tag->getOption<string>("mover") :
 			tag->getOption<string>("mover_name"), movers);
-		protocol_ = new RRProtocolMover(mover);
+		protocol_ = protocols::rotamer_recovery::RRProtocolOP( new RRProtocolMover(mover) );
 	} else if(tag->hasOption("reference_name")){
 		if(tag->hasOption("mover")){
 			throw utility::excn::EXCN_RosettaScriptsOption(
@@ -198,7 +198,7 @@ RotamerRecoveryFeatures::parse_my_tag(
 		// Use with SavePoseMover
 		// WARNING! reference_pose is not initialized until apply time
 		PoseCOP reference_pose(saved_reference_pose(tag, data));
-		protocol_ = new RRProtocolReferenceStructure(reference_pose);
+		protocol_ = protocols::rotamer_recovery::RRProtocolOP( new RRProtocolReferenceStructure(reference_pose) );
 	} else {
 		string const & protocol_name(tag->getOption<string>(
 				"protocol", "RRProtocolMinPack"));
@@ -298,7 +298,7 @@ RotamerRecoveryFeatures::report_features(
 	(*scfxn_)(pose);
 
 	if(task_factory_ == 0){
-		task_factory_ = new TaskFactory();
+		task_factory_ = core::pack::task::TaskFactoryOP( new TaskFactory() );
 	}
 
 	PackerTaskOP packer_task(task_factory_->create_task_and_apply_taskoperations(pose));

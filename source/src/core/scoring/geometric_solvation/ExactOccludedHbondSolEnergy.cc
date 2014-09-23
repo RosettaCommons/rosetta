@@ -89,7 +89,7 @@ methods::EnergyMethodOP
 ExactOccludedHbondSolEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new ExactOccludedHbondSolEnergy(
+	return methods::EnergyMethodOP( new ExactOccludedHbondSolEnergy(
 		basic::options::option[ basic::options::OptionKeys::score::exact_occ_skip_Hbonders ],
 		basic::options::option[ basic::options::OptionKeys::score::exact_occ_include_Hbond_contribution ],
 		basic::options::option[ basic::options::OptionKeys::score::exact_occ_pairwise ],
@@ -97,7 +97,7 @@ ExactOccludedHbondSolEnergyCreator::create_energy_method(
 		basic::options::option[ basic::options::OptionKeys::score::exact_occ_split_between_res ],
 		! basic::options::option[ basic::options::OptionKeys::score::exact_occ_self_res_no_occ ],
 		basic::options::option[basic::options::OptionKeys::score::exact_occ_radius_scaling]
- );
+ ) );
 
 }
 
@@ -209,7 +209,7 @@ WaterWeightGridSet::create_singleton_instance()
 
 // private constructor
 WaterWeightGridSet::WaterWeightGridSet() :
-  hbondoptions_( new HBondOptions ),
+  hbondoptions_( hbonds::HBondOptionsOP( new HBondOptions ) ),
   hb_database_(HBondDatabase::get_database())
 {
 	using namespace hbonds;
@@ -377,7 +377,7 @@ ExactOccludedHbondSolEnergy::ExactOccludedHbondSolEnergy(
 	exact_occ_split_between_res_( exact_occ_split_between_res ),
 	exact_occ_self_res_occ_( exact_occ_self_res_occ ),
 	occ_radius_scaling_( occ_radius_scaling ),
-	hbondoptions_(new HBondOptions ),
+	hbondoptions_(hbonds::HBondOptionsOP( new HBondOptions ) ),
 	hb_database_(HBondDatabase::get_database()),
 	verbose_( verbose )
 {
@@ -440,7 +440,7 @@ ExactOccludedHbondSolEnergy::ExactOccludedHbondSolEnergy( ExactOccludedHbondSolE
 methods::EnergyMethodOP
 ExactOccludedHbondSolEnergy::clone() const
 {
-	return new ExactOccludedHbondSolEnergy( *this );
+	return methods::EnergyMethodOP( new ExactOccludedHbondSolEnergy( *this ) );
 }
 
 void

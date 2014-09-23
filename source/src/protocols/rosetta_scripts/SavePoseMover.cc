@@ -45,7 +45,7 @@ SavePoseMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 SavePoseMoverCreator::create_mover() const {
-	return new SavePoseMover;
+	return protocols::moves::MoverOP( new SavePoseMover );
 }
 
 std::string
@@ -56,7 +56,7 @@ SavePoseMoverCreator::mover_name()
 
 SavePoseMover::SavePoseMover() :
 	Mover( "SavePoseMover" ),
-	reference_pose_(NULL),
+	reference_pose_(/* NULL */),
 	restore_pose_(false)
 {
 }
@@ -101,12 +101,12 @@ SavePoseMover::get_name() const {
 
 protocols::moves::MoverOP
 SavePoseMover::clone() const{
-	return new SavePoseMover( *this );
+	return protocols::moves::MoverOP( new SavePoseMover( *this ) );
 }
 
 protocols::moves::MoverOP
 SavePoseMover::fresh_instance() const{
-	return new SavePoseMover;
+	return protocols::moves::MoverOP( new SavePoseMover );
 }
 
 

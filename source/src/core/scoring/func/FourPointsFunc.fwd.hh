@@ -23,8 +23,8 @@ namespace func {
 
 class FourPointsFunc;
 
-typedef utility::pointer::owning_ptr< FourPointsFunc > FourPointsFuncOP;
-typedef utility::pointer::owning_ptr< FourPointsFunc const > FourPointsFuncCOP;
+typedef utility::pointer::shared_ptr< FourPointsFunc > FourPointsFuncOP;
+typedef utility::pointer::shared_ptr< FourPointsFunc const > FourPointsFuncCOP;
 
 } // constraints
 } // scoring

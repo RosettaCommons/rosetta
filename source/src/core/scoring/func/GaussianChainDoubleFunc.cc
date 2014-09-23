@@ -43,7 +43,7 @@ GaussianChainDoubleFunc::GaussianChainDoubleFunc( Real const gaussian_variance,
 FuncOP
 GaussianChainDoubleFunc::clone() const
 {
-	return new GaussianChainDoubleFunc( gaussian_variance_, loop_fixed_cost_, D2_ );
+	return FuncOP( new GaussianChainDoubleFunc( gaussian_variance_, loop_fixed_cost_, D2_ ) );
 }
 
 void

@@ -17,8 +17,8 @@ namespace sic_dock {
 namespace scores {
 
 class MotifHashRigidScore;
-typedef utility::pointer::owning_ptr< MotifHashRigidScore       > MotifHashRigidScoreOP;
-typedef utility::pointer::owning_ptr< MotifHashRigidScore const > MotifHashRigidScoreCOP;
+typedef utility::pointer::shared_ptr< MotifHashRigidScore       > MotifHashRigidScoreOP;
+typedef utility::pointer::shared_ptr< MotifHashRigidScore const > MotifHashRigidScoreCOP;
 
 
 }

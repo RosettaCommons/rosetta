@@ -28,8 +28,8 @@ enum RocStatus {
 class RocPoint;
 class RocCurve;
 
-typedef utility::pointer::owning_ptr<RocPoint> RocPointOP;
-typedef utility::pointer::owning_ptr<RocCurve> RocCurveOP;
+typedef utility::pointer::shared_ptr<RocPoint> RocPointOP;
+typedef utility::pointer::shared_ptr<RocCurve> RocCurveOP;
 
 }
 

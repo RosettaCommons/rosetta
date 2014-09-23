@@ -47,7 +47,7 @@ std::string SpinMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 SpinMoverCreator::create_mover() const {
-        return new SpinMover;
+        return protocols::moves::MoverOP( new SpinMover );
 }
 
 std::string

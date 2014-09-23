@@ -63,7 +63,7 @@ public:
     {}
 
     virtual DofClaimOP clone() const {
-        return new SymmetryClaim( *this );
+        return DofClaimOP( new SymmetryClaim( *this ) );
     }
 
     std::string const& label() const {

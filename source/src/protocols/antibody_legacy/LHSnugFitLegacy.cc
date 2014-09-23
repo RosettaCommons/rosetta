@@ -121,7 +121,7 @@ LHSnugFitLegacy::~LHSnugFitLegacy() {}
 
 //clone
 protocols::moves::MoverOP LHSnugFitLegacy::clone() const {
-	return( new LHSnugFitLegacy() );
+	return( protocols::moves::MoverOP( new LHSnugFitLegacy() ) );
 }
 
 
@@ -189,16 +189,16 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
 
 	//setting MoveMap
 	kinematics::MoveMapOP cdr_dock_map;
-	cdr_dock_map = new kinematics::MoveMap();
+	cdr_dock_map = kinematics::MoveMapOP( new kinematics::MoveMap() );
 
 	*cdr_dock_map=ab_info_->get_MoveMap_for_LoopsandDock(pose, *ab_info_->get_AllCDRs_in_loopsop(), false, true, 10.0);
 
 	//set up minimizer movers
-	simple_moves::MinMoverOP min_mover = new simple_moves::MinMover( cdr_dock_map, dock_scorefxn, min_type_, min_threshold, nb_list );
+	simple_moves::MinMoverOP min_mover( new simple_moves::MinMover( cdr_dock_map, dock_scorefxn, min_type_, min_threshold, nb_list ) );
 
 	//set up rigid body movers
-	rigid::RigidBodyPerturbMoverOP rb_perturb = new rigid::RigidBodyPerturbMover( pose,
-	        *cdr_dock_map, rot_mag_, trans_mag_, rigid::partner_downstream, true );
+	rigid::RigidBodyPerturbMoverOP rb_perturb( new rigid::RigidBodyPerturbMover( pose,
+	        *cdr_dock_map, rot_mag_, trans_mag_, rigid::partner_downstream, true ) );
 
 
 	//set up sidechain movers for rigid body jump and loop & neighbors
@@ -215,56 +215,56 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
 	for( Size i = 1; i <= nres; i++ )
 		loop_residues( i ) = sc_is_flexible[ i ]; // check mapping
 	using namespace protocols::toolbox::task_operations;
-	tf_->push_back( new RestrictToInterface( rb_jump, loop_residues ) );
+	tf_->push_back( TaskOperationCOP( new RestrictToInterface( rb_jump, loop_residues ) ) );
 
 
 
-	simple_moves::RotamerTrialsMoverOP pack_rottrial = new simple_moves::RotamerTrialsMover( pack_scorefxn, tf_ );
+	simple_moves::RotamerTrialsMoverOP pack_rottrial( new simple_moves::RotamerTrialsMover( pack_scorefxn, tf_ ) );
 
-	simple_moves::PackRotamersMoverOP pack_interface_repack = new simple_moves::PackRotamersMover( pack_scorefxn );
+	simple_moves::PackRotamersMoverOP pack_interface_repack( new simple_moves::PackRotamersMover( pack_scorefxn ) );
 	pack_interface_repack->task_factory(tf_);
 
 
-	MonteCarloOP mc = new MonteCarlo( pose, *dock_scorefxn, temperature_ );
+	MonteCarloOP mc( new MonteCarlo( pose, *dock_scorefxn, temperature_ ) );
 
-	TrialMoverOP pack_interface_trial = new TrialMover(pack_interface_repack, mc );
+	TrialMoverOP pack_interface_trial( new TrialMover(pack_interface_repack, mc ) );
 
-	protocols::docking::SidechainMinMoverOP scmin_mover = new protocols::docking::SidechainMinMover( core::scoring::ScoreFunctionOP( pack_scorefxn ), core::pack::task::TaskFactoryCOP( tf_ ) );
-	TrialMoverOP scmin_trial = new TrialMover( scmin_mover, mc );
+	protocols::docking::SidechainMinMoverOP scmin_mover( new protocols::docking::SidechainMinMover( core::scoring::ScoreFunctionOP( pack_scorefxn ), core::pack::task::TaskFactoryCOP( tf_ ) ) );
+	TrialMoverOP scmin_trial( new TrialMover( scmin_mover, mc ) );
 
-	SequenceMoverOP rb_mover = new SequenceMover;
+	SequenceMoverOP rb_mover( new SequenceMover );
 	rb_mover->add_mover( rb_perturb );
 	rb_mover->add_mover( pack_rottrial );
 
-	JumpOutMoverOP rb_mover_min = new JumpOutMover( rb_mover, min_mover, dock_scorefxn, min_threshold);
-	TrialMoverOP rb_mover_min_trial = new TrialMover( rb_mover_min, mc  );
+	JumpOutMoverOP rb_mover_min( new JumpOutMover( rb_mover, min_mover, dock_scorefxn, min_threshold) );
+	TrialMoverOP rb_mover_min_trial( new TrialMover( rb_mover_min, mc  ) );
 
-	SequenceMoverOP repack_step = new SequenceMover;
+	SequenceMoverOP repack_step( new SequenceMover );
 	repack_step->add_mover( rb_mover_min_trial );
 	repack_step->add_mover( pack_interface_trial );
 	repack_step->add_mover( scmin_trial );
 
-	CycleMoverOP rb_mover_min_trial_repack  = new CycleMover;
+	CycleMoverOP rb_mover_min_trial_repack( new CycleMover );
 	for ( Size i=1; i < 8; ++i )
 		rb_mover_min_trial_repack->add_mover( rb_mover_min_trial );
 	rb_mover_min_trial_repack->add_mover( repack_step );
 
 	//set up initial repack mover
-	SequenceMoverOP initial_repack = new SequenceMover;
+	SequenceMoverOP initial_repack( new SequenceMover );
 	initial_repack->add_mover( pack_interface_trial );
 	initial_repack->add_mover( scmin_trial );
 
 	//set up initial and final min_trial movers for docking
-	TrialMoverOP minimize_trial = new TrialMover( min_mover, mc );
+	TrialMoverOP minimize_trial( new TrialMover( min_mover, mc ) );
 
 	//set up mcm cycles and mcm_repack cycles
-	RepeatMoverOP mcm_four_cycles = new RepeatMover( rb_mover_min_trial, 4 );
+	RepeatMoverOP mcm_four_cycles( new RepeatMover( rb_mover_min_trial, 4 ) );
 
 	Size cycles = 3;
 	if ( benchmark_ ) cycles = 1;
-	RepeatMoverOP mcm_final_cycles = new RepeatMover( rb_mover_min_trial_repack, cycles );
+	RepeatMoverOP mcm_final_cycles( new RepeatMover( rb_mover_min_trial_repack, cycles ) );
 
-	SequenceMoverOP snugfit_mcm = new SequenceMover;
+	SequenceMoverOP snugfit_mcm( new SequenceMover );
 	snugfit_mcm->add_mover( initial_repack );
 	snugfit_mcm->add_mover( minimize_trial );
 	snugfit_mcm->add_mover( mcm_four_cycles );

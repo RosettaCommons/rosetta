@@ -209,7 +209,7 @@ ScaleMapIntensities::parse_my_tag(
 
 protocols::moves::MoverOP
 ScaleMapIntensitiesCreator::create_mover() const {
-	return new ScaleMapIntensities;
+	return protocols::moves::MoverOP( new ScaleMapIntensities );
 }
 
 std::string

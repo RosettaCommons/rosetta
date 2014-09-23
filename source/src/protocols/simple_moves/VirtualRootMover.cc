@@ -43,7 +43,7 @@ VirtualRootMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 VirtualRootMoverCreator::create_mover() const {
-	return new VirtualRootMover;
+	return protocols::moves::MoverOP( new VirtualRootMover );
 }
 
 std::string
@@ -61,10 +61,10 @@ VirtualRootMover::VirtualRootMover() :
 VirtualRootMover::~VirtualRootMover() {}
 
 moves::MoverOP VirtualRootMover::clone() const {
-	return new VirtualRootMover( *this );
+	return moves::MoverOP( new VirtualRootMover( *this ) );
 }
 moves::MoverOP VirtualRootMover::fresh_instance() const {
-	return new VirtualRootMover;
+	return moves::MoverOP( new VirtualRootMover );
 }
 
 void

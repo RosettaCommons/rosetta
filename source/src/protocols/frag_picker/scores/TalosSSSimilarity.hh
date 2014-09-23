@@ -94,10 +94,10 @@ public:
 		if( ! query_prediction ) {
 			utility_exit_with_message( "Unable to find secondary structure prediction for " + prediction_id );
 		}
-		return (FragmentScoringMethodOP) new TalosSSSimilarity(priority,
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new TalosSSSimilarity(priority,
 						lowest_acceptable_value, use_lowest,
 						query_prediction,prediction_id,
-						sequence_length,picker->frag_sizes_,vall_max_len);
+						sequence_length,picker->frag_sizes_,vall_max_len) );
 	}
 };
 

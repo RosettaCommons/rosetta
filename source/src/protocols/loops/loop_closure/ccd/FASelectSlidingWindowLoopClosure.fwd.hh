@@ -26,8 +26,8 @@ namespace ccd {
 class FASelectSlidingWindowLoopClosure;
 
 // Types
-typedef  utility::pointer::owning_ptr< FASelectSlidingWindowLoopClosure >  FASelectSlidingWindowLoopClosureOP;
-typedef  utility::pointer::owning_ptr< FASelectSlidingWindowLoopClosure const >  FASelectSlidingWindowLoopClosureCOP;
+typedef  utility::pointer::shared_ptr< FASelectSlidingWindowLoopClosure >  FASelectSlidingWindowLoopClosureOP;
+typedef  utility::pointer::shared_ptr< FASelectSlidingWindowLoopClosure const >  FASelectSlidingWindowLoopClosureCOP;
 
 } // namespace ccd
 } // namespace loop_closure

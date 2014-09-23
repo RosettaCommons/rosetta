@@ -34,7 +34,7 @@ KDPoint::KDPoint() {}
 KDPoint::KDPoint(
 	utility::vector1< numeric::Real > location
 ) :
-	location_( location ), data_( NULL ), distance_( 0.0 )
+	location_( location ), data_( /* NULL */ ), distance_( 0.0 )
 {}
 
 KDPoint::KDPoint(
@@ -48,7 +48,7 @@ KDPoint::KDPoint(
 	utility::vector1< numeric::Real > location,
 	numeric::Real distance
 ) :
-	location_( location ), data_( NULL ), distance_( distance )
+	location_( location ), data_( /* NULL */ ), distance_( distance )
 {}
 
 KDPoint::KDPoint(
@@ -140,7 +140,7 @@ std::string KDPoint::to_string() const {
 	// do something smarter with data here!
 	if ( data() ) {
 		retval += "DATA ";
-		WrappedRealOP val = dynamic_cast< WrappedReal * > ( data()() );
+		WrappedRealOP val = utility::pointer::dynamic_pointer_cast< WrappedReal > ( data() );
 		retval += string_of( val->val() );
 	}
 

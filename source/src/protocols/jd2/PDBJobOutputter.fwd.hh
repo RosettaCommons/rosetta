@@ -20,7 +20,7 @@ namespace protocols {
 namespace jd2 {
 
 class PDBJobOutputter;
-typedef utility::pointer::owning_ptr< PDBJobOutputter > PDBJobOutputterOP;
+typedef utility::pointer::shared_ptr< PDBJobOutputter > PDBJobOutputterOP;
 
 }//jd2
 }//protocols

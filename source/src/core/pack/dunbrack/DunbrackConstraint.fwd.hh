@@ -23,8 +23,8 @@ namespace dunbrack {
 
 
 class DunbrackConstraint; // fwd declaration
-typedef utility::pointer::owning_ptr< DunbrackConstraint > DunbrackConstraintOP;
-typedef utility::pointer::owning_ptr< DunbrackConstraint const > DunbrackConstraintCOP;
+typedef utility::pointer::shared_ptr< DunbrackConstraint > DunbrackConstraintOP;
+typedef utility::pointer::shared_ptr< DunbrackConstraint const > DunbrackConstraintCOP;
 
 
 } // namespace constraints

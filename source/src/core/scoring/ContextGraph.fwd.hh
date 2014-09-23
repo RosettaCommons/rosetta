@@ -22,8 +22,8 @@ namespace scoring {
 
 class ContextGraph;
 
-typedef utility::pointer::owning_ptr< ContextGraph > ContextGraphOP;
-typedef utility::pointer::owning_ptr< ContextGraph const > ContextGraphCOP;
+typedef utility::pointer::shared_ptr< ContextGraph > ContextGraphOP;
+typedef utility::pointer::shared_ptr< ContextGraph const > ContextGraphCOP;
 
 } // scoring
 } // core

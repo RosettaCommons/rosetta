@@ -23,8 +23,8 @@ namespace toolbox {
 namespace match_enzdes_util {
 
 class EnzdesSeqRecoveryCache;
-typedef utility::pointer::owning_ptr< EnzdesSeqRecoveryCache > EnzdesSeqRecoveryCacheOP;
-typedef utility::pointer::owning_ptr< EnzdesSeqRecoveryCache const > EnzdesSeqRecoveryCacheCOP;
+typedef utility::pointer::shared_ptr< EnzdesSeqRecoveryCache > EnzdesSeqRecoveryCacheOP;
+typedef utility::pointer::shared_ptr< EnzdesSeqRecoveryCache const > EnzdesSeqRecoveryCacheCOP;
 
 } //match_enzdes_util
 } //toolbox

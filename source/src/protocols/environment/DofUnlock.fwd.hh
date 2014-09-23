@@ -23,8 +23,8 @@ namespace protocols {
 namespace environment {
 
 class DofUnlock;
-typedef utility::pointer::owning_ptr< DofUnlock > DofUnlockOP;
-typedef utility::pointer::owning_ptr< DofUnlock const > DofUnlockCOP;
+typedef utility::pointer::shared_ptr< DofUnlock > DofUnlockOP;
+typedef utility::pointer::shared_ptr< DofUnlock const > DofUnlockCOP;
 
 } // environment
 } // protocols

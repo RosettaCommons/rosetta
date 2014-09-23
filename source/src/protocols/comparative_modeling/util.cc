@@ -271,7 +271,7 @@ protocols::loops::LoopsOP pick_loops_unaligned(
 ) {
 	typedef core::Size Size;
 
-	protocols::loops::LoopsOP query_loops = new protocols::loops::Loops();
+	protocols::loops::LoopsOP query_loops( new protocols::loops::Loops() );
 	if ( unaligned_residues.size() == 0 ) {
 		tr.Warning << "No unaligned residues, no loops found." << std::endl;
 		return query_loops;

@@ -264,7 +264,7 @@ void
 AntibodySeqDesignMover::disable_design_cdr(CDRNameEnum cdr, core::pack::task::TaskFactoryOP tf, core::pose::Pose & pose) {
 	
 	//One restrict op per CDR.  That way we can pop them off the TF  individually if we need to.
-	core::pack::task::operation::RestrictResidueToRepackingOP restrict = new core::pack::task::operation::RestrictResidueToRepacking();
+	core::pack::task::operation::RestrictResidueToRepackingOP restrict( new core::pack::task::operation::RestrictResidueToRepacking() );
 	core::Size start = ab_info_->get_CDR_start(cdr, pose);
 	core::Size end = ab_info_->get_CDR_end(cdr, pose);
 	for (core::Size i = start; i <= end; ++i){
@@ -277,7 +277,7 @@ core::pack::task::TaskFactoryOP
 AntibodySeqDesignMover::setup_task_factory(core::pose::Pose & pose){
 	
 
-	protocols::loops::LoopsOP cdr_loops = new protocols::loops::Loops();
+	protocols::loops::LoopsOP cdr_loops( new protocols::loops::Loops() );
 	for (core::Size i = 1; i <= CDRNameEnum_total; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		if (instructions_[cdr].design){
@@ -286,21 +286,21 @@ AntibodySeqDesignMover::setup_task_factory(core::pose::Pose & pose){
 		}
 	}
 	
-	core::pack::task::TaskFactoryOP tf = new TaskFactory();
+	core::pack::task::TaskFactoryOP tf( new TaskFactory() );
 	
 	//Setup Basic TaskOP
-	tf->push_back(new InitializeFromCommandline());
+	tf->push_back(TaskOperationCOP( new InitializeFromCommandline() ));
 	//tf->push_back(new RestrictToRepacking());
 	
 	//Setup Loops TaskOp + Turn on design for CDRs
-	RestrictToLoopsAndNeighborsOP loop_task = new RestrictToLoopsAndNeighbors();
+	RestrictToLoopsAndNeighborsOP loop_task( new RestrictToLoopsAndNeighbors() );
 	loop_task->set_loops(cdr_loops);
 	loop_task->set_design_loop(true);
 	loop_task->set_include_neighbors(true);
 	loop_task->set_cutoff_distance(neighbor_dis_);
 	tf->push_back(loop_task);
 	disable_design_cdrs(tf, pose);
-	tf->push_back(new operation::NoRepackDisulfides());
+	tf->push_back(TaskOperationCOP( new operation::NoRepackDisulfides() ));
 	
 	//Optionally disable Proline design
 	
@@ -311,7 +311,7 @@ AntibodySeqDesignMover::setup_task_factory(core::pose::Pose & pose){
 	
 	//Setup Prob TaskOp.
 	TR << "Adding ResidueProbDesignOp " << std::endl;
-	ResidueProbDesignOperationOP prob_task = new ResidueProbDesignOperation();
+	ResidueProbDesignOperationOP prob_task( new ResidueProbDesignOperation() );
 	std::map< core::Size, std::map< core::chemical::AA, core::Real > > prob_set = setup_probability_data(pose);
 	vector1<core::Size> conservative_positions = get_conservative_design_residues(pose);
 	
@@ -327,7 +327,7 @@ AntibodySeqDesignMover::setup_task_factory(core::pose::Pose & pose){
 	
 	if (!conservative_positions.empty()){
 		TR << "Adding ConservativeDesignOp "<<std::endl;
-		ConservativeDesignOperationOP cons_task = new ConservativeDesignOperation();
+		ConservativeDesignOperationOP cons_task( new ConservativeDesignOperation() );
 		cons_task->limit_to_positions(conservative_positions);
 		cons_task->include_native_aa(true);
 		cons_task->add_to_allowed_aas(false);
@@ -426,7 +426,7 @@ AntibodySeqDesignMover::apply(core::pose::Pose& pose){
 		scorefxn_->show(pose);
 		
 		//Setup the movemap.  Allow SC minimization with neighbors.
-		core::kinematics::MoveMapOP movemap = new MoveMap();
+		core::kinematics::MoveMapOP movemap( new MoveMap() );
 		for (core::Size i = 1; i<=CDRNameEnum_total; ++i){
 			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 			if (instructions_[cdr].design){
@@ -435,7 +435,7 @@ AntibodySeqDesignMover::apply(core::pose::Pose& pose){
 		}
 		
 		//Setup MonteCarlo for >1 round
-		protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo(pose, *scorefxn_, 1.0);
+		protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo(pose, *scorefxn_, 1.0) );
 		
 		//Design methods
 		if (design_method_ == fixbb){
@@ -446,8 +446,8 @@ AntibodySeqDesignMover::apply(core::pose::Pose& pose){
 			}
 		}
 		else if( design_method_ == flxbb) {
-			protocols::flxbb::FlxbbDesignOP flx = new protocols::flxbb::FlxbbDesign();
-			protocols::flxbb::DesignTaskOP des = new protocols::flxbb::DesignTask_Normal();
+			protocols::flxbb::FlxbbDesignOP flx( new protocols::flxbb::FlxbbDesign() );
+			protocols::flxbb::DesignTaskOP des( new protocols::flxbb::DesignTask_Normal() );
 			flx->set_movemap(movemap);
 			core::pack::task::TaskFactory::const_iterator it;
 			for (it = tf->begin(); it != tf->end(); ++it){
@@ -469,7 +469,7 @@ AntibodySeqDesignMover::apply(core::pose::Pose& pose){
 		else if ( design_method_ == relaxed_design) {
 
 			
-			protocols::relax::FastRelaxOP rel = new protocols::relax::FastRelax(scorefxn_);
+			protocols::relax::FastRelaxOP rel( new protocols::relax::FastRelax(scorefxn_) );
 			rel->set_movemap(movemap);
 			
 			//Optionally minimize bond length + angles - Test using cmd-line first!

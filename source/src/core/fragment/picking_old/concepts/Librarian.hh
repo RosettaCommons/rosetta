@@ -62,10 +62,10 @@ public: // typedefs
 
 	typedef typename ExtentGenerator::Extent Extent;
 
-	typedef utility::pointer::owning_ptr< ExtentEvaluator > ExtentEvalOP;
-	typedef utility::pointer::owning_ptr< ExtentEvaluator const > ExtentEvalCOP;
-	typedef utility::pointer::owning_ptr< ExtentGenerator > ExtentGenOP;
-	typedef utility::pointer::owning_ptr< ExtentGenerator const > ExtentGenCOP;
+	typedef utility::pointer::shared_ptr< ExtentEvaluator > ExtentEvalOP;
+	typedef utility::pointer::shared_ptr< ExtentEvaluator const > ExtentEvalCOP;
+	typedef utility::pointer::shared_ptr< ExtentGenerator > ExtentGenOP;
+	typedef utility::pointer::shared_ptr< ExtentGenerator const > ExtentGenCOP;
 
 	typedef utility::vector1< Bookmark > Bookmarks;
 	typedef typename Bookmarks::const_iterator BookmarkConstIterator;

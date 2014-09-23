@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class PoseConformationFeatures;
-typedef utility::pointer::owning_ptr< PoseConformationFeatures > PoseConformationFeaturesOP;
-typedef utility::pointer::owning_ptr< PoseConformationFeatures const > PoseConformationFeaturesCOP;
+typedef utility::pointer::shared_ptr< PoseConformationFeatures > PoseConformationFeaturesOP;
+typedef utility::pointer::shared_ptr< PoseConformationFeatures const > PoseConformationFeaturesCOP;
 
 }//features
 }//protocols

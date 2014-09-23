@@ -26,11 +26,11 @@ namespace md {
 class MDBase;
 
 // Types
-typedef  utility::pointer::owning_ptr< MDBase >  MDBaseOP;
-typedef  utility::pointer::owning_ptr< MDBase const >  MDBaseCOP;
+typedef  utility::pointer::shared_ptr< MDBase >  MDBaseOP;
+typedef  utility::pointer::shared_ptr< MDBase const >  MDBaseCOP;
 
-typedef  utility::pointer::access_ptr< MDBase >  MDBaseAP;
-typedef  utility::pointer::access_ptr< MDBase const >  MDBaseCAP;
+typedef  utility::pointer::weak_ptr< MDBase >  MDBaseAP;
+typedef  utility::pointer::weak_ptr< MDBase const >  MDBaseCAP;
 
 } // namespace devel
 } // namespace md

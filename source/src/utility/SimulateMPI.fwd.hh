@@ -20,8 +20,8 @@ namespace utility {
 
 class SimulateMPIMessage;
 
-typedef utility::pointer::owning_ptr< SimulateMPIMessage > SimulateMPIMessageOP;
-typedef utility::pointer::owning_ptr< SimulateMPIMessage const > SimulateMPIMessageCOP;
+typedef utility::pointer::shared_ptr< SimulateMPIMessage > SimulateMPIMessageOP;
+typedef utility::pointer::shared_ptr< SimulateMPIMessage const > SimulateMPIMessageCOP;
 
 class SimulateMPI;
 

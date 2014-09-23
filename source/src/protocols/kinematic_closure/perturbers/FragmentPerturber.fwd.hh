@@ -20,8 +20,8 @@ namespace perturbers {
 
 class FragmentPerturber;
 
-typedef utility::pointer::owning_ptr<FragmentPerturber> FragmentPerturberOP;
-typedef utility::pointer::owning_ptr<FragmentPerturber const> FragmentPerturberCOP;
+typedef utility::pointer::shared_ptr<FragmentPerturber> FragmentPerturberOP;
+typedef utility::pointer::shared_ptr<FragmentPerturber const> FragmentPerturberCOP;
 
 }
 }

@@ -30,7 +30,7 @@ namespace antibody {
 AntibodyFeaturesCreator::AntibodyFeaturesCreator() {}
 AntibodyFeaturesCreator::~AntibodyFeaturesCreator() {}
 FeaturesReporterOP AntibodyFeaturesCreator::create_features_reporter() const {
-	return new AntibodyFeatures;
+	return FeaturesReporterOP( new AntibodyFeatures );
 }
 
 std::string AntibodyFeaturesCreator::type_name() const {

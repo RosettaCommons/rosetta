@@ -26,8 +26,8 @@ class FixedBBNode;
 class FixedBBEdge;
 class FixedBBInteractionGraph;
 
-typedef utility::pointer::owning_ptr< FixedBBInteractionGraph > FixedBBInteractionGraphOP;
-typedef utility::pointer::owning_ptr< FixedBBInteractionGraph const > FixedBBInteractionGraphCOP;
+typedef utility::pointer::shared_ptr< FixedBBInteractionGraph > FixedBBInteractionGraphOP;
+typedef utility::pointer::shared_ptr< FixedBBInteractionGraph const > FixedBBInteractionGraphCOP;
 
 } //end namespace interaction_graph
 } //end namespace pack

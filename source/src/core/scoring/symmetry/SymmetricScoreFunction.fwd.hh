@@ -29,8 +29,8 @@ namespace symmetry {
 // Forward
 class SymmetricScoreFunction;
 
-typedef utility::pointer::owning_ptr< SymmetricScoreFunction > SymmetricScoreFunctionOP;
-typedef utility::pointer::owning_ptr< SymmetricScoreFunction const > SymmetricScoreFunctionCOP;
+typedef utility::pointer::shared_ptr< SymmetricScoreFunction > SymmetricScoreFunctionOP;
+typedef utility::pointer::shared_ptr< SymmetricScoreFunction const > SymmetricScoreFunctionCOP;
 
 } // symmetry
 } // namespace scoring

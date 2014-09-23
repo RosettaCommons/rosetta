@@ -111,7 +111,7 @@ void LoopCM::parse_my_tag( TagCOP const tag,
   }
 
   std::string const selector = tag->getOption< std::string >( "selector" );
-  selector_ = datamap.get< ResidueSelector const* >( "ResidueSelector", selector );
+  selector_ = datamap.get_ptr<ResidueSelector const>( "ResidueSelector", selector );
 }
 
 void LoopCM::build_mover( LoopsOP loops ) {
@@ -124,15 +124,15 @@ void LoopCM::build_mover( LoopsOP loops ) {
 
   if( algorithm_ == KIC ){
     if( style_ == PERTURB ){
-      mover_ = new perturb::LoopMover_Perturb_KIC( loops );
+      mover_ = LoopMoverOP( new perturb::LoopMover_Perturb_KIC( loops ) );
     } else if( style_ == REFINE ){
-      mover_ = new refine::LoopMover_Refine_KIC( loops );
+      mover_ = LoopMoverOP( new refine::LoopMover_Refine_KIC( loops ) );
     }
   } else if ( algorithm_ == CCD ){
     if( style_ == PERTURB ){
-      mover_ = new perturb::LoopMover_Perturb_CCD( loops );
+      mover_ = LoopMoverOP( new perturb::LoopMover_Perturb_CCD( loops ) );
     } else if( style_ == REFINE ){
-      mover_ = new refine::LoopMover_Refine_CCD( loops );
+      mover_ = LoopMoverOP( new refine::LoopMover_Refine_CCD( loops ) );
     }
   }
 
@@ -191,7 +191,7 @@ environment::claims::EnvClaims LoopCM::yield_claims( core::pose::Pose const& pos
   utility::vector1< bool > selection( pose.total_residue(), false );
   selector_->apply( pose, selection );
 
-  LoopsOP loops = new Loops( selection );
+  LoopsOP loops( new Loops( selection ) );
   if( loops->empty() ){
     std::ostringstream ss;
     ss << "The mover " << get_name() << " couldn't build a loops object from the selection it was given." << std::endl;
@@ -207,12 +207,12 @@ environment::claims::EnvClaims LoopCM::yield_claims( core::pose::Pose const& pos
              << "-" << std::min( pose.total_residue(), loop->stop() + LOOP_EXTEND ) << "." << std::endl;
     for( Size i = std::max( (Size) 1, loop->start()-LOOP_EXTEND );
          i <= std::min( pose.total_residue(), loop->stop()+LOOP_EXTEND ); ++i ){
-      pos_list.push_back( new core::environment::LocalPosition( "BASE", i ) );
+      pos_list.push_back( utility::pointer::shared_ptr<class core::environment::LocalPosition>( new core::environment::LocalPosition( "BASE", i ) ) );
     }
   }
 
   environment::ClaimingMoverOP this_ptr = utility::pointer::static_pointer_cast< ClaimingMover >( get_self_ptr() );
-  TorsionClaimOP torsion = new TorsionClaim( this_ptr, pos_list );
+  TorsionClaimOP torsion( new TorsionClaim( this_ptr, pos_list ) );
   torsion->claim_backbone( true );
   torsion->claim_sidechain( true );
   torsion->strength( MUST_CONTROL, DOES_NOT_CONTROL );
@@ -221,11 +221,11 @@ environment::claims::EnvClaims LoopCM::yield_claims( core::pose::Pose const& pos
 
   for( Size i = 1; i <= loops->num_loop(); ++i ){
     Loop const& loop = loops->loops()[i];
-    JumpClaimOP jump = new JumpClaim( this_ptr,
+    JumpClaimOP jump( new JumpClaim( this_ptr,
                                       get_name()+"_"+utility::to_string( i ),
                                       LocalPosition( "BASE", loop.start() ),
                                       LocalPosition( "BASE", loop.stop() ),
-                                      LocalPosition( "BASE", loop.cut() ) );
+                                      LocalPosition( "BASE", loop.cut() ) ) );
     jump->strength( EXCLUSIVE, EXCLUSIVE );
     jump->physical( false );
     claims.push_back( jump );
@@ -241,7 +241,7 @@ void LoopCM::passport_updated() {
     core::kinematics::MoveMapOP mm = passport()->render_movemap();
     mover_->false_movemap( mm );
   } else if( mover_ ) {
-    core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap();
+    core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap() );
     mm->set_bb( true );
     mm->set_chi( true );
     mover_->false_movemap( mm );

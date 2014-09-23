@@ -35,7 +35,7 @@ enum AlignMove {
 // simple little class to hold scores and store pointers to other Cells. forward declaration
 // for holding onto CellOPs
 class Cell;
-typedef utility::pointer::owning_ptr< Cell > CellOP;
+typedef utility::pointer::shared_ptr< Cell > CellOP;
 class Cell : public utility::pointer::ReferenceCount {
 
 public:
@@ -51,7 +51,7 @@ public:
 	{
 		score( sc );
 		came_from( ty );
-		backptr_ = 0;
+		backptr_.reset();
 	}
 
 	virtual ~Cell();
@@ -110,7 +110,7 @@ private:
 
 class DP_Matrix : public utility::pointer::ReferenceCount {
 
-	typedef utility::pointer::owning_ptr< Cell > CellOP;
+	typedef utility::pointer::shared_ptr< Cell > CellOP;
 	typedef utility::vector1< CellOP > Row;
 	typedef utility::vector1< utility::vector1< CellOP > > Matrix;
 
@@ -119,7 +119,7 @@ public:
 		for ( Size i = 1; i <= rs; ++i ) {
 			Row temp;
 			for ( Size j = 1; j <= cs; ++j ) {
-				CellOP c = new Cell( 0.0, end );
+				CellOP c( new Cell( 0.0, end ) );
 				c->x( i );
 				c->y( j );
 				temp.push_back( c );

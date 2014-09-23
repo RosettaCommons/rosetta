@@ -22,8 +22,8 @@ namespace movers{
 
 //Forwards and OP typedefs
 class LoopRemodel;
-typedef utility::pointer::owning_ptr< LoopRemodel > LoopRemodelOP;
-typedef utility::pointer::owning_ptr< LoopRemodel const > LoopRemodelCOP;
+typedef utility::pointer::shared_ptr< LoopRemodel > LoopRemodelOP;
+typedef utility::pointer::shared_ptr< LoopRemodel const > LoopRemodelCOP;
 
 }//movers
 }//protein_interface_design

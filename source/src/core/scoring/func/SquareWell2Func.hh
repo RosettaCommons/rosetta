@@ -35,7 +35,7 @@ public:
 	SquareWell2Func( Real const x0_in, Real const x_range_in, Real const well_depth_in ): x0_( x0_in ), x_range_(x_range_in), well_depth_( well_depth_in ){}
 
 	FuncOP
-	clone() const { return new SquareWell2Func( *this ); }
+	clone() const { return FuncOP( new SquareWell2Func( *this ) ); }
 
 	Real func( Real const x ) const;
 	Real dfunc( Real const x ) const;

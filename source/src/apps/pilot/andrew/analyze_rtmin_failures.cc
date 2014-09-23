@@ -124,7 +124,7 @@ int main( int argc, char * argv [] )
 
 	rotamer_set::RotamerSetCOP roi_rotset = rotsets->rotamer_set_for_residue( residue_of_interest );
 
-	kinematics::MoveMapOP mm = new kinematics::MoveMap; mm->set_chi( residue_of_interest, true );
+	kinematics::MoveMapOP mm( new kinematics::MoveMap ); mm->set_chi( residue_of_interest, true );
 	protocols::simple_moves::MinMover minmover( mm, sfxn, "dfpmin", 0.1, true, false, false );
 
 	//utility::vector1< ResidueOP > minimized_rotamers( roi_rotset->num_rotamers() );
@@ -147,13 +147,13 @@ int main( int argc, char * argv [] )
 
 		Real totalE = minpose.energies().total_energy();
 		if ( is_nat_rot( pose, minpose, residue_of_interest )) {
-			if ( best_natrot() == 0 || totalE < best_natrot_energy ) {
+			if ( best_natrot == 0 || totalE < best_natrot_energy ) {
 				best_natrot = minpose.residue( residue_of_interest ).clone();
 				best_natrot_energy = totalE;
 				best_natrot_energies = minpose.energies().total_energies();
 			}
 		} else {
-			if ( best_nonnatrot() == 0 || totalE < best_nonnatrot_energy ) {
+			if ( best_nonnatrot == 0 || totalE < best_nonnatrot_energy ) {
 				best_nonnatrot = minpose.residue( residue_of_interest ).clone();
 				best_nonnatrot_energy = totalE;
 				best_nonnatrot_energies = minpose.energies().total_energies();
@@ -162,11 +162,11 @@ int main( int argc, char * argv [] )
 	}
 
 	bool compare = true;
-	if ( best_natrot() == 0 ) {
+	if ( best_natrot == 0 ) {
 		compare = false;
 		std::cout << "No rotamer minimized to within the cutoff of the native rotamer!" << std::endl;
 	}
-	if ( best_nonnatrot() == 0 ) {
+	if ( best_nonnatrot == 0 ) {
 		compare = false;
 		std::cout << "No rotamer minimized away from within the cutoff of the native rotamer!" << std::endl;
 	}

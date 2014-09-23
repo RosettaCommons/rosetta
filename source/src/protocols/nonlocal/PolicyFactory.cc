@@ -55,9 +55,9 @@ PolicyOP PolicyFactory::get_policy(const std::string& policy_name,
   core::fragment::retain_top(num_fragments, reduced_fragments);
 
   if (type == "uniform") {
-    return new UniformPolicy(reduced_fragments);
+    return PolicyOP( new UniformPolicy(reduced_fragments) );
   } else if (type == "smooth") {
-    return new SmoothPolicy(reduced_fragments);
+    return PolicyOP( new SmoothPolicy(reduced_fragments) );
   } else {
     utility_exit_with_message("Invalid policy_name: " + policy_name);
   }

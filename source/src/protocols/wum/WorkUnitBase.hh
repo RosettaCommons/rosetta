@@ -49,7 +49,7 @@ class WorkUnitBase  : public utility::pointer::ReferenceCount   {
     virtual ~WorkUnitBase (){}
 
 		virtual protocols::wum::WorkUnitBaseOP clone() const {
-			return new WorkUnitBase( *this );
+			return protocols::wum::WorkUnitBaseOP( new WorkUnitBase( *this ) );
 		}
 
     /// @brief Remove all data, make sure that the memory is also cleared, hence the cals to reserve
@@ -202,7 +202,7 @@ class WorkUnit_Wait: public WorkUnitBase {
 		virtual ~WorkUnit_Wait(){}
 
 		virtual protocols::wum::WorkUnitBaseOP clone() const {
-			return new WorkUnit_Wait( *this );
+			return protocols::wum::WorkUnitBaseOP( new WorkUnit_Wait( *this ) );
 		}
 
     // @brief Run the workunit - overloaded by children of this class
@@ -226,7 +226,7 @@ class WorkUnit_SilentStructStore : public WorkUnitBase {
 		virtual ~WorkUnit_SilentStructStore(){}
 
 		virtual protocols::wum::WorkUnitBaseOP clone() const {
-			return new WorkUnit_SilentStructStore( *this );
+			return protocols::wum::WorkUnitBaseOP( new WorkUnit_SilentStructStore( *this ) );
 		}
 
     /// @brief This Work unit doesnt do *anything* - its just keeps the structures
@@ -264,7 +264,7 @@ class WorkUnit_MoverWrapper : public WorkUnit_SilentStructStore {
 		virtual ~WorkUnit_MoverWrapper(){}
 
 		virtual protocols::wum::WorkUnitBaseOP clone() const {
-			return new WorkUnit_MoverWrapper( *this );
+			return protocols::wum::WorkUnitBaseOP( new WorkUnit_MoverWrapper( *this ) );
 		}
 
     // @brief Run the workunit - overloaded by children of this class

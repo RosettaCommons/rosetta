@@ -72,7 +72,7 @@ private:
 
 };
 
-typedef utility::pointer::owning_ptr< BasePairMover > BasePairMoverOP;
+typedef utility::pointer::shared_ptr< BasePairMover > BasePairMoverOP;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -119,7 +119,7 @@ private:
 
 };
 
-typedef utility::pointer::owning_ptr< BaseStepMover > BaseStepMoverOP;
+typedef utility::pointer::shared_ptr< BaseStepMover > BaseStepMoverOP;
 
 } // ns dna
 } // ns devel

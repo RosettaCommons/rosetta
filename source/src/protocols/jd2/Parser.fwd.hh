@@ -20,8 +20,8 @@ namespace protocols {
 namespace jd2 {
 
 class Parser;
-typedef utility::pointer::owning_ptr< Parser > ParserOP;
-typedef utility::pointer::owning_ptr< Parser const > ParserCOP;
+typedef utility::pointer::shared_ptr< Parser > ParserOP;
+typedef utility::pointer::shared_ptr< Parser const > ParserCOP;
 
 }//jd2
 }//protocols

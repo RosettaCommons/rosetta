@@ -41,7 +41,7 @@ namespace simple_filters {
 static thread_local basic::Tracer sidechain_rmsd_filter_tracer( "protocols.simple_filters.SidechainRmsdFilter" );
 
 protocols::filters::FilterOP
-SidechainRmsdFilterCreator::create_filter() const { return new SidechainRmsdFilter; }
+SidechainRmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SidechainRmsdFilter ); }
 
 std::string
 SidechainRmsdFilterCreator::keyname() const { return "SidechainRmsd"; }
@@ -65,7 +65,7 @@ SidechainRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::D
 		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data_map);
 	}
 	else{
-		reference_pose_ = new core::pose::Pose( pose );
+		reference_pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
 		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() )
 			core::import_pose::pose_from_pdb( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] );
 	}
@@ -129,11 +129,11 @@ SidechainRmsdFilter::compute( core::pose::Pose const & pose ) const {
 }
 
 filters::FilterOP SidechainRmsdFilter::clone() const {
-	return new SidechainRmsdFilter( *this );
+	return filters::FilterOP( new SidechainRmsdFilter( *this ) );
 }
 
 filters::FilterOP SidechainRmsdFilter::fresh_instance() const{
-	return new SidechainRmsdFilter();
+	return filters::FilterOP( new SidechainRmsdFilter() );
 }
 
 }

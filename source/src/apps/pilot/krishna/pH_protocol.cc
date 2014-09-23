@@ -456,7 +456,7 @@ public:
 	virtual
 	protocols::moves::MoverOP
 	fresh_instance() const {
-		return new PhProtocol;
+		return protocols::moves::MoverOP( new PhProtocol );
 	}
 
 	virtual
@@ -489,7 +489,7 @@ private:
 	core::Size neighbor_count_;
 };
 
-typedef utility::pointer::owning_ptr< PhProtocol > PhProtocolOP;
+typedef utility::pointer::shared_ptr< PhProtocol > PhProtocolOP;
 
 ///////////////////////////////////////////////////////////////////////////////
 int
@@ -498,7 +498,7 @@ main( int argc, char * argv [] )
 	try{
 
 	devel::init(argc, argv);
-	PhProtocolOP pH_test(new PhProtocol);
+	PhProtocolOP pH_test( new PhProtocol );
 	protocols::jd2::JobDistributor::get_instance()->go(pH_test);
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

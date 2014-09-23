@@ -27,7 +27,7 @@ namespace features {
 AtomInResidueAtomInResiduePairFeaturesCreator::AtomInResidueAtomInResiduePairFeaturesCreator() {}
 AtomInResidueAtomInResiduePairFeaturesCreator::~AtomInResidueAtomInResiduePairFeaturesCreator() {}
 FeaturesReporterOP AtomInResidueAtomInResiduePairFeaturesCreator::create_features_reporter() const {
-	return new AtomInResidueAtomInResiduePairFeatures;
+	return FeaturesReporterOP( new AtomInResidueAtomInResiduePairFeatures );
 }
 
 std::string AtomInResidueAtomInResiduePairFeaturesCreator::type_name() const {

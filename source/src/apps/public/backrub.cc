@@ -256,11 +256,11 @@ public:
 	std::string get_name() const { return "BackrubProtocol"; }
 
 	virtual protocols::moves::MoverOP clone() const {
-		return new BackrubProtocol( *this );
+		return protocols::moves::MoverOP( new BackrubProtocol( *this ) );
 	}
 
 	virtual	 protocols::moves::MoverOP	fresh_instance() const {
-		return new BackrubProtocol;
+		return protocols::moves::MoverOP( new BackrubProtocol );
 	}
 
 	protocols::backrub::BackrubMoverOP get_backrub_mover() const;
@@ -279,9 +279,9 @@ private:
 };
 
 BackrubProtocol::BackrubProtocol(): Mover(),
-		score_fxn_(new core::scoring::ScoreFunction()),
-		main_task_factory_(new core::pack::task::TaskFactory()),
-		backrubmover_(new protocols::backrub::BackrubMover()),
+		score_fxn_(core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() )),
+		main_task_factory_(core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory() )),
+		backrubmover_(protocols::backrub::BackrubMoverOP( new protocols::backrub::BackrubMover() )),
 		smallmover_(protocols::simple_moves::SmallMover()),
 		sidechainmover_(protocols::simple_moves::sidechain_moves::SidechainMover()),
 		packrotamersmover_(protocols::simple_moves::PackRotamersMover())
@@ -292,15 +292,15 @@ BackrubProtocol::BackrubProtocol(): Mover(),
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 
-	main_task_factory_->push_back( new operation::InitializeFromCommandline );
+	main_task_factory_->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
 	if ( option[ packing::resfile ].user() ) {
-		main_task_factory_->push_back( new operation::ReadResfile );
+		main_task_factory_->push_back( TaskOperationCOP( new operation::ReadResfile ) );
 	} else {
-		operation::RestrictToRepackingOP rtrop = new operation::RestrictToRepacking;
+		operation::RestrictToRepackingOP rtrop( new operation::RestrictToRepacking );
 		main_task_factory_->push_back( rtrop );
 	}
 	// C-beta atoms should not be altered during packing because branching atoms are optimized
-	main_task_factory_->push_back( new operation::PreserveCBeta );
+	main_task_factory_->push_back( TaskOperationCOP( new operation::PreserveCBeta ) );
 
 	// set up the score function and add the bond angle energy term
 	score_fxn_ = core::scoring::get_score_function();
@@ -325,7 +325,7 @@ BackrubProtocol::BackrubProtocol(): Mover(),
 	// set up the SmallMover
 	smallmover_.nmoves(1);
 	if (option[ backrub::sm_prob ] > 0) {
-		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 		movemap->init_from_file(option[ in::file::movemap ]);
 		smallmover_.movemap(movemap);
 	}
@@ -422,7 +422,7 @@ void BackrubProtocol::apply( core::pose::Pose& pose ){
 	std::string output_tag(protocols::jd2::current_output_name());
 
 	// start with a fresh copy of the optimized pose
-	core::pose::PoseOP pose_copy(new core::pose::Pose(pose));
+	core::pose::PoseOP pose_copy( new core::pose::Pose(pose) );
 
 	// repack/redesign at the beginning if specified/necessary
 	if (initial_pack) {
@@ -433,9 +433,9 @@ void BackrubProtocol::apply( core::pose::Pose& pose ){
 		if (option[ backrub::minimize_movemap ].user()) {
 
 			// setup the MoveMaps
-			core::kinematics::MoveMapOP minimize_movemap = new core::kinematics::MoveMap;
+			core::kinematics::MoveMapOP minimize_movemap( new core::kinematics::MoveMap );
 			minimize_movemap->init_from_file(option[ backrub::minimize_movemap ]);
-			core::kinematics::MoveMapOP minimize_movemap_progressive = new core::kinematics::MoveMap;
+			core::kinematics::MoveMapOP minimize_movemap_progressive( new core::kinematics::MoveMap );
 
 			// setup the MinMover
 			protocols::simple_moves::MinMover minmover;
@@ -538,13 +538,13 @@ void BackrubProtocol::apply( core::pose::Pose& pose ){
 	}
 }
 
-typedef utility::pointer::owning_ptr<BackrubProtocol> BackrubProtocolOP;
+typedef utility::pointer::shared_ptr<BackrubProtocol> BackrubProtocolOP;
 
 void *
 my_main( void* )
 {
 
-	BackrubProtocolOP backrub_protocol = new BackrubProtocol;
+	BackrubProtocolOP backrub_protocol( new BackrubProtocol );
 	protocols::jd2::JobDistributor::get_instance()->go( backrub_protocol );
 
 	// write parameters for any sets of branching atoms for which there were not optimization coefficients

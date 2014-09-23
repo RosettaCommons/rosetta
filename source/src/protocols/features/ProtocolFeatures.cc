@@ -82,28 +82,28 @@ ProtocolFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	//if protocol id is set, don't autoincrement
 	if(protocol_id){
 
-		Column protocol_id("protocol_id", new DbInteger());
+		Column protocol_id("protocol_id", DbDataTypeOP( new DbInteger() ));
 		Schema protocols("protocols", PrimaryKey(protocol_id));
 
-		protocols.add_column( Column("specified_options", new DbText()) );
-		protocols.add_column( Column("command_line", new DbText()) );
-		protocols.add_column( Column("svn_url", new DbText()) );
-		protocols.add_column( Column("svn_version", new DbText()) );
-		protocols.add_column( Column("script", new DbText()) );
+		protocols.add_column( Column("specified_options", DbDataTypeOP( new DbText() )) );
+		protocols.add_column( Column("command_line", DbDataTypeOP( new DbText() )) );
+		protocols.add_column( Column("svn_url", DbDataTypeOP( new DbText() )) );
+		protocols.add_column( Column("svn_version", DbDataTypeOP( new DbText() )) );
+		protocols.add_column( Column("script", DbDataTypeOP( new DbText() )) );
 		protocols.write(db_session);
 	}
 
 	//if protocol id is not set, don't autoincrement
 	else{
 
-		Column protocol_id("protocol_id", new DbInteger(), false /*not null*/, true /*autoincrement*/);
+		Column protocol_id("protocol_id", DbDataTypeOP( new DbInteger() ), false /*not null*/, true /*autoincrement*/);
 		Schema protocols("protocols", PrimaryKey(protocol_id));
 
-		protocols.add_column( Column("specified_options", new DbText()) );
-		protocols.add_column( Column("command_line", new DbText()) );
-		protocols.add_column( Column("svn_url", new DbText()) );
-		protocols.add_column( Column("svn_version", new DbText()) );
-		protocols.add_column( Column("script", new DbText()) );
+		protocols.add_column( Column("specified_options", DbDataTypeOP( new DbText() )) );
+		protocols.add_column( Column("command_line", DbDataTypeOP( new DbText() )) );
+		protocols.add_column( Column("svn_url", DbDataTypeOP( new DbText() )) );
+		protocols.add_column( Column("svn_version", DbDataTypeOP( new DbText() )) );
+		protocols.add_column( Column("script", DbDataTypeOP( new DbText() )) );
 		protocols.write(db_session);
 	}
 }

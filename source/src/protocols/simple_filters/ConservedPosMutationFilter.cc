@@ -45,7 +45,7 @@ namespace simple_filters {
 
 ConservedPosMutationFilter::ConservedPosMutationFilter() :
 	parent("ConservedPosMutationFilter"),
-	conserved_pos_taskop_(new toolbox::task_operations::RestrictConservedLowDdgOperation()),
+	conserved_pos_taskop_(toolbox::task_operations::RestrictConservedLowDdgOperationOP( new toolbox::task_operations::RestrictConservedLowDdgOperation() )),
 	max_allowed_conserved_pos_mutations_(0)
 {
 }
@@ -54,11 +54,11 @@ ConservedPosMutationFilter::~ConservedPosMutationFilter(){}
 
 filters::FilterOP
 ConservedPosMutationFilter::clone() const {
-	return new ConservedPosMutationFilter( *this ); }
+	return filters::FilterOP( new ConservedPosMutationFilter( *this ) ); }
 
 filters::FilterOP
 ConservedPosMutationFilter::fresh_instance() const {
-	return new ConservedPosMutationFilter(); }
+	return filters::FilterOP( new ConservedPosMutationFilter() ); }
 
 
 bool
@@ -111,7 +111,7 @@ ConservedPosMutationFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datac
 
 
 filters::FilterOP
-ConservedPosMutationFilterCreator::create_filter() const { return new ConservedPosMutationFilter; }
+ConservedPosMutationFilterCreator::create_filter() const { return filters::FilterOP( new ConservedPosMutationFilter ); }
 
 std::string
 ConservedPosMutationFilterCreator::keyname() const { return "ConservedPosMutationFilter"; }

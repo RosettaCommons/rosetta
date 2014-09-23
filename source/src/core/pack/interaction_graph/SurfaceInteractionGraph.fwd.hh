@@ -31,8 +31,8 @@ template < typename V, typename E, typename G > class SurfaceInteractionGraph;
 typedef SurfaceInteractionGraph< PDNode, PDEdge, PDInteractionGraph > PDSurfaceInteractionGraph;
 typedef SurfaceInteractionGraph< LinearMemNode, LinearMemEdge, LinearMemoryInteractionGraph > LinearMemorySurfaceInteractionGraph;
 
-typedef utility::pointer::owning_ptr< PDSurfaceInteractionGraph > PDSurfaceInteractionGraphOP;
-typedef utility::pointer::owning_ptr< LinearMemorySurfaceInteractionGraph > LinearMemorySurfaceInteractionGraphOP;
+typedef utility::pointer::shared_ptr< PDSurfaceInteractionGraph > PDSurfaceInteractionGraphOP;
+typedef utility::pointer::shared_ptr< LinearMemorySurfaceInteractionGraph > LinearMemorySurfaceInteractionGraphOP;
 
 
 }

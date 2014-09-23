@@ -78,8 +78,8 @@ LoopClosure::LoopClosure(
 ) : loop_ ( loop_def ),
     scorefxn_( scorefxn ),
     movemap_( movemap ),
-    frag_mover_( NULL ),
-    ccd_mover_( NULL ),
+    frag_mover_( /* NULL */ ),
+    ccd_mover_( /* NULL */ ),
     fragset_( fragset ),
 		bEnableCcdMoves_( loop_def.size() >= 10 ? true : false ),
 		bRampChainbreak_( false )
@@ -90,11 +90,11 @@ LoopClosure::LoopClosure(
 }
 
 LoopClosure::LoopClosure() :
-  scorefxn_( NULL ),
-  movemap_( NULL ),
-  frag_mover_( NULL ),
-  ccd_mover_( NULL ),
-  fragset_( NULL ),
+  scorefxn_( /* NULL */ ),
+  movemap_( /* NULL */ ),
+  frag_mover_( /* NULL */ ),
+  ccd_mover_( /* NULL */ ),
+  fragset_( /* NULL */ ),
 	bEnableCcdMoves_( false )
 {
   set_cycles( 1.0 );
@@ -113,7 +113,7 @@ void LoopClosure::init() {
 	runtime_assert( scorefxn_ != 0 );
 
 	//make movemap that only allows bb moves within loop ( if master movemap allows the move, too ).
-	kinematics::MoveMapOP loop_movemap = new kinematics::MoveMap;
+	kinematics::MoveMapOP loop_movemap( new kinematics::MoveMap );
 	loop_movemap->set_bb( false );
 	for ( Size pos = loop_.start(); pos <= loop_.stop(); pos ++ ) {
 		if ( movemap_->get_bb( pos ) ) loop_movemap->set_bb( pos, true );
@@ -121,17 +121,17 @@ void LoopClosure::init() {
 	set_movemap( loop_movemap );
 
   simple_moves::ClassicFragmentMoverOP ptr;
-  frag_mover_ = ptr = new simple_moves::ClassicFragmentMover( fragset_, movemap_ );
+  frag_mover_ = ptr = simple_moves::ClassicFragmentMoverOP( new simple_moves::ClassicFragmentMover( fragset_, movemap_ ) );
   ptr->enable_end_bias_check( false ); //uniform sampling
 	ptr->set_check_ss( false );
 	if ( bEnableCcdMoves_ ) {
-		ccd_mover_ = new CCDLoopClosureMover( loop_, movemap_ );
+		ccd_mover_ = moves::MoverOP( new CCDLoopClosureMover( loop_, movemap_ ) );
 	}
 	runtime_assert( loop_.size() > 0 );
   init_mc();
   // put a template frame at top of list -- will always catch the fragments according to closure_frames.front()
   using namespace fragment;
-  closure_frame_ = new Frame( loop_.start(), FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), loop_.size() ) ) );
+  closure_frame_ = core::fragment::FrameOP( new Frame( loop_.start(), FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), loop_.size() ) ) ) );
 }
 
 LoopClosure::~LoopClosure() {}
@@ -146,7 +146,7 @@ void LoopClosure::set_nr_fragments( core::Size nr_fragments ) {
 }
 
 void LoopClosure::init_mc() {
-  mc_ = new moves::MonteCarlo( *scorefxn_, temperature_ );
+  mc_ = moves::MonteCarloOP( new moves::MonteCarlo( *scorefxn_, temperature_ ) );
 	final_weight_linear_chainbreak_ = scorefxn_->get_weight( scoring::linear_chainbreak );
 	final_weight_overlap_chainbreak_ = scorefxn_->get_weight( scoring::overlap_chainbreak );
 }
@@ -215,7 +215,7 @@ LoopClosure::do_frag_cycles( pose::Pose &pose ) const {
   moves::TrialMover frag_trial( frag_mover_, mc_ );
 
   moves::TrialMoverOP ccd_trial;
-  if ( ccd_mover_ ) ccd_trial = new moves::TrialMover( ccd_mover_, mc_ );
+  if ( ccd_mover_ ) ccd_trial = moves::TrialMoverOP( new moves::TrialMover( ccd_mover_, mc_ ) );
 	if ( bRampChainbreak_ ) ramp_chainbreak( Size(1), cycles_ );
   for ( Size i = 1; i <= cycles_; i++ ) {
 	  frag_trial.apply( pose );

@@ -519,7 +519,7 @@ LKB_ResidueInfo::LKB_ResidueInfo( LKB_ResidueInfo const & src ):
 basic::datacache::CacheableDataOP
 LKB_ResidueInfo::clone() const
 {
-	return new LKB_ResidueInfo( *this );
+	return basic::datacache::CacheableDataOP( new LKB_ResidueInfo( *this ) );
 }
 
 
@@ -528,14 +528,14 @@ LKB_ResiduesInfo::LKB_ResiduesInfo( LKB_ResiduesInfo const & src ):
 {
 	residues_info_.clear();
 	for ( Size i=1; i<= src.size(); ++i ) {
-		residues_info_.push_back( new LKB_ResidueInfo( src[i] ) );
+		residues_info_.push_back( utility::pointer::shared_ptr<class core::scoring::methods::LKB_ResidueInfo>( new LKB_ResidueInfo( src[i] ) ) );
 	}
 }
 
 basic::datacache::CacheableDataOP
 LKB_ResiduesInfo::clone() const
 {
-	return new LKB_ResiduesInfo( *this );
+	return basic::datacache::CacheableDataOP( new LKB_ResiduesInfo( *this ) );
 }
 
 

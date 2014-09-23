@@ -75,7 +75,7 @@ SidechainMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SidechainMoverCreator::create_mover() const {
-	return new SidechainMover;
+	return protocols::moves::MoverOP( new SidechainMover );
 }
 
 std::string
@@ -85,7 +85,7 @@ SidechainMoverCreator::mover_name() {
 
 SidechainMover::SidechainMover():
 		rotamer_library_( core::pack::dunbrack::RotamerLibrary::get_instance() ),
-		pose_(0),
+		pose_(/* 0 */),
 		prob_uniform_(0.1),
 		prob_withinrot_(0.0),
 		prob_random_pert_to_current_(0.0),
@@ -96,7 +96,7 @@ SidechainMover::SidechainMover():
 		next_resnum_(0),
 		last_proposal_density_ratio_(1),
 		task_initialized_(false),
-		scratch_( new core::pack::dunbrack::RotamerLibraryScratchSpace ),
+		scratch_( core::pack::dunbrack::RotamerLibraryScratchSpaceOP( new core::pack::dunbrack::RotamerLibraryScratchSpace ) ),
 		temperature0_(0.56),
 		sampling_temperature_(0.56)
 {}
@@ -105,7 +105,7 @@ SidechainMover::SidechainMover(
 	core::pack::dunbrack::RotamerLibrary const & rotamer_library
 ):
 	rotamer_library_(rotamer_library),
-	pose_(0),
+	pose_(/* 0 */),
 	prob_uniform_(0.1),
 	prob_withinrot_(0.0),
 	prob_random_pert_to_current_(0.0),
@@ -116,7 +116,7 @@ SidechainMover::SidechainMover(
 	next_resnum_(0),
 	last_proposal_density_ratio_(1),
 	task_initialized_(false),
-	scratch_( new core::pack::dunbrack::RotamerLibraryScratchSpace ),
+	scratch_( core::pack::dunbrack::RotamerLibraryScratchSpaceOP( new core::pack::dunbrack::RotamerLibraryScratchSpace ) ),
 	temperature0_(0.56),
 	sampling_temperature_(0.56)
 {}
@@ -148,10 +148,10 @@ SidechainMover::SidechainMover(
 	temperature0_(0.56),
 	sampling_temperature_(0.56)
 {
-	if (mover.task_factory_) task_factory_ = new core::pack::task::TaskFactory(*mover.task_factory_);
+	if (mover.task_factory_) task_factory_ = core::pack::task::TaskFactoryCOP( new core::pack::task::TaskFactory(*mover.task_factory_) );
 	if (mover.task_) task_ = mover.task_->clone();
-	if (mover.pose_) pose_ = new core::pose::Pose(*mover.pose_);
-	if (mover.scratch_) scratch_ = new core::pack::dunbrack::RotamerLibraryScratchSpace(*mover.scratch_);
+	if (mover.pose_) pose_ = core::pose::PoseOP( new core::pose::Pose(*mover.pose_) );
+	if (mover.scratch_) scratch_ = core::pack::dunbrack::RotamerLibraryScratchSpaceOP( new core::pack::dunbrack::RotamerLibraryScratchSpace(*mover.scratch_) );
 }
 
 SidechainMover::~SidechainMover() {}
@@ -159,7 +159,7 @@ SidechainMover::~SidechainMover() {}
 protocols::moves::MoverOP
 SidechainMover::clone() const
 {
-	return new protocols::simple_moves::sidechain_moves::SidechainMover(*this);
+	return protocols::moves::MoverOP( new protocols::simple_moves::sidechain_moves::SidechainMover(*this) );
 }
 
 void
@@ -189,7 +189,7 @@ SidechainMover::parse_my_tag(
 
 	} else {
 		using core::pack::task::operation::TaskOperationCOP;
-		new_task_factory->push_back( new core::pack::task::operation::RestrictToRepacking );
+		new_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
 	}
 
 	task_factory_ = new_task_factory;
@@ -222,7 +222,7 @@ SidechainMover::init_task(
 	/// apl -- is it reasonable to first check the task to see if infact we are designing?
 	/// copying a pose is expensive -- try to avoid it if possible.
 	if( !pose_ ){ //pose not initialized
-		pose_ = new core::pose::Pose( pose ); //need this in case we're designing as well. ek 4/28/10
+		pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) ); //need this in case we're designing as well. ek 4/28/10
 	}
 
 
@@ -618,7 +618,7 @@ SidechainMover::apply(
 	} else {
 		resnum = packed_residues_[ numeric::random::rg().random_range(1, packed_residues_.size()) ];
 	}
-	conformation::ResidueOP newresidue = new conformation::Residue( pose.residue( resnum ) );
+	conformation::ResidueOP newresidue( new conformation::Residue( pose.residue( resnum ) ) );
 	if ( TR.visible( basic::t_debug )) {
 		TR.Debug << "old residue chi is : ";
 		for (Size i = 1; i <= newresidue->nchi(); ++i) TR.Debug << " " << newresidue->chi(i);

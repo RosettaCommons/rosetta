@@ -60,7 +60,7 @@ public:
 		core::Real rswitch=0.5;
 
 		// func points to the BoundConstraint (Func)
-		BoundFuncOP func(new BoundFunc(lb,ub,sd,rswitch,type));
+		BoundFuncOP func( new BoundFunc(lb,ub,sd,rswitch,type) );
 
 		// Need to give some test input
 		std::stringstream test_input;
@@ -243,7 +243,7 @@ public:
 		core::Real sd=1.0;
 		std::string type="";
 		core::Real rswitch=0.5;
-		core::scoring::constraints::BoundFuncOP func(new core::scoring::constraints::BoundFunc(lb,ub,sd,rswitch,type));
+		core::scoring::constraints::BoundFuncOP func( new core::scoring::constraints::BoundFunc(lb,ub,sd,rswitch,type) );
 
 		std::stringstream test_stream, compare_stream;
 

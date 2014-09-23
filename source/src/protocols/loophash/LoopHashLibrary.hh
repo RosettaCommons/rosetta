@@ -74,7 +74,7 @@ public:
 	virtual void apply( core::pose::Pose& pose );
 
 	virtual protocols::moves::MoverOP clone() const {
-		return new LoopHashLibrary( *this );
+		return protocols::moves::MoverOP( new LoopHashLibrary( *this ) );
 	}
 
 
@@ -83,7 +83,7 @@ public:
 	}
 
 	virtual	protocols::moves::MoverOP	fresh_instance() const {
-		return new LoopHashLibrary;
+		return protocols::moves::MoverOP( new LoopHashLibrary );
 	}
 
 

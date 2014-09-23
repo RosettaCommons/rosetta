@@ -23,8 +23,8 @@ namespace match {
 namespace output {
 
 class PoseInserter;
-typedef utility::pointer::owning_ptr< PoseInserter > PoseInserterOP;
-typedef utility::pointer::owning_ptr< PoseInserter const > PoseInserterCOP;
+typedef utility::pointer::shared_ptr< PoseInserter > PoseInserterOP;
+typedef utility::pointer::shared_ptr< PoseInserter const > PoseInserterCOP;
 
 }
 }

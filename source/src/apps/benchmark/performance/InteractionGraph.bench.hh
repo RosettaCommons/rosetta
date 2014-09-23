@@ -68,9 +68,9 @@ public:
 	{}
 
 	virtual void setUp() {
-		pose_ = new core::pose::Pose;
+		pose_ = core::pose::PoseOP( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*pose_, "test_in.pdb");
-		scorefxn_ = new core::scoring::ScoreFunction;
+		scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
 		switch ( benchtype_ ) {
 			case interaction_graph_perfbench_linmemig_score12 :
 				setup_for_score12();
@@ -113,7 +113,7 @@ public:
 		using namespace core::pack::rotamer_set;
 
 		PackerEnergy bestenergy;
-		FixbbRotamerSetsCOP rsets = static_cast< FixbbRotamerSets const * > ( rotsets_() );
+		FixbbRotamerSetsCOP rsets = utility::pointer::static_pointer_cast< core::pack::rotamer_set::FixbbRotamerSets const > ( rotsets_ );
 		ObjexxFCL::FArray1D_int bestrotamer_at_seqpos( pose_->total_residue(), 0 );
 		ObjexxFCL::FArray1D_int current_rot_index( pose_->total_residue(), 0 );
 		ObjexxFCL::FArray1D_float rot_freq( rotsets_->nrotamers(), 0.0f );
@@ -155,12 +155,12 @@ public:
 	}
 
 	virtual void tearDown() {
-		pose_ = 0;
-		scorefxn_ = 0;
-		ig_ = 0;
-		task_ = 0;
-		rotsets_ = 0;
-		packer_neighbor_graph_ = 0;
+		pose_.reset();
+		scorefxn_.reset();
+		ig_.reset();
+		task_.reset();
+		rotsets_.reset();
+		packer_neighbor_graph_.reset();
 	}
 
 	void setup_for_score12() {
@@ -344,7 +344,7 @@ public:
 			task_->designing_residues()
 		);
 		packer_neighbor_graph_ = create_packer_graph( *pose_, *scorefxn_, task_ );
-		rotsets_ = new RotamerSets;
+		rotsets_ = core::pack::rotamer_set::RotamerSetsOP( new RotamerSets );
 		rotsets_->set_task( task_ );
 		rotsets_->build_rotamers( *pose_, *scorefxn_, packer_neighbor_graph_ );
 		rotsets_->prepare_sets_for_packing( *pose_, *scorefxn_ );
@@ -355,7 +355,7 @@ public:
 		task_ = redesign_20();
 		prepare_rotamer_sets();
 
-		LinearMemoryInteractionGraphOP lmig = new LinearMemoryInteractionGraph( task_->num_to_be_packed() );
+		LinearMemoryInteractionGraphOP lmig( new LinearMemoryInteractionGraph( task_->num_to_be_packed() ) );
 		lmig->set_pose( *pose_ );
 		lmig->set_score_function( *scorefxn_ );
 		lmig->set_recent_history_size( task_->linmem_ig_history_size() );
@@ -367,7 +367,7 @@ public:
 		using namespace core::pack::interaction_graph;
 		task_ = redesign_20();
 		prepare_rotamer_sets();
-		ig_ = new PDInteractionGraph( task_->num_to_be_packed() );
+		ig_ = core::pack::interaction_graph::InteractionGraphBaseOP( new PDInteractionGraph( task_->num_to_be_packed() ) );
 		rotsets_->compute_energies( *pose_, *scorefxn_, packer_neighbor_graph_, ig_ );
 	}
 
@@ -377,7 +377,7 @@ public:
 		task_ = redesign_20();
 		for ( Size ii = 1; ii <= 20; ++ii ) task_->nonconst_residue_task( ii ).restrict_to_repacking();
 		prepare_rotamer_sets();
-		ig_ = new DensePDInteractionGraph( task_->num_to_be_packed() );
+		ig_ = core::pack::interaction_graph::InteractionGraphBaseOP( new DensePDInteractionGraph( task_->num_to_be_packed() ) );
 		rotsets_->compute_energies( *pose_, *scorefxn_, packer_neighbor_graph_, ig_ );
 
 	}

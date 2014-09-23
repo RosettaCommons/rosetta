@@ -57,7 +57,7 @@ methods::EnergyMethodOP
 pHEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new pHEnergy;
+	return methods::EnergyMethodOP( new pHEnergy );
 }
 
 ScoreTypes
@@ -86,7 +86,7 @@ pHEnergy::set_pH ( core::Real new_pH_ )
 EnergyMethodOP
 pHEnergy::clone() const
 {
-	return new pHEnergy;
+	return EnergyMethodOP( new pHEnergy );
 }
 
 

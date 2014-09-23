@@ -39,7 +39,7 @@ namespace simple_filters {
 static thread_local basic::Tracer TR( "protocols.simple_filters.TotalSasaFilter" );
 
 protocols::filters::FilterOP
-TotalSasaFilterCreator::create_filter() const { return new TotalSasaFilter; }
+TotalSasaFilterCreator::create_filter() const { return protocols::filters::FilterOP( new TotalSasaFilter ); }
 
 std::string
 TotalSasaFilterCreator::keyname() const { return "TotalSasa"; }
@@ -67,12 +67,12 @@ TotalSasaFilter::~TotalSasaFilter(){}
 
 filters::FilterOP
 TotalSasaFilter::clone() const{
-	return new TotalSasaFilter( *this );
+	return filters::FilterOP( new TotalSasaFilter( *this ) );
 }
 
 filters::FilterOP
 TotalSasaFilter::fresh_instance() const{
-	return new TotalSasaFilter;
+	return filters::FilterOP( new TotalSasaFilter );
 }
 
 core::pack::task::TaskFactoryOP

@@ -85,7 +85,7 @@ static thread_local basic::Tracer TR( "HelixNCapperMover" );
 			utility_exit_with_message("Error: missing svm model for ncap classification in database!");
 		}
 
-		ncap_model_ = Svm_rosettaOP(new Svm_rosetta( ncap_svm_filename.c_str() ));
+		ncap_model_ = Svm_rosettaOP( new Svm_rosetta( ncap_svm_filename.c_str() ) );
 
 		return;
 	}

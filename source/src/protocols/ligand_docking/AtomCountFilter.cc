@@ -72,7 +72,7 @@ AtomCountFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 }
 
 protocols::filters::FilterOP
-AtomCountFilterCreator::create_filter() const { return new AtomCountFilter; }
+AtomCountFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AtomCountFilter ); }
 
 std::string
 AtomCountFilterCreator::keyname() const { return "AtomCount"; }

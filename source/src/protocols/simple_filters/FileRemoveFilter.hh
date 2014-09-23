@@ -35,10 +35,10 @@ public:
 	FileRemoveFilter();
 	bool apply( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const {
-		return new FileRemoveFilter( *this );
+		return filters::FilterOP( new FileRemoveFilter( *this ) );
 	}
 	filters::FilterOP fresh_instance() const{
-		return new FileRemoveFilter();
+		return filters::FilterOP( new FileRemoveFilter() );
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;

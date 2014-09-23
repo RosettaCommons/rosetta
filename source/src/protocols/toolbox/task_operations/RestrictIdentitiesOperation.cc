@@ -70,13 +70,13 @@ RestrictIdentitiesOperation::~RestrictIdentitiesOperation() {}
 core::pack::task::operation::TaskOperationOP
 RestrictIdentitiesOperationCreator::create_task_operation() const
 {
-	return new RestrictIdentitiesOperation;
+	return core::pack::task::operation::TaskOperationOP( new RestrictIdentitiesOperation );
 }
 
 // @brief copy constructor
 core::pack::task::operation::TaskOperationOP RestrictIdentitiesOperation::clone() const
 {
-	return new RestrictIdentitiesOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new RestrictIdentitiesOperation( *this ) );
 }
 
 // @brief getters

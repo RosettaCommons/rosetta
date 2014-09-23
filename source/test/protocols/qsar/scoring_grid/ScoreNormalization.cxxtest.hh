@@ -72,8 +72,8 @@ public:
 		core::chemical::ResidueType ser_type = fa_std_set->name_map("SER");
 		core::chemical::ResidueType gly_type = fa_std_set->name_map("GLY");
 
-		residue_list.push_back(new core::conformation::Residue(ser_type,false));
-		residue_list.push_back(new core::conformation::Residue(gly_type,false));
+		residue_list.push_back(utility::pointer::shared_ptr<const class core::conformation::Residue>( new core::conformation::Residue(ser_type,false) ));
+		residue_list.push_back(utility::pointer::shared_ptr<const class core::conformation::Residue>( new core::conformation::Residue(gly_type,false) ));
 
 		ScoreNormalizationOP normalization_class =
 			protocols::qsar::scoring_grid::get_score_normalization_function("HeavyAtomNormalization");
@@ -95,8 +95,8 @@ public:
 		core::chemical::ResidueType ser_type = fa_std_set->name_map("SER");
 		core::chemical::ResidueType gly_type = fa_std_set->name_map("GLY");
 
-		residue_list.push_back(new core::conformation::Residue(ser_type,false));
-		residue_list.push_back(new core::conformation::Residue(gly_type,false));
+		residue_list.push_back(utility::pointer::shared_ptr<const class core::conformation::Residue>( new core::conformation::Residue(ser_type,false) ));
+		residue_list.push_back(utility::pointer::shared_ptr<const class core::conformation::Residue>( new core::conformation::Residue(gly_type,false) ));
 
 		ScoreNormalizationOP normalization_class =
 			protocols::qsar::scoring_grid::get_score_normalization_function("AllAtomNormalization");
@@ -118,8 +118,8 @@ public:
 		core::chemical::ResidueType ser_type = fa_std_set->name_map("SER");
 		core::chemical::ResidueType gly_type = fa_std_set->name_map("GLY");
 
-		residue_list.push_back(new core::conformation::Residue(ser_type,false));
-		residue_list.push_back(new core::conformation::Residue(gly_type,false));
+		residue_list.push_back(utility::pointer::shared_ptr<const class core::conformation::Residue>( new core::conformation::Residue(ser_type,false) ));
+		residue_list.push_back(utility::pointer::shared_ptr<const class core::conformation::Residue>( new core::conformation::Residue(gly_type,false) ));
 
 		ScoreNormalizationOP normalization_class =
 			protocols::qsar::scoring_grid::get_score_normalization_function("ChiAngleNormalization");
@@ -141,8 +141,8 @@ public:
 		core::chemical::ResidueType ser_type = fa_std_set->name_map("SER");
 		core::chemical::ResidueType gly_type = fa_std_set->name_map("GLY");
 
-		residue_list.push_back(new core::conformation::Residue(ser_type,false));
-		residue_list.push_back(new core::conformation::Residue(gly_type,false));
+		residue_list.push_back(utility::pointer::shared_ptr<const class core::conformation::Residue>( new core::conformation::Residue(ser_type,false) ));
+		residue_list.push_back(utility::pointer::shared_ptr<const class core::conformation::Residue>( new core::conformation::Residue(gly_type,false) ));
 
 		ScoreNormalizationOP normalization_class =
 			protocols::qsar::scoring_grid::get_score_normalization_function("MolecularWeightNormalization");

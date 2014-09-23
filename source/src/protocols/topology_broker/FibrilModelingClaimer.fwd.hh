@@ -27,11 +27,11 @@ namespace topology_broker {
 class FibrilModelingClaimer;
 
 // Types
-typedef  utility::pointer::owning_ptr< FibrilModelingClaimer >  FibrilModelingClaimerOP;
-typedef  utility::pointer::owning_ptr< FibrilModelingClaimer const >  FibrilModelingClaimerCOP;
+typedef  utility::pointer::shared_ptr< FibrilModelingClaimer >  FibrilModelingClaimerOP;
+typedef  utility::pointer::shared_ptr< FibrilModelingClaimer const >  FibrilModelingClaimerCOP;
 
-typedef  utility::pointer::access_ptr< FibrilModelingClaimer >  FibrilModelingClaimerAP;
-typedef  utility::pointer::access_ptr< FibrilModelingClaimer const >  FibrilModelingClaimerCAP;
+typedef  utility::pointer::weak_ptr< FibrilModelingClaimer >  FibrilModelingClaimerAP;
+typedef  utility::pointer::weak_ptr< FibrilModelingClaimer const >  FibrilModelingClaimerCAP;
 
 
 } // namespace kinematics

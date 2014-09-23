@@ -29,19 +29,19 @@ class ReplicateTask;
 
 
 /// @brief ReplicateTask owning pointer
-typedef utility::pointer::owning_ptr< ReplicateTask > ReplicateTaskOP;
+typedef utility::pointer::shared_ptr< ReplicateTask > ReplicateTaskOP;
 
 
 /// @brief ReplicateTask const owning pointer
-typedef utility::pointer::owning_ptr< ReplicateTask const > ReplicateTaskCOP;
+typedef utility::pointer::shared_ptr< ReplicateTask const > ReplicateTaskCOP;
 
 
 /// @brief ReplicateTask owning pointer
-typedef utility::pointer::access_ptr< ReplicateTask > ReplicateTaskAP;
+typedef utility::pointer::weak_ptr< ReplicateTask > ReplicateTaskAP;
 
 
 /// @brief ReplicateTask const owning pointer
-typedef utility::pointer::access_ptr< ReplicateTask const > ReplicateTaskCAP;
+typedef utility::pointer::weak_ptr< ReplicateTask const > ReplicateTaskCAP;
 
 
 } // namespace operation

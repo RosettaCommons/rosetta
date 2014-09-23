@@ -20,8 +20,8 @@ namespace core {
 namespace sequence {
 
 class ChemicalShiftSequence;
-typedef utility::pointer::owning_ptr< ChemicalShiftSequence > ChemicalShiftSequenceOP;
-typedef utility::pointer::owning_ptr< ChemicalShiftSequence const > ChemicalShiftSequenceCOP;
+typedef utility::pointer::shared_ptr< ChemicalShiftSequence > ChemicalShiftSequenceOP;
+typedef utility::pointer::shared_ptr< ChemicalShiftSequence const > ChemicalShiftSequenceCOP;
 
 } // sequence
 } // core

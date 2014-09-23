@@ -78,8 +78,8 @@ extern ResidualDipolarCouplingRigidSegmentsCOP retrieve_RDC_segments_from_pose(
 		core::pose::Pose const& pose) {
 	//using core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_SEGMENTS_DATA;
 	if (pose.data().has(core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_SEGMENTS_DATA)) {
-		return static_cast<ResidualDipolarCouplingRigidSegments const *> (pose.data().get_const_ptr(
-				core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_SEGMENTS_DATA)());
+		return utility::pointer::static_pointer_cast< protocols::scoring::ResidualDipolarCouplingRigidSegments const > ( pose.data().get_const_ptr(
+				core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_SEGMENTS_DATA) );
 	};
 	return NULL;
 }
@@ -87,8 +87,8 @@ extern ResidualDipolarCouplingRigidSegmentsCOP retrieve_RDC_segments_from_pose(
 extern ResidualDipolarCouplingRigidSegmentsOP retrieve_RDC_segments_from_pose(core::pose::Pose& pose) {
 	//using core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_SEGMENTS_DATA;
 	if (pose.data().has(core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_SEGMENTS_DATA)) {
-		return static_cast<ResidualDipolarCouplingRigidSegments*> (pose.data().get_ptr(
-				core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_SEGMENTS_DATA)());
+		return utility::pointer::static_pointer_cast< protocols::scoring::ResidualDipolarCouplingRigidSegments > ( pose.data().get_ptr(
+				core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_SEGMENTS_DATA) );
 	};
 	return NULL;
 }
@@ -255,7 +255,7 @@ extern ResidualDipolarCouplingRigidSegmentsOP retrieve_RDC_segments_from_pose(co
 
 		//create new RDC objects for all Segments
 		for ( RDC_lines_collection::iterator it=rdc_segm_data.begin(); it!=rdc_segm_data.end(); ++it ) {
-			rdc_segments_.push_back( new core::scoring::ResidualDipolarCoupling( *it ) );
+			rdc_segments_.push_back( utility::pointer::shared_ptr<class core::scoring::ResidualDipolarCoupling>( new core::scoring::ResidualDipolarCoupling( *it ) ) );
 		}
 	}
 

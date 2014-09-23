@@ -170,7 +170,7 @@ FlexbbRotamerSets::set_frames(
 	for( core::Size ii = 1; ii <= nmoltenres_; ++ii){
 
 		if( conformations_for_flexible_segments_[ ii ].size() == 0 ) { //means this was not part of any fragment
-			conformations_for_flexible_segments_[ ii ].push_back( new core::conformation::Residue( pose.residue( moltenres_2_resid_[ ii ] ) ) );
+			conformations_for_flexible_segments_[ ii ].push_back( utility::pointer::shared_ptr<const class core::conformation::Residue>( new core::conformation::Residue( pose.residue( moltenres_2_resid_[ ii ] ) ) ) );
 		}
 	} //loop over moltenres
 
@@ -251,7 +251,7 @@ FlexbbRotamerSets::build_rotamers(
 		for( utility::vector1< core::conformation::ResidueCOP >::const_iterator res_it = conformations_for_flexible_segments_[ ii ].begin();
 				 res_it != conformations_for_flexible_segments_[ ii ].end(); ++res_it){
 
-			FlexbbRotamerSetOP rotset = new FlexbbRotamerSet();
+			FlexbbRotamerSetOP rotset( new FlexbbRotamerSet() );
 			rotset->set_owner( get_self_weak_ptr() );
 			rotset->set_resid( cur_resid );
 			rotset->set_existing_residue( *res_it );
@@ -483,7 +483,7 @@ FlexbbRotamerSets::build_residue_vector_from_fragment(
 
 	for( core::Size rescount = frame->start(); rescount <= frame->end(); ++rescount ){
 
-		fragment_res.push_back( new core::conformation::Residue ( pose.residue( rescount ) ) );
+		fragment_res.push_back( utility::pointer::shared_ptr<class core::conformation::Residue>( new core::conformation::Residue ( pose.residue( rescount ) ) ) );
 	}
 } //build residue vector from fragment
 

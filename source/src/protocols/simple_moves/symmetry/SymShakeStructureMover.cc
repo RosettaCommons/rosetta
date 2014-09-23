@@ -169,7 +169,7 @@ namespace symmetry {
     void
     SymShakeStructureMover::setup_for_run(core::pose::Pose & p){
       if(!get_scorefunction_initialized() ){
-        core::scoring::ScoreFunctionOP s( new core::scoring::symmetry::SymmetricScoreFunction());
+        core::scoring::ScoreFunctionOP s( new core::scoring::symmetry::SymmetricScoreFunction() );
         //std::cout << "[DEBUG]: scorefunction being initialized"<< std::endl;
         s->set_weight(core::scoring::score_type_from_name("rama"), 4.0);
         s->set_weight(core::scoring::score_type_from_name("omega"), 1.0);
@@ -212,7 +212,7 @@ namespace symmetry {
                                                     false /*deriv_check_verbose_in*/);
       options.nblist_auto_update( true );
 			//      options.max_iter(5000);
-      core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
+      core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
       if(!get_sc_min() ){
         mm->set_bb(true);
       }else{
@@ -245,43 +245,43 @@ namespace symmetry {
 
       core::Size nmoves = (core::Size)p.total_residue()/4; //number of moves for each move type
 
-      core::kinematics::MoveMapOP mm= new core::kinematics::MoveMap();
+      core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap() );
       mm->set_bb(true);
 
 			// make symmetric movemap
 			core::pose::symmetry::make_symmetric_movemap( p, *mm );
 
-      simple_moves::SmallMoverOP small_mover(new simple_moves::SmallMover( mm, temperature, nmoves)) ;
-      simple_moves::ShearMoverOP shear_mover( new simple_moves::ShearMover(mm, temperature, nmoves));
+      simple_moves::SmallMoverOP small_mover( new simple_moves::SmallMover( mm, temperature, nmoves) ) ;
+      simple_moves::ShearMoverOP shear_mover( new simple_moves::ShearMover(mm, temperature, nmoves) );
 
       setup_movers(small_mover,shear_mover,
                    0.2,0.2,0.4,
                    1.6,1.6,2.0);
 
-      moves::RandomMoverOP apply_random_move( new moves::RandomMover());
+      moves::RandomMoverOP apply_random_move( new moves::RandomMover() );
       apply_random_move->add_mover( small_mover, .5);
       apply_random_move->add_mover( shear_mover, .5);
 
-      simple_moves::SmallMoverOP small_mover_low(new simple_moves::SmallMover( mm, (temperature*0.25), nmoves)) ;
-      simple_moves::ShearMoverOP shear_mover_low( new simple_moves::ShearMover(mm, (temperature*0.25), nmoves));
+      simple_moves::SmallMoverOP small_mover_low( new simple_moves::SmallMover( mm, (temperature*0.25), nmoves) ) ;
+      simple_moves::ShearMoverOP shear_mover_low( new simple_moves::ShearMover(mm, (temperature*0.25), nmoves) );
 
       setup_movers(small_mover_low,shear_mover_low,
                    0.1,0.1,0.2,
                    1.0,1.0,1.5);
 
-      moves::RandomMoverOP apply_random_move_low( new moves::RandomMover());
+      moves::RandomMoverOP apply_random_move_low( new moves::RandomMover() );
       apply_random_move_low->add_mover( small_mover_low, .5);
       apply_random_move_low->add_mover( shear_mover_low, .5);
 
-      protocols::moves::MonteCarloOP mc(new moves::MonteCarlo(p,s,temperature));
+      protocols::moves::MonteCarloOP mc( new moves::MonteCarlo(p,s,temperature) );
 			//time_t time_per_decoy = time(NULL);
 
 			//			mc->reset_counters();
 			//			mc->reset(p);
 			mc->set_temperature(temperature);
 
-			moves::TrialMoverOP tm( new moves::TrialMover(apply_random_move,mc));
-			protocols::moves::RepeatMoverOP full_cycle(new moves::RepeatMover( tm, get_nrounds() ));
+			moves::TrialMoverOP tm( new moves::TrialMover(apply_random_move,mc) );
+			protocols::moves::RepeatMoverOP full_cycle( new moves::RepeatMover( tm, get_nrounds() ) );
 			full_cycle->apply( p );
 //			mc->show_counters();
 
@@ -292,8 +292,8 @@ namespace symmetry {
 				core::Real low_temp = temperature * 0.25;
 				mc->set_temperature(low_temp);
 
-				moves::TrialMoverOP ltm( new moves::TrialMover(apply_random_move_low,mc));
-				protocols::moves::RepeatMoverOP full_cycle_2(new moves::RepeatMover( ltm, get_nrounds() ));
+				moves::TrialMoverOP ltm( new moves::TrialMover(apply_random_move_low,mc) );
+				protocols::moves::RepeatMoverOP full_cycle_2( new moves::RepeatMover( ltm, get_nrounds() ) );
 				full_cycle_2->apply( p );
 				//mc->show_counters();
 				p = mc->lowest_score_pose();

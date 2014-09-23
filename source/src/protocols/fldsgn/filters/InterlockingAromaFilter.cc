@@ -214,7 +214,7 @@ InterlockingAromaFilter::compute( Pose const & pose ) const
 		Dssp dssp( pose );
 		ss = dssp.get_dssp_secstruct();
 	}
-	SS_Info2_OP ssinfo = new SS_Info2( pose, ss );
+	SS_Info2_OP ssinfo( new SS_Info2( pose, ss ) );
 
 	// calc number of interlocking aromatic residues
 	Size num_interlocked( 0 );
@@ -270,7 +270,7 @@ InterlockingAromaFilter::parse_my_tag(
 }
 
 protocols::filters::FilterOP
-InterlockingAromaFilterCreator::create_filter() const { return new InterlockingAromaFilter; }
+InterlockingAromaFilterCreator::create_filter() const { return protocols::filters::FilterOP( new InterlockingAromaFilter ); }
 
 std::string
 InterlockingAromaFilterCreator::keyname() const { return "InterlockingAroma"; }

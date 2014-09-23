@@ -116,17 +116,17 @@ WaterFeatures::write_water_hbond_geom_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt());
-	Column unrecognized_atom_res("unrecognized_atom_res", new DbInteger());
-	Column unrecognized_atom_name("unrecognized_atom_name", new DbText(255));
-	Column partner_site_id("partner_site_id", new DbInteger());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column unrecognized_atom_res("unrecognized_atom_res", DbDataTypeOP( new DbInteger() ));
+	Column unrecognized_atom_name("unrecognized_atom_name", DbDataTypeOP( new DbText(255) ));
+	Column partner_site_id("partner_site_id", DbDataTypeOP( new DbInteger() ));
 	// donor only
-	Column whdist("WHdist", new DbReal());
-	Column whd("WHD", new DbReal());
+	Column whdist("WHdist", DbDataTypeOP( new DbReal() ));
+	Column whd("WHD", DbDataTypeOP( new DbReal() ));
 	// acceptors only
-	Column awdist("AWdist", new DbReal());
-	Column baw("BAW", new DbReal());
-	Column chi("chi", new DbReal());
+	Column awdist("AWdist", DbDataTypeOP( new DbReal() ));
+	Column baw("BAW", DbDataTypeOP( new DbReal() ));
+	Column chi("chi", DbDataTypeOP( new DbReal() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -254,8 +254,7 @@ WaterFeatures::report_features(
 	igen_wat_donates.add_column("BAW");
 	igen_wat_donates.add_column("chi");
 
-	RowDataBaseOP struct_id_data =
-			new RowData<StructureID>("struct_id", struct_id);
+	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id", struct_id) );
 
 	// locate candidate polar sites from the hbond_sites table
 	std::stringstream water_ss;
@@ -390,15 +389,15 @@ WaterFeatures::report_features(
 				igen_wat_accepts.add_row(
 						utility::tools::make_vector(
 							struct_id_data,
-							RowDataBaseOP(new RowData<Size>(
+							RowDataBaseOP( new RowData<Size>(
 									"unrecognized_atom_res",
-									unrecognized_atom_res)),
-							RowDataBaseOP(new RowData<std::string>(
+									unrecognized_atom_res) ),
+							RowDataBaseOP( new RowData<std::string>(
 									"unrecognized_atom_name",
-									unrecognized_atom_name)),
-							RowDataBaseOP(new RowData<core::Real>("partner_site_id", partner_site_id)),
-							RowDataBaseOP(new RowData<core::Real>("WHdist", whdist)),
-							RowDataBaseOP(new RowData<core::Real>("WHD", whd))));
+									unrecognized_atom_name) ),
+							RowDataBaseOP( new RowData<core::Real>("partner_site_id", partner_site_id) ),
+							RowDataBaseOP( new RowData<core::Real>("WHdist", whdist) ),
+							RowDataBaseOP( new RowData<core::Real>("WHD", whd) )));
 			}
 			else {
 				core::Length awdist = hbond_site_xyz.distance(wat_xyz);
@@ -418,18 +417,18 @@ WaterFeatures::report_features(
 				igen_wat_donates.add_row(
 						utility::tools::make_vector(
 							struct_id_data,
-							RowDataBaseOP(new RowData<Size>(
+							RowDataBaseOP( new RowData<Size>(
 									"unrecognized_atom_res",
-									unrecognized_atom_res)),
-							RowDataBaseOP(new RowData<std::string>(
+									unrecognized_atom_res) ),
+							RowDataBaseOP( new RowData<std::string>(
 									"unrecognized_atom_name",
-									unrecognized_atom_name)),
-							RowDataBaseOP(new RowData<Size>(
+									unrecognized_atom_name) ),
+							RowDataBaseOP( new RowData<Size>(
 									"partner_site_id",
-									partner_site_id)),
-							RowDataBaseOP(new RowData<core::Real>("AWdist", awdist)),
-							RowDataBaseOP(new RowData<core::Real>("BAW", baw)),
-							RowDataBaseOP(new RowData<core::Real>("chi", chi))));
+									partner_site_id) ),
+							RowDataBaseOP( new RowData<core::Real>("AWdist", awdist) ),
+							RowDataBaseOP( new RowData<core::Real>("BAW", baw) ),
+							RowDataBaseOP( new RowData<core::Real>("chi", chi) )));
 			}
 		} //while(hbond_site_result.next()){
 	} //while(wat_result.next()){

@@ -74,7 +74,7 @@ namespace options {
 	StepWiseBasicModelerOptionsOP
 	StepWiseBasicModelerOptions::clone() const
 	{
-		return new StepWiseBasicModelerOptions( *this );
+		return StepWiseBasicModelerOptionsOP( new StepWiseBasicModelerOptions( *this ) );
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////

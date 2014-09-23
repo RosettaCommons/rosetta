@@ -32,7 +32,7 @@ ScoreTypes SAXSEnergyCreatorCEN::score_types_for_method() const {
 
 methods::EnergyMethodOP SAXSEnergyCreatorCEN::create_energy_method( methods::EnergyMethodOptions const &) const {
 
-	return new SAXSEnergyCEN();
+	return methods::EnergyMethodOP( new SAXSEnergyCEN() );
 }
 core::Size
 SAXSEnergyCreatorCEN::version() const

@@ -148,7 +148,7 @@ std::string AndResidueSelector::class_name() {
 
 ResidueSelectorOP
 AndResidueSelectorCreator::create_residue_selector() const {
-	return new AndResidueSelector;
+	return ResidueSelectorOP( new AndResidueSelector );
 }
 
 std::string

@@ -54,7 +54,7 @@ extern void store_RDC_ROHL_in_pose( ResidualDipolarCoupling_RohlOP rdc_info, cor
 extern ResidualDipolarCoupling_RohlCOP retrieve_RDC_ROHL_from_pose( core::pose::Pose const& pose ) {
 	// ////using core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA_ROHL;
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA_ROHL ) ) {
-		return static_cast< ResidualDipolarCoupling_Rohl const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA_ROHL )() );
+		return utility::pointer::static_pointer_cast< core::scoring::ResidualDipolarCoupling_Rohl const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA_ROHL ) );
 	};
 	return NULL;
 }
@@ -62,7 +62,7 @@ extern ResidualDipolarCoupling_RohlCOP retrieve_RDC_ROHL_from_pose( core::pose::
 extern ResidualDipolarCoupling_RohlOP retrieve_RDC_ROHL_from_pose( core::pose::Pose& pose ) {
 	// ////using core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA_ROHL;
 	if( pose.data().has( core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA_ROHL ) ) {
-		return static_cast< ResidualDipolarCoupling_Rohl* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA_ROHL )() );
+		return utility::pointer::static_pointer_cast< core::scoring::ResidualDipolarCoupling_Rohl > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA_ROHL ) );
 	};
 	return NULL;
 }

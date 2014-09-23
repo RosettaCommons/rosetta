@@ -90,35 +90,35 @@ public: // tests
 	/// @brief test to make sure compatibility check in working order
 	void test_compatibility_check() {
 		BuildManager manager;
-		manager.add( new GrowLeft( 1, String( 3, 'H' ) ) );
-		manager.add( new SegmentRebuild( Interval( 1, 10 ), String( 3, 'H' ) ) );
+		manager.add( BuildInstructionOP( new GrowLeft( 1, String( 3, 'H' ) ) ) );
+		manager.add( BuildInstructionOP( new SegmentRebuild( Interval( 1, 10 ), String( 3, 'H' ) ) ) );
 		TS_ASSERT( !manager.compatibility_check() );
 
 		manager.clear();
-		manager.add( new GrowLeft( 1, String( 3, 'H' ) ) );
-		manager.add( new SegmentRebuild( Interval( 2, 10 ), String( 3, 'H' ) ) );
+		manager.add( BuildInstructionOP( new GrowLeft( 1, String( 3, 'H' ) ) ) );
+		manager.add( BuildInstructionOP( new SegmentRebuild( Interval( 2, 10 ), String( 3, 'H' ) ) ) );
 		TS_ASSERT( manager.compatibility_check() );
 
 		manager.clear();
-		manager.add( new GrowRight( 20, String( 3, 'H' ) ) );
-		manager.add( new SegmentRebuild( Interval( 10, 20 ), String( 3, 'H' ) ) );
+		manager.add( BuildInstructionOP( new GrowRight( 20, String( 3, 'H' ) ) ) );
+		manager.add( BuildInstructionOP( new SegmentRebuild( Interval( 10, 20 ), String( 3, 'H' ) ) ) );
 		TS_ASSERT( !manager.compatibility_check() );
 
 		manager.clear();
-		manager.add( new GrowRight( 20, String( 3, 'H' ) ) );
-		manager.add( new SegmentRebuild( Interval( 10, 19 ), String( 3, 'H' ) ) );
+		manager.add( BuildInstructionOP( new GrowRight( 20, String( 3, 'H' ) ) ) );
+		manager.add( BuildInstructionOP( new SegmentRebuild( Interval( 10, 19 ), String( 3, 'H' ) ) ) );
 		TS_ASSERT( manager.compatibility_check() );
 
 		manager.clear();
-		manager.add( new GrowRight( 18, String( 3, 'H' ) ) );
-		manager.add( new GrowLeft( 12, String( 3, 'H' ) ) );
-		manager.add( new SegmentRebuild( Interval( 10, 20 ), String( 3, 'H' ) ) );
+		manager.add( BuildInstructionOP( new GrowRight( 18, String( 3, 'H' ) ) ) );
+		manager.add( BuildInstructionOP( new GrowLeft( 12, String( 3, 'H' ) ) ) );
+		manager.add( BuildInstructionOP( new SegmentRebuild( Interval( 10, 20 ), String( 3, 'H' ) ) ) );
 		TS_ASSERT( !manager.compatibility_check() );
 
 		manager.clear();
-		manager.add( new GrowLeft( 1, String( 3, 'H' ) ) );
-		manager.add( new SegmentRebuild( Interval( 2, 19 ), String( 3, 'H' ) ) );
-		manager.add( new GrowRight( 20, String( 3, 'H' ) ) );
+		manager.add( BuildInstructionOP( new GrowLeft( 1, String( 3, 'H' ) ) ) );
+		manager.add( BuildInstructionOP( new SegmentRebuild( Interval( 2, 19 ), String( 3, 'H' ) ) ) );
+		manager.add( BuildInstructionOP( new GrowRight( 20, String( 3, 'H' ) ) ) );
 		TS_ASSERT( manager.compatibility_check() );
 	}
 
@@ -129,10 +129,10 @@ public: // tests
 
 		BuildManager manager;
 
-		manager.add( new SegmentRebuild( Interval( 5, 9 ), String( 3, 'H' ) ) );
-		manager.add( new GrowLeft( 1, String( 2, 'H' ) ) );
-		manager.add( new SegmentRebuild( Interval( 12, 16 ), String( 7, 'H' ) ) );
-		manager.add( new GrowRight( pose.n_residue(), String( 4, 'H' ) ) );
+		manager.add( BuildInstructionOP( new SegmentRebuild( Interval( 5, 9 ), String( 3, 'H' ) ) ) );
+		manager.add( BuildInstructionOP( new GrowLeft( 1, String( 2, 'H' ) ) ) );
+		manager.add( BuildInstructionOP( new SegmentRebuild( Interval( 12, 16 ), String( 7, 'H' ) ) ) );
+		manager.add( BuildInstructionOP( new GrowRight( pose.n_residue(), String( 4, 'H' ) ) ) );
 
 		// test position mapping doesn't exist prior to modify()
 		TS_ASSERT( manager.original2modified().empty() );
@@ -157,9 +157,9 @@ public: // tests
 		BuildManager manager;
 
 		// dummy instructions
-		BuildInstructionOP sr = new SegmentRebuild( Interval( 1, 10 ), String ( 3, 'H' ) );
-		BuildInstructionOP gl = new GrowLeft( 1, String( 2, 'H' ) );
-		BuildInstructionOP gr = new GrowRight( 20, String( 7, 'E' ) );
+		BuildInstructionOP sr( new SegmentRebuild( Interval( 1, 10 ), String ( 3, 'H' ) ) );
+		BuildInstructionOP gl( new GrowLeft( 1, String( 2, 'H' ) ) );
+		BuildInstructionOP gr( new GrowRight( 20, String( 7, 'E' ) ) );
 
 		manager.add( sr );
 		manager.add( gl );

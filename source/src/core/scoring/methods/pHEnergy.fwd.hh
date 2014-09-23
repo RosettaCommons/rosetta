@@ -26,7 +26,7 @@ namespace methods {
 
 class pHEnergy;
 
-typedef utility::pointer::owning_ptr< pHEnergy > pHEnergyOP;
+typedef utility::pointer::shared_ptr< pHEnergy > pHEnergyOP;
 
 } // methods
 } // scoring

@@ -129,7 +129,7 @@ ThreadingJobInputter::ThreadingJobInputter() :
 		io::silent::SilentFileData sfd;
 		sfd.read_file( option[ in::file::template_silent ]() );
 		for ( io::silent::SilentFileData::iterator it = sfd.begin(); it != sfd.end(); ++it ) {
-			PoseOP pose = new Pose;
+			PoseOP pose( new Pose );
 			it->fill_pose( *pose );
 			std::string const match( ObjexxFCL::uppercased( it->decoy_tag().substr(2,5) ) );
 			tr.Trace << "add template " << match << std::endl;
@@ -165,9 +165,7 @@ void ThreadingJobInputter::pose_from_job(
 	using core::Size;
 
 	///cast to ThreadingJob ... to access alignment and template pdb
-	ThreadingJobCOP tjob = dynamic_cast< ThreadingJob const* const> (
-		job->inner_job().get()
-	);
+	ThreadingJobCOP tjob = utility::pointer::dynamic_pointer_cast< protocols::comparative_modeling::ThreadingJob const > ( job->inner_job() );
 
 	pose = core::pose::Pose();  //fpd  symmetry-safe
 	std::string sequence;
@@ -337,7 +335,7 @@ ThreadingJobInputterCreator::keyname() const
 
 protocols::jd2::JobInputterOP
 ThreadingJobInputterCreator::create_JobInputter() const {
-	return new ThreadingJobInputter;
+	return protocols::jd2::JobInputterOP( new ThreadingJobInputter );
 }
 
 } // comparative_modeling

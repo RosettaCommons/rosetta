@@ -109,7 +109,7 @@ void FACTSPoseInfo::initialize( pose::Pose const & pose, FACTSRsdTypeMap &rsdtyp
 
       if ( it == rsdtypemap.end() ) {
 				TR << "Adding new FACTS residue type info: " << rsdtype.name() << std::endl;
-				FACTSRsdTypeInfoOP rsdtypeinfo = new FACTSRsdTypeInfo;
+				FACTSRsdTypeInfoOP rsdtypeinfo( new FACTSRsdTypeInfo );
 				rsdtypeinfo->create_info( rsdtype );
 				rsdtypemap[ &rsdtype ] = rsdtypeinfo;
 				it = rsdtypemap.find( &rsdtype );

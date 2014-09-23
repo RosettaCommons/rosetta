@@ -60,7 +60,7 @@ SequenceClaimer::SequenceClaimer() :
 	rsd_type_set_( core::chemical::CENTROID ),
 	priority_( 0.0 ),
 	input_sequence_( "" ),
-	sequence_claim_( NULL )
+	sequence_claim_( /* NULL */ )
 {}
 
 SequenceClaimer::SequenceClaimer( std::string const& sequence, std::string const& label,
@@ -68,7 +68,7 @@ SequenceClaimer::SequenceClaimer( std::string const& sequence, std::string const
 	rsd_type_set_( rsd_type_set_identifier ),
 	priority_( 0.0 ),
 	input_sequence_( sequence ),
-	sequence_claim_( NULL )
+	sequence_claim_( /* NULL */ )
 {
 	Parent::set_label(label);
 }
@@ -76,7 +76,7 @@ SequenceClaimer::SequenceClaimer( std::string const& sequence, std::string const
 
 TopologyClaimerOP SequenceClaimer::clone() const
 {
-	return new SequenceClaimer( *this );
+	return TopologyClaimerOP( new SequenceClaimer( *this ) );
 }
 
 void SequenceClaimer::make_sequence_claim() {
@@ -88,13 +88,12 @@ void SequenceClaimer::make_sequence_claim() {
 		input_sequence_,
 		*( chemical::ChemicalManager::get_instance()->residue_type_set( rsd_type_set_ ))
 	);
-	sequence_claim_ =
-		new claims::SequenceClaim(
+	sequence_claim_ = claims::SequenceClaimOP( new claims::SequenceClaim(
 				get_self_weak_ptr(),
 				my_pose.annotated_sequence(),
 				label(),
 				priority_
-		);
+		) );
 	runtime_assert( my_pose.total_residue() == sequence_claim_->length() );
 }
 
@@ -167,13 +166,13 @@ void SequenceClaimer::init_after_reading() {
 void SequenceClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	//Make a new cut at the end of this sequence.
 	//TODO: Make TopologyBroker get rid of cuts outside valid sequence.
-	new_claims.push_back( new claims::CutClaim( get_self_weak_ptr(), std::make_pair( label(), sequence_claim_->length() ) ) );
+	new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::CutClaim( get_self_weak_ptr(), std::make_pair( label(), sequence_claim_->length() ) ) ) );
 
 	//special --- if only 1 residue chain... the torsion will be irrelvant and probably unclaimed
 	// ... make broker happy but don't do anything...
 	if ( sequence_claim_->length() == 1 ) {
 
-		new_claims.push_back( new claims::BBClaim( get_self_weak_ptr(), std::make_pair( label(), 1 ) ) );
+		new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::BBClaim( get_self_weak_ptr(), std::make_pair( label(), 1 ) ) ) );
 	}
 }
 

@@ -29,7 +29,7 @@ namespace features {
 PairFeaturesCreator::PairFeaturesCreator() {}
 PairFeaturesCreator::~PairFeaturesCreator() {}
 FeaturesReporterOP PairFeaturesCreator::create_features_reporter() const {
-	return new PairFeatures;
+	return FeaturesReporterOP( new PairFeatures );
 }
 
 std::string PairFeaturesCreator::type_name() const {

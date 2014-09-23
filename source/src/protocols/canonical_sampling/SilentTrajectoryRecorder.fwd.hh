@@ -41,7 +41,7 @@ class SilentTrajectoryRecorder;
 
 // Typedefs
 //typedef utility::pointer::access_ptr< SilentTrajectoryRecorder > SilentTrajectoryRecorderAP;
-typedef utility::pointer::owning_ptr< SilentTrajectoryRecorder > SilentTrajectoryRecorderOP;
+typedef utility::pointer::shared_ptr< SilentTrajectoryRecorder > SilentTrajectoryRecorderOP;
 
 
 // Smart pointer required functions

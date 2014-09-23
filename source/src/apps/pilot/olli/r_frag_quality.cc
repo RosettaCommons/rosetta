@@ -450,7 +450,7 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 		FrameCOP frame( decoy_frames[ 1 ] );
 
 		// collect fragments from bad decoys here
-		FrameOP decoy_fill_frame = new Frame( pos, decoy_frames[ 1 ]->length() );
+		FrameOP decoy_fill_frame( new Frame( pos, decoy_frames[ 1 ]->length() ) );
 
 		for ( Size nr = 1; nr <= frame->nr_frags(); ++nr ) {
 			//from good decoy ?
@@ -476,7 +476,7 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 		//chop everything in fill_frames and add to new_frags
 		Size const chop( insert_size[ pos ] );
 		for ( FrameList::iterator it = fill_frames.begin(), eit = fill_frames.end(); it != eit; ++it ) {
-			FrameOP chop_frame = new Frame( pos, chop );
+			FrameOP chop_frame( new Frame( pos, chop ) );
 			for ( Size nr = 1; nr <= (*it)->nr_frags(); nr ++ ) {
 				chop_frame->add_fragment( (*it)->fragment( nr ).generate_sub_fragment( 1, chop ) );
 			}
@@ -499,7 +499,7 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 		tr.Info << " fill_frags are only " << fill_frags->max_frag_length() <<"mers. Going to chop all longer frags "  << std::endl;
 
 		//chopping...
-		FragSetOP chopped_frags = new OrderedFragSet;
+		FragSetOP chopped_frags( new OrderedFragSet );
 		for ( ConstFrameIterator it = new_frags->begin(), eit = new_frags->end(); it != eit; ++it ) {
 			Frame const& fr( **it );
 
@@ -511,7 +511,7 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 
 			//chop...
 			for ( Size pos = fr.start(); pos <= fr.end() - chops + 1; pos ++ ) {
-				FrameOP cf = new Frame( pos, chops );
+				FrameOP cf( new Frame( pos, chops ) );
 				for ( Size nr = 1; nr <= fr.nr_frags(); ++nr ) {
 					cf->add_fragment( fr.fragment( nr ).generate_sub_fragment( pos-fr.start() + 1, pos-fr.start()+ chops ) );
 				}
@@ -787,7 +787,7 @@ int main( int argc, char** argv ) {
 
 		FragSetOP predicted_frags = NULL;
 		if ( ( option[ intrinsic ] && option[ torsion ] ) || option[ chop ].user() ) {
-			ConstantLengthFragSetOP short_frags = new ConstantLengthFragSet( option[ chop ] );
+			ConstantLengthFragSetOP short_frags( new ConstantLengthFragSet( option[ chop ] ) );
 			chop_fragments( *orig_frags, *short_frags );
 			predicted_frags = short_frags;
 			FragmentIO().write_data( "dump_chop.dat", *short_frags);

@@ -23,8 +23,8 @@ namespace scoring {
 
 class AtomVDW;
 
-typedef utility::pointer::owning_ptr< AtomVDW > AtomVDWOP;
-typedef utility::pointer::owning_ptr< AtomVDW const > AtomVDWCOP;
+typedef utility::pointer::shared_ptr< AtomVDW > AtomVDWOP;
+typedef utility::pointer::shared_ptr< AtomVDW const > AtomVDWCOP;
 
 }
 }

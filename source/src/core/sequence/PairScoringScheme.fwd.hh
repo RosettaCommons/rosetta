@@ -20,7 +20,7 @@ namespace core {
 namespace sequence {
 
 class PairScoringScheme;
-typedef utility::pointer::owning_ptr< PairScoringScheme > PairScoringSchemeOP;
+typedef utility::pointer::shared_ptr< PairScoringScheme > PairScoringSchemeOP;
 
 } // sequence
 } // core

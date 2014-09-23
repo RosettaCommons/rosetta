@@ -165,7 +165,7 @@ public:
 
 		Pose pose = create_trpcage_ideal_pose();
 		ScoreFunction sfxn;
-		EnergyMethodOptionsOP emopts( new EnergyMethodOptions( sfxn.energy_method_options() ));
+		EnergyMethodOptionsOP emopts( new EnergyMethodOptions( sfxn.energy_method_options() ) );
 		emopts->hbond_options().use_sp2_chi_penalty( true );
 		sfxn.set_energy_method_options( *emopts );
 		//sfxn.set_weight( fa_atr, 0.5 ); /// just test hbonds; ignore etable
@@ -238,7 +238,7 @@ public:
 
 		Pose pose = create_trpcage_ideal_pose();
 		ScoreFunction sfxn;
-		EnergyMethodOptionsOP emopts( new EnergyMethodOptions( sfxn.energy_method_options() ));
+		EnergyMethodOptionsOP emopts( new EnergyMethodOptions( sfxn.energy_method_options() ) );
 		emopts->hbond_options().decompose_bb_hb_into_pair_energies( true );
 		sfxn.set_energy_method_options( *emopts );
 
@@ -266,7 +266,7 @@ public:
 
 		Pose pose = create_trpcage_ideal_pose();
 		ScoreFunction sfxn;
-		EnergyMethodOptionsOP emopts( new EnergyMethodOptions( sfxn.energy_method_options() ));
+		EnergyMethodOptionsOP emopts( new EnergyMethodOptions( sfxn.energy_method_options() ) );
 		emopts->hbond_options().decompose_bb_hb_into_pair_energies( true );
 		emopts->hbond_options().use_sp2_chi_penalty( true );
 		sfxn.set_energy_method_options( *emopts );
@@ -553,8 +553,8 @@ public:
 		Real const shift( 0.25 );
 		Pose pose = create_trpcage_ideal_pose();
 		ScoreFunction sfxn;
-		EnergyMethodOptionsOP emopts_original( new EnergyMethodOptions( sfxn.energy_method_options() ));
-		EnergyMethodOptionsOP emopts_eshifted( new EnergyMethodOptions( sfxn.energy_method_options() ));
+		EnergyMethodOptionsOP emopts_original( new EnergyMethodOptions( sfxn.energy_method_options() ) );
+		EnergyMethodOptionsOP emopts_eshifted( new EnergyMethodOptions( sfxn.energy_method_options() ) );
 		emopts_eshifted->hbond_options().hbond_energy_shift( shift );
 
 		HBondSet hb_original( emopts_original->hbond_options(), pose, false );

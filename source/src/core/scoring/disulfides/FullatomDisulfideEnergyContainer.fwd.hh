@@ -28,10 +28,10 @@ class DisulfResNeighbConstIterator;
 
 class FullatomDisulfideEnergyContainer;
 
-typedef utility::pointer::owning_ptr< FullatomDisulfideEnergyContainer > FullatomDisulfideEnergyContainerOP;
-typedef utility::pointer::owning_ptr< FullatomDisulfideEnergyContainer const > FullatomDisulfideEnergyContainerCOP;
-typedef utility::pointer::access_ptr< FullatomDisulfideEnergyContainer > FullatomDisulfideEnergyContainerAP;
-typedef utility::pointer::access_ptr< FullatomDisulfideEnergyContainer const > FullatomDisulfideEnergyContainerCAP;
+typedef utility::pointer::shared_ptr< FullatomDisulfideEnergyContainer > FullatomDisulfideEnergyContainerOP;
+typedef utility::pointer::shared_ptr< FullatomDisulfideEnergyContainer const > FullatomDisulfideEnergyContainerCOP;
+typedef utility::pointer::weak_ptr< FullatomDisulfideEnergyContainer > FullatomDisulfideEnergyContainerAP;
+typedef utility::pointer::weak_ptr< FullatomDisulfideEnergyContainer const > FullatomDisulfideEnergyContainerCAP;
 
 }
 }

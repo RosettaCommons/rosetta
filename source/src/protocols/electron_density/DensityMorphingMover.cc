@@ -249,7 +249,7 @@ DensityMorphingMover::parse_my_tag(
 
 protocols::moves::MoverOP
 DensityMorphingMoverCreator::create_mover() const {
-	return new DensityMorphingMover;
+	return protocols::moves::MoverOP( new DensityMorphingMover );
 }
 
 std::string

@@ -557,12 +557,12 @@ RotamerLibrary::get_rsd_library( chemical::ResidueType const & rsd_type ) const
         }
 
 		TR.Debug << "Initializing conformer library for " << rsd_type.get_RotamerLibraryName() << std::endl;
-		SingleLigandRotamerLibraryOP pdb_rotamers = new SingleLigandRotamerLibrary();
+		SingleLigandRotamerLibraryOP pdb_rotamers( new SingleLigandRotamerLibrary() );
 		pdb_rotamers->init_from_file( rsd_type.get_RotamerLibraryName(), rsd_type );
 		add_residue_library( rsd_type, pdb_rotamers );
-		return pdb_rotamers();
+		return pdb_rotamers;
 	}
-	return 0;
+	return SingleResidueRotamerLibraryCAP();
 }
 
 SingleResidueRotamerLibraryCAP
@@ -571,7 +571,7 @@ RotamerLibrary::get_library_by_aa( chemical::AA const & aa ) const
 	if ( (Size) aa <= aa_libraries_.size() ) {
 		return aa_libraries_[ aa ];
 	}
-	return 0;
+	return SingleResidueRotamerLibraryCAP();
 }
 
 
@@ -960,7 +960,7 @@ void RotamerLibrary::create_centroid_rotamer_libraries_from_ASCII()
     Size count_libraries_read( 0 );
     while ( nextaa != "" ) {
         aan = chemical::aa_from_name( nextaa );
-        SingleResidueCenrotLibraryOP newlib = new SingleResidueCenrotLibrary(aan);
+        SingleResidueCenrotLibraryOP newlib( new SingleResidueCenrotLibrary(aan) );
         /// read the rotlib for current aa and save the name of the next one
         thisaa = nextaa;
         nextaa = newlib->read_from_file( libstream, true );
@@ -1552,16 +1552,16 @@ RotamerLibrary::create_rotameric_dunlib(
 	SingleResidueDunbrackLibraryOP rotlib;
 	switch ( n_chi ) {
 		case 1:
-			rotlib = new RotamericSingleResidueDunbrackLibrary< ONE >( aa, dun02 );
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< ONE >( aa, dun02 ) );
 			break;
 		case 2:
-			rotlib = new RotamericSingleResidueDunbrackLibrary< TWO >( aa, dun02 );
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< TWO >( aa, dun02 ) );
 			break;
 		case 3:
-			rotlib = new RotamericSingleResidueDunbrackLibrary< THREE >( aa, dun02 );
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< THREE >( aa, dun02 ) );
 			break;
 		case 4:
-			rotlib = new RotamericSingleResidueDunbrackLibrary< FOUR >( aa, dun02 );
+			rotlib = SingleResidueDunbrackLibraryOP( new RotamericSingleResidueDunbrackLibrary< FOUR >( aa, dun02 ) );
 			break;
 		default:
 			utility_exit_with_message( "ERROR: too many chi angles desired for Dunbrack library: " +
@@ -2029,7 +2029,7 @@ RotamerLibrary::get_NCAA_rotamer_library( chemical::ResidueType const & rsd_type
 		ncaa_rotlibs_[ aa_name3 ] = ncaa_rotlib;
 		TR << "done!" << std::endl;
 	}
-	return ( ncaa_rotlibs_.find( aa_name3 )->second)();
+	return ( ncaa_rotlibs_.find( aa_name3 )->second);
 }
 
 /// DOUG DOUG DOUG a good bit of this will need to change for the new RT based system
@@ -2113,7 +2113,7 @@ RotamerLibrary::get_peptoid_rotamer_library( chemical::ResidueType const & rsd_t
 		peptoid_rotlibs_[ aa_name3 ] = peptoid_rotlib;
 		TR << "done!" << std::endl;
 	}
-	return ( peptoid_rotlibs_.find( aa_name3 )->second)();
+	return ( peptoid_rotlibs_.find( aa_name3 )->second);
 }
 
 

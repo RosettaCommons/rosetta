@@ -39,7 +39,7 @@ class CacheableAtomID_MapVector : public basic::datacache::CacheableData {
 public:
 	CacheableAtomID_MapVector() {}
 	virtual ~CacheableAtomID_MapVector(){};
-	virtual basic::datacache::CacheableDataOP clone() const { return new CacheableAtomID_MapVector(*this); }
+	virtual basic::datacache::CacheableDataOP clone() const { return basic::datacache::CacheableDataOP( new CacheableAtomID_MapVector(*this) ); }
 	core::id::AtomID_Map< numeric::xyzVector<core::Real> > & map() { return map_; }
 	core::id::AtomID_Map< numeric::xyzVector<core::Real> > const & map() const { return map_; }
 private:

@@ -135,7 +135,7 @@ ReplicateFilter::parse_my_tag( utility::tag::TagCOP tag_ptr,
 }
 
 FilterOP
-ReplicateFilterCreator::create_filter() const { return new ReplicateFilter; }
+ReplicateFilterCreator::create_filter() const { return FilterOP( new ReplicateFilter ); }
 
 std::string
 ReplicateFilterCreator::keyname() const { return "ReplicateFilter"; }

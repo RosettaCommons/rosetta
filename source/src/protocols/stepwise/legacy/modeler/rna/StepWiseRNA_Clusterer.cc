@@ -112,7 +112,7 @@ SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
   //////////////////////////////////////////////////////////////////////////
 	void
   StepWiseRNA_Clusterer::initialize_parameters_and_input(){
-		input_  = new core::import_pose::pose_stream::SilentFilePoseInputStream();
+		input_ = core::import_pose::pose_stream::SilentFilePoseInputStreamOP( new core::import_pose::pose_stream::SilentFilePoseInputStream() );
 		input_->set_order_by_energy( true );
 
 		//max_decoys_ = 9999999999; Feb 02, 2012; This lead to server-test error at R47198
@@ -1365,7 +1365,7 @@ SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
 
 			//if(score > best_score + score_diff_cut_) break; //Comment out on Dec 11, 2011.
 
-			PoseOP native = new Pose;
+			PoseOP native( new Pose );
 			( *native ) = ( *working_parameters_->working_native_pose() ); //Hard copy...
 
 			align_poses( ( *native ), "native", pose, tag, working_best_alignment, align_only_over_base_atoms_ );

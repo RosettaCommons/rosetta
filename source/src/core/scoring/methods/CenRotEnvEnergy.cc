@@ -40,7 +40,7 @@ methods::EnergyMethodOP
 CenRotEnvEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new CenRotEnvEnergy;
+	return methods::EnergyMethodOP( new CenRotEnvEnergy );
 }
 
 ScoreTypes
@@ -61,7 +61,7 @@ CenRotEnvEnergy::CenRotEnvEnergy() :
 /// clone
 EnergyMethodOP
 CenRotEnvEnergy::clone() const {
-	return new CenRotEnvEnergy;
+	return EnergyMethodOP( new CenRotEnvEnergy );
 }
 
 

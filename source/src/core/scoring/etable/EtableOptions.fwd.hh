@@ -22,8 +22,8 @@ namespace etable{
 
 class EtableOptions;
 
-typedef utility::pointer::owning_ptr< EtableOptions > EtableOptionsOP;
-typedef utility::pointer::owning_ptr< EtableOptions const > EtableOptionsCOP;
+typedef utility::pointer::shared_ptr< EtableOptions > EtableOptionsOP;
+typedef utility::pointer::shared_ptr< EtableOptions const > EtableOptionsCOP;
 
 } //etable
 } //scoring

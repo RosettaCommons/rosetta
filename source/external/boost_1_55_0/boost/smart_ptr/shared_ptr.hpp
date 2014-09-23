@@ -340,6 +340,12 @@ public:
     {
     }
 
+    // Rosetta customization to handle NULL assignments and initialization
+    shared_ptr(void *i) BOOST_NOEXCEPT : px( 0 ), pn()
+    {
+	assert(i == NULL);
+    }
+
 #if !defined( BOOST_NO_CXX11_NULLPTR )
 
     shared_ptr( boost::detail::sp_nullptr_t ) BOOST_NOEXCEPT : px( 0 ), pn() // never throws

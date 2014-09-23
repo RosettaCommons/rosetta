@@ -63,7 +63,7 @@ namespace matdes {
 
 // @brief default constructor
 ClashCheckFilter::ClashCheckFilter():
-  task_factory_( NULL ),
+  task_factory_( /* NULL */ ),
   clash_dist_( 3.5 ),
 	sym_dof_names_( "" ),
 	nsub_bblock_( 1 ),
@@ -100,12 +100,12 @@ ClashCheckFilter::~ClashCheckFilter() {}
 
 protocols::filters::FilterOP
 ClashCheckFilter::fresh_instance() const{
-  return new ClashCheckFilter();
+  return protocols::filters::FilterOP( new ClashCheckFilter() );
 }
 
 protocols::filters::FilterOP
 ClashCheckFilter::clone() const{
-  return new ClashCheckFilter( *this );
+  return protocols::filters::FilterOP( new ClashCheckFilter( *this ) );
 }
 
 // @brief getters
@@ -292,7 +292,7 @@ ClashCheckFilter::report( std::ostream & out, core::pose::Pose const & pose ) co
 }
 
 protocols::filters::FilterOP
-ClashCheckFilterCreator::create_filter() const { return new ClashCheckFilter; }
+ClashCheckFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ClashCheckFilter ); }
 
 std::string
 ClashCheckFilterCreator::keyname() const { return "ClashCheck"; }

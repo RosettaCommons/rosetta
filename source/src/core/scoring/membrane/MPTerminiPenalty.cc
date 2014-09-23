@@ -59,7 +59,7 @@ methods::EnergyMethodOP
 MPTerminiPenaltyCreator::create_energy_method(
 											  methods::EnergyMethodOptions const &
 											  ) const {
-	return new MPTerminiPenalty;
+	return methods::EnergyMethodOP( new MPTerminiPenalty );
 }
 
 /// @brief Return Relevant Score Types
@@ -73,7 +73,7 @@ MPTerminiPenaltyCreator::score_types_for_method() const {
 
 /// @brief Default Constructor
 MPTerminiPenalty::MPTerminiPenalty() :
-	parent( new MPTerminiPenaltyCreator ),
+	parent( EnergyMethodCreatorOP( new MPTerminiPenaltyCreator ) ),
 	mpdata_( ScoringManager::get_instance()->get_MembraneData() )
 {}
 
@@ -81,7 +81,7 @@ MPTerminiPenalty::MPTerminiPenalty() :
 EnergyMethodOP
 MPTerminiPenalty::clone() const
 {
-	return new MPTerminiPenalty();
+	return EnergyMethodOP( new MPTerminiPenalty() );
 }
 
 /// Scoring Methods /////////////////////////

@@ -47,8 +47,8 @@ namespace protocols {
 namespace antibody_legacy {
 
 class CDRH3Modeler;
-typedef utility::pointer::owning_ptr< CDRH3Modeler > CDRH3ModelerOP;
-typedef utility::pointer::owning_ptr< const CDRH3Modeler > CDRH3ModelerCOP;
+typedef utility::pointer::shared_ptr< CDRH3Modeler > CDRH3ModelerOP;
+typedef utility::pointer::shared_ptr< const CDRH3Modeler > CDRH3ModelerCOP;
 
 //////////////////////////////////////////////////////////////////////////
 /// @brief Ab initio modeling of CDR H3 loop

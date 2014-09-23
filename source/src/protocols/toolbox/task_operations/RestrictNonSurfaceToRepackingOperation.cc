@@ -47,7 +47,7 @@ using namespace core::pack::task::operation;
 // Creator method
 core::pack::task::operation::TaskOperationOP
 RestrictNonSurfaceToRepackingOperationCreator::create_task_operation() const {
-	return new RestrictNonSurfaceToRepackingOperation;
+	return core::pack::task::operation::TaskOperationOP( new RestrictNonSurfaceToRepackingOperation );
 }
 
 // default constructor
@@ -65,7 +65,7 @@ RestrictNonSurfaceToRepackingOperation::~RestrictNonSurfaceToRepackingOperation(
 
 // clone method, required by TaskOperation interface
 TaskOperationOP RestrictNonSurfaceToRepackingOperation::clone() const {
-	return new RestrictNonSurfaceToRepackingOperation( *this );
+	return TaskOperationOP( new RestrictNonSurfaceToRepackingOperation( *this ) );
 }
 
 //

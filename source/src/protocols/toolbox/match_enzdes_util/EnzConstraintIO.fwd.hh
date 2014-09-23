@@ -28,23 +28,23 @@ class EnzCstTemplateResAtoms;
 class EnzConstraintIO;
 class CovalentConnectionReplaceInfo;
 
-typedef utility::pointer::owning_ptr< EnzConstraintParameters > EnzConstraintParametersOP;
-typedef utility::pointer::owning_ptr< EnzConstraintParameters const > EnzConstraintParametersCOP;
-typedef utility::pointer::access_ptr< EnzConstraintParameters const > EnzConstraintParametersCAP;
+typedef utility::pointer::shared_ptr< EnzConstraintParameters > EnzConstraintParametersOP;
+typedef utility::pointer::shared_ptr< EnzConstraintParameters const > EnzConstraintParametersCOP;
+typedef utility::pointer::weak_ptr< EnzConstraintParameters const > EnzConstraintParametersCAP;
 
-typedef utility::pointer::owning_ptr< EnzCstTemplateRes > EnzCstTemplateResOP;
-typedef utility::pointer::owning_ptr< EnzCstTemplateRes const > EnzCstTemplateResCOP;
+typedef utility::pointer::shared_ptr< EnzCstTemplateRes > EnzCstTemplateResOP;
+typedef utility::pointer::shared_ptr< EnzCstTemplateRes const > EnzCstTemplateResCOP;
 
-typedef utility::pointer::owning_ptr< EnzCstTemplateResAtoms > EnzCstTemplateResAtomsOP;
-typedef utility::pointer::owning_ptr< EnzCstTemplateResAtoms const > EnzCstTemplateResAtomsCOP;
+typedef utility::pointer::shared_ptr< EnzCstTemplateResAtoms > EnzCstTemplateResAtomsOP;
+typedef utility::pointer::shared_ptr< EnzCstTemplateResAtoms const > EnzCstTemplateResAtomsCOP;
 
-typedef utility::pointer::owning_ptr< EnzConstraintIO > EnzConstraintIOOP;
-typedef utility::pointer::owning_ptr< EnzConstraintIO const > EnzConstraintIOCOP;
-typedef utility::pointer::access_ptr< EnzConstraintIO const > EnzConstraintIOCAP;
-typedef utility::pointer::access_ptr< EnzConstraintIO > EnzConstraintIOAP;
+typedef utility::pointer::shared_ptr< EnzConstraintIO > EnzConstraintIOOP;
+typedef utility::pointer::shared_ptr< EnzConstraintIO const > EnzConstraintIOCOP;
+typedef utility::pointer::weak_ptr< EnzConstraintIO const > EnzConstraintIOCAP;
+typedef utility::pointer::weak_ptr< EnzConstraintIO > EnzConstraintIOAP;
 
-typedef utility::pointer::owning_ptr< CovalentConnectionReplaceInfo >CovalentConnectionReplaceInfoOP;
-typedef utility::pointer::owning_ptr< CovalentConnectionReplaceInfo const > CovalentConnectionReplaceInfoCOP;
+typedef utility::pointer::shared_ptr< CovalentConnectionReplaceInfo >CovalentConnectionReplaceInfoOP;
+typedef utility::pointer::shared_ptr< CovalentConnectionReplaceInfo const > CovalentConnectionReplaceInfoCOP;
 
 }
 } // enzdes

@@ -162,7 +162,7 @@ MPI_LoopHashRefine_Master::process_inbound_wus(){
 		if ( next_wu->get_wu_type() == "waitwu" ) continue;
 
 		// Upcast to a StructureModifier WU
-		WorkUnit_SilentStructStoreOP structure_wu = dynamic_cast<  WorkUnit_SilentStructStore * > ( next_wu() );
+		WorkUnit_SilentStructStoreOP structure_wu = utility::pointer::dynamic_pointer_cast< protocols::wum::WorkUnit_SilentStructStore > ( next_wu );
 
 		// If upcast was unsuccessful - warn and ignore.
 		if ( structure_wu.get() == NULL ){
@@ -309,7 +309,7 @@ MPI_LoopHashRefine_Master::create_loophash_WUs( const core::io::silent::SilentSt
 			TRDEBUG << "Adding a new loophash WU: " << start_ir << " - " << end_ir << ", ssid = " << ssid << std::endl;
 			
 			count_wus++;
-			WorkUnit_LoopHashOP new_wu = new WorkUnit_LoopHash( start_ir, end_ir, ssid );
+			WorkUnit_LoopHashOP new_wu( new WorkUnit_LoopHash( start_ir, end_ir, ssid ) );
 			// this is unsatisfying.. why can't i use the template ? grrr C++ thou are limited.
 			new_wu->set_wu_type("loophasher");
 			new_wu->decoys().add( ss);
@@ -335,7 +335,7 @@ MPI_LoopHashRefine_Master::add_relax_batch( SilentStructStore &start_decoys ){
 	core::Size batchrelax_batchsize_ = (start_decoys.size() / chunks) + 1;
 	core::Size dcount=0;
 	while( dcount < start_decoys.size() ){
-		protocols::relax::WorkUnit_BatchRelaxOP new_wu = new protocols::relax::WorkUnit_BatchRelax_and_PostRescore();
+		protocols::relax::WorkUnit_BatchRelaxOP new_wu( new protocols::relax::WorkUnit_BatchRelax_and_PostRescore() );
 		new_wu->set_wu_type("batchrelax");
 		core::Size lcount=0;
 
@@ -412,7 +412,7 @@ MPI_LoopHashRefine_Master::check_library_expiry_dates(){
 		
 
 		// send the expired structure to the emperor (who will in due time send back a new one)
-		WorkUnit_SilentStructStoreOP getnewstruct = new WorkUnit_SilentStructStore( );
+		WorkUnit_SilentStructStoreOP getnewstruct( new WorkUnit_SilentStructStore( ) );
 		getnewstruct->set_wu_type( "getnewstruct" );
 		getnewstruct->decoys().add( (*jt) );
 		send_MPI_workunit( getnewstruct, 0 ); // The 0 is the MPI_RANK of the master - constant would be better here!
@@ -464,7 +464,7 @@ MPI_LoopHashRefine_Master::add_structure_to_library( core::io::silent::SilentStr
 
 void
 MPI_LoopHashRefine_Master::report_structure_to_emperor(  core::io::silent::SilentStructOP &ss ) {
-	WorkUnit_SilentStructStoreOP resultpack = new WorkUnit_SilentStructStore( );
+	WorkUnit_SilentStructStoreOP resultpack( new WorkUnit_SilentStructStore( ) );
 	resultpack->set_wu_type( "resultpack" );
 	resultpack->decoys().add( ss );
 	send_MPI_workunit( resultpack, my_emperor() );
@@ -473,7 +473,7 @@ MPI_LoopHashRefine_Master::report_structure_to_emperor(  core::io::silent::Silen
 
 void
 MPI_LoopHashRefine_Master::report_structure_to_emperor(  core::io::silent::SilentStruct &pss ) {
-	WorkUnit_SilentStructStoreOP resultpack = new WorkUnit_SilentStructStore( );
+	WorkUnit_SilentStructStoreOP resultpack( new WorkUnit_SilentStructStore( ) );
 	resultpack->set_wu_type( "resultpack" );
 	resultpack->decoys().add( pss );
 	send_MPI_workunit( resultpack, my_emperor() );

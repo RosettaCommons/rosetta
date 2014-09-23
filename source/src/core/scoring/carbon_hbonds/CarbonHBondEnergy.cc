@@ -68,7 +68,7 @@ methods::EnergyMethodOP
 CarbonHBondEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new CarbonHBondEnergy;
+	return methods::EnergyMethodOP( new CarbonHBondEnergy );
 }
 
 ScoreTypes
@@ -108,7 +108,7 @@ CarbonHBondEnergy::CarbonHBondEnergy( CarbonHBondEnergy const & src ):
 methods::EnergyMethodOP
 CarbonHBondEnergy::clone() const
 {
-	return new CarbonHBondEnergy( *this );
+	return methods::EnergyMethodOP( new CarbonHBondEnergy( *this ) );
 }
 
 ///

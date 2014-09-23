@@ -17,9 +17,9 @@ namespace protocols {
 namespace sic_dock {
 
 	class xyzStripeHashPose;
-    typedef utility::pointer::owning_ptr< xyzStripeHashPose > xyzStripeHashPoseOP;
-	typedef utility::pointer::owning_ptr< xyzStripeHashPose const > xyzStripeHashPoseCOP;
-	typedef utility::pointer::access_ptr< xyzStripeHashPose const > xyzStripeHashPoseCAP;
+    typedef utility::pointer::shared_ptr< xyzStripeHashPose > xyzStripeHashPoseOP;
+	typedef utility::pointer::shared_ptr< xyzStripeHashPose const > xyzStripeHashPoseCOP;
+	typedef utility::pointer::weak_ptr< xyzStripeHashPose const > xyzStripeHashPoseCAP;
 
 
 }

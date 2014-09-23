@@ -18,8 +18,8 @@ namespace perturbers {
 
 class BondAnglePerturber;
 
-typedef utility::pointer::owning_ptr<BondAnglePerturber> BondAnglePerturberOP;
-typedef utility::pointer::owning_ptr<BondAnglePerturber const> BondAnglePerturberCOP;
+typedef utility::pointer::shared_ptr<BondAnglePerturber> BondAnglePerturberOP;
+typedef utility::pointer::shared_ptr<BondAnglePerturber const> BondAnglePerturberCOP;
 
 }
 }

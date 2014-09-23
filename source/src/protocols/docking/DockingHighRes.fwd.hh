@@ -22,8 +22,8 @@ namespace docking {
 
 /// @brief this mover does the high resolution refinement stage of the RosettaDock algorithm
 class DockingHighRes;
-typedef utility::pointer::owning_ptr< DockingHighRes > DockingHighResOP;
-typedef utility::pointer::owning_ptr< DockingHighRes const > DockingHighResCOP;
+typedef utility::pointer::shared_ptr< DockingHighRes > DockingHighResOP;
+typedef utility::pointer::shared_ptr< DockingHighRes const > DockingHighResCOP;
 
 } //docking
 } //protocols

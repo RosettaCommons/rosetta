@@ -60,7 +60,7 @@ public:
 
 	virtual ~DnaInterfaceFinder(){}
 
-	DnaInterfaceFinderOP clone() const { return new DnaInterfaceFinder(*this); }
+	DnaInterfaceFinderOP clone() const { return DnaInterfaceFinderOP( new DnaInterfaceFinder(*this) ); }
 
 	void determine_protein_interface( core::pose::Pose const & pose );
 

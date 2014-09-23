@@ -65,12 +65,12 @@ PreventResiduesFromRepackingOperation::~PreventResiduesFromRepackingOperation() 
 core::pack::task::operation::TaskOperationOP
 PreventResiduesFromRepackingOperationCreator::create_task_operation() const
 {
-	return new PreventResiduesFromRepackingOperation;
+	return core::pack::task::operation::TaskOperationOP( new PreventResiduesFromRepackingOperation );
 }
 
 core::pack::task::operation::TaskOperationOP PreventResiduesFromRepackingOperation::clone() const
 {
-	return new PreventResiduesFromRepackingOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new PreventResiduesFromRepackingOperation( *this ) );
 }
 
 void

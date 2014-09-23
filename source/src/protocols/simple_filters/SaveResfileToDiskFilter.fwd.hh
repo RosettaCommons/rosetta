@@ -26,8 +26,8 @@ namespace simple_filters {
 class SaveResfileToDiskFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< SaveResfileToDiskFilter >  SaveResfileToDiskFilterOP;
-typedef utility::pointer::owning_ptr< SaveResfileToDiskFilter const >  SaveResfileToDiskFilterCOP;
+typedef utility::pointer::shared_ptr< SaveResfileToDiskFilter >  SaveResfileToDiskFilterOP;
+typedef utility::pointer::shared_ptr< SaveResfileToDiskFilter const >  SaveResfileToDiskFilterCOP;
 
 } // namespace simple_filters
 } // namespace protocols

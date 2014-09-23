@@ -23,7 +23,7 @@ namespace analysis{
 
 //Forwards and OP typedefs
 class LoopAnalyzerMover;
-typedef utility::pointer::owning_ptr< LoopAnalyzerMover > LoopAnalyzerMoverOP;
+typedef utility::pointer::shared_ptr< LoopAnalyzerMover > LoopAnalyzerMoverOP;
 
 }//analysis
 }//protocols

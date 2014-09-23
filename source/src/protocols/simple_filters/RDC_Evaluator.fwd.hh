@@ -27,8 +27,8 @@ namespace simple_filters {
 
 class SelectRDC_Evaluator;
 
-typedef utility::pointer::owning_ptr< SelectRDC_Evaluator > SelectRDC_EvaluatorOP;
-typedef utility::pointer::owning_ptr< SelectRDC_Evaluator const > SelectRDC_EvaluatorCOP;
+typedef utility::pointer::shared_ptr< SelectRDC_Evaluator > SelectRDC_EvaluatorOP;
+typedef utility::pointer::shared_ptr< SelectRDC_Evaluator const > SelectRDC_EvaluatorCOP;
 
 
 }

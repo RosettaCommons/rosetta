@@ -304,7 +304,7 @@ MembraneTopology_from_pose( pose::Pose const & pose )
   // ////using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
 
   assert( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) );
-  return *( static_cast< MembraneTopology const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY )() ));
+  return *( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
 }
 
 /// @details Either returns a non-const reference to the cenlist object already stored
@@ -316,10 +316,10 @@ nonconst_MembraneTopology_from_pose( pose::Pose & pose )
   // ////using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
 
   if ( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ) {
-    return *( static_cast< MembraneTopology * >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY )() ));
+    return *( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
   }
   // else
-  MembraneTopologyOP membrane_topology = new MembraneTopology;
+  MembraneTopologyOP membrane_topology( new MembraneTopology );
   pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, membrane_topology );
   return *membrane_topology;
 }

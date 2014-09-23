@@ -26,8 +26,8 @@ namespace fldsgn {
 class MatchResiduesMover;
 
 // Types
-typedef utility::pointer::owning_ptr< MatchResiduesMover >  MatchResiduesMoverOP;
-typedef utility::pointer::owning_ptr< MatchResiduesMover const >  MatchResiduesMoverCOP;
+typedef utility::pointer::shared_ptr< MatchResiduesMover >  MatchResiduesMoverOP;
+typedef utility::pointer::shared_ptr< MatchResiduesMover const >  MatchResiduesMoverCOP;
 
 } // namespace fldsgn
 } // namespace protocols

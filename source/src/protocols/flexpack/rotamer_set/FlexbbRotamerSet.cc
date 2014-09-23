@@ -31,8 +31,8 @@ namespace rotamer_set {
 
 FlexbbRotamerSet::FlexbbRotamerSet() :
 	parent(),
-	existing_residue_( 0 ), 
-	owner_( 0 )
+	existing_residue_( /* 0 */ ), 
+	owner_( /* 0 */ )
 {}
 
 FlexbbRotamerSet::~FlexbbRotamerSet()

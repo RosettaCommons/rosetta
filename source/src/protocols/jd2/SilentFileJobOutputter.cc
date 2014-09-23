@@ -354,7 +354,7 @@ SilentFileJobOutputterCreator::keyname() const
 
 protocols::jd2::JobOutputterOP
 SilentFileJobOutputterCreator::create_JobOutputter() const {
-        return new SilentFileJobOutputter;
+        return protocols::jd2::JobOutputterOP( new SilentFileJobOutputter );
 }
 
 } //jd2

@@ -22,8 +22,8 @@ namespace protocols {
 namespace stepwise {
 	
 	class StepWiseSampleAndScreen;
-	typedef utility::pointer::owning_ptr< StepWiseSampleAndScreen > StepWiseSampleAndScreenOP;
-	typedef utility::pointer::owning_ptr< StepWiseSampleAndScreen const > StepWiseSampleAndScreenCOP;
+	typedef utility::pointer::shared_ptr< StepWiseSampleAndScreen > StepWiseSampleAndScreenOP;
+	typedef utility::pointer::shared_ptr< StepWiseSampleAndScreen const > StepWiseSampleAndScreenCOP;
 	
 } //stepwise
 } //protocols

@@ -22,7 +22,7 @@ namespace task_operations {
 
 class RestrictToCDRH3Loop;
 
-typedef utility::pointer::owning_ptr< RestrictToCDRH3Loop > RestrictToCDRH3LoopOP;
+typedef utility::pointer::shared_ptr< RestrictToCDRH3Loop > RestrictToCDRH3LoopOP;
 
 } //namespace task_operations
 } //namespace toolbox

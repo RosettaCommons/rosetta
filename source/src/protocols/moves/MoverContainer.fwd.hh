@@ -22,20 +22,20 @@ namespace moves{
 
 //Forwards and OP typedefs
 class MoverContainer;
-typedef utility::pointer::owning_ptr< MoverContainer > MoverContainerOP;
-typedef utility::pointer::owning_ptr< MoverContainer const > MoverContainerCOP;
+typedef utility::pointer::shared_ptr< MoverContainer > MoverContainerOP;
+typedef utility::pointer::shared_ptr< MoverContainer const > MoverContainerCOP;
 
 class SequenceMover;
-typedef utility::pointer::owning_ptr< SequenceMover > SequenceMoverOP;
-typedef utility::pointer::owning_ptr< SequenceMover const > SequenceMoverCOP;
+typedef utility::pointer::shared_ptr< SequenceMover > SequenceMoverOP;
+typedef utility::pointer::shared_ptr< SequenceMover const > SequenceMoverCOP;
 
 class RandomMover;
-typedef utility::pointer::owning_ptr< RandomMover > RandomMoverOP;
-typedef utility::pointer::owning_ptr< RandomMover const > RandomMoverCOP;
+typedef utility::pointer::shared_ptr< RandomMover > RandomMoverOP;
+typedef utility::pointer::shared_ptr< RandomMover const > RandomMoverCOP;
 
 class CycleMover;
-typedef utility::pointer::owning_ptr< CycleMover > CycleMoverOP;
-typedef utility::pointer::owning_ptr< CycleMover const > CycleMoverCOP;
+typedef utility::pointer::shared_ptr< CycleMover > CycleMoverOP;
+typedef utility::pointer::shared_ptr< CycleMover const > CycleMoverCOP;
 
 }//moves
 }//protocols

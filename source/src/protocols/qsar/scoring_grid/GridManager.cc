@@ -93,20 +93,20 @@ void GridManager::reset()
 	last_tag_ = "";
 	width_ = 40;
 	resolution_ = 0.25;
-	qsar_map_ = 0;
+	qsar_map_.reset();
 	initialized_ = false;
 	chain_ = 'X';
-	norm_function_ = 0;
+	norm_function_.reset();
 }
 
 GridManager::GridManager() :
 	last_tag_(""),
 	width_(40),
 	resolution_(0.25),
-	qsar_map_(0),
+	qsar_map_(/* 0 */),
 	initialized_(false),
 	chain_('X'),
-	norm_function_(0)
+	norm_function_(/* 0 */)
 {
 	grid_map_.clear();
 	score_map_.clear();

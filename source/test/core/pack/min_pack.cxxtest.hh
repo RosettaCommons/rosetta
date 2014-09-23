@@ -79,7 +79,7 @@ public:
 
 
 		scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
-		scoring::methods::EnergyMethodOptionsOP emopts( new scoring::methods::EnergyMethodOptions( scorefxn->energy_method_options() ));
+		scoring::methods::EnergyMethodOptionsOP emopts( new scoring::methods::EnergyMethodOptions( scorefxn->energy_method_options() ) );
 		emopts->hbond_options().decompose_bb_hb_into_pair_energies( true );;
 		scorefxn->set_energy_method_options( *emopts );
 		//scorefxn->set_weight( fa_pair, 0.0 );

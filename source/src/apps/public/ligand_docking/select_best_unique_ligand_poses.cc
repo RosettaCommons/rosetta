@@ -123,7 +123,7 @@ go_main() {
 	for(core::Size i = 1; i <= scores_list2.size(); ++i) {
 		if( selected_poses.size() >= max_poses ) break;
 		std::string tag( scores_list2[i].first );
-		a_pose = new core::pose::Pose();
+		a_pose = core::pose::PoseOP( new core::pose::Pose() );
 		inputter->pose_from_job( *a_pose, tag_job_map[ tag ] );
 		core::Size const last_rsd = a_pose->total_residue();
 		core::Real rms = 1e99;

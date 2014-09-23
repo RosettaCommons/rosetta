@@ -28,7 +28,7 @@ namespace protocols {
 namespace surface_docking {
 
 class SurfaceOrientMover;
-typedef utility::pointer::owning_ptr< SurfaceOrientMover > SurfaceOrientMoverOP;
+typedef utility::pointer::shared_ptr< SurfaceOrientMover > SurfaceOrientMoverOP;
 
 
 } // surfaceDockingProtocols

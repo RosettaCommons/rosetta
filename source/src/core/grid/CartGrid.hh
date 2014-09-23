@@ -343,7 +343,7 @@ public:
 		}
 	}
 
-	void fluff(utility::pointer::owning_ptr<CartGrid<T> > input, utility::pointer::owning_ptr<CartGrid<T> > original, int amount=6) {
+	void fluff(utility::pointer::shared_ptr<CartGrid<T> > input, utility::pointer::shared_ptr<CartGrid<T> > original, int amount=6) {
 		int istart, iend, jstart, jend, kstart, kend;
 		for (int i=0; i < input->its_nX_; i++) {
 			for (int j=0; j < input->its_nY_; j++) {
@@ -522,7 +522,7 @@ public:
 
 	}
 
-	void sum(utility::vector0<utility::pointer::owning_ptr<CartGrid<T> > > const & list_grids) {
+	void sum(utility::vector0<utility::pointer::shared_ptr<CartGrid<T> > > const & list_grids) {
 		int ngrids = static_cast<int>(list_grids.size());
 
 		this->zero();
@@ -556,7 +556,7 @@ public:
 		this->setupZones();
 	}
 
-	void split(int nsplits, int igrid, core::Real pad, utility::pointer::owning_ptr<CartGrid<T> > grid) {
+	void split(int nsplits, int igrid, core::Real pad, utility::pointer::shared_ptr<CartGrid<T> > grid) {
 		int tsplits = nsplits*nsplits*nsplits;
 		if (igrid < 0 || igrid >= tsplits) {
 			utility_exit_with_message("accessing split out of bounds");

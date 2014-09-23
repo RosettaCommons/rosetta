@@ -60,7 +60,7 @@ methods::EnergyMethodOP
 MembraneLipoCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new MembraneLipo;
+	return methods::EnergyMethodOP( new MembraneLipo );
 }
 
 ScoreTypes
@@ -73,7 +73,7 @@ MembraneLipoCreator::score_types_for_method() const {
 
 /// c-tor
 MembraneLipo::MembraneLipo() :
-	parent( new MembraneLipoCreator ),
+	parent( EnergyMethodCreatorOP( new MembraneLipoCreator ) ),
 	potential_( ScoringManager::get_instance()->get_MembranePotential() )
 {}
 
@@ -82,7 +82,7 @@ MembraneLipo::MembraneLipo() :
 EnergyMethodOP
 MembraneLipo::clone() const
 {
-	return new MembraneLipo();
+	return EnergyMethodOP( new MembraneLipo() );
 }
 
 
@@ -115,13 +115,13 @@ MembraneLipo::finalize_total_energy(
 
 	Real lipo(0);
 
-	MembraneTopology const & topology( *( static_cast< MembraneTopology const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY )())));
+	MembraneTopology const & topology( *( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) )));
 	if(topology.LipoDefined()) {
 		Real cen10Buried(0);
 		Real cen10Exposed(0);
 		Real cen10Buried_norm(0);
 		Real cen10Exposed_norm(0);
-		CenListInfo const & cenlist( *( static_cast< CenListInfo const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::CEN_LIST_INFO )() ))); 
+		CenListInfo const & cenlist( *( utility::pointer::static_pointer_cast< core::scoring::CenListInfo const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::CEN_LIST_INFO ) ))); 
 		for(Size i=1;i<=pose.total_residue();++i) {
 			Size rsdSeq(i);
 			if ( core::pose::symmetry::is_symmetric( pose ) ) {

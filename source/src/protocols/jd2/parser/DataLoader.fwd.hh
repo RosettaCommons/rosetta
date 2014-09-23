@@ -24,8 +24,8 @@ namespace parser {
 /// @brief A class for loading arbitrary data into the XML parser's basic::datacache::DataMap.
 class DataLoader;
 
-typedef utility::pointer::owning_ptr< DataLoader > DataLoaderOP;
-typedef utility::pointer::owning_ptr< DataLoader const > DataLoaderCOP;
+typedef utility::pointer::shared_ptr< DataLoader > DataLoaderOP;
+typedef utility::pointer::shared_ptr< DataLoader const > DataLoaderCOP;
 
 } //namespace parser
 } //namespace jd2

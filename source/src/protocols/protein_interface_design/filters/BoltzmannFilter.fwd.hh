@@ -27,8 +27,8 @@ namespace filters {
 class BoltzmannFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< BoltzmannFilter >  BoltzmannFilterOP;
-typedef utility::pointer::owning_ptr< BoltzmannFilter const >  BoltzmannFilterCOP;
+typedef utility::pointer::shared_ptr< BoltzmannFilter >  BoltzmannFilterOP;
+typedef utility::pointer::shared_ptr< BoltzmannFilter const >  BoltzmannFilterCOP;
 
 } // namespace filters
 } //namespace protein_interface_design

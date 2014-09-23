@@ -22,8 +22,8 @@ namespace task_operations {
 
 class RestrictToInterfaceOperation;
 
-typedef utility::pointer::owning_ptr< RestrictToInterfaceOperation > RestrictToInterfaceOperationOP;
-typedef utility::pointer::owning_ptr< RestrictToInterfaceOperation const > RestrictToInterfaceOperationCOP;
+typedef utility::pointer::shared_ptr< RestrictToInterfaceOperation > RestrictToInterfaceOperationOP;
+typedef utility::pointer::shared_ptr< RestrictToInterfaceOperation const > RestrictToInterfaceOperationCOP;
 
 } //namespace protocols
 } //namespace toolbox

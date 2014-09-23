@@ -92,7 +92,7 @@ ConnectJumpsCreator::keyname() const
 
 protocols::moves::MoverOP
 ConnectJumpsCreator::create_mover() const {
-  return new ConnectJumps();
+  return protocols::moves::MoverOP( new ConnectJumps() );
 }
 
 std::string
@@ -112,8 +112,8 @@ ConnectJumps::ConnectJumps() :
 	jump1_( 1 ),
 	jump2_( 2 ),
 	overlap_( 3 ),
-	scorefxn_( NULL ),
-	vlb_( new protocols::forge::components::VarLengthBuild() ),
+	scorefxn_( /* NULL */ ),
+	vlb_( protocols::forge::components::VarLengthBuildOP( new protocols::forge::components::VarLengthBuild() ) ),
 	cached_ss_( "" ),
 	cached_aa_( "" ),
 	cached_start_( 0 ),
@@ -130,7 +130,7 @@ ConnectJumps::~ConnectJumps() {}
 protocols::moves::MoverOP
 ConnectJumps::clone() const
 {
-	return new ConnectJumps(*this);
+	return protocols::moves::MoverOP( new ConnectJumps(*this) );
 }
 
 std::string
@@ -152,7 +152,7 @@ ConnectJumps::parse_my_tag(
 	overlap_ = tag->getOption< core::Size >( "overlap", overlap_ );
 	std::string const sfxn ( tag->getOption<std::string>( "scorefxn", "" ) );
 	if( sfxn != "" ) {
-		scorefxn_ = data.get< core::scoring::ScoreFunction * >( "scorefxns", sfxn );
+		scorefxn_ = data.get_ptr<core::scoring::ScoreFunction>( "scorefxns", sfxn );
 		TR << "score function " << sfxn << " is used. " << std::endl;
 	}
 }
@@ -327,12 +327,12 @@ ConnectJumps::create_coordinate_cst( core::pose::Pose const & pose,
 		atom = pose.residue_type(resi).atom_index("CA");
 	}
 
-	core::scoring::func::FuncOP fx = new core::scoring::func::HarmonicFunc(0.0, 0.5);
-	return new core::scoring::constraints::CoordinateConstraint(
+	core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc(0.0, 0.5) );
+	return core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint(
 			core::id::AtomID(atom,resi),
 			core::id::AtomID(pose.residue(1).nbr_atom(),1),
 			pose.residue(resi).xyz(atom),
-			fx );
+			fx ) );
 }
 
 } // namespace denovo_design

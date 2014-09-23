@@ -24,8 +24,8 @@ namespace simple_moves {
 namespace asym_fold_and_dock {
 
 class AsymFoldandDockMoveRbJumpMover;
-typedef utility::pointer::owning_ptr< AsymFoldandDockMoveRbJumpMover > AsymFoldandDockMoveRbJumpMoverOP;
-typedef utility::pointer::owning_ptr< AsymFoldandDockMoveRbJumpMover const > AsymFoldandDockMoveRbJumpMoverCOP;
+typedef utility::pointer::shared_ptr< AsymFoldandDockMoveRbJumpMover > AsymFoldandDockMoveRbJumpMoverOP;
+typedef utility::pointer::shared_ptr< AsymFoldandDockMoveRbJumpMover const > AsymFoldandDockMoveRbJumpMoverCOP;
 
 } // asym_fold_and_dock
 }

@@ -29,8 +29,8 @@ namespace ccd {
 class SlidingWindowLoopClosure;
 
 // Types
-typedef  utility::pointer::owning_ptr< SlidingWindowLoopClosure >  SlidingWindowLoopClosureOP;
-typedef  utility::pointer::owning_ptr< SlidingWindowLoopClosure const >  SlidingWindowLoopClosureCOP;
+typedef  utility::pointer::shared_ptr< SlidingWindowLoopClosure >  SlidingWindowLoopClosureOP;
+typedef  utility::pointer::shared_ptr< SlidingWindowLoopClosure const >  SlidingWindowLoopClosureCOP;
 
 } // namespace ccd
 } // namespace loop_closure

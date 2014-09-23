@@ -55,7 +55,7 @@ NullResourceLocatorCreator::~NullResourceLocatorCreator() {}
 
 ResourceLocatorOP
 NullResourceLocatorCreator::create_resource_locator() const {
-	return new NullResourceLocator;
+	return ResourceLocatorOP( new NullResourceLocator );
 }
 
 string
@@ -99,7 +99,7 @@ ResourceStreamOP
 NullResourceLocator::locate_resource_stream(
 	string const & /*locator_tag*/
 ) const {
-	return new NullStream();
+	return ResourceStreamOP( new NullStream() );
 }
 
 void

@@ -23,8 +23,8 @@ namespace abinitio {
 
 //forward declaration for private class
 class PairingStatistics;
-typedef utility::pointer::owning_ptr< PairingStatistics > PairingStatisticsOP;
-typedef utility::pointer::owning_ptr< PairingStatistics const > PairingStatisticsCOP;
+typedef utility::pointer::shared_ptr< PairingStatistics > PairingStatisticsOP;
+typedef utility::pointer::shared_ptr< PairingStatistics const > PairingStatisticsCOP;
 
 
 }

@@ -62,13 +62,13 @@ public:
 
 	//
 	SingleResidueFragDataOP clone() const {
-		return new BBTorsionAndAnglesSRFD( *this );
+		return SingleResidueFragDataOP( new BBTorsionAndAnglesSRFD( *this ) );
 	};
 
 	/// @brief create a new instance of this object
 	virtual
 	SingleResidueFragDataOP create() const {
-		return new BBTorsionAndAnglesSRFD();
+		return SingleResidueFragDataOP( new BBTorsionAndAnglesSRFD() );
 	}
 
 	virtual bool apply( pose::Pose&, Size seq_pos ) const;

@@ -49,7 +49,7 @@ namespace rotamer_recovery {
 static Tracer TR("protocol.rotamer_recovery.RRProtocolReferenceStructure");
 
 RRProtocolReferenceStructure::RRProtocolReferenceStructure() :
-	reference_pose_(NULL)
+	reference_pose_(/* NULL */)
 {}
 
 RRProtocolReferenceStructure::RRProtocolReferenceStructure(

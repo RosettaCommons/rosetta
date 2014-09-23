@@ -25,9 +25,9 @@ namespace scores {
 
 class FourAtomsConstraintData;
 
-typedef utility::pointer::owning_ptr<FourAtomsConstraintData>
+typedef utility::pointer::shared_ptr<FourAtomsConstraintData>
 		FourAtomsConstraintDataOP;
-typedef utility::pointer::owning_ptr<FourAtomsConstraintData const>
+typedef utility::pointer::shared_ptr<FourAtomsConstraintData const>
 		FourAtomsConstraintDataCOP;
 
 } // scores

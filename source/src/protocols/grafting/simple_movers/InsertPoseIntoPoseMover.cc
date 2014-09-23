@@ -33,8 +33,8 @@ protocols::moves::Mover("InsertPoseIntoPoseMover"),
 		start_(0),
 		end_(0),
 		copy_pdbinfo_(copy_pdbinfo),
-		src_pose_(NULL),
-		tag_(NULL)
+		src_pose_(/* NULL */),
+		tag_(/* NULL */)
 {
 	
 }
@@ -48,9 +48,9 @@ InsertPoseIntoPoseMover::InsertPoseIntoPoseMover(
 	start_(res_start),
 	end_(res_end),
 	copy_pdbinfo_(copy_pdbinfo),
-	tag_(NULL)
+	tag_(/* NULL */)
 {
-	src_pose_ = new core::pose::Pose(src_pose);
+	src_pose_ = core::pose::PoseOP( new core::pose::Pose(src_pose) );
 }
 	
 	
@@ -70,7 +70,7 @@ InsertPoseIntoPoseMover::~InsertPoseIntoPoseMover(){}
 
 void
 InsertPoseIntoPoseMover::src_pose(const core::pose::Pose& src_pose){
-	src_pose_ = new core::pose::Pose(src_pose);
+	src_pose_ = core::pose::PoseOP( new core::pose::Pose(src_pose) );
 }
 
 void
@@ -100,7 +100,7 @@ InsertPoseIntoPoseMover::get_name() const {
 
 protocols::moves::MoverOP
 InsertPoseIntoPoseMover::clone() const {
-	return new InsertPoseIntoPoseMover(*this);
+	return protocols::moves::MoverOP( new InsertPoseIntoPoseMover(*this) );
 }
 
 void
@@ -124,7 +124,7 @@ InsertPoseIntoPoseMover::parse_my_tag(
 
 protocols::moves::MoverOP
 InsertPoseIntoPoseMoverCreator::create_mover() const {
-	return new InsertPoseIntoPoseMover;
+	return protocols::moves::MoverOP( new InsertPoseIntoPoseMover );
 }
 
 std::string

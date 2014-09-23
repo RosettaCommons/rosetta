@@ -21,8 +21,8 @@ namespace simple_filters {
 
 class InterfaceSasaFilter;
 
-typedef utility::pointer::owning_ptr< InterfaceSasaFilter > InterfaceSasaFilterOP;
-typedef utility::pointer::owning_ptr< InterfaceSasaFilter const > InterfaceSasaFilterCOP;
+typedef utility::pointer::shared_ptr< InterfaceSasaFilter > InterfaceSasaFilterOP;
+typedef utility::pointer::shared_ptr< InterfaceSasaFilter const > InterfaceSasaFilterCOP;
 
 }
 }

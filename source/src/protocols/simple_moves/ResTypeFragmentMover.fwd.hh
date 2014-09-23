@@ -26,8 +26,8 @@ namespace simple_moves {
 // Forward
 class ResTypeFragmentMover;
 
-typedef utility::pointer::owning_ptr< ResTypeFragmentMover > ResTypeFragmentMoverOP;
-typedef utility::pointer::owning_ptr< ResTypeFragmentMover const > ResTypeFragmentMoverCOP;
+typedef utility::pointer::shared_ptr< ResTypeFragmentMover > ResTypeFragmentMoverOP;
+typedef utility::pointer::shared_ptr< ResTypeFragmentMover const > ResTypeFragmentMoverCOP;
 
 
 } // namespace simple_moves

@@ -23,10 +23,10 @@ namespace canonical_sampling {
 
 //Forwards and OP typedefs
 class MetropolisHastingsMover;
-typedef utility::pointer::owning_ptr< MetropolisHastingsMover > MetropolisHastingsMoverOP;
-typedef utility::pointer::owning_ptr< MetropolisHastingsMover const > MetropolisHastingsMoverCOP;
-typedef utility::pointer::access_ptr< MetropolisHastingsMover > MetropolisHastingsMoverAP;
-typedef utility::pointer::access_ptr< MetropolisHastingsMover const > MetropolisHastingsMoverCAP;
+typedef utility::pointer::shared_ptr< MetropolisHastingsMover > MetropolisHastingsMoverOP;
+typedef utility::pointer::shared_ptr< MetropolisHastingsMover const > MetropolisHastingsMoverCOP;
+typedef utility::pointer::weak_ptr< MetropolisHastingsMover > MetropolisHastingsMoverAP;
+typedef utility::pointer::weak_ptr< MetropolisHastingsMover const > MetropolisHastingsMoverCAP;
 
 } //moves
 } //protocols

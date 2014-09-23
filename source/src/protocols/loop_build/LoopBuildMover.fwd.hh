@@ -16,8 +16,8 @@ namespace loop_build{
 class LoopBuildMover;
 
 
-typedef utility::pointer::owning_ptr< LoopBuildMover > LoopBuildMoverOP;
-typedef utility::pointer::owning_ptr< LoopBuildMover const > LoopBuildMoverCOP;
+typedef utility::pointer::shared_ptr< LoopBuildMover > LoopBuildMoverOP;
+typedef utility::pointer::shared_ptr< LoopBuildMover const > LoopBuildMoverCOP;
 
 
 

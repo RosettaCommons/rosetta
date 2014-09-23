@@ -39,7 +39,7 @@ class CacheablePoseRawPtr : public basic::datacache::CacheableData
 public:
 	CacheablePoseRawPtr( core::pose::Pose * pose ) : CacheableData(), pose_(pose) {}
 	virtual ~CacheablePoseRawPtr(){};
-	virtual basic::datacache::CacheableDataOP clone() const { return new CacheablePoseRawPtr(*this); }
+	virtual basic::datacache::CacheableDataOP clone() const { return basic::datacache::CacheableDataOP( new CacheablePoseRawPtr(*this) ); }
 	virtual core::pose::Pose * pose() const { return pose_; }
 private:
 	core::pose::Pose * pose_;

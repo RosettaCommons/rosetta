@@ -48,7 +48,7 @@ methods::EnergyMethodOP
 RG_LocalEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new RG_LocalEnergy;
+	return methods::EnergyMethodOP( new RG_LocalEnergy );
 }
 
 ScoreTypes
@@ -85,7 +85,7 @@ assert(lastRes_ > 0);
 EnergyMethodOP
 RG_LocalEnergy::clone() const
 {
-	return new RG_LocalEnergy;
+	return EnergyMethodOP( new RG_LocalEnergy );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -201,16 +201,16 @@ RG_LocalEnergy::eval_atom_derivative(
 RG_Local_MinData const &
 RG_LocalEnergy::mindata_from_pose( pose::Pose const & pose) const {
 	using namespace core::pose::datacache;
-	return *( static_cast< RG_Local_MinData const * >( pose.data().get_const_ptr( CacheableDataType::RG_LOCAL_MINDATA )() ));
+	return *( utility::pointer::static_pointer_cast< core::scoring::methods::RG_Local_MinData const > ( pose.data().get_const_ptr( CacheableDataType::RG_LOCAL_MINDATA ) ));
 
 }
 
 RG_Local_MinData & RG_LocalEnergy::nonconst_mindata_from_pose( pose::Pose & pose) const {
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::RG_LOCAL_MINDATA ) ) {
-		return *( static_cast< RG_Local_MinData* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::RG_LOCAL_MINDATA )() ));
+		return *( utility::pointer::static_pointer_cast< core::scoring::methods::RG_Local_MinData > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::RG_LOCAL_MINDATA ) ));
 	}
 	// else
-	RG_Local_MinDataOP rgmindata = new RG_Local_MinData;
+	RG_Local_MinDataOP rgmindata( new RG_Local_MinData );
 	pose.data().set( core::pose::datacache::CacheableDataType::RG_LOCAL_MINDATA, rgmindata );
 	return *rgmindata;
 }

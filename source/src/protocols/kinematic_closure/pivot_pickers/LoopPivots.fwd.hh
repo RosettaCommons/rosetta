@@ -18,8 +18,8 @@ namespace pivot_pickers {
 
 class LoopPivots;
 
-typedef utility::pointer::owning_ptr<LoopPivots> LoopPivotsOP;
-typedef utility::pointer::owning_ptr<LoopPivots const> LoopPivotsCOP;
+typedef utility::pointer::shared_ptr<LoopPivots> LoopPivotsOP;
+typedef utility::pointer::shared_ptr<LoopPivots const> LoopPivotsCOP;
 
 }
 }

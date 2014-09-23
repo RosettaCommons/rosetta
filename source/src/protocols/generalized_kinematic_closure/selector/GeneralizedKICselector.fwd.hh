@@ -22,8 +22,8 @@ namespace generalized_kinematic_closure {
 namespace selector {
 
 class GeneralizedKICselector; // fwd declaration
-typedef utility::pointer::owning_ptr< GeneralizedKICselector > GeneralizedKICselectorOP;
-typedef utility::pointer::owning_ptr< GeneralizedKICselector const > GeneralizedKICselectorCOP;
+typedef utility::pointer::shared_ptr< GeneralizedKICselector > GeneralizedKICselectorOP;
+typedef utility::pointer::shared_ptr< GeneralizedKICselector const > GeneralizedKICselectorCOP;
 typedef utility::vector1<GeneralizedKICselectorOP> GeneralizedKICselectorOPs;
 typedef utility::vector1<GeneralizedKICselectorCOP> GeneralizedKICselectorCOPs;
 

@@ -21,8 +21,8 @@ namespace protocols {
 namespace canonical_sampling {
 
 class CanonicalSamplingMover;
-typedef utility::pointer::owning_ptr< CanonicalSamplingMover > CanonicalSamplingMoverOP;
-typedef utility::pointer::owning_ptr< CanonicalSamplingMover const > CanonicalSamplingMoverCOP;
+typedef utility::pointer::shared_ptr< CanonicalSamplingMover > CanonicalSamplingMoverOP;
+typedef utility::pointer::shared_ptr< CanonicalSamplingMover const > CanonicalSamplingMoverCOP;
 
 } // moves
 } // protocols

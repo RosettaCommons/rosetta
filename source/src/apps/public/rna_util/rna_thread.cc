@@ -258,7 +258,7 @@ prepare_threaded_model(
 	}
 
 	// fix up numbering.
-	PDBInfoOP pdb_info = new PDBInfo( pose );
+	PDBInfoOP pdb_info( new PDBInfo( pose ) );
 	pdb_info->set_numbering( working_res );
 	pose.pdb_info( pdb_info );
 

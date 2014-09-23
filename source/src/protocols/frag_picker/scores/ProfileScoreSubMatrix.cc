@@ -149,14 +149,14 @@ FragmentScoringMethodOP MakeProfileScoreSubMatrix::make(Size priority, Real lowe
 
 	trProfScoreSubMatrix << "Profile scoring method is: SubMatrix" << std::endl;
 
-	return (FragmentScoringMethodOP) new ProfileScoreSubMatrix(
+	return (FragmentScoringMethodOP) FragmentScoringMethodOP( new ProfileScoreSubMatrix(
 																													 priority,
 																													 lowest_acceptable_value,
 																													 use_lowest,
 																													 picker->get_query_seq()->sequence(),
 																													 len,
 																													 misc  // is the substituion matrix file location
-																														 );
+																														 ) );
 }
 
 } //scores

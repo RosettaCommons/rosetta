@@ -53,10 +53,10 @@ methods::EnergyMethodOP
 Fa_MbsolvEnergyCreator::create_energy_method(
   methods::EnergyMethodOptions const & options
 ) const {
-  return new Fa_MbsolvEnergy(
+  return methods::EnergyMethodOP( new Fa_MbsolvEnergy(
   	*( ScoringManager::get_instance()->etable( options.etable_type() ).lock() ),
   	*( ScoringManager::get_instance()->memb_etable( options.etable_type() ).lock() ) 
-  );
+  ) );
 }
 
 ScoreTypes
@@ -95,7 +95,7 @@ Fa_MbsolvEnergy::atomic_interaction_cutoff() const
 EnergyMethodOP
 Fa_MbsolvEnergy::clone() const
 {
-	return new Fa_MbsolvEnergy( *this );
+	return EnergyMethodOP( new Fa_MbsolvEnergy( *this ) );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -458,14 +458,14 @@ Membrane_FAEmbed const &
 Fa_MbsolvEnergy::Membrane_FAEmbed_from_pose( pose::Pose const & pose ) const
 {
   //using core::pose::datacache::CacheableDataType::MEMBRANE_FAEMBED;
-  return *( static_cast< Membrane_FAEmbed const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_FAEMBED )() ));
+  return *( utility::pointer::static_pointer_cast< core::scoring::Membrane_FAEmbed const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_FAEMBED ) ));
 }
 
 MembraneTopology const &
 Fa_MbsolvEnergy::MembraneTopology_from_pose( pose::Pose const & pose ) const
 {
   //using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
-  return *( static_cast< MembraneTopology const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY )() ));
+  return *( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
 }
 core::Size
 Fa_MbsolvEnergy::version() const

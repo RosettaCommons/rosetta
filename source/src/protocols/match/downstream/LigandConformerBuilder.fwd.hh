@@ -24,8 +24,8 @@ namespace downstream {
 
 class LigandConformerBuilder;
 
-typedef utility::pointer::owning_ptr< LigandConformerBuilder > LigandConformerBuilderOP;
-typedef utility::pointer::owning_ptr< LigandConformerBuilder const > LigandConformerBuilderCOP;
+typedef utility::pointer::shared_ptr< LigandConformerBuilder > LigandConformerBuilderOP;
+typedef utility::pointer::shared_ptr< LigandConformerBuilder const > LigandConformerBuilderCOP;
 
 }
 }

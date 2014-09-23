@@ -68,7 +68,7 @@ namespace monte_carlo {
 //Constructor
 StepWiseMonteCarlo::StepWiseMonteCarlo( core::scoring::ScoreFunctionCOP scorefxn_input ):
 	scorefxn_input_( scorefxn_input ),
-	options_( new options::StepWiseMonteCarloOptions ), // can be replaced later
+	options_( options::StepWiseMonteCarloOptionsCOP( new options::StepWiseMonteCarloOptions ) ), // can be replaced later
 	minimize_single_res_( false ), // changes during run
 	max_missing_weight_( scorefxn_input->get_weight( scoring::missing_res ) ), // for annealing
 	missing_weight_interval_( 0.0 ), // updated below
@@ -107,7 +107,7 @@ StepWiseMonteCarlo::do_main_loop( pose::Pose & pose ){
 	using namespace protocols::moves;
 	using namespace core::scoring;
 
-	MonteCarloOP monte_carlo = new MonteCarlo( pose, *scorefxn_, options_->temperature() );
+	MonteCarloOP monte_carlo( new MonteCarlo( pose, *scorefxn_, options_->temperature() ) );
 	initialize_for_movie( pose );
 
 	Size k( 0 );
@@ -180,26 +180,26 @@ StepWiseMonteCarlo::initialize_movers(){
 	stepwise_modeler_->set_native_pose( get_native_pose() );
 
 	// maybe AddMover could just hold a copy of ResampleMover...
-	add_mover_ = new AddMover( scorefxn_ );
+	add_mover_ = AddMoverOP( new AddMover( scorefxn_ ) );
 	add_mover_->set_native_pose( get_native_pose() );
 	add_mover_->set_start_added_residue_in_aform( false );
 	add_mover_->set_presample_added_residue(  true );
 	add_mover_->set_presample_by_swa(  true );
 	add_mover_->set_stepwise_modeler( stepwise_modeler_->clone_modeler() );
 
-	delete_mover_ = new DeleteMover;
+	delete_mover_ = DeleteMoverOP( new DeleteMover );
 	delete_mover_->set_native_pose( get_native_pose() );
 	delete_mover_->set_stepwise_modeler( stepwise_modeler_->clone_modeler() );
 	delete_mover_->set_options( options_ );
 
-	from_scratch_mover_ = new FromScratchMover;
+	from_scratch_mover_ = FromScratchMoverOP( new FromScratchMover );
 	from_scratch_mover_->set_native_pose( get_native_pose() );
 	from_scratch_mover_->set_stepwise_modeler( stepwise_modeler_->clone_modeler() );
 
-	add_or_delete_mover_ = new AddOrDeleteMover( add_mover_, delete_mover_, from_scratch_mover_ );
+	add_or_delete_mover_ = AddOrDeleteMoverOP( new AddOrDeleteMover( add_mover_, delete_mover_, from_scratch_mover_ ) );
 	add_or_delete_mover_->set_options( options_ );
 
-	resample_mover_ = new ResampleMover( stepwise_modeler_->clone_modeler() );
+	resample_mover_ = ResampleMoverOP( new ResampleMover( stepwise_modeler_->clone_modeler() ) );
 	resample_mover_->set_native_pose( get_native_pose() );
 	resample_mover_->set_options( options_ );
 
@@ -214,7 +214,7 @@ StepWiseMonteCarlo::setup_unified_stepwise_modeler(){
 	using namespace modeler::rna;
  	using namespace modeler::protein;
 
- 	StepWiseModelerOP stepwise_modeler = new StepWiseModeler( scorefxn_ );
+ 	StepWiseModelerOP stepwise_modeler( new StepWiseModeler( scorefxn_ ) );
 	protocols::stepwise::modeler::options::StepWiseModelerOptionsOP options = options_->setup_modeler_options();
 	if ( enumerate_ ) {
 		options->set_choose_random( false );

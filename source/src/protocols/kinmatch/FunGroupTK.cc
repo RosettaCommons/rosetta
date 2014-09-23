@@ -108,7 +108,7 @@ lzs(
 		}
 
 		PoseOP alapose(Pose const & pose_in) {
-				PoseOP rpose = new Pose(pose_in);
+				PoseOP rpose( new Pose(pose_in) );
     Pose & pose(*rpose);
     for(Size i=1; i<=pose.n_residue(); ++i) {
 						core::pose::replace_pose_residue_copying_existing_coordinates(pose,i,pose.residue(i).residue_type_set().name_map("ALA"));
@@ -145,7 +145,7 @@ FunGroupTK::FunGroupTK(
 				)
 				: pose_(alapose(p_in)), pos_(allifnone(pos,pose_->n_residue()))
 {
-		ifc_ = new ImplicitFastClashCheck(*pose_,2.2);
+		ifc_ = protocols::scoring::ImplicitFastClashCheckCOP( new ImplicitFastClashCheck(*pose_,2.2) );
 		frs_ = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 		core::chemical::ResidueTypeSetCOP frs( frs_ );
 		vector1<string> res_types;

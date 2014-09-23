@@ -21,8 +21,8 @@ namespace moves {
 
 class DualMonteCarlo;
 
-typedef utility::pointer::owning_ptr< DualMonteCarlo > DualMonteCarloOP;
-typedef utility::pointer::owning_ptr< DualMonteCarlo const > DualMonteCarloCOP;
+typedef utility::pointer::shared_ptr< DualMonteCarlo > DualMonteCarloOP;
+typedef utility::pointer::shared_ptr< DualMonteCarlo const > DualMonteCarloCOP;
 
 } // moves
 } // protocols

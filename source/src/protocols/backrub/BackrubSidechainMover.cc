@@ -73,7 +73,7 @@ protocols::backrub::BackrubSidechainMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 protocols::backrub::BackrubSidechainMoverCreator::create_mover() const {
-	return new BackrubSidechainMover;
+	return protocols::moves::MoverOP( new BackrubSidechainMover );
 }
 
 std::string
@@ -84,8 +84,8 @@ protocols::backrub::BackrubSidechainMoverCreator::mover_name() {
 protocols::backrub::BackrubSidechainMover::BackrubSidechainMover(
 ) :
 	protocols::canonical_sampling::ThermodynamicMover(),
-	backrub_mover_(new protocols::backrub::BackrubMover),
-	sidechain_mover_(new protocols::simple_moves::sidechain_moves::SidechainMover),
+	backrub_mover_(protocols::backrub::BackrubMoverOP( new protocols::backrub::BackrubMover )),
+	sidechain_mover_(protocols::simple_moves::sidechain_moves::SidechainMoverOP( new protocols::simple_moves::sidechain_moves::SidechainMover )),
 	record_statistics_(false),
 	statistics_filename_("brsc_stats.txt")
 {
@@ -108,11 +108,11 @@ protocols::backrub::BackrubSidechainMover::BackrubSidechainMover(
 	accept_hists_(mover.accept_hists_)
 {
 	if (mover.backrub_mover_) {
-		backrub_mover_ = dynamic_cast<protocols::backrub::BackrubMover *>(mover.backrub_mover_->clone()());
+		backrub_mover_ = utility::pointer::dynamic_pointer_cast< protocols::backrub::BackrubMover > ( mover.backrub_mover_->clone() );
 		runtime_assert(backrub_mover_ != 0);
 	}
 	if (mover.sidechain_mover_) {
-		sidechain_mover_ = dynamic_cast<protocols::simple_moves::sidechain_moves::SidechainMover *>(mover.sidechain_mover_->clone()());
+		sidechain_mover_ = utility::pointer::dynamic_pointer_cast< protocols::simple_moves::sidechain_moves::SidechainMover > ( mover.sidechain_mover_->clone() );
 		runtime_assert(sidechain_mover_ != 0);
 	}
 }
@@ -122,13 +122,13 @@ protocols::backrub::BackrubSidechainMover::~BackrubSidechainMover(){}
 protocols::moves::MoverOP
 protocols::backrub::BackrubSidechainMover::clone() const
 {
-	return new protocols::backrub::BackrubSidechainMover( *this );
+	return protocols::moves::MoverOP( new protocols::backrub::BackrubSidechainMover( *this ) );
 }
 
 protocols::moves::MoverOP
 protocols::backrub::BackrubSidechainMover::fresh_instance() const
 {
-	return new BackrubSidechainMover;
+	return protocols::moves::MoverOP( new BackrubSidechainMover );
 }
 
 std::string
@@ -190,10 +190,10 @@ protocols::backrub::BackrubSidechainMover::update_segments(
 )
 {
 	if (!(backrub_mover_->get_input_pose() && backrub_mover_->get_input_pose()->fold_tree() == pose.fold_tree())) {
-		backrub_mover_->set_input_pose(new core::pose::Pose(pose));
+		backrub_mover_->set_input_pose(PoseCOP( new core::pose::Pose(pose) ));
 	}
 
-	backrub_mover_->set_input_pose(new core::pose::Pose(pose));
+	backrub_mover_->set_input_pose(PoseCOP( new core::pose::Pose(pose) ));
 	backrub_mover_->clear_segments();
 	backrub_mover_->add_mainchain_segments();
 

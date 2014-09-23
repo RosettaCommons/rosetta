@@ -22,8 +22,8 @@ namespace protocols {
 namespace antibody {
 
 class SnugDock;
-typedef utility::pointer::owning_ptr< SnugDock > SnugDockOP;
-typedef utility::pointer::owning_ptr< SnugDock const > SnugDockCOP;
+typedef utility::pointer::shared_ptr< SnugDock > SnugDockOP;
+typedef utility::pointer::shared_ptr< SnugDock const > SnugDockCOP;
 
 } // namespace antibody
 } // namespace protocols

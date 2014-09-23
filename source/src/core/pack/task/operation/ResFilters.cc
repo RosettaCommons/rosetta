@@ -87,7 +87,7 @@ AnyResFilter::AnyResFilter(utility::vector1<ResFilterCOP> const & sub_filters) :
 	parent(sub_filters)
 {}
 
-ResFilterOP AnyResFilter::clone() const { return new AnyResFilter( *this ); }
+ResFilterOP AnyResFilter::clone() const { return ResFilterOP( new AnyResFilter( *this ) ); }
 
 bool AnyResFilter::operator() ( Pose const & pose, Size index ) const
 {
@@ -104,7 +104,7 @@ bool AnyResFilter::operator() ( Pose const & pose, Size index ) const
 
 ResFilterOP AnyResFilterCreator::create_res_filter() const
 {
-	return new AnyResFilter();
+	return ResFilterOP( new AnyResFilter() );
 }
 
 AllResFilter::AllResFilter() :
@@ -115,7 +115,7 @@ AllResFilter::AllResFilter(utility::vector1<ResFilterCOP> const & sub_filters) :
 	parent(sub_filters)
 {}
 
-ResFilterOP AllResFilter::clone() const { return new AllResFilter( *this ); }
+ResFilterOP AllResFilter::clone() const { return ResFilterOP( new AllResFilter( *this ) ); }
 
 bool AllResFilter::operator() ( Pose const & pose, Size index ) const
 {
@@ -132,7 +132,7 @@ bool AllResFilter::operator() ( Pose const & pose, Size index ) const
 
 ResFilterOP AllResFilterCreator::create_res_filter() const
 {
-	return new AllResFilter();
+	return ResFilterOP( new AllResFilter() );
 }
 
 NoResFilter::NoResFilter() :
@@ -143,7 +143,7 @@ NoResFilter::NoResFilter(utility::vector1<ResFilterCOP> const & sub_filters) :
 	parent(sub_filters)
 {}
 
-ResFilterOP NoResFilter::clone() const { return new NoResFilter( *this ); }
+ResFilterOP NoResFilter::clone() const { return ResFilterOP( new NoResFilter( *this ) ); }
 
 bool NoResFilter::operator() ( Pose const & pose, Size index ) const
 {
@@ -160,7 +160,7 @@ bool NoResFilter::operator() ( Pose const & pose, Size index ) const
 
 ResFilterOP NoResFilterCreator::create_res_filter() const
 	{
-	return new NoResFilter();
+	return ResFilterOP( new NoResFilter() );
 }
 
 ResidueTypeFilter::ResidueTypeFilter() :
@@ -173,7 +173,7 @@ ResidueTypeFilter::ResidueTypeFilter(bool polar, bool apolar, bool aromatic, boo
 	polar_(polar), apolar_(apolar), aromatic_(aromatic), charged_(charged)
 {}
 
-ResFilterOP ResidueTypeFilter::clone() const { return new ResidueTypeFilter( *this ); }
+ResFilterOP ResidueTypeFilter::clone() const { return ResFilterOP( new ResidueTypeFilter( *this ) ); }
 
 bool ResidueTypeFilter::operator() ( Pose const & pose, Size index ) const
 {
@@ -196,7 +196,7 @@ void ResidueTypeFilter::parse_tag( TagCOP tag )
 
 ResFilterOP ResidueTypeFilterCreator::create_res_filter() const
 	{
-	return new ResidueTypeFilter();
+	return ResFilterOP( new ResidueTypeFilter() );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -218,10 +218,10 @@ bool ResidueHasProperty::operator() ( Pose const & pose, Size index ) const
 
 ResFilterOP
 ResidueHasPropertyCreator::create_res_filter() const {
-	return new ResidueHasProperty;
+	return ResFilterOP( new ResidueHasProperty );
 }
 
-ResFilterOP ResidueHasProperty::clone() const { return new ResidueHasProperty( *this ); }
+ResFilterOP ResidueHasProperty::clone() const { return ResFilterOP( new ResidueHasProperty( *this ) ); }
 
 void ResidueHasProperty::parse_tag( TagCOP tag )
 {
@@ -244,10 +244,10 @@ bool ResidueLacksProperty::operator() ( Pose const & pose, Size index ) const
 
 ResFilterOP
 ResidueLacksPropertyCreator::create_res_filter() const {
-  return new ResidueLacksProperty;
+  return ResFilterOP( new ResidueLacksProperty );
 }
 
-ResFilterOP ResidueLacksProperty::clone() const { return new ResidueLacksProperty( *this ); }
+ResFilterOP ResidueLacksProperty::clone() const { return ResFilterOP( new ResidueLacksProperty( *this ) ); }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //begin ResiduePDBInfoHasLabel
@@ -268,10 +268,10 @@ bool ResiduePDBInfoHasLabel::operator() ( Pose const & pose, Size index ) const
 
 ResFilterOP
 ResiduePDBInfoHasLabelCreator::create_res_filter() const {
-  return new ResiduePDBInfoHasLabel;
+  return ResFilterOP( new ResiduePDBInfoHasLabel );
 }
 
-ResFilterOP ResiduePDBInfoHasLabel::clone() const { return new ResiduePDBInfoHasLabel( *this ); }
+ResFilterOP ResiduePDBInfoHasLabel::clone() const { return ResFilterOP( new ResiduePDBInfoHasLabel( *this ) ); }
 
 void ResiduePDBInfoHasLabel::parse_tag( TagCOP tag )
 {
@@ -295,10 +295,10 @@ bool ResiduePDBInfoLacksLabel::operator() ( Pose const & pose, Size index ) cons
 
 ResFilterOP
 ResiduePDBInfoLacksLabelCreator::create_res_filter() const {
-  return new ResiduePDBInfoLacksLabel;
+  return ResFilterOP( new ResiduePDBInfoLacksLabel );
 }
 
-ResFilterOP ResiduePDBInfoLacksLabel::clone() const { return new ResiduePDBInfoLacksLabel( *this ); }
+ResFilterOP ResiduePDBInfoLacksLabel::clone() const { return ResFilterOP( new ResiduePDBInfoLacksLabel( *this ) ); }
 //end ResiduePDBInfoLacksLabel
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -328,10 +328,10 @@ bool ResidueName3Is::operator() ( Pose const & pose, Size index ) const
 
 ResFilterOP
 ResidueName3IsCreator::create_res_filter() const {
-	return new ResidueName3Is;
+	return ResFilterOP( new ResidueName3Is );
 }
 
-ResFilterOP ResidueName3Is::clone() const { return new ResidueName3Is( *this ); }
+ResFilterOP ResidueName3Is::clone() const { return ResFilterOP( new ResidueName3Is( *this ) ); }
 
 void ResidueName3Is::parse_tag( TagCOP tag )
 {
@@ -362,10 +362,10 @@ bool ResidueName3Isnt::operator() ( Pose const & pose, Size index ) const
 
 ResFilterOP
 ResidueName3IsntCreator::create_res_filter() const {
-	return new ResidueName3Isnt;
+	return ResFilterOP( new ResidueName3Isnt );
 }
 
-ResFilterOP ResidueName3Isnt::clone() const { return new ResidueName3Isnt( *this ); }
+ResFilterOP ResidueName3Isnt::clone() const { return ResFilterOP( new ResidueName3Isnt( *this ) ); }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // begin ResidueIndexIs
@@ -395,10 +395,10 @@ bool ResidueIndexIs::operator() ( Pose const & pose, Size index ) const
 
 ResFilterOP
 ResidueIndexIsCreator::create_res_filter() const {
-	return new ResidueIndexIs;
+	return ResFilterOP( new ResidueIndexIs );
 }
 
-ResFilterOP ResidueIndexIs::clone() const { return new ResidueIndexIs( *this ); }
+ResFilterOP ResidueIndexIs::clone() const { return ResFilterOP( new ResidueIndexIs( *this ) ); }
 
 void ResidueIndexIs::parse_tag( TagCOP tag )
 {
@@ -444,10 +444,10 @@ bool ResidueIndexIsnt::operator() ( Pose const & pose, Size index ) const
 
 ResFilterOP
 ResidueIndexIsntCreator::create_res_filter() const {
-	return new ResidueIndexIsnt;
+	return ResFilterOP( new ResidueIndexIsnt );
 }
 
-ResFilterOP ResidueIndexIsnt::clone() const { return new ResidueIndexIsnt( *this ); }
+ResFilterOP ResidueIndexIsnt::clone() const { return ResFilterOP( new ResidueIndexIsnt( *this ) ); }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // ResiduePDBIndexIs
@@ -481,10 +481,10 @@ bool ResiduePDBIndexIs::operator() ( Pose const & pose, Size index ) const
 
 ResFilterOP
 ResiduePDBIndexIsCreator::create_res_filter() const {
-	return new ResiduePDBIndexIs;
+	return ResFilterOP( new ResiduePDBIndexIs );
 }
 
-ResFilterOP ResiduePDBIndexIs::clone() const { return new ResiduePDBIndexIs( *this ); }
+ResFilterOP ResiduePDBIndexIs::clone() const { return ResFilterOP( new ResiduePDBIndexIs( *this ) ); }
 
 ///@brief the expected format for the 'indices' option is: indices=A.2,B.3,Z.-20
 void ResiduePDBIndexIs::parse_tag( TagCOP tag )
@@ -536,10 +536,10 @@ bool ResiduePDBIndexIsnt::operator() ( Pose const & pose, Size index ) const
 
 ResFilterOP
 ResiduePDBIndexIsntCreator::create_res_filter() const {
-	return new ResiduePDBIndexIsnt;
+	return ResFilterOP( new ResiduePDBIndexIsnt );
 }
 
-ResFilterOP ResiduePDBIndexIsnt::clone() const { return new ResiduePDBIndexIs( *this ); }
+ResFilterOP ResiduePDBIndexIsnt::clone() const { return ResFilterOP( new ResiduePDBIndexIs( *this ) ); }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // ChainIs
@@ -563,10 +563,10 @@ bool ChainIs::operator() ( Pose const & pose, Size index ) const
 
 ResFilterOP
 ChainIsCreator::create_res_filter() const {
-	return new ChainIs;
+	return ResFilterOP( new ChainIs );
 }
 
-ResFilterOP ChainIs::clone() const { return new ChainIs( *this ); }
+ResFilterOP ChainIs::clone() const { return ResFilterOP( new ChainIs( *this ) ); }
 
 void ChainIs::parse_tag( TagCOP tag )
 {
@@ -589,10 +589,10 @@ bool ChainIsnt::operator() ( Pose const & pose, Size index ) const
 
 ResFilterOP
 ChainIsntCreator::create_res_filter() const {
-	return new ChainIsnt;
+	return ResFilterOP( new ChainIsnt );
 }
 
-ResFilterOP ChainIsnt::clone() const { return new ChainIsnt( *this ); }
+ResFilterOP ChainIsnt::clone() const { return ResFilterOP( new ChainIsnt( *this ) ); }
 
 } //namespace operation
 } //namespace task

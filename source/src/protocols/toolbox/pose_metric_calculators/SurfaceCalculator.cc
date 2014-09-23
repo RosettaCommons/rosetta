@@ -111,7 +111,7 @@ SurfaceCalculator::recompute( pose::Pose const & this_pose ) {
 			}
 		}
 		if ( has_nonprot_res ) {
-			core::pose::PoseOP pureprotpose = new core::pose::Pose( this_pose );
+			core::pose::PoseOP pureprotpose( new core::pose::Pose( this_pose ) );
 			pose_manipulation::remove_non_protein_residues( *pureprotpose );
 			pureprotpose->update_residue_neighbors();
 			pack::interaction_graph::SurfacePotential::get_instance()->compute_pose_surface_energy( *pureprotpose, total_surface_energy_, residue_surface_energy_ );

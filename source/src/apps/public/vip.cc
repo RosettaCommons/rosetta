@@ -76,13 +76,13 @@ main( int argc, char * argv [] )
 	{
 		std::string rmover = option[ cp::relax_mover ];
 		if( rmover == "relax" ){
-			protocols::relax::RelaxProtocolBaseOP relaxmover = new protocols::relax::FastRelax( scorefxn , 15 );
+			protocols::relax::RelaxProtocolBaseOP relaxmover( new protocols::relax::FastRelax( scorefxn , 15 ) );
 			relaxmover->apply(in_pose);
 		} else if( rmover == "classic_relax" ){
-			protocols::relax::RelaxProtocolBaseOP relaxmover = new protocols::relax::ClassicRelax( scorefxn );
+			protocols::relax::RelaxProtocolBaseOP relaxmover( new protocols::relax::ClassicRelax( scorefxn ) );
 			relaxmover->apply(in_pose);
 		} else if( rmover == "cst_relax" ){
-			protocols::relax::RelaxProtocolBaseOP cstrelaxmover = new protocols::relax::MiniRelax( scorefxn );
+			protocols::relax::RelaxProtocolBaseOP cstrelaxmover( new protocols::relax::MiniRelax( scorefxn ) );
 			cstrelaxmover->apply(in_pose);
 		}
 

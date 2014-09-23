@@ -142,7 +142,7 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
 	protocols::relax::FastRelax relax( fascorefxn,  option[ OptionKeys::relax::sequence_file ]() );
   core::pose::PoseOP native_pose;
 	if(  option[ in::file::native ].user() ){
-		native_pose = new Pose;
+		native_pose = core::pose::PoseOP( new Pose );
 		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() );
 		relax.set_native_pose( native_pose );
 	}
@@ -271,7 +271,7 @@ int loophash_main(){
 	using namespace protocols::loophash;
 
 	utility::vector1 < core::Size > loop_sizes = option[lh::loopsizes]();
-	LoopHashLibraryOP loop_hash_library = new LoopHashLibrary( loop_sizes );
+	LoopHashLibraryOP loop_hash_library( new LoopHashLibrary( loop_sizes ) );
 
 	// Run simple sampling run test or create the db ?
 	if ( option[lh::create_db]() ){;
@@ -280,7 +280,7 @@ int loophash_main(){
 		return 0;
 	}
 
-	Mover_LoopHashRefineOP lh_sampler = new Mover_LoopHashRefine( loop_hash_library );
+	Mover_LoopHashRefineOP lh_sampler( new Mover_LoopHashRefine( loop_hash_library ) );
 
 	// Normal mode with external loophash library
 	loop_hash_library->load_db();

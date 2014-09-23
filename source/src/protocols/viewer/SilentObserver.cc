@@ -54,7 +54,7 @@ SilentObserver::SilentObserver( std::string const & name_in, bool fullatom = fal
 	fullatom_( fullatom ),
 	silent_file_name_( name_in + ".out" )
 {
-	sfd_ = new core::io::silent::SilentFileData();
+	sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData() );
 }
 
 

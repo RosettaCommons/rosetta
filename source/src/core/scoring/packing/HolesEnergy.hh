@@ -54,7 +54,7 @@ public:
 	virtual
 	methods::EnergyMethodOP
 	clone() const {
-	  return new HolesEnergy();
+	  return methods::EnergyMethodOP( new HolesEnergy() );
 	}
 
 

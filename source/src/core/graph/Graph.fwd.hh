@@ -29,8 +29,8 @@ class Node;
 class Edge;
 class Graph;
 
-typedef utility::pointer::owning_ptr< Graph > GraphOP;
-typedef utility::pointer::owning_ptr< Graph const > GraphCOP;
+typedef utility::pointer::shared_ptr< Graph > GraphOP;
+typedef utility::pointer::shared_ptr< Graph const > GraphCOP;
 
 } // namespace graph
 } // namespace core

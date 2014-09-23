@@ -23,8 +23,8 @@ namespace scoring {
 ///
 class WaterAdductHBondPotential;
 
-typedef  utility::pointer::owning_ptr< WaterAdductHBondPotential > WaterAdductHBondPotentialOP;
-typedef  utility::pointer::owning_ptr< WaterAdductHBondPotential const > WaterAdductHBondPotentialCOP;
+typedef  utility::pointer::shared_ptr< WaterAdductHBondPotential > WaterAdductHBondPotentialOP;
+typedef  utility::pointer::shared_ptr< WaterAdductHBondPotential const > WaterAdductHBondPotentialCOP;
 
 
 } // scoring

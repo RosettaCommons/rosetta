@@ -21,7 +21,7 @@ namespace protocols {
 namespace enzdes {
 
 class EnzRepackMinimize;
-typedef utility::pointer::owning_ptr< EnzRepackMinimize > EnzRepackMinimizeOP;
+typedef utility::pointer::shared_ptr< EnzRepackMinimize > EnzRepackMinimizeOP;
 
 }  //namespace enzdes
 }  //namespace protocols

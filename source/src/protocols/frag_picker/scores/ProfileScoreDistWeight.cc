@@ -159,8 +159,8 @@ FragmentScoringMethodOP MakeProfileScoreDistWeight::make(Size priority,
 	if( ! query_prediction ) {
 		utility_exit_with_message("Unable to find secondary structure prediction for " + prediction_id );
 	}
-	return (FragmentScoringMethodOP) new ProfileScoreDistWeight(priority,
-																															lowest_acceptable_value, use_lowest, picker->get_query_seq(), query_prediction, picker->get_query_seq_string(),len);
+	return (FragmentScoringMethodOP) FragmentScoringMethodOP( new ProfileScoreDistWeight(priority,
+																															lowest_acceptable_value, use_lowest, picker->get_query_seq(), query_prediction, picker->get_query_seq_string(),len) );
 }
 
 } //scores

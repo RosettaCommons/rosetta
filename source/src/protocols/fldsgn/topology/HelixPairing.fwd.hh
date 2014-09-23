@@ -24,10 +24,10 @@ namespace topology {
 	class HelixPairing;
 	class HelixPairingSet;
 
-	typedef utility::pointer::owning_ptr< HelixPairing > HelixPairingOP;
-	typedef utility::pointer::owning_ptr< HelixPairingSet > HelixPairingSetOP;
-	typedef utility::pointer::owning_ptr< HelixPairing const > HelixPairingCOP;
-	typedef utility::pointer::owning_ptr< HelixPairingSet const > HelixPairingSetCOP;
+	typedef utility::pointer::shared_ptr< HelixPairing > HelixPairingOP;
+	typedef utility::pointer::shared_ptr< HelixPairingSet > HelixPairingSetOP;
+	typedef utility::pointer::shared_ptr< HelixPairing const > HelixPairingCOP;
+	typedef utility::pointer::shared_ptr< HelixPairingSet const > HelixPairingSetCOP;
 	typedef utility::vector1< HelixPairingOP > HelixPairings;
 
 } // namespace topology

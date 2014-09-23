@@ -97,7 +97,7 @@ EnvironmentCAP ProtectedConformation::environment() const {
 }
 
 core::conformation::ConformationOP ProtectedConformation::clone() const {
-  return new ProtectedConformation( *this );
+  return core::conformation::ConformationOP( new ProtectedConformation( *this ) );
 }
 
 /////////////////////////////////////////////////////////////////////////////

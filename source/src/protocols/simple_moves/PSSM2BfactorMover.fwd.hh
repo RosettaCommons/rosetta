@@ -20,8 +20,8 @@ namespace protocols {
 namespace simple_moves {
 
 class PSSM2BfactorMover;
-typedef utility::pointer::owning_ptr< PSSM2BfactorMover > PSSM2BfactorMoverOP;
-typedef utility::pointer::owning_ptr< PSSM2BfactorMover const > PSSM2BfactorMoverCOP;
+typedef utility::pointer::shared_ptr< PSSM2BfactorMover > PSSM2BfactorMoverOP;
+typedef utility::pointer::shared_ptr< PSSM2BfactorMover const > PSSM2BfactorMoverCOP;
 
 } // simple_moves
 } // protocols

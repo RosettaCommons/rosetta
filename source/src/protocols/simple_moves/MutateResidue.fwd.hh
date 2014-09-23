@@ -23,8 +23,8 @@ namespace protocols {
 namespace simple_moves {
 
 class MutateResidue;
-typedef utility::pointer::owning_ptr< MutateResidue > MutateResidueOP;
-typedef utility::pointer::owning_ptr< MutateResidue const > MutateResidueCOP;
+typedef utility::pointer::shared_ptr< MutateResidue > MutateResidueOP;
+typedef utility::pointer::shared_ptr< MutateResidue const > MutateResidueCOP;
 
 } // moves
 } // protocols

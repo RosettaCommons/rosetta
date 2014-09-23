@@ -157,12 +157,12 @@ PeakAssignment::NmrConstraintOP PeakAssignment::create_constraint(
 
 	using namespace core::scoring::constraints;
 	if ( !func )
-		func = new BoundFunc( 1.5,
+		func = core::scoring::func::FuncOP( new BoundFunc( 1.5,
 		5.5,
 		1.0,
 			"VC "+ObjexxFCL::string_of( normalized_peak_volume(), 3 )
-	);
-	return new NmrConstraint( atom1, atom2, pose, func ); //later figure out what the func should be...
+	) );
+	return PeakAssignment::NmrConstraintOP( new NmrConstraint( atom1, atom2, pose, func ) ); //later figure out what the func should be...
 }
 
 core::scoring::constraints::ConstraintOP PeakAssignment::create_constraint(
@@ -181,7 +181,7 @@ core::scoring::constraints::AmbiguousNMRConstraintOP PeakAssignment::create_floa
 ) const {
 /// create Ambiguous constraint with BoundFunc describing the whole thing...
 	using namespace core::scoring::constraints;
-	AmbiguousNMRConstraintOP full_cst = new AmbiguousNMRConstraint( func );
+	AmbiguousNMRConstraintOP full_cst( new AmbiguousNMRConstraint( func ) );
 	core::Size const n_float = float_ambiguity();
 
 	// add individual constraints --- their potential does not matter ... it is ignored in evaluation...

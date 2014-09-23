@@ -111,7 +111,7 @@ calc_strand_pairing_set(
 				spairname << istrand << "-" << jstrand << "." << orient ;
 				std::map<String, StrandPairingOP>::iterator it( newpairs.find( spairname.str() ) );
 				if ( it == newpairs.end() ){
-					StrandPairingOP strand_pair = new StrandPairing( istrand, jstrand, iaa, jaa, pleats, rgstr_shift, orient );
+					StrandPairingOP strand_pair( new StrandPairing( istrand, jstrand, iaa, jaa, pleats, rgstr_shift, orient ) );
 					newpairs.insert( std::map<String, StrandPairingOP>::value_type( spairname.str(), strand_pair ) );
 				}else{
 					(*it).second->elongate( iaa, jaa, pleats, pleats );

@@ -23,8 +23,8 @@ namespace optimize_weights {
 
 
 class PNatLigPoseOptEData; // fwd declaration
-typedef utility::pointer::owning_ptr< PNatLigPoseOptEData > PNatLigPoseOptEDataOP;
-typedef utility::pointer::owning_ptr< PNatLigPoseOptEData const > PNatLigPoseOptEDataCOP;
+typedef utility::pointer::shared_ptr< PNatLigPoseOptEData > PNatLigPoseOptEDataOP;
+typedef utility::pointer::shared_ptr< PNatLigPoseOptEData const > PNatLigPoseOptEDataCOP;
 
 
 } // namespace optimize_weights

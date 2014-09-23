@@ -54,7 +54,7 @@ public:
 	virtual ~CacheableStringMap() {}
 
 	virtual CacheableDataOP clone() const {
-		return new CacheableStringMap(*this);
+		return CacheableDataOP( new CacheableStringMap(*this) );
 	}
 
 	virtual std::map< std::string, std::string > & map() {

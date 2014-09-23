@@ -23,8 +23,8 @@ namespace task_operations {
 
 class RestrictToTerminiOperation;
 
-typedef utility::pointer::owning_ptr< RestrictToTerminiOperation > RestrictToTerminiOperationOP;
-typedef utility::pointer::owning_ptr< RestrictToTerminiOperation const > RestrictToTerminiOperationCOP;
+typedef utility::pointer::shared_ptr< RestrictToTerminiOperation > RestrictToTerminiOperationOP;
+typedef utility::pointer::shared_ptr< RestrictToTerminiOperation const > RestrictToTerminiOperationCOP;
 
 } //namespace protocols
 } //namespace toolbox

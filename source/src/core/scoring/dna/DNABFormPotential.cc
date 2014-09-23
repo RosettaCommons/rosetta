@@ -92,27 +92,27 @@ DNABFormPotential::init_dna_bform_data()
 	// -jjh
 
 	utility::vector1< TorsionFourierComponentCOP > alpha_components;
-	alpha_components.push_back( new TorsionFourierComponent( 0.185181, 1.0,  31.79508 ) );
-	alpha_components.push_back( new TorsionFourierComponent( 1.256531, 2.0, 351.95960 ) );
-	alpha_components.push_back( new TorsionFourierComponent( 0.354858, 3.0, 357.24748 ) );
+	alpha_components.push_back( utility::pointer::shared_ptr<const class core::scoring::dna::TorsionFourierComponent>( new TorsionFourierComponent( 0.185181, 1.0,  31.79508 ) ) );
+	alpha_components.push_back( utility::pointer::shared_ptr<const class core::scoring::dna::TorsionFourierComponent>( new TorsionFourierComponent( 1.256531, 2.0, 351.95960 ) ) );
+	alpha_components.push_back( utility::pointer::shared_ptr<const class core::scoring::dna::TorsionFourierComponent>( new TorsionFourierComponent( 0.354858, 3.0, 357.24748 ) ) );
 
 	utility::vector1< TorsionFourierComponentCOP > beta_components;
-	beta_components.push_back( new TorsionFourierComponent( 1.150000, 3.0,   0.00000 ) );
+	beta_components.push_back( utility::pointer::shared_ptr<const class core::scoring::dna::TorsionFourierComponent>( new TorsionFourierComponent( 1.150000, 3.0,   0.00000 ) ) );
 
 	utility::vector1< TorsionFourierComponentCOP > gamma_components;
-	gamma_components.push_back( new TorsionFourierComponent( 1.178040, 1.0, 190.97653 ) );
-	gamma_components.push_back( new TorsionFourierComponent( 0.092102, 2.0, 295.63279 ) );
-	gamma_components.push_back( new TorsionFourierComponent( 0.962830, 3.0, 348.09535 ) );
+	gamma_components.push_back( utility::pointer::shared_ptr<const class core::scoring::dna::TorsionFourierComponent>( new TorsionFourierComponent( 1.178040, 1.0, 190.97653 ) ) );
+	gamma_components.push_back( utility::pointer::shared_ptr<const class core::scoring::dna::TorsionFourierComponent>( new TorsionFourierComponent( 0.092102, 2.0, 295.63279 ) ) );
+	gamma_components.push_back( utility::pointer::shared_ptr<const class core::scoring::dna::TorsionFourierComponent>( new TorsionFourierComponent( 0.962830, 3.0, 348.09535 ) ) );
 
 	utility::vector1< TorsionFourierComponentCOP > delta_components;
-	delta_components.push_back( new TorsionFourierComponent( 1.400000, 3.0,   0.00000 ) );
+	delta_components.push_back( utility::pointer::shared_ptr<const class core::scoring::dna::TorsionFourierComponent>( new TorsionFourierComponent( 1.400000, 3.0,   0.00000 ) ) );
 
 	utility::vector1< TorsionFourierComponentCOP > epsilon_components;
-	epsilon_components.push_back( new TorsionFourierComponent( 1.150000, 3.0,   0.00000 ) );
+	epsilon_components.push_back( utility::pointer::shared_ptr<const class core::scoring::dna::TorsionFourierComponent>( new TorsionFourierComponent( 1.150000, 3.0,   0.00000 ) ) );
 
 	utility::vector1< TorsionFourierComponentCOP > zeta_components;
-	zeta_components.push_back( new TorsionFourierComponent( 1.200000, 2.0,   0.00000 ) );
-	zeta_components.push_back( new TorsionFourierComponent( 0.250000, 3.0,   0.00000 ) );
+	zeta_components.push_back( utility::pointer::shared_ptr<const class core::scoring::dna::TorsionFourierComponent>( new TorsionFourierComponent( 1.200000, 2.0,   0.00000 ) ) );
+	zeta_components.push_back( utility::pointer::shared_ptr<const class core::scoring::dna::TorsionFourierComponent>( new TorsionFourierComponent( 0.250000, 3.0,   0.00000 ) ) );
 
 	bb_fourier_data.push_back(   alpha_components );
 	bb_fourier_data.push_back(    beta_components );

@@ -74,10 +74,10 @@ public:
 	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
 	virtual protocols::filters::FilterOP clone() const {
-		return new DisulfideFilter( *this );
+		return protocols::filters::FilterOP( new DisulfideFilter( *this ) );
 	}
 	virtual protocols::filters::FilterOP fresh_instance() const{
-		return new DisulfideFilter();
+		return protocols::filters::FilterOP( new DisulfideFilter() );
 	}
 
 	virtual ~DisulfideFilter();

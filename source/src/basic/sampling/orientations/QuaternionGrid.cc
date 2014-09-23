@@ -199,7 +199,7 @@ QuaternionGridCOP QuaternionGridManager::request_by_name(std::string const & nam
     if(grids_.find(name)==grids_.end()){
         utility::io::izstream infile;
         basic::database::open(infile,"sampling/orientations/orientgridall/data/"+name+".grid");
-        grids_[name] = new QuaternionGrid(name,infile);
+        grids_[name] = utility::pointer::shared_ptr<const class basic::sampling::orientations::QuaternionGrid>( new QuaternionGrid(name,infile) );
         infile.close();
     }
     return grids_[name];

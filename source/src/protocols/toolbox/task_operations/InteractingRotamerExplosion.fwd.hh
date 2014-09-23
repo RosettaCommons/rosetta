@@ -22,8 +22,8 @@ namespace task_operations {
 
 class InteractingRotamerOperation;
 
-typedef utility::pointer::owning_ptr< InteractingRotamerOperation > InteractingRotamerOperationOP;
-typedef utility::pointer::owning_ptr< InteractingRotamerOperation const > InteractingRotamerOperationCOP;
+typedef utility::pointer::shared_ptr< InteractingRotamerOperation > InteractingRotamerOperationOP;
+typedef utility::pointer::shared_ptr< InteractingRotamerOperation const > InteractingRotamerOperationCOP;
 
 } //namespace protocols
 } //namespace toolbox

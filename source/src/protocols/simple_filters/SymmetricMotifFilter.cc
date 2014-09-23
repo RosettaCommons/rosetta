@@ -58,7 +58,7 @@ static thread_local basic::Tracer TR( "protocols.simple_filters.SymmetricMotifFi
 
 // creator
 protocols::filters::FilterOP
-SymmetricMotifFilterCreator::create_filter() const { return new SymmetricMotifFilter; }
+SymmetricMotifFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SymmetricMotifFilter ); }
 
 std::string
 SymmetricMotifFilterCreator::keyname() const { return "SymmetricMotif"; }
@@ -172,7 +172,7 @@ SymmetricMotifFilter::set_defaults() {
 
 protocols::filters::FilterOP
 SymmetricMotifFilter::clone() const {
-	return new SymmetricMotifFilter( *this );
+	return protocols::filters::FilterOP( new SymmetricMotifFilter( *this ) );
 }
 
 bool
@@ -593,7 +593,7 @@ SymmetricMotifFilter::parse_my_tag(
 
 	utility::vector1<std::string> motif_files( utility::string_split( tag->getOption< std::string >("motifs"), ',') );
 	for (Size i=1; i<=motif_files.size(); ++i) {
-		core::pose::PoseOP motif = new core::pose::Pose();
+		core::pose::PoseOP motif( new core::pose::Pose() );
 		core::import_pose::pose_from_pdb( *motif, motif_files[i] );
 		ref_motifs_.push_back( motif );
 	}

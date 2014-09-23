@@ -22,7 +22,7 @@ namespace pack {
 namespace rotamer_set {
 
 class WaterAnchorInfo;
-typedef utility::pointer::owning_ptr< WaterAnchorInfo > WaterAnchorInfoOP;
+typedef utility::pointer::shared_ptr< WaterAnchorInfo > WaterAnchorInfoOP;
 
 } // namespace rotamer_set
 } // namespace pack

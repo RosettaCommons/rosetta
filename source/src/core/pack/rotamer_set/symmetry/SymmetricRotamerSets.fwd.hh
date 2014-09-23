@@ -23,8 +23,8 @@ namespace symmetry {
 
 class SymmetricRotamerSets;
 
-typedef utility::pointer::owning_ptr< SymmetricRotamerSets > SymmetricRotamerSetsOP;
-typedef utility::pointer::owning_ptr< SymmetricRotamerSets const > SymmetricRotamerSetsCOP;
+typedef utility::pointer::shared_ptr< SymmetricRotamerSets > SymmetricRotamerSetsOP;
+typedef utility::pointer::shared_ptr< SymmetricRotamerSets const > SymmetricRotamerSetsCOP;
 
 } // symmetry
 } // namespace rotamer_set

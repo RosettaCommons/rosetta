@@ -33,7 +33,7 @@ moves::MoverCOP MoverList::get_mover( const std::string &name ) const{
 	if( iter == mover_list_.end() ){
 		utility_exit_with_message( "ERROR: Cannot find Mover named '" + name + "'" );
 	}
-	return iter->second();
+	return iter->second;
 }
 
 

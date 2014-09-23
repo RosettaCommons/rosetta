@@ -719,7 +719,7 @@ VarSolDistSasaCalculator::VarSolDistSasaCalculator():
 
 core::pose::metrics::PoseMetricCalculatorOP
 VarSolDistSasaCalculator::clone() const{
-	return new VarSolDistSasaCalculator();
+	return core::pose::metrics::PoseMetricCalculatorOP( new VarSolDistSasaCalculator() );
 }
 
 void VarSolDistSasaCalculator::set_atom_type_radii(std::string atype_name, Real coll_radius, Real int_radius, Size nshells) {
@@ -820,7 +820,7 @@ VarSolDistSasaCalculator::recompute( core::pose::Pose const & this_pose )
 	residue_sasa_.resize( this_pose.total_residue() );
 	// TR << "Initializing vSASA arrays with probe radius = " << probe_radius_ << " and wobble = " << wobble_ << std::endl;
 	for ( Size ii = 1; ii <= this_pose.total_residue(); ++ii ) {
-		rotamer_dots_vec_[ ii ] = new VarSolDRotamerDots( core::conformation::ResidueOP( new core::conformation::Residue(this_pose.residue( ii ) ) ), *this );
+		rotamer_dots_vec_[ ii ] = utility::pointer::shared_ptr<class devel::vardist_solaccess::VarSolDRotamerDots>( new VarSolDRotamerDots( core::conformation::ResidueOP( new core::conformation::Residue(this_pose.residue( ii ) ) ), *this ) );
 		rotamer_dots_vec_[ ii ]->increment_self_overlap();
 	}
 	core::scoring::EnergyGraph const & energy_graph( this_pose.energies().energy_graph() );
@@ -846,7 +846,7 @@ VarSolDistSasaCalculator::recompute( core::pose::Pose const & this_pose )
 protocols::moves::MoverOP
 LoadVarSolDistSasaCalculatorMoverCreator::create_mover() const
 {
-	return new LoadVarSolDistSasaCalculatorMover;
+	return protocols::moves::MoverOP( new LoadVarSolDistSasaCalculatorMover );
 }
 std::string LoadVarSolDistSasaCalculatorMoverCreator::keyname() const
 {
@@ -864,7 +864,7 @@ LoadVarSolDistSasaCalculatorMover::~LoadVarSolDistSasaCalculatorMover()
 
 protocols::moves::MoverOP
 LoadVarSolDistSasaCalculatorMover::clone() const {
-	return new LoadVarSolDistSasaCalculatorMover;
+	return protocols::moves::MoverOP( new LoadVarSolDistSasaCalculatorMover );
 }
 
 std::string

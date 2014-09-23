@@ -51,7 +51,7 @@ USOGFunc::USOGFunc(core::Real mean, core::Real std_dev, core::Real weight) {
 }
 
 FuncOP USOGFunc::clone() const {
-  return new USOGFunc(*this);
+  return FuncOP( new USOGFunc(*this) );
 }
 
 core::Real USOGFunc::func(const core::Real x) const {

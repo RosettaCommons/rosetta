@@ -421,7 +421,7 @@ setup_symmetric_conformation(
 	}
 
 	// now create the symmetric conformation
-	conformation::symmetry::SymmetricConformationOP symm_conf = new conformation::symmetry::SymmetricConformation( conf, symm_info );
+	conformation::symmetry::SymmetricConformationOP symm_conf( new conformation::symmetry::SymmetricConformation( conf, symm_info ) );
 
 	// if(check_coords(orig_coords, conf_coords(*symm_conf,1,orig_coords.size()) ));// utility_exit_with_message("error");
 

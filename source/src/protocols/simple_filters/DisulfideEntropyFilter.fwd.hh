@@ -21,8 +21,8 @@ namespace simple_filters {
 
 class DisulfideEntropyFilter;
 
-typedef utility::pointer::owning_ptr< DisulfideEntropyFilter > DisulfideEntropyFilterOP;
-typedef utility::pointer::owning_ptr< DisulfideEntropyFilter const > DisulfideEntropyFilterCOP;
+typedef utility::pointer::shared_ptr< DisulfideEntropyFilter > DisulfideEntropyFilterOP;
+typedef utility::pointer::shared_ptr< DisulfideEntropyFilter const > DisulfideEntropyFilterCOP;
 
 }
 }

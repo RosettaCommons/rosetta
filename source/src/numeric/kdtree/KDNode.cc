@@ -29,10 +29,10 @@ namespace kdtree {
 
 KDNode::KDNode( KDTree const & tree ) :
 	split_axis_( 0 ),
-	parent_( NULL ),
-	left_child_( NULL ),
-	right_child_( NULL ),
-	pt_( NULL ),
+	parent_( /* NULL */ ),
+	left_child_( /* NULL */ ),
+	right_child_( /* NULL */ ),
+	pt_( /* NULL */ ),
 	tree_( tree )
 {}
 

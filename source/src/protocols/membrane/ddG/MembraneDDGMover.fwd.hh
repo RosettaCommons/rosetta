@@ -28,8 +28,8 @@ namespace membrane {
 namespace ddG {
 
 class MembraneDDGMover;
-typedef utility::pointer::owning_ptr< MembraneDDGMover > MembraneDDGMoverOP;
-typedef utility::pointer::owning_ptr< MembraneDDGMover const > MembraneDDGMoverCOP;
+typedef utility::pointer::shared_ptr< MembraneDDGMover > MembraneDDGMoverOP;
+typedef utility::pointer::shared_ptr< MembraneDDGMover const > MembraneDDGMoverCOP;
 
 } // ddG
 } // membrane

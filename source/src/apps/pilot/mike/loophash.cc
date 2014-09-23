@@ -100,8 +100,8 @@ using namespace protocols::loophash;
 using namespace numeric::geometry::hashing;
 
 class LoopHashRelax_Sampler;
-typedef utility::pointer::owning_ptr< LoopHashRelax_Sampler > LoopHashRelax_SamplerOP;
-typedef utility::pointer::owning_ptr< LoopHashRelax_Sampler const > LoopHashRelax_SamplerCOP;
+typedef utility::pointer::shared_ptr< LoopHashRelax_Sampler > LoopHashRelax_SamplerOP;
+typedef utility::pointer::shared_ptr< LoopHashRelax_Sampler const > LoopHashRelax_SamplerCOP;
 
 class LoopHashRelax_Sampler: public protocols::moves::Mover {
 public:
@@ -117,7 +117,7 @@ public:
 	virtual void apply( core::pose::Pose& pose );
 
   virtual protocols::moves::MoverOP clone() const {
-		return new LoopHashRelax_Sampler( *this );
+		return protocols::moves::MoverOP( new LoopHashRelax_Sampler( *this ) );
 	}
 
 
@@ -126,7 +126,7 @@ public:
 	}
 
 	virtual	protocols::moves::MoverOP	fresh_instance() const {
-		return new LoopHashRelax_Sampler( library_ );
+		return protocols::moves::MoverOP( new LoopHashRelax_Sampler( library_ ) );
 	}
 
 private:
@@ -200,7 +200,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
     TR.Info << "Loophash apply function ! " << std::endl;
 
     //protocols::relax::FastRelax *qrelax = new protocols::relax::FastRelax( fascorefxn, 1 );
-    protocols::relax::FastRelaxOP relax = new protocols::relax::FastRelax( fascorefxn,  option[ OptionKeys::relax::sequence_file ]() );
+    protocols::relax::FastRelaxOP relax( new protocols::relax::FastRelax( fascorefxn,  option[ OptionKeys::relax::sequence_file ]() ) );
 
     // convert pose to centroid pose:
     core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID);
@@ -549,7 +549,7 @@ main( int argc, char * argv [] )
 	TR.Info << "SIZEOF core::Size: " << sizeof( unsigned int ) << std::endl;
 
 	utility::vector1 < core::Size > loop_sizes = option[lh::loopsizes]();
-	LoopHashLibraryOP loop_hash_library = new LoopHashLibrary( loop_sizes );
+	LoopHashLibraryOP loop_hash_library( new LoopHashLibrary( loop_sizes ) );
 
 
   // sandbox mode ?
@@ -565,7 +565,7 @@ main( int argc, char * argv [] )
 		return 0;
 	}
 
-  LoopHashRelax_SamplerOP lh_sampler = new LoopHashRelax_Sampler( loop_hash_library );
+  LoopHashRelax_SamplerOP lh_sampler( new LoopHashRelax_Sampler( loop_hash_library ) );
 
   // Normal mode with external loophash library
   loop_hash_library->load_db();

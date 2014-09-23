@@ -636,9 +636,9 @@ void PairingLibrary::create_jump_fragments(
 	frags.reserve( ntemplates );
 	for ( PairingTemplateList::const_iterator it=templates.begin(),	eit=templates.end();
 				it!=eit; ++it ) {
-		frags.push_back( new FragData );
+		frags.push_back( utility::pointer::shared_ptr<class core::fragment::FragData>( new FragData ) );
 		if ( bWithTorsion ) {
-			BBTorsionSRFDOP start =  new BBTorsionSRFD( 3, 'E', 'X' );
+			BBTorsionSRFDOP start( new BBTorsionSRFD( 3, 'E', 'X' ) );
 			start->set_torsion( 1, it->phi( iStart ) );
 			start->set_torsion( 2, it->psi( iStart ) );
 			start->set_torsion( 3, it->omega( iStart ) );
@@ -646,11 +646,11 @@ void PairingLibrary::create_jump_fragments(
 			frags.back()->add_residue( start );
 		}
 
-		frags.back()->add_residue( new UpJumpSRFD() );
-		frags.back()->add_residue( new DownJumpSRFD( it->rt_, it->atoms_downstream_, it->atoms_upstream_, 'X' ) );
+		frags.back()->add_residue( SingleResidueFragDataOP( new UpJumpSRFD() ) );
+		frags.back()->add_residue( SingleResidueFragDataOP( new DownJumpSRFD( it->rt_, it->atoms_downstream_, it->atoms_upstream_, 'X' ) ) );
 
 		if ( bWithTorsion ) {
-			BBTorsionSRFDOP stop =  new BBTorsionSRFD( 3, 'E', 'X' );
+			BBTorsionSRFDOP stop( new BBTorsionSRFD( 3, 'E', 'X' ) );
 			stop->set_torsion( 1, it->phi( iStop ) );
 			stop->set_torsion( 2, it->psi( iStop ) );
 			stop->set_torsion( 3, it->omega( iStop ) );

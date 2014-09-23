@@ -82,8 +82,8 @@ AtomicContactCountFilter::AtomicContactCountFilter( AtomicContactCountFilter con
 
 AtomicContactCountFilter::~AtomicContactCountFilter() {}
 
-protocols::filters::FilterOP AtomicContactCountFilter::clone() const { return new AtomicContactCountFilter( *this ); }
-protocols::filters::FilterOP AtomicContactCountFilter::fresh_instance() const { return new AtomicContactCountFilter(); }
+protocols::filters::FilterOP AtomicContactCountFilter::clone() const { return protocols::filters::FilterOP( new AtomicContactCountFilter( *this ) ); }
+protocols::filters::FilterOP AtomicContactCountFilter::fresh_instance() const { return protocols::filters::FilterOP( new AtomicContactCountFilter() ); }
 
 void AtomicContactCountFilter::initialize_all_atoms( core::pack::task::TaskFactoryOP task_factoryA, bool individual_tasks, core::pack::task::TaskFactoryOP task_factoryB, bool normalize_by_carbon_count)
 {
@@ -145,8 +145,8 @@ void AtomicContactCountFilter::parse_my_tag(
 	ss_only_ = tag->getOption< bool >( "ss_only", false );
 
 	bool individual_tasks = false;
-  core::pack::task::TaskFactoryOP task_factoryA = new core::pack::task::TaskFactory;
-  core::pack::task::TaskFactoryOP task_factoryB = new core::pack::task::TaskFactory;
+  core::pack::task::TaskFactoryOP task_factoryA( new core::pack::task::TaskFactory );
+  core::pack::task::TaskFactoryOP task_factoryB( new core::pack::task::TaskFactory );
 	if( tag->hasOption( "taskA" ) ){
 		utility::vector1< std::string > taskA_names = utility::string_split( tag->getOption< std::string >( "taskA" ), ',' );
 		for(Size i = 1; i <= taskA_names.size(); i++) {
@@ -548,7 +548,7 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 }
 
 protocols::filters::FilterOP
-AtomicContactCountFilterCreator::create_filter() const { return new AtomicContactCountFilter; }
+AtomicContactCountFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AtomicContactCountFilter ); }
 
 std::string
 AtomicContactCountFilterCreator::keyname() const { return "AtomicContactCount"; }

@@ -24,8 +24,8 @@ namespace pose_metric_calculators {
 
 class RotamerBoltzCalculator;
 
-typedef utility::pointer::owning_ptr< RotamerBoltzCalculator> RotamerBoltzCalculatorOP;
-typedef utility::pointer::owning_ptr< RotamerBoltzCalculator const > RotamerBoltzCalculatorCOP;
+typedef utility::pointer::shared_ptr< RotamerBoltzCalculator> RotamerBoltzCalculatorOP;
+typedef utility::pointer::shared_ptr< RotamerBoltzCalculator const > RotamerBoltzCalculatorCOP;
 
 } // namespace pose_metric_calculators
 } // namespace toolbox

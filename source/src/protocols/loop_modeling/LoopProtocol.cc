@@ -69,7 +69,7 @@ namespace protocols {
 namespace loop_modeling {
 
 MoverOP LoopProtocolCreator::create_mover() const { // {{{1
-	return new LoopProtocol;
+	return MoverOP( new LoopProtocol );
 }
 
 string LoopProtocolCreator::keyname() const { // {{{1
@@ -78,7 +78,7 @@ string LoopProtocolCreator::keyname() const { // {{{1
 // }}}1
 
 LoopProtocol::LoopProtocol() { // {{{1
-	protocol_ = utility::pointer::static_pointer_cast< utilities::LoopMoverGroup >( register_nested_loop_mover( LoopMoverOP(new utilities::LoopMoverGroup) ) );
+	protocol_ = utility::pointer::static_pointer_cast< utilities::LoopMoverGroup >( register_nested_loop_mover( LoopMoverOP( new utilities::LoopMoverGroup ) ) );
 	movers_ = protocol_->add_mover_group();
 	refiners_ = protocol_->add_mover_group();
 	monte_carlo_ = NULL;
@@ -192,8 +192,8 @@ void LoopProtocol::start_protocol(Pose & pose) { // {{{1
 	protocols::loops::loop_mover::loops_set_chainbreak_weight(
 			get_score_function(), 1);
 
-	monte_carlo_ = new protocols::moves::MonteCarlo(
-			pose, *get_score_function(), initial_temp_);
+	monte_carlo_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo(
+			pose, *get_score_function(), initial_temp_) );
 
 	// Setup the loggers.
 
@@ -270,7 +270,7 @@ void LoopProtocol::add_filter(protocols::filters::FilterOP filter) { // {{{1
 }
 
 void LoopProtocol::add_acceptance_check(string name) { // {{{1
-	movers_->add_mover(new utilities::AcceptanceCheck(monte_carlo_, name));
+	movers_->add_mover(LoopMoverOP( new utilities::AcceptanceCheck(monte_carlo_, name) ));
 }
 
 

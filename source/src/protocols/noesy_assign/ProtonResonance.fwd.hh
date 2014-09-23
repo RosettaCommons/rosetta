@@ -28,11 +28,11 @@ namespace noesy_assign {
 class ProtonResonance;
 
 // Types
-typedef  utility::pointer::owning_ptr< ProtonResonance >  ProtonResonanceOP;
-typedef  utility::pointer::owning_ptr< ProtonResonance const >  ProtonResonanceCOP;
+typedef  utility::pointer::shared_ptr< ProtonResonance >  ProtonResonanceOP;
+typedef  utility::pointer::shared_ptr< ProtonResonance const >  ProtonResonanceCOP;
 
-typedef  utility::pointer::access_ptr< ProtonResonance >  ProtonResonanceAP;
-typedef  utility::pointer::access_ptr< ProtonResonance const >  ProtonResonanceCAP;
+typedef  utility::pointer::weak_ptr< ProtonResonance >  ProtonResonanceAP;
+typedef  utility::pointer::weak_ptr< ProtonResonance const >  ProtonResonanceCAP;
 
 }
 }

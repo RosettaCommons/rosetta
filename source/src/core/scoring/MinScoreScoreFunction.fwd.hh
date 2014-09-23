@@ -28,8 +28,8 @@ namespace scoring {
 // Forward
 class MinScoreScoreFunction;
 
-typedef utility::pointer::owning_ptr< MinScoreScoreFunction > MinScoreScoreFunctionOP;
-typedef utility::pointer::owning_ptr< MinScoreScoreFunction const > MinScoreScoreFunctionCOP;
+typedef utility::pointer::shared_ptr< MinScoreScoreFunction > MinScoreScoreFunctionOP;
+typedef utility::pointer::shared_ptr< MinScoreScoreFunction const > MinScoreScoreFunctionCOP;
 
 } // namespace scoring
 } // namespace core

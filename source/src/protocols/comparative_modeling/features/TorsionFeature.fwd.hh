@@ -21,8 +21,8 @@ namespace comparative_modeling {
 namespace features {
 
 class TorsionFeature;
-typedef utility::pointer::owning_ptr< TorsionFeature > TorsionFeatureOP;
-typedef utility::pointer::owning_ptr< TorsionFeature const > TorsionFeatureCOP;
+typedef utility::pointer::shared_ptr< TorsionFeature > TorsionFeatureOP;
+typedef utility::pointer::shared_ptr< TorsionFeature const > TorsionFeatureCOP;
 
 } // features
 } // comparative_modeling

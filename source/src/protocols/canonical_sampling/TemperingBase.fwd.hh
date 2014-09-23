@@ -23,10 +23,10 @@ namespace canonical_sampling {
 // Forward
 class TemperingBase;
 
-typedef utility::pointer::owning_ptr< TemperingBase > TemperingBaseOP;
-typedef utility::pointer::owning_ptr< TemperingBase const > TemperingBaseCOP;
-typedef utility::pointer::access_ptr< TemperingBase > TemperingBaseAP;
-typedef utility::pointer::access_ptr< TemperingBase const > TemperingBaseCAP;
+typedef utility::pointer::shared_ptr< TemperingBase > TemperingBaseOP;
+typedef utility::pointer::shared_ptr< TemperingBase const > TemperingBaseCOP;
+typedef utility::pointer::weak_ptr< TemperingBase > TemperingBaseAP;
+typedef utility::pointer::weak_ptr< TemperingBase const > TemperingBaseCAP;
 
 } // namespace canonical_sampling
 } // namespace protocols

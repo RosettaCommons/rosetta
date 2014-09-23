@@ -27,7 +27,7 @@ void cm_main() {
 	using protocols::comparative_modeling::LoopRelaxThreadingMoverOP;
 
 	// initialization
-	LoopRelaxThreadingMoverOP lrt = new LoopRelaxThreadingMover();
+	LoopRelaxThreadingMoverOP lrt( new LoopRelaxThreadingMover() );
 	lrt->setup();
 
 	// run

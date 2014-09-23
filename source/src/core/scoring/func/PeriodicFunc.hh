@@ -34,7 +34,7 @@ public:
 	PeriodicFunc ( Real const x0_in, Real const k_in, Real const n_periodic_in, Real const C_in) : x0_( x0_in ), k_( k_in ), n_periodic_( n_periodic_in ), C_( C_in ){}
 
 	FuncOP
-	clone() const { return new PeriodicFunc( *this ); }
+	clone() const { return FuncOP( new PeriodicFunc( *this ) ); }
 
 	Real func( Real const x ) const;
 	Real dfunc( Real const x ) const;

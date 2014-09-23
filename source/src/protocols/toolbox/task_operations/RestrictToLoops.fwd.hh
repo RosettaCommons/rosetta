@@ -19,7 +19,7 @@ namespace toolbox {
 namespace task_operations {
 
 class RestrictToLoops;
-typedef utility::pointer::owning_ptr<RestrictToLoops> RestrictToLoopsOP;
+typedef utility::pointer::shared_ptr<RestrictToLoops> RestrictToLoopsOP;
 
 }
 }

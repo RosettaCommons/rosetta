@@ -19,10 +19,10 @@ namespace hashing {
 
 template<typename T>
 class xyzStripeHashWithMeta;
-typedef utility::pointer::owning_ptr< xyzStripeHashWithMeta<numeric::Real> > xyzStripeHashWithMetaRealOP;
-typedef utility::pointer::owning_ptr< xyzStripeHashWithMeta<numeric::Real> const > xyzStripeHashWithMetaRealCOP;
-typedef utility::pointer::owning_ptr< xyzStripeHashWithMeta<float> > xyzStripeHashWithMetaFloatOP;
-typedef utility::pointer::owning_ptr< xyzStripeHashWithMeta<float> const > xyzStripeHashWithMetaFloatCOP;
+typedef utility::pointer::shared_ptr< xyzStripeHashWithMeta<numeric::Real> > xyzStripeHashWithMetaRealOP;
+typedef utility::pointer::shared_ptr< xyzStripeHashWithMeta<numeric::Real> const > xyzStripeHashWithMetaRealCOP;
+typedef utility::pointer::shared_ptr< xyzStripeHashWithMeta<float> > xyzStripeHashWithMetaFloatOP;
+typedef utility::pointer::shared_ptr< xyzStripeHashWithMeta<float> const > xyzStripeHashWithMetaFloatCOP;
 
 }
 }

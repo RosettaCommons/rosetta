@@ -26,8 +26,8 @@ namespace kinematics {
 
 class MinimizerMapBase;
 
-typedef utility::pointer::owning_ptr< MinimizerMapBase > MinimizerMapBaseOP;
-typedef utility::pointer::owning_ptr< MinimizerMapBase const > MinimizerMapBaseCOP;
+typedef utility::pointer::shared_ptr< MinimizerMapBase > MinimizerMapBaseOP;
+typedef utility::pointer::shared_ptr< MinimizerMapBase const > MinimizerMapBaseCOP;
 
 
 } // namespace kinematics

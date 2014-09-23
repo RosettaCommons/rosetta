@@ -22,8 +22,8 @@ namespace docking {
 
 /// @brief this mover does the low-resolution centroid mode phase of the RosettaDock algorithm
 class DockingLowRes;
-typedef utility::pointer::owning_ptr< DockingLowRes > DockingLowResOP;
-typedef utility::pointer::owning_ptr< DockingLowRes const > DockingLowResCOP;
+typedef utility::pointer::shared_ptr< DockingLowRes > DockingLowResOP;
+typedef utility::pointer::shared_ptr< DockingLowRes const > DockingLowResCOP;
 
 }
 }

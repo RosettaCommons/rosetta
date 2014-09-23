@@ -35,10 +35,10 @@ public:
 	virtual ~PDDFScoreFilter() {}
 
 	filters::FilterOP clone() const {
-		return new PDDFScoreFilter( *this ); }
+		return filters::FilterOP( new PDDFScoreFilter( *this ) ); }
 
 	filters::FilterOP fresh_instance() const{
-		return new PDDFScoreFilter();
+		return filters::FilterOP( new PDDFScoreFilter() );
 	}
 
 

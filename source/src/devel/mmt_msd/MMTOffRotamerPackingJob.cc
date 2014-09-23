@@ -50,7 +50,7 @@ void MMTOffRotamerPackingJob::setup()
 void MMTOffRotamerPackingJob::optimize()
 {
 
-	best_assignment_ = new core::pack::scmin::SidechainStateAssignment( rotsets_->nmoltenres() );
+	best_assignment_ = core::pack::scmin::SidechainStateAssignmentOP( new core::pack::scmin::SidechainStateAssignment( rotsets_->nmoltenres() ) );
 
 	core::pack::off_rotamer_pack_optimize( *rotsets_, atc_, *ig_, *best_assignment_ );
 
@@ -109,9 +109,9 @@ MMTOffRotamerPackingJob::final_energy() const
 
 
 void MMTOffRotamerPackingJob::clean_up() {
-	rotsets_ = 0;
-	atc_ = 0;
-	ig_ = 0;
+	rotsets_.reset();
+	atc_.reset();
+	ig_.reset();
 	MMTPackingJob::clean_up();
 }
 

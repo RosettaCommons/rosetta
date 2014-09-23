@@ -28,11 +28,11 @@ namespace topology_broker {
 class SequenceNumberResolver;
 
 // Types
-typedef  utility::pointer::owning_ptr< SequenceNumberResolver >  SequenceNumberResolverOP;
-typedef  utility::pointer::owning_ptr< SequenceNumberResolver const >  SequenceNumberResolverCOP;
+typedef  utility::pointer::shared_ptr< SequenceNumberResolver >  SequenceNumberResolverOP;
+typedef  utility::pointer::shared_ptr< SequenceNumberResolver const >  SequenceNumberResolverCOP;
 
-typedef  utility::pointer::access_ptr< SequenceNumberResolver >  SequenceNumberResolverAP;
-typedef  utility::pointer::access_ptr< SequenceNumberResolver const >  SequenceNumberResolverCAP;
+typedef  utility::pointer::weak_ptr< SequenceNumberResolver >  SequenceNumberResolverAP;
+typedef  utility::pointer::weak_ptr< SequenceNumberResolver const >  SequenceNumberResolverCAP;
 
 
 }

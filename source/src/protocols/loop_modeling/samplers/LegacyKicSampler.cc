@@ -35,7 +35,7 @@ using protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinemati
 using protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP;
 
 protocols::moves::MoverOP LegacyKicSamplerCreator::create_mover() const {
-	return new LegacyKicSampler;
+	return protocols::moves::MoverOP( new LegacyKicSampler );
 }
 
 std::string LegacyKicSamplerCreator::keyname() const {
@@ -44,9 +44,8 @@ std::string LegacyKicSamplerCreator::keyname() const {
 
 LegacyKicSampler::LegacyKicSampler() {
 
-	mover_ = new KinematicMover();
-	TorsionSamplingKinematicPerturberOP perturber =
-		new TorsionSamplingKinematicPerturber(protocols::loops::loop_closure::kinematic_closure::KinematicMoverCAP(mover_));
+	mover_ = protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP( new KinematicMover() );
+	TorsionSamplingKinematicPerturberOP perturber( new TorsionSamplingKinematicPerturber(protocols::loops::loop_closure::kinematic_closure::KinematicMoverCAP(mover_)) );
 
 	mover_->set_perturber(perturber);
 }

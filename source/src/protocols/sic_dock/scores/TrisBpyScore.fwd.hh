@@ -17,8 +17,8 @@ namespace sic_dock {
 namespace scores {
 
 class TrisBpyScore;
-typedef utility::pointer::owning_ptr< TrisBpyScore       > TrisBpyScoreOP;
-typedef utility::pointer::owning_ptr< TrisBpyScore const > TrisBpyScoreCOP;
+typedef utility::pointer::shared_ptr< TrisBpyScore       > TrisBpyScoreOP;
+typedef utility::pointer::shared_ptr< TrisBpyScore const > TrisBpyScoreCOP;
 
 
 }

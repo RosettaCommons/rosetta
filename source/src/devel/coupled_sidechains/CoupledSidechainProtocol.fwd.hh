@@ -23,8 +23,8 @@ namespace devel {
 namespace coupled_sidechains {
 
 class coupledSidechainProtocol;
-typedef utility::pointer::owning_ptr< coupledSidechainProtocol > coupledSidechainProtocolOP;
-typedef utility::pointer::owning_ptr< coupledSidechainProtocol const > coupledSidechainProtocolCOP;
+typedef utility::pointer::shared_ptr< coupledSidechainProtocol > coupledSidechainProtocolOP;
+typedef utility::pointer::shared_ptr< coupledSidechainProtocol const > coupledSidechainProtocolCOP;
 
 } // coupled_sidechains
 } // devel

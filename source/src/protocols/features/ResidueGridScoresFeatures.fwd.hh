@@ -20,8 +20,8 @@ namespace protocols {
 namespace features{
 
 class ResidueGridScoresFeatures;
-typedef utility::pointer::owning_ptr< ResidueGridScoresFeatures > ResidueGridScoresFeaturesOP;
-typedef utility::pointer::owning_ptr< ResidueGridScoresFeatures const > ResidueGridScoresFeaturesCOP;
+typedef utility::pointer::shared_ptr< ResidueGridScoresFeatures > ResidueGridScoresFeaturesOP;
+typedef utility::pointer::shared_ptr< ResidueGridScoresFeatures const > ResidueGridScoresFeaturesCOP;
 
 }
 }

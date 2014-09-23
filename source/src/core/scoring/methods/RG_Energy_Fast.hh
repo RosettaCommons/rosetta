@@ -43,7 +43,7 @@ public:
 	RG_MinData(): com(0.0,0.0,0.0), rg(0), nres_scored(0) {}
 
 	basic::datacache::CacheableDataOP clone() const {
-		return new RG_MinData(*this);
+		return basic::datacache::CacheableDataOP( new RG_MinData(*this) );
 	}
 
 	numeric::xyzVector< core::Real > com;
@@ -51,7 +51,7 @@ public:
 	core::Size nres_scored;
 };
 
-typedef utility::pointer::owning_ptr< RG_MinData > RG_MinDataOP;
+typedef utility::pointer::shared_ptr< RG_MinData > RG_MinDataOP;
 
 class RG_Energy_Fast : public WholeStructureEnergy  {
 public:

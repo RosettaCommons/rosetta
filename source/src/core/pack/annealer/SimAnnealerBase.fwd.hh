@@ -23,7 +23,7 @@ namespace annealer {
 
 class SimAnnealerBase;
 
-typedef utility::pointer::owning_ptr< SimAnnealerBase > SimAnnealerBaseOP;
+typedef utility::pointer::shared_ptr< SimAnnealerBase > SimAnnealerBaseOP;
 
 }//end namespace annealer
 }//end namespace pack

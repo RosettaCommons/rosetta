@@ -39,7 +39,7 @@ namespace func {
 		~SkipViolFunc() {};
 
 		FuncOP
-		clone() const { return new SkipViolFunc( *this ); }
+		clone() const { return FuncOP( new SkipViolFunc( *this ) ); }
 
 		Real func( Real const x ) const;
 		Real dfunc( Real const x ) const;

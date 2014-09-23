@@ -56,7 +56,7 @@ core::scoring::methods::EnergyMethodOP
 EnsembleEnergyCreator::create_energy_method(
 	core::scoring::methods::EnergyMethodOptions const &
 ) const {
-	return new EnsembleEnergy;
+	return core::scoring::methods::EnergyMethodOP( new EnsembleEnergy );
 }
 
 core::scoring::ScoreTypes
@@ -78,7 +78,7 @@ EnsembleEnergy::EnsembleEnergy() :
 core::scoring::methods::EnergyMethodOP
 EnsembleEnergy::clone() const
 {
-	return new EnsembleEnergy();
+	return core::scoring::methods::EnergyMethodOP( new EnsembleEnergy() );
 }
 
 /////////////////////////////////////////////////////////////////////////////

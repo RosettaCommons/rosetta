@@ -74,18 +74,18 @@ class UnfoldedStatePotentialTests : public CxxTest::TestSuite {
 
 		core_init();
 
-		pose = new Pose;
+		pose = PoseOP( new Pose );
 		core::chemical::ResidueTypeSetCOP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 		core::pose::make_pose_from_sequence( *pose, "DFGLK", *rsd_set );
 
-		unfE_potential = new UnfoldedStatePotential( basic::database::full_name( "scoring/score_functions/unfolded/unfolded_state_residue_energies_score12" ) );
+		unfE_potential = UnfoldedStatePotentialOP( new UnfoldedStatePotential( basic::database::full_name( "scoring/score_functions/unfolded/unfolded_state_residue_energies_score12" ) ) );
 
 	}
 
 	// Shared finalization goes here.
 	void tearDown() {
-		pose = 0;
-		unfE_potential = 0;
+		pose.reset();
+		unfE_potential.reset();
 	}
 
 

@@ -22,7 +22,7 @@ namespace task_operations {
 
 class RestrictToLoopsAndNeighbors;
 
-typedef utility::pointer::owning_ptr< RestrictToLoopsAndNeighbors > RestrictToLoopsAndNeighborsOP;
+typedef utility::pointer::shared_ptr< RestrictToLoopsAndNeighbors > RestrictToLoopsAndNeighborsOP;
 
 } //namespace task_operations
 } //namespace toolbox

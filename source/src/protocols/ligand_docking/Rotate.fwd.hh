@@ -22,8 +22,8 @@ namespace protocols {
 namespace ligand_docking {
 
 class Rotate; // fwd declaration
-typedef utility::pointer::owning_ptr< Rotate > RotateOP;
-typedef utility::pointer::owning_ptr< Rotate const > RotateCOP;
+typedef utility::pointer::shared_ptr< Rotate > RotateOP;
+typedef utility::pointer::shared_ptr< Rotate const > RotateCOP;
 typedef utility::vector1<RotateOP> RotateOPs;
 typedef utility::vector1<RotateCOP> RotateCOPs;
 

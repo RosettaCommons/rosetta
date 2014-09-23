@@ -43,7 +43,7 @@ EnvMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 EnvMoverCreator::create_mover() const {
-  return new EnvMover();
+  return protocols::moves::MoverOP( new EnvMover() );
 }
 
 std::string
@@ -79,7 +79,7 @@ void EnvMover::parse_my_tag( utility::tag::TagCOP tag,
                              core::pose::Pose const& pose ) {
   typedef utility::vector0< TagCOP > TagCOPs;
 
-  env_ = new Environment( tag->getOption<std::string>( "name" ) );
+  env_ = EnvironmentOP( new Environment( tag->getOption<std::string>( "name" ) ) );
 
   env_->auto_cut( tag->getOption< bool >( "auto_cut", env_->auto_cut() ) );
   env_->inherit_cuts( tag->getOption< bool >( "inherit_cuts", env_->inherit_cuts() ) );
@@ -152,7 +152,7 @@ std::string EnvMover::get_name() const {
 }
 
 moves::MoverOP EnvMover::clone() const {
-  return new EnvMover( *this );
+  return moves::MoverOP( new EnvMover( *this ) );
 }
 
 } // environment

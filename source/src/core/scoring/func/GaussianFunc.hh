@@ -42,7 +42,7 @@ public:
 	{}
 
 	/// @brief returns a clone of this GaussianFunc
-	FuncOP clone() const { return new GaussianFunc( *this ); }
+	FuncOP clone() const { return FuncOP( new GaussianFunc( *this ) ); }
 
 	/// @brief Returns the value of this GaussianFunc evaluated at distance x.
 	Real func( Real const x ) const;

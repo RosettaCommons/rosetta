@@ -33,17 +33,17 @@ class ResiduePDBIndexIsnt;
 class ChainIs;
 class ChainIsnt;
 
-typedef utility::pointer::owning_ptr< ResidueHasProperty > ResidueHasPropertyOP;
-typedef utility::pointer::owning_ptr< ResiduePDBInfoHasLabel >  ResiduePDBInfoHasLabelOP;
-typedef utility::pointer::owning_ptr< ResidueLacksProperty > ResidueLacksPropertyOP;
-typedef utility::pointer::owning_ptr< ResidueName3Is > ResidueName3IsOP;
-typedef utility::pointer::owning_ptr< ResidueName3Isnt > ResidueName3IsntOP;
-typedef utility::pointer::owning_ptr< ResidueIndexIs > ResidueIndexIsOP;
-typedef utility::pointer::owning_ptr< ResidueIndexIsnt > ResidueIndexIsntOP;
-typedef utility::pointer::owning_ptr< ResiduePDBIndexIs > ResiduePDBIndexIsOP;
-typedef utility::pointer::owning_ptr< ResiduePDBIndexIsnt > ResiduePDBIndexIsntOP;
-typedef utility::pointer::owning_ptr< ChainIs > ChainIsOP;
-typedef utility::pointer::owning_ptr< ChainIsnt > ChainIsntOP;
+typedef utility::pointer::shared_ptr< ResidueHasProperty > ResidueHasPropertyOP;
+typedef utility::pointer::shared_ptr< ResiduePDBInfoHasLabel >  ResiduePDBInfoHasLabelOP;
+typedef utility::pointer::shared_ptr< ResidueLacksProperty > ResidueLacksPropertyOP;
+typedef utility::pointer::shared_ptr< ResidueName3Is > ResidueName3IsOP;
+typedef utility::pointer::shared_ptr< ResidueName3Isnt > ResidueName3IsntOP;
+typedef utility::pointer::shared_ptr< ResidueIndexIs > ResidueIndexIsOP;
+typedef utility::pointer::shared_ptr< ResidueIndexIsnt > ResidueIndexIsntOP;
+typedef utility::pointer::shared_ptr< ResiduePDBIndexIs > ResiduePDBIndexIsOP;
+typedef utility::pointer::shared_ptr< ResiduePDBIndexIsnt > ResiduePDBIndexIsntOP;
+typedef utility::pointer::shared_ptr< ChainIs > ChainIsOP;
+typedef utility::pointer::shared_ptr< ChainIsnt > ChainIsntOP;
 
 } //namespace operation
 } //namespace task

@@ -48,7 +48,7 @@ AddChainMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 AddChainMoverCreator::create_mover() const {
-	return new AddChainMover;
+	return protocols::moves::MoverOP( new AddChainMover );
 }
 
 std::string
@@ -61,7 +61,7 @@ AddChainMover::AddChainMover()
 	: moves::Mover("AddChain"),
 	fname_( "" ),
 	new_chain_( true ),
-    	scorefxn_( NULL )
+    	scorefxn_( /* NULL */ )
 {
 	random_access_ = false;
 	swap_chain_number_ = 0;
@@ -102,7 +102,7 @@ void AddChainMover::add_new_chain( core::pose::Pose & pose ) const {// pose is p
 	pose.conformation().detect_disulfides();
 	pose.update_residue_neighbors();
 	(*scorefxn())( pose );
-	pose.pdb_info( new core::pose::PDBInfo( pose, true ) ); //reinitialize the PDBInfo
+	pose.pdb_info( PDBInfoOP( new core::pose::PDBInfo( pose, true ) ) ); //reinitialize the PDBInfo
 	TR<<"After addchain, total residues: "<<pose.total_residue()<<std::endl;
 
 	core::pose::add_comment(pose,"AddedChainName ",curr_fname);
@@ -181,7 +181,7 @@ void AddChainMover::swap_chain( core::pose::Pose & pose ) const {
 	pose.conformation().detect_disulfides();
 	pose.update_residue_neighbors();
 	(*scorefxn())( pose );
-	pose.pdb_info( new core::pose::PDBInfo( pose, true ) ); //reinitialize the PDBInfo
+	pose.pdb_info( PDBInfoOP( new core::pose::PDBInfo( pose, true ) ) ); //reinitialize the PDBInfo
 	TR<<"After addchain, total residues: "<<pose.total_residue()<<std::endl;
 }
     
@@ -204,13 +204,13 @@ AddChainMover::get_name() const {
 moves::MoverOP
 AddChainMover::clone() const
 {
-	return new AddChainMover( *this );
+	return moves::MoverOP( new AddChainMover( *this ) );
 }
 
 moves::MoverOP
 AddChainMover::fresh_instance() const
 {
-	return new AddChainMover;
+	return moves::MoverOP( new AddChainMover );
 }
 
 void

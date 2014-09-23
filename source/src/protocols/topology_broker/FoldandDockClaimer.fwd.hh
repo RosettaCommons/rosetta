@@ -27,11 +27,11 @@ namespace topology_broker {
 class FoldandDockClaimer;
 
 // Types
-typedef  utility::pointer::owning_ptr< FoldandDockClaimer >  FoldandDockClaimerOP;
-typedef  utility::pointer::owning_ptr< FoldandDockClaimer const >  FoldandDockClaimerCOP;
+typedef  utility::pointer::shared_ptr< FoldandDockClaimer >  FoldandDockClaimerOP;
+typedef  utility::pointer::shared_ptr< FoldandDockClaimer const >  FoldandDockClaimerCOP;
 
-typedef  utility::pointer::access_ptr< FoldandDockClaimer >  FoldandDockClaimerAP;
-typedef  utility::pointer::access_ptr< FoldandDockClaimer const >  FoldandDockClaimerCAP;
+typedef  utility::pointer::weak_ptr< FoldandDockClaimer >  FoldandDockClaimerAP;
+typedef  utility::pointer::weak_ptr< FoldandDockClaimer const >  FoldandDockClaimerCAP;
 
 
 } // namespace kinematics

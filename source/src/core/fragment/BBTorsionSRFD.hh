@@ -54,12 +54,12 @@ public:
 
 	/// @brief clone this object
 	virtual SingleResidueFragDataOP clone() const {
-		return new BBTorsionSRFD( *this );
+		return SingleResidueFragDataOP( new BBTorsionSRFD( *this ) );
 	}
 
 	/// @brief create a new instance of this object
 	virtual SingleResidueFragDataOP create() const {
-		return new BBTorsionSRFD();
+		return SingleResidueFragDataOP( new BBTorsionSRFD() );
 	}
 
 	/// @brief number of backbone torsions described by this fragment

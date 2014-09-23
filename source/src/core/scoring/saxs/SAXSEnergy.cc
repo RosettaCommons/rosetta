@@ -78,9 +78,9 @@ ScoreTypes SAXSEnergyCreator::score_types_for_method() const {
 methods::EnergyMethodOP SAXSEnergyCreator::create_energy_method( methods::EnergyMethodOptions const &) const {
 
 	methods::EnergyMethodCreatorOP creator( new SAXSEnergyCreatorCEN );
-	return new SAXSEnergy(SAXSEnergy::cen_cfg_file_,
+	return methods::EnergyMethodOP( new SAXSEnergy(SAXSEnergy::cen_cfg_file_,
 	    chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID),
-	    saxs_cen_score, creator );
+	    saxs_cen_score, creator ) );
 }
 
 /// c-tor
@@ -237,7 +237,7 @@ void SAXSEnergy::fit_intensities(const utility::vector1<Real> & q,const utility:
 	for (Size i = 1; i <= q.size(); ++i) {
 		gen.add_known_value( q[i],I[i] );
 	}
-	utility::pointer::owning_ptr< numeric::interpolation::spline::Interpolator > spline_interpolator = gen.get_interpolator();
+	utility::pointer::shared_ptr< numeric::interpolation::spline::Interpolator > spline_interpolator = gen.get_interpolator();
 
 	if( result.size() != q_.size() ) {
 	    result.clear();
@@ -299,7 +299,7 @@ void SAXSEnergy::rehash_form_factors(const core::pose::Pose & pose) const {
       utility::vector1<DistanceHistogramOP> row;
       dhist_.push_back( row );
       for(Size j=1;j<=ff_ops_.size();j++) {
-        dhist_[i].push_back( new DistanceHistogram() );
+        dhist_[i].push_back( utility::pointer::shared_ptr<class core::scoring::saxs::DistanceHistogram>( new DistanceHistogram() ) );
       }
     }
 

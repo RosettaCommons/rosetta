@@ -134,17 +134,17 @@ namespace pose_metric_calculators {
     rotset_ = rsf.create_rotamer_set( res );
     rotset_->set_resid( resi );
 
-    TaskFactoryOP tf = new core::pack::task::TaskFactory();
-    tf->push_back( new core::pack::task::operation::InitializeFromCommandline);
+    TaskFactoryOP tf( new core::pack::task::TaskFactory() );
+    tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ));
     PackerTaskOP ptask( tf->create_task_and_apply_taskoperations( pose ) );
     ResidueLevelTask & restask( ptask->nonconst_residue_task( resi ) );
     restask.restrict_to_repacking();///hmk: what is this doing?
-    core::graph::GraphOP packer_graph = new core::graph::Graph( pose.total_residue() );
+    core::graph::GraphOP packer_graph( new core::graph::Graph( pose.total_residue() ) );
     ptask->set_bump_check(false);
     rotset_->build_rotamers( pose, *scorefxn_, *ptask, packer_graph, false );
 
     /// des_around will mark all residues around resi for design, the rest for packing.
-    protocols::toolbox::task_operations::DesignAroundOperationOP des_around = new protocols::toolbox::task_operations::DesignAroundOperation;
+    protocols::toolbox::task_operations::DesignAroundOperationOP des_around( new protocols::toolbox::task_operations::DesignAroundOperation );
     des_around->design_shell( repacking_radius() );
     des_around->include_residue( resi );
     tf->push_back( des_around );
@@ -154,7 +154,7 @@ namespace pose_metric_calculators {
   protocols::simple_moves::MinMoverOP RotamerBoltzCalculator::init_minmover(core::pose::Pose& pose, core::Size, bool unbound, core::pack::task::PackerTaskOP  task){
 	  using namespace core::conformation;
 
-    core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
+    core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 
     mm->set_bb( false );
     if( unbound ) // the complex was split, don't minimize rb dof
@@ -174,7 +174,7 @@ namespace pose_metric_calculators {
     }
 	  //task->nonconst_residue_task( resi ).prevent_repacking();
 
-    protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover();
+    protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover() );
     min_mover->score_function( scorefxn() );
     min_mover->movemap( mm );
     min_mover->min_options()->min_type( "dfpmin_armijo_nonmonotone" );

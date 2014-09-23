@@ -106,7 +106,7 @@ namespace farna {
 		std::string const atom_name2_;
 	};
 
-	typedef utility::pointer::owning_ptr< RNA_PairingTemplate > RNA_PairingTemplateOP;
+	typedef utility::pointer::shared_ptr< RNA_PairingTemplate > RNA_PairingTemplateOP;
 
 	///////////////////////////////////////////////////////////////////////////////////
 
@@ -159,7 +159,7 @@ namespace farna {
 
 	};
 
-	typedef utility::pointer::owning_ptr< RNA_JumpLibrary > RNA_JumpLibraryOP;
+	typedef utility::pointer::shared_ptr< RNA_JumpLibrary > RNA_JumpLibraryOP;
 
 } //farna
 } //protocols

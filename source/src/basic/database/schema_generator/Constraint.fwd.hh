@@ -23,16 +23,16 @@ namespace schema_generator{
 
 // Forward declarations
 class Constraint;
-typedef utility::pointer::owning_ptr< Constraint > ConstraintOP;
-typedef utility::pointer::owning_ptr< Constraint const > ConstraintCOP;
+typedef utility::pointer::shared_ptr< Constraint > ConstraintOP;
+typedef utility::pointer::shared_ptr< Constraint const > ConstraintCOP;
 
 class UniqueConstraint;
-typedef utility::pointer::owning_ptr< UniqueConstraint > UniqueConstraintOP;
-typedef utility::pointer::owning_ptr< UniqueConstraint const > UniqueConstraintCOP;
+typedef utility::pointer::shared_ptr< UniqueConstraint > UniqueConstraintOP;
+typedef utility::pointer::shared_ptr< UniqueConstraint const > UniqueConstraintCOP;
 
 class GreaterThanConstraint;
-typedef utility::pointer::owning_ptr< GreaterThanConstraint > GreaterThanConstraintOP;
-typedef utility::pointer::owning_ptr< GreaterThanConstraint const > GreaterThanConstraintCOP;
+typedef utility::pointer::shared_ptr< GreaterThanConstraint > GreaterThanConstraintOP;
+typedef utility::pointer::shared_ptr< GreaterThanConstraint const > GreaterThanConstraintCOP;
 
 
 } // schema_generator

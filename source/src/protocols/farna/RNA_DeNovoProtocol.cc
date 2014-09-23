@@ -185,7 +185,7 @@ RNA_DeNovoProtocol::RNA_DeNovoProtocol(
 
 /// @brief Clone this object
 protocols::moves::MoverOP RNA_DeNovoProtocol::clone() const {
-	return new RNA_DeNovoProtocol(*this);
+	return protocols::moves::MoverOP( new RNA_DeNovoProtocol(*this) );
 }
 
 //////////////////////////////////////////////////
@@ -216,7 +216,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 	//Keep a copy for resetting after each decoy.
 	Pose start_pose = pose;
 
-	monte_carlo_ = new protocols::moves::MonteCarlo( pose, *denovo_scorefxn_, m_Temperature_ );
+	monte_carlo_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( pose, *denovo_scorefxn_, m_Temperature_ ) );
 	setup_monte_carlo_cycles( pose );
 
 	// Some other silent file setup
@@ -499,7 +499,7 @@ RNA_DeNovoProtocol::initialize_scorefxn( core::pose::Pose & pose ) {
 	// RNA high-resolution score function + rna_chem_shift term
 	if(use_chem_shift_data_){
 		Real const CS_weight = 4.0; //hard-coded to 4.0 based on CS-ROSETTA-RNA work (Parin et al. 2012).
-		chem_shift_scorefxn_ =  new ScoreFunction;
+		chem_shift_scorefxn_ = core::scoring::ScoreFunctionOP( new ScoreFunction );
 		chem_shift_scorefxn_ = hires_scorefxn_->clone();
 		chem_shift_scorefxn_->set_weight( rna_chem_shift, CS_weight );
 	}
@@ -532,12 +532,12 @@ RNA_DeNovoProtocol::initialize_movers( core::pose::Pose & pose ){
 	rna_structure_parameters_->set_suppress_bp_constraint( suppress_bp_constraint_ );
 
 	// reads in any data on, e.g., exposure of different bases --> saves inside the pose's rna_data_info.
-	rna_data_reader_ = new core::io::rna::RNA_DataReader( rna_data_file_ );
+	rna_data_reader_ = core::io::rna::RNA_DataReaderOP( new core::io::rna::RNA_DataReader( rna_data_file_ ) );
 	rna_data_reader_->fill_rna_data_info( pose );
 
-	all_rna_fragments_ = new FullAtomRNA_Fragments( all_rna_fragments_file_ );
+	all_rna_fragments_ = protocols::farna::RNA_FragmentsOP( new FullAtomRNA_Fragments( all_rna_fragments_file_ ) );
 
-	rna_chunk_library_ = new RNA_ChunkLibrary( chunk_pdb_files_, chunk_silent_files_, pose, input_res_ );
+	rna_chunk_library_ = protocols::farna::RNA_ChunkLibraryOP( new RNA_ChunkLibrary( chunk_pdb_files_, chunk_silent_files_, pose, input_res_ ) );
 	if ( bps_moves_ ) rna_chunk_library_->setup_base_pair_step_chunks( pose, rna_structure_parameters_->get_base_pair_steps() );
 
 	chunk_coverage_ = rna_chunk_library_->chunk_coverage();
@@ -550,9 +550,9 @@ RNA_DeNovoProtocol::initialize_movers( core::pose::Pose & pose ){
 	//	rna_structure_parameters_->allow_insert()->show();
 
 	rna_chunk_library_->set_allow_insert( rna_structure_parameters_->allow_insert() );
-	rna_fragment_mover_ = new RNA_FragmentMover( all_rna_fragments_, rna_structure_parameters_->allow_insert() );
+	rna_fragment_mover_ = protocols::farna::RNA_FragmentMoverOP( new RNA_FragmentMover( all_rna_fragments_, rna_structure_parameters_->allow_insert() ) );
 
-	rna_minimizer_ = new RNA_Minimizer;
+	rna_minimizer_ = protocols::farna::RNA_MinimizerOP( new RNA_Minimizer );
 	rna_minimizer_->set_allow_insert( rna_structure_parameters_->allow_insert() );
 	rna_minimizer_->vary_bond_geometry( vary_bond_geometry_ );
 	rna_minimizer_->set_extra_minimize_res( extra_minimize_res_ );
@@ -560,7 +560,7 @@ RNA_DeNovoProtocol::initialize_movers( core::pose::Pose & pose ){
 	rna_minimizer_->set_move_first_rigid_body( move_first_rigid_body_ );
 	rna_minimizer_->use_coordinate_constraints( minimizer_use_coordinate_constraints_ );
 
-	rna_relaxer_ = new RNA_Relaxer( rna_fragment_mover_, rna_minimizer_);
+	rna_relaxer_ = protocols::farna::RNA_RelaxerOP( new RNA_Relaxer( rna_fragment_mover_, rna_minimizer_) );
 	rna_relaxer_->simple_rmsd_cutoff_relax( simple_rmsd_cutoff_relax_ );
 
 }
@@ -629,7 +629,7 @@ RNA_DeNovoProtocol::setup_rigid_body_mover( pose::Pose const & pose, Size const 
 	Real const rot_mag   = rot_mag_init   +  (rot_mag_final - rot_mag_init ) * suppress;
 	Real const trans_mag = trans_mag_init +  (trans_mag_final - trans_mag_init ) * suppress;
 
-	rigid_body_mover_ = new protocols::rigid::RigidBodyPerturbMover( pose, movemap, rot_mag, trans_mag, protocols::rigid::partner_upstream /*because virtual anchor should be root*/ );
+	rigid_body_mover_ = protocols::rigid::RigidBodyPerturbMoverOP( new protocols::rigid::RigidBodyPerturbMover( pose, movemap, rot_mag, trans_mag, protocols::rigid::partner_upstream /*because virtual anchor should be root*/ ) );
 	jump_change_frequency_ = 0.5; /* up from default of 0.1*/
 
 	TR << " rot_mag: " << rot_mag << "    trans_mag: " << trans_mag << std::endl;
@@ -1326,7 +1326,7 @@ RNA_DeNovoProtocol::add_chem_shift_info(core::io::silent::SilentStruct & silent_
 
   pose::Pose chem_shift_pose=const_pose; //HARD COPY SLOW!
 
-  core::scoring::ScoreFunctionOP temp_scorefxn = new ScoreFunction;
+  core::scoring::ScoreFunctionOP temp_scorefxn( new ScoreFunction );
 
   temp_scorefxn->set_weight( scoring::rna_chem_shift  , 1.00 );
 

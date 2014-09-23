@@ -21,8 +21,8 @@ namespace protocols {
 namespace jd2 {
 
 class MpiFileBuffer;
-typedef utility::pointer::owning_ptr< MpiFileBuffer > MpiFileBufferOP;
-typedef utility::pointer::owning_ptr< MpiFileBuffer const > MpiFileBufferCOP;
+typedef utility::pointer::shared_ptr< MpiFileBuffer > MpiFileBufferOP;
+typedef utility::pointer::shared_ptr< MpiFileBuffer const > MpiFileBufferCOP;
 
 
 }

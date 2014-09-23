@@ -57,26 +57,26 @@ public:
 		TS_ASSERT( ! filter.apply(*testpose_) );
 		TS_ASSERT_EQUALS( filter.report_sm(*testpose_), 11.25 );
 
-		protocols::filters::FilterOP sf5 = new StubFilter( true, -5 );
+		protocols::filters::FilterOP sf5( new StubFilter( true, -5 ) );
 		filter.set_else( sf5 , 11.25 );
 		TS_ASSERT( filter.apply(*testpose_) );
 		TS_ASSERT_EQUALS( filter.report_sm(*testpose_), -5 );
 
-		protocols::filters::FilterOP sf11 = new StubFilter( false, 10.875);
+		protocols::filters::FilterOP sf11( new StubFilter( false, 10.875) );
 		filter.set_else( sf11 , 11.25 );
 		TS_ASSERT( ! filter.apply(*testpose_) );
 		TS_ASSERT_EQUALS( filter.report_sm(*testpose_), 10.875 );
 
-		protocols::filters::FilterOP sf12 = new StubFilter( true, 11.125);
+		protocols::filters::FilterOP sf12( new StubFilter( true, 11.125) );
 		filter.set_else( sf12 , 11.25 );
 		TS_ASSERT( ! filter.apply(*testpose_) );
 		TS_ASSERT_EQUALS( filter.report_sm(*testpose_), 11.125 );
 	}
 
 	void test_oneif() {
-		protocols::filters::FilterOP sfT = new StubFilter( true, 222);
-		protocols::filters::FilterOP sfF = new StubFilter( false, 225);
-		protocols::filters::FilterOP sfV = new StubFilter( true, 335);
+		protocols::filters::FilterOP sfT( new StubFilter( true, 222) );
+		protocols::filters::FilterOP sfF( new StubFilter( false, 225) );
+		protocols::filters::FilterOP sfV( new StubFilter( true, 335) );
 
 		protocols::filters::IfThenFilter filter1;
 		filter1.threshold( 0 );
@@ -104,10 +104,10 @@ public:
 	}
 
 	void test_multi() {
-		protocols::filters::FilterOP sfF1 = new StubFilter( false, 111);
-		protocols::filters::FilterOP sfF2 = new StubFilter( false, 222);
-		protocols::filters::FilterOP sfF3 = new StubFilter( false, 333);
-		protocols::filters::FilterOP sfT = new StubFilter( true, 225);
+		protocols::filters::FilterOP sfF1( new StubFilter( false, 111) );
+		protocols::filters::FilterOP sfF2( new StubFilter( false, 222) );
+		protocols::filters::FilterOP sfF3( new StubFilter( false, 333) );
+		protocols::filters::FilterOP sfT( new StubFilter( true, 225) );
 
 		protocols::filters::IfThenFilter filter;
 		filter.threshold( 0 );
@@ -136,12 +136,12 @@ public:
 		Filters_map filters;
 		Movers_map movers;
 
-		filters["sfF1"] = new StubFilter( false, 1 );
-		filters["sfF2"] = new StubFilter( false, 2 );
-		filters["sfF3"] = new StubFilter( false, 3 );
-		filters["sfT10"] = new StubFilter( true, 10 );
-		filters["sfT20"] = new StubFilter( true, 20 );
-		filters["sfT99"] = new StubFilter( true, 99 );
+		filters["sfF1"] = utility::pointer::shared_ptr<class protocols::filters::Filter>( new StubFilter( false, 1 ) );
+		filters["sfF2"] = utility::pointer::shared_ptr<class protocols::filters::Filter>( new StubFilter( false, 2 ) );
+		filters["sfF3"] = utility::pointer::shared_ptr<class protocols::filters::Filter>( new StubFilter( false, 3 ) );
+		filters["sfT10"] = utility::pointer::shared_ptr<class protocols::filters::Filter>( new StubFilter( true, 10 ) );
+		filters["sfT20"] = utility::pointer::shared_ptr<class protocols::filters::Filter>( new StubFilter( true, 20 ) );
+		filters["sfT99"] = utility::pointer::shared_ptr<class protocols::filters::Filter>( new StubFilter( true, 99 ) );
 
 		protocols::filters::IfThenFilter  testfilter;
 		TagCOP tag = tagptr_from_string("<IfThenFilter name=test threshold=0 >\n"
@@ -162,13 +162,13 @@ public:
 		filter.set_else( 0 , -10, 2 );
 		TS_ASSERT_EQUALS( filter.report_sm(*testpose_), -20 );
 
-		protocols::filters::FilterOP sf5 = new StubFilter( true, -5 );
+		protocols::filters::FilterOP sf5( new StubFilter( true, -5 ) );
 		filter.set_else( sf5 , 11.25, 3 );
 		TS_ASSERT_EQUALS( filter.report_sm(*testpose_), -15 );
 
-		protocols::filters::FilterOP sfT = new StubFilter( true, 222);
-		protocols::filters::FilterOP sfF = new StubFilter( false, 225);
-		protocols::filters::FilterOP sfV = new StubFilter( true, 335);
+		protocols::filters::FilterOP sfT( new StubFilter( true, 222) );
+		protocols::filters::FilterOP sfF( new StubFilter( false, 225) );
+		protocols::filters::FilterOP sfV( new StubFilter( true, 335) );
 
 		protocols::filters::IfThenFilter filter1;
 		filter1.threshold( 0 );
@@ -197,10 +197,10 @@ public:
 	}
 
 	void test_invert() {
-		protocols::filters::FilterOP sfF1 = new StubFilter( false, 111);
-		protocols::filters::FilterOP sfF2 = new StubFilter( false, 222);
-		protocols::filters::FilterOP sfF3 = new StubFilter( false, 333);
-		protocols::filters::FilterOP sfT = new StubFilter( true, 225);
+		protocols::filters::FilterOP sfF1( new StubFilter( false, 111) );
+		protocols::filters::FilterOP sfF2( new StubFilter( false, 222) );
+		protocols::filters::FilterOP sfF3( new StubFilter( false, 333) );
+		protocols::filters::FilterOP sfT( new StubFilter( true, 225) );
 
 		protocols::filters::IfThenFilter filter;
 		filter.threshold( 0 );
@@ -219,12 +219,12 @@ public:
 		Filters_map filters;
 		Movers_map movers;
 
-		filters["sfF1"] = new StubFilter( false, 1 );
-		filters["sfF2"] = new StubFilter( false, 2 );
-		filters["sfF3"] = new StubFilter( false, 3 );
-		filters["sfT10"] = new StubFilter( true, 10 );
-		filters["sfT20"] = new StubFilter( true, 20 );
-		filters["sfT99"] = new StubFilter( true, 99 );
+		filters["sfF1"] = utility::pointer::shared_ptr<class protocols::filters::Filter>( new StubFilter( false, 1 ) );
+		filters["sfF2"] = utility::pointer::shared_ptr<class protocols::filters::Filter>( new StubFilter( false, 2 ) );
+		filters["sfF3"] = utility::pointer::shared_ptr<class protocols::filters::Filter>( new StubFilter( false, 3 ) );
+		filters["sfT10"] = utility::pointer::shared_ptr<class protocols::filters::Filter>( new StubFilter( true, 10 ) );
+		filters["sfT20"] = utility::pointer::shared_ptr<class protocols::filters::Filter>( new StubFilter( true, 20 ) );
+		filters["sfT99"] = utility::pointer::shared_ptr<class protocols::filters::Filter>( new StubFilter( true, 99 ) );
 
 		protocols::filters::IfThenFilter  testfilter;
 		TagCOP tag = tagptr_from_string("<IfThenFilter name=test threshold=2 lower_threshold=1>\n"

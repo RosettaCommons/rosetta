@@ -24,8 +24,8 @@ namespace pdb {
 
 class HeaderInformation;
 
-typedef utility::pointer::owning_ptr< HeaderInformation > HeaderInformationOP;
-typedef utility::pointer::owning_ptr< HeaderInformation const > HeaderInformationCOP;
+typedef utility::pointer::shared_ptr< HeaderInformation > HeaderInformationOP;
+typedef utility::pointer::shared_ptr< HeaderInformation const > HeaderInformationCOP;
 
 
 } // namespace pdb

@@ -90,7 +90,7 @@ BuildSheetCreator::keyname() const
 
 protocols::moves::MoverOP
 BuildSheetCreator::create_mover() const {
-	return new BuildSheet();
+	return protocols::moves::MoverOP( new BuildSheet() );
 }
 
 std::string
@@ -112,7 +112,7 @@ BuildSheet::BuildSheet() :
 	psi1_( 125.0 ),
 	psi2_( 125.0 ),
 	num_cached_dihedrals_( 30 ),
-	scorefxn_( NULL )
+	scorefxn_( /* NULL */ )
 {
 }
 
@@ -125,7 +125,7 @@ BuildSheet::~BuildSheet() {}
 protocols::moves::MoverOP
 BuildSheet::clone() const
 {
-	return new BuildSheet(*this);
+	return protocols::moves::MoverOP( new BuildSheet(*this) );
 }
 
 std::string
@@ -154,7 +154,7 @@ BuildSheet::parse_my_tag(
 	psi1_ = tag->getOption< core::Real >( "psi1", psi1_ );
 	psi2_ = tag->getOption< core::Real >( "psi2", psi2_ );
 	if ( tag->hasOption( "scorefxn" ) ) {
-		scorefxn_ = data.get< core::scoring::ScoreFunction * >( "scorefxns", tag->getOption< std::string >( "scorefxn" ) );
+		scorefxn_ = data.get_ptr<core::scoring::ScoreFunction>( "scorefxns", tag->getOption< std::string >( "scorefxn" ) );
 	}
 	sheet_.parse_tags( tag->getTags() );
 }
@@ -412,10 +412,10 @@ BuildSheet::minimize_residues( core::pose::Pose & pose,
 			// add all-atom constraints
 			for ( core::Size j=1; j<=pose.residue(pose_residues[i]).natoms(); ++j ) {
 				core::scoring::constraints::ConstraintOP cst;
-				cst = new core::scoring::constraints::CoordinateConstraint( core::id::AtomID(j,pose_residues[i]),
+				cst = core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint( core::id::AtomID(j,pose_residues[i]),
 						core::id::AtomID(anchor_ca_index,1),
 						pose.residue(pose_residues[i]).atom(j).xyz(),
-						weak_func );
+						weak_func ) );
 				pose.add_constraint( cst );
 			}
 
@@ -423,10 +423,10 @@ BuildSheet::minimize_residues( core::pose::Pose & pose,
 			if ( pose.residue_type( pose_residues[i] ).has("CA") ) {
 				core::Size const ca_index( pose.residue_type( pose_residues[i] ).atom_index("CA") );
 				core::scoring::constraints::ConstraintOP cst;
-				cst = new core::scoring::constraints::CoordinateConstraint( core::id::AtomID( ca_index, pose_residues[i] ),
+				cst = core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint( core::id::AtomID( ca_index, pose_residues[i] ),
 																																		core::id::AtomID( anchor_ca_index, 1 ),
 																																		sheet_.ca_coords( strands[i], resis[i] ),
-																																		func );
+																																		func ) );
 				pose.add_constraint( cst );
 			}
 		}

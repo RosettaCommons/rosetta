@@ -23,8 +23,8 @@ namespace stepwise {
 namespace screener {
 	
 	class IntegrationTestBreaker;
-	typedef utility::pointer::owning_ptr< IntegrationTestBreaker > IntegrationTestBreakerOP;
-	typedef utility::pointer::owning_ptr< IntegrationTestBreaker const > IntegrationTestBreakerCOP;
+	typedef utility::pointer::shared_ptr< IntegrationTestBreaker > IntegrationTestBreakerOP;
+	typedef utility::pointer::shared_ptr< IntegrationTestBreaker const > IntegrationTestBreakerCOP;
 	
 } //screener
 } //stepwise

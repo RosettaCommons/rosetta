@@ -47,7 +47,7 @@ namespace multistate_design {
 class MultiStateFitnessFunction : public genetic_algorithm::FitnessFunction {
 
 public:
-	typedef utility::pointer::owning_ptr< MultiStateFitnessFunction > OP;
+	typedef utility::pointer::shared_ptr< MultiStateFitnessFunction > OP;
 
 	MultiStateFitnessFunction();
 	virtual ~MultiStateFitnessFunction();

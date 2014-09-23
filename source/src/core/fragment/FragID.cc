@@ -28,7 +28,7 @@ namespace core {
 namespace fragment {
 
 
-FragID::FragID() : first( 0 ), second( 0 ) {}
+FragID::FragID() : first( /* 0 */ ), second( 0 ) {}
 
 FragID::FragID( FrameCOP frame, Size frag_id )
 	: first( frame ), second( frag_id )

@@ -101,17 +101,17 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 	// the designtaskfactory_ comes from the ctor
 	// core::pack::task::TaskFactoryOP designtaskfactory_ = new core::pack::task::TaskFactory;
 	// designrelaxmover works with resfile and commandline operations
-	designtaskfactory_->push_back( new operation::InitializeFromCommandline );
+	designtaskfactory_->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
 	// check for resfile - if present use it
 	if( basic::options::option [ basic::options::OptionKeys::packing::resfile ].user()  ){
-		designtaskfactory_->push_back( new operation::ReadResfile );
+		designtaskfactory_->push_back( TaskOperationCOP( new operation::ReadResfile ) );
 	}
 
 
 	// make decision about what loops may be rebuilt
     bool loop_file_is_present = option[ OptionKeys::loops::loop_file].user();
     // read in loops from a file if given
-	protocols::loops::LoopsOP loops = new protocols::loops::Loops( loop_file_is_present );
+	protocols::loops::LoopsOP loops( new protocols::loops::Loops( loop_file_is_present ) );
 	
     // we need this for the rama term
 	basic::options::option[ basic::options::OptionKeys::loops::nonpivot_torsion_sampling ].value(true);
@@ -241,7 +241,7 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 	// i should do this in a monte carlo setting
 	// now that we have a sequence we like - we may want to optimize the loop conformation
 	  if( option[ OptionKeys::DenovoProteinDesign::optimize_loops ].user() ){
-		  protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP kin_moverOP( new protocols::loops::loop_closure::kinematic_closure::KinematicMover());
+		  protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP kin_moverOP( new protocols::loops::loop_closure::kinematic_closure::KinematicMover() );
 		  kin_moverOP->set_vary_bondangles( true );
 		  kin_moverOP->set_temperature( 2.0 );
 		  for( protocols::loops::Loops::const_iterator it= loops->begin(), it_end=loops->end();
@@ -263,7 +263,7 @@ DesignRelaxMover::get_name() const {
 DesignRelaxMover::DesignRelaxMover() : Mover()
 {
 	Mover::type( "DesignRelaxMover" );
-	core::pack::task::TaskFactoryOP designtaskfactory = new core::pack::task::TaskFactory;
+	core::pack::task::TaskFactoryOP designtaskfactory( new core::pack::task::TaskFactory );
 	core::scoring::ScoreFunctionOP softfxn(
 		core::scoring::ScoreFunctionFactory::create_score_function(SOFT_REP_DESIGN_WTS, SCORE12_PATCH));
 	core::scoring::ScoreFunctionOP fullfxn(

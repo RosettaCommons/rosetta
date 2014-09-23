@@ -63,7 +63,7 @@ public:
 		 
 		utility::pointer::ReferenceCountOP resource = loader.create_resource( opts, "unit_test", lstream );
 
-		SurfaceParametersOP spptr = dynamic_cast< SurfaceParameters * > ( resource() );
+		SurfaceParametersOP spptr = utility::pointer::dynamic_pointer_cast< protocols::surface_docking::SurfaceParameters > ( resource );
 		
 		core::pose::Pose pose;
 		
@@ -77,7 +77,7 @@ public:
 	
 		//spptr->generate_surface_parameters(SurfaceCG, ProteinCG);
 		//TR<<"AB surf vec: "<<spptr->vecAB()<<std::endl;
-		core::scoring::solid_surface::SurfaceEnergiesOP surfEs = new core::scoring::solid_surface::SurfaceEnergies;
+		core::scoring::solid_surface::SurfaceEnergiesOP surfEs( new core::scoring::solid_surface::SurfaceEnergies );
 		surfEs->set_total_residue( pose.total_residue() );
 		surfEs->set_residue_range_not_surface( pose.num_jump()+1, pose.total_residue() );
 		pose.set_new_energies_object( surfEs );
@@ -107,10 +107,10 @@ public:
 		
 		slide_away = slide_into.negate();
 		
-		protocols::rigid::RigidBodyTransMoverOP slide_away_from_surface = new protocols::rigid::RigidBodyTransMover( slide_away, pose.num_jump());
+		protocols::rigid::RigidBodyTransMoverOP slide_away_from_surface( new protocols::rigid::RigidBodyTransMover( slide_away, pose.num_jump()) );
 		slide_away_from_surface->step_size(20);
 		
-		protocols::docking::FaDockingSlideIntoContactOP slide_into_surface = new protocols::docking::FaDockingSlideIntoContact( pose.num_jump(), slide_into);
+		protocols::docking::FaDockingSlideIntoContactOP slide_into_surface( new protocols::docking::FaDockingSlideIntoContact( pose.num_jump(), slide_into) );
 
 		
 		slide_away_from_surface->apply( pose );
@@ -136,7 +136,7 @@ public:
 		TR<<"score after slide into: "<<score_after_slide_into<<std::endl;
 		pose.dump_pdb("/Users/mpacella/Rosetta_Surface_Test/after_slide_into_surf.pdb");
 
-		protocols::surface_docking::SurfaceOrientMoverOP surf_orient = new protocols::surface_docking::SurfaceOrientMover();
+		protocols::surface_docking::SurfaceOrientMoverOP surf_orient( new protocols::surface_docking::SurfaceOrientMover() );
 		surf_orient->set_surface_parameters(spptr);
 		surf_orient->apply(pose);
 		

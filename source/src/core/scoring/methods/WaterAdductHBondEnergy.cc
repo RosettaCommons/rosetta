@@ -50,7 +50,7 @@ methods::EnergyMethodOP
 WaterAdductHBondEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new WaterAdductHBondEnergy;
+	return methods::EnergyMethodOP( new WaterAdductHBondEnergy );
 }
 
 ScoreTypes
@@ -71,7 +71,7 @@ WaterAdductHBondEnergy::WaterAdductHBondEnergy() :
 EnergyMethodOP
 WaterAdductHBondEnergy::clone() const
 {
-	return new WaterAdductHBondEnergy();
+	return EnergyMethodOP( new WaterAdductHBondEnergy() );
 }
 
 ///

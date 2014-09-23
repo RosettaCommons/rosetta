@@ -110,16 +110,16 @@ PoseConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP db
 
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt(), false /*not null*/, false /*don't autoincrement*/);
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false /*not null*/, false /*don't autoincrement*/);
 
 	/******pose_conformations******/
 	Schema pose_conformations("pose_conformations");
 	pose_conformations.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
 
-	pose_conformations.add_column( Column("annotated_sequence", new DbText()) );
-	pose_conformations.add_column( Column("total_residue", new DbInteger()) );
-	pose_conformations.add_column( Column("fullatom", new DbInteger()) );
-	pose_conformations.add_column( Column("ideal", new DbInteger()) ); // 0 if not ideal, 1 if ideal
+	pose_conformations.add_column( Column("annotated_sequence", DbDataTypeOP( new DbText() )) );
+	pose_conformations.add_column( Column("total_residue", DbDataTypeOP( new DbInteger() )) );
+	pose_conformations.add_column( Column("fullatom", DbDataTypeOP( new DbInteger() )) );
+	pose_conformations.add_column( Column("ideal", DbDataTypeOP( new DbInteger() )) ); // 0 if not ideal, 1 if ideal
 
 	pose_conformations.write(db_session);
 
@@ -127,38 +127,38 @@ PoseConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP db
 	Schema fold_trees("fold_trees");
 	fold_trees.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
 
-	fold_trees.add_column( Column("start_res", new DbInteger()) );
-	fold_trees.add_column( Column("start_atom", new DbText()) );
-	fold_trees.add_column( Column("stop_res", new DbInteger()) );
-	fold_trees.add_column( Column("stop_atom", new DbText()) );
-	fold_trees.add_column( Column("label", new DbInteger()) );
-	fold_trees.add_column( Column("keep_stub_in_residue", new DbInteger()) );
+	fold_trees.add_column( Column("start_res", DbDataTypeOP( new DbInteger() )) );
+	fold_trees.add_column( Column("start_atom", DbDataTypeOP( new DbText() )) );
+	fold_trees.add_column( Column("stop_res", DbDataTypeOP( new DbInteger() )) );
+	fold_trees.add_column( Column("stop_atom", DbDataTypeOP( new DbText() )) );
+	fold_trees.add_column( Column("label", DbDataTypeOP( new DbInteger() )) );
+	fold_trees.add_column( Column("keep_stub_in_residue", DbDataTypeOP( new DbInteger() )) );
 
 	fold_trees.write(db_session);
 
 	/******jumps******/
 	Schema jumps("jumps");
 	jumps.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
-	jumps.add_column( Column("jump_id", new DbInteger()) );
-	jumps.add_column( Column("xx", new DbDouble()) );
-	jumps.add_column( Column("xy", new DbDouble()) );
-	jumps.add_column( Column("xz", new DbDouble()) );
-	jumps.add_column( Column("yx", new DbDouble()) );
-	jumps.add_column( Column("yy", new DbDouble()) );
-	jumps.add_column( Column("yz", new DbDouble()) );
-	jumps.add_column( Column("zx", new DbDouble()) );
-	jumps.add_column( Column("zy", new DbDouble()) );
-	jumps.add_column( Column("zz", new DbDouble()) );
-	jumps.add_column( Column("x", new DbDouble()) );
-	jumps.add_column( Column("y", new DbDouble()) );
-	jumps.add_column( Column("z", new DbDouble()) );
+	jumps.add_column( Column("jump_id", DbDataTypeOP( new DbInteger() )) );
+	jumps.add_column( Column("xx", DbDataTypeOP( new DbDouble() )) );
+	jumps.add_column( Column("xy", DbDataTypeOP( new DbDouble() )) );
+	jumps.add_column( Column("xz", DbDataTypeOP( new DbDouble() )) );
+	jumps.add_column( Column("yx", DbDataTypeOP( new DbDouble() )) );
+	jumps.add_column( Column("yy", DbDataTypeOP( new DbDouble() )) );
+	jumps.add_column( Column("yz", DbDataTypeOP( new DbDouble() )) );
+	jumps.add_column( Column("zx", DbDataTypeOP( new DbDouble() )) );
+	jumps.add_column( Column("zy", DbDataTypeOP( new DbDouble() )) );
+	jumps.add_column( Column("zz", DbDataTypeOP( new DbDouble() )) );
+	jumps.add_column( Column("x", DbDataTypeOP( new DbDouble() )) );
+	jumps.add_column( Column("y", DbDataTypeOP( new DbDouble() )) );
+	jumps.add_column( Column("z", DbDataTypeOP( new DbDouble() )) );
 
 	jumps.write(db_session);
 
 	/******chain_endings******/
 	Schema chain_endings("chain_endings");
 	chain_endings.add_foreign_key(ForeignKey(struct_id, "structures", "struct_id", true /*defer*/));
-	chain_endings.add_column( Column("end_pos", new DbInteger()) );
+	chain_endings.add_column( Column("end_pos", DbDataTypeOP( new DbInteger() )) );
 
 	chain_endings.write(db_session);
 }
@@ -209,7 +209,7 @@ PoseConformationFeatures::report_features_implementation(
 	fold_tree_insert.add_column("label");
 	fold_tree_insert.add_column("keep_stub_in_residue");
 
-	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id",struct_id);
+	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
 	for (FoldTree::const_iterator
 			it = fold_tree.begin(), it_end = fold_tree.end(); it != it_end; ++it) {
@@ -219,12 +219,12 @@ PoseConformationFeatures::report_features_implementation(
 		bool keep_stub_in_residue(it->keep_stub_in_residue());
 
 
-		RowDataBaseOP start_res_data = new RowData<int>("start_res",start_res);
-		RowDataBaseOP start_atom_data = new RowData<string>("start_atom",start_atom);
-		RowDataBaseOP stop_res_data = new RowData<int>("stop_res",stop_res);
-		RowDataBaseOP stop_atom_data = new RowData<string>("stop_atom",stop_atom);
-		RowDataBaseOP label_data = new RowData<int>("label",label);
-		RowDataBaseOP keep_stub_data = new RowData<bool>("keep_stub_in_residue",keep_stub_in_residue);
+		RowDataBaseOP start_res_data( new RowData<int>("start_res",start_res) );
+		RowDataBaseOP start_atom_data( new RowData<string>("start_atom",start_atom) );
+		RowDataBaseOP stop_res_data( new RowData<int>("stop_res",stop_res) );
+		RowDataBaseOP stop_atom_data( new RowData<string>("stop_atom",stop_atom) );
+		RowDataBaseOP label_data( new RowData<int>("label",label) );
+		RowDataBaseOP keep_stub_data( new RowData<bool>("keep_stub_in_residue",keep_stub_in_residue) );
 
 		fold_tree_insert.add_row(
 			utility::tools::make_vector(struct_id_data,start_res_data,start_atom_data,stop_res_data,stop_atom_data,label_data,keep_stub_data));
@@ -258,19 +258,19 @@ PoseConformationFeatures::report_features_implementation(
 		Vector const & t(jump.get_translation());
 		Real x(t.x()), y(t.y()), z(t.z());
 
-		RowDataBaseOP jump_id_data = new RowData<Size>("jump_id",nr);
-		RowDataBaseOP xx_data = new RowData<Real>("xx",xx);
-		RowDataBaseOP xy_data = new RowData<Real>("xy",xy);
-		RowDataBaseOP xz_data = new RowData<Real>("xz",xz);
-		RowDataBaseOP yx_data = new RowData<Real>("yx",yx);
-		RowDataBaseOP yy_data = new RowData<Real>("yy",yy);
-		RowDataBaseOP yz_data = new RowData<Real>("yz",yz);
-		RowDataBaseOP zx_data = new RowData<Real>("zx",zx);
-		RowDataBaseOP zy_data = new RowData<Real>("zy",zy);
-		RowDataBaseOP zz_data = new RowData<Real>("zz",zz);
-		RowDataBaseOP x_data = new RowData<Real>("x",x);
-		RowDataBaseOP y_data = new RowData<Real>("y",y);
-		RowDataBaseOP z_data = new RowData<Real>("z",z);
+		RowDataBaseOP jump_id_data( new RowData<Size>("jump_id",nr) );
+		RowDataBaseOP xx_data( new RowData<Real>("xx",xx) );
+		RowDataBaseOP xy_data( new RowData<Real>("xy",xy) );
+		RowDataBaseOP xz_data( new RowData<Real>("xz",xz) );
+		RowDataBaseOP yx_data( new RowData<Real>("yx",yx) );
+		RowDataBaseOP yy_data( new RowData<Real>("yy",yy) );
+		RowDataBaseOP yz_data( new RowData<Real>("yz",yz) );
+		RowDataBaseOP zx_data( new RowData<Real>("zx",zx) );
+		RowDataBaseOP zy_data( new RowData<Real>("zy",zy) );
+		RowDataBaseOP zz_data( new RowData<Real>("zz",zz) );
+		RowDataBaseOP x_data( new RowData<Real>("x",x) );
+		RowDataBaseOP y_data( new RowData<Real>("y",y) );
+		RowDataBaseOP z_data( new RowData<Real>("z",z) );
 		jump_insert.add_row(
 			utility::tools::make_vector(struct_id_data,jump_id_data,xx_data,xy_data,xz_data,yx_data,yy_data,yz_data,zx_data,zy_data,zz_data,x_data,y_data,z_data));
 	}
@@ -281,7 +281,7 @@ PoseConformationFeatures::report_features_implementation(
 	chain_ending_insert.add_column("end_pos");
 	BOOST_FOREACH(Size end_pos, pose.conformation().chain_endings())
 	{
-		RowDataBaseOP end_pos_data = new RowData<Size>("end_pos",end_pos);
+		RowDataBaseOP end_pos_data( new RowData<Size>("end_pos",end_pos) );
 
 		chain_ending_insert.add_row(
 			utility::tools::make_vector(struct_id_data,end_pos_data));
@@ -298,9 +298,9 @@ PoseConformationFeatures::report_features_implementation(
 	pose_conformation_insert.add_column("fullatom");
 	pose_conformation_insert.add_column("ideal");
 
-	RowDataBaseOP annotated_sequence_data = new RowData<string>("annotated_sequence",annotated_sequence);
-	RowDataBaseOP total_residue_data = new RowData<Size>("total_residue",pose.total_residue());
-	RowDataBaseOP fullatom_data = new RowData<bool>("fullatom",pose.is_fullatom());
+	RowDataBaseOP annotated_sequence_data( new RowData<string>("annotated_sequence",annotated_sequence) );
+	RowDataBaseOP total_residue_data( new RowData<Size>("total_residue",pose.total_residue()) );
+	RowDataBaseOP fullatom_data( new RowData<bool>("fullatom",pose.is_fullatom()) );
 
 	// KAB -
 	// Determine if pose is ideal
@@ -326,7 +326,7 @@ PoseConformationFeatures::report_features_implementation(
 	else {
 		ideal = false;
 	}
-	RowDataBaseOP ideal_data = new RowData<bool>("ideal", ideal);
+	RowDataBaseOP ideal_data( new RowData<bool>("ideal", ideal) );
 
 	pose_conformation_insert.add_row(
 		utility::tools::make_vector(struct_id_data,annotated_sequence_data,total_residue_data,fullatom_data, ideal_data));

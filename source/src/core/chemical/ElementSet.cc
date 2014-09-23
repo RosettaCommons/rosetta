@@ -59,7 +59,7 @@ ElementSet::read_file( std::string const & filename )
 				continue;
 			}
 			if ( data.peek() == 'E' ) { // Beginning of "Element:" tag
-				ElementOP element = new Element;
+				ElementOP element( new Element );
 				data >> *element;
 				if ( data.good() ) {
 					elements_.push_back( element );

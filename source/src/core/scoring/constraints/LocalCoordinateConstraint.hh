@@ -44,8 +44,8 @@ namespace scoring {
 namespace constraints {
 
 class LocalCoordinateConstraint;
-typedef utility::pointer::owning_ptr< LocalCoordinateConstraint > LocalCoordinateConstraintOP;
-typedef utility::pointer::owning_ptr< LocalCoordinateConstraint const > LocalCoordinateConstraintCOP;
+typedef utility::pointer::shared_ptr< LocalCoordinateConstraint > LocalCoordinateConstraintOP;
+typedef utility::pointer::shared_ptr< LocalCoordinateConstraint const > LocalCoordinateConstraintCOP;
 
 ///
 
@@ -57,7 +57,7 @@ public:
 		Constraint( coordinate_constraint ),
 		atom_( id::BOGUS_ATOM_ID ),
 		fixed_stub_( id::BOGUS_STUB_ID ),
-		func_( NULL ) {}
+		func_( /* NULL */ ) {}
 
 	///c-tor
 	LocalCoordinateConstraint(
@@ -84,7 +84,7 @@ public:
 	}
 
 	virtual ConstraintOP clone() const {
-		return new LocalCoordinateConstraint( *this );
+		return ConstraintOP( new LocalCoordinateConstraint( *this ) );
 	}
 
 	/// @brief Copies the data from this Constraint into a new object and returns an OP

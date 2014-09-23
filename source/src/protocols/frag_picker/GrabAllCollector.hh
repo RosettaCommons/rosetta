@@ -35,8 +35,8 @@ namespace frag_picker {
 // Always always declare your OP typedefs if you're defining a polymorphic class.
 // I shouldn't have to do this for you.
 class GrabAllCollector;
-typedef utility::pointer::owning_ptr< GrabAllCollector > GrabAllCollectorOP;
-typedef utility::pointer::owning_ptr< GrabAllCollector const > GrabAllCollectorCOP;
+typedef utility::pointer::shared_ptr< GrabAllCollector > GrabAllCollectorOP;
+typedef utility::pointer::shared_ptr< GrabAllCollector const > GrabAllCollectorCOP;
 
 
 /// @brief Keeps all fragments candidates for the final selection
@@ -107,7 +107,7 @@ public:
 
 	/// @brief Inserts candidates from another Collector for a give position in the query
 	inline void insert(Size pos, CandidatesCollectorOP collector) {
-		GrabAllCollectorOP c = dynamic_cast<GrabAllCollector*> (collector());
+		GrabAllCollectorOP c = utility::pointer::dynamic_pointer_cast< protocols::frag_picker::GrabAllCollector > ( collector );
 		if (c == 0)
 			utility_exit_with_message("Cant' cast candidates' collector to GrabAllCollector.");
 		for(Size j=1;j<=storage_[pos].size();++j) {

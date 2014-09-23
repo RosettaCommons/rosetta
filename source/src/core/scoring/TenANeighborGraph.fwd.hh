@@ -24,8 +24,8 @@ class TenANeighborNode;
 class TenANeighborEdge;
 class TenANeighborGraph;
 
-typedef utility::pointer::owning_ptr< TenANeighborGraph > TenANeighborGraphOP;
-typedef utility::pointer::owning_ptr< TenANeighborGraph const > TenANeighborGraphCOP;
+typedef utility::pointer::shared_ptr< TenANeighborGraph > TenANeighborGraphOP;
+typedef utility::pointer::shared_ptr< TenANeighborGraph const > TenANeighborGraphCOP;
 
 } // scoring
 } // core

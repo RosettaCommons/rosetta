@@ -109,7 +109,7 @@ public:
 		atom2_( atom2 )
 	{}
 
-	virtual DofClaimOP clone() const { return new JumpClaim( *this ); }
+	virtual DofClaimOP clone() const { return DofClaimOP( new JumpClaim( *this ) ); }
 
 	LocalPosition const& local_pos1() const {
 		return local_pos1_;

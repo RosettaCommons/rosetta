@@ -31,8 +31,8 @@ class PocketGrid;
 class EggshellGrid;
 
 // Types
-typedef utility::pointer::owning_ptr< PocketGrid >  PocketGridOP;
-typedef utility::pointer::owning_ptr< PocketGrid const >  PocketGridCOP;
+typedef utility::pointer::shared_ptr< PocketGrid >  PocketGridOP;
+typedef utility::pointer::shared_ptr< PocketGrid const >  PocketGridCOP;
 
 
 } // namespace pockets

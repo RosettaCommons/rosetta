@@ -697,7 +697,7 @@ protected:
 	bool periodic_;
 	BinPlacement bin_placement_;
 	Interpolator interpolator_;
-	utility::pointer::owning_ptr< numeric::interpolation::spline::Interpolator > spline_interpolator_;
+	utility::pointer::shared_ptr< numeric::interpolation::spline::Interpolator > spline_interpolator_;
 }; //Histogram
 
 } //interpolation

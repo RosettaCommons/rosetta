@@ -202,8 +202,8 @@ FragmentScoringMethodOP MakeJCoupling::make(Size priority,
 			<< input_file << std::endl;
 		JCouplingIO reader(input_file);
 		//in.write(trJCoupling.Debug);
-		return (FragmentScoringMethodOP) new JCoupling(priority,
-																									 lowest_acceptable_value, use_lowest, reader);
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new JCoupling(priority,
+																									 lowest_acceptable_value, use_lowest, reader) );
 	}
 
 	utility_exit_with_message(

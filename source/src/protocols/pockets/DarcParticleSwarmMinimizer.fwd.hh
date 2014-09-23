@@ -26,8 +26,8 @@ namespace protocols {
 namespace pockets {
 
 class DarcParticleSwarmMinimizer;//: public core::optimization::ParticleSwarmMinimizer;
-typedef utility::pointer::owning_ptr< DarcParticleSwarmMinimizer > DarcParticleSwarmMinimizerOP;
-typedef utility::pointer::owning_ptr< DarcParticleSwarmMinimizer const > DarcParticleSwarmMinimizerCOP;
+typedef utility::pointer::shared_ptr< DarcParticleSwarmMinimizer > DarcParticleSwarmMinimizerOP;
+typedef utility::pointer::shared_ptr< DarcParticleSwarmMinimizer const > DarcParticleSwarmMinimizerCOP;
 
 } // namespace pockets
 } // namespace protocols

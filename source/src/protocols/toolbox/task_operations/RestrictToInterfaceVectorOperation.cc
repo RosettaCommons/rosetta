@@ -135,13 +135,13 @@ RestrictToInterfaceVectorOperation::~RestrictToInterfaceVectorOperation() {}
 core::pack::task::operation::TaskOperationOP
 RestrictToInterfaceVectorOperationCreator::create_task_operation() const
 {
-	return new RestrictToInterfaceVectorOperation;
+	return core::pack::task::operation::TaskOperationOP( new RestrictToInterfaceVectorOperation );
 }
 
 ///@details be warned if you use clone that you'll not get a new interface calculator
 core::pack::task::operation::TaskOperationOP RestrictToInterfaceVectorOperation::clone() const
 {
-	return new RestrictToInterfaceVectorOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new RestrictToInterfaceVectorOperation( *this ) );
 }
 
 

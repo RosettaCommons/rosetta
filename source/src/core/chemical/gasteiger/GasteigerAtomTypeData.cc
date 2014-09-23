@@ -297,7 +297,7 @@ std::vector<std::string> const & GasteigerAtomTypeData::AtomicOrbitalTypes_strin
     //! @return pointer to new GasteigerAtomTypeData
     GasteigerAtomTypeDataOP GasteigerAtomTypeData::Clone() const
     {
-      return new GasteigerAtomTypeData( *this);
+      return GasteigerAtomTypeDataOP( new GasteigerAtomTypeData( *this) );
     }
 
   /////////////////

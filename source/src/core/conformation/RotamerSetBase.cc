@@ -34,7 +34,7 @@ namespace conformation {
 
 RotamerSetBase::RotamerSetBase() :
 	parent(),
-	data_cache_( new BasicDataCache( RotamerSetCacheableDataType::num_cacheable_data_types) )
+	data_cache_( BasicDataCacheOP( new BasicDataCache( RotamerSetCacheableDataType::num_cacheable_data_types) ) )
 {}
 
 RotamerSetBase::~RotamerSetBase() {}

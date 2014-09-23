@@ -235,7 +235,7 @@ void CreateStartingStructureMover::apply( core::pose::Pose & pose ){
 
 
 	// make a MoveMap
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	if( basic::options::option[ basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file ].user() ){
 		for( core::Size ii = 1; ii <= nucleated_pose.n_residue(); ++ii ){
 			if(  nucleated_pose.secstruct(ii) == 'L' || nucleated_pose.secstruct(ii -1 ) == 'L' ||  nucleated_pose.secstruct(ii + 1 )== 'L'){ movemap->set_bb( ii, true); }
@@ -244,8 +244,8 @@ void CreateStartingStructureMover::apply( core::pose::Pose & pose ){
 	} else { movemap->set_bb(true); }
 
 
-	core::fragment::ConstantLengthFragSetOP fragset3mer = new core::fragment::ConstantLengthFragSet( 3 );
-	core::fragment::ConstantLengthFragSetOP fragset9mer = new core::fragment::ConstantLengthFragSet( 9 );
+	core::fragment::ConstantLengthFragSetOP fragset3mer( new core::fragment::ConstantLengthFragSet( 3 ) );
+	core::fragment::ConstantLengthFragSetOP fragset9mer( new core::fragment::ConstantLengthFragSet( 9 ) );
 	fragset3mer->read_fragment_file( basic::options::option [ basic::options::OptionKeys::in::file::frag3 ], 400);
 	fragset9mer->read_fragment_file( basic::options::option [ basic::options::OptionKeys::in::file::frag9 ], 200 );
 
@@ -270,10 +270,10 @@ void CreateStartingStructureMover::apply( core::pose::Pose & pose ){
 		shear_mover->angle_max( 'L', 10.0 );
 
 
-		protocols::simple_moves::SmoothFragmentMoverOP smooth_frag_mover ( new protocols::simple_moves::SmoothFragmentMover( fragset3mer, movemap, protocols::simple_moves::FragmentCostOP( new protocols::simple_moves::GunnCost ) ) );
+		protocols::simple_moves::SmoothFragmentMoverOP smooth_frag_mover( new protocols::simple_moves::SmoothFragmentMover( fragset3mer, movemap, protocols::simple_moves::FragmentCostOP( new protocols::simple_moves::GunnCost ) ) );
 
 
-		protocols::moves::RandomMoverOP Moveset = new protocols::moves::RandomMover();
+		protocols::moves::RandomMoverOP Moveset( new protocols::moves::RandomMover() );
 		Moveset->add_mover( small_mover );
 		Moveset->add_mover( shear_mover );
 		Moveset->add_mover( smooth_frag_mover );
@@ -290,7 +290,7 @@ void CreateStartingStructureMover::apply( core::pose::Pose & pose ){
 
 		protocols::abinitio::ClassicAbinitio::register_options();
 		protocols::abinitio::ClassicAbinitioOP prot_ptr;
-		prot_ptr = new protocols::abinitio::ClassicAbinitio( fragset3mer, fragset9mer, movemap );
+		prot_ptr = protocols::abinitio::ClassicAbinitioOP( new protocols::abinitio::ClassicAbinitio( fragset3mer, fragset9mer, movemap ) );
 		protocols::abinitio::ClassicAbinitio& abinitio_protocol( *prot_ptr );
 
 		abinitio_protocol.init( nucleated_pose );

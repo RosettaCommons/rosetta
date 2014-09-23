@@ -22,8 +22,8 @@ namespace protocols {
 namespace ligand_docking {
 
 class MinimizeBackbone; // fwd declaration
-typedef utility::pointer::owning_ptr< MinimizeBackbone > MinimizeBackboneOP;
-typedef utility::pointer::owning_ptr< MinimizeBackbone const > MinimizeBackboneCOP;
+typedef utility::pointer::shared_ptr< MinimizeBackbone > MinimizeBackboneOP;
+typedef utility::pointer::shared_ptr< MinimizeBackbone const > MinimizeBackboneCOP;
 typedef utility::vector1<MinimizeBackboneOP> MinimizeBackboneOPs;
 typedef utility::vector1<MinimizeBackboneCOP> MinimizeBackboneCOPs;
 

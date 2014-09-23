@@ -61,7 +61,7 @@ UnboundRotamersOperation::~UnboundRotamersOperation() {}
 core::pack::rotamer_set::RotamerSetOperationOP
 UnboundRotamersOperation::clone() const
 {
-	return new UnboundRotamersOperation( *this );
+	return core::pack::rotamer_set::RotamerSetOperationOP( new UnboundRotamersOperation( *this ) );
 }
 
 
@@ -85,7 +85,7 @@ void UnboundRotamersOperation::initialize_from_command_line()
 	for(Size i = 1; i <= option[ OptionKeys::packing::unboundrot ]().size(); ++i) {
 		std::string filename = option[ OptionKeys::packing::unboundrot ]()[i].name();
 		TR << "Adding 'unbound' rotamers from " << filename << std::endl;
-		core::pose::PoseOP pose = new core::pose::Pose();
+		core::pose::PoseOP pose( new core::pose::Pose() );
 		//core::import_pose::pose_from_pdb( *pose, filename );
 		core::io::pdb::build_pose_from_pdb_as_is( *pose, filename );
 		this->add_pose( pose );

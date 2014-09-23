@@ -75,7 +75,7 @@ public:
 		Vector normal( 0, 0, 10 );
 		
 		// Add Membrane to pose!
-		AddMembraneMoverOP add_memb = new AddMembraneMover( center, normal, spanfile, 1 );
+		AddMembraneMoverOP add_memb( new AddMembraneMover( center, normal, spanfile, 1 ) );
 		add_memb->apply( *pose_ );
 		
     }
@@ -96,7 +96,7 @@ public:
 		Vector new_normal( 0.044515, 0.0319111, -0.998499 );
 		
 		// Apply Rotation and translation move
-		MembranePositionFromTopologyMoverOP rt = new MembranePositionFromTopologyMover();
+		MembranePositionFromTopologyMoverOP rt( new MembranePositionFromTopologyMover() );
 		rt->apply( *pose_ );
 		
 		// Check the structure was moved to the correct position

@@ -25,21 +25,21 @@ namespace loop_mover{
 // Forward
 class LoopMover;
 
-typedef utility::pointer::owning_ptr< LoopMover > LoopMoverOP;
-typedef utility::pointer::owning_ptr< LoopMover const > LoopMoverCOP;
+typedef utility::pointer::shared_ptr< LoopMover > LoopMoverOP;
+typedef utility::pointer::shared_ptr< LoopMover const > LoopMoverCOP;
 
-typedef utility::pointer::access_ptr< LoopMover > LoopMoverAP;
-typedef utility::pointer::access_ptr< LoopMover const > LoopMoverCAP;
+typedef utility::pointer::weak_ptr< LoopMover > LoopMoverAP;
+typedef utility::pointer::weak_ptr< LoopMover const > LoopMoverCAP;
 
 class MultiLoopMover;
 
-typedef utility::pointer::owning_ptr< MultiLoopMover > MultiLoopMoverOP;
-typedef utility::pointer::owning_ptr< MultiLoopMover const > MultiLoopMoverCOP;
+typedef utility::pointer::shared_ptr< MultiLoopMover > MultiLoopMoverOP;
+typedef utility::pointer::shared_ptr< MultiLoopMover const > MultiLoopMoverCOP;
 
 class SingleLoopMover;
 
-typedef utility::pointer::owning_ptr< SingleLoopMover > SingleLoopMoverOP;
-typedef utility::pointer::owning_ptr< SingleLoopMover const > SingleLoopMoverCOP;
+typedef utility::pointer::shared_ptr< SingleLoopMover > SingleLoopMoverOP;
+typedef utility::pointer::shared_ptr< SingleLoopMover const > SingleLoopMoverCOP;
 
 } //namespace loop_mover
 } //namespace loops

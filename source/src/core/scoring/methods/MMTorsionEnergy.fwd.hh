@@ -23,10 +23,10 @@ namespace methods {
 
 class MMTorsionEnergy;
 
-typedef  utility::pointer::access_ptr< MMTorsionEnergy > MMTorsionEnergyAP;
-typedef  utility::pointer::access_ptr< MMTorsionEnergy const > MMTorsionEnergyCAP;
-typedef  utility::pointer::owning_ptr< MMTorsionEnergy > MMTorsionEnergyOP;
-typedef  utility::pointer::owning_ptr< MMTorsionEnergy const > MMTorsionEnergyCOP;
+typedef  utility::pointer::weak_ptr< MMTorsionEnergy > MMTorsionEnergyAP;
+typedef  utility::pointer::weak_ptr< MMTorsionEnergy const > MMTorsionEnergyCAP;
+typedef  utility::pointer::shared_ptr< MMTorsionEnergy > MMTorsionEnergyOP;
+typedef  utility::pointer::shared_ptr< MMTorsionEnergy const > MMTorsionEnergyCOP;
 
 } // namespace methods
 } // namespace scoring

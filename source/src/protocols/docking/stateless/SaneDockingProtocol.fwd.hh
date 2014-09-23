@@ -21,7 +21,7 @@ namespace docking {
 namespace stateless {
 
 class SaneDockingProtocol;
-typedef utility::pointer::owning_ptr< SaneDockingProtocol > SaneDockingProtocolOP;
+typedef utility::pointer::shared_ptr< SaneDockingProtocol > SaneDockingProtocolOP;
 
 }
 }

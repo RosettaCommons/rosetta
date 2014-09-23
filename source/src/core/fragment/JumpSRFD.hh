@@ -56,13 +56,13 @@ public:
 
 	/// @brief clone
 	SingleResidueFragDataOP clone() const {
-		return new UpJumpSRFD( *this );
+		return SingleResidueFragDataOP( new UpJumpSRFD( *this ) );
 	};
 
 	/// @brief create a new instance of this object
 	virtual
 	SingleResidueFragDataOP create() const {
-		return new UpJumpSRFD();
+		return SingleResidueFragDataOP( new UpJumpSRFD() );
 	}
 
 	virtual bool apply( pose::Pose&, Size const, Frame const& ) const {
@@ -150,13 +150,13 @@ public:
 
 	/// @brief clone
 	SingleResidueFragDataOP clone() const {
-		return new DownJumpSRFD( *this );
+		return SingleResidueFragDataOP( new DownJumpSRFD( *this ) );
 	};
 
 	/// @brief create a new instance of this object
 	virtual
 	SingleResidueFragDataOP create() const {
-		return new DownJumpSRFD();
+		return SingleResidueFragDataOP( new DownJumpSRFD() );
 	}
 
 	/// @brief set value of jump

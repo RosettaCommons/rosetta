@@ -134,7 +134,7 @@ public:
 			while ( pose_ener_gold.size() < pos ) pose_ener_gold.push_back( -1.0 );
 			pose_ener_gold[ pos ] = pose_ener;
 		}
-		graph::GraphOP dummy_graph = new graph::Graph();
+		graph::GraphOP dummy_graph( new graph::Graph() );
 		scoring::ScoreFunction dummy_scorefxn;
 		Size ct( 1 );
 		for (Size pos = 1; pos <= pose.total_residue(); pos++ ) {
@@ -236,7 +236,7 @@ public:
 			if ( AA( ii ) == aa_ala || AA( ii ) == aa_gly ) continue;
 
 			SingleResidueRotamerLibraryCOP aa_rotlib = rotlib.get_library_by_aa( (AA) ii ).lock();
-			SingleResidueDunbrackLibraryCOP aa_dunlib( dynamic_cast< SingleResidueDunbrackLibrary const * > ( aa_rotlib.get() ) );
+			SingleResidueDunbrackLibraryCOP aa_dunlib( utility::pointer::dynamic_pointer_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const > ( aa_rotlib ) );
 			TS_ASSERT( aa_dunlib );
 			if ( ! aa_dunlib ) {
 				std::cerr << "Failed to find dunbrack library for aa " << (AA) ii << std::endl;

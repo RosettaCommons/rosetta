@@ -101,7 +101,7 @@ void CompoundInterpolator::deserialize(utility::json_spirit::mObject data)
 	for(utility::json_spirit::mArray::iterator it = interpolator_data.begin(); it != interpolator_data.end();++it)
 	{
 		utility::json_spirit::mObject interpolator_record(it->get_obj());
-		InterpolatorOP current_interpolator = new SimpleInterpolator();
+		InterpolatorOP current_interpolator( new SimpleInterpolator() );
 		current_interpolator->deserialize(interpolator_record["interp"].get_obj());
 		add_range(current_interpolator,data["lb"].get_real(),data["ub"].get_real());
 	}

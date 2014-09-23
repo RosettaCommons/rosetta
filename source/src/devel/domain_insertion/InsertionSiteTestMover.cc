@@ -67,12 +67,12 @@ static thread_local basic::Tracer tr( "devel.domain_insertion.InsertionSiteTestM
 
 InsertionSiteTestMover::InsertionSiteTestMover()
 :
-	sfxn_(NULL), flex_window_(2),
+	sfxn_(/* NULL */), flex_window_(2),
 	test_insert_ss_("LLLLLLLL"), insert_allowed_score_increase_(10.0),
 	insert_attempt_sasa_cutoff_(30.0),
 	length_of_insert_(test_insert_ss_.size() ), num_repeats_(5), pdb_numbering_(true),
-	enz_flexbb_prot_( new protocols::enzdes::EnzdesFlexBBProtocol() ),
-	insert_seqmap_(NULL)
+	enz_flexbb_prot_( protocols::enzdes::EnzdesFlexBBProtocolOP( new protocols::enzdes::EnzdesFlexBBProtocol() ) ),
+	insert_seqmap_(/* NULL */)
 	//mostly arbitrary numbers, but can be modified through RS tag
 {
 	insert_test_pos_.clear();
@@ -85,7 +85,7 @@ InsertionSiteTestMover::InsertionSiteTestMover( InsertionSiteTestMover const & o
 	insert_allowed_score_increase_(other.insert_allowed_score_increase_),
 	insert_attempt_sasa_cutoff_(other.insert_attempt_sasa_cutoff_), length_of_insert_(other.length_of_insert_),
 	num_repeats_(other.num_repeats_), pdb_numbering_(other.pdb_numbering_),
-	enz_flexbb_prot_( new protocols::enzdes::EnzdesFlexBBProtocol() ), insert_seqmap_(other.insert_seqmap_)
+	enz_flexbb_prot_( protocols::enzdes::EnzdesFlexBBProtocolOP( new protocols::enzdes::EnzdesFlexBBProtocol() ) ), insert_seqmap_(other.insert_seqmap_)
 {}
 
 
@@ -93,7 +93,7 @@ InsertionSiteTestMover::~InsertionSiteTestMover(){}
 
 protocols::moves::MoverOP
 InsertionSiteTestMover::clone() const{
-	return new InsertionSiteTestMover( *this );
+	return protocols::moves::MoverOP( new InsertionSiteTestMover( *this ) );
 }
 
 
@@ -229,7 +229,7 @@ InsertionSiteTestMover::make_insert_task(
 	Size insert_pos
 ) const
 {
-	core::pack::task::PackerTaskOP task = new core::pack::task::PackerTask_( pose );
+	core::pack::task::PackerTaskOP task( new core::pack::task::PackerTask_( pose ) );
 
 	utility::vector1< bool > repack_pos( pose.total_residue(), false );
 	repack_pos[ insert_pos ] = true;
@@ -257,7 +257,7 @@ InsertionSiteTestMover::make_enzremodel_mover(
 
 	core::pack::task::PackerTaskCOP insert_task( make_insert_task( pose, insert_pos ));
 
-	devel::enzdes::EnzdesRemodelMoverOP enzremodel_mover = new devel::enzdes::EnzdesRemodelMover( enz_flexbb_prot_, insert_task, enz_flexbb_prot_->enz_flexible_region( 1 ) );
+	devel::enzdes::EnzdesRemodelMoverOP enzremodel_mover( new devel::enzdes::EnzdesRemodelMover( enz_flexbb_prot_, insert_task, enz_flexbb_prot_->enz_flexible_region( 1 ) ) );
 
 	std::string ss_edges;
 	for( core::Size i = 1; i <= flex_window_; ++i ) ss_edges = ss_edges + "L";
@@ -297,7 +297,7 @@ InsertionSiteTestMover::create_raw_insert_pose(
 	//the sequnce mapping needs to be changed by hand because the immediate insert
 	//residues are considered not present anymore after vlb rebuild
 	//but here we sorta know what they are
-	core::id::SequenceMappingOP seqmap = new core::id::SequenceMapping( *(enzremodel_mover->get_seq_mapping()) );
+	core::id::SequenceMappingOP seqmap( new core::id::SequenceMapping( *(enzremodel_mover->get_seq_mapping()) ) );
 	if( !( (*seqmap)[insert_pos]) ) (*seqmap)[insert_pos] = insert_pos;
 	if( !( (*seqmap)[insert_pos+1]) ){
 		runtime_assert( ( (*seqmap)[insert_pos+2]) != 0 );
@@ -320,10 +320,10 @@ InsertionSiteTestMover::relax_raw_insert_pose(
 	using core::pack::task::operation::TaskOperationCOP;
 	
 	Size repeats(2); //only very few repeats to iron out the worst transgressions
-	protocols::relax::FastRelaxOP frelax(new protocols::relax::FastRelax( sfxn_, repeats ) );
+	protocols::relax::FastRelaxOP frelax( new protocols::relax::FastRelax( sfxn_, repeats ) );
 
 	//for now we relax everything, if it takes too long we could do less
-	core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
+	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 	mm->set_chi(false);
 	mm->set_bb( false );
 	mm->set_jump( false );
@@ -346,9 +346,9 @@ InsertionSiteTestMover::relax_raw_insert_pose(
 	}
 
 	core::pack::task::TaskFactoryOP taskf( new core::pack::task::TaskFactory() );
-	taskf->push_back( new core::pack::task::operation::InitializeFromCommandline() );
-	taskf->push_back( new core::pack::task::operation::RestrictToRepacking() );
-	taskf->push_back( new protocols::toolbox::task_operations::PreventResiduesFromRepackingOperation( prevent_repack ) );
+	taskf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline() ) );
+	taskf->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking() ) );
+	taskf->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::PreventResiduesFromRepackingOperation( prevent_repack ) ) );
 
 	frelax->set_task_factory( taskf );
 	frelax->set_movemap( mm );
@@ -504,7 +504,7 @@ InsertionSiteTestMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 InsertionSiteTestMoverCreator::create_mover() const {
-	return new InsertionSiteTestMover;
+	return protocols::moves::MoverOP( new InsertionSiteTestMover );
 }
 
 std::string

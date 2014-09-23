@@ -81,12 +81,12 @@ DesignInterfacesOperation::~DesignInterfacesOperation() {}
 core::pack::task::operation::TaskOperationOP
 DesignInterfacesOperationCreator::create_task_operation() const
 {
-	return new DesignInterfacesOperation;
+	return core::pack::task::operation::TaskOperationOP( new DesignInterfacesOperation );
 }
 
 core::pack::task::operation::TaskOperationOP DesignInterfacesOperation::clone() const
 {
-	return new DesignInterfacesOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new DesignInterfacesOperation( *this ) );
 }
 ///@brief restricts to repacking all residues outside of design_shell_ around each residue
 void
@@ -96,8 +96,8 @@ DesignInterfacesOperation::apply( core::pose::Pose const & pose, core::pack::tas
     using namespace protocols::toolbox::task_operations;
     using namespace protocols::rosetta_scripts;
 
-    TaskFactoryOP tf = new TaskFactory;
-    ProteinInterfaceDesignOperationOP pido = new ProteinInterfaceDesignOperation;
+    TaskFactoryOP tf( new TaskFactory );
+    ProteinInterfaceDesignOperationOP pido( new ProteinInterfaceDesignOperation );
     pido->interface_distance_cutoff( design_shell() );
     pido->design_chain1(true);
     pido->design_chain2(true);

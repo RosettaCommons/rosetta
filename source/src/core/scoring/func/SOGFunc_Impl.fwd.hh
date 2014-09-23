@@ -24,7 +24,7 @@ namespace scoring {
 namespace func {
 
 class SOGFunc_Impl;
-typedef utility::pointer::owning_ptr< SOGFunc_Impl > SOGFunc_ImplOP;
+typedef utility::pointer::shared_ptr< SOGFunc_Impl > SOGFunc_ImplOP;
 
 }
 }

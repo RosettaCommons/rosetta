@@ -28,8 +28,8 @@ namespace conformation {
 namespace membrane {
             
 class LipidAccInfo;
-typedef utility::pointer::owning_ptr< LipidAccInfo > LipidAccInfoOP;
-typedef utility::pointer::owning_ptr< LipidAccInfo const > LipidAccInfoCOP;
+typedef utility::pointer::shared_ptr< LipidAccInfo > LipidAccInfoOP;
+typedef utility::pointer::shared_ptr< LipidAccInfo const > LipidAccInfoCOP;
 
 } // membrane
 } // conformation

@@ -175,8 +175,8 @@ read_native_sequence_for_entity_elements( core::Size n_designed_positions )
 		utility_exit_with_message( "Could not open correspondence file named: " + correspondence_file_name );
 	}
 
-	EntityCorrespondenceOP ec = new EntityCorrespondence;
-	ec->set_pose( new pose::Pose( pose ));
+	EntityCorrespondenceOP ec( new EntityCorrespondence );
+	ec->set_pose( core::pose::PoseCOP( new pose::Pose( pose ) ));
 	ec->set_num_entities( n_designed_positions );
 	ec->initialize_from_correspondence_file( correspondence_file );
 
@@ -228,7 +228,7 @@ class HPatchNPDCalculatorCreator : public protocols::pack_daemon::NPDPropCalcula
 
 	virtual
 	protocols::pack_daemon::NPDPropCalculatorOP
-	new_calculator() const { return new HPatchNPDCalculator; }
+	new_calculator() const { return protocols::pack_daemon::NPDPropCalculatorOP( new HPatchNPDCalculator ); }
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -289,7 +289,7 @@ class HPatchByChainNPDCalculatorCreator : public protocols::pack_daemon::NPDProp
 
 	virtual
 	protocols::pack_daemon::NPDPropCalculatorOP
-	new_calculator() const { return new HPatchByChainNPDCalculator; }
+	new_calculator() const { return protocols::pack_daemon::NPDPropCalculatorOP( new HPatchByChainNPDCalculator ); }
 };
 
 
@@ -307,7 +307,7 @@ public:
 		core::pose::Pose const & pose,
 		core::pack::task::PackerTask const & task
 	){
-		pose_ = new core::pose::Pose( pose );
+		pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
 		task_ = task.clone();
 		sfxn_ = core::scoring::get_score_function();
 
@@ -317,19 +317,19 @@ public:
 		//If you want non-devel code stripped from the release, see the release machinery in tools/release and contact the release manager (Steven Lewis smlewi@gmail.com at this time)
 		///DONOTRELEASE_TOP
 		if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ) {
-			core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new devel::vardist_solaccess::VarSolDistSasaCalculator;
+			core::pose::metrics::PoseMetricCalculatorOP sasa_calculator( new devel::vardist_solaccess::VarSolDistSasaCalculator );
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 		}
 		///DONOTRELEASE_BOTTOM
 		//end automatic stripping comment
 
 		if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "num_hbonds" ) ) {
-			core::pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator = new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator();
+			core::pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator( new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator() );
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( "num_hbonds", num_hbonds_calculator );
 		}
 
 		if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "unsat" ) ) {
-			core::pose::metrics::PoseMetricCalculatorOP unsat_calculator = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds");
+			core::pose::metrics::PoseMetricCalculatorOP unsat_calculator( new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds") );
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( "unsat", unsat_calculator );
 		}
 
@@ -362,7 +362,7 @@ class NBuriedUnsatsCalcultorCreator : public protocols::pack_daemon::NPDPropCalc
 
 	virtual
 	protocols::pack_daemon::NPDPropCalculatorOP
-	new_calculator() const { return new NBuriedUnsatsCalcultor; }
+	new_calculator() const { return protocols::pack_daemon::NPDPropCalculatorOP( new NBuriedUnsatsCalcultor ); }
 };
 
 
@@ -415,10 +415,10 @@ int main( int argc, char ** argv )
 	std::string entity_resfile( option[ msd::entity_resfile ] );
 	std::string daf_filename( option[ msd::fitness_file ] );
 
-	DaemonSetOP ds = new DaemonSet;
-	ds->add_npdpro_calculator_creator( new HPatchNPDCalculatorCreator );
-	ds->add_npdpro_calculator_creator( new HPatchByChainNPDCalculatorCreator );
-	ds->add_npdpro_calculator_creator( new NBuriedUnsatsCalcultorCreator );
+	DaemonSetOP ds( new DaemonSet );
+	ds->add_npdpro_calculator_creator( NPDPropCalculatorCreatorOP( new HPatchNPDCalculatorCreator ) );
+	ds->add_npdpro_calculator_creator( NPDPropCalculatorCreatorOP( new HPatchByChainNPDCalculatorCreator ) );
+	ds->add_npdpro_calculator_creator( NPDPropCalculatorCreatorOP( new NBuriedUnsatsCalcultorCreator ) );
 
 	core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 
@@ -428,7 +428,7 @@ int main( int argc, char ** argv )
 		/// another set of bb/bb contacts
 		if ( mpi_rank() == 0 ) { TR << "Activating decompose_bb_hb_into_pair_energies in the score function" << std::endl; }
 		using namespace core;
-		scoring::methods::EnergyMethodOptionsOP emopts( new scoring::methods::EnergyMethodOptions( sfxn->energy_method_options() ));
+		scoring::methods::EnergyMethodOptionsOP emopts( new scoring::methods::EnergyMethodOptions( sfxn->energy_method_options() ) );
 		emopts->hbond_options().decompose_bb_hb_into_pair_energies( true );
 		sfxn->set_energy_method_options( *emopts );
 	}
@@ -452,8 +452,8 @@ int main( int argc, char ** argv )
 
 
 	if ( mpi_rank() == 0 ) {
-		protocols::pack_daemon::MPIMultistateFitnessFunctionOP func = new protocols::pack_daemon::MPIMultistateFitnessFunction;
-		protocols::pack_daemon::DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
+		protocols::pack_daemon::MPIMultistateFitnessFunctionOP func( new protocols::pack_daemon::MPIMultistateFitnessFunction );
+		protocols::pack_daemon::DynamicAggregateFunctionDriverOP daf( new DynamicAggregateFunctionDriver );
 		daf->set_num_entity_elements( ds->entity_task()->total_residue() );
 		daf->set_score_function( *sfxn ); // assume one score function for the entire
 		utility::io::izstream daf_file( daf_filename );
@@ -479,7 +479,7 @@ int main( int argc, char ** argv )
 		ga.set_frac_by_recomb( option[ ms::fraction_by_recombination ]() );
 
 		// set up sequence randomizer
-		protocols::genetic_algorithm::Mutate1RandomizerOP rand = new protocols::genetic_algorithm::Mutate1Randomizer;
+		protocols::genetic_algorithm::Mutate1RandomizerOP rand( new protocols::genetic_algorithm::Mutate1Randomizer );
 		// reset the default value of 1.0, but the mutation-rate variable is not used by the Mutate1Randomizer!
 		rand->set_mutation_rate( 0.0 /*option[ ms::mutate_rate ]()*/ );
 		protocols::pack_daemon::initialize_ga_randomizer_from_entity_task( rand, ds->entity_task() );

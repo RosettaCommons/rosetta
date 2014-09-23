@@ -22,8 +22,8 @@ namespace rotamer_set_operations {
 
 class SpecialRotamerRSO;
 
-typedef utility::pointer::owning_ptr< SpecialRotamerRSO > SpecialRotamerRSOOP;
-typedef utility::pointer::owning_ptr< SpecialRotamerRSO const > SpecialRotamerRSOCOP;
+typedef utility::pointer::shared_ptr< SpecialRotamerRSO > SpecialRotamerRSOOP;
+typedef utility::pointer::shared_ptr< SpecialRotamerRSO const > SpecialRotamerRSOCOP;
 
 } //namespace rotamer_set_operations
 } //namespace toolbox

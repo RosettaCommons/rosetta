@@ -91,7 +91,8 @@ settings = {
             "defines" : [
                 "BOOST_ERROR_CODE_HEADER_ONLY",
                 "BOOST_SYSTEM_NO_DEPRECATED",
-                "PTR_REFCOUNT",
+                "PTR_BOOST",
+                "PTR_MODERN",
             ],
         },
     },
@@ -241,6 +242,7 @@ settings = {
             },
         },
     },
+
 
     # OSs & architecures ######################################################
 
@@ -1161,20 +1163,6 @@ settings = {
         },
     },
 
-    "gcc, ptr_boost" : {
-        "appends" : {
-            "defines" : [
-                "PTR_BOOST",
-                "PTR_MODERN"
-            ],
-        },
-        "removes" : {
-            "defines" : [
-                "PTR_REFCOUNT"
-            ],
-        },
-    },
-
     "gcc, cxx11" : {
         "appends" : {
             "flags" : {
@@ -1183,7 +1171,6 @@ settings = {
             "defines" : [
                 "CXX11",
                 "PTR_STD",
-                "PTR_MODERN"
             ],
         },
         "removes" : {
@@ -1191,7 +1178,7 @@ settings = {
                 "cxx" : [ "std=c++98", "std=c++0x" ],
             },
             "defines" : [
-                "PTR_REFCOUNT"
+                "PTR_BOOST"
             ]
         },
     },
@@ -1919,6 +1906,23 @@ settings = {
     },
 
 
+    "clang, macos, cxx11" : {
+        "appends" : {
+            "flags" : {
+                "compile" : [ "stdlib=libc++", ],
+                "shlink" : [ "stdlib=libc++"],
+                "link"   : [ "stdlib=libc++"],
+            },
+        },
+        "removes" : {
+            "flags" : {
+                "compile" : [ "stdlib=libstdc++", ],
+                "shlink" : [ "stdlib=libstdc++"],
+                "link"   : [ "stdlib=libstdc++"],
+            },
+        },
+    },
+
     # modes ###################################################################
 
     "clang, debug" : {
@@ -1977,38 +1981,6 @@ settings = {
 
     # extras ##################################################################
 
-    "clang, ptr_boost" : {
-        "appends" : {
-            "defines" : [
-                "PTR_BOOST",
-                "PTR_MODERN"
-            ],
-        },
-        "removes" : {
-            "defines" : [
-                "PTR_REFCOUNT"
-            ],
-        }
-    },
-
-    "clang, cxx11thread" : {
-        "appends" : {
-            "flags" : {
-                "cxx" : [ "std=c++11" ],
-            },
-            "defines" : [
-                "MULTI_THREADED",
-                "CXX11"
-            ],
-            "libraries" : [ "pthread" ]
-        },
-        "removes" : {
-            "flags" : {
-                "cxx" : [ "std=c++98" ],
-            },
-        },
-    },
-
     "clang, cxx11" : {
         "appends" : {
             "flags" : {
@@ -2017,7 +1989,6 @@ settings = {
             "defines" : [
                 "CXX11",
                 "PTR_STD",
-                "PTR_MODERN"
             ],
         },
         "removes" : {
@@ -2025,7 +1996,7 @@ settings = {
                 "cxx" : [ "std=c++98", "std=c++0x" ],
             },
             "defines" : [
-                "PTR_REFCOUNT"
+                "PTR_BOOST"
             ],
         },
     },

@@ -184,7 +184,7 @@ void add_constraints_from_cmdline_to_pose( core::pose::Pose & pose ) {
 	using namespace basic::options;
 	using namespace core::scoring::constraints;
 	if ( option[ OptionKeys::constraints::cst_file ].user() ) {
-		ConstraintSetOP cstset_ = ConstraintIO::get_instance()->read_constraints( get_cst_file_option() ,new ConstraintSet, pose	);
+		ConstraintSetOP cstset_ = ConstraintIO::get_instance()->read_constraints( get_cst_file_option() ,ConstraintSetOP( new ConstraintSet ), pose	);
 		pose.constraint_set( cstset_ );
 	}
 }
@@ -223,7 +223,7 @@ void add_fa_constraints_from_cmdline_to_pose( core::pose::Pose & pose ) {
 	using namespace core::scoring::constraints;
 	if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
 		ConstraintSetOP cstset_ = ConstraintIO::get_instance()->read_constraints(
-			get_cst_fa_file_option(), new ConstraintSet, pose
+			get_cst_fa_file_option(), ConstraintSetOP( new ConstraintSet ), pose
 		);
 		pose.constraint_set( cstset_ );
 	}
@@ -262,7 +262,7 @@ void merge_constraints_from_cmdline_to_pose( core::pose::Pose & pose ) {
 	using namespace basic::options;
 	using namespace core::scoring::constraints;
 	if ( option[ OptionKeys::constraints::cst_file ].user() ) {
-		ConstraintSetCOP const new_cstset = ConstraintIO::get_instance()->read_constraints( get_cst_file_option(), new ConstraintSet, pose	);
+		ConstraintSetCOP const new_cstset = ConstraintIO::get_instance()->read_constraints( get_cst_file_option(), ConstraintSetOP( new ConstraintSet ), pose	);
 		pose.add_constraints( new_cstset->get_all_constraints() );
 	}
 }
@@ -334,7 +334,7 @@ void merge_fa_constraints_from_cmdline_to_pose( core::pose::Pose & pose ) {
 	using namespace basic::options;
 	using namespace core::scoring::constraints;
 	if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
-		ConstraintSetCOP const new_cstset = ConstraintIO::get_instance()->read_constraints( get_cst_fa_file_option(), new ConstraintSet, pose	);
+		ConstraintSetCOP const new_cstset = ConstraintIO::get_instance()->read_constraints( get_cst_fa_file_option(), ConstraintSetOP( new ConstraintSet ), pose	);
 		pose.add_constraints( new_cstset->get_all_constraints() );
 	}
 }
@@ -382,7 +382,7 @@ add_coordinate_constraints( pose::Pose & pose, Real const coord_sdev /* = 10.0 *
 		for ( Size ii = 1; ii <= last_atom; ++ii ) {
 
 			func::FuncOP f( new func::HarmonicFunc( 0.0, coord_sdev ) );
-			cst_set->add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii), f ) );
+			cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii), f ) ) );
 		}
 	}
 
@@ -411,7 +411,7 @@ add_coordinate_constraints( pose::Pose & pose, core::Size const start_res, core:
 		for ( Size ii = 1; ii<= last_atom; ++ii ) {
 
 			func::FuncOP f( new func::HarmonicFunc( 0.0, coord_sdev ) );
-			cst_set->add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii), f ) );
+			cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii), f ) ) );
 		}
 	}
 
@@ -529,7 +529,7 @@ void combine_constraints(
 					//DO NOT INCREMENT, already incremented in next loop -- gives segfaults otherwise
 		) {
 			Size ct( combine_ratio );
-			MultiConstraintOP combined_cst = new AmbiguousConstraint;
+			MultiConstraintOP combined_cst( new AmbiguousConstraint );
 			for (	; ct > 0 && it != bin_it->second.end(); ++it ) {
 				tr.Trace << " add constraint " << ct << std::endl;
 				//check if constraint is combinable:

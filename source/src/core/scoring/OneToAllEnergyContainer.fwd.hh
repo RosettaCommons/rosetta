@@ -28,11 +28,11 @@ namespace core {
 namespace scoring {
 
 class OneToAllNeighborIterator;
-typedef utility::pointer::owning_ptr< OneToAllNeighborIterator > OneToAllNeighborIteratorOP;
+typedef utility::pointer::shared_ptr< OneToAllNeighborIterator > OneToAllNeighborIteratorOP;
 
 
 class OneToAllEnergyContainer;
-typedef utility::pointer::owning_ptr< OneToAllEnergyContainer > OneToAllEnergyContainerOP;
+typedef utility::pointer::shared_ptr< OneToAllEnergyContainer > OneToAllEnergyContainerOP;
 
 } // namespace scoring
 } // namespace core

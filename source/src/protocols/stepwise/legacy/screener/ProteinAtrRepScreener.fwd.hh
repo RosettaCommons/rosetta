@@ -24,8 +24,8 @@ namespace legacy {
 namespace screener {
 	
 	class ProteinAtrRepScreener;
-	typedef utility::pointer::owning_ptr< ProteinAtrRepScreener > ProteinAtrRepScreenerOP;
-	typedef utility::pointer::owning_ptr< ProteinAtrRepScreener const > ProteinAtrRepScreenerCOP;
+	typedef utility::pointer::shared_ptr< ProteinAtrRepScreener > ProteinAtrRepScreenerOP;
+	typedef utility::pointer::shared_ptr< ProteinAtrRepScreener const > ProteinAtrRepScreenerCOP;
 	
 } //screener
 } //legacy

@@ -34,7 +34,7 @@ LoadPDBMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 LoadPDBMoverCreator::create_mover() const {
-	return new LoadPDBMover;
+	return protocols::moves::MoverOP( new LoadPDBMover );
 }
 
 std::string
@@ -65,13 +65,13 @@ LoadPDBMover::get_name() const {
 moves::MoverOP
 LoadPDBMover::clone() const
 {
-	return new LoadPDBMover( *this );
+	return moves::MoverOP( new LoadPDBMover( *this ) );
 }
 
 moves::MoverOP
 LoadPDBMover::fresh_instance() const
 {
-	return new LoadPDBMover;
+	return moves::MoverOP( new LoadPDBMover );
 }
 
 void

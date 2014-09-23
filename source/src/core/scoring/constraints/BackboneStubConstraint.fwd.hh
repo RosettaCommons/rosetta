@@ -24,8 +24,8 @@ namespace constraints {
 
 class BackboneStubConstraint;
 
-typedef utility::pointer::owning_ptr< BackboneStubConstraint > BackboneStubConstraintOP;
-typedef utility::pointer::owning_ptr< BackboneStubConstraint const > BackboneStubConstraintCOP;
+typedef utility::pointer::shared_ptr< BackboneStubConstraint > BackboneStubConstraintOP;
+typedef utility::pointer::shared_ptr< BackboneStubConstraint const > BackboneStubConstraintCOP;
 
 typedef utility::vector1< BackboneStubConstraintOP > BackboneStubConstraintOPs;
 typedef utility::vector1< BackboneStubConstraintCOP > BackboneStubConstraintCOPs;

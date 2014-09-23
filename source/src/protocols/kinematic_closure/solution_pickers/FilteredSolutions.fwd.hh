@@ -18,8 +18,8 @@ namespace solution_pickers {
 
 class FilteredSolutions;
 
-typedef utility::pointer::owning_ptr<FilteredSolutions> FilteredSolutionsOP;
-typedef utility::pointer::owning_ptr<FilteredSolutions const> FilteredSolutionsCOP;
+typedef utility::pointer::shared_ptr<FilteredSolutions> FilteredSolutionsOP;
+typedef utility::pointer::shared_ptr<FilteredSolutions const> FilteredSolutionsCOP;
 
 }
 }

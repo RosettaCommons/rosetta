@@ -75,7 +75,7 @@ void PredictedBurialFnEvaluatorCreator::add_evaluators( evaluation::MetaPoseEval
 
 	if ( option[ OptionKeys::evaluation::predicted_burial_fn ].user() ) {
 		std::string const fn( option[ OptionKeys::evaluation::predicted_burial_fn ]() );
-		eval.add_evaluation( new PredictedBurialEvaluator(fn) );
+		eval.add_evaluation( PoseEvaluatorOP( new PredictedBurialEvaluator(fn) ) );
 	}
 
 }

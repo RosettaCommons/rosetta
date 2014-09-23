@@ -205,7 +205,11 @@ private:
 
 	bool completed_;
 
+#ifndef PTR_MODERN
 	typedef std::set< JobOutputterObserverAP > JobOutputterObservers;
+#else
+	typedef std::set< JobOutputterObserverAP, utility::pointer::owner_less< JobOutputterObserverAP > > JobOutputterObservers;
+#endif
 	JobOutputterObservers output_observers_;
 
 }; // Job

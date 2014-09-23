@@ -54,10 +54,10 @@ NetChargeFilter::NetChargeFilter() :
 	chain_( 0 ),
 	net_charge_max_( 100 ),
 	net_charge_min_( -100 ),
-	task_factory_( NULL ) {}
+	task_factory_( /* NULL */ ) {}
 
 protocols::filters::FilterOP
-NetChargeFilterCreator::create_filter() const { return new NetChargeFilter; }
+NetChargeFilterCreator::create_filter() const { return protocols::filters::FilterOP( new NetChargeFilter ); }
 
 std::string
 NetChargeFilterCreator::keyname() const { return "NetCharge"; }

@@ -83,7 +83,7 @@ FastDesignCreator::keyname() const
 
 protocols::moves::MoverOP
 FastDesignCreator::create_mover() const {
-  return new FastDesign();
+  return protocols::moves::MoverOP( new FastDesign() );
 }
 
 std::string
@@ -105,7 +105,7 @@ FastDesign::FastDesign() :
 	only_design_changes_( false ),
 	blueprint_file_( "" ),
 	clear_designable_residues_( false ),
-	rank_scorefxn_( NULL ),
+	rank_scorefxn_( /* NULL */ ),
 	max_redesigns_( 5 ),
 	dump_counter_( 0 ),
   //frag_qual_op_( NULL ),
@@ -129,7 +129,7 @@ FastDesign::~FastDesign() {}
 /// Return a copy of ourselves
 protocols::moves::MoverOP
 FastDesign::clone() const {
-	return new FastDesign(*this);
+	return protocols::moves::MoverOP( new FastDesign(*this) );
 }
 
 void
@@ -143,19 +143,19 @@ FastDesign::parse_my_tag(
 	using core::pack::task::operation::TaskOperationCOP;
 	// make sure we create a task factory before parsing FastRelax::parse_my_tag
 	// otherwise no design will occur
-	core::pack::task::TaskFactoryOP local_tf = new core::pack::task::TaskFactory();
+	core::pack::task::TaskFactoryOP local_tf( new core::pack::task::TaskFactory() );
 	if ( get_task_factory() ){
 		local_tf = get_task_factory()->clone();
 	}
 	else{
-		local_tf->push_back(new core::pack::task::operation::InitializeFromCommandline());
+		local_tf->push_back(TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline() ));
 		if ( basic::options::option[ basic::options::OptionKeys::relax::respect_resfile]() &&
 				 basic::options::option[ basic::options::OptionKeys::packing::resfile].user() ) {
-			local_tf->push_back(new core::pack::task::operation::ReadResfile());
+			local_tf->push_back(TaskOperationCOP( new core::pack::task::operation::ReadResfile() ));
 			TR << "Using Resfile for packing step. " <<std::endl;
 		}
 		else {
-			core::pack::task::operation::PreventRepackingOP turn_off_packing = new core::pack::task::operation::PreventRepacking();
+			core::pack::task::operation::PreventRepackingOP turn_off_packing( new core::pack::task::operation::PreventRepacking() );
 			for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
 				if (! get_movemap()->get_chi(pos) ){
 					turn_off_packing->include_residue(pos);
@@ -165,10 +165,10 @@ FastDesign::parse_my_tag(
 		}
 	}
 	//Include current rotamer by default - as before.
-	local_tf->push_back(new core::pack::task::operation::IncludeCurrent());
+	local_tf->push_back(TaskOperationCOP( new core::pack::task::operation::IncludeCurrent() ));
 
 	if( limit_aroma_chi2() ) {
-		local_tf->push_back(new protocols::toolbox::task_operations::LimitAromaChi2Operation());
+		local_tf->push_back(TaskOperationCOP( new protocols::toolbox::task_operations::LimitAromaChi2Operation() ));
 	}
 	set_task_factory( local_tf );
 	FastRelax::parse_my_tag( tag, data, filters, movers, pose );

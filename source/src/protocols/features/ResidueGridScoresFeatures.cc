@@ -45,7 +45,7 @@ ResidueGridScoresFeaturesCreator::~ResidueGridScoresFeaturesCreator()
 
 protocols::features::FeaturesReporterOP ResidueGridScoresFeaturesCreator::create_features_reporter() const
 {
-	return new ResidueGridScoresFeatures;
+	return protocols::features::FeaturesReporterOP( new ResidueGridScoresFeatures );
 }
 
 std::string ResidueGridScoresFeaturesCreator::type_name() const
@@ -78,11 +78,11 @@ std::string ResidueGridScoresFeatures::type_name() const
 void ResidueGridScoresFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const
 {
 	using namespace basic::database::schema_generator;
-	Column struct_id("struct_id",new DbBigInt());
-	Column grid_name("grid_name",new DbTextKey());
-	Column seqpos("seqpos",new DbInteger());
-	Column atomno("atomno",new DbInteger());
-	Column score("score",new DbReal());
+	Column struct_id("struct_id",DbDataTypeOP( new DbBigInt() ));
+	Column grid_name("grid_name",DbDataTypeOP( new DbTextKey() ));
+	Column seqpos("seqpos",DbDataTypeOP( new DbInteger() ));
+	Column atomno("atomno",DbDataTypeOP( new DbInteger() ));
+	Column score("score",DbDataTypeOP( new DbReal() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -149,22 +149,22 @@ core::Size ResidueGridScoresFeatures::report_features(
 	grid_insert.add_column("atomno");
 	grid_insert.add_column("score");
 
-	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id",struct_id);
+	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 	for (Size i = pose.conformation().chain_begin(chain_id); i <= pose.conformation().chain_end(chain_id); ++i) {
 
 		if(!check_relevant_residues(relevant_residues, i)) continue;
 
-		RowDataBaseOP seqpos_data = new RowData<core::Size>("seqpos",i);
+		RowDataBaseOP seqpos_data( new RowData<core::Size>("seqpos",i) );
 
 		core::conformation::Residue const & residue(pose.residue(i));
 		for(Size atomno = 1; atomno <= residue.natoms();++atomno)
 		{
-			RowDataBaseOP atomno_data = new RowData<core::Size>("atomno",atomno);
+			RowDataBaseOP atomno_data( new RowData<core::Size>("atomno",atomno) );
 			std::map<std::string,core::Real> atom_map = grid_manager->atom_score(pose,residue,atomno);
 			for(std::map<std::string,core::Real>::const_iterator score_it = atom_map.begin(); score_it != atom_map.end();++score_it)
 			{
-				RowDataBaseOP grid_name_data = new RowData<std::string>("grid_name",score_it->first);
-				RowDataBaseOP score_data = new RowData<core::Real>("score",score_it->second);
+				RowDataBaseOP grid_name_data( new RowData<std::string>("grid_name",score_it->first) );
+				RowDataBaseOP score_data( new RowData<core::Real>("score",score_it->second) );
 				grid_insert.add_row(
 					utility::tools::make_vector(struct_id_data,seqpos_data,atomno_data,grid_name_data,score_data));
 			}

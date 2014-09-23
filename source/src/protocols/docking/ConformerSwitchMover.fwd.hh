@@ -24,8 +24,8 @@ namespace docking{
 
 //Forwards and OP typedefs
 class ConformerSwitchMover;
-typedef utility::pointer::owning_ptr< ConformerSwitchMover > ConformerSwitchMoverOP;
-typedef utility::pointer::owning_ptr< ConformerSwitchMover const > ConformerSwitchMoverCOP;
+typedef utility::pointer::shared_ptr< ConformerSwitchMover > ConformerSwitchMoverOP;
+typedef utility::pointer::shared_ptr< ConformerSwitchMover const > ConformerSwitchMoverCOP;
 
 
 }//docking

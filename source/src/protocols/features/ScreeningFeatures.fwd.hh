@@ -22,8 +22,8 @@ namespace features {
 
 class ScreeningFeatures;
 
-typedef utility::pointer::owning_ptr<ScreeningFeatures> ScreeningFeaturesOP;
-typedef utility::pointer::owning_ptr<ScreeningFeatures const> ScreeningFeaturesCOP;
+typedef utility::pointer::shared_ptr<ScreeningFeatures> ScreeningFeaturesOP;
+typedef utility::pointer::shared_ptr<ScreeningFeatures const> ScreeningFeaturesCOP;
 
 
 }

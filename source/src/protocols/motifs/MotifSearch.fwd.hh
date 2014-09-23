@@ -21,8 +21,8 @@ namespace protocols {
 namespace motifs {
 
 class MotifSearch;
-typedef utility::pointer::owning_ptr< MotifSearch > MotifSearchOP;
-typedef utility::pointer::owning_ptr< MotifSearch const > MotifSearchCOP;
+typedef utility::pointer::shared_ptr< MotifSearch > MotifSearchOP;
+typedef utility::pointer::shared_ptr< MotifSearch const > MotifSearchCOP;
 
 } // motifs
 } // protocols

@@ -499,7 +499,7 @@ SheetSet::initialize( SS_Info2_COP const ssinfo, StrandPairingSetCOP const spair
 			}
 		}
 
-		SheetOP sop = new Sheet( order_strands, orient_strands, ibarrel );
+		SheetOP sop( new Sheet( order_strands, orient_strands, ibarrel ) );
 		sheets_.push_back( sop );
 
     ++it;

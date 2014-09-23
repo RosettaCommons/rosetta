@@ -27,8 +27,8 @@ namespace filters {
 class SecondaryStructureCountFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< SecondaryStructureCountFilter >  SecondaryStructureCountFilterOP;
-typedef utility::pointer::owning_ptr< SecondaryStructureCountFilter const >  SecondaryStructureCountFilterCOP;
+typedef utility::pointer::shared_ptr< SecondaryStructureCountFilter >  SecondaryStructureCountFilterOP;
+typedef utility::pointer::shared_ptr< SecondaryStructureCountFilter const >  SecondaryStructureCountFilterCOP;
 
 } // namespace protocols
 } // namespace fldsgn

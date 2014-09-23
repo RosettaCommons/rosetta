@@ -42,8 +42,8 @@ main( int argc, char * argv [] )
 	DockingHighResOP dp;
 
 	if ( option[ OptionKeys::docking::ensemble1 ].user() || option[ OptionKeys::docking::ensemble2 ].user() )
-		dp = new DockingEnsemblePrepackProtocol();
-	else dp = new DockingPrepackProtocol();
+		dp = DockingHighResOP( new DockingEnsemblePrepackProtocol() );
+	else dp = DockingHighResOP( new DockingPrepackProtocol() );
 
 	JobDistributor::get_instance()->go(dp);
 	 } catch ( utility::excn::EXCN_Base const & e ) {

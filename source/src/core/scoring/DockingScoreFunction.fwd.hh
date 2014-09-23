@@ -25,8 +25,8 @@ namespace scoring {
 // Forward
 class DockingScoreFunction;
 
-typedef utility::pointer::owning_ptr< DockingScoreFunction > DockingScoreFunctionOP;
-typedef utility::pointer::owning_ptr< DockingScoreFunction const > DockingScoreFunctionCOP;
+typedef utility::pointer::shared_ptr< DockingScoreFunction > DockingScoreFunctionOP;
+typedef utility::pointer::shared_ptr< DockingScoreFunction const > DockingScoreFunctionCOP;
 
 } // namespace scoring
 } // namespace core

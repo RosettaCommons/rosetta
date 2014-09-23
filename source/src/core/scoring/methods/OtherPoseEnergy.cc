@@ -30,7 +30,7 @@ methods::EnergyMethodOP
 OtherPoseEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new OtherPoseEnergy;
+	return methods::EnergyMethodOP( new OtherPoseEnergy );
 }
 
 ScoreTypes
@@ -51,7 +51,7 @@ OtherPoseEnergy::OtherPoseEnergy() :
 EnergyMethodOP
 OtherPoseEnergy::clone() const
 {
-	return new OtherPoseEnergy;
+	return EnergyMethodOP( new OtherPoseEnergy );
 }
 
 /////////////////////////////////////////////////////////////////////////////

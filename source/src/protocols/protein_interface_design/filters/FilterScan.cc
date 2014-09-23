@@ -66,12 +66,12 @@ static thread_local basic::Tracer TR_residue_scan( "ResidueScan" );
 ///@brief default ctor
 FilterScanFilter::FilterScanFilter() :
 	parent( "FilterScan" ),
-	task_factory_( NULL ),
-	triage_filter_( NULL ),
-	filter_( NULL ),
+	task_factory_( /* NULL */ ),
+	triage_filter_( /* NULL */ ),
+	filter_( /* NULL */ ),
 	resfile_general_property_( "nataa" ),
-	relax_mover_( NULL ),
-	scorefxn_( NULL ),
+	relax_mover_( /* NULL */ ),
+	scorefxn_( /* NULL */ ),
 	delta_( false ),
 	unbound_( false ),
 	report_all_( false ),
@@ -218,8 +218,8 @@ FilterScanFilter::single_substitution( core::pose::Pose & pose, core::Size const
   allowed_aas.clear();
   allowed_aas.assign( num_canonical_aas, false );
   allowed_aas[ target_aa ] = true;
-  TaskFactoryOP mut_res = new TaskFactory( *task_factory() );
-  DesignAroundOperationOP dao = new DesignAroundOperation;///restrict repacking to 8.0A around target res to save time
+  TaskFactoryOP mut_res( new TaskFactory( *task_factory() ) );
+  DesignAroundOperationOP dao( new DesignAroundOperation );///restrict repacking to 8.0A around target res to save time
   dao->design_shell( 0.1 );
   dao->include_residue( resi );
   mut_res->push_back( dao );
@@ -234,9 +234,9 @@ FilterScanFilter::single_substitution( core::pose::Pose & pose, core::Size const
   TR<<"Mutating residue "<<pose.residue( resi ).name3()<<resi<<" to ";
   protocols::simple_moves::PackRotamersMoverOP pack;
   if( core::pose::symmetry::is_symmetric( pose ) ) {
-		pack =  new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue );
+		pack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue ) );
 	} else{
-		pack = new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue );
+		pack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue ) );
   }
   pack->apply( pose );
   if( rtmin() ) {
@@ -246,7 +246,7 @@ FilterScanFilter::single_substitution( core::pose::Pose & pose, core::Size const
 			rt.apply( pose );
 		} else{
 			protocols::simple_moves::RotamerTrialsMinMoverOP rtmin;
-			rtmin = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn(), *mutate_residue );
+			rtmin = protocols::simple_moves::RotamerTrialsMinMoverOP( new protocols::simple_moves::RotamerTrialsMinMover( scorefxn(), *mutate_residue ) );
 			rtmin->apply(pose);
 		}
 	}
@@ -471,7 +471,7 @@ FilterScanFilter::parse_my_tag( utility::tag::TagCOP tag,
 		delta_filter_names = utility::string_split( tag->getOption< std::string >( "delta_filters" ), ',' );
 		TR<<"Using delta filters: ";
 		BOOST_FOREACH( std::string const fname, delta_filter_names ){
-			delta_filters_.push_back( dynamic_cast< protocols::simple_filters::DeltaFilter * >( protocols::rosetta_scripts::parse_filter( fname, filters )() ) );
+			delta_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::DeltaFilter > ( protocols::rosetta_scripts::parse_filter( fname, filters ) ) );
 			TR<<fname<<",";
 		}
 		TR<<std::endl;
@@ -491,18 +491,18 @@ FilterScanFilter::scorefxn( core::scoring::ScoreFunctionOP scorefxn ){
 
 protocols::filters::FilterOP
 FilterScanFilter::fresh_instance() const{
-	return new FilterScanFilter();
+	return protocols::filters::FilterOP( new FilterScanFilter() );
 }
 
 FilterScanFilter::~FilterScanFilter(){}
 
 protocols::filters::FilterOP
 FilterScanFilter::clone() const{
-	return new FilterScanFilter( *this );
+	return protocols::filters::FilterOP( new FilterScanFilter( *this ) );
 }
 
 protocols::filters::FilterOP
-FilterScanFilterCreator::create_filter() const { return new FilterScanFilter; }
+FilterScanFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FilterScanFilter ); }
 
 std::string
 FilterScanFilterCreator::keyname() const { return "FilterScan"; }

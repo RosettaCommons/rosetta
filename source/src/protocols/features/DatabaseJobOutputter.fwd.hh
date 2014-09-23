@@ -20,7 +20,7 @@ namespace protocols {
 namespace features {
 
 class DatabaseJobOutputter;
-typedef utility::pointer::owning_ptr< DatabaseJobOutputter > DatabaseJobOutputterOP;
+typedef utility::pointer::shared_ptr< DatabaseJobOutputter > DatabaseJobOutputterOP;
 
 }// namespace features
 }// namespace protocols

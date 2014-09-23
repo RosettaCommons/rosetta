@@ -135,7 +135,7 @@ public:
 
   /// @brief clone method, new frame with same alignment position, fragments are not copied!
   virtual FrameOP clone() const {
-		JumpingFrameOP newFrame ( new JumpingFrame( start(), end(), length() ) );
+		JumpingFrameOP newFrame( new JumpingFrame( start(), end(), length() ) );
 		newFrame->pos() = pos();
 		return newFrame;
   }

@@ -26,8 +26,8 @@ namespace scoring {
 // Forward
 class ScoreFunction;
 
-typedef utility::pointer::owning_ptr< ScoreFunction > ScoreFunctionOP;
-typedef utility::pointer::owning_ptr< ScoreFunction const > ScoreFunctionCOP;
+typedef utility::pointer::shared_ptr< ScoreFunction > ScoreFunctionOP;
+typedef utility::pointer::shared_ptr< ScoreFunction const > ScoreFunctionCOP;
 typedef boost::shared_ptr < ScoreFunction > ScoreFunctionSP;
 
 } // namespace scoring

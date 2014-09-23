@@ -24,8 +24,8 @@ class MinimalistFlexbbNode;
 class MinimalistFlexbbEdge;
 class MinimalistFlexbbInteractionGraph;
 
-typedef utility::pointer::owning_ptr< MinimalistFlexbbInteractionGraph > MinimalistFlexbbInteractionGraphOP;
-typedef utility::pointer::owning_ptr< MinimalistFlexbbInteractionGraph const > MinimalistFlexbbInteractionGraphCOP;
+typedef utility::pointer::shared_ptr< MinimalistFlexbbInteractionGraph > MinimalistFlexbbInteractionGraphOP;
+typedef utility::pointer::shared_ptr< MinimalistFlexbbInteractionGraph const > MinimalistFlexbbInteractionGraphCOP;
 
 }
 }

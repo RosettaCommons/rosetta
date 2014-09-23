@@ -271,7 +271,7 @@ build_proton_chi_rotamers(
 	if ( n_proton_chi > 0 ) {
 		// This seems a little silly -- suck out the chi's, then put them back into rotamers.
 		utility::vector1< pack::dunbrack::ChiSetOP > proton_chi_chisets;
-		proton_chi_chisets.push_back( new pack::dunbrack::ChiSet( concrete_residue->nchi() ) );
+		proton_chi_chisets.push_back( utility::pointer::shared_ptr<class core::pack::dunbrack::ChiSet>( new pack::dunbrack::ChiSet( concrete_residue->nchi() ) ) );
 
 		for ( Size ii = 1; ii <= n_proton_chi; ++ii ) {
 			pack::dunbrack::expand_proton_chi( residue_task.extrachi_sample_level( true /*nneighb test*/,

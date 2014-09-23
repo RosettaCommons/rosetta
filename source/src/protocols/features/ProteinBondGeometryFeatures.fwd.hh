@@ -22,15 +22,15 @@ namespace protocols{
 namespace features{
 
 class ProteinBondGeometryFeatures;
-typedef utility::pointer::owning_ptr< ProteinBondGeometryFeatures > ProteinBondGeometryFeaturesOP;
-typedef utility::pointer::owning_ptr< ProteinBondGeometryFeatures const > ProteinBondGeometryFeaturesCOP;
+typedef utility::pointer::shared_ptr< ProteinBondGeometryFeatures > ProteinBondGeometryFeaturesOP;
+typedef utility::pointer::shared_ptr< ProteinBondGeometryFeatures const > ProteinBondGeometryFeaturesCOP;
 
 //class TorsionDatabase;
 class BondAngleDatabase;
 //class BondLengthDatabase;
 
 //typedef  utility::pointer::owning_ptr< TorsionDatabase > TorsionDatabaseOP;
-typedef  utility::pointer::owning_ptr< BondAngleDatabase > BondAngleDatabaseOP;
+typedef  utility::pointer::shared_ptr< BondAngleDatabase > BondAngleDatabaseOP;
 //typedef  utility::pointer::owning_ptr< BondLengthDatabase > BondLengthDatabaseOP;
 
 

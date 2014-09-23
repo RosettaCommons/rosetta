@@ -216,7 +216,7 @@ public:
 
 		//trpcage->dump_pdb( "test_trpcage_1.pdb" );
 
-		SimpleInteractionGraphOP simple_ig = new SimpleInteractionGraph;
+		SimpleInteractionGraphOP simple_ig( new SimpleInteractionGraph );
 		simple_ig->set_scorefunction( *sfxn );
 		simple_ig->initialize( *trpcage );
 
@@ -275,12 +275,12 @@ public:
 		ScoreFunctionOP sfxn = get_score_function();
 		sfxn->score(oneten);
 
-		SimpleInteractionGraphOP simple_ig = new SimpleInteractionGraph;
+		SimpleInteractionGraphOP simple_ig( new SimpleInteractionGraph );
 		simple_ig->set_scorefunction( *sfxn );
 		simple_ig->initialize( oneten );
 
 		for (core::Size ii(1); ii <= oneten.n_residue(); ++ii) {
-			ResidueCOP res(new Residue(oneten.residue(ii)));
+			ResidueCOP res( new Residue(oneten.residue(ii)) );
 			TS_ASSERT_DELTA( simple_ig->consider_substitution(ii, res), 0, 0.0001);
 			simple_ig->reject_change( ii );
 		}

@@ -24,7 +24,7 @@ namespace loop_extend{
 
 //Forwards and OP typedefs
 class LoopExtendMover;
-typedef utility::pointer::owning_ptr< LoopExtendMover > LoopExtendMoverOP;
+typedef utility::pointer::shared_ptr< LoopExtendMover > LoopExtendMoverOP;
 
 
 }//LoopExtend

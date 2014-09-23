@@ -129,7 +129,7 @@ core::pack::task::TaskFactoryOP setup_tf( core::pack::task::TaskFactoryOP task_f
 			task_factory_->push_back( *it );
 		}
 	} else {
-		task_factory_->push_back( new pack::task::operation::InitializeFromCommandline );
+		task_factory_->push_back( TaskOperationCOP( new pack::task::operation::InitializeFromCommandline ) );
 	}
 
 	return task_factory_;

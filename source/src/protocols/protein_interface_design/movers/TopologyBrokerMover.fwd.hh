@@ -23,8 +23,8 @@ namespace movers{
 
 //Forwards and OP typedefs
 class TopologyBrokerMover;
-typedef utility::pointer::owning_ptr< TopologyBrokerMover > TopologyBrokerMoverOP;
-typedef utility::pointer::owning_ptr< TopologyBrokerMover const > TopologyBrokerMoverCOP;
+typedef utility::pointer::shared_ptr< TopologyBrokerMover > TopologyBrokerMoverOP;
+typedef utility::pointer::shared_ptr< TopologyBrokerMover const > TopologyBrokerMoverCOP;
 
 }//movers
 }//protein_interface_design

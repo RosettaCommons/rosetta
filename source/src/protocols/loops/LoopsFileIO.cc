@@ -239,7 +239,7 @@ LoopsFileData::resolve_loops(
 ) const
 {
 	SerializedLoopList sloops = resolve_as_serialized_loops( pose );
-	return new Loops( sloops );
+	return LoopsOP( new Loops( sloops ) );
 }
 
 SerializedLoopList
@@ -285,7 +285,7 @@ GuardedLoopsFromFile::GuardedLoopsFromFile() :
 	in_charge_( true ),
 	pose_has_resolved_loop_indices_( true ),
 	rely_on_loopfile_indices_( false ),
-	loops_( new Loops )
+	loops_( LoopsOP( new Loops ) )
 {}
 
 /// @details construct from LoopsFileData: set state to expect a Pose
@@ -294,7 +294,7 @@ GuardedLoopsFromFile::GuardedLoopsFromFile( LoopsFileData const & lfd ) :
 	pose_has_resolved_loop_indices_( false ),
 	rely_on_loopfile_indices_( true ),
 	loops_file_data_( lfd ),
-	loops_( new Loops )
+	loops_( LoopsOP( new Loops ) )
 {}
 
 /// @details construct from a LoopsOP
@@ -311,7 +311,7 @@ GuardedLoopsFromFile::GuardedLoopsFromFile( Loops const & loops ) :
 	in_charge_( false ),
 	pose_has_resolved_loop_indices_( true ),
 	rely_on_loopfile_indices_( false ),
-	loops_( new Loops( loops ) ) // copy the contents into a new loops object -- assume this pointer comes from some other GuardedLoopsFromFile object and that I am not in charge
+	loops_( LoopsOP( new Loops( loops ) ) ) // copy the contents into a new loops object -- assume this pointer comes from some other GuardedLoopsFromFile object and that I am not in charge
 {}
 
 /// @details Shallow copy of the LoopsOP data so that it can be shared between
@@ -512,7 +512,7 @@ LoopsFileIO::read_loop_file_stream(
 	PoseNumberedLoopFileReader reader;
 	reader.set_linecount_offset( lines_pre_read );
 	SerializedLoopList sloops = reader.read_pose_numbered_loops_file( loopfstream, filename, prohibit_single_residue_loops );
-	LoopsFileDataOP loops = new LoopsFileData;
+	LoopsFileDataOP loops( new LoopsFileData );
 	loops->resize( sloops.size() );
 	for ( core::Size ii = 1; ii <= sloops.size(); ++ii ) {
 		loops->insert_loop_at_index( LoopFromFileData( sloops[ ii ], filename, prohibit_single_residue_loops ), ii );
@@ -669,7 +669,7 @@ JSONFormattedLoopsFileReader::parse_json_formatted_data(
 	utility::json_spirit::mArray & array = json_data.get_obj()[LoopSetKey].get_array();
 	if ( ! array.size() ) utility_exit_with_message( "The LoopList appears to be empty.  Please check your input file, '" + filename + "'." );
 
-	LoopsFileDataOP loops = new LoopsFileData;
+	LoopsFileDataOP loops( new LoopsFileData );
 	core::Size count_lines_approximate = linecount_offset_;
 	for ( core::Size i=0; i < array.size(); ++i )
 	{

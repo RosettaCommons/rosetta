@@ -22,8 +22,8 @@ namespace scoring_grid {
 class SolvationGrid;
     
 
-typedef utility::pointer::owning_ptr<SolvationGrid> SolvationGridOP;
-typedef utility::pointer::owning_ptr<SolvationGrid const> SolvationGridCOP ;
+typedef utility::pointer::shared_ptr<SolvationGrid> SolvationGridOP;
+typedef utility::pointer::shared_ptr<SolvationGrid const> SolvationGridCOP ;
 
 }
 }

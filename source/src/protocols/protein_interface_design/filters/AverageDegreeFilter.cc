@@ -35,7 +35,7 @@ static thread_local basic::Tracer TR( "protocols.protein_interface_design.filter
 ///@brief default ctor
 AverageDegreeFilter::AverageDegreeFilter() :
 	parent( "AverageDegree" ),
-	task_factory_( NULL ),
+	task_factory_( /* NULL */ ),
 	threshold_( 0 ),
 	distance_threshold_( 10.0 )
 {}
@@ -138,18 +138,18 @@ AverageDegreeFilter::parse_my_tag( utility::tag::TagCOP tag,
 
 protocols::filters::FilterOP
 AverageDegreeFilter::fresh_instance() const{
-	return new AverageDegreeFilter();
+	return protocols::filters::FilterOP( new AverageDegreeFilter() );
 }
 
 AverageDegreeFilter::~AverageDegreeFilter(){}
 
 protocols::filters::FilterOP
 AverageDegreeFilter::clone() const{
-	return new AverageDegreeFilter( *this );
+	return protocols::filters::FilterOP( new AverageDegreeFilter( *this ) );
 }
 
 protocols::filters::FilterOP
-AverageDegreeFilterCreator::create_filter() const { return new AverageDegreeFilter; }
+AverageDegreeFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AverageDegreeFilter ); }
 
 std::string
 AverageDegreeFilterCreator::keyname() const { return "AverageDegree"; }

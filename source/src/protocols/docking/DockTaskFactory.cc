@@ -97,7 +97,7 @@ DockTaskFactory::set_default()
 	design_chains_.clear();
     additional_task_operations_.clear();
     
-    restrict_to_interface_ = new toolbox::task_operations::RestrictToInterface();
+    restrict_to_interface_ = toolbox::task_operations::InterfaceTaskOperationOP( new toolbox::task_operations::RestrictToInterface() );
     
 	// @TODO needs to change so that these options can be set through setters and
 	// do not have to be called from the commandline
@@ -172,7 +172,7 @@ DockTaskFactory::create_and_attach_task_factory(
 	using namespace core::pack::task::operation;
 	using namespace protocols::toolbox::task_operations;
 
-	TaskFactoryOP tf = new TaskFactory();
+	TaskFactoryOP tf( new TaskFactory() );
 
 //	if ( init_tf_ ) tf = new TaskFactory( *init_tf_ );
 
@@ -184,29 +184,29 @@ DockTaskFactory::create_and_attach_task_factory(
 			core::Size const cutpoint = pose.fold_tree().cutpoint_by_jump( i );
 			char chain = pose.pdb_info()->chain( pose.pdb_info()->number( cutpoint ) );
 			if ( find( design_chains_.begin(), design_chains_.end(), chain ) != design_chains_.end() ) {
-				tf->push_back( new protocols::toolbox::task_operations::RestrictChainToRepackingOperation( chain ) );
+				tf->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictChainToRepackingOperation( chain ) ) );
 			}
 		}
 	} else {
-		tf->push_back( new RestrictToRepacking );
+		tf->push_back( TaskOperationCOP( new RestrictToRepacking ) );
 	}
 
-	tf->push_back( new InitializeFromCommandline );
-	tf->push_back( new IncludeCurrent );
-	tf->push_back( new NoRepackDisulfides );
-	if( resfile_ ) tf->push_back( new ReadResfile );
+	tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
+	tf->push_back( TaskOperationCOP( new IncludeCurrent ) );
+	tf->push_back( TaskOperationCOP( new NoRepackDisulfides ) );
+	if( resfile_ ) tf->push_back( TaskOperationCOP( new ReadResfile ) );
 
 	// DockingNoRepack only works over the first rb_jump in movable_jumps
 	// In a 2-body case this separates 1 & 2 based on the only cutpoint
 	// In a multibody case, this separates 1 & 2 based on the first cutpoint
-	if ( norepack1_ ) tf->push_back( new DockingNoRepack1( docker->movable_jumps()[1] ) );
-	if ( norepack2_ ) tf->push_back( new DockingNoRepack2( docker->movable_jumps()[1] ) );
+	if ( norepack1_ ) tf->push_back( TaskOperationCOP( new DockingNoRepack1( docker->movable_jumps()[1] ) ) );
+	if ( norepack2_ ) tf->push_back( TaskOperationCOP( new DockingNoRepack2( docker->movable_jumps()[1] ) ) );
 
 	// incorporating Ian's UnboundRotamer operation.
 	// note that nothing happens if unboundrot option is inactive!
-	core::pack::rotamer_set::UnboundRotamersOperationOP unboundrot = new core::pack::rotamer_set::UnboundRotamersOperation();
+	core::pack::rotamer_set::UnboundRotamersOperationOP unboundrot( new core::pack::rotamer_set::UnboundRotamersOperation() );
 	unboundrot->initialize_from_command_line();
-	operation::AppendRotamerSetOP unboundrot_operation = new operation::AppendRotamerSet( unboundrot );
+	operation::AppendRotamerSetOP unboundrot_operation( new operation::AppendRotamerSet( unboundrot ) );
 	tf->push_back( unboundrot_operation );
 
 	//@TODO pose needed for this, set it up somewhere else

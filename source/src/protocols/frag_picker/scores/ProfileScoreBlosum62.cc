@@ -192,8 +192,8 @@ FragmentScoringMethodOP MakeProfileScoreBlosum62::make(Size priority,
 
 	Size len = picker->get_vall()->get_largest_chunk_size();
 	trProfScoreBlosum62 << "Profile scoring method is: Blosum62" << std::endl;
-	return (FragmentScoringMethodOP) new ProfileScoreBlosum62(priority,
-			lowest_acceptable_value, use_lowest, picker->get_query_seq(), len);
+	return (FragmentScoringMethodOP) FragmentScoringMethodOP( new ProfileScoreBlosum62(priority,
+			lowest_acceptable_value, use_lowest, picker->get_query_seq(), len) );
 }
 
 } //scores

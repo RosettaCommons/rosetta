@@ -60,7 +60,7 @@ static thread_local basic::Tracer TR( "protocols.generalized_kinematic_closure.s
 ///@brief Creator for GeneralizedKICselector.
 GeneralizedKICselector::GeneralizedKICselector():
 		selectortype_(no_selector),
-		selector_sfxn_(NULL),
+		selector_sfxn_(/* NULL */),
 		boltzmann_kbt_(1.0)
 		//utility::pointer::ReferenceCount(),
 		//TODO -- make sure above data are copied properly when duplicating this mover.

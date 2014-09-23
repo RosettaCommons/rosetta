@@ -23,24 +23,24 @@ namespace protocols {
 namespace enzdes {
 
 class ModifyStoredRBConfs;
-typedef utility::pointer::owning_ptr< ModifyStoredRBConfs > ModifyStoredRBConfsOP;
-typedef utility::pointer::owning_ptr< ModifyStoredRBConfs const > ModifyStoredRBConfsCOP;
+typedef utility::pointer::shared_ptr< ModifyStoredRBConfs > ModifyStoredRBConfsOP;
+typedef utility::pointer::shared_ptr< ModifyStoredRBConfs const > ModifyStoredRBConfsCOP;
 
 class GenerateStoredRBConfs;
-typedef utility::pointer::owning_ptr< GenerateStoredRBConfs > GenerateStoredRBConfsOP;
-typedef utility::pointer::owning_ptr< GenerateStoredRBConfs const > GenerateStoredRBConfsCOP;
+typedef utility::pointer::shared_ptr< GenerateStoredRBConfs > GenerateStoredRBConfsOP;
+typedef utility::pointer::shared_ptr< GenerateStoredRBConfs const > GenerateStoredRBConfsCOP;
 
 class ApplyRandomStoredRBConf;
-typedef utility::pointer::owning_ptr< ApplyRandomStoredRBConf > ApplyRandomStoredRBConfOP;
-typedef utility::pointer::owning_ptr< ApplyRandomStoredRBConf const > ApplyRandomStoredRBConfCOP;
+typedef utility::pointer::shared_ptr< ApplyRandomStoredRBConf > ApplyRandomStoredRBConfOP;
+typedef utility::pointer::shared_ptr< ApplyRandomStoredRBConf const > ApplyRandomStoredRBConfCOP;
 
 class MinimizeStoredRBConfs;
-typedef utility::pointer::owning_ptr< MinimizeStoredRBConfs > MinimizeStoredRBConfsOP;
-typedef utility::pointer::owning_ptr< MinimizeStoredRBConfs const > MinimizeStoredRBConfsCOP;
+typedef utility::pointer::shared_ptr< MinimizeStoredRBConfs > MinimizeStoredRBConfsOP;
+typedef utility::pointer::shared_ptr< MinimizeStoredRBConfs const > MinimizeStoredRBConfsCOP;
 
 class DiversifyStoredRBConfs;
-typedef utility::pointer::owning_ptr< DiversifyStoredRBConfs > DiversifyStoredRBConfsOP;
-typedef utility::pointer::owning_ptr< DiversifyStoredRBConfs const > DiversifyStoredRBConfsCOP;
+typedef utility::pointer::shared_ptr< DiversifyStoredRBConfs > DiversifyStoredRBConfsOP;
+typedef utility::pointer::shared_ptr< DiversifyStoredRBConfs const > DiversifyStoredRBConfsCOP;
 
 } // enzdes
 } //protocols

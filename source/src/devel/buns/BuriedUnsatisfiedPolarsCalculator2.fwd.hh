@@ -23,8 +23,8 @@ namespace buns {
 class BuriedUnsatisfiedPolarsCalculator2;
 enum CALCULATORMODE { energy, geometry, check_buns1 };
 
-typedef utility::pointer::owning_ptr< BuriedUnsatisfiedPolarsCalculator2> BuriedUnsatisfiedPolarsCalculator2OP;
-typedef utility::pointer::owning_ptr< BuriedUnsatisfiedPolarsCalculator2 const > BuriedUnsatisfiedPolarsCalculator2COP;
+typedef utility::pointer::shared_ptr< BuriedUnsatisfiedPolarsCalculator2> BuriedUnsatisfiedPolarsCalculator2OP;
+typedef utility::pointer::shared_ptr< BuriedUnsatisfiedPolarsCalculator2 const > BuriedUnsatisfiedPolarsCalculator2COP;
 
 } // namespace toolbox
 } // namespace protocols

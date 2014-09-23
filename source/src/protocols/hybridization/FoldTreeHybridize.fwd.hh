@@ -22,8 +22,8 @@ namespace protocols {
 namespace hybridization {
 
 class FoldTreeHybridize;
-typedef utility::pointer::owning_ptr< FoldTreeHybridize > FoldTreeHybridizeOP;
-typedef utility::pointer::owning_ptr< FoldTreeHybridize const > FoldTreeHybridizeCOP;
+typedef utility::pointer::shared_ptr< FoldTreeHybridize > FoldTreeHybridizeOP;
+typedef utility::pointer::shared_ptr< FoldTreeHybridize const > FoldTreeHybridizeCOP;
 
 
 } // hybridization

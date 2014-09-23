@@ -63,7 +63,7 @@ GeneralizedKICCreator::keyname() const
 
 protocols::moves::MoverOP
 GeneralizedKICCreator::create_mover() const {
-	return new GeneralizedKIC;
+	return protocols::moves::MoverOP( new GeneralizedKIC );
 }
 
 std::string
@@ -88,10 +88,10 @@ GeneralizedKIC::GeneralizedKIC():
 		pivot_2_atmname_(""),
 		pivot_3_rsd_(0),
 		pivot_3_atmname_(""),
-		selector_( new selector::GeneralizedKICselector ),
+		selector_( selector::GeneralizedKICselectorOP( new selector::GeneralizedKICselector ) ),
 		n_closure_attempts_(2000),
 		n_closure_attempts_is_a_maximum_(false),
-		rosettascripts_filter_(NULL),
+		rosettascripts_filter_(/* NULL */),
 		rosettascripts_filter_exists_(false),
 		ntries_before_giving_up_(0)
 		//TODO -- make sure above data are copied properly when duplicating this mover.
@@ -104,13 +104,13 @@ GeneralizedKIC::~GeneralizedKIC() {}
 ///
 ///@brief Clone operator to create a pointer to a fresh GeneralizedKIC object that copies this one.
 protocols::moves::MoverOP GeneralizedKIC::clone() const {
-	return new GeneralizedKIC( *this );
+	return protocols::moves::MoverOP( new GeneralizedKIC( *this ) );
 }
 
 ///
 ///@brief Fresh_instance operator to create a pointer to a fresh GeneralizedKIC object that does NOT copy this one.
 protocols::moves::MoverOP GeneralizedKIC::fresh_instance() const {
-	return new GeneralizedKIC;
+	return protocols::moves::MoverOP( new GeneralizedKIC );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -554,7 +554,7 @@ void GeneralizedKIC::set_selector_kbt ( core::Real const &kbt ) {
 ///
 /// @brief Add a new perturber to the list of perturbers.
 void GeneralizedKIC::add_perturber () {
-	perturber::GeneralizedKICperturberOP newperturber = new perturber::GeneralizedKICperturber;
+	perturber::GeneralizedKICperturberOP newperturber( new perturber::GeneralizedKICperturber );
 	perturberlist_.push_back( newperturber );
 	return;
 }
@@ -643,7 +643,7 @@ void GeneralizedKIC::add_atomset_to_perturber_atomset_list ( utility::vector1 < 
 ///
 /// @brief Add a new filter to the list of filters.
 void GeneralizedKIC::add_filter () {
-	filter::GeneralizedKICfilterOP newfilter = new filter::GeneralizedKICfilter;
+	filter::GeneralizedKICfilterOP newfilter( new filter::GeneralizedKICfilter );
 	filterlist_.push_back( newfilter );
 	return;
 }

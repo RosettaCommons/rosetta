@@ -23,8 +23,8 @@ namespace stepwise {
 namespace screener {
 	
 	class ProteinCCD_ClosureScreener;
-	typedef utility::pointer::owning_ptr< ProteinCCD_ClosureScreener > ProteinCCD_ClosureScreenerOP;
-	typedef utility::pointer::owning_ptr< ProteinCCD_ClosureScreener const > ProteinCCD_ClosureScreenerCOP;
+	typedef utility::pointer::shared_ptr< ProteinCCD_ClosureScreener > ProteinCCD_ClosureScreenerOP;
+	typedef utility::pointer::shared_ptr< ProteinCCD_ClosureScreener const > ProteinCCD_ClosureScreenerCOP;
 	
 } //screener
 } //stepwise

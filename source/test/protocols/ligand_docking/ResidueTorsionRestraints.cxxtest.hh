@@ -65,7 +65,7 @@ public:
 		core::pose::Pose pose;
 		core::import_pose::pose_from_pdb( pose, "protocols/ligand_docking/7cpa_7cpa_native.pdb" );
 
-		ScoreFunctionOP sfxn = new ScoreFunction();
+		ScoreFunctionOP sfxn( new ScoreFunction() );
 		sfxn->set_weight(dihedral_constraint, 1.0);
 		TS_ASSERT_DELTA( 0.0, (*sfxn)( pose ), score_eps );
 
@@ -73,13 +73,13 @@ public:
 		TS_ASSERT( pose.residue(ligres).name() == "CP1" );
 		TS_ASSERT( !pose.residue(ligres).is_polymer() );
 
-		ResidueTorsionRestraintsOP lig_restraints = new ResidueTorsionRestraints(pose, ligres, 10.0 /*stddev_degrees*/);
+		ResidueTorsionRestraintsOP lig_restraints( new ResidueTorsionRestraints(pose, ligres, 10.0 /*stddev_degrees*/) );
 		{
 			TR << "First trial: randomization with constraints left intact" << std::endl;
 			core::Real const start_score = (*sfxn)( pose );
 			TR << "Constraint score for original conformation: " << start_score << std::endl;
 			TS_ASSERT_DELTA( 0.0, start_score, score_eps );
-			MoverOP random_conf = new RandomConformerMover(ligres);
+			MoverOP random_conf( new RandomConformerMover(ligres) );
 			int score_went_up = 0;
 			int const num_trials = 10;
 			for(int i = 0; i < num_trials; ++i) {
@@ -104,10 +104,10 @@ public:
 			core::Size const start_num_constraints = pose.constraint_set()->get_all_constraints().size();
 			TR << "Pose starts with " << start_num_constraints << " constraints" << std::endl;
 			TS_ASSERT( start_num_constraints == 15 );
-			MoverOP random_conf = new RandomConformerMover(ligres);
+			MoverOP random_conf( new RandomConformerMover(ligres) );
 			UnconstrainedTorsionsMover::Restraints restraints;
 			restraints.push_back( lig_restraints );
-			MoverOP better_random_conf = new UnconstrainedTorsionsMover( random_conf, restraints );
+			MoverOP better_random_conf( new UnconstrainedTorsionsMover( random_conf, restraints ) );
 			int score_went_up = 0;
 			int const num_trials = 10;
 			for(int i = 0; i < num_trials; ++i) {

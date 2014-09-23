@@ -73,7 +73,7 @@ public:
 		ElementSetCAP element_types = cm->element_set("default");
 		MMAtomTypeSetCAP mm_atom_types = cm->mm_atom_type_set(tag);
 		OrbitalTypeSetCAP orbital_types = cm->orbital_type_set(tag);
-		ResidueTypeSetOP rsd_types = new ResidueTypeSet;
+		ResidueTypeSetOP rsd_types( new ResidueTypeSet );
 
 		utility::io::izstream paramslist("core/chemical/params/retype_list.txt");
 		std::string filename;
@@ -82,7 +82,7 @@ public:
 			TR << "Retyping " << filename << std::endl;
 			core::chemical::ResidueTypeOP rsd = read_topology_file("core/chemical/"+filename,
 					atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
-			core::chemical::ResidueTypeOP ref = new core::chemical::ResidueType(*rsd);
+			core::chemical::ResidueTypeOP ref( new core::chemical::ResidueType(*rsd) );
 
 			for( core::Size ii(1); ii <= rsd->natoms(); ++ii ) {
 				rsd->atom(ii).atom_type_index(0);

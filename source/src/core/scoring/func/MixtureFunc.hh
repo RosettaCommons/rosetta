@@ -65,7 +65,7 @@ public:
 	}
 
 	/// @brief returns a clone of this MixtureFunc
-	FuncOP clone() const { return new MixtureFunc( *this ); }
+	FuncOP clone() const { return FuncOP( new MixtureFunc( *this ) ); }
 
 	/// @brief Returns the value of this MixtureFunc evaluated at distance x.
 	Real func( Real const x ) const;

@@ -23,8 +23,8 @@ namespace abinitio {
 
 //forward declaration for class
 class Protocol;
-typedef utility::pointer::owning_ptr< Protocol > ProtocolOP;
-typedef utility::pointer::owning_ptr< Protocol const > ProtocolCOP;
+typedef utility::pointer::shared_ptr< Protocol > ProtocolOP;
+typedef utility::pointer::shared_ptr< Protocol const > ProtocolCOP;
 
 
 }

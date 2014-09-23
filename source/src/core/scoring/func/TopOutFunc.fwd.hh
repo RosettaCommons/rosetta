@@ -24,8 +24,8 @@ namespace scoring {
 namespace func {
 
 class TopOutFunc;
-typedef utility::pointer::owning_ptr< TopOutFunc > TopOutFuncOP;
-typedef utility::pointer::owning_ptr< TopOutFunc const > TopOutFuncCOP;
+typedef utility::pointer::shared_ptr< TopOutFunc > TopOutFuncOP;
+typedef utility::pointer::shared_ptr< TopOutFunc const > TopOutFuncCOP;
 
 } // constraints
 } // scoring

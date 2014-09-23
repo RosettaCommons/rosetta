@@ -24,7 +24,7 @@ namespace task_operations {
 
 class RestrictToMoveMapChiOperation;
 
-typedef utility::pointer::owning_ptr< RestrictToMoveMapChiOperation > RestrictToMoveMapChiOperationOP;
+typedef utility::pointer::shared_ptr< RestrictToMoveMapChiOperation > RestrictToMoveMapChiOperationOP;
 
 } //namespace task_operations
 } //namespace toolbox

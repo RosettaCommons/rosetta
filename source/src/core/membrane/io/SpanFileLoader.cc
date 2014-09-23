@@ -65,7 +65,7 @@ SpanFileLoader::create_resource(
 	using namespace core::conformation::membrane;
 
 	// Load a topology object from spanfile
-	SpanningTopologyOP topology = new SpanningTopology( locator_id );
+	SpanningTopologyOP topology( new SpanningTopology( locator_id ) );
 
 	// Adding opts casting
 	if ( ! dynamic_cast< SpanFileOptions const * > ( &options ) ) {
@@ -82,14 +82,14 @@ SpanFileLoader::create_resource(
 basic::resource_manager::ResourceOptionsOP
 SpanFileLoader::default_options() const
 {
-	return new SpanFileOptions;
+	return basic::resource_manager::ResourceOptionsOP( new SpanFileOptions );
 }
 
 /// @brief Return new resource loader for span file
 basic::resource_manager::ResourceLoaderOP
 SpanFileLoaderCreator::create_resource_loader() const
 {
-	return new SpanFileLoader();
+	return basic::resource_manager::ResourceLoaderOP( new SpanFileLoader() );
 }
 
 /// @brief Span File Loader type

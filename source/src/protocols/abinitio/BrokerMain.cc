@@ -201,20 +201,20 @@ void common_setup() {
 
 	if ( option[ constraints::no_linearize_bounded ] ) {
 		tr.Info << "use fully harmonic potential for BOUNDED " << std::endl;
-		ConstraintIO::get_func_factory().add_type("BOUNDED", new BoundFunc(0,0,0,1000,"dummy") );
+		ConstraintIO::get_func_factory().add_type("BOUNDED", FuncOP( new BoundFunc(0,0,0,1000,"dummy") ) );
 	}
 
 	if ( option[ constraints::named ] ) {
 		tr.Info << "use named constraints in AtomPairConstraint to avoid problems with cutpoint-variants " << std::endl;
 		ConstraintFactory::get_instance()->replace_creator(
-			new NamedAtomPairConstraintCreator());
+			ConstraintCreatorCOP( new NamedAtomPairConstraintCreator() ));
 	}
 }
 
 // note: initialization now takes place in AbrelaxMover::set_defaults()
 void Broker_main() {
 	common_setup();
-	AbrelaxMoverOP m = new AbrelaxMover();
+	AbrelaxMoverOP m( new AbrelaxMover() );
 	protocols::jd2::JobDistributor* jd2( protocols::jd2::JobDistributor::get_instance() );
 	protocols::jd2::archive::MPIArchiveJobDistributor* archive_jd = dynamic_cast< protocols::jd2::archive::MPIArchiveJobDistributor* >( jd2 );
 	if ( archive_jd && archive_jd->is_archive_rank() ) {

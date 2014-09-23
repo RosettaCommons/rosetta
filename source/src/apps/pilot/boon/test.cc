@@ -178,7 +178,7 @@ int main(int argc, char *argv[])
 	std::cout << mover << std::endl;*/
 
  // setup a movemap object
-	core::kinematics::MoveMapOP mm ( new core::kinematics::MoveMap );
+	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 	Size bb_begin = 3, bb_end = 6, chi_begin = 5, chi_end = 7, begin2 = 101;
 	mm->set_bb_true_range(bb_begin, bb_end);
 	mm->set_chi_true_range(chi_begin, chi_end);
@@ -187,7 +187,7 @@ int main(int argc, char *argv[])
 	mm->set_jump(2, true);
 	mm->set_jump(5, false);
 	// create a standard scorefxn
-	core::scoring::ScoreFunctionCOP scorefxn = new core::scoring::ScoreFunction;
+	core::scoring::ScoreFunctionCOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	// setup other inputs
 	std::string const min_type_in = "linmin";

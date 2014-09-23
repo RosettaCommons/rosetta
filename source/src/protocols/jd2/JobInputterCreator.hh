@@ -38,8 +38,8 @@ public:
 	virtual std::string keyname() const = 0;
 };
 
-typedef utility::pointer::owning_ptr< JobInputterCreator > JobInputterCreatorOP;
-typedef utility::pointer::owning_ptr< JobInputterCreator const > JobInputterCreatorCOP;
+typedef utility::pointer::shared_ptr< JobInputterCreator > JobInputterCreatorOP;
+typedef utility::pointer::shared_ptr< JobInputterCreator const > JobInputterCreatorCOP;
 
 } //namespace jd2
 } //namespace protocols

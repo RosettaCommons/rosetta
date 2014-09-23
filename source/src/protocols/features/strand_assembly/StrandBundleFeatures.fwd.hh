@@ -22,8 +22,8 @@ namespace features{
 namespace strand_assembly {
 
 class StrandBundleFeatures;
-typedef utility::pointer::owning_ptr< StrandBundleFeatures > StrandBundleFeaturesOP;
-typedef utility::pointer::owning_ptr< StrandBundleFeatures const > StrandBundleFeaturesCOP;
+typedef utility::pointer::shared_ptr< StrandBundleFeatures > StrandBundleFeaturesOP;
+typedef utility::pointer::shared_ptr< StrandBundleFeatures const > StrandBundleFeaturesCOP;
 
 } //namespace strand_assembly
 }// namespace features

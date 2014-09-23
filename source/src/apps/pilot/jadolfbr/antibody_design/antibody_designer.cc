@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
 	try{
 		devel::init(argc, argv);
 
-		protocols::jd2::JobDistributor::get_instance()->go(new AntibodyDesignMover);
+		protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new AntibodyDesignMover ));
 	}catch(utility::excn::EXCN_Base & excn){
 		std::cout << "Exception: "<<std::endl;
 		excn.show(std::cerr);

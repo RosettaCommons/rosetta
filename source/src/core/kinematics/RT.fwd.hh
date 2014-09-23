@@ -30,8 +30,8 @@ class RT;
 
 
 // Types
-typedef  utility::pointer::access_ptr< RT >  RTAP;
-typedef  utility::pointer::owning_ptr< RT >  RTOP;
+typedef  utility::pointer::weak_ptr< RT >  RTAP;
+typedef  utility::pointer::shared_ptr< RT >  RTOP;
 
 
 } // namespace kinematics

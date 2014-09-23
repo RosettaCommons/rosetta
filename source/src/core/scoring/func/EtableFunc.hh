@@ -50,7 +50,7 @@ public:
 	{}
 
 	/// @brief returns a clone of this EtableFunc
-	FuncOP clone() const { return new EtableFunc( *this ); }
+	FuncOP clone() const { return FuncOP( new EtableFunc( *this ) ); }
 
 	/// @brief Returns the value of this EtableFunc evaluated at distance x.
 	Real func( Real const x ) const;

@@ -116,7 +116,7 @@ namespace farna {
 	};
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	typedef utility::pointer::owning_ptr< FragmentLibrary > FragmentLibraryOP;
+	typedef utility::pointer::shared_ptr< FragmentLibrary > FragmentLibraryOP;
 	typedef std::pair< std::string, std::string > SequenceSecStructPair;
 	typedef std::map< SequenceSecStructPair, FragmentLibraryOP >  FragmentLibraryPointerMap;
 

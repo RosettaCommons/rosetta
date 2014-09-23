@@ -23,8 +23,8 @@ namespace domain_assembly{
 
 class RedesignDomainAssemblyMover;
 
-typedef utility::pointer::owning_ptr< RedesignDomainAssemblyMover > RedesignDomainAssemblyMoverOP;
-typedef utility::pointer::owning_ptr< RedesignDomainAssemblyMover const > RedesignDomainAssemblyMoverCOP;
+typedef utility::pointer::shared_ptr< RedesignDomainAssemblyMover > RedesignDomainAssemblyMoverOP;
+typedef utility::pointer::shared_ptr< RedesignDomainAssemblyMover const > RedesignDomainAssemblyMoverCOP;
 
 }
 }

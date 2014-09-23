@@ -43,16 +43,16 @@ class TrueFilter : public Filter {
 public:
 	TrueFilter() : Filter( "TrueFilter" ) {}
 	bool apply( core::pose::Pose const & ) const { return true; }
-	FilterOP clone() const { return new TrueFilter; }
-	FilterOP fresh_instance() const { return new TrueFilter; }
+	FilterOP clone() const { return FilterOP( new TrueFilter ); }
+	FilterOP fresh_instance() const { return FilterOP( new TrueFilter ); }
 };
 
 class FalseFilter : public Filter {
 public:
 	FalseFilter() : Filter( "FalseFilter" ) {}
 	bool apply( core::pose::Pose const & ) const { return false; }
-	FilterOP clone() const { return new FalseFilter; }
-	FilterOP fresh_instance() const { return new FalseFilter; }
+	FilterOP clone() const { return FilterOP( new FalseFilter ); }
+	FilterOP fresh_instance() const { return FilterOP( new FalseFilter ); }
 };
 
 class StochasticFilter : public Filter {

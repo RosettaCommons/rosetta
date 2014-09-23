@@ -26,7 +26,7 @@ LoopsDatabaseDefinerCreator::~LoopsDatabaseDefinerCreator() {}
 
 LoopsDefinerOP
 LoopsDatabaseDefinerCreator::create_loops_definer() const {
-	return new LoopsDatabaseDefiner;
+	return LoopsDefinerOP( new LoopsDatabaseDefiner );
 }
 
 string

@@ -33,7 +33,7 @@ ScoreFunctionInfo::ScoreFunctionInfo() : utility::pointer::ReferenceCount(),
 	max_atomic_interaction_distance_( 0.0 ),
 	max_context_neighbor_cutoff_( 0.0 ),
 	context_graphs_required_( num_context_graph_types, false ),
-	energy_method_options_( 0 )
+	energy_method_options_( /* 0 */ )
 {}
 
 /// @details Make sure to make a copy of the EMOpts, instead of just copying the pointer;
@@ -88,7 +88,7 @@ ScoreFunctionInfo::initialize_from( ScoreFunction const & scorefxn ) {
 
 	/// Use the copy constructor to create a new object -- do not simply take a pointer to the existing object, which might change.
 	if ( ! energy_method_options_ ) {
-		energy_method_options_ = new methods::EnergyMethodOptions( scorefxn.energy_method_options() );
+		energy_method_options_ = methods::EnergyMethodOptionsOP( new methods::EnergyMethodOptions( scorefxn.energy_method_options() ) );
 	} else {
 		*energy_method_options_ = scorefxn.energy_method_options();
 	}

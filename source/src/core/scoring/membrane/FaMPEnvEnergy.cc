@@ -62,7 +62,7 @@ methods::EnergyMethodOP
 FaMPEnvEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 	) const {
-	return new FaMPEnvEnergy( ( ScoringManager::get_instance()->memb_etable( options.etable_type() ) ) );
+	return methods::EnergyMethodOP( new FaMPEnvEnergy( ( ScoringManager::get_instance()->memb_etable( options.etable_type() ) ) ) );
 }
 
 /// @brief Return Score Types Required for Method
@@ -75,7 +75,7 @@ FaMPEnvEnergyCreator::score_types_for_method() const {
 
 /// @brief Construct Energy Method from Etable
 FaMPEnvEnergy::FaMPEnvEnergy( etable::MembEtableCAP memb_etable_in ) :
-	parent( new FaMPEnvEnergyCreator ),
+	parent( EnergyMethodCreatorOP( new FaMPEnvEnergyCreator ) ),
 	memb_etable_( memb_etable_in ),
 	lk_dgrefce_( memb_etable_.lock()->lk_dgrefce() ), // FIXME: check lock() success
 	memb_lk_dgrefce_( memb_etable_.lock()->memb_lk_dgrefce() ) // FIXME: check lock() success
@@ -84,7 +84,7 @@ FaMPEnvEnergy::FaMPEnvEnergy( etable::MembEtableCAP memb_etable_in ) :
 /// @brief Clone Energy Method
 EnergyMethodOP
 FaMPEnvEnergy::clone() const {
-	return new FaMPEnvEnergy( *this );
+	return EnergyMethodOP( new FaMPEnvEnergy( *this ) );
 }
 
 /// @brief Compute Per-Residue Energies

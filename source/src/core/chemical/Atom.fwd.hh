@@ -28,9 +28,9 @@ namespace chemical {
 /// @brief  A class for defining atom parameters, known as atom_types, with properties specific to the atom.
 class Atom;
 
-typedef  utility::pointer::owning_ptr< Atom >  AtomOP;
-typedef  utility::pointer::owning_ptr< Atom const >  AtomCOP;
-typedef  utility::pointer::access_ptr< Atom >  AtomAP;
+typedef  utility::pointer::shared_ptr< Atom >  AtomOP;
+typedef  utility::pointer::shared_ptr< Atom const >  AtomCOP;
+typedef  utility::pointer::weak_ptr< Atom >  AtomAP;
 typedef  utility::vector1< AtomOP >  AtomOPs;
 typedef  utility::vector1< AtomCOP >  AtomCOPs;
 typedef  utility::vector1< AtomAP >  AtomAPs;

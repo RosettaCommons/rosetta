@@ -96,7 +96,7 @@ HamiltonianExchangeCreator::keyname() const {
 
 protocols::moves::MoverOP
 HamiltonianExchangeCreator::create_mover() const {
-	return new HamiltonianExchange;
+	return protocols::moves::MoverOP( new HamiltonianExchange );
 }
 
 std::string
@@ -106,7 +106,7 @@ HamiltonianExchangeCreator::mover_name() {
 
 HamiltonianExchange::HamiltonianExchange() :
 	exchange_grid_dimension_( 1 ),
-	bias_energy_( NULL )
+	bias_energy_( /* NULL */ )
 {
 	set_defaults();
 }
@@ -155,13 +155,13 @@ HamiltonianExchange::get_name() const
 protocols::moves::MoverOP
 HamiltonianExchange::clone() const
 {
-	return new protocols::canonical_sampling::HamiltonianExchange(*this);
+	return protocols::moves::MoverOP( new protocols::canonical_sampling::HamiltonianExchange(*this) );
 }
 
 protocols::moves::MoverOP
 HamiltonianExchange::fresh_instance() const
 {
-	return new HamiltonianExchange;
+	return protocols::moves::MoverOP( new HamiltonianExchange );
 }
 
 void
@@ -199,7 +199,7 @@ HamiltonianExchange::set_monte_carlo(
   protocols::moves::MonteCarloOP monte_carlo
 ) {
 	Parent::set_monte_carlo( monte_carlo );
-	BiasedMonteCarloOP biased_mc = dynamic_cast<BiasedMonteCarlo*>( monte_carlo.get() );
+	BiasedMonteCarloOP biased_mc = utility::pointer::dynamic_pointer_cast< protocols::canonical_sampling::BiasedMonteCarlo > ( monte_carlo );
 	if ( biased_mc ) {
 		bias_energy_ = biased_mc->bias_energy();
 	}

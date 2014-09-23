@@ -281,7 +281,7 @@ InterfaceInfo const &
 InterchainPotential::interface_from_pose( core::pose::Pose const & pose ) const
 {
 	//using core::pose::datacache::CacheableDataType::INTERFACE_INFO;
-	return *( static_cast< InterfaceInfo const * >(pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::INTERFACE_INFO )() ) );
+	return *( utility::pointer::static_pointer_cast< protocols::scoring::InterfaceInfo const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::INTERFACE_INFO ) ) );
 }
 
 /// @details Either returns a non-const reference to the Interface object that already exists
@@ -293,10 +293,10 @@ InterchainPotential::nonconst_interface_from_pose( core::pose::Pose & pose ) con
 	//using core::pose::datacache::CacheableDataType::INTERFACE_INFO;
 
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::INTERFACE_INFO ) ) {
-		return *( static_cast< InterfaceInfo * >(pose.data().get_ptr( core::pose::datacache::CacheableDataType::INTERFACE_INFO )() ) );
+		return *( utility::pointer::static_pointer_cast< protocols::scoring::InterfaceInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::INTERFACE_INFO ) ) );
 	}
 	// else
-	InterfaceInfoOP interface = new InterfaceInfo;
+	InterfaceInfoOP interface( new InterfaceInfo );
 	pose.data().set( core::pose::datacache::CacheableDataType::INTERFACE_INFO, interface );
 	return *interface;
 }

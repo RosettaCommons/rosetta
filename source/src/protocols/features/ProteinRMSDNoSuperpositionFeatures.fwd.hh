@@ -22,8 +22,8 @@ namespace protocols{
 namespace features{
 
 class ProteinRMSDNoSuperpositionFeatures;
-typedef utility::pointer::owning_ptr< ProteinRMSDNoSuperpositionFeatures > ProteinRMSDNoSuperpositionFeaturesOP;
-typedef utility::pointer::owning_ptr< ProteinRMSDNoSuperpositionFeatures const > ProteinRMSDNoSuperpositionFeaturesCOP;
+typedef utility::pointer::shared_ptr< ProteinRMSDNoSuperpositionFeatures > ProteinRMSDNoSuperpositionFeaturesOP;
+typedef utility::pointer::shared_ptr< ProteinRMSDNoSuperpositionFeatures const > ProteinRMSDNoSuperpositionFeaturesCOP;
 
 }//features
 }//protocols

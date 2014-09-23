@@ -24,8 +24,8 @@ namespace toolbox {
 namespace task_operations {
 
 class ModifyAnnealer;
-typedef utility::pointer::owning_ptr< ModifyAnnealer > ModifyAnnealerOP;
-typedef utility::pointer::owning_ptr< ModifyAnnealer const > ModifyAnnealerCOP;
+typedef utility::pointer::shared_ptr< ModifyAnnealer > ModifyAnnealerOP;
+typedef utility::pointer::shared_ptr< ModifyAnnealer const > ModifyAnnealerCOP;
 
 } //task_operations
 } //toolbox

@@ -21,19 +21,19 @@ class Xfres;
 class Xfrag;
 
 class XfragSet;
-typedef utility::pointer::owning_ptr< XfragSet       > XfragSetOP;
-typedef utility::pointer::owning_ptr< XfragSet const > XfragSetCOP;
-typedef utility::pointer::access_ptr< XfragSet const > XfragSetCAP;
+typedef utility::pointer::shared_ptr< XfragSet       > XfragSetOP;
+typedef utility::pointer::shared_ptr< XfragSet const > XfragSetCOP;
+typedef utility::pointer::weak_ptr< XfragSet const > XfragSetCAP;
 
 class XformScore;
-typedef utility::pointer::owning_ptr< XformScore       > XformScoreOP;
-typedef utility::pointer::owning_ptr< XformScore const > XformScoreCOP;
-typedef utility::pointer::access_ptr< XformScore const > XformScoreCAP;
+typedef utility::pointer::shared_ptr< XformScore       > XformScoreOP;
+typedef utility::pointer::shared_ptr< XformScore const > XformScoreCOP;
+typedef utility::pointer::weak_ptr< XformScore const > XformScoreCAP;
 
 class MotifHash;
-typedef utility::pointer::owning_ptr< MotifHash       > MotifHashOP;
-typedef utility::pointer::owning_ptr< MotifHash const > MotifHashCOP;
-typedef utility::pointer::access_ptr< MotifHash const > MotifHashCAP;
+typedef utility::pointer::shared_ptr< MotifHash       > MotifHashOP;
+typedef utility::pointer::shared_ptr< MotifHash const > MotifHashCOP;
+typedef utility::pointer::weak_ptr< MotifHash const > MotifHashCAP;
 
 
 }

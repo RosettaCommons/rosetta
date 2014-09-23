@@ -92,7 +92,7 @@ public:
 
 private:
 	void rotate_ligand(
-			utility::pointer::owning_ptr<core::grid::CartGrid<int> >  const & grid,
+			utility::pointer::shared_ptr<core::grid::CartGrid<int> >  const & grid,
 			core::pose::Pose & pose
 	);
 
@@ -100,7 +100,7 @@ private:
 
 	///@brief  These should have repulsive and attractive scores under the threshold
 	utility::vector1< Ligand_info> create_random_rotations(
-			utility::pointer::owning_ptr<core::grid::CartGrid<int> > const & grid,
+			utility::pointer::shared_ptr<core::grid::CartGrid<int> > const & grid,
 			protocols::rigid::RigidBodyMoverOP const mover,
 			core::pose::Pose & pose,
 			core::Size chain_begin
@@ -112,7 +112,7 @@ private:
 //			core::pose::Pose & pose) const;
 
 	Ligand_info create_random_rotation(
-			utility::pointer::owning_ptr<core::grid::CartGrid<int> > const & grid,
+			utility::pointer::shared_ptr<core::grid::CartGrid<int> > const & grid,
 			protocols::rigid::RigidBodyMoverOP const mover,
 			core::Vector const center,
 			core::Size const begin,

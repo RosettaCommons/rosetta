@@ -22,8 +22,8 @@ namespace canonical_sampling {
 namespace mc_convergence_checks {
 
 class HPool_RMSD;
-typedef utility::pointer::owning_ptr< HPool_RMSD > HPool_RMSD_OP;
-typedef utility::pointer::owning_ptr< HPool_RMSD const > HPool_RMSD_COP;
+typedef utility::pointer::shared_ptr< HPool_RMSD > HPool_RMSD_OP;
+typedef utility::pointer::shared_ptr< HPool_RMSD const > HPool_RMSD_COP;
 
 } // mc_conv
 } // moves

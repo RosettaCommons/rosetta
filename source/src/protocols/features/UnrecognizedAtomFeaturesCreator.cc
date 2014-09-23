@@ -29,7 +29,7 @@ namespace features {
 UnrecognizedAtomFeaturesCreator::UnrecognizedAtomFeaturesCreator() {}
 UnrecognizedAtomFeaturesCreator::~UnrecognizedAtomFeaturesCreator() {}
 FeaturesReporterOP UnrecognizedAtomFeaturesCreator::create_features_reporter() const {
-	return new UnrecognizedAtomFeatures;
+	return FeaturesReporterOP( new UnrecognizedAtomFeatures );
 }
 
 std::string UnrecognizedAtomFeaturesCreator::type_name() const {

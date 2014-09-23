@@ -57,7 +57,7 @@ SetAACompositionPotentialCreator::keyname() const
 /// @brief
 protocols::moves::MoverOP
 SetAACompositionPotentialCreator::create_mover() const {
-	return new SetAACompositionPotential;
+	return protocols::moves::MoverOP( new SetAACompositionPotential );
 }
 
 
@@ -94,7 +94,7 @@ SetAACompositionPotential::~SetAACompositionPotential() {}
 SetAACompositionPotential::MoverOP
 SetAACompositionPotential::clone() const
 {
-	return new SetAACompositionPotential( *this );
+	return SetAACompositionPotential::MoverOP( new SetAACompositionPotential( *this ) );
 }
 
 
@@ -102,7 +102,7 @@ SetAACompositionPotential::clone() const
 SetAACompositionPotential::MoverOP
 SetAACompositionPotential::fresh_instance() const
 {
-	return new SetAACompositionPotential();
+	return SetAACompositionPotential::MoverOP( new SetAACompositionPotential() );
 }
 
 /// @brief set parameters
@@ -198,7 +198,7 @@ SetAACompositionPotential::parse_my_tag(
 
 	// set scorefxn
 	String const sfxn ( tag->getOption<String>( "scorefxn", "" ) );
-	sfx_ = data.get< ScoreFunction* >( "scorefxns", sfxn );
+	sfx_ = data.get_ptr<ScoreFunction>( "scorefxns", sfxn );
 	if( sfxn == "" ) {
 		TR << "No input of sfxn ! " << std::endl;
 		runtime_assert( false );

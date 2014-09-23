@@ -93,11 +93,11 @@ void RdcEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval )
 				utility_exit_with_message(
 							 "need to specify dupletts <rdcs> <column> with option -evaluation:rdc   last read: "+fname );
 			}
-			eval.add_evaluation( new simple_filters::SelectRDC_Evaluator( empty_selection, column, fname ) );
+			eval.add_evaluation( PoseEvaluatorOP( new simple_filters::SelectRDC_Evaluator( empty_selection, column, fname ) ) );
 		} // iterate over tripletts in option -rmsd
 	}
 	if ( option[ OptionKeys::evaluation::built_in_rdc ].user() ) {
-		eval.add_evaluation( new simple_filters::RDC_Evaluator(option[ OptionKeys::evaluation::built_in_rdc ]()) );
+		eval.add_evaluation( PoseEvaluatorOP( new simple_filters::RDC_Evaluator(option[ OptionKeys::evaluation::built_in_rdc ]()) ) );
 	} // iterate over tripletts in option -rmsd
 }
 

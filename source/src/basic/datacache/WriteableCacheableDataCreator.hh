@@ -38,8 +38,8 @@ public:
   virtual std::string keyname() const = 0;
 };
 
-typedef utility::pointer::owning_ptr< WriteableCacheableDataCreator > WriteableCacheableDataCreatorOP;
-typedef utility::pointer::owning_ptr< WriteableCacheableDataCreator const > WriteableCacheableDataCreatorCOP;
+typedef utility::pointer::shared_ptr< WriteableCacheableDataCreator > WriteableCacheableDataCreatorOP;
+typedef utility::pointer::shared_ptr< WriteableCacheableDataCreator const > WriteableCacheableDataCreatorCOP;
 
 } //namespace datacache
 } //namespace basic

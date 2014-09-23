@@ -44,7 +44,7 @@ namespace devel {
 namespace replica_docking {
 
 protocols::filters::FilterOP
-IrmsdFilterCreator::create_filter() const { return new IrmsdFilter; }
+IrmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new IrmsdFilter ); }
 
 std::string
 IrmsdFilterCreator::keyname() const { return "Irms"; }
@@ -66,7 +66,7 @@ IrmsdFilter::IrmsdFilter() :
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	if ( option[ in::file::native ].user() ) {
-		core::pose::PoseOP native_pose = new core::pose::Pose();
+		core::pose::PoseOP native_pose( new core::pose::Pose() );
 		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]());
  		native_pose_ = native_pose;
 	} else {
@@ -87,7 +87,7 @@ IrmsdFilter::IrmsdFilter( core::scoring::ScoreFunctionOP sfxn, core::Size const 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	if ( option[ in::file::native ].user() ) {
-		core::pose::PoseOP native_pose = new core::pose::Pose();
+		core::pose::PoseOP native_pose( new core::pose::Pose() );
 		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]);
  		native_pose_ = native_pose;
 	} else {
@@ -110,12 +110,12 @@ IrmsdFilter::~IrmsdFilter(){}
 
 protocols::filters::FilterOP
 IrmsdFilter::clone() const{
-	return new IrmsdFilter( *this );
+	return protocols::filters::FilterOP( new IrmsdFilter( *this ) );
 }
 
 protocols::filters::FilterOP
 IrmsdFilter::fresh_instance() const{
-	return new IrmsdFilter;
+	return protocols::filters::FilterOP( new IrmsdFilter );
 }
 
 void

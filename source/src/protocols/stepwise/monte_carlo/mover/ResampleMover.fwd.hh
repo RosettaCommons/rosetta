@@ -24,8 +24,8 @@ namespace monte_carlo {
 namespace mover {
 	
 	class ResampleMover;
-	typedef utility::pointer::owning_ptr< ResampleMover > ResampleMoverOP;
-	typedef utility::pointer::owning_ptr< ResampleMover const > ResampleMoverCOP;
+	typedef utility::pointer::shared_ptr< ResampleMover > ResampleMoverOP;
+	typedef utility::pointer::shared_ptr< ResampleMover const > ResampleMoverCOP;
 	
 } //mover
 } //monte_carlo

@@ -28,11 +28,11 @@ namespace noesy_assign {
 class PeakAssignmentResidueMap;
 
 // Types
-typedef  utility::pointer::owning_ptr< PeakAssignmentResidueMap >  PeakAssignmentResidueMapOP;
-typedef  utility::pointer::owning_ptr< PeakAssignmentResidueMap const >  PeakAssignmentResidueMapCOP;
+typedef  utility::pointer::shared_ptr< PeakAssignmentResidueMap >  PeakAssignmentResidueMapOP;
+typedef  utility::pointer::shared_ptr< PeakAssignmentResidueMap const >  PeakAssignmentResidueMapCOP;
 
-typedef  utility::pointer::access_ptr< PeakAssignmentResidueMap >  PeakAssignmentResidueMapAP;
-typedef  utility::pointer::access_ptr< PeakAssignmentResidueMap const >  PeakAssignmentResidueMapCAP;
+typedef  utility::pointer::weak_ptr< PeakAssignmentResidueMap >  PeakAssignmentResidueMapAP;
+typedef  utility::pointer::weak_ptr< PeakAssignmentResidueMap const >  PeakAssignmentResidueMapCAP;
 
 }
 }

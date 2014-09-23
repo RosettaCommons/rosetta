@@ -28,11 +28,11 @@ namespace claims {
 class JumpClaim;
 
 // Types
-typedef  utility::pointer::owning_ptr< JumpClaim >  JumpClaimOP;
-typedef  utility::pointer::owning_ptr< JumpClaim const >  JumpClaimCOP;
+typedef  utility::pointer::shared_ptr< JumpClaim >  JumpClaimOP;
+typedef  utility::pointer::shared_ptr< JumpClaim const >  JumpClaimCOP;
 
-typedef  utility::pointer::access_ptr< JumpClaim >  JumpClaimAP;
-typedef  utility::pointer::access_ptr< JumpClaim const >  JumpClaimCAP;
+typedef  utility::pointer::weak_ptr< JumpClaim >  JumpClaimAP;
+typedef  utility::pointer::weak_ptr< JumpClaim const >  JumpClaimCAP;
 
 typedef utility::vector1< JumpClaimOP > JumpClaims;
 

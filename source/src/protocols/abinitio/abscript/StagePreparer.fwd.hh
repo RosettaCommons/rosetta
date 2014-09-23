@@ -24,8 +24,8 @@ namespace abinitio {
 namespace abscript{
 
 class StagePreparer;
-typedef utility::pointer::owning_ptr< StagePreparer > StagePreparerOP;
-typedef utility::pointer::owning_ptr< StagePreparer const > StagePreparerCOP;
+typedef utility::pointer::shared_ptr< StagePreparer > StagePreparerOP;
+typedef utility::pointer::shared_ptr< StagePreparer const > StagePreparerCOP;
 
 } // abscript
 } // abinitio

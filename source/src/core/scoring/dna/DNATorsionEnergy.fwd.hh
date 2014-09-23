@@ -24,8 +24,8 @@ namespace dna {
 
 class DNATorsionEnergy;
 
-typedef utility::pointer::owning_ptr< DNATorsionEnergy > DNATorsionEnergyOP;
-typedef utility::pointer::owning_ptr< DNATorsionEnergy const > DNATorsionEnergyCOP;
+typedef utility::pointer::shared_ptr< DNATorsionEnergy > DNATorsionEnergyOP;
+typedef utility::pointer::shared_ptr< DNATorsionEnergy const > DNATorsionEnergyCOP;
 
 } // dna
 } // scoring

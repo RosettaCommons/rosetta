@@ -24,8 +24,8 @@ namespace modeler {
 namespace options {
 	
 	class StepWiseModelerOptions;
-	typedef utility::pointer::owning_ptr< StepWiseModelerOptions > StepWiseModelerOptionsOP;
-	typedef utility::pointer::owning_ptr< StepWiseModelerOptions const > StepWiseModelerOptionsCOP;
+	typedef utility::pointer::shared_ptr< StepWiseModelerOptions > StepWiseModelerOptionsOP;
+	typedef utility::pointer::shared_ptr< StepWiseModelerOptions const > StepWiseModelerOptionsCOP;
 	
 } //options
 } //modeler

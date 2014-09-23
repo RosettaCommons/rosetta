@@ -23,7 +23,7 @@ namespace task_operations{
 class JointSequenceOperation;
 class RestrictConservedLowDdgOperation;
 
-typedef utility::pointer::owning_ptr< JointSequenceOperation > JointSequenceOperationOP;
+typedef utility::pointer::shared_ptr< JointSequenceOperation > JointSequenceOperationOP;
 
 } // task_operations
 } // toolbox

@@ -24,8 +24,8 @@ class ConstraintNode;
 class ConstraintEdge;
 class ConstraintGraph;
 
-typedef utility::pointer::owning_ptr< ConstraintGraph > ConstraintGraphOP;
-typedef utility::pointer::owning_ptr< ConstraintGraph const > ConstraintGraphCOP;
+typedef utility::pointer::shared_ptr< ConstraintGraph > ConstraintGraphOP;
+typedef utility::pointer::shared_ptr< ConstraintGraph const > ConstraintGraphCOP;
 
 
 }

@@ -181,7 +181,7 @@ update_pdb_info_from_full_model_info( pose::Pose & pose ){
 
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
 
-	PDBInfoOP pdb_info = new PDBInfo( pose );
+	PDBInfoOP pdb_info( new PDBInfo( pose ) );
 	pdb_info->set_numbering( const_full_model_info( pose ).full_model_parameters()->full_to_conventional( res_list ) );
 	pdb_info->set_chains(    figure_out_conventional_chains_from_full_model_info( pose ) );
 

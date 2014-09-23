@@ -22,8 +22,8 @@ namespace protocols {
 namespace ligand_docking {
 
 class ComputeLigandRDF; // fwd declaration
-typedef utility::pointer::owning_ptr< ComputeLigandRDF > ComputeLigandRDFOP;
-typedef utility::pointer::owning_ptr< ComputeLigandRDF const > ComputeLigandRDFCOP;
+typedef utility::pointer::shared_ptr< ComputeLigandRDF > ComputeLigandRDFOP;
+typedef utility::pointer::shared_ptr< ComputeLigandRDF const > ComputeLigandRDFCOP;
 
 } // namespace ligand_docking
 } // namespace protocols

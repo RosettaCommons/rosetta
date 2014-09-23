@@ -21,8 +21,8 @@ namespace replica_docking {
 
 class TempInterpolatorFactory;
 
-typedef utility::pointer::owning_ptr< TempInterpolatorFactory > TempInterpolatorFactoryOP;
-typedef utility::pointer::owning_ptr< TempInterpolatorFactory const > TempInterpolatorFactoryCOP;
+typedef utility::pointer::shared_ptr< TempInterpolatorFactory > TempInterpolatorFactoryOP;
+typedef utility::pointer::shared_ptr< TempInterpolatorFactory const > TempInterpolatorFactoryCOP;
 
 } //namespace moves
 } //namespace protocols

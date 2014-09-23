@@ -27,8 +27,8 @@ namespace filters {
 class ContingentFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< ContingentFilter >  ContingentFilterOP;
-typedef utility::pointer::owning_ptr< ContingentFilter const >  ContingentFilterCOP;
+typedef utility::pointer::shared_ptr< ContingentFilter >  ContingentFilterOP;
+typedef utility::pointer::shared_ptr< ContingentFilter const >  ContingentFilterCOP;
 
 } // namespace filters
 } // namespace protocols

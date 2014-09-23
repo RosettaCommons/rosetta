@@ -81,10 +81,10 @@ private: // typedefs
 public: // typedefs
 
 
-	typedef utility::pointer::owning_ptr< Data > DataOP;
-	typedef utility::pointer::owning_ptr< Data const > DataCOP;
-	typedef utility::pointer::access_ptr< Data > DataAP;
-	typedef utility::pointer::access_ptr< Data const > DataCAP;
+	typedef utility::pointer::shared_ptr< Data > DataOP;
+	typedef utility::pointer::shared_ptr< Data const > DataCOP;
+	typedef utility::pointer::weak_ptr< Data > DataAP;
+	typedef utility::pointer::weak_ptr< Data const > DataCAP;
 
 
 protected: // typedefs
@@ -254,7 +254,7 @@ public: // accessors
 	/// @tparam D class derived from Data
 	template< typename D >
 	inline
-	utility::pointer::owning_ptr< D const >
+	utility::pointer::shared_ptr< D const >
 	get_const_ptr( std::size_t const slot ) const
 	{
 		return utility::pointer::static_pointer_cast< D const >( get_const_ptr( slot ) );
@@ -275,7 +275,7 @@ public: // accessors
 	/// @tparam D class derived from Data
 	template< typename D >
 	inline
-	utility::pointer::owning_ptr< D >
+	utility::pointer::shared_ptr< D >
 	get_ptr( std::size_t const slot )
 	{
 		return utility::pointer::static_pointer_cast< D >( get_ptr( slot ) );

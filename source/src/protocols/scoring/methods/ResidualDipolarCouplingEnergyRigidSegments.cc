@@ -74,7 +74,7 @@ core::scoring::methods::EnergyMethodOP
 ResidualDipolarCouplingEnergyRigidSegmentsCreator::create_energy_method(
  core::scoring::methods::EnergyMethodOptions const &
 ) const {
-	return new ResidualDipolarCouplingEnergyRigidSegments;
+	return core::scoring::methods::EnergyMethodOP( new ResidualDipolarCouplingEnergyRigidSegments );
 }
 
 ScoreTypes
@@ -101,7 +101,7 @@ core::scoring::methods::EnergyMethodOP
 ResidualDipolarCouplingEnergyRigidSegments::clone() const
 {
 
-  return new ResidualDipolarCouplingEnergyRigidSegments();
+  return core::scoring::methods::EnergyMethodOP( new ResidualDipolarCouplingEnergyRigidSegments() );
 
 }
 
@@ -163,7 +163,7 @@ ResidualDipolarCouplingEnergyRigidSegments::rdc_segments_from_pose(
 
  	ResidualDipolarCouplingRigidSegmentsOP rdcrs_info( retrieve_RDC_segments_from_pose( pose ) );
 	if ( !rdcrs_info ) {
-		rdcrs_info = new ResidualDipolarCouplingRigidSegments;
+		rdcrs_info = ResidualDipolarCouplingRigidSegmentsOP( new ResidualDipolarCouplingRigidSegments );
 		store_RDC_segments_in_pose( rdcrs_info, pose );
 	}
 	return *rdcrs_info;

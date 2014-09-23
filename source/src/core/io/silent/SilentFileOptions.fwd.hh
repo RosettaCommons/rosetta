@@ -22,8 +22,8 @@ namespace io {
 namespace silent {
 
 class SilentFileOptions;
-typedef utility::pointer::owning_ptr< SilentFileOptions > SilentFileOptionsOP;
-typedef utility::pointer::owning_ptr< SilentFileOptions const > SilentFileOptionsCOP;
+typedef utility::pointer::shared_ptr< SilentFileOptions > SilentFileOptionsOP;
+typedef utility::pointer::shared_ptr< SilentFileOptions const > SilentFileOptionsCOP;
 
 } // namespace
 } // namespace

@@ -61,7 +61,7 @@ public:
 
 	virtual std::string get_name() const { return "TailSegmentMover"; }
 
-	virtual protocols::moves::MoverOP fresh_instance() const { return new TailSegmentMover; }
+	virtual protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new TailSegmentMover ); }
 
 	virtual bool reinitialize_for_each_job() const { return false; }
 

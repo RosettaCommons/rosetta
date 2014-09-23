@@ -78,13 +78,13 @@ PairFeatures::write_residue_pairs_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt());
-	Column resNum1("resNum1", new DbInteger());
-	Column resNum2("resNum2", new DbInteger());
-	Column res1_10A_neighbors("res1_10A_neighbors", new DbInteger());
-	Column res2_10A_neighbors("res2_10A_neighbors", new DbInteger());
-	Column actcoord_dist("actcoord_dist", new DbReal());
-	Column polymeric_sequence_dist("polymeric_sequence_dist", new DbInteger());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column resNum1("resNum1", DbDataTypeOP( new DbInteger() ));
+	Column resNum2("resNum2", DbDataTypeOP( new DbInteger() ));
+	Column res1_10A_neighbors("res1_10A_neighbors", DbDataTypeOP( new DbInteger() ));
+	Column res2_10A_neighbors("res2_10A_neighbors", DbDataTypeOP( new DbInteger() ));
+	Column actcoord_dist("actcoord_dist", DbDataTypeOP( new DbReal() ));
+	Column polymeric_sequence_dist("polymeric_sequence_dist", DbDataTypeOP( new DbInteger() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -108,13 +108,10 @@ PairFeatures::write_residue_pairs_table_schema(
 	reference_columns2.push_back("resNum");
 	ForeignKey foreign_key2(foreign_key_columns2, "residues", reference_columns2, true);
 
-	GreaterThanConstraintOP res1_10A_neighbors_is_positive(
-		new GreaterThanConstraint(res1_10A_neighbors, 1.0));
-	GreaterThanConstraintOP res2_10A_neighbors_is_positive(
-		new GreaterThanConstraint(res2_10A_neighbors, 1.0));
+	GreaterThanConstraintOP res1_10A_neighbors_is_positive( new GreaterThanConstraint(res1_10A_neighbors, 1.0) );
+	GreaterThanConstraintOP res2_10A_neighbors_is_positive( new GreaterThanConstraint(res2_10A_neighbors, 1.0) );
 
-	GreaterThanConstraintOP actcoord_dist_is_nonnegative(
-		new GreaterThanConstraint(actcoord_dist, 0));
+	GreaterThanConstraintOP actcoord_dist_is_nonnegative( new GreaterThanConstraint(actcoord_dist, 0) );
 
 	Schema table("residue_pairs", primary_key);
 	table.add_foreign_key(foreign_key1);

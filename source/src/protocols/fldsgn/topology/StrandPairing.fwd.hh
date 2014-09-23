@@ -25,10 +25,10 @@ namespace topology {
 	class StrandPairingSet;
 	class Residues;
 
-	typedef utility::pointer::owning_ptr< StrandPairing > StrandPairingOP;
-	typedef utility::pointer::owning_ptr< StrandPairingSet > StrandPairingSetOP;
-	typedef utility::pointer::owning_ptr< StrandPairing const > StrandPairingCOP;
-	typedef utility::pointer::owning_ptr< StrandPairingSet const > StrandPairingSetCOP;
+	typedef utility::pointer::shared_ptr< StrandPairing > StrandPairingOP;
+	typedef utility::pointer::shared_ptr< StrandPairingSet > StrandPairingSetOP;
+	typedef utility::pointer::shared_ptr< StrandPairing const > StrandPairingCOP;
+	typedef utility::pointer::shared_ptr< StrandPairingSet const > StrandPairingSetCOP;
 	typedef utility::vector1< StrandPairingOP > StrandPairings;
 
 	// typedef utility::pointer::owning_ptr< Residues > ResiduesOP;

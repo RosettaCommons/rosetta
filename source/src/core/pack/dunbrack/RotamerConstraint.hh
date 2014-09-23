@@ -72,7 +72,7 @@ public:
 
 	virtual
 	scoring::constraints::ConstraintOP
-	clone() const { return new RotamerConstraint( *this ); }
+	clone() const { return scoring::constraints::ConstraintOP( new RotamerConstraint( *this ) ); }
 
 	virtual
 	Size

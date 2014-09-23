@@ -93,7 +93,7 @@ SimulatedTemperingCreator::keyname() const {
 
 protocols::moves::MoverOP
 SimulatedTemperingCreator::create_mover() const {
-	return new SimulatedTempering;
+	return protocols::moves::MoverOP( new SimulatedTempering );
 }
 
 std::string
@@ -228,13 +228,13 @@ SimulatedTempering::get_name() const
 protocols::moves::MoverOP
 SimulatedTempering::clone() const
 {
-	return new protocols::canonical_sampling::SimulatedTempering(*this);
+	return protocols::moves::MoverOP( new protocols::canonical_sampling::SimulatedTempering(*this) );
 }
 
 protocols::moves::MoverOP
 SimulatedTempering::fresh_instance() const
 {
-	return new SimulatedTempering;
+	return protocols::moves::MoverOP( new SimulatedTempering );
 }
 
 void

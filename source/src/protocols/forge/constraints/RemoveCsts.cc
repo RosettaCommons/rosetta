@@ -45,7 +45,7 @@ RemoveCstsCreator::keyname() const
 
 protocols::moves::MoverOP
 RemoveCstsCreator::create_mover() const {
-	return new RemoveCsts();
+	return protocols::moves::MoverOP( new RemoveCsts() );
 }
 
 std::string
@@ -57,7 +57,7 @@ RemoveCstsCreator::mover_name()
 /// @brief
 RemoveCsts::RemoveCsts()
 	:	Mover(),
-		generator_( NULL ),
+		generator_( /* NULL */ ),
 		generator_id_( "" )
 {}
 
@@ -108,13 +108,13 @@ RemoveCsts::get_name() const
 protocols::moves::MoverOP
 RemoveCsts::fresh_instance() const
 {
-	return new RemoveCsts();
+	return protocols::moves::MoverOP( new RemoveCsts() );
 }
 
 protocols::moves::MoverOP
 RemoveCsts::clone() const
 {
-	return new RemoveCsts( *this );
+	return protocols::moves::MoverOP( new RemoveCsts( *this ) );
 }
 
 void

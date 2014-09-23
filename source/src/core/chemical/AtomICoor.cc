@@ -367,13 +367,13 @@ AtomICoor::build(
 
 
 typedef basic::datacache::DataMapObj< std::set< std::string > > AtomMemo;
-typedef utility::pointer::owning_ptr< AtomMemo > AtomMemoOP;
+typedef utility::pointer::shared_ptr< AtomMemo > AtomMemoOP;
 
 //Memoized version, implementation of the general interface found below.
 
 void pretty_print_atomicoor(std::ostream & out, AtomICoor const & start, ResidueType const & rsd_type, core::Size indent, AtomMemoOP memo ) {
 	if( ! memo ) {
-		memo = new AtomMemo;
+		memo = AtomMemoOP( new AtomMemo );
 	}
 	for( core::Size ii(1); ii <= indent; ++ii ) {
 		out << "   ";

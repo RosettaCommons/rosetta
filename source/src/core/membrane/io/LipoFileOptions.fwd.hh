@@ -30,8 +30,8 @@ namespace io {
 /// @brief Options class for reading lipid acc data
 /// @details Set options for lipid acc data obj
 class LipoFileOptions;
-typedef utility::pointer::owning_ptr< LipoFileOptions > LipoFileOptionsOP;
-typedef utility::pointer::owning_ptr< LipoFileOptions const > LipoFileOptionsCOP;
+typedef utility::pointer::shared_ptr< LipoFileOptions > LipoFileOptionsOP;
+typedef utility::pointer::shared_ptr< LipoFileOptions const > LipoFileOptionsCOP;
 
 } // io
 } // membrane

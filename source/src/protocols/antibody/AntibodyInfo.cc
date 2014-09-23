@@ -92,7 +92,7 @@ AntibodyInfo::AntibodyInfo( pose::Pose const & pose,
 		bool const & cdr_pdb_numbered) //:
 		//framework_info_(NULL)
 {
-	enum_manager_ = new AntibodyEnumManager();
+	enum_manager_ = AntibodyEnumManagerOP( new AntibodyEnumManager() );
 	set_default();
 
 	numbering_info_.numbering_scheme = numbering_scheme;
@@ -104,7 +104,7 @@ AntibodyInfo::AntibodyInfo( pose::Pose const & pose,
 }
 
 AntibodyInfo::AntibodyInfo(const pose::Pose& pose, const bool& cdr_pdb_numbered) {
-	enum_manager_ = new AntibodyEnumManager();
+	enum_manager_ = AntibodyEnumManagerOP( new AntibodyEnumManager() );
 	set_default();
 	cdr_pdb_numbered_ = cdr_pdb_numbered;
 
@@ -141,11 +141,11 @@ void AntibodyInfo::init(pose::Pose const & pose) {
 	else            total_cdr_loops_ = num_cdr_loops;
 
 	
-	numbering_parser_ = new AntibodyNumberingParser(enum_manager_);
+	numbering_parser_ = AntibodyNumberingParserOP( new AntibodyNumberingParser(enum_manager_) );
 	
 	
-	cdr_cluster_manager_ = new CDRClusterEnumManager();
-	cdr_cluster_set_ = new CDRClusterSet(this);
+	cdr_cluster_manager_ = CDRClusterEnumManagerOP( new CDRClusterEnumManager() );
+	cdr_cluster_set_ = CDRClusterSetOP( new CDRClusterSet(this) );
 	
 	setup_numbering_info_for_scheme(numbering_info_.numbering_scheme, numbering_info_.cdr_definition);
 
@@ -271,7 +271,7 @@ AntibodyInfo::get_landmark_resnum(
 	
 	
 	vector1< PDBLandmarkOP > landmarks = get_numbering_scheme_landmarks(scheme);
-	PDBLandmarkOP query_landmark = new PDBLandmark(chain, pdb_resnum, insertion_code);
+	PDBLandmarkOP query_landmark( new PDBLandmark(chain, pdb_resnum, insertion_code) );
 	
 	//TR<< "Need "<< enum_manager_->numbering_scheme_enum_to_string(scheme)<< " in " << enum_manager_->numbering_scheme_enum_to_string(numbering_info_.numbering_scheme) << std::endl;
 	for (core::Size i = 1; i <= landmarks.size(); ++i){
@@ -432,7 +432,7 @@ void AntibodyInfo::setup_CDRsInfo( pose::Pose const & pose ) {
 	}
 
 	int loop_start_in_pose, loop_stop_in_pose, cut_position ;
-	loopsop_having_allcdrs_ = new loops::Loops();
+	loopsop_having_allcdrs_ = loops::LoopsOP( new loops::Loops() );
 
 	for (Size i=start_cdr_loop; i<= core::Size(total_cdr_loops_); ++i ) {
 		
@@ -472,7 +472,7 @@ void AntibodyInfo::setup_CDRsInfo( pose::Pose const & pose ) {
 		}
 
 		loops::Loop  one_loop(loop_start_in_pose, loop_stop_in_pose, cut_position);
-		loops::LoopsOP one_loops = new loops::Loops();
+		loops::LoopsOP one_loops( new loops::Loops() );
 		one_loops->add_loop(one_loop);
 
 		// make a "LoopsOP" object, in which each "Loop" was saved
@@ -1087,7 +1087,7 @@ AntibodyInfo::get_CDR_loop(CDRNameEnum const cdr_name, core::pose::Pose const & 
 loops::LoopsOP
 AntibodyInfo::get_CDR_loops(pose::Pose const & pose) const {
 	
-	protocols::loops::LoopsOP cdr_loops = new loops::Loops;
+	protocols::loops::LoopsOP cdr_loops( new loops::Loops );
 	for (Size i = 1; i <= Size(total_cdr_loops_); ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		protocols::loops::Loop cdr_loop =get_CDR_loop(cdr, pose);
@@ -1243,7 +1243,7 @@ kinematics::FoldTreeCOP AntibodyInfo::setup_simple_fold_tree(
     pose::Pose const & pose ) const {
 	using namespace kinematics;
 
-	FoldTreeOP f = new FoldTree();
+	FoldTreeOP f( new FoldTree() );
 	loops::Loops moveable_region;
 	moveable_region.add_loop(loops::Loop(jumppoint1 + 1, jumppoint2 - 1, cutpoint));
 	loops::fold_tree_from_loops(pose, moveable_region, *f);
@@ -1255,7 +1255,7 @@ kinematics::FoldTreeCOP AntibodyInfo::setup_simple_fold_tree(
 kinematics::FoldTreeCOP AntibodyInfo::get_FoldTree_AllCDRs (pose::Pose const & pose ) const {
 	using namespace kinematics;
 
-	kinematics::FoldTreeOP f = new FoldTree();
+	kinematics::FoldTreeOP f( new FoldTree() );
 	loops::fold_tree_from_loops(pose, *(get_AllCDRs_in_loopsop()), *f);
 	return f;
 
@@ -1278,7 +1278,7 @@ AntibodyInfo::get_FoldTree_AllCDRs_LHDock( pose::Pose const & pose ) const {
 
 	// Start by creating a FoldTree for all of the CDR loops.
 	// NOTE: Making deep copy becuase this method returns a FoldTreeCOP and we need to perform additional configuration.
-	FoldTreeOP f = new FoldTree(*get_FoldTree_AllCDRs(pose));
+	FoldTreeOP f( new FoldTree(*get_FoldTree_AllCDRs(pose)) );
 	
 	// NOTE: This class assumes the first chain is the light chain,
 	// the second chain is the heavy chain and any other chains are
@@ -1689,7 +1689,7 @@ AntibodyInfo::get_TaskFactory_AllCDRs(pose::Pose & pose)  const {
 	pack::task::TaskFactoryOP tf ;
 	tf= setup_packer_task(pose);
 	//	tf->push_back( new RestrictToInterface(loop_residues) ); //JQX: not sure why we use loop_residues, in stead of sc_is_packable
-	tf->push_back( new RestrictToInterface(sc_is_packable) );
+	tf->push_back( TaskOperationCOP( new RestrictToInterface(sc_is_packable) ) );
 
 
 
@@ -1709,7 +1709,7 @@ AntibodyInfo::get_TaskFactory_OneCDR(pose::Pose & pose, CDRNameEnum const & cdr_
 
 	pack::task::TaskFactoryOP tf ;
 	tf= setup_packer_task(pose);
-	tf->push_back( new RestrictToInterface(sc_is_packable) );
+	tf->push_back( TaskOperationCOP( new RestrictToInterface(sc_is_packable) ) );
 
 	return tf;
 }

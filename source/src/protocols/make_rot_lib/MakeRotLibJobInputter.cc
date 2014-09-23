@@ -57,7 +57,7 @@ protocols::make_rot_lib::MakeRotLibJobInputter::MakeRotLibJobInputter() :
 
   TR << "Instantiate MakeRotLibJobInputter" << std::endl;
 
-	mrlod_ = new MakeRotLibOptionsData( option[ OptionKeys::make_rot_lib::options_file ].value() );
+	mrlod_ = MakeRotLibOptionsDataOP( new MakeRotLibOptionsData( option[ OptionKeys::make_rot_lib::options_file ].value() ) );
 }
 
 protocols::make_rot_lib::MakeRotLibJobInputter::~MakeRotLibJobInputter(){}
@@ -161,7 +161,7 @@ MakeRotLibJobInputterCreator::keyname() const
 protocols::jd2::JobInputterOP
 MakeRotLibJobInputterCreator::create_JobInputter() const
 {
-  return new MakeRotLibJobInputter;
+  return protocols::jd2::JobInputterOP( new MakeRotLibJobInputter );
 }
 
 }//make_rot_lib

@@ -346,7 +346,7 @@ ConstraintOP DihedralConstraint::remapped_clone( pose::Pose const& src, pose::Po
   id::AtomID id3( core::pose::named_atom_id_to_atom_id(atom3, dest ));
   id::AtomID id4( core::pose::named_atom_id_to_atom_id(atom4, dest ));
   if ( id1.valid() && id2.valid() &&  id3.valid() && id4.valid()  ) {
-    return new DihedralConstraint( id1, id2, id3, id4, func_, score_type() );
+    return ConstraintOP( new DihedralConstraint( id1, id2, id3, id4, func_, score_type() ) );
   } else {
     return NULL;
   }

@@ -51,7 +51,7 @@ public:
 	virtual
 	ResidueSelectorOP
 	create_residue_selector() const {
-		return new DummyResidueSelector;
+		return ResidueSelectorOP( new DummyResidueSelector );
 	}
 
 	virtual
@@ -71,7 +71,7 @@ public:
 	void test_register_one_creator_with_ResidueSelectorFactory() {
 		ResidueSelectorFactory * factory = ResidueSelectorFactory::get_instance();
 		factory->set_throw_on_double_registration();
-		factory->factory_register( new DummyResidueSelectorCreator );
+		factory->factory_register( ResidueSelectorCreatorOP( new DummyResidueSelectorCreator ) );
 		basic::datacache::DataMap dm;
 		ResidueSelectorOP selector = factory->new_residue_selector( "DummyResidueSelector", 0, dm );
 		TS_ASSERT( selector.get() ); // make sure we got back a non-null pointer
@@ -85,7 +85,7 @@ public:
 		try {
 			ResidueSelectorFactory * factory = ResidueSelectorFactory::get_instance();
 			factory->set_throw_on_double_registration();
-			factory->factory_register( new DummyResidueSelectorCreator );
+			factory->factory_register( ResidueSelectorCreatorOP( new DummyResidueSelectorCreator ) );
 			TS_ASSERT( false );
 		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 			std::string expected_err_msg = "Factory Name Conflict: Two or more ResidueSelectorCreators registered with the name DummyResidueSelector";

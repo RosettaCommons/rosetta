@@ -25,8 +25,8 @@ namespace downstream {
 
 class RigidLigandBuilder;
 
-typedef utility::pointer::owning_ptr< RigidLigandBuilder > RigidLigandBuilderOP;
-typedef utility::pointer::owning_ptr< RigidLigandBuilder const > RigidLigandBuilderCOP;
+typedef utility::pointer::shared_ptr< RigidLigandBuilder > RigidLigandBuilderOP;
+typedef utility::pointer::shared_ptr< RigidLigandBuilder const > RigidLigandBuilderCOP;
 
 }
 }

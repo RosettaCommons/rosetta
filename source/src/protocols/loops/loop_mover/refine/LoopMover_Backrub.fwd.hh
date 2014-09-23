@@ -25,8 +25,8 @@ namespace refine {
 // Forward
 class LoopMover_Refine_Backrub;
 
-typedef utility::pointer::owning_ptr< LoopMover_Refine_Backrub > LoopMover_Refine_BackrubOP;
-typedef utility::pointer::owning_ptr< LoopMover_Refine_Backrub const > LoopMover_Refine_BackrubCOP;
+typedef utility::pointer::shared_ptr< LoopMover_Refine_Backrub > LoopMover_Refine_BackrubOP;
+typedef utility::pointer::shared_ptr< LoopMover_Refine_Backrub const > LoopMover_Refine_BackrubCOP;
 
 } //namespace refine
 } //namespace loop_mover

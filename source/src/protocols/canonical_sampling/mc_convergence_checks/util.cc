@@ -47,22 +47,22 @@ void setup_convergence_checks_from_cmdline( moves::MonteCarlo& mc ) {
     } while ( !testin.good() && trial-- > 0 );
 		//	if ( trial == 0 ) throw EXCN_BadInput( "can't open "+option[ OptionKeys::mc::known_structures ]() );
     /* okay file is now good, or will never be... */
-		Pool_RMSD_OP pool_ptr = new Pool_RMSD(
+		Pool_RMSD_OP pool_ptr( new Pool_RMSD(
        option[ OptionKeys::mc::known_structures ]()
-		);
+		) );
 
 		if ( option[ OptionKeys::mc::excluded_residues_from_rmsd ].user() ) {
 			pool_ptr->set_excluded_residues( option[ OptionKeys::mc::excluded_residues_from_rmsd ]() );
 		}
 
-		mc.push_back( new Pool_ConvergenceCheck( pool_ptr, option[ OptionKeys::mc::max_rmsd_against_known_structures ]()  ));
-		protocols::jd2::JobDistributor::get_instance()->job_outputter()->add_evaluation( new Pool_Evaluator( pool_ptr ) );
+		mc.push_back( moves::MonteCarloExceptionConvergeOP( new Pool_ConvergenceCheck( pool_ptr, option[ OptionKeys::mc::max_rmsd_against_known_structures ]()  ) ));
+		protocols::jd2::JobDistributor::get_instance()->job_outputter()->add_evaluation( evaluation::PoseEvaluatorOP( new Pool_Evaluator( pool_ptr ) ) );
 
   }
 
   /* other convergence checker */
   if ( option[ basic::options::OptionKeys::mc::heat_convergence_check ].user() ) {
-    mc.push_back( new Heat_ConvergenceCheck() );
+    mc.push_back( moves::MonteCarloExceptionConvergeOP( new Heat_ConvergenceCheck() ) );
     mc.set_heat_after_cycles( option[ basic::options::OptionKeys::mc::heat_convergence_check ] );
   }
 

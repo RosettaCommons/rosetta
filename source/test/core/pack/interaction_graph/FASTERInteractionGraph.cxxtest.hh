@@ -87,7 +87,7 @@ public:
 		rotsets->prepare_sets_for_packing( *trpcage, *sfxn );
 
 
-		FASTERInteractionGraphOP faster_ig = new FASTERInteractionGraph( 3 );
+		FASTERInteractionGraphOP faster_ig( new FASTERInteractionGraph( 3 ) );
 		//core::pack::pack_rotamers_setup( *trpcage, *sfxn, task, rot_sets, ig );
 
 		rotsets->compute_energies( *trpcage, *sfxn, packer_neighbor_graph, faster_ig );

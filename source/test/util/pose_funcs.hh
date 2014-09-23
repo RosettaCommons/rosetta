@@ -93,7 +93,7 @@ poseop_from_string(
 	using namespace core::chemical;
 	using namespace core::pose;
 
-	PoseOP pose = new Pose;
+	PoseOP pose( new Pose );
 	core::io::pdb::PDB_DReaderOptions options;
 	core::io::pdb::FileData fd = core::io::pdb::PDB_DReader::createFileData( pdbstring, options );
 	ResidueTypeSetCOP residue_set

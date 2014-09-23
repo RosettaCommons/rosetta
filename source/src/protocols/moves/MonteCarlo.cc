@@ -93,15 +93,15 @@ MonteCarlo::MonteCarlo(
 	quench_temp_( 0.0 ),
 	last_accept_( 0 ),
 	mc_accepted_( MCA_accepted_score_beat_last ), // init_pose beats the absence of a pose
-	counter_( new TrialCounter ),
+	counter_( TrialCounterOP( new TrialCounter ) ),
 	update_boinc_( true ),
 	total_score_of_last_considered_pose_( 0.0 ),
 	last_accepted_score_( 0.0 ),
 	lowest_score_( 0.0 ),
 	heat_after_cycles_( 150 )
 {
-	last_accepted_pose_ = new Pose();
-	lowest_score_pose_ = new Pose();
+	last_accepted_pose_ = PoseOP( new Pose() );
+	lowest_score_pose_ = PoseOP( new Pose() );
 	// score_function_ = new ScoreFunction(scorefxn);
 	score_function_ = scorefxn.clone();
 	reset( init_pose );
@@ -119,15 +119,15 @@ MonteCarlo::MonteCarlo(
 	quench_temp_( 0.0 ),
 	last_accept_( 0 ),
 	mc_accepted_( MCA_accepted_score_beat_last ), // an empty pose beats the absence of a pose
-	counter_( new TrialCounter ),
+	counter_( TrialCounterOP( new TrialCounter ) ),
 	update_boinc_( true ),
 	total_score_of_last_considered_pose_( 0.0 ),
 	last_accepted_score_( 0.0 ),
 	lowest_score_( 0.0 ),
 	heat_after_cycles_( 150 )
 {
-	last_accepted_pose_ = new Pose();
-	lowest_score_pose_ = new Pose();
+	last_accepted_pose_ = PoseOP( new Pose() );
+	lowest_score_pose_ = PoseOP( new Pose() );
 	// score_function_ = new ScoreFunction(scorefxn);
 	score_function_ = scorefxn.clone();
 	last_check_ = 0;
@@ -141,8 +141,8 @@ MonteCarlo::~MonteCarlo()
 
 
 void MonteCarlo::clear_poses() {
-	last_accepted_pose_ = new Pose();
-	lowest_score_pose_ = new Pose();
+	last_accepted_pose_ = PoseOP( new Pose() );
+	lowest_score_pose_ = PoseOP( new Pose() );
 }
 
 void

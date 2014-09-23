@@ -48,7 +48,7 @@ public:
 
 	/// @brief test that we select all the residues in trpcage
 	void test_chain_selector_chain_A_select_all() {
-		ChainSelectorOP chain_rs = new ChainSelector;
+		ChainSelectorOP chain_rs( new ChainSelector );
 		utility::vector1< std::string > chain_strings; chain_strings.push_back( "A" );
 		chain_rs->set_chain_strings( chain_strings );
 
@@ -63,7 +63,7 @@ public:
 	/// @brief hack trpcage to set half its residues to chain B
 	/// test that we select only the chain A residues
 	void test_chain_selector_chain_A_select_half() {
-		ChainSelectorOP chain_rs = new ChainSelector;
+		ChainSelectorOP chain_rs( new ChainSelector );
 		utility::vector1< std::string > chain_strings; chain_strings.push_back( "A" );
 		chain_rs->set_chain_strings( chain_strings );
 
@@ -82,7 +82,7 @@ public:
 	/// test that when we give two chains to the ChainSelector, we get
 	/// all the residues in trpcage
 	void test_chain_selector_chain_AandB_select_all() {
-		ChainSelectorOP chain_rs = new ChainSelector;
+		ChainSelectorOP chain_rs( new ChainSelector );
 		utility::vector1< std::string > chain_strings;
 		chain_strings.push_back( "A" );
 		chain_strings.push_back( "B" );
@@ -101,7 +101,7 @@ public:
 
 	/// @brief test that we select all the residues in trpcage
 	void test_chain_selector_chain_1_select_all() {
-		ChainSelectorOP chain_rs = new ChainSelector;
+		ChainSelectorOP chain_rs( new ChainSelector );
 		utility::vector1< std::string > chain_strings; chain_strings.push_back( "1" );
 		chain_rs->set_chain_strings( chain_strings );
 
@@ -116,7 +116,7 @@ public:
 	/// @brief hack together a two-chained trpcage to give it a chain B.
 	/// Test that we select only the chain A residues
 	void test_chain_selector_chain_1_select_half() {
-		ChainSelectorOP chain_rs = new ChainSelector;
+		ChainSelectorOP chain_rs( new ChainSelector );
 		utility::vector1< std::string > chain_strings; chain_strings.push_back( "1" );
 		chain_rs->set_chain_strings( chain_strings );
 
@@ -143,7 +143,7 @@ public:
 	/// test that when we give two chains to the ChainSelector, we get
 	/// all the residues in trpcage
 	void test_chain_selector_chain_1and2_select_all() {
-		ChainSelectorOP chain_rs = new ChainSelector;
+		ChainSelectorOP chain_rs( new ChainSelector );
 		utility::vector1< std::string > chain_strings;
 		chain_strings.push_back( "1" );
 		chain_strings.push_back( "2" );
@@ -177,7 +177,7 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
-		ResidueSelectorOP chain_rs = new ChainSelector;
+		ResidueSelectorOP chain_rs( new ChainSelector );
 		try {
 			chain_rs->parse_my_tag( tag, dm );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -202,7 +202,7 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
-		ResidueSelectorOP chain_rs = new ChainSelector;
+		ResidueSelectorOP chain_rs( new ChainSelector );
 		try {
 			chain_rs->parse_my_tag( tag, dm );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -241,7 +241,7 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
-		ResidueSelectorOP chain_rs = new ChainSelector;
+		ResidueSelectorOP chain_rs( new ChainSelector );
 		try {
 			chain_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should fail

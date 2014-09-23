@@ -69,7 +69,7 @@ SICPatternAtTransform::SICPatternAtTransform(
   sic_fast_(),
 	starting_displacement_(starting_displacement),
 	slide_pattern_(slide_pattern),
-	source_pattern_(new ConstPattern())
+	source_pattern_(SearchPatternOP( new ConstPattern() ))
 {
 	TR.Debug << "Creating SICPatternAtTransform with no source pattern."<< std::endl;
   sic_fast_.init(placed_pose, source_pose);

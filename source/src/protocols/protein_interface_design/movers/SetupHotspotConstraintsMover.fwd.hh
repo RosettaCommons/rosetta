@@ -23,8 +23,8 @@ namespace movers{
 
 //Forwards and OP typedefs
 class SetupHotspotConstraintsMover;
-typedef utility::pointer::owning_ptr< SetupHotspotConstraintsMover > SetupHotspotConstraintsMoverOP;
-typedef utility::pointer::owning_ptr< SetupHotspotConstraintsMover const > SetupHotspotConstraintsMoverCOP;
+typedef utility::pointer::shared_ptr< SetupHotspotConstraintsMover > SetupHotspotConstraintsMoverOP;
+typedef utility::pointer::shared_ptr< SetupHotspotConstraintsMover const > SetupHotspotConstraintsMoverCOP;
 
 }//movers
 }//protein_interface_design

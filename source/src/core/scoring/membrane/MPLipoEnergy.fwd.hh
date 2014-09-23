@@ -27,8 +27,8 @@ namespace scoring {
 namespace membrane {
 	
 class MPLipoEnergy;
-typedef utility::pointer::owning_ptr< MPLipoEnergy > MPLipoEnergyOP;
-typedef utility::pointer::owning_ptr< MPLipoEnergy const > MPLipoEnergyCOP;
+typedef utility::pointer::shared_ptr< MPLipoEnergy > MPLipoEnergyOP;
+typedef utility::pointer::shared_ptr< MPLipoEnergy const > MPLipoEnergyCOP;
 	
 } // membrane
 } // scoring

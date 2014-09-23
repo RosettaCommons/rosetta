@@ -20,7 +20,7 @@ namespace protocols{
 namespace toolbox{
 
 class SelectResiduesByLayer;
-typedef utility::pointer::owning_ptr< SelectResiduesByLayer > SelectResiduesByLayerOP;
+typedef utility::pointer::shared_ptr< SelectResiduesByLayer > SelectResiduesByLayerOP;
 
 
 }

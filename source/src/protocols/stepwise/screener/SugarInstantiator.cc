@@ -82,8 +82,8 @@ namespace screener {
 	SugarInstantiator::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
 		if ( instantiate_sugar_ ){
 			using protocols::moves::MoverOP;
-			update_mover->add_mover( new SugarInstantiateMover( moving_res_) );
-			restore_mover->add_mover( new SugarVirtualizeMover( moving_res_) );
+			update_mover->add_mover( MoverOP( new SugarInstantiateMover( moving_res_) ) );
+			restore_mover->add_mover( MoverOP( new SugarVirtualizeMover( moving_res_) ) );
 		} else {
 			update_mover->add_mover( 0 );
 			restore_mover->add_mover( 0 );

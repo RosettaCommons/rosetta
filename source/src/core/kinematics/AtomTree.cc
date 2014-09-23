@@ -61,26 +61,26 @@ AtomTree::AtomTree(
 	AtomPointer2D const & new_atom_pointer,
 	bool const from_xyz // = true
 ):
-	this_weak_ptr_(0),
-	root_( 0 ),
+	this_weak_ptr_(/* 0 */),
+	root_( /* 0 */ ),
 	atom_pointer_(), // default_setting_ = null pointer
 	internal_coords_need_updating_( false ),
 	xyz_coords_need_updating_( false ),
-	topological_match_to_( 0 ),
-	external_coordinate_residues_changed_( new ResidueCoordinateChangeList )
+	topological_match_to_( /* 0 */ ),
+	external_coordinate_residues_changed_( ResidueCoordinateChangeListOP( new ResidueCoordinateChangeList ) )
 {
 	replace_tree( new_atom_pointer, from_xyz );
 	external_coordinate_residues_changed_->total_residue( new_atom_pointer.size() );
 }
 
 AtomTree::AtomTree():
-	this_weak_ptr_(0),
-	root_(0),
+	this_weak_ptr_(/* 0 */),
+	root_(/* 0 */),
 	atom_pointer_(),
 	internal_coords_need_updating_( false ),
 	xyz_coords_need_updating_( false ),
-	topological_match_to_( 0 ),
-	external_coordinate_residues_changed_( new ResidueCoordinateChangeList )
+	topological_match_to_( /* 0 */ ),
+	external_coordinate_residues_changed_( ResidueCoordinateChangeListOP( new ResidueCoordinateChangeList ) )
 {}
 
 /// @brief Destructor
@@ -94,14 +94,14 @@ AtomTree::~AtomTree()
 /// @details copy ctor, uses operator=
 AtomTree::AtomTree( AtomTree const & src ) :
 	utility::pointer::ReferenceCount(),
-	this_weak_ptr_( 0 ),
-	root_( 0 ), /// without this initialization, the destruction of this
+	this_weak_ptr_( /* 0 */ ),
+	root_( /* 0 */ ), /// without this initialization, the destruction of this
 	/// uninitialized pointer might have disasterous consequences
 	atom_pointer_(), // default_setting_ = null pointer
 	internal_coords_need_updating_( false ),
 	xyz_coords_need_updating_( false ),
-	topological_match_to_( 0 ),
-	external_coordinate_residues_changed_( new ResidueCoordinateChangeList )
+	topological_match_to_( /* 0 */ ),
+	external_coordinate_residues_changed_( ResidueCoordinateChangeListOP( new ResidueCoordinateChangeList ) )
 {
 	*this = src;
 }
@@ -118,7 +118,7 @@ void AtomTree::set_weak_pointer_to_self( AtomTreeCAP self_pointer )
 void
 AtomTree::find_root_from_atom_pointer()
 {
-	root_ = 0;
+	root_.reset();
 	for ( Size i=1; i<= atom_pointer_.size(); ++i ) {
 		for ( Size j=1; j<= atom_pointer_[i].size(); ++j ) {
 			assert( atom_pointer_[i][j] && atom_pointer_[i][j]->id() == AtomID( j,i ) );
@@ -210,7 +210,7 @@ AtomTree::delete_seqpos( Size const seqpos )
 	Size const natoms( atom_pointer_[seqpos].size() );
 	AtomOP anchor(0), root(0), child(0);
 	for ( Size i=1; i<= natoms; ++i ) {
-		AtomOP atom( atom_pointer_[seqpos][i]() );
+		AtomOP atom( atom_pointer_[seqpos][i] );
 		if ( !atom ) continue;
 		if ( Size(atom->parent()->id().rsd()) != seqpos ) {
 			assert( !anchor );
@@ -301,7 +301,7 @@ AtomTree::replace_residue_subtree(
 	//
 	AtomOP anchor_atom(0);
 	AtomOP old_root_atom(0);
-	AtomOP new_root_atom( new_atoms[ incoming.atom2.atomno() ]() );
+	AtomOP new_root_atom( new_atoms[ incoming.atom2.atomno() ] );
 
 	if ( incoming.atom1.valid() ) anchor_atom = atom_pointer( incoming.atom1 );
 
@@ -326,7 +326,7 @@ AtomTree::replace_residue_subtree(
 			// only necessary for debugging purposes
 			old_parent->delete_atom( child );
 		}
-		AtomOP new_parent( new_atoms[ outgoing[i].atom1.atomno() ]() );
+		AtomOP new_parent( new_atoms[ outgoing[i].atom1.atomno() ] );
 		new_parent->insert_atom( child );
 	}
 
@@ -335,7 +335,7 @@ AtomTree::replace_residue_subtree(
 		assert( old_atoms.empty() );
 	} else {
 		for ( Size i=1; i<= old_atoms.size(); ++i ) {
-			AtomOP old_atom( old_atoms[i]() );
+			AtomOP old_atom( old_atoms[i] );
 			assert( old_atom ); // atom_pointer_ is ragged, always keep dimension equal to actual number of atoms
 			if ( ! old_atom->parent() ) {
 				// this was the root of the atomtree
@@ -1048,7 +1048,7 @@ void
 AtomTree::clear()
 {
 	atom_pointer_.clear();
-	root_ = 0;
+	root_.reset();
 	external_coordinate_residues_changed_->total_residue(0);
 
 	// anything that depends on the tree topology needs to be updated
@@ -1394,7 +1394,7 @@ void
 AtomTree::notify_topological_change( AtomTreeCAP ASSERT_ONLY( observee ) ) const
 {
 	assert( utility::pointer::equal(observee, topological_match_to_) );
-	topological_match_to_ = 0;
+	topological_match_to_.reset();
 }
 
 /// @details When an AtomTree which was observing this AtomTree changes its

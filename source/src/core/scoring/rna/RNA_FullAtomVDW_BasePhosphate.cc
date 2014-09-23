@@ -77,7 +77,7 @@ RNA_FullAtomVDW_BasePhosphateCreator::create_energy_method(
 		fa_intra_RNA_base_phos_rep,
 		fa_intra_RNA_base_phos_sol );
 
-	return new RNA_FullAtomVDW_BasePhosphate( etable_energy_in, etable_in );
+	return methods::EnergyMethodOP( new RNA_FullAtomVDW_BasePhosphate( etable_energy_in, etable_in ) );
 }
 
 
@@ -123,7 +123,7 @@ methods::EnergyMethodOP
 RNA_FullAtomVDW_BasePhosphate::clone() const
 {
 
-	return new RNA_FullAtomVDW_BasePhosphate( *this );
+	return methods::EnergyMethodOP( new RNA_FullAtomVDW_BasePhosphate( *this ) );
 }
 
 

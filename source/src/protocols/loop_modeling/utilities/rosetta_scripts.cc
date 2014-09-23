@@ -49,7 +49,7 @@ LoopMoverOP loop_mover_from_tag(
 
 	MoverOP base_mover = MoverFactory::get_instance()->newMover(
 				tag, data, filters, movers, pose);
-	LoopMoverOP loop_mover = dynamic_cast<LoopMover*>(base_mover.get());
+	LoopMoverOP loop_mover = utility::pointer::dynamic_pointer_cast< protocols::loop_modeling::LoopMover > ( base_mover );
 
 	if (loop_mover.get() == NULL) {
 		stringstream message;

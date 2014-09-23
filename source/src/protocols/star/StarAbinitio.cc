@@ -110,7 +110,7 @@ void update_sequence_separation(Size distance, Pose* pose) {
   using protocols::constraints_additional::MaxSeqSepConstraintSet;
   using protocols::constraints_additional::MaxSeqSepConstraintSetOP;
 
-  MaxSeqSepConstraintSetOP new_cst = new MaxSeqSepConstraintSet(*pose->constraint_set(), pose->fold_tree());
+  MaxSeqSepConstraintSetOP new_cst( new MaxSeqSepConstraintSet(*pose->constraint_set(), pose->fold_tree()) );
   new_cst->set_max_seq_sep(distance);
   pose->constraint_set(new_cst);
   TR << "max_seq_sep => " << distance << std::endl;
@@ -146,7 +146,7 @@ void setup_constraints(const Loops& aligned, Pose* pose) {
 
           Real distance = p.distance(q);
           if (distance <= option[OptionKeys::abinitio::star::initial_dist_cutoff]()) {
-            pose->add_constraint(core::scoring::constraints::ConstraintCOP(new AtomPairConstraint(ai, aj, core::scoring::func::FuncOP(new HarmonicFunc(distance, 2)))));
+            pose->add_constraint(core::scoring::constraints::ConstraintCOP( new AtomPairConstraint(ai, aj, core::scoring::func::FuncOP(new HarmonicFunc(distance, 2))) ));
             TR << "AtomPair CA " << k << " CA " << l << " HARMONIC " << distance << " 2" << std::endl;
             ++n_csts;
           }
@@ -266,9 +266,9 @@ void StarAbinitio::apply(Pose& pose) {
   compute_per_residue_probabilities(num_residues, fragments_sm_->max_frag_length(), pose.fold_tree(), &probs_sm);
   compute_per_residue_probabilities(num_residues, fragments_lg_->max_frag_length(), pose.fold_tree(), &probs_lg);
 
-  MoverOP fragments_lg_uni = new BiasedFragmentMover(PolicyFactory::get_policy("uniform", fragments_lg_, 25), probs_lg);
-  MoverOP fragments_sm_uni = new BiasedFragmentMover(PolicyFactory::get_policy("uniform", fragments_sm_, 200), probs_sm);
-  MoverOP fragments_sm_smo = new BiasedFragmentMover(PolicyFactory::get_policy("smooth", fragments_sm_, 200), probs_sm);
+  MoverOP fragments_lg_uni( new BiasedFragmentMover(PolicyFactory::get_policy("uniform", fragments_lg_, 25), probs_lg) );
+  MoverOP fragments_sm_uni( new BiasedFragmentMover(PolicyFactory::get_policy("uniform", fragments_sm_, 200), probs_sm) );
+  MoverOP fragments_sm_smo( new BiasedFragmentMover(PolicyFactory::get_policy("smooth", fragments_sm_, 200), probs_sm) );
 
   // Simulation parameters
   const Real mult = option[OptionKeys::abinitio::increase_cycles]();
@@ -344,10 +344,10 @@ StarAbinitio::StarAbinitio() {
 
   // Approximate secondary structure from fragments when psipred isn't available
   if (option[in::file::psipred_ss2].user()) {
-    pred_ss_ = new SecondaryStructure();
+    pred_ss_ = core::fragment::SecondaryStructureOP( new SecondaryStructure() );
     pred_ss_->read_psipred_ss2(option[in::file::psipred_ss2]());
   } else {
-    pred_ss_ = new SecondaryStructure(*fragments_sm_);
+    pred_ss_ = core::fragment::SecondaryStructureOP( new SecondaryStructure(*fragments_sm_) );
   }
 
   // Configure the minimizer
@@ -355,15 +355,15 @@ StarAbinitio::StarAbinitio() {
   min_score->set_weight(core::scoring::atom_pair_constraint, option[OptionKeys::constraints::cst_weight]());
 
   MinimizerOptionsOP min_options;
-	min_options = new MinimizerOptions("lbfgs_armijo_nonmonotone", 0.01, true, false, false);
+	min_options = MinimizerOptionsOP( new MinimizerOptions("lbfgs_armijo_nonmonotone", 0.01, true, false, false) );
   min_options->max_iter(100);
 
-  MoveMapOP mm = new MoveMap();
+  MoveMapOP mm( new MoveMap() );
   mm->set_bb(true);
   mm->set_chi(true);
   mm->set_jump(true);
 
-  minimizer_ = new SaneMinMover(mm, min_score, min_options, true);
+  minimizer_ = protocols::simple_moves::SaneMinMoverOP( new SaneMinMover(mm, min_score, min_options, true) );
 }
 
 std::string StarAbinitio::get_name() const {
@@ -371,11 +371,11 @@ std::string StarAbinitio::get_name() const {
 }
 
 protocols::moves::MoverOP StarAbinitio::clone() const {
-  return new StarAbinitio(*this);
+  return protocols::moves::MoverOP( new StarAbinitio(*this) );
 }
 
 protocols::moves::MoverOP StarAbinitio::fresh_instance() const {
-  return new StarAbinitio();
+  return protocols::moves::MoverOP( new StarAbinitio() );
 }
 
 }  // namespace star

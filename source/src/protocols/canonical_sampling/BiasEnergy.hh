@@ -55,8 +55,8 @@ class BiasEnergy : public ThermodynamicObserver, public protocols::jd2::JobOutpu
 		typedef T ValueType;
 
 	public:
-		typedef utility::pointer::owning_ptr< Histogram<T> > OP;
-		typedef utility::pointer::owning_ptr< Histogram const > COP;
+		typedef utility::pointer::shared_ptr< Histogram<T> > OP;
+		typedef utility::pointer::shared_ptr< Histogram const > COP;
 
 		Histogram( core::Real grid_min, core::Real grid_max, core::Size ngrid_cells_ = 100 );
 		Histogram( Histogram const& );

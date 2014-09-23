@@ -21,8 +21,8 @@ namespace enzdes {
 
 class EnzdesJobInputter;
 
-typedef utility::pointer::owning_ptr< EnzdesJobInputter > EnzdesJobInputterOP;
-typedef utility::pointer::owning_ptr< EnzdesJobInputter const > EnzdesJobInputterCOP;
+typedef utility::pointer::shared_ptr< EnzdesJobInputter > EnzdesJobInputterOP;
+typedef utility::pointer::shared_ptr< EnzdesJobInputter const > EnzdesJobInputterCOP;
 
 } //namespace enzdes
 } //namespace protocols

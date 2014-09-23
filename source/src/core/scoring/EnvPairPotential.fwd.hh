@@ -22,12 +22,12 @@ namespace core {
 namespace scoring {
 
 class CenListInfo;
-typedef utility::pointer::owning_ptr< CenListInfo > CenListInfoOP;
+typedef utility::pointer::shared_ptr< CenListInfo > CenListInfoOP;
 
 class EnvPairPotential;
 
-typedef utility::pointer::owning_ptr< EnvPairPotential > EnvPairPotentialOP;
-typedef utility::pointer::owning_ptr< EnvPairPotential const > EnvPairPotentialCOP;
+typedef utility::pointer::shared_ptr< EnvPairPotential > EnvPairPotentialOP;
+typedef utility::pointer::shared_ptr< EnvPairPotential const > EnvPairPotentialCOP;
 
 } // ns scoring
 } // ns core

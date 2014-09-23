@@ -36,7 +36,7 @@ using namespace core::scoring;
 static thread_local basic::Tracer TR( "protocols.simple_filters.ReportFilter" );
 
 protocols::filters::FilterOP
-ReportFilterCreator::create_filter() const { return new ReportFilter; }
+ReportFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ReportFilter ); }
 
 std::string
 ReportFilterCreator::keyname() const { return "Report"; }
@@ -44,8 +44,8 @@ ReportFilterCreator::keyname() const { return "Report"; }
 //default ctor
 ReportFilter::ReportFilter() :
 protocols::filters::Filter( "Report" ),
-report_string_( NULL ),
-filter_( NULL ),
+report_string_( /* NULL */ ),
+filter_( /* NULL */ ),
 report_filter_name_( "" ),
 filter_val_( -9999.9 ),
     checkpointing_file_("")
@@ -107,9 +107,9 @@ ReportFilter::report( std::ostream & out, core::pose::Pose const & /*pose*/ ) co
 	out<<"filter: "<<report_filter_name_;
 	protocols::jd2::JobOP job2 = jd2::JobDistributor::get_instance()->current_job();
 	std::string job_name (JobDistributor::get_instance()->job_outputter()->output_name( job2 ) );
-	if( report_string_() != NULL && report_string_->obj.length() > 0 )
+	if( report_string_ != NULL && report_string_->obj.length() > 0 )
 		out<<"job name: "<<job_name<<" report_string: "<<report_string_->obj<<std::endl;
-	if( filter_() != NULL )
+	if( filter_ != NULL )
 		out<<"job name: "<<job_name<<" reporting filter value: ";
     out<<"Internal filter's value is: "<<filter_val()<<std::endl;
 }

@@ -24,8 +24,8 @@ namespace protocols {
 namespace docking{
 
 class DockingPrepackProtocol;
-typedef utility::pointer::owning_ptr< DockingPrepackProtocol > DockingPrepackProtocolOP;
-typedef utility::pointer::owning_ptr< DockingPrepackProtocol const > DockingPrepackProtocolCOP;
+typedef utility::pointer::shared_ptr< DockingPrepackProtocol > DockingPrepackProtocolOP;
+typedef utility::pointer::shared_ptr< DockingPrepackProtocol const > DockingPrepackProtocolCOP;
 }
 }
 #endif

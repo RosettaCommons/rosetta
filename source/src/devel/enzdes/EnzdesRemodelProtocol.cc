@@ -137,7 +137,7 @@ EnzdesRemodelProtocol::apply(
 
 	//set the native pose if requested
 	if( ! basic::options::option[basic::options::OptionKeys::in::file::native].user() ){
-		core::pose::PoseOP natpose = new core::pose::Pose( pose );
+		core::pose::PoseOP natpose( new core::pose::Pose( pose ) );
 		(*scorefxn_)( *natpose );
 		this->set_native_pose( natpose );
 	}
@@ -225,7 +225,7 @@ EnzdesRemodelMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 EnzdesRemodelMoverCreator::create_mover() const {
-	return new EnzdesRemodelMover;
+	return protocols::moves::MoverOP( new EnzdesRemodelMover );
 }
 
 std::string
@@ -238,20 +238,20 @@ EnzdesRemodelMoverCreator::mover_name()
 EnzdesRemodelMover::EnzdesRemodelMover()
 :
 	protocols::moves::Mover(),
-	enz_prot_(NULL),
-	flex_region_( NULL ),
+	enz_prot_(/* NULL */),
+	flex_region_( /* NULL */ ),
 	remodel_trials_( basic::options::option[basic::options::OptionKeys::enzdes::remodel_trials] ),
 	remodel_secmatch_(basic::options::option[basic::options::OptionKeys::enzdes::remodel_secmatch] ),
 	reinstate_initial_foldtree_(false),
 	keep_existing_aa_identities_(false),
 	region_to_remodel_(1),
-	start_to_current_smap_(NULL),
+	start_to_current_smap_(/* NULL */),
 	include_existing_conf_as_invrot_target_(false),
 	ss_similarity_probability_( 1.0 - basic::options::option[basic::options::OptionKeys::enzdes::remodel_aggressiveness] ),
 	max_allowed_score_increase_(0.0)
 {
-	predesign_filters_ = new protocols::filters::FilterCollection();
-	postdesign_filters_ = new protocols::filters::FilterCollection();
+	predesign_filters_ = protocols::filters::FilterCollectionOP( new protocols::filters::FilterCollection() );
+	postdesign_filters_ = protocols::filters::FilterCollectionOP( new protocols::filters::FilterCollection() );
 
 	vlb_sfxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "remodel_cen" );
 	//turn on the constraint weights in the remodel scorefunction for our purposes
@@ -306,7 +306,7 @@ EnzdesRemodelMover::EnzdesRemodelMover(
 	reinstate_initial_foldtree_(false),
 	keep_existing_aa_identities_(false),
 	region_to_remodel_(1),
-	start_to_current_smap_(NULL),
+	start_to_current_smap_(/* NULL */),
 	include_existing_conf_as_invrot_target_(false),
 	ss_similarity_probability_( 1.0 - basic::options::option[basic::options::OptionKeys::enzdes::remodel_aggressiveness] )
 {
@@ -319,8 +319,8 @@ EnzdesRemodelMover::EnzdesRemodelMover(
 
 	runtime_assert( flex_region == enz_prot->enz_flexible_region( flex_region->index() ) );
 
-	predesign_filters_ = new protocols::filters::FilterCollection();
-	postdesign_filters_ = new protocols::filters::FilterCollection();
+	predesign_filters_ = protocols::filters::FilterCollectionOP( new protocols::filters::FilterCollection() );
+	postdesign_filters_ = protocols::filters::FilterCollectionOP( new protocols::filters::FilterCollection() );
 
 	set_task( task );
 
@@ -347,7 +347,7 @@ EnzdesRemodelMover::~EnzdesRemodelMover(){}
 
 protocols::moves::MoverOP
 EnzdesRemodelMover::clone() const{
-	return new EnzdesRemodelMover( *this );
+	return protocols::moves::MoverOP( new EnzdesRemodelMover( *this ) );
 }
 
 
@@ -395,7 +395,7 @@ EnzdesRemodelMover::apply(
 
 	this->set_last_move_status( protocols::moves::FAIL_RETRY );
 
-	this->set_native_pose( new core::pose::Pose( pose ) );
+	this->set_native_pose( PoseCOP( new core::pose::Pose( pose ) ) );
 
 	//note: the pose gets reduced to poly-ala at all design positions here
 	examine_initial_conformation( pose );
@@ -492,7 +492,7 @@ EnzdesRemodelMover::initialize(
 {
 
 	if( !enz_prot_ ){
-		enz_prot_ = new protocols::enzdes::EnzdesFlexBBProtocol();
+		enz_prot_ = protocols::enzdes::EnzdesFlexBBProtocolOP( new protocols::enzdes::EnzdesFlexBBProtocol() );
 		if( enz_prot_->reduced_scorefxn()->has_zero_weight( core::scoring::backbone_stub_constraint ) ){
 			enz_prot_->reduced_scorefxn()->set_weight( core::scoring::backbone_stub_constraint, 1.0 );
 		}
@@ -524,7 +524,7 @@ EnzdesRemodelMover::remodel_pose(
 
 	Interval interval( flex_region_->start(), flex_region_->stop() );
 
-	SegmentRebuildOP build_instr = new SegmentRebuild( interval, secstruct );
+	SegmentRebuildOP build_instr( new SegmentRebuild( interval, secstruct ) );
 
 	BuildManager bmanager;
 
@@ -579,13 +579,13 @@ EnzdesRemodelMover::remodel_pose(
 			res_to_repack.insert( flex_region_->start() + num_aa_each_side_to_replace );
 			pose.replace_residue( flex_region_->start() + num_aa_each_side_to_replace, core::conformation::Residue( *(init_aa_[num_aa_each_side_to_replace+1].lock()), true), true);
 		}
-		core::pack::task::PackerTaskOP task = new core::pack::task::PackerTask_( pose );
+		core::pack::task::PackerTaskOP task( new core::pack::task::PackerTask_( pose ) );
 		task->initialize_from_command_line();
 		for( Size i = 1; i <= task->total_residue(); ++i){
 			if( res_to_repack.find( i ) != res_to_repack.end() ) task->nonconst_residue_task( i ).restrict_to_repacking();
 			else task->nonconst_residue_task( i ).prevent_repacking();
 		}
-		protocols::simple_moves::PackRotamersMoverOP packrot = new protocols::simple_moves::PackRotamersMover( enz_prot_->get_scorefxn(), task );
+		protocols::simple_moves::PackRotamersMoverOP packrot( new protocols::simple_moves::PackRotamersMover( enz_prot_->get_scorefxn(), task ) );
 		packrot->apply( pose );
 		(*enz_prot_->reduced_scorefxn())( pose );
 	} // if(keep_existing_aa_identities)
@@ -723,7 +723,7 @@ EnzdesRemodelMover::examine_initial_conformation(
 	//score pose in reduced scorefxn to set up score filter correctly
 	(*enz_prot_->reduced_scorefxn())( pose );
 
-	protocols::simple_filters::ScoreCutoffFilterOP score_filter = new protocols::simple_filters::ScoreCutoffFilter();
+	protocols::simple_filters::ScoreCutoffFilterOP score_filter( new protocols::simple_filters::ScoreCutoffFilter() );
 
 
 	//setting the predesign score filter to a pretty generous cutoff.
@@ -738,7 +738,7 @@ EnzdesRemodelMover::examine_initial_conformation(
 	predesign_filters_->add_filter( score_filter );
 
 	//last but not least, we have to initialise the start_to_cur sequence mapping
-	start_to_current_smap_ = new core::id::SequenceMapping();
+	start_to_current_smap_ = core::id::SequenceMappingOP( new core::id::SequenceMapping() );
 	start_to_current_smap_->clear();
 
 	for( core::Size i = 1; i <= pose.total_residue(); ++i ) start_to_current_smap_->push_back( i );
@@ -767,7 +767,7 @@ EnzdesRemodelMover::setup_packer_neighbor_graph_filter( core::pose::Pose const &
 	nl_calc.get( (std::string) "nlcontacts_graph", mval_graph, pose );
 
 
-	protocols::simple_filters::PackerNeighborGraphFilterOP png_filter = new protocols::simple_filters::PackerNeighborGraphFilter( orig_task_, enz_prot_->get_scorefxn() );
+	protocols::simple_filters::PackerNeighborGraphFilterOP png_filter( new protocols::simple_filters::PackerNeighborGraphFilter( orig_task_, enz_prot_->get_scorefxn() ) );
 
 	png_filter->add_required_connections_between_regions( remodel_positions_, other_design_positions_, mval_size.value() );
 
@@ -1005,14 +1005,14 @@ EnzdesRemodelMover::translate_res_interactions_to_rvinfos(
 	if( res_ints.targ_base_atom_names().size() != 0 ) translate_atomnames_to_restype_set_atomids( pose, restype_set, targ_pos, res_ints.targ_base_atom_names(), targ_base_atom_ids );
 	if( res_ints.targ_base2_atom_names().size() != 0 ) translate_atomnames_to_restype_set_atomids( pose, restype_set, targ_pos, res_ints.targ_base2_atom_names(), targ_base2_atom_ids );
 
-	protocols::forge::remodel::ResidueVicinityInfoOP to_return = new protocols::forge::remodel::ResidueVicinityInfo( targ_pos, targ_atom_ids, loopres_atom_ids, res_ints.num_interactions() );
+	protocols::forge::remodel::ResidueVicinityInfoOP to_return( new protocols::forge::remodel::ResidueVicinityInfo( targ_pos, targ_atom_ids, loopres_atom_ids, res_ints.num_interactions() ) );
 
 	//have to translate distance information in resints into proper function explicityly
 	core::Real min_dis = std::max(0.0, res_ints.dis()->ideal_val() - res_ints.dis()->tolerance() );
 	core::Real max_dis = res_ints.dis()->ideal_val() + res_ints.dis()->tolerance();
 	core::Real force_k_dis = res_ints.dis()->force_const();
-	to_return->set_dis( new core::scoring::constraints::BoundFunc(
-			min_dis, max_dis,	sqrt(1/ force_k_dis),	"dis") );
+	to_return->set_dis( core::scoring::func::FuncOP( new core::scoring::constraints::BoundFunc(
+			min_dis, max_dis,	sqrt(1/ force_k_dis),	"dis") ) );
 
 	if( (loopres_base_atom_ids.size() != 0 ) && res_ints.loop_ang() ){
 		runtime_assert( loopres_base_atom_ids.size() == loopres_atom_ids.size() );
@@ -1059,7 +1059,7 @@ EnzdesRemodelMover::setup_cached_observers(
 ){
 
 	if( !pose.observer_cache().has( core::pose::datacache::CacheableObserverType::LENGTH_EVENT_COLLECTOR ) ){
-		core::pose::datacache::LengthEventCollectorOP lencollect = new core::pose::datacache::LengthEventCollector();
+		core::pose::datacache::LengthEventCollectorOP lencollect( new core::pose::datacache::LengthEventCollector() );
 
 		pose.observer_cache().set( core::pose::datacache::CacheableObserverType::LENGTH_EVENT_COLLECTOR, lencollect );
 	}
@@ -1148,10 +1148,10 @@ EnzdesRemodelMover::secmatch_after_remodel(
 			}
 		}
 	}
-	if( !ligres || !(ligres->type().is_ligand()) ) ligres = new core::conformation::Residue( *(cstio->mcfi_list( 1 )->mcfi( 1 )->allowed_restypes( 1 )[1]), true );
+	if( !ligres || !(ligres->type().is_ligand()) ) ligres = core::conformation::ResidueCOP( new core::conformation::Residue( *(cstio->mcfi_list( 1 )->mcfi( 1 )->allowed_restypes( 1 )[1]), true ) );
 
 	protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_cst_cache( NULL ); //wipe this out for now, matcher will overwrite
-	protocols::match::MatcherMoverOP matcher_mover = new protocols::match::MatcherMover();
+	protocols::match::MatcherMoverOP matcher_mover( new protocols::match::MatcherMover() );
 
 	//generate the positions
 	utility::vector1< core::Size > match_positions;
@@ -1256,8 +1256,8 @@ EnzdesRemodelMover::setup_rcgs(
 
 	if( cen_rv_infos.size() != 0 ){
 		using namespace protocols::forge::remodel;
-		vlb.add_rcg( new ResidueVicinityRCG( flex_region_->start(), flex_region_->stop(), cen_rv_infos ) );
-		rcgs_.push_back( new ResidueVicinityRCG( flex_region_->start(), flex_region_->stop(), fa_rv_infos ) );
+		vlb.add_rcg( RemodelConstraintGeneratorOP( new ResidueVicinityRCG( flex_region_->start(), flex_region_->stop(), cen_rv_infos ) ) );
+		rcgs_.push_back( utility::pointer::shared_ptr<class protocols::forge::remodel::RemodelConstraintGenerator>( new ResidueVicinityRCG( flex_region_->start(), flex_region_->stop(), fa_rv_infos ) ) );
 	}
 }
 
@@ -1270,8 +1270,8 @@ EnzdesRemodelMover::setup_rcgs_from_inverse_rotamers(
 	for( core::Size i =1; i <= target_inverse_rotamers_.size(); ++i) {
 		using namespace protocols::forge::constraints;
 		using namespace protocols::forge::remodel;
-		vlb.add_rcg( new InverseRotamersRCG( flex_region_->start(), flex_region_->stop(),target_inverse_rotamers_[i] ) );
-		rcgs_.push_back( new InverseRotamersRCG( flex_region_->start(), flex_region_->stop(), target_inverse_rotamers_[i] ) );
+		vlb.add_rcg( RemodelConstraintGeneratorOP( new InverseRotamersRCG( flex_region_->start(), flex_region_->stop(),target_inverse_rotamers_[i] ) ) );
+		rcgs_.push_back( utility::pointer::shared_ptr<class protocols::forge::remodel::RemodelConstraintGenerator>( new InverseRotamersRCG( flex_region_->start(), flex_region_->stop(), target_inverse_rotamers_[i] ) ) );
 	}
 }
 
@@ -1336,7 +1336,7 @@ EnzdesRemodelMover::create_target_inverse_rotamers(
 						if( (corresponding_res_block == 0 ) || ( corresponding_res_block > i ) ){
 							tr << "Catalytic residue for MatchConstraint " << i << " at position " << seqpos << " is in remodeled region, building inverse rotamers... " << std::endl;
 							target_inverse_rotamers_.push_back( std::list<core::conformation::ResidueCOP> () );
-							if( include_existing_conf_as_invrot_target_) target_inverse_rotamers_[ target_inverse_rotamers_.size() ].push_back( new core::conformation::Residue( pose.residue( seqpos ) ) );
+							if( include_existing_conf_as_invrot_target_) target_inverse_rotamers_[ target_inverse_rotamers_.size() ].push_back( utility::pointer::shared_ptr<const class core::conformation::Residue>( new core::conformation::Residue( pose.residue( seqpos ) ) ) );
 							invrots_build = true;
 							std::list< core::conformation::ResidueCOP > cur_inv_rots( enzcst_io->mcfi_list( i )->inverse_rotamers_against_residue( other_res, pose.residue( other_seqpos ).get_self_ptr() ) );
 							if( cur_inv_rots.size() != 0 ) target_inverse_rotamers_[ target_inverse_rotamers_.size() ].splice( target_inverse_rotamers_[ target_inverse_rotamers_.size() ].end(), cur_inv_rots );

@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class ChargeChargeFeatures;
-typedef utility::pointer::owning_ptr< ChargeChargeFeatures > ChargeChargeFeaturesOP;
-typedef utility::pointer::owning_ptr< ChargeChargeFeatures const > ChargeChargeFeaturesCOP;
+typedef utility::pointer::shared_ptr< ChargeChargeFeatures > ChargeChargeFeaturesOP;
+typedef utility::pointer::shared_ptr< ChargeChargeFeatures const > ChargeChargeFeaturesCOP;
 
 }//features
 }//protocols

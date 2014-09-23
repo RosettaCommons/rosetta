@@ -69,7 +69,7 @@ private:
 	///@brief data store for the KBP data.  key is the name3 of the amino acid
 	/// This is being done with an unordered map to allow for constant lookup but
 	/// still allow for KBP data about NCAAs to be introduced eventually if needed
-	typedef utility::pointer::owning_ptr< core::grid::CartGrid<core::Real> > KBPGridOP;
+	typedef utility::pointer::shared_ptr< core::grid::CartGrid<core::Real> > KBPGridOP;
 	boost::unordered_map<std::string, KBPGridOP > kbp_data_;
 	core::Real distance_bin_width_;
 	core::Real theta_bin_width_;

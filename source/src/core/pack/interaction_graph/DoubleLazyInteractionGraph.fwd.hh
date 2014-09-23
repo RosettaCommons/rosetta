@@ -25,8 +25,8 @@ class DoubleLazyNode;
 class DoubleLazyEdge;
 class DoubleLazyInteractionGraph;
 
-typedef utility::pointer::owning_ptr< DoubleLazyInteractionGraph > DoubleLazyInteractionGraphOP;
-typedef utility::pointer::owning_ptr< DoubleLazyInteractionGraph const > DoubleLazyInteractionGraphCOP;
+typedef utility::pointer::shared_ptr< DoubleLazyInteractionGraph > DoubleLazyInteractionGraphOP;
+typedef utility::pointer::shared_ptr< DoubleLazyInteractionGraph const > DoubleLazyInteractionGraphCOP;
 
 }
 }

@@ -334,8 +334,8 @@ OopDockDesignProtocol::apply(
 
 	// create a task factory and task operations
 	using core::pack::task::operation::TaskOperationCOP;
-	TaskFactoryOP pert_tf(new TaskFactory());
-	pert_tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
+	TaskFactoryOP pert_tf( new TaskFactory() );
+	pert_tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 
 	operation::ReadResfileOP pert_rrop( new operation::ReadResfile() );
 	pert_rrop->default_filename();
@@ -348,7 +348,7 @@ OopDockDesignProtocol::apply(
 	//pert_tf->push_back( pert_rtio );
 
 	// create a rotamer trials mover
-	simple_moves::RotamerTrialsMoverOP pert_rt(new simple_moves::EnergyCutRotamerTrialsMover( pert_score_fxn, pert_tf, pert_mc, 0.1 /*energycut*/ ) );
+	simple_moves::RotamerTrialsMoverOP pert_rt( new simple_moves::EnergyCutRotamerTrialsMover( pert_score_fxn, pert_tf, pert_mc, 0.1 /*energycut*/ ) );
 
 	/*********************************************************
 	Common Setup
@@ -378,7 +378,7 @@ OopDockDesignProtocol::apply(
 
 	// create a task factory and task operations
 	TaskFactoryOP desn_tf( new TaskFactory() );
-	desn_tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
+	desn_tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 
 	operation::ReadResfileOP desn_rrop( new operation::ReadResfile() );
 	desn_rrop->default_filename();
@@ -439,7 +439,7 @@ OopDockDesignProtocol::apply(
 	//definitely want sidechain minimization here
 	using protocols::simple_moves::TaskAwareMinMoverOP;
 	using protocols::simple_moves::TaskAwareMinMover;
-	TaskAwareMinMoverOP desn_ta_min = new TaskAwareMinMover( desn_min, desn_tf );
+	TaskAwareMinMoverOP desn_ta_min( new TaskAwareMinMover( desn_min, desn_tf ) );
 
 	/*********************************************************
 	Common Setup
@@ -588,8 +588,8 @@ OopDockDesignProtocol::apply(
 	Pose repack_stats_pose( stats_pose );
 
 	//kdrew: probably should repack and minimize here after separation
-	TaskFactoryOP tf(new TaskFactory());
-	tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
+	TaskFactoryOP tf( new TaskFactory() );
+	tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 	//kdrew: do not do design, makes NATAA if res file is not specified
 	operation::RestrictToRepackingOP rtrp( new operation::RestrictToRepacking() );
 	tf->push_back( rtrp );
@@ -694,7 +694,7 @@ OopDockDesignProtocol::setup_pert_foldtree(
 protocols::moves::MoverOP
 OopDockDesignProtocol::clone() const
 {
-    return new OopDockDesignProtocol (
+    return protocols::moves::MoverOP( new OopDockDesignProtocol (
                                            score_fxn_,
                                            mc_temp_,
                                            pert_mc_temp_,
@@ -718,7 +718,7 @@ OopDockDesignProtocol::clone() const
                                            oop_design_first_,
                                            pymol_,
                                            keep_history_
-                                           );
+                                           ) );
     }
     
 void
@@ -738,7 +738,7 @@ OopDockDesignProtocol::parse_my_tag
         std::string const scorefxn_key( tag->getOption<std::string>("scorefxn" ) );
         if ( ! data.has( "scorefxns", scorefxn_key ) )
             throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap.");
-        score_fxn_ = data.get< core::scoring::ScoreFunction* >( "scorefxns", scorefxn_key );
+        score_fxn_ = data.get_ptr<core::scoring::ScoreFunction>( "scorefxns", scorefxn_key );
     }
         
     if(tag->hasOption( "mc_temp"))
@@ -894,7 +894,7 @@ OopDockDesignProtocol::setup_filter_stats()
     
 // MoverCreator
 moves::MoverOP OopDockDesignProtocolCreator::create_mover() const {
-    return new OopDockDesignProtocol();
+    return moves::MoverOP( new OopDockDesignProtocol() );
 }
     
 std::string OopDockDesignProtocolCreator::keyname() const {

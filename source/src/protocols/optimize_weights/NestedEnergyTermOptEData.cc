@@ -498,7 +498,7 @@ NestedEnergyTermPNatAAOptEPositionData::read_from_file( std::ifstream & infile )
 			energies.push_back( val );
 		}
 		assert( !energies.empty() );
-		PNatAAOptERotamerDataOP new_rot_data = new PNatAAOptERotamerData( aa, rotnum, energies, fixed_energies );
+		PNatAAOptERotamerDataOP new_rot_data( new PNatAAOptERotamerData( aa, rotnum, energies, fixed_energies ) );
 		add_rotamer_line_data( new_rot_data );
 	}
 }

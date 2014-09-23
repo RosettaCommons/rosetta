@@ -25,7 +25,7 @@ class EnergyNode;
 class EnergyEdge;
 class EnergyGraph;
 
-typedef utility::pointer::owning_ptr< EnergyGraph > EnergyGraphOP;
+typedef utility::pointer::shared_ptr< EnergyGraph > EnergyGraphOP;
 
 } //namespace scoring
 } //namespace core

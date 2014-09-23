@@ -43,7 +43,7 @@ ActiveSiteGrid::~ActiveSiteGrid() {}
 ActiveSiteGrid::ActiveSiteGrid() :
 	bin_width_( 0.0 ),
 	bb_( Vector( 0.0 ), Vector( 0.0 ) ),
-	grid_( new Bool3DGrid ),
+	grid_( Bool3DGridOP( new Bool3DGrid ) ),
 	reset_grid_bb_( false )
 {
 }
@@ -52,7 +52,7 @@ ActiveSiteGrid::ActiveSiteGrid( ActiveSiteGrid const & other ) :
 	utility::pointer::ReferenceCount(),
 	bin_width_( other.bin_width_ ),
 	bb_( other.bb_ ),
-	grid_( new Bool3DGrid( *other.grid_ )),
+	grid_( Bool3DGridOP( new Bool3DGrid( *other.grid_ ) )),
 	reset_grid_bb_( other.reset_grid_bb_ )
 {
 }
@@ -63,7 +63,7 @@ ActiveSiteGrid::operator = ( ActiveSiteGrid const & rhs )
 	if ( this != & rhs ) {
 		bin_width_ = rhs.bin_width_;
 		bb_ = rhs.bb_;
-		grid_ = new Bool3DGrid( *rhs.grid_ );
+		grid_ = Bool3DGridOP( new Bool3DGrid( *rhs.grid_ ) );
 		reset_grid_bb_ = rhs.reset_grid_bb_;
 	}
 	return *this;
@@ -128,7 +128,7 @@ ActiveSiteGrid::initialize_from_gridlig_file( std::string const & fname )
 
 	bin_width_ = xwidth;
 	bb_ = BoundingBox( lower_corner, upper_corner );
-	grid_ = new Bool3DGrid;
+	grid_ = Bool3DGridOP( new Bool3DGrid );
 	grid_->set_bin_width( bin_width_ );
 	grid_->set_bounding_box( bb_ );
 	reset_grid_bb_ = false;
@@ -344,7 +344,7 @@ ActiveSiteGrid::prep_grid()
 {
 	if ( ! reset_grid_bb_ ) return;
 
-	grid_ = new Bool3DGrid;
+	grid_ = Bool3DGridOP( new Bool3DGrid );
 	grid_->set_bin_width( bin_width_ );
 
 	Vector snapped_lower( bb_.lower() );

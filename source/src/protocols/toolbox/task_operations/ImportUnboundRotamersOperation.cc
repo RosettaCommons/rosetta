@@ -44,7 +44,7 @@ namespace task_operations {
 core::pack::task::operation::TaskOperationOP
 ImportUnboundRotamersOperationCreator::create_task_operation() const
 {
-	return new ImportUnboundRotamersOperation;
+	return core::pack::task::operation::TaskOperationOP( new ImportUnboundRotamersOperation );
 }
 
 /// @brief default constructor
@@ -58,7 +58,7 @@ ImportUnboundRotamersOperation::~ImportUnboundRotamersOperation(){}
 /// @brief clone
 core::pack::task::operation::TaskOperationOP
 ImportUnboundRotamersOperation::clone() const {
-	return new ImportUnboundRotamersOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new ImportUnboundRotamersOperation( *this ) );
 }
 
 //mjo commenting out 'pose' because it is unused and causes a warning
@@ -66,7 +66,7 @@ ImportUnboundRotamersOperation::clone() const {
 void
 ImportUnboundRotamersOperation::apply( Pose const & /*pose*/, PackerTask & task ) const
 {
-	core::pack::rotamer_set::UnboundRotamersOperationOP unboundrot_ = new core::pack::rotamer_set::UnboundRotamersOperation;
+	core::pack::rotamer_set::UnboundRotamersOperationOP unboundrot_( new core::pack::rotamer_set::UnboundRotamersOperation );
 	unboundrot_->initialize_from_command_line();
 	task.append_rotamerset_operation( unboundrot_ );
 

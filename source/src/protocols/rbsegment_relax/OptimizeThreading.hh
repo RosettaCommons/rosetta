@@ -34,8 +34,8 @@ namespace rbsegment_relax {
 class OptimizeThreadingMover : public moves::Mover {
 public:
 	OptimizeThreadingMover() : Mover(),
-			nsteps_(1000), rebuild_cycles_(200), max_shift_(4), weight_(0.1), temperature_(2.0), recover_low_(true), step_penalty_(false), greedy_(false), native_(NULL) {
-		scorefxn_ = new core::scoring::ScoreFunction();
+			nsteps_(1000), rebuild_cycles_(200), max_shift_(4), weight_(0.1), temperature_(2.0), recover_low_(true), step_penalty_(false), greedy_(false), native_(/* NULL */) {
+		scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
 		scorefxn_->set_weight( core::scoring::atom_pair_constraint , 1.0 );
 		scorefxn_sampling_ = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth");
 		if (scorefxn_sampling_->get_weight(core::scoring::atom_pair_constraint) == 0)
@@ -43,7 +43,7 @@ public:
 		if (scorefxn_sampling_->get_weight(core::scoring::dihedral_constraint) == 0)
 			scorefxn_sampling_->set_weight( core::scoring::dihedral_constraint , 1.0 );
 
-		loops_ = new protocols::loops::Loops;
+		loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops );
 	}
 
 	virtual std::string get_name() const { return OptimizeThreadingMoverCreator::mover_name(); }

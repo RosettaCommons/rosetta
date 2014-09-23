@@ -96,9 +96,9 @@ create_scmin_minimizer_map(
 	/// that each of the molten residues have color 0.
 	scmin::SCMinMinimizerMapOP scminmap;
 	if (cartesian) {
-		scminmap = new scmin::CartSCMinMinimizerMap();
+		scminmap = scmin::SCMinMinimizerMapOP( new scmin::CartSCMinMinimizerMap() );
 	} else {
-		scminmap = new scmin::AtomTreeSCMinMinimizerMap();
+		scminmap = scmin::SCMinMinimizerMapOP( new scmin::AtomTreeSCMinMinimizerMap() );
 	}
 
 	scminmap->set_total_residue( pose.total_residue() );
@@ -122,7 +122,7 @@ create_minimization_graph(
 	scmin::SCMinMinimizerMap const & sc_min_map
 )
 {
-	scoring::MinimizationGraphOP mingraph = new scoring::MinimizationGraph( pose.total_residue() );
+	scoring::MinimizationGraphOP mingraph( new scoring::MinimizationGraph( pose.total_residue() ) );
 
 	/// copy all edges that are incident upon the molten residues; background edges may be ignored.
 	for ( graph::Graph::EdgeListConstIter
@@ -820,7 +820,7 @@ min_pack_setup(
 	sfxn.setup_for_packing( pose, task->repacking_residues(), task->designing_residues() );
 	if ( option[ minpack_disable_bumpcheck ] ) task->set_bump_check( false );
 	graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, sfxn, task );
-	rotsets = new rotamer_set::RotamerSets();
+	rotsets = rotamer_set::RotamerSetsOP( new rotamer_set::RotamerSets() );
 	rotsets->set_task( task );
 	rotsets->build_rotamers( pose, sfxn, packer_neighbor_graph );
 	rotsets->prepare_sets_for_packing( pose, sfxn );
@@ -831,7 +831,7 @@ min_pack_setup(
 	mingraph = create_minimization_graph( pose, sfxn, *task, *packer_neighbor_graph, *scminmap );
 
 	/// 3.
-	atc = new scmin::AtomTreeCollection( pose, *rotsets );
+	atc = scmin::AtomTreeCollectionOP( new scmin::AtomTreeCollection( pose, *rotsets ) );
 
 	// true -- nblist, false -- deriv_check, false -- deriv_verbose
 	//optimization::MinimizerOptions min_options( "dfpmin", 0.1, true, false, false );
@@ -843,7 +843,7 @@ min_pack_setup(
 		minimizer = "lbfgs_armijo_atol";
 		//max_iter = 25;                  // PTC - this doesn't give Cartesian enough time to converge
 	}
-	min_options = new optimization::MinimizerOptions( minimizer, 0.1, true, false, false );
+	min_options = optimization::MinimizerOptionsOP( new optimization::MinimizerOptions( minimizer, 0.1, true, false, false ) );
 	min_options->max_iter(max_iter);
 	min_options->silent(true);
 
@@ -1186,13 +1186,13 @@ off_rotamer_pack_setup(
 	sfxn.setup_for_packing( pose, task->repacking_residues(), task->designing_residues() );
 
 	// 1a
-	atc = new scmin::AtomTreeCollection( pose, *task );
+	atc = scmin::AtomTreeCollectionOP( new scmin::AtomTreeCollection( pose, *task ) );
 
 	// 1b
-	rotsets = new rotamer_set::ContinuousRotamerSets( pose, *task );
+	rotsets = rotamer_set::ContinuousRotamerSetsOP( new rotamer_set::ContinuousRotamerSets( pose, *task ) );
 
 	// 1c
-	ig = new interaction_graph::SimpleInteractionGraph;
+	ig = interaction_graph::SimpleInteractionGraphOP( new interaction_graph::SimpleInteractionGraph );
 	ig->set_scorefunction( sfxn );
 	ig->set_pose_no_initialize( pose );
 	graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, sfxn, task );

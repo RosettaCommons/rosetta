@@ -79,7 +79,7 @@ FourHelixGraph::populate_graph(
 			helix_1_id >> helix_1_begin >> helix_1_end >>
 			helix_2_id >> helix_2_begin >> helix_2_end;
 
-		NodeOP node = new Node(
+		NodeOP node( new Node(
 			struct_id,
 			bundle_id,
 			node_id,
@@ -88,7 +88,7 @@ FourHelixGraph::populate_graph(
 			helix_1_end,
 			helix_2_id,
 			helix_2_begin,
-			helix_2_end);
+			helix_2_end) );
 			
 		nodes_map.insert(std::make_pair(node_id, node));
 		

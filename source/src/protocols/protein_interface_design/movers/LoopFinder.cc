@@ -70,7 +70,7 @@ LoopFinderCreator::keyname() const
 
 protocols::moves::MoverOP
 LoopFinderCreator::create_mover() const {
-	return new LoopFinder;
+	return protocols::moves::MoverOP( new LoopFinder );
 }
 
 std::string
@@ -106,7 +106,7 @@ LoopFinder::LoopFinder(
 	ca_ca_distance_( ca_ca_distance ),
 	iface_cutoff_(iface_cutoff)
 {
-	loops_ = new protocols::loops::Loops( *loops );
+	loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops( *loops ) );
 }
 
 LoopFinder::~LoopFinder() {}
@@ -225,7 +225,7 @@ LoopFinder::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, pr
 	if( resnum_ != 0 )	TR<<"distance cutoff from user defined residue is " << ca_ca_distance_ << std::endl;
 
 	// add loopsOP to the basic::datacache::DataMap
-	loops_ = new protocols::loops::Loops;
+	loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops );
 	data.add( "loops", "found_loops", loops_ );
 
 	TR << "LoopFinder mover: interface="<<interface_<<" iface_cutoff="<<iface_cutoff_<<" ch1="<<ch1_<<" ch2="<<ch2_<<" min_length="<<min_length_<<

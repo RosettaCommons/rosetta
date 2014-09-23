@@ -79,8 +79,8 @@ public:
 
 	FragmentScoringMethodOP make(Size priority, Real lowest_acceptable_value, bool use_lowest,
 				FragmentPickerOP picker, std::string) {
-		return (FragmentScoringMethodOP) new SolventAccessibility(priority,
-        lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), picker->get_query_sa_prediction());
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new SolventAccessibility(priority,
+        lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), picker->get_query_sa_prediction()) );
   }
 
 };

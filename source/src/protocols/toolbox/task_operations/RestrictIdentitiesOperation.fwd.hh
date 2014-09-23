@@ -22,8 +22,8 @@ namespace task_operations {
 
 class RestrictIdentitiesOperation;
 
-typedef utility::pointer::owning_ptr< RestrictIdentitiesOperation > RestrictIdentitiesOperationOP;
-typedef utility::pointer::owning_ptr< RestrictIdentitiesOperation const > RestrictIdentitiesOperationCOP;
+typedef utility::pointer::shared_ptr< RestrictIdentitiesOperation > RestrictIdentitiesOperationOP;
+typedef utility::pointer::shared_ptr< RestrictIdentitiesOperation const > RestrictIdentitiesOperationCOP;
 
 } //namespace task_operations
 } //namespace toolbox

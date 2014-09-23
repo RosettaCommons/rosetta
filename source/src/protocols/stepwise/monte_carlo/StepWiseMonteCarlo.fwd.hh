@@ -23,8 +23,8 @@ namespace stepwise {
 namespace monte_carlo {
 	
 	class StepWiseMonteCarlo;
-	typedef utility::pointer::owning_ptr< StepWiseMonteCarlo > StepWiseMonteCarloOP;
-	typedef utility::pointer::owning_ptr< StepWiseMonteCarlo const > StepWiseMonteCarloCOP;
+	typedef utility::pointer::shared_ptr< StepWiseMonteCarlo > StepWiseMonteCarloOP;
+	typedef utility::pointer::shared_ptr< StepWiseMonteCarlo const > StepWiseMonteCarloCOP;
 	
 } //monte_carlo
 } //stepwise

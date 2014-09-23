@@ -56,7 +56,7 @@ public:
     ///
     virtual
     ConstraintOP clone() const {
-        return new FabConstraint(*this);
+        return ConstraintOP( new FabConstraint(*this) );
     }
 
     std::string type() const {

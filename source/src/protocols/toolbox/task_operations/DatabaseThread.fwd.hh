@@ -22,8 +22,8 @@ namespace task_operations {
 
 class DatabaseThread;
 
-typedef utility::pointer::owning_ptr< DatabaseThread > DatabaseThreadOP;
-typedef utility::pointer::owning_ptr< DatabaseThread const > DatabaseThreadCOP;
+typedef utility::pointer::shared_ptr< DatabaseThread > DatabaseThreadOP;
+typedef utility::pointer::shared_ptr< DatabaseThread const > DatabaseThreadCOP;
 
 } //namespace protocols
 } //namespace toolbox

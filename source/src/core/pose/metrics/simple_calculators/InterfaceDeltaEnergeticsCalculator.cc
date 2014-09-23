@@ -83,8 +83,7 @@ InterfaceDeltaEnergeticsCalculator::InterfaceDeltaEnergeticsCalculator( Size con
 			name_of_InterfaceNeighborDefinitionCalculator_ << std::endl;
 		utility_exit();
 	}
-	core::pose::metrics::PoseMetricCalculatorOP int_calculator =
-		new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator(chain1_number,chain2_number);
+	core::pose::metrics::PoseMetricCalculatorOP int_calculator( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator(chain1_number,chain2_number) );
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( name_of_InterfaceNeighborDefinitionCalculator_, int_calculator );
 }
 
@@ -99,8 +98,7 @@ InterfaceDeltaEnergeticsCalculator::InterfaceDeltaEnergeticsCalculator( char con
 			name_of_InterfaceNeighborDefinitionCalculator_ << std::endl;
 		utility_exit();
 	}
-	core::pose::metrics::PoseMetricCalculatorOP int_calculator =
-		new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator(chain1_letter,chain2_letter);
+	core::pose::metrics::PoseMetricCalculatorOP int_calculator( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator(chain1_letter,chain2_letter) );
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( name_of_InterfaceNeighborDefinitionCalculator_, int_calculator );
 }
 

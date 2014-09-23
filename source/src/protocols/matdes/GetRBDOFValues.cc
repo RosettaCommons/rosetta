@@ -101,12 +101,12 @@ GetRBDOFValues::~GetRBDOFValues() {}
 
 protocols::filters::FilterOP
 GetRBDOFValues::fresh_instance() const{
-  return new GetRBDOFValues();
+  return protocols::filters::FilterOP( new GetRBDOFValues() );
 }
 
 protocols::filters::FilterOP
 GetRBDOFValues::clone() const{
-  return new GetRBDOFValues( *this );
+  return protocols::filters::FilterOP( new GetRBDOFValues( *this ) );
 }
 
 // @brief getters
@@ -252,7 +252,7 @@ GetRBDOFValues::report( std::ostream & out, Pose const & pose ) const
 }
 
 protocols::filters::FilterOP
-GetRBDOFValuesCreator::create_filter() const { return new GetRBDOFValues; }
+GetRBDOFValuesCreator::create_filter() const { return protocols::filters::FilterOP( new GetRBDOFValues ); }
 
 std::string
 GetRBDOFValuesCreator::keyname() const { return "GetRBDOFValues"; }

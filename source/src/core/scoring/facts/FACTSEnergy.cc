@@ -53,7 +53,7 @@ namespace methods {
 methods::EnergyMethodOP FACTSEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return new FACTSEnergy( options );
+	return methods::EnergyMethodOP( new FACTSEnergy( options ) );
 }
 
 ScoreTypes FACTSEnergyCreator::score_types_for_method() const {

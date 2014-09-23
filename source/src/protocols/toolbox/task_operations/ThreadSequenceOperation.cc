@@ -57,12 +57,12 @@ ThreadSequenceOperation::~ThreadSequenceOperation() {}
 core::pack::task::operation::TaskOperationOP
 ThreadSequenceOperationCreator::create_task_operation() const
 {
-	return new ThreadSequenceOperation;
+	return core::pack::task::operation::TaskOperationOP( new ThreadSequenceOperation );
 }
 
 core::pack::task::operation::TaskOperationOP ThreadSequenceOperation::clone() const
 {
-	return new ThreadSequenceOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new ThreadSequenceOperation( *this ) );
 }
 
 void

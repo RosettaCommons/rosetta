@@ -54,7 +54,7 @@ RNA_LJ_BaseEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
 	etable::EtableCOP etable( ScoringManager::get_instance()->etable( options.etable_type() ) );
-	return new RNA_LJ_BaseEnergy( *etable );
+	return methods::EnergyMethodOP( new RNA_LJ_BaseEnergy( *etable ) );
 }
 
 ScoreTypes
@@ -93,7 +93,7 @@ RNA_LJ_BaseEnergy::atomic_interaction_cutoff() const
 methods::EnergyMethodOP
 RNA_LJ_BaseEnergy::clone() const
 {
-	return new RNA_LJ_BaseEnergy( *this );
+	return methods::EnergyMethodOP( new RNA_LJ_BaseEnergy( *this ) );
 }
 
 ////////////////////////////////////////////////

@@ -28,15 +28,15 @@ namespace jumping {
 class ResiduePairJumpSetupSingle;
 
 // Types
-typedef  utility::pointer::owning_ptr< ResiduePairJumpSetupSingle >  ResiduePairJumpSetupSingleOP;
-typedef  utility::pointer::owning_ptr< ResiduePairJumpSetupSingle const >  ResiduePairJumpSetupSingleCOP;
+typedef  utility::pointer::shared_ptr< ResiduePairJumpSetupSingle >  ResiduePairJumpSetupSingleOP;
+typedef  utility::pointer::shared_ptr< ResiduePairJumpSetupSingle const >  ResiduePairJumpSetupSingleCOP;
 
 // Forward
 class ResiduePairJumpSetup;
 
 // Types
-typedef  utility::pointer::owning_ptr< ResiduePairJumpSetup >  ResiduePairJumpSetupOP;
-typedef  utility::pointer::owning_ptr< ResiduePairJumpSetup const >  ResiduePairJumpSetupCOP;
+typedef  utility::pointer::shared_ptr< ResiduePairJumpSetup >  ResiduePairJumpSetupOP;
+typedef  utility::pointer::shared_ptr< ResiduePairJumpSetup const >  ResiduePairJumpSetupCOP;
 
 } // namespace kinematics
 } // namespace core

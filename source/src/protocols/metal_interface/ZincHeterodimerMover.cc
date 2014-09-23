@@ -134,7 +134,7 @@ void ZincHeterodimerMover::apply( core::pose::Pose & pose ){
 
 	//////////////////////make RotateJumpAxisMover///////////////////////////
 	//passing no angle settings means that it will make random rotations
-	protocols::rigid::RotateJumpAxisMoverOP RJAmover(new protocols::rigid::RotateJumpAxisMover(metal_to_mobile_.label()));
+	protocols::rigid::RotateJumpAxisMoverOP RJAmover( new protocols::rigid::RotateJumpAxisMover(metal_to_mobile_.label()) );
 
 	//////////////////////make SidechainMover and its task///////////////////////
 	//hand-make a PackerTask for SidechainMover.  A task that is "design nowhere, pack at one position" won't work if
@@ -170,8 +170,8 @@ void ZincHeterodimerMover::apply( core::pose::Pose & pose ){
 	TR << std::flush; //show doesn't flush the buffer
 
 	//////////////////////////////PDBDumpMover for debugging/////////////////////////////////////
-	protocols::moves::PDBDumpMoverOP output_fa(new protocols::moves::PDBDumpMover("perturb_cycle_fa"));
-	protocols::moves::PDBDumpMoverOP output_centroid(new protocols::moves::PDBDumpMover("perturb_cycle_centroid"));
+	protocols::moves::PDBDumpMoverOP output_fa( new protocols::moves::PDBDumpMover("perturb_cycle_fa") );
+	protocols::moves::PDBDumpMoverOP output_centroid( new protocols::moves::PDBDumpMover("perturb_cycle_centroid") );
 
 	/////////////////////////make DualMonteCarlo///////////////////////////////////////////////////
 	using basic::options::OptionKeys::AnchoredDesign::perturb_temp;
@@ -224,26 +224,26 @@ void ZincHeterodimerMover::apply( core::pose::Pose & pose ){
 	/////////////////////////////end perturb, begin fullatom design/refinement////////////////////
 
 	////////////////////////////PackRotamersMover////////////////////////////////////////////
-	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
+	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
 	pack_mover->task_factory( factory_ );
 	pack_mover->score_function( fullatom_scorefunction_ );
 
 	//////////////////////////////////generate minimizer mover/////////////////////////
 	//movemap is empty, TAmin_mover will fill it
-	core::kinematics::MoveMapOP map(new core::kinematics::MoveMap() );
+	core::kinematics::MoveMapOP map( new core::kinematics::MoveMap() );
 
 	using protocols::simple_moves::MinMoverOP;
 	using protocols::simple_moves::MinMover;
-	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover(
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(
 																			map,
 																			fullatom_scorefunction_,
 																			option[ basic::options::OptionKeys::run::min_type ].value(),
 																			0.01,
-																			true /*use_nblist*/ );
+																			true /*use_nblist*/ ) );
 
 	using protocols::simple_moves::TaskAwareMinMoverOP;
 	using protocols::simple_moves::TaskAwareMinMover;
-	protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover = new protocols::simple_moves::TaskAwareMinMover(min_mover, factory_);
+	protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover( new protocols::simple_moves::TaskAwareMinMover(min_mover, factory_) );
 
 	//let's examine the task
 	//TR << *(factory_->create_task_and_apply_taskoperations( pose )) << std::endl;
@@ -288,7 +288,7 @@ void ZincHeterodimerMover::generate_scorefunctions(){
 	TR << "Using default fullatom scorefunction (TALARIS_2013)\n"
 		 << *fullatom_scorefunction_ << std::flush;
 
-	centroid_scorefunction_ = new core::scoring::ScoreFunction;
+	centroid_scorefunction_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
 	centroid_scorefunction_->set_weight( env,         2.0 );
 	centroid_scorefunction_->set_weight( cbeta,       1.0 );
 	centroid_scorefunction_->set_weight( vdw,         1.0 );
@@ -305,12 +305,12 @@ void ZincHeterodimerMover::generate_scorefunctions(){
 void ZincHeterodimerMover::generate_factory(){
 	using namespace core::pack::task;
 	using namespace basic::options;
-	TaskFactoryOP task_factory = new TaskFactory();
+	TaskFactoryOP task_factory( new TaskFactory() );
 	task_factory->push_back(operation::TaskOperationOP( new operation::InitializeFromCommandline() ));
 	if ( option[ OptionKeys::packing::resfile ].user() ) {
 		task_factory->push_back(operation::TaskOperationOP( new operation::ReadResfile ));
 	}
-	operation::PreventRepackingOP prop = new operation::PreventRepacking();
+	operation::PreventRepackingOP prop( new operation::PreventRepacking() );
 	for(utility::vector1< core::Size >::const_iterator it(metal_site_.begin()), end(metal_site_.end());	it != end; ++it)
 		{prop->include_residue(*it);}
 	task_factory->push_back(prop);
@@ -327,7 +327,7 @@ ZincHeterodimerMover::ZincHeterodimerMover(
 																										 utility::vector1< core::Size > const & metal_site,
 																										 core::kinematics::Edge const & fixed_to_metal,
 																										 core::kinematics::Edge const & metal_to_mobile )
-	: Mover(), centroid_scorefunction_(NULL), fullatom_scorefunction_(NULL), factory_(NULL),
+	: Mover(), centroid_scorefunction_(/* NULL */), fullatom_scorefunction_(NULL), factory_(NULL),
 		fixed_to_metal_(fixed_to_metal), metal_to_mobile_(metal_to_mobile), metal_site_(metal_site)
 {
 	Mover::type( "ZincHeterodimerMover" );

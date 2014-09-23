@@ -27,19 +27,19 @@ class SetAACompositionPotential;
 
 
 /// @brief SetAACompositionPotential owning pointer
-typedef utility::pointer::owning_ptr< SetAACompositionPotential > SetAACompositionPotential_OP;
+typedef utility::pointer::shared_ptr< SetAACompositionPotential > SetAACompositionPotential_OP;
 
 
 /// @brief SetAACompositionPotential const owning pointer
-typedef utility::pointer::owning_ptr< SetAACompositionPotential const > SetAACompositionPotential_COP;
+typedef utility::pointer::shared_ptr< SetAACompositionPotential const > SetAACompositionPotential_COP;
 
 
 /// @brief SetAACompositionPotential access pointer
-typedef utility::pointer::access_ptr< SetAACompositionPotential > SetAACompositionPotential_AP;
+typedef utility::pointer::weak_ptr< SetAACompositionPotential > SetAACompositionPotential_AP;
 
 
 /// @brief SetAACompositionPotential const access pointer
-typedef utility::pointer::access_ptr< SetAACompositionPotential const > SetAACompositionPotential_CAP;
+typedef utility::pointer::weak_ptr< SetAACompositionPotential const > SetAACompositionPotential_CAP;
 
 
 } // namespace fldsgn

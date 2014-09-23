@@ -70,13 +70,13 @@ IndependentBBTorsionSRFD & IndependentBBTorsionSRFD::operator =( IndependentBBTo
 
 /// @brief clone this object
 SingleResidueFragDataOP IndependentBBTorsionSRFD::clone() const {
-	return new IndependentBBTorsionSRFD( *this );
+	return SingleResidueFragDataOP( new IndependentBBTorsionSRFD( *this ) );
 }
 
 
 /// @brief create a new instance of this object
 SingleResidueFragDataOP IndependentBBTorsionSRFD::create() const {
-	return new IndependentBBTorsionSRFD();
+	return SingleResidueFragDataOP( new IndependentBBTorsionSRFD() );
 }
 
 

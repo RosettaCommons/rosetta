@@ -47,14 +47,14 @@ static thread_local basic::Tracer TR( "protocols.forge.remodel.RemodelRotamerLin
 
 TaskOperationOP RemodelRotamerLinksCreator::create_task_operation() const
 {
-	return new RemodelRotamerLinks;
+	return TaskOperationOP( new RemodelRotamerLinks );
 }
 
 RemodelRotamerLinks::~RemodelRotamerLinks() {}
 
 TaskOperationOP RemodelRotamerLinks::clone() const
 {
-	return new RemodelRotamerLinks( *this );
+	return TaskOperationOP( new RemodelRotamerLinks( *this ) );
 }
 
 RemodelRotamerLinks::RemodelRotamerLinks()

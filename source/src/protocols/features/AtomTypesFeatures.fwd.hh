@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class AtomTypesFeatures;
-typedef utility::pointer::owning_ptr< AtomTypesFeatures > AtomTypesFeaturesOP;
-typedef utility::pointer::owning_ptr< AtomTypesFeatures const > AtomTypesFeaturesCOP;
+typedef utility::pointer::shared_ptr< AtomTypesFeatures > AtomTypesFeaturesOP;
+typedef utility::pointer::shared_ptr< AtomTypesFeatures const > AtomTypesFeaturesCOP;
 
 }//features
 }//protocols

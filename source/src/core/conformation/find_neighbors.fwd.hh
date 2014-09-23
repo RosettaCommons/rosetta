@@ -73,14 +73,14 @@ typedef numeric::xyzVector< core::Real > PointPosition;
 template <class Vertex, class Edge>
 void
 find_neighbors_naive(
-	utility::pointer::owning_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+	utility::pointer::shared_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
 	core::Real neighbor_cutoff
 );
 
 template <class Vertex, class Edge>
 void
 find_neighbors_octree(
-	utility::pointer::owning_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+	utility::pointer::shared_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
 	core::Real neighbor_cutoff,
 	Strategy strategy
 );
@@ -88,14 +88,14 @@ find_neighbors_octree(
 template <class Vertex, class Edge>
 void
 find_neighbors_3dgrid(
-	utility::pointer::owning_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+	utility::pointer::shared_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
 	core::Real neighbor_cutoff
 );
 
 template <class Vertex, class Edge>
 void
 find_neighbors_naive_restricted(
-	utility::pointer::owning_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+	utility::pointer::shared_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
 	core::Real neighbor_cutoff,
 	utility::vector1< bool > const & residue_selection
 );
@@ -103,7 +103,7 @@ find_neighbors_naive_restricted(
 template <class Vertex, class Edge>
 void
 find_neighbors_octree_restricted(
-	utility::pointer::owning_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+	utility::pointer::shared_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
 	core::Real neighbor_cutoff,
 	utility::vector1< bool > const & residue_selection,
 	Strategy strategy
@@ -113,7 +113,7 @@ find_neighbors_octree_restricted(
 template <class Vertex, class Edge>
 void
 find_neighbors_3dgrid_restricted(
-	utility::pointer::owning_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+	utility::pointer::shared_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
 	core::Real neighbor_cutoff,
 	utility::vector1< bool > const &  residue_selection
 );
@@ -121,7 +121,7 @@ find_neighbors_3dgrid_restricted(
 template <class Vertex, class Edge>
 core::Size
 get_nearest_neighbor(
-		utility::pointer::owning_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
+		utility::pointer::shared_ptr<graph::UpperEdgeGraph<Vertex, Edge> > point_graph,
 		core::Size node_id,
 		core::Real neighbor_cutoff,
 		Strategy strategy = AUTOMATIC

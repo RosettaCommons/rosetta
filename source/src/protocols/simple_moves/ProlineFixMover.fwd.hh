@@ -23,8 +23,8 @@ namespace protocols {
 namespace simple_moves {
 
 class ProlineFixMover;
-typedef utility::pointer::owning_ptr< ProlineFixMover > ProlineFixMoverOP;
-typedef utility::pointer::owning_ptr< ProlineFixMover const > ProlineFixMoverCOP;
+typedef utility::pointer::shared_ptr< ProlineFixMover > ProlineFixMoverOP;
+typedef utility::pointer::shared_ptr< ProlineFixMover const > ProlineFixMoverCOP;
 
 } // moves
 } // protocols

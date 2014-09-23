@@ -24,8 +24,8 @@ namespace scoring {
 namespace func {
 
 class IdentityFunc;
-typedef utility::pointer::owning_ptr< IdentityFunc > IdentityFuncOP;
-typedef utility::pointer::owning_ptr< IdentityFunc const > IdentityFuncCOP;
+typedef utility::pointer::shared_ptr< IdentityFunc > IdentityFuncOP;
+typedef utility::pointer::shared_ptr< IdentityFunc const > IdentityFuncCOP;
 
 } // constraints
 } // scoring

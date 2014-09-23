@@ -119,7 +119,7 @@ SymFoldandDockRbTrialMover::apply( core::pose::Pose & pose )
 	core::Real trans_mag_trial = smooth_move_ ? trans_mag_smooth_ : trans_mag_;
 
 	// Setup Monte Carlo object
-	protocols::moves::MonteCarloOP monteCarlo_ = new protocols::moves::MonteCarlo(pose, *scorefxn_, 2.0 );
+	protocols::moves::MonteCarloOP monteCarlo_( new protocols::moves::MonteCarlo(pose, *scorefxn_, 2.0 ) );
 
 	// set up mover for docking
 	protocols::rigid::RigidBodyDofSeqPerturbMover rb_perturb =
@@ -176,7 +176,7 @@ SymFoldandDockRbTrialMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SymFoldandDockRbTrialMoverCreator::create_mover() const {
-    return new SymFoldandDockRbTrialMover();
+    return protocols::moves::MoverOP( new SymFoldandDockRbTrialMover() );
 }
 
 std::string

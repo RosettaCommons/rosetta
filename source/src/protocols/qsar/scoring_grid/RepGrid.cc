@@ -36,7 +36,7 @@ std::string RepGridCreator::keyname() const
 
 GridBaseOP RepGridCreator::create_grid(utility::tag::TagCOP tag) const
 {
-	GridBaseOP rep_grid= new RepGrid();
+	GridBaseOP rep_grid( new RepGrid() );
 
 	rep_grid->parse_my_tag(tag);
 
@@ -45,7 +45,7 @@ GridBaseOP RepGridCreator::create_grid(utility::tag::TagCOP tag) const
 
 GridBaseOP RepGridCreator::create_grid() const
 {
-	return new RepGrid();
+	return GridBaseOP( new RepGrid() );
 }
 
 std::string RepGridCreator::grid_name()

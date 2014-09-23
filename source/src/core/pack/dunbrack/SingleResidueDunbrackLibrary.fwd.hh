@@ -22,10 +22,10 @@ namespace pack {
 namespace dunbrack {
 
 class SingleResidueDunbrackLibrary;
-typedef utility::pointer::owning_ptr< SingleResidueDunbrackLibrary > SingleResidueDunbrackLibraryOP;
-typedef utility::pointer::access_ptr< SingleResidueDunbrackLibrary > SingleResidueDunbrackLibraryAP;
-typedef utility::pointer::owning_ptr< SingleResidueDunbrackLibrary const > SingleResidueDunbrackLibraryCOP;
-typedef utility::pointer::access_ptr< SingleResidueDunbrackLibrary const > SingleResidueDunbrackLibraryCAP;
+typedef utility::pointer::shared_ptr< SingleResidueDunbrackLibrary > SingleResidueDunbrackLibraryOP;
+typedef utility::pointer::weak_ptr< SingleResidueDunbrackLibrary > SingleResidueDunbrackLibraryAP;
+typedef utility::pointer::shared_ptr< SingleResidueDunbrackLibrary const > SingleResidueDunbrackLibraryCOP;
+typedef utility::pointer::weak_ptr< SingleResidueDunbrackLibrary const > SingleResidueDunbrackLibraryCAP;
 
 template < class T >
 class SingleResidueDunbrackLibraryConcrete;

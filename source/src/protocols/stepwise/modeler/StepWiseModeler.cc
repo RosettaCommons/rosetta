@@ -95,7 +95,7 @@ namespace modeler {
 	//////////////////////////////////////////////////////////////////////////////
 	StepWiseModelerOP
 	StepWiseModeler::clone_modeler() const {
-		return new StepWiseModeler( *this );
+		return StepWiseModelerOP( new StepWiseModeler( *this ) );
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -142,7 +142,7 @@ namespace modeler {
 	void
 	StepWiseModeler::do_prepacking( core::pose::Pose & pose ) {
 
-		master_packer_ = new packer::StepWiseMasterPacker( working_parameters_, options_->get_sampler_options() );
+		master_packer_ = packer::StepWiseMasterPackerOP( new packer::StepWiseMasterPacker( working_parameters_, options_->get_sampler_options() ) );
 		master_packer_->set_scorefxn( pack_scorefxn_ );
 		master_packer_->initialize( pose );
 
@@ -189,7 +189,7 @@ namespace modeler {
 		pose.remove_constraints(); // modeler can stick in additional constraints
 
 		// Important: make sure that the next time this is used, job parameters is set explicitly -- or it will be reset.
-		working_parameters_ = 0;
+		working_parameters_.reset();
 		moving_res_list_.clear();
 		working_prepack_res_.clear();
 		working_minimize_res_.clear();
@@ -201,7 +201,7 @@ namespace modeler {
 	void
 	StepWiseModeler::set_moving_res_and_reset( Size const moving_res ){
 		moving_res_ = moving_res;
-		working_parameters_ = 0;
+		working_parameters_.reset();
 	}
 
 	//////////////////////////////////////////////////////////////////////////////

@@ -98,7 +98,7 @@ BDR::BDR( BDR const & rval ) :
 	fullatom_sfx_( rval.fullatom_sfx_->clone() )
 {
 	if ( rval.vlb_.get() ) {
-		vlb_ = new VarLengthBuild( *rval.vlb_ );
+		vlb_ = VarLengthBuildOP( new VarLengthBuild( *rval.vlb_ ) );
 	}
 }
 
@@ -109,13 +109,13 @@ BDR::~BDR() {}
 
 /// @brief clone this object
 BDR::MoverOP BDR::clone() const {
-	return new BDR( *this );
+	return BDR::MoverOP( new BDR( *this ) );
 }
 
 
 /// @brief create this type of object
 BDR::MoverOP BDR::fresh_instance() const {
-	return new BDR();
+	return BDR::MoverOP( new BDR() );
 }
 
 
@@ -149,7 +149,7 @@ void BDR::add_instruction(
 
 	// additional instruction means we'll need a new re-init the VLB, so
 	// go ahead and drop the existing one
-	vlb_ = 0;
+	vlb_.reset();
 }
 
 
@@ -213,7 +213,7 @@ void BDR::apply( Pose & pose ) {
 	CalculatorFactory::Instance().remove_calculator( neighborhood_calc_name() );
 	CalculatorFactory::Instance().register_calculator(
 		neighborhood_calc_name(),
-		new NeighborhoodByDistanceCalculator( manager_.union_of_intervals_containing_undefined_positions() )
+		PoseMetricCalculatorOP( new NeighborhoodByDistanceCalculator( manager_.union_of_intervals_containing_undefined_positions() ) )
 	);
 
 	// do design-refine iteration
@@ -237,22 +237,22 @@ void BDR::apply( Pose & pose ) {
 
 	CalculatorFactory::Instance().register_calculator(
 		loops_buns_polar_calc_name(),
-		new BuriedUnsatisfiedPolarsCalculator(
+		PoseMetricCalculatorOP( new BuriedUnsatisfiedPolarsCalculator(
 			"default",
 			"default",
 			manager_.union_of_intervals_containing_undefined_positions()
-		)
+		) )
 	);
 
 	MetricValue< std::set< Size > > loops_neighborhood;
 	pose.metric( neighborhood_calc_name(), "neighbors", loops_neighborhood );
 	CalculatorFactory::Instance().register_calculator(
 		neighborhood_buns_polar_calc_name(),
-		new BuriedUnsatisfiedPolarsCalculator(
+		PoseMetricCalculatorOP( new BuriedUnsatisfiedPolarsCalculator(
 			"default",
 			"default",
 			loops_neighborhood.value()
-		)
+		) )
 	);
 }
 
@@ -307,7 +307,7 @@ bool BDR::centroid_build(
 	// run VLB to build the new section, if no segments have been added/deleted
 	// we use the same VLB so that fragment caching works properly
 	if ( !vlb_.get() ) {
-		vlb_ = new VarLengthBuild( manager_ );
+		vlb_ = VarLengthBuildOP( new VarLengthBuild( manager_ ) );
 	}
 
 	vlb_->scorefunction( centroid_sfx_ );
@@ -384,7 +384,7 @@ bool BDR::design_refine(
 	Original2Modified original2modified_interval_endpoints = manager_.original2modified_interval_endpoints();
 
 	// collect loops
-	loops::LoopsOP loops = new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) );
+	loops::LoopsOP loops( new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) ) );
 
 	// refine Mover used doesn't setup a fold tree, so do it here
 	FoldTree loop_ft = protocols::forge::methods::fold_tree_from_loops( pose, *loops );
@@ -397,11 +397,11 @@ bool BDR::design_refine(
 
 	// setup the design TaskFactory
 	TaskFactoryOP design_tf = generic_taskfactory();
-	design_tf->push_back( new RestrictToNeighborhoodOperation( neighborhood_calc_name() ) );
+	design_tf->push_back( TaskOperationCOP( new RestrictToNeighborhoodOperation( neighborhood_calc_name() ) ) );
 
 	if ( !redesign_loop_neighborhood_ ) {
 		// set repack only for non-loop positions
-		RestrictResidueToRepackingOP repack_op = new RestrictResidueToRepacking();
+		RestrictResidueToRepackingOP repack_op( new RestrictResidueToRepacking() );
 
 		Positions new_positions = manager_.new_positions();
 		for ( Size i = 1, ie = pose.n_residue(); i != ie; ++i ) {
@@ -430,8 +430,8 @@ bool BDR::design_refine(
 
 	// setup the refine TaskFactory
 	TaskFactoryOP refine_tf = generic_taskfactory();
-	refine_tf->push_back( new RestrictToNeighborhoodOperation( neighborhood_calc_name() ) );
-	refine_tf->push_back( new RestrictToRepacking() );
+	refine_tf->push_back( TaskOperationCOP( new RestrictToNeighborhoodOperation( neighborhood_calc_name() ) ) );
+	refine_tf->push_back( TaskOperationCOP( new RestrictToRepacking() ) );
 
 	// safety, clear the energies object
 	pose.energies().clear();
@@ -491,15 +491,15 @@ BDR::TaskFactoryOP BDR::generic_taskfactory() {
 	using core::pack::task::TaskFactory;
 	using core::pack::task::operation::NoRepackDisulfides;
 
-	TaskFactoryOP tf = new TaskFactory();
+	TaskFactoryOP tf( new TaskFactory() );
 
-	tf->push_back( new InitializeFromCommandline() ); // also inits -ex options
-	tf->push_back( new IncludeCurrent() ); // enforce keeping of input sidechains
-	tf->push_back( new NoRepackDisulfides() );
+	tf->push_back( TaskOperationCOP( new InitializeFromCommandline() ) ); // also inits -ex options
+	tf->push_back( TaskOperationCOP( new IncludeCurrent() ) ); // enforce keeping of input sidechains
+	tf->push_back( TaskOperationCOP( new NoRepackDisulfides() ) );
 
 	// load resfile op only if requested
 	if ( !resfile_.empty() ) {
-		ReadResfileOP rrf = new ReadResfile();
+		ReadResfileOP rrf( new ReadResfile() );
 		rrf->filename( resfile_ );
 		tf->push_back( rrf );
 	}
@@ -536,7 +536,7 @@ void BDR::process_continuous_design_string(
 				break;
 		}
 
-		design_tf->push_back( new RestrictAbsentCanonicalAAS( i + offset, allowed_aa_types ) );
+		design_tf->push_back( TaskOperationCOP( new RestrictAbsentCanonicalAAS( i + offset, allowed_aa_types ) ) );
 	}
 }
 
@@ -579,7 +579,7 @@ void BDR::process_insert_design_string(
 	aa.replace( insert_char_idx, 1, insert_nres, insert_char );
 
 	// setup TaskOperations
-	RestrictResidueToRepackingOP repack_op = new RestrictResidueToRepacking();
+	RestrictResidueToRepackingOP repack_op( new RestrictResidueToRepacking() );
 
 	Size const left_offset = interval.left;
 	for ( Size i = 0, ie = aa.size(); i < ie; ++i ) {
@@ -596,7 +596,7 @@ void BDR::process_insert_design_string(
 			allowed_aa_types[ aa_from_oneletter_code( aa.at( i ) ) ] = true;
 		}
 
-		design_tf->push_back( new RestrictAbsentCanonicalAAS( i + left_offset, allowed_aa_types ) );
+		design_tf->push_back( TaskOperationCOP( new RestrictAbsentCanonicalAAS( i + left_offset, allowed_aa_types ) ) );
 	}
 
 	design_tf->push_back( repack_op );

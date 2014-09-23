@@ -35,8 +35,8 @@ class Atom_
 
 public:
 
-	typedef  utility::pointer::access_ptr< Bond_ >  BondP_;
-	typedef  utility::pointer::access_ptr< Bond_ const >  ConstBondP_;
+	typedef  utility::pointer::weak_ptr< Bond_ >  BondP_;
+	typedef  utility::pointer::weak_ptr< Bond_ const >  ConstBondP_;
 	typedef  std::set< BondP_ >  Bonds_;
 
 	Atom_( double const weight, double const charge ) :
@@ -100,7 +100,7 @@ class Bond_
 {
 public:
 
-	typedef  utility::pointer::access_ptr< Atom_ >  AtomP_;
+	typedef  utility::pointer::weak_ptr< Atom_ >  AtomP_;
 
 	Bond_( Atom_ & a, Atom_ & b ) :
 		a_( a ),
@@ -151,21 +151,21 @@ public:
 
 
 void
-f_( utility::pointer::access_ptr< Bond_ > const & bp )
+f_utility::pointer::weak_ptr< Bond_ > const & bp )
 {
 	assert( bp );
 }
 
 
 void
-g_( utility::pointer::access_ptr< Bond_ > bp )
+g_utility::pointer::weak_ptr< Bond_ > bp )
 {
 	assert( bp );
 }
 
 
 void
-h_( utility::pointer::access_ptr< Bond_ > & bp )
+h_utility::pointer::weak_ptr< Bond_ > & bp )
 {
 	assert( bp );
 }
@@ -185,12 +185,12 @@ class AccessPtrTests : public CxxTest::TestSuite {
 	public:
 
 	/// @brief Size test
-	void test_access_ptr_size() {
+	void test_weak_ptr_size() {
 		TS_ASSERT( sizeof( utility::pointer::access_ptr< Bond_ > ) == sizeof( Bond_ * ) );
 	}
 
 	/// @brief Atom/Bond basics
-	void test_access_ptr_basics() {
+	void test_weak_ptr_basics() {
 		Atom_ C( 12.0, 0.0 ), H( 1.0, 0.0 );
 		Bond_ bond( C, H );
 		Bond_ bond2( C, H );
@@ -211,67 +211,67 @@ class AccessPtrTests : public CxxTest::TestSuite {
 	}
 
 	/// @brief Constructor test
-	void test_access_ptr_constructor() {
+	void test_weak_ptr_constructor() {
 		Atom_ C( 12.0, 0.0 ), H( 1.0, 0.0 );
 		Bond_ bond( C, H );
-		utility::pointer::access_ptr< Bond_ > CH( bond );
+		utility::pointer::weak_ptr< Bond_ > CH( bond );
 		TS_ASSERT( C.bonds_.find( CH ) != C.bonds_.end() );
 		TS_ASSERT( *C.bonds_.find( CH ) == CH );
 		TS_ASSERT( C.bonds_.size() == 1 );
 	}
 
 	/// @brief Derived object
-	void test_access_ptr_derived() {
+	void test_weak_ptr_derived() {
 		Atom_ C( 12.0, 0.0 ), H( 1.0, 0.0 );
 		SpecialBond_ bond( C, H );
-		utility::pointer::access_ptr< Bond_ > CH( bond ); // Can hold pointer to derived class object
+		utility::pointer::weak_ptr< Bond_ > CH( bond ); // Can hold pointer to derived class object
 		TS_ASSERT( C.bonds_.find( CH ) != C.bonds_.end() );
 		TS_ASSERT( *C.bonds_.find( CH ) == CH );
 		TS_ASSERT( C.bonds_.size() == 1 );
 	}
 
 	/// @brief Const object test
-	void test_access_ptr_const_object() {
+	void test_weak_ptr_const_object() {
 		Atom_ C( 12.0, 0.0 ), H( 1.0, 0.0 );
 		Bond_ bond( C, H );
-		utility::pointer::access_ptr< Bond_ const > CH( bond );
+		utility::pointer::weak_ptr< Bond_ const > CH( bond );
 		TS_ASSERT( CH->a_->weight_ == C.weight_ );
 		//CH->a_.reset(); // Won't compile because CH holds pointer to const
 	}
 
 	/// @brief Derived object conversion
-	void test_access_ptr_derived_conversion() {
+	void test_weak_ptr_derived_conversion() {
 		Atom_ C( 12.0, 0.0 ), H( 1.0, 0.0 );
 		Bond_ bond( C, H );
-		utility::pointer::access_ptr< Bond_ > CH( bond );
+		utility::pointer::weak_ptr< Bond_ > CH( bond );
 		f_( CH );
 		SpecialBond_ special_bond( C, H );
-		utility::pointer::access_ptr< SpecialBond_ > sCH( special_bond );
+		utility::pointer::weak_ptr< SpecialBond_ > sCH( special_bond );
 		f_( sCH ); // OK: Creates temporary bound to const reference
 		g_( sCH ); // OK: Creates temporary bound to passed value
 		// h_( sCH ); // Won't compile since can't create non-const temporary
 	}
 
 	/// @brief Derived object construction and assignment
-	void test_access_ptr_derived_construction_assignment() {
+	void test_weak_ptr_derived_construction_assignment() {
 		Atom_ C( 12.0, 0.0 ), H( 1.0, 0.0 );
 		Bond_ bond( C, H );
 		SpecialBond_ special_bond( C, H );
-		utility::pointer::access_ptr< SpecialBond_ > sCH( special_bond );
-		utility::pointer::access_ptr< Bond_ > CH( sCH );
+		utility::pointer::weak_ptr< SpecialBond_ > sCH( special_bond );
+		utility::pointer::weak_ptr< Bond_ > CH( sCH );
 		TS_ASSERT( CH == sCH );
 		CH = sCH;
 		TS_ASSERT( CH == sCH );
 	}
 
 	/// @brief Const object construction and assignment
-	void test_access_ptr_constant_construction_assignment() {
+	void test_weak_ptr_constant_construction_assignment() {
 		Atom_ H( 1.0, 0.0 ), C( 12.0, 0.0 );
-		utility::pointer::access_ptr< Atom_ > Cp( C );
-		utility::pointer::access_ptr< Atom_ const > Ccp( Cp );
+		utility::pointer::weak_ptr< Atom_ > Cp( C );
+		utility::pointer::weak_ptr< Atom_ const > Ccp( Cp );
 		TS_ASSERT( Ccp->weight_ == C.weight_ );
 		// access_ptr< Atom_ > badCp( Ccp ); // Won't compile since pointer to const Atom_ isn't assignable to pointer to non-const Atom_
-		utility::pointer::access_ptr< Atom_ > Hp( H );
+		utility::pointer::weak_ptr< Atom_ > Hp( H );
 		Ccp = Hp;
 		TS_ASSERT( Ccp->weight_ == H.weight_ );
 	}

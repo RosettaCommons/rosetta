@@ -23,8 +23,8 @@ namespace stepwise {
 namespace screener {
 	
 	class Scorer;
-	typedef utility::pointer::owning_ptr< Scorer > ScorerOP;
-	typedef utility::pointer::owning_ptr< Scorer const > ScorerCOP;
+	typedef utility::pointer::shared_ptr< Scorer > ScorerOP;
+	typedef utility::pointer::shared_ptr< Scorer const > ScorerCOP;
 	
 } //screener
 } //stepwise

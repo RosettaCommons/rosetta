@@ -228,7 +228,7 @@ RotamerSets::build_rotamers(
 
 				for (Rotamers::const_iterator itr = bufferset->begin(), ite = bufferset->end(); itr!=ite; itr++){
 
-					conformation::ResidueOP cloneRes = new conformation::Residue(*(*itr)->clone());
+					conformation::ResidueOP cloneRes( new conformation::Residue(*(*itr)->clone()) );
 
 					cloneRes->seqpos(copies[jj]);
 
@@ -371,12 +371,12 @@ RotamerSets::compute_energies(
 	compute_one_body_energies( pose, scfxn, packer_neighbor_graph, ig );
 
 	PrecomputedPairEnergiesInteractionGraphOP pig =
-		dynamic_cast< PrecomputedPairEnergiesInteractionGraph * > ( ig.get() );
+		utility::pointer::dynamic_pointer_cast< core::pack::interaction_graph::PrecomputedPairEnergiesInteractionGraph > ( ig );
 	if ( pig ) {
 		precompute_two_body_energies( pose, scfxn, packer_neighbor_graph, pig );
 	} else {
 		/// is this an on the fly graph?
-		OnTheFlyInteractionGraphOP otfig = dynamic_cast< OnTheFlyInteractionGraph * > ( ig.get() );
+		OnTheFlyInteractionGraphOP otfig = utility::pointer::dynamic_pointer_cast< core::pack::interaction_graph::OnTheFlyInteractionGraph > ( ig );
 		if ( otfig ) {
 			prepare_otf_graph( pose, scfxn, packer_neighbor_graph, otfig );
 			compute_proline_correction_energies_for_otf_graph( pose, scfxn, packer_neighbor_graph, otfig);

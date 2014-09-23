@@ -26,8 +26,8 @@ namespace clusters {
 // Forward
 class CDRClusterSet;
 
-typedef utility::pointer::owning_ptr< CDRClusterSet > CDRClusterSetOP;
-typedef utility::pointer::owning_ptr< CDRClusterSet const > CDRClusterSetCOP;
+typedef utility::pointer::shared_ptr< CDRClusterSet > CDRClusterSetOP;
+typedef utility::pointer::shared_ptr< CDRClusterSet const > CDRClusterSetCOP;
 
 
 } //namespace clusters

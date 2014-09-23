@@ -82,11 +82,11 @@ ReadResfileFromDB::ReadResfileFromDB(ReadResfileFromDB const & src) : TaskOperat
 ReadResfileFromDB::~ReadResfileFromDB() {}
 
 TaskOperationOP ReadResfileFromDBCreator::create_task_operation() const {
-	return new ReadResfileFromDB;
+	return TaskOperationOP( new ReadResfileFromDB );
 }
 
 TaskOperationOP ReadResfileFromDB::clone() const {
-	return new ReadResfileFromDB( *this );
+	return TaskOperationOP( new ReadResfileFromDB( *this ) );
 }
 
 void

@@ -33,7 +33,7 @@
 namespace protocols {
 namespace genetic_algorithm {
 
-EntityRandomizer::EntityRandomizer() : utility::pointer::ReferenceCount(), entity_length_(0), mutation_rate_(1.), entity_template_(0) {}
+EntityRandomizer::EntityRandomizer() : utility::pointer::ReferenceCount(), entity_length_(0), mutation_rate_(1.), entity_template_(/* 0 */) {}
 EntityRandomizer::~EntityRandomizer() {}
 EntityCOP EntityRandomizer::entity_template() const { return entity_template_; }
 void EntityRandomizer::set_entity_template( EntityCOP entity) { entity_template_ = entity; }
@@ -64,7 +64,7 @@ EntityRandomizer::random_entity()
 	if (entity_template_) {
 		entity = entity_template_->clone();
 	} else {
-		entity = new Entity;
+		entity = EntityOP( new Entity );
 	}
 	entity->set_traits_size( entity_length_ );
 	// temporarily increase mutation rate to 100%

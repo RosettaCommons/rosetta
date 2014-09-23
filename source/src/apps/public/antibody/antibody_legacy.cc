@@ -48,7 +48,7 @@ main( int argc, char * argv [] )
 	// initialize core
 	devel::init( argc, argv );
 
-	MoverOP RosettaAntibody = new antibody_legacy::AntibodyModeler( );
+	MoverOP RosettaAntibody( new antibody_legacy::AntibodyModeler( ) );
 	// protocols::jd2::JobDistributor::get_instance()->go( RosettaAntibody );
 	protocols::jobdist::main_plain_mover( *RosettaAntibody );
 	 } catch ( utility::excn::EXCN_Base const & e ) {

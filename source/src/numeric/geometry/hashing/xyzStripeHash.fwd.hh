@@ -18,8 +18,8 @@ namespace geometry {
 namespace hashing {
 
 class xyzStripeHash;
-typedef utility::pointer::owning_ptr< xyzStripeHash > xyzStripeHashOP;
-typedef utility::pointer::owning_ptr< xyzStripeHash const > xyzStripeHashCOP;
+typedef utility::pointer::shared_ptr< xyzStripeHash > xyzStripeHashOP;
+typedef utility::pointer::shared_ptr< xyzStripeHash const > xyzStripeHashCOP;
 
 }
 }

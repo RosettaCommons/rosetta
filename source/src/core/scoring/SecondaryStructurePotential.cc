@@ -368,7 +368,7 @@ private:
 
 };
 
-typedef utility::pointer::owning_ptr< DimerPairing > DimerPairingOP;
+typedef utility::pointer::shared_ptr< DimerPairing > DimerPairingOP;
 
 bool
 dimer_pairing_pointer_sorter( DimerPairingOP const & a, DimerPairingOP const & b )
@@ -724,7 +724,7 @@ SecondaryStructurePotential::sspair(
 //car here we should also build a list of what dimers ss1 and ss2 are close
 //car to so that we can speed up the check for disallowed pairs at the end
 //car of this function
-							dimer_pairs.push_back( new DimerPairing( ss1, ss2, sign1, sign2, dimer_pair_score ) );
+							dimer_pairs.push_back( utility::pointer::shared_ptr<class core::scoring::DimerPairing>( new DimerPairing( ss1, ss2, sign1, sign2, dimer_pair_score ) ) );
 
 							if (symmetric) {  // multiply with score factors for the edge
 									// We need to have all possible dimer pairs present for the sheet detection to work. The energy graph does not contain all residues, only the ones in the scoring subunit and edges to the scoring subunit. So we need to add dimer pairongs for no-scoring subunits to make the list complete.
@@ -743,7 +743,7 @@ SecondaryStructurePotential::sspair(
 										if ( symm_ss1_clone == 0 || symm_ss2_clone == 0 ) continue; // if there are no strands at clone postions...
 										if ( clone_SS_resnum_ss1 > clone_SS_resnum_ss2 ) continue; // strands have to be in sequence order
 
-										dimer_pairs.push_back( new DimerPairing( symm_ss1_clone, symm_ss2_clone, sign1, sign2, dimer_pair_score ) );
+										dimer_pairs.push_back( utility::pointer::shared_ptr<class core::scoring::DimerPairing>( new DimerPairing( symm_ss1_clone, symm_ss2_clone, sign1, sign2, dimer_pair_score ) ) );
 								}
 							}
 

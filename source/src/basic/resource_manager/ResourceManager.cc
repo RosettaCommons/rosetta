@@ -142,7 +142,7 @@ ResourceManager::show(
 			r = resources_.begin(), re = resources_.end(); r != re; ++r){
 		out
 			<< std::setiosflags(std::ios::left) << setw(16) << r->first
-			<< (r->second() ? "true" : "false") << endl;
+			<< (r->second ? "true" : "false") << endl;
 	}
 }
 

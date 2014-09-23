@@ -71,15 +71,15 @@ using std::pair;
 ///@brief default ctor
 ParetoOptMutationMover::ParetoOptMutationMover() :
 	Mover( ParetoOptMutationMoverCreator::mover_name() ),
-	task_factory_( NULL ),
+	task_factory_( /* NULL */ ),
 //	filters_( NULL ), /* how set default vecgtor of NULLs? */
 //	sample_type_( "low" ),
-	scorefxn_( NULL ),
-	relax_mover_( NULL ),
+	scorefxn_( /* NULL */ ),
+	relax_mover_( /* NULL */ ),
 	dump_pdb_( false ),
 	dump_table_( false ),
 	parallel_( false ),
-	stopping_condition_( NULL ),
+	stopping_condition_( /* NULL */ ),
   stop_before_condition_( false ),
   skip_best_check_( false ),
   rtmin_( false ),
@@ -126,12 +126,12 @@ ParetoOptMutationMover::~ParetoOptMutationMover(){}
 //creators
 protocols::moves::MoverOP
 ParetoOptMutationMoverCreator::create_mover() const {
-	return new ParetoOptMutationMover;
+	return protocols::moves::MoverOP( new ParetoOptMutationMover );
 }
 
 protocols::moves::MoverOP
 ParetoOptMutationMover::clone() const{
-	return new ParetoOptMutationMover( *this );
+	return protocols::moves::MoverOP( new ParetoOptMutationMover( *this ) );
 }
 
 //name getters
@@ -385,7 +385,7 @@ ParetoOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
   if( tag->hasOption( "reset_delta_filters" ) ){
     delta_filter_names = utility::string_split( tag->getOption< std::string >( "reset_delta_filters" ), ',' );
     BOOST_FOREACH( std::string const fname, delta_filter_names ){
-      reset_delta_filters_.push_back( dynamic_cast< protocols::simple_filters::DeltaFilter * >( protocols::rosetta_scripts::parse_filter( fname, filters )() ) );
+      reset_delta_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::DeltaFilter > ( protocols::rosetta_scripts::parse_filter( fname, filters ) ) );
       TR<<"The baseline for Delta Filter "<<fname<<" will be reset upon each accepted mutation"<<std::endl;
     }
   }

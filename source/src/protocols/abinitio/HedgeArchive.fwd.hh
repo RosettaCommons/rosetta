@@ -19,8 +19,8 @@ namespace protocols {
 namespace abinitio {
 
 class HedgeArchive;
-typedef utility::pointer::owning_ptr<HedgeArchive> HedgeArchiveOP;
-typedef utility::pointer::owning_ptr<HedgeArchive const> HedgeArchiveCOP;
+typedef utility::pointer::shared_ptr<HedgeArchive> HedgeArchiveOP;
+typedef utility::pointer::shared_ptr<HedgeArchive const> HedgeArchiveCOP;
 
 }
 }

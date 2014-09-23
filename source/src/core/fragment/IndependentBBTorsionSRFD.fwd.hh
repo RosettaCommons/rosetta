@@ -29,19 +29,19 @@ class IndependentBBTorsionSRFD;
 
 
 /// @brief access pointer for IndependentBBTorsionSRFD
-typedef utility::pointer::access_ptr< IndependentBBTorsionSRFD > IndependentBBTorsionSRFD_AP;
+typedef utility::pointer::weak_ptr< IndependentBBTorsionSRFD > IndependentBBTorsionSRFD_AP;
 
 
 /// @brief const access pointer for IndependentBBTorsionSRFD
-typedef utility::pointer::access_ptr< IndependentBBTorsionSRFD const > IndependentBBTorsionSRFD_CAP;
+typedef utility::pointer::weak_ptr< IndependentBBTorsionSRFD const > IndependentBBTorsionSRFD_CAP;
 
 
 /// @brief owning pointer for IndependentBBTorsionSRFD
-typedef utility::pointer::owning_ptr< IndependentBBTorsionSRFD > IndependentBBTorsionSRFD_OP;
+typedef utility::pointer::shared_ptr< IndependentBBTorsionSRFD > IndependentBBTorsionSRFD_OP;
 
 
 /// @brief const owning pointer for IndependentBBTorsionSRFD
-typedef utility::pointer::owning_ptr< IndependentBBTorsionSRFD const > IndependentBBTorsionSRFD_COP;
+typedef utility::pointer::shared_ptr< IndependentBBTorsionSRFD const > IndependentBBTorsionSRFD_COP;
 
 
 } // namespace fragment

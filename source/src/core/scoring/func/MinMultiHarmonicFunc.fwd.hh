@@ -23,8 +23,8 @@ namespace scoring {
 namespace func {
 
 class MinMultiHarmonicFunc;
-typedef utility::pointer::owning_ptr< MinMultiHarmonicFunc > MinMultiHarmonicFuncOP;
-typedef utility::pointer::owning_ptr< MinMultiHarmonicFunc const > MinMultiHarmonicFuncCOP;
+typedef utility::pointer::shared_ptr< MinMultiHarmonicFunc > MinMultiHarmonicFuncOP;
+typedef utility::pointer::shared_ptr< MinMultiHarmonicFunc const > MinMultiHarmonicFuncCOP;
 
 } // constraints
 } // scoring

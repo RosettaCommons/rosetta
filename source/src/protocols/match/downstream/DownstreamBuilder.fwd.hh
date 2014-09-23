@@ -25,8 +25,8 @@ namespace downstream {
 
 class DownstreamBuilder;
 
-typedef utility::pointer::owning_ptr< DownstreamBuilder > DownstreamBuilderOP;
-typedef utility::pointer::owning_ptr< DownstreamBuilder const > DownstreamBuilderCOP;
+typedef utility::pointer::shared_ptr< DownstreamBuilder > DownstreamBuilderOP;
+typedef utility::pointer::shared_ptr< DownstreamBuilder const > DownstreamBuilderCOP;
 
 }
 }

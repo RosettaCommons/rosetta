@@ -20,7 +20,7 @@ namespace core {
 namespace sequence {
 
 class CompositeScoringScheme;
-typedef utility::pointer::owning_ptr< CompositeScoringScheme > CompositeScoringSchemeOP;
+typedef utility::pointer::shared_ptr< CompositeScoringScheme > CompositeScoringSchemeOP;
 
 } // sequence
 } // core

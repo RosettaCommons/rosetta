@@ -74,7 +74,7 @@ namespace full_model_info {
 											 core::chemical::ResidueTypeSetCAP rsd_set )
 	{
 		using namespace core::pose;
-		PoseOP input_pose = new Pose;
+		PoseOP input_pose( new Pose );
 		core::chemical::ResidueTypeSetCOP rsd_set_op( rsd_set );
 		import_pose::pose_from_pdb( *input_pose, *rsd_set_op, input_file );
 		cleanup( *input_pose );
@@ -127,7 +127,7 @@ namespace full_model_info {
 			input_poses.push_back( get_pdb_and_cleanup( input_pdb_files[ n ], rsd_set ) );
 		}
 		for ( Size n = 1; n <= input_silent_files.size(); n++ ) {
-			PoseOP pose = new Pose;
+			PoseOP pose( new Pose );
 			SilentFileData silent_file_data;
 			core::chemical::ResidueTypeSetCOP rsd_set_op( rsd_set );
 			silent_file_data.read_file( input_silent_files[n] );
@@ -142,7 +142,7 @@ namespace full_model_info {
 			Size input_res_count = 0;
 			for ( Size n = 1; n <= input_poses.size(); n++ ) {
 				Pose & pose = *input_poses[ n ];
-				PDBInfoOP pdb_info = new PDBInfo( pose );
+				PDBInfoOP pdb_info( new PDBInfo( pose ) );
 				vector1< Size > input_res_for_pose;
 				vector1< char > input_chain_for_pose;
 				for ( Size k = 1; k <= pose.total_residue(); k++ ){
@@ -159,7 +159,7 @@ namespace full_model_info {
 			runtime_assert( input_res_count == input_res_list.size() );
 		}
 
-		if ( input_poses.size() == 0 ) input_poses.push_back( new Pose ); // just a blank pose for now.
+		if ( input_poses.size() == 0 ) input_poses.push_back( utility::pointer::shared_ptr<class core::pose::Pose>( new Pose ) ); // just a blank pose for now.
 
 		if ( option[ full_model::other_poses ].user() ) {
 			get_other_poses( input_poses, option[ full_model::other_poses ](), rsd_set );
@@ -295,7 +295,7 @@ namespace full_model_info {
 		std::string const desired_sequence           = get_concatenated_sequence( fasta_sequences );
 		vector1< Size > cutpoint_open_in_full_model  = get_cutpoints( fasta_sequences );
 
-		FullModelParametersOP full_model_parameters =	new FullModelParameters( desired_sequence );
+		FullModelParametersOP full_model_parameters( new FullModelParameters( desired_sequence ) );
 		vector1< char > conventional_chains;
 		vector1< int  > conventional_numbering;
 		get_conventional_chains_and_numbering( fasta_sequences, conventional_chains, conventional_numbering );
@@ -382,7 +382,7 @@ namespace full_model_info {
 
 		for ( Size n = 1; n <= pose_pointers.size(); n++ ) {
 			Pose & pose = *pose_pointers[n];
-			FullModelInfoOP full_model_info_for_pose = new FullModelInfo( full_model_parameters );
+			FullModelInfoOP full_model_info_for_pose( new FullModelInfo( full_model_parameters ) );
 			full_model_info_for_pose->set_res_list( pose_res_lists[ n ] );
 			pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, full_model_info_for_pose );
 			update_pdb_info_from_full_model_info( pose ); // for output pdb or silent file -- residue numbering.

@@ -70,10 +70,10 @@ public:// constructor/destructor
 
 public:// virtual constructor
 	// @brief make clone
-	virtual filters::FilterOP clone() const { return new ShapeComplementarityFilter( *this ); }
+	virtual filters::FilterOP clone() const { return filters::FilterOP( new ShapeComplementarityFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual filters::FilterOP fresh_instance() const { return new ShapeComplementarityFilter(); }
+	virtual filters::FilterOP fresh_instance() const { return filters::FilterOP( new ShapeComplementarityFilter() ); }
 
 public:// accessor
 	// @brief get name of this filter

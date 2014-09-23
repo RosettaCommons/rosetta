@@ -94,19 +94,19 @@ FloppyTailMover::FloppyTailMover() :
 	start_(0),
 	stop_(0),
 	init_for_input_yet_(false),
-	centroid_scorefunction_(NULL),
-	fullatom_scorefunction_(NULL),
-	task_factory_(NULL),
-	movemap_(NULL),
-	movemap_lesstail_(NULL),
-	foldtree_(NULL),
-	fragset3mer_(NULL)
+	centroid_scorefunction_(/* NULL */),
+	fullatom_scorefunction_(/* NULL */),
+	task_factory_(/* NULL */),
+	movemap_(/* NULL */),
+	movemap_lesstail_(/* NULL */),
+	foldtree_(/* NULL */),
+	fragset3mer_(/* NULL */)
 {
 	protocols::moves::Mover::type( "FloppyTail" );
 
 	//this should be per-input, not in the ctor, if multiple frags files
 	if (basic::options::option[ basic::options::OptionKeys::in::file::frag3].user()){
-        fragset3mer_ = new core::fragment::ConstantLengthFragSet( 3 );
+        fragset3mer_ = core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( 3 ) );
 		fragset3mer_->read_fragment_file( basic::options::option[ basic::options::OptionKeys::in::file::frag3].value() );
 	}
 
@@ -118,7 +118,7 @@ FloppyTailMover::FloppyTailMover() :
         centroid_scorefunction_ = ScoreFunctionFactory::create_score_function(basic::options::option[ basic::options::OptionKeys::FloppyTail::cen_weights].value());
     }
     else{
-        centroid_scorefunction_ = new ScoreFunction;
+        centroid_scorefunction_ = core::scoring::ScoreFunctionOP( new ScoreFunction );
         centroid_scorefunction_->set_weight( env,         1.0 );
         centroid_scorefunction_->set_weight( cbeta,       1.0 );
         centroid_scorefunction_->set_weight( vdw,         1.0 );
@@ -162,8 +162,8 @@ FloppyTailMover & FloppyTailMover::operator=( FloppyTailMover const & rhs ){
 	task_factory_						= rhs.task_factory_->clone();
 	movemap_								= rhs.movemap_->clone();
 	movemap_lesstail_				= rhs.movemap_lesstail_->clone();
-	foldtree_								= new core::kinematics::FoldTree(*rhs.foldtree_); //no clone operation, and no proper copy ctor
-	fragset3mer_            = new core::fragment::ConstantLengthFragSet(*rhs.fragset3mer_);//clone useless
+	foldtree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(*rhs.foldtree_) ); //no clone operation, and no proper copy ctor
+	fragset3mer_ = core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet(*rhs.fragset3mer_) );//clone useless
 
 	return *this;
 }
@@ -199,13 +199,13 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 		TR << "Tail is from " << start_ << " to " << stop_ << std::endl;
 
 		//setup MoveMap
-		movemap_ = new core::kinematics::MoveMap;
+		movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
 		for(core::Size i(start_); i<=stop_; ++i) {
 			movemap_->set_bb(i, true); //backbone mobile
 			movemap_->set_chi(i, true); //chi of mobile residues
 		}
 
-		movemap_lesstail_ = new core::kinematics::MoveMap(*movemap_);
+		movemap_lesstail_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap(*movemap_) );
 		if (stop_ == pose.total_residue()){
 			core::Size const taillength = stop_ - start_;
 			core::Size const substop = (start_ + core::Size(core::Real(taillength) * (1.0 - option[ FloppyTail::short_tail::short_tail_fraction ] ) ) );
@@ -224,10 +224,10 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 	} else {
 		//handle user-defined movemap from file or from function; reverse-convert into start_ and stop_
 		if (!movemap_){
-			movemap_ = new core::kinematics::MoveMap;
+			movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
 			movemap_->init_from_file(option[in::file::movemap].value());
 		}
-		movemap_lesstail_ = new core::kinematics::MoveMap(*movemap_);
+		movemap_lesstail_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap(*movemap_) );
 
 		//calculate effective start_ and stop_.  This may be less efficient than the MoveMap's iterators, but it is vastly simpler, less likely to be buggy, and not a performace concern.
 		core::Size const nres(pose.total_residue());
@@ -255,10 +255,10 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 	}
 
 	//We want to linearize the fold_tree so that internal linkers with noncovalent attachments on both sides will work properly; it will have no effect on terminal tails
-	foldtree_ = new core::kinematics::FoldTree(pose.fold_tree()); //store original fold tree; if we enter neither option below it stays valid
+	foldtree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(pose.fold_tree()) ); //store original fold tree; if we enter neither option below it stays valid
 	if( !((stop_ == pose.total_residue()) || (start_ == 1)) || basic::options::option[ FloppyTail::force_linear_fold_tree].value() ){
 		TR << "non-terminal or N-terminal (C-rooted) floppy section, using a linear fold tree to try to ensure downstream residues follow \nOld tree: " << pose.fold_tree();
-		foldtree_ = new core::kinematics::FoldTree(core::kinematics::linearize_fold_tree(*foldtree_));
+		foldtree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(core::kinematics::linearize_fold_tree(*foldtree_)) );
 		TR << "new tree: " << *foldtree_ << std::endl;
 	}
 	if( basic::options::option[ FloppyTail::C_root].value() ) {
@@ -271,7 +271,7 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 	//!currently hardcoded for chains 7 and 8!!!!!!!!!!!!!!!
 	if(false){
 		//linearized fold tree for proper domain-moves-with-domain
-		foldtree_ = new core::kinematics::FoldTree(core::kinematics::linearize_fold_tree(*foldtree_));
+		foldtree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(core::kinematics::linearize_fold_tree(*foldtree_)) );
 		//std::cout << "linearized foldtree " << *foldtree_ << std::endl;
 
 		//re-root fold_tree in one dimerization domain
@@ -304,7 +304,7 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 	//setup of TaskFactory
 	//command line and resfile options
 	using namespace core::pack::task;
-	task_factory_ = new TaskFactory;
+	task_factory_ = core::pack::task::TaskFactoryOP( new TaskFactory );
 	task_factory_->push_back( operation::TaskOperationOP( new operation::InitializeFromCommandline ) );
 	if ( option[ packing::resfile ].user() ) {
 		task_factory_->push_back( operation::TaskOperationOP( new operation::ReadResfile ) );
@@ -431,13 +431,13 @@ void FloppyTailMover::apply( core::pose::Pose & pose ){
 
 	using protocols::simple_moves::SmallMover;
 	using protocols::simple_moves::BackboneMoverOP;
-	protocols::simple_moves::BackboneMoverOP small_mover_cen = new protocols::simple_moves::SmallMover(movemap_, 0.8, 0);
+	protocols::simple_moves::BackboneMoverOP small_mover_cen( new protocols::simple_moves::SmallMover(movemap_, 0.8, 0) );
 	small_mover_cen->angle_max( 'H', 180.0 );
 	small_mover_cen->angle_max( 'E', 180.0 );
 	small_mover_cen->angle_max( 'L', 180.0 );
 	backbone_mover_cen->add_mover(small_mover_cen, 1.0);
 
-	protocols::simple_moves::BackboneMoverOP shear_mover_cen = new protocols::simple_moves::ShearMover(movemap_, 0.8, 0);
+	protocols::simple_moves::BackboneMoverOP shear_mover_cen( new protocols::simple_moves::ShearMover(movemap_, 0.8, 0) );
 	shear_mover_cen->angle_max( 'H', 180.0 );
 	shear_mover_cen->angle_max( 'E', 180.0 );
 	shear_mover_cen->angle_max( 'L', 180.0 );
@@ -445,7 +445,7 @@ void FloppyTailMover::apply( core::pose::Pose & pose ){
 
 	if(fragset3mer_){ //if we have fragments
 		using protocols::simple_moves::ClassicFragmentMover;
-		protocols::simple_moves::ClassicFragmentMoverOP frag_mover = new ClassicFragmentMover(fragset3mer_, movemap_);
+		protocols::simple_moves::ClassicFragmentMoverOP frag_mover( new ClassicFragmentMover(fragset3mer_, movemap_) );
 		frag_mover->enable_end_bias_check(false);
 		backbone_mover_cen->add_mover(frag_mover, 0.5);
 	}
@@ -453,12 +453,12 @@ void FloppyTailMover::apply( core::pose::Pose & pose ){
 	/////////////////////////minimizer mover/////////////////////////////////////////
 	using protocols::simple_moves::MinMoverOP;
 	using protocols::simple_moves::MinMover;
-	protocols::simple_moves::MinMoverOP min_mover_cen = new protocols::simple_moves::MinMover(
+	protocols::simple_moves::MinMoverOP min_mover_cen( new protocols::simple_moves::MinMover(
 		movemap_,
 		centroid_scorefunction_,
 		basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
 		0.01,
-		true /*use_nblist*/ );
+		true /*use_nblist*/ ) );
 
 	/////////////////////////Monte Carlo//////////////////////////////////////////////////////////
 	//make the monte carlo object
@@ -529,21 +529,21 @@ void FloppyTailMover::apply( core::pose::Pose & pose ){
 	core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose(pose); //protected internally if no csts
 
 	/////////////////////////////generate full repack&minimize mover//////////////////////////////
-	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
+	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
 	pack_mover->task_factory( task_factory_ );
 	pack_mover->score_function( fullatom_scorefunction_ );
 
-	protocols::simple_moves::MinMoverOP min_mover_fa = new protocols::simple_moves::MinMover(
+	protocols::simple_moves::MinMoverOP min_mover_fa( new protocols::simple_moves::MinMover(
 		movemap_,
 		fullatom_scorefunction_,
 		basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
 		0.01,
-		true /*use_nblist*/ );
+		true /*use_nblist*/ ) );
 
 	//definitely want sidechain minimization here
 	using protocols::simple_moves::TaskAwareMinMoverOP;
 	using protocols::simple_moves::TaskAwareMinMover;
-	protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover_fa = new protocols::simple_moves::TaskAwareMinMover(min_mover_fa, task_factory_);
+	protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover_fa( new protocols::simple_moves::TaskAwareMinMover(min_mover_fa, task_factory_) );
 
 	/////////////////////////repack/minimize once to fix sidechains//////////////////////////////////
 	// TR << "packing" << std::endl;
@@ -554,12 +554,12 @@ void FloppyTailMover::apply( core::pose::Pose & pose ){
 	//////////////////////////////////////// backbone mover/////////////////////////////////////////
 	protocols::moves::RandomMoverOP backbone_mover_fa( new protocols::moves::RandomMover() );
 
-	protocols::simple_moves::BackboneMoverOP small_mover_fa = new protocols::simple_moves::SmallMover(movemap_lesstail_, 0.8, 0);
+	protocols::simple_moves::BackboneMoverOP small_mover_fa( new protocols::simple_moves::SmallMover(movemap_lesstail_, 0.8, 0) );
 	small_mover_fa->angle_max( 'H', 4.0 );
 	small_mover_fa->angle_max( 'E', 4.0 );
 	small_mover_fa->angle_max( 'L', 4.0 );
 
-	protocols::simple_moves::BackboneMoverOP shear_mover_fa = new protocols::simple_moves::ShearMover(movemap_lesstail_, 0.8, 0);
+	protocols::simple_moves::BackboneMoverOP shear_mover_fa( new protocols::simple_moves::ShearMover(movemap_lesstail_, 0.8, 0) );
 	shear_mover_fa->angle_max( 'H', 4.0 );
 	shear_mover_fa->angle_max( 'E', 4.0 );
 	shear_mover_fa->angle_max( 'L', 4.0 );
@@ -574,7 +574,7 @@ void FloppyTailMover::apply( core::pose::Pose & pose ){
 	/////////////////////////////////rotamer trials mover///////////////////////////////////////////
 	using protocols::simple_moves::RotamerTrialsMoverOP;
 	using protocols::simple_moves::EnergyCutRotamerTrialsMover;
-	protocols::simple_moves::RotamerTrialsMoverOP rt_mover(new protocols::simple_moves::EnergyCutRotamerTrialsMover(
+	protocols::simple_moves::RotamerTrialsMoverOP rt_mover( new protocols::simple_moves::EnergyCutRotamerTrialsMover(
 			fullatom_scorefunction_,
 			task_factory_,
 			mc_fa,

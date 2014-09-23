@@ -28,8 +28,8 @@ namespace abinitio {
 class ClassicAbinitio;
 
 // Types
-typedef  utility::pointer::owning_ptr< ClassicAbinitio >  ClassicAbinitioOP;
-typedef  utility::pointer::owning_ptr< ClassicAbinitio const >  ClassicAbinitioCOP;
+typedef  utility::pointer::shared_ptr< ClassicAbinitio >  ClassicAbinitioOP;
+typedef  utility::pointer::shared_ptr< ClassicAbinitio const >  ClassicAbinitioCOP;
 
 
 } // namespace kinematics

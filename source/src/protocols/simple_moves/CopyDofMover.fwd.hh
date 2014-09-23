@@ -22,8 +22,8 @@ namespace protocols {
 namespace simple_moves {
 	
 	class CopyDofMover;
-	typedef utility::pointer::owning_ptr< CopyDofMover > CopyDofMoverOP;
-	typedef utility::pointer::owning_ptr< CopyDofMover const > CopyDofMoverCOP;
+	typedef utility::pointer::shared_ptr< CopyDofMover > CopyDofMoverOP;
+	typedef utility::pointer::shared_ptr< CopyDofMover const > CopyDofMoverCOP;
 	
 } //simple_moves 
 } //protocols 

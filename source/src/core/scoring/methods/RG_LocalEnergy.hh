@@ -45,7 +45,7 @@ public:
   RG_Local_MinData():RG_MinData(){}
 };
 
-typedef utility::pointer::owning_ptr< RG_Local_MinData > RG_Local_MinDataOP;
+typedef utility::pointer::shared_ptr< RG_Local_MinData > RG_Local_MinDataOP;
 
 class RG_LocalEnergy: public RG_Energy_Fast  {
 public:

@@ -24,7 +24,7 @@ namespace silent {
 
 	class SilentFileData;
 
-	typedef utility::pointer::owning_ptr< SilentFileData > SilentFileDataOP;
+	typedef utility::pointer::shared_ptr< SilentFileData > SilentFileDataOP;
 } // namespace silent
 } // namespace io
 } // namespace core

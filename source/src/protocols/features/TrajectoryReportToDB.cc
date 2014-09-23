@@ -114,7 +114,7 @@ TrajectoryReportToDBCreator::keyname() const
 
 moves::MoverOP
 TrajectoryReportToDBCreator::create_mover() const {
-	return new TrajectoryReportToDB;
+	return moves::MoverOP( new TrajectoryReportToDB );
 }
 
 std::string
@@ -126,18 +126,18 @@ TrajectoryReportToDBCreator::mover_name()
 static thread_local basic::Tracer TR( "protocols.features.TrajectoryReportToDB" );
 
 moves::MoverOP
-TrajectoryReportToDB::fresh_instance() const { return new TrajectoryReportToDB; }
+TrajectoryReportToDB::fresh_instance() const { return moves::MoverOP( new TrajectoryReportToDB ); }
 
 moves::MoverOP
 TrajectoryReportToDB::clone() const
 {
-	return new TrajectoryReportToDB( *this );
+	return moves::MoverOP( new TrajectoryReportToDB( *this ) );
 }
 
 void
 TrajectoryReportToDB::initialize_trajectory_reporter()
 {
-	trajectory_map_features_reporter_ = new TrajectoryMapFeatures();
+	trajectory_map_features_reporter_ = TrajectoryMapFeaturesOP( new TrajectoryMapFeatures() );
 	ReportToDB::add_features_reporter( trajectory_map_features_reporter_ );
 }
 

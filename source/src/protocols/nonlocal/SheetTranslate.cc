@@ -153,11 +153,11 @@ std::string SheetTranslate::get_name() const {
 }
 
 moves::MoverOP SheetTranslate::fresh_instance() const {
-  return new SheetTranslate();
+  return moves::MoverOP( new SheetTranslate() );
 }
 
 moves::MoverOP SheetTranslate::clone() const {
-  return new SheetTranslate(*this);
+  return moves::MoverOP( new SheetTranslate(*this) );
 }
 
 }  // namespace moves

@@ -69,7 +69,7 @@ SSShapeComplementarityFilterCreator::keyname() const
 
 protocols::filters::FilterOP
 SSShapeComplementarityFilterCreator::create_filter() const {
-	return new SSShapeComplementarityFilter();
+	return protocols::filters::FilterOP( new SSShapeComplementarityFilter() );
 }
 
 std::string
@@ -86,8 +86,8 @@ SSShapeComplementarityFilter::SSShapeComplementarityFilter() :
 	verbose_( false ),
 	calc_loops_( true ),
 	calc_helices_( true ),
-	blueprint_( NULL ),
-	scc_( new core::scoring::sc::ShapeComplementarityCalculator() )
+	blueprint_( /* NULL */ ),
+	scc_( core::scoring::sc::ShapeComplementarityCalculatorOP( new core::scoring::sc::ShapeComplementarityCalculator() ) )
 {
 }
 
@@ -111,13 +111,13 @@ SSShapeComplementarityFilter::~SSShapeComplementarityFilter()
 protocols::filters::FilterOP
 SSShapeComplementarityFilter::clone() const
 {
-	return new SSShapeComplementarityFilter(*this);
+	return protocols::filters::FilterOP( new SSShapeComplementarityFilter(*this) );
 }
 
 protocols::filters::FilterOP
 SSShapeComplementarityFilter::fresh_instance() const
 {
-	return new SSShapeComplementarityFilter();
+	return protocols::filters::FilterOP( new SSShapeComplementarityFilter() );
 }
 
 void
@@ -130,7 +130,7 @@ SSShapeComplementarityFilter::parse_my_tag(
 {
 	std::string const bp_filename( tag->getOption< std::string >( "blueprint", "" ) );
 	if ( bp_filename != "" ) {
-		blueprint_ = new protocols::jd2::parser::BluePrint( bp_filename );
+		blueprint_ = protocols::jd2::parser::BluePrintCOP( new protocols::jd2::parser::BluePrint( bp_filename ) );
 		if ( ! blueprint_ ) {
 			utility_exit_with_message( "Error reading blueprint file." );
 		}
@@ -172,7 +172,7 @@ SSShapeComplementarityFilter::compute( core::pose::Pose const & pose ) const
 
 	protocols::fldsgn::topology::SS_Info2_OP ss_info;
 	if ( blueprint_ ) {
-		ss_info = new protocols::fldsgn::topology::SS_Info2( pose, blueprint_->secstruct() );
+		ss_info = protocols::fldsgn::topology::SS_Info2_OP( new protocols::fldsgn::topology::SS_Info2( pose, blueprint_->secstruct() ) );
 	} else {
 		core::scoring::dssp::Dssp dssp( pose );
 		std::string const & dssp_ss( dssp.get_dssp_secstruct() );
@@ -185,7 +185,7 @@ SSShapeComplementarityFilter::compute( core::pose::Pose const & pose ) const
 			}
 		}
 
-		ss_info = new protocols::fldsgn::topology::SS_Info2( pose, dssp.get_dssp_secstruct() );
+		ss_info = protocols::fldsgn::topology::SS_Info2_OP( new protocols::fldsgn::topology::SS_Info2( pose, dssp.get_dssp_secstruct() ) );
 	}
 
 	// we will average out the shape complementarity from HSS triplets and Helix-Helix pairings

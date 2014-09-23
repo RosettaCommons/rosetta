@@ -23,8 +23,8 @@ namespace movers {
 
 class PlacementAuctionMover;
 
-typedef utility::pointer::owning_ptr< PlacementAuctionMover > PlacementAuctionMoverOP;
-typedef utility::pointer::owning_ptr< PlacementAuctionMover const > PlacementAuctionMoverCOP;
+typedef utility::pointer::shared_ptr< PlacementAuctionMover > PlacementAuctionMoverOP;
+typedef utility::pointer::shared_ptr< PlacementAuctionMover const > PlacementAuctionMoverCOP;
 
 } } }
 

@@ -67,7 +67,7 @@ public:
 
 	evaluation::MetaPoseEvaluatorOP evaluator() {
 		if ( !evaluator_ ) {
-			evaluator_ = new evaluation::MetaPoseEvaluator;
+			evaluator_ = evaluation::MetaPoseEvaluatorOP( new evaluation::MetaPoseEvaluator );
 		}
 		return evaluator_;
 	}

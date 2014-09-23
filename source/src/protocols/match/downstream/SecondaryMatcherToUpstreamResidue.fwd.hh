@@ -25,17 +25,17 @@ namespace match {
 namespace downstream {
 
 class SecondaryMatcherToUpstreamResidue;
-typedef utility::pointer::owning_ptr< SecondaryMatcherToUpstreamResidue > SecondaryMatcherToUpstreamResidueOP;
-typedef utility::pointer::owning_ptr< SecondaryMatcherToUpstreamResidue const > SecondaryMatcherToUpstreamResidueCOP;
+typedef utility::pointer::shared_ptr< SecondaryMatcherToUpstreamResidue > SecondaryMatcherToUpstreamResidueOP;
+typedef utility::pointer::shared_ptr< SecondaryMatcherToUpstreamResidue const > SecondaryMatcherToUpstreamResidueCOP;
 
 class TargetRotamerCoords;
-typedef utility::pointer::owning_ptr< TargetRotamerCoords > TargetRotamerCoordsOP;
-typedef utility::pointer::owning_ptr< TargetRotamerCoords const > TargetRotamerCoordsCOP;
+typedef utility::pointer::shared_ptr< TargetRotamerCoords > TargetRotamerCoordsOP;
+typedef utility::pointer::shared_ptr< TargetRotamerCoords const > TargetRotamerCoordsCOP;
 
 
 class SecondaryMatchUpstreamResProcessor;
-typedef utility::pointer::owning_ptr< SecondaryMatchUpstreamResProcessor > SecondaryMatchUpstreamResProcessorOP;
-typedef utility::pointer::owning_ptr< SecondaryMatchUpstreamResProcessor const > SecondaryMatchUpstreamResProcessorCOP;
+typedef utility::pointer::shared_ptr< SecondaryMatchUpstreamResProcessor > SecondaryMatchUpstreamResProcessorOP;
+typedef utility::pointer::shared_ptr< SecondaryMatchUpstreamResProcessor const > SecondaryMatchUpstreamResProcessorCOP;
 
 }
 }

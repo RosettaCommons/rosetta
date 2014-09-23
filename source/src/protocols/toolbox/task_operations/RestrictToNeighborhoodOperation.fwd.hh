@@ -22,8 +22,8 @@ namespace task_operations {
 
 class RestrictToNeighborhoodOperation;
 
-typedef utility::pointer::owning_ptr< RestrictToNeighborhoodOperation > RestrictToNeighborhoodOperationOP;
-typedef utility::pointer::owning_ptr< RestrictToNeighborhoodOperation const > RestrictToNeighborhoodOperationCOP;
+typedef utility::pointer::shared_ptr< RestrictToNeighborhoodOperation > RestrictToNeighborhoodOperationOP;
+typedef utility::pointer::shared_ptr< RestrictToNeighborhoodOperation const > RestrictToNeighborhoodOperationCOP;
 
 } //namespace protocols
 } //namespace toolbox

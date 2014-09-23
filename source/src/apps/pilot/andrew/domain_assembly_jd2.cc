@@ -30,7 +30,7 @@ int main( int argc, char * argv [] )
 	try {
 		devel::init( argc, argv );
 
-		devel::domain_assembly::DomainAssemblyMoverOP mover = new devel::domain_assembly::DomainAssemblyMover;
+		devel::domain_assembly::DomainAssemblyMoverOP mover( new devel::domain_assembly::DomainAssemblyMover );
 
 		// GO!
 		protocols::jd2::JobDistributor::get_instance()->go( mover );

@@ -41,7 +41,7 @@ Torsion::Torsion() :
 	upper_( true ),
 	resnum_( 0 ),
 	torsion_( "" ),
-	task_factory_( NULL ),
+	task_factory_( /* NULL */ ),
 	task_factory_set_( false )
 {}
 
@@ -143,18 +143,18 @@ Torsion::parse_my_tag( utility::tag::TagCOP tag,
 
 protocols::filters::FilterOP
 Torsion::fresh_instance() const{
-	return new Torsion();
+	return protocols::filters::FilterOP( new Torsion() );
 }
 
 Torsion::~Torsion(){}
 
 protocols::filters::FilterOP
 Torsion::clone() const{
-	return new Torsion( *this );
+	return protocols::filters::FilterOP( new Torsion( *this ) );
 }
 
 protocols::filters::FilterOP
-TorsionCreator::create_filter() const { return new Torsion; }
+TorsionCreator::create_filter() const { return protocols::filters::FilterOP( new Torsion ); }
 
 std::string
 TorsionCreator::keyname() const { return "Torsion"; }

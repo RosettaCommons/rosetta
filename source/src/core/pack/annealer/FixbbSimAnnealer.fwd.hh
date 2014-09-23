@@ -23,7 +23,7 @@ namespace annealer {
 
 class FixbbSimAnnealer;
 
-typedef utility::pointer::owning_ptr< FixbbSimAnnealer > FixbbSimAnnealerOP;
+typedef utility::pointer::shared_ptr< FixbbSimAnnealer > FixbbSimAnnealerOP;
 
 }//end namespace annealer
 }//end namespace pack

@@ -76,15 +76,13 @@ public:
 		ResourceOP my_resource(
 			lazy_resource_manager->get_resource_by_job_tag( rDesc, jTag ));
 		core::conformation::symmetry::SymmDataCOP symm_data(
-			dynamic_cast< core::conformation::symmetry::SymmData const * > (
-				my_resource() ));
+			utility::pointer::dynamic_pointer_cast< core::conformation::symmetry::SymmData const > ( my_resource ));
 
 		// make sure we got back the right resource type
 		TS_ASSERT( symm_data );
 
 		// Setup the alternate symmetry data to compare against
-		core::conformation::symmetry::SymmDataOP symm_data_alt(
-			new core::conformation::symmetry::SymmData());
+		core::conformation::symmetry::SymmDataOP symm_data_alt( new core::conformation::symmetry::SymmData() );
 		symm_data_alt->read_symmetry_data_from_file(symm_data_filename);
 
 		TS_ASSERT_EQUALS(*symm_data, *symm_data_alt);

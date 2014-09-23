@@ -94,7 +94,7 @@ LoopCreationMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 LoopCreationMoverCreator::create_mover() const {
-	return new LoopCreationMover;
+	return protocols::moves::MoverOP( new LoopCreationMover );
 }
 
 std::string
@@ -106,9 +106,9 @@ LoopCreationMoverCreator::mover_name()
 
 ///@brief default constructor
 LoopCreationMover::LoopCreationMover():
-		loop_inserter_(NULL),
-		loop_closer_(NULL),
-		loop_filter_(NULL),
+		loop_inserter_(/* NULL */),
+		loop_closer_(/* NULL */),
+		loop_filter_(/* NULL */),
 		attempts_per_anchor_(1),
 		refine_(true),
 		design_loops_(false),
@@ -149,7 +149,7 @@ LoopCreationMover::LoopCreationMover(
 void
 LoopCreationMover::init()
 {
-	loop_filter_=new protocols::filters::TrueFilter;
+	loop_filter_ = protocols::filters::FilterOP( new protocols::filters::TrueFilter );
 }
 
 protocols::moves::MoverOP
@@ -194,7 +194,7 @@ LoopCreationMover::apply(
 	}
 	if(loop_filter_ == 0)
 	{
-		loop_filter_ = new protocols::filters::TrueFilter;//default to true filter
+		loop_filter_ = protocols::filters::FilterOP( new protocols::filters::TrueFilter );//default to true filter
 	}
 	TR.Debug << "Fold tree prior to LoopCreationMover: " << pose.fold_tree() << endl;
 
@@ -304,7 +304,7 @@ LoopCreationMover::apply(
 					protocols::loops::Loops loops;
 					//loops.add_loop(last_created_loop_);
 					loops.add_loop(protocols::loops::Loop(loop_inserter_->modified_range().first, loop_inserter_->modified_range().second));
-					protocols::analysis::LoopAnalyzerMoverOP lam = new protocols::analysis::LoopAnalyzerMover(loops, true);
+					protocols::analysis::LoopAnalyzerMoverOP lam( new protocols::analysis::LoopAnalyzerMover(loops, true) );
 					lam->apply(edit_pose);
 
 					core::Real total_loop_score = lam->get_total_score();
@@ -515,12 +515,11 @@ LoopCreationMover::refine_loop(
 	scorefxn_min->set_weight( scoring::chainbreak, 100.0 );//loop should already be closed, so this will just prevent re-breaking by minimization
 
 	//Initialize a mover if we haven't already
-	protocols::simple_moves::PackRotamersMoverOP pack_mover =
-		new protocols::simple_moves::PackRotamersMover;
+	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
 	pack_mover->score_function( scorefxn_ );
 
 	//Setup task factory for minimization and packing
-	pack::task::TaskFactoryOP task_factory = new pack::task::TaskFactory;
+	pack::task::TaskFactoryOP task_factory( new pack::task::TaskFactory );
 
 	set<Size> loop_residues;
 	for(Size i=loop.start(); i<=loop.stop(); ++i)
@@ -547,10 +546,8 @@ LoopCreationMover::refine_loop(
 	}
 
 	//Restrict all non-packable residues and allow movements at all packable residues
-	pack::task::operation::PreventRepackingOP prevent_packing =
-		new pack::task::operation::PreventRepacking;
-	pack::task::operation::RestrictResidueToRepackingOP repack_res =
-		new pack::task::operation::RestrictResidueToRepacking();
+	pack::task::operation::PreventRepackingOP prevent_packing( new pack::task::operation::PreventRepacking );
+	pack::task::operation::RestrictResidueToRepackingOP repack_res( new pack::task::operation::RestrictResidueToRepacking() );
 	for(Size i=1; i<=pose.total_residue(); ++i)
 	{
 		if(residues_to_pack.find(i)==residues_to_pack.end())
@@ -579,7 +576,7 @@ LoopCreationMover::refine_loop(
 		protocols::loops::Loop extended_loop(modifications_begin, modifications_end, loop.cut());
 		protocols::loops::set_single_loop_fold_tree(pose, extended_loop);
 
-		kinematics::MoveMapOP movemap = new kinematics::MoveMap;
+		kinematics::MoveMapOP movemap( new kinematics::MoveMap );
 		for(core::Size i=extended_loop.start(); i<=extended_loop.stop(); ++i)
 		{
 			movemap->set_bb(i, true);
@@ -587,8 +584,7 @@ LoopCreationMover::refine_loop(
 		}
 		TR.Debug << "Movemap for minimization: " << *movemap << std::endl;
 
-		protocols::simple_moves::MinMoverOP min_mover =
-			new protocols::simple_moves::MinMover(movemap, scorefxn_min, "dfpmin_armijo_nonmonotone", 0.01, false );
+		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(movemap, scorefxn_min, "dfpmin_armijo_nonmonotone", 0.01, false ) );
 
 		TR << "Score prior to minimization: " << scorefxn_min->score(pose) << std::endl;
 //		pose.dump_pdb("pre_minimization.pdb");
@@ -643,7 +639,7 @@ LoopCreationMover::parse_my_tag(
 		protocols::moves::Movers_map::const_iterator find_mover( movers.find( loop_inserter_name ) );
 		bool const mover_found( find_mover != movers.end() );
 		if( mover_found )
-			loop_inserter_ = dynamic_cast< LoopInserter* > (find_mover->second());
+			loop_inserter_ = utility::pointer::dynamic_pointer_cast< devel::loop_creation::LoopInserter > ( find_mover->second );
 		else
 			utility_exit_with_message( "Mover " + loop_inserter_name + " not found" );
 	}
@@ -656,7 +652,7 @@ LoopCreationMover::parse_my_tag(
 		protocols::moves::Movers_map::const_iterator find_mover( movers.find( loop_closer_name ) );
 		bool const mover_found( find_mover != movers.end() );
 		if( mover_found )
-			loop_closer_ = dynamic_cast< LoopCloser* > (find_mover->second());
+			loop_closer_ = utility::pointer::dynamic_pointer_cast< devel::loop_creation::LoopCloser > ( find_mover->second );
 		else
 			utility_exit_with_message( "Mover " + loop_closer_name + " not found" );
 	}

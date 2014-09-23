@@ -35,7 +35,7 @@ namespace sspot {
 
 /// @Brief default constructor
 NatbiasHelixPairPotential::NatbiasHelixPairPotential():
-	hpairset_( NULL )
+	hpairset_( /* NULL */ )
 {
 	set_params();
 }
@@ -124,7 +124,7 @@ NatbiasHelixPairPotential::show( Pose const & pose ) const
 	}
 
 	Size nhpairs = hpairset_->helix_pairings().size();
-	SS_Info2_OP ssinfo = new SS_Info2( pose );
+	SS_Info2_OP ssinfo( new SS_Info2( pose ) );
 	utility::vector1< Real > hh_scores( nhpairs, 0.0 );
 
 	Real hh_score( 0.0 );

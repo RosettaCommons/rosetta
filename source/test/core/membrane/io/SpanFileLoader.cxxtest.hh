@@ -105,16 +105,16 @@ public: // test methods
         TS_ASSERT( sp_full_tmh_ );
         
         // Checking that the correct resource was returned
-        SpanningTopologyOP sptr1 = dynamic_cast< SpanningTopology * > ( sp_single_tmh_() );
+        SpanningTopologyOP sptr1 = utility::pointer::dynamic_pointer_cast< core::conformation::membrane::SpanningTopology > ( sp_single_tmh_ );
         TS_ASSERT( sptr1 );
         
-        SpanningTopologyOP sptr2 = dynamic_cast< SpanningTopology * > ( sp_multiple_tmh_() );
+        SpanningTopologyOP sptr2 = utility::pointer::dynamic_pointer_cast< core::conformation::membrane::SpanningTopology > ( sp_multiple_tmh_ );
         TS_ASSERT( sptr2 );
         
-        SpanningTopologyOP sptr3 = dynamic_cast< SpanningTopology * > ( sp_edge_tmh_() );
+        SpanningTopologyOP sptr3 = utility::pointer::dynamic_pointer_cast< core::conformation::membrane::SpanningTopology > ( sp_edge_tmh_ );
         TS_ASSERT( sptr3 );
         
-        SpanningTopologyOP sptr4 = dynamic_cast< SpanningTopology * > ( sp_full_tmh_() );
+        SpanningTopologyOP sptr4 = utility::pointer::dynamic_pointer_cast< core::conformation::membrane::SpanningTopology > ( sp_full_tmh_ );
         TS_ASSERT( sptr4 );
         
     }
@@ -160,7 +160,7 @@ public: // test methods
         TS_ASSERT( topology );
         
         // Checking that the correct resource was returned
-        SpanningTopologyOP sptr1 = dynamic_cast< SpanningTopology * > ( topology () );
+        SpanningTopologyOP sptr1 = utility::pointer::dynamic_pointer_cast< core::conformation::membrane::SpanningTopology > ( topology  );
         TS_ASSERT( sptr1 );
         
     }

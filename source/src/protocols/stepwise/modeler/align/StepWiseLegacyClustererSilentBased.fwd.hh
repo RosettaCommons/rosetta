@@ -22,8 +22,8 @@ namespace modeler {
 namespace align {
 
 	class StepWiseLegacyClustererSilentBased;
-	typedef utility::pointer::owning_ptr< StepWiseLegacyClustererSilentBased > StepWiseLegacyClustererSilentBasedOP;
-	typedef utility::pointer::owning_ptr< StepWiseLegacyClustererSilentBased const > StepWiseLegacyClustererSilentBasedCOP;
+	typedef utility::pointer::shared_ptr< StepWiseLegacyClustererSilentBased > StepWiseLegacyClustererSilentBasedOP;
+	typedef utility::pointer::shared_ptr< StepWiseLegacyClustererSilentBased const > StepWiseLegacyClustererSilentBasedCOP;
 
 } //align
 } //modeler

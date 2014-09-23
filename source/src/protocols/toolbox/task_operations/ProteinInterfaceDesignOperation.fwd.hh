@@ -22,8 +22,8 @@ namespace task_operations {
 
 class ProteinInterfaceDesignOperation;
 
-typedef utility::pointer::owning_ptr< ProteinInterfaceDesignOperation > ProteinInterfaceDesignOperationOP;
-typedef utility::pointer::owning_ptr< ProteinInterfaceDesignOperation const > ProteinInterfaceDesignOperationCOP;
+typedef utility::pointer::shared_ptr< ProteinInterfaceDesignOperation > ProteinInterfaceDesignOperationOP;
+typedef utility::pointer::shared_ptr< ProteinInterfaceDesignOperation const > ProteinInterfaceDesignOperationCOP;
 
 } //namespace protocols
 } //namespace toolbox

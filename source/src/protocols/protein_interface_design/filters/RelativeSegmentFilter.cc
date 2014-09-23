@@ -30,7 +30,7 @@ static thread_local basic::Tracer TR( "protocols.protein_interface_design.filter
 using core::pose::Pose;
 
 protocols::filters::FilterOP
-RelativeSegmentFilterCreator::create_filter() const { return new RelativeSegmentFilter; }
+RelativeSegmentFilterCreator::create_filter() const { return protocols::filters::FilterOP( new RelativeSegmentFilter ); }
 
 std::string
 RelativeSegmentFilterCreator::keyname() const { return "RelativeSegment"; }

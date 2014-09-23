@@ -83,8 +83,8 @@ void PeakFileFormat_xpk::write_peak( std::ostream& os, Size ct, CrossPeak const&
 }
 
 void PeakFileFormat_xpk::set_format_from_peak( CrossPeak const& cp ) {
-  info1_ = new CrossPeakInfo( cp.info( 1 ) );
-  info2_ = new CrossPeakInfo( cp.info( 2 ) );
+  info1_ = CrossPeakInfoOP( new CrossPeakInfo( cp.info( 1 ) ) );
+  info2_ = CrossPeakInfoOP( new CrossPeakInfo( cp.info( 2 ) ) );
   col2proton_.clear();
   col2islabel_.clear();
 

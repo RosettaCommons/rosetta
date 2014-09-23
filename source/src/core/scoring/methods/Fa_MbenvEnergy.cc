@@ -56,7 +56,7 @@ methods::EnergyMethodOP
 Fa_MbenvEnergyCreator::create_energy_method(
   methods::EnergyMethodOptions const & options
 ) const {
-  return new Fa_MbenvEnergy(*( ScoringManager::get_instance()->memb_etable( options.etable_type() ).lock() ) );
+  return methods::EnergyMethodOP( new Fa_MbenvEnergy(*( ScoringManager::get_instance()->memb_etable( options.etable_type() ).lock() ) ) );
 }
 
 ScoreTypes
@@ -78,7 +78,7 @@ Fa_MbenvEnergy::Fa_MbenvEnergy( etable::MembEtable const & memb_etable_in):
 
 EnergyMethodOP
 Fa_MbenvEnergy::clone() const {
-	return new Fa_MbenvEnergy( *this );
+	return EnergyMethodOP( new Fa_MbenvEnergy( *this ) );
 }
 
 
@@ -207,7 +207,7 @@ Membrane_FAEmbed const &
 Fa_MbenvEnergy::Membrane_FAEmbed_from_pose( pose::Pose const & pose ) const
 {
   //using core::pose::datacache::CacheableDataType::MEMBRANE_FAEMBED;
-  return *( static_cast< Membrane_FAEmbed const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_FAEMBED )() ));
+  return *( utility::pointer::static_pointer_cast< core::scoring::Membrane_FAEmbed const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_FAEMBED ) ));
 }
 
 MembraneEmbed const &
@@ -215,14 +215,14 @@ Fa_MbenvEnergy::MembraneEmbed_from_pose( pose::Pose const & pose ) const
 {
   //using core::pose::datacache::CacheableDataType::MEMBRANE_EMBED;
   assert( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED ) );
-  return *( static_cast< MembraneEmbed const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED )() ));
+  return *( utility::pointer::static_pointer_cast< core::scoring::MembraneEmbed const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED ) ));
 }
 
 MembraneTopology const &
 Fa_MbenvEnergy::MembraneTopology_from_pose( pose::Pose const & pose ) const
 {
   //using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
-  return *( static_cast< MembraneTopology const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY )() ));
+  return *( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
 }
 core::Size
 Fa_MbenvEnergy::version() const

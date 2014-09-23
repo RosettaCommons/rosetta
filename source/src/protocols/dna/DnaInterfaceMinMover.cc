@@ -63,7 +63,7 @@ DnaInterfaceMinMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 DnaInterfaceMinMoverCreator::create_mover() const {
-	return new DnaInterfaceMinMover;
+	return protocols::moves::MoverOP( new DnaInterfaceMinMover );
 }
 
 std::string
@@ -74,7 +74,7 @@ DnaInterfaceMinMoverCreator::mover_name()
 
 DnaInterfaceMinMover::DnaInterfaceMinMover()
 	: protocols::simple_moves::MinMover("DnaInterfaceMinMover"),
-		interface_(0),
+		interface_(/* 0 */),
 		chi_(true),
 		bb_(false)
 {
@@ -93,7 +93,7 @@ DnaInterfaceMinMover &
 DnaInterfaceMinMover::operator = ( DnaInterfaceMinMover const & src )
 {
 	if ( src.interface_ ) interface_ = src.interface_->clone();
-	else interface_ = 0;
+	else interface_.reset();
 	chi_ = src.chi_;
 	bb_ = src.bb_;
 	return *this;
@@ -143,7 +143,7 @@ void
 DnaInterfaceMinMover::apply( pose::Pose & pose )
 {
 	if ( ! interface_ ) {
-		interface_ = new DnaInterfaceFinder;
+		interface_ = DnaInterfaceFinderOP( new DnaInterfaceFinder );
 		interface_->determine_protein_interface( pose );
 		reset_from_interface();
 	}
@@ -201,14 +201,14 @@ DnaInterfaceMinMover::parse_my_tag(
 MoverOP
 DnaInterfaceMinMover::fresh_instance() const
 {
-	return new DnaInterfaceMinMover;
+	return MoverOP( new DnaInterfaceMinMover );
 }
 
 ///@brief required in the context of the parser/scripting scheme
 MoverOP
 DnaInterfaceMinMover::clone() const
 {
-	return new DnaInterfaceMinMover( *this );
+	return MoverOP( new DnaInterfaceMinMover( *this ) );
 }
 
 } // namespace dna

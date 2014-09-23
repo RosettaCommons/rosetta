@@ -171,7 +171,7 @@ SecondaryMatchProtocol::do_matching(
 	//first we'll clone the missing params
 	for( utility::vector1< toolbox::match_enzdes_util::EnzConstraintParametersCOP >::const_iterator tmp_it = tmp_params.begin();
 			 tmp_it != tmp_params.end(); ++tmp_it) {
-		toolbox::match_enzdes_util::EnzConstraintParametersOP p = new toolbox::match_enzdes_util::EnzConstraintParameters( **tmp_it );
+		toolbox::match_enzdes_util::EnzConstraintParametersOP p( new toolbox::match_enzdes_util::EnzConstraintParameters( **tmp_it ) );
 		match_params_.push_back( p );
 	}
 
@@ -315,7 +315,7 @@ SecondaryMatchProtocol::add_enz_cst_interaction_to_pose(
 				else task->nonconst_residue_task( i ).prevent_repacking();
 			}
 
-			protocols::simple_moves::PackRotamersMoverOP trial_packer = new protocols::simple_moves::PackRotamersMover(reduced_scofx_, task);
+			protocols::simple_moves::PackRotamersMoverOP trial_packer( new protocols::simple_moves::PackRotamersMover(reduced_scofx_, task) );
 			trial_packer->apply( pose );
 
 			(*reduced_scofx_)( pose );
@@ -343,7 +343,7 @@ SecondaryMatchProtocol::add_enz_cst_interaction_to_pose(
 				&& ( try_targ_clash < basic::options::option[basic::options::OptionKeys::enzdes::sc_sc_bump_cutoff] )
 				&& try_bb_clash < basic::options::option[basic::options::OptionKeys::enzdes::bb_bump_cutoff]){
 
-				core::conformation::ResidueOP fres = new core::conformation::Residue( pose.residue( *pos_try_it ) );
+				core::conformation::ResidueOP fres( new core::conformation::Residue( pose.residue( *pos_try_it ) ) );
 
 				found_res_this_param.push_back( fres );
 
@@ -390,7 +390,7 @@ SecondaryMatchProtocol::find_all_allowed_positions(
 	utility::vector1< bool > allowed_res( pose.total_residue() );
 	std::set< core::Size > interface_res;
 	interface_res.insert( pose.fold_tree().downstream_jump_residue( pose.num_jump() ) );
-	DetectProteinLigandInterfaceOP lig_prot_interface = new DetectProteinLigandInterface();
+	DetectProteinLigandInterfaceOP lig_prot_interface( new DetectProteinLigandInterface() );
 	lig_prot_interface->find_design_interface(pose, interface_res, cut1_, cut2_, cut3_, cut4_, allowed_res, dummy );
 
 	//utility::vector1< core::Size > cat_res = catalytic_res();
@@ -429,9 +429,9 @@ SecondaryMatchProtocol::generate_and_dump_pose_found_residues_combinations( core
 
 	//process_poses.push_back( ref_poseCOP );
 
-	process_combos.push_back( new PoseFoundResiduesCombination( ref_poseCOP,
+	process_combos.push_back( utility::pointer::shared_ptr<class protocols::enzdes::PoseFoundResiduesCombination>( new PoseFoundResiduesCombination( ref_poseCOP,
 		SecondaryMatchProtocolCAP( utility::pointer::dynamic_pointer_cast< SecondaryMatchProtocol const >( get_self_ptr() ) )
-	) );
+	) ) );
 
 
 	for( utility::vector1< utility::vector1< core::conformation::ResidueOP > >::iterator param_it = found_resis_.begin();
@@ -450,7 +450,7 @@ SecondaryMatchProtocol::generate_and_dump_pose_found_residues_combinations( core
 						{
 							//core::pose::PoseOP success_pose = new core::pose::Pose(**pp_it);
 							//success_pose->replace_residue( (*res_it)->seqpos(), **res_it, true);
-							PoseFoundResiduesCombinationOP success_combo = new PoseFoundResiduesCombination( **pp_it );
+							PoseFoundResiduesCombinationOP success_combo( new PoseFoundResiduesCombination( **pp_it ) );
 							success_combo->add_residue( *res_it );
 							temp_combos.push_back( success_combo );
 						}

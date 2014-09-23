@@ -50,9 +50,9 @@ VoxelSetIterator::VoxelSetIterator(
 	//wrap_theta_( false ),
 	theta_near_0_( false ),
 	theta_near_180_( false ),
-	wrapped_phipsi_bins_( 0 ),
-	wrapped_phipsi_halfbins_( 0 ),
-	curr_bin_( 0 ),
+	wrapped_phipsi_bins_( /* 0 */ ),
+	wrapped_phipsi_halfbins_( /* 0 */ ),
+	curr_bin_( /* 0 */ ),
 	curr_pos_( 0 )
 {
 	assert( point_[ 4 ] >= 0 && point_[ 4 ] <  360 );

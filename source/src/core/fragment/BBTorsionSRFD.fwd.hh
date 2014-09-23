@@ -25,8 +25,8 @@ namespace fragment {
 
 
 class BBTorsionSRFD;
-typedef	utility::pointer::owning_ptr< BBTorsionSRFD > BBTorsionSRFDOP;
-typedef	utility::pointer::owning_ptr< BBTorsionSRFD const > BBTorsionSRFDCOP;
+typedef	utility::pointer::shared_ptr< BBTorsionSRFD > BBTorsionSRFDOP;
+typedef	utility::pointer::shared_ptr< BBTorsionSRFD const > BBTorsionSRFDCOP;
 
 
 } // namespace fragment

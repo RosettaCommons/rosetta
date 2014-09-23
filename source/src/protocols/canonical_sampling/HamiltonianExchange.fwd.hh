@@ -22,8 +22,8 @@ namespace canonical_sampling {
 // Forward
 class HamiltonianExchange;
 
-typedef utility::pointer::owning_ptr< HamiltonianExchange > HamiltonianExchangeOP;
-typedef utility::pointer::owning_ptr< HamiltonianExchange const > HamiltonianExchangeCOP;
+typedef utility::pointer::shared_ptr< HamiltonianExchange > HamiltonianExchangeOP;
+typedef utility::pointer::shared_ptr< HamiltonianExchange const > HamiltonianExchangeCOP;
 
 } // namespace canonical_sampling
 } // namespace protocols

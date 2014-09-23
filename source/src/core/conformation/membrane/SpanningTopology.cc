@@ -310,7 +310,7 @@ SpanningTopology::create_from_spanfile( std::string spanfile, Size  ){
         l >> start >> end;
         
 		// add to chain topology
-        SpanOP span = new Span( start, end );
+        SpanOP span( new Span( start, end ) );
         topology_.push_back( span );
     }
     
@@ -374,7 +374,7 @@ SpanningTopology::create_from_structure(
                 
 				TR.Debug << "Adding TMspan end at " << j << std::endl;
 				end = j;
-				SpanOP span = new Span( start, end );
+				SpanOP span( new Span( start, end ) );
 				
 				// if span spans the membrane
 				if ( spanning( res_z_coord, span ) ){

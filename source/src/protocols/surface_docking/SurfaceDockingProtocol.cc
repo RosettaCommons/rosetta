@@ -95,12 +95,12 @@ SurfaceDockingProtocol::~SurfaceDockingProtocol() {}
 	
 protocols::moves::MoverOP SurfaceDockingProtocol::clone() const
 	{
-		return new SurfaceDockingProtocol(*this);
+		return protocols::moves::MoverOP( new SurfaceDockingProtocol(*this) );
 	}
 	
 protocols::moves::MoverOP SurfaceDockingProtocol::fresh_instance() const
 	{
-		return new SurfaceDockingProtocol();
+		return protocols::moves::MoverOP( new SurfaceDockingProtocol() );
 	}
 	
 void SurfaceDockingProtocol::show(std::ostream & output) const
@@ -248,7 +248,7 @@ void SurfaceDockingProtocol::initialize_surface_energies(core::pose::Pose & pose
 	{
 		// Initialize the SurfaceEnergies object; this protocol assumes that the block of residues from num_jump to total_residue
 		// represents the single range of non-surface residues
-		core::scoring::solid_surface::SurfaceEnergiesOP surfEs = new core::scoring::solid_surface::SurfaceEnergies;
+		core::scoring::solid_surface::SurfaceEnergiesOP surfEs( new core::scoring::solid_surface::SurfaceEnergies );
 		surfEs->set_total_residue( pose.total_residue() );
 		surfEs->set_residue_range_not_surface( first_protein_residue, pose.total_residue() );
 		pose.set_new_energies_object( surfEs );
@@ -268,12 +268,12 @@ void SurfaceDockingProtocol::set_surface_parameters ( core::pose::Pose &)
 void SurfaceDockingProtocol::setup_movers ( core::pose::Pose const & pose, Size const first_protein_residue )
 	{
 		
-		to_centroid_ = new simple_moves::SwitchResidueTypeSetMover("centroid");
-		to_full_atom_ = new simple_moves::SwitchResidueTypeSetMover( "fa_standard" );
-		surface_orient_ = new surface_docking::SurfaceOrientMover();
+		to_centroid_ = simple_moves::SwitchResidueTypeSetMoverOP( new simple_moves::SwitchResidueTypeSetMover("centroid") );
+		to_full_atom_ = simple_moves::SwitchResidueTypeSetMoverOP( new simple_moves::SwitchResidueTypeSetMover( "fa_standard" ) );
+		surface_orient_ = SurfaceOrientMoverOP( new surface_docking::SurfaceOrientMover() );
 		surface_orient_->set_surface_parameters(surface_parameters_);
 		setup_abinitio();
-		centroid_relax_ = new surface_docking::CentroidRelaxMover();
+		centroid_relax_ = protocols::surface_docking::CentroidRelaxMoverOP( new surface_docking::CentroidRelaxMover() );
 		core::Size protein_length = pose.total_residue()-first_protein_residue+1;
 		
 		if ( basic::options::option[ basic::options::OptionKeys::run::test_cycles ] ) {
@@ -288,9 +288,9 @@ void SurfaceDockingProtocol::setup_movers ( core::pose::Pose const & pose, Size 
 		}
 		setup_slide_movers(pose);
 		pack::task::PackerTaskOP my_task_fullatom = create_surface_packer_task(pose, first_protein_residue);
-		pack_rotamers_fullatom_ = new protocols::simple_moves::PackRotamersMover( score_sidechain_pack_,  my_task_fullatom );
+		pack_rotamers_fullatom_ = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( score_sidechain_pack_,  my_task_fullatom ) );
 		
-		fullatom_relax_ = new protocols::surface_docking::FullatomRelaxMover();
+		fullatom_relax_ = protocols::surface_docking::FullatomRelaxMoverOP( new protocols::surface_docking::FullatomRelaxMover() );
 		fullatom_relax_->set_surface_contact_mover(slide_into_surface_);
 		fullatom_relax_->set_surface_orient_mover(surface_orient_);
 		fullatom_relax_->set_surface_parameters(surface_parameters_);
@@ -314,14 +314,14 @@ void SurfaceDockingProtocol::setup_abinitio()
 		std::string frag_large_file = option[ OptionKeys::in::file::frag9 ]();
 		std::string frag_small_file = option[ OptionKeys::in::file::frag3 ]();
 		TR<<"Loading Fragment 9:"<<std::endl;
-		core::fragment::ConstantLengthFragSetOP fragset_large = new core::fragment::ConstantLengthFragSet;
+		core::fragment::ConstantLengthFragSetOP fragset_large( new core::fragment::ConstantLengthFragSet );
 		fragset_large->read_fragment_file(frag_large_file);
 		TR<<"Loading Fragment 3:"<<std::endl;
-		core::fragment::ConstantLengthFragSetOP fragset_small = new core::fragment::ConstantLengthFragSet;
+		core::fragment::ConstantLengthFragSetOP fragset_small( new core::fragment::ConstantLengthFragSet );
 		fragset_small->read_fragment_file(frag_small_file);
-		core::kinematics::MoveMapOP movemap = new kinematics::MoveMap;
+		core::kinematics::MoveMapOP movemap( new kinematics::MoveMap );
 		movemap->set_bb( true );
-		abinitio_ = new protocols::abinitio::ClassicAbinitio(fragset_small,fragset_large,movemap);
+		abinitio_ = protocols::abinitio::ClassicAbinitioOP( new protocols::abinitio::ClassicAbinitio(fragset_small,fragset_large,movemap) );
 		abinitio_->set_score_weight(scoring::rg,0);
 	}
 	
@@ -349,16 +349,16 @@ void SurfaceDockingProtocol::setup_slide_movers( core::pose::Pose const & pose )
 		
 		//setting the slide axis in the shared surface parameters so everyone can agree which side of the surface the protein should be!
 		surface_parameters_->set_slide_axis(slide_into);
-		slide_away_from_surface_ = new protocols::rigid::RigidBodyTransMover( slide_away, pose.num_jump());
+		slide_away_from_surface_ = protocols::rigid::RigidBodyTransMoverOP( new protocols::rigid::RigidBodyTransMover( slide_away, pose.num_jump()) );
 		slide_away_from_surface_->step_size(20);
 		
-		slide_into_surface_ = new protocols::docking::FaDockingSlideIntoContact( pose.num_jump(), slide_into.negated());
+		slide_into_surface_ = protocols::docking::FaDockingSlideIntoContactOP( new protocols::docking::FaDockingSlideIntoContact( pose.num_jump(), slide_into.negated()) );
 		
 		//getting a point 30 angstroms above surface centroid
 		Vector point_above = surf_centroid+slide_away.normalized()*100;
 		//vector needed to move protein centroid to point above
 		Vector position_above = point_above-protein_centroid;
-		position_above_surface_ = new protocols::rigid::RigidBodyTransMover(position_above, pose.num_jump());
+		position_above_surface_ = protocols::rigid::RigidBodyTransMoverOP( new protocols::rigid::RigidBodyTransMover(position_above, pose.num_jump()) );
 		position_above_surface_->step_size(position_above.magnitude());
 		//TODO: going to manually bring the centroids of the protein and surface within a reasonable distance of eachother before beginning slide-into
 			
@@ -370,7 +370,7 @@ void SurfaceDockingProtocol::split_protein_surface_poses (core::pose::Pose const
 		utility::vector1< pose::PoseOP > singlechain_poses;
 		singlechain_poses = pose.split_by_chain();
 		assert( valid_surface_pose( pose ));
-		singlechain_poses[ 2 ]->set_new_energies_object( new core::scoring::Energies ); // replace the SurfaceEnergies object
+		singlechain_poses[ 2 ]->set_new_energies_object( scoring::EnergiesOP( new core::scoring::Energies ) ); // replace the SurfaceEnergies object
 		surface = *singlechain_poses[ 1 ];
 		protein = *singlechain_poses[ 2 ];
 	}

@@ -62,7 +62,7 @@ RNA_KIC_Sampler::RNA_KIC_Sampler(
 	idealize_coord_( false ),
 	torsion_screen_( true ),
 	random_chain_closed_( true ),
-	screener_( new RNA_TorsionScreener )
+	screener_( screener::RNA_TorsionScreenerOP( new RNA_TorsionScreener ) )
 {
 	StepWiseSamplerBase::set_random( false );
 }
@@ -74,7 +74,7 @@ void RNA_KIC_Sampler::init() {
 	using namespace core::id;
 
 	////////// Backbone StepWiseSampler //////////
-	bb_rotamer_ = new StepWiseSamplerSizedComb;
+	bb_rotamer_ = StepWiseSamplerSizedCombOP( new StepWiseSamplerSizedComb );
 
 	RNA_FittedTorsionInfo const torsion_info;
 
@@ -100,25 +100,25 @@ void RNA_KIC_Sampler::init() {
 		center += ( pucker1 == NORTH ) ? -20 : 20;
 	}
 	add_values_from_center( epsilon_torsions, center, max_range, bin_size_ );
-	StepWiseSamplerOneTorsionOP epsilon_rotamer = new StepWiseSamplerOneTorsion(
-			TorsionID( moving_suite_, BB, EPSILON ), epsilon_torsions );
+	StepWiseSamplerOneTorsionOP epsilon_rotamer( new StepWiseSamplerOneTorsion(
+			TorsionID( moving_suite_, BB, EPSILON ), epsilon_torsions ) );
 	bb_rotamer_->add_external_loop_rotamer( epsilon_rotamer );
 	/////Zeta1 rotamers/////
-	StepWiseSamplerOneTorsionOP zeta_rotamer = new StepWiseSamplerOneTorsion(
-			TorsionID( moving_suite_, BB, ZETA ), full_torsions );
+	StepWiseSamplerOneTorsionOP zeta_rotamer( new StepWiseSamplerOneTorsion(
+			TorsionID( moving_suite_, BB, ZETA ), full_torsions ) );
 	bb_rotamer_->add_external_loop_rotamer( zeta_rotamer );
 	/////Alpha1 rotamers/////
-	StepWiseSamplerOneTorsionOP alpha1_rotamer = new StepWiseSamplerOneTorsion(
-			TorsionID( moving_suite_ + 1, BB, ALPHA ), full_torsions );
+	StepWiseSamplerOneTorsionOP alpha1_rotamer( new StepWiseSamplerOneTorsion(
+			TorsionID( moving_suite_ + 1, BB, ALPHA ), full_torsions ) );
 	bb_rotamer_->add_external_loop_rotamer( alpha1_rotamer );
 	/////Alpha2 rotamers/////
-	StepWiseSamplerOneTorsionOP alpha2_rotamer = new StepWiseSamplerOneTorsion(
-			TorsionID( chainbreak_suite_ + 1, BB, ALPHA ), full_torsions );
+	StepWiseSamplerOneTorsionOP alpha2_rotamer( new StepWiseSamplerOneTorsion(
+			TorsionID( chainbreak_suite_ + 1, BB, ALPHA ), full_torsions ) );
 	bb_rotamer_->add_external_loop_rotamer( alpha2_rotamer );
 	/////Pucker rotamers/////
 	if ( pucker_state_ != NO_PUCKER ) {
-		RNA_SugarStepWiseSamplerOP pucker_rotamer = new RNA_SugarStepWiseSampler(
-				sample_nucleoside_, pucker_state_ );
+		RNA_SugarStepWiseSamplerOP pucker_rotamer( new RNA_SugarStepWiseSampler(
+				sample_nucleoside_, pucker_state_ ) );
 		pucker_rotamer->set_skip_same_pucker( skip_same_pucker_ );
 		pucker_rotamer->set_idealize_coord( idealize_coord_ );
 		bb_rotamer_->add_external_loop_rotamer( pucker_rotamer );
@@ -126,14 +126,14 @@ void RNA_KIC_Sampler::init() {
 	bb_rotamer_->init();
 
 	////////// Loop Closer //////////
-	loop_closer_ = new RNA_KinematicCloser(
-			ref_pose_, moving_suite_, chainbreak_suite_ );
+	loop_closer_ = RNA_KinematicCloserOP( new RNA_KinematicCloser(
+			ref_pose_, moving_suite_, chainbreak_suite_ ) );
 	loop_closer_->set_verbose( verbose_ );
 
 	////////// Chi StepWiseSampler //////////
 	if ( base_state_ != NO_CHI ){
-		chi_rotamer_ = new RNA_ChiStepWiseSampler(
-													sample_nucleoside_, NORTH/*arbitary*/, base_state_	);
+		chi_rotamer_ = RNA_ChiStepWiseSamplerOP( new RNA_ChiStepWiseSampler(
+													sample_nucleoside_, NORTH/*arbitary*/, base_state_	) );
 		chi_rotamer_->set_extra_chi( extra_chi_ );
 		chi_rotamer_->set_bin_size( bin_size_ );
 		chi_rotamer_->init();

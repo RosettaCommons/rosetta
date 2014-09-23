@@ -51,7 +51,7 @@ namespace fldsgn {
 // -------------  Mover Creator -------------
 
 protocols::moves::MoverOP
-MatchResiduesMoverCreator::create_mover() const { return new MatchResiduesMover; }
+MatchResiduesMoverCreator::create_mover() const { return protocols::moves::MoverOP( new MatchResiduesMover ); }
 
 std::string
 MatchResiduesMoverCreator::keyname() const { return "MatchResiduesMover"; }
@@ -69,12 +69,12 @@ MatchResiduesMover::~MatchResiduesMover() {}
 
 protocols::moves::MoverOP
 MatchResiduesMover::fresh_instance() const{
-  return new MatchResiduesMover();
+  return protocols::moves::MoverOP( new MatchResiduesMover() );
 }
 
 protocols::moves::MoverOP
 MatchResiduesMover::clone() const{
-  return new MatchResiduesMover( *this );
+  return protocols::moves::MoverOP( new MatchResiduesMover( *this ) );
 }
 
 

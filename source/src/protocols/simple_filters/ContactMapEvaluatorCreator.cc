@@ -83,7 +83,7 @@ void ContactMapEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
 	if ( option[ OptionKeys::evaluation::contact_map ] ) {
 		core::pose::PoseOP native_pose = NULL;
 		if ( option[ in::file::native ].user() ) {
-			native_pose = new core::pose::Pose;
+			native_pose = core::pose::PoseOP( new core::pose::Pose );
 			core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() );
 		}
 
@@ -93,7 +93,7 @@ void ContactMapEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
 			core::Real max_dist(12);
 			core::Size min_seqsep(5);
 			eval.add_evaluation(
-				new ContactMapEvaluator( *native_pose, max_dist, min_seqsep )
+				PoseEvaluatorOP( new ContactMapEvaluator( *native_pose, max_dist, min_seqsep ) )
 			);
 		}
 	}

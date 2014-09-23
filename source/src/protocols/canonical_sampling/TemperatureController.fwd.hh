@@ -22,8 +22,8 @@ namespace canonical_sampling {
 // Forward
 class TemperatureController;
 
-typedef utility::pointer::owning_ptr< TemperatureController > TemperatureControllerOP;
-typedef utility::pointer::owning_ptr< TemperatureController const > TemperatureControllerCOP;
+typedef utility::pointer::shared_ptr< TemperatureController > TemperatureControllerOP;
+typedef utility::pointer::shared_ptr< TemperatureController const > TemperatureControllerCOP;
 
 } // namespace canonical_sampling
 } // namespace protocols

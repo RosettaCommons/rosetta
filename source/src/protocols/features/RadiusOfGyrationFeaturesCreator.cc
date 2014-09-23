@@ -29,7 +29,7 @@ namespace features {
 RadiusOfGyrationFeaturesCreator::RadiusOfGyrationFeaturesCreator() {}
 RadiusOfGyrationFeaturesCreator::~RadiusOfGyrationFeaturesCreator() {}
 FeaturesReporterOP RadiusOfGyrationFeaturesCreator::create_features_reporter() const {
-	return new RadiusOfGyrationFeatures;
+	return FeaturesReporterOP( new RadiusOfGyrationFeatures );
 }
 
 std::string RadiusOfGyrationFeaturesCreator::type_name() const {

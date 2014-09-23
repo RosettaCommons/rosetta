@@ -27,8 +27,8 @@ namespace filters {
 class CoreDunbrackFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< CoreDunbrackFilter >  CoreDunbrackFilterOP;
-typedef utility::pointer::owning_ptr< CoreDunbrackFilter const >  CoreDunbrackFilterCOP;
+typedef utility::pointer::shared_ptr< CoreDunbrackFilter >  CoreDunbrackFilterOP;
+typedef utility::pointer::shared_ptr< CoreDunbrackFilter const >  CoreDunbrackFilterCOP;
 
 } // namespace protocols
 } // namespace fldsgn

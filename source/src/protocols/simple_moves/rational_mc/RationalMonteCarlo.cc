@@ -50,7 +50,7 @@ static thread_local basic::Tracer TR( "protocols.simple_moves.RationalMonteCarlo
 
 RationalMonteCarlo::RationalMonteCarlo(MoverOP mover, ScoreFunctionOP score, Size num_trials, Real temperature, bool recover_low)
     : Mover("RationalMonteCarlo"), mover_(mover), num_trials_(num_trials), recover_low_(recover_low), next_trigger_id_(0) {
-  mc_ = new protocols::moves::MonteCarlo(*score, temperature);
+  mc_ = moves::MonteCarloOP( new protocols::moves::MonteCarlo(*score, temperature) );
   protocols::viewer::add_monte_carlo_viewer(*mc_, "RationalMonteCarlo");
 }
 

@@ -29,7 +29,7 @@ public:
 	SigmoidFunc( Real const x0_in, Real const slope_in ): x0_( x0_in ), slope_( slope_in ){}
 
 	FuncOP
-	clone() const { return new SigmoidFunc( *this ); }
+	clone() const { return FuncOP( new SigmoidFunc( *this ) ); }
 
 	Real func( Real const x ) const;
 	Real dfunc( Real const x ) const;

@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class RotamerBoltzmannWeightFeatures;
-typedef utility::pointer::owning_ptr< RotamerBoltzmannWeightFeatures > RotamerBoltzmannWeightFeaturesOP;
-typedef utility::pointer::owning_ptr< RotamerBoltzmannWeightFeatures const > RotamerBoltzmannWeightFeaturesCOP;
+typedef utility::pointer::shared_ptr< RotamerBoltzmannWeightFeatures > RotamerBoltzmannWeightFeaturesOP;
+typedef utility::pointer::shared_ptr< RotamerBoltzmannWeightFeatures const > RotamerBoltzmannWeightFeaturesCOP;
 
 }//features
 }//protocols

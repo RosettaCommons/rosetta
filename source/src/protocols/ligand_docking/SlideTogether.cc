@@ -45,7 +45,7 @@ SlideTogetherCreator::keyname() const
 
 protocols::moves::MoverOP
 SlideTogetherCreator::create_mover() const {
-	return new SlideTogether;
+	return protocols::moves::MoverOP( new SlideTogether );
 }
 
 std::string
@@ -68,11 +68,11 @@ SlideTogether::SlideTogether(SlideTogether const & that):
 SlideTogether::~SlideTogether() {}
 
 protocols::moves::MoverOP SlideTogether::clone() const {
-	return new SlideTogether( *this );
+	return protocols::moves::MoverOP( new SlideTogether( *this ) );
 }
 
 protocols::moves::MoverOP SlideTogether::fresh_instance() const {
-	return new SlideTogether;
+	return protocols::moves::MoverOP( new SlideTogether );
 }
 
 std::string SlideTogether::get_name() const{

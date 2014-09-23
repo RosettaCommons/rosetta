@@ -379,7 +379,7 @@ graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
 	}
 
 	// Need to fill in PDBInfo!
-	PDBInfoOP pdb_info = new PDBInfo( pose_target );
+	PDBInfoOP pdb_info( new PDBInfo( pose_target ) );
 	pdb_info->set_numbering( resnum_target );
 	pose_target.pdb_info(  pdb_info );
 	std::cout << pose_target.annotated_sequence() << std::endl;

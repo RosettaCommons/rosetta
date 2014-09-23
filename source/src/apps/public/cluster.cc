@@ -147,9 +147,9 @@ main( int argc, char * argv [] ) {
 
 	if ( option[ basic::options::OptionKeys::cluster::loops ]() ) {
 		loops::Loops loops( true );
-		clustering = new ClusterPhilStyle_Loop(loops );
+		clustering = ClusterPhilStyleOP( new ClusterPhilStyle_Loop(loops ) );
 	} else {
-		clustering = new ClusterPhilStyle();
+		clustering = ClusterPhilStyleOP( new ClusterPhilStyle() );
 	}
 
 	clustering->set_score_function( sfxn );
@@ -209,7 +209,7 @@ main( int argc, char * argv [] ) {
 
 	// Process any remaining structures by asigning to clusters or forming new clusters
 	std::cout << "Assigning extra structures ... " << std::endl;
-	AssignToClustersMoverOP mover_add_structures = new AssignToClustersMover( clustering );
+	AssignToClustersMoverOP mover_add_structures( new AssignToClustersMover( clustering ) );
 	mover_add_structures->set_score_function( sfxn );
 	//mover_add_structures->set_cluster_radius( clustering.get_cluster_radius() );
 

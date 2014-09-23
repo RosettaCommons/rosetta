@@ -20,7 +20,7 @@ namespace protocols {
 namespace jd2 {
 
 class AtomTreeDiffJobInputter;
-typedef utility::pointer::owning_ptr< AtomTreeDiffJobInputter > AtomTreeDiffJobInputterOP;
+typedef utility::pointer::shared_ptr< AtomTreeDiffJobInputter > AtomTreeDiffJobInputterOP;
 
 } // jd2
 } // protocols

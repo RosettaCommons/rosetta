@@ -54,7 +54,7 @@ std::string TransformCreator::keyname() const
 
 protocols::moves::MoverOP TransformCreator::create_mover() const
 {
-	return new Transform;
+	return protocols::moves::MoverOP( new Transform );
 }
 
 std::string TransformCreator::mover_name()
@@ -103,12 +103,12 @@ Transform::~Transform()
 
 protocols::moves::MoverOP Transform::clone() const
 {
-	return new Transform (*this);
+	return protocols::moves::MoverOP( new Transform (*this) );
 }
 
 protocols::moves::MoverOP Transform::fresh_instance() const
 {
-	return new Transform;
+	return protocols::moves::MoverOP( new Transform );
 }
 
 std::string Transform::get_name() const
@@ -210,7 +210,7 @@ void Transform::apply(core::pose::Pose & pose)
 		pose = starting_pose;
 		core::Size cycle = 1;
 		bool not_converged = true;
-		core::conformation::UltraLightResidue ligand_residue(&pose.residue(begin));
+		core::conformation::UltraLightResidue ligand_residue(pose.residue(begin).get_self_ptr());
 
 		//For benchmarking purposes it is sometimes desirable to translate the ligand
 		//away from the starting point before beginning a trajectory.

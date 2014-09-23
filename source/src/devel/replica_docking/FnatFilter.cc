@@ -44,7 +44,7 @@ namespace devel {
 namespace replica_docking {
 
 protocols::filters::FilterOP
-FnatFilterCreator::create_filter() const { return new FnatFilter; }
+FnatFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FnatFilter ); }
 
 std::string
 FnatFilterCreator::keyname() const { return "Fnat"; }
@@ -70,7 +70,7 @@ FnatFilter::FnatFilter() :
 	if ( option[ in::file::native_contacts ].user() ) {
 		native_contacts_ = option[ in::file::native_contacts ]();
 	} else if ( option[ in::file::native ].user() ) {
-		core::pose::PoseOP native_pose = new core::pose::Pose();
+		core::pose::PoseOP native_pose( new core::pose::Pose() );
 		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]());
  		native_pose_ = native_pose;
 	} else {
@@ -94,7 +94,7 @@ FnatFilter::FnatFilter( core::scoring::ScoreFunctionOP sfxn, core::Size const rb
 	if ( option[ in::file::native_contacts ].user() ) {
 		native_contacts_ = option[ in::file::native_contacts ]();
 	} else if ( option[ in::file::native ].user() ) {
-		core::pose::PoseOP native_pose = new core::pose::Pose();
+		core::pose::PoseOP native_pose( new core::pose::Pose() );
 		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]());
  		native_pose_ = native_pose;
 	} else {
@@ -124,12 +124,12 @@ FnatFilter::~FnatFilter(){}
 
 protocols::filters::FilterOP
 FnatFilter::clone() const{
-	return new FnatFilter( *this );
+	return protocols::filters::FilterOP( new FnatFilter( *this ) );
 }
 
 protocols::filters::FilterOP
 FnatFilter::fresh_instance() const{
-	return new FnatFilter;
+	return protocols::filters::FilterOP( new FnatFilter );
 }
 
 void

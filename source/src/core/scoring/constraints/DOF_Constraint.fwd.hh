@@ -27,8 +27,8 @@ namespace constraints {
 
 class DOF_Constraint;
 
-typedef utility::pointer::owning_ptr< DOF_Constraint > DOF_ConstraintOP;
-typedef utility::pointer::owning_ptr< DOF_Constraint const > DOF_ConstraintCOP;
+typedef utility::pointer::shared_ptr< DOF_Constraint > DOF_ConstraintOP;
+typedef utility::pointer::shared_ptr< DOF_Constraint const > DOF_ConstraintCOP;
 typedef utility::vector1< DOF_ConstraintOP > DOF_ConstraintOPs;
 typedef utility::vector1< DOF_ConstraintCOP > DOF_ConstraintCOPs;
 

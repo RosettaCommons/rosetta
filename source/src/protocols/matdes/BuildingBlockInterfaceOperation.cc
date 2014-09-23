@@ -46,7 +46,7 @@ namespace matdes {
 core::pack::task::operation::TaskOperationOP
 BuildingBlockInterfaceOperationCreator::create_task_operation() const
 {
-	return new BuildingBlockInterfaceOperation;
+	return core::pack::task::operation::TaskOperationOP( new BuildingBlockInterfaceOperation );
 }
 
 
@@ -65,7 +65,7 @@ BuildingBlockInterfaceOperation::~BuildingBlockInterfaceOperation() {}
 
 core::pack::task::operation::TaskOperationOP BuildingBlockInterfaceOperation::clone() const
 {
-	return new BuildingBlockInterfaceOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new BuildingBlockInterfaceOperation( *this ) );
 }
 
 void

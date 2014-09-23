@@ -112,7 +112,7 @@ FragmentReader::parse_tag( TagCOP const & tag )
 		// read from blueprint
 		String const blueprint( tag->getOption<String>( "blueprint", "" ) );
 		if( blueprint != "" ){
-			blueprint_ = new protocols::jd2::parser::BluePrint( blueprint );
+			blueprint_ = protocols::jd2::parser::BluePrintOP( new protocols::jd2::parser::BluePrint( blueprint ) );
 			ss_ = blueprint_->secstruct();
 			// pick fragment using sequence information (default false)
 			bool use_sequence_bias( tag->getOption<bool>( "use_sequence_bias", 0 ) );
@@ -172,9 +172,9 @@ FragmentReader::set_fragments( Pose const & pose_in, FragSetOP const & fragset )
  	using namespace core::fragment;
 
 	if( begin_ == 0 ){
-		core::fragment::steal_frag_set_from_pose( pose_in, *fragset, new FragData( SingleResidueFragDataOP( new IndependentBBTorsionSRFD ), frag_size_ ) );
+		core::fragment::steal_frag_set_from_pose( pose_in, *fragset, core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new IndependentBBTorsionSRFD ), frag_size_ ) ) );
 	}else{
-		core::fragment::steal_frag_set_from_pose( pose_in, begin_, end_ , *fragset, new FragData( SingleResidueFragDataOP( new IndependentBBTorsionSRFD ), frag_size_ ) );
+		core::fragment::steal_frag_set_from_pose( pose_in, begin_, end_ , *fragset, core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new IndependentBBTorsionSRFD ), frag_size_ ) ) );
 	}
 }
 
@@ -193,7 +193,7 @@ FragmentReader::apply( FragSetOP & fragset )
 		using core::import_pose::pose_stream::SilentFilePoseInputStream;
 
 		ResidueTypeSetCOP residue_set = ChemicalManager::get_instance()->residue_type_set( CENTROID );
-		SilentFilePoseInputStreamOP silent_input = new SilentFilePoseInputStream( filename_ );
+		SilentFilePoseInputStreamOP silent_input( new SilentFilePoseInputStream( filename_ ) );
 
 		Size num( 0 );
 		Pose pose_in;
@@ -228,17 +228,17 @@ FragmentReader::apply( FragSetOP & fragset )
 		using core::fragment::OrderedFragSetOP;
 
 		FragSetOP fset = FragmentIO().read_data( filename_ );
-		ConstantLengthFragSetOP cf = dynamic_cast< ConstantLengthFragSet * >( fset.get() );
-		OrderedFragSetOP of = dynamic_cast< OrderedFragSet * >( fset.get() );
+		ConstantLengthFragSetOP cf = utility::pointer::dynamic_pointer_cast< core::fragment::ConstantLengthFragSet > ( fset );
+		OrderedFragSetOP of = utility::pointer::dynamic_pointer_cast< core::fragment::OrderedFragSet > ( fset );
 
 		FrameList frames;
 		if ( cf.get() != NULL && of.get() == NULL ) {
 			for( ConstFrameIterator it=cf->begin(), end( cf->end() ); it!=end; ++it ) {
-				frames.push_back( new Frame( **it ) );
+				frames.push_back( utility::pointer::shared_ptr<class core::fragment::Frame>( new Frame( **it ) ) );
 			}
 		} else if ( of.get() != NULL && cf.get() == NULL ) {
 			for( ConstFrameIterator it=of->begin(), end( of->end() ); it!=end; ++it ) {
-				frames.push_back( new Frame( **it ) );
+				frames.push_back( utility::pointer::shared_ptr<class core::fragment::Frame>( new Frame( **it ) ) );
 			}
 		} else {
 			TR << "[ ERROR ] FragmentIO returned not proper fragset. See the code." << std::endl;
@@ -293,7 +293,7 @@ FragmentReader::apply( FragSetOP & fragset )
 				abego_sub.clear();
 			}
 
-			FrameOP frame = new Frame( begin_ + j, frag_size_ );
+			FrameOP frame( new Frame( begin_ + j, frag_size_ ) );
 
 			frame->add_fragment( pick_fragments( ss_sub, aa_sub, abego_sub, nfrags_, true, IndependentBBTorsionSRFD() ) );
 

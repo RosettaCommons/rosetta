@@ -23,8 +23,8 @@ namespace pose {
 namespace full_model_info {
 	
 	class FullModelParameters;
-	typedef utility::pointer::owning_ptr< FullModelParameters > FullModelParametersOP;
-	typedef utility::pointer::owning_ptr< FullModelParameters const > FullModelParametersCOP;
+	typedef utility::pointer::shared_ptr< FullModelParameters > FullModelParametersOP;
+	typedef utility::pointer::shared_ptr< FullModelParameters const > FullModelParametersCOP;
 	
 } //full_model_info
 } //pose

@@ -47,7 +47,7 @@ std::string const& EnvCore::name() const{
 DofPassportOP EnvCore::issue_passport( std::string const& mover_name ) const{
 	// This method doesn't register the passport with the mover because that would
 	// require including movers, which violates the inclusion hierarchy.
-  return new DofPassport( mover_name, id() );
+  return DofPassportOP( new DofPassport( mover_name, id() ) );
 }
 
 EnvCoreCAP EnvCore::superenv() const{

@@ -124,7 +124,7 @@ initialize_o2prime_pack_scorefxn( core::scoring::ScoreFunctionCOP const & scoref
 
 	using namespace core::scoring;
 
-	ScoreFunctionOP o2prime_pack_scorefxn = new ScoreFunction;
+	ScoreFunctionOP o2prime_pack_scorefxn( new ScoreFunction );
 
 	// Each of the following terms have been pretty optimized for the packer (trie, etc.)
 	o2prime_pack_scorefxn->set_weight( fa_atr, scorefxn->get_weight( fa_atr ) );

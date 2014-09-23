@@ -90,14 +90,14 @@ std::string RepackTrial::get_name() const
 protocols::moves::MoverOP
 RepackTrial::clone() const
 {
-	return new RepackTrial( *this );
+	return protocols::moves::MoverOP( new RepackTrial( *this ) );
 }
 
 ///@brief fresh_instance returns a default-constructed object for JD2
 protocols::moves::MoverOP
 RepackTrial::fresh_instance() const
 {
-	return new RepackTrial();
+	return protocols::moves::MoverOP( new RepackTrial() );
 }
 
 ///@brief This mover retains state such that a fresh version is needed if the input Pose is about to change
@@ -197,7 +197,7 @@ std::ostream & operator<<(std::ostream& out, RepackTrial const & repack_trial )
 RepackTrialCreator::~RepackTrialCreator() {}
 
 moves::MoverOP RepackTrialCreator::create_mover() const {
-  return new RepackTrial();
+  return moves::MoverOP( new RepackTrial() );
 }
 
 std::string RepackTrialCreator::keyname() const {

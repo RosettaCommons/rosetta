@@ -86,7 +86,7 @@ add_atom(
 
 	// set the atom_id information
 	atom_p->id( AtomID( atomno, seqpos ) );
-	atom_p->parent( 0 );
+	atom_p->parent( AtomAP() );
 
 	utility::vector1< Size > const & nbrs( links[ atomno ] );
 	for ( Size i=1, i_end = nbrs.size(); i<= i_end; ++i ) {
@@ -95,7 +95,7 @@ add_atom(
 		atom_p->append_atom( add_atom( nbr, seqpos, links, atom_ptr, false ));
 	}
 
-	return atom_p();
+	return atom_p;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

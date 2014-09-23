@@ -78,7 +78,7 @@ namespace rna {
 		kT_( 0.5 ),
 		do_add_delete_( true ),
 		silent_file_( "" ),
-		silent_file_data_( new core::io::silent::SilentFileData )
+		silent_file_data_( core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData ) )
 	{
 		initialize_next_suite_atoms(); // used in RMSD calculations.
 	}
@@ -96,7 +96,7 @@ namespace rna {
 		using namespace protocols::moves;
 		using namespace core::pose::full_model_info;
 
-		MonteCarloOP monte_carlo = new MonteCarlo( pose, *scorefxn_, kT_ );
+		MonteCarloOP monte_carlo( new MonteCarlo( pose, *scorefxn_, kT_ ) );
 
 		//bool accepted( true );
 		std::string move_type;

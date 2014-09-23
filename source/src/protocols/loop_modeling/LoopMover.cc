@@ -38,7 +38,7 @@ LoopMover::LoopMover()  // {{{1
 	: trust_fold_tree_(false),
 		manage_score_function_(true),
 		was_successful_(false),
-		score_function_(NULL)
+		score_function_(/* NULL */)
 	{}
 
 LoopMover::~LoopMover() {}  // {{{1

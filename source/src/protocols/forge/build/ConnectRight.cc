@@ -113,7 +113,7 @@ ConnectRight & ConnectRight::operator =( ConnectRight const & rval ) {
 
 /// @brief clone this object
 BuildInstructionOP ConnectRight::clone() const {
-	return new ConnectRight( *this );
+	return BuildInstructionOP( new ConnectRight( *this ) );
 }
 
 

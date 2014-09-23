@@ -46,7 +46,7 @@ static thread_local basic::Tracer TR( "protocols.indexed_structure_store.filters
 using namespace core::indexed_structure_store;
 
 FragmentLookupFilter::FragmentLookupFilter() :
-  target_lookup_(NULL)
+  target_lookup_(/* NULL */)
 {
 }
 
@@ -290,7 +290,7 @@ FragmentSpecification const & FragmentLookupFilter::fragment_specification()
 }
 
 protocols::filters::FilterOP
-FragmentLookupFilterCreator::create_filter() const { return new FragmentLookupFilter; }
+FragmentLookupFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FragmentLookupFilter ); }
 
 std::string
 FragmentLookupFilterCreator::keyname() const { return "FragmentLookupFilter"; }

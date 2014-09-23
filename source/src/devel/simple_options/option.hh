@@ -123,9 +123,9 @@ namespace option {
 class OptionBlock;
 class OptionModule;
 class base_opt;
-typedef utility::pointer::owning_ptr< OptionBlock > OptionBlockOP;
-typedef utility::pointer::owning_ptr< OptionModule > OptionModuleOP;
-typedef utility::pointer::owning_ptr< base_opt > base_optOP;
+typedef utility::pointer::shared_ptr< OptionBlock > OptionBlockOP;
+typedef utility::pointer::shared_ptr< OptionModule > OptionModuleOP;
+typedef utility::pointer::shared_ptr< base_opt > base_optOP;
 
 class base_opt : public utility::pointer::ReferenceCount {
 	public:
@@ -245,7 +245,7 @@ class OptionFile : public OptionBackend {
 	void write_options(); //* writes options, if called multiple times file is overwritten */
 protected:
 	void read_options();
-	OptionBlockOP new_block( std::string mid ) { return new OptionFileBlock( mid ); }
+	OptionBlockOP new_block( std::string mid ) { return OptionBlockOP( new OptionFileBlock( mid ) ); }
 private:
 	std::string in_file;
 	std::string out_file;
@@ -268,7 +268,7 @@ public:
 	};
 protected:
 	void process_options_( int& argc, char* argv[] );
-	OptionBlockOP new_block( std::string mid ) { return new OptionBlock( mid ); };
+	OptionBlockOP new_block( std::string mid ) { return OptionBlockOP( new OptionBlock( mid ) ); };
 private:
 	std::string cmdline;
 	bool processed_;

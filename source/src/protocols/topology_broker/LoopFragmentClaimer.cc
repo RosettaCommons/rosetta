@@ -52,15 +52,15 @@ namespace topology_broker {
 using namespace core;
 
 LoopFragmentClaimer::LoopFragmentClaimer( fragment::FragSetOP frags ) :
-	FragmentClaimer( new simple_moves::ClassicFragmentMover( frags, core::kinematics::MoveMapCOP( new kinematics::MoveMap ) ),
-		"Loops", new weights::ConstAbinitioMoverWeight( 0.0 ) )
+	FragmentClaimer( simple_moves::FragmentMoverOP( new simple_moves::ClassicFragmentMover( frags, core::kinematics::MoveMapCOP( new kinematics::MoveMap ) ) ),
+		"Loops", weights::AbinitioMoverWeightOP( new weights::ConstAbinitioMoverWeight( 0.0 ) ) )
 {
  	runtime_assert( frags != 0 );
 }
 
 LoopFragmentClaimer::LoopFragmentClaimer( fragment::FragSetOP frags, std::string label ) :
-	FragmentClaimer( new simple_moves::ClassicFragmentMover( frags, core::kinematics::MoveMapCOP( new kinematics::MoveMap ) ),
-		"Loops", new weights::ConstAbinitioMoverWeight( 0.0 ) )
+	FragmentClaimer( simple_moves::FragmentMoverOP( new simple_moves::ClassicFragmentMover( frags, core::kinematics::MoveMapCOP( new kinematics::MoveMap ) ) ),
+		"Loops", weights::AbinitioMoverWeightOP( new weights::ConstAbinitioMoverWeight( 0.0 ) ) )
 {
  	runtime_assert( frags != 0 );
  	set_label( label );

@@ -73,7 +73,7 @@ PerturbRotamerSidechainMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 PerturbRotamerSidechainMoverCreator::create_mover() const {
-	return new PerturbRotamerSidechainMover;
+	return protocols::moves::MoverOP( new PerturbRotamerSidechainMover );
 }
 
 std::string
@@ -102,7 +102,7 @@ PerturbRotamerSidechainMover::PerturbRotamerSidechainMover(
 
 protocols::moves::MoverOP
 PerturbRotamerSidechainMover::clone() const {
-	return new protocols::simple_moves::sidechain_moves::PerturbRotamerSidechainMover(*this);
+	return protocols::moves::MoverOP( new protocols::simple_moves::sidechain_moves::PerturbRotamerSidechainMover(*this) );
 }
 
 void

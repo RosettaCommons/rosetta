@@ -1465,7 +1465,7 @@ rna_fullatom_minimize_test()
 
 	} else if ( option[ in::file::silent ].user() ){
 
-		core::import_pose::pose_stream::SilentFilePoseInputStreamOP input  = new core::import_pose::pose_stream::SilentFilePoseInputStream();
+		core::import_pose::pose_stream::SilentFilePoseInputStreamOP input( new core::import_pose::pose_stream::SilentFilePoseInputStream() );
 		input->set_order_by_energy( true );
 
 		utility::vector1< std::string > silent_files = option[in::file::silent ]();

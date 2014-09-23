@@ -23,8 +23,8 @@ namespace core {
 namespace environment {
 
 class DofPassport;
-typedef utility::pointer::owning_ptr< DofPassport > DofPassportOP;
-typedef utility::pointer::owning_ptr< DofPassport const > DofPassportCOP;
+typedef utility::pointer::shared_ptr< DofPassport > DofPassportOP;
+typedef utility::pointer::shared_ptr< DofPassport const > DofPassportCOP;
 
 } // core
 } // environment

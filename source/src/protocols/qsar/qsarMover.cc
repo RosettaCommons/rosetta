@@ -45,7 +45,7 @@ qsarCreator::keyname() const
 
 protocols::moves::MoverOP
 qsarCreator::create_mover() const {
-	return new qsarMover;
+	return protocols::moves::MoverOP( new qsarMover );
 }
 
 std::string
@@ -55,7 +55,7 @@ qsarCreator::mover_name()
 }
 
 qsarMover::qsarMover():
-		qsar_map_(0),
+		qsar_map_(/* 0 */),
 		chain_(),
 		initialize_(false)
 {}
@@ -89,7 +89,7 @@ void qsarMover::apply(core::pose::Pose & pose)
 	core::Size const chain_id(core::pose::get_chain_id_from_chain(chain_,pose));
 	core::Size const begin(pose.conformation().chain_begin(chain_id));
 	/// TODO The next line assumes the chain is one residue. fix this.
-	core::conformation::ResidueOP residue = new core::conformation::Residue(pose.residue(begin));
+	core::conformation::ResidueOP residue( new core::conformation::Residue(pose.residue(begin)) );
 
 	if(grids_to_use_.size()==0)
 	{
@@ -107,7 +107,7 @@ void qsarMover::apply(core::pose::Pose & pose)
 		if(qsar_map_ == 0)
 		{
 
-			qsar_map_ = new qsarMap("default",residue);
+			qsar_map_ = qsarMapOP( new qsarMap("default",residue) );
 
 			qsar_map_->fill_with_value(1,grids_to_use_);
 		}

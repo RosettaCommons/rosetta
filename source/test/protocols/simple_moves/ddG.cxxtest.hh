@@ -50,14 +50,14 @@ public:
 		core_init();
 
 		testpose_ = create_2res_1ten_2res_trp_cage_poseop(); //dimer structure
-		scorefxn_ = new core::scoring::ScoreFunction;
+		scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
 	}
 
 	void tearDown() {
 	}
 
 	void test_use_filter() {
-		StubMultiFilterOP sf = new StubMultiFilter( false );
+		StubMultiFilterOP sf( new StubMultiFilter( false ) );
 		sf->push_back( 211.0 ); // Bound
 		sf->push_back( 100 ); // Unbound
 		protocols::simple_moves::ddG ddg_mover(scorefxn_);
@@ -77,7 +77,7 @@ public:
     Movers_map movers;
 
 		prime_Data( data );
-		StubMultiFilterOP sf = new StubMultiFilter( false );
+		StubMultiFilterOP sf( new StubMultiFilter( false ) );
 		sf->push_back( 199.0 ); // Bound
 		sf->push_back( 100 ); // Unbound
     filters["sfT99"] = sf;

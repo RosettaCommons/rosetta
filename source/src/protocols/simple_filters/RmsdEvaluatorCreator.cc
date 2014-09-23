@@ -86,7 +86,7 @@ void RmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval 
 
 		core::pose::PoseOP native_pose = NULL;
 		if ( option[ in::file::native ].user() ) {
-			native_pose = new core::pose::Pose;
+			native_pose = core::pose::PoseOP( new core::pose::Pose );
 			core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() );
 		}
 
@@ -154,7 +154,7 @@ void RmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval 
 			}
 			if ( fname == "NATIVE" ) target_pose = native_pose;
 			else if ( fname != "IRMS" ) {
-				target_pose = new pose::Pose;
+				target_pose = core::pose::PoseOP( new pose::Pose );
 				core::import_pose::pose_from_pdb( *target_pose, fname );
 			}
 
@@ -223,17 +223,17 @@ void RmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval 
 			}
 			if ( selection_file != "FULL" ) {
 				if ( !loop_rms ) {
-					eval.add_evaluation( new simple_filters::SelectRmsdEvaluator( target_pose, selection, column, CA ) );
+					eval.add_evaluation( PoseEvaluatorOP( new simple_filters::SelectRmsdEvaluator( target_pose, selection, column, CA ) ) );
 				} else {
-					eval.add_evaluation( new simple_filters::LoopRmsdEvaluator( target_pose, loops, core, column, CA, superimpose_for_looprms ) );
+					eval.add_evaluation( PoseEvaluatorOP( new simple_filters::LoopRmsdEvaluator( target_pose, loops, core, column, CA, superimpose_for_looprms ) ) );
 				}
 				if ( option[ OptionKeys::evaluation::gdtmm ]() ) {
-					eval.add_evaluation( new simple_filters::SelectGdtEvaluator( target_pose, selection, column) );
+					eval.add_evaluation( PoseEvaluatorOP( new simple_filters::SelectGdtEvaluator( target_pose, selection, column) ) );
 				}
 			} else {
-				eval.add_evaluation( new simple_filters::SelectRmsdEvaluator( target_pose, column, CA ) );
+				eval.add_evaluation( PoseEvaluatorOP( new simple_filters::SelectRmsdEvaluator( target_pose, column, CA ) ) );
 				if ( option[ OptionKeys::evaluation::gdtmm ]() ) {
-					eval.add_evaluation( new simple_filters::SelectGdtEvaluator( target_pose, column ) );
+					eval.add_evaluation( PoseEvaluatorOP( new simple_filters::SelectGdtEvaluator( target_pose, column ) ) );
 				}
 			} // no selection
 		} // iterate over tripletts in option -rmsd

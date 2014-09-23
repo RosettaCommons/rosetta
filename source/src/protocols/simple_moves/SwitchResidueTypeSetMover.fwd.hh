@@ -20,8 +20,8 @@ namespace protocols {
 namespace simple_moves {
 
 class SwitchResidueTypeSetMover;
-typedef utility::pointer::owning_ptr< SwitchResidueTypeSetMover > SwitchResidueTypeSetMoverOP;
-typedef utility::pointer::owning_ptr< SwitchResidueTypeSetMover const > SwitchResidueTypeSetMoverCOP;
+typedef utility::pointer::shared_ptr< SwitchResidueTypeSetMover > SwitchResidueTypeSetMoverOP;
+typedef utility::pointer::shared_ptr< SwitchResidueTypeSetMover const > SwitchResidueTypeSetMoverCOP;
 
 } // simple_moves
 } // protocols

@@ -70,8 +70,8 @@ CyclizationMover::CyclizationMover( core::Size chain_to_cyclize, bool add_constr
 	add_constraints_( add_constraints ),
 	minimize_( minimize ),
 	minimization_rebuild_rounds_( minimization_rebuild_rounds ),
-	score_fxn_( 0 ),
-	move_map_( 0 )
+	score_fxn_( /* 0 */ ),
+	move_map_( /* 0 */ )
 {}
 
 CyclizationMover::CyclizationMover( core::Size chain_to_cyclize, bool add_constraints, bool minimize, core::Size minimization_rebuild_rounds, core::scoring::ScoreFunctionOP score_fxn, core::kinematics::MoveMapOP move_map ) :
@@ -271,7 +271,7 @@ CyclizationMover::setup_minimizer( core::pose::Pose & pose )
 
 	if ( move_map_ == 0 ) {
 		TR << "Creating move map and setting all backbone and sidechain DOFs to movable" << std::endl;
-		move_map_ = new MoveMap();
+		move_map_ = core::kinematics::MoveMapOP( new MoveMap() );
 		move_map_->set_bb_true_range( pose.conformation().chain_begin( chain_to_cyclize_ ), pose.conformation().chain_end( chain_to_cyclize_ ) );
 		move_map_->set_chi_true_range( pose.conformation().chain_begin( chain_to_cyclize_ ), pose.conformation().chain_end( chain_to_cyclize_ ) );
 	}

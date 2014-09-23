@@ -61,10 +61,10 @@ public :
 	}
 	bool apply( core::pose::Pose const & pose ) const;
 	FilterOP clone() const {
-		return new HbondsToAtomFilter( *this );
+		return FilterOP( new HbondsToAtomFilter( *this ) );
 	}
 	FilterOP fresh_instance() const{
-		return new HbondsToAtomFilter();
+		return FilterOP( new HbondsToAtomFilter() );
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;

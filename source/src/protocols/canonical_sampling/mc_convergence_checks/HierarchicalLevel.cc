@@ -110,16 +110,16 @@ static thread_local basic::Tracer TR( "HierarchicalLevel" );
 
     utility::vector1< core::Size >  universal_address( max_levels_ , 0 );
     universal_address[ 1 ] = 1;
-    Pool_RMSD_OP poolrms = new Pool_RMSD();
+    Pool_RMSD_OP poolrms( new Pool_RMSD() );
     pool_cache_.push_back( PoolData( poolrms, universal_address ) );
     num_clusters_in_level_++;
     radius_ = option[ cluster::K_radius ]()[ level_ ];
 
     if( TR.visible() ) {TR.Debug << "new hierarchical-level created, level=" << level_ << " radius=" << radius_ << std::endl;}
     if( ( level_ + 1 ) <= max_levels_ ) {
-      next_level_ = new HierarchicalLevel( (core::Size)(level_ + 1), max_levels_ );
+      next_level_ = HierarchicalLevelOP( new HierarchicalLevel( (core::Size)(level_ + 1), max_levels_ ) );
     } else {
-      next_level_ = 0;
+      next_level_.reset();
     }
   }
 
@@ -139,16 +139,16 @@ static thread_local basic::Tracer TR( "HierarchicalLevel" );
 
     utility::vector1< core::Size >  universal_address( max_levels_ , 0 );
     universal_address[ 1 ] = 1;
-    Pool_RMSD_OP poolrms = new Pool_RMSD();
+    Pool_RMSD_OP poolrms( new Pool_RMSD() );
     pool_cache_.push_back( PoolData( poolrms, universal_address ) );
     num_clusters_in_level_++;
     radius_ = option[ cluster::K_radius ]()[ level_ ];
 
     if( TR.visible() ) { TR.Debug << "new hierarchical-level created, level=" << level_ << " radius=" << radius_ << std::endl; }
     if( ( level_ + 1 ) <= max_levels_ ) {
-      next_level_ = new HierarchicalLevel( (core::Size)(level_ + 1), max_levels_ );
+      next_level_ = HierarchicalLevelOP( new HierarchicalLevel( (core::Size)(level_ + 1), max_levels_ ) );
     } else {
-      next_level_ = 0;
+      next_level_.reset();
     }
   }
 
@@ -167,9 +167,9 @@ static thread_local basic::Tracer TR( "HierarchicalLevel" );
     radius_ = option[ cluster::K_radius ]()[ level_ ];
     if( TR.visible() ) { TR.Debug << "new hierarchical-level created level=" << level_ << " radius=" << radius_ << std::endl; }
     if( level_ < max_levels_ ) {
-      next_level_ = new HierarchicalLevel( level_ + 1, max_levels );
+      next_level_ = HierarchicalLevelOP( new HierarchicalLevel( level_ + 1, max_levels ) );
     } else {
-      next_level_ = 0;
+      next_level_.reset();
     }
   }
 
@@ -523,7 +523,7 @@ static thread_local basic::Tracer TR( "HierarchicalLevel" );
   HierarchicalLevel::sort_pool( Pool_RMSD_OP& pool_ptr ) {
     PROF_START( basic::SORT_POOL );
     if( TR.visible() ) TR.Debug << "now going to sort pool" << std::endl;
-    Pool_RMSD_OP sorted_pool = new Pool_RMSD();
+    Pool_RMSD_OP sorted_pool( new Pool_RMSD() );
     utility::vector1< Address > tags;
     utility::vector1< Address > initial_order;
     tags.reserve( pool_ptr->size() );
@@ -872,7 +872,7 @@ static thread_local basic::Tracer TR( "HierarchicalLevel" );
   HierarchicalLevel::add_elem_to_cache( FArray2D_double & coords, std::string & tag, Address & input_addr ) {
     PROF_START( basic::HIERARCHICAL_ADD_ELEM_TO_CACHE );
     runtime_assert( find(input_addr) == pool_cache_.end() );
-    PoolData newpooldat = PoolData( new Pool_RMSD(), input_addr );
+    PoolData newpooldat = PoolData( Pool_RMSD_OP( new Pool_RMSD() ), input_addr );
     newpooldat.pool_->add( coords, coords.u2(), tag );
     while( pool_cache_.size() >= max_cache_size_ ) {
       pool_cache_.pop_back();
@@ -1057,7 +1057,7 @@ static thread_local basic::Tracer TR( "HierarchicalLevel" );
       testin.open( file.c_str() );
     }
     **/
-    Pool_RMSD_OP pool_ptr = new Pool_RMSD(file);
+    Pool_RMSD_OP pool_ptr( new Pool_RMSD(file) );
     core::Size ntries = 5;
     while( pool_ptr->size() == 0 && ntries > 0 ) { //we never try to open empty files
 #ifdef _WIN32
@@ -1067,7 +1067,7 @@ static thread_local basic::Tracer TR( "HierarchicalLevel" );
 #else
 		sleep(5);
 #endif
-      pool_ptr = new Pool_RMSD( file );
+      pool_ptr = Pool_RMSD_OP( new Pool_RMSD( file ) );
       ntries--;
     }
     runtime_assert( pool_ptr->size() > 0 );

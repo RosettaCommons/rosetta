@@ -90,7 +90,7 @@ SymmetricConformation::operator=( Conformation const & src )
 ConformationOP
 SymmetricConformation::clone() const
 {
-	SymmetricConformationOP copy = new SymmetricConformation(*this, *symm_info_);
+	SymmetricConformationOP copy( new SymmetricConformation(*this, *symm_info_) );
 	copy->Tsymm_.clear();  // force recompute
 	return copy;
 }

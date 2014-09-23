@@ -22,8 +22,8 @@ namespace protocols {
 namespace hybridization {
 
 class ChunkTrialMover;
-typedef utility::pointer::owning_ptr< ChunkTrialMover > ChunkTrialMoverOP;
-typedef utility::pointer::owning_ptr< ChunkTrialMover const > ChunkTrialMoverCOP;
+typedef utility::pointer::shared_ptr< ChunkTrialMover > ChunkTrialMoverOP;
+typedef utility::pointer::shared_ptr< ChunkTrialMover const > ChunkTrialMoverCOP;
 
 
 } // hybridization

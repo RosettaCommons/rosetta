@@ -121,7 +121,7 @@ AntibodyModeler::~AntibodyModeler() {}
 
 //clone
 protocols::moves::MoverOP AntibodyModeler::clone() const {
-	return( new AntibodyModeler() );
+	return( protocols::moves::MoverOP( new AntibodyModeler() ) );
 }
 
 void AntibodyModeler::set_default() {
@@ -215,8 +215,7 @@ void AntibodyModeler::apply( pose::Pose & pose_in ) {
 	using namespace protocols::moves;
 
 	if( model_h3_ && ( cst_weight_ != 0.00 ) ) {
-		protocols::simple_moves::ConstraintSetMoverOP cdr_constraint =
-		    new protocols::simple_moves::ConstraintSetMover();
+		protocols::simple_moves::ConstraintSetMoverOP cdr_constraint( new protocols::simple_moves::ConstraintSetMover() );
 		cdr_constraint->apply( pose_in );
 	}
 	// utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
@@ -271,7 +270,7 @@ void AntibodyModeler::apply( pose::Pose & pose_in ) {
 	*/
 	// End Junk
 
-	SequenceMoverOP model_antibody ( new SequenceMover() );
+	SequenceMoverOP model_antibody( new SequenceMover() );
 
 	GraftMoverOP graft_move( new GraftMover() );
 	graft_move->enable_graft_l1( graft_l1_ );
@@ -282,7 +281,7 @@ void AntibodyModeler::apply( pose::Pose & pose_in ) {
 	graft_move->enable_graft_h3( graft_h3_ );
 	graft_move->enable_benchmark_mode( benchmark_ );
 	graft_move->set_camelid( camelid_ );
-	graft_move->set_native_pose( new pose::Pose ( native_pose_ ) );
+	graft_move->set_native_pose( PoseCOP( new pose::Pose ( native_pose_ ) ) );
 	model_antibody->add_mover( graft_move );
 
 	if ( model_h3_ ) {
@@ -291,7 +290,7 @@ void AntibodyModeler::apply( pose::Pose & pose_in ) {
 		model_cdrh3->set_camelid( camelid_ );
 		model_cdrh3->model_h3( model_h3_ );
 		model_cdrh3->store_H3_cter_fragment( H3_base_library_ );
-		model_cdrh3->set_native_pose( new pose::Pose ( native_pose_ ) );
+		model_cdrh3->set_native_pose( PoseCOP( new pose::Pose ( native_pose_ ) ) );
 		model_cdrh3->set_centroid_loop_building( true );
 		model_cdrh3->set_fullatom_loop_building( true );
 		model_antibody->add_mover( model_cdrh3 );
@@ -504,7 +503,7 @@ AntibodyModeler::relax_cdrs() {
 
 	//setting MoveMap
 	kinematics::MoveMapOP allcdr_map;
-	allcdr_map = new kinematics::MoveMap();
+	allcdr_map = kinematics::MoveMapOP( new kinematics::MoveMap() );
 	allcdr_map->clear();
 	allcdr_map->set_chi( false );
 	allcdr_map->set_bb( false );
@@ -531,20 +530,20 @@ AntibodyModeler::relax_cdrs() {
 	if( benchmark_ ) min_tolerance = 1.0;
 	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
 	bool nb_list = true;
-	protocols::simple_moves::MinMoverOP all_cdr_min_mover = new protocols::simple_moves::MinMover( allcdr_map,
-	        scorefxn, min_type, min_tolerance, nb_list );
+	protocols::simple_moves::MinMoverOP all_cdr_min_mover( new protocols::simple_moves::MinMover( allcdr_map,
+	        scorefxn, min_type, min_tolerance, nb_list ) );
 	all_cdr_min_mover->apply( antibody_in_.Fv );
 
 	if( !benchmark_ ) {
-		protocols::simple_moves::PackRotamersMoverOP repack=new protocols::simple_moves::PackRotamersMover( scorefxn );
+		protocols::simple_moves::PackRotamersMoverOP repack( new protocols::simple_moves::PackRotamersMover( scorefxn ) );
 		setup_packer_task( antibody_in_.Fv );
 		( *scorefxn )( antibody_in_.Fv );
-		tf_->push_back( new RestrictToInterface( is_flexible ) );
+		tf_->push_back( TaskOperationCOP( new RestrictToInterface( is_flexible ) ) );
 		repack->task_factory( tf_ );
 		repack->apply( antibody_in_.Fv );
 
-		protocols::simple_moves::RotamerTrialsMinMoverOP rtmin = new protocols::simple_moves::RotamerTrialsMinMover(
-		    scorefxn, tf_ );
+		protocols::simple_moves::RotamerTrialsMinMoverOP rtmin( new protocols::simple_moves::RotamerTrialsMinMover(
+		    scorefxn, tf_ ) );
 		rtmin->apply( antibody_in_.Fv );
 	}
 
@@ -691,7 +690,7 @@ AntibodyModeler::repulsive_ramp(
 
 	//setting MoveMap
 	kinematics::MoveMapOP cdr_dock_map;
-	cdr_dock_map = new kinematics::MoveMap();
+	cdr_dock_map = kinematics::MoveMapOP( new kinematics::MoveMap() );
 	cdr_dock_map->clear();
 	cdr_dock_map->set_chi( false );
 	cdr_dock_map->set_bb( false );
@@ -772,12 +771,12 @@ AntibodyModeler::snugfit_MC_min (
 	bool nb_list = true;
 	Size nres = pose_in.total_residue();
 
-	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( cdr_dock_map, scorefxn,
-	        "dfpmin_armijo_nonmonotone", minimization_threshold, nb_list );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( cdr_dock_map, scorefxn,
+	        "dfpmin_armijo_nonmonotone", minimization_threshold, nb_list ) );
 
 	//set up rigid body movers
-	rigid::RigidBodyPerturbMoverOP rb_perturb=new rigid::RigidBodyPerturbMover(pose_in,
-	        *cdr_dock_map, 2.0, 0.1 , rigid::partner_downstream, true );
+	rigid::RigidBodyPerturbMoverOP rb_perturb( new rigid::RigidBodyPerturbMover(pose_in,
+	        *cdr_dock_map, 2.0, 0.1 , rigid::partner_downstream, true ) );
 
 	setup_packer_task( pose_in );
 	//set up sidechain movers for rigid body jump and loop & neighbors
@@ -790,21 +789,21 @@ AntibodyModeler::snugfit_MC_min (
 	for( Size i = 1; i <= nres; i++ )
 		loop_residues( i ) = is_flexible[ i ]; // check mapping
 	using namespace protocols::toolbox::task_operations;
-	tf_->push_back( new RestrictToInterface( rb_jump, loop_residues ) );
+	tf_->push_back( TaskOperationCOP( new RestrictToInterface( rb_jump, loop_residues ) ) );
 
-	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover(
-	    pack_scorefxn, tf_ );
-	SequenceMoverOP rb_mover = new SequenceMover;
+	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover(
+	    pack_scorefxn, tf_ ) );
+	SequenceMoverOP rb_mover( new SequenceMover );
 	rb_mover->add_mover( rb_perturb );
 	rb_mover->add_mover( pack_rottrial );
-	JumpOutMoverOP rb_mover_min = new JumpOutMover( rb_mover, min_mover,
-	        scorefxn,	minimization_threshold );
+	JumpOutMoverOP rb_mover_min( new JumpOutMover( rb_mover, min_mover,
+	        scorefxn,	minimization_threshold ) );
 
 	Real temperature = 0.8;
-	MonteCarloOP mc = new MonteCarlo( pose_in, *scorefxn, temperature );
-	TrialMoverOP rb_mover_min_trial = new TrialMover( rb_mover_min, mc);
-	RepeatMoverOP first_mcm_cycles = new RepeatMover( rb_mover_min_trial,
-	        cycles );
+	MonteCarloOP mc( new MonteCarlo( pose_in, *scorefxn, temperature ) );
+	TrialMoverOP rb_mover_min_trial( new TrialMover( rb_mover_min, mc) );
+	RepeatMoverOP first_mcm_cycles( new RepeatMover( rb_mover_min_trial,
+	        cycles ) );
 	first_mcm_cycles->apply( pose_in );
 
 	return;
@@ -853,7 +852,7 @@ AntibodyModeler::snugfit_mcm_protocol(
 
 	//setting MoveMap
 	kinematics::MoveMapOP cdr_dock_map;
-	cdr_dock_map = new kinematics::MoveMap();
+	cdr_dock_map = kinematics::MoveMapOP( new kinematics::MoveMap() );
 	cdr_dock_map->clear();
 	cdr_dock_map->set_chi( false );
 	cdr_dock_map->set_bb( false );
@@ -871,12 +870,12 @@ AntibodyModeler::snugfit_mcm_protocol(
 
 
 	//set up minimizer movers
-	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( cdr_dock_map, scorefxn, min_type,
-	        min_threshold, nb_list );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( cdr_dock_map, scorefxn, min_type,
+	        min_threshold, nb_list ) );
 
 	//set up rigid body movers
-	rigid::RigidBodyPerturbMoverOP rb_perturb = new rigid::RigidBodyPerturbMover( pose_in,
-	        *cdr_dock_map, rot_mag, trans_mag, rigid::partner_downstream, true );
+	rigid::RigidBodyPerturbMoverOP rb_perturb( new rigid::RigidBodyPerturbMover( pose_in,
+	        *cdr_dock_map, rot_mag, trans_mag, rigid::partner_downstream, true ) );
 
 	setup_packer_task( pose_in );
 	//set up sidechain movers for rigid body jump and loop & neighbors
@@ -889,63 +888,63 @@ AntibodyModeler::snugfit_mcm_protocol(
 	for( Size i = 1; i <= nres; i++ )
 		loop_residues( i ) = is_flexible[ i ]; // check mapping
 	using namespace protocols::toolbox::task_operations;
-	tf_->push_back( new RestrictToInterface( rb_jump, loop_residues ) );
+	tf_->push_back( TaskOperationCOP( new RestrictToInterface( rb_jump, loop_residues ) ) );
 
 
 
-	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover(
-	    pack_scorefxn, tf_ );
+	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover(
+	    pack_scorefxn, tf_ ) );
 
-	protocols::simple_moves::PackRotamersMoverOP pack_interface_repack = new protocols::simple_moves::PackRotamersMover(
-	    pack_scorefxn );
+	protocols::simple_moves::PackRotamersMoverOP pack_interface_repack( new protocols::simple_moves::PackRotamersMover(
+	    pack_scorefxn ) );
 	pack_interface_repack->task_factory(tf_);
 
 	Real temperature = 0.8;
-	MonteCarloOP mc = new MonteCarlo( pose_in, *scorefxn, temperature );
+	MonteCarloOP mc( new MonteCarlo( pose_in, *scorefxn, temperature ) );
 
-	TrialMoverOP pack_interface_trial = new TrialMover(pack_interface_repack,
-	        mc );
+	TrialMoverOP pack_interface_trial( new TrialMover(pack_interface_repack,
+	        mc ) );
 
-	protocols::docking::SidechainMinMoverOP scmin_mover = new
-	protocols::docking::SidechainMinMover( core::scoring::ScoreFunctionOP( pack_scorefxn ), core::pack::task::TaskFactoryCOP( tf_ ) );
-	TrialMoverOP scmin_trial = new TrialMover( scmin_mover, mc );
+	protocols::docking::SidechainMinMoverOP scmin_mover( new
+	protocols::docking::SidechainMinMover( core::scoring::ScoreFunctionOP( pack_scorefxn ), core::pack::task::TaskFactoryCOP( tf_ ) ) );
+	TrialMoverOP scmin_trial( new TrialMover( scmin_mover, mc ) );
 
-	SequenceMoverOP rb_mover = new SequenceMover;
+	SequenceMoverOP rb_mover( new SequenceMover );
 	rb_mover->add_mover( rb_perturb );
 	rb_mover->add_mover( pack_rottrial );
 
-	JumpOutMoverOP rb_mover_min = new JumpOutMover( rb_mover, min_mover,
-	        scorefxn, min_threshold);
-	TrialMoverOP rb_mover_min_trial = new TrialMover( rb_mover_min, mc  );
+	JumpOutMoverOP rb_mover_min( new JumpOutMover( rb_mover, min_mover,
+	        scorefxn, min_threshold) );
+	TrialMoverOP rb_mover_min_trial( new TrialMover( rb_mover_min, mc  ) );
 
-	SequenceMoverOP repack_step = new SequenceMover;
+	SequenceMoverOP repack_step( new SequenceMover );
 	repack_step->add_mover( rb_mover_min_trial );
 	repack_step->add_mover( pack_interface_trial );
 	repack_step->add_mover( scmin_trial );
 
-	CycleMoverOP rb_mover_min_trial_repack  = new CycleMover;
+	CycleMoverOP rb_mover_min_trial_repack( new CycleMover );
 	for ( Size i=1; i < 8; ++i )
 		rb_mover_min_trial_repack->add_mover( rb_mover_min_trial );
 	rb_mover_min_trial_repack->add_mover( repack_step );
 
 	//set up initial repack mover
-	SequenceMoverOP initial_repack = new SequenceMover;
+	SequenceMoverOP initial_repack( new SequenceMover );
 	initial_repack->add_mover( pack_interface_trial );
 	initial_repack->add_mover( scmin_trial );
 
 	//set up initial and final min_trial movers for docking
-	TrialMoverOP minimize_trial = new TrialMover( min_mover, mc );
+	TrialMoverOP minimize_trial( new TrialMover( min_mover, mc ) );
 
 	//set up mcm cycles and mcm_repack cycles
-	RepeatMoverOP mcm_four_cycles = new RepeatMover( rb_mover_min_trial, 4 );
+	RepeatMoverOP mcm_four_cycles( new RepeatMover( rb_mover_min_trial, 4 ) );
 
 	Size cycles = 3;
 	if ( benchmark_ )
 		cycles = 1;
-	RepeatMoverOP mcm_final_cycles = new RepeatMover(
-	    rb_mover_min_trial_repack, cycles );
+	RepeatMoverOP mcm_final_cycles( new RepeatMover(
+	    rb_mover_min_trial_repack, cycles ) );
 
-	SequenceMoverOP snugfit_mcm = new SequenceMover;
+	SequenceMoverOP snugfit_mcm( new SequenceMover );
 	snugfit_mcm->add_mover( initial_repack );
 	snugfit_mcm->add_mover( minimize_trial );
 	snugfit_mcm->add_mover( mcm_four_cycles );
@@ -964,27 +963,25 @@ AntibodyModeler::setup_packer_task(
 	using namespace pack::task::operation;
 
 	if( init_task_factory_ ) {
-		tf_ = new TaskFactory( *init_task_factory_ );
+		tf_ = core::pack::task::TaskFactoryOP( new TaskFactory( *init_task_factory_ ) );
 		TR << "AbModeler Reinitializing Packer Task" << std::endl;
 		return;
 	} else
-		tf_ = new TaskFactory;
+		tf_ = core::pack::task::TaskFactoryOP( new TaskFactory );
 
 	TR << "AbModeler Setting Up Packer Task" << std::endl;
 
-	tf_->push_back( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueLacksProperty("PROTEIN") ) ) );
-	tf_->push_back( new InitializeFromCommandline );
-	tf_->push_back( new IncludeCurrent );
-	tf_->push_back( new RestrictToRepacking );
-	tf_->push_back( new NoRepackDisulfides );
+	tf_->push_back( TaskOperationCOP( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueLacksProperty("PROTEIN") ) ) ) );
+	tf_->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
+	tf_->push_back( TaskOperationCOP( new IncludeCurrent ) );
+	tf_->push_back( TaskOperationCOP( new RestrictToRepacking ) );
+	tf_->push_back( TaskOperationCOP( new NoRepackDisulfides ) );
 
 	// incorporating Ian's UnboundRotamer operation.
 	// note that nothing happens if unboundrot option is inactive!
-	pack::rotamer_set::UnboundRotamersOperationOP unboundrot =
-	    new pack::rotamer_set::UnboundRotamersOperation();
+	pack::rotamer_set::UnboundRotamersOperationOP unboundrot( new pack::rotamer_set::UnboundRotamersOperation() );
 	unboundrot->initialize_from_command_line();
-	operation::AppendRotamerSetOP unboundrot_operation =
-	    new operation::AppendRotamerSet( unboundrot );
+	operation::AppendRotamerSetOP unboundrot_operation( new operation::AppendRotamerSet( unboundrot ) );
 	tf_->push_back( unboundrot_operation );
 	// adds scoring bonuses for the "unbound" rotamers, if any
 	core::pack::dunbrack::load_unboundrot( pose_in );

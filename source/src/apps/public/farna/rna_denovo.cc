@@ -129,7 +129,7 @@ rna_denovo_test()
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
-	pose::PoseOP native_pose_OP = new pose::Pose;
+	pose::PoseOP native_pose_OP( new pose::Pose );
 	pose::Pose & native_pose = *native_pose_OP;
 
 	pose::Pose extended_pose;
@@ -166,7 +166,7 @@ rna_denovo_test()
 		core::import_pose::pose_stream::SilentFilePoseInputStream input( option[refine_silent_file]() );
 		input.set_order_by_energy( true );
 		while ( input.has_another_pose() ) {
-			pose::PoseOP new_pose = new pose::Pose;
+			pose::PoseOP new_pose( new pose::Pose );
 			input.fill_pose( *new_pose, *rsd_set );
 			set_output_res_num( *new_pose, option[ output_res_num ]() );
 			refine_pose_list.push_back( new_pose );
@@ -272,7 +272,7 @@ rna_denovo_test()
 
 	//Constraints?
 	if ( option[ cst_file ].user() ) {
-		ConstraintSetOP cst_set = ConstraintIO::get_instance()->read_constraints( option[cst_file], new ConstraintSet, pose );
+		ConstraintSetOP cst_set = ConstraintIO::get_instance()->read_constraints( option[cst_file], ConstraintSetOP( new ConstraintSet ), pose );
 		pose.constraint_set( cst_set );
 		for ( Size i = 1; i <= refine_pose_list.size(); ++i) {
 			// ConstraintSetOP cst_set = ConstraintIO::get_instance()->read_constraints( option[cst_file], new ConstraintSet, *refine_pose_list[i] );

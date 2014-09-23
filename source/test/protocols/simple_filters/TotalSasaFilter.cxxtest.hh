@@ -55,7 +55,7 @@ class TotalSasaFilterTests : public CxxTest::TestSuite {
 
 		using namespace core::pose::metrics;
 		if( !CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ){
-			PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy();
+			PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy() );
 			CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 		}
 

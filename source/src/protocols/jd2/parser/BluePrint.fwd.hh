@@ -23,8 +23,8 @@ namespace jd2 {
 namespace parser {
 
 class BluePrint;
-typedef utility::pointer::owning_ptr< BluePrint > BluePrintOP;
-typedef utility::pointer::owning_ptr< BluePrint const > BluePrintCOP;
+typedef utility::pointer::shared_ptr< BluePrint > BluePrintOP;
+typedef utility::pointer::shared_ptr< BluePrint const > BluePrintCOP;
 
 } // parser
 } // jd2

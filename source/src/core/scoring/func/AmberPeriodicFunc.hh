@@ -35,7 +35,7 @@ public:
 	AmberPeriodicFunc ( Real const x0_in, Real const k_in, Real const n_periodic_in) : x0_( x0_in ), k_( k_in ), n_periodic_( n_periodic_in ){}
 
 	FuncOP
-	clone() const { return new AmberPeriodicFunc( *this ); }
+	clone() const { return FuncOP( new AmberPeriodicFunc( *this ) ); }
 
 	Real func( Real const x ) const;
 	Real dfunc( Real const x ) const;

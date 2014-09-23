@@ -22,7 +22,7 @@ namespace pack {
 namespace rotamer_set {
 
 class WaterPackingInfo;
-typedef utility::pointer::owning_ptr< WaterPackingInfo > WaterPackingInfoOP;
+typedef utility::pointer::shared_ptr< WaterPackingInfo > WaterPackingInfoOP;
 
 } // namespace rotamer_set
 } // namespace pack

@@ -83,7 +83,7 @@ public:
 		using namespace core::kinematics;
 
 		// Add a Membrane
-		AddMembraneMoverOP add_memb = new AddMembraneMover(); 
+		AddMembraneMoverOP add_memb( new AddMembraneMover() ); 
 		add_memb->apply(pose); 
 
 		// Rotate a bit
@@ -93,7 +93,7 @@ public:
 		//TransformIntoMembraneMoverOP transform_memb = new TransformIntoMembraneMover( 1, center, normal );
 		//transform_memb->apply( pose );
 
-		MembranePositionFromTopologyMoverOP initialize_memb = new MembranePositionFromTopologyMover(); 
+		MembranePositionFromTopologyMoverOP initialize_memb( new MembranePositionFromTopologyMover() ); 
 		initialize_memb->apply( pose ); 
 
 	//	Vector center = pose.conformation().membrane_info()->membrane_center();
@@ -106,8 +106,8 @@ public:
 	}
 };
 
-typedef utility::pointer::owning_ptr< MembraneViewMover > MembraneViewMoverOP; 
-typedef utility::pointer::owning_ptr< MembraneViewMover const > MembraneViewMoverCOP; 
+typedef utility::pointer::shared_ptr< MembraneViewMover > MembraneViewMoverOP; 
+typedef utility::pointer::shared_ptr< MembraneViewMover const > MembraneViewMoverCOP; 
 
 /// @brief Main method
 int
@@ -122,7 +122,7 @@ main( int argc, char * argv [] )
 		protocols::jd2::register_options();
 
 		// Minimize with mp
-		MembraneViewMoverOP mpview = new MembraneViewMover();
+		MembraneViewMoverOP mpview( new MembraneViewMover() );
 		protocols::jd2::JobDistributor::get_instance()->go( mpview );
 
 		return 0; 

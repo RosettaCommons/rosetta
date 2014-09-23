@@ -109,7 +109,7 @@ public:
 
 	virtual
 	MonteCarloOP clone() {
-		return new MonteCarlo( *this );
+		return MonteCarloOP( new MonteCarlo( *this ) );
 	}
 
 	/// @brief Resets the ScoreFunction

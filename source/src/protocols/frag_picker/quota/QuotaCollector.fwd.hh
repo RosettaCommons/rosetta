@@ -25,8 +25,8 @@ namespace quota {
 /// @brief forward declaration for QuotaCollector
 class QuotaCollector;
 
-typedef utility::pointer::owning_ptr<QuotaCollector> QuotaCollectorOP;
-typedef utility::pointer::owning_ptr<QuotaCollector const>
+typedef utility::pointer::shared_ptr<QuotaCollector> QuotaCollectorOP;
+typedef utility::pointer::shared_ptr<QuotaCollector const>
 		QuotaCollectorCOP;
 
 } // quota

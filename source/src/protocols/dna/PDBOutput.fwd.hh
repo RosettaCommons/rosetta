@@ -18,8 +18,8 @@ namespace protocols {
 namespace dna {
 
 class PDBOutput;
-typedef utility::pointer::owning_ptr< PDBOutput > PDBOutputOP;
-typedef utility::pointer::owning_ptr< PDBOutput const > PDBOutputCOP;
+typedef utility::pointer::shared_ptr< PDBOutput > PDBOutputOP;
+typedef utility::pointer::shared_ptr< PDBOutput const > PDBOutputCOP;
 
 } // namespace dna
 } // namespace protocols

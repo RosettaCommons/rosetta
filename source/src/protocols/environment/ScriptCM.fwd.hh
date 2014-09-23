@@ -23,8 +23,8 @@ namespace protocols {
 namespace environment {
 
 class ScriptCM;
-typedef utility::pointer::owning_ptr< ScriptCM > ScriptCMOP;
-typedef utility::pointer::owning_ptr< ScriptCM const > ScriptCMCOP;
+typedef utility::pointer::shared_ptr< ScriptCM > ScriptCMOP;
+typedef utility::pointer::shared_ptr< ScriptCM const > ScriptCMCOP;
 
 } // environment
 } // protocols

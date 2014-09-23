@@ -77,7 +77,7 @@ static thread_local basic::Tracer TR( "protocols.medal.MedalExchangeMover" );
 
 /// @detail Combines both sets of loops, sorting the result in increasing order of start position
 protocols::loops::LoopsCOP combine_loops(LoopsCOP aligned, LoopsCOP unaligned) {
-  LoopsOP combined = new Loops();
+  LoopsOP combined( new Loops() );
 
   for (Loops::const_iterator i = aligned->begin(); i != aligned->end(); ++i) {
     combined->add_loop(*i);
@@ -119,8 +119,8 @@ void setup_coordinate_constraints(const Pose& pose, LoopsCOP aligned, Constraint
       const PointPosition& ca_coords = pose.xyz(ca_atom);
 
       Real distance = ca_coords.distance(fixed_coords);
-      FuncOP function = new HarmonicFunc(distance, 5);
-      ConstraintCOP constraint = new CoordinateConstraint(ca_atom, fixed_atom, fixed_coords, function);
+      FuncOP function( new HarmonicFunc(distance, 5) );
+      ConstraintCOP constraint( new CoordinateConstraint(ca_atom, fixed_atom, fixed_coords, function) );
       constraints->add_constraint(constraint);
     }
   }
@@ -144,7 +144,7 @@ void setup_atom_pair_constraints(const Pose& pose, LoopsCOP aligned, ConstraintS
       TR.Warning << "Multiple constraint files specified; using first" << std::endl;
     }
 
-    ConstraintSetOP additional = ConstraintIO::get_instance()->read_constraints(filenames[1], new ConstraintSet(), pose);
+    ConstraintSetOP additional = ConstraintIO::get_instance()->read_constraints(filenames[1], ConstraintSetOP( new ConstraintSet() ), pose);
     ConstraintCOPs cst_list = additional->get_all_constraints();
 
     for (ConstraintCOPs::const_iterator i = cst_list.begin(); i != cst_list.end(); ++i) {
@@ -219,14 +219,14 @@ void MedalExchangeMover::apply(Pose& pose) {
   builder->set_up(*combined, &pose);
   TR << pose.fold_tree() << std::endl;
 
-  ConstraintSetOP constraints = new ConstraintSet();
+  ConstraintSetOP constraints( new ConstraintSet() );
   setup_constraints(pose, aligned, constraints);
 
   // Minimal score function used during initial replacement
-  ScoreFunctionOP minimal = new ScoreFunction();
+  ScoreFunctionOP minimal( new ScoreFunction() );
   //minimal->set_weight(core::scoring::vdw, 1);
 
-  ScoreFunctionOP score = new ScoreFunction();
+  ScoreFunctionOP score( new ScoreFunction() );
   //score->set_weight(core::scoring::vdw, 1);
   score->set_weight(core::scoring::atom_pair_constraint, option[OptionKeys::cm::sanitize::cst_weight_pair]());
   score->set_weight(core::scoring::coordinate_constraint, option[OptionKeys::cm::sanitize::cst_weight_coord]());
@@ -240,7 +240,7 @@ void MedalExchangeMover::apply(Pose& pose) {
   const Size num_cycles = static_cast<Size>(aligned->nr_residues() * 50 * option[OptionKeys::abinitio::increase_cycles]());
 
   PolicyOP policy = PolicyFactory::get_policy("uniform", fragments_, num_fragments);
-  MoverOP fragment_mover = new BiasedFragmentMover(policy, probs);
+  MoverOP fragment_mover( new BiasedFragmentMover(policy, probs) );
 
   RationalMonteCarlo replace(fragment_mover, minimal, 1000, 2.0, false);
   RationalMonteCarlo exchange(fragment_mover, score, num_cycles, temp, true);
@@ -269,7 +269,7 @@ MedalExchangeMover::MedalExchangeMover() {
 
   FragmentIO io;
   fragments_ = io.read_data(option[in::file::frag3]());
-  pred_ss_ = new SecondaryStructure(*fragments_);
+  pred_ss_ = core::fragment::SecondaryStructureOP( new SecondaryStructure(*fragments_) );
 }
 
 std::string MedalExchangeMover::get_name() const {
@@ -277,11 +277,11 @@ std::string MedalExchangeMover::get_name() const {
 }
 
 protocols::moves::MoverOP MedalExchangeMover::clone() const {
-  return new MedalExchangeMover(*this);
+  return protocols::moves::MoverOP( new MedalExchangeMover(*this) );
 }
 
 protocols::moves::MoverOP MedalExchangeMover::fresh_instance() const {
-  return new MedalExchangeMover();
+  return protocols::moves::MoverOP( new MedalExchangeMover() );
 }
 
 }  // namespace medal

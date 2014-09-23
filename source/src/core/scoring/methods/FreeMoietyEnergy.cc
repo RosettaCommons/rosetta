@@ -43,7 +43,7 @@ methods::EnergyMethodOP
 FreeMoietyEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new FreeMoietyEnergy;
+	return methods::EnergyMethodOP( new FreeMoietyEnergy );
 }
 
 ScoreTypes
@@ -71,7 +71,7 @@ FreeMoietyEnergy::~FreeMoietyEnergy() {}
 core::scoring::methods::EnergyMethodOP
 FreeMoietyEnergy::clone() const
 {
-	return new FreeMoietyEnergy;
+	return core::scoring::methods::EnergyMethodOP( new FreeMoietyEnergy );
 }
 
 /////////////////////////////////////////////////////////////////////////////

@@ -78,7 +78,7 @@ GraftCDRLoopsProtocol::~GraftCDRLoopsProtocol() {}
 
 //clone
 protocols::moves::MoverOP GraftCDRLoopsProtocol::clone() const {
-	return( new GraftCDRLoopsProtocol() );
+	return( protocols::moves::MoverOP( new GraftCDRLoopsProtocol() ) );
 }
 
 
@@ -185,7 +185,7 @@ void GraftCDRLoopsProtocol::init_from_options() {
 
 	//set native pose if asked for
 	if ( option[ OptionKeys::in::file::native ].user() ) {
-		core::pose::PoseOP native_pose = new core::pose::Pose();
+		core::pose::PoseOP native_pose( new core::pose::Pose() );
 		core::import_pose::pose_from_pdb( *native_pose, option[ OptionKeys::in::file::native ]() );
 		set_native_pose( native_pose );
 	} else {
@@ -230,7 +230,7 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
 
 	// check for native and input pose
 	if ( !get_input_pose() ) {
-		pose::PoseOP input_pose = new pose::Pose(frame_pose);  //JQX: QUESTION: why owning pointer here
+		pose::PoseOP input_pose( new pose::Pose(frame_pose) );  //JQX: QUESTION: why owning pointer here
 		set_input_pose( input_pose );   // JQX: pass the input_pose to the mover.input_pose_
 	}
 
@@ -240,9 +240,9 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
 		TR << "Danger Will Robinson! Native is an impostor!" << std::endl;
 		TR << "   'native_pose' is just a copy of the 'input_pose'    " << std::endl;
 		TR << "    since you didn't sepcifiy the native pdb name"<<std::endl;
-		native_pose = new pose::Pose(frame_pose);
+		native_pose = pose::PoseOP( new pose::Pose(frame_pose) );
 	} else {
-		native_pose = new pose::Pose( *get_native_pose() );
+		native_pose = pose::PoseOP( new pose::Pose( *get_native_pose() ) );
 	}
 
 	// JQX: this is the secondary structure from the native pose
@@ -251,11 +251,11 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
 	set_native_pose( native_pose ); // pass the native pose to the mover.native_pose_
 
 
-	ab_info_   =  new AntibodyInfo(frame_pose);
-	ab_t_info_ =  new Ab_TemplateInfo(graft_l1_, graft_l2_, graft_l3_,
-	                                  graft_h1_, graft_h2_, graft_h3_, camelid_);
+	ab_info_ = AntibodyInfoOP( new AntibodyInfo(frame_pose) );
+	ab_t_info_ = Ab_TemplateInfoOP( new Ab_TemplateInfo(graft_l1_, graft_l2_, graft_l3_,
+	                                  graft_h1_, graft_h2_, graft_h3_, camelid_) );
 
-	graft_sequence_ = new moves::SequenceMover();
+	graft_sequence_ = protocols::moves::SequenceMoverOP( new moves::SequenceMover() );
 
 
 	TR<<" Checking AntibodyInfo object: "<<std::endl<<*ab_info_<<std::endl<<std::endl;
@@ -266,7 +266,7 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
 		TR << "                  start (chothia): "<<ab_info_->get_CDR_loop(it).start()<<std::endl;
 		TR << "                   stop (chothia): "<<ab_info_->get_CDR_loop(it).stop()<<std::endl;
 
-		GraftOneCDRLoopOP graft_one_cdr = new GraftOneCDRLoop( it, ab_info_, ab_t_info_) ;
+		GraftOneCDRLoopOP graft_one_cdr( new GraftOneCDRLoop( it, ab_info_, ab_t_info_) ) ;
 		if(it == h3 && h3_no_stem_graft_) {
 			graft_one_cdr->set_no_stem_copy(true);
 		}
@@ -295,7 +295,7 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
 	// When do packing, pack the whole pose, but minimize the CDRs
 	tf_ = setup_packer_task(frame_pose);
 
-	cdrs_min_pack_min_ = new CDRsMinPackMin(ab_info_);
+	cdrs_min_pack_min_ = CDRsMinPackMinOP( new CDRsMinPackMin(ab_info_) );
 	cdrs_min_pack_min_ -> set_task_factory(tf_);
 	// the tf_ include all the residues, the movemap is to use the deafult one in CDRsMinPackMin, which is the CDRs
 	cdrs_min_pack_min_->set_sc_min(sc_min_);
@@ -306,11 +306,11 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
 
 
 
-	optimize_sequence_ = new moves::SequenceMover();
+	optimize_sequence_ = protocols::moves::SequenceMoverOP( new moves::SequenceMover() );
 
 	for(CDRNameEnum it = start_cdr_loop; it <= ab_info_->get_total_num_CDRs(); it=CDRNameEnum(it+1) ) {
 		if (  !(it == h3 && h3_no_stem_graft_)   ) {
-			GraftedStemOptimizerOP optimize_oneCDR_stems = new GraftedStemOptimizer(it, ab_info_);
+			GraftedStemOptimizerOP optimize_oneCDR_stems( new GraftedStemOptimizer(it, ab_info_) );
 			optimize_oneCDR_stems->enable_benchmark_mode( benchmark_ );
 			optimize_sequence_->add_mover(optimize_oneCDR_stems);
 		}
@@ -387,7 +387,7 @@ void GraftCDRLoopsProtocol::apply( pose::Pose & frame_pose ) {
 	if( get_native_pose() ) native_pose = *get_native_pose();
 	else                    native_pose = frame_pose;
 
-	AntibodyInfoOP native_ab_info = new AntibodyInfo( native_pose );
+	AntibodyInfoOP native_ab_info( new AntibodyInfo( native_pose ) );
 
 
 	align_to_native( frame_pose, native_pose, ab_info_, native_ab_info );

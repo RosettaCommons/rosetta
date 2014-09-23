@@ -59,7 +59,7 @@ namespace flxbb{
 		}
 
 		MoverOP protocol;
-		protocol = new FlxbbDesign( scorefxn_design, scorefxn_relax );
+		protocol = MoverOP( new FlxbbDesign( scorefxn_design, scorefxn_relax ) );
 		JobDistributor::get_instance()->go( protocol );
 
 	}

@@ -276,7 +276,7 @@ FlexPepDockingPoseMetrics::calc_interface_metrics( core::pose::Pose & pose, Size
  		//////// calculate interface score ////////
 		core::pose::Pose unbound_pose = pose;
 		float trans_magnitude = 1000;
-		rigid::RigidBodyTransMoverOP translate_away ( new rigid::RigidBodyTransMover( unbound_pose, rb_jump ) );
+		rigid::RigidBodyTransMoverOP translate_away( new rigid::RigidBodyTransMover( unbound_pose, rb_jump ) );
 		translate_away->step_size( trans_magnitude );
 
 		float bound_energy = (*scorefxn_no_cst)( unbound_pose );
@@ -297,30 +297,26 @@ FlexPepDockingPoseMetrics::calc_interface_metrics( core::pose::Pose & pose, Size
 
 		// sasa
 		if( !CalculatorFactory::Instance().check_calculator_exists( sasa_calc_name ) ){
-			PoseMetricCalculatorOP sasa_calculator =
-				new core::pose::metrics::simple_calculators::SasaCalculatorLegacy;
+			PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy );
 			CalculatorFactory::Instance().register_calculator
 				( sasa_calc_name, sasa_calculator );
 		}
     // hbonds
 		if( !CalculatorFactory::Instance().check_calculator_exists( hbond_calc_name ) ){
-			core::pose::metrics::PoseMetricCalculatorOP hb_calc =
-				new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator();
+			core::pose::metrics::PoseMetricCalculatorOP hb_calc( new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator() );
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator
 				( hbond_calc_name, hb_calc );
 		}
 		// packstats
 		if( !CalculatorFactory::Instance().check_calculator_exists( packstat_calc_name ) ){
-			core::pose::metrics::PoseMetricCalculatorOP packstat_calc =
-				new protocols::toolbox::pose_metric_calculators::PackstatCalculator();
+			core::pose::metrics::PoseMetricCalculatorOP packstat_calc( new protocols::toolbox::pose_metric_calculators::PackstatCalculator() );
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator
 				( packstat_calc_name, packstat_calc );
 		}
 		// burried unsatisfied polar
 		if( !CalculatorFactory::Instance().check_calculator_exists( burunsat_calc_name ) ){
-		core::pose::metrics::PoseMetricCalculatorOP burunsat_calc =
-			new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator
-			(sasa_calc_name, hbond_calc_name);
+		core::pose::metrics::PoseMetricCalculatorOP burunsat_calc( new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator
+			(sasa_calc_name, hbond_calc_name) );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator
 			( burunsat_calc_name, burunsat_calc );
 		}

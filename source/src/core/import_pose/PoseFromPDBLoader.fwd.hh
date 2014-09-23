@@ -21,8 +21,8 @@ namespace core {
 namespace import_pose {
 
 class PoseFromPDBLoader;
-typedef utility::pointer::owning_ptr< PoseFromPDBLoader > PoseFromPDBLoaderOP;
-typedef utility::pointer::owning_ptr< PoseFromPDBLoader const > PoseFromPDBLoaderCOP;
+typedef utility::pointer::shared_ptr< PoseFromPDBLoader > PoseFromPDBLoaderOP;
+typedef utility::pointer::shared_ptr< PoseFromPDBLoader const > PoseFromPDBLoaderCOP;
 
 } // namespace import_pose
 } // namespace core

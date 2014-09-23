@@ -24,8 +24,8 @@ class FlexbbInteractionGraph;
 class FlexbbNode;
 class FlexbbEdge;
 
-typedef utility::pointer::owning_ptr< FlexbbInteractionGraph > FlexbbInteractionGraphOP;
-typedef utility::pointer::owning_ptr< FlexbbInteractionGraph const > FlexbbInteractionGraphCOP;
+typedef utility::pointer::shared_ptr< FlexbbInteractionGraph > FlexbbInteractionGraphOP;
+typedef utility::pointer::shared_ptr< FlexbbInteractionGraph const > FlexbbInteractionGraphCOP;
 
 }
 }

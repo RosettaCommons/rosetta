@@ -90,7 +90,7 @@ ParallelTemperingCreator::keyname() const {
 
 protocols::moves::MoverOP
 ParallelTemperingCreator::create_mover() const {
-	return new ParallelTempering;
+	return protocols::moves::MoverOP( new ParallelTempering );
 }
 
 std::string
@@ -339,13 +339,13 @@ ParallelTempering::get_name() const
 protocols::moves::MoverOP
 ParallelTempering::clone() const
 {
-	return new protocols::canonical_sampling::ParallelTempering(*this);
+	return protocols::moves::MoverOP( new protocols::canonical_sampling::ParallelTempering(*this) );
 }
 
 protocols::moves::MoverOP
 ParallelTempering::fresh_instance() const
 {
-	return new ParallelTempering;
+	return protocols::moves::MoverOP( new ParallelTempering );
 }
 
 void

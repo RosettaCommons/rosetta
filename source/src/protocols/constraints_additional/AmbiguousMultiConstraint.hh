@@ -56,7 +56,7 @@ public:
 	///
 	virtual
 	core::scoring::constraints::ConstraintOP clone() const {
-		return new AmbiguousMultiConstraint(*this);
+		return core::scoring::constraints::ConstraintOP( new AmbiguousMultiConstraint(*this) );
 	}
 
 	std::string type() const {

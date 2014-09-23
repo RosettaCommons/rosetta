@@ -71,7 +71,7 @@ HBondDonorFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Data
 }
 
 protocols::filters::FilterOP
-HBondDonorFilterCreator::create_filter() const { return new HBondDonorFilter; }
+HBondDonorFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HBondDonorFilter ); }
 
 std::string
 HBondDonorFilterCreator::keyname() const { return "HBondDonor"; }

@@ -98,20 +98,20 @@ main( int argc, char* argv [] ) {
 	PoseInputStreamOP input;
 	if ( option[ in::file::silent ].user() ) {
 		if ( option[ in::file::tags ].user() ) {
-			input = new SilentFilePoseInputStream(
+			input = PoseInputStreamOP( new SilentFilePoseInputStream(
 				option[ in::file::silent ](),
 				option[ in::file::tags ]()
-			);
+			) );
 		} else if( option[ in::file::tagfile ].user() ) {
 
 			utility::vector1< std::string > input_tags;
 			utility::io::izstream tag_file( option[ in::file::tagfile ]() );
 			std::copy( std::istream_iterator< std::string >( tag_file ), std::istream_iterator< std::string >(),
 								 std::back_inserter( input_tags ) );
-			input = new SilentFilePoseInputStream( option[ in::file::silent ](), input_tags );
+			input = PoseInputStreamOP( new SilentFilePoseInputStream( option[ in::file::silent ](), input_tags ) );
 
 		} else {
-			input = new SilentFilePoseInputStream( option[ in::file::silent ]() );
+			input = PoseInputStreamOP( new SilentFilePoseInputStream( option[ in::file::silent ]() ) );
 		}
 	}
 

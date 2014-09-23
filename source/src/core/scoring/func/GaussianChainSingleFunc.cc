@@ -41,7 +41,7 @@ GaussianChainSingleFunc::GaussianChainSingleFunc( Real const gaussian_variance,
 FuncOP
 GaussianChainSingleFunc::clone() const
 {
-	return new GaussianChainSingleFunc( gaussian_variance_, loop_fixed_cost_ );
+	return FuncOP( new GaussianChainSingleFunc( gaussian_variance_, loop_fixed_cost_ ) );
 }
 
 void

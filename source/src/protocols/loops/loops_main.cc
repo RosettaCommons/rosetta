@@ -102,7 +102,7 @@ void read_loop_fragments(
 	for ( Size i = 1; i <= frag_sizes.size(); ++i ) {
 		Size const frag_size = Size(frag_sizes[i]);
 
-		FragSetOP frag_lib_op ( new ConstantLengthFragSet( frag_size ) );
+		FragSetOP frag_lib_op( new ConstantLengthFragSet( frag_size ) );
 		//protocols::frags::TorsionFragmentLibraryOP frag_lib_op( new protocols::frags::TorsionFragmentLibrary );
 		tt.Error << "Frag libraries debug " << frag_files[i] << " " << frag_size << std::endl;
 
@@ -166,7 +166,7 @@ void read_loop_fragments(
 
 				for(int c=0; c< option[  OptionKeys::loops::stealfrags_times ](); c++ ){
 					//steal_constant_length_frag_set_from_pose ( stealpose, **it );
-					steal_frag_set_from_pose( stealpose, **it, new FragData( core::fragment::SingleResidueFragDataOP( new BBTorsionSRFD ), (*it)->max_frag_length() ) );
+					steal_frag_set_from_pose( stealpose, **it, core::fragment::FragDataCOP( new FragData( core::fragment::SingleResidueFragDataOP( new BBTorsionSRFD ), (*it)->max_frag_length() ) ) );
 				}
 			}
 		} // loop over input files
@@ -615,7 +615,7 @@ move_map_from_loops(
 	using core::kinematics::MoveMap;
 	using core::kinematics::MoveMapOP;
 
-	MoveMapOP move_map = new MoveMap;
+	MoveMapOP move_map( new MoveMap );
 	loops_set_move_map(pose, loops, fix_template_sc, *move_map, neighbor_dist);
 
 	if (flanking_residues) {

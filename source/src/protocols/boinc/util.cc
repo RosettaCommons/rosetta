@@ -86,7 +86,7 @@ void boincOutputFilter(core::Real runTime, core::Real minTimePerModel){
 	vector1<Real> scores;
 	//step1: read in poses and output them to temp file.
 	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
-	SilentStructOP localOutputSS(new core::io::silent::BinarySilentStruct);
+	SilentStructOP localOutputSS( new core::io::silent::BinarySilentStruct );
 	SilentFileData sfd;
 	string outputFileName = option[out::file::silent]();
 	if(option[out::silent_gz]()){
@@ -99,14 +99,12 @@ void boincOutputFilter(core::Real runTime, core::Real minTimePerModel){
 		utility_exit_with_message( "could not find " + outputFileName);
 	vector1< string> tempSilentVectorOrig;
 	tempSilentVectorOrig.push_back(outputFileName);
-	LazySilentFilePoseInputStreamOP tempSilentStreamOrig(
-			new LazySilentFilePoseInputStream(tempSilentVectorOrig)
-		);
+	LazySilentFilePoseInputStreamOP tempSilentStreamOrig( new LazySilentFilePoseInputStream(tempSilentVectorOrig) );
 	MetaPoseInputStream input;
 	input.add_pose_input_stream(tempSilentStreamOrig);
 	while(input.has_another_pose()){
 		core::pose::PoseOP input_poseOP;
-		input_poseOP = new core::pose::Pose();
+		input_poseOP = core::pose::PoseOP( new core::pose::Pose() );
 		input.fill_pose(*input_poseOP,*rsd_set);
 		std::string tag = core::pose::tag_from_pose(*input_poseOP);
 		if("fa_standard" == rsd_set->name()){
@@ -140,9 +138,7 @@ void boincOutputFilter(core::Real runTime, core::Real minTimePerModel){
 	//setup rd2 input stream
 	vector1< string> tempSilentVector;
 	tempSilentVector.push_back(tempSilentLocation);
-	LazySilentFilePoseInputStreamOP tempSilentStream(
-			new LazySilentFilePoseInputStream(tempSilentVector)
-		);
+	LazySilentFilePoseInputStreamOP tempSilentStream( new LazySilentFilePoseInputStream(tempSilentVector) );
 	//wipe out input
 	remove(outputFileName.c_str());
 	remove(tempSilentLocation.c_str());
@@ -151,7 +147,7 @@ void boincOutputFilter(core::Real runTime, core::Real minTimePerModel){
 	input_rd2.add_pose_input_stream(tempSilentStream);
 	while(input_rd2.has_another_pose()){
 		core::pose::PoseOP input_poseOP;
-		input_poseOP = new core::pose::Pose();
+		input_poseOP = core::pose::PoseOP( new core::pose::Pose() );
 		input_rd2.fill_pose(*input_poseOP,*rsd_set);
 		std::string tag = core::pose::tag_from_pose(*input_poseOP);
 		Real tmpScore;

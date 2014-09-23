@@ -64,7 +64,7 @@ DockSetupMover::DockSetupMover() {
 ///@brief clone operator, calls the copy constructor
 protocols::moves::MoverOP
 DockSetupMover::clone() const {
-	return new DockSetupMover(*this);
+	return protocols::moves::MoverOP( new DockSetupMover(*this) );
 }
 
 ///@brief copy ctor
@@ -163,7 +163,7 @@ DockSetupMover::parse_my_tag(
 		set_partners(partners);
 	}
 	moves::MoverOP mover = rosetta_scripts::parse_mover( tag->getOption< std::string >( "rb_mover", "null" ), movers );
-	rb_mover_ = dynamic_cast< rigid::RigidBodyPerturbNoCenterMover* >( mover() );
+	rb_mover_ = utility::pointer::dynamic_pointer_cast< rigid::RigidBodyPerturbNoCenterMover > ( mover );
 // 	if ( !rb_mover_ ) {
 // 		throw utility::excn::EXCN_RosettaScriptsOption( "DockSetupMover requires an rb_mover argument" );
 // 	}
@@ -177,7 +177,7 @@ DockSetupMover::parse_my_tag(
 	// using RigidBodyInfo to store movable_jumps, then rb_mover is free from DockSetupMover
 	if ( !data_map.has( "RigidBodyInfo", "docking_setup" ) ) {
 		// as member variable: RigidBodyInfoOP rigid_body_info_;
-		rigid_body_info_ = new protocols::docking::RigidBodyInfo;
+		rigid_body_info_ = protocols::docking::RigidBodyInfoOP( new protocols::docking::RigidBodyInfo );
 		data_map.add( "RigidBodyInfo", "docking_setup", rigid_body_info_ );
 		tr.Debug << "added RigidBodyInfo into basic::datacache::DataMap" << std::endl;
 	} else {
@@ -198,7 +198,7 @@ DockSetupMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 DockSetupMoverCreator::create_mover() const {
-	return new DockSetupMover();
+	return protocols::moves::MoverOP( new DockSetupMover() );
 }
 
 std::string

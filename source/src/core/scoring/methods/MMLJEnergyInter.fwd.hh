@@ -23,10 +23,10 @@ namespace methods {
 
 class MMLJEnergyInter;
 
-typedef  utility::pointer::access_ptr< MMLJEnergyInter > MMLJEnergyInterAP;
-typedef  utility::pointer::access_ptr< MMLJEnergyInter const > MMLJEnergyInterCAP;
-typedef  utility::pointer::owning_ptr< MMLJEnergyInter > MMLJEnergyInterOP;
-typedef  utility::pointer::owning_ptr< MMLJEnergyInter const > MMLJEnergyInterCOP;
+typedef  utility::pointer::weak_ptr< MMLJEnergyInter > MMLJEnergyInterAP;
+typedef  utility::pointer::weak_ptr< MMLJEnergyInter const > MMLJEnergyInterCAP;
+typedef  utility::pointer::shared_ptr< MMLJEnergyInter > MMLJEnergyInterOP;
+typedef  utility::pointer::shared_ptr< MMLJEnergyInter const > MMLJEnergyInterCOP;
 
 } // namespace methods
 } // namespace scoring

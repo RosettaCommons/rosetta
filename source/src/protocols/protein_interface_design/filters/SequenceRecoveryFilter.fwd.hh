@@ -27,8 +27,8 @@ namespace filters {
 class SequenceRecoveryFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< SequenceRecoveryFilter >  SequenceRecoveryFilterOP;
-typedef utility::pointer::owning_ptr< SequenceRecoveryFilter const >  SequenceRecoveryFilterCOP;
+typedef utility::pointer::shared_ptr< SequenceRecoveryFilter >  SequenceRecoveryFilterOP;
+typedef utility::pointer::shared_ptr< SequenceRecoveryFilter const >  SequenceRecoveryFilterCOP;
 
 } // namespace filters
 } //namespace protein_interface_design

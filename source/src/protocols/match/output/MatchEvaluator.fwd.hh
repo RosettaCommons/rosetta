@@ -25,8 +25,8 @@ namespace output {
 
 class MatchEvaluator;
 
-typedef utility::pointer::owning_ptr< MatchEvaluator > MatchEvaluatorOP;
-typedef utility::pointer::owning_ptr< MatchEvaluator const > MatchEvaluatorCOP;
+typedef utility::pointer::shared_ptr< MatchEvaluator > MatchEvaluatorOP;
+typedef utility::pointer::shared_ptr< MatchEvaluator const > MatchEvaluatorCOP;
 
 }
 }

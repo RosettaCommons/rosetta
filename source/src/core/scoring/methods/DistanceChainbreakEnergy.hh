@@ -52,7 +52,7 @@ public:
   EnergyMethodOP
   clone() const
   {
-    return new DistanceChainbreakEnergy;
+    return EnergyMethodOP( new DistanceChainbreakEnergy );
   }
 
   /// called at the end of energy evaluation

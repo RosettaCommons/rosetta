@@ -306,8 +306,8 @@ PatchdockReader::read_poses( core::pose::Pose & input_pose, core::pose::Pose & n
 			runtime_assert( ft_found );
 		}//option foldtree
 
-		saved_input_pose_ = new core::pose::Pose( input_pose );
-		saved_native_pose_ = new core::pose::Pose( native_pose );
+		saved_input_pose_ = core::pose::PoseOP( new core::pose::Pose( input_pose ) );
+		saved_native_pose_ = core::pose::PoseOP( new core::pose::Pose( native_pose ) );
 	}//else
 
 	read_patchdock( input_tag, native_tag );

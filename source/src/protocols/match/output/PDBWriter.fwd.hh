@@ -26,14 +26,14 @@ class PDBWriter;
 class CloudPDBWriter;
 class PoseMatchOutputWriter;
 
-typedef utility::pointer::owning_ptr< PDBWriter > PDBWriterOP;
-typedef utility::pointer::owning_ptr< PDBWriter const > PDBWriterCOP;
+typedef utility::pointer::shared_ptr< PDBWriter > PDBWriterOP;
+typedef utility::pointer::shared_ptr< PDBWriter const > PDBWriterCOP;
 
-typedef utility::pointer::owning_ptr< CloudPDBWriter > CloudPDBWriterOP;
-typedef utility::pointer::owning_ptr< CloudPDBWriter const > CloudPDBWriterCOP;
+typedef utility::pointer::shared_ptr< CloudPDBWriter > CloudPDBWriterOP;
+typedef utility::pointer::shared_ptr< CloudPDBWriter const > CloudPDBWriterCOP;
 
-typedef utility::pointer::owning_ptr< PoseMatchOutputWriter > PoseMatchOutputWriterOP;
-typedef utility::pointer::owning_ptr< PoseMatchOutputWriter const > PoseMatchOutputWriterCOP;
+typedef utility::pointer::shared_ptr< PoseMatchOutputWriter > PoseMatchOutputWriterOP;
+typedef utility::pointer::shared_ptr< PoseMatchOutputWriter const > PoseMatchOutputWriterCOP;
 
 }
 }

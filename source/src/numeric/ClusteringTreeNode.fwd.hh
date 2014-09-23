@@ -21,8 +21,8 @@ namespace numeric {
 
 class ClusteringTreeNode;
 
-typedef utility::pointer::owning_ptr<ClusteringTreeNode> ClusteringTreeNodeOP;
-typedef utility::pointer::access_ptr<ClusteringTreeNode> ClusteringTreeNodeAP;
+typedef utility::pointer::shared_ptr<ClusteringTreeNode> ClusteringTreeNodeOP;
+typedef utility::pointer::weak_ptr<ClusteringTreeNode> ClusteringTreeNodeAP;
 
 } // numeric
 

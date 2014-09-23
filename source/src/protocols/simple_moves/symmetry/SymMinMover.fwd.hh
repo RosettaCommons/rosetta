@@ -22,8 +22,8 @@ namespace symmetry {
 
 //Forwards and OP typedefs
 class SymMinMover;
-typedef utility::pointer::owning_ptr< SymMinMover > SymMinMoverOP;
-typedef utility::pointer::owning_ptr< SymMinMover const > SymMinMoverCOP;
+typedef utility::pointer::shared_ptr< SymMinMover > SymMinMoverOP;
+typedef utility::pointer::shared_ptr< SymMinMover const > SymMinMoverCOP;
 
 } // symmetry
 }//moves

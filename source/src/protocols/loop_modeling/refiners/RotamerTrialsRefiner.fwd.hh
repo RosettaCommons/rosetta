@@ -18,8 +18,8 @@ namespace refiners {
 
 class RotamerTrialsRefiner;
 
-typedef utility::pointer::owning_ptr<RotamerTrialsRefiner> RotamerTrialsRefinerOP;
-typedef utility::pointer::owning_ptr<RotamerTrialsRefiner const> RotamerTrialsRefinerCOP;
+typedef utility::pointer::shared_ptr<RotamerTrialsRefiner> RotamerTrialsRefinerOP;
+typedef utility::pointer::shared_ptr<RotamerTrialsRefiner const> RotamerTrialsRefinerCOP;
 
 }
 }

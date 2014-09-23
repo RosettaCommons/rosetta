@@ -332,7 +332,7 @@ FullatomDisulfideEnergyContainer::~FullatomDisulfideEnergyContainer()
 LREnergyContainerOP
 FullatomDisulfideEnergyContainer::clone() const
 {
-	FullatomDisulfideEnergyContainerOP dec = new FullatomDisulfideEnergyContainer;
+	FullatomDisulfideEnergyContainerOP dec( new FullatomDisulfideEnergyContainer );
 	if ( !empty() ) {
 		dec->disulfide_atom_indices_ = disulfide_atom_indices_;
 		dec->disulfide_residue_types_ = disulfide_residue_types_;
@@ -354,10 +354,10 @@ FullatomDisulfideEnergyContainer::const_neighbor_iterator_begin( int resid ) con
 {
 	assert( !empty() );
   if ( resid <= (int) resid_2_disulfide_index_.size() && resid_2_disulfide_index_[ resid ] != NO_DISULFIDE ) {
-		return new DisulfResNeighbConstIterator( this, resid, resid_2_disulfide_index_[ resid ]  );
+		return ResidueNeighborConstIteratorOP( new DisulfResNeighbConstIterator( this, resid, resid_2_disulfide_index_[ resid ]  ) );
 	}
 	else {
-		return new DisulfResNeighbConstIterator( this );
+		return ResidueNeighborConstIteratorOP( new DisulfResNeighbConstIterator( this ) );
 	}
 }
 
@@ -365,7 +365,7 @@ ResidueNeighborConstIteratorOP
 FullatomDisulfideEnergyContainer::const_neighbor_iterator_end( int ) const
 {
 	assert( !empty() );
-	return new DisulfResNeighbConstIterator( this );
+	return ResidueNeighborConstIteratorOP( new DisulfResNeighbConstIterator( this ) );
 }
 
 ResidueNeighborConstIteratorOP
@@ -375,10 +375,10 @@ FullatomDisulfideEnergyContainer::const_upper_neighbor_iterator_begin( int resid
 	if ( resid <= (int)resid_2_disulfide_index_.size() &&
 			 resid_2_disulfide_index_[ resid ] != NO_DISULFIDE &&
 			(Size) resid < other_neighbor_id( resid_2_disulfide_index_[ resid ], resid ) ) {
-		return new DisulfResNeighbConstIterator( this, resid, resid_2_disulfide_index_[ resid ]  );
+		return ResidueNeighborConstIteratorOP( new DisulfResNeighbConstIterator( this, resid, resid_2_disulfide_index_[ resid ]  ) );
 	}
 	else {
-		return new DisulfResNeighbConstIterator( this );
+		return ResidueNeighborConstIteratorOP( new DisulfResNeighbConstIterator( this ) );
 	}
 }
 
@@ -386,7 +386,7 @@ ResidueNeighborConstIteratorOP
 FullatomDisulfideEnergyContainer::const_upper_neighbor_iterator_end( int ) const
 {
 	assert( !empty() );
-	return new DisulfResNeighbConstIterator( this );
+	return ResidueNeighborConstIteratorOP( new DisulfResNeighbConstIterator( this ) );
 }
 
 	ResidueNeighborIteratorOP
@@ -394,10 +394,10 @@ FullatomDisulfideEnergyContainer::neighbor_iterator_begin( int resid )
 {
 	assert( !empty() );
 	if ( resid_2_disulfide_index_[ resid ] != NO_DISULFIDE ) {
-		return new DisulfResNeighbIterator( this, resid, resid_2_disulfide_index_[ resid ]  );
+		return ResidueNeighborIteratorOP( new DisulfResNeighbIterator( this, resid, resid_2_disulfide_index_[ resid ]  ) );
 	}
 	else {
-		return new DisulfResNeighbIterator( this );
+		return ResidueNeighborIteratorOP( new DisulfResNeighbIterator( this ) );
 	}
 }
 
@@ -405,7 +405,7 @@ FullatomDisulfideEnergyContainer::neighbor_iterator_begin( int resid )
 FullatomDisulfideEnergyContainer::neighbor_iterator_end( int )
 {
 	assert( !empty() );
-	return new DisulfResNeighbIterator( this );
+	return ResidueNeighborIteratorOP( new DisulfResNeighbIterator( this ) );
 }
 
 	ResidueNeighborIteratorOP
@@ -414,10 +414,10 @@ FullatomDisulfideEnergyContainer::upper_neighbor_iterator_begin( int resid )
 	if ( resid <= (int)resid_2_disulfide_index_.size() &&
 			 resid_2_disulfide_index_[ resid ] != NO_DISULFIDE &&
 			(Size) resid < other_neighbor_id( resid_2_disulfide_index_[ resid ], resid ) ) {
-		return new DisulfResNeighbIterator( this, resid, resid_2_disulfide_index_[ resid ]  );
+		return ResidueNeighborIteratorOP( new DisulfResNeighbIterator( this, resid, resid_2_disulfide_index_[ resid ]  ) );
 	}
 	else {
-		return new DisulfResNeighbIterator( this );
+		return ResidueNeighborIteratorOP( new DisulfResNeighbIterator( this ) );
 	}
 }
 
@@ -425,7 +425,7 @@ FullatomDisulfideEnergyContainer::upper_neighbor_iterator_begin( int resid )
 FullatomDisulfideEnergyContainer::upper_neighbor_iterator_end( int )
 {
 	assert( !empty() );
-	return new DisulfResNeighbIterator( this );
+	return ResidueNeighborIteratorOP( new DisulfResNeighbIterator( this ) );
 }
 
 bool

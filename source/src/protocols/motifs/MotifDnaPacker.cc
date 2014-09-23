@@ -130,7 +130,7 @@ MotifDnaPackerCreator::keyname() const
 protocols::moves::MoverOP
 MotifDnaPackerCreator::create_mover() const
 {
-	return new MotifDnaPacker;
+	return protocols::moves::MoverOP( new MotifDnaPacker );
 }
 
 std::string
@@ -143,11 +143,11 @@ MotifDnaPackerCreator::mover_name()
 ///@brief lightweight default constructor
 MotifDnaPacker::MotifDnaPacker()
 	: protocols::moves::Mover("MotifDnaPacker"),
-		dna_packer_(0),
-		motif_search_(0),
-		scorefxn_(0),
-		pdboutput_(0),
-		targeted_dna_(0),
+		dna_packer_(/* 0 */),
+		motif_search_(/* 0 */),
+		scorefxn_(/* 0 */),
+		pdboutput_(/* 0 */),
+		targeted_dna_(/* 0 */),
 		run_motifs_(false),
 		expand_motifs_(false),
 		aromatic_motifs_(false),
@@ -178,10 +178,10 @@ MotifDnaPacker::MotifDnaPacker(
 {
 	init_options();
 	filename_root_ = filename_root;
-	dna_packer_ = new DnaInterfacePacker( scorefxn_in, minimize, filename_root );
-	protocols::motifs::MotifSearchOP motif_search = new protocols::motifs::MotifSearch;
+	dna_packer_ = protocols::dna::DnaInterfacePackerOP( new DnaInterfacePacker( scorefxn_in, minimize, filename_root ) );
+	protocols::motifs::MotifSearchOP motif_search( new protocols::motifs::MotifSearch );
 	motif_search_ = motif_search;
-	pdboutput_ = new PDBOutput;
+	pdboutput_ = protocols::dna::PDBOutputOP( new PDBOutput );
 }
 
 ///@brief destructor
@@ -191,14 +191,14 @@ MotifDnaPacker::~MotifDnaPacker(){}
 protocols::moves::MoverOP
 MotifDnaPacker::fresh_instance() const
 {
-	return new MotifDnaPacker;
+	return protocols::moves::MoverOP( new MotifDnaPacker );
 }
 
 ///@brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 MotifDnaPacker::clone() const
 {
-	return new MotifDnaPacker( *this );
+	return protocols::moves::MoverOP( new MotifDnaPacker( *this ) );
 }
 
 std::string
@@ -215,10 +215,10 @@ MotifDnaPacker::apply( Pose & pose )
 {
 	init_standard( pose );
 
-	TaskFactoryOP taskfactory = new TaskFactory;
-	taskfactory->push_back( new InitializeFromCommandline );
+	TaskFactoryOP taskfactory( new TaskFactory );
+	taskfactory->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
 	if( option[ OptionKeys::packing::resfile ].user() ) {
-		taskfactory->push_back( new ReadResfile );
+		taskfactory->push_back( TaskOperationCOP( new ReadResfile ) );
 	}
 
 	utility::vector1< core::Size > protein_positions, dna_positions, dna_design_positions, preventrepack;
@@ -261,12 +261,12 @@ MotifDnaPacker::apply( Pose & pose )
 			}
 			// NEED THE INPUTS HERE TO BE FROM THE OPTIONS? OR DEFAULT AND SPREAD TO ALL DNAIFs
 			RestrictDesignToProteinDNAInterfaceOP rdtpdi( new RestrictDesignToProteinDNAInterface );
-			protocols::dna::DnaInterfaceFinderOP complete_interface_ = new protocols::dna::DnaInterfaceFinder( 10 * 10, 3.9 * 3.9, 6., true );
+			protocols::dna::DnaInterfaceFinderOP complete_interface_( new protocols::dna::DnaInterfaceFinder( 10 * 10, 3.9 * 3.9, 6., true ) );
 			complete_interface_->determine_protein_interface( pose, protein_positions, dna_positions );
 			////	rdtpdi->set_reference_pose( starting_pose_ );
 			rdtpdi->copy_interface( complete_interface_ );
 			rdtpdi->set_forget_chains_and_interface( false );
-			TaskFactoryOP taskfactory0 = new TaskFactory( *taskfactory );
+			TaskFactoryOP taskfactory0( new TaskFactory( *taskfactory ) );
 			taskfactory0->push_back( rdtpdi );
 			PackerTaskOP ptask_ = taskfactory0->create_task_and_apply_taskoperations( pose );
 			for ( core::Size j(1); j<=nres; ++j ) {
@@ -290,27 +290,27 @@ MotifDnaPacker::apply( Pose & pose )
 		std::list< std::string > info_lines;
 		std::stringstream info_lines_str;
 			// NEED THE INPUTS HERE TO BE FROM THE OPTIONS? OR DEFAULT AND SPREAD TO ALL DNAIFs
-		protocols::dna::DnaInterfaceFinderOP interface_ = new protocols::dna::DnaInterfaceFinder( 10 * 10, 3.9 * 3.9, 6., true );
+		protocols::dna::DnaInterfaceFinderOP interface_( new protocols::dna::DnaInterfaceFinder( 10 * 10, 3.9 * 3.9, 6., true ) );
 		interface_->determine_protein_interface( pose, protein_positions, base_partners[bp] );
-		RestrictDesignToProteinDNAInterfaceOP rdtpdi2 = new RestrictDesignToProteinDNAInterface;
+		RestrictDesignToProteinDNAInterfaceOP rdtpdi2( new RestrictDesignToProteinDNAInterface );
 		// need or not??
 //////	rdtpdi->set_reference_pose( starting_pose_ );
 		rdtpdi2->copy_interface( interface_ );
 
-		DnaChainsOP dna_chains = new DnaChains;
+		DnaChainsOP dna_chains( new DnaChains );
 		find_basepairs( pose, *dna_chains );
 		DnaDesignDefOPs targetdefs;
 		for( Size i(1); i<=(base_partners[bp].size()); ++i ) {
 			if( dna_chains->is_top(base_partners[bp][i]) ) {
 				std::stringstream def;
 				def << pose.pdb_info()->chain( base_partners[bp][i]) << "." << pose.pdb_info()->number(base_partners[bp][i]) << "." << pose.residue(base_partners[bp][i]).name3();
-				DnaDesignDefOP target = new DnaDesignDef( def.str() );
+				DnaDesignDefOP target( new DnaDesignDef( def.str() ) );
 				targetdefs.push_back( target );
 			}
 		}
 		rdtpdi2->set_forget_chains_and_interface( false );
-		TaskFactoryOP taskfactory1 = new TaskFactory( *taskfactory );
-		TaskFactoryOP taskfactory2 = new TaskFactory( *taskfactory );
+		TaskFactoryOP taskfactory1( new TaskFactory( *taskfactory ) );
+		TaskFactoryOP taskfactory2( new TaskFactory( *taskfactory ) );
 
 		targeted_dna_ = targetdefs;
 		if( ! dna_design_ ) {
@@ -328,10 +328,10 @@ MotifDnaPacker::apply( Pose & pose )
 					restricted_DNA.push_back( dna_positions[d] );
 				}
 			}
-			OperateOnCertainResiduesOP fixedDNA = new OperateOnCertainResidues;
+			OperateOnCertainResiduesOP fixedDNA( new OperateOnCertainResidues );
 			fixedDNA->residue_indices( restricted_DNA );
-			fixedDNA->op( new PreventRepackingRLT );
-			WatsonCrickRotamerCouplingsOP wrc = new WatsonCrickRotamerCouplings;
+			fixedDNA->op( ResLvlTaskOperationCOP( new PreventRepackingRLT ) );
+			WatsonCrickRotamerCouplingsOP wrc( new WatsonCrickRotamerCouplings );
 			taskfactory1->push_back( fixedDNA );
 			taskfactory1->push_back( wrc );
 			taskfactory2->push_back( fixedDNA );
@@ -396,7 +396,7 @@ void
 MotifDnaPacker::init_standard( Pose & pose )
 {
 	//protocols::motifs::make_dna_mutations( pose );
-	starting_pose_ = new pose::Pose( pose );
+	starting_pose_ = core::pose::PoseCOP( new pose::Pose( pose ) );
 	pdboutput_->reference_pose( *starting_pose_ );
 	if ( option[ OptionKeys::dna::design::dna_defs ].user() ) {
 		load_dna_design_defs_from_options( targeted_dna_ );
@@ -535,7 +535,7 @@ MotifDnaPacker::run_motifs(
 			if( (! expand_motifs_) && (! aromatic_motifs_) ) {
 					protocols::toolbox::rotamer_set_operations::SpecialRotamerRSOOP ms_rsoop( new protocols::toolbox::rotamer_set_operations::SpecialRotamerRSO( design_positions[i] ) );
 					ms_rsoop->set_new_rots( variant_rotamers );
-					taskfactory->push_back( new AppendRotamerSet( ms_rsoop ) );
+					taskfactory->push_back( TaskOperationCOP( new AppendRotamerSet( ms_rsoop ) ) );
 				}
 			}
 			types_map[design_positions[i]] = name3set;
@@ -611,7 +611,7 @@ MotifDnaPacker::expand_motifs(
 				end2( name3s.end() ); it2 != end2; ++it2 ) {
 			pose = *starting_pose_;
 			TaskFactoryOP my_tf2;
-			my_tf2 = new TaskFactory( *taskfactory );
+			my_tf2 = TaskFactoryOP( new TaskFactory( *taskfactory ) );
 			pack::rotamer_set::Rotamers restricted_rotamers;
 			pack::rotamer_set::Rotamers src_rotamers( it->second );
 			for( core::Size rot2(1); rot2 <= src_rotamers.size(); ++rot2 ) {
@@ -620,10 +620,10 @@ MotifDnaPacker::expand_motifs(
 			}
 			utility::vector1< bool > keep_aas( num_canonical_aas, false );
 			keep_aas[ chemical::aa_from_name(*it2) ] = true;
-			my_tf2->push_back( new RestrictAbsentCanonicalAAS( it->first, keep_aas ) );
+			my_tf2->push_back( TaskOperationCOP( new RestrictAbsentCanonicalAAS( it->first, keep_aas ) ) );
 			protocols::toolbox::rotamer_set_operations::SpecialRotamerRSOOP ms_rsoop( new protocols::toolbox::rotamer_set_operations::SpecialRotamerRSO( it->first ) );
 			ms_rsoop->set_new_rots( restricted_rotamers );
-			my_tf2->push_back( new AppendRotamerSet( ms_rsoop ) );
+			my_tf2->push_back( TaskOperationCOP( new AppendRotamerSet( ms_rsoop ) ) );
 
 			for( std::set< core::Size >::const_iterator it3( current_pos.begin() ),
 					end3( current_pos.end() ); it3 != end3; ++it3 ) {
@@ -634,7 +634,7 @@ MotifDnaPacker::expand_motifs(
 				}
 				protocols::toolbox::rotamer_set_operations::SpecialRotamerRSOOP ms_rsoop2( new protocols::toolbox::rotamer_set_operations::SpecialRotamerRSO( *it3 ) );
 				ms_rsoop2->set_new_rots( other_rotamers );
-				my_tf2->push_back( new AppendRotamerSet( ms_rsoop2 ) );
+				my_tf2->push_back( TaskOperationCOP( new AppendRotamerSet( ms_rsoop2 ) ) );
 			}
 
 			std::stringstream mot_name;
@@ -723,7 +723,7 @@ MotifDnaPacker::aromatic_motifs(
 				end2( name3_arom.end() ); it2 != end2; ++it2 ) {
 			pose = *starting_pose_;
 			TaskFactoryOP my_tf2;
-			my_tf2 = new TaskFactory( *taskfactory );
+			my_tf2 = TaskFactoryOP( new TaskFactory( *taskfactory ) );
 			pack::rotamer_set::Rotamers restricted_rotamers;
 			pack::rotamer_set::Rotamers src_rotamers( it->second );
 			for( core::Size rot2(1); rot2 <= src_rotamers.size(); ++rot2 ) {
@@ -732,10 +732,10 @@ MotifDnaPacker::aromatic_motifs(
 			}
 			utility::vector1< bool > keep_aas( num_canonical_aas, false );
 			keep_aas[ chemical::aa_from_name(*it2) ] = true;
-			my_tf2->push_back( new RestrictAbsentCanonicalAAS( it->first, keep_aas ) );
+			my_tf2->push_back( TaskOperationCOP( new RestrictAbsentCanonicalAAS( it->first, keep_aas ) ) );
 			protocols::toolbox::rotamer_set_operations::SpecialRotamerRSOOP ms_rsoop( new protocols::toolbox::rotamer_set_operations::SpecialRotamerRSO( it->first ) );
 			ms_rsoop->set_new_rots( restricted_rotamers );
-			my_tf2->push_back( new AppendRotamerSet( ms_rsoop ) );
+			my_tf2->push_back( TaskOperationCOP( new AppendRotamerSet( ms_rsoop ) ) );
 
 			for( std::set< core::Size >::const_iterator it3( current_pos.begin() ),
 					end3( current_pos.end() ); it3 != end3; ++it3 ) {
@@ -746,7 +746,7 @@ MotifDnaPacker::aromatic_motifs(
 				}
 				protocols::toolbox::rotamer_set_operations::SpecialRotamerRSOOP ms_rsoop2( new protocols::toolbox::rotamer_set_operations::SpecialRotamerRSO( *it3 ) );
 				ms_rsoop2->set_new_rots( other_rotamers );
-				my_tf2->push_back( new AppendRotamerSet( ms_rsoop2 ) );
+				my_tf2->push_back( TaskOperationCOP( new AppendRotamerSet( ms_rsoop2 ) ) );
 			}
 
 			std::stringstream mot_name;

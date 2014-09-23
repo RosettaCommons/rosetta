@@ -32,7 +32,7 @@ namespace conformation {
 ResidueOP
 ResidueFactory::create_residue( chemical::ResidueType const & rsd_type )
 {
-	return new Residue( rsd_type, true /* this superfluous arg to prevent type conversions */);
+	return ResidueOP( new Residue( rsd_type, true /* this superfluous arg to prevent type conversions */) );
 }
 
 ResidueOP
@@ -43,7 +43,7 @@ ResidueFactory::create_residue(
 	bool preserve_c_beta
 )
 {
-	return new Residue( rsd_type, current_rsd, conf, preserve_c_beta );
+	return ResidueOP( new Residue( rsd_type, current_rsd, conf, preserve_c_beta ) );
 }
 
 } // namespace conformation

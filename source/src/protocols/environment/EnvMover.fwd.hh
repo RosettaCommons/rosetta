@@ -23,8 +23,8 @@ namespace protocols {
 namespace environment {
 
 class EnvMover;
-typedef utility::pointer::owning_ptr< EnvMover > EnvMoverOP;
-typedef utility::pointer::owning_ptr< EnvMover const > EnvMoverCOP;
+typedef utility::pointer::shared_ptr< EnvMover > EnvMoverOP;
+typedef utility::pointer::shared_ptr< EnvMover const > EnvMoverCOP;
 
 } // environment
 } // protocols

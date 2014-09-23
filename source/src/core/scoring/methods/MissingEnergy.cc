@@ -48,7 +48,7 @@ methods::EnergyMethodOP
 MissingEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new MissingEnergy;
+	return methods::EnergyMethodOP( new MissingEnergy );
 }
 
 ScoreTypes
@@ -68,7 +68,7 @@ MissingEnergy::MissingEnergy() :
 methods::EnergyMethodOP
 MissingEnergy::clone() const
 {
-	return new MissingEnergy;
+	return methods::EnergyMethodOP( new MissingEnergy );
 }
 
 

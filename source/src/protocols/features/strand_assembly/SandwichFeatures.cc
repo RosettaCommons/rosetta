@@ -115,22 +115,22 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	// Columns
 	// id of sheet
 	//unique
-	Column sheet_PK_id	("sheet_PK_id",	new DbInteger(), false /*not null*/, false /*no autoincrement*/);
+	Column sheet_PK_id	("sheet_PK_id",	DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*no autoincrement*/);
 
 	// could be redundant
-	Column sheet_id	("sheet_id",	new DbInteger(), true /*could be null*/, false /*no autoincrement*/);
+	Column sheet_id	("sheet_id",	DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*no autoincrement*/);
 		// <history> changed into 'null-possible' because of sandwich
 
-	Column sheet_antiparallel	("sheet_antiparallel",	new DbText(), true /* could be null at first, eventually it will not be null though*/, false /*no autoincrement*/);
+	Column sheet_antiparallel	("sheet_antiparallel",	DbDataTypeOP( new DbText() ), true /* could be null at first, eventually it will not be null though*/, false /*no autoincrement*/);
 		// A: antiparallel
 		// P_or_mix: parallel or mix of antiparallel and parallel
-	Column num_of_sheets_that_surround_this_sheet	("num_of_sheets_that_surround_this_sheet",	new DbInteger(), true /* could be null */, false /*no autoincrement*/);
+	Column num_of_sheets_that_surround_this_sheet	("num_of_sheets_that_surround_this_sheet",	DbDataTypeOP( new DbInteger() ), true /* could be null */, false /*no autoincrement*/);
 
 	// unique key of original PDB file
-	Column struct_id             ("struct_id",              new DbBigInt(),    false /*not null*/, false /*don't autoincrement*/);
+	Column struct_id             ("struct_id",              DbDataTypeOP( new DbBigInt() ),    false /*not null*/, false /*don't autoincrement*/);
 
 	// ForeignKey
-	Column segment_id ("segment_id",	new DbInteger(), false /*not null*/, false /*don't autoincrement*/);
+	Column segment_id ("segment_id",	DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*don't autoincrement*/);
 
 	// Schema - sheet
 	// PrimaryKey
@@ -168,18 +168,18 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	// Columns
 	// id of sw_can_by_sh
 	//unique
-	Column sw_can_by_sh_PK_id	("sw_can_by_sh_PK_id",	new DbInteger(), false /*not null*/, false /*no autoincrement*/);
+	Column sw_can_by_sh_PK_id	("sw_can_by_sh_PK_id",	DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*no autoincrement*/);
 
 	// could be redundant
 	//Column tag	("tag",	new DbText(), false /*not null*/, false /*no autoincrement*/);
-	Column tag	("tag",	new DbText(), true /*could be null*/, false /*no autoincrement*/);
+	Column tag	("tag",	DbDataTypeOP( new DbText() ), true /*could be null*/, false /*no autoincrement*/);
 
 	// could be redundant
-	Column sw_can_by_sh_id	("sw_can_by_sh_id",	new DbInteger(), false /*not null*/, false /*no autoincrement*/);
+	Column sw_can_by_sh_id	("sw_can_by_sh_id",	DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*no autoincrement*/);
 	//Column sw_can_by_sh_id	("sw_can_by_sh_id",	new DbInteger(), true /*could be null*/, false /*no autoincrement*/);
 
 	// could be redundant
-	Column strand_num	("strand_num",	new DbInteger(), false /*not null*/, false /*no autoincrement*/);
+	Column strand_num	("strand_num",	DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*no autoincrement*/);
 
 	// Schema - sw_can_by_sh_id
 	// PrimaryKey
@@ -221,198 +221,198 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	// id of sandwich
 
 	//unique
-	Column sandwich_PK_id	("sandwich_PK_id",	new DbInteger(), false /*not null*/, false /*no autoincrement*/);
+	Column sandwich_PK_id	("sandwich_PK_id",	DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*no autoincrement*/);
 
 	// could be redundant
-	Column sandwich_bs_id	("sandwich_bs_id",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
+	Column sandwich_bs_id	("sandwich_bs_id",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
 
-	Column long_strand_id	("long_strand_id",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
+	Column long_strand_id	("long_strand_id",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
 
-	Column strand_edge	("strand_edge",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
+	Column strand_edge	("strand_edge",	DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
 		// edge strand
 		// core strand
 
-	Column num_strands_in_each_sw	("num_strands_in_each_sw",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
-	Column num_edge_strands_in_each_sw	("num_edge_strands_in_each_sw",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
+	Column num_strands_in_each_sw	("num_strands_in_each_sw",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+	Column num_edge_strands_in_each_sw	("num_edge_strands_in_each_sw",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
 
-	Column intra_sheet_con_id	("intra_sheet_con_id",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
-	Column inter_sheet_con_id	("inter_sheet_con_id",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
+	Column intra_sheet_con_id	("intra_sheet_con_id",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+	Column inter_sheet_con_id	("inter_sheet_con_id",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
 
-	Column loop_kind	("loop_kind",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
+	Column loop_kind	("loop_kind",	DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
 		// starting_loop
 		// hairpin_loop (intra-sheet loop)
 		// inter_sheet_loop
 		// ending_loop
 
-	Column LR	("LR",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
+	Column LR	("LR",	DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
 
-	Column canonical_LR	("canonical_LR",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
+	Column canonical_LR	("canonical_LR",	DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
 	// T, -> true, canonical chiral
 	// F, -> false, non-canonical chiral
 	// U, -> uncertain, this loop-size with this condition has no definite canonical chiral reference in the first place!
 
-	Column turn_type	("turn_type",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
+	Column turn_type	("turn_type",	DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
 
-	Column i_AA	("i_AA",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
-	Column i_p1_AA	("i_p1_AA",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
-	Column i_p2_AA	("i_p2_AA",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
-	Column i_p3_AA	("i_p3_AA",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
+	Column i_AA	("i_AA",	DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
+	Column i_p1_AA	("i_p1_AA",	DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
+	Column i_p2_AA	("i_p2_AA",	DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
+	Column i_p3_AA	("i_p3_AA",	DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
 
-	Column canonical_turn_AA	("canonical_turn_AA",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
+	Column canonical_turn_AA	("canonical_turn_AA",	DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
 
-	Column PA_by_preceding_E	("PA_by_preceding_E",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
-	Column PA_by_following_E	("PA_by_following_E",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
+	Column PA_by_preceding_E	("PA_by_preceding_E",	DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
+	Column PA_by_following_E	("PA_by_following_E",	DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
 
-	Column cano_PA	("cano_PA",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
+	Column cano_PA	("cano_PA",	DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
 	// T, -> true, canonical PA
 	// F, -> false, non-canonical PA
 	// U, -> uncertain, this loop-size with this condition has no definite canonical PA reference in the first place!
 
-	Column heading_direction	("heading_direction",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
-	Column parallel_EE	("parallel_EE",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
-	Column cano_parallel_EE	("cano_parallel_EE",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
-	Column component_size	("component_size",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
+	Column heading_direction	("heading_direction",	DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
+	Column parallel_EE	("parallel_EE",	DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
+	Column cano_parallel_EE	("cano_parallel_EE",	DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
+	Column component_size	("component_size",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
 
-	Column A  ("A", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column C  ("C", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column D  ("D", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column E  ("E", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column A  ("A", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column C  ("C", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column D  ("D", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column E  ("E", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column F  ("F", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column G  ("G", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column H  ("H", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column I  ("I", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column K  ("K", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column L  ("L", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column M  ("M", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column N  ("N", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column P  ("P", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column F  ("F", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column G  ("G", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column H  ("H", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column I  ("I", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column K  ("K", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column L  ("L", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column M  ("M", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column N  ("N", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column P  ("P", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column Q  ("Q", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column R  ("R", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column S  ("S", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column T  ("T", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column V  ("V", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column W  ("W", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column Y  ("Y", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column Q  ("Q", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column R  ("R", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column S  ("S", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column T  ("T", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column V  ("V", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column W  ("W", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column Y  ("Y", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column A_core_heading  ("A_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column A_surface_heading  ("A_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column A_core_heading  ("A_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column A_surface_heading  ("A_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column C_core_heading  ("C_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column C_surface_heading  ("C_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-
-
-	Column D_core_heading  ("D_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column D_surface_heading  ("D_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column E_core_heading  ("E_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column E_surface_heading  ("E_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column C_core_heading  ("C_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column C_surface_heading  ("C_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
 
 
-	Column F_core_heading  ("F_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column F_surface_heading  ("F_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-
-	Column G_core_heading  ("G_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column G_surface_heading  ("G_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-
-	Column H_core_heading  ("H_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column H_surface_heading  ("H_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column I_core_heading  ("I_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column I_surface_heading  ("I_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-
-	Column K_core_heading  ("K_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column K_surface_heading  ("K_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-
-	Column L_core_heading  ("L_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column L_surface_heading  ("L_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-
-	Column M_core_heading  ("M_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column M_surface_heading  ("M_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-
-	Column N_core_heading  ("N_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column N_surface_heading  ("N_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column D_core_heading  ("D_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column D_surface_heading  ("D_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column E_core_heading  ("E_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column E_surface_heading  ("E_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
 
 
-	Column P_core_heading  ("P_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column P_surface_heading  ("P_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column F_core_heading  ("F_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column F_surface_heading  ("F_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column Q_core_heading  ("Q_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column Q_surface_heading  ("Q_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column G_core_heading  ("G_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column G_surface_heading  ("G_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column R_core_heading  ("R_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column R_surface_heading  ("R_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column H_core_heading  ("H_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column H_surface_heading  ("H_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column I_core_heading  ("I_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column I_surface_heading  ("I_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
 
+	Column K_core_heading  ("K_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column K_surface_heading  ("K_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
 
+	Column L_core_heading  ("L_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column L_surface_heading  ("L_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column S_core_heading  ("S_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column S_surface_heading  ("S_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column T_core_heading  ("T_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column T_surface_heading  ("T_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column M_core_heading  ("M_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column M_surface_heading  ("M_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
 
-
-	Column V_core_heading  ("V_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column V_surface_heading  ("V_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column W_core_heading  ("W_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column W_surface_heading  ("W_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-
-	Column Y_core_heading  ("Y_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column Y_surface_heading  ("Y_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column N_core_heading  ("N_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column N_surface_heading  ("N_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
 
 
-	Column H_percentage ("H_percentage", new DbReal(), true /*could be null*/, false /*don't autoincrement*/);
-	Column E_percentage ("E_percentage", new DbReal(), true /*could be null*/, false /*don't autoincrement*/);
-	Column L_percentage ("L_percentage", new DbReal(), true /*could be null*/, false /*don't autoincrement*/);
+	Column P_core_heading  ("P_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column P_surface_heading  ("P_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands ("number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column Q_core_heading  ("Q_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column Q_surface_heading  ("Q_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands ("number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-
-	Column residue_begin("residue_begin", new DbInteger(), false /*not null*/, false /*don't autoincrement*/);
-	Column residue_end  ("residue_end", new DbInteger(), false /*not null*/, false /*don't autoincrement*/);
+	Column R_core_heading  ("R_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column R_surface_heading  ("R_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
 
 
 
-	Column number_of_hydrophobic_res	("number_of_hydrophobic_res",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
-	Column number_of_hydrophilic_res	("number_of_hydrophilic_res",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
+	Column S_core_heading  ("S_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column S_surface_heading  ("S_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column T_core_heading  ("T_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column T_surface_heading  ("T_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column number_of_CGP	("number_of_CGP",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
-	Column ratio_hydrophobic_philic_of_sw_in_percent	("ratio_hydrophobic_philic_of_sw_in_percent",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
 
-	Column number_of_RK_in_sw	("number_of_RK_in_sw",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
-	Column number_of_DE_in_sw	("number_of_DE_in_sw",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
-	Column net_charge_of_sw	("net_charge_of_sw",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
+	Column V_core_heading  ("V_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column V_surface_heading  ("V_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column W_core_heading  ("W_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column W_surface_heading  ("W_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column number_of_core_heading_FWY_in_sw	("number_of_core_heading_FWY_in_sw",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
-	Column ratio_of_core_heading_FWY_in_sw	("ratio_of_core_heading_FWY_in_sw",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
-	Column number_of_core_heading_W_in_sw	("number_of_core_heading_W_in_sw",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
-	Column number_of_core_heading_L_in_core_strands_in_sw	("number_of_core_heading_L_in_core_strands_in_sw",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
-	Column number_of_core_heading_W_in_core_strands_in_sw	("number_of_core_heading_W_in_core_strands_in_sw",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
-	Column number_of_core_heading_Y_in_core_strands_in_sw	("number_of_core_heading_Y_in_core_strands_in_sw",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
-	Column avg_dihedral_angle_between_core_strands_across_facing_sheets	("avg_dihedral_angle_between_core_strands_across_facing_sheets",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
-	Column sw_res_size	("sw_res_size",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
+	Column Y_core_heading  ("Y_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column Y_surface_heading  ("Y_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column multimer_is_suspected	("multimer_is_suspected",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
-	Column avg_b_factor_CB_at_each_component	("avg_b_factor_CB_at_each_component",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
 
-	Column topology_candidate	("topology_candidate",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
+	Column H_percentage ("H_percentage", DbDataTypeOP( new DbReal() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column E_percentage ("E_percentage", DbDataTypeOP( new DbReal() ), true /*could be null*/, false /*don't autoincrement*/);
+	Column L_percentage ("L_percentage", DbDataTypeOP( new DbReal() ), true /*could be null*/, false /*don't autoincrement*/);
+
+	Column number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands ("number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+
+	Column number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands ("number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
+
+	Column residue_begin("residue_begin", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*don't autoincrement*/);
+	Column residue_end  ("residue_end", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*don't autoincrement*/);
+
+
+
+	Column number_of_hydrophobic_res	("number_of_hydrophobic_res",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+	Column number_of_hydrophilic_res	("number_of_hydrophilic_res",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+
+	Column number_of_CGP	("number_of_CGP",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+	Column ratio_hydrophobic_philic_of_sw_in_percent	("ratio_hydrophobic_philic_of_sw_in_percent",	DbDataTypeOP( new DbReal() ), true /* could be null*/, false /*no autoincrement*/);
+
+	Column number_of_RK_in_sw	("number_of_RK_in_sw",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+	Column number_of_DE_in_sw	("number_of_DE_in_sw",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+	Column net_charge_of_sw	("net_charge_of_sw",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+
+	Column number_of_core_heading_FWY_in_sw	("number_of_core_heading_FWY_in_sw",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+	Column ratio_of_core_heading_FWY_in_sw	("ratio_of_core_heading_FWY_in_sw",	DbDataTypeOP( new DbReal() ), true /* could be null*/, false /*no autoincrement*/);
+	Column number_of_core_heading_W_in_sw	("number_of_core_heading_W_in_sw",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+	Column number_of_core_heading_L_in_core_strands_in_sw	("number_of_core_heading_L_in_core_strands_in_sw",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+	Column number_of_core_heading_W_in_core_strands_in_sw	("number_of_core_heading_W_in_core_strands_in_sw",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+	Column number_of_core_heading_Y_in_core_strands_in_sw	("number_of_core_heading_Y_in_core_strands_in_sw",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+	Column avg_dihedral_angle_between_core_strands_across_facing_sheets	("avg_dihedral_angle_between_core_strands_across_facing_sheets",	DbDataTypeOP( new DbReal() ), true /* could be null*/, false /*no autoincrement*/);
+	Column sw_res_size	("sw_res_size",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+
+	Column multimer_is_suspected	("multimer_is_suspected",	DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
+	Column avg_b_factor_CB_at_each_component	("avg_b_factor_CB_at_each_component",	DbDataTypeOP( new DbReal() ), true /* could be null*/, false /*no autoincrement*/);
+
+	Column topology_candidate	("topology_candidate",	DbDataTypeOP( new DbText() ), true /* could be null*/, false /*no autoincrement*/);
 		// "fnIII" or "not_fnIII" or "not_known_topology"
 
-	Column min_dis_between_sheets_by_all_res	("min_dis_between_sheets_by_all_res",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
+	Column min_dis_between_sheets_by_all_res	("min_dis_between_sheets_by_all_res",	DbDataTypeOP( new DbReal() ), true /* could be null*/, false /*no autoincrement*/);
 		// all residues of not only edge strands, but all strands
 
-	Column min_dis_between_sheets_by_cen_res	("min_dis_between_sheets_by_cen_res",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
+	Column min_dis_between_sheets_by_cen_res	("min_dis_between_sheets_by_cen_res",	DbDataTypeOP( new DbReal() ), true /* could be null*/, false /*no autoincrement*/);
 		// central residues of not only edge strands, but all strands
 
-	Column avg_dis_between_sheets_by_cen_res	("avg_dis_between_sheets_by_cen_res",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
+	Column avg_dis_between_sheets_by_cen_res	("avg_dis_between_sheets_by_cen_res",	DbDataTypeOP( new DbReal() ), true /* could be null*/, false /*no autoincrement*/);
 		// central residues of not only edge strands, but all strands
 
-	Column num_PRO_in_starting_loop_and_1st_3rd_inter_sheet_loop	("num_PRO_in_starting_loop_and_1st_3rd_inter_sheet_loop",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
-	Column num_PRO_in_starting_loop	("num_PRO_in_starting_loop",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
-	Column num_PRO_in_1st_inter_sheet_loop	("num_PRO_in_1st_inter_sheet_loop",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
-	Column num_PRO_in_3rd_inter_sheet_loop	("num_PRO_in_3rd_inter_sheet_loop",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
-	Column weighted_num_PRO_prevent	("weighted_num_PRO_prevent",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
+	Column num_PRO_in_starting_loop_and_1st_3rd_inter_sheet_loop	("num_PRO_in_starting_loop_and_1st_3rd_inter_sheet_loop",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+	Column num_PRO_in_starting_loop	("num_PRO_in_starting_loop",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+	Column num_PRO_in_1st_inter_sheet_loop	("num_PRO_in_1st_inter_sheet_loop",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+	Column num_PRO_in_3rd_inter_sheet_loop	("num_PRO_in_3rd_inter_sheet_loop",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
+	Column weighted_num_PRO_prevent	("weighted_num_PRO_prevent",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
 
-	Column shortest_dis_between_facing_aro_in_sw	("shortest_dis_between_facing_aro_in_sw",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
+	Column shortest_dis_between_facing_aro_in_sw	("shortest_dis_between_facing_aro_in_sw",	DbDataTypeOP( new DbReal() ), true /* could be null*/, false /*no autoincrement*/);
 
 	// Schema
 	// PrimaryKey
@@ -615,11 +615,11 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	// Columns
 
 	// unique_primary_key
-	Column rkde_in_strands_PK_id	("rkde_in_strands_PK_id",	new DbInteger(), false /*not null*/, false /*no autoincrement*/);
+	Column rkde_in_strands_PK_id	("rkde_in_strands_PK_id",	DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*no autoincrement*/);
 
 	// may not be unique
-	Column residue_number	("residue_number",	new DbInteger(), false /*not null*/, false /*no autoincrement*/);
-	Column residue_type	("residue_type",	new DbText(), false /*not null*/, false /*no autoincrement*/);
+	Column residue_number	("residue_number",	DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*no autoincrement*/);
+	Column residue_type	("residue_type",	DbDataTypeOP( new DbText() ), false /*not null*/, false /*no autoincrement*/);
 
 	// Schema
 	// PrimaryKey
@@ -652,7 +652,7 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	// Columns
 
 	// unique_primary_key
-	Column rkde_PK_id	("rkde_PK_id",	new DbInteger(), false /*not null*/, false /*no autoincrement*/);
+	Column rkde_PK_id	("rkde_PK_id",	DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*no autoincrement*/);
 
 	// Schema
 	// PrimaryKey

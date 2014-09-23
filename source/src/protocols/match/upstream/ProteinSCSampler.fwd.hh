@@ -24,13 +24,13 @@ namespace upstream {
 
 class ProteinSCSampler;
 
-typedef utility::pointer::owning_ptr< ProteinSCSampler > ProteinSCSamplerOP;
-typedef utility::pointer::owning_ptr< ProteinSCSampler const > ProteinSCSamplerCOP;
+typedef utility::pointer::shared_ptr< ProteinSCSampler > ProteinSCSamplerOP;
+typedef utility::pointer::shared_ptr< ProteinSCSampler const > ProteinSCSamplerCOP;
 
 class DunbrackSCSampler;
 
-typedef utility::pointer::owning_ptr< DunbrackSCSampler > DunbrackSCSamplerOP;
-typedef utility::pointer::owning_ptr< DunbrackSCSampler const > DunbrackSCSamplerCOP;
+typedef utility::pointer::shared_ptr< DunbrackSCSampler > DunbrackSCSamplerOP;
+typedef utility::pointer::shared_ptr< DunbrackSCSampler const > DunbrackSCSamplerCOP;
 
 }
 }

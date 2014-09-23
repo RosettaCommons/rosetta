@@ -178,13 +178,13 @@ AddMembraneMover::~AddMembraneMover() {}
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 AddMembraneMover::clone() const {
-	return ( new AddMembraneMover( *this ) );
+	return ( protocols::moves::MoverOP( new AddMembraneMover( *this ) ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 AddMembraneMover::fresh_instance() const {
-	return new AddMembraneMover();
+	return protocols::moves::MoverOP( new AddMembraneMover() );
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
@@ -248,7 +248,7 @@ AddMembraneMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
 AddMembraneMoverCreator::create_mover() const {
-	return new AddMembraneMover;
+	return protocols::moves::MoverOP( new AddMembraneMover );
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
@@ -291,15 +291,15 @@ AddMembraneMover::apply( Pose & pose ) {
 	core::Size membrane_pos = setup_membrane_virtual( pose );
 
  	// Load spanning topology objects
-	SpanningTopologyOP spans = new SpanningTopology( spanfile_, pose.total_residue()-1 );
+	SpanningTopologyOP spans( new SpanningTopology( spanfile_, pose.total_residue()-1 ) );
 	
 	// Setup Membrane Info Object
 	MembraneInfoOP mem_info;
 	if ( !include_lips_ ) {
-		mem_info = new MembraneInfo( pose.conformation(), membrane_pos, spans, 1 );
+		mem_info = MembraneInfoOP( new MembraneInfo( pose.conformation(), membrane_pos, spans, 1 ) );
 	} else {
-		LipidAccInfoOP lips = new LipidAccInfo( lipsfile_ );
-		mem_info = new MembraneInfo( pose.conformation(), membrane_pos, spans, lips, 1 );
+		LipidAccInfoOP lips( new LipidAccInfo( lipsfile_ ) );
+		mem_info = MembraneInfoOP( new MembraneInfo( pose.conformation(), membrane_pos, spans, lips, 1 ) );
 	}
 	
 	// Add Membrane Info Object to conformation
@@ -309,7 +309,7 @@ AddMembraneMover::apply( Pose & pose ) {
 	if ( view_in_pymol_ ) {
 	
 		TR << "Setting up membrane visualization in PyMol" << std::endl;
-		ShowMembranePlanesMoverOP show_planes = new ShowMembranePlanesMover();
+		ShowMembranePlanesMoverOP show_planes( new ShowMembranePlanesMover() );
 		show_planes->apply( pose );
 		
 	}

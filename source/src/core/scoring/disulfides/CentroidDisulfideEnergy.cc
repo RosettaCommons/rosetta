@@ -47,7 +47,7 @@ methods::EnergyMethodOP
 CentroidDisulfideEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new CentroidDisulfideEnergy( ScoringManager::get_instance()->get_CentroidDisulfidePotential() );
+	return methods::EnergyMethodOP( new CentroidDisulfideEnergy( ScoringManager::get_instance()->get_CentroidDisulfidePotential() ) );
 }
 
 ScoreTypes
@@ -77,7 +77,7 @@ CentroidDisulfideEnergy::~CentroidDisulfideEnergy() {}
 
 methods::EnergyMethodOP CentroidDisulfideEnergy::clone() const
 {
-	return new CentroidDisulfideEnergy( potential_ );
+	return methods::EnergyMethodOP( new CentroidDisulfideEnergy( potential_ ) );
 }
 
 
@@ -88,12 +88,11 @@ void CentroidDisulfideEnergy::setup_for_scoring(
 	using namespace methods;
 
 	if ( pose.energies().long_range_container( centroid_disulfide_energy ) == 0 ) {
-		CentroidDisulfideEnergyContainerOP dec = new CentroidDisulfideEnergyContainer( pose );
+		CentroidDisulfideEnergyContainerOP dec( new CentroidDisulfideEnergyContainer( pose ) );
 		pose.energies().set_long_range_container( centroid_disulfide_energy, dec );
 	} else {
 		CentroidDisulfideEnergyContainerOP dec = CentroidDisulfideEnergyContainerOP (
-				static_cast< CentroidDisulfideEnergyContainer * > (
-					pose.energies().nonconst_long_range_container( centroid_disulfide_energy ).get() ));
+				utility::pointer::static_pointer_cast< core::scoring::disulfides::CentroidDisulfideEnergyContainer > ( pose.energies().nonconst_long_range_container( centroid_disulfide_energy ) ));
 		dec->update( pose );
 	}
 }
@@ -134,8 +133,7 @@ void CentroidDisulfideEnergy::residue_pair_energy(
 		return;
 
 	CentroidDisulfideEnergyContainerCOP dec = CentroidDisulfideEnergyContainerCOP (
-			static_cast< CentroidDisulfideEnergyContainer const * > (
-				pose.energies().long_range_container( methods::centroid_disulfide_energy ).get() ));
+			utility::pointer::static_pointer_cast< core::scoring::disulfides::CentroidDisulfideEnergyContainer const > ( pose.energies().long_range_container( methods::centroid_disulfide_energy ) ));
 	//Require they're bonded
 	if ( ! dec->residue_forms_disulfide( rsd1.seqpos() ) ||
 			dec->other_neighbor_id( rsd1.seqpos() ) != (Size) rsd2.seqpos() ){
@@ -192,8 +190,7 @@ bool CentroidDisulfideEnergy::defines_residue_pair_energy(
 	if ( ! pose.energies().long_range_container( centroid_disulfide_energy )) return false;
 
 	CentroidDisulfideEnergyContainerCOP dec = CentroidDisulfideEnergyContainerCOP (
-			static_cast< CentroidDisulfideEnergyContainer const * > (
-				pose.energies().long_range_container( centroid_disulfide_energy ).get() ));
+			utility::pointer::static_pointer_cast< core::scoring::disulfides::CentroidDisulfideEnergyContainer const > ( pose.energies().long_range_container( centroid_disulfide_energy ) ));
 	return dec->disulfide_bonded( res1, res2 );
 }
 core::Size

@@ -22,7 +22,7 @@ namespace protocols{
 namespace fldsgn{
 
 class SheetConstraintsRCG;
-typedef utility::pointer::owning_ptr< SheetConstraintsRCG > SheetConstraintsRCGOP;
+typedef utility::pointer::shared_ptr< SheetConstraintsRCG > SheetConstraintsRCGOP;
 
 } //namespace fldsgn
 } //namespace protocols

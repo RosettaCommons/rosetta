@@ -20,8 +20,8 @@ namespace qsar {
 namespace scoring_grid {
 
 class GridManager;
-typedef utility::pointer::owning_ptr<GridManager> GridManagerOP;
-typedef utility::pointer::owning_ptr<GridManager const> GridManagerCOP;
+typedef utility::pointer::shared_ptr<GridManager> GridManagerOP;
+typedef utility::pointer::shared_ptr<GridManager const> GridManagerCOP;
 
 
 

@@ -89,12 +89,12 @@ SaveResfileToDiskFilter::~SaveResfileToDiskFilter() {}
 
 protocols::filters::FilterOP
 SaveResfileToDiskFilter::fresh_instance() const{
-  return new SaveResfileToDiskFilter();
+  return protocols::filters::FilterOP( new SaveResfileToDiskFilter() );
 }
 
 protocols::filters::FilterOP
 SaveResfileToDiskFilter::clone() const{
-  return new SaveResfileToDiskFilter( *this );
+  return protocols::filters::FilterOP( new SaveResfileToDiskFilter( *this ) );
 }
 
 // @brief getters
@@ -226,7 +226,7 @@ SaveResfileToDiskFilter::report( std::ostream & out, core::pose::Pose const & po
 }
 */
 protocols::filters::FilterOP
-SaveResfileToDiskFilterCreator::create_filter() const { return new SaveResfileToDiskFilter; }
+SaveResfileToDiskFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SaveResfileToDiskFilter ); }
 
 std::string
 SaveResfileToDiskFilterCreator::keyname() const { return "SaveResfileToDisk"; }

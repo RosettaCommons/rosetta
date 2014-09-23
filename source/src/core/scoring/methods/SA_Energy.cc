@@ -36,7 +36,7 @@ methods::EnergyMethodOP
 SA_EnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new SA_Energy;
+	return methods::EnergyMethodOP( new SA_Energy );
 }
 
 ScoreTypes
@@ -56,7 +56,7 @@ SA_Energy::SA_Energy() :
 EnergyMethodOP
 SA_Energy::clone() const
 {
-	return new SA_Energy;
+	return EnergyMethodOP( new SA_Energy );
 }
 
 /////////////////////////////////////////////////////////////////////////////

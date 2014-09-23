@@ -23,8 +23,8 @@ namespace operation {
 
 class TaskOperationFactory;
 
-typedef utility::pointer::owning_ptr< TaskOperationFactory > TaskOperationFactoryOP;
-typedef utility::pointer::owning_ptr< TaskOperationFactory const > TaskOperationFactoryCOP;
+typedef utility::pointer::shared_ptr< TaskOperationFactory > TaskOperationFactoryOP;
+typedef utility::pointer::shared_ptr< TaskOperationFactory const > TaskOperationFactoryCOP;
 
 } //namespace operation
 } //namespace task

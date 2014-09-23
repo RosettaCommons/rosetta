@@ -29,19 +29,19 @@ class BuildManager;
 
 
 /// @brief owning pointer for BuildManager
-typedef utility::pointer::owning_ptr< BuildManager > BuildManagerOP;
+typedef utility::pointer::shared_ptr< BuildManager > BuildManagerOP;
 
 
 /// @brief owning pointer for const BuildManager
-typedef utility::pointer::owning_ptr< BuildManager const > BuildManagerCOP;
+typedef utility::pointer::shared_ptr< BuildManager const > BuildManagerCOP;
 
 
 /// @brief access pointer for BuildManager
-typedef utility::pointer::access_ptr< BuildManager > BuildManagerAP;
+typedef utility::pointer::weak_ptr< BuildManager > BuildManagerAP;
 
 
 /// @brief access pointer for const BuildManager
-typedef utility::pointer::access_ptr< BuildManager const > BuildManagerCAP;
+typedef utility::pointer::weak_ptr< BuildManager const > BuildManagerCAP;
 
 
 } // namespace build

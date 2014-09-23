@@ -25,8 +25,8 @@ namespace residue_selector {
 
 class ChainSelector;
 
-typedef utility::pointer::owning_ptr< ChainSelector > ChainSelectorOP;
-typedef utility::pointer::owning_ptr< ChainSelector const > ChainSelectorCOP;
+typedef utility::pointer::shared_ptr< ChainSelector > ChainSelectorOP;
+typedef utility::pointer::shared_ptr< ChainSelector const > ChainSelectorCOP;
 
 } //namespace residue_selector
 } //namespace task

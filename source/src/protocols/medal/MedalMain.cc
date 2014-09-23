@@ -80,13 +80,13 @@ void* graphics_main(protocols::moves::MoverOP mover) {
 void* Medal_main(void*) {
   check_required_common();
   check_required_cm();
-  return graphics_main(new MedalMover());
+  return graphics_main(protocols::moves::MoverOP( new MedalMover() ));
 }
 
 void* MedalExchange_main(void*) {
   check_required_common();
   check_required_cm();
-  return graphics_main(new MedalExchangeMover());
+  return graphics_main(protocols::moves::MoverOP( new MedalExchangeMover() ));
 }
 
 }  // namespace medal

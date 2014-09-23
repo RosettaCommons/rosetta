@@ -33,10 +33,10 @@ namespace datacache {
 
 
 class DiagnosticData;
-typedef utility::pointer::owning_ptr< DiagnosticData > DiagnosticDataOP;
-typedef utility::pointer::owning_ptr< DiagnosticData const > DiagnosticDataCOP;
-typedef utility::pointer::access_ptr< DiagnosticData > DiagnosticDataAP;
-typedef utility::pointer::access_ptr< DiagnosticData const > DiagnosticDataCAP;
+typedef utility::pointer::shared_ptr< DiagnosticData > DiagnosticDataOP;
+typedef utility::pointer::shared_ptr< DiagnosticData const > DiagnosticDataCOP;
+typedef utility::pointer::weak_ptr< DiagnosticData > DiagnosticDataAP;
+typedef utility::pointer::weak_ptr< DiagnosticData const > DiagnosticDataCAP;
 
 
 } // namespace datacache

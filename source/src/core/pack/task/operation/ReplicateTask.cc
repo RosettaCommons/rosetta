@@ -53,12 +53,12 @@ ReplicateTask::~ReplicateTask(){}
 
 task::operation::TaskOperationOP ReplicateTask::clone() const
 {
-	return new ReplicateTask( *this );
+	return task::operation::TaskOperationOP( new ReplicateTask( *this ) );
 }
 
 task::operation::TaskOperationOP ReplicateTaskCreator::create_task_operation() const
 {
-	return new ReplicateTask;
+	return task::operation::TaskOperationOP( new ReplicateTask );
 }
 
 void

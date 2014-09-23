@@ -64,14 +64,14 @@ public:
 		std::set< std::string > names;
 
 		// Already named - should be no changes.
-		rsd = new ResidueType( *rsd_ref );
+		rsd = ResidueTypeOP( new ResidueType( *rsd_ref ) );
 		rename_atoms( *rsd, /*preserve=*/true);
 		for( core::Size ii(1); ii <= rsd->natoms(); ++ii) {
 			TS_ASSERT_EQUALS( rsd->atom(ii).name(), rsd_ref->atom(ii).name() );
 		}
 
 		// Force renaming.
-		rsd = new ResidueType( *rsd_ref );
+		rsd = ResidueTypeOP( new ResidueType( *rsd_ref ) );
 		names.clear();
 		rename_atoms( *rsd, /*preserve=*/false);
 		for( core::Size ii(1); ii <= rsd->natoms(); ++ii) {
@@ -92,7 +92,7 @@ public:
 		TS_ASSERT_EQUALS( names.count( " H14" ), 0 );
 
 		// Partial renaming.
-		rsd = new ResidueType( *rsd_ref );
+		rsd = ResidueTypeOP( new ResidueType( *rsd_ref ) );
 		rsd->atom(" NZ ").name(" N  ");
 		rsd->atom("1HB ").name("");
 		rsd->atom("2HB ").name("");
@@ -135,7 +135,7 @@ public:
 		// minirosetta_database/chemical/mm_atom_type_sets/<tag>
 		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
 
-		ResidueTypeOP rsd = new ResidueType( atom_types, element_types, mm_atom_types, NULL );
+		ResidueTypeOP rsd( new ResidueType( atom_types, element_types, mm_atom_types, NULL ) );
 
 		rsd->add_atom( "C1", "aroC", "VIRT", 0 );
 		rsd->add_atom( "C2", "aroC", "VIRT", 0 );
@@ -242,7 +242,7 @@ public:
 		// minirosetta_database/chemical/mm_atom_type_sets/<tag>
 		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
 
-		ResidueTypeOP rsd = new ResidueType( atom_types, element_types, mm_atom_types, NULL );
+		ResidueTypeOP rsd( new ResidueType( atom_types, element_types, mm_atom_types, NULL ) );
 
 		rsd->add_atom( "C1", "aroC", "VIRT", 0 );
 		rsd->add_atom( "C2", "aroC", "VIRT", 0 );
@@ -338,7 +338,7 @@ public:
 		std::string const tag(FA_STANDARD);
 		ResidueTypeSetCOP rsd_types = cm->residue_type_set(tag);
 
-		ResidueTypeOP rsd = new ResidueType( rsd_types->name_map("TYR") );
+		ResidueTypeOP rsd( new ResidueType( rsd_types->name_map("TYR") ) );
 
 		TR << "Testing standard charging." << std::endl;
 
@@ -380,7 +380,7 @@ public:
 
 		TR << "Testing that virtual atoms aren't recharged and aren't counted during recharge" << std::endl;
 
-		rsd = new ResidueType( rsd_types->name_map("PRO") );
+		rsd = ResidueTypeOP( new ResidueType( rsd_types->name_map("PRO") ) );
 
 		for( core::Size ii(1); ii <= rsd->natoms(); ++ii) {
 			rsd->atom(ii).formal_charge( 0.0 );

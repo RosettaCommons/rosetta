@@ -35,7 +35,7 @@ main( int argc, char * argv [] )
 		// initialize core
 		devel::init(argc, argv);
 
-		SnugDockProtocolOP snugdock = new SnugDockProtocol;
+		SnugDockProtocolOP snugdock( new SnugDockProtocol );
 		JobDistributor::get_instance()->go( snugdock );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

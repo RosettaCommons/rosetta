@@ -22,12 +22,12 @@ namespace protocols {
 namespace moves {
 
 class WhileMover;
-typedef utility::pointer::owning_ptr< WhileMover > WhileMoverOP;
-typedef utility::pointer::owning_ptr< WhileMover const > WhileMoverCOP;
+typedef utility::pointer::shared_ptr< WhileMover > WhileMoverOP;
+typedef utility::pointer::shared_ptr< WhileMover const > WhileMoverCOP;
 
 class PoseCondition;
-typedef utility::pointer::owning_ptr< PoseCondition > PoseConditionOP;
-typedef utility::pointer::owning_ptr< PoseCondition const > PoseConditionCOP;
+typedef utility::pointer::shared_ptr< PoseCondition > PoseConditionOP;
+typedef utility::pointer::shared_ptr< PoseCondition const > PoseConditionCOP;
 
 } // moves
 } // protocols

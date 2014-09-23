@@ -20,8 +20,8 @@ namespace protocols {
 namespace simple_moves {
 
 class ShortBackrubMover;
-typedef utility::pointer::owning_ptr< ShortBackrubMover > ShortBackrubMoverOP;
-typedef utility::pointer::owning_ptr< ShortBackrubMover const > ShortBackrubMoverCOP;
+typedef utility::pointer::shared_ptr< ShortBackrubMover > ShortBackrubMoverOP;
+typedef utility::pointer::shared_ptr< ShortBackrubMover const > ShortBackrubMoverCOP;
 
 } // moves
 } // protocols

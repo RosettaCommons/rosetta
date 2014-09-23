@@ -69,14 +69,14 @@ public:
 		using namespace protocols::moves; 
 
 		// Add Membrane
-		AddMembraneMoverOP add_memb = new AddMembraneMover(); 
+		AddMembraneMoverOP add_memb( new AddMembraneMover() ); 
 		add_memb->apply( pose ); 
 
 		// Show new pose membrane
 		pose.conformation().membrane_info()->show();
 		
 		// Initialize Membrane
-		MembranePositionFromTopologyMoverOP init_memb = new MembranePositionFromTopologyMover();
+		MembranePositionFromTopologyMoverOP init_memb( new MembranePositionFromTopologyMover() );
 		init_memb->apply( pose ); 
 
 		// Show new pose membrane
@@ -85,7 +85,7 @@ public:
 	}
 };
 
-typedef utility::pointer::owning_ptr< LoadMembraneMover > LoadMembraneMoverOP; 
+typedef utility::pointer::shared_ptr< LoadMembraneMover > LoadMembraneMoverOP; 
 
 /// @brief Main method
 int
@@ -101,7 +101,7 @@ main( int argc, char * argv [] )
 		protocols::jd2::register_options();
 
 		// Create and kick off a new load membrane mover
-		LoadMembraneMoverOP load_memb = new LoadMembraneMover(); 
+		LoadMembraneMoverOP load_memb( new LoadMembraneMover() ); 
 		protocols::jd2::JobDistributor::get_instance()->go( load_memb );
 
 		return 0; 

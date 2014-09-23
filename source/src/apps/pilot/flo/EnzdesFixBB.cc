@@ -106,21 +106,21 @@ main( int argc, char * argv [])
 	protocols::enzdes::EnzdesScorefileFilterOP enz_scofile;
 
 
-	if( option[ OptionKeys::enzdes::flexbb_protocol ] ) enzdes_protocol = new protocols::enzdes::EnzdesFlexBBProtocol();
-	else if( option[ OptionKeys::enzdes::remodel_protocol ] ) enzdes_protocol = new devel::enzdes::EnzdesRemodelProtocol();
-	else enzdes_protocol = new protocols::enzdes::EnzdesFixBBProtocol();
+	if( option[ OptionKeys::enzdes::flexbb_protocol ] ) enzdes_protocol = protocols::enzdes::EnzdesBaseProtocolOP( new protocols::enzdes::EnzdesFlexBBProtocol() );
+	else if( option[ OptionKeys::enzdes::remodel_protocol ] ) enzdes_protocol = protocols::enzdes::EnzdesBaseProtocolOP( new devel::enzdes::EnzdesRemodelProtocol() );
+	else enzdes_protocol = protocols::enzdes::EnzdesBaseProtocolOP( new protocols::enzdes::EnzdesFixBBProtocol() );
 
 	std::string scorefile_name("");
 
 	if( option[ OptionKeys::out::file::o ].user() ){
 		scorefile_name = option[ OptionKeys::out::file::o ]();
-		enz_scofile = new protocols::enzdes::EnzdesScorefileFilter();
+		enz_scofile = protocols::enzdes::EnzdesScorefileFilterOP( new protocols::enzdes::EnzdesScorefileFilter() );
 		//enz_scofile->set_cstio( enzdes_protocol->cst_io() );
 		if( option[ OptionKeys::out::overwrite ].user() ){
 			if( utility::file::file_exists( scorefile_name ) ) utility::file::file_delete( scorefile_name );
 		}
 	}
-	core::io::silent::SilentFileDataOP scorefile = new core::io::silent::SilentFileData();
+	core::io::silent::SilentFileDataOP scorefile( new core::io::silent::SilentFileData() );
 
 	if( option[OptionKeys::enzdes::cstfile].user() ){
 		option[OptionKeys::run::preserve_header ].value(true);
@@ -142,13 +142,13 @@ main( int argc, char * argv [])
 
 		// we read each PDB just once to save on disk I/O
 		if( curr_job.get() != prev_job.get() || input_pose.get() == NULL ) {
-			input_pose = new core::pose::Pose();
+			input_pose = core::pose::PoseOP( new core::pose::Pose() );
 			//core::import_pose::pose_from_pdb( *input_pose, curr_job->input_tag() );
 			protocols::enzdes::enzutil::read_pose_from_pdb(  *input_pose, curr_job->input_tag() );
 		}
 
 		// Make a modifiable copy of the pose read from disk
-		core::pose::PoseOP the_pose = new core::pose::Pose( *input_pose );
+		core::pose::PoseOP the_pose( new core::pose::Pose( *input_pose ) );
 		std::string outext = "_DE";
 		if( basic::options::option[basic::options::OptionKeys::out::suffix].user() ){
 			outext = basic::options::option[basic::options::OptionKeys::out::suffix];

@@ -24,8 +24,8 @@ namespace frag_picker {
 /// @brief forward declaration for ContactCounts
 class ContactCounts;
 
-typedef utility::pointer::owning_ptr<ContactCounts> ContactCountsOP;
-typedef utility::pointer::owning_ptr<ContactCounts const> ContactCountsCOP;
+typedef utility::pointer::shared_ptr<ContactCounts> ContactCountsOP;
+typedef utility::pointer::shared_ptr<ContactCounts const> ContactCountsCOP;
 
 } // frag_picker
 } // protocols

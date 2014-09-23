@@ -22,8 +22,8 @@ namespace protocols {
 namespace simple_moves {
 
 class AddJobPairData;
-typedef utility::pointer::owning_ptr< AddJobPairData > AddJobPairDataOP;
-typedef utility::pointer::owning_ptr< AddJobPairData const > AddJobPairDataCOP;
+typedef utility::pointer::shared_ptr< AddJobPairData > AddJobPairDataOP;
+typedef utility::pointer::shared_ptr< AddJobPairData const > AddJobPairDataCOP;
 
 }
 }

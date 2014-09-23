@@ -33,10 +33,10 @@ class SSMotifFinder : public filters::Filter
     SSMotifFinder();
     virtual ~SSMotifFinder();
 		filters::FilterOP clone() const {
-			return new SSMotifFinder( *this );
+			return filters::FilterOP( new SSMotifFinder( *this ) );
 		}
 		filters::FilterOP fresh_instance() const{
-			return new SSMotifFinder();
+			return filters::FilterOP( new SSMotifFinder() );
 		}
 
 		virtual bool apply( core::pose::Pose const & pose ) const;

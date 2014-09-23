@@ -108,19 +108,19 @@ rna_fullatom_minimize_test()
 	PoseInputStreamOP input;
 	if ( option[ in::file::silent ].user() ) {
 		if ( option[ in::file::tags ].user() ) {
-			SilentFilePoseInputStreamOP input1 = new SilentFilePoseInputStream(
+			SilentFilePoseInputStreamOP input1( new SilentFilePoseInputStream(
 				option[ in::file::silent ](),
 				option[ in::file::tags ]()
-			);
+			) );
 			input1->set_order_by_energy( true );
 			input = input1;
 		} else {
-			SilentFilePoseInputStreamOP input1 = new SilentFilePoseInputStream( option[ in::file::silent ]() );
+			SilentFilePoseInputStreamOP input1( new SilentFilePoseInputStream( option[ in::file::silent ]() ) );
 			input1->set_order_by_energy( true );
 			input = input1;
 		}
 	} else {
-		input = new PDBPoseInputStream( option[ in::file::s ]() );
+		input = PoseInputStreamOP( new PDBPoseInputStream( option[ in::file::s ]() ) );
 	}
 
 	// native pose setup
@@ -171,7 +171,7 @@ rna_fullatom_minimize_test()
 			core::pose::Pose test_pose;
 			core::pose::make_pose_from_sequence( test_pose,	pose.annotated_sequence(),	*rsd_set );
 			ConstraintSetOP cst_set = ConstraintIO::get_instance()->read_constraints(
-					option[OptionKeys::constraints::cst_fa_file][1], new ConstraintSet, test_pose );
+					option[OptionKeys::constraints::cst_fa_file][1], ConstraintSetOP( new ConstraintSet ), test_pose );
 			pose.constraint_set( cst_set );
 		}
 
@@ -187,7 +187,7 @@ rna_fullatom_minimize_test()
 			//rna_minimizer.set_allow_insert( parameters.allow_insert() );
 		}
 
-		AllowInsertOP allow_insert = new AllowInsert( pose );
+		AllowInsertOP allow_insert( new AllowInsert( pose ) );
 		if ( option[ in::file::minimize_res ].user() ){
 			// don't allow anything to move, and then supply minimize_res as 'extra' minimize_res.
 			allow_insert->set( false );

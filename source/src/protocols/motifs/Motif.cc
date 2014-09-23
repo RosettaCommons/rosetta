@@ -355,7 +355,7 @@ Motif::Motif(
 MotifOP
 Motif::clone() const
 {
-	return new Motif( *this );
+	return MotifOP( new Motif( *this ) );
 }
 
 Motif::~Motif()

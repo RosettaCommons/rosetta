@@ -80,8 +80,8 @@ private:
 	std::list< atoms_and_func_struct > interacting_atompair_list_;
 };
 
-typedef utility::pointer::owning_ptr< AtomPairFuncList > AtomPairFuncListOP;
-typedef utility::pointer::owning_ptr< AtomPairFuncList const > AtomPairFuncListCOP;
+typedef utility::pointer::shared_ptr< AtomPairFuncList > AtomPairFuncListOP;
+typedef utility::pointer::shared_ptr< AtomPairFuncList const > AtomPairFuncListCOP;
 
 ///
 class FullatomCustomPairDistanceEnergy : public methods::ContextIndependentTwoBodyEnergy {
@@ -266,7 +266,7 @@ class DistanceFunc : public func::Func
 public:
 	DistanceFunc( std::string const name );
 	virtual ~DistanceFunc();
-	func::FuncOP clone() const { return new DistanceFunc( *this ); }
+	func::FuncOP clone() const { return func::FuncOP( new DistanceFunc( *this ) ); }
 	virtual Real func( Real const ) const;
 	virtual Real dfunc( Real const ) const;
 	virtual Real max_dis() const;

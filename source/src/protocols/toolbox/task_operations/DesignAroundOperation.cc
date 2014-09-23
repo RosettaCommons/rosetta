@@ -74,12 +74,12 @@ DesignAroundOperation::~DesignAroundOperation() {}
 core::pack::task::operation::TaskOperationOP
 DesignAroundOperationCreator::create_task_operation() const
 {
-	return new DesignAroundOperation;
+	return core::pack::task::operation::TaskOperationOP( new DesignAroundOperation );
 }
 
 core::pack::task::operation::TaskOperationOP DesignAroundOperation::clone() const
 {
-	return new DesignAroundOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new DesignAroundOperation( *this ) );
 }
 
 ///@brief restricts to repacking all residues outside of design_shell_ around each residue
@@ -132,12 +132,12 @@ DesignAroundOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 ///for some unfathomable reason OperateOnCertainResidues defaults to applying to all residues if none are defined, so you have to be careful here...
 	OperateOnCertainResidues oocr_repacking, oocr_prevent_repacking;
 	if( packing_residues.size() ){
-		oocr_repacking.op( new RestrictToRepackingRLT );
+		oocr_repacking.op( ResLvlTaskOperationCOP( new RestrictToRepackingRLT ) );
 		oocr_repacking.residue_indices( packing_residues );
 		oocr_repacking.apply( pose, task );
 	}
 	if( prevent_repacking_residues.size() ){
-		oocr_prevent_repacking.op( new PreventRepackingRLT );
+		oocr_prevent_repacking.op( ResLvlTaskOperationCOP( new PreventRepackingRLT ) );
 		oocr_prevent_repacking.residue_indices( prevent_repacking_residues );
 		oocr_prevent_repacking.apply( pose, task );
 	}

@@ -87,10 +87,10 @@ namespace raw_data {
 
 		if(format == "text") {
 			// Old plain-text format
-			outputter = new ScoreStructText( pose, tag );
+			outputter = RawStructOP( new ScoreStructText( pose, tag ) );
 		} else if(format == "json" || format == "JSON") {
 			// JSON
-			outputter = new ScoreStructJSON( pose, tag ); 
+			outputter = RawStructOP( new ScoreStructJSON( pose, tag ) ); 
 		}
 
 		if(!outputter) {

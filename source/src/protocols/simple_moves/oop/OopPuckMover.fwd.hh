@@ -28,20 +28,20 @@ typedef utility::pointer::owning_ptr< OopPuckMover const > OopPuckMoverCOP;
 */
 
 class OopPuckPlusMover;
-typedef utility::pointer::owning_ptr< OopPuckPlusMover > OopPuckPlusMoverOP;
-typedef utility::pointer::owning_ptr< OopPuckPlusMover const > OopPuckPlusMoverCOP;
+typedef utility::pointer::shared_ptr< OopPuckPlusMover > OopPuckPlusMoverOP;
+typedef utility::pointer::shared_ptr< OopPuckPlusMover const > OopPuckPlusMoverCOP;
 
 class OopPuckMinusMover;
-typedef utility::pointer::owning_ptr< OopPuckMinusMover > OopPuckMinusMoverOP;
-typedef utility::pointer::owning_ptr< OopPuckMinusMover const > OopPuckMinusMoverCOP;
+typedef utility::pointer::shared_ptr< OopPuckMinusMover > OopPuckMinusMoverOP;
+typedef utility::pointer::shared_ptr< OopPuckMinusMover const > OopPuckMinusMoverCOP;
 
 class OopDPuckPlusMover;
-typedef utility::pointer::owning_ptr< OopDPuckPlusMover > OopDPuckPlusMoverOP;
-typedef utility::pointer::owning_ptr< OopDPuckPlusMover const > OopDPuckPlusMoverCOP;
+typedef utility::pointer::shared_ptr< OopDPuckPlusMover > OopDPuckPlusMoverOP;
+typedef utility::pointer::shared_ptr< OopDPuckPlusMover const > OopDPuckPlusMoverCOP;
 
 class OopDPuckMinusMover;
-typedef utility::pointer::owning_ptr< OopDPuckMinusMover > OopDPuckMinusMoverOP;
-typedef utility::pointer::owning_ptr< OopDPuckMinusMover const > OopDPuckMinusMoverCOP;
+typedef utility::pointer::shared_ptr< OopDPuckMinusMover > OopDPuckMinusMoverOP;
+typedef utility::pointer::shared_ptr< OopDPuckMinusMover const > OopDPuckMinusMoverCOP;
 
 }//oop
 }//simple_moves

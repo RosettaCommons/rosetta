@@ -26,10 +26,10 @@ namespace output {
 class SameSequenceGrouper;
 class SameSequenceAndDSPositionGrouper;
 
-typedef utility::pointer::owning_ptr< SameSequenceGrouper > SameSequenceGrouperOP;
-typedef utility::pointer::owning_ptr< SameSequenceGrouper const > SameSequenceGrouperCOP;
-typedef utility::pointer::owning_ptr< SameSequenceAndDSPositionGrouper > SameSequenceAndDSPositionGrouperOP;
-typedef utility::pointer::owning_ptr< SameSequenceAndDSPositionGrouper const > SameSequenceAndDSPositionGrouperCOP;
+typedef utility::pointer::shared_ptr< SameSequenceGrouper > SameSequenceGrouperOP;
+typedef utility::pointer::shared_ptr< SameSequenceGrouper const > SameSequenceGrouperCOP;
+typedef utility::pointer::shared_ptr< SameSequenceAndDSPositionGrouper > SameSequenceAndDSPositionGrouperOP;
+typedef utility::pointer::shared_ptr< SameSequenceAndDSPositionGrouper const > SameSequenceAndDSPositionGrouperCOP;
 
 
 }

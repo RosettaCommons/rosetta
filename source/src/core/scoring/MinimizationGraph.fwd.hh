@@ -24,8 +24,8 @@ class MinimizationNode;
 class MinimizationEdge;
 class MinimizationGraph;
 
-typedef utility::pointer::owning_ptr< MinimizationGraph > MinimizationGraphOP;
-typedef utility::pointer::owning_ptr< MinimizationGraph const > MinimizationGraphCOP;
+typedef utility::pointer::shared_ptr< MinimizationGraph > MinimizationGraphOP;
+typedef utility::pointer::shared_ptr< MinimizationGraph const > MinimizationGraphCOP;
 
 } //namespace scoring
 } //namespace core

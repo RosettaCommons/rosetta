@@ -22,8 +22,8 @@ namespace canonical_sampling{
 
 //Forwards and OP typedefs
 class ThermodynamicObserver;
-typedef utility::pointer::owning_ptr< ThermodynamicObserver > ThermodynamicObserverOP;
-typedef utility::pointer::owning_ptr< ThermodynamicObserver const > ThermodynamicObserverCOP;
+typedef utility::pointer::shared_ptr< ThermodynamicObserver > ThermodynamicObserverOP;
+typedef utility::pointer::shared_ptr< ThermodynamicObserver const > ThermodynamicObserverCOP;
 
 } //moves
 } //protocols

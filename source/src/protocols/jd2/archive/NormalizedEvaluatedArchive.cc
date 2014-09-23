@@ -123,7 +123,7 @@ void NormalizedEvaluatedArchive::init_from_options() {
 
 void NormalizedEvaluatedArchive::initialize() {
 	if ( use_variance_archive_ ) {
-		variance_archive_ = new VarianceStatisticsArchive( name()+"_variance" );
+		variance_archive_ = VarianceStatisticsArchiveOP( new VarianceStatisticsArchive( name()+"_variance" ) );
 		variance_archive_->set_nstruct( nstruct_for_statistics_ );
 		variance_archive_->set_insertion_prob( insertion_prob_ );
 		variance_archive_->initialize();

@@ -60,7 +60,7 @@ LimitAromaChi2_RotamerSetOperation::~LimitAromaChi2_RotamerSetOperation() {}
 core::pack::rotamer_set::RotamerSetOperationOP
 LimitAromaChi2_RotamerSetOperation::clone() const
 {
-	return new LimitAromaChi2_RotamerSetOperation( *this );
+	return core::pack::rotamer_set::RotamerSetOperationOP( new LimitAromaChi2_RotamerSetOperation( *this ) );
 }
 
 void
@@ -117,7 +117,7 @@ LimitAromaChi2_RotamerSetOperation::alter_rotamer_set(
 core::pack::task::operation::TaskOperationOP
 LimitAromaChi2OperationCreator::create_task_operation() const
 {
-	return new LimitAromaChi2Operation;
+	return core::pack::task::operation::TaskOperationOP( new LimitAromaChi2Operation );
 }
 
 /// @brief defauot constructor
@@ -134,7 +134,7 @@ LimitAromaChi2Operation::~LimitAromaChi2Operation(){}
 /// @brief clone
 core::pack::task::operation::TaskOperationOP
 LimitAromaChi2Operation::clone() const {
-	return new LimitAromaChi2Operation( *this );
+	return core::pack::task::operation::TaskOperationOP( new LimitAromaChi2Operation( *this ) );
 }
 
 //mjo commenting out 'pose' because it is unused and causes a warning
@@ -142,7 +142,7 @@ LimitAromaChi2Operation::clone() const {
 void
 LimitAromaChi2Operation::apply( Pose const & /*pose*/, PackerTask & task ) const
 {
-	LimitAromaChi2_RotamerSetOperationOP rso = new LimitAromaChi2_RotamerSetOperation( chi2max_, chi2min_ );
+	LimitAromaChi2_RotamerSetOperationOP rso( new LimitAromaChi2_RotamerSetOperation( chi2max_, chi2min_ ) );
 	rso->include_trp( include_trp_ );
 	task.append_rotamerset_operation( rso );
 }

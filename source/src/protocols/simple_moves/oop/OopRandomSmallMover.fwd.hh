@@ -22,8 +22,8 @@ namespace oop{
 
 //Forwards and OP typedefs
 class OopRandomSmallMover;
-typedef utility::pointer::owning_ptr< OopRandomSmallMover > OopRandomSmallMoverOP;
-typedef utility::pointer::owning_ptr< OopRandomSmallMover const > OopRandomSmallMoverCOP;
+typedef utility::pointer::shared_ptr< OopRandomSmallMover > OopRandomSmallMoverOP;
+typedef utility::pointer::shared_ptr< OopRandomSmallMover const > OopRandomSmallMoverCOP;
 
 }//oop
 }//simple_moves

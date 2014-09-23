@@ -43,7 +43,7 @@ namespace abinitio {
 
 /// Move these forward declarations to ConstraintFragmentSampler.fwd.hh
 class ConstraintFragmentSampler;
-typedef utility::pointer::owning_ptr< ConstraintFragmentSampler > ConstraintFragmentSamplerOP;
+typedef utility::pointer::shared_ptr< ConstraintFragmentSampler > ConstraintFragmentSamplerOP;
 
 //@ brief The Classic Abinitio protocol from rosetta++
 /*!

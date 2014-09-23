@@ -23,8 +23,8 @@ namespace normalmode {
 
 // Forward
 class NormalModeMinimizer;
-typedef utility::pointer::owning_ptr< NormalModeMinimizer       > NormalModeMinimizerOP;
-typedef utility::pointer::owning_ptr< NormalModeMinimizer const > NormalModeMinimizerCOP;
+typedef utility::pointer::shared_ptr< NormalModeMinimizer       > NormalModeMinimizerOP;
+typedef utility::pointer::shared_ptr< NormalModeMinimizer const > NormalModeMinimizerCOP;
 
 
 } // namespace optimization

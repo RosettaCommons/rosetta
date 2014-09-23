@@ -28,11 +28,11 @@ namespace claims {
 class VirtResClaim;
 
 // Types
-typedef  utility::pointer::owning_ptr< VirtResClaim >  VirtResClaimOP;
-typedef  utility::pointer::owning_ptr< VirtResClaim const >  VirtResClaimCOP;
+typedef  utility::pointer::shared_ptr< VirtResClaim >  VirtResClaimOP;
+typedef  utility::pointer::shared_ptr< VirtResClaim const >  VirtResClaimCOP;
 
-typedef  utility::pointer::access_ptr< VirtResClaim >  VirtResClaimAP;
-typedef  utility::pointer::access_ptr< VirtResClaim const >  VirtResClaimCAP;
+typedef  utility::pointer::weak_ptr< VirtResClaim >  VirtResClaimAP;
+typedef  utility::pointer::weak_ptr< VirtResClaim const >  VirtResClaimCAP;
 
 typedef utility::vector1< VirtResClaimOP > VirtResClaims;
 

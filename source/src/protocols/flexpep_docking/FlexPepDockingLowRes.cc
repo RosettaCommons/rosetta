@@ -80,7 +80,7 @@ FlexPepDockingLowRes::FlexPepDockingLowRes
   // Loop modeling options
   // NOTE: most LoopRelax options are initiated automatically from cmd-line
   // TODO: LoopRelaxMover is a wrapper, perhaps user the LoopModel class explicitly
-  loop_relax_mover_ = new protocols::comparative_modeling::LoopRelaxMover();
+  loop_relax_mover_ = protocols::comparative_modeling::LoopRelaxMoverOP( new protocols::comparative_modeling::LoopRelaxMover() );
   // loop_relax_mover_->centroid_scorefxn(scorefxn_); // TODO: we need a chain brteak score here, so let's leave it for modeller default?
   loop_relax_mover_->refine("no"); // centroid modeling only
   loop_relax_mover_->relax("no"); // centroid modeling only
@@ -106,12 +106,12 @@ void
 FlexPepDockingLowRes::setup_for_apply( core::pose::Pose& pose )
 {
   double temperature = 0.8;
-  mc_ = new moves::MonteCarlo( pose, *scorefxn_, temperature );
+  mc_ = moves::MonteCarloOP( new moves::MonteCarlo( pose, *scorefxn_, temperature ) );
   // setup minimizer
   std::string min_type = "dfpmin_atol"; // armijo_nonmonotone? different tolerance?
   double min_func_tol = 0.1;
-  minimizer_ = new protocols::simple_moves::MinMover(
-    movemap_, scorefxn_, min_type, min_func_tol, true /*nb_list accel.*/ );
+  minimizer_ = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover(
+    movemap_, scorefxn_, min_type, min_func_tol, true /*nb_list accel.*/ ) );
 }
 
 
@@ -155,21 +155,18 @@ FlexPepDockingLowRes::torsions_monte_carlo
 {
   using namespace protocols::moves;
   // setup sub-moves
-  simple_moves::SmallMoverOP small_mover =
-    new protocols::simple_moves::SmallMover( movemap_, 0.8 /*temp*/, 100 /*nmoves ???*/ );
+  simple_moves::SmallMoverOP small_mover( new protocols::simple_moves::SmallMover( movemap_, 0.8 /*temp*/, 100 /*nmoves ???*/ ) );
   small_mover->angle_max('L',flags_.smove_angle_range);
-  protocols::simple_moves::ShearMoverOP shear_mover =
-    new protocols::simple_moves::ShearMover( movemap_, 0.8 /*temp*/, 100 /*nmoves ???*/ );
+  protocols::simple_moves::ShearMoverOP shear_mover( new protocols::simple_moves::ShearMover( movemap_, 0.8 /*temp*/, 100 /*nmoves ???*/ ) );
   shear_mover->angle_max('L',flags_.smove_angle_range);
 
   // setup cycle of sub-moves
-  CycleMoverOP cyclic_tor_moves =
-    new CycleMover;
+  CycleMoverOP cyclic_tor_moves( new CycleMover );
   cyclic_tor_moves->add_mover(small_mover);
   cyclic_tor_moves->add_mover(shear_mover);
 
   // wrap with monte-carlo trial mover
-  TrialMoverOP mc_trial = new TrialMover( cyclic_tor_moves, mc_ );
+  TrialMoverOP mc_trial( new TrialMover( cyclic_tor_moves, mc_ ) );
   mc_trial->keep_stats_type( accept_reject ); // track stats (for acceptance rate)
 
   // Do initial forced perturbation // TODO: do we want to keep this part?
@@ -198,7 +195,7 @@ FlexPepDockingLowRes::loopclosure_monte_carlo
   // set up and model a random loop
   Size first_res = flags_.peptide_first_res() + 1;
   Size last_res = flags_.peptide_last_res() - 1;
-  protocols::loops::LoopsOP loops = new protocols::loops::Loops();
+  protocols::loops::LoopsOP loops( new protocols::loops::Loops() );
   loops->add_loop(first_res, last_res); // TODO: cut defaults to zero, is this a random cut?
   for(Size i = first_res; i <= last_res ; i++)
     runtime_assert( movemap_->get_bb(i) ); // verify loop is movable, this should have been always true for the peptide
@@ -223,10 +220,9 @@ FlexPepDockingLowRes::rigidbody_monte_carlo
   using namespace protocols::moves;
 
   // set up monte-carlo trial moves
-  rigid::RigidBodyPerturbNoCenterMoverOP rb_mover =
-    new rigid::RigidBodyPerturbNoCenterMover(
-      rb_jump_, rot_magnitude, trans_magnitude );
-  TrialMoverOP mc_trial = new TrialMover( rb_mover, mc_ );
+  rigid::RigidBodyPerturbNoCenterMoverOP rb_mover( new rigid::RigidBodyPerturbNoCenterMover(
+      rb_jump_, rot_magnitude, trans_magnitude ) );
+  TrialMoverOP mc_trial( new TrialMover( rb_mover, mc_ ) );
   mc_trial->keep_stats_type( accept_reject ); // track stats (for acceptance rate)
 
   // run monte-carlo

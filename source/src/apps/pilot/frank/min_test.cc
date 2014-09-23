@@ -148,24 +148,23 @@ public:
 		// set pose for density scoring if a map was input
 		//   + (potentially) dock map into density
 		if ( option[ edensity::mapfile ].user() ) {
-			protocols::electron_density::SetupForDensityScoringMoverOP edens
-											 ( new protocols::electron_density::SetupForDensityScoringMover );
+			protocols::electron_density::SetupForDensityScoringMoverOP edens( new protocols::electron_density::SetupForDensityScoringMover );
 			edens->apply( pose );
 		}
 
-		pose::PoseOP start_pose ( new pose::Pose(pose) );
+		pose::PoseOP start_pose( new pose::Pose(pose) );
 		(*scorefxn)(pose);
 		scorefxn->show(std::cout, pose);
 
 		if ( option[ OptionKeys::min::pack ]() )  {
-			TaskFactoryOP local_tf = new TaskFactory();
-			local_tf->push_back(new InitializeFromCommandline());
-			local_tf->push_back(new RestrictToRepacking());
-			local_tf->push_back(new IncludeCurrent());
+			TaskFactoryOP local_tf( new TaskFactory() );
+			local_tf->push_back(TaskOperationCOP( new InitializeFromCommandline() ));
+			local_tf->push_back(TaskOperationCOP( new RestrictToRepacking() ));
+			local_tf->push_back(TaskOperationCOP( new IncludeCurrent() ));
 
-			protocols::simple_moves::PackRotamersMoverOP pack_full_repack = new protocols::simple_moves::PackRotamersMover( scorefxn );
+			protocols::simple_moves::PackRotamersMoverOP pack_full_repack( new protocols::simple_moves::PackRotamersMover( scorefxn ) );
 			if ( core::pose::symmetry::is_symmetric( pose ) )  {
-				pack_full_repack = new simple_moves::symmetry::SymPackRotamersMover( scorefxn );
+				pack_full_repack = protocols::simple_moves::PackRotamersMoverOP( new simple_moves::symmetry::SymPackRotamersMover( scorefxn ) );
 			}
 			pack_full_repack->task_factory(local_tf);
 			pack_full_repack->apply( pose );
@@ -233,7 +232,7 @@ my_main( void* ) {
 	using namespace protocols::simple_moves::symmetry;
 
 	try{
-		protocols::jd2::JobDistributor::get_instance()->go( new MinTestMover() );
+		protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new MinTestMover() ) );
 	} catch ( utility::excn::EXCN_Base& excn ) {
 		std::cerr << "Exception: " << std::endl;
 		excn.show( std::cerr );

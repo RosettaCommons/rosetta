@@ -23,8 +23,8 @@ namespace scoring {
 
 class CenRotEnvPairPotential;
 
-typedef utility::pointer::owning_ptr< CenRotEnvPairPotential > CenRotEnvPairPotentialOP;
-typedef utility::pointer::owning_ptr< CenRotEnvPairPotential const > CenRotEnvPairPotentialCOP;
+typedef utility::pointer::shared_ptr< CenRotEnvPairPotential > CenRotEnvPairPotentialOP;
+typedef utility::pointer::shared_ptr< CenRotEnvPairPotential const > CenRotEnvPairPotentialCOP;
 
 } // ns scoring
 } // ns core

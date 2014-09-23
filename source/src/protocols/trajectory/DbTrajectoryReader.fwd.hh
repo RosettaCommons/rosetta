@@ -16,8 +16,8 @@ namespace protocols {
 namespace trajectory {
 
 class DbTrajectoryReader;
-typedef utility::pointer::owning_ptr<DbTrajectoryReader> DbTrajectoryReaderOP;
-typedef utility::pointer::owning_ptr<DbTrajectoryReader const> DbTrajectoryReaderCOP;
+typedef utility::pointer::shared_ptr<DbTrajectoryReader> DbTrajectoryReaderOP;
+typedef utility::pointer::shared_ptr<DbTrajectoryReader const> DbTrajectoryReaderCOP;
 
 }
 }

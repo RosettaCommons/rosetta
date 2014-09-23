@@ -69,7 +69,7 @@ class LoophashTest: public CxxTest::TestSuite {
 
 		utility::vector1 < core::Size > loop_sizes;
 		loop_sizes.push_back( 10 );
-		loophash::LoopHashLibraryOP loop_hash_library = new loophash::LoopHashLibrary( loop_sizes, 0 , 1 );
+		loophash::LoopHashLibraryOP loop_hash_library( new loophash::LoopHashLibrary( loop_sizes, 0 , 1 ) );
 		
 		TS_ASSERT(loop_hash_library->test_saving_library( sample_pose, 14, true ));
 
@@ -79,7 +79,7 @@ class LoophashTest: public CxxTest::TestSuite {
 
 		TR << "Reloading Library: " << std::endl;
 
-		loophash::LoopHashLibraryOP read_loop_hash_library = new loophash::LoopHashLibrary( loop_sizes, 0 , 1 );
+		loophash::LoopHashLibraryOP read_loop_hash_library( new loophash::LoopHashLibrary( loop_sizes, 0 , 1 ) );
 		read_loop_hash_library->load_db();
 		
 		TR << "Retesting Library: " << std::endl;

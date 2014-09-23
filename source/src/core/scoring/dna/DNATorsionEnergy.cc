@@ -49,7 +49,7 @@ methods::EnergyMethodOP
 DNATorsionEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new DNATorsionEnergy;
+	return methods::EnergyMethodOP( new DNATorsionEnergy );
 }
 
 ScoreTypes
@@ -74,7 +74,7 @@ DNATorsionEnergy::DNATorsionEnergy():
 methods::EnergyMethodOP
 DNATorsionEnergy::clone() const
 {
-	return new DNATorsionEnergy;
+	return methods::EnergyMethodOP( new DNATorsionEnergy );
 }
 
 

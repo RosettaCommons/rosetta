@@ -97,14 +97,14 @@ std::string SmallMinCCDTrial::get_name() const
 protocols::moves::MoverOP
 SmallMinCCDTrial::clone() const
 {
-	return new SmallMinCCDTrial( *this );
+	return protocols::moves::MoverOP( new SmallMinCCDTrial( *this ) );
 }
 
 ///@brief fresh_instance returns a default-constructed object for JD2
 protocols::moves::MoverOP
 SmallMinCCDTrial::fresh_instance() const
 {
-	return new SmallMinCCDTrial();
+	return protocols::moves::MoverOP( new SmallMinCCDTrial() );
 }
 
 ///@brief This mover retains state such that a fresh version is needed if the input Pose is about to change
@@ -213,7 +213,7 @@ void SmallMinCCDTrial::init()
 	type( "SmallMinCCDTrial" );
 	
 	nmoves_ = 1;
-	minimizer_options_ = new MinimizerOptions( "dfpmin", 0.001, true /*use_nblist*/, false /*deriv_check*/ );
+	minimizer_options_ = core::optimization::MinimizerOptionsOP( new MinimizerOptions( "dfpmin", 0.001, true /*use_nblist*/, false /*deriv_check*/ ) );
 	init_options();
 }
 
@@ -241,9 +241,9 @@ core::optimization::AtomTreeMinimizerOP SmallMinCCDTrial::minimizer( core::pose:
 	if (! minimizer_){
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
 			// minimizer_ = dynamic_cast<core::optimization::AtomTreeMinimizer>( new core::optimization::symmetry::SymAtomTreeMinimizer );
-			minimizer_ = new core::optimization::symmetry::SymAtomTreeMinimizer;
+			minimizer_ = core::optimization::AtomTreeMinimizerOP( new core::optimization::symmetry::SymAtomTreeMinimizer );
 		} else {
-			minimizer_ = new core::optimization::AtomTreeMinimizer;
+			minimizer_ = core::optimization::AtomTreeMinimizerOP( new core::optimization::AtomTreeMinimizer );
 		}
 	}
 	return minimizer_;
@@ -366,7 +366,7 @@ void SmallMinCCDTrial::debug_five( Pose & pose )
 SmallMinCCDTrialCreator::~SmallMinCCDTrialCreator() {}
 
 moves::MoverOP SmallMinCCDTrialCreator::create_mover() const {
-  return new SmallMinCCDTrial();
+  return moves::MoverOP( new SmallMinCCDTrial() );
 }
 
 std::string SmallMinCCDTrialCreator::keyname() const {

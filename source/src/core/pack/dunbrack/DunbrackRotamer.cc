@@ -545,16 +545,16 @@ expand_proton_chi(
 			if (ii == 1) { 	//change first chi in place:
 				base_chi_vec = new_chi_vec = chi_set_vector[ jj ];
 			} else { // make copies for all others
-				new_chi_vec = new pack::dunbrack::ChiSet( *base_chi_vec );
+				new_chi_vec = ChiSetOP( new pack::dunbrack::ChiSet( *base_chi_vec ) );
 				chi_set_vector.push_back( new_chi_vec );
 			}
 			new_chi_vec->chi[ chi_id ] = ii_sample;
 
 			if ( include_extra ) {
 				for ( Size kk = 1; kk <= extra_samples.size(); ++kk ) {
-					chi_set_vector.push_back( new_chi_vec = new pack::dunbrack::ChiSet( *base_chi_vec  ) );
+					chi_set_vector.push_back( new_chi_vec = ChiSetOP( new pack::dunbrack::ChiSet( *base_chi_vec  ) ) );
 					new_chi_vec->chi[ chi_id ] = ii_sample  + extra_samples[ kk ];
-					chi_set_vector.push_back( new_chi_vec = new pack::dunbrack::ChiSet( *base_chi_vec  ) );
+					chi_set_vector.push_back( new_chi_vec = ChiSetOP( new pack::dunbrack::ChiSet( *base_chi_vec  ) ) );
 					new_chi_vec->chi[ chi_id ] = ii_sample  - extra_samples[ kk ];
 				} // for extra_samples
 			} // include extra

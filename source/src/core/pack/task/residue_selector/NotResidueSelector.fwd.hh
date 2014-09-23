@@ -24,8 +24,8 @@ namespace residue_selector {
 
 class NotResidueSelector;
 
-typedef utility::pointer::owning_ptr< NotResidueSelector > NotResidueSelectorOP;
-typedef utility::pointer::owning_ptr< NotResidueSelector const > NotResidueSelectorCOP;
+typedef utility::pointer::shared_ptr< NotResidueSelector > NotResidueSelectorOP;
+typedef utility::pointer::shared_ptr< NotResidueSelector const > NotResidueSelectorCOP;
 
 } //namespace residue_selector
 } //namespace task

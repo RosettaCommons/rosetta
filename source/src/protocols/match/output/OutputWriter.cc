@@ -34,7 +34,7 @@ namespace match {
 namespace output {
 
 OutputWriter::OutputWriter()
-	: cst_io_(NULL)
+	: cst_io_(/* NULL */)
 {}
 
 OutputWriter::~OutputWriter() {}

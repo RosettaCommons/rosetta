@@ -29,13 +29,13 @@ class UserDefinedGroupDiscriminator;
 
 class GreenPacker;
 
-typedef utility::pointer::owning_ptr< MinimalRotamer > MinimalRotamerOP;
-typedef utility::pointer::owning_ptr< MinimalRotamer const > MinimalRotamerCOP;
-typedef utility::pointer::owning_ptr< GroupDiscriminator > GroupDiscriminatorOP;
-typedef utility::pointer::owning_ptr< GroupDiscriminator const > GroupDiscriminatorCOP;
-typedef utility::pointer::owning_ptr< UserDefinedGroupDiscriminator > UserDefinedGroupDiscriminatorOP;
-typedef utility::pointer::owning_ptr< GreenPacker > GreenPackerOP;
-typedef utility::pointer::owning_ptr< GreenPacker const > GreenPackerCOP;
+typedef utility::pointer::shared_ptr< MinimalRotamer > MinimalRotamerOP;
+typedef utility::pointer::shared_ptr< MinimalRotamer const > MinimalRotamerCOP;
+typedef utility::pointer::shared_ptr< GroupDiscriminator > GroupDiscriminatorOP;
+typedef utility::pointer::shared_ptr< GroupDiscriminator const > GroupDiscriminatorCOP;
+typedef utility::pointer::shared_ptr< UserDefinedGroupDiscriminator > UserDefinedGroupDiscriminatorOP;
+typedef utility::pointer::shared_ptr< GreenPacker > GreenPackerOP;
+typedef utility::pointer::shared_ptr< GreenPacker const > GreenPackerCOP;
 
 } // namespace moves
 } // namespace protocols

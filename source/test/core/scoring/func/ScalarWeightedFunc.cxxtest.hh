@@ -55,7 +55,7 @@ public:
 		core::Real weight=0.0;
 		FuncOP myfunc;
 
-		ScalarWeightedFuncOP func(new ScalarWeightedFunc(weight,myfunc));
+		ScalarWeightedFuncOP func( new ScalarWeightedFunc(weight,myfunc) );
 
 		// Get the scoring/constraints/epr_distance_potential.histogram from mini database
 		std::string epr_dist_histogram( basic::database::full_name("scoring/constraints/epr_distance_potential.histogram"));

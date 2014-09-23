@@ -30,11 +30,11 @@ namespace claims {
 
 class CutClaim;
 
-typedef  utility::pointer::owning_ptr< CutClaim >  CutClaimOP;
-typedef  utility::pointer::owning_ptr< CutClaim const >  CutClaimCOP;
+typedef  utility::pointer::shared_ptr< CutClaim >  CutClaimOP;
+typedef  utility::pointer::shared_ptr< CutClaim const >  CutClaimCOP;
 
-typedef  utility::pointer::access_ptr< CutClaim >  CutClaimAP;
-typedef  utility::pointer::access_ptr< CutClaim const >  CutClaimCAP;
+typedef  utility::pointer::weak_ptr< CutClaim >  CutClaimAP;
+typedef  utility::pointer::weak_ptr< CutClaim const >  CutClaimCAP;
 
 typedef utility::vector1< CutClaimOP > CutClaims;
 

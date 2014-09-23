@@ -29,11 +29,11 @@ namespace noesy_assign {
 class FragsToAtomDist;
 
 // Types
-typedef  utility::pointer::owning_ptr< FragsToAtomDist >  FragsToAtomDistOP;
-typedef  utility::pointer::owning_ptr< FragsToAtomDist const >  FragsToAtomDistCOP;
+typedef  utility::pointer::shared_ptr< FragsToAtomDist >  FragsToAtomDistOP;
+typedef  utility::pointer::shared_ptr< FragsToAtomDist const >  FragsToAtomDistCOP;
 
-typedef  utility::pointer::access_ptr< FragsToAtomDist >  FragsToAtomDistAP;
-typedef  utility::pointer::access_ptr< FragsToAtomDist const >  FragsToAtomDistCAP;
+typedef  utility::pointer::weak_ptr< FragsToAtomDist >  FragsToAtomDistAP;
+typedef  utility::pointer::weak_ptr< FragsToAtomDist const >  FragsToAtomDistCAP;
 
 } // namespace noesy_assign
 } // namespace protocols

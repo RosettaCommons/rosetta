@@ -26,8 +26,8 @@ namespace matdes {
 class InterfacePackingFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< InterfacePackingFilter >  InterfacePackingFilterOP;
-typedef utility::pointer::owning_ptr< InterfacePackingFilter const >  InterfacePackingFilterCOP;
+typedef utility::pointer::shared_ptr< InterfacePackingFilter >  InterfacePackingFilterOP;
+typedef utility::pointer::shared_ptr< InterfacePackingFilter const >  InterfacePackingFilterCOP;
 
 } // matdes
 } // protocols

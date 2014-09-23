@@ -419,10 +419,10 @@ bool SilentFileData::write_silent_struct(
 	// set minimal set of EnergyNames if we know about them ...
 	if ( has_shared_silent_data( energynames ) ) {
   	enames = EnergyNamesOP(
-			static_cast< EnergyNames * > ( get_shared_silent_data( energynames )() )
+			utility::pointer::static_pointer_cast< core::io::silent::EnergyNames > ( get_shared_silent_data( energynames ) )
 		);
 	} else {
-		enames = new EnergyNames();
+		enames = EnergyNamesOP( new EnergyNames() );
 		enames->energy_names( s.energy_names().energy_names() );
 		set_shared_silent_data( energynames, enames );
 	}
@@ -439,7 +439,7 @@ bool SilentFileData::write_silent_struct(
 				option[ out::file::silent_print_all_score_headers ]()
 		) {
 			s.print_header( out );
-			enames = new EnergyNames();
+			enames = EnergyNamesOP( new EnergyNames() );
 			enames->energy_names( s.energy_names().energy_names() );
 			set_shared_silent_data( energynames, enames );
 		}

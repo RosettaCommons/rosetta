@@ -16,8 +16,8 @@ namespace protocols {
 namespace sic_dock {
 
 class SICFast;
-typedef utility::pointer::owning_ptr< SICFast > SICFastOP;
-typedef utility::pointer::owning_ptr< SICFast const > SICFastCOP;
+typedef utility::pointer::shared_ptr< SICFast > SICFastOP;
+typedef utility::pointer::shared_ptr< SICFast const > SICFastCOP;
 
 }
 }

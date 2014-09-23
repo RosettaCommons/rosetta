@@ -150,7 +150,7 @@ read_metric_value_scalar(
 	MetricValueBaseOP & metric_value
 )
 {
-	metric_value = new MetricValue<T>;
+	metric_value = MetricValueBaseOP( new MetricValue<T> );
 
 	return read_metric_value_scalar<T>(is, *metric_value);
 }
@@ -189,7 +189,7 @@ read_metric_value_vector1(
 	MetricValueBaseOP & metric_value
 )
 {
-	metric_value = new MetricValue<vector1<T> >;
+	metric_value = MetricValueBaseOP( new MetricValue<vector1<T> > );
 
 	return read_metric_value_vector1<T>(is, *metric_value);
 }

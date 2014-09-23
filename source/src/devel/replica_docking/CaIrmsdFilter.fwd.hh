@@ -21,8 +21,8 @@ namespace replica_docking {
 
 class CaIrmsdFilter;
 
-typedef utility::pointer::owning_ptr< CaIrmsdFilter > CaIrmsdFilterOP;
-typedef utility::pointer::owning_ptr< CaIrmsdFilter const > CaIrmsdFilterCOP;
+typedef utility::pointer::shared_ptr< CaIrmsdFilter > CaIrmsdFilterOP;
+typedef utility::pointer::shared_ptr< CaIrmsdFilter const > CaIrmsdFilterCOP;
 
 }
 }

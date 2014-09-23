@@ -23,8 +23,8 @@ namespace methods {
 
 class SequenceDependentRefEnergy;
 
-typedef utility::pointer::owning_ptr< SequenceDependentRefEnergy > SequenceDependentRefEnergyOP;
-typedef utility::pointer::owning_ptr< SequenceDependentRefEnergy const > SequenceDependentRefEnergyCOP;
+typedef utility::pointer::shared_ptr< SequenceDependentRefEnergy > SequenceDependentRefEnergyOP;
+typedef utility::pointer::shared_ptr< SequenceDependentRefEnergy const > SequenceDependentRefEnergyCOP;
 
 } // methods
 } // scoring

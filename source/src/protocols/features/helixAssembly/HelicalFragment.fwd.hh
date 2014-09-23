@@ -22,8 +22,8 @@ namespace features{
 namespace helixAssembly {
 
 	class HelicalFragment;
-	typedef utility::pointer::owning_ptr< HelicalFragment > HelicalFragmentOP;
-	typedef utility::pointer::owning_ptr< HelicalFragment const > HelicalFragmentCOP;
+	typedef utility::pointer::shared_ptr< HelicalFragment > HelicalFragmentOP;
+	typedef utility::pointer::shared_ptr< HelicalFragment const > HelicalFragmentCOP;
 			
 } //namespace helixAssembly
 }// namespace features

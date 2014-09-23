@@ -69,14 +69,14 @@ static thread_local basic::Tracer TR( "protocols.dna.RestrictDesignToProteinDNAI
 
 TaskOperationOP RestrictDesignToProteinDNAInterfaceCreator::create_task_operation() const
 {
-	return new RestrictDesignToProteinDNAInterface;
+	return TaskOperationOP( new RestrictDesignToProteinDNAInterface );
 }
 
 RestrictDesignToProteinDNAInterface::RestrictDesignToProteinDNAInterface()
 	: parent(),
-		dna_chains_(0),
-		interface_(0),
-		reference_pose_(0),
+		dna_chains_(/* 0 */),
+		interface_(/* 0 */),
+		reference_pose_(/* 0 */),
 		base_only_( true ),
 		forget_chains_and_interface_( true ),
 		z_cutoff_( 0.0 ),
@@ -88,13 +88,13 @@ RestrictDesignToProteinDNAInterface::~RestrictDesignToProteinDNAInterface() {}
 
 TaskOperationOP RestrictDesignToProteinDNAInterface::clone() const
 {
-	return new RestrictDesignToProteinDNAInterface( *this );
+	return TaskOperationOP( new RestrictDesignToProteinDNAInterface( *this ) );
 }
 
 void
 RestrictDesignToProteinDNAInterface::copy_dna_chains( DnaChainsCOP dna_chains )
 {
-	dna_chains_ = new DnaChains( *dna_chains );
+	dna_chains_ = DnaChainsOP( new DnaChains( *dna_chains ) );
 }
 
 DnaChainsCOP
@@ -112,7 +112,7 @@ RestrictDesignToProteinDNAInterface::targeted_dna() const { return targeted_dna_
 void
 RestrictDesignToProteinDNAInterface::copy_interface( DnaInterfaceFinderCOP interface )
 {
-	interface_ = new DnaInterfaceFinder( *interface );
+	interface_ = DnaInterfaceFinderOP( new DnaInterfaceFinder( *interface ) );
 }
 
 DnaInterfaceFinderCOP
@@ -192,7 +192,7 @@ RestrictDesignToProteinDNAInterface::apply(
 
 	// get basepairing info unless supplied by user
 	if ( !dna_chains_ ) {
-		dna_chains_ = new DnaChains;
+		dna_chains_ = DnaChainsOP( new DnaChains );
 		find_basepairs( pose, *dna_chains_ );
 	}
 
@@ -339,8 +339,7 @@ RestrictDesignToProteinDNAInterface::apply(
 			}
 		}
 
-		interface_ =
-			new DnaInterfaceFinder( close_threshold_, contact_threshold_, z_cutoff_, base_only_ );
+		interface_ = DnaInterfaceFinderOP( new DnaInterfaceFinder( close_threshold_, contact_threshold_, z_cutoff_, base_only_ ) );
 		// perform arginine rotamer sweep to decide wether or not to pack/design protein residues
 		interface_->determine_protein_interface( pose, protein_positions, dna_design_positions );
 	}
@@ -413,8 +412,8 @@ RestrictDesignToProteinDNAInterface::apply(
 	if ( forget_chains_and_interface_ ) {
 		// abandon exisiting dna chains and interface info to prevent accumulation of state
 		TR.Debug << "forgetting chains and interface" << std::endl;
-		dna_chains_ = 0;
-		interface_ = 0;
+		dna_chains_.reset();
+		interface_.reset();
 	}
 }
 

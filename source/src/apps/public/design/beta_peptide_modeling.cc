@@ -213,8 +213,8 @@ minimize_test()
 	for ( Size i=1; i<= nres; ++i ) {
 		Residue const & i_rsd( pose.residue(i) );
 		for ( Size ii = 1; ii<= i_rsd.natoms(); ++ii ) {
-			core::scoring::func::FuncOP fx = new core::scoring::func::HarmonicFunc( 0.0, coord_sdev );
-			cst_set->add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii), fx ) );
+			core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) );
+			cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii), fx ) ) );
 		}
 	}
 
@@ -242,9 +242,9 @@ minimize_test()
 				( current_atom->xyz(), stub_atom1->xyz(),
 					stub_atom2->xyz(), stub_atom3->xyz() );
 
-			core::scoring::func::FuncOP fx = new core::scoring::func::HarmonicFunc( angle, dihedral_sdev );
-			cst_set->add_constraint( new DihedralConstraint( current_atom->id(), stub_atom1->id(),
-															 stub_atom2->id(), stub_atom3->id(), fx ) );
+			core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( angle, dihedral_sdev ) );
+			cst_set->add_constraint( ConstraintCOP( new DihedralConstraint( current_atom->id(), stub_atom1->id(),
+															 stub_atom2->id(), stub_atom3->id(), fx ) ) );
 
 		}
 

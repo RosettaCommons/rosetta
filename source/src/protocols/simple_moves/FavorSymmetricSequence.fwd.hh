@@ -21,8 +21,8 @@ namespace protocols {
 namespace simple_moves {
 
 class FavorSymmetricSequence;
-typedef utility::pointer::owning_ptr< FavorSymmetricSequence > FavorSymmetricSequenceOP;
-typedef utility::pointer::owning_ptr< FavorSymmetricSequence const > FavorSymmetricSequenceCOP;
+typedef utility::pointer::shared_ptr< FavorSymmetricSequence > FavorSymmetricSequenceOP;
+typedef utility::pointer::shared_ptr< FavorSymmetricSequence const > FavorSymmetricSequenceCOP;
 
 }
 }

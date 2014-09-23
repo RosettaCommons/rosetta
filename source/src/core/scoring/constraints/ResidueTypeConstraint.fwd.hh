@@ -24,8 +24,8 @@ namespace constraints {
 
 
 class ResidueTypeConstraint; // fwd declaration
-typedef utility::pointer::owning_ptr< ResidueTypeConstraint > ResidueTypeConstraintOP;
-typedef utility::pointer::owning_ptr< ResidueTypeConstraint const > ResidueTypeConstraintCOP;
+typedef utility::pointer::shared_ptr< ResidueTypeConstraint > ResidueTypeConstraintOP;
+typedef utility::pointer::shared_ptr< ResidueTypeConstraint const > ResidueTypeConstraintCOP;
 
 
 } // namespace constraints

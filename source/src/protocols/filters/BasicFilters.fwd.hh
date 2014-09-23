@@ -33,17 +33,17 @@ class MoveBeforeFilter;
 class IfThenFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< CompoundFilter > CompoundFilterOP;
-typedef utility::pointer::owning_ptr< CompoundFilter const >  CompoundFilterCOP;
+typedef utility::pointer::shared_ptr< CompoundFilter > CompoundFilterOP;
+typedef utility::pointer::shared_ptr< CompoundFilter const >  CompoundFilterCOP;
 
-typedef utility::pointer::owning_ptr< CombinedFilter > CombinedFilterOP;
-typedef utility::pointer::owning_ptr< CombinedFilter const >  CombinedFilterCOP;
+typedef utility::pointer::shared_ptr< CombinedFilter > CombinedFilterOP;
+typedef utility::pointer::shared_ptr< CombinedFilter const >  CombinedFilterCOP;
 
-typedef utility::pointer::owning_ptr< MoveBeforeFilter > MoveBeforeFilterOP;
-typedef utility::pointer::owning_ptr< MoveBeforeFilter const >  MoveBeforeFilterCOP;
+typedef utility::pointer::shared_ptr< MoveBeforeFilter > MoveBeforeFilterOP;
+typedef utility::pointer::shared_ptr< MoveBeforeFilter const >  MoveBeforeFilterCOP;
 
-typedef utility::pointer::owning_ptr< IfThenFilter > IfThenFilterOP;
-typedef utility::pointer::owning_ptr< IfThenFilter const >  IfThenFilterCOP;
+typedef utility::pointer::shared_ptr< IfThenFilter > IfThenFilterOP;
+typedef utility::pointer::shared_ptr< IfThenFilter const >  IfThenFilterCOP;
 
 // used by CompoundFilter
 enum boolean_operations {

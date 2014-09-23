@@ -84,7 +84,7 @@ public:
 		fourpts.xyz( 3, Vector( 0.707, 0.707, 0 ));
 		fourpts.xyz( 4, Vector( 0.707, 0.707, 1.0 )); // 90 degrees
 
-		core::scoring::func::CircularHarmonicFuncOP func = new core::scoring::func::CircularHarmonicFunc( numeric::conversions::radians( 80 ), 10 );
+		core::scoring::func::CircularHarmonicFuncOP func( new core::scoring::func::CircularHarmonicFunc( numeric::conversions::radians( 80 ), 10 ) );
 
 		AtomID at1( 1, 1), at2( 2, 1 ), at3( 3, 1 ), at4( 4, 1 );
 
@@ -109,7 +109,7 @@ public:
 		core::pose::PoseOP ubqstump = create_twores_1ubq_poseop();
 		TS_ASSERT( ubqstump->total_residue() == 2 );
 		AtomID at1( 1, 1), at2( 2, 1 ), at3( 3, 1 ), at4( 4, 1 );
-		core::scoring::func::CircularHarmonicFuncOP func = new core::scoring::func::CircularHarmonicFunc( numeric::conversions::radians( 80 ), 10 );
+		core::scoring::func::CircularHarmonicFuncOP func( new core::scoring::func::CircularHarmonicFunc( numeric::conversions::radians( 80 ), 10 ) );
 
 		ScoreFunction sfxn;
 		sfxn.set_weight( dihedral_constraint, 1.0 );
@@ -129,7 +129,7 @@ public:
 				at3.atomno() = ( rsd_type.dihedral( dihe ) ).key3();
 				at4.atomno() = ( rsd_type.dihedral( dihe ) ).key4();
 
-				DihedralConstraintOP dcst = new DihedralConstraint( at1, at2, at3, at4, func );
+				DihedralConstraintOP dcst( new DihedralConstraint( at1, at2, at3, at4, func ) );
 				ubqstump->add_constraint( dcst );
 
 				AtomDerivValidator adv( *ubqstump, sfxn, movemap );
@@ -155,7 +155,7 @@ public:
 		//core::import_pose::pose_from_pdb( start_pose, "core/scoring/constraints/test_in.pdb" );
 		pose::Pose pose = start_pose; // a copy
 
-		scoring::ScoreFunctionOP scorefxn = new scoring::ScoreFunction;
+		scoring::ScoreFunctionOP scorefxn( new scoring::ScoreFunction );
 		scorefxn->reset();
 		scorefxn->set_weight( scoring::fa_atr, 0.80 );
 		scorefxn->set_weight( scoring::fa_rep, 0.44 );
@@ -164,7 +164,7 @@ public:
 
 		// input stddev is in degrees, but dihedral constraints deal in radians
 		core::Real const stddev_radians = numeric::conversions::radians( 5.0 );
-		ConstraintSetOP constraints = new ConstraintSet();
+		ConstraintSetOP constraints( new ConstraintSet() );
 
 		core::Size const which_res = 116; // Leu 164
 		core::Size const which_chi = 2;
@@ -174,15 +174,15 @@ public:
 
 		core::Real const start_chi_degrees = rsd.chi(which_chi);
 		core::Real const start_chi_radians = numeric::conversions::radians( start_chi_degrees );
-		core::scoring::func::FuncOP restr_func = new core::scoring::func::CircularHarmonicFunc( start_chi_radians, stddev_radians );
+		core::scoring::func::FuncOP restr_func( new core::scoring::func::CircularHarmonicFunc( start_chi_radians, stddev_radians ) );
 		AtomIndices chi_idx = rsd_type.chi_atoms(which_chi); // 1-based
-		ConstraintOP constraint = new DihedralConstraint(
+		ConstraintOP constraint( new DihedralConstraint(
 			AtomID(chi_idx[1], which_res),
 			AtomID(chi_idx[2], which_res),
 			AtomID(chi_idx[3], which_res),
 			AtomID(chi_idx[4], which_res),
 			restr_func
-		);
+		) );
 		constraints->add_constraint( constraint );
 		pose.constraint_set( constraints );
 		TR << "Constraint: " << constraint->atom(1) << " " << constraint->atom(2) << " " << constraint->atom(3) << " " << constraint->atom(4) << std::endl;
@@ -199,7 +199,7 @@ public:
 		TR << "New constraint energy " << pose.energies().total_energies()[ scoring::dihedral_constraint ] << " (expected: >0)" << std::endl;
 		TS_ASSERT( 10.0 < pose.energies().total_energies()[ scoring::dihedral_constraint ] );
 
-		kinematics::MoveMapOP mm = new kinematics::MoveMap;
+		kinematics::MoveMapOP mm( new kinematics::MoveMap );
 		mm->set_chi( which_res, true );
 
 		TR << "Minimizing..." << std::endl;
@@ -207,8 +207,7 @@ public:
 	//protocols::simple_moves::MinMover min_mover( mm, scorefxn, "dfpmin_armijo_nonmonotone_atol", 0.001, true /*use_nblist*/ );
 
 		core::optimization::AtomTreeMinimizer minimizer;
-		core::optimization::MinimizerOptionsOP min_options =
-			new core::optimization::MinimizerOptions( "dfpmin_armijo_nonmonotone_atol", 0.001, true, true, false );
+		core::optimization::MinimizerOptionsOP min_options( new core::optimization::MinimizerOptions( "dfpmin_armijo_nonmonotone_atol", 0.001, true, true, false ) );
 		minimizer.run( pose, *mm, *scorefxn, *min_options );
 
 	//	min_mover.apply( pose );

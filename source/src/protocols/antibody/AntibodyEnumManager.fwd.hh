@@ -26,8 +26,8 @@ namespace antibody {
 // Forward
 class AntibodyEnumManager;
 
-typedef utility::pointer::owning_ptr< AntibodyEnumManager > AntibodyEnumManagerOP;
-typedef utility::pointer::owning_ptr< AntibodyEnumManager const > AntibodyEnumManagerCOP;
+typedef utility::pointer::shared_ptr< AntibodyEnumManager > AntibodyEnumManagerOP;
+typedef utility::pointer::shared_ptr< AntibodyEnumManager const > AntibodyEnumManagerCOP;
 
 
 } //namespace antibody

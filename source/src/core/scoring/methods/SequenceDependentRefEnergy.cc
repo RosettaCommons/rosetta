@@ -48,7 +48,7 @@ methods::EnergyMethodOP
 SequenceDependentRefEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new SequenceDependentRefEnergy;
+	return methods::EnergyMethodOP( new SequenceDependentRefEnergy );
 }
 
 ScoreTypes
@@ -138,7 +138,7 @@ void SequenceDependentRefEnergy::read_energy_weight_table() {
 EnergyMethodOP
 SequenceDependentRefEnergy::clone() const
 {
-	return new SequenceDependentRefEnergy( aa_seq_weights_ );
+	return EnergyMethodOP( new SequenceDependentRefEnergy( aa_seq_weights_ ) );
 }
 
 

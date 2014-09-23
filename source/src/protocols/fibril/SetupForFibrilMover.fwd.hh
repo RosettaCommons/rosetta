@@ -23,8 +23,8 @@ namespace protocols {
 namespace fibril {
 
 class SetupForFibrilMover;
-typedef utility::pointer::owning_ptr< SetupForFibrilMover > SetupForFibrilMoverOP;
-typedef utility::pointer::owning_ptr< SetupForFibrilMover const > SetupForFibrilMoverCOP;
+typedef utility::pointer::shared_ptr< SetupForFibrilMover > SetupForFibrilMoverOP;
+typedef utility::pointer::shared_ptr< SetupForFibrilMover const > SetupForFibrilMoverCOP;
 
 } // fibril
 } // rosetta

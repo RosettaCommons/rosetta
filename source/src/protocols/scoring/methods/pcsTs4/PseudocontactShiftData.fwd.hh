@@ -28,7 +28,7 @@ class PCS_data_per_lanthanides_Ts4;
 
 class PCS_data_Ts4;
 
-typedef utility::pointer::owning_ptr< PCS_data_Ts4 > PCS_data_Ts4OP;
+typedef utility::pointer::shared_ptr< PCS_data_Ts4 > PCS_data_Ts4OP;
 
 }//namespace pcsTs4
 }//namespace methods

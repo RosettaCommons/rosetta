@@ -53,7 +53,7 @@ methods::EnergyMethodOP
 MMBondAngleEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return new MMBondAngleEnergy( options );
+	return methods::EnergyMethodOP( new MMBondAngleEnergy( options ) );
 }
 
 ScoreTypes
@@ -68,22 +68,22 @@ static thread_local basic::Tracer TR( "core.mm.MMBondAngleEnergy" );
 
 MMBondAngleEnergy::MMBondAngleEnergy( methods::EnergyMethodOptions const & options ):
 	parent( methods::EnergyMethodCreatorOP( new MMBondAngleEnergyCreator ) ),
-	param_set_( NULL ),
+	param_set_( /* NULL */ ),
 	central_atoms_to_score_( options.bond_angle_central_atoms_to_score() )
 {
 	if ( options.bond_angle_residue_type_param_set() ) {
-		param_set_ = new core::scoring::mm::MMBondAngleResidueTypeParamSet( *(options.bond_angle_residue_type_param_set()) );
+		param_set_ = core::scoring::mm::MMBondAngleResidueTypeParamSetOP( new core::scoring::mm::MMBondAngleResidueTypeParamSet( *(options.bond_angle_residue_type_param_set()) ) );
 	}
 	//param_set_ = new core::scoring::mm::MMBondAngleResidueTypeParamSet();
 }
 
 MMBondAngleEnergy::MMBondAngleEnergy( MMBondAngleEnergy const & src ):
 	parent( src ),
-	param_set_( NULL ),
+	param_set_( /* NULL */ ),
 	central_atoms_to_score_( src.central_atoms_to_score_ )
 {
 	if ( src.param_set_ ) {
-		param_set_ = new core::scoring::mm::MMBondAngleResidueTypeParamSet( *src.param_set_ );
+		param_set_ = core::scoring::mm::MMBondAngleResidueTypeParamSetOP( new core::scoring::mm::MMBondAngleResidueTypeParamSet( *src.param_set_ ) );
 	}
 }
 
@@ -94,7 +94,7 @@ MMBondAngleEnergy::~MMBondAngleEnergy() {}
 EnergyMethodOP
 MMBondAngleEnergy::clone() const
 {
-	return new MMBondAngleEnergy( *this );
+	return EnergyMethodOP( new MMBondAngleEnergy( *this ) );
 }
 
 ///

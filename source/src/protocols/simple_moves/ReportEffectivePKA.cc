@@ -241,7 +241,7 @@ ReportEffectivePKA::parse_my_tag(
 
 protocols::moves::MoverOP
 ReportEffectivePKACreator::create_mover() const {
-	return new ReportEffectivePKA;
+	return protocols::moves::MoverOP( new ReportEffectivePKA );
 }
 
 std::string

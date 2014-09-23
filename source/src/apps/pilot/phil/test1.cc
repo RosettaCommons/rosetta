@@ -1058,12 +1058,12 @@ dna_deriv_test()
 	start_pose = pose;
 	start_jump_pose = jump_pose;
 
-	MoveMapOP mm ( new MoveMap );
+	MoveMapOP mm( new MoveMap );
 	mm->set_bb( true );
 	mm->set_jump( true );
 
 	// setup the options
-	scoring::ScoreFunctionOP scorefxn ( new scoring::ScoreFunction );
+	scoring::ScoreFunctionOP scorefxn( new scoring::ScoreFunction );
 	protocols::simple_moves::MinMover min_mover( mm, scorefxn, "dfpmin", 0.01, true /*use_nblist*/ );
 
 	{
@@ -1575,7 +1575,7 @@ simple_hbond_test()
 	dump_hbond_pdb( pose, "test_out.hbonds.pdb" );
 
 	// setup scorefxn
-	scoring::ScoreFunctionOP scorefxn ( new scoring::ScoreFunction );
+	scoring::ScoreFunctionOP scorefxn( new scoring::ScoreFunction );
 	scorefxn->set_weight( scoring::hbond_lr_bb, 1.0 );
 	scorefxn->set_weight( scoring::hbond_sr_bb, 1.0 );
 	scorefxn->set_weight( scoring::hbond_bb_sc, 1.0 );
@@ -1586,10 +1586,10 @@ simple_hbond_test()
 	//pose.energies().show( std::cout );
 
 	// set the moving dofs
-	kinematics::MoveMapOP mm1 ( new kinematics::MoveMap );
-	kinematics::MoveMapOP mm2 ( new kinematics::MoveMap );
-	kinematics::MoveMapOP mm3 ( new kinematics::MoveMap );
-	kinematics::MoveMapOP mm4 ( new kinematics::MoveMap );
+	kinematics::MoveMapOP mm1( new kinematics::MoveMap );
+	kinematics::MoveMapOP mm2( new kinematics::MoveMap );
+	kinematics::MoveMapOP mm3( new kinematics::MoveMap );
+	kinematics::MoveMapOP mm4( new kinematics::MoveMap );
 
 	// single backbone
 	mm1->set_bb( 4, true );
@@ -1886,7 +1886,7 @@ small_min_test()
 
 	std::string const outfile_prefix( option[ OptionKeys::out::file::o ] );
 
-	core::scoring::ScoreFunctionOP scorefxn = new ScoreFunction;
+	core::scoring::ScoreFunctionOP scorefxn( new ScoreFunction );
 
 	// aiming for standard packer weights
 	scorefxn->set_weight( fa_atr, 0.80 );
@@ -1901,25 +1901,25 @@ small_min_test()
 	scorefxn->set_weight( hbond_sc   , 1.10 );
 
 	// monte carlo object
-	MonteCarloOP mc ( new MonteCarlo( pose, *scorefxn, 0.8 /*temperature*/ ) );
+	MonteCarloOP mc( new MonteCarlo( pose, *scorefxn, 0.8 /*temperature*/ ) );
 
 	// the movable dof's
-	kinematics::MoveMapOP mm ( new kinematics::MoveMap );
+	kinematics::MoveMapOP mm( new kinematics::MoveMap );
 	mm->set_bb ( true );
 	mm->set_chi( true );
 
 	// options for minimizer
-	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, scorefxn, "dfpmin", 0.001, true /*use_nblist*/ );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn, "dfpmin", 0.001, true /*use_nblist*/ ) );
 
 	// packer options
 	pack::task::PackerTaskOP task
 		( pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line().restrict_to_repacking().or_include_current( true );
-	protocols::simple_moves::PackRotamersMoverOP pack_full_repack ( new protocols::simple_moves::PackRotamersMover( scorefxn, task ) );
+	protocols::simple_moves::PackRotamersMoverOP pack_full_repack( new protocols::simple_moves::PackRotamersMover( scorefxn, task ) );
 	/// @bug accumulate_residue_total_energies has to be called before anything can be done
 	(*scorefxn)( pose );
 	/// Now handled automatically.  scorefxn->accumulate_residue_total_energies( pose );
-	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial ( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn, *task, mc, 0.01 /*energycut*/ ) );
+	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn, *task, mc, 0.01 /*energycut*/ ) );
 //	pack_rottrial->setup_rottrial_task( pose, mc, 0.01 /*energycut*/ );
 
 	// setup the move objects
@@ -1932,7 +1932,7 @@ small_min_test()
 
 	//dump_pdb( pose, "tmp_start.pdb" );
 	{ // initial minimization
-		TrialMoverOP min_trial ( new TrialMover( min_mover, mc ) );
+		TrialMoverOP min_trial( new TrialMover( min_mover, mc ) );
 		min_trial->apply( pose );
 	}
 
@@ -1943,29 +1943,29 @@ small_min_test()
 
 	basic::prof_reset();
 
-	CycleMoverOP repack_cycle = new CycleMover;
+	CycleMoverOP repack_cycle( new CycleMover );
 
-	SequenceMoverOP main_min_seq = new SequenceMover;
+	SequenceMoverOP main_min_seq( new SequenceMover );
 	main_min_seq->add_mover( small_mover );
 	main_min_seq->add_mover( pack_rottrial );
 	main_min_seq->add_mover( min_mover );
 
-	SequenceMoverOP pack_min_seq = new SequenceMover;
+	SequenceMoverOP pack_min_seq( new SequenceMover );
 	pack_min_seq->add_mover( pack_full_repack );
 	pack_min_seq->add_mover( pack_rottrial );
 	pack_min_seq->add_mover( min_mover );
 
-	TrialMoverOP main_min_trial = new TrialMover( main_min_seq, mc );
-	TrialMoverOP pack_min_trail = new TrialMover( pack_min_seq, mc );
-	RepeatMoverOP main_min_cycle = new RepeatMover( main_min_trial, inner_cycle );
-	ProfilerMoverOP profiler = new ProfilerMover;
+	TrialMoverOP main_min_trial( new TrialMover( main_min_seq, mc ) );
+	TrialMoverOP pack_min_trail( new TrialMover( pack_min_seq, mc ) );
+	RepeatMoverOP main_min_cycle( new RepeatMover( main_min_trial, inner_cycle ) );
+	ProfilerMoverOP profiler( new ProfilerMover );
 
-	SequenceMoverOP full_seq = new SequenceMover;
+	SequenceMoverOP full_seq( new SequenceMover );
 	full_seq->add_mover( main_min_cycle );
 	full_seq->add_mover( pack_min_seq );
 	full_seq->add_mover( profiler );
 
-	RepeatMoverOP full_min_cycle = new RepeatMover( full_seq, outer_cycle );
+	RepeatMoverOP full_min_cycle( new RepeatMover( full_seq, outer_cycle ) );
 
 	for ( int n=1; n<= option[ OptionKeys::out::nstruct ]; ++n ) {
 		pose::Pose relax_pose;
@@ -2070,14 +2070,14 @@ rb_test()
 	start_pose.fold_tree( f1 );
 
 	// forward rotation
-	rigid::RigidBodyPerturbMoverOP rb_mover = new rigid::RigidBodyPerturbMover(
-			1 /*jump_num*/, 5.0 /*rot*/, 0.0 /*trans*/ );
-	moves::PDBDumpMoverOP dumper= new PDBDumpMover( "tmp_fwd_rotation_" );
-	moves::SequenceMoverOP sequencer ( new SequenceMover );
+	rigid::RigidBodyPerturbMoverOP rb_mover( new rigid::RigidBodyPerturbMover(
+			1 /*jump_num*/, 5.0 /*rot*/, 0.0 /*trans*/ ) );
+	moves::PDBDumpMoverOP dumper( new PDBDumpMover( "tmp_fwd_rotation_" ) );
+	moves::SequenceMoverOP sequencer( new SequenceMover );
 	sequencer->add_mover( rb_mover );
 	sequencer->add_mover( dumper );
 
-	moves::RepeatMoverOP cycler = new RepeatMover( sequencer, 10 );
+	moves::RepeatMoverOP cycler( new RepeatMover( sequencer, 10 ) );
 	pose = start_pose;
 	cycler->apply( pose );
 

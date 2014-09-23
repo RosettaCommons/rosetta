@@ -132,10 +132,10 @@ ScoreFunctionFeatures::write_score_function_weights_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column batch_id("batch_id", new DbInteger(), true);
-	Column score_function_name("score_function_name", new DbText(255), true);
-	Column score_type_id("score_type_id", new DbInteger(), true);
-	Column weight("weight", new DbReal(), true);
+	Column batch_id("batch_id", DbDataTypeOP( new DbInteger() ), true);
+	Column score_function_name("score_function_name", DbDataTypeOP( new DbText(255) ), true);
+	Column score_type_id("score_type_id", DbDataTypeOP( new DbInteger() ), true);
+	Column weight("weight", DbDataTypeOP( new DbReal() ), true);
 
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(batch_id);
@@ -176,7 +176,7 @@ ScoreFunctionFeatures::parse_my_tag(
 ) {
 	if(tag->hasOption("scorefxn")){
 		scfxn_name_ = tag->getOption<string>("scorefxn");
-		scfxn_ = data.get<ScoreFunction*>("scorefxns", scfxn_name_);
+		scfxn_ = data.get_ptr<ScoreFunction>("scorefxns", scfxn_name_);
 	} else {
 		stringstream error_msg;
 		error_msg

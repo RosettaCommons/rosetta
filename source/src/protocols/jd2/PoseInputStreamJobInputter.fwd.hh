@@ -20,7 +20,7 @@ namespace protocols {
 namespace jd2 {
 
 class PoseInputStreamJobInputter;
-typedef utility::pointer::owning_ptr< PoseInputStreamJobInputter > PoseInputStreamJobInputterOP;
+typedef utility::pointer::shared_ptr< PoseInputStreamJobInputter > PoseInputStreamJobInputterOP;
 
 } // jd2
 } // protocols

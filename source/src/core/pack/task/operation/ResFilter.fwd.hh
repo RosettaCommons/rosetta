@@ -22,8 +22,8 @@ namespace task {
 namespace operation {
 
 class ResFilter;
-typedef utility::pointer::owning_ptr< ResFilter > ResFilterOP;
-typedef utility::pointer::owning_ptr< ResFilter > ResFilterCOP;
+typedef utility::pointer::shared_ptr< ResFilter > ResFilterOP;
+typedef utility::pointer::shared_ptr< ResFilter > ResFilterCOP;
 
 } //namespace operation
 } //namespace task

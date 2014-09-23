@@ -208,7 +208,7 @@ public:
 	virtual
 	protocols::moves::MoverOP
 	fresh_instance() const {
-		return new AnchorFinderMover;
+		return protocols::moves::MoverOP( new AnchorFinderMover );
 	}
 
 	virtual
@@ -230,7 +230,7 @@ private:
 	std::ostringstream outcopy;
 };
 
-typedef utility::pointer::owning_ptr< AnchorFinderMover > AnchorFinderMoverOP;
+typedef utility::pointer::shared_ptr< AnchorFinderMover > AnchorFinderMoverOP;
 
 int main( int argc, char* argv[] )
 {
@@ -242,7 +242,7 @@ int main( int argc, char* argv[] )
 	option.add( bestoutfile, "file to print best loops in (ALL windows printed to tracer").def("goodfile.out");
 	devel::init(argc, argv);
 
-	protocols::jd2::JobDistributor::get_instance()->go(new AnchorFinderMover);
+	protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new AnchorFinderMover ));
 
 	TR << "************************d**o**n**e**************************************" << std::endl;
 	}

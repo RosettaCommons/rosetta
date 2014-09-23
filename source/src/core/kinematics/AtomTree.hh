@@ -547,14 +547,14 @@ private: // Methods
 	AtomOP
 	atom_pointer( AtomID const & id )
 	{
-		return atom_pointer_[ id ]();
+		return atom_pointer_[ id ];
 	}
 
 	/// @brief  Convenience when we want an Atom*
 	AtomCOP
 	atom_pointer( AtomID const & id ) const
 	{
-		return atom_pointer_[ id ]();
+		return atom_pointer_[ id ];
 	}
 
 

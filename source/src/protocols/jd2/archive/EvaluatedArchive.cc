@@ -90,7 +90,7 @@ EvaluatedArchive::~EvaluatedArchive() {}
 
 
 EvaluatedArchive::EvaluatedArchive()
-	: scorefxn_( NULL ),
+	: scorefxn_( /* NULL */ ),
 		scores_are_clean_( true ),
 		b_evaluate_incoming_decoys_( !basic::options::option[ basic::options::OptionKeys::iterative::evaluate_only_on_slaves ]() ) ///yields bottleneck on BG
 {
@@ -101,7 +101,7 @@ EvaluatedArchive::EvaluatedArchive()
 
 EvaluatedArchive::EvaluatedArchive( ArchiveManagerAP ptr )
 	: ArchiveBase( ptr ),
-		scorefxn_( NULL ),
+		scorefxn_( /* NULL */ ),
 		scores_are_clean_( true ),
 		b_evaluate_incoming_decoys_( !basic::options::option[ basic::options::OptionKeys::iterative::evaluate_only_on_slaves ]() ) ///yields bottleneck on BG
 {

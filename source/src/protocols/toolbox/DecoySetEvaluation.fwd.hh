@@ -28,8 +28,8 @@ namespace toolbox {
 class DecoySetEvaluation;
 
 // Types
-typedef  utility::pointer::owning_ptr< DecoySetEvaluation >  DecoySetEvaluationOP;
-typedef  utility::pointer::owning_ptr< DecoySetEvaluation const >  DecoySetEvaluationCOP;
+typedef  utility::pointer::shared_ptr< DecoySetEvaluation >  DecoySetEvaluationOP;
+typedef  utility::pointer::shared_ptr< DecoySetEvaluation const >  DecoySetEvaluationCOP;
 
 
 } // namespace kinematics

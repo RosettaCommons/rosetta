@@ -29,7 +29,7 @@ namespace features {
 WaterFeaturesCreator::WaterFeaturesCreator() {}
 WaterFeaturesCreator::~WaterFeaturesCreator() {}
 FeaturesReporterOP WaterFeaturesCreator::create_features_reporter() const {
-	return new WaterFeatures;
+	return FeaturesReporterOP( new WaterFeatures );
 }
 
 std::string WaterFeaturesCreator::type_name() const {

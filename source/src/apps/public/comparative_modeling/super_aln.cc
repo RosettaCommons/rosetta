@@ -73,9 +73,7 @@ main( int argc, char * argv [] ) {
 	ResidueTypeSetCOP rsd_set =
 		ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
-	PoseInputStreamOP pdb_input(
-		new PDBPoseInputStream( option[ in::file::s ]() )
-	);
+	PoseInputStreamOP pdb_input( new PDBPoseInputStream( option[ in::file::s ]() ) );
 
 	core::pose::Pose pose1, pose2;
 	pdb_input->fill_pose( pose1, *rsd_set );

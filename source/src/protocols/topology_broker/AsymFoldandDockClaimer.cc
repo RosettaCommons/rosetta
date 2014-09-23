@@ -64,7 +64,7 @@ AsymFoldandDockClaimer::AsymFoldandDockClaimer( pose::Pose const& input_pose ) :
 	//clone
 TopologyClaimerOP
 AsymFoldandDockClaimer::clone() const {
-	return new AsymFoldandDockClaimer( *this );
+	return TopologyClaimerOP( new AsymFoldandDockClaimer( *this ) );
 }
 
 ///@brief type() is specifying the output name of the TopologyClaimer
@@ -91,13 +91,13 @@ AsymFoldandDockClaimer::add_mover(
 	using namespace protocols::loops;
 	using namespace protocols::simple_moves;
 
-	moves::MoverOP move_anchor_mover =  new simple_moves::asym_fold_and_dock::AsymFoldandDockMoveRbJumpMover( chain_break_res_ );
+	moves::MoverOP move_anchor_mover( new simple_moves::asym_fold_and_dock::AsymFoldandDockMoveRbJumpMover( chain_break_res_ ) );
 	moves::MoverOP rb_trial_mover (
 		(stageID==abinitio::STAGE_4) ?
 		new simple_moves::asym_fold_and_dock::AsymFoldandDockRbTrialMover( scorefxn.get_self_ptr(), true ) :
 		new simple_moves::asym_fold_and_dock::AsymFoldandDockRbTrialMover( scorefxn.get_self_ptr() )  // smooth RB moves in stage 4
 	);
-	moves::MoverOP slide_mover = new protocols::docking::DockingSlideIntoContact( docking_jump_ );
+	moves::MoverOP slide_mover( new protocols::docking::DockingSlideIntoContact( docking_jump_ ) );
 	core::Real move_anchor_weight(1.0),
 	           rb_weight(option[ OptionKeys::fold_and_dock::rigid_body_frequency ]()),
 	           slide_weight(option[ OptionKeys::fold_and_dock::slide_contact_frequency ]());
@@ -151,7 +151,7 @@ void AsymFoldandDockClaimer::initialize_dofs(
 */
 
 	// make a PDBInfo for the pose...
-	pose::PDBInfoOP pdb_info = new pose::PDBInfo( pose, true );
+	pose::PDBInfoOP pdb_info( new pose::PDBInfo( pose, true ) );
 
 	utility::vector1< char > chain;
 	for ( Size i=1; i<= pdb_info->nres(); ++i ) {
@@ -183,7 +183,7 @@ void AsymFoldandDockClaimer::initialize_dofs(
 	docking_jump_ = docking_jump( pose, chain_break_res_ );
 	dock_init.apply( pose );
 	// Setup the movemap
-	kinematics::MoveMapOP movemap = new kinematics::MoveMap();
+	kinematics::MoveMapOP movemap( new kinematics::MoveMap() );
 	movemap->set_bb( true );
 	movemap->set_jump( true );
 
@@ -205,9 +205,9 @@ void AsymFoldandDockClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	utility::vector1< int > cuts( input_pose_.conformation().fold_tree().cutpoints() );
 	for ( Size i = 1; i <= cuts.size(); ++i ) {
 
-		new_claims.push_back( new claims::CutClaim( get_self_weak_ptr(), std::make_pair( Parent::label(), cuts[i]),
+		new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::CutClaim( get_self_weak_ptr(), std::make_pair( Parent::label(), cuts[i]),
 																								claims::DofClaim::INIT // for now... eventually CAN_INIT ?
-																								) );
+																								) ) );
 	}
 }
 

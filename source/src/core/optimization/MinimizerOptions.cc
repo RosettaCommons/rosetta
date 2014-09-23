@@ -71,9 +71,9 @@ MinimizerOptions::MinimizerOptions(
 MinimizerOptionsOP
 MinimizerOptions::clone() const
 {
-	MinimizerOptionsOP minoptop = new MinimizerOptions(
+	MinimizerOptionsOP minoptop( new MinimizerOptions(
 		min_type_, minimize_tolerance_, use_nblist_,
-		deriv_check_, deriv_check_verbose_ );
+		deriv_check_, deriv_check_verbose_ ) );
 	if ( nblist_auto_update_ ) minoptop->nblist_auto_update_ = true;
 	if ( 	deriv_check_to_stdout_ ) minoptop->deriv_check_to_stdout_ = true;
 

@@ -22,8 +22,8 @@ namespace loophash {
 
 
 class LoopHashSampler;
-typedef utility::pointer::owning_ptr< LoopHashSampler > LoopHashSamplerOP;
-typedef utility::pointer::owning_ptr< LoopHashSampler const > LoopHashSamplerCOP;
+typedef utility::pointer::shared_ptr< LoopHashSampler > LoopHashSamplerOP;
+typedef utility::pointer::shared_ptr< LoopHashSampler const > LoopHashSamplerCOP;
 
 
 }

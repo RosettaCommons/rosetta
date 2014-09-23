@@ -23,8 +23,8 @@ namespace stepwise {
 namespace options {
 	
 	class StepWiseBasicOptions;
-	typedef utility::pointer::owning_ptr< StepWiseBasicOptions > StepWiseBasicOptionsOP;
-	typedef utility::pointer::owning_ptr< StepWiseBasicOptions const > StepWiseBasicOptionsCOP;
+	typedef utility::pointer::shared_ptr< StepWiseBasicOptions > StepWiseBasicOptionsOP;
+	typedef utility::pointer::shared_ptr< StepWiseBasicOptions const > StepWiseBasicOptionsCOP;
 	
 } //options 
 } //stepwise 

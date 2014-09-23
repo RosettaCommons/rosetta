@@ -29,7 +29,7 @@ namespace features {
 ScoreTypeFeaturesCreator::ScoreTypeFeaturesCreator() {}
 ScoreTypeFeaturesCreator::~ScoreTypeFeaturesCreator() {}
 FeaturesReporterOP ScoreTypeFeaturesCreator::create_features_reporter() const {
-	return new ScoreTypeFeatures;
+	return FeaturesReporterOP( new ScoreTypeFeatures );
 }
 
 std::string ScoreTypeFeaturesCreator::type_name() const {

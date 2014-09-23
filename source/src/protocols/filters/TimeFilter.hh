@@ -41,10 +41,10 @@ public:
 	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
 	virtual FilterOP clone() const {
-		return new TimeFilter( *this );
+		return FilterOP( new TimeFilter( *this ) );
 	}
 	virtual FilterOP fresh_instance() const{
-		return new TimeFilter();
+		return FilterOP( new TimeFilter() );
 	}
 
 	virtual ~TimeFilter();

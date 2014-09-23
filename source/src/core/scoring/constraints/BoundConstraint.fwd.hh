@@ -24,8 +24,8 @@ namespace scoring {
 namespace constraints {
 
 class BoundFunc;
-typedef utility::pointer::owning_ptr< BoundFunc > BoundFuncOP;
-typedef utility::pointer::owning_ptr< BoundFunc const > BoundFuncCOP;
+typedef utility::pointer::shared_ptr< BoundFunc > BoundFuncOP;
+typedef utility::pointer::shared_ptr< BoundFunc const > BoundFuncCOP;
 
 }
 }

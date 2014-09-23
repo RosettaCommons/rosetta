@@ -56,10 +56,10 @@ create_theozyme_pdb()
 
 	std::string cstfile_name( basic::options::option[basic::options::OptionKeys::match::geometric_constraint_file]() );
 
-	protocols::toolbox::match_enzdes_util::EnzConstraintIOOP enz_io = new protocols::toolbox::match_enzdes_util::EnzConstraintIO( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
+	protocols::toolbox::match_enzdes_util::EnzConstraintIOOP enz_io( new protocols::toolbox::match_enzdes_util::EnzConstraintIO( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) ) );
 	enz_io->read_enzyme_cstfile( cstfile_name );
 
-	protocols::toolbox::match_enzdes_util::InvrotTreeOP invrot_tree = new protocols::toolbox::match_enzdes_util::TheozymeInvrotTree( enz_io );
+	protocols::toolbox::match_enzdes_util::InvrotTreeOP invrot_tree( new protocols::toolbox::match_enzdes_util::TheozymeInvrotTree( enz_io ) );
 	invrot_tree->generate_targets_and_inverse_rotamers();
 
 	//test whether the input cstfile is in the same directory or somewhere else
@@ -78,9 +78,9 @@ create_theozyme_pdb()
 	if( basic::options::option[basic::options::OptionKeys::in::file::s].user() ){
 		utility::vector1< std::string > input_files = basic::options::start_files();
 		if( input_files.size() == 1){
-			core::pose::PoseOP pose = new core::pose::Pose();
+			core::pose::PoseOP pose( new core::pose::Pose() );
 			core::import_pose::pose_from_pdb( *pose, input_files[ 1 ] );
-			protocols::toolbox::match_enzdes_util::AllowedSeqposForGeomCstOP allowed_seqpos = new protocols::toolbox::match_enzdes_util::AllowedSeqposForGeomCst();
+			protocols::toolbox::match_enzdes_util::AllowedSeqposForGeomCstOP allowed_seqpos( new protocols::toolbox::match_enzdes_util::AllowedSeqposForGeomCst() );
 			allowed_seqpos->initialize_from_command_line( pose );
 			protocols::toolbox::match_enzdes_util::AlignPoseToInvrotTreeMover align_pose( invrot_tree, allowed_seqpos);
 			align_pose.set_add_target_to_pose( true );

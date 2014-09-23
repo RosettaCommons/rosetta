@@ -75,7 +75,7 @@ methods::EnergyMethodOP
 OccludedHbondSolEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return new geometric_solvation::OccludedHbondSolEnergy( options );
+	return methods::EnergyMethodOP( new geometric_solvation::OccludedHbondSolEnergy( options ) );
 }
 
 ScoreTypes
@@ -117,7 +117,7 @@ OccludedHbondSolEnergy::OccludedHbondSolEnergy( OccludedHbondSolEnergy const & s
 methods::EnergyMethodOP
 OccludedHbondSolEnergy::clone() const
 {
-	return new OccludedHbondSolEnergy( *this );
+	return methods::EnergyMethodOP( new OccludedHbondSolEnergy( *this ) );
 }
 
 void

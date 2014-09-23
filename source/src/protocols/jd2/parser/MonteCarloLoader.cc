@@ -57,7 +57,7 @@ void MonteCarloLoader::load_data(
 		core::scoring::ScoreFunctionOP scorefxn =
 			rosetta_scripts::parse_score_function( montecarlo_tag, data )->clone();
 
-		protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( *scorefxn, mctemp );
+		protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( *scorefxn, mctemp ) );
 		// add more options for the MonteCarlo object here, e.g.
 		// 1. autotemp / quenchtemp
 		// 2. heat after cycles
@@ -67,7 +67,7 @@ void MonteCarloLoader::load_data(
 }
 
 DataLoaderOP
-MonteCarloLoaderCreator::create_loader() const { return new MonteCarloLoader; }
+MonteCarloLoaderCreator::create_loader() const { return DataLoaderOP( new MonteCarloLoader ); }
 
 std::string
 MonteCarloLoaderCreator::keyname() const { return "MONTECARLOS"; }

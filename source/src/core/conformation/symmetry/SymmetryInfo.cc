@@ -422,7 +422,7 @@ SymmetryInfo::SymmetryInfo(
 SymmetryInfoOP
 SymmetryInfo::clone() const
 {
-  return new SymmetryInfo( *this );
+  return SymmetryInfoOP( new SymmetryInfo( *this ) );
 }
 
 // Initialize from "de-novo-style" symmdef files (as from make_symmdef_denovo.py)

@@ -22,8 +22,8 @@ namespace simple_moves{
 
 //Forwards and OP typedefs
 class ScoreMover;
-typedef utility::pointer::owning_ptr< ScoreMover > ScoreMoverOP;
-typedef utility::pointer::owning_ptr< ScoreMover const > ScoreMoverCOP;
+typedef utility::pointer::shared_ptr< ScoreMover > ScoreMoverOP;
+typedef utility::pointer::shared_ptr< ScoreMover const > ScoreMoverCOP;
 
 }//simple_moves
 }//protocols

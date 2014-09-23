@@ -54,7 +54,7 @@ methods::EnergyMethodOP
 ProClosureEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new ProClosureEnergy;
+	return methods::EnergyMethodOP( new ProClosureEnergy );
 }
 
 ScoreTypes
@@ -93,7 +93,7 @@ ProClosureEnergy::~ProClosureEnergy()
 EnergyMethodOP
 ProClosureEnergy::clone() const
 {
-	return new ProClosureEnergy;
+	return EnergyMethodOP( new ProClosureEnergy );
 }
 
 /////////////////////////////////////////////////////////////////////////////

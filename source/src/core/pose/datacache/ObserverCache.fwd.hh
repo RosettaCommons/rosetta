@@ -29,19 +29,19 @@ class ObserverCache;
 
 
 /// @brief ObserverCache owning pointer
-typedef utility::pointer::owning_ptr< ObserverCache > ObserverCacheOP;
+typedef utility::pointer::shared_ptr< ObserverCache > ObserverCacheOP;
 
 
 /// @brief ObserverCache const owning pointer
-typedef utility::pointer::owning_ptr< ObserverCache const > ObserverCacheCOP;
+typedef utility::pointer::shared_ptr< ObserverCache const > ObserverCacheCOP;
 
 
 /// @brief ObserverCache access pointer
-typedef utility::pointer::access_ptr< ObserverCache > ObserverCacheAP;
+typedef utility::pointer::weak_ptr< ObserverCache > ObserverCacheAP;
 
 
 /// @brief ObserverCache const access pointer
-typedef utility::pointer::access_ptr< ObserverCache const > ObserverCacheCAP;
+typedef utility::pointer::weak_ptr< ObserverCache const > ObserverCacheCAP;
 
 
 } // namespace datacache

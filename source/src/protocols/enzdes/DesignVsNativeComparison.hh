@@ -45,7 +45,7 @@ namespace protocols {
 namespace enzdes {
 
 class DesignVsNativeComparison;
-typedef utility::pointer::owning_ptr< DesignVsNativeComparison > DesignVsNativeComparisonOP;
+typedef utility::pointer::shared_ptr< DesignVsNativeComparison > DesignVsNativeComparisonOP;
 
 
 

@@ -171,7 +171,7 @@ read_additional_pdb_data(
 
 pose::PoseOP pose_from_pdb(std::string const & filename, bool read_fold_tree)
 {
-	pose::PoseOP pose = new pose::Pose();
+	pose::PoseOP pose( new pose::Pose() );
 	pose_from_pdb( *pose, filename, read_fold_tree);
 	return pose;
 }
@@ -179,7 +179,7 @@ pose::PoseOP pose_from_pdb(std::string const & filename, bool read_fold_tree)
 
 pose::PoseOP pose_from_pdb(chemical::ResidueTypeSet const & residue_set, std::string const & filename, 	bool read_fold_tree)
 {
-	pose::PoseOP pose = new pose::Pose();
+	pose::PoseOP pose( new pose::Pose() );
 	pose_from_pdb( *pose, residue_set, filename, read_fold_tree);
 	return pose;
 }
@@ -222,7 +222,7 @@ pose_from_pdb(
 	}
 
 	//fpd If the conformation is not of type core::Conformation, reset it
-	conformation::ConformationOP conformation_op = new conformation::Conformation();
+	conformation::ConformationOP conformation_op( new conformation::Conformation() );
 	if ( !pose.conformation().same_type_as_me( *conformation_op, true ) ) {
 		pose.set_new_conformation( conformation_op );
 	}
@@ -370,7 +370,7 @@ poseOPs_from_pdbs(
 	vector1< pose::PoseOP > poses;
 	typedef vector1< string >::const_iterator vec_it;
 	for ( vec_it it = filenames.begin(), end = filenames.end(); it != end; ++it ) {
-		pose::PoseOP pose = new pose::Pose;
+		pose::PoseOP pose( new pose::Pose );
 		core::import_pose::pose_from_pdb( *pose, residue_set, *it, options, read_fold_tree );
 		poses.push_back( pose );
 	}

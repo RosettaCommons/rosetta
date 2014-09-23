@@ -209,7 +209,7 @@ public:
 
 	/// @brief Return a copy of this mover.
 	protocols::moves::MoverOP
-	clone() const { return new protocols::canonical_sampling::FixedTemperatureController( temperature_ ); };
+	clone() const { return protocols::moves::MoverOP( new protocols::canonical_sampling::FixedTemperatureController( temperature_ ) ); };
 
 	virtual
 	std::string

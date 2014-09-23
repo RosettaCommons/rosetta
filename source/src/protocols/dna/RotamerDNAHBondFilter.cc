@@ -55,7 +55,7 @@ RotamerDNAHBondFilter::RotamerDNAHBondFilter(
 	nfiltered_(0),
 	naccepted_(0),
 	hb_database_(scoring::hbonds::HBondDatabase::get_database()),
-	hbondoptions_(new scoring::hbonds::HBondOptions )
+	hbondoptions_(core::scoring::hbonds::HBondOptionsOP( new scoring::hbonds::HBondOptions ) )
 {}
 
 RotamerDNAHBondFilter::~RotamerDNAHBondFilter() {}

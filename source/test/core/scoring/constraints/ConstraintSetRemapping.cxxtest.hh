@@ -117,7 +117,7 @@ void test_constraint_set_remapping()
 	//core::import_pose::pose_from_pdb( pose, "core/scoring/constraints/test_in.pdb" );
 
 
-	scoring::ScoreFunctionOP scorefxn = new scoring::ScoreFunction;
+	scoring::ScoreFunctionOP scorefxn( new scoring::ScoreFunction );
 	scorefxn->reset();
 	scorefxn->set_weight( scoring::fa_atr, 0.80 );
 	scorefxn->set_weight( scoring::fa_rep, 0.44 );
@@ -130,8 +130,8 @@ void test_constraint_set_remapping()
 	scorefxn->set_weight( scoring::backbone_stub_constraint, 1.0 );
 
 	core::Real const stddev_radians = numeric::conversions::radians( 5.0 );
-	core::scoring::func::FuncOP some_func = new core::scoring::func::CircularHarmonicFunc( 1.05, stddev_radians );
-	core::scoring::func::FuncOP some_other_func = new core::scoring::func::HarmonicFunc( 0.5, 1.0 );
+	core::scoring::func::FuncOP some_func( new core::scoring::func::CircularHarmonicFunc( 1.05, stddev_radians ) );
+	core::scoring::func::FuncOP some_other_func( new core::scoring::func::HarmonicFunc( 0.5, 1.0 ) );
 
 	utility::vector1< core::Size > cst_positions;
 	cst_positions.push_back( 3 );
@@ -152,41 +152,41 @@ void test_constraint_set_remapping()
 	cst_positions.push_back( 70 );
 
 	//some random constraints
-	pose.add_constraint( new AtomPairConstraint( AtomID(1, 12), AtomID(3, 57), some_func ) );
-	pose.add_constraint( new AtomPairConstraint( AtomID(6, 20), AtomID(1, 17), some_other_func ) );
-	pose.add_constraint( new AtomPairConstraint( AtomID(7, 15), AtomID(3, 16), some_other_func ) );
-	pose.add_constraint( new AngleConstraint( AtomID(6, 19), AtomID(1, 3), AtomID(10, 3 ), some_func ) );
-	pose.add_constraint( new AngleConstraint( AtomID(4, 69), AtomID(1, 57), AtomID(3, 30 ), some_func ) );
-	pose.add_constraint( new DihedralConstraint( AtomID(4, 65), AtomID(1, 65), AtomID(3, 65 ), AtomID(2, 65 ), some_func ) );
-	pose.add_constraint( new DihedralConstraint( AtomID(8, 44), AtomID(1, 44), AtomID(2, 48 ), AtomID(1, 48 ), some_func ) );
-	pose.add_constraint( new ResidueTypeConstraint( pose, 33, 1.0 ) );
+	pose.add_constraint( scoring::constraints::ConstraintCOP( new AtomPairConstraint( AtomID(1, 12), AtomID(3, 57), some_func ) ) );
+	pose.add_constraint( scoring::constraints::ConstraintCOP( new AtomPairConstraint( AtomID(6, 20), AtomID(1, 17), some_other_func ) ) );
+	pose.add_constraint( scoring::constraints::ConstraintCOP( new AtomPairConstraint( AtomID(7, 15), AtomID(3, 16), some_other_func ) ) );
+	pose.add_constraint( scoring::constraints::ConstraintCOP( new AngleConstraint( AtomID(6, 19), AtomID(1, 3), AtomID(10, 3 ), some_func ) ) );
+	pose.add_constraint( scoring::constraints::ConstraintCOP( new AngleConstraint( AtomID(4, 69), AtomID(1, 57), AtomID(3, 30 ), some_func ) ) );
+	pose.add_constraint( scoring::constraints::ConstraintCOP( new DihedralConstraint( AtomID(4, 65), AtomID(1, 65), AtomID(3, 65 ), AtomID(2, 65 ), some_func ) ) );
+	pose.add_constraint( scoring::constraints::ConstraintCOP( new DihedralConstraint( AtomID(8, 44), AtomID(1, 44), AtomID(2, 48 ), AtomID(1, 48 ), some_func ) ) );
+	pose.add_constraint( scoring::constraints::ConstraintCOP( new ResidueTypeConstraint( pose, 33, 1.0 ) ) );
 
 	utility::vector1< ConstraintCOP > multi_csts;
 	utility::vector1< ConstraintCOP > ambig_csts;
 
-	multi_csts.push_back( new AngleConstraint( AtomID(6, 15), AtomID(1, 15), AtomID(3, 3 ), some_func ) );
-	multi_csts.push_back( new AtomPairConstraint( AtomID(2, 15), AtomID(2, 3),  some_func ) );
-	multi_csts.push_back( new DihedralConstraint( AtomID(2, 15), AtomID(7, 15), AtomID(1, 65), AtomID(3, 65 ),  some_func ) );
+	multi_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new AngleConstraint( AtomID(6, 15), AtomID(1, 15), AtomID(3, 3 ), some_func ) ) );
+	multi_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new AtomPairConstraint( AtomID(2, 15), AtomID(2, 3),  some_func ) ) );
+	multi_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new DihedralConstraint( AtomID(2, 15), AtomID(7, 15), AtomID(1, 65), AtomID(3, 65 ),  some_func ) ) );
 
-	ambig_csts.push_back( new AngleConstraint( AtomID(6, 33), AtomID(1, 33), AtomID(3, 30 ), some_func ) );
-	ambig_csts.push_back( new AtomPairConstraint( AtomID(2, 35), AtomID(2, 13),  some_func ) );
-	ambig_csts.push_back( new DihedralConstraint( AtomID(2, 35), AtomID(7, 35), AtomID(1, 45), AtomID(3, 65 ),  some_func ) );
+	ambig_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new AngleConstraint( AtomID(6, 33), AtomID(1, 33), AtomID(3, 30 ), some_func ) ) );
+	ambig_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new AtomPairConstraint( AtomID(2, 35), AtomID(2, 13),  some_func ) ) );
+	ambig_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new DihedralConstraint( AtomID(2, 35), AtomID(7, 35), AtomID(1, 45), AtomID(3, 65 ),  some_func ) ) );
 
-	ConstraintCOP posemulticst = pose.add_constraint( new MultiConstraint( multi_csts ) );
-	ConstraintCOP poseambigcst = pose.add_constraint( new AmbiguousConstraint( ambig_csts ) );
+	ConstraintCOP posemulticst = pose.add_constraint( scoring::constraints::ConstraintCOP( new MultiConstraint( multi_csts ) ) );
+	ConstraintCOP poseambigcst = pose.add_constraint( scoring::constraints::ConstraintCOP( new AmbiguousConstraint( ambig_csts ) ) );
 
 	//first test whether constraint == operators work
 	utility::vector1< ConstraintCOP > testeq_csts;
-	testeq_csts.push_back( new AngleConstraint(AtomID(6, 15), AtomID(1, 15), AtomID(3, 3 ), some_func ) );
-	testeq_csts.push_back( new AtomPairConstraint( AtomID(2, 15), AtomID(2, 3),  some_func ) );
-	testeq_csts.push_back( new DihedralConstraint( AtomID(2, 15), AtomID(7, 15), AtomID(1, 65), AtomID(3, 65 ),  some_func ) );
+	testeq_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new AngleConstraint(AtomID(6, 15), AtomID(1, 15), AtomID(3, 3 ), some_func ) ) );
+	testeq_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new AtomPairConstraint( AtomID(2, 15), AtomID(2, 3),  some_func ) ) );
+	testeq_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new DihedralConstraint( AtomID(2, 15), AtomID(7, 15), AtomID(1, 65), AtomID(3, 65 ),  some_func ) ) );
 	MultiConstraint testeq_mult( testeq_csts );
 	AmbiguousConstraint testeq_ambig1( testeq_csts );
 
 	utility::vector1< ConstraintCOP > testeq_ambig_csts;
-	testeq_ambig_csts.push_back( new AngleConstraint( AtomID(6, 33), AtomID(1, 33), AtomID(3, 30 ), some_func ) );
-	testeq_ambig_csts.push_back( new AtomPairConstraint( AtomID(2, 35), AtomID(2, 13),  some_func ) );
-	testeq_ambig_csts.push_back( new DihedralConstraint( AtomID(2, 35), AtomID(7, 35), AtomID(1, 45), AtomID(3, 65 ),  some_func ) );
+	testeq_ambig_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new AngleConstraint( AtomID(6, 33), AtomID(1, 33), AtomID(3, 30 ), some_func ) ) );
+	testeq_ambig_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new AtomPairConstraint( AtomID(2, 35), AtomID(2, 13),  some_func ) ) );
+	testeq_ambig_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new DihedralConstraint( AtomID(2, 35), AtomID(7, 35), AtomID(1, 45), AtomID(3, 65 ),  some_func ) ) );
 	AmbiguousConstraint testeq_ambig2( testeq_ambig_csts );
 
 	TS_ASSERT( *(testeq_csts[1]) == *(multi_csts[1]) );
@@ -241,7 +241,7 @@ void test_constraint_set_remapping()
 	TS_ASSERT_DELTA( orig_score, test3_score, 0.00001 );
 
 	///now do some tests regarding adding of loop modelling residue types
-	ConstraintCOP bstubcst = 	pose.add_constraint( new BackboneStubConstraint( pose, 15, fixed_pt, pose.residue(19), -80.0, 0.2) );
+	ConstraintCOP bstubcst = 	pose.add_constraint( scoring::constraints::ConstraintCOP( new BackboneStubConstraint( pose, 15, fixed_pt, pose.residue(19), -80.0, 0.2) ) );
 	(*scorefxn)( pose );
 	core::Real test4_score = return_constraint_scores( pose, cst_positions );
 	TR << "test4_score (after adding bstubcst at pos 15) is  " << test4_score << std::endl;

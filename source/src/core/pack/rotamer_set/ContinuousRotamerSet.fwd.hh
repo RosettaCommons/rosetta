@@ -25,11 +25,11 @@ namespace rotamer_set {
 class ContinuousRotamerSet;
 class ContinuousRotamerSets;
 
-typedef utility::pointer::owning_ptr< ContinuousRotamerSet > ContinuousRotamerSetOP;
-typedef utility::pointer::owning_ptr< ContinuousRotamerSet const > ContinuousRotamerSetCOP;
+typedef utility::pointer::shared_ptr< ContinuousRotamerSet > ContinuousRotamerSetOP;
+typedef utility::pointer::shared_ptr< ContinuousRotamerSet const > ContinuousRotamerSetCOP;
 
-typedef utility::pointer::owning_ptr< ContinuousRotamerSets > ContinuousRotamerSetsOP;
-typedef utility::pointer::owning_ptr< ContinuousRotamerSets const > ContinuousRotamerSetsCOP;
+typedef utility::pointer::shared_ptr< ContinuousRotamerSets > ContinuousRotamerSetsOP;
+typedef utility::pointer::shared_ptr< ContinuousRotamerSets const > ContinuousRotamerSetsCOP;
 
 } // namespace rotamer_set
 } // namespace pack

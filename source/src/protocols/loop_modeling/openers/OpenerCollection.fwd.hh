@@ -18,8 +18,8 @@ namespace openers {
 
 class OpenerCollection;
 
-typedef utility::pointer::owning_ptr<OpenerCollection> OpenerCollectionOP;
-typedef utility::pointer::owning_ptr<OpenerCollection const> OpenerCollectionCOP;
+typedef utility::pointer::shared_ptr<OpenerCollection> OpenerCollectionOP;
+typedef utility::pointer::shared_ptr<OpenerCollection const> OpenerCollectionCOP;
 
 }
 }

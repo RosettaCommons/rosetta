@@ -131,7 +131,7 @@ private:
 
 void StructureStore::add( std::string const& file_name ) {
 	if ( !has( file_name) ) {
-		pose::PoseOP pose = new pose::Pose;
+		pose::PoseOP pose( new pose::Pose );
 
 		//read structure
 		core::import_pose::pose_from_pdb( *pose, file_name );
@@ -177,7 +177,7 @@ Templates::Templates( std::string const& config_file, pose::PoseCOP native ) :
 			if ( !pose_store.has( pdb ) ) pose_store.add( pdb );
 			tr.Info << "template  " << name << " read template structure " << pdb << " with offset " << offset << std::endl;
 
-			theTemplate = new Template( name, pose_store[pdb], align, offset, score );
+			theTemplate = TemplateOP( new Template( name, pose_store[pdb], align, offset, score ) );
 			if( !theTemplate->is_good() ){
 				good_ = false;
 				continue;
@@ -209,7 +209,7 @@ Templates::Templates( std::string const& config_file, pose::PoseCOP native ) :
 			}
 		}
 	}
-	PairingStatisticsOP strand_stats = new PairingStatistics( *this );
+	PairingStatisticsOP strand_stats( new PairingStatistics( *this ) );
 	if ( native_ ) strand_stats->set_native_topology( core::scoring::dssp::StrandPairingSet( *native_ ) );
 	strand_stats_ = strand_stats;
 
@@ -341,7 +341,7 @@ Templates::pick_frags( FragSet& frag_set, core::fragment::FragDataCOP frag_type,
 	Size total( 0 );
 	tr.Info << "pick frames for target position 1 -> " << nframes << " from templates"  << std::endl;
 	for ( Size pos =1; pos<=nframes; pos ++ ) {
-		FrameOP frame = new Frame( pos, frag_type );
+		FrameOP frame( new Frame( pos, frag_type ) );
 		frames.push_back( frame );
 	}
 
@@ -450,8 +450,8 @@ TemplateJumpSetupOP Templates::create_jump_def( core::fragment::SecondaryStructu
 		using namespace fragment;
 		tr.Info << "TemplateJumpSetup will be initialized with secondary structure from homologs " << std::endl;
 		ConstantLengthFragSet fragset;
-		pick_frags( fragset, new FragData( SingleResidueFragDataOP( new SecstructSRFD ), 1 ) ); //for ss-structure 1mers are enough
-		ss_def = new core::fragment::SecondaryStructure( fragset, target_total_residue() );
+		pick_frags( fragset, core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new SecstructSRFD ), 1 ) ) ); //for ss-structure 1mers are enough
+		ss_def = core::fragment::SecondaryStructureCOP( new core::fragment::SecondaryStructure( fragset, target_total_residue() ) );
 	}
 // 	utility::io::ozstream dump("ss_def_for_jumps");
 // 	for ( Size i = 1; i<=ss_def->total_residue(); i++ ) {
@@ -459,7 +459,7 @@ TemplateJumpSetupOP Templates::create_jump_def( core::fragment::SecondaryStructu
 // 	}
 	core::scoring::dssp::PairingsList helix_pairings;
 	if ( option[ templates::helix_pairings ].user() ) read_pairings( option[ templates::helix_pairings ], helix_pairings );
-	return new TemplateJumpSetup( get_self_ptr(), ss_def, strand_stats_, helix_pairings );
+	return TemplateJumpSetupOP( new TemplateJumpSetup( get_self_ptr(), ss_def, strand_stats_, helix_pairings ) );
 }
 
 

@@ -24,7 +24,7 @@ namespace fragment {
 
 class FrameIteratorWorker_;
 
-typedef utility::pointer::owning_ptr< FrameIteratorWorker_ > FrameIteratorWorker_OP;
+typedef utility::pointer::shared_ptr< FrameIteratorWorker_ > FrameIteratorWorker_OP;
 
 
 }

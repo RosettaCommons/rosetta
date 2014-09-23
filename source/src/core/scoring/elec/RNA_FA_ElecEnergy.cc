@@ -77,7 +77,7 @@ methods::EnergyMethodOP
 RNA_FA_ElecEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return new RNA_FA_ElecEnergy( options );
+	return methods::EnergyMethodOP( new RNA_FA_ElecEnergy( options ) );
 }
 
 ScoreTypes
@@ -113,7 +113,7 @@ RNA_FA_ElecEnergy::RNA_FA_ElecEnergy( RNA_FA_ElecEnergy const & src ):
 methods::EnergyMethodOP
 RNA_FA_ElecEnergy::clone() const
 {
-	return new RNA_FA_ElecEnergy( *this );
+	return methods::EnergyMethodOP( new RNA_FA_ElecEnergy( *this ) );
 }
 
 ///

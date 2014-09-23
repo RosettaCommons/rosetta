@@ -21,7 +21,7 @@ namespace stepwise {
 namespace sampler {
 
 class MC_StepWiseSampler;
-typedef utility::pointer::owning_ptr< MC_StepWiseSampler > MC_StepWiseSamplerOP;
+typedef utility::pointer::shared_ptr< MC_StepWiseSampler > MC_StepWiseSamplerOP;
 
 } //sampler
 } //stepwise

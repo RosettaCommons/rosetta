@@ -161,7 +161,7 @@ void IterativeVectorExpression::initialize(
 			iter = vector_varnames.begin(), iter_end = vector_varnames.end();
 			iter != iter_end; ++iter ) {
 		++count;
-		VariableExpressionOP varex = new VariableExpression( iter->first, 0.0 );
+		VariableExpressionOP varex( new VariableExpression( iter->first, 0.0 ) );
 		input_vector_expressions_[ count ] = iter->second;
 		local_variables_[ count ] = varex;
 		local_variable_map_[ iter->first ] = varex;
@@ -506,7 +506,7 @@ SurrogateVariableExpression::SurrogateVariableExpression(
 	std::string const & name
 ) :
 	parent( name ),
-	root_expression_( 0 )
+	root_expression_( /* 0 */ )
 {}
 
 SurrogateVariableExpression::SurrogateVariableExpression(
@@ -514,7 +514,7 @@ SurrogateVariableExpression::SurrogateVariableExpression(
 	core::Real value
 ) :
 	parent( name, value ),
-	root_expression_( 0 )
+	root_expression_( /* 0 */ )
 {}
 
 /// @details If you don't want to consider any of the variables
@@ -551,7 +551,7 @@ SurrogateVariableExpression::differentiate( std::string const & varname ) const
 
 DynamicAggregateFunction::DynamicAggregateFunction() :
 	num_entity_elements_( 0 ),
-	file_contents_( new utility::io::FileContentsMap )
+	file_contents_( utility::io::FileContentsMapOP( new utility::io::FileContentsMap ) )
 {}
 
 DynamicAggregateFunction::~DynamicAggregateFunction() {}
@@ -729,76 +729,76 @@ DynamicAggregateFunction::function_expression(
 	std::string const fname = function->name();
 	if ( fname == "vmax" ) {
 		utility::vector1< VectorExpressionCOP > vector_expressions = verify_vector_arguments( fname, args, 1 );
-		return new VMax( vector_expressions[1] );
+		return ExpressionCOP( new VMax( vector_expressions[1] ) );
 	} else if ( fname == "vmin" ) {
 		utility::vector1< VectorExpressionCOP > vector_expressions = verify_vector_arguments( fname, args, 1 );
-		return new VMin( vector_expressions[1] );
+		return ExpressionCOP( new VMin( vector_expressions[1] ) );
 	} else if ( fname == "vmax_by" ) {
 		utility::vector1< VectorExpressionCOP > vector_expressions = verify_vector_arguments( fname, args, 2 );
-		return new VMaxBy( vector_expressions[1], vector_expressions[2] );
+		return ExpressionCOP( new VMaxBy( vector_expressions[1], vector_expressions[2] ) );
 	} else if ( fname == "vmin_by" ) {
 		utility::vector1< VectorExpressionCOP > vector_expressions = verify_vector_arguments( fname, args, 2 );
-		return new VMinBy( vector_expressions[1], vector_expressions[2] );
+		return ExpressionCOP( new VMinBy( vector_expressions[1], vector_expressions[2] ) );
 	} else if ( fname == "exp" ) {
 		if ( args.size() != 1 ) {
 			throw utility::excn::EXCN_Msg_Exception( "exp expression construction requested with more than one argument: " + utility::to_string( args.size() )  );
 		}
-		return new ExpExpression( args[ 1 ] );
+		return ExpressionCOP( new ExpExpression( args[ 1 ] ) );
 	} else if ( fname == "ln" ) {
 		if ( args.size() != 1 ) {
 			throw utility::excn::EXCN_Msg_Exception( "ln expression construction requested with more than one argument: " + utility::to_string( args.size() )  );
 		}
-		return new LnExpression( args[ 1 ] );
+		return ExpressionCOP( new LnExpression( args[ 1 ] ) );
 	} else if ( fname == "pow" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "pow expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new PowExpression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new PowExpression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "ite" ) {
 		if ( args.size() != 3 ) {
 			throw utility::excn::EXCN_Msg_Exception( "ite expression construction requested with nargs != 3. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new ITEExpression( args[ 1 ], args[ 2 ], args[ 3 ] );
+		return ExpressionCOP( new ITEExpression( args[ 1 ], args[ 2 ], args[ 3 ] ) );
 	} else if ( fname == "abs" ) {
 		if ( args.size() != 1 ) {
 			throw utility::excn::EXCN_Msg_Exception( "abs expression construction requested with nargs != 1. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new AbsoluteValueExpression( args[ 1 ] );
+		return ExpressionCOP( new AbsoluteValueExpression( args[ 1 ] ) );
 	} else if ( fname == "gt" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "gt expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new GT_Expression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new GT_Expression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "lt" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "lt expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new LT_Expression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new LT_Expression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "gte" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "gte expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new GTE_Expression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new GTE_Expression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "lte" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "lte expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new LTE_Expression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new LTE_Expression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "and" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "and expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new AndExpression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new AndExpression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "or" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "or expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new OrExpression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new OrExpression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "not" ) {
 		if ( args.size() != 1 ) {
 			throw utility::excn::EXCN_Msg_Exception( "not expression construction requested with nargs != 1. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new NotExpression( args[ 1 ] );
+		return ExpressionCOP( new NotExpression( args[ 1 ] ) );
 	}
 	throw utility::excn::EXCN_Msg_Exception( "Unrecognized function requested of DynamicAggregateFunction: " + fname );
 	return 0;
@@ -956,7 +956,7 @@ DynamicAggregateFunction::npd_variable_indices_for_state_end( core::Size state_i
 void
 DynamicAggregateFunction::initialize_scanner()
 {
-	scanner_ = new ArithmeticScanner( false ); /// constructor without adding the "standard" functions
+	scanner_ = numeric::expression_parser::ArithmeticScannerOP( new ArithmeticScanner( false ) ); /// constructor without adding the "standard" functions
 	scanner_->add_function( "sqrt", 1 ); // neiter min nor max are allowed functions.
 	scanner_->add_function( "vmax", 1 );
 	scanner_->add_function( "vmin", 1 );
@@ -1153,7 +1153,7 @@ DynamicAggregateFunction::process_POSE_ENERGY_line(
 	// ok -- go ahead and score the pose
 	TR << "  Scoring pose from pdb file '" << pdb_name << "'" << std::endl;
 	core::Real score = (*sfxn_)( pose );
-	scalar_expression_map_[ varname ] = new VariableExpression( varname, score );
+	scalar_expression_map_[ varname ] = utility::pointer::shared_ptr<const class numeric::expression_parser::VariableExpression>( new VariableExpression( varname, score ) );
 	save_scalar_variable( varname, line_number );
 
 	TR << "Saving POSE_ENERGY of " << score << " in variable " << varname << std::endl;
@@ -1241,11 +1241,11 @@ DynamicAggregateFunction::process_POSE_ENERGY_VECTOR_line(
 		core::Real score = (*sfxn_)( pose );
 		std::string newvar = varname + "_" + *iter;
 		TR << "  Saving score of " << score << " in variable " << newvar << std::endl;
-		pose_energy_variables[ count_pdbs ] = new VariableExpression( newvar, score );;
+		pose_energy_variables[ count_pdbs ] = utility::pointer::shared_ptr<class numeric::expression_parser::VariableExpression>( new VariableExpression( newvar, score ) );;
 	}
 
 	save_vector_variable( varname, line_number );
-	vector_expression_map_[ varname ] = new VariableVectorExpression( varname, pose_energy_variables );
+	vector_expression_map_[ varname ] = utility::pointer::shared_ptr<const class protocols::pack_daemon::VectorExpression>( new VariableVectorExpression( varname, pose_energy_variables ) );
 
 
 }
@@ -1437,7 +1437,7 @@ DynamicAggregateFunction::process_SCALAR_EXPRESSION_line(
 	TR << "On line " << line_number << ", attempting to tokenize scalar expression: " << rest_of_line << std::endl;
 	TokenSetOP tokens = scanner_->scan( rest_of_line );
 	TR << "On line " << line_number << ", attempting to parse scalar expression: " << rest_of_line << std::endl;
-	ArithmeticASTExpressionOP expression_ast = new ArithmeticASTExpression;
+	ArithmeticASTExpressionOP expression_ast( new ArithmeticASTExpression );
 	expression_ast->parse( *tokens );
 
 	// Assuming we made it here, the AST has been correctly parsed.
@@ -1571,7 +1571,7 @@ DynamicAggregateFunction::process_VECTOR_EXPRESSION_line(
 	TR << "On line " << line_number << ", attempting to tokenize VECTOR_EXPRESSION expression: " << rest_of_line << std::endl;
 	TokenSetOP tokens = local_scanner.scan( rest_of_line );
 	TR << "On line " << line_number << ", attempting to parse expression: " << rest_of_line << std::endl;
-	ArithmeticASTExpressionOP vector_expression_ast = new ArithmeticASTExpression;
+	ArithmeticASTExpressionOP vector_expression_ast( new ArithmeticASTExpression );
 	vector_expression_ast->parse( *tokens );
 	TR << "VECTOR_EXPRESSION on line " << line_number << " successfully parsed" << std::endl;
 
@@ -1621,7 +1621,7 @@ DynamicAggregateFunction::process_ENTITY_FUNCTION_line(
 	}
 
 
-	EntityFuncOP entfunc = new EntityFunc;
+	EntityFuncOP entfunc( new EntityFunc );
 	entfunc->set_num_entity_elements( num_entity_elements_ );
 	std::string entfunc_contents;
 
@@ -1668,7 +1668,7 @@ DynamicAggregateFunction::process_FITNESS_line(
 	TR << "On line " << line_number << ", attempting to tokenize FITNESS expression: " << rest_of_line << std::endl;
 	TokenSetOP tokens = scanner_->scan( rest_of_line );
 	TR << "On line " << line_number << ", attempting to parse expression: " << rest_of_line << std::endl;
-	fitness_expression_ast = new ArithmeticASTExpression;
+	fitness_expression_ast = ArithmeticASTExpressionOP( new ArithmeticASTExpression );
 	fitness_expression_ast->parse( *tokens );
 	TR << "FITNESS on line " << line_number << " successfully parsed" << std::endl;
 }
@@ -1786,7 +1786,7 @@ DynamicAggregateFunction::create_state_variable_expressions(
 			iter != iter_end; ++iter ) {
 		++count_state;
 		++count_variable_index;
-		variable_expressions_for_states_[ count_state ] = new VariableExpression( iter->first, 0.0 );
+		variable_expressions_for_states_[ count_state ] = utility::pointer::shared_ptr<class numeric::expression_parser::VariableExpression>( new VariableExpression( iter->first, 0.0 ) );
 		variable_expressions_[ count_variable_index ] = variable_expressions_for_states_[ count_state ];
 		files_for_state_[ count_state ] = iter->second;
 		named_state_expression_map_[ iter->first ] = variable_expressions_for_states_[ count_state ];
@@ -1800,7 +1800,7 @@ DynamicAggregateFunction::create_state_variable_expressions(
 					npditer != npditer_end; ++npditer ) {
 				++count_npd_index;
 				++count_variable_index;
-				SurrogateVariableExpressionOP surrogate = new SurrogateVariableExpression( npditer->second, 0.0 );
+				SurrogateVariableExpressionOP surrogate( new SurrogateVariableExpression( npditer->second, 0.0 ) );
 				surrogate->root_expression( variable_expressions_for_states_[ count_state ] );
 
 				npd_variable_indices_for_states_[ count_state ].push_back( std::make_pair( count_npd_index, npditer->first ) );
@@ -1846,8 +1846,7 @@ DynamicAggregateFunction::create_variable_vector_expressions(
 			++count_variable_index;
 			std::string ii_varname( iter->first + "_" + utility::to_string( ii ) );
 			TR << "Adding state " << ii_varname << " with state index " << count_state << std::endl;
-			variable_expressions_for_states_[ count_state ] =
-				new VariableExpression( ii_varname, 0.0 );
+			variable_expressions_for_states_[ count_state ] = utility::pointer::shared_ptr<class numeric::expression_parser::VariableExpression>( new VariableExpression( ii_varname, 0.0 ) );
 			indices[ ii ] = count_state;
 			variable_expressions_[ count_variable_index ] = variable_expressions_for_states_[ count_state ];
 			files_for_state_[ count_state ] = iter->second[ ii ];
@@ -1865,7 +1864,7 @@ DynamicAggregateFunction::create_variable_vector_expressions(
 					++count_variable_index;
 					npd_variable_indices_for_states_[ count_state ].push_back( std::make_pair( count_npd_index, npditer->first ) );
 					std::string ii_npd_varname = npditer->second + "_" + utility::to_string( ii );
-					SurrogateVariableExpressionOP surrogate = new SurrogateVariableExpression( ii_npd_varname, 0.0 );
+					SurrogateVariableExpressionOP surrogate( new SurrogateVariableExpression( ii_npd_varname, 0.0 ) );
 					surrogate->root_expression( variable_expressions_for_states_[ count_state ] );
 					variable_expressions_for_npd_properties_[ count_npd_index ] =
 						variable_expressions_[ count_variable_index ] = surrogate;
@@ -1874,8 +1873,7 @@ DynamicAggregateFunction::create_variable_vector_expressions(
 				}
 			}
 		}
-		vector_expression_map_[ iter->first ] = state_vector_variables_[ iter->first ] =
-			new VariableVectorExpression( iter->first, variables );
+		vector_expression_map_[ iter->first ] = state_vector_variables_[ iter->first ] = utility::pointer::shared_ptr<class protocols::pack_daemon::VariableVectorExpression>( new VariableVectorExpression( iter->first, variables ) );
 		if ( has_npd_properties ) {
 			std::list< std::pair< std::string, std::string > > const & npdlist( npd_properties_for_state_variables_[ iter->first ]);
 			for ( std::list< std::pair< std::string, std::string > >::const_iterator
@@ -1883,7 +1881,7 @@ DynamicAggregateFunction::create_variable_vector_expressions(
 					npditer != npditer_end; ++npditer ) {
 				//std::string ii_npd_varname = npditer->second + "_" + utility::to_string( ii );
 				//npd_property_variables[ npditer->first ].push_back( new VariableExpressin( ii_npd_varname, 0.0 ) );
-				vector_expression_map_[ npditer->second ] = new VariableVectorExpression( npditer->second, npd_property_variables[ npditer->first ] );
+				vector_expression_map_[ npditer->second ] = utility::pointer::shared_ptr<const class protocols::pack_daemon::VectorExpression>( new VariableVectorExpression( npditer->second, npd_property_variables[ npditer->first ] ) );
 			}
 		}
 		state_indices_for_state_vector_[ iter->first ] = indices;
@@ -1906,7 +1904,7 @@ DynamicAggregateFunction::create_scalar_and_vector_expression_variable_expressio
 			iter = scalar_expression_asts.begin(), iter_end = scalar_expression_asts.end();
 			iter != iter_end; ++iter ) {
 		++count_variable_index;
-		SurrogateVariableExpressionOP surrogate = new SurrogateVariableExpression( iter->first, 0.0 );
+		SurrogateVariableExpressionOP surrogate( new SurrogateVariableExpression( iter->first, 0.0 ) );
 		variable_expressions_[ count_variable_index ] = surrogate;
 		surrogate_expression_map_[ count_variable_index ] = surrogate;
 		variable_name_2_variable_exp_index_[ iter->first ] = count_variable_index;
@@ -1928,7 +1926,7 @@ DynamicAggregateFunction::create_scalar_and_vector_expression_variable_expressio
 			}
 			variables.push_back( scvar->second );
 		}
-		vector_expression_map_[ vvar_iter->first ] = new VariableVectorExpression( vvar_iter->first, variables );
+		vector_expression_map_[ vvar_iter->first ] = utility::pointer::shared_ptr<const class protocols::pack_daemon::VectorExpression>( new VariableVectorExpression( vvar_iter->first, variables ) );
 	}
 }
 
@@ -1995,7 +1993,7 @@ DynamicAggregateFunction::turn_expression_ASTs_into_expressions(
 				}
 				vector_varnames[ vec_iter->first ] = vector_expression_map_[ vec_iter->second ];
 			}
-			IterativeVectorExpressionOP ivec_exp = new IterativeVectorExpression( iter->second );
+			IterativeVectorExpressionOP ivec_exp( new IterativeVectorExpression( iter->second ) );
 
 			TR << "Creating expression from AST:\n" << printer.ast_string( *itvecexp_data.second ) << std::endl;
 
@@ -2004,7 +2002,7 @@ DynamicAggregateFunction::turn_expression_ASTs_into_expressions(
 			/// am asked to process variable expressions from the expression_creator.
 			focused_iterative_vector_expression_ = ivec_exp;
 			ivec_exp->initialize( vector_varnames, *itvecexp_data.second, expression_creator );
-			focused_iterative_vector_expression_ = 0;
+			focused_iterative_vector_expression_.reset();
 
 			vector_expression_map_[ iter->second ] = ivec_exp;
 		}
@@ -2031,9 +2029,9 @@ DynamicAggregateFunction::verify_vector_arguments(
 	}
 	utility::vector1< VectorExpressionCOP > vector_expressions( expected_nargs );
 	for ( Size ii = 1; ii <= expected_nargs; ++ii ) {
-		VectorExpressionCOP vec_ptr = dynamic_cast< VectorExpression const * > ( args[ ii ].get() );
+		VectorExpressionCOP vec_ptr = utility::pointer::dynamic_pointer_cast< protocols::pack_daemon::VectorExpression const > ( args[ ii ] );
 		if ( ! vec_ptr ) {
-			VariableExpressionCOP var_ptr = dynamic_cast< VariableExpression const * > ( args[ ii ].get() );
+			VariableExpressionCOP var_ptr = utility::pointer::dynamic_pointer_cast< VariableExpression const > ( args[ ii ] );
 			if ( var_ptr ) {
 				throw utility::excn::EXCN_Msg_Exception( "vector function expression " + fname + " can only be constructed from a vector expression.\n"
 					"Variable " + var_ptr->name() + " is not a vector variable." );
@@ -2544,74 +2542,74 @@ EntityFunc::function_expression(
 {
 	std::string const fname = function->name();
 	if ( fname == "max" ) {
-		return new MaxExpression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new MaxExpression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "min" ) {
-		return new MinExpression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new MinExpression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "exp" ) {
 		if ( args.size() != 1 ) {
 			throw utility::excn::EXCN_Msg_Exception( "exp expression construction requested with more than one argument: " + utility::to_string( args.size() )  );
 		}
-		return new ExpExpression( args[ 1 ] );
+		return ExpressionCOP( new ExpExpression( args[ 1 ] ) );
 	} else if ( fname == "ln" ) {
 		if ( args.size() != 1 ) {
 			throw utility::excn::EXCN_Msg_Exception( "ln expression construction requested with more than one argument: " + utility::to_string( args.size() )  );
 		}
-		return new LnExpression( args[ 1 ] );
+		return ExpressionCOP( new LnExpression( args[ 1 ] ) );
 	} else if ( fname == "pow" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "pow expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new PowExpression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new PowExpression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "ite" ) {
 		if ( args.size() != 3 ) {
 			throw utility::excn::EXCN_Msg_Exception( "ite expression construction requested with nargs != 3. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new ITEExpression( args[ 1 ], args[ 2 ], args[ 3 ] );
+		return ExpressionCOP( new ITEExpression( args[ 1 ], args[ 2 ], args[ 3 ] ) );
 	} else if ( fname == "abs" ) {
 		if ( args.size() != 1 ) {
 			throw utility::excn::EXCN_Msg_Exception( "abs expression construction requested with nargs != 1. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new AbsoluteValueExpression( args[ 1 ] );
+		return ExpressionCOP( new AbsoluteValueExpression( args[ 1 ] ) );
 	} else if ( fname == "gt" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "gt expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new GT_Expression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new GT_Expression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "lt" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "lt expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new LT_Expression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new LT_Expression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "gte" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "gte expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new GTE_Expression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new GTE_Expression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "lte" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "lte expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new LTE_Expression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new LTE_Expression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "eq" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "eq expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new EqualsExpression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new EqualsExpression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "and" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "and expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new AndExpression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new AndExpression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "or" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "or expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new OrExpression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new OrExpression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "not" ) {
 		if ( args.size() != 1 ) {
 			throw utility::excn::EXCN_Msg_Exception( "not expression construction requested with nargs != 1. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new NotExpression( args[ 1 ] );
+		return ExpressionCOP( new NotExpression( args[ 1 ] ) );
 	}
 
 	throw utility::excn::EXCN_Msg_Exception( "Unable to find function with name " + fname + " in"
@@ -2624,7 +2622,7 @@ EntityFunc::function_expression(
 void
 EntityFunc::initialize_scanner_and_function_names()
 {
-	scanner_ = new ArithmeticScanner( false );
+	scanner_ = numeric::expression_parser::ArithmeticScannerOP( new ArithmeticScanner( false ) );
 	scanner_->add_function( "sqrt", 1 );
 	scanner_->add_function( "max", 2 );
 	scanner_->add_function( "min", 2 );
@@ -2669,7 +2667,7 @@ EntityFunc::initialize_scanner_and_function_names()
 	for ( Size ii = 1; ii <= num_entity_elements_; ++ii ) {
 		std::string ii_name = "ee_" + utility::to_string( ii );
 		scanner_->add_variable( ii_name );
-		VariableExpressionOP ee_var_expression = new VariableExpression( ii_name, 0.0 );
+		VariableExpressionOP ee_var_expression( new VariableExpression( ii_name, 0.0 ) );
 		entity_aas_[ ii ] = ee_var_expression;
 		variable_expression_map_[ ii_name ] = ee_var_expression;
 		subexpression_name_map_[ ii_name ] = ee_var_expression;
@@ -2986,10 +2984,10 @@ EntityFunc::process_SET_CONDITION_line(
 	}
 
 	/// Alright -- we've made it this far.  Therefore, we're now ready to create a set condition expression.
-	InSetExpressionOP inset_expression = new InSetExpression( subexpression_name_map_[ eename ] );
+	InSetExpressionOP inset_expression( new InSetExpression( subexpression_name_map_[ eename ] ) );
 	inset_expression->value_set( aas_in_set );
 
-	SurrogateVariableExpressionOP surrogate_expression = new SurrogateVariableExpression( condition_name );
+	SurrogateVariableExpressionOP surrogate_expression( new SurrogateVariableExpression( condition_name ) );
 	surrogate_expression->root_expression( inset_expression );
 	expression_evaluation_order_.push_back( std::make_pair( inset_expression, surrogate_expression ) );
 
@@ -3073,11 +3071,11 @@ EntityFunc::process_SUB_EXPRESSION_line(
 	TR << "On line " << line_number << ", attempting to tokenize scalar expression: " << rest_of_line << std::endl;
 	TokenSetOP tokens = scanner_->scan( rest_of_line );
 	TR << "On line " << line_number << ", attempting to parse scalar expression: " << rest_of_line << std::endl;
-	ArithmeticASTExpressionOP expression_ast = new ArithmeticASTExpression;
+	ArithmeticASTExpressionOP expression_ast( new ArithmeticASTExpression );
 	expression_ast->parse( *tokens );
 
 	expression_asts[ subexpression_name ] = expression_ast;
-	SurrogateVariableExpressionOP surrogate_expression = new SurrogateVariableExpression( subexpression_name );
+	SurrogateVariableExpressionOP surrogate_expression( new SurrogateVariableExpression( subexpression_name ) );
 	expression_evaluation_order_.push_back( std::make_pair( ExpressionCOP( 0 ), surrogate_expression ) );
 
 	variable_expression_map_[ subexpression_name ] = surrogate_expression;
@@ -3107,7 +3105,7 @@ EntityFunc::process_SCORE_line(
 	TR << "On line " << line_number << ", attempting to tokenize score expression: " << rest_of_line << std::endl;
 	TokenSetOP tokens = scanner_->scan( rest_of_line );
 	TR << "On line " << line_number << ", attempting to parse score expression: " << rest_of_line << std::endl;
-	score_expression_ast = new ArithmeticASTExpression;
+	score_expression_ast = ArithmeticASTExpressionOP( new ArithmeticASTExpression );
 	score_expression_ast->parse( *tokens );
 
 }

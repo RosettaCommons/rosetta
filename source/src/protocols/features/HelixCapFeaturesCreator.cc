@@ -28,7 +28,7 @@ namespace features {
 HelixCapFeaturesCreator::HelixCapFeaturesCreator() {}
 HelixCapFeaturesCreator::~HelixCapFeaturesCreator() {}
 FeaturesReporterOP HelixCapFeaturesCreator::create_features_reporter() const {
-	return new HelixCapFeatures;
+	return FeaturesReporterOP( new HelixCapFeatures );
 }
 
 std::string HelixCapFeaturesCreator::type_name() const {

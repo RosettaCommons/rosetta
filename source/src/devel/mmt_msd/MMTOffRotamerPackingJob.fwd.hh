@@ -22,8 +22,8 @@ namespace mmt_msd {
 
 class MMTOffRotamerPackingJob;
 
-typedef utility::pointer::owning_ptr< MMTOffRotamerPackingJob > MMTOffRotamerPackingJobOP;
-typedef utility::pointer::owning_ptr< MMTOffRotamerPackingJob const > MMTOffRotamerPackingJobCOP;
+typedef utility::pointer::shared_ptr< MMTOffRotamerPackingJob > MMTOffRotamerPackingJobOP;
+typedef utility::pointer::shared_ptr< MMTOffRotamerPackingJob const > MMTOffRotamerPackingJobCOP;
 
 }
 }

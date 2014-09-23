@@ -119,7 +119,7 @@ DnaInterfacePackerCreator::keyname() const
 
 protocols::moves::MoverOP
 DnaInterfacePackerCreator::create_mover() const {
-	return new DnaInterfacePacker;
+	return protocols::moves::MoverOP( new DnaInterfacePacker );
 }
 
 std::string
@@ -132,8 +132,8 @@ DnaInterfacePackerCreator::mover_name()
 ///@brief lightweight default constructor
 DnaInterfacePacker::DnaInterfacePacker()
 	: protocols::simple_moves::PackRotamersMover("DnaInterfacePacker"),
-		reference_pose_(0),
-		dna_chains_(0),
+		reference_pose_(/* 0 */),
+		dna_chains_(/* 0 */),
 		minimize_(false),
 		filename_root_( option[ OptionKeys::out::prefix ]() ),
 		binding_E_(false),
@@ -144,9 +144,9 @@ DnaInterfacePacker::DnaInterfacePacker()
 		include_dna_potentials_in_specificity_calculations_(false),
 		num_repacks_(1),
 		specificity_repacks_(1),
-		minimize_options_(0),
-		min_movemap_(0),
-		pdboutput_(0),
+		minimize_options_(/* 0 */),
+		min_movemap_(/* 0 */),
+		pdboutput_(/* 0 */),
 		initialization_state_(false),
 		pdbname_("")
 {}
@@ -157,8 +157,8 @@ DnaInterfacePacker::DnaInterfacePacker(
 	bool minimize,
 	std::string filename_root
 ) : protocols::simple_moves::PackRotamersMover("DnaInterfacePacker"),
-		reference_pose_(0),
-		dna_chains_(0),
+		reference_pose_(/* 0 */),
+		dna_chains_(/* 0 */),
 		minimize_( minimize ),
 		filename_root_( filename_root ),
 		binding_E_(false),
@@ -169,9 +169,9 @@ DnaInterfacePacker::DnaInterfacePacker(
 		include_dna_potentials_in_specificity_calculations_(false),
 		num_repacks_(1),
 		specificity_repacks_(1),
-		minimize_options_(0),
-		min_movemap_(0),
-		pdboutput_(0),
+		minimize_options_(/* 0 */),
+		min_movemap_(/* 0 */),
+		pdboutput_(/* 0 */),
 		initialization_state_(false),
 		pdbname_("")
 {
@@ -199,14 +199,14 @@ DnaInterfacePacker::~DnaInterfacePacker(){}
 moves::MoverOP
 DnaInterfacePacker::fresh_instance() const
 {
-	return new DnaInterfacePacker;
+	return moves::MoverOP( new DnaInterfacePacker );
 }
 
 ///@brief required in the context of the parser/scripting scheme
 moves::MoverOP
 DnaInterfacePacker::clone() const
 {
-	return new DnaInterfacePacker( *this );
+	return moves::MoverOP( new DnaInterfacePacker( *this ) );
 }
 
 std::string
@@ -373,15 +373,15 @@ DnaInterfacePacker::init_standard( Pose & pose )
 		}
 	}
 
-	dna_chains_ = new DnaChains;
+	dna_chains_ = DnaChainsOP( new DnaChains );
 	find_basepairs( pose, *dna_chains_ );
 
 	TaskFactoryOP my_tf;
 	// if there is no initialized TaskFactory, create default one here
 	if ( ! task_factory() ) { // PackRotamersMover accessor
-		my_tf = new TaskFactory;
-		my_tf->push_back( new InitializeFromCommandline );
-		if ( option[ OptionKeys::packing::resfile ].user() ) my_tf->push_back( new ReadResfile );
+		my_tf = TaskFactoryOP( new TaskFactory );
+		my_tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
+		if ( option[ OptionKeys::packing::resfile ].user() ) my_tf->push_back( TaskOperationCOP( new ReadResfile ) );
 		RestrictDesignToProteinDNAInterfaceOP rdtpdi( new RestrictDesignToProteinDNAInterface );
 		rdtpdi->set_reference_pose( reference_pose_ );
 		if ( ! targeted_dna_.empty() ) rdtpdi->copy_targeted_dna( targeted_dna_ );
@@ -389,11 +389,11 @@ DnaInterfacePacker::init_standard( Pose & pose )
 		rdtpdi->set_base_only( base_only_ );
 		my_tf->push_back( rdtpdi );
 	} else { // TaskFactory already exists, make copy to tamper with
-		my_tf = new TaskFactory( *task_factory() );
+		my_tf = TaskFactoryOP( new TaskFactory( *task_factory() ) );
 	}
 	// a protein-DNA hbonding filter for ex rotamers that the PackerTask makes available to the rotamer set during rotamer building (formerly known as 'rotamer explosion')
 	RotamerDNAHBondFilterOP rot_dna_hb_filter( new RotamerDNAHBondFilter( -0.5, base_only_ ) );
-	my_tf->push_back( new AppendRotamer( rot_dna_hb_filter ) );
+	my_tf->push_back( TaskOperationCOP( new AppendRotamer( rot_dna_hb_filter ) ) );
 
 	task_factory( my_tf ); // PackRotamersMover setter
 
@@ -424,8 +424,8 @@ DnaInterfacePacker::init_standard( Pose & pose )
 		// set up minimizer
 		std::string const min_type( option[ OptionKeys::run::min_type ]() );
 		Real const tolerance( option[ OptionKeys::run::min_tolerance ]() );
-		minimize_options_ = new MinimizerOptions( min_type, tolerance, true );
-		min_movemap_ = new kinematics::MoveMap;
+		minimize_options_ = core::optimization::MinimizerOptionsOP( new MinimizerOptions( min_type, tolerance, true ) );
+		min_movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap );
 		TR << "Chi minimization will be allowed for the following residues:";
 		for ( Size index(1); index <= task()->total_residue(); ++index ) {
 			if ( !pose.residue_type(index).is_protein() ) continue;
@@ -491,7 +491,7 @@ void DnaInterfacePacker::parse_my_tag(
 	}
 	if ( tag->hasOption("pdb_output") ) {
 		if ( tag->getOption<bool>("pdb_output") ) {
-			if ( !pdboutput_ ) pdboutput_ = new PDBOutput;
+			if ( !pdboutput_ ) pdboutput_ = PDBOutputOP( new PDBOutput );
 		}
 	}
 	if ( tag->hasOption("protein_scan") ) protein_scan_ = tag->getOption<bool>("protein_scan");
@@ -593,7 +593,7 @@ DnaInterfacePacker::unbound_score(
 	if ( output_pdb ) {
 		PDBOutputOP unbound_outputter;
 		if ( pdboutput_ ) unbound_outputter = pdboutput_;
-		else unbound_outputter = new PDBOutput;
+		else unbound_outputter = PDBOutputOP( new PDBOutput );
 		unbound_outputter->score_function( *nonconst_scorefxn );
 		(*unbound_outputter)( unbound_pose, pdbname + "_unbound.pdb" );
 	}
@@ -1247,7 +1247,7 @@ DnaInterfacePacker::protein_scan( Pose & pose )
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///@brief makes hard copy to guarantee that the reference pose isn't changed from elsewhere
-void DnaInterfacePacker::reference_pose( Pose const & pose ) { reference_pose_ = new Pose( pose ); }
+void DnaInterfacePacker::reference_pose( Pose const & pose ) { reference_pose_ = PoseCOP( new Pose( pose ) ); }
 PoseCOP DnaInterfacePacker::reference_pose() const { return reference_pose_; }
 
 void DnaInterfacePacker::targeted_dna( DnaDesignDefOPs const & defs ) { targeted_dna_ = defs; }

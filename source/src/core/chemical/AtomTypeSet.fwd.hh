@@ -22,10 +22,10 @@ namespace chemical {
 
 class AtomTypeSet;
 
-typedef  utility::pointer::access_ptr< AtomTypeSet > AtomTypeSetAP;
-typedef  utility::pointer::access_ptr< AtomTypeSet const > AtomTypeSetCAP;
-typedef  utility::pointer::owning_ptr< AtomTypeSet > AtomTypeSetOP;
-typedef  utility::pointer::owning_ptr< AtomTypeSet const > AtomTypeSetCOP;
+typedef  utility::pointer::weak_ptr< AtomTypeSet > AtomTypeSetAP;
+typedef  utility::pointer::weak_ptr< AtomTypeSet const > AtomTypeSetCAP;
+typedef  utility::pointer::shared_ptr< AtomTypeSet > AtomTypeSetOP;
+typedef  utility::pointer::shared_ptr< AtomTypeSet const > AtomTypeSetCOP;
 
 }
 }

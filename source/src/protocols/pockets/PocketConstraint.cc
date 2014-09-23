@@ -56,7 +56,7 @@ PocketConstraintCreator::~PocketConstraintCreator() {}
 
 core::scoring::constraints::ConstraintOP
 PocketConstraintCreator::create_constraint() const {
-	return new PocketConstraint;
+	return core::scoring::constraints::ConstraintOP( new PocketConstraint );
 }
 
 std::string PocketConstraintCreator::keyname() const
@@ -101,7 +101,7 @@ void PocketConstraint::read_def(
 		std::cout << "ERROR!! Invalid PocketConstraint specification" << std::endl;
 		exit(1);
 	}
-	pocketgrid_ = new protocols::pockets::PocketGrid(residues_);
+	pocketgrid_ = protocols::pockets::PocketGridOP( new protocols::pockets::PocketGrid(residues_) );
 
 }
 
@@ -157,7 +157,7 @@ PocketConstraint::PocketConstraint(
 	//      }
 
 	if ( seqpos_ != 0 ) {
-		pocketgrid_ = new protocols::pockets::PocketGrid( pose.conformation().residue(seqpos_) );
+		pocketgrid_ = protocols::pockets::PocketGridOP( new protocols::pockets::PocketGrid( pose.conformation().residue(seqpos_) ) );
 	}
 
 	// JK NOTE: WE'RE NOT USING THE "FUNC" SYSTEM, THIS COULD BE ADDED LATER....
@@ -184,7 +184,7 @@ void PocketConstraint::set_target_res( core::pose::Pose const & pose, Size new_s
 	}
 	if ( seqpos_ != 0 ) {
 		seqpos_=new_seqpos;
-		pocketgrid_ = new protocols::pockets::PocketGrid( pose.conformation().residue(seqpos_) );
+		pocketgrid_ = protocols::pockets::PocketGridOP( new protocols::pockets::PocketGrid( pose.conformation().residue(seqpos_) ) );
 	}else{
 		std::cout << "ERROR!! Invalid residue to backrub around" << std::endl;
 		exit(1);
@@ -221,7 +221,7 @@ void PocketConstraint::set_target_res_pdb( core::pose::Pose const & pose, std::s
 	}
 
 	if ( seqpos_ != 0 ) {
-		pocketgrid_ = new protocols::pockets::PocketGrid( pose.conformation().residue(seqpos_) );
+		pocketgrid_ = protocols::pockets::PocketGridOP( new protocols::pockets::PocketGrid( pose.conformation().residue(seqpos_) ) );
 	} else {
 		std::cout << "ERROR!! Invalid residue to backrub around" << std::endl;
 		exit(1);

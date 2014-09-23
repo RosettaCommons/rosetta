@@ -291,8 +291,8 @@ public:
 
 	void apply( Pose & p ) {
 		using namespace core::pack::task;
-		TaskFactoryOP main_task_factory = new TaskFactory;
-		operation::RestrictToRepackingOP rtrop = new operation::RestrictToRepacking;
+		TaskFactoryOP main_task_factory( new TaskFactory );
+		operation::RestrictToRepackingOP rtrop( new operation::RestrictToRepacking );
 		main_task_factory->push_back( rtrop );
 
 		protocols::simple_moves::PackRotamersMover packrotamersmover;
@@ -385,7 +385,7 @@ private:
 	MonteCarloOP mc_;
 	BBG8T3AMoverOP bbgmover_;
 
-	typedef utility::pointer::owning_ptr< CenRotSidechainMover > CenRotSidechainMoverOP;
+	typedef utility::pointer::shared_ptr< CenRotSidechainMover > CenRotSidechainMoverOP;
 	CenRotSidechainMoverOP sidechainmover_;
 
 public:
@@ -396,9 +396,9 @@ public:
 		scorefxn_ = core::scoring::get_score_function();
 
 		//bbgmover
-		bbgmover_ = new BBG8T3AMover();
+		bbgmover_ = BBG8T3AMoverOP( new BBG8T3AMover() );
 		//scmove
-		sidechainmover_ = new CenRotSidechainMover();
+		sidechainmover_ = CenRotSidechainMoverOP( new CenRotSidechainMover() );
 
 		mc_steps_ = option[relax_step_per_cycle];
 
@@ -410,7 +410,7 @@ public:
 		mc_temp_ = option[relax_temp];
 
 		if (first_run_) {
-			mc_ = new MonteCarlo(pose, *scorefxn_, mc_temp_);
+			mc_ = MonteCarloOP( new MonteCarlo(pose, *scorefxn_, mc_temp_) );
 			first_run_ = false;
 		}
 		else {
@@ -571,9 +571,9 @@ public:
 
 		//repack
 		using core::pack::task::operation::TaskOperationCOP;
-		pack_rotamers_ = new protocols::simple_moves::PackRotamersMover();
-		TaskFactoryOP main_task_factory = new TaskFactory;
-		main_task_factory->push_back( new operation::RestrictToRepacking );
+		pack_rotamers_ = simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover() );
+		TaskFactoryOP main_task_factory( new TaskFactory );
+		main_task_factory->push_back( TaskOperationCOP( new operation::RestrictToRepacking ) );
 		pack_rotamers_->task_factory(main_task_factory);
 		pack_rotamers_->score_function(scorefxn_repack_);
 
@@ -666,16 +666,16 @@ public:
 	{
 		// mover
 		core::kinematics::MoveMap mm; mm.set_jump(true);
-		rb_mover_ = new rigid::RigidBodyPerturbNoCenterMover( pose, mm, rot_magnitude_, trans_magnitude_, protocols::rigid::n2c );
-		combo_ = new moves::SequenceMover();
+		rb_mover_ = protocols::rigid::RigidBodyPerturbNoCenterMoverOP( new rigid::RigidBodyPerturbNoCenterMover( pose, mm, rot_magnitude_, trans_magnitude_, protocols::rigid::n2c ) );
+		combo_ = moves::SequenceMoverOP( new moves::SequenceMover() );
 		combo_->add_mover(rb_mover_);
 
 		if (do_repack_) combo_->add_mover(pack_rotamers_);
 
 		// Monte Carlo
-		mc_ = new moves::MonteCarlo( pose, (*scorefxn_dock_), temperature_ );
+		mc_ = moves::MonteCarloOP( new moves::MonteCarlo( pose, (*scorefxn_dock_), temperature_ ) );
 
-		trial_ = new moves::TrialMover(combo_, mc_);
+		trial_ = moves::TrialMoverOP( new moves::TrialMover(combo_, mc_) );
 
 		first_run_ = false;
 	}
@@ -741,21 +741,21 @@ public:
 
 		scorefxn_ = core::scoring::get_score_function();
 
-		kinematics::MoveMapOP movemap = new kinematics::MoveMap;
+		kinematics::MoveMapOP movemap( new kinematics::MoveMap );
 		movemap->set_bb( true );
 
 		fragset_small_ = FragmentIO(option[ abinitio::number_3mer_frags ] ).read_data( option[in::file::frag3] );
-		sms_ = new SmoothFragmentMover ( fragset_small_, movemap, FragmentCostOP( new GunnCost ) );
+		sms_ = simple_moves::ClassicFragmentMoverOP( new SmoothFragmentMover ( fragset_small_, movemap, FragmentCostOP( new GunnCost ) ) );
 
 		//repack
 		using core::pack::task::operation::TaskOperationCOP;
-		pack_rotamers_ = new protocols::simple_moves::PackRotamersMover();
-		TaskFactoryOP main_task_factory = new TaskFactory;
-		main_task_factory->push_back( new operation::RestrictToRepacking );
+		pack_rotamers_ = simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover() );
+		TaskFactoryOP main_task_factory( new TaskFactory );
+		main_task_factory->push_back( TaskOperationCOP( new operation::RestrictToRepacking ) );
 		pack_rotamers_->task_factory(main_task_factory);
 		pack_rotamers_->score_function(scorefxn_);
 
-		combo_smooth_ = new moves::SequenceMover();
+		combo_smooth_ = moves::SequenceMoverOP( new moves::SequenceMover() );
 		combo_smooth_->add_mover(sms_);
 		combo_smooth_->add_mover(pack_rotamers_);
 
@@ -768,8 +768,8 @@ public:
 	void apply( Pose &p )
 	{
 		Real temperature = option[relax_temp]; // init temp
-		mc_ = new moves::MonteCarlo( p, (*scorefxn_), temperature );
-		smooth_trial_small_pack_ = new moves::TrialMover(combo_smooth_, mc_);
+		mc_ = moves::MonteCarloOP( new moves::MonteCarlo( p, (*scorefxn_), temperature ) );
+		smooth_trial_small_pack_ = moves::TrialMoverOP( new moves::TrialMover(combo_smooth_, mc_) );
 
 		for (Size i=1; i<=outer_cycles_; i++) {
 			moves::RepeatMover( smooth_trial_small_pack_, inner_cycles_ ).apply(p);
@@ -838,8 +838,8 @@ public:
 
 		core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 
-		TaskFactoryOP main_task_factory = new TaskFactory;
-		operation::RestrictToRepackingOP rtrop = new operation::RestrictToRepacking;
+		TaskFactoryOP main_task_factory( new TaskFactory );
+		operation::RestrictToRepackingOP rtrop( new operation::RestrictToRepacking );
 		main_task_factory->push_back( rtrop );
 
 		protocols::simple_moves::PackRotamersMover packrotamersmover;
@@ -1063,16 +1063,16 @@ public:
 };
 
 
-typedef utility::pointer::owning_ptr< RepackCenrotMover > RepackCenrotMoverOP;
-typedef utility::pointer::owning_ptr< RepackCenrotMover > RepackCenrotMoverOP;
-typedef utility::pointer::owning_ptr< RepackMinCenrotMover > RepackMinCenrotMoverOP;
-typedef utility::pointer::owning_ptr< CenRotRelaxMover > CenRotRelaxMoverOP;
-typedef utility::pointer::owning_ptr< SmoothFragRepackMover > SmoothFragRepackMoverOP;
-typedef utility::pointer::owning_ptr< CenRotDockingMover > CenRotDockingMoverOP;
-typedef utility::pointer::owning_ptr< CenRotRBRelaxMover > CenRotRBRelaxMoverOP;
-typedef utility::pointer::owning_ptr< RescoreCenrot > RescoreCenrotOP;
-typedef utility::pointer::owning_ptr< MinCenrotMover > MinCenrotMoverOP;
-typedef utility::pointer::owning_ptr< CenRotCanonicalMover > CenRotCanonicalMoverOP;
+typedef utility::pointer::shared_ptr< RepackCenrotMover > RepackCenrotMoverOP;
+typedef utility::pointer::shared_ptr< RepackCenrotMover > RepackCenrotMoverOP;
+typedef utility::pointer::shared_ptr< RepackMinCenrotMover > RepackMinCenrotMoverOP;
+typedef utility::pointer::shared_ptr< CenRotRelaxMover > CenRotRelaxMoverOP;
+typedef utility::pointer::shared_ptr< SmoothFragRepackMover > SmoothFragRepackMoverOP;
+typedef utility::pointer::shared_ptr< CenRotDockingMover > CenRotDockingMoverOP;
+typedef utility::pointer::shared_ptr< CenRotRBRelaxMover > CenRotRBRelaxMoverOP;
+typedef utility::pointer::shared_ptr< RescoreCenrot > RescoreCenrotOP;
+typedef utility::pointer::shared_ptr< MinCenrotMover > MinCenrotMoverOP;
+typedef utility::pointer::shared_ptr< CenRotCanonicalMover > CenRotCanonicalMoverOP;
 
 ///////////////////////////////////////////////////////////////////
 void*
@@ -1085,18 +1085,18 @@ my_main( void* ) {
 	//switch
 	//input pose is either centroid or fullatom
 	if (option[switch_to_centroid]()) {
-		do_cenrot->add_mover(new SwitchResidueTypeSetMover("centroid"));
+		do_cenrot->add_mover(MoverOP( new SwitchResidueTypeSetMover("centroid") ));
 	}
 	else {
 		TR << "Switch to CenRot model" << std::endl;
-		do_cenrot->add_mover(new SwitchResidueTypeSetMover("centroid_rot"));
+		do_cenrot->add_mover(MoverOP( new SwitchResidueTypeSetMover("centroid_rot") ));
 	}
 
-	if (!option[keep_silent_header]) do_cenrot->add_mover(new ClearPoseHeader());
+	if (!option[keep_silent_header]) do_cenrot->add_mover(MoverOP( new ClearPoseHeader() ));
 
 	//output intcoord
 	if (option[output_cenrot_intcoord]()) {
-		do_cenrot->add_mover(new OutputCenrotIntCoord());
+		do_cenrot->add_mover(MoverOP( new OutputCenrotIntCoord() ));
 	}
 	else {
 		//setup the scorefxn
@@ -1153,7 +1153,7 @@ my_main( void* ) {
 		if (option[in::file::native].user()) {
 			ResidueTypeSetCOP rsd_set( ChemicalManager::get_instance()->residue_type_set( "centroid" ) );
 			core::pose::PoseOP native_pose;
-			native_pose = new Pose();
+			native_pose = core::pose::PoseOP( new Pose() );
 			core::import_pose::pose_from_pdb( *native_pose, *rsd_set, option[ in::file::native ]() );
 			rescore->set_native(native_pose);
 		}

@@ -21,8 +21,8 @@ namespace scoring {
 namespace constraints {
 
 class Constraints;
-typedef utility::pointer::owning_ptr< Constraints > ConstraintsOP;
-typedef utility::pointer::owning_ptr< Constraints const > ConstraintsCOP;
+typedef utility::pointer::shared_ptr< Constraints > ConstraintsOP;
+typedef utility::pointer::shared_ptr< Constraints const > ConstraintsCOP;
 
 
 } // constraints

@@ -57,7 +57,7 @@ SheetCstGeneratorCreator::keyname() const
 
 protocols::moves::MoverOP
 SheetCstGeneratorCreator::create_mover() const {
-	return new SheetConstraintsRCG();
+	return protocols::moves::MoverOP( new SheetConstraintsRCG() );
 }
 
 std::string
@@ -75,7 +75,7 @@ SheetConstraintsRCG::SheetConstraintsRCG():
 	cacb_dihedral_tolerance_( 0.9 ),
 	bb_dihedral_tolerance_( 0.52 ),
 	constrain_dist_only_( false ),
-	blueprint_( NULL )
+	blueprint_( /* NULL */ )
 {}
 
 /// @ copy constructor
@@ -156,13 +156,13 @@ SheetConstraintsRCG::get_name() const
 protocols::moves::MoverOP
 SheetConstraintsRCG::fresh_instance() const
 {
-	return new SheetConstraintsRCG();
+	return protocols::moves::MoverOP( new SheetConstraintsRCG() );
 }
 
 protocols::moves::MoverOP
 SheetConstraintsRCG::clone() const
 {
-	return new SheetConstraintsRCG( *this );
+	return protocols::moves::MoverOP( new SheetConstraintsRCG( *this ) );
 }
 
 
@@ -174,7 +174,7 @@ SheetConstraintsRCG::set_blueprint( std::string const & blueprint_file )
  	if ( blueprint_file == "" ) {
 		utility_exit_with_message( "SheetCstGenerator requires a blueprint file" );
   }
-  set_blueprint( new protocols::jd2::parser::BluePrint( blueprint_file ) );
+  set_blueprint( BluePrintOP( new protocols::jd2::parser::BluePrint( blueprint_file ) ) );
 	if ( ! blueprint_ ) {
 		utility_exit_with_message( "SheetCstGenerator tried to read a blueprint file, but failed to create the proper object." );
 	}
@@ -257,11 +257,11 @@ SheetConstraintsRCG::generate_remodel_constraints( Pose const & pose )
 	core::Real ub( dist_ );
 	core::Real sd( 1.0 );
 	std::string tag( "constraints_in_beta_sheet" );
-	core::scoring::func::ScalarWeightedFuncOP cstfunc = new core::scoring::func::ScalarWeightedFunc( weight_, core::scoring::func::FuncOP( new BoundFunc( lb, ub, sd, tag ) ) );
+	core::scoring::func::ScalarWeightedFuncOP cstfunc( new core::scoring::func::ScalarWeightedFunc( weight_, core::scoring::func::FuncOP( new BoundFunc( lb, ub, sd, tag ) ) ) );
 	// TL Oct '12 add weights to angle/dihedral constraints
-	ScalarWeightedFuncOP cacb_dihedral_func = new ScalarWeightedFunc( weight_, core::scoring::func::FuncOP( new OffsetPeriodicBoundFunc(-cacb_dihedral_tolerance_,cacb_dihedral_tolerance_, std::sqrt(1.0/42.0), "dihed_cacb", 6.28, 0.0 ) ) );
-	ScalarWeightedFuncOP bb_dihedral_func = new ScalarWeightedFunc( weight_, core::scoring::func::FuncOP( new OffsetPeriodicBoundFunc(-bb_dihedral_tolerance_,bb_dihedral_tolerance_, std::sqrt(1.0/42.0), "dihed_bb", 3.14, 0.0 ) ) );
-	ScalarWeightedFuncOP bb_angle_func = new ScalarWeightedFunc( weight_, core::scoring::func::FuncOP( new BoundFunc(1.57-angle_tolerance_,1.57+angle_tolerance_, sqrt(1.0/42.0), "angle_bb") ) );
+	ScalarWeightedFuncOP cacb_dihedral_func( new ScalarWeightedFunc( weight_, core::scoring::func::FuncOP( new OffsetPeriodicBoundFunc(-cacb_dihedral_tolerance_,cacb_dihedral_tolerance_, std::sqrt(1.0/42.0), "dihed_cacb", 6.28, 0.0 ) ) ) );
+	ScalarWeightedFuncOP bb_dihedral_func( new ScalarWeightedFunc( weight_, core::scoring::func::FuncOP( new OffsetPeriodicBoundFunc(-bb_dihedral_tolerance_,bb_dihedral_tolerance_, std::sqrt(1.0/42.0), "dihed_bb", 3.14, 0.0 ) ) ) );
+	ScalarWeightedFuncOP bb_angle_func( new ScalarWeightedFunc( weight_, core::scoring::func::FuncOP( new BoundFunc(1.57-angle_tolerance_,1.57+angle_tolerance_, sqrt(1.0/42.0), "angle_bb") ) ) );
 
 	// set constraints to csts
 	core::Size nres( pose.total_residue() );
@@ -281,7 +281,7 @@ SheetConstraintsRCG::generate_remodel_constraints( Pose const & pose )
 	TR << "Constrains between CA-CA atoms in sheet are applied for the following residues. " << std::endl;
 	TR << "dist=" << dist_ << ", weight_=" << weight_ << ", cacb_dihedral=" << cacb_dihedral_tolerance_ << ", bb_dihedral=" << bb_dihedral_tolerance_ << ", angle=" << angle_tolerance_ << std::endl;
 
-	SS_Info2_OP ssinfo = new SS_Info2( pose, blueprint_->secstruct() );
+	SS_Info2_OP ssinfo( new SS_Info2( pose, blueprint_->secstruct() ) );
 	StrandPairingSet spairset( blueprint_->strand_pairings(), ssinfo );
 	StrandPairings spairs = spairset.strand_pairings();
 	for ( utility::vector1< StrandPairingOP >::const_iterator it=spairs.begin(); it!=spairs.end(); ++it ) {
@@ -291,7 +291,7 @@ SheetConstraintsRCG::generate_remodel_constraints( Pose const & pose )
 			core::Size jaa( spair.residue_pair( iaa ) );
 			core::id::AtomID atom1( pose.residue_type( iaa ).atom_index( "CA" ), iaa );
 			core::id::AtomID atom2( pose.residue_type( jaa ).atom_index( "CA" ), jaa );
-			csts.push_back( new AtomPairConstraint( atom1, atom2, cstfunc ) );
+			csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new AtomPairConstraint( atom1, atom2, cstfunc ) ) );
 			//flo sep '12: constrain dihedral, might be more accurate
 			if( ( !constrain_dist_only_ ) ||
 					( basic::options::option[ basic::options::OptionKeys::flxbb::constraints_sheet_include_cacb_pseudotorsion ].value() ) ){
@@ -301,20 +301,20 @@ SheetConstraintsRCG::generate_remodel_constraints( Pose const & pose )
         core::id::AtomID resj_n( pose.residue_type( jaa ).atom_index( "N" ), jaa );
         core::id::AtomID resj_c( pose.residue_type( jaa ).atom_index( "C" ), jaa );
         core::id::AtomID resj_o( pose.residue_type( jaa ).atom_index( "O" ), jaa );
-				csts.push_back( new core::scoring::constraints::DihedralConstraint( resi_o, resi_n, resi_c, resj_c, bb_dihedral_func ) );
-				csts.push_back( new core::scoring::constraints::DihedralConstraint( resj_o, resj_n, resj_c, resi_c, bb_dihedral_func ) );
+				csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::DihedralConstraint( resi_o, resi_n, resi_c, resj_c, bb_dihedral_func ) ) );
+				csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::DihedralConstraint( resj_o, resj_n, resj_c, resi_c, bb_dihedral_func ) ) );
 				if( spair.orient() == 'P' ){
-					csts.push_back( new core::scoring::constraints::AngleConstraint( resi_n, resi_c, resj_c, bb_angle_func ) );
-					csts.push_back( new core::scoring::constraints::AngleConstraint( resj_n, resj_c, resi_c, bb_angle_func ) );
+					csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::AngleConstraint( resi_n, resi_c, resj_c, bb_angle_func ) ) );
+					csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::AngleConstraint( resj_n, resj_c, resi_c, bb_angle_func ) ) );
 				}
 				else if( spair.orient() == 'A' ){
-          csts.push_back( new core::scoring::constraints::AngleConstraint( resi_n, resi_c, resj_n, bb_angle_func ) );
-          csts.push_back( new core::scoring::constraints::AngleConstraint( resj_n, resj_c, resi_n, bb_angle_func ) );
+          csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::AngleConstraint( resi_n, resi_c, resj_n, bb_angle_func ) ) );
+          csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::AngleConstraint( resj_n, resj_c, resi_n, bb_angle_func ) ) );
 				}
 				if( (pose.residue_type( iaa ).name3() == "GLY") || (pose.residue_type( jaa ).name3() == "GLY" ) ) continue; // don't bother restraining cacb dihedral with gly
 				core::id::AtomID resi_cb( pose.residue_type( iaa ).atom_index( "CB" ), iaa );
       	core::id::AtomID resj_cb( pose.residue_type( jaa ).atom_index( "CB" ), jaa );
-				csts.push_back( new core::scoring::constraints::DihedralConstraint( resi_cb, atom1, atom2, resj_cb, cacb_dihedral_func ) );
+				csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::DihedralConstraint( resi_cb, atom1, atom2, resj_cb, cacb_dihedral_func ) ) );
 				TR << "Added dihedral constraint between residues " << iaa << " and " << jaa << std::endl;
 			}
 			// flo sep '12 over

@@ -46,10 +46,10 @@ public:
 	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
 	virtual protocols::filters::FilterOP clone() const {
-		return new ContingentFilter( *this );
+		return protocols::filters::FilterOP( new ContingentFilter( *this ) );
 	}
 	virtual protocols::filters::FilterOP fresh_instance() const{
-		return new ContingentFilter();
+		return protocols::filters::FilterOP( new ContingentFilter() );
 	}
 
 	virtual ~ContingentFilter(){};

@@ -187,21 +187,21 @@ FragmentScoringMethodOP MakeFragmentCrmsd::make(Size priority,
 		trRmsScore
 				<< "Reference structure to score fragments by crmsd loaded from: "
 				<< option[in::file::native]() << std::endl;
-		core::pose::PoseOP nativePose = new core::pose::Pose;
+		core::pose::PoseOP nativePose( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*nativePose, option[in::file::native]());
 
-		return (FragmentScoringMethodOP) new FragmentCrmsd(priority,
-				lowest_acceptable_value, use_lowest, nativePose);
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new FragmentCrmsd(priority,
+				lowest_acceptable_value, use_lowest, nativePose) );
 	}
 	if (option[in::file::s].user()) {
 		trRmsScore
 				<< "Reference structure to score fragments by crmsd loaded from: "
 				<< option[in::file::s]()[1] << std::endl;
-		core::pose::PoseOP nativePose = new core::pose::Pose;
+		core::pose::PoseOP nativePose( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*nativePose, option[in::file::s]()[1]);
 
-		return (FragmentScoringMethodOP) new FragmentCrmsd(priority,
-				lowest_acceptable_value, use_lowest, nativePose);
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new FragmentCrmsd(priority,
+				lowest_acceptable_value, use_lowest, nativePose) );
 	}
 	if (option[in::file::xyz].user()) {
 
@@ -227,8 +227,8 @@ FragmentScoringMethodOP MakeFragmentCrmsd::make(Size priority,
 		}
 		trRmsScore <<  xyz.size() << " atoms found in the reference" << std::endl;
 
-		return (FragmentScoringMethodOP) new FragmentCrmsd(priority,
-				lowest_acceptable_value, use_lowest, xyz);
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new FragmentCrmsd(priority,
+				lowest_acceptable_value, use_lowest, xyz) );
 	}
 	utility_exit_with_message(
 			"Can't read a reference structure. Provide it with in::file::s flag");

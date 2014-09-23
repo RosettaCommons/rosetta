@@ -17,8 +17,8 @@ namespace loop_modeling {
 
 class LoopProtocol;
 
-typedef utility::pointer::owning_ptr<LoopProtocol> LoopProtocolOP;
-typedef utility::pointer::owning_ptr<LoopProtocol const> LoopProtocolCOP;
+typedef utility::pointer::shared_ptr<LoopProtocol> LoopProtocolOP;
+typedef utility::pointer::shared_ptr<LoopProtocol const> LoopProtocolCOP;
 
 }
 }

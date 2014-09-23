@@ -22,19 +22,19 @@ namespace pack_daemon {
 
 class TopEntitySet;
 
-typedef utility::pointer::owning_ptr< TopEntitySet > TopEntitySetOP;
-typedef utility::pointer::owning_ptr< TopEntitySet const > TopEntitySetCOP;
+typedef utility::pointer::shared_ptr< TopEntitySet > TopEntitySetOP;
+typedef utility::pointer::shared_ptr< TopEntitySet const > TopEntitySetCOP;
 
 
 class MultistateFitnessFunction;
 
-typedef utility::pointer::owning_ptr< MultistateFitnessFunction > MultistateFitnessFunctionOP;
-typedef utility::pointer::owning_ptr< MultistateFitnessFunction const > MultistateFitnessFunctionCOP;
+typedef utility::pointer::shared_ptr< MultistateFitnessFunction > MultistateFitnessFunctionOP;
+typedef utility::pointer::shared_ptr< MultistateFitnessFunction const > MultistateFitnessFunctionCOP;
 
 class MPIMultistateFitnessFunction;
 
-typedef utility::pointer::owning_ptr< MPIMultistateFitnessFunction > MPIMultistateFitnessFunctionOP;
-typedef utility::pointer::owning_ptr< MPIMultistateFitnessFunction const > MPIMultistateFitnessFunctionCOP;
+typedef utility::pointer::shared_ptr< MPIMultistateFitnessFunction > MPIMultistateFitnessFunctionOP;
+typedef utility::pointer::shared_ptr< MPIMultistateFitnessFunction const > MPIMultistateFitnessFunctionCOP;
 
 
 }

@@ -32,19 +32,19 @@ class EnergyEval;
 
 
 /// @brief EnergyEval owning pointer
-typedef utility::pointer::owning_ptr< EnergyEval > EnergyEvalOP;
+typedef utility::pointer::shared_ptr< EnergyEval > EnergyEvalOP;
 
 
 /// @brief EnergyEval const owning pointer
-typedef utility::pointer::owning_ptr< EnergyEval const > EnergyEvalCOP;
+typedef utility::pointer::shared_ptr< EnergyEval const > EnergyEvalCOP;
 
 
 /// @brief EnergyEval access pointer
-typedef utility::pointer::access_ptr< EnergyEval > EnergyEvalAP;
+typedef utility::pointer::weak_ptr< EnergyEval > EnergyEvalAP;
 
 
 /// @brief EnergyEval const access pointer
-typedef utility::pointer::access_ptr< EnergyEval const > EnergyEvalCAP;
+typedef utility::pointer::weak_ptr< EnergyEval const > EnergyEvalCAP;
 
 
 } // eval

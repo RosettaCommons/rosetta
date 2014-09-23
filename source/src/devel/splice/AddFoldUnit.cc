@@ -199,7 +199,7 @@ AddFoldUnitMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 AddFoldUnitMoverCreator::create_mover() const {
-	return new AddFoldUnitMover;
+	return protocols::moves::MoverOP( new AddFoldUnitMover );
 }
 
 std::string
@@ -238,13 +238,13 @@ AddFoldUnitMover::get_name() const {
 moves::MoverOP
 AddFoldUnitMover::clone() const
 {
-	return new AddFoldUnitMover( *this );
+	return moves::MoverOP( new AddFoldUnitMover( *this ) );
 }
 
 moves::MoverOP
 AddFoldUnitMover::fresh_instance() const
 {
-	return new AddFoldUnitMover;
+	return moves::MoverOP( new AddFoldUnitMover );
 }
 
 void
@@ -259,7 +259,7 @@ AddFoldUnitMover::parse_my_tag(
 	max_length( tag->getOption< Size >( "max_length", 40 ));
 	add_c( tag->getOption< bool >( "add_c", true ) );
 	if( !fold_unit_utils_ ){
-		fold_unit_utils_ = new FoldUnitUtils;
+		fold_unit_utils_ = FoldUnitUtilsOP( new FoldUnitUtils );
 		fold_unit_utils_->fragment_dbase( fragment_dbase() );
 		bool const success = fold_unit_utils_->read_dbase();
 		TR<<"fold_unit_utils dbase read status: "<<success<<std::endl;
@@ -335,13 +335,13 @@ StartFreshMover::parse_my_tag(
 moves::MoverOP
 StartFreshMover::clone() const
 {
-	return new StartFreshMover( *this );
+	return moves::MoverOP( new StartFreshMover( *this ) );
 }
 
 moves::MoverOP
 StartFreshMover::fresh_instance() const
 {
-	return new StartFreshMover;
+	return moves::MoverOP( new StartFreshMover );
 }
 
 std::string
@@ -357,7 +357,7 @@ StartFreshMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 StartFreshMoverCreator::create_mover() const {
-	return new StartFreshMover;
+	return protocols::moves::MoverOP( new StartFreshMover );
 }
 
 std::string

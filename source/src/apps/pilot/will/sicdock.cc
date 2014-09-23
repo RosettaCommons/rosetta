@@ -228,17 +228,17 @@ dock(
 
 	protocols::sic_dock::scores::MotifHashRigidScoreOP mhscore_(NULL);
 	protocols::sic_dock::scores::TrisBpyScoreCOP bpy3_sc_(NULL);
-	protocols::sic_dock::JointScoreOP rigidsfxn = new protocols::sic_dock::JointScore;
-	protocols::sic_dock::RigidScoreCOP cbscore_  = new protocols::sic_dock::CBScore(init_pose,init_pose,option[sicdock::clash_dis](),option[sicdock::contact_dis]());
+	protocols::sic_dock::JointScoreOP rigidsfxn( new protocols::sic_dock::JointScore );
+	protocols::sic_dock::RigidScoreCOP cbscore_( new protocols::sic_dock::CBScore(init_pose,init_pose,option[sicdock::clash_dis](),option[sicdock::contact_dis]()) );
 	// rigidsfxn->add_score(cbscore_,1.0);
 
 	if(option[basic::options::OptionKeys::sicdock::trisbpy].user()){
-		bpy3_sc_ = new protocols::sic_dock::scores::TrisBpyScore(init_pose,option[sicdock::trisbpy](),option[sicdock::trisbpy_min_contacts]());
+		bpy3_sc_ = protocols::sic_dock::scores::TrisBpyScoreCOP( new protocols::sic_dock::scores::TrisBpyScore(init_pose,option[sicdock::trisbpy](),option[sicdock::trisbpy_min_contacts]()) );
 		rigidsfxn->add_score(bpy3_sc_,1.0);
 	}
 
 	if(option[basic::options::OptionKeys::mh::xform_score_data].user()){
-		mhscore_ = new protocols::sic_dock::scores::MotifHashRigidScore(init_pose,init_pose);
+		mhscore_ = protocols::sic_dock::scores::MotifHashRigidScoreOP( new protocols::sic_dock::scores::MotifHashRigidScore(init_pose,init_pose) );
 		rigidsfxn->add_score(mhscore_, option[sicdock::motif_hash_weight]() );
 	}
 
@@ -466,7 +466,7 @@ dock(
 				if(nout < nstruct){
 					if(mhscore_){
 						utility::io::ozstream out(outdir+tag+"_motifs.pdb");
-						clash_checker = new xyzStripeHashPose(olig,NCO,2.5);
+						clash_checker = xyzStripeHashPoseCOP( new xyzStripeHashPose(olig,NCO,2.5) );
 						mhscore_->dump_matching_motifs(x1s,x2s,out,clash_checker);
 						out.close();
 						// protocols::motif_hash::MotifRotamerSetOperationCOP rso = mhscore_->motif_hash()->get_matching_motifs_rotsetop(olig,NULL,0.6,NULL);

@@ -41,7 +41,7 @@ namespace rdf {
 
 RDFBaseOP RDFEtableCreator::create_rdf_function() const
 {
-	return new RDFEtableFunction;
+	return RDFBaseOP( new RDFEtableFunction );
 }
 
 std::string RDFEtableCreator::type_name() const
@@ -49,7 +49,7 @@ std::string RDFEtableCreator::type_name() const
 	return "RDFEtableFunction";
 }
 
-RDFEtableFunction::RDFEtableFunction() : RDFBase("RDFEtableFunction"), etable_evaluator_(NULL)
+RDFEtableFunction::RDFEtableFunction() : RDFBase("RDFEtableFunction"), etable_evaluator_(/* NULL */)
 {
 	this->add_function_name("atr");
 	this->add_function_name("rep");
@@ -72,7 +72,7 @@ void RDFEtableFunction::parse_my_tag(utility::tag::TagCOP tag, basic::datacache:
 	core::scoring::ScoreFunctionOP scorefxn(data_map.get_ptr< core::scoring::ScoreFunction >( "scorefxns", scorefxn_name));
 	core::scoring::methods::EnergyMethodOptions options(scorefxn->energy_method_options());
 	core::scoring::etable::EtableCOP etable(core::scoring::ScoringManager::get_instance()->etable( options.etable_type()));
-	etable_evaluator_ = new core::scoring::etable::AnalyticEtableEvaluator(*etable);
+	etable_evaluator_ = core::scoring::etable::AnalyticEtableEvaluatorOP( new core::scoring::etable::AnalyticEtableEvaluator(*etable) );
 
 }
 
@@ -102,7 +102,7 @@ RDFResultList RDFEtableFunction::operator()(AtomPairData const & atom_data )
 
 RDFBaseOP RDFElecCreator::create_rdf_function() const
 {
-	return new RDFElecFunction;
+	return RDFBaseOP( new RDFElecFunction );
 }
 
 std::string RDFElecCreator::type_name() const
@@ -110,7 +110,7 @@ std::string RDFElecCreator::type_name() const
 	return "RDFElecFunction";
 }
 
-RDFElecFunction::RDFElecFunction() : RDFBase("RDFElecFunction"), coloumb_(NULL)
+RDFElecFunction::RDFElecFunction() : RDFBase("RDFElecFunction"), coloumb_(/* NULL */)
 {
 	this->add_function_name("elec");
 }
@@ -131,7 +131,7 @@ void RDFElecFunction::parse_my_tag(
 	std::string scorefxn_name = tag->getOption<std::string>("scorefxn");
 	core::scoring::ScoreFunctionOP scorefxn(data_map.get_ptr< core::scoring::ScoreFunction >( "scorefxns", scorefxn_name));
 	core::scoring::methods::EnergyMethodOptions options(scorefxn->energy_method_options());
-	coloumb_ = new core::scoring::etable::coulomb::Coulomb(options);
+	coloumb_ = core::scoring::etable::coulomb::CoulombOP( new core::scoring::etable::coulomb::Coulomb(options) );
 	coloumb_->initialize();
 
 }
@@ -151,7 +151,7 @@ RDFResultList RDFElecFunction::operator()(AtomPairData const & atom_data )
 
 RDFBaseOP RDFChargeCreator::create_rdf_function() const
 {
-	return new RDFChargeFunction;
+	return RDFBaseOP( new RDFChargeFunction );
 }
 
 std::string RDFChargeCreator::type_name() const
@@ -225,7 +225,7 @@ RDFResultList RDFChargeFunction::operator()(AtomPairData const & atom_data )
 
 RDFBaseOP RDFHbondCreator::create_rdf_function() const
 {
-	return new RDFHbondFunction;
+	return RDFBaseOP( new RDFHbondFunction );
 }
 
 std::string RDFHbondCreator::type_name() const
@@ -233,7 +233,7 @@ std::string RDFHbondCreator::type_name() const
 	return "RDFHbondFunction";
 }
 
-RDFHbondFunction::RDFHbondFunction() : RDFBase("RDFHbondFunction"),hbond_set_(NULL)
+RDFHbondFunction::RDFHbondFunction() : RDFBase("RDFHbondFunction"),hbond_set_(/* NULL */)
 {
 
 }
@@ -271,7 +271,7 @@ void RDFHbondFunction::parse_my_tag(
 
 void RDFHbondFunction::preamble(core::pose::Pose & pose)
 {
-	hbond_set_ = new core::scoring::hbonds::HBondSet;
+	hbond_set_ = core::scoring::hbonds::HBondSetOP( new core::scoring::hbonds::HBondSet );
 	pose.update_residue_neighbors();
 	hbond_set_->setup_for_residue_pair_energies(pose,false,false);
 }
@@ -315,7 +315,7 @@ RDFResultList RDFHbondFunction::operator()(AtomPairData const & atom_data )
 
 RDFBaseOP RDFBinaryHbondCreator::create_rdf_function() const
 {
-	return new RDFBinaryHbondFunction;
+	return RDFBaseOP( new RDFBinaryHbondFunction );
 }
 
 std::string RDFBinaryHbondCreator::type_name() const
@@ -388,7 +388,7 @@ RDFResultList RDFBinaryHbondFunction::operator()(AtomPairData const & atom_data)
 
 RDFBaseOP RDFOrbitalFunctionCreator::create_rdf_function() const
 {
-	return new RDFOrbitalFunction;
+	return RDFBaseOP( new RDFOrbitalFunction );
 }
 
 std::string RDFOrbitalFunctionCreator::type_name() const
@@ -396,7 +396,7 @@ std::string RDFOrbitalFunctionCreator::type_name() const
 	return "RDFOrbitalFunction";
 }
 
-RDFOrbitalFunction::RDFOrbitalFunction() : RDFBase("RDFOrbitalFunction"),pose_(NULL),orbital_score_(NULL)
+RDFOrbitalFunction::RDFOrbitalFunction() : RDFBase("RDFOrbitalFunction"),pose_(/* NULL */),orbital_score_(NULL)
 {
 	this->add_function_name("pci_cation_pi");
 	this->add_function_name("pci_pi_pi");
@@ -447,13 +447,13 @@ RDFResultList RDFOrbitalFunction::operator()(AtomPairData const & atom_data )
 void RDFOrbitalFunction::preamble(core::pose::Pose & pose)
 {
 	pose_ = pose.get_self_ptr();
-	orbital_score_ = new core::scoring::orbitals::OrbitalsScore();
+	orbital_score_ = core::scoring::orbitals::OrbitalsScoreOP( new core::scoring::orbitals::OrbitalsScore() );
 	pose.update_residue_neighbors();
 }
 
 RDFBaseOP RDFBinaryOrbitalFunctionCreator::create_rdf_function() const
 {
-	return new RDFBinaryOrbitalFunction;
+	return RDFBaseOP( new RDFBinaryOrbitalFunction );
 }
 
 std::string RDFBinaryOrbitalFunctionCreator::type_name() const
@@ -462,7 +462,7 @@ std::string RDFBinaryOrbitalFunctionCreator::type_name() const
 }
 
 
-RDFBinaryOrbitalFunction::RDFBinaryOrbitalFunction() : RDFBase("RDFBinaryOrbitalFunction"),pose_(NULL)
+RDFBinaryOrbitalFunction::RDFBinaryOrbitalFunction() : RDFBase("RDFBinaryOrbitalFunction"),pose_(/* NULL */)
 {
 
 	this->add_function_name("pi_pi_counts");

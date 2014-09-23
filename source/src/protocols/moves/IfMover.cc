@@ -51,7 +51,7 @@ std::string IfMoverCreator::keyname() const {
 }
 
 protocols::moves::MoverOP IfMoverCreator::create_mover() const {
-  return new IfMover();
+  return protocols::moves::MoverOP( new IfMover() );
 }
 
 void IfMover::apply(core::pose::Pose& pose) {

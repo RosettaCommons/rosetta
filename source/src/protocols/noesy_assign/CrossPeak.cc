@@ -108,7 +108,7 @@ void CrossPeak::add_full_assignment( Size res_ids[] ) {
 	Size ind1 = assign_spin( 1, res_ids );
 	Size ind2 = assign_spin( 2, res_ids );
 #ifndef WIN32
-	assignments_.push_back( new PeakAssignment( this, ind1, ind2 ) );
+	assignments_.push_back( utility::pointer::shared_ptr<class protocols::noesy_assign::PeakAssignment>( new PeakAssignment( this, ind1, ind2 ) ) );
 #endif
 	//	for ( Size i = 1;
 	//need to find resonances in Spins and add them if they are still missing.
@@ -135,7 +135,7 @@ void CrossPeak::find_assignments( ) {
   for ( Size ct1 = 1; ct1 <= n_assigned_1; ++ct1 ) {
     for ( Size ct2 = 1; ct2 <= n_assigned_2; ++ct2 ) {
 #ifndef WIN32
-      assignments_.push_back( new PeakAssignment( this, ct1, ct2 ) );
+      assignments_.push_back( utility::pointer::shared_ptr<class protocols::noesy_assign::PeakAssignment>( new PeakAssignment( this, ct1, ct2 ) ) );
 #endif
 	}
   }
@@ -204,8 +204,7 @@ CrossPeak::create_fa_and_cen_constraint(
 			round(distance_bound()+padding,round_digits),
 			round(inv_weight,round_digits),
 			  "automatic NOE Peak "+ObjexxFCL::string_of( peak_id() )+" "+filename()+" Volume: "+ObjexxFCL::string_of( volume() )
-			)
-		);
+			) );
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -229,10 +228,10 @@ CrossPeak::create_fa_and_cen_constraint(
 	if ( ct_ambiguous > 1 ) {
 		/// create Ambiguous constraint with BoundFunc describing the whole thing...
 		AmbiguousNMRConstraintOP
-			my_fa_cst = new AmbiguousNMRConstraint( func );
+			my_fa_cst( new AmbiguousNMRConstraint( func ) );
 
 		AmbiguousNMRConstraintOP
-			my_cen_cst = new AmbiguousNMRConstraint( func );
+			my_cen_cst( new AmbiguousNMRConstraint( func ) );
 
 		//		core::Size n( n_assigned() );
 		//mjo commenting out 'sd' because it is unused and causes a warning
@@ -273,11 +272,11 @@ CrossPeak::create_fa_and_cen_constraint(
 				mapped_upl = pow( cum_new_distance, -1.0/6 );
 				mapped_inv_weight = inv_weight;
 			}
-			core::scoring::func::FuncOP centroid_bound_func = new BoundFunc( 1.5,
+			core::scoring::func::FuncOP centroid_bound_func( new BoundFunc( 1.5,
 					round(mapped_upl,round_digits),
 					round(mapped_inv_weight,round_digits),
 					"CEN mapped automatic NOE: Peak "+ ObjexxFCL::string_of( peak_id() )
-			);
+			) );
 			if ( my_cen_cst->member_constraints().size()<=1 ) {
 				cen_cst = my_cen_cst->member_constraints()[ 1 ]->clone( centroid_bound_func );
 			} else {
@@ -308,7 +307,7 @@ CrossPeak::create_fa_and_cen_constraint(
 				mapped_inv_weight = inv_weight;
 			}
 			std::string const comment( "CEN mapped automatic NOE: Peak "+ ObjexxFCL::string_of( peak_id() ) );
-			cen_cst = my_cen_cst->clone( new BoundFunc( 1.5, round(mapped_upl,round_digits), round(mapped_inv_weight,round_digits), comment ) );
+			cen_cst = my_cen_cst->clone( core::scoring::func::FuncOP( new BoundFunc( 1.5, round(mapped_upl,round_digits), round(mapped_inv_weight,round_digits), comment ) ) );
 		}
 		//	tr.Trace << "constraint for " << peak_id() << " finished " << std::endl;
 	}

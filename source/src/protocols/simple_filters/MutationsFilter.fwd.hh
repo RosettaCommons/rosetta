@@ -26,8 +26,8 @@ namespace simple_filters {
 class MutationsFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< MutationsFilter >  MutationsFilterOP;
-typedef utility::pointer::owning_ptr< MutationsFilter const >  MutationsFilterCOP;
+typedef utility::pointer::shared_ptr< MutationsFilter >  MutationsFilterOP;
+typedef utility::pointer::shared_ptr< MutationsFilter const >  MutationsFilterCOP;
 
 } // namespace simple_filters
 } //namespace protocols

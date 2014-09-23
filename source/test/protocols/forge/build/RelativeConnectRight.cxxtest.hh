@@ -177,18 +177,18 @@ public: // tests
 		Real const ca2_ca11 = cut.residue( 2 ).xyz( "CA" ).distance( cut.residue( 11 ).xyz( "CA" ) );
 
 		// make an independent instruction
-		SegmentInsertOP si = new SegmentInsert( Interval( 13, 15 ), "L^L", left_cut, true, C );
+		SegmentInsertOP si( new SegmentInsert( Interval( 13, 15 ), "L^L", left_cut, true, C ) );
 
 		// Make a RelativeConnectRight that depends on the SegmentInsert and
 		// set it up so that it tries to mirror the jump in 'cut'.  We'll be
 		// testing to see if everything is successful by testing the relative
 		// distances between 'left_cut' and 'right_cut' and making sure they're
 		// the same after the modifications.
-		CountFromLeftOP cfl = new CountFromLeft();
+		CountFromLeftOP cfl( new CountFromLeft() );
 		cfl->left_skip = 1;
 		cfl->p = 7;
 
-		RelativeConnectRightOP rcr = new RelativeConnectRight( cfl, 5, right_cut );
+		RelativeConnectRightOP rcr( new RelativeConnectRight( cfl, 5, right_cut ) );
 
 		// Set up the rt by grabbing it from cut_pose.
 		rcr->extract_rt( cut, 7, 14 );

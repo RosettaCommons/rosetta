@@ -61,21 +61,21 @@ namespace task_operations{
 core::pack::task::operation::TaskOperationOP
 SeqprofConsensusOperationCreator::create_task_operation() const
 {
-	return new SeqprofConsensusOperation;
+	return core::pack::task::operation::TaskOperationOP( new SeqprofConsensusOperation );
 }
 
 
 /// @brief default constructor
 SeqprofConsensusOperation::SeqprofConsensusOperation():
 	TaskOperation(),
-	seqprof_(NULL),
+	seqprof_(/* NULL */),
 	min_aa_probability_(0.0),
 	prob_larger_current_(true),
 	ignore_pose_profile_length_mismatch_(false),
 	convert_scores_to_probabilities_( true ),
-	restrict_to_aligned_segments_( NULL ),
+	restrict_to_aligned_segments_( /* NULL */ ),
 	conservation_cutoff_aligned_segments_( -100000 ),
-	protein_interface_design_( NULL ),
+	protein_interface_design_( /* NULL */ ),
 	conservation_cutoff_protein_interface_design_( -100000 ),
 	debug_( false )
 {
@@ -84,7 +84,7 @@ SeqprofConsensusOperation::SeqprofConsensusOperation():
 	else
 		seqprof_filename_ = "";
 	if( utility::file::file_exists( seqprof_filename_ ) ){
-		core::sequence::SequenceProfileOP seqprof = new core::sequence::SequenceProfile( seqprof_filename_ );
+		core::sequence::SequenceProfileOP seqprof( new core::sequence::SequenceProfile( seqprof_filename_ ) );
 		seqprof->convert_profile_to_probs(); // was previously implicit in from-filename constructor
 		seqprof_ = seqprof;
 	}
@@ -97,7 +97,7 @@ SeqprofConsensusOperation::~SeqprofConsensusOperation() {}
 /// @brief clone
 core::pack::task::operation::TaskOperationOP
 SeqprofConsensusOperation::clone() const {
-	return new SeqprofConsensusOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new SeqprofConsensusOperation( *this ) );
 }
 
 /// @brief all AA that have a higher probability in the seqprofile
@@ -119,7 +119,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 
 	SequenceProfileOP seqprof = seqprof_;
 	if( !seqprof ){
-		seqprof = new core::sequence::SequenceProfile;
+		seqprof = SequenceProfileOP( new core::sequence::SequenceProfile );
 		tr<<"Sequence profile was not set until now. Attempting to read sequence profile from the pose's sequenceprofile constraints..."<<std::endl;
 
 		 core::pose::PoseOP chain = pose.split_by_chain(chain_num_);
@@ -129,7 +129,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 		 core::Size cst_num( 0 );
 		 BOOST_FOREACH( ConstraintCOP const c, constraints ){
 		   if( c->type() == "SequenceProfile" ){
-				 SequenceProfileConstraintCOP seqprof_cst( dynamic_cast< SequenceProfileConstraint const * >( c() ) );
+				 SequenceProfileConstraintCOP seqprof_cst( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::SequenceProfileConstraint const > ( c ) );
 				 runtime_assert( seqprof_cst != 0 );
 				 core::Size const seqpos( seqprof_cst->seqpos() );
 				 SequenceProfileCOP seqprof_pos( seqprof_cst->sequence_profile() );
@@ -165,13 +165,13 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 /// These are used in the following loop to restrict conservation profiles differently
 	utility::vector1< core::Size > designable_interface, designable_aligned_segments;
 	designable_interface.clear(); designable_aligned_segments.clear();
-	if( protein_interface_design()() != NULL ){
-		core::pack::task::TaskFactoryOP temp_tf = new core::pack::task::TaskFactory;
+	if( protein_interface_design() != NULL ){
+		core::pack::task::TaskFactoryOP temp_tf( new core::pack::task::TaskFactory );
 		temp_tf->push_back( protein_interface_design_ );
 		designable_interface = protocols::rosetta_scripts::residue_packer_states( pose, temp_tf, true/*designable*/, false/*packable*/ );
 	}
-	if( restrict_to_aligned_segments()() != NULL ){
-		core::pack::task::TaskFactoryOP temp_tf = new core::pack::task::TaskFactory;
+	if( restrict_to_aligned_segments() != NULL ){
+		core::pack::task::TaskFactoryOP temp_tf( new core::pack::task::TaskFactory );
 		temp_tf->push_back( restrict_to_aligned_segments_ );
 		designable_aligned_segments = protocols::rosetta_scripts::residue_packer_states( pose, temp_tf, true/*designable*/, false/*packable*/ );
 	}
@@ -187,9 +187,9 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 	for( core::Size i = resi_begin; i <= resi_end; ++i){
 
 		core::Real position_min_prob = min_aa_probability_;
-		if( protein_interface_design()() != NULL && std::find( designable_interface.begin(), designable_interface.end(), i ) != designable_interface.end() )
+		if( protein_interface_design() != NULL && std::find( designable_interface.begin(), designable_interface.end(), i ) != designable_interface.end() )
 			position_min_prob = conservation_cutoff_protein_interface_design();
-		else if( restrict_to_aligned_segments()() != NULL && std::find( designable_aligned_segments.begin(), designable_aligned_segments.end(), i ) != designable_aligned_segments.end() )
+		else if( restrict_to_aligned_segments() != NULL && std::find( designable_aligned_segments.begin(), designable_aligned_segments.end(), i ) != designable_aligned_segments.end() )
 			position_min_prob = conservation_cutoff_aligned_segments();
 
 		if( debug() )
@@ -233,7 +233,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 	if (basic::options::option[ basic::options::OptionKeys::out::file::use_occurrence_data ].value()){
 		for( core::Size i = resi_begin; i <= resi_end; ++i){
 			//for all non interface reisdues we allow only reidues that acctualy appear in native proteins.
-			if( protein_interface_design()() != NULL && std::find( designable_interface.begin(), designable_interface.end(), i ) != designable_interface.end() ){
+			if( protein_interface_design() != NULL && std::find( designable_interface.begin(), designable_interface.end(), i ) != designable_interface.end() ){
 				tr <<"Residue "<<i<<" is in the interface, not applying occurrence data"<<std::endl;
 				continue;
 			}
@@ -261,7 +261,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 			}
 			else {//if profile doesn't have probability data we revert to using pssm data
 				core::Real position_min_prob = min_aa_probability_;
-				if( restrict_to_aligned_segments()() != NULL && std::find( designable_aligned_segments.begin(), designable_aligned_segments.end(), i ) != designable_aligned_segments.end() )
+				if( restrict_to_aligned_segments() != NULL && std::find( designable_aligned_segments.begin(), designable_aligned_segments.end(), i ) != designable_aligned_segments.end() )
 					position_min_prob = conservation_cutoff_aligned_segments();
 				utility::vector1< Real > const & pos_profile( (seqprof->profile())[ i - resi_begin + 1 ] );
 
@@ -302,7 +302,7 @@ SeqprofConsensusOperation::parse_tag( TagCOP tag , DataMap & datamap )
 	if( tag->hasOption("filename") ){
 		seqprof_filename_ = tag->getOption< String >( "filename" );
 		tr<<"Loading seqprof from a file named: "<<seqprof_filename_<<std::endl;
-		core::sequence::SequenceProfileOP seqprof = new core::sequence::SequenceProfile( seqprof_filename_ );
+		core::sequence::SequenceProfileOP seqprof( new core::sequence::SequenceProfile( seqprof_filename_ ) );
 		if( convert_scores_to_probabilities() )
 			seqprof->convert_profile_to_probs(); // was previously implicit in from-filename constructor
 		seqprof_ = seqprof;
@@ -320,14 +320,14 @@ SeqprofConsensusOperation::parse_tag( TagCOP tag , DataMap & datamap )
 	utility::vector1< TagCOP > const sub_tags( tag->getTags() );
 	BOOST_FOREACH( TagCOP const sub_tag, sub_tags ){
 		if( sub_tag->getName() == "RestrictToAlignedSegments" ){
-			restrict_to_aligned_segments_ = new RestrictToAlignedSegmentsOperation;
+			restrict_to_aligned_segments_ = RestrictToAlignedSegmentsOperationOP( new RestrictToAlignedSegmentsOperation );
 			tr<<"Within SeqprofConsensus I'm now reading a RestrictToAlignedSegments operation..."<<std::endl;
 			restrict_to_aligned_segments_->parse_tag( sub_tag, datamap );
 			conservation_cutoff_aligned_segments( tag->getOption< core::Real >( "conservation_cutoff_aligned_segments" ) );
 			tr<<"conservation cutoff for aligned segments: "<<conservation_cutoff_aligned_segments()<<std::endl;
 		}
 		else if( sub_tag->getName() == "ProteinInterfaceDesign" ){
-			protein_interface_design_ = new ProteinInterfaceDesignOperation;
+			protein_interface_design_ = ProteinInterfaceDesignOperationOP( new ProteinInterfaceDesignOperation );
 			tr<<"Within SeqprofConsensus I'm now reading a ProteinInterfaceDesign operation..."<<std::endl;
 			protein_interface_design_->parse_tag( sub_tag, datamap );
 			conservation_cutoff_protein_interface_design( tag->getOption< core::Real >( "conservation_cutoff_protein_interface_design" ) );
@@ -352,7 +352,7 @@ void
 SeqprofConsensusOperation::set_seqprof( core::sequence::SequenceProfileOP seqprof, bool reweight )
 {
 	if ( reweight ) {
-		core::sequence::SequenceProfileOP reweightedprof = new core::sequence::SequenceProfile( *seqprof );
+		core::sequence::SequenceProfileOP reweightedprof( new core::sequence::SequenceProfile( *seqprof ) );
 		reweightedprof->convert_profile_to_probs(); // was previously implicit in from-filename constructor
 		seqprof_ = reweightedprof;
 	} else {
@@ -363,7 +363,7 @@ SeqprofConsensusOperation::set_seqprof( core::sequence::SequenceProfileOP seqpro
 core::pack::task::operation::TaskOperationOP
 RestrictConservedLowDdgOperationCreator::create_task_operation() const
 {
-	return new RestrictConservedLowDdgOperation;
+	return core::pack::task::operation::TaskOperationOP( new RestrictConservedLowDdgOperation );
 }
 
 void
@@ -399,7 +399,7 @@ RestrictConservedLowDdgOperation::~RestrictConservedLowDdgOperation()
 core::pack::task::operation::TaskOperationOP
 RestrictConservedLowDdgOperation::clone() const
 {
-	return new RestrictConservedLowDdgOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new RestrictConservedLowDdgOperation( *this ) );
 }
 
 void

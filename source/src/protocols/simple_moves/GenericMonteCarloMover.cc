@@ -81,7 +81,7 @@ GenericMonteCarloMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 GenericMonteCarloMoverCreator::create_mover() const {
-  return new GenericMonteCarloMover;
+  return protocols::moves::MoverOP( new GenericMonteCarloMover );
 }
 
 std::string
@@ -95,8 +95,8 @@ GenericMonteCarloMover::GenericMonteCarloMover():
 	Super( "GenericMonteCarlo" ),
 	maxtrials_( 10 ),
 	task_scaling_( 5 ),
-	mover_( NULL ),
-	scorefxn_( NULL ),
+	mover_( /* NULL */ ),
+	scorefxn_( /* NULL */ ),
 	temperature_( 0.0 ),
 	sample_type_( "low" ),
 	drift_( true ),
@@ -104,15 +104,15 @@ GenericMonteCarloMover::GenericMonteCarloMover():
 	recover_low_( true ),
 	rank_by_filter_( 1 ),
 	boltz_rank_( false ),
-	last_accepted_pose_( NULL ),
-	lowest_score_pose_( NULL ),
-	stopping_condition_( NULL ),
-	mover_stopping_condition_( NULL ),
+	last_accepted_pose_( /* NULL */ ),
+	lowest_score_pose_( /* NULL */ ),
+	stopping_condition_( /* NULL */ ),
+	mover_stopping_condition_( /* NULL */ ),
 	adaptive_movers_( false ),
 	adaptation_period_( 0 ),
 	saved_accept_file_name_( "" ),
 	saved_trial_number_file_( "" ),
-	mover_tag_( NULL ),
+	mover_tag_( /* NULL */ ),
 	reset_baselines_( true ),
 	progress_file_( "" )
 {
@@ -140,10 +140,10 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	recover_low_( true ),
 	rank_by_filter_(1),
 	boltz_rank_( false ),
-	last_accepted_pose_( NULL ),
-	lowest_score_pose_( NULL ),
+	last_accepted_pose_( /* NULL */ ),
+	lowest_score_pose_( /* NULL */ ),
 	saved_accept_file_name_( "" ),
-	mover_tag_( NULL ),
+	mover_tag_( /* NULL */ ),
 	reset_baselines_( true )
 {
   initialize();
@@ -163,7 +163,7 @@ GenericMonteCarloMover::GenericMonteCarloMover(
   maxtrials_( maxtrials ),
 	task_scaling_( task_scaling ),
   mover_( mover ),
-	task_( NULL ),
+	task_( /* NULL */ ),
 	factory_ (factory_in),
   temperature_( temperature ),
   sample_type_( sample_type ),
@@ -173,7 +173,7 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	rank_by_filter_(1),
 	boltz_rank_( false ),
 	saved_accept_file_name_( "" ),
-	mover_tag_( NULL ),
+	mover_tag_( /* NULL */ ),
 	reset_baselines_( true )
 {
   initialize();
@@ -187,7 +187,7 @@ GenericMonteCarloMover::~GenericMonteCarloMover(){}
 GenericMonteCarloMover::MoverOP
 GenericMonteCarloMover::clone() const
 {
-  return new GenericMonteCarloMover( *this );
+  return GenericMonteCarloMover::MoverOP( new GenericMonteCarloMover( *this ) );
 }
 
 void GenericMonteCarloMover::task_factory( core::pack::task::TaskFactoryOP tf ) { factory_ = tf; }
@@ -196,7 +196,7 @@ void GenericMonteCarloMover::task_factory( core::pack::task::TaskFactoryOP tf ) 
 GenericMonteCarloMover::MoverOP
 GenericMonteCarloMover::fresh_instance() const
 {
-  return new GenericMonteCarloMover();
+  return GenericMonteCarloMover::MoverOP( new GenericMonteCarloMover() );
 }
 
 /// @brief initialize
@@ -462,8 +462,8 @@ GenericMonteCarloMover::reset( Pose & pose )
 		lowest_score_ = ranking_score;
   }// fi filters_.size()
 
-  lowest_score_pose_ = new Pose( pose );
-  last_accepted_pose_ = new Pose( pose );
+  lowest_score_pose_ = PoseOP( new Pose( pose ) );
+  last_accepted_pose_ = PoseOP( new Pose( pose ) );
   last_accepted_score_ = lowest_score_;
 
   trial_counter_ = 0;
@@ -532,7 +532,7 @@ GenericMonteCarloMover::accept( Pose & pose,
 		copy( provisional_scores.begin(), provisional_scores.end(), lowest_scores_.begin() );
 		mc_accepted_ = MCA_accepted_score_beat_low;
 		if( saved_accept_file_name_ != "" ){
-			if( mover_tag_() != NULL ){
+			if( mover_tag_ != NULL ){
 				TR<<"Adding accepted mover tag to pose comments"<<std::endl;
 				//						std::ofstream f;
 				//						std::string const fname( saved_accept_file_name_ + ".mover_tag" );
@@ -704,7 +704,7 @@ GenericMonteCarloMover::load_trial_number_from_checkpoint( core::pose::Pose & po
 			f.close();
 		}//fi f.good()
 	}// fi saved_trial_number_file_ != ""
-	if( mover_tag_() != NULL ){
+	if( mover_tag_ != NULL ){
 		std::string const fname( saved_trial_number_file_ + ".mover_tag" );
 		ifstream f_mover_tag( fname.c_str(), ios::in );
 		if( f_mover_tag.good() ){
@@ -722,18 +722,18 @@ GenericMonteCarloMover::load_trial_number_from_checkpoint( core::pose::Pose & po
 		BOOST_FOREACH( FilterOP filter, filters_ ){
 			if( filter->get_type() == "Operator" ){
 					TR<<"Resetting Operator filter's baseline"<<std::endl;
-					OperatorOP operator_filter( dynamic_cast< Operator * >( filter() ) );
+					OperatorOP operator_filter( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::Operator > ( filter ) );
 					operator_filter->reset_baseline( pose, trial != 1/*if trial>1, attempt to read the baselines from checkpointing files. Otherwise, don't use the checkpointing files*/ );
 					call_reset = true;
 			}// fi Operator
 			else if( filter->get_type() == "CompoundStatement" ){ /// User defined filters with confidence!=1 in RosettaScripts are all CompoundFilter, so poke inside...
-				CompoundFilterOP comp_filt_op( dynamic_cast< CompoundFilter * >( filter() ) );
+				CompoundFilterOP comp_filt_op( utility::pointer::dynamic_pointer_cast< protocols::filters::CompoundFilter > ( filter ) );
 				runtime_assert( comp_filt_op != 0 );
 				for( CompoundFilter::CompoundStatement::iterator cs_it = comp_filt_op->begin(); cs_it != comp_filt_op->end(); ++cs_it ){
 					FilterOP filt( cs_it->first );
 					if( filt->get_type() == "Operator" ){
 						TR<<"Resetting Operator filter's baseline"<<std::endl;
-						OperatorOP operator_filter( dynamic_cast< Operator * >( filt() ) );
+						OperatorOP operator_filter( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::Operator > ( filt ) );
 						operator_filter->reset_baseline( pose, trial != 1/*if trial>1, attempt to read the baselines from checkpointing files. Otherwise, don't use the checkpointing files*/ );
 						call_reset = true;
 					}// fi Operator
@@ -796,7 +796,7 @@ GenericMonteCarloMover::apply( Pose & pose )
 	}
 	TR << "The number of trials for this run is: " << maxtrials_ << std::endl;
 
-	bool const stop_at_start( ( mover_stopping_condition_() != NULL && mover_stopping_condition_->obj ) || stopping_condition()->apply( pose ) );
+	bool const stop_at_start( ( mover_stopping_condition_ != NULL && mover_stopping_condition_->obj ) || stopping_condition()->apply( pose ) );
 	if( stop_at_start ){
 		TR<<"MC stopping condition met at the start, so failing without retrying "<<std::endl;
 		set_last_move_status( FAIL_DO_NOT_RETRY );
@@ -828,17 +828,17 @@ GenericMonteCarloMover::apply( Pose & pose )
 
 	}
 
-  PoseOP initial_pose = new Pose( pose );
+  PoseOP initial_pose( new Pose( pose ) );
 	reset( pose ); //(re)initialize MC statistics
   protocols::moves::MoverStatus ms( FAIL_RETRY );
 	core::Size accept( 0 ), reject( 0 );
 	using namespace protocols::rosetta_scripts;
-	ParsedProtocolOP mover_pp( dynamic_cast< ParsedProtocol * >( mover_() ) );
+	ParsedProtocolOP mover_pp( utility::pointer::dynamic_pointer_cast< protocols::rosetta_scripts::ParsedProtocol > ( mover_ ) );
 	if( adaptive_movers() ){
 		bool is_single_random( mover_pp->mode() == "single_random" );
 		if( mover_pp && !is_single_random ){ // dig in one level (at most) to find the correct ParsedProtocol; if this becomes more generally useful then it would make sense to generatlize this to look for all parsedprotocols of type single_random that are being called by the MC mover. A simple recursion could do it, but I'm not sure how useful this would be
 			BOOST_FOREACH( ParsedProtocol::MoverFilterPair const mfp, *mover_pp ){
-				ParsedProtocolOP tmp( dynamic_cast< ParsedProtocol * >( mfp.first.first() ) );
+				ParsedProtocolOP tmp( utility::pointer::dynamic_pointer_cast< protocols::rosetta_scripts::ParsedProtocol > ( mfp.first.first ) );
 				if( tmp && tmp->mode() == "single_random" ){/// the parsedprotocol mover must be run in mode single_random for the apply_probabilities to be modified
 					mover_pp = tmp;
 					is_single_random = true;
@@ -873,7 +873,7 @@ GenericMonteCarloMover::apply( Pose & pose )
 			mover_pp->apply_probability( new_probabilities );
 			mover_accepts = utility::vector1< core::Size >( mover_accepts.size(), 1 );
 		}
-		bool const stop( ( mover_stopping_condition_() != NULL && mover_stopping_condition_->obj ) || stopping_condition()->apply( pose ) );
+		bool const stop( ( mover_stopping_condition_ != NULL && mover_stopping_condition_->obj ) || stopping_condition()->apply( pose ) );
 		if( stop ){
 			TR<<"MC stopping condition met at trial "<<i<<std::endl;
 			break;

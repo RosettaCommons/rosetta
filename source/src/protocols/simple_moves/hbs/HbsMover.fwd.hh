@@ -22,8 +22,8 @@ namespace hbs{
 
 //Forwards and OP typedefs
 class HbsMover;
-typedef utility::pointer::owning_ptr< HbsMover > HbsMoverOP;
-typedef utility::pointer::owning_ptr< HbsMover const > HbsMoverCOP;
+typedef utility::pointer::shared_ptr< HbsMover > HbsMoverOP;
+typedef utility::pointer::shared_ptr< HbsMover const > HbsMoverCOP;
 
 }//hbs
 }//simple_moves

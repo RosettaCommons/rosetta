@@ -67,7 +67,7 @@ public:// construct/destruct
 
 	/// @brief clone this object
 	SheetOP clone() {
-		return new Sheet( *this );
+		return SheetOP( new Sheet( *this ) );
 	}
 
 	/// @brief return strand pairing

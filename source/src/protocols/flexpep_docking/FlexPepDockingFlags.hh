@@ -44,7 +44,7 @@ public:
 
 	// TODO: documentation
 	FlexPepDockingFlagsOP clone() const {
-		return new FlexPepDockingFlags( *this );
+		return FlexPepDockingFlagsOP( new FlexPepDockingFlags( *this ) );
 	}
 
 	// TODO: more documentation

@@ -89,13 +89,13 @@ std::string	MissingDensityToJumpMover::get_name() const {
 protocols::moves::MoverOP
 MissingDensityToJumpMover::clone() const
 {
-	return new MissingDensityToJumpMover(*this);
+	return protocols::moves::MoverOP( new MissingDensityToJumpMover(*this) );
 }
 
 protocols::moves::MoverOP
 MissingDensityToJumpMover::fresh_instance() const
 {
-	return new MissingDensityToJumpMover();
+	return protocols::moves::MoverOP( new MissingDensityToJumpMover() );
 }
 
 } // moves

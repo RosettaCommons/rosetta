@@ -70,10 +70,10 @@ FaMPSolvEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 	) const {
 	
-	return new FaMPSolvEnergy(
+	return methods::EnergyMethodOP( new FaMPSolvEnergy(
 	   ( ScoringManager::get_instance()->etable( options.etable_type() ) ),
 	   ( ScoringManager::get_instance()->memb_etable( options.etable_type() ))
-	   );
+	   ) );
 }
 	
 ScoreTypes
@@ -89,7 +89,7 @@ FaMPSolvEnergy::FaMPSolvEnergy(
 	etable::EtableCAP etable_in,
 	etable::MembEtableCAP memb_etable_in
 	) :
-	parent( new FaMPSolvEnergyCreator ),
+	parent( EnergyMethodCreatorOP( new FaMPSolvEnergyCreator ) ),
 	etable_( etable_in ),
 	memb_etable_( memb_etable_in ),
 	// FIXME: move inside with lock() success check?
@@ -114,7 +114,7 @@ FaMPSolvEnergy::FaMPSolvEnergy(
 /// @brief Clone Energy Method
 EnergyMethodOP
 FaMPSolvEnergy::clone() const {
-	return new FaMPSolvEnergy( *this );
+	return EnergyMethodOP( new FaMPSolvEnergy( *this ) );
 }
 
 /// @brief Setup Energy Method for Derivatives

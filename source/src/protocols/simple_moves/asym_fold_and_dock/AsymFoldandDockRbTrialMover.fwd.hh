@@ -24,8 +24,8 @@ namespace simple_moves {
 namespace symmetry {
 
 class SymFoldandDockRbTrialMover;
-typedef utility::pointer::owning_ptr< SymFoldandDockRbTrialMover > SymFoldandDockRbTrialMoverOP;
-typedef utility::pointer::owning_ptr< SymFoldandDockRbTrialMover const > SymFoldandDockRbTrialMoverCOP;
+typedef utility::pointer::shared_ptr< SymFoldandDockRbTrialMover > SymFoldandDockRbTrialMoverOP;
+typedef utility::pointer::shared_ptr< SymFoldandDockRbTrialMover const > SymFoldandDockRbTrialMoverCOP;
 
 } // symmetry
 } // moves

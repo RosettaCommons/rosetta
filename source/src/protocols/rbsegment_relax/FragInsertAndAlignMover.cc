@@ -111,7 +111,7 @@ void FragInsertAndAlignMover::initialize_rb_fragments(
 		int frag_size  = rbsegs[i][1].end() - frag_start + 1;
 
 		// add a new frame
-		frames_.push_back( new core::fragment::Frame( frag_start, frag_size ) );
+		frames_.push_back( utility::pointer::shared_ptr<class core::fragment::Frame>( new core::fragment::Frame( frag_start, frag_size ) ) );
 
 		utility::vector1< numeric::xyzVector< core::Real> > cas( frag_size );
 		for (int k=0; k<frag_size; ++k)

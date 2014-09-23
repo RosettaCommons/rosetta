@@ -21,8 +21,8 @@ namespace protocols {
 namespace multistate_design {
 
 class PackingState;
-typedef utility::pointer::owning_ptr< PackingState > PackingStateOP;
-typedef utility::pointer::owning_ptr< PackingState const > PackingStateCOP;
+typedef utility::pointer::shared_ptr< PackingState > PackingStateOP;
+typedef utility::pointer::shared_ptr< PackingState const > PackingStateCOP;
 
 }
 }

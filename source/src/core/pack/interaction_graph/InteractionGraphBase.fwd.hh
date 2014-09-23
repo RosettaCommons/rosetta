@@ -26,8 +26,8 @@ class NodeBase;
 class EdgeBase;
 class InteractionGraphBase;
 
-typedef utility::pointer::owning_ptr< InteractionGraphBase > InteractionGraphBaseOP;
-typedef utility::pointer::owning_ptr< InteractionGraphBase const > InteractionGraphBaseCOP;
+typedef utility::pointer::shared_ptr< InteractionGraphBase > InteractionGraphBaseOP;
+typedef utility::pointer::shared_ptr< InteractionGraphBase const > InteractionGraphBaseCOP;
 
 } // namespace interaction_graph
 } // namespace pack

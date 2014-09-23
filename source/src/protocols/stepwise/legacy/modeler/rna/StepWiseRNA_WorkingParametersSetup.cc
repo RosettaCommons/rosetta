@@ -85,7 +85,7 @@ namespace rna {
 		moving_res_list_( moving_res_list ),
 		cutpoint_open_( cutpoint_open ),
 		is_cutpoint_( full_sequence.size(), false ),
-		working_parameters_( new stepwise::modeler::working_parameters::StepWiseWorkingParameters ),
+		working_parameters_( stepwise::modeler::working_parameters::StepWiseWorkingParametersOP( new stepwise::modeler::working_parameters::StepWiseWorkingParameters ) ),
 		filter_user_alignment_res_( true ), //Generally want to keep this true!
 		allow_chain_boundary_jump_partner_right_at_fixed_BP_( false ), //hacky, just to get the Square RNA working..Nov 6, 2010
 		allow_fixed_res_at_moving_res_( false ), //hacky, just to get the Hermann Duplex RNA working..Nov 15, 2010

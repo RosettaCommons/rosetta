@@ -30,7 +30,7 @@ public:
 };
 
 #include <utility/pointer/access_ptr.hh>
-typedef utility::pointer::access_ptr< JobOutputterObserver const > JobOutputterObserverAP;
+typedef utility::pointer::weak_ptr< JobOutputterObserver const > JobOutputterObserverAP;
 
 #ifdef PTR_MODERN
 #include <utility/pointer/owning_ptr.hh>

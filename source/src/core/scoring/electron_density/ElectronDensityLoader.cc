@@ -46,7 +46,7 @@ ElectronDensityLoaderCreator::~ElectronDensityLoaderCreator() {}
 
 ResourceLoaderOP
 ElectronDensityLoaderCreator::create_resource_loader() const {
-	return new ElectronDensityLoader;
+	return ResourceLoaderOP( new ElectronDensityLoader );
 }
 
 string
@@ -78,7 +78,7 @@ ElectronDensityLoader::create_resource(
 	ElectronDensityOptions const & resource_options(
 		static_cast< ElectronDensityOptions const & >( options ));
 
-	ElectronDensityOP electron_density(new ElectronDensity());
+	ElectronDensityOP electron_density( new ElectronDensity() );
 
 	electron_density->readMRCandResize(
 		istream,
@@ -92,7 +92,7 @@ ElectronDensityLoader::create_resource(
 ResourceOptionsOP
 ElectronDensityLoader::default_options(
 ) const {
-	return new ElectronDensityOptions();
+	return ResourceOptionsOP( new ElectronDensityOptions() );
 }
 
 } // namespace

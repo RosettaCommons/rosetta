@@ -21,8 +21,8 @@ namespace core {
 namespace optimization {
 
 class DOF_Node;
-typedef utility::pointer::owning_ptr< DOF_Node > DOF_NodeOP;
-typedef utility::pointer::owning_ptr< DOF_Node const > DOF_NodeCOP;
+typedef utility::pointer::shared_ptr< DOF_Node > DOF_NodeOP;
+typedef utility::pointer::shared_ptr< DOF_Node const > DOF_NodeCOP;
 
 } // namespace kinematics
 } // namespace core

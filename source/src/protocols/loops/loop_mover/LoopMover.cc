@@ -82,7 +82,7 @@ using namespace ObjexxFCL::format;
 
 LoopMover::LoopMover() :
 	Mover(),
-	guarded_loops_( new GuardedLoopsFromFile )
+	guarded_loops_( GuardedLoopsFromFileOP( new GuardedLoopsFromFile ) )
 {
    init();
 }
@@ -93,7 +93,7 @@ LoopMover::LoopMover() :
 LoopMover::LoopMover( protocols::loops::LoopsOP loops_in )
 :
 	Mover(),
-	guarded_loops_( new GuardedLoopsFromFile( loops_in ))
+	guarded_loops_( GuardedLoopsFromFileOP( new GuardedLoopsFromFile( loops_in ) ))
 {
     init();
 }
@@ -103,7 +103,7 @@ LoopMover::LoopMover( protocols::loops::LoopsOP loops_in )
 /// before the loops object may be used, the loop indices must be resolved.
 LoopMover::LoopMover( protocols::loops::LoopsFileData const & loops_from_file ) :
 	Mover(),
-	guarded_loops_( new GuardedLoopsFromFile( loops_from_file ))
+	guarded_loops_( GuardedLoopsFromFileOP( new GuardedLoopsFromFile( loops_from_file ) ))
 {
 	init();
 }
@@ -120,8 +120,8 @@ void LoopMover::init()
 {
 	Mover::type( "LoopMover" );
 	loops_from_observer_cache_ = false;
-	checkpoints_ = new checkpoint::CheckPointer( "LoopMover" );
-	false_movemap_ = new core::kinematics::MoveMap();
+	checkpoints_ = checkpoint::CheckPointerOP( new checkpoint::CheckPointer( "LoopMover" ) );
+	false_movemap_ = MoveMapOP( new core::kinematics::MoveMap() );
 }
 
 // destructor
@@ -266,7 +266,7 @@ void
 LoopMover::set_loops_from_pose_observer_cache( core::pose::Pose const & pose ){
 
 	if( pose.observer_cache().has( core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER) ){
-		LoopsOP loops = new Loops();
+		LoopsOP loops( new Loops() );
 		utility::vector1< std::pair< core::Size, core::Size > > const & segments = utility::pointer::static_pointer_cast< core::pose::datacache::SpecialSegmentsObserver const >(pose.observer_cache().get_const_ptr( core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER ) )->segments();
 		for( core::Size i = 1; i <= segments.size(); ++i ){
 			core::Size loop_end = segments[i].second - 1; //segment convention

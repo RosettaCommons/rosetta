@@ -24,10 +24,10 @@ namespace scoring {
 namespace disulfides {
 
 class CentroidDisulfidePotential;
-typedef utility::pointer::owning_ptr< CentroidDisulfidePotential > CentroidDisulfidePotentialOP;
-typedef utility::pointer::owning_ptr< CentroidDisulfidePotential const > CentroidDisulfidePotentialCOP;
-typedef utility::pointer::access_ptr< CentroidDisulfidePotential > CentroidDisulfidePotentialAP;
-typedef utility::pointer::access_ptr< CentroidDisulfidePotential const > CentroidDisulfidePotentialCAP;
+typedef utility::pointer::shared_ptr< CentroidDisulfidePotential > CentroidDisulfidePotentialOP;
+typedef utility::pointer::shared_ptr< CentroidDisulfidePotential const > CentroidDisulfidePotentialCOP;
+typedef utility::pointer::weak_ptr< CentroidDisulfidePotential > CentroidDisulfidePotentialAP;
+typedef utility::pointer::weak_ptr< CentroidDisulfidePotential const > CentroidDisulfidePotentialCAP;
 
 class Cb_Distance_Func;
 class Cen_Distance_Func;
@@ -35,29 +35,29 @@ class CaCbCb_Angle_Func;
 class NCaCaC_Dihedral_Func;
 class CaCbCbCa_Dihedral_Func;
 
-typedef utility::pointer::owning_ptr< Cb_Distance_Func > Cb_Distance_FuncOP;
-typedef utility::pointer::owning_ptr< Cen_Distance_Func > Cen_Distance_FuncOP;
-typedef utility::pointer::owning_ptr< CaCbCb_Angle_Func > CaCbCb_Angle_FuncOP;
-typedef utility::pointer::owning_ptr< NCaCaC_Dihedral_Func > NCaCaC_Dihedral_FuncOP;
-typedef utility::pointer::owning_ptr< CaCbCbCa_Dihedral_Func > CaCbCbCa_Dihedral_FuncOP;
+typedef utility::pointer::shared_ptr< Cb_Distance_Func > Cb_Distance_FuncOP;
+typedef utility::pointer::shared_ptr< Cen_Distance_Func > Cen_Distance_FuncOP;
+typedef utility::pointer::shared_ptr< CaCbCb_Angle_Func > CaCbCb_Angle_FuncOP;
+typedef utility::pointer::shared_ptr< NCaCaC_Dihedral_Func > NCaCaC_Dihedral_FuncOP;
+typedef utility::pointer::shared_ptr< CaCbCbCa_Dihedral_Func > CaCbCbCa_Dihedral_FuncOP;
 
-typedef utility::pointer::owning_ptr< Cb_Distance_Func const > Cb_Distance_FuncCOP;
-typedef utility::pointer::owning_ptr< Cen_Distance_Func const > Cen_Distance_FuncCOP;
-typedef utility::pointer::owning_ptr< CaCbCb_Angle_Func const > CaCbCb_Angle_FuncCOP;
-typedef utility::pointer::owning_ptr< NCaCaC_Dihedral_Func const > NCaCaC_Dihedral_FuncCOP;
-typedef utility::pointer::owning_ptr< CaCbCbCa_Dihedral_Func const > CaCbCbCa_Dihedral_FuncCOP;
+typedef utility::pointer::shared_ptr< Cb_Distance_Func const > Cb_Distance_FuncCOP;
+typedef utility::pointer::shared_ptr< Cen_Distance_Func const > Cen_Distance_FuncCOP;
+typedef utility::pointer::shared_ptr< CaCbCb_Angle_Func const > CaCbCb_Angle_FuncCOP;
+typedef utility::pointer::shared_ptr< NCaCaC_Dihedral_Func const > NCaCaC_Dihedral_FuncCOP;
+typedef utility::pointer::shared_ptr< CaCbCbCa_Dihedral_Func const > CaCbCbCa_Dihedral_FuncCOP;
 
-typedef utility::pointer::access_ptr< Cb_Distance_Func > Cb_Distance_FuncAP;
-typedef utility::pointer::access_ptr< Cen_Distance_Func > Cen_Distance_FuncAP;
-typedef utility::pointer::access_ptr< CaCbCb_Angle_Func > CaCbCb_Angle_FuncAP;
-typedef utility::pointer::access_ptr< NCaCaC_Dihedral_Func > NCaCaC_Dihedral_FuncAP;
-typedef utility::pointer::access_ptr< CaCbCbCa_Dihedral_Func > CaCbCbCa_Dihedral_FuncAP;
+typedef utility::pointer::weak_ptr< Cb_Distance_Func > Cb_Distance_FuncAP;
+typedef utility::pointer::weak_ptr< Cen_Distance_Func > Cen_Distance_FuncAP;
+typedef utility::pointer::weak_ptr< CaCbCb_Angle_Func > CaCbCb_Angle_FuncAP;
+typedef utility::pointer::weak_ptr< NCaCaC_Dihedral_Func > NCaCaC_Dihedral_FuncAP;
+typedef utility::pointer::weak_ptr< CaCbCbCa_Dihedral_Func > CaCbCbCa_Dihedral_FuncAP;
 
-typedef utility::pointer::access_ptr< Cb_Distance_Func const > Cb_Distance_FuncCAP;
-typedef utility::pointer::access_ptr< Cen_Distance_Func const > Cen_Distance_FuncCAP;
-typedef utility::pointer::access_ptr< CaCbCb_Angle_Func const > CaCbCb_Angle_FuncCAP;
-typedef utility::pointer::access_ptr< NCaCaC_Dihedral_Func const > NCaCaC_Dihedral_FuncCAP;
-typedef utility::pointer::access_ptr< CaCbCbCa_Dihedral_Func const > CaCbCbCa_Dihedral_FuncCAP;
+typedef utility::pointer::weak_ptr< Cb_Distance_Func const > Cb_Distance_FuncCAP;
+typedef utility::pointer::weak_ptr< Cen_Distance_Func const > Cen_Distance_FuncCAP;
+typedef utility::pointer::weak_ptr< CaCbCb_Angle_Func const > CaCbCb_Angle_FuncCAP;
+typedef utility::pointer::weak_ptr< NCaCaC_Dihedral_Func const > NCaCaC_Dihedral_FuncCAP;
+typedef utility::pointer::weak_ptr< CaCbCbCa_Dihedral_Func const > CaCbCbCa_Dihedral_FuncCAP;
 
 } //disulfides
 } //scoring

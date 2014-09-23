@@ -58,7 +58,7 @@ void StubGenerator::placeResidueAtTransform( core::pose::Pose & pose, core::conf
 {
   tr.Debug << "Placing at transform: " << transform << std::endl;
 
-	core::conformation::ResidueOP new_residue(new core::conformation::Residue(*sourceResidue));
+	core::conformation::ResidueOP new_residue( new core::conformation::Residue(*sourceResidue) );
 	moveIntoStubFrame(new_residue, transform);
 
   // Places residue at last jump & residue number

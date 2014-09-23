@@ -38,8 +38,8 @@
 using namespace protocols::jd2;
 
 class DummyObserver;
-typedef utility::pointer::owning_ptr< DummyObserver > DummyObserverOP;
-typedef utility::pointer::access_ptr< DummyObserver > DummyObserverAP;
+typedef utility::pointer::shared_ptr< DummyObserver > DummyObserverOP;
+typedef utility::pointer::weak_ptr< DummyObserver > DummyObserverAP;
 
 class DummyObserver :
 	public protocols::moves::Mover, // For OP
@@ -81,15 +81,15 @@ public:
 
 	// @brief test default options and default locator
 	void test_Observer_add_remove() {
-		DummyObserverOP observer1_op = new DummyObserver;
-		DummyObserverOP observer2_op = new DummyObserver;
-		DummyObserverOP observer3_op = new DummyObserver;
+		DummyObserverOP observer1_op( new DummyObserver );
+		DummyObserverOP observer2_op( new DummyObserver );
+		DummyObserverOP observer3_op( new DummyObserver );
 		DummyObserver & observer1 = *observer1_op;
 		DummyObserver & observer2 = *observer2_op;
 		DummyObserver & observer3 = *observer3_op;
 		SilentFileJobOutputter job_outputter;
 		core::pose::Pose pose;
-		JobOP job = new Job( InnerJobOP( new InnerJob( "job", 1 ) ), 1 );
+		JobOP job( new Job( InnerJobOP( new InnerJob( "job", 1 ) ), 1 ) );
 		job_outputter.call_output_observers( pose, job  );
 		TS_ASSERT( observer1.call_counter_ == 0 );
 		job->add_output_observer( DummyObserverAP(observer1_op) );

@@ -30,19 +30,19 @@ class Bridge;
 
 
 /// @brief owning pointer for Bridge
-typedef utility::pointer::owning_ptr< Bridge > BridgeOP;
+typedef utility::pointer::shared_ptr< Bridge > BridgeOP;
 
 
 /// @brief owning pointer for const Bridge
-typedef utility::pointer::owning_ptr< Bridge const > BridgeCOP;
+typedef utility::pointer::shared_ptr< Bridge const > BridgeCOP;
 
 
 /// @brief access pointer for Bridge
-typedef utility::pointer::access_ptr< Bridge > BridgeAP;
+typedef utility::pointer::weak_ptr< Bridge > BridgeAP;
 
 
 /// @brief access pointer for const Bridge
-typedef utility::pointer::access_ptr< Bridge const > BridgeCAP;
+typedef utility::pointer::weak_ptr< Bridge const > BridgeCAP;
 
 
 } // namespace build

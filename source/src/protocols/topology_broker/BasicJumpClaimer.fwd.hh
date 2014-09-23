@@ -28,11 +28,11 @@ namespace topology_broker {
 class BasicJumpClaimer;
 
 // Types
-typedef  utility::pointer::owning_ptr< BasicJumpClaimer >  BasicJumpClaimerOP;
-typedef  utility::pointer::owning_ptr< BasicJumpClaimer const >  BasicJumpClaimerCOP;
+typedef  utility::pointer::shared_ptr< BasicJumpClaimer >  BasicJumpClaimerOP;
+typedef  utility::pointer::shared_ptr< BasicJumpClaimer const >  BasicJumpClaimerCOP;
 
-typedef  utility::pointer::access_ptr< BasicJumpClaimer >  BasicJumpClaimerAP;
-typedef  utility::pointer::access_ptr< BasicJumpClaimer const >  BasicJumpClaimerCAP;
+typedef  utility::pointer::weak_ptr< BasicJumpClaimer >  BasicJumpClaimerAP;
+typedef  utility::pointer::weak_ptr< BasicJumpClaimer const >  BasicJumpClaimerCAP;
 
 
 } // namespace kinematics

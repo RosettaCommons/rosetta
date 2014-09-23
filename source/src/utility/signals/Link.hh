@@ -46,7 +46,7 @@ class Link {
 private: // typedefs
 
 
-	typedef utility::pointer::owning_ptr< LinkUnit > LinkUnitOP;
+	typedef utility::pointer::shared_ptr< LinkUnit > LinkUnitOP;
 
 
 public: // construct/destruct
@@ -105,7 +105,7 @@ public: // interface
 	/// @brief link empty?
 	inline
 	bool empty() const {
-		return ( unit_() == NULL );
+		return ( unit_ == NULL );
 	}
 
 

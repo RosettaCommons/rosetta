@@ -84,7 +84,7 @@ DockingEnsemblePrepackProtocol::DockingEnsemblePrepackProtocol(): DockingHighRes
 void DockingEnsemblePrepackProtocol::setup_defaults()
 {
 	trans_magnitude_ = 1000.0;
-	pack_operations_= new SequenceMover();
+	pack_operations_ = SequenceMoverOP( new SequenceMover() );
 
 	ensemble1_ = NULL;
 	ensemble2_ = NULL;
@@ -127,19 +127,19 @@ void DockingEnsemblePrepackProtocol::register_options()
 
 void DockingEnsemblePrepackProtocol::setup_pack_operation_movers()
 {
-	prepack_full_repack_ = new protocols::simple_moves::PackRotamersMover();
+	prepack_full_repack_ = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover() );
 	prepack_full_repack_->score_function( scorefxn_pack() );
 	prepack_full_repack_->task_factory( task_factory() );
 	pack_operations_->add_mover(prepack_full_repack_);
 
 	if ( rt_min() ){
-		rtmin_mover_ = new protocols::simple_moves::RotamerTrialsMinMover( );
+		rtmin_mover_ = protocols::simple_moves::RotamerTrialsMinMoverOP( new protocols::simple_moves::RotamerTrialsMinMover( ) );
 		rtmin_mover_->score_function( scorefxn_pack() );
 		rtmin_mover_->task_factory( task_factory() );
 		pack_operations_->add_mover( rtmin_mover_ );
 	}
 	if ( sc_min() ){
-		scmin_mover_ =new SidechainMinMover();
+		scmin_mover_ = SidechainMinMoverOP( new SidechainMinMover() );
 		scmin_mover_->set_scorefxn( scorefxn_pack() );
 		scmin_mover_->set_task_factory( task_factory() );
 		pack_operations_->add_mover( scmin_mover_ );
@@ -164,13 +164,13 @@ void DockingEnsemblePrepackProtocol::finalize_setup( pose::Pose & pose ) {
 	start_res = 1;
 	end_res = cutpoint;
 
-	ensemble1_ = new DockingEnsemble( start_res, end_res, rb_jump, ensemble1_filename_, "dock_ens_conf1", scorefxn_low, scorefxn() );
+	ensemble1_ = DockingEnsembleOP( new DockingEnsemble( start_res, end_res, rb_jump, ensemble1_filename_, "dock_ens_conf1", scorefxn_low, scorefxn() ) );
 
 	TR << "Ensemble 2: " << ensemble2_filename_ << std::endl;
 	start_res = cutpoint + 1;
 	end_res = pose.total_residue();
 
-	ensemble2_ = new DockingEnsemble( start_res, end_res, rb_jump, ensemble2_filename_, "dock_ens_conf2", scorefxn_low, scorefxn() );
+	ensemble2_ = DockingEnsembleOP( new DockingEnsemble( start_res, end_res, rb_jump, ensemble2_filename_, "dock_ens_conf2", scorefxn_low, scorefxn() ) );
 }
 
 void DockingEnsemblePrepackProtocol::apply( core::pose::Pose & pose )
@@ -181,7 +181,7 @@ void DockingEnsemblePrepackProtocol::apply( core::pose::Pose & pose )
 
 	starting_pose = pose;
 
-	switch_mover = new protocols::docking::ConformerSwitchMover( ensemble1_ );
+	switch_mover = protocols::docking::ConformerSwitchMoverOP( new protocols::docking::ConformerSwitchMover( ensemble1_ ) );
 	for ( Size i=1; i<=ensemble1_->size(); ++i ) {
 		protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
 		to_centroid.apply( pose );
@@ -196,7 +196,7 @@ void DockingEnsemblePrepackProtocol::apply( core::pose::Pose & pose )
 		ensemble1_->calculate_lowres_ref_energy( pose );
 		//bringing the packed structures together
 		for(  DockJumps::const_iterator jump= movable_jumps().begin() ; jump != movable_jumps().end(); ++jump ) {
-			rigid::RigidBodyTransMoverOP translate_back ( new rigid::RigidBodyTransMover(pose, *jump) );
+			rigid::RigidBodyTransMoverOP translate_back( new rigid::RigidBodyTransMover(pose, *jump) );
 			translate_back->step_size( trans_magnitude_ );
 			translate_back->trans_axis().negate();
 			translate_back->apply(pose);
@@ -210,7 +210,7 @@ void DockingEnsemblePrepackProtocol::apply( core::pose::Pose & pose )
 
 	// reset to starting pose
 	pose = starting_pose;
-	switch_mover = new protocols::docking::ConformerSwitchMover( ensemble2_ );
+	switch_mover = protocols::docking::ConformerSwitchMoverOP( new protocols::docking::ConformerSwitchMover( ensemble2_ ) );
 	for ( Size i=1; i<=ensemble2_->size(); ++i ) {
 		protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
 		to_centroid.apply( pose );
@@ -226,7 +226,7 @@ void DockingEnsemblePrepackProtocol::apply( core::pose::Pose & pose )
 		ensemble2_->calculate_lowres_ref_energy( pose );
 		//bringing the packed structures together
 		for(  DockJumps::const_iterator jump= movable_jumps().begin() ; jump != movable_jumps().end(); ++jump ) {
-			rigid::RigidBodyTransMoverOP translate_back ( new rigid::RigidBodyTransMover(pose, *jump) );
+			rigid::RigidBodyTransMoverOP translate_back( new rigid::RigidBodyTransMover(pose, *jump) );
 			translate_back->step_size( trans_magnitude_ );
 			translate_back->trans_axis().negate();
 			translate_back->apply(pose);

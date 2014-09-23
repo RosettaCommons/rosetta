@@ -36,10 +36,10 @@ public:
 	EnergyPerResidueFilter( EnergyPerResidueFilter const &init );
 	bool apply( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const {
-		return new EnergyPerResidueFilter( *this );
+		return filters::FilterOP( new EnergyPerResidueFilter( *this ) );
 	}
 	filters::FilterOP fresh_instance() const{
-		return new EnergyPerResidueFilter();
+		return filters::FilterOP( new EnergyPerResidueFilter() );
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;

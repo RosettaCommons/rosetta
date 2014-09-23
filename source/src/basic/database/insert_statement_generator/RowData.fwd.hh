@@ -25,7 +25,7 @@ namespace insert_statement_generator {
 template <class T> class RowData;
 class RowDataBase;
 
-typedef utility::pointer::owning_ptr< RowDataBase > RowDataBaseOP;
+typedef utility::pointer::shared_ptr< RowDataBase > RowDataBaseOP;
 
 }
 }

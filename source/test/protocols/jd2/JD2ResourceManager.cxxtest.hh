@@ -78,12 +78,12 @@ public:
 
 };
 
-typedef utility::pointer::owning_ptr< DummyResourceOptions > DummyResourceOptionsOP;
+typedef utility::pointer::shared_ptr< DummyResourceOptions > DummyResourceOptionsOP;
 
 class DummyResourceOptionsCreator : public ResourceOptionsCreator {
 public:
 	virtual std::string options_type() const { return "DummyResourceOptions"; }
-	virtual ResourceOptionsOP create_options() const { return new DummyResourceOptions; }
+	virtual ResourceOptionsOP create_options() const { return ResourceOptionsOP( new DummyResourceOptions ); }
 };
 
 
@@ -111,7 +111,7 @@ public:
 	virtual
 	ResourceOptionsOP
 	default_options() const {
-		return new DummyResourceOptions;
+		return ResourceOptionsOP( new DummyResourceOptions );
 	}
 
 };
@@ -121,7 +121,7 @@ public:
 	virtual
 	ResourceLoaderOP
 	create_resource_loader() const {
-		return new DummyResourceLoader;
+		return ResourceLoaderOP( new DummyResourceLoader );
 	}
 
 	virtual
@@ -151,7 +151,7 @@ public:
 	locate_resource_stream(
 		std::string const &
 	) const{
-		return new DummyResourceStream;
+		return ResourceStreamOP( new DummyResourceStream );
 	}
 
 	virtual
@@ -177,7 +177,7 @@ public:
 	virtual
 	ResourceLocatorOP
 	create_resource_locator() const {
-		return new DummyResourceLocator;
+		return ResourceLocatorOP( new DummyResourceLocator );
 	}
 
 	virtual
@@ -202,7 +202,7 @@ public:
 
 	virtual
 	ResourceOptionsOP
-	get_resource_options( ResourceDescription const & ) const { return new DummyResourceOptions(2); }
+	get_resource_options( ResourceDescription const & ) const { return ResourceOptionsOP( new DummyResourceOptions(2) ); }
 
 };
 
@@ -225,14 +225,14 @@ public:
 class DummyResourceFallbackConfiguration1Creator : public FallbackConfigurationCreator
 {
 public:
-	virtual FallbackConfigurationOP create_fallback_configuration() const { return new DummyResourceFallbackConfiguration1; }
+	virtual FallbackConfigurationOP create_fallback_configuration() const { return FallbackConfigurationOP( new DummyResourceFallbackConfiguration1 ); }
 	virtual std::string resource_description() const { return "DummyResource1"; }
 };
 
 class DummyResourceFallbackConfiguration2Creator : public FallbackConfigurationCreator
 {
 public:
-	virtual FallbackConfigurationOP create_fallback_configuration() const { return new DummyResourceFallbackConfiguration2; }
+	virtual FallbackConfigurationOP create_fallback_configuration() const { return FallbackConfigurationOP( new DummyResourceFallbackConfiguration2 ); }
 	virtual std::string resource_description() const { return "DummyResource2"; }
 };
 
@@ -271,7 +271,7 @@ public:
 		lazy_resource_manager->add_resource_tag_by_job_tag( rDesc, jTag, rTag );
 		lazy_resource_manager->add_resource_configuration( rTag, my_config );
 		ResourceOP my_resource = lazy_resource_manager->get_resource_by_job_tag( rDesc, jTag );
-		protocols::loops::LoopsFileDataCOP my_loops = dynamic_cast< protocols::loops::LoopsFileData const * >( my_resource() );
+		protocols::loops::LoopsFileDataCOP my_loops = utility::pointer::dynamic_pointer_cast< protocols::loops::LoopsFileData const > ( my_resource );
 
 		TS_ASSERT( my_loops ); // make sure we got back the right resource type
 
@@ -305,7 +305,7 @@ public:
 		my_config.loader_type = "LoopsFile";
 		my_config.resource_options_tag = resource_options_tag;
 
-		protocols::loops::LoopsFileOptionsOP lfo = new protocols::loops::LoopsFileOptions();
+		protocols::loops::LoopsFileOptionsOP lfo( new protocols::loops::LoopsFileOptions() );
 
 		ResourceManager * resource_manager = ResourceManager::get_instance();
 		LazyResourceManager * lazy_resource_manager = dynamic_cast< LazyResourceManager * > ( resource_manager );
@@ -316,7 +316,7 @@ public:
 		lazy_resource_manager->add_resource_configuration( rTag, my_config );
 		lazy_resource_manager->add_resource_options( resource_options_tag, lfo );
 		ResourceOP my_resource = lazy_resource_manager->get_resource_by_job_tag( rDesc, jTag );
-		protocols::loops::LoopsFileDataCOP my_loops = dynamic_cast< protocols::loops::LoopsFileData const * >( my_resource() );
+		protocols::loops::LoopsFileDataCOP my_loops = utility::pointer::dynamic_pointer_cast< protocols::loops::LoopsFileData const > ( my_resource );
 
 		TS_ASSERT( my_loops ); // make sure we got back the right resource type
 
@@ -350,7 +350,7 @@ public:
 		my_config.loader_type = "LoopsFile";
 		my_config.resource_options_tag = resource_options_tag;
 
-		protocols::loops::LoopsFileOptionsOP lfo = new protocols::loops::LoopsFileOptions();
+		protocols::loops::LoopsFileOptionsOP lfo( new protocols::loops::LoopsFileOptions() );
 		lfo->prohibit_single_residue_loops( false );
 
 		ResourceManager * resource_manager = ResourceManager::get_instance();
@@ -362,7 +362,7 @@ public:
 		lazy_resource_manager->add_resource_configuration( rTag, my_config );
 		lazy_resource_manager->add_resource_options( resource_options_tag, lfo );
 		ResourceOP my_resource = lazy_resource_manager->get_resource_by_job_tag( rDesc, jTag );
-		protocols::loops::LoopsFileDataCOP my_loops = dynamic_cast< protocols::loops::LoopsFileData const * >( my_resource() );
+		protocols::loops::LoopsFileDataCOP my_loops = utility::pointer::dynamic_pointer_cast< protocols::loops::LoopsFileData const > ( my_resource );
 
 		TS_ASSERT( my_loops ); // make sure we got back the right resource type
 
@@ -426,7 +426,7 @@ public:
 		my_config.loader_type = "LoopsFile";
 		my_config.resource_options_tag = resource_options_tag;
 
-		DummyResourceOptionsOP dro = new DummyResourceOptions();
+		DummyResourceOptionsOP dro( new DummyResourceOptions() );
 
 		ResourceManager * resource_manager = ResourceManager::get_instance();
 		LazyResourceManager * lazy_resource_manager = dynamic_cast< LazyResourceManager * > ( resource_manager );
@@ -451,7 +451,7 @@ public:
 		jd2rm->clear();
 
 		ResourceOptionsFactory * factory = ResourceOptionsFactory::get_instance();
-		factory->factory_register( new DummyResourceOptionsCreator );
+		factory->factory_register( ResourceOptionsCreatorOP( new DummyResourceOptionsCreator ) );
 
 		std::string xmlfile =
 			"<ResourceOptions>\n"
@@ -534,7 +534,7 @@ public:
 	void test_JD2ResourceManager_read_dummy_resource() {
 		JD2ResourceManager * jd2rm = JD2ResourceManager::get_jd2_resource_manager_instance();
 		jd2rm->clear();
-		ResourceLoaderFactory::get_instance()->factory_register( new DummyResourceLoaderCreator );
+		ResourceLoaderFactory::get_instance()->factory_register( ResourceLoaderCreatorOP( new DummyResourceLoaderCreator ) );
 
 		std::string xmlfile =
 			"<Resources>\n"
@@ -754,7 +754,7 @@ public:
 	void test_JD2ResourceManager_read_dummy_resource_locator() {
 		JD2ResourceManager * jd2rm = JD2ResourceManager::get_jd2_resource_manager_instance();
 		jd2rm->clear();
-		ResourceLocatorFactory::get_instance()->factory_register( new DummyResourceLocatorCreator );
+		ResourceLocatorFactory::get_instance()->factory_register( ResourceLocatorCreatorOP( new DummyResourceLocatorCreator ) );
 
 		std::string xmlfile =
 			"<ResourceLocators>\n"

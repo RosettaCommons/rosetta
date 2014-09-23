@@ -202,7 +202,7 @@ TheozymeInvrotTree::generate_targets_and_inverse_rotamers()
 	//but at afer this, we'll generate a bunch of ligand targets
 	for( Size i =1; i <= conformer_groups.size(); ++i ){
 
-		SingleResidueInvrotTargetOP invtarg = new SingleResidueInvrotTarget( conformer_groups[i] );
+		SingleResidueInvrotTargetOP invtarg( new SingleResidueInvrotTarget( conformer_groups[i] ) );
 		if( !invtarg->initialize_tree_nodes_from_enzcst_io( enzcst_io_ ) ) tr << "Target from conformer group " << i << " failed to initialize, cstfile geometry (clashes?) is bad somewhere." << std::endl;
 		else this->add_to_targets( invtarg );
 	}

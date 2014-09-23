@@ -67,7 +67,7 @@ NatbiasStrandPairPotential::NatbiasStrandPairPotential():
 	phithetascore_( 2, 3, 36, 36 ),
 	dotscore_( 6 ),
 	rsigma_dot_( 12, 18, 2, 2, rsigma_dot_initializer ),
-	native_spairset_( NULL )
+	native_spairset_( /* NULL */ )
 {
 	load_phi_theta_bins();
 	load_dotscore_bins();

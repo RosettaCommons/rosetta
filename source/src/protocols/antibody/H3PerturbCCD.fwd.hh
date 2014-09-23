@@ -21,8 +21,8 @@ namespace protocols {
 namespace antibody {
 
 class H3PerturbCCD;
-typedef utility::pointer::owning_ptr< H3PerturbCCD > H3PerturbCCDOP;
-typedef utility::pointer::owning_ptr< H3PerturbCCD const > H3PerturbCCDCOP;
+typedef utility::pointer::shared_ptr< H3PerturbCCD > H3PerturbCCDOP;
+typedef utility::pointer::shared_ptr< H3PerturbCCD const > H3PerturbCCDCOP;
 
 }
 }

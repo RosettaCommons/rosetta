@@ -87,7 +87,7 @@ DesignProteinBackboneAroundDNACreator::keyname() const
 
 protocols::moves::MoverOP
 DesignProteinBackboneAroundDNACreator::create_mover() const {
-	return new DesignProteinBackboneAroundDNA;
+	return protocols::moves::MoverOP( new DesignProteinBackboneAroundDNA );
 }
 
 std::string
@@ -142,9 +142,9 @@ DesignProteinBackboneAroundDNA::apply( Pose & pose )
 {
 	if ( ! task_factory() ) {
 		TaskFactoryOP new_tf( new TaskFactory );
-		new_tf->push_back( new InitializeFromCommandline );
-		if ( option[ OptionKeys::packing::resfile ].user() ) new_tf->push_back( new ReadResfile );
-		RestrictDesignToProteinDNAInterfaceOP rest = new RestrictDesignToProteinDNAInterface;
+		new_tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
+		if ( option[ OptionKeys::packing::resfile ].user() ) new_tf->push_back( TaskOperationCOP( new ReadResfile ) );
+		RestrictDesignToProteinDNAInterfaceOP rest( new RestrictDesignToProteinDNAInterface );
 		rest->set_base_only( option[ OptionKeys::dna::design::base_contacts_only ]() );
 		rest->copy_targeted_dna( targeted_dna_ );
 		new_tf->push_back( rest );
@@ -178,23 +178,22 @@ DesignProteinBackboneAroundDNA::apply( Pose & pose )
 		std::ostream_iterator<Size>(TR(t_debug),",") );
 
 	//this 'second-shell' TaskFactory will be used for packer operations during the backbone protocols
-	TaskFactoryOP task_factory2 = new TaskFactory;
+	TaskFactoryOP task_factory2( new TaskFactory );
 
 	task_factory2->push_back( operation::TaskOperationCOP( new IncludeCurrent ) );
 	// the following will disable packing outside of the neighborhood around design_positions
 
-	toolbox::task_operations::RestrictToNeighborhoodOperationOP nbop(
-		new toolbox::task_operations::RestrictToNeighborhoodOperation( packing_positions ) );
+	toolbox::task_operations::RestrictToNeighborhoodOperationOP nbop( new toolbox::task_operations::RestrictToNeighborhoodOperation( packing_positions ) );
 	task_factory2->push_back( nbop );
 
 	// option-dependent designable second shell
-	if ( ! designable_second_shell_ ) task_factory2->push_back( new RestrictToRepacking );
+	if ( ! designable_second_shell_ ) task_factory2->push_back( TaskOperationCOP( new RestrictToRepacking ) );
 
 	// prevent DNA packing/designing
-	task_factory2->push_back( new OperateOnCertainResidues( ResLvlTaskOperationOP(new RestrictToRepackingRLT), ResFilterOP(new ResidueHasProperty("DNA")) ) );
+	task_factory2->push_back( TaskOperationCOP( new OperateOnCertainResidues( ResLvlTaskOperationOP(new RestrictToRepackingRLT), ResFilterOP(new ResidueHasProperty("DNA")) ) ) );
 
 	// make loops
-	loops::LoopsOP loops_to_move = new Loops();
+	loops::LoopsOP loops_to_move( new Loops() );
 
 	loops::loops_around_residues( *loops_to_move, pose, design_positions, gapspan_, spread_ );
 	if ( loops_to_move->size() == 0 ) {
@@ -254,14 +253,14 @@ void DesignProteinBackboneAroundDNA::parse_my_tag(
 moves::MoverOP
 DesignProteinBackboneAroundDNA::fresh_instance() const
 {
-	return new DesignProteinBackboneAroundDNA;
+	return moves::MoverOP( new DesignProteinBackboneAroundDNA );
 }
 
 ///@brief required in the context of the parser/scripting scheme
 moves::MoverOP
 DesignProteinBackboneAroundDNA::clone() const
 {
-	return new DesignProteinBackboneAroundDNA( *this );
+	return moves::MoverOP( new DesignProteinBackboneAroundDNA( *this ) );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -303,7 +302,7 @@ DesignProteinBackboneAroundDNA::ccd(
 	refine_ccd->repack_period( repack_rate_ );
 	refine_ccd->temp_initial( temp_initial_ );
 	refine_ccd->temp_final( temp_final_ );
-	refine_ccd->set_native_pose( new Pose( pose ) );
+	refine_ccd->set_native_pose( PoseCOP( new Pose( pose ) ) );
 	refine_ccd->set_task_factory( task_factory2 );
 	refine_ccd->apply( pose );
 }
@@ -327,7 +326,7 @@ DesignProteinBackboneAroundDNA::backrub(
 	backrubmover.branchopt().read_database();
 
 	// this mover appears to require a separate copy of the input pose
-	PoseCOP input_pose = new Pose( pose );
+	PoseCOP input_pose( new Pose( pose ) );
 	backrubmover.set_input_pose( input_pose ); // virtual funtion in Mover base class
 
 	// set up backrub segments

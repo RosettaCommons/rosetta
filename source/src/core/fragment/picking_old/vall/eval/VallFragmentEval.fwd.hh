@@ -32,19 +32,19 @@ class VallFragmentEval;
 
 
 /// @brief VallFragmentEval owning pointer
-typedef utility::pointer::owning_ptr< VallFragmentEval > VallFragmentEvalOP;
+typedef utility::pointer::shared_ptr< VallFragmentEval > VallFragmentEvalOP;
 
 
 /// @brief VallFragmentEval const owning pointer
-typedef utility::pointer::owning_ptr< VallFragmentEval const > VallFragmentEvalCOP;
+typedef utility::pointer::shared_ptr< VallFragmentEval const > VallFragmentEvalCOP;
 
 
 /// @brief VallFragmentEval access pointer
-typedef utility::pointer::access_ptr< VallFragmentEval > VallFragmentEvalAP;
+typedef utility::pointer::weak_ptr< VallFragmentEval > VallFragmentEvalAP;
 
 
 /// @brief VallFragmentEval const access pointer
-typedef utility::pointer::access_ptr< VallFragmentEval const > VallFragmentEvalCAP;
+typedef utility::pointer::weak_ptr< VallFragmentEval const > VallFragmentEvalCAP;
 
 
 } // eval

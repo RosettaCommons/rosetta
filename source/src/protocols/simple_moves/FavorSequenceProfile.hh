@@ -37,8 +37,8 @@ class FavorSequenceProfile : public protocols::moves::Mover
 public:
 	FavorSequenceProfile();
 	virtual std::string get_name() const { return "FavorSequenceProfile"; }
-	protocols::moves::MoverOP clone() const { return( new protocols::simple_moves::FavorSequenceProfile( *this ) ); }
-	protocols::moves::MoverOP fresh_instance() const { return new FavorSequenceProfile; }
+	protocols::moves::MoverOP clone() const { return( protocols::moves::MoverOP( new protocols::simple_moves::FavorSequenceProfile( *this ) ) ); }
+	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new FavorSequenceProfile ); }
 	void set_sequence( core::sequence::Sequence & seq, std::string matrix);
 	/// @brief Set the profile object to use.
 	/// Remember to set set_scaling() appropriately for the profile matrix you pass in.

@@ -161,19 +161,19 @@ void PeptideStapleMover::derive_staple_constraints_( core::pose::Pose & pose )
 
 	{
 	core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 0.001 ) );
-	ConstraintOP apc1 = new AtomPairConstraint(
+	ConstraintOP apc1( new AtomPairConstraint(
 		AtomID( seqpos_conn_atom, seqpos_ ),
 		AtomID( jj_vc_atom, jj ),
-		fx );
+		fx ) );
 	pose.add_constraint( apc1 );
 	}
 
 	{
 	core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 0.001 ) );
-	ConstraintOP apc2 = new AtomPairConstraint(
+	ConstraintOP apc2( new AtomPairConstraint(
 		AtomID( jj_conn_atom, jj ),
 		AtomID( seqpos_vc_atom, seqpos_ ),
-		fx );
+		fx ) );
 	pose.add_constraint( apc2 );
 	}
 
@@ -188,21 +188,21 @@ void PeptideStapleMover::derive_staple_constraints_( core::pose::Pose & pose )
 
 	{
 	core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( jj_ideal_angle, 0.01 ) );
-	ConstraintOP bac1 = new AngleConstraint(
+	ConstraintOP bac1( new AngleConstraint(
 		AtomID( seqpos_conn_atom, seqpos_),
 		AtomID( seqpos_vc_atom, seqpos_ ),
 		AtomID( jj_conn_atom_base, jj ),
-		fx );
+		fx ) );
 	pose.add_constraint( bac1 );
 	}
 
 	{
 	core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( seqpos_ideal_angle, 0.01 ) );
-	ConstraintOP bac2 = new AngleConstraint(
+	ConstraintOP bac2( new AngleConstraint(
 		AtomID( seqpos_conn_atom_base, seqpos_),
 		AtomID( jj_vc_atom, jj ),
 		AtomID( jj_conn_atom, jj ),
-		fx );
+		fx ) );
 	pose.add_constraint( bac2 );
 	}
 
@@ -214,12 +214,12 @@ void PeptideStapleMover::derive_staple_constraints_( core::pose::Pose & pose )
 
 	{
 	core::scoring::func::FuncOP fx( new core::scoring::func::CircularHarmonicFunc( cross_connection_dihedral_val * numeric::constants::d::pi / 180.0, 0.1 ) );
-	ConstraintOP dcst = new DihedralConstraint(
+	ConstraintOP dcst( new DihedralConstraint(
 		AtomID( seqpos_conn_atom_base, seqpos_ ),
 		AtomID( seqpos_conn_atom, seqpos_ ),
 		AtomID( jj_conn_atom, jj ),
 		AtomID( jj_conn_atom_base, jj ),
-		fx );
+		fx ) );
 	pose.add_constraint( dcst );
 	}
 
@@ -228,12 +228,12 @@ void PeptideStapleMover::derive_staple_constraints_( core::pose::Pose & pose )
 		Real ideal_dihedral = pose.residue( seqpos_ ).type().icoor( seqpos_chi[ kk ][ 4 ] ).phi();
 		TR << "seqpos ideal dihedral: " << ideal_dihedral << " " << ideal_dihedral * 180 / numeric::constants::d::pi << std::endl;
 		core::scoring::func::FuncOP fx( new core::scoring::func::CircularHarmonicFunc( ideal_dihedral, 0.1 ) );
-		ConstraintOP dcst = new DihedralConstraint(
+		ConstraintOP dcst( new DihedralConstraint(
 			AtomID( seqpos_chi[ kk ][ 1 ], seqpos_ ),
 			AtomID( seqpos_chi[ kk ][ 2 ], seqpos_ ),
 			AtomID( seqpos_chi[ kk ][ 3 ], seqpos_ ),
 			AtomID( seqpos_chi[ kk ][ 4 ], seqpos_ ),
-			fx );
+			fx ) );
 		pose.add_constraint( dcst );
 	}
 
@@ -242,12 +242,12 @@ void PeptideStapleMover::derive_staple_constraints_( core::pose::Pose & pose )
 		Real ideal_dihedral = pose.residue( jj ).type().icoor( jj_chi[ kk ][ 4 ] ).phi();
 		TR << "jj ideal dihedral: " << ideal_dihedral << " " << ideal_dihedral * 180 / numeric::constants::d::pi << std::endl;
 		core::scoring::func::FuncOP fx( new core::scoring::func::CircularHarmonicFunc( ideal_dihedral, 0.1 ) );
-		ConstraintOP dcst = new DihedralConstraint(
+		ConstraintOP dcst( new DihedralConstraint(
 			AtomID( jj_chi[ kk ][ 1 ], jj ),
 			AtomID( jj_chi[ kk ][ 2 ], jj ),
 			AtomID( jj_chi[ kk ][ 3 ], jj ),
 			AtomID( jj_chi[ kk ][ 4 ], jj ),
-			fx );
+			fx ) );
 		pose.add_constraint( dcst );
 	}
 	//pose.add_constraint( cst_set );
@@ -268,7 +268,7 @@ void PeptideStapleMover::minimize_( core::pose::Pose & pose )
 	TR << "Total score before staple minimization: " << (*scorefxn)( pose ) << std::endl;
 
 	// the movable dof's
-	core::kinematics::MoveMapOP mm ( new core::kinematics::MoveMap );
+	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 	mm->set_chi( seqpos_, true );
 	mm->set_chi( seqpos_ + staple_gap_, true);
 	protocols::simple_moves::MinMover min_mover( mm, scorefxn, "dfpmin_armijo_nonmonotone_atol", 10.0 /*tolerance*/,

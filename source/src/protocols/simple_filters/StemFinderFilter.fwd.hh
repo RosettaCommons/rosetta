@@ -20,8 +20,8 @@ namespace simple_filters {
 
 class StemFinder;
 
-typedef utility::pointer::owning_ptr< StemFinder > StemFinderOP;
-typedef utility::pointer::owning_ptr< StemFinder const > StemFinderCOP;
+typedef utility::pointer::shared_ptr< StemFinder > StemFinderOP;
+typedef utility::pointer::shared_ptr< StemFinder const > StemFinderCOP;
 
 }
 }

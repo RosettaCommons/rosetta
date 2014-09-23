@@ -242,7 +242,7 @@ bool TemplateJumpSetup::is_helix_jump( core::scoring::dssp::Pairing const& p ) c
 core::fragment::FragSetOP
 TemplateJumpSetup::generate_jump_frags( JumpSample const& target_jumps, kinematics::MoveMap const& mm ) const {
   tr.Debug <<" generate jump fragments... " << std::endl;
-  FragSetOP jump_frags = new OrderedFragSet;
+  FragSetOP jump_frags( new OrderedFragSet );
   //generate fragments from all homologes
   core::fragment::FrameList jump_frames;
 	core::scoring::dssp::PairingsList library_pairings;

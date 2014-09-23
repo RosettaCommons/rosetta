@@ -24,8 +24,8 @@ namespace core {
             
             class SiteConstraint;
             
-            typedef utility::pointer::owning_ptr< SiteConstraint > SiteConstraintOP;
-            typedef utility::pointer::owning_ptr< SiteConstraint const > SiteConstraintCOP;
+            typedef utility::pointer::shared_ptr< SiteConstraint > SiteConstraintOP;
+            typedef utility::pointer::shared_ptr< SiteConstraint const > SiteConstraintCOP;
             
         }
     }

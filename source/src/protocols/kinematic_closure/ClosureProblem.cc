@@ -123,11 +123,11 @@ SolutionList ClosureProblem::solve() const { // {{{1
 	SolutionList solutions(num_solutions);
 
 	for (Size index = 1; index <= (Size) num_solutions; index++) {
-		solutions[index] = new ClosureSolution(
+		solutions[index] = utility::pointer::shared_ptr<const class protocols::kinematic_closure::ClosureSolution>( new ClosureSolution(
 				this, index,
 				solution_torsions[index],
 				solution_angles[index],
-				solution_lengths[index]);
+				solution_lengths[index]) );
 	}
 
 	return solutions;
@@ -544,7 +544,7 @@ void ClosureProblem::frame_lower_pivot( // {{{1
 	// ideal coordinates.
 
 	if (pivot_residue.is_lower_terminus()) {
-		core::conformation::ConformationOP buffer = new core::conformation::Conformation();
+		core::conformation::ConformationOP buffer( new core::conformation::Conformation() );
 
 		// Make a copy of the N-terminal residue.
 		Residue pivot_residue_copy = core::conformation::Residue(
@@ -608,7 +608,7 @@ void ClosureProblem::frame_upper_pivot( // {{{1
 	// artificially build with ideal coordinates.
 
 	if (pivot_residue.is_upper_terminus()) {
-		core::conformation::ConformationOP buffer = new core::conformation::Conformation();
+		core::conformation::ConformationOP buffer( new core::conformation::Conformation() );
 
 		// Make a copy of the N-terminal residue.
 		Residue pivot_residue_copy = core::conformation::Residue(

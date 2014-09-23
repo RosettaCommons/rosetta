@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class ResidueTypesFeatures;
-typedef utility::pointer::owning_ptr< ResidueTypesFeatures > ResidueTypesFeaturesOP;
-typedef utility::pointer::owning_ptr< ResidueTypesFeatures const > ResidueTypesFeaturesCOP;
+typedef utility::pointer::shared_ptr< ResidueTypesFeatures > ResidueTypesFeaturesOP;
+typedef utility::pointer::shared_ptr< ResidueTypesFeatures const > ResidueTypesFeaturesCOP;
 
 }//features
 }//protocols

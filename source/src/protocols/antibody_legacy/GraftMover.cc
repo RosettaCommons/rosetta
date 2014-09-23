@@ -96,7 +96,7 @@ void GraftMover::apply( pose::Pose & pose_in ) {
 	TR <<  "Grafting designated CDRs" << std::endl;
 
 	Antibody antibody_in( pose_in, camelid_ );
-	SequenceMoverOP graft_sequence ( new SequenceMover() );
+	SequenceMoverOP graft_sequence( new SequenceMover() );
 	Size nres = pose_in.total_residue();
 
 	// Storing secondary structure
@@ -107,38 +107,38 @@ void GraftMover::apply( pose::Pose & pose_in ) {
 	if( !camelid_ ) {
 		if ( graft_l1_ ) {
 			GraftOneMoverOP graftone_l1( new GraftOneMover(
-			                                 antibody_in.cdrl_[1][1],antibody_in.cdrl_[1][2],"l1" ));
+			                                 antibody_in.cdrl_[1][1],antibody_in.cdrl_[1][2],"l1" ) );
 			graftone_l1->enable_benchmark_mode( benchmark_ );
 			graft_sequence->add_mover( graftone_l1 );
 		}
 		if ( graft_l2_ ) {
 			GraftOneMoverOP graftone_l2( new GraftOneMover(
-			                                 antibody_in.cdrl_[2][1],antibody_in.cdrl_[2][2],"l2" ));
+			                                 antibody_in.cdrl_[2][1],antibody_in.cdrl_[2][2],"l2" ) );
 			graftone_l2->enable_benchmark_mode( benchmark_ );
 			graft_sequence->add_mover( graftone_l2 );
 		}
 		if ( graft_l3_ ) {
 			GraftOneMoverOP graftone_l3( new GraftOneMover(
-			                                 antibody_in.cdrl_[3][1],antibody_in.cdrl_[3][2],"l3" ));
+			                                 antibody_in.cdrl_[3][1],antibody_in.cdrl_[3][2],"l3" ) );
 			graftone_l3->enable_benchmark_mode( benchmark_ );
 			graft_sequence->add_mover( graftone_l3 );
 		}
 	}
 	if ( graft_h1_ ) {
 		GraftOneMoverOP graftone_h1( new GraftOneMover(
-		                                 antibody_in.cdrh_[1][1],antibody_in.cdrh_[1][2],"h1" ));
+		                                 antibody_in.cdrh_[1][1],antibody_in.cdrh_[1][2],"h1" ) );
 		graftone_h1->enable_benchmark_mode( benchmark_ );
 		graft_sequence->add_mover( graftone_h1 );
 	}
 	if ( graft_h2_ ) {
 		GraftOneMoverOP graftone_h2( new GraftOneMover(
-		                                 antibody_in.cdrh_[2][1],antibody_in.cdrh_[2][2],"h2" ));
+		                                 antibody_in.cdrh_[2][1],antibody_in.cdrh_[2][2],"h2" ) );
 		graftone_h2->enable_benchmark_mode( benchmark_ );
 		graft_sequence->add_mover( graftone_h2 );
 	}
 	if ( graft_h3_ ) {
 		GraftOneMoverOP graftone_h3( new GraftOneMover(
-		                                 antibody_in.cdrh_[3][1],antibody_in.cdrh_[3][2],"h3" ));
+		                                 antibody_in.cdrh_[3][1],antibody_in.cdrh_[3][2],"h3" ) );
 		graftone_h3->enable_benchmark_mode( benchmark_ );
 		graft_sequence->add_mover( graftone_h3 );
 	}
@@ -156,7 +156,7 @@ void GraftMover::apply( pose::Pose & pose_in ) {
 		simple_one_loop_fold_tree( pose_in, cdr_h3);
 
 		// silly hack to make extended loops work
-		loops::LoopsOP loop_list = new loops::Loops();
+		loops::LoopsOP loop_list( new loops::Loops() );
 		loop_list->add_loop( cdr_h3 );
 		/* Commented out by BDW with JX's consent
 		loops::loop_mover::LoopMoverOP my_loop_move = new loops::loop_mover::LoopMover( loop_list );
@@ -224,7 +224,7 @@ void GraftMover::apply( pose::Pose & pose_in ) {
 		set_packer_default( pose_in, antibody_score, include_current );
 		packer_->apply( pose_in );
 
-		SequenceMoverOP close_grafted_loops ( new SequenceMover() );
+		SequenceMoverOP close_grafted_loops( new SequenceMover() );
 		if( !camelid_ ) {
 			if ( graft_l1_ ) {
 				CloseOneMoverOP closeone_l1( new CloseOneMover(
@@ -343,7 +343,7 @@ void GraftMover::set_packer_default(
 	task = pack::task::TaskFactory::create_packer_task( pose_in );
 	task->restrict_to_repacking();
 	task->or_include_current( include_current );
-	GraftMover::packer_ = new protocols::simple_moves::PackRotamersMover( scorefxn, task );
+	GraftMover::packer_ = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( scorefxn, task ) );
 
 } // GraftMover set_packer_default
 
@@ -454,7 +454,7 @@ void GraftMover::relax_optimized_CDR_grafts( pose::Pose & pose_in ) {
 			detect_flag = false;
 		}
 		if((detect_flag == false) && (loop_begin != 0) && (loop_end != 0 )) {
-			LoopRlxMoverOP rlx_one_loop(new LoopRlxMover( loop_begin, loop_end));
+			LoopRlxMoverOP rlx_one_loop( new LoopRlxMover( loop_begin, loop_end) );
 			rlx_one_loop->enable_benchmark_mode( benchmark_ );
 			rlx_one_loop->apply( pose_in );
 			loop_begin = 0;
@@ -573,7 +573,7 @@ void CloseOneMover::close_one_loop_stem (
 
 	//setting MoveMap
 	kinematics::MoveMapOP loop_map;
-	loop_map = new kinematics::MoveMap();
+	loop_map = kinematics::MoveMapOP( new kinematics::MoveMap() );
 	loop_map->clear();
 	loop_map->set_chi( false );
 	loop_map->set_bb( false );
@@ -622,8 +622,8 @@ void CloseOneMover::close_one_loop_stem (
 	if( benchmark_ ) min_tolerance = 1.0;
 	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
 	bool nb_list = true;
-	protocols::simple_moves::MinMoverOP loop_min_mover = new protocols::simple_moves::MinMover( loop_map,
-	        lowres_scorefxn, min_type, min_tolerance, nb_list );
+	protocols::simple_moves::MinMoverOP loop_min_mover( new protocols::simple_moves::MinMover( loop_map,
+	        lowres_scorefxn, min_type, min_tolerance, nb_list ) );
 
 	// more params
 	Size loop_size = ( loop_end - loop_begin ) + 1;
@@ -638,12 +638,12 @@ void CloseOneMover::close_one_loop_stem (
 
 	Real high_move_temp = 2.00;
 	// minimize amplitude of moves if correct parameter is set
-	protocols::simple_moves::BackboneMoverOP small_mover = new protocols::simple_moves::SmallMover( loop_map,
+	protocols::simple_moves::BackboneMoverOP small_mover( new protocols::simple_moves::SmallMover( loop_map,
 	        high_move_temp,
-	        n_small_moves );
-	protocols::simple_moves::BackboneMoverOP shear_mover = new protocols::simple_moves::ShearMover( loop_map,
+	        n_small_moves ) );
+	protocols::simple_moves::BackboneMoverOP shear_mover( new protocols::simple_moves::ShearMover( loop_map,
 	        high_move_temp,
-	        n_small_moves );
+	        n_small_moves ) );
 	small_mover->angle_max( 'H', 2.0 );
 	small_mover->angle_max( 'E', 5.0 );
 	small_mover->angle_max( 'L', 6.0 );
@@ -651,8 +651,8 @@ void CloseOneMover::close_one_loop_stem (
 	shear_mover->angle_max( 'E', 5.0 );
 	shear_mover->angle_max( 'L', 6.0 );
 
-	CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover( one_loop, loop_map );
-	RepeatMoverOP ccd_cycle = new RepeatMover(ccd_moves, n_small_moves);
+	CCDLoopClosureMoverOP ccd_moves( new CCDLoopClosureMover( one_loop, loop_map ) );
+	RepeatMoverOP ccd_cycle( new RepeatMover(ccd_moves, n_small_moves) );
 
 	SequenceMoverOP wiggle_cdr( new SequenceMover() );
 	wiggle_cdr->add_mover( small_mover );
@@ -668,7 +668,7 @@ void CloseOneMover::close_one_loop_stem (
 	Real temperature = init_temp;
 
 	MonteCarloOP mc;
-	mc = new moves::MonteCarlo( pose_in, *lowres_scorefxn, temperature );
+	mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *lowres_scorefxn, temperature ) );
 	mc->reset( pose_in ); // monte carlo reset
 
 	// outer cycle
@@ -716,7 +716,7 @@ void CloseOneMover::close_one_loop_stem (
 
 	//setting MoveMap
 	kinematics::MoveMapOP loop_map;
-	loop_map = new kinematics::MoveMap();
+	loop_map = kinematics::MoveMapOP( new kinematics::MoveMap() );
 	loop_map->clear();
 	loop_map->set_chi( false );
 	loop_map->set_bb( false );
@@ -754,8 +754,8 @@ void CloseOneMover::close_one_loop_stem (
 	if( benchmark_ ) min_tolerance = 1.0;
 	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
 	bool nb_list = true;
-	protocols::simple_moves::MinMoverOP loop_min_mover = new protocols::simple_moves::MinMover( loop_map,
-	        lowres_scorefxn, min_type, min_tolerance, nb_list );
+	protocols::simple_moves::MinMoverOP loop_min_mover( new protocols::simple_moves::MinMover( loop_map,
+	        lowres_scorefxn, min_type, min_tolerance, nb_list ) );
 
 	// more params
 	Size loop_size = ( loop_end - loop_begin ) + 1;
@@ -770,12 +770,12 @@ void CloseOneMover::close_one_loop_stem (
 
 	Real high_move_temp = 2.00;
 	// minimize amplitude of moves if correct parameter is set
-	protocols::simple_moves::BackboneMoverOP small_mover = new protocols::simple_moves::SmallMover( loop_map,
+	protocols::simple_moves::BackboneMoverOP small_mover( new protocols::simple_moves::SmallMover( loop_map,
 	        high_move_temp,
-	        n_small_moves );
-	protocols::simple_moves::BackboneMoverOP shear_mover = new protocols::simple_moves::ShearMover( loop_map,
+	        n_small_moves ) );
+	protocols::simple_moves::BackboneMoverOP shear_mover( new protocols::simple_moves::ShearMover( loop_map,
 	        high_move_temp,
-	        n_small_moves );
+	        n_small_moves ) );
 	small_mover->angle_max( 'H', 2.0 );
 	small_mover->angle_max( 'E', 5.0 );
 	small_mover->angle_max( 'L', 6.0 );
@@ -783,8 +783,8 @@ void CloseOneMover::close_one_loop_stem (
 	shear_mover->angle_max( 'E', 5.0 );
 	shear_mover->angle_max( 'L', 6.0 );
 
-	CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover(one_loop,loop_map);
-	RepeatMoverOP ccd_cycle = new RepeatMover(ccd_moves, n_small_moves);
+	CCDLoopClosureMoverOP ccd_moves( new CCDLoopClosureMover(one_loop,loop_map) );
+	RepeatMoverOP ccd_cycle( new RepeatMover(ccd_moves, n_small_moves) );
 
 	SequenceMoverOP wiggle_cdr( new SequenceMover() );
 	wiggle_cdr->add_mover( small_mover );
@@ -800,7 +800,7 @@ void CloseOneMover::close_one_loop_stem (
 	Real temperature = init_temp;
 
 	MonteCarloOP mc;
-	mc = new moves::MonteCarlo( pose_in, *lowres_scorefxn, temperature );
+	mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *lowres_scorefxn, temperature ) );
 	mc->reset( pose_in ); // monte carlo reset
 
 	// outer cycle
@@ -889,7 +889,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 
 	//setting MoveMap
 	kinematics::MoveMapOP loop_map;
-	loop_map = new kinematics::MoveMap();
+	loop_map = kinematics::MoveMapOP( new kinematics::MoveMap() );
 	loop_map->clear();
 	loop_map->set_chi( false );
 	loop_map->set_bb( false );
@@ -928,10 +928,10 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	                      allow_repack);
 	loop_map->set_chi( allow_repack );
 
-	protocols::simple_moves::PackRotamersMoverOP loop_repack=new protocols::simple_moves::PackRotamersMover(highres_scorefxn_);
+	protocols::simple_moves::PackRotamersMoverOP loop_repack( new protocols::simple_moves::PackRotamersMover(highres_scorefxn_) );
 	setup_packer_task( pose_in );
 	( *highres_scorefxn_ )( pose_in );
-	tf_->push_back( new protocols::toolbox::task_operations::RestrictToInterface( allow_repack ) );
+	tf_->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterface( allow_repack ) ) );
 	loop_repack->task_factory(tf_);
 	loop_repack->apply( pose_in );
 
@@ -939,8 +939,8 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	if( benchmark_ ) min_tolerance = 1.0;
 	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
 	bool nb_list = true;
-	protocols::simple_moves::MinMoverOP loop_min_mover = new protocols::simple_moves::MinMover( loop_map,
-	        highres_scorefxn_, min_type, min_tolerance, nb_list );
+	protocols::simple_moves::MinMoverOP loop_min_mover( new protocols::simple_moves::MinMover( loop_map,
+	        highres_scorefxn_, min_type, min_tolerance, nb_list ) );
 
 	// more params
 	Size n_small_moves ( numeric::max(Size(5), Size(loop_size/2)) );
@@ -954,12 +954,12 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 
 	Real high_move_temp = 2.00;
 	// minimize amplitude of moves if correct parameter is set
-	protocols::simple_moves::BackboneMoverOP small_mover = new protocols::simple_moves::SmallMover( loop_map,
+	protocols::simple_moves::BackboneMoverOP small_mover( new protocols::simple_moves::SmallMover( loop_map,
 	        high_move_temp,
-	        n_small_moves );
-	protocols::simple_moves::BackboneMoverOP shear_mover = new protocols::simple_moves::ShearMover( loop_map,
+	        n_small_moves ) );
+	protocols::simple_moves::BackboneMoverOP shear_mover( new protocols::simple_moves::ShearMover( loop_map,
 	        high_move_temp,
-	        n_small_moves );
+	        n_small_moves ) );
 	small_mover->angle_max( 'H', 2.0 );
 	small_mover->angle_max( 'E', 5.0 );
 	small_mover->angle_max( 'L', 6.0 );
@@ -967,8 +967,8 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	shear_mover->angle_max( 'E', 5.0 );
 	shear_mover->angle_max( 'L', 6.0 );
 
-	CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover( one_loop, loop_map );
-	RepeatMoverOP ccd_cycle = new RepeatMover(ccd_moves, n_small_moves);
+	CCDLoopClosureMoverOP ccd_moves( new CCDLoopClosureMover( one_loop, loop_map ) );
+	RepeatMoverOP ccd_cycle( new RepeatMover(ccd_moves, n_small_moves) );
 
 	SequenceMoverOP wiggle_loop( new SequenceMover() );
 	wiggle_loop->add_mover( small_mover );
@@ -981,9 +981,9 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	loop_map->set_chi( allow_repack );
 	setup_packer_task( pose_in );
 	( *highres_scorefxn_ )( pose_in );
-	tf_->push_back( new protocols::toolbox::task_operations::RestrictToInterface( allow_repack ) );
-	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover(
-	    highres_scorefxn_, tf_ );
+	tf_->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterface( allow_repack ) ) );
+	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover(
+	    highres_scorefxn_, tf_ ) );
 
 	pack_rottrial->apply( pose_in );
 
@@ -994,7 +994,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	Real temperature = init_temp;
 
 	MonteCarloOP mc;
-	mc = new moves::MonteCarlo( pose_in, *highres_scorefxn_, temperature );
+	mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *highres_scorefxn_, temperature ) );
 	mc->reset( pose_in ); // monte carlo reset
 
 	// outer cycle
@@ -1014,9 +1014,9 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 			loop_map->set_chi( allow_repack );
 			setup_packer_task( pose_in );
 			( *highres_scorefxn_ )( pose_in );
-			tf_->push_back( new protocols::toolbox::task_operations::RestrictToInterface( allow_repack ) );
-			protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover(
-			    highres_scorefxn_, tf_ );
+			tf_->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterface( allow_repack ) ) );
+			protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover(
+			    highres_scorefxn_, tf_ ) );
 			pack_rottrial->apply( pose_in );
 
 			mc->boltzmann( pose_in );
@@ -1024,10 +1024,10 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 
 			if ( numeric::mod(j,Size(20))==0 || j==inner_cycles ) {
 				// repack trial
-				loop_repack = new protocols::simple_moves::PackRotamersMover( highres_scorefxn_ );
+				loop_repack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( highres_scorefxn_ ) );
 				setup_packer_task( pose_in );
 				( *highres_scorefxn_ )( pose_in );
-				tf_->push_back( new protocols::toolbox::task_operations::RestrictToInterface( allow_repack ) );
+				tf_->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterface( allow_repack ) ) );
 				loop_repack->task_factory( tf_ );
 				loop_repack->apply( pose_in );
 				mc->boltzmann( pose_in );
@@ -1061,27 +1061,25 @@ LoopRlxMover::setup_packer_task(
 	using namespace pack::task::operation;
 
 	if( init_task_factory_ ) {
-		tf_ = new TaskFactory( *init_task_factory_ );
+		tf_ = core::pack::task::TaskFactoryOP( new TaskFactory( *init_task_factory_ ) );
 		TR << "LoopRlxMover Reinitializing Packer Task" << std::endl;
 		return;
 	} else
-		tf_ = new TaskFactory;
+		tf_ = core::pack::task::TaskFactoryOP( new TaskFactory );
 
 	TR << "LoopRlxMover Setting Up Packer Task" << std::endl;
 
-	tf_->push_back( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueLacksProperty("PROTEIN") ) ) );
-	tf_->push_back( new InitializeFromCommandline );
-	tf_->push_back( new IncludeCurrent );
-	tf_->push_back( new RestrictToRepacking );
-	tf_->push_back( new NoRepackDisulfides );
+	tf_->push_back( TaskOperationCOP( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueLacksProperty("PROTEIN") ) ) ) );
+	tf_->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
+	tf_->push_back( TaskOperationCOP( new IncludeCurrent ) );
+	tf_->push_back( TaskOperationCOP( new RestrictToRepacking ) );
+	tf_->push_back( TaskOperationCOP( new NoRepackDisulfides ) );
 
 	// incorporating Ian's UnboundRotamer operation.
 	// note that nothing happens if unboundrot option is inactive!
-	pack::rotamer_set::UnboundRotamersOperationOP unboundrot =
-	    new pack::rotamer_set::UnboundRotamersOperation();
+	pack::rotamer_set::UnboundRotamersOperationOP unboundrot( new pack::rotamer_set::UnboundRotamersOperation() );
 	unboundrot->initialize_from_command_line();
-	operation::AppendRotamerSetOP unboundrot_operation =
-	    new operation::AppendRotamerSet( unboundrot );
+	operation::AppendRotamerSetOP unboundrot_operation( new operation::AppendRotamerSet( unboundrot ) );
 	tf_->push_back( unboundrot_operation );
 	// adds scoring bonuses for the "unbound" rotamers, if any
 	core::pack::dunbrack::load_unboundrot( pose_in );

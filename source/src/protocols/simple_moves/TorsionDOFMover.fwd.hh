@@ -22,8 +22,8 @@ namespace simple_moves{
 
 //Forwards and OP typedefs
 class TorsionDOFMover;
-typedef utility::pointer::owning_ptr< TorsionDOFMover > TorsionDOFMoverOP;
-typedef utility::pointer::owning_ptr< TorsionDOFMover const > TorsionDOFMoverCOP;
+typedef utility::pointer::shared_ptr< TorsionDOFMover > TorsionDOFMoverOP;
+typedef utility::pointer::shared_ptr< TorsionDOFMover const > TorsionDOFMoverCOP;
 
 }//moves
 }//protocols

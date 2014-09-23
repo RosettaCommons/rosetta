@@ -51,7 +51,7 @@ ConstraintsOP
 Constraints::clone() const
 {
 
-	ConstraintsOP new_constraints = new Constraints();
+	ConstraintsOP new_constraints( new Constraints() );
 	new_constraints->copy_from( *this );
 	return new_constraints;
 }

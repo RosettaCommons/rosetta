@@ -86,7 +86,7 @@ motif_dna_packer_design()
 			pdb_prefix = basic::options::option[ basic::options::OptionKeys::out::prefix ]();
 		}
 
-		core::pose::PoseOP pose = new core::pose::Pose;
+		core::pose::PoseOP pose( new core::pose::Pose );
 		core::import_pose::pose_from_pdb( *pose, pdb_name );
 		protocols::motifs::make_dna_mutations( *pose );
 		// This sets BasePartner in pose cacheable data

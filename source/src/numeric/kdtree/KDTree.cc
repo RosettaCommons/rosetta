@@ -33,14 +33,14 @@ KDTree::~KDTree() {}
 
 KDTree::KDTree() :
 	size_( 0 ),
-	root_( NULL ),
-	bounds_( NULL )
+	root_( /* NULL */ ),
+	bounds_( /* NULL */ )
 {}
 
 KDTree::KDTree( utility::vector1< utility::vector1< numeric::Real > > & pts ) {
 	utility::vector1< KDPointOP > kd_pts( make_points( pts ) );
 	//bounds_ = new HyperRectangle( pts[1], pts[1] );
-	bounds_ = new HyperRectangle( pts );
+	bounds_ = HyperRectangleOP( new HyperRectangle( pts ) );
 	root_   = construct_kd_tree( kd_pts, 1, *this );
 	size( pts.size() );
 }
@@ -52,7 +52,7 @@ KDTree::KDTree(
 	assert( pts.size() == data.size() );
 	utility::vector1< KDPointOP > kd_pts( make_points( pts, data ) );
 	//bounds_ = new HyperRectangle( pts[1], pts[1] );
-	bounds_ = new HyperRectangle( pts );
+	bounds_ = HyperRectangleOP( new HyperRectangle( pts ) );
 	root_   = construct_kd_tree( kd_pts, 1, *this );
 	size( pts.size() );
 }

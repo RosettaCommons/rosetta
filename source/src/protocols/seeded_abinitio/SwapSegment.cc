@@ -69,7 +69,7 @@ namespace protocols {
 
 		protocols::moves::MoverOP
 		SwapSegmentCreator::create_mover() const {
-			return new SwapSegment();
+			return protocols::moves::MoverOP( new SwapSegment() );
 		}
 
 		std::string
@@ -246,7 +246,7 @@ SwapSegment::parse_my_tag(
 
 	if( tag->hasOption( "seeds_pdb" ) || tag->hasOption( "template_pdb" ) ){
 		std::string const template_pdb_fname( tag->getOption< std::string >( "seeds_pdb" ));
-		seeds_pdb_ =  new core::pose::Pose ;
+		seeds_pdb_ = core::pose::PoseOP( new core::pose::Pose ) ;
 		core::import_pose::pose_from_pdb( *seeds_pdb_, template_pdb_fname );
 		TR<<"read in a template pdb with " <<seeds_pdb_->total_residue() <<"residues"<<std::endl;
 		seeds_presence_ = true;

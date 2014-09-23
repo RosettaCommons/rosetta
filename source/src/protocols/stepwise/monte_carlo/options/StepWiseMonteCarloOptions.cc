@@ -92,7 +92,7 @@ namespace options {
 	StepWiseMonteCarloOptionsOP
 	StepWiseMonteCarloOptions::clone() const
 	{
-		return new StepWiseMonteCarloOptions( *this );
+		return StepWiseMonteCarloOptionsOP( new StepWiseMonteCarloOptions( *this ) );
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////
@@ -190,7 +190,7 @@ namespace options {
 	StepWiseMonteCarloOptions::setup_modeler_options() const{
 
 		using namespace protocols::stepwise::modeler::options;
-		StepWiseModelerOptionsOP options = new StepWiseModelerOptions;
+		StepWiseModelerOptionsOP options( new StepWiseModelerOptions );
 		options->set_silent_file( silent_file() );
 		options->set_sampler_silent_file( sampler_silent_file() );
 		options->set_choose_random( true );

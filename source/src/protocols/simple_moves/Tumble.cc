@@ -133,10 +133,10 @@ Tumble::parse_my_tag(
 }
 
 moves::MoverOP Tumble::clone() const {
-	return new Tumble( *this );
+	return moves::MoverOP( new Tumble( *this ) );
 }
 moves::MoverOP Tumble::fresh_instance() const {
-	return new Tumble;
+	return moves::MoverOP( new Tumble );
 }
 
 std::string
@@ -146,7 +146,7 @@ Tumble::get_name() const {
 
 protocols::moves::MoverOP
 TumbleCreator::create_mover() const {
-	return new Tumble;
+	return protocols::moves::MoverOP( new Tumble );
 }
 
 std::string

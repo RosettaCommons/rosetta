@@ -20,8 +20,8 @@ namespace protocols {
 namespace rosetta_scripts {
 
 class SavePoseMover;
-typedef utility::pointer::owning_ptr< SavePoseMover > SavePoseMoverOP;
-typedef utility::pointer::owning_ptr< SavePoseMover const > SavePoseMoverCOP;
+typedef utility::pointer::shared_ptr< SavePoseMover > SavePoseMoverOP;
+typedef utility::pointer::shared_ptr< SavePoseMover const > SavePoseMoverCOP;
 
 } // rosetta_scripts
 } // protocols

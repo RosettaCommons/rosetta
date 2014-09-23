@@ -41,7 +41,7 @@ namespace screener {
 		pass_count_( 0 ) // only incremented if do_screen true, and screen passes.
 	{
 		runtime_assert( moving_res_list_.size() > 0 );
-		pose_aligner_ = new modeler::align::StepWisePoseAligner( native_pose_ );
+		pose_aligner_ = modeler::align::StepWisePoseAlignerOP( new modeler::align::StepWisePoseAligner( native_pose_ ) );
 		pose_aligner_->set_user_defined_calc_rms_res( moving_res_list_ );
 		// this is extra -- I was originally doings checks of alignment based on RMSD screens.
 		//		pose_aligner_->set_root_partition_res( modeler::figure_out_root_partition_res( screening_pose_, moving_res_list ) );

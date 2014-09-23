@@ -30,8 +30,8 @@ namespace design{
 // Forward
 class AntibodyDatabaseManager;
 
-typedef utility::pointer::owning_ptr< AntibodyDatabaseManager > AntibodyDatabaseManagerOP;
-typedef utility::pointer::owning_ptr< AntibodyDatabaseManager const > AntibodyDatabaseManagerCOP;
+typedef utility::pointer::shared_ptr< AntibodyDatabaseManager > AntibodyDatabaseManagerOP;
+typedef utility::pointer::shared_ptr< AntibodyDatabaseManager const > AntibodyDatabaseManagerCOP;
 
 
 } //namespace design

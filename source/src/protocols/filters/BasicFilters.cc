@@ -81,13 +81,13 @@ StochasticFilter::apply( Pose const & ) const
 FilterOP
 StochasticFilter::clone() const
 {
-	return new StochasticFilter( *this );
+	return FilterOP( new StochasticFilter( *this ) );
 }
 
 FilterOP
 StochasticFilter::fresh_instance() const
 {
-	return new StochasticFilter();
+	return FilterOP( new StochasticFilter() );
 }
 
 void
@@ -131,13 +131,13 @@ CompoundFilter::apply( Pose const & pose ) const
 FilterOP
 CompoundFilter::clone() const
 {
-	return new CompoundFilter( *this );
+	return FilterOP( new CompoundFilter( *this ) );
 }
 
 FilterOP
 CompoundFilter::fresh_instance() const
 {
-	return new CompoundFilter();
+	return FilterOP( new CompoundFilter() );
 }
 
 void
@@ -347,13 +347,13 @@ CombinedFilter::apply( core::pose::Pose const & pose ) const
 FilterOP
 CombinedFilter::clone() const
 {
-	return new CombinedFilter( *this );
+	return FilterOP( new CombinedFilter( *this ) );
 }
 
 FilterOP
 CombinedFilter::fresh_instance() const
 {
-	return new CombinedFilter();
+	return FilterOP( new CombinedFilter() );
 }
 
 void
@@ -463,13 +463,13 @@ MoveBeforeFilter::apply( core::pose::Pose const & pose ) const
 FilterOP
 MoveBeforeFilter::clone() const
 {
-	return new MoveBeforeFilter( *this );
+	return FilterOP( new MoveBeforeFilter( *this ) );
 }
 
 FilterOP
 MoveBeforeFilter::fresh_instance() const
 {
-	return new MoveBeforeFilter();
+	return FilterOP( new MoveBeforeFilter() );
 }
 
 void
@@ -571,13 +571,13 @@ IfThenFilter::apply( core::pose::Pose const & pose ) const
 FilterOP
 IfThenFilter::clone() const
 {
-	return new IfThenFilter( *this );
+	return FilterOP( new IfThenFilter( *this ) );
 }
 
 FilterOP
 IfThenFilter::fresh_instance() const
 {
-	return new IfThenFilter();
+	return FilterOP( new IfThenFilter() );
 }
 
 void
@@ -673,43 +673,43 @@ IfThenFilter::parse_my_tag(
 // @brief FilterCreator methods
 
 FilterOP
-TrueFilterCreator::create_filter() const { return new TrueFilter; }
+TrueFilterCreator::create_filter() const { return FilterOP( new TrueFilter ); }
 
 std::string
 TrueFilterCreator::keyname() const { return "TrueFilter"; }
 
 FilterOP
-FalseFilterCreator::create_filter() const { return new FalseFilter; }
+FalseFilterCreator::create_filter() const { return FilterOP( new FalseFilter ); }
 
 std::string
 FalseFilterCreator::keyname() const { return "FalseFilter"; }
 
 FilterOP
-StochasticFilterCreator::create_filter() const { return new StochasticFilter; }
+StochasticFilterCreator::create_filter() const { return FilterOP( new StochasticFilter ); }
 
 std::string
 StochasticFilterCreator::keyname() const { return "Stochastic"; }
 
 FilterOP
-CompoundFilterCreator::create_filter() const { return new CompoundFilter; }
+CompoundFilterCreator::create_filter() const { return FilterOP( new CompoundFilter ); }
 
 std::string
 CompoundFilterCreator::keyname() const { return "CompoundStatement"; }
 
 FilterOP
-CombinedFilterCreator::create_filter() const { return new CombinedFilter; }
+CombinedFilterCreator::create_filter() const { return FilterOP( new CombinedFilter ); }
 
 std::string
 CombinedFilterCreator::keyname() const { return "CombinedValue"; }
 
 FilterOP
-MoveBeforeFilterCreator::create_filter() const { return new MoveBeforeFilter; }
+MoveBeforeFilterCreator::create_filter() const { return FilterOP( new MoveBeforeFilter ); }
 
 std::string
 MoveBeforeFilterCreator::keyname() const { return "MoveBeforeFilter"; }
 
 FilterOP
-IfThenFilterCreator::create_filter() const { return new IfThenFilter; }
+IfThenFilterCreator::create_filter() const { return FilterOP( new IfThenFilter ); }
 
 std::string
 IfThenFilterCreator::keyname() const { return "IfThenFilter"; }

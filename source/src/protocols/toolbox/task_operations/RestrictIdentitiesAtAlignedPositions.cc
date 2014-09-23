@@ -60,7 +60,7 @@ RestrictIdentitiesAtAlignedPositionsOperation::RestrictIdentitiesAtAlignedPositi
 	keep_aas_( "ACDEFGHIKLMNPQRSTVWY" ),
 	restrict_identities_( false )
 {
-	source_pose_ = new core::pose::Pose;
+	source_pose_ = core::pose::PoseOP( new core::pose::Pose );
 	res_ids_.clear();
 }
 
@@ -69,12 +69,12 @@ RestrictIdentitiesAtAlignedPositionsOperation::~RestrictIdentitiesAtAlignedPosit
 core::pack::task::operation::TaskOperationOP
 RestrictIdentitiesAtAlignedPositionsOperationCreator::create_task_operation() const
 {
-	return new RestrictIdentitiesAtAlignedPositionsOperation;
+	return core::pack::task::operation::TaskOperationOP( new RestrictIdentitiesAtAlignedPositionsOperation );
 }
 
 core::pack::task::operation::TaskOperationOP RestrictIdentitiesAtAlignedPositionsOperation::clone() const
 {
-	return new RestrictIdentitiesAtAlignedPositionsOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new RestrictIdentitiesAtAlignedPositionsOperation( *this ) );
 }
 
 void
@@ -92,9 +92,9 @@ RestrictIdentitiesAtAlignedPositionsOperation::apply( core::pose::Pose const & p
 			TR<<"WARNING: could not find a residue near to "<<resid<<std::endl;
 			continue;
 		}//fi
-		RestrictAbsentCanonicalAASRLTOP racaas1 = new RestrictAbsentCanonicalAASRLT; /// used to determine the single residue identity taken from the source pose
-		RestrictAbsentCanonicalAASRLTOP racaas2 = new RestrictAbsentCanonicalAASRLT; /// used to limit identities to those specified by the user
-		PreventRepackingRLTOP pr = new PreventRepackingRLT;
+		RestrictAbsentCanonicalAASRLTOP racaas1( new RestrictAbsentCanonicalAASRLT ); /// used to determine the single residue identity taken from the source pose
+		RestrictAbsentCanonicalAASRLTOP racaas2( new RestrictAbsentCanonicalAASRLT ); /// used to limit identities to those specified by the user
+		PreventRepackingRLTOP pr( new PreventRepackingRLT );
 		char const residue_id( source_pose_->residue( resid ).name1() );
 		std::string residues_to_keep("");
 		residues_to_keep += residue_id;

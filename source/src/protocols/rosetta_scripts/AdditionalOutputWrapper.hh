@@ -50,11 +50,11 @@ public:
 	virtual ~AdditionalOutputWrapper() {};
 
 	protocols::moves::MoverOP clone() const {
-		return new AdditionalOutputWrapper(*this);
+		return protocols::moves::MoverOP( new AdditionalOutputWrapper(*this) );
 	}
 
 	protocols::moves::MoverOP fresh_instance() const {
-		return new AdditionalOutputWrapper();
+		return protocols::moves::MoverOP( new AdditionalOutputWrapper() );
 	}
 
 	void apply(core::pose::Pose& pose);

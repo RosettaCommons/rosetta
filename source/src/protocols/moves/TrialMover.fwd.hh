@@ -22,8 +22,8 @@ namespace moves{
 
 //Forwards and OP typedefs
 class TrialMover;
-typedef utility::pointer::owning_ptr< TrialMover > TrialMoverOP;
-typedef utility::pointer::owning_ptr< TrialMover const > TrialMoverCOP;
+typedef utility::pointer::shared_ptr< TrialMover > TrialMoverOP;
+typedef utility::pointer::shared_ptr< TrialMover const > TrialMoverCOP;
 
 }//moves
 }//protocols

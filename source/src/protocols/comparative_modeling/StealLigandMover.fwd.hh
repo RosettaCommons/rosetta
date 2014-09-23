@@ -20,8 +20,8 @@ namespace protocols {
 namespace comparative_modeling {
 
 class StealLigandMover;
-typedef utility::pointer::owning_ptr< StealLigandMover > StealLigandMoverOP;
-typedef utility::pointer::owning_ptr< StealLigandMover const > StealLigandMoverCOP;
+typedef utility::pointer::shared_ptr< StealLigandMover > StealLigandMoverOP;
+typedef utility::pointer::shared_ptr< StealLigandMover const > StealLigandMoverCOP;
 
 } // comparative_modeling
 } // protocols

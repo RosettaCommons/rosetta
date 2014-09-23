@@ -27,11 +27,11 @@ namespace grafting {
 class AnchoredGraftMover;
 
 // Types
-typedef  utility::pointer::owning_ptr< AnchoredGraftMover >  AnchoredGraftMoverOP;
-typedef  utility::pointer::owning_ptr< AnchoredGraftMover const >  AnchoredGraftMoverCOP;
+typedef  utility::pointer::shared_ptr< AnchoredGraftMover >  AnchoredGraftMoverOP;
+typedef  utility::pointer::shared_ptr< AnchoredGraftMover const >  AnchoredGraftMoverCOP;
 
-typedef  utility::pointer::access_ptr< AnchoredGraftMover >  AnchoredGraftMoverAP;
-typedef  utility::pointer::access_ptr< AnchoredGraftMover const >  AnchoredGraftMoverCAP;
+typedef  utility::pointer::weak_ptr< AnchoredGraftMover >  AnchoredGraftMoverAP;
+typedef  utility::pointer::weak_ptr< AnchoredGraftMover const >  AnchoredGraftMoverCAP;
 
 
 } // namespace grafting

@@ -23,8 +23,8 @@ namespace protocols {
 namespace moves {
 
 class JumpOutMover;
-typedef utility::pointer::owning_ptr< JumpOutMover > JumpOutMoverOP;
-typedef utility::pointer::owning_ptr< JumpOutMover const > JumpOutMoverCOP;
+typedef utility::pointer::shared_ptr< JumpOutMover > JumpOutMoverOP;
+typedef utility::pointer::shared_ptr< JumpOutMover const > JumpOutMoverCOP;
 
 } // moves
 } // rosetta

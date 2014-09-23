@@ -73,8 +73,8 @@ public:
 	EntityOP next_entity() {
 		std::string seq = seqs_.front();
 		seqs_.pop_front();
-		EntityOP temp = new Entity(eestring( seq ));
-		EntityOP retval = new Entity;
+		EntityOP temp( new Entity(eestring( seq )) );
+		EntityOP retval( new Entity );
 		retval->set_traits( temp->traits() );
 		return retval;
 	}
@@ -101,7 +101,7 @@ private:
 
 };
 
-typedef utility::pointer::owning_ptr< BogusRandomizer > BogusRandomizerOP;
+typedef utility::pointer::shared_ptr< BogusRandomizer > BogusRandomizerOP;
 
 class MMTDriverTests : public CxxTest::TestSuite {
 public:
@@ -139,14 +139,14 @@ public:
 		mmt_driver.set_pop_size( 2 );
 		mmt_driver.set_frac_by_recomb( 0 );
 
-		BogusRandomizerOP rand = new BogusRandomizer;
+		BogusRandomizerOP rand( new BogusRandomizer );
 		rand->append_sequence( "AG" ); // gen1a
 		rand->append_sequence( "AQ" ); // gen1b
 		rand->append_sequence( "MQ" ); // gen2
 		rand->append_sequence( "MG" ); // gen3
 		mmt_driver.set_randomizer( rand );
 
-		fc_ = new utility::io::FileContentsMap;
+		fc_ = utility::io::FileContentsMapOP( new utility::io::FileContentsMap );
 		fc_->set_file_contents( "ubq.pdb", ubq_twores_string() );
 		fc_->set_file_contents( "ubq.corr", "1 1 _\n2 2 _\n" );
 		fc_->set_file_contents( "ubq_entity.resfile", "2\nstart\n1 A PIKAA AM\n2 A PIKAA GQ\n" );

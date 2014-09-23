@@ -22,8 +22,8 @@ namespace simple_moves{
 
 //Forwards and OP typedefs
 class ForceDisulfidesMover;
-typedef utility::pointer::owning_ptr< ForceDisulfidesMover > ForceDisulfideMoverOP;
-typedef utility::pointer::owning_ptr< ForceDisulfidesMover const > ForceDisulfideMoverCOP;
+typedef utility::pointer::shared_ptr< ForceDisulfidesMover > ForceDisulfideMoverOP;
+typedef utility::pointer::shared_ptr< ForceDisulfidesMover const > ForceDisulfideMoverCOP;
 
 }//moves
 }//protocols

@@ -41,7 +41,7 @@ LoopOverCreator::keyname() const
 
 protocols::moves::MoverOP
 LoopOverCreator::create_mover() const {
-	return new LoopOver;
+	return protocols::moves::MoverOP( new LoopOver );
 }
 
 std::string

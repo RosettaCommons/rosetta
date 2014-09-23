@@ -47,7 +47,7 @@ PeptideStapleDesignMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 PeptideStapleDesignMoverCreator::create_mover() const {
-	return new PeptideStapleDesignMover;
+	return protocols::moves::MoverOP( new PeptideStapleDesignMover );
 }
 
 std::string
@@ -63,14 +63,14 @@ PeptideStapleDesignMover::PeptideStapleDesignMover() :
 PeptideStapleDesignMover::PeptideStapleDesignMover( core::Size const seqpos, core::Size const staple_gap ) :
 	protocols::moves::Mover( PeptideStapleDesignMoverCreator::mover_name() )
 {
-	stapler_ = new protocols::simple_moves::PeptideStapleMover( seqpos, staple_gap );
+	stapler_ = protocols::simple_moves::PeptideStapleMoverOP( new protocols::simple_moves::PeptideStapleMover( seqpos, staple_gap ) );
 }
 
 PeptideStapleDesignMover::PeptideStapleDesignMover( PeptideStapleDesignMover const & init ) :
 	//utility::pointer::ReferenceCount(), 
 	protocols::moves::Mover( init )
 {
-	stapler_ = new protocols::simple_moves::PeptideStapleMover( *(init.stapler_) );
+	stapler_ = protocols::simple_moves::PeptideStapleMoverOP( new protocols::simple_moves::PeptideStapleMover( *(init.stapler_) ) );
 }
 
 PeptideStapleDesignMover::~PeptideStapleDesignMover() {}
@@ -95,7 +95,7 @@ PeptideStapleDesignMover::parse_my_tag( TagCOP const tag, basic::datacache::Data
 {
 	core::Size const staple_start( core::pose::get_resnum( tag, pose ));
 	core::Size const gap( tag->getOption<core::Size>( "staple_gap", 4 ) );
-	stapler_ = new protocols::simple_moves::PeptideStapleMover( staple_start, gap );
+	stapler_ = protocols::simple_moves::PeptideStapleMoverOP( new protocols::simple_moves::PeptideStapleMover( staple_start, gap ) );
 }
 
 } //movers

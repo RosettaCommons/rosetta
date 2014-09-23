@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class TrajectoryMapFeatures;
-typedef utility::pointer::owning_ptr< TrajectoryMapFeatures > TrajectoryMapFeaturesOP;
-typedef utility::pointer::owning_ptr< TrajectoryMapFeatures const > TrajectoryMapFeaturesCOP;
+typedef utility::pointer::shared_ptr< TrajectoryMapFeatures > TrajectoryMapFeaturesOP;
+typedef utility::pointer::shared_ptr< TrajectoryMapFeatures const > TrajectoryMapFeaturesCOP;
 
 }//features
 }//protocols

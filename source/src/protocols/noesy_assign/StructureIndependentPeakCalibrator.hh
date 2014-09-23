@@ -57,7 +57,7 @@ public:
 
   StructureIndependentPeakCalibrator() : PeakCalibrator( 1 /*normal sign*/ ) {};
   virtual PeakCalibratorOP fresh_instance() {
-    return new StructureIndependentPeakCalibrator();
+    return PeakCalibratorOP( new StructureIndependentPeakCalibrator() );
   }
 
   virtual void collect_upperbound_statistics( core::Size  /*peak*/, TypeCumulator const& /*types*/ );

@@ -23,8 +23,8 @@ namespace stepwise {
 namespace screener {
 	
 	class TagDefinition;
-	typedef utility::pointer::owning_ptr< TagDefinition > TagDefinitionOP;
-	typedef utility::pointer::owning_ptr< TagDefinition const > TagDefinitionCOP;
+	typedef utility::pointer::shared_ptr< TagDefinition > TagDefinitionOP;
+	typedef utility::pointer::shared_ptr< TagDefinition const > TagDefinitionCOP;
 	
 } //screener
 } //stepwise

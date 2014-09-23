@@ -22,8 +22,8 @@ namespace loops{
 
 //Forwards and OP typedefs
 class FoldTreeFromLoops;
-typedef utility::pointer::owning_ptr< FoldTreeFromLoops > FoldTreeFromLoopsOP;
-typedef utility::pointer::owning_ptr< FoldTreeFromLoops const > FoldTreeFromLoopsCOP;
+typedef utility::pointer::shared_ptr< FoldTreeFromLoops > FoldTreeFromLoopsOP;
+typedef utility::pointer::shared_ptr< FoldTreeFromLoops const > FoldTreeFromLoopsCOP;
 
 }//loops
 }//protocols

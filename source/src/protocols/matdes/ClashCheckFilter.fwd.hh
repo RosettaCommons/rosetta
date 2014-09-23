@@ -26,8 +26,8 @@ namespace matdes {
 class ClashCheckFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< ClashCheckFilter >  ClashCheckFilterOP;
-typedef utility::pointer::owning_ptr< ClashCheckFilter const >  ClashCheckFilterCOP;
+typedef utility::pointer::shared_ptr< ClashCheckFilter >  ClashCheckFilterOP;
+typedef utility::pointer::shared_ptr< ClashCheckFilter const >  ClashCheckFilterCOP;
 
 } // namespace matdes
 } // namespace protocols

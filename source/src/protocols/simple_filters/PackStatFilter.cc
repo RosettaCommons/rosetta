@@ -134,7 +134,7 @@ PackStatFilter::parse_my_tag(
 }
 
 filters::FilterOP
-PackStatFilterCreator::create_filter() const { return new PackStatFilter; }
+PackStatFilterCreator::create_filter() const { return filters::FilterOP( new PackStatFilter ); }
 
 std::string
 PackStatFilterCreator::keyname() const { return "PackStat"; }

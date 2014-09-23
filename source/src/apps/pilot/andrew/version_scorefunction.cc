@@ -218,7 +218,7 @@ ScoreFunctionFingerprintMover::lines_for_jobs() const
 	return lines_for_jobs_;
 }
 
-typedef utility::pointer::owning_ptr< ScoreFunctionFingerprintMover > ScoreFunctionFingerprintMoverOP;
+typedef utility::pointer::shared_ptr< ScoreFunctionFingerprintMover > ScoreFunctionFingerprintMoverOP;
 
 int main( int argc, char ** argv )
 {
@@ -237,7 +237,7 @@ int main( int argc, char ** argv )
 	}
 
 
-	ScoreFunctionFingerprintMoverOP sffm = new ScoreFunctionFingerprintMover;
+	ScoreFunctionFingerprintMoverOP sffm( new ScoreFunctionFingerprintMover );
 	sffm->sfxn( core::scoring::get_score_function() );
 
 	protocols::jd2::JobDistributor::get_instance()->go(sffm);

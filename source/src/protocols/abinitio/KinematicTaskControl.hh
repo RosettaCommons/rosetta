@@ -63,8 +63,8 @@ namespace abinitio {
 class KinematicTaskControl : public Protocol {
 public:
 	KinematicTaskControl() :
-		current_kinematics_( NULL ),
-		sampling_protocol_( NULL )
+		current_kinematics_( /* NULL */ ),
+		sampling_protocol_( /* NULL */ )
 	{
 		return_centroid( false ); //default
 	}

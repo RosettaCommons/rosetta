@@ -96,7 +96,7 @@ main( int argc, char * argv [] )
 	// read in constraints
 	ConstraintSetOP cstset;
 	std::string cstfile = core::scoring::constraints::get_cst_file_option();
-	cstset = ConstraintIO::read_constraints( cstfile, new ConstraintSet, pose );
+	cstset = ConstraintIO::read_constraints( cstfile, ConstraintSetOP( new ConstraintSet ), pose );
 
 	core::scoring::EnergyMap emap;
 	emap.zero();

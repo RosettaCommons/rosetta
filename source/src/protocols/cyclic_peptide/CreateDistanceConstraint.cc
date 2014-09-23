@@ -108,12 +108,12 @@ CreateDistanceConstraint::parse_my_tag(
 	return;
 }
 	
-moves::MoverOP CreateDistanceConstraint::clone() const { return new CreateDistanceConstraint( *this ); }
-moves::MoverOP CreateDistanceConstraint::fresh_instance() const { return new CreateDistanceConstraint; }
+moves::MoverOP CreateDistanceConstraint::clone() const { return moves::MoverOP( new CreateDistanceConstraint( *this ) ); }
+moves::MoverOP CreateDistanceConstraint::fresh_instance() const { return moves::MoverOP( new CreateDistanceConstraint ); }
 
 protocols::moves::MoverOP
 CreateDistanceConstraintCreator::create_mover() const {
-	return new CreateDistanceConstraint;
+	return protocols::moves::MoverOP( new CreateDistanceConstraint );
 }
 
 std::string

@@ -28,11 +28,11 @@ namespace topology_broker {
 class ConstraintEvaluatorWrapper;
 
 // Types
-typedef  utility::pointer::owning_ptr< ConstraintEvaluatorWrapper >  ConstraintEvaluatorWrapperOP;
-typedef  utility::pointer::owning_ptr< ConstraintEvaluatorWrapper const >  ConstraintEvaluatorWrapperCOP;
+typedef  utility::pointer::shared_ptr< ConstraintEvaluatorWrapper >  ConstraintEvaluatorWrapperOP;
+typedef  utility::pointer::shared_ptr< ConstraintEvaluatorWrapper const >  ConstraintEvaluatorWrapperCOP;
 
-typedef  utility::pointer::access_ptr< ConstraintEvaluatorWrapper >  ConstraintEvaluatorWrapperAP;
-typedef  utility::pointer::access_ptr< ConstraintEvaluatorWrapper const >  ConstraintEvaluatorWrapperCAP;
+typedef  utility::pointer::weak_ptr< ConstraintEvaluatorWrapper >  ConstraintEvaluatorWrapperAP;
+typedef  utility::pointer::weak_ptr< ConstraintEvaluatorWrapper const >  ConstraintEvaluatorWrapperCAP;
 
 
 } // namespace kinematics

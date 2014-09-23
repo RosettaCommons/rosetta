@@ -74,7 +74,7 @@ sequence_from_entity(
 	sequence.reserve( length );
 	for ( core::Size ii = 1; ii <= length; ++ii ) {
 		protocols::genetic_algorithm::EntityElementCOP iiee = entity.traits()[ ii ];
-		PosTypeCOP ii_pos_type = dynamic_cast< PosType const * > ( iiee() );
+		PosTypeCOP ii_pos_type = utility::pointer::dynamic_pointer_cast< protocols::multistate_design::PosType const > ( iiee );
 		if ( ! ii_pos_type ) {
 			throw utility::excn::EXCN_Msg_Exception( "Position " + utility::to_string( ii ) + " of entity " + entity.to_string() + " could not be dynamically casted to PosType" );
 		}
@@ -290,7 +290,7 @@ void
 MMTDriver::setup()
 {
 	if ( ! sfxn_ ) sfxn_ = core::scoring::get_score_function();
-	if ( ! file_contents_ ) file_contents_ = new utility::io::FileContentsMap;
+	if ( ! file_contents_ ) file_contents_ = utility::io::FileContentsMapOP( new utility::io::FileContentsMap );
 	try {
 		std::istringstream entity_resfile_stream( file_contents_->get_file_contents_ref( entity_resfile_fname_ ) );
 		protocols::pack_daemon::create_entity_resfile_contents(
@@ -300,7 +300,7 @@ MMTDriver::setup()
 		throw utility::excn::EXCN_Msg_Exception( "MMTDriver failed to initialize the entity resfile\n" + e.msg() );
 	}
 
-	daf_ = new protocols::pack_daemon::DynamicAggregateFunction;
+	daf_ = protocols::pack_daemon::DynamicAggregateFunctionOP( new protocols::pack_daemon::DynamicAggregateFunction );
 	daf_->set_num_entity_elements( num_entities_ );
 	daf_->set_score_function( *sfxn_ );
 	try {
@@ -311,13 +311,13 @@ MMTDriver::setup()
 	}
 
 	if ( ! ga_randomizer_ ) {
-		ga_randomizer_ = new protocols::genetic_algorithm::Mutate1Randomizer;
+		ga_randomizer_ = protocols::genetic_algorithm::PositionSpecificRandomizerOP( new protocols::genetic_algorithm::Mutate1Randomizer );
 		// reset the default value of 1.0, but the mutation-rate variable is not used by the Mutate1Randomizer!
 		ga_randomizer_->set_mutation_rate( 0.0 /*option[ ms::mutate_rate ]()*/ );
 		protocols::pack_daemon::initialize_ga_randomizer_from_entity_task( ga_randomizer_, entity_task_ );
 	}
 
-	ga_ = new protocols::genetic_algorithm::GeneticAlgorithmBase;
+	ga_ = protocols::genetic_algorithm::GeneticAlgorithmBaseOP( new protocols::genetic_algorithm::GeneticAlgorithmBase );
 	ga_->set_max_generations( ga_ngenerations_ );
 	ga_->set_max_pop_size( ga_pop_size_ );
 	ga_->set_num_to_propagate( ga_num_to_propagate_ );
@@ -325,7 +325,7 @@ MMTDriver::setup()
 	ga_->set_rand( ga_randomizer_ );
 	ga_->fill_with_random_entities();
 
-	top_entities_ = new protocols::pack_daemon::TopEntitySet;
+	top_entities_ = protocols::pack_daemon::TopEntitySetOP( new protocols::pack_daemon::TopEntitySet );
 	top_entities_->desired_entity_history_size( n_top_results_to_output_ );
 }
 
@@ -454,11 +454,11 @@ MMTDriver::optimize_generation()
 
 
 
-	this_gen_work_ = new OneGenerationJobInfo( *ga_, *daf_ );
+	this_gen_work_ = OneGenerationJobInfoOP( new OneGenerationJobInfo( *ga_, *daf_ ) );
 	this_gen_results_.clear();
 	this_gen_results_.resize( this_gen_work_->n_new_sequences() );
 	for ( core::Size ii = 1; ii <= this_gen_work_->n_new_sequences(); ++ii ) {
-		this_gen_results_[ ii ] = new JobsForSequence( daf_->num_states(), daf_->num_npd_properties() );
+		this_gen_results_[ ii ] = utility::pointer::shared_ptr<class devel::mmt_msd::JobsForSequence>( new JobsForSequence( daf_->num_states(), daf_->num_npd_properties() ) );
 	}
 
 	// broadcast that we're starting a new generation

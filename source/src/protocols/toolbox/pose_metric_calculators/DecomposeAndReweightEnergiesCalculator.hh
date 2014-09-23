@@ -166,7 +166,7 @@ public:
 	);
 
 	core::pose::metrics::PoseMetricCalculatorOP clone() const
-	{ return new DecomposeAndReweightEnergiesCalculator( *this ); }
+	{ return core::pose::metrics::PoseMetricCalculatorOP( new DecomposeAndReweightEnergiesCalculator( *this ) ); }
 
 	std::string const & residue_decomposition_calculator() const { return name_of_ResidueDecompositionCalculator_; }
 	core::scoring::EnergyMap const & original_weights() const { return original_weights_; }
@@ -253,8 +253,8 @@ private:
 	core::Real weighted_total_;
 };
 
-typedef utility::pointer::owning_ptr< DecomposeAndReweightEnergiesCalculator > DecomposeAndReweightEnergiesCalculatorOP;
-typedef utility::pointer::owning_ptr< DecomposeAndReweightEnergiesCalculator const > DecomposeAndReweightEnergiesCalculatorCOP;
+typedef utility::pointer::shared_ptr< DecomposeAndReweightEnergiesCalculator > DecomposeAndReweightEnergiesCalculatorOP;
+typedef utility::pointer::shared_ptr< DecomposeAndReweightEnergiesCalculator const > DecomposeAndReweightEnergiesCalculatorCOP;
 
 
 } // namespace pose_metric_calculators

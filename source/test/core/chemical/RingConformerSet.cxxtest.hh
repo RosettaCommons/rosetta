@@ -32,8 +32,8 @@ public:
 
 		core_init_with_additional_options("-out:levels core.chemical.RingConformerSet:400");
 
-		set5_ = new RingConformerSet(5);
-		set6_ = new RingConformerSet(6);
+		set5_ = core::chemical::RingConformerSetOP( new RingConformerSet(5) );
+		set6_ = core::chemical::RingConformerSetOP( new RingConformerSet(6) );
 	}
 
 	// Destruction

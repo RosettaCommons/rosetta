@@ -25,8 +25,8 @@ namespace rotamer_set {
 
 class FlexbbRotamerSet;
 
-typedef utility::pointer::owning_ptr< FlexbbRotamerSet > FlexbbRotamerSetOP;
-typedef utility::pointer::owning_ptr< FlexbbRotamerSet const > FlexbbRotamerSetCOP;
+typedef utility::pointer::shared_ptr< FlexbbRotamerSet > FlexbbRotamerSetOP;
+typedef utility::pointer::shared_ptr< FlexbbRotamerSet const > FlexbbRotamerSetCOP;
 //typedef utility::pointer::access_ptr< FlexbbRotamerSet const > FlexbbRotamerSetCAP;
 
 

@@ -26,13 +26,13 @@ namespace archive {
 // Forward
 class AbstractArchiveBase;
 // Types
-typedef  utility::pointer::owning_ptr< AbstractArchiveBase >  AbstractArchiveBaseOP;
-typedef  utility::pointer::owning_ptr< AbstractArchiveBase const >  AbstractArchiveBaseCOP;
+typedef  utility::pointer::shared_ptr< AbstractArchiveBase >  AbstractArchiveBaseOP;
+typedef  utility::pointer::shared_ptr< AbstractArchiveBase const >  AbstractArchiveBaseCOP;
 
 class ArchiveBase;
 // Types
-typedef  utility::pointer::owning_ptr< ArchiveBase >  ArchiveBaseOP;
-typedef  utility::pointer::owning_ptr< ArchiveBase const >  ArchiveBaseCOP;
+typedef  utility::pointer::shared_ptr< ArchiveBase >  ArchiveBaseOP;
+typedef  utility::pointer::shared_ptr< ArchiveBase const >  ArchiveBaseCOP;
 
 }
 } // namespace kinematics

@@ -25,10 +25,10 @@ namespace filters {
 
 class FragmentLookupFilter;
 
-typedef utility::pointer::owning_ptr<FragmentLookupFilter> FragmentLookupFilterOP;
-typedef utility::pointer::owning_ptr<FragmentLookupFilter const> FragmentLookupFilterCOP;
-typedef utility::pointer::access_ptr<FragmentLookupFilter> FragmentLookupFilterAP;
-typedef utility::pointer::access_ptr<FragmentLookupFilter const> FragmentLookupFilterCAP;
+typedef utility::pointer::shared_ptr<FragmentLookupFilter> FragmentLookupFilterOP;
+typedef utility::pointer::shared_ptr<FragmentLookupFilter const> FragmentLookupFilterCOP;
+typedef utility::pointer::weak_ptr<FragmentLookupFilter> FragmentLookupFilterAP;
+typedef utility::pointer::weak_ptr<FragmentLookupFilter const> FragmentLookupFilterCAP;
 
 }
 }

@@ -69,7 +69,7 @@ namespace full_model_info {
 		FullModelParametersOP
 		clone() const
 		{
-			return new FullModelParameters( *this );
+			return FullModelParametersOP( new FullModelParameters( *this ) );
 		}
 
 		std::string const & full_sequence() const { return full_sequence_;}

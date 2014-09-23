@@ -23,8 +23,8 @@ namespace core {
 namespace environment {
 
 class FoldTreeSketch;
-typedef utility::pointer::owning_ptr< FoldTreeSketch > FoldTreeSketchOP;
-typedef utility::pointer::owning_ptr< FoldTreeSketch const > FoldTreeSketchCOP;
+typedef utility::pointer::shared_ptr< FoldTreeSketch > FoldTreeSketchOP;
+typedef utility::pointer::shared_ptr< FoldTreeSketch const > FoldTreeSketchCOP;
 
 } // core
 } // environment

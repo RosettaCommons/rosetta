@@ -206,13 +206,13 @@ public:
 	/// @brief apply
 	virtual void apply( Pose const & pose, PackerTask & task ) const;
 	/// @brief make clone
-	virtual TaskOperationOP clone() const { return new CombinedTaskOperation( *this ); }
+	virtual TaskOperationOP clone() const { return TaskOperationOP( new CombinedTaskOperation( *this ) ); }
 
 private:
 	VecTaskOP task_operations_;
 };
 
-typedef utility::pointer::owning_ptr< CombinedTaskOperation > CombinedTaskOperationOP;
+typedef utility::pointer::shared_ptr< CombinedTaskOperation > CombinedTaskOperationOP;
 
 } // flxbb
 } // protocols

@@ -25,8 +25,8 @@ namespace output {
 
 class MatchProcessor;
 
-typedef utility::pointer::owning_ptr< MatchProcessor > MatchProcessorOP;
-typedef utility::pointer::owning_ptr< MatchProcessor const > MatchProcessorCOP;
+typedef utility::pointer::shared_ptr< MatchProcessor > MatchProcessorOP;
+typedef utility::pointer::shared_ptr< MatchProcessor const > MatchProcessorCOP;
 
 }
 }

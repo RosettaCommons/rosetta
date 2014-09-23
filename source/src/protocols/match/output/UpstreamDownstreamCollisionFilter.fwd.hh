@@ -25,8 +25,8 @@ namespace output {
 
 class UpstreamDownstreamCollisionFilter;
 
-typedef utility::pointer::owning_ptr< UpstreamDownstreamCollisionFilter > UpstreamDownstreamCollisionFilterOP;
-typedef utility::pointer::owning_ptr< UpstreamDownstreamCollisionFilter const > UpstreamDownstreamCollisionFilterCOP;
+typedef utility::pointer::shared_ptr< UpstreamDownstreamCollisionFilter > UpstreamDownstreamCollisionFilterOP;
+typedef utility::pointer::shared_ptr< UpstreamDownstreamCollisionFilter const > UpstreamDownstreamCollisionFilterCOP;
 
 
 }

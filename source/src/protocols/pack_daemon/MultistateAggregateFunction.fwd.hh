@@ -22,8 +22,8 @@ namespace pack_daemon {
 
 class MultistateAggregateFunction;
 
-typedef utility::pointer::owning_ptr< MultistateAggregateFunction > MultistateAggregateFunctionOP;
-typedef utility::pointer::owning_ptr< MultistateAggregateFunction const > MultistateAggregateFunctionCOP;
+typedef utility::pointer::shared_ptr< MultistateAggregateFunction > MultistateAggregateFunctionOP;
+typedef utility::pointer::shared_ptr< MultistateAggregateFunction const > MultistateAggregateFunctionCOP;
 
 }
 }

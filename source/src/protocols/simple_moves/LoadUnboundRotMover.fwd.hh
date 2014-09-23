@@ -24,8 +24,8 @@ namespace simple_moves{
 
 //Forwards and OP typedefs
 class LoadUnboundRotMover;
-typedef utility::pointer::owning_ptr< LoadUnboundRotMover > LoadUnboundRotMoverOP;
-typedef utility::pointer::owning_ptr< LoadUnboundRotMover const > LoadUnboundRotMoverCOP;
+typedef utility::pointer::shared_ptr< LoadUnboundRotMover > LoadUnboundRotMoverOP;
+typedef utility::pointer::shared_ptr< LoadUnboundRotMover const > LoadUnboundRotMoverCOP;
 
 }//simple_moves
 }//protocols

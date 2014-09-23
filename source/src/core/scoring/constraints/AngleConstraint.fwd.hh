@@ -23,8 +23,8 @@ namespace constraints {
 
 class AngleConstraint;
 
-typedef utility::pointer::owning_ptr< AngleConstraint > AngleConstraintOP;
-typedef utility::pointer::owning_ptr< AngleConstraint const > AngleConstraintCOP;
+typedef utility::pointer::shared_ptr< AngleConstraint > AngleConstraintOP;
+typedef utility::pointer::shared_ptr< AngleConstraint const > AngleConstraintCOP;
 
 }
 }

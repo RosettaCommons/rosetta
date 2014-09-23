@@ -22,8 +22,8 @@ namespace task_operations {
 
 class PreventChainFromRepackingOperation;
 
-typedef utility::pointer::owning_ptr< PreventChainFromRepackingOperation > PreventChainFromRepackingOperationOP;
-typedef utility::pointer::owning_ptr< PreventChainFromRepackingOperation const > PreventChainFromRepackingOperationCOP;
+typedef utility::pointer::shared_ptr< PreventChainFromRepackingOperation > PreventChainFromRepackingOperationOP;
+typedef utility::pointer::shared_ptr< PreventChainFromRepackingOperation const > PreventChainFromRepackingOperationCOP;
 
 } //namespace protocols
 } //namespace toolbox

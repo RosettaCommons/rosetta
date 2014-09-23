@@ -22,7 +22,7 @@ namespace stepwise {
 namespace sampler {
 
 class StepWiseSamplerSizedAny;
-typedef utility::pointer::owning_ptr< StepWiseSamplerSizedAny > StepWiseSamplerSizedAnyOP;
+typedef utility::pointer::shared_ptr< StepWiseSamplerSizedAny > StepWiseSamplerSizedAnyOP;
 
 } //sampler
 } //stepwise

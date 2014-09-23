@@ -36,8 +36,8 @@ ReplaceRegionMover::ReplaceRegionMover(bool copy_pdbinfo /*false*/):
 	target_pose_start_(0),
 	span_(0),
 	copy_pdbinfo_(copy_pdbinfo),
-	src_pose_(NULL),
-	tag_(NULL)
+	src_pose_(/* NULL */),
+	tag_(/* NULL */)
 {
 
 }
@@ -54,9 +54,9 @@ ReplaceRegionMover::ReplaceRegionMover(
 	target_pose_start_(target_pose_start),
 	span_(span),
 	copy_pdbinfo_(copy_pdbinfo),
-	tag_(NULL)
+	tag_(/* NULL */)
 {
-	src_pose_ = new core::pose::Pose(src_pose);
+	src_pose_ = core::pose::PoseOP( new core::pose::Pose(src_pose) );
 }
 
 
@@ -103,7 +103,7 @@ ReplaceRegionMover::parse_my_tag(
 
 protocols::moves::MoverOP
 ReplaceRegionMoverCreator::create_mover() const {
-	return new ReplaceRegionMover;
+	return protocols::moves::MoverOP( new ReplaceRegionMover );
 }
 
 std::string
@@ -124,17 +124,17 @@ core::Size ReplaceRegionMover::target_pose_start() const { return target_pose_st
 
 void
 ReplaceRegionMover::src_pose(const core::pose::Pose& src_pose){
-	src_pose_ = new core::pose::Pose(src_pose);
+	src_pose_ = core::pose::PoseOP( new core::pose::Pose(src_pose) );
 }
 
 protocols::moves::MoverOP
 ReplaceRegionMover::clone() const {
-	return new ReplaceRegionMover(*this);
+	return protocols::moves::MoverOP( new ReplaceRegionMover(*this) );
 }
 
 protocols::moves::MoverOP
 ReplaceRegionMover::fresh_instance() const {
-	return new ReplaceRegionMover;
+	return protocols::moves::MoverOP( new ReplaceRegionMover );
 }
 
 void

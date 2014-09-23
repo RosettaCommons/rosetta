@@ -26,14 +26,14 @@ class NumDerivCheckData;
 class NumericalDerivCheckResult;
 
 
-typedef utility::pointer::owning_ptr< SimpleDerivCheckResult > SimpleDerivCheckResultOP;
-typedef utility::pointer::owning_ptr< SimpleDerivCheckResult const > SimpleDerivCheckResultCOP;
+typedef utility::pointer::shared_ptr< SimpleDerivCheckResult > SimpleDerivCheckResultOP;
+typedef utility::pointer::shared_ptr< SimpleDerivCheckResult const > SimpleDerivCheckResultCOP;
 
-typedef utility::pointer::owning_ptr< NumDerivCheckData > NumDerivCheckDataOP;
-typedef utility::pointer::owning_ptr< NumDerivCheckData const > NumDerivCheckDataCOP;
+typedef utility::pointer::shared_ptr< NumDerivCheckData > NumDerivCheckDataOP;
+typedef utility::pointer::shared_ptr< NumDerivCheckData const > NumDerivCheckDataCOP;
 
-typedef utility::pointer::owning_ptr< NumericalDerivCheckResult > NumericalDerivCheckResultOP;
-typedef utility::pointer::owning_ptr< NumericalDerivCheckResult const > NumericalDerivCheckResultCOP;
+typedef utility::pointer::shared_ptr< NumericalDerivCheckResult > NumericalDerivCheckResultOP;
+typedef utility::pointer::shared_ptr< NumericalDerivCheckResult const > NumericalDerivCheckResultCOP;
 
 } // namespace optimization
 } // namespace core

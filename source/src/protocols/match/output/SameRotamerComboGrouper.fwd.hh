@@ -25,8 +25,8 @@ namespace output {
 
 class SameRotamerComboGrouper;
 
-typedef utility::pointer::owning_ptr< SameRotamerComboGrouper > SameRotamerComboGrouperOP;
-typedef utility::pointer::owning_ptr< SameRotamerComboGrouper const > SameRotamerComboGrouperCOP;
+typedef utility::pointer::shared_ptr< SameRotamerComboGrouper > SameRotamerComboGrouperOP;
+typedef utility::pointer::shared_ptr< SameRotamerComboGrouper const > SameRotamerComboGrouperCOP;
 
 
 }

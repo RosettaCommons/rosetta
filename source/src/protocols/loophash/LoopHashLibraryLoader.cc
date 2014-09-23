@@ -31,7 +31,7 @@ namespace loophash {
 basic::resource_manager::ResourceLoaderOP
 LoopHashLibraryLoaderCreator::create_resource_loader() const
 {
-	return new LoopHashLibraryLoader();
+	return basic::resource_manager::ResourceLoaderOP( new LoopHashLibraryLoader() );
 }
 
 /// @details Return a string specifying the type of %ResourceLoader to create (LoopHashLibrary).
@@ -57,7 +57,7 @@ LoopHashLibraryLoader::create_resource(
 			"but was given a non-LoopHashLibraryOptions object of type '" + options.type() + "', which has the name '" + options.name() + "'." );
 	}
 	LoopHashLibraryOptions const & lh_opts = static_cast< LoopHashLibraryOptions const & > ( options );
-	LoopHashLibraryOP lh_library = new LoopHashLibrary( lh_opts.loop_sizes() );
+	LoopHashLibraryOP lh_library( new LoopHashLibrary( lh_opts.loop_sizes() ) );
 	lh_library->load_mergeddb();
 	return lh_library;
 }

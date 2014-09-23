@@ -90,7 +90,7 @@ WorkUnit_LoopHash::init_from_cmd( const core::Size mpi_rank )
         num_partitions = option[ OptionKeys::lh::num_partitions]();
     core::Size assigned_num = mpi_rank % num_partitions;
 	try{
-		library_ = new LoopHashLibrary( loop_sizes, num_partitions, assigned_num );
+		library_ = LoopHashLibraryOP( new LoopHashLibrary( loop_sizes, num_partitions, assigned_num ) );
 		// load initial library from disk
 		library_->load_mergeddb();
 	}

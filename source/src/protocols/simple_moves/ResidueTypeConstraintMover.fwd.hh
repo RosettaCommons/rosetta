@@ -20,8 +20,8 @@ namespace protocols {
 namespace simple_moves {
 
 class ResidueTypeConstraintMover;
-typedef utility::pointer::owning_ptr< ResidueTypeConstraintMover > ResidueTypeConstraintMoverOP;
-typedef utility::pointer::owning_ptr< ResidueTypeConstraintMover const > ResidueTypeConstraintMoverCOP;
+typedef utility::pointer::shared_ptr< ResidueTypeConstraintMover > ResidueTypeConstraintMoverOP;
+typedef utility::pointer::shared_ptr< ResidueTypeConstraintMover const > ResidueTypeConstraintMoverCOP;
 
 } // moves
 } // protocols

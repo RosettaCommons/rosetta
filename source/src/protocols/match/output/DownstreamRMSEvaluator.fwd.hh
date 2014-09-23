@@ -25,8 +25,8 @@ namespace match {
 namespace output {
 
 class DownstreamRMSEvaluator;
-typedef utility::pointer::owning_ptr< DownstreamRMSEvaluator > DownstreamRMSEvaluatorOP;
-typedef utility::pointer::owning_ptr< DownstreamRMSEvaluator const > DownstreamRMSEvaluatorCOP;
+typedef utility::pointer::shared_ptr< DownstreamRMSEvaluator > DownstreamRMSEvaluatorOP;
+typedef utility::pointer::shared_ptr< DownstreamRMSEvaluator const > DownstreamRMSEvaluatorCOP;
 
 
 }

@@ -174,7 +174,7 @@ pack_rotamers_loop(
 			" seq: " << final_seq << " simannealerE: " << bestenergy << " rescoreE: " << final_score << std::endl;
 
 		results.push_back( std::make_pair( final_score, pose.sequence() ) );
-		pose_list.push_back( new pose::Pose( pose ) ); //saves a copy.
+		pose_list.push_back( utility::pointer::shared_ptr<class core::pose::Pose>( new pose::Pose( pose ) ) ); //saves a copy.
 		if ( run == 1 || bestenergy < best_bestenergy ) {
 			best_pose = pose;
 			best_bestenergy = bestenergy;

@@ -23,8 +23,8 @@ namespace movers {
 
 class PlacementMinimizationMover;
 
-typedef utility::pointer::owning_ptr< PlacementMinimizationMover > PlacementMinimizationMoverOP;
-typedef utility::pointer::owning_ptr< PlacementMinimizationMover const > PlacementMinimizationMoverCOP;
+typedef utility::pointer::shared_ptr< PlacementMinimizationMover > PlacementMinimizationMoverOP;
+typedef utility::pointer::shared_ptr< PlacementMinimizationMover const > PlacementMinimizationMoverCOP;
 
 } } }
 

@@ -152,7 +152,7 @@ void DisulfideFilter::parse_my_tag( utility::tag::TagCOP tag,
 }
 
 protocols::filters::FilterOP
-DisulfideFilterCreator::create_filter() const { return new DisulfideFilter; }
+DisulfideFilterCreator::create_filter() const { return protocols::filters::FilterOP( new DisulfideFilter ); }
 
 std::string
 DisulfideFilterCreator::keyname() const { return "DisulfideFilter"; }

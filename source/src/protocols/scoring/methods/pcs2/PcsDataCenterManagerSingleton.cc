@@ -82,7 +82,7 @@ PcsDataCenterManagerSingleton::PcsDataCenterManagerSingleton(PcsEnergyParameterM
 		}
 		PcsInputCenter pcs_i_c = PcsInputCenterManager::get_instance()->get_PcsInputCenter_for(vec_filename, vec_weight);
 		PcsDataCenterOP pcs_d_c_OP;
-		pcs_d_c_OP = new PcsDataCenter(pcs_i_c, start, end, individual_scale);
+		pcs_d_c_OP = PcsDataCenterOP( new PcsDataCenter(pcs_i_c, start, end, individual_scale) );
 		(*this).get_PCS_data_all().push_back(*pcs_d_c_OP);
 	}
 }

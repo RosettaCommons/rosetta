@@ -86,8 +86,8 @@ DesignBySecondaryStructureOperation::DesignBySecondaryStructureOperation()
 		pred_ss_( "" ),
 		prevent_native_aa_( false ),
 		prevent_bad_point_mutants_( false ),
-		psipred_interface_( NULL ),
-		ss_predictor_( NULL )
+		psipred_interface_( /* NULL */ ),
+		ss_predictor_( /* NULL */ )
 {}
 
 // copy constructor
@@ -109,12 +109,12 @@ DesignBySecondaryStructureOperation::DesignBySecondaryStructureOperation( std::s
 		pred_ss_( "" ),
 		prevent_native_aa_( prevent_native ),
   	prevent_bad_point_mutants_( prevent_bad_point_mutants ),
-	  psipred_interface_( NULL )
+	  psipred_interface_( /* NULL */ )
 {
 	if ( cmd != "" ) {
-		psipred_interface_ = new denovo_design::filters::PsiPredInterface( cmd );
+		psipred_interface_ = denovo_design::filters::PsiPredInterfaceOP( new denovo_design::filters::PsiPredInterface( cmd ) );
 	} else {
-		ss_predictor_ = new protocols::ss_prediction::SS_predictor( "HLE" );
+		ss_predictor_ = protocols::ss_prediction::SS_predictorOP( new protocols::ss_prediction::SS_predictor( "HLE" ) );
 	}
 	initialize_blueprint_ss( bp_file );
 }
@@ -126,7 +126,7 @@ DesignBySecondaryStructureOperation::~DesignBySecondaryStructureOperation()
 /// @brief make clone
 core::pack::task::operation::TaskOperationOP
 DesignBySecondaryStructureOperation::clone() const {
-  return new DesignBySecondaryStructureOperation( *this );
+  return core::pack::task::operation::TaskOperationOP( new DesignBySecondaryStructureOperation( *this ) );
 }
 
 /// @brief utility function that compares two resid-probability pairs and returns true of the probability of the first is greater than probability of the second
@@ -308,7 +308,7 @@ DesignBySecondaryStructureOperation::parse_tag( utility::tag::TagCOP tag, basic:
 		utility_exit_with_message( "cmd must be set in DesignBySecondaryStructure." );
 	}
 	// now that we have a command, we can create the psipred interface object
-	psipred_interface_ = new denovo_design::filters::PsiPredInterface( cmd );
+	psipred_interface_ = denovo_design::filters::PsiPredInterfaceOP( new denovo_design::filters::PsiPredInterface( cmd ) );
 	prevent_bad_point_mutants_ = tag->getOption< bool >( "prevent_bad_point_mutations", prevent_bad_point_mutants_ );
 }
 
@@ -318,7 +318,7 @@ DesignBySecondaryStructureOperation::initialize_blueprint_ss( std::string const 
 		//utility_exit_with_message( "A blueprint filename must be provided to DesignBySecondaryStructure." );
 		return;
 	}
-	protocols::jd2::parser::BluePrintOP bp = new protocols::jd2::parser::BluePrint( blueprint_file );
+	protocols::jd2::parser::BluePrintOP bp( new protocols::jd2::parser::BluePrint( blueprint_file ) );
 	if ( ! bp ) {
 		utility_exit_with_message( "Error initializing the blueprint." );
 	}
@@ -327,7 +327,7 @@ DesignBySecondaryStructureOperation::initialize_blueprint_ss( std::string const 
 
 core::pack::task::operation::TaskOperationOP
 DesignBySecondaryStructureOperationCreator::create_task_operation() const {
-	return new DesignBySecondaryStructureOperation;
+	return core::pack::task::operation::TaskOperationOP( new DesignBySecondaryStructureOperation );
 }
 
 std::string

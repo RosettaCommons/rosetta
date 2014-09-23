@@ -28,8 +28,8 @@ class DarcElectrostaticsBase;
 class DelphiElectrostatics;
 
 // Types
-typedef utility::pointer::owning_ptr< DelphiElectrostatics >  DelphiElectrostaticsOP;
-typedef utility::pointer::owning_ptr< DelphiElectrostatics const >  DelphiElectrostaticsCOP;
+typedef utility::pointer::shared_ptr< DelphiElectrostatics >  DelphiElectrostaticsOP;
+typedef utility::pointer::shared_ptr< DelphiElectrostatics const >  DelphiElectrostaticsCOP;
 
 } // namespace pockets
 } // namespace protocols

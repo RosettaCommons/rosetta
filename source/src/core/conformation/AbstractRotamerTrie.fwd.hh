@@ -23,8 +23,8 @@ namespace conformation {
 
 class AbstractRotamerTrie;
 
-typedef utility::pointer::owning_ptr< AbstractRotamerTrie > AbstractRotamerTrieOP;
-typedef utility::pointer::owning_ptr< AbstractRotamerTrie const > AbstractRotamerTrieCOP;
+typedef utility::pointer::shared_ptr< AbstractRotamerTrie > AbstractRotamerTrieOP;
+typedef utility::pointer::shared_ptr< AbstractRotamerTrie const > AbstractRotamerTrieCOP;
 
 } // namespace conformation
 } // namespace core

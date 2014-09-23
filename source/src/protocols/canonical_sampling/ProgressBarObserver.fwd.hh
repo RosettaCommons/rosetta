@@ -16,8 +16,8 @@ namespace protocols {
 namespace canonical_sampling {
 
 class ProgressBarObserver;
-typedef utility::pointer::owning_ptr<ProgressBarObserver> ProgressBarObserverOP;
-typedef utility::pointer::owning_ptr<ProgressBarObserver const> ProgressBarObserverCOP;
+typedef utility::pointer::shared_ptr<ProgressBarObserver> ProgressBarObserverOP;
+typedef utility::pointer::shared_ptr<ProgressBarObserver const> ProgressBarObserverCOP;
 
 }
 }

@@ -25,7 +25,7 @@ namespace protocols {
 namespace surface_docking {
 
 class SurfaceDockingProtocol;
-typedef utility::pointer::owning_ptr< SurfaceDockingProtocol > SurfaceDockingProtocolOP;
+typedef utility::pointer::shared_ptr< SurfaceDockingProtocol > SurfaceDockingProtocolOP;
 
 }
 }

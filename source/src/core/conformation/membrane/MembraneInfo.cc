@@ -85,7 +85,7 @@ MembraneInfo::MembraneInfo() :
 	membrane_rsd_num_( 1 ),
 	membrane_jump_( 2 ),
 	view_in_pymol_( false ),
-	plane_info_( 0 )
+	plane_info_( /* 0 */ )
 {}
 
 /// @brief Custom Constructor - Membrane pos & topology
@@ -108,7 +108,7 @@ MembraneInfo::MembraneInfo(
 	membrane_jump_( membrane_jump ),
 	spanning_topology_( topology ),
 	view_in_pymol_( view_in_pymol ),
-	plane_info_( 0 )
+	plane_info_( /* 0 */ )
 {}
 
 /// @brief Custom Constructor - Membrane pos, topology & lips
@@ -134,7 +134,7 @@ MembraneInfo::MembraneInfo(
 	lipid_acc_data_( lips ),
 	spanning_topology_( topology ),
 	view_in_pymol_( view_in_pymol ),
-	plane_info_( 0 )
+	plane_info_( /* 0 */ )
 {}
 
 /// @brief Copy Constructor
@@ -337,7 +337,7 @@ MembraneInfo::setup_plane_visualization(
 	) {
 	
 	using namespace core::conformation::membrane;
-	plane_info_ = new MembranePlanes( top_points, bottom_points );
+	plane_info_ = MembranePlanesOP( new MembranePlanes( top_points, bottom_points ) );
 }
 
 /// @brief Membrane Planes Points

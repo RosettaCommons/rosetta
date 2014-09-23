@@ -73,7 +73,7 @@ downstream_hit::operator == ( downstream_hit const & rhs ) const
 match_dspos1::match_dspos1() :
 	originating_geom_cst_for_dspos( 0 ),
 	downstream_conf_id( 0 ),
-	dspos( 0 )
+	dspos( /* 0 */ )
 {}
 
 match_dspos1::match_dspos1( core::Size n_geometric_constraints ) : upstream_hits( n_geometric_constraints ) {}

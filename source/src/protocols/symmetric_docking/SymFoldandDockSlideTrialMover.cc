@@ -127,7 +127,7 @@ SymFoldandDockSlideTrialMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SymFoldandDockSlideTrialMoverCreator::create_mover() const {
-    return new SymFoldandDockSlideTrialMover();
+    return protocols::moves::MoverOP( new SymFoldandDockSlideTrialMover() );
 }
 
 std::string

@@ -28,10 +28,10 @@ namespace disulfides {
 
 class CentroidDisulfideEnergyContainer;
 
-typedef utility::pointer::owning_ptr< CentroidDisulfideEnergyContainer > CentroidDisulfideEnergyContainerOP;
-typedef utility::pointer::owning_ptr< CentroidDisulfideEnergyContainer const > CentroidDisulfideEnergyContainerCOP;
-typedef utility::pointer::access_ptr< CentroidDisulfideEnergyContainer > CentroidDisulfideEnergyContainerAP;
-typedef utility::pointer::access_ptr< CentroidDisulfideEnergyContainer const > CentroidDisulfideEnergyContainerCAP;
+typedef utility::pointer::shared_ptr< CentroidDisulfideEnergyContainer > CentroidDisulfideEnergyContainerOP;
+typedef utility::pointer::shared_ptr< CentroidDisulfideEnergyContainer const > CentroidDisulfideEnergyContainerCOP;
+typedef utility::pointer::weak_ptr< CentroidDisulfideEnergyContainer > CentroidDisulfideEnergyContainerAP;
+typedef utility::pointer::weak_ptr< CentroidDisulfideEnergyContainer const > CentroidDisulfideEnergyContainerCAP;
 
 }
 }

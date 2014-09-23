@@ -90,13 +90,13 @@ setup_dna_chainbreak_constraints(
 			AtomID const O5_id( rsd2.atom_index( "O5*" ), i+1 );
 
 			// distance from O3* to P
-			pose.add_constraint( new AtomPairConstraint( O3_id, P_id, distance_func ) );
+			pose.add_constraint( scoring::constraints::ConstraintCOP( new AtomPairConstraint( O3_id, P_id, distance_func ) ) );
 
 			// angle at O3*
-			pose.add_constraint( new AngleConstraint( C3_id, O3_id, P_id, O3_angle_func ) );
+			pose.add_constraint( scoring::constraints::ConstraintCOP( new AngleConstraint( C3_id, O3_id, P_id, O3_angle_func ) ) );
 
 			// angle at P
-			pose.add_constraint( new AngleConstraint( O3_id, P_id, O5_id,  P_angle_func ) );
+			pose.add_constraint( scoring::constraints::ConstraintCOP( new AngleConstraint( O3_id, P_id, O5_id,  P_angle_func ) ) );
 		}
 	}
 

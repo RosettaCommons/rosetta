@@ -23,8 +23,8 @@ namespace methods {
 
 class ReferenceEnergy;
 
-typedef utility::pointer::owning_ptr< ReferenceEnergy > ReferenceEnergyOP;
-typedef utility::pointer::owning_ptr< ReferenceEnergy const > ReferenceEnergyCOP;
+typedef utility::pointer::shared_ptr< ReferenceEnergy > ReferenceEnergyOP;
+typedef utility::pointer::shared_ptr< ReferenceEnergy const > ReferenceEnergyCOP;
 
 } // methods
 } // scoring

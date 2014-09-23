@@ -24,11 +24,11 @@ namespace frag_picker {
 /// @brief forward declaration for VallProvider
 class VallProvider;
 
-typedef utility::pointer::owning_ptr<VallProvider> VallProviderOP;
-typedef utility::pointer::owning_ptr<VallProvider const> VallProviderCOP;
+typedef utility::pointer::shared_ptr<VallProvider> VallProviderOP;
+typedef utility::pointer::shared_ptr<VallProvider const> VallProviderCOP;
 
-typedef utility::pointer::access_ptr<VallProvider> VallProviderAP;
-typedef utility::pointer::access_ptr<VallProvider const> VallProviderCAP;
+typedef utility::pointer::weak_ptr<VallProvider> VallProviderAP;
+typedef utility::pointer::weak_ptr<VallProvider const> VallProviderCAP;
 
 } // frag_picker
 } // protocols

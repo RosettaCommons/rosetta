@@ -60,7 +60,7 @@ public:
 	PiPiCalculator(core::Real dist_cutoff);
 
 	core::pose::metrics::PoseMetricCalculatorOP clone() const {
-	    return new PiPiCalculator( distance_cutoff_); };
+	    return core::pose::metrics::PoseMetricCalculatorOP( new PiPiCalculator( distance_cutoff_) ); };
 
 private:
 	core::Real distance_cutoff_; //distance cutoff between the Hydrogen and Acceptor atoms. Default is 3.2

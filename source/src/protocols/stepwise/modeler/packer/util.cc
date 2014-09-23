@@ -46,7 +46,7 @@ namespace packer {
 
 		using namespace core::scoring;
 		// may want to put in proper handling of moving_partition_res -- i.e., pack any residues that make new contacts:
-		StepWisePackerOP stepwise_packer = new StepWisePacker( moving_res_list );
+		StepWisePackerOP stepwise_packer( new StepWisePacker( moving_res_list ) );
 		stepwise_packer->set_scorefxn( pack_scorefxn );
 		stepwise_packer->set_use_packer_instead_of_rotamer_trials( options->use_packer_instead_of_rotamer_trials() );
 		stepwise_packer->set_allow_virtual_side_chains( options->allow_virtual_side_chains() );

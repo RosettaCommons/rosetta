@@ -178,7 +178,7 @@ void DeclareBond::apply( core::pose::Pose & pose )
 		
 		//Kinematic closure to build the rest of the peptide:
 		if (run_kic_) {
-		    protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP kinmover = new protocols::loops::loop_closure::kinematic_closure::KinematicMover;
+		    protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP kinmover( new protocols::loops::loop_closure::kinematic_closure::KinematicMover );
 		    core::scoring::ScoreFunctionOP sfxn;
 		    sfxn = core::scoring::get_score_function();
 		    if (kic_res1_ == 0) {
@@ -222,12 +222,12 @@ DeclareBond::parse_my_tag(
     kic_res2_ = tag->getOption< Size >( "KIC_res2", 0);
 }
 	
-moves::MoverOP DeclareBond::clone() const { return new DeclareBond( *this ); }
-moves::MoverOP DeclareBond::fresh_instance() const { return new DeclareBond; }
+moves::MoverOP DeclareBond::clone() const { return moves::MoverOP( new DeclareBond( *this ) ); }
+moves::MoverOP DeclareBond::fresh_instance() const { return moves::MoverOP( new DeclareBond ); }
 
 protocols::moves::MoverOP
 DeclareBondCreator::create_mover() const {
-	return new DeclareBond;
+	return protocols::moves::MoverOP( new DeclareBond );
 }
 
 std::string

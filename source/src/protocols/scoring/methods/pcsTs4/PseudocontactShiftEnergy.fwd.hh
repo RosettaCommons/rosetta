@@ -31,8 +31,8 @@ namespace pcsTs4 {
 class PCS_Energy_Ts4;
 class PCS_Energy_parameters_manager_Ts4;
 
-typedef utility::pointer::owning_ptr< PCS_Energy_Ts4 > PCS_Energy_Ts4OP;
-typedef utility::pointer::owning_ptr< PCS_Energy_Ts4 const > PCS_Energy_Ts4COP;
+typedef utility::pointer::shared_ptr< PCS_Energy_Ts4 > PCS_Energy_Ts4OP;
+typedef utility::pointer::shared_ptr< PCS_Energy_Ts4 const > PCS_Energy_Ts4COP;
 }
 }
 }

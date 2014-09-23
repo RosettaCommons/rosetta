@@ -104,7 +104,7 @@ HPatchCalculator::recompute( pose::Pose const & this_pose ) {
 			}
 		}
 		if ( has_nonprot_res ) {
-			core::pose::PoseOP pureprotpose = new core::pose::Pose( this_pose );
+			core::pose::PoseOP pureprotpose( new core::pose::Pose( this_pose ) );
 			pose_manipulation::remove_non_protein_residues( *pureprotpose );
 			pack::interaction_graph::SurfacePotential::get_instance()->compute_pose_hpatch_score( *pureprotpose, total_hpatch_score_, patch_scores_, atoms_in_patches_ );
 

@@ -41,7 +41,7 @@ MakePolyXMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 MakePolyXMoverCreator::create_mover() const {
-	return new MakePolyXMover;
+	return protocols::moves::MoverOP( new MakePolyXMover );
 }
 
 std::string
@@ -71,12 +71,12 @@ MakePolyXMover::~MakePolyXMover()
 
 /// @brief clone this object
 protocols::moves::MoverOP MakePolyXMover::clone() const {
-	return new protocols::simple_moves::MakePolyXMover( *this );
+	return protocols::moves::MoverOP( new protocols::simple_moves::MakePolyXMover( *this ) );
 }
 
 /// @brief create this type of object
 protocols::moves::MoverOP MakePolyXMover::fresh_instance() const {
-	return new protocols::simple_moves::MakePolyXMover();
+	return protocols::moves::MoverOP( new protocols::simple_moves::MakePolyXMover() );
 }
 
 /// @details virtual main

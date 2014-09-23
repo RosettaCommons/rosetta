@@ -103,12 +103,12 @@ CreateTorsionConstraint::parse_my_tag(
     }
 }
 	
-moves::MoverOP CreateTorsionConstraint::clone() const { return new CreateTorsionConstraint( *this ); }
-moves::MoverOP CreateTorsionConstraint::fresh_instance() const { return new CreateTorsionConstraint; }
+moves::MoverOP CreateTorsionConstraint::clone() const { return moves::MoverOP( new CreateTorsionConstraint( *this ) ); }
+moves::MoverOP CreateTorsionConstraint::fresh_instance() const { return moves::MoverOP( new CreateTorsionConstraint ); }
 
 protocols::moves::MoverOP
 CreateTorsionConstraintCreator::create_mover() const {
-	return new CreateTorsionConstraint;
+	return protocols::moves::MoverOP( new CreateTorsionConstraint );
 }
 
 std::string

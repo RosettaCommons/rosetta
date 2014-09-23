@@ -23,8 +23,8 @@ namespace movers{
 
 //Forwards and OP typedefs
 class BuildAlaPose;
-typedef utility::pointer::owning_ptr< BuildAlaPose > BuildAlaPoseOP;
-typedef utility::pointer::owning_ptr< BuildAlaPose const > BuildAlaPoseCOP;
+typedef utility::pointer::shared_ptr< BuildAlaPose > BuildAlaPoseOP;
+typedef utility::pointer::shared_ptr< BuildAlaPose const > BuildAlaPoseCOP;
 
 }//movers
 }//protein_interface_design

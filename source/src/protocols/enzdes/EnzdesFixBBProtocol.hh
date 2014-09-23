@@ -37,7 +37,7 @@ namespace protocols{
 namespace enzdes{
 
 class EnzdesFixBBProtocol;
-typedef utility::pointer::owning_ptr< EnzdesFixBBProtocol > EnzdesFixBBProtocolOP;
+typedef utility::pointer::shared_ptr< EnzdesFixBBProtocol > EnzdesFixBBProtocolOP;
 
 class EnzdesFixBBProtocol : public protocols::enzdes::EnzdesBaseProtocol
 {

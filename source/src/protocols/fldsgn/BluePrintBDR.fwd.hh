@@ -27,19 +27,19 @@ class BluePrintBDR;
 
 
 /// @brief BluePrintBDR owning pointer
-typedef utility::pointer::owning_ptr< BluePrintBDR > BluePrintBDR_OP;
+typedef utility::pointer::shared_ptr< BluePrintBDR > BluePrintBDR_OP;
 
 
 /// @brief BluePrintBDR const owning pointer
-typedef utility::pointer::owning_ptr< BluePrintBDR const > BluePrintBDR_COP;
+typedef utility::pointer::shared_ptr< BluePrintBDR const > BluePrintBDR_COP;
 
 
 /// @brief BluePrintBDR access pointer
-typedef utility::pointer::access_ptr< BluePrintBDR > BluePrintBDR_AP;
+typedef utility::pointer::weak_ptr< BluePrintBDR > BluePrintBDR_AP;
 
 
 /// @brief BluePrintBDR const access pointer
-typedef utility::pointer::access_ptr< BluePrintBDR const > BluePrintBDR_CAP;
+typedef utility::pointer::weak_ptr< BluePrintBDR const > BluePrintBDR_CAP;
 
 
 } // namespace fldsgn

@@ -102,7 +102,7 @@ void AlignRmsdTargetEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvalua
 		bool gdt_by_TM( option[ OptionKeys::evaluation::gdttm ]() );
 
 		for ( Size ii = 1; ii <= align_rmsd_target.size(); ++ii ) {
-      pose::PoseOP rmsd_pose = new pose::Pose;
+      pose::PoseOP rmsd_pose( new pose::Pose );
       core::import_pose::pose_from_pdb( *rmsd_pose, align_rmsd_target[ii] );
 			//string const tag( align_rmsd_target[ii] );
 			string const tag( align_rmsd_col_names[ii] );
@@ -112,8 +112,8 @@ void AlignRmsdTargetEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvalua
 					align_rmsd_fns[ii], option[ OptionKeys::evaluation::align_rmsd_format ]()
 				).front();
 			}
-			eval.add_evaluation( new Align_RmsdEvaluator(rmsd_pose,tag,true,aln,gdt_by_TM) );
-			eval.add_evaluation( new Align_RotamerEvaluator(rmsd_pose,tag,true,aln) );
+			eval.add_evaluation( PoseEvaluatorOP( new Align_RmsdEvaluator(rmsd_pose,tag,true,aln,gdt_by_TM) ) );
+			eval.add_evaluation( PoseEvaluatorOP( new Align_RotamerEvaluator(rmsd_pose,tag,true,aln) ) );
 		}
 	}
 

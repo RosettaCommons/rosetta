@@ -20,8 +20,8 @@ namespace numeric {
 namespace kdtree {
 
 class KDPoint;
-typedef utility::pointer::owning_ptr< KDPoint > KDPointOP;
-typedef utility::pointer::owning_ptr< KDPoint const > KDPointCOP;
+typedef utility::pointer::shared_ptr< KDPoint > KDPointOP;
+typedef utility::pointer::shared_ptr< KDPoint const > KDPointCOP;
 
 } // kdtree
 } // numeric

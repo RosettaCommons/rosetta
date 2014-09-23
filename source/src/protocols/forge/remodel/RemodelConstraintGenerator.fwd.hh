@@ -26,10 +26,10 @@ namespace forge{
 namespace remodel{
 
 class RemodelConstraintGenerator;
-typedef utility::pointer::owning_ptr< RemodelConstraintGenerator > RemodelConstraintGeneratorOP;
-typedef utility::pointer::owning_ptr< RemodelConstraintGenerator const > RemodelConstraintGeneratorCOP;
-typedef utility::pointer::access_ptr< RemodelConstraintGenerator > RemodelConstraintGeneratorAP;
-typedef utility::pointer::access_ptr< RemodelConstraintGenerator const > RemodelConstraintGeneratorCAP;
+typedef utility::pointer::shared_ptr< RemodelConstraintGenerator > RemodelConstraintGeneratorOP;
+typedef utility::pointer::shared_ptr< RemodelConstraintGenerator const > RemodelConstraintGeneratorCOP;
+typedef utility::pointer::weak_ptr< RemodelConstraintGenerator > RemodelConstraintGeneratorAP;
+typedef utility::pointer::weak_ptr< RemodelConstraintGenerator const > RemodelConstraintGeneratorCAP;
 
 }
 }

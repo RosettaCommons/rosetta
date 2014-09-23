@@ -37,7 +37,7 @@ public:
 	{}
 
 	/// @brief returns a clone of this ConstantFunc
-	FuncOP clone() const { return new ConstantFunc( *this ); }
+	FuncOP clone() const { return FuncOP( new ConstantFunc( *this ) ); }
 
 	/// @brief Returns the value of this ConstantFunc evaluated at distance x.
 	Real func( Real const ) const;

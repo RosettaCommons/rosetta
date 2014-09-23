@@ -133,7 +133,7 @@ LoopRefineInnerCycleOP LoopRefineInnerCycleFactory::create_inner_cycle(
 	}
 	else
 	{
-		LoopRefineInnerCycleContainerOP tmp_inner_cycle = new LoopRefineInnerCycleContainer;
+		LoopRefineInnerCycleContainerOP tmp_inner_cycle( new LoopRefineInnerCycleContainer );
 
 		for( vector1< string >::const_iterator it = movers_to_make.begin(); it != movers_to_make.end(); ++it )
 		{
@@ -154,8 +154,7 @@ LoopRefineInnerCycleOP LoopRefineInnerCycleFactory::create_inner_cycle(
 LoopRefineInnerCycleOP LoopRefineInnerCycleFactory::make_inner_cycle_from_string_name( std::string const & name ) const
 {
 	TR.Trace << "generate LoopRefineInnerCycle of type " << name << std::endl;
-	LoopRefineInnerCycleOP inner_cycle = dynamic_cast< LoopRefineInnerCycle * >(
-		( moves::MoverFactory::get_instance()->newMover( name ) ).get() );
+	LoopRefineInnerCycleOP inner_cycle = utility::pointer::dynamic_pointer_cast< protocols::loops::loop_mover::refine::LoopRefineInnerCycle > ( ( moves::MoverFactory::get_instance()->newMover( name ) ) );
 
 	if( ! inner_cycle ){
 		using utility::excn::EXCN_Msg_Exception;

@@ -489,9 +489,9 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 
 	sampler::copy_dofs::ResidueAlternativeSetOP
 	convert_sugar_modeling_to_residue_alternative_set( SugarModeling const & sugar_modeling ){
-		return new sampler::copy_dofs::ResidueAlternativeSet( sugar_modeling.pose_list,
+		return sampler::copy_dofs::ResidueAlternativeSetOP( new sampler::copy_dofs::ResidueAlternativeSet( sugar_modeling.pose_list,
 																																	get_res_map( sugar_modeling ),
-																																	sugar_modeling.moving_res );
+																																	sugar_modeling.moving_res ) );
 	}
 
 
@@ -502,8 +502,7 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 																	core::scoring::ScoreFunctionCOP scorefxn,
 																	options::StepWiseModelerOptionsCOP options ) {
 		Pose pose_save = pose;
-		StepWiseRNA_VirtualSugarJustInTimeInstantiatorOP virtual_sugar_just_in_time_instantiator =
-              new StepWiseRNA_VirtualSugarJustInTimeInstantiator( working_parameters );
+		StepWiseRNA_VirtualSugarJustInTimeInstantiatorOP virtual_sugar_just_in_time_instantiator( new StepWiseRNA_VirtualSugarJustInTimeInstantiator( working_parameters ) );
 		virtual_sugar_just_in_time_instantiator->set_scorefxn( scorefxn );
 		virtual_sugar_just_in_time_instantiator->set_options( options );
 		virtual_sugar_just_in_time_instantiator->apply( pose );

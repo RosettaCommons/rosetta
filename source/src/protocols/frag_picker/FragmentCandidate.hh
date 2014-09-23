@@ -136,8 +136,8 @@ public:
 
 	inline FragDataOP get_frag_data() {
 
-		AnnotatedFragDataOP fragdata = new AnnotatedFragData(get_pdb_id(),
-				queryResidueIndex_);
+		AnnotatedFragDataOP fragdata( new AnnotatedFragData(get_pdb_id(),
+				queryResidueIndex_) );
 
 		for (Size i = 1; i <= fragmentLength_; ++i) {
 			fragdata->add_residue(

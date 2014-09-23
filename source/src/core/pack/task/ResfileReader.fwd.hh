@@ -23,13 +23,13 @@ namespace task {
 
 class ResfileCommand;
 
-typedef utility::pointer::owning_ptr< ResfileCommand > ResfileCommandOP;
-typedef utility::pointer::owning_ptr< ResfileCommand const > ResfileCommandCOP;
+typedef utility::pointer::shared_ptr< ResfileCommand > ResfileCommandOP;
+typedef utility::pointer::shared_ptr< ResfileCommand const > ResfileCommandCOP;
 
 class ResfileContents;
 
-typedef utility::pointer::owning_ptr< ResfileContents > ResfileContentsOP;
-typedef utility::pointer::owning_ptr< ResfileContents const > ResfileContentsCOP;
+typedef utility::pointer::shared_ptr< ResfileContents > ResfileContentsOP;
+typedef utility::pointer::shared_ptr< ResfileContents const > ResfileContentsCOP;
 
 } //namespace task
 } //namespace pack

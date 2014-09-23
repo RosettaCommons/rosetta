@@ -91,7 +91,7 @@ FullModelInfo::FullModelInfo(
 		utility::vector1< Size > const & res_numbers_in_pose ):
 	CacheableData(),
 	res_list_( res_numbers_in_pose ),
-	full_model_parameters_( new FullModelParameters( full_sequence, cutpoint_open_in_full_model, res_numbers_in_pose )  )
+	full_model_parameters_( FullModelParametersCOP( new FullModelParameters( full_sequence, cutpoint_open_in_full_model, res_numbers_in_pose ) )  )
 {
 }
 
@@ -106,7 +106,7 @@ FullModelInfo::FullModelInfo( FullModelParametersCOP full_model_parameters ):
 FullModelInfo::FullModelInfo( pose::Pose & pose ) :
 	CacheableData()
 {
-	full_model_parameters_ = new FullModelParameters( pose, res_list_ );
+	full_model_parameters_ = FullModelParametersCOP( new FullModelParameters( pose, res_list_ ) );
 }
 
 
@@ -345,7 +345,7 @@ FullModelInfo const &
 const_full_model_info( pose::Pose const & pose )
 {
 	assert( pose.data().has( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO ) );
-	return *( static_cast< FullModelInfo const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO)() ) );
+	return *( utility::pointer::static_pointer_cast< core::pose::full_model_info::FullModelInfo const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO) ) );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -359,10 +359,10 @@ nonconst_full_model_info( pose::Pose & pose )
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO ) ) {
 		// following takes time -- so we shouldn't call this nonconst function a lot.
 		runtime_assert ( check_full_model_info_OK( pose ) ); // later remove this for speed.
-		return *( static_cast< FullModelInfo * >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO )() ));
+		return *( utility::pointer::static_pointer_cast< core::pose::full_model_info::FullModelInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO ) ));
 	}
 
-	FullModelInfoOP full_model_info = new FullModelInfo( pose );
+	FullModelInfoOP full_model_info( new FullModelInfo( pose ) );
 
 	pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, full_model_info );
 	return *full_model_info;

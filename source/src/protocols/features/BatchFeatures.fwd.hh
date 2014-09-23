@@ -22,8 +22,8 @@ namespace protocols{
 namespace features{
 
 class BatchFeatures;
-typedef utility::pointer::owning_ptr< BatchFeatures > BatchFeaturesOP;
-typedef utility::pointer::owning_ptr< BatchFeatures const > BatchFeaturesCOP;
+typedef utility::pointer::shared_ptr< BatchFeatures > BatchFeaturesOP;
+typedef utility::pointer::shared_ptr< BatchFeatures const > BatchFeaturesCOP;
 
 }
 }

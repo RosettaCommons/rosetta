@@ -51,7 +51,7 @@ TrieCollection::trie( Size index, RotamerTrieBaseOP new_trie )
 basic::datacache::CacheableDataOP
 TrieCollection::clone() const
 {
-	return new TrieCollection( *this );
+	return basic::datacache::CacheableDataOP( new TrieCollection( *this ) );
 }
 
 

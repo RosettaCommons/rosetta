@@ -101,7 +101,7 @@ properties_(NumberOfProperties, utility::get_undefined_real() )
 //! @brief virtual copy constructor
 ElementOP Element::Clone() const
 {
-	return new Element( *this );
+	return ElementOP( new Element( *this ) );
 }
 
 

@@ -26,7 +26,7 @@ namespace pose {
 
 class Remarks;
 
-typedef utility::pointer::owning_ptr< Remarks > RemarksOP;
+typedef utility::pointer::shared_ptr< Remarks > RemarksOP;
 
 } // namespace pose
 } // namespace core

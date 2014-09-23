@@ -27,11 +27,11 @@ class DisallowIfNonnativeRLT;
 class PreventRepackingRLT;
 class AddBehaviorRLT;
 
-typedef utility::pointer::owning_ptr< RestrictToRepackingRLT > RestrictToRepackingRLTOP;
-typedef utility::pointer::owning_ptr< RestrictAbsentCanonicalAASRLT > RestrictAbsentCanonicalAASRLTOP;
-typedef utility::pointer::owning_ptr< DisallowIfNonnativeRLT > DisallowIfNonnativeRLTOP;
-typedef utility::pointer::owning_ptr< PreventRepackingRLT > PreventRepackingRLTOP;
-typedef utility::pointer::owning_ptr< AddBehaviorRLT > AddBehaviorRLTOP;
+typedef utility::pointer::shared_ptr< RestrictToRepackingRLT > RestrictToRepackingRLTOP;
+typedef utility::pointer::shared_ptr< RestrictAbsentCanonicalAASRLT > RestrictAbsentCanonicalAASRLTOP;
+typedef utility::pointer::shared_ptr< DisallowIfNonnativeRLT > DisallowIfNonnativeRLTOP;
+typedef utility::pointer::shared_ptr< PreventRepackingRLT > PreventRepackingRLTOP;
+typedef utility::pointer::shared_ptr< AddBehaviorRLT > AddBehaviorRLTOP;
 
 } //namespace operation
 } //namespace task

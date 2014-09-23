@@ -25,8 +25,8 @@ namespace simple_moves {
 // Forward
 class SequenceProfileMover;
 
-typedef utility::pointer::owning_ptr< SequenceProfileMover > SequenceProfileMoverOP;
-typedef utility::pointer::owning_ptr< SequenceProfileMover const > SequenceProfileMoverCOP;
+typedef utility::pointer::shared_ptr< SequenceProfileMover > SequenceProfileMoverOP;
+typedef utility::pointer::shared_ptr< SequenceProfileMover const > SequenceProfileMoverCOP;
 
 } // namespace simple_moves
 } // namespace protocols

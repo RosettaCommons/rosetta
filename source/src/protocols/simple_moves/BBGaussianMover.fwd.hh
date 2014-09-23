@@ -22,12 +22,12 @@ namespace protocols {
 namespace simple_moves {
 
 class BBGaussianMover;
-typedef utility::pointer::owning_ptr< BBGaussianMover > BBGaussianMoverOP;
-typedef utility::pointer::owning_ptr< BBGaussianMover const > BBGaussianMoverCOP;
+typedef utility::pointer::shared_ptr< BBGaussianMover > BBGaussianMoverOP;
+typedef utility::pointer::shared_ptr< BBGaussianMover const > BBGaussianMoverCOP;
 
 class BBG8T3AMover;
-typedef utility::pointer::owning_ptr< BBG8T3AMover > BBG8T3AMoverOP;
-typedef utility::pointer::owning_ptr< BBG8T3AMover const > BBG8T3AMoverCOP;
+typedef utility::pointer::shared_ptr< BBG8T3AMover > BBG8T3AMoverOP;
+typedef utility::pointer::shared_ptr< BBG8T3AMover const > BBG8T3AMoverCOP;
 
 }//namespace simple_moves
 }//namespace protocols

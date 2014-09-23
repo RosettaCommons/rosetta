@@ -50,7 +50,7 @@ public:
 	InterfaceDeltaEnergeticsCalculator( char const chain1_letter, char const chain2_letter );
 
 	core::pose::metrics::PoseMetricCalculatorOP clone() const
-	{ return new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator( name_of_InterfaceNeighborDefinitionCalculator_, score_types_to_ignore_ ); }
+	{ return core::pose::metrics::PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator( name_of_InterfaceNeighborDefinitionCalculator_, score_types_to_ignore_ ) ); }
 
 protected:
 

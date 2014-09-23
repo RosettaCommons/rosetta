@@ -69,7 +69,7 @@ static thread_local basic::Tracer TR( "protocols.seeded_abinitio.SeedSetupMover"
 		
 		protocols::moves::MoverOP
 		SeedSetupMoverCreator::create_mover() const {
-			return new SeedSetupMover;
+			return protocols::moves::MoverOP( new SeedSetupMover );
 		}
 		
 		std::string
@@ -165,7 +165,7 @@ SeedSetupMover::set_packerTasks_target_and_seeds ( 	core::pose::Pose & pose ,
 	
 	TR<<"disallowing target chain(s) to repack" << std::endl;
   	if( num_chains > 1  && repack_target_ ){
-		PreventChainFromRepackingOperationOP pcfr = new PreventChainFromRepackingOperation ;
+		PreventChainFromRepackingOperationOP pcfr( new PreventChainFromRepackingOperation ) ;
 		Size chains_norepack = num_chains;
 		if( repack_foldpose_ ){ 
 			chains_norepack -= 1; 
@@ -182,7 +182,7 @@ SeedSetupMover::set_packerTasks_target_and_seeds ( 	core::pose::Pose & pose ,
 	if ( norepack_res.size() != 0 ){
 		TR.Debug<<"disallow " << norepack_res.size() << " to repack " <<std::endl;
 		using namespace protocols::toolbox::task_operations;
-		PreventResiduesFromRepackingOperationOP prfr = new PreventResiduesFromRepackingOperation ;
+		PreventResiduesFromRepackingOperationOP prfr( new PreventResiduesFromRepackingOperation ) ;
 		prfr->set_residues( norepack_res );	
 		tf->push_back( prfr );
 	}
@@ -197,7 +197,7 @@ SeedSetupMover::set_packerTasks_target_and_seeds ( 	core::pose::Pose & pose ,
 	}
 */
 	/// do not repack disulfides
-	NoRepackDisulfidesOP nrd = new NoRepackDisulfides;
+	NoRepackDisulfidesOP nrd( new NoRepackDisulfides );
 	tf->push_back( nrd );
 		
 	
@@ -206,7 +206,7 @@ SeedSetupMover::set_packerTasks_target_and_seeds ( 	core::pose::Pose & pose ,
 	//////////////////////////////////
 	
 	if( !design_target_ ){
-		RestrictChainToRepackingOperationOP rctr = new RestrictChainToRepackingOperation;
+		RestrictChainToRepackingOperationOP rctr( new RestrictChainToRepackingOperation );
 		for ( Size chain = 1; chain <= num_chains - 1 ; chain++ )
 			rctr->chain( chain );
 		tf->push_back( rctr );
@@ -235,7 +235,7 @@ SeedSetupMover::set_packerTasks_target_and_seeds ( 	core::pose::Pose & pose ,
 			BOOST_FOREACH( core::Size const res, residues )
 				TR.Debug<<res<<", ";
 			TR.Debug<<std::endl;
-			RestrictResiduesToRepackingOperationOP rrtr = new RestrictResiduesToRepackingOperation;
+			RestrictResiduesToRepackingOperationOP rrtr( new RestrictResiduesToRepackingOperation );
 			rrtr->set_residues( residues );
 			tf->push_back( rrtr );
 		}
@@ -381,7 +381,7 @@ SeedSetupMover::parse_my_tag( TagCOP const tag,
 	TR<<"SeedSetupMover has been invoked"<<std::endl;
 	
 	//adding the movemap to the datamap
-	movemap_ = new core::kinematics::MoveMap;
+	movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
 	protocols::rosetta_scripts::parse_movemap( tag, pose, movemap_, data );
 
 	//adding the taskfactory to the datamap

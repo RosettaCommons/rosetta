@@ -20,8 +20,8 @@ namespace protocols {
 namespace simple_moves {
 
 class SwitchChainOrderMover;
-typedef utility::pointer::owning_ptr< SwitchChainOrderMover > SwitchChainOrderMoverOP;
-typedef utility::pointer::owning_ptr< SwitchChainOrderMover const > SwitchChainOrderMoverCOP;
+typedef utility::pointer::shared_ptr< SwitchChainOrderMover > SwitchChainOrderMoverOP;
+typedef utility::pointer::shared_ptr< SwitchChainOrderMover const > SwitchChainOrderMoverCOP;
 
 } // simple_moves
 } // protocols

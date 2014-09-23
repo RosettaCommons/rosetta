@@ -24,8 +24,8 @@ namespace matdes {
 class SymUnsatHbondFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< SymUnsatHbondFilter >  SymUnsatHbondFilterOP;
-typedef utility::pointer::owning_ptr< SymUnsatHbondFilter const >  SymUnsatHbondFilterCOP;
+typedef utility::pointer::shared_ptr< SymUnsatHbondFilter >  SymUnsatHbondFilterOP;
+typedef utility::pointer::shared_ptr< SymUnsatHbondFilter const >  SymUnsatHbondFilterCOP;
 
 }
 }

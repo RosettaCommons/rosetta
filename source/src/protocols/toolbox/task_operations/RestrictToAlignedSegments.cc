@@ -69,12 +69,12 @@ RestrictToAlignedSegmentsOperation::~RestrictToAlignedSegmentsOperation() {}
 core::pack::task::operation::TaskOperationOP
 RestrictToAlignedSegmentsOperationCreator::create_task_operation() const
 {
-	return new RestrictToAlignedSegmentsOperation;
+	return core::pack::task::operation::TaskOperationOP( new RestrictToAlignedSegmentsOperation );
 }
 
 core::pack::task::operation::TaskOperationOP RestrictToAlignedSegmentsOperation::clone() const
 {
-	return new RestrictToAlignedSegmentsOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new RestrictToAlignedSegmentsOperation( *this ) );
 }
 
 void
@@ -97,13 +97,13 @@ RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::
 			designable.insert( position );
   }
 /// in the following we use dao to compute the residues that surround the aligned region. We then go over these residues to make sure they're within the target chain
-	protocols::toolbox::task_operations::DesignAroundOperationOP dao = new protocols::toolbox::task_operations::DesignAroundOperation;
+	protocols::toolbox::task_operations::DesignAroundOperationOP dao( new protocols::toolbox::task_operations::DesignAroundOperation );
 	dao->design_shell( 0.1 );
 	dao->repack_shell( repack_shell() );
 	BOOST_FOREACH( core::Size const d, designable ){
 		dao->include_residue( d );
 	}
-	core::pack::task::TaskFactoryOP dao_tf = new core::pack::task::TaskFactory;
+	core::pack::task::TaskFactoryOP dao_tf( new core::pack::task::TaskFactory );
 	dao_tf->push_back( dao );
 
 	utility::vector1< core::Size > const surrounding_shell( protocols::rosetta_scripts::residue_packer_states( pose, dao_tf, false/*designable*/, true/*packable*/ ) );
@@ -121,8 +121,8 @@ RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::
 	}
 ///for some unfathomable reason OperateOnCertainResidues defaults to applying to all residues if none are defined, so you have to be careful here...
 	OperateOnCertainResidues oocr_repackable, oocr_immutable;
-	oocr_immutable.op( new PreventRepackingRLT );
-	oocr_repackable.op( new RestrictToRepackingRLT );
+	oocr_immutable.op( ResLvlTaskOperationCOP( new PreventRepackingRLT ) );
+	oocr_repackable.op( ResLvlTaskOperationCOP( new RestrictToRepackingRLT ) );
 	if( repackable.size() ){
 		oocr_repackable.residue_indices( repackable );
 		oocr_repackable.apply( pose, task );
@@ -168,7 +168,7 @@ RestrictToAlignedSegmentsOperation::parse_tag( TagCOP tag , DataMap & )
 
 	for( core::Size i = 1; i <= pdb_names.size(); ++i ){
 		if( i == 1 || pdb_names[ i ] != pdb_names[ i - 1 ]){ // scrimp on reading from disk
-			source_pose_.push_back( new core::pose::Pose );
+			source_pose_.push_back( utility::pointer::shared_ptr<class core::pose::Pose>( new core::pose::Pose ) );
 			core::import_pose::pose_from_pdb( *source_pose_[ i ], pdb_names[ i ] );
 		}
 		else

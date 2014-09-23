@@ -93,7 +93,7 @@ public:
 	{}
 
 	virtual ConstraintOP clone() const {
-		return new NamedAtomPairConstraint( named_atom1_, named_atom2_, func_, score_type() );
+		return ConstraintOP( new NamedAtomPairConstraint( named_atom1_, named_atom2_, func_, score_type() ) );
 	}
 
 	/// @brief Copies the data from this Constraint into a new object and returns an OP

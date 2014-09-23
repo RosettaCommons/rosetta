@@ -73,7 +73,7 @@ JumpRotamerSidechainMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 JumpRotamerSidechainMoverCreator::create_mover() const {
-	return new JumpRotamerSidechainMover;
+	return protocols::moves::MoverOP( new JumpRotamerSidechainMover );
 }
 
 std::string
@@ -101,7 +101,7 @@ JumpRotamerSidechainMover::JumpRotamerSidechainMover(
 
 protocols::moves::MoverOP
 JumpRotamerSidechainMover::clone() const {
-	return new protocols::simple_moves::sidechain_moves::JumpRotamerSidechainMover(*this);
+	return protocols::moves::MoverOP( new protocols::simple_moves::sidechain_moves::JumpRotamerSidechainMover(*this) );
 }
 
 void

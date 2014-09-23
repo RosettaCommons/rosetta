@@ -83,7 +83,7 @@ typedef utility::vector1< WaterBuilder > WaterBuilders;
 
 /// @details  Holds the locations of ideal waters attached to the atoms of a Residue
 class LKB_ResidueInfo; // fwd
-typedef utility::pointer::owning_ptr< LKB_ResidueInfo > LKB_ResidueInfoOP;
+typedef utility::pointer::shared_ptr< LKB_ResidueInfo > LKB_ResidueInfoOP;
 
 	class LKB_ResidueInfo : public basic::datacache::CacheableData {
 public:
@@ -149,8 +149,8 @@ private:
 
 };
 
-typedef utility::pointer::owning_ptr< LKB_ResidueInfo > LKB_ResidueInfoOP;
-typedef utility::pointer::owning_ptr< const LKB_ResidueInfo > LKB_ResidueInfoCOP;
+typedef utility::pointer::shared_ptr< LKB_ResidueInfo > LKB_ResidueInfoOP;
+typedef utility::pointer::shared_ptr< const LKB_ResidueInfo > LKB_ResidueInfoCOP;
 
 class LKB_ResiduesInfo : public basic::datacache::CacheableData {
 public:
@@ -181,8 +181,8 @@ private:
 typedef LKB_ResiduesInfo LKB_PoseInfo;
 typedef LKB_ResiduesInfo LKB_RotamerSetInfo;
 
-typedef utility::pointer::owning_ptr< LKB_PoseInfo > LKB_PoseInfoOP;
-typedef utility::pointer::owning_ptr< LKB_RotamerSetInfo > LKB_RotamerSetInfoOP;
+typedef utility::pointer::shared_ptr< LKB_PoseInfo > LKB_PoseInfoOP;
+typedef utility::pointer::shared_ptr< LKB_RotamerSetInfo > LKB_RotamerSetInfoOP;
 
 
 

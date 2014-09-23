@@ -24,8 +24,8 @@ namespace task {
 namespace operation {
 
 class TaskOperation;
-typedef utility::pointer::owning_ptr< TaskOperation > TaskOperationOP;
-typedef utility::pointer::owning_ptr< TaskOperation > TaskOperationCOP;
+typedef utility::pointer::shared_ptr< TaskOperation > TaskOperationOP;
+typedef utility::pointer::shared_ptr< TaskOperation > TaskOperationCOP;
 typedef boost::shared_ptr < TaskOperation > TaskOperationSP;
 
 } //namespace operation

@@ -21,7 +21,7 @@ namespace moves {
 
 class SimulatedTempering;
 
-typedef utility::pointer::owning_ptr<SimulatedTempering> SimulatedTemperingOP;
+typedef utility::pointer::shared_ptr<SimulatedTempering> SimulatedTemperingOP;
 
 } // moves
 } // rosetta

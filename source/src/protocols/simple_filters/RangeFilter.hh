@@ -76,10 +76,10 @@ public:// virtual constructor
 
 
 	// @brief make clone
-	virtual filters::FilterOP clone() const { return new RangeFilter( *this ); }
+	virtual filters::FilterOP clone() const { return filters::FilterOP( new RangeFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual filters::FilterOP fresh_instance() const {	return new RangeFilter(); }
+	virtual filters::FilterOP fresh_instance() const {	return filters::FilterOP( new RangeFilter() ); }
 
 
 public:// mutator

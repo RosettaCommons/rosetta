@@ -32,11 +32,11 @@ namespace claims {
 class DofClaim;
 
 // Types
-typedef  utility::pointer::owning_ptr< DofClaim >  DofClaimOP;
-typedef  utility::pointer::owning_ptr< DofClaim const >  DofClaimCOP;
+typedef  utility::pointer::shared_ptr< DofClaim >  DofClaimOP;
+typedef  utility::pointer::shared_ptr< DofClaim const >  DofClaimCOP;
 
-typedef  utility::pointer::access_ptr< DofClaim >  DofClaimAP;
-typedef  utility::pointer::access_ptr< DofClaim const >  DofClaimCAP;
+typedef  utility::pointer::weak_ptr< DofClaim >  DofClaimAP;
+typedef  utility::pointer::weak_ptr< DofClaim const >  DofClaimCAP;
 
 typedef utility::vector1< DofClaimOP > DofClaims;
 

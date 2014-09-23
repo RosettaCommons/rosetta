@@ -64,7 +64,7 @@ get_enzdes_observer(
 
 	if( !pose.observer_cache().has( core::pose::datacache::CacheableObserverType::ENZDES_OBSERVER ) ){
 
-		EnzdesCacheableObserverOP enz_obs = new EnzdesCacheableObserver();
+		EnzdesCacheableObserverOP enz_obs( new EnzdesCacheableObserver() );
 		pose.observer_cache().set( core::pose::datacache::CacheableObserverType::ENZDES_OBSERVER, enz_obs, true );
 		//std::cout << " setting new cacheable observer for pose " << std::endl;
 	}
@@ -93,9 +93,9 @@ get_enzdes_observer(
 
 EnzdesCacheableObserver::EnzdesCacheableObserver()
 	: CacheableObserver(),
-		cst_cache_(NULL),
-		seq_recovery_cache_(NULL),
-		enz_loops_file_(NULL)
+		cst_cache_(/* NULL */),
+		seq_recovery_cache_(/* NULL */),
+		enz_loops_file_(/* NULL */)
 {
 	favor_native_constraints_.clear();
 	lig_rigid_body_confs_.clear();
@@ -103,14 +103,14 @@ EnzdesCacheableObserver::EnzdesCacheableObserver()
 
 EnzdesCacheableObserver::EnzdesCacheableObserver( EnzdesCacheableObserver const & other )
 	: CacheableObserver( other ),
-		cst_cache_( NULL ),
-		seq_recovery_cache_(NULL),
+		cst_cache_( /* NULL */ ),
+		seq_recovery_cache_(/* NULL */),
 		favor_native_constraints_(other.favor_native_constraints_),
 		enz_loops_file_(other.enz_loops_file_ ),
 		lig_rigid_body_confs_( other.lig_rigid_body_confs_ )
 {
-	if( other.cst_cache_ ) cst_cache_ = new toolbox::match_enzdes_util::EnzdesCstCache( *(other.cst_cache_) );
-	if( other.seq_recovery_cache_ ) seq_recovery_cache_ = new EnzdesSeqRecoveryCache( *(other.seq_recovery_cache_) );
+	if( other.cst_cache_ ) cst_cache_ = toolbox::match_enzdes_util::EnzdesCstCacheOP( new toolbox::match_enzdes_util::EnzdesCstCache( *(other.cst_cache_) ) );
+	if( other.seq_recovery_cache_ ) seq_recovery_cache_ = EnzdesSeqRecoveryCacheOP( new EnzdesSeqRecoveryCache( *(other.seq_recovery_cache_) ) );
 }
 
 EnzdesCacheableObserver::~EnzdesCacheableObserver(){}
@@ -118,13 +118,13 @@ EnzdesCacheableObserver::~EnzdesCacheableObserver(){}
 core::pose::datacache::CacheableObserverOP
 EnzdesCacheableObserver::clone()
 {
-	return new EnzdesCacheableObserver( *this );
+	return core::pose::datacache::CacheableObserverOP( new EnzdesCacheableObserver( *this ) );
 }
 
 core::pose::datacache::CacheableObserverOP
 EnzdesCacheableObserver::create()
 {
-	return new EnzdesCacheableObserver();
+	return core::pose::datacache::CacheableObserverOP( new EnzdesCacheableObserver() );
 }
 
 bool
@@ -279,7 +279,7 @@ EnzdesCacheableObserver::setup_favor_native_constraints(
 
 			if( task->design_residue(i) ){
 
-				ConstraintOP resconstraint = new ResidueTypeConstraint( native_pose, i, bonus );
+				ConstraintOP resconstraint( new ResidueTypeConstraint( native_pose, i, bonus ) );
 				favor_native_constraints_.push_back( resconstraint );
 
 			}
@@ -302,7 +302,7 @@ EnzdesCacheableObserver::setup_favor_native_constraints(
     	//new core::scoring::constraints::SequenceProfileConstraint( Size(), utility::vector1< id::AtomID >(), NULL ) );
 
    	 // add constraints to bias design toward a sequence profile
-    	SequenceProfileOP profile = new SequenceProfile;
+    	SequenceProfileOP profile( new SequenceProfile );
     	utility::file::FileName filename( option[ OptionKeys::in::file::pssm ]().front() );
 
      	profile->read_from_file( filename );
@@ -314,7 +314,7 @@ EnzdesCacheableObserver::setup_favor_native_constraints(
       	// add individual profile constraint for each residue position
       	// because of the underlying constraint implementation, this enures that the constraint is
 				// a context-independent 1-body energy, or (intra)residue constraint
-      	pose.add_constraint( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile ) );
+      	pose.add_constraint( scoring::constraints::ConstraintCOP( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile ) ) );
 			}
   	}// else if ( option[ OptionKeys::constraints::in::file::pssm ].user() ){
  //}

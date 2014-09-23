@@ -57,12 +57,12 @@ PreventChainFromRepackingOperation::~PreventChainFromRepackingOperation() {}
 core::pack::task::operation::TaskOperationOP
 PreventChainFromRepackingOperationCreator::create_task_operation() const
 {
-	return new PreventChainFromRepackingOperation;
+	return core::pack::task::operation::TaskOperationOP( new PreventChainFromRepackingOperation );
 }
 
 core::pack::task::operation::TaskOperationOP PreventChainFromRepackingOperation::clone() const
 {
-	return new PreventChainFromRepackingOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new PreventChainFromRepackingOperation( *this ) );
 }
 
 void

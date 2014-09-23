@@ -26,10 +26,10 @@ namespace dunbrack {
 
 class SingleResidueRotamerLibrary;
 
-typedef utility::pointer::owning_ptr< SingleResidueRotamerLibrary > SingleResidueRotamerLibraryOP;
-typedef utility::pointer::owning_ptr< SingleResidueRotamerLibrary const > SingleResidueRotamerLibraryCOP;
-typedef utility::pointer::access_ptr< SingleResidueRotamerLibrary > SingleResidueRotamerLibraryAP;
-typedef utility::pointer::access_ptr< SingleResidueRotamerLibrary const > SingleResidueRotamerLibraryCAP;
+typedef utility::pointer::shared_ptr< SingleResidueRotamerLibrary > SingleResidueRotamerLibraryOP;
+typedef utility::pointer::shared_ptr< SingleResidueRotamerLibrary const > SingleResidueRotamerLibraryCOP;
+typedef utility::pointer::weak_ptr< SingleResidueRotamerLibrary > SingleResidueRotamerLibraryAP;
+typedef utility::pointer::weak_ptr< SingleResidueRotamerLibrary const > SingleResidueRotamerLibraryCAP;
 
 typedef utility::vector1< conformation::ResidueOP > RotamerVector;
 

@@ -99,7 +99,7 @@ public:
 	virtual void apply( core::pose::Pose& pose );
 
 	virtual MoverOP clone() const {
-		return new MinPackMinMover( *this );
+		return MoverOP( new MinPackMinMover( *this ) );
 	}
 
 	virtual
@@ -109,7 +109,7 @@ public:
 	}
 
 	virtual	MoverOP	fresh_instance() const {
-		return new MinPackMinMover;
+		return MoverOP( new MinPackMinMover );
 	}
 
 private:
@@ -188,18 +188,18 @@ void MinPackMinMover::apply (pose::Pose& pose ) {
   // Set up packer tasks and move map
   //////////////////////////////////////////////////////
 
-  TaskFactoryOP tf = new TaskFactory();
+  TaskFactoryOP tf( new TaskFactory() );
   //set common taskfactory options
-  tf->push_back( new InitializeFromCommandline() );
-  tf->push_back( new operation::IncludeCurrent );
+  tf->push_back( TaskOperationCOP( new InitializeFromCommandline() ) );
+  tf->push_back( TaskOperationCOP( new operation::IncludeCurrent ) );
 	// read a resfile. note that design is impossible
 	if( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ){
-		tf->push_back( new operation::ReadResfile() );
+		tf->push_back( TaskOperationCOP( new operation::ReadResfile() ) );
 		TR << "Resfile read, note that this application DOES NOT DESIGN!" << std::endl;
 	}
 
   //want to just repack the wt pose, NO design
-  RestrictResidueToRepackingOP repack_op = new RestrictResidueToRepacking();
+  RestrictResidueToRepackingOP repack_op( new RestrictResidueToRepacking() );
   for( Size ii = 1; ii<= pose.n_residue(); ++ii) {
     repack_op->include_residue( ii );
   }
@@ -211,7 +211,7 @@ void MinPackMinMover::apply (pose::Pose& pose ) {
 #endif
 
   //set move map to allow bb and sc minimization
-  kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
+  kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
   movemap->set_bb(true);
   movemap->set_chi(true);
 	movemap->set_jump( false );
@@ -245,10 +245,10 @@ void MinPackMinMover::apply (pose::Pose& pose ) {
 
   //first do minimization mover making
 	//leave out movemap in initialization
-  protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap_initial, scorefxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
+  protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap_initial, scorefxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ ) );
 
   // Make PackRots movers
-  protocols::simple_moves::PackRotamersMoverOP repacker = new protocols::simple_moves::PackRotamersMover();
+  protocols::simple_moves::PackRotamersMoverOP repacker( new protocols::simple_moves::PackRotamersMover() );
   repacker->task_factory( tf );
   repacker->score_function( scorefxn_ );
 
@@ -329,7 +329,7 @@ main( int argc, char * argv [] )
 	// initialize core
 	devel::init(argc, argv);
 
-	protocols::jd2::JobDistributor::get_instance()->go( new MinPackMinMover );
+	protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new MinPackMinMover ) );
 
 	std::cout << "Done! -------------------------------\n";
 

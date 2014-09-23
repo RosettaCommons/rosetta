@@ -73,7 +73,7 @@ public: // re-used methods
 
 	/// @brief return a one-chain Pose ( 9 res )
 	PoseOP one_chain_pose() {
-		PoseOP pose = new Pose();
+		PoseOP pose( new Pose() );
 		core::pose::make_pose_from_sequence(
 			*pose,
 			"A[ALA:NtermProteinFull]CDEFGHIK[LYS:CtermProteinFull]",
@@ -90,7 +90,7 @@ public: // re-used methods
 
 	/// @brief return a two-chain Pose ( 9 res + 11 res )
 	PoseOP two_chain_pose() {
-		PoseOP pose = new Pose();
+		PoseOP pose( new Pose() );
 		core::pose::make_pose_from_sequence(
 			*pose,
 			"A[ALA:NtermProteinFull]CDEFGHIK[LYS:CtermProteinFull]L[LEU:NtermProteinFull]MNPQRSTVWY[TYR:CtermProteinFull]",
@@ -106,7 +106,7 @@ public: // re-used methods
 
 
 	PDBInfoOP add_empty_pdb_info( Pose & pose ) {
-		PDBInfoOP pdbinfo = new PDBInfo( pose.n_residue() );
+		PDBInfoOP pdbinfo( new PDBInfo( pose.n_residue() ) );
 		pose.pdb_info( pdbinfo );
 
 		return pdbinfo;

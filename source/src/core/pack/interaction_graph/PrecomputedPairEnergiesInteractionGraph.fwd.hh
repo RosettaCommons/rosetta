@@ -23,8 +23,8 @@ namespace interaction_graph {
 
 class PrecomputedPairEnergiesInteractionGraph;
 
-typedef utility::pointer::owning_ptr< PrecomputedPairEnergiesInteractionGraph > PrecomputedPairEnergiesInteractionGraphOP;
-typedef utility::pointer::owning_ptr< PrecomputedPairEnergiesInteractionGraph const > PrecomputedPairEnergiesInteractionGraphCOP;
+typedef utility::pointer::shared_ptr< PrecomputedPairEnergiesInteractionGraph > PrecomputedPairEnergiesInteractionGraphOP;
+typedef utility::pointer::shared_ptr< PrecomputedPairEnergiesInteractionGraph const > PrecomputedPairEnergiesInteractionGraphCOP;
 
 } // namespace interaction_graph
 } // namespace pack

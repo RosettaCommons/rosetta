@@ -68,9 +68,7 @@ main( int argc, char* argv [] ) {
 	);
 
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
-	core::scoring::methods::EnergyMethodOptionsOP emopts(
-		new core::scoring::methods::EnergyMethodOptions( scorefxn->energy_method_options() )
-	);
+	core::scoring::methods::EnergyMethodOptionsOP emopts( new core::scoring::methods::EnergyMethodOptions( scorefxn->energy_method_options() ) );
 	emopts->hbond_options().decompose_bb_hb_into_pair_energies( true );
 	scorefxn->set_energy_method_options( *emopts );
 	// Post-loading commandline scorefunction alterations.

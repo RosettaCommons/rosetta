@@ -37,7 +37,7 @@ SymmDataLoader::create_resource(
 	basic::resource_manager::LocatorID const &,
 	std::istream & istream
 ) const {
-	SymmDataOP symm_data(new SymmData());
+	SymmDataOP symm_data( new SymmData() );
 	symm_data->read_symmetry_data_from_stream(istream);
 	return symm_data;
 }
@@ -50,7 +50,7 @@ SymmDataOptionsCreator::~SymmDataOptionsCreator() {}
 
 basic::resource_manager::ResourceOptionsOP
 SymmDataOptionsCreator::create_options() const {
-	return new SymmDataOptions;
+	return basic::resource_manager::ResourceOptionsOP( new SymmDataOptions );
 }
 
 std::string
@@ -62,7 +62,7 @@ SymmDataOptionsCreator::options_type() const {
 basic::resource_manager::ResourceLoaderOP
 SymmDataLoaderCreator::create_resource_loader() const
 {
-	return new SymmDataLoader();
+	return basic::resource_manager::ResourceLoaderOP( new SymmDataLoader() );
 }
 
 std::string SymmDataLoaderCreator::loader_type() const

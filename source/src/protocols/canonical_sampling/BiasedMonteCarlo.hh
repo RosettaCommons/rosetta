@@ -58,7 +58,7 @@ public:
 
 	virtual
 	protocols::moves::MonteCarloOP clone() {
-		return new BiasedMonteCarlo( *this );
+		return protocols::moves::MonteCarloOP( new BiasedMonteCarlo( *this ) );
 	}
 	//BiasedMonteCarlo& operator=( BiasedMonteCarlo const& );
 

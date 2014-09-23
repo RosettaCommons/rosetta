@@ -34,8 +34,8 @@ namespace output {
 
 class MatchGrouper;
 
-typedef utility::pointer::owning_ptr< MatchGrouper > MatchGrouperOP;
-typedef utility::pointer::owning_ptr< MatchGrouper const > MatchGrouperCOP;
+typedef utility::pointer::shared_ptr< MatchGrouper > MatchGrouperOP;
+typedef utility::pointer::shared_ptr< MatchGrouper const > MatchGrouperCOP;
 
 
 }

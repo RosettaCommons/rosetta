@@ -46,7 +46,7 @@ public:
   {}
 
   virtual PeakCalibratorOP fresh_instance() {
-    return new StructureDependentPeakCalibrator( structures_, dcalibrate_ );
+    return PeakCalibratorOP( new StructureDependentPeakCalibrator( structures_, dcalibrate_ ) );
   }
 
 

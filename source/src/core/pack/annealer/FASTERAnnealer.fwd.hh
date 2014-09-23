@@ -22,8 +22,8 @@ namespace annealer {
 
 class FASTERAnnealer;
 
-typedef utility::pointer::owning_ptr< FASTERAnnealer > FASTERAnnealerOP;
-typedef utility::pointer::owning_ptr< FASTERAnnealer const > FASTERAnnealerCOP;
+typedef utility::pointer::shared_ptr< FASTERAnnealer > FASTERAnnealerOP;
+typedef utility::pointer::shared_ptr< FASTERAnnealer const > FASTERAnnealerCOP;
 
 }
 }

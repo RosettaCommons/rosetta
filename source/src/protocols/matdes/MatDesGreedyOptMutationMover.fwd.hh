@@ -22,8 +22,8 @@ namespace protocols {
 namespace matdes {
 
 class MatDesGreedyOptMutationMover;
-typedef utility::pointer::owning_ptr< MatDesGreedyOptMutationMover >  MatDesGreedyOptMutationMoverOP;
-typedef utility::pointer::owning_ptr< MatDesGreedyOptMutationMover const >  MatDesGreedyOptMutationMoverCOP;
+typedef utility::pointer::shared_ptr< MatDesGreedyOptMutationMover >  MatDesGreedyOptMutationMoverOP;
+typedef utility::pointer::shared_ptr< MatDesGreedyOptMutationMover const >  MatDesGreedyOptMutationMoverCOP;
 
 
 } // namespace matdes

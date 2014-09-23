@@ -18,8 +18,8 @@ namespace pivot_pickers {
 
 class StandardPivots;
 
-typedef utility::pointer::owning_ptr<StandardPivots> StandardPivotsOP;
-typedef utility::pointer::owning_ptr<StandardPivots const> StandardPivotsCOP;
+typedef utility::pointer::shared_ptr<StandardPivots> StandardPivotsOP;
+typedef utility::pointer::shared_ptr<StandardPivots const> StandardPivotsCOP;
 
 }
 }

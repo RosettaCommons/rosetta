@@ -56,7 +56,7 @@ namespace protocols {
 namespace loop_modeling {
 
 moves::MoverOP LoopBuilderCreator::create_mover() const { // {{{1
-	return new LoopBuilder;
+	return moves::MoverOP( new LoopBuilder );
 }
 
 string LoopBuilderCreator::keyname() const { // {{{1
@@ -82,17 +82,17 @@ LoopBuilder::LoopBuilder() { // {{{1
 	// One motivation for changing the rama check to use a static threshold (in
 	// addition to simplicity) is that it could be used here.
 
-	FilteredSolutionsOP solution_picker = new FilteredSolutions;
+	FilteredSolutionsOP solution_picker( new FilteredSolutions );
 	solution_picker->dont_check_rama();
 	solution_picker->be_lenient();
 
-	kic_mover_ = new KicMover;
-	kic_mover_->add_perturber(new IdealizeNonPhiPsi);
-	kic_mover_->add_perturber(new RamaPerturber);
-	kic_mover_->set_pivot_picker(new LoopPivots);
+	kic_mover_ = protocols::kinematic_closure::KicMoverOP( new KicMover );
+	kic_mover_->add_perturber(perturbers::PerturberOP( new IdealizeNonPhiPsi ));
+	kic_mover_->add_perturber(perturbers::PerturberOP( new RamaPerturber ));
+	kic_mover_->set_pivot_picker(pivot_pickers::PivotPickerOP( new LoopPivots ));
 	kic_mover_->set_solution_picker(solution_picker);
 
-	minimizer_ = new MinimizationRefiner;
+	minimizer_ = refiners::MinimizationRefinerOP( new MinimizationRefiner );
 
 	register_nested_loop_mover(kic_mover_);
 	register_nested_loop_mover(minimizer_);

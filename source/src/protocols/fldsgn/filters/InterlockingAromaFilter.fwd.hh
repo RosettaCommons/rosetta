@@ -27,8 +27,8 @@ namespace filters {
 class InterlockingAromaFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< InterlockingAromaFilter >  InterlockingAromaFilterOP;
-typedef utility::pointer::owning_ptr< InterlockingAromaFilter const >  InterlockingAromaFilterCOP;
+typedef utility::pointer::shared_ptr< InterlockingAromaFilter >  InterlockingAromaFilterOP;
+typedef utility::pointer::shared_ptr< InterlockingAromaFilter const >  InterlockingAromaFilterCOP;
 
 } // namespace protocols
 } // namespace fldsgn

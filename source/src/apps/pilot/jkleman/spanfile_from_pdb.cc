@@ -129,7 +129,7 @@ void spanfile_from_pdb(){
 	TR.Debug << "got pose info:" << std::endl;
 
 	// create SpanningTopology from pose
-	SpanningTopologyOP topo_whole_pose = new SpanningTopology( z_coord, chain_info, thickness );
+	SpanningTopologyOP topo_whole_pose( new SpanningTopology( z_coord, chain_info, thickness ) );
 	TR.Debug << "got whole pose topology: " << std::endl;
 //	topo_whole_pose->show();
 	
@@ -161,7 +161,7 @@ void spanfile_from_pdb(){
 		utility::vector1< Size > split_chain_info( split_pose_info.second );
 
 		// create SpanningTopology from poses
-		SpanningTopologyOP topo_pose = new SpanningTopology( split_z_coord, split_chain_info, thickness );
+		SpanningTopologyOP topo_pose( new SpanningTopology( split_z_coord, split_chain_info, thickness ) );
 		
 		// get filename
 		char chain( split_poses[i]->pdb_info()->chain(i) );

@@ -54,7 +54,7 @@ OrbitalsScoreCreator::create_energy_method(
 		methods::EnergyMethodOptions const & options
 ) const
 {
-	return new OrbitalsScore(options);
+	return methods::EnergyMethodOP( new OrbitalsScore(options) );
 }
 
 ScoreTypes
@@ -99,7 +99,7 @@ OrbitalsScore::OrbitalsScore( methods::EnergyMethodOptions const & ) :
 methods::EnergyMethodOP
 OrbitalsScore::clone() const
 {
-	return new OrbitalsScore(*this);
+	return methods::EnergyMethodOP( new OrbitalsScore(*this) );
 }
 
 void OrbitalsScore::setup_for_scoring(pose::Pose & pose, ScoreFunction const & ) const

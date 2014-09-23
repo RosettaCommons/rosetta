@@ -125,11 +125,11 @@ void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, c
   using namespace core::scoring::constraints;
 
   //kdrew: add constraint
-  HarmonicFuncOP harm_func  (new HarmonicFunc( distance, std ) );
-  HarmonicFuncOP harm_func_0  (new HarmonicFunc( 0, std ) );
-  CircularHarmonicFuncOP ang_func  (new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_2_over_3(), 0.02 ) );
-  CircularHarmonicFuncOP ang_func2 (new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_over_3(), 0.02 ) );
-  CircularHarmonicFuncOP dih_func  (new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) );
+  HarmonicFuncOP harm_func( new HarmonicFunc( distance, std ) );
+  HarmonicFuncOP harm_func_0( new HarmonicFunc( 0, std ) );
+  CircularHarmonicFuncOP ang_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_2_over_3(), 0.02 ) );
+  CircularHarmonicFuncOP ang_func2( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_over_3(), 0.02 ) );
+  CircularHarmonicFuncOP dih_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) );
 
   AtomID aidCYH( pose.residue( hbs_pre_position ).atom_index("CYH"), hbs_pre_position );
   AtomID aidCZH( pose.residue( hbs_pre_position+2 ).atom_index("CZH"), hbs_pre_position+2 );
@@ -139,12 +139,12 @@ void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, c
   AtomID aidCY2( pose.residue( hbs_pre_position ).atom_index("CY2"), hbs_pre_position );
   AtomID aidCY1( pose.residue( hbs_pre_position ).atom_index("CY1"), hbs_pre_position );
 
-  ConstraintCOP atompair = new AtomPairConstraint( aidCYH, aidCZH, harm_func );
-  ConstraintCOP atompair2 = new AtomPairConstraint( aidCYH, aidVYH, harm_func_0 );
-  ConstraintCOP atompair3 = new AtomPairConstraint( aidCZH, aidVZH, harm_func_0 );
-  ConstraintCOP angle = new AngleConstraint( aidCZH, aidCYH, aidCY2, ang_func2 );
-  ConstraintCOP angle2 = new AngleConstraint( aidN, aidCZH, aidCYH, ang_func2 );
-  ConstraintCOP dihedral = new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, dih_func );
+  ConstraintCOP atompair( new AtomPairConstraint( aidCYH, aidCZH, harm_func ) );
+  ConstraintCOP atompair2( new AtomPairConstraint( aidCYH, aidVYH, harm_func_0 ) );
+  ConstraintCOP atompair3( new AtomPairConstraint( aidCZH, aidVZH, harm_func_0 ) );
+  ConstraintCOP angle( new AngleConstraint( aidCZH, aidCYH, aidCY2, ang_func2 ) );
+  ConstraintCOP angle2( new AngleConstraint( aidN, aidCZH, aidCYH, ang_func2 ) );
+  ConstraintCOP dihedral( new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, dih_func ) );
 
   pose.add_constraint( atompair );
   pose.add_constraint( atompair2 );
@@ -194,20 +194,20 @@ void add_oop_constraint( core::pose::Pose & pose, core::Size oop_seq_position, c
 	runtime_assert_msg ( pose.residue(oop_seq_position).has_variant_type(chemical::OOP_PRE) == 1, "residue must have OOP_PRE variant type" );
 
 	//kdrew: add constraint
-	core::scoring::func::HarmonicFuncOP harm_func  (new core::scoring::func::HarmonicFunc( distance, std ) );
+	core::scoring::func::HarmonicFuncOP harm_func( new core::scoring::func::HarmonicFunc( distance, std ) );
 
 	//kdrew: constrain: CYP VYP  and CZP VZP, hard coded to have zero distance
-	core::scoring::func::HarmonicFuncOP virtual_atom_overlap_harm_func  (new core::scoring::func::HarmonicFunc( 0.0, 0.1 ) );
+	core::scoring::func::HarmonicFuncOP virtual_atom_overlap_harm_func( new core::scoring::func::HarmonicFunc( 0.0, 0.1 ) );
 
 	AtomID aidCYP( pose.residue( oop_seq_position ).atom_index("CYP"), oop_seq_position );
 	AtomID aidCZP( pose.residue( oop_seq_position+1 ).atom_index("CZP"), oop_seq_position+1 );
 	AtomID aidVYP( pose.residue( oop_seq_position+1 ).atom_index("VYP"), oop_seq_position+1 );
 	AtomID aidVZP( pose.residue( oop_seq_position ).atom_index("VZP"), oop_seq_position );
 
-	AtomPairConstraintCOP CYP_CZP_atompair = new AtomPairConstraint( aidCYP, aidCZP, harm_func );
+	AtomPairConstraintCOP CYP_CZP_atompair( new AtomPairConstraint( aidCYP, aidCZP, harm_func ) );
 	//kdrew: setup virtual atoms constraints
-	AtomPairConstraintCOP CYP_VYP_atompair = new AtomPairConstraint( aidCYP, aidVYP, virtual_atom_overlap_harm_func );
-	AtomPairConstraintCOP CZP_VZP_atompair = new AtomPairConstraint( aidCZP, aidVZP, virtual_atom_overlap_harm_func );
+	AtomPairConstraintCOP CYP_VYP_atompair( new AtomPairConstraint( aidCYP, aidVYP, virtual_atom_overlap_harm_func ) );
+	AtomPairConstraintCOP CZP_VZP_atompair( new AtomPairConstraint( aidCZP, aidVZP, virtual_atom_overlap_harm_func ) );
 
 	//kdrew: remove old constraints that are identical
 	core::scoring::constraints::ConstraintCOPs cs = pose.constraint_set()->get_all_constraints();

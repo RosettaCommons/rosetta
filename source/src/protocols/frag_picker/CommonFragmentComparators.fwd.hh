@@ -25,14 +25,14 @@ class CompareQueryPosition;
 class CompareTotalScore;
 class CompareScoreComponent;
 
-typedef utility::pointer::owning_ptr<CompareQueryPosition> CompareQueryPositionOP;
-typedef utility::pointer::owning_ptr<CompareQueryPosition const> CompareQueryPositionCOP;
+typedef utility::pointer::shared_ptr<CompareQueryPosition> CompareQueryPositionOP;
+typedef utility::pointer::shared_ptr<CompareQueryPosition const> CompareQueryPositionCOP;
 
-typedef utility::pointer::owning_ptr<CompareTotalScore> CompareTotalScoreOP;
-typedef utility::pointer::owning_ptr<CompareTotalScore const> CompareTotalScoreCOP;
+typedef utility::pointer::shared_ptr<CompareTotalScore> CompareTotalScoreOP;
+typedef utility::pointer::shared_ptr<CompareTotalScore const> CompareTotalScoreCOP;
 
-typedef utility::pointer::owning_ptr<CompareScoreComponent> CompareScoreComponentOP;
-typedef utility::pointer::owning_ptr<CompareScoreComponent const> CompareScoreComponentCOP;
+typedef utility::pointer::shared_ptr<CompareScoreComponent> CompareScoreComponentOP;
+typedef utility::pointer::shared_ptr<CompareScoreComponent const> CompareScoreComponentCOP;
 
 } // frag_picker
 } // protocols

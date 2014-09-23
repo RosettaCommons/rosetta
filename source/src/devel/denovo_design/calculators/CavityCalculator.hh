@@ -53,7 +53,7 @@ public:// constructor/destructor
 public:// virtual constructor
 	/// @brief make clone
   core::pose::metrics::PoseMetricCalculatorOP
-	clone() const { return new CavityCalculator( *this ); }
+	clone() const { return core::pose::metrics::PoseMetricCalculatorOP( new CavityCalculator( *this ) ); }
 
 public:// mutators
 

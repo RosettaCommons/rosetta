@@ -38,8 +38,8 @@ namespace protocols {
 namespace loophash {
 
 class Mover_LoopHashRefine;
-typedef utility::pointer::owning_ptr< Mover_LoopHashRefine > Mover_LoopHashRefineOP;
-typedef utility::pointer::owning_ptr< Mover_LoopHashRefine const > Mover_LoopHashRefineCOP;
+typedef utility::pointer::shared_ptr< Mover_LoopHashRefine > Mover_LoopHashRefineOP;
+typedef utility::pointer::shared_ptr< Mover_LoopHashRefine const > Mover_LoopHashRefineCOP;
 
 class Mover_LoopHashRefine: public protocols::moves::Mover {
 public:
@@ -55,7 +55,7 @@ public:
 	virtual void apply( core::pose::Pose& pose );
 
   virtual protocols::moves::MoverOP clone() const {
-		return new Mover_LoopHashRefine( *this );
+		return protocols::moves::MoverOP( new Mover_LoopHashRefine( *this ) );
 	}
 
 
@@ -64,7 +64,7 @@ public:
 	}
 
 	virtual	protocols::moves::MoverOP	fresh_instance() const {
-		return new Mover_LoopHashRefine( library_ );
+		return protocols::moves::MoverOP( new Mover_LoopHashRefine( library_ ) );
 	}
 
 private:

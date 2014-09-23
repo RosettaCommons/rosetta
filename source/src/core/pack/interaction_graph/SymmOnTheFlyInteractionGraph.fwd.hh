@@ -24,8 +24,8 @@ class SymmOnTheFlyNode;
 class SymmOnTheFlyEdge;
 class SymmOnTheFlyInteractionGraph;
 
-typedef utility::pointer::owning_ptr< SymmOnTheFlyInteractionGraph > SymmOnTheFlyInteractionGraphOP;
-typedef utility::pointer::owning_ptr< SymmOnTheFlyInteractionGraph const > SymmOnTheFlyInteractionGraphCOP;
+typedef utility::pointer::shared_ptr< SymmOnTheFlyInteractionGraph > SymmOnTheFlyInteractionGraphOP;
+typedef utility::pointer::shared_ptr< SymmOnTheFlyInteractionGraph const > SymmOnTheFlyInteractionGraphCOP;
 
 }
 }

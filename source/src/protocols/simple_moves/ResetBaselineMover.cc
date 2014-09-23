@@ -35,7 +35,7 @@ ResetBaselineMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 ResetBaselineMoverCreator::create_mover() const {
-	return new ResetBaselineMover;
+	return protocols::moves::MoverOP( new ResetBaselineMover );
 }
 
 std::string
@@ -46,7 +46,7 @@ ResetBaselineMoverCreator::mover_name()
 
 ResetBaselineMover::ResetBaselineMover()
 	: moves::Mover("ResetBaseline"),
-	filter_( NULL )
+	filter_( /* NULL */ )
 {}
 
 void
@@ -59,18 +59,18 @@ ResetBaselineMover::apply( Pose & pose )
   runtime_assert( filter_type == "Operator" || filter_type == "CompoundStatement" );
 	if( filter_type == "Operator" ){
 		TR<<"resetting Operator filter's baseline"<<std::endl;
-		OperatorOP operator_filter( dynamic_cast< Operator * >( filter()() )) ;
+		OperatorOP operator_filter( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::Operator > ( filter() )) ;
 		runtime_assert( operator_filter != 0 );
 		operator_filter->reset_baseline( pose, false/*reset baselines from checkpoint*/ );
 	}
 	else if( filter_type == "CompoundStatement" ){
-		CompoundFilterOP comp_filt_op( dynamic_cast< CompoundFilter *>( filter()() ) );
+		CompoundFilterOP comp_filt_op( utility::pointer::dynamic_pointer_cast< protocols::filters::CompoundFilter > ( filter() ) );
 		runtime_assert( comp_filt_op != 0 );
     for( CompoundFilter::CompoundStatement::iterator cs_it = comp_filt_op->begin(); cs_it != comp_filt_op->end(); ++cs_it ){
       FilterOP filt( cs_it->first );
       if( filt->get_type() == "Operator" ){
         TR<<"Resetting Operator filter's baseline"<<std::endl;
-        OperatorOP operator_filter( dynamic_cast< Operator * >( filt() ) );
+        OperatorOP operator_filter( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::Operator > ( filt ) );
 				runtime_assert( operator_filter != 0 );
         operator_filter->reset_baseline( pose, false/*read baselines from checkpoint*/ );
       }// fi Operator
@@ -86,13 +86,13 @@ ResetBaselineMover::get_name() const {
 moves::MoverOP
 ResetBaselineMover::clone() const
 {
-	return new ResetBaselineMover( *this );
+	return moves::MoverOP( new ResetBaselineMover( *this ) );
 }
 
 moves::MoverOP
 ResetBaselineMover::fresh_instance() const
 {
-	return new ResetBaselineMover;
+	return moves::MoverOP( new ResetBaselineMover );
 }
 
 void

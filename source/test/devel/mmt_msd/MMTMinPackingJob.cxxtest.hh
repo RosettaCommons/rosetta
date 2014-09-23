@@ -84,7 +84,7 @@ public:
 
 	devel::mmt_msd::MMTMinPackingJobOP
 	create_and_initialize_minpacking_job() {
-		devel::mmt_msd::MMTMinPackingJobOP job = new devel::mmt_msd::MMTMinPackingJob;
+		devel::mmt_msd::MMTMinPackingJobOP job( new devel::mmt_msd::MMTMinPackingJob );
 		initialize_minpacking_job( job );
 		return job;
 	}

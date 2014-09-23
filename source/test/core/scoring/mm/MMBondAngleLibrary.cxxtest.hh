@@ -63,11 +63,11 @@ public:
 		// Only want to read in copy of the library once not for each test so init here in ctor
 
 		// init the mmatomtypeset
-		mmatomtypeset = new MMAtomTypeSet;
+		mmatomtypeset = MMAtomTypeSetOP( new MMAtomTypeSet );
 		mmatomtypeset->read_file( "core/chemical/mm_atom_properties.txt" );
 
 		// init the mmbondanglelibrary
-		mmbondanglelibrary = new MMBondAngleLibrary( "core/scoring/mm/par_all27_prot_na.prm" , MMAtomTypeSetAP( mmatomtypeset ) );
+		mmbondanglelibrary = MMBondAngleLibraryOP( new MMBondAngleLibrary( "core/scoring/mm/par_all27_prot_na.prm" , MMAtomTypeSetAP( mmatomtypeset ) ) );
 	}
 
 	virtual ~MMBondAngleLibraryTests() {}

@@ -22,8 +22,8 @@ namespace symmetric_docking {
 
 
 class SymDockingHiRes; // fwd declaration
-typedef utility::pointer::owning_ptr< SymDockingHiRes > SymDockingHiResOP;
-typedef utility::pointer::owning_ptr< SymDockingHiRes const > SymDockingHiResCOP;
+typedef utility::pointer::shared_ptr< SymDockingHiRes > SymDockingHiResOP;
+typedef utility::pointer::shared_ptr< SymDockingHiRes const > SymDockingHiResCOP;
 
 
 } // namespace symmetric_docking

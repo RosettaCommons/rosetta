@@ -52,7 +52,7 @@ methods::EnergyMethodOP
 NMerRefEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new NMerRefEnergy;
+	return methods::EnergyMethodOP( new NMerRefEnergy );
 }
 
 ScoreTypes
@@ -178,7 +178,7 @@ void NMerRefEnergy::read_nmer_table( std::string ref_fname ) {
 EnergyMethodOP
 NMerRefEnergy::clone() const
 {
-	return new NMerRefEnergy( nmer_ref_energies_ );
+	return EnergyMethodOP( new NMerRefEnergy( nmer_ref_energies_ ) );
 }
 
 

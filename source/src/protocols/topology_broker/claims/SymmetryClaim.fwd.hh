@@ -28,11 +28,11 @@ namespace claims {
 
 class SymmetryClaim;
 
-typedef  utility::pointer::owning_ptr< SymmetryClaim >  SymmetryClaimOP;
-typedef  utility::pointer::owning_ptr< SymmetryClaim const >  SymmetryClaimCOP;
+typedef  utility::pointer::shared_ptr< SymmetryClaim >  SymmetryClaimOP;
+typedef  utility::pointer::shared_ptr< SymmetryClaim const >  SymmetryClaimCOP;
 
-typedef  utility::pointer::access_ptr< SymmetryClaim >  SymmetryClaimAP;
-typedef  utility::pointer::access_ptr< SymmetryClaim const >  SymmetryClaimCAP;
+typedef  utility::pointer::weak_ptr< SymmetryClaim >  SymmetryClaimAP;
+typedef  utility::pointer::weak_ptr< SymmetryClaim const >  SymmetryClaimCAP;
 
 typedef utility::vector1< SymmetryClaimOP > SymmetryClaims;
 

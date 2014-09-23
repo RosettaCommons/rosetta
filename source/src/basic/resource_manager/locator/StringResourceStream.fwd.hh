@@ -21,8 +21,8 @@ namespace resource_manager{
 namespace locator {
 
 class StringResourceStream;
-typedef utility::pointer::owning_ptr< StringResourceStream > StringResourceStreamOP;
-typedef utility::pointer::owning_ptr< StringResourceStream const > StringResourceStreamCOP;
+typedef utility::pointer::shared_ptr< StringResourceStream > StringResourceStreamOP;
+typedef utility::pointer::shared_ptr< StringResourceStream const > StringResourceStreamCOP;
 
 }// namespace
 }// namespace

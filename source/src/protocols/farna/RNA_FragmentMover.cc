@@ -90,7 +90,7 @@ RNA_FragmentMover::RNA_FragmentMover( RNA_FragmentsOP all_rna_fragments,
 {
 	Mover::type("RNA_FragmentMover");
 
-	allow_insert_ = new toolbox::AllowInsert( pose );
+	allow_insert_ = protocols::toolbox::AllowInsertOP( new toolbox::AllowInsert( pose ) );
 	allow_insert_->set( false );
 	for ( Size i = 1; i <= allow_insert_in.size(); i++ ){
 		if ( pose.residue_type( i ).is_RNA() && allow_insert_in[ i ] ) allow_insert_->set( i, true );
@@ -121,13 +121,13 @@ RNA_FragmentMover::get_name() const {
 protocols::moves::MoverOP
 RNA_FragmentMover::clone() const
 {
-	return new RNA_FragmentMover(*this);
+	return protocols::moves::MoverOP( new RNA_FragmentMover(*this) );
 }
 
 protocols::moves::MoverOP
 RNA_FragmentMover::fresh_instance() const
 {
-	return new RNA_FragmentMover();
+	return protocols::moves::MoverOP( new RNA_FragmentMover() );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

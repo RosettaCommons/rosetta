@@ -82,7 +82,7 @@ public:
 		assert( glycines.size() > 1 );
 		gly_ = glycines[1];
 
-		ResidueTypeSetOP rsd_types = new ResidueTypeSet;
+		ResidueTypeSetOP rsd_types( new ResidueTypeSet );
 		
 		std::string filename("core/chemical/params/1aq1.mol2.params");
 		rsd_ = read_topology_file(filename, atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));

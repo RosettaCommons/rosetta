@@ -47,10 +47,10 @@ public:
 		utility::pointer::ReferenceCountOP resource = loader.create_resource( opts, "unit_test", lstream );
 		TS_ASSERT( resource ); // make sure a resource was returned
 
-		LoopsFileDataOP lfdptr = dynamic_cast< LoopsFileData * > ( resource() );
+		LoopsFileDataOP lfdptr = utility::pointer::dynamic_pointer_cast< protocols::loops::LoopsFileData > ( resource );
 		TS_ASSERT( lfdptr ); // make sure we're actually returned the correct type
 
-		LoopsFileData const & lfd( *lfdptr() );
+		LoopsFileData const & lfd( *lfdptr );
 		TS_ASSERT( lfd.size() == 2 );
 		TS_ASSERT( lfd[ 1 ].start_res().pose_index() == 1 );
 		TS_ASSERT( lfd[ 1 ].end_res().pose_index() == 4 );

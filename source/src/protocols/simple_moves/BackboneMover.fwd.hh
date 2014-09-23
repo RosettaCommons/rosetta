@@ -22,16 +22,16 @@ namespace simple_moves{
 
 //Forwards and OP typedefs
 class BackboneMover;
-typedef utility::pointer::owning_ptr< BackboneMover > BackboneMoverOP;
-typedef utility::pointer::owning_ptr< BackboneMover const > BackboneMoverCOP;
+typedef utility::pointer::shared_ptr< BackboneMover > BackboneMoverOP;
+typedef utility::pointer::shared_ptr< BackboneMover const > BackboneMoverCOP;
 
 class SmallMover;
-typedef utility::pointer::owning_ptr< SmallMover > SmallMoverOP;
-typedef utility::pointer::owning_ptr< SmallMover const > SmallMoverCOP;
+typedef utility::pointer::shared_ptr< SmallMover > SmallMoverOP;
+typedef utility::pointer::shared_ptr< SmallMover const > SmallMoverCOP;
 
 class ShearMover;
-typedef utility::pointer::owning_ptr< ShearMover > ShearMoverOP;
-typedef utility::pointer::owning_ptr< ShearMover const > ShearMoverCOP;
+typedef utility::pointer::shared_ptr< ShearMover > ShearMoverOP;
+typedef utility::pointer::shared_ptr< ShearMover const > ShearMoverCOP;
 
 } // simple_moves
 } // protocols

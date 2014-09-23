@@ -21,17 +21,17 @@ namespace core {
 namespace scoring {
 
 class ResidueNeighborIterator;
-typedef utility::pointer::owning_ptr< ResidueNeighborIterator > ResidueNeighborIteratorOP;
-typedef utility::pointer::owning_ptr< ResidueNeighborIterator const > ResidueNeighborIteratorCOP;
+typedef utility::pointer::shared_ptr< ResidueNeighborIterator > ResidueNeighborIteratorOP;
+typedef utility::pointer::shared_ptr< ResidueNeighborIterator const > ResidueNeighborIteratorCOP;
 
 class ResidueNeighborConstIterator;
-typedef utility::pointer::owning_ptr< ResidueNeighborConstIterator > ResidueNeighborConstIteratorOP;
-typedef utility::pointer::owning_ptr< ResidueNeighborConstIterator const > ResidueNeighborConstIteratorCOP;
+typedef utility::pointer::shared_ptr< ResidueNeighborConstIterator > ResidueNeighborConstIteratorOP;
+typedef utility::pointer::shared_ptr< ResidueNeighborConstIterator const > ResidueNeighborConstIteratorCOP;
 
 
 class LREnergyContainer;
-typedef utility::pointer::owning_ptr< LREnergyContainer > LREnergyContainerOP;
-typedef utility::pointer::owning_ptr< LREnergyContainer const > LREnergyContainerCOP;
+typedef utility::pointer::shared_ptr< LREnergyContainer > LREnergyContainerOP;
+typedef utility::pointer::shared_ptr< LREnergyContainer const > LREnergyContainerCOP;
 
 }
 }

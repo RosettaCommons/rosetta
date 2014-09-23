@@ -21,8 +21,8 @@ namespace scoring {
 
 class OmegaTether;
 
-typedef utility::pointer::owning_ptr< OmegaTether > OmegaTetherOP;
-typedef utility::pointer::owning_ptr< OmegaTether const > OmegaTetherCOP;
+typedef utility::pointer::shared_ptr< OmegaTether > OmegaTetherOP;
+typedef utility::pointer::shared_ptr< OmegaTether const > OmegaTetherCOP;
 }
 }
 

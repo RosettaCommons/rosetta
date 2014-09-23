@@ -75,12 +75,12 @@ public:
 
     TS_ASSERT_DIFFERS( pose.total_residue(), 0 );
 
-    ChainSelectorOP chain1 = new ChainSelector();
+    ChainSelectorOP chain1( new ChainSelector() );
     chain1->set_chain_strings( utility::vector1< std::string >( 1, "1" ) );
-    CoMTrackerCMOP tracker = new CoMTrackerCM( "com", chain1 );
-    StructPerturberCMOP perturb = new StructPerturberCM( "BASE" , 15.0 );
+    CoMTrackerCMOP tracker( new CoMTrackerCM( "com", chain1 ) );
+    StructPerturberCMOP perturb( new StructPerturberCM( "BASE" , 15.0 ) );
 
-    EnvironmentOP env_op = new Environment( "env" );
+    EnvironmentOP env_op( new Environment( "env" ) );
     Environment & env = *env_op;
 
     env.register_mover( tracker );
@@ -141,12 +141,12 @@ public:
 
     TS_ASSERT_DIFFERS( pose.total_residue(), 0 );
 
-    ChainSelectorOP chain1 = new ChainSelector();
+    ChainSelectorOP chain1( new ChainSelector() );
     chain1->set_chain_strings( utility::vector1< std::string >( 1, "1" ) );
 
-    CoMTrackerCMOP tracker = new CoMTrackerCM( "com", chain1 );
+    CoMTrackerCMOP tracker( new CoMTrackerCM( "com", chain1 ) );
 
-    EnvironmentOP env_op = new Environment( "env" );
+    EnvironmentOP env_op( new Environment( "env" ) );
     Environment & env = *env_op;
 
     env.register_mover( tracker );
@@ -203,18 +203,18 @@ public:
     std::string const com1 = "com1";
     std::string const com2 = "com2";
 
-    ChainSelectorOP chain1 = new ChainSelector();
-    ChainSelectorOP chain2 = new ChainSelector();
+    ChainSelectorOP chain1( new ChainSelector() );
+    ChainSelectorOP chain2( new ChainSelector() );
     chain1->set_chain_strings( utility::vector1< std::string >( 1, "1" ) );
     chain2->set_chain_strings( utility::vector1< std::string >( 1, "2" ) );
-    CoMTrackerCMOP tracker1 = new CoMTrackerCM( com1, chain1 );
-    CoMTrackerCMOP tracker2 = new CoMTrackerCM( com2, chain2 );
+    CoMTrackerCMOP tracker1( new CoMTrackerCM( com1, chain1 ) );
+    CoMTrackerCMOP tracker2( new CoMTrackerCM( com2, chain2 ) );
 
-    StructPerturberCMOP perturb = new StructPerturberCM( "BASE", 10.0 );
+    StructPerturberCMOP perturb( new StructPerturberCM( "BASE", 10.0 ) );
 
-    UniformRigidBodyCMOP rigpert = new UniformRigidBodyCM( "perturb", LocalPosition( com1, 1 ), LocalPosition( com2, 1 ) );
+    UniformRigidBodyCMOP rigpert( new UniformRigidBodyCM( "perturb", LocalPosition( com1, 1 ), LocalPosition( com2, 1 ) ) );
 
-    EnvironmentOP env_op = new Environment( "env" );
+    EnvironmentOP env_op( new Environment( "env" ) );
     Environment & env = *env_op;
     
     env.register_mover( rigpert );

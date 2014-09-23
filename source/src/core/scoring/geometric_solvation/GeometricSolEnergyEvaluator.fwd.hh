@@ -23,8 +23,8 @@ namespace scoring {
 namespace geometric_solvation {
 	
 	class GeometricSolEnergyEvaluator;
-	typedef utility::pointer::owning_ptr< GeometricSolEnergyEvaluator > GeometricSolEnergyEvaluatorOP;
-	typedef utility::pointer::owning_ptr< GeometricSolEnergyEvaluator const > GeometricSolEnergyEvaluatorCOP;
+	typedef utility::pointer::shared_ptr< GeometricSolEnergyEvaluator > GeometricSolEnergyEvaluatorOP;
+	typedef utility::pointer::shared_ptr< GeometricSolEnergyEvaluator const > GeometricSolEnergyEvaluatorCOP;
 	
 } //geometric_solvation 
 } //scoring 

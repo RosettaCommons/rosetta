@@ -70,7 +70,7 @@ RigidLigandBuilder::RigidLigandBuilder( RigidLigandBuilder const & other ) :
 	min_sep_d2_from_upstream_atoms_( other.min_sep_d2_from_upstream_atoms_ )
 {
   for ( Size ii = 1; ii <= lig_conformers_.size(); ++ii ) {
-    lig_conformers_[ ii ] = new toolbox::match_enzdes_util::LigandConformer( * other.lig_conformers_[ ii ] );
+    lig_conformers_[ ii ] = utility::pointer::shared_ptr<class protocols::toolbox::match_enzdes_util::LigandConformer>( new toolbox::match_enzdes_util::LigandConformer( * other.lig_conformers_[ ii ] ) );
   }
 }
 
@@ -98,7 +98,7 @@ RigidLigandBuilder::~RigidLigandBuilder() {}
 DownstreamBuilderOP
 RigidLigandBuilder::clone() const
 {
-	return new RigidLigandBuilder( *this );
+	return DownstreamBuilderOP( new RigidLigandBuilder( *this ) );
 }
 
 
@@ -343,11 +343,11 @@ RigidLigandBuilder::downstream_pose_from_hit(
 		lig_res.set_xyz( ii, lig_conformers_[1]->coordinate_in_global_frame( ii, global_frame ) );
 	}
 
-	core::pose::PoseOP pose = new core::pose::Pose();
+	core::pose::PoseOP pose( new core::pose::Pose() );
 	pose->append_residue_by_jump( lig_res, 1 );
 
 	//we should also set a different chain for the downstream pose
-	core::pose::PDBInfoOP pdbinf = new core::pose::PDBInfo( *pose );
+	core::pose::PDBInfoOP pdbinf( new core::pose::PDBInfo( *pose ) );
 	pose->pdb_info( pdbinf );
 	pose->pdb_info()->chain( 1, 'X' );
 
@@ -394,7 +394,7 @@ RigidLigandBuilder::initialize_from_residue(
 		atom_radii_[ ii ] = probe_radius_for_atom_type( residue.atom( ii ).type() );
 	}
 
-	lig_conformers_.push_back( new toolbox::match_enzdes_util::LigandConformer );
+	lig_conformers_.push_back( utility::pointer::shared_ptr<class protocols::toolbox::match_enzdes_util::LigandConformer>( new toolbox::match_enzdes_util::LigandConformer ) );
 	lig_conformers_[1]->ignore_h_collisions( ignore_h_collisions_ );
 	lig_conformers_[1]->initialize_from_residue( atom1, atom2, atom3,
 		orientation_atom1, orientation_atom2, orientation_atom3, residue );

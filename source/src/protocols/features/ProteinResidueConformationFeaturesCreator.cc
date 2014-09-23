@@ -29,7 +29,7 @@ namespace features {
 ProteinResidueConformationFeaturesCreator::ProteinResidueConformationFeaturesCreator() {}
 ProteinResidueConformationFeaturesCreator::~ProteinResidueConformationFeaturesCreator() {}
 FeaturesReporterOP ProteinResidueConformationFeaturesCreator::create_features_reporter() const {
-	return new ProteinResidueConformationFeatures;
+	return FeaturesReporterOP( new ProteinResidueConformationFeatures );
 }
 
 std::string ProteinResidueConformationFeaturesCreator::type_name() const {

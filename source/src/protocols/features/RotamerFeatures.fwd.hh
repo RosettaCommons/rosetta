@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class RotamerFeatures;
-typedef utility::pointer::owning_ptr< RotamerFeatures > RotamerFeaturesOP;
-typedef utility::pointer::owning_ptr< RotamerFeatures const > RotamerFeaturesCOP;
+typedef utility::pointer::shared_ptr< RotamerFeatures > RotamerFeaturesOP;
+typedef utility::pointer::shared_ptr< RotamerFeatures const > RotamerFeaturesCOP;
 
 }//features
 }//protocols

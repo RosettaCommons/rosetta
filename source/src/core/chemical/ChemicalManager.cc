@@ -145,7 +145,7 @@ ChemicalManager::atom_type_set( std::string const & tag )
 
 		// bind the relevant atom-type-set creation function and its arguments so that
 		// it can be passed to the utility::thread::create_and_insert function.
-		boost::function< utility::pointer::owning_ptr< AtomTypeSet > () > func =
+		boost::function< utility::pointer::shared_ptr< AtomTypeSet > () > func =
 				boost::bind( &ChemicalManager::create_atom_type_set, this, boost::cref(tag) );
 
 #if defined MULTI_THREADED && defined CXX11
@@ -155,7 +155,7 @@ ChemicalManager::atom_type_set( std::string const & tag )
 		iter = atom_type_sets_.insert( std::make_pair( tag, newset ) ).first;
 #endif
 	}
-	return iter->second();
+	return iter->second;
 }
 
 ///@details Actually go and create an AtomTypeSet
@@ -190,7 +190,7 @@ ChemicalManager::element_set( std::string const & tag )
 
 		// bind the relevant atom-type-set creation function and its arguments so that
 		// it can be passed to the utility::thread::create_and_insert function.
-		boost::function< utility::pointer::owning_ptr< ElementSet > () > func =
+		boost::function< utility::pointer::shared_ptr< ElementSet > () > func =
 				boost::bind( &ChemicalManager::create_element_set, this, boost::cref(tag) );
 
 #if defined MULTI_THREADED && defined CXX11
@@ -200,7 +200,7 @@ ChemicalManager::element_set( std::string const & tag )
 		iter = element_sets_.insert( std::make_pair( tag, newset ) ).first;
 #endif
 	}
-	return iter->second();
+	return iter->second;
 }
 ElementSetOP
 ChemicalManager::create_element_set( std::string const & tag ) const
@@ -229,7 +229,7 @@ ChemicalManager::orbital_type_set( std::string const & tag )
 
 		// bind the relevant atom-type-set creation function and its arguments so that
 		// it can be passed to the utility::thread::create_and_insert function.
-		boost::function< utility::pointer::owning_ptr< orbitals::OrbitalTypeSet > () > func =
+		boost::function< utility::pointer::shared_ptr< orbitals::OrbitalTypeSet > () > func =
 				boost::bind( &ChemicalManager::create_orbital_type_set, this, boost::cref(tag) );
 
 #if defined MULTI_THREADED && defined CXX11
@@ -239,7 +239,7 @@ ChemicalManager::orbital_type_set( std::string const & tag )
 		iter = orbital_type_sets_.insert( std::make_pair( tag, newset ) ).first;
 #endif
 	}
-	return iter->second();
+	return iter->second;
 }
 
 orbitals::OrbitalTypeSetOP
@@ -247,7 +247,7 @@ ChemicalManager::create_orbital_type_set( std::string const & tag ) const
 {
 	// read from file
 	std::string const directory( basic::database::full_name( "chemical/orbital_type_sets/"+tag+"/" ) );
-	return new orbitals::OrbitalTypeSet( directory );
+	return orbitals::OrbitalTypeSetOP( new orbitals::OrbitalTypeSet( directory ) );
 }
 
 /// @details if the tag is not in the map, input it from a database file and add it
@@ -266,7 +266,7 @@ ChemicalManager::mm_atom_type_set( std::string const & tag )
 
 		// bind the relevant mm-atom-type-set creation function and its arguments so that
 		// it can be passed to the utility::thread::create_and_insert function.
-		boost::function< utility::pointer::owning_ptr< MMAtomTypeSet > () > func =
+		boost::function< utility::pointer::shared_ptr< MMAtomTypeSet > () > func =
 				boost::bind( &ChemicalManager::create_mm_atom_type_set, this, boost::cref(tag) );
 
 #if defined MULTI_THREADED && defined CXX11
@@ -276,7 +276,7 @@ ChemicalManager::mm_atom_type_set( std::string const & tag )
 		iter = mm_atom_type_sets_.insert( std::make_pair( tag, newset ) ).first;
 #endif
 	}
-	return iter->second();
+	return iter->second;
 }
 
 /// @details if the tag is not in the map, input it from a database file and add it
@@ -295,7 +295,7 @@ ChemicalManager::gasteiger_atom_type_set( std::string const & tag /* = "default"
 		filename =  basic::database::full_name( "chemical/gasteiger/"+tag+"/bond_lengths.txt" );
 		new_set->read_bond_file(filename);
 	}
-	return iter->second();
+	return iter->second;
 }
 MMAtomTypeSetOP
 ChemicalManager::create_mm_atom_type_set( std::string const & tag ) const
@@ -349,7 +349,7 @@ ChemicalManager::residue_type_set( std::string tag )
 
 		// bind the relevant residue-type-set creation function and its arguments so that
 		// it can be passed to the utility::thread::create_and_insert function.
-		boost::function< utility::pointer::owning_ptr< ResidueTypeSet > () > func =
+		boost::function< utility::pointer::shared_ptr< ResidueTypeSet > () > func =
 				boost::bind( &ChemicalManager::create_residue_type_set, this, boost::cref(tag) );
 
 #if defined MULTI_THREADED && defined CXX11
@@ -359,7 +359,7 @@ ChemicalManager::residue_type_set( std::string tag )
 		iter = residue_type_sets_.insert( std::make_pair( tag, newset ) ).first;
 #endif
 	}
-	return iter->second();
+	return iter->second;
 }
 
 ResidueTypeSetOP
@@ -604,7 +604,7 @@ ChemicalManager::ideal_bond_length_set( std::string const & tag )
 
 		// bind the relevant ideal-bond-length-set creation function and its arguments so that
 		// it can be passed to the utility::thread::create_and_insert function.
-		boost::function< utility::pointer::owning_ptr< IdealBondLengthSet > () > func =
+		boost::function< utility::pointer::shared_ptr< IdealBondLengthSet > () > func =
 				boost::bind( &ChemicalManager::create_ideal_bond_length_set, this, boost::cref(tag) );
 
 #if defined MULTI_THREADED && defined CXX11
@@ -614,7 +614,7 @@ ChemicalManager::ideal_bond_length_set( std::string const & tag )
 		iter = ideal_bond_length_sets_.insert( std::make_pair( tag, newset ) ).first;
 #endif
 	}
-	return iter->second();
+	return iter->second;
 }
 
 IdealBondLengthSetOP

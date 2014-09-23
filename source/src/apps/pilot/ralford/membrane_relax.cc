@@ -65,11 +65,11 @@ public:
 		using namespace protocols::relax; 
 
 		// Create a membrane pose
-		AddMembraneMoverOP add_memb = new AddMembraneMover(); 
+		AddMembraneMoverOP add_memb( new AddMembraneMover() ); 
 		add_memb->apply( pose ); 
 
 		// Initialze the posiiton of a membrane protein
-		MembranePositionFromTopologyMoverOP init_position = new MembranePositionFromTopologyMover(); 
+		MembranePositionFromTopologyMoverOP init_position( new MembranePositionFromTopologyMover() ); 
 		init_position->apply( pose ); 
 
 		// Setup Relax Base Protocol
@@ -80,7 +80,7 @@ public:
 	}
 };
 
-typedef utility::pointer::owning_ptr< MembraneRelaxMover > MembraneRelaxMoverOP; 
+typedef utility::pointer::shared_ptr< MembraneRelaxMover > MembraneRelaxMoverOP; 
 
 /// @brief Main method
 int
@@ -102,7 +102,7 @@ main( int argc, char * argv [] )
 		devel::init(argc, argv);
 
 		// Create and kick off a new relax mover
-		MembraneRelaxMoverOP mprlx = new MembraneRelaxMover();
+		MembraneRelaxMoverOP mprlx( new MembraneRelaxMover() );
 		protocols::jd2::JobDistributor::get_instance()->go( mprlx );
 
 		return 0; 

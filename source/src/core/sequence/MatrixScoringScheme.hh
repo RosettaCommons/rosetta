@@ -70,11 +70,11 @@ public:
 	/// @brief returns owning pointer to a new object with a deep copy of
 	/// this object's values.
 	ScoringSchemeOP clone() const {
-		return new MatrixScoringScheme(
+		return ScoringSchemeOP( new MatrixScoringScheme(
 			gap_open(),
 			gap_extend(),
 			scoring_matrix()
-		);
+		) );
 	}
 
 	/// @brief dtor

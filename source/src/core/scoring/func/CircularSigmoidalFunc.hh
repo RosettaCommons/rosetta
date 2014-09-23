@@ -38,7 +38,7 @@ public:
 			Real const offset								 ) : xC_( center_radians ), m_( slope_radians ),
 								  o1_( -width_radians/2 ), o2_( width_radians/2 ), offset_( offset ) {}
 
-	FuncOP clone() const { return new CircularSigmoidalFunc( *this ); }
+	FuncOP clone() const { return FuncOP( new CircularSigmoidalFunc( *this ) ); }
 
 	Real func( Real const x ) const;
 	Real dfunc( Real const x ) const;

@@ -115,7 +115,7 @@ LoopRebuild::~LoopRebuild() {}
 /// @brief Clone this object
 protocols::moves::MoverOP
 LoopRebuild::clone() const {
-	return new LoopRebuild(*this);
+	return protocols::moves::MoverOP( new LoopRebuild(*this) );
 }
 
 
@@ -519,14 +519,14 @@ void LoopRebuild::build_loop_with_ccd_closure(
 
 
 	// prepare fragment movers
-	MoveMapOP movemap = new MoveMap();
+	MoveMapOP movemap( new MoveMap() );
 	movemap->set_bb_true_range(loop_begin, loop_end);
 
 	std::vector< FragmentMoverOP > fragmover;
 	for ( std::vector< core::fragment::FragSetOP >::const_iterator
 				it = frag_libs_.begin(), it_end = frag_libs_.end();
 				it != it_end; it++ ) {
-		ClassicFragmentMoverOP cfm = new ClassicFragmentMover( *it, movemap );
+		ClassicFragmentMoverOP cfm( new ClassicFragmentMover( *it, movemap ) );
 		cfm->set_check_ss( false );
 		cfm->enable_end_bias_check( false );
 		fragmover.push_back( cfm );
@@ -555,7 +555,7 @@ void LoopRebuild::build_loop_with_ccd_closure(
 	shear_mover->angle_max( 'L', 3.0 );
 
 	// create a Random Mover, fill it with individual moves
-	moves::RandomMoverOP refine_mover = new moves::RandomMover();
+	moves::RandomMoverOP refine_mover( new moves::RandomMover() );
 	refine_mover->add_mover( small_mover );
 	refine_mover->add_mover( shear_mover );
 
@@ -574,22 +574,22 @@ void LoopRebuild::build_loop_with_ccd_closure(
 
 
 	// --- Figure out constraints (ConstraintSet)	  ------
-	core::scoring::constraints::ConstraintSetOP pose_cst = new core::scoring::constraints::ConstraintSet(	*pose.constraint_set() );
+	core::scoring::constraints::ConstraintSetOP pose_cst( new core::scoring::constraints::ConstraintSet(	*pose.constraint_set() ) );
 
 
 	// --- Figure out constraints (ConstraintSet)	  ------
 	if(  option[OptionKeys::loops::coord_cst ]()  > 0.0 ){
-		core::scoring::constraints::ConstraintSetOP new_csts =	new core::scoring::constraints::ConstraintSet;
+		core::scoring::constraints::ConstraintSetOP new_csts( new core::scoring::constraints::ConstraintSet );
 		for( int ir=loop_begin; ir <= loop_end; ir++ ){
 			Real middlefactor = 1.0 - (float(std::min( std::abs(ir - loop_begin), std::abs(loop_end - ir) ))/ float(std::abs(loop_end-loop_begin))) * 2 * 0.8;
 
-			core::scoring::func::FuncOP CA_cst = new core::scoring::func::HarmonicFunc( 0, option[OptionKeys::loops::coord_cst ]() * middlefactor );
-			core::scoring::constraints::ConstraintOP newcst = new core::scoring::constraints::CoordinateConstraint(
+			core::scoring::func::FuncOP CA_cst( new core::scoring::func::HarmonicFunc( 0, option[OptionKeys::loops::coord_cst ]() * middlefactor ) );
+			core::scoring::constraints::ConstraintOP newcst( new core::scoring::constraints::CoordinateConstraint(
 								core::id::AtomID( pose.residue_type(ir).atom_index("CA") , ir ),
 								core::id::AtomID( pose.residue_type( 1).atom_index("CA") , 1  ),
 								start_pose.residue(ir).xyz( "CA" ),
 								CA_cst
-							);
+							) );
 			new_csts->add_constraint( newcst );
 		}
 		pose.constraint_set( new_csts );
@@ -611,7 +611,7 @@ void LoopRebuild::build_loop_with_ccd_closure(
 		// ConstraintSet
 		//filter out constraints that have at least one "anchor" in the loop
 		scorefxn_->show(  TR , pose );
-		core::scoring::constraints::ConstraintSetOP loop_cst = new core::scoring::constraints::ConstraintSet( *full_cst, loop_begin, loop_end );
+		core::scoring::constraints::ConstraintSetOP loop_cst( new core::scoring::constraints::ConstraintSet( *full_cst, loop_begin, loop_end ) );
 		pose.constraint_set(  loop_cst );
 		scorefxn_->show(  TR , pose );
 	}
@@ -1298,7 +1298,7 @@ void LoopRebuild::set_default_settings(){
 void LoopRebuild::set_default_mc( core::pose::Pose & pose )
 {
 	m_Temperature_ = 2.0;
-	mc_ = new moves::MonteCarlo( pose, *scorefxn_, m_Temperature_ );
+	mc_ = protocols::moves::MonteCarloOP( new moves::MonteCarlo( pose, *scorefxn_, m_Temperature_ ) );
 }
 ///////////////////////////////////////////////////////////////////////
 ///@brief Full atom loop refinement
@@ -1309,7 +1309,7 @@ void LoopRefine::apply(
 
 	TR << "***** Starting full-atom loop refinement protocol  ****" << std::endl;
 
-    protocols::loops::LoopsOP LoopsToRefine = new protocols::loops::Loops();
+    protocols::loops::LoopsOP LoopsToRefine( new protocols::loops::Loops() );
 
     for( Loops::const_iterator it=Loops_in_.begin(), it_end=Loops_in_.end(); it != it_end; ++it ) {
 		Loop refine_loop( *it );
@@ -1323,7 +1323,7 @@ void LoopRefine::apply(
 
 	//protocols::loops::refine_loops_with_ccd( pose, pose, LoopsToRefine );
 	loop_mover::refine::LoopMover_Refine_CCD refine_ccd( LoopsToRefine );
-	refine_ccd.set_native_pose( new pose::Pose ( pose ) );
+	refine_ccd.set_native_pose( PoseCOP( new pose::Pose ( pose ) ) );
 	refine_ccd.apply( pose );
 
 }

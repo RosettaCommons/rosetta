@@ -60,7 +60,7 @@ using namespace task_operations;
 core::pack::task::operation::TaskOperationOP
 SelectByDensityFitOperationCreator::create_task_operation() const
 {
-	return new SelectByDensityFitOperation;
+	return core::pack::task::operation::TaskOperationOP( new SelectByDensityFitOperation );
 }
 
 SelectByDensityFitOperation::SelectByDensityFitOperation( core::Real threshold, bool invert ):
@@ -72,7 +72,7 @@ SelectByDensityFitOperation::~SelectByDensityFitOperation() {}
 
 core::pack::task::operation::TaskOperationOP SelectByDensityFitOperation::clone() const
 {
-	return new SelectByDensityFitOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new SelectByDensityFitOperation( *this ) );
 }
 
 void
@@ -86,8 +86,7 @@ SelectByDensityFitOperation::apply( core::pose::Pose const & const_pose, core::p
 	core::pose::Pose pose = const_pose;
 	core::Size nres = pose.total_residue();
 
-	protocols::electron_density::SetupForDensityScoringMoverOP dockindens
-		( new protocols::electron_density::SetupForDensityScoringMover );
+	protocols::electron_density::SetupForDensityScoringMoverOP dockindens( new protocols::electron_density::SetupForDensityScoringMover );
 	dockindens->apply( pose );
 
 	core::scoring::electron_density::getDensityMap().set_nres( nres );

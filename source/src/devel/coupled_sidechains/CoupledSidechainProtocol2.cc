@@ -187,11 +187,11 @@ CoupledSidechainProtocol::setup_objects() {
 	core::pack::task::TaskFactoryOP task_factory( new core::pack::task::TaskFactory );
 	task_factory->push_back( core::pack::task::operation::TaskOperationOP( new core::pack::task::operation::RestrictToRepacking ) );
 
-	protocols::canonical_sampling::SimulatedTemperingOP tempering  = new protocols::canonical_sampling::SimulatedTempering();
-	moves::MonteCarloOP mc_object = new moves::MonteCarlo( *scorefunction, 0.6 );
+	protocols::canonical_sampling::SimulatedTemperingOP tempering( new protocols::canonical_sampling::SimulatedTempering() );
+	moves::MonteCarloOP mc_object( new moves::MonteCarlo( *scorefunction, 0.6 ) );
 	tempering->set_monte_carlo( mc_object );
 
-	sampler_ = new protocols::canonical_sampling::SidechainMetropolisHastingsMover( stride_ );
+	sampler_ = protocols::canonical_sampling::MetropolisHastingsMoverOP( new protocols::canonical_sampling::SidechainMetropolisHastingsMover( stride_ ) );
 	sampler_->set_monte_carlo( mc_object );
 	sampler_->set_tempering( tempering );
 	sampler_->add_observer( protocols::canonical_sampling::ThermodynamicObserverOP( new protocols::canonical_sampling::SilentTrajectoryRecorder ) );
@@ -203,14 +203,14 @@ CoupledSidechainProtocol::setup_objects() {
 	}
 
 	if ( prob_pert_chi_ > 0.0 ) {
-		protocols::simple_moves::sidechain_moves::PerturbChiSidechainMoverOP mover = new protocols::simple_moves::sidechain_moves::PerturbChiSidechainMover();
+		protocols::simple_moves::sidechain_moves::PerturbChiSidechainMoverOP mover( new protocols::simple_moves::sidechain_moves::PerturbChiSidechainMover() );
 		mover->set_magnitude( pert_magnitude_ );
 		//		mover->set_task_factory( task_factory );
 		sampler_->add_mover( mover, prob_pert_chi_ );
 	}
 
 	if ( prob_jump_rot_ > 0.0 ) {
-		protocols::simple_moves::sidechain_moves::SidechainMoverBaseOP mover = new protocols::simple_moves::sidechain_moves::JumpRotamerSidechainMover();
+		protocols::simple_moves::sidechain_moves::SidechainMoverBaseOP mover( new protocols::simple_moves::sidechain_moves::JumpRotamerSidechainMover() );
 		//		mover->set_task_factory( task_factory );
 		sampler_->add_mover( mover, prob_jump_rot_ );
 	}

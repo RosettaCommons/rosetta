@@ -22,12 +22,12 @@ namespace protocols{
 namespace rotamer_recovery{
 
 class PerNativeRRReporterHuman;
-typedef utility::pointer::owning_ptr< PerNativeRRReporterHuman > PerNativeRRReporterHumanOP;
-typedef utility::pointer::owning_ptr< PerNativeRRReporterHuman const > PerNativeRRReporterHumanCOP;
+typedef utility::pointer::shared_ptr< PerNativeRRReporterHuman > PerNativeRRReporterHumanOP;
+typedef utility::pointer::shared_ptr< PerNativeRRReporterHuman const > PerNativeRRReporterHumanCOP;
 
 class RRReporterHuman;
-typedef utility::pointer::owning_ptr< RRReporterHuman > RRReporterHumanOP;
-typedef utility::pointer::owning_ptr< RRReporterHuman const > RRReporterHumanCOP;
+typedef utility::pointer::shared_ptr< RRReporterHuman > RRReporterHumanOP;
+typedef utility::pointer::shared_ptr< RRReporterHuman const > RRReporterHumanCOP;
 
 
 }//rotamer_recovery

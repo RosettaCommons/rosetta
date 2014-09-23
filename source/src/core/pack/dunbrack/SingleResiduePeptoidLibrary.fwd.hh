@@ -22,10 +22,10 @@ namespace pack {
 namespace dunbrack {
 
 class SingleResiduePeptoidLibrary;
-typedef utility::pointer::owning_ptr< SingleResiduePeptoidLibrary > SingleResiduePeptoidLibraryOP;
-typedef utility::pointer::access_ptr< SingleResiduePeptoidLibrary > SingleResiduePeptoidLibraryAP;
-typedef utility::pointer::owning_ptr< SingleResiduePeptoidLibrary const > SingleResiduePeptoidLibraryCOP;
-typedef utility::pointer::access_ptr< SingleResiduePeptoidLibrary const > SingleResiduePeptoidLibraryCAP;
+typedef utility::pointer::shared_ptr< SingleResiduePeptoidLibrary > SingleResiduePeptoidLibraryOP;
+typedef utility::pointer::weak_ptr< SingleResiduePeptoidLibrary > SingleResiduePeptoidLibraryAP;
+typedef utility::pointer::shared_ptr< SingleResiduePeptoidLibrary const > SingleResiduePeptoidLibraryCOP;
+typedef utility::pointer::weak_ptr< SingleResiduePeptoidLibrary const > SingleResiduePeptoidLibraryCAP;
 
 } // dunbrack
 } // pack

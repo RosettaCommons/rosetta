@@ -24,8 +24,8 @@ namespace quota {
 
 class SecondaryStructurePool;
 
-typedef utility::pointer::owning_ptr<SecondaryStructurePool> SecondaryStructurePoolOP;
-typedef utility::pointer::owning_ptr<SecondaryStructurePool const> SecondaryStructurePoolCOP;
+typedef utility::pointer::shared_ptr<SecondaryStructurePool> SecondaryStructurePoolOP;
+typedef utility::pointer::shared_ptr<SecondaryStructurePool const> SecondaryStructurePoolCOP;
 
 } // quota
 } // frag_picker

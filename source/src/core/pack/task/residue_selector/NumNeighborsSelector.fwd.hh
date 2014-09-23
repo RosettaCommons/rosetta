@@ -24,8 +24,8 @@ namespace residue_selector {
 
 class NumNeighborsSelector;
 
-typedef utility::pointer::owning_ptr< NumNeighborsSelector > NumNeighborsSelectorOP;
-typedef utility::pointer::owning_ptr< NumNeighborsSelector const > NumNeighborsSelectorCOP;
+typedef utility::pointer::shared_ptr< NumNeighborsSelector > NumNeighborsSelectorOP;
+typedef utility::pointer::shared_ptr< NumNeighborsSelector const > NumNeighborsSelectorCOP;
 
 } //namespace residue_selector
 } //namespace task

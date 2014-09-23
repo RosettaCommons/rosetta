@@ -44,7 +44,7 @@ methods::EnergyMethodOP
 SmoothCenPairEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new methods::SmoothCenPairEnergy;
+	return methods::EnergyMethodOP( new methods::SmoothCenPairEnergy );
 }
 
 /// @brief Return the set of score types claimed by the EnergyMethod
@@ -68,7 +68,7 @@ SmoothCenPairEnergy::SmoothCenPairEnergy() :
 /// clone
 EnergyMethodOP
 SmoothCenPairEnergy::clone() const {
-	return new SmoothCenPairEnergy();
+	return EnergyMethodOP( new SmoothCenPairEnergy() );
 }
 
 

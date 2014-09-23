@@ -74,7 +74,7 @@ GasteigerAtomTypeSet::read_file( std::string const & filename )
 				getline( data,line ); // Discard the comment line
 				continue;
 			}
-			GasteigerAtomTypeDataOP atom = new GasteigerAtomTypeData;
+			GasteigerAtomTypeDataOP atom( new GasteigerAtomTypeData );
 			atom->read( data, element_set_);
 			if ( data.good() ) {
 				atom_types_.push_back( atom );

@@ -40,7 +40,7 @@ class TrajectoryRecorder;
 
 
 // Typedefs
-typedef utility::pointer::owning_ptr< TrajectoryRecorder > TrajectoryRecorderOP;
+typedef utility::pointer::shared_ptr< TrajectoryRecorder > TrajectoryRecorderOP;
 
 
 // Smart pointer required functions

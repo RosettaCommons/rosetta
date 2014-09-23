@@ -27,7 +27,7 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_rb_;
 };
 
-typedef utility::pointer::owning_ptr< RBSegmentRelaxImpl > RBSegmentRelaxImplOP;
+typedef utility::pointer::shared_ptr< RBSegmentRelaxImpl > RBSegmentRelaxImplOP;
 
 int RBSegmentRelax_main();
 //}

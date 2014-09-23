@@ -24,8 +24,8 @@ namespace simple_filters {
 class ResidueIEFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< ResidueIEFilter >  ResidueIEFilterOP;
-typedef utility::pointer::owning_ptr< ResidueIEFilter const >  ResidueIEFilterCOP;
+typedef utility::pointer::shared_ptr< ResidueIEFilter >  ResidueIEFilterOP;
+typedef utility::pointer::shared_ptr< ResidueIEFilter const >  ResidueIEFilterCOP;
 
 }
 }

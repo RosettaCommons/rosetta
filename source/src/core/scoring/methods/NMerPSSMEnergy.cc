@@ -53,7 +53,7 @@ methods::EnergyMethodOP
 NMerPSSMEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new NMerPSSMEnergy;
+	return methods::EnergyMethodOP( new NMerPSSMEnergy );
 }
 
 ScoreTypes
@@ -195,7 +195,7 @@ void NMerPSSMEnergy::read_nmer_pssm( std::string pssm_fname ) {
 EnergyMethodOP
 NMerPSSMEnergy::clone() const
 {
-	return new NMerPSSMEnergy( *this );
+	return EnergyMethodOP( new NMerPSSMEnergy( *this ) );
 }
 
 core::Size

@@ -30,7 +30,7 @@ public:
 
 	FuncOP
 	clone() const {
-		return new IdentityFunc( *this );
+		return FuncOP( new IdentityFunc( *this ) );
 	}
 
 	Real func( Real const x ) const;

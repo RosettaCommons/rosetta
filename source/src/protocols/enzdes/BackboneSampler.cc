@@ -72,7 +72,7 @@ BackboneSamplerCreator::keyname() const
 
 protocols::moves::MoverOP
 BackboneSamplerCreator::create_mover() const {
-	return new BackboneSampler();
+	return protocols::moves::MoverOP( new BackboneSampler() );
 }
 
 std::string
@@ -125,7 +125,7 @@ BackboneSampler::apply( Pose & pose )
 
 	//makes protein segements movable
 	utility::vector1< bool > mobile_bb( pose.n_residue(), false );
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
+	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
 	//movemap -> clear();
 	if ( segments.empty() ) {
 	  for ( core::Size ii=1; ii <= pose.n_residue(); ++ii ) {

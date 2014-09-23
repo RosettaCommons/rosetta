@@ -55,7 +55,7 @@ core::scoring::methods::EnergyMethodOP
 InterchainEnvEnergyCreator::create_energy_method(
 	core::scoring::methods::EnergyMethodOptions const &
 ) const {
-	return new InterchainEnvEnergy;
+	return core::scoring::methods::EnergyMethodOP( new InterchainEnvEnergy );
 }
 
 core::scoring::ScoreTypes
@@ -79,7 +79,7 @@ InterchainEnvEnergy::InterchainEnvEnergy() :
 core::scoring::methods::EnergyMethodOP
 InterchainEnvEnergy::clone() const
 {
-	return new InterchainEnvEnergy();
+	return core::scoring::methods::EnergyMethodOP( new InterchainEnvEnergy() );
 }
 
 ///

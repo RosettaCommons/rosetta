@@ -100,16 +100,16 @@ ProteinResidueConformationFeatures::write_schema_to_db(utility::sql_database::se
 	using namespace basic::database::schema_generator;
 
 	//******protein_residue_conformation******//
-	Column struct_id("struct_id", new DbBigInt(), false);
-	Column seqpos("seqpos", new DbInteger(), false);
-	Column secstruct("secstruct", new DbText(), false);
-	Column phi("phi", new DbDouble(), false);
-	Column psi("psi", new DbDouble(), false);
-	Column omega("omega", new DbDouble(), false);
-	Column chi1("chi1", new DbDouble(), false);
-	Column chi2("chi2", new DbDouble(), false);
-	Column chi3("chi3", new DbDouble(), false);
-	Column chi4("chi4", new DbDouble(), false);
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
+	Column seqpos("seqpos", DbDataTypeOP( new DbInteger() ), false);
+	Column secstruct("secstruct", DbDataTypeOP( new DbText() ), false);
+	Column phi("phi", DbDataTypeOP( new DbDouble() ), false);
+	Column psi("psi", DbDataTypeOP( new DbDouble() ), false);
+	Column omega("omega", DbDataTypeOP( new DbDouble() ), false);
+	Column chi1("chi1", DbDataTypeOP( new DbDouble() ), false);
+	Column chi2("chi2", DbDataTypeOP( new DbDouble() ), false);
+	Column chi3("chi3", DbDataTypeOP( new DbDouble() ), false);
+	Column chi4("chi4", DbDataTypeOP( new DbDouble() ), false);
 
 
 	utility::vector1<Column> prot_res_pkeys;
@@ -142,8 +142,8 @@ ProteinResidueConformationFeatures::write_schema_to_db(utility::sql_database::se
 	if(compact_residue_schema_)
 	{
 		//******compact_residue_atom_coords*****//
-		Column coord_data("coord_data",new DbText());
-		Column atom_count("atom_count",new DbInteger(),false);
+		Column coord_data("coord_data",DbDataTypeOP( new DbText() ));
+		Column atom_count("atom_count",DbDataTypeOP( new DbInteger() ),false);
 		utility::vector1<Column> compact_res_atom_coords_pkeys;
 		compact_res_atom_coords_pkeys.push_back(struct_id);
 		compact_res_atom_coords_pkeys.push_back(seqpos);
@@ -159,10 +159,10 @@ ProteinResidueConformationFeatures::write_schema_to_db(utility::sql_database::se
 	}else
 	{
 		//******residue_atom_coords******//
-		Column atomno("atomno", new DbInteger(), false);
-		Column x("x", new DbDouble(), false);
-		Column y("y", new DbDouble(), false);
-		Column z("z", new DbDouble(), false);
+		Column atomno("atomno", DbDataTypeOP( new DbInteger() ), false);
+		Column x("x", DbDataTypeOP( new DbDouble() ), false);
+		Column y("y", DbDataTypeOP( new DbDouble() ), false);
+		Column z("z", DbDataTypeOP( new DbDouble() ), false);
 
 		utility::vector1<Column> res_atm_coords_pkeys;
 		res_atm_coords_pkeys.push_back(struct_id);
@@ -254,7 +254,7 @@ ProteinResidueConformationFeatures::report_features(
 	compact_residue_insert.add_column("atom_count");
 	compact_residue_insert.add_column("coord_data");
 
-	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id",struct_id);
+	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
 	for (Size i = 1; i <= pose.total_residue(); ++i) {
 		if(!check_relevant_residues( relevant_residues, i )) continue;
@@ -274,15 +274,15 @@ ProteinResidueConformationFeatures::report_features(
 		Real chi3 = fullatom && resi.nchi() >= 3 ? resi.chi(3) : 0.0;
 		Real chi4 = fullatom && resi.nchi() >= 4 ? resi.chi(4) : 0.0;
 
-		RowDataBaseOP seqpos_data = new RowData<Size>("seqpos",i);
-		RowDataBaseOP secstruct_data = new RowData<std::string>("secstruct",secstruct);
-		RowDataBaseOP phi_data = new RowData<Real>("phi",phi);
-		RowDataBaseOP psi_data = new RowData<Real>("psi",psi);
-		RowDataBaseOP omega_data = new RowData<Real>("omega",omega);
-		RowDataBaseOP chi1_data = new RowData<Real>("chi1",chi1);
-		RowDataBaseOP chi2_data = new RowData<Real>("chi2",chi2);
-		RowDataBaseOP chi3_data = new RowData<Real>("chi3",chi3);
-		RowDataBaseOP chi4_data = new RowData<Real>("chi4",chi4);
+		RowDataBaseOP seqpos_data( new RowData<Size>("seqpos",i) );
+		RowDataBaseOP secstruct_data( new RowData<std::string>("secstruct",secstruct) );
+		RowDataBaseOP phi_data( new RowData<Real>("phi",phi) );
+		RowDataBaseOP psi_data( new RowData<Real>("psi",psi) );
+		RowDataBaseOP omega_data( new RowData<Real>("omega",omega) );
+		RowDataBaseOP chi1_data( new RowData<Real>("chi1",chi1) );
+		RowDataBaseOP chi2_data( new RowData<Real>("chi2",chi2) );
+		RowDataBaseOP chi3_data( new RowData<Real>("chi3",chi3) );
+		RowDataBaseOP chi4_data( new RowData<Real>("chi4",chi4) );
 
 
 		conformation_insert.add_row(utility::tools::make_vector(
@@ -297,18 +297,18 @@ ProteinResidueConformationFeatures::report_features(
 			if(compact_residue_schema_)
 			{
 				std::string residue_data_string(serialize_residue_xyz_coords(resi));
-				RowDataBaseOP atom_count = new RowData<core::Size>("atom_count",resi.natoms());
-				RowDataBaseOP residue_data = new RowData<std::string>("coord_data",residue_data_string);
+				RowDataBaseOP atom_count( new RowData<core::Size>("atom_count",resi.natoms()) );
+				RowDataBaseOP residue_data( new RowData<std::string>("coord_data",residue_data_string) );
 				compact_residue_insert.add_row(utility::tools::make_vector(struct_id_data,atom_count,seqpos_data,residue_data));
 			}else
 			{
 				for(Size atom = 1; atom <= resi.natoms(); ++atom){
 					core::Vector coords = resi.xyz(atom);
 
-					RowDataBaseOP atom_data = new RowData<Size>("atomno",atom);
-					RowDataBaseOP x_data = new RowData<Real>("x",coords.x());
-					RowDataBaseOP y_data = new RowData<Real>("y",coords.y());
-					RowDataBaseOP z_data = new RowData<Real>("z",coords.z());
+					RowDataBaseOP atom_data( new RowData<Size>("atomno",atom) );
+					RowDataBaseOP x_data( new RowData<Real>("x",coords.x()) );
+					RowDataBaseOP y_data( new RowData<Real>("y",coords.y()) );
+					RowDataBaseOP z_data( new RowData<Real>("z",coords.z()) );
 
 					atom_insert.add_row(utility::tools::make_vector(
 						struct_id_data,seqpos_data,atom_data,x_data,y_data,z_data));

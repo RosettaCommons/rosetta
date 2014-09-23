@@ -226,7 +226,7 @@ SimulateMPI::send_string_to_node(
 	assert(0 <= destination);
 	assert(destination < mpi_nprocs());
 
-	SimulateMPIMessageOP msg = new SimulateMPIMessage;
+	SimulateMPIMessageOP msg( new SimulateMPIMessage );
 	msg->src( rank_ );
 	msg->dst( destination );
 	msg->set_string_msg( message );
@@ -255,7 +255,7 @@ SimulateMPI::send_char_to_node(
 	assert(0 <= destination);
 	assert(destination < mpi_nprocs());
 
-	SimulateMPIMessageOP msg = new SimulateMPIMessage;
+	SimulateMPIMessageOP msg( new SimulateMPIMessage );
 	msg->src( rank_ );
 	msg->dst( destination );
 	msg->set_char_msg( message );
@@ -284,7 +284,7 @@ SimulateMPI::send_integer_to_node(
 	assert(0 <= destination);
 	assert(destination < mpi_nprocs());
 
-	SimulateMPIMessageOP msg = new SimulateMPIMessage;
+	SimulateMPIMessageOP msg( new SimulateMPIMessage );
 	msg->src( rank_ );
 	msg->dst( destination );
 	msg->set_integer_msg( message );
@@ -312,7 +312,7 @@ SimulateMPI::send_integers_to_node(
 	assert(0 <= destination);
 	assert(destination < mpi_nprocs());
 
-	SimulateMPIMessageOP msg = new SimulateMPIMessage;
+	SimulateMPIMessageOP msg( new SimulateMPIMessage );
 	msg->src( rank_ );
 	msg->dst( destination );
 	msg->set_integers_msg( message );
@@ -341,7 +341,7 @@ SimulateMPI::send_double_to_node(
 	assert(0 <= destination);
 	assert(destination < mpi_nprocs());
 
-	SimulateMPIMessageOP msg = new SimulateMPIMessage;
+	SimulateMPIMessageOP msg( new SimulateMPIMessage );
 	msg->src( rank_ );
 	msg->dst( destination );
 	msg->set_double_msg( message );
@@ -369,7 +369,7 @@ SimulateMPI::send_doubles_to_node(
 	assert(0 <= destination);
 	assert(destination < mpi_nprocs());
 
-	SimulateMPIMessageOP msg = new SimulateMPIMessage;
+	SimulateMPIMessageOP msg( new SimulateMPIMessage );
 	msg->src( rank_ );
 	msg->dst( destination );
 	msg->set_doubles_msg( message );

@@ -21,8 +21,8 @@ namespace toolbox {
 namespace task_operations {
 
 class StoreTaskMover;
-typedef utility::pointer::owning_ptr< StoreTaskMover > StoreTaskMoverOP;
-typedef utility::pointer::owning_ptr< StoreTaskMover const > StoreTaskMoverCOP;
+typedef utility::pointer::shared_ptr< StoreTaskMover > StoreTaskMoverOP;
+typedef utility::pointer::shared_ptr< StoreTaskMover const > StoreTaskMoverCOP;
 
 } // task_operations
 } // toolbox

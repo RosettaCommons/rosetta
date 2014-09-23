@@ -130,7 +130,7 @@ const core::Size DEFAULT_NCYCLES=400;
 static thread_local basic::Tracer TR( "protocols.hybridization.CartesianHybridize" );
 
 CartesianHybridize::CartesianHybridize( ) :
-	hybridize_setup_(NULL),
+	hybridize_setup_(/* NULL */),
 	ncycles_(DEFAULT_NCYCLES)
 {
 	init();
@@ -509,7 +509,7 @@ CartesianHybridize::apply( Pose & pose ) {
 	if (hybridize_setup_) {
 		if (align_templates_to_pose_) {
 			TR << "Realigning template domains to the current pose." << std::endl;
-			core::pose::PoseOP pose_copy = new core::pose::Pose( pose );
+			core::pose::PoseOP pose_copy( new core::pose::Pose( pose ) );
 			hybridize_setup_->realign_templates(pose_copy);
 		}
 
@@ -529,21 +529,19 @@ CartesianHybridize::apply( Pose & pose ) {
 	using namespace core::pack::task;
 	using core::pack::task::operation::TaskOperationCOP;
 	simple_moves::PackRotamersMoverOP pack_rotamers;
-	pack_rotamers = new protocols::simple_moves::PackRotamersMover();
-	TaskFactoryOP main_task_factory = new TaskFactory;
-	main_task_factory->push_back( new operation::RestrictToRepacking );
+	pack_rotamers = simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover() );
+	TaskFactoryOP main_task_factory( new TaskFactory );
+	main_task_factory->push_back( TaskOperationCOP( new operation::RestrictToRepacking ) );
 	pack_rotamers->task_factory(main_task_factory);
 	pack_rotamers->score_function(lowres_scorefxn_);
 
 	if (option[corrections::score::cenrot]) {
-		protocols::moves::MoverOP tocenrot =
-			new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID_ROT );
+		protocols::moves::MoverOP tocenrot( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID_ROT ) );
 		tocenrot->apply( pose );
 		pack_rotamers->apply(pose);
 	}
 	else {
-		protocols::moves::MoverOP tocen =
-			new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
+		protocols::moves::MoverOP tocen( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
 		tocen->apply( pose );
 	}
 
@@ -647,8 +645,8 @@ sampler:
 		lowres_scorefxn_->set_weight( core::scoring::vdw, vdw_weight );
 
 		(*lowres_scorefxn_)(pose);
-		protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *lowres_scorefxn_,
-			option[cm::hybridize::stage2_temperature]() ); //cenrot may use higher temp
+		protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose, *lowres_scorefxn_,
+			option[cm::hybridize::stage2_temperature]() ) ); //cenrot may use higher temp
 
 		core::Size neffcycles = (core::Size)(ncycles_*increase_cycles_);
 		if (m==4 || seqfrags_only_) neffcycles /=2;
@@ -698,7 +696,7 @@ sampler:
                     core::Size max_frag_trial=nfrags*3;
                     for (core::Size ii=1; ii<=max_frag_trial; ++ii) {
                         frag_id = numeric::random::random_range( 1, nfrags );
-                        frag =  new protocols::loops::Loop ( template_contigs_[templ_id][frag_id] );
+                        frag = protocols::loops::LoopOP( new protocols::loops::Loop ( template_contigs_[templ_id][frag_id] ) );
                         for (core::Size iii=frag->start(); iii<=frag->stop(); ++iii) {
                             if ( residue_sample_template_[templates_[templ_id]->pdb_info()->number(iii)]==true ) {
                                 movable_loop=true;
@@ -726,7 +724,7 @@ sampler:
 					//fpd assume this was initialized elsewhere
 					runtime_assert( pose.data().has( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) );
 					TemplateHistory &history =
-                    *( static_cast< TemplateHistory* >( pose.data().get_ptr( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY )() ));
+                    *( utility::pointer::static_pointer_cast< protocols::hybridization::TemplateHistory > ( pose.data().get_ptr( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) ));
 					history.set( frag->start(), frag->stop(), templ_id );
 				}
 			}
@@ -857,8 +855,8 @@ sampler:
 	(*lowres_scorefxn_)(pose);
 }
 
-protocols::moves::MoverOP CartesianHybridize::clone() const { return new CartesianHybridize( *this ); }
-protocols::moves::MoverOP CartesianHybridize::fresh_instance() const { return new CartesianHybridize; }
+protocols::moves::MoverOP CartesianHybridize::clone() const { return protocols::moves::MoverOP( new CartesianHybridize( *this ) ); }
+protocols::moves::MoverOP CartesianHybridize::fresh_instance() const { return protocols::moves::MoverOP( new CartesianHybridize ); }
 
 void
 CartesianHybridize::parse_my_tag(
@@ -948,7 +946,7 @@ CartesianHybridizeCreator::keyname() const {
 
 protocols::moves::MoverOP
 CartesianHybridizeCreator::create_mover() const {
-	return new CartesianHybridize;
+	return protocols::moves::MoverOP( new CartesianHybridize );
 }
 
 std::string

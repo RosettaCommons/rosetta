@@ -124,7 +124,7 @@ Bridge & Bridge::operator =( Bridge const & rval ) {
 
 /// @brief clone this object
 BuildInstructionOP Bridge::clone() const {
-	return new Bridge( *this );
+	return BuildInstructionOP( new Bridge( *this ) );
 }
 
 

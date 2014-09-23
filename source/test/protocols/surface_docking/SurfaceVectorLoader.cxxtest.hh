@@ -53,7 +53,7 @@ public:
 		
 		TS_ASSERT( resource ); // make sure a resource was returned
 
-		SurfaceParametersOP spptr = dynamic_cast< SurfaceParameters * > ( resource() );
+		SurfaceParametersOP spptr = utility::pointer::dynamic_pointer_cast< protocols::surface_docking::SurfaceParameters > ( resource );
 		TS_ASSERT( spptr ); // make sure we're actually returned the correct type
 
 		//SurfaceParameters const & sp( *spptr() ); // no copy ctor!

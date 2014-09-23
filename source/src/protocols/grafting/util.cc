@@ -117,7 +117,7 @@ return_region(Pose & pose, Size const start, Size const end){
 	core::pose::create_subpose(pose, positions, new_foldtree, piece);
 
 	//Create subpose results in a NULL PDBInfo.  We now need a new one.
-	core::pose::PDBInfoOP pdb_info = new core::pose::PDBInfo(piece.total_residue());
+	core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo(piece.total_residue()) );
 	piece.pdb_info(pdb_info);
 
 	piece.pdb_info()->copy(*(pose.pdb_info()), start, end, 1); //Should be an option directly within subpose
@@ -268,16 +268,16 @@ repack_connection_and_residues_in_movemap(
 	local->set_chi(end, true);
 	local->set_chi(end-1, true);
 
-	RestrictToMoveMapChiOperationOP mm_task_op = new protocols::toolbox::task_operations::RestrictToMoveMapChiOperation(local);
+	RestrictToMoveMapChiOperationOP mm_task_op( new protocols::toolbox::task_operations::RestrictToMoveMapChiOperation(local) );
 	mm_task_op->set_include_neighbors(false);
 
-	core::pack::task::TaskFactoryOP tf = new core::pack::task::TaskFactory();
-	tf->push_back(new core::pack::task::operation::InitializeFromCommandline());
-	tf->push_back(new core::pack::task::operation::RestrictToRepacking());
+	core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory() );
+	tf->push_back(TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline() ));
+	tf->push_back(TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking() ));
 	tf->push_back(mm_task_op);
 
 	PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
-	protocols::simple_moves::PackRotamersMoverOP packer = new protocols::simple_moves::PackRotamersMover(fa_scorefxn, task);
+	protocols::simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover(fa_scorefxn, task) );
 	packer->apply(pose);
 }
 
@@ -299,16 +299,16 @@ repack_connection_and_residues_in_movemap_and_piece(
 	    local->set_chi(i, true);
 	}
 
-	RestrictToMoveMapChiOperationOP mm_task_op = new protocols::toolbox::task_operations::RestrictToMoveMapChiOperation(local);
+	RestrictToMoveMapChiOperationOP mm_task_op( new protocols::toolbox::task_operations::RestrictToMoveMapChiOperation(local) );
 	mm_task_op->set_include_neighbors(false);
 
-	core::pack::task::TaskFactoryOP tf = new core::pack::task::TaskFactory();
-	tf->push_back(new core::pack::task::operation::InitializeFromCommandline());
-	tf->push_back(new core::pack::task::operation::RestrictToRepacking());
+	core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory() );
+	tf->push_back(TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline() ));
+	tf->push_back(TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking() ));
 	tf->push_back(mm_task_op);
 
 	PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
-	protocols::simple_moves::PackRotamersMoverOP packer = new protocols::simple_moves::PackRotamersMover(fa_scorefxn, task);
+	protocols::simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover(fa_scorefxn, task) );
 	packer->apply(pose);
 }
 
@@ -331,17 +331,17 @@ repack_connection_and_residues_in_movemap_and_piece_and_neighbors(
 	}
 
 
-	RestrictToMoveMapChiOperationOP mm_task_op = new protocols::toolbox::task_operations::RestrictToMoveMapChiOperation(local);
+	RestrictToMoveMapChiOperationOP mm_task_op( new protocols::toolbox::task_operations::RestrictToMoveMapChiOperation(local) );
 	mm_task_op->set_include_neighbors(true);
 	mm_task_op->set_cutoff_distance(neighbor_dis);
 
-	core::pack::task::TaskFactoryOP tf = new core::pack::task::TaskFactory();
-	tf->push_back(new core::pack::task::operation::InitializeFromCommandline());
-	tf->push_back(new core::pack::task::operation::RestrictToRepacking());
+	core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory() );
+	tf->push_back(TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline() ));
+	tf->push_back(TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking() ));
 	tf->push_back(mm_task_op);
 
 	PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
-	protocols::simple_moves::PackRotamersMoverOP packer = new protocols::simple_moves::PackRotamersMover(fa_scorefxn, task);
+	protocols::simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover(fa_scorefxn, task) );
 	packer->apply(pose);
 }
 
@@ -426,7 +426,7 @@ combine_movemaps_post_insertion(MoveMapCOP scaffold_mm, MoveMapCOP insert_mm,
 	Size insertion_length, Size cter_overhang_start)
 {
 	using namespace core::kinematics;
-	MoveMapOP mm = new MoveMap();
+	MoveMapOP mm( new MoveMap() );
 	TR<<"Combining movemaps"<<std::endl;
 	//typedef core::id::TorsionID TorsionID;
 	typedef std::pair< Size, core::id::TorsionType > MoveMapTorsionID;

@@ -24,8 +24,8 @@ namespace legacy {
 namespace screener {
 	
 	class SimpleRMSD_Screener;
-	typedef utility::pointer::owning_ptr< SimpleRMSD_Screener > SimpleRMSD_ScreenerOP;
-	typedef utility::pointer::owning_ptr< SimpleRMSD_Screener const > SimpleRMSD_ScreenerCOP;
+	typedef utility::pointer::shared_ptr< SimpleRMSD_Screener > SimpleRMSD_ScreenerOP;
+	typedef utility::pointer::shared_ptr< SimpleRMSD_Screener const > SimpleRMSD_ScreenerCOP;
 	
 } //screener
 } //legacy

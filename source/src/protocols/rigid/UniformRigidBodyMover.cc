@@ -50,7 +50,7 @@ UniformRigidBodyMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 UniformRigidBodyMoverCreator::create_mover() const {
-  return new UniformRigidBodyMover;
+  return protocols::moves::MoverOP( new UniformRigidBodyMover );
 }
 
 std::string
@@ -133,11 +133,11 @@ UniformRigidBodyMover::torsion_id_ranges( core::pose::Pose & ) {
 }
 
 moves::MoverOP UniformRigidBodyMover::fresh_instance() const {
-  return new UniformRigidBodyMover();
+  return moves::MoverOP( new UniformRigidBodyMover() );
 }
 
 moves::MoverOP UniformRigidBodyMover::clone() const{
-  return new UniformRigidBodyMover( *this );
+  return moves::MoverOP( new UniformRigidBodyMover( *this ) );
 }
 
 } // rigid

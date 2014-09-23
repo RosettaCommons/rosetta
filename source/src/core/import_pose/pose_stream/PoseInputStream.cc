@@ -68,7 +68,7 @@ utility::vector1< core::pose::PoseOP > PoseInputStream::get_all_poses(
 	utility::vector1< core::pose::PoseOP > pose_list;
 	reset();
 	while ( has_another_pose() ) {
-		core::pose::PoseOP pose = new core::pose::Pose;
+		core::pose::PoseOP pose( new core::pose::Pose );
 		fill_pose( *pose, residue_set );
 		pose_list.push_back( pose );
 	}

@@ -92,7 +92,7 @@ namespace protein {
 										core::pose::PoseCOP native_pose,
 										std::string const & silent_file,
 										utility::vector1< Size > const & working_calc_rms_res	){
-		core::io::silent::SilentFileDataOP sfd = new core::io::silent::SilentFileData; // silly
+		core::io::silent::SilentFileDataOP sfd( new core::io::silent::SilentFileData ); // silly
 		for ( Size n = 1; n <= pose_list.size(); n++ ){
 			Pose & pose = *pose_list[ n ];
 			std::string const tag = "S_"+ ObjexxFCL::string_of( n-1 /* start with zero */);

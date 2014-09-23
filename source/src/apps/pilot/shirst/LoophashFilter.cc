@@ -77,12 +77,12 @@ int main(int argc, char* argv[])
 	runtime_assert (option[in::file::spanfile].user());
 
 	//set up membrane topology
-	core::scoring::MembraneTopologyOP topology = new core::scoring::MembraneTopology;
+	core::scoring::MembraneTopologyOP topology( new core::scoring::MembraneTopology );
 	pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, topology );
 	topology->initialize(spanfile);
 
 	utility::vector1 < core::Size > loop_sizes = option[lh::loopsizes]();
-	protocols::loophash::LoopHashLibraryOP library = new protocols::loophash::LoopHashLibrary( loop_sizes );
+	protocols::loophash::LoopHashLibraryOP library( new protocols::loophash::LoopHashLibrary( loop_sizes ) );
 
 	//loophash stuff
 	core::Size start = 0;

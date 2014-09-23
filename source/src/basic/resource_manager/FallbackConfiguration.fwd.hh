@@ -20,8 +20,8 @@ namespace basic {
 namespace resource_manager {
 
 class FallbackConfiguration;
-typedef utility::pointer::owning_ptr< FallbackConfiguration > FallbackConfigurationOP;
-typedef utility::pointer::owning_ptr< FallbackConfiguration const > FallbackConfigurationCOP;
+typedef utility::pointer::shared_ptr< FallbackConfiguration > FallbackConfigurationOP;
+typedef utility::pointer::shared_ptr< FallbackConfiguration const > FallbackConfigurationCOP;
 
 } // resource_manager
 } // basic

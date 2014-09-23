@@ -68,7 +68,7 @@ methods::EnergyMethodOP
 SurfVolEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new SurfVolEnergy;
+	return methods::EnergyMethodOP( new SurfVolEnergy );
 }
 
 ScoreTypes
@@ -122,11 +122,11 @@ SurfVolEnergy::setup_for_derivatives(
 	}
 
 	CacheableDataOP dat1( pose.data().get_ptr( core::pose::datacache::CacheableDataType::DAB_SASA_POSE_INFO ) );
-	CacheableAtomID_MapVectorOP cachemap1 = static_cast< CacheableAtomID_MapVector * >(dat1());
+	CacheableAtomID_MapVectorOP cachemap1 = utility::pointer::static_pointer_cast< core::id::CacheableAtomID_MapVector > ( dat1 );
 	AtomID_Map<xyzVector<Real> > & sasa_derivs(cachemap1->map());
 
 	CacheableDataOP dat2( pose.data().get_ptr( core::pose::datacache::CacheableDataType::DAB_SASA_POSE_INFO ) );
-	CacheableAtomID_MapVectorOP cachemap2 = static_cast< CacheableAtomID_MapVector * >(dat2());
+	CacheableAtomID_MapVectorOP cachemap2 = utility::pointer::static_pointer_cast< core::id::CacheableAtomID_MapVector > ( dat2 );
 	AtomID_Map<xyzVector<Real> > & sev_derivs(cachemap2->map());
 
 	SurfVolDeriv svd = get_surf_vol_deriv( pose, 1.4 );
@@ -167,11 +167,11 @@ SurfVolEnergy::eval_atom_derivative(
 	// AtomID_Map<xyzVector<Real> > const & derivs(cachemap->map());
 
 	CacheableDataCOP dat1( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::DAB_SASA_POSE_INFO ) );
-	CacheableAtomID_MapVectorCOP cachemap1 = static_cast< CacheableAtomID_MapVector const * > (dat1());
+	CacheableAtomID_MapVectorCOP cachemap1 = utility::pointer::static_pointer_cast< core::id::CacheableAtomID_MapVector const > ( dat1 );
 	AtomID_Map<xyzVector<Real> > const & sasa_derivs(cachemap1->map());
 
 	CacheableDataCOP dat2( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::DAB_SASA_POSE_INFO ) );
-	CacheableAtomID_MapVectorCOP cachemap2 = static_cast< CacheableAtomID_MapVector const * >(dat2());
+	CacheableAtomID_MapVectorCOP cachemap2 = utility::pointer::static_pointer_cast< core::id::CacheableAtomID_MapVector const > ( dat2 );
 	AtomID_Map<xyzVector<Real> > const & sev_derivs(cachemap2->map());
 
 	if( aid.rsd() > sasa_derivs.n_residue() || aid.atomno() > sasa_derivs.n_atom(aid.rsd()) ) {

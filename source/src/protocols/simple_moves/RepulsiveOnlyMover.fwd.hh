@@ -35,8 +35,8 @@ namespace protocols {
 namespace simple_moves {
 
 class RepulsiveOnlyMover;
-typedef utility::pointer::owning_ptr< RepulsiveOnlyMover > RepulsiveOnlyMoverOP;
-typedef utility::pointer::owning_ptr< RepulsiveOnlyMover const > RepulsiveOnlyMoverCOP;
+typedef utility::pointer::shared_ptr< RepulsiveOnlyMover > RepulsiveOnlyMoverOP;
+typedef utility::pointer::shared_ptr< RepulsiveOnlyMover const > RepulsiveOnlyMoverCOP;
 
 } // moves
 } // protocols

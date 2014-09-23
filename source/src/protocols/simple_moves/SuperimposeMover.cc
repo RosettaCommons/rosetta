@@ -58,7 +58,7 @@ SuperimposeMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 SuperimposeMoverCreator::create_mover() const {
-	return new SuperimposeMover;
+	return protocols::moves::MoverOP( new SuperimposeMover );
 }
 
 std::string
@@ -69,17 +69,17 @@ SuperimposeMoverCreator::mover_name()
 
 SuperimposeMover::SuperimposeMover() :
 	protocols::moves::Mover("SuperimposeMover"),
-	ref_pose_(0)
+	ref_pose_(/* 0 */)
 {}
 
 SuperimposeMover::SuperimposeMover( Pose const & ref_pose ) :
   protocols::moves::Mover("SuperimposeMover"),
-	ref_pose_(new Pose(ref_pose))
+	ref_pose_(core::pose::PoseOP( new Pose(ref_pose) ))
 	{}
 
 SuperimposeMover::SuperimposeMover(Pose const & ref_pose, core::Size ref_start, core::Size ref_end, core::Size target_start, core::Size target_end, bool CA_only):
   protocols::moves::Mover("SuperimposeMover"),
-  ref_pose_(new Pose(ref_pose)),
+  ref_pose_(core::pose::PoseOP( new Pose(ref_pose) )),
   ref_start_(ref_start),
   ref_end_(ref_end),
   target_start_(target_start),
@@ -93,18 +93,18 @@ SuperimposeMover::~SuperimposeMover() {}
 protocols::moves::MoverOP
 SuperimposeMover::clone() const
 {
-	return new SuperimposeMover( *this );
+	return protocols::moves::MoverOP( new SuperimposeMover( *this ) );
 }
 
 protocols::moves::MoverOP
 SuperimposeMover::fresh_instance() const
 {
-	return new SuperimposeMover();
+	return protocols::moves::MoverOP( new SuperimposeMover() );
 }
 
 void
 SuperimposeMover::set_reference_pose( Pose const & pose,Size start, Size end ) {
-	ref_pose_ = new Pose(pose);
+	ref_pose_ = core::pose::PoseOP( new Pose(pose) );
 	ref_start_ = start;
 	ref_end_ = (end == 0) ? pose.total_residue() : end;
 	runtime_assert(ref_start_ > 0 && ref_start_ < ref_end_ && ref_end_ <= pose.total_residue()); 

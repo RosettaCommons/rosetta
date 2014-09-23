@@ -82,7 +82,7 @@ SetupForDensityScoringMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 SetupForDensityScoringMoverCreator::create_mover() const {
-	return new SetupForDensityScoringMover;
+	return protocols::moves::MoverOP( new SetupForDensityScoringMover );
 }
 
 std::string

@@ -99,7 +99,7 @@ public:
 // constructors
 
 	FragmentPicker() {
-		scores_.push_back(new scores::FragmentScoreManager());
+		scores_.push_back(utility::pointer::shared_ptr<class protocols::frag_picker::scores::FragmentScoreManager>( new scores::FragmentScoreManager() ));
 		CandidatesSink storage;
 		candidates_sinks_.push_back(storage);
 		max_frag_size_ = 0;
@@ -112,9 +112,9 @@ public:
 
 	FragmentPicker(std::string fragment_score_manager_type) {
 		if (fragment_score_manager_type.compare("PValuedFragmentScoreManager") == 0)
-			scores_.push_back(new scores::PValuedFragmentScoreManager());
+			scores_.push_back(utility::pointer::shared_ptr<class protocols::frag_picker::scores::FragmentScoreManager>( new scores::PValuedFragmentScoreManager() ));
 		else
-			scores_.push_back(new scores::FragmentScoreManager());
+			scores_.push_back(utility::pointer::shared_ptr<class protocols::frag_picker::scores::FragmentScoreManager>( new scores::FragmentScoreManager() ));
 		CandidatesSink storage;
 		candidates_sinks_.push_back(storage);
 		max_frag_size_ = 0;

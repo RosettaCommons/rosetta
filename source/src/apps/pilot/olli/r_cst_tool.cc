@@ -119,8 +119,8 @@ void register_options() {
 class ConstraintToolMover;
 
 // Types
-typedef  utility::pointer::owning_ptr< ConstraintToolMover >  ConstraintToolMoverOP;
-typedef  utility::pointer::owning_ptr< ConstraintToolMover const >  ConstraintToolMoverCOP;
+typedef  utility::pointer::shared_ptr< ConstraintToolMover >  ConstraintToolMoverOP;
+typedef  utility::pointer::shared_ptr< ConstraintToolMover const >  ConstraintToolMoverCOP;
 
 class ConstraintToolMover : public moves::Mover {
 public:
@@ -133,7 +133,7 @@ public:
 		ConstraintSetOP output_cst = cstset_;
 		if ( option[ skip ] < 1.0 ) {
 			ConstraintCOPs all_constraints = cstset_->get_all_constraints();
-			ConstraintSetOP filtered_cstset = new ConstraintSet;
+			ConstraintSetOP filtered_cstset( new ConstraintSet );
 			for ( ConstraintCOPs::const_iterator it = all_constraints.begin(); it != all_constraints.end(); ++it ) {
 				Real r = numeric::random::rg().uniform();
 				if ( r < option[ skip ] ) {
@@ -148,7 +148,7 @@ public:
 	virtual
 	protocols::moves::MoverOP
 	fresh_instance() const {
-		return new ConstraintToolMover();
+		return protocols::moves::MoverOP( new ConstraintToolMover() );
 	}
 
 	std::string get_name() const { return "ConstraintToolMover"; }
@@ -169,7 +169,7 @@ void ConstraintToolMover::apply( core::pose::Pose &pose ) {
 	if ( !cstset_ && option[ OptionKeys::constraints::cst_file ].user() ) {
 		// reads and sets constraints
 		tr.Info << "read constraints... : " << std::endl;
-		cstset_ = ConstraintIO::get_instance()->read_constraints( option[ OptionKeys::constraints::cst_file ]()[1], new ConstraintSet, pose );
+		cstset_ = ConstraintIO::get_instance()->read_constraints( option[ OptionKeys::constraints::cst_file ]()[1], ConstraintSetOP( new ConstraintSet ), pose );
 		ConstraintCOPs added_constraints = cstset_->get_all_constraints();
 		utility::vector1< bool > exclude_res;
 		//if ( option[ OptionKeys::constraints::combine_exclude_region ].user() ) {
@@ -183,18 +183,18 @@ void ConstraintToolMover::apply( core::pose::Pose &pose ) {
 
 		core::kinematics::ShortestPathInFoldTree sp( pose.fold_tree() );
 		combine_constraints( added_constraints, option[ OptionKeys::constraints::combine ](), exclude_res, sp ); // if combine_ratio_ > 1 this will randomly combine constraints into multipletts w
-		cstset_ = new ConstraintSet;
+		cstset_ = ConstraintSetOP( new ConstraintSet );
 		cstset_->add_constraints( added_constraints );
 		reference_pose_ = pose;
 	}
 	if ( !cstset_ && option[ OptionKeys::in::top ] ) {
 		ConstraintCOPs my_strand_cst;
 		utility::io::izstream is( option[ OptionKeys::in::top ] );
-		PairingStatisticsOP ps = new PairingStatistics;
+		PairingStatisticsOP ps( new PairingStatistics );
 		is >> *ps;
 		tr.Info << *ps << std::endl;
 		my_strand_cst = StrandConstraints( *ps ).build_constraints( pose );
-		cstset_ = new ConstraintSet;
+		cstset_ = ConstraintSetOP( new ConstraintSet );
 		cstset_->add_constraints( my_strand_cst );
 		reference_pose_ = pose;
 	}
@@ -216,7 +216,7 @@ void ConstraintToolMover::apply( core::pose::Pose &pose ) {
 
 	if ( option[ clean ]() ) {  //cleaning
 		ConstraintCOPs all_constraints = cstset_->get_all_constraints();
-		ConstraintSetOP filtered_cstset = new ConstraintSet;
+		ConstraintSetOP filtered_cstset( new ConstraintSet );
 		for ( ConstraintCOPs::const_iterator it = all_constraints.begin(); it != all_constraints.end(); ++it ) {
 			if ( (*it)->show_violations( tr.Debug, pose, option[ level ](), option[ threshold ] ) == 0 ) {
 				filtered_cstset->add_constraint( *it );
@@ -242,10 +242,10 @@ void run() {
 	if ( option[ OptionKeys::constraints::named ] ) {
 		tr.Info << "use named constraints in AtomPairConstraint to avoid problems with cutpoint-variants " << std::endl;
 		//ConstraintIO::get_cst_factory().add_type( new scoring::constraints::NamedAtomPairConstraint( id::NamedAtomID(), id::NamedAtomID(), NULL) );
-		core::scoring::constraints::ConstraintFactory::get_instance()->replace_creator( new constraints_additional::NamedAtomPairConstraintCreator );
+		core::scoring::constraints::ConstraintFactory::get_instance()->replace_creator( ConstraintCreatorCOP( new constraints_additional::NamedAtomPairConstraintCreator ) );
 	}
 
-	ConstraintToolMoverOP cst_tool =  new ConstraintToolMover;
+	ConstraintToolMoverOP cst_tool( new ConstraintToolMover );
 	protocols::jd2::JobDistributor::get_instance()->go( cst_tool, jd2::JobOutputterOP( new jd2::NoOutputJobOutputter ) );
 
 

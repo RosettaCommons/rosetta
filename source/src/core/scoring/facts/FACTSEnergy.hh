@@ -54,7 +54,7 @@ public:
 	virtual
 	EnergyMethodOP
 	clone() const {
-		return new FACTSEnergy(*this);
+		return EnergyMethodOP( new FACTSEnergy(*this) );
 	}
 
 	virtual

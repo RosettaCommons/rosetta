@@ -114,7 +114,7 @@ utility::vector1< core::pose::PoseOP > PDBPoseInputStream::get_all_poses(
 	pose_list.resize( filenames_.size() );
 
 	while( has_another_pose() ) {
-		core::pose::PoseOP pose = new core::pose::Pose;
+		core::pose::PoseOP pose( new core::pose::Pose );
 		fill_pose( *pose, residue_set );
 		pose_list.push_back( pose );
 	}

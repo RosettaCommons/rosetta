@@ -57,7 +57,7 @@ my_main( void* )
 
 //	devel::init_random_generators(3,numeric::random::_RND_TestRun_, "mt19937"); //JQX from Sergery
 
-	DockingProtocolOP dp = new DockingProtocol();
+	DockingProtocolOP dp( new DockingProtocol() );
 
 	if ( option[ OptionKeys::docking::multibody ].user() ) {
 			utility::vector1< core::Size > const movable_jumps(

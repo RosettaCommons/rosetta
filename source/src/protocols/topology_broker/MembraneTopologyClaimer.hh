@@ -46,7 +46,7 @@ namespace protocols {
 
 			//clone
 			virtual TopologyClaimerOP clone() const {
-				return new MembraneTopologyClaimer( *this );
+				return TopologyClaimerOP( new MembraneTopologyClaimer( *this ) );
 			}
 
 			///@brief type() is specifying the output name of the TopologyClaimer

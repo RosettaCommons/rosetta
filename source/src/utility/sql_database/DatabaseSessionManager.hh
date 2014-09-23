@@ -53,7 +53,7 @@ public:
 		db_name_(""),
 		pq_schema_(""),
 		db_partition_(-1),
-		cur_transaction_(0),
+		cur_transaction_(/* 0 */),
 		chunk_size_(0),
 		transaction_counter_(0)
 	{

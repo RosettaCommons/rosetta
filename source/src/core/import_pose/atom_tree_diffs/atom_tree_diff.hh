@@ -39,8 +39,8 @@ namespace atom_tree_diffs {
 
 
 class AtomTreeDiff; // fwd declaration
-typedef utility::pointer::owning_ptr< AtomTreeDiff > AtomTreeDiffOP;
-typedef utility::pointer::owning_ptr< AtomTreeDiff const > AtomTreeDiffCOP;
+typedef utility::pointer::shared_ptr< AtomTreeDiff > AtomTreeDiffOP;
+typedef utility::pointer::shared_ptr< AtomTreeDiff const > AtomTreeDiffCOP;
 
 typedef std::pair<std::string, core::Real> ScorePair;
 typedef std::map< std::string, core::Real > Scores;

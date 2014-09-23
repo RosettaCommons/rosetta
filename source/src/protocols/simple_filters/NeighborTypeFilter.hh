@@ -41,10 +41,10 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	std::vector< core::Size > compute( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const {
-		return new NeighborTypeFilter( *this );
+		return filters::FilterOP( new NeighborTypeFilter( *this ) );
 	}
 	filters::FilterOP fresh_instance() const{
-		return new NeighborTypeFilter();
+		return filters::FilterOP( new NeighborTypeFilter() );
 	}
 	void clear() { residue_types_.clear(); }
 	virtual ~NeighborTypeFilter();

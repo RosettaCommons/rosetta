@@ -70,12 +70,12 @@ void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, c
 	using namespace core::scoring::constraints;
 
 	//kdrew: add constraint
-	HarmonicFuncOP harm_func  (new HarmonicFunc( distance, std ) );
-	HarmonicFuncOP harm_func_0  (new HarmonicFunc( 0, std ) );
-	CircularHarmonicFuncOP ang_func  (new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_2_over_3(), 0.02 ) );
-	CircularHarmonicFuncOP ang_func2 (new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_over_3(), 0.02 ) );
-	CircularHarmonicFuncOP dih_func  (new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) );
-	CircularHarmonicFuncOP dih_func_2  (new CircularHarmonicFunc( 0, 0.02 ) );
+	HarmonicFuncOP harm_func( new HarmonicFunc( distance, std ) );
+	HarmonicFuncOP harm_func_0( new HarmonicFunc( 0, std ) );
+	CircularHarmonicFuncOP ang_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_2_over_3(), 0.02 ) );
+	CircularHarmonicFuncOP ang_func2( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_over_3(), 0.02 ) );
+	CircularHarmonicFuncOP dih_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) );
+	CircularHarmonicFuncOP dih_func_2( new CircularHarmonicFunc( 0, 0.02 ) );
 																			 
 	AtomID aidCYH( pose.residue( hbs_pre_position ).atom_index("CYH"), hbs_pre_position );
 	AtomID aidHYH( pose.residue( hbs_pre_position ).atom_index("HYH"), hbs_pre_position );
@@ -86,14 +86,14 @@ void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, c
 	AtomID aidCY2( pose.residue( hbs_pre_position ).atom_index("CY2"), hbs_pre_position );
 	AtomID aidCY1( pose.residue( hbs_pre_position ).atom_index("CY1"), hbs_pre_position );
 
-	ConstraintCOP atompair = new AtomPairConstraint( aidCYH, aidCZH, harm_func );
-	ConstraintCOP atompair2 = new AtomPairConstraint( aidCYH, aidVYH, harm_func_0 );
-	ConstraintCOP atompair3 = new AtomPairConstraint( aidCZH, aidVZH, harm_func_0 );
+	ConstraintCOP atompair( new AtomPairConstraint( aidCYH, aidCZH, harm_func ) );
+	ConstraintCOP atompair2( new AtomPairConstraint( aidCYH, aidVYH, harm_func_0 ) );
+	ConstraintCOP atompair3( new AtomPairConstraint( aidCZH, aidVZH, harm_func_0 ) );
 	//ConstraintCOP angle = new AngleConstraint( aidCZH, aidCYH, aidCY2, ang_func2 );
-	ConstraintCOP angle = new AngleConstraint( aidCZH, aidCYH, aidCY2, ang_func );
+	ConstraintCOP angle( new AngleConstraint( aidCZH, aidCYH, aidCY2, ang_func ) );
 	//ConstraintCOP angle2 = new AngleConstraint( aidN, aidCZH, aidCYH, ang_func2 );
-	ConstraintCOP dihedral = new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, dih_func );
-	ConstraintCOP dihedral2 = new DihedralConstraint( aidN, aidCZH, aidCYH, aidHYH, dih_func_2 );
+	ConstraintCOP dihedral( new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, dih_func ) );
+	ConstraintCOP dihedral2( new DihedralConstraint( aidN, aidCZH, aidCYH, aidHYH, dih_func_2 ) );
 
 	pose.add_constraint( atompair );
 	pose.add_constraint( atompair2 );

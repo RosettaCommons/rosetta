@@ -207,7 +207,7 @@ Residue::~Residue() {}
 ResidueOP
 Residue::clone() const
 {
-	return new Residue( *this );
+	return ResidueOP( new Residue( *this ) );
 }
 
 

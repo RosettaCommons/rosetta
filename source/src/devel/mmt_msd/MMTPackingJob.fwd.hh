@@ -22,8 +22,8 @@ namespace mmt_msd {
 
 class MMTPackingJob;
 
-typedef utility::pointer::owning_ptr< MMTPackingJob > MMTPackingJobOP;
-typedef utility::pointer::owning_ptr< MMTPackingJob const > MMTPackingJobCOP;
+typedef utility::pointer::shared_ptr< MMTPackingJob > MMTPackingJobOP;
+typedef utility::pointer::shared_ptr< MMTPackingJob const > MMTPackingJobCOP;
 
 }
 }

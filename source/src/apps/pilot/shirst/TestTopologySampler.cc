@@ -122,8 +122,8 @@ using basic::options::option;
 	runtime_assert (option[in::file::spanfile].user());
 
 	//set up membrane topology
-	core::scoring::MembraneEmbedOP membrane_embed = new core::scoring::MembraneEmbed;
-	core::scoring::MembraneTopologyOP topology = new core::scoring::MembraneTopology;
+	core::scoring::MembraneEmbedOP membrane_embed( new core::scoring::MembraneEmbed );
+	core::scoring::MembraneTopologyOP topology( new core::scoring::MembraneTopology );
 	pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, topology );
 	pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED, membrane_embed);
 	topology->initialize(spanfile);

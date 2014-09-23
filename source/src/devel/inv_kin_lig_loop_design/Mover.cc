@@ -53,7 +53,7 @@ namespace inv_kin_lig_loop_design {
 
 Mover::Mover(core::pose::Pose* pose) :
 	pose(pose),
-	scratch_( new core::pack::dunbrack::RotamerLibraryScratchSpace )
+	scratch_( core::pack::dunbrack::RotamerLibraryScratchSpaceOP( new core::pack::dunbrack::RotamerLibraryScratchSpace ) )
 {} // Mover::Mover
 
 /// @details DANGER DANGER DANGER Pose is not deallocated
@@ -175,7 +175,7 @@ Mover::~Mover()
 			if( ! rotamer_library ) return;
 
 			core::pack::dunbrack::SingleResidueDunbrackLibraryCOP dun_rotlib =
-				dynamic_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const* >( rotamer_library.get() );
+				utility::pointer::dynamic_pointer_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const > ( rotamer_library );
 			//assert( dun_rotlib ); // WHOA! Where's the guarantee here?
 			if ( ! dun_rotlib ) return; // Is this right? maybe we would want random rotamers for ligands?
 

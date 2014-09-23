@@ -22,8 +22,8 @@ namespace util {
 
 class ABEGOManager;
 
-typedef utility::pointer::owning_ptr<ABEGOManager> ABEGOManagerOP;
-typedef utility::pointer::owning_ptr<ABEGOManager const> ABEGOManagerCOP;
+typedef utility::pointer::shared_ptr<ABEGOManager> ABEGOManagerOP;
+typedef utility::pointer::shared_ptr<ABEGOManager const> ABEGOManagerCOP;
 
 } // namespace util
 } // namespace core

@@ -25,7 +25,7 @@ namespace protocols {
 namespace surface_docking {
 
 class CentroidRelaxMover;
-typedef utility::pointer::owning_ptr< CentroidRelaxMover > CentroidRelaxMoverOP;
+typedef utility::pointer::shared_ptr< CentroidRelaxMover > CentroidRelaxMoverOP;
 
 }
 }

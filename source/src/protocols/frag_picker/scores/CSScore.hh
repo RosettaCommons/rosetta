@@ -39,8 +39,8 @@ typedef utility::vector1<utility::vector1<Real> > Matrix;
 
 	//typedef utility::vector1<utility::vector1<std::pair<Real,Real> > > Score_Matrix;
 class CSScore;
-typedef utility::pointer::owning_ptr< CSScore > CSScoreOP;
-typedef utility::pointer::owning_ptr< CSScore const > CSScoreCOP;
+typedef utility::pointer::shared_ptr< CSScore > CSScoreOP;
+typedef utility::pointer::shared_ptr< CSScore const > CSScoreCOP;
 
 
 /// @brief  scores a fragment by the root mean square deviation of Phi and Psi angles.

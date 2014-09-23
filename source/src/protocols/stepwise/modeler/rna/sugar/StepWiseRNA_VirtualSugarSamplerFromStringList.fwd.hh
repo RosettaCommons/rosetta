@@ -25,8 +25,8 @@ namespace rna {
 namespace sugar {
 	
 	class StepWiseRNA_VirtualSugarSamplerFromStringList;
-	typedef utility::pointer::owning_ptr< StepWiseRNA_VirtualSugarSamplerFromStringList > StepWiseRNA_VirtualSugarSamplerFromStringListOP;
-	typedef utility::pointer::owning_ptr< StepWiseRNA_VirtualSugarSamplerFromStringList const > StepWiseRNA_VirtualSugarSamplerFromStringListCOP;
+	typedef utility::pointer::shared_ptr< StepWiseRNA_VirtualSugarSamplerFromStringList > StepWiseRNA_VirtualSugarSamplerFromStringListOP;
+	typedef utility::pointer::shared_ptr< StepWiseRNA_VirtualSugarSamplerFromStringList const > StepWiseRNA_VirtualSugarSamplerFromStringListCOP;
 	
 } //sugar
 } //rna

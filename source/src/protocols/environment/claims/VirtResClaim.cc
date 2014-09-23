@@ -144,7 +144,7 @@ void VirtResClaim::strength( ControlStrength const& c_str, ControlStrength const
 }
 
 EnvClaimOP VirtResClaim::clone() const {
-  return new VirtResClaim( *this );
+  return EnvClaimOP( new VirtResClaim( *this ) );
 }
 
 std::string const& VirtResClaim::vrt_label() const {

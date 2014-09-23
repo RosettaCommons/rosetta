@@ -23,8 +23,8 @@ namespace core {
 namespace environment {
 
 class SequenceAnnotation;
-typedef utility::pointer::owning_ptr< SequenceAnnotation > SequenceAnnotationOP;
-typedef utility::pointer::owning_ptr< SequenceAnnotation const > SequenceAnnotationCOP;
+typedef utility::pointer::shared_ptr< SequenceAnnotation > SequenceAnnotationOP;
+typedef utility::pointer::shared_ptr< SequenceAnnotation const > SequenceAnnotationCOP;
 
 
 

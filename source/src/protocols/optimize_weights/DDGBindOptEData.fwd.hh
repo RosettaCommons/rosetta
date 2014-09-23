@@ -21,7 +21,7 @@ namespace protocols {
 namespace optimize_weights {
 
 class DDGBindOptEData;
-typedef utility::pointer::owning_ptr< DDGBindOptEData > DDGBindOptEDataOP;
+typedef utility::pointer::shared_ptr< DDGBindOptEData > DDGBindOptEDataOP;
 
 
 } // namespace optimize_weights

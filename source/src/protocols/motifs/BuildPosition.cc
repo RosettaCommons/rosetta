@@ -37,9 +37,9 @@ BuildPosition::BuildPosition(
 ) : seqpos_( seqpos ),
 		target_positions_( target_positions ),
 		allowed_types_(),
-		best_rotamers_(0),
-		best_motifs_(0),
-		best_motifhits_(0)
+		best_rotamers_(/* 0 */),
+		best_motifs_(/* 0 */),
+		best_motifhits_(/* 0 */)
 {}
 
 
@@ -50,9 +50,9 @@ BuildPosition::BuildPosition(
 ) : seqpos_( seqpos ),
 		target_positions_( target_positions ),
 		allowed_types_( allowed_types ),
-		best_rotamers_(0),
-		best_motifs_(0),
-		best_motifhits_(0)
+		best_rotamers_(/* 0 */),
+		best_motifs_(/* 0 */),
+		best_motifhits_(/* 0 */)
 {}
 
 BuildPosition::~BuildPosition()
@@ -71,7 +71,7 @@ BuildPosition::BuildPosition( BuildPosition const & src ) :
 BuildPositionOP
 BuildPosition::clone() const
 {
-	return new BuildPosition(*this);
+	return BuildPositionOP( new BuildPosition(*this) );
 }
 
 void

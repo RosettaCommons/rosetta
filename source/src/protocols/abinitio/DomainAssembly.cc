@@ -63,7 +63,7 @@ DomainAssemblyCreator::keyname() const
 
 protocols::moves::MoverOP
 DomainAssemblyCreator::create_mover() const {
-	return new DomainAssembly;
+	return protocols::moves::MoverOP( new DomainAssembly );
 }
 
 std::string
@@ -114,7 +114,7 @@ DomainAssembly::apply( core::pose::Pose & pose )
 		return;
 	}
 
-	core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap();
+	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap() );
 	mm->set_bb( false );
 	for( core::Size i=linker_start_; i<=linker_end_; ++i ) mm->set_bb( i, true );
 /* //The following code only makes sense if we do 'blind' prediction stuff. In all cases where we have a starting structure,

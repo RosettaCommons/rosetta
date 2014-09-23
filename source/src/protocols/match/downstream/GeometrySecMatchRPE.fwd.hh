@@ -24,24 +24,24 @@ namespace match {
 namespace downstream {
 
 class AtomGeometrySecMatchRPE;
-typedef utility::pointer::owning_ptr< AtomGeometrySecMatchRPE > AtomGeometrySecMatchRPEOP;
-typedef utility::pointer::owning_ptr< AtomGeometrySecMatchRPE const > AtomGeometrySecMatchRPECOP;
+typedef utility::pointer::shared_ptr< AtomGeometrySecMatchRPE > AtomGeometrySecMatchRPEOP;
+typedef utility::pointer::shared_ptr< AtomGeometrySecMatchRPE const > AtomGeometrySecMatchRPECOP;
 
 class AtomDistanceSecMatchRPE;
-typedef utility::pointer::owning_ptr< AtomDistanceSecMatchRPE > AtomDistanceSecMatchRPEOP;
-typedef utility::pointer::owning_ptr< AtomDistanceSecMatchRPE const > AtomDistanceSecMatchRPECOP;
+typedef utility::pointer::shared_ptr< AtomDistanceSecMatchRPE > AtomDistanceSecMatchRPEOP;
+typedef utility::pointer::shared_ptr< AtomDistanceSecMatchRPE const > AtomDistanceSecMatchRPECOP;
 
 class AtomAngleSecMatchRPE;
-typedef utility::pointer::owning_ptr< AtomAngleSecMatchRPE > AtomAngleSecMatchRPEOP;
-typedef utility::pointer::owning_ptr< AtomAngleSecMatchRPE const > AtomAngleSecMatchRPECOP;
+typedef utility::pointer::shared_ptr< AtomAngleSecMatchRPE > AtomAngleSecMatchRPEOP;
+typedef utility::pointer::shared_ptr< AtomAngleSecMatchRPE const > AtomAngleSecMatchRPECOP;
 
 class AtomDihedralSecMatchRPE;
-typedef utility::pointer::owning_ptr< AtomDihedralSecMatchRPE > AtomDihedralSecMatchRPEOP;
-typedef utility::pointer::owning_ptr< AtomDihedralSecMatchRPE const > AtomDihedralSecMatchRPECOP;
+typedef utility::pointer::shared_ptr< AtomDihedralSecMatchRPE > AtomDihedralSecMatchRPEOP;
+typedef utility::pointer::shared_ptr< AtomDihedralSecMatchRPE const > AtomDihedralSecMatchRPECOP;
 
 class GeometrySecMatchRPE;
-typedef utility::pointer::owning_ptr< GeometrySecMatchRPE > GeometrySecMatchRPEOP;
-typedef utility::pointer::owning_ptr< GeometrySecMatchRPE const > GeometrySecMatchRPECOP;
+typedef utility::pointer::shared_ptr< GeometrySecMatchRPE > GeometrySecMatchRPEOP;
+typedef utility::pointer::shared_ptr< GeometrySecMatchRPE const > GeometrySecMatchRPECOP;
 
 
 }

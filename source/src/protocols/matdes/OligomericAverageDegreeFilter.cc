@@ -59,7 +59,7 @@ namespace matdes {
 
 // @brief default constructor
 OligomericAverageDegreeFilter::OligomericAverageDegreeFilter():
-  task_factory_( NULL ),
+  task_factory_( /* NULL */ ),
   threshold_( 0 ),
   distance_threshold_( 10.0 ),
 	jump_set_( false ),
@@ -97,12 +97,12 @@ OligomericAverageDegreeFilter::~OligomericAverageDegreeFilter() {}
 
 protocols::filters::FilterOP
 OligomericAverageDegreeFilter::fresh_instance() const{
-  return new OligomericAverageDegreeFilter();
+  return protocols::filters::FilterOP( new OligomericAverageDegreeFilter() );
 }
 
 protocols::filters::FilterOP
 OligomericAverageDegreeFilter::clone() const{
-  return new OligomericAverageDegreeFilter( *this );
+  return protocols::filters::FilterOP( new OligomericAverageDegreeFilter( *this ) );
 }
 
 // @brief getters
@@ -296,7 +296,7 @@ OligomericAverageDegreeFilter::report( std::ostream & out, core::pose::Pose cons
 }
 
 protocols::filters::FilterOP
-OligomericAverageDegreeFilterCreator::create_filter() const { return new OligomericAverageDegreeFilter; }
+OligomericAverageDegreeFilterCreator::create_filter() const { return protocols::filters::FilterOP( new OligomericAverageDegreeFilter ); }
 
 std::string
 OligomericAverageDegreeFilterCreator::keyname() const { return "OligomericAverageDegree"; }

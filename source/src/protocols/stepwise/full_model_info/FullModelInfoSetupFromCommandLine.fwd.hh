@@ -23,8 +23,8 @@ namespace stepwise {
 namespace full_model_info {
 	
 	class FullModelInfoSetupFromCommandLine;
-	typedef utility::pointer::owning_ptr< FullModelInfoSetupFromCommandLine > FullModelInfoSetupFromCommandLineOP;
-	typedef utility::pointer::owning_ptr< FullModelInfoSetupFromCommandLine const > FullModelInfoSetupFromCommandLineCOP;
+	typedef utility::pointer::shared_ptr< FullModelInfoSetupFromCommandLine > FullModelInfoSetupFromCommandLineOP;
+	typedef utility::pointer::shared_ptr< FullModelInfoSetupFromCommandLine const > FullModelInfoSetupFromCommandLineCOP;
 	
 } //full_model_info
 } //stepwise

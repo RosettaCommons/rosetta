@@ -24,8 +24,8 @@ namespace methods {
 
 class EnergyMethodCreator;
 
-typedef utility::pointer::owning_ptr< EnergyMethodCreator > EnergyMethodCreatorOP;
-typedef utility::pointer::owning_ptr< EnergyMethodCreator const > EnergyMethodCreatorCOP;
+typedef utility::pointer::shared_ptr< EnergyMethodCreator > EnergyMethodCreatorOP;
+typedef utility::pointer::shared_ptr< EnergyMethodCreator const > EnergyMethodCreatorCOP;
 
 }
 }

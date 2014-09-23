@@ -148,7 +148,7 @@ LoopMoverFactory::create_loop_mover(
 	}
 
 	tr.Trace << "generate LoopMover of type " << type_name << std::endl;
-	loop_mover::LoopMoverOP loop_mover( dynamic_cast<loop_mover::LoopMover *>((moves::MoverFactory::get_instance()->newMover(type_name)).get()));
+	loop_mover::LoopMoverOP loop_mover( utility::pointer::dynamic_pointer_cast< loop_mover::LoopMover > ( (moves::MoverFactory::get_instance()->newMover(type_name)) ));
 	if(!loop_mover){
 		stringstream error_msg;
 		error_msg

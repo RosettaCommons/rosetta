@@ -23,8 +23,8 @@ namespace stepwise {
 namespace modeler {
 	
 	class StepWiseModeler;
-	typedef utility::pointer::owning_ptr< StepWiseModeler > StepWiseModelerOP;
-	typedef utility::pointer::owning_ptr< StepWiseModeler const > StepWiseModelerCOP;
+	typedef utility::pointer::shared_ptr< StepWiseModeler > StepWiseModelerOP;
+	typedef utility::pointer::shared_ptr< StepWiseModeler const > StepWiseModelerCOP;
 	
 } //modeler
 } //stepwise

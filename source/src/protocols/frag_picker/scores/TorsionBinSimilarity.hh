@@ -34,8 +34,8 @@ namespace scores {
 typedef utility::vector1< utility::vector1 < Real > > Matrix;
 
 class TorsionBinSimilarity;
-typedef utility::pointer::owning_ptr< TorsionBinSimilarity > TorsionBinSimilarityOP;
-typedef utility::pointer::owning_ptr< TorsionBinSimilarity const > TorsionBinSimilarityCOP;
+typedef utility::pointer::shared_ptr< TorsionBinSimilarity > TorsionBinSimilarityOP;
+typedef utility::pointer::shared_ptr< TorsionBinSimilarity const > TorsionBinSimilarityCOP;
 
 /// @brief scores a fragment by torsion bin similarity
 class TorsionBinSimilarity: public CachingScoringMethod {

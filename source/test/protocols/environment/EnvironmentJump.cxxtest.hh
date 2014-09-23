@@ -73,9 +73,9 @@ public:
     core::pose::make_pose_from_sequence(pose, "FRIENDLYFRIENDS", "fa_standard");
 
     set_jump_ = &core::pose::Pose::set_jump;
-    standard_claim_ = new claims::JumpClaim( NULL, "claimed_jump",
+    standard_claim_ = protocols::environment::claims::JumpClaimOP( new claims::JumpClaim( NULL, "claimed_jump",
                                              LocalPosition( "BASE", JUMP_START ),
-                                             LocalPosition( "BASE", JUMP_END ) );
+                                             LocalPosition( "BASE", JUMP_END ) ) );
     standard_claim_->strength( claims::MUST_CONTROL, claims::DOES_NOT_CONTROL );
   }
 
@@ -90,20 +90,20 @@ public:
     using namespace protocols::environment::claims;
     using namespace core::environment;
 
-    TesterOP allowed_mover = new Tester;
+    TesterOP allowed_mover( new Tester );
     allowed_mover->init( protocols::environment::claims::EnvClaimOP( new JumpClaim( *standard_claim_ ) ) );
 
-    TesterOP duplicate_claim_mover = new Tester;
+    TesterOP duplicate_claim_mover( new Tester );
     duplicate_claim_mover->init( protocols::environment::claims::EnvClaimOP( new JumpClaim( *standard_claim_ ) ) );
     
-    TesterOP no_claim_mover = new Tester;
+    TesterOP no_claim_mover( new Tester );
 
-    TesterOP unreg_mover = new Tester;
+    TesterOP unreg_mover( new Tester );
     unreg_mover->init( protocols::environment::claims::EnvClaimOP( new JumpClaim( *standard_claim_ ) ) );
 
     static_cast< JumpClaim* >( duplicate_claim_mover->claim().get() )->cut( core::environment::LocalPosition( "BASE", CUT_POS ) );
 
-    EnvironmentOP env_op = new Environment( "env" );
+    EnvironmentOP env_op( new Environment( "env" ) );
     Environment & env = *env_op;
 
     env.auto_cut( true );
@@ -172,10 +172,10 @@ public:
     using namespace protocols::environment::claims;
     using namespace core::environment;
 
-    TesterOP allowed_mover = new Tester;
+    TesterOP allowed_mover( new Tester );
     allowed_mover->init( protocols::environment::claims::EnvClaimOP( new JumpClaim(*standard_claim_ ) ) );
 
-    EnvironmentOP env_op = new Environment( "env" );
+    EnvironmentOP env_op( new Environment( "env" ) );
     Environment & env = *env_op;
 
     env.register_mover( allowed_mover );
@@ -214,10 +214,10 @@ public:
     new_fts.insert_jump( 1, pose.total_residue() );
     pose.fold_tree( *new_fts.render() );
 
-    TesterOP allowed_mover = new Tester;
+    TesterOP allowed_mover( new Tester );
     allowed_mover->init( protocols::environment::claims::EnvClaimOP( new JumpClaim( *standard_claim_ ) ) );
 
-    EnvironmentOP env_op = new Environment( "env" );
+    EnvironmentOP env_op( new Environment( "env" ) );
     Environment & env = *env_op;
     env.inherit_cuts( false );
 
@@ -262,7 +262,7 @@ public:
     core::pose::Pose protected_pose;
     core::pose::Pose final_pose;
 
-    EnvironmentOP env_op = new Environment( "env" );
+    EnvironmentOP env_op( new Environment( "env" ) );
     Environment & env = *env_op;
 
     TS_ASSERT_THROWS_NOTHING( protected_pose = env.start( pose ) );
@@ -276,11 +276,11 @@ public:
   }
 
   void test_pdb_info_persistence() {
-    core::pose::PDBInfoOP info = new core::pose::PDBInfo( pose.total_residue() );
+    core::pose::PDBInfoOP info( new core::pose::PDBInfo( pose.total_residue() ) );
     info->set_chains( 'A' );
     pose.pdb_info( info );
 
-    EnvironmentOP env_op = new Environment( "env" );
+    EnvironmentOP env_op( new Environment( "env" ) );
     Environment & env = *env_op;
 
     core::pose::Pose protected_pose;
@@ -299,10 +299,10 @@ public:
     using namespace protocols::environment;
     using namespace protocols::environment::claims;
 
-    core::pack::task::residue_selector::ChainSelectorOP chA_sele = new core::pack::task::residue_selector::ChainSelector();
+    core::pack::task::residue_selector::ChainSelectorOP chA_sele( new core::pack::task::residue_selector::ChainSelector() );
     chA_sele->set_chain_strings( utility::vector1< std::string >( 1, "1" ) );
 
-    core::pack::task::residue_selector::ChainSelectorOP chB_sele = new core::pack::task::residue_selector::ChainSelector();
+    core::pack::task::residue_selector::ChainSelectorOP chB_sele( new core::pack::task::residue_selector::ChainSelector() );
     chB_sele->set_chain_strings( utility::vector1< std::string >( 1, "2" ) );
 
     basic::datacache::DataMap datamap;
@@ -311,10 +311,10 @@ public:
 
     std::string const tag_string = "<JumpClaim jump_label=\"labelA\" control_strength=CAN_CONTROL position1=\"ChainA,5\" position2=\"ChainB,5\" />";
     std::stringstream ss( tag_string );
-    utility::tag::TagPtr tag = new utility::tag::Tag;
+    utility::tag::TagPtr tag( new utility::tag::Tag );
     tag->read( ss );
 
-    TesterOP tester = new Tester();
+    TesterOP tester( new Tester() );
     tester->claim( EnvClaim::make_claim( tag->getName(), tester, tag, datamap ) );
     protocols::environment::Environment env( "test" );
     env.register_mover( tester );

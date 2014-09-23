@@ -29,7 +29,7 @@ namespace conformation {
 
 typedef graph::UpperEdgeGraph< PointGraphVertexData, PointGraphEdgeData > PointGraph;
 
-typedef utility::pointer::owning_ptr< PointGraph > PointGraphOP;
+typedef utility::pointer::shared_ptr< PointGraph > PointGraphOP;
 
 } // namespace conformation
 } // namespace core

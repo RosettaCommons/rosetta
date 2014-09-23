@@ -28,8 +28,8 @@ namespace abinitio {
 class FragmentSampler;
 
 // Types
-typedef  utility::pointer::owning_ptr< FragmentSampler >  FragmentSamplerOP;
-typedef  utility::pointer::owning_ptr< FragmentSampler const >  FragmentSamplerCOP;
+typedef  utility::pointer::shared_ptr< FragmentSampler >  FragmentSamplerOP;
+typedef  utility::pointer::shared_ptr< FragmentSampler const >  FragmentSamplerCOP;
 
 enum StageID {
 		ALL_STAGES = 0, //don't change!

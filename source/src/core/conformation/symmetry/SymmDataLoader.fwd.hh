@@ -21,8 +21,8 @@ namespace conformation {
 namespace symmetry {
 
 class SymmDataLoader;
-typedef utility::pointer::owning_ptr< SymmDataLoader > SymmDataLoaderOP;
-typedef utility::pointer::owning_ptr< SymmDataLoader const > SymmDataLoaderCOP;
+typedef utility::pointer::shared_ptr< SymmDataLoader > SymmDataLoaderOP;
+typedef utility::pointer::shared_ptr< SymmDataLoader const > SymmDataLoaderCOP;
 
 } // namespace
 } // namespace

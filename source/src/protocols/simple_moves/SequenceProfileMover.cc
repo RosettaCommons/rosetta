@@ -57,7 +57,7 @@ SequenceProfileMover::apply( core::pose::Pose & pose )
 {
     using namespace core::sequence;
 
-    SequenceProfileOP profile = new SequenceProfile;
+    SequenceProfileOP profile( new SequenceProfile );
     profile->read_from_checkpoint( cst_file_name_ );
     for( core::Size seqpos( 1 ), end( pose.total_residue() ); seqpos <= end; ++seqpos )
         pose.add_constraint( core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile ) ) );
@@ -114,7 +114,7 @@ SequenceProfileMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 SequenceProfileMoverCreator::create_mover() const {
-	return new SequenceProfileMover;
+	return protocols::moves::MoverOP( new SequenceProfileMover );
 }
 
 std::string

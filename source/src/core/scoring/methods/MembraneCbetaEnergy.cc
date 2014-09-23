@@ -51,7 +51,7 @@ methods::EnergyMethodOP
 MembraneCbetaEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new MembraneCbetaEnergy;
+	return methods::EnergyMethodOP( new MembraneCbetaEnergy );
 }
 
 ScoreTypes
@@ -73,7 +73,7 @@ MembraneCbetaEnergy::MembraneCbetaEnergy() :
 EnergyMethodOP
 MembraneCbetaEnergy::clone() const
 {
-	return new MembraneCbetaEnergy;
+	return EnergyMethodOP( new MembraneCbetaEnergy );
 }
 
 
@@ -152,7 +152,7 @@ MembraneTopology const &
 MembraneCbetaEnergy::MembraneTopology_from_pose( pose::Pose const & pose ) const
 {
 	//using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
-	return *( static_cast< MembraneTopology const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY )() ));
+	return *( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
 }
 core::Size
 MembraneCbetaEnergy::version() const

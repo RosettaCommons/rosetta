@@ -65,7 +65,7 @@ public:
 		LigandDockProtocol()
 	{
 		if( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
-			native_ = new core::pose::Pose();
+			native_ = core::pose::PoseOP( new core::pose::Pose() );
 			core::import_pose::pose_from_pdb( *native_, basic::options::option[ basic::options::OptionKeys::in::file::native ]().name() );
 		}
 
@@ -73,7 +73,7 @@ public:
 			//we need the residue type set, assuming FA standard is used
 			core::chemical::ResidueTypeSetCAP restype_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 			basic::options::option[ basic::options::OptionKeys::run::preserve_header ].value(true);
-			constraints_ = new protocols::toolbox::match_enzdes_util::EnzConstraintIO( restype_set );
+			constraints_ = protocols::toolbox::match_enzdes_util::EnzConstraintIOOP( new protocols::toolbox::match_enzdes_util::EnzConstraintIO( restype_set ) );
 			constraints_->read_enzyme_cstfile( basic::options::option[ basic::options::OptionKeys::enzdes::cstfile ] );
 
 			core::scoring::ScoreFunctionOP scorefunc = this->get_scorefxn();
@@ -139,7 +139,7 @@ public:
 	virtual
 	protocols::moves::MoverOP
 	fresh_instance() const {
-		return new LigandDockMain;
+		return protocols::moves::MoverOP( new LigandDockMain );
 	}
 
 	virtual
@@ -156,7 +156,7 @@ private:
 	protocols::toolbox::match_enzdes_util::EnzConstraintIOOP constraints_;
 };
 
-typedef utility::pointer::owning_ptr< LigandDockMain > LigandDockMainOP;
+typedef utility::pointer::shared_ptr< LigandDockMain > LigandDockMainOP;
 
 } //namespace ligand_docking
 } //namespace protocols
@@ -181,7 +181,7 @@ ligand_dock_main()
 	}
 
  	protocols::jd2::JobOutputterOP 	job_outputter(protocols::jd2::JobDistributor::get_instance()->job_outputter());
-	protocols::jd2::AtomTreeDiffJobOutputterOP atd_outputter( dynamic_cast< protocols::jd2::AtomTreeDiffJobOutputter * >( job_outputter() ) );
+	protocols::jd2::AtomTreeDiffJobOutputterOP atd_outputter( utility::pointer::dynamic_pointer_cast< protocols::jd2::AtomTreeDiffJobOutputter > ( job_outputter ) );
 	if ( atd_outputter ) {
 		atd_outputter->use_input_for_ref(true); // match original ligand_dock application
 	}

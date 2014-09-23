@@ -108,7 +108,7 @@ class Splice : public protocols::moves::Mover
 public:
 	typedef core::pose::Pose Pose;
 	typedef utility::vector1< ResidueBBDofs >::const_iterator dbase_const_iterator;
-	typedef utility::pointer::owning_ptr< basic::datacache::DataMapObj< bool > > DataccacheBoolDataOP;
+	typedef utility::pointer::shared_ptr< basic::datacache::DataMapObj< bool > > DataccacheBoolDataOP;
 public:
 	Splice();
 	void apply( Pose & pose );
@@ -331,7 +331,7 @@ private:
 	// This residue is expected to be within the loop span, and allows the loop to be refined while keeping the rigid
 	// body jump between the two chains; it's a only ostensibly a vector, as it has to be compatible with placestub,
 	// but it only looks at the first element of that vector
-	utility::pointer::owning_ptr< basic::datacache::DataMapObj < utility::vector1< core::Size > > > locked_res_;
+	utility::pointer::shared_ptr< basic::datacache::DataMapObj < utility::vector1< core::Size > > > locked_res_;
 
 	char locked_res_id_; // dflt ''; the one-letter code for the locked residue
 
@@ -346,7 +346,7 @@ private:
 	std::string loop_pdb_source_;
 
 	// dflt NULL; to communicate the current Splice mover's loop origin to the GenericMC
-	utility::pointer::owning_ptr< basic::datacache::DataMapObj< std::string > > mover_tag_;
+	utility::pointer::shared_ptr< basic::datacache::DataMapObj< std::string > > mover_tag_;
 
 	protocols::filters::FilterOP splice_filter_;
 	std::string Pdb4LetName_;

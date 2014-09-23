@@ -24,9 +24,9 @@ namespace hbonds {
 
 class HBondEnergy;
 
-typedef utility::pointer::owning_ptr< HBondEnergy > HBondEnergyOP;
-typedef utility::pointer::owning_ptr< HBondEnergy const > HBondEnergyCOP;
-typedef utility::pointer::owning_ptr< HBondEnergy const > HBondEnergyCAP;
+typedef utility::pointer::shared_ptr< HBondEnergy > HBondEnergyOP;
+typedef utility::pointer::shared_ptr< HBondEnergy const > HBondEnergyCOP;
+typedef utility::pointer::shared_ptr< HBondEnergy const > HBondEnergyCAP;
 
 } // hbonds
 } // scoring

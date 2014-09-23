@@ -163,7 +163,7 @@ CanonicalSamplingMover::CanonicalSamplingMover():
   Mover("CanonicalSamplingMover"),
   mc_(),
   sfxn_(),
-  randmove_(new protocols::moves::RandomMover()),
+  randmove_(moves::RandomMoverOP( new protocols::moves::RandomMover() )),
   pool_rms_(),
   interval_posedump_(100),
   interval_transitiondump_(100),
@@ -185,9 +185,9 @@ CanonicalSamplingMover::CanonicalSamplingMover(
   int ntrial
 ):
   Mover("CanonicalSamplingMover"),
-  mc_(new protocols::moves::MonteCarlo( *sfxn, basic::options::option[ basic::options::OptionKeys::canonical_sampling::sampling::mc_kt ]() ) ),
+  mc_(protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( *sfxn, basic::options::option[ basic::options::OptionKeys::canonical_sampling::sampling::mc_kt ]() ) ) ),
   sfxn_(sfxn),
-  randmove_(new protocols::moves::RandomMover()),
+  randmove_(moves::RandomMoverOP( new protocols::moves::RandomMover() )),
   pool_rms_(ptr),
   interval_posedump_(1000),
   interval_transitiondump_(100),
@@ -288,7 +288,7 @@ CanonicalSamplingMover::periodic_range(
 void CanonicalSamplingMover::ntrials(int ntrials) {ntrials_ = ntrials;}
 
 void CanonicalSamplingMover::set_temp(core::Real temperature) {
-  mc_ = new protocols::moves::MonteCarlo(*sfxn_, temperature);
+  mc_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo(*sfxn_, temperature) );
   temperature_ = temperature;
 }
 
@@ -328,11 +328,11 @@ void CanonicalSamplingMover::setup_constraints( core::pose::Pose & pose ){
       if( CA_dist < CA_cutoff ){
 		core::scoring::func::FuncOP f( new core::scoring::func::HarmonicFunc( CA_dist, cst_tol ) );
         pose.add_constraint(
-	      new core::scoring::constraints::AtomPairConstraint(
+	      scoring::constraints::ConstraintCOP( new core::scoring::constraints::AtomPairConstraint(
 	        core::id::AtomID(pose.residue(itr_res_i).atom_index(" CA "),itr_res_i),
 	        core::id::AtomID(pose.residue(itr_res_j).atom_index(" CA "),itr_res_j),
 	        f
-	      )
+	      ) )
         );
       }
     }
@@ -605,9 +605,9 @@ CanonicalSamplingMover::apply(Pose & pose){
   bool constrain_structure = false;
 
   if( ramp_temperature_ ){
-    mc_ = new protocols::moves::MonteCarlo( *sfxn_, starting_temp );
+    mc_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( *sfxn_, starting_temp ) );
   }else{
-    mc_ = new protocols::moves::MonteCarlo( *sfxn_, ending_temp );
+    mc_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( *sfxn_, ending_temp ) );
   }
 
   /**

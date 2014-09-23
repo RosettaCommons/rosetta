@@ -30,7 +30,7 @@ std::string AddJobPairDataCreator::keyname() const
 
 moves::MoverOP AddJobPairDataCreator::create_mover() const
 {
-	return new AddJobPairData;
+	return moves::MoverOP( new AddJobPairData );
 }
 
 std::string AddJobPairDataCreator::mover_name()
@@ -109,12 +109,12 @@ std::string AddJobPairData::get_name() const
 
 moves::MoverOP AddJobPairData::clone() const
 {
-	return new AddJobPairData(*this);
+	return moves::MoverOP( new AddJobPairData(*this) );
 }
 
 moves::MoverOP AddJobPairData::fresh_instance() const
 {
-	return new AddJobPairData;
+	return moves::MoverOP( new AddJobPairData );
 }
 
 void AddJobPairData::parse_my_tag(

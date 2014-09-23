@@ -63,7 +63,7 @@ ShoveResidueMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 ShoveResidueMoverCreator::create_mover() const {
-	return new ShoveResidueMover;
+	return protocols::moves::MoverOP( new ShoveResidueMover );
 }
 
 std::string

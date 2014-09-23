@@ -87,13 +87,13 @@ std::string SnugDock::get_name() const {
 //@brief clone operator, calls the copy constructor
 protocols::moves::MoverOP
 SnugDock::clone() const {
-	return new SnugDock( *this );
+	return protocols::moves::MoverOP( new SnugDock( *this ) );
 }
 
 ///@brief fresh_instance returns a default-constructed object for JD2
 protocols::moves::MoverOP
 SnugDock::fresh_instance() const {
-	return new SnugDock();
+	return protocols::moves::MoverOP( new SnugDock() );
 }
 
 ///@brief This mover retains state such that a fresh version is needed if the input Pose is about to change
@@ -170,14 +170,14 @@ void SnugDock::setup_objects( Pose const & pose ) {
 
 	/// AntibodyInfo is used to store information about the Ab-Ag complex and to generate useful helper objects based on
 	/// that information (e.g. the various FoldTrees that are needed for SnugDock).
-	if ( ! antibody_info_ ) antibody_info_ = new AntibodyInfo( pose );
+	if ( ! antibody_info_ ) antibody_info_ = AntibodyInfoOP( new AntibodyInfo( pose ) );
 
 	///
-	pre_minimization_ = new CDRsMinPackMin( antibody_info_ );
+	pre_minimization_ = antibody::CDRsMinPackMinOP( new CDRsMinPackMin( antibody_info_ ) );
 
 
 	/// A vanilla DockMCMCycle can be used because AntibodyInfo will always make the first jump in the FoldTree dockable.
-	DockMCMCycleOP standard_dock_cycle = new DockMCMCycle;
+	DockMCMCycleOP standard_dock_cycle( new DockMCMCycle );
 
 	/// Set a default docking task factory to the DockMCMCycle.
 	/// The DockingHighRes base class provides a mechanism to do this.
@@ -188,26 +188,26 @@ void SnugDock::setup_objects( Pose const & pose ) {
 	/// All movers in the high resolution step will share this MonteCarlo instance to provide consistent results.
 	mc_ = standard_dock_cycle->get_mc();
 
-	ChangeFoldTreeMoverOP set_foldtree_for_ab_ag_docking = new ChangeFoldTreeMover(
+	ChangeFoldTreeMoverOP set_foldtree_for_ab_ag_docking( new ChangeFoldTreeMover(
 	    antibody_info_->get_FoldTree_LH_A( pose )
-	);
-	ChangeFoldTreeMoverOP set_foldtree_for_vH_vL_docking = new ChangeFoldTreeMover(
+	) );
+	ChangeFoldTreeMoverOP set_foldtree_for_vH_vL_docking( new ChangeFoldTreeMover(
 	    antibody_info_->get_FoldTree_L_HA( pose )
-	);
+	) );
 
-	SequenceMoverOP antibody_antigen_dock_cycle = new SequenceMover(
+	SequenceMoverOP antibody_antigen_dock_cycle( new SequenceMover(
 	    set_foldtree_for_ab_ag_docking,
 	    standard_dock_cycle
-	);
+	) );
 
-	SequenceMoverOP vH_vL_dock_cycle = new SequenceMover(
+	SequenceMoverOP vH_vL_dock_cycle( new SequenceMover(
 	    set_foldtree_for_vH_vL_docking,
 	    standard_dock_cycle
-	);
+	) );
 
 	/// TODO: Does CDRsMinPackMin need a TaskFactory to be set?  Does it get this from AntibodyInfo?
-	CDRsMinPackMinOP minimize_all_cdr_loops_base = new CDRsMinPackMin( antibody_info_ );
-	TrialMoverOP minimize_all_cdr_loops = new TrialMover( minimize_all_cdr_loops_base, mc_ );
+	CDRsMinPackMinOP minimize_all_cdr_loops_base( new CDRsMinPackMin( antibody_info_ ) );
+	TrialMoverOP minimize_all_cdr_loops( new TrialMover( minimize_all_cdr_loops_base, mc_ ) );
 
 	/// FIXME: The chain break weight configuration and constraint weight should be handled by RefineOneCDRLoop.
 	ScoreFunctionOP high_res_loop_refinement_scorefxn = scorefxn_pack()->clone();
@@ -215,19 +215,19 @@ void SnugDock::setup_objects( Pose const & pose ) {
 	high_res_loop_refinement_scorefxn->set_weight( scoring::overlap_chainbreak, 10./3. );
 	high_res_loop_refinement_scorefxn->set_weight( scoring::atom_pair_constraint, 100 );
 
-	RefineOneCDRLoopOP refine_cdr_h2_base = new RefineOneCDRLoop( antibody_info_, h2, loop_refinement_method_, high_res_loop_refinement_scorefxn );
+	RefineOneCDRLoopOP refine_cdr_h2_base( new RefineOneCDRLoop( antibody_info_, h2, loop_refinement_method_, high_res_loop_refinement_scorefxn ) );
 	refine_cdr_h2_base->set_h3_filter( false );
-	TrialMoverOP refine_cdr_h2 = new TrialMover( refine_cdr_h2_base, mc_ );
+	TrialMoverOP refine_cdr_h2( new TrialMover( refine_cdr_h2_base, mc_ ) );
 
-	RefineOneCDRLoopOP refine_cdr_h3_base = new RefineOneCDRLoop( antibody_info_, h3, loop_refinement_method_, high_res_loop_refinement_scorefxn );
+	RefineOneCDRLoopOP refine_cdr_h3_base( new RefineOneCDRLoop( antibody_info_, h3, loop_refinement_method_, high_res_loop_refinement_scorefxn ) );
 	refine_cdr_h3_base->set_h3_filter( h3_filter_ );
 	refine_cdr_h3_base->set_num_filter_tries( h3_filter_tolerance_ );
-	TrialMoverOP refine_cdr_h3 = new TrialMover( refine_cdr_h3_base, mc_ );
+	TrialMoverOP refine_cdr_h3( new TrialMover( refine_cdr_h3_base, mc_ ) );
 
 
 	/// This is a very succinct description of what this mover does.  For a description in words, see the implementation
 	/// of the streaming operator.
-	high_resolution_step_ = new RandomMover;
+	high_resolution_step_ = moves::RandomMoverOP( new RandomMover );
 	high_resolution_step_->add_mover( antibody_antigen_dock_cycle, 0.4 );
 	high_resolution_step_->add_mover( vH_vL_dock_cycle, 0.4 );
 	high_resolution_step_->add_mover( minimize_all_cdr_loops, 0.1 );

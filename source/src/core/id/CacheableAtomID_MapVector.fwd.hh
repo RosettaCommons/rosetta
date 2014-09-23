@@ -24,10 +24,10 @@ namespace id {
 
 
 class CacheableAtomID_MapVector;
-typedef utility::pointer::owning_ptr< CacheableAtomID_MapVector > CacheableAtomID_MapVectorOP;
-typedef utility::pointer::owning_ptr< CacheableAtomID_MapVector const > CacheableAtomID_MapVectorCOP;
-typedef utility::pointer::access_ptr< CacheableAtomID_MapVector > CacheableAtomID_MapVectorAP;
-typedef utility::pointer::access_ptr< CacheableAtomID_MapVector const > CacheableAtomID_MapVectorCAP;
+typedef utility::pointer::shared_ptr< CacheableAtomID_MapVector > CacheableAtomID_MapVectorOP;
+typedef utility::pointer::shared_ptr< CacheableAtomID_MapVector const > CacheableAtomID_MapVectorCOP;
+typedef utility::pointer::weak_ptr< CacheableAtomID_MapVector > CacheableAtomID_MapVectorAP;
+typedef utility::pointer::weak_ptr< CacheableAtomID_MapVector const > CacheableAtomID_MapVectorCAP;
 
 
 } // namespace id

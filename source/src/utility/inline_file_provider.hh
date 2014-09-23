@@ -32,8 +32,8 @@ namespace utility {
 // Forward
 class Inline_File_Provider_Hook;
 
-typedef utility::pointer::owning_ptr< Inline_File_Provider_Hook > Inline_File_Provider_HookOP;
-typedef utility::pointer::owning_ptr< Inline_File_Provider_Hook const > Inline_File_Provider_HookCOP;
+typedef utility::pointer::shared_ptr< Inline_File_Provider_Hook > Inline_File_Provider_HookOP;
+typedef utility::pointer::shared_ptr< Inline_File_Provider_Hook const > Inline_File_Provider_HookCOP;
 
 // base class for adding file-providing hooks into Inline_File_Provider
 class Inline_File_Provider_Hook: public utility::pointer::ReferenceCount {

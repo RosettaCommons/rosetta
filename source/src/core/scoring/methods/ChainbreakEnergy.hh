@@ -46,7 +46,7 @@ public:
 	virtual
 	EnergyMethodOP
 	clone() const {
-		return new ChainbreakEnergy;
+		return EnergyMethodOP( new ChainbreakEnergy );
 	}
 
 	/// @brief Called at the end of the energy evaluation.

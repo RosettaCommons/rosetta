@@ -61,7 +61,7 @@ public:
 	ConstraintClaimer( bool CmdFlag, bool centroid = true, bool fullatom = false );
 
 	virtual TopologyClaimerOP clone() const {
-		return new ConstraintClaimer( *this );
+		return TopologyClaimerOP( new ConstraintClaimer( *this ) );
 	}
 
 	virtual void generate_claims( claims::DofClaims& );

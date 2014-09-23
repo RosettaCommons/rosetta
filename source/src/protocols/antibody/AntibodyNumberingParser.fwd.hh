@@ -22,12 +22,12 @@ namespace protocols {
 namespace antibody {
 	
 	class AntibodyNumberingParser;
-	typedef utility::pointer::owning_ptr< AntibodyNumberingParser > AntibodyNumberingParserOP;
-	typedef utility::pointer::owning_ptr< AntibodyNumberingParser const > AntibodyNumberingParserCOP;
+	typedef utility::pointer::shared_ptr< AntibodyNumberingParser > AntibodyNumberingParserOP;
+	typedef utility::pointer::shared_ptr< AntibodyNumberingParser const > AntibodyNumberingParserCOP;
 	
 	class PDBLandmark;
-	typedef utility::pointer::owning_ptr< PDBLandmark > PDBLandmarkOP;
-	typedef utility::pointer::owning_ptr< PDBLandmark const > PDBLandmarkCOP;
+	typedef utility::pointer::shared_ptr< PDBLandmark > PDBLandmarkOP;
+	typedef utility::pointer::shared_ptr< PDBLandmark const > PDBLandmarkCOP;
 }
 }
 

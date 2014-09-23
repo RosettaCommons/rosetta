@@ -23,8 +23,8 @@ namespace metal_interface{
 
 //Forwards and OP typedefs
 class MetalSiteResidue;
-typedef utility::pointer::owning_ptr< MetalSiteResidue > MetalSiteResidueOP;
-typedef utility::pointer::owning_ptr< MetalSiteResidue const > MetalSiteResidueCOP;
+typedef utility::pointer::shared_ptr< MetalSiteResidue > MetalSiteResidueOP;
+typedef utility::pointer::shared_ptr< MetalSiteResidue const > MetalSiteResidueCOP;
 
 }//metal_interface
 }//protocols

@@ -22,8 +22,8 @@ namespace task_operations {
 
 class DesignAroundOperation;
 
-typedef utility::pointer::owning_ptr< DesignAroundOperation > DesignAroundOperationOP;
-typedef utility::pointer::owning_ptr< DesignAroundOperation const > DesignAroundOperationCOP;
+typedef utility::pointer::shared_ptr< DesignAroundOperation > DesignAroundOperationOP;
+typedef utility::pointer::shared_ptr< DesignAroundOperation const > DesignAroundOperationCOP;
 
 } //namespace protocols
 } //namespace toolbox

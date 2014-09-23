@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class TrajectoryReportToDB;
-typedef utility::pointer::owning_ptr< TrajectoryReportToDB > TrajectoryReportToDBOP;
-typedef utility::pointer::owning_ptr< TrajectoryReportToDB const > TrajectoryReportToDBCOP;
+typedef utility::pointer::shared_ptr< TrajectoryReportToDB > TrajectoryReportToDBOP;
+typedef utility::pointer::shared_ptr< TrajectoryReportToDB const > TrajectoryReportToDBCOP;
 
 }
 }

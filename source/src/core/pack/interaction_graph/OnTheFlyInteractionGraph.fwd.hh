@@ -24,8 +24,8 @@ class OnTheFlyNode;
 class OnTheFlyEdge;
 class OnTheFlyInteractionGraph;
 
-typedef utility::pointer::owning_ptr< OnTheFlyInteractionGraph > OnTheFlyInteractionGraphOP;
-typedef utility::pointer::owning_ptr< OnTheFlyInteractionGraph const > OnTheFlyInteractionGraphCOP;
+typedef utility::pointer::shared_ptr< OnTheFlyInteractionGraph > OnTheFlyInteractionGraphOP;
+typedef utility::pointer::shared_ptr< OnTheFlyInteractionGraph const > OnTheFlyInteractionGraphCOP;
 
 }
 }

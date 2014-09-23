@@ -27,10 +27,10 @@ namespace disulfides {
 
 class DisulfideMatchingEnergyContainer;
 
-typedef utility::pointer::owning_ptr< DisulfideMatchingEnergyContainer > DisulfideMatchingEnergyContainerOP;
-typedef utility::pointer::owning_ptr< DisulfideMatchingEnergyContainer const > DisulfideMatchingEnergyContainerCOP;
-typedef utility::pointer::access_ptr< DisulfideMatchingEnergyContainer > DisulfideMatchingEnergyContainerAP;
-typedef utility::pointer::access_ptr< DisulfideMatchingEnergyContainer const > DisulfideMatchingEnergyContainerCAP;
+typedef utility::pointer::shared_ptr< DisulfideMatchingEnergyContainer > DisulfideMatchingEnergyContainerOP;
+typedef utility::pointer::shared_ptr< DisulfideMatchingEnergyContainer const > DisulfideMatchingEnergyContainerCOP;
+typedef utility::pointer::weak_ptr< DisulfideMatchingEnergyContainer > DisulfideMatchingEnergyContainerAP;
+typedef utility::pointer::weak_ptr< DisulfideMatchingEnergyContainer const > DisulfideMatchingEnergyContainerCAP;
 
 }
 }

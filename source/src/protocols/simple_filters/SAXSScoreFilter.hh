@@ -35,10 +35,10 @@ public:
 	virtual ~SAXSScoreFilter() {}
 
 	filters::FilterOP clone() const {
-		return new SAXSScoreFilter( *this ); }
+		return filters::FilterOP( new SAXSScoreFilter( *this ) ); }
 
 	filters::FilterOP fresh_instance() const{
-		return new SAXSScoreFilter();
+		return filters::FilterOP( new SAXSScoreFilter() );
 	}
 
 

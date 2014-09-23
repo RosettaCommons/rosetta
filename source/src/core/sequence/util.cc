@@ -154,7 +154,7 @@ vector1< SequenceOP > read_fasta_file( std::string const & filename ) {
 			if ( current_sequence != "" ) {
 				ObjexxFCL::strip_whitespace( current_id );
 				ObjexxFCL::strip_whitespace( current_sequence );
-				sequences.push_back( new Sequence( current_sequence, current_id ) );
+				sequences.push_back( utility::pointer::shared_ptr<class core::sequence::Sequence>( new Sequence( current_sequence, current_id ) ) );
 				current_sequence = "";
 			}
 			current_id = line.substr(1,line.size());
@@ -165,7 +165,7 @@ vector1< SequenceOP > read_fasta_file( std::string const & filename ) {
 	if ( current_sequence != "" ) {
 		ObjexxFCL::strip_whitespace( current_id );
 		ObjexxFCL::strip_whitespace( current_sequence );
-		sequences.push_back( new Sequence( current_sequence, current_id ) );
+		sequences.push_back( utility::pointer::shared_ptr<class core::sequence::Sequence>( new Sequence( current_sequence, current_id ) ) );
 	}
 
 	return sequences;
@@ -339,7 +339,7 @@ utility::vector1< SequenceAlignment > read_general_aln(
 			//}
 		} else if ( line.substr(0,2) == "--" ) {
 			if ( current->size() > 0 ) alignments.push_back( *current );
-			current = new SequenceAlignment;
+			current = SequenceAlignmentOP( new SequenceAlignment );
 		} else if ( line.substr(0,1) == "#" ) {
 			// do nothing. eventually add a comment here.
 		} else {
@@ -387,7 +387,7 @@ utility::vector1< SequenceAlignment > read_grishin_aln_file(
 			if ( current->size() > 0 ) {
 				alignments.push_back( *current );
 			}
-			current = new SequenceAlignment;
+			current = SequenceAlignmentOP( new SequenceAlignment );
 		} else if ( line.substr(0,2) == "##" ) {
 			std::istringstream line_input( line );
 			line_input >> dummy >> id1 >> id2;

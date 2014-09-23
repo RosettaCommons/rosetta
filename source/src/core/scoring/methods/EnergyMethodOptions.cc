@@ -59,8 +59,8 @@ EnergyMethodOptions::EnergyMethodOptions():
 	smooth_fa_elec_( false ),
 	exclude_DNA_DNA_(true), // rosetta++ default
 	intrares_elec_correction_scale_( 0.0 ),
-	hbond_options_(new hbonds::HBondOptions()),
-	etable_options_(new core::scoring::etable::EtableOptions()),
+	hbond_options_(hbonds::HBondOptionsOP( new hbonds::HBondOptions() )),
+	etable_options_(core::scoring::etable::EtableOptionsOP( new core::scoring::etable::EtableOptions() )),
 	cst_max_seq_sep_( std::numeric_limits<core::Size>::max() ),
 	cartbonded_len_(-1.0),
 	cartbonded_ang_(-1.0),
@@ -70,7 +70,7 @@ EnergyMethodOptions::EnergyMethodOptions():
 	cartbonded_linear_(false),
 	pb_bound_tag_("bound"),
 	pb_unbound_tag_("unbound"),
-	bond_angle_residue_type_param_set_(NULL)
+	bond_angle_residue_type_param_set_(/* NULL */)
 {
 	initialize_from_options();
 }
@@ -114,8 +114,8 @@ EnergyMethodOptions::operator=(EnergyMethodOptions const & src) {
 		smooth_fa_elec_ = src.smooth_fa_elec_;
 		exclude_DNA_DNA_ = src.exclude_DNA_DNA_;
 		intrares_elec_correction_scale_ = src.intrares_elec_correction_scale_;
-		hbond_options_ = new hbonds::HBondOptions( *(src.hbond_options_) );
-		etable_options_ = new etable::EtableOptions( *(src.etable_options_) );
+		hbond_options_ = hbonds::HBondOptionsOP( new hbonds::HBondOptions( *(src.hbond_options_) ) );
+		etable_options_ = core::scoring::etable::EtableOptionsOP( new etable::EtableOptions( *(src.etable_options_) ) );
 		cst_max_seq_sep_ = src.cst_max_seq_sep_;
 		bond_angle_central_atoms_to_score_ = src.bond_angle_central_atoms_to_score_;
 		bond_angle_residue_type_param_set_ = src.bond_angle_residue_type_param_set_;
@@ -256,7 +256,7 @@ EnergyMethodOptions::hbond_options() {
 
 void
 EnergyMethodOptions::hbond_options( hbonds::HBondOptions const & opts ) {
- 	hbond_options_ = new hbonds::HBondOptions( opts );
+ 	hbond_options_ = hbonds::HBondOptionsOP( new hbonds::HBondOptions( opts ) );
 }
 
 etable::EtableOptions const &
@@ -271,7 +271,7 @@ EnergyMethodOptions::etable_options() {
 
 void
 EnergyMethodOptions::etable_options( etable::EtableOptions const & opts ) {
-	etable_options_ = new etable::EtableOptions( opts );
+	etable_options_ = core::scoring::etable::EtableOptionsOP( new etable::EtableOptions( opts ) );
 }
 
 std::string const &
@@ -498,10 +498,10 @@ EnergyMethodOptions::write_score_function_method_options_table_schema(
 ) {
 	using namespace basic::database::schema_generator;
 
-	Column batch_id("batch_id", new DbInteger(), true);
-	Column score_function_name("score_function_name", new DbText(255), true);
-	Column option_key("option_key", new DbText(255), true);
-	Column option_value("option_value", new DbText(255), true);
+	Column batch_id("batch_id", DbDataTypeOP( new DbInteger() ), true);
+	Column score_function_name("score_function_name", DbDataTypeOP( new DbText(255) ), true);
+	Column option_key("option_key", DbDataTypeOP( new DbText(255) ), true);
+	Column option_value("option_value", DbDataTypeOP( new DbText(255) ), true);
 
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(batch_id);

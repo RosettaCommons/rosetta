@@ -23,8 +23,8 @@ namespace optimize_weights {
 
 
 class DGBindOptEData; // fwd declaration
-typedef utility::pointer::owning_ptr< DGBindOptEData > DGBindOptEDataOP;
-typedef utility::pointer::owning_ptr< DGBindOptEData const > DGBindOptEDataCOP;
+typedef utility::pointer::shared_ptr< DGBindOptEData > DGBindOptEDataOP;
+typedef utility::pointer::shared_ptr< DGBindOptEData const > DGBindOptEDataCOP;
 
 
 } // namespace optimize_weights

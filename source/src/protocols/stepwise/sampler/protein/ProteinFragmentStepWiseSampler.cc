@@ -68,7 +68,7 @@ namespace protein {
 																			utility::vector1< core::Size > const & slice_res,
 																			utility::vector1< core::Size > const & moving_residues	 ) {
 
-		core::fragment::ConstantLengthFragSetOP fragset =  new core::fragment::ConstantLengthFragSet( 0 /*frag_length ... is reset by reader*/, frag_file );
+		core::fragment::ConstantLengthFragSetOP fragset( new core::fragment::ConstantLengthFragSet( 0 /*frag_length ... is reset by reader*/, frag_file ) );
 
 		if( fragset->max_frag_length() != moving_residues.size() ) {
 			utility_exit_with_message( "Number of -moving_res must match frag size!" );

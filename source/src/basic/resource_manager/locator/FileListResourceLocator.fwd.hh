@@ -22,8 +22,8 @@ namespace resource_manager{
 namespace locator {
 
 class FileListResourceLocator;
-typedef utility::pointer::owning_ptr< FileListResourceLocator > FileListResourceLocatorOP;
-typedef utility::pointer::owning_ptr< FileListResourceLocator const > FileListResourceLocatorCOP;
+typedef utility::pointer::shared_ptr< FileListResourceLocator > FileListResourceLocatorOP;
+typedef utility::pointer::shared_ptr< FileListResourceLocator const > FileListResourceLocatorCOP;
 
 }// namespace
 }// namespace

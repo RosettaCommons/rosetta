@@ -69,7 +69,7 @@ namespace abinitio {
 
 /// Move these forward declarations to FragmentSampler.fwd.hh
 class FragmentSampler;
-typedef utility::pointer::owning_ptr< FragmentSampler > FragmentSamplerOP;
+typedef utility::pointer::shared_ptr< FragmentSampler > FragmentSamplerOP;
 
 //@ brief The Classic Abinitio protocol from rosetta++
 /*!

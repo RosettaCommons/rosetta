@@ -103,7 +103,7 @@ using namespace std;
 utility::vector0<TagCOP> const Tag::vEmpty_; // need to return this from getTags
 
 Tag::Tag() :
-	parentTag_(NULL)
+	parentTag_(/* NULL */)
 {}
 
 void Tag::clear() {
@@ -135,7 +135,7 @@ Tag::operator=(Tag const &other) {
 	mOptions_ = other.mOptions_;
 
 	for( size_t i = 0; i < other.vTags_.size(); ++i ) {
-		TagOP tag = new Tag();
+		TagOP tag( new Tag() );
 		*tag = *other.vTags_[i];
 		addTag( tag );
 	}
@@ -323,7 +323,7 @@ struct tag_closure : public boost::spirit::classic::closure< tag_closure,TagOP >
 
 void set_name_and_options( TagOP & tag, name_and_options_value_type const & v )
 {
-	tag = new Tag();
+	tag = TagOP( new Tag() );
 	tag->setName( v.first );
 	for(  map<string,string>::const_iterator i = v.second.begin(), end_i = v.second.end(); i != end_i ; ++i ) {
 		tag->setOption( i->first, i->second );
@@ -542,7 +542,7 @@ else {
 
 TagOP
 Tag::create(std::istream& in) {
-	TagOP tag = new Tag();
+	TagOP tag( new Tag() );
 	tag->read(in);
 	return tag;
 } // creates a new tag and reads into it
@@ -557,7 +557,7 @@ Tag::create(std::string instring) {
 TagOP
 Tag::clone() const {
 
-	TagOP rval = new Tag();
+	TagOP rval( new Tag() );
 	*rval = *this;
 	return rval;
 

@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class SaltBridgeFeatures;
-typedef utility::pointer::owning_ptr< SaltBridgeFeatures > SaltBridgeFeaturesOP;
-typedef utility::pointer::owning_ptr< SaltBridgeFeatures const > SaltBridgeFeaturesCOP;
+typedef utility::pointer::shared_ptr< SaltBridgeFeatures > SaltBridgeFeaturesOP;
+typedef utility::pointer::shared_ptr< SaltBridgeFeatures const > SaltBridgeFeaturesCOP;
 
 }//features
 }//protocols

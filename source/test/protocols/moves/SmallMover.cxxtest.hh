@@ -70,14 +70,14 @@ public:
 		core_init();
 		residue_set = chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
 
-		the_pose = new Pose;
+		the_pose = PoseOP( new Pose );
 		core::import_pose::pose_from_pdb( *the_pose, "protocols/moves/test_in.pdb" );
 
 		core::init::init_random_generators(1000, "mt19937");
 	}
 
 	void tearDown() {
-		the_pose = 0;
+		the_pose.reset();
 	}
 
 	void test_OneSmallMover() {

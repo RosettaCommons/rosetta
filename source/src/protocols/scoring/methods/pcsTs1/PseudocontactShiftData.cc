@@ -156,7 +156,7 @@ PCS_data_Ts1::PCS_data_Ts1(PCS_data_Ts1 const &other):
 
 basic::datacache::CacheableDataOP
 PCS_data_Ts1::clone() const {
-	return new PCS_data_Ts1( *this );
+	return basic::datacache::CacheableDataOP( new PCS_data_Ts1( *this ) );
 }
 
 void

@@ -43,7 +43,7 @@ low_temp_(low_temp)
 ModifyAnnealer::~ModifyAnnealer(){}
 
 core::pack::task::operation::TaskOperationOP ModifyAnnealer::clone() const{
-	return new ModifyAnnealer( *this );
+	return core::pack::task::operation::TaskOperationOP( new ModifyAnnealer( *this ) );
 }
 
 void ModifyAnnealer::apply( core::pose::Pose const &, core::pack::task::PackerTask & task ) const{
@@ -60,7 +60,7 @@ void ModifyAnnealer::parse_tag( utility::tag::TagCOP tag, basic::datacache::Data
 
 core::pack::task::operation::TaskOperationOP ModifyAnnealerCreator::create_task_operation() const
 {
-	return new ModifyAnnealer;
+	return core::pack::task::operation::TaskOperationOP( new ModifyAnnealer );
 }
 
 } //task_operations

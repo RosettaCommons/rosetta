@@ -75,8 +75,8 @@ void frac_atoms_within(
 
 
 class LigandBaseProtocol; // fwd declaration
-typedef utility::pointer::owning_ptr< LigandBaseProtocol > LigandBaseProtocolOP;
-typedef utility::pointer::owning_ptr< LigandBaseProtocol const > LigandBaseProtocolCOP;
+typedef utility::pointer::shared_ptr< LigandBaseProtocol > LigandBaseProtocolOP;
+typedef utility::pointer::shared_ptr< LigandBaseProtocol const > LigandBaseProtocolCOP;
 
 ///@brief Shared functionality for protocols that dock ligands.
 ///

@@ -85,7 +85,7 @@ ReportToDBCreator::keyname() const
 
 moves::MoverOP
 ReportToDBCreator::create_mover() const {
-	return new ReportToDB;
+	return moves::MoverOP( new ReportToDB );
 }
 
 std::string
@@ -153,7 +153,7 @@ ReportToDB::ReportToDB():
 	custom_structure_input_tag_(false),
 	structure_input_tag_(""),
 	last_struct_id_(0),
-	task_factory_(new TaskFactory()),
+	task_factory_(core::pack::task::TaskFactoryOP( new TaskFactory() )),
 	relevant_residues_mode_(RelevantResiduesMode::Exclusive),
 	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
 	features_reporters_(),
@@ -177,7 +177,7 @@ ReportToDB::ReportToDB(string const & type):
 	custom_structure_input_tag_(false),
 	structure_input_tag_(""),
 	last_struct_id_(0),
-	task_factory_(new TaskFactory()),
+	task_factory_(core::pack::task::TaskFactoryOP( new TaskFactory() )),
 	relevant_residues_mode_(RelevantResiduesMode::Exclusive),
 	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
 	features_reporters_(),
@@ -206,7 +206,7 @@ ReportToDB::ReportToDB(
 	custom_structure_input_tag_(false),
 	structure_input_tag_(""),
 	last_struct_id_(0),
-	task_factory_(new TaskFactory()),
+	task_factory_(core::pack::task::TaskFactoryOP( new TaskFactory() )),
 	relevant_residues_mode_(RelevantResiduesMode::Exclusive),
 	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
 	features_reporters_(),
@@ -241,7 +241,7 @@ ReportToDB::ReportToDB(
 	custom_structure_input_tag_(false),
 	structure_input_tag_(""),
 	last_struct_id_(0),
-	task_factory_(new TaskFactory()),
+	task_factory_(core::pack::task::TaskFactoryOP( new TaskFactory() )),
 	relevant_residues_mode_(RelevantResiduesMode::Exclusive),
 	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
 	features_reporters_(),
@@ -293,11 +293,11 @@ ReportToDB::register_options() const {
 	//TODO call relevant_options on FeaturesMover objects
 }
 
-MoverOP ReportToDB::fresh_instance() const { return new ReportToDB; }
+MoverOP ReportToDB::fresh_instance() const { return MoverOP( new ReportToDB ); }
 
 MoverOP ReportToDB::clone() const
 {
-	return new ReportToDB( *this );
+	return MoverOP( new ReportToDB( *this ) );
 }
 
 void
@@ -660,9 +660,9 @@ void
 ReportToDB::initialize_reporters()
 {
 	// the protocols, batches, and structure features are special
-	protocol_features_ = new ProtocolFeatures();
-	batch_features_ = new BatchFeatures();
-	structure_features_ = new StructureFeatures();
+	protocol_features_ = protocols::features::ProtocolFeaturesOP( new ProtocolFeatures() );
+	batch_features_ = protocols::features::BatchFeaturesOP( new BatchFeatures() );
+	structure_features_ = protocols::features::StructureFeaturesOP( new StructureFeatures() );
 }
 
 void

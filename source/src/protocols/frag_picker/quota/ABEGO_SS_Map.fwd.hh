@@ -24,8 +24,8 @@ namespace quota {
 
 class ABEGO_SS_Map;
 
-typedef utility::pointer::owning_ptr<ABEGO_SS_Map> ABEGO_SS_MapOP;
-typedef utility::pointer::owning_ptr<ABEGO_SS_Map const> ABEGO_SS_MapCOP;
+typedef utility::pointer::shared_ptr<ABEGO_SS_Map> ABEGO_SS_MapOP;
+typedef utility::pointer::shared_ptr<ABEGO_SS_Map const> ABEGO_SS_MapCOP;
 
 } // quota
 } // frag_picker

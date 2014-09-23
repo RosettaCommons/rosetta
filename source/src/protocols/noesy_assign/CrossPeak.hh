@@ -109,7 +109,7 @@ public:
   CrossPeak();
   virtual ~CrossPeak();
   virtual CrossPeakOP empty_clone() {
-    return new CrossPeak;
+    return CrossPeakOP( new CrossPeak );
   }
 
   virtual bool has_label( core::Size ) const { return false; }
@@ -336,7 +336,7 @@ public:
   CrossPeak3D();
   ~CrossPeak3D();
   virtual CrossPeakOP empty_clone() {
-    return new CrossPeak3D;
+    return CrossPeakOP( new CrossPeak3D );
   }
   virtual void assign_spin( Size spin_id );
   virtual core::Size assign_spin( core::Size spin_id, core::Size res_ids[] ); //provide array with spin 1 spin 2 label 1 label 2
@@ -354,7 +354,7 @@ public:
   CrossPeak4D();
   ~CrossPeak4D();
   virtual CrossPeakOP empty_clone() {
-    return new CrossPeak4D;
+    return CrossPeakOP( new CrossPeak4D );
   }
   virtual void assign_spin( Size proton );
   virtual core::Size assign_spin( core::Size spin_id, core::Size res_ids[] ); //provide array with spin 1 spin 2 label 1 label 2

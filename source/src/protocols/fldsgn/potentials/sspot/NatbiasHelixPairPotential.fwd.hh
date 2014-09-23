@@ -26,7 +26,7 @@ namespace potentials {
 namespace sspot {
 
 class NatbiasHelixPairPotential;
-typedef utility::pointer::owning_ptr< NatbiasHelixPairPotential > NatbiasHelixPairPotentialOP;
+typedef utility::pointer::shared_ptr< NatbiasHelixPairPotential > NatbiasHelixPairPotentialOP;
 
 } // ns sspot
 } // ns potentials

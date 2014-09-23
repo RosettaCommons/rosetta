@@ -23,8 +23,8 @@ namespace methods {
 
 class ReferenceEnergyNoncanonical;
 
-typedef utility::pointer::owning_ptr< ReferenceEnergyNoncanonical > ReferenceEnergyNoncanonicalOP;
-typedef utility::pointer::owning_ptr< ReferenceEnergyNoncanonical const > ReferenceEnergyNoncanonicalCOP;
+typedef utility::pointer::shared_ptr< ReferenceEnergyNoncanonical > ReferenceEnergyNoncanonicalOP;
+typedef utility::pointer::shared_ptr< ReferenceEnergyNoncanonical const > ReferenceEnergyNoncanonicalCOP;
 
 } // methods
 } // scoring

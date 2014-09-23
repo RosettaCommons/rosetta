@@ -67,12 +67,12 @@ RestrictToRepacking::~RestrictToRepacking() {}
 
 TaskOperationOP RestrictToRepackingCreator::create_task_operation() const
 {
-	return new RestrictToRepacking;
+	return TaskOperationOP( new RestrictToRepacking );
 }
 
 TaskOperationOP RestrictToRepacking::clone() const
 {
-	return new RestrictToRepacking( *this );
+	return TaskOperationOP( new RestrictToRepacking( *this ) );
 }
 
 void
@@ -93,12 +93,12 @@ RestrictResidueToRepacking::~RestrictResidueToRepacking() {}
 
 TaskOperationOP RestrictResidueToRepackingCreator::create_task_operation() const
 {
-	return new RestrictResidueToRepacking;
+	return TaskOperationOP( new RestrictResidueToRepacking );
 }
 
 TaskOperationOP RestrictResidueToRepacking::clone() const
 {
-	return new RestrictResidueToRepacking( *this );
+	return TaskOperationOP( new RestrictResidueToRepacking( *this ) );
 }
 
 void
@@ -145,12 +145,12 @@ RestrictAbsentCanonicalAAS::~RestrictAbsentCanonicalAAS(){}
 
 TaskOperationOP RestrictAbsentCanonicalAASCreator::create_task_operation() const
 {
-	return new RestrictAbsentCanonicalAAS;
+	return TaskOperationOP( new RestrictAbsentCanonicalAAS );
 }
 
 TaskOperationOP RestrictAbsentCanonicalAAS::clone() const
 {
-	return new RestrictAbsentCanonicalAAS( *this );
+	return TaskOperationOP( new RestrictAbsentCanonicalAAS( *this ) );
 }
 
 void
@@ -229,12 +229,12 @@ DisallowIfNonnative::~DisallowIfNonnative(){}
 
 TaskOperationOP DisallowIfNonnativeCreator::create_task_operation() const
 {
-	return new DisallowIfNonnative;
+	return TaskOperationOP( new DisallowIfNonnative );
 }
 
 TaskOperationOP DisallowIfNonnative::clone() const
 {
-	return new DisallowIfNonnative( *this );
+	return TaskOperationOP( new DisallowIfNonnative( *this ) );
 }
 
 void DisallowIfNonnative::clear(){
@@ -323,7 +323,7 @@ RotamerExplosion::~RotamerExplosion() {}
 
 TaskOperationOP RotamerExplosionCreator::create_task_operation() const
 {
-	return new RotamerExplosion;
+	return TaskOperationOP( new RotamerExplosion );
 }
 
 TaskOperationOP RotamerExplosion::clone() const
@@ -375,12 +375,12 @@ InitializeFromCommandline::~InitializeFromCommandline() {}
 
 TaskOperationOP InitializeFromCommandlineCreator::create_task_operation() const
 {
-	return new InitializeFromCommandline;
+	return TaskOperationOP( new InitializeFromCommandline );
 }
 
 TaskOperationOP InitializeFromCommandline::clone() const
 {
-	return new InitializeFromCommandline( *this );
+	return TaskOperationOP( new InitializeFromCommandline( *this ) );
 }
 
 void
@@ -403,12 +403,12 @@ InitializeExtraRotsFromCommandline::~InitializeExtraRotsFromCommandline() {}
 
 TaskOperationOP InitializeExtraRotsFromCommandlineCreator::create_task_operation() const
 {
-	return new InitializeExtraRotsFromCommandline;
+	return TaskOperationOP( new InitializeExtraRotsFromCommandline );
 }
 
 TaskOperationOP InitializeExtraRotsFromCommandline::clone() const
 {
-	return new InitializeExtraRotsFromCommandline( *this );
+	return TaskOperationOP( new InitializeExtraRotsFromCommandline( *this ) );
 }
 
 void
@@ -424,12 +424,12 @@ IncludeCurrent::~IncludeCurrent() {}
 
 TaskOperationOP IncludeCurrentCreator::create_task_operation() const
 {
-	return new IncludeCurrent;
+	return TaskOperationOP( new IncludeCurrent );
 }
 
 TaskOperationOP IncludeCurrent::clone() const
 {
-	return new IncludeCurrent( *this );
+	return TaskOperationOP( new IncludeCurrent( *this ) );
 }
 
 void
@@ -468,12 +468,12 @@ ExtraRotamersGeneric::~ExtraRotamersGeneric() {}
 
 TaskOperationOP ExtraRotamersGenericCreator::create_task_operation() const
 {
-	return new ExtraRotamersGeneric;
+	return TaskOperationOP( new ExtraRotamersGeneric );
 }
 
 TaskOperationOP ExtraRotamersGeneric::clone() const
 {
-	return new ExtraRotamersGeneric( *this );
+	return TaskOperationOP( new ExtraRotamersGeneric( *this ) );
 }
 
 void
@@ -598,12 +598,12 @@ ReadResfile::~ReadResfile() {}
 
 TaskOperationOP ReadResfileCreator::create_task_operation() const
 {
-	return new ReadResfile;
+	return TaskOperationOP( new ReadResfile );
 }
 
 TaskOperationOP ReadResfile::clone() const
 {
-	return new ReadResfile( *this );
+	return TaskOperationOP( new ReadResfile( *this ) );
 }
 
 void
@@ -683,12 +683,12 @@ ReadResfileAndObeyLengthEvents::~ReadResfileAndObeyLengthEvents(){}
 
 TaskOperationOP ReadResfileAndObeyLengthEventsCreator::create_task_operation() const
 {
-	return new ReadResfileAndObeyLengthEvents;
+	return TaskOperationOP( new ReadResfileAndObeyLengthEvents );
 }
 
 TaskOperationOP ReadResfileAndObeyLengthEvents::clone() const
 {
-	return new ReadResfileAndObeyLengthEvents( *this );
+	return TaskOperationOP( new ReadResfileAndObeyLengthEvents( *this ) );
 }
 
 
@@ -797,12 +797,12 @@ SetRotamerCouplings::operator = ( SetRotamerCouplings const & rhs )
 
 TaskOperationOP SetRotamerCouplingsCreator::create_task_operation() const
 {
-	return new SetRotamerCouplings;
+	return TaskOperationOP( new SetRotamerCouplings );
 }
 
 TaskOperationOP SetRotamerCouplings::clone() const
 {
-	return new SetRotamerCouplings( *this );
+	return TaskOperationOP( new SetRotamerCouplings( *this ) );
 }
 
 void
@@ -840,12 +840,12 @@ SetRotamerLinks::operator = ( SetRotamerLinks const & rhs )
 
 TaskOperationOP SetRotamerLinksCreator::create_task_operation() const
 {
-	return new SetRotamerLinks;
+	return TaskOperationOP( new SetRotamerLinks );
 }
 
 TaskOperationOP SetRotamerLinks::clone() const
 {
-	return new SetRotamerLinks( *this );
+	return TaskOperationOP( new SetRotamerLinks( *this ) );
 }
 
 void
@@ -863,7 +863,7 @@ SetRotamerLinks::set_links( rotamer_set::RotamerLinksOP links )
 /// BEGIN AppendRotamer
 
 AppendRotamer::AppendRotamer()
-	: rotamer_operation_(0)
+	: rotamer_operation_(/* 0 */)
 {}
 
 AppendRotamer::~AppendRotamer()
@@ -879,12 +879,12 @@ AppendRotamer::AppendRotamer( AppendRotamer const & src )
 
 TaskOperationOP AppendRotamerCreator::create_task_operation() const
 {
-	return new AppendRotamer;
+	return TaskOperationOP( new AppendRotamer );
 }
 
 TaskOperationOP AppendRotamer::clone() const
 {
-	return new AppendRotamer( *this );
+	return TaskOperationOP( new AppendRotamer( *this ) );
 }
 
 void
@@ -905,7 +905,7 @@ AppendRotamer::set_rotamer_operation(
 /// BEGIN AppendRotamerSet
 
 AppendRotamerSet::AppendRotamerSet()
-	: rotamer_set_operation_(0)
+	: rotamer_set_operation_(/* 0 */)
 {}
 
 AppendRotamerSet::~AppendRotamerSet()
@@ -921,12 +921,12 @@ AppendRotamerSet::AppendRotamerSet( AppendRotamerSet const & src )
 
 TaskOperationOP AppendRotamerSetCreator::create_task_operation() const
 {
-	return new AppendRotamerSet;
+	return TaskOperationOP( new AppendRotamerSet );
 }
 
 TaskOperationOP AppendRotamerSet::clone() const
 {
-	return new AppendRotamerSet( *this );
+	return TaskOperationOP( new AppendRotamerSet( *this ) );
 }
 
 void
@@ -949,7 +949,7 @@ AppendRotamerSet::set_rotamer_set_operation(
 AppendResidueRotamerSet::AppendResidueRotamerSet()
 	: parent(),
 	  resnum_(0),
-	  rotamer_set_operation_(0)
+	  rotamer_set_operation_(/* 0 */)
 {}
 
 AppendResidueRotamerSet::~AppendResidueRotamerSet()
@@ -969,12 +969,12 @@ AppendResidueRotamerSet::AppendResidueRotamerSet( AppendResidueRotamerSet const 
 
 TaskOperationOP AppendResidueRotamerSetCreator::create_task_operation() const
 {
-	return new AppendResidueRotamerSet;
+	return TaskOperationOP( new AppendResidueRotamerSet );
 }
 
 TaskOperationOP AppendResidueRotamerSet::clone() const
 {
-	return new AppendResidueRotamerSet( *this );
+	return TaskOperationOP( new AppendResidueRotamerSet( *this ) );
 }
 
 void
@@ -1002,12 +1002,12 @@ PreserveCBeta::~PreserveCBeta() {}
 
 TaskOperationOP PreserveCBetaCreator::create_task_operation() const
 {
-	return new PreserveCBeta;
+	return TaskOperationOP( new PreserveCBeta );
 }
 
 TaskOperationOP PreserveCBeta::clone() const
 {
-	return new PreserveCBeta( *this );
+	return TaskOperationOP( new PreserveCBeta( *this ) );
 }
 
 void
@@ -1021,12 +1021,12 @@ PreventRepacking::~PreventRepacking() {}
 
 TaskOperationOP PreventRepackingCreator::create_task_operation() const
 {
-	return new PreventRepacking;
+	return TaskOperationOP( new PreventRepacking );
 }
 
 TaskOperationOP PreventRepacking::clone() const
 {
-	return new PreventRepacking( *this );
+	return TaskOperationOP( new PreventRepacking( *this ) );
 }
 
 void
@@ -1079,11 +1079,11 @@ RestrictYSDesign::apply( pose::Pose const &, PackerTask & task ) const {
 
 TaskOperationOP RestrictYSDesignCreator::create_task_operation() const
 {
-	return new RestrictYSDesign;
+	return TaskOperationOP( new RestrictYSDesign );
 }
 
 TaskOperationOP RestrictYSDesign::clone() const {
-	return new RestrictYSDesign( *this );
+	return TaskOperationOP( new RestrictYSDesign( *this ) );
 }
 
 void
@@ -1113,7 +1113,7 @@ ExtraRotamers::~ExtraRotamers() {}
 
 TaskOperationOP ExtraRotamersCreator::create_task_operation() const
 {
-	return new ExtraRotamers;
+	return TaskOperationOP( new ExtraRotamers );
 }
 
 TaskOperationOP ExtraRotamers::clone() const
@@ -1182,7 +1182,7 @@ ExtraChiCutoff::~ExtraChiCutoff() {}
 
 TaskOperationOP ExtraChiCutoffCreator::create_task_operation() const
 {
-	return new ExtraChiCutoff;
+	return TaskOperationOP( new ExtraChiCutoff );
 }
 
 TaskOperationOP ExtraChiCutoff::clone() const

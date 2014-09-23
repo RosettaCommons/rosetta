@@ -24,7 +24,7 @@ namespace rna {
 class RNA_SuiteAssignment;
 class RNA_SuiteName;
 class RNA_SuiteInfo;
-typedef utility::pointer::owning_ptr< RNA_SuiteName > RNA_SuiteNameOP;
+typedef utility::pointer::shared_ptr< RNA_SuiteName > RNA_SuiteNameOP;
 
 }
 }

@@ -21,8 +21,8 @@ namespace simple_filters {
 
 class AveragePathLengthFilter;
 
-typedef utility::pointer::owning_ptr< AveragePathLengthFilter > AveragePathLengthFilterOP;
-typedef utility::pointer::owning_ptr< AveragePathLengthFilter const > AveragePathLengthFilterCOP;
+typedef utility::pointer::shared_ptr< AveragePathLengthFilter > AveragePathLengthFilterOP;
+typedef utility::pointer::shared_ptr< AveragePathLengthFilter const > AveragePathLengthFilterCOP;
 
 }
 }

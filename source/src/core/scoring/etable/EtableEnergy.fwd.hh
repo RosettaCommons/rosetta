@@ -26,11 +26,11 @@ class EtableEvaluator;
 class TableLookupEvaluator;
 class AnalyticEtableEvaluator;
 
-typedef utility::pointer::owning_ptr< EtableEvaluator > EtableEvaluatorOP;
-typedef utility::pointer::owning_ptr< EtableEvaluator const > EtableEvaluatorCOP;
-typedef utility::pointer::access_ptr< EtableEvaluator const > EtableEvaluatorCAP;
+typedef utility::pointer::shared_ptr< EtableEvaluator > EtableEvaluatorOP;
+typedef utility::pointer::shared_ptr< EtableEvaluator const > EtableEvaluatorCOP;
+typedef utility::pointer::weak_ptr< EtableEvaluator const > EtableEvaluatorCAP;
 	
-typedef utility::pointer::owning_ptr< AnalyticEtableEvaluator > AnalyticEtableEvaluatorOP;
+typedef utility::pointer::shared_ptr< AnalyticEtableEvaluator > AnalyticEtableEvaluatorOP;
 
 } // etable
 } // scoring

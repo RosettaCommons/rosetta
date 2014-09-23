@@ -48,7 +48,7 @@ public:
 
 	/// @brief test that we select all the residues in trpcage
 	void test_num_neighbors_selector_1() {
-		NumNeighborsSelectorOP nneighbs_rs = new NumNeighborsSelector( 12, 10.0 );
+		NumNeighborsSelectorOP nneighbs_rs( new NumNeighborsSelector( 12, 10.0 ) );
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueSubset subset( trpcage.total_residue(), false );
 		nneighbs_rs->apply( trpcage, subset );
@@ -73,7 +73,7 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
-		NumNeighborsSelectorOP nn_rs = new NumNeighborsSelector;
+		NumNeighborsSelectorOP nn_rs( new NumNeighborsSelector );
 		try {
 			nn_rs->parse_my_tag( tag, dm );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -94,7 +94,7 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
-		NumNeighborsSelectorOP nn_rs = new NumNeighborsSelector;
+		NumNeighborsSelectorOP nn_rs( new NumNeighborsSelector );
 		try {
 			nn_rs->parse_my_tag( tag, dm );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {

@@ -62,7 +62,7 @@ public:
 
 	virtual std::string get_name() const { return "FloppyTailMover"; }
 
-	virtual protocols::moves::MoverOP fresh_instance() const { return new FloppyTailMover; }
+	virtual protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new FloppyTailMover ); }
 
 	virtual bool reinitialize_for_each_job() const { return false; }
 

@@ -79,7 +79,7 @@ ConformerSwitchMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 ConformerSwitchMoverCreator::create_mover() const {
-	return new ConformerSwitchMover;
+	return protocols::moves::MoverOP( new ConformerSwitchMover );
 }
 
 std::string
@@ -99,7 +99,7 @@ ConformerSwitchMover::ConformerSwitchMover(
 {
 	ensemble_ = ensemble;
 
-	lowres_filter_ = new protocols::docking::DockingLowResFilter();
+	lowres_filter_ = protocols::docking::DockingLowResFilterOP( new protocols::docking::DockingLowResFilter() );
 }
 
 void ConformerSwitchMover::set_temperature( core::Real temp_in )

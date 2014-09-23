@@ -21,8 +21,8 @@ namespace protocols {
 namespace hybridization {
 
 class TemplateHistory;
-typedef utility::pointer::owning_ptr< TemplateHistory > TemplateHistoryOP;
-typedef utility::pointer::owning_ptr< TemplateHistory const > TemplateHistoryCOP;
+typedef utility::pointer::shared_ptr< TemplateHistory > TemplateHistoryOP;
+typedef utility::pointer::shared_ptr< TemplateHistory const > TemplateHistoryCOP;
 
 } // symmetry
 //} // simple_moves

@@ -57,20 +57,20 @@ public:
 		using namespace basic::options::OptionKeys;
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;
-		main_task_factory = new TaskFactory;
-		main_task_factory->push_back( new operation::InitializeFromCommandline );
+		main_task_factory = core::pack::task::TaskFactoryOP( new TaskFactory );
+		main_task_factory->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
 		if ( option[ packing::resfile ].user() ) {
-			main_task_factory->push_back( new operation::ReadResfile );
+			main_task_factory->push_back( TaskOperationCOP( new operation::ReadResfile ) );
 		}
 
 		score_fxn = core::scoring::get_score_function();
 
-		pack_mover = new protocols::simple_moves::PackRotamersMover;
+		pack_mover = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover );
 		pack_mover->task_factory( main_task_factory );
 		pack_mover->score_function( score_fxn );
 
 		//set up another mover
-		sc_mover = new protocols::simple_moves::sidechain_moves::SidechainMover();
+		sc_mover = protocols::simple_moves::sidechain_moves::SidechainMoverOP( new protocols::simple_moves::sidechain_moves::SidechainMover() );
 		sc_mover->set_task_factory( main_task_factory );
 	}
 
@@ -155,7 +155,7 @@ public:
 	virtual
 	protocols::moves::MoverOP
 	fresh_instance() const {
-		return new JDtestmover;
+		return protocols::moves::MoverOP( new JDtestmover );
 	}
 
 	virtual
@@ -176,7 +176,7 @@ private:
 
 };
 
-typedef utility::pointer::owning_ptr< JDtestmover > JDtestmoverOP;
+typedef utility::pointer::shared_ptr< JDtestmover > JDtestmoverOP;
 
 
 
@@ -189,7 +189,7 @@ main( int argc, char * argv [] )
 
 	devel::init(argc, argv);
 
-	JDtestmoverOP test_mover(new JDtestmover);
+	JDtestmoverOP test_mover( new JDtestmover );
 
 	protocols::jd2::JobDistributor::get_instance()->go(test_mover);
 

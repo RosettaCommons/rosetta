@@ -66,7 +66,7 @@ public:
 
 	//this class lives in the PoseCache.... need to provide clone()
 	basic::datacache::CacheableDataOP clone() const {
-		return new ChemicalShiftAnisotropy(*this);
+		return basic::datacache::CacheableDataOP( new ChemicalShiftAnisotropy(*this) );
 	}
 
 	///@brief compute csa score for given pose (non-constant due to membrane)

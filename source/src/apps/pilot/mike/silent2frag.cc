@@ -85,8 +85,8 @@ private:  //  Data
 
 };
 
-typedef utility::pointer::owning_ptr< FragCaptureMover > FragCaptureMoverOP;
-typedef utility::pointer::owning_ptr< FragCaptureMover const > FragCaptureMoverCOP;
+typedef utility::pointer::shared_ptr< FragCaptureMover > FragCaptureMoverOP;
+typedef utility::pointer::shared_ptr< FragCaptureMover const > FragCaptureMoverCOP;
 
 
 void FragCaptureMover::apply( core::pose::Pose & pose )
@@ -119,12 +119,12 @@ main( int argc, char * argv [] )
     	devel::init(argc, argv);
     	jd2::register_options();
 
-    	FragCaptureMoverOP capture3mers =  new FragCaptureMover(3);
-    	FragCaptureMoverOP capture9mers =  new FragCaptureMover(9);
+    	FragCaptureMoverOP capture3mers( new FragCaptureMover(3) );
+    	FragCaptureMoverOP capture9mers( new FragCaptureMover(9) );
 
-    	SequenceMoverOP seqmov = new SequenceMover;
+    	SequenceMoverOP seqmov( new SequenceMover );
     	if ( option[ run::idealize_before_protocol ]() ) {
-    		seqmov->add_mover( new protocols::idealize::IdealizeMover );
+    		seqmov->add_mover( MoverOP( new protocols::idealize::IdealizeMover ) );
     	}
 
     	seqmov->add_mover( capture3mers );

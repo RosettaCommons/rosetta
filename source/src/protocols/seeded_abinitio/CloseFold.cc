@@ -96,7 +96,7 @@ namespace protocols {
 
 		protocols::moves::MoverOP
 		CloseFoldCreator::create_mover() const {
-			return new CloseFold();
+			return protocols::moves::MoverOP( new CloseFold() );
 		}
 
 		std::string
@@ -202,7 +202,7 @@ CloseFold::find_loops( 		pose::Pose & pose,
 
 	//curate the cutpoint list from the cutpoints between the chain ends
 	if( use_cutpoints() ){
-		core::kinematics::FoldTreeOP ft = new kinematics::FoldTree( pose.fold_tree() );
+		core::kinematics::FoldTreeOP ft( new kinematics::FoldTree( pose.fold_tree() ) );
 		utility::vector1< Size > cutpoints =  ft->cutpoints();
 		utility::vector1< Size > chain_ends = pose.conformation().chain_endings();
 		//adding last chains' end too, since it isnt included in chain_endings( and to avoid seg fault beloew)
@@ -279,7 +279,7 @@ CloseFold::find_loops( 		pose::Pose & pose,
 	}//end for loop through sec strct
 
 	TR  <<"loop return: " << found_loops << std::endl;
-	protocols::loops::LoopsOP newloops = new protocols::loops::Loops( found_loops );
+	protocols::loops::LoopsOP newloops( new protocols::loops::Loops( found_loops ) );
 	return newloops;
 }
 
@@ -310,7 +310,7 @@ CloseFold::fast_loopclose( core::pose::Pose &pose, protocols::loops::LoopsOP con
 		bool chainbreak_present = true;
 		if ( chainbreak_present ) {
 			std::cout<<"start fast ccd closure " << std::endl;
-			core::kinematics::MoveMapOP mm_one_loop = new core::kinematics::MoveMap();
+			core::kinematics::MoveMapOP mm_one_loop( new core::kinematics::MoveMap() );
 			set_move_map_for_centroid_loop( buildloop, *mm_one_loop );
 			loops::loop_mover::perturb::fast_ccd_close_loops( pose, buildloop,  *mm_one_loop );
 		}
@@ -443,7 +443,7 @@ CloseFold::parse_my_tag(
 		throw utility::excn::EXCN_RosettaScriptsOption("need to supply fragments...currently still not accessing the general fragment pool" );
 
 	//adding the LoopOP to the data map
-	loops_ = new protocols::loops::Loops();
+	loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops() );
 	data.add( "loops", "found_loops", loops_ );
 
 	chainbreakweights_ = tag->getOption< bool >("add_chainbreakterm" , 1 );
@@ -475,7 +475,7 @@ CloseFold::parse_my_tag(
 
   if( tag->hasOption( "template_pdb" ) ){
     std::string const template_pdb_fname( tag->getOption< std::string >( "template_pdb" ));
-    template_pdb_ =  new core::pose::Pose ;
+    template_pdb_ = core::pose::PoseOP( new core::pose::Pose ) ;
     core::import_pose::pose_from_pdb( *template_pdb_, template_pdb_fname );
     TR<<"read in a template pdb with " <<template_pdb_->total_residue() <<"residues"<<std::endl;
     //template_presence_ = true;

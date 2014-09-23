@@ -20,8 +20,8 @@ namespace conformation {
 namespace symmetry {
 
 class SymDof;
-typedef utility::pointer::owning_ptr< SymDof > SymDofOP;
-typedef utility::pointer::owning_ptr< SymDof const > SymDofCOP;
+typedef utility::pointer::shared_ptr< SymDof > SymDofOP;
+typedef utility::pointer::shared_ptr< SymDof const > SymDofCOP;
 
 } // symmetry
 } // conformation

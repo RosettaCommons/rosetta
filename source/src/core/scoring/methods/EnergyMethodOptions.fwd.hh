@@ -23,8 +23,8 @@ namespace methods {
 
 class EnergyMethodOptions;
 
-typedef utility::pointer::owning_ptr< EnergyMethodOptions > EnergyMethodOptionsOP;
-typedef utility::pointer::owning_ptr< EnergyMethodOptions const > EnergyMethodOptionsCOP;
+typedef utility::pointer::shared_ptr< EnergyMethodOptions > EnergyMethodOptionsOP;
+typedef utility::pointer::shared_ptr< EnergyMethodOptions const > EnergyMethodOptionsCOP;
 
 }
 }

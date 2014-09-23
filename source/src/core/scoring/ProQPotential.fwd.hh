@@ -33,7 +33,7 @@ namespace core {
 namespace scoring {
 
 class ProQPotential;
-typedef utility::pointer::owning_ptr< ProQPotential > ProQPotentialOP;
+typedef utility::pointer::shared_ptr< ProQPotential > ProQPotentialOP;
 
 } // ns scoring
 } // ns core

@@ -52,7 +52,7 @@ public:
 	core::pose::metrics::PoseMetricCalculatorOP clone()
 	const
 	{
-		return new BuriedUnsatisfiedPolarsCalculator2( name_of_weak_bunsat_calc_ );
+		return core::pose::metrics::PoseMetricCalculatorOP( new BuriedUnsatisfiedPolarsCalculator2( name_of_weak_bunsat_calc_ ) );
 	};
 	
 	std::string const & name_of_weak_bunsat_calc()

@@ -97,7 +97,7 @@ LigandBaseProtocol::LigandBaseProtocol():
 {
 	Mover::type( "LigandBaseProtocol" );
 
-	unboundrot_ = new core::pack::rotamer_set::UnboundRotamersOperation();
+	unboundrot_ = core::pack::rotamer_set::UnboundRotamersOperationOP( new core::pack::rotamer_set::UnboundRotamersOperation() );
 	unboundrot_->initialize_from_command_line();
 
 	using namespace basic::options;
@@ -163,7 +163,7 @@ LigandBaseProtocol::make_tweaked_scorefxn(
 {
 	using namespace core::scoring;
 
-	ScoreFunctionOP sfxn = new ScoreFunction();
+	ScoreFunctionOP sfxn( new ScoreFunction() );
 	sfxn->reset();
 
 	// manipulate EnergyMethodOptions here
@@ -423,7 +423,7 @@ LigandBaseProtocol::make_movemap(
 ) const
 {
 	// All DOF start false (frozen)
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
+	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
 	movemap->set_jump(jump_id, true);
 	//if( include_backbone ) movemap->set_bb(true); // held in check by restraints (elsewhere)
 
@@ -694,12 +694,12 @@ LigandBaseProtocol::restrain_protein_Calphas(
 		if ( pose.residue(i).is_protein() && is_restrained[i] ) { // protein residues
 			Residue const & rsd = pose.residue(i);
 			ResidueType const & rsd_type = pose.residue_type(i);
-			ConstraintOP constraint = new CoordinateConstraint(
+			ConstraintOP constraint( new CoordinateConstraint(
 				AtomID(rsd_type.atom_index("CA"), i),
 				fixed_pt,
 				rsd.xyz("CA"),
 				restr_func
-			);
+			) );
 			TR.Debug << "Restraining C-alpha of residue " << i << std::endl;
 			pose.add_constraint( constraint );
 		}
@@ -726,19 +726,19 @@ LigandBaseProtocol::restrain_ligand_nbr_atom(
 	using core::conformation::Residue;
 	using core::id::AtomID;
 
-	core::scoring::func::FuncOP restr_func = new core::scoring::func::HarmonicFunc(0, stddev_Angstroms);
+	core::scoring::func::FuncOP restr_func( new core::scoring::func::HarmonicFunc(0, stddev_Angstroms) );
 	// An atom that should never move in terms of absolute coordinates.
 	// Needed as a proxy for the origin, b/c Rosetta assumes all energies are
 	// translation-invariant.  So it's a "two-body" energy with this fixed atom.
 	AtomID fixed_pt( pose.atom_tree().root()->atom_id() );
 
 	Residue const & rsd = pose.residue(lig_id);
-	ConstraintOP constraint = new CoordinateConstraint(
+	ConstraintOP constraint( new CoordinateConstraint(
 		AtomID(rsd.nbr_atom(), lig_id),
 		fixed_pt,
 		rsd.nbr_atom_xyz(),
 		restr_func
-	);
+	) );
 	TR << "Restraining ligand residue " << lig_id << std::endl;
 	pose.add_constraint( constraint );
 
@@ -782,7 +782,7 @@ LigandBaseProtocol::setup_bbmin_foldtree(
 		allow_move_bb[i] = mobile_bb[i];
 	}
 	// Add constraints
-	core::scoring::func::FuncOP restr_func = new core::scoring::func::HarmonicFunc(0, stddev_Angstroms);
+	core::scoring::func::FuncOP restr_func( new core::scoring::func::HarmonicFunc(0, stddev_Angstroms) );
 	restrain_protein_Calphas(pose, allow_move_bb, restr_func);
 
 }//setup_bbmin_foldtree
@@ -981,7 +981,7 @@ LigandBaseProtocol::get_non_bb_clashing_rotamers(
 
 	//let's see if this works
 	//graph::GraphOP neighbor_graph = pack::create_packer_graph( pose, *scofx, help_task );
-	graph::GraphOP neighbor_graph = new graph::Graph( pose.energies().energy_graph() );
+	graph::GraphOP neighbor_graph( new graph::Graph( pose.energies().energy_graph() ) );
 
 	chemical::ResidueTypeCOP res_type = pose.residue_type( seqpos ).get_self_ptr();
 	conformation::Residue const & existing_residue( pose.residue( seqpos ) );

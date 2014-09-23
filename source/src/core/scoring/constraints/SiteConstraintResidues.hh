@@ -55,7 +55,7 @@ public:
     ///
     virtual
     ConstraintOP clone() const {
-        return new SiteConstraintResidues(*this);
+        return ConstraintOP( new SiteConstraintResidues(*this) );
     }
 
     std::string type() const {

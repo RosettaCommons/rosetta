@@ -384,8 +384,7 @@ AtomTreeCollection::AtomTreeCollection(
 		++count_moltenres;
 		resid_2_moltenresid_[ ii ] = count_moltenres;
 		moltenresid_2_resid_[ count_moltenres ] = ii;
-		res_collections_[ count_moltenres ] = ResidueAtomTreeCollectionOP(
-			new ResidueAtomTreeCollection( task.residue_task( ii ),  pose.conformation(), pose.residue( ii ) ) );
+		res_collections_[ count_moltenres ] = ResidueAtomTreeCollectionOP( new ResidueAtomTreeCollection( task.residue_task( ii ),  pose.conformation(), pose.residue( ii ) ) );
 	}
 }
 

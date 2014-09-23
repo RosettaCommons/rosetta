@@ -129,7 +129,7 @@ using namespace core;
 SheetBuilder::SheetBuilder( core::fragment::SecondaryStructureOP ss, core::scoring::dssp::PairingsList const& pairings, SheetTopology const& sheet_topol) :
   total_residue_( ss->total_residue() ),
   pairings_( pairings ),
-  same_strand_( new SameStrand( ss ) ),
+  same_strand_( SameStrandOP( new SameStrand( ss ) ) ),
   secondary_structure_( ss ),
 	sheet_sizes_( sheet_topol ),
   bForceSingleSheet_( true ) // this should be set by an option or so

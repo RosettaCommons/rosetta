@@ -83,7 +83,7 @@ TimeFilter::apply( core::pose::Pose const & p ) const{
 }
 
 FilterOP
-TimeFilterCreator::create_filter() const { return new TimeFilter; }
+TimeFilterCreator::create_filter() const { return FilterOP( new TimeFilter ); }
 
 std::string
 TimeFilterCreator::keyname() const { return "Time"; }

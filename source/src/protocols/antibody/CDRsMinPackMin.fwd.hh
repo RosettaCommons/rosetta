@@ -21,8 +21,8 @@ namespace protocols {
 namespace antibody {
 
 class CDRsMinPackMin;
-typedef utility::pointer::owning_ptr< CDRsMinPackMin > CDRsMinPackMinOP;
-typedef utility::pointer::owning_ptr< CDRsMinPackMin const > CDRsMinPackMinCOP;
+typedef utility::pointer::shared_ptr< CDRsMinPackMin > CDRsMinPackMinOP;
+typedef utility::pointer::shared_ptr< CDRsMinPackMin const > CDRsMinPackMinCOP;
 
 }
 }

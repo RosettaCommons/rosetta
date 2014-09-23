@@ -60,7 +60,7 @@ core::sequence::SequenceAlignmentOP AlignEvaluator::get_alignment(
 	if ( aln_ ) return aln_;
 	// calculate a naive alignment if we don't already have an alignment.
 	using namespace core::sequence;
-	SequenceOP model_seq ( new Sequence( pose.sequence(),  "model",  1 ) );
+	SequenceOP model_seq( new Sequence( pose.sequence(),  "model",  1 ) );
 	SequenceOP native_seq( new Sequence( native_pose_->sequence(), "native", 1 ) );
 	tr.Debug << "aligning: " << std::endl;
 	tr.Debug << model_seq ->to_string() << std::endl;

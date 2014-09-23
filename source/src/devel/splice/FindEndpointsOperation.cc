@@ -58,12 +58,12 @@ FindEndpointsOperation::~FindEndpointsOperation() {}
 core::pack::task::operation::TaskOperationOP
 FindEndpointsOperationCreator::create_task_operation() const
 {
-	return new FindEndpointsOperation;
+	return core::pack::task::operation::TaskOperationOP( new FindEndpointsOperation );
 }
 
 core::pack::task::operation::TaskOperationOP FindEndpointsOperation::clone() const
 {
-	return new FindEndpointsOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new FindEndpointsOperation( *this ) );
 }
 
 ///@brief compute the number of residue neighbours target_res has within neighbours vector

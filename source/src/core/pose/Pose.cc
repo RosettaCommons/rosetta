@@ -83,28 +83,28 @@ void Pose::init(void)
 		if( !basic::was_init_called() ) utility_exit_with_message("Attempt to initialize Pose object before core::init was called detected… Have you forgot to call core::init?");
 	#endif
 
-	conformation_ = new Conformation();
+	conformation_ = ConformationOP( new Conformation() );
 
 	// have the Pose observe it's Conformation for XYZ changes
 	// we discard the Link because we own the Conformation
 	conformation_->attach_xyz_obs( &Pose::on_conf_xyz_change, this );
 
-	energies_ = new scoring::Energies();
+	energies_ = scoring::EnergiesOP( new scoring::Energies() );
 	energies_->set_owner( this );
 
-	data_cache_ = new BasicDataCache( datacache::CacheableDataType::num_cacheable_data_types );
+	data_cache_ = BasicDataCacheOP( new BasicDataCache( datacache::CacheableDataType::num_cacheable_data_types ) );
 
-	observer_cache_ = new ObserverCache( datacache::CacheableObserverType::num_cacheable_data_types, *this );
+	observer_cache_ = ObserverCacheOP( new ObserverCache( datacache::CacheableObserverType::num_cacheable_data_types, *this ) );
 
-	metrics_ = new metrics::PoseMetricContainer;
+	metrics_ = metrics::PoseMetricContainerOP( new metrics::PoseMetricContainer );
 	metrics_->attach_to( *this );
 }
 
 
 /// @details default constructor
 Pose::Pose() :
-	pdb_info_( NULL ),
-	constraint_set_( 0 )
+	pdb_info_( /* NULL */ ),
+	constraint_set_( /* 0 */ )
 {
 	init();
 }
@@ -129,8 +129,8 @@ Pose::Pose( Pose const & src ) :
 
 /// @brief partial copy constructor
 Pose::Pose( Pose const & src, Size begin, Size const end):
-	pdb_info_( NULL ),
-	constraint_set_( 0 )
+	pdb_info_( /* NULL */ ),
+	constraint_set_( /* 0 */ )
 {
 	init();
 	utility::vector1< core::Size > residue_indices;
@@ -162,15 +162,15 @@ Pose::operator=( Pose const & src )
 		energies_->set_owner( this );
 	}
 
-	data_cache_  = new BasicDataCache( datacache::CacheableDataType::num_cacheable_data_types );
+	data_cache_ = BasicDataCacheOP( new BasicDataCache( datacache::CacheableDataType::num_cacheable_data_types ) );
 	*data_cache_ = *(src.data_cache_);
 
-	observer_cache_ = new ObserverCache( datacache::CacheableObserverType::num_cacheable_data_types, *this );
+	observer_cache_ = ObserverCacheOP( new ObserverCache( datacache::CacheableObserverType::num_cacheable_data_types, *this ) );
 	*observer_cache_ = *src.observer_cache_;
 
 	this->pdb_info( src.pdb_info_ );
 
-	metrics_ = new metrics::PoseMetricContainer( *src.metrics_ );
+	metrics_ = metrics::PoseMetricContainerOP( new metrics::PoseMetricContainer( *src.metrics_ ) );
 	metrics_->attach_to( *this );
 
 	if( constraint_set_ ) constraint_set_->detach_from_conformation();
@@ -179,7 +179,7 @@ Pose::operator=( Pose const & src )
 		constraint_set_ = src.constraint_set_->clone();
 		constraint_set_->attach_to_conformation( ConformationAP( conformation_ ) );
 	} else {
-		constraint_set_ = 0;
+		constraint_set_.reset();
 	}
 
 	num_stacks_ = src.num_stacks_;
@@ -200,7 +200,7 @@ Pose::operator=( Pose const & src )
 PoseOP
 Pose::clone() const
 {
-	return new Pose( *this );
+	return PoseOP( new Pose( *this ) );
 }
 
 kinematics::FoldTree const &
@@ -247,12 +247,12 @@ Pose::set_new_conformation( conformation::ConformationCOP new_conformation )
 	observer_cache_->detach();
 
 	// initialize new
-	energies_ = new scoring::Energies();
+	energies_ = scoring::EnergiesOP( new scoring::Energies() );
 	energies_->set_owner( this );
 
-	data_cache_ = new BasicDataCache( datacache::CacheableDataType::num_cacheable_data_types );
+	data_cache_ = BasicDataCacheOP( new BasicDataCache( datacache::CacheableDataType::num_cacheable_data_types ) );
 
-	metrics_ = new metrics::PoseMetricContainer;
+	metrics_ = metrics::PoseMetricContainerOP( new metrics::PoseMetricContainer );
 	metrics_->attach_to( *this );
 
 	/// clone and reassign the pointer
@@ -294,7 +294,7 @@ PoseOP
 Pose::split_by_chain(Size const chain_id) const
 {
 
-	core::pose::PoseOP chain_pose = new Pose(*this);
+	core::pose::PoseOP chain_pose( new Pose(*this) );
 	Size chain_begin, chain_end, delete_begin, delete_end;
 
 	chain_begin = chain_pose->conformation().chain_begin( chain_id );
@@ -1327,7 +1327,7 @@ Pose::clear()
 {
 	conformation_->clear();
 	energies_->clear();
-	constraint_set_ = 0;
+	constraint_set_.reset();
 	metrics_->clear();
 	data_cache_->clear();
 	observer_cache_->clear();
@@ -1392,7 +1392,7 @@ Pose::ConstraintSetCOP
 Pose::constraint_set() const
 {
 	if ( constraint_set_ == 0 ) {
-		return new scoring::constraints::ConstraintSet; // create an empty constraint set
+		return Pose::ConstraintSetCOP( new scoring::constraints::ConstraintSet ); // create an empty constraint set
 	}
 	return constraint_set_;
 }
@@ -1402,7 +1402,7 @@ Pose::add_constraint( scoring::constraints::ConstraintCOP cst )
 {
 	energies_->clear();
 	if ( constraint_set_ == 0 ) {
-		constraint_set_ = new scoring::constraints::ConstraintSet; // create an empty constraint set the first time it's asked for
+		constraint_set_ = ConstraintSetOP( new scoring::constraints::ConstraintSet ); // create an empty constraint set the first time it's asked for
 		constraint_set_->attach_to_conformation( ConformationAP( conformation_ ) );
 	}
 	scoring::constraints::ConstraintCOP new_cst( cst->clone() );
@@ -1415,7 +1415,7 @@ Pose::add_constraints( scoring::constraints::ConstraintCOPs csts )
 {
 	energies_->clear();
 	if ( constraint_set_ == 0 ) {
-		constraint_set_ = new scoring::constraints::ConstraintSet; // create an empty constraint set the first time it's asked for
+		constraint_set_ = ConstraintSetOP( new scoring::constraints::ConstraintSet ); // create an empty constraint set the first time it's asked for
 		constraint_set_->attach_to_conformation( ConformationAP( conformation_ ) );
 	}
 	using namespace scoring::constraints;
@@ -1535,7 +1535,7 @@ Pose::pdb_info( PDBInfoOP new_info )
 	PDBInfoOP prior_pdb_info = pdb_info_;
 
 	if ( new_info ) {
-		pdb_info_ = new PDBInfo( *new_info ); // make a copy
+		pdb_info_ = PDBInfoOP( new PDBInfo( *new_info ) ); // make a copy
 		pdb_info_->attach_to( *conformation_ );
 	} else {
 		pdb_info_.reset(); // set to NULL

@@ -22,8 +22,8 @@ namespace task_operations{
 
 class RestrictInterGroupVectorOperation;
 
-typedef utility::pointer::owning_ptr< RestrictInterGroupVectorOperation > RestrictInterGroupVectorOperationOP;
-typedef utility::pointer::owning_ptr< RestrictInterGroupVectorOperation const > RestrictInterGroupVectorOperationCOP;
+typedef utility::pointer::shared_ptr< RestrictInterGroupVectorOperation > RestrictInterGroupVectorOperationOP;
+typedef utility::pointer::shared_ptr< RestrictInterGroupVectorOperation const > RestrictInterGroupVectorOperationCOP;
 
 
 } // task_operations

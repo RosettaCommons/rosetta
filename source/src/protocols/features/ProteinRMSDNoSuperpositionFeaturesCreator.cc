@@ -29,7 +29,7 @@ namespace features {
 ProteinRMSDNoSuperpositionFeaturesCreator::ProteinRMSDNoSuperpositionFeaturesCreator() {}
 ProteinRMSDNoSuperpositionFeaturesCreator::~ProteinRMSDNoSuperpositionFeaturesCreator() {}
 FeaturesReporterOP ProteinRMSDNoSuperpositionFeaturesCreator::create_features_reporter() const {
-	return new ProteinRMSDNoSuperpositionFeatures;
+	return FeaturesReporterOP( new ProteinRMSDNoSuperpositionFeatures );
 }
 
 std::string ProteinRMSDNoSuperpositionFeaturesCreator::type_name() const {

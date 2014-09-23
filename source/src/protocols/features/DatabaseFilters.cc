@@ -75,10 +75,10 @@ DatabaseFilterOP get_DB_filter_ptr(){
 	++begin;
 	utility::vector1<std::string> arguments(begin, filter_option.end());
 
-	if(type == "TopPercentOfEachInput") return new TopPercentOfEachInput(arguments);
-	if(type == "TopPercentOfAllInputs") return new TopPercentOfAllInputs(arguments);
-	if(type == "TopCountOfEachInput") return new TopCountOfEachInput(arguments);
-	if(type == "TopCountOfAllInputs") return new TopCountOfAllInputs(arguments);
+	if(type == "TopPercentOfEachInput") return DatabaseFilterOP( new TopPercentOfEachInput(arguments) );
+	if(type == "TopPercentOfAllInputs") return DatabaseFilterOP( new TopPercentOfAllInputs(arguments) );
+	if(type == "TopCountOfEachInput") return DatabaseFilterOP( new TopCountOfEachInput(arguments) );
+	if(type == "TopCountOfAllInputs") return DatabaseFilterOP( new TopCountOfAllInputs(arguments) );
 
 	utility_exit_with_message(type+" is not a valid Database Filter name");
 	return NULL; // To keep the compiler happy

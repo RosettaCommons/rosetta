@@ -62,7 +62,7 @@ public:
 
 	///@brief TMHTopologySamplerClaimer has virtual functions... use this to obtain a new instance
 	virtual TopologyClaimerOP clone() const {
-		return new TMHTopologySamplerClaimer( *this );
+		return TopologyClaimerOP( new TMHTopologySamplerClaimer( *this ) );
 	}
 
 	///@brief type() is specifying the output name of the TopologyClaimer

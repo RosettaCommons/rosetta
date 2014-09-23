@@ -503,7 +503,7 @@ namespace devel {
 
     void Protocol::apply(core::pose::PoseOP pose_) {
       pose = pose_;
-      move_map =  new core::kinematics::MoveMap( get_move_map(pose->n_residue(),loops) );
+      move_map = core::kinematics::MoveMapOP( new core::kinematics::MoveMap( get_move_map(pose->n_residue(),loops) ) );
 
       const double CHAINBREAK_WEIGHT = 10;
       const double RAMA_WEIGHT       = 10;

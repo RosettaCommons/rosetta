@@ -24,21 +24,21 @@ namespace ccd {
 // Forward declaration and typedefs for RamaCheck base class
 class RamaCheckBase;
 
-typedef  utility::pointer::owning_ptr< RamaCheckBase >  RamaCheckBaseOP;
-typedef  utility::pointer::owning_ptr< RamaCheckBase const >  RamaCheckBaseCOP;
+typedef  utility::pointer::shared_ptr< RamaCheckBase >  RamaCheckBaseOP;
+typedef  utility::pointer::shared_ptr< RamaCheckBase const >  RamaCheckBaseCOP;
 
 
 // Forward declaration and typedefs for one-body (neighbor-independent) Ramachandran scores
 class RamaCheck1B;
 
-typedef  utility::pointer::owning_ptr< RamaCheck1B >  RamaCheck1BOP;
-typedef  utility::pointer::owning_ptr< RamaCheck1B const >  RamaCheck1BCOP;
+typedef  utility::pointer::shared_ptr< RamaCheck1B >  RamaCheck1BOP;
+typedef  utility::pointer::shared_ptr< RamaCheck1B const >  RamaCheck1BCOP;
 
 // Forward declaration and typedefs for two-body (neighbor-dependent) Ramachandran scores
 class RamaCheck2B;
 
-typedef  utility::pointer::owning_ptr< RamaCheck2B >  RamaCheck2BOP;
-typedef  utility::pointer::owning_ptr< RamaCheck2B const >  RamaCheck2BCOP;
+typedef  utility::pointer::shared_ptr< RamaCheck2B >  RamaCheck2BOP;
+typedef  utility::pointer::shared_ptr< RamaCheck2B const >  RamaCheck2BCOP;
 
 } // namespace ccd
 } // namespace loop_closure

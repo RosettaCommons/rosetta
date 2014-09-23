@@ -93,7 +93,7 @@ std::string JumpUpstreamSelector::class_name() {
 
 ResidueSelectorOP
 JumpUpstreamSelectorCreator::create_residue_selector() const {
-	return new JumpUpstreamSelector;
+	return ResidueSelectorOP( new JumpUpstreamSelector );
 }
 
 std::string

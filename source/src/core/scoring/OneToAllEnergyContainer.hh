@@ -252,7 +252,7 @@ public:
 	virtual
 	LREnergyContainerOP clone() const
 	{
-		return new OneToAllEnergyContainer( *this );
+		return LREnergyContainerOP( new OneToAllEnergyContainer( *this ) );
 	}
 
 	OneToAllEnergyContainer( int const fixed_res_idx, Size const size_in, ScoreType const score_type_in ):
@@ -296,11 +296,11 @@ public:
 	{
 		if (resid == fixed_) {
 			// loop over ALL tgts
-			return new OneToAllNeighborConstIterator( fixed_ , 1, true, score_type_, &table_, &computed_ );
+			return ResidueNeighborConstIteratorOP( new OneToAllNeighborConstIterator( fixed_ , 1, true, score_type_, &table_, &computed_ ) );
 		} else {
 			// loop over fixed only
 			//std::cerr << "START fixed " << fixed_ << " , resid " << resid << std::endl;
-			return new OneToAllNeighborConstIterator( fixed_ , resid, false, score_type_, &table_, &computed_ );
+			return ResidueNeighborConstIteratorOP( new OneToAllNeighborConstIterator( fixed_ , resid, false, score_type_, &table_, &computed_ ) );
 		}
 	}
 
@@ -310,15 +310,15 @@ public:
 	{
 		if (resid == fixed_) {
 			// loop over ALL tgts
-			return new OneToAllNeighborConstIterator( fixed_ , size_ + 1, true, score_type_, &table_, &computed_ );
+			return ResidueNeighborConstIteratorOP( new OneToAllNeighborConstIterator( fixed_ , size_ + 1, true, score_type_, &table_, &computed_ ) );
 		} else {
 			// loop over fixed only
 			if (resid+1 == fixed_) {
 				//std::cerr << "END fixed " << fixed_ << " , resid " << resid+2 << std::endl;
-				return new OneToAllNeighborConstIterator( fixed_ , resid + 2, false, score_type_, &table_, &computed_ );
+				return ResidueNeighborConstIteratorOP( new OneToAllNeighborConstIterator( fixed_ , resid + 2, false, score_type_, &table_, &computed_ ) );
 			} else  {
 				//std::cerr << "END fixed " << fixed_ << " , resid " << resid+1 << std::endl;
-				return new OneToAllNeighborConstIterator( fixed_ , resid + 1, false, score_type_, &table_, &computed_ );
+				return ResidueNeighborConstIteratorOP( new OneToAllNeighborConstIterator( fixed_ , resid + 1, false, score_type_, &table_, &computed_ ) );
 			}
 		}
 	}
@@ -329,10 +329,10 @@ public:
 	{
 		if (resid == fixed_) {
 			// loop over NOTHING
-			return new OneToAllNeighborConstIterator( fixed_ , size_ + 1, true, score_type_, &table_, &computed_ );
+			return ResidueNeighborConstIteratorOP( new OneToAllNeighborConstIterator( fixed_ , size_ + 1, true, score_type_, &table_, &computed_ ) );
 		} else {
 			// loop over fixed only
-			return new OneToAllNeighborConstIterator( fixed_ , resid, false, score_type_, &table_, &computed_ );
+			return ResidueNeighborConstIteratorOP( new OneToAllNeighborConstIterator( fixed_ , resid, false, score_type_, &table_, &computed_ ) );
 		}
 	}
 
@@ -350,10 +350,10 @@ public:
 	{
 		if (resid == fixed_) {
 			// loop over ALL tgts
-			return new OneToAllNeighborIterator( fixed_ , 1, true, score_type_, &table_, &computed_ );
+			return ResidueNeighborIteratorOP( new OneToAllNeighborIterator( fixed_ , 1, true, score_type_, &table_, &computed_ ) );
 		} else {
 			// loop over fixed only
-			return new OneToAllNeighborIterator( fixed_ , resid, false, score_type_, &table_, &computed_ );
+			return ResidueNeighborIteratorOP( new OneToAllNeighborIterator( fixed_ , resid, false, score_type_, &table_, &computed_ ) );
 		}
 	}
 
@@ -363,13 +363,13 @@ public:
 	{
 		if (resid == fixed_) {
 			// loop over ALL tgts
-			return new OneToAllNeighborIterator( fixed_ , size_ + 1, true, score_type_, &table_, &computed_ );
+			return ResidueNeighborIteratorOP( new OneToAllNeighborIterator( fixed_ , size_ + 1, true, score_type_, &table_, &computed_ ) );
 		} else {
 			// loop over fixed only
 			if (resid+1 == fixed_)
-				return new OneToAllNeighborIterator( fixed_ , resid + 2, false, score_type_, &table_, &computed_ );
+				return ResidueNeighborIteratorOP( new OneToAllNeighborIterator( fixed_ , resid + 2, false, score_type_, &table_, &computed_ ) );
 			else
-				return new OneToAllNeighborIterator( fixed_ , resid + 1, false, score_type_, &table_, &computed_ );
+				return ResidueNeighborIteratorOP( new OneToAllNeighborIterator( fixed_ , resid + 1, false, score_type_, &table_, &computed_ ) );
 		}
 	}
 
@@ -379,10 +379,10 @@ public:
 	{
 		if (resid == fixed_) {
 			// loop over NOTHING
-			return new OneToAllNeighborIterator( fixed_ , size_ + 1, true, score_type_, &table_, &computed_ );
+			return ResidueNeighborIteratorOP( new OneToAllNeighborIterator( fixed_ , size_ + 1, true, score_type_, &table_, &computed_ ) );
 		} else {
 			// loop over fixed only
-			return new OneToAllNeighborIterator( fixed_ , resid, false, score_type_, &table_, &computed_ );
+			return ResidueNeighborIteratorOP( new OneToAllNeighborIterator( fixed_ , resid, false, score_type_, &table_, &computed_ ) );
 		}
 	}
 

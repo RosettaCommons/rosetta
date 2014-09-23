@@ -79,7 +79,7 @@ ScoreTypes XtalMLEnergyCreator::score_types_for_method() const {
 }
 
 methods::EnergyMethodOP XtalMLEnergyCreator::create_energy_method( methods::EnergyMethodOptions const &) const {
-	return new XtalMLEnergy();
+	return methods::EnergyMethodOP( new XtalMLEnergy() );
 }
 
 XtalMLEnergy::XtalMLEnergy() :
@@ -90,7 +90,7 @@ XtalMLEnergy::XtalMLEnergy() :
 
 /// clone
 methods::EnergyMethodOP XtalMLEnergy::clone() const {
-	return new XtalMLEnergy( *this );
+	return methods::EnergyMethodOP( new XtalMLEnergy( *this ) );
 }
 
 void XtalMLEnergy::setup_for_scoring( pose::Pose & , ScoreFunction const & ) const {

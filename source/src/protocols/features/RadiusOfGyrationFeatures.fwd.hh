@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class RadiusOfGyrationFeatures;
-typedef utility::pointer::owning_ptr< RadiusOfGyrationFeatures > RadiusOfGyrationFeaturesOP;
-typedef utility::pointer::owning_ptr< RadiusOfGyrationFeatures const > RadiusOfGyrationFeaturesCOP;
+typedef utility::pointer::shared_ptr< RadiusOfGyrationFeatures > RadiusOfGyrationFeaturesOP;
+typedef utility::pointer::shared_ptr< RadiusOfGyrationFeatures const > RadiusOfGyrationFeaturesCOP;
 
 }//features namespace
 }//protocols namespace

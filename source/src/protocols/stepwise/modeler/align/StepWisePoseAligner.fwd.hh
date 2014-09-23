@@ -24,8 +24,8 @@ namespace modeler {
 namespace align {
 	
 	class StepWisePoseAligner;
-	typedef utility::pointer::owning_ptr< StepWisePoseAligner > StepWisePoseAlignerOP;
-	typedef utility::pointer::owning_ptr< StepWisePoseAligner const > StepWisePoseAlignerCOP;
+	typedef utility::pointer::shared_ptr< StepWisePoseAligner > StepWisePoseAlignerOP;
+	typedef utility::pointer::shared_ptr< StepWisePoseAligner const > StepWisePoseAlignerCOP;
 	
 } //align
 } //modeler

@@ -25,8 +25,8 @@ class SymmLinearMemNode;
 class SymmLinearMemEdge;
 class SymmLinearMemoryInteractionGraph;
 
-typedef utility::pointer::owning_ptr< SymmLinearMemoryInteractionGraph > SymmLinearMemoryInteractionGraphOP;
-typedef utility::pointer::owning_ptr< SymmLinearMemoryInteractionGraph const > SymmLinearMemoryInteractionGraphCOP;
+typedef utility::pointer::shared_ptr< SymmLinearMemoryInteractionGraph > SymmLinearMemoryInteractionGraphOP;
+typedef utility::pointer::shared_ptr< SymmLinearMemoryInteractionGraph const > SymmLinearMemoryInteractionGraphCOP;
 
 
 }

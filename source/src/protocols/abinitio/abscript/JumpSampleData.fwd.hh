@@ -24,8 +24,8 @@ namespace abinitio {
 namespace abscript{
 
 class JumpSampleData;
-typedef utility::pointer::owning_ptr< JumpSampleData > JumpSampleDataOP;
-typedef utility::pointer::owning_ptr< JumpSampleData const > JumpSampleDataCOP;
+typedef utility::pointer::shared_ptr< JumpSampleData > JumpSampleDataOP;
+typedef utility::pointer::shared_ptr< JumpSampleData const > JumpSampleDataCOP;
 
 } // abscript
 } // abinitio

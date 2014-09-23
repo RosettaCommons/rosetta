@@ -21,8 +21,8 @@ namespace protocols {
 namespace dna {
 
 class DnaDesignDef;
-typedef utility::pointer::owning_ptr< DnaDesignDef > DnaDesignDefOP;
-typedef utility::pointer::owning_ptr< DnaDesignDef const > DnaDesignDefCOP;
+typedef utility::pointer::shared_ptr< DnaDesignDef > DnaDesignDefOP;
+typedef utility::pointer::shared_ptr< DnaDesignDef const > DnaDesignDefCOP;
 typedef utility::vector1< DnaDesignDef > DnaDesignDefs;
 typedef utility::vector1< DnaDesignDefOP > DnaDesignDefOPs;
 

@@ -24,8 +24,8 @@ namespace design {
 
 class ConservativeDesignOperation;
 
-typedef utility::pointer::owning_ptr< ConservativeDesignOperation > ConservativeDesignOperationOP;
-typedef utility::pointer::owning_ptr< ConservativeDesignOperation const > ConservativeDesignOperationCOP;
+typedef utility::pointer::shared_ptr< ConservativeDesignOperation > ConservativeDesignOperationOP;
+typedef utility::pointer::shared_ptr< ConservativeDesignOperation const > ConservativeDesignOperationCOP;
 
 } //namespace protocols
 } //namespace toolbox

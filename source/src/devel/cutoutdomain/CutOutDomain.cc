@@ -63,7 +63,7 @@ CutOutDomainCreator::keyname() const
 
 protocols::moves::MoverOP
 CutOutDomainCreator::create_mover() const {
-	return new CutOutDomain;
+	return protocols::moves::MoverOP( new CutOutDomain );
 }
 
 std::string

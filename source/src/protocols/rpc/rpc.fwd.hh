@@ -22,8 +22,8 @@ namespace rpc {
 // Forward
 class JSON_RPC;
 
-typedef utility::pointer::owning_ptr< JSON_RPC > JSON_RPCOP;
-typedef utility::pointer::owning_ptr< JSON_RPC const > JSON_RPCCOP;
+typedef utility::pointer::shared_ptr< JSON_RPC > JSON_RPCOP;
+typedef utility::pointer::shared_ptr< JSON_RPC const > JSON_RPCCOP;
 
 } //namespace rpc 
 } //namespace protocols

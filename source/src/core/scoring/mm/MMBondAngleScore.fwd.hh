@@ -26,10 +26,10 @@ namespace mm {
 // Forward
 class MMBondAngleScore;
 
-typedef  utility::pointer::access_ptr< MMBondAngleScore > MMBondAngleScoreAP;
-typedef  utility::pointer::access_ptr< MMBondAngleScore const > MMBondAngleScoreCAP;
-typedef  utility::pointer::owning_ptr< MMBondAngleScore > MMBondAngleScoreOP;
-typedef  utility::pointer::owning_ptr< MMBondAngleScore const > MMBondAngleScoreCOP;
+typedef  utility::pointer::weak_ptr< MMBondAngleScore > MMBondAngleScoreAP;
+typedef  utility::pointer::weak_ptr< MMBondAngleScore const > MMBondAngleScoreCAP;
+typedef  utility::pointer::shared_ptr< MMBondAngleScore > MMBondAngleScoreOP;
+typedef  utility::pointer::shared_ptr< MMBondAngleScore const > MMBondAngleScoreCOP;
 
 } // namespace mm
 } // namespace scoring

@@ -85,7 +85,7 @@ TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
 TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
                             LocalPosition const& local_pos):
   EnvClaim( owner ),
-  selector_( new EnvLabelSelector( local_pos ) ),
+  selector_( ResidueSelectorCOP( new EnvLabelSelector( local_pos ) ) ),
   c_str_( MUST_CONTROL ),
   i_str_( DOES_NOT_CONTROL ),
   claim_sidechain_( false ),
@@ -104,16 +104,16 @@ TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
   LocalPositions local_positions = LocalPositions();
 
   for( Size i = range.first; i <= range.second; ++i){
-    local_positions.push_back( new LocalPosition( label, i ) );
+    local_positions.push_back( utility::pointer::shared_ptr<class core::environment::LocalPosition>( new LocalPosition( label, i ) ) );
   }
 
-  selector_ = new EnvLabelSelector( local_positions );
+  selector_ = ResidueSelectorCOP( new EnvLabelSelector( local_positions ) );
 }
 
 TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
                             LocalPositions const& positions ):
   EnvClaim( owner ),
-  selector_( new EnvLabelSelector( positions ) ),
+  selector_( ResidueSelectorCOP( new EnvLabelSelector( positions ) ) ),
   c_str_( MUST_CONTROL ),
   i_str_( DOES_NOT_CONTROL ),
   claim_sidechain_( false ),
@@ -221,7 +221,7 @@ ControlStrength const& TorsionClaim::init_strength() const {
 }
 
 EnvClaimOP TorsionClaim::clone() const {
-  return new TorsionClaim( *this );
+  return EnvClaimOP( new TorsionClaim( *this ) );
 }
 
 std::string TorsionClaim::type() const{

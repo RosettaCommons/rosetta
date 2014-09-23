@@ -47,13 +47,13 @@ namespace task_operations{
 core::pack::task::operation::TaskOperationOP
 RestrictNativeResiduesOperationCreator::create_task_operation() const
 {
-	return new RestrictNativeResiduesOperation;
+	return core::pack::task::operation::TaskOperationOP( new RestrictNativeResiduesOperation );
 }
 
 /// @brief default constructor
 RestrictNativeResiduesOperation::RestrictNativeResiduesOperation():
 	TaskOperation(),
-	reference_pose_( NULL ),
+	reference_pose_( /* NULL */ ),
 	verbose_( false ),
 	prevent_repacking_( 0 )
 {
@@ -65,7 +65,7 @@ RestrictNativeResiduesOperation::~RestrictNativeResiduesOperation() {}
 /// @brief clone
 core::pack::task::operation::TaskOperationOP
 RestrictNativeResiduesOperation::clone() const {
-	return new RestrictNativeResiduesOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new RestrictNativeResiduesOperation( *this ) );
 }
 
 core::pose::PoseCOP
@@ -83,7 +83,7 @@ RestrictNativeResiduesOperation::reference_pose( core::pose::PoseCOP pose )
 void
 RestrictNativeResiduesOperation::reference_pose( core::pose::Pose const & pose )
 {
-	reference_pose_ = new core::pose::Pose( pose );
+	reference_pose_ = core::pose::PoseCOP( new core::pose::Pose( pose ) );
 }
 
 bool

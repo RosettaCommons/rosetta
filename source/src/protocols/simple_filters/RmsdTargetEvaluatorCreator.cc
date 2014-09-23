@@ -113,21 +113,21 @@ void RmsdTargetEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
 			}
 		}
     for ( Size ct = 1; ct <= rmsd_target.size(); ct ++ ) {
-      pose::PoseOP rmsd_pose = new pose::Pose;
+      pose::PoseOP rmsd_pose( new pose::Pose );
       core::import_pose::pose_from_pdb( *rmsd_pose, rmsd_target[ ct ] );
       std::string tag( ObjexxFCL::string_of( ct ) );
       if ( rmsd_col_name.size() >= ct ) tag = rmsd_col_name[ ct ];
-      eval.add_evaluation( new simple_filters::SelectRmsdEvaluator( rmsd_pose, tag ) );
-      if ( option[ OptionKeys::evaluation::gdtmm ]() ) eval.add_evaluation( new simple_filters::SelectGdtEvaluator( rmsd_pose, tag ) );
+      eval.add_evaluation( PoseEvaluatorOP( new simple_filters::SelectRmsdEvaluator( rmsd_pose, tag ) ) );
+      if ( option[ OptionKeys::evaluation::gdtmm ]() ) eval.add_evaluation( PoseEvaluatorOP( new simple_filters::SelectGdtEvaluator( rmsd_pose, tag ) ) );
 			if ( option[ OptionKeys::evaluation::score_with_rmsd ]() ){
 				core::scoring::ResidueSelection selection;
 				evaluation::find_existing_residues( rmsd_pose, tag, selection );
 				core::scoring::ResidueSelectionVector vector;
 				std::copy( selection.begin(), selection.end(), std::back_inserter( vector ) );
-				eval.add_evaluation( new simple_filters::TruncatedScoreEvaluator( tag, vector ) );
+				eval.add_evaluation( PoseEvaluatorOP( new simple_filters::TruncatedScoreEvaluator( tag, vector ) ) );
 			}
 			if ( option[ OptionKeys::evaluation::symmetric_rmsd ]() ) {
-				eval.add_evaluation( new simple_filters::SymmetricRmsdEvaluator( rmsd_pose, tag ) );
+				eval.add_evaluation( PoseEvaluatorOP( new simple_filters::SymmetricRmsdEvaluator( rmsd_pose, tag ) ) );
 			}
     }
   }

@@ -126,7 +126,7 @@ LoopMover_Refine_KIC::~LoopMover_Refine_KIC(){}
 
 //clone
 protocols::moves::MoverOP LoopMover_Refine_KIC::clone() const {
-		return new LoopMover_Refine_KIC(*this);
+		return protocols::moves::MoverOP( new LoopMover_Refine_KIC(*this) );
 	}
 
 void LoopMover_Refine_KIC::init( core::scoring::ScoreFunctionCOP  scorefxn )
@@ -297,9 +297,9 @@ void LoopMover_Refine_KIC::apply(
 	bool use_nblist( true ), deriv_check( false ), use_cartmin ( option[ OptionKeys::loops::kic_with_cartmin ]() ); // true ); // false );
 	if ( use_cartmin ) runtime_assert( min_scorefxn->get_weight( core::scoring::cart_bonded ) > 1e-3 );
 	if ( core::pose::symmetry::is_symmetric( pose ) )  {
-		min_mover = new simple_moves::symmetry::SymMinMover();
+		min_mover = protocols::simple_moves::MinMoverOP( new simple_moves::symmetry::SymMinMover() );
 	} else {
-		min_mover = new protocols::simple_moves::MinMover();
+		min_mover = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover() );
 	}
 	min_mover->score_function( min_scorefxn );
 	min_mover->min_type( min_type );
@@ -317,7 +317,7 @@ void LoopMover_Refine_KIC::apply(
 	// Set up the packer tasks: one for rotamer trials, one for repacking (with design if resfile supplied)
 	using namespace pack::task;
 	if ( task_factory == 0 ) {
-		task_factory = new TaskFactory;
+		task_factory = core::pack::task::TaskFactoryOP( new TaskFactory );
 		// TaskOperations replace the following kind of code:
 		// base_packer_task->initialize_from_command_line().or_include_current( true );
 		task_factory->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
@@ -357,8 +357,7 @@ void LoopMover_Refine_KIC::apply(
 
 	// AS Oct 3, 2012: create appropriate perturber here, depending on input flags
 	if (option[ OptionKeys::loops::vicinity_sampling ]()) {
-		loop_closure::kinematic_closure::VicinitySamplingKinematicPerturberOP perturber =
-		new loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber( myKinematicMover_cap );
+		loop_closure::kinematic_closure::VicinitySamplingKinematicPerturberOP perturber( new loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber( myKinematicMover_cap ) );
 		perturber->set_vary_ca_bond_angles(  ! option[OptionKeys::loops::fix_ca_bond_angles ]()  );
 		myKinematicMover.set_perturber( perturber );
 		perturber->set_degree_vicinity( option[ OptionKeys::loops::vicinity_degree ]() );
@@ -383,8 +382,7 @@ void LoopMover_Refine_KIC::apply(
 		// loop boundaries are not available here -- maybe the perturber should check the length?
 		//runtime_assert(torsion_bins.size() != loop_end - loop_begin + 1);
 
-		loop_closure::kinematic_closure::TorsionRestrictedKinematicPerturberOP perturber =
-			new loop_closure::kinematic_closure::TorsionRestrictedKinematicPerturber ( myKinematicMover_cap, torsion_bins );
+		loop_closure::kinematic_closure::TorsionRestrictedKinematicPerturberOP perturber( new loop_closure::kinematic_closure::TorsionRestrictedKinematicPerturber ( myKinematicMover_cap, torsion_bins ) );
 		// to make the code cleaner this should really be a generic function, even though some classes may not use it
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
@@ -393,24 +391,21 @@ void LoopMover_Refine_KIC::apply(
 		// TabooSampling with rama2b (neighbor-dependent phi/psi lookup) -- note that Taboo Sampling will
 		// only be active during the first half of the full-atom stage, after that we follow the energy
 		// landscape / Monte Carlo
-		loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturberOP perturber =
-			new loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturber( myKinematicMover_cap );
+		loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturberOP perturber( new loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturber( myKinematicMover_cap ) );
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	} else if ( basic::options::option[ basic::options::OptionKeys::loops::taboo_in_fa ] ) { // TabooSampling (std rama) -- note that Taboo Sampling will only be active during the first half of the full-atom stage, after that we follow the energy landscape / Monte Carlo
-		loop_closure::kinematic_closure::TabooSamplingKinematicPerturberOP perturber = new loop_closure::kinematic_closure::TabooSamplingKinematicPerturber ( myKinematicMover_cap );
+		loop_closure::kinematic_closure::TabooSamplingKinematicPerturberOP perturber( new loop_closure::kinematic_closure::TabooSamplingKinematicPerturber ( myKinematicMover_cap ) );
 
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	} else if ( basic::options::option[ basic::options::OptionKeys::loops::kic_rama2b ]() ) { // neighbor-dependent phi/psi selection
 		loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturberOP
-		perturber =
-        new loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturber( myKinematicMover_cap );
+		perturber( new loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturber( myKinematicMover_cap ) );
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	} else { // standard KIC
-		loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP perturber =
-		new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( myKinematicMover_cap );
+		loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP perturber( new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( myKinematicMover_cap ) );
 		perturber->set_vary_ca_bond_angles(  ! option[OptionKeys::loops::fix_ca_bond_angles ]()  );
 		myKinematicMover.set_perturber( perturber );
 	}
@@ -473,7 +468,7 @@ void LoopMover_Refine_KIC::apply(
 	kinematics::MoveMap mm_all_loops; // DJM tmp
 	loops_set_move_map( pose, *loops(), fix_natsc_, mm_all_loops, neighbor_dist_);
 	if(flank_residue_min_){add_loop_flank_residues_bb_to_movemap(*loops(), mm_all_loops); } // added by JQX
-	MoveMapOP mm_all_loops_OP = new kinematics::MoveMap( mm_all_loops ); // AS, required for using MinMover
+	MoveMapOP mm_all_loops_OP( new kinematics::MoveMap( mm_all_loops ) ); // AS, required for using MinMover
 	min_mover->movemap( mm_all_loops_OP );
 	min_mover->score_function( min_scorefxn ); // AS: needs to be adapted in case we ramp any weights (or does this happen automatically through pointers?)
 	//	minimizer->run( pose, mm_all_loops, *min_scorefxn, options ); // DJM tmp
@@ -545,13 +540,11 @@ void LoopMover_Refine_KIC::apply(
 			// if rama2b is active, generate a new rama2b perturber, otherwise use a standard torsion sampling perturber
 			if ( basic::options::option[ basic::options::OptionKeys::loops::kic_rama2b ]() ) { // neighbor-dependent phi/psi selection
 				loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturberOP
-				perturber =
-				new loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturber( myKinematicMover_cap );
+				perturber( new loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturber( myKinematicMover_cap ) );
 				perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 				myKinematicMover.set_perturber( perturber );
 			} else { // standard KIC
-				loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP perturber =
-				new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( myKinematicMover_cap );
+				loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP perturber( new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( myKinematicMover_cap ) );
 				perturber->set_vary_ca_bond_angles(  ! option[OptionKeys::loops::fix_ca_bond_angles ]()  );
 				myKinematicMover.set_perturber( perturber );
 			}
@@ -596,7 +589,7 @@ void LoopMover_Refine_KIC::apply(
 
 			// get the movemap for minimization and allowed side-chains for rottrials for this loop
 			kinematics::MoveMap cur_mm = move_maps[ loop_ind ];
-			MoveMapOP cur_mm_OP = new kinematics::MoveMap( cur_mm );
+			MoveMapOP cur_mm_OP( new kinematics::MoveMap( cur_mm ) );
 			utility::vector1<bool> cur_allow_sc_move = allow_sc_vectors[ loop_ind ];
 			rottrials_packer_task->restrict_to_residues( cur_allow_sc_move );
 
@@ -955,7 +948,7 @@ basic::Tracer & LoopMover_Refine_KIC::tr() const
 LoopMover_Refine_KICCreator::~LoopMover_Refine_KICCreator() {}
 
 moves::MoverOP LoopMover_Refine_KICCreator::create_mover() const {
-  return new LoopMover_Refine_KIC();
+  return moves::MoverOP( new LoopMover_Refine_KIC() );
 }
 
 std::string LoopMover_Refine_KICCreator::keyname() const {

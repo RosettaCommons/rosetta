@@ -22,13 +22,13 @@ namespace genetic_algorithm {
 
 class EntityRandomizer;
 
-typedef utility::pointer::owning_ptr< EntityRandomizer > EntityRandomizerOP;
-typedef utility::pointer::owning_ptr< EntityRandomizer const > EntityRandomizerCOP;
+typedef utility::pointer::shared_ptr< EntityRandomizer > EntityRandomizerOP;
+typedef utility::pointer::shared_ptr< EntityRandomizer const > EntityRandomizerCOP;
 
 class PositionSpecificRandomizer;
 
-typedef utility::pointer::owning_ptr< PositionSpecificRandomizer > PositionSpecificRandomizerOP;
-typedef utility::pointer::owning_ptr< PositionSpecificRandomizer const > PositionSpecificRandomizerCOP;
+typedef utility::pointer::shared_ptr< PositionSpecificRandomizer > PositionSpecificRandomizerOP;
+typedef utility::pointer::shared_ptr< PositionSpecificRandomizer const > PositionSpecificRandomizerCOP;
 
 } // namespace genetic_algorithm
 } // namespace protocols

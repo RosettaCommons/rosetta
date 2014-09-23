@@ -24,11 +24,11 @@ namespace protocols {
 namespace environment {
 
 class ClaimingMover;
-typedef utility::pointer::owning_ptr< ClaimingMover > ClaimingMoverOP;
-typedef utility::pointer::owning_ptr< ClaimingMover const > ClaimingMoverCOP;
+typedef utility::pointer::shared_ptr< ClaimingMover > ClaimingMoverOP;
+typedef utility::pointer::shared_ptr< ClaimingMover const > ClaimingMoverCOP;
 
-typedef utility::pointer::access_ptr< ClaimingMover > ClaimingMoverAP;
-typedef utility::pointer::access_ptr< ClaimingMover const > ClaimingMoverCAP;
+typedef utility::pointer::weak_ptr< ClaimingMover > ClaimingMoverAP;
+typedef utility::pointer::weak_ptr< ClaimingMover const > ClaimingMoverCAP;
 
 } // environment
 } // protocols

@@ -24,8 +24,8 @@ namespace methods {
 
 class ProClosureEnergy;
 
-typedef utility::pointer::owning_ptr< ProClosureEnergy > ProClosureEnergyOP;
-typedef utility::pointer::owning_ptr< ProClosureEnergy const > ProClosureEnergyCOP;
+typedef utility::pointer::shared_ptr< ProClosureEnergy > ProClosureEnergyOP;
+typedef utility::pointer::shared_ptr< ProClosureEnergy const > ProClosureEnergyCOP;
 
 } // methods
 } // scoring

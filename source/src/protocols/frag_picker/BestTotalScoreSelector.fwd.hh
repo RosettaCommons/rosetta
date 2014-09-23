@@ -23,9 +23,9 @@ namespace frag_picker {
 
 class BestTotalScoreSelector;
 
-typedef utility::pointer::owning_ptr<BestTotalScoreSelector>
+typedef utility::pointer::shared_ptr<BestTotalScoreSelector>
 		BestTotalScoreSelectorOP;
-typedef utility::pointer::owning_ptr<BestTotalScoreSelector const>
+typedef utility::pointer::shared_ptr<BestTotalScoreSelector const>
 		BestTotalScoreSelectorCOP;
 
 } // frag_picker

@@ -25,8 +25,8 @@ namespace optimization {
 // Forward
 class MinimizerOptions;
 
-typedef utility::pointer::owning_ptr< MinimizerOptions > MinimizerOptionsOP;
-typedef utility::pointer::owning_ptr< MinimizerOptions const > MinimizerOptionsCOP;
+typedef utility::pointer::shared_ptr< MinimizerOptions > MinimizerOptionsOP;
+typedef utility::pointer::shared_ptr< MinimizerOptions const > MinimizerOptionsCOP;
 
 } // namespace optimization
 } // namespace core

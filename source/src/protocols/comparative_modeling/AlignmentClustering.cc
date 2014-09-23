@@ -382,7 +382,7 @@ vector1<AlignmentClusterOP> AlignmentClustering::cluster(vector1< vector1< Real 
   Size clusterCenter = 1;
   //This is written so alignments may end up in multiple clusters.
   while(!allClustered){
-    AlignmentClusterOP tempCluster = new AlignmentCluster(rankedAlignments[clusterCenter]);
+    AlignmentClusterOP tempCluster( new AlignmentCluster(rankedAlignments[clusterCenter]) );
     alignmentInCluster[clusterCenter] = true;
     for( Size ii = 1; ii <= rankedAlignments.size(); ++ii) {
       if(ii != clusterCenter){

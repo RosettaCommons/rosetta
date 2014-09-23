@@ -21,8 +21,8 @@ namespace dna {
 class DnaNeighbor;
 class DnaInterfaceFinder;
 
-typedef utility::pointer::owning_ptr< DnaInterfaceFinder > DnaInterfaceFinderOP;
-typedef utility::pointer::owning_ptr< DnaInterfaceFinder const > DnaInterfaceFinderCOP;
+typedef utility::pointer::shared_ptr< DnaInterfaceFinder > DnaInterfaceFinderOP;
+typedef utility::pointer::shared_ptr< DnaInterfaceFinder const > DnaInterfaceFinderCOP;
 
 } // namespace dna
 } // namespace protocols

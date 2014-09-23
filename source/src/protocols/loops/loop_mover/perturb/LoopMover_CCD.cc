@@ -168,7 +168,7 @@ LoopMover_Perturb_CCD::show(std::ostream & output) const
 
 //clone
 protocols::moves::MoverOP LoopMover_Perturb_CCD::clone() const {
-		return new LoopMover_Perturb_CCD(*this);
+		return protocols::moves::MoverOP( new LoopMover_Perturb_CCD(*this) );
 	}
 
 loop_mover::LoopResult LoopMover_Perturb_CCD::model_loop(
@@ -189,7 +189,7 @@ loop_mover::LoopResult LoopMover_Perturb_CCD::model_loop(
 	set_single_loop_fold_tree( pose, loop );
 
 	/// prepare fragment movers
-	MoveMapOP movemap = new MoveMap();
+	MoveMapOP movemap( new MoveMap() );
 	movemap->set_bb_true_range( loop.start(), loop.stop() );
 
 	Loops one_loop_loops;
@@ -199,7 +199,7 @@ loop_mover::LoopResult LoopMover_Perturb_CCD::model_loop(
 	for ( std::vector< core::fragment::FragSetOP >::const_iterator
 				it = frag_libs_.begin(), it_end = frag_libs_.end();
 				it != it_end; it++ ) {
-		ClassicFragmentMoverOP cfm = new ClassicFragmentMover( *it, movemap );
+		ClassicFragmentMoverOP cfm( new ClassicFragmentMover( *it, movemap ) );
 		cfm->set_check_ss( false );
 		cfm->enable_end_bias_check( false );
 		fragmover.push_back( cfm );
@@ -355,9 +355,9 @@ loop_mover::LoopResult LoopMover_Perturb_CCD::model_loop(
 	bool const use_nblist( false ), deriv_check( false ); // true ); // false );
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		// minimizer = dynamic_cast<AtomTreeMinimizer*> (new core::optimization::symmetry::SymAtomTreeMinimizer);
-		minimizer = new core::optimization::symmetry::SymAtomTreeMinimizer;
+		minimizer = AtomTreeMinimizerOP( new core::optimization::symmetry::SymAtomTreeMinimizer );
 	} else {
-		minimizer = new core::optimization::AtomTreeMinimizer;
+		minimizer = AtomTreeMinimizerOP( new core::optimization::AtomTreeMinimizer );
 	}
 
 	MinimizerOptions options( "linmin", dummy_tol, use_nblist, deriv_check);
@@ -468,7 +468,7 @@ basic::Tracer & LoopMover_Perturb_CCD::tr() const
 LoopMover_Perturb_CCDCreator::~LoopMover_Perturb_CCDCreator() {}
 
 moves::MoverOP LoopMover_Perturb_CCDCreator::create_mover() const {
-  return new LoopMover_Perturb_CCD();
+  return moves::MoverOP( new LoopMover_Perturb_CCD() );
 }
 
 std::string LoopMover_Perturb_CCDCreator::keyname() const {

@@ -32,10 +32,10 @@ namespace basic {
 namespace datacache {
 
 class WriteableCacheableData;
-typedef utility::pointer::owning_ptr< WriteableCacheableData > WriteableCacheableDataOP;
-typedef utility::pointer::owning_ptr< WriteableCacheableData const > WriteeableCacheableDataCOP;
-typedef utility::pointer::access_ptr< WriteableCacheableData > WriteableCacheableDataAP;
-typedef utility::pointer::access_ptr< WriteableCacheableData const > WriteableCacheableDataCAP;
+typedef utility::pointer::shared_ptr< WriteableCacheableData > WriteableCacheableDataOP;
+typedef utility::pointer::shared_ptr< WriteableCacheableData const > WriteeableCacheableDataCOP;
+typedef utility::pointer::weak_ptr< WriteableCacheableData > WriteableCacheableDataAP;
+typedef utility::pointer::weak_ptr< WriteableCacheableData const > WriteableCacheableDataCAP;
 
 
 } // namespace datacache

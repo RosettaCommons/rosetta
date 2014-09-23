@@ -622,15 +622,15 @@ run_pep_prep()
 
 			using pack::task::operation::TaskOperationCOP;
 			pack::task::TaskFactoryOP prepack_task_factory( new pack::task::TaskFactory );
-			prepack_task_factory->push_back( new pack::task::operation::InitializeFromCommandline() );
-			prepack_task_factory->push_back( new pack::task::operation::IncludeCurrent() );
-			prepack_task_factory->push_back( new pack::task::operation::RestrictToRepacking() );
-			protocols::simple_moves::RotamerTrialsMoverOP prepack_rottrial ( new protocols::simple_moves::RotamerTrialsMover( soft_scorefxn, prepack_task_factory ) );
+			prepack_task_factory->push_back( TaskOperationCOP( new pack::task::operation::InitializeFromCommandline() ) );
+			prepack_task_factory->push_back( TaskOperationCOP( new pack::task::operation::IncludeCurrent() ) );
+			prepack_task_factory->push_back( TaskOperationCOP( new pack::task::operation::RestrictToRepacking() ) );
+			protocols::simple_moves::RotamerTrialsMoverOP prepack_rottrial( new protocols::simple_moves::RotamerTrialsMover( soft_scorefxn, prepack_task_factory ) );
 			prepack_rottrial->apply( pose );
 
-			kinematics::MoveMapOP mm_prepack ( new kinematics::MoveMap );
+			kinematics::MoveMapOP mm_prepack( new kinematics::MoveMap );
 			mm_prepack->set_chi( true );
-			protocols::simple_moves::MinMoverOP prepack_min_mover = new protocols::simple_moves::MinMover( mm_prepack, scorefxn, "dfpmin", 0.001, true );
+			protocols::simple_moves::MinMoverOP prepack_min_mover( new protocols::simple_moves::MinMover( mm_prepack, scorefxn, "dfpmin", 0.001, true ) );
 			prepack_min_mover->apply( pose );
 
 			dump_pdb( pose, pdb_filename + ".prepack" );
@@ -1100,17 +1100,17 @@ run_pep_prep()
 		TR << "\n";
 
 		//Real Docking!!
-		MonteCarloOP mc_dock2 ( new MonteCarlo( pose, *scorefxn, 0.8 ) );
+		MonteCarloOP mc_dock2( new MonteCarlo( pose, *scorefxn, 0.8 ) );
 		pose.update_residue_neighbors();
 		Pose restart_pose( pose );
 		for( Size i_dock = 1; i_dock <= Size(option[ pepspec::n_dock_loop]); ++i_dock ){
 
 			pose = restart_pose;
 			( *scorefxn )( pose );
-			MonteCarloOP mc_dock ( new MonteCarlo( pose, *scorefxn, 0.8 ) );
+			MonteCarloOP mc_dock( new MonteCarlo( pose, *scorefxn, 0.8 ) );
 			vector1< bool > check_clash( pose.total_residue(), false );
 			check_clash[ pep_anchor ] = true;
-			rigid::RigidBodyPerturbNoCenterMoverOP rb_mover = new rigid::RigidBodyPerturbNoCenterMover( pep_jump, 2.5, 0.25 );
+			rigid::RigidBodyPerturbNoCenterMoverOP rb_mover( new rigid::RigidBodyPerturbNoCenterMover( pep_jump, 2.5, 0.25 ) );
 			rb_mover->apply( pose );
 			mc_dock->boltzmann( pose );
 
@@ -1127,11 +1127,11 @@ run_pep_prep()
 			}
 
 			{
-				kinematics::MoveMapOP mm_min ( new kinematics::MoveMap );
+				kinematics::MoveMapOP mm_min( new kinematics::MoveMap );
 				//mm_min->set_jump( pep_jump, true );
 				mm_min->set_chi( pep_anchor );
 				mm_min->set_chi( is_pep_nbr );
-				protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, scorefxn, "dfpmin", 0.001, true );
+				protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm_min, scorefxn, "dfpmin", 0.001, true ) );
 				min_mover->apply( pose );
 			}
 			mc_dock->boltzmann( pose );
@@ -1150,11 +1150,11 @@ run_pep_prep()
 			( *scorefxn )( pose );
 
 			{
-				kinematics::MoveMapOP mm_min ( new kinematics::MoveMap );
+				kinematics::MoveMapOP mm_min( new kinematics::MoveMap );
 				//mm_min->set_jump( pep_jump, true );
 				mm_min->set_chi( pep_anchor );
 				mm_min->set_chi( is_pep_nbr );
-				protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, scorefxn, "dfpmin", 0.001, true );
+				protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm_min, scorefxn, "dfpmin", 0.001, true ) );
 				min_mover->apply( pose );
 			}
 			mc_dock->boltzmann( pose );

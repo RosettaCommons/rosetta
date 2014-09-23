@@ -329,8 +329,8 @@ SSPairPotential::score(
 						}
 
 						if ( dimer_pair_score < 0.0 ) {
-							dimer_pairs.push_back( new DimerPairing( ss1, ss2, dist_dimers, phi, theta,
-																											 sig, dpall, sign1, sign2, dimer_pair_score ) );
+							dimer_pairs.push_back( utility::pointer::shared_ptr<class protocols::fldsgn::topology::DimerPairing>( new DimerPairing( ss1, ss2, dist_dimers, phi, theta,
+																											 sig, dpall, sign1, sign2, dimer_pair_score ) ) );
 						} else {
 							ss_score += dimer_pair_score;
 						}

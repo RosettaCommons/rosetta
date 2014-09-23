@@ -25,8 +25,8 @@ namespace moves {
 
 class MonteCarloExceptionConverge;
 
-typedef utility::pointer::owning_ptr< MonteCarloExceptionConverge > MonteCarloExceptionConvergeOP;
-typedef utility::pointer::owning_ptr< MonteCarloExceptionConverge const > MonteCarloExceptionConvergeCOP;
+typedef utility::pointer::shared_ptr< MonteCarloExceptionConverge > MonteCarloExceptionConvergeOP;
+typedef utility::pointer::shared_ptr< MonteCarloExceptionConverge const > MonteCarloExceptionConvergeCOP;
 
 } // moves
 } // rosetta

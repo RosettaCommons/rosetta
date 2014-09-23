@@ -56,15 +56,15 @@ namespace task_operations {
 core::pack::task::operation::TaskOperationOP
 SelectByDeltaScoreOperationCreator::create_task_operation() const
 {
-	return new SelectByDeltaScoreOperation;
+	return core::pack::task::operation::TaskOperationOP( new SelectByDeltaScoreOperation );
 }
 
 /// @brief default constructor
 SelectByDeltaScoreOperation::SelectByDeltaScoreOperation() :
 	TaskOperation(),
-  scorefxn_(NULL),
+  scorefxn_(/* NULL */),
   threshold_( 100 ),
-	reference_pose_(NULL)
+	reference_pose_(/* NULL */)
 {}
 
 /// @brief destructor
@@ -73,7 +73,7 @@ SelectByDeltaScoreOperation::~SelectByDeltaScoreOperation(){}
 /// @brief make clone
 core::pack::task::operation::TaskOperationOP
 SelectByDeltaScoreOperation::clone() const{
-	return new SelectByDeltaScoreOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new SelectByDeltaScoreOperation( *this ) );
 }
 
 core::scoring::ScoreFunctionOP SelectByDeltaScoreOperation::scorefxn() const{	return scorefxn_; }

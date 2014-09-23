@@ -24,11 +24,11 @@ namespace conformation {
 class ResidueKinWriter;
 class ConformationKinWriter;
 
-typedef utility::pointer::owning_ptr< ResidueKinWriter > ResidueKinWriterOP;
-typedef utility::pointer::owning_ptr< ResidueKinWriter const > ResidueKinWriterCOP;
+typedef utility::pointer::shared_ptr< ResidueKinWriter > ResidueKinWriterOP;
+typedef utility::pointer::shared_ptr< ResidueKinWriter const > ResidueKinWriterCOP;
 
-typedef utility::pointer::owning_ptr< ConformationKinWriter > ConformationKinWriterOP;
-typedef utility::pointer::owning_ptr< ConformationKinWriter const > ConformationKinWriterCOP;
+typedef utility::pointer::shared_ptr< ConformationKinWriter > ConformationKinWriterOP;
+typedef utility::pointer::shared_ptr< ConformationKinWriter const > ConformationKinWriterCOP;
 
 } // conformation
 } // core

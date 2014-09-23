@@ -23,8 +23,8 @@ namespace chemical {
 /// @brief  A class for storing residue properties, modifications, and classifications.
 class ResidueProperties;
 
-typedef utility::pointer::owning_ptr< ResidueProperties > ResiduePropertiesOP;
-typedef utility::pointer::owning_ptr< ResidueProperties const > ResiduePropertiesCOP;
+typedef utility::pointer::shared_ptr< ResidueProperties > ResiduePropertiesOP;
+typedef utility::pointer::shared_ptr< ResidueProperties const > ResiduePropertiesCOP;
 
 }  // namespace chemical
 }  // namespace core

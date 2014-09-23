@@ -219,7 +219,7 @@ setup_ca_constraints(pose::Pose & pose, ScoreFunction & s, float const CA_cutoff
 			Vector const CA_j(pose.residue(j).xyz(" CA "));
 			Real const CA_dist = (CA_i - CA_j).length();
 			if(CA_dist < CA_cutoff && i != j){
-				ConstraintCOP cst(new AtomPairConstraint( AtomID(pose.residue(i).atom_index(" CA "),i),AtomID(pose.residue(j).atom_index(" CA "),j),core::scoring::func::FuncOP(new BoundFunc(CA_dist-0.5,CA_dist+0.5,0.1,10,"BoundFunc")))); //bounded func
+				ConstraintCOP cst( new AtomPairConstraint( AtomID(pose.residue(i).atom_index(" CA "),i),AtomID(pose.residue(j).atom_index(" CA "),j),core::scoring::func::FuncOP(new BoundFunc(CA_dist-0.5,CA_dist+0.5,0.1,10,"BoundFunc"))) ); //bounded func
 				pose.add_constraint(cst);
 			}
 		}
@@ -259,12 +259,12 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 		nrounds = 100;
 	}
 
-	core::kinematics::MoveMapOP mm= new core::kinematics::MoveMap();
+	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap() );
 	mm->set_bb(true);
 
 	//small mover
-		simple_moves::SmallMoverOP small_mover(new simple_moves::SmallMover( mm, temperature, nmoves)) ;
-		simple_moves::ShearMoverOP shear_mover( new simple_moves::ShearMover(mm, temperature, nmoves));
+		simple_moves::SmallMoverOP small_mover( new simple_moves::SmallMover( mm, temperature, nmoves) ) ;
+		simple_moves::ShearMoverOP shear_mover( new simple_moves::ShearMover(mm, temperature, nmoves) );
 
 		setup_movers(small_mover,shear_mover,
 								 0.1,0.1,0.2,
@@ -273,8 +273,8 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 	core::pack::task::PackerTaskOP pt(pack::task::TaskFactory::create_packer_task(p));
 	pt->restrict_to_repacking();
 	pt->or_include_current(true);
-	protocols::simple_moves::RotamerTrialsMoverOP rottrial_mover(new protocols::simple_moves::RotamerTrialsMover(s,(*pt)));
-	moves::RandomMoverOP apply_random_move( new moves::RandomMover());
+	protocols::simple_moves::RotamerTrialsMoverOP rottrial_mover( new protocols::simple_moves::RotamerTrialsMover(s,(*pt)) );
+	moves::RandomMoverOP apply_random_move( new moves::RandomMover() );
 
 	if(BACKBONE_MOVEMENT){
 		apply_random_move->add_mover( small_mover, .45);
@@ -286,13 +286,13 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 	}
 
 	//separate set of movers for low temperature (reduce angle-max)
-	simple_moves::SmallMoverOP small_mover_low(new simple_moves::SmallMover( mm, (temperature*0.25), nmoves)) ;
-	simple_moves::ShearMoverOP shear_mover_low( new simple_moves::ShearMover(mm, (temperature*0.25), nmoves));
+	simple_moves::SmallMoverOP small_mover_low( new simple_moves::SmallMover( mm, (temperature*0.25), nmoves) ) ;
+	simple_moves::ShearMoverOP shear_mover_low( new simple_moves::ShearMover(mm, (temperature*0.25), nmoves) );
 	setup_movers(small_mover_low,shear_mover_low,
 							 0.05,0.05,0.1,
 							 0.25,1.0,1.5);
 
-	moves::RandomMoverOP apply_random_move_low( new moves::RandomMover());
+	moves::RandomMoverOP apply_random_move_low( new moves::RandomMover() );
 	if(BACKBONE_MOVEMENT){
 		apply_random_move_low->add_mover( small_mover_low, .45);
 		apply_random_move_low->add_mover( shear_mover_low, .45);
@@ -329,7 +329,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 		}
 	}
 
-	MonteCarloOP mc(new moves::MonteCarlo(init_pose,*s,temperature));
+	MonteCarloOP mc( new moves::MonteCarlo(init_pose,*s,temperature) );
 	for(int ns =1;ns<=numstruct;ns++){
 		time_t time_per_decoy = time(NULL);
 		std::ostringstream curr;
@@ -346,8 +346,8 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 			mc->set_temperature(temperature);
 
 			p = init_pose;
-			moves::TrialMoverOP tm( new moves::TrialMover(apply_random_move,mc));
-			RepeatMoverOP full_cycle(new moves::RepeatMover( tm, nrounds ));
+			moves::TrialMoverOP tm( new moves::TrialMover(apply_random_move,mc) );
+			RepeatMoverOP full_cycle( new moves::RepeatMover( tm, nrounds ) );
 			full_cycle->apply( p );
 
 			//std::cout << "ended trial at high temp" << std::endl;
@@ -367,8 +367,8 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 			//mc->show_counters();
 			//std::cout << "end double-checking" << std::endl;
 
-			moves::TrialMoverOP ltm( new moves::TrialMover(apply_random_move_low,mc));
-			RepeatMoverOP full_cycle_2(new moves::RepeatMover( ltm, nrounds ));
+			moves::TrialMoverOP ltm( new moves::TrialMover(apply_random_move_low,mc) );
+			RepeatMoverOP full_cycle_2( new moves::RepeatMover( ltm, nrounds ) );
 			full_cycle_2->apply( p );
 
 			//std::cout << "end low temp trial, showing monte carlo stats" << std::endl;

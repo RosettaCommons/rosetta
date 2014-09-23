@@ -22,8 +22,8 @@ namespace protocols {
 namespace ligand_docking {
 
 class MinimizeLigand; // fwd declaration
-typedef utility::pointer::owning_ptr< MinimizeLigand > MinimizeLigandOP;
-typedef utility::pointer::owning_ptr< MinimizeLigand const > MinimizeLigandCOP;
+typedef utility::pointer::shared_ptr< MinimizeLigand > MinimizeLigandOP;
+typedef utility::pointer::shared_ptr< MinimizeLigand const > MinimizeLigandCOP;
 typedef utility::vector1<MinimizeLigandOP> MinimizeLigandOPs;
 typedef utility::vector1<MinimizeLigandCOP> MinimizeLigandCOPs;
 

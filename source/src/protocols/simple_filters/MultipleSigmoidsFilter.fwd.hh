@@ -20,8 +20,8 @@ namespace simple_filters {
 
 class MultipleSigmoids;
 
-typedef utility::pointer::owning_ptr< MultipleSigmoids > MultipleSigmoidsOP;
-typedef utility::pointer::owning_ptr< MultipleSigmoids const > MultipleSigmoidsCOP;
+typedef utility::pointer::shared_ptr< MultipleSigmoids > MultipleSigmoidsOP;
+typedef utility::pointer::shared_ptr< MultipleSigmoids const > MultipleSigmoidsCOP;
 
 }
 }

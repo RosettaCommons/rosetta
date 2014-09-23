@@ -55,7 +55,7 @@ TorsionDOFMover::TorsionDOFMover() :
 	upper_angle_(0),
 	lower_angle_(0),
 	check_MMT_(false),
-	mmt_(NULL),
+	mmt_(/* NULL */),
 	temp_(0),
 	tries_(0)
 {	protocols::moves::Mover::type( "TorsionDOFMover" ); }
@@ -75,7 +75,7 @@ TorsionDOFMover::TorsionDOFMover(
 	upper_angle_(180.0),
 	lower_angle_(-179.9999999999999999999999999999999999999999999999),
 	check_MMT_(false),
-	mmt_(NULL),
+	mmt_(/* NULL */),
 	temp_(0.8),
 	tries_(1)
 {	protocols::moves::Mover::type( "TorsionDOFMover" ); }
@@ -97,7 +97,7 @@ TorsionDOFMover::TorsionDOFMover(
 	upper_angle_(upper),
 	lower_angle_(lower),
 	check_MMT_(false),
-	mmt_(NULL),
+	mmt_(/* NULL */),
 	temp_(0.8),
 	tries_(1)
 {	protocols::moves::Mover::type( "TorsionDOFMover" ); }
@@ -112,7 +112,7 @@ TorsionDOFMover::TorsionDOFMover( core::id::AtomID const & atom1, core::id::Atom
 	upper_angle_(angle),
 	lower_angle_(angle),
 	check_MMT_(false),
-	mmt_(NULL),
+	mmt_(/* NULL */),
 	temp_(0.8),
 	tries_(1)
 {	protocols::moves::Mover::type( "TorsionDOFMover" ); }
@@ -135,7 +135,7 @@ void TorsionDOFMover::apply( core::pose::Pose & pose ){
 
 	//if we want this score, fill the pointer!
 	if(check_MMT_ && !mmt_){
-		mmt_ = new core::scoring::ScoreFunction;
+		mmt_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
 		mmt_->set_weight(core::scoring::mm_twist, 1.0);
 	}
 

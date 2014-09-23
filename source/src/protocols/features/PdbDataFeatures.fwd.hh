@@ -20,7 +20,7 @@ namespace protocols {
 namespace features {
 
 class PdbDataFeatures;
-typedef utility::pointer::owning_ptr< PdbDataFeatures > PdbDataFeaturesOP;
+typedef utility::pointer::shared_ptr< PdbDataFeatures > PdbDataFeaturesOP;
 
 }
 }

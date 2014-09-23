@@ -22,8 +22,8 @@ namespace io {
 
 
 class FileContentsMap;
-typedef utility::pointer::owning_ptr< FileContentsMap > FileContentsMapOP;
-typedef utility::pointer::owning_ptr< FileContentsMap const > FileContentsMapCOP;
+typedef utility::pointer::shared_ptr< FileContentsMap > FileContentsMapOP;
+typedef utility::pointer::shared_ptr< FileContentsMap const > FileContentsMapCOP;
 
 
 }

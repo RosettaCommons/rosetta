@@ -86,7 +86,7 @@ public:
 	virtual
 	protocols::moves::MoverOP
 	fresh_instance() const {
-		return new ExtractATD;
+		return protocols::moves::MoverOP( new ExtractATD );
 	}
 
 	virtual
@@ -105,7 +105,7 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 };
 
-typedef utility::pointer::owning_ptr< ExtractATD > ExtractATDOP;
+typedef utility::pointer::shared_ptr< ExtractATD > ExtractATDOP;
 
 
 
@@ -144,17 +144,17 @@ main( int argc, char * argv [] )
 		basic::options::option[basic::options::OptionKeys::run::preserve_header ].value(true);
 	}
 
-	ExtractATDOP extract_mover(new ExtractATD);
+	ExtractATDOP extract_mover( new ExtractATD );
 
 	// Setup constraints on reference poses
 	// Reading the enzdes constraints creates new residue types we may need, in the case of covalent constraints.
 	protocols::jd2::JobInputterOP inputter(protocols::jd2::JobDistributor::get_instance()->job_inputter());
-	protocols::jd2::AtomTreeDiffJobInputterOP atd_inputter( dynamic_cast<protocols::jd2::AtomTreeDiffJobInputter*>( inputter() ) );
+	protocols::jd2::AtomTreeDiffJobInputterOP atd_inputter( utility::pointer::dynamic_pointer_cast< protocols::jd2::AtomTreeDiffJobInputter > ( inputter ) );
 	if (atd_inputter && basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ) {
 		protocols::toolbox::match_enzdes_util::EnzConstraintIOOP constraints;
 		//we need the residue type set, assuming FA standard is used
 		core::chemical::ResidueTypeSetCAP restype_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-		constraints = new protocols::toolbox::match_enzdes_util::EnzConstraintIO( restype_set );
+		constraints = protocols::toolbox::match_enzdes_util::EnzConstraintIOOP( new protocols::toolbox::match_enzdes_util::EnzConstraintIO( restype_set ) );
 		constraints->read_enzyme_cstfile(basic::options::option[basic::options::OptionKeys::enzdes::cstfile]);
 
 		utility::vector1< core::pose::PoseOP > const & ref_poses = atd_inputter->all_ref_poses();

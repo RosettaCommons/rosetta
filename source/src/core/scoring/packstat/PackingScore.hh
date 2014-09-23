@@ -43,8 +43,8 @@ private:
 	utility::vector1<core::Real> msa_;
 };
 std::ostream & operator<< ( std::ostream & out, PackingScoreResData const & dat );
-typedef utility::pointer::owning_ptr< PackingScoreResData >       PackingScoreResDataOP;
-typedef utility::pointer::owning_ptr< PackingScoreResData const > PackingScoreResDataCOP;
+typedef utility::pointer::shared_ptr< PackingScoreResData >       PackingScoreResDataOP;
+typedef utility::pointer::shared_ptr< PackingScoreResData const > PackingScoreResDataCOP;
 
 struct PackingScore : public utility::pointer::ReferenceCount {
 	PackingScore( Size nrad, Size npr, bool /*compprob = false*/ ) :
@@ -72,8 +72,8 @@ private:
 	bool compprob_;
 };
 
-typedef utility::pointer::owning_ptr< PackingScore >       PackingScoreOP;
-typedef utility::pointer::owning_ptr< PackingScore const > PackingScoreCOP;
+typedef utility::pointer::shared_ptr< PackingScore >       PackingScoreOP;
+typedef utility::pointer::shared_ptr< PackingScore const > PackingScoreCOP;
 
 
 } // namespace packstat

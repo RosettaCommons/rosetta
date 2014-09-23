@@ -24,8 +24,8 @@ namespace match {
 
 
 class OccupiedSpaceHash;
-typedef utility::pointer::owning_ptr< OccupiedSpaceHash > OccupiedSpaceHashOP;
-typedef utility::pointer::owning_ptr< OccupiedSpaceHash const > OccupiedSpaceHashCOP;
+typedef utility::pointer::shared_ptr< OccupiedSpaceHash > OccupiedSpaceHashOP;
+typedef utility::pointer::shared_ptr< OccupiedSpaceHash const > OccupiedSpaceHashCOP;
 
 
 }

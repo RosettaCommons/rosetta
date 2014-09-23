@@ -36,14 +36,14 @@ std::string SolvationMetaGridCreator::keyname() const
 
 GridBaseOP SolvationMetaGridCreator::create_grid(utility::tag::TagCOP tag) const
 {
-	GridBaseOP solvation_meta_grid = new SolvationMetaGrid();
+	GridBaseOP solvation_meta_grid( new SolvationMetaGrid() );
 	solvation_meta_grid->parse_my_tag(tag);
 	return solvation_meta_grid;
 }
 
 GridBaseOP SolvationMetaGridCreator::create_grid() const
 {
-	return new SolvationMetaGrid();
+	return GridBaseOP( new SolvationMetaGrid() );
 }
 
 std::string SolvationMetaGridCreator::grid_name()
@@ -70,7 +70,7 @@ void SolvationMetaGrid::initialize(core::Vector const & center, core::Real width
     for(core::ShortSize atom_type = 1; atom_type <= max_atom_type;++atom_type)
     {
 
-    	SolvationGridOP new_grid = new SolvationGrid();
+    	SolvationGridOP new_grid( new SolvationGrid() );
     	new_grid->set_probe_atom_type(atom_type);
     	new_grid->initialize(center, width, resolution);
     	grid_map_[atom_type] = SingleGridOP(new_grid);
@@ -224,7 +224,7 @@ void SolvationMetaGrid::deserialize(utility::json_spirit::mObject data)
 	{
 		utility::json_spirit::mArray grid_pair(it->get_array());
 		core::ShortSize atom_type = grid_pair[0].get_int();
-		SingleGridOP grid = new SolvationGrid();
+		SingleGridOP grid( new SolvationGrid() );
 		grid->deserialize(grid_pair[1].get_obj());
 		grid_map_[atom_type] = grid;
 	}

@@ -154,7 +154,7 @@ AntibodyNumberingParser::read_scheme_numbering_line(vector1< std::string > const
 
 		char chain = raw_landmark[1].at(0);
 		core::Size resnum; std::stringstream(raw_landmark[2]) >> resnum;
-		PDBLandmarkOP landmark =  new PDBLandmark(chain, resnum, insertion_code, schemes_defined_[i]);
+		PDBLandmarkOP landmark( new PDBLandmark(chain, resnum, insertion_code, schemes_defined_[i]) );
 
 		numbering.numbering_scheme_transform[schemes_defined_[i]].push_back(landmark);
 	}
@@ -304,7 +304,7 @@ AntibodyNumberingParser::read_cdr_definition_numbering_line(vector1<std::string>
 		AntibodyNumberingSchemeEnum scheme = cdr_definitions_defined_using_[i];
 		CDRDefinitionEnum definition = cdr_definitions_defined_[i];
 
-		PDBLandmarkOP defined_pdb_landmark = new PDBLandmark(chain, resnum, insertion_code , scheme );
+		PDBLandmarkOP defined_pdb_landmark( new PDBLandmark(chain, resnum, insertion_code , scheme ) );
 		//TR << "Access:" << defined_pdb_landmark->chain() << " " <<defined_pdb_landmark->resnum()<< " "<<defined_pdb_landmark->insertion_code()<< std::endl;
 		PDBLandmarkOP new_landmark;
 

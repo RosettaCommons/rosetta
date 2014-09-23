@@ -59,7 +59,7 @@ BuildAlaPoseCreator::keyname() const
 
 protocols::moves::MoverOP
 BuildAlaPoseCreator::create_mover() const {
-	return new BuildAlaPose;
+	return protocols::moves::MoverOP( new BuildAlaPose );
 }
 
 std::string

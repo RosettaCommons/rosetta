@@ -59,7 +59,7 @@ DatabaseResourceLocatorCreator::~DatabaseResourceLocatorCreator() {}
 
 ResourceLocatorOP
 DatabaseResourceLocatorCreator::create_resource_locator() const {
-	return new DatabaseResourceLocator;
+	return ResourceLocatorOP( new DatabaseResourceLocator );
 }
 
 string
@@ -185,7 +185,7 @@ DatabaseResourceLocator::locate_resource_stream(
 	}
 
 
-	StringResourceStreamOP string_resource_stream(new StringResourceStream(concatenated_result.str()));
+	StringResourceStreamOP string_resource_stream( new StringResourceStream(concatenated_result.str()) );
 
 	return string_resource_stream;
 }

@@ -22,8 +22,8 @@ namespace chemical {
 
 class Element;
 
-typedef  utility::pointer::owning_ptr< Element >  ElementOP;
-typedef  utility::pointer::owning_ptr< Element const >  ElementCOP;
+typedef  utility::pointer::shared_ptr< Element >  ElementOP;
+typedef  utility::pointer::shared_ptr< Element const >  ElementCOP;
 
 
 } // chemical

@@ -23,8 +23,8 @@ namespace anchored_design{
 
 //Forwards and OP typedefs
 class Anchor;
-typedef utility::pointer::owning_ptr< Anchor > AnchorOP;
-typedef utility::pointer::owning_ptr< Anchor const > AnchorCOP;
+typedef utility::pointer::shared_ptr< Anchor > AnchorOP;
+typedef utility::pointer::shared_ptr< Anchor const > AnchorCOP;
 
 }//AnchoredDesign
 }//protocols

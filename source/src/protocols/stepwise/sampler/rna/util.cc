@@ -120,9 +120,9 @@ setup_sampler( pose::Pose const & pose,
 		Size const chainbreak_suite( working_parameters->five_prime_chain_break_res() );
 		runtime_assert( chainbreak_suite > 0 );
 
-		pose::PoseOP new_pose = new pose::Pose( pose ); //hard copy
-		RNA_KIC_SamplerOP sampler = new RNA_KIC_Sampler(
-				new_pose, moving_suite_, chainbreak_suite );
+		pose::PoseOP new_pose( new pose::Pose( pose ) ); //hard copy
+		RNA_KIC_SamplerOP sampler( new RNA_KIC_Sampler(
+				new_pose, moving_suite_, chainbreak_suite ) );
 		//		runtime_assert( (moving_suite_ == chainbreak_suite + 1) || (moving_suite_ == chainbreak_suite - 1) );
 		Size const which_nucleoside_to_sample = ( moving_suite_ < chainbreak_suite ) ? 2 : 1;
 		Size const sample_nucleoside_res = ( moving_suite_ < chainbreak_suite ) ? (moving_suite_ + 1) : moving_suite_;
@@ -147,8 +147,8 @@ setup_sampler( pose::Pose const & pose,
 		return sampler;
 	}
 
-	RNA_SuiteStepWiseSamplerOP sampler = new RNA_SuiteStepWiseSampler( moving_suite_,
-			pucker_state[1], pucker_state[2], base_state[1], base_state[2] );
+	RNA_SuiteStepWiseSamplerOP sampler( new RNA_SuiteStepWiseSampler( moving_suite_,
+			pucker_state[1], pucker_state[2], base_state[1], base_state[2] ) );
 	sampler->set_skip_same_pucker( options->use_phenix_geo() );
 	sampler->set_idealize_coord( options->use_phenix_geo() );
 	sampler->set_sample_nucleoside_lower( sample_sugar[1] );

@@ -68,7 +68,7 @@ public:
 	);
 
   core::pose::metrics::PoseMetricCalculatorOP clone() const {
-    return new SemiExplicitWaterUnsatisfiedPolarsCalculator( name_of_hbond_calc_, scorefxn_, semiexpl_water_cutoff_ ); };
+    return core::pose::metrics::PoseMetricCalculatorOP( new SemiExplicitWaterUnsatisfiedPolarsCalculator( name_of_hbond_calc_, scorefxn_, semiexpl_water_cutoff_ ) ); };
 
 	std::string const & name_of_hbond_calc() const { return name_of_hbond_calc_; }
 

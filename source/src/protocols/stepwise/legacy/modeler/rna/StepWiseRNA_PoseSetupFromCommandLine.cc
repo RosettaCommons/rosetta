@@ -179,17 +179,17 @@ void apply_chi_cst( core::pose::Pose & pose, core::pose::Pose const & ref_pose )
 	using namespace core::chemical::rna;
 
 	Size const nres = pose.total_residue();
-	ConstraintSetOP cst_set = new ConstraintSet;
+	ConstraintSetOP cst_set( new ConstraintSet );
 	for ( Size i = 1; i <= nres; ++i ) {
 		Residue const & res = pose.residue( i );
 		if ( res.is_RNA() && ( res.aa() == na_rad || res.aa() == na_rgu ) ) {
 			Real const chi = numeric::conversions::radians( ref_pose.torsion( TorsionID( i, id::CHI, 1 ) ) );
-			core::scoring::func::FuncOP chi_cst_func ( new core::scoring::func::CharmmPeriodicFunc( chi, 1.0, 1.0 ) );
+			core::scoring::func::FuncOP chi_cst_func( new core::scoring::func::CharmmPeriodicFunc( chi, 1.0, 1.0 ) );
 			AtomID const atom1 ( res.atom_index( "C2'" ), i );
 			AtomID const atom2 ( res.atom_index( "C1'" ), i );
 			AtomID const atom3 ( is_purine( res ) ? res.atom_index( "N9" ) : res.atom_index( "N1" ), i );
 			AtomID const atom4 ( is_purine( res ) ? res.atom_index( "C4" ) : res.atom_index( "C2" ), i );
-			cst_set->add_constraint( new DihedralConstraint( atom1, atom2, atom3, atom4, chi_cst_func ) );
+			cst_set->add_constraint( ConstraintCOP( new DihedralConstraint( atom1, atom2, atom3, atom4, chi_cst_func ) ) );
 		}
 	}
 	pose.constraint_set ( cst_set );
@@ -518,7 +518,7 @@ setup_simple_full_length_rna_working_parameters(){
 
 	/////////////////////////////////////////////////////
 
-	stepwise::modeler::working_parameters::StepWiseWorkingParametersOP working_parameters = new stepwise::modeler::working_parameters::StepWiseWorkingParameters;
+	stepwise::modeler::working_parameters::StepWiseWorkingParametersOP working_parameters( new stepwise::modeler::working_parameters::StepWiseWorkingParameters );
 
 	working_parameters->set_is_simple_full_length_job_params( true ); //FORGOT THIS! ONLY INCLUDED ON MARCH 03, 2012!
 	//LUCKILY, BEFORE MARCH 03, 2012, only called is_simple_full_length_job_params() for utility_exit_with_message() check in the following three functions of StepWiseRNA_Clusterer.cc:
@@ -881,7 +881,7 @@ setup_pose_setup_class( stepwise::modeler::working_parameters::StepWiseWorkingPa
 
 //	StepWiseRNA_PoseSetup stepwise_rna_pose_setup( pdb_tags, silent_files_in, working_parameters);
 
-	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = new StepWiseRNA_PoseSetup( working_parameters );
+	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup( new StepWiseRNA_PoseSetup( working_parameters ) );
 	stepwise_rna_pose_setup->set_copy_DOF( copy_DOF );
 
 	if ( copy_DOF == true ){

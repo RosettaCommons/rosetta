@@ -22,8 +22,8 @@ namespace genetic_algorithm {
 
 class Mutate1Randomizer;
 
-typedef utility::pointer::owning_ptr< Mutate1Randomizer > Mutate1RandomizerOP;
-typedef utility::pointer::owning_ptr< Mutate1Randomizer const > Mutate1RandomizerCOP;
+typedef utility::pointer::shared_ptr< Mutate1Randomizer > Mutate1RandomizerOP;
+typedef utility::pointer::shared_ptr< Mutate1Randomizer const > Mutate1RandomizerCOP;
 
 } // namespace genetic_algorithm
 } // namespace protocols

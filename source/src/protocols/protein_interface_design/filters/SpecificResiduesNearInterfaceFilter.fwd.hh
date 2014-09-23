@@ -27,8 +27,8 @@ namespace filters {
 class SpecificResiduesNearInterfaceFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< SpecificResiduesNearInterfaceFilter >  SpecificResiduesNearInterfaceFilterOP;
-typedef utility::pointer::owning_ptr< SpecificResiduesNearInterfaceFilter const >  SpecificResiduesNearInterfaceFilterCOP;
+typedef utility::pointer::shared_ptr< SpecificResiduesNearInterfaceFilter >  SpecificResiduesNearInterfaceFilterOP;
+typedef utility::pointer::shared_ptr< SpecificResiduesNearInterfaceFilter const >  SpecificResiduesNearInterfaceFilterCOP;
 
 } // namespace
 } // namespace

@@ -57,12 +57,12 @@ AlignedThreadOperation::~AlignedThreadOperation() {}
 core::pack::task::operation::TaskOperationOP
 AlignedThreadOperationCreator::create_task_operation() const
 {
-	return new AlignedThreadOperation;
+	return core::pack::task::operation::TaskOperationOP( new AlignedThreadOperation );
 }
 
 core::pack::task::operation::TaskOperationOP AlignedThreadOperation::clone() const
 {
-	return new AlignedThreadOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new AlignedThreadOperation( *this ) );
 }
 
 void

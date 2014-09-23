@@ -23,8 +23,8 @@ namespace constraints {
 
 class AmbiguousNMRDistanceConstraint;
 
-typedef utility::pointer::owning_ptr< AmbiguousNMRDistanceConstraint > AmbiguousNMRDistanceConstraintOP;
-typedef utility::pointer::owning_ptr< AmbiguousNMRDistanceConstraint const > AmbiguousNMRDistanceConstraintCOP;
+typedef utility::pointer::shared_ptr< AmbiguousNMRDistanceConstraint > AmbiguousNMRDistanceConstraintOP;
+typedef utility::pointer::shared_ptr< AmbiguousNMRDistanceConstraint const > AmbiguousNMRDistanceConstraintCOP;
 
 }
 }

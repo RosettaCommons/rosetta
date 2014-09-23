@@ -49,7 +49,7 @@ VIP_Report::get_GOE_repack_report(
 	output << "Iteration " << it << " :  Found candidate mutations:" << std::endl;
 
 	core::scoring::ScoreFunctionOP sf2 = core::scoring::ScoreFunctionFactory::create_score_function( option[cp::pack_sfxn] );
-	protocols::simple_moves::ScoreMoverOP score_em = new protocols::simple_moves::ScoreMover(sf2);
+	protocols::simple_moves::ScoreMoverOP score_em( new protocols::simple_moves::ScoreMover(sf2) );
 	score_em->apply( goe_native );
 
 	core::Real check_E( use_stored ? stored_e : goe_native.energies().total_energy() );
@@ -88,7 +88,7 @@ VIP_Report::get_GOE_relaxed_report(
 				output << "Iteration " << it << " :  The following mutations were accomodated after relaxation:" << std::endl;
 
         core::scoring::ScoreFunctionOP sf2 = core::scoring::ScoreFunctionFactory::create_score_function( option[cp::relax_sfxn] );
-        protocols::simple_moves::ScoreMoverOP score_em = new protocols::simple_moves::ScoreMover(sf2);
+        protocols::simple_moves::ScoreMoverOP score_em( new protocols::simple_moves::ScoreMover(sf2) );
         score_em->apply( goe_native );
 
 	core::Real check_E( use_stored ? stored_e : goe_native.energies().total_energy() );

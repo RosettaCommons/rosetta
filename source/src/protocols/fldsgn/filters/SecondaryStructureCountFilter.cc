@@ -202,7 +202,7 @@ void SecondaryStructureCountFilter::report( std::ostream & out, core::pose::Pose
 }
 
 protocols::filters::FilterOP
-SecondaryStructureCountFilterCreator::create_filter() const { return new SecondaryStructureCountFilter; }
+SecondaryStructureCountFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SecondaryStructureCountFilter ); }
 
 std::string
 SecondaryStructureCountFilterCreator::keyname() const { return "SecondaryStructureCount"; }

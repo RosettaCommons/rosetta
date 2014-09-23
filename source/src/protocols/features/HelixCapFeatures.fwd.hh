@@ -19,8 +19,8 @@
 #include <utility/pointer/owning_ptr.hh>
 
 class HelixCapFeatures;
-typedef utility::pointer::owning_ptr< HelixCapFeatures > HelixCapFeaturesOP;
-typedef utility::pointer::owning_ptr< HelixCapFeatures const > HelixCapFeaturesCOP;
+typedef utility::pointer::shared_ptr< HelixCapFeatures > HelixCapFeaturesOP;
+typedef utility::pointer::shared_ptr< HelixCapFeatures const > HelixCapFeaturesCOP;
 
 #endif
 

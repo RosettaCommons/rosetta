@@ -29,10 +29,10 @@ class NonPlaidFingerprint;
 class PlaidFingerprint;
 
 // Types
-typedef utility::pointer::owning_ptr< NonPlaidFingerprint >  NonPlaidFingerprintOP;
-typedef utility::pointer::owning_ptr< NonPlaidFingerprint const >  NonPlaidFingerprintCOP;
-typedef utility::pointer::owning_ptr< PlaidFingerprint >  PlaidFingerprintOP;
-typedef utility::pointer::owning_ptr< PlaidFingerprint const >  PlaidFingerprintCOP;
+typedef utility::pointer::shared_ptr< NonPlaidFingerprint >  NonPlaidFingerprintOP;
+typedef utility::pointer::shared_ptr< NonPlaidFingerprint const >  NonPlaidFingerprintCOP;
+typedef utility::pointer::shared_ptr< PlaidFingerprint >  PlaidFingerprintOP;
+typedef utility::pointer::shared_ptr< PlaidFingerprint const >  PlaidFingerprintCOP;
 
 
 } // namespace pockets

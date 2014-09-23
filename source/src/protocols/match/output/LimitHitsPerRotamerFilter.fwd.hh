@@ -25,8 +25,8 @@ namespace output {
 
 class LimitHitsPerRotamerFilter;
 
-typedef utility::pointer::owning_ptr< LimitHitsPerRotamerFilter > LimitHitsPerRotamerFilterOP;
-typedef utility::pointer::owning_ptr< LimitHitsPerRotamerFilter const > LimitHitsPerRotamerFilterCOP;
+typedef utility::pointer::shared_ptr< LimitHitsPerRotamerFilter > LimitHitsPerRotamerFilterOP;
+typedef utility::pointer::shared_ptr< LimitHitsPerRotamerFilter const > LimitHitsPerRotamerFilterCOP;
 
 }
 }

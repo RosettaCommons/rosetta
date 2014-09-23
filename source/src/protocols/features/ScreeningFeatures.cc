@@ -69,12 +69,12 @@ std::string ScreeningFeatures::type_name() const
 void ScreeningFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const
 {
 	using namespace basic::database::schema_generator;
-	Column struct_id("struct_id",new DbBigInt(),false);
-	Column chain_name("chain_id",new DbText(1),false);
-	Column residue_number("residue_number",new DbInteger(),false);
-	Column name3("name3",new DbText(),false);
-	Column experiment_group("group_name",new DbText(),false);
-	Column descriptor_data("descriptor_data",new DbText(),false);
+	Column struct_id("struct_id",DbDataTypeOP( new DbBigInt() ),false);
+	Column chain_name("chain_id",DbDataTypeOP( new DbText(1) ),false);
+	Column residue_number("residue_number",DbDataTypeOP( new DbInteger() ),false);
+	Column name3("name3",DbDataTypeOP( new DbText() ),false);
+	Column experiment_group("group_name",DbDataTypeOP( new DbText() ),false);
+	Column descriptor_data("descriptor_data",DbDataTypeOP( new DbText() ),false);
 
 	utility::vector1<Column> primary_keys;
 	primary_keys.push_back(struct_id);
@@ -116,14 +116,14 @@ ScreeningFeatures::report_features(
 	screening_insert.add_column("group_name");
 	screening_insert.add_column("descriptor_data");
 
-	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id",struct_id);
-	RowDataBaseOP chain_id_data = new RowData<std::string>("chain_id",chain_);
+	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
+	RowDataBaseOP chain_id_data( new RowData<std::string>("chain_id",chain_) );
 	
 	std::vector<utility::json_spirit::Pair>  descriptor_json_data(get_desriptor_data());
 	
 
 	std::string descriptor_string(utility::json_spirit::write(utility::json_spirit::Value(descriptor_json_data)));
-	RowDataBaseOP descriptor_data_column = new RowData<std::string>("descriptor_data",descriptor_string);
+	RowDataBaseOP descriptor_data_column( new RowData<std::string>("descriptor_data",descriptor_string) );
 	
 	jd2::JobDistributor* job_distributor = jd2::JobDistributor::get_instance();
 	jd2::JobCOP current_job = job_distributor->current_job();
@@ -140,14 +140,14 @@ ScreeningFeatures::report_features(
 		}
 	}
 
-	RowDataBaseOP group_name_data = new RowData<std::string>("group_name",group_name);
+	RowDataBaseOP group_name_data( new RowData<std::string>("group_name",group_name) );
 
 	core::Size chain_id = core::pose::get_chain_id_from_chain(chain_,pose);
 
 	for(core::Size resnum= pose.conformation().chain_begin(chain_id); resnum <= pose.conformation().chain_end(chain_id); ++resnum)
 	{
-		RowDataBaseOP resnum_data = new RowData<core::Size>("residue_number",resnum);
-		RowDataBaseOP name3_data = new RowData<std::string>("name3",pose.residue_type(resnum).name3());
+		RowDataBaseOP resnum_data( new RowData<core::Size>("residue_number",resnum) );
+		RowDataBaseOP name3_data( new RowData<std::string>("name3",pose.residue_type(resnum).name3()) );
 
 		screening_insert.add_row(utility::tools::make_vector(struct_id_data,chain_id_data,descriptor_data_column,group_name_data,resnum_data,name3_data));
 	}

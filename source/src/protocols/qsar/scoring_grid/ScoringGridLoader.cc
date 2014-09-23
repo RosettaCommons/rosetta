@@ -89,7 +89,7 @@ void ScoringGridLoader::load_data(
 }
 
 protocols::jd2::parser::DataLoaderOP
-ScoringGridLoaderCreator::create_loader() const { return new ScoringGridLoader; }
+ScoringGridLoaderCreator::create_loader() const { return protocols::jd2::parser::DataLoaderOP( new ScoringGridLoader ); }
 
 std::string
 ScoringGridLoaderCreator::keyname() const { return "SCORINGGRIDS"; }

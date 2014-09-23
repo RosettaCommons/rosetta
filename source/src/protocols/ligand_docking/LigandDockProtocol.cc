@@ -264,7 +264,7 @@ LigandDockProtocol::apply( core::pose::Pose & pose )
 
 	// Create a MonteCarlo object
 	// Want to do this after perturb so we don't reset to pre-perturb state
-	MonteCarloOP monteCarlo = new MonteCarlo(pose, *scorefxn_, 2.0 /* temperature, from RosettaLigand paper */);
+	MonteCarloOP monteCarlo( new MonteCarlo(pose, *scorefxn_, 2.0 /* temperature, from RosettaLigand paper */) );
 
 	if(protocol_ == "meiler2006") classic_protocol(pose, jump_id, scorefxn_, monteCarlo, 50, 8); // Meiler and Baker 2006
 	// pack - rottrials - rottrials - rottrials - pack
@@ -292,7 +292,7 @@ LigandDockProtocol::apply( core::pose::Pose & pose )
 	// Set up move map for minimizing.
 	// Have to do this after initial perturb so we get the "right" interface defn.
 	// Putting it here, we will get a slightly different interface than is used during classic_protocol() ...
-	protocols::simple_moves::MinMoverOP dfpMinTightTol = new protocols::simple_moves::MinMover( movemap, scorefxn_, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ );
+	protocols::simple_moves::MinMoverOP dfpMinTightTol( new protocols::simple_moves::MinMover( movemap, scorefxn_, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ ) );
 	dfpMinTightTol->min_options()->nblist_auto_update(true);
 	dfpMinTightTol->apply(pose);
 
@@ -347,7 +347,7 @@ LigandDockProtocol::classic_protocol(
 	PackerTaskOP rottrials_task = make_packer_task(pose, jump_id, sc_interface_padding_, rottrials_all_rsds_, ligand_protonation_);
 
 	// Rigid body exploration
-	MoverOP simple_rigbod = new rigid::RigidBodyPerturbMover( jump_id, numeric::conversions::degrees(0.05), 0.1);
+	MoverOP simple_rigbod( new rigid::RigidBodyPerturbMover( jump_id, numeric::conversions::degrees(0.05), 0.1) );
 
 	for( core::Size cycle = 1; cycle <= num_cycles; ++cycle ) {
 		// RotamerTrialsMover actually asks for a non-const OP to scorefxn, sadly.
@@ -358,12 +358,12 @@ LigandDockProtocol::classic_protocol(
 			(Mover *) new protocols::simple_moves::RotamerTrialsMover(scorefxn, *rottrials_task)
 		);
 		// Wrap it in something to disable the torsion constraints before packing!
-		pack_mover = new protocols::ligand_docking::UnconstrainedTorsionsMover( pack_mover, ligand_torsion_restraints_ );
+		pack_mover = MoverOP( new protocols::ligand_docking::UnconstrainedTorsionsMover( pack_mover, ligand_torsion_restraints_ ) );
 
 		//MoverOP dockmcm_mover = make_dockmcm_mover(pose, jump_id, pack_mover, simple_rigbod, movemap, scorefxn, monteCarlo);
 		//dockmcm_mover->apply(pose);
 		{
-			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ );
+			protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
 			min_mover->min_options()->nblist_auto_update(true); // does this cost us lots of time in practice?
 
 			core::Real const score1 = (*scorefxn)( pose );
@@ -425,7 +425,7 @@ LigandDockProtocol::shear_min_protocol(
 	//monteCarlo->reset_counters();
 	for( core::Size cycle = 1; cycle <= num_cycles; ++cycle ) {
 		//TR << "shear_min_protocol(), cycle " << cycle << std::endl;
-		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ );
+		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
 		min_mover->min_options()->nblist_auto_update(true); // does this cost us lots of time in practice?
 		//core::Real const score1 = (*scorefxn)( pose );
 
@@ -477,8 +477,8 @@ LigandDockProtocol::random_conformer(
 		for(core::Size i = 1; i <= pose.total_residue(); ++i ) {
 			if( pose.residue(i).is_polymer() ) continue;
 			//(*scorefxn_)( pose ); scorefxn_->accumulate_residue_total_energies( pose ); std::cout << "Constraints before: " << pose.energies().total_energies()[ core::scoring::dihedral_constraint ] << std::endl;
-			RandomConformerMoverOP rcm = new RandomConformerMover(i);
-			UnconstrainedTorsionsMoverOP utm = new UnconstrainedTorsionsMover( rcm, ligand_torsion_restraints_ );
+			RandomConformerMoverOP rcm( new RandomConformerMover(i) );
+			UnconstrainedTorsionsMoverOP utm( new UnconstrainedTorsionsMover( rcm, ligand_torsion_restraints_ ) );
 			utm->apply(pose);
 			//(*scorefxn_)( pose ); scorefxn_->accumulate_residue_total_energies( pose ); std::cout << "Constraints after: " << pose.energies().total_energies()[ core::scoring::dihedral_constraint ] << std::endl;
 		}
@@ -514,7 +514,7 @@ LigandDockProtocol::optimize_orientation3(
 
 	TR << "Making ligand grid ..." << std::endl;
 	//clock_t start_time = clock();
-	utility::pointer::owning_ptr<core::grid::CartGrid<int> >  grid = make_atr_rep_grid(pose, pose.residue(lig_id).nbr_atom_xyz());
+	utility::pointer::shared_ptr<core::grid::CartGrid<int> >  grid = make_atr_rep_grid(pose, pose.residue(lig_id).nbr_atom_xyz());
 	//clock_t end_time = clock();
 	//TR << "Elapsed time: " << double(end_time - start_time) / CLOCKS_PER_SEC << " seconds" << std::endl;
 
@@ -539,7 +539,7 @@ LigandDockProtocol::optimize_orientation3(
 		grid->write_to_BRIX( option[ OptionKeys::docking::ligand::grid::grid_map ]().name() );
 	}
 
-	MoverOP initialPerturb = new protocols::docking::DockingInitialPerturbation(jump_id, false /*don't slide*/);
+	MoverOP initialPerturb( new protocols::docking::DockingInitialPerturbation(jump_id, false /*don't slide*/) );
 	// Make sure the initial perturb lands our nbr_atom in an empty space.
 	{
 		core::pose::Pose const orig_pose( pose );
@@ -706,22 +706,22 @@ LigandDockProtocol::make_dockmcm_mover(
 {
 	using namespace protocols::moves;
 
-	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
 	min_mover->min_options()->nblist_auto_update(true); // does this cost us lots of time in practice?
 
-	MoverOP sequence_mover = new SequenceMover(
+	MoverOP sequence_mover( new SequenceMover(
 		rigbod_mover,
 		repack_mover
-	);
+	) );
 	
-	MoverOP jump_out_mover = new JumpOutMover(
+	MoverOP jump_out_mover( new JumpOutMover(
 		sequence_mover,
 		min_mover,
 		scorefxn,
 		15.0 // energy units, taken from Rosetta++ docking_minimize.cc
-	);
+	) );
 	
-	TrialMoverOP mctrial = new TrialMover( jump_out_mover, monteCarlo );
+	TrialMoverOP mctrial( new TrialMover( jump_out_mover, monteCarlo ) );
 	
 	//mctrial->set_keep_stats(false); // big time sink for MC
 	mctrial->keep_stats_type( no_stats );
@@ -780,7 +780,7 @@ LigandDockProtocol::append_ligand_docking_scores(
 		// once separated, but Chu's JMB paper found this doesn't really help,
 		// at least for protein-protein docking.
 		// Also, it's very slow, requiring 10+ independent repacks.
-		core::pose::PoseOP after_unbound = new core::pose::Pose( after );
+		core::pose::PoseOP after_unbound( new core::pose::Pose( after ) );
 		// If constraints aren't removed, pulling the components apart gives big penalties.
 		if( constraint_io ) constraint_io->remove_constraints_from_pose(*after_unbound, /*keep_covalent=*/ false, /*fail_on_constraints_missing=*/ true);
 
@@ -891,7 +891,7 @@ LigandDockProtocol::restrain_ligand_chis(
 	} else {
 		for(core::Size i = 1; i <= pose.total_residue(); ++i ) {
 			if( pose.residue(i).is_polymer() ) continue;
-			ligand_torsion_restraints_.push_back( new protocols::ligand_docking::ResidueTorsionRestraints(pose, i, ligand_chi_stddev_deg_) );
+			ligand_torsion_restraints_.push_back( utility::pointer::shared_ptr<class protocols::ligand_docking::ResidueTorsionRestraints>( new protocols::ligand_docking::ResidueTorsionRestraints(pose, i, ligand_chi_stddev_deg_) ) );
 		}
 	}
 }

@@ -22,8 +22,8 @@ namespace protocols {
 namespace moves {
 
 class ResId;
-typedef utility::pointer::owning_ptr< ResId > ResIdOP;
-typedef utility::pointer::owning_ptr< ResId const > ResIdCOP;
+typedef utility::pointer::shared_ptr< ResId > ResIdOP;
+typedef utility::pointer::shared_ptr< ResId const > ResIdCOP;
 
 } // moves
 } // protocols

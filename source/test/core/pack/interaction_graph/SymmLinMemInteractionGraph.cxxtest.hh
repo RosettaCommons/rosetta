@@ -123,11 +123,11 @@ public:
 
 		make_symmetric_PackerTask_by_truncation( pose, task );
 
-		ScoreFunctionOP sfxn = new core::scoring::symmetry::SymmetricScoreFunction; //get_score_function();
+		ScoreFunctionOP sfxn( new core::scoring::symmetry::SymmetricScoreFunction ); //get_score_function();
 		sfxn->set_weight( fa_atr, 0.8 );
 		sfxn->set_weight( fa_rep, 0.44 );
 		sfxn->set_weight( fa_sol, 0.65 );
-		methods::EnergyMethodOptionsOP emopts( new methods::EnergyMethodOptions( sfxn->energy_method_options() ));
+		methods::EnergyMethodOptionsOP emopts( new methods::EnergyMethodOptions( sfxn->energy_method_options() ) );
     emopts->hbond_options().decompose_bb_hb_into_pair_energies( true );
     sfxn->set_energy_method_options( *emopts );
 
@@ -136,15 +136,14 @@ public:
 		sfxn->setup_for_packing( pose, task->repacking_residues(), task->designing_residues() );
 		GraphOP packer_neighbor_graph = create_packer_graph( pose, *sfxn, task );
 
-		core::pack::rotamer_set::symmetry::SymmetricRotamerSetsOP rotsets(
-			new core::pack::rotamer_set::symmetry::SymmetricRotamerSets() );
+		core::pack::rotamer_set::symmetry::SymmetricRotamerSetsOP rotsets( new core::pack::rotamer_set::symmetry::SymmetricRotamerSets() );
 		rotsets->set_task( task );
 		rotsets->build_rotamers( pose, *sfxn, packer_neighbor_graph );
 		rotsets->prepare_sets_for_packing( pose, *sfxn );
 
 
-		PDInteractionGraphOP regular_ig = new PDInteractionGraph( 3 );
-		SymmLinearMemoryInteractionGraphOP symlinmem_ig = new SymmLinearMemoryInteractionGraph( 3 );
+		PDInteractionGraphOP regular_ig( new PDInteractionGraph( 3 ) );
+		SymmLinearMemoryInteractionGraphOP symlinmem_ig( new SymmLinearMemoryInteractionGraph( 3 ) );
 		symlinmem_ig->set_pose( pose );
 		symlinmem_ig->set_score_function( *sfxn );
 

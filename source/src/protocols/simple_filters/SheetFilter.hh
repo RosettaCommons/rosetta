@@ -59,10 +59,10 @@ public:
 	virtual ~SheetFilter() {}
 
 	filters::FilterOP clone() const {
-		return new SheetFilter( *this ); }
+		return filters::FilterOP( new SheetFilter( *this ) ); }
 
 	filters::FilterOP fresh_instance() const{
-		return new SheetFilter(); }
+		return filters::FilterOP( new SheetFilter() ); }
 
 
 	/// @brief Returns true if the given pose passes the filter, false otherwise.

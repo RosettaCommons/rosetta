@@ -38,8 +38,8 @@ public:
 	virtual std::string keyname() const = 0;
 };
 
-typedef utility::pointer::owning_ptr< FilterCreator > FilterCreatorOP;
-typedef utility::pointer::owning_ptr< FilterCreator const > FilterCreatorCOP;
+typedef utility::pointer::shared_ptr< FilterCreator > FilterCreatorOP;
+typedef utility::pointer::shared_ptr< FilterCreator const > FilterCreatorCOP;
 
 } //namespace filters
 } //namespace protocols

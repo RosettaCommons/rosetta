@@ -53,9 +53,9 @@ public:
 	}
 
 	virtual ConstraintOP clone() const {
-		return new DihedralConstraint(
+		return ConstraintOP( new DihedralConstraint(
 			atom1_, atom2_, atom3_, atom4_, func_, score_type()
-		);
+		) );
 	}
 
   Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1 ) const;

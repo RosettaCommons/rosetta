@@ -55,7 +55,7 @@ methods::EnergyMethodOP
 D2H_SA_EnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new D2H_SA_Energy;
+	return methods::EnergyMethodOP( new D2H_SA_Energy );
 }
 
 ScoreTypes
@@ -187,7 +187,7 @@ D2H_SA_Energy::D2H_SA_Energy() :
 EnergyMethodOP
 D2H_SA_Energy::clone() const
 {
-	return new D2H_SA_Energy;
+	return EnergyMethodOP( new D2H_SA_Energy );
 }
 
 /////////////////////////////////////////////////////////////////////////////

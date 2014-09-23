@@ -50,7 +50,7 @@ namespace simple_moves {
 
 RandomTorsionMover::RandomTorsionMover() :
 	Mover("RandomTorsionMover"),
-	move_map_( 0 ),
+	move_map_( /* 0 */ ),
 	max_angle_( 0 ),
 	num_moves_( 0 )
 {}
@@ -64,7 +64,7 @@ RandomTorsionMover::RandomTorsionMover( core::kinematics::MoveMapOP move_map, co
 
 RandomTorsionMover::RandomTorsionMover( RandomTorsionMover const & other ) :
 	Mover("RandomTorsionMover"),
-	move_map_( new core::kinematics::MoveMap( *other.move_map_ ) ),
+	move_map_( core::kinematics::MoveMapOP( new core::kinematics::MoveMap( *other.move_map_ ) ) ),
 	max_angle_( other.max_angle_ ),
 	num_moves_( other.num_moves_ )
 {}
@@ -142,13 +142,13 @@ RandomTorsionMover::setup_torsion_list( core::pose::Pose & pose )
 protocols::moves::MoverOP
 RandomTorsionMover::clone() const
 {
-	return new protocols::simple_moves::RandomTorsionMover( *this );
+	return protocols::moves::MoverOP( new protocols::simple_moves::RandomTorsionMover( *this ) );
 }
 
 protocols::moves::MoverOP
 RandomTorsionMover::fresh_instance() const
 {
-	return new protocols::simple_moves::RandomTorsionMover();
+	return protocols::moves::MoverOP( new protocols::simple_moves::RandomTorsionMover() );
 }
 
 void
@@ -159,7 +159,7 @@ RandomTorsionMover::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & pose )
 {
-	if ( !move_map_ ) move_map_ = new core::kinematics::MoveMap();
+	if ( !move_map_ ) move_map_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
 
 	max_angle_ = tag->getOption< core::Real >( "max_angle", max_angle_ );
 	num_moves_ = tag->getOption< core::Size >( "num_moves", num_moves_ );
@@ -179,7 +179,7 @@ std::string RandomTorsionMoverCreator::keyname() const {
 
 /// @brief RandomTorsionMoverCreator interface, return a new instance
 protocols::moves::MoverOP RandomTorsionMoverCreator::create_mover() const {
-  return new RandomTorsionMover();
+  return protocols::moves::MoverOP( new RandomTorsionMover() );
 }
 
 } // simple_moves

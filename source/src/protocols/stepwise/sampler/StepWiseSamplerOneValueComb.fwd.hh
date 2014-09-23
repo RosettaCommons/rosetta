@@ -22,7 +22,7 @@ namespace stepwise {
 namespace sampler {
 
 class StepWiseSamplerOneValueComb;
-typedef utility::pointer::owning_ptr< StepWiseSamplerOneValueComb > StepWiseSamplerOneValueCombOP;
+typedef utility::pointer::shared_ptr< StepWiseSamplerOneValueComb > StepWiseSamplerOneValueCombOP;
 
 } //sampler
 } //stepwise

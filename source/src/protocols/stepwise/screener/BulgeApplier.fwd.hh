@@ -23,8 +23,8 @@ namespace stepwise {
 namespace screener {
 	
 	class BulgeApplier;
-	typedef utility::pointer::owning_ptr< BulgeApplier > BulgeApplierOP;
-	typedef utility::pointer::owning_ptr< BulgeApplier const > BulgeApplierCOP;
+	typedef utility::pointer::shared_ptr< BulgeApplier > BulgeApplierOP;
+	typedef utility::pointer::shared_ptr< BulgeApplier const > BulgeApplierCOP;
 	
 } //screener
 } //stepwise

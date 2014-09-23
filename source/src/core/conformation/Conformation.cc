@@ -106,14 +106,14 @@ Conformation::~Conformation()
 
 Conformation::Conformation() :
 	utility::pointer::ReferenceCount(),
-	fold_tree_( new FoldTree ),
-	atom_tree_( new AtomTree ),
+	fold_tree_( FoldTreeOP( new FoldTree ) ),
+	atom_tree_( AtomTreeOP( new AtomTree ) ),
 	contains_carbohydrate_residues_( false) ,
 	residue_coordinates_need_updating_( false ),
 	residue_torsions_need_updating_( false ),
 	structure_moved_( true )
 {
-	atom_tree_->set_weak_pointer_to_self( atom_tree_() );
+	atom_tree_->set_weak_pointer_to_self( atom_tree_ );
 }
 
 // copy constructor
@@ -130,9 +130,9 @@ Conformation::Conformation( Conformation const & src ) :
 	}
 
 	// kinematics
-	fold_tree_ = new FoldTree( *src.fold_tree_ );
-	atom_tree_ = new AtomTree( *src.atom_tree_ );
-	atom_tree_->set_weak_pointer_to_self( atom_tree_() );
+	fold_tree_ = FoldTreeOP( new FoldTree( *src.fold_tree_ ) );
+	atom_tree_ = AtomTreeOP( new AtomTree( *src.atom_tree_ ) );
+	atom_tree_->set_weak_pointer_to_self( atom_tree_ );
 
 	// carbohydrates?
 	contains_carbohydrate_residues_ = src.contains_carbohydrate_residues_;
@@ -215,7 +215,7 @@ Conformation::operator=( Conformation const & src )
 ConformationOP
 Conformation::clone() const
 {
-	return new Conformation(*this);
+	return ConformationOP( new Conformation(*this) );
 }
 
 // clear data
@@ -1154,7 +1154,7 @@ Conformation::detect_bonds()
 
 	// Create point graph of nbr_atoms of incomplete residues only.
 	// Also, calculate maximum distance that a connected residue could be.
-	PointGraphOP pg = new PointGraph;
+	PointGraphOP pg( new PointGraph );
 	pg->set_num_vertices( num_incomp );
 	Distance maxrad( 0.0 );
 	Distance maxd( 0.0 );
@@ -1853,7 +1853,7 @@ Conformation::detect_disulfides()
 	std::string const distance_atom = fullatom? "SG" : "CB";
 
 	// Create point graph
-	PointGraphOP pg = new PointGraph;
+	PointGraphOP pg( new PointGraph );
 	pg->set_num_vertices( num_cys );
 	Distance maxrad( 0.0 );
 	Distance maxd( typical_disulfide_distance + tolerance );
@@ -2447,10 +2447,10 @@ Conformation::insert_ideal_geometry_at_residue_connection( Size const pos1, Size
 	// we use residues_[ xx ] rather than residue(xx) to avoid triggering refold/angle update
 	//
 	// determine what the other residue for this connection is:
-	ResidueCOP rsd1( residues_[ pos1 ]() );
+	ResidueCOP rsd1( residues_[ pos1 ] );
 	Size const    pos2( rsd1->connect_map( connid1 ).resid() );
 	Size const connid2( rsd1->connect_map( connid1 ).connid() );
-	ResidueCOP rsd2( residues_[ pos2 ]() );
+	ResidueCOP rsd2( residues_[ pos2 ] );
 
 	// what is the ideal geometry?
 	chemical::ResidueConnection const & connect1( rsd1->residue_connection( connid1 ) );
@@ -3723,9 +3723,9 @@ Conformation::add_pseudobond(
 
 	if ( residues_[ lr ]->is_pseudo_bonded( *residues_[ ur ] ) ) {
 		PseudoBondCollectionCOP existing_pbs = residues_[ lr ]->get_pseudobonds_to_residue( ur );
-		new_pbs = new PseudoBondCollection( *existing_pbs );
+		new_pbs = PseudoBondCollectionOP( new PseudoBondCollection( *existing_pbs ) );
 	} else {
-		new_pbs = new PseudoBondCollection();
+		new_pbs = PseudoBondCollectionOP( new PseudoBondCollection() );
 	}
 	PseudoBond new_pb;
 	new_pb.lr( lr ); new_pb.lr_conn_id( lr_connid );

@@ -207,27 +207,27 @@ FragmentScoringMethodOP MakeFragmentCrmsdResDepth::make(Size priority,
 		trRmsScore
 				<< "Reference structure to score fragments by crmsd loaded from: "
 				<< option[in::file::native]() << std::endl;
-		core::pose::PoseOP nativePose = new core::pose::Pose;
+		core::pose::PoseOP nativePose( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*nativePose, option[in::file::native]());
 
 		if (nativePose->total_residue() != picker->get_query_residue_depth().size())
 			utility_exit_with_message("MakeFragmentCrmsdResDepth native total residue != query residue depth length");
 
-		return (FragmentScoringMethodOP) new FragmentCrmsdResDepth(priority,
-				lowest_acceptable_value, use_lowest, nativePose, picker->get_query_residue_depth());
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new FragmentCrmsdResDepth(priority,
+				lowest_acceptable_value, use_lowest, nativePose, picker->get_query_residue_depth()) );
 	}
 	if (option[in::file::s].user()) {
 		trRmsScore
 				<< "Reference structure to score fragments by crmsd loaded from: "
 				<< option[in::file::s]()[1] << std::endl;
-		core::pose::PoseOP nativePose = new core::pose::Pose;
+		core::pose::PoseOP nativePose( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*nativePose, option[in::file::s]()[1]);
 
 		if (nativePose->total_residue() != picker->get_query_residue_depth().size())
 			utility_exit_with_message("MakeFragmentCrmsdResDepth native total residue != query residue depth length");
 
-		return (FragmentScoringMethodOP) new FragmentCrmsdResDepth(priority,
-				lowest_acceptable_value, use_lowest, nativePose, picker->get_query_residue_depth());
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new FragmentCrmsdResDepth(priority,
+				lowest_acceptable_value, use_lowest, nativePose, picker->get_query_residue_depth()) );
 	}
 	if (option[in::file::xyz].user()) {
 
@@ -256,8 +256,8 @@ FragmentScoringMethodOP MakeFragmentCrmsdResDepth::make(Size priority,
 		if (xyz.size() != picker->get_query_residue_depth().size())
 			utility_exit_with_message("MakeFragmentCrmsdResDepth xyz size != query residue depth length");
 
-		return (FragmentScoringMethodOP) new FragmentCrmsdResDepth(priority,
-				lowest_acceptable_value, use_lowest, xyz, picker->get_query_residue_depth());
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new FragmentCrmsdResDepth(priority,
+				lowest_acceptable_value, use_lowest, xyz, picker->get_query_residue_depth()) );
 	}
 	utility_exit_with_message(
 			"Can't read a reference structure. Provide it with in::file::s flag");

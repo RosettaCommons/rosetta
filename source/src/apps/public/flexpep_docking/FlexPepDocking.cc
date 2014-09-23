@@ -95,12 +95,12 @@ main( int argc, char * argv [] )
 	// end of setup
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	MoverOP fpDock = new flexpep_docking::FlexPepDockingProtocol(1,true, true);
+	MoverOP fpDock( new flexpep_docking::FlexPepDockingProtocol(1,true, true) );
 
 	// read native pose: (TODO: look how this should be handled in Job Distributor 2)
 	//	protocols::jd2::set_native_in_mover(*fpDock);
 	if ( option[ in::file::native ].user() ) {
-		core::pose::PoseOP native_pose = new core::pose::Pose;
+		core::pose::PoseOP native_pose( new core::pose::Pose );
 		core::chemical::ResidueTypeSetCAP rsd_set;
 		if ( option[ in::file::centroid_input ].user() ) {
 		  core::import_pose::centroid_pose_from_pdb( *native_pose, option[ in::file::native ]() );

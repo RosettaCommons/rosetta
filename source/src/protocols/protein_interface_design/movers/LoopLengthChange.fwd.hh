@@ -23,8 +23,8 @@ namespace movers{
 
 //Forwards and OP typedefs
 class LoopLengthChange;
-typedef utility::pointer::owning_ptr< LoopLengthChange > LoopLengthChangeOP;
-typedef utility::pointer::owning_ptr< LoopLengthChange const > LoopLengthChangeCOP;
+typedef utility::pointer::shared_ptr< LoopLengthChange > LoopLengthChangeOP;
+typedef utility::pointer::shared_ptr< LoopLengthChange const > LoopLengthChangeCOP;
 
 }//movers
 }//protein_interface_design

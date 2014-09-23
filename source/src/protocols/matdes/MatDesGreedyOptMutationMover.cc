@@ -77,15 +77,15 @@ using std::pair;
 ///@brief default ctor
 MatDesGreedyOptMutationMover::MatDesGreedyOptMutationMover() :
 	Mover( MatDesGreedyOptMutationMoverCreator::mover_name() ),
-	task_factory_( NULL ),
+	task_factory_( /* NULL */ ),
 //	filters_( NULL ), /* how set default vecgtor of NULLs? */
 //	sample_type_( "low" ),
-	scorefxn_( NULL ),
-	relax_mover_( NULL ),
+	scorefxn_( /* NULL */ ),
+	relax_mover_( /* NULL */ ),
 	dump_pdb_( false ),
 	dump_table_( false ),
 	parallel_( false ),
-	stopping_condition_( NULL ),
+	stopping_condition_( /* NULL */ ),
 	nstruct_iter_( 1 ),
 	stop_before_condition_( false ),
 	skip_best_check_( false ),
@@ -150,12 +150,12 @@ MatDesGreedyOptMutationMover::~MatDesGreedyOptMutationMover(){}
 //creators
 protocols::moves::MoverOP
 MatDesGreedyOptMutationMoverCreator::create_mover() const {
-	return new MatDesGreedyOptMutationMover;
+	return protocols::moves::MoverOP( new MatDesGreedyOptMutationMover );
 }
 
 protocols::moves::MoverOP
 MatDesGreedyOptMutationMover::clone() const{
-	return new MatDesGreedyOptMutationMover( *this );
+	return protocols::moves::MoverOP( new MatDesGreedyOptMutationMover( *this ) );
 }
 
 //name getters
@@ -755,7 +755,7 @@ MatDesGreedyOptMutationMover::apply( core::pose::Pose & pose )
 			if( force_natro_ ) {
 				utility::vector1< core::pack::task::PackerTaskOP > new_tasks;
 				for( Size itask = 1; itask <= force_natro_for_stored_task_names_.size(); ++itask ){
-					protocols::toolbox::task_operations::STMStoredTaskOP pfront_pose_stored_tasks = static_cast< protocols::toolbox::task_operations::STMStoredTask* >( pfront_poses_[1].data().get_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS )() );
+					protocols::toolbox::task_operations::STMStoredTaskOP pfront_pose_stored_tasks = utility::pointer::static_pointer_cast< protocols::toolbox::task_operations::STMStoredTask > ( pfront_poses_[1].data().get_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS ) );
 					pfront_pose_stored_tasks->set_task( ptmut_calc->new_tasks()[itask]->clone(), force_natro_for_stored_task_names_[itask]);
 				}
 			}
@@ -854,7 +854,7 @@ MatDesGreedyOptMutationMover::apply( core::pose::Pose & pose )
 					if( force_natro_ ) {
 						utility::vector1< core::pack::task::PackerTaskOP > new_tasks;
 						for( Size itask = 1; itask <= force_natro_for_stored_task_names_.size(); ++itask ){
-							protocols::toolbox::task_operations::STMStoredTaskOP pfront_pose_stored_tasks = static_cast< protocols::toolbox::task_operations::STMStoredTask* >( pfront_poses_[1].data().get_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS )() );
+							protocols::toolbox::task_operations::STMStoredTaskOP pfront_pose_stored_tasks = utility::pointer::static_pointer_cast< protocols::toolbox::task_operations::STMStoredTask > ( pfront_poses_[1].data().get_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS ) );
 							pfront_pose_stored_tasks->set_task( ptmut_calc->new_tasks()[itask]->clone(), force_natro_for_stored_task_names_[itask]);
 						}
 					}
@@ -1000,22 +1000,22 @@ MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
   if( tag->hasOption( "reset_delta_filters" ) ){
     delta_filter_names = utility::string_split( tag->getOption< std::string >( "reset_delta_filters" ), ',' );
     foreach( std::string const fname, delta_filter_names ){
-      reset_delta_filters_.push_back( dynamic_cast< protocols::simple_filters::DeltaFilter * >( protocols::rosetta_scripts::parse_filter( fname, filters )() ) );
+      reset_delta_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::DeltaFilter > ( protocols::rosetta_scripts::parse_filter( fname, filters ) ) );
       TR<<"The baseline for Delta Filter "<<fname<<" will be reset upon each accepted mutation"<<std::endl;
     }
 		for( protocols::filters::Filters_map::const_iterator it=filters.begin(); it!=filters.end(); ++it ) {
 			if( it->second->get_type() == "CompoundStatement" ){
-				compound_filters_.push_back( dynamic_cast< protocols::filters::CompoundFilter * >( it->second() ));
+				compound_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::filters::CompoundFilter > ( it->second ));
 			}
 			if( it->second->get_type() == "CombinedValue" ){
-				combined_filters_.push_back( dynamic_cast< protocols::filters::CombinedFilter * >( it->second() ));
+				combined_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::filters::CombinedFilter > ( it->second ));
 			}
     }
   }
   if( tag->hasOption( "set_task_for_filters" ) ){
     utility::vector1< std::string > filter_names = utility::string_split( tag->getOption< std::string >( "set_task_for_filters" ), ',' );
     foreach( std::string const fname, filter_names ){
-      set_task_for_filters_.push_back( dynamic_cast< protocols::simple_filters::TaskAwareScoreTypeFilter * >( protocols::rosetta_scripts::parse_filter( fname, filters )()) ); //Note: Returns a Null pointer if incompatible filter type is passed through the xml.
+      set_task_for_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::TaskAwareScoreTypeFilter > ( protocols::rosetta_scripts::parse_filter( fname, filters ) ) ); //Note: Returns a Null pointer if incompatible filter type is passed through the xml.
 			//Would be nice if task_factory() was a standard method of the filter class, so that we could make a Virtual task_factory() method in the Filter base class and not have to have this specific to TaskAwareScoreTypeFilter.  If this proves useful, then perhaps we could consider that...
       TR<<"The task for filter "<<fname<<" will be set to only allow repacking at the mutated positions."<<std::endl;
     }

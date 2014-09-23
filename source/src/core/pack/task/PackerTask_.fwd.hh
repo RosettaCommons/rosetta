@@ -26,8 +26,8 @@ namespace task {
 
 class PackerTask_;
 
-typedef utility::pointer::owning_ptr< PackerTask_ > PackerTask_OP;
-typedef utility::pointer::owning_ptr< PackerTask_ const > PackerTask_COP;
+typedef utility::pointer::shared_ptr< PackerTask_ > PackerTask_OP;
+typedef utility::pointer::shared_ptr< PackerTask_ const > PackerTask_COP;
 
 } //namespace task
 } //namespace pack

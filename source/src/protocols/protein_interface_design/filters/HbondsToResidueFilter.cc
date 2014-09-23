@@ -86,7 +86,7 @@ static thread_local basic::Tracer TR( "protocols.protein_interface_design.filter
 using core::pose::Pose;
 
 protocols::filters::FilterOP
-HbondsToResidueFilterCreator::create_filter() const { return new HbondsToResidueFilter; }
+HbondsToResidueFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HbondsToResidueFilter ); }
 
 std::string
 HbondsToResidueFilterCreator::keyname() const { return "HbondsToResidue"; }

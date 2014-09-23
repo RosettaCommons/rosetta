@@ -27,8 +27,8 @@ namespace filters {
 class HSSTripletFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< HSSTripletFilter >  HSSTripletFilterOP;
-typedef utility::pointer::owning_ptr< HSSTripletFilter const >  HSSTripletFilterCOP;
+typedef utility::pointer::shared_ptr< HSSTripletFilter >  HSSTripletFilterOP;
+typedef utility::pointer::shared_ptr< HSSTripletFilter const >  HSSTripletFilterCOP;
 
 } // namespace protocols
 } // namespace fldsgn

@@ -129,7 +129,7 @@ void NonContinuousFrame::shift_by( int offset ) {
 // it is enough that clone() itself is virtually overloaded
  /// @brief clone method, new frame with same alignment position, fragments are not copied!
 FrameOP NonContinuousFrame::clone() const {
- 	return new NonContinuousFrame( start(), end(), length() );
+ 	return FrameOP( new NonContinuousFrame( start(), end(), length() ) );
 }
 
 // /// @brief clone method, new frame with same alignment position, fragments are not copied!

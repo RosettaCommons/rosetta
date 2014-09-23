@@ -131,11 +131,11 @@ public: // tests
 
 		Pose pose;
 		make_pose_from_sequence(pose, "TE", "fa_standard");
-		pose.pdb_info(PDBInfoOP(new PDBInfo(pose)));
+		pose.pdb_info(PDBInfoOP( new PDBInfo(pose) ));
 
 		Pose pose2;
 		make_pose_from_sequence(pose2, "ST", "fa_standard");
-		pose2.pdb_info(PDBInfoOP(new PDBInfo(pose2)));
+		pose2.pdb_info(PDBInfoOP( new PDBInfo(pose2) ));
 
 		char pose2_chain = 'B';
 		pose2.pdb_info()->set_chains(pose2_chain);

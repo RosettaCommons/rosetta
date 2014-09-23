@@ -25,8 +25,8 @@ namespace simple_filters {
 class SAXSScoreFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< SAXSScoreFilter >  SAXSScoreFilterOP;
-typedef utility::pointer::owning_ptr< SAXSScoreFilter const >  SAXSScoreFilterCOP;
+typedef utility::pointer::shared_ptr< SAXSScoreFilter >  SAXSScoreFilterOP;
+typedef utility::pointer::shared_ptr< SAXSScoreFilter const >  SAXSScoreFilterCOP;
 
 
 } // namespace protocols

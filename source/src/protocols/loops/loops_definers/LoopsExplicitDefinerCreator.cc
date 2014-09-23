@@ -27,7 +27,7 @@ LoopsExplicitDefinerCreator::~LoopsExplicitDefinerCreator() {}
 
 LoopsDefinerOP
 LoopsExplicitDefinerCreator::create_loops_definer() const {
-	return new LoopsExplicitDefiner;
+	return LoopsDefinerOP( new LoopsExplicitDefiner );
 }
 
 string

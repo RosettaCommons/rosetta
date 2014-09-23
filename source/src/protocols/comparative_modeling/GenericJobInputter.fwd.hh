@@ -20,7 +20,7 @@ namespace protocols {
 namespace jd2 {
 
 class GenericJobInputter;
-typedef utility::pointer::owning_ptr< GenericJobInputter > GenericJobInputterOP;
+typedef utility::pointer::shared_ptr< GenericJobInputter > GenericJobInputterOP;
 
 }//jd2
 }//protocols

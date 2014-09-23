@@ -22,8 +22,8 @@ namespace protocols {
 namespace jobdist {
 
 class BasicJob; // fwd declaration
-typedef utility::pointer::owning_ptr< BasicJob > BasicJobOP;
-typedef utility::pointer::owning_ptr< BasicJob const > BasicJobCOP;
+typedef utility::pointer::shared_ptr< BasicJob > BasicJobOP;
+typedef utility::pointer::shared_ptr< BasicJob const > BasicJobCOP;
 
 } // namespace jobdist
 } // namespace protocols

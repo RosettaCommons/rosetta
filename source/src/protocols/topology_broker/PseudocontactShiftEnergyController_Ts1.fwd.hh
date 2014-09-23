@@ -44,11 +44,11 @@ namespace topology_broker {
 class PseudocontactShiftEnergyController_Ts1;
 
 // Types
-typedef  utility::pointer::owning_ptr< PseudocontactShiftEnergyController_Ts1 >  PseudocontactShiftEnergyController_Ts1OP;
-typedef  utility::pointer::owning_ptr< PseudocontactShiftEnergyController_Ts1 const >  PseudocontactShiftEnergyController_Ts1COP;
+typedef  utility::pointer::shared_ptr< PseudocontactShiftEnergyController_Ts1 >  PseudocontactShiftEnergyController_Ts1OP;
+typedef  utility::pointer::shared_ptr< PseudocontactShiftEnergyController_Ts1 const >  PseudocontactShiftEnergyController_Ts1COP;
 
-typedef  utility::pointer::access_ptr< PseudocontactShiftEnergyController_Ts1 >  PseudocontactShiftEnergyController_Ts1AP;
-typedef  utility::pointer::access_ptr< PseudocontactShiftEnergyController_Ts1 const >  PseudocontactShiftEnergyController_Ts1CAP;
+typedef  utility::pointer::weak_ptr< PseudocontactShiftEnergyController_Ts1 >  PseudocontactShiftEnergyController_Ts1AP;
+typedef  utility::pointer::weak_ptr< PseudocontactShiftEnergyController_Ts1 const >  PseudocontactShiftEnergyController_Ts1CAP;
 
 } // namespace topology_broker
 } // namespace protocols

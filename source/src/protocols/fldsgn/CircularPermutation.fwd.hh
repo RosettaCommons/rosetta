@@ -27,19 +27,19 @@ class CircularPermutation;
 
 
 /// @brief CircularPermutation owning pointer
-typedef utility::pointer::owning_ptr< CircularPermutation > CircularPermutation_OP;
+typedef utility::pointer::shared_ptr< CircularPermutation > CircularPermutation_OP;
 
 
 /// @brief CircularPermutation const owning pointer
-typedef utility::pointer::owning_ptr< CircularPermutation const > CircularPermutation_COP;
+typedef utility::pointer::shared_ptr< CircularPermutation const > CircularPermutation_COP;
 
 
 /// @brief CircularPermutation access pointer
-typedef utility::pointer::access_ptr< CircularPermutation > CircularPermutation_AP;
+typedef utility::pointer::weak_ptr< CircularPermutation > CircularPermutation_AP;
 
 
 /// @brief CircularPermutation const access pointer
-typedef utility::pointer::access_ptr< CircularPermutation const > CircularPermutation_CAP;
+typedef utility::pointer::weak_ptr< CircularPermutation const > CircularPermutation_CAP;
 
 
 } // namespace fldsgn

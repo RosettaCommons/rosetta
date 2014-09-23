@@ -66,7 +66,7 @@ BoltzmannRotamerMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 BoltzmannRotamerMoverCreator::create_mover() const {
-	return new BoltzmannRotamerMover;
+	return protocols::moves::MoverOP( new BoltzmannRotamerMover );
 }
 
 std::string
@@ -88,7 +88,7 @@ BoltzmannRotamerMover::BoltzmannRotamerMover() : protocols::moves::Mover()
 BoltzmannRotamerMover::BoltzmannRotamerMover(
 	ScoreFunctionCOP scorefxn_in,
 	PackerTaskOP & task_in
-) : protocols::moves::Mover(), scorefxn_( scorefxn_in ), factory_( NULL ), show_packer_task_( false )
+) : protocols::moves::Mover(), scorefxn_( scorefxn_in ), factory_( /* NULL */ ), show_packer_task_( false )
 {
 	protocols::moves::Mover::type( "BoltzmannRotamer" );
 	task_ = task_in->clone();
@@ -102,7 +102,7 @@ BoltzmannRotamerMover::BoltzmannRotamerMover(
 BoltzmannRotamerMover::BoltzmannRotamerMover(
 	ScoreFunctionCOP scorefxn_in,
 	TaskFactoryCOP factory_in
-) : protocols::moves::Mover(), scorefxn_( scorefxn_in ), task_( NULL ), factory_( factory_in ), show_packer_task_( false )
+) : protocols::moves::Mover(), scorefxn_( scorefxn_in ), task_( /* NULL */ ), factory_( factory_in ), show_packer_task_( false )
 {
 	protocols::moves::Mover::type( "BoltzmannRotamer" );
 	resnum_ = 0;
@@ -132,14 +132,14 @@ BoltzmannRotamerMover::~BoltzmannRotamerMover(){}
 BoltzmannRotamerMover::MoverOP
 BoltzmannRotamerMover::clone() const
 {
-	return new protocols::simple_moves::BoltzmannRotamerMover( *this );
+	return BoltzmannRotamerMover::MoverOP( new protocols::simple_moves::BoltzmannRotamerMover( *this ) );
 }
 
 // create this type of object
 BoltzmannRotamerMover::MoverOP
 BoltzmannRotamerMover::fresh_instance() const
 {
-	return new protocols::simple_moves::BoltzmannRotamerMover();
+	return BoltzmannRotamerMover::MoverOP( new protocols::simple_moves::BoltzmannRotamerMover() );
 }
 
 void

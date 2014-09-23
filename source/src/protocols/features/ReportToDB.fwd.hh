@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class ReportToDB;
-typedef utility::pointer::owning_ptr< ReportToDB > ReportToDBOP;
-typedef utility::pointer::owning_ptr< ReportToDB const > ReportToDBCOP;
+typedef utility::pointer::shared_ptr< ReportToDB > ReportToDBOP;
+typedef utility::pointer::shared_ptr< ReportToDB const > ReportToDBCOP;
 
 }
 }

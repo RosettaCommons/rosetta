@@ -132,7 +132,7 @@ utility::vector1< SpanningTopologyOP > get_topologies( utility::vector1< std::st
 		TR << "poses" << poses[i]->total_residue() << std::endl;
 		
 		// read spanfiles
-		SpanningTopologyOP topo = new SpanningTopology( spanfiles[i], poses[i]->total_residue() );
+		SpanningTopologyOP topo( new SpanningTopology( spanfiles[i], poses[i]->total_residue() ) );
 		
 		// put topologies into vector
 		topologies.push_back( topo );
@@ -195,7 +195,7 @@ void mpdocking_setup(){
 
 	// OPTIMIZE MEMBRANE OF POSE1
 	// 1) default EmbeddingConfig
-	EmbeddingDefOP membrane1 = new EmbeddingDef();
+	EmbeddingDefOP membrane1( new EmbeddingDef() );
 
 	TR << "set EmbedDef" << std::endl;
 
@@ -208,7 +208,7 @@ void mpdocking_setup(){
 //	TR << std::endl;
 	
 	// 2) attach MEM to pose 1
-	AddMembraneMoverOP add_membrane1 = new AddMembraneMover( membrane1->center(), membrane1->normal(), spanfile1, true);
+	AddMembraneMoverOP add_membrane1( new AddMembraneMover( membrane1->center(), membrane1->normal(), spanfile1, true) );
 	add_membrane1->apply( *pose1 );
 
 //	TR << "post-add" << std::endl;
@@ -240,7 +240,7 @@ void mpdocking_setup(){
 	pose1->dump_pdb("before.pdb");
 
 	// 3) set initial position of pose 1 in the membrane
-	MembranePositionFromTopologyMoverOP initial_position1 = new MembranePositionFromTopologyMover( true );
+	MembranePositionFromTopologyMoverOP initial_position1( new MembranePositionFromTopologyMover( true ) );
 	TR << "constructor called" << std::endl;
 	initial_position1->apply( *pose1 );
 

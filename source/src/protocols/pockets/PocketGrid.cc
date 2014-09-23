@@ -566,7 +566,7 @@ PocketGrid& PocketGrid::operator=(const PocketGrid& gr){
 
 
 PocketGrid::PocketGrid(){
-	core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy;
+	core::pose::metrics::PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy );
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 	setup_default_options();
 }
@@ -576,7 +576,7 @@ PocketGrid::PocketGrid( core::conformation::Residue const & central_rsd ) {
 	initialize(central_rsd, size_x_, size_y_, size_z_, spacing_, markpsp_, marksps_);
 	using namespace basic::options;
 	tag_=option[ OptionKeys::out::output_tag ]();
-	core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy;
+	core::pose::metrics::PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy );
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 
 }
@@ -586,7 +586,7 @@ PocketGrid::PocketGrid( std::vector< core::conformation::ResidueOP > const & cen
 	initialize(central_rsds, size_x_, size_y_, size_z_, spacing_, markpsp_, marksps_);
 	using namespace basic::options;
 	tag_=option[ OptionKeys::out::output_tag ]();
-	core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy;
+	core::pose::metrics::PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy );
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 
 }
@@ -596,7 +596,7 @@ PocketGrid::PocketGrid( std::vector< core::conformation::ResidueOP > const & cen
 	initialize(central_rsd, x, y, z, spacing_, markpsp_, marksps_);
 	using namespace basic::options;
 	tag_=option[ OptionKeys::out::output_tag ]();
-		core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy;
+		core::pose::metrics::PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 
 }
@@ -606,7 +606,7 @@ PocketGrid::PocketGrid( std::vector< core::conformation::ResidueOP > const & cen
 	initialize(central_rsds, x, y, z, spacing_, markpsp_, marksps_);
 	using namespace basic::options;
 	tag_=option[ OptionKeys::out::output_tag ]();
-		core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy;
+		core::pose::metrics::PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 
 }

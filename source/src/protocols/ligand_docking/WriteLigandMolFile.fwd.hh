@@ -22,7 +22,7 @@ namespace ligand_docking {
 
 class WriteLigandMolFile;
 
-typedef utility::pointer::owning_ptr<WriteLigandMolFile> WriteLigandMolFileOP;
+typedef utility::pointer::shared_ptr<WriteLigandMolFile> WriteLigandMolFileOP;
 
 }
 }

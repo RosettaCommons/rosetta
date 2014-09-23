@@ -35,7 +35,7 @@ std::string AtrGridCreator::keyname()const
 
 GridBaseOP AtrGridCreator::create_grid(utility::tag::TagCOP tag) const
 {
-	GridBaseOP atr_grid= new AtrGrid();
+	GridBaseOP atr_grid( new AtrGrid() );
 
 	atr_grid->parse_my_tag(tag);
 
@@ -45,7 +45,7 @@ GridBaseOP AtrGridCreator::create_grid(utility::tag::TagCOP tag) const
 GridBaseOP AtrGridCreator::create_grid() const
 {
 
-	return new AtrGrid();
+	return GridBaseOP( new AtrGrid() );
 }
 
 

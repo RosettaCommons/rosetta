@@ -26,11 +26,11 @@ class qsarPoint;
 
 class qsarMap;
 
-typedef utility::pointer::owning_ptr<qsarMap> qsarMapOP;
-typedef utility::pointer::owning_ptr<qsarMap const> qsarMapCOP;
+typedef utility::pointer::shared_ptr<qsarMap> qsarMapOP;
+typedef utility::pointer::shared_ptr<qsarMap const> qsarMapCOP;
 
-typedef utility::pointer::owning_ptr<qsarPoint> qsarPointOP;
-typedef utility::pointer::owning_ptr<qsarPoint const> qsarPointCOP;
+typedef utility::pointer::shared_ptr<qsarPoint> qsarPointOP;
+typedef utility::pointer::shared_ptr<qsarPoint const> qsarPointCOP;
 
 }
 }

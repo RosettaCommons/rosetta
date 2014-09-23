@@ -125,8 +125,7 @@ TMHTopologySamplerClaimer::get_membrane_topology(core::pose::Pose& pose)
 	core::scoring::MembraneTopologyOP membrane_topology;
 	if (pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) )
 	{
-		membrane_topology = static_cast< core::scoring::MembraneTopology * >
-		( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY) () );
+		membrane_topology = utility::pointer::static_pointer_cast< core::scoring::MembraneTopology > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY)  );
 	}else{
 		utility_exit_with_message("Must have MembraneTopology!");
 	}
@@ -148,7 +147,7 @@ TMHTopologySamplerClaimer::get_membrane_embed(core::pose::Pose& pose)
 core::pose::PoseOP
 TMHTopologySamplerClaimer::get_pose_from_claimer()
 {
-	return new core::pose::Pose(current_pose_);
+	return core::pose::PoseOP( new core::pose::Pose(current_pose_) );
 }
 
 ///@brief the broker checks if the claimer builds its own fold tree to figure out if needs to build one itself
@@ -401,7 +400,7 @@ TMHTopologySamplerClaimer::build_fold_tree(core::pose::Pose& pose, core::kinemat
 core::kinematics::FoldTreeOP
 TMHTopologySamplerClaimer::get_fold_tree(core::pose::Pose& pose)
 {
-	return new core::kinematics::FoldTree(pose.fold_tree());
+	return core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(pose.fold_tree()) );
 }
 
 ///@brief generate DoF Claims to be read in by broker
@@ -410,7 +409,7 @@ TMHTopologySamplerClaimer::generate_claims(claims::DofClaims &dof_claims)
 {
 	for(Size jump_num = 1; jump_num <= njumps_; ++jump_num)
 	{
-		dof_claims.push_back(new claims::JumpClaim(get_self_weak_ptr(),jump_array_(1,jump_num),jump_array_(2,jump_num),claims::DofClaim::CAN_INIT));
+		dof_claims.push_back(utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::JumpClaim(get_self_weak_ptr(),jump_array_(1,jump_num),jump_array_(2,jump_num),claims::DofClaim::CAN_INIT) ));
 	}
 	for(int i=1;i<=nres_;++i)
 	{
@@ -418,12 +417,12 @@ TMHTopologySamplerClaimer::generate_claims(claims::DofClaims &dof_claims)
 		{
 			if(cuts_(cut_index)==i)
 			{
-					dof_claims.push_back(new claims::CutClaim(get_self_weak_ptr(),std::make_pair(TopologyClaimer::label(),i),claims::DofClaim::CAN_INIT));
+					dof_claims.push_back(utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::CutClaim(get_self_weak_ptr(),std::make_pair(TopologyClaimer::label(),i),claims::DofClaim::CAN_INIT) ));
 			}
 			if(i == topology_root_res_)
 			{
-				dof_claims.push_back(new claims::BBClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT));
-				dof_claims.push_back(new claims::LegacyRootClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT));
+				dof_claims.push_back(utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::BBClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ));
+				dof_claims.push_back(utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::LegacyRootClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ));
 			}
 		}
 	}
@@ -434,7 +433,7 @@ TMHTopologySamplerClaimer::generate_claims(claims::DofClaims &dof_claims)
 void
 TMHTopologySamplerClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& init_dofs, claims::DofClaims& /*failed_to_init */)
 {
-	core::kinematics::MoveMapOP init_map = new core::kinematics::MoveMap;
+	core::kinematics::MoveMapOP init_map( new core::kinematics::MoveMap );
 	init_map->set_jump( false );
 
 	for ( claims::DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end(); it != eit; ++it )
@@ -711,7 +710,7 @@ TMHTopologySamplerClaimer::add_mover(
 		//Use the RigidBodyRandomTMHMover to move TMHs.  The mover chooses a random jump from the pose and does a RB perturb on it given the rotation and translation
 		//If the helix moves too far away from starting position, moves it back to initial position so it doesnt escape out into space
 		core::Real max_trans = (6*tmhelix_)+10;
-		RigidBodyRandomTMHMoverOP RBMover = new RigidBodyRandomTMHMover(max_trans,rotation_mag_,translation_mag_,tmhelix_,get_self_ptr());
+		RigidBodyRandomTMHMoverOP RBMover( new RigidBodyRandomTMHMover(max_trans,rotation_mag_,translation_mag_,tmhelix_,get_self_ptr()) );
 		//Add RBMover to the random_mover, which is then passed on to TopologyBroker::mover(pose, stageID, scorefxn, progress)
 		random_mover.add_mover(RBMover,weight);
 	}else{

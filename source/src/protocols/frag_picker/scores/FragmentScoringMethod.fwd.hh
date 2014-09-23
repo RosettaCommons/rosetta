@@ -25,16 +25,16 @@ namespace scores {
 /// @brief forward declaration for FragmentScoringMethod
 class FragmentScoringMethod;
 
-typedef utility::pointer::owning_ptr<FragmentScoringMethod>
+typedef utility::pointer::shared_ptr<FragmentScoringMethod>
 		FragmentScoringMethodOP;
-typedef utility::pointer::owning_ptr<FragmentScoringMethod const>
+typedef utility::pointer::shared_ptr<FragmentScoringMethod const>
 		FragmentScoringMethodCOP;
 
 class MakeFragmentScoringMethod;
 
-typedef utility::pointer::owning_ptr<MakeFragmentScoringMethod>
+typedef utility::pointer::shared_ptr<MakeFragmentScoringMethod>
 		MakeFragmentScoringMethodOP;
-typedef utility::pointer::owning_ptr<MakeFragmentScoringMethod const>
+typedef utility::pointer::shared_ptr<MakeFragmentScoringMethod const>
 		MakeFragmentScoringMethodCOP;
 
 } // scores

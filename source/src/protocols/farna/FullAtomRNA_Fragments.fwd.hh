@@ -23,7 +23,7 @@ namespace farna {
 	class TorsionSet;
 	class FragmentLibrary;
 
-	typedef utility::pointer::owning_ptr< FragmentLibrary > FragmentLibraryOP;
+	typedef utility::pointer::shared_ptr< FragmentLibrary > FragmentLibraryOP;
 
 } //farna
 } //protocols

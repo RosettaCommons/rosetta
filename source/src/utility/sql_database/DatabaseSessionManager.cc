@@ -63,10 +63,10 @@ session::begin_transaction(){
 				//do nothing
 				break;
 			case(TransactionMode::standard):
-				cur_transaction_ = new transaction(*this);
+				cur_transaction_ = transactionOP( new transaction(*this) );
 				break;
 			case(TransactionMode::chunk):
-				cur_transaction_ = new transaction(*this);
+				cur_transaction_ = transactionOP( new transaction(*this) );
 				break;
 			default:
 				utility_exit_with_message(
@@ -85,13 +85,13 @@ session::commit_transaction(){
 				break;
 			case(TransactionMode::standard):
 				cur_transaction_->commit();
-				cur_transaction_=0;
+				cur_transaction_.reset();
 				break;
 			case(TransactionMode::chunk):
 				if(transaction_counter_==chunk_size_){
 					cur_transaction_->commit();
 					transaction_counter_=0;
-					cur_transaction_=0;
+					cur_transaction_.reset();
 				}
 				else{
 					++transaction_counter_;
@@ -114,11 +114,11 @@ session::force_commit_transaction(){
 				break;
 			case(TransactionMode::standard):
 				cur_transaction_->commit();
-				cur_transaction_=0;
+				cur_transaction_.reset();
 				break;
 			case(TransactionMode::chunk):
 				cur_transaction_->commit();
-				cur_transaction_=0;
+				cur_transaction_.reset();
 				break;
 			default:
 				utility_exit_with_message(
@@ -207,7 +207,7 @@ DatabaseSessionManager::get_session_sqlite3(
 	bool const readonly /* = false */,
 	SSize const db_partition
 ){
-	sessionOP s(new session());
+	sessionOP s( new session() );
 	s->set_db_mode(DatabaseMode::sqlite3);
 	s->set_transaction_mode(transaction_mode);
 	s->set_chunk_size(chunk_size);

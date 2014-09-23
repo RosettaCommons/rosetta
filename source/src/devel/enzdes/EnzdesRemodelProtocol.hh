@@ -35,8 +35,8 @@ namespace devel{
 namespace enzdes{
 
 class EnzdesRemodelProtocol;
-typedef utility::pointer::owning_ptr< EnzdesRemodelProtocol > EnzdesRemodelProtocolOP;
-typedef utility::pointer::access_ptr< EnzdesRemodelProtocol const > EnzdesRemodelProtocolCAP;
+typedef utility::pointer::shared_ptr< EnzdesRemodelProtocol > EnzdesRemodelProtocolOP;
+typedef utility::pointer::weak_ptr< EnzdesRemodelProtocol const > EnzdesRemodelProtocolCAP;
 
 
 class EnzdesRemodelProtocol : public protocols::enzdes::EnzdesFlexBBProtocol
@@ -55,8 +55,8 @@ private:
 }; //class EnzdesRemodelProtocol
 
 class EnzdesRemodelMover;
-typedef utility::pointer::owning_ptr< EnzdesRemodelMover > EnzdesRemodelMoverOP;
-typedef utility::pointer::access_ptr< EnzdesRemodelMover const > EnzdesRemodelMoverCAP;
+typedef utility::pointer::shared_ptr< EnzdesRemodelMover > EnzdesRemodelMoverOP;
+typedef utility::pointer::weak_ptr< EnzdesRemodelMover const > EnzdesRemodelMoverCAP;
 
 class EnzdesRemodelMover : public protocols::moves::Mover
 {

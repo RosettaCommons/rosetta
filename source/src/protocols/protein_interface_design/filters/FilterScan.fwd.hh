@@ -27,8 +27,8 @@ namespace filters {
 class FilterScanFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< FilterScanFilter >  FilterScanFilterOP;
-typedef utility::pointer::owning_ptr< FilterScanFilter const >  FilterScanFilterCOP;
+typedef utility::pointer::shared_ptr< FilterScanFilter >  FilterScanFilterOP;
+typedef utility::pointer::shared_ptr< FilterScanFilter const >  FilterScanFilterCOP;
 
 } // namespace filters
 } //namespace protein_interface_design

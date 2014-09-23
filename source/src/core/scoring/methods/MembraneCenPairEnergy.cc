@@ -60,7 +60,7 @@ methods::EnergyMethodOP
 MembraneCenPairEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new MembraneCenPairEnergy;
+	return methods::EnergyMethodOP( new MembraneCenPairEnergy );
 }
 
 ScoreTypes
@@ -82,7 +82,7 @@ MembraneCenPairEnergy::MembraneCenPairEnergy() :
 EnergyMethodOP
 MembraneCenPairEnergy::clone() const
 {
-	return new MembraneCenPairEnergy();
+	return EnergyMethodOP( new MembraneCenPairEnergy() );
 }
 
 
@@ -195,7 +195,7 @@ MembraneTopology const &
 MembraneCenPairEnergy::MembraneTopology_from_pose( pose::Pose const & pose ) const
 {
 	//using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
-	return *( static_cast< MembraneTopology const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY )() ));
+	return *( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
 }
 ///// @brief MembraneCenPairEnergy distance cutoff
 Distance

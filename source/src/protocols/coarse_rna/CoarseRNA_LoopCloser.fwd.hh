@@ -21,7 +21,7 @@ namespace protocols{
 namespace coarse_rna{
 
 	class CoarseRNA_LoopCloser;
-	typedef utility::pointer::owning_ptr< CoarseRNA_LoopCloser > CoarseRNA_LoopCloserOP;
+	typedef utility::pointer::shared_ptr< CoarseRNA_LoopCloser > CoarseRNA_LoopCloserOP;
 
 }
 }

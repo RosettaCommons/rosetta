@@ -53,7 +53,7 @@ TorsionFeature::values_from_pose( core::pose::Pose & pose ) const {
 		Real psi   = torsions[2];
 		Real omega = torsions[3];
 		features.push_back(
-			new TorsionFeature( torsion2big_bin( phi, psi, omega ) )
+			utility::pointer::shared_ptr<class protocols::comparative_modeling::features::TorsionFeature>( new TorsionFeature( torsion2big_bin( phi, psi, omega ) ) )
 		);
 	}
 

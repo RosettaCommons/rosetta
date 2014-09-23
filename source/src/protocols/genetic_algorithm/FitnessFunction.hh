@@ -25,8 +25,8 @@ namespace genetic_algorithm {
 
 class FitnessFunction : public utility::pointer::ReferenceCount {
 public:
-	typedef utility::pointer::owning_ptr< FitnessFunction > OP;
-	typedef utility::pointer::owning_ptr< FitnessFunction const > COP;
+	typedef utility::pointer::shared_ptr< FitnessFunction > OP;
+	typedef utility::pointer::shared_ptr< FitnessFunction const > COP;
 	virtual ~FitnessFunction(){}
 	virtual core::Real evaluate( Entity & entity ) = 0;
 };

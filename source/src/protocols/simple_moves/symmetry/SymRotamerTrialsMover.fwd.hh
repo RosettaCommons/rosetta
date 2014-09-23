@@ -20,12 +20,12 @@ namespace simple_moves {
 namespace symmetry {
 
 class SymRotamerTrialsMover;
-typedef utility::pointer::owning_ptr< SymRotamerTrialsMover > SymRotamerTrialsMoverOP;
-typedef utility::pointer::owning_ptr< SymRotamerTrialsMover const > SymRotamerTrialsMoverCOP;
+typedef utility::pointer::shared_ptr< SymRotamerTrialsMover > SymRotamerTrialsMoverOP;
+typedef utility::pointer::shared_ptr< SymRotamerTrialsMover const > SymRotamerTrialsMoverCOP;
 
 class SymEnergyCutRotamerTrialsMover;
-typedef utility::pointer::owning_ptr< SymEnergyCutRotamerTrialsMover > SymEnergyCutRotamerTrialsMoverOP;
-typedef utility::pointer::owning_ptr< SymEnergyCutRotamerTrialsMover const > SymEnergyCutRotamerTrialsMoverCOP;
+typedef utility::pointer::shared_ptr< SymEnergyCutRotamerTrialsMover > SymEnergyCutRotamerTrialsMoverOP;
+typedef utility::pointer::shared_ptr< SymEnergyCutRotamerTrialsMover const > SymEnergyCutRotamerTrialsMoverCOP;
 
 }	// symmetry
 } // moves

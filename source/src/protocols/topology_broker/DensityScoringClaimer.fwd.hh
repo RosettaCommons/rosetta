@@ -28,11 +28,11 @@ namespace topology_broker {
 class DensityScoringClaimer;
 
 // Types
-typedef  utility::pointer::owning_ptr< DensityScoringClaimer >  DensityScoringClaimerOP;
-typedef  utility::pointer::owning_ptr< DensityScoringClaimer const >  DensityScoringClaimerCOP;
+typedef  utility::pointer::shared_ptr< DensityScoringClaimer >  DensityScoringClaimerOP;
+typedef  utility::pointer::shared_ptr< DensityScoringClaimer const >  DensityScoringClaimerCOP;
 
-typedef  utility::pointer::access_ptr< DensityScoringClaimer >  DensityScoringClaimerAP;
-typedef  utility::pointer::access_ptr< DensityScoringClaimer const >  DensityScoringClaimerCAP;
+typedef  utility::pointer::weak_ptr< DensityScoringClaimer >  DensityScoringClaimerAP;
+typedef  utility::pointer::weak_ptr< DensityScoringClaimer const >  DensityScoringClaimerCAP;
 
 
 } // namespace kinematics

@@ -103,24 +103,24 @@ GaussianChainFunc::initialize_parameters(){
 FuncOP
 GaussianChainFunc::clone() const
 {
-	return new GaussianChainFunc( gaussian_variance_, loop_fixed_cost_, other_distances_ );
+	return FuncOP( new GaussianChainFunc( gaussian_variance_, loop_fixed_cost_, other_distances_ ) );
 }
 
 /////////////////////////////////////////////////////
 void
 GaussianChainFunc::initialize_func(){
 
-	func_ = 0;
+	func_.reset();
 
 	if ( !force_combined_gaussian_approximation_ ){
 		if ( other_distances_.size() == 0 ) {
-			func_ = new GaussianChainSingleFunc( gaussian_variance_, loop_fixed_cost_ );
+			func_ = FuncOP( new GaussianChainSingleFunc( gaussian_variance_, loop_fixed_cost_ ) );
 		} else if ( other_distances_.size() == 1 ){
-			func_ = new GaussianChainDoubleFunc( gaussian_variance_, loop_fixed_cost_, other_distances_[1] );
+			func_ = FuncOP( new GaussianChainDoubleFunc( gaussian_variance_, loop_fixed_cost_, other_distances_[1] ) );
 		} else if ( other_distances_.size() == 2 ){
-			func_ = new GaussianChainTripleFunc( gaussian_variance_, loop_fixed_cost_, other_distances_[1], other_distances_[2] );
+			func_ = FuncOP( new GaussianChainTripleFunc( gaussian_variance_, loop_fixed_cost_, other_distances_[1], other_distances_[2] ) );
 		} else if ( other_distances_.size() == 3 ){
-			func_ = new GaussianChainQuadrupleFunc( gaussian_variance_, loop_fixed_cost_, other_distances_[1], other_distances_[2], other_distances_[3] );
+			func_ = FuncOP( new GaussianChainQuadrupleFunc( gaussian_variance_, loop_fixed_cost_, other_distances_[1], other_distances_[2], other_distances_[3] ) );
 		}
 	}
 
@@ -132,7 +132,7 @@ GaussianChainFunc::initialize_func(){
 			// Note that the radius of gyration is sqrt( 3 ) * gaussian_variance.
 			gaussian_variance_total += (other_distances_[ n ] * other_distances_[ n ] / 3.0);
 		}
-		func_ = new GaussianChainSingleFunc( gaussian_variance_total, 	loop_fixed_cost_ );
+		func_ = FuncOP( new GaussianChainSingleFunc( gaussian_variance_total, 	loop_fixed_cost_ ) );
 	}
 
 	runtime_assert( func_.get() != NULL );

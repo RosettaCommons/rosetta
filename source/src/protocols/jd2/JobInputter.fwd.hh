@@ -21,10 +21,10 @@ namespace protocols {
 namespace jd2 {
 
 class JobInputter;
-typedef utility::pointer::access_ptr< JobInputter > JobInputterAP;
-typedef utility::pointer::access_ptr< JobInputter const > JobInputterCAP;
-typedef utility::pointer::owning_ptr< JobInputter > JobInputterOP;
-typedef utility::pointer::owning_ptr< JobInputter const > JobInputterCOP;
+typedef utility::pointer::weak_ptr< JobInputter > JobInputterAP;
+typedef utility::pointer::weak_ptr< JobInputter const > JobInputterCAP;
+typedef utility::pointer::shared_ptr< JobInputter > JobInputterOP;
+typedef utility::pointer::shared_ptr< JobInputter const > JobInputterCOP;
 
 // wrap enum in a descriptive namespace to reduce conflicts and keep down
 // namespace pollution

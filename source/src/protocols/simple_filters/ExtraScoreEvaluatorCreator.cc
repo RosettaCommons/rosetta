@@ -146,9 +146,9 @@ void ExtraScoreEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
 
 				utility::vector1< Size> selection;
 				core.get_residues( selection );
-				eval.add_evaluation( new simple_filters::TruncatedScoreEvaluator( tag, selection, scfxn ) );
+				eval.add_evaluation( PoseEvaluatorOP( new simple_filters::TruncatedScoreEvaluator( tag, selection, scfxn ) ) );
 			} else {
-				eval.add_evaluation( new ScoreEvaluator( tag, scfxn ) );
+				eval.add_evaluation( PoseEvaluatorOP( new ScoreEvaluator( tag, scfxn ) ) );
 			}
 		}
 	}

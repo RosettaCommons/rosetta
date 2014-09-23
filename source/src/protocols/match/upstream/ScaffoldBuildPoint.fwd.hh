@@ -24,8 +24,8 @@ namespace match {
 namespace upstream {
 
 class ScaffoldBuildPoint;
-typedef utility::pointer::owning_ptr< ScaffoldBuildPoint > ScaffoldBuildPointOP;
-typedef utility::pointer::owning_ptr< ScaffoldBuildPoint const > ScaffoldBuildPointCOP;
+typedef utility::pointer::shared_ptr< ScaffoldBuildPoint > ScaffoldBuildPointOP;
+typedef utility::pointer::shared_ptr< ScaffoldBuildPoint const > ScaffoldBuildPointCOP;
 
 
 }

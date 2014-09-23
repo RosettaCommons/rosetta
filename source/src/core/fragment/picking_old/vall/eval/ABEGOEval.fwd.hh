@@ -32,19 +32,19 @@ class ABEGOEval;
 
 
 /// @brief ABEGOEval owning pointer
-typedef utility::pointer::owning_ptr< ABEGOEval > ABEGOEvalOP;
+typedef utility::pointer::shared_ptr< ABEGOEval > ABEGOEvalOP;
 
 
 /// @brief ABEGOEval const owning pointer
-typedef utility::pointer::owning_ptr< ABEGOEval const > ABEGOEvalCOP;
+typedef utility::pointer::shared_ptr< ABEGOEval const > ABEGOEvalCOP;
 
 
 /// @brief ABEGOEval access pointer
-typedef utility::pointer::access_ptr< ABEGOEval > ABEGOEvalAP;
+typedef utility::pointer::weak_ptr< ABEGOEval > ABEGOEvalAP;
 
 
 /// @brief ABEGOEval access owning pointer
-typedef utility::pointer::access_ptr< ABEGOEval const > ABEGOEvalCAP;
+typedef utility::pointer::weak_ptr< ABEGOEval const > ABEGOEvalCAP;
 
 
 } // eval

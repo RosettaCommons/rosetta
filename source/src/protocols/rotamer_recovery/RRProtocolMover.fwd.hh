@@ -21,8 +21,8 @@ namespace protocols{
 namespace rotamer_recovery{
 
 class RRProtocolMover;
-typedef utility::pointer::owning_ptr< RRProtocolMover > RRProtocolMoverOP;
-typedef utility::pointer::owning_ptr< RRProtocolMover const > RRProtocolMoverCOP;
+typedef utility::pointer::shared_ptr< RRProtocolMover > RRProtocolMoverOP;
+typedef utility::pointer::shared_ptr< RRProtocolMover const > RRProtocolMoverCOP;
 
 } // namespace
 } // namespace

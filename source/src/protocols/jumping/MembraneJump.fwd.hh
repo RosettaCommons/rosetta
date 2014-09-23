@@ -28,7 +28,7 @@ namespace jumping {
 class MembraneJump;
 
 // Types
-typedef  utility::pointer::owning_ptr< MembraneJump >  MembraneJumpOP;
+typedef  utility::pointer::shared_ptr< MembraneJump >  MembraneJumpOP;
 
 
 } // namespace kinematics

@@ -22,20 +22,20 @@ namespace protocols {
 namespace optimize_weights {
 
 class OptEMultifunc;
-typedef utility::pointer::owning_ptr< OptEMultifunc > OptEMultifuncOP;
-typedef utility::pointer::owning_ptr< OptEMultifunc const > OptEMultifuncCOP;
-typedef utility::pointer::access_ptr< OptEMultifunc > OptEMultifuncAP;
-typedef utility::pointer::access_ptr< OptEMultifunc const > OptEMultifuncCAP;
+typedef utility::pointer::shared_ptr< OptEMultifunc > OptEMultifuncOP;
+typedef utility::pointer::shared_ptr< OptEMultifunc const > OptEMultifuncCOP;
+typedef utility::pointer::weak_ptr< OptEMultifunc > OptEMultifuncAP;
+typedef utility::pointer::weak_ptr< OptEMultifunc const > OptEMultifuncCAP;
 
 class WrapperOptEMultifunc;
-typedef utility::pointer::owning_ptr< WrapperOptEMultifunc > WrapperOptEMultifuncOP;
-typedef utility::pointer::owning_ptr< WrapperOptEMultifunc const > WrapperOptEMultifuncCOP;
-typedef utility::pointer::access_ptr< WrapperOptEMultifunc > WrapperOptEMultifuncAP;
-typedef utility::pointer::access_ptr< WrapperOptEMultifunc const > WrapperOptEMultifuncCAP;
+typedef utility::pointer::shared_ptr< WrapperOptEMultifunc > WrapperOptEMultifuncOP;
+typedef utility::pointer::shared_ptr< WrapperOptEMultifunc const > WrapperOptEMultifuncCOP;
+typedef utility::pointer::weak_ptr< WrapperOptEMultifunc > WrapperOptEMultifuncAP;
+typedef utility::pointer::weak_ptr< WrapperOptEMultifunc const > WrapperOptEMultifuncCAP;
 
 class OptEVariableExpression;
-typedef utility::pointer::owning_ptr< OptEVariableExpression > OptEVariableExpressionOP;
-typedef utility::pointer::owning_ptr< OptEVariableExpression const > OptEVariableExpressionCOP;
+typedef utility::pointer::shared_ptr< OptEVariableExpression > OptEVariableExpressionOP;
+typedef utility::pointer::shared_ptr< OptEVariableExpression const > OptEVariableExpressionCOP;
 
 
 } // namespace optimize_weights

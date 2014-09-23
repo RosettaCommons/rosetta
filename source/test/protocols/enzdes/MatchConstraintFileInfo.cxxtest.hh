@@ -95,7 +95,7 @@ public:
 		residue_set.read_files(params_files);
 		basic::options::option[basic::options::OptionKeys::run::preserve_header ].value(true);
 
-		enz_io = new protocols::toolbox::match_enzdes_util::EnzConstraintIO(residue_set.get_self_weak_ptr());
+		enz_io = protocols::toolbox::match_enzdes_util::EnzConstraintIOOP( new protocols::toolbox::match_enzdes_util::EnzConstraintIO(residue_set.get_self_weak_ptr()) );
 
 
   }

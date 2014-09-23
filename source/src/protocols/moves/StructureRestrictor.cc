@@ -71,11 +71,11 @@ StructureRestrictor::StructureRestrictor( StructureRestrictor const & src):
 
 StructureRestrictor::~StructureRestrictor(){}
 
-MoverOP StructureRestrictor::fresh_instance() const { return new StructureRestrictor; }
+MoverOP StructureRestrictor::fresh_instance() const { return MoverOP( new StructureRestrictor ); }
 
 MoverOP StructureRestrictor::clone() const
 {
-	return new StructureRestrictor( *this );
+	return MoverOP( new StructureRestrictor( *this ) );
 }
 
 

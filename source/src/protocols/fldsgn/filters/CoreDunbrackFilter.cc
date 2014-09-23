@@ -219,7 +219,7 @@ CoreDunbrackFilter::parse_my_tag(
 }
 
 protocols::filters::FilterOP
-CoreDunbrackFilterCreator::create_filter() const { return new CoreDunbrackFilter; }
+CoreDunbrackFilterCreator::create_filter() const { return protocols::filters::FilterOP( new CoreDunbrackFilter ); }
 
 std::string
 CoreDunbrackFilterCreator::keyname() const { return "CoreDunbrack"; }

@@ -67,7 +67,7 @@ ResidueProbDesignOperation::ResidueProbDesignOperation(ResidueProbDesignOperatio
 core::pack::task::operation::TaskOperationOP
 ResidueProbDesignOperation::clone() const
 {
-	return new ResidueProbDesignOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new ResidueProbDesignOperation( *this ) );
 }
 
 /*

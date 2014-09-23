@@ -66,7 +66,7 @@ ConstraintOP NamedAtomPairConstraint::remapped_clone( pose::Pose const&, pose::P
 	id::AtomID id1( core::pose::named_atom_id_to_atom_id( atom1, dest ) );
 	id::AtomID id2( core::pose::named_atom_id_to_atom_id( atom2, dest ) );
 	if ( id1.valid() && id2.valid() ) {
-		return new NamedAtomPairConstraint( atom1, atom2, func_, score_type() );
+		return ConstraintOP( new NamedAtomPairConstraint( atom1, atom2, func_, score_type() ) );
 	} else {
 		return NULL;
 	}
@@ -182,7 +182,7 @@ Obsolet_NamedAtomPairConstraint::mapto(
   id::AtomID id1( core::pose::named_atom_id_to_atom_id( NamedAtomID( atom1_.atom(), map[ atom1_.rsd() ] ), pose ));
   id::AtomID id2( core::pose::named_atom_id_to_atom_id( NamedAtomID( atom2_.atom(), map[ atom2_.rsd() ] ), pose ));
   if ( id1.valid() && id2.valid() ) {
-    return new AtomPairConstraint( id1, id2, cst_->get_func().clone(), cst_->score_type() );
+    return AtomPairConstraintOP( new AtomPairConstraint( id1, id2, cst_->get_func().clone(), cst_->score_type() ) );
   }
   return NULL; // if translation not possible
 }
@@ -195,7 +195,7 @@ Obsolet_NamedAtomPairConstraint::mapto( id::SequenceMapping const& map ) const
   id1.rsd() = map[ id1.rsd() ];
   id2.rsd() = map[ id2.rsd() ];
   if ( id1.valid() && id2.valid() ) {
-    return new Obsolet_NamedAtomPairConstraint( id1, id2, cst_ );
+    return Obsolet_NamedAtomPairConstraintOP( new Obsolet_NamedAtomPairConstraint( id1, id2, cst_ ) );
   }
   return NULL;
 }
@@ -205,7 +205,7 @@ Obsolet_NamedAtomPairConstraint::mapto( core::pose::Pose const& pose ) const {
   id::AtomID id1( core::pose::named_atom_id_to_atom_id(atom1_, pose ));
   id::AtomID id2( core::pose::named_atom_id_to_atom_id(atom2_, pose ));
   if ( id1.valid() && id2.valid() ) {
-    return new AtomPairConstraint( id1, id2, cst_->get_func().clone(), cst_->score_type() );
+    return AtomPairConstraintOP( new AtomPairConstraint( id1, id2, cst_->get_func().clone(), cst_->score_type() ) );
   }
   return NULL;
 }

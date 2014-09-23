@@ -26,11 +26,11 @@ namespace refine {
 // Forward
 class LoopMover_Refine_CCD;
 
-typedef utility::pointer::owning_ptr< LoopMover_Refine_CCD > LoopMover_Refine_CCDOP;
-typedef utility::pointer::owning_ptr< LoopMover_Refine_CCD const > LoopMover_Refine_CCDCOP;
+typedef utility::pointer::shared_ptr< LoopMover_Refine_CCD > LoopMover_Refine_CCDOP;
+typedef utility::pointer::shared_ptr< LoopMover_Refine_CCD const > LoopMover_Refine_CCDCOP;
 
-typedef utility::pointer::access_ptr< LoopMover_Refine_CCD > LoopMover_Refine_CCDAP;
-typedef utility::pointer::access_ptr< LoopMover_Refine_CCD const > LoopMover_Refine_CCDCAP;
+typedef utility::pointer::weak_ptr< LoopMover_Refine_CCD > LoopMover_Refine_CCDAP;
+typedef utility::pointer::weak_ptr< LoopMover_Refine_CCD const > LoopMover_Refine_CCDCAP;
 } //namespace refine
 } //namespace loop_mover
 } //namespace loops

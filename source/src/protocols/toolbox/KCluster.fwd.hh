@@ -17,24 +17,24 @@ namespace protocols {
 namespace toolbox {
 
 class KClusterElement;
-typedef utility::pointer::owning_ptr< KClusterElement > KClusterElementOP;
-typedef utility::pointer::owning_ptr< KClusterElement const > KClusterElementCOP;
+typedef utility::pointer::shared_ptr< KClusterElement > KClusterElementOP;
+typedef utility::pointer::shared_ptr< KClusterElement const > KClusterElementCOP;
 
 class KClusterData;
-typedef utility::pointer::owning_ptr< KClusterData > KClusterDataOP;
-typedef utility::pointer::owning_ptr< KClusterData const > KClusterDataCOP;
+typedef utility::pointer::shared_ptr< KClusterData > KClusterDataOP;
+typedef utility::pointer::shared_ptr< KClusterData const > KClusterDataCOP;
 
 class KCluster;
-typedef utility::pointer::owning_ptr< KCluster > KClusterOP;
-typedef utility::pointer::owning_ptr< KCluster const > KClusterCOP;
+typedef utility::pointer::shared_ptr< KCluster > KClusterOP;
+typedef utility::pointer::shared_ptr< KCluster const > KClusterCOP;
 
 class KMedoid;
-typedef utility::pointer::owning_ptr< KMedoid > KMedoidOP;
-typedef utility::pointer::owning_ptr< KMedoid const > KMedoidCOP;
+typedef utility::pointer::shared_ptr< KMedoid > KMedoidOP;
+typedef utility::pointer::shared_ptr< KMedoid const > KMedoidCOP;
 
 class GreedyKCenter;
-typedef utility::pointer::owning_ptr< GreedyKCenter > GreedyKCenterOP;
-typedef utility::pointer::owning_ptr< GreedyKCenter const > GreedyKCenterCOP;
+typedef utility::pointer::shared_ptr< GreedyKCenter > GreedyKCenterOP;
+typedef utility::pointer::shared_ptr< GreedyKCenter const > GreedyKCenterCOP;
 
 }
 }

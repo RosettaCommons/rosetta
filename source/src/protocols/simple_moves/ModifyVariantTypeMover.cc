@@ -58,7 +58,7 @@ static thread_local basic::Tracer TR( "protocols.simple_moves.ModifyVariantTypeM
 // ModifyVariantTypeMover; based on the protocols::moves::Mover basis class
 ModifyVariantTypeMover::ModifyVariantTypeMover() :
 		protocols::moves::Mover("ModifyVariantType"),
-		task_factory_(NULL),
+		task_factory_(/* NULL */),
 		add_target_types_(),
 		remove_target_types_()
 {}
@@ -107,13 +107,13 @@ ModifyVariantTypeMover::get_name() const {
 moves::MoverOP
 ModifyVariantTypeMover::clone() const
 {
-	return new ModifyVariantTypeMover( *this );
+	return moves::MoverOP( new ModifyVariantTypeMover( *this ) );
 }
 
 moves::MoverOP
 ModifyVariantTypeMover::fresh_instance() const
 {
-	return new ModifyVariantTypeMover;
+	return moves::MoverOP( new ModifyVariantTypeMover );
 }
 
 void ModifyVariantTypeMover::parse_my_tag(
@@ -145,7 +145,7 @@ void ModifyVariantTypeMover::parse_my_tag(
 }
 
 protocols::moves::MoverOP
-ModifyVariantTypeMoverCreator::create_mover() const { return new ModifyVariantTypeMover; }
+ModifyVariantTypeMoverCreator::create_mover() const { return protocols::moves::MoverOP( new ModifyVariantTypeMover ); }
 
 std::string
 ModifyVariantTypeMoverCreator::keyname() const { return "ModifyVariantType"; }

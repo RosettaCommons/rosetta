@@ -193,7 +193,7 @@ public:
 	func( Real const ) const;
 
 	func::FuncOP
-	clone() const { return new CBSG_Dihedral_Func( *this ); };
+	clone() const { return func::FuncOP( new CBSG_Dihedral_Func( *this ) ); };
 
 	virtual
 	Real
@@ -216,7 +216,7 @@ public:
 	func( Real const ) const;
 
 	func::FuncOP
-	clone() const { return new SGSG_Dihedral_Func( *this ); };
+	clone() const { return func::FuncOP( new SGSG_Dihedral_Func( *this ) ); };
 
 	virtual
 	Real
@@ -237,7 +237,7 @@ public:
 	~CB_Angle_Func();
 
 	func::FuncOP
-	clone() const { return new CB_Angle_Func( *this ); };
+	clone() const { return func::FuncOP( new CB_Angle_Func( *this ) ); };
 
 	virtual
 	Real
@@ -261,7 +261,7 @@ public:
 	~SG_Dist_Func();
 
 	func::FuncOP
-	clone() const { return new SG_Dist_Func( *this ); };
+	clone() const { return func::FuncOP( new SG_Dist_Func( *this ) ); };
 
 	virtual
 	Real

@@ -80,7 +80,7 @@ void ScoreFunctionLoader::load_data(
 			TR << "defined score function \"" << scorefxn_name << "\" with weights \""
 				<< scorefxn_weights << "\"\n";
 		} else {
-			in_scorefxn = new ScoreFunction;
+			in_scorefxn = ScoreFunctionOP( new ScoreFunction );
 			in_scorefxn->reset();
 			TR << "***WARNING***: No weights/patch defined. Defining " << scorefxn_name << " with all-zero weights.\n";
 		}
@@ -180,7 +180,7 @@ void ScoreFunctionLoader::load_data(
 }
 
 DataLoaderOP
-ScoreFunctionLoaderCreator::create_loader() const { return new ScoreFunctionLoader; }
+ScoreFunctionLoaderCreator::create_loader() const { return DataLoaderOP( new ScoreFunctionLoader ); }
 
 std::string
 ScoreFunctionLoaderCreator::keyname() const { return "SCOREFXNS"; }

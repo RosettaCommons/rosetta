@@ -99,7 +99,7 @@ RangeFilter::parse_my_tag(
 }
 
 filters::FilterOP
-RangeFilterCreator::create_filter() const { return new RangeFilter; }
+RangeFilterCreator::create_filter() const { return filters::FilterOP( new RangeFilter ); }
 
 std::string
 RangeFilterCreator::keyname() const { return "Range"; }

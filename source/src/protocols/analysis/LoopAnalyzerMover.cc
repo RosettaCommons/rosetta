@@ -73,10 +73,10 @@ std::ostream & which_ostream( std::ostream & ost, std::ostream & oss, bool const
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 LoopAnalyzerMover::LoopAnalyzerMover( protocols::loops::Loops const & loops, bool const tracer ) :
 	Mover(),
-	loops_(new protocols::loops::Loops(loops)),
+	loops_(protocols::loops::LoopsCOP( new protocols::loops::Loops(loops) )),
 	tracer_(tracer),
-	sf_(NULL),
-	chbreak_sf_(NULL),
+	sf_(/* NULL */),
+	chbreak_sf_(/* NULL */),
 	total_score_(0),
 	max_rama_(-100000),
 	max_chainbreak_(-100000),
@@ -95,7 +95,7 @@ LoopAnalyzerMover::LoopAnalyzerMover() : tracer_(false) { utility_exit_with_mess
 LoopAnalyzerMover::LoopAnalyzerMover( LoopAnalyzerMover const & rhs ) :
 	//utility::pointer::ReferenceCount(),
 	Mover(),
-	loops_(new protocols::loops::Loops(*(rhs.loops_))),
+	loops_(protocols::loops::LoopsCOP( new protocols::loops::Loops(*(rhs.loops_)) )),
 	tracer_(rhs.tracer_),
 	positions_(rhs.positions_), //this is useless data
 	sf_(rhs.sf_->clone()),
@@ -106,7 +106,7 @@ LoopAnalyzerMover::LoopAnalyzerMover( LoopAnalyzerMover const & rhs ) :
 void LoopAnalyzerMover::set_sf(){
 	using namespace core::scoring;
 
-	sf_ = new ScoreFunction;
+	sf_ = core::scoring::ScoreFunctionOP( new ScoreFunction );
 	sf_->set_weight( rama, 1.0 );
 	sf_->set_weight( omega, 1.0 );
 	sf_->set_weight( fa_dun, 1.0 );
@@ -114,7 +114,7 @@ void LoopAnalyzerMover::set_sf(){
 	//sf_->set_weight( chainbreak, 1.0 );
 	sf_->set_weight( peptide_bond, 1.0 );
 
-	chbreak_sf_ = new ScoreFunction;
+	chbreak_sf_ = core::scoring::ScoreFunctionOP( new ScoreFunction );
 	chbreak_sf_->set_weight( chainbreak, 20.0 );
 
 	return;

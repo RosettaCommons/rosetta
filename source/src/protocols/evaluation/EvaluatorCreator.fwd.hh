@@ -24,8 +24,8 @@ namespace evaluation {
 /// creating a particular Evaluator class.
 class EvaluatorCreator;
 
-typedef utility::pointer::owning_ptr< EvaluatorCreator > EvaluatorCreatorOP;
-typedef utility::pointer::owning_ptr< EvaluatorCreator const > EvaluatorCreatorCOP;
+typedef utility::pointer::shared_ptr< EvaluatorCreator > EvaluatorCreatorOP;
+typedef utility::pointer::shared_ptr< EvaluatorCreator const > EvaluatorCreatorCOP;
 
 } //namespace
 } //namespace

@@ -37,7 +37,7 @@ ResidueBurialFilter::ResidueBurialFilter() :
 	residue_( "" ),
 	neighbors_( 1 ),
 	distance_threshold_( 8.0 ),
-	task_factory_( NULL ) {}
+	task_factory_( /* NULL */ ) {}
 
 /*SJF does anyone use this constructor? If so, we need to change target_residue to a string to make it work
 ResidueBurialFilter::ResidueBurialFilter( core::Size const target_residue, core::Size const neighbors, core::Real const distance_threshold ) :
@@ -48,7 +48,7 @@ ResidueBurialFilter::ResidueBurialFilter( core::Size const target_residue, core:
 			task_factory_( NULL ) {}
 */
 protocols::filters::FilterOP
-ResidueBurialFilterCreator::create_filter() const { return new ResidueBurialFilter; }
+ResidueBurialFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueBurialFilter ); }
 
 std::string
 ResidueBurialFilterCreator::keyname() const { return "ResidueBurial"; }
@@ -154,12 +154,12 @@ ResidueBurialFilter::compute( core::pose::Pose const & pose ) const {
 
 filters::FilterOP
 ResidueBurialFilter::clone() const {
-    return new ResidueBurialFilter( *this );
+    return filters::FilterOP( new ResidueBurialFilter( *this ) );
 }
 
 filters::FilterOP
 ResidueBurialFilter::fresh_instance() const{
-    return new ResidueBurialFilter();
+    return filters::FilterOP( new ResidueBurialFilter() );
 }
 
 }

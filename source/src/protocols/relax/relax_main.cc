@@ -81,7 +81,7 @@ Relax_main( bool ) {
 
 	// add constraints from cmd line
 	if ( option[ OptionKeys::constraints::cst_fa_file ].user() || option[ OptionKeys::constraints::cst_file ].user()) {
-			protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
+			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
 			protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
             if (option[ OptionKeys::constraints::cst_fa_file ].user()) {
                 loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );
@@ -96,8 +96,8 @@ Relax_main( bool ) {
 	// set pose for density scoring if a map was input
 	// (potentially) dock map into density
 	if ( option[ OptionKeys::edensity::mapfile ].user() ) {
-		protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
-		seqmov->add_mover( new protocols::electron_density::SetupForDensityScoringMover );
+		protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
+		seqmov->add_mover( MoverOP( new protocols::electron_density::SetupForDensityScoringMover ) );
 		seqmov->add_mover( protocol );
 		protocol = seqmov;
 	}
@@ -105,8 +105,8 @@ Relax_main( bool ) {
 	// setup symmetry mover ... this should happen _before_ SetupForDensityScoringMover
 	//   to avoid adding extra VRTs
 	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-			protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
-	    seqmov->add_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
+			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
+	    seqmov->add_mover( MoverOP( new protocols::simple_moves::symmetry::SetupForSymmetryMover ) );
 	    seqmov->add_mover( protocol );
 	    protocol = seqmov;
 	}
@@ -120,8 +120,8 @@ Relax_main( bool ) {
 			if(  option[ OptionKeys::relax::superimpose_to_file ].user() ) ref_filename = option[ basic::options::OptionKeys::relax::superimpose_to_file ]();
 			if(  option[ OptionKeys::relax::superimpose_to_native ].user() ) ref_filename =  option[ basic::options::OptionKeys::in::file::native ]();
 			core::import_pose::pose_from_pdb( ref_pose, ref_filename );
-			protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
-			protocols::simple_moves::SuperimposeMoverOP sm  =  new protocols::simple_moves::SuperimposeMover;
+			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
+			protocols::simple_moves::SuperimposeMoverOP sm( new protocols::simple_moves::SuperimposeMover );
 			sm->set_reference_pose( ref_pose );
 			seqmov->add_mover( sm );
 			seqmov->add_mover( protocol );

@@ -24,8 +24,8 @@ namespace monte_carlo {
 namespace options {
 
 	class StepWiseMonteCarloOptions;
-	typedef utility::pointer::owning_ptr< StepWiseMonteCarloOptions > StepWiseMonteCarloOptionsOP;
-	typedef utility::pointer::owning_ptr< StepWiseMonteCarloOptions const > StepWiseMonteCarloOptionsCOP;
+	typedef utility::pointer::shared_ptr< StepWiseMonteCarloOptions > StepWiseMonteCarloOptionsOP;
+	typedef utility::pointer::shared_ptr< StepWiseMonteCarloOptions const > StepWiseMonteCarloOptionsCOP;
 
 } //options
 } //monte_carlo

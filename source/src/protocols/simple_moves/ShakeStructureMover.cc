@@ -125,7 +125,7 @@ ShakeStructureMover::ShakeStructureMover() :
 	mc_temp(0),
 	ramp_fa_rep(false),
 	min_cst(false),
-	scorefxn(0),
+	scorefxn(/* 0 */),
 	ensemble_ca_rmsd(-1),
 	ensemble_ca_rmsd_tolerance(0.75f),
 	is_properly_initialized(false),
@@ -135,7 +135,7 @@ ShakeStructureMover::ShakeStructureMover() :
 	nrounds(1000),
 	cst_weight(1.0f),
 	skip_low_temp_phase(true),
-	min_scorefxn(0),
+	min_scorefxn(/* 0 */),
 	testing_phase(false)
 {}
 
@@ -154,7 +154,7 @@ ShakeStructureMover::ShakeStructureMover(core::scoring::ScoreFunctionOP s) :
 	nrounds(1000),
 	cst_weight(1.0),
 	skip_low_temp_phase(true),
-	min_scorefxn(0),
+	min_scorefxn(/* 0 */),
 	testing_phase(false)
 {}
 
@@ -176,7 +176,7 @@ ShakeStructureMover::ShakeStructureMover(
 	nrounds(1000),
 	cst_weight(1.0),
 	skip_low_temp_phase(true),
-	min_scorefxn(0),
+	min_scorefxn(/* 0 */),
 	testing_phase(false)
 {}
 
@@ -198,7 +198,7 @@ ShakeStructureMover::ShakeStructureMover(
 	nrounds(1000),
 	cst_weight(1.0),
 	skip_low_temp_phase(true),
-	min_scorefxn(0),
+	min_scorefxn(/* 0 */),
 	testing_phase(false)
 {}
 
@@ -389,7 +389,7 @@ ShakeStructureMover::reduce_fa_rep(float fraction_fa_rep, core::scoring::ScoreFu
 void
 ShakeStructureMover::setup_for_run(core::pose::Pose & p){
 	if(!scorefunction_initialized){
-		core::scoring::ScoreFunctionOP s( new core::scoring::ScoreFunction());
+		core::scoring::ScoreFunctionOP s( new core::scoring::ScoreFunction() );
 		//std::cout << "[DEBUG]: scorefunction being initialized"<< std::endl;
 		s->set_weight(core::scoring::score_type_from_name("rama"), 4.0);
 		s->set_weight(core::scoring::score_type_from_name("omega"), 1.0);
@@ -476,7 +476,7 @@ ShakeStructureMover::setup_ca_constraints(
 			Vector const CA_j(pose.residue(j).xyz(" CA "));
 			Real const CA_dist = (CA_i - CA_j).length();
 			if(CA_dist < CA_cutoff){
-				ConstraintCOP cst(new AtomPairConstraint( AtomID(pose.residue(i).atom_index(" CA "),i),AtomID(pose.residue(j).atom_index(" CA "),j), core::scoring::func::FuncOP(new core::scoring::func::HarmonicFunc(CA_dist, cst_tol)) ));
+				ConstraintCOP cst( new AtomPairConstraint( AtomID(pose.residue(i).atom_index(" CA "),i),AtomID(pose.residue(j).atom_index(" CA "),j), core::scoring::func::FuncOP(new core::scoring::func::HarmonicFunc(CA_dist, cst_tol)) ) );
 				pose.add_constraint(cst);
 			}
 		}
@@ -517,42 +517,42 @@ ShakeStructureMover::run_mc(
 
 	core::Size nmoves = (core::Size)p.total_residue()/4; //number of moves for each move type
 
-	core::kinematics::MoveMapOP mm= new core::kinematics::MoveMap();
+	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap() );
 	mm->set_bb(true);
 
-	simple_moves::SmallMoverOP small_mover(new simple_moves::SmallMover( mm, temperature, nmoves)) ;
-	simple_moves::ShearMoverOP shear_mover( new simple_moves::ShearMover(mm, temperature, nmoves));
+	simple_moves::SmallMoverOP small_mover( new simple_moves::SmallMover( mm, temperature, nmoves) ) ;
+	simple_moves::ShearMoverOP shear_mover( new simple_moves::ShearMover(mm, temperature, nmoves) );
 
 	setup_movers(
 		small_mover,shear_mover,
 		0.2,0.2,0.4,
 		1.6,1.6,2.0);
 
-	moves::RandomMoverOP apply_random_move( new moves::RandomMover());
+	moves::RandomMoverOP apply_random_move( new moves::RandomMover() );
 	apply_random_move->add_mover( small_mover, .5);
 	apply_random_move->add_mover( shear_mover, .5);
 
-	simple_moves::SmallMoverOP small_mover_low(new simple_moves::SmallMover( mm, (temperature*0.25), nmoves)) ;
-	simple_moves::ShearMoverOP shear_mover_low( new simple_moves::ShearMover(mm, (temperature*0.25), nmoves));
+	simple_moves::SmallMoverOP small_mover_low( new simple_moves::SmallMover( mm, (temperature*0.25), nmoves) ) ;
+	simple_moves::ShearMoverOP shear_mover_low( new simple_moves::ShearMover(mm, (temperature*0.25), nmoves) );
 
 	setup_movers(
 		small_mover_low,shear_mover_low,
 		0.1,0.1,0.2,
 		1.0,1.0,1.5);
 
-	moves::RandomMoverOP apply_random_move_low( new moves::RandomMover());
+	moves::RandomMoverOP apply_random_move_low( new moves::RandomMover() );
 	apply_random_move_low->add_mover( small_mover_low, .5);
 	apply_random_move_low->add_mover( shear_mover_low, .5);
 
-	protocols::moves::MonteCarloOP mc(new moves::MonteCarlo(p,s,temperature));
+	protocols::moves::MonteCarloOP mc( new moves::MonteCarlo(p,s,temperature) );
 	//time_t time_per_decoy = time(NULL);
 
 	//			mc->reset_counters();
 	//			mc->reset(p);
 	mc->set_temperature(temperature);
 
-	moves::TrialMoverOP tm( new moves::TrialMover(apply_random_move,mc));
-	RepeatMoverOP full_cycle(new moves::RepeatMover( tm, nrounds ));
+	moves::TrialMoverOP tm( new moves::TrialMover(apply_random_move,mc) );
+	RepeatMoverOP full_cycle( new moves::RepeatMover( tm, nrounds ) );
 	full_cycle->apply( p );
 	//			mc->show_counters();
 
@@ -563,8 +563,8 @@ ShakeStructureMover::run_mc(
 		core::Real low_temp = temperature * 0.25;
 		mc->set_temperature(low_temp);
 
-		moves::TrialMoverOP ltm( new moves::TrialMover(apply_random_move_low,mc));
-		RepeatMoverOP full_cycle_2(new moves::RepeatMover( ltm, nrounds ));
+		moves::TrialMoverOP ltm( new moves::TrialMover(apply_random_move_low,mc) );
+		RepeatMoverOP full_cycle_2( new moves::RepeatMover( ltm, nrounds ) );
 		full_cycle_2->apply( p );
 		//mc->show_counters();
 		p = mc->lowest_score_pose();

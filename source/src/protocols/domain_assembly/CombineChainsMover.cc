@@ -43,7 +43,7 @@ void CombineChainsMover::apply( core::pose::Pose & pose ) {
   using namespace basic::options::OptionKeys;
 
 	core::sequence::SequenceAlignment aln;
-	core::sequence::SequenceOP seq = new core::sequence::Sequence( pose.sequence(), "this comment here is really irrelevant..." );
+	core::sequence::SequenceOP seq( new core::sequence::Sequence( pose.sequence(), "this comment here is really irrelevant..." ) );
 
 	core::pose::Pose extended_pose;
         core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(

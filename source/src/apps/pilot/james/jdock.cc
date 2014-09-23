@@ -177,9 +177,7 @@ main( int argc, char * argv [] ) {
 	setup.apply(pose);
 	pose.dump_pdb("post_setup.pdb");
 	scorefxn->show(pose);
-	core::optimization::MinimizerOptionsOP min_options(
-		new core::optimization::MinimizerOptions( "dfpmin", 1e-2, true )
-	);
+	core::optimization::MinimizerOptionsOP min_options( new core::optimization::MinimizerOptions( "dfpmin", 1e-2, true ) );
 
 	//runtime_assert( option[ run::nblist_autoupdate ]() );
 

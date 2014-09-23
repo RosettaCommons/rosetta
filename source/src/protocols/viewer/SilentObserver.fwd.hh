@@ -30,7 +30,7 @@ namespace viewer {
 // base class
 class SilentObserver;
 
-typedef utility::pointer::owning_ptr< SilentObserver > SilentObserverOP;
+typedef utility::pointer::shared_ptr< SilentObserver > SilentObserverOP;
 
 } // viewer
 } // protocols

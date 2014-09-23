@@ -135,8 +135,8 @@ ResiduePairJump::ResiduePairJump(
 	core::chemical::ResidueType const & residue2
 )
 {
-	residues_.push_back( new ResiduePairJumpSingle( residue1 ) );
-	residues_.push_back( new ResiduePairJumpSingle( residue2 ) );
+	residues_.push_back( utility::pointer::shared_ptr<class protocols::jumping::ResiduePairJumpSingle>( new ResiduePairJumpSingle( residue1 ) ) );
+	residues_.push_back( utility::pointer::shared_ptr<class protocols::jumping::ResiduePairJumpSingle>( new ResiduePairJumpSingle( residue2 ) ) );
 }
 
 void
@@ -147,8 +147,8 @@ ResiduePairJump::add_residue_pair(
 {
 	residues_.clear();
 	cstInfoMap_.clear();
-	residues_.push_back( new ResiduePairJumpSingle( residue1 ) );
-	residues_.push_back( new ResiduePairJumpSingle( residue2 ) );
+	residues_.push_back( utility::pointer::shared_ptr<class protocols::jumping::ResiduePairJumpSingle>( new ResiduePairJumpSingle( residue1 ) ) );
+	residues_.push_back( utility::pointer::shared_ptr<class protocols::jumping::ResiduePairJumpSingle>( new ResiduePairJumpSingle( residue2 ) ) );
 }
 /////////////////////////////////////////////////////////////////////
 void
@@ -158,7 +158,7 @@ ResiduePairJump::add_residue_single(
 {
 	if ( residues_.size() < 2 ) {
 		cstInfoMap_.clear();
-		residues_.push_back( new ResiduePairJumpSingle(residue) );
+		residues_.push_back( utility::pointer::shared_ptr<class protocols::jumping::ResiduePairJumpSingle>( new ResiduePairJumpSingle(residue) ) );
 	} else {
 		utility_exit_with_message("ResiduePairJump can only take two residues\n");
 	}
@@ -212,12 +212,12 @@ ResiduePairJump::generate_frame()
 
 	// create a frame with proper data structures Frame->FragData->(UpJumpSRFD and DownJumpSRFD)
 	core::kinematics::RT jump_rt;
-	UpJumpSRFDOP up_jump = new UpJumpSRFD(residues_[1]->residueType()->name1());
-	DownJumpSRFDOP down_jump = new DownJumpSRFD( jump_rt, jumpAtoms(2), jumpAtoms(1), residues_[2]->residueType()->name1() );
-	FragDataOP jump_frag = new FragData();
+	UpJumpSRFDOP up_jump( new UpJumpSRFD(residues_[1]->residueType()->name1()) );
+	DownJumpSRFDOP down_jump( new DownJumpSRFD( jump_rt, jumpAtoms(2), jumpAtoms(1), residues_[2]->residueType()->name1() ) );
+	FragDataOP jump_frag( new FragData() );
 	jump_frag->add_residue(up_jump);
 	jump_frag->add_residue(down_jump);
-	JumpingFrameOP ResiduePairJumpFrame = new JumpingFrame( 1, 2, 2 ); // from residue 1 to 2
+	JumpingFrameOP ResiduePairJumpFrame( new JumpingFrame( 1, 2, 2 ) ); // from residue 1 to 2
 	ResiduePairJumpFrame->set_pos( 1, 1);
 	ResiduePairJumpFrame->set_pos( 2, 2);
 	ResiduePairJumpFrame->add_fragment( jump_frag );
@@ -240,7 +240,7 @@ ResiduePairJump::init_mini_pose()
 
 	runtime_assert( cstAtoms_defined() );
 
-	miniPose_ = new core::pose::Pose();
+	miniPose_ = core::pose::PoseOP( new core::pose::Pose() );
 
 	// initial configuration for how these two residues are connected
 // 	Real init_phi = numeric::conversions::radians(180.0);

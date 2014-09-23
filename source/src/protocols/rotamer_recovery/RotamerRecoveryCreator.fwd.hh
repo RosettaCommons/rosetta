@@ -21,16 +21,16 @@ namespace protocols {
 namespace rotamer_recovery {
 
 class RRProtocolCreator;
-typedef utility::pointer::owning_ptr< RRProtocolCreator > RRProtocolCreatorOP;
-typedef utility::pointer::owning_ptr< RRProtocolCreator const > RRProtocolCreatorCOP;
+typedef utility::pointer::shared_ptr< RRProtocolCreator > RRProtocolCreatorOP;
+typedef utility::pointer::shared_ptr< RRProtocolCreator const > RRProtocolCreatorCOP;
 
 class RRComparerCreator;
-typedef utility::pointer::owning_ptr< RRComparerCreator > RRComparerCreatorOP;
-typedef utility::pointer::owning_ptr< RRComparerCreator const > RRComparerCreatorCOP;
+typedef utility::pointer::shared_ptr< RRComparerCreator > RRComparerCreatorOP;
+typedef utility::pointer::shared_ptr< RRComparerCreator const > RRComparerCreatorCOP;
 
 class RRReporterCreator;
-typedef utility::pointer::owning_ptr< RRReporterCreator > RRReporterCreatorOP;
-typedef utility::pointer::owning_ptr< RRReporterCreator const > RRReporterCreatorCOP;
+typedef utility::pointer::shared_ptr< RRReporterCreator > RRReporterCreatorOP;
+typedef utility::pointer::shared_ptr< RRReporterCreator const > RRReporterCreatorCOP;
 
 } //namespace
 } //namespace

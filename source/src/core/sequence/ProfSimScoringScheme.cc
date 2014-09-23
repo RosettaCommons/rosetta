@@ -89,9 +89,9 @@ Real ProfSimScoringScheme::score(
 	Size pos2
 ) {
 	SequenceProfileOP prof1
-		= SequenceProfileOP( static_cast < SequenceProfile * > ( seq1() ) );
+		= SequenceProfileOP( utility::pointer::static_pointer_cast< core::sequence::SequenceProfile > ( seq1 ) );
 	SequenceProfileOP prof2
-		= SequenceProfileOP( static_cast < SequenceProfile * > ( seq2() ) );
+		= SequenceProfileOP( utility::pointer::static_pointer_cast< core::sequence::SequenceProfile > ( seq2 ) );
 
 	runtime_assert( pos1 <= prof1->length() );
 	runtime_assert( pos2 <= prof2->length() );

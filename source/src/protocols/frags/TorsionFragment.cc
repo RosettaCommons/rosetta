@@ -92,7 +92,7 @@ TorsionFragment::TorsionFragment( TorsionFragment const & src ):
 TorsionFragmentOP
 TorsionFragment::clone() const
 {
-	return new TorsionFragment( *this );
+	return TorsionFragmentOP( new TorsionFragment( *this ) );
 }
 
 ///\brief insert this piece of fragment to a pose at position "begin"
@@ -171,7 +171,7 @@ TorsionFragmentLibrary::read_file(
 		getline(data, line); // skip blank line
 		SingleResidueTorsionFragmentLibrary & current_position_library( (*this)[position] );
 		for ( Size i=1; i<=neighbors; ++i ) {
-			TorsionFragmentOP fragment = new TorsionFragment( frag_size, nbb );
+			TorsionFragmentOP fragment( new TorsionFragment( frag_size, nbb ) );
 			// read lines within each fragment
 			std::string last_pdb; char last_chain('0'); Size last_seqpos(0);
 			for ( Size j=1; j<=frag_size; ++j ) {
@@ -231,7 +231,7 @@ TorsionFragmentLibrary::shift( int const current2desired_offset )
 		if ( j >=1 && j <= int( oldsize ) ) {
 			new_fragments[ i ] = fragments_[ j ];
 		} else {
-			new_fragments[ i ] = new SingleResidueTorsionFragmentLibrary();
+			new_fragments[ i ] = utility::pointer::shared_ptr<class protocols::frags::SingleResidueTorsionFragmentLibrary>( new SingleResidueTorsionFragmentLibrary() );
 		}
 	}
 	fragments_.swap( new_fragments );
@@ -420,7 +420,7 @@ FragLib::library( Size const size )
 {
 	if ( frag_map_.count( size ) == 0 ) {
 		TR.Info << "Creating new fragment library for frag_size " << size << endl;
-		frag_map_[ size ] = new TorsionFragmentLibrary();
+		frag_map_[ size ] = utility::pointer::shared_ptr<class protocols::frags::TorsionFragmentLibrary>( new TorsionFragmentLibrary() );
 	}
 	return *( frag_map_.find( size )->second );
 }

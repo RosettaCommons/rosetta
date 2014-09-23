@@ -83,19 +83,19 @@ ProcessorFactory::create_processor(
 {
 	MatchProcessorOP processor;
 
-	UpstreamHitCacherOP cacher = new UpstreamHitCacher( matcher );
+	UpstreamHitCacherOP cacher( new UpstreamHitCacher( matcher ) );
 
 	if ( mtask->consolidate_matches() ) {
 		TR << "Matches will be consolidated before output." << std::endl;
 		if( mtask->output_writer_name()  == "CloudPDB" ) TR << "NOTICE: match consolidation and CloudPDB writing are both active. This is fine but somewhat redundant. In this case, the -output_matches_per_group parameter should be set to a higher number than without cloud pdb writing, say 100 or so." << std::endl;
-		MatchConsolidatorOP consolidator = new MatchConsolidator;
+		MatchConsolidatorOP consolidator( new MatchConsolidator );
 		consolidator->set_grouper( create_grouper( matcher, mtask, cacher ) );
 		consolidator->set_output_writer( create_output_writer( matcher, mtask, cacher ) );
 		consolidator->set_n_to_output_per_group( mtask->n_to_output_per_group() );
 
 		processor = consolidator;
 	} else {
-		MatchOutputterOP outputter = new MatchOutputter;
+		MatchOutputterOP outputter( new MatchOutputter );
 
 		outputter->set_output_writer( create_output_writer( matcher, mtask, cacher ) );
 
@@ -129,17 +129,17 @@ ProcessorFactory::create_grouper(
 )
 {
 	if (mtask->grouper_name() == "SameChiBinComboGrouper" ) {
-		SameChiBinComboGrouperOP chibin_grouper = new SameChiBinComboGrouper;
+		SameChiBinComboGrouperOP chibin_grouper( new SameChiBinComboGrouper );
 		chibin_grouper->set_n_geometric_constraints( matcher->n_geometric_constraints() );
 		chibin_grouper->set_hit_cacher( cacher );
 		return chibin_grouper;
 	} else if ( mtask->grouper_name() == "SameSequenceGrouper" ) {
-		SameSequenceGrouperOP seq_grouper = new SameSequenceGrouper;
+		SameSequenceGrouperOP seq_grouper( new SameSequenceGrouper );
 		seq_grouper->set_n_geometric_constraints( matcher->n_geometric_constraints() );
 		seq_grouper->set_hit_cacher( cacher );
 		return seq_grouper;
 	}else if ( mtask->grouper_name() == "SameSequenceAndDSPositionGrouper" ) {
-		SameSequenceAndDSPositionGrouperOP seq_ds_grouper = new SameSequenceAndDSPositionGrouper;
+		SameSequenceAndDSPositionGrouperOP seq_ds_grouper( new SameSequenceAndDSPositionGrouper );
 		seq_ds_grouper->set_n_geometric_constraints( matcher->n_geometric_constraints() );
 		seq_ds_grouper->set_hit_cacher( cacher );
 		for ( Size ii = 1; ii <= matcher->n_geometric_constraints() ; ++ii ) {
@@ -149,7 +149,7 @@ ProcessorFactory::create_grouper(
 		seq_ds_grouper->set_rms_group_cutoff( mtask->grouper_ds_rmsd() );
 		return seq_ds_grouper;
 	} else if ( mtask->grouper_name() == "SameRotamerComboGrouper" ) {
-		SameRotamerComboGrouperOP rot_grouper = new SameRotamerComboGrouper;
+		SameRotamerComboGrouperOP rot_grouper( new SameRotamerComboGrouper );
 		rot_grouper->set_n_geometric_constraints( matcher->n_geometric_constraints() );
 		return rot_grouper;
 	} else {
@@ -168,7 +168,7 @@ ProcessorFactory::create_evaluator(
 )
 {
 	if ( mtask->evaluator_name() == "DownstreamRMSEvaluator" ) {
-		DownstreamRMSEvaluatorOP rms_eval = new DownstreamRMSEvaluator;
+		DownstreamRMSEvaluatorOP rms_eval( new DownstreamRMSEvaluator );
 		rms_eval->set_n_geometric_constraints( matcher->n_geometric_constraints() );
         for ( Size ii = 1; ii <= matcher->n_geometric_constraints(); ++ii ) {
 			/// HACK -- all RigidLigandBuilders are equivalent -- FIX THIS!
@@ -203,7 +203,7 @@ ProcessorFactory::create_filters(
 
 	std::list< MatchFilterOP > filter_list;
 	if ( mtask->filter_upstream_residue_collisions() ) {
-		output::UpstreamCollisionFilterOP collfilt = new output::UpstreamCollisionFilter( "UpstreamCollisionFilter", cacher );
+		output::UpstreamCollisionFilterOP collfilt( new output::UpstreamCollisionFilter( "UpstreamCollisionFilter", cacher ) );
 		if ( mtask->filter_upstream_collisions_by_score() ) {
 			collfilt->set_filter_by_lj( true );
 			collfilt->set_lj_cutoff( mtask->upstream_residue_collision_score_cutoff() );
@@ -217,7 +217,7 @@ ProcessorFactory::create_filters(
 	}
 
 	if ( mtask->filter_upstream_downstream_collisions() || matcher->has_upstream_only_geomcsts() ) {
-		output::UpstreamDownstreamCollisionFilterOP collfilt = new output::UpstreamDownstreamCollisionFilter( "UpstreamDownstreamCollisionFilter", cacher );
+		output::UpstreamDownstreamCollisionFilterOP collfilt( new output::UpstreamDownstreamCollisionFilter( "UpstreamDownstreamCollisionFilter", cacher ) );
 		if ( mtask->filter_upstream_downstream_collisions_by_score() ) {
 			collfilt->set_filter_by_lj( true );
 			collfilt->set_lj_cutoff( mtask->upstream_downstream_residue_collision_score_cutoff() );
@@ -256,15 +256,15 @@ ProcessorFactory::create_output_writer(
 	if ( mtask->output_writer_name() == "KinWriter" ) {
 
 
-		output::WriteKinemageOutputterOP kin_match_writer = new output::WriteKinemageOutputter;
-		WriteUpstreamHitKinemageOP kin_hit_writer = new WriteUpstreamHitKinemage( mtask->output_file_name() );
+		output::WriteKinemageOutputterOP kin_match_writer( new output::WriteKinemageOutputter );
+		WriteUpstreamHitKinemageOP kin_hit_writer( new WriteUpstreamHitKinemage( mtask->output_file_name() ) );
 		kin_match_writer->set_n_geomcst( matcher->n_geometric_constraints() );
 		kin_match_writer->set_kin_writer( kin_hit_writer );
 
 		for ( Size ii = 1; ii <= matcher->n_geometric_constraints() ; ++ii ) {
 			/// DIRTY ASSUMPTION -- SINGLE RESIDUE IN DOWNSTREAM PARTNER
 			if ( matcher->downstream_builder( ii ) ) {
-				SingleDownstreamResidueWriterOP downstream_writer = new SingleDownstreamResidueWriter;
+				SingleDownstreamResidueWriterOP downstream_writer( new SingleDownstreamResidueWriter );
 				downstream_writer->set_restype( mtask->downstream_pose()->residue(1).type().get_self_ptr() );
 				downstream_writer->set_downstream_builder( matcher->downstream_builder( ii ) );
 				downstream_writer->set_downstream_master( mtask->downstream_pose()->residue(1).name3() );
@@ -278,13 +278,13 @@ ProcessorFactory::create_output_writer(
 	} else if ( (mtask->output_writer_name()  == "PDB" ) || (mtask->output_writer_name()  == "pdb" )  || (mtask->output_writer_name()  == "CloudPDB" ) || ( mtask->output_writer_name() == "PoseMatchOutputWriter" ) ) {
 		output::PDBWriterOP pdb_writer;
 		if ( (mtask->output_writer_name()  == "PDB" ) || (mtask->output_writer_name()  == "pdb" ) ){
-			pdb_writer = new output::PDBWriter;
+			pdb_writer = output::PDBWriterOP( new output::PDBWriter );
 		}
 		else if( mtask->output_writer_name() == "PoseMatchOutputWriter" ){
-			pdb_writer = new output::PoseMatchOutputWriter( create_grouper( matcher, mtask, cacher) );
+			pdb_writer = output::PDBWriterOP( new output::PoseMatchOutputWriter( create_grouper( matcher, mtask, cacher) ) );
 		}
 		else{
-			pdb_writer = new output::CloudPDBWriter( create_grouper( matcher, mtask, cacher) );
+			pdb_writer = output::PDBWriterOP( new output::CloudPDBWriter( create_grouper( matcher, mtask, cacher) ) );
 		}
 		pdb_writer->set_coordinate_cacher( cacher );
 		pdb_writer->initialize_from_matcher_task( mtask );
@@ -312,7 +312,7 @@ ProcessorFactory::create_output_writer(
 
 MatchScoreWriterOP
 ProcessorFactory::create_match_score_writer() {
-	return new MatchScoreWriter();
+	return MatchScoreWriterOP( new MatchScoreWriter() );
 }
 
 

@@ -24,8 +24,8 @@ namespace simple_moves {
 namespace sidechain_moves {
 
 class PerturbChiSidechainMover;
-typedef utility::pointer::owning_ptr< PerturbChiSidechainMover > PerturbChiSidechainMoverOP;
-typedef utility::pointer::owning_ptr< PerturbChiSidechainMover const > PerturbChiSidechainMoverCOP;
+typedef utility::pointer::shared_ptr< PerturbChiSidechainMover > PerturbChiSidechainMoverOP;
+typedef utility::pointer::shared_ptr< PerturbChiSidechainMover const > PerturbChiSidechainMoverCOP;
 
 } // simple_moves
 } // sidechain_moves

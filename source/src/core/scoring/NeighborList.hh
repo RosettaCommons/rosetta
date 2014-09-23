@@ -188,7 +188,7 @@ public:
 
 	// Clone method used in copy ctors of classes that contain NeighborListOP's
 	// like, for example, Energies.
-	NeighborListOP clone() const { return new NeighborList( *this ); }
+	NeighborListOP clone() const { return NeighborListOP( new NeighborList( *this ) ); }
 
 	///
 	AtomNeighbors const &
@@ -363,7 +363,7 @@ private:
 	mutable Size n_full_updates_;
 };
 
-typedef utility::pointer::owning_ptr< NeighborList > NeighborListOP;
+typedef utility::pointer::shared_ptr< NeighborList > NeighborListOP;
 
 } // namespace scoring
 } // namespace core

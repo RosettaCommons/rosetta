@@ -59,7 +59,7 @@ namespace modeler {
 		//		for (Size i = 1; i <= slice_res.size(); i++) slice_map[ slice_res[ i ] ] = i;
 		utility::vector1< Size > mapping( full_pose.total_residue(), 0);
 		for (Size i = 1; i <= slice_res.size(); i++) mapping[ slice_res[ i ] ] = i;
-		SequenceMappingOP smap = new SequenceMapping( mapping );
+		SequenceMappingOP smap( new SequenceMapping( mapping ) );
 
 		for ( Size n = 1; n <= csts.size(); n++ ) {
 

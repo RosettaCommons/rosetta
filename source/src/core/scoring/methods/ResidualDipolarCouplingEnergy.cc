@@ -72,7 +72,7 @@ methods::EnergyMethodOP
 ResidualDipolarCouplingEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new ResidualDipolarCouplingEnergy;
+	return methods::EnergyMethodOP( new ResidualDipolarCouplingEnergy );
 }
 
 ScoreTypes
@@ -99,7 +99,7 @@ EnergyMethodOP
 ResidualDipolarCouplingEnergy::clone() const
 {
 
-  return new ResidualDipolarCouplingEnergy();
+  return EnergyMethodOP( new ResidualDipolarCouplingEnergy() );
 
 }
 
@@ -164,7 +164,7 @@ ResidualDipolarCouplingEnergy::rdc_from_pose(
 // 	pose.data().set( RESIDUAL_DIPOLAR_COUPLING_DATA, rdc_info );
  	ResidualDipolarCouplingOP rdc_info( retrieve_RDC_from_pose( pose ) );
 	if ( !rdc_info ) {
-		rdc_info = new ResidualDipolarCoupling;
+		rdc_info = ResidualDipolarCouplingOP( new ResidualDipolarCoupling );
 		store_RDC_in_pose( rdc_info, pose );
 	}
 	return *rdc_info;

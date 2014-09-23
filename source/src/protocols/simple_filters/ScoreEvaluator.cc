@@ -64,7 +64,7 @@ using namespace core;
 
 ScoreEvaluator::ScoreEvaluator( std::string tag, core::scoring::ScoreFunctionOP scorefxn, bool fullname ) :
 	evaluation::SingleValuePoseEvaluator< Real >(  ( !fullname ? ("score"+tag) : tag ) ),
-  scorefxn_ ( NULL )
+  scorefxn_ ( /* NULL */ )
 
 {
 	if( !scorefxn ) {
@@ -114,7 +114,7 @@ TruncatedScoreEvaluator::TruncatedScoreEvaluator(
 ) :
 	ScoreEvaluator( tag, scorefxn, fullname ),
 	selection_( selection ),
-	rdcs_( NULL )
+	rdcs_( /* NULL */ )
 {
 	nres_ = 400; //no worries: if the pose turns out to be larger we repeat that inversion in apply().
 	evaluation::invert_include_residues( 400, selection_, exclude_list_ );
@@ -127,7 +127,7 @@ TruncatedScoreEvaluator::TruncatedScoreEvaluator(
 		tr.Trace << std::endl;
 	}
 	if ( !rdcs_ && scorefxn->get_weight( scoring::rdc ) > 0.0 && basic::options::option[ basic::options::OptionKeys::in::file::rdc ].user() ) {
-		rdcs_ = new SelectRDC_Evaluator( selection_, "none");
+		rdcs_ = SelectRDC_EvaluatorOP( new SelectRDC_Evaluator( selection_, "none") );
 	}
 }
 

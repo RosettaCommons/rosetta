@@ -67,8 +67,7 @@ void CreateAngleConstraint::apply( core::pose::Pose & pose )
             pose.add_constraint(
                                 core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AngleConstraint( core::id::AtomID(atomno1,res1_[i_cst]),
                                                                                 core::id::AtomID(atomno0,res_center_[i_cst]),
-                                                                                core::id::AtomID(atomno2,res2_[i_cst]), func )
-                                ) );
+                                                                                core::id::AtomID(atomno2,res2_[i_cst]), func ) ) );
         }
     }
 }
@@ -98,12 +97,12 @@ CreateAngleConstraint::parse_my_tag(
     }
 }
 	
-moves::MoverOP CreateAngleConstraint::clone() const { return new CreateAngleConstraint( *this ); }
-moves::MoverOP CreateAngleConstraint::fresh_instance() const { return new CreateAngleConstraint; }
+moves::MoverOP CreateAngleConstraint::clone() const { return moves::MoverOP( new CreateAngleConstraint( *this ) ); }
+moves::MoverOP CreateAngleConstraint::fresh_instance() const { return moves::MoverOP( new CreateAngleConstraint ); }
 
 protocols::moves::MoverOP
 CreateAngleConstraintCreator::create_mover() const {
-	return new CreateAngleConstraint;
+	return protocols::moves::MoverOP( new CreateAngleConstraint );
 }
 
 std::string

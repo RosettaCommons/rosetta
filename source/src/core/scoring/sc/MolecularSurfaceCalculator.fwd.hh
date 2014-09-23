@@ -27,8 +27,8 @@ namespace sc {
 class MolecularSurfaceCalculator;
 
 // Types
-typedef utility::pointer::owning_ptr< MolecularSurfaceCalculator > MolecularSurfaceCalculatorOP;
-typedef utility::pointer::owning_ptr< MolecularSurfaceCalculator const > MolecularSurfaceCalculatorCOP;
+typedef utility::pointer::shared_ptr< MolecularSurfaceCalculator > MolecularSurfaceCalculatorOP;
+typedef utility::pointer::shared_ptr< MolecularSurfaceCalculator const > MolecularSurfaceCalculatorCOP;
 
 
 } // namespace sc

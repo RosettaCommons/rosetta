@@ -55,10 +55,10 @@ MatchCollisionFilter::MatchCollisionFilter(
 	wfa_sol_( 0.6 ),
 	lj_cutoff_( 10 ),
 	tolerated_overlap_( 0.0 ),
-	empty_pose_( new core::pose::Pose ),
-	empty_sfxn_( new core::scoring::ScoreFunction ),
-	etable_energy_( 0 ),
-	bump_grid_( new BumpGrid )
+	empty_pose_( core::pose::PoseOP( new core::pose::Pose ) ),
+	empty_sfxn_( core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction ) ),
+	etable_energy_( /* 0 */ ),
+	bump_grid_( BumpGridOP( new BumpGrid ) )
 {}
 
 MatchCollisionFilter::~MatchCollisionFilter(){}
@@ -71,8 +71,8 @@ void MatchCollisionFilter::set_filter_by_lj( bool setting )
 		using namespace core::scoring::etable;
 		using namespace core::scoring::methods;
 		EnergyMethodOptions eopts;
-		etable_energy_ = new TableLookupEtableEnergy(
-			*ScoringManager::get_instance()->etable( eopts.etable_type() ).lock(), eopts ); // FIXME: passing reference of a temporairly locked AP
+		etable_energy_ = core::scoring::methods::ShortRangeTwoBodyEnergyOP( new TableLookupEtableEnergy(
+			*ScoringManager::get_instance()->etable( eopts.etable_type() ).lock(), eopts ) ); // FIXME: passing reference of a temporairly locked AP
 	}
 }
 

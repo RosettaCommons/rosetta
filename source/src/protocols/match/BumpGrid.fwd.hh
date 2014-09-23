@@ -22,8 +22,8 @@ namespace protocols {
 namespace match {
 
 class Bool3DGrid;
-typedef utility::pointer::owning_ptr< Bool3DGrid > Bool3DGridOP;
-typedef utility::pointer::owning_ptr< Bool3DGrid const > Bool3DGridCOP;
+typedef utility::pointer::shared_ptr< Bool3DGrid > Bool3DGridOP;
+typedef utility::pointer::shared_ptr< Bool3DGrid const > Bool3DGridCOP;
 
 /// The different radii types used in collision detection.
 /// These values are taken from Probe / Reduce from the Richardson lab.
@@ -45,8 +45,8 @@ enum ProbeRadius
 
 class BumpGrid;
 
-typedef utility::pointer::owning_ptr< BumpGrid > BumpGridOP;
-typedef utility::pointer::owning_ptr< BumpGrid const > BumpGridCOP;
+typedef utility::pointer::shared_ptr< BumpGrid > BumpGridOP;
+typedef utility::pointer::shared_ptr< BumpGrid const > BumpGridCOP;
 
 }
 }

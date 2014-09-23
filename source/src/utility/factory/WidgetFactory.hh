@@ -41,7 +41,7 @@ template< class Creator >
 class WidgetFactory
 {
 public:
-	typedef typename utility::pointer::owning_ptr< Creator > CreatorOP;
+	typedef typename utility::pointer::shared_ptr< Creator > CreatorOP;
 	typedef typename std::map< std::string, CreatorOP >      CreatorMap;
 
 public:

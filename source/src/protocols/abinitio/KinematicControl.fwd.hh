@@ -27,8 +27,8 @@ namespace abinitio {
 class KinematicControl;
 
 // Types
-typedef  utility::pointer::owning_ptr< KinematicControl >  KinematicControlOP;
-typedef  utility::pointer::owning_ptr< KinematicControl const >  KinematicControlCOP;
+typedef  utility::pointer::shared_ptr< KinematicControl >  KinematicControlOP;
+typedef  utility::pointer::shared_ptr< KinematicControl const >  KinematicControlCOP;
 
 } // namespace jumping
 } // namespace protocols

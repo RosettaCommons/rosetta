@@ -23,8 +23,8 @@ namespace movers{
 
 //Forwards and OP typedefs
 class RandomMutation;
-typedef utility::pointer::owning_ptr< RandomMutation > RandomMutationOP;
-typedef utility::pointer::owning_ptr< RandomMutation const > RandomMutationCOP;
+typedef utility::pointer::shared_ptr< RandomMutation > RandomMutationOP;
+typedef utility::pointer::shared_ptr< RandomMutation const > RandomMutationCOP;
 
 }//movers
 }//protein_interface_design

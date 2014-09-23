@@ -45,10 +45,10 @@ public:
   core::Real compute( core::pose::Pose const & pose ) const;
 
 	virtual protocols::filters::FilterOP clone() const {
-		return new CalculatorFilter( *this );
+		return protocols::filters::FilterOP( new CalculatorFilter( *this ) );
 	}
 	virtual protocols::filters::FilterOP fresh_instance() const{
-		return new CalculatorFilter();
+		return protocols::filters::FilterOP( new CalculatorFilter() );
 	}
 
 	void parse_my_tag( utility::tag::TagCOP tag,

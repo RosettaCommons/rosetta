@@ -25,8 +25,8 @@ namespace jobdist {
 class BaseJobDistributor;
 class PlainSilentFileJobDistributor;
 
-typedef utility::pointer::owning_ptr< BaseJobDistributor > BaseJobDistributorOP;
-typedef utility::pointer::owning_ptr< PlainSilentFileJobDistributor > PlainSilentFileJobDistributorOP;
+typedef utility::pointer::shared_ptr< BaseJobDistributor > BaseJobDistributorOP;
+typedef utility::pointer::shared_ptr< PlainSilentFileJobDistributor > PlainSilentFileJobDistributorOP;
 
 }
 }

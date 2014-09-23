@@ -21,12 +21,12 @@ namespace resource_manager{
 namespace locator {
 
 class FileStream;
-typedef utility::pointer::owning_ptr< FileStream > FileStreamOP;
-typedef utility::pointer::owning_ptr< FileStream const > FileStreamCOP;
+typedef utility::pointer::shared_ptr< FileStream > FileStreamOP;
+typedef utility::pointer::shared_ptr< FileStream const > FileStreamCOP;
 
 class DatabaseResourceLocator;
-typedef utility::pointer::owning_ptr< DatabaseResourceLocator > DatabaseResourceLocatorOP;
-typedef utility::pointer::owning_ptr< DatabaseResourceLocator const > DatabaseResourceLocatorCOP;
+typedef utility::pointer::shared_ptr< DatabaseResourceLocator > DatabaseResourceLocatorOP;
+typedef utility::pointer::shared_ptr< DatabaseResourceLocator const > DatabaseResourceLocatorCOP;
 
 }// namespace
 }// namespace

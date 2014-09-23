@@ -65,7 +65,7 @@ TemplateFragmentClaimer::TemplateFragmentClaimer( std::string config_file, core:
 }
 
 void TemplateFragmentClaimer::read_config_file( std::string const& file ) {
-	templates_ = new abinitio::Templates( file /*native_pose_*/ );
+	templates_ = abinitio::TemplatesOP( new abinitio::Templates( file /*native_pose_*/ ) );
 	//templates_->target_sequence() = sequence_; // a hack until class SequenceMapping works better
 	// want to pick fragments from templates... make sure they are not initialized yet
 	//	runtime_assert( !fragset_large_ );
@@ -74,10 +74,10 @@ void TemplateFragmentClaimer::read_config_file( std::string const& file ) {
 		utility_exit_with_message("ERROR occured during template setup. check BAD_SEQUENCES file!");
 	}
 
-	fragment::FragSetOP fragset_large = new fragment::ConstantLengthFragSet( frag_size_ );
-	Size nr = templates_->pick_frags( *fragset_large, new fragment::FragData( core::fragment::SingleResidueFragDataOP( new fragment::BBTorsionSRFD ), frag_size_ ) );
+	fragment::FragSetOP fragset_large( new fragment::ConstantLengthFragSet( frag_size_ ) );
+	Size nr = templates_->pick_frags( *fragset_large, core::fragment::FragDataCOP( new fragment::FragData( core::fragment::SingleResidueFragDataOP( new fragment::BBTorsionSRFD ), frag_size_ ) ) );
 	tr.Info << nr << " " << fragset_large->max_frag_length() << "mer fragments picked from homolog structures" << std::endl;
-	set_mover( new simple_moves::ClassicFragmentMover( fragset_large ) );
+	set_mover( simple_moves::FragmentMoverOP( new simple_moves::ClassicFragmentMover( fragset_large ) ) );
 }
 
 bool TemplateFragmentClaimer::read_tag( std::string tag, std::istream& is ) {

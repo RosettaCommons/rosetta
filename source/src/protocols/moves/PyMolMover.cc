@@ -90,7 +90,7 @@ getRG()
 
 	if( RG == 0 ) {
 		//RG = new numeric::random::mt19937_RG;
-		RG = new numeric::random::standard_RG;
+		RG = numeric::random::uniform_RG_OP( new numeric::random::standard_RG );
 		RG->setSeed( time(NULL) );
 	}
 
@@ -571,7 +571,7 @@ void PyMolObserver::detach(core::pose::Pose &p)
 PyMolObserverOP AddPyMolObserver(core::pose::Pose &p, bool keep_history, core::Real update_interval)
 {
 	//Add options
-    PyMolObserverOP o = new PyMolObserver;
+    PyMolObserverOP o( new PyMolObserver );
 	o->pymol().keep_history(keep_history);
 	o->pymol().update_interval(update_interval);
 	p.attach_general_obs(&PyMolObserver::generalEvent, o);
@@ -580,7 +580,7 @@ PyMolObserverOP AddPyMolObserver(core::pose::Pose &p, bool keep_history, core::R
 
 PyMolObserverOP AddPyMolObserver_to_energies(core::pose::Pose &p, bool keep_history, core::Real update_interval)
 {
-    PyMolObserverOP o = new PyMolObserver;
+    PyMolObserverOP o( new PyMolObserver );
 	o->pymol().keep_history(keep_history);
 	o->pymol().update_interval(update_interval);
 	p.attach_energy_obs(&PyMolObserver::energyEvent, o);
@@ -589,7 +589,7 @@ PyMolObserverOP AddPyMolObserver_to_energies(core::pose::Pose &p, bool keep_hist
 
 PyMolObserverOP AddPyMolObserver_to_conformation(core::pose::Pose &p, bool keep_history, core::Real update_interval)
 {
-    PyMolObserverOP o = new PyMolObserver;
+    PyMolObserverOP o( new PyMolObserver );
 	o->pymol().keep_history(keep_history);
 	o->pymol().update_interval(update_interval);
 	p.attach_conformation_obs(&PyMolObserver::conformationEvent, o);
@@ -608,7 +608,7 @@ std::string PyMolMoverCreator::keyname() const {
 
 /// @brief PyMolMoverCreator interface, return a new instance
 protocols::moves::MoverOP PyMolMoverCreator::create_mover() const {
-  return new PyMolMover();
+  return protocols::moves::MoverOP( new PyMolMover() );
 }
 
 /// @brief allows for the setting of certain variabel from the rosetta scripts interface, only keep history
@@ -627,14 +627,14 @@ PyMolMover::parse_my_tag(
 protocols::moves::MoverOP
 PyMolMover::fresh_instance() const
 {
-	return new PyMolMover;
+	return protocols::moves::MoverOP( new PyMolMover );
 }
 
 ///@brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 PyMolMover::clone() const
 {
-	return new protocols::moves::PyMolMover( *this );
+	return protocols::moves::MoverOP( new protocols::moves::PyMolMover( *this ) );
 }
 
 } // moves

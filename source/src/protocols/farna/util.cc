@@ -668,10 +668,10 @@ setup_base_pair_constraints(
 		if ( !pose.residue(i).is_coarse() ) { //fullatom
 			Size const atom1 = pose.residue(i).type().atom_index( " C1'" ) ;
 			Size const atom2 = pose.residue(j).type().atom_index( " C1'" ) ;
-			pose.add_constraint( new AtomPairConstraint(
+			pose.add_constraint( scoring::constraints::ConstraintCOP( new AtomPairConstraint(
 																									id::AtomID(atom1,i),
 																									id::AtomID(atom2,j),
-																									C1prime_distance_func ) );
+																									C1prime_distance_func ) ) );
 
 			utility::vector1< std::string > atom_ids1, atom_ids2;
 			get_watson_crick_base_pair_atoms( pose.residue(i).aa(), pose.residue(j).aa(), atom_ids1, atom_ids2 );
@@ -686,10 +686,10 @@ setup_base_pair_constraints(
 					atom_ids1[p] << " <--> " <<
 					atom_ids2[p] << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
 
-				pose.add_constraint( new AtomPairConstraint(
+				pose.add_constraint( scoring::constraints::ConstraintCOP( new AtomPairConstraint(
 																										id::AtomID(atom1,i),
 																										id::AtomID(atom2,j),
-																										distance_func ) );
+																										distance_func ) ) );
 			}
 
 		} else { //coarse-grained RNA
@@ -710,10 +710,10 @@ setup_base_pair_constraints(
 					pose.residue(j).name1() << I(3,j) << "   " <<
 					" S  " << " <--> " <<
 					" S  " << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
-				pose.add_constraint( new AtomPairConstraint(
+				pose.add_constraint( scoring::constraints::ConstraintCOP( new AtomPairConstraint(
 																										id::AtomID(atom1,i),
 																										id::AtomID(atom2,j),
-																										coarse_SUG_distance_func ) );
+																										coarse_SUG_distance_func ) ) );
 			}
 
 			static Real const coarse_WC_CEN_distance( 5.5 );
@@ -731,10 +731,10 @@ setup_base_pair_constraints(
 					pose.residue(j).name1() << I(3,j) << "   " <<
 					" CEN" << " <--> " <<
 					" CEN" << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
-				pose.add_constraint( new AtomPairConstraint(
+				pose.add_constraint( scoring::constraints::ConstraintCOP( new AtomPairConstraint(
 																										id::AtomID(atom1,i),
 																										id::AtomID(atom2,j),
-																										coarse_CEN_distance_func ) );
+																										coarse_CEN_distance_func ) ) );
 			}
 
 			static Real const coarse_WC_X_distance( 3.5 );
@@ -751,10 +751,10 @@ setup_base_pair_constraints(
 					pose.residue(j).name1() << I(3,j) << "   " <<
 					" X  " << " <--> " <<
 					" X  " << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
-				pose.add_constraint( new AtomPairConstraint(
+				pose.add_constraint( scoring::constraints::ConstraintCOP( new AtomPairConstraint(
 																										id::AtomID(atom1,i),
 																										id::AtomID(atom2,j),
-																										coarse_X_distance_func ) );
+																										coarse_X_distance_func ) ) );
 			}
 		}
 	}
@@ -816,25 +816,25 @@ setup_coarse_chainbreak_constraints( pose::Pose & pose, Size const & n )
 	Size const & atom_S2 = pose.residue( n+1 ).atom_index( " S  " );
 	Size const & atom_P2 = pose.residue( n+1 ).atom_index( " P  " );
 
-	pose.add_constraint( new AtomPairConstraint(
+	pose.add_constraint( scoring::constraints::ConstraintCOP( new AtomPairConstraint(
 																							id::AtomID(atom_S1, n),
 																							id::AtomID(atom_P2, n+1),
-																									S_P_distance_func ) );
+																									S_P_distance_func ) ) );
 
-	pose.add_constraint( new AtomPairConstraint(
+	pose.add_constraint( scoring::constraints::ConstraintCOP( new AtomPairConstraint(
 																							id::AtomID(atom_S1, n),
 																							id::AtomID(atom_P2, n+1),
-																									S_P_harmonic_func ) );
+																									S_P_harmonic_func ) ) );
 
-	pose.add_constraint( new AtomPairConstraint(
+	pose.add_constraint( scoring::constraints::ConstraintCOP( new AtomPairConstraint(
 																							id::AtomID(atom_P1, n),
 																							id::AtomID(atom_P2, n+1),
-																							P_P_distance_func ) );
+																							P_P_distance_func ) ) );
 
-	pose.add_constraint( new AtomPairConstraint(
+	pose.add_constraint( scoring::constraints::ConstraintCOP( new AtomPairConstraint(
 																							id::AtomID(atom_S1, n),
 																							id::AtomID(atom_S2, n+1),
-																							S_S_distance_func ) );
+																							S_S_distance_func ) ) );
 
 }
 
@@ -1227,7 +1227,7 @@ set_output_res_num( pose::Pose & extended_pose,
 	if ( output_res_num.size() == 0 ) return;
 	runtime_assert( output_res_num.size() == extended_pose.total_residue() );
 
-	PDBInfoOP pdb_info = new PDBInfo( extended_pose );
+	PDBInfoOP pdb_info( new PDBInfo( extended_pose ) );
 	pdb_info->set_numbering( output_res_num );
 	extended_pose.pdb_info( pdb_info );
 }

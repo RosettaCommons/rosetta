@@ -31,10 +31,10 @@ class PoseComment : public filters::Filter
     PoseComment();
     virtual ~PoseComment();
 		filters::FilterOP clone() const {
-			return new PoseComment( *this );
+			return filters::FilterOP( new PoseComment( *this ) );
 		}
 		filters::FilterOP fresh_instance() const{
-			return new PoseComment();
+			return filters::FilterOP( new PoseComment() );
 		}
 
 		virtual bool apply( core::pose::Pose const & pose ) const;

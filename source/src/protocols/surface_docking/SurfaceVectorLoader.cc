@@ -98,18 +98,18 @@ SurfaceVectorLoader::create_resource(
 			"define the periodicity of the surface, but less than three points were provided in "  + locator_id + ".");
 	}
 	
-	return new SurfaceParameters(surf_coords[1], surf_coords[2], surf_coords[3]);
+	return utility::pointer::ReferenceCountOP( new SurfaceParameters(surf_coords[1], surf_coords[2], surf_coords[3]) );
 }
 
 basic::resource_manager::ResourceOptionsOP
 SurfaceVectorLoader::default_options() const
 {
-	return new SurfaceVectorOptions();
+	return basic::resource_manager::ResourceOptionsOP( new SurfaceVectorOptions() );
 }
 
 basic::resource_manager::ResourceLoaderOP SurfaceVectorLoaderCreator::create_resource_loader() const
 {
-	return new SurfaceVectorLoader();
+	return basic::resource_manager::ResourceLoaderOP( new SurfaceVectorLoader() );
 }
 
 std::string SurfaceVectorLoaderCreator::loader_type() const

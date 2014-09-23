@@ -92,7 +92,7 @@ SymmetricEnergies::same_type_as_me( Energies const & other, bool recurse  /* = t
 EnergiesOP
 SymmetricEnergies::clone() const
 {
-  return new SymmetricEnergies( *this );
+  return EnergiesOP( new SymmetricEnergies( *this ) );
 }
 
 SymmetricEnergies::~SymmetricEnergies() {}
@@ -138,7 +138,7 @@ SymmetricEnergies::update_neighbor_links(
 
 	conformation::PointGraphOP pg( point_graph() );
 	if ( pg == 0 ) {
-		pg = new conformation::PointGraph;
+		pg = conformation::PointGraphOP( new conformation::PointGraph );
 	}
 	fill_point_graph( pose, pg );
 
@@ -265,7 +265,7 @@ SymmetricEnergies::require_context_graph_( scoring::ContextGraphType type, bool 
 
 		using namespace graph;
 
-		core::conformation::PointGraphOP point_graph = new core::conformation::PointGraph;
+		core::conformation::PointGraphOP point_graph( new core::conformation::PointGraph );
 		fill_point_graph( pose, point_graph );
 		for ( uint ii = 1, ii_end = size(); ii <= ii_end; ++ii ) {
 			for ( core::conformation::PointGraph::UpperEdgeListConstIter

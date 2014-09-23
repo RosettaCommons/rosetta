@@ -210,8 +210,8 @@ public:
 
 };
 
-typedef utility::pointer::owning_ptr< DougsDockDesignMinimizeMagicMover > DougsDockDesignMinimizeMagicMoverOP;
-typedef utility::pointer::owning_ptr< DougsDockDesignMinimizeMagicMover const > DougsDockDesignMinimizeMagicMoverCOP;
+typedef utility::pointer::shared_ptr< DougsDockDesignMinimizeMagicMover > DougsDockDesignMinimizeMagicMoverOP;
+typedef utility::pointer::shared_ptr< DougsDockDesignMinimizeMagicMover const > DougsDockDesignMinimizeMagicMoverCOP;
 
 int
 main( int argc, char* argv[] )
@@ -403,7 +403,7 @@ DougsDockDesignMinimizeMagicMover::apply(
 	TR << "Setting up RT movers..." << std::endl;
 
 	// create a task factory and tack operations
-	TaskFactoryOP pert_tf(new TaskFactory());
+	TaskFactoryOP pert_tf( new TaskFactory() );
 
 	operation::InitializeFromCommandlineOP pert_ifcl( new operation::InitializeFromCommandline() );
 	pert_tf->push_back( pert_ifcl );
@@ -416,7 +416,7 @@ DougsDockDesignMinimizeMagicMover::apply(
 	pert_tf->push_back( pert_rtrp );
 
 	// create a rotamer trials mover
-	protocols::simple_moves::RotamerTrialsMoverOP pert_rt(new protocols::simple_moves::EnergyCutRotamerTrialsMover( score_fxn, pert_tf, pert_mc, 0.1 /*energycut*/ ) );
+	protocols::simple_moves::RotamerTrialsMoverOP pert_rt( new protocols::simple_moves::EnergyCutRotamerTrialsMover( score_fxn, pert_tf, pert_mc, 0.1 /*energycut*/ ) );
 
 	/*********************************************************
 	   ___       	       	       	    ___	     _
@@ -500,7 +500,7 @@ DougsDockDesignMinimizeMagicMover::apply(
 	//definitely want sidechain minimization here
 	using protocols::simple_moves::TaskAwareMinMoverOP;
 	using protocols::simple_moves::TaskAwareMinMover;
-	protocols::simple_moves::TaskAwareMinMoverOP desn_ta_min = new protocols::simple_moves::TaskAwareMinMover( desn_min, desn_tf );
+	protocols::simple_moves::TaskAwareMinMoverOP desn_ta_min( new protocols::simple_moves::TaskAwareMinMover( desn_min, desn_tf ) );
 
 	/*********************************************************
 	   ___       	       	       	    ___	     _

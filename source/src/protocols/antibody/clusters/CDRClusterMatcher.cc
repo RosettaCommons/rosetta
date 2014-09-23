@@ -57,8 +57,8 @@ void
 CDRClusterMatcher::load_center_data(){
 	
 	//I need to turn this text file into a database soon.
-	CDRClusterEnumManagerOP cluster_man = new CDRClusterEnumManager();
-	AntibodyEnumManagerOP ab_man = new AntibodyEnumManager();
+	CDRClusterEnumManagerOP cluster_man( new CDRClusterEnumManager() );
+	AntibodyEnumManagerOP ab_man( new AntibodyEnumManager() );
 	
 	
 	std::string cdr_name;
@@ -139,7 +139,7 @@ CDRClusterMatcher::get_cdr_cluster(core::pose::Pose const & pose, CDRNameEnum co
 
 	}
 	
-	CDRClusterOP cdr_cluster = new CDRCluster(pose, cdr, length, cluster, start, distance);
+	CDRClusterOP cdr_cluster( new CDRCluster(pose, cdr, length, cluster, start, distance) );
 	return cdr_cluster;
 	
 	
@@ -186,7 +186,7 @@ CDRClusterMatcher::get_closest_cluster(core::pose::Pose const & pose, core::Size
 
 	}
 	
-	CDRClusterOP cdr_cluster = new CDRCluster(pose, cdr, length, cluster, start, distance);
+	CDRClusterOP cdr_cluster( new CDRCluster(pose, cdr, length, cluster, start, distance) );
 	return cdr_cluster;
 	
 }

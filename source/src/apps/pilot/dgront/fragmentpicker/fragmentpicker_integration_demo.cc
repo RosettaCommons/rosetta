@@ -69,10 +69,10 @@ int main(int argc, char * argv[]) {
 
 //------------ CREATE A PICKER OBJECT
 //	FragmentPickerOP my_picker = new FragmentPicker("PValuedFragmentScoreManager");
-	FragmentPickerOP my_picker = new FragmentPicker();
+	FragmentPickerOP my_picker( new FragmentPicker() );
 
 //------------ PLUG-IN SEQUENCE PROFILE
-	SequenceProfileOP q_prof(new SequenceProfile);
+	SequenceProfileOP q_prof( new SequenceProfile );
 	q_prof->read_from_checkpoint(option[in::file::checkpoint]());
 	my_picker->set_query_profile(q_prof);
 
@@ -82,7 +82,7 @@ int main(int argc, char * argv[]) {
 	my_picker->read_ss_file(option[in::file::psipred_ss2](),"johny");
 
 //------------ READ VALL  AND PLUG IT INTO THE PICKER
-	VallProviderOP chunks = new VallProvider();
+	VallProviderOP chunks( new VallProvider() );
 	chunks->vallChunksFromLibrary(option[in::file::vall]()[1]);
 	my_picker->set_vall(chunks);
 
@@ -104,24 +104,24 @@ int main(int argc, char * argv[]) {
 	//- this comparator is used for collecting
 	Size n_scores = scoring->count_components();
 	CompareTotalScore comparator( my_picker->get_score_manager() );
-	CandidatesCollectorOP collector3 = new BoundedCollector<CompareTotalScore> (
+	CandidatesCollectorOP collector3( new BoundedCollector<CompareTotalScore> (
 		q_prof->length(), 	  // collector must know the size of query
 		my_picker->n_candidates_, // how many candidates to collect
 		comparator,		  // yes, here the comparator comes to sort fragments within the collector
-		n_scores);
-	CandidatesCollectorOP collector9 = new BoundedCollector<CompareTotalScore> (
+		n_scores) );
+	CandidatesCollectorOP collector9( new BoundedCollector<CompareTotalScore> (
 		q_prof->length(), 	  // collector must know the size of query
 		my_picker->n_candidates_, // how many candidates to collect
 		comparator,		  // yes, here the comparator comes to sort fragments within the collector
-		n_scores);
+		n_scores) );
 	my_picker->set_candidates_collector(3, collector3);
 	my_picker->set_candidates_collector(9, collector9);
 
 	if(option[frags::cluster_by_rms].user()) {
-	    my_picker->selector_ = new DiversifyCrmsdByClustering(my_picker->n_frags_);
+	    my_picker->selector_ = FragmentSelectingRuleOP( new DiversifyCrmsdByClustering(my_picker->n_frags_) );
 	}
 	else
-    	    my_picker->selector_ = new BestTotalScoreSelector(my_picker->n_frags_, scoring);
+    	    my_picker->selector_ = FragmentSelectingRuleOP( new BestTotalScoreSelector(my_picker->n_frags_, scoring) );
 
 	my_picker->prefix_ = "fragments";
 	if (option[out::file::frag_prefix].user())

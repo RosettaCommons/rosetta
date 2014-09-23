@@ -50,7 +50,7 @@ NtoCCstGeneratorCreator::keyname() const
 
 protocols::moves::MoverOP
 NtoCCstGeneratorCreator::create_mover() const {
-	return new NtoC_RCG();
+	return protocols::moves::MoverOP( new NtoC_RCG() );
 }
 
 std::string
@@ -103,13 +103,13 @@ NtoC_RCG::get_name() const
 protocols::moves::MoverOP
 NtoC_RCG::fresh_instance() const
 {
-	return new NtoC_RCG();
+	return protocols::moves::MoverOP( new NtoC_RCG() );
 }
 
 protocols::moves::MoverOP
 NtoC_RCG::clone() const
 {
-	return new NtoC_RCG( *this );
+	return protocols::moves::MoverOP( new NtoC_RCG( *this ) );
 }
 
 /// @brief set weight
@@ -137,14 +137,14 @@ NtoC_RCG::generate_remodel_constraints( Pose const & pose )
 	Real lb( 0.0 );
 	Real ub( dist_ );
 	Real sd( 1.0 );
-	core::scoring::func::ScalarWeightedFuncOP cstfunc = new core::scoring::func::ScalarWeightedFunc( coef_, core::scoring::func::FuncOP( new BoundFunc( lb, ub, sd, tag ) ) );
+	core::scoring::func::ScalarWeightedFuncOP cstfunc( new core::scoring::func::ScalarWeightedFunc( coef_, core::scoring::func::FuncOP( new BoundFunc( lb, ub, sd, tag ) ) ) );
 
 	Size last_residue = protocols::toolbox::match_enzdes_util::get_last_protein_residue( pose );
 	Size first_residue = protocols::toolbox::match_enzdes_util::get_first_protein_residue( pose );
 	TR << "first residue in NtoC generation is:" << first_residue << " and last is:" << last_residue << " out of total=" << pose.total_residue() << std::endl;
 	core::id::AtomID atom1( pose.residue_type( first_residue ).atom_index( "CA" ), first_residue );
 	core::id::AtomID atom2( pose.residue_type( last_residue ).atom_index( "CA" ), last_residue );
-	ConstraintOP const cst = new AtomPairConstraint( atom1, atom2, cstfunc );
+	ConstraintOP const cst( new AtomPairConstraint( atom1, atom2, cstfunc ) );
 
 	TR << "Constraints between N- and C- terminal: " << first_residue << "-" << last_residue << ", dist=" << dist_ << std::endl;
 

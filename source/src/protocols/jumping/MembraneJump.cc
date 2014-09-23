@@ -88,7 +88,7 @@ MembraneJump::setup_fold_tree(core::pose::Pose & pose, core::Size njumps)
 	Size nres=pose.total_residue();
 	core::kinematics::FoldTree f(nres);
 	Size tries(0);
-	core::scoring::MembraneTopology const & topology(*( static_cast< core::scoring::MembraneTopology const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY )() )));
+	core::scoring::MembraneTopology const & topology(*( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) )));
 	FArray1D_int tmh(pose.total_residue());
 	FArray1D_int tmh2(pose.total_residue(),0);
 	Size total_tmhelix(topology.tmhelix());

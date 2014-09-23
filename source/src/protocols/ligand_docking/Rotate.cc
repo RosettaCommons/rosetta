@@ -59,7 +59,7 @@ RotateCreator::keyname() const
 
 protocols::moves::MoverOP
 RotateCreator::create_mover() const {
-	return new Rotate;
+	return protocols::moves::MoverOP( new Rotate );
 }
 
 std::string
@@ -104,11 +104,11 @@ Rotate::Rotate(Rotate const & that):
 Rotate::~Rotate() {}
 
 protocols::moves::MoverOP Rotate::clone() const {
-	return new Rotate( *this );
+	return protocols::moves::MoverOP( new Rotate( *this ) );
 }
 
 protocols::moves::MoverOP Rotate::fresh_instance() const {
-	return new Rotate;
+	return protocols::moves::MoverOP( new Rotate );
 }
 
 std::string Rotate::get_name() const{
@@ -165,7 +165,7 @@ void Rotate::apply(core::pose::Pose & pose){
 	{
 		utility::vector1<core::Size> all_chain_ids = rotate_info_.tag_along_chains;
 		all_chain_ids.push_back(rotate_info_.chain_id);
-		utility::pointer::owning_ptr<core::grid::CartGrid<int> > const grid = make_atr_rep_grid_without_ligands(pose, center, all_chain_ids);
+		utility::pointer::shared_ptr<core::grid::CartGrid<int> > const grid = make_atr_rep_grid_without_ligands(pose, center, all_chain_ids);
 		rotate_ligand(grid, pose);// move ligand to a random point in binding pocket
 	}else
 	{
@@ -186,17 +186,17 @@ void Rotate::apply(core::pose::Pose & pose){
 
 ///@brief for n random rotations, randomly pick one from among the best scoring set of diverse poses
 void Rotate::rotate_ligand(
-		utility::pointer::owning_ptr<core::grid::CartGrid<int> >  const & grid,
+		utility::pointer::shared_ptr<core::grid::CartGrid<int> >  const & grid,
 		core::pose::Pose & pose
 ) {
 	if(rotate_info_.degrees == 0) return;
 
 	protocols::rigid::RigidBodyMoverOP mover;
 	if(rotate_info_.distribution == Uniform){
-		mover= new protocols::rigid::RigidBodyRandomizeMover( pose, rotate_info_.jump_id, protocols::rigid::partner_downstream, rotate_info_.degrees, rotate_info_.degrees);
+		mover = protocols::rigid::RigidBodyMoverOP( new protocols::rigid::RigidBodyRandomizeMover( pose, rotate_info_.jump_id, protocols::rigid::partner_downstream, rotate_info_.degrees, rotate_info_.degrees) );
 	}
 	else if(rotate_info_.distribution == Gaussian){
-		mover= new protocols::rigid::RigidBodyPerturbMover ( rotate_info_.jump_id, rotate_info_.degrees, 0 /*translate*/);
+		mover = protocols::rigid::RigidBodyMoverOP( new protocols::rigid::RigidBodyPerturbMover ( rotate_info_.jump_id, rotate_info_.degrees, 0 /*translate*/) );
 	}
 
 	core::Size chain_begin = pose.conformation().chain_begin(rotate_info_.chain_id);
@@ -227,10 +227,10 @@ void Rotate::rotate_ligand(core::pose::Pose & pose)
 
 	protocols::rigid::RigidBodyMoverOP mover;
 	if(rotate_info_.distribution == Uniform){
-		mover= new protocols::rigid::RigidBodyRandomizeMover( pose, rotate_info_.jump_id, protocols::rigid::partner_downstream, rotate_info_.degrees, rotate_info_.degrees);
+		mover = protocols::rigid::RigidBodyMoverOP( new protocols::rigid::RigidBodyRandomizeMover( pose, rotate_info_.jump_id, protocols::rigid::partner_downstream, rotate_info_.degrees, rotate_info_.degrees) );
 	}
 	else if(rotate_info_.distribution == Gaussian){
-		mover= new protocols::rigid::RigidBodyPerturbMover ( rotate_info_.jump_id, rotate_info_.degrees, 0 /*translate*/);
+		mover = protocols::rigid::RigidBodyMoverOP( new protocols::rigid::RigidBodyPerturbMover ( rotate_info_.jump_id, rotate_info_.degrees, 0 /*translate*/) );
 	}
 	//core::Size chain_begin = pose.conformation().chain_begin(rotate_info_.chain_id);
 
@@ -238,7 +238,7 @@ void Rotate::rotate_ligand(core::pose::Pose & pose)
 
 utility::vector1< Ligand_info>
 Rotate::create_random_rotations(
-		utility::pointer::owning_ptr<core::grid::CartGrid<int> > const & grid,
+		utility::pointer::shared_ptr<core::grid::CartGrid<int> > const & grid,
 		protocols::rigid::RigidBodyMoverOP const mover,
 		core::pose::Pose & pose,
 		core::Size begin
@@ -269,7 +269,7 @@ Rotate::create_random_rotations(
 }
 
 Ligand_info Rotate::create_random_rotation(
-		utility::pointer::owning_ptr<core::grid::CartGrid<int> > const & grid,
+		utility::pointer::shared_ptr<core::grid::CartGrid<int> > const & grid,
 		protocols::rigid::RigidBodyMoverOP const mover,
 		core::Vector const center,
 		core::Size const begin,

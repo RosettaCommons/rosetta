@@ -57,7 +57,7 @@ GenericSymmetricSamplerCreator::keyname() const
 
 protocols::moves::MoverOP
 GenericSymmetricSamplerCreator::create_mover() const {
-	return new GenericSymmetricSampler;
+	return protocols::moves::MoverOP( new GenericSymmetricSampler );
 }
 
 std::string
@@ -82,12 +82,12 @@ GenericSymmetricSampler::GenericSymmetricSampler() :
 
 protocols::moves::MoverOP 
 GenericSymmetricSampler::clone() const {
-	return new GenericSymmetricSampler( *this );
+	return protocols::moves::MoverOP( new GenericSymmetricSampler( *this ) );
 }
 
 protocols::moves::MoverOP 
 GenericSymmetricSampler::fresh_instance() const {
-				return new GenericSymmetricSampler();
+				return protocols::moves::MoverOP( new GenericSymmetricSampler() );
 }
 
 

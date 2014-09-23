@@ -19,8 +19,8 @@
 namespace utility {
 
 class subset_mapping;
-typedef pointer::owning_ptr< subset_mapping      > subset_mappingOP;
-typedef pointer::owning_ptr< subset_mapping const> subset_mappingCOP;
+typedef pointer::shared_ptr< subset_mapping      > subset_mappingOP;
+typedef pointer::shared_ptr< subset_mapping const> subset_mappingCOP;
 
 }
 

@@ -22,8 +22,8 @@ namespace rotamer_set_operations {
 
 class AddGood2BPairEnergyRotamers;
 
-typedef utility::pointer::owning_ptr< AddGood2BPairEnergyRotamers > AddGood2BPairEnergyRotamersOP;
-typedef utility::pointer::owning_ptr< AddGood2BPairEnergyRotamers const > AddGood2BPairEnergyRotamersCOP;
+typedef utility::pointer::shared_ptr< AddGood2BPairEnergyRotamers > AddGood2BPairEnergyRotamersOP;
+typedef utility::pointer::shared_ptr< AddGood2BPairEnergyRotamers const > AddGood2BPairEnergyRotamersCOP;
 
 } //namespace rotamer_set_operations
 } //namespace toolbox

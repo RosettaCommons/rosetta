@@ -24,8 +24,8 @@ namespace disulfides {
 
 class DisulfideMatchingEnergy;
 
-typedef utility::pointer::owning_ptr< DisulfideMatchingEnergy > DisulfideMatchingEnergyOP;
-typedef utility::pointer::owning_ptr< DisulfideMatchingEnergy const > DisulfideMatchingEnergyCOP;
+typedef utility::pointer::shared_ptr< DisulfideMatchingEnergy > DisulfideMatchingEnergyOP;
+typedef utility::pointer::shared_ptr< DisulfideMatchingEnergy const > DisulfideMatchingEnergyCOP;
 
 } // namespace disulfides
 } // namespace scoring

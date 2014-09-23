@@ -46,7 +46,7 @@ methods::EnergyMethodOP
 YHHPlanarityEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new YHHPlanarityEnergy;
+	return methods::EnergyMethodOP( new YHHPlanarityEnergy );
 }
 
 ScoreTypes
@@ -67,7 +67,7 @@ YHHPlanarityEnergy::YHHPlanarityEnergy() :
 EnergyMethodOP
 YHHPlanarityEnergy::clone() const
 {
-	return new YHHPlanarityEnergy;
+	return EnergyMethodOP( new YHHPlanarityEnergy );
 }
 
 /////////////////////////////////////////////////////////////////////////////

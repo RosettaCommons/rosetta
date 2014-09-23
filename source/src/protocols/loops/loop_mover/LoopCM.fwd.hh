@@ -24,11 +24,11 @@ namespace loop_mover{
 // Forward
 class LoopCM;
 
-typedef utility::pointer::owning_ptr< LoopCM > LoopCMOP;
-typedef utility::pointer::owning_ptr< LoopCM const > LoopCMCOP;
+typedef utility::pointer::shared_ptr< LoopCM > LoopCMOP;
+typedef utility::pointer::shared_ptr< LoopCM const > LoopCMCOP;
 
-typedef utility::pointer::access_ptr< LoopCM > LoopCMAP;
-typedef utility::pointer::access_ptr< LoopCM const > LoopCMCAP;
+typedef utility::pointer::weak_ptr< LoopCM > LoopCMAP;
+typedef utility::pointer::weak_ptr< LoopCM const > LoopCMCAP;
 
 } //namespace loop_mover
 } //namespace loops

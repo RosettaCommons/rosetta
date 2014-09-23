@@ -29,7 +29,7 @@ namespace features {
 AtomTypesFeaturesCreator::AtomTypesFeaturesCreator() {}
 AtomTypesFeaturesCreator::~AtomTypesFeaturesCreator() {}
 FeaturesReporterOP AtomTypesFeaturesCreator::create_features_reporter() const {
-	return new AtomTypesFeatures;
+	return FeaturesReporterOP( new AtomTypesFeatures );
 }
 
 std::string AtomTypesFeaturesCreator::type_name() const {

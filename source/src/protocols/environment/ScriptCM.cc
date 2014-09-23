@@ -60,7 +60,7 @@ ScriptCMCreator::keyname() const {
 
 protocols::moves::MoverOP
 ScriptCMCreator::create_mover() const {
-  return new ScriptCM;
+  return protocols::moves::MoverOP( new ScriptCM );
 }
 
 std::string
@@ -71,11 +71,11 @@ ScriptCMCreator::mover_name() {
 ScriptCM::ScriptCM():
   ClaimingMover(),
   name_( NOT_SET ),
-  client_( NULL )
+  client_( /* NULL */ )
 {}
 
 void ScriptCM::passport_updated(){
-  core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap();
+  core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap() );
 
   if( has_passport() ){
     passport()->render_movemap( mm );
@@ -139,7 +139,7 @@ void ScriptCM::set_client( moves::MoverOP mover_in ) {
     throw utility::excn::EXCN_RosettaScriptsOption( "The ScriptCM '" + this->get_name() + "' cannot contain >1 client mover." );
   }
 
-  moves::MoveMapMoverOP mover_ptr = dynamic_cast< moves::MoveMapMover * >( mover_in.get() );
+  moves::MoveMapMoverOP mover_ptr = utility::pointer::dynamic_pointer_cast< moves::MoveMapMover > ( mover_in );
 
   if ( !mover_ptr ){
     throw utility::excn::EXCN_RosettaScriptsOption( "The "+mover_in->type()+" named '"+mover_in->get_name()+

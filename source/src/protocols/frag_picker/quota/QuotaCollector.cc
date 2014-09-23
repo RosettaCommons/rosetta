@@ -154,7 +154,7 @@ void QuotaCollector::attach_secondary_structure_pools(
 			if(n == 0)
 				trQuotaCollector.Debug << "Pool >"<<name<<"< for H would have size 0, not created"<<std::endl;
 			else {
-				SecondaryStructurePoolOP pool = new SecondaryStructurePool(n_candidates,name+":H",'H',components,weights,f,n_scores,buffer_factor);
+				SecondaryStructurePoolOP pool( new SecondaryStructurePool(n_candidates,name+":H",'H',components,weights,f,n_scores,buffer_factor) );
 				storage_[i].push_back( pool );
 			    if(trQuotaCollector.Trace.visible()) {
 				trQuotaCollector.Trace << "Pool >"<<name<<":E< added at query pos: "<<i<<" as number: "<<storage_[i].size()<<std::endl;
@@ -170,7 +170,7 @@ void QuotaCollector::attach_secondary_structure_pools(
 			if(n == 0)
 				trQuotaCollector.Debug << "Pool >"<<name<<"< for E would have size 0, not created"<<std::endl;
 			else {
-			    SecondaryStructurePoolOP pool = new SecondaryStructurePool(n_candidates,name+":E",'E',components,weights,f,n_scores,buffer_factor);
+			    SecondaryStructurePoolOP pool( new SecondaryStructurePool(n_candidates,name+":E",'E',components,weights,f,n_scores,buffer_factor) );
 			    storage_[i].push_back( pool );
 			    if(trQuotaCollector.Trace.visible()) {
 				trQuotaCollector.Trace << "Pool >"<<name<<":E< added at query pos: "<<i<<" as number: "<<storage_[i].size()<<std::endl;
@@ -186,7 +186,7 @@ void QuotaCollector::attach_secondary_structure_pools(
 			if(n == 0)
 				trQuotaCollector.Debug << "Pool >"<<name<<"< for L would have size 0, not created"<<std::endl;
 			else {
-				SecondaryStructurePoolOP pool = new SecondaryStructurePool(n_candidates,name+":L",'L',components,weights,f,n_scores,buffer_factor);
+				SecondaryStructurePoolOP pool( new SecondaryStructurePool(n_candidates,name+":L",'L',components,weights,f,n_scores,buffer_factor) );
 				storage_[i].push_back( pool );
 			    if(trQuotaCollector.Trace.visible()) {
 				trQuotaCollector.Trace << "Pool >"<<name<<":E< added at query pos: "<<i<<" as number: "<<storage_[i].size()<<std::endl;

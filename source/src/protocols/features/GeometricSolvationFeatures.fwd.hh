@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class GeometricSolvationFeatures;
-typedef utility::pointer::owning_ptr< GeometricSolvationFeatures > GeometricSolvationFeaturesOP;
-typedef utility::pointer::owning_ptr< GeometricSolvationFeatures const > GeometricSolvationFeaturesCOP;
+typedef utility::pointer::shared_ptr< GeometricSolvationFeatures > GeometricSolvationFeaturesOP;
+typedef utility::pointer::shared_ptr< GeometricSolvationFeatures const > GeometricSolvationFeaturesCOP;
 
 }//features
 }//protocols

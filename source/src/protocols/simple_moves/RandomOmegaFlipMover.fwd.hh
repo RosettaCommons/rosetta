@@ -22,8 +22,8 @@ namespace simple_moves{
 
 class RandomOmegaFlipMover;
 
-typedef utility::pointer::owning_ptr< RandomOmegaFlipMover > RandomOmegaFlipMoverOP;
-typedef utility::pointer::owning_ptr< RandomOmegaFlipMover const > RandomOmegaFlipMoverCOP;
+typedef utility::pointer::shared_ptr< RandomOmegaFlipMover > RandomOmegaFlipMoverOP;
+typedef utility::pointer::shared_ptr< RandomOmegaFlipMover const > RandomOmegaFlipMoverCOP;
 
 } // simple_moves
 } // protocols

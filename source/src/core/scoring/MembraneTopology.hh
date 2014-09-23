@@ -51,7 +51,7 @@ public:
 	basic::datacache::CacheableDataOP
 	clone() const
 	{
-		return new MembraneTopology( *this );
+		return basic::datacache::CacheableDataOP( new MembraneTopology( *this ) );
 	}
 	std::string
 	read_in_spanfile();

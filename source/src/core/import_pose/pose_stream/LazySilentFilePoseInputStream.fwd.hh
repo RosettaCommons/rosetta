@@ -21,7 +21,7 @@ namespace import_pose {
 namespace pose_stream {
 
 class LazySilentFilePoseInputStream;
-typedef utility::pointer::owning_ptr< LazySilentFilePoseInputStream > LazySilentFilePoseInputStreamOP;
+typedef utility::pointer::shared_ptr< LazySilentFilePoseInputStream > LazySilentFilePoseInputStreamOP;
 
 } // pose_input_stream
 } // import_pose

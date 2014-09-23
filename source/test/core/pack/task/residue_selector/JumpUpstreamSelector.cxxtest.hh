@@ -52,7 +52,7 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
-		ResidueSelectorOP jump_u_rs = new JumpUpstreamSelector;
+		ResidueSelectorOP jump_u_rs( new JumpUpstreamSelector );
 
 		try {
 			jump_u_rs->parse_my_tag( tag, dm );
@@ -82,7 +82,7 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
-		ResidueSelectorOP jump_u_rs = new JumpUpstreamSelector;
+		ResidueSelectorOP jump_u_rs( new JumpUpstreamSelector );
 		try {
 			jump_u_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); //parsing should fail!

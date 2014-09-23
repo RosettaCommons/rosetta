@@ -84,13 +84,13 @@ AtomInResidueAtomInResiduePairFeatures::write_atom_in_residue_pairs_table_schema
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt());
-	Column residue_type1("residue_type1", new DbText());
-	Column atom_type1("atom_type1", new DbText());
-	Column residue_type2("residue_type2", new DbText());
-	Column atom_type2("atom_type2", new DbText());
-	Column distance_bin("distance_bin", new DbText());
-	Column count("count", new DbInteger());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column residue_type1("residue_type1", DbDataTypeOP( new DbText() ));
+	Column atom_type1("atom_type1", DbDataTypeOP( new DbText() ));
+	Column residue_type2("residue_type2", DbDataTypeOP( new DbText() ));
+	Column atom_type2("atom_type2", DbDataTypeOP( new DbText() ));
+	Column distance_bin("distance_bin", DbDataTypeOP( new DbText() ));
+	Column count("count", DbDataTypeOP( new DbInteger() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -107,7 +107,7 @@ AtomInResidueAtomInResiduePairFeatures::write_atom_in_residue_pairs_table_schema
 	reference_columns.push_back("struct_id");
 	ForeignKey foreign_key(foreign_key_columns, "structures", reference_columns, true);
 
-	GreaterThanConstraintOP count_is_non_negative( new GreaterThanConstraint(count, 0));
+	GreaterThanConstraintOP count_is_non_negative( new GreaterThanConstraint(count, 0) );
 
 	Schema table("atom_in_residue_pairs", primary_key);
 	table.add_foreign_key(foreign_key);

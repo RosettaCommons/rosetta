@@ -26,17 +26,17 @@ namespace methods {
 
 class PoissonBoltzmannEnergy;
 
-typedef utility::pointer::owning_ptr< PoissonBoltzmannEnergy > PoissonBoltzmannEnergyOP;
-typedef utility::pointer::owning_ptr< PoissonBoltzmannEnergy const > PoissonBoltzmannEnergyCOP;
-typedef utility::pointer::access_ptr< PoissonBoltzmannEnergy > PoissonBoltzmannEnergyAP;
-typedef utility::pointer::access_ptr< PoissonBoltzmannEnergy const > PoissonBoltzmannEnergyCAP;
+typedef utility::pointer::shared_ptr< PoissonBoltzmannEnergy > PoissonBoltzmannEnergyOP;
+typedef utility::pointer::shared_ptr< PoissonBoltzmannEnergy const > PoissonBoltzmannEnergyCOP;
+typedef utility::pointer::weak_ptr< PoissonBoltzmannEnergy > PoissonBoltzmannEnergyAP;
+typedef utility::pointer::weak_ptr< PoissonBoltzmannEnergy const > PoissonBoltzmannEnergyCAP;
 
 class PBLifetimeCache;
 
-typedef utility::pointer::owning_ptr< PBLifetimeCache > PBLifetimeCacheOP;
-typedef utility::pointer::owning_ptr< PBLifetimeCache const > PBLifetimeCacheCOP;
-typedef utility::pointer::access_ptr< PBLifetimeCache > PBLifetimeCacheAP;
-typedef utility::pointer::access_ptr< PBLifetimeCache const > PBLifetimeCacheCAP;
+typedef utility::pointer::shared_ptr< PBLifetimeCache > PBLifetimeCacheOP;
+typedef utility::pointer::shared_ptr< PBLifetimeCache const > PBLifetimeCacheCOP;
+typedef utility::pointer::weak_ptr< PBLifetimeCache > PBLifetimeCacheAP;
+typedef utility::pointer::weak_ptr< PBLifetimeCache const > PBLifetimeCacheCAP;
 } // methods
 } // scoring
 } // core

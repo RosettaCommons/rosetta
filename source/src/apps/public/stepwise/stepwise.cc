@@ -105,7 +105,7 @@ protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 500
 
 
 	StepWiseMonteCarlo stepwise_monte_carlo( scorefxn );
-	protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsOP options = new protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptions;
+	protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsOP options( new protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptions );
 	bool const just_preminimize = option[ OptionKeys::stepwise::preminimize ]();
 	bool const test_move = option[ OptionKeys::stepwise::move ].user() || just_preminimize;
 	if ( test_move ) options->set_output_minimized_pose_list( true );

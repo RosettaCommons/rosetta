@@ -78,7 +78,7 @@ public:
 
 		// setup JobDistributor stuff
 		utility::vector1< BasicJobOP > input_jobs;
-		BasicJobOP job = new BasicJob("" /*no input tag*/, "test_job", nstruct);
+		BasicJobOP job( new BasicJob("" /*no input tag*/, "test_job", nstruct) );
 		input_jobs.push_back( job );
 		PlainSilentFileJobDistributor jobdist( input_jobs );
 		BasicJobOP curr_job;

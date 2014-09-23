@@ -21,8 +21,8 @@ namespace protocols {
 namespace comparative_modeling {
 
 class ThreadingJob;
-typedef utility::pointer::owning_ptr< ThreadingJob > ThreadingJobOP;
-typedef utility::pointer::owning_ptr< ThreadingJob const > ThreadingJobCOP;
+typedef utility::pointer::shared_ptr< ThreadingJob > ThreadingJobOP;
+typedef utility::pointer::shared_ptr< ThreadingJob const > ThreadingJobCOP;
 
 }//comparative_modeling
 }//protocols

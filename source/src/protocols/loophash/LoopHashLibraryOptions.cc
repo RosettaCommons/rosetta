@@ -34,7 +34,7 @@ LoopHashLibraryOptionsCreator::~LoopHashLibraryOptionsCreator() {}
 /// @details Return an owning pointer to a newly constructed default instance of LoopHashLibraryOptions.
 basic::resource_manager::ResourceOptionsOP
 LoopHashLibraryOptionsCreator::create_options() const {
-	return new LoopHashLibraryOptions;
+	return basic::resource_manager::ResourceOptionsOP( new LoopHashLibraryOptions );
 }
 
 /// @details Return a string specifying the type of %ResourceOptions to create (LoopHashLibraryOptions).

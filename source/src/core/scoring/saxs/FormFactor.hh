@@ -66,7 +66,7 @@ public:
 	void tabulate(const utility::vector1<Real> & q);
 private:
 	bool glob_flag_;
-	utility::pointer::owning_ptr< numeric::interpolation::spline::Interpolator > spline_interpolator_;
+	utility::pointer::shared_ptr< numeric::interpolation::spline::Interpolator > spline_interpolator_;
 	std::string name_;
 	mutable utility::vector1<Real> ff_values_;
 };

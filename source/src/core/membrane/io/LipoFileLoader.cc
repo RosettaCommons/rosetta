@@ -61,7 +61,7 @@ LipoFileLoader::create_resource(
 	using namespace core::membrane::io;
 
 	// Create and initialize a lipid object
-	LipidAccInfoOP lips_exp = new LipidAccInfo( locator_id );
+	LipidAccInfoOP lips_exp( new LipidAccInfo( locator_id ) );
 
 	// Cast generic options to lipofile opts
 	if ( ! dynamic_cast< LipoFileOptions const * > ( &options ) ) {
@@ -77,14 +77,14 @@ LipoFileLoader::create_resource(
 basic::resource_manager::ResourceOptionsOP
 LipoFileLoader::default_options() const
 {
-	return new LipoFileOptions;
+	return basic::resource_manager::ResourceOptionsOP( new LipoFileOptions );
 }
 
 /// @brief Return new resource loader for lipo file
 basic::resource_manager::ResourceLoaderOP
 LipoFileLoaderCreator::create_resource_loader() const
 {
-	return new LipoFileLoader();
+	return basic::resource_manager::ResourceLoaderOP( new LipoFileLoader() );
 }
 
 /// @brief Lipo File Loader Type

@@ -23,7 +23,7 @@ namespace methods {
 
 class UnfoldedStateEnergy;
 
-typedef utility::pointer::owning_ptr< UnfoldedStateEnergy > UnfoldedStateEnergyOP;
+typedef utility::pointer::shared_ptr< UnfoldedStateEnergy > UnfoldedStateEnergyOP;
 
 } // methods
 } // scoring

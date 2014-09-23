@@ -22,8 +22,8 @@ namespace scoring {
 
 class SecondaryStructurePotential;
 
-typedef utility::pointer::owning_ptr< SecondaryStructurePotential > SecondaryStructurePotentialOP;
-typedef utility::pointer::owning_ptr< SecondaryStructurePotential const > SecondaryStructurePotentialCOP;
+typedef utility::pointer::shared_ptr< SecondaryStructurePotential > SecondaryStructurePotentialOP;
+typedef utility::pointer::shared_ptr< SecondaryStructurePotential const > SecondaryStructurePotentialCOP;
 
 } // ns scoring
 } // ns core

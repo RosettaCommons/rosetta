@@ -47,7 +47,7 @@ methods::EnergyMethodOP
 FreeResidueBonusEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new FreeResidueBonusEnergy;
+	return methods::EnergyMethodOP( new FreeResidueBonusEnergy );
 }
 
 ScoreTypes
@@ -67,7 +67,7 @@ FreeResidueBonusEnergy::FreeResidueBonusEnergy() :
 methods::EnergyMethodOP
 FreeResidueBonusEnergy::clone() const
 {
-	return new FreeResidueBonusEnergy;
+	return methods::EnergyMethodOP( new FreeResidueBonusEnergy );
 }
 
 

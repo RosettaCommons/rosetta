@@ -146,7 +146,7 @@ FragQualFilter::parse_my_tag(
 }
 
 protocols::filters::FilterOP
-FragQualFilterCreator::create_filter() const { return new FragQualFilter; }
+FragQualFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FragQualFilter ); }
 
 std::string
 FragQualFilterCreator::keyname() const { return "FragQual"; }

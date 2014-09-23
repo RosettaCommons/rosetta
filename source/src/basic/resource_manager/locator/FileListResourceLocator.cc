@@ -36,7 +36,7 @@ FileListResourceLocatorCreator::~FileListResourceLocatorCreator(){}
 ResourceLocatorOP
 FileListResourceLocatorCreator::create_resource_locator() const
 {
-	return new FileListResourceLocator;
+	return ResourceLocatorOP( new FileListResourceLocator );
 }
 
 std::string
@@ -96,7 +96,7 @@ FileListResourceLocator::locate_resource_stream(std::string const & locator_tag)
 {
 	utility::vector1<std::string> path_vector(utility::string_split(locator_tag));
 
-	StringResourceStreamOP string_stream = new StringResourceStream;
+	StringResourceStreamOP string_stream( new StringResourceStream );
 
 	for ( utility::vector1<std::string>::const_iterator
 			path_it = path_vector.begin();

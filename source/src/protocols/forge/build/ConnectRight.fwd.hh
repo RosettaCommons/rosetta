@@ -29,19 +29,19 @@ class ConnectRight;
 
 
 /// @brief owning pointer for ConnectRight
-typedef utility::pointer::owning_ptr< ConnectRight > ConnectRightOP;
+typedef utility::pointer::shared_ptr< ConnectRight > ConnectRightOP;
 
 
 /// @brief owning pointer for const ConnectRight
-typedef utility::pointer::owning_ptr< ConnectRight const > ConnectRightCOP;
+typedef utility::pointer::shared_ptr< ConnectRight const > ConnectRightCOP;
 
 
 /// @brief access pointer for ConnectRight
-typedef utility::pointer::access_ptr< ConnectRight > ConnectRightAP;
+typedef utility::pointer::weak_ptr< ConnectRight > ConnectRightAP;
 
 
 /// @brief access pointer for const ConnectRight
-typedef utility::pointer::access_ptr< ConnectRight const > ConnectRightCAP;
+typedef utility::pointer::weak_ptr< ConnectRight const > ConnectRightCAP;
 
 
 } // namespace build

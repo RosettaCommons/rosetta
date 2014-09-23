@@ -24,7 +24,7 @@ namespace potentials {
 namespace sspot {
 
 class HSPairPotential;
-typedef utility::pointer::owning_ptr< HSPairPotential > HSPairPotentialOP;
+typedef utility::pointer::shared_ptr< HSPairPotential > HSPairPotentialOP;
 
 } // ns sspot
 } // ns potentials

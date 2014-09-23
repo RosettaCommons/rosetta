@@ -83,7 +83,7 @@ RNA_AnalyticLoopCloser::RNA_AnalyticLoopCloser ( Size const moving_suite, Size c
 
 /// @brief Clone this object
 protocols::moves::MoverOP RNA_AnalyticLoopCloser::clone() const {
-	return new RNA_AnalyticLoopCloser ( *this );
+	return protocols::moves::MoverOP( new RNA_AnalyticLoopCloser ( *this ) );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -392,7 +392,7 @@ RNA_AnalyticLoopCloser::get_all_solutions ( core::pose::Pose & pose,
 
 	for ( Size n = 1; n <= Size ( nsol_ ); n++ ) {
 		fill_solution ( pose, n );
-		core::pose::PoseOP pose_save = new Pose;
+		core::pose::PoseOP pose_save( new Pose );
 		*pose_save = pose;
 		pose_list.push_back ( pose_save );
 

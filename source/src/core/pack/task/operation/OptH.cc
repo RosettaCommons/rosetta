@@ -55,12 +55,12 @@ OptH::~OptH() {}
 
 TaskOperationOP OptHCreator::create_task_operation() const
 {
-	return new OptH;
+	return TaskOperationOP( new OptH );
 }
 
 /// @brief clone this object
 OptH::TaskOperationOP OptH::clone() const {
-	return new OptH( *this );
+	return OptH::TaskOperationOP( new OptH( *this ) );
 }
 
 

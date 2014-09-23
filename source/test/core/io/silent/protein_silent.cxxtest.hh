@@ -280,9 +280,7 @@ public:
 
 		for ( Size ii = 1; ii <= nstruct; ++ii ) {
 			std::string const tag( "S" + string_of(ii) );
-			SilentStructOP ss(
-				new ProteinSilentStruct( *start_pose, tag, false )
-			);
+			SilentStructOP ss( new ProteinSilentStruct( *start_pose, tag, false ) );
 			ss->add_energy( "score", ii );
 			sfd.add_structure( ss );
 		}
@@ -313,9 +311,7 @@ public:
 
 		for ( Size ii = 1; ii <= nstruct; ++ii ) {
 			std::string const tag( "S" + string_of(ii) );
-			SilentStructOP ss(
-				new ProteinSilentStruct( *start_pose, tag, false )
-			);
+			SilentStructOP ss( new ProteinSilentStruct( *start_pose, tag, false ) );
 			ss->add_energy( "score", ii );
 			sfd.add_structure( ss );
 		}
@@ -344,7 +340,7 @@ public:
 		TS_ASSERT( ss->has_energy( "short_key" ) );
 		TS_ASSERT_DELTA( ss->get_energy( "short_key" ), 0.0, 1e-5 );
 		// add checks for filling Pose here.
-		ss = new ProteinSilentStruct( *start_pose, "tag", false );
+		ss = SilentStructOP( new ProteinSilentStruct( *start_pose, "tag", false ) );
 
 		ss->add_comment( "comment", "tag" );
 		TS_ASSERT_EQUALS( ss->get_comment( "comment" ), "tag" );

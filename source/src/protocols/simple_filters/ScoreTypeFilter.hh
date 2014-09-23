@@ -41,10 +41,10 @@ public:
 	ScoreTypeFilter( core::scoring::ScoreFunctionCOP scorefxn, core::scoring::ScoreType const score_type, core::Real const score_type_threshold );
 	bool apply( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const {
-		return new ScoreTypeFilter( *this );
+		return filters::FilterOP( new ScoreTypeFilter( *this ) );
 	}
 	filters::FilterOP fresh_instance() const{
-		return new ScoreTypeFilter();
+		return filters::FilterOP( new ScoreTypeFilter() );
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;

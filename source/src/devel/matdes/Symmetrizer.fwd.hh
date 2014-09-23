@@ -20,8 +20,8 @@ namespace matdes {
 
 class Symmetrizer;
 
-typedef utility::pointer::owning_ptr< Symmetrizer > SymmetrizerOP;
-typedef utility::pointer::owning_ptr< Symmetrizer const > SymmetrizerCOP;
+typedef utility::pointer::shared_ptr< Symmetrizer > SymmetrizerOP;
+typedef utility::pointer::shared_ptr< Symmetrizer const > SymmetrizerCOP;
 
 
 } // matdes

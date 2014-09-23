@@ -48,7 +48,7 @@ public:
 
 		filename_ = "core/pack/dunbrack/1UBQ_repack.pdb";
 
-		scorefxn_ = new core::scoring::ScoreFunction;
+		scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
 		scorefxn_->set_weight(core::scoring::fa_dun, 1.0);
 		scorefxn_->set_weight(core::scoring::dunbrack_constraint, 0.000001); // Needed to turn on constraints
 

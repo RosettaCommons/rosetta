@@ -23,8 +23,8 @@ namespace core {
 namespace scoring {
 
 class ChemicalShiftAnisotropy;
-typedef utility::pointer::owning_ptr< ChemicalShiftAnisotropy > ChemicalShiftAnisotropyOP;
-typedef utility::pointer::owning_ptr< ChemicalShiftAnisotropy const > ChemicalShiftAnisotropyCOP;
+typedef utility::pointer::shared_ptr< ChemicalShiftAnisotropy > ChemicalShiftAnisotropyOP;
+typedef utility::pointer::shared_ptr< ChemicalShiftAnisotropy const > ChemicalShiftAnisotropyCOP;
 
 class CSA;
 

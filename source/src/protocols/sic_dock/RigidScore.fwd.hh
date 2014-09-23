@@ -16,20 +16,20 @@ namespace protocols {
 namespace sic_dock {
 
 class RigidScore;
-typedef utility::pointer::owning_ptr< RigidScore > RigidScoreOP;
-typedef utility::pointer::owning_ptr< RigidScore const > RigidScoreCOP;
+typedef utility::pointer::shared_ptr< RigidScore > RigidScoreOP;
+typedef utility::pointer::shared_ptr< RigidScore const > RigidScoreCOP;
 
 class CBScore;
-typedef utility::pointer::owning_ptr< CBScore > CBScoreOP;
-typedef utility::pointer::owning_ptr< CBScore const > CBScoreCOP;
+typedef utility::pointer::shared_ptr< CBScore > CBScoreOP;
+typedef utility::pointer::shared_ptr< CBScore const > CBScoreCOP;
 
 class LinkerScore;
-typedef utility::pointer::owning_ptr< LinkerScore > LinkerScoreOP;
-typedef utility::pointer::owning_ptr< LinkerScore const > LinkerScoreCOP;
+typedef utility::pointer::shared_ptr< LinkerScore > LinkerScoreOP;
+typedef utility::pointer::shared_ptr< LinkerScore const > LinkerScoreCOP;
 
 class ConstraintSetScore;
-typedef utility::pointer::owning_ptr< ConstraintSetScore > ConstraintSetScoreOP;
-typedef utility::pointer::owning_ptr< ConstraintSetScore const > ConstraintSetScoreCOP;
+typedef utility::pointer::shared_ptr< ConstraintSetScore > ConstraintSetScoreOP;
+typedef utility::pointer::shared_ptr< ConstraintSetScore const > ConstraintSetScoreCOP;
 
 // class EdgeStandScore;
 // typedef utility::pointer::owning_ptr< EdgeStandScore > EdgeStandScoreOP;
@@ -44,8 +44,8 @@ typedef utility::pointer::owning_ptr< ConstraintSetScore const > ConstraintSetSc
 // typedef utility::pointer::owning_ptr< BuriedPolarScore const > BuriedPolarScoreCOP;
 
 class JointScore;
-typedef utility::pointer::owning_ptr< JointScore > JointScoreOP;
-typedef utility::pointer::owning_ptr< JointScore const > JointScoreCOP;
+typedef utility::pointer::shared_ptr< JointScore > JointScoreOP;
+typedef utility::pointer::shared_ptr< JointScore const > JointScoreCOP;
 
 // class CachedScore;
 // typedef utility::pointer::owning_ptr< CachedScore > CachedScoreOP;

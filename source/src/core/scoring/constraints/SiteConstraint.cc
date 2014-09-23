@@ -121,7 +121,7 @@ SiteConstraint::setup_csts(
     for (Size j = start_res ; j < end_res ; ++j ) {
                 id::AtomID atom2( pose.residue_type( j ).atom_index( "CA" ), j );
                 runtime_assert( target_atom.valid() && atom2.valid() );
-                add_individual_constraint( new AtomPairConstraint( target_atom, atom2, func ) );
+                add_individual_constraint( ConstraintCOP( new AtomPairConstraint( target_atom, atom2, func ) ) );
     }
 
 } // setup_csts

@@ -18,8 +18,8 @@ namespace utilities {
 
 class LoopFilter;
 
-typedef utility::pointer::owning_ptr<LoopFilter> LoopFilterOP;
-typedef utility::pointer::owning_ptr<LoopFilter const> LoopFilterCOP;
+typedef utility::pointer::shared_ptr<LoopFilter> LoopFilterOP;
+typedef utility::pointer::shared_ptr<LoopFilter const> LoopFilterCOP;
 
 }
 }

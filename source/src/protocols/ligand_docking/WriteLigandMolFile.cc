@@ -47,7 +47,7 @@ WriteLigandMolFileCreator::keyname() const
 
 protocols::moves::MoverOP
 WriteLigandMolFileCreator::create_mover() const {
-	return new WriteLigandMolFile;
+	return protocols::moves::MoverOP( new WriteLigandMolFile );
 }
 
 std::string
@@ -77,12 +77,12 @@ WriteLigandMolFile::WriteLigandMolFile(WriteLigandMolFile const & that) :
 
 protocols::moves::MoverOP WriteLigandMolFile::clone() const
 {
-	return new WriteLigandMolFile(*this);
+	return protocols::moves::MoverOP( new WriteLigandMolFile(*this) );
 }
 
 protocols::moves::MoverOP WriteLigandMolFile::fresh_instance() const
 {
-	return new WriteLigandMolFile;
+	return protocols::moves::MoverOP( new WriteLigandMolFile );
 }
 
 std::string WriteLigandMolFile::get_name() const

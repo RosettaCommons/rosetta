@@ -51,8 +51,8 @@ public:
 
 	// @brief make sure that when we register a residue selector, we can later get it back
 	void test_disable_odd_residues_init_by_ctor() {
-		ResidueSelectorOP odd_rs = new OddResidueSelector;
-		ResLvlTaskOperationOP prev_repacking = new PreventRepackingRLT;
+		ResidueSelectorOP odd_rs( new OddResidueSelector );
+		ResLvlTaskOperationOP prev_repacking( new PreventRepackingRLT );
 		OperateOnResidueSubset op_on_subset( prev_repacking, odd_rs );
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
@@ -65,8 +65,8 @@ public:
 	}
 
 	void test_disable_odd_residues_init_w_functions() {
-		ResidueSelectorOP odd_rs = new OddResidueSelector;
-		ResLvlTaskOperationOP prev_repacking = new PreventRepackingRLT;
+		ResidueSelectorOP odd_rs( new OddResidueSelector );
+		ResLvlTaskOperationOP prev_repacking( new PreventRepackingRLT );
 		OperateOnResidueSubset op_on_subset;
 		op_on_subset.op( prev_repacking );
 		op_on_subset.selector( odd_rs );
@@ -87,7 +87,7 @@ public:
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
-		ResidueSelectorOP odd_rs = new OddResidueSelector;
+		ResidueSelectorOP odd_rs( new OddResidueSelector );
 
 		dm.add( "ResidueSelector", "odd", odd_rs );
 

@@ -29,7 +29,7 @@ namespace factory {
 template< class FACTORY, class CREATOR >
 class WidgetRegistrator
 {
-	typedef utility::pointer::owning_ptr< CREATOR > CREATOROP;
+	typedef utility::pointer::shared_ptr< CREATOR > CREATOROP;
 
 public:
 

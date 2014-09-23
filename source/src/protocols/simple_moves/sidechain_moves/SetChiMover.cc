@@ -50,7 +50,7 @@ SetChiMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 SetChiMoverCreator::create_mover() const {
-	return new SetChiMover;
+	return protocols::moves::MoverOP( new SetChiMover );
 }
 
 std::string

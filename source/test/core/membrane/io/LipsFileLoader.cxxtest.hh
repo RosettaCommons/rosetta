@@ -92,7 +92,7 @@ public: // test methods
         TS_ASSERT( lips_exp );
         
         // Cast to type
-        LipidAccInfoOP lpptr1 = dynamic_cast< LipidAccInfo * > ( lips_exp () );
+        LipidAccInfoOP lpptr1 = utility::pointer::dynamic_pointer_cast< core::conformation::membrane::LipidAccInfo > ( lips_exp  );
         
         // Check non null (typechecking)
         TS_ASSERT( lpptr1 );
@@ -139,7 +139,7 @@ public: // test methods
         TS_ASSERT( lipids );
         
         // Cast to type
-        LipidAccInfoOP lpptr1 = dynamic_cast< LipidAccInfo * > ( lipids () );
+        LipidAccInfoOP lpptr1 = utility::pointer::dynamic_pointer_cast< core::conformation::membrane::LipidAccInfo > ( lipids  );
         
         // Check non null (typechecking)
         TS_ASSERT( lpptr1 );

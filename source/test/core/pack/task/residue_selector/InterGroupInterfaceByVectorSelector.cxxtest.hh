@@ -86,7 +86,7 @@ public:
 	/// @brief make sure the igibv selector properly identifies the interface residues in test_in.pdb
 	/// where the interface is between the two groups grp1= 49-69 and grp2= 95-116 both on chain A.
 	void test_interface_vector_selector_from_std_set_on_test_in_pdb() {
-		InterGroupInterfaceByVectorSelectorOP igibv_rs = new InterGroupInterfaceByVectorSelector;
+		InterGroupInterfaceByVectorSelectorOP igibv_rs( new InterGroupInterfaceByVectorSelector );
 
 		two_sets both_sets = two_test_in_groups();
 
@@ -108,10 +108,10 @@ public:
 	/// @brief make sure the igibv selector properly identifies the interface residues in test_in.pdb
 	/// where the interface is between the two groups grp1= 49-69 and grp2= 95-116 both on chain A.
 	void test_interface_vector_selector_from_resselector_on_test_in_pdb() {
-		InterGroupInterfaceByVectorSelectorOP igibv_rs = new InterGroupInterfaceByVectorSelector;
+		InterGroupInterfaceByVectorSelectorOP igibv_rs( new InterGroupInterfaceByVectorSelector );
 
-		igibv_rs->group1_selector( new ResRangeSelector( 1, 20 ) );
-		igibv_rs->group2_selector( new ResRangeSelector( 45, 66 ) );
+		igibv_rs->group1_selector( ResidueSelectorCOP( new ResRangeSelector( 1, 20 ) ) );
+		igibv_rs->group2_selector( ResidueSelectorCOP( new ResRangeSelector( 45, 66 ) ) );
 
 		core::pose::Pose pose = create_test_in_pdb_pose();
 		ResidueSubset subset( pose.total_residue(), false );
@@ -132,12 +132,12 @@ public:
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
-		ResidueSelectorOP range1_rs = new ResRangeSelector( 1, 20 );
-		ResidueSelectorOP range2_rs = new ResRangeSelector( 45, 66 );
+		ResidueSelectorOP range1_rs( new ResRangeSelector( 1, 20 ) );
+		ResidueSelectorOP range2_rs( new ResRangeSelector( 45, 66 ) );
 		dm.add( "ResidueSelector", "res1to20", range1_rs );
 		dm.add( "ResidueSelector", "res45to66", range2_rs );
 
-		ResidueSelectorOP igibv_rs = new InterGroupInterfaceByVectorSelector;
+		ResidueSelectorOP igibv_rs( new InterGroupInterfaceByVectorSelector );
 		try {
 			igibv_rs->parse_my_tag( tag, dm );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -166,12 +166,12 @@ public:
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
-		ResidueSelectorOP range1_rs = new ResRangeSelector( 1, 20 );
-		ResidueSelectorOP range2_rs = new ResRangeSelector( 45, 66 );
+		ResidueSelectorOP range1_rs( new ResRangeSelector( 1, 20 ) );
+		ResidueSelectorOP range2_rs( new ResRangeSelector( 45, 66 ) );
 		dm.add( "ResidueSelector", "res1to20", range1_rs );
 		dm.add( "ResidueSelector", "res45to66", range2_rs );
 
-		ResidueSelectorOP igibv_rs = new InterGroupInterfaceByVectorSelector;
+		ResidueSelectorOP igibv_rs( new InterGroupInterfaceByVectorSelector );
 		try {
 			igibv_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should not succeed
@@ -190,12 +190,12 @@ public:
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
-		ResidueSelectorOP range1_rs = new ResRangeSelector( 1, 20 );
-		ResidueSelectorOP range2_rs = new ResRangeSelector( 45, 66 );
+		ResidueSelectorOP range1_rs( new ResRangeSelector( 1, 20 ) );
+		ResidueSelectorOP range2_rs( new ResRangeSelector( 45, 66 ) );
 		dm.add( "ResidueSelector", "res1to20", range1_rs );
 		dm.add( "ResidueSelector", "res45to66", range2_rs );
 
-		ResidueSelectorOP igibv_rs = new InterGroupInterfaceByVectorSelector;
+		ResidueSelectorOP igibv_rs( new InterGroupInterfaceByVectorSelector );
 		try {
 			igibv_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should not succeed
@@ -216,7 +216,7 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
-		ResidueSelectorOP igibv_rs = new InterGroupInterfaceByVectorSelector;
+		ResidueSelectorOP igibv_rs( new InterGroupInterfaceByVectorSelector );
 		try {
 			igibv_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should not succeed
@@ -238,7 +238,7 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 	
-		ResidueSelectorOP igibv_rs = new InterGroupInterfaceByVectorSelector;
+		ResidueSelectorOP igibv_rs( new InterGroupInterfaceByVectorSelector );
 		try {
 			igibv_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should not succeed

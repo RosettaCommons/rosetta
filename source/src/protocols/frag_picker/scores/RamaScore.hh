@@ -32,8 +32,8 @@ namespace scores {
 
 
 class RamaScore;
-typedef utility::pointer::owning_ptr< RamaScore > RamaScoreOP;
-typedef utility::pointer::owning_ptr< RamaScore const > RamaScoreCOP;
+typedef utility::pointer::shared_ptr< RamaScore > RamaScoreOP;
+typedef utility::pointer::shared_ptr< RamaScore const > RamaScoreCOP;
 
 /// @brief  RamaScore score counts identical residues
 /// @detailed Resulting score is the number of identical residues
@@ -88,7 +88,7 @@ public:
 			FragmentPickerOP picker, std::string prediction_id ) {
 
 		if ( prediction_id == "" ) {
-			core::fragment::SecondaryStructureOP default_ss = new core::fragment::SecondaryStructure;
+			core::fragment::SecondaryStructureOP default_ss( new core::fragment::SecondaryStructure );
 			Size query_len = picker->get_query_seq_string().size();
 			default_ss->extend( query_len );
 			for ( Size i = 1; i <= query_len; ++i ) {
@@ -97,8 +97,8 @@ public:
 
 			//			std::cout << "CO_PREDICTION_ID " << prediction_id << std::endl;
 			std::string default_prediction_name("uniform_default");
-			return (FragmentScoringMethodOP) new RamaScore(priority,
-				lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), default_ss,default_prediction_name);
+			return (FragmentScoringMethodOP) FragmentScoringMethodOP( new RamaScore(priority,
+				lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), default_ss,default_prediction_name) );
 		} else {
 
 			//std::cout << "PREDICTION_ID " << prediction_id << std::endl;
@@ -106,8 +106,8 @@ public:
 			if( ! query_prediction ) {
 				utility_exit_with_message( "Unable to find secondary structure prediction for " + prediction_id );
 			}
-			return (FragmentScoringMethodOP) new RamaScore(priority,
-				lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), query_prediction,prediction_id);
+			return (FragmentScoringMethodOP) FragmentScoringMethodOP( new RamaScore(priority,
+				lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), query_prediction,prediction_id) );
 		}
 	}
 };

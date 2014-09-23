@@ -60,7 +60,7 @@ public:
 		core_init();
 		core::import_pose::pose_from_pdb(ab_pose, "protocols/antibody/2j88.pdb");
 
-		ab_info = new AntibodyInfo(ab_pose, AHO_Scheme, North);
+		ab_info = AntibodyInfoOP( new AntibodyInfo(ab_pose, AHO_Scheme, North) );
 		ab_info->setup_CDR_clusters(ab_pose);
 
 
@@ -76,8 +76,8 @@ public:
 		utility::file::file_delete(database_filename);
 		utility::sql_database::sessionOP db_session = basic::database::get_db_session(database_filename);
 
-		StructureFeaturesOP structure_reporter = new StructureFeatures();
-		FeaturesReporterOP ab_cluster_reporter = new CDRClusterFeatures();
+		StructureFeaturesOP structure_reporter( new StructureFeatures() );
+		FeaturesReporterOP ab_cluster_reporter( new CDRClusterFeatures() );
 
 		structure_reporter->write_schema_to_db(db_session);
 		TS_ASSERT_THROWS_NOTHING(ab_cluster_reporter->write_schema_to_db(db_session));

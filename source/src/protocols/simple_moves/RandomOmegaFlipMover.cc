@@ -50,7 +50,7 @@ namespace simple_moves {
 
 RandomOmegaFlipMover::RandomOmegaFlipMover() :
 	Mover("RandomOmegaFlipMover"),
-	move_map_( 0 )
+	move_map_( /* 0 */ )
 {}
 
 RandomOmegaFlipMover::RandomOmegaFlipMover( core::kinematics::MoveMapOP move_map ) :
@@ -60,7 +60,7 @@ RandomOmegaFlipMover::RandomOmegaFlipMover( core::kinematics::MoveMapOP move_map
 
 RandomOmegaFlipMover::RandomOmegaFlipMover( RandomOmegaFlipMover const & other ) :
 	Mover("RandomOmegaFlipMover"),
-	move_map_( new core::kinematics::MoveMap( *other.move_map_ ) )
+	move_map_( core::kinematics::MoveMapOP( new core::kinematics::MoveMap( *other.move_map_ ) ) )
 {}
 
 RandomOmegaFlipMover::~RandomOmegaFlipMover(){}
@@ -130,13 +130,13 @@ RandomOmegaFlipMover::setup_torsion_list( core::pose::Pose & pose )
 protocols::moves::MoverOP
 RandomOmegaFlipMover::clone() const
 {
-	return new protocols::simple_moves::RandomOmegaFlipMover( *this );
+	return protocols::moves::MoverOP( new protocols::simple_moves::RandomOmegaFlipMover( *this ) );
 }
 
 protocols::moves::MoverOP
 RandomOmegaFlipMover::fresh_instance() const
 {
-	return new protocols::simple_moves::RandomOmegaFlipMover();
+	return protocols::moves::MoverOP( new protocols::simple_moves::RandomOmegaFlipMover() );
 }
 
 void
@@ -147,7 +147,7 @@ RandomOmegaFlipMover::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & pose )
 {
-	if ( !move_map_ ) move_map_ = new core::kinematics::MoveMap();
+	if ( !move_map_ ) move_map_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
 	protocols::rosetta_scripts::parse_movemap( tag, pose, move_map_, data, false );
 }
 
@@ -163,7 +163,7 @@ std::string RandomOmegaFlipMoverCreator::keyname() const {
 
 /// @brief RandomOmegaFlipMoverCreator interface, return a new instance
 protocols::moves::MoverOP RandomOmegaFlipMoverCreator::create_mover() const {
-  return new RandomOmegaFlipMover();
+  return protocols::moves::MoverOP( new RandomOmegaFlipMover() );
 }
 
 

@@ -24,8 +24,8 @@ namespace scmin {
 
 class SCMinMinimizerMap;
 
-typedef utility::pointer::owning_ptr< SCMinMinimizerMap >       SCMinMinimizerMapOP;
-typedef utility::pointer::owning_ptr< SCMinMinimizerMap const > SCMinMinimizerMapCOP;
+typedef utility::pointer::shared_ptr< SCMinMinimizerMap >       SCMinMinimizerMapOP;
+typedef utility::pointer::shared_ptr< SCMinMinimizerMap const > SCMinMinimizerMapCOP;
 
 } // namespace scmin
 } // namespace pack

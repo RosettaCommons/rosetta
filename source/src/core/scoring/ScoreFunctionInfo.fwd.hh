@@ -23,8 +23,8 @@ namespace scoring {
 
 class ScoreFunctionInfo;
 
-typedef utility::pointer::owning_ptr< ScoreFunctionInfo > ScoreFunctionInfoOP;
-typedef utility::pointer::owning_ptr< ScoreFunctionInfo const > ScoreFunctionInfoCOP;
+typedef utility::pointer::shared_ptr< ScoreFunctionInfo > ScoreFunctionInfoOP;
+typedef utility::pointer::shared_ptr< ScoreFunctionInfo const > ScoreFunctionInfoCOP;
 
 
 }

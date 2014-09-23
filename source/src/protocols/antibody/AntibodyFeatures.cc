@@ -119,7 +119,7 @@ AntibodyFeatures::report_features(
 		utility::sql_database::sessionOP db_session) {
 	
 	if (! ab_info_){
-		ab_info_ = new AntibodyInfo(pose);
+		ab_info_ = AntibodyInfoOP( new AntibodyInfo(pose) );
 	}
 	
 	std::map<std::string, std::string > db_interfaces;
@@ -197,7 +197,7 @@ AntibodyFeatures::report_features(
 	
 	//We need zero values for interface_data and interface_data_res or we need to get data
 	if (! have_interface_data){
-		protocols::analysis::InterfaceAnalyzerMoverOP IAM = new protocols::analysis::InterfaceAnalyzerMover(match_interface_type, true, scorefxn_, compute_packstat_, pack_together_, pack_separated_);
+		protocols::analysis::InterfaceAnalyzerMoverOP IAM( new protocols::analysis::InterfaceAnalyzerMover(match_interface_type, true, scorefxn_, compute_packstat_, pack_together_, pack_separated_) );
 		if (! skip_antigen_reports_){
 			IAM->init_on_new_input(pose); //Zeros and initializes all values so we can use this as zero.
 			interface_data_ = IAM->get_all_data();
@@ -262,22 +262,22 @@ AntibodyFeatures::write_ab_metrics_schema_to_db(utility::sql_database::sessionOP
 	
 	
 	
-	Column struct_id("struct_id", new DbBigInt());
-	Column num_scheme("numbering_scheme", new DbText());
-	Column cdr_def("cdr_definition", new DbText());
-	Column cdr_res("cdr_residues", new DbInteger());
-	Column vl_vh_pack("VL_VH_packing_angle", new DbReal());
-	Column vl_vh_distance("VL_VH_distance", new DbReal());
-	Column vl_vh_open("VL_VH_opening_angle", new DbReal());
-	Column vl_vh_opp("VL_VH_opposite_opening_angle", new DbReal());
-	Column antigen_present("antigen_present", new DbInteger());
-	Column antigen_chains("antigen_chains", new DbText());
-	Column antigen_charge("net_charge", new DbInteger());
-	Column paratope_charge("paratope_charge", new DbInteger());
-	Column paratope_SASA("paratope_SASA", new DbReal());
-	Column paratope_hSASA("paratope_hSASA", new DbReal());
-	Column paratope_pSASA("paratope_pSASA", new DbReal());
-	Column is_camelid("is_camelid", new DbInteger());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column num_scheme("numbering_scheme", DbDataTypeOP( new DbText() ));
+	Column cdr_def("cdr_definition", DbDataTypeOP( new DbText() ));
+	Column cdr_res("cdr_residues", DbDataTypeOP( new DbInteger() ));
+	Column vl_vh_pack("VL_VH_packing_angle", DbDataTypeOP( new DbReal() ));
+	Column vl_vh_distance("VL_VH_distance", DbDataTypeOP( new DbReal() ));
+	Column vl_vh_open("VL_VH_opening_angle", DbDataTypeOP( new DbReal() ));
+	Column vl_vh_opp("VL_VH_opposite_opening_angle", DbDataTypeOP( new DbReal() ));
+	Column antigen_present("antigen_present", DbDataTypeOP( new DbInteger() ));
+	Column antigen_chains("antigen_chains", DbDataTypeOP( new DbText() ));
+	Column antigen_charge("net_charge", DbDataTypeOP( new DbInteger() ));
+	Column paratope_charge("paratope_charge", DbDataTypeOP( new DbInteger() ));
+	Column paratope_SASA("paratope_SASA", DbDataTypeOP( new DbReal() ));
+	Column paratope_hSASA("paratope_hSASA", DbDataTypeOP( new DbReal() ));
+	Column paratope_pSASA("paratope_pSASA", DbDataTypeOP( new DbReal() ));
+	Column is_camelid("is_camelid", DbDataTypeOP( new DbInteger() ));
 	
 
 	PrimaryKey primary_key(struct_id);
@@ -383,25 +383,25 @@ AntibodyFeatures::write_cdr_metrics_schema_to_db(utility::sql_database::sessionO
 	using namespace basic::database::schema_generator;
 	
 	
-	Column struct_id("struct_id", new DbBigInt());
-	Column cdr("CDR", new DbText());
-	Column length("length", new DbInteger());
-	Column start("start", new DbInteger());
-	Column end("end", new DbInteger());
-	Column ag_contact("ag_ab_contacts_total", new DbInteger());
-	Column ag_contact_res("ag_ab_contacts_nres", new DbInteger());
-	Column ag_ab_dsasa("ag_ab_dSASA", new DbReal());
-	Column ag_ab_dsasa_sc("ag_ab_dSASA_sc", new DbReal());
-	Column ag_ab_dhsasa("ag_ab_dhSASA", new DbReal());
-	Column ag_ab_dhsasa_sc("ag_ab_dhSASA_sc", new DbReal());
-	Column ag_ab_dhsasa_rel("ag_ab_dhSASA_rel_by_charge", new DbReal());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column cdr("CDR", DbDataTypeOP( new DbText() ));
+	Column length("length", DbDataTypeOP( new DbInteger() ));
+	Column start("start", DbDataTypeOP( new DbInteger() ));
+	Column end("end", DbDataTypeOP( new DbInteger() ));
+	Column ag_contact("ag_ab_contacts_total", DbDataTypeOP( new DbInteger() ));
+	Column ag_contact_res("ag_ab_contacts_nres", DbDataTypeOP( new DbInteger() ));
+	Column ag_ab_dsasa("ag_ab_dSASA", DbDataTypeOP( new DbReal() ));
+	Column ag_ab_dsasa_sc("ag_ab_dSASA_sc", DbDataTypeOP( new DbReal() ));
+	Column ag_ab_dhsasa("ag_ab_dhSASA", DbDataTypeOP( new DbReal() ));
+	Column ag_ab_dhsasa_sc("ag_ab_dhSASA_sc", DbDataTypeOP( new DbReal() ));
+	Column ag_ab_dhsasa_rel("ag_ab_dhSASA_rel_by_charge", DbDataTypeOP( new DbReal() ));
 	
-	Column SASA("SASA", new DbReal());
-	Column energy("energy", new DbReal());
-	Column charge("charge", new DbInteger());
-	Column dG("ag_ab_dG", new DbReal());
-	Column anchor_dis("anchor_CN_distance", new DbReal());
-	Column aromatic_nres("aromatic_nres", new DbReal());
+	Column SASA("SASA", DbDataTypeOP( new DbReal() ));
+	Column energy("energy", DbDataTypeOP( new DbReal() ));
+	Column charge("charge", DbDataTypeOP( new DbInteger() ));
+	Column dG("ag_ab_dG", DbDataTypeOP( new DbReal() ));
+	Column anchor_dis("anchor_CN_distance", DbDataTypeOP( new DbReal() ));
+	Column aromatic_nres("aromatic_nres", DbDataTypeOP( new DbReal() ));
 
 	Columns primary_keys;
 	primary_keys.push_back(struct_id);
@@ -495,11 +495,11 @@ void
 AntibodyFeatures::write_cdr_residue_schema_to_db(utility::sql_database::sessionOP db_session) const {
 	using namespace basic::database::schema_generator;
 	
-	Column struct_id("struct_id", new DbBigInt());
-	Column resnum("resNum", new DbInteger());
-	Column cdr("CDR", new DbText());
-	Column cdr_position("position", new DbInteger());
-	Column ag_contacts("ag_contacts", new DbInteger());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column resnum("resNum", DbDataTypeOP( new DbInteger() ));
+	Column cdr("CDR", DbDataTypeOP( new DbText() ));
+	Column cdr_position("position", DbDataTypeOP( new DbInteger() ));
+	Column ag_contacts("ag_contacts", DbDataTypeOP( new DbInteger() ));
 	
 	Columns primary_keys;
 	primary_keys.push_back(struct_id);
@@ -579,17 +579,17 @@ void
 AntibodyFeatures::write_ab_H3_kink_metrics_schema_to_db(utility::sql_database::sessionOP db_session) const {
 	using namespace basic::database::schema_generator;
 	
-	Column struct_id("struct_id", new DbBigInt());
-	Column H3_kink("kink_type", new DbText());
-	Column kink_begin("begin", new DbInteger());
-	Column kink_end("end", new DbInteger());
-	Column anion_res("anion_res", new DbInteger());
-	Column cation_res("cation_res", new DbInteger());
-	Column kink_Rd("RD_Hbond_dis", new DbReal());
-	Column kink_bb("bb_Hbond_dis", new DbReal());
-	Column kink_trp("Trp_Hbond_dis", new DbReal());
-	Column qdis("qdis", new DbReal());
-	Column qdih("qdih", new DbReal());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column H3_kink("kink_type", DbDataTypeOP( new DbText() ));
+	Column kink_begin("begin", DbDataTypeOP( new DbInteger() ));
+	Column kink_end("end", DbDataTypeOP( new DbInteger() ));
+	Column anion_res("anion_res", DbDataTypeOP( new DbInteger() ));
+	Column cation_res("cation_res", DbDataTypeOP( new DbInteger() ));
+	Column kink_Rd("RD_Hbond_dis", DbDataTypeOP( new DbReal() ));
+	Column kink_bb("bb_Hbond_dis", DbDataTypeOP( new DbReal() ));
+	Column kink_trp("Trp_Hbond_dis", DbDataTypeOP( new DbReal() ));
+	Column qdis("qdis", DbDataTypeOP( new DbReal() ));
+	Column qdih("qdih", DbDataTypeOP( new DbReal() ));
 
 	PrimaryKey primary(struct_id);
 	ForeignKey foreign_key(struct_id, "structures", "struct_id", true);
@@ -708,7 +708,7 @@ AntibodyFeatures::parse_my_tag(
 		CDRDefinitionEnum definition = manager.cdr_definition_string_to_enum(tag->getOption<std::string>("cdr_definition"));
 		AntibodyNumberingSchemeEnum scheme = manager.numbering_scheme_string_to_enum(tag->getOption<std::string>("numbering_scheme"));
 		
-		ab_info_ = new AntibodyInfo(pose, scheme, definition);
+		ab_info_ = AntibodyInfoOP( new AntibodyInfo(pose, scheme, definition) );
 		
 	}
 	else if(tag->hasOption("cdr_definition") || tag->hasOption("numbering_scheme")){

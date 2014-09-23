@@ -189,13 +189,13 @@ MPFoldingMover::~MPFoldingMover() {}
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 MPFoldingMover::clone() const {
-	return ( new MPFoldingMover( *this ) );
+	return ( protocols::moves::MoverOP( new MPFoldingMover( *this ) ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 MPFoldingMover::fresh_instance() const {
-	return new MPFoldingMover();
+	return protocols::moves::MoverOP( new MPFoldingMover() );
 }
 
 /////////////////////
@@ -241,7 +241,7 @@ MPFoldingMover::apply( Pose & pose ) {
 	make_pose_from_sequence( pose, seq, "centroid" );
 	
 	// create topology from spanfile
-	SpanningTopologyOP topo = new SpanningTopology( spanfile_name() );
+	SpanningTopologyOP topo( new SpanningTopology( spanfile_name() ) );
 
 	
 	// create ideal helices from SSEs
@@ -320,7 +320,7 @@ std::string read_spanfile(){
 
 ////////////////////////////////////////////////////////////////////////////////
 
-typedef utility::pointer::owning_ptr< MPFoldingMover > MPFoldingMoverOP;
+typedef utility::pointer::shared_ptr< MPFoldingMover > MPFoldingMoverOP;
 
 /////////////////////////////////////// MAIN ///////////////////////////////////
 
@@ -335,7 +335,7 @@ main( int argc, char * argv [] )
 		devel::init(argc, argv);
 		//protocols::init(argc, argv);
 		
-		MPFoldingMoverOP mpfm = new MPFoldingMover();
+		MPFoldingMoverOP mpfm( new MPFoldingMover() );
 		JobDistributor::get_instance()->go(mpfm);
 	}
 	catch ( utility::excn::EXCN_Base const & e ) {

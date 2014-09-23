@@ -45,9 +45,9 @@ static thread_local basic::Tracer TR( "protocols.protein_interface_design.filter
 ///@brief default ctor
 BindingStrainFilter::BindingStrainFilter() :
 	parent( "BindingStrain" ),
-	task_factory_( NULL ),
-	scorefxn_( NULL ),
-	relax_mover_( NULL ),
+	task_factory_( /* NULL */ ),
+	scorefxn_( /* NULL */ ),
+	relax_mover_( /* NULL */ ),
 	jump_( 1 ),
 	threshold_( 3.0 )
 {}
@@ -121,9 +121,9 @@ BindingStrainFilter::compute( core::pose::Pose const & p ) const{
 
   protocols::simple_moves::PackRotamersMoverOP prm;
   if( core::pose::symmetry::is_symmetric( pose ) )
-    prm =  new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), pack );
+    prm = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), pack ) );
   else
-    prm = new protocols::simple_moves::PackRotamersMover( scorefxn(), pack );
+    prm = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( scorefxn(), pack ) );
   prm->apply( pose );
 	core::Real const energy_after_pack( stf.compute( pose ) );
 	return( energy_before_pack - energy_after_pack );
@@ -162,18 +162,18 @@ BindingStrainFilter::parse_my_tag( utility::tag::TagCOP tag,
 
 protocols::filters::FilterOP
 BindingStrainFilter::fresh_instance() const{
-	return new BindingStrainFilter();
+	return protocols::filters::FilterOP( new BindingStrainFilter() );
 }
 
 BindingStrainFilter::~BindingStrainFilter(){}
 
 protocols::filters::FilterOP
 BindingStrainFilter::clone() const{
-	return new BindingStrainFilter( *this );
+	return protocols::filters::FilterOP( new BindingStrainFilter( *this ) );
 }
 
 protocols::filters::FilterOP
-BindingStrainFilterCreator::create_filter() const { return new BindingStrainFilter; }
+BindingStrainFilterCreator::create_filter() const { return protocols::filters::FilterOP( new BindingStrainFilter ); }
 
 std::string
 BindingStrainFilterCreator::keyname() const { return "BindingStrain"; }

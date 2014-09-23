@@ -67,7 +67,7 @@ methods::EnergyMethodOP
 CustomAtomPairEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & opts
 ) const {
-	return new CustomAtomPairEnergy( opts.cst_max_seq_sep() );
+	return methods::EnergyMethodOP( new CustomAtomPairEnergy( opts.cst_max_seq_sep() ) );
 }
 
 ScoreTypes
@@ -86,7 +86,7 @@ CustomAtomPairEnergy::CustomAtomPairEnergy( Size const max_cst_seq_sep ) :
 EnergyMethodOP
 CustomAtomPairEnergy::clone() const
 {
-	return new CustomAtomPairEnergy(max_cst_seq_sep_);
+	return EnergyMethodOP( new CustomAtomPairEnergy(max_cst_seq_sep_) );
 }
 
 ///

@@ -63,7 +63,7 @@ public:
 	CoordConstraintClaimer( std::string pdb_file );
 
 	virtual TopologyClaimerOP clone() const {
-		return new CoordConstraintClaimer( *this );
+		return TopologyClaimerOP( new CoordConstraintClaimer( *this ) );
 	}
 
 	virtual void generate_claims( claims::DofClaims& );

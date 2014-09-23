@@ -94,7 +94,7 @@ namespace protocols {
 namespace loop_modeling {
 
 MoverOP LoopModelerCreator::create_mover() const { // {{{1
-	return new LoopModeler;
+	return MoverOP( new LoopModeler );
 }
 
 string LoopModelerCreator::keyname() const { // {{{1
@@ -105,9 +105,9 @@ string LoopModelerCreator::keyname() const { // {{{1
 LoopModeler::LoopModeler() { // {{{1
 	dont_manage_score_function();
 
-	build_stage_ = utility::pointer::static_pointer_cast< LoopBuilder >( register_nested_loop_mover( LoopMoverOP(new LoopBuilder) ) );
-	centroid_stage_ = utility::pointer::static_pointer_cast< LoopProtocol >( register_nested_loop_mover( LoopMoverOP(new LoopProtocol) ) );
-	fullatom_stage_ = utility::pointer::static_pointer_cast< LoopProtocol >( register_nested_loop_mover( LoopMoverOP(new LoopProtocol) ) );
+	build_stage_ = utility::pointer::static_pointer_cast< LoopBuilder >( register_nested_loop_mover( LoopMoverOP( new LoopBuilder ) ) );
+	centroid_stage_ = utility::pointer::static_pointer_cast< LoopProtocol >( register_nested_loop_mover( LoopMoverOP( new LoopProtocol ) ) );
+	fullatom_stage_ = utility::pointer::static_pointer_cast< LoopProtocol >( register_nested_loop_mover( LoopMoverOP( new LoopProtocol ) ) );
 
 	is_build_stage_enabled_ = true;
 	is_centroid_stage_enabled_ = true;
@@ -263,10 +263,10 @@ void LoopModeler::convert_to_fullatom(Pose & pose, Pose & original_pose) { // {{
 
 	pose.conformation().detect_disulfides();
 
-	TaskFactoryOP task_factory = new TaskFactory;
-	task_factory->push_back(new InitializeFromCommandline);
-	task_factory->push_back(new RestrictToRepacking);
-	task_factory->push_back(new NoRepackDisulfides);
+	TaskFactoryOP task_factory( new TaskFactory );
+	task_factory->push_back(TaskOperationCOP( new InitializeFromCommandline ));
+	task_factory->push_back(TaskOperationCOP( new RestrictToRepacking ));
+	task_factory->push_back(TaskOperationCOP( new NoRepackDisulfides ));
 
 	PackerTaskOP task = task_factory->create_task_and_apply_taskoperations(pose);
 	make_residue_mask_symmetric(pose, residues_to_repack);
@@ -293,12 +293,12 @@ void LoopModeler::convert_to_fullatom(Pose & pose, Pose & original_pose) { // {{
 	ScoreFunctionCOP fa_score_function = fullatom_stage_->get_score_function();
 
 	if (is_symmetric(pose)) {
-		packer = new SymPackRotamersMover(fa_score_function, task);
-		minimizer = new SymAtomTreeMinimizer;
+		packer = PackRotamersMoverOP( new SymPackRotamersMover(fa_score_function, task) );
+		minimizer = AtomTreeMinimizerOP( new SymAtomTreeMinimizer );
 		make_symmetric_movemap(pose, move_map);
 	} else {
-		packer = new PackRotamersMover(fa_score_function, task);
-		minimizer = new AtomTreeMinimizer;
+		packer = PackRotamersMoverOP( new PackRotamersMover(fa_score_function, task) );
+		minimizer = AtomTreeMinimizerOP( new AtomTreeMinimizer );
 	}
 
 	packer->apply(pose);
@@ -330,12 +330,12 @@ void LoopModeler::setup_kic_config() { // {{{1
 
 	setup_empty_config();
 
-	add_shared_mover(new KicMover);
+	add_shared_mover(LoopMoverOP( new KicMover ));
 
-	centroid_stage_->add_refiner(new MinimizationRefiner);
-	fullatom_stage_->add_refiner(new PeriodicMover(LoopMoverOP( new RepackingRefiner ), 20));
-	fullatom_stage_->add_refiner(new RotamerTrialsRefiner);
-	fullatom_stage_->add_refiner(new MinimizationRefiner);
+	centroid_stage_->add_refiner(LoopMoverOP( new MinimizationRefiner ));
+	fullatom_stage_->add_refiner(LoopMoverOP( new PeriodicMover(LoopMoverOP( new RepackingRefiner ), 20) ));
+	fullatom_stage_->add_refiner(LoopMoverOP( new RotamerTrialsRefiner ));
+	fullatom_stage_->add_refiner(LoopMoverOP( new MinimizationRefiner ));
 
 	mark_as_default();
 }

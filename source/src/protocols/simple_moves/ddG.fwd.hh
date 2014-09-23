@@ -22,8 +22,8 @@ namespace simple_moves {
 
 class ddG;
 
-typedef utility::pointer::owning_ptr< ddG > ddGOP;
-typedef utility::pointer::owning_ptr< ddG const > ddGCOP;
+typedef utility::pointer::shared_ptr< ddG > ddGOP;
+typedef utility::pointer::shared_ptr< ddG const > ddGCOP;
 
 } //movers
 } //protocols

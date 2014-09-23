@@ -59,7 +59,7 @@ void InterfaceBuilderLoader::load_data(
 			continue;
 		}
 		///// Add this movemap to the data map
-		protocols::ligand_docking::InterfaceBuilderOP interface_builder= new protocols::ligand_docking::InterfaceBuilder();
+		protocols::ligand_docking::InterfaceBuilderOP interface_builder( new protocols::ligand_docking::InterfaceBuilder() );
 		interface_builder->parse_my_tag( interface_builder_tag, data );
 		data.add( "interface_builders" , name, interface_builder);
 	}
@@ -67,7 +67,7 @@ void InterfaceBuilderLoader::load_data(
 }
 
 jd2::parser::DataLoaderOP
-InterfaceBuilderLoaderCreator::create_loader() const { return new InterfaceBuilderLoader; }
+InterfaceBuilderLoaderCreator::create_loader() const { return jd2::parser::DataLoaderOP( new InterfaceBuilderLoader ); }
 
 std::string
 InterfaceBuilderLoaderCreator::keyname() const { return "INTERFACE_BUILDERS"; }
@@ -92,7 +92,7 @@ void MoveMapBuilderLoader::load_data(
 			continue;
 		}
 		///// Add this movemap to the data map
-		protocols::ligand_docking::MoveMapBuilderOP movemap_builder= new protocols::ligand_docking::MoveMapBuilder();
+		protocols::ligand_docking::MoveMapBuilderOP movemap_builder( new protocols::ligand_docking::MoveMapBuilder() );
 		movemap_builder->parse_my_tag( movemap_builder_tag, data );
 		data.add( "movemap_builders" , name, movemap_builder);
 	}
@@ -100,7 +100,7 @@ void MoveMapBuilderLoader::load_data(
 }
 
 jd2::parser::DataLoaderOP
-MoveMapBuilderLoaderCreator::create_loader() const { return new MoveMapBuilderLoader; }
+MoveMapBuilderLoaderCreator::create_loader() const { return jd2::parser::DataLoaderOP( new MoveMapBuilderLoader ); }
 
 std::string
 MoveMapBuilderLoaderCreator::keyname() const { return "MOVEMAP_BUILDERS"; }
@@ -125,7 +125,7 @@ void LigandAreaLoader::load_data(
 			continue;
 		}
 		///// Add this movemap to the data map
-		protocols::ligand_docking::LigandAreaOP ligand_area= new protocols::ligand_docking::LigandArea();
+		protocols::ligand_docking::LigandAreaOP ligand_area( new protocols::ligand_docking::LigandArea() );
 		ligand_area->parse_my_tag( ligand_area_tag );
 		data.add( "ligand_areas" , name, ligand_area);
 	}
@@ -133,7 +133,7 @@ void LigandAreaLoader::load_data(
 }
 
 jd2::parser::DataLoaderOP
-LigandAreaLoaderCreator::create_loader() const { return new LigandAreaLoader; }
+LigandAreaLoaderCreator::create_loader() const { return jd2::parser::DataLoaderOP( new LigandAreaLoader ); }
 
 std::string
 LigandAreaLoaderCreator::keyname() const { return "LIGAND_AREAS"; }

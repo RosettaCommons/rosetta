@@ -153,7 +153,7 @@ void ClashBasedRepackShellSelector::apply( core::pose::Pose const & pose, Residu
 	assert( subset.size() == pose.total_residue() );
 	std::fill( subset.begin(), subset.end(), false );
 	
-	core::pose::PoseOP mypose = new core::pose::Pose(pose);
+	core::pose::PoseOP mypose( new core::pose::Pose(pose) );
 	
 	// determine design positions based on the packer task
 	std::set<core::Size> design_shell;
@@ -237,7 +237,7 @@ core::Real ClashBasedRepackShellSelector::get_bump_overlap_factor() const { retu
 
 ResidueSelectorOP
 ClashBasedRepackShellSelectorCreator::create_residue_selector() const {
-	return new ClashBasedRepackShellSelector;
+	return ResidueSelectorOP( new ClashBasedRepackShellSelector );
 }
 
 std::string

@@ -170,8 +170,8 @@ String ResidueInformation::resid() const {
 
 ///////////////////////////////////////////////////////////////////////////////
 FileData::FileData() :
-		header(0),
-		remarks(new pose::Remarks)
+		header(/* 0 */),
+		remarks(pose::RemarksOP( new pose::Remarks ))
 {}
 
 FileData::~FileData()
@@ -182,7 +182,7 @@ FileData::~FileData()
 /// @details prepare the HeaderInformation data structure;
 void
 FileData::initialize_header_information() {
-	header = new HeaderInformation();
+	header = HeaderInformationOP( new HeaderInformation() );
 }
 
 HeaderInformationOP
@@ -502,9 +502,9 @@ FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions const & 
 	if( (options.preserve_header() == true || options.preserve_crystinfo() == true ) && pose.pdb_info() ) {
 		*remarks = pose.pdb_info()->remarks();  // Get OP to PDBInfo object for remarks.
 		if(pose.pdb_info()->header_information()){
-			header = new HeaderInformation(*(pose.pdb_info()->header_information()));
+			header = HeaderInformationOP( new HeaderInformation(*(pose.pdb_info()->header_information())) );
 		} else {
-			header = new HeaderInformation();
+			header = HeaderInformationOP( new HeaderInformation() );
 		}
 	}
 

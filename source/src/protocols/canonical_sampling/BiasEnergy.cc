@@ -39,8 +39,8 @@ namespace canonical_sampling {
 using namespace core;
 
 BiasEnergy::BiasEnergy() :
-	bias_grid_( NULL ),
-	count_grid_( NULL ),
+	bias_grid_( /* NULL */ ),
+	count_grid_( /* NULL */ ),
 	step_counter_( 0 ),
 	stride_ ( 1 ),
 	omega_ ( 1.0 ),
@@ -50,8 +50,8 @@ BiasEnergy::BiasEnergy() :
 { }
 
 BiasEnergy::BiasEnergy( core::Size stride, core::Real omega, core::Real gamma ) :
-	bias_grid_( NULL ),
-	count_grid_( NULL ),
+	bias_grid_( /* NULL */ ),
+	count_grid_( /* NULL */ ),
 	step_counter_( 0 ),
 	stride_ ( stride ),
 	omega_ ( omega ),
@@ -66,7 +66,9 @@ BiasEnergy::~BiasEnergy() {
 		// before the current_job is.
 		// Should be now OK with proper weak pointers: if BiasEnergy is not longer valid,
 		// the AP lock will fail and the output observer will not be called... but not seg fault expected.
-		protocols::jd2::JobDistributor::get_instance()->current_job()->remove_output_observer( get_self_weak_ptr() );
+		protocols::jd2::JobDistributor::get_instance()->current_job()->remove_output_observer(
+			utility::pointer::dynamic_pointer_cast< protocols::jd2::JobOutputterObserver >( get_self_ptr() )
+		);
 	}
 }
 
@@ -97,7 +99,9 @@ void BiasEnergy::initialize_simulation(
 ) {
 	runtime_assert( bias_grid_ != 0 );
 	if ( protocols::jd2::jd2_used() ) {
-		protocols::jd2::JobDistributor::get_instance()->current_job()->add_output_observer( get_self_weak_ptr() );
+		protocols::jd2::JobDistributor::get_instance()->current_job()->add_output_observer(
+			utility::pointer::dynamic_pointer_cast< protocols::jd2::JobOutputterObserver >( get_self_ptr() )
+		);
 	}
 	bias_grid_->reset();
 	count_grid_->reset();
@@ -173,8 +177,8 @@ BiasEnergy::parse_my_tag(
 	core::Real const grid_min( tag->getOption< core::Real >( "wte_grid_min", -10 ) );
 	core::Real const grid_max( tag->getOption< core::Real >( "wte_grid_max", 1000 ) );
 	core::Size const grid_size( tag->getOption< core::Size >( "wte_grid_size", 100 ) );
-	bias_grid_ = new Histogram<float>( grid_min, grid_max, grid_size );
-	count_grid_ = new Histogram<int>( grid_min, grid_max, grid_size );
+	bias_grid_ = HistogramFloatOP( new Histogram<float>( grid_min, grid_max, grid_size ) );
+	count_grid_ = HistogramIntOP( new Histogram<int>( grid_min, grid_max, grid_size ) );
 	grid_output_file_ = tag->getOption< std::string >( "wte_output", "wte_bias.grid" );
 }
 	///ntrials

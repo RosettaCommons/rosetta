@@ -80,10 +80,10 @@ public:// virtual constructor
 
 
 	// @brief make clone
-	virtual FilterOP clone() const { return new ParallelBetaPairingPreferenceFilter( *this ); }
+	virtual FilterOP clone() const { return FilterOP( new ParallelBetaPairingPreferenceFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const {	return new ParallelBetaPairingPreferenceFilter(); }
+	virtual FilterOP fresh_instance() const {	return FilterOP( new ParallelBetaPairingPreferenceFilter() ); }
 
 
 public:// set filter value

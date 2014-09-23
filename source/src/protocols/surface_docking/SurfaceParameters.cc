@@ -75,7 +75,7 @@ SurfaceParameters::SurfaceParameters( SurfaceParameters const & src ):
 	
 SurfaceParametersOP SurfaceParameters::clone() const
 	{
-		return new SurfaceParameters( *this );
+		return SurfaceParametersOP( new SurfaceParameters( *this ) );
 	}
 
 SurfaceParameters::~SurfaceParameters(){}

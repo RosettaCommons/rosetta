@@ -22,8 +22,8 @@ namespace pack {
 namespace interaction_graph {
 
 class FASTERInteractionGraph;
-typedef utility::pointer::owning_ptr< FASTERInteractionGraph > FASTERInteractionGraphOP;
-typedef utility::pointer::owning_ptr< FASTERInteractionGraph const > FASTERInteractionGraphCOP;
+typedef utility::pointer::shared_ptr< FASTERInteractionGraph > FASTERInteractionGraphOP;
+typedef utility::pointer::shared_ptr< FASTERInteractionGraph const > FASTERInteractionGraphCOP;
 
 } // namespace interaction_graph
 } // namespace pack

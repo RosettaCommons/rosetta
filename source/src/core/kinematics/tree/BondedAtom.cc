@@ -301,7 +301,7 @@ AtomOP
 BondedAtom::clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const
 {
 
-	BondedAtomOP new_me = new BondedAtom( *this );
+	BondedAtomOP new_me( new BondedAtom( *this ) );
 
 	atom_pointer[ id() ] = new_me; // handles memory management
 

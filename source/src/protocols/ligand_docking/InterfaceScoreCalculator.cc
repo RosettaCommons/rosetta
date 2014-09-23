@@ -58,7 +58,7 @@ InterfaceScoreCalculatorCreator::keyname() const
 
 protocols::moves::MoverOP
 InterfaceScoreCalculatorCreator::create_mover() const {
-	return new InterfaceScoreCalculator;
+	return protocols::moves::MoverOP( new InterfaceScoreCalculator );
 }
 
 std::string
@@ -71,9 +71,9 @@ InterfaceScoreCalculatorCreator::mover_name()
 InterfaceScoreCalculator::InterfaceScoreCalculator():
 		Mover("InterfaceScoreCalculator"),
 		chains_(),
-		native_(NULL),
-		score_fxn_(NULL),
-		normalization_function_(NULL),
+		native_(/* NULL */),
+		score_fxn_(/* NULL */),
+		normalization_function_(/* NULL */),
 		compute_grid_scores_(true),
 		prefix_("")
 {}
@@ -92,11 +92,11 @@ InterfaceScoreCalculator::InterfaceScoreCalculator(InterfaceScoreCalculator cons
 InterfaceScoreCalculator::~InterfaceScoreCalculator() {}
 
 protocols::moves::MoverOP InterfaceScoreCalculator::clone() const {
-	return new InterfaceScoreCalculator( *this );
+	return protocols::moves::MoverOP( new InterfaceScoreCalculator( *this ) );
 }
 
 protocols::moves::MoverOP InterfaceScoreCalculator::fresh_instance() const {
-	return new InterfaceScoreCalculator;
+	return protocols::moves::MoverOP( new InterfaceScoreCalculator );
 }
 
 std::string InterfaceScoreCalculator::get_name() const{
@@ -136,7 +136,7 @@ InterfaceScoreCalculator::parse_my_tag(
 	/// Score Function ///
 	if ( ! tag->hasOption("scorefxn") ) throw utility::excn::EXCN_RosettaScriptsOption("'HighResDocker' requires 'scorefxn' tag");
 	std::string scorefxn_name= tag->getOption<std::string>("scorefxn");
-	score_fxn_= datamap.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name);
+	score_fxn_= datamap.get_ptr<core::scoring::ScoreFunction>( "scorefxns", scorefxn_name);
 	assert(score_fxn_);
 
 	if (tag->hasOption("native") ){
@@ -144,12 +144,12 @@ InterfaceScoreCalculator::parse_my_tag(
 		utility::vector1<std::string> natives_strs= utility::string_split(native_str, ',');
 		std::string natives_str = utility::join(natives_strs, " ");
 
-		native_ = new core::pose::Pose;
+		native_ = core::pose::PoseOP( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*native_, natives_str);
 	}
 	else if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user()){
 		std::string const & native_str= basic::options::option[ basic::options::OptionKeys::in::file::native ]().name();
-		native_ = new core::pose::Pose;
+		native_ = core::pose::PoseOP( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*native_, native_str);
 	}
 	if(tag->hasOption("normalize")) {
@@ -169,7 +169,7 @@ void InterfaceScoreCalculator::apply(core::pose::Pose & pose) {
 	if(string_string_pairs.find("native_path") != string_string_pairs.end())
 	{
 		std::string native_string(string_string_pairs.find("native_path")->second);
-		native_ = new core::pose::Pose;
+		native_ = core::pose::PoseOP( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*native_,native_string);
 	}
 	add_scores_to_job(pose, job);

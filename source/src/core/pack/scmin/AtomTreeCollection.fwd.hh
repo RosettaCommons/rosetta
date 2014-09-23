@@ -22,18 +22,18 @@ namespace pack {
 namespace scmin {
 
 class ResidueAtomTreeCollectionMomento;
-typedef utility::pointer::owning_ptr< ResidueAtomTreeCollectionMomento > ResidueAtomTreeCollectionMomentoOP;
-typedef utility::pointer::owning_ptr< ResidueAtomTreeCollectionMomento const > ResidueAtomTreeCollectionMomentoCOP;
+typedef utility::pointer::shared_ptr< ResidueAtomTreeCollectionMomento > ResidueAtomTreeCollectionMomentoOP;
+typedef utility::pointer::shared_ptr< ResidueAtomTreeCollectionMomento const > ResidueAtomTreeCollectionMomentoCOP;
 
 class ResidueAtomTreeCollection;
 
-typedef utility::pointer::owning_ptr< ResidueAtomTreeCollection > ResidueAtomTreeCollectionOP;
-typedef utility::pointer::owning_ptr< ResidueAtomTreeCollection const > ResidueAtomTreeCollectionCOP;
+typedef utility::pointer::shared_ptr< ResidueAtomTreeCollection > ResidueAtomTreeCollectionOP;
+typedef utility::pointer::shared_ptr< ResidueAtomTreeCollection const > ResidueAtomTreeCollectionCOP;
 
 class AtomTreeCollection;
 
-typedef utility::pointer::owning_ptr< AtomTreeCollection > AtomTreeCollectionOP;
-typedef utility::pointer::owning_ptr< AtomTreeCollection const > AtomTreeCollectionCOP;
+typedef utility::pointer::shared_ptr< AtomTreeCollection > AtomTreeCollectionOP;
+typedef utility::pointer::shared_ptr< AtomTreeCollection const > AtomTreeCollectionCOP;
 
 } // namespace scmin
 } // namespace pack

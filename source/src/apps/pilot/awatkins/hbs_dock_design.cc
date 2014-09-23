@@ -185,8 +185,8 @@ class HbsDockDesignMinimizeMover : public Mover {
 
 };
 
-typedef utility::pointer::owning_ptr< HbsDockDesignMinimizeMover > HbsDockDesignMinimizeMoverOP;
-typedef utility::pointer::owning_ptr< HbsDockDesignMinimizeMover const > HbsDockDesignMinimizeMoverCOP;
+typedef utility::pointer::shared_ptr< HbsDockDesignMinimizeMover > HbsDockDesignMinimizeMoverOP;
+typedef utility::pointer::shared_ptr< HbsDockDesignMinimizeMover const > HbsDockDesignMinimizeMoverCOP;
 
 
 int
@@ -392,8 +392,8 @@ HbsDockDesignMinimizeMover::apply(
 	using core::pack::task::operation::TaskOperationCOP;
 	
 	// create a task factory and task operations
-	TaskFactoryOP pert_tf(new TaskFactory());
-	pert_tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
+	TaskFactoryOP pert_tf( new TaskFactory() );
+	pert_tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 
 	operation::ReadResfileOP pert_rrop( new operation::ReadResfile() );
 	pert_rrop->default_filename();
@@ -406,7 +406,7 @@ HbsDockDesignMinimizeMover::apply(
 	//pert_tf->push_back( pert_rtio );
 
 	// create a rotamer trials mover
-	simple_moves::RotamerTrialsMoverOP pert_rt(new simple_moves::EnergyCutRotamerTrialsMover( pert_score_fxn, pert_tf, pert_mc, 0.1 /*energycut*/ ) );
+	simple_moves::RotamerTrialsMoverOP pert_rt( new simple_moves::EnergyCutRotamerTrialsMover( pert_score_fxn, pert_tf, pert_mc, 0.1 /*energycut*/ ) );
 
 	/*********************************************************
 	Common Setup
@@ -435,7 +435,7 @@ HbsDockDesignMinimizeMover::apply(
 
 	// create a task factory and task operations
 	TaskFactoryOP desn_tf( new TaskFactory() );
-	desn_tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
+	desn_tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 
 	operation::ReadResfileOP desn_rrop( new operation::ReadResfile() );
 	desn_rrop->default_filename();
@@ -470,7 +470,7 @@ HbsDockDesignMinimizeMover::apply(
 	//definitely want sidechain minimization here
 	using protocols::simple_moves::TaskAwareMinMoverOP;
 	using protocols::simple_moves::TaskAwareMinMover;
-	TaskAwareMinMoverOP desn_ta_min = new TaskAwareMinMover( desn_min, desn_tf );
+	TaskAwareMinMoverOP desn_ta_min( new TaskAwareMinMover( desn_min, desn_tf ) );
 
 	/*********************************************************
 	Common Setup
@@ -623,8 +623,8 @@ if( option[ hddm::pymol ].value() )
 	Pose repack_stats_pose( stats_pose );
 
 	//kdrew: probably should repack and minimize here after separation
-	TaskFactoryOP tf(new TaskFactory());
-	tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
+	TaskFactoryOP tf( new TaskFactory() );
+	tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 	//kdrew: do not do design, makes NATAA if res file is not specified
 	operation::RestrictToRepackingOP rtrp( new operation::RestrictToRepacking() );
 	tf->push_back( rtrp );

@@ -88,9 +88,9 @@ GeometricSolvationFeatures::write_geometric_solvation_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt());
-	Column hbond_site_id("hbond_site_id", new DbInteger());
-	Column geometric_solvation_exact("geometric_solvation_exact", new DbReal());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column hbond_site_id("hbond_site_id", DbDataTypeOP( new DbInteger() ));
+	Column geometric_solvation_exact("geometric_solvation_exact", DbDataTypeOP( new DbReal() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);

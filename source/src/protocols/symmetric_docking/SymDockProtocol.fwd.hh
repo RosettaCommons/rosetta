@@ -22,8 +22,8 @@ namespace symmetric_docking {
 
 
 class SymDockProtocol; // fwd declaration
-typedef utility::pointer::owning_ptr< SymDockProtocol > SymDockProtocolOP;
-typedef utility::pointer::owning_ptr< SymDockProtocol const > SymDockProtocolCOP;
+typedef utility::pointer::shared_ptr< SymDockProtocol > SymDockProtocolOP;
+typedef utility::pointer::shared_ptr< SymDockProtocol const > SymDockProtocolCOP;
 
 
 } // namespace symmetric_docking

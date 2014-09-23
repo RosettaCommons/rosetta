@@ -104,14 +104,14 @@ canonical_sampling_main(){
 
   core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
   //protocols::canonical_sampling::CanonicalSamplingMoverOP csm(new protocols::canonical_sampling::CanonicalSamplingMover(sfxn,pool_ptr,1000));
-	protocols::canonical_sampling::CanonicalSamplingMoverOP csm(new CanonicalSamplingMover);
+	protocols::canonical_sampling::CanonicalSamplingMoverOP csm( new CanonicalSamplingMover );
 		csm->set_scorefunction(sfxn);
 
 	if( !use_fast_sc_moves ){
 		//setup sidechain mover
-		protocols::simple_moves::sidechain_moves::SidechainMoverOP scm(new protocols::simple_moves::sidechain_moves::SidechainMover());
-		TaskFactoryOP main_task_factory = new TaskFactory;
-		operation::RestrictToRepackingOP rtrop = new operation::RestrictToRepacking;
+		protocols::simple_moves::sidechain_moves::SidechainMoverOP scm( new protocols::simple_moves::sidechain_moves::SidechainMover() );
+		TaskFactoryOP main_task_factory( new TaskFactory );
+		operation::RestrictToRepackingOP rtrop( new operation::RestrictToRepacking );
 		main_task_factory->push_back( rtrop );
 		main_task_factory->push_back( operation::TaskOperationOP( new operation::ReadResfile ) );
 		scm->set_task_factory(main_task_factory);
@@ -130,9 +130,9 @@ canonical_sampling_main(){
 		csm->add_mover(scm,options::option[options::OptionKeys::canonical_sampling::probabilities::sc]);
 	}else{
 		//setup sidechain mover
-		protocols::simple_moves::sidechain_moves::SidechainMCMoverOP scm(new protocols::simple_moves::sidechain_moves::SidechainMCMover());
-		TaskFactoryOP main_task_factory = new TaskFactory;
-		operation::RestrictToRepackingOP rtrop = new operation::RestrictToRepacking;
+		protocols::simple_moves::sidechain_moves::SidechainMCMoverOP scm( new protocols::simple_moves::sidechain_moves::SidechainMCMover() );
+		TaskFactoryOP main_task_factory( new TaskFactory );
+		operation::RestrictToRepackingOP rtrop( new operation::RestrictToRepacking );
 		main_task_factory->push_back( rtrop );
 		scm->set_temperature( csm->get_temp() );
 		scm->set_scorefunction(  *sfxn );
@@ -148,14 +148,14 @@ canonical_sampling_main(){
 
 	}
 	//add move-map to bbg-mover
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	if( options::option[in::file::movemap].user() ){
 		movemap->init_from_file(options::option[in::file::movemap]);
 	}else{
 		movemap->set_bb( true );
 		movemap->set_chi( true );
 	}
-	simple_moves::BBG8T3AMoverOP bbg8t3mover = new simple_moves::BBG8T3AMover();
+	simple_moves::BBG8T3AMoverOP bbg8t3mover( new simple_moves::BBG8T3AMover() );
 	bbg8t3mover->movemap(movemap);
 	tr << "probability of executing bbg move: " << (options::option[options::OptionKeys::canonical_sampling::probabilities::localbb]*
 																									(1-options::option[options::OptionKeys::canonical_sampling::probabilities::backrub]-options::option[options::OptionKeys::canonical_sampling::probabilities::conrot]())) << std::endl;
@@ -164,7 +164,7 @@ canonical_sampling_main(){
 
 	//setup conrot mover
 	if( options::option[options::OptionKeys::canonical_sampling::probabilities::conrot]() > 0 ) {
-		simple_moves::BBConRotMoverOP conrotmover = new simple_moves::BBConRotMover();
+		simple_moves::BBConRotMoverOP conrotmover( new simple_moves::BBConRotMover() );
 		conrotmover->movemap( movemap );
 		csm->add_mover( conrotmover, options::option[options::OptionKeys::canonical_sampling::probabilities::localbb]*options::option[options::OptionKeys::canonical_sampling::probabilities::conrot]());
 	}
@@ -172,7 +172,7 @@ canonical_sampling_main(){
 
 	//setup backrub mover
 	if( options::option[options::OptionKeys::canonical_sampling::probabilities::backrub]() > 0 ) {
-		protocols::backrub::BackrubMoverOP backrubmover = new protocols::backrub::BackrubMover;
+		protocols::backrub::BackrubMoverOP backrubmover( new protocols::backrub::BackrubMover );
 		core::scoring::methods::EnergyMethodOptions energymethodoptions(sfxn->energy_method_options());
     if (energymethodoptions.bond_angle_residue_type_param_set()) {
       backrubmover->branchopt().bond_angle_residue_type_param_set(energymethodoptions.bond_angle_residue_type_param_set());
@@ -190,8 +190,7 @@ canonical_sampling_main(){
 
 	tr.Info << "using regular pool-rmsd" << std::endl;
 	//protocols::jd2::JobDistributor* jd2 = protocols::jd2::JobDistributor::get_instance();
-	mc_convergence_checks::Pool_RMSD_OP pool_ptr =
-		new mc_convergence_checks::Pool_RMSD(options::option[mc::known_structures]);
+	mc_convergence_checks::Pool_RMSD_OP pool_ptr( new mc_convergence_checks::Pool_RMSD(options::option[mc::known_structures]) );
 	csm->set_poolrmsd(pool_ptr);
 	if( no_jd2_output ) {
 		protocols::jd2::JobDistributor::get_instance()->go( csm, protocols::jd2::JobOutputterOP( new protocols::jd2::NoOutputJobOutputter ) );

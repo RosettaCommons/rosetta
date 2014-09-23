@@ -26,8 +26,8 @@ namespace import_pose {
 
 class ImportPoseOptions;
 
-typedef utility::pointer::owning_ptr< ImportPoseOptions > ImportPoseOptionsOP;
-typedef utility::pointer::owning_ptr< ImportPoseOptions const > ImportPoseOptionsCOP;
+typedef utility::pointer::shared_ptr< ImportPoseOptions > ImportPoseOptionsOP;
+typedef utility::pointer::shared_ptr< ImportPoseOptions const > ImportPoseOptionsCOP;
 
 } // namespace import_pose
 } // namespace core

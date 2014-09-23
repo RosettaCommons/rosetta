@@ -43,7 +43,7 @@ RandomGenerator & rg()
 	// If you want thread saftety mechanisms but don't want to use C++11 (foldit?) then
 	// you'll want to edit this logic.
 	if ( random_generator == 0 ) {
-		random_generator = new RandomGenerator;
+		random_generator = RandomGeneratorOP( new RandomGenerator );
 	}
 	return *random_generator;
 }
@@ -59,9 +59,9 @@ using namespace std;
 uniform_RG_OP
 createRG(string const & type )
 {
-	if( type == "standard" ) return new standard_RG();
+	if( type == "standard" ) return uniform_RG_OP( new standard_RG() );
 	//if( type == "ran3" ) return new ran3_RG();
-	if( type == "mt19937" ) return new mt19937_RG();
+	if( type == "mt19937" ) return uniform_RG_OP( new mt19937_RG() );
 
 	utility_exit_with_message("Unknown random number generator type: " + type);
 	return 0;

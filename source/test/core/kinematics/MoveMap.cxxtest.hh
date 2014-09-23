@@ -78,7 +78,7 @@ class MoveMapTest : public CxxTest::TestSuite {
 		vector<pair<Size, Size> > offlimits;
 		offlimits.push_back(std::make_pair(11, 19));
 
-		MoveMapOP mmap = new MoveMap();
+		MoveMapOP mmap( new MoveMap() );
 		mmap->set_ranges_unmodifiable(offlimits);
 
 		// create a simple mover and make some modifications

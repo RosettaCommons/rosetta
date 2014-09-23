@@ -21,8 +21,8 @@ namespace protocols {
 namespace rosetta_scripts {
 
 class PoseSelector;
-typedef utility::pointer::owning_ptr< PoseSelector > PoseSelectorOP;
-typedef utility::pointer::owning_ptr< PoseSelector const > PoseSelectorCOP;
+typedef utility::pointer::shared_ptr< PoseSelector > PoseSelectorOP;
+typedef utility::pointer::shared_ptr< PoseSelector const > PoseSelectorCOP;
 
 } // rosetta_scripts
 } // protocols

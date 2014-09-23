@@ -21,12 +21,12 @@ namespace scoring {
 namespace dna {
 
 class DNABFormPotential;
-typedef utility::pointer::owning_ptr< DNABFormPotential > DNABFormPotentialOP;
-typedef utility::pointer::owning_ptr< DNABFormPotential const > DNABFormPotentialCOP;
+typedef utility::pointer::shared_ptr< DNABFormPotential > DNABFormPotentialOP;
+typedef utility::pointer::shared_ptr< DNABFormPotential const > DNABFormPotentialCOP;
 
 class TorsionFourierComponent;
-typedef utility::pointer::owning_ptr< TorsionFourierComponent > TorsionFourierComponentOP;
-typedef utility::pointer::owning_ptr< TorsionFourierComponent const > TorsionFourierComponentCOP;
+typedef utility::pointer::shared_ptr< TorsionFourierComponent > TorsionFourierComponentOP;
+typedef utility::pointer::shared_ptr< TorsionFourierComponent const > TorsionFourierComponentCOP;
 
 }
 }

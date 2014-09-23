@@ -43,11 +43,11 @@ class IfMover : public protocols::moves::Mover {
   virtual ~IfMover() {};
 
   protocols::moves::MoverOP clone() const {
-    return new IfMover(*this);
+    return protocols::moves::MoverOP( new IfMover(*this) );
   }
 
   protocols::moves::MoverOP fresh_instance() const {
-    return new IfMover();
+    return protocols::moves::MoverOP( new IfMover() );
   }
 
   void apply(core::pose::Pose& pose);

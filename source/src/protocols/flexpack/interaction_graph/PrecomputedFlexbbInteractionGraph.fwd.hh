@@ -22,8 +22,8 @@ namespace interaction_graph {
 
 class PrecomputedFlexbbInteractionGraph;
 
-typedef utility::pointer::owning_ptr< PrecomputedFlexbbInteractionGraph > PrecomputedFlexbbInteractionGraphOP;
-typedef utility::pointer::owning_ptr< PrecomputedFlexbbInteractionGraph const > PrecomputedFlexbbInteractionGraphCOP;
+typedef utility::pointer::shared_ptr< PrecomputedFlexbbInteractionGraph > PrecomputedFlexbbInteractionGraphOP;
+typedef utility::pointer::shared_ptr< PrecomputedFlexbbInteractionGraph const > PrecomputedFlexbbInteractionGraphCOP;
 
 }
 }

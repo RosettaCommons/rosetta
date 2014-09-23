@@ -53,7 +53,7 @@ public:
 	SymmetryClaimer( SymmetryClaimer const & src );
 
 	virtual TopologyClaimerOP clone() const {
-		return new SymmetryClaimer( *this );
+		return TopologyClaimerOP( new SymmetryClaimer( *this ) );
 	}
 
 	virtual std::string type() const {

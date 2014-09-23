@@ -28,8 +28,8 @@ namespace simple_filters {
 class ConservedPosMutationFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< ConservedPosMutationFilter >  ConservedPosMutationFilterOP;
-typedef utility::pointer::owning_ptr< ConservedPosMutationFilter const >  ConservedPosMutationFilterCOP;
+typedef utility::pointer::shared_ptr< ConservedPosMutationFilter >  ConservedPosMutationFilterOP;
+typedef utility::pointer::shared_ptr< ConservedPosMutationFilter const >  ConservedPosMutationFilterCOP;
 
 } // namespace protocols
 } // namespace filters

@@ -79,7 +79,7 @@ void CrossPeakList::update_decoy_compatibility_score( DecoyIterator const& decoy
   decoys_begin->fill_pose( pose );
   protocols::jumping::JumpSample jumps( pose.fold_tree() );
   jumps.remove_chainbreaks( pose );
-  DistanceScoreMoverOP cst_tool =  new DistanceScoreMover( *this, pose, params.dcut_ );
+  DistanceScoreMoverOP cst_tool( new DistanceScoreMover( *this, pose, params.dcut_ ) );
   cst_tool->prepare_scoring( false /*not use for calibration */ );
 
   for ( DecoyIterator iss = decoys_begin; iss != decoys_end; ++iss ) {
@@ -110,7 +110,7 @@ void CrossPeakList::calibrate( DecoyIterator const& begin, DecoyIterator const& 
 
   if ( structure_independent_calibration ) {
     tr.Info << "structure independent calibration..."<<std::endl;
-    PeakCalibratorMap calibrators( *this, new StructureIndependentPeakCalibrator );
+    PeakCalibratorMap calibrators( *this, PeakCalibratorOP( new StructureIndependentPeakCalibrator ) );
     calibrators.set_target_and_tolerance( params.calibration_target_, 0.1 );
     calibrators.do_calibration();
   };
@@ -119,7 +119,7 @@ void CrossPeakList::calibrate( DecoyIterator const& begin, DecoyIterator const& 
     typedef utility::vector1< pose::PoseOP > Poses;
     Poses pose_cache;
     for ( DecoyIterator iss = begin; iss != end; ++iss ) {
-      pose::PoseOP pose=new pose::Pose;
+      pose::PoseOP pose( new pose::Pose );
       iss->fill_pose( *pose ); //has to reread RDC file for each pose!
       protocols::jumping::JumpSample jumps( pose->fold_tree() );
       jumps.remove_chainbreaks( *pose );
@@ -127,7 +127,7 @@ void CrossPeakList::calibrate( DecoyIterator const& begin, DecoyIterator const& 
     }
 
     for ( Size cycles( params.calibration_cycles_ ); cycles >= 1; --cycles ) {
-      PeakCalibratorMap calibrators( *this, new StructureDependentPeakCalibrator( pose_cache, params.dcalibrate_ ) );
+      PeakCalibratorMap calibrators( *this, PeakCalibratorOP( new StructureDependentPeakCalibrator( pose_cache, params.dcalibrate_ ) ) );
       if ( !structure_independent_calibration ) {
 	tr.Info << "structure dependent calibration..."<<std::endl;
 	calibrators.set_target_and_tolerance( params.calibration_target_, 0.005 );

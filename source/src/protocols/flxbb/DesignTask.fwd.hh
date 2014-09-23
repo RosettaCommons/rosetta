@@ -26,17 +26,17 @@ namespace flxbb {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 class DesignTask;
-typedef utility::pointer::owning_ptr< DesignTask > DesignTaskOP;
+typedef utility::pointer::shared_ptr< DesignTask > DesignTaskOP;
 typedef utility::vector1< DesignTaskOP > DesignTaskSet;
-typedef utility::pointer::owning_ptr< DesignTaskSet > DesignTaskSetOP;
+typedef utility::pointer::shared_ptr< DesignTaskSet > DesignTaskSetOP;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 class DesignTask_Normal;
-typedef utility::pointer::owning_ptr< DesignTask_Normal > DesignTask_NormalOP;
+typedef utility::pointer::shared_ptr< DesignTask_Normal > DesignTask_NormalOP;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 class DesignTask_Layer;
-typedef utility::pointer::owning_ptr< DesignTask_Layer > DesignTask_LayerOP;
+typedef utility::pointer::shared_ptr< DesignTask_Layer > DesignTask_LayerOP;
 
 
 } // namespace flxbb

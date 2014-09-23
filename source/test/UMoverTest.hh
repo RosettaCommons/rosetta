@@ -82,13 +82,13 @@ public:
 		const std::string tmp_file_name = std::string(fileOut) + "._tmp_";
 
 		if( fileTracerOut && tracerChannelsList ) {
-			basic::otstreamOP ut = new test::UTracer(fileTracerOut);
+			basic::otstreamOP ut( new test::UTracer(fileTracerOut) );
 			basic::Tracer::set_ios_hook(ut, tracerChannelsList);
 		}
 		//std::cout << " Testing: " << mover->type() << "..." << std::endl;
 
-		PoseOP pose = new Pose;
-		PoseOP n_pose = new Pose; // native pose
+		PoseOP pose( new Pose );
+		PoseOP n_pose( new Pose ); // native pose
 		core::import_pose::pose_from_pdb( *pose, original_file_name );
 		if ( nativeFileIn ) {
 			const std::string native_file_name( nativeFileIn );

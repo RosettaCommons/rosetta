@@ -103,8 +103,8 @@ void register_options() {
 class RmsfMover;
 
 // Types
-typedef  utility::pointer::owning_ptr< RmsfMover >  RmsfMoverOP;
-typedef  utility::pointer::owning_ptr< RmsfMover const >  RmsfMoverCOP;
+typedef  utility::pointer::shared_ptr< RmsfMover >  RmsfMoverOP;
+typedef  utility::pointer::shared_ptr< RmsfMover const >  RmsfMoverCOP;
 
 class RmsfMover : public moves::Mover {
 public:
@@ -132,7 +132,7 @@ public:
 	Size iref;
 };
 
-typedef utility::pointer::owning_ptr< FitMover > FitMoverOP;
+typedef utility::pointer::shared_ptr< FitMover > FitMoverOP;
 
 void FitMover::apply( core::pose::Pose &pose ) {
 	if ( iref && first ) {
@@ -151,13 +151,13 @@ void FitMover::apply( core::pose::Pose &pose ) {
 void read_structures( RmsfMoverOP rmsf_tool ) {
 	//get silent-file job-inputter if available
 	SilentFileJobInputterOP sfd_inputter (
-							dynamic_cast< SilentFileJobInputter* > ( JobDistributor::get_instance()->job_inputter().get() ) );
+							utility::pointer::dynamic_pointer_cast< protocols::jd2::SilentFileJobInputter > ( JobDistributor::get_instance()->job_inputter() ) );
 	if ( sfd_inputter ) {
 		//this allows very fast reading of CA coords
 		io::silent::SilentFileData const& sfd( sfd_inputter->silent_file_data() );
 		rmsf_tool->eval_.push_back_CA_xyz_from_silent_file( sfd, false /*store energies*/ );
 	} else {
-		JobDistributor::get_instance()->go( rmsf_tool, new jd2::NoOutputJobOutputter );
+		JobDistributor::get_instance()->go( rmsf_tool, JobOutputterOP( new jd2::NoOutputJobOutputter ) );
 	}
 }
 
@@ -206,7 +206,7 @@ void run() {
 	using namespace protocols::jd2;
 
 	//store structures in rmsf_tool ...
-	RmsfMoverOP rmsf_tool =  new RmsfMover;
+	RmsfMoverOP rmsf_tool( new RmsfMover );
 	read_structures( rmsf_tool );
 
 	//initialize wRMSD weights with 1.0 unless we have -rigid:in file active
@@ -254,12 +254,12 @@ void run() {
 
 	///write superimposed structures
 	if ( option[ out::pdb ]() ) {
-		FitMoverOP fit_tool = new FitMover;
+		FitMoverOP fit_tool( new FitMover );
 		fit_tool->weights_ = weights;
 		if ( icenter > 1 ) {
 			fit_tool->iref = icenter - 1; //ignores the first iref structures before it takes the pose as reference pose.
 			JobDistributor::get_instance()->restart();
-			JobDistributor::get_instance()->go( fit_tool, new jd2::NoOutputJobOutputter );
+			JobDistributor::get_instance()->go( fit_tool, JobOutputterOP( new jd2::NoOutputJobOutputter ) );
 		}
 		JobDistributor::get_instance()->restart();
 		JobDistributor::get_instance()->go( fit_tool );

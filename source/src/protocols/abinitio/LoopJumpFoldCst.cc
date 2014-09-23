@@ -132,7 +132,7 @@ bool LoopJumpFoldCst::parse_jump_def( KinematicControlOP current_kinematics, kin
       // flexible_part.switch_movemap( *movemap, id::BB, true ); this line seems redundant here
     }
     jump_frags = jump_def_->generate_jump_frags( current_jumps, *movemap );
-    simple_moves::ClassicFragmentMoverOP jump_mover = new protocols::simple_moves::ClassicFragmentMover( jump_frags, movemap );
+    simple_moves::ClassicFragmentMoverOP jump_mover( new protocols::simple_moves::ClassicFragmentMover( jump_frags, movemap ) );
     jump_mover->type( "JumpMoves" );
     jump_mover->set_check_ss( false ); // this doesn't make sense with jump fragments
     jump_mover->enable_end_bias_check( false ); //no sense for discontinuous fragments
@@ -169,9 +169,9 @@ KinematicControlOP LoopJumpFoldCst::new_kinematics( pose::Pose &pose ) {
 
   KinematicControlOP current_kinematics( NULL );
   if ( loops.size() && coordinate_constraint_weight_ > 0.0 ) {
-    current_kinematics = new CoordinateConstraintKC( false /*ramp*/, coordinate_constraint_weight_ );
+    current_kinematics = KinematicControlOP( new CoordinateConstraintKC( false /*ramp*/, coordinate_constraint_weight_ ) );
   }	else {
-    current_kinematics = new KinematicControl;
+    current_kinematics = KinematicControlOP( new KinematicControl );
   }
 
   loops::Loops mmloops;
@@ -182,7 +182,7 @@ KinematicControlOP LoopJumpFoldCst::new_kinematics( pose::Pose &pose ) {
   }
 
   //figure out movemap!
-  kinematics::MoveMapOP movemap = new kinematics::MoveMap;
+  kinematics::MoveMapOP movemap( new kinematics::MoveMap );
   movemap->set_jump( true );
   if ( jump_def_ ) movemap->set_jump( true ); //careful that these don't get minimized!
   if ( mmloops.size() && coordinate_constraint_weight_ == 0.0 ) {

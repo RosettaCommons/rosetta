@@ -20,7 +20,7 @@ namespace protocols {
 namespace jd2 {
 
 class BatchJobInputter;
-typedef utility::pointer::owning_ptr< BatchJobInputter > BatchJobInputterOP;
+typedef utility::pointer::shared_ptr< BatchJobInputter > BatchJobInputterOP;
 
 } // jd2
 } // protocols

@@ -25,10 +25,10 @@ namespace rotamer_set {
 
 class FlexbbRotamerSets;
 
-typedef utility::pointer::owning_ptr< FlexbbRotamerSets > FlexbbRotamerSetsOP;
-typedef utility::pointer::owning_ptr< FlexbbRotamerSets const > FlexbbRotamerSetsCOP;
-typedef utility::pointer::access_ptr< FlexbbRotamerSets > FlexbbRotamerSetsAP;
-typedef utility::pointer::access_ptr< FlexbbRotamerSets const > FlexbbRotamerSetsCAP;
+typedef utility::pointer::shared_ptr< FlexbbRotamerSets > FlexbbRotamerSetsOP;
+typedef utility::pointer::shared_ptr< FlexbbRotamerSets const > FlexbbRotamerSetsCOP;
+typedef utility::pointer::weak_ptr< FlexbbRotamerSets > FlexbbRotamerSetsAP;
+typedef utility::pointer::weak_ptr< FlexbbRotamerSets const > FlexbbRotamerSetsCAP;
 
 
 } //namespace rotamer_set

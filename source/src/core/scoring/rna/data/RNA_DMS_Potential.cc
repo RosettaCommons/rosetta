@@ -286,7 +286,7 @@ namespace data {
 		//
 		hbonds::HBondOptionsOP hbond_options( new hbonds::HBondOptions() );
 		hbond_options->use_hb_env_dep( false );
-		hbond_set_ = new hbonds::HBondSet( *hbond_options );
+		hbond_set_ = hbonds::HBondSetOP( new hbonds::HBondSet( *hbond_options ) );
 		hbonds::fill_hbond_set( pose, false /*calc deriv*/, *hbond_set_ );
 
 		// setup poses in which one residue base can be virtualized, and
@@ -297,8 +297,8 @@ namespace data {
 		add_probe_to_pose( *working_pose_with_probe_ );
 
 		// clone() above actually does not reset scoring_ flag in Energies object, leading to early exit.
-		working_pose_->set_new_energies_object( new scoring::Energies );
-		working_pose_with_probe_->set_new_energies_object( new scoring::Energies );
+		working_pose_->set_new_energies_object( scoring::EnergiesOP( new scoring::Energies ) );
+		working_pose_with_probe_->set_new_energies_object( scoring::EnergiesOP( new scoring::Energies ) );
 
 	}
 
@@ -518,7 +518,7 @@ RNA_DMS_Potential::get_probe_scorefxn( bool const soft_rep, bool const just_atr_
 	using namespace core::scoring;
 	using namespace core::scoring::methods;
 
-	ScoreFunctionOP scorefxn = new ScoreFunction;
+	ScoreFunctionOP scorefxn( new ScoreFunction );
 	EnergyMethodOptions energy_method_options = scorefxn->energy_method_options();
 	energy_method_options.hbond_options().use_hb_env_dep( false );
 	if ( soft_rep ) energy_method_options.etable_type( FA_STANDARD_SOFT );

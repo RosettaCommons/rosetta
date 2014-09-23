@@ -35,10 +35,10 @@ public:
 	}
 
 	ScoringSchemeOP clone() const {
-		return new ChemicalShiftScoringScheme(
+		return ScoringSchemeOP( new ChemicalShiftScoringScheme(
 			gap_open(),
 			gap_extend()
-		);
+		) );
 	}
 
 	/// @brief dtor

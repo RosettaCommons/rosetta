@@ -84,12 +84,12 @@ void KinematicTaskControl::apply( pose::Pose &pose ) {
 					 << " add side-chains " << ( sampling_protocol_->return_centroid() ? "yes" : "no" )
 					 << std::endl;
 	//resoltuion switch: if pose is fullatom ---> make it centroid but keep full-atom copy for the retrieval of side-chains later on.
-	res_switch_ = new	ResolutionSwitcher(
+	res_switch_ = ResolutionSwitcherOP( new	ResolutionSwitcher(
 			pose,
 			b_input_is_fullatom_,
 			sampling_protocol_->start_from_centroid(),
 			sampling_protocol_->return_centroid()
-	);
+	) );
 	//needs the full-atom scorefxn for repacking later
 	res_switch().set_scorefxn( fullatom_scorefxn() ); //needed for repacking
 

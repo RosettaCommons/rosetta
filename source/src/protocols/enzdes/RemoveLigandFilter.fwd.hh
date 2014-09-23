@@ -21,7 +21,7 @@ namespace protocols {
 namespace enzdes {
 
 class RemoveLigandFilter;
-typedef utility::pointer::owning_ptr< RemoveLigandFilter > RemoveLigandFilterOP;
+typedef utility::pointer::shared_ptr< RemoveLigandFilter > RemoveLigandFilterOP;
 
 }  //namespace enzdes
 }  //namespace protocols

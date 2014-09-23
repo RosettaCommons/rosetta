@@ -48,7 +48,7 @@ public:
 
 	virtual
 	basic::resource_manager::ResourceOptionsOP
-	default_options() const { return new DatabaseSessionOptions();}
+	default_options() const { return basic::resource_manager::ResourceOptionsOP( new DatabaseSessionOptions() );}
 };
 
 } // database

@@ -29,7 +29,7 @@ namespace features {
 InterfaceFeaturesCreator::InterfaceFeaturesCreator() {}
 InterfaceFeaturesCreator::~InterfaceFeaturesCreator() {}
 FeaturesReporterOP InterfaceFeaturesCreator::create_features_reporter() const {
-	return new InterfaceFeatures;
+	return FeaturesReporterOP( new InterfaceFeatures );
 }
 
 std::string InterfaceFeaturesCreator::type_name() const {

@@ -160,10 +160,10 @@ public:
 	ShearMoverBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
 	virtual void setUp() {
-		pose = new pose::Pose();
+		pose = pose::PoseOP( new pose::Pose() );
 		core::import_pose::pose_from_pdb(*pose, "test_in.pdb");
 
-		movemap = new kinematics::MoveMap();
+		movemap = kinematics::MoveMapOP( new kinematics::MoveMap() );
 		movemap->set_chi( true );
 		movemap->set_bb( true );
 
@@ -189,7 +189,7 @@ public:
 	};
 
 	virtual void tearDown() {
-		pose = 0;
-		movemap = 0;
+		pose.reset();
+		movemap.reset();
 	}
 };

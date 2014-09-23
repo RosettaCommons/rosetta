@@ -25,8 +25,8 @@ namespace residue_selector {
 
 class ClashBasedRepackShellSelector;
 
-typedef utility::pointer::owning_ptr< ClashBasedRepackShellSelector > ClashBasedRepackShellSelectorOP;
-typedef utility::pointer::owning_ptr< ClashBasedRepackShellSelector const > ClashBasedRepackShellSelectorCOP;
+typedef utility::pointer::shared_ptr< ClashBasedRepackShellSelector > ClashBasedRepackShellSelectorOP;
+typedef utility::pointer::shared_ptr< ClashBasedRepackShellSelector const > ClashBasedRepackShellSelectorCOP;
 
 } //namespace residue_selector
 } //namespace task

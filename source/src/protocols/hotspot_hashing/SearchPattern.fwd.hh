@@ -23,8 +23,8 @@ namespace hotspot_hashing {
 
 class SearchPattern;
 
-typedef utility::pointer::owning_ptr<SearchPattern>  SearchPatternOP;
-typedef utility::pointer::owning_ptr<SearchPattern const>  SearchPatternCOP;
+typedef utility::pointer::shared_ptr<SearchPattern>  SearchPatternOP;
+typedef utility::pointer::shared_ptr<SearchPattern const>  SearchPatternCOP;
 
 }
 }

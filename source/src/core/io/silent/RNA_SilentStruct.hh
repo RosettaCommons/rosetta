@@ -95,7 +95,7 @@ public:
 	);
 
 	virtual SilentStructOP clone() const {
-		return new RNA_SilentStruct( *this );
+		return SilentStructOP( new RNA_SilentStruct( *this ) );
 	};
 
 	// destructor

@@ -124,7 +124,7 @@ public:
 		fourpts.xyz( 3, Vector( 0.707, 0.707, 0 ));
 		fourpts.xyz( 4, Vector( 0.707, 0.707, 1.0 )); // 90 degrees
 
-		core::scoring::func::HarmonicFuncOP func = new core::scoring::func::HarmonicFunc( 1.2, 0.5 );
+		core::scoring::func::HarmonicFuncOP func( new core::scoring::func::HarmonicFunc( 1.2, 0.5 ) );
 
 		AtomID at1( 1, 1), at2( 2, 1 );
 
@@ -150,7 +150,7 @@ public:
 		core::pose::PoseOP ubqstump = create_twores_1ubq_poseop();
 		TS_ASSERT( ubqstump->total_residue() == 2 );
 
-		core::scoring::func::HarmonicFuncOP func = new core::scoring::func::HarmonicFunc( 1.2, 0.5 );
+		core::scoring::func::HarmonicFuncOP func( new core::scoring::func::HarmonicFunc( 1.2, 0.5 ) );
 		AtomID at1, at2;
 		ScoreFunction sfxn;
 		sfxn.set_weight( atom_pair_constraint, 1.0 );
@@ -169,7 +169,7 @@ public:
 					at1.atomno() = jj;
 					at2.atomno() = kk;
 
-					AtomPairConstraintOP atom_pair_cst = new AtomPairConstraint( at1, at2, func );
+					AtomPairConstraintOP atom_pair_cst( new AtomPairConstraint( at1, at2, func ) );
 					ubqstump->remove_constraints();
 					ubqstump->add_constraint( atom_pair_cst );
 

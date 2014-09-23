@@ -460,7 +460,7 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 
 	// make sure pose has pdbinfo
 	if (! pose.pdb_info() ) {
-		core::pose::PDBInfoOP newinfo(new core::pose::PDBInfo(pose));
+		core::pose::PDBInfoOP newinfo( new core::pose::PDBInfo(pose) );
 		pose.pdb_info( newinfo );
 	}
 
@@ -474,9 +474,9 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 	// make sure interaction graphs are set up
 	core::scoring::ScoreFunctionOP sf;
 	if ( core::pose::symmetry::is_symmetric(pose) )
-		sf = new core::scoring::symmetry::SymmetricScoreFunction();
+		sf = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction() );
 	else
-		sf = new core::scoring::ScoreFunction();
+		sf = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
 	sf->set_weight( core::scoring::fa_rep, 1.0 );
 	(*sf)(pose);
 
@@ -616,7 +616,7 @@ BfactorFittingMover::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &,
 
 protocols::moves::MoverOP
 BfactorFittingMoverCreator::create_mover() const {
-	return new BfactorFittingMover;
+	return protocols::moves::MoverOP( new BfactorFittingMover );
 }
 
 std::string

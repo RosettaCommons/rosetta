@@ -22,8 +22,8 @@ namespace protocols {
 namespace hybridization {
 
 class HybridizeSetup;
-typedef utility::pointer::owning_ptr< HybridizeSetup > HybridizeSetupOP;
-typedef utility::pointer::owning_ptr< HybridizeSetup const > HybridizeSetupCOP;
+typedef utility::pointer::shared_ptr< HybridizeSetup > HybridizeSetupOP;
+typedef utility::pointer::shared_ptr< HybridizeSetup const > HybridizeSetupCOP;
 
 
 } // hybridization

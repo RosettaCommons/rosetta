@@ -95,7 +95,7 @@ EnzCstTemplateRes::EnzCstTemplateRes(
 ) : rb_minimizable_(true), is_backbone_(false),
 		identical_tag_found_(false), corresponding_res_block_(0),
 		corresponding_res_num_in_block_(0),
-		restype_set_(src_restype_set), enz_io_param_( NULL )
+		restype_set_(src_restype_set), enz_io_param_( /* NULL */ )
 {
 	clear_all();
 }

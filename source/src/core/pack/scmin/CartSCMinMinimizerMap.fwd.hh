@@ -24,8 +24,8 @@ namespace scmin {
 
 class CartSCMinMinimizerMap;
 
-typedef utility::pointer::owning_ptr< CartSCMinMinimizerMap >       CartSCMinMinimizerMapOP;
-typedef utility::pointer::owning_ptr< CartSCMinMinimizerMap const > CartSCMinMinimizerMapCOP;
+typedef utility::pointer::shared_ptr< CartSCMinMinimizerMap >       CartSCMinMinimizerMapOP;
+typedef utility::pointer::shared_ptr< CartSCMinMinimizerMap const > CartSCMinMinimizerMapCOP;
 
 } // namespace scmin
 } // namespace pack

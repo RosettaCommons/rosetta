@@ -49,7 +49,7 @@ SymRotamerTrialsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SymRotamerTrialsMoverCreator::create_mover() const {
-	return new SymRotamerTrialsMover;
+	return protocols::moves::MoverOP( new SymRotamerTrialsMover );
 }
 
 std::string

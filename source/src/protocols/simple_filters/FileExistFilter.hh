@@ -35,10 +35,10 @@ public:
 	FileExistFilter();
 	bool apply( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const {
-		return new FileExistFilter( *this );
+		return filters::FilterOP( new FileExistFilter( *this ) );
 	}
 	filters::FilterOP fresh_instance() const{
-		return new FileExistFilter();
+		return filters::FilterOP( new FileExistFilter() );
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;

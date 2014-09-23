@@ -24,8 +24,8 @@ namespace scoring {
 namespace func {
 
 class CircularHarmonicFunc;
-typedef utility::pointer::owning_ptr< CircularHarmonicFunc > CircularHarmonicFuncOP;
-typedef utility::pointer::owning_ptr< CircularHarmonicFunc const > CircularHarmonicFuncCOP;
+typedef utility::pointer::shared_ptr< CircularHarmonicFunc > CircularHarmonicFuncOP;
+typedef utility::pointer::shared_ptr< CircularHarmonicFunc const > CircularHarmonicFuncCOP;
 
 }
 }

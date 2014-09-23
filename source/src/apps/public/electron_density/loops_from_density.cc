@@ -126,8 +126,7 @@ main( int argc, char* argv [] )
 		secstruct.dssp_reduced (dssp_pose);
 
 		// align to map
-		protocols::electron_density::SetupForDensityScoringMoverOP dockindens
-			( new protocols::electron_density::SetupForDensityScoringMover );
+		protocols::electron_density::SetupForDensityScoringMoverOP dockindens( new protocols::electron_density::SetupForDensityScoringMover );
 		dockindens->apply( pose );
 
 		// per-res score

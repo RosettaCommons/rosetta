@@ -32,7 +32,7 @@ namespace simple_filters {
 static thread_local basic::Tracer residue_distance_filter_tracer( "protocols.simple_filters.ResidueDistanceFilter" );
 
 protocols::filters::FilterOP
-ResidueDistanceFilterCreator::create_filter() const { return new ResidueDistanceFilter; }
+ResidueDistanceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueDistanceFilter ); }
 
 std::string
 ResidueDistanceFilterCreator::keyname() const { return "ResidueDistance"; }

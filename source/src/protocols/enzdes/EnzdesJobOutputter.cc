@@ -51,22 +51,22 @@ namespace enzdes {
 
 EnzdesJobOutputter::EnzdesJobOutputter()
 : parent(),
-  scorefile_writer_(NULL),
-  enz_scofile_(NULL),
+  scorefile_writer_(/* NULL */),
+  enz_scofile_(/* NULL */),
 	silent_output_(false),
-	silent_job_outputter_(NULL)
+	silent_job_outputter_(/* NULL */)
 {
 
 	if(  basic::options::option[ basic::options::OptionKeys::out::file::silent_struct_type ].user() ){
 		silent_output_ = true;
-		silent_job_outputter_ = new protocols::jd2::SilentFileJobOutputter;
+		silent_job_outputter_ = protocols::jd2::SilentFileJobOutputterOP( new protocols::jd2::SilentFileJobOutputter );
 		silent_job_outputter_->set_write_separate_scorefile( false );
 		silent_job_outputter_->set_silent_file_name( utility::file::FileName( basic::options::option[ basic::options::OptionKeys::out::file::o ]) );
 	}
 
   if( !this->write_scorefile() ) return;
-  scorefile_writer_ = new core::io::silent::SilentFileData();
-  enz_scofile_ = new protocols::enzdes::EnzdesScorefileFilter();
+  scorefile_writer_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData() );
+  enz_scofile_ = protocols::enzdes::EnzdesScorefileFilterOP( new protocols::enzdes::EnzdesScorefileFilter() );
   if( basic::options::option[ basic::options::OptionKeys::out::overwrite ].user() ){
     if( utility::file::file_exists( scorefile_name().name() ) ) utility::file::file_delete( scorefile_name().name() );
   }
@@ -143,7 +143,7 @@ EnzdesJobOutputterCreator::keyname() const
 
 protocols::jd2::JobOutputterOP
 EnzdesJobOutputterCreator::create_JobOutputter() const {
-        return new EnzdesJobOutputter;
+        return protocols::jd2::JobOutputterOP( new EnzdesJobOutputter );
 }
 
 }//enzdes

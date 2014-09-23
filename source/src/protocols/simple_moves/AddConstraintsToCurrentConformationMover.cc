@@ -159,8 +159,8 @@ void AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose ) 
 
 			if( residue_to_constrain(ires) ) {
 			 for (Size iatom = iatom_start; iatom <= iatom_stop; ++iatom) {
-				pose.add_constraint( new CoordinateConstraint(
-			               AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom), cc_func_ ) );
+				pose.add_constraint( scoring::constraints::ConstraintCOP( new CoordinateConstraint(
+			               AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom), cc_func_ ) ) );
 				TR.Debug << "coordinate constraint added to residue " << ires << ", atom " << iatom << std::endl;
 			 }
 			}
@@ -204,7 +204,7 @@ void AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose ) 
 					if ( dist > max_distance_ ) continue;
 
 					pose.add_constraint(
-					    new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires), core::id::AtomID(jatom,jres), core::scoring::func::FuncOP( new core::scoring::func::ScalarWeightedFunc( cst_weight_, core::scoring::func::FuncOP( new core::scoring::func::SOGFunc( dist, coord_dev_ ) ) ) ) ) );
+					    scoring::constraints::ConstraintCOP( new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires), core::id::AtomID(jatom,jres), core::scoring::func::FuncOP( new core::scoring::func::ScalarWeightedFunc( cst_weight_, core::scoring::func::FuncOP( new core::scoring::func::SOGFunc( dist, coord_dev_ ) ) ) ) ) ) );
 					TR.Debug << "atom_pair_constraint added to residue " << ires << ", atom " << iatom << " and residue " << jres << ", atom " << jatom << " with weight " << cst_weight_ << std::endl;
 				}}
 			}
@@ -235,8 +235,8 @@ AddConstraintsToCurrentConformationMover::parse_my_tag(
 	if ( tag->hasOption("bound_width") ) {
 		bound_width_ = tag->getOption<core::Real>("bound_width");
 	}
-    if ( bound_width_ < 1e-3 ) cc_func_ = new core::scoring::func::HarmonicFunc(0.0,coord_dev_);
-    else cc_func_ = new BoundFunc(0,bound_width_,coord_dev_,"xyz");
+    if ( bound_width_ < 1e-3 ) cc_func_ = core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(0.0,coord_dev_) );
+    else cc_func_ = core::scoring::func::FuncOP( new BoundFunc(0,bound_width_,coord_dev_,"xyz") );
 
 	if ( tag->hasOption("min_seq_sep") ) {
 		min_seq_sep_ = tag->getOption<core::Size>("min_seq_sep");
@@ -284,15 +284,15 @@ void AddConstraintsToCurrentConformationMover::task_factory( TaskFactoryCOP tf )
 }
 
 moves::MoverOP AddConstraintsToCurrentConformationMover::clone() const {
-	return new AddConstraintsToCurrentConformationMover( *this );
+	return moves::MoverOP( new AddConstraintsToCurrentConformationMover( *this ) );
 }
 moves::MoverOP AddConstraintsToCurrentConformationMover::fresh_instance() const {
-	return new AddConstraintsToCurrentConformationMover;
+	return moves::MoverOP( new AddConstraintsToCurrentConformationMover );
 }
 
 protocols::moves::MoverOP
 AddConstraintsToCurrentConformationMoverCreator::create_mover() const {
-	return new AddConstraintsToCurrentConformationMover;
+	return protocols::moves::MoverOP( new AddConstraintsToCurrentConformationMover );
 }
 
 std::string

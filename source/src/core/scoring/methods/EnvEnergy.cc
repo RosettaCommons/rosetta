@@ -48,7 +48,7 @@ methods::EnergyMethodOP
 EnvEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new EnvEnergy;
+	return methods::EnergyMethodOP( new EnvEnergy );
 }
 
 ScoreTypes
@@ -72,7 +72,7 @@ EnvEnergy::EnvEnergy() :
 EnergyMethodOP
 EnvEnergy::clone() const
 {
-	return new EnvEnergy;
+	return EnergyMethodOP( new EnvEnergy );
 }
 
 

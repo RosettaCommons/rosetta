@@ -18,8 +18,8 @@ namespace loggers {
 
 class ScoreVsRmsd;
 
-typedef utility::pointer::owning_ptr<ScoreVsRmsd> ScoreVsRmsdOP;
-typedef utility::pointer::owning_ptr<ScoreVsRmsd const> ScoreVsRmsdCOP;
+typedef utility::pointer::shared_ptr<ScoreVsRmsd> ScoreVsRmsdOP;
+typedef utility::pointer::shared_ptr<ScoreVsRmsd const> ScoreVsRmsdCOP;
 
 }
 }

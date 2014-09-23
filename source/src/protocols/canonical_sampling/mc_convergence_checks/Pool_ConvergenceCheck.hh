@@ -53,7 +53,7 @@ class EXCN_Pool_Converged : public moves::EXCN_Converged
 
 class Pool_RMSD;
 
-typedef utility::pointer::owning_ptr< Pool_RMSD > Pool_RMSD_OP;
+typedef utility::pointer::shared_ptr< Pool_RMSD > Pool_RMSD_OP;
 
 
 class Pool_RMSD : public utility::pointer::ReferenceCount {

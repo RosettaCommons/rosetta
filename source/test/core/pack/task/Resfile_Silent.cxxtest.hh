@@ -74,7 +74,7 @@ public:
 	void setUp() {
 		core_init_with_additional_options( "-no_optH" );
 		residue_set = chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
-		rrop = new ReadResfile( "core/pack/task/test_in.resfile" );
+		rrop = pack::task::operation::ReadResfileOP( new ReadResfile( "core/pack/task/test_in.resfile" ) );
 	}
 
 	// Shared finalization goes here.
@@ -116,7 +116,7 @@ public:
 		// set packer task from silent file
 		PoseOP silent_pose;
 		const std::string silent_file_name( "core/pack/task/test_in.silent" );
-		SilentFilePoseInputStreamOP silent_input = new SilentFilePoseInputStream( silent_file_name );
+		SilentFilePoseInputStreamOP silent_input( new SilentFilePoseInputStream( silent_file_name ) );
 		silent_pose =	silent_input->get_all_poses( *residue_set )[ 1 ];
 		PackerTaskOP task_silent( TaskFactory::create_packer_task( *silent_pose ) );
 		rrop->apply( *silent_pose, *task_silent );

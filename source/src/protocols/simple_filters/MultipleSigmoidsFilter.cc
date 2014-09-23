@@ -37,7 +37,7 @@ static thread_local basic::Tracer TR( "protocols.simple_filters.MultipleSigmoids
 using namespace protocols::filters;
 
 protocols::filters::FilterOP
-MultipleSigmoidsFilterCreator::create_filter() const { return new MultipleSigmoids; }
+MultipleSigmoidsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new MultipleSigmoids ); }
 
 std::string
 MultipleSigmoidsFilterCreator::keyname() const { return "MultipleSigmoids"; }
@@ -46,9 +46,9 @@ MultipleSigmoids::MultipleSigmoids() :
 protocols::filters::Filter( "MultipleSigmoids" ),
 file_names_ ( "" ), // dflt ""
 threshold_(0.0),
-r_pose_( NULL ),
-sig_( NULL ),
-operatorF_( NULL )
+r_pose_( /* NULL */ ),
+sig_( /* NULL */ ),
+operatorF_( /* NULL */ )
 {
 }
 
@@ -81,7 +81,7 @@ void
 	{
 	threshold( tag->getOption< core::Real >( "threshold", 0 ) );
 	utility::vector1< std::string > const pdb_names( utility::string_split( tag->getOption< std::string >( "file_names" ), ',' ) ); //split file names
-	operatorF_ = new protocols::simple_filters::Operator;
+	operatorF_ = OperatorOP( new protocols::simple_filters::Operator );
 	utility::vector1< utility::tag::TagCOP > const sub_tags( tag->getTags() ); //tags
 	BOOST_FOREACH( utility::tag::TagCOP const sub_tag, sub_tags ){
 		if( sub_tag->getName() == "Operator" )
@@ -93,14 +93,14 @@ void
 				BOOST_FOREACH( utility::tag::TagCOP const sub_tag, sub_tags ){
 				if( sub_tag->getName() == "RelativePose" )
 				{
-					r_pose_ = new RelativePoseFilter;
+					r_pose_ = RelativePoseFilterOP( new RelativePoseFilter );
 					TR<<"I'm now reading from RelativePose filter"<<std::endl;
 					r_pose_->pdb_name(fname);
 					r_pose_->parse_my_tag(sub_tag, data, filters, movers, pose);
 				}
 				else if( sub_tag->getName() == "Sigmoid" )
 				{
-					sig_=new Sigmoid;
+					sig_ = SigmoidOP( new Sigmoid );
 					TR<<"I'm now reading from Sigmoid filter for fname "<<fname<<std::endl;
 					sig_->set_user_defined_name( fname );
 					sig_->filter(r_pose_);
@@ -145,12 +145,12 @@ MultipleSigmoids::compute(
 
 protocols::filters::FilterOP
 MultipleSigmoids::clone() const{
-	return new MultipleSigmoids( *this );
+	return protocols::filters::FilterOP( new MultipleSigmoids( *this ) );
 }
 
 protocols::filters::FilterOP
 MultipleSigmoids::fresh_instance() const{
-	return new MultipleSigmoids();
+	return protocols::filters::FilterOP( new MultipleSigmoids() );
 }
 
 }

@@ -193,13 +193,13 @@ MPDockingMover::~MPDockingMover() {}
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 MPDockingMover::clone() const {
-	return ( new MPDockingMover( *this ) );
+	return ( protocols::moves::MoverOP( new MPDockingMover( *this ) ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 MPDockingMover::fresh_instance() const {
-	return new MPDockingMover();
+	return protocols::moves::MoverOP( new MPDockingMover() );
 }
 
 /////////////////////
@@ -277,7 +277,7 @@ void MPDockingMover::setup(){
 	using namespace protocols::docking;
 	using namespace core::scoring;
 
-	add_membrane_mover_ = new AddMembraneMover();
+	add_membrane_mover_ = protocols::membrane::AddMembraneMoverOP( new AddMembraneMover() );
 //	low_res_scorefxn_ = getScoreFunction();
 
 	// create scorefunctions for lowres and highres
@@ -285,7 +285,7 @@ void MPDockingMover::setup(){
 	ScoreFunctionOP lowres_scorefxn_ = ScoreFunctionFactory::create_score_function( "mpdocking_cen_14-6-25.wts" );
 	ScoreFunctionOP highres_scorefxn_ = ScoreFunctionFactory::create_score_function( "mpdocking_fa_14-6-25.wts" );
 	
-	dock_mcm_protocol_ = new DockMCMProtocol( 1, lowres_scorefxn_, highres_scorefxn_);
+	dock_mcm_protocol_ = protocols::docking::DockMCMProtocolOP( new DockMCMProtocol( 1, lowres_scorefxn_, highres_scorefxn_) );
 
 	// low res only (jump#, bool low-res only, bool local refine only, bool autofoldtree, low scorefxn, high scorefxn)
 //	docking_protocol_ = new DockingProtocol( 1, true, false, false, lowres_scorefxn_, highres_scorefxn_ );
@@ -294,15 +294,15 @@ void MPDockingMover::setup(){
 //	docking_protocol_ = new DockingProtocol( 1, false, true, false, lowres_scorefxn_, highres_scorefxn_ );
 	
 	// both low res and high res
-	docking_protocol_ = new DockingProtocol( 1, true, false, false, lowres_scorefxn_, highres_scorefxn_ );
+	docking_protocol_ = protocols::docking::DockingProtocolOP( new DockingProtocol( 1, true, false, false, lowres_scorefxn_, highres_scorefxn_ ) );
 	
-	random_mover_ = new protocols::moves::RandomMover();
+	random_mover_ = protocols::moves::RandomMoverOP( new protocols::moves::RandomMover() );
 
 	kT_ = 1;
 	
 }
 
-typedef utility::pointer::owning_ptr< MPDockingMover > MPDockingMoverOP;
+typedef utility::pointer::shared_ptr< MPDockingMover > MPDockingMoverOP;
 
 
 /////////////////////////////////////// MAIN ///////////////////////////////////
@@ -318,7 +318,7 @@ main( int argc, char * argv [] )
 		devel::init(argc, argv);
 		//protocols::init(argc, argv);
 
-		MPDockingMoverOP mpdm = new MPDockingMover();
+		MPDockingMoverOP mpdm( new MPDockingMover() );
 		JobDistributor::get_instance()->go(mpdm);
 	}
 	catch ( utility::excn::EXCN_Base const & e ) {

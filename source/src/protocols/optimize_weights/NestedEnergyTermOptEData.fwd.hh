@@ -28,8 +28,8 @@ class NestedEnergyTermPNatAAOptEPositionData;
 class NestedEnergyTermDDGMutationOptEData;
 
 /// Position containers
-typedef utility::pointer::owning_ptr< NestedEnergyTermPNatAAOptEPositionData > NestedEnergyTermPNatAAOptEPositionDataOP;
-typedef utility::pointer::owning_ptr< NestedEnergyTermDDGMutationOptEData > NestedEnergyTermDDGMutationOptEDataOP;
+typedef utility::pointer::shared_ptr< NestedEnergyTermPNatAAOptEPositionData > NestedEnergyTermPNatAAOptEPositionDataOP;
+typedef utility::pointer::shared_ptr< NestedEnergyTermDDGMutationOptEData > NestedEnergyTermDDGMutationOptEDataOP;
 
 
 } // namespace optimize_weights

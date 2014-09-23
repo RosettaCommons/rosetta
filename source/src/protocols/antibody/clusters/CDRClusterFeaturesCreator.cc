@@ -29,7 +29,7 @@ CDRClusterFeaturesCreator::~CDRClusterFeaturesCreator(){}
 
 FeaturesReporterOP
 CDRClusterFeaturesCreator::create_features_reporter() const {
-	return new CDRClusterFeatures;
+	return FeaturesReporterOP( new CDRClusterFeatures );
 }
 
 std::string

@@ -28,11 +28,11 @@ namespace topology_broker {
 class MetalloClaimer;
 
 // Types
-typedef  utility::pointer::owning_ptr< MetalloClaimer >  MetalloClaimerOP;
-typedef  utility::pointer::owning_ptr< MetalloClaimer const >  MetalloClaimerCOP;
+typedef  utility::pointer::shared_ptr< MetalloClaimer >  MetalloClaimerOP;
+typedef  utility::pointer::shared_ptr< MetalloClaimer const >  MetalloClaimerCOP;
 
-typedef  utility::pointer::access_ptr< MetalloClaimer >  MetalloClaimerAP;
-typedef  utility::pointer::access_ptr< MetalloClaimer const >  MetalloClaimerCAP;
+typedef  utility::pointer::weak_ptr< MetalloClaimer >  MetalloClaimerAP;
+typedef  utility::pointer::weak_ptr< MetalloClaimer const >  MetalloClaimerCAP;
 
 
 } // namespace kinematics

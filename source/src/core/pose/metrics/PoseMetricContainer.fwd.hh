@@ -22,16 +22,16 @@ namespace pose {
 namespace metrics {
 
 class PoseMetricContainer;
-typedef utility::pointer::owning_ptr< PoseMetricContainer > PoseMetricContainerOP;
-typedef utility::pointer::owning_ptr< PoseMetricContainer const > PoseMetricContainerCOP;
+typedef utility::pointer::shared_ptr< PoseMetricContainer > PoseMetricContainerOP;
+typedef utility::pointer::shared_ptr< PoseMetricContainer const > PoseMetricContainerCOP;
 
 class PoseMetric;
-typedef utility::pointer::owning_ptr< PoseMetric > PoseMetricOP;
-typedef utility::pointer::owning_ptr< PoseMetric const > PoseMetricCOP;
+typedef utility::pointer::shared_ptr< PoseMetric > PoseMetricOP;
+typedef utility::pointer::shared_ptr< PoseMetric const > PoseMetricCOP;
 
 class PoseMetricCalculator;
-typedef utility::pointer::owning_ptr< PoseMetricCalculator > PoseMetricCalculatorOP;
-typedef utility::pointer::owning_ptr< PoseMetricCalculator const > PoseMetricCalculatorCOP;
+typedef utility::pointer::shared_ptr< PoseMetricCalculator > PoseMetricCalculatorOP;
+typedef utility::pointer::shared_ptr< PoseMetricCalculator const > PoseMetricCalculatorCOP;
 
 } // namespace metrics
 } // namespace pose

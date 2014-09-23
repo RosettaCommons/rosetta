@@ -24,11 +24,11 @@ namespace protocols {
 namespace environment {
 
 class EnvClaimBroker;
-typedef utility::pointer::owning_ptr< EnvClaimBroker > EnvClaimBrokerOP;
-typedef utility::pointer::owning_ptr< EnvClaimBroker const > EnvClaimBrokerCOP;
+typedef utility::pointer::shared_ptr< EnvClaimBroker > EnvClaimBrokerOP;
+typedef utility::pointer::shared_ptr< EnvClaimBroker const > EnvClaimBrokerCOP;
 
-typedef utility::pointer::access_ptr< EnvClaimBroker > EnvClaimBrokerAP;
-typedef utility::pointer::access_ptr< EnvClaimBroker const > EnvClaimBrokerCAP;
+typedef utility::pointer::weak_ptr< EnvClaimBroker > EnvClaimBrokerAP;
+typedef utility::pointer::weak_ptr< EnvClaimBroker const > EnvClaimBrokerCAP;
 
 } // environment
 } // protocols

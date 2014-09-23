@@ -29,7 +29,7 @@ public:
 	FlatHarmonicFunc( Real const x0_in, Real const sd_in, Real const tol_in ): x0_( x0_in ), sd_( sd_in ), tol_( tol_in ){}
 
 	FuncOP
-	clone() const { return new FlatHarmonicFunc( *this ); }
+	clone() const { return FuncOP( new FlatHarmonicFunc( *this ) ); }
 
 	Real func( Real const x ) const;
 	Real dfunc( Real const x ) const;

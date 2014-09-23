@@ -24,10 +24,10 @@ namespace topology {
 class HSSTriplet;
 class HSSTripletSet;
 
-typedef utility::pointer::owning_ptr< HSSTriplet > HSSTripletOP;
-typedef utility::pointer::owning_ptr< HSSTripletSet > HSSTripletSetOP;
-typedef utility::pointer::owning_ptr< HSSTriplet const > HSSTripletCOP;
-typedef utility::pointer::owning_ptr< HSSTripletSet const > HSSTripletSetCOP;
+typedef utility::pointer::shared_ptr< HSSTriplet > HSSTripletOP;
+typedef utility::pointer::shared_ptr< HSSTripletSet > HSSTripletSetOP;
+typedef utility::pointer::shared_ptr< HSSTriplet const > HSSTripletCOP;
+typedef utility::pointer::shared_ptr< HSSTripletSet const > HSSTripletSetCOP;
 typedef utility::vector1< HSSTripletOP > HSSTriplets;
 
 typedef HSSTriplets::const_iterator HSSConstIterator;

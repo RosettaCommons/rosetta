@@ -16,7 +16,7 @@ namespace protocols {
 namespace dna {
 
 class WatsonCrickRotamerCouplings;
-typedef utility::pointer::owning_ptr< WatsonCrickRotamerCouplings > WatsonCrickRotamerCouplingsOP;
+typedef utility::pointer::shared_ptr< WatsonCrickRotamerCouplings > WatsonCrickRotamerCouplingsOP;
 
 }
 }

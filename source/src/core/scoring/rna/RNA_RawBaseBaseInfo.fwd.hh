@@ -26,8 +26,8 @@ namespace rna {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Keep track of RNA centroid information inside the pose.
 class RNA_RawBaseBaseInfo;
-typedef utility::pointer::owning_ptr< RNA_RawBaseBaseInfo > RNA_RawBaseBaseInfoOP;
-typedef utility::pointer::access_ptr< RNA_RawBaseBaseInfo > RNA_RawBaseBaseInfoAP;
+typedef utility::pointer::shared_ptr< RNA_RawBaseBaseInfo > RNA_RawBaseBaseInfoOP;
+typedef utility::pointer::weak_ptr< RNA_RawBaseBaseInfo > RNA_RawBaseBaseInfoAP;
 
 } //rna
 } //scoring

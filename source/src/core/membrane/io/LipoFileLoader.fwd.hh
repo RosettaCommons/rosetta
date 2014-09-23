@@ -30,8 +30,8 @@ namespace io {
 /// @brief Loader for Lipid Acc Data
 /// @details Load lipid acc data from spanning topology and .lips4 file
 class LipoFileLoader;
-typedef utility::pointer::owning_ptr< LipoFileLoader > LipoFileLoaderOP;
-typedef utility::pointer::owning_ptr< LipoFileLoader const > LipoFileLoaderCOP;
+typedef utility::pointer::shared_ptr< LipoFileLoader > LipoFileLoaderOP;
+typedef utility::pointer::shared_ptr< LipoFileLoader const > LipoFileLoaderCOP;
 
 } // io
 } // membrane

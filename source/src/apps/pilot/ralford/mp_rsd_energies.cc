@@ -100,7 +100,7 @@ main( int argc, char* argv [] ) {
     std::cout << pose->total_residue() << std::endl;
 
     // Add Membrane to Pose
-    AddMembraneMoverOP add_memb = new AddMembraneMover(); 
+    AddMembraneMoverOP add_memb( new AddMembraneMover() ); 
     add_memb->apply(*pose); 
 
 	// Setup new Membrane Energy function with all weights 
@@ -108,9 +108,7 @@ main( int argc, char* argv [] ) {
 	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "cen_membrane_2014" );
      
     // Set Options for Energy Methods
-	core::scoring::methods::EnergyMethodOptionsOP emopts(
-		new core::scoring::methods::EnergyMethodOptions( scorefxn->energy_method_options() )
-	);
+	core::scoring::methods::EnergyMethodOptionsOP emopts( new core::scoring::methods::EnergyMethodOptions( scorefxn->energy_method_options() ) );
 	emopts->hbond_options().decompose_bb_hb_into_pair_energies( true );
 	scorefxn->set_energy_method_options( *emopts );
 

@@ -66,7 +66,7 @@ public:
 		basic::options::option[ basic::options::OptionKeys::loops::loop_file ].def( loop_filename );
 		FallbackConfigurationOP fallback = FallbackConfigurationFactory::get_instance()->create_fallback_configuration( "LoopsFile" );
 
-		LoopsFileFallbackConfigurationOP loops_fallback = dynamic_cast< LoopsFileFallbackConfiguration * > ( fallback() );
+		LoopsFileFallbackConfigurationOP loops_fallback = utility::pointer::dynamic_pointer_cast< protocols::loops::LoopsFileFallbackConfiguration > ( fallback );
 		TS_ASSERT( loops_fallback ); // make sure the cast worked
 		TS_ASSERT( loop_filename == loops_fallback->get_locator_id( "LoopsFile" ) );
 		TS_ASSERT( "LoopsFile" == loops_fallback->get_resource_loader( "LoopsFile" ) );

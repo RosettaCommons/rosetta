@@ -24,8 +24,8 @@ namespace rna {
 namespace data {
 	
 	class RNA_DMS_Potential;
-	typedef utility::pointer::owning_ptr< RNA_DMS_Potential > RNA_DMS_PotentialOP;
-	typedef utility::pointer::owning_ptr< RNA_DMS_Potential const > RNA_DMS_PotentialCOP;
+	typedef utility::pointer::shared_ptr< RNA_DMS_Potential > RNA_DMS_PotentialOP;
+	typedef utility::pointer::shared_ptr< RNA_DMS_Potential const > RNA_DMS_PotentialCOP;
 	
 } //data 
 } //rna 

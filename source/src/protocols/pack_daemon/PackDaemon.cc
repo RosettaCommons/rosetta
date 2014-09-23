@@ -90,7 +90,7 @@ PackDaemon::~PackDaemon() {}
 // calling setup().
 void PackDaemon::set_pose_and_task( Pose const & pose, PackerTask const & task )
 {
-	pose_ = new Pose( pose );
+	pose_ = PoseOP( new Pose( pose ) );
 	task_ = task.clone();
 	for ( Size ii = 1; ii <= task.total_residue(); ++ii ) {
 		task_->nonconst_residue_task( ii ).and_extrachi_cutoff( 1 );
@@ -115,7 +115,7 @@ void PackDaemon::set_entity_correspondence( EntityCorrespondence const &  ec )
 		utility_exit_with_message( "Num residue disgreement between input EntityCorrespondence and existing pose_" );
 	}
 	if ( ! correspondence_ ) {
-		correspondence_ = new EntityCorrespondence( ec );
+		correspondence_ = EntityCorrespondenceOP( new EntityCorrespondence( ec ) );
 		setup_complete_ = false;
 	}
 	correspondence_->set_pose( pose_ ); // discard the pose that's already being pointed to by the ec
@@ -147,7 +147,7 @@ void PackDaemon::setup()
 	}
 	TR << "PackDaemon::setup()" << std::endl;
 
-	rot_sets_ = new RotamerSets;
+	rot_sets_ = RotamerSetsOP( new RotamerSets );
 	InteractionGraphBaseOP ig;
 	core::pack::pack_rotamers_setup( *pose_, *score_function_, task_, rot_sets_, ig );
 
@@ -196,7 +196,7 @@ void PackDaemon::setup()
 	temp->set_ciBR_only( true );
 	repacker_ = temp;*/
 
-	DenseIGRepackerOP mca_repacker = new DenseIGRepacker( pose_, task_, ig_, rot_sets_ );
+	DenseIGRepackerOP mca_repacker( new DenseIGRepacker( pose_, task_, ig_, rot_sets_ ) );
 	mca_repacker->set_MCA();
 	repacker_ = mca_repacker;
 
@@ -311,7 +311,7 @@ PackDaemon::select_rotamer_subset( Entity const & entity ) const
 					+ utility::to_string( ii_resid ) + "." );
 			}
 		} else {
-			PosTypeCOP pt_ptr( dynamic_cast< PosType const * > ( entity.traits()[ ii_entity_id ].get() ));
+			PosTypeCOP pt_ptr( utility::pointer::dynamic_pointer_cast< protocols::multistate_design::PosType const > ( entity.traits()[ ii_entity_id ] ));
 			if ( ! pt_ptr ) {
 				utility_exit_with_message( "Failed to downcast entity trait[" +
 					utility::to_string( ii ) + "] to PosTye; trait name: " +
@@ -379,7 +379,7 @@ PackDaemon::PoseOP PackDaemon::recreate_pose_for_entity( Entity const & ent ) co
 		return 0;
 	}
 	RotamerAssignmentAndEnergy const & rotamer_assignment( iter->second );
-	PoseOP return_pose = new Pose( *pose_ );
+	PoseOP return_pose( new Pose( *pose_ ) );
 	for ( Size ii = 1; ii <= rot_sets_->nmoltenres(); ++ii ) {
 		Size iiresid = rot_sets_->moltenres_2_resid( ii );
 		Size iibestrot = rot_sets_->rotid_on_moltenresidue( rotamer_assignment.first[ ii ] );
@@ -455,7 +455,7 @@ void PackDaemon::calculate_background_energies()
 
 DaemonSet::DaemonSet() :
 	num_entities_( 0 ),
-	task_factory_( new core::pack::task::TaskFactory ),
+	task_factory_( core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory ) ),
 	include_background_energies_( true ),
 	limit_dlig_mem_usage_( false ),
 	dlig_nmeg_limit_( 0 ),
@@ -581,14 +581,14 @@ DaemonSet::add_pack_daemon(
 	}
 
 	/// Read the correspondence file
-	EntityCorrespondenceOP ec = new EntityCorrespondence;
-	ec->set_pose( new core::pose::Pose( pose ));
+	EntityCorrespondenceOP ec( new EntityCorrespondence );
+	ec->set_pose( core::pose::PoseCOP( new core::pose::Pose( pose ) ));
 	ec->set_num_entities( num_entities_ );
 	ec->initialize_from_correspondence_file( correspondence_file );
 
 	/// Setup the task
 	PackerTaskOP task = task_factory_->create_task_and_apply_taskoperations( pose );
-	ResfileContentsOP secondary_resfile_contents = new ResfileContents( pose, secondary_resfile );
+	ResfileContentsOP secondary_resfile_contents( new ResfileContents( pose, secondary_resfile ) );
 
 	initialize_task_from_entity_resfile_and_secondary_resfile( pose, ec, *entity_resfile_, *secondary_resfile_contents, task );
 	task->initialize_from_command_line();
@@ -679,7 +679,7 @@ DaemonSet::add_pack_daemon(
 	}
 
 	// Create the new daemon
-	PackDaemonOP daemon = new PackDaemon;
+	PackDaemonOP daemon( new PackDaemon );
 	daemon->set_pose_and_task( pose, *task );
 	daemon->set_score_function( *score_function_ );
 	daemon->set_entity_correspondence( *ec );
@@ -689,7 +689,7 @@ DaemonSet::add_pack_daemon(
 	}
 
 	daemons_.push_back( std::make_pair( daemon_index, daemon ));
-	daemon_poses_.push_back( new core::pose::Pose( pose ));
+	daemon_poses_.push_back( utility::pointer::shared_ptr<class core::pose::Pose>( new core::pose::Pose( pose ) ));
 	daemon_tasks_.push_back( task );
 	npd_calcs_for_poses_.resize( daemon_tasks_.size() );
 	++ndaemons_;
@@ -1175,7 +1175,7 @@ RotamerSubsetRepacker::create_rotamer_subsets_from_rot_to_pack(
 	utility::vector0< int > const & rot_to_pack
 )
 {
-	return new core::pack::rotamer_set::RotamerSubsets( *rot_sets(), rot_to_pack );
+	return RotamerSubsetRepacker::RotamerSubsetsOP( new core::pack::rotamer_set::RotamerSubsets( *rot_sets(), rot_to_pack ) );
 }
 
 
@@ -1254,7 +1254,7 @@ DenseIGRepacker::create_dense_pdig_from_rot_to_pack(
 	using namespace core::pack::interaction_graph;
 
 	core::Size nmoltenres = rot_sets()->nmoltenres();
-	DensePDInteractionGraphOP dense_ig = new DensePDInteractionGraph( nmoltenres );
+	DensePDInteractionGraphOP dense_ig( new DensePDInteractionGraph( nmoltenres ) );
 	dense_ig->initialize( *rot_subsets );
 
 	/// If the rotamers are in a contiguous block and all have the same "aa" according to
@@ -1405,7 +1405,7 @@ DoubleDenseIGRepacker::create_dense_pdig_from_rot_to_pack(
 	using namespace core::pack::interaction_graph;
 
 	core::Size nmoltenres = rot_sets()->nmoltenres();
-	DoubleDensePDInteractionGraphOP dense_ig = new DoubleDensePDInteractionGraph( nmoltenres );
+	DoubleDensePDInteractionGraphOP dense_ig( new DoubleDensePDInteractionGraph( nmoltenres ) );
 	dense_ig->initialize( *rot_subsets );
 	for ( Size ii = 1; ii <= rot_to_pack.size(); ++ii ) {
 		Size const ii_moltenres = rot_subsets->moltenres_for_rotamer( ii );
@@ -1496,7 +1496,7 @@ FASTER_IG_Repacker::repack( utility::vector0< int > const & rot_to_pack )
 		FArray1D< core::PackerEnergy > rot_freq( faster_ig->get_num_total_states(), 0.0 );
 
 		FASTERAnnealer fa( rotamer_assignment, rotamer_energy, start_with_current,
-			faster_ig, rsubset(), current_rot_index, calc_rot_freq, rot_freq );
+			faster_ig, rsubset, current_rot_index, calc_rot_freq, rot_freq );
 
 		fa.set_ciBR_only( ciBR_only_ );
 		fa.set_num_sa_trajectories( num_sa_ );
@@ -1532,7 +1532,7 @@ FASTER_IG_Repacker::create_faster_ig_from_rot_to_pack(
 	using namespace core::pack::interaction_graph;
 
 	core::Size nmoltenres = rot_sets()->nmoltenres();
-	FASTERInteractionGraphOP faster_ig = new FASTERInteractionGraph( nmoltenres );
+	FASTERInteractionGraphOP faster_ig( new FASTERInteractionGraph( nmoltenres ) );
 	faster_ig->initialize( *rot_subsets );
 
 

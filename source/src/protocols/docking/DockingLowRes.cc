@@ -112,7 +112,7 @@ void DockingLowRes::init(
 	// they will get overwritten by the options and/or passed values
 	set_default();
 
-	if ( scorefxn() == NULL ) {
+	if ( scorefxn == NULL ) {
 		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen" );
 	} else scorefxn_ = scorefxn;
 
@@ -126,7 +126,7 @@ DockingLowRes::~DockingLowRes() {}
 
 protocols::moves::MoverOP
 DockingLowRes::clone() const {
-	return new DockingLowRes(*this);
+	return protocols::moves::MoverOP( new DockingLowRes(*this) );
 }
 
 void DockingLowRes::set_trans_magnitude( core::Real trans_magnitude) { trans_magnitude_ = trans_magnitude;}
@@ -162,7 +162,7 @@ void DockingLowRes::sync_objects_with_flags()
 	docking_lowres_protocol_ = NULL;
 
 	// the movable dof's -- jumps only in this case
-	movemap_ = new kinematics::MoveMap();
+	movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap() );
 	movemap_->set_chi( chi_ ); // is this right?
 	movemap_->set_bb( bb_ ); // is this right?
 	for( DockJumps::const_iterator it = movable_jumps_.begin(); it != movable_jumps_.end(); ++it ) {
@@ -170,7 +170,7 @@ void DockingLowRes::sync_objects_with_flags()
 	}
 
 	// setup the mc object
-	mc_ = new moves::MonteCarlo( *scorefxn_, temperature_ );
+	mc_ = protocols::moves::MonteCarloOP( new moves::MonteCarlo( *scorefxn_, temperature_ ) );
 
 	flags_and_objects_are_in_sync_ = true;
 	first_apply_with_current_setup_ = true;
@@ -186,9 +186,9 @@ void DockingLowRes::set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn )
 void DockingLowRes::finalize_setup( core::pose::Pose & pose){
 	using namespace moves;
 
-	rb_mover_ = new rigid::RigidBodyPerturbNoCenterMover( pose, *movemap_, rot_magnitude_, trans_magnitude_, protocols::rigid::n2c );
+	rb_mover_ = protocols::rigid::RigidBodyPerturbNoCenterMoverOP( new rigid::RigidBodyPerturbNoCenterMover( pose, *movemap_, rot_magnitude_, trans_magnitude_, protocols::rigid::n2c ) );
 
-	docking_lowres_protocol_ = new SequenceMover;
+	docking_lowres_protocol_ = protocols::moves::SequenceMoverOP( new SequenceMover );
 	docking_lowres_protocol_->add_mover( rb_mover_ );
 }
 
@@ -288,11 +288,11 @@ void DockingLowRes::rigid_body_trial( core::pose::Pose & pose )
 	rb_mover_->rot_magnitude( rot_magnitude_ );
 	rb_mover_->trans_magnitude( trans_magnitude_ );
 
-	TrialMoverOP rb_trial = new TrialMover( docking_lowres_protocol_, mc_ );
+	TrialMoverOP rb_trial( new TrialMover( docking_lowres_protocol_, mc_ ) );
 //	rb_trial->keep_stats_type( moves::all_stats );
 	rb_trial->keep_stats_type( accept_reject );
     
-	RepeatMoverOP rb_cycle = new RepeatMover( rb_trial, inner_cycles_ );
+	RepeatMoverOP rb_cycle( new RepeatMover( rb_trial, inner_cycles_ ) );
 	rb_cycle->apply( pose );
     
 	pose = mc_->lowest_score_pose();

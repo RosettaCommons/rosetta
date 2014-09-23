@@ -51,23 +51,23 @@ public:
     // Shared initialization goes here.
 	void setUp() {
 		core_init();
-        the_pose = new pose::Pose;
+        the_pose = pose::PoseOP( new pose::Pose );
 		core::import_pose::centroid_pose_from_pdb( *the_pose, "protocols/scoring/dock_in.pdb" );
-        func = new core::scoring::func::FlatHarmonicFunc( 0.0, 1.0, 5.0 );
+        func = core::scoring::func::FlatHarmonicFuncOP( new core::scoring::func::FlatHarmonicFunc( 0.0, 1.0, 5.0 ) );
         name = "CA";
 	}
 
 	// Shared finalization goes here.
 	void tearDown() {
-        the_pose = 0;
-        func = 0;
+        the_pose.reset();
+        func.reset();
         name = "";
     }
 
     void test_site_constraint_near_interface() {
 
         Size res = 192;
-        SiteConstraintOP site_cst = new SiteConstraint();
+        SiteConstraintOP site_cst( new SiteConstraint() );
         site_cst->setup_csts( res, name, "I", *the_pose, func );
 
         EnergyMap weights, emap;
@@ -88,7 +88,7 @@ public:
 
         Size res = 3;
         Real distance = 26.71618914; // measured in pdb file
-        SiteConstraintOP site_cst = new SiteConstraint();
+        SiteConstraintOP site_cst( new SiteConstraint() );
         site_cst->setup_csts( res, name, "I", *the_pose, func );
 
         EnergyMap weights, emap;

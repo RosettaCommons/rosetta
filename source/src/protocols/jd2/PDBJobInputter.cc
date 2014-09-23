@@ -113,7 +113,7 @@ PDBJobInputterCreator::keyname() const
 
 protocols::jd2::JobInputterOP
 PDBJobInputterCreator::create_JobInputter() const {
-	return new PDBJobInputter;
+	return protocols::jd2::JobInputterOP( new PDBJobInputter );
 }
 
 }//jd2

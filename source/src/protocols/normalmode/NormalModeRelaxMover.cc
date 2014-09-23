@@ -217,8 +217,7 @@ CartesianNormalModeMover::CartesianNormalModeMover(
 
 void
 CartesianNormalModeMover::set_default_minoption(){
-	minoption_ =
-		new optimization::MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.02, true, false, false );
+	minoption_ = optimization::MinimizerOptionsCOP( new optimization::MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.02, true, false, false ) );
 }
 
 CartesianNormalModeMover::~CartesianNormalModeMover(){}
@@ -342,8 +341,8 @@ CartesianNormalModeMover::gen_coord_constraint( pose::Pose &pose,
   core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, cst_sdev() ) );
   for( Size i_atm = 1; i_atm <= NM().natm(); ++i_atm ){
     pose.add_constraint(
-		new core::scoring::constraints::CoordinateConstraint
-	  ( NM().get_atomID()[i_atm], NM().get_atomID()[i_atm], excrd[ i_atm ], fx ) );
+		scoring::constraints::ConstraintCOP( new core::scoring::constraints::CoordinateConstraint
+	  ( NM().get_atomID()[i_atm], NM().get_atomID()[i_atm], excrd[ i_atm ], fx ) ) );
   }
 }
 
@@ -441,17 +440,15 @@ TorsionNormalModeMover::set_default_minoption(){
 	//optimization::MinimizerOptionsCOP minoption =
 	//	new ( "dfpmin", 0.02, true, false, false );
 	//set_minoption( minoption );
-	minoption_ = new optimization::MinimizerOptions( "dfpmin", 0.02, true, false, false );
+	minoption_ = optimization::MinimizerOptionsCOP( new optimization::MinimizerOptions( "dfpmin", 0.02, true, false, false ) );
 }
 
 void
 TorsionNormalModeMover::apply( pose::Pose &pose )
 {
 	pose::Pose const pose_init( pose );
-	protocols::moves::MoverOP tocen
-		= new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
-	protocols::moves::MoverOP tofa
-		= new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD );
+	protocols::moves::MoverOP tocen( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
+	protocols::moves::MoverOP tofa( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD ) );
 
   // NormalMode setup
   // Don't solve again NormalMode until "refresh_normalmode" is called
@@ -534,9 +531,9 @@ TorsionNormalModeMover::gen_coord_constraint( pose::Pose &pose,
 
 		// Just put current position
     pose.add_constraint(
-		new core::scoring::constraints::CoordinateConstraint
+		scoring::constraints::ConstraintCOP( new core::scoring::constraints::CoordinateConstraint
 	  ( NM().get_atomID()[i_atm], NM().get_atomID()[i_atm],
-			pose.residue(resno).xyz(atmno), fx ) );
+			pose.residue(resno).xyz(atmno), fx ) ) );
   }
 }
 

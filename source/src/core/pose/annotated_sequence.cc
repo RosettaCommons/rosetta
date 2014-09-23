@@ -560,7 +560,7 @@ pose_from_saccharide_sequence(std::string const & sequence,
 {
 	using namespace pose;
 
-	PoseOP pose = new Pose();
+	PoseOP pose( new Pose() );
 	make_pose_from_saccharide_sequence(*pose, sequence, type_set_name, auto_termini);
 	return pose;
 }

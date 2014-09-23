@@ -28,8 +28,8 @@ namespace abinitio {
 class DoubleLayerKinematicAbinitio;
 
 // Types
-typedef  utility::pointer::owning_ptr< DoubleLayerKinematicAbinitio >  DoubleLayerKinematicAbinitioOP;
-typedef  utility::pointer::owning_ptr< DoubleLayerKinematicAbinitio const >  DoubleLayerKinematicAbinitioCOP;
+typedef  utility::pointer::shared_ptr< DoubleLayerKinematicAbinitio >  DoubleLayerKinematicAbinitioOP;
+typedef  utility::pointer::shared_ptr< DoubleLayerKinematicAbinitio const >  DoubleLayerKinematicAbinitioCOP;
 
 } // namespace kinematics
 } // namespace core

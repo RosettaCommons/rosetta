@@ -49,12 +49,12 @@ public:
 	}
 
 	ScoringSchemeOP clone() const {
-		return new SimpleScoringScheme(
+		return ScoringSchemeOP( new SimpleScoringScheme(
 			match_score(),
 			mismatch_score(),
 			gap_open(),
 			gap_extend()
-		);
+		) );
 	}
 
 	/// @brief dtor

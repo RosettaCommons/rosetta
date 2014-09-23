@@ -43,8 +43,8 @@ static thread_local basic::Tracer TR( "core.pack.task.operation.OperateOnCertain
 
 OperateOnCertainResidues::OperateOnCertainResidues()
 	: parent(),
-		op_(0),
-		filter_(0)
+		op_(/* 0 */),
+		filter_(/* 0 */)
 {}
 
 OperateOnCertainResidues::OperateOnCertainResidues(
@@ -67,9 +67,9 @@ OperateOnCertainResidues::operator = ( OperateOnCertainResidues const & src )
 {
 	residue_indices_ = src.residue_indices();
 	if ( src.op_ ) op_ = src.op_->clone();
-	else op_ = 0;
+	else op_.reset();
 	if ( src.filter_ ) filter_ = src.filter_->clone();
-	else filter_ = 0;
+	else filter_.reset();
 	return *this;
 }
 
@@ -77,12 +77,12 @@ OperateOnCertainResidues::~OperateOnCertainResidues() {}
 
 TaskOperationOP OperateOnCertainResiduesCreator::create_task_operation() const
 {
-	return new OperateOnCertainResidues;
+	return TaskOperationOP( new OperateOnCertainResidues );
 }
 
 TaskOperationOP OperateOnCertainResidues::clone() const
 {
-	return new OperateOnCertainResidues( *this );
+	return TaskOperationOP( new OperateOnCertainResidues( *this ) );
 }
 
 void

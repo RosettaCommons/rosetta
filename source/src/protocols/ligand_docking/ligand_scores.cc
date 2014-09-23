@@ -68,7 +68,7 @@ append_interface_deltas(
 		const core::scoring::ScoreFunctionOP scorefxn,
 		std::string const & prefix
 ){
-	core::pose::PoseOP after_copy = new core::pose::Pose( after );
+	core::pose::PoseOP after_copy( new core::pose::Pose( after ) );
 
 	char const ligand_chain= core::pose::get_chain_from_jump_id(jump_id, after);
 
@@ -148,7 +148,7 @@ append_interface_deltas(
 	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function
 	)
 {
-	core::pose::PoseOP after_copy = new core::pose::Pose( after );
+	core::pose::PoseOP after_copy( new core::pose::Pose( after ) );
 
 	char const ligand_chain= core::pose::get_chain_from_jump_id(jump_id, after);
 	core::Size chain_id = core::pose::get_chain_id_from_jump_id(jump_id, after);
@@ -421,7 +421,7 @@ append_multi_residue_ligand_RMSD(
 		core::Size const before_chain= before.chain(before_first_residue);
 		core::Size const after_chain= before.chain(after_first_residue);
 		core::pose::Pose before_copy(before);
-		core::pose::PoseOP after_copy= new core::pose::Pose(after);
+		core::pose::PoseOP after_copy( new core::pose::Pose(after) );
 		before_copy.remove_constraints();/// TODO fix split_by_chain to avoid this
 		after_copy->remove_constraints();/// TODO fix split_by_chain to avoid this
 		before_ligand= *before_copy.split_by_chain(before_chain);

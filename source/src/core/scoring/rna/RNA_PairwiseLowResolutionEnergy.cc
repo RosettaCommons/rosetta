@@ -52,7 +52,7 @@ methods::EnergyMethodOP
 RNA_PairwiseLowResolutionEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new RNA_PairwiseLowResolutionEnergy;
+	return methods::EnergyMethodOP( new RNA_PairwiseLowResolutionEnergy );
 }
 
 ScoreTypes
@@ -98,7 +98,7 @@ RNA_PairwiseLowResolutionEnergy::RNA_PairwiseLowResolutionEnergy() :
 methods::EnergyMethodOP
 RNA_PairwiseLowResolutionEnergy::clone() const
 {
-	return new RNA_PairwiseLowResolutionEnergy;
+	return methods::EnergyMethodOP( new RNA_PairwiseLowResolutionEnergy );
 }
 
 

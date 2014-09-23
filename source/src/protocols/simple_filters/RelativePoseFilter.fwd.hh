@@ -26,8 +26,8 @@ namespace simple_filters {
 class RelativePoseFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< RelativePoseFilter >  RelativePoseFilterOP;
-typedef utility::pointer::owning_ptr< RelativePoseFilter const >  RelativePoseFilterCOP;
+typedef utility::pointer::shared_ptr< RelativePoseFilter >  RelativePoseFilterOP;
+typedef utility::pointer::shared_ptr< RelativePoseFilter const >  RelativePoseFilterCOP;
 
 } // namespace simple_filters
 } // namespace protocols

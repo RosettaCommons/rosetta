@@ -28,11 +28,11 @@ class MatchConsolidator;
 
 class BestMatchesCollection;
 
-typedef utility::pointer::owning_ptr< MatchConsolidator > MatchConsolidatorOP;
-typedef utility::pointer::owning_ptr< MatchConsolidator const > MatchConsolidatorCOP;
+typedef utility::pointer::shared_ptr< MatchConsolidator > MatchConsolidatorOP;
+typedef utility::pointer::shared_ptr< MatchConsolidator const > MatchConsolidatorCOP;
 
-typedef utility::pointer::owning_ptr< BestMatchesCollection > BestMatchesCollectionOP;
-typedef utility::pointer::owning_ptr< BestMatchesCollection const > BestMatchesCollectionCOP;
+typedef utility::pointer::shared_ptr< BestMatchesCollection > BestMatchesCollectionOP;
+typedef utility::pointer::shared_ptr< BestMatchesCollection const > BestMatchesCollectionCOP;
 
 }
 }

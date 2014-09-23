@@ -40,7 +40,7 @@ methods::EnergyMethodOP
 WaterAdductIntraEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new WaterAdductIntraEnergy;
+	return methods::EnergyMethodOP( new WaterAdductIntraEnergy );
 }
 
 ScoreTypes
@@ -60,7 +60,7 @@ WaterAdductIntraEnergy::WaterAdductIntraEnergy() :
 EnergyMethodOP
 WaterAdductIntraEnergy::clone() const
 {
-	return new WaterAdductIntraEnergy;
+	return EnergyMethodOP( new WaterAdductIntraEnergy );
 }
 
 /////////////////////////////////////////////////////////////////////////////

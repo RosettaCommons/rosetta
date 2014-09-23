@@ -55,8 +55,8 @@ static thread_local basic::Tracer TR( "protocols.simple_filters.TaskAwareScoreTy
 ///@brief default ctor
 TaskAwareScoreTypeFilter::TaskAwareScoreTypeFilter() :
 	parent( "TaskAwareScoreType" ),
-	task_factory_( NULL ),
-	scorefxn_( NULL ),
+	task_factory_( /* NULL */ ),
+	scorefxn_( /* NULL */ ),
 	threshold_( 100000 ),
 	bb_bb_( false ),
 	write2pdb_( false ),
@@ -383,18 +383,18 @@ void TaskAwareScoreTypeFilter::parse_def( utility::lua::LuaObject const & def,
 
 protocols::filters::FilterOP
 TaskAwareScoreTypeFilter::fresh_instance() const{
-	return new TaskAwareScoreTypeFilter();
+	return protocols::filters::FilterOP( new TaskAwareScoreTypeFilter() );
 }
 
 TaskAwareScoreTypeFilter::~TaskAwareScoreTypeFilter(){}
 
 protocols::filters::FilterOP
 TaskAwareScoreTypeFilter::clone() const{
-	return new TaskAwareScoreTypeFilter( *this );
+	return protocols::filters::FilterOP( new TaskAwareScoreTypeFilter( *this ) );
 }
 
 protocols::filters::FilterOP
-TaskAwareScoreTypeFilterCreator::create_filter() const { return new TaskAwareScoreTypeFilter; }
+TaskAwareScoreTypeFilterCreator::create_filter() const { return protocols::filters::FilterOP( new TaskAwareScoreTypeFilter ); }
 
 std::string
 TaskAwareScoreTypeFilterCreator::keyname() const { return "TaskAwareScoreType"; }

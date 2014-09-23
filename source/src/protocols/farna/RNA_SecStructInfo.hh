@@ -49,7 +49,7 @@ RNA_SecStructInfo(): initialized_(false) {};
  basic::datacache::CacheableDataOP
   clone() const
   {
-    return new RNA_SecStructInfo( *this );
+    return basic::datacache::CacheableDataOP( new RNA_SecStructInfo( *this ) );
   }
 
  	// Undefinded, comented out to make python bindings complile

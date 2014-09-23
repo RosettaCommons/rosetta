@@ -61,7 +61,7 @@ UpstreamDownstreamCollisionFilter::~UpstreamDownstreamCollisionFilter()
 void
 UpstreamDownstreamCollisionFilter::set_downstream_pose( core::pose::Pose const & downstream_pose )
 {
-	downstream_pose_ = new core::pose::Pose( downstream_pose );
+	downstream_pose_ = core::pose::PoseOP( new core::pose::Pose( downstream_pose ) );
 	Size count_atoms( 0 );
 	per_res_atom_ind_.resize( downstream_pose.total_residue() );
 	for ( Size ii = 1; ii <= downstream_pose.total_residue(); ++ii ) {

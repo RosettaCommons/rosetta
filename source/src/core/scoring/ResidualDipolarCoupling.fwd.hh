@@ -23,8 +23,8 @@ namespace core {
 namespace scoring {
 
 class ResidualDipolarCoupling;
-typedef utility::pointer::owning_ptr< ResidualDipolarCoupling > ResidualDipolarCouplingOP;
-typedef utility::pointer::owning_ptr< ResidualDipolarCoupling const > ResidualDipolarCouplingCOP;
+typedef utility::pointer::shared_ptr< ResidualDipolarCoupling > ResidualDipolarCouplingOP;
+typedef utility::pointer::shared_ptr< ResidualDipolarCoupling const > ResidualDipolarCouplingCOP;
 
 
 class RDC;

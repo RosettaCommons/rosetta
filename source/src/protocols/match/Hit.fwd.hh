@@ -61,8 +61,8 @@ class Hit;
 typedef utility::vector1< Hit > match;
 
 typedef numeric::kdtree::WrappedPrimitive< std::list< Hit const * > > HitPtrList;
-typedef utility::pointer::owning_ptr< HitPtrList > HitPtrListOP;
-typedef utility::pointer::owning_ptr< HitPtrList const > HitPtrListCOP;
+typedef utility::pointer::shared_ptr< HitPtrList > HitPtrListOP;
+typedef utility::pointer::shared_ptr< HitPtrList const > HitPtrListCOP;
 
 class upstream_hit;
 class downstream_hit;

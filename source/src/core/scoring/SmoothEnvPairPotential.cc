@@ -567,7 +567,7 @@ SmoothEnvPairPotential::evaluate_pair_and_cenpack_deriv(
 SigmoidWeightedCenList< Real > const &
 SmoothEnvPairPotential::cenlist_from_pose( pose::Pose const & pose ) const {
 	using namespace core::pose::datacache;
-	return *( static_cast< SigmoidWeightedCenList< Real > const * >( pose.data().get_const_ptr( CacheableDataType::SIGMOID_WEIGHTED_CEN_LIST )() ));
+	return *( utility::pointer::static_pointer_cast< SigmoidWeightedCenList<Real> const > ( pose.data().get_const_ptr( CacheableDataType::SIGMOID_WEIGHTED_CEN_LIST ) ));
  }
 
 /// @details Either returns a non-const reference to the cenlist object already stored
@@ -576,10 +576,10 @@ SmoothEnvPairPotential::cenlist_from_pose( pose::Pose const & pose ) const {
 SigmoidWeightedCenList< Real > &
 SmoothEnvPairPotential::nonconst_cenlist_from_pose( pose::Pose & pose ) const {
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::SIGMOID_WEIGHTED_CEN_LIST ) ) {
-		return *( static_cast< SigmoidWeightedCenList< Real > * >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::SIGMOID_WEIGHTED_CEN_LIST )() ));
+		return *( utility::pointer::static_pointer_cast< SigmoidWeightedCenList<Real> > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::SIGMOID_WEIGHTED_CEN_LIST ) ));
 	}
 	// else
-	SigmoidWeightedCenListRealOP cenlist = new SigmoidWeightedCenList< Real >;
+	SigmoidWeightedCenListRealOP cenlist( new SigmoidWeightedCenList< Real > );
 	pose.data().set( core::pose::datacache::CacheableDataType::SIGMOID_WEIGHTED_CEN_LIST, cenlist );
 	return *cenlist;
 }
@@ -588,8 +588,7 @@ SmoothEnvPairPotential::nonconst_cenlist_from_pose( pose::Pose & pose ) const {
 SigmoidWeightedCenList< numeric::xyzVector< Real > > const &
 SmoothEnvPairPotential::dcenlist_from_pose( pose::Pose const & pose ) const {
 	using namespace core::pose::datacache;
-	return *( static_cast< SigmoidWeightedCenList< numeric::xyzVector< Real > > const * >
-		( pose.data().get_const_ptr( CacheableDataType::SIGMOID_WEIGHTED_D_CEN_LIST )() ));
+	return *( utility::pointer::static_pointer_cast< SigmoidWeightedCenList<numeric::xyzVector<Real> > const > ( pose.data().get_const_ptr( CacheableDataType::SIGMOID_WEIGHTED_D_CEN_LIST ) ));
 
 }
 
@@ -599,11 +598,10 @@ SmoothEnvPairPotential::dcenlist_from_pose( pose::Pose const & pose ) const {
 SigmoidWeightedCenList< numeric::xyzVector< Real > > &
 SmoothEnvPairPotential::nonconst_dcenlist_from_pose( pose::Pose & pose ) const {
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::SIGMOID_WEIGHTED_D_CEN_LIST ) ) {
-		return *( static_cast< SigmoidWeightedCenList< numeric::xyzVector< Real > > * >
-			( pose.data().get_ptr( core::pose::datacache::CacheableDataType::SIGMOID_WEIGHTED_D_CEN_LIST )() ));
+		return *( utility::pointer::static_pointer_cast< SigmoidWeightedCenList<numeric::xyzVector<Real> > > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::SIGMOID_WEIGHTED_D_CEN_LIST ) ));
 	}
 	// else
-	SigmoidWeightedCenListVectorOP cenlist = new SigmoidWeightedCenList< numeric::xyzVector< Real > >;
+	SigmoidWeightedCenListVectorOP cenlist( new SigmoidWeightedCenList< numeric::xyzVector< Real > > );
 	pose.data().set( core::pose::datacache::CacheableDataType::SIGMOID_WEIGHTED_D_CEN_LIST, cenlist );
 	return *cenlist;
 }

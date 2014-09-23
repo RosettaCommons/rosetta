@@ -86,14 +86,12 @@ void LoopRelaxThreadingMover::apply( core::pose::Pose & pose ) {
 	using core::Size;
 	basic::Tracer tr( "protocols.threading" );
 	// looprelax
-	protocols::comparative_modeling::ThreadingJobCOP job = dynamic_cast< protocols::comparative_modeling::ThreadingJob const * >(
-		JobDistributor::get_instance()->current_job()->inner_job().get()
-	);
+	protocols::comparative_modeling::ThreadingJobCOP job = utility::pointer::dynamic_pointer_cast< protocols::comparative_modeling::ThreadingJob const > ( JobDistributor::get_instance()->current_job()->inner_job() );
 	if ( !job ) {
 		utility_exit_with_message("ERROR: You must use the ThreadingJobInputter with the LoopRelaxThreadingMover - did you forget the -in:file:template_pdb option?");
 	}
 
-	LoopsOP my_loops = new Loops( job->loops( pose.total_residue() ) );
+	LoopsOP my_loops( new Loops( job->loops( pose.total_residue() ) ) );
 	my_loops->choose_cutpoints( pose );
 	tr.Info << "loops to be rebuilt are: " << std::endl;
 	tr.Info << my_loops << std::endl;

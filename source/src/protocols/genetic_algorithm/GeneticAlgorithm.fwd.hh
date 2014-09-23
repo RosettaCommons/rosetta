@@ -21,13 +21,13 @@ namespace genetic_algorithm {
 
 class GeneticAlgorithmBase;
 
-typedef  utility::pointer::owning_ptr< GeneticAlgorithmBase >  GeneticAlgorithmBaseOP;
-typedef  utility::pointer::owning_ptr< GeneticAlgorithmBase const >  GeneticAlgorithmBaseCOP;
+typedef  utility::pointer::shared_ptr< GeneticAlgorithmBase >  GeneticAlgorithmBaseOP;
+typedef  utility::pointer::shared_ptr< GeneticAlgorithmBase const >  GeneticAlgorithmBaseCOP;
 
 class GeneticAlgorithm;
 
-typedef  utility::pointer::owning_ptr< GeneticAlgorithm >  GeneticAlgorithmOP;
-typedef  utility::pointer::owning_ptr< GeneticAlgorithm const >  GeneticAlgorithmCOP;
+typedef  utility::pointer::shared_ptr< GeneticAlgorithm >  GeneticAlgorithmOP;
+typedef  utility::pointer::shared_ptr< GeneticAlgorithm const >  GeneticAlgorithmCOP;
 
 } // namespace genetic_algorithm
 } // namespace protocols

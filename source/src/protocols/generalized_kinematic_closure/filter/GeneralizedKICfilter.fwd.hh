@@ -22,8 +22,8 @@ namespace generalized_kinematic_closure {
 namespace filter {
 
 class GeneralizedKICfilter; // fwd declaration
-typedef utility::pointer::owning_ptr< GeneralizedKICfilter > GeneralizedKICfilterOP;
-typedef utility::pointer::owning_ptr< GeneralizedKICfilter const > GeneralizedKICfilterCOP;
+typedef utility::pointer::shared_ptr< GeneralizedKICfilter > GeneralizedKICfilterOP;
+typedef utility::pointer::shared_ptr< GeneralizedKICfilter const > GeneralizedKICfilterCOP;
 typedef utility::vector1<GeneralizedKICfilterOP> GeneralizedKICfilterOPs;
 typedef utility::vector1<GeneralizedKICfilterCOP> GeneralizedKICfilterCOPs;
 

@@ -148,7 +148,7 @@ void MedalMover::decompose_structure(const core::pose::Pose& pose,
   }
 
   // Override automatic chunk selection
-  chunks = new protocols::loops::Loops( option[OptionKeys::nonlocal::chunks]() );
+  chunks = protocols::loops::LoopsOP( new protocols::loops::Loops( option[OptionKeys::nonlocal::chunks]() ) );
 }
 
 MedalMover::MedalMover() {
@@ -253,7 +253,7 @@ void MedalMover::do_loop_closure(core::pose::Pose* pose) const {
     return;
 
   // Choose chainbreaks automatically
-  LoopsOP empty = new protocols::loops::Loops();
+  LoopsOP empty( new protocols::loops::Loops() );
   protocols::comparative_modeling::LoopRelaxMover closure;
   closure.remodel("quick_ccd");
   closure.intermedrelax("no");
@@ -314,11 +314,11 @@ std::string MedalMover::get_name() const {
 }
 
 protocols::moves::MoverOP MedalMover::clone() const {
-  return new MedalMover(*this);
+  return protocols::moves::MoverOP( new MedalMover(*this) );
 }
 
 protocols::moves::MoverOP MedalMover::fresh_instance() const {
-  return new MedalMover();
+  return protocols::moves::MoverOP( new MedalMover() );
 }
 
 protocols::moves::MoverOP MedalMover::create_fragment_mover(
@@ -335,13 +335,12 @@ protocols::moves::MoverOP MedalMover::create_fragment_mover(
   using namespace protocols::simple_moves::rational_mc;
   using namespace protocols::nonlocal;
 
-  MoverOP fragment_mover = new BiasedFragmentMover(PolicyFactory::get_policy(policy, fragments, library_size), probs);
+  MoverOP fragment_mover( new BiasedFragmentMover(PolicyFactory::get_policy(policy, fragments, library_size), probs) );
 
-  RationalMonteCarloOP mover =
-      new RationalMonteCarlo(fragment_mover, score,
+  RationalMonteCarloOP mover( new RationalMonteCarlo(fragment_mover, score,
                              option[OptionKeys::rigid::fragment_cycles](),
                              option[OptionKeys::rigid::temperature](),
-                             true);
+                             true) );
 
     // Optionally record accepted moves
     if (option[OptionKeys::rigid::log_accepted_moves]())
@@ -365,16 +364,15 @@ protocols::moves::MoverOP MedalMover::create_fragment_and_rigid_mover(
   using namespace protocols::simple_moves::rational_mc;
   using namespace protocols::nonlocal;
 
-  CyclicMoverOP meta = new CyclicMover();
-  meta->enqueue(new rigid::RigidBodyMotionMover(pose.fold_tree()));
-  meta->enqueue(new BiasedFragmentMover(PolicyFactory::get_policy(policy, fragments, library_size), probs));
+  CyclicMoverOP meta( new CyclicMover() );
+  meta->enqueue(MoverOP( new rigid::RigidBodyMotionMover(pose.fold_tree()) ));
+  meta->enqueue(MoverOP( new BiasedFragmentMover(PolicyFactory::get_policy(policy, fragments, library_size), probs) ));
 
-  RationalMonteCarloOP mover =
-      new RationalMonteCarlo(meta,
+  RationalMonteCarloOP mover( new RationalMonteCarlo(meta,
                              score,
                              option[OptionKeys::rigid::fragment_cycles](),
                              option[OptionKeys::rigid::temperature](),
-                             true);
+                             true) );
 
   // Optionally record accepted moves
   if (option[OptionKeys::rigid::log_accepted_moves]())
@@ -391,24 +389,23 @@ protocols::moves::MoverOP MedalMover::create_small_mover(core::pose::PoseOP, cor
   using core::kinematics::MoveMap;
   using core::kinematics::MoveMapOP;
 
-  MoveMapOP movable = new MoveMap();
+  MoveMapOP movable( new MoveMap() );
   movable->set_bb(true);
 
-  CyclicMoverOP meta = new CyclicMover();
-  meta->enqueue(new protocols::simple_moves::SmallMover(movable,
+  CyclicMoverOP meta( new CyclicMover() );
+  meta->enqueue(MoverOP( new protocols::simple_moves::SmallMover(movable,
                                option[OptionKeys::rigid::temperature](),
-                               option[OptionKeys::rigid::residues_backbone_move]()));
+                               option[OptionKeys::rigid::residues_backbone_move]()) ));
 
-  meta->enqueue(new protocols::simple_moves::ShearMover(movable,
+  meta->enqueue(MoverOP( new protocols::simple_moves::ShearMover(movable,
                                option[OptionKeys::rigid::temperature](),
-                               option[OptionKeys::rigid::residues_backbone_move]()));
+                               option[OptionKeys::rigid::residues_backbone_move]()) ));
 
-  RationalMonteCarloOP mover =
-      new RationalMonteCarlo(meta,
+  RationalMonteCarloOP mover( new RationalMonteCarlo(meta,
                              score,
                              option[OptionKeys::rigid::small_cycles](),
                              option[OptionKeys::rigid::temperature](),
-                             true);
+                             true) );
 
   // Optionally record accepted moves
   if (option[OptionKeys::rigid::log_accepted_moves]())

@@ -16,9 +16,9 @@ namespace fold_from_loops {
 
 class FoldFromLoopsMover;
 
-typedef  utility::pointer::owning_ptr< FoldFromLoopsMover >  FoldFromLoopsMoverOP;
+typedef  utility::pointer::shared_ptr< FoldFromLoopsMover >  FoldFromLoopsMoverOP;
 
-typedef  utility::pointer::owning_ptr< FoldFromLoopsMover const >  FoldFromLoopsMoverCOP;
+typedef  utility::pointer::shared_ptr< FoldFromLoopsMover const >  FoldFromLoopsMoverCOP;
 
 
 }

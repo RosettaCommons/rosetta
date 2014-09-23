@@ -373,7 +373,7 @@ SymMinimizerMap::add_new_dof_node(
 	// runtime_assert( (  new_tor_id.valid() && symm_info_->torsion_is_independent( new_tor_id ) ) ||
 	// 								( !new_tor_id.valid() && symm_info_->bb_follows( new_torsion.rsd() ) == 0 ) );
 
-	DOF_NodeOP dof_node = new DOF_Node( new_torsion, DOF_NodeOP( 0 ) );
+	DOF_NodeOP dof_node( new DOF_Node( new_torsion, DOF_NodeOP( 0 ) ) );
 	dof_node->dependent( false ); // only used if new_sym_min_
 
 	if ( parent.valid() ) {

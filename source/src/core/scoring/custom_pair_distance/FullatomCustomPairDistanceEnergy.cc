@@ -57,7 +57,7 @@ methods::EnergyMethodOP
 FullatomCustomPairDistanceEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new FullatomCustomPairDistanceEnergy;
+	return methods::EnergyMethodOP( new FullatomCustomPairDistanceEnergy );
 }
 
 ScoreTypes
@@ -79,7 +79,7 @@ public:
 
 	RespairInteractions(){}
 	virtual ~RespairInteractions(){}
-	virtual basic::datacache::CacheableDataOP clone() const { return new RespairInteractions( *this ); }
+	virtual basic::datacache::CacheableDataOP clone() const { return basic::datacache::CacheableDataOP( new RespairInteractions( *this ) ); }
 
 	void apfc_list( AtomPairFuncListCOP apfclist ) { apfc_list_ = apfclist; }
 	AtomPairFuncList const & apfc_list() const { return *apfc_list_; }
@@ -87,8 +87,8 @@ private:
 	AtomPairFuncListCOP apfc_list_;
 };
 
-typedef utility::pointer::owning_ptr< RespairInteractions > RespairInteractionsOP;
-typedef utility::pointer::owning_ptr< RespairInteractions const > RespairInteractionsCOP;
+typedef utility::pointer::shared_ptr< RespairInteractions > RespairInteractionsOP;
+typedef utility::pointer::shared_ptr< RespairInteractions const > RespairInteractionsCOP;
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -125,7 +125,7 @@ FullatomCustomPairDistanceEnergy::FullatomCustomPairDistanceEnergy( FullatomCust
 methods::EnergyMethodOP
 FullatomCustomPairDistanceEnergy::clone() const
 {
-	return new FullatomCustomPairDistanceEnergy( *this );
+	return methods::EnergyMethodOP( new FullatomCustomPairDistanceEnergy( *this ) );
 }
 
 
@@ -230,8 +230,8 @@ FullatomCustomPairDistanceEnergy::setup_for_minimizing_for_residue_pair(
 	assert( rsd1.seqpos() < rsd2.seqpos() );
 
 	// update the existing respair_intxns object if one is already present in the pair_data object
-	RespairInteractionsOP respair_intxns = static_cast< RespairInteractions * > ( pair_data.get_data( fa_custom_pair_dist_data )() );
-	if ( ! respair_intxns ) respair_intxns = new RespairInteractions;
+	RespairInteractionsOP respair_intxns = utility::pointer::static_pointer_cast< core::scoring::custom_pair_distance::RespairInteractions > ( pair_data.get_data( fa_custom_pair_dist_data ) );
+	if ( ! respair_intxns ) respair_intxns = RespairInteractionsOP( new RespairInteractions );
 
 	AtomPairFuncListCOP apfclist = find( rsd1, rsd2 )->second;
 	assert( apfclist );
@@ -456,7 +456,7 @@ FullatomCustomPairDistanceEnergy::set_pair_and_func_map()
 			l >> score_function_name;
 
 			atoms_and_func_struct pair_func;
-			pair_func.func_ = new DistanceFunc( score_function_name );
+			pair_func.func_ = DistanceFuncCOP( new DistanceFunc( score_function_name ) );
 			if (pair_func.func_->max_dis() > max_dis_)
 				max_dis_ = pair_func.func_->max_dis();
 			tr.Debug << "SCORE_FUNCTION: " << score_function_name << " (min: " <<
@@ -484,7 +484,7 @@ FullatomCustomPairDistanceEnergy::set_pair_and_func_map()
 						AtomPairFuncListOP atpairlist = pair_and_func_map_[ respair ];
 						if ( ! atpairlist ) {
 							//std::cout << "Adding new residue-pair interaction for " << respair[1]->name() << " " << respair[2]->name() << std::endl;
-							atpairlist = new AtomPairFuncList;
+							atpairlist = AtomPairFuncListOP( new AtomPairFuncList );
 							pair_and_func_map_[ respair ] = atpairlist;
 						} else {
 							//std::cout << "Updating residue-pair interaction for " << respair[1]->name() << " " << respair[2]->name() << std::endl;
@@ -502,7 +502,7 @@ FullatomCustomPairDistanceEnergy::set_pair_and_func_map()
 							pair_func.resB_atom_index_ =  atom_index_a;
 							atpairlist =  pair_and_func_map_[ respair ];
 							if ( ! atpairlist ) {
-								atpairlist = new AtomPairFuncList;
+								atpairlist = AtomPairFuncListOP( new AtomPairFuncList );
 								pair_and_func_map_[ respair ] = atpairlist;
 							}
 							atpairlist->add_interaction( pair_func );

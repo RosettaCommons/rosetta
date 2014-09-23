@@ -25,8 +25,8 @@ namespace silent {
 /// creating a particular SilentStruct class.
 class SilentStructCreator;
 
-typedef utility::pointer::owning_ptr< SilentStructCreator > SilentStructCreatorOP;
-typedef utility::pointer::owning_ptr< SilentStructCreator const > SilentStructCreatorCOP;
+typedef utility::pointer::shared_ptr< SilentStructCreator > SilentStructCreatorOP;
+typedef utility::pointer::shared_ptr< SilentStructCreator const > SilentStructCreatorCOP;
 
 } //namespace silent
 } //namespace io

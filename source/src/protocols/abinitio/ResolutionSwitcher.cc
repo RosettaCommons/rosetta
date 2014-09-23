@@ -121,7 +121,7 @@ ResolutionSwitcher::ResolutionSwitcher(
 		init_pose_( pose ),
 		init_fa_( pose.is_fullatom() ),
 		start_centroid_( start_centroid ),
-		scorefxn_fa_( NULL ),
+		scorefxn_fa_( /* NULL */ ),
 		repack_buffer_( 0 ),
 		map_cst_from_centroid_to_fa_( true )
 {}

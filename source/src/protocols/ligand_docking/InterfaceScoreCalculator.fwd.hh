@@ -22,8 +22,8 @@ namespace protocols {
 namespace ligand_docking {
 
 class InterfaceScoreCalculator; // fwd declaration
-typedef utility::pointer::owning_ptr< InterfaceScoreCalculator > InterfaceScoreCalculatorOP;
-typedef utility::pointer::owning_ptr< InterfaceScoreCalculator const > InterfaceScoreCalculatorCOP;
+typedef utility::pointer::shared_ptr< InterfaceScoreCalculator > InterfaceScoreCalculatorOP;
+typedef utility::pointer::shared_ptr< InterfaceScoreCalculator const > InterfaceScoreCalculatorCOP;
 typedef utility::vector1<InterfaceScoreCalculatorOP> InterfaceScoreCalculatorOPs;
 typedef utility::vector1<InterfaceScoreCalculatorCOP> InterfaceScoreCalculatorCOPs;
 

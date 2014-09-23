@@ -50,8 +50,8 @@ namespace frag_picker {
 template< class StrictWeakOrdering >
 class BoundedCollector: public CandidatesCollector {
 public:
-	typedef utility::pointer::owning_ptr< BoundedCollector< StrictWeakOrdering > > BoundedCollectorOP;
-	typedef utility::pointer::owning_ptr< BoundedCollector< StrictWeakOrdering > const> BoundedCollectorCOP;
+	typedef utility::pointer::shared_ptr< BoundedCollector< StrictWeakOrdering > > BoundedCollectorOP;
+	typedef utility::pointer::shared_ptr< BoundedCollector< StrictWeakOrdering > const> BoundedCollectorCOP;
 
 public:
 
@@ -64,8 +64,8 @@ public:
 		Size buffer_factor = 5
 	) {
 
-		FragmentCandidateOP worst_f = new FragmentCandidate(1,1,0,1);
-		scores::FragmentScoreMapOP worst_s = new scores::FragmentScoreMap(n_score_terms);
+		FragmentCandidateOP worst_f( new FragmentCandidate(1,1,0,1) );
+		scores::FragmentScoreMapOP worst_s( new scores::FragmentScoreMap(n_score_terms) );
 		for(Size i=1;i<=n_score_terms;i++)
 		    worst_s->set_score_component(99999.9999,i);
 
@@ -112,7 +112,7 @@ public:
 	/// @brief Inserts candidates from another Collector for a give position in the query
 	/// Candidates may or may not get inserted depending on the candidate
 	void insert(Size pos, CandidatesCollectorOP collector) {
-		BoundedCollectorOP c = dynamic_cast<BoundedCollector*> (collector());
+		BoundedCollectorOP c = utility::pointer::dynamic_pointer_cast< protocols::frag_picker::BoundedCollector<class protocols::frag_picker::CompareTotalScore> > ( collector );
 		if (c == 0) {
 			utility_exit_with_message("Cant' cast candidates' collector to BoundedCollector.");
 		}

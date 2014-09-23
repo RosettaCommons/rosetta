@@ -37,22 +37,22 @@ class DDGMutationOptEData;
 class OptEData;
 
 //// Individual pieces of data held by position containers
-typedef utility::pointer::owning_ptr< PNatAAOptERotamerData > PNatAAOptERotamerDataOP;
-typedef utility::pointer::owning_ptr< PNatRotOptERotamerData > PNatRotOptERotamerDataOP;
-typedef utility::pointer::owning_ptr< SingleStructureData > SingleStructureDataOP;
-typedef utility::pointer::owning_ptr< ConstraintedOptimizationWeightFunc > ConstraintedOptimizationWeightFuncOP;
-typedef utility::pointer::owning_ptr< SingleStructureData const > SingleStructureDataCOP;
+typedef utility::pointer::shared_ptr< PNatAAOptERotamerData > PNatAAOptERotamerDataOP;
+typedef utility::pointer::shared_ptr< PNatRotOptERotamerData > PNatRotOptERotamerDataOP;
+typedef utility::pointer::shared_ptr< SingleStructureData > SingleStructureDataOP;
+typedef utility::pointer::shared_ptr< ConstraintedOptimizationWeightFunc > ConstraintedOptimizationWeightFuncOP;
+typedef utility::pointer::shared_ptr< SingleStructureData const > SingleStructureDataCOP;
 
-typedef utility::pointer::owning_ptr< OptEPositionData > OptEPositionDataOP;
+typedef utility::pointer::shared_ptr< OptEPositionData > OptEPositionDataOP;
 
 /// Position containers
-typedef utility::pointer::owning_ptr< PNatAAOptEPositionData > PNatAAOptEPositionDataOP;
-typedef utility::pointer::owning_ptr< PSSMOptEPositionData > PSSMOptEPositionDataOP;
-typedef utility::pointer::owning_ptr< PNatRotOptEPositionData > PNatRotOptEPositionDataOP;
-typedef utility::pointer::owning_ptr< PNatStructureOptEData > PNatStructureOptEDataOP;
-typedef utility::pointer::owning_ptr< DDGMutationOptEData > DDGMutationOptEDataOP;
+typedef utility::pointer::shared_ptr< PNatAAOptEPositionData > PNatAAOptEPositionDataOP;
+typedef utility::pointer::shared_ptr< PSSMOptEPositionData > PSSMOptEPositionDataOP;
+typedef utility::pointer::shared_ptr< PNatRotOptEPositionData > PNatRotOptEPositionDataOP;
+typedef utility::pointer::shared_ptr< PNatStructureOptEData > PNatStructureOptEDataOP;
+typedef utility::pointer::shared_ptr< DDGMutationOptEData > DDGMutationOptEDataOP;
 
-typedef utility::pointer::owning_ptr< OptEData > OptEDataOP;
+typedef utility::pointer::shared_ptr< OptEData > OptEDataOP;
 
 typedef utility::vector1< PNatAAOptERotamerDataOP > PNatAAOptERotamerDataOPs;
 typedef utility::vector1< PNatRotOptERotamerDataOP > PNatRotOptERotamerDataOPs;

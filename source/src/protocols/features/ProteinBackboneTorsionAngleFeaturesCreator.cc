@@ -29,7 +29,7 @@ namespace features {
 ProteinBackboneTorsionAngleFeaturesCreator::ProteinBackboneTorsionAngleFeaturesCreator() {}
 ProteinBackboneTorsionAngleFeaturesCreator::~ProteinBackboneTorsionAngleFeaturesCreator() {}
 FeaturesReporterOP ProteinBackboneTorsionAngleFeaturesCreator::create_features_reporter() const {
-	return new ProteinBackboneTorsionAngleFeatures;
+	return FeaturesReporterOP( new ProteinBackboneTorsionAngleFeatures );
 }
 
 std::string ProteinBackboneTorsionAngleFeaturesCreator::type_name() const {

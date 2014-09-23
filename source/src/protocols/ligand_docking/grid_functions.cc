@@ -34,7 +34,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-typedef utility::pointer::owning_ptr<core::grid::CartGrid<int> > CartGridIntOP;
+typedef utility::pointer::shared_ptr<core::grid::CartGrid<int> > CartGridIntOP;
 
 static thread_local basic::Tracer TR( "protocols.ligand_docking.grid_functions", basic::t_debug );
 
@@ -213,7 +213,7 @@ void rotamers_for_trials(
 	core::scoring::ScoreFunction dummy_sfxn;
 	PackerTaskOP dummy_task = TaskFactory::create_packer_task(pose); // actually used, in a trivial way
 
-	core::graph::GraphCOP empty_graph = new core::graph::Graph();
+	core::graph::GraphCOP empty_graph( new core::graph::Graph() );
 	// Retrieve conformers
 	core::pack::dunbrack::SingleResidueRotamerLibraryCOP reslib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( pose.residue_type(rsd_no) ).lock();
 	if( reslib.get() == NULL ) return;
@@ -273,7 +273,7 @@ void set_sphere(
 	}
 }
 
-void set_repulsive_bb_cores( utility::pointer::owning_ptr<core::grid::CartGrid<int> >grid, core::pose::Pose const & pose, core::Real const rep_rad){
+void set_repulsive_bb_cores( utility::pointer::shared_ptr<core::grid::CartGrid<int> >grid, core::pose::Pose const & pose, core::Real const rep_rad){
 	// Set repulsive core around each backbone heavy atom (including CB)
 	for(core::Size r = 1, r_end = pose.total_residue(); r <= r_end; ++r) {
 		core::conformation::Residue const & rsd = pose.residue(r);
@@ -287,7 +287,7 @@ void set_repulsive_bb_cores( utility::pointer::owning_ptr<core::grid::CartGrid<i
 }
 
 /// @detail this function assumes there is only one ligand so it only considers protein residues
-utility::pointer::owning_ptr<core::grid::CartGrid<int> > make_atr_rep_grid(
+utility::pointer::shared_ptr<core::grid::CartGrid<int> > make_atr_rep_grid(
 	core::pose::Pose const & pose,
 	core::Vector const & center
 )
@@ -301,7 +301,7 @@ utility::pointer::owning_ptr<core::grid::CartGrid<int> > make_atr_rep_grid(
 	Real const rep_rad = 2.25; // don't want to exclude H-bonds (~2.8A heavy-heavy) or make clefts too narrow
 
 	// Designer of this class did not believe in RAII:
-	CartGridIntOP grid = new core::grid::CartGrid<int>();
+	CartGridIntOP grid( new core::grid::CartGrid<int>() );
 	grid->setBase(
 		center.x() - grid_halfwidth,
 		center.y() - grid_halfwidth,
@@ -338,7 +338,7 @@ utility::pointer::owning_ptr<core::grid::CartGrid<int> > make_atr_rep_grid(
 }
 
 /// @detail this function assumes excludes one ligand from the grid
-utility::pointer::owning_ptr<core::grid::CartGrid<int> > make_atr_rep_grid_without_ligand(
+utility::pointer::shared_ptr<core::grid::CartGrid<int> > make_atr_rep_grid_without_ligand(
 	core::pose::Pose const & pose,
 	core::Vector const & center,
 	core::Size const & ligand_chain_id_to_exclude
@@ -351,7 +351,7 @@ utility::pointer::owning_ptr<core::grid::CartGrid<int> > make_atr_rep_grid_witho
 
 /// @brief Make a grid around the specified point with attractive (negative)
 /// and repulsive (positive) values for all heavy atoms not in ligand_chain_id_to_exclude
-utility::pointer::owning_ptr<core::grid::CartGrid<int> > make_atr_rep_grid_without_ligands(
+utility::pointer::shared_ptr<core::grid::CartGrid<int> > make_atr_rep_grid_without_ligands(
 	core::pose::Pose const & pose,
 	core::Vector const & center,
 	utility::vector1<core::Size> ligand_chain_ids_to_exclude
@@ -365,7 +365,7 @@ utility::pointer::owning_ptr<core::grid::CartGrid<int> > make_atr_rep_grid_witho
 	Real const rep_rad = 2.25; // don't want to exclude H-bonds (~2.8A heavy-heavy) or make clefts too narrow
 
 	// Designer of this class did not believe in RAII:
-	CartGridIntOP grid = new grid::CartGrid<int>();
+	CartGridIntOP grid( new grid::CartGrid<int>() );
 	grid->setBase(
 		center.x() - grid_halfwidth,
 		center.y() - grid_halfwidth,

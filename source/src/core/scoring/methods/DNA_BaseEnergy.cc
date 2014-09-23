@@ -47,7 +47,7 @@ methods::EnergyMethodOP
 DNA_BaseEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new DNA_BaseEnergy;
+	return methods::EnergyMethodOP( new DNA_BaseEnergy );
 }
 
 ScoreTypes
@@ -75,7 +75,7 @@ DNA_BaseEnergy::DNA_BaseEnergy() :
 EnergyMethodOP
 DNA_BaseEnergy::clone() const
 {
-	return new DNA_BaseEnergy();
+	return EnergyMethodOP( new DNA_BaseEnergy() );
 }
 
 /// are these really necessary??????????? move to scheme that doesnt depend on nbr calcn

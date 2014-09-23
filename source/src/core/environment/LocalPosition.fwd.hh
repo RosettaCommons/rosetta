@@ -24,8 +24,8 @@ namespace core {
 namespace environment {
 
 class LocalPosition;
-typedef utility::pointer::owning_ptr< LocalPosition > LocalPositionOP;
-typedef utility::pointer::owning_ptr< LocalPosition const > LocalPositionCOP;
+typedef utility::pointer::shared_ptr< LocalPosition > LocalPositionOP;
+typedef utility::pointer::shared_ptr< LocalPosition const > LocalPositionCOP;
 
 typedef utility::vector1< LocalPositionOP > LocalPositions;
 

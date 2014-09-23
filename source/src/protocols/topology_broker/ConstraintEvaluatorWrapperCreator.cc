@@ -81,14 +81,13 @@ void ConstraintEvaluatorWrapperCreator::add_evaluators( evaluation::MetaPoseEval
     for ( Size ct = 1; ct <= cst_target.size(); ct ++ ) {
       std::string tag( ObjexxFCL::string_of( ct ) );
 			if ( cst_col_name.size() >= ct ) tag = cst_col_name[ ct ];
-			topology_broker::ConstraintClaimerOP cst =
-				new topology_broker::ConstraintClaimer( cst_target[ ct ], tag );
+			topology_broker::ConstraintClaimerOP cst( new topology_broker::ConstraintClaimer( cst_target[ ct ], tag ) );
 			cst->set_combine_ratio( 2 );
 			cst->set_fullatom( true );
 			cst->set_centroid( false );
 			cst->set_filter_weight( 1 );
 			cst->set_skip_redundant( 1 );
-      eval.add_evaluation( new ConstraintEvaluatorWrapper( cst->tag(), cst ) );
+      eval.add_evaluation( PoseEvaluatorOP( new ConstraintEvaluatorWrapper( cst->tag(), cst ) ) );
     }
   }
 }

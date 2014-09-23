@@ -23,8 +23,8 @@ namespace core {
 namespace scoring {
 
 class DipolarCoupling;
-typedef utility::pointer::owning_ptr< DipolarCoupling > DipolarCouplingOP;
-typedef utility::pointer::owning_ptr< DipolarCoupling const > DipolarCouplingCOP;
+typedef utility::pointer::shared_ptr< DipolarCoupling > DipolarCouplingOP;
+typedef utility::pointer::shared_ptr< DipolarCoupling const > DipolarCouplingCOP;
 
 class DC;
 

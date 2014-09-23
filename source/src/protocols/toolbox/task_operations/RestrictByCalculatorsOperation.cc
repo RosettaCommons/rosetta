@@ -59,13 +59,13 @@ RestrictByCalculatorsOperation::~RestrictByCalculatorsOperation() {}
 core::pack::task::operation::TaskOperationOP
 RestrictByCalculatorsOperationCreator::create_task_operation() const
 {
-	return new RestrictByCalculatorsOperation;
+	return core::pack::task::operation::TaskOperationOP( new RestrictByCalculatorsOperation );
 }
 
 ///@details be warned if you use clone that you'll not get new calculators
 core::pack::task::operation::TaskOperationOP RestrictByCalculatorsOperation::clone() const
 {
-	return new RestrictByCalculatorsOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new RestrictByCalculatorsOperation( *this ) );
 }
 
 void

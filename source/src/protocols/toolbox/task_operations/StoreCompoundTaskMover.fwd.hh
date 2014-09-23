@@ -22,8 +22,8 @@ namespace toolbox {
 namespace task_operations {
 
 class StoreCompoundTaskMover;
-typedef utility::pointer::owning_ptr< StoreCompoundTaskMover > StoreCompoundTaskMoverOP;
-typedef utility::pointer::owning_ptr< StoreCompoundTaskMover const > StoreCompoundTaskMoverCOP;
+typedef utility::pointer::shared_ptr< StoreCompoundTaskMover > StoreCompoundTaskMoverOP;
+typedef utility::pointer::shared_ptr< StoreCompoundTaskMover const > StoreCompoundTaskMoverCOP;
 
 enum boolean_operations {
 	AND=1,

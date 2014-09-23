@@ -61,7 +61,7 @@ namespace phosphate {
 	//////////////////////////////
 	MultiPhosphateSamplerOP
 	MultiPhosphateSampler::clone_sampler() const {
-		MultiPhosphateSamplerOP multi_phosphate_sampler = new MultiPhosphateSampler( *pose_with_original_phosphates_ );
+		MultiPhosphateSamplerOP multi_phosphate_sampler( new MultiPhosphateSampler( *pose_with_original_phosphates_ ) );
 		multi_phosphate_sampler->set_screen_all( screen_all_ );
 		multi_phosphate_sampler->set_phosphate_move_list( phosphate_move_list_ );
 		return multi_phosphate_sampler;

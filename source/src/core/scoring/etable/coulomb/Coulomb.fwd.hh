@@ -23,8 +23,8 @@ namespace etable {
 namespace coulomb {
 
 class Coulomb;
-typedef utility::pointer::owning_ptr< Coulomb > CoulombOP;
-typedef utility::pointer::owning_ptr< Coulomb const > CoulombCOP;
+typedef utility::pointer::shared_ptr< Coulomb > CoulombOP;
+typedef utility::pointer::shared_ptr< Coulomb const > CoulombCOP;
 
 } // coulomb
 } // etable

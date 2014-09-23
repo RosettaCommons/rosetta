@@ -27,8 +27,8 @@ namespace filters {
 class NcontactsFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< NcontactsFilter >  NcontactsFilterOP;
-typedef utility::pointer::owning_ptr< NcontactsFilter const >  NcontactsFilterCOP;
+typedef utility::pointer::shared_ptr< NcontactsFilter >  NcontactsFilterOP;
+typedef utility::pointer::shared_ptr< NcontactsFilter const >  NcontactsFilterCOP;
 
 } // namespace protocols
 } // namespace fldsgn

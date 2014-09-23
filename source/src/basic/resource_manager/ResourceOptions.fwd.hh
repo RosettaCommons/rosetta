@@ -21,8 +21,8 @@ namespace basic {
 namespace resource_manager {
 
 class ResourceOptions;
-typedef utility::pointer::owning_ptr< ResourceOptions > ResourceOptionsOP;
-typedef utility::pointer::owning_ptr< ResourceOptions const > ResourceOptionsCOP;
+typedef utility::pointer::shared_ptr< ResourceOptions > ResourceOptionsOP;
+typedef utility::pointer::shared_ptr< ResourceOptions const > ResourceOptionsCOP;
 
 } // namespace resource_manager
 } // namespace basic

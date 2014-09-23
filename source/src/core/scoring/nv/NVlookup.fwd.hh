@@ -27,8 +27,8 @@ namespace scoring {
 namespace nv {
 
 class NVlookup;
-typedef utility::pointer::owning_ptr< NVlookup > NVlookupOP;
-typedef utility::pointer::owning_ptr< NVlookup const > NVlookupCOP;
+typedef utility::pointer::shared_ptr< NVlookup > NVlookupOP;
+typedef utility::pointer::shared_ptr< NVlookup const > NVlookupCOP;
 
 } //NV
 } //scoring

@@ -146,13 +146,13 @@ MembraneDDGMover::~MembraneDDGMover() {}
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 MembraneDDGMover::clone() const {
-	return new MembraneDDGMover( *this );
+	return protocols::moves::MoverOP( new MembraneDDGMover( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 MembraneDDGMover::fresh_instance() const {
-	return new MembraneDDGMover();
+	return protocols::moves::MoverOP( new MembraneDDGMover() );
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
@@ -170,7 +170,7 @@ MembraneDDGMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
 MembraneDDGMoverCreator::create_mover() const {
-	return new MembraneDDGMover;
+	return protocols::moves::MoverOP( new MembraneDDGMover );
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
@@ -206,12 +206,12 @@ MembraneDDGMover::apply( Pose & pose ) {
 	
 	// Add the membrane framework (membrane residue, topology, etc)
 	// to the pose
-	AddMembraneMoverOP add_memb = new AddMembraneMover();
+	AddMembraneMoverOP add_memb( new AddMembraneMover() );
 	add_memb->apply( pose );
 	
 	// Compute the initial position of the membrane based on its xyz coords
 	// and transmembrane spans
-	MembranePositionFromTopologyMoverOP init_position = new MembranePositionFromTopologyMover();
+	MembranePositionFromTopologyMoverOP init_position( new MembranePositionFromTopologyMover() );
 	init_position->apply( pose );
 	
 	// Compute the score of the starting structure
@@ -250,7 +250,7 @@ MembraneDDGMover::compute_ddG_score(
 	}
 
 	// Create a deep copy of the input pose
-	PoseOP copy_pose = new Pose( pose );
+	PoseOP copy_pose( new Pose( pose ) );
 
 	// Create a new packer task for making a mutation in the pose
 	PackerTaskOP repack_task = TaskFactory::create_packer_task( *copy_pose );
@@ -285,7 +285,7 @@ MembraneDDGMover::compute_ddG_score(
 	repack_task->nonconst_residue_task( position ).restrict_absent_canonical_aas( allowed_residues );
 	
 	// Setup a new pack rotamers mover and apply the packer task
-	PackRotamersMoverOP packer = new PackRotamersMover( sfxn_, repack_task );
+	PackRotamersMoverOP packer( new PackRotamersMover( sfxn_, repack_task ) );
 	packer->apply( *copy_pose );
 		
 	// Score the pose

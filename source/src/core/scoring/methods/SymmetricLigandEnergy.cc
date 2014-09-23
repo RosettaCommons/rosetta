@@ -42,7 +42,7 @@ methods::EnergyMethodOP
 SymmetricLigandEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new SymmetricLigandEnergy;
+	return methods::EnergyMethodOP( new SymmetricLigandEnergy );
 }
 
 ScoreTypes
@@ -67,7 +67,7 @@ SymmetricLigandEnergy::~SymmetricLigandEnergy() {}
 EnergyMethodOP
 SymmetricLigandEnergy::clone() const
 {
-	return new SymmetricLigandEnergy;
+	return EnergyMethodOP( new SymmetricLigandEnergy );
 }
 
 /////////////////////////////////////////////////////////////////////////////

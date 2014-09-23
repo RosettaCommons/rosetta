@@ -28,11 +28,11 @@ namespace noesy_assign {
 class LabelResonance;
 
 // Types
-typedef  utility::pointer::owning_ptr< LabelResonance >  LabelResonanceOP;
-typedef  utility::pointer::owning_ptr< LabelResonance const >  LabelResonanceCOP;
+typedef  utility::pointer::shared_ptr< LabelResonance >  LabelResonanceOP;
+typedef  utility::pointer::shared_ptr< LabelResonance const >  LabelResonanceCOP;
 
-typedef  utility::pointer::access_ptr< LabelResonance >  LabelResonanceAP;
-typedef  utility::pointer::access_ptr< LabelResonance const >  LabelResonanceCAP;
+typedef  utility::pointer::weak_ptr< LabelResonance >  LabelResonanceAP;
+typedef  utility::pointer::weak_ptr< LabelResonance const >  LabelResonanceCAP;
 
 }
 }

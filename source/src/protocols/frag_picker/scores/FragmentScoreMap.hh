@@ -48,7 +48,7 @@ public:
 
 	/// @brief creates a new deep copy of this map
 	FragmentScoreMapOP clone() const {
-		FragmentScoreMapOP f = new FragmentScoreMap(small_scores_.size());
+		FragmentScoreMapOP f( new FragmentScoreMap(small_scores_.size()) );
 		for (Size i = 1; i <= small_scores_.size(); i++)
 			f->small_scores_[i] = small_scores_[i];
 		f->was_modified_ = was_modified_;

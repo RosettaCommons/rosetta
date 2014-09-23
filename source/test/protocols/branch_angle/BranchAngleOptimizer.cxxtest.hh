@@ -115,13 +115,13 @@ public:
 		core_init_with_additional_options( "-no_optH" );
 		residue_set = chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
 
-		the_pose = new Pose;
+		the_pose = pose::PoseOP( new Pose );
 		//the_pose = create_test_in_pdb_poseop(); slightly different chain IDs
 		core::import_pose::pose_from_pdb( *the_pose, "protocols/moves/test_in.pdb" );
 	}
 
 	void tearDown() {
-		the_pose = 0;
+		the_pose.reset();
 	}
 
 	// Test functions that go along with the BranchAnlgeOptimizer class
@@ -199,11 +199,11 @@ public:
 
 		the_pose->dump_pdb(UT);
 
-		PoseOP pose_ideal = new Pose();
+		PoseOP pose_ideal( new Pose() );
 		core::pose::make_pose_from_sequence(*pose_ideal, "ACDEFGHIKLMNQRSTVWY", "fa_standard");
-		PoseOP pose_ideal_optimized = new Pose(*pose_ideal);
+		PoseOP pose_ideal_optimized( new Pose(*pose_ideal) );
 
-		core::scoring::mm::MMBondAngleResidueTypeParamSetOP param_set(new core::scoring::mm::MMBondAngleResidueTypeParamSet());
+		core::scoring::mm::MMBondAngleResidueTypeParamSetOP param_set( new core::scoring::mm::MMBondAngleResidueTypeParamSet() );
 		param_set->use_residue_type_theta0(true);
 		branchopt.bond_angle_residue_type_param_set(param_set);
 

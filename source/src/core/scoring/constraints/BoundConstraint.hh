@@ -46,7 +46,7 @@ public:
 	  : lb_( lb ), ub_( ub ), sd_ ( sd ), rswitch_( rswitch ), type_( type ) {}
 
 	virtual
-	func::FuncOP clone() const { return new BoundFunc( *this ); };
+	func::FuncOP clone() const { return func::FuncOP( new BoundFunc( *this ) ); };
 
 	virtual
 	void read_data( std::istream& );
@@ -98,7 +98,7 @@ public:
 	periodicity_( periodicity_in )
 	{}
 
-	func::FuncOP clone() const { return new PeriodicBoundFunc( *this ); };
+	func::FuncOP clone() const { return func::FuncOP( new PeriodicBoundFunc( *this ) ); };
 
 	void read_data( std::istream& );
 
@@ -143,7 +143,7 @@ public:
 	offset_( offset_in )
 	{}
 
-	func::FuncOP clone() const { return new OffsetPeriodicBoundFunc( *this ); };
+	func::FuncOP clone() const { return func::FuncOP( new OffsetPeriodicBoundFunc( *this ) ); };
 
 	void read_data( std::istream& );
 

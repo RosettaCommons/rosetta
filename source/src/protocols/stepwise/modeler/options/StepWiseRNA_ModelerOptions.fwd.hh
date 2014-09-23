@@ -24,8 +24,8 @@ namespace modeler {
 namespace options {
 	
 	class StepWiseRNA_ModelerOptions;
-	typedef utility::pointer::owning_ptr< StepWiseRNA_ModelerOptions > StepWiseRNA_ModelerOptionsOP;
-	typedef utility::pointer::owning_ptr< StepWiseRNA_ModelerOptions const > StepWiseRNA_ModelerOptionsCOP;
+	typedef utility::pointer::shared_ptr< StepWiseRNA_ModelerOptions > StepWiseRNA_ModelerOptionsOP;
+	typedef utility::pointer::shared_ptr< StepWiseRNA_ModelerOptions const > StepWiseRNA_ModelerOptionsCOP;
 	
 } //options
 } //modeler

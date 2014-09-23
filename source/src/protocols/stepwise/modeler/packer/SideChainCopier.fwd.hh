@@ -24,8 +24,8 @@ namespace modeler {
 namespace packer {
 	
 	class SideChainCopier;
-	typedef utility::pointer::owning_ptr< SideChainCopier > SideChainCopierOP;
-	typedef utility::pointer::owning_ptr< SideChainCopier const > SideChainCopierCOP;
+	typedef utility::pointer::shared_ptr< SideChainCopier > SideChainCopierOP;
+	typedef utility::pointer::shared_ptr< SideChainCopier const > SideChainCopierCOP;
 	
 } //packer
 } //modeler

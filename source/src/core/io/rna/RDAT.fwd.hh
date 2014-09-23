@@ -23,8 +23,8 @@ namespace io {
 namespace rna {
 	
 	class RDAT;
-	typedef utility::pointer::owning_ptr< RDAT > RDATOP;
-	typedef utility::pointer::owning_ptr< RDAT const > RDATCOP;
+	typedef utility::pointer::shared_ptr< RDAT > RDATOP;
+	typedef utility::pointer::shared_ptr< RDAT const > RDATCOP;
 	
 } //rna
 } //io

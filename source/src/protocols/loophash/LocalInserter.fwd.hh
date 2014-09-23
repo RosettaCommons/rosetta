@@ -21,12 +21,12 @@ namespace protocols {
 namespace loophash {
 
 class LocalInserter;
-typedef utility::pointer::owning_ptr< LocalInserter > LocalInserterOP;
-typedef utility::pointer::owning_ptr< LocalInserter const > LocalInserterCOP;
+typedef utility::pointer::shared_ptr< LocalInserter > LocalInserterOP;
+typedef utility::pointer::shared_ptr< LocalInserter const > LocalInserterCOP;
 
 class LocalInserter_SimpleMin;
-typedef utility::pointer::owning_ptr< LocalInserter_SimpleMin > LocalInserter_SimpleMinOP;
-typedef utility::pointer::owning_ptr< LocalInserter_SimpleMin const > LocalInserter_SimpleMinCOP;
+typedef utility::pointer::shared_ptr< LocalInserter_SimpleMin > LocalInserter_SimpleMinOP;
+typedef utility::pointer::shared_ptr< LocalInserter_SimpleMin const > LocalInserter_SimpleMinCOP;
 
 }
 }

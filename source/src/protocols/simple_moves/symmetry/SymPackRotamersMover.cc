@@ -70,7 +70,7 @@ SymPackRotamersMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SymPackRotamersMoverCreator::create_mover() const {
-	return new SymPackRotamersMover;
+	return protocols::moves::MoverOP( new SymPackRotamersMover );
 }
 
 std::string
@@ -83,8 +83,8 @@ SymPackRotamersMoverCreator::mover_name() {
 
 SymPackRotamersMover::SymPackRotamersMover()
 	: protocols::simple_moves::PackRotamersMover(),
-		sym_rotamer_sets_( new rotamer_set::symmetry::SymmetricRotamerSets() ),
-		symmetric_ig_(0)
+		sym_rotamer_sets_( core::pack::rotamer_set::symmetry::SymmetricRotamerSetsOP( new rotamer_set::symmetry::SymmetricRotamerSets() ) ),
+		symmetric_ig_(/* 0 */)
 {}
 
 	// constructors with arguments
@@ -93,8 +93,8 @@ SymPackRotamersMover::SymPackRotamersMover(
 	task::PackerTaskCOP task,
 	Size nloop
 ) : protocols::simple_moves::PackRotamersMover( scorefxn, task, nloop ),
-		sym_rotamer_sets_( new rotamer_set::symmetry::SymmetricRotamerSets() ),
-		symmetric_ig_(0)
+		sym_rotamer_sets_( core::pack::rotamer_set::symmetry::SymmetricRotamerSetsOP( new rotamer_set::symmetry::SymmetricRotamerSets() ) ),
+		symmetric_ig_(/* 0 */)
 {}
 
 SymPackRotamersMover::~SymPackRotamersMover(){}
@@ -102,7 +102,7 @@ SymPackRotamersMover::~SymPackRotamersMover(){}
 SymPackRotamersMover::SymPackRotamersMover( PackRotamersMover const & other )
 	: protocols::simple_moves::PackRotamersMover( other )
 {
-	sym_rotamer_sets_ = new rotamer_set::symmetry::SymmetricRotamerSets();
+	sym_rotamer_sets_ = core::pack::rotamer_set::symmetry::SymmetricRotamerSetsOP( new rotamer_set::symmetry::SymmetricRotamerSets() );
 
 }
 
@@ -185,8 +185,8 @@ SymPackRotamersMover::make_symmetric_task(
 	task->restrict_to_residues( allow_repacked );
 }
 
-protocols::moves::MoverOP SymPackRotamersMover::clone() const { return new  SymPackRotamersMover( *this ); }
-protocols::moves::MoverOP SymPackRotamersMover::fresh_instance() const { return new  SymPackRotamersMover; }
+protocols::moves::MoverOP SymPackRotamersMover::clone() const { return protocols::moves::MoverOP( new  SymPackRotamersMover( *this ) ); }
+protocols::moves::MoverOP SymPackRotamersMover::fresh_instance() const { return protocols::moves::MoverOP( new  SymPackRotamersMover ); }
 
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void

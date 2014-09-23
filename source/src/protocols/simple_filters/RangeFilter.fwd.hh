@@ -26,8 +26,8 @@ namespace simple_filters {
 class RangeFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< RangeFilter >  RangeFilterOP;
-typedef utility::pointer::owning_ptr< RangeFilter const >  RangeFilterCOP;
+typedef utility::pointer::shared_ptr< RangeFilter >  RangeFilterOP;
+typedef utility::pointer::shared_ptr< RangeFilter const >  RangeFilterCOP;
 
 } // namespace protocols
 } // namespace filters

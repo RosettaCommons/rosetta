@@ -78,8 +78,8 @@ static thread_local basic::Tracer TR( "protocols.dna.PDBOutput", t_info );
 
 PDBOutput::PDBOutput()
 	: jd2::PDBJobOutputter(),
-		pose_copy_(0),
-		reference_pose_(0),
+		pose_copy_(/* 0 */),
+		reference_pose_(/* 0 */),
 		chi_diff_threshold_(0.0001),
 		mainchain_torsion_diff_threshold_(0.0001),
 		enabled_(true)
@@ -96,7 +96,7 @@ PDBOutput::final_pose( JobOP job, Pose const & pose, std::string const & /*tag*/
 {
 	if ( !enabled_ ) return; // to allow easy overrides of excess pdb writing in higher-level code
 	call_output_observers( pose, job );
-	pose_copy_ = new Pose( pose );
+	pose_copy_ = PoseOP( new Pose( pose ) );
 	ozstream pdbout( extended_name(job) );
 	if ( !pdbout.good() )
 		utility_exit_with_message( "Unable to open file: " + extended_name(job) + "\n" );
@@ -118,7 +118,7 @@ PDBOutput::operator() (
 )
 {
 	if ( !enabled_ ) return; // to allow easy overrides of excess pdb writing in higher-level code
-	pose_copy_ = new Pose( pose );
+	pose_copy_ = PoseOP( new Pose( pose ) );
 	make_subdirs( name );
 	ozstream pdbout( name );
 	if ( !pdbout.good() )
@@ -155,7 +155,7 @@ void PDBOutput::starting_pose( Pose const & pose ) { reference_pose( pose ); }
 void PDBOutput::reference_pose( Pose const & pose )
 {
 	// make hard copy to guarantee that the reference pose remains unchanged
-	reference_pose_ = new Pose( pose );
+	reference_pose_ = PoseCOP( new Pose( pose ) );
 	designed_residues_.assign( reference_pose_->total_residue(), false );
 }
 pose::PoseCOP PDBOutput::reference_pose() const { return reference_pose_; }

@@ -604,7 +604,7 @@ add_coordinate_constraints( pose::Pose & pose ) {
 
 		for ( Size ii = 1; ii<= i_rsd.natoms(); ++ii ) {
 			core::scoring::func::FuncOP fx( new HarmonicFunc( 0.0, coord_sdev ) );
-			cst_set->add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii), fx ) );
+			cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii), fx ) ) );
 		}
 	}
 
@@ -668,13 +668,13 @@ setup_rna_chainbreak_constraints(
 			AtomID const O5_id( rsd2.atom_index( "O5'" ), i+1 );
 
 			// distance from O3' to P
-			cst_set->add_constraint( new AtomPairConstraint( O3_id, P_id, distance_func ) );
+			cst_set->add_constraint( ConstraintCOP( new AtomPairConstraint( O3_id, P_id, distance_func ) ) );
 
 			// angle at O3'
-			cst_set->add_constraint( new AngleConstraint( C3_id, O3_id, P_id, O3_angle_func ) );
+			cst_set->add_constraint( ConstraintCOP( new AngleConstraint( C3_id, O3_id, P_id, O3_angle_func ) ) );
 
 			// angle at P
-			cst_set->add_constraint( new AngleConstraint( O3_id, P_id, O5_id,  P_angle_func ) );
+			cst_set->add_constraint( ConstraintCOP( new AngleConstraint( O3_id, P_id, O5_id,  P_angle_func ) ) );
 		}
 	}
 
@@ -788,7 +788,7 @@ setup_rna_base_pair_constraints( pose::Pose & pose ){
 
 		Size const atom1_index = pose.residue(i).atom_index( atom1 );
 		Size const atom2_index = pose.residue(j).atom_index( atom2 );
-		cst_set->add_constraint( new AtomPairConstraint( AtomID( atom1_index, i ), AtomID( atom2_index, j), distance_func ) );
+		cst_set->add_constraint( ConstraintCOP( new AtomPairConstraint( AtomID( atom1_index, i ), AtomID( atom2_index, j), distance_func ) ) );
 	}
 
 	pose.constraint_set( cst_set );
@@ -1978,7 +1978,7 @@ rna_jumping_test(){
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
-	pose::PoseOP native_pose_OP = new pose::Pose;
+	pose::PoseOP native_pose_OP( new pose::Pose );
 	pose::Pose & native_pose = *native_pose_OP;
 
 	pose::Pose extended_pose;
@@ -3000,7 +3000,7 @@ crazy_minimize_test()
 			if ( option[ params_file ].user() ) {
 				std::string const rna_params_file =  option[ params_file ]();
 				std::string const jump_library_file( basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat" ) );
-				RNA_StructureParametersOP rna_structure_parameters_ = new RNA_StructureParameters;
+				RNA_StructureParametersOP rna_structure_parameters_( new RNA_StructureParameters );
 				rna_structure_parameters_->initialize( pose, rna_params_file, jump_library_file, false /* ignore_secstruct */ );
 			} else if ( option[ crazy_fold_tree ] ) {
 				setup_crazy_fold_tree( pose, rsd_set );
@@ -3327,13 +3327,12 @@ create_dihedral_constraint( core::scoring::constraints::ConstraintSetOP & cst_se
 
 	Real torsion_value( pose.torsion( torsion_id ) );
 
-	HarmonicFuncOP harm_func  (new HarmonicFunc( numeric::conversions::radians( torsion_value ),
+	HarmonicFuncOP harm_func( new HarmonicFunc( numeric::conversions::radians( torsion_value ),
 																							 numeric::conversions::radians( 20.0 ) ) );
 
-	ConstraintOP dihedral1 =
-		new DihedralConstraint( id1, id2, id3, id4,
+	ConstraintOP dihedral1( new DihedralConstraint( id1, id2, id3, id4,
 																				 harm_func,
-																				 rna_torsion );
+																				 rna_torsion ) );
 	cst_set->add_constraint( dihedral1 );
 }
 
@@ -3635,7 +3634,7 @@ vary_bond_length( pose::Pose & pose,
 	mm.set( DOF_ID( my_ID, PHI) , true );
 	mm.set( DOF_ID( my_ID, THETA ), true );
 
-	cst_set->add_dof_constraint( dof_id, new HarmonicFunc( (atom2->xyz() - atom3->xyz() ).length() , 0.01 ) );
+	cst_set->add_dof_constraint( dof_id, core::scoring::func::FuncOP( new HarmonicFunc( (atom2->xyz() - atom3->xyz() ).length() , 0.01 ) ) );
 
 }
 
@@ -4085,10 +4084,10 @@ rotamerize_rna_test()
 			atom_ids1[p] << " <--> " <<
 			atom_ids2[p] << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
 
-		cst_set->add_constraint( new AtomPairConstraint(
+		cst_set->add_constraint( ConstraintCOP( new AtomPairConstraint(
 																										id::AtomID(atom1,i),
 																										id::AtomID(atom2,j),
-																										distance_func ) );
+																										distance_func ) ) );
 
 	}
 
@@ -4685,7 +4684,7 @@ color_by_geom_sol_RNA_test()
 		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 
-		PDBInfoOP pdb_info(  new PDBInfo( pose, true ) );
+		PDBInfoOP pdb_info( new PDBInfo( pose, true ) );
 
 		(*scorefxn)( pose );
 
@@ -4725,8 +4724,7 @@ color_by_lj_base_RNA_test()
 
 	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( RNA_HIRES_WTS );
 
-	EtableOP etable_ptr
-		( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
+	EtableOP etable_ptr( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
 									EtableOptions() ) );
 	//	core::chemical::rna::RNA_LJ_BaseEnergy rna_lj_base_energy( *etable_ptr );
 
@@ -4737,7 +4735,7 @@ color_by_lj_base_RNA_test()
 		import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
 		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 
-		PDBInfoOP pdb_info(  new PDBInfo( pose, true ) );
+		PDBInfoOP pdb_info( new PDBInfo( pose, true ) );
 
 		(*scorefxn)( pose );
 
@@ -4780,7 +4778,7 @@ rna_stats_test()
 	std::string const silent_file = option[ out::file::silent  ]();
 	protocols::farna::RNA_DeNovoProtocol rna_de_novo_protocol( 0 /*nstruct*/, silent_file );
 
-	pose::PoseOP native_pose_OP = new pose::Pose;
+	pose::PoseOP native_pose_OP( new pose::Pose );
 	pose::Pose & native_pose = *native_pose_OP;
 
 	if ( option[ in::file::native ].active() ) {

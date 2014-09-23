@@ -23,7 +23,7 @@ namespace dna {
 /// silly vector1 wrapper class so we can derive from PoseCachedData
 
 class BasePartner;
-typedef utility::pointer::owning_ptr< BasePartner > BasePartnerOP;
+typedef utility::pointer::shared_ptr< BasePartner > BasePartnerOP;
 
 } // namespace dna
 } // scoring

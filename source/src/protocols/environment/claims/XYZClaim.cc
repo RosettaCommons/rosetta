@@ -66,14 +66,14 @@ XYZClaim::XYZClaim( ClaimingMoverOP owner,
     selector_ = datamap.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selection" ) );
   } else {
     tr.Debug << "Instantiating EnvLabelSelector for selection '" << selection << "' in " << *this << std::endl;
-    selector_ = new EnvLabelSelector( LocalPosition( selection ) );
+    selector_ = ResidueSelectorCOP( new EnvLabelSelector( LocalPosition( selection ) ) );
   }
 }
 
 XYZClaim::XYZClaim( ClaimingMoverOP owner,
                     LocalPosition const& local_pos):
   EnvClaim( owner ),
-  selector_( new EnvLabelSelector( local_pos ) ),
+  selector_( ResidueSelectorCOP( new EnvLabelSelector( local_pos ) ) ),
   c_str_( DOES_NOT_CONTROL ),
   i_str_( DOES_NOT_CONTROL )
 {}
@@ -82,7 +82,7 @@ XYZClaim::XYZClaim( ClaimingMoverOP owner,
                             std::string const& label,
                             std::pair< core::Size, core::Size > const& range ):
   EnvClaim( owner ),
-  selector_( new EnvLabelSelector( label, range ) ),
+  selector_( ResidueSelectorCOP( new EnvLabelSelector( label, range ) ) ),
   c_str_( DOES_NOT_CONTROL ),
   i_str_( DOES_NOT_CONTROL )
 {}
@@ -150,7 +150,7 @@ void XYZClaim::strength( ControlStrength const& c_str, ControlStrength const& i_
 }
 
 EnvClaimOP XYZClaim::clone() const {
-  return new XYZClaim( *this );
+  return EnvClaimOP( new XYZClaim( *this ) );
 }
 
 std::string XYZClaim::type() const {

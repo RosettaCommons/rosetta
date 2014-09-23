@@ -83,7 +83,7 @@ LoopHashMoverWrapperCreator::keyname() const
 
 protocols::moves::MoverOP
 LoopHashMoverWrapperCreator::create_mover() const {
-	return new LoopHashMoverWrapper;
+	return protocols::moves::MoverOP( new LoopHashMoverWrapper );
 }
 
 std::string
@@ -95,8 +95,8 @@ LoopHashMoverWrapperCreator::mover_name()
 
 LoopHashMoverWrapper::LoopHashMoverWrapper() :
 	protocols::moves::Mover( LoopHashMoverWrapperCreator::mover_name() ),
-	library_( NULL ),
-	fastrelax_( NULL ),
+	library_( /* NULL */ ),
+	fastrelax_( /* NULL */ ),
 	min_bbrms_( 0 ),
 	max_bbrms_( 0 ),
 	min_rms_( 0 ),
@@ -104,12 +104,12 @@ LoopHashMoverWrapper::LoopHashMoverWrapper() :
 	start_res_( 2 ),
 	stop_res_( 0 ),
 	max_nstruct_( 1000000 ),
-	cenfilter_( NULL ),
-	ranking_cenfilter_( NULL ),
-	fafilter_( NULL ),
-	ranking_fafilter_( NULL ),
+	cenfilter_( /* NULL */ ),
+	ranking_cenfilter_( /* NULL */ ),
+	fafilter_( /* NULL */ ),
+	ranking_fafilter_( /* NULL */ ),
 	nprefilter_( 0 ),
-	prefilter_scorefxn_( NULL ),
+	prefilter_scorefxn_( /* NULL */ ),
 	ideal_( false ),
 	sample_weight_const_( 1 )
 {
@@ -334,7 +334,7 @@ LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
 		add_loop_size( (Size)std::atoi(loop_size.c_str()) ) ;
 
 	// path to DB -- if not specified then command-line flag is used
-	library_ = new LoopHashLibrary( loop_sizes() , 1 , 0 );
+	library_ = LoopHashLibraryOP( new LoopHashLibrary( loop_sizes() , 1 , 0 ) );
 	if ( tag->hasOption( "db_path" )) {
 		std::string db_path = tag->getOption< string >( "db_path" );
 		library_->set_db_path( db_path );
@@ -369,7 +369,7 @@ LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
 		Movers_map::const_iterator find_mover( movers.find( relax_mover_name ) );
 		bool const mover_found( find_mover != movers.end() );
 		if( mover_found )
-			relax_mover( dynamic_cast< protocols::relax::FastRelax* > (find_mover->second()) );
+			relax_mover( utility::pointer::dynamic_pointer_cast< protocols::relax::FastRelax > ( find_mover->second ) );
 		else
 			utility_exit_with_message( "Mover " + relax_mover_name + " not found in LoopHashMoverWrapper" );
 

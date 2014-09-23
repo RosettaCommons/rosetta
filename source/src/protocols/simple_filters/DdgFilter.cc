@@ -44,7 +44,7 @@ namespace simple_filters {
 static thread_local basic::Tracer TR( "protocols.simple_filters.DdgFilter" );
 
 protocols::filters::FilterOP
-DdgFilterCreator::create_filter() const { return new DdgFilter; }
+DdgFilterCreator::create_filter() const { return protocols::filters::FilterOP( new DdgFilter ); }
 
 std::string
 DdgFilterCreator::keyname() const { return "Ddg"; }
@@ -53,14 +53,14 @@ DdgFilterCreator::keyname() const { return "Ddg"; }
 DdgFilter::DdgFilter() :
 	filters::Filter( "Ddg" ),
 	ddg_threshold_( -15.0 ),
-	scorefxn_( NULL ),
+	scorefxn_( /* NULL */ ),
 	rb_jump_( 1 ),
 	use_custom_task_(false),
 	repack_bound_(true),
 	relax_bound_(false),
 	repeats_( 1 ),
 	repack_( true ),
-	relax_mover_( NULL ),
+	relax_mover_( /* NULL */ ),
 	pb_enabled_(false),
 	translate_by_(1000),
 	extreme_value_removal_( false )
@@ -82,7 +82,7 @@ DdgFilter::DdgFilter( core::Real const ddg_threshold,
 	relax_bound_( false ),
 	repeats_(repeats),
 	repack_( true ),
-	relax_mover_( NULL ),
+	relax_mover_( /* NULL */ ),
 	pb_enabled_(false),
 	translate_by_(1000),
 	extreme_value_removal_( false )
@@ -101,10 +101,10 @@ DdgFilter::DdgFilter( core::Real const ddg_threshold,
 DdgFilter::~DdgFilter() {}
 
 filters::FilterOP DdgFilter::clone() const {
-	return new DdgFilter( *this );
+	return filters::FilterOP( new DdgFilter( *this ) );
 }
 filters::FilterOP DdgFilter::fresh_instance() const{
-	return new DdgFilter();
+	return filters::FilterOP( new DdgFilter() );
 }
 
 void
@@ -325,7 +325,7 @@ DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 		if( filter_ ) {
 			scoring_filter = filter_;
 		} else {
-			scoring_filter = new simple_filters::ScoreTypeFilter( scorefxn_, core::scoring::total_score, 10000/*threshold*/ );
+			scoring_filter = filters::FilterCOP( new simple_filters::ScoreTypeFilter( scorefxn_, core::scoring::total_score, 10000/*threshold*/ ) );
 		}
 		//JBB This is not handling symmetric poses properly. This needs to be fixed.
 		core::pose::Pose split_pose( pose );

@@ -166,14 +166,14 @@ ReportFSC::parse_my_tag(
 		core::Real mapreso = option[ edensity::mapreso ]();
 		core::Real mapsampling = option[ edensity::grid_spacing ]();
 		std::cerr << "Loading alternate density map " << mapfile << std::endl;
-		testmap_ = new core::scoring::electron_density::ElectronDensity();
+		testmap_ = core::scoring::electron_density::ElectronDensityOP( new core::scoring::electron_density::ElectronDensity() );
 		testmap_->readMRCandResize( mapfile , mapreso , mapsampling );
 	}
 }
 
 protocols::moves::MoverOP
 ReportFSCCreator::create_mover() const {
-	return new ReportFSC;
+	return protocols::moves::MoverOP( new ReportFSC );
 }
 
 std::string

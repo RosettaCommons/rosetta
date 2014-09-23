@@ -20,10 +20,10 @@
 namespace utility{
 namespace libsvm{
 class Svm_node_rosetta;
-typedef utility::pointer::owning_ptr< Svm_node_rosetta > Svm_node_rosettaOP;
+typedef utility::pointer::shared_ptr< Svm_node_rosetta > Svm_node_rosettaOP;
 
 class Svm_rosetta;
-typedef utility::pointer::owning_ptr< Svm_rosetta > Svm_rosettaOP;
+typedef utility::pointer::shared_ptr< Svm_rosetta > Svm_rosettaOP;
 
 } //namespace libsvm
 } //namespace utility

@@ -478,22 +478,22 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in ) {
 
 	TR.Debug << "Setting Up Packer Task" << std::endl;
 
-	core::pack::task::TaskFactoryOP tf = new TaskFactory;
+	core::pack::task::TaskFactoryOP tf( new TaskFactory );
 	tf->clear();
 
-	tf->push_back(new OperateOnCertainResidues(ResLvlTaskOperationOP(new PreventRepackingRLT), ResFilterOP(new ResidueLacksProperty("PROTEIN")) ));
-	tf->push_back(new InitializeFromCommandline );
-	tf->push_back(new IncludeCurrent );
-	tf->push_back(new RestrictToRepacking );
-	tf->push_back(new NoRepackDisulfides );
+	tf->push_back(TaskOperationCOP( new OperateOnCertainResidues(ResLvlTaskOperationOP(new PreventRepackingRLT), ResFilterOP(new ResidueLacksProperty("PROTEIN")) ) ));
+	tf->push_back(TaskOperationCOP( new InitializeFromCommandline ) );
+	tf->push_back(TaskOperationCOP( new IncludeCurrent ) );
+	tf->push_back(TaskOperationCOP( new RestrictToRepacking ) );
+	tf->push_back(TaskOperationCOP( new NoRepackDisulfides ) );
 
 	// incorporating Ian's UnboundRotamer operation.
 	// note that nothing happens if unboundrot option is inactive!
 	pack::rotamer_set::UnboundRotamersOperationOP
-	unboundrot = new pack::rotamer_set::UnboundRotamersOperation();
+	unboundrot( new pack::rotamer_set::UnboundRotamersOperation() );
 	unboundrot->initialize_from_command_line();
 
-	operation::AppendRotamerSetOP unboundrot_operation = new operation::AppendRotamerSet( unboundrot );
+	operation::AppendRotamerSetOP unboundrot_operation( new operation::AppendRotamerSet( unboundrot ) );
 	tf->push_back( unboundrot_operation );
 
 	// adds scoring bonuses for the "unbound" rotamers, if any
@@ -708,7 +708,7 @@ add_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, core::pose::Pose & pose
 	std::string fname = get_harmonic_cluster_constraint_filename(ab_info, cluster);
 	if (fname=="NA"){return false;}
 	try {
-		ConstraintSetOP cst = ConstraintIO::get_instance()->read_constraints(fname, new ConstraintSet, pose);
+		ConstraintSetOP cst = ConstraintIO::get_instance()->read_constraints(fname, ConstraintSetOP( new ConstraintSet ), pose);
 
 		pose.add_constraints(cst->get_all_constraints());
 		return true;
@@ -731,7 +731,7 @@ add_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, core::pose::Pose & pose
 	if (fname=="NA"){return false;}
 
 	try {
-		ConstraintSetOP cst = ConstraintIO::get_instance()->read_constraints(fname, new ConstraintSet, pose);
+		ConstraintSetOP cst = ConstraintIO::get_instance()->read_constraints(fname, ConstraintSetOP( new ConstraintSet ), pose);
 
 		vector1< ConstraintCOP > local_csts = cst->get_all_constraints();
 		pose.add_constraints(local_csts);

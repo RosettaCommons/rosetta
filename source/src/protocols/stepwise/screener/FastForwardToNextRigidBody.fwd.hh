@@ -23,8 +23,8 @@ namespace stepwise {
 namespace screener {
 	
 	class FastForwardToNextRigidBody;
-	typedef utility::pointer::owning_ptr< FastForwardToNextRigidBody > FastForwardToNextRigidBodyOP;
-	typedef utility::pointer::owning_ptr< FastForwardToNextRigidBody const > FastForwardToNextRigidBodyCOP;
+	typedef utility::pointer::shared_ptr< FastForwardToNextRigidBody > FastForwardToNextRigidBodyOP;
+	typedef utility::pointer::shared_ptr< FastForwardToNextRigidBody const > FastForwardToNextRigidBodyCOP;
 	
 } //screener
 } //stepwise

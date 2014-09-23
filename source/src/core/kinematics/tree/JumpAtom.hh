@@ -301,10 +301,10 @@ private: // Fields
 
 }; // JumpAtom
 
-typedef utility::pointer::owning_ptr< JumpAtom > JumpAtomOP;
-typedef utility::pointer::owning_ptr< JumpAtom const > JumpAtomCOP;
-typedef utility::pointer::access_ptr< JumpAtom > JumpAtomAP;
-typedef utility::pointer::access_ptr< JumpAtom const > JumpAtomCAP;
+typedef utility::pointer::shared_ptr< JumpAtom > JumpAtomOP;
+typedef utility::pointer::shared_ptr< JumpAtom const > JumpAtomCOP;
+typedef utility::pointer::weak_ptr< JumpAtom > JumpAtomAP;
+typedef utility::pointer::weak_ptr< JumpAtom const > JumpAtomCAP;
 
 } // namespace tree
 } // namespace kinematics

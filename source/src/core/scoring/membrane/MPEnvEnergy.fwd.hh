@@ -28,8 +28,8 @@ namespace membrane {
 			
 /// @brief Membrane Potential Environment Energy Term
 class MPEnvEnergy;
-typedef utility::pointer::owning_ptr< MPEnvEnergy > MPEnvEnergyOP;
-typedef utility::pointer::owning_ptr< MPEnvEnergy const > MPEnvEnergyCOP;
+typedef utility::pointer::shared_ptr< MPEnvEnergy > MPEnvEnergyOP;
+typedef utility::pointer::shared_ptr< MPEnvEnergy const > MPEnvEnergyCOP;
 			
 } // membrane
 } // scoring

@@ -43,7 +43,7 @@ SwitchResidueTypeSetMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 SwitchResidueTypeSetMoverCreator::create_mover() const {
-	return new SwitchResidueTypeSetMover;
+	return protocols::moves::MoverOP( new SwitchResidueTypeSetMover );
 }
 
 std::string
@@ -87,13 +87,13 @@ SwitchResidueTypeSetMover::show(std::ostream & output) const
 moves::MoverOP
 SwitchResidueTypeSetMover::clone() const
 {
-	return new SwitchResidueTypeSetMover( *this );
+	return moves::MoverOP( new SwitchResidueTypeSetMover( *this ) );
 }
 
 moves::MoverOP
 SwitchResidueTypeSetMover::fresh_instance() const
 {
-	return new SwitchResidueTypeSetMover;
+	return moves::MoverOP( new SwitchResidueTypeSetMover );
 }
 
 void

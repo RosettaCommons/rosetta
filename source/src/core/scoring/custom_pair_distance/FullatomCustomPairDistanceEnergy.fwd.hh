@@ -28,21 +28,21 @@ struct resatom_and_func_struct;
 
 class FullatomCustomPairDistanceEnergy;
 
-typedef utility::pointer::owning_ptr< FullatomCustomPairDistanceEnergy > FullatomCustomPairDistanceEnergyOP;
-typedef utility::pointer::owning_ptr< FullatomCustomPairDistanceEnergy const > FullatomCustomPairDistanceEnergyCOP;
+typedef utility::pointer::shared_ptr< FullatomCustomPairDistanceEnergy > FullatomCustomPairDistanceEnergyOP;
+typedef utility::pointer::shared_ptr< FullatomCustomPairDistanceEnergy const > FullatomCustomPairDistanceEnergyCOP;
 
 class DistanceFunc;
 
-typedef utility::pointer::owning_ptr< DistanceFunc > DistanceFuncOP;
-typedef utility::pointer::owning_ptr< DistanceFunc const > DistanceFuncCOP;
-typedef utility::pointer::access_ptr< DistanceFunc > DistanceFuncAP;
-typedef utility::pointer::access_ptr< DistanceFunc const > DistanceFuncCAP;
+typedef utility::pointer::shared_ptr< DistanceFunc > DistanceFuncOP;
+typedef utility::pointer::shared_ptr< DistanceFunc const > DistanceFuncCOP;
+typedef utility::pointer::weak_ptr< DistanceFunc > DistanceFuncAP;
+typedef utility::pointer::weak_ptr< DistanceFunc const > DistanceFuncCAP;
 
 
 class CacheableAtomPairFuncMap;
 
-typedef utility::pointer::owning_ptr< CacheableAtomPairFuncMap > CacheableAtomPairFuncMapOP;
-typedef utility::pointer::owning_ptr< CacheableAtomPairFuncMap const > CacheableAtomPairFuncMapCOP;
+typedef utility::pointer::shared_ptr< CacheableAtomPairFuncMap > CacheableAtomPairFuncMapOP;
+typedef utility::pointer::shared_ptr< CacheableAtomPairFuncMap const > CacheableAtomPairFuncMapCOP;
 
 }
 }

@@ -38,10 +38,10 @@ Bool3DGrid::Bool3DGrid() :
 	bb_extended_( Vector(0.0) ),
 	bin_width_( 1.0 ),
 	bin_width_2x_( 2.0 ),
-	dimsizes_( 0 ),
-	dimprods_( 0 ),
-	halfdimsizes_( 0 ),
-	halfdimprods_( 0 )
+	dimsizes_( /* 0 */ ),
+	dimprods_( /* 0 */ ),
+	halfdimsizes_( /* 0 */ ),
+	halfdimprods_( /* 0 */ )
 {}
 
 Bool3DGrid::~Bool3DGrid() {}
@@ -929,7 +929,7 @@ BumpGrid::BumpGrid() :
 	general_permit_overlap_( 0.0 )
 {
 	for ( Size ii = 1; ii <= n_probe_radii; ++ii ) {
-		grids_[ ii ] = new Bool3DGrid;
+		grids_[ ii ] = utility::pointer::shared_ptr<class protocols::match::Bool3DGrid>( new Bool3DGrid );
 		pair_permit_overlap_[ ii ].resize( n_probe_radii );
 		std::fill ( pair_permit_overlap_[ ii ].begin(), pair_permit_overlap_[ ii ].end(), 0.0 );
 	}
@@ -960,7 +960,7 @@ BumpGrid::BumpGrid( BumpGrid const & rhs ) :
 	general_permit_overlap_( rhs.general_permit_overlap_ )
 {
 	for ( Size ii = 1; ii <= n_probe_radii; ++ii ) {
-		grids_[ ii ] = new Bool3DGrid( *rhs.grids_[ ii ] );
+		grids_[ ii ] = utility::pointer::shared_ptr<class protocols::match::Bool3DGrid>( new Bool3DGrid( *rhs.grids_[ ii ] ) );
 	}
 }
 
@@ -969,7 +969,7 @@ BumpGrid::~BumpGrid() {}
 BumpGrid const & BumpGrid::operator = ( BumpGrid const & rhs )
 {
 	for ( Size ii = 1; ii <= n_probe_radii; ++ii ) {
-		grids_[ ii ] = new Bool3DGrid( *rhs.grids_[ ii ] );
+		grids_[ ii ] = utility::pointer::shared_ptr<class protocols::match::Bool3DGrid>( new Bool3DGrid( *rhs.grids_[ ii ] ) );
 	}
 	pair_permit_overlap_ = rhs.pair_permit_overlap_;
 	general_permit_overlap_ = rhs.general_permit_overlap_;
@@ -991,7 +991,7 @@ void BumpGrid::set_bounding_box( BoundingBox const & bb )
 		lower.z() = static_cast< Real > ( static_cast< int > ( lower.z() ));
 		Vector upper = bb.upper() + probe_radius( (ProbeRadius) ii );
 		BoundingBox iibb( lower, upper );
-		grids_[ ii ] = new Bool3DGrid;
+		grids_[ ii ] = utility::pointer::shared_ptr<class protocols::match::Bool3DGrid>( new Bool3DGrid );
 		grids_[ ii ]->set_bin_width( 0.25 ); /// HARD CODED HACK!
 		grids_[ ii ]->set_bounding_box( iibb );
 	}
@@ -1017,7 +1017,7 @@ BumpGrid::create_bump_grid_for_bb( BoundingBox const & bb ) const
 
 BumpGridOP
 BumpGrid::create_new_bump_grid_for_bb( BoundingBox const & bb ) const {
-	BumpGridOP bgop = new BumpGrid;
+	BumpGridOP bgop( new BumpGrid );
 
 	/// Initialize the new BumpGrid with the sphere overlap parameters held in this bump grid
 	bgop->pair_permit_overlap_ = pair_permit_overlap_;
@@ -1171,7 +1171,7 @@ bump_grid_to_enclose_pose( core::pose::Pose const & pose )
 	Real at1rad( 0.0 );
 
 	if ( pose.total_residue() < 1 ) {
-		return new BumpGrid;
+		return BumpGridOP( new BumpGrid );
 	} else {
 		bool found_an_atom( false );
 		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
@@ -1184,7 +1184,7 @@ bump_grid_to_enclose_pose( core::pose::Pose const & pose )
 		}
 		if ( ! found_an_atom ) {
 			/// weird non-empty pose where each residue has 0 atoms?
-			return new BumpGrid;
+			return BumpGridOP( new BumpGrid );
 		}
 	}
 
@@ -1197,7 +1197,7 @@ bump_grid_to_enclose_pose( core::pose::Pose const & pose )
 		}
 	}
 
-	BumpGridOP bgop =  new BumpGrid;
+	BumpGridOP bgop( new BumpGrid );
 	numeric::geometry::BoundingBox< Vector > bb( bbl, bbu );
 	bgop->set_bounding_box( bb );
 
@@ -1214,7 +1214,7 @@ BumpGridOP bump_grid_to_enclose_residue_backbone(
 	Vector first_xyz( 0 );
 
 	if ( residue.natoms() < 1 ) {
-		return new BumpGrid;
+		return BumpGridOP( new BumpGrid );
 	} else {
 		first_xyz = residue.xyz( 1 );
 	}
@@ -1244,7 +1244,7 @@ BumpGridOP bump_grid_to_enclose_residue(
 	Vector first_xyz( 0 );
 
 	if ( residue.natoms() < 1 ) {
-		return new BumpGrid;
+		return BumpGridOP( new BumpGrid );
 	} else {
 		first_xyz = residue.xyz( 1 );
 	}

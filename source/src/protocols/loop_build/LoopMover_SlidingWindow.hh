@@ -75,7 +75,7 @@ public: // virtual constructors
 	/// @brief clone this object
 	virtual
 	protocols::moves::MoverOP clone() const {
-		return new LoopMover_SlidingWindow( *this );
+		return protocols::moves::MoverOP( new LoopMover_SlidingWindow( *this ) );
 	}
 
 

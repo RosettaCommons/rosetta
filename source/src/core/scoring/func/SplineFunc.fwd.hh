@@ -22,8 +22,8 @@ namespace core {
 		namespace func {
 
 class SplineFunc;
-typedef utility::pointer::owning_ptr< SplineFunc > SplineFuncOP;
-typedef utility::pointer::owning_ptr< SplineFunc const > SplineFuncCOP;
+typedef utility::pointer::shared_ptr< SplineFunc > SplineFuncOP;
+typedef utility::pointer::shared_ptr< SplineFunc const > SplineFuncCOP;
 
 		} // constraints
 	} // scoring

@@ -23,8 +23,8 @@ namespace constraints_additional {
 
 class AmbiguousMultiConstraint;
 
-typedef utility::pointer::owning_ptr< AmbiguousMultiConstraint > AmbiguousMultiConstraintOP;
-typedef utility::pointer::owning_ptr< AmbiguousMultiConstraint const > AmbiguousMultiConstraintCOP;
+typedef utility::pointer::shared_ptr< AmbiguousMultiConstraint > AmbiguousMultiConstraintOP;
+typedef utility::pointer::shared_ptr< AmbiguousMultiConstraint const > AmbiguousMultiConstraintCOP;
 
 }
 }

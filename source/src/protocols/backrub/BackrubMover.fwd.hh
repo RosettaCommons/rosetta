@@ -22,8 +22,8 @@ namespace backrub {
 // Forward
 class BackrubMover;
 
-typedef utility::pointer::owning_ptr< BackrubMover > BackrubMoverOP;
-typedef utility::pointer::owning_ptr< BackrubMover const > BackrubMoverCOP;
+typedef utility::pointer::shared_ptr< BackrubMover > BackrubMoverOP;
+typedef utility::pointer::shared_ptr< BackrubMover const > BackrubMoverCOP;
 
 } // namespace backrub
 } // namespace protocols

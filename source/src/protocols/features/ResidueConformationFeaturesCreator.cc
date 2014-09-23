@@ -29,7 +29,7 @@ namespace features {
 ResidueConformationFeaturesCreator::ResidueConformationFeaturesCreator() {}
 ResidueConformationFeaturesCreator::~ResidueConformationFeaturesCreator() {}
 FeaturesReporterOP ResidueConformationFeaturesCreator::create_features_reporter() const {
-	return new ResidueConformationFeatures;
+	return FeaturesReporterOP( new ResidueConformationFeatures );
 }
 
 std::string ResidueConformationFeaturesCreator::type_name() const {

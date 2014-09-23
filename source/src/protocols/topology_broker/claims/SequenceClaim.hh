@@ -78,7 +78,7 @@ private:
 	typedef DofClaim Parent;
 
 public:
-	virtual DofClaimOP clone() const { return new SequenceClaim( *this ); }
+	virtual DofClaimOP clone() const { return DofClaimOP( new SequenceClaim( *this ) ); }
 
 	core::Size length() const {
 		return annotated_sequence_.length();

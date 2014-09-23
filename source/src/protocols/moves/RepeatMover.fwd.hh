@@ -35,8 +35,8 @@ namespace protocols {
 namespace moves {
 
 class RepeatMover;
-typedef utility::pointer::owning_ptr< RepeatMover > RepeatMoverOP;
-typedef utility::pointer::owning_ptr< RepeatMover const > RepeatMoverCOP;
+typedef utility::pointer::shared_ptr< RepeatMover > RepeatMoverOP;
+typedef utility::pointer::shared_ptr< RepeatMover const > RepeatMoverCOP;
 
 } // moves
 } // protocols

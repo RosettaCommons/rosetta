@@ -23,7 +23,7 @@ namespace annealer {
 
 class DebuggingAnnealer;
 
-typedef utility::pointer::owning_ptr< DebuggingAnnealer > DebuggingAnnealerOP;
+typedef utility::pointer::shared_ptr< DebuggingAnnealer > DebuggingAnnealerOP;
 
 }//end namespace annealer
 }//end namespace pack

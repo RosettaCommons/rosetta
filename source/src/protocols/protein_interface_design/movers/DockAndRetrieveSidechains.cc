@@ -56,7 +56,7 @@ DockAndRetrieveSidechainsCreator::keyname() const
 
 protocols::moves::MoverOP
 DockAndRetrieveSidechainsCreator::create_mover() const {
-	return new DockAndRetrieveSidechains;
+	return protocols::moves::MoverOP( new DockAndRetrieveSidechains );
 }
 
 std::string
@@ -81,11 +81,11 @@ DockAndRetrieveSidechains::apply( core::pose::Pose & pose )
 {
 	// If the pose is not symmetric, then make it so
 	if ( symmetry_ ) {
-		protocols::simple_moves::symmetry::SetupForSymmetryMoverOP setup_mover = new protocols::simple_moves::symmetry::SetupForSymmetryMover;
+		protocols::simple_moves::symmetry::SetupForSymmetryMoverOP setup_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
 		setup_mover->apply( pose );
 	}
 
-	core::pose::PoseCOP saved_pose = new core::pose::Pose( pose );
+	core::pose::PoseCOP saved_pose( new core::pose::Pose( pose ) );
 	core::kinematics::FoldTree saved_ft( pose.fold_tree() );
 
 	if ( symmetry_ ) {
@@ -137,7 +137,7 @@ DockAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::Dat
 		ScoreFunctionOP scorelo = core::scoring::symmetry::symmetrize_scorefunction( *data.get_ptr< ScoreFunction >( "scorefxns", score_low ) );
 		ScoreFunctionOP scorehi = core::scoring::symmetry::symmetrize_scorefunction( *data.get_ptr< ScoreFunction >( "scorefxns", score_high ));
 
-		sym_docking_mover_ = new protocols::symmetric_docking::SymDockProtocol( !low_res_protocol_only_, local_refine, view, scorelo, scorehi );
+		sym_docking_mover_ = protocols::symmetric_docking::SymDockProtocolOP( new protocols::symmetric_docking::SymDockProtocol( !low_res_protocol_only_, local_refine, view, scorelo, scorehi ) );
 
 		sym_docking_mover_->task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 		sym_docking_mover_->design( design );
@@ -159,7 +159,7 @@ DockAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::Dat
 	}
 	//core::Size const rb_jump( tag->getOption< core::Size >( "rb_jump", 1 ) );
 	bool const optimize_foldtree = tag->getOption<bool>( "optimize_fold_tree", 1 );
-	docking_mover_ = new protocols::docking::DockingProtocol( movable_jumps, low_res_protocol_only_, local_refine, optimize_foldtree, scorelo, scorehi );
+	docking_mover_ = protocols::docking::DockingProtocolOP( new protocols::docking::DockingProtocol( movable_jumps, low_res_protocol_only_, local_refine, optimize_foldtree, scorelo, scorehi ) );
 
 	docking_mover_->set_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	docking_mover_->set_ignore_default_docking_task( ignore_default_docking_task );

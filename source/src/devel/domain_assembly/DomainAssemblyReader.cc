@@ -119,11 +119,11 @@ create_command_map()
 	using namespace std;
 
 	map< string, DomainAssemblyCommandOP > command_map;
-	command_map[ PDB::name() ]    = new PDB;
-	command_map[ NTermLinker::name() ]    = new NTermLinker;
-	command_map[ CTermLinker::name() ]    = new CTermLinker;
-	command_map[ NTrim::name() ]  = new NTrim;
-	command_map[ CTrim::name() ]  = new CTrim;
+	command_map[ PDB::name() ] = utility::pointer::shared_ptr<class devel::domain_assembly::DomainAssemblyCommand>( new PDB );
+	command_map[ NTermLinker::name() ] = utility::pointer::shared_ptr<class devel::domain_assembly::DomainAssemblyCommand>( new NTermLinker );
+	command_map[ CTermLinker::name() ] = utility::pointer::shared_ptr<class devel::domain_assembly::DomainAssemblyCommand>( new CTermLinker );
+	command_map[ NTrim::name() ] = utility::pointer::shared_ptr<class devel::domain_assembly::DomainAssemblyCommand>( new NTrim );
+	command_map[ CTrim::name() ] = utility::pointer::shared_ptr<class devel::domain_assembly::DomainAssemblyCommand>( new CTrim );
 
 	return command_map;
 }

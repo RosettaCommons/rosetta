@@ -61,7 +61,7 @@ InterlockAromaCreator::keyname() const
 
 protocols::moves::MoverOP
 InterlockAromaCreator::create_mover() const {
-	return new InterlockAroma;
+	return protocols::moves::MoverOP( new InterlockAroma );
 }
 
 std::string
@@ -102,14 +102,14 @@ InterlockAroma::~InterlockAroma(){}
 InterlockAroma::MoverOP
 InterlockAroma::clone() const
 {
-	return new InterlockAroma( *this );
+	return InterlockAroma::MoverOP( new InterlockAroma( *this ) );
 }
 
 /// @brief create this type of object
 InterlockAroma::MoverOP
 InterlockAroma::fresh_instance() const
 {
-	return new InterlockAroma();
+	return InterlockAroma::MoverOP( new InterlockAroma() );
 }
 
 
@@ -143,7 +143,7 @@ InterlockAroma::apply( Pose & pose )
 		Dssp dssp( pose );
 		ss = dssp.get_dssp_secstruct();
 	}
-	SS_Info2_OP ssinfo = new SS_Info2( pose, ss );
+	SS_Info2_OP ssinfo( new SS_Info2( pose, ss ) );
 
 	// create packer task
 	TaskFactory taskf;
@@ -246,7 +246,7 @@ InterlockAroma::parse_my_tag(
 	Pose const & )
 {
 	String const sfxn ( tag->getOption<String>( "scorefxn", "soft_rep" ));
-	scorefxn_ = data.get< ScoreFunction * >( "scorefxns", sfxn );
+	scorefxn_ = data.get_ptr<ScoreFunction>( "scorefxns", sfxn );
 
 	max_repulsion_energy_ = tag->getOption<Real>( "max_repulsion_energy", 30.0 );
 	min_env_energy_ = tag->getOption<Real>( "min_env_energy", -0.5 );
@@ -256,7 +256,7 @@ InterlockAroma::parse_my_tag(
 	// read secondary structure info through blueprint
  	std::string const blueprint( tag->getOption<std::string>( "blueprint", "" ) );
 	if( blueprint != "" ){
-		protocols::jd2::parser::BluePrintOP bop = new protocols::jd2::parser::BluePrint( blueprint );
+		protocols::jd2::parser::BluePrintOP bop( new protocols::jd2::parser::BluePrint( blueprint ) );
 		input_ss_ = bop->secstruct();
 	}
 

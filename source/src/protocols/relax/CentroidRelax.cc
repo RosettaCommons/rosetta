@@ -100,7 +100,7 @@ namespace relax {
     
     protocols::moves::MoverOP
     CentroidRelax::clone() const {
-        return new CentroidRelax(*this);
+        return protocols::moves::MoverOP( new CentroidRelax(*this) );
     }
     
     string
@@ -289,21 +289,21 @@ namespace relax {
             
             fa_scorefxn_->show(TR, pose);
             
-            recover_sc = new ReturnSidechainMover(pose);
-	    SwitchResidueTypeSetMoverOP to_cen = new SwitchResidueTypeSetMover("centroid");
+            recover_sc = ReturnSidechainMoverOP( new ReturnSidechainMover(pose) );
+	    SwitchResidueTypeSetMoverOP to_cen( new SwitchResidueTypeSetMover("centroid") );
             to_cen->apply(pose);
             
             passed_centroid = false;
             
             TR << "Centroid Score::"<<std::endl;
             //cen_scorefxn_->show(TR, pose);
-            cen_mc = new MonteCarlo(pose, *cen_scorefxn_, 1.0);
+            cen_mc = MonteCarloOP( new MonteCarlo(pose, *cen_scorefxn_, 1.0) );
         
         } else {
             
             passed_centroid = true;
             cen_scorefxn_->show(TR, pose);
-            cen_mc = new MonteCarlo(pose, *cen_scorefxn_, 1.0);
+            cen_mc = MonteCarloOP( new MonteCarlo(pose, *cen_scorefxn_, 1.0) );
 	    
         }
         
@@ -313,9 +313,9 @@ namespace relax {
         //Initialize MinMover
         MinMoverOP minmover;
         if ( core::pose::symmetry::is_symmetric( pose ) )  {
-            minmover = new symmetry::SymMinMover( movemap_, cen_scorefxn_, min_type(), def_parameters.min_params[1], true );}
+            minmover = MinMoverOP( new symmetry::SymMinMover( movemap_, cen_scorefxn_, min_type(), def_parameters.min_params[1], true ) );}
         else {
-            minmover = new MinMover( movemap_, cen_scorefxn_, min_type(), def_parameters.min_params[1], true );
+            minmover = MinMoverOP( new MinMover( movemap_, cen_scorefxn_, min_type(), def_parameters.min_params[1], true ) );
         }
 	minmover->cartesian( cartesian() );
 	
@@ -386,7 +386,7 @@ namespace relax {
 			task->temporarily_set_pack_residue(i, true);
 		    }
 		}
-		protocols::simple_moves::PackRotamersMoverOP packer = new protocols::simple_moves::PackRotamersMover(fa_scorefxn_, task);
+		protocols::simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover(fa_scorefxn_, task) );
 		packer->apply(pose);
 		fa_scorefxn_->show(TR, pose);
 	    }

@@ -22,16 +22,16 @@ namespace moves{
 
 //Forwards and OP typedefs
 class PDBDumpMover;
-typedef utility::pointer::owning_ptr< PDBDumpMover > PDBDumpMoverOP;
-typedef utility::pointer::owning_ptr< PDBDumpMover const > PDBDumpMoverCOP;
+typedef utility::pointer::shared_ptr< PDBDumpMover > PDBDumpMoverOP;
+typedef utility::pointer::shared_ptr< PDBDumpMover const > PDBDumpMoverCOP;
 
 class ProfilerMover;
-typedef utility::pointer::owning_ptr< ProfilerMover > ProfilerMoverOP;
-typedef utility::pointer::owning_ptr< ProfilerMover const > ProfilerMoverCOP;
+typedef utility::pointer::shared_ptr< ProfilerMover > ProfilerMoverOP;
+typedef utility::pointer::shared_ptr< ProfilerMover const > ProfilerMoverCOP;
 
 class MCShowMover;
-typedef utility::pointer::owning_ptr< MCShowMover > MCShowMoverOP;
-typedef utility::pointer::owning_ptr< MCShowMover const > MCShowMoverCOP;
+typedef utility::pointer::shared_ptr< MCShowMover > MCShowMoverOP;
+typedef utility::pointer::shared_ptr< MCShowMover const > MCShowMoverCOP;
 
 }//moves
 }//protocols

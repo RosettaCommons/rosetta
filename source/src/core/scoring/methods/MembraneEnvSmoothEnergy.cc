@@ -53,7 +53,7 @@ methods::EnergyMethodOP
 MembraneEnvSmoothEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new MembraneEnvSmoothEnergy;
+	return methods::EnergyMethodOP( new MembraneEnvSmoothEnergy );
 }
 
 ScoreTypes
@@ -99,7 +99,7 @@ MembraneEnvSmoothEnergy::MembraneEnvSmoothEnergy() :
 EnergyMethodOP
 MembraneEnvSmoothEnergy::clone() const
 {
-	return new MembraneEnvSmoothEnergy( *this );
+	return EnergyMethodOP( new MembraneEnvSmoothEnergy( *this ) );
 }
 
 /////////////////////////////////////////////////////////////////////////////

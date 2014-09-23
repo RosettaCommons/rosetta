@@ -22,12 +22,12 @@ namespace protocols {
 namespace moves {
 
 class RampingMover;
-typedef utility::pointer::owning_ptr< RampingMover > RampingMoverOP;
-typedef utility::pointer::owning_ptr< RampingMover const > RampingMoverCOP;
+typedef utility::pointer::shared_ptr< RampingMover > RampingMoverOP;
+typedef utility::pointer::shared_ptr< RampingMover const > RampingMoverCOP;
 
 class RampingFunc;
-typedef utility::pointer::owning_ptr< RampingFunc > RampingFuncOP;
-typedef utility::pointer::owning_ptr< RampingFunc const > RampingFuncCOP;
+typedef utility::pointer::shared_ptr< RampingFunc > RampingFuncOP;
+typedef utility::pointer::shared_ptr< RampingFunc const > RampingFuncCOP;
 
 } // moves
 } // protocols

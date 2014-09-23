@@ -43,10 +43,10 @@ public:
 	}
 
 	ScoringSchemeOP clone() const {
-		return new DPScoringScheme(
+		return ScoringSchemeOP( new DPScoringScheme(
 			gap_open(),
 			gap_extend()
-		);
+		) );
 	}
 
 	/// @brief dtor

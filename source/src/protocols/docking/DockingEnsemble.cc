@@ -140,7 +140,7 @@ void DockingEnsemble::recover_conformer_sidechains( core::pose::Pose & pose )
 {
 	using namespace core::pose::datacache;
 	core::pose::Pose recover_pose = ensemble_list_[conf_num_];
-	protocols::simple_moves::ReturnSidechainMoverOP recover_mover = new protocols::simple_moves::ReturnSidechainMover( recover_pose, start_res_, end_res_ );
+	protocols::simple_moves::ReturnSidechainMoverOP recover_mover( new protocols::simple_moves::ReturnSidechainMover( recover_pose, start_res_, end_res_ ) );
 	recover_mover->apply( pose );
 
 	// make sure that the pose has ARBITRARY_FLOAT_DATA in the DataCache

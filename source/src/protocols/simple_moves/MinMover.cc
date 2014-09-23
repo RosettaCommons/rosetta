@@ -70,7 +70,7 @@ MinMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 MinMoverCreator::create_mover() const {
-	return new MinMover;
+	return protocols::moves::MoverOP( new MinMover );
 }
 
 std::string
@@ -83,26 +83,26 @@ MinMoverCreator::mover_name()
 // proper lightweight default constructor
 MinMover::MinMover() :
     Parent("MinMover"),
-		movemap_(0),
-		scorefxn_(0),
-		min_options_(0),
+		movemap_(/* 0 */),
+		scorefxn_(/* 0 */),
+		min_options_(/* 0 */),
 		cartesian_(false),
 		dof_tasks_()
 {
 	omega_ = true;
-	min_options_ = new MinimizerOptions( "linmin", 0.01, true, false, false );
+	min_options_ = MinimizerOptionsOP( new MinimizerOptions( "linmin", 0.01, true, false, false ) );
 }
 
 MinMover::MinMover( std::string const & name ) :
     Parent( name ),
-		movemap_(0),
-		scorefxn_(0),
-		min_options_(0),
+		movemap_(/* 0 */),
+		scorefxn_(/* 0 */),
+		min_options_(/* 0 */),
 		cartesian_(false),
 		dof_tasks_()
 {
 	omega_ = true;
-	min_options_ = new MinimizerOptions( "linmin", 0.01, true, false, false );
+	min_options_ = MinimizerOptionsOP( new MinimizerOptions( "linmin", 0.01, true, false, false ) );
 }
 
 MinMover::~MinMover(){}
@@ -119,14 +119,14 @@ MinMover::MinMover(
 ) : Parent("MinMover"),
 		movemap_( movemap_in ),
 		scorefxn_( scorefxn_in ),
-		min_options_(0),
+		min_options_(/* 0 */),
 		threshold_(1000000.0), // TODO: line can be deleted?
 		cartesian_(false),
 		dof_tasks_()
 {
 	omega_ = true;
-	min_options_ = new MinimizerOptions(
-		min_type_in, tolerance_in, use_nb_list_in, deriv_check_in, deriv_check_verbose_in );
+	min_options_ = MinimizerOptionsOP( new MinimizerOptions(
+		min_type_in, tolerance_in, use_nb_list_in, deriv_check_in, deriv_check_verbose_in ) );
 }
 
 /// @brief allow non-const access to the internal minimizer options object
@@ -150,7 +150,7 @@ void
 MinMover::movemap( MoveMapCOP movemap_in )
 {
 	runtime_assert( movemap_in != 0 );
-	movemap_ = new MoveMap( *movemap_in );
+	movemap_ = core::kinematics::MoveMapOP( new MoveMap( *movemap_in ) );
 }
 
 void MinMover::set_movemap( MoveMapCOP movemap_in ){
@@ -294,8 +294,8 @@ MinMover::show(std::ostream & output) const
 	}
 }
 
-protocols::moves::MoverOP MinMover::clone() const { return new protocols::simple_moves::MinMover( *this ); }
-protocols::moves::MoverOP MinMover::fresh_instance() const { return new MinMover; }
+protocols::moves::MoverOP MinMover::clone() const { return protocols::moves::MoverOP( new protocols::simple_moves::MinMover( *this ) ); }
+protocols::moves::MoverOP MinMover::fresh_instance() const { return protocols::moves::MoverOP( new MinMover ); }
 
 void MinMover::parse_def_opts( utility::lua::LuaObject const & def,
 	utility::lua::LuaObject const & score_fxns,
@@ -307,7 +307,7 @@ void MinMover::parse_def_opts( utility::lua::LuaObject const & def,
 		score_function( score_fxns["score12"].to<ScoreFunctionSP>()->clone()  );
 	}
 
-	if ( ! movemap_ ) movemap_ = new MoveMap;
+	if ( ! movemap_ ) movemap_ = core::kinematics::MoveMapOP( new MoveMap );
 	if( def["jump"] ) {
 		for (utility::lua::LuaIterator i=def["jump"].begin(), end; i != end; ++i) {
 			if( (*i).to<int>() == -1 ) {
@@ -338,7 +338,7 @@ void MinMover::parse_def( utility::lua::LuaObject const & def,
 				utility::lua::LuaObject const & score_fxns,
 				utility::lua::LuaObject const & tasks,
 				protocols::moves::MoverCacheSP cache ) {
-	if ( ! movemap_ ) movemap_ = new MoveMap;
+	if ( ! movemap_ ) movemap_ = core::kinematics::MoveMapOP( new MoveMap );
 
 	parse_def_opts( def, score_fxns, tasks, cache );
 
@@ -359,7 +359,7 @@ void MinMover::parse_my_tag(
 	protocols::moves::Movers_map const & movers,
 	Pose const & pose )
 {
-	if ( ! movemap_ ) movemap_ = new MoveMap;
+	if ( ! movemap_ ) movemap_ = core::kinematics::MoveMapOP( new MoveMap );
 	parse_opts( tag, data, filters, movers, pose );
 	parse_chi_and_bb( tag );
 	parse_dof_tasks( tag, data );
@@ -381,7 +381,7 @@ void MinMover::parse_opts(
 	score_function( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 
 	if ( tag->hasOption("jump") ) {
-		if ( ! movemap_ ) movemap_ = new MoveMap;
+		if ( ! movemap_ ) movemap_ = core::kinematics::MoveMapOP( new MoveMap );
 		utility::vector1<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );
 		// string 'ALL' makes all jumps movable
 		if (jumps.size() == 1 && (jumps[1] == "ALL" || jumps[1] == "All" || jumps[1] == "all" || jumps[1] == "*") ) {
@@ -413,7 +413,7 @@ void MinMover::parse_opts(
 
 void MinMover::parse_chi_and_bb( TagCOP const tag )
 {
-	if ( ! movemap_ ) movemap_ = new MoveMap;
+	if ( ! movemap_ ) movemap_ = core::kinematics::MoveMapOP( new MoveMap );
 	bool const chi( tag->getOption< bool >( "chi" ) ), bb( tag->getOption< bool >( "bb" ) );
   omega_ = tag->getOption< bool >( "omega", true );
 	movemap_->set_chi( chi );
@@ -448,7 +448,7 @@ MinMover::parse_dof_task_type(
 	using std::string;
   typedef utility::vector1< std::string > StringVec;
 
-	TaskFactoryOP task_factory(new TaskFactory());
+	TaskFactoryOP task_factory( new TaskFactory() );
 	string const t_o_val( tag->getOption<string>(tag_name) );
 	StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
 

@@ -19,8 +19,8 @@ namespace protocols {
 namespace moves {
 
 class CyclicMover;
-typedef utility::pointer::owning_ptr<CyclicMover> CyclicMoverOP;
-typedef utility::pointer::owning_ptr<CyclicMover const> CyclicMoverCOP;
+typedef utility::pointer::shared_ptr<CyclicMover> CyclicMoverOP;
+typedef utility::pointer::shared_ptr<CyclicMover const> CyclicMoverCOP;
 
 }  // namespace moves
 }  // namespace protocols

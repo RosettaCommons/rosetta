@@ -22,8 +22,8 @@ namespace task_operations {
 
 class RestrictToAlignedSegmentsOperation;
 
-typedef utility::pointer::owning_ptr< RestrictToAlignedSegmentsOperation > RestrictToAlignedSegmentsOperationOP;
-typedef utility::pointer::owning_ptr< RestrictToAlignedSegmentsOperation const > RestrictToAlignedSegmentsOperationCOP;
+typedef utility::pointer::shared_ptr< RestrictToAlignedSegmentsOperation > RestrictToAlignedSegmentsOperationOP;
+typedef utility::pointer::shared_ptr< RestrictToAlignedSegmentsOperation const > RestrictToAlignedSegmentsOperationCOP;
 
 } //namespace task_operations
 } //toolbox

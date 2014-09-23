@@ -219,18 +219,18 @@ BoltzmannFilter::parse_my_tag( utility::tag::TagCOP tag,
 
 protocols::filters::FilterOP
 BoltzmannFilter::fresh_instance() const{
-	return new BoltzmannFilter();
+	return protocols::filters::FilterOP( new BoltzmannFilter() );
 }
 
 BoltzmannFilter::~BoltzmannFilter(){}
 
 protocols::filters::FilterOP
 BoltzmannFilter::clone() const{
-	return new BoltzmannFilter( *this );
+	return protocols::filters::FilterOP( new BoltzmannFilter( *this ) );
 }
 
 protocols::filters::FilterOP
-BoltzmannFilterCreator::create_filter() const { return new BoltzmannFilter; }
+BoltzmannFilterCreator::create_filter() const { return protocols::filters::FilterOP( new BoltzmannFilter ); }
 
 std::string
 BoltzmannFilterCreator::keyname() const { return "Boltzmann"; }

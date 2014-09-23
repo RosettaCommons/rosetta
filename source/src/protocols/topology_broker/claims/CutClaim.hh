@@ -67,7 +67,7 @@ public:
 		position_( position )
 	{}
 
-	virtual DofClaimOP clone() const { return new CutClaim( *this ); }
+	virtual DofClaimOP clone() const { return DofClaimOP( new CutClaim( *this ) ); }
 
 	std::pair< std::string, core::Size > get_position() const {
 		return position_;

@@ -53,7 +53,7 @@ namespace simple_filters {
 
 
 class EvaluatedTrialMover;
-typedef  utility::pointer::owning_ptr< EvaluatedTrialMover >  EvaluatedTrialMoverOP;
+typedef  utility::pointer::shared_ptr< EvaluatedTrialMover >  EvaluatedTrialMoverOP;
 
 
 class EvaluatedTrialMover : public moves::TrialMover {

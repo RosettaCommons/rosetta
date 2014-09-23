@@ -69,7 +69,7 @@ AbscriptStageMover::AbscriptStageMover( StageID stage,
   chbreak_slope_( 0.0 ),
   chbreak_intcpt_( 0.0 )
 {
-  random_mover_ = new moves::RandomMover();
+  random_mover_ = moves::RandomMoverOP( new moves::RandomMover() );
 }
 
 std::string AbscriptStageMover::get_name() const {
@@ -108,7 +108,7 @@ void AbscriptStageMover::update_max_seq_sep( core::pose::Pose& pose, core::Real 
   }
 
   // Configure sequence separation constraints for this run
-  constraints_ = new constraints_additional::MaxSeqSepConstraintSet( *pose.constraint_set(), pose.fold_tree());
+  constraints_ = constraints_additional::MaxSeqSepConstraintSetOP( new constraints_additional::MaxSeqSepConstraintSet( *pose.constraint_set(), pose.fold_tree()) );
   pose.constraint_set( constraints_ );
 
   //std::min nullifies 1.2 in setting, but this is how it is in the old code...
@@ -182,7 +182,7 @@ void AbscriptStageMover::apply( core::pose::Pose& pose ){
   ConstraintSetOP orig_constraints( pose.constraint_set()->clone() );
   mc_->reset( pose );
 
-  RepeatMover( new TrialMover( random_mover_, mc_ ), cycles_*cycles_adjust_ ).apply( pose );
+  RepeatMover( MoverOP( new TrialMover( random_mover_, mc_ ) ), cycles_*cycles_adjust_ ).apply( pose );
 
   if( stage_ == I ){
     mc_->reset( pose );

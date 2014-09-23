@@ -29,19 +29,19 @@ class RemodelMover;
 
 
 /// @brief RemodelMover owning pointer
-typedef utility::pointer::owning_ptr< RemodelMover > RemodelMover_OP;
+typedef utility::pointer::shared_ptr< RemodelMover > RemodelMover_OP;
 
 
 /// @brief RemodelMover const owning pointer
-typedef utility::pointer::owning_ptr< RemodelMover const > RemodelMover_COP;
+typedef utility::pointer::shared_ptr< RemodelMover const > RemodelMover_COP;
 
 
 /// @brief RemodelMover access pointer
-typedef utility::pointer::access_ptr< RemodelMover > RemodelMover_AP;
+typedef utility::pointer::weak_ptr< RemodelMover > RemodelMover_AP;
 
 
 /// @brief RemodelMover const access pointer
-typedef utility::pointer::access_ptr< RemodelMover const > RemodelMover_CAP;
+typedef utility::pointer::weak_ptr< RemodelMover const > RemodelMover_CAP;
 
 
 } // namespace remodel

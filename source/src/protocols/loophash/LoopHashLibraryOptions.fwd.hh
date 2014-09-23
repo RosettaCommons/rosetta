@@ -20,8 +20,8 @@ namespace protocols {
 namespace loophash {
 
 class LoopHashLibraryOptions;
-typedef utility::pointer::owning_ptr< LoopHashLibraryOptions > LoopHashLibraryOptionsOP;
-typedef utility::pointer::owning_ptr< LoopHashLibraryOptions const > LoopHashLibraryOptionsCOP;
+typedef utility::pointer::shared_ptr< LoopHashLibraryOptions > LoopHashLibraryOptionsOP;
+typedef utility::pointer::shared_ptr< LoopHashLibraryOptions const > LoopHashLibraryOptionsCOP;
 
 } // namespace
 } // namespace

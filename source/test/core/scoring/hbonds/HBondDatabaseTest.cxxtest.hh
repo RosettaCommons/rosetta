@@ -68,7 +68,7 @@ public:
 		tags.push_back( "sp2_elec_params" );
 		for( Size i = 1; i <= tags.size(); ++i ){
 			// Validate data integrity
-			HBondOptionsCOP hb_options(new HBondOptions( tags[i] ));
+			HBondOptionsCOP hb_options( new HBondOptions( tags[i] ) );
 			string path("scoring/score_functions/hbonds/" + tags[i] );
 			validate_HBAccChemType(path);
 			validate_HBDonChemType(path);

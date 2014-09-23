@@ -26,8 +26,8 @@ struct RingConformer;
 /// @brief  A class containing data and methods for the set of possible ring conformations for a cyclic residue.
 class RingConformerSet;
 
-typedef utility::pointer::owning_ptr<RingConformerSet> RingConformerSetOP;
-typedef utility::pointer::owning_ptr<RingConformerSet const> RingConformerSetCOP;
+typedef utility::pointer::shared_ptr<RingConformerSet> RingConformerSetOP;
+typedef utility::pointer::shared_ptr<RingConformerSet const> RingConformerSetCOP;
 
 }  // namespace chemical
 }  // namespace core

@@ -135,7 +135,7 @@ public:
 	//@brief set fragments for loop-sampling
 	void
 	fragments( core::fragment::FragSetCOP frags ) {
-		ss_info_ = new core::fragment::SecondaryStructure( *frags );
+		ss_info_ = core::fragment::SecondaryStructureOP( new core::fragment::SecondaryStructure( *frags ) );
 		fragset_ = frags;
 	}
 

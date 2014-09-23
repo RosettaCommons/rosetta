@@ -24,8 +24,8 @@ namespace loophash {
 class FastGapMover;
 
 // Types
-typedef utility::pointer::owning_ptr< FastGapMover > FastGapMoverOP;
-typedef utility::pointer::owning_ptr< FastGapMover const > FastGapMoverCOP;
+typedef utility::pointer::shared_ptr< FastGapMover > FastGapMoverOP;
+typedef utility::pointer::shared_ptr< FastGapMover const > FastGapMoverCOP;
 
 }
 }

@@ -22,8 +22,8 @@ namespace task_operations {
 
 class RetrieveStoredTaskOperation;
 
-typedef utility::pointer::owning_ptr< RetrieveStoredTaskOperation > RetrieveStoredTaskOperationOP;
-typedef utility::pointer::owning_ptr< RetrieveStoredTaskOperation const > RetrieveStoredTaskOperationCOP;
+typedef utility::pointer::shared_ptr< RetrieveStoredTaskOperation > RetrieveStoredTaskOperationOP;
+typedef utility::pointer::shared_ptr< RetrieveStoredTaskOperation const > RetrieveStoredTaskOperationCOP;
 
 } //namespace task_operations
 } //namespace toolbox

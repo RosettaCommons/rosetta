@@ -25,8 +25,8 @@ namespace nonlocal {
 /// @brief forward declaration for NonlocalPair
 class NonlocalPair;
 
-typedef utility::pointer::owning_ptr<NonlocalPair> NonlocalPairOP;
-typedef utility::pointer::owning_ptr<NonlocalPair const> NonlocalPairCOP;
+typedef utility::pointer::shared_ptr<NonlocalPair> NonlocalPairOP;
+typedef utility::pointer::shared_ptr<NonlocalPair const> NonlocalPairCOP;
 
 } // nonlocal
 } // frag_picker

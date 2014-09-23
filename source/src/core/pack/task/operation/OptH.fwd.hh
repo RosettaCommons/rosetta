@@ -29,19 +29,19 @@ class OptH;
 
 
 /// @brief OptH owning pointer
-typedef utility::pointer::owning_ptr< OptH > OptHOP;
+typedef utility::pointer::shared_ptr< OptH > OptHOP;
 
 
 /// @brief OptH const owning pointer
-typedef utility::pointer::owning_ptr< OptH const > OptHCOP;
+typedef utility::pointer::shared_ptr< OptH const > OptHCOP;
 
 
 /// @brief OptH owning pointer
-typedef utility::pointer::access_ptr< OptH > OptHAP;
+typedef utility::pointer::weak_ptr< OptH > OptHAP;
 
 
 /// @brief OptH const owning pointer
-typedef utility::pointer::access_ptr< OptH const > OptHCAP;
+typedef utility::pointer::weak_ptr< OptH const > OptHCAP;
 
 
 } // namespace operation

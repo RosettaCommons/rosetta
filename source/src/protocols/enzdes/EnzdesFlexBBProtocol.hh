@@ -39,14 +39,14 @@ namespace protocols{
 namespace enzdes{
 
 class EnzdesFlexBBProtocol;
-typedef utility::pointer::owning_ptr< EnzdesFlexBBProtocol > EnzdesFlexBBProtocolOP;
-typedef utility::pointer::owning_ptr< EnzdesFlexBBProtocol const > EnzdesFlexBBProtocolCOP;
-typedef utility::pointer::access_ptr< EnzdesFlexBBProtocol const > EnzdesFlexBBProtocolCAP;
-typedef utility::pointer::access_ptr< EnzdesFlexBBProtocol > EnzdesFlexBBProtocolAP;
+typedef utility::pointer::shared_ptr< EnzdesFlexBBProtocol > EnzdesFlexBBProtocolOP;
+typedef utility::pointer::shared_ptr< EnzdesFlexBBProtocol const > EnzdesFlexBBProtocolCOP;
+typedef utility::pointer::weak_ptr< EnzdesFlexBBProtocol const > EnzdesFlexBBProtocolCAP;
+typedef utility::pointer::weak_ptr< EnzdesFlexBBProtocol > EnzdesFlexBBProtocolAP;
 
 class EnzdesFlexibleRegion;
-typedef utility::pointer::owning_ptr< EnzdesFlexibleRegion > EnzdesFlexibleRegionOP;
-typedef utility::pointer::owning_ptr< EnzdesFlexibleRegion const > EnzdesFlexibleRegionCOP;
+typedef utility::pointer::shared_ptr< EnzdesFlexibleRegion > EnzdesFlexibleRegionOP;
+typedef utility::pointer::shared_ptr< EnzdesFlexibleRegion const > EnzdesFlexibleRegionCOP;
 
 class EnzdesFlexBBProtocol : public protocols::enzdes::EnzdesBaseProtocol
 {

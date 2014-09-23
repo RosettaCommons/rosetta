@@ -23,8 +23,8 @@ namespace stepwise {
 namespace screener {
 	
 	class FastForwardToNextResidueAlternative;
-	typedef utility::pointer::owning_ptr< FastForwardToNextResidueAlternative > FastForwardToNextResidueAlternativeOP;
-	typedef utility::pointer::owning_ptr< FastForwardToNextResidueAlternative const > FastForwardToNextResidueAlternativeCOP;
+	typedef utility::pointer::shared_ptr< FastForwardToNextResidueAlternative > FastForwardToNextResidueAlternativeOP;
+	typedef utility::pointer::shared_ptr< FastForwardToNextResidueAlternative const > FastForwardToNextResidueAlternativeCOP;
 	
 } //screener
 } //stepwise

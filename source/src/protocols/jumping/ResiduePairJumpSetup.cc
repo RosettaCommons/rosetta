@@ -85,7 +85,7 @@ ResiduePairJumpSetup::read_file( std::string fname ) {
 		std::istringstream in( line );
 		in >> tag;
 		if ( tag == "BEGIN" ) {
-			residue_pair_jump = new ResiduePairJump;
+			residue_pair_jump = ResiduePairJumpOP( new ResiduePairJump );
 			continue;
 		} else if ( tag == "END" ) {
 			residue_pair_jump->init_mini_pose();
@@ -164,7 +164,7 @@ ResiduePairJumpSetup::read_file( std::string fname ) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 FragSetOP
 ResiduePairJumpSetup::generate_jump_frags( JumpSample const& jumps, kinematics::MoveMap const& mm ) const {
-	OrderedFragSetOP frags = new OrderedFragSet;
+	OrderedFragSetOP frags( new OrderedFragSet );
 	FrameList jump_geometries;
 	//runtime_assert( jumps.total_residue() == total_residue() );
 	ObjexxFCL::FArray2D_int const & in_jumps ( jumps.jumps() );

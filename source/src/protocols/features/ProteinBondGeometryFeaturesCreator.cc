@@ -29,7 +29,7 @@ namespace features {
 ProteinBondGeometryFeaturesCreator::ProteinBondGeometryFeaturesCreator() {}
 ProteinBondGeometryFeaturesCreator::~ProteinBondGeometryFeaturesCreator() {}
 FeaturesReporterOP ProteinBondGeometryFeaturesCreator::create_features_reporter() const {
-	return new ProteinBondGeometryFeatures;
+	return FeaturesReporterOP( new ProteinBondGeometryFeatures );
 }
 
 std::string ProteinBondGeometryFeaturesCreator::type_name() const {

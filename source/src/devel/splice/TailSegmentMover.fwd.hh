@@ -21,8 +21,8 @@ namespace splice {
 
 //Forwards and OP typedefs
 class TailSegmentMover;
-typedef utility::pointer::owning_ptr< TailSegmentMover > TailSegmentMoverOP;
-typedef utility::pointer::owning_ptr< TailSegmentMover const > TailSegmentMoverCOP;
+typedef utility::pointer::shared_ptr< TailSegmentMover > TailSegmentMoverOP;
+typedef utility::pointer::shared_ptr< TailSegmentMover const > TailSegmentMoverCOP;
 
 } //splice
 } //devel

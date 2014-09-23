@@ -22,8 +22,8 @@ namespace protocols {
 namespace moves {
 	
 	class MoverForPoseList;
-	typedef utility::pointer::owning_ptr< MoverForPoseList > MoverForPoseListOP;
-	typedef utility::pointer::owning_ptr< MoverForPoseList const > MoverForPoseListCOP;
+	typedef utility::pointer::shared_ptr< MoverForPoseList > MoverForPoseListOP;
+	typedef utility::pointer::shared_ptr< MoverForPoseList const > MoverForPoseListCOP;
 	
 } //moves 
 } //protocols 

@@ -56,7 +56,7 @@ ConstraintSet::ConstraintSet()
 :
 	revision_id_( 0 ),
 	revision_id_current_( false ),
-	conformation_pt_( NULL )
+	conformation_pt_( /* NULL */ )
 {}
 
 ConstraintSet::ConstraintSet( ConstraintSet const & other )
@@ -65,7 +65,7 @@ ConstraintSet::ConstraintSet( ConstraintSet const & other )
 	residue_pair_constraints_( other.residue_pair_constraints_.size() ),
 	revision_id_( 0 ),
 	revision_id_current_( false ),
-	conformation_pt_( NULL )
+	conformation_pt_( /* NULL */ )
 {
 	basic::ProfileThis doit( basic::CONSTRAINT_SET_COPY );
 
@@ -110,7 +110,7 @@ ConstraintSet::ConstraintSet( ConstraintSet const & other,
 	residue_pair_constraints_( other.residue_pair_constraints_.size() ),
 	revision_id_( 0 ),
 	revision_id_current_( false ),
-	conformation_pt_( NULL )
+	conformation_pt_( /* NULL */ )
 {
 	basic::ProfileThis doit( basic::CONSTRAINT_SET_COPY );
 
@@ -159,7 +159,7 @@ ConstraintSet::ConstraintSet( ConstraintSet const & other,
 }
 
 ConstraintSetOP ConstraintSet::clone() const {
-	return new ConstraintSet( *this );
+	return ConstraintSetOP( new ConstraintSet( *this ) );
 }
 
 /// @brief Copies the data from this ConstraintSet into a new object and returns
@@ -174,7 +174,7 @@ ConstraintSetOP ConstraintSet::remapped_clone(
 	id::SequenceMappingCOP smap /*default NULL*/
 ) const {
 	ConstraintCOPs all_cst = get_all_constraints();
-	ConstraintSetOP new_set = new ConstraintSet;
+	ConstraintSetOP new_set( new ConstraintSet );
 	for ( ConstraintCOPs::const_iterator it = all_cst.begin(), eit = all_cst.end(); it!=eit; ++it ) {
 		ConstraintCOP new_cst = (*it)->remapped_clone( src, dest, smap );
 		if ( new_cst ) new_set->add_constraint( new_cst );
@@ -190,7 +190,7 @@ ConstraintSetOP ConstraintSet::steal_def_clone(
 	id::SequenceMappingCOP smap /*default NULL*/
 ) const {
 	ConstraintCOPs all_cst = get_all_constraints();
-	ConstraintSetOP new_set = new ConstraintSet;
+	ConstraintSetOP new_set( new ConstraintSet );
 	for ( ConstraintCOPs::const_iterator it = all_cst.begin(), eit = all_cst.end(); it!=eit; ++it ) {
 		ConstraintOP new_cst = (*it)->clone();
 		new_cst->steal_def( src );
@@ -261,7 +261,7 @@ ConstraintSet::setup_for_minimizing_for_residue_pair(
 	if ( ! residue_pair_constraints_[ resno1 ] ) return;
 	ResidueConstraints::const_iterator iter = residue_pair_constraints_[ resno1 ]->find( resno2 );
 	if ( iter != residue_pair_constraints_[ resno1 ]->end() ) {
-		respair_data_cache.set_data( cst_respair_data, new CstMinimizationData( iter->second )  );
+		respair_data_cache.set_data( cst_respair_data, CacheableDataOP( new CstMinimizationData( iter->second ) )  );
 	}
 }
 
@@ -485,7 +485,7 @@ add_constraint_to_residue_constraints(
 )
 {
 	if ( !residue_constraints.has( seqpos ) ) {
-		residue_constraints.insert( seqpos, new Constraints() );
+		residue_constraints.insert( seqpos, ConstraintsOP( new Constraints() ) );
 		//residue_constraints.insert( std::make_pair( seqpos, ConstraintsOP( new Constraints() ) ) );
 	}
 	residue_constraints.find( seqpos )->second->add_constraint( cst );
@@ -498,7 +498,7 @@ void
 ConstraintSet::add_residue_pair_constraint( Size const pos1, Size const pos2, ConstraintCOP cst )
 {
 	if (  residue_pair_constraints_.size() < pos1 ) residue_pair_constraints_.resize( pos1, 0 );
-	if ( !residue_pair_constraints_[ pos1 ] ) residue_pair_constraints_[ pos1 ]= new ResidueConstraints();
+	if ( !residue_pair_constraints_[ pos1 ] ) residue_pair_constraints_[ pos1 ] = utility::pointer::shared_ptr<class core::scoring::constraints::ResidueConstraints>( new ResidueConstraints() );
 
 	add_constraint_to_residue_constraints( pos2, cst, *(residue_pair_constraints_[ pos1 ] ) );
 }
@@ -653,7 +653,7 @@ void
 ConstraintSet::add_dof_constraint( DOF_ID const & id, func::FuncOP func, ScoreType const & t )
 {
 	mark_revision_id_expired();
-	dof_constraints_.push_back( new DOF_Constraint( id, func, t ) );
+	dof_constraints_.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::DOF_Constraint>( new DOF_Constraint( id, func, t ) ) );
 }
 
 

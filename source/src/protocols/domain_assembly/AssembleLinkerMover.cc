@@ -106,7 +106,7 @@ void AssembleLinkerMover::apply( core::pose::Pose & pose ) {
 		);
 
 		Loop loop( loop_start, loop_stop, 0, 0, false );
-		LoopsOP loops = new Loops();
+		LoopsOP loops( new Loops() );
 		loops->add_loop(loop);
 		loop_mover::LoopMoverOP loop_mover = LoopMoverFactory::get_instance()->create_loop_mover(
 			loop_mover_name_, loops

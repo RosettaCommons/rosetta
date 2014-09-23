@@ -29,7 +29,7 @@ namespace features {
 PdbDataFeaturesCreator::PdbDataFeaturesCreator() {}
 PdbDataFeaturesCreator::~PdbDataFeaturesCreator() {}
 FeaturesReporterOP PdbDataFeaturesCreator::create_features_reporter() const {
-	return new PdbDataFeatures;
+	return FeaturesReporterOP( new PdbDataFeatures );
 }
 
 std::string PdbDataFeaturesCreator::type_name() const {

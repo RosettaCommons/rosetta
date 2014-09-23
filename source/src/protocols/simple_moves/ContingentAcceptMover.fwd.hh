@@ -20,8 +20,8 @@ namespace protocols {
 namespace simple_moves {
 
 class ContingentAcceptMover;
-typedef utility::pointer::owning_ptr< ContingentAcceptMover > ContingentAcceptMoverOP;
-typedef utility::pointer::owning_ptr< ContingentAcceptMover const > ContingentAcceptMoverCOP;
+typedef utility::pointer::shared_ptr< ContingentAcceptMover > ContingentAcceptMoverOP;
+typedef utility::pointer::shared_ptr< ContingentAcceptMover const > ContingentAcceptMoverCOP;
 
 } // simple_moves
 } // protocols

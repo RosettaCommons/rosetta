@@ -22,8 +22,8 @@ namespace protocols{
 namespace features{
 
 class FeaturesReporter;
-typedef utility::pointer::owning_ptr< FeaturesReporter > FeaturesReporterOP;
-typedef utility::pointer::owning_ptr< FeaturesReporter const > FeaturesReporterCOP;
+typedef utility::pointer::shared_ptr< FeaturesReporter > FeaturesReporterOP;
+typedef utility::pointer::shared_ptr< FeaturesReporter const > FeaturesReporterCOP;
 
 typedef boost::uint64_t StructureID;
 

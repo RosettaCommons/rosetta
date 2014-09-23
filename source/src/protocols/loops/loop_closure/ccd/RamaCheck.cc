@@ -318,7 +318,7 @@ std::string RamaCheck1B::name() const
 RamaCheckBaseOP
 RamaCheck1B::clone() const
 {
-	return new RamaCheck1B( * this );
+	return RamaCheckBaseOP( new RamaCheck1B( * this ) );
 }
 
 /// @details The neighbor-independent Ramachandran maps are used to compute the score for a residue in the conformation
@@ -381,7 +381,7 @@ std::string RamaCheck2B::name() const
 RamaCheckBaseOP
 RamaCheck2B::clone() const
 {
-	return new RamaCheck2B( * this );
+	return RamaCheckBaseOP( new RamaCheck2B( * this ) );
 }
 
 /// @details The neighbor-dependent Ramachandran maps are used to compute the score for a residue in the conformation

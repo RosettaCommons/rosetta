@@ -259,8 +259,7 @@ densityTools()
 			core::Size nres = fullpose.total_residue();
 			perResCC.resize( nres, 0.0 );
 
-			protocols::electron_density::SetupForDensityScoringMoverOP dockindens
-				( new protocols::electron_density::SetupForDensityScoringMover );
+			protocols::electron_density::SetupForDensityScoringMoverOP dockindens( new protocols::electron_density::SetupForDensityScoringMover );
 			dockindens->apply( fullpose );
 
 			core::scoring::electron_density::getDensityMap().set_nres( nres );

@@ -27,7 +27,7 @@ namespace protocols {
 namespace simple_moves {
 
 protocols::moves::MoverOP ExtendedPoseMoverCreator::create_mover() const {
-  return new protocols::simple_moves::ExtendedPoseMover();
+  return protocols::moves::MoverOP( new protocols::simple_moves::ExtendedPoseMover() );
 }
 
 std::string ExtendedPoseMoverCreator::keyname() const {

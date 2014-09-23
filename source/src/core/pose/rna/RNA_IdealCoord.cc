@@ -84,9 +84,9 @@ void RNA_IdealCoord::init() {
 	//Initialize the reference poses
 	chemical::ResidueTypeSetCOP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set(chemical::FA_RNA);
 	for ( Size i = 1; i <= pdb_file_list.size(); ++i ) {
-		PoseOP ref_pose = new Pose();
+		PoseOP ref_pose( new Pose() );
 		io::pdb::build_pose_from_pdb_as_is( *ref_pose, *rsd_set, pdb_file_list[i] );
-		MiniPoseOP ref_mini_pose = new MiniPose( *ref_pose );
+		MiniPoseOP ref_mini_pose( new MiniPose( *ref_pose ) );
 		ref_mini_pose_list_.push_back( ref_mini_pose );
 	}
 }

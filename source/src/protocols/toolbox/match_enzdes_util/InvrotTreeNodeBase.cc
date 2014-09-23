@@ -43,7 +43,7 @@ InvrotCollector::~InvrotCollector(){}
 
 InvrotCollectorOP
 InvrotCollector::clone() const {
-  return new InvrotCollector( *this );
+  return InvrotCollectorOP( new InvrotCollector( *this ) );
 }
 
 void

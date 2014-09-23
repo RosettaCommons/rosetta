@@ -31,19 +31,19 @@ class SecStructGen;
 
 
 /// @brief SecStructGen owning pointer
-typedef utility::pointer::owning_ptr< SecStructGen > SecStructGenOP;
+typedef utility::pointer::shared_ptr< SecStructGen > SecStructGenOP;
 
 
 /// @brief SecStructGen const owning pointer
-typedef utility::pointer::owning_ptr< SecStructGen const > SecStructGenCOP;
+typedef utility::pointer::shared_ptr< SecStructGen const > SecStructGenCOP;
 
 
 /// @brief SecStructGen access pointer
-typedef utility::pointer::owning_ptr< SecStructGen > SecStructGenAP;
+typedef utility::pointer::shared_ptr< SecStructGen > SecStructGenAP;
 
 
 /// @brief SecStructGen const access pointer
-typedef utility::pointer::owning_ptr< SecStructGen const > SecStructGenCAP;
+typedef utility::pointer::shared_ptr< SecStructGen const > SecStructGenCAP;
 
 
 } // namespace gen

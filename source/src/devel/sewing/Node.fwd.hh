@@ -21,8 +21,8 @@ namespace devel {
 namespace sewing {
 
 class Node;
-typedef utility::pointer::owning_ptr< Node > NodeOP;
-typedef utility::pointer::owning_ptr< Node const > NodeCOP;
+typedef utility::pointer::shared_ptr< Node > NodeOP;
+typedef utility::pointer::shared_ptr< Node const > NodeCOP;
 
 } //sewing namespace
 } //devel namespace

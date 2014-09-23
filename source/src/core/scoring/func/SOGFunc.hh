@@ -47,7 +47,7 @@ public:
 	SOGFunc( core::Real mean, core::Real sdev );
 
 	/// @brief returns a clone of this SOGFunc
-	FuncOP clone() const { return new SOGFunc( *this ); }
+	FuncOP clone() const { return FuncOP( new SOGFunc( *this ) ); }
 
 	/// @brief Returns the value of this SOGFunc evaluated at distance x.
 	Real func( Real const x ) const;

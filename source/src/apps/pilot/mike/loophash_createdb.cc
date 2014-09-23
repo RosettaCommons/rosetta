@@ -74,7 +74,7 @@ main( int argc, char * argv [] )
     }
 #endif
 	utility::vector1 < core::Size > loop_sizes = option[lh::loopsizes]();
-	loophash::LoopHashLibraryOP loop_hash_library = new loophash::LoopHashLibrary( loop_sizes, num_partitions, assigned_num );
+	loophash::LoopHashLibraryOP loop_hash_library( new loophash::LoopHashLibrary( loop_sizes, num_partitions, assigned_num ) );
 	loop_hash_library->create_db();
 	loop_hash_library->save_db();
 	TR << "Finished creating loophash library" << std::endl;

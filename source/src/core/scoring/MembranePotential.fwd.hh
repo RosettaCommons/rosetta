@@ -29,13 +29,13 @@ namespace core {
 	namespace scoring {
 		
 		class MembraneEmbed;
-		typedef utility::pointer::owning_ptr< MembraneEmbed > MembraneEmbedOP;
-		typedef utility::pointer::owning_ptr< MembraneEmbed const > MembraneEmbedCOP;
+		typedef utility::pointer::shared_ptr< MembraneEmbed > MembraneEmbedOP;
+		typedef utility::pointer::shared_ptr< MembraneEmbed const > MembraneEmbedCOP;
 		
 		
 		class MembranePotential;
-		typedef utility::pointer::owning_ptr< MembranePotential > MembranePotentialOP;
-		typedef utility::pointer::owning_ptr< MembranePotential const > MembranePotentialCOP;
+		typedef utility::pointer::shared_ptr< MembranePotential > MembranePotentialOP;
+		typedef utility::pointer::shared_ptr< MembranePotential const > MembranePotentialCOP;
 		
 	} // scoring
 } // core

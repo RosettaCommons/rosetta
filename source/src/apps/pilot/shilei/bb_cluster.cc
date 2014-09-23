@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
         for ( Size i = 1; i <= input_pdb_size; ++i ) {
 		std::string pdbnamei=basic::options::option[ basic::options::OptionKeys::in::file::s ]()[i];
 //		TR << pdbnamei << endl;
-		pose=new core::pose::Pose;
+		pose = core::pose::PoseOP( new core::pose::Pose );
 		core::import_pose::pose_from_pdb( *pose, pdbnamei.c_str() );
 		PoseVec.push_back(pose);
 	}

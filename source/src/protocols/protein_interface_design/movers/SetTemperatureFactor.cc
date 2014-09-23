@@ -51,7 +51,7 @@ SetTemperatureFactorCreator::keyname() const
 
 protocols::moves::MoverOP
 SetTemperatureFactorCreator::create_mover() const {
-	return new SetTemperatureFactor;
+	return protocols::moves::MoverOP( new SetTemperatureFactor );
 }
 
 std::string
@@ -62,7 +62,7 @@ SetTemperatureFactorCreator::mover_name()
 
 SetTemperatureFactor::SetTemperatureFactor() :
 	Mover( SetTemperatureFactorCreator::mover_name() ),
-	filter_( NULL ),
+	filter_( /* NULL */ ),
 	scaling_( 1.0 )
 {
 }

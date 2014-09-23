@@ -29,8 +29,8 @@ namespace chemical {
 
 
 class AutomorphismIterator; // fwd declaration
-typedef utility::pointer::owning_ptr< AutomorphismIterator > AutomorphismIteratorOP;
-typedef utility::pointer::owning_ptr< AutomorphismIterator const > AutomorphismIteratorCOP;
+typedef utility::pointer::shared_ptr< AutomorphismIterator > AutomorphismIteratorOP;
+typedef utility::pointer::shared_ptr< AutomorphismIterator const > AutomorphismIteratorCOP;
 
 ///@brief Enumerates the automorphisms of a residue, which are basically
 /// chemical symmetries that affect RMSD calculations.

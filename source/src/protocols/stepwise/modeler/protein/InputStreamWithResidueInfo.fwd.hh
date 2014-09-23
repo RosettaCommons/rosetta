@@ -22,8 +22,8 @@ namespace modeler {
 namespace protein {
 
 	class InputStreamWithResidueInfo;
-	typedef utility::pointer::owning_ptr< InputStreamWithResidueInfo > InputStreamWithResidueInfoOP;
-	typedef utility::pointer::owning_ptr< InputStreamWithResidueInfo const > InputStreamWithResidueInfoCOP;
+	typedef utility::pointer::shared_ptr< InputStreamWithResidueInfo > InputStreamWithResidueInfoOP;
+	typedef utility::pointer::shared_ptr< InputStreamWithResidueInfo const > InputStreamWithResidueInfoCOP;
 
 } //protein
 } //modeler

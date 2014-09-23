@@ -87,7 +87,7 @@ OptimizeThreadingMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 OptimizeThreadingMoverCreator::create_mover() const {
-	return new OptimizeThreadingMover;
+	return protocols::moves::MoverOP( new OptimizeThreadingMover );
 }
 
 std::string
@@ -113,7 +113,7 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 	// see if the pose has NCS
 	simple_moves::symmetry::NCSResMappingOP ncs;
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ) {
-		ncs = ( static_cast< simple_moves::symmetry::NCSResMapping* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING )() ));
+		ncs = ( utility::pointer::static_pointer_cast< simple_moves::symmetry::NCSResMapping > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ));
 	}
 
 	// get sses & choose cutpoints
@@ -179,7 +179,7 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 	sshift.set_extra_penalty( sse_core );
 
 	core::Real best_score=1e30, acc_score=1e30;
-	loops::LoopsOP best_loops = new loops::Loops();
+	loops::LoopsOP best_loops( new loops::Loops() );
 	core::pose::Pose best_pose=pose, acc_pose;
 	utility::vector1< int > offsets( nres, 0 );
 
@@ -347,7 +347,7 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 		// see if the pose has NCS
 		simple_moves::symmetry::NCSResMappingOP ncs;
 		if ( pose.data().has( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ) {
-			ncs = ( static_cast< simple_moves::symmetry::NCSResMapping* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING )() ));
+			ncs = ( utility::pointer::static_pointer_cast< simple_moves::symmetry::NCSResMapping > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ));
 		}
 
 		core::kinematics::FoldTree f_in=pose.fold_tree(), f_new;
@@ -375,7 +375,7 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 		protocols::loops::add_cutpoint_variants( pose );
 
 		// set movemap
-		core::kinematics::MoveMapOP mm_loop = new core::kinematics::MoveMap();
+		core::kinematics::MoveMapOP mm_loop( new core::kinematics::MoveMap() );
 		for( protocols::loops::Loops::const_iterator it=loops_->begin(), it_end=loops_->end(); it!=it_end; ++it ) {
 			for( Size i=it->start(); i<=it->stop(); ++i ) {
 				mm_loop->set_bb(i, true);
@@ -388,17 +388,17 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 
 		// pick 3mers only in unaligned regions
 		std::string tgt_seq = pose.sequence();
-		core::fragment::FragSetOP frags3 = new core::fragment::ConstantLengthFragSet( 3 );
+		core::fragment::FragSetOP frags3( new core::fragment::ConstantLengthFragSet( 3 ) );
 		for( protocols::loops::Loops::const_iterator it=loops_->begin(), it_end=loops_->end(); it!=it_end; ++it ) {
 			for( Size i=it->start(); i+2<=it->stop(); ++i ) {
-				core::fragment::FrameOP frame = new core::fragment::Frame( i, 3 );
+				core::fragment::FrameOP frame( new core::fragment::Frame( i, 3 ) );
 				frame->add_fragment(
 					core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa( "DDD", tgt_seq.substr( i-1, 3 ), 25, true, core::fragment::IndependentBBTorsionSRFD() ) );
 				frags3->add( frame );
 			}
 		}
 
-		core::fragment::FragSetOP frags1 = new core::fragment::ConstantLengthFragSet( 1 );
+		core::fragment::FragSetOP frags1( new core::fragment::ConstantLengthFragSet( 1 ) );
 		core::fragment::chop_fragments( *frags3, *frags1 );
 
 		// make a vector of fragments for random access (why does FragSet not have this?!?)
@@ -413,7 +413,7 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 			if (i==nouterCyc)   scorefxn_sampling_->set_weight( core::scoring::linear_chainbreak, 2.0 );
 
 			(*scorefxn_sampling_)(pose);
-			protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *scorefxn_sampling_, 2.0 );
+			protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose, *scorefxn_sampling_, 2.0 ) );
 
 			for (Size n=1; n<=ninnerCyc; ++n) {
 				utility::vector1< core::fragment::FrameOP > & working_frames = (n%2)?frames3:frames1;
@@ -487,7 +487,7 @@ void OptimizeThreadingMover::parse_my_tag(
 
 	if( tag->hasOption( "native" ) ) {
 		std::string ref_model_pdb = tag->getOption<std::string>( "native" );
-		native_ = new core::pose::Pose;
+		native_ = core::pose::PoseOP( new core::pose::Pose );
 		core::import_pose::pose_from_pdb( *native_, ref_model_pdb );
 	}
 

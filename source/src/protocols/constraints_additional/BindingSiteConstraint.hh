@@ -63,7 +63,7 @@ public:
 	);
 
 	virtual core::scoring::constraints::ConstraintOP clone() const {
-		return new BindingSiteConstraint( atms_, tgt_pos_, tgt_pos_centroid_ );
+		return core::scoring::constraints::ConstraintOP( new BindingSiteConstraint( atms_, tgt_pos_, tgt_pos_centroid_ ) );
 	}
 
 	///

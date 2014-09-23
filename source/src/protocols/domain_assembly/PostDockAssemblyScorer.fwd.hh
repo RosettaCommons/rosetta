@@ -22,8 +22,8 @@ namespace protocols {
 namespace domain_assembly {
 
 class PostDockAssemblyScorer;
-typedef utility::pointer::owning_ptr< PostDockAssemblyScorer > PostDockAssemblyScorerOP;
-typedef utility::pointer::owning_ptr< PostDockAssemblyScorer const > PostDockAssemblyScorerCOP;
+typedef utility::pointer::shared_ptr< PostDockAssemblyScorer > PostDockAssemblyScorerOP;
+typedef utility::pointer::shared_ptr< PostDockAssemblyScorer const > PostDockAssemblyScorerCOP;
 
 
 }//namespace domain_assembly

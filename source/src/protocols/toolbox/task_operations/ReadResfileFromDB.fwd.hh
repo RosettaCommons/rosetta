@@ -22,7 +22,7 @@ namespace task_operations {
 
 class ReadResfileFromDB;
 
-typedef utility::pointer::owning_ptr< ReadResfileFromDB > ReadResfileFromDBOP;
+typedef utility::pointer::shared_ptr< ReadResfileFromDB > ReadResfileFromDBOP;
 
 } //namespace task_operations
 } //namespace toolbox

@@ -86,7 +86,7 @@ namespace symmetric_docking {
 
 	moves::MoverOP
 	SymDockingLowRes::clone() const {
-		return new SymDockingLowRes( *this );
+		return moves::MoverOP( new SymDockingLowRes( *this ) );
 	}
 
 	void
@@ -131,13 +131,13 @@ namespace symmetric_docking {
 	void
 	SymDockingLowRes::set_default_mc( pose::Pose & pose ) {
 		// create the monte carlo object and movemap
-		mc_ = new moves::MonteCarlo( pose, *scorefxn_, temperature_ );
+		mc_ = moves::MonteCarloOP( new moves::MonteCarlo( pose, *scorefxn_, temperature_ ) );
 	}
 
 void SymDockingLowRes::set_default_move_map( pose::Pose & pose ) {
 	using namespace core::conformation::symmetry;
 
-	movemap_ = new kinematics::MoveMap();
+	movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap() );
 	movemap_->set_bb( bb_ );
 	movemap_->set_chi( chi_ );
 	core::pose::symmetry::make_symmetric_movemap( pose, *movemap_ );
@@ -154,9 +154,9 @@ void SymDockingLowRes::set_default_protocol( pose::Pose & pose ){
 
 	std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
 
-	rb_mover_ = new rigid::RigidBodyDofSeqPerturbMover( dofs , rot_magnitude_, trans_magnitude_ );
+	rb_mover_ = rigid::RigidBodyDofSeqPerturbMoverOP( new rigid::RigidBodyDofSeqPerturbMover( dofs , rot_magnitude_, trans_magnitude_ ) );
 
-	docking_lowres_protocol_ = new SequenceMover;
+	docking_lowres_protocol_ = moves::SequenceMoverOP( new SequenceMover );
 	docking_lowres_protocol_->add_mover( rb_mover_ );
 
 	if( basic::options::option[basic::options::OptionKeys::docking::multibody].user() ){
@@ -164,7 +164,7 @@ void SymDockingLowRes::set_default_protocol( pose::Pose & pose ){
 		for(Size ij = 1; ij <= symm_conf.Symmetry_Info()->get_njumps_subunit(); ++ij){
 			if( mbjumps.size()==0 || std::find(mbjumps.begin(),mbjumps.end(),ij)!=mbjumps.end() ){
 				TR << "add subunit jump mover " << ij << std::endl;
-				docking_lowres_protocol_->add_mover( new rigid::RigidBodyPerturbMover(ij,rot_magnitude_,trans_magnitude_) );
+				docking_lowres_protocol_->add_mover( MoverOP( new rigid::RigidBodyPerturbMover(ij,rot_magnitude_,trans_magnitude_) ) );
 			}
 		}
 	}
@@ -243,18 +243,18 @@ void SymDockingLowRes::rigid_body_trial( core::pose::Pose & pose )
 {
 	using namespace moves;
 
-	PDBDumpMoverOP dump = new PDBDumpMover("lowres_cycle_");
+	PDBDumpMoverOP dump( new PDBDumpMover("lowres_cycle_") );
 	//	dump->apply( pose );
-	MCShowMoverOP mc_show = new MCShowMover( mc_ );
+	MCShowMoverOP mc_show( new MCShowMover( mc_ ) );
 	//	mc_show->apply( pose );
 
 	rb_mover_->rot_magnitude( rot_magnitude_ );
 	rb_mover_->trans_magnitude( trans_magnitude_ );
 
-	TrialMoverOP rb_trial = new TrialMover( docking_lowres_protocol_, mc_ );
+	TrialMoverOP rb_trial( new TrialMover( docking_lowres_protocol_, mc_ ) );
 	rb_trial->keep_stats_type( moves::accept_reject );
 
-	RepeatMoverOP rb_cycle = new RepeatMover( rb_trial, inner_cycles_ );
+	RepeatMoverOP rb_cycle( new RepeatMover( rb_trial, inner_cycles_ ) );
 
 	rb_cycle->apply( pose );
 

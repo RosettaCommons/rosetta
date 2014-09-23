@@ -84,7 +84,7 @@ DisulfideMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 DisulfideMoverCreator::create_mover() const {
-	return new DisulfideMover;
+	return protocols::moves::MoverOP( new DisulfideMover );
 }
 
 std::string
@@ -163,7 +163,7 @@ void DisulfideMover::apply( Pose & pose ) {
 		TR.Debug << "Trying disulfide from " << disulf->first
 			<< " to " << disulf->second << endl;
 
-		PoseOP trial_pose(new Pose(pose));
+		PoseOP trial_pose( new Pose(pose) );
 
 		//Introduce a disulfide bond
 		form_disulfide(*trial_pose, disulf->first, disulf->second);
@@ -196,7 +196,7 @@ void DisulfideMover::apply( Pose & pose ) {
 		}
 
 		// Setup minimizer: allow interface to move
-		kinematics::MoveMapOP mm(new kinematics::MoveMap);
+		kinematics::MoveMapOP mm( new kinematics::MoveMap );
 		mm->set_bb( false );
 		mm->set_jump( rb_jump_, false );
 		for( core::Size i=1; i<=trial_pose->total_residue(); ++i ) {

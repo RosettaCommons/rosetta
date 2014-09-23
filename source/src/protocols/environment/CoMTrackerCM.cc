@@ -281,10 +281,10 @@ claims::EnvClaims CoMTrackerCM::yield_claims( core::pose::Pose const& pose,
   assert( std::find( mobile_residues_.begin(), mobile_residues_.end(), true ) != mobile_residues_.end() );
 
   moves::MoverOP this_ptr = get_self_ptr();
-  claims::VirtResClaimOP vclaim = new claims::VirtResClaim( utility::pointer::static_pointer_cast< ClaimingMover >(this_ptr),
+  claims::VirtResClaimOP vclaim( new claims::VirtResClaim( utility::pointer::static_pointer_cast< ClaimingMover >(this_ptr),
                                                             LocalPosition( "BASE", mobile_connection_point ),
                                                             com_jump_name_,
-                                                            com_name_ );
+                                                            com_name_ ) );
 
   vclaim->jump().strength( claims::MUST_CONTROL, claims::MUST_CONTROL );
   claim_list.push_back( vclaim );

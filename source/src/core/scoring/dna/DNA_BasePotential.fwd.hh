@@ -22,8 +22,8 @@ namespace dna {
 
 class DNA_BasePotential;
 
-typedef  utility::pointer::owning_ptr< DNA_BasePotential > DNA_BasePotentialOP;
-typedef  utility::pointer::owning_ptr< DNA_BasePotential const > DNA_BasePotentialCOP;
+typedef  utility::pointer::shared_ptr< DNA_BasePotential > DNA_BasePotentialOP;
+typedef  utility::pointer::shared_ptr< DNA_BasePotential const > DNA_BasePotentialCOP;
 
 } // namespace dna
 } // scoring

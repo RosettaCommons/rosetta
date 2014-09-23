@@ -22,18 +22,18 @@ namespace replica_docking {
 // Forward
 class TempInterpolatorBase;
 
-typedef utility::pointer::owning_ptr< TempInterpolatorBase > TempInterpolatorBaseOP;
-typedef utility::pointer::owning_ptr< TempInterpolatorBase const > TempInterpolatorBaseCOP;
+typedef utility::pointer::shared_ptr< TempInterpolatorBase > TempInterpolatorBaseOP;
+typedef utility::pointer::shared_ptr< TempInterpolatorBase const > TempInterpolatorBaseCOP;
 
 class TempInterpolator;
 
-typedef utility::pointer::owning_ptr< TempInterpolator > TempInterpolatorOP;
-typedef utility::pointer::owning_ptr< TempInterpolator const > TempInterpolatorCOP;
+typedef utility::pointer::shared_ptr< TempInterpolator > TempInterpolatorOP;
+typedef utility::pointer::shared_ptr< TempInterpolator const > TempInterpolatorCOP;
 
 class TempFixValue;
 
-typedef utility::pointer::owning_ptr< TempFixValue > TempFixValueOP;
-typedef utility::pointer::owning_ptr< TempFixValue const > TempFixValueCOP;
+typedef utility::pointer::shared_ptr< TempFixValue > TempFixValueOP;
+typedef utility::pointer::shared_ptr< TempFixValue const > TempFixValueCOP;
 
 } // namespace replica_docking
 } // namespace devel

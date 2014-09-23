@@ -63,7 +63,7 @@ MakeStarTopologyMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 MakeStarTopologyMoverCreator::create_mover() const {
-	return new MakeStarTopologyMover;
+	return protocols::moves::MoverOP( new MakeStarTopologyMover );
 }
 
 std::string
@@ -108,10 +108,10 @@ void MakeStarTopologyMover::parse_my_tag(
 
 	// look for tag on datamap
 	if( data.has( "foldtrees", tag_ ) ){
-		ft_restore_ = data.get< core::kinematics::FoldTree * >( "foldtrees", tag_ );
+		ft_restore_ = data.get_ptr<core::kinematics::FoldTree>( "foldtrees", tag_ );
 		TR << "Found foldtree " << tag_ << " on datamap" << std::endl;
 	} else {
-		ft_restore_ = new core::kinematics::FoldTree( pose.fold_tree() );
+		ft_restore_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree( pose.fold_tree() ) );
 			// make a copy of current pose ... if restore is called before 'set' this could be oddly behaved
 		data.add( "foldtrees", tag_, ft_restore_ );
 		TR << "Adding foldtrees " << tag_ << " to datamap" << std::endl;

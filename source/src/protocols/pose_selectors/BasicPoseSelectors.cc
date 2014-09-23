@@ -131,7 +131,7 @@ utility::vector1<bool> LogicalSelector::select_poses(
 
 // Creator
 protocols::rosetta_scripts::PoseSelectorOP AndSelectorCreator::create_selector() const {
-  return new AndSelector();
+  return protocols::rosetta_scripts::PoseSelectorOP( new AndSelector() );
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -139,7 +139,7 @@ protocols::rosetta_scripts::PoseSelectorOP AndSelectorCreator::create_selector()
 
 // Creator
 protocols::rosetta_scripts::PoseSelectorOP OrSelectorCreator::create_selector() const {
-  return new OrSelector();
+  return protocols::rosetta_scripts::PoseSelectorOP( new OrSelector() );
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -147,12 +147,12 @@ protocols::rosetta_scripts::PoseSelectorOP OrSelectorCreator::create_selector() 
 
 // Creator
 protocols::rosetta_scripts::PoseSelectorOP TopNByPropertyCreator::create_selector() const {
-  return new TopNByProperty();
+  return protocols::rosetta_scripts::PoseSelectorOP( new TopNByProperty() );
 }
 
 // Selector
 TopNByProperty::TopNByProperty() :
-	reporter_(NULL),
+	reporter_(/* NULL */),
 	order_(1)
 {
 }
@@ -247,12 +247,12 @@ utility::vector1<bool> TopNByProperty::select_poses(
 
 // Creator
 protocols::rosetta_scripts::PoseSelectorOP FilterCreator::create_selector() const {
-  return new Filter();
+  return protocols::rosetta_scripts::PoseSelectorOP( new Filter() );
 }
 
 // Selector
 Filter::Filter() :
-	filter_(NULL)
+	filter_(/* NULL */)
 {
 }
 

@@ -78,10 +78,10 @@ using namespace ObjexxFCL;
 
 CoordConstraintClaimer::CoordConstraintClaimer() :
 	filename_( "NO_FILE"),
-	constraints_( NULL ),
+	constraints_( /* NULL */ ),
 	root_( 1 ),
 	bRegenerateFromInputPose_ ( false ),
-	cst_pose_ ( NULL ),
+	cst_pose_ ( /* NULL */ ),
 	bCentroid_( true ),
 	bFullatom_( false ),
 	bLocal_( false )
@@ -89,10 +89,10 @@ CoordConstraintClaimer::CoordConstraintClaimer() :
 
 CoordConstraintClaimer::CoordConstraintClaimer( std::string filename ) :
 	filename_( filename ),
-	constraints_( NULL ),
+	constraints_( /* NULL */ ),
 	root_( 1 ),
 	bRegenerateFromInputPose_ ( false ),
-	cst_pose_ ( NULL ),
+	cst_pose_ ( /* NULL */ ),
 	bCentroid_( true ),
 	bFullatom_( false ),
 	bLocal_( false )
@@ -110,7 +110,7 @@ void CoordConstraintClaimer::new_decoy() {
 void CoordConstraintClaimer::new_decoy( core::pose::Pose const& pose ) {
 	if ( bRegenerateFromInputPose_ ) {
 		sequence_ = ""; //force new stealing
-		cst_pose_ = new core::pose::Pose( pose );
+		cst_pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
 	}
 	if ( bSuperimpose_ ) {
 		sequence_ = ""; //force new superposition
@@ -130,7 +130,7 @@ void CoordConstraintClaimer::generate_claims( claims::DofClaims& new_claims ) {
 
 		if ( !constraints_ && bUseXYZ_in_cstfile_ ) {
 			//in this case we haven't been able to read the constraints file yet, since this is the first time a valid pose exists...
-			cst_pose_ = new pose::Pose( broker().current_pose() );
+			cst_pose_ = core::pose::PoseOP( new pose::Pose( broker().current_pose() ) );
 			read_constraints_from_file( *cst_pose_ );
 		}
 
@@ -141,11 +141,11 @@ void CoordConstraintClaimer::generate_claims( claims::DofClaims& new_claims ) {
 		}
 		runtime_assert( root_ != 0 );
 	}
-	if ( !bLocal_ ) new_claims.push_back( new claims::LegacyRootClaim( get_self_weak_ptr(), root_, claims::DofClaim::NEED_TO_KNOW ) );
+	if ( !bLocal_ ) new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::LegacyRootClaim( get_self_weak_ptr(), root_, claims::DofClaim::NEED_TO_KNOW ) ) );
 }
 
 void CoordConstraintClaimer::read_cst_pose() {
-	cst_pose_ = new core::pose::Pose;
+	cst_pose_ = core::pose::PoseOP( new core::pose::Pose );
 	core::import_pose::pose_from_pdb( *cst_pose_,
 		*core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID ),
 		filename_ );
@@ -205,10 +205,10 @@ void CoordConstraintClaimer::set_cst_root() {
 	id::StubID cst_fix_stub_ID( core::pose::named_stub_id_to_stub_id( id::NamedStubID( "N","CA","C", root_ ), *cst_pose_ ));
 	runtime_assert( constraints_ != 0 );
 	ConstraintCOPs all_cst = constraints_->get_all_constraints();
-	ConstraintSetOP new_set = new ConstraintSet;
+	ConstraintSetOP new_set( new ConstraintSet );
 	for ( ConstraintCOPs::const_iterator it = all_cst.begin(), eit = all_cst.end(); it!=eit; ++it ) {
 		ConstraintOP new_cst = (*it)->clone();
-		LocalCoordinateConstraintOP ll_cst = dynamic_cast< LocalCoordinateConstraint* > ( new_cst.get() );
+		LocalCoordinateConstraintOP ll_cst = utility::pointer::dynamic_pointer_cast< core::scoring::constraints::LocalCoordinateConstraint > ( new_cst );
 		runtime_assert( ll_cst != 0 ); //only these should be in the constraint set!
 		ll_cst->set_fixed_stub( cst_fix_stub_ID );
 		new_set->add_constraint( ll_cst );
@@ -219,7 +219,7 @@ void CoordConstraintClaimer::set_cst_root() {
 void CoordConstraintClaimer::generate_constraints( pose::Pose const& cst_pose ) const {
 
 	//empty constraint set
-	constraints_ = new ConstraintSet;
+	constraints_ = core::scoring::constraints::ConstraintSetOP( new ConstraintSet );
 
 	//make local copy of region-definition
 	loops::Loops rigid( rigid_ );
@@ -243,18 +243,18 @@ void CoordConstraintClaimer::generate_constraints( pose::Pose const& cst_pose ) 
 			);
 			Vector xyz( rsd.xyz( cst_atomID.atomno() ) + ai );
 			if ( bLocal_ ) {
-				constraints_->add_constraint( new scoring::constraints::LocalCoordinateConstraint(
+				constraints_->add_constraint( ConstraintCOP( new scoring::constraints::LocalCoordinateConstraint(
   													 cst_atomID,
 														 cst_fix_stub_ID,
 														 xyz,
-														 cst_func_)	);
+														 cst_func_) )	);
 
 			} else {
-				constraints_->add_constraint( new scoring::constraints::CoordinateConstraint(
+				constraints_->add_constraint( ConstraintCOP( new scoring::constraints::CoordinateConstraint(
   													 cst_atomID,
 	    											 id::AtomID( 1, root_ ) /*this is completely ignored! */,
 														 xyz,
-														 cst_func_)	);
+														 cst_func_) )	);
 			}
 		}
 
@@ -267,7 +267,7 @@ void CoordConstraintClaimer::generate_constraints( pose::Pose const& cst_pose ) 
 
 void CoordConstraintClaimer::read_constraints_from_file( pose::Pose const& cst_pose ) const {
 	constraints_ = ConstraintIO::get_instance()->read_constraints(
-										cst_filename_,	new ConstraintSet, cst_pose	);
+										cst_filename_,	ConstraintSetOP( new ConstraintSet ), cst_pose	);
 
 	if ( tr.Debug.visible() ) {
 			tr.Debug << "CoordConstraintClaimer: have read constraints from file:" << std::endl;
@@ -277,7 +277,7 @@ void CoordConstraintClaimer::read_constraints_from_file( pose::Pose const& cst_p
 
 void CoordConstraintClaimer::superimpose( pose::Pose const& pose ) const {
 	ConstraintCOPs all_cst = constraints_->get_all_constraints();
-	ConstraintSetOP new_set = new ConstraintSet;
+	ConstraintSetOP new_set( new ConstraintSet );
 
 	core::Size const natoms( all_cst.size() );
 	ObjexxFCL::FArray1D_double weights( natoms, 1.0 );
@@ -334,7 +334,7 @@ void CoordConstraintClaimer::superimpose( pose::Pose const& pose ) const {
 	n = 1;
 	for ( ConstraintCOPs::const_iterator it = all_cst.begin(), eit = all_cst.end(); it!=eit; ++it, ++n ) {
 		ConstraintOP new_cst = (*it)->clone();
-		LocalCoordinateConstraintOP ll_cst = dynamic_cast< LocalCoordinateConstraint* > ( new_cst.get() );
+		LocalCoordinateConstraintOP ll_cst = utility::pointer::dynamic_pointer_cast< core::scoring::constraints::LocalCoordinateConstraint > ( new_cst );
 		Vector xyz_cst;
 		//		n = ll_cst->atom( 1 ).rsd();
 		for ( Size d=1; d<=3; ++d ) {

@@ -177,7 +177,7 @@ PCS_data::PCS_data(PCS_data const &other):
 
 basic::datacache::CacheableDataOP
 PCS_data::clone() const {
-	return new PCS_data( *this );
+	return basic::datacache::CacheableDataOP( new PCS_data( *this ) );
 }
 
 void

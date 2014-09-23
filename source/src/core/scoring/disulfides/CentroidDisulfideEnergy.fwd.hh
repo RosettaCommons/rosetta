@@ -24,8 +24,8 @@ namespace disulfides {
 
 class CentroidDisulfideEnergy;
 
-typedef utility::pointer::owning_ptr< CentroidDisulfideEnergy > CentroidDisulfideEnergyOP;
-typedef utility::pointer::owning_ptr< CentroidDisulfideEnergy const > CentroidDisulfideEnergyCOP;
+typedef utility::pointer::shared_ptr< CentroidDisulfideEnergy > CentroidDisulfideEnergyOP;
+typedef utility::pointer::shared_ptr< CentroidDisulfideEnergy const > CentroidDisulfideEnergyCOP;
 
 } // namespace disulfides
 } // namespace scoring

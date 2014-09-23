@@ -23,8 +23,8 @@ namespace methods {
 
 class ShortRangeTwoBodyEnergy;
 
-typedef utility::pointer::owning_ptr< ShortRangeTwoBodyEnergy > ShortRangeTwoBodyEnergyOP;
-typedef utility::pointer::owning_ptr< ShortRangeTwoBodyEnergy const > ShortRangeTwoBodyEnergyCOP;
+typedef utility::pointer::shared_ptr< ShortRangeTwoBodyEnergy > ShortRangeTwoBodyEnergyOP;
+typedef utility::pointer::shared_ptr< ShortRangeTwoBodyEnergy const > ShortRangeTwoBodyEnergyCOP;
 
 
 }

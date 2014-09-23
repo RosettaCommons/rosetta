@@ -60,7 +60,7 @@ RotamerTrialsMinMover::RotamerTrialsMinMover() : protocols::moves::Mover()
 RotamerTrialsMinMover::RotamerTrialsMinMover(
 	ScoreFunctionCOP scorefxn_in,
 	PackerTask & task_in
-) : protocols::moves::Mover(), scorefxn_( scorefxn_in ), factory_( NULL )
+) : protocols::moves::Mover(), scorefxn_( scorefxn_in ), factory_( /* NULL */ )
 {
 	protocols::moves::Mover::type( "RotamerTrialsMin" );
 	task_ = task_in.clone();
@@ -71,7 +71,7 @@ RotamerTrialsMinMover::RotamerTrialsMinMover(
 RotamerTrialsMinMover::RotamerTrialsMinMover(
 	ScoreFunctionCOP scorefxn_in,
 	TaskFactoryCOP factory_in
-) : protocols::moves::Mover(), scorefxn_( scorefxn_in ), task_( NULL ), factory_( factory_in )
+) : protocols::moves::Mover(), scorefxn_( scorefxn_in ), task_( /* NULL */ ), factory_( factory_in )
 {
 	protocols::moves::Mover::type( "RotamerTrialsMin" );
 	init();
@@ -159,7 +159,7 @@ RotamerTrialsMinMover::parse_my_tag(
 	core::pack::task::TaskFactoryOP new_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
 	if ( new_task_factory == 0) {
 		TR << "Using default Task Operations for RotamerTrialsMinMover." << std::endl;
-		new_task_factory = new core::pack::task::TaskFactory;
+		new_task_factory = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory );
 	}
 	task_factory( new_task_factory );
 
@@ -175,14 +175,14 @@ RotamerTrialsMinMover::parse_my_tag(
 protocols::moves::MoverOP
 RotamerTrialsMinMover::fresh_instance() const
 {
-	return new RotamerTrialsMinMover;
+	return protocols::moves::MoverOP( new RotamerTrialsMinMover );
 }
 
 ///@brief Return a copy of this mover instance (for RosettaScripts)
 protocols::moves::MoverOP
 RotamerTrialsMinMover::clone() const
 {
-	return new protocols::simple_moves::RotamerTrialsMinMover( *this );
+	return protocols::moves::MoverOP( new protocols::simple_moves::RotamerTrialsMinMover( *this ) );
 }
 
 std::string
@@ -194,7 +194,7 @@ RotamerTrialsMinMoverCreator::keyname() const
 protocols::moves::MoverOP
 RotamerTrialsMinMoverCreator::create_mover() const
 {
-	return new RotamerTrialsMinMover;
+	return protocols::moves::MoverOP( new RotamerTrialsMinMover );
 }
 
 std::string

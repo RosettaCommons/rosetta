@@ -68,7 +68,7 @@ ProteinCore::operator() ( core::pose::Pose const & pose, core::Size index ) cons
 
 core::pack::task::operation::ResFilterOP
 ProteinCoreFilterCreator::create_res_filter() const{
-	return new ProteinCore;
+	return core::pack::task::operation::ResFilterOP( new ProteinCore );
 }
 
 

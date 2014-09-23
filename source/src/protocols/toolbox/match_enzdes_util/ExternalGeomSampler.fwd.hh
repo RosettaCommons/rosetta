@@ -33,8 +33,8 @@ enum ExternalTransform {
 
 class ExternalGeomSampler;
 
-typedef utility::pointer::owning_ptr< ExternalGeomSampler > ExternalGeomSamplerOP;
-typedef utility::pointer::owning_ptr< ExternalGeomSampler const > ExternalGeomSamplerCOP;
+typedef utility::pointer::shared_ptr< ExternalGeomSampler > ExternalGeomSamplerOP;
+typedef utility::pointer::shared_ptr< ExternalGeomSampler const > ExternalGeomSamplerCOP;
 
 }
 }

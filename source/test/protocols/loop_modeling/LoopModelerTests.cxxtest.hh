@@ -236,7 +236,7 @@ public:
 		TS_ASSERT_EQUALS(refiners[3]->get_name(), "MinimizationRefiner");
 
 		utilities::PeriodicMoverOP periodic_refiner =
-			dynamic_cast<utilities::PeriodicMover*>(refiners[1].get());
+			utility::pointer::dynamic_pointer_cast< utilities::PeriodicMover > ( refiners[1] );
 
 		TS_ASSERT_EQUALS(periodic_refiner->period_, 20);
 		TS_ASSERT_EQUALS(periodic_refiner->mover_->get_name(), "RepackingRefiner");

@@ -75,22 +75,22 @@ using core::pose::tag_from_pose;
 
 ProteinSilentReport::ProteinSilentReport() :
 	initialized_(false),
-	database_filter_(NULL),
+	database_filter_(/* NULL */),
 	protocol_id_(0),
 	batch_id_(0),
 	structure_map_(),
-	protocol_features_( new ProtocolFeatures() ),
-	batch_features_( new BatchFeatures() ),
-	pdb_data_features_( new PdbDataFeatures()),
-	structure_features_( new StructureFeatures() ),
-	structure_scores_features_( new StructureScoresFeatures() ),
-	score_type_features_(new ScoreTypeFeatures()),
-	pose_conformation_features_( new PoseConformationFeatures() ),
-	pose_comments_features_( new PoseCommentsFeatures() ),
-	protein_residue_conformation_features_( new ProteinResidueConformationFeatures() ),
-	residue_features_ (new ResidueFeatures() ),
-	residue_conformation_features_ (new ResidueConformationFeatures() ),
-	job_data_features_ (new JobDataFeatures() )
+	protocol_features_( protocols::features::ProtocolFeaturesOP( new ProtocolFeatures() ) ),
+	batch_features_( protocols::features::BatchFeaturesOP( new BatchFeatures() ) ),
+	pdb_data_features_( protocols::features::PdbDataFeaturesOP( new PdbDataFeatures() )),
+	structure_features_( protocols::features::StructureFeaturesOP( new StructureFeatures() ) ),
+	structure_scores_features_( protocols::features::StructureScoresFeaturesOP( new StructureScoresFeatures() ) ),
+	score_type_features_(protocols::features::ScoreTypeFeaturesOP( new ScoreTypeFeatures() )),
+	pose_conformation_features_( protocols::features::PoseConformationFeaturesOP( new PoseConformationFeatures() ) ),
+	pose_comments_features_( protocols::features::PoseCommentsFeaturesOP( new PoseCommentsFeatures() ) ),
+	protein_residue_conformation_features_( protocols::features::ProteinResidueConformationFeaturesOP( new ProteinResidueConformationFeatures() ) ),
+	residue_features_ (protocols::features::ResidueFeaturesOP( new ResidueFeatures() ) ),
+	residue_conformation_features_ (protocols::features::ResidueConformationFeaturesOP( new ResidueConformationFeatures() ) ),
+	job_data_features_ (protocols::features::JobDataFeaturesOP( new JobDataFeatures() ) )
 {
 	database_filter_=get_DB_filter_ptr();
 

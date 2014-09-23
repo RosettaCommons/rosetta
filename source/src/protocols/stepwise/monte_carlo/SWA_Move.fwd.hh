@@ -23,12 +23,12 @@ namespace stepwise {
 namespace monte_carlo {
 
 	class SWA_Move;
-	typedef utility::pointer::owning_ptr< SWA_Move > SWA_MoveOP;
-	typedef utility::pointer::owning_ptr< SWA_Move const > SWA_MoveCOP;
+	typedef utility::pointer::shared_ptr< SWA_Move > SWA_MoveOP;
+	typedef utility::pointer::shared_ptr< SWA_Move const > SWA_MoveCOP;
 
 	class Attachment;
-	typedef utility::pointer::owning_ptr< Attachment > AttachmentOP;
-	typedef utility::pointer::owning_ptr< Attachment const > AttachmentCOP;
+	typedef utility::pointer::shared_ptr< Attachment > AttachmentOP;
+	typedef utility::pointer::shared_ptr< Attachment const > AttachmentCOP;
 
 
 } //monte_carlo

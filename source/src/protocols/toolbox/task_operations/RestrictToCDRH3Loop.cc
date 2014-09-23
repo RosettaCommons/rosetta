@@ -44,7 +44,7 @@ RestrictToCDRH3Loop::~RestrictToCDRH3Loop() {}
 
 TaskOperationOP RestrictToCDRH3Loop::clone() const
 {
-	return new RestrictToCDRH3Loop( *this );
+	return TaskOperationOP( new RestrictToCDRH3Loop( *this ) );
 }
 
 void RestrictToCDRH3Loop::apply( Pose const & pose, PackerTask & task ) const
@@ -80,7 +80,7 @@ bool RestrictToCDRH3Loop::residue_is_in_h3_loop( Pose const & pose, Size residue
 
 TaskOperationOP RestrictToCDRH3LoopCreator::create_task_operation() const
 {
-	return new RestrictToCDRH3Loop;
+	return TaskOperationOP( new RestrictToCDRH3Loop );
 }
 
 } //namespace task_operations

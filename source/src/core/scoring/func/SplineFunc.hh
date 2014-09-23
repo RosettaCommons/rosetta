@@ -51,7 +51,7 @@ public:
 
 	/// @brief returns a clone of this SplineFunc
 	virtual
-	FuncOP clone() const { return new SplineFunc( *this ); }
+	FuncOP clone() const { return FuncOP( new SplineFunc( *this ) ); }
 
 	/// @brief return SplineFunc member variables
 	core::Real get_exp_val();

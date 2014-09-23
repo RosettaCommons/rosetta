@@ -53,7 +53,7 @@ SpecialRotamerRSO::~SpecialRotamerRSO(){}
 
 core::pack::rotamer_set::RotamerSetOperationOP
 SpecialRotamerRSO::clone() const{
-	return new SpecialRotamerRSO( *this );
+	return core::pack::rotamer_set::RotamerSetOperationOP( new SpecialRotamerRSO( *this ) );
 }
 
 

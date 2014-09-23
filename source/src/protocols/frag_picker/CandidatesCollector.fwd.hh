@@ -24,8 +24,8 @@ namespace frag_picker {
 /// @brief forward declaration for CandidatesCollector
 class CandidatesCollector;
 
-typedef utility::pointer::owning_ptr<CandidatesCollector> CandidatesCollectorOP;
-typedef utility::pointer::owning_ptr<CandidatesCollector const>
+typedef utility::pointer::shared_ptr<CandidatesCollector> CandidatesCollectorOP;
+typedef utility::pointer::shared_ptr<CandidatesCollector const>
 		CandidatesCollectorCOP;
 
 } // frag_picker

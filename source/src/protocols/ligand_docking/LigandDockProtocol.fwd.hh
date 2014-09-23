@@ -23,8 +23,8 @@ namespace ligand_docking {
 
 
 class LigandDockProtocol; // fwd declaration
-typedef utility::pointer::owning_ptr< LigandDockProtocol > LigandDockProtocolOP;
-typedef utility::pointer::owning_ptr< LigandDockProtocol const > LigandDockProtocolCOP;
+typedef utility::pointer::shared_ptr< LigandDockProtocol > LigandDockProtocolOP;
+typedef utility::pointer::shared_ptr< LigandDockProtocol const > LigandDockProtocolCOP;
 
 
 } // namespace ligand_docking

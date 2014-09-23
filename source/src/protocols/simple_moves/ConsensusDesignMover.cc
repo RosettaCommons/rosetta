@@ -68,7 +68,7 @@ ConsensusDesignMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 ConsensusDesignMoverCreator::create_mover() const {
-	return new ConsensusDesignMover;
+	return protocols::moves::MoverOP( new ConsensusDesignMover );
 }
 
 std::string
@@ -79,20 +79,20 @@ ConsensusDesignMoverCreator::mover_name()
 
 
 ConsensusDesignMover::ConsensusDesignMover()
-: ptask_(NULL), task_factory_(NULL),
-	sfxn_(NULL), invert_task_(false),
+: ptask_(/* NULL */), task_factory_(NULL),
+	sfxn_(/* NULL */), invert_task_(false),
 	use_seqprof_constraints_(false), sasa_cutoff_(0.0),
-	seqprof_(NULL), ignore_pose_profile_length_mismatch_(false)
+	seqprof_(/* NULL */), ignore_pose_profile_length_mismatch_(false)
 {}
 
 ConsensusDesignMover::ConsensusDesignMover(
 	core::pack::task::PackerTaskCOP ptask,
 	core::scoring::ScoreFunctionCOP sfxn
 )
-	: ptask_(ptask), task_factory_(NULL),
+	: ptask_(ptask), task_factory_(/* NULL */),
 	sfxn_(sfxn), invert_task_(false),
 	use_seqprof_constraints_(false), sasa_cutoff_(0.0),
-	seqprof_(NULL), ignore_pose_profile_length_mismatch_(false)
+	seqprof_(/* NULL */), ignore_pose_profile_length_mismatch_(false)
 {}
 
 ConsensusDesignMover::~ConsensusDesignMover(){}
@@ -100,13 +100,13 @@ ConsensusDesignMover::~ConsensusDesignMover(){}
 protocols::moves::MoverOP
 ConsensusDesignMover::clone() const
 {
-	return new ConsensusDesignMover( *this );
+	return protocols::moves::MoverOP( new ConsensusDesignMover( *this ) );
 }
 
 protocols::moves::MoverOP
 ConsensusDesignMover::fresh_instance() const
 {
-	return new ConsensusDesignMover();
+	return protocols::moves::MoverOP( new ConsensusDesignMover() );
 }
 
 /// @details this mover is allowed to touch all residues specified
@@ -162,12 +162,12 @@ ConsensusDesignMover::create_consensus_design_task(
 	if( !ptask_ ){
 		if( task_factory_ ) ptask_ = task_factory_->create_task_and_apply_taskoperations( pose );
 		else{
-			ptask_ = new core::pack::task::PackerTask_( pose );
+			ptask_ = core::pack::task::PackerTaskCOP( new core::pack::task::PackerTask_( pose ) );
 			if( invert_task_) utility_exit_with_message("invert_task_ set to true even though no task or task_factory was passed in. something probably unclean somewhere.");
 		}
 	}
 
-	core::pack::task::PackerTaskOP consensus_task = new core::pack::task::PackerTask_( pose );
+	core::pack::task::PackerTaskOP consensus_task( new core::pack::task::PackerTask_( pose ) );
 	consensus_task->initialize_from_command_line();
 	toolbox::task_operations::SeqprofConsensusOperation seqprof_to;
 	seqprof_to.set_ignore_pose_profile_length_mismatch( ignore_pose_profile_length_mismatch_);
@@ -216,10 +216,10 @@ ConsensusDesignMover::create_sequence_profile_constraints(
 ) const
 {
 	core::scoring::constraints::ConstraintCOPs csts;
-	core::sequence::SequenceProfileOP temp_sp = new core::sequence::SequenceProfile(*seqprof_); //dumb nonconstness of seqprofile in SequenceProfileConstraint makes this necessary :(
+	core::sequence::SequenceProfileOP temp_sp( new core::sequence::SequenceProfile(*seqprof_) ); //dumb nonconstness of seqprofile in SequenceProfileConstraint makes this necessary :(
 	for( core::Size i = 1; i <= pose.total_residue(); ++i){
 		if( pose.residue_type(i).is_protein() && task.residue_task(i).being_designed() )
-			csts.push_back( new core::scoring::constraints::SequenceProfileConstraint( pose, i, temp_sp ) );
+			csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new core::scoring::constraints::SequenceProfileConstraint( pose, i, temp_sp ) ) );
 	}
 	return csts;
 }

@@ -87,7 +87,7 @@ namespace screener {
 	PartitionContactScreener::initialize_evaluator(){
 		core::scoring::methods::EnergyMethodOptions options;
 		core::scoring::etable::EtableCOP etable(core::scoring::ScoringManager::get_instance()->etable( options.etable_type()));
-		eval_ = new core::scoring::etable::AnalyticEtableEvaluator( *etable );
+		eval_ = core::scoring::etable::AnalyticEtableEvaluatorOP( new core::scoring::etable::AnalyticEtableEvaluator( *etable ) );
 	}
 
 	//////////////////////////////////////////////////////////////////////////////

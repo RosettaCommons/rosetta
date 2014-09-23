@@ -83,8 +83,8 @@ extern ResidualDipolarCouplingCOP retrieve_RDC_from_pose(
 		core::pose::Pose const& pose) {
 	// ////using core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA;
 	if (pose.data().has(core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA)) {
-		return static_cast<ResidualDipolarCoupling const *> (pose.data().get_const_ptr(
-				core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA)());
+		return utility::pointer::static_pointer_cast< core::scoring::ResidualDipolarCoupling const > ( pose.data().get_const_ptr(
+				core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA) );
 	};
 	return NULL;
 }
@@ -92,8 +92,8 @@ extern ResidualDipolarCouplingCOP retrieve_RDC_from_pose(
 extern ResidualDipolarCouplingOP retrieve_RDC_from_pose(core::pose::Pose& pose) {
 	// ////using core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA;
 	if (pose.data().has(core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA)) {
-		return static_cast<ResidualDipolarCoupling*> (pose.data().get_ptr(
-				core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA)());
+		return utility::pointer::static_pointer_cast< core::scoring::ResidualDipolarCoupling > ( pose.data().get_ptr(
+				core::pose::datacache::CacheableDataType::RESIDUAL_DIPOLAR_COUPLING_DATA) );
 	};
 	return NULL;
 }

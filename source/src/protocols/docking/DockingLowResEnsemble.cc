@@ -89,18 +89,18 @@ DockingLowResEnsemble::~DockingLowResEnsemble() {}
 
     
 protocols::moves::MoverOP DockingLowResEnsemble::clone() const {
-	return new DockingLowResEnsemble(*this);
+	return protocols::moves::MoverOP( new DockingLowResEnsemble(*this) );
 }
 
  
 void DockingLowResEnsemble::set_ensemble1( DockingEnsembleOP ensemble1 )
 {
-    ensemble1_mover_ = new protocols::docking::ConformerSwitchMover( ensemble1 );
+    ensemble1_mover_ = protocols::docking::ConformerSwitchMoverOP( new protocols::docking::ConformerSwitchMover( ensemble1 ) );
 }
 
 void DockingLowResEnsemble::set_ensemble2( DockingEnsembleOP ensemble2 )
 {
-    ensemble2_mover_ = new protocols::docking::ConformerSwitchMover( ensemble2 );
+    ensemble2_mover_ = protocols::docking::ConformerSwitchMoverOP( new protocols::docking::ConformerSwitchMover( ensemble2 ) );
 }
 
 void DockingLowResEnsemble::finalize_setup( core::pose::Pose & pose){

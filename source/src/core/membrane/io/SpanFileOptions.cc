@@ -57,7 +57,7 @@ SpanFileOptionsCreator::options_type() const { return "SpanFileOptions"; }
 
 /// @brief Return options class to registrator
 basic::resource_manager::ResourceOptionsOP
-SpanFileOptionsCreator::create_options() const { return new SpanFileOptions; }
+SpanFileOptionsCreator::create_options() const { return basic::resource_manager::ResourceOptionsOP( new SpanFileOptions ); }
 
 } // io
 } // memrbane

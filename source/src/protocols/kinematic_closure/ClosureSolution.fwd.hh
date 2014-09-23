@@ -21,8 +21,8 @@ namespace protocols {
 namespace kinematic_closure {
 
 class ClosureSolution;
-typedef utility::pointer::owning_ptr<ClosureSolution> ClosureSolutionOP;
-typedef utility::pointer::owning_ptr<ClosureSolution const> ClosureSolutionCOP;
+typedef utility::pointer::shared_ptr<ClosureSolution> ClosureSolutionOP;
+typedef utility::pointer::shared_ptr<ClosureSolution const> ClosureSolutionCOP;
 typedef utility::vector1<ClosureSolutionCOP> SolutionList;
 
 } // namespace kinematic_closure

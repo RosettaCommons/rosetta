@@ -196,11 +196,11 @@ std::string HelixRotate::get_name() const {
 }
 
 moves::MoverOP HelixRotate::fresh_instance() const {
-	return new HelixRotate();
+	return moves::MoverOP( new HelixRotate() );
 }
 
 moves::MoverOP HelixRotate::clone() const {
-	return new HelixRotate(*this);
+	return moves::MoverOP( new HelixRotate(*this) );
 }
 
 }  // namespace nonlocal

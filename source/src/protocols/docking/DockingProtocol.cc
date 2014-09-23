@@ -190,7 +190,7 @@ void DockingProtocol::init(
 	}
 
 	// correctly set up the score functions from either passed in values or defaults
-	if ( docking_score_low() == NULL ) {
+	if ( docking_score_low == NULL ) {
 		//docking_scorefxn_low_ = core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen" );
 		docking_scorefxn_low_ = core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen",
 			basic::options::option[ basic::options::OptionKeys::score::patch ]()
@@ -200,7 +200,7 @@ void DockingProtocol::init(
 		docking_scorefxn_low_ = docking_score_low;
 	}
 
-	if ( docking_score_high() == NULL ) {
+	if ( docking_score_high == NULL ) {
 		docking_scorefxn_high_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" ) ;
 		docking_scorefxn_pack_ = core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) ;
 		docking_scorefxn_output_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking" );
@@ -279,13 +279,13 @@ void DockingProtocol::setup_objects()
 	docking_highres_mover_ = NULL;
 
 	// Residue movers
-	to_centroid_ = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
+	to_centroid_ = protocols::simple_moves::SwitchResidueTypeSetMoverOP( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
 
 	//generate to_all_atom mover: 	to_all_atom_ =
 	using protocols::moves::MoverOP;
-	protocols::moves::SequenceMoverOP to_all_atom_and_repack = new protocols::moves::SequenceMover;
-	to_all_atom_and_repack->add_mover( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD ) );
-	to_all_atom_and_repack->add_mover( new protocols::simple_moves::RepackSidechainsMover( docking_scorefxn_pack_ ) );
+	protocols::moves::SequenceMoverOP to_all_atom_and_repack( new protocols::moves::SequenceMover );
+	to_all_atom_and_repack->add_mover( MoverOP( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD ) ) );
+	to_all_atom_and_repack->add_mover( MoverOP( new protocols::simple_moves::RepackSidechainsMover( docking_scorefxn_pack_ ) ) );
 	to_all_atom_=to_all_atom_and_repack;
 
 	sync_objects_with_flags();
@@ -299,19 +299,19 @@ void DockingProtocol::sync_objects_with_flags()
         }
 
         if ( !perturber_ ){
-			perturber_ = new DockingInitialPerturbation( movable_jumps_, true /*slide into contact*/ );
+			perturber_ = protocols::docking::DockingInitialPerturbationOP( new DockingInitialPerturbation( movable_jumps_, true /*slide into contact*/ ) );
 	}
 
 	if ( !docking_lowres_mover_ ){
             // Modified by DK
             if( if_ensemble_ ){
-                docking_lowres_mover_ = new DockingLowResEnsemble( docking_scorefxn_low_, movable_jumps_ );
+                docking_lowres_mover_ = protocols::docking::DockingLowResOP( new DockingLowResEnsemble( docking_scorefxn_low_, movable_jumps_ ) );
             } else {
-                docking_lowres_mover_ = new DockingLowRes( docking_scorefxn_low_, movable_jumps_ );
+                docking_lowres_mover_ = protocols::docking::DockingLowResOP( new DockingLowRes( docking_scorefxn_low_, movable_jumps_ ) );
             }
 	}
 		if ( !no_filters_ && !lowres_filter_ ) {
-			lowres_filter_ = new protocols::docking::DockingLowResFilter();
+			lowres_filter_ = protocols::docking::DockingLowResFilterOP( new protocols::docking::DockingLowResFilter() );
 		}
 	} else {
 		perturber_ = NULL;
@@ -323,14 +323,14 @@ void DockingProtocol::sync_objects_with_flags()
 			if ( docking_highres_mover_ ) {
 				if ( docking_highres_mover_->get_name() != "DockMinMover" ) docking_highres_mover_ = NULL;
 			}
-			if ( !docking_highres_mover_ ) docking_highres_mover_ = new DockMinMover( movable_jumps_, docking_scorefxn_high_ );
+			if ( !docking_highres_mover_ ) docking_highres_mover_ = protocols::docking::DockingHighResOP( new DockMinMover( movable_jumps_, docking_scorefxn_high_ ) );
 		}
 		else if ( use_legacy_protocol_ ) {
 			if ( docking_highres_mover_ ) {
 				if ( docking_highres_mover_->get_name() != "DockingHighResLegacy" ) docking_highres_mover_ = NULL;
 			}
 			if ( !docking_highres_mover_ ) {
-				docking_highres_mover_ = new DockingHighResLegacy( movable_jumps_, docking_scorefxn_high_, docking_scorefxn_pack_ );
+				docking_highres_mover_ = protocols::docking::DockingHighResOP( new DockingHighResLegacy( movable_jumps_, docking_scorefxn_high_, docking_scorefxn_pack_ ) );
 				docking_highres_mover_->set_rt_min( rt_min_ );
 				docking_highres_mover_->set_sc_min( sc_min_ );
 				docking_highres_mover_->set_partners( partners_ );
@@ -344,14 +344,14 @@ void DockingProtocol::sync_objects_with_flags()
 				// uses docking_scorefxn_output because three scorefunction still exist
 				// After move to new protocol is complete, docking_scorefxn_output will be the same as docking_scorefxn_high
 				// docking_highres_mover_ = new DockMCMProtocol( movable_jumps_, docking_scorefxn_output_, docking_scorefxn_pack_ ); //JQX commented this out, see the line below
-				docking_highres_mover_ = new DockMCMProtocol( movable_jumps_, docking_scorefxn_high_, docking_scorefxn_pack_ );  //JQX added this line to match the Legacy code
+				docking_highres_mover_ = protocols::docking::DockingHighResOP( new DockMCMProtocol( movable_jumps_, docking_scorefxn_high_, docking_scorefxn_pack_ ) );  //JQX added this line to match the Legacy code
 				docking_highres_mover_->set_rt_min( rt_min_ );
 				docking_highres_mover_->set_sc_min( sc_min_ );
 				docking_highres_mover_->set_partners( partners_ );
 			}
 		}
 		if ( !no_filters_ && !highres_filter_ ) {
-			highres_filter_ = new protocols::docking::DockingHighResFilter();
+			highres_filter_ = protocols::docking::DockingHighResFilterOP( new protocols::docking::DockingHighResFilter() );
 		}
 	} else {
 		docking_highres_mover_ = NULL;
@@ -366,7 +366,7 @@ void DockingProtocol::sync_objects_with_flags()
 		docking_constraint_ = NULL;
 	} else {
 		if ( !docking_constraint_ ) {
-			docking_constraint_ = new protocols::simple_moves::ConstraintSetMover();
+			docking_constraint_ = protocols::simple_moves::ConstraintSetMoverOP( new protocols::simple_moves::ConstraintSetMover() );
 		}
 	}
 
@@ -430,7 +430,7 @@ DockingProtocol::init_from_options()
 
 	//set native pose if asked for
 	if ( option[ OptionKeys::in::file::native ].user() ) {
-		core::pose::PoseOP native_pose = new core::pose::Pose();
+		core::pose::PoseOP native_pose( new core::pose::Pose() );
 		core::import_pose::pose_from_pdb( *native_pose, option[ OptionKeys::in::file::native ]() );
 		set_native_pose( native_pose );
 	} else {
@@ -521,7 +521,7 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 	// check for native and input pose
 	// input pose is used further down for the recover sidehchains mover
 	if ( !get_input_pose() ) {
-		core::pose::PoseOP input_pose = new core::pose::Pose( pose );
+		core::pose::PoseOP input_pose( new core::pose::Pose( pose ) );
 		set_input_pose( input_pose );
 	}
 
@@ -538,13 +538,13 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 		start_res = 1;
 		end_res = cutpoint;
 
-		ensemble1_ = new DockingEnsemble( start_res, end_res, rb_jump, ensemble1_filename_, "dock_ens_conf1", docking_scorefxn_low_, docking_scorefxn_high_ );
+		ensemble1_ = protocols::docking::DockingEnsembleOP( new DockingEnsemble( start_res, end_res, rb_jump, ensemble1_filename_, "dock_ens_conf1", docking_scorefxn_low_, docking_scorefxn_high_ ) );
 
 		TR << "Ensemble 2: " << ensemble2_filename_ << std::endl;
 		start_res = cutpoint + 1;
 		end_res = pose.total_residue();
 
-		ensemble2_ = new DockingEnsemble( start_res, end_res, rb_jump, ensemble2_filename_, "dock_ens_conf2", docking_scorefxn_low_, docking_scorefxn_high_ );
+		ensemble2_ = protocols::docking::DockingEnsembleOP( new DockingEnsemble( start_res, end_res, rb_jump, ensemble2_filename_, "dock_ens_conf2", docking_scorefxn_low_, docking_scorefxn_high_ ) );
 
 		// recover sidechains mover is not needed with ensemble docking since the sidechains are recovered from the partners in the ensemble file
 		recover_sidechains_ = NULL;
@@ -567,10 +567,10 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 			if ( !recover_sidechains_ ) {
 				core::pose::Pose a_pose;
 				core::import_pose::pose_from_pdb( a_pose, recover_sidechains_filename_ );
-				recover_sidechains_ = new protocols::simple_moves::ReturnSidechainMover( a_pose );
+				recover_sidechains_ = protocols::simple_moves::ReturnSidechainMoverOP( new protocols::simple_moves::ReturnSidechainMover( a_pose ) );
 			} //first initialization ?
 		} else if ( get_input_pose() && get_input_pose()->is_fullatom() ) {
-			recover_sidechains_ = new protocols::simple_moves::ReturnSidechainMover( *get_input_pose() );
+			recover_sidechains_ = protocols::simple_moves::ReturnSidechainMoverOP( new protocols::simple_moves::ReturnSidechainMover( *get_input_pose() ) );
 		} else {
 			// recover sidechains mover is not needed with ensemble docking since the sidechains are recovered from the partners in the ensemble fi
 			recover_sidechains_ = NULL;
@@ -593,7 +593,7 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 	// set relevant information to legacy high res mover
 	if ( docking_highres_mover_ ) {
 		if ( docking_highres_mover_->get_name() == "DockingHighResLegacy" && design_ ) {
-			DockingHighResLegacyOP legacy_mover = dynamic_cast< DockingHighResLegacy* >(docking_highres_mover_.get());
+			DockingHighResLegacyOP legacy_mover = utility::pointer::dynamic_pointer_cast< protocols::docking::DockingHighResLegacy > ( docking_highres_mover_ );
 			legacy_mover->design( design_ );
 		}
 		// passes the task factory down the chain and allows setting of the default docking task
@@ -628,13 +628,13 @@ DockingProtocol::~DockingProtocol() {}
 protocols::moves::MoverOP
 DockingProtocol::clone() const {
 	//return( new DockingProtocol( movable_jumps_, low_res_protocol_only_, docking_local_refine_, autofoldtree_, docking_scorefxn_low_, docking_scorefxn_high_ ) ); This is bad do not clone this way.
-	return new DockingProtocol(*this);
+	return protocols::moves::MoverOP( new DockingProtocol(*this) );
 }
 
 ///@brief fresh_instance returns a default-constructed object for the JD2
 protocols::moves::MoverOP
 DockingProtocol::fresh_instance() const {
-	return new DockingProtocol();
+	return protocols::moves::MoverOP( new DockingProtocol() );
 }
 
 ///@brief This mover retains state such that a fresh version is needed if the input Pose is about to change
@@ -688,31 +688,31 @@ void DockingProtocol::initForEqualOperatorAndCopyConstructor(DockingProtocol & l
 	if ( rhs.docking_scorefxn_pack_ ) lhs.docking_scorefxn_pack_ = rhs.docking_scorefxn_pack_->clone();
 	if ( rhs.docking_scorefxn_output_ ) lhs.docking_scorefxn_output_ = rhs.docking_scorefxn_output_->clone();
 	if( rhs.mc_ ) //not used currently but might be needed later
-		lhs.mc_ = new moves::MonteCarlo( *(rhs.mc_) );
-	if ( rhs.lowres_filter_ ) lhs.lowres_filter_ = static_cast< DockingLowResFilter * const > (rhs.lowres_filter_->clone()() );
-	if ( rhs.highres_filter_ ) lhs.highres_filter_ = static_cast< DockingHighResFilter * const > (rhs.highres_filter_->clone()() );
+		lhs.mc_ = protocols::moves::MonteCarloOP( new moves::MonteCarlo( *(rhs.mc_) ) );
+	if ( rhs.lowres_filter_ ) lhs.lowres_filter_ = utility::pointer::static_pointer_cast< protocols::docking::DockingLowResFilter > ( rhs.lowres_filter_->clone() );
+	if ( rhs.highres_filter_ ) lhs.highres_filter_ = utility::pointer::static_pointer_cast< protocols::docking::DockingHighResFilter > ( rhs.highres_filter_->clone() );
 	if ( rhs.docking_lowres_mover_){
-		lhs.docking_lowres_mover_ = static_cast< DockingLowRes * >( rhs.docking_lowres_mover_->clone()() );
+		lhs.docking_lowres_mover_ = utility::pointer::static_pointer_cast< protocols::docking::DockingLowRes > ( rhs.docking_lowres_mover_->clone() );
 	}
 	if ( rhs.docking_highres_mover_){
-		lhs.docking_highres_mover_ = static_cast< DockingHighRes * >( rhs.docking_highres_mover_->clone()() );
+		lhs.docking_highres_mover_ = utility::pointer::static_pointer_cast< protocols::docking::DockingHighRes > ( rhs.docking_highres_mover_->clone() );
 	}
-	if ( rhs.to_centroid_ ) lhs.to_centroid_ = static_cast< protocols::simple_moves::SwitchResidueTypeSetMover * >( rhs.to_centroid_->clone()() );
+	if ( rhs.to_centroid_ ) lhs.to_centroid_ = utility::pointer::static_pointer_cast< protocols::simple_moves::SwitchResidueTypeSetMover > ( rhs.to_centroid_->clone() );
 	if ( rhs.to_all_atom_ ) lhs.to_all_atom_ = rhs.to_all_atom_->clone();
 	if( rhs.ensemble1_){
-		lhs.ensemble1_ = new protocols::docking::DockingEnsemble( *(rhs.ensemble1_) );
+		lhs.ensemble1_ = protocols::docking::DockingEnsembleOP( new protocols::docking::DockingEnsemble( *(rhs.ensemble1_) ) );
 		lhs.ensemble1_filename_ = rhs.ensemble1_filename_ ;
 	}
 	if( rhs.ensemble2_){
-		lhs.ensemble2_ = new protocols::docking::DockingEnsemble( *(rhs.ensemble2_) );
+		lhs.ensemble2_ = protocols::docking::DockingEnsembleOP( new protocols::docking::DockingEnsemble( *(rhs.ensemble2_) ) );
 		lhs.ensemble2_filename_ = rhs.ensemble2_filename_;
 	}
 	if( rhs.docking_constraint_ )
-		lhs.docking_constraint_ = static_cast< protocols::simple_moves::ConstraintSetMover * >( rhs.docking_constraint_->clone()() );
+		lhs.docking_constraint_ = utility::pointer::static_pointer_cast< protocols::simple_moves::ConstraintSetMover > ( rhs.docking_constraint_->clone() );
 	if( rhs.recover_sidechains_ )
-		lhs.recover_sidechains_ = static_cast< protocols::simple_moves::ReturnSidechainMover * >( rhs.recover_sidechains_->clone()() );
+		lhs.recover_sidechains_ = utility::pointer::static_pointer_cast< protocols::simple_moves::ReturnSidechainMover > ( rhs.recover_sidechains_->clone() );
 	if(	rhs.init_task_factory_ ){
-		lhs.init_task_factory_ = new 	core::pack::task::TaskFactory( *(rhs.init_task_factory_) );
+		lhs.init_task_factory_ = core::pack::task::TaskFactoryOP( new 	core::pack::task::TaskFactory( *(rhs.init_task_factory_) ) );
 	}
 	lhs.design_ = rhs.design_;
 	lhs.ignore_default_docking_task_ = rhs.ignore_default_docking_task_;
@@ -928,7 +928,7 @@ DockingProtocol::apply( pose::Pose & pose )
 
 	if ( !get_native_pose() ) {
 		TR << "Danger Will Robinson! Native is an impostor!" << std::endl;
-		core::pose::PoseOP native_pose = new core::pose::Pose(pose);
+		core::pose::PoseOP native_pose( new core::pose::Pose(pose) );
 		set_native_pose( native_pose );
 	}
 
@@ -1118,7 +1118,7 @@ void DockingProtocol::add_additional_low_resolution_step( protocols::moves::Move
 {
 	if ( ! additional_low_resolution_steps_ )
 	{
-		additional_low_resolution_steps_ = new moves::SequenceMover;
+		additional_low_resolution_steps_ = protocols::moves::SequenceMoverOP( new moves::SequenceMover );
 	}
 	additional_low_resolution_steps_->add_mover( additional_low_resolution_mover );
 }
@@ -1217,7 +1217,7 @@ DockingProtocolCreator::keyname() const
 
 protocols::moves::MoverOP
 DockingProtocolCreator::create_mover() const {
-    return new DockingProtocol();
+    return protocols::moves::MoverOP( new DockingProtocol() );
 }
 
 std::string

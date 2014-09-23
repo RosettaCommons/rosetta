@@ -29,19 +29,19 @@ class SegmentRebuild;
 
 
 /// @brief owning pointer for SegmentRebuild
-typedef utility::pointer::owning_ptr< SegmentRebuild > SegmentRebuildOP;
+typedef utility::pointer::shared_ptr< SegmentRebuild > SegmentRebuildOP;
 
 
 /// @brief owning pointer for const SegmentRebuild
-typedef utility::pointer::owning_ptr< SegmentRebuild const > SegmentRebuildCOP;
+typedef utility::pointer::shared_ptr< SegmentRebuild const > SegmentRebuildCOP;
 
 
 /// @brief access pointer for SegmentRebuild
-typedef utility::pointer::access_ptr< SegmentRebuild > SegmentRebuildAP;
+typedef utility::pointer::weak_ptr< SegmentRebuild > SegmentRebuildAP;
 
 
 /// @brief access pointer for const SegmentRebuild
-typedef utility::pointer::access_ptr< SegmentRebuild const > SegmentRebuildCAP;
+typedef utility::pointer::weak_ptr< SegmentRebuild const > SegmentRebuildCAP;
 
 
 } // namespace build

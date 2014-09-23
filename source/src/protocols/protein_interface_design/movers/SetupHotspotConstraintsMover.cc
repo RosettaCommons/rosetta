@@ -46,7 +46,7 @@ SetupHotspotConstraintsMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 SetupHotspotConstraintsMoverCreator::create_mover() const {
-	return new SetupHotspotConstraintsMover;
+	return protocols::moves::MoverOP( new SetupHotspotConstraintsMover );
 }
 
 std::string
@@ -99,7 +99,7 @@ SetupHotspotConstraintsMover::SetupHotspotConstraintsMover(
 	stub_energy_fxn_( stub_energy_fxn)
 {
 //		packer_task_ = packer_task->clone();
-	hotspot_stub_set_ = new protocols::hotspot_hashing::HotspotStubSet( *hotspot_stub_set );
+	hotspot_stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new protocols::hotspot_hashing::HotspotStubSet( *hotspot_stub_set ) );
 }
 
 SetupHotspotConstraintsMover::SetupHotspotConstraintsMover( SetupHotspotConstraintsMover const & init ) :
@@ -114,7 +114,7 @@ SetupHotspotConstraintsMover::SetupHotspotConstraintsMover( SetupHotspotConstrai
 	colonyE_( init.colonyE_ ),
 	stub_energy_fxn_( init.stub_energy_fxn_ )
 {
-	hotspot_stub_set_ = new protocols::hotspot_hashing::HotspotStubSet( *init.hotspot_stub_set_ );
+	hotspot_stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new protocols::hotspot_hashing::HotspotStubSet( *init.hotspot_stub_set_ ) );
 }
 
 void
@@ -132,7 +132,7 @@ SetupHotspotConstraintsMover::apply( core::pose::Pose & pose ) {
 			CB_force_constant_, worst_allowed_stub_bonus_, apply_self_energies_, bump_cutoff_, apply_ambiguous_constraints_ );
 		}
 	} else {
-		core::scoring::constraints::ConstraintSetOP empty_constraint_set = new core::scoring::constraints::ConstraintSet;
+		core::scoring::constraints::ConstraintSetOP empty_constraint_set( new core::scoring::constraints::ConstraintSet );
 		pose.constraint_set( empty_constraint_set );
 	}
 }
@@ -159,7 +159,7 @@ SetupHotspotConstraintsMover::parse_my_tag( TagCOP const tag, basic::datacache::
 
   colonyE_ = tag->getOption<bool>( "colonyE", 0 );
 
-  hotspot_stub_set_ = new hotspot_hashing::HotspotStubSet;
+  hotspot_stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new hotspot_hashing::HotspotStubSet );
 	if( tag->hasOption( "stubfile" ) ){
   	std::string const hotspot_fname( tag->getOption<std::string>( "stubfile", "stubs.pdb" ) );
   	hotspot_stub_set_->read_data( hotspot_fname );
@@ -172,7 +172,7 @@ SetupHotspotConstraintsMover::parse_my_tag( TagCOP const tag, basic::datacache::
 				std::string const file_name( curr_tag2->getOption< std::string >( "file_name" ) );
 				std::string const nickname( curr_tag2->getOption< std::string >( "nickname" ) );
 				core::Size const stub_num( curr_tag2->getOption< core::Size >( "stub_num", 100000 ) );
-				hotspot_hashing::HotspotStubSetOP temp_stubset = new hotspot_hashing::HotspotStubSet;
+				hotspot_hashing::HotspotStubSetOP temp_stubset( new hotspot_hashing::HotspotStubSet );
 				temp_stubset->read_data( file_name );
 				temp_stubset->remove_random_stubs_from_set( temp_stubset->size() - stub_num );
   			hotspot_stub_set_->add_stub_set( *temp_stubset );

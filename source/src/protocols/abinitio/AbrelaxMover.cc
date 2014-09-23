@@ -76,11 +76,11 @@ namespace abinitio {
 using namespace core;
 
 AbrelaxMover::AbrelaxMover() :
-	topology_broker_( NULL ),
-	sampling_protocol_( NULL ),
-	loop_closure_protocol_( NULL ),
-	relax_protocol_( NULL ),
-	post_loop_closure_protocol_( NULL ),
+	topology_broker_( /* NULL */ ),
+	sampling_protocol_( /* NULL */ ),
+	loop_closure_protocol_( /* NULL */ ),
+	relax_protocol_( /* NULL */ ),
+	post_loop_closure_protocol_( /* NULL */ ),
 	b_return_unrelaxed_fullatom_( false )
   {
 		basic::mem_tr << "AbrelaxMover CStor start" << std::endl;
@@ -108,7 +108,7 @@ void AbrelaxMover::set_defaults() {
 
 	b_return_unrelaxed_fullatom_ = false;
 
-	topology_broker_ = new topology_broker::TopologyBroker();
+	topology_broker_ = topology_broker::TopologyBrokerOP( new topology_broker::TopologyBroker() );
 	topology_broker::add_cmdline_claims( *topology_broker_ );
 
 
@@ -123,7 +123,7 @@ void AbrelaxMover::set_defaults() {
 //	}
 //	else{
 		//tr << "setting ConstraintfragmentSampler" << std::endl;
-		FragmentSamplerOP sampler = new ConstraintFragmentSampler( topology_broker_ );
+		FragmentSamplerOP sampler( new ConstraintFragmentSampler( topology_broker_ ) );
 		//tr << "sampler:  " << sampler->get_name() << std::endl;
 		sampling_protocol( sampler );
 //	}
@@ -132,17 +132,17 @@ void AbrelaxMover::set_defaults() {
 	//  Idealize the structure before relax
 	bool bIdeal( true );
 	if ( option[ OptionKeys::loops::idealize_before_loop_close ].user() ) {
-		IdealizeMoverOP idealizer(new IdealizeMover);
+		IdealizeMoverOP idealizer( new IdealizeMover );
 		idealizer->fast( false );
 		pre_loop_closure_protocol( idealizer );
 	}
 
 	// loop closing
 	if ( option[ OptionKeys::abinitio::close_loops ]() ) {
-		SlidingWindowLoopClosureOP closure_method = new SlidingWindowLoopClosure;
+		SlidingWindowLoopClosureOP closure_method( new SlidingWindowLoopClosure );
 
 		if ( option[ OptionKeys::loops::alternative_closure_protocol ]() ) {
-			closure_method = new WidthFirstSlidingWindowLoopClosure;
+			closure_method = SlidingWindowLoopClosureOP( new WidthFirstSlidingWindowLoopClosure );
 		}
 
 		bIdeal = !option[ OptionKeys::loops::non_ideal_loop_closing ]();
@@ -160,7 +160,7 @@ void AbrelaxMover::set_defaults() {
 
 	//  Idealize the structure after relax
 	if ( option[ OptionKeys::loops::idealize_after_loop_close ].user() ) {
-		IdealizeMoverOP idealizer(new IdealizeMover);
+		IdealizeMoverOP idealizer( new IdealizeMover );
 		idealizer->fast( false );
 		post_loop_closure_protocol( idealizer );
 		bIdeal = true;
@@ -339,7 +339,7 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 		} else {
 			// No ? Then evidently we havn't even tried yet
 			tr << "AbrelaxMover: start loops" << std::endl;
-			kinematics::MoveMapOP movemap = new kinematics::MoveMap;
+			kinematics::MoveMapOP movemap( new kinematics::MoveMap );
 			closure_protocol()->scorefxn( sampling_protocol()->current_scorefxn().clone() );
 			closure_protocol()->fragments( topology_broker()->loop_frags( *movemap ) ); //get frags and movemap from broker
 			closure_protocol()->movemap( movemap ); //this is the movemap sanctioned by the broker ... see line above
@@ -474,7 +474,7 @@ void AbrelaxMover::close_with_idealization( pose::Pose &pose) {
 	kinematics::FoldTree fold_tree( pose.fold_tree() );
 
 	// record cutpoints
-	protocols::loops::LoopsOP cloops = new protocols::loops::Loops();
+	protocols::loops::LoopsOP cloops( new protocols::loops::Loops() );
 	for ( Size ncut = 1; ncut <= (Size) pose.fold_tree().num_cutpoint(); ncut++ ) {
 		Size cutpoint = pose.fold_tree().cutpoint( ncut );
 		Size margin = option[ basic::options::OptionKeys::abinitio::optimize_cutpoints_margin ]();

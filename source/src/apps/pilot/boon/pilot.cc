@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 
 	///////////////////////////////Arguments Setup////////////////////////////////////////////////////////
 	// create a score12 scorefxn
-	scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction;
+	scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 	scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score12" );
 	// create a loops object
 	Size start = 15, start2 = 51;
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 	Size cutpoint = 19, cutpoint2 = 55;
 	protocols::loops::Loop loop ( protocols::loops::Loop(start, stop, cutpoint) );
 	protocols::loops::Loop loop2 ( protocols::loops::Loop(start2, stop2, cutpoint2) );
-	protocols::loops::LoopsOP loops = new protocols::loops::Loops;
+	protocols::loops::LoopsOP loops( new protocols::loops::Loops );
 	loops->add_loop(loop);
 	loops->add_loop(loop2);
 

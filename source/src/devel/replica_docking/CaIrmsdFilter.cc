@@ -44,7 +44,7 @@ namespace devel {
 namespace replica_docking {
 
 protocols::filters::FilterOP
-CaIrmsdFilterCreator::create_filter() const { return new CaIrmsdFilter; }
+CaIrmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new CaIrmsdFilter ); }
 
 std::string
 CaIrmsdFilterCreator::keyname() const { return "Ca_Irms"; }
@@ -66,7 +66,7 @@ CaIrmsdFilter::CaIrmsdFilter() :
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	if ( option[ in::file::native ].user() ) {
-		core::pose::PoseOP native_pose = new core::pose::Pose();
+		core::pose::PoseOP native_pose( new core::pose::Pose() );
 		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]());
  		native_pose_ = native_pose;
 	} else {
@@ -87,7 +87,7 @@ CaIrmsdFilter::CaIrmsdFilter( core::scoring::ScoreFunctionOP sfxn, core::Size co
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	if ( option[ in::file::native ].user() ) {
-		core::pose::PoseOP native_pose = new core::pose::Pose();
+		core::pose::PoseOP native_pose( new core::pose::Pose() );
 		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]);
  		native_pose_ = native_pose;
 	} else {
@@ -110,12 +110,12 @@ CaIrmsdFilter::~CaIrmsdFilter(){}
 
 protocols::filters::FilterOP
 CaIrmsdFilter::clone() const{
-	return new CaIrmsdFilter( *this );
+	return protocols::filters::FilterOP( new CaIrmsdFilter( *this ) );
 }
 
 protocols::filters::FilterOP
 CaIrmsdFilter::fresh_instance() const{
-	return new CaIrmsdFilter;
+	return protocols::filters::FilterOP( new CaIrmsdFilter );
 }
 
 void

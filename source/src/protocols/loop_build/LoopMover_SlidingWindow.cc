@@ -125,7 +125,7 @@ loops::loop_mover::LoopResult LoopMover_SlidingWindow::model_loop(
 	closedpose.fold_tree( f_empty );
 
 	// generate movemap after fold_tree is set
-	kinematics::MoveMapOP mm_one_loop = new kinematics::MoveMap();
+	kinematics::MoveMapOP mm_one_loop( new kinematics::MoveMap() );
 	set_move_map_for_centroid_loop( loop, *mm_one_loop );
 
 	core::Size const nres =  pose.total_residue();
@@ -156,9 +156,9 @@ loops::loop_mover::LoopResult LoopMover_SlidingWindow::model_loop(
 	loops::loop_closure::ccd::SlidingWindowLoopClosureOP closure_protocol;
 
 	if ( option[ OptionKeys::loops::alternative_closure_protocol ]() ) {
-		closure_protocol = new loops::loop_closure::ccd::WidthFirstSlidingWindowLoopClosure;
+		closure_protocol = loops::loop_closure::ccd::SlidingWindowLoopClosureOP( new loops::loop_closure::ccd::WidthFirstSlidingWindowLoopClosure );
 	}else{
-		closure_protocol = new loops::loop_closure::ccd::SlidingWindowLoopClosure;
+		closure_protocol = loops::loop_closure::ccd::SlidingWindowLoopClosureOP( new loops::loop_closure::ccd::SlidingWindowLoopClosure );
 	}
 
 	closure_protocol->scored_frag_cycle_ratio( option[ OptionKeys::loops::scored_frag_cycles ]() );

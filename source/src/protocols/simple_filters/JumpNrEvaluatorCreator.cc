@@ -77,7 +77,7 @@ void JumpNrEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eva
 
 
 	if ( option[ OptionKeys::evaluation::jump_nr ]() ) {
-		eval.add_evaluation( new JumpNrEvaluator );
+		eval.add_evaluation( PoseEvaluatorOP( new JumpNrEvaluator ) );
 	}
 
 }

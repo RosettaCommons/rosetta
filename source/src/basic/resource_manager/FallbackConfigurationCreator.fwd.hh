@@ -27,8 +27,8 @@ namespace basic {
 namespace resource_manager {
 
 class FallbackConfigurationCreator;
-typedef utility::pointer::owning_ptr< FallbackConfigurationCreator > FallbackConfigurationCreatorOP;
-typedef utility::pointer::owning_ptr< FallbackConfigurationCreator const > FallbackConfigurationCreatorCOP;
+typedef utility::pointer::shared_ptr< FallbackConfigurationCreator > FallbackConfigurationCreatorOP;
+typedef utility::pointer::shared_ptr< FallbackConfigurationCreator const > FallbackConfigurationCreatorCOP;
 
 } // namespace resource_manager
 } // namespace basic

@@ -72,7 +72,7 @@ O2PrimePacker::initialize_o2prime_green_packer()
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 
-	o2prime_green_packer_ = new protocols::simple_moves::GreenPacker;
+	o2prime_green_packer_ = protocols::simple_moves::GreenPackerOP( new protocols::simple_moves::GreenPacker );
 
 	if ( partition_definition_.size() == 0 ) utility_exit_with_message( "To use green packer, make sure to set partition definition." );
 	bool const root_partition = partition_definition_( o2prime_pack_pose_.fold_tree().root() );
@@ -99,13 +99,13 @@ O2PrimePacker::initialize_o2prime_green_packer()
 	o2prime_green_packer_->set_group_discriminator( user_defined_group_discriminator );
 
 	TaskFactoryOP task_factory( new TaskFactory );
-	task_factory->push_back( new InitializeFromCommandline );
-	task_factory->push_back( new RestrictToRepacking );
-	task_factory->push_back( new IncludeCurrent );
+	task_factory->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
+	task_factory->push_back( TaskOperationCOP( new RestrictToRepacking ) );
+	task_factory->push_back( TaskOperationCOP( new IncludeCurrent ) );
 	for ( Size i = 1; i <= nres; i++ ) {
 		if ( !o2prime_pack_pose_.residue( i ).is_RNA() ) continue;
-		task_factory->push_back( new ExtraChiCutoff( i, 0 ) );
-		task_factory->push_back( new ExtraRotamers( i, 4 /*ex4*/ ) );
+		task_factory->push_back( TaskOperationCOP( new ExtraChiCutoff( i, 0 ) ) );
+		task_factory->push_back( TaskOperationCOP( new ExtraRotamers( i, 4 /*ex4*/ ) ) );
 	}
 
 	o2prime_green_packer_->set_task_factory( task_factory );

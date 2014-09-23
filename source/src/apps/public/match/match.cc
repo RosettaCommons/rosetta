@@ -105,7 +105,7 @@ match_main()
 	//we need this for the output to be correct
 	option[OptionKeys::run::preserve_header ].value(true);
 
-	MatcherTaskOP mtask = new MatcherTask;
+	MatcherTaskOP mtask( new MatcherTask );
 
 	utility::vector1< std::string > input_jobs = basic::options::start_files();
 	if( input_jobs.size() == 0 ) utility_exit_with_message("No input scaffold structures specified for matcher. Check for -s <pdbfile> in arguments.");
@@ -146,7 +146,7 @@ match_main()
 
 	time_t matcher_start_time = time(NULL), find_hits_end_time( time( NULL ) );
 	long processing_time(0);
-	MatcherOP matcher = new Matcher;
+	MatcherOP matcher( new Matcher );
 	matcher->initialize_from_task( *mtask );
 	MatchProcessorOP processor = ProcessorFactory::create_processor( matcher, mtask );
 

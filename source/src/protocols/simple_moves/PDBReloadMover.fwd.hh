@@ -22,8 +22,8 @@ namespace simple_moves{
 
 //Forwards and OP typedefs
 class PDBReloadMover;
-typedef utility::pointer::owning_ptr< PDBReloadMover > PDBReloadMoverOP;
-typedef utility::pointer::owning_ptr< PDBReloadMover const > PDBReloadMoverCOP;
+typedef utility::pointer::shared_ptr< PDBReloadMover > PDBReloadMoverOP;
+typedef utility::pointer::shared_ptr< PDBReloadMover const > PDBReloadMoverCOP;
 
 }//moves
 }//protocols

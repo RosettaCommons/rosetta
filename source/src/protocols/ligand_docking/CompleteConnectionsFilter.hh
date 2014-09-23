@@ -50,11 +50,11 @@ public:
 
 	bool apply( core::pose::Pose const & pose ) const;
 	protocols::filters::FilterOP clone() const {
-		return new CompleteConnectionsFilter( *this );
+		return protocols::filters::FilterOP( new CompleteConnectionsFilter( *this ) );
 	}
 
 	protocols::filters::FilterOP fresh_instance() const{
-		return new CompleteConnectionsFilter();
+		return protocols::filters::FilterOP( new CompleteConnectionsFilter() );
 	}
 
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose );

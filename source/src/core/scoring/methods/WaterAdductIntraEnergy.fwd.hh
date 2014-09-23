@@ -23,7 +23,7 @@ namespace methods {
 
 class WaterAdductIntraEnergy;
 
-typedef utility::pointer::owning_ptr< WaterAdductIntraEnergy > WaterAdductIntraEnergyOP;
+typedef utility::pointer::shared_ptr< WaterAdductIntraEnergy > WaterAdductIntraEnergyOP;
 
 } // methods
 } // scoring

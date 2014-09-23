@@ -25,7 +25,7 @@ namespace numeric {
 namespace kdtree {
 
 typedef WrappedPrimitive< numeric::Real > WrappedReal;
-typedef utility::pointer::owning_ptr< WrappedReal > WrappedRealOP;
+typedef utility::pointer::shared_ptr< WrappedReal > WrappedRealOP;
 
 } // kdtree
 } // numeric

@@ -21,8 +21,8 @@ namespace numeric{
 
 class Polynomial_1d;
 
-typedef utility::pointer::owning_ptr< Polynomial_1d > Polynomial_1dOP;
-typedef utility::pointer::owning_ptr< Polynomial_1d const > Polynomial_1dCOP;
+typedef utility::pointer::shared_ptr< Polynomial_1d > Polynomial_1dOP;
+typedef utility::pointer::shared_ptr< Polynomial_1d const > Polynomial_1dCOP;
 
 } //numeric
 

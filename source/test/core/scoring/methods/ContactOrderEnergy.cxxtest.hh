@@ -73,12 +73,12 @@ class ContactOrderEnergy_Tests : public CxxTest::TestSuite {
 		// contact order calculations in rosetta++ used centroids
 		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 		// scorefxn isn't really used, but necessary for call to finalize_total_energy
-		scorefxn = new core::scoring::ScoreFunction;
+		scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
 	}
 
 	// Shared finalization goes here.
 	void tearDown() {
-		scorefxn = 0;
+		scorefxn.reset();
 	}
 
 	// --------------- Test Cases --------------- //

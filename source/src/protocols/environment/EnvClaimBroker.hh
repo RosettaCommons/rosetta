@@ -107,8 +107,8 @@ private:
     bool const put_jump_stub_intra_residue;
   };
 
-  typedef utility::pointer::owning_ptr< BrokeredJumpData > BrokeredJumpDataOP;
-  typedef utility::pointer::owning_ptr< BrokeredJumpData const > BrokeredJumpDataCOP;
+  typedef utility::pointer::shared_ptr< BrokeredJumpData > BrokeredJumpDataOP;
+  typedef utility::pointer::shared_ptr< BrokeredJumpData const > BrokeredJumpDataCOP;
   typedef std::map< std::string, BrokeredJumpDataCOP > JumpDataMap;
 
   void broker_fold_tree( Conformation&, basic::datacache::BasicDataCache& );

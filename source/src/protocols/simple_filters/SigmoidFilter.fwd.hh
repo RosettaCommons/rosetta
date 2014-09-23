@@ -20,8 +20,8 @@ namespace simple_filters {
 
 class Sigmoid;
 
-typedef utility::pointer::owning_ptr< Sigmoid > SigmoidOP;
-typedef utility::pointer::owning_ptr< Sigmoid const > SigmoidCOP;
+typedef utility::pointer::shared_ptr< Sigmoid > SigmoidOP;
+typedef utility::pointer::shared_ptr< Sigmoid const > SigmoidCOP;
 
 }
 }

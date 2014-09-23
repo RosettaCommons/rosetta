@@ -57,7 +57,7 @@ PDBInfo::PDBInfo() :
 	obsolete_( true ),
 	name_( "" ),
 	modeltag_( "" ),
-	conf_( NULL ),
+	conf_( /* NULL */ ),
 	num_unrecognized_res_(0),
 	num_unrecognized_atoms_(0)
 {}
@@ -71,7 +71,7 @@ PDBInfo::PDBInfo( Size const n ) :
 	name_( "" ),
 	modeltag_( "" ),
 	residue_rec_( n ),
-	conf_( NULL ),
+	conf_( /* NULL */ ),
 	num_unrecognized_res_(0),
 	num_unrecognized_atoms_(0)
 {}
@@ -92,7 +92,7 @@ PDBInfo::PDBInfo(
 	name_( "" ),
 	modeltag_( "" ),
 	residue_rec_( pose.total_residue() ),
-	conf_( NULL ),
+	conf_( /* NULL */ ),
 	num_unrecognized_res_(0),
 	num_unrecognized_atoms_(0)
 {
@@ -124,7 +124,7 @@ PDBInfo::PDBInfo( PDBInfo const & info ) :
 	remarks_( info.remarks_ ),
 	residue_rec_( info.residue_rec_ ),
 	pdb2pose_( info.pdb2pose_ ),
-	conf_( NULL ), // no observation on copy
+	conf_( /* NULL */ ), // no observation on copy
 	unrecognized_atoms_       ( info.unrecognized_atoms_ ),
 	unrecognized_res_num2name_( info.unrecognized_res_num2name_ ),
 	unrecognized_res_size_    ( info.unrecognized_res_size_ ),
@@ -156,8 +156,7 @@ PDBInfo::operator =( PDBInfo const & info )
 		modeltag_ = info.modeltag_;
 		remarks_ = info.remarks_;
 		if(info.header_information_){
-			header_information_ =
-				new io::pdb::HeaderInformation(*info.header_information_);
+			header_information_ = io::pdb::HeaderInformationOP( new io::pdb::HeaderInformation(*info.header_information_) );
 		}
 
 		residue_rec_ = info.residue_rec_;

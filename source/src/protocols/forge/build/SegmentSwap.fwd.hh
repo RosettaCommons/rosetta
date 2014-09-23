@@ -29,19 +29,19 @@ class SegmentSwap;
 
 
 /// @brief owning pointer for SegmentSwap
-typedef utility::pointer::owning_ptr< SegmentSwap > SegmentSwapOP;
+typedef utility::pointer::shared_ptr< SegmentSwap > SegmentSwapOP;
 
 
 /// @brief owning pointer for const SegmentSwap
-typedef utility::pointer::owning_ptr< SegmentSwap const > SegmentSwapCOP;
+typedef utility::pointer::shared_ptr< SegmentSwap const > SegmentSwapCOP;
 
 
 /// @brief access pointer for SegmentSwap
-typedef utility::pointer::access_ptr< SegmentSwap > SegmentSwapAP;
+typedef utility::pointer::weak_ptr< SegmentSwap > SegmentSwapAP;
 
 
 /// @brief access pointer for const SegmentSwap
-typedef utility::pointer::access_ptr< SegmentSwap const > SegmentSwapCAP;
+typedef utility::pointer::weak_ptr< SegmentSwap const > SegmentSwapCAP;
 
 
 } // namespace build

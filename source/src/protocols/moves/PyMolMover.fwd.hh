@@ -20,12 +20,12 @@ namespace protocols {
 namespace moves {
 
 class PyMolMover;
-typedef utility::pointer::owning_ptr< PyMolMover > PyMolMoverOP;
-typedef utility::pointer::owning_ptr< PyMolMover const > PyMolMoverCOP;
+typedef utility::pointer::shared_ptr< PyMolMover > PyMolMoverOP;
+typedef utility::pointer::shared_ptr< PyMolMover const > PyMolMoverCOP;
 
 class PyMolObserver;
-typedef utility::pointer::owning_ptr< PyMolObserver > PyMolObserverOP;
-typedef utility::pointer::owning_ptr< PyMolObserver const > PyMolObserverCOP;
+typedef utility::pointer::shared_ptr< PyMolObserver > PyMolObserverOP;
+typedef utility::pointer::shared_ptr< PyMolObserver const > PyMolObserverCOP;
 
 } // moves
 } // protocols

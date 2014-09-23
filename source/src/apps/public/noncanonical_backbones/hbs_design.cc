@@ -136,8 +136,8 @@ class HbsDesignMover : public Mover {
 
 };
 
-typedef utility::pointer::owning_ptr< HbsDesignMover > HbsDesignMoverOP;
-typedef utility::pointer::owning_ptr< HbsDesignMover const > HbsDesignMoverCOP;
+typedef utility::pointer::shared_ptr< HbsDesignMover > HbsDesignMoverOP;
+typedef utility::pointer::shared_ptr< HbsDesignMover const > HbsDesignMoverCOP;
 
 
 int
@@ -257,7 +257,7 @@ HbsDesignMover::apply(
 
 	using core::pack::task::operation::TaskOperationCOP;
 	TaskFactoryOP desn_tf( new TaskFactory() );
-	desn_tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
+	desn_tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 
 	/*********************************************************
 	Minimize Setup
@@ -278,7 +278,7 @@ HbsDesignMover::apply(
 	//definitely want sidechain minimization here
 	using protocols::simple_moves::TaskAwareMinMoverOP;
 	using protocols::simple_moves::TaskAwareMinMover;
-	TaskAwareMinMoverOP desn_ta_min = new TaskAwareMinMover( desn_min, desn_tf );
+	TaskAwareMinMoverOP desn_ta_min( new TaskAwareMinMover( desn_min, desn_tf ) );
 
 	/*********************************************************************************************************************
 	Main Loop
@@ -412,8 +412,8 @@ HbsDesignMover::apply(
 	Pose repack_stats_pose( stats_pose );
 
 	//kdrew: probably should repack and minimize here after separation
-	TaskFactoryOP tf(new TaskFactory());
-	tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
+	TaskFactoryOP tf( new TaskFactory() );
+	tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 	//kdrew: do not do design, makes NATAA if res file is not specified
 	operation::RestrictToRepackingOP rtrp( new operation::RestrictToRepacking() );
 	tf->push_back( rtrp );

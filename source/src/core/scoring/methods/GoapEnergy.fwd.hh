@@ -23,11 +23,11 @@ namespace scoring {
 namespace methods {
 
   class GoapRsdType;
-  typedef utility::pointer::owning_ptr< GoapRsdType > GoapRsdTypeOP;
-  typedef utility::pointer::owning_ptr< GoapRsdType const > GoapRsdTypeCOP;
+  typedef utility::pointer::shared_ptr< GoapRsdType > GoapRsdTypeOP;
+  typedef utility::pointer::shared_ptr< GoapRsdType const > GoapRsdTypeCOP;
 
   class GoapEnergy;
-  typedef utility::pointer::owning_ptr< GoapEnergy > GoapEnergyOP;
+  typedef utility::pointer::shared_ptr< GoapEnergy > GoapEnergyOP;
 
   //typedef std::map< chemical::AA const *, GoapRsdTypeOP > GoapRsdTypeMap;
   typedef std::map< std::string, GoapRsdTypeOP > GoapRsdTypeMap;

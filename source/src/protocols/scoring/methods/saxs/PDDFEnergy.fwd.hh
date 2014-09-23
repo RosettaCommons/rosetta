@@ -25,9 +25,9 @@ namespace saxs {
 
 class PDDFEnergy;
 
-typedef utility::pointer::owning_ptr<PDDFEnergy>
+typedef utility::pointer::shared_ptr<PDDFEnergy>
 		PDDFEnergyOP;
-typedef utility::pointer::owning_ptr<PDDFEnergy const>
+typedef utility::pointer::shared_ptr<PDDFEnergy const>
 		PDDFEnergyCOP;
 
 } // saxs

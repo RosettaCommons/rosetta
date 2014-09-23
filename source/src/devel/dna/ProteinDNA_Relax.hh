@@ -76,7 +76,7 @@ private:
 	Size moved_jump_;
 };
 
-typedef utility::pointer::owning_ptr< RB_Mover > RB_MoverOP;
+typedef utility::pointer::shared_ptr< RB_Mover > RB_MoverOP;
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////

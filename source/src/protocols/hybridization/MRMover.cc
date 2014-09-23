@@ -120,8 +120,8 @@ parse_res( core::pose::Pose const &pose, std::string resnum ) {
 //
 
 MRMover::MRMover() :
-		fragments_big_(NULL),
-		fragments_small_(NULL) {
+		fragments_big_(/* NULL */),
+		fragments_small_(/* NULL */) {
 	init();
 }
 
@@ -172,8 +172,7 @@ void MRMover::apply( Pose &pose ) {
 	protocols::simple_moves::SwitchResidueTypeSetMover to_fullatom("fa_standard");
 
 	bool threaded = true;
-	protocols::comparative_modeling::ThreadingJobCOP job = dynamic_cast< protocols::comparative_modeling::ThreadingJob const*  >(
-		JobDistributor::get_instance()->current_job()->inner_job().get() );
+	protocols::comparative_modeling::ThreadingJobCOP job = utility::pointer::dynamic_pointer_cast< protocols::comparative_modeling::ThreadingJob const > ( JobDistributor::get_instance()->current_job()->inner_job() );
 	if ( !job ) {
 		if (option[ OptionKeys::in::file::fasta ].user()) {
 			utility_exit_with_message(
@@ -202,7 +201,7 @@ void MRMover::apply( Pose &pose ) {
 	if (threaded) {
 		core::Size nres = pose.total_residue();
 		while (!pose.residue(nres).is_polymer()) nres--;
-		my_loops = new Loops( job->loops( nres ) );
+		my_loops = LoopsOP( new Loops( job->loops( nres ) ) );
 
 		if ( max_gaplength_to_model_ < 999 ) {
 			trim_target_pose( pose, *my_loops, max_gaplength_to_model_ );
@@ -216,7 +215,7 @@ void MRMover::apply( Pose &pose ) {
 		// 1 - remove loops from the input pose, add as template
 		utility::vector1< int > pdb_numbering;
 		utility::vector1< char > pdb_chains;
-		core::pose::PoseOP template_pose = new core::pose::Pose;
+		core::pose::PoseOP template_pose( new core::pose::Pose );
 		bool add_by_jump = true;
 		for (Size i=1; i<=pose.total_residue(); ++i) {
 			if (!threaded || !my_loops->is_loop_residue(i)) {
@@ -253,7 +252,7 @@ void MRMover::apply( Pose &pose ) {
 				 && !template_pose->residue(template_pose->total_residue()).is_upper_terminus()
 				 && template_pose->residue(template_pose->total_residue()).is_polymer())
 		core::pose::add_upper_terminus_type_to_pose_residue( *template_pose, template_pose->total_residue() );
-		core::pose::PDBInfoOP new_pdb_info = new core::pose::PDBInfo( *template_pose );
+		core::pose::PDBInfoOP new_pdb_info( new core::pose::PDBInfo( *template_pose ) );
 
 		// pdbinfo
 		new_pdb_info->set_numbering( pdb_numbering );
@@ -303,9 +302,9 @@ void MRMover::apply( Pose &pose ) {
 		//setup_fullatom_constraints( pose, templates_, template_weights_, "AUTO", "NONE" );
 
 		// relax with flexible angles & jumps
-		protocols::relax::RelaxProtocolBaseOP relax_prot = new protocols::relax::FastRelax( fa_scorefxn_, relax_cycles_ );
+		protocols::relax::RelaxProtocolBaseOP relax_prot( new protocols::relax::FastRelax( fa_scorefxn_, relax_cycles_ ) );
 		relax_prot->set_current_tag( get_current_tag() );
-		core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
+		core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 		mm->set_bb( true ); mm->set_chi( true ); mm->set_jump( true );
 		mm->set( core::id::THETA, true );
 		relax_prot->set_movemap( mm );

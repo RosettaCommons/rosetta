@@ -190,7 +190,7 @@ void design_setup( core::pose::Pose & pose, core::pack::task::TaskFactoryOP desi
 			//				keep_aas[aa] = false; // disallow native AAs at designable positions
 			//			}
 
-			operation::RestrictAbsentCanonicalAASOP allowdesign(new operation::RestrictAbsentCanonicalAAS( ii, keep_aas));
+			operation::RestrictAbsentCanonicalAASOP allowdesign( new operation::RestrictAbsentCanonicalAAS( ii, keep_aas) );
 			designtaskfactory->push_back( allowdesign );
 		}
 

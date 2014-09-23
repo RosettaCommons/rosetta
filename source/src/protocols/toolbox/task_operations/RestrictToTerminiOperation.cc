@@ -52,7 +52,7 @@ using core::pack::task::operation::RestrictToRepackingRLT;
 ////////////////// Creator ////////////////
 TaskOperationOP
 RestrictToTerminiOperationCreator::create_task_operation() const {
-	return new RestrictToTerminiOperation;
+	return TaskOperationOP( new RestrictToTerminiOperation );
 }
 ///////////////// End Creator ////////////
 
@@ -83,7 +83,7 @@ RestrictToTerminiOperation::~RestrictToTerminiOperation() {}
 
 TaskOperationOP
 RestrictToTerminiOperation::clone() const {
-	return new RestrictToTerminiOperation( *this );
+	return TaskOperationOP( new RestrictToTerminiOperation( *this ) );
 }
 
 ///@brief restrict to pack only the N and/or C-termini

@@ -109,16 +109,16 @@ SlidingWindowLoopClosure::SlidingWindowLoopClosure(
 ) : scorefxn_( scorefxn ),
     movemap_( movemap ),
     fragset_( fragset ),
-    ss_info_( new core::fragment::SecondaryStructure( *fragset ) )
+    ss_info_( core::fragment::SecondaryStructureOP( new core::fragment::SecondaryStructure( *fragset ) ) )
 {
 	set_defaults();
 }
 
 SlidingWindowLoopClosure::SlidingWindowLoopClosure() :
-		scorefxn_( NULL ),
-		movemap_( NULL ),
-		fragset_( NULL ),
-		ss_info_( NULL )
+		scorefxn_( /* NULL */ ),
+		movemap_( /* NULL */ ),
+		fragset_( /* NULL */ ),
+		ss_info_( /* NULL */ )
 {
 	set_defaults();
 }
@@ -249,7 +249,7 @@ SlidingWindowLoopClosure::setup_frag_scorefxn() {
 	}
 
 	if ( !scorefxn_ ) {
-		scorefxn_=new ScoreFunction;
+		scorefxn_ = core::scoring::ScoreFunctionOP( new ScoreFunction );
 		scorefxn_->set_weight( linear_chainbreak, 1.0 );
 		scorefxn_->set_weight( overlap_chainbreak, 1.0 );
 	}
@@ -265,7 +265,7 @@ SlidingWindowLoopClosure::setup_frag_scorefxn() {
 	}
 	tr.Debug << " is there a filter_cst_ evaluator?.. " << std::endl;
 	if ( !filter_cst_ && option[ OptionKeys::fast_loops::filter_cst_file ].user() ) {
-		filter_cst_ = new constraints_additional::ConstraintEvaluator( "filter_loops", option[ OptionKeys::fast_loops::filter_cst_file ]() );
+		filter_cst_ = constraints_additional::ConstraintEvaluatorOP( new constraints_additional::ConstraintEvaluator( "filter_loops", option[ OptionKeys::fast_loops::filter_cst_file ]() ) );
 		filter_cst_weight_ = option[ OptionKeys::fast_loops::filter_cst_weight ]();
 	}
 
@@ -350,7 +350,7 @@ SlidingWindowLoopClosure::sample_loops( Pose& more_cut, Pose& less_cut ) {
   best_score_ = REALLY_BAD_SCORE;
 
   if ( bKeepFragments_ ) {
-    closure_fragments_ = new fragment::OrderedFragSet;
+    closure_fragments_ = core::fragment::OrderedFragSetOP( new fragment::OrderedFragSet );
   }
 
 	Size attempt_count = 0;
@@ -370,7 +370,7 @@ SlidingWindowLoopClosure::sample_loops( Pose& more_cut, Pose& less_cut ) {
 
 	{	//take initial loop-conformation as closing candidate
 		using namespace fragment;
-		FrameOP closure_frame = new Frame( loop_.start(), FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), loop_.size() ) ) );
+		FrameOP closure_frame( new Frame( loop_.start(), FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), loop_.size() ) ) ) );
 		FrameList closure_frames;
 		closure_frame->steal( more_cut );
 

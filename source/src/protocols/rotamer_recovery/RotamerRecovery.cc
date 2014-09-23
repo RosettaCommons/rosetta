@@ -59,9 +59,9 @@ using utility::vector1;
 static Tracer TR("protocol.rotamer_recovery.RotamerRecovery");
 
 RotamerRecovery::RotamerRecovery() :
-	protocol_( new RRProtocolMinPack),
-	comparer_( new RRComparerAutomorphicRMSD),
-	reporter_( new RRReporterSimple),
+	protocol_( RRProtocolOP( new RRProtocolMinPack )),
+	comparer_( RRComparerOP( new RRComparerAutomorphicRMSD )),
+	reporter_( RRReporterOP( new RRReporterSimple )),
 	ignore_unrecognized_res_(false)
 {}
 

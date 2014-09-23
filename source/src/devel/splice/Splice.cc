@@ -143,7 +143,7 @@ static thread_local basic::Tracer TR_min( "devel.splice.Splice_min" );
 		}
 
 		protocols::moves::MoverOP SpliceCreator::create_mover() const {
-			return new Splice;
+			return protocols::moves::MoverOP( new Splice );
 		}
 
 		std::string SpliceCreator::mover_name() {
@@ -152,12 +152,12 @@ static thread_local basic::Tracer TR_min( "devel.splice.Splice_min" );
 
 		Splice::Splice() :
 				Mover(SpliceCreator::mover_name()),	from_res_(0), to_res_(0), saved_from_res_(0), saved_to_res_(0), source_pdb_(""), ccd_(true), scorefxn_(
-				NULL), rms_cutoff_(999999), res_move_(4), randomize_cut_(false), cut_secondarystruc_(false), task_factory_(	NULL),
-				design_task_factory_( NULL), torsion_database_fname_(""), database_entry_(0), database_pdb_entry_(""),
-				template_file_(""), poly_ala_(true), equal_length_(false), template_pose_(NULL), start_pose_( NULL),source_pose_(NULL),
-				saved_fold_tree_( NULL), design_(false), dbase_iterate_(false), allow_all_aa_(false), thread_original_sequence_(false),
-				rtmin_(true), first_pass_(true), locked_res_( NULL), locked_res_id_(' '), checkpointing_file_(""),
-				loop_dbase_file_name_(""), loop_pdb_source_(""), mover_tag_(NULL), splice_filter_( NULL), Pdb4LetName_(""),
+				/* NULL */), rms_cutoff_(999999), res_move_(4), randomize_cut_(false), cut_secondarystruc_(false), task_factory_(	/* NULL */),
+				design_task_factory_( /* NULL */), torsion_database_fname_(""), database_entry_(0), database_pdb_entry_(""),
+				template_file_(""), poly_ala_(true), equal_length_(false), template_pose_(/* NULL */), start_pose_( NULL),source_pose_(NULL),
+				saved_fold_tree_( /* NULL */), design_(false), dbase_iterate_(false), allow_all_aa_(false), thread_original_sequence_(false),
+				rtmin_(true), first_pass_(true), locked_res_( /* NULL */), locked_res_id_(' '), checkpointing_file_(""),
+				loop_dbase_file_name_(""), loop_pdb_source_(""), mover_tag_(/* NULL */), splice_filter_( NULL), Pdb4LetName_(""),
 				use_sequence_profiles_(false), segment_type_("") {
 			profile_weight_away_from_interface_ = 1.0;
 			restrict_to_repacking_chain2_ = true;
@@ -169,7 +169,7 @@ static thread_local basic::Tracer TR_min( "devel.splice.Splice_min" );
 			dbase_subset_.clear();
 			splice_segments_.clear();
 			pdb_segments_.clear();
-			end_dbase_subset_ = new basic::datacache::DataMapObj<bool>;
+			end_dbase_subset_ = DataccacheBoolDataOP( new basic::datacache::DataMapObj<bool> );
 			end_dbase_subset_->obj = false;
 			basic::options::option[basic::options::OptionKeys::out::file::pdb_comments].value(true);
 			rb_sensitive_ = false;
@@ -650,7 +650,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				//adding current segment to pose comments
 				TR << "The currnet segment is: " << segment_type_ << " and the source pdb is " << Pdb4LetName_ << std::endl;
 				core::pose::add_comment(pose, "segment_" + segment_type_, Pdb4LetName_);//change correct association between current loop and pdb file
-				if (mover_tag_() != NULL)
+				if (mover_tag_ != NULL)
 					mover_tag_->obj = "segment_" + source_pdb_name;
 				BOOST_FOREACH(BBDofs & resdofs, dofs)
 				{ /// transform 3-letter code to 1-letter code
@@ -885,33 +885,33 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 			using namespace protocols::toolbox::task_operations;
 			using namespace core::pack::task;
 			using namespace core::pack::task::operation;
-			ThreadSequenceOperationOP tso = new ThreadSequenceOperation;
+			ThreadSequenceOperationOP tso( new ThreadSequenceOperation );
 				tso->target_sequence(threaded_seq);
 				tso->start_res(from_res());
 				tso->allow_design_around(true); // 21Sep12: from now on the design shell is determined downstream //false );
 				TR << "Source segment sequence: " << threaded_seq << " starting from " << from_res() << std::endl;
 			TaskFactoryOP tf;
-			if (design_task_factory()() == NULL)
-				tf = new TaskFactory;
+			if (design_task_factory() == NULL)
+				tf = TaskFactoryOP( new TaskFactory );
 			else
-				tf = new TaskFactory(*design_task_factory());
+				tf = TaskFactoryOP( new TaskFactory(*design_task_factory()) );
 
 			if (restrict_to_repacking_chain2()) {
 				for (core::Size i = 2; i <= pose.conformation().num_chains(); ++i) {
 					TR << "Restricting chain " << i << " to repacking only" << std::endl;
-					tf->push_back(new protocols::toolbox::task_operations::RestrictChainToRepackingOperation(i));
+					tf->push_back(TaskOperationCOP( new protocols::toolbox::task_operations::RestrictChainToRepackingOperation(i) ));
 				}
 			}
 
-			tf->push_back(new operation::InitializeFromCommandline);
-			tf->push_back(new operation::NoRepackDisulfides);
+			tf->push_back(TaskOperationCOP( new operation::InitializeFromCommandline ));
+			tf->push_back(TaskOperationCOP( new operation::NoRepackDisulfides ));
 			if (thread_original_sequence()) {
 				TR << "THREADING ORIGINAL SEGMENT" << std::endl;
 				tf->push_back(tso);
 			}
 
-			DesignAroundOperationOP dao = new DesignAroundOperation;
-			dao->design_shell((design_task_factory()() == NULL ? 0.0 : design_shell())); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
+			DesignAroundOperationOP dao( new DesignAroundOperation );
+			dao->design_shell((design_task_factory() == NULL ? 0.0 : design_shell())); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
 			dao->repack_shell(repack_shell());
 
 			TR << "Dao design shell: " << dao->design_shell() << ", Dao repack shell: " << repack_shell()
@@ -928,7 +928,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 			TR<< "allowing pro/gly only at positions (29Mar13, given sequence profiles, now allowing pro/gly/his at all designed positions. The following is kept for benchmarking): ";
 			for (core::Size res_num = 1; res_num <= pose.total_residue(); res_num++) {
 				if (std::find(pro_gly_res.begin(), pro_gly_res.end(), res_num) == pro_gly_res.end()) {
-					operation::RestrictAbsentCanonicalAASOP racaas = new operation::RestrictAbsentCanonicalAAS;
+					operation::RestrictAbsentCanonicalAASOP racaas( new operation::RestrictAbsentCanonicalAAS );
 					if (allow_all_aa())
 						racaas->keep_aas("ACDEFGHIKLMNPQRSTVWY"); //allow all amino acids - for the humanization project - Assaf Alon
 					else
@@ -966,8 +966,8 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 			if (ccd()) {
 				TR<<"Before doing CCD threading sequence from source pose onto pose"<<std::endl;
 
-				TaskFactoryOP tf_thread = new TaskFactory();
-				DesignAroundOperationOP dao_for_threading =  new DesignAroundOperation;
+				TaskFactoryOP tf_thread( new TaskFactory() );
+				DesignAroundOperationOP dao_for_threading( new DesignAroundOperation );
 				for (core::Size i = from_res(); i <= from_res() + total_residue_new - 1; ++i) {
 					if (!pose.residue(i).has_variant_type(DISULFIDE)) {
 						dao_for_threading->include_residue(i);
@@ -993,7 +993,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				///		Loop loop( std::max( (core::Size) 2, from_res() - 6 )/*start*/, std::min( pose.total_residue()-1, to_res() + 6 )/*stop*/, cut_site/*cut*/ );
 				TR<<"Loop definition before ccd:startn, startc, cut_site"<<startn<<","<< startc<<","<< cut_site<<std::endl;
 				Loop loop(startn, startc, cut_site); /// Gideon & Sarel (8Jul13): we're now respecting the user's choice of from_res to_res and not melting the framework
-				LoopsOP loops = new Loops();
+				LoopsOP loops( new Loops() );
 				loops->push_back(loop);
 
 				/// Gideon & Sarel (8Jul13): the comment below is no longer true, see comments above.
@@ -1001,14 +1001,12 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				/// the torsion in the loop are maintained. Allow repacking around the loop.
 				/// If disulfide occurs in the range that is allowed to minimize, adjust that region to not include disulf
 				core::scoring::ScoreFunctionOP scorefxn_local(scorefxn()->clone());	/// in case you want to modify the scorefxn. Currently not used
-				protocols::loops::loop_mover::refine::LoopMover_Refine_CCDOP ccd_mover (
-					new protocols::loops::loop_mover::refine::LoopMover_Refine_CCD(loops, scorefxn_local)
-				);
+				protocols::loops::loop_mover::refine::LoopMover_Refine_CCDOP ccd_mover( new protocols::loops::loop_mover::refine::LoopMover_Refine_CCD(loops, scorefxn_local) );
 				TailSegmentMover tsm;	//Object used for designing the tail segments of a protein
 				ccd_mover->temp_initial(1.5);
 				ccd_mover->temp_final(0.5);
 				core::kinematics::MoveMapOP mm;
-				mm = new core::kinematics::MoveMap;
+				mm = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
 				mm->set_chi(false);
 				mm->set_bb(false);
 				mm->set_jump(false);
@@ -1253,7 +1251,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					}	//for
 					//add dihedral constraints loop
 					//pose.dump_pdb("after_changedofs_tail_test.pdb");
-					mm = new core::kinematics::MoveMap;
+					mm = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
 					mm->set_chi(false);
 					mm->set_bb(false);
 					mm->set_jump(false);
@@ -1266,16 +1264,16 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					//Add new dihedral and coordinate constraint to the tail segment
 					tsm.set_fa_scorefxn(scorefxn());
 					tsm.set_movemap(mm);
-					tf = new TaskFactory;
-					tf = new TaskFactory(*design_task_factory());
+					tf = TaskFactoryOP( new TaskFactory );
+					tf = TaskFactoryOP( new TaskFactory(*design_task_factory()) );
 					if (restrict_to_repacking_chain2()) {
 						for (core::Size i = 2; i <= pose.conformation().num_chains(); ++i) {
 							TR << "Restricting chain " << i << " to repacking only" << std::endl;
-							tf->push_back(new protocols::toolbox::task_operations::RestrictChainToRepackingOperation(i));
+							tf->push_back(TaskOperationCOP( new protocols::toolbox::task_operations::RestrictChainToRepackingOperation(i) ));
 						}
 					}
-					tf->push_back(new operation::InitializeFromCommandline);
-					tf->push_back(new operation::NoRepackDisulfides);
+					tf->push_back(TaskOperationCOP( new operation::InitializeFromCommandline ));
+					tf->push_back(TaskOperationCOP( new operation::NoRepackDisulfides ));
 					if (thread_original_sequence()) {
 						TR << "THREADING ALLOWED" << std::endl;
 						tf->push_back(tso);
@@ -1283,8 +1281,8 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					else
 						TR << "THREADING NOT ALLOWED" << std::endl;
 
-					DesignAroundOperationOP dao = new DesignAroundOperation;
-					dao->design_shell((design_task_factory()() == NULL ? 0.0 : design_shell())); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
+					DesignAroundOperationOP dao( new DesignAroundOperation );
+					dao->design_shell((design_task_factory() == NULL ? 0.0 : design_shell())); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
 					dao->repack_shell(repack_shell());
 					for (core::Size i = tail_start; i <= tail_end; ++i) {
 						if (!pose.residue(i).has_variant_type(DISULFIDE)) {
@@ -1295,7 +1293,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					tf->push_back(dao);
 					for (core::Size res_num = 1; res_num <= pose.total_residue(); res_num++) {
 						if (std::find(pro_gly_res.begin(), pro_gly_res.end(), res_num) == pro_gly_res.end()) {
-							operation::RestrictAbsentCanonicalAASOP racaas = new operation::RestrictAbsentCanonicalAAS;
+							operation::RestrictAbsentCanonicalAASOP racaas( new operation::RestrictAbsentCanonicalAAS );
 							if (allow_all_aa())
 								racaas->keep_aas("ACDEFGHIKLMNPQRSTVWY"); //allow all amino acids - for the humanization project - Assaf Alon
 							else
@@ -1316,10 +1314,10 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				if (rtmin()) {		//To prevent rtmin when not needed - Assaf Alon
 					TR<<"Score function before rtmin:"<<std::endl;
 					scorefxn()->show(pose);
-					TaskFactoryOP tf_in = new TaskFactory(*design_task_factory());
-					tf_in->push_back(new operation::NoRepackDisulfides);
+					TaskFactoryOP tf_in( new TaskFactory(*design_task_factory()) );
+					tf_in->push_back(TaskOperationCOP( new operation::NoRepackDisulfides ));
 					if (conf.num_chains()>1)
-						tf_in->push_back(new PreventChainFromRepackingOperation(2));
+						tf_in->push_back(TaskOperationCOP( new PreventChainFromRepackingOperation(2) ));
 
 					PackerTaskOP ptask = tf_in->create_task_and_apply_taskoperations(pose);
 					protocols::simple_moves::PackRotamersMover prm(scorefxn(), ptask);
@@ -1395,8 +1393,8 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				}
 				/// tell us what the torsions of the new (closed) loop are. This is used for dbase construction. At one point, might be a good idea to make the mover
 				/// output the dofs directly to a dbase file rather than to a log file.
-				TaskFactoryOP tf_dofs = new TaskFactory;
-				DesignAroundOperationOP dao_dofs = new DesignAroundOperation;
+				TaskFactoryOP tf_dofs( new TaskFactory );
+				DesignAroundOperationOP dao_dofs( new DesignAroundOperation );
 				for (core::Size i = startn; i <= std::min(startc + res_move() - 1, startc); ++i)
 					dao_dofs->include_residue(i);
 				dao_dofs->design_shell(0);		/// only include the loop residues
@@ -1451,9 +1449,9 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 
 				//Debugging, remove after, gideonla aug13
 				//TR<<"NOT DOING CCD, DOING REPACKING INSTEAD"<<std::endl;
-				TaskFactoryOP tf_in = new TaskFactory(*design_task_factory());
-				tf_in->push_back(new operation::InitializeFromCommandline);
-				tf_in->push_back(new operation::NoRepackDisulfides);
+				TaskFactoryOP tf_in( new TaskFactory(*design_task_factory()) );
+				tf_in->push_back(TaskOperationCOP( new operation::InitializeFromCommandline ));
+				tf_in->push_back(TaskOperationCOP( new operation::NoRepackDisulfides ));
 				tf_in->push_back(dao);
 
 				PackerTaskOP ptask = tf_in->create_task_and_apply_taskoperations(pose);
@@ -1480,8 +1478,8 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					pose.dump_pdb(mover_name_+"_before_rtmin.pdb");
 				//After Re-packing we add RotamerTrialMover to resolve any left over clashes, gideonla Aug13
 				if (rtmin()) {		//To prevent rtmin when not needed - Assaf Alon
-					TaskFactoryOP tf_rtmin = new TaskFactory(*tf);//this taskfactory (tf_rttmin) is only used here. I don't want to affect other places in splice, gideonla aug13
-					tf_rtmin->push_back(new operation::RestrictToRepacking()); //W don't rtmin to do design
+					TaskFactoryOP tf_rtmin( new TaskFactory(*tf) );//this taskfactory (tf_rttmin) is only used here. I don't want to affect other places in splice, gideonla aug13
+					tf_rtmin->push_back(TaskOperationCOP( new operation::RestrictToRepacking() )); //W don't rtmin to do design
 					ptask = tf_rtmin->create_task_and_apply_taskoperations(pose);
 					protocols::simple_moves::RotamerTrialsMinMover rtmin(scorefxn(), *ptask);
 					rtmin.apply(pose);
@@ -1490,7 +1488,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				}
 				if (min_seg_){
 					core::kinematics::MoveMapOP mm;
-					mm = new core::kinematics::MoveMap;
+					mm = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
 					mm->set_chi(false);
 					mm->set_bb(false);
 					mm->set_jump(false);
@@ -1537,19 +1535,19 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 
 					tail_fold_tree(pose, cut_vl_vh_after_llc, cut_site);
 					TR<<"Fold tree before minimization: "<<pose.fold_tree()<<std::endl;
-					protocols::simple_moves::MinMoverOP min_mover= new protocols::simple_moves::MinMover(
+					protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(
 								mm,
 								scorefxn(),
 								"dfpmin_armijo_nonmonotone",
 								0.01,
-								true /*use_nblist*/ );
+								true /*use_nblist*/ ) );
 					min_mover->apply(pose);
 					//remove coordinate constraints post minimization
 					pose.remove_constraints();
 					add_sequence_constraints(pose);
 				}
 			}
-			saved_fold_tree_ = new core::kinematics::FoldTree(pose.fold_tree());
+			saved_fold_tree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(pose.fold_tree()) );
 			retrieve_values();
 		}
 
@@ -1585,7 +1583,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 
 			if (tag->hasOption("source_pdb")){
         source_pdb(tag->getOption<std::string>("source_pdb"));
-        source_pose_ = new core::pose::Pose;
+        source_pose_ = core::pose::PoseOP( new core::pose::Pose );
         core::import_pose::pose_from_pdb(*source_pose_, source_pdb_);
       }
 
@@ -1731,22 +1729,22 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 		template_file(tag->getOption<std::string>("template_file", ""));
 		if (template_file_ != "") { /// using a template file to determine from_res() to_res()
 			if (data.has("poses", template_file_)) {
-				template_pose_ = data.get<core::pose::Pose *>("poses", template_file_);
+				template_pose_ = data.get_ptr<core::pose::Pose>("poses", template_file_);
 				TR << "using template pdb from datamap" << std::endl;
 			}
 			else if (tag->hasOption("template_file")) {
-				template_pose_ = new core::pose::Pose;
+				template_pose_ = core::pose::PoseOP( new core::pose::Pose );
 				core::import_pose::pose_from_pdb(*template_pose_, template_file_);
 				data.add("poses", template_file_, template_pose_);
 				TR << "loading template_pose from " << template_file_ << std::endl;
 			}
 		}
 		else
-			template_pose_ = new core::pose::Pose(pose);
+			template_pose_ = core::pose::PoseOP( new core::pose::Pose(pose) );
 		set_fold_tree_only_ = tag->getOption<bool>("set_fold_tree_only", false);
 		if (set_fold_tree_only_)
 			return; //other options are not relevant
-		start_pose_ = new core::pose::Pose(pose);
+		start_pose_ = core::pose::PoseOP( new core::pose::Pose(pose) );
 		runtime_assert(tag->hasOption("torsion_database") != tag->hasOption("source_pdb"));
 		task_factory(protocols::rosetta_scripts::parse_task_operations(tag, data));
 		if (!tag->hasOption("task_operations")) {
@@ -1860,7 +1858,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 }
 
 protocols::moves::MoverOP Splice::clone() const {
-	return (protocols::moves::MoverOP(new Splice(*this)));
+	return (protocols::moves::MoverOP( new Splice(*this) ));
 }
 
 void Splice::scorefxn(core::scoring::ScoreFunctionOP sf) {
@@ -2450,14 +2448,14 @@ utility::vector1<core::Size> find_residues_on_chain1_inside_interface(core::pose
 
 
 	using namespace protocols::toolbox::task_operations;
-	ProteinInterfaceDesignOperationOP pido = new ProteinInterfaceDesignOperation;
+	ProteinInterfaceDesignOperationOP pido( new ProteinInterfaceDesignOperation );
 	if (chainNum == 1) {
 		pido->repack_chain1(true);
 		pido->design_chain1(true);
 		pido->repack_chain2(false);
 		pido->design_chain2(false);
 		pido->interface_distance_cutoff(8.0);
-		core::pack::task::TaskFactoryOP tf_interface(new core::pack::task::TaskFactory);
+		core::pack::task::TaskFactoryOP tf_interface( new core::pack::task::TaskFactory );
 		tf_interface->push_back(pido);
 ///// FIND COMPLEMENT ////////
 		utility::vector1<core::Size> const chain1_interface(
@@ -2470,7 +2468,7 @@ utility::vector1<core::Size> find_residues_on_chain1_inside_interface(core::pose
 		pido->repack_chain2(true);
 		pido->design_chain2(true);
 		pido->interface_distance_cutoff(8.0);
-		core::pack::task::TaskFactoryOP tf_interface(new core::pack::task::TaskFactory);
+		core::pack::task::TaskFactoryOP tf_interface( new core::pack::task::TaskFactory );
 		tf_interface->push_back(pido);
 ///// FIND COMPLEMENT ////////
 		utility::vector1<core::Size> const chain1_interface(
@@ -2515,7 +2513,7 @@ void Splice::add_sequence_constraints(core::pose::Pose & pose) {
 		TR << "Up-weighting sequence constraints " << std::endl;
 
 //If pose has more than one chain the sequence profile mapping needs to be modified accordingly
-		core::id::SequenceMappingOP smap = new core::id::SequenceMapping();
+		core::id::SequenceMappingOP smap( new core::id::SequenceMapping() );
 		for (core::Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos) {
 			if ((seqpos >= pose.conformation().chain_begin(chain_num_))
 					and (seqpos <= pose.conformation().chain_end(chain_num_))) {
@@ -2533,7 +2531,7 @@ void Splice::add_sequence_constraints(core::pose::Pose & pose) {
 		for (core::Size seqpos = pose.conformation().chain_begin(chain_num_);	seqpos <= pose.conformation().chain_end(chain_num_); ++seqpos) {
 			using namespace core::scoring::constraints;
 
-			SequenceProfileConstraintOP spc(new SequenceProfileConstraint(pose, seqpos, seqprof, smap));
+			SequenceProfileConstraintOP spc( new SequenceProfileConstraint(pose, seqpos, seqprof, smap) );
 			//TR << "sepos=" << spc->seqpos() << std::endl;
 			if (std::find(non_upweighted_residues.begin(), non_upweighted_residues.end(), seqpos)
 					== non_upweighted_residues.end()) { //seqpos not in interface so upweight
@@ -2616,10 +2614,10 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 				for (core::Size atmnum=source_pose.residue(i + res_diff).first_sidechain_atom(); atmnum<=source_pose.residue(i + res_diff).natoms();atmnum++){
 						if (source_pose.residue(i + res_diff).atom_is_hydrogen(atmnum))
 							continue;
-						core::scoring::func::FuncOP coor_cont_fun = new core::scoring::func::HarmonicFunc(0.0, 1);
+						core::scoring::func::FuncOP coor_cont_fun( new core::scoring::func::HarmonicFunc(0.0, 1) );
 						TR_constraints<<"Applying constraints to atom:"<<pose.residue(i).atom_name(atmnum)<<",of residue "<<pose.residue(i).name3()<<i;
 						TR_constraints<<"Taking xyz coordinates from atom:"<<source_pose.residue(i + res_diff).xyz(atmnum)[0]<<"(x),"<<source_pose.residue(i + res_diff).xyz(atmnum)[1]<<"(y),"<<source_pose.residue(i + res_diff).xyz(atmnum)[2]<<"(z), pose atom xyz: "<<pose.residue(i).xyz(atmnum)[0]<<std::endl;
-						cst.push_back(new core::scoring::constraints::CoordinateConstraint(core::id::AtomID(atmnum, i),anchor_atom, source_pose.residue(i + res_diff).xyz(atmnum), coor_cont_fun));
+						cst.push_back(utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::CoordinateConstraint(core::id::AtomID(atmnum, i),anchor_atom, source_pose.residue(i + res_diff).xyz(atmnum), coor_cont_fun) ));
 						pose.add_constraints(cst);
 					}//for atom_it
 				using namespace std;
@@ -2635,8 +2633,8 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 					pose.set_chi(chi,i,chi_curr);
 					utility::vector1< core::Size > const chiAtoms=pose.residue(i).chi_atoms(chi);//get chi atoms from chi angle so we can apply coordiante constraints
 					for (core::Size chiAtom=1;chiAtom<=4; chiAtom++){
-						core::scoring::func::FuncOP coor_cont_fun = new core::scoring::func::HarmonicFunc(0.0, 1);
-						cst.push_back(new core::scoring::constraints::CoordinateConstraint(core::id::AtomID(chiAtoms[chiAtom], i),anchor_atom, source_pose.residue(i + res_diff).xyz(chiAtoms[chiAtom]), coor_cont_fun));
+						core::scoring::func::FuncOP coor_cont_fun( new core::scoring::func::HarmonicFunc(0.0, 1) );
+						cst.push_back(utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::CoordinateConstraint(core::id::AtomID(chiAtoms[chiAtom], i),anchor_atom, source_pose.residue(i + res_diff).xyz(chiAtoms[chiAtom]), coor_cont_fun) ));
 						TR<<"Applying constraints to chi_atom:"<<chiAtoms[chiAtom]<<pose.residue(i).atom_name(chiAtoms[chiAtom])<<",of residue "<<pose.residue(i).name3()<<i<<std::endl;
 						pose.add_constraints(cst);
 					}//for chiAtom
@@ -2648,10 +2646,10 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 			}
 			continue;
 		}
-		core::scoring::func::FuncOP coor_cont_fun = new core::scoring::func::HarmonicFunc(0.0, 1);
+		core::scoring::func::FuncOP coor_cont_fun( new core::scoring::func::HarmonicFunc(0.0, 1) );
 		cst.push_back(
-				new core::scoring::constraints::CoordinateConstraint(core::id::AtomID(pose.residue(i).atom_index(atom_type), i),
-						anchor_atom, source_pose.residue(i + res_diff).atom(atom_type).xyz(), coor_cont_fun));
+				utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::CoordinateConstraint(core::id::AtomID(pose.residue(i).atom_index(atom_type), i),
+						anchor_atom, source_pose.residue(i + res_diff).atom(atom_type).xyz(), coor_cont_fun) ));
 //Print xyz coor of current pose CA atoms vs. source pose
 		TR_constraints << i << pose.aa(i) << " " << pose.residue(i).atom(atom_type).xyz()[0] << "," << pose.residue(i).atom(atom_type).xyz()[1]
 				<< "," << pose.residue(i).atom(atom_type).xyz()[2] << " / " << i + res_diff << source_pose.aa(i + res_diff) << " "
@@ -2694,11 +2692,11 @@ void Splice::add_dihedral_constraints(core::pose::Pose & pose, core::pose::Pose 
 		TR_constraints << "Phi: " << i - residue_diff << pose.aa(i - residue_diff) << ":" << pose.phi(i - residue_diff)
 				<< " / " << i << source_pose.aa(i) << ":" << numeric::dihedral_degrees(xyz_Cj, xyz_Ni, xyz_Cai, xyz_Ci)
 				<< std::endl;
-		core::scoring::func::FuncOP di_const_func_phi = new core::scoring::func::CircularHarmonicFunc(
-				(source_pose.phi(i) * numeric::constants::d::pi_2) / 360, 1);
+		core::scoring::func::FuncOP di_const_func_phi( new core::scoring::func::CircularHarmonicFunc(
+				(source_pose.phi(i) * numeric::constants::d::pi_2) / 360, 1) );
 		csts.push_back(
-				new core::scoring::constraints::DihedralConstraint(pose_phi_resj_c, pose_phi_resi_n, pose_phi_resi_ca, pose_phi_resi_co,
-						di_const_func_phi));
+				utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::DihedralConstraint(pose_phi_resj_c, pose_phi_resi_n, pose_phi_resi_ca, pose_phi_resi_co,
+						di_const_func_phi) ));
 
 //Set up constraints for the psi angle
 		core::id::AtomID psi_resi_n(source_pose.residue_type(i).atom_index("N"), i);
@@ -2718,11 +2716,11 @@ void Splice::add_dihedral_constraints(core::pose::Pose & pose, core::pose::Pose 
 		xyz_Cai = source_pose.residue(i).atom("CA").xyz();
 
 //for each residue the ideal angle is taken from the source pdb
-		core::scoring::func::FuncOP di_const_func_psi = new core::scoring::func::CircularHarmonicFunc(
-				(source_pose.psi(i) * numeric::constants::d::pi_2) / 360, 1);
+		core::scoring::func::FuncOP di_const_func_psi( new core::scoring::func::CircularHarmonicFunc(
+				(source_pose.psi(i) * numeric::constants::d::pi_2) / 360, 1) );
 		csts.push_back(
-				new core::scoring::constraints::DihedralConstraint(pose_psi_resi_n, pose_psi_resi_ca, pose_psi_resi_co, pose_psi_resj_n,
-						di_const_func_psi));
+				utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::DihedralConstraint(pose_psi_resi_n, pose_psi_resi_ca, pose_psi_resi_co, pose_psi_resj_n,
+						di_const_func_psi) ));
 		TR_constraints << "Psi: " << i - residue_diff << pose.aa(i - residue_diff) << ":" << pose.psi(i - residue_diff)
 				<< " / " << i << source_pose.aa(i) << ":" << numeric::dihedral_degrees(xyz_Ni, xyz_Cai, xyz_Ci, xyz_Nj)
 				<< std::endl;
@@ -2746,11 +2744,11 @@ void Splice::add_dihedral_constraints(core::pose::Pose & pose, core::pose::Pose 
 				<< " / " << i << source_pose.aa(i) << ":" << numeric::dihedral_degrees(xyz_Cai, xyz_Ci, xyz_Nj, xyz_Caj)
 				<< std::endl;
 //for each residue the ideal angle is taken from the "donor" pdb
-		core::scoring::func::FuncOP di_const_func_omega = new core::scoring::func::CircularHarmonicFunc(
-				(source_pose.omega(i) * numeric::constants::d::pi_2) / 360, 1);
+		core::scoring::func::FuncOP di_const_func_omega( new core::scoring::func::CircularHarmonicFunc(
+				(source_pose.omega(i) * numeric::constants::d::pi_2) / 360, 1) );
 		csts.push_back(
-				new core::scoring::constraints::DihedralConstraint(pose_omega_resi_ca, pose_omega_resi_co, pose_omega_resj_n, pose_omega_resj_ca,
-						di_const_func_omega));
+				utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::DihedralConstraint(pose_omega_resi_ca, pose_omega_resi_co, pose_omega_resj_n, pose_omega_resj_ca,
+						di_const_func_omega) ));
 
 		pose.add_constraints(csts);
 	}

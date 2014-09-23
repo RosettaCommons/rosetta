@@ -50,7 +50,7 @@ namespace func {
 		//}
 
 		FuncOP
-		clone() const { return new SumFunc( *this ); }
+		clone() const { return FuncOP( new SumFunc( *this ) ); }
 
 		Real func( Real const x ) const;
 		Real dfunc( Real const x ) const;

@@ -85,7 +85,7 @@ void JScoreEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eva
 			string scorefxn_name( tags[ii]   );
 			string rsd_set_name ( tags[ii+1] );
 
-			eval.add_evaluation( new JScoreEvaluator( scorefxn_name, rsd_set_name ) );
+			eval.add_evaluation( PoseEvaluatorOP( new JScoreEvaluator( scorefxn_name, rsd_set_name ) ) );
 		}
 	}
 

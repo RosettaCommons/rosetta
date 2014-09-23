@@ -25,8 +25,8 @@ namespace rna {
 
 class RNA_TorsionEnergy;
 
-typedef utility::pointer::owning_ptr< RNA_TorsionEnergy > RNA_TorsionEnergyOP;
-typedef utility::pointer::owning_ptr< RNA_TorsionEnergy const > RNA_TorsionEnergyCOP;
+typedef utility::pointer::shared_ptr< RNA_TorsionEnergy > RNA_TorsionEnergyOP;
+typedef utility::pointer::shared_ptr< RNA_TorsionEnergy const > RNA_TorsionEnergyCOP;
 
 } //rna
 } //scoring

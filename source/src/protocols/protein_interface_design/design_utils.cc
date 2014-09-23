@@ -304,7 +304,7 @@ FavorNativeResidue::add_residue_constraints( core::pose::Pose & pose ) const {
 
   core::Size const nres( pose.total_residue() );
   for ( core::Size i=1; i<= nres;  ++i ) {
-    pose.add_constraint( new ResidueTypeConstraint( pose, i,  native_residue_bonus_[ i ]) );
+    pose.add_constraint( scoring::constraints::ConstraintCOP( new ResidueTypeConstraint( pose, i,  native_residue_bonus_[ i ]) ) );
   }
 
 }
@@ -339,7 +339,7 @@ FavorNonNativeResidue::add_residue_constraints( pose::Pose & pose ) const {
 
   core::Size const nres( pose.total_residue() );
   for ( core::Size i=1; i<= nres;  ++i ) {
-    pose.add_constraint( new NonResidueTypeConstraint( pose, i,  non_native_residue_bonus_[ i ]) );
+    pose.add_constraint( scoring::constraints::ConstraintCOP( new NonResidueTypeConstraint( pose, i,  non_native_residue_bonus_[ i ]) ) );
   }
 
 }
@@ -544,7 +544,7 @@ hbonded(
 
   if( bb_bb ){
       TR << "decomposing bb hydrogen bond terms" << std::endl;
-      core::scoring::methods::EnergyMethodOptionsOP energy_options(new core::scoring::methods::EnergyMethodOptions(scorefxn->energy_method_options()));
+      core::scoring::methods::EnergyMethodOptionsOP energy_options( new core::scoring::methods::EnergyMethodOptions(scorefxn->energy_method_options()) );
       energy_options->hbond_options().decompose_bb_hb_into_pair_energies(true);
       scorefxn->set_energy_method_options(*energy_options);
   }
@@ -639,7 +639,7 @@ hbonded_atom (
 
   if( bb_bb ){
       TR << "decomposing bb hydrogen bond terms" << std::endl;
-      core::scoring::methods::EnergyMethodOptionsOP energy_options(new core::scoring::methods::EnergyMethodOptions(scorefxn->energy_method_options()));
+      core::scoring::methods::EnergyMethodOptionsOP energy_options( new core::scoring::methods::EnergyMethodOptions(scorefxn->energy_method_options()) );
       energy_options->hbond_options().decompose_bb_hb_into_pair_energies(true);
       scorefxn->set_energy_method_options(*energy_options);
   }

@@ -38,7 +38,7 @@ public:
 
   BasicJumpClaimer() {}
 
-  TopologyClaimerOP clone() const { return new BasicJumpClaimer( *this ); }
+  TopologyClaimerOP clone() const { return TopologyClaimerOP( new BasicJumpClaimer( *this ) ); }
 
   std::string type() const { return _static_type_name(); }
 

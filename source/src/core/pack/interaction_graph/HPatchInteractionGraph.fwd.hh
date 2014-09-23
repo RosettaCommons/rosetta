@@ -31,8 +31,8 @@ template < typename V, typename E, typename G > class HPatchInteractionGraph;
 typedef HPatchInteractionGraph< PDNode, PDEdge, PDInteractionGraph > PDHPatchInteractionGraph;
 typedef HPatchInteractionGraph< LinearMemNode, LinearMemEdge, LinearMemoryInteractionGraph > LinearMemoryHPatchInteractionGraph;
 
-typedef utility::pointer::owning_ptr< PDHPatchInteractionGraph > PDHPatchInteractionGraphOP;
-typedef utility::pointer::owning_ptr< LinearMemoryHPatchInteractionGraph > LinearMemoryHPatchInteractionGraphOP;
+typedef utility::pointer::shared_ptr< PDHPatchInteractionGraph > PDHPatchInteractionGraphOP;
+typedef utility::pointer::shared_ptr< LinearMemoryHPatchInteractionGraph > LinearMemoryHPatchInteractionGraphOP;
 
 
 }

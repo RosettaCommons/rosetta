@@ -23,8 +23,8 @@ namespace hbonds{
 
 class HBondDatabase;
 
-typedef utility::pointer::owning_ptr< HBondDatabase > HBondDatabaseOP;
-typedef utility::pointer::owning_ptr< HBondDatabase const > HBondDatabaseCOP;
+typedef utility::pointer::shared_ptr< HBondDatabase > HBondDatabaseOP;
+typedef utility::pointer::shared_ptr< HBondDatabase const > HBondDatabaseCOP;
 
 } //hbonds
 } //scoring

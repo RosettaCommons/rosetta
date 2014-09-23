@@ -50,7 +50,7 @@ SubroutineMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 SubroutineMoverCreator::create_mover() const {
-	return new SubroutineMover;
+	return protocols::moves::MoverOP( new SubroutineMover );
 }
 
 std::string
@@ -83,7 +83,7 @@ SubroutineMover::parse_my_tag( TagCOP const tag,
 	std::string const xml_fname( tag->getOption< std::string >( "xml_fname" ) );
 
 	JobOP job( JobDistributor::get_instance()->current_job() );
-	ParserOP rsparser = new protocols::rosetta_scripts::RosettaScriptsParser;
+	ParserOP rsparser( new protocols::rosetta_scripts::RosettaScriptsParser );
 	TR<<"Parsing a subroutine xml_file"<<std::endl;
 	TR<<"*************WARNING: AT THIS POINT, CONSTRAINTS ADDED TO THE POSE IN A SUBROUTINE WILL BE IGNORED***********"<<std::endl;
 	core::pose::Pose nonconst_pose( pose );
@@ -99,7 +99,7 @@ SubroutineMover::~SubroutineMover(){}
 
 SubroutineMover::SubroutineMover() :
 	Mover( SubroutineMoverCreator::mover_name() ),
-	mover_( NULL )
+	mover_( /* NULL */ )
 {}
 
 std::string

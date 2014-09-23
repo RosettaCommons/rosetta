@@ -47,7 +47,7 @@ namespace kinematics {
 /// @brief A helper class that can tell the shortest distance of residues in a given Foldtree
 /// The fold-tree is parsed only in the beginning such that individual queries are fast
 class ShortestPathInFoldTree;
-typedef utility::pointer::owning_ptr< ShortestPathInFoldTree > ShortestPathInFoldTreeOP;
+typedef utility::pointer::shared_ptr< ShortestPathInFoldTree > ShortestPathInFoldTreeOP;
 
 class ShortestPathInFoldTree : public utility::pointer::ReferenceCount {
 public:

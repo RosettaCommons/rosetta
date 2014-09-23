@@ -86,7 +86,7 @@ namespace jd2 {
     inner_jobs.reserve( tags.size() );
     tr.Debug << "fill list with " << tags.size() << " InnerJob Objects" << std::endl;
     for ( core::Size iter = 1; iter <= tags.size(); iter++ ) {
-      protocols::jd2::InnerJobOP ijob( new InnerJob( tags[iter], nstruct ));
+      protocols::jd2::InnerJobOP ijob( new InnerJob( tags[iter], nstruct ) );
       inner_jobs.push_back( ijob );
     }
     
@@ -151,7 +151,7 @@ LazySilentFileJobInputterCreator::keyname() const
 
 protocols::jd2::JobInputterOP
 LazySilentFileJobInputterCreator::create_JobInputter() const {
-  return new LazySilentFileJobInputter;
+  return protocols::jd2::JobInputterOP( new LazySilentFileJobInputter );
 }
 
 } //jd2

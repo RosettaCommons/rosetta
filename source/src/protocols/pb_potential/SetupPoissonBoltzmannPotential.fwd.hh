@@ -20,10 +20,10 @@
 namespace core {
 namespace scoring {
 class  SetupPoissonBoltzmannPotential;
-typedef utility::pointer::owning_ptr< SetupPoissonBoltzmannPotential > SetupPoissonBoltzmannPotentialOP;
-typedef utility::pointer::owning_ptr< SetupPoissonBoltzmannPotential const > SetupPoissonBoltzmannPotentialCOP;
-typedef utility::pointer::access_ptr< SetupPoissonBoltzmannPotential > SetupPoissonBoltzmannPotentialAP;
-typedef utility::pointer::access_ptr< SetupPoissonBoltzmannPotential const > SetupPoissonBoltzmannPotentialCAP;
+typedef utility::pointer::shared_ptr< SetupPoissonBoltzmannPotential > SetupPoissonBoltzmannPotentialOP;
+typedef utility::pointer::shared_ptr< SetupPoissonBoltzmannPotential const > SetupPoissonBoltzmannPotentialCOP;
+typedef utility::pointer::weak_ptr< SetupPoissonBoltzmannPotential > SetupPoissonBoltzmannPotentialAP;
+typedef utility::pointer::weak_ptr< SetupPoissonBoltzmannPotential const > SetupPoissonBoltzmannPotentialCAP;
 
 }
 }

@@ -57,8 +57,7 @@ DihedralPairConstraint::remap_resid(
            remap_b2( atomB2_.atomno(), seqmap[atomB2_.rsd()] ),
 		       remap_b3( atomB3_.atomno(), seqmap[atomB3_.rsd()] ),
 		       remap_b4( atomB4_.atomno(), seqmap[atomB4_.rsd()] );
-    return ConstraintOP(
-			new DihedralPairConstraint(
+    return ConstraintOP( new DihedralPairConstraint(
 				remap_a1, remap_a2, remap_a3, remap_a4,
 				remap_b1, remap_b2, remap_b3, remap_b4,
 				this->func_ ) );
@@ -103,7 +102,7 @@ ConstraintOP DihedralPairConstraint::remapped_clone( pose::Pose const& src, pose
   id::AtomID id8( core::pose::named_atom_id_to_atom_id(atomB4, dest ));
   if (    id1.valid() && id2.valid() &&  id3.valid() && id4.valid()
 	     && id5.valid() && id6.valid() &&  id7.valid() && id8.valid() ) {
-    return new DihedralPairConstraint( id1, id2, id3, id4, id5, id6, id7, id8, func_, score_type() );
+    return ConstraintOP( new DihedralPairConstraint( id1, id2, id3, id4, id5, id6, id7, id8, func_, score_type() ) );
   } else {
     return NULL;
   }

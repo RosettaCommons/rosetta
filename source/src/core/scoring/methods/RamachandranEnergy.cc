@@ -47,7 +47,7 @@ methods::EnergyMethodOP
 RamachandranEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new RamachandranEnergy;
+	return methods::EnergyMethodOP( new RamachandranEnergy );
 }
 
 ScoreTypes
@@ -68,7 +68,7 @@ RamachandranEnergy::RamachandranEnergy() :
 EnergyMethodOP
 RamachandranEnergy::clone() const
 {
-	return new RamachandranEnergy;
+	return EnergyMethodOP( new RamachandranEnergy );
 }
 
 /////////////////////////////////////////////////////////////////////////////

@@ -49,7 +49,7 @@ methods::EnergyMethodOP
 SecondaryStructureEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new SecondaryStructureEnergy;
+	return methods::EnergyMethodOP( new SecondaryStructureEnergy );
 }
 
 ScoreTypes
@@ -81,7 +81,7 @@ SecondaryStructureEnergy::SecondaryStructureEnergy( SecondaryStructureEnergy con
 EnergyMethodOP
 SecondaryStructureEnergy::clone() const
 {
-	return new SecondaryStructureEnergy( *this );
+	return EnergyMethodOP( new SecondaryStructureEnergy( *this ) );
 }
 
 

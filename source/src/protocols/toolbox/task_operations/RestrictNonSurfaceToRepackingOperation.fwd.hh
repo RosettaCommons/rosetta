@@ -22,7 +22,7 @@ namespace task_operations {
 
 class RestrictNonSurfaceToRepackingOperation;
 
-typedef utility::pointer::owning_ptr< RestrictNonSurfaceToRepackingOperation > RestrictNonSurfaceToRepackingOperationOP;
+typedef utility::pointer::shared_ptr< RestrictNonSurfaceToRepackingOperation > RestrictNonSurfaceToRepackingOperationOP;
 
 } //namespace protocols
 } //namespace toolbox

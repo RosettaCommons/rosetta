@@ -87,7 +87,7 @@ static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers
 
 moves::MoverOP ddGCreator::create_mover() const
 {
-	return new ddG;
+	return moves::MoverOP( new ddG );
 }
 
 std::string ddGCreator::mover_name()
@@ -112,7 +112,7 @@ ddG::ddG() :
 		rb_jump_(0),
 		per_residue_ddg_(false),
 		repack_(false),
-		relax_mover_( NULL ),
+		relax_mover_( /* NULL */ ),
 		use_custom_task_(false),
 		repack_bound_(true),
 		relax_bound_(false),
@@ -134,7 +134,7 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 		rb_jump_(jump),
 		per_residue_ddg_(false),
 		repack_(true),
-		relax_mover_( NULL ),
+		relax_mover_( /* NULL */ ),
 		use_custom_task_(false),
 		repack_bound_(true),
 		relax_bound_(false),
@@ -169,7 +169,7 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 		rb_jump_(jump),
 		per_residue_ddg_(false),
 		repack_(true),
-		relax_mover_( NULL ),
+		relax_mover_( /* NULL */ ),
 		use_custom_task_(false),
 		repack_bound_(true),
 		relax_bound_(false),
@@ -282,7 +282,7 @@ void ddG::apply(Pose & pose)
 
 	if(per_residue_ddg_)
 	{
-		EnergyMethodOptionsOP energy_options(new core::scoring::methods::EnergyMethodOptions(scorefxn_->energy_method_options()));
+		EnergyMethodOptionsOP energy_options( new core::scoring::methods::EnergyMethodOptions(scorefxn_->energy_method_options()) );
 		energy_options->hbond_options().decompose_bb_hb_into_pair_energies(true);
 		scorefxn_->set_energy_method_options(*energy_options);
 
@@ -584,7 +584,7 @@ ddG::get_name() const {
 
 protocols::moves::MoverOP
 ddG::clone() const {
-	return (protocols::moves::MoverOP) new ddG( *this );
+	return (protocols::moves::MoverOP) protocols::moves::MoverOP( new ddG( *this ) );
 }
 
 } //movers

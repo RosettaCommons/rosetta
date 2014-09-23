@@ -20,8 +20,8 @@ namespace protocols {
 namespace surface_docking {
 
 class SurfaceVectorFallbackConfiguration;
-typedef utility::pointer::owning_ptr< SurfaceVectorFallbackConfiguration > SurfaceVectorFallbackConfigurationOP;
-typedef utility::pointer::owning_ptr< SurfaceVectorFallbackConfiguration const > SurfaceVectorFallbackConfigurationCOP;
+typedef utility::pointer::shared_ptr< SurfaceVectorFallbackConfiguration > SurfaceVectorFallbackConfigurationOP;
+typedef utility::pointer::shared_ptr< SurfaceVectorFallbackConfiguration const > SurfaceVectorFallbackConfigurationCOP;
 
 } // surface_docking
 } // protocols

@@ -93,11 +93,11 @@ FastGapMover::FastGapMover() :
 		loop_sizes.push_back(i);
 	}
 
-	simple_inserter_ = new LocalInserter_SimpleMin();
-	lhlibrary_ = new LoopHashLibrary( loop_sizes );
+	simple_inserter_ = LocalInserter_SimpleMinOP( new LocalInserter_SimpleMin() );
+	lhlibrary_ = LoopHashLibraryOP( new LoopHashLibrary( loop_sizes ) );
 	lhlibrary_->load_mergeddb();
 
-	lhsampler_ = new LoopHashSampler( lhlibrary_, simple_inserter_ );
+	lhsampler_ = LoopHashSamplerOP( new LoopHashSampler( lhlibrary_, simple_inserter_ ) );
 } 
 
 void
@@ -107,7 +107,7 @@ FastGapMover::apply( pose::Pose & pose ) {
 		lhsampler_->set_min_rms( min_rms_ );
 
 		// copy pose
-		PoseOP working_pose = new Pose(pose);
+		PoseOP working_pose( new Pose(pose) );
 		//Size idx = 1;
 
 		// convert pose to centroid pose:
@@ -133,7 +133,7 @@ FastGapMover::apply( pose::Pose & pose ) {
 				lhsampler_->close_gaps( *working_pose, lib_structs, loop_size );
 			}
 			if( lib_structs.size() != 0 ) {
-				working_pose = new Pose (lib_structs[0]);
+				working_pose = PoseOP( new Pose (lib_structs[0]) );
 			}
 
 			find_next_gap( *working_pose, next_gap, gap_dist );

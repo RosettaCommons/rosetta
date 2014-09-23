@@ -57,13 +57,13 @@ LoopsFileLoader::create_resource(
 basic::resource_manager::ResourceOptionsOP
 LoopsFileLoader::default_options() const
 {
-	return new LoopsFileOptions;
+	return basic::resource_manager::ResourceOptionsOP( new LoopsFileOptions );
 }
 
 /// @details Return an owning pointer to a newly constructed default instance of LoopsFileLoader.
 basic::resource_manager::ResourceLoaderOP LoopsFileLoaderCreator::create_resource_loader() const
 {
-	return new LoopsFileLoader();
+	return basic::resource_manager::ResourceLoaderOP( new LoopsFileLoader() );
 }
 
 /// @details Return a string specifying the type of %ResourceLoader to create (LoopsFile).

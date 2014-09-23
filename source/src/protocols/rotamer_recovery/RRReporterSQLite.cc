@@ -175,8 +175,8 @@ RRReporterSQLite::write_nchi_table_schema(
 	using namespace basic::database;
 	using namespace boost::assign;
 
-	Column name3("name3", new DbText());
-	Column nchi("nchi", new DbInteger());
+	Column name3("name3", DbDataTypeOP( new DbText() ));
+	Column nchi("nchi", DbDataTypeOP( new DbInteger() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(name3);
@@ -220,21 +220,21 @@ RRReporterSQLite::write_rotamer_recovery_full_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct1_name("struct1_name", new DbText());
-	Column name1("name1", new DbText());
-	Column name3("name3", new DbText());
-	Column residue_type("residue_type", new DbText());
-	Column chain1("chain1", new DbInteger());
-	Column res1("res1", new DbInteger());
-	Column struct2_name("struct2_name", new DbText());
-	Column chain2("chain2", new DbInteger());
-	Column res2("res2", new DbInteger());
-	Column protocol_name("protocol_name", new DbText());
-	Column protocol_params("protocol_params", new DbText());
-	Column comparer_name("comparer_name", new DbText());
-	Column comparer_params("comparer_params", new DbText());
-	Column score("score", new DbReal());
-	Column recovered("recovered", new DbInteger());
+	Column struct1_name("struct1_name", DbDataTypeOP( new DbText() ));
+	Column name1("name1", DbDataTypeOP( new DbText() ));
+	Column name3("name3", DbDataTypeOP( new DbText() ));
+	Column residue_type("residue_type", DbDataTypeOP( new DbText() ));
+	Column chain1("chain1", DbDataTypeOP( new DbInteger() ));
+	Column res1("res1", DbDataTypeOP( new DbInteger() ));
+	Column struct2_name("struct2_name", DbDataTypeOP( new DbText() ));
+	Column chain2("chain2", DbDataTypeOP( new DbInteger() ));
+	Column res2("res2", DbDataTypeOP( new DbInteger() ));
+	Column protocol_name("protocol_name", DbDataTypeOP( new DbText() ));
+	Column protocol_params("protocol_params", DbDataTypeOP( new DbText() ));
+	Column comparer_name("comparer_name", DbDataTypeOP( new DbText() ));
+	Column comparer_params("comparer_params", DbDataTypeOP( new DbText() ));
+	Column score("score", DbDataTypeOP( new DbReal() ));
+	Column recovered("recovered", DbDataTypeOP( new DbInteger() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct1_name);
@@ -266,10 +266,10 @@ RRReporterSQLite::write_rotamer_recovery_features_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt());
-	Column resNum("resNum", new DbInteger());
-	Column divergence("divergence", new DbReal());
-	Column recovered("recovered", new DbInteger());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column resNum("resNum", DbDataTypeOP( new DbInteger() ));
+	Column divergence("divergence", DbDataTypeOP( new DbReal() ));
+	Column recovered("recovered", DbDataTypeOP( new DbInteger() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -299,10 +299,10 @@ RRReporterSQLite::write_predicted_features_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt());
-	Column resNum("resNum", new DbInteger());
-	Column predicted_struct_id("predicted_struct_id", new DbBigInt());
-	Column predicted_resNum("predicted_resNum", new DbInteger());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column resNum("resNum", DbDataTypeOP( new DbInteger() ));
+	Column predicted_struct_id("predicted_struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column predicted_resNum("predicted_resNum", DbDataTypeOP( new DbInteger() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -521,8 +521,7 @@ RRReporterSQLite::report_predicted_features(
 	if(!report_to_db_) return;
 
 
-	core::pack::task::TaskFactoryOP task_factory(
-		new core::pack::task::TaskFactory());
+	core::pack::task::TaskFactoryOP task_factory( new core::pack::task::TaskFactory() );
 	std::set< core::Size > central_residues;
 	central_residues.insert(predicted_residue.seqpos());
 
@@ -530,9 +529,8 @@ RRReporterSQLite::report_predicted_features(
 	core::Real dist_cutoff(10);
 
 	toolbox::task_operations::RestrictToNeighborhoodOperationOP
-		restrict_to_neighborhood_operation(
-			new toolbox::task_operations::RestrictToNeighborhoodOperation(
-				central_residues,dist_cutoff));
+		restrict_to_neighborhood_operation( new toolbox::task_operations::RestrictToNeighborhoodOperation(
+				central_residues,dist_cutoff) );
 	std::string neighborhood_calculator_name(
 		restrict_to_neighborhood_operation->get_calculator_name());
 	task_factory->push_back(restrict_to_neighborhood_operation);

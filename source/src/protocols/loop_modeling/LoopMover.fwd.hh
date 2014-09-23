@@ -17,8 +17,8 @@ namespace loop_modeling {
 
 class LoopMover;
 
-typedef utility::pointer::owning_ptr<LoopMover> LoopMoverOP;
-typedef utility::pointer::owning_ptr<LoopMover const> LoopMoverCOP;
+typedef utility::pointer::shared_ptr<LoopMover> LoopMoverOP;
+typedef utility::pointer::shared_ptr<LoopMover const> LoopMoverCOP;
 
 }
 }

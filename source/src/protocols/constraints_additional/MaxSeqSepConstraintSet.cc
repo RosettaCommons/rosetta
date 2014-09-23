@@ -85,7 +85,7 @@ MaxSeqSepConstraintSet::MaxSeqSepConstraintSet( ConstraintSet const & other, cor
 {
   tr.Trace << f ;
 	// if ( f.size() > 2 ) { //assuming simple fold-tree has eges 1 1 -1 and 1 nres -1
-	shortest_path_ = new ShortestPathInFoldTree( f );
+	shortest_path_ = core::kinematics::ShortestPathInFoldTreeOP( new ShortestPathInFoldTree( f ) );
 		//} else {
     //shortest_path_ = NULL;
 		//  }
@@ -108,7 +108,7 @@ ConstraintSetOP MaxSeqSepConstraintSet::remapped_clone(
 		core::pose::Pose const& dest,
 		core::id::SequenceMappingCOP smap
 ) const {
-	MaxSeqSepConstraintSetOP clone_ptr = new MaxSeqSepConstraintSet( *Parent::remapped_clone( src, dest, smap ), shortest_path_ );
+	MaxSeqSepConstraintSetOP clone_ptr( new MaxSeqSepConstraintSet( *Parent::remapped_clone( src, dest, smap ), shortest_path_ ) );
 	clone_ptr->set_max_seq_sep( max_seq_sep() );
 	return clone_ptr;
 }

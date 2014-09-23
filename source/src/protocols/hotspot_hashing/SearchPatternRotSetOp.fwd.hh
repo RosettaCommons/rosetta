@@ -20,12 +20,12 @@ namespace protocols {
 namespace hotspot_hashing {
 
 class SearchPatternRotSetOp;
-typedef utility::pointer::owning_ptr< SearchPatternRotSetOp > SearchPatternRotSetOpOP;
-typedef utility::pointer::owning_ptr< SearchPatternRotSetOp const > SearchPatternRotSetOpCOP;
+typedef utility::pointer::shared_ptr< SearchPatternRotSetOp > SearchPatternRotSetOpOP;
+typedef utility::pointer::shared_ptr< SearchPatternRotSetOp const > SearchPatternRotSetOpCOP;
 
 class AddSearchPatternRotSetOp;
-typedef utility::pointer::owning_ptr< AddSearchPatternRotSetOp > AddSearchPatternRotSetOpOP;
-typedef utility::pointer::owning_ptr< AddSearchPatternRotSetOp const > AddSearchPatternRotSetOpCOP;
+typedef utility::pointer::shared_ptr< AddSearchPatternRotSetOp > AddSearchPatternRotSetOpOP;
+typedef utility::pointer::shared_ptr< AddSearchPatternRotSetOp const > AddSearchPatternRotSetOpCOP;
 
 }
 }

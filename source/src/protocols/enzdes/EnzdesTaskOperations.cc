@@ -88,7 +88,7 @@ SetCatalyticResPackBehavior::~SetCatalyticResPackBehavior(){}
 core::pack::task::operation::TaskOperationOP
 SetCatalyticResPackBehavior::clone() const
 {
-	SetCatalyticResPackBehaviorOP to_return = new SetCatalyticResPackBehavior();
+	SetCatalyticResPackBehaviorOP to_return( new SetCatalyticResPackBehavior() );
 	to_return->set_fix_catalytic_aa( this->fix_catalytic_aa_);
 	to_return->behavior_non_catalytic_ = this->behavior_non_catalytic_;
 	return to_return;
@@ -179,25 +179,25 @@ SetCatalyticResPackBehavior::parse_tag( TagCOP tag , DataMap & )
 core::pack::task::operation::TaskOperationOP
 SetCatalyticResPackBehaviorCreator::create_task_operation() const
 {
-	return new SetCatalyticResPackBehavior;
+	return core::pack::task::operation::TaskOperationOP( new SetCatalyticResPackBehavior );
 }
 
 core::pack::task::operation::TaskOperationOP
 DetectProteinLigandInterfaceOperationCreator::create_task_operation() const
 {
-	return new DetectProteinLigandInterface;
+	return core::pack::task::operation::TaskOperationOP( new DetectProteinLigandInterface );
 }
 
 core::pack::task::operation::TaskOperationOP
 ProteinLigandInterfaceUpweighterOperationCreator::create_task_operation() const
 {
-	return new ProteinLigandInterfaceUpweighter;
+	return core::pack::task::operation::TaskOperationOP( new ProteinLigandInterfaceUpweighter );
 }
 
 core::pack::task::operation::TaskOperationOP
 AddLigandMotifRotamersOperationCreator::create_task_operation() const
 {
-	return new AddLigandMotifRotamers;
+	return core::pack::task::operation::TaskOperationOP( new AddLigandMotifRotamers );
 }
 
 DetectProteinLigandInterface::DetectProteinLigandInterface():
@@ -219,7 +219,7 @@ DetectProteinLigandInterface::~DetectProteinLigandInterface() {}
 core::pack::task::operation::TaskOperationOP
 DetectProteinLigandInterface::clone() const
 {
-	return new DetectProteinLigandInterface(*this);
+	return core::pack::task::operation::TaskOperationOP( new DetectProteinLigandInterface(*this) );
 }
 
 /// @brief Initialize the class based on the command line options.
@@ -726,7 +726,7 @@ ProteinLigandInterfaceUpweighter::~ProteinLigandInterfaceUpweighter() {}
 core::pack::task::operation::TaskOperationOP
 ProteinLigandInterfaceUpweighter::clone() const
 {
-	return new ProteinLigandInterfaceUpweighter(*this);
+	return core::pack::task::operation::TaskOperationOP( new ProteinLigandInterfaceUpweighter(*this) );
 }
 
 /// @brief Initialize the class based on the command line options.
@@ -751,7 +751,7 @@ PackerTask & task) const
 {
 	//If applicable, set the ligand weigths to the specified value
 	if( lig_packer_weight_ != 1.0 ){
-		core::pack::task::IGEdgeReweighterOP lig_up = new protocols::toolbox::IGLigandDesignEdgeUpweighter( lig_packer_weight_ );
+		core::pack::task::IGEdgeReweighterOP lig_up( new protocols::toolbox::IGLigandDesignEdgeUpweighter( lig_packer_weight_ ) );
 		core::pack::task::IGEdgeReweightContainerOP IGreweight = task.set_IGEdgeReweights();
 		IGreweight->add_reweighter( lig_up );
 
@@ -766,7 +766,7 @@ PackerTask & task) const
         else if (task.design_residue( ii )) design_residues.push_back( ii );
      }
 
-     core::pack::task::IGEdgeReweighterOP catres_up = new protocols::toolbox::ResidueGroupIGEdgeUpweighter( catres_packer_weight_, catres , design_residues );
+     core::pack::task::IGEdgeReweighterOP catres_up( new protocols::toolbox::ResidueGroupIGEdgeUpweighter( catres_packer_weight_, catres , design_residues ) );
      task.set_IGEdgeReweights()->add_reweighter( catres_up );
 
     tr.Info << "Packer Energies between catalytic residues and design residues are upweighted by factor " << catres_packer_weight_ << "." << std::endl;
@@ -783,7 +783,7 @@ ProteinLigandInterfaceUpweighter::register_options()
 core::pack::task::operation::TaskOperationOP
 AddRigidBodyLigandConfsCreator::create_task_operation() const
 {
-	return new AddRigidBodyLigandConfs;
+	return core::pack::task::operation::TaskOperationOP( new AddRigidBodyLigandConfs );
 }
 
 AddRigidBodyLigandConfs::AddRigidBodyLigandConfs(){}
@@ -793,7 +793,7 @@ AddRigidBodyLigandConfs::~AddRigidBodyLigandConfs(){}
 core::pack::task::operation::TaskOperationOP
 AddRigidBodyLigandConfs::clone() const
 {
-	return new AddRigidBodyLigandConfs();
+	return core::pack::task::operation::TaskOperationOP( new AddRigidBodyLigandConfs() );
 }
 
 /// @details doesn't do anything atm, because the operation right now
@@ -825,7 +825,7 @@ AddRigidBodyLigandConfs::apply(
 		if( lig_it->second.size() == 0 ) continue;
 		runtime_assert( pose.residue_type( lig_it->first ).name3() == lig_it->second[1]->type().name3() );
 
-		protocols::toolbox::rotamer_set_operations::RigidBodyMoveRSOOP rb_rotsetop = new protocols::toolbox::rotamer_set_operations::RigidBodyMoveRSO( lig_it->first );
+		protocols::toolbox::rotamer_set_operations::RigidBodyMoveRSOOP rb_rotsetop( new protocols::toolbox::rotamer_set_operations::RigidBodyMoveRSO( lig_it->first ) );
 		rb_rotsetop->set_rigid_body_confs( lig_it->second );
 
 		//std::cout << " instantiated rotamer set operation, passed it " << lig_it->second.size() << " rb confs for position " << lig_it->first << std::endl;
@@ -847,7 +847,7 @@ AddLigandMotifRotamers::~AddLigandMotifRotamers(){}
 core::pack::task::operation::TaskOperationOP
 AddLigandMotifRotamers::clone() const
 {
-  return new AddLigandMotifRotamers();
+  return core::pack::task::operation::TaskOperationOP( new AddLigandMotifRotamers() );
 }
 
 void
@@ -874,7 +874,7 @@ AddLigandMotifRotamers::apply(
 	PackerTask & task
 ) const
 {
-	protocols::motifs::LigandMotifSearchOP motif_search = new protocols::motifs::LigandMotifSearch;
+	protocols::motifs::LigandMotifSearchOP motif_search( new protocols::motifs::LigandMotifSearch );
 		motif_search->run( pose, task );
 }
 

@@ -185,7 +185,7 @@ CartesianMultifunc::CartesianMultifunc(
 	score_function_( scorefxn_in ),
 	deriv_check_( deriv_check_in ),
 	deriv_check_verbose_( deriv_check_verbose_in ),
-	deriv_check_result_( 0 )
+	deriv_check_result_( /* 0 */ )
 {}
 
 CartesianMultifunc::~CartesianMultifunc() {}

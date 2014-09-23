@@ -20,8 +20,8 @@ namespace frag_picker {
 namespace nonlocal {
 
 class NonlocalFrags;
-typedef utility::pointer::owning_ptr<NonlocalFrags> NonlocalFragsOP;
-typedef utility::pointer::owning_ptr<NonlocalFrags const> NonlocalFragsCOP;
+typedef utility::pointer::shared_ptr<NonlocalFrags> NonlocalFragsOP;
+typedef utility::pointer::shared_ptr<NonlocalFrags const> NonlocalFragsCOP;
 
 }  // namespace nonlocal
 }  // namespace frag_picker

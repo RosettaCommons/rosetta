@@ -32,19 +32,19 @@ class IdentityEval;
 
 
 /// @brief IdentityEval owning pointer
-typedef utility::pointer::owning_ptr< IdentityEval > IdentityEvalOP;
+typedef utility::pointer::shared_ptr< IdentityEval > IdentityEvalOP;
 
 
 /// @brief IdentityEval const owning pointer
-typedef utility::pointer::owning_ptr< IdentityEval const > IdentityEvalCOP;
+typedef utility::pointer::shared_ptr< IdentityEval const > IdentityEvalCOP;
 
 
 /// @brief IdentityEval access pointer
-typedef utility::pointer::access_ptr< IdentityEval > IdentityEvalAP;
+typedef utility::pointer::weak_ptr< IdentityEval > IdentityEvalAP;
 
 
 /// @brief IdentityEval access owning pointer
-typedef utility::pointer::access_ptr< IdentityEval const > IdentityEvalCAP;
+typedef utility::pointer::weak_ptr< IdentityEval const > IdentityEvalCAP;
 
 
 } // eval

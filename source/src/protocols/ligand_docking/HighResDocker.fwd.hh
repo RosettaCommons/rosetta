@@ -22,8 +22,8 @@ namespace protocols {
 namespace ligand_docking {
 
 class HighResDocker; // fwd declaration
-typedef utility::pointer::owning_ptr< HighResDocker > HighResDockerOP;
-typedef utility::pointer::owning_ptr< HighResDocker const > HighResDockerCOP;
+typedef utility::pointer::shared_ptr< HighResDocker > HighResDockerOP;
+typedef utility::pointer::shared_ptr< HighResDocker const > HighResDockerCOP;
 typedef utility::vector1<HighResDockerOP> HighResDockerOPs;
 typedef utility::vector1<HighResDockerCOP> HighResDockerCOPs;
 

@@ -23,8 +23,8 @@ namespace rna {
 
 class RNA_FullAtomVDW_BasePhosphate;
 
-typedef utility::pointer::owning_ptr< RNA_FullAtomVDW_BasePhosphate > RNA_FullAtomVDW_BasePhosphateOP;
-typedef utility::pointer::owning_ptr< RNA_FullAtomVDW_BasePhosphate const > RNA_FullAtomVDW_BasePhosphateCOP;
+typedef utility::pointer::shared_ptr< RNA_FullAtomVDW_BasePhosphate > RNA_FullAtomVDW_BasePhosphateOP;
+typedef utility::pointer::shared_ptr< RNA_FullAtomVDW_BasePhosphate const > RNA_FullAtomVDW_BasePhosphateCOP;
 
 } //rna
 } //scoring

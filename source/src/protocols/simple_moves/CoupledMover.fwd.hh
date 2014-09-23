@@ -20,8 +20,8 @@ namespace protocols {
 namespace simple_moves {
 
 class CoupledMover;
-typedef utility::pointer::owning_ptr< CoupledMover > CoupledMoverOP;
-typedef utility::pointer::owning_ptr< CoupledMover const > CoupledMoverCOP;
+typedef utility::pointer::shared_ptr< CoupledMover > CoupledMoverOP;
+typedef utility::pointer::shared_ptr< CoupledMover const > CoupledMoverCOP;
 
 } // moves
 } // protocols

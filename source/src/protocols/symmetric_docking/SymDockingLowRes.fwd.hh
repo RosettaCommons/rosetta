@@ -22,8 +22,8 @@ namespace symmetric_docking {
 
 
 class SymDockingLowRes; // fwd declaration
-typedef utility::pointer::owning_ptr< SymDockingLowRes > SymDockingLowResOP;
-typedef utility::pointer::owning_ptr< SymDockingLowRes const > SymDockingLowResCOP;
+typedef utility::pointer::shared_ptr< SymDockingLowRes > SymDockingLowResOP;
+typedef utility::pointer::shared_ptr< SymDockingLowRes const > SymDockingLowResCOP;
 
 
 } // namespace symmetric_docking

@@ -27,8 +27,8 @@ namespace filters {
 class DesignableResiduesFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< DesignableResiduesFilter >  DesignableResiduesFilterOP;
-typedef utility::pointer::owning_ptr< DesignableResiduesFilter const >  DesignableResiduesFilterCOP;
+typedef utility::pointer::shared_ptr< DesignableResiduesFilter >  DesignableResiduesFilterOP;
+typedef utility::pointer::shared_ptr< DesignableResiduesFilter const >  DesignableResiduesFilterCOP;
 
 } // namespace filters
 } //namespace protein_interface_design

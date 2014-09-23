@@ -27,7 +27,7 @@ namespace features {
 ScreeningFeaturesCreator::ScreeningFeaturesCreator() {}
 ScreeningFeaturesCreator::~ScreeningFeaturesCreator() {}
 FeaturesReporterOP ScreeningFeaturesCreator::create_features_reporter() const {
-	return new ScreeningFeatures;
+	return FeaturesReporterOP( new ScreeningFeatures );
 }
 
 std::string ScreeningFeaturesCreator::type_name() const {

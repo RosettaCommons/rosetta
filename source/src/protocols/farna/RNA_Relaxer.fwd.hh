@@ -19,7 +19,7 @@ namespace farna {
 
 	//Auto Headers
 	class RNA_Relaxer;
-	typedef utility::pointer::owning_ptr< RNA_Relaxer > RNA_RelaxerOP;
+	typedef utility::pointer::shared_ptr< RNA_Relaxer > RNA_RelaxerOP;
 
 } //farna
 } //protocols

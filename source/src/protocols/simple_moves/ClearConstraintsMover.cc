@@ -39,12 +39,12 @@ ClearConstraintsMover::parse_my_tag(
 {
 }
 	
-moves::MoverOP ClearConstraintsMover::clone() const { return new ClearConstraintsMover( *this ); }
-moves::MoverOP ClearConstraintsMover::fresh_instance() const { return new ClearConstraintsMover; }
+moves::MoverOP ClearConstraintsMover::clone() const { return moves::MoverOP( new ClearConstraintsMover( *this ) ); }
+moves::MoverOP ClearConstraintsMover::fresh_instance() const { return moves::MoverOP( new ClearConstraintsMover ); }
 
 protocols::moves::MoverOP
 ClearConstraintsMoverCreator::create_mover() const {
-	return new ClearConstraintsMover;
+	return protocols::moves::MoverOP( new ClearConstraintsMover );
 }
 
 std::string

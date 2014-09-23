@@ -64,7 +64,7 @@ static thread_local basic::Tracer TR( "protocols.hotspot_hashing.movers.PlacePro
 
 PlaceProbeMover::PlaceProbeMover() :
     residue_name_(""),
-    target_residue_(NULL),
+    target_residue_(/* NULL */),
     current_mode_(RunAll),
     search_partition_(0),
     total_search_partition_(1),
@@ -193,20 +193,19 @@ void PlaceProbeMover::check_and_initialize(core::pose::Pose const & target_pose)
 
 SearchPatternOP PlaceProbeMover::create_partitioned_search_pattern(core::pose::Pose const & target_pose)
 {
-	return new PartitionedSearchPattern(create_search_pattern(target_pose), search_partition_, total_search_partition_);
+	return SearchPatternOP( new PartitionedSearchPattern(create_search_pattern(target_pose), search_partition_, total_search_partition_) );
 }
 
 SearchPatternOP PlaceProbeMover::create_refinement_pattern(core::pose::Pose const & /*target_pose*/, core::Size /*target_residue*/)
 {
-	return new ConstPattern(); 
+	return SearchPatternOP( new ConstPattern() ); 
 }
 
 void PlaceProbeMover::perform_local_refinement(core::pose::Pose & target_pose, core::Size target_residue)
 {
 	core::pack::task::PackerTaskOP packer_task = create_refinement_packing_task(target_pose, target_residue);
 
-	protocols::simple_moves::PackRotamersMoverOP packer =
-		new protocols::simple_moves::PackRotamersMover(refinement_scorefxn_, packer_task);
+	protocols::simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover(refinement_scorefxn_, packer_task) );
 
 	packer->apply(target_pose);
 }
@@ -217,10 +216,10 @@ core::pack::task::PackerTaskOP PlaceProbeMover::create_refinement_packing_task(c
 	core::pack::task::TaskFactory taskfactory;
 	using core::pack::task::operation::TaskOperationCOP;
 	
-  taskfactory.push_back( new core::pack::task::operation::InitializeFromCommandline() );
-	taskfactory.push_back( new AddSearchPatternRotSetOp(
+  taskfactory.push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline() ) );
+	taskfactory.push_back( TaskOperationCOP( new AddSearchPatternRotSetOp(
 																target_residue,
-																create_refinement_pattern(target_pose, target_residue)));
+																create_refinement_pattern(target_pose, target_residue)) ));
 
 	core::pack::task::PackerTaskOP task = taskfactory.create_task_and_apply_taskoperations( target_pose );
 

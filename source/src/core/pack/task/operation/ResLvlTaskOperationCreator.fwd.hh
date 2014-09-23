@@ -25,8 +25,8 @@ namespace operation {
 
 class ResLvlTaskOperationCreator;
 
-typedef utility::pointer::owning_ptr< ResLvlTaskOperationCreator > ResLvlTaskOperationCreatorOP;
-typedef utility::pointer::owning_ptr< ResLvlTaskOperationCreator const > ResLvlTaskOperationCreatorCOP;
+typedef utility::pointer::shared_ptr< ResLvlTaskOperationCreator > ResLvlTaskOperationCreatorOP;
+typedef utility::pointer::shared_ptr< ResLvlTaskOperationCreator const > ResLvlTaskOperationCreatorCOP;
 
 }
 }

@@ -21,12 +21,12 @@ namespace protocols {
 namespace multistate_design {
 
 class PosType;
-typedef utility::pointer::owning_ptr< PosType > PosTypeOP;
-typedef utility::pointer::owning_ptr< PosType const > PosTypeCOP;
+typedef utility::pointer::shared_ptr< PosType > PosTypeOP;
+typedef utility::pointer::shared_ptr< PosType const > PosTypeCOP;
 
 class MultiStatePacker;
-typedef utility::pointer::owning_ptr< MultiStatePacker > MultiStatePackerOP;
-typedef utility::pointer::owning_ptr< MultiStatePacker const > MultiStatePackerCOP;
+typedef utility::pointer::shared_ptr< MultiStatePacker > MultiStatePackerOP;
+typedef utility::pointer::shared_ptr< MultiStatePacker const > MultiStatePackerCOP;
 
 } // namespace multistate_design
 } // namespace protocols

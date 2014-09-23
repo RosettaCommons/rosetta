@@ -112,7 +112,7 @@ namespace MoveContainerCxxTest {
 	#include <test/protocols/moves/DummyMover.hh>
 }
 using namespace MoveContainerCxxTest;
-typedef utility::pointer::owning_ptr< DummyMover > DummyMoverOP;
+typedef utility::pointer::shared_ptr< DummyMover > DummyMoverOP;
 
 using basic::T;
 using basic::Error;
@@ -154,7 +154,7 @@ public:
 
 		for(Size i=0; i<256; i++) {
 			DummyMover::reset();
-			DummyMoverOP dm = new DummyMover;
+			DummyMoverOP dm( new DummyMover );
 			RepeatMover RM(dm, i);
 
 			RM.apply(pose);
@@ -172,7 +172,7 @@ public:
 
 		DummyMover::reset();
 		SequenceMover SM;
-		for(Size i=0; i<N; i++) SM.add_mover(new DummyMover(i));
+		for(Size i=0; i<N; i++) SM.add_mover(MoverOP( new DummyMover(i) ));
 
 		SM.apply(pose);
 
@@ -193,7 +193,7 @@ public:
 		pose::Pose pose;
 
 		CycleMover CM;
-		for(Size i=0; i<N; i++) CM.add_mover(new DummyMover(i));
+		for(Size i=0; i<N; i++) CM.add_mover(MoverOP( new DummyMover(i) ));
 
 		for(Size s=0; s<NSteps; s++) {
 			DummyMover::reset();

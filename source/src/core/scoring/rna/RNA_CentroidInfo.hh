@@ -50,7 +50,7 @@ RNA_CentroidInfo(): calculated_( false ) {};
   basic::datacache::CacheableDataOP
   clone() const
   {
-    return new RNA_CentroidInfo( *this );
+    return basic::datacache::CacheableDataOP( new RNA_CentroidInfo( *this ) );
   }
 
 	void

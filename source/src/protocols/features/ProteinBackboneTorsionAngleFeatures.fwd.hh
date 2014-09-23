@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class ProteinBackboneTorsionAngleFeatures;
-typedef utility::pointer::owning_ptr< ProteinBackboneTorsionAngleFeatures > ProteinBackboneTorsionAngleFeaturesOP;
-typedef utility::pointer::owning_ptr< ProteinBackboneTorsionAngleFeatures const > ProteinBackboneTorsionAngleFeaturesCOP;
+typedef utility::pointer::shared_ptr< ProteinBackboneTorsionAngleFeatures > ProteinBackboneTorsionAngleFeaturesOP;
+typedef utility::pointer::shared_ptr< ProteinBackboneTorsionAngleFeatures const > ProteinBackboneTorsionAngleFeaturesCOP;
 
 }// namespace
 }// namespace

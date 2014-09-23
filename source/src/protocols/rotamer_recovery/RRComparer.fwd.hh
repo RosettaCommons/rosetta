@@ -21,16 +21,16 @@ namespace protocols{
 namespace rotamer_recovery{
 
 class RRComparer;
-typedef utility::pointer::owning_ptr< RRComparer > RRComparerOP;
-typedef utility::pointer::owning_ptr< RRComparer const > RRComparerCOP;
+typedef utility::pointer::shared_ptr< RRComparer > RRComparerOP;
+typedef utility::pointer::shared_ptr< RRComparer const > RRComparerCOP;
 
 class RRComparerRotBins;
-typedef utility::pointer::owning_ptr< RRComparerRotBins > RRComparerRotBinsOP;
-typedef utility::pointer::owning_ptr< RRComparerRotBins const > RRComparerRotBinsCOP;
+typedef utility::pointer::shared_ptr< RRComparerRotBins > RRComparerRotBinsOP;
+typedef utility::pointer::shared_ptr< RRComparerRotBins const > RRComparerRotBinsCOP;
 
 class RRComparerChiDiff;
-typedef utility::pointer::owning_ptr< RRComparerChiDiff > RRComparerChiDiffOP;
-typedef utility::pointer::owning_ptr< RRComparerChiDiff const > RRComparerChiDiffCOP;
+typedef utility::pointer::shared_ptr< RRComparerChiDiff > RRComparerChiDiffOP;
+typedef utility::pointer::shared_ptr< RRComparerChiDiff const > RRComparerChiDiffCOP;
 
 
 }//rotamer_recovery

@@ -203,7 +203,7 @@ EnzdesBaseProtocol::EnzdesBaseProtocol():
 
 		//set the native pose if requested
 		if( basic::options::option[basic::options::OptionKeys::in::file::native].user() ){
-			core::pose::PoseOP natpose = new core::pose::Pose();
+			core::pose::PoseOP natpose( new core::pose::Pose() );
 			core::import_pose::pose_from_pdb( *natpose, basic::options::option[basic::options::OptionKeys::in::file::native].value() );
 			(*scorefxn_)( *natpose);
 			this->set_native_pose( natpose );
@@ -307,28 +307,28 @@ EnzdesBaseProtocol::create_enzdes_pack_task(
 	//make sure the design targets are up to date
 	design_targets( pose );
 
-  DetectProteinLigandInterfaceOP detect_enzdes_interface = new DetectProteinLigandInterface();
+  DetectProteinLigandInterfaceOP detect_enzdes_interface( new DetectProteinLigandInterface() );
   detect_enzdes_interface->set_design(design);
 	if( include_all_design_targets_in_design_interface_ ){
 		detect_enzdes_interface->set_design_target_res( design_targets_ );
 	}
   TaskFactory taskfactory;
-  taskfactory.push_back( new operation::InitializeFromCommandline );
+  taskfactory.push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
   taskfactory.push_back( detect_enzdes_interface);
 	if( design ) { // upweight ligand interactions and remove bad aromatic rotamers during design only
-		taskfactory.push_back( new ProteinLigandInterfaceUpweighter() );
-		taskfactory.push_back( new toolbox::task_operations::LimitAromaChi2Operation() );
+		taskfactory.push_back( TaskOperationCOP( new ProteinLigandInterfaceUpweighter() ) );
+		taskfactory.push_back( TaskOperationCOP( new toolbox::task_operations::LimitAromaChi2Operation() ) );
 	}
 	if( toolbox::match_enzdes_util::get_enzdes_observer( pose ) ){
-		taskfactory.push_back( new AddRigidBodyLigandConfs() );
+		taskfactory.push_back( TaskOperationCOP( new AddRigidBodyLigandConfs() ) );
 	}
 	if( basic::options::option[basic::options::OptionKeys::enzdes::detect_design_interface].user() ){
-		SetCatalyticResPackBehaviorOP catpack = new SetCatalyticResPackBehavior();
+		SetCatalyticResPackBehaviorOP catpack( new SetCatalyticResPackBehavior() );
 		catpack->set_fix_catalytic_aa( this->fix_catalytic_aa_ );
 		taskfactory.push_back( catpack );
 	}
 	if( basic::options::option[basic::options::OptionKeys::enzdes::run_ligand_motifs].user() ){
-		taskfactory.push_back( new AddLigandMotifRotamers() );
+		taskfactory.push_back( TaskOperationCOP( new AddLigandMotifRotamers() ) );
 	}
 
 	PackerTaskOP task = taskfactory.create_task_and_apply_taskoperations( pose );
@@ -350,7 +350,7 @@ EnzdesBaseProtocol::setup_sequence_recovery_cache(
 	//that the wt sequence gets initiated
   if ( ! toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> get_seq_recovery_cache() ){
     using namespace toolbox::match_enzdes_util;
-    toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> set_seq_recovery_cache( new EnzdesSeqRecoveryCache );
+    toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> set_seq_recovery_cache( EnzdesSeqRecoveryCacheOP( new EnzdesSeqRecoveryCache ) );
   	toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> get_seq_recovery_cache() -> set_sequence( pose );
   }
 
@@ -374,7 +374,7 @@ EnzdesBaseProtocol::create_enzdes_movemap(
   bool min_all_jumps
 ) const
 {
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
+	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
 	movemap->set_jump( false );
 	movemap->set_chi( false );
 	movemap->set_bb( false );
@@ -456,8 +456,8 @@ core::Size jump_id ) const
 	core::Size const lig_id = jump_id !=0 ? get_ligand_id(pose, jump_id): 0;
   //restraining function for Calphas. should allow fairly liberal movement ~0.1A from the original position,
   //but severly limits movement beyond this
-  core::scoring::func::FuncOP ss_ca_restr_func = new core::scoring::constraints::BoundFunc( 0, bb_min_allowed_dev_, 0.1, "CAdis");
-  core::scoring::func::FuncOP loop_ca_restr_func = new core::scoring::constraints::BoundFunc( 0, loop_bb_min_allowed_dev_, 0.1, "CAdis");
+  core::scoring::func::FuncOP ss_ca_restr_func( new core::scoring::constraints::BoundFunc( 0, bb_min_allowed_dev_, 0.1, "CAdis") );
+  core::scoring::func::FuncOP loop_ca_restr_func( new core::scoring::constraints::BoundFunc( 0, loop_bb_min_allowed_dev_, 0.1, "CAdis") );
 
 	//note flo feb '11 reordering the foldtree will change residue types and can thus have an
 	//effect on constraints, which is a nasty bug bc different constraints will be enforced.
@@ -514,7 +514,7 @@ EnzdesBaseProtocol::enzdes_pack(
 
 		if( soft_rep ) packsfxn = soft_scorefxn_;
 		else packsfxn = scorefxn;
-		protocols::simple_moves::PackRotamersMoverOP enzdes_pack = new protocols::simple_moves::PackRotamersMover(packsfxn, usetask);
+		protocols::simple_moves::PackRotamersMoverOP enzdes_pack( new protocols::simple_moves::PackRotamersMover(packsfxn, usetask) );
 
 		enzdes_pack->apply(pose);
 
@@ -638,7 +638,7 @@ EnzdesBaseProtocol::cst_minimize(
 	//create movemap
 	 core::kinematics::MoveMapOP movemap = create_enzdes_movemap( pose, task, min_all_jumps_);
 	//setting up move map done, now do minimization
-	protocols::simple_moves::MinMoverOP dfpMinTightTol = new protocols::simple_moves::MinMover( movemap, min_scorefxn, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ );
+	protocols::simple_moves::MinMoverOP dfpMinTightTol( new protocols::simple_moves::MinMover( movemap, min_scorefxn, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ ) );
 	dfpMinTightTol->apply(pose);
 
 	min_scorefxn->set_weight( core::scoring::chainbreak, orig_cbreak_weight);
@@ -884,7 +884,7 @@ EnzdesBaseProtocol::generate_explicit_ligand_rotamer_poses(
 		for( utility::vector1< core::conformation::ResidueCOP >::const_iterator rot_it = accepted_rotamers.begin();
 				 rot_it != accepted_rotamers.end(); ++rot_it ){
 
-			core::pose::PoseOP lig_pose = new core::pose::Pose( orig_pose );
+			core::pose::PoseOP lig_pose( new core::pose::Pose( orig_pose ) );
 			lig_pose->replace_residue( i, **rot_it, true );
 
 			ligrot_poses.push_back( lig_pose );

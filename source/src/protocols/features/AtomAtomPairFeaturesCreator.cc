@@ -27,7 +27,7 @@ namespace features {
 AtomAtomPairFeaturesCreator::AtomAtomPairFeaturesCreator() {}
 AtomAtomPairFeaturesCreator::~AtomAtomPairFeaturesCreator() {}
 FeaturesReporterOP AtomAtomPairFeaturesCreator::create_features_reporter() const {
-	return new AtomAtomPairFeatures;
+	return FeaturesReporterOP( new AtomAtomPairFeatures );
 }
 
 std::string AtomAtomPairFeaturesCreator::type_name() const {

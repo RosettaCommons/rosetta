@@ -30,10 +30,10 @@ namespace core {
 namespace conformation {
 
 class Conformation;
-typedef utility::pointer::owning_ptr< Conformation       > ConformationOP;
-typedef utility::pointer::owning_ptr< Conformation const > ConformationCOP;
-typedef utility::pointer::access_ptr< Conformation       > ConformationAP;
-typedef utility::pointer::access_ptr< Conformation const > ConformationCAP;
+typedef utility::pointer::shared_ptr< Conformation       > ConformationOP;
+typedef utility::pointer::shared_ptr< Conformation const > ConformationCOP;
+typedef utility::pointer::weak_ptr< Conformation       > ConformationAP;
+typedef utility::pointer::weak_ptr< Conformation const > ConformationCAP;
 	
 } // conformation
 } // core

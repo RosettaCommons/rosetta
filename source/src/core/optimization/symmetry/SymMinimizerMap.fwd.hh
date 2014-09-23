@@ -22,8 +22,8 @@ namespace symmetry {
 
 class SymMinimizerMap;
 
-typedef utility::pointer::owning_ptr< SymMinimizerMap > SymMinimizerMapOP;
-typedef utility::pointer::owning_ptr< SymMinimizerMap const > SymMinimizerMapCOP;
+typedef utility::pointer::shared_ptr< SymMinimizerMap > SymMinimizerMapOP;
+typedef utility::pointer::shared_ptr< SymMinimizerMap const > SymMinimizerMapCOP;
 
 } // symmetry
 } // namespace optimization

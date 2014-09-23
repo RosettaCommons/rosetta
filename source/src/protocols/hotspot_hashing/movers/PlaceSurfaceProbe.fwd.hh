@@ -30,8 +30,8 @@ namespace movers
 class PlaceSurfaceProbe;
 
 // Types
-typedef utility::pointer::owning_ptr< PlaceSurfaceProbe >  PlaceSurfaceProbeOP;
-typedef utility::pointer::owning_ptr< PlaceSurfaceProbe const >  PlaceSurfaceProbeCOP;
+typedef utility::pointer::shared_ptr< PlaceSurfaceProbe >  PlaceSurfaceProbeOP;
+typedef utility::pointer::shared_ptr< PlaceSurfaceProbe const >  PlaceSurfaceProbeCOP;
 
 } // namespace movers
 } //namespace hotspot_hashing

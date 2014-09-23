@@ -80,8 +80,8 @@ public:
 
 
 	std::string get_name() const;
-	protocols::moves::MoverOP clone() const { return new NormalModeMinimizer( *this ); }
-	protocols::moves::MoverOP fresh_instance() const { return new NormalModeMinimizer; }
+	protocols::moves::MoverOP clone() const { return protocols::moves::MoverOP( new NormalModeMinimizer( *this ) ); }
+	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new NormalModeMinimizer ); }
 
 private:
 	void

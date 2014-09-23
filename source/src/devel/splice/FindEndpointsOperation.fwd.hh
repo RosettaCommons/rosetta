@@ -21,8 +21,8 @@ namespace splice {
     
 class FindEndpointsOperation;
 
-typedef utility::pointer::owning_ptr< FindEndpointsOperation > FindEndpointsOperationOP;
-typedef utility::pointer::owning_ptr< FindEndpointsOperation const > FindEndpointsOperationCOP;
+typedef utility::pointer::shared_ptr< FindEndpointsOperation > FindEndpointsOperationOP;
+typedef utility::pointer::shared_ptr< FindEndpointsOperation const > FindEndpointsOperationCOP;
 
 } //namespace splice
 } //namespace devel

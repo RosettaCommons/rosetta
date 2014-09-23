@@ -75,7 +75,7 @@ public:
 
 		// --- ScoreFunction ---
 		// create a score function using the standard packer weights
-		scorefxn = new core::scoring::ScoreFunction();
+		scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
 		//scorefxn->set_weight( scoring::surface, 0.5 );
 
 
@@ -105,7 +105,7 @@ public:
 	//utility function - we don't care about any of these rotamers but we have to do it anyway for the IGFactory
 	//relies on class member variables instead of passing stuff around
 	void make_rotset(){
-		rotsets = new rotamer_set::RotamerSets();
+		rotsets = rotamer_set::RotamerSetsOP( new rotamer_set::RotamerSets() );
 		rotsets->set_task( packertask );
 		packer_neighbor_graph = create_packer_graph( pose, *scorefxn, packertask );
 		rotsets->build_rotamers( pose, *scorefxn, packer_neighbor_graph );

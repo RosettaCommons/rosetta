@@ -85,7 +85,7 @@ MessageListenerFactory::get_listener(
 	switch ( tag ) {
 		case DATABASE_PROTOCOL_AND_BATCH_ID_TAG:
 			TR.Debug << "Creating a new DbMoverMessageListener" << std::endl;
-			listener = new DbMoverMessageListener();
+			listener = MessageListenerOP( new DbMoverMessageListener() );
 			break;
 
 		default:

@@ -59,8 +59,8 @@ private:
 	DisulfideAtomIndices res2_inds_;
 };
 
-typedef utility::pointer::owning_ptr< DisulfMinData > DisulfMinDataOP;
-typedef utility::pointer::owning_ptr< DisulfMinData const > DisulfMinDataCOP;
+typedef utility::pointer::shared_ptr< DisulfMinData > DisulfMinDataOP;
+typedef utility::pointer::shared_ptr< DisulfMinData const > DisulfMinDataCOP;
 
 
 DisulfMinData::DisulfMinData(
@@ -73,7 +73,7 @@ DisulfMinData::DisulfMinData(
 
 DisulfMinData::~DisulfMinData() {}
 
-DisulfMinData::CacheableDataOP DisulfMinData::clone() const { return new DisulfMinData( *this ); }
+DisulfMinData::CacheableDataOP DisulfMinData::clone() const { return DisulfMinData::CacheableDataOP( new DisulfMinData( *this ) ); }
 
 /// @brief which_res should be 1 or 2
 void DisulfMinData::set_res_inds( Size which_res, DisulfideAtomIndices const & dais )
@@ -97,7 +97,7 @@ methods::EnergyMethodOP
 FullatomDisulfideEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new FullatomDisulfideEnergy( ScoringManager::get_instance()->get_FullatomDisulfidePotential() );
+	return methods::EnergyMethodOP( new FullatomDisulfideEnergy( ScoringManager::get_instance()->get_FullatomDisulfidePotential() ) );
 }
 
 ScoreTypes
@@ -128,7 +128,7 @@ FullatomDisulfideEnergy::~FullatomDisulfideEnergy()
 methods:: EnergyMethodOP
 FullatomDisulfideEnergy::clone() const
 {
-	return new FullatomDisulfideEnergy( potential_ );
+	return methods::EnergyMethodOP( new FullatomDisulfideEnergy( potential_ ) );
 }
 
 void
@@ -139,15 +139,14 @@ FullatomDisulfideEnergy::ensure_lrenergy_container_is_up_to_date(
 	using namespace methods;
 
 	if ( pose.energies().long_range_container( fa_disulfide_energy ) == 0 ) {
-		FullatomDisulfideEnergyContainerOP dec = new FullatomDisulfideEnergyContainer( pose );
+		FullatomDisulfideEnergyContainerOP dec( new FullatomDisulfideEnergyContainer( pose ) );
 		pose.energies().set_long_range_container( fa_disulfide_energy, dec );
 	} else {
 		FullatomDisulfideEnergyContainerOP dec = FullatomDisulfideEnergyContainerOP (
-			static_cast< FullatomDisulfideEnergyContainer * > (
-			pose.energies().nonconst_long_range_container( fa_disulfide_energy ).get() ));
+			utility::pointer::static_pointer_cast< core::scoring::disulfides::FullatomDisulfideEnergyContainer > ( pose.energies().nonconst_long_range_container( fa_disulfide_energy ) ));
 		dec->update( pose );
 		if ( dec->num_residues() != pose.conformation().size() ) {
-			FullatomDisulfideEnergyContainerOP dec = new FullatomDisulfideEnergyContainer( pose );
+			FullatomDisulfideEnergyContainerOP dec( new FullatomDisulfideEnergyContainer( pose ) );
 			pose.energies().set_long_range_container( fa_disulfide_energy, dec );
 		}
 	}
@@ -274,7 +273,7 @@ FullatomDisulfideEnergy::setup_for_minimizing_for_residue_pair(
 	conformation::Residue const & rsdl( rsd1.seqpos() < rsd2.seqpos() ? rsd1 : rsd2 );
 	conformation::Residue const & rsdu( rsd1.seqpos() < rsd2.seqpos() ? rsd2 : rsd1 );
 
-	DisulfMinDataOP disulf_inds = new DisulfMinData( rsdl, rsdu );
+	DisulfMinDataOP disulf_inds( new DisulfMinData( rsdl, rsdu ) );
 
 	data_cache.set_data( fa_dslf_respair_data, disulf_inds );
 }
@@ -370,8 +369,7 @@ FullatomDisulfideEnergy::old_eval_atom_derivative(
 	}
 
 	FullatomDisulfideEnergyContainerCOP dec = FullatomDisulfideEnergyContainerCOP (
-		static_cast< FullatomDisulfideEnergyContainer const * > (
-		pose.energies().long_range_container( methods::fa_disulfide_energy ).get() ));
+		utility::pointer::static_pointer_cast< core::scoring::disulfides::FullatomDisulfideEnergyContainer const > ( pose.energies().long_range_container( methods::fa_disulfide_energy ) ));
 	if ( ! dec->residue_forms_disulfide( atomid.rsd() ) ) return;
 
 	if ( dec->disulfide_atom_indices( atomid.rsd() ).atom_gets_derivatives( atomid.atomno() ) ) {
@@ -427,8 +425,7 @@ FullatomDisulfideEnergy::residue_pair_energy(
 
 	if ( rsd1.aa() != chemical::aa_cys || rsd2.aa() != chemical::aa_cys ) return;
 	FullatomDisulfideEnergyContainerCOP dec = FullatomDisulfideEnergyContainerCOP (
-		static_cast< FullatomDisulfideEnergyContainer const * > (
-		pose.energies().long_range_container( methods::fa_disulfide_energy ).get() ));
+		utility::pointer::static_pointer_cast< core::scoring::disulfides::FullatomDisulfideEnergyContainer const > ( pose.energies().long_range_container( methods::fa_disulfide_energy ) ));
 	if ( ! dec->residue_forms_disulfide( rsd1.seqpos() ) ||
 			dec->other_neighbor_id( rsd1.seqpos() ) != (Size) rsd2.seqpos() ){
 		return;
@@ -508,8 +505,7 @@ FullatomDisulfideEnergy::defines_residue_pair_energy(
 	if ( ! pose.energies().long_range_container( fa_disulfide_energy )) return false;
 
 	FullatomDisulfideEnergyContainerCOP dec = FullatomDisulfideEnergyContainerCOP (
-		static_cast< FullatomDisulfideEnergyContainer const * > (
-		pose.energies().long_range_container( fa_disulfide_energy ).get() ));
+		utility::pointer::static_pointer_cast< core::scoring::disulfides::FullatomDisulfideEnergyContainer const > ( pose.energies().long_range_container( fa_disulfide_energy ) ));
 	return dec->disulfide_bonded( res1, res2 );
 }
 

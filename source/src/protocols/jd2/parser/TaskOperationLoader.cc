@@ -68,7 +68,7 @@ void TaskOperationLoader::load_data(
 }
 
 DataLoaderOP
-TaskOperationLoaderCreator::create_loader() const { return new TaskOperationLoader; }
+TaskOperationLoaderCreator::create_loader() const { return DataLoaderOP( new TaskOperationLoader ); }
 
 std::string
 TaskOperationLoaderCreator::keyname() const { return "TASKOPERATIONS"; }

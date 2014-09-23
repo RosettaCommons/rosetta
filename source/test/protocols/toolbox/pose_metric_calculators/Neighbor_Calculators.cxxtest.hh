@@ -64,16 +64,16 @@ public:
 
 		//set up the Neighbors calculators
 		using core::pose::metrics::PoseMetricCalculatorOP;
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "nbdc_buried", new protocols::toolbox::pose_metric_calculators::NeighborsByDistanceCalculator(213) );
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "nbdc_buried", PoseMetricCalculatorOP( new protocols::toolbox::pose_metric_calculators::NeighborsByDistanceCalculator(213) ) );
 
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "nbdc_surface", new protocols::toolbox::pose_metric_calculators::NeighborsByDistanceCalculator(204) );
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "nbdc_surface", PoseMetricCalculatorOP( new protocols::toolbox::pose_metric_calculators::NeighborsByDistanceCalculator(204) ) );
 
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "nbdc_interface", new protocols::toolbox::pose_metric_calculators::NeighborsByDistanceCalculator(265) );
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "nbdc_interface", PoseMetricCalculatorOP( new protocols::toolbox::pose_metric_calculators::NeighborsByDistanceCalculator(265) ) );
 
 		//set up the Neighborhood calculators (testing each constructor type)
 		std::set< core::Size > crset;
 		crset.insert(213); crset.insert(204), crset.insert(265);
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "nh_crset_calc", new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator(crset) );
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "nh_crset_calc", PoseMetricCalculatorOP( new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator(crset) ) );
 	}
 
 	virtual ~Neighbor_CalculatorsTests() {}
@@ -202,7 +202,7 @@ public:
 		//set up the calculator
 		using core::pose::metrics::PoseMetricCalculatorOP;
 		std::string const calc_d("IGNC_d");
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc_d, new protocols::toolbox::pose_metric_calculators::InterGroupNeighborsCalculator(domains) );
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc_d, PoseMetricCalculatorOP( new protocols::toolbox::pose_metric_calculators::InterGroupNeighborsCalculator(domains) ) );
 
 // 		std::cout << pose.print_metric("IGNC_d", "groups") << std::endl;
 // 		std::cout << pose.print_metric("IGNC_d", "dist_cutoff") << std::endl;
@@ -236,7 +236,7 @@ public:
 
 		//make the calculator
 		std::string const calc_g("IGNC_g");
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc_g, new protocols::toolbox::pose_metric_calculators::InterGroupNeighborsCalculator(groups) );
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc_g, PoseMetricCalculatorOP( new protocols::toolbox::pose_metric_calculators::InterGroupNeighborsCalculator(groups) ) );
 
 // 		std::cout << pose.print_metric("IGNC_g", "groups") << std::endl;
 // 		std::cout << pose.print_metric("IGNC_g", "dist_cutoff") << std::endl;

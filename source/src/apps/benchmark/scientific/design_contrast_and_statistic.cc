@@ -337,13 +337,13 @@ int main( int argc, char * argv [] )
 	// Initialize and use the mover
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
-	TaskFactoryOP main_task_factory = new TaskFactory;
-	main_task_factory->push_back( new operation::InitializeFromCommandline );
+	TaskFactoryOP main_task_factory( new TaskFactory );
+	main_task_factory->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
 	if ( option[ packing::resfile ].user() ) {
-		main_task_factory->push_back( new operation::ReadResfile );
+		main_task_factory->push_back( TaskOperationCOP( new operation::ReadResfile ) );
 	}
 	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
-	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
+	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
 	pack_mover->task_factory( main_task_factory );
 	pack_mover->score_function( score_fxn );
 	TR << "before the loop" << std::endl;

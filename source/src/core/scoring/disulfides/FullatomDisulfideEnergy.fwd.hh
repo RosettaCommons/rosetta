@@ -23,8 +23,8 @@ namespace disulfides {
 
 class FullatomDisulfideEnergy;
 
-typedef utility::pointer::owning_ptr< FullatomDisulfideEnergy > FullatomDisulfideEnergyOP;
-typedef utility::pointer::owning_ptr< FullatomDisulfideEnergy const > FullatomDisulfideEnergyCOP;
+typedef utility::pointer::shared_ptr< FullatomDisulfideEnergy > FullatomDisulfideEnergyOP;
+typedef utility::pointer::shared_ptr< FullatomDisulfideEnergy const > FullatomDisulfideEnergyCOP;
 
 
 } // namespace disulfides

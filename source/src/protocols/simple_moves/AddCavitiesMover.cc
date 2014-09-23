@@ -166,10 +166,10 @@ namespace simple_moves {
 			pose.append_residue_by_jump( *sucker, closest.rsd() );
 			int suck_resno = pose.total_residue();
 
-			pose.add_constraint( new CoordinateConstraint( AtomID(1,suck_resno),
+			pose.add_constraint( scoring::constraints::ConstraintCOP( new CoordinateConstraint( AtomID(1,suck_resno),
 																												 AtomID(1,virt_resno),
 																												 sucker->xyz(1),
-																												 func ) );
+																												 func ) ) );
 		  ++count;
 		}
 		//std::cerr << "added " << count << " suckers" << std::endl;

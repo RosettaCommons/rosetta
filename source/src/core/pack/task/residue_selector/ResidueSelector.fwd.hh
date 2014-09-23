@@ -29,10 +29,10 @@ typedef utility::vector1< bool > ResidueSubset;
 
 class ResidueSelector;
 
-typedef utility::pointer::owning_ptr< ResidueSelector > ResidueSelectorOP;
-typedef utility::pointer::owning_ptr< ResidueSelector const > ResidueSelectorCOP;
-typedef utility::pointer::access_ptr< ResidueSelector > ResidueSelectorAP;
-typedef utility::pointer::access_ptr< ResidueSelector const > ResidueSelectorCAP;
+typedef utility::pointer::shared_ptr< ResidueSelector > ResidueSelectorOP;
+typedef utility::pointer::shared_ptr< ResidueSelector const > ResidueSelectorCOP;
+typedef utility::pointer::weak_ptr< ResidueSelector > ResidueSelectorAP;
+typedef utility::pointer::weak_ptr< ResidueSelector const > ResidueSelectorCAP;
 
 } //namespace residue_selector
 } //namespace task

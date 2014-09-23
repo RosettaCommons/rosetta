@@ -22,8 +22,8 @@ namespace canonical_sampling {
 // Forward
 class SimulatedTempering;
 
-typedef utility::pointer::owning_ptr< SimulatedTempering > SimulatedTemperingOP;
-typedef utility::pointer::owning_ptr< SimulatedTempering const > SimulatedTemperingCOP;
+typedef utility::pointer::shared_ptr< SimulatedTempering > SimulatedTemperingOP;
+typedef utility::pointer::shared_ptr< SimulatedTempering const > SimulatedTemperingCOP;
 
 } // namespace canonical_sampling
 } // namespace protocols

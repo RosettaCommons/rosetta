@@ -142,7 +142,7 @@ AngleConstraint::remapped_clone( pose::Pose const& src, pose::Pose const& dest, 
 	id::AtomID id2( named_atom_id_to_atom_id( atom2, dest ) );
 	id::AtomID id3( named_atom_id_to_atom_id( atom3, dest ) );
 	if ( id1.valid() && id2.valid() && id3.valid() ) {
-		return new AngleConstraint( id1, id2, id3, func_, score_type() );
+		return ConstraintOP( new AngleConstraint( id1, id2, id3, func_, score_type() ) );
 	} else {
 		return NULL;
 	}

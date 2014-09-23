@@ -264,7 +264,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 	// clear the evaluators or else different input pdbs may cause a runtime error
 	// when doing rmsd evaluations
 	jd->job_outputter()->clear_evaluators();
-	jd->job_outputter()->add_evaluation( new simple_filters::RmsdEvaluator( pose::PoseOP( new pose::Pose( unmodified_pose ) ), "" ) );
+	jd->job_outputter()->add_evaluation( evaluation::PoseEvaluatorOP( new simple_filters::RmsdEvaluator( pose::PoseOP( new pose::Pose( unmodified_pose ) ), "" ) ) );
 
 	//scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
 	scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
@@ -325,7 +325,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 	pose::add_comment( pose, output_name + "_input_score", scorestr.str() );
 
 	// setup relax protocol for sub pose (frag pair)
-	protocols::relax::RelaxProtocolBaseOP sub_pose_relax_protocol = new protocols::relax::FastRelax( scorefxn, relax_frags_repeats_ );
+	protocols::relax::RelaxProtocolBaseOP sub_pose_relax_protocol( new protocols::relax::FastRelax( scorefxn, relax_frags_repeats_ ) );
 	kinematics::MoveMapOP mm = sub_pose_relax_protocol->get_movemap();
 	mm->set_jump(true); // set jumps movable
 
@@ -594,11 +594,11 @@ std::string NonlocalFrags::get_name() const {
 }
 
 protocols::moves::MoverOP NonlocalFrags::clone() const {
-  return new NonlocalFrags(*this);
+  return protocols::moves::MoverOP( new NonlocalFrags(*this) );
 }
 
 protocols::moves::MoverOP NonlocalFrags::fresh_instance() const {
-  return new NonlocalFrags();
+  return protocols::moves::MoverOP( new NonlocalFrags() );
 }
 
 

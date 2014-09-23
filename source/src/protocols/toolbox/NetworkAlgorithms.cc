@@ -136,7 +136,7 @@ ResidueNetwork::create_from_pose( core::pose::Pose const & pose )
 	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
 		std::string resname = pose.residue( i ).name3() + boost::lexical_cast<std::string>( i );
 		TR.Debug << "Adding node " << resname << std::endl;
-		nodes_.push_back( new Node( resname, i ) );
+		nodes_.push_back( utility::pointer::shared_ptr<class protocols::toolbox::Node>( new Node( resname, i ) ) );
 	} // for each residue
 
 	TR << "nodes size=" << nodes_.size() << ", computing edges..."; TR.flush();

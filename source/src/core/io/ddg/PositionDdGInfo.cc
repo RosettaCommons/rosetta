@@ -117,7 +117,7 @@ namespace PositionDdGInfo{
 			
 			std::map< core::Size, PositionDdGInfoOP >::iterator muts_it( to_return.find( mut_seqpos ));
 			if( muts_it == to_return.end() ){
-				PositionDdGInfoOP pos_info = new PositionDdGInfo( mut_seqpos, wt_aa );
+				PositionDdGInfoOP pos_info( new PositionDdGInfo( mut_seqpos, wt_aa ) );
 				to_return.insert( std::pair< core::Size, PositionDdGInfoOP >( mut_seqpos, pos_info ) );
 				muts_it = to_return.find( mut_seqpos );
 			}

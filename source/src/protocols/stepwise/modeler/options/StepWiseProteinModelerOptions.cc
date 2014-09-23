@@ -92,7 +92,7 @@ namespace options {
 	StepWiseProteinModelerOptionsOP
 	StepWiseProteinModelerOptions::clone() const
 	{
-		return new StepWiseProteinModelerOptions( *this );
+		return StepWiseProteinModelerOptionsOP( new StepWiseProteinModelerOptions( *this ) );
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////

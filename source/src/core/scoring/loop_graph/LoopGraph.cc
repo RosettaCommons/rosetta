@@ -135,14 +135,14 @@ namespace loop_graph {
 			}
 
 			// Note loop_fixed_cost_ needs to be my current loop_fixed_cost_ but corrected by 1.5 * k_B_T_ * log( rna_persistence_length2_ )
-			core::scoring::func::FuncOP func = new core::scoring::func::GaussianChainFunc( total_gaussian_variance, loop_fixed_cost_, other_distances );
+			core::scoring::func::FuncOP func( new core::scoring::func::GaussianChainFunc( total_gaussian_variance, loop_fixed_cost_, other_distances ) );
 			Real const loop_closure_energy = func->func( main_distance );
 			total_energy_ += loop_closure_energy;
 			//			TR << "Variance " << total_gaussian_variance << "  distance: " << main_distance << " ==> " << loop_closure_energy << std::endl;
 
 			if ( current_pose_idx_in_cycle ){
 				// save information to allow derivative computation.
-				LoopScoreInfoOP loop_score_info = new LoopScoreInfo;
+				LoopScoreInfoOP loop_score_info( new LoopScoreInfo );
 				loop_score_info->set_takeoff_atom( current_pose_takeoff_atom_id );
 				loop_score_info->set_landing_atom( current_pose_landing_atom_id );
 				loop_score_info->set_func( func );

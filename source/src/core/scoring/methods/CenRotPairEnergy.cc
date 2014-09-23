@@ -42,7 +42,7 @@ methods::EnergyMethodOP
 CenRotPairEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new methods::CenRotPairEnergy;
+	return methods::EnergyMethodOP( new methods::CenRotPairEnergy );
 }
 
 /// @brief Return the set of score types claimed by the EnergyMethod
@@ -66,7 +66,7 @@ CenRotPairEnergy::CenRotPairEnergy() :
 /// clone
 EnergyMethodOP
 CenRotPairEnergy::clone() const {
-	return new CenRotPairEnergy();
+	return EnergyMethodOP( new CenRotPairEnergy() );
 }
 
 

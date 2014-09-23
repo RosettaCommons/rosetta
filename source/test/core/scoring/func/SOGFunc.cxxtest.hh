@@ -42,7 +42,7 @@ class SOGFuncTests : public CxxTest::TestSuite {
     sdevs.push_back( 2.0 );
     weights.push_back( 0.3334 );
 
-    SOGFunc_ImplOP func = new SOGFunc_Impl(means, sdevs, weights);
+    SOGFunc_ImplOP func( new SOGFunc_Impl(means, sdevs, weights) );
     Real const TOLERATED_ERROR = 0.001;
     Real const start = 2.0;
     Real const end = 20.0;

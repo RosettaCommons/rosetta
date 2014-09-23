@@ -53,7 +53,7 @@ public:
 	);
 
 	virtual core::io::silent::SilentStructOP clone() const {
-		return new PDBSilentStruct( *this );
+		return core::io::silent::SilentStructOP( new PDBSilentStruct( *this ) );
 	}
 
 	// destructor

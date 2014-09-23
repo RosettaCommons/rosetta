@@ -50,7 +50,7 @@ methods::EnergyMethodOP
 HybridVDW_EnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new HybridVDW_Energy;
+	return methods::EnergyMethodOP( new HybridVDW_Energy );
 }
 
 ScoreTypes
@@ -74,7 +74,7 @@ HybridVDW_Energy::HybridVDW_Energy() :
 EnergyMethodOP
 HybridVDW_Energy::clone() const
 {
-	return new HybridVDW_Energy( *this );
+	return EnergyMethodOP( new HybridVDW_Energy( *this ) );
 }
 
 /// @details  copy c-tor

@@ -22,8 +22,8 @@ namespace protocols {
 namespace simple_moves {
 
 class SetTorsion;
-typedef utility::pointer::owning_ptr< SetTorsion > SetTorsionOP;
-typedef utility::pointer::owning_ptr< SetTorsion const > SetTorsionCOP;
+typedef utility::pointer::shared_ptr< SetTorsion > SetTorsionOP;
+typedef utility::pointer::shared_ptr< SetTorsion const > SetTorsionCOP;
 
 } // moves
 } // protocols

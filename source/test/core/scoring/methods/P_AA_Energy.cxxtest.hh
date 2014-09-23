@@ -68,14 +68,14 @@ class P_AA_EnergyTests : public CxxTest::TestSuite {
 		the_pose = create_test_in_pdb_poseop();
 		//core::import_pose::pose_from_pdb( *the_pose, "core/scoring/methods/test_in.pdb" );
 
-		paa_energy = new P_AA_Energy;
+		paa_energy = P_AA_EnergyOP( new P_AA_Energy );
 
 	}
 
 	// Shared finalization goes here.
 	void tearDown() {
-		the_pose = 0;
-		paa_energy = 0;
+		the_pose.reset();
+		paa_energy.reset();
 	}
 
 

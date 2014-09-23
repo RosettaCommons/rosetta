@@ -21,8 +21,8 @@ namespace protocols {
 namespace simple_moves {
 
 class MonteCarloRecover;
-typedef utility::pointer::owning_ptr< MonteCarloRecover >  MonteCarloRecoverOP;
-typedef utility::pointer::owning_ptr< MonteCarloRecover const >  MonteCarloRecoverCOP;
+typedef utility::pointer::shared_ptr< MonteCarloRecover >  MonteCarloRecoverOP;
+typedef utility::pointer::shared_ptr< MonteCarloRecover const >  MonteCarloRecoverCOP;
 
 
 } // namespace simple_moves

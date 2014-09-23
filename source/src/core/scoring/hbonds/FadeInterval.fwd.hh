@@ -24,8 +24,8 @@ namespace hbonds{
 
 class FadeInterval;
 
-typedef utility::pointer::owning_ptr< FadeInterval > FadeIntervalOP;
-typedef utility::pointer::owning_ptr< FadeInterval const > FadeIntervalCOP;
+typedef utility::pointer::shared_ptr< FadeInterval > FadeIntervalOP;
+typedef utility::pointer::shared_ptr< FadeInterval const > FadeIntervalCOP;
 
 } //hbonds
 } //scoring

@@ -180,12 +180,11 @@ namespace
 				TS_ASSERT_EQUALS(jump2_count, 1);
 
 				// Test with TaskOperation restriction
-				core::pack::task::TaskFactoryOP select_12 = new core::pack::task::TaskFactory();
+				core::pack::task::TaskFactoryOP select_12( new core::pack::task::TaskFactory() );
 				utility::vector1<core::Size> nopack_residues;
 				nopack_residues.push_back(3);
 				nopack_residues.push_back(4);
-				protocols::toolbox::task_operations::PreventResiduesFromRepackingOperationOP prevent_3_repack = 
-					new protocols::toolbox::task_operations::PreventResiduesFromRepackingOperation(nopack_residues);
+				protocols::toolbox::task_operations::PreventResiduesFromRepackingOperationOP prevent_3_repack( new protocols::toolbox::task_operations::PreventResiduesFromRepackingOperation(nopack_residues) );
 				select_12->push_back(prevent_3_repack);
 
 				AtomicContactCountFilter res12_filter;

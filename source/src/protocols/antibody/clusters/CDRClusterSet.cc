@@ -21,7 +21,7 @@ namespace clusters {
 	
 CDRClusterSet::CDRClusterSet(AntibodyInfo * ab_info){
 	ab_info_ = ab_info;
-	cluster_matcher_ = new CDRClusterMatcher();
+	cluster_matcher_ = CDRClusterMatcherOP( new CDRClusterMatcher() );
 	clear();
 }
 

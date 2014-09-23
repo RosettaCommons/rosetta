@@ -100,12 +100,12 @@ single_motif_from_filename(
 	utility::file::FileName const & motif_filename
 )
 {
-	core::pose::PoseOP pose = new core::pose::Pose;
+	core::pose::PoseOP pose( new core::pose::Pose );
 	core::import_pose::pose_from_pdb( *pose, motif_filename );
 	core::conformation::Residue res1( pose->residue(1) ); //the motifs in my motif pdbs are setup so that residue #1 is the amino acid and #2 is the base
 	core::conformation::Residue res2( pose->residue(2) ); //this function at some point include some checks to see what residue is base or amino acid or both bases, both amino acids (or something else, like a ligand, etc)
 
-	SingleMotifOP retval = new SingleMotif( res1, res2 );
+	SingleMotifOP retval( new SingleMotif( res1, res2 ) );
 	std::string this_remark( motif_filename.base() ); //I am using the remark to keep track of the pdb name for output purposes (I don't know what Jim is using the remark for, since he made it)
 	std::string this_path( motif_filename.path() ); //I am using the remark to keep track of the pdb name for output purposes (I don't know what Jim is using the remark for, since he made it)
 	retval->store_remark( this_remark );
@@ -157,7 +157,7 @@ single_motif_from_stream(
 
 	motif_info >> motif_jump;
 
-	SingleMotifOP retval = new SingleMotif( res1, r1atom1, r1atom2, r1atom3, res2, r2atom1, r2atom2, r2atom3, motif_jump );
+	SingleMotifOP retval( new SingleMotif( res1, r1atom1, r1atom2, r1atom3, res2, r2atom1, r2atom2, r2atom3, motif_jump ) );
 	if( has_remark ) {
 		retval->store_remark( this_remark );
 	}
@@ -211,7 +211,7 @@ single_motif_from_stream(
 
 	motif_info >> motif_jump;
 
-	SingleMotifOP retval = new SingleMotif( res1, r1atom1, r1atom2, r1atom3, res2, r2atom1, r2atom2, r2atom3, motif_jump );
+	SingleMotifOP retval( new SingleMotif( res1, r1atom1, r1atom2, r1atom3, res2, r2atom1, r2atom2, r2atom3, motif_jump ) );
 	if( has_remark ) {
 		retval->store_remark( this_remark );
 	}
@@ -256,7 +256,7 @@ single_ligand_motif_from_stream(
 		} else {
 	}
 	motif_info >> motif_jump;
-	SingleMotifOP retval = new SingleMotif( res1, r1atom1, r1atom2, r1atom3, r2atom1, r2atom2, r2atom3, motif_jump );
+	SingleMotifOP retval( new SingleMotif( res1, r1atom1, r1atom2, r1atom3, r2atom1, r2atom2, r2atom3, motif_jump ) );
 	if( has_remark ) {
 		retval->store_remark( this_remark );
 	}
@@ -316,23 +316,23 @@ add_motif_bb_constraints(
 	using namespace core::scoring::constraints;
 	using namespace core::scoring::func;
 
-	FuncOP fx1 = new core::scoring::func::HarmonicFunc( 0.0, 1.0 );
-	cst_set->add_constraint( new CoordinateConstraint( core::id::AtomID( pose.residue( this_pos ).atom_index( "CA" ), this_pos ),
+	FuncOP fx1( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
+	cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint( core::id::AtomID( pose.residue( this_pos ).atom_index( "CA" ), this_pos ),
 																											core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
 																											inv_rotamer.xyz( "CA" ),
-																											fx1 ) );
+																											fx1 ) ) );
 
-	FuncOP fx2 = new core::scoring::func::HarmonicFunc( 0.0, 1.0 );
-	cst_set->add_constraint( new CoordinateConstraint( core::id::AtomID( pose.residue( this_pos ).atom_index( "C" ), this_pos ),
+	FuncOP fx2( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
+	cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint( core::id::AtomID( pose.residue( this_pos ).atom_index( "C" ), this_pos ),
 																											core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
 																											inv_rotamer.xyz( "C" ),
-																											fx2 ) );
+																											fx2 ) ) );
 
-	FuncOP fx3 = new core::scoring::func::HarmonicFunc( 0.0, 1.0 );
-	cst_set->add_constraint( new CoordinateConstraint( core::id::AtomID( pose.residue( this_pos ).atom_index( "N" ), this_pos ),
+	FuncOP fx3( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
+	cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint( core::id::AtomID( pose.residue( this_pos ).atom_index( "N" ), this_pos ),
 																											core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
 																											inv_rotamer.xyz( "N" ),
-																											fx3 ) );
+																											fx3 ) ) );
 
 	// For the fourth atom, if either residue is glycine, you need to use HA, else use CB
 	if( pose.residue( this_pos ).type().aa() == core::chemical::aa_gly || inv_rotamer.type().aa() == core::chemical::aa_gly ) {
@@ -341,17 +341,17 @@ add_motif_bb_constraints(
 		core::Size index2( inv_rotamer.type().aa() == core::chemical::aa_gly ?
 					inv_rotamer.atom_index( "1HA" ) : inv_rotamer.atom_index( "HA" ) );
 
-		FuncOP fx = new core::scoring::func::HarmonicFunc( 0.0, 1.0 );
-		cst_set->add_constraint( new CoordinateConstraint( core::id::AtomID( index1, this_pos ),
+		FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
+		cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint( core::id::AtomID( index1, this_pos ),
 																											core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
 																											inv_rotamer.xyz( index2 ),
-																											fx ) );
+																											fx ) ) );
 	} else {
-		FuncOP fx = new core::scoring::func::HarmonicFunc( 0.0, 1.0 );
-		cst_set->add_constraint( new CoordinateConstraint( core::id::AtomID( pose.residue( this_pos ).atom_index( "CB" ), this_pos ),
+		FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
+		cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint( core::id::AtomID( pose.residue( this_pos ).atom_index( "CB" ), this_pos ),
 																											core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
 																											inv_rotamer.xyz( "CB" ),
-																											fx ) );
+																											fx ) ) );
 	}
 
 	return;
@@ -392,23 +392,23 @@ add_motif_sc_constraints(
 		}
 	}
 
-	FuncOP fx1 = new core::scoring::func::HarmonicFunc( 0.0, 1.0 );
-	cst_set->add_constraint( new CoordinateConstraint( core::id::AtomID( index1, this_pos ),
+	FuncOP fx1( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
+	cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint( core::id::AtomID( index1, this_pos ),
 																											core::id::AtomID( pose.residue( first_protein_resi ).atom_index( "CA" ), 1 ),
 																											inv_rotamer.xyz( index1 ),
-																											fx1 ) );
+																											fx1 ) ) );
 
-	FuncOP fx2 = new core::scoring::func::HarmonicFunc( 0.0, 1.0 );
-	cst_set->add_constraint( new CoordinateConstraint( core::id::AtomID( index2, this_pos ),
+	FuncOP fx2( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
+	cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint( core::id::AtomID( index2, this_pos ),
 																											core::id::AtomID( pose.residue( first_protein_resi ).atom_index( "CA" ), 1 ),
 																											inv_rotamer.xyz( index2 ),
-																											fx2 ) );
+																											fx2 ) ) );
 
-	FuncOP fx3 = new core::scoring::func::HarmonicFunc( 0.0, 1.0 );
-	cst_set->add_constraint( new CoordinateConstraint( core::id::AtomID( index3, this_pos ),
+	FuncOP fx3( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
+	cst_set->add_constraint( ConstraintCOP( new CoordinateConstraint( core::id::AtomID( index3, this_pos ),
 																											core::id::AtomID( pose.residue( first_protein_resi ).atom_index( "CA" ), 1 ),
 																											inv_rotamer.xyz( index3 ),
-																											fx3 ) );
+																											fx3 ) ) );
 
 	return;
 }
@@ -558,7 +558,7 @@ get_targetconformers_user()
 			if ( !utility::file::file_exists( *filename ) ) {
 				continue;
 			}
-			core::pose::PoseOP pose = new core::pose::Pose;
+			core::pose::PoseOP pose( new core::pose::Pose );
 			core::import_pose::pose_from_pdb( *pose, *filename );
 			if ( pose->total_residue() > 1 ) {
 				std::cerr << "WARNING!!! Conformer PDB contains more than one residue, loading all residues in PDB as conformers." << std::endl;

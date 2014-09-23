@@ -18,8 +18,8 @@ namespace protocols {
 namespace loop_modeling {
 
 class LoopBuilder;
-typedef utility::pointer::owning_ptr<LoopBuilder> LoopBuilderOP;
-typedef utility::pointer::owning_ptr<LoopBuilder const> LoopBuilderCOP;
+typedef utility::pointer::shared_ptr<LoopBuilder> LoopBuilderOP;
+typedef utility::pointer::shared_ptr<LoopBuilder const> LoopBuilderCOP;
 
 }
 }

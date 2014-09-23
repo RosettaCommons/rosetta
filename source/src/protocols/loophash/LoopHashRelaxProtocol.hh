@@ -37,8 +37,8 @@ namespace protocols {
 namespace loophash {
 
 class LoopHashRelaxProtocol;
-typedef utility::pointer::owning_ptr< LoopHashRelaxProtocol > LoopHashRelaxProtocolOP;
-typedef utility::pointer::owning_ptr< LoopHashRelaxProtocol const > LoopHashRelaxProtocolCOP;
+typedef utility::pointer::shared_ptr< LoopHashRelaxProtocol > LoopHashRelaxProtocolOP;
+typedef utility::pointer::shared_ptr< LoopHashRelaxProtocol const > LoopHashRelaxProtocolCOP;
 
 
 class LoopHashRelaxProtocol: public protocols::moves::Mover {

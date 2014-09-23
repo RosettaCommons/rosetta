@@ -24,8 +24,8 @@ namespace simple_moves {
 
 class DesignRepackMover;
 
-typedef utility::pointer::owning_ptr< DesignRepackMover > DesignRepackMoverOP;
-typedef utility::pointer::owning_ptr< DesignRepackMover const > DesignRepackMoverCOP;
+typedef utility::pointer::shared_ptr< DesignRepackMover > DesignRepackMoverOP;
+typedef utility::pointer::shared_ptr< DesignRepackMover const > DesignRepackMoverCOP;
 
 }
 }

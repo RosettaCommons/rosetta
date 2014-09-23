@@ -28,8 +28,8 @@ namespace membrane {
 
 /// @brief Membrane Potential Based CBeta Energy Term
 class MPCbetaEnergy;
-typedef utility::pointer::owning_ptr< MPCbetaEnergy > MPCbetaEnergyOP;
-typedef utility::pointer::owning_ptr< MPCbetaEnergy const > MPCbetaEnergyCOP;
+typedef utility::pointer::shared_ptr< MPCbetaEnergy > MPCbetaEnergyOP;
+typedef utility::pointer::shared_ptr< MPCbetaEnergy const > MPCbetaEnergyCOP;
 
 } // membrane
 } // scoring

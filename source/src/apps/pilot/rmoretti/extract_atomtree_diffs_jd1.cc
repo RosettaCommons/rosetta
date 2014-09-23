@@ -128,7 +128,7 @@ main( int argc, char * argv [] )
 	// This used to be required but will be rarely used now.
 	core::pose::PoseOP native_pose;
 	if( option[ in::file::native ].user() ) {
-		native_pose = new core::pose::Pose();
+		native_pose = core::pose::PoseOP( new core::pose::Pose() );
 		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]().name() );
 	}
 
@@ -145,7 +145,7 @@ main( int argc, char * argv [] )
 		//we need the residue type set, assuming FA standard is used
 		core::chemical::ResidueTypeSetCAP restype_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 		option[basic::options::OptionKeys::run::preserve_header ].value(true);
-		constraint_io = new protocols::toolbox::match_enzdes_util::EnzConstraintIO( restype_set );
+		constraint_io = protocols::toolbox::match_enzdes_util::EnzConstraintIOOP( new protocols::toolbox::match_enzdes_util::EnzConstraintIO( restype_set ) );
 		constraint_io->read_enzyme_cstfile(basic::options::option[basic::options::OptionKeys::enzdes::cstfile]);
 	}
 
@@ -183,8 +183,8 @@ main( int argc, char * argv [] )
 			// If this tag was not requested on cmd line, skip it.
 			if( !desired_tags.empty() && desired_tags.count(output_tag) == 0 ) continue;
 
-			core::pose::PoseOP the_pose = new core::pose::Pose();
-			if( native_pose() == NULL ) atdiff.read_pose(output_tag, *the_pose);
+			core::pose::PoseOP the_pose( new core::pose::Pose() );
+			if( native_pose == NULL ) atdiff.read_pose(output_tag, *the_pose);
 			else atdiff.read_pose(output_tag, *the_pose, *native_pose);
 
 			// Score new structure.  Cached energies (including *residue* energies)

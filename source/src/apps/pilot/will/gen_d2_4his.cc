@@ -251,7 +251,7 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
 
 
 void minimize(Pose & pose, Size nres, Size , ScoreFunctionOP sf, int bb=0) {
-  core::kinematics::MoveMapOP movemap=new core::kinematics::MoveMap;
+  core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
   // core::pose::symmetry::make_symmetric_movemap(pose,*movemap);
   movemap->set_chi(true);
   movemap->set_bb(false);
@@ -271,7 +271,7 @@ void minimize(Pose & pose, Size nres, Size , ScoreFunctionOP sf, int bb=0) {
 struct Hit : public utility::pointer::ReferenceCount {
   Size ihis,jhis,khis,lhis;
 };
-typedef utility::pointer::owning_ptr<Hit> HitOP;
+typedef utility::pointer::shared_ptr<Hit> HitOP;
 
 
 

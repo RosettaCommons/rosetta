@@ -46,13 +46,13 @@ class ChunkTest : public CxxTest::TestSuite {
     core_init();
 
     // define the movable backbone degrees of freedom
-		movable_ = new MoveMap();
+		movable_ = MoveMapOP( new MoveMap() );
 		movable_->set_bb(true);
 		for (Size i = 5; i <= 10; ++i)
 			movable_->set_bb(i, false);
 
-    valid_chunk_.reset(new Chunk(new Region(1,5), movable_));
-		invalid_chunk_.reset(new Chunk(new Region(5,10), movable_));
+    valid_chunk_.reset(new Chunk(RegionOP( new Region(1,5) ), movable_));
+		invalid_chunk_.reset(new Chunk(RegionOP( new Region(5,10) ), movable_));
 	}
 
 	void tearDown() {}

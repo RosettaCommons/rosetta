@@ -18,8 +18,8 @@ namespace protocols {
 namespace dna {
 
 class DnaInterfacePacker;
-typedef utility::pointer::owning_ptr< DnaInterfacePacker > DnaInterfacePackerOP;
-typedef utility::pointer::owning_ptr< DnaInterfacePacker const > DnaInterfacePackerCOP;
+typedef utility::pointer::shared_ptr< DnaInterfacePacker > DnaInterfacePackerOP;
+typedef utility::pointer::shared_ptr< DnaInterfacePacker const > DnaInterfacePackerCOP;
 
 
 } // namespace dna

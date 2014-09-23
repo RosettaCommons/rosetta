@@ -69,7 +69,7 @@ SymDofMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 SymDofMoverCreator::create_mover() const {
-	return new SymDofMover;
+	return protocols::moves::MoverOP( new SymDofMover );
 }
 
 std::string
@@ -104,12 +104,12 @@ SymDofMover::SymDofMover() :
 
 protocols::moves::MoverOP
 SymDofMover::clone() const {
-	return new SymDofMover( *this );
+	return protocols::moves::MoverOP( new SymDofMover( *this ) );
 }
 
 protocols::moves::MoverOP
 SymDofMover::fresh_instance() const {
-	return new SymDofMover();
+	return protocols::moves::MoverOP( new SymDofMover() );
 }
 
 utility::vector1<std::string>

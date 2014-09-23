@@ -268,16 +268,16 @@ my_main( void* )
 	// create a TaskFactory with the resfile
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
-	TaskFactoryOP main_task_factory = new TaskFactory;
-	main_task_factory->push_back( new operation::InitializeFromCommandline );
+	TaskFactoryOP main_task_factory( new TaskFactory );
+	main_task_factory->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
 	if ( option[ packing::resfile ].user() ) {
-		main_task_factory->push_back( new operation::ReadResfile );
+		main_task_factory->push_back( TaskOperationCOP( new operation::ReadResfile ) );
 	} else {
-		operation::RestrictToRepackingOP rtrop = new operation::RestrictToRepacking;
+		operation::RestrictToRepackingOP rtrop( new operation::RestrictToRepacking );
 		main_task_factory->push_back( rtrop );
 	}
 	// C-beta atoms should not be altered during packing because branching atoms are optimized
-	main_task_factory->push_back( new operation::PreserveCBeta );
+	main_task_factory->push_back( TaskOperationCOP( new operation::PreserveCBeta ) );
 
 	// set up the score function and add the bond angle energy term
 	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
@@ -292,7 +292,7 @@ my_main( void* )
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn);
 	}
 	// use an empty score function if testing detailed balance
-	if (option[ backrub::test_detailed_balance ]) score_fxn = new core::scoring::ScoreFunction();
+	if (option[ backrub::test_detailed_balance ]) score_fxn = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
 
 	// set up the BackrubMover
 	protocols::backrub::BackrubMover backrubmover;
@@ -310,7 +310,7 @@ my_main( void* )
 	smallmover.set_preserve_detailed_balance(option[ backrub::detailed_balance ]);
 	if ( option[ backrub::sm_angle_max ].user() ) smallmover.angle_max(option[ backrub::sm_angle_max ]);
 	if (option[ backrub::sm_prob ] > 0) {
-		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 		movemap->init_from_file(option[ in::file::movemap ]);
 		smallmover.movemap(movemap);
 	}
@@ -335,7 +335,7 @@ my_main( void* )
 		bool custom_fold_tree(false);
 
 		// load the PDB file
-		core::pose::PoseOP input_pose(new core::pose::Pose());
+		core::pose::PoseOP input_pose( new core::pose::Pose() );
 		if ( option[ in::file::centroid_input ].user() ) {
 			TR.Warning << "*** This is untested with centroid mode! ***" << std::endl;
 			core::import_pose::centroid_pose_from_pdb( *input_pose, input_jobs[jobnum]->input_tag() );
@@ -395,7 +395,7 @@ my_main( void* )
 		for (int structnum = 1; structnum <= input_jobs[jobnum]->nstruct(); ++structnum)
 		{
 			// start with a fresh copy of the optimized pose
-			core::pose::PoseOP pose(new core::pose::Pose(*input_pose));
+			core::pose::PoseOP pose( new core::pose::Pose(*input_pose) );
 
 			// repack/redesign at the beginning if specified/necessary
 			if (initial_pack) {
@@ -406,9 +406,9 @@ my_main( void* )
 				if (option[ backrub::minimize_movemap ].user()) {
 
 					// setup the MoveMaps
-					core::kinematics::MoveMapOP minimize_movemap = new core::kinematics::MoveMap;
+					core::kinematics::MoveMapOP minimize_movemap( new core::kinematics::MoveMap );
 					minimize_movemap->init_from_file(option[ backrub::minimize_movemap ]);
-					core::kinematics::MoveMapOP minimize_movemap_progressive = new core::kinematics::MoveMap;
+					core::kinematics::MoveMapOP minimize_movemap_progressive( new core::kinematics::MoveMap );
 
 					// setup the MinMover
 					protocols::simple_moves::MinMover minmover;

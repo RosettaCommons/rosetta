@@ -319,7 +319,7 @@ MMTReceiver::initialize_state_data( StateInputData const & sid )
 	StateData sd;
 
 	// initialize the pose
-	sd.pose = new core::pose::Pose;
+	sd.pose = core::pose::PoseOP( new core::pose::Pose );
 	core::import_pose::ImportPoseOptions import_opts;
 	core::import_pose::pose_from_pdbstring( *sd.pose, sid.pdb_string, import_opts, sid.pdb_name );
 
@@ -327,7 +327,7 @@ MMTReceiver::initialize_state_data( StateInputData const & sid )
 
 	// initialize the secondary resfile contents
 	std::istringstream sec_resfile_stream( sid.sec_resfile );
-	sd.secondary_resfile_contents = new core::pack::task::ResfileContents( *sd.pose, sec_resfile_stream );
+	sd.secondary_resfile_contents = core::pack::task::ResfileContentsOP( new core::pack::task::ResfileContents( *sd.pose, sec_resfile_stream ) );
 
 	sd.task =	initialize_packer_task( sd.pose, sd.ent_corr, *sd.secondary_resfile_contents );
 	return sd;
@@ -343,7 +343,7 @@ MMTReceiver::receive_new_job()
 	restrict_task_for_job( sd.pose, sd.ent_corr, seqstring, sd.task );
 
 	// replace the following line with a call to some factory to produce a generic MMTPackingJob
-	MMTOffRotamerPackingJobOP job = new MMTOffRotamerPackingJob;
+	MMTOffRotamerPackingJobOP job( new MMTOffRotamerPackingJob );
 
 	job->set_pose( *sd.pose );
 	job->set_sfxn( *sfxn_ );
@@ -383,7 +383,7 @@ MMTReceiver::entity_correspondence_from_string(
 {
 
 	// initialize the entity correspondence
-	protocols::pack_daemon::EntityCorrespondenceOP ent_corr = new protocols::pack_daemon::EntityCorrespondence;
+	protocols::pack_daemon::EntityCorrespondenceOP ent_corr( new protocols::pack_daemon::EntityCorrespondence );
 	ent_corr->set_pose( pose );
 	ent_corr->set_num_entities( num_entities_ );
 	std::istringstream corrfile_stream( corr_file );

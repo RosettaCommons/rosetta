@@ -21,7 +21,7 @@ namespace analysis{
 
 //Forwards and OP typedefs
 class PackStatMover;
-typedef utility::pointer::owning_ptr< PackStatMover > PackStatMoverOP;
+typedef utility::pointer::shared_ptr< PackStatMover > PackStatMoverOP;
 
 }//analysis
 }//protocols

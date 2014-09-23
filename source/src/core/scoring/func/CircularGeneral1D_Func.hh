@@ -36,7 +36,7 @@ public:
 
 	CircularGeneral1D_Func( std::string const & filename );
 
-	FuncOP clone() const { return new CircularGeneral1D_Func( *this ); }
+	FuncOP clone() const { return FuncOP( new CircularGeneral1D_Func( *this ) ); }
 
 	Real func( Real const x ) const;
 	Real dfunc( Real const x ) const;

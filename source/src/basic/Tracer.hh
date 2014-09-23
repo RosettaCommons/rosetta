@@ -124,7 +124,7 @@ private:
 
 typedef basic_otstream<char> otstream;
 
-typedef utility::pointer::owning_ptr< otstream > otstreamOP;
+typedef utility::pointer::shared_ptr< otstream > otstreamOP;
 
 
 /// @brief data structure to store all system level options for Tracer system.

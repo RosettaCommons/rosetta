@@ -61,7 +61,7 @@ InterfaceInfo::initialize()
 
 	//initialize interface objects for each interface in pose
 	for (core::Size i = 1; i <= num_jump_; i++){
-		interface_list_[i] = 	new protocols::scoring::Interface( rb_jump_[i] );
+		interface_list_[i] = utility::pointer::shared_ptr<class protocols::scoring::Interface>( new protocols::scoring::Interface( rb_jump_[i] ) );
 		interface_list_[i]->distance(6.0);
 		}
 

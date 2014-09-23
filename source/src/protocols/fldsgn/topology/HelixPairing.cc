@@ -123,7 +123,7 @@ HelixPairing::~HelixPairing(){}
 /// @brief clone this object
 HelixPairingOP HelixPairing::clone()
 {
-	return new HelixPairing( *this );
+	return HelixPairingOP( new HelixPairing( *this ) );
 }
 
 /// @brief return name
@@ -221,7 +221,7 @@ HelixPairingSet::HelixPairingSet( String const & helix_pairings ):
 
 	utility::vector1< String > hpairs( utility::string_split( helix_pairings, ';' ) );
 	for( utility::vector1< String >::const_iterator iter = hpairs.begin(); iter != hpairs.end() ; ++iter) {
-		helix_pairings_.push_back( new HelixPairing( *iter ) );
+		helix_pairings_.push_back( utility::pointer::shared_ptr<class protocols::fldsgn::topology::HelixPairing>( new HelixPairing( *iter ) ) );
 	}
 }
 
@@ -260,7 +260,7 @@ HelixPairingSet::~HelixPairingSet(){}
 HelixPairingSetOP
 HelixPairingSet::clone() const
 {
-	return new HelixPairingSet( *this );
+	return HelixPairingSetOP( new HelixPairingSet( *this ) );
 }
 
 /// @brief return helix pairing

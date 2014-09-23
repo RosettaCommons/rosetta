@@ -119,7 +119,7 @@ HBondParameterFeatures::parse_my_tag(
 ) {
 	if(tag->hasOption("scorefxn")){
 		string scorefxn_name = tag->getOption<string>("scorefxn");
-		scfxn_ = data.get<ScoreFunction*>("scorefxns", scorefxn_name);
+		scfxn_ = data.get_ptr<ScoreFunction>("scorefxns", scorefxn_name);
 	} else {
 		stringstream error_msg;
 		error_msg

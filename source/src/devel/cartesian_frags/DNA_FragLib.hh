@@ -113,7 +113,7 @@ private:
 };
 
 
-typedef utility::pointer::owning_ptr< DNA_FragLib > DNA_FragLibOP;
+typedef utility::pointer::shared_ptr< DNA_FragLib > DNA_FragLibOP;
 
 
 void

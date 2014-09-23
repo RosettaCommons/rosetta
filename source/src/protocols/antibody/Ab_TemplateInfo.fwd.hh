@@ -25,8 +25,8 @@ namespace antibody {
 // Forward
 class Ab_TemplateInfo;
 
-typedef utility::pointer::owning_ptr< Ab_TemplateInfo > Ab_TemplateInfoOP;
-typedef utility::pointer::owning_ptr< Ab_TemplateInfo const > Ab_TemplateInfoCOP;
+typedef utility::pointer::shared_ptr< Ab_TemplateInfo > Ab_TemplateInfoOP;
+typedef utility::pointer::shared_ptr< Ab_TemplateInfo const > Ab_TemplateInfoCOP;
 
 } // antibody
 } // protocols

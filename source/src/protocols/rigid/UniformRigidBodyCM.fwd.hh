@@ -23,8 +23,8 @@ namespace protocols {
 namespace rigid {
 
 class UniformRigidBodyCM;
-typedef utility::pointer::owning_ptr< UniformRigidBodyCM > UniformRigidBodyCMOP;
-typedef utility::pointer::owning_ptr< UniformRigidBodyCM const > UniformRigidBodyCMCOP;
+typedef utility::pointer::shared_ptr< UniformRigidBodyCM > UniformRigidBodyCMOP;
+typedef utility::pointer::shared_ptr< UniformRigidBodyCM const > UniformRigidBodyCMCOP;
 
 } // rigid
 } // protocols

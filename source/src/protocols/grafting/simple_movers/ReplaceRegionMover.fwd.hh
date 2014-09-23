@@ -23,8 +23,8 @@ namespace grafting {
 /// @brief  
 class ReplaceRegionMover;
 
-typedef utility::pointer::owning_ptr<ReplaceRegionMover> ReplaceRegionMoverOP;
-typedef utility::pointer::owning_ptr<ReplaceRegionMover const> ReplaceRegionMoverCOP;
+typedef utility::pointer::shared_ptr<ReplaceRegionMover> ReplaceRegionMoverOP;
+typedef utility::pointer::shared_ptr<ReplaceRegionMover const> ReplaceRegionMoverCOP;
 
 }}  // namespace grafting_protocls
 

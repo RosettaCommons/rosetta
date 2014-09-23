@@ -83,7 +83,7 @@ public:
 	~KinematicAbinitio();
 
 	virtual moves::MoverOP clone() const {
-		return new KinematicAbinitio(*this);
+		return moves::MoverOP( new KinematicAbinitio(*this) );
 	}
 
 	static void register_options();
@@ -199,7 +199,7 @@ public:
 	);
 
 	virtual moves::MoverOP clone() const {
-		return new JumpingFoldConstraintsWrapper(*this);
+		return moves::MoverOP( new JumpingFoldConstraintsWrapper(*this) );
 	}
 
 	//static void register_options();

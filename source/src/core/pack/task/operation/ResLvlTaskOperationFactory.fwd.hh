@@ -23,8 +23,8 @@ namespace operation {
 
 class ResLvlTaskOperationFactory;
 
-typedef utility::pointer::owning_ptr< ResLvlTaskOperationFactory > ResLvlTaskOperationFactoryOP;
-typedef utility::pointer::owning_ptr< ResLvlTaskOperationFactory const > ResLvlTaskOperationFactoryCOP;
+typedef utility::pointer::shared_ptr< ResLvlTaskOperationFactory > ResLvlTaskOperationFactoryOP;
+typedef utility::pointer::shared_ptr< ResLvlTaskOperationFactory const > ResLvlTaskOperationFactoryCOP;
 
 } //namespace operation
 } //namespace task

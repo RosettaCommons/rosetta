@@ -23,8 +23,8 @@ namespace scmin {
 
 class SCMinMultifunc;
 
-typedef utility::pointer::owning_ptr< SCMinMultifunc > SCMinMultifuncOP;
-typedef utility::pointer::owning_ptr< SCMinMultifunc > SCMinMultifuncCOP;
+typedef utility::pointer::shared_ptr< SCMinMultifunc > SCMinMultifuncOP;
+typedef utility::pointer::shared_ptr< SCMinMultifunc > SCMinMultifuncCOP;
 
 } // namespace scmin
 } // namespace pack

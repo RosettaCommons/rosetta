@@ -20,8 +20,8 @@ namespace protocols {
 namespace moves {
 
 class IteratedConvergenceMover;
-typedef utility::pointer::owning_ptr< IteratedConvergenceMover > IteratedConvergenceMoverOP;
-typedef utility::pointer::owning_ptr< IteratedConvergenceMover const > IteratedConvergenceMoverCOP;
+typedef utility::pointer::shared_ptr< IteratedConvergenceMover > IteratedConvergenceMoverOP;
+typedef utility::pointer::shared_ptr< IteratedConvergenceMover const > IteratedConvergenceMoverCOP;
 
 } // moves
 } // protocols

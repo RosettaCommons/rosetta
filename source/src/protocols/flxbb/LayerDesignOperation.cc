@@ -88,7 +88,7 @@ namespace flxbb {
 core::pack::task::operation::TaskOperationOP
 LayerDesignOperationCreator::create_task_operation() const
 {
-	return new LayerDesignOperation;
+	return core::pack::task::operation::TaskOperationOP( new LayerDesignOperation );
 }
 
 CombinedTaskOperation::CombinedTaskOperation( VecTaskOP  ops ):
@@ -112,8 +112,8 @@ LayerDesignOperation::LayerDesignOperation():
 	verbose_( false ),
 	restrict_restypes_( true ),
 	make_pymol_script_( false ),
-	srbl_( new toolbox::SelectResiduesByLayer ),
-	blueprint_( NULL )
+	srbl_( toolbox::SelectResiduesByLayerOP( new toolbox::SelectResiduesByLayer ) ),
+	blueprint_( /* NULL */ )
 {
 	set_default_layer_residues();
 }
@@ -127,8 +127,8 @@ LayerDesignOperation::LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, 
 	verbose_( false ),
 	restrict_restypes_( true ),
 	make_pymol_script_( false ),
-	srbl_( new toolbox::SelectResiduesByLayer ),
-	blueprint_( NULL )
+	srbl_( toolbox::SelectResiduesByLayerOP( new toolbox::SelectResiduesByLayer ) ),
+	blueprint_( /* NULL */ )
 {
 	design_layer( dsgn_core, dsgn_boundary, dsgn_surface );
 	set_default_layer_residues();
@@ -159,7 +159,7 @@ LayerDesignOperation::~LayerDesignOperation() {
 /// @brief clone
 core::pack::task::operation::TaskOperationOP
 LayerDesignOperation::clone() const {
-	return new LayerDesignOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new LayerDesignOperation( *this ) );
 }
 
 /// @brief layer to be designed
@@ -623,7 +623,7 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 	}
 
 	if( tag->hasOption( "blueprint" ) ) {
-		blueprint_ = new protocols::jd2::parser::BluePrint( tag->getOption< std::string >("blueprint") );
+		blueprint_ = protocols::jd2::parser::BluePrintOP( new protocols::jd2::parser::BluePrint( tag->getOption< std::string >("blueprint") ) );
 	}
 
 	set_verbose( tag->getOption< bool >( "verbose", false ) );
@@ -650,7 +650,7 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 				TaskOperationOP task = TaskOperationFactory::get_instance()->newTaskOperation(task_op_type, datamap, task_tag);
 				task_ops.push_back( task );
 			}
-			CombinedTaskOperationOP comb = new CombinedTaskOperation( task_ops );
+			CombinedTaskOperationOP comb( new CombinedTaskOperation( task_ops ) );
 			task_layers_[ comb_name ] = comb;
 			design_layer_[ comb_name ] = true;
 			layer_residues_[ comb_name ] = std::map< std::string, std::string >();

@@ -904,7 +904,7 @@ PlaidFingerprint::PlaidFingerprint( core::pose::Pose const & input_pose, Fingerp
 
 	core::Size const lig_res_num = compute_ligand_resnum();
 	//	core::Size const ligand_natoms = compute_ligand_natoms();
-	core::conformation::ResidueCOP ligand_rsd = new core::conformation::Residue( pose_.conformation().residue(lig_res_num) );
+	core::conformation::ResidueCOP ligand_rsd( new core::conformation::Residue( pose_.conformation().residue(lig_res_num) ) );
 
 	numeric::xyzVector<core::Real> no_CoM_offset(0.);
 	select_conf_and_move_ligand_(fp,no_CoM_offset,0,0,0,0);
@@ -979,7 +979,7 @@ core::Size PlaidFingerprint::compute_ligand_nconformers( core::pose::Pose const 
 core::conformation::ResidueCOP PlaidFingerprint::select_conf_and_move_ligand_( FingerprintBase & fp, numeric::xyzVector<core::Real> const & CoM_offset, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, core::Size const & conformer ) {
 
 	// note: conformer passed in is indexed from 0, below is indexed from 1
-	core::pose::PoseOP tmp_pose = new core::pose::Pose(pose_, conformer+1, conformer+1);
+	core::pose::PoseOP tmp_pose( new core::pose::Pose(pose_, conformer+1, conformer+1) );
 
 	apply_rotation_offset_to_pose_( *tmp_pose, angle1_offset, angle2_offset, angle3_offset );
 
@@ -992,7 +992,7 @@ core::conformation::ResidueCOP PlaidFingerprint::select_conf_and_move_ligand_( F
 
 	core::Size const lig_res_num = compute_ligand_resnum(*tmp_pose);
 	//	core::Size const ligand_natoms = compute_ligand_natoms(*tmp_pose);
-	core::conformation::ResidueCOP ligand_rsd = new core::conformation::Residue( tmp_pose->conformation().residue(lig_res_num) );
+	core::conformation::ResidueCOP ligand_rsd( new core::conformation::Residue( tmp_pose->conformation().residue(lig_res_num) ) );
 
 	return ligand_rsd;
 

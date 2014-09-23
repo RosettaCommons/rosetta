@@ -20,8 +20,8 @@
 namespace utility {
 
 class heap;
-typedef utility::pointer::owning_ptr< heap > heapOP;
-typedef utility::pointer::owning_ptr< heap const > heapCOP;
+typedef utility::pointer::shared_ptr< heap > heapOP;
+typedef utility::pointer::shared_ptr< heap const > heapCOP;
 
 } // ns utility
 

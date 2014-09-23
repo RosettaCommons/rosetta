@@ -125,7 +125,7 @@ RandomPositionRotationMover::apply( Pose & pose ) {
 	Real theta = 2*numeric::random::rg().uniform() * rot_mag_;
 
 	// Apply Uniform Rotation
-	UniformPositionRotationMoverOP rotate = new UniformPositionRotationMover( theta, current_normal, rb_jump_ );
+	UniformPositionRotationMoverOP rotate( new UniformPositionRotationMover( theta, current_normal, rb_jump_ ) );
 	rotate->apply( pose );
 
 }
@@ -215,7 +215,7 @@ RandomPositionTranslationMover::apply( Pose & pose ) {
 	Vector new_position = current_center + delta_trans;
 
 	// Apply translation
-	UniformPositionTranslationMoverOP translate = new UniformPositionTranslationMover( new_position, rb_jump_ );
+	UniformPositionTranslationMoverOP translate( new UniformPositionTranslationMover( new_position, rb_jump_ ) );
 	translate->apply( pose );
 
 

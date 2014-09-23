@@ -24,8 +24,8 @@ namespace protein_interface_design {
 namespace movers {
 
 class DockWithHotspotMover;
-typedef utility::pointer::owning_ptr< DockWithHotspotMover > DockWithHotspotMoverOP;
-typedef utility::pointer::owning_ptr< DockWithHotspotMover const > DockWithHotspotMoverCOP;
+typedef utility::pointer::shared_ptr< DockWithHotspotMover > DockWithHotspotMoverOP;
+typedef utility::pointer::shared_ptr< DockWithHotspotMover const > DockWithHotspotMoverCOP;
 
 } //movers
 } //protein_interface_design

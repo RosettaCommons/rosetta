@@ -20,20 +20,20 @@ namespace protocols {
 namespace wum {
 
 class WorkUnitBase;
-typedef utility::pointer::owning_ptr< WorkUnitBase > WorkUnitBaseOP;
-typedef utility::pointer::owning_ptr< WorkUnitBase const > WorkUnitBaseCOP;
+typedef utility::pointer::shared_ptr< WorkUnitBase > WorkUnitBaseOP;
+typedef utility::pointer::shared_ptr< WorkUnitBase const > WorkUnitBaseCOP;
 
 class WorkUnit_Wait;
-typedef utility::pointer::owning_ptr< WorkUnit_Wait > WorkUnit_WaitOP;
-typedef utility::pointer::owning_ptr< WorkUnit_Wait const > WorkUnit_WaitCOP;
+typedef utility::pointer::shared_ptr< WorkUnit_Wait > WorkUnit_WaitOP;
+typedef utility::pointer::shared_ptr< WorkUnit_Wait const > WorkUnit_WaitCOP;
 
 class WorkUnit_SilentStructStore;
-typedef utility::pointer::owning_ptr< WorkUnit_SilentStructStore > WorkUnit_SilentStructStoreOP;
-typedef utility::pointer::owning_ptr< WorkUnit_SilentStructStore const > WorkUnit_SilentStructStoreCOP;
+typedef utility::pointer::shared_ptr< WorkUnit_SilentStructStore > WorkUnit_SilentStructStoreOP;
+typedef utility::pointer::shared_ptr< WorkUnit_SilentStructStore const > WorkUnit_SilentStructStoreCOP;
 
 class WorkUnit_MoverWrapper;
-typedef utility::pointer::owning_ptr< WorkUnit_MoverWrapper > WorkUnit_MoverWrapperOP;
-typedef utility::pointer::owning_ptr< WorkUnit_MoverWrapper const > WorkUnit_MoverWrapperCOP;
+typedef utility::pointer::shared_ptr< WorkUnit_MoverWrapper > WorkUnit_MoverWrapperOP;
+typedef utility::pointer::shared_ptr< WorkUnit_MoverWrapper const > WorkUnit_MoverWrapperCOP;
 
 } //namespace loops
 } //namespace protocols

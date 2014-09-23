@@ -47,20 +47,20 @@ public:
 	{
 		//		utility::vector1< FileName > empty;
 		//		filenames(empty);
-		sfd_ = new core::io::silent::SilentFileData;
+		sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData );
 	}
 
 	SilentFilePoseInputStream( utility::vector1< FileName > fns )
 		: renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( false ), record_source_( false )
 	{
-		sfd_ = new core::io::silent::SilentFileData;
+		sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData );
 		filenames(fns);
 	}
 
 	SilentFilePoseInputStream( std::string const & fn )
 		: renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( false ), record_source_( false )
 	{
-		sfd_ = new core::io::silent::SilentFileData;
+		sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData );
 		utility::vector1< FileName > fns;
 		fns.push_back( fn );
 		filenames(fns);
@@ -72,7 +72,7 @@ public:
 	)
 		: renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( order_by_energy ), record_source_( false )
 	{
-		sfd_ = new core::io::silent::SilentFileData;
+		sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData );
 		filenames(fns);
 	}
 
@@ -82,7 +82,7 @@ public:
 	)
 		: renumber_decoys_( false ), energy_cut_( energy_cut ), order_by_energy_( false ), record_source_( false )
 	{
-		sfd_ = new core::io::silent::SilentFileData;
+		sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData );
 		filenames(fns);
 	}
 
@@ -92,7 +92,7 @@ public:
 	) :
 		renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( false ), record_source_( false )
 	{
-		sfd_ = new core::io::silent::SilentFileData;
+		sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData );
 		tags(input_tags);
 		filenames(fns);
 	}
@@ -104,7 +104,7 @@ public:
 	) :
 		renumber_decoys_( false ), energy_cut_( energy_cut ), order_by_energy_( false ), record_source_( false )
 	{
-		sfd_ = new core::io::silent::SilentFileData;
+		sfd_ = core::io::silent::SilentFileDataOP( new core::io::silent::SilentFileData );
 		tags(input_tags);
 		filenames(fns);
 	}

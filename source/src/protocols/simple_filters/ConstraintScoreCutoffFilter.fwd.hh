@@ -28,8 +28,8 @@ namespace simple_filters {
 class ConstraintScoreCutoffFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< ConstraintScoreCutoffFilter >  ConstraintScoreCutoffFilterOP;
-typedef utility::pointer::owning_ptr< ConstraintScoreCutoffFilter const >  ConstraintScoreCutoffFilterCOP;
+typedef utility::pointer::shared_ptr< ConstraintScoreCutoffFilter >  ConstraintScoreCutoffFilterOP;
+typedef utility::pointer::shared_ptr< ConstraintScoreCutoffFilter const >  ConstraintScoreCutoffFilterCOP;
 
 } // namespace protocols
 } // namespace filters

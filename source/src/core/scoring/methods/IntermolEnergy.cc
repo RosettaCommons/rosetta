@@ -53,7 +53,7 @@ methods::EnergyMethodOP
 IntermolEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new IntermolEnergy;
+	return methods::EnergyMethodOP( new IntermolEnergy );
 }
 
 ScoreTypes
@@ -75,7 +75,7 @@ IntermolEnergy::IntermolEnergy() :
 methods::EnergyMethodOP
 IntermolEnergy::clone() const
 {
-	return new IntermolEnergy;
+	return methods::EnergyMethodOP( new IntermolEnergy );
 }
 
 

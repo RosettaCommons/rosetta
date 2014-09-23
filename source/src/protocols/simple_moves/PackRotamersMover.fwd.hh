@@ -21,8 +21,8 @@ namespace protocols {
 namespace simple_moves {
 
 class PackRotamersMover;
-typedef utility::pointer::owning_ptr< PackRotamersMover > PackRotamersMoverOP;
-typedef utility::pointer::owning_ptr< PackRotamersMover const > PackRotamersMoverCOP;
+typedef utility::pointer::shared_ptr< PackRotamersMover > PackRotamersMoverOP;
+typedef utility::pointer::shared_ptr< PackRotamersMover const > PackRotamersMoverCOP;
 
 } // moves
 } // protocols

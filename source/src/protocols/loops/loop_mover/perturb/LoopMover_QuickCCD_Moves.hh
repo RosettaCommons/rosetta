@@ -56,7 +56,7 @@ public:
 
 	/// @brief Clone this object
 	virtual protocols::moves::MoverOP clone() const {
-		return new LoopMover_Perturb_QuickCCD_Moves(*this);
+		return protocols::moves::MoverOP( new LoopMover_Perturb_QuickCCD_Moves(*this) );
 	}
 
 	

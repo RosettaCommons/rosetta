@@ -29,19 +29,19 @@ class VarLengthBuild;
 
 
 /// @brief access pointer for VarLengthBuild
-typedef utility::pointer::access_ptr< VarLengthBuild > VarLengthBuildAP;
+typedef utility::pointer::weak_ptr< VarLengthBuild > VarLengthBuildAP;
 
 
 /// @brief const access pointer for VarLengthBuild
-typedef utility::pointer::access_ptr< VarLengthBuild const > VarLengthBuildCAP;
+typedef utility::pointer::weak_ptr< VarLengthBuild const > VarLengthBuildCAP;
 
 
 /// @brief owning pointer for VarLengthBuild
-typedef utility::pointer::owning_ptr< VarLengthBuild > VarLengthBuildOP;
+typedef utility::pointer::shared_ptr< VarLengthBuild > VarLengthBuildOP;
 
 
 /// @brief const owning pointer for VarLengthBuild
-typedef utility::pointer::owning_ptr< VarLengthBuild const > VarLengthBuildCOP;
+typedef utility::pointer::shared_ptr< VarLengthBuild const > VarLengthBuildCOP;
 
 
 namespace VLB_VallMemoryUsage {

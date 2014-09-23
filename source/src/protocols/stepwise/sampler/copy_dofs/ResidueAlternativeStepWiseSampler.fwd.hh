@@ -24,8 +24,8 @@ namespace sampler {
 namespace copy_dofs {
 	
 	class ResidueAlternativeStepWiseSampler;
-	typedef utility::pointer::owning_ptr< ResidueAlternativeStepWiseSampler > ResidueAlternativeStepWiseSamplerOP;
-	typedef utility::pointer::owning_ptr< ResidueAlternativeStepWiseSampler const > ResidueAlternativeStepWiseSamplerCOP;
+	typedef utility::pointer::shared_ptr< ResidueAlternativeStepWiseSampler > ResidueAlternativeStepWiseSamplerOP;
+	typedef utility::pointer::shared_ptr< ResidueAlternativeStepWiseSampler const > ResidueAlternativeStepWiseSamplerCOP;
 	
 } //copy_dofs
 } //sampler

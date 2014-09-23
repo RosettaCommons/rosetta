@@ -62,7 +62,7 @@ varsoldist_rotamer_dots_for_pose(
 
 	utility::vector1< VarSolDRotamerDotsOP > rotamer_dots( pose.total_residue() );
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-		rotamer_dots[ ii ] = new VarSolDRotamerDots( core::conformation::ResidueCOP( new core::conformation::Residue( pose.residue( ii )) ), calc );
+		rotamer_dots[ ii ] = utility::pointer::shared_ptr<class devel::vardist_solaccess::VarSolDRotamerDots>( new VarSolDRotamerDots( core::conformation::ResidueCOP( new core::conformation::Residue( pose.residue( ii )) ), calc ) );
 		rotamer_dots[ ii ]->increment_self_overlap();
 	}
 

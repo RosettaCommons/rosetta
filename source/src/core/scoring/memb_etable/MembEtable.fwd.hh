@@ -22,9 +22,9 @@ namespace etable {
 
 class MembEtable;
 
-typedef utility::pointer::owning_ptr< MembEtable > MembEtableOP;
+typedef utility::pointer::shared_ptr< MembEtable > MembEtableOP;
 	//typedef utility::pointer::owning_ptr< Etable const > EtableCOP;
-typedef utility::pointer::access_ptr< MembEtable const > MembEtableCAP;
+typedef utility::pointer::weak_ptr< MembEtable const > MembEtableCAP;
 
 } // etable
 } // scoring

@@ -20,8 +20,8 @@ namespace protocols {
 namespace antibody {
 
 class CloseOneCDRLoop;
-typedef utility::pointer::owning_ptr< CloseOneCDRLoop > CloseOneCDRLoopOP;
-typedef utility::pointer::owning_ptr< CloseOneCDRLoop const > CloseOneCDRLoopCOP;
+typedef utility::pointer::shared_ptr< CloseOneCDRLoop > CloseOneCDRLoopOP;
+typedef utility::pointer::shared_ptr< CloseOneCDRLoop const > CloseOneCDRLoopCOP;
 
 } // antibody
 } // protocols

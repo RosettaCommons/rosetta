@@ -62,7 +62,7 @@ public:
   ~ProtonResonance();
 
   virtual ResonanceOP clone() {
-    return new ProtonResonance( *this );
+    return ResonanceOP( new ProtonResonance( *this ) );
   }
 
   ///@brief match the proton and corresponding label atom at same time

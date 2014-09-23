@@ -42,7 +42,7 @@ methods::EnergyMethodOP
 PeptideBondEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new PeptideBondEnergy;
+	return methods::EnergyMethodOP( new PeptideBondEnergy );
 }
 
 ScoreTypes

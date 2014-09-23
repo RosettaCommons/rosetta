@@ -21,8 +21,8 @@ namespace scoring {
 
 class Rama2BOffset;
 
-typedef utility::pointer::owning_ptr< Rama2BOffset > Rama2BOffsetOP;
-typedef utility::pointer::owning_ptr< Rama2BOffset const > Rama2BOffsetCOP;
+typedef utility::pointer::shared_ptr< Rama2BOffset > Rama2BOffsetOP;
+typedef utility::pointer::shared_ptr< Rama2BOffset const > Rama2BOffsetCOP;
 }
 }
 

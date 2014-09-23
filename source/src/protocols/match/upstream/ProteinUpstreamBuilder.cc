@@ -318,7 +318,7 @@ void BuildSet::set_residue_type(
 	restype_ = restype;
 	backbone_only_ = backbone_only;
 
-	restype_geom_ = new UpstreamResTypeGeometry( *restype_ );
+	restype_geom_ = UpstreamResTypeGeometryOP( new UpstreamResTypeGeometry( *restype_ ) );
 
 	sample_strategy_for_chi_.clear();
 	sample_strategy_for_chi_.resize( restype->nchi() );
@@ -764,7 +764,7 @@ ProteinUpstreamBuilder::~ProteinUpstreamBuilder() {}
 
 UpstreamBuilderOP
 ProteinUpstreamBuilder::clone() const {
-	return new ProteinUpstreamBuilder( *this );
+	return UpstreamBuilderOP( new ProteinUpstreamBuilder( *this ) );
 }
 
 //Kui 110609 Native
@@ -1224,7 +1224,7 @@ BuildSet &
 ProteinUpstreamBuilder::build_set( core::chemical::ResidueTypeCOP restype )
 {
 	for ( Size ii = 1; ii <= build_sets_.size(); ++ii ) {
-		if ( &build_sets_[ ii ].restype() == &(*restype()) ) {
+		if ( &build_sets_[ ii ].restype() == &(*restype) ) {
 			return build_sets_[ ii ];
 		}
 	}

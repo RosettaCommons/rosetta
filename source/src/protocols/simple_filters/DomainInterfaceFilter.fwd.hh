@@ -29,8 +29,8 @@ namespace simple_filters {
 class DomainInterfaceFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< DomainInterfaceFilter >  DomainInterfaceFilterOP;
-typedef utility::pointer::owning_ptr< DomainInterfaceFilter const >  DomainInterfaceFilterCOP;
+typedef utility::pointer::shared_ptr< DomainInterfaceFilter >  DomainInterfaceFilterOP;
+typedef utility::pointer::shared_ptr< DomainInterfaceFilter const >  DomainInterfaceFilterCOP;
 
 } // namespace protocols
 } // namespace simple_filters

@@ -30,7 +30,7 @@ namespace strand_assembly {
 StrandBundleFeaturesCreator::StrandBundleFeaturesCreator() {}
 StrandBundleFeaturesCreator::~StrandBundleFeaturesCreator() {}
 FeaturesReporterOP StrandBundleFeaturesCreator::create_features_reporter() const {
-	return new StrandBundleFeatures;
+	return FeaturesReporterOP( new StrandBundleFeatures );
 }
 
 std::string StrandBundleFeaturesCreator::type_name() const {

@@ -28,11 +28,11 @@ namespace noesy_assign {
 class FloatingResonance;
 
 // Types
-typedef  utility::pointer::owning_ptr< FloatingResonance >  FloatingResonanceOP;
-typedef  utility::pointer::owning_ptr< FloatingResonance const >  FloatingResonanceCOP;
+typedef  utility::pointer::shared_ptr< FloatingResonance >  FloatingResonanceOP;
+typedef  utility::pointer::shared_ptr< FloatingResonance const >  FloatingResonanceCOP;
 
-typedef  utility::pointer::access_ptr< FloatingResonance >  FloatingResonanceAP;
-typedef  utility::pointer::access_ptr< FloatingResonance const >  FloatingResonanceCAP;
+typedef  utility::pointer::weak_ptr< FloatingResonance >  FloatingResonanceAP;
+typedef  utility::pointer::weak_ptr< FloatingResonance const >  FloatingResonanceCAP;
 
 }
 }

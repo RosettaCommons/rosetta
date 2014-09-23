@@ -27,8 +27,8 @@ namespace simple_movers {
 
 class KeepRegionMover;
 
-typedef utility::pointer::owning_ptr< KeepRegionMover > KeepRegionMoverOP;
-typedef utility::pointer::owning_ptr< KeepRegionMover const > KeepRegionMoverCOP;
+typedef utility::pointer::shared_ptr< KeepRegionMover > KeepRegionMoverOP;
+typedef utility::pointer::shared_ptr< KeepRegionMover const > KeepRegionMoverCOP;
 
 }
 }

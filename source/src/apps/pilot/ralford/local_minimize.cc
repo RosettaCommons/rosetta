@@ -74,7 +74,7 @@ public:
 		using namespace protocols::membrane;
 	 
 		// Add a Membrane
-		AddMembraneMoverOP add_memb = new AddMembraneMover(); 
+		AddMembraneMoverOP add_memb( new AddMembraneMover() ); 
 		add_memb->apply(pose); 
 
 		// Optimize Merane Position
@@ -85,7 +85,7 @@ public:
 		ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function( "fa_membrane_2014" );
 
 		// Set up a movemap - bb, chi and jump are all moveable
-		MoveMapOP movemap = new MoveMap(); 
+		MoveMapOP movemap( new MoveMap() ); 
 		movemap->set_bb( true ); 
 		movemap->set_chi( true ); 
 		movemap->set_jump( true ); // will need to play with this one
@@ -113,8 +113,8 @@ public:
 	}
 };
 
-typedef utility::pointer::owning_ptr< MembraneMinMover > MembraneMinMoverOP; 
-typedef utility::pointer::owning_ptr< MembraneMinMover const > MembraneMinMoverCOP; 
+typedef utility::pointer::shared_ptr< MembraneMinMover > MembraneMinMoverOP; 
+typedef utility::pointer::shared_ptr< MembraneMinMover const > MembraneMinMoverCOP; 
 
 /// @brief Main method
 int
@@ -129,7 +129,7 @@ main( int argc, char * argv [] )
 		protocols::jd2::register_options();
 
 		// Minimize with mp
-		MembraneMinMoverOP mpmin = new MembraneMinMover();
+		MembraneMinMoverOP mpmin( new MembraneMinMover() );
 		protocols::jd2::JobDistributor::get_instance()->go( mpmin );
 
 		return 0; 

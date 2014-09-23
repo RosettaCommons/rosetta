@@ -25,8 +25,8 @@ namespace rna {
 namespace checker {
 	
 	class RNA_ChainClosableGeometryChecker;
-	typedef utility::pointer::owning_ptr< RNA_ChainClosableGeometryChecker > RNA_ChainClosableGeometryCheckerOP;
-	typedef utility::pointer::owning_ptr< RNA_ChainClosableGeometryChecker const > RNA_ChainClosableGeometryCheckerCOP;
+	typedef utility::pointer::shared_ptr< RNA_ChainClosableGeometryChecker > RNA_ChainClosableGeometryCheckerOP;
+	typedef utility::pointer::shared_ptr< RNA_ChainClosableGeometryChecker const > RNA_ChainClosableGeometryCheckerCOP;
 	
 } //checker
 } //rna

@@ -126,7 +126,7 @@ void MotifLoopBuild::apply(core::pose::Pose & pose)
     std::string secstruct;
     core::Size num_attemps(0);
     bool pass(false);
-    this->set_native_pose( new core::pose::Pose( pose ) );
+    this->set_native_pose( PoseCOP( new core::pose::Pose( pose ) ) );
     this->set_last_move_status( protocols::moves::FAIL_RETRY );
 
     devel::enzdes::EnzdesRemodelMover::initialize(pose);
@@ -254,7 +254,7 @@ MotifLoopBuild::irc_build(core::pose::Pose & pose)
     utility::vector1<core::Size> design = get_flex_region();
 		utility::vector1<core::Size> trim_residues;
 		trim_residues.clear();
-    protocols::loops::LoopsOP this_loop = new protocols::loops::Loops();
+    protocols::loops::LoopsOP this_loop( new protocols::loops::Loops() );
     this_loop->add_loop(design[1], design[ design.size()] );
     IRCollection irc = IRCollection(pose, motif_lib, dna_design_pos_);
     irc.incorporate_motifs(pose, this_loop, trim_residues);
@@ -279,7 +279,7 @@ void MotifLoopBuild::place_motifs( core::pose::Pose & pose,
 
 protocols::moves::MoverOP
 MotifLoopBuildCreator::create_mover() const {
-	return new MotifLoopBuild();
+	return protocols::moves::MoverOP( new MotifLoopBuild() );
 }
 
 std::string

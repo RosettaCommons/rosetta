@@ -48,7 +48,7 @@ using utility::tag::TagCOP;
 using basic::datacache::DataMap;
 
 TaskOperationOP RestrictToLoopsCreator::create_task_operation() const {
-	return new RestrictToLoops;
+	return TaskOperationOP( new RestrictToLoops );
 }
 
 RestrictToLoops::RestrictToLoops() : parent() {
@@ -69,7 +69,7 @@ RestrictToLoops & RestrictToLoops::operator = (RestrictToLoops const & rhs) {
 }
 
 TaskOperationOP RestrictToLoops::clone() const {
-	return new RestrictToLoops(*this);
+	return TaskOperationOP( new RestrictToLoops(*this) );
 }
 
 void RestrictToLoops::parse_tag(TagCOP tag, DataMap &) {
@@ -94,7 +94,7 @@ void RestrictToLoops::init() {
 
 void RestrictToLoops::copy(RestrictToLoops & lhs, RestrictToLoops const & rhs) {
 	lhs.design_loop_ = rhs.design_loop_;
-	lhs.loops_ = new Loops(*rhs.loops_);
+	lhs.loops_ = loops::LoopsCOP( new Loops(*rhs.loops_) );
 }
 
 void RestrictToLoops::apply(Pose const & pose, PackerTask & task) const {
@@ -157,7 +157,7 @@ void RestrictToLoops::set_loops(LoopsCOP loops) {
 }
 
 void RestrictToLoops::set_loops_from_file(string loops_file) {
-	loops_ = new Loops(loops_file);
+	loops_ = loops::LoopsCOP( new Loops(loops_file) );
 }
 
 

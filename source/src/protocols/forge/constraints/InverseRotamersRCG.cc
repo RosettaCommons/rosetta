@@ -43,7 +43,7 @@ namespace constraints{
 protocols::moves::MoverOP
 InverseRotamersCstGeneratorCreator::create_mover() const
 {
-	return new InverseRotamersRCG();
+	return protocols::moves::MoverOP( new InverseRotamersRCG() );
 }
 
 std::string
@@ -60,7 +60,7 @@ InverseRotamersCstGeneratorCreator::mover_name()
 
 InverseRotamersRCG::InverseRotamersRCG()
 	: RemodelConstraintGenerator(),
-		constraint_func_( NULL ),
+		constraint_func_( /* NULL */ ),
 		func_sd_( 0.4 )
 {}
 
@@ -75,7 +75,7 @@ InverseRotamersRCG::InverseRotamersRCG(
 	core::Size const lstop,
 	std::list< core::conformation::ResidueCOP > const & inverse_rotamers )
 	: RemodelConstraintGenerator(),
-		constraint_func_(NULL),
+		constraint_func_(/* NULL */),
 		func_sd_(0.4)
 {
 	init( lstart, lstop, inverse_rotamers );
@@ -104,13 +104,13 @@ InverseRotamersRCG::get_name() const
 protocols::moves::MoverOP
 InverseRotamersRCG::fresh_instance() const
 {
-	return new InverseRotamersRCG();
+	return protocols::moves::MoverOP( new InverseRotamersRCG() );
 }
 
 protocols::moves::MoverOP
 InverseRotamersRCG::clone() const
 {
-	return new InverseRotamersRCG( *this );
+	return protocols::moves::MoverOP( new InverseRotamersRCG( *this ) );
 }
 
 void
@@ -127,7 +127,7 @@ InverseRotamersRCG::generate_remodel_constraints(
 
 	//if no constraint func has been set, we'll create a default one
 	if( !constraint_func_ ){
-		constraint_func_ = new core::scoring::constraints::BoundFunc( 0, 0.05, func_sd_, "invrot");
+		constraint_func_ = core::scoring::func::FuncOP( new core::scoring::constraints::BoundFunc( 0, 0.05, func_sd_, "invrot") );
 	}
 	utility::vector1< core::Size > seqpos;
 	for( core::Size i(1); i <= intervals_.size(); ++i ){

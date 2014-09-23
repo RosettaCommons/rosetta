@@ -33,7 +33,7 @@ std::string HbdGridCreator::keyname() const
 
 GridBaseOP HbdGridCreator::create_grid(utility::tag::TagCOP tag) const
 {
-	GridBaseOP hbd_grid= new HbdGrid();
+	GridBaseOP hbd_grid( new HbdGrid() );
 
 	hbd_grid->parse_my_tag(tag);
 
@@ -42,7 +42,7 @@ GridBaseOP HbdGridCreator::create_grid(utility::tag::TagCOP tag) const
 
 GridBaseOP HbdGridCreator::create_grid() const
 {
-	return new HbdGrid();
+	return GridBaseOP( new HbdGrid() );
 }
 
 

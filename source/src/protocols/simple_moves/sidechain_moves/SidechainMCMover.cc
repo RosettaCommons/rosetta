@@ -88,7 +88,7 @@ SidechainMCMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SidechainMCMoverCreator::create_mover() const {
-	return new SidechainMCMover;
+	return protocols::moves::MoverOP( new SidechainMCMover );
 }
 
 std::string
@@ -104,14 +104,14 @@ SidechainMCMover::SidechainMCMover():
 	temperature_(0),
 	ntrials_(0),
 	best_energy_(0),
-	sfxn_( new core::scoring::ScoreFunction ),
+	sfxn_( core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction ) ),
 	inherit_scorefxn_temperature_(false),
-	ig_(0),
+	ig_(/* 0 */),
 	accepts_(0),
 	current_ntrial_(0),
 	score_pre_apply_(0),
 	score_post_apply_(0),
-	metropolis_hastings_mover_(0)
+	metropolis_hastings_mover_(/* 0 */)
 {}
 
 SidechainMCMover::SidechainMCMover(
@@ -124,14 +124,14 @@ SidechainMCMover::SidechainMCMover(
 	temperature_(0),
 	ntrials_(0),
 	best_energy_(0),
-	sfxn_( new core::scoring::ScoreFunction ),
+	sfxn_( core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction ) ),
 	inherit_scorefxn_temperature_(false),
-	ig_(0),
+	ig_(/* 0 */),
 	accepts_(0),
 	current_ntrial_(0),
 	score_pre_apply_(0),
 	score_post_apply_(0),
-	metropolis_hastings_mover_(0)
+	metropolis_hastings_mover_(/* 0 */)
 {}
 
 SidechainMCMover::~SidechainMCMover() {}
@@ -139,7 +139,7 @@ SidechainMCMover::~SidechainMCMover() {}
 
 void
 SidechainMCMover::setup( core::scoring::ScoreFunctionCOP sfxn ){
-	ig_ = new core::pack::interaction_graph::SimpleInteractionGraph(); //commented out debug
+	ig_ = core::pack::interaction_graph::SimpleInteractionGraphOP( new core::pack::interaction_graph::SimpleInteractionGraph() ); //commented out debug
 	//(*sfxn)(pose); //gets called in apply
 	set_scorefunction( *sfxn );
 	ig_->set_scorefunction( *sfxn );
@@ -200,7 +200,7 @@ SidechainMCMover::apply(
 	 //
 
 	for(core::Size itr = 1; itr <= pose.total_residue(); itr++){
-		current_[ itr ] = new core::conformation::Residue(pose.residue( itr ));
+		current_[ itr ] = utility::pointer::shared_ptr<class core::conformation::Residue>( new core::conformation::Residue(pose.residue( itr )) );
 	}
 
 	//	PROF_START( SIMPLEINTGRAPH );

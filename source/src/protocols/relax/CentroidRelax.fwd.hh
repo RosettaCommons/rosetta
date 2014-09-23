@@ -27,11 +27,11 @@ namespace relax {
 class CentroidRelax;
 
 // Types
-typedef  utility::pointer::owning_ptr< CentroidRelax >  CentroidRelaxOP;
-typedef  utility::pointer::owning_ptr< CentroidRelax const >  CentroidRelaxCOP;
+typedef  utility::pointer::shared_ptr< CentroidRelax >  CentroidRelaxOP;
+typedef  utility::pointer::shared_ptr< CentroidRelax const >  CentroidRelaxCOP;
 
-typedef  utility::pointer::access_ptr< CentroidRelax >  CentroidRelaxAP;
-typedef  utility::pointer::access_ptr< CentroidRelax const >  CentroidRelaxCAP;
+typedef  utility::pointer::weak_ptr< CentroidRelax >  CentroidRelaxAP;
+typedef  utility::pointer::weak_ptr< CentroidRelax const >  CentroidRelaxCAP;
 
 
 } // namespace kinematics

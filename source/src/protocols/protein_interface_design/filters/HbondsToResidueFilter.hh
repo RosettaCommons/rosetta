@@ -61,10 +61,10 @@ public :
 	}
 	bool apply( core::pose::Pose const & pose ) const;
 	FilterOP clone() const {
-		return new HbondsToResidueFilter( *this );
+		return FilterOP( new HbondsToResidueFilter( *this ) );
 	}
 	FilterOP fresh_instance() const{
-		return new HbondsToResidueFilter();
+		return FilterOP( new HbondsToResidueFilter() );
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;

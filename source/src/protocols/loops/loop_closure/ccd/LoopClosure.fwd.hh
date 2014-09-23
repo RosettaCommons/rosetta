@@ -26,8 +26,8 @@ namespace ccd {
 class LoopClosure;
 
 // Types
-typedef  utility::pointer::owning_ptr< LoopClosure >  LoopClosureOP;
-typedef  utility::pointer::owning_ptr< LoopClosure const >  LoopClosureCOP;
+typedef  utility::pointer::shared_ptr< LoopClosure >  LoopClosureOP;
+typedef  utility::pointer::shared_ptr< LoopClosure const >  LoopClosureCOP;
 
 } // namespace ccd
 } // namespace loop_closure

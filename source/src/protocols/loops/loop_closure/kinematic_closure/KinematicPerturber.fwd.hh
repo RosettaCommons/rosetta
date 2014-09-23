@@ -28,44 +28,44 @@ namespace kinematic_closure {
 
 //Forwards and OP typedefs
 class KinematicPerturber;
-typedef utility::pointer::owning_ptr< KinematicPerturber > KinematicPerturberOP;
-typedef utility::pointer::owning_ptr< KinematicPerturber const > KinematicPerturberCOP;
+typedef utility::pointer::shared_ptr< KinematicPerturber > KinematicPerturberOP;
+typedef utility::pointer::shared_ptr< KinematicPerturber const > KinematicPerturberCOP;
 
 class TorsionSamplingKinematicPerturber;
-typedef utility::pointer::owning_ptr< TorsionSamplingKinematicPerturber > TorsionSamplingKinematicPerturberOP;
-typedef utility::pointer::owning_ptr< TorsionSamplingKinematicPerturber const > TorsionSamplingKinematicPerturberCOP;
+typedef utility::pointer::shared_ptr< TorsionSamplingKinematicPerturber > TorsionSamplingKinematicPerturberOP;
+typedef utility::pointer::shared_ptr< TorsionSamplingKinematicPerturber const > TorsionSamplingKinematicPerturberCOP;
 
 class SmallMoveKinematicPerturber;
-typedef utility::pointer::owning_ptr< SmallMoveKinematicPerturber > SmallMoveKinematicPerturberOP;
-typedef utility::pointer::owning_ptr< SmallMoveKinematicPerturber const > SmallMoveKinematicPerturberCOP;
+typedef utility::pointer::shared_ptr< SmallMoveKinematicPerturber > SmallMoveKinematicPerturberOP;
+typedef utility::pointer::shared_ptr< SmallMoveKinematicPerturber const > SmallMoveKinematicPerturberCOP;
 
 class PivotBasedKinematicPerturber;
-typedef utility::pointer::owning_ptr< PivotBasedKinematicPerturber > PivotBasedKinematicPerturberOP;
-typedef utility::pointer::owning_ptr< PivotBasedKinematicPerturber const > PivotBasedKinematicPerturberCOP;
+typedef utility::pointer::shared_ptr< PivotBasedKinematicPerturber > PivotBasedKinematicPerturberOP;
+typedef utility::pointer::shared_ptr< PivotBasedKinematicPerturber const > PivotBasedKinematicPerturberCOP;
 
 class VicinitySamplingKinematicPerturber;
-typedef utility::pointer::owning_ptr< VicinitySamplingKinematicPerturber > VicinitySamplingKinematicPerturberOP;
-typedef utility::pointer::owning_ptr< VicinitySamplingKinematicPerturber const > VicinitySamplingKinematicPerturberCOP;
+typedef utility::pointer::shared_ptr< VicinitySamplingKinematicPerturber > VicinitySamplingKinematicPerturberOP;
+typedef utility::pointer::shared_ptr< VicinitySamplingKinematicPerturber const > VicinitySamplingKinematicPerturberCOP;
 
 class TorsionSweepingKinematicPerturber;
-typedef utility::pointer::owning_ptr< TorsionSweepingKinematicPerturber > TorsionSweepingKinematicPerturberOP;
-typedef utility::pointer::owning_ptr< TorsionSweepingKinematicPerturber const > TorsionSweepingKinematicPerturberCOP;
+typedef utility::pointer::shared_ptr< TorsionSweepingKinematicPerturber > TorsionSweepingKinematicPerturberOP;
+typedef utility::pointer::shared_ptr< TorsionSweepingKinematicPerturber const > TorsionSweepingKinematicPerturberCOP;
 
 class NeighborDependentTorsionSamplingKinematicPerturber;
-typedef utility::pointer::owning_ptr< NeighborDependentTorsionSamplingKinematicPerturber > NeighborDependentTorsionSamplingKinematicPerturberOP;
-typedef utility::pointer::owning_ptr< NeighborDependentTorsionSamplingKinematicPerturber const > NeighborDependentTorsionSamplingKinematicPerturberCOP;
+typedef utility::pointer::shared_ptr< NeighborDependentTorsionSamplingKinematicPerturber > NeighborDependentTorsionSamplingKinematicPerturberOP;
+typedef utility::pointer::shared_ptr< NeighborDependentTorsionSamplingKinematicPerturber const > NeighborDependentTorsionSamplingKinematicPerturberCOP;
 
 class NeighborDependentTabooSamplingKinematicPerturber;
-typedef utility::pointer::owning_ptr< NeighborDependentTabooSamplingKinematicPerturber > NeighborDependentTabooSamplingKinematicPerturberOP;
-typedef utility::pointer::owning_ptr< NeighborDependentTabooSamplingKinematicPerturber const > NeighborDependentTabooSamplingKinematicPerturberCOP;
+typedef utility::pointer::shared_ptr< NeighborDependentTabooSamplingKinematicPerturber > NeighborDependentTabooSamplingKinematicPerturberOP;
+typedef utility::pointer::shared_ptr< NeighborDependentTabooSamplingKinematicPerturber const > NeighborDependentTabooSamplingKinematicPerturberCOP;
 
 class TorsionRestrictedKinematicPerturber;
-typedef utility::pointer::owning_ptr< TorsionRestrictedKinematicPerturber > TorsionRestrictedKinematicPerturberOP;
-typedef utility::pointer::owning_ptr< TorsionRestrictedKinematicPerturber const > TorsionRestrictedKinematicPerturberCOP;
+typedef utility::pointer::shared_ptr< TorsionRestrictedKinematicPerturber > TorsionRestrictedKinematicPerturberOP;
+typedef utility::pointer::shared_ptr< TorsionRestrictedKinematicPerturber const > TorsionRestrictedKinematicPerturberCOP;
 
 class TabooSamplingKinematicPerturber;
-typedef utility::pointer::owning_ptr< TabooSamplingKinematicPerturber > TabooSamplingKinematicPerturberOP;
-typedef utility::pointer::owning_ptr< TabooSamplingKinematicPerturber const > TabooSamplingKinematicPerturberCOP;
+typedef utility::pointer::shared_ptr< TabooSamplingKinematicPerturber > TabooSamplingKinematicPerturberOP;
+typedef utility::pointer::shared_ptr< TabooSamplingKinematicPerturber const > TabooSamplingKinematicPerturberCOP;
 
 } // namespace kinematic_closure
 } // namespace loop_closure

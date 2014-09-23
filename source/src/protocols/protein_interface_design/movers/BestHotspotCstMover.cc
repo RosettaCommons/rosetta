@@ -52,7 +52,7 @@ BestHotspotCstMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 BestHotspotCstMoverCreator::create_mover() const {
-	return new BestHotspotCstMover;
+	return protocols::moves::MoverOP( new BestHotspotCstMover );
 }
 
 std::string
@@ -75,7 +75,7 @@ BestHotspotCstMover::BestHotspotCstMover(
 	host_chain_( host_chain ),
 	n_resi_( n_resi )
 {
-	if( stub_set ) stub_set_ = new protocols::hotspot_hashing::HotspotStubSet( *stub_set );
+	if( stub_set ) stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new protocols::hotspot_hashing::HotspotStubSet( *stub_set ) );
 }
 
 BestHotspotCstMover::BestHotspotCstMover( BestHotspotCstMover const & init ) :
@@ -83,7 +83,7 @@ BestHotspotCstMover::BestHotspotCstMover( BestHotspotCstMover const & init ) :
 	protocols::moves::Mover( init ),
 	host_chain_(init.host_chain_), n_resi_( init.n_resi_ )
 {
-	if( init.stub_set_ ) stub_set_ = new protocols::hotspot_hashing::HotspotStubSet( *init.stub_set_ );
+	if( init.stub_set_ ) stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new protocols::hotspot_hashing::HotspotStubSet( *init.stub_set_ ) );
 }
 
 BestHotspotCstMover::~BestHotspotCstMover() {}
@@ -148,7 +148,7 @@ void BestHotspotCstMover::parse_my_tag( TagCOP const tag, basic::datacache::Data
 	cb_force_constant_ = tag->getOption< core::Real >( "cb_force", 1.0 );
 
 	std::string const hs( "hotspot_stubset" );
-	stub_set_ = data.get< HotspotStubSet * >( "constraints", hs );
+	stub_set_ = data.get_ptr<HotspotStubSet>( "constraints", hs );
 
 	TR<<"BestHotspotCst mover on chain "<<host_chain_<<" with cbeta force " << cb_force_constant_ << "\n";
 }

@@ -44,7 +44,7 @@ namespace simple_filters {
 static thread_local basic::Tracer TR( "protocols.simple_filters.InterfaceBindingEnergyDensityFilter" );
 
 protocols::filters::FilterOP
-InterfaceBindingEnergyDensityFilterCreator::create_filter() const { return new InterfaceBindingEnergyDensityFilter; }
+InterfaceBindingEnergyDensityFilterCreator::create_filter() const { return protocols::filters::FilterOP( new InterfaceBindingEnergyDensityFilter ); }
 
 std::string
 InterfaceBindingEnergyDensityFilterCreator::keyname() const { return "InterfaceBindingEnergyDensityFilter"; }
@@ -52,8 +52,8 @@ InterfaceBindingEnergyDensityFilterCreator::keyname() const { return "InterfaceB
 
 InterfaceBindingEnergyDensityFilter::InterfaceBindingEnergyDensityFilter() :
 	Filter( "InterfaceBindingEnergyDensityFilter" ),
-	sasa_filter_( 0 ),
-	ddG_filter_( 0 ),
+	sasa_filter_( /* 0 */ ),
+	ddG_filter_( /* 0 */ ),
 	upper_threshold_( 0.0 )
 {}
 
@@ -77,12 +77,12 @@ InterfaceBindingEnergyDensityFilter::~InterfaceBindingEnergyDensityFilter(){}
 
 filters::FilterOP
 InterfaceBindingEnergyDensityFilter::clone() const{
-	return new InterfaceBindingEnergyDensityFilter( *this );
+	return filters::FilterOP( new InterfaceBindingEnergyDensityFilter( *this ) );
 }
 
 filters::FilterOP
 InterfaceBindingEnergyDensityFilter::fresh_instance() const{
-	return new InterfaceSasaFilter;
+	return filters::FilterOP( new InterfaceSasaFilter );
 }
 
 void
@@ -107,7 +107,7 @@ InterfaceBindingEnergyDensityFilter::parse_my_tag(
 		throw utility::excn::EXCN_RosettaScriptsOption( "Could not locate requested sasa_filter with name " + sasa_filter_name + " in the Filters_map." );
 	}
 	filters::FilterOP sasafilter_baseptr = sasaiter->second;
-	sasa_filter_ = dynamic_cast< InterfaceSasaFilter * > ( sasafilter_baseptr() );
+	sasa_filter_ = utility::pointer::dynamic_pointer_cast< protocols::simple_filters::InterfaceSasaFilter > ( sasafilter_baseptr );
 	if ( ! sasa_filter_ ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "Dynamic cast of filter " + sasa_filter_name + " to type InterfaceSasaFilter failed" );
 	}
@@ -118,7 +118,7 @@ InterfaceBindingEnergyDensityFilter::parse_my_tag(
 		throw utility::excn::EXCN_RosettaScriptsOption( "Could not locate requested ddG_filter with name " + ddG_filter_name + " in the Filters_map." );
 	}
 	filters::FilterOP ddGfilter_baseptr = ddGiter->second;
-	ddG_filter_ = dynamic_cast< DdgFilter * > ( ddGfilter_baseptr() );
+	ddG_filter_ = utility::pointer::dynamic_pointer_cast< protocols::simple_filters::DdgFilter > ( ddGfilter_baseptr );
 	if ( ! ddG_filter_ ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "Dynamic cast of filter " + ddG_filter_name + " to type DdgFilter failed" );
 	}

@@ -25,8 +25,8 @@ namespace loops_definers {
 /// creating a particular LoopsDefiner class.
 class LoopsExplicitDefinerCreator;
 
-typedef utility::pointer::owning_ptr< LoopsExplicitDefinerCreator > LoopsExplicitDefinerCreatorOP;
-typedef utility::pointer::owning_ptr< LoopsExplicitDefinerCreator const > LoopsExplicitDefinerCreatorCOP;
+typedef utility::pointer::shared_ptr< LoopsExplicitDefinerCreator > LoopsExplicitDefinerCreatorOP;
+typedef utility::pointer::shared_ptr< LoopsExplicitDefinerCreator const > LoopsExplicitDefinerCreatorCOP;
 
 } //namespace
 } //namespace

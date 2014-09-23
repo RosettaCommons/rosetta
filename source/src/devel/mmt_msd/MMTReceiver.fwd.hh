@@ -22,8 +22,8 @@ namespace mmt_msd {
 
 class MMTReceiver;
 
-typedef utility::pointer::owning_ptr< MMTReceiver > MMTReceiverOP;
-typedef utility::pointer::owning_ptr< MMTReceiver const > MMTReceiverCOP;
+typedef utility::pointer::shared_ptr< MMTReceiver > MMTReceiverOP;
+typedef utility::pointer::shared_ptr< MMTReceiver const > MMTReceiverCOP;
 
 }
 }

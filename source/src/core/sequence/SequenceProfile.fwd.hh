@@ -20,8 +20,8 @@ namespace core {
 namespace sequence {
 
 class SequenceProfile;
-typedef utility::pointer::owning_ptr< SequenceProfile > SequenceProfileOP;
-typedef utility::pointer::owning_ptr< SequenceProfile const > SequenceProfileCOP;
+typedef utility::pointer::shared_ptr< SequenceProfile > SequenceProfileOP;
+typedef utility::pointer::shared_ptr< SequenceProfile const > SequenceProfileCOP;
 
 } // sequence
 } // core

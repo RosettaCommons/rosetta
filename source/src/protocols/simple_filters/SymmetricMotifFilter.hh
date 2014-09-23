@@ -71,7 +71,7 @@ public:
 	void process_motifs();
 
 	protocols::filters::FilterOP clone() const;
-	protocols::filters::FilterOP fresh_instance() const { return new SymmetricMotifFilter(); }
+	protocols::filters::FilterOP fresh_instance() const { return protocols::filters::FilterOP( new SymmetricMotifFilter() ); }
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
 

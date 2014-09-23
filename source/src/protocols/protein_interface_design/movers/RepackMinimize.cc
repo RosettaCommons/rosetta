@@ -55,7 +55,7 @@ RepackMinimizeCreator::keyname() const
 
 protocols::moves::MoverOP
 RepackMinimizeCreator::create_mover() const {
-	return new RepackMinimize;
+	return protocols::moves::MoverOP( new RepackMinimize );
 }
 
 std::string
@@ -123,7 +123,7 @@ RepackMinimize::apply( pose::Pose & pose )
 	allowed_aas_[ chemical::aa_pro ] = false;
 
 if ( symmetry_ ) {
-    protocols::simple_moves::symmetry::SetupForSymmetryMoverOP setup_mover = new protocols::simple_moves::symmetry::SetupForSymmetryMover;
+    protocols::simple_moves::symmetry::SetupForSymmetryMoverOP setup_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
 		setup_mover->apply( pose );
 	}
 

@@ -100,7 +100,7 @@ void SavePoseConstraintToFileFilter::parse_my_tag( utility::tag::TagCOP tag,
 }
 
 protocols::filters::FilterOP
-SavePoseConstraintToFileFilterCreator::create_filter() const { return new SavePoseConstraintToFileFilter; }
+SavePoseConstraintToFileFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SavePoseConstraintToFileFilter ); }
 
 std::string
 SavePoseConstraintToFileFilterCreator::keyname() const { return "SavePoseConstraintToFile"; }

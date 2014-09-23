@@ -33,10 +33,10 @@ namespace datacache {
 
 
 class CacheableString;
-typedef utility::pointer::owning_ptr< CacheableString > CacheableStringOP;
-typedef utility::pointer::owning_ptr< CacheableString const > CacheableStringCOP;
-typedef utility::pointer::access_ptr< CacheableString > CacheableStringAP;
-typedef utility::pointer::access_ptr< CacheableString const > CacheableStringCAP;
+typedef utility::pointer::shared_ptr< CacheableString > CacheableStringOP;
+typedef utility::pointer::shared_ptr< CacheableString const > CacheableStringCOP;
+typedef utility::pointer::weak_ptr< CacheableString > CacheableStringAP;
+typedef utility::pointer::weak_ptr< CacheableString const > CacheableStringCAP;
 
 
 } // namespace datacache

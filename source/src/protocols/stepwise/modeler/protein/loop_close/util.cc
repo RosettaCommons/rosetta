@@ -69,9 +69,9 @@ namespace loop_close {
 		main_chain_torsion_set_lists = stepwise_loop_bridger.main_chain_torsion_set_lists();
 
 		TR << "Using ProteinMainChainStepWiseSampler with loops" << std::endl;
-		ProteinMainChainStepWiseSamplerOP new_sampler = new ProteinMainChainStepWiseSampler( which_torsions,
+		ProteinMainChainStepWiseSamplerOP new_sampler( new ProteinMainChainStepWiseSampler( which_torsions,
 																																				 main_chain_torsion_set_lists,
-																																				 options_->choose_random() );
+																																				 options_->choose_random() ) );
 		new_sampler->init();
 		sampler = new_sampler;
 	}
@@ -114,11 +114,10 @@ namespace loop_close {
 		TR << "Going to sample this many takeoff psi/phi combinations: " <<
 			backbone_sampler.main_chain_torsion_set_lists_real().size() << std::endl;
 
-		ProteinMainChainStepWiseSamplerOP sampler_for_takeoff_res =
-          new ProteinMainChainStepWiseSampler( backbone_sampler.which_torsions(),
+		ProteinMainChainStepWiseSamplerOP sampler_for_takeoff_res( new ProteinMainChainStepWiseSampler( backbone_sampler.which_torsions(),
 																			 backbone_sampler.main_chain_torsion_set_lists_real(),
-																			 false /*choose_random*/ );
-		sampler = new sampler::StepWiseSamplerSizedComb( sampler /*input pose sample generator from above*/, sampler_for_takeoff_res /*inner loop*/);
+																			 false /*choose_random*/ ) );
+		sampler = sampler::StepWiseSamplerSizedOP( new sampler::StepWiseSamplerSizedComb( sampler /*input pose sample generator from above*/, sampler_for_takeoff_res /*inner loop*/) );
 
 	}
 

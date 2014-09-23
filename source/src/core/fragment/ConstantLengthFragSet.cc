@@ -227,7 +227,7 @@ void ConstantLengthFragSet::read_fragment_stream( utility::io::izstream & data, 
 				add( frame );
 				n_frags = std::max( n_frags, frame->nr_frags() );
 			}
-			frame = new Frame( insertion_pos );
+			frame = FrameOP( new Frame( insertion_pos ) );
 			continue;
 		}
 
@@ -241,7 +241,7 @@ void ConstantLengthFragSet::read_fragment_stream( utility::io::izstream & data, 
 		Real psi = float_of(line.substr(27, 9));
 		Real omega = float_of(line.substr(36, 9));
 
-    BBTorsionSRFDOP res = new BBTorsionSRFD(3, ss, aa);  // 3 protein torsions
+    BBTorsionSRFDOP res( new BBTorsionSRFD(3, ss, aa) );  // 3 protein torsions
 
 		// set torsions
 		res->set_torsion(1, phi);
@@ -262,10 +262,10 @@ void ConstantLengthFragSet::read_fragment_stream( utility::io::izstream & data, 
 
 		if ( !current_fragment ) {
 			if ( bAnnotation ) {
-				current_fragment = new AnnotatedFragData( pdbid, aa_index, chain );
+				current_fragment = FragDataOP( new AnnotatedFragData( pdbid, aa_index, chain ) );
 			}
 			else {
-				current_fragment = new FragData;
+				current_fragment = FragDataOP( new FragData );
 			}
 		}
 		current_fragment->add_residue(res);
@@ -283,19 +283,19 @@ void ConstantLengthFragSet::read_fragment_stream( utility::io::izstream & data, 
 }
 
 ConstFrameIterator ConstantLengthFragSet::begin() const {
-	return ConstFrameIterator( new ConstantLengthFragSetIterator_( frames_.begin(), frames_.end() ) );
+	return ConstFrameIterator( FrameIteratorWorker_OP( new ConstantLengthFragSetIterator_( frames_.begin(), frames_.end() ) ) );
 }
 
 ConstFrameIterator ConstantLengthFragSet::end() const {
-	return ConstFrameIterator( new ConstantLengthFragSetIterator_( frames_.end(), frames_.end() ) );
+	return ConstFrameIterator( FrameIteratorWorker_OP( new ConstantLengthFragSetIterator_( frames_.end(), frames_.end() ) ) );
 }
 
 FrameIterator ConstantLengthFragSet::nonconst_begin() {
-	return FrameIterator( new ConstantLengthFragSetIterator_( frames_.begin(), frames_.end() ) );
+	return FrameIterator( FrameIteratorWorker_OP( new ConstantLengthFragSetIterator_( frames_.begin(), frames_.end() ) ) );
 }
 
 FrameIterator ConstantLengthFragSet::nonconst_end() {
-	return FrameIterator( new ConstantLengthFragSetIterator_( frames_.end(), frames_.end() ) );
+	return FrameIterator( FrameIteratorWorker_OP( new ConstantLengthFragSetIterator_( frames_.end(), frames_.end() ) ) );
 }
 
 } //fragment

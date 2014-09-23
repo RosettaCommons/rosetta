@@ -87,9 +87,9 @@ class LocalInserter_SimpleMin : public LocalInserter{
 public:
 	LocalInserter_SimpleMin():
 		LocalInserter(),
-		scorefxn_rama_cst_( new core::scoring::ScoreFunction ),
+		scorefxn_rama_cst_( core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction ) ),
 		options_( "dfpmin", 0.2, true , false ),
-		scorefxn_cen_cst_( new core::scoring::ScoreFunction ),
+		scorefxn_cen_cst_( core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction ) ),
 		options2_( "dfpmin", 0.02,true , false )
 	{
 		set_default_score_functions();

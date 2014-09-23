@@ -100,7 +100,7 @@ Coulomb::initialize() {
 				low_poly_start_, min_dis_score_, 0,
 				low_poly_end_, low_poly_end_score, low_poly_end_deriv );
 			InterpolatorOP interp_low( gen_low_poly.get_interpolator() );
-			SimpleInterpolatorOP sinterp_low = dynamic_cast< SimpleInterpolator * > (interp_low() );
+			SimpleInterpolatorOP sinterp_low = utility::pointer::dynamic_pointer_cast< numeric::interpolation::spline::SimpleInterpolator > ( interp_low );
 			if ( ! sinterp_low ) {
 				utility_exit_with_message( "Hack Elec created non-simple-interpolator in initialize()" );
 			}
@@ -134,7 +134,7 @@ Coulomb::initialize() {
 				hi_poly_start_, hi_poly_start_score, hi_poly_start_deriv,
 				hi_poly_end_, 0, 0 );
 			InterpolatorOP interp_hi( gen_hi_poly.get_interpolator() );
-			SimpleInterpolatorOP sinterp_hi = dynamic_cast< SimpleInterpolator * > (interp_hi() );
+			SimpleInterpolatorOP sinterp_hi = utility::pointer::dynamic_pointer_cast< numeric::interpolation::spline::SimpleInterpolator > ( interp_hi );
 			if ( ! sinterp_hi ) {
 				utility_exit_with_message( "Hack Elec created non-simple-interpolator in initialize()" );
 			}

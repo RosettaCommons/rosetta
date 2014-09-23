@@ -24,8 +24,8 @@ namespace protocols {
 namespace antibody {
 
 class ModelCDRH3;
-typedef utility::pointer::owning_ptr< ModelCDRH3 > ModelCDRH3OP;
-typedef utility::pointer::owning_ptr< ModelCDRH3 const > ModelCDRH3COP;
+typedef utility::pointer::shared_ptr< ModelCDRH3 > ModelCDRH3OP;
+typedef utility::pointer::shared_ptr< ModelCDRH3 const > ModelCDRH3COP;
 
 } // antibody
 } // protocols

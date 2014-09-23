@@ -232,7 +232,7 @@ RigidBodyMoveRSO::RigidBodyMoveRSO( RigidBodyMoveRSO const & other )
 
 core::pack::rotamer_set::RotamerSetOperationOP
 RigidBodyMoveRSO::clone() const{
-	return new RigidBodyMoveRSO( *this );
+	return core::pack::rotamer_set::RotamerSetOperationOP( new RigidBodyMoveRSO( *this ) );
 }
 
 utility::vector1< core::conformation::ResidueCOP >

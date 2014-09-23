@@ -169,8 +169,8 @@ bool PeakFileFormat::compatible_with_current_format( CrossPeak const& cp ) const
 }
 
 void PeakFileFormat::set_format_from_peak( CrossPeak const& cp ) {
-  info1_ = new CrossPeakInfo( cp.info( 1 ) );
-  info2_ = new CrossPeakInfo( cp.info( 2 ) );
+  info1_ = CrossPeakInfoOP( new CrossPeakInfo( cp.info( 1 ) ) );
+  info2_ = CrossPeakInfoOP( new CrossPeakInfo( cp.info( 2 ) ) );
   col2proton_.clear();
   col2islabel_.clear();
 
@@ -349,7 +349,7 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
       col2proton_[ i ] = 2;
 			if ( tolerances[ i ]==0.0 ) tolerances[ i ]=default_tolerance_h;
       if ( !info2_ ) {
-				info2_ = new CrossPeakInfo( uppercased( atom_names[ i ] ), "", max_noe_dist, tolerances[ i ], 0.0 );
+				info2_ = CrossPeakInfoOP( new CrossPeakInfo( uppercased( atom_names[ i ] ), "", max_noe_dist, tolerances[ i ], 0.0 ) );
       } else {
 				info2_->set_proton( uppercased( atom_names[ i ] ), tolerances[ i ] );
       }
@@ -358,7 +358,7 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
 			if ( HN_column_labels ) atom_names[ i ] = "h";
 			if ( tolerances[ i ]==0.0 ) tolerances[ i ]=default_tolerance_H;
       if ( !info1_ ) {
-				info1_ = new CrossPeakInfo( atom_names[ i ], "", max_noe_dist, tolerances[ i ], 0.0 );
+				info1_ = CrossPeakInfoOP( new CrossPeakInfo( atom_names[ i ], "", max_noe_dist, tolerances[ i ], 0.0 ) );
       } else {
 				info1_->set_proton( atom_names[ i ], tolerances[ i ] );
       }
@@ -367,7 +367,7 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
       col2islabel_[ i ] = true;
 			if ( tolerances[ i ]==0.0 ) tolerances[ i ]=	option[ noesy_weights::tolerances ][ TOL_LABEL ];
       if ( !info2_ ) {
-				info2_ = new CrossPeakInfo( "", uppercased( atom_names[ i ] ), max_noe_dist, 0.0, tolerances[ i ] );
+				info2_ = CrossPeakInfoOP( new CrossPeakInfo( "", uppercased( atom_names[ i ] ), max_noe_dist, 0.0, tolerances[ i ] ) );
       } else {
 				info2_->set_label( uppercased( atom_names[ i ] ), tolerances[ i ] );
       }
@@ -376,7 +376,7 @@ void PeakFileFormat::read_header( std::istream& is, std::string& next_line ) {
       col2islabel_[ i ] = true;
 			if ( tolerances[ i ]==0.0 ) tolerances[ i ]=	option[ noesy_weights::tolerances ][ TOL_LABEL ];
       if ( !info1_ ) {
-				info1_ = new CrossPeakInfo( "", atom_names[ i ], max_noe_dist, 0.0, tolerances[ i ] );
+				info1_ = CrossPeakInfoOP( new CrossPeakInfo( "", atom_names[ i ], max_noe_dist, 0.0, tolerances[ i ] ) );
       } else {
 				info1_->set_label( atom_names[ i ], tolerances[ i ] );
       }
@@ -420,11 +420,11 @@ CrossPeakOP PeakFileFormat::read_peak( std::istream& is, std::string& next_line 
   //CrossPeak factory
   runtime_assert( ncol >=2 && ncol <= 4 );
   if ( ncol == 2 ) {
-    cp = new CrossPeak;
+    cp = CrossPeakOP( new CrossPeak );
   } else if ( ncol == 3 ) {
-    cp = new CrossPeak3D;
+    cp = CrossPeakOP( new CrossPeak3D );
   } else {
-    cp = new CrossPeak4D;
+    cp = CrossPeakOP( new CrossPeak4D );
   }
   cp->set_info( 1, info1_ );
   cp->set_info( 2, info2_ );

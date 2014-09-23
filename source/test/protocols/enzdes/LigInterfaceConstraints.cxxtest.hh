@@ -105,7 +105,7 @@ public:
 		residue_set.read_files(params_files);
 		basic::options::option[basic::options::OptionKeys::run::preserve_header ].value(true);
 
-		enz_io = new protocols::toolbox::match_enzdes_util::EnzConstraintIO(residue_set.get_self_weak_ptr());
+		enz_io = protocols::toolbox::match_enzdes_util::EnzConstraintIOOP( new protocols::toolbox::match_enzdes_util::EnzConstraintIO(residue_set.get_self_weak_ptr()) );
   }
 
   // Shared finalization goes here.
@@ -121,34 +121,34 @@ public:
 	  core::Real const rad_per_deg = numeric::constants::f::degrees_to_radians;
 
 	  core::import_pose::pose_from_pdb( test_pose, "protocols/enzdes/ligtest_it.pdb");
-	  scoring::ScoreFunctionOP scorefxn = new scoring::ScoreFunction;
+	  scoring::ScoreFunctionOP scorefxn( new scoring::ScoreFunction );
 	  scorefxn->reset();
 	  //scorefxn->set_weight( scoring::fa_atr, 1.0);
 	  scorefxn->set_weight( scoring::atom_pair_constraint, 1.0);
 	  scorefxn->set_weight( scoring::angle_constraint, 1.0);
 	  scorefxn->set_weight( scoring::dihedral_constraint, 1.0);
 
-	  ConstraintSetOP test_cst_set = new ConstraintSet();
+	  ConstraintSetOP test_cst_set( new ConstraintSet() );
 
 
 	  //couple of constraints
-	  core::scoring::func::FuncOP his_lig_dist = new core::scoring::constraints::BoundFunc((2.00-0.30),(2.00+0.30), sqrt(1.0/180.0), "dis");
-	  test_cst_set->add_constraint( new AtomPairConstraint( AtomID(test_pose.residue_type(107).atom_index("C6"),107), AtomID(test_pose.residue_type(45).atom_index("ND1"),45), his_lig_dist) );
+	  core::scoring::func::FuncOP his_lig_dist( new core::scoring::constraints::BoundFunc((2.00-0.30),(2.00+0.30), sqrt(1.0/180.0), "dis") );
+	  test_cst_set->add_constraint( ConstraintCOP( new AtomPairConstraint( AtomID(test_pose.residue_type(107).atom_index("C6"),107), AtomID(test_pose.residue_type(45).atom_index("ND1"),45), his_lig_dist) ) );
 	  TR << "Adding constraint between res " << test_pose.residue_type(45).name3() << "45 and " << test_pose.residue_type(107).name3() <<"107." << std::endl;
 
-	  core::scoring::func::FuncOP his_lig_ang = new core::scoring::constraints::BoundFunc( (105.10*rad_per_deg - 6.00*rad_per_deg), (105.10*rad_per_deg + 6.00*rad_per_deg), sqrt(1.0/100.0),"angA");
-	  test_cst_set->add_constraint( new AngleConstraint( AtomID(test_pose.residue_type(107).atom_index("O4"),107), AtomID(test_pose.residue_type(107).atom_index("C6"),107), AtomID(test_pose.residue_type(45).atom_index("ND1"),45), his_lig_ang) );
+	  core::scoring::func::FuncOP his_lig_ang( new core::scoring::constraints::BoundFunc( (105.10*rad_per_deg - 6.00*rad_per_deg), (105.10*rad_per_deg + 6.00*rad_per_deg), sqrt(1.0/100.0),"angA") );
+	  test_cst_set->add_constraint( ConstraintCOP( new AngleConstraint( AtomID(test_pose.residue_type(107).atom_index("O4"),107), AtomID(test_pose.residue_type(107).atom_index("C6"),107), AtomID(test_pose.residue_type(45).atom_index("ND1"),45), his_lig_ang) ) );
 
 
-	  core::scoring::func::FuncOP ser_lig_ang = new core::scoring::constraints::BoundFunc( (109.00*rad_per_deg - 15.00*rad_per_deg), (109.00*rad_per_deg + 15.00*rad_per_deg), sqrt(1.0/20.0),"angB");
-	  test_cst_set->add_constraint( new AngleConstraint( AtomID(test_pose.residue_type(107).atom_index("O4"),107), AtomID(test_pose.residue_type(68).atom_index("OG"),68), AtomID(test_pose.residue_type(68).atom_index("CB"),68), ser_lig_ang) );
+	  core::scoring::func::FuncOP ser_lig_ang( new core::scoring::constraints::BoundFunc( (109.00*rad_per_deg - 15.00*rad_per_deg), (109.00*rad_per_deg + 15.00*rad_per_deg), sqrt(1.0/20.0),"angB") );
+	  test_cst_set->add_constraint( ConstraintCOP( new AngleConstraint( AtomID(test_pose.residue_type(107).atom_index("O4"),107), AtomID(test_pose.residue_type(68).atom_index("OG"),68), AtomID(test_pose.residue_type(68).atom_index("CB"),68), ser_lig_ang) ) );
 
-	  core::scoring::func::FuncOP gln_lig_dist = new core::scoring::constraints::BoundFunc( (3.00-0.20),(3.00 + 0.20), sqrt(1.0/20.0), "dis");
-	  test_cst_set->add_constraint( new AtomPairConstraint( AtomID(test_pose.residue_type(107).atom_index("O4"),107), AtomID(test_pose.residue_type(51).atom_index("NE2"),51), gln_lig_dist) );
+	  core::scoring::func::FuncOP gln_lig_dist( new core::scoring::constraints::BoundFunc( (3.00-0.20),(3.00 + 0.20), sqrt(1.0/20.0), "dis") );
+	  test_cst_set->add_constraint( ConstraintCOP( new AtomPairConstraint( AtomID(test_pose.residue_type(107).atom_index("O4"),107), AtomID(test_pose.residue_type(51).atom_index("NE2"),51), gln_lig_dist) ) );
 
 
-	  core::scoring::func::FuncOP gln_lig_dih = new core::scoring::constraints::PeriodicBoundFunc( (180.00*rad_per_deg - 15.00*rad_per_deg),(180.00*rad_per_deg + 15.00*rad_per_deg), sqrt(1.0/25.0), "dis", 180.00*rad_per_deg);
-	  test_cst_set->add_constraint( new DihedralConstraint( AtomID(test_pose.residue_type(107).atom_index("O4"),107), AtomID(test_pose.residue_type(51).atom_index("NE2"),51), AtomID(test_pose.residue_type(51).atom_index("CD"),51), AtomID(test_pose.residue_type(51).atom_index("CG"),51), gln_lig_dih) );
+	  core::scoring::func::FuncOP gln_lig_dih( new core::scoring::constraints::PeriodicBoundFunc( (180.00*rad_per_deg - 15.00*rad_per_deg),(180.00*rad_per_deg + 15.00*rad_per_deg), sqrt(1.0/25.0), "dis", 180.00*rad_per_deg) );
+	  test_cst_set->add_constraint( ConstraintCOP( new DihedralConstraint( AtomID(test_pose.residue_type(107).atom_index("O4"),107), AtomID(test_pose.residue_type(51).atom_index("NE2"),51), AtomID(test_pose.residue_type(51).atom_index("CD"),51), AtomID(test_pose.residue_type(51).atom_index("CG"),51), gln_lig_dih) ) );
 	  // all constraints defined
 
 	  //test_cst_set->show(TR);
@@ -261,16 +261,16 @@ public:
 	  Size jump_id = test_pose.num_jump(); // assume ligand attached by last jump
 	  TS_ASSERT_EQUALS( test_pose.num_jump(), compare_pose.num_jump());
 
-	  core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
+	  core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
 	  movemap->set_jump(jump_id, true);
 	  movemap->set_chi(45, true);
 	  movemap->set_chi(51, true);
 	  movemap->set_chi(68, true);
 
 
-	  protocols::simple_moves::MinMoverOP dfpMinTightTol = new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ );
+	  protocols::simple_moves::MinMoverOP dfpMinTightTol( new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ ) );
 
-	  protocols::simple_moves::MinMoverOP dfpMinTightTol2 = new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ );
+	  protocols::simple_moves::MinMoverOP dfpMinTightTol2( new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ ) );
 
 
 	  TR << "scoring seems to work, doing minimization...  ";

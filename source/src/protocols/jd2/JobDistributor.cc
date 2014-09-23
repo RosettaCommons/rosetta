@@ -175,7 +175,7 @@ JobDistributor::JobDistributor(bool empty) :
 	else
 	{
 		job_inputter_ = NULL;
-		job_outputter_ = new NoOutputJobOutputter;
+		job_outputter_ = JobOutputterOP( new NoOutputJobOutputter );
 		parser_ = JobDistributorFactory::create_parser();
 	}
 }
@@ -190,7 +190,7 @@ void JobDistributor::init_jd()
 	{
 		tr.Debug << "batches present... " << std::endl;
 		current_batch_id_ = 1;
-		job_inputter_ = new BatchJobInputter(batches_[1]);
+		job_inputter_ = JobInputterOP( new BatchJobInputter(batches_[1]) );
 	}
 	else
 	{ //no batches...
@@ -423,7 +423,7 @@ JobDistributor::check_for_parser_in_go_main() {
 }
 
 bool JobDistributor::using_parser() const {
-	return parser_;
+	return parser_ != 0;
 }
 
 bool
@@ -468,7 +468,7 @@ JobDistributor::run_one_job(
 	// setup profiling
 	evaluation::TimeEvaluatorOP run_time(NULL);
 	if (!option[OptionKeys::run::no_prof_info_in_silentout]) {
-		job_outputter_->add_evaluation(run_time =	new evaluation::TimeEvaluator); //just don't use this in integration tests!
+		job_outputter_->add_evaluation(run_time = evaluation::TimeEvaluatorOP( new evaluation::TimeEvaluator )); //just don't use this in integration tests!
 	}
 
 	tr.Debug << "Starting job " << job_outputter_->output_name( current_job_ ) << std::endl;
@@ -931,7 +931,7 @@ void JobDistributor::load_new_batch()
 	//this is the first batch!
 	job_inputter_ = NULL; //triggers destructor --> restores options
 	tr.Info << "start batch " << batches_[current_batch_id_] << std::endl;
-	job_inputter_ = new BatchJobInputter(batches_[current_batch_id_]);
+	job_inputter_ = JobInputterOP( new BatchJobInputter(batches_[current_batch_id_]) );
 
 	job_inputter_->fill_jobs(jobs_);
 	// have to initialize these AFTER BatchJobInputter->fill_jobs an new batch

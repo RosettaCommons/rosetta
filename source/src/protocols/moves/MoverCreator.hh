@@ -41,8 +41,8 @@ public:
 	virtual std::string keyname() const = 0;
 };
 
-typedef utility::pointer::owning_ptr< MoverCreator > MoverCreatorOP;
-typedef utility::pointer::owning_ptr< MoverCreator const > MoverCreatorCOP;
+typedef utility::pointer::shared_ptr< MoverCreator > MoverCreatorOP;
+typedef utility::pointer::shared_ptr< MoverCreator const > MoverCreatorCOP;
 
 } //namespace moves
 } //namespace protocols

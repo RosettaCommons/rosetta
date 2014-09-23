@@ -26,8 +26,8 @@ namespace simple_filters {
 class TaskAwareSASAFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< TaskAwareSASAFilter >  TaskAwareSASAFilterOP;
-typedef utility::pointer::owning_ptr< TaskAwareSASAFilter const >  TaskAwareSASAFilterCOP;
+typedef utility::pointer::shared_ptr< TaskAwareSASAFilter >  TaskAwareSASAFilterOP;
+typedef utility::pointer::shared_ptr< TaskAwareSASAFilter const >  TaskAwareSASAFilterCOP;
 
 } // namespace simple_filters
 } // namespace protocols

@@ -60,7 +60,7 @@ public:
   virtual ~WriteableCacheableMap() {}
 
   virtual CacheableDataOP clone() const {
-    return new WriteableCacheableMap(*this);
+    return CacheableDataOP( new WriteableCacheableMap(*this) );
   }
 
   virtual DataMap & map() {

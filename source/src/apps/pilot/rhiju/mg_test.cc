@@ -245,7 +245,7 @@ scan_magnesium( pose::Pose & pose,
 	FArray3D< bool > energy_assigned( xgridsize, ygridsize, zgridsize );
 
 	// vdw calculation takes a while, actually -- do a faster calculation...
-	ScoreFunctionOP scorefxn_fast = new ScoreFunction;
+	ScoreFunctionOP scorefxn_fast( new ScoreFunction );
 	scorefxn_fast->set_weight( rna_mg,  1.0 );
 	scorefxn_fast->set_weight( rna_mg_indirect,  1.0 );
 
@@ -373,7 +373,7 @@ scan_magnesium_SLOW( pose::Pose & pose,
 
 	Distance const xyz_increment = option[ xyz_step ]();
 
-	ScoreFunctionOP scorefxn_fast = new ScoreFunction;
+	ScoreFunctionOP scorefxn_fast( new ScoreFunction );
 	scorefxn_fast->set_weight( rna_mg,  1.0 );
 	//	scorefxn->set_weight( rna_vdw, 1.0 );
 
@@ -594,7 +594,7 @@ mg_scan_test()
 	if ( count == 0 ) protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 600, 600 );
 
 	/////////////////////////////////////////////
-	ScoreFunctionOP scorefxn = new ScoreFunction;
+	ScoreFunctionOP scorefxn( new ScoreFunction );
 	if ( option[ score::weights ].user() ){
 		scorefxn = get_score_function();
 	} else {

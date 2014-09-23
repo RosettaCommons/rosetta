@@ -68,7 +68,7 @@ CloseOneCDRLoop::~CloseOneCDRLoop() {}
 void CloseOneCDRLoop::set_default() {
 	allowed_separation_ = 1.9;
 	flanking_residues_ = 5; // default 5;
-	movemap_ = new kinematics::MoveMap();
+	movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap() );
 	movemap_->set_chi( false );
 	movemap_->set_bb( false );
 } // CloseOneCDRLoop::set_default
@@ -128,14 +128,14 @@ void CloseOneCDRLoop::apply( pose::Pose & pose_in ) {
 	if( nter_separation > allowed_separation_ ) {
 		loops::Loop one_loop( loop_start_, cdr_loop_start_, cdr_loop_start_-1, 0, false );
 		simple_one_loop_fold_tree( pose_in, one_loop );
-		CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover( one_loop, movemap_ );
+		CCDLoopClosureMoverOP ccd_moves( new CCDLoopClosureMover( one_loop, movemap_ ) );
 		ccd_moves->apply( pose_in );
 	}
 
 	if( cter_separation > allowed_separation_ ) {
 		loops::Loop one_loop( cdr_loop_end_, loop_end_, cdr_loop_end_+1, 0, false );
 		simple_one_loop_fold_tree( pose_in, one_loop );
-		CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover( one_loop, movemap_ );
+		CCDLoopClosureMoverOP ccd_moves( new CCDLoopClosureMover( one_loop, movemap_ ) );
 		ccd_moves->apply( pose_in );
 	}
 
@@ -148,7 +148,7 @@ void CloseOneCDRLoop::apply( pose::Pose & pose_in ) {
 		if( separation > allowed_separation_ ) {
 			Size cutpoint = ii;
 			loops::Loop one_loop( loop_start_, loop_end_, cutpoint, 0, false );
-			CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover( one_loop, movemap_ );
+			CCDLoopClosureMoverOP ccd_moves( new CCDLoopClosureMover( one_loop, movemap_ ) );
 			ccd_moves->apply( pose_in );
 		}
 	}

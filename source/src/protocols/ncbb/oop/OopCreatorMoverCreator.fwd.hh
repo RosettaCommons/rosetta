@@ -23,8 +23,8 @@ namespace ncbb {
 namespace oop {
 
 class OopCreatorMoverCreator; // fwd declaration
-typedef utility::pointer::owning_ptr< OopCreatorMoverCreator > OopCreatorMoverCreatorOP;
-typedef utility::pointer::owning_ptr< OopCreatorMoverCreator const > OopCreatorMoverCreatorCOP;
+typedef utility::pointer::shared_ptr< OopCreatorMoverCreator > OopCreatorMoverCreatorOP;
+typedef utility::pointer::shared_ptr< OopCreatorMoverCreator const > OopCreatorMoverCreatorCOP;
 
 } // namespace oop
 } // namespace ncbb

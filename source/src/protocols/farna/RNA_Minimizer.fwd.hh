@@ -17,7 +17,7 @@ namespace protocols {
 namespace farna {
 
 class RNA_Minimizer;
-typedef utility::pointer::owning_ptr< RNA_Minimizer > RNA_MinimizerOP;
+typedef utility::pointer::shared_ptr< RNA_Minimizer > RNA_MinimizerOP;
 
 } //farna
 } //protocols

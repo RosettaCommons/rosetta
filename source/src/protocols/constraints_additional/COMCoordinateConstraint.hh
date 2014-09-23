@@ -69,7 +69,7 @@ public:
 	);
 
 	virtual scoring::constraints::ConstraintOP clone() const {
-		return new COMCoordinateConstraint( atms_, COM_target_, stdv_, interval_ );
+		return scoring::constraints::ConstraintOP( new COMCoordinateConstraint( atms_, COM_target_, stdv_, interval_ ) );
 	}
 
 	virtual scoring::constraints::ConstraintOP remapped_clone(

@@ -39,9 +39,9 @@ TreeBuilderOP TreeBuilderFactory::get_builder(const std::string& builder_name) {
   boost::to_lower(type);
 
   if (type == "star") {
-    return new StarTreeBuilder();
+    return TreeBuilderOP( new StarTreeBuilder() );
   } else if (type == "simple") {
-    return new SimpleTreeBuilder();
+    return TreeBuilderOP( new SimpleTreeBuilder() );
   } else {
     utility_exit_with_message("Invalid builder_type: " + type);
   }

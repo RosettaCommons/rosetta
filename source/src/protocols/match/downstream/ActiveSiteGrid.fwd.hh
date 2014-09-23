@@ -25,8 +25,8 @@ namespace downstream {
 
 class ActiveSiteGrid;
 
-typedef utility::pointer::owning_ptr< ActiveSiteGrid > ActiveSiteGridOP;
-typedef utility::pointer::owning_ptr< ActiveSiteGrid const > ActiveSiteGridCOP;
+typedef utility::pointer::shared_ptr< ActiveSiteGrid > ActiveSiteGridOP;
+typedef utility::pointer::shared_ptr< ActiveSiteGrid const > ActiveSiteGridCOP;
 
 }
 }

@@ -24,13 +24,13 @@ class MolFileIOAtom;
 class MolFileIOBond;
 class MolFileIOMolecule;
 
-typedef  utility::pointer::owning_ptr< MolFileIOAtom >  MolFileIOAtomOP;
-typedef  utility::pointer::owning_ptr< MolFileIOBond >  MolFileIOBondOP;
-typedef  utility::pointer::owning_ptr< MolFileIOMolecule >  MolFileIOMoleculeOP;
+typedef  utility::pointer::shared_ptr< MolFileIOAtom >  MolFileIOAtomOP;
+typedef  utility::pointer::shared_ptr< MolFileIOBond >  MolFileIOBondOP;
+typedef  utility::pointer::shared_ptr< MolFileIOMolecule >  MolFileIOMoleculeOP;
 
-typedef  utility::pointer::owning_ptr< const MolFileIOAtom >  MolFileIOAtomCOP;
-typedef  utility::pointer::owning_ptr< const MolFileIOBond >  MolFileIOBondCOP;
-typedef  utility::pointer::owning_ptr< const MolFileIOMolecule >  MolFileIOMoleculeCOP;
+typedef  utility::pointer::shared_ptr< const MolFileIOAtom >  MolFileIOAtomCOP;
+typedef  utility::pointer::shared_ptr< const MolFileIOBond >  MolFileIOBondCOP;
+typedef  utility::pointer::shared_ptr< const MolFileIOMolecule >  MolFileIOMoleculeCOP;
 
 }
 }

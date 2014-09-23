@@ -21,7 +21,7 @@ namespace import_pose {
 namespace pose_stream {
 
 class PoseInputStream;
-typedef utility::pointer::owning_ptr< PoseInputStream > PoseInputStreamOP;
+typedef utility::pointer::shared_ptr< PoseInputStream > PoseInputStreamOP;
 
 } // pose_input_stream
 } // impose_pose

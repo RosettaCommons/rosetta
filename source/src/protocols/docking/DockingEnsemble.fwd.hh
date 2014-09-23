@@ -22,8 +22,8 @@ namespace docking{
 
 //Forwards and OP typedefs
 class DockingEnsemble;
-typedef utility::pointer::owning_ptr< DockingEnsemble > DockingEnsembleOP;
-typedef utility::pointer::owning_ptr< DockingEnsemble const > DockingEnsembleCOP;
+typedef utility::pointer::shared_ptr< DockingEnsemble > DockingEnsembleOP;
+typedef utility::pointer::shared_ptr< DockingEnsemble const > DockingEnsembleCOP;
 
 }//docking
 }//protocols

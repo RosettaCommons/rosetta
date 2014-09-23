@@ -24,8 +24,8 @@ namespace loophash {
 
 
 class WorkUnit_LoopHash;
-typedef utility::pointer::owning_ptr< WorkUnit_LoopHash > WorkUnit_LoopHashOP;
-typedef utility::pointer::owning_ptr< WorkUnit_LoopHash const > WorkUnit_LoopHashCOP;
+typedef utility::pointer::shared_ptr< WorkUnit_LoopHash > WorkUnit_LoopHashOP;
+typedef utility::pointer::shared_ptr< WorkUnit_LoopHash const > WorkUnit_LoopHashCOP;
 
 class WorkUnit_LoopHash: public protocols::wum::WorkUnit_SilentStructStore {
   public:
@@ -37,7 +37,7 @@ class WorkUnit_LoopHash: public protocols::wum::WorkUnit_SilentStructStore {
 
 		virtual protocols::wum::WorkUnitBaseOP clone() const {
 			runtime_assert( library_ != 0 );
-			return new WorkUnit_LoopHash( *this );
+			return protocols::wum::WorkUnitBaseOP( new WorkUnit_LoopHash( *this ) );
 		}
 
 		void init_from_cmd( const core::Size mpi_rank );

@@ -26,9 +26,9 @@ class ContactMap;
 class Contact;
 class ContactPartner;
 
-typedef utility::pointer::owning_ptr< ContactMap > ContactMapOP;
-typedef utility::pointer::owning_ptr< ContactMap const > ContactMapCOP;
-typedef utility::pointer::access_ptr< ContactPartner > ContactPartnerAP;
+typedef utility::pointer::shared_ptr< ContactMap > ContactMapOP;
+typedef utility::pointer::shared_ptr< ContactMap const > ContactMapCOP;
+typedef utility::pointer::weak_ptr< ContactPartner > ContactPartnerAP;
 
 }//moves
 }//protocols

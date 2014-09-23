@@ -34,7 +34,7 @@ using namespace core::scoring;
 static thread_local basic::Tracer TR( "protocols.simple_filters.AveragePathLengthFilter" );
 
 protocols::filters::FilterOP
-AveragePathLengthFilterCreator::create_filter() const { return new AveragePathLengthFilter; }
+AveragePathLengthFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AveragePathLengthFilter ); }
 
 std::string
 AveragePathLengthFilterCreator::keyname() const { return "AveragePathLength"; }
@@ -66,12 +66,12 @@ AveragePathLengthFilter::~AveragePathLengthFilter() {}
 
 filters::FilterOP
 AveragePathLengthFilter::clone() const {
-	return new AveragePathLengthFilter( *this );
+	return filters::FilterOP( new AveragePathLengthFilter( *this ) );
 }
 
 filters::FilterOP
 AveragePathLengthFilter::fresh_instance() const {
-	return new AveragePathLengthFilter();
+	return filters::FilterOP( new AveragePathLengthFilter() );
 }
 
 core::Real

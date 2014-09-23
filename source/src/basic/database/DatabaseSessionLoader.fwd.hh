@@ -20,8 +20,8 @@ namespace basic {
 namespace database {
 
 class DatabaseSessionLoader;
-typedef utility::pointer::owning_ptr< DatabaseSessionLoader > DatabaseSessionLoaderOP;
-typedef utility::pointer::owning_ptr< DatabaseSessionLoader const > DatabaseSessionLoaderCOP;
+typedef utility::pointer::shared_ptr< DatabaseSessionLoader > DatabaseSessionLoaderOP;
+typedef utility::pointer::shared_ptr< DatabaseSessionLoader const > DatabaseSessionLoaderCOP;
 
 } // database
 } // basic

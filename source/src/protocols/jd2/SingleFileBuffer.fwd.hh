@@ -22,8 +22,8 @@ namespace jd2 {
 
 //forward declaration for class
 class SingleFileBuffer;
-typedef utility::pointer::owning_ptr< SingleFileBuffer > SingleFileBufferOP;
-typedef utility::pointer::owning_ptr< SingleFileBuffer const > SingleFileBufferCOP;
+typedef utility::pointer::shared_ptr< SingleFileBuffer > SingleFileBufferOP;
+typedef utility::pointer::shared_ptr< SingleFileBuffer const > SingleFileBufferCOP;
 
 
 }

@@ -24,8 +24,8 @@ namespace protocols{
 namespace moves{
 
 class StructureRestrictor;
-typedef utility::pointer::owning_ptr< StructureRestrictor > StructureRestrictorOP;
-typedef utility::pointer::owning_ptr< StructureRestrictor const > StructureRestrictorCOP;
+typedef utility::pointer::shared_ptr< StructureRestrictor > StructureRestrictorOP;
+typedef utility::pointer::shared_ptr< StructureRestrictor const > StructureRestrictorCOP;
 
 }//moves
 }//protocols

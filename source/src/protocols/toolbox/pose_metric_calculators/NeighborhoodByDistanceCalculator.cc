@@ -62,7 +62,7 @@ NeighborhoodByDistanceCalculator::NeighborhoodByDistanceCalculator( Neighborhood
 {}
 
 core::pose::metrics::PoseMetricCalculatorOP NeighborhoodByDistanceCalculator::clone() const
-{ return new NeighborhoodByDistanceCalculator(*this); }
+{ return core::pose::metrics::PoseMetricCalculatorOP( new NeighborhoodByDistanceCalculator(*this) ); }
 
 void
 NeighborhoodByDistanceCalculator::lookup(

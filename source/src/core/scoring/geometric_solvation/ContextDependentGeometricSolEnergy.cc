@@ -76,7 +76,7 @@ methods::EnergyMethodOP
 ContextDependentGeometricSolEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return new ContextDependentGeometricSolEnergy( options );
+	return methods::EnergyMethodOP( new ContextDependentGeometricSolEnergy( options ) );
 }
 
 ScoreTypes
@@ -92,8 +92,8 @@ ContextDependentGeometricSolEnergyCreator::score_types_for_method() const {
 ContextDependentGeometricSolEnergy::ContextDependentGeometricSolEnergy( methods::EnergyMethodOptions const & opts
 ) :
 	parent( methods::EnergyMethodCreatorOP( new ContextDependentGeometricSolEnergyCreator ) ),
-	options_( new methods::EnergyMethodOptions( opts ) ),
-	evaluator_( new GeometricSolEnergyEvaluator( opts ) ),
+	options_( methods::EnergyMethodOptionsOP( new methods::EnergyMethodOptions( opts ) ) ),
+	evaluator_( GeometricSolEnergyEvaluatorOP( new GeometricSolEnergyEvaluator( opts ) ) ),
   precalculated_bb_bb_energy_(0.0f),
 	using_extended_method_( false )
 {
@@ -102,7 +102,7 @@ ContextDependentGeometricSolEnergy::ContextDependentGeometricSolEnergy( methods:
 /// copy ctor
 ContextDependentGeometricSolEnergy::ContextDependentGeometricSolEnergy( ContextDependentGeometricSolEnergy const & src ):
 	ContextDependentTwoBodyEnergy( src ),
-	options_( new methods::EnergyMethodOptions( *src.options_ ) ),
+	options_( methods::EnergyMethodOptionsOP( new methods::EnergyMethodOptions( *src.options_ ) ) ),
 	evaluator_( src.evaluator_ ),
 	precalculated_bb_bb_energy_(src.precalculated_bb_bb_energy_),
 	using_extended_method_( src.using_extended_method_ )
@@ -112,7 +112,7 @@ ContextDependentGeometricSolEnergy::ContextDependentGeometricSolEnergy( ContextD
 methods::EnergyMethodOP
 ContextDependentGeometricSolEnergy::clone() const
 {
-	return new ContextDependentGeometricSolEnergy( *this );
+	return methods::EnergyMethodOP( new ContextDependentGeometricSolEnergy( *this ) );
 }
 
 void

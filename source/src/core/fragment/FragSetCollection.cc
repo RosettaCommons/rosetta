@@ -55,10 +55,10 @@ FragSetCollection::FragSetCollection( FragSetCollection const & src ) :
 {}
 
 FragSetOP FragSetCollection::clone() const {
-	return new FragSetCollection( *this );
+	return FragSetOP( new FragSetCollection( *this ) );
 }
 FragSetOP FragSetCollection::empty_clone() const {
-	return new FragSetCollection();
+	return FragSetOP( new FragSetCollection() );
 }
 
 

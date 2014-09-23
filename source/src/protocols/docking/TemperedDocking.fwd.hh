@@ -20,7 +20,7 @@ namespace protocols {
 namespace docking {
 
 class TemperedDocking;
-typedef utility::pointer::owning_ptr< TemperedDocking > TemperedDockingOP;
+typedef utility::pointer::shared_ptr< TemperedDocking > TemperedDockingOP;
 
 }
 }

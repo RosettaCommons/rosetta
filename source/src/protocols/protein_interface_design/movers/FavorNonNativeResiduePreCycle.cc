@@ -40,7 +40,7 @@ std::string FavorNonNativeResiduePreCycleCreator::keyname() const
 
 protocols::moves::MoverOP
 FavorNonNativeResiduePreCycleCreator::create_mover() const {
-        return new FavorNonNativeResiduePreCycle;
+        return protocols::moves::MoverOP( new FavorNonNativeResiduePreCycle );
 }
 
 std::string

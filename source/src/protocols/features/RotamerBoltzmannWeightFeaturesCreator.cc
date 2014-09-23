@@ -29,7 +29,7 @@ namespace features {
 RotamerBoltzmannWeightFeaturesCreator::RotamerBoltzmannWeightFeaturesCreator() {}
 RotamerBoltzmannWeightFeaturesCreator::~RotamerBoltzmannWeightFeaturesCreator() {}
 FeaturesReporterOP RotamerBoltzmannWeightFeaturesCreator::create_features_reporter() const {
-	return new RotamerBoltzmannWeightFeatures;
+	return FeaturesReporterOP( new RotamerBoltzmannWeightFeatures );
 }
 
 std::string RotamerBoltzmannWeightFeaturesCreator::type_name() const {

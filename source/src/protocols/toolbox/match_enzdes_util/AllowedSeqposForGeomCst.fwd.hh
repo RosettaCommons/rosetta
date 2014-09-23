@@ -24,8 +24,8 @@ namespace toolbox {
 namespace match_enzdes_util {
 
 class  AllowedSeqposForGeomCst;
-typedef utility::pointer::owning_ptr< AllowedSeqposForGeomCst >AllowedSeqposForGeomCstOP;
-typedef utility::pointer::owning_ptr< AllowedSeqposForGeomCst const > AllowedSeqposForGeomCstCOP;
+typedef utility::pointer::shared_ptr< AllowedSeqposForGeomCst >AllowedSeqposForGeomCstOP;
+typedef utility::pointer::shared_ptr< AllowedSeqposForGeomCst const > AllowedSeqposForGeomCstCOP;
 
 
 }

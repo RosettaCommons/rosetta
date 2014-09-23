@@ -24,12 +24,12 @@ namespace match {
 namespace upstream {
 
 class ProteinBackboneBuildPoint;
-typedef utility::pointer::owning_ptr< ProteinBackboneBuildPoint > ProteinBackboneBuildPointOP;
-typedef utility::pointer::owning_ptr< ProteinBackboneBuildPoint const > ProteinBackboneBuildPointCOP;
+typedef utility::pointer::shared_ptr< ProteinBackboneBuildPoint > ProteinBackboneBuildPointOP;
+typedef utility::pointer::shared_ptr< ProteinBackboneBuildPoint const > ProteinBackboneBuildPointCOP;
 
 class OriginalBackboneBuildPoint;
-typedef utility::pointer::owning_ptr< OriginalBackboneBuildPoint > OriginalBackboneBuildPointOP;
-typedef utility::pointer::owning_ptr< OriginalBackboneBuildPoint const > OriginalBackboneBuildPointCOP;
+typedef utility::pointer::shared_ptr< OriginalBackboneBuildPoint > OriginalBackboneBuildPointOP;
+typedef utility::pointer::shared_ptr< OriginalBackboneBuildPoint const > OriginalBackboneBuildPointCOP;
 
 }
 }

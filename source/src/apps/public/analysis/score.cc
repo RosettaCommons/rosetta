@@ -149,7 +149,7 @@ main( int argc, char * argv [] )
 
 	//The following lines are to ensure one can rescore the pcs energy term (that uses TopologyClaimer)
 	if ( option[ broker::setup ].user() ) {
-		protocols::topology_broker::TopologyBrokerOP top_bro_OP = new  topology_broker::TopologyBroker();
+		protocols::topology_broker::TopologyBrokerOP top_bro_OP( new  topology_broker::TopologyBroker() );
 		try {
 			add_cmdline_claims(*top_bro_OP, false /* do_I_need_fragments */);
 		}
@@ -181,9 +181,9 @@ main( int argc, char * argv [] )
 
 	simple_moves::ScoreMoverOP scoretmp;
 	if( option[ krassk::tail_mode]) {
-		scoretmp = new simple_moves::TailsScoreMover(sfxn);
+		scoretmp = simple_moves::ScoreMoverOP( new simple_moves::TailsScoreMover(sfxn) );
 	} else {
-		scoretmp = new simple_moves::ScoreMover(sfxn);
+		scoretmp = simple_moves::ScoreMoverOP( new simple_moves::ScoreMover(sfxn) );
 	}
 
 	if(  option[ rescore::verbose ] )	{
@@ -198,17 +198,17 @@ main( int argc, char * argv [] )
 	// do sth more than just scoring
 	if ( option[ score_app::linmin ]() || option[ in::file::repair_sidechains ]() ) {
 		assert( sfxn );
-		protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
+		protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
 		if ( option[ in::file::repair_sidechains ]() ) {
-			protocols::simple_moves::ProlineFixMoverOP pfm = new protocols::simple_moves::ProlineFixMover;
+			protocols::simple_moves::ProlineFixMoverOP pfm( new protocols::simple_moves::ProlineFixMover );
 			seqmov->add_mover( pfm );
 		}
 		if ( option[ score_app::linmin ]() ) {
-			core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+			core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 			movemap->set_bb( true ); movemap->set_chi( true );
-			protocols::simple_moves::MinMoverOP minmover = new protocols::simple_moves::MinMover(
+			protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover(
 				movemap, sfxn, "linmin", 1e-4,
-				true /*use_nblist*/, true /*deriv_check*/, true /*verbose driv check*/ );
+				true /*use_nblist*/, true /*deriv_check*/, true /*verbose driv check*/ ) );
 			seqmov->add_mover( minmover );
 		}
 
@@ -218,7 +218,7 @@ main( int argc, char * argv [] )
 
 	// add constraints from cmd line
 	if ( option[ OptionKeys::constraints::cst_fa_file ].user() || option[ OptionKeys::constraints::cst_file ].user() ) {
-			protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
+			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
 			protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
 			if( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
 				loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );
@@ -233,16 +233,16 @@ main( int argc, char * argv [] )
 	// set pose for density scoring if a map was input
 	//   + (potentially) dock map into density
 	if ( option[ edensity::mapfile ].user() ) {
-		protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
-		seqmov->add_mover( new protocols::electron_density::SetupForDensityScoringMover );
+		protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
+		seqmov->add_mover( MoverOP( new protocols::electron_density::SetupForDensityScoringMover ) );
 		seqmov->add_mover( mover );
 		mover = seqmov;
 	}
 
 	// set pose for symmetry
 	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-		protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
-		seqmov->add_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
+		protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
+		seqmov->add_mover( MoverOP( new protocols::simple_moves::symmetry::SetupForSymmetryMover ) );
 		seqmov->add_mover( mover );
 		mover = seqmov;
 	}
@@ -254,8 +254,8 @@ main( int argc, char * argv [] )
 			// read native structure
 			core::pose::Pose native;
 			core::import_pose::pose_from_pdb( native, option[ basic::options::OptionKeys::in::file::native ] );
-			protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
-			seqmov->add_mover( new protocols::simple_moves::SuperimposeMover( native ) );
+			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
+			seqmov->add_mover( MoverOP( new protocols::simple_moves::SuperimposeMover( native ) ) );
 			seqmov->add_mover( mover );
 			mover = seqmov;
 		}

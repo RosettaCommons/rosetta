@@ -22,8 +22,8 @@ namespace trie {
 
 class TrieCollection;
 
-typedef utility::pointer::owning_ptr< TrieCollection > TrieCollectionOP;
-typedef utility::pointer::owning_ptr< TrieCollection const > TrieCollectionCOP;
+typedef utility::pointer::shared_ptr< TrieCollection > TrieCollectionOP;
+typedef utility::pointer::shared_ptr< TrieCollection const > TrieCollectionCOP;
 
 } // namespace trie
 } // namespace scoring

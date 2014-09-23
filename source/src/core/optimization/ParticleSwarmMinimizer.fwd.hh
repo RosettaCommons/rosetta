@@ -27,13 +27,13 @@ namespace optimization {
 
 
 class Particle; // fwd declaration
-typedef utility::pointer::owning_ptr< Particle > ParticleOP;
-typedef utility::pointer::owning_ptr< Particle const > ParticleCOP;
+typedef utility::pointer::shared_ptr< Particle > ParticleOP;
+typedef utility::pointer::shared_ptr< Particle const > ParticleCOP;
 typedef utility::vector1< ParticleOP > ParticleOPs;
 
 class ParticleSwarmMinimizer; // fwd declaration
-typedef utility::pointer::owning_ptr< ParticleSwarmMinimizer > ParticleSwarmMinimizerOP;
-typedef utility::pointer::owning_ptr< ParticleSwarmMinimizer const > ParticleSwarmMinimizerCOP;
+typedef utility::pointer::shared_ptr< ParticleSwarmMinimizer > ParticleSwarmMinimizerOP;
+typedef utility::pointer::shared_ptr< ParticleSwarmMinimizer const > ParticleSwarmMinimizerCOP;
 
 
 } // namespace optimization

@@ -21,8 +21,8 @@ namespace protocols {
 namespace multistate_design {
 
 class SingleState;
-typedef utility::pointer::owning_ptr< SingleState > SingleStateOP;
-typedef utility::pointer::owning_ptr< SingleState const > SingleStateCOP;
+typedef utility::pointer::shared_ptr< SingleState > SingleStateOP;
+typedef utility::pointer::shared_ptr< SingleState const > SingleStateCOP;
 typedef utility::vector1< SingleStateOP > SingleStateOPs;
 typedef utility::vector1< SingleStateCOP > SingleStateCOPs;
 

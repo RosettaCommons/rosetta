@@ -54,15 +54,15 @@ public:
 	void setUp() {
 		core_init();
 
-		test_helpers.push_back(new DebuggingHelper);
-		test_helpers.push_back(new BigLoopTest);
-		test_helpers.push_back(new NoSolutionsTest);
-		test_helpers.push_back(new PoseWithLigandTest);
+		test_helpers.push_back(utility::pointer::shared_ptr<class ClosureTest>( new DebuggingHelper ));
+		test_helpers.push_back(utility::pointer::shared_ptr<class ClosureTest>( new BigLoopTest ));
+		test_helpers.push_back(utility::pointer::shared_ptr<class ClosureTest>( new NoSolutionsTest ));
+		test_helpers.push_back(utility::pointer::shared_ptr<class ClosureTest>( new PoseWithLigandTest ));
 	}
 
 	void test_with_simple_fold_tree() {
 		foreach(ClosureTestOP helper, test_helpers) {
-			ClosureProblemOP problem = new ClosureProblem;
+			ClosureProblemOP problem( new ClosureProblem );
 			SolutionList solutions;
 
 			problem->frame(helper->pose, helper->loop, helper->pivot_picker);
@@ -82,7 +82,7 @@ public:
 		using protocols::loops::set_single_loop_fold_tree;
 
 		foreach(ClosureTestOP helper, test_helpers) {
-			ClosureProblemOP problem = new ClosureProblem;
+			ClosureProblemOP problem( new ClosureProblem );
 			SolutionList solutions;
 
 			set_single_loop_fold_tree(helper->pose, helper->loop);
@@ -113,7 +113,7 @@ public:
 
 	void test_kic_mover() {
 		foreach(ClosureTestOP helper, test_helpers) {
-			KicMoverOP mover = new KicMover;
+			KicMoverOP mover( new KicMover );
 
 			mover->add_perturber(helper);
 			mover->set_pivot_picker(helper->pivot_picker);

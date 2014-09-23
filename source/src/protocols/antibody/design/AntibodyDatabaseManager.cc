@@ -399,7 +399,7 @@ AntibodyDatabaseManager::load_cdrs_for_grafting(AntibodyInfoCOP ab_info, GraftIn
 				TR.Debug << "Loading structure: " << tags[k] <<std::endl;
 				StructureID struct_id;
 				uuid_result >> struct_id;
-				core::pose::PoseOP pose = new core::pose::Pose();
+				core::pose::PoseOP pose( new core::pose::Pose() );
 				reporter.load_pose(db_session_, struct_id, *pose);
 				pose->conformation().detect_disulfides();
 				

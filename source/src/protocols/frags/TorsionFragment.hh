@@ -284,7 +284,7 @@ public:
 		Size const old_size( fragments_.size() );
 		fragments_.resize( new_size );
 		for ( Size i=old_size+1; i<= new_size; ++i ) {
-			fragments_[i] = new SingleResidueTorsionFragmentLibrary();
+			fragments_[i] = utility::pointer::shared_ptr<class protocols::frags::SingleResidueTorsionFragmentLibrary>( new SingleResidueTorsionFragmentLibrary() );
 		}
 	}
 

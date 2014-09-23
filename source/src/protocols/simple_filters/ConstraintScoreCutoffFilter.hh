@@ -52,10 +52,10 @@ public:
 	ConstraintScoreCutoffFilter( core::Real cutoff_in );
 
 	filters::FilterOP clone() const {
-		return new ConstraintScoreCutoffFilter( *this ); }
+		return filters::FilterOP( new ConstraintScoreCutoffFilter( *this ) ); }
 
 	filters::FilterOP fresh_instance() const {
-		return new ConstraintScoreCutoffFilter(); }
+		return filters::FilterOP( new ConstraintScoreCutoffFilter() ); }
 
 	virtual void report( std::ostream & ostr, core::pose::Pose const & pose ) const;
 	void parse_my_tag(

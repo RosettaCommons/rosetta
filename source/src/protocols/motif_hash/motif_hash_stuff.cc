@@ -764,7 +764,7 @@ static thread_local basic::Tracer TR( "protocols.motif_hash" );
 		core::pose::make_pose_from_sequence(pose,seq,"fa_standard");
 		core::pose::remove_lower_terminus_type_from_pose_residue(pose,1);
 		core::pose::remove_upper_terminus_type_from_pose_residue(pose,2);
-		core::pose::PDBInfoOP pdb_info = new core::pose::PDBInfo( pose, true );
+		core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo( pose, true ) );
 		pdb_info->number(1,ir);
 		pdb_info->number(2,jr);
 		pose.pdb_info( pdb_info );
@@ -2115,7 +2115,7 @@ static thread_local basic::Tracer TR( "protocols.motif_hash" );
 		if( cli_motif_hash_ == 0 ){
 			ResPairMotifs motifs; load_motifs( option[basic::options::OptionKeys::mh::input_motifs](), motifs );
 			TR << "create motif hash" << endl;
-			cli_motif_hash_ = new MotifHash(motifs);
+			cli_motif_hash_ = MotifHashOP( new MotifHash(motifs) );
 			cli_motif_hash_->hasher().tree_init(5);
 		}
 		return cli_motif_hash_;
@@ -2124,7 +2124,7 @@ static thread_local basic::Tracer TR( "protocols.motif_hash" );
 	XformScoreOP get_xform_score_from_file(XformScoreOP xs,vector1<string> const & datfiles,XformScoreOP defaultval=NULL){
 		if( xs == 0 ){
 			if(datfiles.size()){
-				xs = new XformScore;
+				xs = XformScoreOP( new XformScore );
 				if(!xs->read_binary(datfiles)) utility_exit_with_message("bad file -mh:score_data");
 				TR << "created xs from " << datfiles.size() << ":" << endl;
 				BOOST_FOREACH(string s,datfiles) TR << s << endl;
@@ -2203,10 +2203,10 @@ static thread_local basic::Tracer TR( "protocols.motif_hash" );
 
 		xyzStripeHashPoseCOP ccheck1bb32,ccheck2bb32,ccheck1nco2,ccheck2nco2;
 		if(clash_check){
-			ccheck1bb32 = new xyzStripeHashPose(pose1,BB ,3.2);
-			ccheck2bb32 = new xyzStripeHashPose(pose2,BB ,3.2);
-			ccheck1nco2 = new xyzStripeHashPose(pose1,NCO,2.5);
-			ccheck2nco2 = new xyzStripeHashPose(pose2,NCO,2.5);
+			ccheck1bb32 = xyzStripeHashPoseCOP( new xyzStripeHashPose(pose1,BB ,3.2) );
+			ccheck2bb32 = xyzStripeHashPoseCOP( new xyzStripeHashPose(pose2,BB ,3.2) );
+			ccheck1nco2 = xyzStripeHashPoseCOP( new xyzStripeHashPose(pose1,NCO,2.5) );
+			ccheck2nco2 = xyzStripeHashPoseCOP( new xyzStripeHashPose(pose2,NCO,2.5) );
 		}
 
 		vector1<Xform> stubs1,stubs2;
@@ -2393,7 +2393,7 @@ static thread_local basic::Tracer TR( "protocols.motif_hash" );
 	// cout << *ptask << endl;
 	MotifHits hits;
 	get_matching_motifs(pose,ptask,hits,clash_check,radius);
-	return new MotifRotamerSetOperation(pose,hits);
+	return MotifRotamerSetOperationCOP( new MotifRotamerSetOperation(pose,hits) );
  }
 
  MotifRotamerSetOperation::MotifRotamerSetOperation(

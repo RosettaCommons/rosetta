@@ -145,7 +145,7 @@ options = {
 
 	# Build with boost non-intrusive pointers
 	"ptr_boost",
-
+	
 	# Enable APBS integration
 	"apbs",
 

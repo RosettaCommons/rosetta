@@ -95,13 +95,13 @@ main( int argc, char * argv [] ) {
 	get_score_function();
 
 	// docking
-	container->add_mover( new AddAssemblyConstraints );
-	container->add_mover( new SaneDockingProtocol );
+	container->add_mover( MoverOP( new AddAssemblyConstraints ) );
+	container->add_mover( MoverOP( new SaneDockingProtocol ) );
 
 //	container->add_mover( new CombineChainsMover() );
 
 	// scoring
-	container->add_mover( new PostDockAssemblyScorer("pre_rebuild_dist") );
+	container->add_mover( MoverOP( new PostDockAssemblyScorer("pre_rebuild_dist") ) );
 
 	// loop remodeling
 	if ( option[ OptionKeys::loops::frag_files ].user() ) {
@@ -109,12 +109,10 @@ main( int argc, char * argv [] ) {
 		Size const min_loop_size( option[ cm::min_loop_size ]() );
 		utility::vector1< core::fragment::FragSetOP > frag_libs;
 		protocols::loops::read_loop_fragments( frag_libs );
-		MoverOP builder(
-			new AssembleLinkerMover( "quick_ccd", min_loop_size, frag_libs )
-		);
+		MoverOP builder( new AssembleLinkerMover( "quick_ccd", min_loop_size, frag_libs ) );
 		container->add_mover(builder);
-		container->add_mover( new FastRelax( get_score_function() ) );
-		container->add_mover( new PostDockAssemblyScorer( "post_rebuild_dist" ) );
+		container->add_mover( MoverOP( new FastRelax( get_score_function() ) ) );
+		container->add_mover( MoverOP( new PostDockAssemblyScorer( "post_rebuild_dist" ) ) );
 	}
 
 	// execution

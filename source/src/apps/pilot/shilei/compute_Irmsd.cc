@@ -107,7 +107,7 @@ public:
 	compute_Irmsd(){}
 	void apply( pose::Pose & pose) {
 
-        core::pose::PoseOP native_pose = new core::pose::Pose();
+        core::pose::PoseOP native_pose( new core::pose::Pose() );
 
         //set native pose if asked for
         if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
@@ -123,8 +123,8 @@ public:
 	movable_jumps_.push_back( 1 );
 
 	//perform sequence alignment
-	core::sequence::SequenceOP seq1 ( new core::sequence::Sequence(*native_pose) );
-	core::sequence::SequenceOP seq2 ( new core::sequence::Sequence(pose) );
+	core::sequence::SequenceOP seq1( new core::sequence::Sequence(*native_pose) );
+	core::sequence::SequenceOP seq2( new core::sequence::Sequence(pose) );
 	//std::cout<<"seq1: "<<*seq1<<std::endl;
 	//std::cout<<"seq2: "<<*seq2<<std::endl;
 
@@ -201,7 +201,7 @@ my_main( void* ) {
 	using namespace protocols::moves;
 
 	SequenceMoverOP seq( new SequenceMover() );
-	seq->add_mover( new compute_Irmsd() );
+	seq->add_mover( MoverOP( new compute_Irmsd() ) );
 
 	try{
 		protocols::jd2::JobDistributor::get_instance()->go( seq );

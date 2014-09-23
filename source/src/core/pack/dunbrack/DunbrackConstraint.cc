@@ -40,7 +40,7 @@ DunbrackConstraintCreator::~DunbrackConstraintCreator() {}
 
 scoring::constraints::ConstraintOP
 DunbrackConstraintCreator::create_constraint() const {
-	return new DunbrackConstraint;
+	return scoring::constraints::ConstraintOP( new DunbrackConstraint );
 }
 
 std::string DunbrackConstraintCreator::keyname() const
@@ -75,7 +75,7 @@ DunbrackConstraint::atom( Size const index ) const {
 
 scoring::constraints::ConstraintOP
 DunbrackConstraint::clone() const {
-	return new DunbrackConstraint( *this );
+	return scoring::constraints::ConstraintOP( new DunbrackConstraint( *this ) );
 }
 
 // Calculates a score for this constraint using XYZ_Func, and puts the

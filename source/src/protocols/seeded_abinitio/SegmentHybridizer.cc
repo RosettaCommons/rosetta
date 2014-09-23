@@ -107,7 +107,7 @@ SegmentHybridizerCreator::keyname() const
 
 protocols::moves::MoverOP
 SegmentHybridizerCreator::create_mover() const {
-	return new SegmentHybridizer;
+	return protocols::moves::MoverOP( new SegmentHybridizer );
 }
 
 std::string
@@ -141,14 +141,14 @@ SegmentHybridizer::SegmentHybridizer() :
 
 SegmentHybridizer::~SegmentHybridizer() {}
 
-protocols::moves::MoverOP SegmentHybridizer::clone() const { return new SegmentHybridizer( *this ); }
-protocols::moves::MoverOP SegmentHybridizer::fresh_instance() const { return new SegmentHybridizer; }
+protocols::moves::MoverOP SegmentHybridizer::clone() const { return protocols::moves::MoverOP( new SegmentHybridizer( *this ) ); }
+protocols::moves::MoverOP SegmentHybridizer::fresh_instance() const { return protocols::moves::MoverOP( new SegmentHybridizer ); }
 
 
 void
 SegmentHybridizer::init() {
-	fragments_big_ = new core::fragment::ConstantLengthFragSet( big_ );
-	fragments_small_ = new core::fragment::ConstantLengthFragSet( small_ );
+	fragments_big_ = core::fragment::FragSetOP( new core::fragment::ConstantLengthFragSet( big_ ) );
+	fragments_small_ = core::fragment::FragSetOP( new core::fragment::ConstantLengthFragSet( small_ ) );
 
 	// default scorefunction
 	set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ) );
@@ -298,7 +298,7 @@ SegmentHybridizer::check_and_create_fragments( core::pose::Pose & pose, core::Si
 			std::string ss_sub = tgt_ss.substr( j-1, big_ );
 			std::string aa_sub = tgt_seq.substr( j-1, big_ );
 
-			core::fragment::FrameOP frame = new core::fragment::Frame( j, big_ );
+			core::fragment::FrameOP frame( new core::fragment::Frame( j, big_ ) );
 			if( use_seq_ ){
 				frame->add_fragment( core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa( ss_sub, aa_sub,
 														nfrags_, true, core::fragment::IndependentBBTorsionSRFD() ) );
@@ -407,8 +407,7 @@ SegmentHybridizer::apply( core::pose::Pose & pose ){
 
 	using namespace core::pose::datacache;
 
-	protocols::moves::MoverOP tocen =
-	new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
+	protocols::moves::MoverOP tocen( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
 	tocen->apply( pose );
 
 	/// 2. set up minimizer
@@ -439,7 +438,7 @@ SegmentHybridizer::apply( core::pose::Pose & pose ){
 
 		/// 3.a. define and set movemap
 
-		extended_mm_ = new core::kinematics::MoveMap;
+		extended_mm_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
 		extended_mm_->set_bb  ( false );
 		extended_mm_->set_chi ( false );
 		extended_mm_->set_jump( true );
@@ -521,7 +520,7 @@ SegmentHybridizer::apply( core::pose::Pose & pose ){
 				}
 
 				(*lowres_scorefxn_)(pose);
-				protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *lowres_scorefxn_, temp_ );
+				protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose, *lowres_scorefxn_, temp_ ) );
 
 				for (core::Size i=1; i <= mc_cycles_; ++i) {
 					hybridize(pose, insert_pos_start, insert_pos_stop);

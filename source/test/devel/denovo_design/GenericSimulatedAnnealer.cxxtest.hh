@@ -47,8 +47,8 @@ class GenericSimulatedAnnealerTests : public CxxTest::TestSuite {
 	core::scoring::ScoreFunctionOP scorefxn;
 
 	// filter that simply returns the number of TRP residues
-	utility::pointer::owning_ptr< protocols::simple_filters::ResidueCountFilter > num_trp;
-	utility::pointer::owning_ptr< protocols::simple_filters::ScoreTypeFilter > score_filter;
+	utility::pointer::shared_ptr< protocols::simple_filters::ResidueCountFilter > num_trp;
+	utility::pointer::shared_ptr< protocols::simple_filters::ScoreTypeFilter > score_filter;
 
 	// mutate residues to trp and ala
 	protocols::simple_moves::MutateResidueOP mut_to_trp, mut_to_trp2;
@@ -77,24 +77,24 @@ public:
 		// initialize common filters/movers/scorefxns
 		scorefxn = core::scoring::get_score_function( true );
 
-		num_trp = new protocols::simple_filters::ResidueCountFilter();
+		num_trp = protocols::simple_filters::ResidueCountFilter( new protocols::simple_filters::ResidueCountFilter() );
 		utility::vector1< std::string > res_to_count;
 		res_to_count.push_back( "TRP" );
 		num_trp->res_types( res_to_count );
 
 		// for test purposes, we will mutate residues 25 and 52 to TRP
-		mut_to_trp = new protocols::simple_moves::MutateResidue( 25, "TRP" );
-		mut_to_trp2 = new protocols::simple_moves::MutateResidue( 52, "TRP" );
+		mut_to_trp = protocols::simple_moves::MutateResidueOP( new protocols::simple_moves::MutateResidue( 25, "TRP" ) );
+		mut_to_trp2 = protocols::simple_moves::MutateResidueOP( new protocols::simple_moves::MutateResidue( 52, "TRP" ) );
 		// mutate residues 25 and 52 to ALA
-		mut_to_ala = new protocols::simple_moves::MutateResidue( 25, "ALA" );
-		mut_to_ala2 = new protocols::simple_moves::MutateResidue( 52, "ALA" );
+		mut_to_ala = protocols::simple_moves::MutateResidueOP( new protocols::simple_moves::MutateResidue( 25, "ALA" ) );
+		mut_to_ala2 = protocols::simple_moves::MutateResidueOP( new protocols::simple_moves::MutateResidue( 52, "ALA" ) );
 		// mutate residue 25 to PHE
-		mut_to_phe = new protocols::simple_moves::MutateResidue( 25, "PHE" );
+		mut_to_phe = protocols::simple_moves::MutateResidueOP( new protocols::simple_moves::MutateResidue( 25, "PHE" ) );
 
 		// get the total score
-		score_filter = new protocols::simple_filters::ScoreTypeFilter( scorefxn,
+		score_filter = protocols::simple_filters::ScoreTypeFilter( new protocols::simple_filters::ScoreTypeFilter( scorefxn,
 																																	 core::scoring::score_type_from_name( "total_score" ),
-																																	 999999.9 );
+																																	 999999.9 ) );
 
 		std::string const pdb_file( "devel/denovo_design/test_input.pdb" );
 		core::import_pose::pose_from_pdb( input_pose, pdb_file );

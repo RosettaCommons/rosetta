@@ -126,7 +126,7 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose ) {
 	using namespace protocols::toolbox::task_operations;
 	using namespace protocols::moves;
 
-	cdr_sequence_move_ = new moves::SequenceMover();
+	cdr_sequence_move_ = protocols::moves::SequenceMoverOP( new moves::SequenceMover() );
 
 	// **************** FoldTree ****************
 	pose.fold_tree( * ab_info_->get_FoldTree_AllCDRs(pose)  );
@@ -141,7 +141,7 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose ) {
 
 	//**************** MoveMap ****************
 	if(!allcdr_map_) { // use this if, because sometimes a user may input a movemap at the beginning
-		allcdr_map_ = new kinematics::MoveMap();
+		allcdr_map_ = core::kinematics::MoveMapOP( new kinematics::MoveMap() );
 		*allcdr_map_=ab_info_->get_MoveMap_for_Loops(pose, *ab_info_->get_AllCDRs_in_loopsop(), false, true, 10.0);
 	} else {
 		if(update_rounds_ > 0 ) {
@@ -165,35 +165,35 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose ) {
 	}
 
 	// 1. rotamer_trial
-	simple_moves::RotamerTrialsMoverOP rotamer_trial_mover = new simple_moves::RotamerTrialsMover( loop_scorefxn_highres_, tf_ );
+	simple_moves::RotamerTrialsMoverOP rotamer_trial_mover( new simple_moves::RotamerTrialsMover( loop_scorefxn_highres_, tf_ ) );
 	cdr_sequence_move_->add_mover(rotamer_trial_mover);
 
 	// 2. all_cdr_min_moves
-	simple_moves::MinMoverOP  all_cdr_min_moves = new simple_moves::MinMover( allcdr_map_,loop_scorefxn_highres_, min_type_, min_tolerance_, true );
+	simple_moves::MinMoverOP  all_cdr_min_moves( new simple_moves::MinMover( allcdr_map_,loop_scorefxn_highres_, min_type_, min_tolerance_, true ) );
 	if (!turnoff_minimization_ ) cdr_sequence_move_ -> add_mover(all_cdr_min_moves);
 
 
 
-	moves::MonteCarloOP mc = new moves::MonteCarlo(pose, *loop_scorefxn_highres_, Temperature_ );
+	moves::MonteCarloOP mc( new moves::MonteCarlo(pose, *loop_scorefxn_highres_, Temperature_ ) );
 
 
 	// 3. PackRotamer and Trial
-	simple_moves::PackRotamersMoverOP repack = new simple_moves::PackRotamersMover( loop_scorefxn_highres_ );
+	simple_moves::PackRotamersMoverOP repack( new simple_moves::PackRotamersMover( loop_scorefxn_highres_ ) );
 	repack->task_factory( tf_ );
-	moves::TrialMoverOP repack_trial = new moves::TrialMover(repack, mc);
+	moves::TrialMoverOP repack_trial( new moves::TrialMover(repack, mc) );
 	cdr_sequence_move_ -> add_mover(repack_trial);
 
 
 	// 4. optional, rt_min_ or sc_min_
 	if ( rt_min_ ) {
-		simple_moves::RotamerTrialsMinMoverOP rtmin = new simple_moves::RotamerTrialsMinMover( loop_scorefxn_highres_, tf_ );
-		moves::TrialMoverOP rtmin_trial = new moves::TrialMover( rtmin, mc );
+		simple_moves::RotamerTrialsMinMoverOP rtmin( new simple_moves::RotamerTrialsMinMover( loop_scorefxn_highres_, tf_ ) );
+		moves::TrialMoverOP rtmin_trial( new moves::TrialMover( rtmin, mc ) );
 		cdr_sequence_move_ -> add_mover(rtmin_trial);
 	}
 	if ( sc_min_ ) {
 		core::pack::task::TaskFactoryCOP my_tf( tf_); // input must be COP, weird
-		docking::SidechainMinMoverOP scmin_mover = new docking::SidechainMinMover( loop_scorefxn_highres_, my_tf );
-		moves::TrialMoverOP scmin_trial = new moves::TrialMover( scmin_mover, mc );
+		docking::SidechainMinMoverOP scmin_mover( new docking::SidechainMinMover( loop_scorefxn_highres_, my_tf ) );
+		moves::TrialMoverOP scmin_trial( new moves::TrialMover( scmin_mover, mc ) );
 		cdr_sequence_move_ -> add_mover(scmin_trial);
 	}
 
@@ -239,11 +239,11 @@ std::string CDRsMinPackMin::get_name() const {
 }
 
 void CDRsMinPackMin::set_task_factory(core::pack::task::TaskFactoryCOP tf) {
-	tf_ = new pack::task::TaskFactory(*tf);
+	tf_ = core::pack::task::TaskFactoryOP( new pack::task::TaskFactory(*tf) );
 }
 
 void CDRsMinPackMin::set_move_map(kinematics::MoveMapCOP movemap) {
-	allcdr_map_ = new kinematics::MoveMap(*movemap);
+	allcdr_map_ = core::kinematics::MoveMapOP( new kinematics::MoveMap(*movemap) );
 }
 
 

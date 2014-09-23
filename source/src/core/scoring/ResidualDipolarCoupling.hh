@@ -86,7 +86,7 @@ public:
 
 	//this class lives in the PoseCache.... need to provide clone()
 	basic::datacache::CacheableDataOP clone() const {
-		return new ResidualDipolarCoupling(*this);
+		return basic::datacache::CacheableDataOP( new ResidualDipolarCoupling(*this) );
 	}
 
 	///@brief compute dipolar score for given pose

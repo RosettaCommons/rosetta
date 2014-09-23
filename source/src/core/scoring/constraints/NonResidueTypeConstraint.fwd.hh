@@ -24,8 +24,8 @@ namespace constraints {
 
 
 class NonResidueTypeConstraint; // fwd declaration
-typedef utility::pointer::owning_ptr< NonResidueTypeConstraint > NonResidueTypeConstraintOP;
-typedef utility::pointer::owning_ptr< NonResidueTypeConstraint const > NonResidueTypeConstraintCOP;
+typedef utility::pointer::shared_ptr< NonResidueTypeConstraint > NonResidueTypeConstraintOP;
+typedef utility::pointer::shared_ptr< NonResidueTypeConstraint const > NonResidueTypeConstraintCOP;
 
 
 } // namespace constraints

@@ -45,7 +45,7 @@ FilterStructs::FilterStructs():
 	filter_on_( true ),
 	ntrial_( 5 ),
 	current_trial_( 0 ),
-	best_pose_( NULL )
+	best_pose_( /* NULL */ )
 {}
 
 /// @brief value constructor
@@ -54,7 +54,7 @@ FilterStructs::FilterStructs( String const & name ):
 	filter_on_( true ),
 	ntrial_( 5 ),
 	current_trial_( 0 ),
-	best_pose_( NULL )
+	best_pose_( /* NULL */ )
 {}
 
 /// @brief value constructor
@@ -63,7 +63,7 @@ FilterStructs::FilterStructs( String const & name, Size const ntrial ):
 	filter_on_( true ),
 	ntrial_( ntrial ),
 	current_trial_( 0 ),
-	best_pose_( NULL )
+	best_pose_( /* NULL */ )
 {}
 
 
@@ -73,7 +73,7 @@ FilterStructs::FilterStructs( String const & name, Pose const & pose, Size const
 	filter_on_( true ),
 	ntrial_( ntrial ),
 	current_trial_( 0 ),
-	best_pose_( new Pose(pose) )
+	best_pose_( PoseOP( new Pose(pose) ) )
 {}
 
 /// @brief copy constructor
@@ -133,7 +133,7 @@ FilterStructs::initialize( Pose const & pose )
 {
 	set_filter_on();
 	current_trial_ = 0;
-	best_pose_ = new Pose( pose );
+	best_pose_ = PoseOP( new Pose( pose ) );
 }
 
 /// @brief set ntrial
@@ -158,7 +158,7 @@ FilterStructs::filter_is_over()
 void
 FilterStructs::set_bestpose( Pose const & pose )
 {
-	best_pose_ = new Pose( pose );
+	best_pose_ = PoseOP( new Pose( pose ) );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -186,13 +186,13 @@ FilterStructs_Packstat::~FilterStructs_Packstat(){}
 /// @brief clone
 FilterStructsOP FilterStructs_Packstat::clone() const
 {
-	return new FilterStructs_Packstat( *this );
+	return FilterStructsOP( new FilterStructs_Packstat( *this ) );
 }
 
 /// @brief fresh instance
 FilterStructsOP FilterStructs_Packstat::fresh_instance() const
 {
-	return new FilterStructs_Packstat();
+	return FilterStructsOP( new FilterStructs_Packstat() );
 }
 
 /// @brief
@@ -245,13 +245,13 @@ FilterStructs_TotalCharge::~FilterStructs_TotalCharge() {}
 /// @brief clone
 FilterStructsOP FilterStructs_TotalCharge::clone() const
 {
-	return new FilterStructs_TotalCharge( *this );
+	return FilterStructsOP( new FilterStructs_TotalCharge( *this ) );
 }
 
 /// @brief clone
 FilterStructsOP FilterStructs_TotalCharge::fresh_instance() const
 {
-	return new FilterStructs_TotalCharge();
+	return FilterStructsOP( new FilterStructs_TotalCharge() );
 }
 
 /// @brief

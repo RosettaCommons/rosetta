@@ -21,8 +21,8 @@ namespace scoring_grid {
 
 class ScoringGridLoader;
 
-typedef utility::pointer::owning_ptr<ScoringGridLoader> ScoringGridLoaderOP;
-typedef utility::pointer::owning_ptr<ScoringGridLoader const > ScoringGridLoaderCOP;
+typedef utility::pointer::shared_ptr<ScoringGridLoader> ScoringGridLoaderOP;
+typedef utility::pointer::shared_ptr<ScoringGridLoader const > ScoringGridLoaderCOP;
 
 } //namespace scoring_grid
 } //namespace qsar

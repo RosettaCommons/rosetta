@@ -25,8 +25,8 @@ namespace simple_filters {
 class PDDFScoreFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< PDDFScoreFilter >  PDDFScoreFilterOP;
-typedef utility::pointer::owning_ptr< PDDFScoreFilter const >  PDDFScoreFilterCOP;
+typedef utility::pointer::shared_ptr< PDDFScoreFilter >  PDDFScoreFilterOP;
+typedef utility::pointer::shared_ptr< PDDFScoreFilter const >  PDDFScoreFilterCOP;
 
 
 } // namespace simple_filters

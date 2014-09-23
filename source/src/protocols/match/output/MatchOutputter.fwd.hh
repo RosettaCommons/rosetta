@@ -26,8 +26,8 @@ namespace output {
 
 class MatchOutputter;
 
-typedef utility::pointer::owning_ptr< MatchOutputter > MatchOutputterOP;
-typedef utility::pointer::owning_ptr< MatchOutputter const > MatchOutputterCOP;
+typedef utility::pointer::shared_ptr< MatchOutputter > MatchOutputterOP;
+typedef utility::pointer::shared_ptr< MatchOutputter const > MatchOutputterCOP;
 
 }
 }

@@ -121,8 +121,8 @@ FragmentScoringMethodOP MakeMidPsiOut::make(Size priority,
 		Real lowest_acceptable_value, bool use_lowest, FragmentPickerOP //picker
 		, std::string) {
 
-	return (FragmentScoringMethodOP) new MidPsiOut(priority,
-																								 lowest_acceptable_value, use_lowest);
+	return (FragmentScoringMethodOP) FragmentScoringMethodOP( new MidPsiOut(priority,
+																								 lowest_acceptable_value, use_lowest) );
 }
 
 } // scores

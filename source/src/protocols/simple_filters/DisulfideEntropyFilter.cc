@@ -45,7 +45,7 @@ using namespace core::scoring;
 static thread_local basic::Tracer TR( "protocols.simple_filters.DisulfideEntropyFilter" );
 
 protocols::filters::FilterOP
-DisulfideEntropyFilterCreator::create_filter() const { return new DisulfideEntropyFilter; }
+DisulfideEntropyFilterCreator::create_filter() const { return protocols::filters::FilterOP( new DisulfideEntropyFilter ); }
 
 std::string
 DisulfideEntropyFilterCreator::keyname() const { return "DisulfideEntropy"; }
@@ -77,12 +77,12 @@ DisulfideEntropyFilter::~DisulfideEntropyFilter() {}
 
 filters::FilterOP
 DisulfideEntropyFilter::clone() const {
-	return new DisulfideEntropyFilter( *this );
+	return filters::FilterOP( new DisulfideEntropyFilter( *this ) );
 }
 
 filters::FilterOP
 DisulfideEntropyFilter::fresh_instance() const {
-	return new DisulfideEntropyFilter();
+	return filters::FilterOP( new DisulfideEntropyFilter() );
 }
 
 core::Real

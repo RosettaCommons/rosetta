@@ -114,7 +114,7 @@ Extender::Extender(core::sequence::SequenceAlignmentCOP alignment, int num_resid
   unaligned_ = protocols::comparative_modeling::pick_loops_unaligned(num_residues, unaligned_res, min_len);
   unaligned_->sequential_order();
 
-  aligned_ = new Loops(unaligned_->invert(num_residues));
+  aligned_ = protocols::loops::LoopsOP( new Loops(unaligned_->invert(num_residues)) );
   aligned_->sequential_order();
 }
 

@@ -22,8 +22,8 @@ namespace protocols {
 namespace pack_daemon {
 
 class EntityCorrespondence;
-typedef utility::pointer::owning_ptr< EntityCorrespondence > EntityCorrespondenceOP;
-typedef utility::pointer::owning_ptr< EntityCorrespondence const > EntityCorrespondenceCOP;
+typedef utility::pointer::shared_ptr< EntityCorrespondence > EntityCorrespondenceOP;
+typedef utility::pointer::shared_ptr< EntityCorrespondence const > EntityCorrespondenceCOP;
 
 
 }

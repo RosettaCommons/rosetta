@@ -28,11 +28,11 @@ namespace noesy_assign {
 class DistanceScoreMover;
 
 // Types
-typedef  utility::pointer::owning_ptr< DistanceScoreMover >  DistanceScoreMoverOP;
-typedef  utility::pointer::owning_ptr< DistanceScoreMover const >  DistanceScoreMoverCOP;
+typedef  utility::pointer::shared_ptr< DistanceScoreMover >  DistanceScoreMoverOP;
+typedef  utility::pointer::shared_ptr< DistanceScoreMover const >  DistanceScoreMoverCOP;
 
-typedef  utility::pointer::access_ptr< DistanceScoreMover >  DistanceScoreMoverAP;
-typedef  utility::pointer::access_ptr< DistanceScoreMover const >  DistanceScoreMoverCAP;
+typedef  utility::pointer::weak_ptr< DistanceScoreMover >  DistanceScoreMoverAP;
+typedef  utility::pointer::weak_ptr< DistanceScoreMover const >  DistanceScoreMoverCAP;
 
 }
 }

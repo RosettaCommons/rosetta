@@ -63,7 +63,7 @@ public:
 	);
 
 	virtual SilentStructOP clone() const {
-		return new BinarySilentStruct( *this );
+		return SilentStructOP( new BinarySilentStruct( *this ) );
 	}
 
 	/// @brief Re-dimension the storage capacity of this BinarySilentStruct to the given number of residues.
@@ -159,7 +159,7 @@ public:
  	}
 
 	void symmetry_info( core::conformation::symmetry::SymmetryInfo & s ) {
-		symminfo_ = new core::conformation::symmetry::SymmetryInfo( s );
+		symminfo_ = core::conformation::symmetry::SymmetryInfoOP( new core::conformation::symmetry::SymmetryInfo( s ) );
 	}
 
 	core::conformation::symmetry::SymmetryInfoCOP symmetry_info( ) const {

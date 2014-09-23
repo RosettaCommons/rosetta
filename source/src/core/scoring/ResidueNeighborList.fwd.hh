@@ -22,13 +22,13 @@ namespace core {
 namespace scoring {
 
 class ResidueNblistData;
-typedef utility::pointer::owning_ptr< ResidueNblistData > ResidueNblistDataOP;
-typedef utility::pointer::owning_ptr< ResidueNblistData const > ResidueNblistDataCOP;
+typedef utility::pointer::shared_ptr< ResidueNblistData > ResidueNblistDataOP;
+typedef utility::pointer::shared_ptr< ResidueNblistData const > ResidueNblistDataCOP;
 
 class ResiduePairNeighborList;
 
-typedef utility::pointer::owning_ptr< ResiduePairNeighborList > ResiduePairNeighborListOP;
-typedef utility::pointer::owning_ptr< ResiduePairNeighborList const > ResiduePairNeighborListCOP;
+typedef utility::pointer::shared_ptr< ResiduePairNeighborList > ResiduePairNeighborListOP;
+typedef utility::pointer::shared_ptr< ResiduePairNeighborList const > ResiduePairNeighborListCOP;
 
 }
 }

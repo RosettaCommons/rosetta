@@ -121,21 +121,21 @@ fix_with_coord_cst( Loops const& rigid, core::pose::Pose& pose, bool bCstAllAtom
 			conformation::Residue const & rsd( pose.residue( pos ) );
 			if ( bCstAllAtom ) {
 				for ( Size ii = 1; ii<= rsd.natoms(); ++ii ) {
-					pose.add_constraint( new scoring::constraints::CoordinateConstraint(
+					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::CoordinateConstraint(
 						id::AtomID( ii, pos),
 						id::AtomID( 1, pos ) /*this is completely ignored! */,
 						rsd.xyz( ii ),
 						fx
-					) );
+					) ) );
 				}
 			} else {
 				id::AtomID atomID( pose.residue_type(pos).atom_index("CA"), pos );
-				pose.add_constraint( new scoring::constraints::CoordinateConstraint(
+				pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::CoordinateConstraint(
 					atomID,
 					id::AtomID( 1, pos ) /*this is completely ignored! */,
 					rsd.xyz( atomID.atomno() ),
 					fx
-				) );
+				) ) );
 			}
 		}
 	}
@@ -381,9 +381,9 @@ void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::po
     if( coordconstraint_segments.is_loop_residue( i ) ) {
       Residue const & nat_i_rsd( pose.residue(i) );
       for ( Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
-        pose.add_constraint( new CoordinateConstraint(
+        pose.add_constraint( scoring::constraints::ConstraintCOP( new CoordinateConstraint(
           AtomID(ii,i), AtomID(1,nres), nat_i_rsd.xyz( ii ),
-          fx ) );
+          fx ) ) );
       }
     }
   }
@@ -397,7 +397,7 @@ loops_from_string( std::string const loop_str, core::pose::Pose const & pose ){
 // each loop should have the format loop_start:loop_end:cut
 // if cut is not set then it's taken to be 0. Residue numbering can follow the
 // pdb numbering
-  LoopsOP loops_from_tag = new Loops();
+  LoopsOP loops_from_tag( new Loops() );
  	BOOST_FOREACH( std::string const residue_pair, loops_vec ){
     utility::vector1< std::string > const residues( utility::string_split( residue_pair, ':' ) );
 		if(residues.size() != 2 && residues.size() != 3){

@@ -61,7 +61,7 @@ SimplePDB::get_spheres(
 PosePackDataOP
 SimplePDB::get_pose_pack_data() const
 {
-	PosePackDataOP pd = new PosePackData;
+	PosePackDataOP pd( new PosePackData );
 	AtomRadiusMap arm;
 	pd->spheres = get_spheres(arm);
 	pd->centers = get_res_centers();

@@ -24,8 +24,8 @@ namespace sequence {
 /// creating a particular Sequence class.
 class SequenceCreator;
 
-typedef utility::pointer::owning_ptr< SequenceCreator > SequenceCreatorOP;
-typedef utility::pointer::owning_ptr< SequenceCreator const > SequenceCreatorCOP;
+typedef utility::pointer::shared_ptr< SequenceCreator > SequenceCreatorOP;
+typedef utility::pointer::shared_ptr< SequenceCreator const > SequenceCreatorCOP;
 
 } //namespace sequence
 } //namespace core

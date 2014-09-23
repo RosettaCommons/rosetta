@@ -24,8 +24,8 @@ namespace core {
             
             class SiteConstraintResidues;
             
-            typedef utility::pointer::owning_ptr< SiteConstraintResidues > SiteConstraintResiduesOP;
-            typedef utility::pointer::owning_ptr< SiteConstraintResidues const > SiteConstraintResiduesCOP;
+            typedef utility::pointer::shared_ptr< SiteConstraintResidues > SiteConstraintResiduesOP;
+            typedef utility::pointer::shared_ptr< SiteConstraintResidues const > SiteConstraintResiduesCOP;
             
         }
     }

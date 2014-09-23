@@ -43,7 +43,7 @@ public:
     virtual ~DatabaseEntryWorkUnit(){}
 
     virtual protocols::wum::WorkUnitBaseOP clone() const {
-        return new DatabaseEntryWorkUnit( *this );
+        return protocols::wum::WorkUnitBaseOP( new DatabaseEntryWorkUnit( *this ) );
     }
 
     /// @brief Accessor for database query string

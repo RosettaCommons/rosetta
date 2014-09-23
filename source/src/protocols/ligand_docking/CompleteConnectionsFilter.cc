@@ -74,7 +74,7 @@ CompleteConnectionsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::dataca
 }
 
 protocols::filters::FilterOP
-CompleteConnectionsFilterCreator::create_filter() const { return new CompleteConnectionsFilter; }
+CompleteConnectionsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new CompleteConnectionsFilter ); }
 
 std::string
 CompleteConnectionsFilterCreator::keyname() const { return "CompleteConnections"; }

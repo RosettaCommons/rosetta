@@ -54,7 +54,7 @@ RBOutMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 RBOutMoverCreator::create_mover() const {
-	return new RBOutMover;
+	return protocols::moves::MoverOP( new RBOutMover );
 }
 
 std::string
@@ -174,13 +174,13 @@ RBOutMover::get_name() const {
 moves::MoverOP
 RBOutMover::clone() const
 {
-	return new RBOutMover( *this );
+	return moves::MoverOP( new RBOutMover( *this ) );
 }
 
 moves::MoverOP
 RBOutMover::fresh_instance() const
 {
-	return new RBOutMover;
+	return moves::MoverOP( new RBOutMover );
 }
 
 void

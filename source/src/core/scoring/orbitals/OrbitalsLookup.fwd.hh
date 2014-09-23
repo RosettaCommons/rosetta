@@ -22,8 +22,8 @@ namespace orbitals{
 
 class OrbitalsLookup;
 
-typedef  utility::pointer::owning_ptr< OrbitalsLookup > OrbitalsLookupOP;
-typedef  utility::pointer::owning_ptr< OrbitalsLookup const > OrbitalsLookupCOP;
+typedef  utility::pointer::shared_ptr< OrbitalsLookup > OrbitalsLookupOP;
+typedef  utility::pointer::shared_ptr< OrbitalsLookup const > OrbitalsLookupCOP;
 
 }
 }

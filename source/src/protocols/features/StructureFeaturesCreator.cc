@@ -29,7 +29,7 @@ namespace features {
 StructureFeaturesCreator::StructureFeaturesCreator() {}
 StructureFeaturesCreator::~StructureFeaturesCreator() {}
 FeaturesReporterOP StructureFeaturesCreator::create_features_reporter() const {
-	return new StructureFeatures;
+	return FeaturesReporterOP( new StructureFeatures );
 }
 
 std::string StructureFeaturesCreator::type_name() const {

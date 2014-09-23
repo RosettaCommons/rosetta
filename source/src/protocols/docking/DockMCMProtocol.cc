@@ -129,14 +129,14 @@ void DockMCMProtocol::set_filter( DockingHighResFilterOP filter ) { filter_ = fi
 
 //clone
 protocols::moves::MoverOP DockMCMProtocol::clone() const {
-	return new DockMCMProtocol(*this);
+	return protocols::moves::MoverOP( new DockMCMProtocol(*this) );
 }
 
 void
 DockMCMProtocol::init()
 {
 	moves::Mover::type( "DockMCMProtocol" );
-	filter_ = new DockingHighResFilter();
+	filter_ = DockingHighResFilterOP( new DockingHighResFilter() );
     movemap_reset_ = false;
 	num_of_first_cycle_=4;
 	num_of_second_cycle_=45;
@@ -171,7 +171,7 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 	(*scorefxn())( pose );
 	jd2::write_score_tracer( pose, "DockMCM_start" );
 
-	dock_mcm_ = new DockMCMCycle( movable_jumps(), scorefxn(), scorefxn_pack() );
+	dock_mcm_ = DockMCMCycleOP( new DockMCMCycle( movable_jumps(), scorefxn(), scorefxn_pack() ) );
     if(movemap_reset_){
         dock_mcm_->set_move_map(movemap_);
     }
@@ -193,27 +193,27 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 	}
 
 	//JQX: define the initial_pack, and this initial_pack was defined as a trial mover
-	protocols::simple_moves::PackRotamersMoverOP initial_pack = new protocols::simple_moves::PackRotamersMover();
+	protocols::simple_moves::PackRotamersMoverOP initial_pack( new protocols::simple_moves::PackRotamersMover() );
 	initial_pack->score_function( scorefxn_pack() );
 	initial_pack->task_factory( task_factory() );
 	if ( dock_mcm_->get_mc()->last_accepted_pose().empty() ) { dock_mcm_->init_mc(pose); } //JQX: use the dock_mcm_'s "mc_" object
-	moves::TrialMoverOP initial_pack_trial = new moves::TrialMover(initial_pack, dock_mcm_->get_mc() );
+	moves::TrialMoverOP initial_pack_trial( new moves::TrialMover(initial_pack, dock_mcm_->get_mc() ) );
 
     
     
     //JQX: rt_min and sc_min options were ignored in the extreme coding week, put them back now     
-    protocols::moves::SequenceMoverOP initial_repack_sequence = new protocols::moves::SequenceMover();
+    protocols::moves::SequenceMoverOP initial_repack_sequence( new protocols::moves::SequenceMover() );
     initial_repack_sequence->add_mover(initial_pack_trial);
     
     if ( rt_min() ){ 
-        simple_moves::RotamerTrialsMinMoverOP rtmin = new simple_moves::RotamerTrialsMinMover( scorefxn_pack(), task_factory() );
-        moves::TrialMoverOP rtmin_trial = new moves::TrialMover( rtmin, dock_mcm_->get_mc() );
+        simple_moves::RotamerTrialsMinMoverOP rtmin( new simple_moves::RotamerTrialsMinMover( scorefxn_pack(), task_factory() ) );
+        moves::TrialMoverOP rtmin_trial( new moves::TrialMover( rtmin, dock_mcm_->get_mc() ) );
         initial_repack_sequence->add_mover(rtmin_trial); 
         dock_mcm_->set_rtmin(true);
     }
     if ( sc_min() ){ 
-        docking::SidechainMinMoverOP scmin_mover = new docking::SidechainMinMover( scorefxn_pack(), task_factory() );
-        moves::TrialMoverOP scmin_trial = new moves::TrialMover( scmin_mover, dock_mcm_->get_mc() );
+        docking::SidechainMinMoverOP scmin_mover( new docking::SidechainMinMover( scorefxn_pack(), task_factory() ) );
+        moves::TrialMoverOP scmin_trial( new moves::TrialMover( scmin_mover, dock_mcm_->get_mc() ) );
         initial_repack_sequence->add_mover(scmin_trial); 
         dock_mcm_->set_scmin(true);
     }
@@ -226,7 +226,7 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 	jd2::write_score_tracer( pose, "DockMCM_pack_trialed" );
 
 	/// minimize_trial defaults to a min_tolerance of 0.01 in DockMinMover
-	DockMinMoverOP minimize_trial = new DockMinMover( movable_jumps(), scorefxn(), dock_mcm_->get_mc() );
+	DockMinMoverOP minimize_trial( new DockMinMover( movable_jumps(), scorefxn(), dock_mcm_->get_mc() ) );
 	minimize_trial->apply( pose );
 	jd2::write_score_tracer( pose, "DockMCM_minimized" );
 

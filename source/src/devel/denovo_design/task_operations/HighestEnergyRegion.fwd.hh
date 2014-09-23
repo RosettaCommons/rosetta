@@ -26,10 +26,10 @@ namespace task_operations {
 	class DesignByFragmentQualityOperation;
 
   // Types
-  typedef utility::pointer::owning_ptr< HighestEnergyRegionOperation > HighestEnergyRegionOperationOP;
-  typedef utility::pointer::owning_ptr< HighestEnergyRegionOperation const > HighestEnergyRegionOperationCOP;
-  typedef utility::pointer::owning_ptr< DesignByFragmentQualityOperation > DesignByFragmentQualityOperationOP;
-  typedef utility::pointer::owning_ptr< DesignByFragmentQualityOperation const > DesignByFragmentQualityOperationCOP;
+  typedef utility::pointer::shared_ptr< HighestEnergyRegionOperation > HighestEnergyRegionOperationOP;
+  typedef utility::pointer::shared_ptr< HighestEnergyRegionOperation const > HighestEnergyRegionOperationCOP;
+  typedef utility::pointer::shared_ptr< DesignByFragmentQualityOperation > DesignByFragmentQualityOperationOP;
+  typedef utility::pointer::shared_ptr< DesignByFragmentQualityOperation const > DesignByFragmentQualityOperationCOP;
 
 }
 }

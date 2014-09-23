@@ -51,7 +51,7 @@ MonteCarloRecoverCreator::keyname() const
 
 protocols::moves::MoverOP
 MonteCarloRecoverCreator::create_mover() const {
-	return new MonteCarloRecover;
+	return protocols::moves::MoverOP( new MonteCarloRecover );
 }
 
 std::string
@@ -70,7 +70,7 @@ MonteCarloRecover::get_name() const {
 MonteCarloRecover::MonteCarloRecover():
 	Mover("MonteCarloRecover"),
 	recover_low_( true ),
-	MC_mover_( NULL )
+	MC_mover_( /* NULL */ )
 {
 }
 
@@ -81,14 +81,14 @@ MonteCarloRecover::~MonteCarloRecover(){}
 MoverOP
 MonteCarloRecover::clone() const
 {
-	return new MonteCarloRecover( *this );
+	return MoverOP( new MonteCarloRecover( *this ) );
 }
 
 /// @brief create this type of object
 MoverOP
 MonteCarloRecover::fresh_instance() const
 {
-	return new MonteCarloRecover();
+	return MoverOP( new MonteCarloRecover() );
 }
 
 GenericMonteCarloMoverOP
@@ -108,7 +108,7 @@ MonteCarloRecover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, 
 	if( find_mover == movers.end() )
 		throw utility::excn::EXCN_RosettaScriptsOption( "MC mover not found by MonteCarloRecover" );
 
-	set_MC( dynamic_cast< GenericMonteCarloMover * >( find_mover->second() ) );
+	set_MC( utility::pointer::dynamic_pointer_cast< protocols::simple_moves::GenericMonteCarloMover > ( find_mover->second ) );
 	recover_low( tag->getOption< bool >( "recover_low", true ) );
 	Pose temp_pose( pose );
 	get_MC()->initialize();

@@ -25,8 +25,8 @@ namespace operation {
 
 class TaskOperationCreator;
 
-typedef utility::pointer::owning_ptr< TaskOperationCreator > TaskOperationCreatorOP;
-typedef utility::pointer::owning_ptr< TaskOperationCreator const > TaskOperationCreatorCOP;
+typedef utility::pointer::shared_ptr< TaskOperationCreator > TaskOperationCreatorOP;
+typedef utility::pointer::shared_ptr< TaskOperationCreator const > TaskOperationCreatorCOP;
 
 }
 }

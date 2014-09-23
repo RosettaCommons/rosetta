@@ -64,12 +64,12 @@ using namespace core;
 
 FragmentClaimer::FragmentClaimer() :
 	TopologyClaimer(),
-	mover_( NULL ),
+	mover_( /* NULL */ ),
 	mover_tag_( "NoTag" ),
 	bInitDofs_( false ),
 	claim_right_( claims::DofClaim::CAN_INIT )
 {
-	movemap_ = new kinematics::MoveMap;
+	movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap );
 }
 
 FragmentClaimer::FragmentClaimer( simple_moves::FragmentMoverOP mover, std::string tag, weights::AbinitioMoverWeightOP weight ) :
@@ -79,7 +79,7 @@ FragmentClaimer::FragmentClaimer( simple_moves::FragmentMoverOP mover, std::stri
 	bInitDofs_( false ),
 	claim_right_( claims::DofClaim::CAN_INIT )
 {
-	movemap_ = new kinematics::MoveMap;
+	movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap );
 	runtime_assert( fragments() != 0 );
 }
 
@@ -90,7 +90,7 @@ FragmentClaimer::FragmentClaimer( simple_moves::FragmentMoverOP mover, std::stri
 	bInitDofs_( false ),
 	claim_right_( claims::DofClaim::CAN_INIT )
 {
-	movemap_ = new kinematics::MoveMap;
+	movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap );
 	set_label( label );
 	set_fragments( frags );
 	runtime_assert( fragments() != 0 );
@@ -105,7 +105,7 @@ FragmentClaimer::FragmentClaimer( simple_moves::FragmentMoverOP mover ) :
 	claim_right_( claims::DofClaim::CAN_INIT )
 {
 	if ( mover_) mover_tag_ = mover_->type();
-	movemap_ = new kinematics::MoveMap;
+	movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap );
 	runtime_assert( fragments() != 0 );
 }
 
@@ -199,10 +199,10 @@ void FragmentClaimer::generate_claims( claims::DofClaims& new_claims ) {
 				it != eit; ++it ) {
 		Size const start ( *it - fragment_offset );
 		Size const length( insert_size[ *it ] );
-		new_claims.push_back( new claims::BBClaim( get_self_weak_ptr(), std::make_pair( label(), start ), claim_right_) );
+		new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::BBClaim( get_self_weak_ptr(), std::make_pair( label(), start ), claim_right_) ) );
 		//new_claims.push_back( new claims::BBClaim( this, *it, claim_right_ ) );
 		for ( Size i = start + 1; i < start+length && insert_size[ i + fragment_offset ] == 0; i++ ) {
-			new_claims.push_back( new claims::BBClaim( get_self_weak_ptr(), std::make_pair( label(), i), claim_right_ ));
+			new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::BBClaim( get_self_weak_ptr(), std::make_pair( label(), i), claim_right_ ) ));
 			//new_claims.push_back( new claims::BBClaim( this, i, claim_right_ ) );
 		}
 	}
@@ -250,7 +250,7 @@ void FragmentClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClaims
 	if ( total_insert ) for ( Size i = 1; i<=insert_map[ total_insert ]; i++ ) tr.Trace << " " << insert_size[ i ];
 	tr.Trace << std::endl;
 
-	kinematics::MoveMapOP init_map = new kinematics::MoveMap;
+	kinematics::MoveMapOP init_map( new kinematics::MoveMap );
 	init_map->set_bb( false );
 	init_map->set_jump( false );
 

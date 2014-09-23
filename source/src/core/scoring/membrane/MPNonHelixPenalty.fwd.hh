@@ -27,8 +27,8 @@ namespace scoring {
 namespace membrane {
 	
 class MPNonHelixPenalty;
-typedef utility::pointer::owning_ptr< MPNonHelixPenalty > MPNonHelixPenaltyOP;
-typedef utility::pointer::owning_ptr< MPNonHelixPenalty const > MPNonHelixPenaltyCOP;
+typedef utility::pointer::shared_ptr< MPNonHelixPenalty > MPNonHelixPenaltyOP;
+typedef utility::pointer::shared_ptr< MPNonHelixPenalty const > MPNonHelixPenaltyCOP;
 
 } // membrane
 } // scoring

@@ -81,7 +81,7 @@ void set_rb_constraints(
 					   
 	using core::scoring::constraints::ConstraintCOP;
 	
-	core::scoring::constraints::ConstraintSetOP new_csts =	new core::scoring::constraints::ConstraintSet;
+	core::scoring::constraints::ConstraintSetOP new_csts( new core::scoring::constraints::ConstraintSet );
 
 	for (int i =  1; i <= (int)rbsegs.size(); ++i) {
 		for (core::Size j=1; j<=rbsegs[i].nContinuousSegments(); ++j) {
@@ -99,11 +99,11 @@ void set_rb_constraints(
 					if (!cst_pose.residue(cst_ij).is_protein()) continue;
 
 					core::scoring::func::FuncOP fx( new core::scoring::constraints::BoundFunc(0,cst_width,cst_stdev,"xyz") );
-					core::scoring::constraints::ConstraintOP newcst_ij = new core::scoring::constraints::CoordinateConstraint(
+					core::scoring::constraints::ConstraintOP newcst_ij( new core::scoring::constraints::CoordinateConstraint(
 											 core::id::AtomID( pose.residue(resmap[cst_i]).atom_index("CA"), resmap[cst_i]),
 											 core::id::AtomID( pose.residue(pose.total_residue()).atom_index("ORIG"), pose.total_residue()),
 											 cst_pose.residue(cst_ij).xyz( "CA" ),
-											  fx );
+											  fx ) );
 
 
 					// make sure not randomized <<<< kind of hacky
@@ -116,7 +116,7 @@ void set_rb_constraints(
 				if ( CSTs_i.size() > 0 ) {
 					TR << "Adding " << CSTs_i.size() << " ambiguous constraints for res " << resmap[cst_i]
 					   << " (= input " << cst_i << ")" << std::endl;
-					new_csts->add_constraint( new core::scoring::constraints::AmbiguousConstraint( CSTs_i ) );
+					new_csts->add_constraint( ConstraintCOP( new core::scoring::constraints::AmbiguousConstraint( CSTs_i ) ) );
 				}
 
 			}
@@ -144,7 +144,7 @@ void set_constraints(
 	}
 	int nres = (int)std::min( pose.total_residue() , cst_pose.total_residue() );
 
-	core::scoring::constraints::ConstraintSetOP new_csts =	new core::scoring::constraints::ConstraintSet;
+	core::scoring::constraints::ConstraintSetOP new_csts( new core::scoring::constraints::ConstraintSet );
 	for (int cst_i =  1; cst_i < nres; ++cst_i) {
 		// make ambiguous cst from ( cst_i-cst_seqwidth , cst_i+cst_seqwidth )
 		core::scoring::constraints::ConstraintCOPs CSTs_i;
@@ -155,12 +155,12 @@ void set_constraints(
 			if (!cst_pose.residue(cst_ij).is_protein()) continue;
 
 			core::scoring::func::FuncOP fx( new core::scoring::constraints::BoundFunc(0,cst_width,cst_stdev,"xyz") );
-			core::scoring::constraints::ConstraintOP newcst_ij = new core::scoring::constraints::CoordinateConstraint(
+			core::scoring::constraints::ConstraintOP newcst_ij( new core::scoring::constraints::CoordinateConstraint(
 				core::id::AtomID( pose.residue(cst_i               ).atom_index("CA"  ), cst_i),
 				core::id::AtomID( pose.residue(pose.total_residue()).atom_index("ORIG"), pose.total_residue()),
 				cst_pose.residue(cst_ij).xyz( "CA" ),
 				fx
-			);
+			) );
 
 			// make sure not randomized <<<< kind of hacky
 			core::Real len = (cst_pose.residue(cst_ij).xyz( "CA" )).length();
@@ -171,7 +171,7 @@ void set_constraints(
 		//
 		if ( CSTs_i.size() > 0 ) {
 			TR << "Adding " << CSTs_i.size() << " ambiguous constraints for res " << cst_i << std::endl;
-			new_csts->add_constraint( new core::scoring::constraints::AmbiguousConstraint( CSTs_i ) );
+			new_csts->add_constraint( ConstraintCOP( new core::scoring::constraints::AmbiguousConstraint( CSTs_i ) ) );
 		}
 	}
 	pose.constraint_set( new_csts );
@@ -266,7 +266,7 @@ utility::vector1< core::Size > setup_pose_rbsegs_keep_loops(
 
 	core::pose::PDBInfoOP pdbinfo_old;
 	if (pose.pdb_info())
-		pdbinfo_old = new core::pose::PDBInfo( *(pose.pdb_info()) );
+		pdbinfo_old = core::pose::PDBInfoOP( new core::pose::PDBInfo( *(pose.pdb_info()) ) );
 
 	// cb variants
 	for( protocols::loops::Loops::const_iterator it=loops.begin(), it_end=loops.end(); it != it_end; ++it ) {
@@ -302,7 +302,7 @@ setup_star_topology( core::pose::Pose & pose ) {
 	utility::vector1< RBSegment > rigid_segs, rb_chunks;
 	utility::vector1< core::Size > jumps;
 	protocols::loops::Loops loops;
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
+	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
 
 	core::pose::Pose pose_asu;
 	core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu);
@@ -365,7 +365,7 @@ setup_disconnected( core::pose::Pose & pose ) {
 
 	core::pose::PDBInfoOP pdbinfo_old;
 	if (pose.pdb_info())
-		pdbinfo_old = new core::pose::PDBInfo( *(pose.pdb_info()) );
+		pdbinfo_old = core::pose::PDBInfoOP( new core::pose::PDBInfo( *(pose.pdb_info()) ) );
 
 	// cb variants
 	for( core::Size i=1; i<=nres; ++i) {

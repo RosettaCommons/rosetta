@@ -57,7 +57,7 @@ figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 														 core::pose::Pose const & pose,
 														 utility::vector1< Size > const & working_minimize_res,
 														 bool const move_takeoff_torsions /* = true */ ){
-	toolbox::AllowInsertOP allow_insert = new toolbox::AllowInsert( pose );
+	toolbox::AllowInsertOP allow_insert( new toolbox::AllowInsert( pose ) );
 	figure_out_stepwise_movemap( mm, allow_insert, pose, working_minimize_res, move_takeoff_torsions );
 }
 
@@ -74,7 +74,7 @@ figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
 		if ( !working_fixed_res.has_value( n ) || working_extra_minimize_res.has_value( n ) ) working_minimize_res.push_back( n );
 	}
-	allow_insert = new toolbox::AllowInsert( pose );
+	allow_insert = toolbox::AllowInsertOP( new toolbox::AllowInsert( pose ) );
 	figure_out_stepwise_movemap( mm, allow_insert, pose, working_minimize_res, move_takeoff_torsions );
 }
 

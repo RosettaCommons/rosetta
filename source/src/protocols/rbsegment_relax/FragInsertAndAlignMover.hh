@@ -39,7 +39,7 @@ namespace protocols {
 namespace rbsegment_relax {
 
 class FragInsertAndAlignMover;
-typedef utility::pointer::owning_ptr< FragInsertAndAlignMover >  FragInsertAndAlignMoverOP;
+typedef utility::pointer::shared_ptr< FragInsertAndAlignMover >  FragInsertAndAlignMoverOP;
 
 //////////////////////////////////////////////////////////
 ///@brief Performs a rigid-body movement on a segment of a protein
@@ -58,7 +58,7 @@ public:
 
 	/// @brief clone this object
 	virtual protocols::moves::MoverOP clone() const {
-		return protocols::moves::MoverOP(new FragInsertAndAlignMover(*this));
+		return protocols::moves::MoverOP( new FragInsertAndAlignMover(*this) );
 	}
 
 	/// @brief take a CA-only pose and insert idealized fragments close to the trace

@@ -58,13 +58,13 @@ ChainSplitMover::apply( core::pose::Pose & pose )
 protocols::moves::MoverOP
 ChainSplitMover::clone() const
 {
-	return new ChainSplitMover( *this );
+	return protocols::moves::MoverOP( new ChainSplitMover( *this ) );
 }
 
 protocols::moves::MoverOP
 ChainSplitMover::fresh_instance() const
 {
-	return new ChainSplitMover;
+	return protocols::moves::MoverOP( new ChainSplitMover );
 }
 
 std::string

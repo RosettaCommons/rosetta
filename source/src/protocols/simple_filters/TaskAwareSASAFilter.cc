@@ -53,7 +53,7 @@ namespace simple_filters {
 
 // @brief default constructor
 TaskAwareSASAFilter::TaskAwareSASAFilter():
-  task_factory_( NULL ),
+  task_factory_( /* NULL */ ),
   threshold_( 0 ),
   designable_only_( false ),
 	sc_only_( false ),
@@ -87,12 +87,12 @@ TaskAwareSASAFilter::~TaskAwareSASAFilter() {}
 
 protocols::filters::FilterOP
 TaskAwareSASAFilter::fresh_instance() const{
-  return new TaskAwareSASAFilter();
+  return protocols::filters::FilterOP( new TaskAwareSASAFilter() );
 }
 
 protocols::filters::FilterOP
 TaskAwareSASAFilter::clone() const{
-  return new TaskAwareSASAFilter( *this );
+  return protocols::filters::FilterOP( new TaskAwareSASAFilter( *this ) );
 }
 
 // @brief getters
@@ -212,7 +212,7 @@ TaskAwareSASAFilter::report( std::ostream & out, core::pose::Pose const & pose )
 }
 
 protocols::filters::FilterOP
-TaskAwareSASAFilterCreator::create_filter() const { return new TaskAwareSASAFilter; }
+TaskAwareSASAFilterCreator::create_filter() const { return protocols::filters::FilterOP( new TaskAwareSASAFilter ); }
 
 std::string
 TaskAwareSASAFilterCreator::keyname() const { return "TaskAwareSASA"; }

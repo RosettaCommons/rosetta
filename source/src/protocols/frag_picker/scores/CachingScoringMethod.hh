@@ -36,8 +36,8 @@ namespace scores {
 /// APL: Always always declare your OP typedefs if you're declaring a polymorphic class.
 /// I shouldn't have to do this for you.
 class CachingScoringMethod;
-typedef utility::pointer::owning_ptr< CachingScoringMethod > CachingScoringMethodOP;
-typedef utility::pointer::owning_ptr< CachingScoringMethod const > CachingScoringMethodCOP;
+typedef utility::pointer::shared_ptr< CachingScoringMethod > CachingScoringMethodOP;
+typedef utility::pointer::shared_ptr< CachingScoringMethod const > CachingScoringMethodCOP;
 
 
 /// @brief

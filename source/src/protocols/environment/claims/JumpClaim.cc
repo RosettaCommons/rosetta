@@ -194,7 +194,7 @@ LocalPosition const& JumpClaim::cut() const {
 }
 
 EnvClaimOP JumpClaim::clone() const {
-  return new JumpClaim( *this );
+  return EnvClaimOP( new JumpClaim( *this ) );
 }
 
 std::string JumpClaim::type() const{

@@ -200,7 +200,7 @@ void Membrane_FAPotential::fa_projection(
 /// @brief Return a Const Reference to the Embedding Object from the Pose Cache
 Membrane_FAEmbed const & Membrane_FAEmbed_from_pose( pose::Pose const & pose )
 {
-	return *( static_cast< Membrane_FAEmbed const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_FAEMBED )() ));
+	return *( utility::pointer::static_pointer_cast< core::scoring::Membrane_FAEmbed const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_FAEMBED ) ));
 }
 
 /// @brief Return a Non Const Reference to the Embedding Object from the Pose Cache
@@ -208,10 +208,10 @@ Membrane_FAEmbed & nonconst_Membrane_FAEmbed_from_pose( pose::Pose & pose )
 {
 
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_FAEMBED ) ) {
-		return *( static_cast< Membrane_FAEmbed * >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_FAEMBED )() ));
+		return *( utility::pointer::static_pointer_cast< core::scoring::Membrane_FAEmbed > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_FAEMBED ) ));
 	}
 
-	Membrane_FAEmbedOP membrane_faembed = new Membrane_FAEmbed;
+	Membrane_FAEmbedOP membrane_faembed( new Membrane_FAEmbed );
 	pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_FAEMBED, membrane_faembed );
 	return *membrane_faembed;
 }

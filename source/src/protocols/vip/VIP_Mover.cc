@@ -104,11 +104,11 @@ static thread_local basic::Tracer TR( "VIP" );
 
 		core::pose::Pose pose = initial_pose;
 		core::scoring::ScoreFunctionOP sf2 = core::scoring::ScoreFunctionFactory::create_score_function( option[cp::minimizer_score_fxn] );
-		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 		movemap->set_jump(false);
 		movemap->set_chi(true);
 		movemap->set_bb(true);
-		protocols::moves::MoverOP min_native = new protocols::simple_moves::MinMover( movemap, sf2, "dfpmin_armijo_nonmonotone", 1e-2, true );
+		protocols::moves::MoverOP min_native( new protocols::simple_moves::MinMover( movemap, sf2, "dfpmin_armijo_nonmonotone", 1e-2, true ) );
 		min_native->apply( pose );
 		initial_pose = pose;
 	}
@@ -237,14 +237,14 @@ static thread_local basic::Tracer TR( "VIP" );
 		// TR << "Num void_mutatables is " << void_mutatables.size() << std::endl;
 		// TR << "Num temp_positions  is " << temp_positions.size() << std::endl;
 
-		core::pack::task::ResfileCommandOP command = new core::pack::task::APOLAR;
+		core::pack::task::ResfileCommandOP command( new core::pack::task::APOLAR );
 
 		for( core::Size aa = 1; aa <= void_mutatables.size(); aa++ ){
 			core::pose::Pose pack_pose;
 			pack_pose = initial_pose;
 			core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( pack_pose ));
 			core::scoring::ScoreFunctionOP score_fxn = core::scoring::ScoreFunctionFactory::create_score_function( option[cp::pack_sfxn] );
-			core::pack::task::TaskFactoryOP main_task_factory = new core::pack::task::TaskFactory;
+			core::pack::task::TaskFactoryOP main_task_factory( new core::pack::task::TaskFactory );
 			for( core::Size j = 1; j <= pack_pose.total_residue(); j++ ){
 				if( j != void_mutatables[aa] ){
 					task->nonconst_residue_task(j).prevent_repacking();
@@ -255,7 +255,7 @@ static thread_local basic::Tracer TR( "VIP" );
 					command->residue_action(*task,void_mutatables[aa]);
 				}
 			}
-					protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover(score_fxn, task);
+					protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover(score_fxn, task) );
 					pack_mover->apply( pack_pose );
 					// Store this single residue
 					temp_residues.push_back( pack_pose.residue(temp_positions[aa]).clone() );
@@ -281,7 +281,7 @@ static thread_local basic::Tracer TR( "VIP" );
 		using namespace basic::options::OptionKeys;
 
 		core::scoring::ScoreFunctionOP score_fxn = core::scoring::ScoreFunctionFactory::create_score_function( option[cp::pack_sfxn] );
-		protocols::simple_moves::ScoreMoverOP score_em = new protocols::simple_moves::ScoreMover(score_fxn);
+		protocols::simple_moves::ScoreMoverOP score_em( new protocols::simple_moves::ScoreMover(score_fxn) );
 		score_em->apply( initial_pose );
 
 		core::Real baseE = initial_pose.energies().total_energy();
@@ -359,9 +359,9 @@ static thread_local basic::Tracer TR( "VIP" );
 			relax_pose.replace_residue( favorable_positions[i], *(favorable_residues[i]), true );
 
 			if( rmover == "relax" ){
-					protocols::relax::RelaxProtocolBaseOP relaxmover = new protocols::relax::FastRelax( relax_score_fxn, 15 );
+					protocols::relax::RelaxProtocolBaseOP relaxmover( new protocols::relax::FastRelax( relax_score_fxn, 15 ) );
 				if( option[ cp::local_relax ] ) {
-					core::kinematics::MoveMapOP mmap_ptr = new core::kinematics::MoveMap;
+					core::kinematics::MoveMapOP mmap_ptr( new core::kinematics::MoveMap );
 					if( option[ cp::local_relax ] ) {
 						set_local_movemap( relax_pose, favorable_positions[i], mmap_ptr );
 					}
@@ -369,9 +369,9 @@ static thread_local basic::Tracer TR( "VIP" );
 				}
 				relaxmover->apply(relax_pose);
 			} else if( rmover == "classic_relax" ){
-				protocols::relax::RelaxProtocolBaseOP relaxmover = new protocols::relax::ClassicRelax( relax_score_fxn );
+				protocols::relax::RelaxProtocolBaseOP relaxmover( new protocols::relax::ClassicRelax( relax_score_fxn ) );
 				if( option[ cp::local_relax ] ) {
-					core::kinematics::MoveMapOP mmap_ptr = new core::kinematics::MoveMap;
+					core::kinematics::MoveMapOP mmap_ptr( new core::kinematics::MoveMap );
 					if( option[ cp::local_relax ] ) {
 						set_local_movemap( relax_pose, favorable_positions[i], mmap_ptr );
 					}
@@ -379,9 +379,9 @@ static thread_local basic::Tracer TR( "VIP" );
 				}
 				relaxmover->apply(relax_pose);
 			} else if( rmover == "cst_relax" ){
-				protocols::relax::RelaxProtocolBaseOP cstrelaxmover = new protocols::relax::MiniRelax( relax_score_fxn );
+				protocols::relax::RelaxProtocolBaseOP cstrelaxmover( new protocols::relax::MiniRelax( relax_score_fxn ) );
 				if( option[ cp::local_relax ] ) {
-					core::kinematics::MoveMapOP mmap_ptr = new core::kinematics::MoveMap;
+					core::kinematics::MoveMapOP mmap_ptr( new core::kinematics::MoveMap );
 					if( option[ cp::local_relax ] ) {
 						set_local_movemap( relax_pose, favorable_positions[i], mmap_ptr );
 					}
@@ -392,7 +392,7 @@ static thread_local basic::Tracer TR( "VIP" );
 
 			core::scoring::ScoreFunctionOP sf2 =
 					core::scoring::ScoreFunctionFactory::create_score_function( option[cp::relax_sfxn] );
-			protocols::simple_moves::ScoreMoverOP score_em = new protocols::simple_moves::ScoreMover(sf2);
+			protocols::simple_moves::ScoreMoverOP score_em( new protocols::simple_moves::ScoreMover(sf2) );
 			score_em->apply( relax_pose );
 			favorable_energies[i] = relax_pose.energies().total_energy();
 

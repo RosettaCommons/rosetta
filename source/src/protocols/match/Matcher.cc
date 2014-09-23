@@ -103,7 +103,7 @@ Matcher::~Matcher() {}
 
 void Matcher::set_upstream_pose( core::pose::Pose const & pose )
 {
-	upstream_pose_ = new core::pose::Pose( pose );
+	upstream_pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
 }
 
 void Matcher::set_downstream_pose(
@@ -113,7 +113,7 @@ void Matcher::set_downstream_pose(
 {
 	runtime_assert( orientation_atoms.size() == 3 );
 
-	downstream_pose_ = new core::pose::Pose( pose );
+	downstream_pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
 	downstream_orientation_atoms_ = orientation_atoms;
 }
 
@@ -187,7 +187,7 @@ void Matcher::add_upstream_restype_for_constraint(
 	assert( build_set_id_for_restype_[ cst_id ].find( restype->name() ) == build_set_id_for_restype_[ cst_id ].end() );
 
 	if ( ! upstream_builders_[ cst_id ] ) {
-		upstream::ProteinUpstreamBuilderOP prot_sc_builder = new upstream::ProteinUpstreamBuilder;
+		upstream::ProteinUpstreamBuilderOP prot_sc_builder( new upstream::ProteinUpstreamBuilder );
 		/// default to dunbrack sampler
 		prot_sc_builder->set_sampler( upstream::ProteinSCSamplerCOP( new upstream::DunbrackSCSampler ) );
 		prot_sc_builder->set_use_input_sidechain( use_input_sc_ );
@@ -199,7 +199,7 @@ void Matcher::add_upstream_restype_for_constraint(
 
 	runtime_assert( dynamic_cast< upstream::ProteinUpstreamBuilder * > ( upstream_builders_[ cst_id ].get() ) );
 
-	upstream::ProteinUpstreamBuilderOP prot_sc_builder( dynamic_cast< upstream::ProteinUpstreamBuilder * > ( upstream_builders_[ cst_id ].get() ));
+	upstream::ProteinUpstreamBuilderOP prot_sc_builder( utility::pointer::dynamic_pointer_cast< upstream::ProteinUpstreamBuilder > ( upstream_builders_[ cst_id ] ));
 	prot_sc_builder->add_build_set( build_set );
 	build_set_id_for_restype_[ cst_id ][ restype->name() ] = prot_sc_builder->n_build_sets();
 
@@ -216,7 +216,7 @@ void Matcher::desymmeterize_upstream_restype_for_constraint(
 	/// Replace the existing sampler with one that is desymmeterized.  This will over-write any other stored data in the DunbrackSCSampler if any
 	/// other data gets added to this class.  If new data should be added, then the ProteinUpstreamBuilder needs to be modified to hand out non-const
 	/// access to its sampler.
-	upstream::DunbrackSCSamplerOP sampler = new upstream::DunbrackSCSampler;
+	upstream::DunbrackSCSamplerOP sampler( new upstream::DunbrackSCSampler );
 	sampler->set_desymmeterize( true );
 	prot_sc_builder->set_sampler( sampler );
 }
@@ -233,7 +233,7 @@ void Matcher::set_sample_startegy_for_constraint(
 
 	//Size build_set_id = build_set_id_for_restype_[ cst_id ][ restype->name() ];
 	runtime_assert( dynamic_cast< upstream::ProteinUpstreamBuilder * > ( upstream_builders_[ cst_id ].get() ) );
-	upstream::ProteinUpstreamBuilderOP prot_sc_builder( dynamic_cast< upstream::ProteinUpstreamBuilder * > ( upstream_builders_[ cst_id ].get() ));
+	upstream::ProteinUpstreamBuilderOP prot_sc_builder( utility::pointer::dynamic_pointer_cast< upstream::ProteinUpstreamBuilder > ( upstream_builders_[ cst_id ] ));
 
 	upstream::BuildSet & build_set = prot_sc_builder->build_set( restype );
 
@@ -252,7 +252,7 @@ Matcher::set_fa_dun_cutoff_for_constraint(
 
 	assert( dynamic_cast< upstream::ProteinUpstreamBuilder * > ( upstream_builders_[ cst_id ].get() ) );
 
-	upstream::ProteinUpstreamBuilderOP prot_sc_builder( dynamic_cast< upstream::ProteinUpstreamBuilder * > ( upstream_builders_[ cst_id ].get() ));
+	upstream::ProteinUpstreamBuilderOP prot_sc_builder( utility::pointer::dynamic_pointer_cast< upstream::ProteinUpstreamBuilder > ( upstream_builders_[ cst_id ] ));
 	upstream::BuildSet & build_set = prot_sc_builder->build_set( restype );
 	build_set.set_fa_dun_cutoff( fa_dun_cutoff );
 }
@@ -322,12 +322,12 @@ void Matcher::add_external_geometry_samples_for_constraint(
 	runtime_assert( dynamic_cast< upstream::ProteinUpstreamBuilder * > (
 		upstream_builders_[ cst_id ].get() ) );
 	upstream::ProteinUpstreamBuilderOP prot_sc_builder(
-		static_cast< upstream::ProteinUpstreamBuilder * > ( upstream_builders_[ cst_id ].get() ));
+		utility::pointer::static_pointer_cast< upstream::ProteinUpstreamBuilder > ( upstream_builders_[ cst_id ] ));
 
 	upstream::BuildSet & build_set = prot_sc_builder->build_set( restype );
 
 	if ( ! build_set.has_algorithm() ) {
-		downstream::ClassicMatchAlgorithmOP match_algorithm = new downstream::ClassicMatchAlgorithm( cst_id );
+		downstream::ClassicMatchAlgorithmOP match_algorithm( new downstream::ClassicMatchAlgorithm( cst_id ) );
 		match_algorithm->set_residue_type( restype );
 		build_set.set_downstream_algorithm( match_algorithm );
 
@@ -376,13 +376,12 @@ void Matcher::add_secondary_upstream_match_geometry_for_constraint(
 	runtime_assert( dynamic_cast< upstream::ProteinUpstreamBuilder * > (
 		upstream_builders_[ geom_cst_id ].get() ) );
 	upstream::ProteinUpstreamBuilderOP prot_sc_builder(
-		static_cast< upstream::ProteinUpstreamBuilder * > ( upstream_builders_[ geom_cst_id ].get() ));
+		utility::pointer::static_pointer_cast< upstream::ProteinUpstreamBuilder > ( upstream_builders_[ geom_cst_id ] ));
 
 	upstream::BuildSet & build_set = prot_sc_builder->build_set( candidate_restype );
 
 	if ( ! build_set.has_algorithm() ) {
-		SecondaryMatcherToUpstreamResidueOP secondary_match_algorithm
-			= new SecondaryMatcherToUpstreamResidue( geom_cst_id );
+		SecondaryMatcherToUpstreamResidueOP secondary_match_algorithm( new SecondaryMatcherToUpstreamResidue( geom_cst_id ) );
 		build_set.set_downstream_algorithm( secondary_match_algorithm );
 		secondary_match_algorithm->set_target_geomcst_id( target_geom_cst_id );
 		downstream_algorithms_[ geom_cst_id ].push_back( secondary_match_algorithm );
@@ -438,13 +437,12 @@ Matcher::add_secondary_downstream_match_geometry_for_constraint(
 	runtime_assert( dynamic_cast< upstream::ProteinUpstreamBuilder * > (
 		upstream_builders_[ geom_cst_id ].get() ) );
 	upstream::ProteinUpstreamBuilderOP prot_sc_builder(
-		static_cast< upstream::ProteinUpstreamBuilder * > ( upstream_builders_[ geom_cst_id ].get() ));
+		utility::pointer::static_pointer_cast< upstream::ProteinUpstreamBuilder > ( upstream_builders_[ geom_cst_id ] ));
 
 	upstream::BuildSet & build_set = prot_sc_builder->build_set( candidate_restype );
 
 	if ( ! build_set.has_algorithm() ) {
-		SecondaryMatcherToDownstreamResidueOP secondary_match_algorithm
-			= new SecondaryMatcherToDownstreamResidue( upstream_pose_, geom_cst_id );
+		SecondaryMatcherToDownstreamResidueOP secondary_match_algorithm( new SecondaryMatcherToDownstreamResidue( upstream_pose_, geom_cst_id ) );
 		build_set.set_downstream_algorithm( secondary_match_algorithm );
 		secondary_match_algorithm->set_downstream_restype( downstream_restype );
 		downstream_algorithms_[ geom_cst_id ].push_back( secondary_match_algorithm );
@@ -566,7 +564,7 @@ Matcher::initialize_from_task(
 		//Kui Native 110809
 		runtime_assert( dynamic_cast< upstream::ProteinUpstreamBuilder * > ( upstream_builders_[ ii ].get() ) );
 		upstream::ProteinUpstreamBuilderOP prot_sc_builder(
-		static_cast< upstream::ProteinUpstreamBuilder * > ( upstream_builders_[ ii ].get() ));
+		utility::pointer::static_pointer_cast< upstream::ProteinUpstreamBuilder > ( upstream_builders_[ ii ] ));
 
 		toolbox::match_enzdes_util::MatchConstraintFileInfoListCOP constraint_list = (mtask.enz_input_data())->mcfi_list( ii );
 		utility::vector1< core::chemical::ResidueTypeCOP > const & upres( constraint_list->upstream_restypes() );
@@ -883,8 +881,7 @@ void Matcher::initialize_from_file(
 								if ( res_rotlib != 0 ) {
 
 									SingleResidueDunbrackLibraryCOP dun_rotlib(
-										dynamic_cast< SingleResidueDunbrackLibrary const * >
-										( res_rotlib.get() ));
+										utility::pointer::dynamic_pointer_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const > ( res_rotlib ));
 
 									if ( dun_rotlib == 0 ) {
 										utility_exit_with_message( "Failed to retrieve a Dunbrack rotamer library for AA: " +
@@ -1457,7 +1454,7 @@ Matcher::finish_hit_generation_for_constraint( Size cst_id )
 				iter != iter_end; ++iter ) {
 			(*iter)->set_occupied_space_hash( 0 );
 		}
-		occ_space_hash_ = 0;
+		occ_space_hash_.reset();
 	}
 	return hits_found;
 }
@@ -1489,8 +1486,8 @@ Matcher::initialize_scaffold_build_points()
 	for ( Size ii = 1; ii <= pose_build_resids_.size(); ++ii ) {
 		runtime_assert_msg( pose_build_resids_[ ii ] <= upstream_pose_->n_residue(),
 		                    "pos file contains position outside of valid range.");
-		all_build_points_[ ii ] = new upstream::OriginalBackboneBuildPoint(
-			upstream_pose_->residue( pose_build_resids_[ ii ] ), ii );
+		all_build_points_[ ii ] = utility::pointer::shared_ptr<class protocols::match::upstream::ScaffoldBuildPoint>( new upstream::OriginalBackboneBuildPoint(
+			upstream_pose_->residue( pose_build_resids_[ ii ] ), ii ) );
 	}
 	return true;
 }
@@ -1554,7 +1551,7 @@ Matcher::initialize_active_site_grid()
 	}*/
 
 	if ( read_gridlig_file_ ) {
-		active_site_grid_ = new downstream::ActiveSiteGrid;
+		active_site_grid_ = downstream::ActiveSiteGridOP( new downstream::ActiveSiteGrid );
 		active_site_grid_->initialize_from_gridlig_file( gridlig_fname_ );
 
 		/*Bool3DGridKinemageWriter writer;
@@ -1563,7 +1560,7 @@ Matcher::initialize_active_site_grid()
 		writer.set_line_color( "green" );
 		writer.write_grid_to_kinemage( ostr, "act_site", active_site_grid_->grid() );*/
 	} else {
-		active_site_grid_ = new downstream::ActiveSiteGrid;
+		active_site_grid_ = downstream::ActiveSiteGridOP( new downstream::ActiveSiteGrid );
 		active_site_grid_->set_bin_width( 0.25 ); /// Same resolution as the bump grid!
 
 		for ( std::list< std::pair< Size, Real > >::const_iterator
@@ -1628,7 +1625,7 @@ Matcher::initialize_active_site_grid()
 void
 Matcher::initialize_occupied_space_hash()
 {
-	occ_space_hash_ = new OccupiedSpaceHash;
+	occ_space_hash_ = OccupiedSpaceHashOP( new OccupiedSpaceHash );
 	occ_space_hash_->set_bounding_box( occ_space_bounding_box_ );
 	occ_space_hash_->set_xyz_bin_widths( euclidean_bin_widths_ );
 	occ_space_hash_->set_euler_bin_widths( euler_bin_widths_ );
@@ -1663,7 +1660,7 @@ Matcher::create_ds_builder(
 
 	//Size build_set_id = build_set_id_for_restype_[ cst_id ][ restype->name() ];
 	runtime_assert( dynamic_cast< upstream::ProteinUpstreamBuilder * > ( upstream_builders_[ cst_id ].get() ) );
-	upstream::ProteinUpstreamBuilderOP prot_sc_builder( static_cast< upstream::ProteinUpstreamBuilder * > ( upstream_builders_[ cst_id ].get() ));
+	upstream::ProteinUpstreamBuilderOP prot_sc_builder( utility::pointer::static_pointer_cast< upstream::ProteinUpstreamBuilder > ( upstream_builders_[ cst_id ] ));
 
 	upstream::BuildSet & build_set = prot_sc_builder->build_set( restype );
 
@@ -1681,7 +1678,7 @@ Matcher::create_ds_builder(
 	downstream::DownstreamBuilderOP builder;
 	if ( ! enumerate_ligand_rotamers ) {
 
-		downstream::RigidLigandBuilderOP rigid_builder = new downstream::RigidLigandBuilder;
+		downstream::RigidLigandBuilderOP rigid_builder( new downstream::RigidLigandBuilder );
 		rigid_builder->ignore_h_collisions( true );
 		rigid_builder->initialize_from_residue(
 			downstream_3atoms[ 1 ].atomno(),
@@ -1701,10 +1698,10 @@ Matcher::create_ds_builder(
 
 			bond_list.push_back( std::make_pair( upstream_atom_id, downstream_atom_id ) );
 
-			CountPairGenericOP cpgen = new CountPairGeneric(
+			CountPairGenericOP cpgen( new CountPairGeneric(
 				build_set.restype(),
 				downstream_pose_->residue_type(1),
-				bond_list );
+				bond_list ) );
 			/// Unclear what the xover value should be... 3 ignores collisions for
 			/// atoms that are 3 bonds apart
 			cpgen->set_crossover( 3 );
@@ -1715,7 +1712,7 @@ Matcher::create_ds_builder(
 		}
 		builder = rigid_builder;
 	} else {
-		downstream::LigandConformerBuilderOP ligand_rotamer_builder = new downstream::LigandConformerBuilder;
+		downstream::LigandConformerBuilderOP ligand_rotamer_builder( new downstream::LigandConformerBuilder );
 		ligand_rotamer_builder->ignore_h_collisions( true );
 		ligand_rotamer_builder->initialize_from_residue(
 			downstream_3atoms[ 1 ].atomno(),
@@ -1748,10 +1745,10 @@ Matcher::create_ds_builder(
 
 			bond_list.push_back( std::make_pair( upstream_atom_id, downstream_atom_id ) );
 
-			CountPairGenericOP cpgen = new CountPairGeneric(
+			CountPairGenericOP cpgen( new CountPairGeneric(
 				build_set.restype(),
 				downstream_pose_->residue_type(1),
-				bond_list );
+				bond_list ) );
 			/// Unclear what the xover value should be... 3 ignores collisions for
 			/// atoms that are 3 bonds apart
 			cpgen->set_crossover( 3 );

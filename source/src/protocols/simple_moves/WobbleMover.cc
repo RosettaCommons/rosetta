@@ -61,7 +61,7 @@ WobbleMover::WobbleMover(
 	core::kinematics::MoveMapCOP movemap
 ) :
 	protocols::simple_moves::ClassicFragmentMover( fragset, movemap, "WobbleMover" ), // explicit initialization of virtual base class required
-	protocols::simple_moves::SmoothFragmentMover( fragset, movemap, new protocols::simple_moves::GunnCost, "WobbleMover")
+	protocols::simple_moves::SmoothFragmentMover( fragset, movemap, FragmentCostOP( new protocols::simple_moves::GunnCost ), "WobbleMover")
 {
 	set_defaults();
 }

@@ -164,7 +164,7 @@ bool
 StepWiseRNA_VirtualSugarJustInTimeInstantiator::get_sugar_modeling_set( pose::Pose & viewer_pose, Size const i ){
 	if ( sampled_sugar_index( i ) > 0 ) return true;
 
-	SugarModelingOP sugar_modeling = new SugarModeling();
+	SugarModelingOP sugar_modeling( new SugarModeling() );
 	if ( moving_res_legacy_ && i == moving_res_ && working_parameters_->floating_base() ) return true;
 
 	bool did_setup = setup_sugar_modeling( viewer_pose, i, *sugar_modeling);
@@ -355,7 +355,7 @@ StepWiseRNA_VirtualSugarJustInTimeInstantiator::anchor_sugar_modeling(){
 	Size const anchor_set_idx = sampled_sugar_index( working_parameters_->working_reference_res() );
 	// kind of a hack, for backwards compatibility.
 	if ( anchor_set_idx == 0 ){
-		SugarModelingOP blank_sugar_modeling = new SugarModeling();
+		SugarModelingOP blank_sugar_modeling( new SugarModeling() );
 		return *blank_sugar_modeling;
 	}
 	return *sugar_modeling_sets_[ sampled_sugar_index( working_parameters_->working_reference_res() ) ];

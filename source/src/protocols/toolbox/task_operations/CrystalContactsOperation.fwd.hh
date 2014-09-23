@@ -22,8 +22,8 @@ namespace task_operations {
 
 class CrystalContactsOperation;
 
-typedef utility::pointer::owning_ptr< CrystalContactsOperation > CrystalContactsOperationOP;
-typedef utility::pointer::owning_ptr< CrystalContactsOperation const > CrystalContactsOperationCOP;
+typedef utility::pointer::shared_ptr< CrystalContactsOperation > CrystalContactsOperationOP;
+typedef utility::pointer::shared_ptr< CrystalContactsOperation const > CrystalContactsOperationCOP;
 
 } //namespace task_operations
 } //namespace toolbox

@@ -90,8 +90,8 @@ Mover::Mover()
 	utility::pointer::ReferenceCount(),
 	type_( "MoverBase" ),
 	current_tag_( "NoTag" ),
-	input_pose_(0),
-	native_pose_(0),
+	input_pose_(/* 0 */),
+	native_pose_(/* 0 */),
 	last_status_( MS_SUCCESS )
 {}
 
@@ -101,8 +101,8 @@ Mover::Mover( std::string const & type_name ) :
 	utility::pointer::ReferenceCount(),
 	type_( type_name ),
 	current_tag_( "NoTag" ),
-	input_pose_(0),
-	native_pose_(0),
+	input_pose_(/* 0 */),
+	native_pose_(/* 0 */),
 	last_status_( MS_SUCCESS )
 {}
 

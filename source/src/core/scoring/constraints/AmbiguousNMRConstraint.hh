@@ -60,9 +60,9 @@ public:
 	virtual
 	ConstraintOP clone() const {
 		if ( size() > 0 ) {
-			return new AmbiguousNMRConstraint( member_constraints_, func_ );
+			return ConstraintOP( new AmbiguousNMRConstraint( member_constraints_, func_ ) );
 		} else {
-			return new AmbiguousNMRConstraint( func_ );
+			return ConstraintOP( new AmbiguousNMRConstraint( func_ ) );
 		}
 	}
 
@@ -70,15 +70,15 @@ public:
 	virtual
 	ConstraintOP clone( func::FuncOP func ) const {
 		if ( size() > 0 ) {
-			return new AmbiguousNMRConstraint( member_constraints_, func );
+			return ConstraintOP( new AmbiguousNMRConstraint( member_constraints_, func ) );
 		} else {
-			return new AmbiguousNMRConstraint( func );
+			return ConstraintOP( new AmbiguousNMRConstraint( func ) );
 		}
 	}
 
 	virtual
 	MultiConstraintOP empty_clone() const {
-		return new AmbiguousNMRConstraint( get_func().clone() );
+		return MultiConstraintOP( new AmbiguousNMRConstraint( get_func().clone() ) );
 	}
 
 	virtual std::string type() const {

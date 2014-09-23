@@ -36,8 +36,8 @@ namespace protocols {
 namespace farna {
 
 
-typedef utility::pointer::owning_ptr< RNA_FragmentMover > RNA_FragmentMoverOP;
-typedef utility::pointer::owning_ptr< RNA_Minimizer > RNA_MinimizerOP;
+typedef utility::pointer::shared_ptr< RNA_FragmentMover > RNA_FragmentMoverOP;
+typedef utility::pointer::shared_ptr< RNA_Minimizer > RNA_MinimizerOP;
 
 /// @brief The RNA de novo structure modeling protocol
 class RNA_Relaxer: public protocols::moves::Mover {

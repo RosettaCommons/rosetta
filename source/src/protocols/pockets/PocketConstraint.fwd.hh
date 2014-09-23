@@ -26,7 +26,7 @@ namespace pockets {
 // Forward
 class PocketConstraint;
 
-typedef utility::pointer::owning_ptr< PocketConstraint > PocketConstraintOP;
+typedef utility::pointer::shared_ptr< PocketConstraint > PocketConstraintOP;
 
 } // namespace pockets
 } // namespace protocols

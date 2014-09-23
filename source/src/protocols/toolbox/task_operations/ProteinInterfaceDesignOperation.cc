@@ -71,12 +71,12 @@ ProteinInterfaceDesignOperation::~ProteinInterfaceDesignOperation() {}
 core::pack::task::operation::TaskOperationOP
 ProteinInterfaceDesignOperationCreator::create_task_operation() const
 {
-	return new ProteinInterfaceDesignOperation;
+	return core::pack::task::operation::TaskOperationOP( new ProteinInterfaceDesignOperation );
 }
 
 core::pack::task::operation::TaskOperationOP ProteinInterfaceDesignOperation::clone() const
 {
-	return new ProteinInterfaceDesignOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new ProteinInterfaceDesignOperation( *this ) );
 }
 
 ///@brief the default taskoperation for protein-interface design. Sets up which chains to repack/design
@@ -153,7 +153,7 @@ ProteinInterfaceDesignOperation::apply( core::pose::Pose const & pose, core::pac
 	// the pose if the vector of indices is empty
 	if( residues.size() != 0 ){
 		OperateOnCertainResidues oocr;
-		oocr.op( new PreventRepackingRLT );
+		oocr.op( ResLvlTaskOperationCOP( new PreventRepackingRLT ) );
 		oocr.residue_indices( residues );
 		oocr.apply( pose, task );
 	}

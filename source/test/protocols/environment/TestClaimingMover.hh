@@ -18,7 +18,7 @@ namespace environment {
 class Tester : public protocols::environment::ClaimingMover {
 public:
 
-  Tester() : claim_( NULL ) {}
+  Tester() : claim_( /* NULL */ ) {}
   
   void init( protocols::environment::claims::EnvClaimOP claim ) {
 	claim_ = claim;
@@ -55,8 +55,8 @@ private:
   protocols::environment::claims::EnvClaimOP claim_;
 };
 
-typedef utility::pointer::owning_ptr< Tester > TesterOP;
-typedef utility::pointer::owning_ptr< Tester const > TesterCOP;
+typedef utility::pointer::shared_ptr< Tester > TesterOP;
+typedef utility::pointer::shared_ptr< Tester const > TesterCOP;
 
 }
 }

@@ -40,8 +40,8 @@ typedef utility::fixedsizearray1< Size, DUNBRACK_MAX_BBTOR > Size3;
 
 class RotamerLibraryScratchSpace;
 
-typedef utility::pointer::owning_ptr< RotamerLibraryScratchSpace > RotamerLibraryScratchSpaceOP;
-typedef utility::pointer::owning_ptr< RotamerLibraryScratchSpace const > RotamerLibraryScratchSpaceCOP;
+typedef utility::pointer::shared_ptr< RotamerLibraryScratchSpace > RotamerLibraryScratchSpaceOP;
+typedef utility::pointer::shared_ptr< RotamerLibraryScratchSpace const > RotamerLibraryScratchSpaceCOP;
 
 
 }

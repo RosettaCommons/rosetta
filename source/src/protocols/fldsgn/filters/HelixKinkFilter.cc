@@ -94,7 +94,7 @@ HelixKinkFilter::apply( Pose const & pose ) const
 	if( secstruct_ != "" ) {
 		secstruct = secstruct_;
 	}
-	SS_Info2_OP  ss_info = new SS_Info2( pose, secstruct );
+	SS_Info2_OP  ss_info( new SS_Info2( pose, secstruct ) );
 	Helices const & helices( ss_info->helices() );
 
 	if( helices.size() < 1 ) {
@@ -237,7 +237,7 @@ HelixKinkFilter::parse_my_tag(
 }
 
 protocols::filters::FilterOP
-HelixKinkFilterCreator::create_filter() const { return new HelixKinkFilter; }
+HelixKinkFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HelixKinkFilter ); }
 
 std::string
 HelixKinkFilterCreator::keyname() const { return "HelixKink"; }

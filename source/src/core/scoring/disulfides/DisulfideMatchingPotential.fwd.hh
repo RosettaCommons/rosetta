@@ -24,10 +24,10 @@ namespace scoring {
 namespace disulfides {
 
 class DisulfideMatchingPotential;
-typedef utility::pointer::owning_ptr< DisulfideMatchingPotential > DisulfideMatchingPotentialOP;
-typedef utility::pointer::owning_ptr< DisulfideMatchingPotential const > DisulfideMatchingPotentialCOP;
-typedef utility::pointer::access_ptr< DisulfideMatchingPotential > DisulfideMatchingPotentialAP;
-typedef utility::pointer::access_ptr< DisulfideMatchingPotential const > DisulfideMatchingPotentialCAP;
+typedef utility::pointer::shared_ptr< DisulfideMatchingPotential > DisulfideMatchingPotentialOP;
+typedef utility::pointer::shared_ptr< DisulfideMatchingPotential const > DisulfideMatchingPotentialCOP;
+typedef utility::pointer::weak_ptr< DisulfideMatchingPotential > DisulfideMatchingPotentialAP;
+typedef utility::pointer::weak_ptr< DisulfideMatchingPotential const > DisulfideMatchingPotentialCAP;
 
 
 } //disulfides

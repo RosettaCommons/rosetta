@@ -72,9 +72,8 @@ public:
 		ResourceDescription rDesc = "electron_density_description";
 		JobTag jTag = "job_tag";
 
-		ResourceLocatorOP binary_file_locator(
-			new locator::FileSystemResourceLocator(
-				std::ios_base::binary | std::ios_base::in ));
+		ResourceLocatorOP binary_file_locator( new locator::FileSystemResourceLocator(
+				std::ios_base::binary | std::ios_base::in ) );
 
 		ResourceConfiguration my_config;
 		my_config.resource_tag = rTag;

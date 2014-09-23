@@ -29,8 +29,8 @@ namespace protocols {
 namespace membrane {
 		
 class MembranePositionFromTopologyMover;
-typedef utility::pointer::owning_ptr< MembranePositionFromTopologyMover > MembranePositionFromTopologyMoverOP;
-typedef utility::pointer::owning_ptr< MembranePositionFromTopologyMover const > MembranePositionFromTopologyMoverCOP;
+typedef utility::pointer::shared_ptr< MembranePositionFromTopologyMover > MembranePositionFromTopologyMoverOP;
+typedef utility::pointer::shared_ptr< MembranePositionFromTopologyMover const > MembranePositionFromTopologyMoverCOP;
 		
 } // membrane
 } // protocols

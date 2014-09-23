@@ -22,8 +22,8 @@ namespace canonical_sampling {
 // Forward
 class ParallelTempering;
 
-typedef utility::pointer::owning_ptr< ParallelTempering > ParallelTemperingOP;
-typedef utility::pointer::owning_ptr< ParallelTempering const > ParallelTemperingCOP;
+typedef utility::pointer::shared_ptr< ParallelTempering > ParallelTemperingOP;
+typedef utility::pointer::shared_ptr< ParallelTempering const > ParallelTemperingCOP;
 
 } // namespace canonical_sampling
 } // namespace protocols

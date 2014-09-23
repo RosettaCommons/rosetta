@@ -21,8 +21,8 @@ namespace protocols{
 namespace rotamer_recovery{
 
 class RRComparerElecDensDiff;
-typedef utility::pointer::owning_ptr< RRComparerElecDensDiff > RRComparerElecDensDiffOP;
-typedef utility::pointer::owning_ptr< RRComparerElecDensDiff const > RRComparerElecDensDiffCOP;
+typedef utility::pointer::shared_ptr< RRComparerElecDensDiff > RRComparerElecDensDiffOP;
+typedef utility::pointer::shared_ptr< RRComparerElecDensDiff const > RRComparerElecDensDiffCOP;
 
 
 }//rotamer_recovery

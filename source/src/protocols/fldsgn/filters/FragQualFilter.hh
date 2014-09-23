@@ -77,10 +77,10 @@ public:// virtual constructor
 
 
 	// @brief make clone
-	virtual FilterOP clone() const { return new FragQualFilter( *this ); }
+	virtual FilterOP clone() const { return FilterOP( new FragQualFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const {	return new FragQualFilter(); }
+	virtual FilterOP fresh_instance() const {	return FilterOP( new FragQualFilter() ); }
 
 
 public:// mutator

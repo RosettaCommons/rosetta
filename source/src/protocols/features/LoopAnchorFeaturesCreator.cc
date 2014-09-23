@@ -29,7 +29,7 @@ namespace features {
 LoopAnchorFeaturesCreator::LoopAnchorFeaturesCreator() {}
 LoopAnchorFeaturesCreator::~LoopAnchorFeaturesCreator() {}
 FeaturesReporterOP LoopAnchorFeaturesCreator::create_features_reporter() const {
-	return new LoopAnchorFeatures;
+	return FeaturesReporterOP( new LoopAnchorFeatures );
 }
 
 std::string LoopAnchorFeaturesCreator::type_name() const {

@@ -64,7 +64,7 @@ TaskAwareMinMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 TaskAwareMinMoverCreator::create_mover() const {
-	return new TaskAwareMinMover;
+	return protocols::moves::MoverOP( new TaskAwareMinMover );
 }
 
 std::string
@@ -75,8 +75,8 @@ TaskAwareMinMoverCreator::mover_name()
 
 TaskAwareMinMover::TaskAwareMinMover()
 	: protocols::moves::Mover("TaskAwareMinMover"),
-		minmover_(0),
-		factory_(0),
+		minmover_(/* 0 */),
+		factory_(/* 0 */),
 		chi_(true),
 		bb_(false)
 {}
@@ -106,11 +106,11 @@ void TaskAwareMinMover::apply( core::pose::Pose & pose ){
   using core::kinematics::MoveMap;
 
 	// non-initialization failsafe
-	if ( ! minmover_->movemap() ) minmover_->movemap( new MoveMap );
+	if ( ! minmover_->movemap() ) minmover_->movemap( core::kinematics::MoveMapCOP( new MoveMap ) );
 
   //clone the MinMover's MoveMap
-  MoveMapOP mm = new MoveMap( *( minmover_->movemap() ) );
-  MoveMapOP mm_copy = new MoveMap( *( minmover_->movemap() ) );
+  MoveMapOP mm( new MoveMap( *( minmover_->movemap() ) ) );
+  MoveMapOP mm_copy( new MoveMap( *( minmover_->movemap() ) ) );
 
   //generate task
   using core::pack::task::PackerTaskOP;
@@ -150,8 +150,8 @@ TaskAwareMinMover::get_name() const {
 	return TaskAwareMinMoverCreator::mover_name();
 }
 
-protocols::moves::MoverOP TaskAwareMinMover::fresh_instance() const { return new TaskAwareMinMover; }
-protocols::moves::MoverOP TaskAwareMinMover::clone() const { return new protocols::simple_moves::TaskAwareMinMover( *this ); }
+protocols::moves::MoverOP TaskAwareMinMover::fresh_instance() const { return protocols::moves::MoverOP( new TaskAwareMinMover ); }
+protocols::moves::MoverOP TaskAwareMinMover::clone() const { return protocols::moves::MoverOP( new protocols::simple_moves::TaskAwareMinMover( *this ) ); }
 
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
@@ -176,7 +176,7 @@ TaskAwareMinMover::parse_my_tag(
 			utility_exit_with_message( "TaskAwareMinMover only knows how to interpret jump=1(all jumps true) or jump=0 (false). I got jump = "+jump );
 	}
 	jump_ = tag->getOption< bool >( "jump", false );
-	minmover_ = new MinMover;
+	minmover_ = protocols::simple_moves::MinMoverOP( new MinMover );
 	// call to MinMover::parse_my_tag avoided here to prevent collision of chi and bb tag options
 	minmover_->parse_opts( tag, datamap, filters, movers, pose );
 	parse_task_operations( tag, datamap, filters, movers, pose );
@@ -192,7 +192,7 @@ void TaskAwareMinMover::parse_def( utility::lua::LuaObject const & def,
 	if( def["bb"] )
 		bb_ = def["bb"].to<bool>();
 	jump_ = def["jump"] ? def["jump"].to<bool>() : false;
-	minmover_ = new MinMover;
+	minmover_ = protocols::simple_moves::MinMoverOP( new MinMover );
 // interesting how this doesn't read a movemap....
 	minmover_->parse_def_opts( def, score_fxns, tasks, cache );
 	if( def["tasks"] ) {

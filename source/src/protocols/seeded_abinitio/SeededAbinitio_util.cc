@@ -119,7 +119,7 @@ adjust_mm_to_length( core::pose::Pose const & pose, core::kinematics::MoveMapOP 
 	//iterate through the movemap and if get_bb (false) adjust that position
 	//replace the old movemap with the new one, assert total residue size with the new mm size and all is good!
 	
-	core::kinematics::MoveMapOP new_mm = new core::kinematics::MoveMap();
+	core::kinematics::MoveMapOP new_mm( new core::kinematics::MoveMap() );
 	new_mm->set_bb( false ); 
  	new_mm->set_chi( false ); 
 // 	new_mm->set_jump( false ); 
@@ -166,7 +166,7 @@ parse_seeds( core::pose::Pose const & pose, utility::vector1 < std::pair < std::
 void
 combine_two_poses( core::pose::Pose design_pose , core::pose::PoseOP target_chain ){
 
-	core::pose::PoseOP combo_pose = new core::pose::Pose;
+	core::pose::PoseOP combo_pose( new core::pose::Pose );
 	combo_pose = target_chain;
 	
 	TR<<"new poseOP total number should contain the additional target chain number: " << combo_pose->total_residue();

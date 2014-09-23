@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class WaterFeatures;
-typedef utility::pointer::owning_ptr< WaterFeatures > WaterFeaturesOP;
-typedef utility::pointer::owning_ptr< WaterFeatures const > WaterFeaturesCOP;
+typedef utility::pointer::shared_ptr< WaterFeatures > WaterFeaturesOP;
+typedef utility::pointer::shared_ptr< WaterFeatures const > WaterFeaturesCOP;
 
 }//features
 }//protocols

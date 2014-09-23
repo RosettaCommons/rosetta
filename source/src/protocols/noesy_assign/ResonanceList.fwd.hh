@@ -28,11 +28,11 @@ namespace noesy_assign {
 class ResonanceList;
 
 // Types
-typedef  utility::pointer::owning_ptr< ResonanceList >  ResonanceListOP;
-typedef  utility::pointer::owning_ptr< ResonanceList const >  ResonanceListCOP;
+typedef  utility::pointer::shared_ptr< ResonanceList >  ResonanceListOP;
+typedef  utility::pointer::shared_ptr< ResonanceList const >  ResonanceListCOP;
 
-typedef  utility::pointer::access_ptr< ResonanceList >  ResonanceListAP;
-typedef  utility::pointer::access_ptr< ResonanceList const >  ResonanceListCAP;
+typedef  utility::pointer::weak_ptr< ResonanceList >  ResonanceListAP;
+typedef  utility::pointer::weak_ptr< ResonanceList const >  ResonanceListCAP;
 
 }
 }

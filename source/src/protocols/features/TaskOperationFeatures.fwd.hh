@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class TaskOperationFeatures;
-typedef utility::pointer::owning_ptr< TaskOperationFeatures > TaskOperationFeaturesOP;
-typedef utility::pointer::owning_ptr< TaskOperationFeatures const > TaskOperationFeaturesCOP;
+typedef utility::pointer::shared_ptr< TaskOperationFeatures > TaskOperationFeaturesOP;
+typedef utility::pointer::shared_ptr< TaskOperationFeatures const > TaskOperationFeaturesCOP;
 
 }//features
 }//protocols

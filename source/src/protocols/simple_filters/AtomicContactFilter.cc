@@ -156,7 +156,7 @@ void AtomicContactFilter::parse_my_tag( utility::tag::TagCOP tag,
 }
 
 filters::FilterOP
-AtomicContactFilterCreator::create_filter() const { return new AtomicContactFilter; }
+AtomicContactFilterCreator::create_filter() const { return filters::FilterOP( new AtomicContactFilter ); }
 
 std::string
 AtomicContactFilterCreator::keyname() const { return "AtomicContact"; }

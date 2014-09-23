@@ -82,10 +82,10 @@ main( int argc, char * argv [] )
 	// create a TaskFactory with the resfile
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
-	TaskFactoryOP main_task_factory = new TaskFactory;
-	main_task_factory->push_back( new operation::InitializeFromCommandline );
+	TaskFactoryOP main_task_factory( new TaskFactory );
+	main_task_factory->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
 	if ( option[ packing::resfile ].user() ) {
-		main_task_factory->push_back( new operation::ReadResfile );
+		main_task_factory->push_back( TaskOperationCOP( new operation::ReadResfile ) );
 	}
 
 	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
@@ -98,7 +98,7 @@ main( int argc, char * argv [] )
 		TR << "Processing " << input_jobs[i]->input_tag() << "..." << std::endl;
 
 		// load the PDB file
-		input_pose = new core::pose::Pose();
+		input_pose = core::pose::PoseOP( new core::pose::Pose() );
 		if ( option[ in::file::centroid_input ].user() ) {
 			core::import_pose::centroid_pose_from_pdb( *input_pose, input_jobs[i]->input_tag() );
 		} else {
@@ -119,7 +119,7 @@ main( int argc, char * argv [] )
 
 		// allocate variables necessary for creating an interaction graph
 		PackerTaskCOP task = main_task_factory->create_task_and_apply_taskoperations( *input_pose );
-		core::pack::rotamer_set::RotamerSetsOP rotsets = new core::pack::rotamer_set::RotamerSets;
+		core::pack::rotamer_set::RotamerSetsOP rotsets( new core::pack::rotamer_set::RotamerSets );
 		core::pack::interaction_graph::InteractionGraphBaseOP ig;
 
 		// create rotamers and calculate interaction graph energies
@@ -154,7 +154,7 @@ main( int argc, char * argv [] )
 		TR << "Two Body Energies:" << std::endl << std::endl;
 
 		core::pack::interaction_graph::PrecomputedPairEnergiesInteractionGraphOP pig =
-		dynamic_cast< core::pack::interaction_graph::PrecomputedPairEnergiesInteractionGraph * > ( ig.get() );
+		utility::pointer::dynamic_pointer_cast< core::pack::interaction_graph::PrecomputedPairEnergiesInteractionGraph > ( ig );
 		if ( !pig ) {
 			utility_exit_with_message("Interaction graph is not pre-computed");
 		}

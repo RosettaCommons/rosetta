@@ -18,8 +18,8 @@ namespace protocols {
 namespace motifs {
 
 class MotifDnaPacker;
-typedef utility::pointer::owning_ptr< MotifDnaPacker > MotifDnaPackerOP;
-typedef utility::pointer::owning_ptr< MotifDnaPacker const > MotifDnaPackerCOP;
+typedef utility::pointer::shared_ptr< MotifDnaPacker > MotifDnaPackerOP;
+typedef utility::pointer::shared_ptr< MotifDnaPacker const > MotifDnaPackerCOP;
 
 
 } // namespace motifs

@@ -22,8 +22,8 @@ namespace simple_moves{
 
 //Forwards and OP typedefs
 class SaneMinMover;
-typedef utility::pointer::owning_ptr< SaneMinMover > SaneMinMoverOP;
-typedef utility::pointer::owning_ptr< SaneMinMover const > SaneMinMoverCOP;
+typedef utility::pointer::shared_ptr< SaneMinMover > SaneMinMoverOP;
+typedef utility::pointer::shared_ptr< SaneMinMover const > SaneMinMoverCOP;
 
 }//moves
 }//protocols

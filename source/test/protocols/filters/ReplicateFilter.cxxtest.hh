@@ -47,8 +47,8 @@ public:
 	}
 
 	void test_thresholding() {
-		protocols::filters::FilterOP sfP = new StubFilter( true, 222);
-		protocols::filters::FilterOP sfN = new StubFilter( true, -335);
+		protocols::filters::FilterOP sfP( new StubFilter( true, 222) );
+		protocols::filters::FilterOP sfN( new StubFilter( true, -335) );
 
 		protocols::filters::ReplicateFilter filterP(sfP,1);
 		protocols::filters::ReplicateFilter filterN(sfN,1);
@@ -76,7 +76,7 @@ public:
 		values.push_back(20);
 		values.push_back(7);
 		
-		StubMultiFilterOP sf = new StubMultiFilter;
+		StubMultiFilterOP sf( new StubMultiFilter );
 		sf->set(values);
 		protocols::filters::ReplicateFilter filter(sf,8);
 		TS_ASSERT_EQUALS( filter.report_sm(*testpose_), (-2+-4+-1+-6+-5+-10+20+7)/8.0 );
@@ -95,7 +95,7 @@ public:
 		Movers_map movers;
 
 
-		StubMultiFilterOP sf = new StubMultiFilter;
+		StubMultiFilterOP sf( new StubMultiFilter );
     utility::vector1<core::Real> values;
     values.push_back(-2);
     values.push_back(-4);

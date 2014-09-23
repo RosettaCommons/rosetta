@@ -25,8 +25,8 @@ namespace scores {
 /// @brief forward declaration for FragmentScoringMethod
 class ProfileScore;
 
-typedef utility::pointer::owning_ptr<ProfileScore> ProfileScoreOP;
-typedef utility::pointer::owning_ptr<ProfileScore const> ProfileScoreCOP;
+typedef utility::pointer::shared_ptr<ProfileScore> ProfileScoreOP;
+typedef utility::pointer::shared_ptr<ProfileScore const> ProfileScoreCOP;
 
 } // scores
 } // frag_picker

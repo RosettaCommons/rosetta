@@ -161,8 +161,8 @@ FragmentScoringMethodOP MakeProfileScore::make(Size priority,
 				option[frags::scoring::profile_score]()));
 		trProfScore << "Profile scoring method is: "
 				<< option[frags::scoring::profile_score]() << std::endl;
-		return (FragmentScoringMethodOP) new ProfileScore(priority,
-				lowest_acceptable_value, use_lowest, picker->get_query_seq(), ss, len);
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new ProfileScore(priority,
+				lowest_acceptable_value, use_lowest, picker->get_query_seq(), ss, len) );
 	}
 	utility_exit_with_message(
 			"[ERROR] Undefined profile scoring method. Provide it with frags::scoring::profile_score flag");

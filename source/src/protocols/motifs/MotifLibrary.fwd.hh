@@ -21,8 +21,8 @@ namespace protocols {
 namespace motifs {
 
 class MotifLibrary;
-typedef utility::pointer::owning_ptr< MotifLibrary > MotifLibraryOP;
-typedef utility::pointer::owning_ptr< MotifLibrary const > MotifLibraryCOP;
+typedef utility::pointer::shared_ptr< MotifLibrary > MotifLibraryOP;
+typedef utility::pointer::shared_ptr< MotifLibrary const > MotifLibraryCOP;
 
 } // motifs
 } // protocols

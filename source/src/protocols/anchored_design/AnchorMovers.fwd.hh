@@ -23,13 +23,13 @@ namespace anchored_design {
 
 //Forwards and OP typedefs
 class AnchoredDesignMover;
-typedef utility::pointer::owning_ptr< AnchoredDesignMover > AnchoredDesignMoverOP;
+typedef utility::pointer::shared_ptr< AnchoredDesignMover > AnchoredDesignMoverOP;
 
 class AnchoredPerturbMover;
-typedef utility::pointer::owning_ptr< AnchoredPerturbMover > AnchoredPerturbMoverOP;
+typedef utility::pointer::shared_ptr< AnchoredPerturbMover > AnchoredPerturbMoverOP;
 
 class AnchoredRefineMover;
-typedef utility::pointer::owning_ptr< AnchoredRefineMover > AnchoredRefineMoverOP;
+typedef utility::pointer::shared_ptr< AnchoredRefineMover > AnchoredRefineMoverOP;
 
 } //AnchoredDesign
 } //protocols

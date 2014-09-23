@@ -19,8 +19,8 @@ namespace protocols {
 namespace simple_moves {
 
 class ExtendedPoseMover;
-typedef utility::pointer::owning_ptr<ExtendedPoseMover> ExtendedPoseMoverOP;
-typedef utility::pointer::owning_ptr<ExtendedPoseMover const> ExtendedPoseMoverCOP;
+typedef utility::pointer::shared_ptr<ExtendedPoseMover> ExtendedPoseMoverOP;
+typedef utility::pointer::shared_ptr<ExtendedPoseMover const> ExtendedPoseMoverCOP;
 
 }  // namespace simple_moves
 }  // namespace protocols

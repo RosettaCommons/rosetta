@@ -56,7 +56,7 @@ public:
 		using namespace core::scoring::func;
 
 		// func points to the SplineFunc
-		SplineFuncOP func( new SplineFunc());
+		SplineFuncOP func( new SplineFunc() );
 
 		// Get the scoring/constraints/epr_distance_potential.histogram from mini database
 		std::string epr_dist_histogram( basic::database::full_name("scoring/constraints/epr_distance_potential.histogram"));

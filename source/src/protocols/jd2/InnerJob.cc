@@ -39,7 +39,7 @@ namespace jd2 {
 InnerJob::InnerJob( std::string const & input_tag, core::Size nstruct_max ) :
 	input_tag_(input_tag),
 	nstruct_max_(nstruct_max),
-	pose_(NULL),
+	pose_(/* NULL */),
 	bad_( false )
 {
 	//commented these out... somehow they don't respond to -mute

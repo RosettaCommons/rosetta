@@ -71,7 +71,7 @@ RigidChunkCMCreator::keyname() const {
 
 protocols::moves::MoverOP
 RigidChunkCMCreator::create_mover() const {
-  return new RigidChunkCM;
+  return protocols::moves::MoverOP( new RigidChunkCM );
 }
 
 std::string
@@ -89,7 +89,7 @@ RigidChunkCM::RigidChunkCM( std::string const& label,
   Parent(),
   label_( label ),
   rigid_core_( rigid_core ),
-  template_( new core::pose::Pose(template_pose) ) {}
+  template_( core::pose::PoseCOP( new core::pose::Pose(template_pose) ) ) {}
 
 
 loops::Loops read_rigid_core( std::string const& file){
@@ -137,7 +137,7 @@ void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
     if( file == "INPUT" ){
       template_ = NULL;
     } else {
-      core::pose::PoseOP p = new core::pose::Pose();
+      core::pose::PoseOP p( new core::pose::Pose() );
       core::import_pose::pose_from_pdb( *p,
                                         *core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ),
                                         file );
@@ -159,7 +159,7 @@ claims::EnvClaims RigidChunkCM::yield_claims( core::pose::Pose const& in_p,
 
   if( !template_ ){
     tr.Debug << "Building template from broker-time pose." << std::endl;
-    template_ = new core::pose::Pose( in_p );
+    template_ = core::pose::PoseCOP( new core::pose::Pose( in_p ) );
   }
 
   if( in_p.is_fullatom() && !template_->is_fullatom() ){
@@ -171,39 +171,39 @@ claims::EnvClaims RigidChunkCM::yield_claims( core::pose::Pose const& in_p,
 
   for ( loops::Loops::const_iterator loop_it = rigid_core_.begin();
         loop_it != rigid_core_.end(); ++loop_it ) {
-    XYZClaimOP xyz_claim = new XYZClaim( this_ptr,
+    XYZClaimOP xyz_claim( new XYZClaim( this_ptr,
                                          label(),
                                          std::make_pair( loop_it->start(),
-                                                         loop_it->stop() ) );
+                                                         loop_it->stop() ) ) );
     xyz_claim->strength( EXCLUSIVE, EXCLUSIVE );
     claims.push_back( xyz_claim );
 
 
     if( loop_it->start() > 1 ){
-      XYZClaimOP support_claim = new XYZClaim( this_ptr,
-                                               LocalPosition( label(), loop_it->start()-1 ) );
+      XYZClaimOP support_claim( new XYZClaim( this_ptr,
+                                               LocalPosition( label(), loop_it->start()-1 ) ) );
       support_claim->strength( DOES_NOT_CONTROL, MUST_CONTROL );
       claims.push_back( support_claim );
     }
 
     if( loop_it->stop() < template_->total_residue() ){
-      XYZClaimOP support_claim = new XYZClaim( this_ptr,
-                                               LocalPosition( label(), loop_it->stop()+1 ) );
+      XYZClaimOP support_claim( new XYZClaim( this_ptr,
+                                               LocalPosition( label(), loop_it->stop()+1 ) ) );
       support_claim->strength( DOES_NOT_CONTROL, MUST_CONTROL );
       claims.push_back( support_claim );
     }
 
-    claims.push_back( new CutBiasClaim( this_ptr, label(), std::make_pair( loop_it->start(), loop_it->stop() ), 0.0 ) );
+    claims.push_back( utility::pointer::shared_ptr<class protocols::environment::claims::EnvClaim>( new CutBiasClaim( this_ptr, label(), std::make_pair( loop_it->start(), loop_it->stop() ), 0.0 ) ) );
 
     if( loop_prev.start() != 0 && loop_prev.stop() != 0 ){
       core::Size jump_start = loop_prev.start() + ( ( loop_prev.stop() - loop_prev.start() ) / 2 );
       core::Size jump_end   = loop_it->start() +  ( ( loop_it->stop()  - loop_it->start()  ) / 2 );
 
 
-      JumpClaimOP j_claim = new JumpClaim( this_ptr,
+      JumpClaimOP j_claim( new JumpClaim( this_ptr,
                                            "RigidChunkJump"+utility::to_string( claims.size()/4 ),
                                            LocalPosition( label(), jump_start ),
-                                           LocalPosition( label(), jump_end ) );
+                                           LocalPosition( label(), jump_end ) ) );
       j_claim->strength( EXCLUSIVE, EXCLUSIVE );
       j_claim->physical( false );
 
@@ -482,7 +482,7 @@ std::string RigidChunkCM::get_name() const {
 }
 
 moves::MoverOP RigidChunkCM::clone() const {
-  return new RigidChunkCM( *this );
+  return moves::MoverOP( new RigidChunkCM( *this ) );
 }
 
 } // abscript

@@ -64,7 +64,7 @@ public:
 	void apply( Pose & pose ) {
 
 		// Add Membrane
-		AddMembraneMoverOP add_memb = new AddMembraneMover(); 
+		AddMembraneMoverOP add_memb( new AddMembraneMover() ); 
 		add_memb->apply( pose ); 
 
 		// reorder foldtree
@@ -98,7 +98,7 @@ public:
 		pose.dump_pdb("before2.pdb");
 
 		//Initialize Membrane
-		MembranePositionFromTopologyMoverOP init_memb = new MembranePositionFromTopologyMover( true );
+		MembranePositionFromTopologyMoverOP init_memb( new MembranePositionFromTopologyMover( true ) );
 		init_memb->apply( pose );
 
 		// normalize normal vector to length 15
@@ -177,7 +177,7 @@ public:
 	}
 };
 
-typedef utility::pointer::owning_ptr< MPframeworkTestMover > MPframeworkTestMoverOP; 
+typedef utility::pointer::shared_ptr< MPframeworkTestMover > MPframeworkTestMoverOP; 
 
 /// @brief Main method
 int
@@ -193,7 +193,7 @@ main( int argc, char * argv [] )
 		protocols::jd2::register_options();
 
 		// Create and kick off a new load membrane mover
-		MPframeworkTestMoverOP load_memb = new MPframeworkTestMover(); 
+		MPframeworkTestMoverOP load_memb( new MPframeworkTestMover() ); 
 		protocols::jd2::JobDistributor::get_instance()->go( load_memb );
 
 		return 0; 

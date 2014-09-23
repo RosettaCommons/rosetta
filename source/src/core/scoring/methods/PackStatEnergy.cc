@@ -40,7 +40,7 @@ methods::EnergyMethodOP
 PackStatEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new PackStatEnergy;
+	return methods::EnergyMethodOP( new PackStatEnergy );
 }
 
 ScoreTypes
@@ -61,7 +61,7 @@ PackStatEnergy::PackStatEnergy() :
 EnergyMethodOP
 PackStatEnergy::clone() const
 {
-	return new PackStatEnergy();
+	return EnergyMethodOP( new PackStatEnergy() );
 }
 
 

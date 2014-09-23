@@ -71,9 +71,9 @@ using std::pair;
 
 ///@brief default ctor
 PointMutationCalculator::PointMutationCalculator() :
-	task_factory_( NULL ),
-	scorefxn_( NULL ),
-	relax_mover_( NULL ),
+	task_factory_( /* NULL */ ),
+	scorefxn_( /* NULL */ ),
+	relax_mover_( /* NULL */ ),
 //	filters_( NULL ), /*TODO: this throws a warning!*/
 //	sample_type_( "low" )
 	dump_pdb_( false ),
@@ -160,7 +160,7 @@ PointMutationCalculator::~PointMutationCalculator(){}
 //creators
 protocols::design_opt::PointMutationCalculatorOP
 PointMutationCalculator::clone() const{
-	return new PointMutationCalculator( *this );
+	return protocols::design_opt::PointMutationCalculatorOP( new PointMutationCalculator( *this ) );
 }
 
 // setter - getter pairs
@@ -309,9 +309,8 @@ PointMutationCalculator::mutate_and_relax(
 	allowed_aas[ target_aa ] = true;
 	//make mut_res task factory by copying input task_factory,
 	//then restrict to mutates resi to target_aa and repack 8A shell
-	core::pack::task::TaskFactoryOP mut_res = new core::pack::task::TaskFactory( *task_factory() );
-	protocols::toolbox::task_operations::DesignAroundOperationOP repack_around_op =
-		new protocols::toolbox::task_operations::DesignAroundOperation;
+	core::pack::task::TaskFactoryOP mut_res( new core::pack::task::TaskFactory( *task_factory() ) );
+	protocols::toolbox::task_operations::DesignAroundOperationOP repack_around_op( new protocols::toolbox::task_operations::DesignAroundOperation );
 	repack_around_op->design_shell( design_shell_ ); //neg radius insures no designing nbrs, positive will do so!
 	repack_around_op->repack_shell( repack_shell_ );
 	repack_around_op->allow_design( true ); //because we still want to design resi
@@ -327,9 +326,9 @@ PointMutationCalculator::mutate_and_relax(
 	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin;
 	if( core::pose::symmetry::is_symmetric( pose ) ) {
 		mutate_residue->request_symmetrize_by_union();
-		pack = new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue );
+		pack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue ) );
 	} else {
-		pack = new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue );
+		pack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue ) );
 	}
 	pack->apply( pose );
 	if( rtmin ){
@@ -337,7 +336,7 @@ PointMutationCalculator::mutate_and_relax(
 		if( core::pose::symmetry::is_symmetric( pose ) ) {
 			utility_exit_with_message("Cannot currently use PointMutationCalculator (GreedyOptMutation/ParetoOptMutation) with rtmin on a symmetric pose!");
 		}
-		rtmin = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn(), *mutate_residue );
+		rtmin = protocols::simple_moves::RotamerTrialsMinMoverOP( new protocols::simple_moves::RotamerTrialsMinMover( scorefxn(), *mutate_residue ) );
 		rtmin->apply( pose );
 		TR<<"Finished rtmin"<<std::endl;
 	}
@@ -366,21 +365,17 @@ PointMutationCalculator::mutate_and_relax(
 	allowed_aas[ target_aa ] = true;
 	//make mut_res task factory by copying input task_factory,
 	//then restrict to mutates resi to target_aa and repack 8A shell
-	core::pack::task::TaskFactoryOP mut_res = new core::pack::task::TaskFactory( *task_factory() );
-	protocols::toolbox::task_operations::DesignAroundOperationOP repack_around_op =
-			new protocols::toolbox::task_operations::DesignAroundOperation;
+	core::pack::task::TaskFactoryOP mut_res( new core::pack::task::TaskFactory( *task_factory() ) );
+	protocols::toolbox::task_operations::DesignAroundOperationOP repack_around_op( new protocols::toolbox::task_operations::DesignAroundOperation );
 	repack_around_op->design_shell( design_shell_ ); //neg radius insures no designing nbrs
 	repack_around_op->repack_shell( repack_shell_ );
 	repack_around_op->allow_design( true ); //because we still want to design resi
 	repack_around_op->include_residue( resi );
-	core::pack::task::operation::RestrictAbsentCanonicalAASOP restrict_to_aa_op =
-			new core::pack::task::operation::RestrictAbsentCanonicalAAS;
+	core::pack::task::operation::RestrictAbsentCanonicalAASOP restrict_to_aa_op( new core::pack::task::operation::RestrictAbsentCanonicalAAS );
 	restrict_to_aa_op->include_residue( resi );
 	restrict_to_aa_op->keep_aas( allowed_aas );
-	core::pack::task::operation::InitializeFromCommandlineOP init_from_cmd_op =
-			new core::pack::task::operation::InitializeFromCommandline;
-	core::pack::task::operation::IncludeCurrentOP incl_curr_op =
-		new core::pack::task::operation::IncludeCurrent;
+	core::pack::task::operation::InitializeFromCommandlineOP init_from_cmd_op( new core::pack::task::operation::InitializeFromCommandline );
+	core::pack::task::operation::IncludeCurrentOP incl_curr_op( new core::pack::task::operation::IncludeCurrent );
 	mut_res->push_back( repack_around_op );
 	mut_res->push_back( restrict_to_aa_op );
 	mut_res->push_back( init_from_cmd_op );
@@ -546,8 +541,7 @@ PointMutationCalculator::calc_point_mut_filters(
 				"packing will be slower because GreedyOpt can't use GreenPacker precomputed rotamer pair energies" << std::endl;
 		use_precomp_rot_pair_nrgs = false;
 	}
-	protocols::simple_moves::UserDefinedGroupDiscriminatorOP user_defined_group_discriminator(
-			new protocols::simple_moves::UserDefinedGroupDiscriminator );
+	protocols::simple_moves::UserDefinedGroupDiscriminatorOP user_defined_group_discriminator( new protocols::simple_moves::UserDefinedGroupDiscriminator );
 	user_defined_group_discriminator->set_group_ids( group_ids );
 	protocols::simple_moves::GreenPackerOP green_packer( new protocols::simple_moves::GreenPacker );
 	green_packer->set_group_discriminator( user_defined_group_discriminator );

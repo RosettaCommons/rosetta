@@ -22,8 +22,8 @@ namespace hbs{
 
 //Forwards and OP typedefs
 class HbsPatcher;
-typedef utility::pointer::owning_ptr< HbsPatcher > HbsPatcherOP;
-typedef utility::pointer::owning_ptr< HbsPatcher const > HbsPatcherCOP;
+typedef utility::pointer::shared_ptr< HbsPatcher > HbsPatcherOP;
+typedef utility::pointer::shared_ptr< HbsPatcher const > HbsPatcherCOP;
 
 }//hbs
 }//simple_moves

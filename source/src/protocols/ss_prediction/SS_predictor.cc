@@ -71,8 +71,8 @@ SS_predictor::~SS_predictor(){
 void SS_predictor::load_models(string rd1_model_fl, string rd2_model_fl){
 	const char* rd1_model_fl_char= rd1_model_fl.c_str();
 	const char* rd2_model_fl_char= rd2_model_fl.c_str();
-	rd1_model = Svm_rosettaOP(new Svm_rosetta(rd1_model_fl_char));
-	rd2_model = Svm_rosettaOP(new Svm_rosetta(rd2_model_fl_char));
+	rd1_model = Svm_rosettaOP( new Svm_rosetta(rd1_model_fl_char) );
+	rd2_model = Svm_rosettaOP( new Svm_rosetta(rd2_model_fl_char) );
 }
 /////////////////////////////////////////////////////////////////////////////////
 //@brief: Gets 15 residue window from the fasta. ALso replaces non AA with X. This
@@ -98,7 +98,7 @@ vector1 <Real> SS_predictor::predict_pos_rd1(string window_aa){
 	for(Size ii=0; ii<window_aa.size(); ++ii){
 		Size aa_pos_index = (aa_order.find(window_aa.at(ii))+1);
 		Size final_index = ii*21+aa_pos_index;
-		Svm_node_rosettaOP tmpNode = Svm_node_rosettaOP(new Svm_node_rosetta(final_index,1));
+		Svm_node_rosettaOP tmpNode = Svm_node_rosettaOP( new Svm_node_rosetta(final_index,1) );
 		features.push_back(tmpNode);
 	}
 	vector1< Real> probs_to_return = rd1_model->predict_probability(features);
@@ -120,7 +120,7 @@ vector1 <Real> SS_predictor::predict_pos_rd2( vector1<vector1<Real> > rd1_preds,
 	for(SSize ii=position-half_window_size; ii<=position+half_window_size; ++ii){
 		if(ii<0 || ii>=SSize(fasta.size())){
 			Size tmp_index = lpCt*(rd1_preds[1].size()+1)+(rd1_preds[1].size()+1);//For HLE position 4
-			Svm_node_rosettaOP tmpNode = Svm_node_rosettaOP(new Svm_node_rosetta(tmp_index,1));
+			Svm_node_rosettaOP tmpNode = Svm_node_rosettaOP( new Svm_node_rosetta(tmp_index,1) );
 			features.push_back(tmpNode);
 		}
 		else
@@ -132,7 +132,7 @@ vector1 <Real> SS_predictor::predict_pos_rd2( vector1<vector1<Real> > rd1_preds,
 					rd1_pred_typeCorrection = ABEGO_RD1_OUT_ORDER.find(ABEGO_RD2_IN_ORDER.at(jj))+1;
 				Size tmp_index = lpCt*(rd1_preds[1].size()+1)+jj+1;
 				Real tmp_value = rd1_preds[ii+1][rd1_pred_typeCorrection];
-				Svm_node_rosettaOP tmpNode= Svm_node_rosettaOP(new Svm_node_rosetta(tmp_index,tmp_value));
+				Svm_node_rosettaOP tmpNode= Svm_node_rosettaOP( new Svm_node_rosetta(tmp_index,tmp_value) );
 				features.push_back(tmpNode);
 			}
 		lpCt++;

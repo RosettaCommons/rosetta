@@ -41,7 +41,7 @@ methods::EnergyMethodOP
 DDPscoreCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new DDPscore;
+	return methods::EnergyMethodOP( new DDPscore );
 }
 
 ScoreTypes
@@ -59,7 +59,7 @@ DDPscore::DDPscore() :
 
 methods::EnergyMethodOP DDPscore::clone() const
 {
-	return new DDPscore(*this);
+	return methods::EnergyMethodOP( new DDPscore(*this) );
 }
 
 void DDPscore::setup_for_scoring(pose::Pose&, const ScoreFunction& ) const

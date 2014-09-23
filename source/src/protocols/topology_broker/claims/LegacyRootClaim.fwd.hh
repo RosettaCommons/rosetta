@@ -28,11 +28,11 @@ namespace claims{
 
 class LegacyRootClaim;
 
-typedef  utility::pointer::owning_ptr< LegacyRootClaim >  LegacyRootClaimOP;
-typedef  utility::pointer::owning_ptr< LegacyRootClaim const >  LegacyRootClaimCOP;
+typedef  utility::pointer::shared_ptr< LegacyRootClaim >  LegacyRootClaimOP;
+typedef  utility::pointer::shared_ptr< LegacyRootClaim const >  LegacyRootClaimCOP;
 
-typedef  utility::pointer::access_ptr< LegacyRootClaim >  LegacyRootClaimAP;
-typedef  utility::pointer::access_ptr< LegacyRootClaim const >  LegacyRootClaimCAP;
+typedef  utility::pointer::weak_ptr< LegacyRootClaim >  LegacyRootClaimAP;
+typedef  utility::pointer::weak_ptr< LegacyRootClaim const >  LegacyRootClaimCAP;
 
 typedef utility::vector1< LegacyRootClaimOP > LegacyRootClaims;
 

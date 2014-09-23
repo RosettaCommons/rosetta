@@ -79,7 +79,7 @@ FoldabilityFilterCreator::keyname() const
 
 protocols::filters::FilterOP
 FoldabilityFilterCreator::create_filter() const {
-	return new FoldabilityFilter();
+	return protocols::filters::FilterOP( new FoldabilityFilter() );
 }
 
 std::string
@@ -116,7 +116,7 @@ FoldabilityFilter::FoldabilityFilter() :
 	end_res_( 1 ),
 	ignore_pose_abego_( false ),
 	output_poses_( false ),
-	vlb_(	new protocols::forge::components::VarLengthBuild() ),
+	vlb_(	protocols::forge::components::VarLengthBuildOP( new protocols::forge::components::VarLengthBuild() ) ),
 	cached_aa_( "" ),
 	cached_ss_( "" ),
 	cached_start_( 0 ),
@@ -134,13 +134,13 @@ FoldabilityFilter::~FoldabilityFilter()
 protocols::filters::FilterOP
 FoldabilityFilter::clone() const
 {
-	return new FoldabilityFilter(*this);
+	return protocols::filters::FilterOP( new FoldabilityFilter(*this) );
 }
 
 protocols::filters::FilterOP
 FoldabilityFilter::fresh_instance() const
 {
-	return new FoldabilityFilter();
+	return protocols::filters::FilterOP( new FoldabilityFilter() );
 }
 
 void

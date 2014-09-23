@@ -34,8 +34,8 @@ namespace scores {
 typedef utility::vector1<utility::vector1<Real> > Matrix;
 
 class SecondarySimilarity;
-typedef utility::pointer::owning_ptr< SecondarySimilarity > SecondarySimilarityOP;
-typedef utility::pointer::owning_ptr< SecondarySimilarity const > SecondarySimilarityCOP;
+typedef utility::pointer::shared_ptr< SecondarySimilarity > SecondarySimilarityOP;
+typedef utility::pointer::shared_ptr< SecondarySimilarity const > SecondarySimilarityCOP;
 
 /// @brief  scores a fragment by secondary structure similarity
 /// @detail The score for each position is P(H), P(L) or P(E) if
@@ -96,10 +96,10 @@ public:
 		if( ! query_prediction ) {
 			utility_exit_with_message("Unable to find secondary structure prediction for " + prediction_id );
 		}
-		return (FragmentScoringMethodOP) new SecondarySimilarity(priority,
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new SecondarySimilarity(priority,
 						lowest_acceptable_value, use_lowest,
 						query_prediction, prediction_id,
-						sequence_length,picker->frag_sizes_,vall_max_len);
+						sequence_length,picker->frag_sizes_,vall_max_len) );
 	}
 };
 

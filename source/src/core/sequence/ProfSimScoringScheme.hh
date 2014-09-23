@@ -52,10 +52,10 @@ public:
 	/// @brief returns owning pointer to a new object with a deep copy of this
 	/// object's values.
 	virtual ScoringSchemeOP clone() const {
-		return new ProfSimScoringScheme(
+		return ScoringSchemeOP( new ProfSimScoringScheme(
 			gap_open(),
 			gap_extend()
-		);
+		) );
 	}
 
 	/// @brief ProfSim profile-profile similarity metric based on information theory.

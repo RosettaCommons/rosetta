@@ -60,7 +60,7 @@ FinalMinimizerCreator::keyname() const
 
 protocols::moves::MoverOP
 FinalMinimizerCreator::create_mover() const {
-	return new FinalMinimizer;
+	return protocols::moves::MoverOP( new FinalMinimizer );
 }
 
 std::string
@@ -71,8 +71,8 @@ FinalMinimizerCreator::mover_name()
 
 FinalMinimizer::FinalMinimizer():
 				Mover("FinalMinimizer"),
-				score_fxn_(NULL),
-				movemap_builder_(NULL)
+				score_fxn_(/* NULL */),
+				movemap_builder_(/* NULL */)
 {}
 
 FinalMinimizer::FinalMinimizer(
@@ -95,11 +95,11 @@ FinalMinimizer::FinalMinimizer(FinalMinimizer const & that):
 FinalMinimizer::~FinalMinimizer() {}
 
 protocols::moves::MoverOP FinalMinimizer::clone() const {
-	return new FinalMinimizer( *this );
+	return protocols::moves::MoverOP( new FinalMinimizer( *this ) );
 }
 
 protocols::moves::MoverOP FinalMinimizer::fresh_instance() const {
-	return new FinalMinimizer;
+	return protocols::moves::MoverOP( new FinalMinimizer );
 }
 
 std::string FinalMinimizer::get_name() const{
@@ -121,12 +121,12 @@ FinalMinimizer::parse_my_tag(
 	/// Score Function ///
 	if ( ! tag->hasOption("scorefxn") ) throw utility::excn::EXCN_RosettaScriptsOption("'FinalMinimizer' requires 'scorefxn' tag");
 	std::string scorefxn_name= tag->getOption<std::string>("scorefxn");
-	score_fxn_= datamap.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name);
+	score_fxn_= datamap.get_ptr<core::scoring::ScoreFunction>( "scorefxns", scorefxn_name);
 
 	/// MoveMapBuilder///
 	if ( ! tag->hasOption("movemap_builder") ) throw utility::excn::EXCN_RosettaScriptsOption("'FinalMinimizer' requires 'movemap_builder' tag");
 	std::string movemap_builder_name= tag->getOption<std::string>("movemap_builder");
-	movemap_builder_= datamap.get< protocols::ligand_docking::MoveMapBuilder * >( "movemap_builders", movemap_builder_name);
+	movemap_builder_= datamap.get_ptr<protocols::ligand_docking::MoveMapBuilder>( "movemap_builders", movemap_builder_name);
 
 }
 
@@ -164,7 +164,7 @@ FinalMinimizer::get_final_min_mover(core::pose::Pose const & pose) const{
 	core::kinematics::MoveMapOP movemap= movemap_builder_->build(pose);
 	movemap->show(FinalMinimizer_tracer, pose.n_residue());
 	FinalMinimizer_tracer<< std::endl;
-	return new protocols::simple_moves::MinMover(movemap, score_fxn_, min_type, tolerance, use_nb_list);
+	return protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover(movemap, score_fxn_, min_type, tolerance, use_nb_list) );
 }
 
 } //namespace ligand_docking

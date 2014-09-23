@@ -39,7 +39,7 @@ ContingentAcceptMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 ContingentAcceptMoverCreator::create_mover() const {
-	return new ContingentAcceptMover;
+	return protocols::moves::MoverOP( new ContingentAcceptMover );
 }
 
 std::string
@@ -50,8 +50,8 @@ ContingentAcceptMoverCreator::mover_name()
 
 ContingentAcceptMover::ContingentAcceptMover()
     : moves::Mover("ContingentAccept"),
-    filter_(NULL),
-    mover_(NULL),
+    filter_(/* NULL */),
+    mover_(/* NULL */),
     delta_(5)
 {
 }
@@ -94,13 +94,13 @@ ContingentAcceptMover::get_name() const {
 moves::MoverOP
 ContingentAcceptMover::clone() const
 {
-	return new ContingentAcceptMover( *this );
+	return moves::MoverOP( new ContingentAcceptMover( *this ) );
 }
 
 moves::MoverOP
 ContingentAcceptMover::fresh_instance() const
 {
-	return new ContingentAcceptMover;
+	return moves::MoverOP( new ContingentAcceptMover );
 }
 
 /*

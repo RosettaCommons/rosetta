@@ -96,7 +96,7 @@ CCDEndsGraftMover::get_name() const { return "CCDEndsGraftMover"; }
 
 protocols::moves::MoverOP
 CCDEndsGraftMoverCreator::create_mover() const {
-	return new CCDEndsGraftMover;
+	return protocols::moves::MoverOP( new CCDEndsGraftMover );
 }
 
 std::string
@@ -111,12 +111,12 @@ CCDEndsGraftMoverCreator::mover_name(){
 
 protocols::moves::MoverOP
 CCDEndsGraftMover::clone() const{
-	return new CCDEndsGraftMover(*this);
+	return protocols::moves::MoverOP( new CCDEndsGraftMover(*this) );
 }
 
 protocols::moves::MoverOP
 CCDEndsGraftMover::fresh_instance() const{
-	return new CCDEndsGraftMover();
+	return protocols::moves::MoverOP( new CCDEndsGraftMover() );
 }
 
 SmallMoverOP
@@ -144,7 +144,7 @@ CCDEndsGraftMover::setup_default_small_mover(){
 	    }
 	}
 
-   	SmallMoverOP small =  new SmallMover(movemap(), 2, nmoves*2); 
+   	SmallMoverOP small( new SmallMover(movemap(), 2, nmoves*2) ); 
 	small->angle_max( 'H', 10.0 );
 	small->angle_max( 'E', 10.0 );
 	small->angle_max( 'L', 30.0 );
@@ -189,7 +189,7 @@ CCDEndsGraftMover::apply(Pose & pose){
 	
 	Loop Nter_loop;
 	Loop Cter_loop;
-	LoopsOP loop_set = new Loops();
+	LoopsOP loop_set( new Loops() );
 	std::map< Loop, loop_closure::ccd::CCDLoopClosureMoverOP > loop_set_map; //Would not work without owning pointer.
 
 	Nter_loop = Loop(Nter_loop_start(), Nter_loop_end()+1, Nter_loop_end());//(LEFT LOOP)
@@ -206,8 +206,8 @@ CCDEndsGraftMover::apply(Pose & pose){
 	ft_loop.loops(loop_set);
 	ft_loop.apply(combined);
 
-	loop_set_map[Nter_loop]=new loop_closure::ccd::CCDLoopClosureMover(Nter_loop, movemap());
-	loop_set_map[Cter_loop]=new loop_closure::ccd::CCDLoopClosureMover(Cter_loop, movemap());
+	loop_set_map[Nter_loop] = utility::pointer::shared_ptr<class protocols::loops::loop_closure::ccd::CCDLoopClosureMover>( new loop_closure::ccd::CCDLoopClosureMover(Nter_loop, movemap()) );
+	loop_set_map[Cter_loop] = utility::pointer::shared_ptr<class protocols::loops::loop_closure::ccd::CCDLoopClosureMover>( new loop_closure::ccd::CCDLoopClosureMover(Cter_loop, movemap()) );
 	
 	//combined.dump_pdb("before_idealize.pdb");
 
@@ -217,7 +217,7 @@ CCDEndsGraftMover::apply(Pose & pose){
 	
 	//centroidize the pose before we do stuff to it - sidechains are expensive and unnecessary
 	protocols::simple_moves::SwitchResidueTypeSetMover typeset_swap(core::chemical::CENTROID);
-	protocols::simple_moves::ReturnSidechainMoverOP return_sidechains = new  protocols::simple_moves::ReturnSidechainMover(combined );
+	protocols::simple_moves::ReturnSidechainMoverOP return_sidechains( new  protocols::simple_moves::ReturnSidechainMover(combined ) );
 	typeset_swap.apply( combined );
 
 	//TR <<"After type swap" <<std::endl;

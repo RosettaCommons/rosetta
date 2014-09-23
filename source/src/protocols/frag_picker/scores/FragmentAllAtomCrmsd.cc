@@ -61,7 +61,7 @@ FragmentAllAtomCrmsd::FragmentAllAtomCrmsd(Size priority, Real lowest_acceptable
 	FragmentScoringMethod(priority, lowest_acceptable_value, use_lowest, "FragmentAllAtomCrmsd"), query_sequence_(query_sequence) {
 
 	reference_pose_ = reference_pose;
-	fragment_pose_ = new core::pose::Pose;
+	fragment_pose_ = pose::PoseOP( new core::pose::Pose );
 	total_ref_resids_ = reference_pose_->total_residue();
 	reference_coordinates_.redimension(3, 4 * total_ref_resids_, 0.0);
 	fill_coords(*reference_pose_, reference_coordinates_, total_ref_resids_, reference_pose_->sequence());
@@ -76,7 +76,7 @@ FragmentAllAtomCrmsd::FragmentAllAtomCrmsd(Size priority, Real lowest_acceptable
         query_sequence_(query_sequence) {
 
 	total_ref_resids_ = xyz.size() / 5;
-	fragment_pose_ = new core::pose::Pose;
+	fragment_pose_ = pose::PoseOP( new core::pose::Pose );
 	reference_coordinates_.redimension(3, 4 * total_ref_resids_, 0.0);
 	weights_.redimension(total_ref_resids_ * 4, 1.0);
 	for (core::Size i = 1; i <= total_ref_resids_ * 4; i++) {
@@ -169,21 +169,21 @@ FragmentScoringMethodOP MakeFragmentAllAtomCrmsd::make(Size priority,
 		trRmsScore
 				<< "Reference structure to score fragments by crmsd loaded from: "
 				<< option[in::file::native]() << std::endl;
-		core::pose::PoseOP nativePose = new core::pose::Pose;
+		core::pose::PoseOP nativePose( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*nativePose, option[in::file::native]());
 
-		return (FragmentScoringMethodOP) new FragmentAllAtomCrmsd(priority,
-				lowest_acceptable_value, use_lowest, nativePose->sequence(), nativePose);
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new FragmentAllAtomCrmsd(priority,
+				lowest_acceptable_value, use_lowest, nativePose->sequence(), nativePose) );
 	}
 	if (option[in::file::s].user()) {
 		trRmsScore
 				<< "Reference structure to score fragments by crmsd loaded from: "
 				<< option[in::file::s]()[1] << std::endl;
-		core::pose::PoseOP nativePose = new core::pose::Pose;
+		core::pose::PoseOP nativePose( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*nativePose, option[in::file::s]()[1]);
 
-		return (FragmentScoringMethodOP) new FragmentAllAtomCrmsd(priority,
-				lowest_acceptable_value, use_lowest, nativePose->sequence(), nativePose);
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new FragmentAllAtomCrmsd(priority,
+				lowest_acceptable_value, use_lowest, nativePose->sequence(), nativePose) );
 	}
 	if (option[in::file::xyz].user()) {
 
@@ -212,8 +212,8 @@ FragmentScoringMethodOP MakeFragmentAllAtomCrmsd::make(Size priority,
 		}
 		trRmsScore <<  xyz.size() << " atoms found in the reference" << std::endl;
 
-		return (FragmentScoringMethodOP) new FragmentAllAtomCrmsd(priority,
-				lowest_acceptable_value, use_lowest, seq, xyz);
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new FragmentAllAtomCrmsd(priority,
+				lowest_acceptable_value, use_lowest, seq, xyz) );
 	}
 	utility_exit_with_message(
 			"Can't read a reference structure. Provide it with in::file::s flag");

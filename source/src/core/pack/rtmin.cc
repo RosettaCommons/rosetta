@@ -180,9 +180,9 @@ RTMin::rtmin(
 
 	SCMinMinimizerMapOP scminmap;
 	if (cartesian_) {
-		scminmap = new CartSCMinMinimizerMap();
+		scminmap = SCMinMinimizerMapOP( new CartSCMinMinimizerMap() );
 	} else {
-		scminmap = new AtomTreeSCMinMinimizerMap();
+		scminmap = SCMinMinimizerMapOP( new AtomTreeSCMinMinimizerMap() );
 	}
 	scminmap->set_nonideal( nonideal_ );
 	scminmap->set_total_residue( pose.total_residue() );
@@ -306,7 +306,7 @@ RTMin::rtmin(
 		iirotset->build_rotamers( pose, scfxn, *input_task, packer_neighbor_graph );
 		assert( iirotset->id_for_current_rotamer() != 0 );
 
-		AtomTreeCollectionOP ii_atc = new AtomTreeCollection( pose, *iirotset, iiresid );
+		AtomTreeCollectionOP ii_atc( new AtomTreeCollection( pose, *iirotset, iiresid ) );
 		ii_atc->residue_atomtree_collection( iiresid ).set_active_restype_index( 1 ); // start at the beginning.
 		ii_atc->residue_atomtree_collection( iiresid ).set_rescoords( * iirotset->rotamer( 1 ) );
 		ii_atc->residue_atomtree_collection( iiresid ).update_atom_tree();

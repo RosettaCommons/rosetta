@@ -22,8 +22,8 @@ namespace hbonds{
 
 class HBondOptions;
 
-typedef utility::pointer::owning_ptr< HBondOptions > HBondOptionsOP;
-typedef utility::pointer::owning_ptr< HBondOptions const > HBondOptionsCOP;
+typedef utility::pointer::shared_ptr< HBondOptions > HBondOptionsOP;
+typedef utility::pointer::shared_ptr< HBondOptions const > HBondOptionsCOP;
 
 } //hbonds
 } //scoring

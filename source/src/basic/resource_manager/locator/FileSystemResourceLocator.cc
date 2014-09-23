@@ -54,7 +54,7 @@ FileSystemResourceLocatorCreator::~FileSystemResourceLocatorCreator() {}
 
 ResourceLocatorOP
 FileSystemResourceLocatorCreator::create_resource_locator() const {
-	return new FileSystemResourceLocator;
+	return ResourceLocatorOP( new FileSystemResourceLocator );
 }
 
 string
@@ -199,7 +199,7 @@ FileSystemResourceLocator::locate_resource_stream(
 	// Concatenate base_path_ and the locator tag to generate the appropriate filename.
 	std::stringstream fully_specified_locator_tag;
 	fully_specified_locator_tag << base_path_ << locator_tag;
-	return new FileStream( fully_specified_locator_tag.str(), open_mode_ );
+	return ResourceStreamOP( new FileStream( fully_specified_locator_tag.str(), open_mode_ ) );
 }
 
 /// @details Set the value for base_path if specified in the ResourceDefintionFile.

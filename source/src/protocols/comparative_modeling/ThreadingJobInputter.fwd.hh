@@ -20,8 +20,8 @@ namespace protocols {
 namespace comparative_modeling {
 
 class ThreadingJobInputter;
-typedef utility::pointer::owning_ptr< ThreadingJobInputter > ThreadingJobInputterOP;
-typedef utility::pointer::owning_ptr< ThreadingJobInputter const > ThreadingJobInputterCOP;
+typedef utility::pointer::shared_ptr< ThreadingJobInputter > ThreadingJobInputterOP;
+typedef utility::pointer::shared_ptr< ThreadingJobInputter const > ThreadingJobInputterCOP;
 
 }//comparative_modeling
 }//protocols

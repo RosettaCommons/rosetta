@@ -305,18 +305,18 @@ void InterfacePackingFilter::parse_def( utility::lua::LuaObject const & def,
 }
 protocols::filters::FilterOP
 InterfacePackingFilter::fresh_instance() const{
-	return new InterfacePackingFilter();
+	return protocols::filters::FilterOP( new InterfacePackingFilter() );
 }
 
 InterfacePackingFilter::~InterfacePackingFilter(){}
 
 protocols::filters::FilterOP
 InterfacePackingFilter::clone() const{
-	return new InterfacePackingFilter( *this );
+	return protocols::filters::FilterOP( new InterfacePackingFilter( *this ) );
 }
 
 protocols::filters::FilterOP
-InterfacePackingFilterCreator::create_filter() const { return new InterfacePackingFilter; }
+InterfacePackingFilterCreator::create_filter() const { return protocols::filters::FilterOP( new InterfacePackingFilter ); }
 
 std::string
 InterfacePackingFilterCreator::keyname() const { return "InterfacePacking"; }

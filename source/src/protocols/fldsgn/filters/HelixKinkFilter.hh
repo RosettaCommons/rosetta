@@ -78,10 +78,10 @@ public:// virtual constructor
 
 
 	// @brief make clone
-	virtual FilterOP clone() const { return new HelixKinkFilter( *this ); }
+	virtual FilterOP clone() const { return FilterOP( new HelixKinkFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const {	return new HelixKinkFilter(); }
+	virtual FilterOP fresh_instance() const {	return FilterOP( new HelixKinkFilter() ); }
 
 
 public:// accessor

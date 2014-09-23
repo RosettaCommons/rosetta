@@ -25,8 +25,8 @@ namespace protocols {
 namespace hybridization {
 			
 class CartesianHybridize;
-typedef utility::pointer::owning_ptr< CartesianHybridize > CartesianHybridizeOP;
-typedef utility::pointer::owning_ptr< CartesianHybridize const > CartesianHybridizeCOP;
+typedef utility::pointer::shared_ptr< CartesianHybridize > CartesianHybridizeOP;
+typedef utility::pointer::shared_ptr< CartesianHybridize const > CartesianHybridizeCOP;
 
 
 } // hybridize 

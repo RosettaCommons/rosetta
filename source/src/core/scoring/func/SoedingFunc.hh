@@ -33,7 +33,7 @@ public:
 	{}
 
 	/// @brief returns a clone of this SoedingFunc
-	FuncOP clone() const { return new SoedingFunc( *this ); }
+	FuncOP clone() const { return FuncOP( new SoedingFunc( *this ) ); }
 
 	Real
 	compute_func( Real const x ) const;

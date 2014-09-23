@@ -69,19 +69,19 @@ public:
 		// This accomplishes nothing...
 		residue_set = chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID );
 
-		the_pose = new Pose;
+		the_pose = PoseOP( new Pose );
 		core::import_pose::centroid_pose_from_pdb( *the_pose, "protocols/scoring/dock_in.pdb" );
 	}
 
 	void tearDown() {
-		the_pose = 0;
+		the_pose.reset();
 	}
 
 	void test_InterfaceTest() {
 		//test::UTracer UT("core/conformation/test_simple_conformation.u");
 
 		// create it with jump 1 as the dock jump
-		InterfaceOP iface = new Interface(1);
+		InterfaceOP iface( new Interface(1) );
 
 		// the Interface object uses an energy graph to calculate the iface,
 		// therefore, energies must be accumulated before any calculations
@@ -93,7 +93,7 @@ public:
 		iface->distance( 8.0 );
 
 		// monitor the output from the iface calculation
-		basic::otstreamOP ut = new test::UTracer("protocols/scoring/Interface.u");
+		basic::otstreamOP ut( new test::UTracer("protocols/scoring/Interface.u") );
 		basic::Tracer::set_ios_hook(ut, "core.conformation.Interface");
 		iface->calculate( *the_pose );
 		iface->print( *the_pose );

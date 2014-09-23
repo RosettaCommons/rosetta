@@ -195,7 +195,7 @@ void AtomPairConstraintsScore::read_constraints(
 							<< line << std::endl;
 					continue;
 				}
-				dat = new AtomPairConstraintsData(func, id2 - id1, a1, a2);
+				dat = AtomPairConstraintsDataOP( new AtomPairConstraintsData(func, id2 - id1, a1, a2) );
 				data_[id1].push_back(dat);
 				n_constr++;
 			} else {
@@ -205,7 +205,7 @@ void AtomPairConstraintsScore::read_constraints(
 							<< line << std::endl;
 					continue;
 				}
-				dat = new AtomPairConstraintsData(func, id1 - id2, a2, a1);
+				dat = AtomPairConstraintsDataOP( new AtomPairConstraintsData(func, id1 - id2, a2, a1) );
 				data_[id2].push_back(dat);
 				n_constr++;
 			}
@@ -225,9 +225,9 @@ FragmentScoringMethodOP MakeAtomPairConstraintsScore::make(Size priority,
 		trAtomPairConstraintsScore << "Constraints loaded from: "
 				<< option[constraints::cst_file]()[1] << std::endl;
 
-		return (FragmentScoringMethodOP) new AtomPairConstraintsScore(priority,
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new AtomPairConstraintsScore(priority,
 				lowest_acceptable_value, use_lowest, option[constraints::cst_file]()[1],
-				picker->size_of_query());
+				picker->size_of_query()) );
 	}
 	utility_exit_with_message(
 			"Can't read a constraints file. Provide it with constraints::cst_file flag");

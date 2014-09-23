@@ -22,8 +22,8 @@ namespace surface_docking {
 // Forward
 class SurfaceVectorOptions;
 
-typedef utility::pointer::owning_ptr< SurfaceVectorOptions > SurfaceVectorOptionsOP;
-typedef utility::pointer::owning_ptr< SurfaceVectorOptions const > SurfaceVectorOptionsCOP;
+typedef utility::pointer::shared_ptr< SurfaceVectorOptions > SurfaceVectorOptionsOP;
+typedef utility::pointer::shared_ptr< SurfaceVectorOptions const > SurfaceVectorOptionsCOP;
 
 } //namespace surface_docking
 } //namespace protocols

@@ -19,8 +19,8 @@ namespace protocols {
 namespace nonlocal {
 
 class Chunk;
-typedef utility::pointer::owning_ptr<Chunk> ChunkOP;
-typedef utility::pointer::owning_ptr<Chunk const> ChunkCOP;
+typedef utility::pointer::shared_ptr<Chunk> ChunkOP;
+typedef utility::pointer::shared_ptr<Chunk const> ChunkCOP;
 
 }  // namespace nonlocal
 }  // namespace protocols

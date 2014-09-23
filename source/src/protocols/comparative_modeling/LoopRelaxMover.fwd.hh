@@ -18,15 +18,15 @@ namespace comparative_modeling {
 
 class LoopRelaxMover;
 
-typedef  utility::pointer::owning_ptr< LoopRelaxMover >  LoopRelaxMoverOP;
-typedef  utility::pointer::owning_ptr< LoopRelaxMover const >  LoopRelaxMoverCOP;
+typedef  utility::pointer::shared_ptr< LoopRelaxMover >  LoopRelaxMoverOP;
+typedef  utility::pointer::shared_ptr< LoopRelaxMover const >  LoopRelaxMoverCOP;
 
 
 
 class LoopRelaxThreadingMover;
 
-typedef  utility::pointer::owning_ptr< LoopRelaxThreadingMover >  LoopRelaxThreadingMoverOP;
-typedef  utility::pointer::owning_ptr< LoopRelaxThreadingMover const >  LoopRelaxThreadingMoverCOP;
+typedef  utility::pointer::shared_ptr< LoopRelaxThreadingMover >  LoopRelaxThreadingMoverOP;
+typedef  utility::pointer::shared_ptr< LoopRelaxThreadingMover const >  LoopRelaxThreadingMoverCOP;
 
 
 } // namespace comparative_modeling

@@ -24,8 +24,8 @@ namespace design {
 
 class ResidueProbDesignOperation;
 
-typedef utility::pointer::owning_ptr< ResidueProbDesignOperation > ResidueProbDesignOperationOP;
-typedef utility::pointer::owning_ptr< ResidueProbDesignOperation const > ResidueProbDesignOperationCOP;
+typedef utility::pointer::shared_ptr< ResidueProbDesignOperation > ResidueProbDesignOperationOP;
+typedef utility::pointer::shared_ptr< ResidueProbDesignOperation const > ResidueProbDesignOperationCOP;
 
 } //namespace protocols
 } //namespace toolbox

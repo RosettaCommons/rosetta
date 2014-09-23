@@ -20,8 +20,8 @@ namespace scoring {
 namespace func {
 
 class USOGFunc;
-typedef utility::pointer::owning_ptr<USOGFunc> USOGFuncOP;
-typedef utility::pointer::owning_ptr<USOGFunc const> USOGFuncCOP;
+typedef utility::pointer::shared_ptr<USOGFunc> USOGFuncOP;
+typedef utility::pointer::shared_ptr<USOGFunc const> USOGFuncCOP;
 
 }  // namespace constraints
 }  // namespace scoring

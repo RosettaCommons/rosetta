@@ -254,9 +254,9 @@ FragmentScoringMethodOP MakeAmbigCSScore::make(Size priority,
 		CSTalosIO inB(option[in::file::ambig_talos_cs_B]());
 	  inA.write(std::cerr);
 	  inB.write(std::cerr);
-	  return (FragmentScoringMethodOP) new AmbigCSScore(priority,
+	  return (FragmentScoringMethodOP) FragmentScoringMethodOP( new AmbigCSScore(priority,
 																								 lowest_acceptable_value,
-																								 use_lowest,inA,inB);
+																								 use_lowest,inA,inB) );
 	}
 
 	utility_exit_with_message(

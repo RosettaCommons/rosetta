@@ -31,8 +31,8 @@ namespace pcs2{
 
 class PcsInputCenter;
 
-typedef utility::pointer::owning_ptr< PcsInputCenter > PcsInputCenterOP;
-typedef utility::pointer::owning_ptr< PcsInputCenter const > PcsInputCenterCOP;
+typedef utility::pointer::shared_ptr< PcsInputCenter > PcsInputCenterOP;
+typedef utility::pointer::shared_ptr< PcsInputCenter const > PcsInputCenterCOP;
 
 }//namespace pcs2
 }//namespace methods

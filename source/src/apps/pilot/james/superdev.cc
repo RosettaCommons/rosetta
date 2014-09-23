@@ -50,7 +50,7 @@
 #include <utility/excn/Exceptions.hh>
 
 class SuperDeviationMover;
-typedef utility::pointer::owning_ptr< SuperDeviationMover > SuperDeviationMoverOP;
+typedef utility::pointer::shared_ptr< SuperDeviationMover > SuperDeviationMoverOP;
 using core::Size;
 using core::Real;
 using utility::vector1;

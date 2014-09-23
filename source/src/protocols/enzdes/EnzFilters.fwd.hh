@@ -21,8 +21,8 @@ namespace enzdes {
 
 class EnzdesScorefileFilter;
 
-typedef utility::pointer::owning_ptr< EnzdesScorefileFilter > EnzdesScorefileFilterOP;
-typedef utility::pointer::owning_ptr< EnzdesScorefileFilter const > EnzdesScorefileFilterCOP;
+typedef utility::pointer::shared_ptr< EnzdesScorefileFilter > EnzdesScorefileFilterOP;
+typedef utility::pointer::shared_ptr< EnzdesScorefileFilter const > EnzdesScorefileFilterCOP;
 
 } // enzdes
 } //protocols

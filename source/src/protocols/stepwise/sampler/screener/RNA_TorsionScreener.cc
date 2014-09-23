@@ -35,7 +35,7 @@ namespace screener {
 
 RNA_TorsionScreener::RNA_TorsionScreener() :
 	utility::pointer::ReferenceCount(),
-	suitename_( new RNA_SuiteName() )
+	suitename_( core::pose::rna::RNA_SuiteNameOP( new RNA_SuiteName() ) )
 {}
 
 /// @brief screen the pose

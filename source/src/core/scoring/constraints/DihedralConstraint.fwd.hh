@@ -23,8 +23,8 @@ namespace constraints {
 
 class DihedralConstraint;
 
-typedef utility::pointer::owning_ptr< DihedralConstraint > DihedralConstraintOP;
-typedef utility::pointer::owning_ptr< DihedralConstraint const > DihedralConstraintCOP;
+typedef utility::pointer::shared_ptr< DihedralConstraint > DihedralConstraintOP;
+typedef utility::pointer::shared_ptr< DihedralConstraint const > DihedralConstraintCOP;
 
 }
 }

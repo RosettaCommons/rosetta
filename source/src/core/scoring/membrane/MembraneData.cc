@@ -104,7 +104,7 @@ CenListInfo const &
 MembraneData::get_cenlist_from_pose( pose::Pose const & pose ) const
 {
 	using namespace core::pose::datacache;
-	return *( static_cast< CenListInfo const * >( pose.data().get_const_ptr( CacheableDataType::CEN_LIST_INFO )() ));
+	return *( utility::pointer::static_pointer_cast< core::scoring::CenListInfo const > ( pose.data().get_const_ptr( CacheableDataType::CEN_LIST_INFO ) ));
 	
 } 
 

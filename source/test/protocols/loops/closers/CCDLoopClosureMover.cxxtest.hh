@@ -72,7 +72,7 @@ public:
 		Pose pose( *pose_ );
 
 		// make sure we don't move omega
-		MoveMapOP mm = new MoveMap;
+		MoveMapOP mm( new MoveMap );
 		mm->set_bb( true );
 		for ( core::uint i = 1; i < pose.total_residue(); ++i ) {
 			mm->set( TorsionID( i, BB, 3 ), false );
@@ -146,7 +146,7 @@ public:
 		MoverFactory * mover_factory = MoverFactory::get_instance();
 		MoverOP my_mover = mover_factory->newMover( mover_name );
 
-		CCDLoopClosureMoverOP ccd_mover = dynamic_cast< CCDLoopClosureMover * >( my_mover.get() );
+		CCDLoopClosureMoverOP ccd_mover = utility::pointer::dynamic_pointer_cast< protocols::loops::loop_closure::ccd::CCDLoopClosureMover > ( my_mover );
 		TS_ASSERT( ccd_mover ); // make sure we got back the right mover type
 
 		// Create a Tag instance to test for RosettaScripts compatibility
@@ -158,7 +158,7 @@ public:
 		using core::Real;
 
 		// Set up tag so all options are not default
-		TagOP tag = new Tag;
+		TagOP tag( new Tag );
 		tag->setName( mover_name );
 		tag->setOption< Real >( "max_torsion_delta_per_move_H", 0 );
 		tag->setOption< Real >( "max_torsion_delta_per_move_E", 0 );
@@ -178,7 +178,7 @@ public:
 		// can be nonsense
 		MoverOP my_configured_mover = mover_factory->newMover( tag, dm, fm, mm, * pose_ );
 
-		CCDLoopClosureMoverOP configured_ccd_mover = dynamic_cast< CCDLoopClosureMover * >( my_configured_mover.get() );
+		CCDLoopClosureMoverOP configured_ccd_mover = utility::pointer::dynamic_pointer_cast< protocols::loops::loop_closure::ccd::CCDLoopClosureMover > ( my_configured_mover );
 		TS_ASSERT( configured_ccd_mover ); // make sure we got back the right mover type
 
 		// Make sure the mover's configuration reflect what is in the Tag
@@ -220,7 +220,7 @@ public:
 
 		// Test that a pose without cut points added will throw the user a message about that.
 		// make sure we don't move omega
-		MoveMapOP mm = new MoveMap;
+		MoveMapOP mm( new MoveMap );
 		mm->set_bb( true );
 		for ( core::uint i = 1; i < pose.total_residue(); ++i ) {
 			mm->set( TorsionID( i, BB, 3 ), false );

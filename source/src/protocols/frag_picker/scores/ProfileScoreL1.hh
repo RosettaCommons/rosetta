@@ -33,8 +33,8 @@ namespace frag_picker {
 namespace scores {
 
 class ProfileScoreL1;
-typedef utility::pointer::owning_ptr< ProfileScoreL1 > ProfileScoreL1OP;
-typedef utility::pointer::owning_ptr< ProfileScoreL1 const > ProfileScoreL1COP;
+typedef utility::pointer::shared_ptr< ProfileScoreL1 > ProfileScoreL1OP;
+typedef utility::pointer::shared_ptr< ProfileScoreL1 const > ProfileScoreL1COP;
 
 /// @brief  a fragment candidate
 class ProfileScoreL1: public CachingScoringMethod {

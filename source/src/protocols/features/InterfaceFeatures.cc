@@ -129,7 +129,7 @@ InterfaceFeatures::parse_my_tag(
 
 	if(tag->hasOption("scorefxn")){
 		string const scorefxn_name(tag->getOption<std::string>("scorefxn"));
-		scorefxn_ = data.get<core::scoring::ScoreFunction*>("scorefxns", scorefxn_name);
+		scorefxn_ = data.get_ptr<core::scoring::ScoreFunction>("scorefxns", scorefxn_name);
 	}
 
 	if (tag->hasOption("interfaces") && tag->hasOption("interface")){
@@ -208,7 +208,7 @@ InterfaceFeatures::report_all_interface_features(
 		vector1<std::string> interface_sides = utility::string_split(db_interface, '_');
 		std::string interface_side1 = interface_sides[1];
 		std::string interface_side2 = interface_sides[2];
-		interface_analyzer_ = new protocols::analysis::InterfaceAnalyzerMover(interface, true, scorefxn_, compute_packstat_, pack_together_, pack_separated_);
+		interface_analyzer_ = protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover(interface, true, scorefxn_, compute_packstat_, pack_together_, pack_separated_) );
 		interface_analyzer_->set_use_centroid_dG(true); //Uses score3 by default without rg - used in zinc homodimer design .  Used for clash detection
 		interface_analyzer_->apply_const(pose);
 
@@ -391,36 +391,36 @@ void
 InterfaceFeatures::write_interface_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt());
-	Column interface("interface", new DbText(255));
-	Column chains_side1("chains_side1", new DbText(255));
-	Column chains_side2("chains_side2", new DbText(255));
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column interface("interface", DbDataTypeOP( new DbText(255) ));
+	Column chains_side1("chains_side1", DbDataTypeOP( new DbText(255) ));
+	Column chains_side2("chains_side2", DbDataTypeOP( new DbText(255) ));
 
 	Columns primary_keys;
 	primary_keys.push_back(struct_id);
 	primary_keys.push_back(interface);
 
-	Column nchains_side1("nchains_side1", new DbInteger());
-	Column nchains_side2("nchains_side2", new DbInteger());
-	Column dG_cross("dG_cross", new DbReal());
-	Column dG_cross_dev_dSASAx100("dG_cross_dev_dSASAx100", new DbReal());
-	Column dG_separated("dG", new DbReal());
-	Column dG_separated_dev_dSASAx100("dG_dev_dSASAx100", new DbReal());
-	Column dSASA_hphobic("dSASA_hphobic", new DbReal());
-	Column dSASA_int("dSASA", new DbReal());
-	Column dSASA_polar("dSASA_polar", new DbReal());
-	Column delta_unsatHbonds("delta_unsatHbonds", new DbReal());
-	Column hbond_E_fraction("hbond_E_fraction", new DbReal());
-	Column nres_all("nres_all", new DbInteger());
-	Column nres_int("nres_int", new DbInteger());
-	Column packstat("packstat", new DbReal());
-	Column sc_value("sc_value", new DbReal());
+	Column nchains_side1("nchains_side1", DbDataTypeOP( new DbInteger() ));
+	Column nchains_side2("nchains_side2", DbDataTypeOP( new DbInteger() ));
+	Column dG_cross("dG_cross", DbDataTypeOP( new DbReal() ));
+	Column dG_cross_dev_dSASAx100("dG_cross_dev_dSASAx100", DbDataTypeOP( new DbReal() ));
+	Column dG_separated("dG", DbDataTypeOP( new DbReal() ));
+	Column dG_separated_dev_dSASAx100("dG_dev_dSASAx100", DbDataTypeOP( new DbReal() ));
+	Column dSASA_hphobic("dSASA_hphobic", DbDataTypeOP( new DbReal() ));
+	Column dSASA_int("dSASA", DbDataTypeOP( new DbReal() ));
+	Column dSASA_polar("dSASA_polar", DbDataTypeOP( new DbReal() ));
+	Column delta_unsatHbonds("delta_unsatHbonds", DbDataTypeOP( new DbReal() ));
+	Column hbond_E_fraction("hbond_E_fraction", DbDataTypeOP( new DbReal() ));
+	Column nres_all("nres_all", DbDataTypeOP( new DbInteger() ));
+	Column nres_int("nres_int", DbDataTypeOP( new DbInteger() ));
+	Column packstat("packstat", DbDataTypeOP( new DbReal() ));
+	Column sc_value("sc_value", DbDataTypeOP( new DbReal() ));
 	//Column side1_normalized("side1_normalized", new DbReal());
 	//Column side1_score("side1_complexed_interface_score", new DbReal());
 	//Column side1_nres("side1_nres", new DbReal());
 	//Column side2_normalized("side2_normalized", new DbReal());
 	//Column side2_nres("side2_nres", new DbReal());
-	Column complex_normalized("complex_normalized", new DbReal());
+	Column complex_normalized("complex_normalized", DbDataTypeOP( new DbReal() ));
 	//Column side2_score("side2_complexed_interface_score", new DbReal());
 
 	ForeignKey foreign_key(struct_id, "structures", "struct_id", true);
@@ -514,11 +514,11 @@ InterfaceFeatures::report_interface_features(
 void
 InterfaceFeatures::write_interface_side_schema_to_db(utility::sql_database::sessionOP db_session) const {
 	using namespace basic::database::schema_generator;
-	Column struct_id("struct_id", new DbBigInt());
-	Column interface("interface", new DbText(255));
-	Column chains_side1("chains_side1", new DbText(255));
-	Column chains_side2("chains_side2", new DbText(255));
-	Column side("side", new DbText(255));
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column interface("interface", DbDataTypeOP( new DbText(255) ));
+	Column chains_side1("chains_side1", DbDataTypeOP( new DbText(255) ));
+	Column chains_side2("chains_side2", DbDataTypeOP( new DbText(255) ));
+	Column side("side", DbDataTypeOP( new DbText(255) ));
 	Columns primary_keys;
 	primary_keys.push_back(struct_id);
 	primary_keys.push_back(interface);
@@ -528,36 +528,36 @@ InterfaceFeatures::write_interface_side_schema_to_db(utility::sql_database::sess
 
 	ForeignKey foreign_key(struct_id, "structures", "struct_id", true);
 
-	Column complexed_interface_score("energy_int", new DbReal());
-	Column separated_interface_score("energy_sep", new DbReal());
-	Column dSASA("dSASA", new DbReal());
-	Column dSASA_bb("dSASA_bb", new DbReal());
-	Column dSASA_sc("dSASA_sc", new DbReal());
+	Column complexed_interface_score("energy_int", DbDataTypeOP( new DbReal() ));
+	Column separated_interface_score("energy_sep", DbDataTypeOP( new DbReal() ));
+	Column dSASA("dSASA", DbDataTypeOP( new DbReal() ));
+	Column dSASA_bb("dSASA_bb", DbDataTypeOP( new DbReal() ));
+	Column dSASA_sc("dSASA_sc", DbDataTypeOP( new DbReal() ));
 	
-	Column dhSASA("dhSASA", new DbReal());
-	Column dhSASA_bb("dhSASA_bb", new DbReal());
-	Column dhSASA_sc("dhSASA_sc", new DbReal());
-	Column dhSASA_rel("dhSASA_rel_by_charge", new DbReal());
+	Column dhSASA("dhSASA", DbDataTypeOP( new DbReal() ));
+	Column dhSASA_bb("dhSASA_bb", DbDataTypeOP( new DbReal() ));
+	Column dhSASA_sc("dhSASA_sc", DbDataTypeOP( new DbReal() ));
+	Column dhSASA_rel("dhSASA_rel_by_charge", DbDataTypeOP( new DbReal() ));
 	
-	Column dG("dG", new DbReal());
-	Column interface_nres("interface_nres", new DbInteger());
+	Column dG("dG", DbDataTypeOP( new DbReal() ));
+	Column interface_nres("interface_nres", DbDataTypeOP( new DbInteger() ));
 
-	Column aromatic_fraction("aromatic_fraction", new DbReal());
-	Column aromatic_dSASA_fraction("aromatic_dSASA_fraction", new DbReal());
-	Column aromatic_energy_fraction("aromatic_dG_fraction", new DbReal());
+	Column aromatic_fraction("aromatic_fraction", DbDataTypeOP( new DbReal() ));
+	Column aromatic_dSASA_fraction("aromatic_dSASA_fraction", DbDataTypeOP( new DbReal() ));
+	Column aromatic_energy_fraction("aromatic_dG_fraction", DbDataTypeOP( new DbReal() ));
 
-	Column interface_to_surface_fraction("interface_to_surface_fraction", new DbReal());
+	Column interface_to_surface_fraction("interface_to_surface_fraction", DbDataTypeOP( new DbReal() ));
 
-	Column ss_sheet_fraction("ss_sheet_fraction", new DbReal());
-	Column ss_helix_fraction("ss_helix_fraction", new DbReal());
-	Column ss_loop_fraction("ss_loop_fraction", new DbReal());
+	Column ss_sheet_fraction("ss_sheet_fraction", DbDataTypeOP( new DbReal() ));
+	Column ss_helix_fraction("ss_helix_fraction", DbDataTypeOP( new DbReal() ));
+	Column ss_loop_fraction("ss_loop_fraction", DbDataTypeOP( new DbReal() ));
 
-	Column avg_per_res_energy_int("avg_per_residue_energy_int", new DbReal());
-	Column avg_per_res_energy_sep("avg_per_residue_energy_sep", new DbReal());
-	Column avg_per_res_energy_dG("avg_per_residue_energy_dG", new DbReal());
-	Column avg_per_res_SASA_int("avg_per_residue_SASA_int", new DbReal());
-	Column avg_per_res_SASA_sep("avg_per_residue_SASA_sep", new DbReal());
-	Column avg_per_res_dSASA("avg_per_residue_dSASA", new DbReal());
+	Column avg_per_res_energy_int("avg_per_residue_energy_int", DbDataTypeOP( new DbReal() ));
+	Column avg_per_res_energy_sep("avg_per_residue_energy_sep", DbDataTypeOP( new DbReal() ));
+	Column avg_per_res_energy_dG("avg_per_residue_energy_dG", DbDataTypeOP( new DbReal() ));
+	Column avg_per_res_SASA_int("avg_per_residue_SASA_int", DbDataTypeOP( new DbReal() ));
+	Column avg_per_res_SASA_sep("avg_per_residue_SASA_sep", DbDataTypeOP( new DbReal() ));
+	Column avg_per_res_dSASA("avg_per_residue_dSASA", DbDataTypeOP( new DbReal() ));
 
 	Schema table("interface_sides", primary_keys);
 	table.add_foreign_key(foreign_key);
@@ -677,11 +677,11 @@ void
 InterfaceFeatures::write_interface_residues_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt());
-	Column interface("interface", new DbText(255));
-	Column chains_side1("chains_side1", new DbText(255));
-	Column chains_side2("chains_side2", new DbText(255));
-	Column resnum("resNum", new DbInteger());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column interface("interface", DbDataTypeOP( new DbText(255) ));
+	Column chains_side1("chains_side1", DbDataTypeOP( new DbText(255) ));
+	Column chains_side2("chains_side2", DbDataTypeOP( new DbText(255) ));
+	Column resnum("resNum", DbDataTypeOP( new DbInteger() ));
 
 	Columns primary_keys;
 	primary_keys.push_back(struct_id);
@@ -700,21 +700,21 @@ InterfaceFeatures::write_interface_residues_schema_to_db(utility::sql_database::
 	reference_columns.push_back("resNum");
 	ForeignKey res_foreign_key(foreign_keys, "residues", reference_columns, true);
 
-	Column side("side", new DbText(255));
-	Column SASA_sep("SASA_sep", new DbReal());
-	Column SASA_int("SASA_int", new DbReal());
-	Column dSASA("dSASA", new DbReal());
-	Column dSASA_bb("dSASA_bb", new DbReal());
-	Column dSASA_sc("dSASA_sc", new DbReal());
-	Column dhSASA("dhSASA", new DbReal());
-	Column dhSASA_bb("dhSASA_bb", new DbReal());
-	Column dhSASA_sc("dhSASA_sc", new DbReal());
-	Column dhSASA_rel("dhSASA_rel_by_charge", new DbReal());
+	Column side("side", DbDataTypeOP( new DbText(255) ));
+	Column SASA_sep("SASA_sep", DbDataTypeOP( new DbReal() ));
+	Column SASA_int("SASA_int", DbDataTypeOP( new DbReal() ));
+	Column dSASA("dSASA", DbDataTypeOP( new DbReal() ));
+	Column dSASA_bb("dSASA_bb", DbDataTypeOP( new DbReal() ));
+	Column dSASA_sc("dSASA_sc", DbDataTypeOP( new DbReal() ));
+	Column dhSASA("dhSASA", DbDataTypeOP( new DbReal() ));
+	Column dhSASA_bb("dhSASA_bb", DbDataTypeOP( new DbReal() ));
+	Column dhSASA_sc("dhSASA_sc", DbDataTypeOP( new DbReal() ));
+	Column dhSASA_rel("dhSASA_rel_by_charge", DbDataTypeOP( new DbReal() ));
 	
-	Column rel_dSASA_fraction("relative_dSASA_fraction", new DbReal());
-	Column energy_sep("energy_sep", new DbReal());
-	Column energy_int("energy_int", new DbReal());
-	Column dG("dG", new DbReal());
+	Column rel_dSASA_fraction("relative_dSASA_fraction", DbDataTypeOP( new DbReal() ));
+	Column energy_sep("energy_sep", DbDataTypeOP( new DbReal() ));
+	Column energy_int("energy_int", DbDataTypeOP( new DbReal() ));
+	Column dG("dG", DbDataTypeOP( new DbReal() ));
 
 	Schema table("interface_residues", primary_keys);
 	table.add_foreign_key(res_foreign_key);

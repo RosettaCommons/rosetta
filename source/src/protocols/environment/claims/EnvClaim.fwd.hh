@@ -28,11 +28,11 @@ namespace claims {
 class EnvClaim;
 
 // Types
-typedef  utility::pointer::owning_ptr< EnvClaim >  EnvClaimOP;
-typedef  utility::pointer::owning_ptr< EnvClaim const >  EnvClaimCOP;
+typedef  utility::pointer::shared_ptr< EnvClaim >  EnvClaimOP;
+typedef  utility::pointer::shared_ptr< EnvClaim const >  EnvClaimCOP;
 
-typedef  utility::pointer::access_ptr< EnvClaim >  EnvClaimAP;
-typedef  utility::pointer::access_ptr< EnvClaim const >  EnvClaimCAP;
+typedef  utility::pointer::weak_ptr< EnvClaim >  EnvClaimAP;
+typedef  utility::pointer::weak_ptr< EnvClaim const >  EnvClaimCAP;
 
 typedef std::list< EnvClaimOP > EnvClaims;
 

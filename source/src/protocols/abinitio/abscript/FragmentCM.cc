@@ -73,7 +73,7 @@ FragmentCMCreator::keyname() const {
 
 protocols::moves::MoverOP
 FragmentCMCreator::create_mover() const {
-  return new FragmentCM;
+  return protocols::moves::MoverOP( new FragmentCM );
 }
 
 std::string
@@ -84,8 +84,8 @@ FragmentCMCreator::mover_name() {
 
 FragmentCM::FragmentCM():
   ClaimingMover(),
-  mover_( NULL ),
-  selector_( NULL ),
+  mover_( /* NULL */ ),
+  selector_( /* NULL */ ),
   bInitialize_( true ),
   bYieldCutBias_( false )
 {}
@@ -155,9 +155,9 @@ void FragmentCM::parse_my_tag( utility::tag::TagCOP tag,
 
   std::string const& frag_type = tag->getOption< std::string >( "frag_type", "classic" );
   if( frag_type == "classic" ){
-    set_mover( new simple_moves::ClassicFragmentMover( frag_io.read_data( tag->getOption< std::string >( frag_file_tag ) ) ) );
+    set_mover( simple_moves::FragmentMoverOP( new simple_moves::ClassicFragmentMover( frag_io.read_data( tag->getOption< std::string >( frag_file_tag ) ) ) ) );
   } else if( frag_type == "smooth" ){
-    set_mover( new simple_moves::SmoothFragmentMover( frag_io.read_data( tag->getOption< std::string >( frag_file_tag ) ), protocols::simple_moves::FragmentCostOP( new simple_moves::GunnCost() ) ) );
+    set_mover( simple_moves::FragmentMoverOP( new simple_moves::SmoothFragmentMover( frag_io.read_data( tag->getOption< std::string >( frag_file_tag ) ), protocols::simple_moves::FragmentCostOP( new simple_moves::GunnCost() ) ) ) );
   } else {
     std::ostringstream ss;
     ss << "The fragment type " << frag_type << " is not valid. The options "
@@ -176,11 +176,11 @@ claims::EnvClaims FragmentCM::yield_claims( core::pose::Pose const& pose,
   claims::EnvClaims claim_list;
 
   if( yield_cut_bias() ){
-    core::fragment::SecondaryStructureOP ss = new core::fragment::SecondaryStructure( *( mover()->fragments() ) );
-    claim_list.push_back( new environment::claims::CutBiasClaim(
+    core::fragment::SecondaryStructureOP ss( new core::fragment::SecondaryStructure( *( mover()->fragments() ) ) );
+    claim_list.push_back( utility::pointer::shared_ptr<class protocols::environment::claims::EnvClaim>( new environment::claims::CutBiasClaim(
 		utility::pointer::static_pointer_cast< ClaimingMover > ( get_self_ptr() ),
 		"BASE",
-		*ss ) );
+		*ss ) ) );
   }
 
   int shift = 0;
@@ -191,10 +191,10 @@ claims::EnvClaims FragmentCM::yield_claims( core::pose::Pose const& pose,
     mover()->set_fragments( mover()->fragments()->clone_shifted( shift ) );
   }
 
-  TorsionClaimOP new_claim = new TorsionClaim( utility::pointer::static_pointer_cast< ClaimingMover > ( get_self_ptr() ),
+  TorsionClaimOP new_claim( new TorsionClaim( utility::pointer::static_pointer_cast< ClaimingMover > ( get_self_ptr() ),
                                                "BASE",
                                                std::make_pair( mover()->fragments()->min_pos(),
-                                                               mover()->fragments()->max_pos() ) );
+                                                               mover()->fragments()->max_pos() ) ) );
 
   if( initialize() ){
     new_claim->strength( CAN_CONTROL, CAN_CONTROL );
@@ -237,7 +237,7 @@ void FragmentCM::passport_updated() {
   if( has_passport() ){
     mover()->set_movemap( passport()->render_movemap() );
   } else {
-    core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap();
+    core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap() );
     mm->set_bb( true );
     mover()->set_movemap( mm );
   }

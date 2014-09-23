@@ -21,8 +21,8 @@ namespace replica_docking {
 
 class InteractionScoreFilter;
 
-typedef utility::pointer::owning_ptr< InteractionScoreFilter > InteractionScoreFilterOP;
-typedef utility::pointer::owning_ptr< InteractionScoreFilter const > InteractionScoreFilterCOP;
+typedef utility::pointer::shared_ptr< InteractionScoreFilter > InteractionScoreFilterOP;
+typedef utility::pointer::shared_ptr< InteractionScoreFilter const > InteractionScoreFilterCOP;
 
 }
 }

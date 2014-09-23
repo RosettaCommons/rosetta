@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class ProteinBackboneAtomAtomPairFeatures;
-typedef utility::pointer::owning_ptr< ProteinBackboneAtomAtomPairFeatures > ProteinBackboneAtomAtomPairFeaturesOP;
-typedef utility::pointer::owning_ptr< ProteinBackboneAtomAtomPairFeatures const > ProteinBackboneAtomAtomPairFeaturesCOP;
+typedef utility::pointer::shared_ptr< ProteinBackboneAtomAtomPairFeatures > ProteinBackboneAtomAtomPairFeaturesOP;
+typedef utility::pointer::shared_ptr< ProteinBackboneAtomAtomPairFeatures const > ProteinBackboneAtomAtomPairFeaturesCOP;
 
 }// namespace
 }// namespace

@@ -68,9 +68,9 @@ MDBase::cst_on_pose( pose::Pose &pose )
 			Size i_ca = pose.residue(i_res).atom_index(" CA ");
 			id::AtomID atomID( i_ca, i_res );
 
-			pose.add_constraint( new scoring::constraints::CoordinateConstraint(
+			pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::CoordinateConstraint(
 				atomID, atomID, pose.residue(i_res).xyz(i_ca), fx
-			) );
+			) ) );
 		}
 	}
 }

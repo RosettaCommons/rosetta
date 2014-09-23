@@ -26,13 +26,13 @@ class SigmoidWeightedCenList;
 
 // templated typedefs are not allowed
 // do this instead
-typedef utility::pointer::owning_ptr< SigmoidWeightedCenList<Real> > SigmoidWeightedCenListRealOP;
-typedef utility::pointer::owning_ptr< SigmoidWeightedCenList<numeric::xyzVector<Real> > > SigmoidWeightedCenListVectorOP;
+typedef utility::pointer::shared_ptr< SigmoidWeightedCenList<Real> > SigmoidWeightedCenListRealOP;
+typedef utility::pointer::shared_ptr< SigmoidWeightedCenList<numeric::xyzVector<Real> > > SigmoidWeightedCenListVectorOP;
 
 class SmoothEnvPairPotential;
 
-typedef utility::pointer::owning_ptr< SmoothEnvPairPotential > SmoothEnvPairPotentialOP;
-typedef utility::pointer::owning_ptr< SmoothEnvPairPotential const > SmoothEnvPairPotentialCOP;
+typedef utility::pointer::shared_ptr< SmoothEnvPairPotential > SmoothEnvPairPotentialOP;
+typedef utility::pointer::shared_ptr< SmoothEnvPairPotential const > SmoothEnvPairPotentialCOP;
 
 } // ns scoring
 } // ns core

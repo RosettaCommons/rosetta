@@ -596,7 +596,7 @@ MPIMultistateFitnessFunction::recover_poses_from_states(
 			Size pack_daemon_index = utility::receive_integer_from_node( ii );
 			std::string pdb_string = utility::receive_string_from_node( ii );
 
-			PoseOP pose = new Pose;
+			PoseOP pose( new Pose );
 			core::import_pose::pose_from_pdbstring( *pose, pdb_string, pseudo_pdbname );
 
 			return_pose_list.push_back( std::make_pair( pack_daemon_index, pose ) );

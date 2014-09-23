@@ -28,8 +28,8 @@ namespace design {
 // Forward
 class AntibodyDesignModeler;
 
-typedef utility::pointer::owning_ptr< AntibodyDesignModeler > AntibodyDesignModelerOP;
-typedef utility::pointer::owning_ptr< AntibodyDesignModeler const > AntibodyDesignModelerCOP;
+typedef utility::pointer::shared_ptr< AntibodyDesignModeler > AntibodyDesignModelerOP;
+typedef utility::pointer::shared_ptr< AntibodyDesignModeler const > AntibodyDesignModelerCOP;
 
 
 } //namespace design

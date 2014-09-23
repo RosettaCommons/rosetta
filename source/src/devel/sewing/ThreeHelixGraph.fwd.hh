@@ -21,8 +21,8 @@ namespace devel {
 namespace sewing {
 
 class ThreeHelixGraph;
-typedef utility::pointer::owning_ptr< ThreeHelixGraph > ThreeHelixGraphOP;
-typedef utility::pointer::owning_ptr< ThreeHelixGraph const > ThreeHelixGraphCOP;
+typedef utility::pointer::shared_ptr< ThreeHelixGraph > ThreeHelixGraphOP;
+typedef utility::pointer::shared_ptr< ThreeHelixGraph const > ThreeHelixGraphCOP;
 
 } //sewing namespace
 } //devel namespace

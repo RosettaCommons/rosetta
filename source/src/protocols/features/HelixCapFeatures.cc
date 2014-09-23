@@ -75,18 +75,18 @@ HelixCapFeatures::write_schema_to_db(
 	using namespace basic::database::schema_generator;
 
 	//******secondary structure segments******//
-	Column struct_id("struct_id", new DbBigInt(), false);
-	Column resnum("resnum", new DbInteger(), false);
-	Column type("type", new DbText(1), false);
-	Column im4("im4", new DbInteger(), false);
-	Column im3("im3", new DbInteger(), false);
-	Column im2("im2", new DbInteger(), false);
-	Column im1("im1", new DbInteger(), false);
-	Column ip1("ip1", new DbInteger(), false);
-	Column ip2("ip2", new DbInteger(), false);
-	Column ip3("ip3", new DbInteger(), false);
-	Column ip4("ip4", new DbInteger(), false);
-	Column dssp("dssp", new DbText(1), false);
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
+	Column resnum("resnum", DbDataTypeOP( new DbInteger() ), false);
+	Column type("type", DbDataTypeOP( new DbText(1) ), false);
+	Column im4("im4", DbDataTypeOP( new DbInteger() ), false);
+	Column im3("im3", DbDataTypeOP( new DbInteger() ), false);
+	Column im2("im2", DbDataTypeOP( new DbInteger() ), false);
+	Column im1("im1", DbDataTypeOP( new DbInteger() ), false);
+	Column ip1("ip1", DbDataTypeOP( new DbInteger() ), false);
+	Column ip2("ip2", DbDataTypeOP( new DbInteger() ), false);
+	Column ip3("ip3", DbDataTypeOP( new DbInteger() ), false);
+	Column ip4("ip4", DbDataTypeOP( new DbInteger() ), false);
+	Column dssp("dssp", DbDataTypeOP( new DbText(1) ), false);
 
 	Columns pkey_cols;
 	pkey_cols.push_back(struct_id);

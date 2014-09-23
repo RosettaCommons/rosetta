@@ -25,8 +25,8 @@ namespace refine {
 // Forward
 class RepackTrial;
 
-typedef utility::pointer::owning_ptr< RepackTrial > RepackTrialOP;
-typedef utility::pointer::owning_ptr< RepackTrial const > RepackTrialCOP;
+typedef utility::pointer::shared_ptr< RepackTrial > RepackTrialOP;
+typedef utility::pointer::shared_ptr< RepackTrial const > RepackTrialCOP;
 
 } //namespace refine
 } //namespace loop_mover

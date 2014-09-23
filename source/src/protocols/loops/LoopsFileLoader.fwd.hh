@@ -21,8 +21,8 @@ namespace protocols {
 namespace loops {
 
 class LoopsFileLoader;
-typedef utility::pointer::owning_ptr< LoopsFileLoader > LoopsFileLoaderOP;
-typedef utility::pointer::owning_ptr< LoopsFileLoader const > LoopsFileLoaderCOP;
+typedef utility::pointer::shared_ptr< LoopsFileLoader > LoopsFileLoaderOP;
+typedef utility::pointer::shared_ptr< LoopsFileLoader const > LoopsFileLoaderCOP;
 
 
 } // namespace loops

@@ -28,11 +28,11 @@ namespace topology_broker {
 class ClaimerMessage;
 
 // Types
-typedef  utility::pointer::owning_ptr< ClaimerMessage >  ClaimerMessageOP;
-typedef  utility::pointer::owning_ptr< ClaimerMessage const >  ClaimerMessageCOP;
+typedef  utility::pointer::shared_ptr< ClaimerMessage >  ClaimerMessageOP;
+typedef  utility::pointer::shared_ptr< ClaimerMessage const >  ClaimerMessageCOP;
 
-typedef  utility::pointer::access_ptr< ClaimerMessage >  ClaimerMessageAP;
-typedef  utility::pointer::access_ptr< ClaimerMessage const >  ClaimerMessageCAP;
+typedef  utility::pointer::weak_ptr< ClaimerMessage >  ClaimerMessageAP;
+typedef  utility::pointer::weak_ptr< ClaimerMessage const >  ClaimerMessageCAP;
 
 
 } // namespace kinematics

@@ -56,7 +56,7 @@ CCDLoopCloserCreator::keyname() const
 
 protocols::moves::MoverOP
 CCDLoopCloserCreator::create_mover() const {
-	return new CCDLoopCloser;
+	return protocols::moves::MoverOP( new CCDLoopCloser );
 }
 
 std::string
@@ -187,8 +187,7 @@ CCDLoopCloser::apply(
 		if(deviation < tolerance_ )
 		{
 			//Calculator for backbone clash detection
-			core::pose::metrics::PoseMetricCalculatorOP clash_calculator =
-				new protocols::toolbox::pose_metric_calculators::ClashCountCalculator(2.0);
+			core::pose::metrics::PoseMetricCalculatorOP clash_calculator( new protocols::toolbox::pose_metric_calculators::ClashCountCalculator(2.0) );
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( "clash_calculator", clash_calculator );
 			
 			basic::MetricValue<core::Size> bb_clash_metric;

@@ -27,11 +27,11 @@ namespace topology_broker {
 class AsymFoldandDockClaimer;
 
 // Types
-typedef  utility::pointer::owning_ptr< AsymFoldandDockClaimer >  AsymFoldandDockClaimerOP;
-typedef  utility::pointer::owning_ptr< AsymFoldandDockClaimer const >  AsymFoldandDockClaimerCOP;
+typedef  utility::pointer::shared_ptr< AsymFoldandDockClaimer >  AsymFoldandDockClaimerOP;
+typedef  utility::pointer::shared_ptr< AsymFoldandDockClaimer const >  AsymFoldandDockClaimerCOP;
 
-typedef  utility::pointer::access_ptr< AsymFoldandDockClaimer >  AsymFoldandDockClaimerAP;
-typedef  utility::pointer::access_ptr< AsymFoldandDockClaimer const >  AsymFoldandDockClaimerCAP;
+typedef  utility::pointer::weak_ptr< AsymFoldandDockClaimer >  AsymFoldandDockClaimerAP;
+typedef  utility::pointer::weak_ptr< AsymFoldandDockClaimer const >  AsymFoldandDockClaimerCAP;
 
 
 } // namespace kinematics

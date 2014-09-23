@@ -22,8 +22,8 @@ namespace protocols {
 namespace simple_moves {
 	
 	class TorsionSetMover;
-	typedef utility::pointer::owning_ptr< TorsionSetMover > TorsionSetMoverOP;
-	typedef utility::pointer::owning_ptr< TorsionSetMover const > TorsionSetMoverCOP;
+	typedef utility::pointer::shared_ptr< TorsionSetMover > TorsionSetMoverOP;
+	typedef utility::pointer::shared_ptr< TorsionSetMover const > TorsionSetMoverCOP;
 	
 } //simple_moves 
 } //protocols 

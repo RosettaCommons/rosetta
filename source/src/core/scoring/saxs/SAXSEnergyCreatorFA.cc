@@ -31,7 +31,7 @@ ScoreTypes SAXSEnergyCreatorFA::score_types_for_method() const {
 
 methods::EnergyMethodOP SAXSEnergyCreatorFA::create_energy_method( methods::EnergyMethodOptions const &) const {
 
-	return new SAXSEnergyFA();
+	return methods::EnergyMethodOP( new SAXSEnergyFA() );
 }
 core::Size
 SAXSEnergyCreatorFA::version() const

@@ -23,10 +23,10 @@ namespace rosetta_scripts {
 
 class ParsedProtocol;
 
-typedef utility::pointer::owning_ptr< ParsedProtocol > ParsedProtocolOP;
-typedef utility::pointer::owning_ptr< ParsedProtocol const > ParsedProtocolCOP;
-typedef utility::pointer::access_ptr< ParsedProtocol > ParsedProtocolAP;
-typedef utility::pointer::access_ptr< ParsedProtocol const > ParsedProtocolCAP;
+typedef utility::pointer::shared_ptr< ParsedProtocol > ParsedProtocolOP;
+typedef utility::pointer::shared_ptr< ParsedProtocol const > ParsedProtocolCOP;
+typedef utility::pointer::weak_ptr< ParsedProtocol > ParsedProtocolAP;
+typedef utility::pointer::weak_ptr< ParsedProtocol const > ParsedProtocolCAP;
 
 } // namespace protocols
 } // namespace rosetta_scripts

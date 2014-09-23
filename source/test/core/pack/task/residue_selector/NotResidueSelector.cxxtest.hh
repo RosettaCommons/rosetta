@@ -45,8 +45,8 @@ public:
 
 	// @brief make sure that the not selector negates the odd selector
 	void test_not_residue_selector_odd() {
-		ResidueSelectorOP odd_rs = new OddResidueSelector;
-		ResidueSelectorOP not_rs = new NotResidueSelector( odd_rs );
+		ResidueSelectorOP odd_rs( new OddResidueSelector );
+		ResidueSelectorOP not_rs( new NotResidueSelector( odd_rs ) );
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueSubset subset( trpcage.total_residue(), false );
 		not_rs->apply( trpcage, subset );
@@ -62,10 +62,10 @@ public:
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
-		ResidueSelectorOP odd_rs = new OddResidueSelector;
+		ResidueSelectorOP odd_rs( new OddResidueSelector );
 		dm.add( "ResidueSelector", "odd", odd_rs );
 
-		ResidueSelectorOP not_rs = new NotResidueSelector;
+		ResidueSelectorOP not_rs( new NotResidueSelector );
 		try {
 			not_rs->parse_my_tag( tag, dm );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -91,7 +91,7 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
-		ResidueSelectorOP not_rs = new NotResidueSelector;
+		ResidueSelectorOP not_rs( new NotResidueSelector );
 		try {
 			not_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should fail
@@ -110,7 +110,7 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
-		ResidueSelectorOP not_rs = new NotResidueSelector;
+		ResidueSelectorOP not_rs( new NotResidueSelector );
 		try {
 			not_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should fail

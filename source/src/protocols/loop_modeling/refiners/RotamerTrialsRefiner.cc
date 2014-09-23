@@ -39,7 +39,7 @@ using core::scoring::ScoreFunctionCOP;
 using protocols::loops::Loop;
 
 protocols::moves::MoverOP RotamerTrialsRefinerCreator::create_mover() const {
-	return new RotamerTrialsRefiner;
+	return protocols::moves::MoverOP( new RotamerTrialsRefiner );
 }
 
 std::string RotamerTrialsRefinerCreator::keyname() const {
@@ -52,9 +52,9 @@ RotamerTrialsRefiner::RotamerTrialsRefiner() {
 	using core::pack::task::operation::InitializeFromCommandline;
 	using core::pack::task::operation::IncludeCurrent;
 
-	task_factory_ = new TaskFactory;
-	task_factory_->push_back(new InitializeFromCommandline);
-	task_factory_->push_back(new IncludeCurrent);
+	task_factory_ = TaskFactoryOP( new TaskFactory );
+	task_factory_->push_back(TaskOperationCOP( new InitializeFromCommandline ));
+	task_factory_->push_back(TaskOperationCOP( new IncludeCurrent ));
 
 	// Should read resfile if present.
 }

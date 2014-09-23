@@ -23,8 +23,8 @@ namespace simple_moves {
 /// @brief  A Mover class for switching among various ring conformations.
 class RingConformationMover;
 
-typedef utility::pointer::owning_ptr<RingConformationMover> RingConformationMoverOP;
-typedef utility::pointer::owning_ptr<RingConformationMover const> RingConformationMoverCOP;
+typedef utility::pointer::shared_ptr<RingConformationMover> RingConformationMoverOP;
+typedef utility::pointer::shared_ptr<RingConformationMover const> RingConformationMoverCOP;
 
 }  // namespace simple_moves
 }  // namespace protocols

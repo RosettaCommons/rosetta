@@ -37,8 +37,8 @@ public:
 	virtual std::string keyname() const = 0;
 };
 
-typedef utility::pointer::owning_ptr< PoseSelectorCreator > PoseSelectorCreatorOP;
-typedef utility::pointer::owning_ptr< PoseSelectorCreator const > PoseSelectorCreatorCOP;
+typedef utility::pointer::shared_ptr< PoseSelectorCreator > PoseSelectorCreatorOP;
+typedef utility::pointer::shared_ptr< PoseSelectorCreator const > PoseSelectorCreatorCOP;
 
 } //namespace rosetta_scripts
 } //namespace protocols

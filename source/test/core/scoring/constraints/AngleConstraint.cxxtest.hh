@@ -152,7 +152,7 @@ public:
 		fourpts.xyz( 3, Vector( 0.707, 0.707, 0 ));
 		fourpts.xyz( 4, Vector( 0.707, 0.707, 1.0 )); // 90 degrees
 
-		core::scoring::func::HarmonicFuncOP func = new core::scoring::func::HarmonicFunc( numeric::conversions::radians( 109 ), 10 );
+		core::scoring::func::HarmonicFuncOP func( new core::scoring::func::HarmonicFunc( numeric::conversions::radians( 109 ), 10 ) );
 
 		AtomID at1( 1, 1), at2( 2, 1 ), at3( 3, 1 );
 
@@ -177,7 +177,7 @@ public:
 		core::pose::PoseOP ubqstump = create_twores_1ubq_poseop();
 		TS_ASSERT( ubqstump->total_residue() == 2 );
 		AtomID at1( 1, 1), at2( 2, 1 ), at3( 3, 1 );
-		core::scoring::func::HarmonicFuncOP func = new core::scoring::func::HarmonicFunc( numeric::conversions::radians( 109 ), 10 );
+		core::scoring::func::HarmonicFuncOP func( new core::scoring::func::HarmonicFunc( numeric::conversions::radians( 109 ), 10 ) );
 		AngleConstraint ang_cst( at1, at2, at3, func );
 		EnergyMap weights, emap;
 		weights[ angle_constraint ] = 1.0;
@@ -203,7 +203,7 @@ public:
 				at2.atomno() = ( rsd_type.bondangle( bondang ) ).key2();
 				at3.atomno() = ( rsd_type.bondangle( bondang ) ).key3();
 
-				AngleConstraintOP ang_cst2 = new AngleConstraint( at1, at2, at3, func );
+				AngleConstraintOP ang_cst2( new AngleConstraint( at1, at2, at3, func ) );
 				ubqstump->remove_constraints();
 				ubqstump->add_constraint( ang_cst2 );
 				AtomDerivValidator adv( *ubqstump, sfxn, movemap );

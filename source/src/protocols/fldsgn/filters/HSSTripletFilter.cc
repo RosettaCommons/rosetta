@@ -46,7 +46,7 @@ namespace filters {
 // @Brief default constructor
 HSSTripletFilter::HSSTripletFilter():
 	Filter( "HSSTriplet" ),
-	hss3set_( new HSSTripletSet ),
+	hss3set_( HSSTripletSetOP( new HSSTripletSet ) ),
 	secstruct_( "" ),
 	filter_min_dist_(  7.5 ),
 	filter_max_dist_( 13.0 ),
@@ -61,7 +61,7 @@ HSSTripletFilter::HSSTripletFilter():
 // @brief constructor with arguments
 HSSTripletFilter::HSSTripletFilter( HSSTriplets const & hss3s ):
 	Filter( "HSSTriplet" ),
-	hss3set_( new HSSTripletSet( hss3s ) ),
+	hss3set_( HSSTripletSetOP( new HSSTripletSet( hss3s ) ) ),
 	secstruct_( "" ),
 	filter_min_dist_(  7.5 ),
 	filter_max_dist_( 13.0 ),
@@ -76,7 +76,7 @@ HSSTripletFilter::HSSTripletFilter( HSSTriplets const & hss3s ):
 // @brief constructor with arguments
 HSSTripletFilter::HSSTripletFilter( String const & hss3s ):
 	Filter( "HSSTriplet" ),
-	hss3set_( new HSSTripletSet( hss3s ) ),
+	hss3set_( HSSTripletSetOP( new HSSTripletSet( hss3s ) ) ),
 	secstruct_( "" ),
 	filter_min_dist_(  7.5 ),
 	filter_max_dist_( 13.0 ),
@@ -188,7 +188,7 @@ HSSTripletFilter::apply( Pose const & pose ) const
 	runtime_assert( secstruct_.length() == pose.total_residue() );
 
 	// set SS_Info
-	SS_Info2_OP  ss_info = new SS_Info2( pose, secstruct_ );
+	SS_Info2_OP  ss_info( new SS_Info2( pose, secstruct_ ) );
 	Helices const & helices( ss_info->helices() );
 	Strands const & strands( ss_info->strands() );
 
@@ -335,7 +335,7 @@ HSSTripletFilter::parse_my_tag(
 }
 
 protocols::filters::FilterOP
-HSSTripletFilterCreator::create_filter() const { return new HSSTripletFilter; }
+HSSTripletFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HSSTripletFilter ); }
 
 std::string
 HSSTripletFilterCreator::keyname() const { return "HSSTriplet"; }

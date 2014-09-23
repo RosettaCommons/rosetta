@@ -24,8 +24,8 @@ namespace match_enzdes_util {
 
 class AlignPoseToInvrotTreeMover;
 
-typedef utility::pointer::owning_ptr< AlignPoseToInvrotTreeMover > AlignPoseToInvrotTreeMoverOP;
-typedef utility::pointer::owning_ptr< AlignPoseToInvrotTreeMover const > AlignPoseToInvrotTreeMoverCOP;
+typedef utility::pointer::shared_ptr< AlignPoseToInvrotTreeMover > AlignPoseToInvrotTreeMoverOP;
+typedef utility::pointer::shared_ptr< AlignPoseToInvrotTreeMover const > AlignPoseToInvrotTreeMoverCOP;
 
 
 }

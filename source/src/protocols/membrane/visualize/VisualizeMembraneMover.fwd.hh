@@ -29,8 +29,8 @@ namespace visualize {
 /// @brief Add membrane planes to the pose represented by
 ///			2 layers of MEM virtual residues
 class VisualizeMembraneMover;
-typedef utility::pointer::owning_ptr< VisualizeMembraneMover > VisualizeMembraneMoverOP;
-typedef utility::pointer::owning_ptr< VisualizeMembraneMover const > VisualizeMembraneMoverCOP;
+typedef utility::pointer::shared_ptr< VisualizeMembraneMover > VisualizeMembraneMoverOP;
+typedef utility::pointer::shared_ptr< VisualizeMembraneMover const > VisualizeMembraneMoverCOP;
 
 } // visualize
 } // membrane

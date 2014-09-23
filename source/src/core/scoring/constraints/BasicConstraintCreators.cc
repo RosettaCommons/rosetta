@@ -45,7 +45,7 @@ AmbiguousConstraintCreator::AmbiguousConstraintCreator() {}
 AmbiguousConstraintCreator::~AmbiguousConstraintCreator() {}
 
 ConstraintOP AmbiguousConstraintCreator::create_constraint() const {
-	return new AmbiguousConstraint;
+	return ConstraintOP( new AmbiguousConstraint );
 }
 
 std::string AmbiguousConstraintCreator::keyname() const
@@ -57,7 +57,7 @@ AmbiguousNMRConstraintCreator::AmbiguousNMRConstraintCreator() {}
 AmbiguousNMRConstraintCreator::~AmbiguousNMRConstraintCreator() {}
 
 ConstraintOP AmbiguousNMRConstraintCreator::create_constraint() const {
-	return new AmbiguousNMRConstraint;
+	return ConstraintOP( new AmbiguousNMRConstraint );
 }
 
 std::string AmbiguousNMRConstraintCreator::keyname() const
@@ -69,7 +69,7 @@ AmbiguousNMRDistanceConstraintCreator::AmbiguousNMRDistanceConstraintCreator() {
 AmbiguousNMRDistanceConstraintCreator::~AmbiguousNMRDistanceConstraintCreator() {}
 
 ConstraintOP AmbiguousNMRDistanceConstraintCreator::create_constraint() const {
-	return new AmbiguousNMRDistanceConstraint;
+	return ConstraintOP( new AmbiguousNMRDistanceConstraint );
 }
 
 std::string AmbiguousNMRDistanceConstraintCreator::keyname() const
@@ -81,7 +81,7 @@ AngleConstraintCreator::AngleConstraintCreator() {}
 AngleConstraintCreator::~AngleConstraintCreator() {}
 
 ConstraintOP AngleConstraintCreator::create_constraint() const {
-	return new AngleConstraint( id::AtomID(), id::AtomID(), id::AtomID(), NULL ) ;
+	return ConstraintOP( new AngleConstraint( id::AtomID(), id::AtomID(), id::AtomID(), NULL ) ) ;
 }
 
 std::string AngleConstraintCreator::keyname() const
@@ -93,7 +93,7 @@ AtomPairConstraintCreator::AtomPairConstraintCreator() {}
 AtomPairConstraintCreator::~AtomPairConstraintCreator() {}
 
 ConstraintOP AtomPairConstraintCreator::create_constraint() const {
-	return new AtomPairConstraint( id::AtomID(), id::AtomID(), NULL );
+	return ConstraintOP( new AtomPairConstraint( id::AtomID(), id::AtomID(), NULL ) );
 }
 
 std::string AtomPairConstraintCreator::keyname() const
@@ -105,7 +105,7 @@ BigBinConstraintCreator::BigBinConstraintCreator() {}
 BigBinConstraintCreator::~BigBinConstraintCreator() {}
 
 ConstraintOP BigBinConstraintCreator::create_constraint() const {
-	return new BigBinConstraint;
+	return ConstraintOP( new BigBinConstraint );
 }
 
 std::string BigBinConstraintCreator::keyname() const
@@ -117,7 +117,7 @@ CoordinateConstraintCreator::CoordinateConstraintCreator() {}
 CoordinateConstraintCreator::~CoordinateConstraintCreator() {}
 
 ConstraintOP CoordinateConstraintCreator::create_constraint() const {
-	return new CoordinateConstraint;
+	return ConstraintOP( new CoordinateConstraint );
 }
 
 std::string CoordinateConstraintCreator::keyname() const
@@ -129,7 +129,7 @@ DihedralConstraintCreator::DihedralConstraintCreator() {}
 DihedralConstraintCreator::~DihedralConstraintCreator() {}
 
 ConstraintOP DihedralConstraintCreator::create_constraint() const {
-	return new DihedralConstraint( id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(), NULL );
+	return ConstraintOP( new DihedralConstraint( id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(), NULL ) );
 }
 
 std::string DihedralConstraintCreator::keyname() const
@@ -141,9 +141,9 @@ DihedralPairConstraintCreator::DihedralPairConstraintCreator() {}
 DihedralPairConstraintCreator::~DihedralPairConstraintCreator() {}
 
 ConstraintOP DihedralPairConstraintCreator::create_constraint() const {
-	return new DihedralPairConstraint(
+	return ConstraintOP( new DihedralPairConstraint(
 		id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(),
-		id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(), NULL );
+		id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(), NULL ) );
 }
 
 std::string DihedralPairConstraintCreator::keyname() const
@@ -155,7 +155,7 @@ KofNConstraintCreator::KofNConstraintCreator() {}
 KofNConstraintCreator::~KofNConstraintCreator() {}
 
 ConstraintOP KofNConstraintCreator::create_constraint() const {
-	return new KofNConstraint;
+	return ConstraintOP( new KofNConstraint );
 }
 
 std::string KofNConstraintCreator::keyname() const
@@ -167,7 +167,7 @@ LocalCoordinateConstraintCreator::LocalCoordinateConstraintCreator() {}
 LocalCoordinateConstraintCreator::~LocalCoordinateConstraintCreator() {}
 
 ConstraintOP LocalCoordinateConstraintCreator::create_constraint() const {
-	return new LocalCoordinateConstraint;
+	return ConstraintOP( new LocalCoordinateConstraint );
 }
 
 std::string LocalCoordinateConstraintCreator::keyname() const
@@ -179,7 +179,7 @@ MultiConstraintCreator::MultiConstraintCreator() {}
 MultiConstraintCreator::~MultiConstraintCreator() {}
 
 ConstraintOP MultiConstraintCreator::create_constraint() const {
-	return new MultiConstraint;
+	return ConstraintOP( new MultiConstraint );
 }
 
 std::string MultiConstraintCreator::keyname() const
@@ -191,7 +191,7 @@ SiteConstraintCreator::SiteConstraintCreator() {}
 SiteConstraintCreator::~SiteConstraintCreator() {}
 
 ConstraintOP SiteConstraintCreator::create_constraint() const {
-    return new SiteConstraint;
+    return ConstraintOP( new SiteConstraint );
 }
 
 std::string SiteConstraintCreator::keyname() const
@@ -203,7 +203,7 @@ SiteConstraintResiduesCreator::SiteConstraintResiduesCreator() {}
 SiteConstraintResiduesCreator::~SiteConstraintResiduesCreator() {}
 
 ConstraintOP SiteConstraintResiduesCreator::create_constraint() const {
-    return new SiteConstraintResidues;
+    return ConstraintOP( new SiteConstraintResidues );
 }
 
 std::string SiteConstraintResiduesCreator::keyname() const
@@ -215,7 +215,7 @@ FabConstraintCreator::FabConstraintCreator() {}
 FabConstraintCreator::~FabConstraintCreator() {}
 
 ConstraintOP FabConstraintCreator::create_constraint() const {
-    return new FabConstraint;
+    return ConstraintOP( new FabConstraint );
 }
 
 std::string FabConstraintCreator::keyname() const

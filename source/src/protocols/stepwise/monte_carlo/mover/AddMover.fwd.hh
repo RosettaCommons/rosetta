@@ -27,7 +27,7 @@ namespace monte_carlo {
 namespace mover {
 
 	class AddMover;
-	typedef utility::pointer::owning_ptr< AddMover > AddMoverOP;
+	typedef utility::pointer::shared_ptr< AddMover > AddMoverOP;
 
 } //mover
 } //monte_carlo

@@ -28,8 +28,8 @@ namespace jumping {
 class SameStrand;
 
 // Types
-typedef  utility::pointer::owning_ptr< SameStrand >  SameStrandOP;
-typedef  utility::pointer::owning_ptr< SameStrand const >  SameStrandCOP;
+typedef  utility::pointer::shared_ptr< SameStrand >  SameStrandOP;
+typedef  utility::pointer::shared_ptr< SameStrand const >  SameStrandCOP;
 
 
 

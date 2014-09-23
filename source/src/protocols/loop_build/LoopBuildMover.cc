@@ -92,7 +92,7 @@ void LoopBuildMover::apply(core::pose::Pose & pose){
 		native_pose = pose;
 	}
 
-	evaluation::MetaPoseEvaluatorOP evaluator = new evaluation::MetaPoseEvaluator;
+	evaluation::MetaPoseEvaluatorOP evaluator( new evaluation::MetaPoseEvaluator );
 	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluator);
 	evaluator->add_evaluation(
 		evaluation::PoseEvaluatorOP( new simple_filters::SelectRmsdEvaluator( native_pose, "_native" ) )

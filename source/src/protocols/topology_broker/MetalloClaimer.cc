@@ -63,7 +63,7 @@ namespace protocols {
 namespace topology_broker {
 
 using namespace core;
-MetalloClaimer::MetalloClaimer() : residue_pair_jump_( NULL )
+MetalloClaimer::MetalloClaimer() : residue_pair_jump_( /* NULL */ )
 {}
 
 //bool MetalloClaimer::allow_claim( DofClaim const& foreign_claim ) {
@@ -141,7 +141,7 @@ void  MetalloClaimer::set_defaults() {
 	FragmentJumpClaimer::set_defaults();
 	anchor_chain_ = ""; //usually anchored to DEFAULT chain
 	anchor_residue_ = 0;
-	residue_pair_jump_ = new jumping::ResiduePairJump;
+	residue_pair_jump_ = jumping::ResiduePairJumpOP( new jumping::ResiduePairJump );
 }
 
 bool MetalloClaimer::read_tag( std::string tag, std::istream& is ) {
@@ -242,7 +242,7 @@ void MetalloClaimer::init_after_reading() {
 	//end_position ( 1 );
 
 	residue_pair_jump_->init_mini_pose();
-	jump_setup_ = new jumping::ResiduePairJumpSetup;
+	jump_setup_ = jumping::ResiduePairJumpSetupOP( new jumping::ResiduePairJumpSetup );
 	jump_setup_->add_residue_pair_jump( residue_pair_jump_ );
 	set_jump_def( jump_setup_ ); //tell the underlying FragmentJumpClaimer
 }

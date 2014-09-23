@@ -24,8 +24,8 @@ namespace anchored_design{
 
 //Forwards and OP typedefs
 class AnchorMoversData;
-typedef utility::pointer::owning_ptr< AnchorMoversData > AnchorMoversDataOP;
-typedef utility::pointer::owning_ptr< AnchorMoversData const > AnchorMoversDataCOP;
+typedef utility::pointer::shared_ptr< AnchorMoversData > AnchorMoversDataOP;
+typedef utility::pointer::shared_ptr< AnchorMoversData const > AnchorMoversDataCOP;
 
 }//AnchoredDesign
 }//protocols

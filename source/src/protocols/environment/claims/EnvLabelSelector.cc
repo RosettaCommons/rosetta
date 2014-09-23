@@ -46,7 +46,7 @@ EnvLabelSelector::EnvLabelSelector( LocalPositions const& positions_in ) {
 
 EnvLabelSelector::EnvLabelSelector( LocalPosition const& local_pos ) {
   LocalPositions local_positions = LocalPositions();
-  local_positions.push_back( new LocalPosition( local_pos ) );
+  local_positions.push_back( utility::pointer::shared_ptr<class core::environment::LocalPosition>( new LocalPosition( local_pos ) ) );
 
   this->set_local_positions( local_positions );
 }
@@ -56,7 +56,7 @@ EnvLabelSelector::EnvLabelSelector( std::string const& label,
   LocalPositions local_positions = LocalPositions();
 
   for( Size i = range.first; i <= range.second; ++i){
-    local_positions.push_back( new LocalPosition( label, i ) );
+    local_positions.push_back( utility::pointer::shared_ptr<class core::environment::LocalPosition>( new LocalPosition( label, i ) ) );
   }
 
   this->set_local_positions( local_positions );
@@ -75,7 +75,7 @@ void EnvLabelSelector::apply(
 
   subset = ResidueSubset( subset.size(), false );
 
-  ProtectedConformationCOP conf = dynamic_cast< ProtectedConformation const* >( &( pose.conformation() ) );
+  ProtectedConformationCOP conf = utility::pointer::dynamic_pointer_cast< protocols::environment::ProtectedConformation const > ( pose.conformation_ptr() );
   core::environment::SequenceAnnotationCOP ann = conf->annotations();
 
   for( LocalPositions::const_iterator pos_it = positions_.begin();
@@ -96,7 +96,7 @@ void EnvLabelSelector::set_local_positions( LocalPositions const& positions_in )
   using namespace core::environment;
 
   BOOST_FOREACH( LocalPositionOP pos, positions_in ){
-    positions_.push_back( new LocalPosition( *pos ) );
+    positions_.push_back( utility::pointer::shared_ptr<class core::environment::LocalPosition>( new LocalPosition( *pos ) ) );
   }
 }
 

@@ -18,8 +18,8 @@ namespace perturbers {
 
 class LogFilePerturber;
 
-typedef utility::pointer::owning_ptr<LogFilePerturber> LogFilePerturberOP;
-typedef utility::pointer::owning_ptr<LogFilePerturber const> LogFilePerturberCOP;
+typedef utility::pointer::shared_ptr<LogFilePerturber> LogFilePerturberOP;
+typedef utility::pointer::shared_ptr<LogFilePerturber const> LogFilePerturberCOP;
 
 }
 }

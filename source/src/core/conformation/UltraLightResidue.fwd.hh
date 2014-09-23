@@ -20,7 +20,7 @@ namespace conformation {
 
 
 class UltraLightResidue;
-typedef  utility::pointer::owning_ptr< UltraLightResidue > UltraLightResidueOP;
+typedef  utility::pointer::shared_ptr< UltraLightResidue > UltraLightResidueOP;
 
 }
 }

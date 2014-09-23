@@ -61,7 +61,7 @@ std::string HotspotDisjointedFoldTreeMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 HotspotDisjointedFoldTreeMoverCreator::create_mover() const {
-	return new HotspotDisjointedFoldTreeMover;
+	return protocols::moves::MoverOP( new HotspotDisjointedFoldTreeMover );
 }
 
 std::string
@@ -74,7 +74,7 @@ HotspotDisjointedFoldTreeMover::HotspotDisjointedFoldTreeMover( ) :
 	ddG_threshold_( 1.0 ),
 	chain_( 2 ),
 	interface_radius_( 8.0 ),
-	scorefxn_( NULL )
+	scorefxn_( /* NULL */ )
 {
 	residues_.clear();
 }
@@ -90,7 +90,7 @@ core::kinematics::FoldTreeOP
 HotspotDisjointedFoldTreeMover::make_disjointed_foldtree( core::pose::Pose const & pose ) const
 {
 	using namespace core::kinematics;
-	FoldTreeOP ft = new FoldTree;
+	FoldTreeOP ft( new FoldTree );
 
 	TR<<"Fold tree before disjointed foldtree:\n"<<pose.fold_tree()<<std::endl;
 	ft->clear();
@@ -154,14 +154,14 @@ HotspotDisjointedFoldTreeMover::apply( core::pose::Pose & pose )
 	using namespace protocols::toolbox::task_operations;
 	using namespace core::pack::task::operation;
 
-	ProteinInterfaceDesignOperationOP pido = new ProteinInterfaceDesignOperation;
+	ProteinInterfaceDesignOperationOP pido( new ProteinInterfaceDesignOperation );
 	pido->repack_chain1( false );
 	pido->repack_chain2( true );
 	pido->design_chain2( true );
 	pido->interface_distance_cutoff( interface_radius() );
 	pido->jump( 1 );
 
-	core::pack::task::TaskFactoryOP tf = new core::pack::task::TaskFactory;
+	core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory );
 	tf->push_back( pido );
 
 	if( ddG_threshold() <= 100 ){

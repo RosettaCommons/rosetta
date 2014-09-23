@@ -63,7 +63,7 @@ LigandDesignCreator::keyname() const
 
 protocols::moves::MoverOP
 LigandDesignCreator::create_mover() const {
-	return new LigandDesign;
+	return protocols::moves::MoverOP( new LigandDesign );
 }
 
 std::string
@@ -96,18 +96,18 @@ LigandDesign::set_fragments(){
 	ligand_design_tracer<< fragment_types.size()<< " fragment_types"<< std::endl;
 
 	BOOST_FOREACH(core::chemical::ResidueTypeCOP fragment_type, fragment_types){
-		core::conformation::ResidueOP temp = new core::conformation::Residue( *fragment_type, true);
+		core::conformation::ResidueOP temp( new core::conformation::Residue( *fragment_type, true) );
 		fragments_.push_back(temp);
 		ligand_design_tracer<< "frag_name: "<< temp->name()<< std::endl;
 	}
 }
 
 protocols::moves::MoverOP LigandDesign::clone() const {
-	return new LigandDesign( *this );
+	return protocols::moves::MoverOP( new LigandDesign( *this ) );
 }
 
 protocols::moves::MoverOP LigandDesign::fresh_instance() const {
-	return new LigandDesign;
+	return protocols::moves::MoverOP( new LigandDesign );
 }
 
 std::string LigandDesign::get_name() const{
@@ -219,7 +219,7 @@ LigandDesign::apply( core::pose::Pose & pose )
 		utility::vector1<core::Size> unconnected_residues = find_unconnected_residues(pose, start,end);
 		core::Size const & grow_from= numeric::random::rg().random_element(unconnected_residues);
 		core::conformation::ResidueCOP const growth= numeric::random::rg().random_element(fragments_);;
-		core::Size grow_from_connection= random_connection(&pose.residue(grow_from));
+		core::Size grow_from_connection= random_connection(pose.residue(grow_from).get_self_ptr());
 		core::Size growth_connection= random_connection(growth);
 		pose.append_residue_by_bond(*growth, true, growth_connection, grow_from, grow_from_connection);
 		//end = pose.conformation().chain_end(chain_id);

@@ -23,8 +23,8 @@ namespace protocols {
 namespace environment {
 
 class CoMTrackerCM;
-typedef utility::pointer::owning_ptr< CoMTrackerCM > CoMTrackerCMOP;
-typedef utility::pointer::owning_ptr< CoMTrackerCM const > CoMTrackerCMCOP;
+typedef utility::pointer::shared_ptr< CoMTrackerCM > CoMTrackerCMOP;
+typedef utility::pointer::shared_ptr< CoMTrackerCM const > CoMTrackerCMCOP;
 
 } // environment
 } // protocols

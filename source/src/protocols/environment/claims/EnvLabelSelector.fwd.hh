@@ -23,8 +23,8 @@ namespace claims {
 
 class EnvLabelSelector;
 
-typedef utility::pointer::owning_ptr< EnvLabelSelector > EnvLabelSelectorOP;
-typedef utility::pointer::owning_ptr< EnvLabelSelector const > EnvLabelSelectorCOP;
+typedef utility::pointer::shared_ptr< EnvLabelSelector > EnvLabelSelectorOP;
+typedef utility::pointer::shared_ptr< EnvLabelSelector const > EnvLabelSelectorCOP;
 
 } //namespace claims
 } //namespace environment

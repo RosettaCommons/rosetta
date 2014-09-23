@@ -43,10 +43,10 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const {
-		return new TerminusDistanceFilter( *this );
+		return filters::FilterOP( new TerminusDistanceFilter( *this ) );
 	}
 	filters::FilterOP fresh_instance() const{
-		return new TerminusDistanceFilter();
+		return filters::FilterOP( new TerminusDistanceFilter() );
 	}
 
 	virtual ~TerminusDistanceFilter();

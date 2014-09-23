@@ -21,8 +21,8 @@ namespace protocols {
 namespace wum {
 
 class SilentStructStore;
-typedef utility::pointer::owning_ptr< SilentStructStore > SilentStructStoreOP;
-typedef utility::pointer::owning_ptr< SilentStructStore const > SilentStructStoreCOP;
+typedef utility::pointer::shared_ptr< SilentStructStore > SilentStructStoreOP;
+typedef utility::pointer::shared_ptr< SilentStructStore const > SilentStructStoreCOP;
 
 
 }

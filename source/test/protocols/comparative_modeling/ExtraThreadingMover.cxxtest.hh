@@ -172,12 +172,8 @@ void test_basic_threading() {
 	using core::import_pose::pose_from_pdb;
 	using core::pose::make_pose_from_sequence;
 
-	SequenceOP query(
-		new Sequence( "MKNGEQNGPTTCTNCFTQTTPLWRRNPEGQPLCNACGLFLKLHGVVRPLSLKTDVIKKRNRNSANS", "4gat_prot" )
-	);
-	SequenceOP templ(
-		new Sequence( "MKNGEQNGPTTCTNCFTQTTPLWRRNPEGQPLCNACGLFLKLHGVVRPLSLKTDVIKKRNRNSANS", "4gat_all" )
-	);
+	SequenceOP query( new Sequence( "MKNGEQNGPTTCTNCFTQTTPLWRRNPEGQPLCNACGLFLKLHGVVRPLSLKTDVIKKRNRNSANS", "4gat_prot" ) );
+	SequenceOP templ( new Sequence( "MKNGEQNGPTTCTNCFTQTTPLWRRNPEGQPLCNACGLFLKLHGVVRPLSLKTDVIKKRNRNSANS", "4gat_all" ) );
 
 	SequenceAlignment align;
 	align.add_sequence(templ);

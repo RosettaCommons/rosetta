@@ -48,7 +48,7 @@ namespace task_operations {
 core::pack::task::operation::TaskOperationOP
 SelectBySASAOperationCreator::create_task_operation() const
 {
-	return new SelectBySASAOperation;
+	return core::pack::task::operation::TaskOperationOP( new SelectBySASAOperation );
 }
 
 SelectBySASAOperation::SelectBySASAOperation( std::string mode, std::string state, core::Real probe_radius, core::Real core_asa, core::Real surface_asa, std::string jump_nums, std::string sym_dof_names, bool core, bool boundary, bool surface, bool verbose ):
@@ -69,7 +69,7 @@ SelectBySASAOperation::~SelectBySASAOperation() {}
 
 core::pack::task::operation::TaskOperationOP SelectBySASAOperation::clone() const
 {
-	return new SelectBySASAOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new SelectBySASAOperation( *this ) );
 }
 
 void

@@ -24,8 +24,8 @@ namespace scoring {
 namespace func {
 
 class KarplusFunc;
-typedef utility::pointer::owning_ptr< KarplusFunc > KarplusFuncOP;
-typedef utility::pointer::owning_ptr< KarplusFunc const > KarplusFuncCOP;
+typedef utility::pointer::shared_ptr< KarplusFunc > KarplusFuncOP;
+typedef utility::pointer::shared_ptr< KarplusFunc const > KarplusFuncCOP;
 
 }
 }

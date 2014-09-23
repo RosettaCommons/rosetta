@@ -24,13 +24,13 @@ namespace match_enzdes_util {
 
 class InvrotTarget;
 
-typedef utility::pointer::owning_ptr< InvrotTarget > InvrotTargetOP;
-typedef utility::pointer::owning_ptr< InvrotTarget const > InvrotTargetCOP;
+typedef utility::pointer::shared_ptr< InvrotTarget > InvrotTargetOP;
+typedef utility::pointer::shared_ptr< InvrotTarget const > InvrotTargetCOP;
 
 class SingleResidueInvrotTarget;
 
-typedef utility::pointer::owning_ptr< SingleResidueInvrotTarget > SingleResidueInvrotTargetOP;
-typedef utility::pointer::owning_ptr< SingleResidueInvrotTarget const > SingleResidueInvrotTargetCOP;
+typedef utility::pointer::shared_ptr< SingleResidueInvrotTarget > SingleResidueInvrotTargetOP;
+typedef utility::pointer::shared_ptr< SingleResidueInvrotTarget const > SingleResidueInvrotTargetCOP;
 
 }
 }

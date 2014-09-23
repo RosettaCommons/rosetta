@@ -97,12 +97,12 @@ SequenceMover::SequenceMover( SequenceMover const & source ) :
 
 MoverOP
 SequenceMover::clone() const {
-	return new SequenceMover( *this );
+	return MoverOP( new SequenceMover( *this ) );
 }
 
 MoverOP
 SequenceMover::fresh_instance() const {
-	return new SequenceMover();
+	return MoverOP( new SequenceMover() );
 }
 
 void SequenceMover::apply( core::pose::Pose & pose )
@@ -165,7 +165,7 @@ std::string RandomMoverCreator::keyname() const {
 }
 
 protocols::moves::MoverOP RandomMoverCreator::create_mover() const {
-  return new RandomMover();
+  return protocols::moves::MoverOP( new RandomMover() );
 }
 
 
@@ -210,12 +210,12 @@ RandomMover::RandomMover( RandomMover const & source ) :
 
 MoverOP
 RandomMover::clone() const {
-	return new RandomMover( *this );
+	return MoverOP( new RandomMover( *this ) );
 }
 
 MoverOP
 RandomMover::fresh_instance() const {
-	return new RandomMover();
+	return MoverOP( new RandomMover() );
 }
 
 std::string
@@ -262,12 +262,12 @@ CycleMover::CycleMover( CycleMover const & source ) :
 
 MoverOP
 CycleMover::clone() const {
-	return new CycleMover( *this );
+	return MoverOP( new CycleMover( *this ) );
 }
 
 MoverOP
 CycleMover::fresh_instance() const {
-	return new CycleMover();
+	return MoverOP( new CycleMover() );
 }
 
 void CycleMover::apply( core::pose::Pose& pose )

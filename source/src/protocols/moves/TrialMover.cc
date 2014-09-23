@@ -43,7 +43,7 @@ static thread_local basic::Tracer tr( "protocols.TrialMover" );
 	
 using namespace core;
 
-MonteCarloUtil::MonteCarloUtil() : mc_(0)
+MonteCarloUtil::MonteCarloUtil() : mc_(/* 0 */)
 {
 	
 }
@@ -99,12 +99,12 @@ void MonteCarloUtil::parse_my_tag(
 	
 protocols::moves::MoverOP MonteCarloUtil::clone() const
 {
-	return new MonteCarloUtil(mc_);
+	return protocols::moves::MoverOP( new MonteCarloUtil(mc_) );
 }
 
 protocols::moves::MoverOP MonteCarloUtil::fresh_instance() const
 {
-	return new MonteCarloUtil();
+	return protocols::moves::MoverOP( new MonteCarloUtil() );
 }
 
 
@@ -215,13 +215,13 @@ TrialMover::get_name() const {
 protocols::moves::MoverOP
 TrialMover::clone() const
 {
-	return new TrialMover(*this);
+	return protocols::moves::MoverOP( new TrialMover(*this) );
 }
 
 protocols::moves::MoverOP
 TrialMover::fresh_instance() const
 {
-	return new TrialMover();
+	return protocols::moves::MoverOP( new TrialMover() );
 }
 
 Real TrialMover::acceptance_rate() const

@@ -29,11 +29,11 @@ namespace claims {
 class TorsionClaim;
 
 // Types
-typedef  utility::pointer::owning_ptr< TorsionClaim >  TorsionClaimOP;
-typedef  utility::pointer::owning_ptr< TorsionClaim const >  TorsionClaimCOP;
+typedef  utility::pointer::shared_ptr< TorsionClaim >  TorsionClaimOP;
+typedef  utility::pointer::shared_ptr< TorsionClaim const >  TorsionClaimCOP;
 
-typedef  utility::pointer::access_ptr< TorsionClaim >  TorsionClaimAP;
-typedef  utility::pointer::access_ptr< TorsionClaim const >  TorsionClaimCAP;
+typedef  utility::pointer::weak_ptr< TorsionClaim >  TorsionClaimAP;
+typedef  utility::pointer::weak_ptr< TorsionClaim const >  TorsionClaimCAP;
 
 }
 }

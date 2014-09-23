@@ -26,8 +26,8 @@ namespace simple_filters {
 class RotamerBoltzmannWeight;
 
 // Types
-typedef utility::pointer::owning_ptr< RotamerBoltzmannWeight >  RotamerBoltzmannWeightFilterOP;
-typedef utility::pointer::owning_ptr< RotamerBoltzmannWeight const >  RotamerBoltzmannWeightFilterCOP;
+typedef utility::pointer::shared_ptr< RotamerBoltzmannWeight >  RotamerBoltzmannWeightFilterOP;
+typedef utility::pointer::shared_ptr< RotamerBoltzmannWeight const >  RotamerBoltzmannWeightFilterCOP;
 
 } // namespace simple_filters
 } // namespace protocols

@@ -54,7 +54,7 @@ namespace mover {
 		rna_delete_mover_( rna_delete_mover ),
 		rna_from_scratch_mover_( rna_from_scratch_mover ),
 		disallow_deletion_of_last_residue_( false ),
-		swa_move_selector_( new SWA_MoveSelector )
+		swa_move_selector_( SWA_MoveSelectorOP( new SWA_MoveSelector ) )
 	{}
 
   //////////////////////////////////////////////////////////////////////////

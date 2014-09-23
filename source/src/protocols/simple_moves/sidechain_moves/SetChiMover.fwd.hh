@@ -23,8 +23,8 @@ namespace simple_moves {
 namespace sidechain_moves {
 
 class SetChiMover;
-typedef utility::pointer::owning_ptr< SetChiMover > SetChiMoverOP;
-typedef utility::pointer::owning_ptr< SetChiMover const > SetChiMoverCOP;
+typedef utility::pointer::shared_ptr< SetChiMover > SetChiMoverOP;
+typedef utility::pointer::shared_ptr< SetChiMover const > SetChiMoverCOP;
 
 } // sidechain_moves
 } // simple_moves

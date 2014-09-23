@@ -28,10 +28,10 @@ namespace protocols {
 namespace moves {
 
 class Mover;
-typedef utility::pointer::owning_ptr< Mover > MoverOP;
-typedef utility::pointer::owning_ptr< Mover const > MoverCOP;
-typedef utility::pointer::access_ptr< Mover > MoverAP;
-typedef utility::pointer::access_ptr< Mover const > MoverCAP;
+typedef utility::pointer::shared_ptr< Mover > MoverOP;
+typedef utility::pointer::shared_ptr< Mover const > MoverCOP;
+typedef utility::pointer::weak_ptr< Mover > MoverAP;
+typedef utility::pointer::weak_ptr< Mover const > MoverCAP;
 typedef boost::shared_ptr< Mover> MoverSP;
 
 typedef std::map< std::string const, MoverOP > Movers_map;

@@ -31,8 +31,8 @@ namespace pose {
 
 class PDBPoseMap;
 
-typedef utility::pointer::owning_ptr< PDBPoseMap > PDBPoseMapOP;
-typedef utility::pointer::owning_ptr< PDBPoseMap const > PDBPoseMapCOP;
+typedef utility::pointer::shared_ptr< PDBPoseMap > PDBPoseMapOP;
+typedef utility::pointer::shared_ptr< PDBPoseMap const > PDBPoseMapCOP;
 
 } // namespace pose
 } // namespace core

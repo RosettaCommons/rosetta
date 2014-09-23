@@ -58,7 +58,7 @@ SetAtomTreeCreator::keyname() const
 
 protocols::moves::MoverOP
 SetAtomTreeCreator::create_mover() const {
-	return new SetAtomTree;
+	return protocols::moves::MoverOP( new SetAtomTree );
 }
 
 std::string
@@ -83,7 +83,7 @@ SetAtomTree::SetAtomTree() :
 	anchor_res_( "" ),
 	connect_from_( "" ),
 	host_chain_( 2 ),
-	fold_tree_( NULL ),
+	fold_tree_( /* NULL */ ),
 	ab_fold_tree_( false )
 {
 	start_tree_at_chain_ = '\0';
@@ -112,7 +112,7 @@ SetAtomTree::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protoc
 		utility::io::izstream data( ft_name );
   	if ( !data )
 			utility_exit_with_message( "failed to open file " + ft_name );
-		fold_tree_ = new core::kinematics::FoldTree;
+		fold_tree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree );
 		data >> *fold_tree_;
 		fold_tree_->reorder( 1 );
 		TR<<"Read fold tree from file: "<<*fold_tree_<<std::endl;
@@ -143,7 +143,7 @@ SetAtomTree::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protoc
 core::kinematics::FoldTreeOP
 SetAtomTree::create_atom_tree( core::pose::Pose const & pose, core::Size const host_chain, core::Size const resnum, core::Size const anchor_num_in, std::string connect_to_in/*=""*/, std::string connect_from_in/*=""*/ )
 {
-	core::kinematics::FoldTreeOP fold_tree = new core::kinematics::FoldTree;
+	core::kinematics::FoldTreeOP fold_tree( new core::kinematics::FoldTree );
 
 	core::Size const begin( pose.conformation().chain_begin( host_chain == 1 ? 2 : 1 ) );
 	core::Size const end( pose.conformation().chain_end( host_chain == 1 ? 2 : 1 ) );

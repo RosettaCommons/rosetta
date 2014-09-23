@@ -64,7 +64,7 @@ ChainExistsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 }
 
 protocols::filters::FilterOP
-ChainExistsFilterCreator::create_filter() const { return new ChainExistsFilter; }
+ChainExistsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ChainExistsFilter ); }
 
 std::string
 ChainExistsFilterCreator::keyname() const { return "ChainExists"; }

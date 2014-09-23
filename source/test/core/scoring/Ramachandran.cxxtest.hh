@@ -66,7 +66,7 @@ public:
 	// is used by several of the tests to compare against.
 	void setUp() {
 		core_init();
-		pose_ = new core::pose::Pose;
+		pose_ = core::pose::PoseOP( new core::pose::Pose );
 		core::pose::make_pose_from_sequence(*pose_, "VVAV", "fa_standard", false);
 
 		pose_->set_phi(1, 296); pose_->set_psi(1, 319);		// alpha helix
@@ -76,7 +76,7 @@ public:
 	}
 
 	void tearDown() {
-		pose_ = 0;
+		pose_.reset();
 	}
 
 	// Test the score function on a handful of points, as defined in setup().

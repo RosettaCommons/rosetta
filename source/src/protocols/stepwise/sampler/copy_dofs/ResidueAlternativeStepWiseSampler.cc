@@ -112,7 +112,7 @@ namespace copy_dofs {
 		for ( Size n = 1; n <= pose_list_.size(); n++ ){
 			pose::PoseOP pose = pose_list_[ n ];
 			Residue const & original_rsd = pose->residue( representative_seqpos_ );
-			residues.push_back( new Residue( rsd_in.type(), original_rsd, pose->conformation() /*pray this works*/ ) );
+			residues.push_back( utility::pointer::shared_ptr<class core::conformation::Residue>( new Residue( rsd_in.type(), original_rsd, pose->conformation() /*pray this works*/ ) ) );
 		}
 		std::string type_in = rsd_in.name(); // could be a hash.
 		residues_for_each_type_[ type_in ] = residues;

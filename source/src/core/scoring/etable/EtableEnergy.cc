@@ -50,9 +50,9 @@ EtableEnergyCreator::create_energy_method(
 	/// TableLookupEtableEnergy class.
 	// NEEDS FIXING?: using reference of temporary locked weak_ptr
 	if ( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] || options.analytic_etable_evaluation() ) {
-		return new AnalyticEtableEnergy( *( ScoringManager::get_instance()->etable( options ).lock() ), options );
+		return methods::EnergyMethodOP( new AnalyticEtableEnergy( *( ScoringManager::get_instance()->etable( options ).lock() ), options ) );
 	} else {
-		return new TableLookupEtableEnergy( *( ScoringManager::get_instance()->etable( options ).lock() ), options );
+		return methods::EnergyMethodOP( new TableLookupEtableEnergy( *( ScoringManager::get_instance()->etable( options ).lock() ), options ) );
 	}
 }
 
@@ -94,7 +94,7 @@ TableLookupEtableEnergy::TableLookupEtableEnergy(
 
 methods::EnergyMethodOP
 TableLookupEtableEnergy::clone() const {
-	return new TableLookupEtableEnergy( *this );
+	return methods::EnergyMethodOP( new TableLookupEtableEnergy( *this ) );
 }
 
 void
@@ -188,7 +188,7 @@ AnalyticEtableEnergy::AnalyticEtableEnergy(
 
 methods::EnergyMethodOP
 AnalyticEtableEnergy::clone() const {
-	return new AnalyticEtableEnergy( *this );
+	return methods::EnergyMethodOP( new AnalyticEtableEnergy( *this ) );
 }
 
 void

@@ -34,8 +34,8 @@ namespace multistate_design {
 class PartitionAggregateFunction : public MultiStateAggregateFunction {
 
 public:
-	typedef utility::pointer::owning_ptr< PartitionAggregateFunction > OP;
-	typedef utility::pointer::owning_ptr< PartitionAggregateFunction const > COP;
+	typedef utility::pointer::shared_ptr< PartitionAggregateFunction > OP;
+	typedef utility::pointer::shared_ptr< PartitionAggregateFunction const > COP;
 
 	PartitionAggregateFunction();
 	PartitionAggregateFunction(core::Real temp, core::Real anchor_offset, bool const compare_to_ground_state=false);

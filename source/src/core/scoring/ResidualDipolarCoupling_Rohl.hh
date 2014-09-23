@@ -51,7 +51,7 @@ public:
   basic::datacache::CacheableDataOP
   clone() const
   {
-    return new ResidualDipolarCoupling_Rohl( *this );
+    return basic::datacache::CacheableDataOP( new ResidualDipolarCoupling_Rohl( *this ) );
   }
 
 

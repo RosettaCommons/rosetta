@@ -30,7 +30,7 @@ namespace signals {
 struct LinkUnit;
 
 
-typedef utility::pointer::owning_ptr< LinkUnit > LinkUnitOP;
+typedef utility::pointer::shared_ptr< LinkUnit > LinkUnitOP;
 
 
 } // namespace signals

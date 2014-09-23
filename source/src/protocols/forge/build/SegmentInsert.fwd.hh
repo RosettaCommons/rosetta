@@ -30,19 +30,19 @@ class SegmentInsert;
 
 
 /// @brief owning pointer for SegmentInsert
-typedef utility::pointer::owning_ptr< SegmentInsert > SegmentInsertOP;
+typedef utility::pointer::shared_ptr< SegmentInsert > SegmentInsertOP;
 
 
 /// @brief owning pointer for const SegmentInsert
-typedef utility::pointer::owning_ptr< SegmentInsert const > SegmentInsertCOP;
+typedef utility::pointer::shared_ptr< SegmentInsert const > SegmentInsertCOP;
 
 
 /// @brief access pointer for SegmentInsert
-typedef utility::pointer::access_ptr< SegmentInsert > SegmentInsertAP;
+typedef utility::pointer::weak_ptr< SegmentInsert > SegmentInsertAP;
 
 
 /// @brief access pointer for const SegmentInsert
-typedef utility::pointer::access_ptr< SegmentInsert const > SegmentInsertCAP;
+typedef utility::pointer::weak_ptr< SegmentInsert const > SegmentInsertCAP;
 
 
 } // namespace build

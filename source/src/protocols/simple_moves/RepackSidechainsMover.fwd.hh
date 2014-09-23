@@ -21,8 +21,8 @@ namespace protocols {
 namespace simple_moves {
 
 class RepackSidechainsMover;
-typedef utility::pointer::owning_ptr< RepackSidechainsMover > RepackSidechainsMoverOP;
-typedef utility::pointer::owning_ptr< RepackSidechainsMover const > RepackSidechainsMoverCOP;
+typedef utility::pointer::shared_ptr< RepackSidechainsMover > RepackSidechainsMoverOP;
+typedef utility::pointer::shared_ptr< RepackSidechainsMover const > RepackSidechainsMoverCOP;
 
 } // moves
 } // protocols

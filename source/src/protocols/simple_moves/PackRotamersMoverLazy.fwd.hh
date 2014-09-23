@@ -19,8 +19,8 @@
 namespace protocols {
 namespace simple_moves {
 class PackRotamersMoverLazy;
-typedef utility::pointer::owning_ptr< PackRotamersMoverLazy > PackRotamersMoverLazyOP;
-typedef utility::pointer::owning_ptr< PackRotamersMoverLazy const > PackRotamersMoverLazyCOP;
+typedef utility::pointer::shared_ptr< PackRotamersMoverLazy > PackRotamersMoverLazyOP;
+typedef utility::pointer::shared_ptr< PackRotamersMoverLazy const > PackRotamersMoverLazyCOP;
 
 } // moves
 } // protocols

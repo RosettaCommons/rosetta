@@ -65,7 +65,7 @@ ScreeningJobInputterCreator::keyname() const
 
 protocols::jd2::JobInputterOP
 ScreeningJobInputterCreator::create_JobInputter() const {
-        return new ScreeningJobInputter;
+        return protocols::jd2::JobInputterOP( new ScreeningJobInputter );
 }
 
 
@@ -207,9 +207,9 @@ void ScreeningJobInputter::fill_jobs(Jobs & jobs)
 				//multiple pdb paths combined with a space get concatenated into a single pose
 				std::string input_tag(protein_path + " " + ligand_path);
 
-				InnerJobOP ijob(new InnerJob( input_tag,nstruct));
+				InnerJobOP ijob( new InnerJob( input_tag,nstruct) );
 				for( core::Size index(1); index <= nstruct; ++index){
-					JobOP current_job = new Job(ijob,index);
+					JobOP current_job( new Job(ijob,index) );
 					//Tag the current job with the group name so that we can keep track of what is is
 					current_job->add_string_string_pair("input_group_name",group_name);
 					//Add the path to the native structure so that we can compute RMS values later

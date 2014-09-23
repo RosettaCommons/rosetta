@@ -71,7 +71,7 @@ public:
 	/// @brief Inserts candidates from another QuotaCollector for a give position in the query
 	/// Candidates may or may not get inserted depending on the candidate
 	void insert(Size pos, CandidatesCollectorOP collector) {
-		QuotaCollectorOP c = dynamic_cast<QuotaCollector*> (collector());
+		QuotaCollectorOP c = utility::pointer::dynamic_pointer_cast< protocols::frag_picker::quota::QuotaCollector > ( collector );
 		if (c == 0)
 			utility_exit_with_message("Cant' cast candidates' collector to QuotaCollector. Is quota set up correctly?");
 		for(Size j=1;j<=storage_[pos].size();++j) {

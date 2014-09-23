@@ -355,9 +355,9 @@ combine_sequence_mappings(
 	using namespace core::id;
 
 	//gigo :)
-	if( smaps.size() == 0 ) return new SequenceMapping() ;
+	if( smaps.size() == 0 ) return core::id::SequenceMappingOP( new SequenceMapping() ) ;
 
-	SequenceMappingOP composite_smap = new SequenceMapping();
+	SequenceMappingOP composite_smap( new SequenceMapping() );
 	*composite_smap = smaps[1];
 
 	for( core::Size i = 2; i <= smaps.size(); ++i ){

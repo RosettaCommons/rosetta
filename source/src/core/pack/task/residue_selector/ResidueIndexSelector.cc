@@ -97,7 +97,7 @@ std::string ResidueIndexSelector::class_name() {
 
 ResidueSelectorOP
 ResidueIndexSelectorCreator::create_residue_selector() const {
-	return new ResidueIndexSelector;
+	return ResidueSelectorOP( new ResidueIndexSelector );
 }
 
 std::string

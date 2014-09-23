@@ -69,10 +69,9 @@ public:
 
     core::fragment::FragmentIO frag_io( 1, 1, true );
 
-    protocols::abinitio::abscript::FragmentCMOP fragmover =
-      new protocols::abinitio::abscript::FragmentCM( protocols::simple_moves::FragmentMoverOP( new protocols::simple_moves::ClassicFragmentMover( frag_io.read_data( "protocols/abinitio/abscript/one_frag3_per_pos" ) ) ) );
+    protocols::abinitio::abscript::FragmentCMOP fragmover( new protocols::abinitio::abscript::FragmentCM( protocols::simple_moves::FragmentMoverOP( new protocols::simple_moves::ClassicFragmentMover( frag_io.read_data( "protocols/abinitio/abscript/one_frag3_per_pos" ) ) ) ) );
 
-    EnvironmentOP env_op = new Environment( "env" );
+    EnvironmentOP env_op( new Environment( "env" ) );
     Environment & env = *env_op;
     env.register_mover( fragmover );
 
@@ -100,18 +99,18 @@ public:
 
   void test_chain2_fragment_init( core::pose::Pose & pose ){
 
-    core::pack::task::residue_selector::ChainSelectorOP selector = new core::pack::task::residue_selector::ChainSelector();
-    core::pack::task::residue_selector::ChainSelectorOP bad_selector = new core::pack::task::residue_selector::ChainSelector();
+    core::pack::task::residue_selector::ChainSelectorOP selector( new core::pack::task::residue_selector::ChainSelector() );
+    core::pack::task::residue_selector::ChainSelectorOP bad_selector( new core::pack::task::residue_selector::ChainSelector() );
     selector->set_chain_strings( utility::vector1< std::string >( 1, "2" ) );
     bad_selector->set_chain_strings( utility::vector1< std::string >( 1, "1" ) );
 
     core::fragment::FragmentIO frag_io( 1, 1, true );
 
-    protocols::abinitio::abscript::FragmentCMOP fragmover = new protocols::abinitio::abscript::FragmentCM( protocols::simple_moves::FragmentMoverOP( new protocols::simple_moves::ClassicFragmentMover( frag_io.read_data( "protocols/abinitio/abscript/one_frag3_per_pos" ) ) ) );
+    protocols::abinitio::abscript::FragmentCMOP fragmover( new protocols::abinitio::abscript::FragmentCM( protocols::simple_moves::FragmentMoverOP( new protocols::simple_moves::ClassicFragmentMover( frag_io.read_data( "protocols/abinitio/abscript/one_frag3_per_pos" ) ) ) ) );
 
     fragmover->set_selector( selector );
 
-    EnvironmentOP env_op = new Environment( "env" );
+    EnvironmentOP env_op( new Environment( "env" ) );
     Environment & env = *env_op;
     env.register_mover( fragmover );
 
@@ -172,13 +171,12 @@ public:
 		TS_ASSERT_EQUALS( onefrag_fragset->size(), frag_start_residue );
 
 
-		BBTorsionSRFDCOP r1_sfrd = static_cast< BBTorsionSRFD const* >( onefrag_fragset->begin()->fragment(1).get_residue(1).get() );
+		BBTorsionSRFDCOP r1_sfrd = utility::pointer::static_pointer_cast< core::fragment::BBTorsionSRFD const > ( onefrag_fragset->begin()->fragment(1).get_residue(1) );
 
-		protocols::abinitio::abscript::FragmentCMOP fragmover =
-			new protocols::abinitio::abscript::FragmentCM( protocols::simple_moves::FragmentMoverOP( new protocols::simple_moves::ClassicFragmentMover( onefrag_fragset ) ) );
+		protocols::abinitio::abscript::FragmentCMOP fragmover( new protocols::abinitio::abscript::FragmentCM( protocols::simple_moves::FragmentMoverOP( new protocols::simple_moves::ClassicFragmentMover( onefrag_fragset ) ) ) );
 		TS_ASSERT_THROWS_NOTHING( fragmover->initialize( false ) );
 
-		EnvironmentOP env_op = new Environment( "env" );
+		EnvironmentOP env_op( new Environment( "env" ) );
 		Environment & env = *env_op;
 		env.register_mover( fragmover );
 
@@ -199,7 +197,7 @@ public:
 			fragmover->apply( ppose );
 
 			for( core::Size i = onefrag_fragset->min_pos(); i <= onefrag_fragset->max_pos(); ++i ) {
-				BBTorsionSRFDCOP sfrd = static_cast< BBTorsionSRFD const* >( onefrag_fragset->begin()->fragment(1).get_residue( i ).get() );
+				BBTorsionSRFDCOP sfrd = utility::pointer::static_pointer_cast< core::fragment::BBTorsionSRFD const > ( onefrag_fragset->begin()->fragment(1).get_residue( i ) );
 
 				TS_ASSERT_DELTA( ppose.phi( i ), sfrd->torsion( 1 ), 1e-10 );
 				TS_ASSERT_DELTA( ppose.psi( i ), sfrd->torsion( 2 ), 1e-10 );

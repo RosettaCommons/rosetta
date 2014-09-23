@@ -26,8 +26,8 @@ namespace residue_selector {
 
 class JumpUpstreamSelector;
 
-typedef utility::pointer::owning_ptr< JumpUpstreamSelector > JumpUpstreamSelectorOP;
-typedef utility::pointer::owning_ptr< JumpUpstreamSelector const > JumpUpstreamSelectorCOP;
+typedef utility::pointer::shared_ptr< JumpUpstreamSelector > JumpUpstreamSelectorOP;
+typedef utility::pointer::shared_ptr< JumpUpstreamSelector const > JumpUpstreamSelectorCOP;
 
 } //namespace residue_selector
 } //namespace task

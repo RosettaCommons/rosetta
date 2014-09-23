@@ -30,8 +30,8 @@ enum listener_tags {
 
 
 class MessageListener;
-typedef utility::pointer::owning_ptr< MessageListener > MessageListenerOP;
-typedef utility::pointer::owning_ptr< MessageListener const > MessageListenerCOP;
+typedef utility::pointer::shared_ptr< MessageListener > MessageListenerOP;
+typedef utility::pointer::shared_ptr< MessageListener const > MessageListenerCOP;
 
 } //namespace
 } //namespace

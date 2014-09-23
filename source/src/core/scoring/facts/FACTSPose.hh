@@ -47,7 +47,7 @@ public:
   FACTSPoseInfo( FACTSPoseInfo const & src );
   
   basic::datacache::CacheableDataOP	clone() const
-  {	return new FACTSPoseInfo( *this );}
+  {	return basic::datacache::CacheableDataOP( new FACTSPoseInfo( *this ) );}
   
   Size size() const	{	return residue_info_.size(); }
   

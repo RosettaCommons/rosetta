@@ -23,9 +23,9 @@ namespace frag_picker {
 
 class CustomScoreSelector;
 
-typedef utility::pointer::owning_ptr<CustomScoreSelector>
+typedef utility::pointer::shared_ptr<CustomScoreSelector>
 		CustomScoreSelectorOP;
-typedef utility::pointer::owning_ptr<CustomScoreSelector const>
+typedef utility::pointer::shared_ptr<CustomScoreSelector const>
 		CustomScoreSelectorCOP;
 
 } // frag_picker

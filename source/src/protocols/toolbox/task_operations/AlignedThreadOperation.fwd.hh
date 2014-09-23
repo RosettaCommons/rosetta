@@ -22,8 +22,8 @@ namespace task_operations {
 
 class AlignedThreadOperation;
 
-typedef utility::pointer::owning_ptr< AlignedThreadOperation > AlignedThreadOperationOP;
-typedef utility::pointer::owning_ptr< AlignedThreadOperation const > AlignedThreadOperationCOP;
+typedef utility::pointer::shared_ptr< AlignedThreadOperation > AlignedThreadOperationOP;
+typedef utility::pointer::shared_ptr< AlignedThreadOperation const > AlignedThreadOperationCOP;
 
 } //namespace protocols
 } //namespace toolbox

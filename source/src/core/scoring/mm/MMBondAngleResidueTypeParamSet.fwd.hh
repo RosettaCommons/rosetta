@@ -26,10 +26,10 @@ namespace mm {
 // Forward
 class MMBondAngleResidueTypeParamSet;
 
-typedef  utility::pointer::access_ptr< MMBondAngleResidueTypeParamSet > MMBondAngleResidueTypeParamSetAP;
-typedef  utility::pointer::access_ptr< MMBondAngleResidueTypeParamSet const > MMBondAngleResidueTypeParamSetCAP;
-typedef  utility::pointer::owning_ptr< MMBondAngleResidueTypeParamSet > MMBondAngleResidueTypeParamSetOP;
-typedef  utility::pointer::owning_ptr< MMBondAngleResidueTypeParamSet const > MMBondAngleResidueTypeParamSetCOP;
+typedef  utility::pointer::weak_ptr< MMBondAngleResidueTypeParamSet > MMBondAngleResidueTypeParamSetAP;
+typedef  utility::pointer::weak_ptr< MMBondAngleResidueTypeParamSet const > MMBondAngleResidueTypeParamSetCAP;
+typedef  utility::pointer::shared_ptr< MMBondAngleResidueTypeParamSet > MMBondAngleResidueTypeParamSetOP;
+typedef  utility::pointer::shared_ptr< MMBondAngleResidueTypeParamSet const > MMBondAngleResidueTypeParamSetCOP;
 
 } // namespace mm
 } // namespace scoring

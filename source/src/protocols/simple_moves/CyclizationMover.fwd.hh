@@ -20,8 +20,8 @@ namespace protocols {
 namespace simple_moves {
 
 class CyclizationMover;
-typedef utility::pointer::owning_ptr< CyclizationMover > CyclizationMoverOP;
-typedef utility::pointer::owning_ptr< CyclizationMover const > CyclizationMoverCOP;
+typedef utility::pointer::shared_ptr< CyclizationMover > CyclizationMoverOP;
+typedef utility::pointer::shared_ptr< CyclizationMover const > CyclizationMoverCOP;
 
 }//simple_moves
 }//protocols

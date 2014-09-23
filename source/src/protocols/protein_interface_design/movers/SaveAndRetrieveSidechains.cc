@@ -58,7 +58,7 @@ SaveAndRetrieveSidechainsCreator::keyname() const
 
 protocols::moves::MoverOP
 SaveAndRetrieveSidechainsCreator::create_mover() const {
-	return new SaveAndRetrieveSidechains;
+	return protocols::moves::MoverOP( new SaveAndRetrieveSidechains );
 }
 
 std::string
@@ -74,9 +74,9 @@ SaveAndRetrieveSidechains::SaveAndRetrieveSidechains() :
 	jumpid_ = 1; //default
 	ensure_variant_matching_ = false; //default
 	two_step_ = false;
-	first_apply_ = new basic::datacache::DataMapObj< bool >;
+	first_apply_ = BoolDataCacheBoolOP( new basic::datacache::DataMapObj< bool > );
 	first_apply_->obj = true;
-	init_pose_ = new core::pose::Pose;
+	init_pose_ = PoseOP( new core::pose::Pose );
 }
 
 SaveAndRetrieveSidechains::SaveAndRetrieveSidechains(
@@ -90,9 +90,9 @@ SaveAndRetrieveSidechains::SaveAndRetrieveSidechains(
 	ensure_variant_matching_(ensure_variant_matching),
 	jumpid_( jumpid )
 {
-	init_pose_ = new core::pose::Pose( pose );
+	init_pose_ = PoseOP( new core::pose::Pose( pose ) );
 	two_step_ = false;
-	first_apply_ = new basic::datacache::DataMapObj< bool >;
+	first_apply_ = BoolDataCacheBoolOP( new basic::datacache::DataMapObj< bool > );
 	first_apply_->obj = true;
 }
 
@@ -180,13 +180,13 @@ SaveAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::Dat
 	multi_use( tag->getOption< bool >( "multi_use", false ) );
 	two_step( tag->getOption< bool >( "two_step", false ) );
 	if( !two_step() )
-		init_pose_ = new core::pose::Pose( pose );
+		init_pose_ = PoseOP( new core::pose::Pose( pose ) );
 	jumpid_ = tag->getOption<core::Size>( "jumpid", 1 );
 }
 
 protocols::moves::MoverOP
 SaveAndRetrieveSidechains::clone() const {
-  return( protocols::moves::MoverOP( new SaveAndRetrieveSidechains( *this )));
+  return( protocols::moves::MoverOP( new SaveAndRetrieveSidechains( *this ) ));
 }
 
 } //movers

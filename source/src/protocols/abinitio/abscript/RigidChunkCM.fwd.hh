@@ -24,8 +24,8 @@ namespace abinitio {
 namespace abscript {
 
 class RigidChunkCM;
-typedef utility::pointer::owning_ptr< RigidChunkCM > RigidChunkCMOP;
-typedef utility::pointer::owning_ptr< RigidChunkCM const > RigidChunkCMCOP;
+typedef utility::pointer::shared_ptr< RigidChunkCM > RigidChunkCMOP;
+typedef utility::pointer::shared_ptr< RigidChunkCM const > RigidChunkCMCOP;
 
 } // abscript
 } // abinitio

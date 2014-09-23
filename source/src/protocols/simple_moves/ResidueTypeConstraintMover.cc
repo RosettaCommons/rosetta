@@ -48,7 +48,7 @@ ResidueTypeConstraintMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 ResidueTypeConstraintMoverCreator::create_mover() const {
-	return new ResidueTypeConstraintMover;
+	return protocols::moves::MoverOP( new ResidueTypeConstraintMover );
 }
 
 std::string
@@ -89,8 +89,7 @@ ResidueTypeConstraintMover::apply( Pose & pose )
 			substr_index	=	substr_index +	pos	+	1;
 				// essentially just same as "substr_index	=	substr_index +	4";
 
-			ResidueTypeConstraintOP res_favor =
-				new core::scoring::constraints::ResidueTypeConstraint(pose, resnum,	favored_res, favor_bonus_);
+			ResidueTypeConstraintOP res_favor( new core::scoring::constraints::ResidueTypeConstraint(pose, resnum,	favored_res, favor_bonus_) );
 
 			pose.add_constraint(res_favor);
 		}
@@ -102,8 +101,8 @@ ResidueTypeConstraintMover::get_name() const {
 	return ResidueTypeConstraintMoverCreator::mover_name();
 }
 
-protocols::moves::MoverOP ResidueTypeConstraintMover::clone() const { return new protocols::simple_moves::ResidueTypeConstraintMover( *this ); }
-protocols::moves::MoverOP ResidueTypeConstraintMover::fresh_instance() const { return new ResidueTypeConstraintMover; }
+protocols::moves::MoverOP ResidueTypeConstraintMover::clone() const { return protocols::moves::MoverOP( new protocols::simple_moves::ResidueTypeConstraintMover( *this ) ); }
+protocols::moves::MoverOP ResidueTypeConstraintMover::fresh_instance() const { return protocols::moves::MoverOP( new ResidueTypeConstraintMover ); }
 
 void
 ResidueTypeConstraintMover::parse_my_tag(

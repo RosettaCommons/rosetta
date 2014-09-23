@@ -22,8 +22,8 @@ namespace protocols {
 namespace ligand_docking {
 
 class FinalMinimizer; // fwd declaration
-typedef utility::pointer::owning_ptr< FinalMinimizer > FinalMinimizerOP;
-typedef utility::pointer::owning_ptr< FinalMinimizer const > FinalMinimizerCOP;
+typedef utility::pointer::shared_ptr< FinalMinimizer > FinalMinimizerOP;
+typedef utility::pointer::shared_ptr< FinalMinimizer const > FinalMinimizerCOP;
 typedef utility::vector1<FinalMinimizerOP> FinalMinimizerOPs;
 typedef utility::vector1<FinalMinimizerCOP> FinalMinimizerCOPs;
 

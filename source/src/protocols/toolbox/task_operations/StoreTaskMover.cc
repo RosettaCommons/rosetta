@@ -61,11 +61,11 @@ StoreTaskMover::apply( core::pose::Pose & pose )
 		core::pack::make_symmetric_PackerTask_by_truncation(pose, task); // Does this need to be fixed or omitted?
 	// If the pose doesn't have STM_STORED_TASK data, put a blank STMStoredTask in there.
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::STM_STORED_TASKS ) ) {
-		protocols::toolbox::task_operations::STMStoredTaskOP blank_tasks = new protocols::toolbox::task_operations::STMStoredTask();
+		protocols::toolbox::task_operations::STMStoredTaskOP blank_tasks( new protocols::toolbox::task_operations::STMStoredTask() );
 		pose.data().set( core::pose::datacache::CacheableDataType::STM_STORED_TASKS, blank_tasks );
 	}
 	// Grab a reference to the data
-	protocols::toolbox::task_operations::STMStoredTask & stored_tasks = *( static_cast< protocols::toolbox::task_operations::STMStoredTask* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS )() ) );
+	protocols::toolbox::task_operations::STMStoredTask & stored_tasks = *( utility::pointer::static_pointer_cast< protocols::toolbox::task_operations::STMStoredTask > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS ) ) );
 	// If you haven't set overwrite to true and your task name already exists, fail. Otherwise, put the task you've made into the data cache.
 	if ( overwrite_ || !stored_tasks.has_task(task_name_) ) {
 		stored_tasks.set_task( task, task_name_ );
@@ -100,17 +100,17 @@ std::string StoreTaskMover::get_name() const { return "StoreTaskMover"; }
 
 protocols::moves::MoverOP
 StoreTaskMoverCreator::create_mover() const {
-	return new StoreTaskMover;
+	return protocols::moves::MoverOP( new StoreTaskMover );
 }
 
 protocols::moves::MoverOP
 StoreTaskMover::clone() const {
-	return new StoreTaskMover( *this );
+	return protocols::moves::MoverOP( new StoreTaskMover( *this ) );
 }
 
 protocols::moves::MoverOP
 StoreTaskMover::fresh_instance() const {
-	return new StoreTaskMover;
+	return protocols::moves::MoverOP( new StoreTaskMover );
 }
 
 } // task_operations

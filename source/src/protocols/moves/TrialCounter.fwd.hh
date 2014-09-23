@@ -16,8 +16,8 @@ namespace protocols {
 namespace moves {
 
 class TrialCounter;
-typedef utility::pointer::owning_ptr< TrialCounter > TrialCounterOP;
-typedef utility::pointer::owning_ptr< TrialCounter const > TrialCounterCOP;
+typedef utility::pointer::shared_ptr< TrialCounter > TrialCounterOP;
+typedef utility::pointer::shared_ptr< TrialCounter const > TrialCounterCOP;
 
 } // moves
 } // protocols

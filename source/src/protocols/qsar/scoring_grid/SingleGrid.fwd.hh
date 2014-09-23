@@ -21,8 +21,8 @@ namespace scoring_grid {
 
 class SingleGrid;
 
-typedef utility::pointer::owning_ptr<SingleGrid> SingleGridOP;
-typedef utility::pointer::owning_ptr<SingleGrid const> SingleGridCOP;
+typedef utility::pointer::shared_ptr<SingleGrid> SingleGridOP;
+typedef utility::pointer::shared_ptr<SingleGrid const> SingleGridCOP;
 
 
 }

@@ -28,7 +28,7 @@ using namespace core::scoring;
 static thread_local basic::Tracer TR( "protocols.simple_filters.ExpiryFilter" );
 
 protocols::filters::FilterOP
-ExpiryFilterCreator::create_filter() const { return new ExpiryFilter; }
+ExpiryFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ExpiryFilter ); }
 
 std::string
 ExpiryFilterCreator::keyname() const { return "Expiry"; }

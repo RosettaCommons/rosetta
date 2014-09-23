@@ -21,7 +21,7 @@ namespace sewing {
 core::pack::rotamer_set::RotamerSetOperationOP
 DeleteAllRotamerSetOperation::clone() const
 {
-	return new DeleteAllRotamerSetOperation( *this );
+	return core::pack::rotamer_set::RotamerSetOperationOP( new DeleteAllRotamerSetOperation( *this ) );
 }
 
 void DeleteAllRotamerSetOperation::alter_rotamer_set(

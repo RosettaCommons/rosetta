@@ -48,7 +48,7 @@ namespace constraints {
 
 static thread_local basic::Tracer tr( "core.scoring.constraints.BackboneStubConstraint" );
 
-utility::pointer::owning_ptr< AngleConstraint > BackboneStubConstraint::ang_cst_(0);
+utility::pointer::shared_ptr< AngleConstraint > BackboneStubConstraint::ang_cst_(0);
 
 
 std::map< std::string, core::id::AtomID >
@@ -221,7 +221,7 @@ BackboneStubConstraint::BackboneStubConstraint(
 	// to get access to AngleConstraint derivatives
 	if ( ang_cst_ == 0 ) {
 		// note: PeriodicFunc has functional form y = ( k * cos(n * (x - x0) ) ) + C
-		func::FuncOP cos_func = new func::PeriodicFunc(0., 1., 1., 0.);
+		func::FuncOP cos_func( new func::PeriodicFunc(0., 1., 1., 0.) );
 		ang_cst_ = AngleConstraintOP( new AngleConstraint( cos_func ) );
 	}
 }
@@ -287,7 +287,7 @@ BackboneStubConstraint::BackboneStubConstraint(
 	// to get access to AngleConstraint derivatives
 	if ( ang_cst_ == 0 ) {
 		// note: PeriodicFunc has functional form y = ( k * cos(n * (x - x0) ) ) + C
-		func::FuncOP cos_func = new func::PeriodicFunc(0., 1., 1., 0.);
+		func::FuncOP cos_func( new func::PeriodicFunc(0., 1., 1., 0.) );
 		ang_cst_ = AngleConstraintOP( new AngleConstraint( cos_func ) );
 	}
 }
@@ -349,7 +349,7 @@ BackboneStubConstraint::BackboneStubConstraint(
 	// to get access to AngleConstraint derivatives
 	if ( ang_cst_ == 0 ) {
 		// note: PeriodicFunc has functional form y = ( k * cos(n * (x - x0) ) ) + C
-		func::FuncOP cos_func = new func::PeriodicFunc(0., 1., 1., 0.);
+		func::FuncOP cos_func( new func::PeriodicFunc(0., 1., 1., 0.) );
 		ang_cst_ = AngleConstraintOP( new AngleConstraint( cos_func ) );
 	}
 }
@@ -632,7 +632,7 @@ ConstraintOP BackboneStubConstraint::remapped_clone( pose::Pose const& /*src*/, 
 	ala->set_xyz("C",backbone2_target_);
 	ala->set_xyz("N",backbone1_target_);
 
-	return new BackboneStubConstraint(dest, new_seqpos, new_fixed_atom_id, *ala, superposition_bonus_, force_constant_ );
+	return ConstraintOP( new BackboneStubConstraint(dest, new_seqpos, new_fixed_atom_id, *ala, superposition_bonus_, force_constant_ ) );
 }
 
 

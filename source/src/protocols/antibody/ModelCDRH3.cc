@@ -85,8 +85,8 @@ void ModelCDRH3::init( ) {
 		c_ter_stem_ = 0;
 	}
 
-	h3_cter_insert_mover_ = new H3CterInsert(ab_info_, is_camelid_);
-	h3_perturb_ccd_build_ = new H3PerturbCCD(ab_info_, lowres_scorefxn_);
+	h3_cter_insert_mover_ = H3CterInsertOP( new H3CterInsert(ab_info_, is_camelid_) );
+	h3_perturb_ccd_build_ = H3PerturbCCDOP( new H3PerturbCCD(ab_info_, lowres_scorefxn_) );
 }
 
 
@@ -123,7 +123,7 @@ void ModelCDRH3::set_lowres_score_func(scoring::ScoreFunctionCOP lowres_scorefxn
 
 
 void ModelCDRH3::set_task_factory(pack::task::TaskFactoryCOP tf) {
-	tf_ = new pack::task::TaskFactory(*tf);
+	tf_ = pack::task::TaskFactoryOP( new pack::task::TaskFactory(*tf) );
 }
 
 
@@ -208,7 +208,7 @@ void ModelCDRH3::apply( pose::Pose & pose_in ) {
 	} else {
 		/// FIXME: JQX very redudent loops defitions
 		// use H3 to define a loops object
-		loops::LoopsOP pass_loops = new loops::Loops();
+		loops::LoopsOP pass_loops( new loops::Loops() );
 		pass_loops->add_loop( input_loop   );
 		pass_loops->set_extended(true); // the IndepdentLoopMover will extend the loop
 
@@ -255,7 +255,7 @@ void ModelCDRH3::apply( pose::Pose & pose_in ) {
 	}
 
 	antibody::AntibodyInfoOP starting_antibody;
-	starting_antibody = new AntibodyInfo(*ab_info_);
+	starting_antibody = antibody::AntibodyInfoOP( new AntibodyInfo(*ab_info_) );
 	bool closed_cutpoints( false );
 
 

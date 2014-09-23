@@ -31,7 +31,7 @@ class Product : public utility::pointer::ReferenceCount {
 
 public: // Types
 
-	typedef  utility::pointer::owning_ptr< Product >  ProductOP;
+	typedef  utility::pointer::shared_ptr< Product >  ProductOP;
 	typedef  utility::factory::Factory< Product >  Factory;
 	typedef  std::string const  FactoryKey;
 	typedef  std::string const *  FactoryKeyP;
@@ -89,7 +89,7 @@ public: // Creation
 	static
 	ProductOP
 	factory_create() {
-		return new ProductA();
+		return ProductOP( new ProductA() );
 	}
 
 	/// @brief Destructor
@@ -147,7 +147,7 @@ public: // Creation
 	ProductOP
 	factory_create()
 	{
-		return new ProductB();
+		return ProductOP( new ProductB() );
 	}
 
 	/// @brief Destructor

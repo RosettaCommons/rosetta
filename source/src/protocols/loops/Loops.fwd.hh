@@ -23,8 +23,8 @@ namespace loops {
 // Forward
 class Loops;
 
-typedef utility::pointer::owning_ptr< Loops > LoopsOP;
-typedef utility::pointer::owning_ptr< Loops const > LoopsCOP;
+typedef utility::pointer::shared_ptr< Loops > LoopsOP;
+typedef utility::pointer::shared_ptr< Loops const > LoopsCOP;
 
 } //namespace loops
 } //namespace protocols

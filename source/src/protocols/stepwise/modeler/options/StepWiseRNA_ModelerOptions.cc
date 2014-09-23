@@ -109,7 +109,7 @@ namespace options {
 	StepWiseRNA_ModelerOptionsOP
 	StepWiseRNA_ModelerOptions::clone() const
 	{
-		return new StepWiseRNA_ModelerOptions( *this );
+		return StepWiseRNA_ModelerOptionsOP( new StepWiseRNA_ModelerOptions( *this ) );
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////

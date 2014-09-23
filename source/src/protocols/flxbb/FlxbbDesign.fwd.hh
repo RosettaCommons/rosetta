@@ -20,7 +20,7 @@ namespace protocols {
 namespace flxbb{
 
 class FlxbbDesign;
-typedef utility::pointer::owning_ptr< FlxbbDesign > FlxbbDesignOP;
+typedef utility::pointer::shared_ptr< FlxbbDesign > FlxbbDesignOP;
 
 
 } // namespace flxbb

@@ -23,8 +23,8 @@ namespace loop_closure {
 namespace kinematic_closure {
 
 class KinematicWrapper;
-typedef utility::pointer::owning_ptr< KinematicWrapper > KinematicWrapperOP;
-typedef utility::pointer::owning_ptr< KinematicWrapper const > KinematicWrapperCOP;
+typedef utility::pointer::shared_ptr< KinematicWrapper > KinematicWrapperOP;
+typedef utility::pointer::shared_ptr< KinematicWrapper const > KinematicWrapperCOP;
 
 } // namespace kinematic_closure
 } // namespace loop_closure

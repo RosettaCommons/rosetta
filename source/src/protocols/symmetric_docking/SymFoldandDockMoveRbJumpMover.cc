@@ -71,7 +71,7 @@ SymFoldandDockMoveRbJumpMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SymFoldandDockMoveRbJumpMoverCreator::create_mover() const {
-    return new SymFoldandDockMoveRbJumpMover();
+    return protocols::moves::MoverOP( new SymFoldandDockMoveRbJumpMover() );
 }
 
 std::string

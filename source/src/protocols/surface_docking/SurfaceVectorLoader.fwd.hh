@@ -21,8 +21,8 @@ namespace protocols {
 namespace surface_docking {
 
 class SurfaceVectorLoader;
-typedef utility::pointer::owning_ptr< SurfaceVectorLoader > SurfaceVectorLoaderOP;
-typedef utility::pointer::owning_ptr< SurfaceVectorLoader const > SurfaceVectorLoaderCOP;
+typedef utility::pointer::shared_ptr< SurfaceVectorLoader > SurfaceVectorLoaderOP;
+typedef utility::pointer::shared_ptr< SurfaceVectorLoader const > SurfaceVectorLoaderCOP;
 
 
 } // namespace surface_docking

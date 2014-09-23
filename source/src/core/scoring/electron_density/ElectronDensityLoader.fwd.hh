@@ -22,8 +22,8 @@ namespace scoring {
 namespace electron_density {
 
 class ElectronDensityLoader;
-typedef utility::pointer::owning_ptr< ElectronDensityLoader > ElectronDensityLoaderOP;
-typedef utility::pointer::owning_ptr< ElectronDensityLoader const > ElectronDensityLoaderCOP;
+typedef utility::pointer::shared_ptr< ElectronDensityLoader > ElectronDensityLoaderOP;
+typedef utility::pointer::shared_ptr< ElectronDensityLoader const > ElectronDensityLoaderCOP;
 
 } // namespace electron_density
 } //namespace scoring

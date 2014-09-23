@@ -50,7 +50,7 @@ AddChainBreakCreator::keyname() const
 
 protocols::moves::MoverOP
 AddChainBreakCreator::create_mover() const {
-	return new AddChainBreak;
+	return protocols::moves::MoverOP( new AddChainBreak );
 }
 
 std::string

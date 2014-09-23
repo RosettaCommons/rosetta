@@ -22,8 +22,8 @@ namespace task_operations {
 
 class SelectResiduesWithinChainOperation;
 
-typedef utility::pointer::owning_ptr< SelectResiduesWithinChainOperation > SelectResiduesWithinChainOperationOP;
-typedef utility::pointer::owning_ptr< SelectResiduesWithinChainOperation const > SelectResiduesWithinChainOperationCOP;
+typedef utility::pointer::shared_ptr< SelectResiduesWithinChainOperation > SelectResiduesWithinChainOperationOP;
+typedef utility::pointer::shared_ptr< SelectResiduesWithinChainOperation const > SelectResiduesWithinChainOperationCOP;
 
 } //namespace protocols
 } //namespace toolbox

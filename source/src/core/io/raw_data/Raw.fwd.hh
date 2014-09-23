@@ -40,9 +40,9 @@ namespace raw_data {
 	class ScoreFileData;
 
 	// owning pointers
-	typedef utility::pointer::owning_ptr< RawStruct > RawStructOP;
-	typedef utility::pointer::owning_ptr< DecoyStruct > DecoyStructOP;
-	typedef utility::pointer::owning_ptr< ScoreStruct > ScoreStructOP;
+	typedef utility::pointer::shared_ptr< RawStruct > RawStructOP;
+	typedef utility::pointer::shared_ptr< DecoyStruct > DecoyStructOP;
+	typedef utility::pointer::shared_ptr< ScoreStruct > ScoreStructOP;
 
 	// data types
 	typedef std::map< std::string, RawStructOP > StructureMap;

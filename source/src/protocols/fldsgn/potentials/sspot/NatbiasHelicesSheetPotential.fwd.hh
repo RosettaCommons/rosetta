@@ -24,7 +24,7 @@ namespace potentials {
 namespace sspot {
 
 class NatbiasHelicesSheetPotential;
-typedef utility::pointer::owning_ptr< NatbiasHelicesSheetPotential > NatbiasHelicesSheetPotentialOP;
+typedef utility::pointer::shared_ptr< NatbiasHelicesSheetPotential > NatbiasHelicesSheetPotentialOP;
 
 } // ns sspot
 } // ns potentials

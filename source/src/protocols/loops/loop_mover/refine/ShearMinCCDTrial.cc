@@ -92,12 +92,12 @@ std::string ShearMinCCDTrial::get_name() const
 	
 moves::MoverOP ShearMinCCDTrial::clone() const
 {
-	return new ShearMinCCDTrial( *this );
+	return moves::MoverOP( new ShearMinCCDTrial( *this ) );
 }
 	
 moves::MoverOP ShearMinCCDTrial::fresh_instance() const
 {
-	return new ShearMinCCDTrial();
+	return moves::MoverOP( new ShearMinCCDTrial() );
 }
 
 ///@brief This mover retains state such that a fresh version is needed if the input Pose is about to change
@@ -170,7 +170,7 @@ void ShearMinCCDTrial::init()
 {
 	type( "ShearMinCCDTrial" );
 	nmoves_ = 1;
-	min_options_ = new core::optimization::MinimizerOptions("dfpmin", 0.001, true /*use_nblist*/, false /*deriv_check*/ );
+	min_options_ = core::optimization::MinimizerOptionsOP( new core::optimization::MinimizerOptions("dfpmin", 0.001, true /*use_nblist*/, false /*deriv_check*/ ) );
 	init_options();
 }
 	
@@ -194,9 +194,9 @@ core::optimization::AtomTreeMinimizerOP ShearMinCCDTrial::minimizer( core::pose:
 		if ( core::pose::symmetry::is_symmetric( pose ) )
 		{
 			// minimizer_ = dynamic_cast<core::optimization::AtomTreeMinimizer*>( new core::optimization::symmetry::SymAtomTreeMinimizer );
-			minimizer_ = new core::optimization::symmetry::SymAtomTreeMinimizer;
+			minimizer_ = core::optimization::AtomTreeMinimizerOP( new core::optimization::symmetry::SymAtomTreeMinimizer );
 		} else {
-			minimizer_ = new core::optimization::AtomTreeMinimizer;
+			minimizer_ = core::optimization::AtomTreeMinimizerOP( new core::optimization::AtomTreeMinimizer );
 		}
 	}
 	return minimizer_;
@@ -222,7 +222,7 @@ void ShearMinCCDTrial::setup_objects( Pose const & pose )
 ShearMinCCDTrialCreator::~ShearMinCCDTrialCreator() {}
 
 moves::MoverOP ShearMinCCDTrialCreator::create_mover() const {
-  return new ShearMinCCDTrial();
+  return moves::MoverOP( new ShearMinCCDTrial() );
 }
 
 std::string ShearMinCCDTrialCreator::keyname() const {

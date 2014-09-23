@@ -112,7 +112,7 @@ RNA_HelixAssembler::~RNA_HelixAssembler(){}
 
 protocols::moves::MoverOP RNA_HelixAssembler::clone() const
 {
-	return new RNA_HelixAssembler(*this);
+	return protocols::moves::MoverOP( new RNA_HelixAssembler(*this) );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -307,7 +307,7 @@ RNA_HelixAssembler::build_on_base_pair( pose::Pose & pose, Size const & n, char 
 	prepend_Aform_residue( pose, n + 1, seq2 );
 
 	using namespace core::pose::full_model_info;
-	FullModelInfoOP full_model_info = new FullModelInfo( pose );
+	FullModelInfoOP full_model_info( new FullModelInfo( pose ) );
 	set_full_model_info( pose, full_model_info );
 
 }
@@ -319,11 +319,11 @@ RNA_HelixAssembler::initialize_minimizer(){
 
  	using namespace core::optimization;
 
-	minimizer_ = new AtomTreeMinimizer;
+	minimizer_ = core::optimization::AtomTreeMinimizerOP( new AtomTreeMinimizer );
 
 	float const dummy_tol( 0.0000025);
 	bool const use_nblist( false );
-	minimizer_options_ = new MinimizerOptions( "dfpmin", dummy_tol, use_nblist, false, false );
+	minimizer_options_ = core::optimization::MinimizerOptionsOP( new MinimizerOptions( "dfpmin", dummy_tol, use_nblist, false, false ) );
 	minimizer_options_->nblist_auto_update( true );
 }
 
@@ -689,7 +689,7 @@ RNA_HelixAssembler::fill_chain_info( pose::Pose & pose, std::string const & full
 		if ( !is_blank_seq( full_sequence[i-1] ) ) chains.push_back( 'B' );
 	}
 
-	PDBInfoOP pdb_info = new PDBInfo( pose );
+	PDBInfoOP pdb_info( new PDBInfo( pose ) );
 	pdb_info->set_chains( chains );
 	pdb_info->obsolete( false ); // this is silly.
 

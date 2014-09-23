@@ -21,8 +21,8 @@ namespace constraints_additional {
 
 ///@brief
 class SequenceCouplingConstraint;
-typedef utility::pointer::owning_ptr< SequenceCouplingConstraint > SequenceCouplingConstraintOP;
-typedef utility::pointer::owning_ptr< SequenceCouplingConstraint const > SequenceCouplingConstraintCOP;
+typedef utility::pointer::shared_ptr< SequenceCouplingConstraint > SequenceCouplingConstraintOP;
+typedef utility::pointer::shared_ptr< SequenceCouplingConstraint const > SequenceCouplingConstraintCOP;
 
 } // namespace constraints_additional
 } // namespace protocols

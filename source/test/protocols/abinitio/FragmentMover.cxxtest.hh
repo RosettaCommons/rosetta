@@ -219,7 +219,7 @@ public:
     core_init();
     core::import_pose::pose_from_pdb( pose_, "protocols/abinitio/2GB3.pdb" );
 
-    fragset3mer_  = new ConstantLengthFragSet;
+    fragset3mer_ = ConstantLengthFragSetOP( new ConstantLengthFragSet );
     fragset3mer_->read_fragment_file( "protocols/abinitio/mfr_aa2GB3_03_05.200_v1_3" );
 
     TS_ASSERT_EQUALS( fragset3mer_->max_frag_length(), 3 );
@@ -244,7 +244,7 @@ void FragmentMoverTest::test_mover() {
   using namespace protocols;
   using namespace simple_moves;
   using namespace scoring;
-  kinematics::MoveMapOP movemap ( new kinematics::MoveMap ); //dummy ( functionality not used yet )
+  kinematics::MoveMapOP movemap( new kinematics::MoveMap ); //dummy ( functionality not used yet )
   //Size len (3);
   movemap->set_bb( true );
   //	for (Size ii=1; ii<=6; ii++ ) {
@@ -295,7 +295,7 @@ void FragmentMoverTest::test_proposed_ss() {
   proposed_ss.reserve( pose_.total_residue() );
   proposed_ss = pose_.secstruct(); // full ss-string from pose
   std::string old_ss = proposed_ss;
-  kinematics::MoveMapOP movemap ( new kinematics::MoveMap ); //dummy ( functionality not used yet )
+  kinematics::MoveMapOP movemap( new kinematics::MoveMap ); //dummy ( functionality not used yet )
   //Size len (3);
   movemap->set_bb( true );
   ClassicFragmentMover mover ( fragset3mer_, movemap );
@@ -345,7 +345,7 @@ void FragmentMoverTest::test_ss_check() {
   using namespace scoring;
 
 	std::string const proposed_ss( pose_.secstruct() ); // full ss-string from pose
-  kinematics::MoveMapOP movemap ( new kinematics::MoveMap );
+  kinematics::MoveMapOP movemap( new kinematics::MoveMap );
   movemap->set_bb( true );
   ClassicFragmentMover mover ( fragset3mer_, movemap );
 
@@ -370,7 +370,7 @@ void FragmentMoverTest::test_window_start() {
   using namespace scoring;
 
   // test if all insertable positions are chosen
-  kinematics::MoveMapOP movemap ( new kinematics::MoveMap ); //dummy ( functionality not used yet )
+  kinematics::MoveMapOP movemap( new kinematics::MoveMap ); //dummy ( functionality not used yet )
   movemap->set_bb( true );
 	std::map< Size, Size > inserted_pos; // make it a set such that it will be sorted and no positions are doubled
   core::fragment::InsertMap insert_map;

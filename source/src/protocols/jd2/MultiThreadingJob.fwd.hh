@@ -20,8 +20,8 @@ namespace protocols {
 namespace jd2 {
 
 class MultiThreadingJob;
-typedef utility::pointer::owning_ptr< MultiThreadingJob > MultiThreadingJobOP;
-typedef utility::pointer::owning_ptr< MultiThreadingJob const > MultiThreadingJobCOP;
+typedef utility::pointer::shared_ptr< MultiThreadingJob > MultiThreadingJobOP;
+typedef utility::pointer::shared_ptr< MultiThreadingJob const > MultiThreadingJobCOP;
 
 
 } // jd2

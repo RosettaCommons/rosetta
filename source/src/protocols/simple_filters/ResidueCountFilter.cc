@@ -38,7 +38,7 @@ using namespace core::scoring;
 static thread_local basic::Tracer TR( "protocols.simple_filters.ResidueCountFilter" );
 
 protocols::filters::FilterOP
-ResidueCountFilterCreator::create_filter() const { return new ResidueCountFilter; }
+ResidueCountFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueCountFilter ); }
 
 std::string
 ResidueCountFilterCreator::keyname() const { return "ResidueCount"; }
@@ -52,7 +52,7 @@ ResidueCountFilter::ResidueCountFilter() :
 	enable_min_residue_count_(false),
 	count_as_percentage_(false),	// for a user who does not use rosetta_scripts, count_as_percentage_ = false by default here
   packable_( 0 ),
- 	task_factory_( NULL )
+ 	task_factory_( /* NULL */ )
 {}
 
 ResidueCountFilter::ResidueCountFilter(
@@ -75,12 +75,12 @@ ResidueCountFilter::~ResidueCountFilter() {}
 
 filters::FilterOP
 ResidueCountFilter::clone() const {
-	return new ResidueCountFilter( *this );
+	return filters::FilterOP( new ResidueCountFilter( *this ) );
 }
 
 filters::FilterOP
 ResidueCountFilter::fresh_instance() const {
-	return new ResidueCountFilter();
+	return filters::FilterOP( new ResidueCountFilter() );
 }
 
 

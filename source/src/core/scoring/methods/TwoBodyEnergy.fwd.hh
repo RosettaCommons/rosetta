@@ -23,8 +23,8 @@ namespace methods {
 
 class TwoBodyEnergy;
 
-typedef utility::pointer::owning_ptr< TwoBodyEnergy > TwoBodyEnergyOP;
-typedef utility::pointer::owning_ptr< TwoBodyEnergy const > TwoBodyEnergyCOP;
+typedef utility::pointer::shared_ptr< TwoBodyEnergy > TwoBodyEnergyOP;
+typedef utility::pointer::shared_ptr< TwoBodyEnergy const > TwoBodyEnergyCOP;
 
 }
 }

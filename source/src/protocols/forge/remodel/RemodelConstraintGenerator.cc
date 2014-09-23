@@ -39,8 +39,8 @@ RemodelConstraintGenerator::~RemodelConstraintGenerator()
 RemodelConstraintGenerator::RemodelConstraintGenerator()
 	: Mover("RemodelConstraintGenerator"),
 		id_( "" ),
-		seqmap_(NULL),
-		vlb_(NULL)
+		seqmap_(/* NULL */),
+		vlb_(/* NULL */)
 {}
 
 RemodelConstraintGenerator::RemodelConstraintGenerator( RemodelConstraintGenerator const & rval )

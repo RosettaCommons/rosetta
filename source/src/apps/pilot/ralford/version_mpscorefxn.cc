@@ -222,7 +222,7 @@ ScoreFunctionFingerprintMover::lines_for_jobs() const
 	return lines_for_jobs_;
 }
 
-typedef utility::pointer::owning_ptr< ScoreFunctionFingerprintMover > ScoreFunctionFingerprintMoverOP;
+typedef utility::pointer::shared_ptr< ScoreFunctionFingerprintMover > ScoreFunctionFingerprintMoverOP;
 
 ////////////////////////////////////////
 /// Membrane Sfxn fingerprint mover ////
@@ -253,11 +253,11 @@ void MPScoreFunctionFingerprintMover::apply( pose::Pose & pose ) {
 	using namespace basic::options::OptionKeys;
 
 	// Apply Membrane Mover
-	AddMembraneMoverOP add_mem = new AddMembraneMover(); 
+	AddMembraneMoverOP add_mem( new AddMembraneMover() ); 
 	add_mem->apply(pose); 
 
 	// Apply fingerprint mover
-	ScoreFunctionFingerprintMoverOP sffm = new ScoreFunctionFingerprintMover;
+	ScoreFunctionFingerprintMoverOP sffm( new ScoreFunctionFingerprintMover );
 	sffm->sfxn( core::scoring::get_score_function() );
 	sffm->apply( pose ); 
 
@@ -273,7 +273,7 @@ void MPScoreFunctionFingerprintMover::apply( pose::Pose & pose ) {
 }
 
 // Tyepdef to owning pointer
-typedef utility::pointer::owning_ptr< MPScoreFunctionFingerprintMover > MPScoreFunctionFingerprintMoverOP; 
+typedef utility::pointer::shared_ptr< MPScoreFunctionFingerprintMover > MPScoreFunctionFingerprintMoverOP; 
 
 
 int main( int argc, char ** argv )
@@ -292,7 +292,7 @@ int main( int argc, char ** argv )
 		}
 
 		// Setup Membrane sfxn fingerprint mover and send to jd2
-		MPScoreFunctionFingerprintMoverOP mpsffm = new MPScoreFunctionFingerprintMover(); 
+		MPScoreFunctionFingerprintMoverOP mpsffm( new MPScoreFunctionFingerprintMover() ); 
 		protocols::jd2::JobDistributor::get_instance()->go(mpsffm);
 
 		

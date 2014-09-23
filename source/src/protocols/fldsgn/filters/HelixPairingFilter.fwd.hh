@@ -27,8 +27,8 @@ namespace filters {
 class HelixPairingFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< HelixPairingFilter >  HelixPairingFilterOP;
-typedef utility::pointer::owning_ptr< HelixPairingFilter const >  HelixPairingFilterCOP;
+typedef utility::pointer::shared_ptr< HelixPairingFilter >  HelixPairingFilterOP;
+typedef utility::pointer::shared_ptr< HelixPairingFilter const >  HelixPairingFilterCOP;
 
 } // namespace protocols
 } // namespace fldsgn

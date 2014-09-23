@@ -77,7 +77,7 @@ PlacementAuctionMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 PlacementAuctionMoverCreator::create_mover() const {
-	return new PlacementAuctionMover;
+	return protocols::moves::MoverOP( new PlacementAuctionMover );
 }
 
 std::string
@@ -155,17 +155,17 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 	core::Size const host_chain_begin( pose.conformation().chain_begin( host_chain_ ) );
 	core::Size const host_chain_end  ( pose.conformation().chain_end(   host_chain_ ) );
 	using namespace core::scoring;
-	ScoreFunctionOP only_stub_scorefxn = new ScoreFunction;
+	ScoreFunctionOP only_stub_scorefxn( new ScoreFunction );
 	only_stub_scorefxn->reset();
 
   protocols::filters::FilterOP stf;
 	if ( stub_energy_fxn_ == "backbone_stub_constraint" ) {
 		only_stub_scorefxn->set_weight( backbone_stub_constraint, 1.0 );
-		stf= new protocols::simple_filters::ScoreTypeFilter(only_stub_scorefxn, backbone_stub_constraint, 1.0 );
+		stf = protocols::filters::FilterOP( new protocols::simple_filters::ScoreTypeFilter(only_stub_scorefxn, backbone_stub_constraint, 1.0 ) );
 
 	} else if ( stub_energy_fxn_ == "backbone_stub_linear_constraint" ) {
 		only_stub_scorefxn->set_weight( backbone_stub_linear_constraint, 1.0 );
-		stf= new protocols::simple_filters::ScoreTypeFilter(only_stub_scorefxn, backbone_stub_linear_constraint, 1.0 );
+		stf = protocols::filters::FilterOP( new protocols::simple_filters::ScoreTypeFilter(only_stub_scorefxn, backbone_stub_linear_constraint, 1.0 ) );
 	} else {
 		utility_exit_with_message( "ERROR: unrecognized stub_energy_fxn_. Only support backbone_stub_constraint or backbone_stub_linear_constraint");
 	}
@@ -217,13 +217,13 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 				ConstraintCOPs stub_constraints;
 				core::conformation::Residue const host_res( pose.conformation().residue( host_residue ) );
   				if ( stub_energy_fxn_ == "backbone_stub_constraint" ) {
-						stub_constraints.push_back( new BackboneStubConstraint( pose, host_residue, fixed_atom_id, host_res, bonus, cb_force_ ) );
+						stub_constraints.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new BackboneStubConstraint( pose, host_residue, fixed_atom_id, host_res, bonus, cb_force_ ) ) );
 						stub_constraints = pose.add_constraints( stub_constraints );
 						core::Real const bb_cst_score( stf->report_sm( pose ) );
 						if( bb_cst_score <= -0.5 ) // take only residues that make some appreciable contribution
 							insert( std::make_pair( bb_cst_score, std::make_pair( host_residue, std::make_pair( stub_set, stub ) ) ) );
 				} else if ( stub_energy_fxn_ == "backbone_stub_linear_constraint" ) {
-						stub_constraints.push_back( new BackboneStubLinearConstraint( pose, host_residue, fixed_atom_id, *(stub->residue()), bonus, cb_force_ ) );
+						stub_constraints.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new BackboneStubLinearConstraint( pose, host_residue, fixed_atom_id, *(stub->residue()), bonus, cb_force_ ) ) );
 						stub_constraints = pose.add_constraints( stub_constraints );
         		core::Real const bb_cst_score( stf->report_sm( pose ) );
 						insert( std::make_pair( bonus+bb_cst_score, std::make_pair( host_residue, std::make_pair( stub_set, stub ) ) ) );

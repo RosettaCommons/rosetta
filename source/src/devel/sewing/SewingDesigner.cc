@@ -111,7 +111,7 @@ static thread_local basic::Tracer TR( "protocols.loophash.SewingDesigner" );
 protocols::moves::MoverOP
 SewingDesignerCreator::create_mover() const
 {
-	return new SewingDesigner;
+	return protocols::moves::MoverOP( new SewingDesigner );
 }
 
 std::string
@@ -193,7 +193,7 @@ SewingDesigner::apply( pose::Pose & pose )
 	scorefxn_ = scoring::get_score_function();
 	scorefxn_->set_weight(core::scoring::res_type_constraint, 1.0);
 
-	repack_mover_ = new protocols::simple_moves::PackRotamersMover;
+	repack_mover_ = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover );
 	repack_mover_->score_function(scorefxn_);
 
 	//Look for breaks in the pose and keep residues as anchors for loops
@@ -467,7 +467,7 @@ SewingDesigner::design_neighborhood(
 	std::set<core::Size> const & neighbor_residues
 ){
 	//Update loops for each of the new structures and continue closing
-	pack::task::TaskFactoryOP task_factory = new pack::task::TaskFactory;
+	pack::task::TaskFactoryOP task_factory( new pack::task::TaskFactory );
 	//	task_factory->push_back( new pack::task::operation::InitializeFromCommandline );
 
 	//Add native rotamers for each position in the updated native rotamers map
@@ -494,8 +494,7 @@ SewingDesigner::design_neighborhood(
 	//Add constraints for each of the native residues at each position that is a neighbor
 	//and just repack at non-neighbor residues
 	core::Real native_bonus=0.5;
-	pack::task::operation::RestrictResidueToRepackingOP repack_res =
-	new pack::task::operation::RestrictResidueToRepacking();
+	pack::task::operation::RestrictResidueToRepackingOP repack_res( new pack::task::operation::RestrictResidueToRepacking() );
 	for(Size resnum=1; resnum<=pose.total_residue(); ++resnum)
 	{
 		//if this residue is a a nieghbor of the loop residues than favor all natives and allow design
@@ -508,9 +507,8 @@ SewingDesigner::design_neighborhood(
 					native_helix_residues.find(resnum)->second;
 				for(Size pos_index=1; pos_index<=position_residues.size(); ++pos_index)
 				{
-					core::scoring::constraints::ResidueTypeConstraintOP nat_res_constraint =
-						new core::scoring::constraints::ResidueTypeConstraint(pose, resnum,
-							position_residues[pos_index]->name3(), native_bonus);
+					core::scoring::constraints::ResidueTypeConstraintOP nat_res_constraint( new core::scoring::constraints::ResidueTypeConstraint(pose, resnum,
+							position_residues[pos_index]->name3(), native_bonus) );
 
 					pose.add_constraint(nat_res_constraint);
 
@@ -521,8 +519,7 @@ SewingDesigner::design_neighborhood(
 			//newly built loop position, favor single native residue
 			else
 			{
-				core::scoring::constraints::ResidueTypeConstraintOP nat_res_constraint =
-					new core::scoring::constraints::ResidueTypeConstraint(pose, resnum, native_bonus);
+				core::scoring::constraints::ResidueTypeConstraintOP nat_res_constraint( new core::scoring::constraints::ResidueTypeConstraint(pose, resnum, native_bonus) );
 				pose.add_constraint(nat_res_constraint);
 				TR << "Favored residue for loop position " << resnum << ": "
 					<< pose.residue(resnum).type().name() << std::endl;
@@ -766,7 +763,7 @@ SewingDesigner::parse_my_tag(
 		{
 			utility_exit_with_message( "Mover " + lcm_mover_name + " not found" );
 		}
-		loop_creation_mover_ = dynamic_cast< devel::loop_creation::LoopCreationMover * >(lcm_it->second());
+		loop_creation_mover_ = utility::pointer::dynamic_pointer_cast< devel::loop_creation::LoopCreationMover > ( lcm_it->second );
 	}
 	else
 	{

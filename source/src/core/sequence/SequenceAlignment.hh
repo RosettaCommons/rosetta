@@ -56,7 +56,7 @@ public:
 // 	}
 
 	SequenceAlignmentOP clone() const {
-		return new SequenceAlignment( *this );
+		return SequenceAlignmentOP( new SequenceAlignment( *this ) );
 	}
 
 	void clear() {

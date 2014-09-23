@@ -29,7 +29,7 @@ namespace features {
 HBondParameterFeaturesCreator::HBondParameterFeaturesCreator() {}
 HBondParameterFeaturesCreator::~HBondParameterFeaturesCreator() {}
 FeaturesReporterOP HBondParameterFeaturesCreator::create_features_reporter() const {
-	return new HBondParameterFeatures;
+	return FeaturesReporterOP( new HBondParameterFeatures );
 }
 
 std::string HBondParameterFeaturesCreator::type_name() const {

@@ -847,20 +847,20 @@ BaseEtableEnergy< Derived >::setup_for_minimizing(
 			Real const HH = etable_.max_hydrogen_lj_radius() + etable_.max_hydrogen_lj_radius()
 				+ 2 * tolerated_narrow_nblist_motion;
 
-			nblist = new NeighborList(
+			nblist = NeighborListOP( new NeighborList(
 				min_map.domain_map(),
 				XX*XX,
 				XH*XH,
-				HH*HH);
+				HH*HH) );
 			nblist->set_auto_update( tolerated_narrow_nblist_motion );
 		} else {
 
 			/// Use the default parameters
-			nblist = new NeighborList(
+			nblist = NeighborListOP( new NeighborList(
 				min_map.domain_map(),
 				etable_.nblist_dis2_cutoff_XX(),
 				etable_.nblist_dis2_cutoff_XH(),
-				etable_.nblist_dis2_cutoff_HH());
+				etable_.nblist_dis2_cutoff_HH()) );
 		}
 		// this partially becomes the EtableEnergy classes's responsibility
 		nblist->setup( pose, sfxn, static_cast<Derived const&> (*this));
@@ -920,7 +920,7 @@ BaseEtableEnergy< Derived >::setup_for_packing(
 ) const
 {
 
-	TrieCollectionOP tries = new TrieCollection;
+	TrieCollectionOP tries( new TrieCollection );
 	tries->total_residue( pose.total_residue() );
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		// Do not compute energy for virtual residues.
@@ -998,7 +998,7 @@ BaseEtableEnergy< Derived >::get_count_pair_function(
 	using namespace count_pair;
 
 	if ( exclude_DNA_DNA && res1.is_DNA() && res2.is_DNA() ) {
-		return new CountPairNone;
+		return count_pair::CountPairFunctionCOP( new CountPairNone );
 	}
 
 	count_pair::CPCrossoverBehavior crossover = determine_crossover_behavior( res1, res2, pose, sfxn );
@@ -1017,7 +1017,7 @@ BaseEtableEnergy< Derived >::get_intrares_countpair(
 	using namespace count_pair;
 
 	if ( exclude_DNA_DNA && res.is_DNA() ) {
-		return new CountPairNone;
+		return count_pair::CountPairFunctionOP( new CountPairNone );
 	}
 
 	CPCrossoverBehavior crossover = determine_crossover_behavior( res, res, pose, sfxn );
@@ -1041,8 +1041,8 @@ BaseEtableEnergy< Derived >::get_count_pair_function_trie(
 	using namespace methods;
 	conformation::Residue const & res1( pose.residue( set1.resid() ) );
 	conformation::Residue const & res2( pose.residue( set2.resid() ) );
-	trie::RotamerTrieBaseCOP trie1( static_cast< trie::RotamerTrieBase const * > ( set1.get_trie( etable_method )() ));
-	trie::RotamerTrieBaseCOP trie2( static_cast< trie::RotamerTrieBase const * > ( set2.get_trie( etable_method )() ));
+	trie::RotamerTrieBaseCOP trie1( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set1.get_trie( etable_method ) ));
+	trie::RotamerTrieBaseCOP trie2( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set2.get_trie( etable_method ) ));
 
 	return get_count_pair_function_trie( res1, res2, trie1, trie2, pose, sfxn );
 }
@@ -1062,7 +1062,7 @@ BaseEtableEnergy< Derived >::get_count_pair_function_trie(
 
 	TrieCountPairBaseOP tcpfxn;
 	if ( exclude_DNA_DNA && res1.is_DNA() && res2.is_DNA() ) {
-		tcpfxn = new TrieCountPairNone();
+		tcpfxn = TrieCountPairBaseOP( new TrieCountPairNone() );
 		return tcpfxn;
 	}
 
@@ -1074,10 +1074,10 @@ BaseEtableEnergy< Derived >::get_count_pair_function_trie(
 		CPCrossoverBehavior crossover = determine_crossover_behavior( res1, res2, pose, sfxn );
 		switch ( crossover ) {
 			case CP_CROSSOVER_3 :
-				tcpfxn = new TrieCountPair1BC3( conn1, conn2 );
+				tcpfxn = TrieCountPairBaseOP( new TrieCountPair1BC3( conn1, conn2 ) );
 			break;
 			case CP_CROSSOVER_4 :
-				tcpfxn = new TrieCountPair1BC4( conn1, conn2 );
+				tcpfxn = TrieCountPairBaseOP( new TrieCountPair1BC4( conn1, conn2 ) );
 			break;
 			default:
 				utility_exit();
@@ -1086,7 +1086,7 @@ BaseEtableEnergy< Derived >::get_count_pair_function_trie(
 	} else if ( connection == CP_MULTIPLE_BONDS_OR_PSEUDOBONDS ) {
 		CPCrossoverBehavior crossover = determine_crossover_behavior( res1, res2, pose, sfxn );
 
-		TrieCountPairGenericOP cpgen = new TrieCountPairGeneric( res1, res2, conn1, conn2 );
+		TrieCountPairGenericOP cpgen( new TrieCountPairGeneric( res1, res2, conn1, conn2 ) );
 		if ( crossover == CP_CROSSOVER_3 ) {
 			cpgen->crossover( 3 );
 		} else if ( crossover == CP_CROSSOVER_4 ) {
@@ -1097,7 +1097,7 @@ BaseEtableEnergy< Derived >::get_count_pair_function_trie(
 		cpgen->hard_crossover( false );
 		tcpfxn = cpgen;
 	} else {
-		tcpfxn = new TrieCountPairAll;
+		tcpfxn = TrieCountPairBaseOP( new TrieCountPairAll );
 	}
 	return tcpfxn;
 
@@ -1285,8 +1285,8 @@ BaseEtableEnergy< Derived >::setup_for_minimizing_for_residue_pair(
 	count_pair::CountPairFunctionCOP count_pair = get_count_pair_function( rsd1, rsd2, pose, sfxn );
 
 	// update the existing nblist if it's already present in the min_data object
-	ResiduePairNeighborListOP nblist( static_cast< ResiduePairNeighborList * > (pair_data.get_data( etab_pair_nblist )() ));
-	if ( ! nblist ) nblist = new ResiduePairNeighborList;
+	ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( etab_pair_nblist ) ));
+	if ( ! nblist ) nblist = ResiduePairNeighborListOP( new ResiduePairNeighborList );
 
 	/// STOLEN CODE!
 	Real const tolerated_narrow_nblist_motion = 0.75; //option[ run::nblist_autoupdate_narrow ];
@@ -1629,8 +1629,8 @@ BaseEtableEnergy< Derived >::evaluate_rotamer_pair_energies(
 	typename Derived::Evaluator evaluator( static_cast< Derived const & > (*this).interres_evaluator() );
 	evaluator.set_weights( weights );
 
-	EtableRotamerTrieCOP trie1( static_cast< trie::RotamerTrieBase const * > ( set1.get_trie( etable_method )() ));
-	EtableRotamerTrieCOP trie2( static_cast< trie::RotamerTrieBase const * > ( set2.get_trie( etable_method )() ));
+	EtableRotamerTrieCOP trie1( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set1.get_trie( etable_method ) ));
+	EtableRotamerTrieCOP trie2( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set2.get_trie( etable_method ) ));
 
 	// figure out which trie countPairFunction needs to be used for this set
 	TrieCountPairBaseOP cp = get_count_pair_function_trie( set1, set2, pose, sfxn );
@@ -1689,7 +1689,7 @@ BaseEtableEnergy< Derived >::evaluate_rotamer_background_energies(
 	typename Derived::Evaluator evaluator( static_cast< Derived const & > (*this).interres_evaluator() );
 	evaluator.set_weights( weights );
 
-	EtableRotamerTrieCOP trie1( static_cast< trie::RotamerTrieBase const * > ( set.get_trie( etable_method )() ));
+	EtableRotamerTrieCOP trie1( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set.get_trie( etable_method ) ));
 	EtableRotamerTrieCOP trie2 = ( static_cast< TrieCollection const & >
 		( pose.energies().data().get( EnergiesCacheableDataType::ETABLE_TRIE_COLLECTION )) ).trie( residue.seqpos() );
 
@@ -1784,8 +1784,8 @@ BaseEtableEnergy< Derived >::setup_for_minimizing_for_residue(
 		using namespace basic::options::OptionKeys;
 
 		// update the existing nblist if it's already present in the min_data object
-		ResidueNblistDataOP nbdata( static_cast< ResidueNblistData * > (min_data.get_data( etab_single_nblist )() ));
-		if ( ! nbdata ) nbdata = new ResidueNblistData;
+		ResidueNblistDataOP nbdata( utility::pointer::static_pointer_cast< core::scoring::ResidueNblistData > ( min_data.get_data( etab_single_nblist ) ));
+		if ( ! nbdata ) nbdata = ResidueNblistDataOP( new ResidueNblistData );
 
 		/// STOLEN CODE!
 		Real const tolerated_narrow_nblist_motion = option[ run::nblist_autoupdate_narrow ];

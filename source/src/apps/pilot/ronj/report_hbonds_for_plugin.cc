@@ -91,7 +91,7 @@ public:
 /// @begin HBondReporter::HBondReporter()
 ///
 HBondReporter() : allowNonProtein_( true ), relevant_chains_("*") {
-	scfxn = new ScoreFunction;
+	scfxn = core::scoring::ScoreFunctionOP( new ScoreFunction );
 	scfxn->set_weight( core::scoring::hbond_lr_bb, 1.17 );
 	scfxn->set_weight( core::scoring::hbond_sr_bb, 0.585 );
 	scfxn->set_weight( core::scoring::hbond_bb_sc, 1.17 );
@@ -422,7 +422,7 @@ int main( int argc, char* argv[] ) {
 	NEW_OPT( HBondReporter::relevant_chains, "relevant_chains", "*" );
 
 	devel::init(argc, argv);
-	protocols::jd2::JobDistributor::get_instance()->go( new HBondReporter );
+	protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new HBondReporter ) );
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

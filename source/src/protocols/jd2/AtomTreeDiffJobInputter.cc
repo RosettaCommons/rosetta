@@ -145,7 +145,7 @@ void protocols::jd2::AtomTreeDiffJobInputter::fill_jobs( Jobs & jobs ){
 		core::import_pose::atom_tree_diffs::Scores scores= all_scores[tag_score.second].second;
 
 		for(core::Size j=1; j<=nstruct; ++j){
-			JobOP job = new Job( ijob, j);
+			JobOP job( new Job( ijob, j) );
 			if( basic::options::option[ basic::options::OptionKeys::in::file::keep_input_scores ] ) {
 				BOOST_FOREACH(core::import_pose::atom_tree_diffs::ScorePair score, scores){
 					job->add_string_real_pair(score.first, score.second);
@@ -183,7 +183,7 @@ AtomTreeDiffJobInputterCreator::keyname() const
 
 protocols::jd2::JobInputterOP
 AtomTreeDiffJobInputterCreator::create_JobInputter() const {
-	return new AtomTreeDiffJobInputter;
+	return protocols::jd2::JobInputterOP( new AtomTreeDiffJobInputter );
 }
 
 } // jd2

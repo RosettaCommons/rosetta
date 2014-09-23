@@ -37,7 +37,7 @@ core::scoring::methods::EnergyMethodOP
 SpecialRotamerEnergyCreator::create_energy_method(
 	core::scoring::methods::EnergyMethodOptions const &
 ) const {
-	return new SpecialRotamerEnergy;
+	return core::scoring::methods::EnergyMethodOP( new SpecialRotamerEnergy );
 }
 
 core::scoring::ScoreTypes
@@ -57,7 +57,7 @@ SpecialRotamerEnergy::SpecialRotamerEnergy() :
 core::scoring::methods::EnergyMethodOP
 SpecialRotamerEnergy::clone() const
 {
-	return new SpecialRotamerEnergy;
+	return core::scoring::methods::EnergyMethodOP( new SpecialRotamerEnergy );
 }
 
 /////////////////////////////////////////////////////////////////////////////

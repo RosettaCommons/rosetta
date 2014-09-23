@@ -40,10 +40,10 @@ public :
 	AlaScan( bool const chain1, bool const chain2, core::Size const repeats, core::Real const dist, core::scoring::ScoreFunctionCOP scorefxn, core::Size const jump, bool const symmetry );
 	bool apply( core::pose::Pose const & ) const{ return true; }
 	filters::FilterOP clone() const {
-		return new AlaScan( *this );
+		return filters::FilterOP( new AlaScan( *this ) );
 	}
 	filters::FilterOP fresh_instance() const{
-		return new AlaScan();
+		return filters::FilterOP( new AlaScan() );
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;

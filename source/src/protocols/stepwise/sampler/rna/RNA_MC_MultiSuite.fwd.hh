@@ -23,7 +23,7 @@ namespace sampler {
 namespace rna {
 
 class RNA_MC_MultiSuite;
-typedef utility::pointer::owning_ptr< RNA_MC_MultiSuite > RNA_MC_MultiSuiteOP;
+typedef utility::pointer::shared_ptr< RNA_MC_MultiSuite > RNA_MC_MultiSuiteOP;
 
 } //rna
 } //sampler

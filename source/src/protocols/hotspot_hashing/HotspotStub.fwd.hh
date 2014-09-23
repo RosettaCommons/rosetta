@@ -21,8 +21,8 @@ namespace protocols {
 namespace hotspot_hashing {
 
 class HotspotStub;
-typedef utility::pointer::owning_ptr< HotspotStub > HotspotStubOP;
-typedef utility::pointer::owning_ptr< HotspotStub const > HotspotStubCOP;
+typedef utility::pointer::shared_ptr< HotspotStub > HotspotStubOP;
+typedef utility::pointer::shared_ptr< HotspotStub const > HotspotStubCOP;
 
 } // namespace hotspot_hashing
 } // namespace protocols

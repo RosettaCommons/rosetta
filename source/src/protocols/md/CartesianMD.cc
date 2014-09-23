@@ -89,7 +89,7 @@ CartesianMDCreator::keyname() const
 
 protocols::moves::MoverOP
 CartesianMDCreator::create_mover() const {
-	return new CartesianMD;
+	return protocols::moves::MoverOP( new CartesianMD );
 }
 
 std::string
@@ -161,7 +161,7 @@ CartesianMD::~CartesianMD(){}
 
 protocols::moves::MoverOP
 CartesianMD::clone() const {
-	return new CartesianMD(*this);
+	return protocols::moves::MoverOP( new CartesianMD(*this) );
 }
 
 void CartesianMD::set_movemap(
@@ -587,14 +587,14 @@ void CartesianMD::parse_opts(
 	using namespace scoring;
 
 	std::string const scorefxn_name( tag->getOption< std::string >( "scorefxn" ) );
-	scorefxn_ = data.get< ScoreFunction * >( "scorefxns", scorefxn_name ); //->clone();
+	scorefxn_ = data.get_ptr<ScoreFunction>( "scorefxns", scorefxn_name ); //->clone();
 
 	std::string const scoreobj_name( tag->getOption< std::string >( "scorefxn_obj","" ) );
 
 	if( scoreobj_name.compare("") == 0 ){
 		scorefxn_obj_ = scorefxn_; //->clone();
 	} else {
-		scorefxn_obj_ = data.get< ScoreFunction * >( "scorefxns", scoreobj_name ); //->clone();
+		scorefxn_obj_ = data.get_ptr<ScoreFunction>( "scorefxns", scoreobj_name ); //->clone();
 	}
 
 	use_rattle_ = tag->getOption< bool >( "rattle", true );
@@ -632,7 +632,7 @@ void CartesianMD::parse_movemap(
 	//protocols::moves::Movers_map const &,
 	Pose const & pose )
 {
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	bool const chi( tag->getOption< bool >( "chi", true ) ), bb( tag->getOption< bool >( "bb", true ) );
 	movemap->set_chi( chi );
 	movemap->set_bb( bb );

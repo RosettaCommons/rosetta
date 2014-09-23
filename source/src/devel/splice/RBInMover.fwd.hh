@@ -19,8 +19,8 @@
 namespace devel{
     namespace splice{
         class RBInMover;
-        typedef utility::pointer::owning_ptr< RBInMover > RBInMoverOP;
-        typedef utility::pointer::owning_ptr< RBInMover const > RBInMoverCOP;
+        typedef utility::pointer::shared_ptr< RBInMover > RBInMoverOP;
+        typedef utility::pointer::shared_ptr< RBInMover const > RBInMoverCOP;
     } // simple_moves
 } // protocols
 

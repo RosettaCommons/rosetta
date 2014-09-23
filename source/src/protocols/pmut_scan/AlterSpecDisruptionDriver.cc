@@ -39,16 +39,16 @@ static thread_local basic::Tracer TR( "protocols.pmut_scan.AlterSpecDisruptionDr
 /// Main constructor for the class.
 ///
 AlterSpecDisruptionDriver::AlterSpecDisruptionDriver( utility::vector1< std::string > & pdb_file_names, bool double_mutant_scan, std::string list_file, bool output_mutant_structures ) :
-	PointMutScanDriver(pdb_file_names, double_mutant_scan, list_file, output_mutant_structures), IAM_(NULL)
+	PointMutScanDriver(pdb_file_names, double_mutant_scan, list_file, output_mutant_structures), IAM_(/* NULL */)
 {
-	IAM_ = new protocols::analysis::InterfaceAnalyzerMover(
+	IAM_ = protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover(
 		1, //interface_jump
 		true, //output to Tracer - we are ignoring this output and will collect from getters
 		get_scorefxn(), //pass in the scorefunction we are using
 		false, //do not compute packstat
 		true, //do repack input - we already did, but this will keep the PackerTasks similar
 		true,  //do repack separated pose
-		false); //do not bother with JD2 tracer name hookups
+		false) ); //do not bother with JD2 tracer name hookups
 
 	//IAM_->set_use_resfile(false);
 	IAM_->set_use_centroid_dG(false);

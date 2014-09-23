@@ -21,8 +21,8 @@ namespace jd2 {
 
 class JobOutputterFactory;
 
-typedef utility::pointer::owning_ptr< JobOutputterFactory > JobOutputterFactoryOP;
-typedef utility::pointer::owning_ptr< JobOutputterFactory const > JobOutputterFactoryCOP;
+typedef utility::pointer::shared_ptr< JobOutputterFactory > JobOutputterFactoryOP;
+typedef utility::pointer::shared_ptr< JobOutputterFactory const > JobOutputterFactoryCOP;
 
 } //namespace jd2
 } //namespace protocols

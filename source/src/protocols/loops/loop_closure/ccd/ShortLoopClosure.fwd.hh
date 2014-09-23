@@ -26,8 +26,8 @@ namespace ccd {
 class ShortLoopClosure;
 
 // Types
-typedef  utility::pointer::owning_ptr< ShortLoopClosure >  ShortLoopClosureOP;
-typedef  utility::pointer::owning_ptr< ShortLoopClosure const >  ShortLoopClosureCOP;
+typedef  utility::pointer::shared_ptr< ShortLoopClosure >  ShortLoopClosureOP;
+typedef  utility::pointer::shared_ptr< ShortLoopClosure const >  ShortLoopClosureCOP;
 
 } // namespace ccd
 } // namespace loop_closure

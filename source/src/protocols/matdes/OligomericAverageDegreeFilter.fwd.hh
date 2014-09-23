@@ -26,8 +26,8 @@ namespace matdes {
 class OligomericAverageDegreeFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< OligomericAverageDegreeFilter >  OligomericAverageDegreeFilterOP;
-typedef utility::pointer::owning_ptr< OligomericAverageDegreeFilter const >  OligomericAverageDegreeFilterCOP;
+typedef utility::pointer::shared_ptr< OligomericAverageDegreeFilter >  OligomericAverageDegreeFilterOP;
+typedef utility::pointer::shared_ptr< OligomericAverageDegreeFilter const >  OligomericAverageDegreeFilterCOP;
 
 } // namespace matdes
 } // namespace protocols

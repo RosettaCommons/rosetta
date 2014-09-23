@@ -82,7 +82,7 @@ void test_DisallowIfNonnativeTaskOperation() {
   TR << "Running test_DisallowIfNonnativeTaskOperation..." << std::endl;
 
   core::pack::task::TaskFactory tf;
-  operation::DisallowIfNonnativeOP disallow_op = new operation::DisallowIfNonnative();
+  operation::DisallowIfNonnativeOP disallow_op( new operation::DisallowIfNonnative() );
 
   //define options for disallow_op
   std::string noAGP ("AGP");  //don't allow Ala, Gly, Pro
@@ -105,14 +105,14 @@ void test_ReplicateTaskTaskOperation(){
 	using namespace core::pack::task::operation;
   TR << "Running test_ReplicateTaskTaskOperation..." << std::endl;
 
-  TaskFactoryOP tf = new TaskFactory;
+  TaskFactoryOP tf( new TaskFactory );
 	//define some other operations to do stuffs
-	operation::RestrictResidueToRepackingOP nodes_op = new operation::RestrictResidueToRepacking;
+	operation::RestrictResidueToRepackingOP nodes_op( new operation::RestrictResidueToRepacking );
 	nodes_op->include_residue(1);
 	nodes_op->include_residue(2);
 	nodes_op->include_residue(4);
 	nodes_op->include_residue(31);
-	operation::PreventRepackingOP prevent_op = new operation::PreventRepacking;
+	operation::PreventRepackingOP prevent_op( new operation::PreventRepacking );
 	prevent_op->include_residue(2);
 	prevent_op->include_residue(3);
 	prevent_op->include_residue(7);
@@ -125,12 +125,12 @@ void test_ReplicateTaskTaskOperation(){
 	//make a mutation pose that will have a different sequence from the test pose
 	//this test makes sure the overall logic is the same even though the sequence is not
 	pose::Pose mut_pose;
-	TaskFactoryOP mut_tf = new TaskFactory;
+	TaskFactoryOP mut_tf( new TaskFactory );
 	core::import_pose::pose_from_pdb( mut_pose, "core/pack/task/resfile_test_mut.pdb" );
 	PackerTaskOP mut_task = mut_tf->create_task_and_apply_taskoperations( mut_pose );
 	//TR << "MUT TASK BEFORE ReplicateTask: " << *(mut_task)<< std::endl;
 	//now make the same logic as the native
-	TaskOperationOP mimic_nat_task_op = new operation::ReplicateTask(pose, tf);
+	TaskOperationOP mimic_nat_task_op( new operation::ReplicateTask(pose, tf) );
 	mimic_nat_task_op->apply( pose, *(mut_task) );
 	//TR << "MUT TASK AFTER ReplicateTask: " << *(mut_task)<< std::endl;
 

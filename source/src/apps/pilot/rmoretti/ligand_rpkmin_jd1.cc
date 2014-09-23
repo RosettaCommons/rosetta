@@ -51,8 +51,8 @@
 
 //////////////////////////////////////////////////////////////////////////////
 class LigandRepackMinimizeProtocol; // fwd declaration
-typedef utility::pointer::owning_ptr< LigandRepackMinimizeProtocol > LigandRepackMinimizeProtocolOP;
-typedef utility::pointer::owning_ptr< LigandRepackMinimizeProtocol const > LigandRepackMinimizeProtocolCOP;
+typedef utility::pointer::shared_ptr< LigandRepackMinimizeProtocol > LigandRepackMinimizeProtocolOP;
+typedef utility::pointer::shared_ptr< LigandRepackMinimizeProtocol const > LigandRepackMinimizeProtocolCOP;
 
 class LigandRepackMinimizeProtocol : public protocols::ligand_docking::LigandBaseProtocol
 {
@@ -109,22 +109,22 @@ LigandRepackMinimizeProtocol::apply( core::pose::Pose & pose )
 	//core::pack::rtmin(pose, *scorefxn_, pack_task);
 	//return;
 
-	protocols::simple_moves::PackRotamersMoverOP fullRepack = new protocols::simple_moves::PackRotamersMover(scorefxn_, pack_task);
+	protocols::simple_moves::PackRotamersMoverOP fullRepack( new protocols::simple_moves::PackRotamersMover(scorefxn_, pack_task) );
 	fullRepack->apply(pose);
 
 	// Is this necessary?  How well does the repack converge?
-	protocols::simple_moves::RotamerTrialsMoverOP rotamerTrials = new protocols::simple_moves::RotamerTrialsMover(scorefxn_, *pack_task);
+	protocols::simple_moves::RotamerTrialsMoverOP rotamerTrials( new protocols::simple_moves::RotamerTrialsMover(scorefxn_, *pack_task) );
 	rotamerTrials->apply(pose);
 
 	// Set up move map for minimizing.
 	// Only want to minimize protein sc;  keep ligand the same as reference point
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
+	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
 	for(int i = 1, end_i = pose.total_residue(); i <= end_i; ++i) {
 		if( pose.residue(i).is_polymer() ) {
 			movemap->set_chi(i, true);
 		}
 	}
-	protocols::simple_moves::MinMoverOP dfpMinTightTol = new protocols::simple_moves::MinMover( movemap, scorefxn_, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ );
+	protocols::simple_moves::MinMoverOP dfpMinTightTol( new protocols::simple_moves::MinMover( movemap, scorefxn_, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/ ) );
 	dfpMinTightTol->min_options()->nblist_auto_update(true);
 	dfpMinTightTol->apply(pose);
 
@@ -160,7 +160,7 @@ main( int argc, char * argv [] )
 	devel::init(argc, argv);
 
 	// Build overall docking protocol Mover
-	LigandRepackMinimizeProtocolOP dockingProtocol = new LigandRepackMinimizeProtocol();
+	LigandRepackMinimizeProtocolOP dockingProtocol( new LigandRepackMinimizeProtocol() );
 
 	protocols::jobdist::main_plain_pdb_mover(*dockingProtocol, dockingProtocol->get_scorefxn());
 

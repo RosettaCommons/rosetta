@@ -85,7 +85,7 @@ core::scoring::methods::EnergyMethodOP
 PcsEnergyCreator::create_energy_method(
 	core::scoring::methods::EnergyMethodOptions const &
 ) const {
-	return new PcsEnergy;
+	return core::scoring::methods::EnergyMethodOP( new PcsEnergy );
 }
 
 core::scoring::ScoreTypes
@@ -130,7 +130,7 @@ PcsEnergy::PcsEnergy() :
 core::scoring::methods::EnergyMethodOP
 PcsEnergy::clone() const{
 	//	TR_PcsEnergy << " clone called" << std::endl;
-	return new PcsEnergy;
+	return core::scoring::methods::EnergyMethodOP( new PcsEnergy );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -189,7 +189,7 @@ PcsEnergy::PCS_multi_data_from_pose(core::pose::Pose & pose) const{
 			 ( pose.data().has( core::pose::datacache::CacheableDataType::PSEUDOCONTACT_SHIFT_MULTI_DATA ) ) ){
 
 		//std::cerr << "PcsDataCenterManager was cached" << std::endl<< std::endl;
-		return *( static_cast< PcsDataCenterManager * >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::PSEUDOCONTACT_SHIFT_MULTI_DATA )() ) );
+		return *( utility::pointer::static_pointer_cast< protocols::scoring::methods::pcs2::PcsDataCenterManager > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::PSEUDOCONTACT_SHIFT_MULTI_DATA ) ) );
 	}
 
 	//	TR_PcsEnergy << "PcsDataCenterManager was NOT cached" << std::endl;
@@ -201,7 +201,7 @@ PcsEnergy::PCS_multi_data_from_pose(core::pose::Pose & pose) const{
 
 	PcsDataCenterManagerOP pcs_d_c_m_OP;
 
-	pcs_d_c_m_OP = new PcsDataCenterManager();
+	pcs_d_c_m_OP = PcsDataCenterManagerOP( new PcsDataCenterManager() );
 
 	for(i_multi_data = 1; i_multi_data <= n_multi_data; ++i_multi_data ){
 
@@ -237,7 +237,7 @@ PcsEnergy::PCS_multi_data_from_pose(core::pose::Pose & pose) const{
 		//			PcsDataCenter pcs_d (pcs_i_c, exclude_residues);
 		//pcs_d = PcsDataCenter(pcs_i_c, exclude_residues);
 		//pcs_d = PcsDataCenter(pcs_i_c);
-		pcs_d_c_OP = new PcsDataCenter(pcs_i_c, start, end, individual_scale);
+		pcs_d_c_OP = PcsDataCenterOP( new PcsDataCenter(pcs_i_c, start, end, individual_scale) );
 
 		//(*pcs_d_c_m_OP).get_PCS_data_all().push_back(pcs_d);
 		(*pcs_d_c_m_OP).get_PCS_data_all().push_back(*pcs_d_c_OP);

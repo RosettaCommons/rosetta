@@ -83,7 +83,7 @@ methods::EnergyMethodOP
 Rama2BOffsetEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & /*options*/
 ) const {
-	return new Rama2BOffsetEnergy( );
+	return methods::EnergyMethodOP( new Rama2BOffsetEnergy( ) );
 }
 
 ScoreTypes
@@ -105,7 +105,7 @@ Rama2BOffsetEnergy::~Rama2BOffsetEnergy() {}
 
 EnergyMethodOP
 Rama2BOffsetEnergy::clone() const {
-	return new Rama2BOffsetEnergy( *this );
+	return EnergyMethodOP( new Rama2BOffsetEnergy( *this ) );
 }
 
 
@@ -125,7 +125,7 @@ Rama2BOffsetEnergy::setup_for_scoring(
 		create_new_lre_container = true;
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		PeptideBondedEnergyContainerOP dec( static_cast< PeptideBondedEnergyContainer * > ( lrc.get() ) );
+		PeptideBondedEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::PeptideBondedEnergyContainer > ( lrc ) );
 		Size nres = pose.total_residue();
 		if( core::pose::symmetry::is_symmetric(pose) )
 			nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
@@ -142,7 +142,7 @@ Rama2BOffsetEnergy::setup_for_scoring(
 		s_types.push_back( rama2b_offset );
 		s_types.push_back( omega2b_offset );
 		s_types.push_back( p_aa_pp_offset );
-		LREnergyContainerOP new_dec = new PeptideBondedEnergyContainer( nres, s_types );
+		LREnergyContainerOP new_dec( new PeptideBondedEnergyContainer( nres, s_types ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 }

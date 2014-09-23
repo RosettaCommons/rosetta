@@ -84,13 +84,13 @@ TempInterpolatorFactory::new_tempInterpolator( utility::tag::TagCOP tag, core::S
 	}
 	std::string curve = tag->getOption< std::string >( "curve" );
 	if ( curve == "const" ) {
-		return new TempFixValue( tag->getOption< core::Real >( "value" ) );
+		return TempInterpolatorBaseOP( new TempFixValue( tag->getOption< core::Real >( "value" ) ) );
 	}
 	else {
 		if ( tag->hasOption( "start" ) && tag->hasOption( "end" ) ) {
 			core::Real start = tag->getOption< core::Real >( "start" );
 			core::Real end = tag->getOption< core::Real >( "end" );
-			return new TempInterpolator( n_levels, start, end, curve );
+			return TempInterpolatorBaseOP( new TempInterpolator( n_levels, start, end, curve ) );
 		}
 		else {
 			throw utility::excn::EXCN_RosettaScriptsOption( "Error: start and end value must be given for linear and expotential interpolation !" );

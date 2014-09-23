@@ -20,7 +20,7 @@ namespace protocols {
 namespace docking {
 
 class DockingSetupMover;
-typedef utility::pointer::owning_ptr< DockingSetupMover > DockingSetupMoverOP;
+typedef utility::pointer::shared_ptr< DockingSetupMover > DockingSetupMoverOP;
 
 }
 }

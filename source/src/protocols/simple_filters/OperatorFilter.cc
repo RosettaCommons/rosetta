@@ -40,7 +40,7 @@ static thread_local basic::Tracer TR( "protocols.simple_filters.Operator" );
 using namespace protocols::filters;
 
 protocols::filters::FilterOP
-OperatorFilterCreator::create_filter() const { return new Operator; }
+OperatorFilterCreator::create_filter() const { return protocols::filters::FilterOP( new Operator ); }
 
 std::string
 OperatorFilterCreator::keyname() const { return "Operator"; }
@@ -63,36 +63,36 @@ void
 Operator::reset_baseline( core::pose::Pose const & pose, bool const attempt_read_from_checkpoint ){
 	BOOST_FOREACH( protocols::filters::FilterOP filter, filters() ){
 		if( filter->get_type() == "Sigmoid" ){
-			SigmoidOP sigmoid_filter( dynamic_cast< Sigmoid * >( filter() ) );
+			SigmoidOP sigmoid_filter( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::Sigmoid > ( filter ) );
 			runtime_assert( sigmoid_filter != 0 );
 			sigmoid_filter->reset_baseline( pose, attempt_read_from_checkpoint );
 			TR<<"Resetting Sigmoid filter's baseline"<<std::endl;
 		}
     if( filter->get_type() == "MultipleSigmoids" ){
-			MultipleSigmoidsOP multisigmoid_filter( dynamic_cast< MultipleSigmoids * >( filter() ) );
+			MultipleSigmoidsOP multisigmoid_filter( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::MultipleSigmoids > ( filter ) );
 			runtime_assert( multisigmoid_filter != 0 );
 			multisigmoid_filter->reset_baseline( pose, attempt_read_from_checkpoint );
 			TR<<"Resetting MultipleSigmoids filter's baseline"<<std::endl;
 		}
 		else if( filter->get_type() == "Operator" ){ //recursive call
-			OperatorOP operator_filter( dynamic_cast< Operator * >( filter() ) );
+			OperatorOP operator_filter( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::Operator > ( filter ) );
 			runtime_assert( operator_filter != 0 );
 			operator_filter->reset_baseline( pose, attempt_read_from_checkpoint );
 			TR<<"Resetting Operator filter's baseline"<<std::endl;
 		}
 		else if( filter->get_type() == "CompoundStatement" ){///all RosettaScripts user-defined filters with confidence!=1 are compoundstatements
-		  CompoundFilterOP comp_filt_op( dynamic_cast< CompoundFilter * >( filter() ) );
+		  CompoundFilterOP comp_filt_op( utility::pointer::dynamic_pointer_cast< protocols::filters::CompoundFilter > ( filter ) );
 		  runtime_assert( comp_filt_op != 0 );
 		  for( protocols::filters::CompoundFilter::CompoundStatement::iterator cs_it = comp_filt_op->begin(); cs_it != comp_filt_op->end(); ++cs_it ){
 		     protocols::filters::FilterOP f( cs_it->first );
 				if( f->get_type() == "Sigmoid" ){
-					SigmoidOP sigmoid_filter( dynamic_cast< Sigmoid * >( f() ) );
+					SigmoidOP sigmoid_filter( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::Sigmoid > ( f ) );
 					runtime_assert( sigmoid_filter != 0 );
 					sigmoid_filter->reset_baseline( pose, attempt_read_from_checkpoint );
 					TR<<"Resetting Sigmoid filter's baseline"<<std::endl;
 				}
 				else if( f->get_type() == "Operator" ){ //recursive call
-					OperatorOP operator_filter( dynamic_cast< Operator * >( f() ) );
+					OperatorOP operator_filter( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::Operator > ( f ) );
 					runtime_assert( operator_filter != 0 );
 					operator_filter->reset_baseline( pose, attempt_read_from_checkpoint );
 					TR<<"Resetting Operator filter's baseline"<<std::endl;
@@ -108,13 +108,13 @@ Operator::modify_relative_filters_pdb_names(){
 	erase_filters.clear();
 	BOOST_FOREACH( FilterOP filter, filters_ ){
 		if( filter->get_type() == "Sigmoid" ){
-			SigmoidOP sigmoid_filter( dynamic_cast< Sigmoid * >( filter() ) );
+			SigmoidOP sigmoid_filter( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::Sigmoid > ( filter ) );
 			runtime_assert( sigmoid_filter != 0 );
 			if( sigmoid_filter->filter()->get_type() == "RelativePose" ){
 				TR<<"Replicating and changing RelativePose's filter pdb fname. File names: ";
 				BOOST_FOREACH( std::string const fname, relative_pose_names_ ){
 					SigmoidOP new_sigmoid( sigmoid_filter );
-					RelativePoseFilterOP relative_pose( dynamic_cast< RelativePoseFilter * >( new_sigmoid->filter()() ) );
+					RelativePoseFilterOP relative_pose( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::RelativePoseFilter > ( new_sigmoid->filter() ) );
 					runtime_assert( relative_pose != 0 );
 					relative_pose->pdb_name( fname );
 					add_filter( new_sigmoid );

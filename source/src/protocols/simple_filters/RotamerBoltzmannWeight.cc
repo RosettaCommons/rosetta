@@ -72,11 +72,11 @@ static thread_local basic::Tracer TR( "protocols.simple_filters.RotamerBoltzmann
 ///@brief default ctor
 RotamerBoltzmannWeight::RotamerBoltzmannWeight() :
 	parent( "RotamerBoltzmannWeight" ),
-	task_factory_( NULL ),
+	task_factory_( /* NULL */ ),
 	rb_jump_( 1 ),
 	sym_dof_names_( "" ),
 	unbound_( true ),
-	scorefxn_( NULL ),
+	scorefxn_( /* NULL */ ),
 	temperature_( 0.8 ),
 	ddG_threshold_( 1.5 ),
 	repacking_radius_( 6.0 ),
@@ -327,22 +327,22 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	RotamerSetFactory rsf;
 	RotamerSetOP rotset = rsf.create_rotamer_set( res );
 	rotset->set_resid( resi );
-	TaskFactoryOP tf = new core::pack::task::TaskFactory;
-	tf->push_back( new core::pack::task::operation::InitializeFromCommandline);
-	tf->push_back( new core::pack::task::operation::IncludeCurrent );
+	TaskFactoryOP tf( new core::pack::task::TaskFactory );
+	tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ));
+	tf->push_back( TaskOperationCOP( new core::pack::task::operation::IncludeCurrent ) );
 	PackerTaskOP ptask( tf->create_task_and_apply_taskoperations( pose ) );
 	if (core::pose::symmetry::is_symmetric(pose)) {
 		core::pack::make_symmetric_PackerTask_by_truncation(pose, ptask); // NK 110621
 	}
 	ResidueLevelTask & restask( ptask->nonconst_residue_task( resi ) );
 	restask.restrict_to_repacking();
-	core::graph::GraphOP packer_graph = new core::graph::Graph( pose.total_residue() );
+	core::graph::GraphOP packer_graph( new core::graph::Graph( pose.total_residue() ) );
 	ptask->set_bump_check( true );
 	rotset->build_rotamers( pose, *scorefxn_, *ptask, packer_graph, false );
 	// TR << "num rotamers for resi " << resi << " is: " << rotset->num_rotamers() << std::endl;
 
 /// des_around will mark all residues around resi for design, the rest for packing.
-	protocols::toolbox::task_operations::DesignAroundOperationOP des_around = new protocols::toolbox::task_operations::DesignAroundOperation;
+	protocols::toolbox::task_operations::DesignAroundOperationOP des_around( new protocols::toolbox::task_operations::DesignAroundOperation );
 	des_around->design_shell( repacking_radius() );
 	des_around->include_residue( resi );
 	tf->push_back( des_around );
@@ -352,7 +352,7 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	}
 	protocols::simple_filters::ScoreTypeFilter const stf( scorefxn_, core::scoring::total_score, 0 );
 
-	core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
+	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 	if (core::pose::symmetry::is_symmetric(pose)) {
 		core::pose::symmetry::make_symmetric_movemap( pose, *mm ); // NK 110621
 	}
@@ -375,9 +375,9 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	core::pack::pack_rotamers( pose, *scorefxn_, task );
 	protocols::moves::MoverOP min_mover;
 	if (core::pose::symmetry::is_symmetric(pose)) {
-		min_mover = new protocols::simple_moves::symmetry::SymMinMover( mm, scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, true, false, false ); // NK 110621
+		min_mover = protocols::moves::MoverOP( new protocols::simple_moves::symmetry::SymMinMover( mm, scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, true, false, false ) ); // NK 110621
 	} else {
-		min_mover = new protocols::simple_moves::MinMover( mm, scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, true, false, false ); // NK 110621
+		min_mover = protocols::moves::MoverOP( new protocols::simple_moves::MinMover( mm, scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, true, false, false ) ); // NK 110621
 	}
 	min_mover->apply( pose );
 	core::pose::Pose const const_min_pose( pose );
@@ -562,14 +562,14 @@ void RotamerBoltzmannWeight::write_to_pdb( core::Size const residue, std::string
 
 protocols::filters::FilterOP
 RotamerBoltzmannWeight::fresh_instance() const{
-	return new RotamerBoltzmannWeight();
+	return protocols::filters::FilterOP( new RotamerBoltzmannWeight() );
 }
 
 RotamerBoltzmannWeight::~RotamerBoltzmannWeight(){}
 
 protocols::filters::FilterOP
 RotamerBoltzmannWeight::clone() const{
-	return new RotamerBoltzmannWeight( *this );
+	return protocols::filters::FilterOP( new RotamerBoltzmannWeight( *this ) );
 }
 
 void
@@ -603,7 +603,7 @@ RotamerBoltzmannWeight::compute_entropy_reduction( bool const cer ){
 }
 
 protocols::filters::FilterOP
-RotamerBoltzmannWeightFilterCreator::create_filter() const { return new RotamerBoltzmannWeight; }
+RotamerBoltzmannWeightFilterCreator::create_filter() const { return protocols::filters::FilterOP( new RotamerBoltzmannWeight ); }
 
 std::string
 RotamerBoltzmannWeightFilterCreator::keyname() const { return "RotamerBoltzmannWeight"; }

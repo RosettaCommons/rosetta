@@ -38,7 +38,7 @@ namespace abscript{
 
 basic::datacache::WriteableCacheableDataOP
 JumpSampleDataCreator::create_data( std::istream &in ) const {
-  return new JumpSampleData( in );
+  return basic::datacache::WriteableCacheableDataOP( new JumpSampleData( in ) );
 }
 
 std::string JumpSampleDataCreator::keyname() const{
@@ -89,7 +89,7 @@ void JumpSampleData::write( std::ostream &out ) const {
 
 basic::datacache::CacheableDataOP
 JumpSampleData::clone() const {
-  return new JumpSampleData( *this );
+  return basic::datacache::CacheableDataOP( new JumpSampleData( *this ) );
 }
 
 std::string JumpSampleData::datatype() const {

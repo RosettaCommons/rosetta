@@ -95,7 +95,7 @@ AntibodyModelerProtocol::~AntibodyModelerProtocol() {}
 //clone
 protocols::moves::MoverOP
 AntibodyModelerProtocol::clone() const {
-	return( new AntibodyModelerProtocol() );
+	return( protocols::moves::MoverOP( new AntibodyModelerProtocol() ) );
 }
 
 
@@ -258,7 +258,7 @@ void AntibodyModelerProtocol::init_from_options() {
 
 	//set native pose if asked for
 	if ( option[ OptionKeys::in::file::native ].user() ) {
-		core::pose::PoseOP native_pose = new core::pose::Pose();
+		core::pose::PoseOP native_pose( new core::pose::Pose() );
 		core::import_pose::pose_from_pdb( *native_pose, option[ OptionKeys::in::file::native ]() );
 		set_native_pose( native_pose );
 	} else {
@@ -311,7 +311,7 @@ std::string AntibodyModelerProtocol::get_name() const {
 void AntibodyModelerProtocol::finalize_setup( pose::Pose & pose ) {
 	// check for native and input pose
 	if ( !get_input_pose() ) {
-		pose::PoseOP input_pose = new pose::Pose(pose);
+		pose::PoseOP input_pose( new pose::Pose(pose) );
 		set_input_pose( input_pose );   // JQX: pass the input_pose to the mover.input_pose_
 	}
 
@@ -320,16 +320,16 @@ void AntibodyModelerProtocol::finalize_setup( pose::Pose & pose ) {
 		TR << "Danger Will Robinson! Native is an impostor!" << std::endl;
 		TR << "   'native_pose' is just a copy of the 'input_pose'    " << std::endl;
 		TR << "    since you didn't sepcifiy the native pdb name"<<std::endl;
-		native_pose = new pose::Pose(pose);
+		native_pose = pose::PoseOP( new pose::Pose(pose) );
 	} else {
-		native_pose = new pose::Pose( *get_native_pose() );
+		native_pose = pose::PoseOP( new pose::Pose( *get_native_pose() ) );
 	}
 
 	pose::set_ss_from_phipsi( *native_pose ); // JQX: this is the secondary structure from the native pose
 
 	set_native_pose( native_pose ); // pass the native pose to the mover.native_pose_
 
-	ab_info_ = new AntibodyInfo(pose);
+	ab_info_ = AntibodyInfoOP( new AntibodyInfo(pose) );
 
 	pose.fold_tree( * ab_info_->get_FoldTree_AllCDRs(pose) ) ;
 	TR<<*ab_info_<<std::endl;
@@ -386,11 +386,11 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 		// call ConstraintSetMover
 		TR<<"Centroid cst_weight: "<<cst_weight_<<std::endl;
 		if(  cst_weight_ != 0.0  ) {
-			cdr_constraint_ = new simple_moves::ConstraintSetMover();
+			cdr_constraint_ = protocols::simple_moves::ConstraintSetMoverOP( new simple_moves::ConstraintSetMover() );
 			cdr_constraint_->apply( pose );
 		}
 
-		ModelCDRH3OP model_cdrh3  = new ModelCDRH3( ab_info_, loop_scorefxn_centroid_);
+		ModelCDRH3OP model_cdrh3( new ModelCDRH3( ab_info_, loop_scorefxn_centroid_) );
 		model_cdrh3->set_perturb_type(h3_perturb_type_); //legacy_perturb_ccd, ccd, kic
 		if(cter_insert_ ==false) {
 			model_cdrh3->turn_off_cter_insert();
@@ -420,12 +420,12 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 	// call ConstraintSetMover
 	TR << "Full-atom cst_weight: " << cst_weight_ << std::endl;
 	if(  cst_weight_ != 0.0  ) {
-		cdr_constraint_ = new simple_moves::ConstraintSetMover();
+		cdr_constraint_ = protocols::simple_moves::ConstraintSetMoverOP( new simple_moves::ConstraintSetMover() );
 		cdr_constraint_->apply( pose );
 	}
 
 	//if(middle_pack_min_){
-	CDRsMinPackMinOP cdrs_min_pack_min = new CDRsMinPackMin(ab_info_);
+	CDRsMinPackMinOP cdrs_min_pack_min( new CDRsMinPackMin(ab_info_) );
 	if(sc_min_) cdrs_min_pack_min->set_sc_min(true);
 	if(rt_min_) cdrs_min_pack_min->set_rt_min(true);
 	cdrs_min_pack_min -> set_turnoff_minimization(packonly_after_graft_);
@@ -434,7 +434,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 
 	// Step 2: SnugFit: relieve the clashes between L-H
 	if ( snugfit_ ) {
-		RefineBetaBarrelOP refine_beta_barrel = new RefineBetaBarrel(ab_info_, dock_scorefxn_highres_, pack_scorefxn_);
+		RefineBetaBarrelOP refine_beta_barrel( new RefineBetaBarrel(ab_info_, dock_scorefxn_highres_, pack_scorefxn_) );
 		// it has default movemap, tf, and fold_tree
 		if (!LH_repulsive_ramp_) {
 			refine_beta_barrel-> turn_off_repulsive_ramp();
@@ -451,7 +451,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 
 	// Step 3: Full Atom Relax
 	if(refine_h3_) {
-		RefineOneCDRLoopOP cdr_highres_refine_ = new RefineOneCDRLoop(ab_info_, h3_refine_type_, loop_scorefxn_highres_);
+		RefineOneCDRLoopOP cdr_highres_refine_( new RefineOneCDRLoop(ab_info_, h3_refine_type_, loop_scorefxn_highres_) );
 		cdr_highres_refine_ -> set_refine_mode(h3_refine_type_);
 		cdr_highres_refine_ -> set_h3_filter(h3_filter_);
 		cdr_highres_refine_ -> set_num_filter_tries(h3_filter_tolerance_);
@@ -492,7 +492,7 @@ void AntibodyModelerProtocol::echo_metrics_to_jd2(core::pose::Pose & pose, proto
 
 	// align pose to native pose
 	pose::Pose native_pose = *get_native_pose();
-	antibody::AntibodyInfoOP native_ab_info = new AntibodyInfo(native_pose);
+	antibody::AntibodyInfoOP native_ab_info( new AntibodyInfo(native_pose) );
 	align_to_native( pose, native_pose, ab_info_, native_ab_info );
 
 	// the specific constraint terms for output in the log file

@@ -28,8 +28,8 @@ namespace protocols {
 namespace loops {
 
 class Loop;
-typedef utility::pointer::owning_ptr< Loop > LoopOP;
-typedef utility::pointer::owning_ptr< Loop const > LoopCOP;
+typedef utility::pointer::shared_ptr< Loop > LoopOP;
+typedef utility::pointer::shared_ptr< Loop const > LoopCOP;
 
 struct SerializedLoop;
 

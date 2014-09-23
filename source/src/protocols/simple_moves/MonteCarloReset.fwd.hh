@@ -21,8 +21,8 @@ namespace protocols {
 namespace simple_moves {
 
 class MonteCarloReset;
-typedef utility::pointer::owning_ptr< MonteCarloReset >  MonteCarloResetOP;
-typedef utility::pointer::owning_ptr< MonteCarloReset const >  MonteCarloResetCOP;
+typedef utility::pointer::shared_ptr< MonteCarloReset >  MonteCarloResetOP;
+typedef utility::pointer::shared_ptr< MonteCarloReset const >  MonteCarloResetCOP;
 
 
 } // namespace moves

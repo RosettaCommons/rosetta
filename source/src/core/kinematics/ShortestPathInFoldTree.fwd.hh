@@ -30,9 +30,9 @@ class ShortestPathInFoldTree;
 
 
 // Types
-typedef  utility::pointer::access_ptr< ShortestPathInFoldTree >  ShortestPathInFoldTreeAP;
-typedef  utility::pointer::owning_ptr< ShortestPathInFoldTree >  ShortestPathInFoldTreeOP;
-typedef  utility::pointer::owning_ptr< ShortestPathInFoldTree const >  ShortestPathInFoldTreeCOP;
+typedef  utility::pointer::weak_ptr< ShortestPathInFoldTree >  ShortestPathInFoldTreeAP;
+typedef  utility::pointer::shared_ptr< ShortestPathInFoldTree >  ShortestPathInFoldTreeOP;
+typedef  utility::pointer::shared_ptr< ShortestPathInFoldTree const >  ShortestPathInFoldTreeCOP;
 
 
 } // namespace kinematics

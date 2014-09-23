@@ -27,7 +27,7 @@ namespace monte_carlo {
 namespace mover {
 
 	class DeleteMover;
-	typedef utility::pointer::owning_ptr< DeleteMover > DeleteMoverOP;
+	typedef utility::pointer::shared_ptr< DeleteMover > DeleteMoverOP;
 
 } //mover
 } //monte_carlo

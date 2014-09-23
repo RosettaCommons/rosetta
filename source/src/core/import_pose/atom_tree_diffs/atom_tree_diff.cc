@@ -113,7 +113,7 @@ void AtomTreeDiff::read_file(std::string filename){
 		std::string ref_tag= tag.substr(0, end);
 		if( scores.find("is_reference_pose") != scores.end() ) {
 			core::pose::Pose empty_pose;
-			ref_pose = new core::pose::Pose();
+			ref_pose = core::pose::PoseOP( new core::pose::Pose() );
 			core::import_pose::atom_tree_diffs::pose_from_atom_tree_diff(in_, empty_pose, *ref_pose);
 			unique_ref_poses_.push_back(ref_pose);
 			core::Size const start= ref_tag.find_first_of('_');

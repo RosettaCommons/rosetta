@@ -25,9 +25,9 @@ namespace scores {
 /// @brief forward declaration for DihedralConstraintsScore
 class DihedralConstraintsScore;
 
-typedef utility::pointer::owning_ptr<DihedralConstraintsScore>
+typedef utility::pointer::shared_ptr<DihedralConstraintsScore>
 		DihedralConstraintsScoreOP;
-typedef utility::pointer::owning_ptr<DihedralConstraintsScore const>
+typedef utility::pointer::shared_ptr<DihedralConstraintsScore const>
 		DihedralConstraintsScoreCOP;
 
 } // scores

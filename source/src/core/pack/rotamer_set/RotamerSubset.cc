@@ -238,7 +238,7 @@ RotamerSubset::drop_rotamers( utility::vector1< bool > const & rotamers_to_delet
 		rotamers_.resize( 1 );
 		rotamers_[ 1 ] = current_rotamer_copy_;
 		id_for_current_rotamer_ = 1;
-		current_rotamer_copy_ = 0;
+		current_rotamer_copy_.reset();
 	} else {
 		utility::vector1< conformation::ResidueOP > new_rotamers( rotamers_to_delete.size() - n_dropped, 0 );
 		Size count_new = 1;

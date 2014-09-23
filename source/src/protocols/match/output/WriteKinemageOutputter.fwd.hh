@@ -25,8 +25,8 @@ namespace output {
 
 class WriteKinemageOutputter;
 
-typedef utility::pointer::owning_ptr< WriteKinemageOutputter > WriteKinemageOutputterOP;
-typedef utility::pointer::owning_ptr< WriteKinemageOutputter const > WriteKinemageOutputterCOP;
+typedef utility::pointer::shared_ptr< WriteKinemageOutputter > WriteKinemageOutputterOP;
+typedef utility::pointer::shared_ptr< WriteKinemageOutputter const > WriteKinemageOutputterCOP;
 
 }
 }

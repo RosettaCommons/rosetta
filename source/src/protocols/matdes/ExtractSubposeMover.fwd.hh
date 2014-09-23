@@ -20,8 +20,8 @@ namespace matdes {
 
 class ExtractSubposeMover;
 
-typedef utility::pointer::owning_ptr< ExtractSubposeMover > ExtractSubposeMoverOP;
-typedef utility::pointer::owning_ptr< ExtractSubposeMover const > ExtractSubposeMoverCOP;
+typedef utility::pointer::shared_ptr< ExtractSubposeMover > ExtractSubposeMoverOP;
+typedef utility::pointer::shared_ptr< ExtractSubposeMover const > ExtractSubposeMoverCOP;
 
 
 } // matdes

@@ -25,8 +25,8 @@ class SymmMinimalistNode;
 class SymmMinimalistEdge;
 class SymmMinimalistInteractionGraph;
 
-typedef utility::pointer::owning_ptr< SymmMinimalistInteractionGraph > SymmMinimalistInteractionGraphOP;
-typedef utility::pointer::owning_ptr< SymmMinimalistInteractionGraph const > SymmMinimalistInteractionGraphCOP;
+typedef utility::pointer::shared_ptr< SymmMinimalistInteractionGraph > SymmMinimalistInteractionGraphOP;
+typedef utility::pointer::shared_ptr< SymmMinimalistInteractionGraph const > SymmMinimalistInteractionGraphCOP;
 
 
 }

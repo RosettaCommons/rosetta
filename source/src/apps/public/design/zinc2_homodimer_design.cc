@@ -129,7 +129,7 @@ public:
 		pdbname_base_ = pdbfilename.base();
 
 		// make symmetric pose according to symm definition file included as an option
-		protocols::simple_moves::symmetry::SetupForSymmetryMoverOP make_monomeric_input_pose_symmetrical = new protocols::simple_moves::symmetry::SetupForSymmetryMover();
+		protocols::simple_moves::symmetry::SetupForSymmetryMoverOP make_monomeric_input_pose_symmetrical( new protocols::simple_moves::symmetry::SetupForSymmetryMover() );
 		make_monomeric_input_pose_symmetrical->apply( pose );
 
 		pose.dump_pdb("sym.pdb");
@@ -172,13 +172,13 @@ public:
 		}
 
 		//will find the zincs and the coordinating residues, storing the relevant info such as restype, resnum, atom xyz's
-		protocols::metal_interface::ZincSiteFinderOP find_zinc1 = new protocols::metal_interface::ZincSiteFinder( zn1_res );
-		protocols::metal_interface::ZincSiteFinderOP find_zinc2 = new protocols::metal_interface::ZincSiteFinder( zn2_res );
+		protocols::metal_interface::ZincSiteFinderOP find_zinc1( new protocols::metal_interface::ZincSiteFinder( zn1_res ) );
+		protocols::metal_interface::ZincSiteFinderOP find_zinc2( new protocols::metal_interface::ZincSiteFinder( zn2_res ) );
 		msr1_ = find_zinc1->find_zinc_site(pose); // msr is of type utility::vector1< protocols::metal_interface::MetalSiteResidueOP >
 		msr2_ = find_zinc2->find_zinc_site(pose);
 
-		protocols::metal_interface::AddZincSiteConstraintsOP constraints_adder1 = new protocols::metal_interface::AddZincSiteConstraints( msr1_ );
-		protocols::metal_interface::AddZincSiteConstraintsOP constraints_adder2 = new protocols::metal_interface::AddZincSiteConstraints( msr2_ );
+		protocols::metal_interface::AddZincSiteConstraintsOP constraints_adder1( new protocols::metal_interface::AddZincSiteConstraints( msr1_ ) );
+		protocols::metal_interface::AddZincSiteConstraintsOP constraints_adder2( new protocols::metal_interface::AddZincSiteConstraints( msr2_ ) );
 		constraints_adder1->add_constraints( pose );
 		constraints_adder2->add_constraints( pose );
 
@@ -199,13 +199,13 @@ public:
 
 
 		//TASKFACTORY --> resfile
-		TaskFactoryOP task_factory = new TaskFactory();
-		task_factory->push_back(new operation::InitializeFromCommandline());
+		TaskFactoryOP task_factory( new TaskFactory() );
+		task_factory->push_back(TaskOperationCOP( new operation::InitializeFromCommandline() ));
 		if ( option[ OptionKeys::packing::resfile ].user() ) { // resfile enables one-sided interface design
-			task_factory->push_back( new operation::ReadResfile ); //NATAA resfile
+			task_factory->push_back( TaskOperationCOP( new operation::ReadResfile ) ); //NATAA resfile
 		}
 		//TASKFACTORY --> prevent repack
-		operation::PreventRepackingOP prevent_repack = new operation::PreventRepacking();
+		operation::PreventRepackingOP prevent_repack( new operation::PreventRepacking() );
 		TR << "Preventing repacking of residues ";
 		for(core::Size i(2); i <= 5; ++i) {
 			prevent_repack->include_residue( msr1_[i]->get_seqpos() );
@@ -215,13 +215,13 @@ public:
 		task_factory->push_back(prevent_repack);
 
 		//TASKFACTORY --> restrict to interface
-		task_factory->push_back(new protocols::toolbox::task_operations::RestrictToInterfaceOperation(1, 2));
+		task_factory->push_back(TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterfaceOperation(1, 2) ));
 		taskfactory_ = task_factory;
 
 
 		//SCOREFUNCTION --> Favor native residue
 		for ( Size i=1; i<= pose.total_residue();  ++i ) {
-			pose.add_constraint( new ResidueTypeConstraint( pose, i, basic::options::option[fav_nat_bonus].value()) );
+			pose.add_constraint( scoring::constraints::ConstraintCOP( new ResidueTypeConstraint( pose, i, basic::options::option[fav_nat_bonus].value()) ) );
 		}
 		//SCOREFUNCTION --> add constraints
 		fa_metal_scorefxn_ = get_score_function();
@@ -237,30 +237,30 @@ public:
 
 		//MOVERS --> sym_pack_mover
 		TR << "Generating sym pack mover..." << std::endl;
-		sym_pack_mover_ = new protocols::simple_moves::symmetry::SymPackRotamersMover;
+		sym_pack_mover_ = protocols::simple_moves::symmetry::SymPackRotamersMoverOP( new protocols::simple_moves::symmetry::SymPackRotamersMover );
 		sym_pack_mover_->task_factory( taskfactory_ );
 		sym_pack_mover_->score_function( fa_metal_scorefxn_ );
 
 		//MOVERS --> minmover
-		movemap_sc_ = new kinematics::MoveMap;
+		movemap_sc_ = core::kinematics::MoveMapOP( new kinematics::MoveMap );
 		movemap_sc_->set_chi( true );
 		movemap_sc_->set_bb( false );
 		movemap_sc_->set_jump( false ); //first and second jumps are to zinc from chain A
 
-		movemap_bb_ = new kinematics::MoveMap;
+		movemap_bb_ = core::kinematics::MoveMapOP( new kinematics::MoveMap );
 		movemap_bb_->set_chi( false );
 		movemap_bb_->set_bb( true );
 		movemap_bb_->set_jump( true ); //first and second jumps are to zinc from chain A
 
-		movemap_ = new kinematics::MoveMap;
+		movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap );
 		movemap_->set_chi( true );
 		movemap_->set_bb( true );
 		movemap_->set_jump( true ); //first and second jumps are to zinc from chain A
 
 
-		sym_minmover_sc_ = new protocols::simple_moves::symmetry::SymMinMover( movemap_sc_, fa_metal_scorefxn_, "dfpmin_armijo", 0.01, true );
-		sym_minmover_bb_ = new protocols::simple_moves::symmetry::SymMinMover( movemap_bb_, fa_metal_scorefxn_, "dfpmin_armijo", 0.01, true );
-		sym_minmover_ = new protocols::simple_moves::symmetry::SymMinMover( movemap_, fa_metal_scorefxn_, "dfpmin_armijo", 0.01, true );
+		sym_minmover_sc_ = protocols::simple_moves::symmetry::SymMinMoverOP( new protocols::simple_moves::symmetry::SymMinMover( movemap_sc_, fa_metal_scorefxn_, "dfpmin_armijo", 0.01, true ) );
+		sym_minmover_bb_ = protocols::simple_moves::symmetry::SymMinMoverOP( new protocols::simple_moves::symmetry::SymMinMover( movemap_bb_, fa_metal_scorefxn_, "dfpmin_armijo", 0.01, true ) );
+		sym_minmover_ = protocols::simple_moves::symmetry::SymMinMoverOP( new protocols::simple_moves::symmetry::SymMinMover( movemap_, fa_metal_scorefxn_, "dfpmin_armijo", 0.01, true ) );
 
 
 
@@ -295,7 +295,7 @@ public:
       else if (n < 1000) { n_string = "0" + ss.str(); }
       else { n_string = ss.str(); }
 
-      protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose , *fa_metal_sym_scorefxn_ , 0.6 );
+      protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose , *fa_metal_sym_scorefxn_ , 0.6 ) );
 
 			Size repackmin_it = (Size) basic::options::option[ repackmin_iterations ];
       for( Size i(1); i <= repackmin_it; ++i ) {
@@ -363,7 +363,7 @@ private:
 };
 
 
-typedef utility::pointer::owning_ptr< zinc2_homodimer_design > zinc2_homodimer_designOP;
+typedef utility::pointer::shared_ptr< zinc2_homodimer_design > zinc2_homodimer_designOP;
 
 int main( int argc, char* argv[] )
 {
@@ -375,7 +375,7 @@ int main( int argc, char* argv[] )
 
 
   devel::init(argc, argv);
-  protocols::jd2::JobDistributor::get_instance()->go(new zinc2_homodimer_design);
+  protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new zinc2_homodimer_design ));
 
   TR << "************************d**o**n**e**************************************" << std::endl;
 

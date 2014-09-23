@@ -36,7 +36,7 @@ namespace screener {
 		screening_pose_( screening_pose ),
 		moving_res_( moving_res ),
 		using_stub_( false ),
-		screening_moving_rsd_at_origin_( 0 ),
+		screening_moving_rsd_at_origin_( /* 0 */ ),
 		moving_res_base_stub_( core::kinematics::default_stub )
 	{}
 

@@ -61,7 +61,7 @@ public:
 
 
 	virtual TopologyClaimerOP clone() const {
-		return new CutBiasClaimer( *this );
+		return TopologyClaimerOP( new CutBiasClaimer( *this ) );
 	}
 
 	virtual void generate_claims( claims::DofClaims& ) {};

@@ -113,8 +113,8 @@ public:
 		value_(value),
 		tag_(tag)
 	{}
-	FilterOP clone() const { return new StubFilter( *this ); }
-	FilterOP fresh_instance() const {	return new StubFilter(); }
+	FilterOP clone() const { return FilterOP( new StubFilter( *this ) ); }
+	FilterOP fresh_instance() const {	return FilterOP( new StubFilter() ); }
 	void set( bool truth, core::Real value) { truth_ = truth; value_ = value; }
 	bool apply( core::pose::Pose const & ) const { return truth_; }
 	core::Real report_sm( core::pose::Pose const & ) const { return value_;}
@@ -127,8 +127,8 @@ public: // Yes, public - deliberately so people can easily change them, if they 
 	std::string tag_;
 };
 
-typedef utility::pointer::owning_ptr< StubFilter >  StubFilterOP;
-typedef utility::pointer::owning_ptr< StubFilter const >  StubFilterCOP;
+typedef utility::pointer::shared_ptr< StubFilter >  StubFilterOP;
+typedef utility::pointer::shared_ptr< StubFilter const >  StubFilterCOP;
 
 ///@brief A simple filter for helping to test nested classes
 /// will apply() with the given truth value,
@@ -141,8 +141,8 @@ public:
 		pos_(1),
 		tag_(tag)
 	{}
-	FilterOP clone() const { return new StubMultiFilter( *this ); }
-	FilterOP fresh_instance() const {	return new StubMultiFilter(); }
+	FilterOP clone() const { return FilterOP( new StubMultiFilter( *this ) ); }
+	FilterOP fresh_instance() const {	return FilterOP( new StubMultiFilter() ); }
 	void set( utility::vector1<core::Real> const & values, bool truth=true, std::string tag="") { values_ = values, truth_ = truth; tag_ = tag; }
 	void push_back( core::Real value ) { values_.push_back( value); }
 	void set_pos( core::Size pos = 1) { pos_ = pos; }
@@ -166,7 +166,7 @@ public: // Yes, public - deliberately so people can easily change them, if they 
 	utility::vector1<core::Real> values_;
 };
 
-typedef utility::pointer::owning_ptr< StubMultiFilter >  StubMultiFilterOP;
-typedef utility::pointer::owning_ptr< StubMultiFilter const >  StubMultiFilterCOP;
+typedef utility::pointer::shared_ptr< StubMultiFilter >  StubMultiFilterOP;
+typedef utility::pointer::shared_ptr< StubMultiFilter const >  StubMultiFilterCOP;
 
 #endif

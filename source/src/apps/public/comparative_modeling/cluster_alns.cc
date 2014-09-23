@@ -25,7 +25,7 @@ int main( int argc, char * argv [] ) {
 
 	using namespace protocols::comparative_modeling;
 	devel::init(argc, argv);
-	AlignmentClusteringOP cluster = new AlignmentClustering();
+	AlignmentClusteringOP cluster( new AlignmentClustering() );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

@@ -83,7 +83,7 @@ private:
 
 };
 
-typedef utility::pointer::owning_ptr< Interpolator > InterpolatorOP;
+typedef utility::pointer::shared_ptr< Interpolator > InterpolatorOP;
 
 } // end namespace spline
 } // end namespace interpolation

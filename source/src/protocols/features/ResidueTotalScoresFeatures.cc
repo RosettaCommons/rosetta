@@ -111,9 +111,9 @@ ResidueTotalScoresFeatures::write_residue_total_scores_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt());
-	Column resNum("resNum", new DbInteger());
-	Column score_value("score_value", new DbReal());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column resNum("resNum", DbDataTypeOP( new DbInteger() ));
+	Column score_value("score_value", DbDataTypeOP( new DbReal() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -153,7 +153,7 @@ ResidueTotalScoresFeatures::parse_my_tag(
 ) {
 	if(tag->hasOption("scorefxn")){
 		string const scorefxn_name(tag->getOption<string>("scorefxn"));
-		scfxn_ = data.get<ScoreFunction*>("scorefxns", scorefxn_name);
+		scfxn_ = data.get_ptr<ScoreFunction>("scorefxns", scorefxn_name);
 	} else {
 		stringstream error_msg;
 		error_msg

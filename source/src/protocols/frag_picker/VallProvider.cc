@@ -122,7 +122,7 @@ core::sequence::SequenceProfileOP VallProvider::cache_profile(VallChunkOP source
 	cached_profile_id_.assign(key);
 
 	if (cached_profile_ == 0)
-		cached_profile_ = new core::sequence::SequenceProfile();
+		cached_profile_ = core::sequence::SequenceProfileOP( new core::sequence::SequenceProfile() );
 	cached_profile_->profile(prof);
 	cached_profile_->sequence(source_chunk->get_sequence());
 
@@ -183,12 +183,12 @@ Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Siz
 	}
 	std::string prior_id = "";
 	Size prior_resi = 0;
-	VallChunkOP current_section = new VallChunk(get_self_weak_ptr());
+	VallChunkOP current_section( new VallChunk(get_self_weak_ptr()) );
 	std::string line;
 	getline(stream, line);
 	while(line[0] == '#') getline(stream, line);
 
-	VallResidueOP firstRes = new VallResidue();
+	VallResidueOP firstRes( new VallResidue() );
 	firstRes->key(1);
 
 	//Decides if vall is in the old nnmake format
@@ -215,7 +215,7 @@ Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Siz
 		// If endline is 0, just read to the end of the file
 		if( endline != 0 && n_lines > endline ) break;
 
-		VallResidueOP current_residue = new VallResidue();
+		VallResidueOP current_residue( new VallResidue() );
 
 		if (line.length() > 300)
 			current_residue->fill_from_string_version1(line);
@@ -238,7 +238,7 @@ Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Siz
 					<< " having " << current_section->size() << " residues "
 					<< " at index " << size() << ". The largest chunk's size is: "
 					<<largest_chunk_size_<<std::endl;
-			current_section = new VallChunk(get_self_weak_ptr());
+			current_section = VallChunkOP( new VallChunk(get_self_weak_ptr()) );
 			prior_id = current_residue->id();
 		}
 		prior_resi = current_residue->resi();
@@ -267,7 +267,7 @@ Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Siz
 
 	// create cached pose
 	for (Size i = 1; i <= largest_chunk_size_; i++) poly_A_seq_ += "A";
-	cached_pose_ = new core::pose::Pose();
+	cached_pose_ = core::pose::PoseOP( new core::pose::Pose() );
 	core::pose::make_pose_from_sequence(*cached_pose_, poly_A_seq_,
 			*(chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard")));
 	TR.flush();

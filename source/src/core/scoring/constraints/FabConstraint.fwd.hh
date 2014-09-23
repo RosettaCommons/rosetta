@@ -25,8 +25,8 @@ namespace core {
             
             class FabConstraint;
             
-            typedef utility::pointer::owning_ptr< FabConstraint > FabConstraintOP;
-            typedef utility::pointer::owning_ptr< FabConstraint const > FabConstraintCOP;
+            typedef utility::pointer::shared_ptr< FabConstraint > FabConstraintOP;
+            typedef utility::pointer::shared_ptr< FabConstraint const > FabConstraintCOP;
             
         }
     }

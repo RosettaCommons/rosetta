@@ -33,7 +33,7 @@ BindingSiteConstraintCreator::~BindingSiteConstraintCreator() {}
 
 core::scoring::constraints::ConstraintOP
 BindingSiteConstraintCreator::create_constraint() const {
-	return new BindingSiteConstraint;
+	return core::scoring::constraints::ConstraintOP( new BindingSiteConstraint );
 }
 
 std::string BindingSiteConstraintCreator::keyname() const
@@ -47,7 +47,7 @@ SequenceCoupling1BDConstraintCreator::~SequenceCoupling1BDConstraintCreator() {}
 core::scoring::constraints::ConstraintOP
 SequenceCoupling1BDConstraintCreator::create_constraint() const
 {
-	return new SequenceCoupling1BDConstraint;
+	return core::scoring::constraints::ConstraintOP( new SequenceCoupling1BDConstraint );
 }
 
 std::string
@@ -61,7 +61,7 @@ SequenceCouplingConstraintCreator::~SequenceCouplingConstraintCreator() {}
 core::scoring::constraints::ConstraintOP
 SequenceCouplingConstraintCreator::create_constraint() const
 {
-	return new SequenceCouplingConstraint;
+	return core::scoring::constraints::ConstraintOP( new SequenceCouplingConstraint );
 }
 
 std::string
@@ -76,7 +76,7 @@ NamedAtomPairConstraintCreator::~NamedAtomPairConstraintCreator() {}
 core::scoring::constraints::ConstraintOP
 NamedAtomPairConstraintCreator::create_constraint() const
 {
-	return new core::scoring::constraints::NamedAtomPairConstraint( core::id::NamedAtomID(), core::id::NamedAtomID(), NULL);
+	return core::scoring::constraints::ConstraintOP( new core::scoring::constraints::NamedAtomPairConstraint( core::id::NamedAtomID(), core::id::NamedAtomID(), NULL) );
 }
 
 std::string

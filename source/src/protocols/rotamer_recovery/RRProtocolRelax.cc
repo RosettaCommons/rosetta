@@ -121,7 +121,7 @@ RRProtocolRelax::run(
 
 	Pose working_pose = pose; // deep copy
 	RelaxProtocolBaseOP relax = generate_relax_from_cmd();
-	MoveMapOP movemap = new MoveMap();	
+	MoveMapOP movemap( new MoveMap() );	
 
 	if (cartesian_)
 		relax->cartesian(true);

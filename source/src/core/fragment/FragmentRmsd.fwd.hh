@@ -19,8 +19,8 @@ namespace core {
 namespace fragment {
 
 class FragmentRmsd;
-typedef utility::pointer::owning_ptr<FragmentRmsd> FragmentRmsdOP;
-typedef utility::pointer::owning_ptr<FragmentRmsd const> FragmentRmsdCOP;
+typedef utility::pointer::shared_ptr<FragmentRmsd> FragmentRmsdOP;
+typedef utility::pointer::shared_ptr<FragmentRmsd const> FragmentRmsdCOP;
 
 }  // namespace fragment
 }  // namespace core

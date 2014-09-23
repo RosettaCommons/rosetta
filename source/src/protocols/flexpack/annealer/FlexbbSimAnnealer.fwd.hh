@@ -22,7 +22,7 @@ namespace annealer {
 
 class FlexbbSimAnnealer;
 
-typedef utility::pointer::owning_ptr< FlexbbSimAnnealer > FlexbbSimAnnealerOP;
+typedef utility::pointer::shared_ptr< FlexbbSimAnnealer > FlexbbSimAnnealerOP;
 
 }
 }

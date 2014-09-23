@@ -29,7 +29,7 @@ namespace features {
 TaskOperationFeaturesCreator::TaskOperationFeaturesCreator() {}
 TaskOperationFeaturesCreator::~TaskOperationFeaturesCreator() {}
 FeaturesReporterOP TaskOperationFeaturesCreator::create_features_reporter() const {
-	return new TaskOperationFeatures;
+	return FeaturesReporterOP( new TaskOperationFeatures );
 }
 
 std::string TaskOperationFeaturesCreator::type_name() const {

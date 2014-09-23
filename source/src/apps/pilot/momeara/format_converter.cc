@@ -181,7 +181,7 @@ main( int argc, char* argv [] ) {
 		// options, random initialization
 		devel::init( argc, argv );
 
-		protocols::moves::NullMoverOP mover(new protocols::moves::NullMover);
+		protocols::moves::NullMoverOP mover( new protocols::moves::NullMover );
 
 		// start the job
 		protocols::jd2::JobDistributor::get_instance()->go( mover );

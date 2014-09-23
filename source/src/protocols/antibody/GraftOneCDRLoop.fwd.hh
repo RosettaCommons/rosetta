@@ -20,8 +20,8 @@ namespace protocols {
 namespace antibody {
 
 class GraftOneCDRLoop;
-typedef utility::pointer::owning_ptr< GraftOneCDRLoop > GraftOneCDRLoopOP;
-typedef utility::pointer::owning_ptr<const GraftOneCDRLoop> GraftOneCDRLoopCOP;
+typedef utility::pointer::shared_ptr< GraftOneCDRLoop > GraftOneCDRLoopOP;
+typedef utility::pointer::shared_ptr<const GraftOneCDRLoop> GraftOneCDRLoopCOP;
 } // antibody
 } // protocols
 

@@ -238,11 +238,11 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 	for (it=contact_types_.begin(); it!=contact_types_.end(); it++) {
 		if (*it == CEN) {
 			std::pair<Real,ContactType> p(0,*it);
-			contact_counts[p] = new ContactCounts();
+			contact_counts[p] = utility::pointer::shared_ptr<class protocols::frag_picker::ContactCounts>( new ContactCounts() );
 		} else {
 			for (Size i=1; i<=contacts_dist_cutoffs_squared_.size();++i) {
 				std::pair<Real,ContactType> p(contacts_dist_cutoffs_squared_[i],*it);
-				contact_counts[p] = new ContactCounts();
+				contact_counts[p] = utility::pointer::shared_ptr<class protocols::frag_picker::ContactCounts>( new ContactCounts() );
 			}
 		}
 	}
@@ -505,7 +505,7 @@ void FragmentPicker::nonlocal_pairs_at_positions( utility::vector1<Size> const &
 										has_good_constraint = true;
 									}
 								}
-								if (dist_squared <= cutoff_dist_squared) contacts.push_back(new Contact( qpi, qpj, dist_squared, *it ));
+								if (dist_squared <= cutoff_dist_squared) contacts.push_back(utility::pointer::shared_ptr<class protocols::frag_picker::Contact>( new Contact( qpi, qpj, dist_squared, *it ) ));
 							}
 							qpj++;
 						}
@@ -513,7 +513,7 @@ void FragmentPicker::nonlocal_pairs_at_positions( utility::vector1<Size> const &
 					}
 					if (!skip && contacts.size() > 0 && (!has_constraints || has_good_constraint)) {
 						// save all fragment pairs with contacts
-						nonlocal::NonlocalPairOP pair = new nonlocal::NonlocalPair( qPosi, qPosj, outi[fi], outj[fj], fi, fj, contacts );
+						nonlocal::NonlocalPairOP pair( new nonlocal::NonlocalPair( qPosi, qPosj, outi[fi], outj[fj], fi, fj, contacts ) );
 						pairs.push_back(pair);
 					} // contact
 				} // fi
@@ -537,11 +537,11 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 	bool has_native = false;
 	core::pose::PoseOP nativePose;
 	if (option[in::file::native].user()) {
-		nativePose = new core::pose::Pose;
+		nativePose = core::pose::PoseOP( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*nativePose, option[in::file::native]());
 		has_native = true;
 	} else if (option[in::file::s].user()) {
-		nativePose = new core::pose::Pose;
+		nativePose = core::pose::PoseOP( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*nativePose, option[in::file::s]()[1]);
 		has_native = true;
 	}
@@ -627,11 +627,11 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 	for (it=contact_types_.begin(); it!=contact_types_.end(); it++) {
 		if (*it == CEN) {
 			std::pair<Real,ContactType> p(0,*it);
-			contact_counts[p] = new ContactCounts();
+			contact_counts[p] = utility::pointer::shared_ptr<class protocols::frag_picker::ContactCounts>( new ContactCounts() );
 		} else {
 			for (Size i=1; i<=contacts_dist_cutoffs_squared_.size();++i) {
 				std::pair<Real,ContactType> p(contacts_dist_cutoffs_squared_[i],*it);
-				contact_counts[p] = new ContactCounts();
+				contact_counts[p] = utility::pointer::shared_ptr<class protocols::frag_picker::ContactCounts>( new ContactCounts() );
 			}
 		}
 	}
@@ -1019,7 +1019,7 @@ void FragmentPicker::pick_chunk_candidates(utility::vector1<VallChunkOP> const &
 				if ( iPos > size_of_query() - fragment_size + 1 ) continue;
 				// split chunk into fragment candidates and score them
 				for (Size j = 1; j <= chunk->size() - fragment_size + 1; j++) {
-					FragmentCandidateOP f = new FragmentCandidate(iPos, j, chunk, fragment_size);
+					FragmentCandidateOP f( new FragmentCandidate(iPos, j, chunk, fragment_size) );
 					if (scores_[index]->score_fragment_from_cache(f, empty_map)) {
 						std::pair<FragmentCandidateOP,scores::FragmentScoreMapOP> p(f,empty_map);
 						if(sink->add(p)) empty_map  = scores_[index]->create_empty_map();
@@ -1117,7 +1117,7 @@ void FragmentPicker::pick_candidates() {
 
 				// split chunk into fragment candidates and score them
 				for (Size j = 1; j <= chunk->size() - fragment_size + 1; ++j) {
-					FragmentCandidateOP f = new FragmentCandidate(iPos, j, chunk, fragment_size);
+					FragmentCandidateOP f( new FragmentCandidate(iPos, j, chunk, fragment_size) );
 					if (scores_[1]->score_fragment_from_cache(f, empty_map)) {
 						std::pair<FragmentCandidateOP,scores::FragmentScoreMapOP> p(f,empty_map);
 						if(sink->add(p)) empty_map  = scores_[1]->create_empty_map();
@@ -1191,8 +1191,7 @@ void FragmentPicker::read_ss_file(std::string const & file_name,
 void FragmentPicker::read_psipred_ss2(std::string const & file_name,
 		std::string prediction_name) {
 
-	core::fragment::SecondaryStructureOP ss_profile =
-			new core::fragment::SecondaryStructure();
+	core::fragment::SecondaryStructureOP ss_profile( new core::fragment::SecondaryStructure() );
 	ss_profile->read_psipred_ss2(file_name);
 
 	std::string query_ss_as_string;
@@ -1206,8 +1205,7 @@ void FragmentPicker::read_psipred_ss2(std::string const & file_name,
 void FragmentPicker::read_talos_ss(std::string const & file_name,
 		std::string prediction_name) {
 
-	core::fragment::SecondaryStructureOP ss_profile =
-			new core::fragment::SecondaryStructure();
+	core::fragment::SecondaryStructureOP ss_profile( new core::fragment::SecondaryStructure() );
 	ss_profile->read_talos_ss(file_name);
 	//TALOS files can be shortened if there is no data at end of sequence. Fill up with 1/3 1/3 1/3 propensities until end is reached
 	ss_profile->extend(query_profile_->length());
@@ -1281,8 +1279,7 @@ void FragmentPicker::read_spine_x(std::string const & file_name) {
 void FragmentPicker::add_query_ss(std::string query_secondary,
 		std::string prediction_name) {
 
-	core::fragment::SecondaryStructureOP ss_profile =
-			new core::fragment::SecondaryStructure();
+	core::fragment::SecondaryStructureOP ss_profile( new core::fragment::SecondaryStructure() );
 	ss_profile->extend(query_secondary.length());
 
 	for (Size i = 1; i <= query_secondary.length(); ++i) {
@@ -1393,7 +1390,7 @@ void FragmentPicker::pick_candidates(Size i_pos,Size frag_len) {
 
 		// split chunk into fragment candidates and score them
 		for (Size j = 1; j <= chunk->size() - frag_len + 1; j++) {
-			FragmentCandidateOP f = new FragmentCandidate(i_pos, j,chunk, frag_len);
+			FragmentCandidateOP f( new FragmentCandidate(i_pos, j,chunk, frag_len) );
 			if (scores_[1]->score_fragment(f, empty_map)) {
 				scores::FragmentScoreMapOP new_map = empty_map->clone();
 				std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> p(f, new_map);
@@ -1416,7 +1413,7 @@ void FragmentPicker::parse_command_line() {
 #endif
 	// score with multiple threads
 	while (max_threads_ > scores_.size())
-		scores_.push_back(new scores::FragmentScoreManager());
+		scores_.push_back(utility::pointer::shared_ptr<class protocols::frag_picker::scores::FragmentScoreManager>( new scores::FragmentScoreManager() ));
 	while (max_threads_ > candidates_sinks_.size()) {
 		CandidatesSink storage;
 		candidates_sinks_.push_back(storage);
@@ -1424,7 +1421,7 @@ void FragmentPicker::parse_command_line() {
 
 	//## -------- setup query profile
 	if (option[in::file::checkpoint].user()) {
-		core::sequence::SequenceProfileOP q_prof(new core::sequence::SequenceProfile);
+		core::sequence::SequenceProfileOP q_prof( new core::sequence::SequenceProfile );
 		tr.Info << "reading a query profile from: "
 			<< option[in::file::checkpoint]() << std::endl;
 		q_prof->read_from_checkpoint(option[in::file::checkpoint]());
@@ -1434,7 +1431,7 @@ void FragmentPicker::parse_command_line() {
 	}
 	//## -------- setup query profile : legacy blast's binary checkpoint file
 	if (option[in::file::binary_chk].user()) {
-		core::sequence::SequenceProfileOP q_prof(new core::sequence::SequenceProfile);
+		core::sequence::SequenceProfileOP q_prof( new core::sequence::SequenceProfile );
 		tr.Info << "reading a query profile from: "
 			<< option[in::file::binary_chk]() << std::endl;
 		q_prof->read_from_binary_chk(option[in::file::binary_chk]());
@@ -1443,7 +1440,7 @@ void FragmentPicker::parse_command_line() {
 			<< get_query_seq_string() << std::endl;
 	}
 	if (option[in::file::pssm].user()) {
-		core::sequence::SequenceProfileOP q_prof(new core::sequence::SequenceProfile);
+		core::sequence::SequenceProfileOP q_prof( new core::sequence::SequenceProfile );
 		tr.Info << "reading a query profile from: "
 			<< option[in::file::pssm]()[1] << std::endl;
 		q_prof->read_from_file(option[in::file::pssm]()[1] );
@@ -1482,7 +1479,7 @@ void FragmentPicker::parse_command_line() {
 
 	//---------- setup chunk filters
 	if (option[frags::allowed_pdb].user()) {
-		AllowPdbIdFilterOP allow = new AllowPdbIdFilter();
+		AllowPdbIdFilterOP allow( new AllowPdbIdFilter() );
 		allow->load_pdb_id_from_file(option[frags::allowed_pdb]());
 		add_chunk_filter(allow);
 		tr.Info << "Allowed PDB chains:\n";
@@ -1490,7 +1487,7 @@ void FragmentPicker::parse_command_line() {
 	}
 
 	if (option[frags::denied_pdb].user()) {
-		DenyPdbIdFilterOP deny = new DenyPdbIdFilter();
+		DenyPdbIdFilterOP deny( new DenyPdbIdFilter() );
 		deny->load_pdb_id_from_file(option[frags::denied_pdb]());
 		add_chunk_filter(deny);
 		tr.Info << "Excluded PDBs:\n";
@@ -1547,12 +1544,12 @@ void FragmentPicker::parse_command_line() {
 	tr.Info << "Creating fragment scoring scheme for the selection step" << std::endl;
 	FragmentScoreManagerOP selection_scoring;
 	if (option[frags::picking::selecting_scorefxn].user()) {
-		selection_scoring  = new FragmentScoreManager();
+		selection_scoring = FragmentScoreManagerOP( new FragmentScoreManager() );
 		selection_scoring->create_scores(option[frags::picking::selecting_scorefxn](), get_self_ptr());
-		selector_ = new CustomScoreSelector(n_frags_, selection_scoring);
+		selector_ = FragmentSelectingRuleOP( new CustomScoreSelector(n_frags_, selection_scoring) );
 	} else {
 		// note: The selector is based on the first score manager so the score managers have to have the same scoring scheme! -dk
-		selector_ = new BestTotalScoreSelector(n_frags_, get_score_manager());
+		selector_ = FragmentSelectingRuleOP( new BestTotalScoreSelector(n_frags_, get_score_manager()) );
 	}
 
 	//-------- collector & selector set up
@@ -1564,15 +1561,15 @@ void FragmentPicker::parse_command_line() {
 	} else {
 		if (option[frags::keep_all_protocol].user()) {
 			for (Size i = 1; i <= frag_sizes_.size(); ++i) {
-				CandidatesCollectorOP collector = new GrabAllCollector(size_of_query());
+				CandidatesCollectorOP collector( new GrabAllCollector(size_of_query()) );
 				set_candidates_collector(frag_sizes_[i], collector);
 				tr.Info << "Collector for fragment size: " << frag_sizes_[i] << " set to: GrabAllCollector" << std::endl;
 			}
 		} else {
 			for (Size i = 1; i <= frag_sizes_.size(); ++i) {
 				for (Size j = 0; j <= max_threads_; ++j) {  // 0 for merged collector
-					CandidatesCollectorOP collector = new BoundedCollector<CompareTotalScore> (size_of_query(), n_candidates_,
-						comparator,get_score_manager()->count_components());
+					CandidatesCollectorOP collector( new BoundedCollector<CompareTotalScore> (size_of_query(), n_candidates_,
+						comparator,get_score_manager()->count_components()) );
 					set_candidates_collector(frag_sizes_[i], collector, j);
 				}
 				tr.Info << "Collector for fragment size: " << frag_sizes_[i] << " set to: BoundedCollector" << std::endl;
@@ -1611,7 +1608,7 @@ void FragmentPicker::parse_command_line() {
 	for (Size i = 1; i <= contact_types.size(); ++i) {
 		contact_types_.insert(contact_type(contact_types[i]));
 		if (contact_type(contact_types[i]) == CEN)
-			sidechain_contact_dist_cutoff_ = new SidechainContactDistCutoff( option[ frags::contacts::centroid_distance_scale_factor ]() );
+			sidechain_contact_dist_cutoff_ = SidechainContactDistCutoffOP( new SidechainContactDistCutoff( option[ frags::contacts::centroid_distance_scale_factor ]() ) );
 	}
 	// sequence separation
 	contacts_min_seq_sep_ = option[ frags::contacts::min_seq_sep ](); // j>=i+contacts_min_seq_sep_
@@ -1639,7 +1636,7 @@ void FragmentPicker::set_query_seq(core::sequence::SequenceProfileOP query_seque
 /// @brief sets the query sequence
 void FragmentPicker::set_query_seq(std::string & query_sequence) {
 	if (query_profile_ == 0) {
-		query_profile_ = new core::sequence::SequenceProfile();
+		query_profile_ = core::sequence::SequenceProfileOP( new core::sequence::SequenceProfile() );
 		tr.Warning << "CAUTION: No sequence profile supplied. Profile-dependant options/scoring will not work." << std::endl;
 	}
 	query_profile_->sequence(query_sequence);
@@ -1659,34 +1656,34 @@ void FragmentPicker::set_up_ss_abego_quota() {
 	utility::vector1<Real> scoring_weights = scores_[1]->get_weights();
 	for (Size i = 1; i <= scores_[1]->count_components(); ++i) {
 		ABEGO_SS_ScoreOP s0 =
-			dynamic_cast<ABEGO_SS_Score*> (scores_[1]->get_component(i).get());
+			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::ABEGO_SS_Score > ( scores_[1]->get_component(i) );
 		if (s0 != 0) {
 			components.push_back( i );
 			weights.push_back( scoring_weights[s0->get_id()] );
 		}
 		ProfileScoreL1OP s1 =
-			dynamic_cast<ProfileScoreL1*> (scores_[1]->get_component(i).get());
+			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::ProfileScoreL1 > ( scores_[1]->get_component(i) );
 		if (s1 != 0) {
 			components.push_back( i );
 			weights.push_back( scoring_weights[s1->get_id()] );
 		}
 
 		RamaScoreOP s2 =
-			dynamic_cast<RamaScore*> (scores_[1]->get_component(i).get());
+			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::RamaScore > ( scores_[1]->get_component(i) );
 		if (s2 != 0) {
 			components.push_back( i );
 			weights.push_back( scoring_weights[s2->get_id()] );
 		}
 
 		CSScoreOP s3 =
-			dynamic_cast<CSScore*> (scores_[1]->get_component(i).get());
+			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::CSScore > ( scores_[1]->get_component(i) );
 		if (s3 != 0) {
 			components.push_back( i );
 			weights.push_back( scoring_weights[s3->get_id()] );
 		}
 
 		SecondarySimilarityOP s4 =
-			dynamic_cast<SecondarySimilarity*> (scores_[1]->get_component(i).get());
+			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::SecondarySimilarity > ( scores_[1]->get_component(i) );
 		if (s4 != 0) {
 			components.push_back( i );
 			weights.push_back( scoring_weights[s4->get_id()] );
@@ -1701,7 +1698,7 @@ void FragmentPicker::set_up_ss_abego_quota() {
 	Size buffer_factor = 5;
 	for(Size f=1;f<=frag_sizes_.size();f++) {
 		for (Size j = 0; j <= max_threads_; ++j) { // 0 for the merged collector
-			quota::QuotaCollectorOP collector = new quota::QuotaCollector( size_of_query(), frag_sizes_[f] );
+			quota::QuotaCollectorOP collector( new quota::QuotaCollector( size_of_query(), frag_sizes_[f] ) );
 			set_candidates_collector(frag_sizes_[f],collector, j);
 		}
 		Size middle = frag_sizes_[f] / 2 + 1;
@@ -1712,9 +1709,9 @@ void FragmentPicker::set_up_ss_abego_quota() {
 				Real prob = q_config.probability(j+middle-1,i);
 				for (Size k = 0; k <= max_threads_; ++k) {  // 0 for the merged collector
 					CandidatesCollectorOP storage = get_candidates_collector(frag_sizes_[f], k);
-					quota::QuotaCollectorOP collector = dynamic_cast<quota::QuotaCollector*> (storage());
-					quota::QuotaPoolOP p = new quota::ABEGO_SS_Pool(n_candidates_,q_config.get_pool_name(i),
-							q_config.get_pool_bins((i)),components,weights,prob,scores_[1]->count_components(),buffer_factor);
+					quota::QuotaCollectorOP collector = utility::pointer::dynamic_pointer_cast< quota::QuotaCollector > ( storage );
+					quota::QuotaPoolOP p( new quota::ABEGO_SS_Pool(n_candidates_,q_config.get_pool_name(i),
+							q_config.get_pool_bins((i)),components,weights,prob,scores_[1]->count_components(),buffer_factor) );
 					collector->add_pool(j,p);
 				}
 			}
@@ -1737,7 +1734,7 @@ void FragmentPicker::set_up_quota_nnmake_style() {
 	utility::vector1<Real> scoring_weights = scores_[1]->get_weights();
 	for (Size i = 1; i <= scores_[1]->count_components(); ++i) {
 		ProfileScoreL1OP s1 =
-			dynamic_cast<ProfileScoreL1*> (scores_[1]->get_component(i).get());
+			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::ProfileScoreL1 > ( scores_[1]->get_component(i) );
 		if (s1 != 0) {
 			components.push_back( i );
 			weights.push_back( scoring_weights[s1->get_id()] );
@@ -1752,19 +1749,19 @@ void FragmentPicker::set_up_quota_nnmake_style() {
 		}
 *********/
 		CSScoreOP s3 =
-			dynamic_cast<CSScore*> (scores_[1]->get_component(i).get());
+			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::CSScore > ( scores_[1]->get_component(i) );
 		if (s3 != 0) {
 			components.push_back( i );
 			weights.push_back( scoring_weights[s3->get_id()] );
 		}
 		ABEGO_SS_ScoreOP s4 =
-			dynamic_cast<ABEGO_SS_Score*> (scores_[1]->get_component(i).get());
+			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::ABEGO_SS_Score > ( scores_[1]->get_component(i) );
 		if (s4 != 0) {
 			components.push_back( i );
 			weights.push_back( scoring_weights[s4->get_id()] );
 		}
 		TorsionBinSimilarityOP s5 =
-			dynamic_cast<TorsionBinSimilarity*> (scores_[1]->get_component(i).get());
+			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::TorsionBinSimilarity > ( scores_[1]->get_component(i) );
 		if (s5 != 0) {
 			components.push_back( i );
 			weights.push_back( scoring_weights[s5->get_id()] );
@@ -1783,13 +1780,13 @@ void FragmentPicker::set_up_quota_nnmake_style() {
 
 	for(Size f=1;f<=frag_sizes_.size();f++) {
 		for (Size j = 0; j <= max_threads_; ++j) { // 0 for the merged collector
-			quota::QuotaCollectorOP collector = new quota::QuotaCollector( size_of_query(), frag_sizes_[f] );
+			quota::QuotaCollectorOP collector( new quota::QuotaCollector( size_of_query(), frag_sizes_[f] ) );
 			set_candidates_collector(frag_sizes_[f], collector, j);
 		}
 // --------- This part puts RamaScore into quota scoring; each Rama is based on a certain SS prediction and this part of the code
 // --------- dispatches each Rama into a proper pool
 		for (Size i = 1; i <= scores_[1]->count_components(); ++i) {
-			RamaScoreOP sr = dynamic_cast<RamaScore*> (scores_[1]->get_component(i).get());
+			RamaScoreOP sr = utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::RamaScore > ( scores_[1]->get_component(i) );
 			if (sr != 0) {
 				std::string & name = sr->get_prediction_name();
 				if( ! q_config.is_valid_quota_pool_name( name ) ) continue;
@@ -1804,7 +1801,7 @@ void FragmentPicker::set_up_quota_nnmake_style() {
 
 // Create secondary structure pools (if any)
 		for (Size i = 1; i <= scores_[1]->count_components(); ++i) {
-			SecondarySimilarityOP ss = dynamic_cast<SecondarySimilarity*> (scores_[1]->get_component(i).get());
+			SecondarySimilarityOP ss = utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::SecondarySimilarity > ( scores_[1]->get_component(i) );
 
 		//PartialSecondarySimilarity is a variant of SecondarySimilarity, this means they're not compatible
 		//So what is it compatible with???
@@ -1827,7 +1824,7 @@ void FragmentPicker::set_up_quota_nnmake_style() {
 
 				for (Size j = 0; j <= max_threads_; ++j) { // 0 for the merged collector
 					CandidatesCollectorOP storage = get_candidates_collector(frag_sizes_[f], j);
-					quota::QuotaCollectorOP collector = dynamic_cast<quota::QuotaCollector*> (storage());
+					quota::QuotaCollectorOP collector = utility::pointer::dynamic_pointer_cast< quota::QuotaCollector > ( storage );
 
 					core::fragment::SecondaryStructureOP ss_prediction( get_query_ss( name ) );
 					if( ! ss_prediction ) {
@@ -1852,12 +1849,12 @@ void FragmentPicker::parse_quota_command_line() {
 }
 
 void FragmentPicker::read_vall( utility::vector1< std::string > const & fns ) {
-	chunks_ = new VallProvider();
+	chunks_ = VallProviderOP( new VallProvider() );
 	chunks_->vallChunksFromLibraries(fns);
 }
 
 void FragmentPicker::read_vall( std::string const & fn ) {
-	chunks_ = new VallProvider();
+	chunks_ = VallProviderOP( new VallProvider() );
 	chunks_->vallChunksFromLibrary(fn);
 }
 
@@ -1926,7 +1923,7 @@ utility::vector1<ConstantLengthFragSetOP> FragmentPicker::getFragSet(int residue
 	// Loop over various sizes of fragments
 	for (Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize) {
 
-		ConstantLengthFragSetOP myFragSet = new ConstantLengthFragSet();
+		ConstantLengthFragSetOP myFragSet( new ConstantLengthFragSet() );
 
 		Size fragment_size = frag_sizes_[iFragSize];
 		CandidatesCollectorOP storage = get_candidates_collector(fragment_size);
@@ -1946,7 +1943,7 @@ utility::vector1<ConstantLengthFragSetOP> FragmentPicker::getFragSet(int residue
 			 Therefore,  I think this is the connection between Pose and Fragment File. In design mode,
 			 we do not have this, therefore we just add an incremented index for each qPos
 			*/
-			FrameOP frame = new Frame(residueInPose_++);
+			FrameOP frame( new Frame(residueInPose_++) );
 
 			for (Size fi = 1; fi <= out.size(); ++fi) {
 
@@ -1964,9 +1961,9 @@ utility::vector1<ConstantLengthFragSetOP> FragmentPicker::getFragSet(int residue
 							Real omega        = r->omega();
 
 							if (i == 1){
-								current_fragment = new AnnotatedFragData( pdbid, index );
+								current_fragment = FragDataOP( new AnnotatedFragData( pdbid, index ) );
 							}
-							utility::pointer::owning_ptr< BBTorsionSRFD > res_torsions( new BBTorsionSRFD(3,ss,aa) ); // 3 protein torsions
+							utility::pointer::shared_ptr< BBTorsionSRFD > res_torsions( new BBTorsionSRFD(3,ss,aa) ); // 3 protein torsions
 							res_torsions->set_torsion   ( 1, phi   ); // ugly numbers 1-3, but pose.set_phi also uses explicit numbers
 							res_torsions->set_torsion   ( 2, psi   );
 							res_torsions->set_torsion   ( 3, omega );

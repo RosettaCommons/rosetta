@@ -132,7 +132,7 @@ static thread_local basic::Tracer TR( "protocols.looprelax.FragmentPerturber" );
 			fragment_residue = fragment->get_residue(frag_pos);
 			//dynamically cast the base class fragment data pointer to the specialized BBTorsion subtype
 			//(dynamic cast required, since different fragment types can exist in parallel at runtime)
-			fragment_data = core::fragment::BBTorsionSRFDCOP(dynamic_cast<core::fragment::BBTorsionSRFD const*>(fragment_residue.get()));
+			fragment_data = core::fragment::BBTorsionSRFDCOP(utility::pointer::dynamic_pointer_cast< core::fragment::BBTorsionSRFD const > ( fragment_residue ));
 			if (fragment_data) {
 				//if the dynamic cast was successful, extract backbone torsion angles
 				phi = fragment_data->torsion(1);

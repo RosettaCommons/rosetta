@@ -21,8 +21,8 @@ namespace dna {
 class DnaPosition;
 
 class DnaChains;
-typedef utility::pointer::owning_ptr< DnaChains > DnaChainsOP;
-typedef utility::pointer::owning_ptr< DnaChains const > DnaChainsCOP;
+typedef utility::pointer::shared_ptr< DnaChains > DnaChainsOP;
+typedef utility::pointer::shared_ptr< DnaChains const > DnaChainsCOP;
 
 } // namespace dna
 } // namespace protocols

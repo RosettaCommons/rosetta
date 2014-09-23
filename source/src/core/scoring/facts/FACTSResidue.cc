@@ -576,7 +576,7 @@ void FACTSRotamerSetInfo::initialize( RotamerSet const & rotamer_set, FACTSRsdTy
     FACTSRsdTypeMap::const_iterator it = rsdtypemap.find( &rsdtype );
     if ( it == rsdtypemap.end() ) {
       TR << "Adding new FACTS residue type info: " << rsdtype.name() << std::endl;
-      FACTSRsdTypeInfoOP rsdtypeinfo = new FACTSRsdTypeInfo;
+      FACTSRsdTypeInfoOP rsdtypeinfo( new FACTSRsdTypeInfo );
       rsdtypeinfo->create_info( rsdtype );
       rsdtypemap[ &rsdtype ] = rsdtypeinfo;
       it = rsdtypemap.find( &rsdtype );

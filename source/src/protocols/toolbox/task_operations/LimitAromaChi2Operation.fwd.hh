@@ -25,11 +25,11 @@ namespace task_operations {
 class LimitAromaChi2_RotamerSetOperation;
 class LimitAromaChi2Operation;
 
-typedef utility::pointer::owning_ptr< LimitAromaChi2_RotamerSetOperation > LimitAromaChi2_RotamerSetOperationOP;
-typedef utility::pointer::owning_ptr< LimitAromaChi2_RotamerSetOperation const > LimitAromaChi2_RotamerSetOperationCOP;
+typedef utility::pointer::shared_ptr< LimitAromaChi2_RotamerSetOperation > LimitAromaChi2_RotamerSetOperationOP;
+typedef utility::pointer::shared_ptr< LimitAromaChi2_RotamerSetOperation const > LimitAromaChi2_RotamerSetOperationCOP;
 
-typedef utility::pointer::owning_ptr< LimitAromaChi2Operation > LimitAromaChi2OperationOP;
-typedef utility::pointer::owning_ptr< LimitAromaChi2Operation const > LimitAromaChi2OperationCOP;
+typedef utility::pointer::shared_ptr< LimitAromaChi2Operation > LimitAromaChi2OperationOP;
+typedef utility::pointer::shared_ptr< LimitAromaChi2Operation const > LimitAromaChi2OperationCOP;
 
 
 }

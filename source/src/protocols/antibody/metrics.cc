@@ -233,7 +233,7 @@ paratope_sasa( const core::pose::Pose & pose, const protocols::antibody::Antibod
 	hsasa_results.cdr.resize(6, 0.0);
 	
 	///Create a basic new sasa calc, and get needed values.
-	scoring::sasa::SasaCalcOP sasa_calc = new scoring::sasa::SasaCalc();
+	scoring::sasa::SasaCalcOP sasa_calc( new scoring::sasa::SasaCalc() );
 	
 	Real total_sasa = sasa_calc->calculate(pose);
 	Real total_hsasa = sasa_calc->get_total_hsasa();

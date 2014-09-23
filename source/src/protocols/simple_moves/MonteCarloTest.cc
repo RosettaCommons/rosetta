@@ -52,7 +52,7 @@ MonteCarloTestCreator::keyname() const
 
 protocols::moves::MoverOP
 MonteCarloTestCreator::create_mover() const {
-	return new MonteCarloTest;
+	return protocols::moves::MoverOP( new MonteCarloTest );
 }
 
 std::string
@@ -70,7 +70,7 @@ MonteCarloTest::get_name() const {
 /// @brief default constructor
 MonteCarloTest::MonteCarloTest():
 	Mover("MonteCarloTest"),
-	MC_mover_( NULL )
+	MC_mover_( /* NULL */ )
 {
 }
 
@@ -81,14 +81,14 @@ MonteCarloTest::~MonteCarloTest(){}
 MoverOP
 MonteCarloTest::clone() const
 {
-	return new MonteCarloTest( *this );
+	return MoverOP( new MonteCarloTest( *this ) );
 }
 
 /// @brief create this type of object
 MoverOP
 MonteCarloTest::fresh_instance() const
 {
-	return new MonteCarloTest();
+	return MoverOP( new MonteCarloTest() );
 }
 
 GenericMonteCarloMoverOP
@@ -108,7 +108,7 @@ MonteCarloTest::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Fil
 	if( find_mover == movers.end() )
 		throw utility::excn::EXCN_RosettaScriptsOption( "MC mover not found by MonteCarloTest" );
 
-	set_MC( dynamic_cast< GenericMonteCarloMover * >( find_mover->second() ) );
+	set_MC( utility::pointer::dynamic_pointer_cast< protocols::simple_moves::GenericMonteCarloMover > ( find_mover->second ) );
 	Pose temp_pose( pose );
 	get_MC()->initialize();
 	get_MC()->reset( temp_pose );

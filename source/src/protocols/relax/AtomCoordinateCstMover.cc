@@ -52,7 +52,7 @@ AtomCoordinateCstMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 AtomCoordinateCstMoverCreator::create_mover() const {
-	return new AtomCoordinateCstMover();
+	return protocols::moves::MoverOP( new AtomCoordinateCstMover() );
 }
 
 std::string
@@ -86,10 +86,10 @@ AtomCoordinateCstMover::AtomCoordinateCstMover( AtomCoordinateCstMover const & o
 AtomCoordinateCstMover::~AtomCoordinateCstMover() {}
 
 protocols::moves::MoverOP AtomCoordinateCstMover::fresh_instance() const {
-	return new AtomCoordinateCstMover;
+	return protocols::moves::MoverOP( new AtomCoordinateCstMover );
 }
 protocols::moves::MoverOP AtomCoordinateCstMover::clone() const {
-	return new AtomCoordinateCstMover( *this );
+	return protocols::moves::MoverOP( new AtomCoordinateCstMover( *this ) );
 }
 
 void
@@ -197,9 +197,9 @@ void AtomCoordinateCstMover::apply( core::pose::Pose & pose) {
 				}
 				core::scoring::func::FuncOP function;
 				if( bounded_ ) {
-					function = new BoundFunc( 0, cst_width_, cst_sd_, "xyz" );
+					function = core::scoring::func::FuncOP( new BoundFunc( 0, cst_width_, cst_sd_, "xyz" ) );
 				} else {
-					function = new core::scoring::func::HarmonicFunc( 0.0, cst_sd_ );
+					function = core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( 0.0, cst_sd_ ) );
 				}
 
 				// Rely on shortcutting evaluation to speed things up - get to else clause as soon as possible.
@@ -230,16 +230,14 @@ void AtomCoordinateCstMover::apply( core::pose::Pose & pose) {
 						utility_exit_with_message("Logic error in AtomCoordinateConstraints");
 					}
 					core::scoring::constraints::AmbiguousConstraintOP amb_constr( new core::scoring::constraints::AmbiguousConstraint );
-					amb_constr->add_individual_constraint( new CoordinateConstraint(  core::id::AtomID(ii,i),
-							core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( atom1 ), function ) );
-					amb_constr->add_individual_constraint( new CoordinateConstraint(  core::id::AtomID(ii,i),
-							core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( atom2 ), function ) );
+					amb_constr->add_individual_constraint( ConstraintCOP( new CoordinateConstraint(  core::id::AtomID(ii,i),
+							core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( atom1 ), function ) ) );
+					amb_constr->add_individual_constraint( ConstraintCOP( new CoordinateConstraint(  core::id::AtomID(ii,i),
+							core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( atom2 ), function ) ) );
 					pose.add_constraint( amb_constr );
 				} else {
-					pose.add_constraint( core::scoring::constraints::ConstraintCOP(
-						new CoordinateConstraint( core::id::AtomID(ii,i),
-							core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( jj ), function ) 
-					) );
+					pose.add_constraint( core::scoring::constraints::ConstraintCOP( new CoordinateConstraint( core::id::AtomID(ii,i),
+							core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( jj ), function ) ) );
 				}
 			} // for atom
 		} // if(loop)

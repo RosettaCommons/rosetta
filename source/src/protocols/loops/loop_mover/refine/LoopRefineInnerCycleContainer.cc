@@ -82,14 +82,14 @@ std::string LoopRefineInnerCycleContainer::get_name() const
 protocols::moves::MoverOP
 LoopRefineInnerCycleContainer::clone() const
 {
-	return new LoopRefineInnerCycleContainer( *this );
+	return protocols::moves::MoverOP( new LoopRefineInnerCycleContainer( *this ) );
 }
 
 ///@brief fresh_instance returns a default-constructed object for JD2
 protocols::moves::MoverOP
 LoopRefineInnerCycleContainer::fresh_instance() const
 {
-	return new LoopRefineInnerCycleContainer();
+	return protocols::moves::MoverOP( new LoopRefineInnerCycleContainer() );
 }
 
 ///@brief This mover retains state such that a fresh version is needed if the input Pose is about to change
@@ -131,7 +131,7 @@ void LoopRefineInnerCycleContainer::init()
 {
 	type( "LoopRefineInnerCycleContainer" );
 	inner_cycle_list_  = InnerCycleList();
-	inner_cycle_steps_ = new moves::SequenceMover;
+	inner_cycle_steps_ = moves::SequenceMoverOP( new moves::SequenceMover );
 
 	init_options();
 }
@@ -235,7 +235,7 @@ std::ostream & operator<<(std::ostream& out, LoopRefineInnerCycleContainer const
 LoopRefineInnerCycleContainerCreator::~LoopRefineInnerCycleContainerCreator() {}
 
 moves::MoverOP LoopRefineInnerCycleContainerCreator::create_mover() const {
-  return new LoopRefineInnerCycleContainer();
+  return moves::MoverOP( new LoopRefineInnerCycleContainer() );
 }
 
 std::string LoopRefineInnerCycleContainerCreator::keyname() const {

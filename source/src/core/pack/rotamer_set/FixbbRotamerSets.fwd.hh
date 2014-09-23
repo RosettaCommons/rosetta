@@ -24,8 +24,8 @@ namespace rotamer_set {
 
 class FixbbRotamerSets;
 
-typedef utility::pointer::owning_ptr< FixbbRotamerSets > FixbbRotamerSetsOP;
-typedef utility::pointer::owning_ptr< FixbbRotamerSets const > FixbbRotamerSetsCOP;
+typedef utility::pointer::shared_ptr< FixbbRotamerSets > FixbbRotamerSetsOP;
+typedef utility::pointer::shared_ptr< FixbbRotamerSets const > FixbbRotamerSetsCOP;
 
 } // namespace rotamer_set
 } // namespace pack

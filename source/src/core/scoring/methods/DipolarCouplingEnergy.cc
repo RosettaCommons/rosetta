@@ -71,7 +71,7 @@ methods::EnergyMethodOP
 DipolarCouplingEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new DipolarCouplingEnergy;
+	return methods::EnergyMethodOP( new DipolarCouplingEnergy );
 }
 
 ScoreTypes
@@ -95,7 +95,7 @@ DipolarCouplingEnergy::DipolarCouplingEnergy() :
 EnergyMethodOP
 DipolarCouplingEnergy::clone() const
 {
-  return new DipolarCouplingEnergy();
+  return EnergyMethodOP( new DipolarCouplingEnergy() );
 }
 
 void DipolarCouplingEnergy::setup_for_scoring(
@@ -151,7 +151,7 @@ DipolarCouplingEnergy::dc_from_pose(
 {
  	DipolarCouplingOP dc_info( retrieve_DC_from_pose( pose ) );
 	if ( !dc_info ) {
-		dc_info = new DipolarCoupling;
+		dc_info = DipolarCouplingOP( new DipolarCoupling );
 		store_DC_in_pose( dc_info, pose );
 	}
 	return *dc_info;

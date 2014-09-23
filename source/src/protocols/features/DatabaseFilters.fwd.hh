@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class DatabaseFilter;
-typedef utility::pointer::owning_ptr< DatabaseFilter > DatabaseFilterOP;
-typedef utility::pointer::owning_ptr< DatabaseFilter const > DatabaseFilterCOP;
+typedef utility::pointer::shared_ptr< DatabaseFilter > DatabaseFilterOP;
+typedef utility::pointer::shared_ptr< DatabaseFilter const > DatabaseFilterCOP;
 
 } //namesapce
 } //namespace

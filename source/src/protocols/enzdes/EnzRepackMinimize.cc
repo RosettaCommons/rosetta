@@ -67,7 +67,7 @@ EnzRepackMinimizeCreator::keyname() const
 protocols::moves::MoverOP
 EnzRepackMinimizeCreator::create_mover() const
 {
-	return new EnzRepackMinimize;
+	return protocols::moves::MoverOP( new EnzRepackMinimize );
 }
 
 std::string
@@ -82,7 +82,7 @@ EnzRepackMinimize::EnzRepackMinimize() :
 	design_( false ), repack_( false ), fix_catalytic_( false ),
 	minimize_in_stages_( false ), min_rb_( true ), min_sc_( false ), min_bb_( false ),
 	min_lig_( false ), minimize_prot_jumps_( false ), backrub_( false ),
-	task_factory_(NULL),
+	task_factory_(/* NULL */),
 	n_cycles_( 1 )
 {}
 
@@ -92,7 +92,7 @@ EnzRepackMinimize::EnzRepackMinimize(std::string const name) :
 	design_( false ), repack_( false ), fix_catalytic_( false ),
 	minimize_in_stages_( false ), min_rb_( true ), min_sc_( false ), min_bb_( false ),
 	min_lig_( false ), minimize_prot_jumps_( false ), backrub_( false ),
-	task_factory_(NULL),
+	task_factory_(/* NULL */),
 	n_cycles_( 1 )
 {}
 
@@ -101,20 +101,20 @@ EnzRepackMinimize::~EnzRepackMinimize() {}
 protocols::moves::MoverOP
 EnzRepackMinimize::clone() const
 {
-  return new EnzRepackMinimize( *this );
+  return protocols::moves::MoverOP( new EnzRepackMinimize( *this ) );
 }
 
 protocols::moves::MoverOP
 EnzRepackMinimize::fresh_instance() const
 {
-	return new EnzRepackMinimize;
+	return protocols::moves::MoverOP( new EnzRepackMinimize );
 }
 
 void
 EnzRepackMinimize::apply( pose::Pose & pose )
 {
   ensure_scofx_cstfication( pose );
-	protocols::enzdes::EnzdesBaseProtocolOP enzprot = new protocols::enzdes::EnzdesBaseProtocol();
+	protocols::enzdes::EnzdesBaseProtocolOP enzprot( new protocols::enzdes::EnzdesBaseProtocol() );
   enzprot->set_fix_cataa( fix_catalytic_ );
   enzprot->set_minimize_options(min_sc_, min_bb_,min_rb_,min_lig_);
 	enzprot->rb_min_jumps( rb_min_jumps() ); /// override the min_rb_ option, if multiple jumps were set
@@ -194,7 +194,7 @@ EnzRepackMinimize::minimize_in_stages(
   bool const & min_lig
 )
 {
-  protocols::enzdes::EnzdesBaseProtocolOP enzprot = new protocols::enzdes::EnzdesBaseProtocol();
+  protocols::enzdes::EnzdesBaseProtocolOP enzprot( new protocols::enzdes::EnzdesBaseProtocol() );
   enzprot->set_scorefxn( scorefxn_minimize() );
 
   enzprot->set_minimize_options( min_sc, false/*min_bb_*/,min_rb,min_lig );

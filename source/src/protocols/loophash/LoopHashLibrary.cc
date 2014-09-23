@@ -78,8 +78,8 @@ static thread_local basic::Tracer TR( "LoopHashLibrary" );
 
 LoopHashLibrary::LoopHashLibrary( const utility::vector1< core::Size > &init_sizes, const core::Size num_partitions,
 		const core::Size assigned_num) :
-		scorefxn_rama_cst( new core::scoring::ScoreFunction ),
-		scorefxn_cen_cst( new core::scoring::ScoreFunction ),
+		scorefxn_rama_cst( core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction ) ),
+		scorefxn_cen_cst( core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction ) ),
 		options( "dfpmin", 0.2, true , false ),
 		options2( "dfpmin", 0.02, true , false )
 {
@@ -352,7 +352,7 @@ LoopHashLibrary::create_db()
 		// by default read extra data from Vall
 		extra_ = true;
 
-		VallProviderOP chunks = new VallProvider();
+		VallProviderOP chunks( new VallProvider() );
 		// Use partition information generate line numbers
 		core::Size vall_nlines = chunks->vallNumLines(option[in::file::vall]()[1]);
 		core::Size startline = 2;
@@ -482,7 +482,7 @@ LoopHashLibrary::apply( core::pose::Pose& pose )
 		// Set up contraints
 		ScoreFunctionOP fascorefxn = core::scoring::get_score_function();
 		//protocols::relax::FastRelax *qrelax = new protocols::relax::FastRelax( fascorefxn, 1 );
-		protocols::relax::FastRelaxOP relax = new protocols::relax::FastRelax( fascorefxn,	option[ OptionKeys::relax::sequence_file ]() );
+		protocols::relax::FastRelaxOP relax( new protocols::relax::FastRelax( fascorefxn,	option[ OptionKeys::relax::sequence_file ]() ) );
 
 		// convert pose to centroid pose:
 		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID);

@@ -22,8 +22,8 @@ namespace utility {
 
 class PyExitCallback;
 
-typedef utility::pointer::owning_ptr< PyExitCallback > PyExitCallbackOP;
-typedef utility::pointer::owning_ptr< PyExitCallback const > PyExitCallbackCOP;
+typedef utility::pointer::shared_ptr< PyExitCallback > PyExitCallbackOP;
+typedef utility::pointer::shared_ptr< PyExitCallback const > PyExitCallbackCOP;
 
 } // namespace utility
 

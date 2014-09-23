@@ -243,7 +243,7 @@ core::kinematics::MoveMapOP derive_MoveMap_from_cluster_lst(
 															bool allow_bb_move = false /* does this work if I don't have a separate declaration? */
 															)
 {
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 
 	movemap->set_bb(allow_bb_move);
 	movemap->set_chi(false);
@@ -389,7 +389,7 @@ void repack_cluster(
 
 			// minimize with hard -- requires movemap that must be derived from PackerTask
 			core::kinematics::MoveMapOP mm = derive_MoveMap_from_cluster_lst(repacked, allow_repacked);
-			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover(); // no symmetry support for now
+			protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover() ); // no symmetry support for now
 			//const std::string min_type = "dfpmin"; // use as many defaults as possible -- not sure if we want to fix this, actually
 			//min_mover->min_type( min_type );
 			min_mover->score_function( score_fxn );
@@ -426,7 +426,7 @@ void repack_cluster(
 				TR << " -- pose setup -- " << std::endl;
 
 
-				core::pose::PoseOP after_backrub(new core::pose::Pose(repacked)); // freshly initialize each time
+				core::pose::PoseOP after_backrub( new core::pose::Pose(repacked) ); // freshly initialize each time
 				//main_task_factory->modify_task(*after_backrub, repack_packer_task);
 				mc.reset(*after_backrub); // reset MonteCarlo object
 
@@ -1058,12 +1058,12 @@ int main( int argc, char * argv [] )
 		TR << std::endl;
 
 		// read in a resfile, if specified -- with this the user may disable regions from cluster detection, e.g. those that are too close to a HETATM (which may not be visible in runs with -ignore_unrecognized_res)
-		core::pack::task::TaskFactoryOP input_task_factory = new core::pack::task::TaskFactory;
-		input_task_factory->push_back( new core::pack::task::operation::InitializeFromCommandline );
+		core::pack::task::TaskFactoryOP input_task_factory( new core::pack::task::TaskFactory );
+		input_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 		if ( option[ packing::resfile ].user() ) {
-			input_task_factory->push_back( new core::pack::task::operation::ReadResfile );
+			input_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::ReadResfile ) );
 		} else {
-			core::pack::task::operation::RestrictToRepackingOP rtrop = new core::pack::task::operation::RestrictToRepacking; // make sure that by default everything is allowed to be repacked
+			core::pack::task::operation::RestrictToRepackingOP rtrop( new core::pack::task::operation::RestrictToRepacking ); // make sure that by default everything is allowed to be repacked
 			input_task_factory->push_back( rtrop );
 		}
 

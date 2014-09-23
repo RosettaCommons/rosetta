@@ -52,7 +52,7 @@ public:
 	virtual
 	methods::EnergyMethodOP
 	clone() const {
-	  return new SurfVolEnergy();
+	  return methods::EnergyMethodOP( new SurfVolEnergy() );
 	}
 
 

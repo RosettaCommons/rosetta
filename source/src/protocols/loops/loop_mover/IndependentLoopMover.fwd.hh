@@ -23,8 +23,8 @@ namespace loop_mover {
 // Forward
 class IndependentLoopMover;
 
-typedef utility::pointer::owning_ptr< IndependentLoopMover > IndependentLoopMoverOP;
-typedef utility::pointer::owning_ptr< IndependentLoopMover const > IndependentLoopMoverCOP;
+typedef utility::pointer::shared_ptr< IndependentLoopMover > IndependentLoopMoverOP;
+typedef utility::pointer::shared_ptr< IndependentLoopMover const > IndependentLoopMoverCOP;
 
 } //namepsace loop_mover
 } //namespace loops

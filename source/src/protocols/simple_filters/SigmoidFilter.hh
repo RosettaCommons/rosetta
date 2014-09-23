@@ -34,10 +34,10 @@ class Sigmoid : public filters::Filter
     Sigmoid();
     virtual ~Sigmoid();
 		filters::FilterOP clone() const {
-			return new Sigmoid( *this );
+			return filters::FilterOP( new Sigmoid( *this ) );
 		}
 		filters::FilterOP fresh_instance() const{
-			return new Sigmoid();
+			return filters::FilterOP( new Sigmoid() );
 		}
 
 		virtual bool apply( core::pose::Pose const & pose ) const;

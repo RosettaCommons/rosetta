@@ -388,7 +388,7 @@ process_file_list()
 
 		std::string pdb_prefix( utility::string_split( utility::string_split( pdb_name, '/' ).back(), '.' ).front() );
 
-		core::pose::PoseOP pose = new core::pose::Pose;
+		core::pose::PoseOP pose( new core::pose::Pose );
 		core::import_pose::pose_from_pdb( *pose, pdb_name );
 
 		process_for_motifs( *pose, pdb_prefix, motifs, motif_output_file );

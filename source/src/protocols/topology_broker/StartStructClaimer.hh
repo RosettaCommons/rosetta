@@ -70,7 +70,7 @@ public:
 
 
 	virtual TopologyClaimerOP clone() const {
-		return new StartStructClaimer( *this );
+		return TopologyClaimerOP( new StartStructClaimer( *this ) );
 	}
 
 	///@brief type() is specifying the output name of the TopologyClaimer

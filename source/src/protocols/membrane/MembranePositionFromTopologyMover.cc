@@ -94,13 +94,13 @@ MembranePositionFromTopologyMover::~MembranePositionFromTopologyMover() {}
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 MembranePositionFromTopologyMover::clone() const {
-	return ( new MembranePositionFromTopologyMover( *this ) );
+	return ( protocols::moves::MoverOP( new MembranePositionFromTopologyMover( *this ) ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 MembranePositionFromTopologyMover::fresh_instance() const {
-	return new MembranePositionFromTopologyMover();
+	return protocols::moves::MoverOP( new MembranePositionFromTopologyMover() );
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
@@ -122,7 +122,7 @@ MembranePositionFromTopologyMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
 MembranePositionFromTopologyMoverCreator::create_mover() const {
-	return new MembranePositionFromTopologyMover;
+	return protocols::moves::MoverOP( new MembranePositionFromTopologyMover );
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)

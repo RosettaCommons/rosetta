@@ -48,7 +48,7 @@ AddHydrogensCreator::keyname() const
 
 protocols::moves::MoverOP
 AddHydrogensCreator::create_mover() const {
-	return new AddHydrogens;
+	return protocols::moves::MoverOP( new AddHydrogens );
 }
 
 std::string
@@ -74,11 +74,11 @@ AddHydrogens::AddHydrogens(AddHydrogens const & that):
 AddHydrogens::~AddHydrogens() {}
 
 protocols::moves::MoverOP AddHydrogens::clone() const {
-	return new AddHydrogens( *this );
+	return protocols::moves::MoverOP( new AddHydrogens( *this ) );
 }
 
 protocols::moves::MoverOP AddHydrogens::fresh_instance() const {
-	return new AddHydrogens;
+	return protocols::moves::MoverOP( new AddHydrogens );
 }
 
 std::string AddHydrogens::get_name() const{

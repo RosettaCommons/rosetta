@@ -56,7 +56,7 @@ public:
 	void scorefxn( core::scoring::ScoreFunctionOP s );
 private:
 	std::string chain_order_;
-	utility::pointer::owning_ptr< basic::datacache::DataMapObj< utility::vector1< core::Size > > > residue_numbers_; /// dflt NULL; a vector of residue numbers placed on the basic::datacache::DataMap which need to be changed due to the chain order switch
+	utility::pointer::shared_ptr< basic::datacache::DataMapObj< utility::vector1< core::Size > > > residue_numbers_; /// dflt NULL; a vector of residue numbers placed on the basic::datacache::DataMap which need to be changed due to the chain order switch
 	core::scoring::ScoreFunctionOP scorefxn_; // dflt NULL; needed to score the pose for the energy graph to behave well
 };
 

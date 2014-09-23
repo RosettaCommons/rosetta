@@ -49,7 +49,7 @@ using namespace ObjexxFCL::format;
 static thread_local basic::Tracer TR( "protocols.simple_filters.ResidueSetChainEnergyFilter" );
 
 protocols::filters::FilterOP
-ResidueSetChainEnergyFilterCreator::create_filter() const { return new ResidueSetChainEnergyFilter; }
+ResidueSetChainEnergyFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueSetChainEnergyFilter ); }
 
 std::string
 ResidueSetChainEnergyFilterCreator::keyname() const { return "ResidueSetChainEnergy"; }

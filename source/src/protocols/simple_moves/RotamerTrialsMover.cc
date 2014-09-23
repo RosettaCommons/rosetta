@@ -61,7 +61,7 @@ RotamerTrialsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 RotamerTrialsMoverCreator::create_mover() const {
-	return new RotamerTrialsMover;
+	return protocols::moves::MoverOP( new RotamerTrialsMover );
 }
 
 std::string
@@ -79,7 +79,7 @@ RotamerTrialsMover::RotamerTrialsMover() : protocols::moves::Mover()
 RotamerTrialsMover::RotamerTrialsMover(
 	ScoreFunctionCOP scorefxn_in,
 	PackerTask & task_in
-) : protocols::moves::Mover(), scorefxn_( scorefxn_in ), factory_( NULL ), show_packer_task_( false )
+) : protocols::moves::Mover(), scorefxn_( scorefxn_in ), factory_( /* NULL */ ), show_packer_task_( false )
 {
 	protocols::moves::Mover::type( "RotamerTrials" );
 	task_ = task_in.clone();
@@ -89,7 +89,7 @@ RotamerTrialsMover::RotamerTrialsMover(
 RotamerTrialsMover::RotamerTrialsMover(
 	ScoreFunctionCOP scorefxn_in,
 	TaskFactoryCOP factory_in
-) : protocols::moves::Mover(), scorefxn_( scorefxn_in ), task_( NULL ), factory_( factory_in ), show_packer_task_( false )
+) : protocols::moves::Mover(), scorefxn_( scorefxn_in ), task_( /* NULL */ ), factory_( factory_in ), show_packer_task_( false )
 {
 	protocols::moves::Mover::type( "RotamerTrials" );
 }
@@ -111,14 +111,14 @@ RotamerTrialsMover::~RotamerTrialsMover(){}
 RotamerTrialsMover::MoverOP
 RotamerTrialsMover::clone() const
 {
-	return new protocols::simple_moves::RotamerTrialsMover( *this );
+	return RotamerTrialsMover::MoverOP( new protocols::simple_moves::RotamerTrialsMover( *this ) );
 }
 
 // create this type of object
 RotamerTrialsMover::MoverOP
 RotamerTrialsMover::fresh_instance() const
 {
-	return new protocols::simple_moves::RotamerTrialsMover();
+	return RotamerTrialsMover::MoverOP( new protocols::simple_moves::RotamerTrialsMover() );
 }
 
 // setters

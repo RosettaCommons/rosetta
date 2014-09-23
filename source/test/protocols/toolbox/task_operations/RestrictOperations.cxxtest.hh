@@ -97,7 +97,7 @@ public:
 		using protocols::toolbox::task_operations::RestrictToInterfaceOperation;
 		using core::pack::task::operation::TaskOperationCOP;
 		TaskFactory RTIO_factory;
-		RTIO_factory.push_back( new RestrictToInterfaceOperation() ); //defaults to interface between chains 1 and 2
+		RTIO_factory.push_back( TaskOperationCOP( new RestrictToInterfaceOperation() ) ); //defaults to interface between chains 1 and 2
 
 		//run
 		test::UTracer UT_RTIO("protocols/toolbox/task_operations/RestrictToInterfaceOperation.u");
@@ -115,7 +115,7 @@ public:
 		using protocols::toolbox::task_operations::RestrictToNeighborhoodOperation;
 		using core::pack::task::operation::TaskOperationCOP;
 		TaskFactory RTNO_factory;
-		RTNO_factory.push_back( new RestrictToNeighborhoodOperation( crset ) );
+		RTNO_factory.push_back( TaskOperationCOP( new RestrictToNeighborhoodOperation( crset ) ) );
 
 		test::UTracer UT_RTNO("protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.u");
 		UT_RTNO << *(RTNO_factory.create_task_and_apply_taskoperations( pose )) << std::endl;
@@ -128,8 +128,8 @@ public:
 		std::string const interface_calc("interface"), neighborhood_calc("neighborhood");
 		std::set< core::Size > crset_RBC;
 		crset_RBC.insert(127); crset_RBC.insert(170), crset_RBC.insert(46);
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc, new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(2) ) );
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc, new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( crset_RBC ) );
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(2) ) ) );
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc, PoseMetricCalculatorOP( new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( crset_RBC ) ) );
 
 		//this is the constructor parameter for the calculator - pairs of calculators and calculations to perform
 		utility::vector1< std::pair< std::string, std::string> > calcs_and_calcns;
@@ -139,7 +139,7 @@ public:
 		using protocols::toolbox::task_operations::RestrictByCalculatorsOperation;
 		using core::pack::task::operation::TaskOperationCOP;
 		core::pack::task::TaskFactory RBC_factory;
-		RBC_factory.push_back( new RestrictByCalculatorsOperation( calcs_and_calcns ) );
+		RBC_factory.push_back( TaskOperationCOP( new RestrictByCalculatorsOperation( calcs_and_calcns ) ) );
 
 		test::UTracer UT_RBC("protocols/toolbox/task_operations/RestrictByCalculatorsOperation.u");
 		UT_RBC << *(RBC_factory.create_task_and_apply_taskoperations( pose )) << std::endl;
@@ -154,7 +154,7 @@ public:
 		using core::pack::task::operation::TaskOperationCOP;
 		TaskFactory RTIVO_factory;
 		//these are the default values but hard code anyway, test for chain #s
-		RTIVO_factory.push_back( new RestrictToInterfaceVectorOperation(1,2,10,5.5,75,9.0) );
+		RTIVO_factory.push_back( TaskOperationCOP( new RestrictToInterfaceVectorOperation(1,2,10,5.5,75,9.0) ) );
 		//run
 		test::UTracer UT_RTIVO("protocols/toolbox/task_operations/RestrictToInterfaceVectorOperation.u");
 		//this call returns PackerTaskOP; we are dumping the ptask to utracer
@@ -166,7 +166,7 @@ public:
 		RTIVO_factory.clear();
 		utility::vector1< int > interface_jump;
 		interface_jump.push_back(1);
-		RTIVO_factory.push_back( new RestrictToInterfaceVectorOperation(interface_jump,10,5.5,75,9.0) );
+		RTIVO_factory.push_back( TaskOperationCOP( new RestrictToInterfaceVectorOperation(interface_jump,10,5.5,75,9.0) ) );
 		//std::cout <<"Interface Jump RestrictToInterfaceVectorOperation \n "
 		//<< *(RTIVO_factory.create_task_and_apply_taskoperations( pose )) << std::endl;
 		UT_RTIVO2 << *(RTIVO_factory.create_task_and_apply_taskoperations( pose )) << std::endl;
@@ -200,7 +200,7 @@ public:
 		full_vec.push_back(interface);
 		full_vec.push_back(otherparts);
 		//now make the task
-		RIGV_factory.push_back( new RestrictInterGroupVectorOperation( full_vec,10,5.5,75,9.0 ) );
+		RIGV_factory.push_back( TaskOperationCOP( new RestrictInterGroupVectorOperation( full_vec,10,5.5,75,9.0 ) ) );
 		//output
 		//std::cout <<"RestrictInterGroupVectorOperation \n "
 		//<< *(RIGV_factory.create_task_and_apply_taskoperations( pose )) << std::endl;
@@ -216,7 +216,7 @@ public:
 		using core::pack::task::operation::TaskOperationCOP;
 		using utility::vector1;
 		
-		MoveMapOP mm = new MoveMap();
+		MoveMapOP mm( new MoveMap() );
 		for (core::Size i = 1; i <=10; ++i){
 			mm->set_chi(i, true);
 		}
@@ -224,7 +224,7 @@ public:
 		
 		TaskFactory tf;
 		
-		RestrictToMoveMapChiOperationOP mm_op = new RestrictToMoveMapChiOperation(mm);
+		RestrictToMoveMapChiOperationOP mm_op( new RestrictToMoveMapChiOperation(mm) );
 		tf.push_back(mm_op);
 		PackerTaskOP task = tf.create_task_and_apply_taskoperations(pose);
 		task->show(std::cout);

@@ -25,8 +25,8 @@ namespace rdf {
 /// creating a particular FeaturesReporter class.
 class RDFFunctionCreator;
 
-typedef utility::pointer::owning_ptr< RDFFunctionCreator > RDFFunctionCreatorOP;
-typedef utility::pointer::owning_ptr< RDFFunctionCreator const > RDFFunctionCreatorCOP;
+typedef utility::pointer::shared_ptr< RDFFunctionCreator > RDFFunctionCreatorOP;
+typedef utility::pointer::shared_ptr< RDFFunctionCreator const > RDFFunctionCreatorCOP;
 
 }
 } //namespace

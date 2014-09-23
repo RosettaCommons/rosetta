@@ -37,7 +37,7 @@ KeepRegionMover::KeepRegionMover() :
 	end_(0),
 	nter_overhang_(0),
 	cter_overhang_(0),
-	tag_(NULL)
+	tag_(/* NULL */)
 {
 
 }
@@ -47,7 +47,7 @@ KeepRegionMover::KeepRegionMover(core::Size res_start, core::Size res_end):
 	end_(res_end),
 	nter_overhang_(0),
 	cter_overhang_(0),
-	tag_(NULL)
+	tag_(/* NULL */)
 {
 	
 }
@@ -67,12 +67,12 @@ KeepRegionMover::KeepRegionMover(KeepRegionMover const & src) :
 
 protocols::moves::MoverOP
 KeepRegionMover::clone() const {
-	return new KeepRegionMover(*this);
+	return protocols::moves::MoverOP( new KeepRegionMover(*this) );
 }
 
 protocols::moves::MoverOP
 KeepRegionMover::fresh_instance() const {
-	return new KeepRegionMover;
+	return protocols::moves::MoverOP( new KeepRegionMover );
 }
 
 std::string
@@ -82,7 +82,7 @@ KeepRegionMover::get_name() const {
 
 protocols::moves::MoverOP
 KeepRegionMoverCreator::create_mover() const {
-	return new KeepRegionMover;
+	return protocols::moves::MoverOP( new KeepRegionMover );
 }
 
 std::string

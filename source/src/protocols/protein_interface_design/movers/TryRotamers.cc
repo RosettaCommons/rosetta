@@ -61,7 +61,7 @@ TryRotamersCreator::keyname() const
 
 protocols::moves::MoverOP
 TryRotamersCreator::create_mover() const {
-	return new TryRotamers;
+	return protocols::moves::MoverOP( new TryRotamers );
 }
 
 std::string
@@ -112,7 +112,7 @@ TryRotamers::TryRotamers( core::Size resnum,
 	solo_res_(solo_res),
 	include_current_(include_current),
 	explosion_(explosion),
-	final_filter_(new protocols::filters::TrueFilter)
+	final_filter_(protocols::filters::FilterOP( new protocols::filters::TrueFilter ))
 {}
 
 TryRotamers::~TryRotamers() {}
@@ -132,7 +132,7 @@ TryRotamers::setup_rotamer_set( pose::Pose & pose )
 	ptask->set_bump_check( clash_check_ );
 
 	ResidueLevelTask & restask( ptask->nonconst_residue_task( resnum_ ) );
-	graph::GraphOP packer_graph = new graph::Graph( pose.total_residue() );
+	graph::GraphOP packer_graph( new graph::Graph( pose.total_residue() ) );
 	restask.or_ex1( true );
 	restask.or_ex2( true );
 	restask.or_ex3( true );
@@ -250,7 +250,7 @@ TryRotamers::parse_my_tag( TagCOP const tag,
 			runtime_assert( filter_found );
 		}
 		else
-			final_filter_ = new protocols::filters::TrueFilter;
+			final_filter_ = protocols::filters::FilterOP( new protocols::filters::TrueFilter );
 	}
 
 	if( tag->hasOption( "shove" ) ){

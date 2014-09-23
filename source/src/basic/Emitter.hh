@@ -44,16 +44,16 @@
 namespace basic {
 
 class Emitter; // fwd declaration
-typedef utility::pointer::owning_ptr< Emitter > EmitterOP;
-typedef utility::pointer::owning_ptr< Emitter const > EmitterCOP;
+typedef utility::pointer::shared_ptr< Emitter > EmitterOP;
+typedef utility::pointer::shared_ptr< Emitter const > EmitterCOP;
 
 class YamlEmitter; // fwd declaration
-typedef utility::pointer::owning_ptr< YamlEmitter > YamlEmitterOP;
-typedef utility::pointer::owning_ptr< YamlEmitter const > YamlEmitterCOP;
+typedef utility::pointer::shared_ptr< YamlEmitter > YamlEmitterOP;
+typedef utility::pointer::shared_ptr< YamlEmitter const > YamlEmitterCOP;
 
 class JsonEmitter; // fwd declaration
-typedef utility::pointer::owning_ptr< JsonEmitter > JsonEmitterOP;
-typedef utility::pointer::owning_ptr< JsonEmitter const > JsonEmitterCOP;
+typedef utility::pointer::shared_ptr< JsonEmitter > JsonEmitterOP;
+typedef utility::pointer::shared_ptr< JsonEmitter const > JsonEmitterCOP;
 
 /// @brief Lightweight class to ease writting YAML documents (http://yaml.org)
 /// @details YAML is a structured data format, a more human-readable

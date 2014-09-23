@@ -19,8 +19,8 @@ namespace protocols {
 namespace nonlocal {
 
 class Region;
-typedef utility::pointer::owning_ptr<Region> RegionOP;
-typedef utility::pointer::owning_ptr<Region const> RegionCOP;
+typedef utility::pointer::shared_ptr<Region> RegionOP;
+typedef utility::pointer::shared_ptr<Region const> RegionCOP;
 
 }  // namespace nonlocal
 }  // namespace protocols

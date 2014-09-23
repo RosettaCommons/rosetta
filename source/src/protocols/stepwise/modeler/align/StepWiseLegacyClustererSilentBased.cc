@@ -138,7 +138,7 @@ namespace align {
 		score_min_ =  0.0 ;
 		score_min_defined_ = false;
 
-		input_  = new core::import_pose::pose_stream::SilentFilePoseInputStream();
+		input_ = core::import_pose::pose_stream::SilentFilePoseInputStreamOP( new core::import_pose::pose_stream::SilentFilePoseInputStream() );
 		input_->set_order_by_energy( true );
 
 		initialize_auto_tune_cluster_rmsds();
@@ -388,7 +388,7 @@ namespace align {
 	StepWiseLegacyClustererSilentBased::silent_file_data(){
 		using namespace core::io::silent;
 
-		SilentFileDataOP silent_file_data = new SilentFileData;
+		SilentFileDataOP silent_file_data( new SilentFileData );
 		for ( Size n = 1 ; n <= silent_struct_output_list_.size(); n++ ) {
 			silent_file_data->add_structure( silent_struct_output_list_[ n ] );
 		}
@@ -419,7 +419,7 @@ namespace align {
 		utility::vector1< PoseOP > pose_list;
 		for ( Size n = 1 ; n <= silent_struct_output_list_.size(); n++ ) {
 			SilentStructOP s = setup_silent_struct( n );
-			PoseOP pose = new Pose;
+			PoseOP pose( new Pose );
 			s->fill_pose( *pose );
 			tag_into_pose( *pose, s->decoy_tag() );
 			pose_list.push_back( pose );

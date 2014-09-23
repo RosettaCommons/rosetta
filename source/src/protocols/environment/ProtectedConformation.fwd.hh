@@ -24,11 +24,11 @@ namespace protocols {
 namespace environment {
 
 class ProtectedConformation;
-typedef utility::pointer::owning_ptr< ProtectedConformation > ProtectedConformationOP;
-typedef utility::pointer::owning_ptr< ProtectedConformation const > ProtectedConformationCOP;
+typedef utility::pointer::shared_ptr< ProtectedConformation > ProtectedConformationOP;
+typedef utility::pointer::shared_ptr< ProtectedConformation const > ProtectedConformationCOP;
 
-typedef utility::pointer::access_ptr< ProtectedConformation > ProtectedConformationAP;
-typedef utility::pointer::access_ptr< ProtectedConformation const > ProtectedConformationCAP;
+typedef utility::pointer::weak_ptr< ProtectedConformation > ProtectedConformationAP;
+typedef utility::pointer::weak_ptr< ProtectedConformation const > ProtectedConformationCAP;
 
 } // environment
 } // protocols

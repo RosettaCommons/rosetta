@@ -21,7 +21,7 @@ namespace protocols {
 namespace enzdes {
 
 class PredesignPerturbMover;
-typedef utility::pointer::owning_ptr< PredesignPerturbMover > PredesignPerturbMoverOP;
+typedef utility::pointer::shared_ptr< PredesignPerturbMover > PredesignPerturbMoverOP;
 
 }  //namespace enzdes
 }  //namespace protocols

@@ -21,8 +21,8 @@ namespace simple_filters {
 
 class DdgFilter;
 
-typedef utility::pointer::owning_ptr< DdgFilter > DdgFilterOP;
-typedef utility::pointer::owning_ptr< DdgFilter const > DdgFilterCOP;
+typedef utility::pointer::shared_ptr< DdgFilter > DdgFilterOP;
+typedef utility::pointer::shared_ptr< DdgFilter const > DdgFilterCOP;
 
 
 }

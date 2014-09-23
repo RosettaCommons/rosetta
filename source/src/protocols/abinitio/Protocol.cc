@@ -59,7 +59,7 @@ namespace abinitio {
 
 protocols::abinitio::Protocol::Protocol() :
 	checkpoints_("Protocol"),
-	evaluator_( NULL ),
+	evaluator_( /* NULL */ ),
 	return_centroid_( true )
 {
 	if ( basic::options::option[ basic::options::OptionKeys::out::file::silent ].user() ) {
@@ -81,7 +81,7 @@ protocols::abinitio::Protocol::evaluate_pose(
 void
 protocols::abinitio::Protocol::add_evaluation( evaluation::PoseEvaluatorOP ev ) {
 	if ( !evaluator_ ) {
-		evaluator_ = new evaluation::MetaPoseEvaluator;
+		evaluator_ = evaluation::MetaPoseEvaluatorOP( new evaluation::MetaPoseEvaluator );
 	}
 	evaluator_->add_evaluation( ev );
 }

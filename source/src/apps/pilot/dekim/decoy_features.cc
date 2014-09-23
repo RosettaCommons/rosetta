@@ -162,7 +162,7 @@ public:
 	virtual
 	protocols::moves::MoverOP
 	fresh_instance() const {
-		return new JDmover;
+		return protocols::moves::MoverOP( new JDmover );
 	}
 
 	virtual
@@ -225,7 +225,7 @@ private:
 
 };
 
-typedef utility::pointer::owning_ptr< JDmover > JDmoverOP;
+typedef utility::pointer::shared_ptr< JDmover > JDmoverOP;
 
 
 
@@ -238,7 +238,7 @@ main( int argc, char * argv [] )
 
 	core::init::init(argc, argv);
 
-	JDmoverOP jd_mover(new JDmover);
+	JDmoverOP jd_mover( new JDmover );
 
 	try {
 		protocols::jd2::JobDistributor::get_instance()->go(jd_mover);
@@ -250,7 +250,7 @@ main( int argc, char * argv [] )
 	}
 
 	if (option[in::file::native].user()) {
-    core::pose::PoseOP nativePose = new core::pose::Pose;
+    core::pose::PoseOP nativePose( new core::pose::Pose );
     core::import_pose::pose_from_pdb(*nativePose, option[in::file::native]());
 		core::scoring::dssp::Dssp dssp_obj( *nativePose );
 		dssp_obj.insert_ss_into_pose( *nativePose );

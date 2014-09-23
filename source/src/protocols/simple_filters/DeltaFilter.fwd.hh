@@ -26,8 +26,8 @@ namespace simple_filters {
 class DeltaFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< DeltaFilter >  DeltaFilterOP;
-typedef utility::pointer::owning_ptr< DeltaFilter const >  DeltaFilterCOP;
+typedef utility::pointer::shared_ptr< DeltaFilter >  DeltaFilterOP;
+typedef utility::pointer::shared_ptr< DeltaFilter const >  DeltaFilterCOP;
 
 } // namespace simple_filters
 } // namespace protocols

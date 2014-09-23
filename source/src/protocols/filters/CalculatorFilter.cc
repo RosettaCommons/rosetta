@@ -45,7 +45,7 @@ CalculatorFilter::CalculatorFilter(std::string equation) :
 	Filter( "CalculatorFilter" ),
 	threshold_(0)
 {
-	calc_ = new numeric::Calculator(equation);
+	calc_ = numeric::CalculatorOP( new numeric::Calculator(equation) );
 }
 
 CalculatorFilter::CalculatorFilter(CalculatorFilter const & other) :
@@ -135,7 +135,7 @@ CalculatorFilter::parse_my_tag( utility::tag::TagCOP tag_ptr,
 	}
 
 	// Now do a quick sanity check for the equation parsing.
-	calc_ = new numeric::Calculator( equation );
+	calc_ = numeric::CalculatorOP( new numeric::Calculator( equation ) );
 	std::map< std::string, core::Real > vars(values_);
 	for( std::map<std::string, protocols::filters::FilterOP>::iterator iter(filters_.begin()); iter != filters_.end(); ++iter) {
 		vars[ iter->first ] = 1.0 + 0.00001 * numeric::random::uniform(); // Additional random to avoid "1/(alpha - beta)" type situations. 
@@ -147,7 +147,7 @@ CalculatorFilter::parse_my_tag( utility::tag::TagCOP tag_ptr,
 }
 
 FilterOP
-CalculatorFilterCreator::create_filter() const { return new CalculatorFilter; }
+CalculatorFilterCreator::create_filter() const { return FilterOP( new CalculatorFilter ); }
 
 std::string
 CalculatorFilterCreator::keyname() const { return "CalculatorFilter"; }

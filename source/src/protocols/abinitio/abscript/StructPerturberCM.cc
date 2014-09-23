@@ -61,7 +61,7 @@ StructPerturberCMCreator::keyname() const {
 
 protocols::moves::MoverOP
 StructPerturberCMCreator::create_mover() const {
-  return new StructPerturberCM;
+  return protocols::moves::MoverOP( new StructPerturberCM );
 }
 
 std::string
@@ -83,9 +83,9 @@ claims::EnvClaims StructPerturberCM::yield_claims( core::pose::Pose const& in_po
                                                    basic::datacache::WriteableCacheableMapOP ){
   claims::EnvClaims claims;
 
-  claims::TorsionClaimOP claim = new claims::TorsionClaim(
+  claims::TorsionClaimOP claim( new claims::TorsionClaim(
 	utility::pointer::static_pointer_cast< ClaimingMover > ( get_self_ptr() ),
-	label(), std::make_pair( 1, in_pose.total_residue() ) );
+	label(), std::make_pair( 1, in_pose.total_residue() ) ) );
   claim->strength( claims::CAN_CONTROL, claims::DOES_NOT_CONTROL );
 
   claims.push_back( claim );
@@ -127,7 +127,7 @@ std::string StructPerturberCM::get_name() const {
 
 protocols::moves::MoverOP
 StructPerturberCM::clone() const {
-  return new StructPerturberCM( *this );
+  return protocols::moves::MoverOP( new StructPerturberCM( *this ) );
 }
 
 } // abscript

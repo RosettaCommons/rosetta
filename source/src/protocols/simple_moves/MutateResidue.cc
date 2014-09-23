@@ -64,7 +64,7 @@ MutateResidueCreator::keyname() const
 
 protocols::moves::MoverOP
 MutateResidueCreator::create_mover() const {
-	return new MutateResidue;
+	return protocols::moves::MoverOP( new MutateResidue );
 }
 
 std::string

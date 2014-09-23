@@ -48,11 +48,11 @@ public:
 	virtual ~MultipleOutputWrapper() {};
 
 	protocols::moves::MoverOP clone() const {
-		return new MultipleOutputWrapper(*this);
+		return protocols::moves::MoverOP( new MultipleOutputWrapper(*this) );
 	}
 
 	protocols::moves::MoverOP fresh_instance() const {
-		return new MultipleOutputWrapper();
+		return protocols::moves::MoverOP( new MultipleOutputWrapper() );
 	}
 
 	void apply(core::pose::Pose& pose);

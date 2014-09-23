@@ -65,11 +65,11 @@ public:
 	std::string get_name() const { return "ExtendedChainMover"; }
 
 	virtual MoverOP clone() const {
-		return new MyMover( *this );
+		return MoverOP( new MyMover( *this ) );
 	}
 
 	virtual	MoverOP	fresh_instance() const {
-		return new MyMover;
+		return MoverOP( new MyMover );
 	}
 
 };
@@ -106,12 +106,12 @@ main( int argc, char * argv [] )
 	// initialize core
 	devel::init(argc, argv);
 
-	MoverOP mymover = new MyMover;
+	MoverOP mymover( new MyMover );
 
 	using namespace protocols::jd2;
 
 	// Set up a job outputter that writes a scorefile and no PDBs and no Silent Files.
-	PDBJobOutputterOP jobout = new PDBJobOutputter;
+	PDBJobOutputterOP jobout( new PDBJobOutputter );
 
 	// If the user chooses something else, then so be it, but by default score(_jd2) should only create a score
 	// file and nothing else.

@@ -31,19 +31,19 @@ class LengthGen;
 
 
 /// @brief LengthGen owning pointer
-typedef utility::pointer::owning_ptr< LengthGen > LengthGenOP;
+typedef utility::pointer::shared_ptr< LengthGen > LengthGenOP;
 
 
 /// @brief LengthGen const owning pointer
-typedef utility::pointer::owning_ptr< LengthGen const > LengthGenCOP;
+typedef utility::pointer::shared_ptr< LengthGen const > LengthGenCOP;
 
 
 /// @brief LengthGen access pointer
-typedef utility::pointer::owning_ptr< LengthGen > LengthGenAP;
+typedef utility::pointer::shared_ptr< LengthGen > LengthGenAP;
 
 
 /// @brief LengthGen const access pointer
-typedef utility::pointer::owning_ptr< LengthGen const > LengthGenCAP;
+typedef utility::pointer::shared_ptr< LengthGen const > LengthGenCAP;
 
 
 } // namespace gen

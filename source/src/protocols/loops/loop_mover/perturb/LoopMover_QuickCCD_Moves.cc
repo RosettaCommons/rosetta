@@ -123,8 +123,8 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	set_single_loop_fold_tree( pose, loop );
 
 	// generate movemap after fold_tree is set
-	kinematics::MoveMapOP mm_one_loop = new kinematics::MoveMap();
-	kinematics::MoveMapOP mm_one_loop_symm = new kinematics::MoveMap();
+	kinematics::MoveMapOP mm_one_loop( new kinematics::MoveMap() );
+	kinematics::MoveMapOP mm_one_loop_symm( new kinematics::MoveMap() );
 	set_move_map_for_centroid_loop( loop, *mm_one_loop );
 	set_move_map_for_centroid_loop( loop, *mm_one_loop_symm );
 	if ( core::pose::symmetry::is_symmetric( pose ) )  {
@@ -159,21 +159,21 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	else                     idealize_loop(  pose, loop );
 
 	// omega needs to be moveable for FragmentMovers, so use a separate movemap
-	kinematics::MoveMapOP frag_mover_movemap = new kinematics::MoveMap();
+	kinematics::MoveMapOP frag_mover_movemap( new kinematics::MoveMap() );
 	frag_mover_movemap->set_bb_true_range( loop.start(), loop.stop() );
 
 	utility::vector1< FragmentMoverOP > fragmover;
 	for ( utility::vector1< core::fragment::FragSetOP >::const_iterator
 				it = frag_libs().begin(), it_end = frag_libs().end();
 				it != it_end; it++ ) {
-		ClassicFragmentMoverOP cfm = new ClassicFragmentMover( *it, frag_mover_movemap );
+		ClassicFragmentMoverOP cfm( new ClassicFragmentMover( *it, frag_mover_movemap ) );
 		cfm->set_check_ss( false );
 		cfm->enable_end_bias_check( false );
 		fragmover.push_back( cfm );
 	}
 
 	core::Real m_Temperature_ = 2.0;
-	moves::MonteCarloOP mc_ = new moves::MonteCarlo( pose, *scorefxn(), m_Temperature_ );
+	moves::MonteCarloOP mc_( new moves::MonteCarlo( pose, *scorefxn(), m_Temperature_ ) );
 
 	if( randomize_loop_ ){
 		// insert random fragment as many times as the loop is long (not quite the exact same as the old code)
@@ -191,9 +191,9 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	bool const use_nblist( true ), deriv_check( false ); // true ); // false );
 	MinimizerOptions options( "linmin", dummy_tol, use_nblist, deriv_check);
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		mzr = new core::optimization::symmetry::SymAtomTreeMinimizer;
+		mzr = AtomTreeMinimizerOP( new core::optimization::symmetry::SymAtomTreeMinimizer );
 	} else {
-		mzr = new core::optimization::AtomTreeMinimizer;
+		mzr = AtomTreeMinimizerOP( new core::optimization::AtomTreeMinimizer );
 	}
 
 
@@ -322,7 +322,7 @@ LoopMover_Perturb_QuickCCD_MovesCreator::~LoopMover_Perturb_QuickCCD_MovesCreato
 
 
 moves::MoverOP LoopMover_Perturb_QuickCCD_MovesCreator::create_mover() const {
-  return new LoopMover_Perturb_QuickCCD_Moves();
+  return moves::MoverOP( new LoopMover_Perturb_QuickCCD_Moves() );
 }
 
 std::string LoopMover_Perturb_QuickCCD_MovesCreator::keyname() const {

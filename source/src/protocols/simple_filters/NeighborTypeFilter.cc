@@ -29,7 +29,7 @@ namespace simple_filters {
 static thread_local basic::Tracer neighbor_type_filter_tracer( "protocols.simple_filters.NeighborTypeFilter" );
 
 protocols::filters::FilterOP
-NeighborTypeFilterCreator::create_filter() const { return new NeighborTypeFilter; }
+NeighborTypeFilterCreator::create_filter() const { return protocols::filters::FilterOP( new NeighborTypeFilter ); }
 
 std::string
 NeighborTypeFilterCreator::keyname() const { return "NeighborType"; }

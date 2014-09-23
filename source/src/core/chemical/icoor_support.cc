@@ -59,7 +59,7 @@ public:
 	template <class Vertex, class Graph>
 	void initialize_vertex(Vertex u, const Graph& /*g*/) {
 		if( treeatom_map_.count(u) == 0 ) {
-			treeatom_map_[ u ] = new core::kinematics::tree::BondedAtom;
+			treeatom_map_[ u ] = utility::pointer::shared_ptr<class core::kinematics::tree::Atom>( new core::kinematics::tree::BondedAtom );
 		}
 		treeatom_map_[ u ]->xyz( restype_.atom( u ).ideal_xyz() );
 		// Fill in vertex identity for debugging purposes:
@@ -203,7 +203,7 @@ reroot_restype( core::chemical::ResidueType & restype, core::chemical::ResidueGr
 
 	// The root of the atom tree needs to be a jump atom,
 	// as opposed to the Bonded atom that would be initialized by default in the DFS
-	core::kinematics::tree::AtomOP rootatom = new core::kinematics::tree::JumpAtom;
+	core::kinematics::tree::AtomOP rootatom( new core::kinematics::tree::JumpAtom );
 	treeatom_map[ root ] = rootatom;
 	TR << "Rooting on atom: " << restype.atom_name(root) << std::endl;
 

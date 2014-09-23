@@ -108,13 +108,13 @@ parse_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap & dat
     TR <<"taskfacotry name: " << name << std::endl;
 
     if( data.has( "TaskFactory", name ) ){
-       task_factory = data.get< TaskFactory *>( "TaskFactory", name );
+       task_factory = data.get_ptr<TaskFactory>( "TaskFactory", name );
       TR<<"found helper task_factory: "<< name <<" for mover: "<<tag->getName()<< std::endl;
     }
 
   else{ // ( !data.has( "TaskFactory", name ) ){
       std::string tf_string = "TaskFactory";
-      task_factory = new TaskFactory;
+      task_factory = core::pack::task::TaskFactoryOP( new TaskFactory );
       data.add( tf_string , name , task_factory );
       TR<<"adding new TaskFactory to the datamap: "<< name  <<std::endl;
     }
@@ -248,10 +248,10 @@ saved_reference_pose( utility::tag::TagCOP const in_tag, basic::datacache::DataM
 		std::string refpose_name(in_tag->getOption<std::string>( tag_name) );
 
 		if( !data_map.has("spm_ref_poses",refpose_name) ){
-			refpose = new core::pose::Pose();
+			refpose = core::pose::PoseOP( new core::pose::Pose() );
 			data_map.add("spm_ref_poses",refpose_name,refpose );
 		}
-		else refpose = data_map.get<core::pose::Pose *>("spm_ref_poses",refpose_name );
+		else refpose = data_map.get_ptr<core::pose::Pose>("spm_ref_poses",refpose_name );
 
 		return refpose;
 	}
@@ -335,7 +335,7 @@ parse_movemap(
 	using utility::tag::TagCOP;
 	using namespace core::kinematics;
 
-	if( in_tag() == NULL ) return;
+	if( in_tag == NULL ) return;
 	utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
 	utility::vector1< TagCOP >::const_iterator tag_it;
 	for( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ){
@@ -353,7 +353,7 @@ parse_movemap(
 	if( (*tag_it)->hasOption("name") ){
 		std::string const name( (*tag_it)->getOption< std::string >( "name" ) );
 		if( data.has( "movemaps", name ) ){
-			mm = data.get< MoveMap * >( "movemaps", name );
+			mm = data.get_ptr<MoveMap>( "movemaps", name );
 			TR<<"Found movemap "<<name<<" on datamap"<<std::endl;
 		}
 		else{
@@ -376,7 +376,7 @@ parse_movemap(
 	using utility::tag::TagCOP;
 	using namespace core::kinematics;
 
-	if( in_tag() == NULL ) return;
+	if( in_tag == NULL ) return;
 	utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
 	utility::vector1< TagCOP >::const_iterator tag_it;
 	for( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ){
@@ -409,7 +409,7 @@ add_movemaps_to_datamap(
 	using utility::tag::TagCOP;
 	using namespace core::kinematics;
 
-	if( in_tag() == NULL ) return;
+	if( in_tag == NULL ) return;
 	utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
 	utility::vector1< TagCOP >::const_iterator tag_it;
 	for( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ){
@@ -420,7 +420,7 @@ add_movemaps_to_datamap(
 			if (data.has("movemaps", name)) continue;
 
 
-			MoveMapOP mm = new MoveMap();
+			MoveMapOP mm( new MoveMap() );
 			if (initialize_mm_as_true){
 				mm->set_bb( true );
 				mm->set_chi( true );

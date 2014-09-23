@@ -133,7 +133,7 @@ LoopMover_Perturb_KIC::LoopMover_Perturb_KIC(
 		set_scorefxn( scorefxn );
 	}else{
 		set_scorefxn( get_cen_scorefxn() );
- 		loop_mover::loops_set_chainbreak_weight( scorefxn(), 1 );
+ 		loop_mover::loops_set_chainbreak_weight( scorefxn, 1 );
 	}
 	protocols::moves::Mover::type("LoopMover_Perturb_KIC");
 	set_default_settings();
@@ -144,7 +144,7 @@ LoopMover_Perturb_KIC::~LoopMover_Perturb_KIC(){}
 
 //clone
 protocols::moves::MoverOP LoopMover_Perturb_KIC::clone() const {
-	return new LoopMover_Perturb_KIC(*this);
+	return protocols::moves::MoverOP( new LoopMover_Perturb_KIC(*this) );
 }
 
 void LoopMover_Perturb_KIC::set_default_settings()
@@ -275,17 +275,17 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	*/
 	// AS Feb 6 2013: rewriting the minimizer section to use the MinMover, which allows seamless integration of cartesian minimization
 	protocols::simple_moves::MinMoverOP min_mover;
-	MoveMapOP mm_one_loop_OP = new core::kinematics::MoveMap( mm_one_loop ); // it appears we need a move map OP to do this...
+	MoveMapOP mm_one_loop_OP( new core::kinematics::MoveMap( mm_one_loop ) ); // it appears we need a move map OP to do this...
 
 	const std::string min_type = "linmin";
 	core::Real dummy_tol( 0.001 ); // linmin sets tol internally -- MinMover doesn't accept const input...
 	bool use_nblist( false ), deriv_check( false ), use_cartmin ( option[ OptionKeys::loops::kic_with_cartmin ]() ); // true ); // false );
 	if ( use_cartmin ) runtime_assert( scorefxn()->get_weight( core::scoring::cart_bonded ) > 1e-3 ); // AS -- actually I'm not sure if this makes any sense in centroid... ask Frank?
 	if ( core::pose::symmetry::is_symmetric( pose ) )  {
-		min_mover = new simple_moves::symmetry::SymMinMover( mm_one_loop_OP, scorefxn(), min_type, dummy_tol, use_nblist, deriv_check );
+		min_mover = protocols::simple_moves::MinMoverOP( new simple_moves::symmetry::SymMinMover( mm_one_loop_OP, scorefxn(), min_type, dummy_tol, use_nblist, deriv_check ) );
 		//min_mover = new simple_moves::symmetry::SymMinMover();
 	} else {
-		min_mover = new protocols::simple_moves::MinMover( mm_one_loop_OP, scorefxn(), min_type, dummy_tol, use_nblist, deriv_check );
+		min_mover = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover( mm_one_loop_OP, scorefxn(), min_type, dummy_tol, use_nblist, deriv_check ) );
 		//min_mover = new protocols::simple_moves::MinMover(); // version above doesn't work, but setting all one by one does.. try again with scorefxn() w/o the star though
 	}
 	/*
@@ -343,32 +343,28 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 				+ " vs. the loop length " + utility::to_string( loop_end - loop_begin + 1 ) + "\n" );
 		}
 
-		loop_closure::kinematic_closure::TorsionRestrictedKinematicPerturberOP perturber =
-			new loop_closure::kinematic_closure::TorsionRestrictedKinematicPerturber ( myKinematicMover_cap, torsion_bins );
+		loop_closure::kinematic_closure::TorsionRestrictedKinematicPerturberOP perturber( new loop_closure::kinematic_closure::TorsionRestrictedKinematicPerturber ( myKinematicMover_cap, torsion_bins ) );
 
 		// to make the code cleaner this should really be a generic function, even though some classes may not use it
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	} else if ( basic::options::option[ basic::options::OptionKeys::loops::kic_rama2b ]() && basic::options::option[ basic::options::OptionKeys::loops::taboo_sampling ]() ) {  // TabooSampling with rama2b (neighbor-dependent phi/psi lookup)
 		loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturberOP
-		perturber =
-        new loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturber( myKinematicMover_cap );
+		perturber( new loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturber( myKinematicMover_cap ) );
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	} else if ( basic::options::option[ basic::options::OptionKeys::loops::taboo_sampling ] ) { // TabooSampling (std rama)
-		loop_closure::kinematic_closure::TabooSamplingKinematicPerturberOP perturber = new loop_closure::kinematic_closure::TabooSamplingKinematicPerturber ( myKinematicMover_cap );
+		loop_closure::kinematic_closure::TabooSamplingKinematicPerturberOP perturber( new loop_closure::kinematic_closure::TabooSamplingKinematicPerturber ( myKinematicMover_cap ) );
 
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	} else if ( basic::options::option[ basic::options::OptionKeys::loops::kic_rama2b ]() ) { // rama2b
-		loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturberOP	perturber =
-			new loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturber( myKinematicMover_cap );
+		loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturberOP	perturber( new loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturber( myKinematicMover_cap ) );
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	} else { // default behavior [for now] -- std KIC
 		loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP
-		perturber =
-		new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( myKinematicMover_cap );
+		perturber( new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( myKinematicMover_cap ) );
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	}
@@ -461,8 +457,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 		tr() << "not performing initial kinematic perturbation" << std::endl;
 		if (option[ OptionKeys::loops::vicinity_sampling ]()) {
 			// AS Oct 3 2012: replace TorsionRestrictedKinematicPerturber by VicinitySamplingKinematicPerturber
-			loop_closure::kinematic_closure::VicinitySamplingKinematicPerturberOP v_perturber =
-			new loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber( myKinematicMover_cap );
+			loop_closure::kinematic_closure::VicinitySamplingKinematicPerturberOP v_perturber( new loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber( myKinematicMover_cap ) );
 			v_perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 			v_perturber->set_degree_vicinity( option[ OptionKeys::loops::vicinity_degree ]() );
 			myKinematicMover.set_perturber( v_perturber );
@@ -642,7 +637,7 @@ basic::Tracer & LoopMover_Perturb_KIC::tr() const
 LoopMover_Perturb_KICCreator::~LoopMover_Perturb_KICCreator() {}
 
 moves::MoverOP LoopMover_Perturb_KICCreator::create_mover() const {
-  return new LoopMover_Perturb_KIC();
+  return moves::MoverOP( new LoopMover_Perturb_KIC() );
 }
 
 std::string LoopMover_Perturb_KICCreator::keyname() const {

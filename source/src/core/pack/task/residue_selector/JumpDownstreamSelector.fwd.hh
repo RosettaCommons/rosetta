@@ -26,8 +26,8 @@ namespace residue_selector {
 
 class JumpDownstreamSelector;
 
-typedef utility::pointer::owning_ptr< JumpDownstreamSelector > JumpDownstreamSelectorOP;
-typedef utility::pointer::owning_ptr< JumpDownstreamSelector const > JumpDownstreamSelectorCOP;
+typedef utility::pointer::shared_ptr< JumpDownstreamSelector > JumpDownstreamSelectorOP;
+typedef utility::pointer::shared_ptr< JumpDownstreamSelector const > JumpDownstreamSelectorCOP;
 
 } //namespace residue_selector
 } //namespace task

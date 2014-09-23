@@ -21,8 +21,8 @@ namespace comparative_modeling {
 namespace features {
 
 class SSFeature;
-typedef utility::pointer::owning_ptr< SSFeature > SSFeatureOP;
-typedef utility::pointer::owning_ptr< SSFeature const > SSFeatureCOP;
+typedef utility::pointer::shared_ptr< SSFeature > SSFeatureOP;
+typedef utility::pointer::shared_ptr< SSFeature const > SSFeatureCOP;
 
 } // features
 } // comparative_modeling

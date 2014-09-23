@@ -66,7 +66,7 @@ using namespace ObjexxFCL;
 RmsdSimpleFilter::RmsdSimpleFilter() :
 	protocols::filters::Filter( "RmsdSimple" ),
 	threshold_( 5.0 ),
-	reference_pose_( 0 ),
+	reference_pose_( /* 0 */ ),
 	do_align_( 0 )
 {
 }
@@ -84,13 +84,13 @@ RmsdSimpleFilter::~RmsdSimpleFilter() {}
 
 protocols::filters::FilterOP
 RmsdSimpleFilter::clone() const {
-	return new RmsdSimpleFilter( *this );
+	return protocols::filters::FilterOP( new RmsdSimpleFilter( *this ) );
 }
 
 protocols::filters::FilterOP
 RmsdSimpleFilter::fresh_instance() const
 {
-	return new RmsdSimpleFilter();
+	return protocols::filters::FilterOP( new RmsdSimpleFilter() );
 }
 
 static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.RmsdSimpleFilter" );
@@ -325,7 +325,7 @@ void RmsdSimpleFilter::parse_my_tag( utility::tag::TagCOP tag,
 											core::pose::Pose const & pose )
 {
 	/// @brief
-	reference_pose_ = new core::pose::Pose( pose );
+	reference_pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
 	target_chain_ = 0;
 	threshold_ = 0.0;
 
@@ -363,7 +363,7 @@ void RmsdSimpleFilter::parse_my_tag( utility::tag::TagCOP tag,
 }
 
 protocols::filters::FilterOP RmsdSimpleFilterCreator::create_filter() const {
-	return new RmsdSimpleFilter;
+	return protocols::filters::FilterOP( new RmsdSimpleFilter );
 }
 
 std::string RmsdSimpleFilterCreator::keyname() const {

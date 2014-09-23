@@ -58,7 +58,7 @@ methods::EnergyMethodOP
 RNA_Mg_EnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new RNA_Mg_Energy;
+	return methods::EnergyMethodOP( new RNA_Mg_Energy );
 }
 
 ScoreTypes
@@ -72,8 +72,8 @@ RNA_Mg_EnergyCreator::score_types_for_method() const {
 
 RNA_Mg_Energy::RNA_Mg_Energy() :
 	parent( methods::EnergyMethodCreatorOP( new RNA_Mg_EnergyCreator ) ),
-	rna_mg_knowledge_based_potential_( new RNA_Mg_KnowledgeBasedPotential ),
-	hbond_options_( new core::scoring::hbonds::HBondOptions ), // useful helper functions
+	rna_mg_knowledge_based_potential_( RNA_Mg_KnowledgeBasedPotentialOP( new RNA_Mg_KnowledgeBasedPotential ) ),
+	hbond_options_( core::scoring::hbonds::HBondOptionsOP( new core::scoring::hbonds::HBondOptions ) ), // useful helper functions
 	verbose_( basic::options::option[ basic::options::OptionKeys::rescore::verbose ]() )
 {}
 
@@ -82,7 +82,7 @@ RNA_Mg_Energy::RNA_Mg_Energy() :
 methods::EnergyMethodOP
 RNA_Mg_Energy::clone() const
 {
-	return new RNA_Mg_Energy;
+	return methods::EnergyMethodOP( new RNA_Mg_Energy );
 }
 
 /////////////////////////////////////////////////////////////////////////////

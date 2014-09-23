@@ -24,8 +24,8 @@ namespace scmin {
 
 class AtomTreeSCMinMinimizerMap;
 
-typedef utility::pointer::owning_ptr< AtomTreeSCMinMinimizerMap >       AtomTreeSCMinMinimizerMapOP;
-typedef utility::pointer::owning_ptr< AtomTreeSCMinMinimizerMap const > AtomTreeSCMinMinimizerMapCOP;
+typedef utility::pointer::shared_ptr< AtomTreeSCMinMinimizerMap >       AtomTreeSCMinMinimizerMapOP;
+typedef utility::pointer::shared_ptr< AtomTreeSCMinMinimizerMap const > AtomTreeSCMinMinimizerMapCOP;
 
 } // namespace scmin
 } // namespace pack

@@ -24,16 +24,16 @@ namespace match_enzdes_util {
 
 class GeomSampleInfo;
 
-typedef utility::pointer::owning_ptr< GeomSampleInfo > GeomSampleInfoOP;
-typedef utility::pointer::owning_ptr< GeomSampleInfo const > GeomSampleInfoCOP;
+typedef utility::pointer::shared_ptr< GeomSampleInfo > GeomSampleInfoOP;
+typedef utility::pointer::shared_ptr< GeomSampleInfo const > GeomSampleInfoCOP;
 
 class MatchConstraintFileInfo;
-typedef utility::pointer::owning_ptr< MatchConstraintFileInfo > MatchConstraintFileInfoOP;
-typedef utility::pointer::owning_ptr< MatchConstraintFileInfo const > MatchConstraintFileInfoCOP;
+typedef utility::pointer::shared_ptr< MatchConstraintFileInfo > MatchConstraintFileInfoOP;
+typedef utility::pointer::shared_ptr< MatchConstraintFileInfo const > MatchConstraintFileInfoCOP;
 
 class MatchConstraintFileInfoList;
-typedef utility::pointer::owning_ptr< MatchConstraintFileInfoList > MatchConstraintFileInfoListOP;
-typedef utility::pointer::owning_ptr< MatchConstraintFileInfoList const > MatchConstraintFileInfoListCOP;
+typedef utility::pointer::shared_ptr< MatchConstraintFileInfoList > MatchConstraintFileInfoListOP;
+typedef utility::pointer::shared_ptr< MatchConstraintFileInfoList const > MatchConstraintFileInfoListCOP;
 
 
 }

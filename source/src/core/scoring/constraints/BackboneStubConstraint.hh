@@ -138,7 +138,7 @@ private:
 	core::Vector fixed_reference_point_;
 
 	/// why is this static?
-	static utility::pointer::owning_ptr< AngleConstraint > ang_cst_;
+	static utility::pointer::shared_ptr< AngleConstraint > ang_cst_;
 
 }; // BackboneStubConstraint
 

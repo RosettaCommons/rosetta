@@ -299,10 +299,10 @@ private: // Fields
 
 }; // BondedAtom
 
-typedef utility::pointer::owning_ptr< BondedAtom > BondedAtomOP;
-typedef utility::pointer::owning_ptr< BondedAtom const > BondedAtomCOP;
-typedef utility::pointer::access_ptr< BondedAtom > BondedAtomAP;
-typedef utility::pointer::access_ptr< BondedAtom const > BondedAtomCAP;
+typedef utility::pointer::shared_ptr< BondedAtom > BondedAtomOP;
+typedef utility::pointer::shared_ptr< BondedAtom const > BondedAtomCOP;
+typedef utility::pointer::weak_ptr< BondedAtom > BondedAtomAP;
+typedef utility::pointer::weak_ptr< BondedAtom const > BondedAtomCAP;
 
 } // namespace tree
 } // namespace kinematics

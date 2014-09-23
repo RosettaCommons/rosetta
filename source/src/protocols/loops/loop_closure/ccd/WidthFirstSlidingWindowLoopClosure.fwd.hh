@@ -29,8 +29,8 @@ namespace loop_closure {
 class WidthFirstSlidingWindowLoopClosure;
 
 // Types
-typedef  utility::pointer::owning_ptr< WidthFirstSlidingWindowLoopClosure >  WidthFirstSlidingWindowLoopClosureOP;
-typedef  utility::pointer::owning_ptr< WidthFirstSlidingWindowLoopClosure const >  WidthFirstSlidingWindowLoopClosureCOP;
+typedef  utility::pointer::shared_ptr< WidthFirstSlidingWindowLoopClosure >  WidthFirstSlidingWindowLoopClosureOP;
+typedef  utility::pointer::shared_ptr< WidthFirstSlidingWindowLoopClosure const >  WidthFirstSlidingWindowLoopClosureCOP;
 
 
 } // namespace loop_closure

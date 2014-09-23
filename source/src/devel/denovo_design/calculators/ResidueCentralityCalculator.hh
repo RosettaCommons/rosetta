@@ -41,10 +41,10 @@ namespace calculators {
 
 class Node;
 class Edge;
-typedef utility::pointer::owning_ptr< Node > NodeOP;
-typedef utility::pointer::owning_ptr< Node const > NodeCOP;
-typedef utility::pointer::owning_ptr< Edge > EdgeOP;
-typedef utility::pointer::owning_ptr< Edge const > EdgeCOP;
+typedef utility::pointer::shared_ptr< Node > NodeOP;
+typedef utility::pointer::shared_ptr< Node const > NodeCOP;
+typedef utility::pointer::shared_ptr< Edge > EdgeOP;
+typedef utility::pointer::shared_ptr< Edge const > EdgeCOP;
 
 // Nodes and edges for dijkstra's algorithm
 class Node : public utility::pointer::ReferenceCount
@@ -91,7 +91,7 @@ public:// constructor/destructor
 public:// virtual constructor
 	/// @brief make clone
   core::pose::metrics::PoseMetricCalculatorOP
-	clone() const { return new ResidueCentralityCalculator( *this ); }
+	clone() const { return core::pose::metrics::PoseMetricCalculatorOP( new ResidueCentralityCalculator( *this ) ); }
 
 public:// mutators
 

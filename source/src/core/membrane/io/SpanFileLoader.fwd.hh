@@ -30,8 +30,8 @@ namespace io {
 /// @brief Span File Loader
 /// @details Load Spanning Topology Object
 class SpanFileLoader;
-typedef utility::pointer::owning_ptr< SpanFileLoader > SpanFileLoaderOP;
-typedef utility::pointer::owning_ptr< SpanFileLoader const > SpanFileLoaderCOP;
+typedef utility::pointer::shared_ptr< SpanFileLoader > SpanFileLoaderOP;
+typedef utility::pointer::shared_ptr< SpanFileLoader const > SpanFileLoaderCOP;
 
 } // io
 } // membrane

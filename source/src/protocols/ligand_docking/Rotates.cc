@@ -50,7 +50,7 @@ RotatesCreator::keyname() const
 
 protocols::moves::MoverOP
 RotatesCreator::create_mover() const {
-	return new Rotates;
+	return protocols::moves::MoverOP( new Rotates );
 }
 
 std::string
@@ -71,11 +71,11 @@ Rotates::Rotates(Rotates const & that):
 Rotates::~Rotates() {}
 
 protocols::moves::MoverOP Rotates::clone() const {
-	return new Rotates( *this );
+	return protocols::moves::MoverOP( new Rotates( *this ) );
 }
 
 protocols::moves::MoverOP Rotates::fresh_instance() const {
-	return new Rotates;
+	return protocols::moves::MoverOP( new Rotates );
 }
 
 std::string Rotates::get_name() const{
@@ -124,7 +124,7 @@ Rotates::parse_my_tag(
 			rotate_info.distribution= distribution;
 			rotate_info.degrees = degrees;
 			rotate_info.cycles = cycles;
-			rotates_.push_back( new Rotate(rotate_info) );
+			rotates_.push_back( utility::pointer::shared_ptr<class protocols::ligand_docking::Rotate>( new Rotate(rotate_info) ) );
 		}
 	}
 }

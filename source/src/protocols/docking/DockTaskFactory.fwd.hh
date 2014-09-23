@@ -21,8 +21,8 @@ namespace protocols {
 namespace docking {
 	/// @brief owning pointer for Task Factory used in docking
 	class DockTaskFactory;
-	typedef utility::pointer::owning_ptr< DockTaskFactory > DockTaskFactoryOP;
-	typedef utility::pointer::owning_ptr< DockTaskFactory const > DockTaskFactoryCOP;
+	typedef utility::pointer::shared_ptr< DockTaskFactory > DockTaskFactoryOP;
+	typedef utility::pointer::shared_ptr< DockTaskFactory const > DockTaskFactoryCOP;
 
 } //docking
 } //protocols

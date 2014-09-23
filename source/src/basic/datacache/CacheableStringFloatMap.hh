@@ -51,7 +51,7 @@ class CacheableStringFloatMap : public CacheableData
 public:
 	CacheableStringFloatMap() : CacheableData() {}
 	virtual ~CacheableStringFloatMap(){};
-	virtual CacheableDataOP clone() const { return new CacheableStringFloatMap(*this); }
+	virtual CacheableDataOP clone() const { return CacheableDataOP( new CacheableStringFloatMap(*this) ); }
 
 	virtual std::map< std::string, float > & map(){ return map_; }
 	virtual const std::map< std::string, float > & map() const { return map_; }

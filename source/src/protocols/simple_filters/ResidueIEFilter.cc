@@ -35,7 +35,7 @@ namespace simple_filters {
 static thread_local basic::Tracer tr( "protocols.simple_filters.ResidueIEFilter" );
 
 protocols::filters::FilterOP
-ResidueIEFilterCreator::create_filter() const { return new ResidueIEFilter; }
+ResidueIEFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResidueIEFilter ); }
 
 std::string
 ResidueIEFilterCreator::keyname() const { return "ResidueIE"; }

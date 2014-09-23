@@ -180,7 +180,7 @@ MatcherTask::set_upstream_pose(
 	core::pose::Pose const & input_pose
 )
 {
-	upstream_pose_ = new core::pose::Pose( input_pose );
+	upstream_pose_ = core::pose::PoseCOP( new core::pose::Pose( input_pose ) );
 	utility::vector1< std::string > path = utility::string_split( input_pose.pdb_info()->name(), '/' );
 	upstream_pose_name_ = utility::string_split( path[ path.size() ], '.' )[1];
 }
@@ -190,7 +190,7 @@ MatcherTask::set_downstream_pose(
 	core::pose::Pose const & input_pose
 )
 {
-	downstream_pose_ = new core::pose::Pose( input_pose );
+	downstream_pose_ = core::pose::PoseCOP( new core::pose::Pose( input_pose ) );
 
 	if ( downstream_orientation_atoms_.size() != 0 ) {
 		validate_downstream_orientation_atoms();
@@ -203,7 +203,7 @@ MatcherTask::set_downstream_pose(
 	utility::vector1< core::id::AtomID > const & orientation_atoms
 )
 {
-	downstream_pose_ = new core::pose::Pose( input_pose );
+	downstream_pose_ = core::pose::PoseCOP( new core::pose::Pose( input_pose ) );
 	downstream_orientation_atoms_ = orientation_atoms;
 
 	validate_downstream_orientation_atoms();
@@ -1121,7 +1121,7 @@ MatcherTask::remove_downstream_object_from_upstream_pose()
 	}
 	if( seqpos_to_remove.size() == 0 ) return;
 
-	core::pose::PoseOP mod_up_pose = new core::pose::Pose( *upstream_pose_ );
+	core::pose::PoseOP mod_up_pose( new core::pose::Pose( *upstream_pose_ ) );
 	for( core::Size i = seqpos_to_remove.size(); i >= 1; --i){
 		TR << "Removing seqpos " << seqpos_to_remove[i] << " from upstream_pose_ because it is part of the downstream object." << std::endl;
 		mod_up_pose->conformation().delete_residue_slow( seqpos_to_remove[i] );
@@ -1138,8 +1138,8 @@ MatcherTask::initialize_enzdes_input_data_from_command_line()
 	using namespace protocols::toolbox::match_enzdes_util;
 	using namespace core::chemical;
 	/// create a local non-const version of the input data.
-	EnzConstraintIOOP enz_input_data = new EnzConstraintIO(
-		ChemicalManager::get_instance()->nonconst_residue_type_set( FA_STANDARD ).get_self_weak_ptr() );
+	EnzConstraintIOOP enz_input_data( new EnzConstraintIO(
+		ChemicalManager::get_instance()->nonconst_residue_type_set( FA_STANDARD ).get_self_weak_ptr() ) );
 	if ( ! option[ geometric_constraint_file ].user() ) {
 		utility_exit_with_message( "Option match::geometric_constraint_file must be specified on the command line" );
 	}

@@ -23,8 +23,8 @@ namespace ligand_docking {
 
 
 class GrowLigand; // fwd declaration
-typedef utility::pointer::owning_ptr< GrowLigand > GrowLigandOP;
-typedef utility::pointer::owning_ptr< GrowLigand const > GrowLigandCOP;
+typedef utility::pointer::shared_ptr< GrowLigand > GrowLigandOP;
+typedef utility::pointer::shared_ptr< GrowLigand const > GrowLigandCOP;
 
 
 } // namespace ligand_docking

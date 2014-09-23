@@ -18,8 +18,8 @@ namespace openers {
 
 class LoopOpener;
 
-typedef utility::pointer::owning_ptr<LoopOpener> LoopOpenerOP;
-typedef utility::pointer::owning_ptr<LoopOpener const> LoopOpenerCOP;
+typedef utility::pointer::shared_ptr<LoopOpener> LoopOpenerOP;
+typedef utility::pointer::shared_ptr<LoopOpener const> LoopOpenerCOP;
 
 }
 }

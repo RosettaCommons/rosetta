@@ -36,8 +36,8 @@ namespace protocols {
 namespace antibody_legacy {
 
 class GraftMover;
-typedef utility::pointer::owning_ptr< GraftMover > GraftMoverOP;
-typedef utility::pointer::owning_ptr< const GraftMover > GraftMoverCOP;
+typedef utility::pointer::shared_ptr< GraftMover > GraftMoverOP;
+typedef utility::pointer::shared_ptr< const GraftMover > GraftMoverCOP;
 
 //////////////////////////////////////////////////////////////////////////
 /// @brief Grafts a series of CDR onto a framework
@@ -107,8 +107,8 @@ private:
 }; // class GraftMover
 
 class GraftOneMover;
-typedef utility::pointer::owning_ptr< GraftOneMover > GraftOneMoverOP;
-typedef utility::pointer::owning_ptr<const GraftOneMover> GraftOneMoverCOP;
+typedef utility::pointer::shared_ptr< GraftOneMover > GraftOneMoverOP;
+typedef utility::pointer::shared_ptr<const GraftOneMover> GraftOneMoverCOP;
 
 //////////////////////////////////////////////////////////////////////////
 /// @brief Grafts only one CDR onto a framework
@@ -148,8 +148,8 @@ private:
 }; // class GraftOneMover
 
 class CloseOneMover;
-typedef utility::pointer::owning_ptr< CloseOneMover > CloseOneMoverOP;
-typedef utility::pointer::owning_ptr<const CloseOneMover> CloseOneMoverCOP;
+typedef utility::pointer::shared_ptr< CloseOneMover > CloseOneMoverOP;
+typedef utility::pointer::shared_ptr<const CloseOneMover> CloseOneMoverCOP;
 
 /// @brief Closes only one CDR onto a framework
 class CloseOneMover : public moves::Mover {
@@ -193,8 +193,8 @@ private:
 }; // class CloseOneMover
 
 class LoopRlxMover;
-typedef utility::pointer::owning_ptr< LoopRlxMover > LoopRlxMoverOP;
-typedef utility::pointer::owning_ptr<const LoopRlxMover> LoopRlxMoverCOP;
+typedef utility::pointer::shared_ptr< LoopRlxMover > LoopRlxMoverOP;
+typedef utility::pointer::shared_ptr<const LoopRlxMover> LoopRlxMoverCOP;
 
 /// @brief Closes only one CDR onto a framework
 class LoopRlxMover : public moves::Mover {

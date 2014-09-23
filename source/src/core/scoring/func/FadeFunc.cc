@@ -33,9 +33,9 @@ namespace func {
 FuncOP
 FadeFunc::clone() const
 {
-	return new FadeFunc( cutoff_lower_, cutoff_upper_,
+	return FuncOP( new FadeFunc( cutoff_lower_, cutoff_upper_,
 											 fade_zone_, well_depth_,
-											 well_offset_ );
+											 well_offset_ ) );
 }
 
 Real

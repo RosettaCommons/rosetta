@@ -22,9 +22,9 @@ namespace chemical {
 
 class ResidueTypeSet;
 
-typedef utility::pointer::owning_ptr< ResidueTypeSet > ResidueTypeSetOP;
-typedef utility::pointer::owning_ptr< ResidueTypeSet const > ResidueTypeSetCOP;
-typedef utility::pointer::access_ptr< ResidueTypeSet const > ResidueTypeSetCAP;
+typedef utility::pointer::shared_ptr< ResidueTypeSet > ResidueTypeSetOP;
+typedef utility::pointer::shared_ptr< ResidueTypeSet const > ResidueTypeSetCOP;
+typedef utility::pointer::weak_ptr< ResidueTypeSet const > ResidueTypeSetCAP;
 
 }
 }

@@ -57,7 +57,7 @@ methods::EnergyMethodOP
 CenRotDunEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new CenRotDunEnergy;
+	return methods::EnergyMethodOP( new CenRotDunEnergy );
 }
 
 ScoreTypes
@@ -70,14 +70,14 @@ CenRotDunEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 CenRotDunEnergy::CenRotDunEnergy() :
-	parent( new CenRotDunEnergyCreator )
+	parent( EnergyMethodCreatorOP( new CenRotDunEnergyCreator ) )
 {}
 
 
 /// clone
 EnergyMethodOP
 CenRotDunEnergy::clone() const {
-	return new CenRotDunEnergy;
+	return EnergyMethodOP( new CenRotDunEnergy );
 }
 
 

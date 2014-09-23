@@ -61,7 +61,7 @@ public:
 
 	void clear(); //set's all pointers to zero
 
-	virtual moves::MoverOP fresh_instance() const { return new AbrelaxMover(); }
+	virtual moves::MoverOP fresh_instance() const { return moves::MoverOP( new AbrelaxMover() ); }
 
 	FragmentSamplerOP sampling_protocol();
 

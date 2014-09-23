@@ -40,16 +40,16 @@ using core::pack::pack_rotamers_run;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 PackingState::PackingState()
 	: SingleState(),
-		ptask_p_(0),
-		rotamersets_p_(0),
-		ig_p_(0)
+		ptask_p_(/* 0 */),
+		rotamersets_p_(/* 0 */),
+		ig_p_(/* 0 */)
 {}
 
 PackingState::PackingState( core::pose::Pose const & pose, bool is_positive )
 	: SingleState( pose, is_positive ),
-		ptask_p_(0),
-		rotamersets_p_(0),
-		ig_p_(0)
+		ptask_p_(/* 0 */),
+		rotamersets_p_(/* 0 */),
+		ig_p_(/* 0 */)
 {}
 
 PackingState::~PackingState() {}
@@ -68,7 +68,7 @@ PackingState::create_packer_data(
 )
 {
 	ptask_p_ = ptask;
-	rotamersets_p_ = new RotamerSets();
+	rotamersets_p_ = core::pack::rotamer_set::RotamerSetsOP( new RotamerSets() );
 	assert( scorefxn && ptask_p_ && rotamersets_p_ );
 	pack_rotamers_setup( nonconst_pose(), *scorefxn, ptask_p_, rotamersets_p_, ig_p_ );
 }

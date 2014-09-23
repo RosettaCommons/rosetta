@@ -29,7 +29,7 @@ namespace features {
 ProteinRMSDFeaturesCreator::ProteinRMSDFeaturesCreator() {}
 ProteinRMSDFeaturesCreator::~ProteinRMSDFeaturesCreator() {}
 FeaturesReporterOP ProteinRMSDFeaturesCreator::create_features_reporter() const {
-	return new ProteinRMSDFeatures;
+	return FeaturesReporterOP( new ProteinRMSDFeatures );
 }
 
 std::string ProteinRMSDFeaturesCreator::type_name() const {

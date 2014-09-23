@@ -186,18 +186,18 @@ ClassicAbinitio::ClassicAbinitio(
 	using simple_moves::GunnCost;
 	if ( option[ OptionKeys::abinitio::log_frags ].user() ) {
 		if ( !option[ OptionKeys::abinitio::debug ] ) utility_exit_with_message( "apply option abinitio::log_frags always together with abinitio::debug!!!");
-		bms  = new simple_moves::LoggedFragmentMover( fragset_small, movemap );
-		bml  = new simple_moves::LoggedFragmentMover( fragset_large, movemap );
-		sms  = new SmoothFragmentMover( fragset_small, movemap, FragmentCostOP( new GunnCost ) );
+		bms = simple_moves::ClassicFragmentMoverOP( new simple_moves::LoggedFragmentMover( fragset_small, movemap ) );
+		bml = simple_moves::ClassicFragmentMoverOP( new simple_moves::LoggedFragmentMover( fragset_large, movemap ) );
+		sms = simple_moves::ClassicFragmentMoverOP( new SmoothFragmentMover( fragset_small, movemap, FragmentCostOP( new GunnCost ) ) );
 	} else if ( option[ OptionKeys::abinitio::symmetry_residue ].user() ) {
 		Size const sr (  option[ OptionKeys::abinitio::symmetry_residue ] );
-		bms = new SymmetricFragmentMover( fragset_small, movemap, sr );
-		bml = new SymmetricFragmentMover( fragset_large, movemap, sr );
-		sms = new SmoothSymmetricFragmentMover( fragset_small, movemap, FragmentCostOP( new GunnCost ), sr );
+		bms = simple_moves::ClassicFragmentMoverOP( new SymmetricFragmentMover( fragset_small, movemap, sr ) );
+		bml = simple_moves::ClassicFragmentMoverOP( new SymmetricFragmentMover( fragset_large, movemap, sr ) );
+		sms = simple_moves::ClassicFragmentMoverOP( new SmoothSymmetricFragmentMover( fragset_small, movemap, FragmentCostOP( new GunnCost ), sr ) );
 	} else {
-		bms  = new ClassicFragmentMover( fragset_small, movemap );
-		bml  = new ClassicFragmentMover( fragset_large, movemap );
-		sms = new SmoothFragmentMover ( fragset_small, movemap, FragmentCostOP( new GunnCost ) );
+		bms = simple_moves::ClassicFragmentMoverOP( new ClassicFragmentMover( fragset_small, movemap ) );
+		bml = simple_moves::ClassicFragmentMoverOP( new ClassicFragmentMover( fragset_large, movemap ) );
+		sms = simple_moves::ClassicFragmentMoverOP( new SmoothFragmentMover ( fragset_small, movemap, FragmentCostOP( new GunnCost ) ) );
 	}
 
 	bms->set_end_bias( option[ OptionKeys::abinitio::end_bias ] ); //default is 30.0
@@ -210,8 +210,8 @@ ClassicAbinitio::ClassicAbinitio(
 
 	using namespace core::pack::task;
 	//init the packer
-	pack_rotamers_ = new protocols::simple_moves::PackRotamersMover();
-	TaskFactoryOP main_task_factory = new TaskFactory;
+	pack_rotamers_ = simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover() );
+	TaskFactoryOP main_task_factory( new TaskFactory );
 	main_task_factory->push_back( operation::TaskOperationCOP( new operation::RestrictToRepacking ) );
 	//main_task_factory->push_back( new operation::PreserveCBeta );
 	pack_rotamers_->task_factory(main_task_factory);
@@ -287,7 +287,7 @@ ClassicAbinitio::init( core::pose::Pose const& pose ) {
 moves::MoverOP
 ClassicAbinitio::clone() const
 {
-	return new ClassicAbinitio( *this );
+	return moves::MoverOP( new ClassicAbinitio( *this ) );
 }
 
 void ClassicAbinitio::apply( pose::Pose & pose ) {
@@ -620,17 +620,17 @@ void ClassicAbinitio::update_moves() {
 void ClassicAbinitio::set_trials() {
 	// setup loop1
 	runtime_assert( brute_move_large_ != 0 );
-	trial_large_ = new moves::TrialMover( brute_move_large_, mc_ );
+	trial_large_ = moves::TrialMoverOP( new moves::TrialMover( brute_move_large_, mc_ ) );
 	//trial_large_->set_keep_stats( true );
 	trial_large_->keep_stats_type( moves::accept_reject );
 
 	runtime_assert( brute_move_small_ != 0 );
-	trial_small_ = new moves::TrialMover( brute_move_small_, mc_ );
+	trial_small_ = moves::TrialMoverOP( new moves::TrialMover( brute_move_small_, mc_ ) );
 	//trial_small_->set_keep_stats( true );
 	trial_small_->keep_stats_type( moves::accept_reject );
 
 	runtime_assert( smooth_move_small_ != 0 );
-	smooth_trial_small_ = new moves::TrialMover( smooth_move_small_, mc_ );
+	smooth_trial_small_ = moves::TrialMoverOP( new moves::TrialMover( smooth_move_small_, mc_ ) );
 	//smooth_trial_small_->set_keep_stats( true );
 	smooth_trial_small_->keep_stats_type( moves::accept_reject );
 
@@ -638,11 +638,11 @@ void ClassicAbinitio::set_trials() {
 	moves::SequenceMoverOP combo_small( new moves::SequenceMover() );
 	combo_small->add_mover(brute_move_small_);
 	combo_small->add_mover(pack_rotamers_);
-	trial_small_pack_ = new moves::TrialMover(combo_small, mc_);
+	trial_small_pack_ = moves::TrialMoverOP( new moves::TrialMover(combo_small, mc_) );
 	moves::SequenceMoverOP combo_smooth( new moves::SequenceMover() );
 	combo_smooth->add_mover(smooth_move_small_);
 	combo_smooth->add_mover(pack_rotamers_);
-	smooth_trial_small_pack_ = new moves::TrialMover(combo_smooth, mc_);
+	smooth_trial_small_pack_ = moves::TrialMoverOP( new moves::TrialMover(combo_smooth, mc_) );
 }
 
 //@detail sets Monto-Carlo object to default
@@ -650,7 +650,7 @@ void ClassicAbinitio::set_default_mc(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scorefxn
 ) {
-	set_mc( new moves::MonteCarlo( pose, scorefxn, temperature_ ) );
+	set_mc( moves::MonteCarloOP( new moves::MonteCarlo( pose, scorefxn, temperature_ ) ) );
 }
 
 //@detail sets Monto-Carlo object
@@ -826,7 +826,7 @@ void ClassicAbinitio::set_default_options() {
 /// @detail
 /// calls of operator ( pose ) compare the
 class hConvergenceCheck;
-typedef  utility::pointer::owning_ptr< hConvergenceCheck >  hConvergenceCheckOP;
+typedef  utility::pointer::shared_ptr< hConvergenceCheck >  hConvergenceCheckOP;
 
 class hConvergenceCheck : public moves::PoseCondition {
 public:
@@ -904,7 +904,7 @@ bool ClassicAbinitio::do_stage2_cycles( pose::Pose &pose ) {
 	if ( short_insert_region_ ) cycle->add_mover( trial_small_->mover() );
 
 	Size nr_cycles = stage2_cycles() / ( short_insert_region_ ? 2 : 1 );
-	moves::TrialMoverOP trials = new moves::TrialMover( cycle, mc_ptr() );
+	moves::TrialMoverOP trials( new moves::TrialMover( cycle, mc_ptr() ) );
 	moves::RepeatMover( stage2_mover( pose, trials ), nr_cycles ).apply(pose);
 
 	//is there a better way to find out how many steps ? for instance how many calls to scoring?
@@ -941,7 +941,7 @@ bool ClassicAbinitio::do_stage3_cycles( pose::Pose &pose ) {
 
 	hConvergenceCheckOP convergence_checker ( NULL );
 	if ( !option[ basic::options::OptionKeys::abinitio::skip_convergence_check ] ) {
-		convergence_checker = new hConvergenceCheck;
+		convergence_checker = hConvergenceCheckOP( new hConvergenceCheck );
 	}
 
 	moves::TrialMoverOP trials = trial_large();
@@ -1087,7 +1087,7 @@ bool ClassicAbinitio::do_stage5_cycles( pose::Pose &pose ) {//vats
 	small_mover->angle_max( 'E', 2.0 );
 	small_mover->angle_max( 'L', 5.0 );
 
-	moves::TrialMoverOP trials = new moves::TrialMover( small_mover, mc_ptr() );
+	moves::TrialMoverOP trials( new moves::TrialMover( small_mover, mc_ptr() ) );
 	moves::RepeatMover( stage5_mover( pose, trials ), stage5_cycles() ).apply( pose );
 
 	//	moves::MoverOP trial( stage5_mover( pose, small_mover ) );
@@ -1201,7 +1201,7 @@ bool ClassicAbinitio::prepare_stage3( core::pose::Pose &pose ) {
 	replace_scorefxn( pose, STAGE_3a, 0 );
 	//score for this stage is changed in the do_stage3_cycles explicitly
 	if ( option[ templates::change_movemap ].user() && option[ templates::change_movemap ] == 3 ) {
-		kinematics::MoveMapOP new_mm = new kinematics::MoveMap( *movemap() );
+		kinematics::MoveMapOP new_mm( new kinematics::MoveMap( *movemap() ) );
 		new_mm->set_bb( true );
 		set_movemap( new_mm ); // --> store it in movemap_ --> original will be reinstated at end of apply()
 	}
@@ -1215,7 +1215,7 @@ bool ClassicAbinitio::prepare_stage4( core::pose::Pose &pose ) {
 	/// Now handled automatically.  score_stage4_->accumulate_residue_total_energies( pose ); // fix this
 
 	if ( option[ templates::change_movemap ].user() && option[ templates::change_movemap ] == 4 ) {
-		kinematics::MoveMapOP new_mm = new kinematics::MoveMap( *movemap() );
+		kinematics::MoveMapOP new_mm( new kinematics::MoveMap( *movemap() ) );
 		new_mm->set_bb( true );
 		tr.Debug << "option: templates::change_movemap ACTIVE: set_movemap" << std::endl;
 		set_movemap( new_mm ); // --> store it in movemap_ --> original will be reinstated at end of apply()

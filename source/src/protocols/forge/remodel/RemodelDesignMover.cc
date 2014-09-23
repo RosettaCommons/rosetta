@@ -119,7 +119,7 @@ RemodelDesignMover::RemodelDesignMover( RemodelData const & remodel_data,
 		TR << "Warning: union_of_intervals_containing_undefined_positions() returned empty set. NeighborhoodByDistanceCalculator could return undefined results." << std::endl;
 	}
 
-	CalculatorFactory::Instance().register_calculator( "neighborhood_calc", new NeighborhoodByDistanceCalculator( und_pos ) );
+	CalculatorFactory::Instance().register_calculator( "neighborhood_calc", PoseMetricCalculatorOP( new NeighborhoodByDistanceCalculator( und_pos ) ) );
 
 }
 
@@ -128,12 +128,12 @@ RemodelDesignMover::~RemodelDesignMover(){}
 
 /// @brief clone this object
 RemodelDesignMover::MoverOP RemodelDesignMover::clone() const {
-  return new RemodelDesignMover( *this );
+  return RemodelDesignMover::MoverOP( new RemodelDesignMover( *this ) );
 }
 
 /// @brief create this type of object
 RemodelDesignMover::MoverOP RemodelDesignMover::fresh_instance() const {
-  return new RemodelDesignMover();
+  return RemodelDesignMover::MoverOP( new RemodelDesignMover() );
 }
 
 /// @brief packer task accessor
@@ -229,7 +229,7 @@ void RemodelDesignMover::apply( Pose & pose ) {
 		working_model_.task->set_bump_check( true );
 
 		// make rotamer links
-		RemodelRotamerLinksOP linkOP = new RemodelRotamerLinks;
+		RemodelRotamerLinksOP linkOP( new RemodelRotamerLinks );
 		linkOP->apply( pose, *working_model_.task );
 	}
 
@@ -324,7 +324,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 
   CalculatorFactory::Instance().register_calculator(
     "reducetask_calc",
-    new NeighborhoodByDistanceCalculator( positionList )
+    PoseMetricCalculatorOP( new NeighborhoodByDistanceCalculator( positionList ) )
   );
 
 	//compute the bsasa values for each position
@@ -492,7 +492,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 		//borrow RESFILE command for the job -- save a lot of coding effort.
 		if ( core ){
 			for (utility::vector1<Size>::iterator it= corePos.begin(), end=corePos.end(); it!=end; it++){
-				ResfileCommandOP command  = new core::pack::task::APOLAR;
+				ResfileCommandOP command( new core::pack::task::APOLAR );
 				utility::vector1<std::string> decoy;
 				decoy.push_back("APOLAR");
 				Size resid = *it;
@@ -503,7 +503,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 			}
 		} else {
 			for (utility::vector1<Size>::iterator it= corePos.begin(), end=corePos.end(); it!=end; it++){
-					ResfileCommandOP command  = new core::pack::task::NATRO;
+					ResfileCommandOP command( new core::pack::task::NATRO );
 					utility::vector1<std::string> decoy;
 					decoy.push_back("NATRO");
 					Size resid = *it;
@@ -516,7 +516,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 
 		if ( boundary ){
 			for (utility::vector1<Size>::iterator it= boundaryPos.begin(), end=boundaryPos.end(); it!=end; it++){
-				ResfileCommandOP command  = new core::pack::task::ALLAAxc; //note! no cys
+				ResfileCommandOP command( new core::pack::task::ALLAAxc ); //note! no cys
 				utility::vector1<std::string> decoy;
 				decoy.push_back("ALLAAxc");
 				Size resid = *it;
@@ -527,7 +527,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 			}
 		} else {
 		for (utility::vector1<Size>::iterator it= boundaryPos.begin(), end=boundaryPos.end(); it!=end; it++){
-					ResfileCommandOP command  = new core::pack::task::NATRO;
+					ResfileCommandOP command( new core::pack::task::NATRO );
 					utility::vector1<std::string> decoy;
 					decoy.push_back("NATRO");
 					Size resid = *it;
@@ -541,7 +541,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 
 		if ( surface ){
 			for (utility::vector1<Size>::iterator it= surfPos.begin(), end=surfPos.end(); it!=end; it++){
-				ResfileCommandOP command  = new core::pack::task::POLAR;
+				ResfileCommandOP command( new core::pack::task::POLAR );
 				utility::vector1<std::string> decoy;
 				decoy.push_back("POLAR");
 				Size resid = *it;
@@ -552,7 +552,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 			}
 		} else {
 			for (utility::vector1<Size>::iterator it= surfPos.begin(), end=surfPos.end(); it!=end; it++){
-						ResfileCommandOP command  = new core::pack::task::NATRO;
+						ResfileCommandOP command( new core::pack::task::NATRO );
 						utility::vector1<std::string> decoy;
 						decoy.push_back("NATRO");
 						Size resid = *it;

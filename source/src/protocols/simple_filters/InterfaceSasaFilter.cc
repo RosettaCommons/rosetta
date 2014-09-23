@@ -44,7 +44,7 @@ namespace simple_filters {
 static thread_local basic::Tracer TR( "protocols.simple_filters.InterfaceSasaFilter" );
 
 protocols::filters::FilterOP
-InterfaceSasaFilterCreator::create_filter() const { return new InterfaceSasaFilter; }
+InterfaceSasaFilterCreator::create_filter() const { return protocols::filters::FilterOP( new InterfaceSasaFilter ); }
 
 std::string
 InterfaceSasaFilterCreator::keyname() const { return "Sasa"; }
@@ -85,12 +85,12 @@ InterfaceSasaFilter::~InterfaceSasaFilter(){}
 
 filters::FilterOP
 InterfaceSasaFilter::clone() const{
-	return new InterfaceSasaFilter( *this );
+	return filters::FilterOP( new InterfaceSasaFilter( *this ) );
 }
 
 filters::FilterOP
 InterfaceSasaFilter::fresh_instance() const{
-	return new InterfaceSasaFilter;
+	return filters::FilterOP( new InterfaceSasaFilter );
 }
 
 void

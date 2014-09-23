@@ -26,8 +26,8 @@ namespace clusters {
 // Forward
 class CDRClusterMatcher;
 
-typedef utility::pointer::owning_ptr< CDRClusterMatcher > CDRClusterMatcherOP;
-typedef utility::pointer::owning_ptr< CDRClusterMatcher const > CDRClusterMatcherCOP;
+typedef utility::pointer::shared_ptr< CDRClusterMatcher > CDRClusterMatcherOP;
+typedef utility::pointer::shared_ptr< CDRClusterMatcher const > CDRClusterMatcherCOP;
 
 
 } //namespace clusters

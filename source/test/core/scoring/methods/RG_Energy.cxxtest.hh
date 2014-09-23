@@ -67,7 +67,7 @@ class RG_Energy_Tests : public CxxTest::TestSuite {
 		core_init();
 
 		// scorefxn isn't really used, but necessary for call to finalize_total_energy
-		scorefxn = new core::scoring::ScoreFunction;
+		scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
 
 		// rg_energy = new RG_Energy;
 		// rg_energy_fast = new RG_Energy_Fast;
@@ -75,7 +75,7 @@ class RG_Energy_Tests : public CxxTest::TestSuite {
 
 	// Shared finalization goes here.
 	void tearDown() {
-		scorefxn = 0;
+		scorefxn.reset();
 	}
 
 	// --------------- Test Cases --------------- //

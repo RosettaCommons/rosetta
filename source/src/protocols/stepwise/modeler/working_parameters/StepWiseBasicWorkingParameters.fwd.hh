@@ -24,8 +24,8 @@ namespace modeler {
 namespace working_parameters {
 	
 	class StepWiseBasicWorkingParameters;
-	typedef utility::pointer::owning_ptr< StepWiseBasicWorkingParameters > StepWiseBasicWorkingParametersOP;
-	typedef utility::pointer::owning_ptr< StepWiseBasicWorkingParameters const > StepWiseBasicWorkingParametersCOP;
+	typedef utility::pointer::shared_ptr< StepWiseBasicWorkingParameters > StepWiseBasicWorkingParametersOP;
+	typedef utility::pointer::shared_ptr< StepWiseBasicWorkingParameters const > StepWiseBasicWorkingParametersCOP;
 	
 } //working_parameters
 } //modeler

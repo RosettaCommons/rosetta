@@ -24,8 +24,8 @@ namespace scoring {
 
 // Forward
 class Energies;
-typedef utility::pointer::owning_ptr< Energies       > EnergiesOP;
-typedef utility::pointer::owning_ptr< Energies const > EnergiesCOP;
+typedef utility::pointer::shared_ptr< Energies       > EnergiesOP;
+typedef utility::pointer::shared_ptr< Energies const > EnergiesCOP;
 
 } // namespace pose
 } // namespace core

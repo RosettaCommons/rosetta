@@ -19,8 +19,8 @@ namespace protocols {
 namespace nonlocal {
 
 class SingleFragmentMover;
-typedef utility::pointer::owning_ptr<SingleFragmentMover> SingleFragmentMoverOP;
-typedef utility::pointer::owning_ptr<SingleFragmentMover const> SingleFragmentMoverCOP;
+typedef utility::pointer::shared_ptr<SingleFragmentMover> SingleFragmentMoverOP;
+typedef utility::pointer::shared_ptr<SingleFragmentMover const> SingleFragmentMoverCOP;
 
 }  // namespace nonlocal
 }  // namespace protocols

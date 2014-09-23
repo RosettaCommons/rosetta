@@ -29,8 +29,8 @@ namespace conformation {
 namespace membrane {
 
 class MembranePlanes;
-typedef utility::pointer::owning_ptr< MembranePlanes > MembranePlanesOP;
-typedef utility::pointer::owning_ptr< MembranePlanes const > MembranePlanesCOP;
+typedef utility::pointer::shared_ptr< MembranePlanes > MembranePlanesOP;
+typedef utility::pointer::shared_ptr< MembranePlanes const > MembranePlanesCOP;
 
 } // membrane
 } // conformation

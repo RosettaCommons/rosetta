@@ -195,10 +195,10 @@ private:
 };
 
 // owning pointers
-typedef  utility::pointer::access_ptr< CartBondedParameters > CartBondedParametersAP;
-typedef  utility::pointer::access_ptr< CartBondedParameters const > CartBondedParametersCAP;
-typedef  utility::pointer::owning_ptr< CartBondedParameters > CartBondedParametersOP;
-typedef  utility::pointer::owning_ptr< CartBondedParameters const > CartBondedParametersCOP;
+typedef  utility::pointer::weak_ptr< CartBondedParameters > CartBondedParametersAP;
+typedef  utility::pointer::weak_ptr< CartBondedParameters const > CartBondedParametersCAP;
+typedef  utility::pointer::shared_ptr< CartBondedParameters > CartBondedParametersOP;
+typedef  utility::pointer::shared_ptr< CartBondedParameters const > CartBondedParametersCOP;
 
 
 

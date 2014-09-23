@@ -62,7 +62,7 @@ RemoveLigandFilterCreator::keyname() const
 FilterOP
 RemoveLigandFilterCreator::create_filter() const
 {
-    return new RemoveLigandFilter;
+    return FilterOP( new RemoveLigandFilter );
 }
    
 
@@ -70,10 +70,10 @@ RemoveLigandFilterCreator::create_filter() const
 RemoveLigandFilter::RemoveLigandFilter( ):
 		Filter( "RemoveLigandFilter" ),
     threshold_( 99.99 ),
-    mover_( new MinMover ),
-    filter_( new RmsdFilter )
+    mover_( MoverOP( new MinMover ) ),
+    filter_( FilterOP( new RmsdFilter ) )
 {
-    MoveMapOP movemap = new core::kinematics::MoveMap;
+    MoveMapOP movemap( new core::kinematics::MoveMap );
     movemap->set_bb(1);
     movemap->set_chi(1);
     
@@ -87,8 +87,8 @@ RemoveLigandFilter::RemoveLigandFilter( ):
 RemoveLigandFilter::RemoveLigandFilter( Real threshold ):
 		Filter( "RemoveLigandFilter" ),
     threshold_( threshold ),
-    mover_( new MinMover ),
-    filter_( new RmsdFilter )
+    mover_( MoverOP( new MinMover ) ),
+    filter_( FilterOP( new RmsdFilter ) )
 { }
  
 RemoveLigandFilter::RemoveLigandFilter( RemoveLigandFilter const & rval ):
@@ -108,7 +108,7 @@ RemoveLigandFilter::report_sm( Pose const & pose ) const
     protocols::toolbox::pose_manipulation::remove_non_protein_residues( no_lig_pose );
     if( filter_->get_type() == "Rmsd" )
     {
-        PoseOP init_pose = new Pose( no_lig_pose );
+        PoseOP init_pose( new Pose( no_lig_pose ) );
         RmsdFilter* rmsd_filter = dynamic_cast< RmsdFilter* >( filter_.get() );
         rmsd_filter->reference_pose( init_pose );
         rmsd_filter->superimpose( true );

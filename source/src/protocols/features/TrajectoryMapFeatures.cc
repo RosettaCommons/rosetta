@@ -85,8 +85,8 @@ void
 TrajectoryMapFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt(), false);
-	Column step("step", new DbInteger(), false); // referred to as "cycle" in code
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
+	Column step("step", DbDataTypeOP( new DbInteger() ), false); // referred to as "cycle" in code
 
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(struct_id);
@@ -118,8 +118,8 @@ TrajectoryMapFeatures::report_features(
 	trajectory_structures_steps_insert.add_column("struct_id");
 	trajectory_structures_steps_insert.add_column("step");
 
-	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id", struct_id);
-	RowDataBaseOP step_data = new RowData<Size>("step", current_cycle_);
+	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id", struct_id) );
+	RowDataBaseOP step_data( new RowData<Size>("step", current_cycle_) );
 
 	trajectory_structures_steps_insert.add_row(
 		utility::tools::make_vector(struct_id_data, step_data)

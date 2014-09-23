@@ -266,11 +266,11 @@ StoreCompoundTaskMover::apply( core::pose::Pose & pose )
 		core::pack::make_symmetric_PackerTask_by_truncation(pose, task); // Does this need to be fixed or omitted?
 	// If the pose doesn't have STM_STORED_TASK data, put a blank STMStoredTask in there.
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::STM_STORED_TASKS ) ) {
-		protocols::toolbox::task_operations::STMStoredTaskOP blank_tasks = new protocols::toolbox::task_operations::STMStoredTask();
+		protocols::toolbox::task_operations::STMStoredTaskOP blank_tasks( new protocols::toolbox::task_operations::STMStoredTask() );
 		pose.data().set( core::pose::datacache::CacheableDataType::STM_STORED_TASKS, blank_tasks );
 	}
 	// Grab a reference to the data
-	protocols::toolbox::task_operations::STMStoredTask & stored_tasks = *( static_cast< protocols::toolbox::task_operations::STMStoredTask* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS )() ) );
+	protocols::toolbox::task_operations::STMStoredTask & stored_tasks = *( utility::pointer::static_pointer_cast< protocols::toolbox::task_operations::STMStoredTask > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS ) ) );
 	// If you haven't set overwrite to true and your task name already exists, fail. Otherwise, put the task you've made into the data cache.
 	if ( overwrite_ || !stored_tasks.has_task(task_name_) ) {
 		stored_tasks.set_task( task, task_name_ );
@@ -328,7 +328,7 @@ StoreCompoundTaskMover::parse_my_tag(
 			throw utility::excn::EXCN_RosettaScriptsOption( "Error: Boolean operation in tag is undefined." );
 		}
 
-  	core::pack::task::TaskFactoryOP new_task_factory = new core::pack::task::TaskFactory;
+  	core::pack::task::TaskFactoryOP new_task_factory( new core::pack::task::TaskFactory );
   	std::string const t_o_val( cmp_tag_ptr->getOption<std::string>("task_operations") );
  
 	 	TR<<"Defined with operator: "<<operation<<" and tasks: "<<t_o_val<<std::endl;
@@ -355,17 +355,17 @@ std::string StoreCompoundTaskMover::get_name() const { return "StoreCompoundTask
 
 protocols::moves::MoverOP
 StoreCompoundTaskMoverCreator::create_mover() const {
-	return new StoreCompoundTaskMover;
+	return protocols::moves::MoverOP( new StoreCompoundTaskMover );
 }
 
 protocols::moves::MoverOP
 StoreCompoundTaskMover::clone() const {
-	return new StoreCompoundTaskMover( *this );
+	return protocols::moves::MoverOP( new StoreCompoundTaskMover( *this ) );
 }
 
 protocols::moves::MoverOP
 StoreCompoundTaskMover::fresh_instance() const {
-	return new StoreCompoundTaskMover;
+	return protocols::moves::MoverOP( new StoreCompoundTaskMover );
 }
 
 } // task_operations

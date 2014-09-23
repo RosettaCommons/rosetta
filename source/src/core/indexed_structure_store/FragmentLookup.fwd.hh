@@ -26,10 +26,10 @@ class FragmentLookupResult;
 
 class FragmentLookup;
 
-typedef utility::pointer::owning_ptr<FragmentLookup> FragmentLookupOP;
-typedef utility::pointer::owning_ptr<FragmentLookup const> FragmentLookupCOP;
-typedef utility::pointer::access_ptr<FragmentLookup> FragmentLookupAP;
-typedef utility::pointer::access_ptr<FragmentLookup const> FragmentLookupCAP;
+typedef utility::pointer::shared_ptr<FragmentLookup> FragmentLookupOP;
+typedef utility::pointer::shared_ptr<FragmentLookup const> FragmentLookupCOP;
+typedef utility::pointer::weak_ptr<FragmentLookup> FragmentLookupAP;
+typedef utility::pointer::weak_ptr<FragmentLookup const> FragmentLookupCAP;
 
 }
 }

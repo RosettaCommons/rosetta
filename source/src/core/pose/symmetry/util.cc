@@ -89,10 +89,10 @@ make_score_function_consistent_with_symmetric_state_of_pose(
 ) {
 	scoring::ScoreFunctionOP tmp_scorefxn = scorefxn;
 	if(is_symmetric( pose ) && !is_symmetric( *scorefxn ) ){
-		scorefxn = new scoring::symmetry::SymmetricScoreFunction();
+		scorefxn = scoring::ScoreFunctionOP( new scoring::symmetry::SymmetricScoreFunction() );
 		scorefxn->assign(*tmp_scorefxn);
 	} else if( !is_symmetric( pose ) && is_symmetric( *scorefxn) ){
-		scorefxn = new scoring::ScoreFunction();
+		scorefxn = scoring::ScoreFunctionOP( new scoring::ScoreFunction() );
 		scorefxn->assign(*tmp_scorefxn);
 	}
 }
@@ -134,18 +134,18 @@ make_symmetric_pose(
 {
 	using namespace basic::options;
 
-	conformation::symmetry::SymmetricConformationOP symm_conf = new core::conformation::symmetry::SymmetricConformation( pose.conformation(), symmetry_info );
+	conformation::symmetry::SymmetricConformationOP symm_conf( new core::conformation::symmetry::SymmetricConformation( pose.conformation(), symmetry_info ) );
 
 	scoring::symmetry::SymmetricEnergiesOP symm_energy( new scoring::symmetry::SymmetricEnergies( pose.energies()) );
 
 	pose.set_new_conformation( symm_conf );
 	pose.set_new_energies_object( symm_energy );
 
-	pose::PDBInfoOP pdb_info = new pose::PDBInfo( pose, true );
+	pose::PDBInfoOP pdb_info( new pose::PDBInfo( pose, true ) );
 
 	//fpd if the input pdb info is valid copy it
 	if ( pose.pdb_info() && pose.pdb_info()->nres() == pose.total_residue() ) {
-		pdb_info = new pose::PDBInfo( *(pose.pdb_info()) );
+		pdb_info = pose::PDBInfoOP( new pose::PDBInfo( *(pose.pdb_info()) ) );
 	}
 	pose.pdb_info( pdb_info );
 
@@ -170,18 +170,18 @@ make_symmetric_pose(
 
 	pose::PDBInfoOP pdb_info_src( pose.pdb_info() );
 	if ( !pose.pdb_info() ) {
-		pdb_info_src = new pose::PDBInfo( pose, true );
+		pdb_info_src = pose::PDBInfoOP( new pose::PDBInfo( pose, true ) );
 	}
 
 	conformation::symmetry::SymmetricConformationOP symm_conf
 		( setup_symmetric_conformation( pose.conformation(), symmdata, conf2pdb_chain(pose) ) );
 
-	scoring::symmetry::SymmetricEnergiesOP symm_energy ( new scoring::symmetry::SymmetricEnergies( pose.energies()) );
+	scoring::symmetry::SymmetricEnergiesOP symm_energy( new scoring::symmetry::SymmetricEnergies( pose.energies()) );
 
 	pose.set_new_conformation( symm_conf );
 	pose.set_new_energies_object( symm_energy );
 
-	pose::PDBInfoOP pdb_info = new pose::PDBInfo( pose, true );
+	pose::PDBInfoOP pdb_info( new pose::PDBInfo( pose, true ) );
 	core::pose::symmetry::make_symmetric_pdb_info( pose, pdb_info_src, pdb_info );
 	pose.pdb_info( pdb_info );
 
@@ -254,7 +254,7 @@ make_asymmetric_pose(
 	scoring::Energies asym_energies( static_cast< scoring::Energies const & >( ( pose.energies()  ) ) );
 	conformation::Conformation const & asym_conformation = static_cast< conformation::Conformation const & >( ( pose.conformation() ) );
 	conformation::ConformationCOP conformation = asym_conformation.get_self_ptr();
-	scoring::EnergiesOP energies = new scoring::Energies( asym_energies );
+	scoring::EnergiesOP energies( new scoring::Energies( asym_energies ) );
 	pose.set_new_conformation( conformation );
 	// Necessary to reinitialize the energy_graph
 	energies->clear_energies();
@@ -317,11 +317,11 @@ void extract_asymmetric_unit(core::pose::Pose const& pose_in, core::pose::Pose &
   	pose_out.fold_tree( f_in );
 	}
 
-	pose::PDBInfoOP pdb_info = new pose::PDBInfo( pose_out, true );
+	pose::PDBInfoOP pdb_info( new pose::PDBInfo( pose_out, true ) );
 
 	pose::PDBInfoCOP pdb_info_src ( pose_in.pdb_info() );
 	if ( !pose_in.pdb_info() )
-		pdb_info_src = new pose::PDBInfo( pose_in, true );
+		pdb_info_src = pose::PDBInfoCOP( new pose::PDBInfo( pose_in, true ) );
 
 	core::pose::symmetry::extract_asymmetric_unit_pdb_info( pose_in, pdb_info_src, pdb_info );
 	pose_out.pdb_info( pdb_info );
@@ -497,7 +497,7 @@ make_symmetric_pdb_info(
 
 	// copy header and remark lines
 	if(pdb_info_src->header_information()){
-		pdb_info_target->header_information( new io::pdb::HeaderInformation(*pdb_info_src->header_information()));
+		pdb_info_target->header_information( io::pdb::HeaderInformationOP( new io::pdb::HeaderInformation(*pdb_info_src->header_information()) ));
 	}
 	pdb_info_target->remarks( pdb_info_src->remarks() );
 }
@@ -512,7 +512,7 @@ extract_asymmetric_unit_pdb_info(
 	using namespace core::conformation::symmetry;
 
 	if (!is_symmetric(pose)) {
-		pdb_info_target = new pose::PDBInfo( *pdb_info_src );
+		pdb_info_target = pose::PDBInfoOP( new pose::PDBInfo( *pdb_info_src ) );
 		return;
 	}
 
@@ -559,7 +559,7 @@ extract_asymmetric_unit_pdb_info(
 
 	// copy header and remark lines
 	if(pdb_info_src->header_information()){
-		pdb_info_target->header_information( new io::pdb::HeaderInformation(*pdb_info_src->header_information() ));
+		pdb_info_target->header_information( io::pdb::HeaderInformationOP( new io::pdb::HeaderInformation(*pdb_info_src->header_information() ) ));
 	}
 	pdb_info_target->remarks( pdb_info_src->remarks() );
 }
@@ -603,7 +603,7 @@ make_symmetric_movemap(
 	// first find out whether we have any allowed jumps. we just need to
 	// find one jump that is true to know that set_jump have been set to
 	// true
-	kinematics::MoveMapOP movemap_in ( new kinematics::MoveMap( movemap ) );
+	kinematics::MoveMapOP movemap_in( new kinematics::MoveMap( movemap ) );
 
 	//fpd  only let THETA and D move  in master subunit
 	if ( movemap.get( core::id::THETA ) ) {

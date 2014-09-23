@@ -78,7 +78,7 @@ PlacementMinimizationMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 PlacementMinimizationMoverCreator::create_mover() const {
-	return new PlacementMinimizationMover;
+	return protocols::moves::MoverOP( new PlacementMinimizationMover );
 }
 
 std::string
@@ -112,7 +112,7 @@ PlacementMinimizationMover::refresh_bbstub_constraints( core::pose::Pose & pose 
 	core::Size fixed_res(1);
 	if( host_chain_ == 1 ) fixed_res = pose.total_residue();
 	core::id::AtomID const fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );
-	HotspotStubSetOP all_stubs = new HotspotStubSet;
+	HotspotStubSetOP all_stubs( new HotspotStubSet );
 	BOOST_FOREACH( StubSetStubPos const stubset_pos_pair, stub_sets_ )
 		all_stubs->add_stub_set( *stubset_pos_pair.first );
 

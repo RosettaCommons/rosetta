@@ -23,10 +23,10 @@ namespace gasteiger {
 
 class GasteigerAtomTypeSet;
 
-typedef  utility::pointer::access_ptr< GasteigerAtomTypeSet > GasteigerAtomTypeSetAP;
-typedef  utility::pointer::access_ptr< GasteigerAtomTypeSet const > GasteigerAtomTypeSetCAP;
-typedef  utility::pointer::owning_ptr< GasteigerAtomTypeSet > GasteigerAtomTypeSetOP;
-typedef  utility::pointer::owning_ptr< GasteigerAtomTypeSet const > GasteigerAtomTypeSetCOP;
+typedef  utility::pointer::weak_ptr< GasteigerAtomTypeSet > GasteigerAtomTypeSetAP;
+typedef  utility::pointer::weak_ptr< GasteigerAtomTypeSet const > GasteigerAtomTypeSetCAP;
+typedef  utility::pointer::shared_ptr< GasteigerAtomTypeSet > GasteigerAtomTypeSetOP;
+typedef  utility::pointer::shared_ptr< GasteigerAtomTypeSet const > GasteigerAtomTypeSetCOP;
 
 }
 }

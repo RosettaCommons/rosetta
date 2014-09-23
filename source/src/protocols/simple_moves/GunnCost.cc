@@ -90,7 +90,7 @@ void GunnCost::compute_gunn( core::fragment::Frame const& frame, core::Size frag
 	}
 	PoseOP & poseptr = various_length_poses_[ frame.length()  ];
 	if ( poseptr == 0 ) {
-		poseptr = new Pose;
+		poseptr = PoseOP( new Pose );
 		frame.fragment_as_pose( frag_num, *poseptr, chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID ) );
 	} else {
 		frame.fragment( frag_num ).apply( *poseptr, 1, frame.length() );

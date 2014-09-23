@@ -72,19 +72,19 @@ DNATorsionPotential::DNATorsionPotential():
 	////////////////////////////////////////////////////////////////////////////
 	c2prime_c3prime_bond_length_( 1.526 ),
 	c2prime_c3prime_sd_( 1.0/ sqrt( 310.0 ) ), // 310.0 is the value of k
-	c2prime_c3prime_dist_harm_func_( new func::HarmonicFunc( c2prime_c3prime_bond_length_, scale_dna_torsion_sd_ * c2prime_c3prime_sd_ )),
+	c2prime_c3prime_dist_harm_func_( func::HarmonicFuncOP( new func::HarmonicFunc( c2prime_c3prime_bond_length_, scale_dna_torsion_sd_ * c2prime_c3prime_sd_ ) )),
 
 	c4prime_c3prime_c2prime_bond_angle_( numeric::conversions::radians( 109.50 ) ),
 	c4prime_c3prime_c2prime_angle_harm_func_(
-		new func::HarmonicFunc( c4prime_c3prime_c2prime_bond_angle_, scale_dna_torsion_sd_ * 1.0/sqrt( numeric::conversions::radians( 40.0 ) ) ) ),
+		func::HarmonicFuncOP( new func::HarmonicFunc( c4prime_c3prime_c2prime_bond_angle_, scale_dna_torsion_sd_ * 1.0/sqrt( numeric::conversions::radians( 40.0 ) ) ) ) ),
 
 	o3prime_c3prime_c2prime_bond_angle_( numeric::conversions::radians( 109.50 ) ),
 	o3prime_c3prime_c2prime_angle_harm_func_(
-		new func::HarmonicFunc( o3prime_c3prime_c2prime_bond_angle_, scale_dna_torsion_sd_ * 1.0/sqrt( numeric::conversions::radians( 50.0 ) ) ) ),
+		func::HarmonicFuncOP( new func::HarmonicFunc( o3prime_c3prime_c2prime_bond_angle_, scale_dna_torsion_sd_ * 1.0/sqrt( numeric::conversions::radians( 50.0 ) ) ) ) ),
 
 	c3prime_c2prime_c1prime_bond_angle_( numeric::conversions::radians( 109.50 ) ),
 	c3prime_c2prime_c1prime_angle_harm_func_(
-		new func::HarmonicFunc( c3prime_c2prime_c1prime_bond_angle_, scale_dna_torsion_sd_ * 1.0/sqrt( numeric::conversions::radians( 40.0 ) ) ) )
+		func::HarmonicFuncOP( new func::HarmonicFunc( c3prime_c2prime_c1prime_bond_angle_, scale_dna_torsion_sd_ * 1.0/sqrt( numeric::conversions::radians( 40.0 ) ) ) ) )
 
 	// Might also be good to have additional angle or torsional potentials
 	// to preserve sugar geometry.
@@ -202,21 +202,21 @@ DNATorsionPotential::add_dna_base_distance_constraints(
 //set up harmonic function
 		Real angle_diff ( rsd.mainchain_torsion(5) - rsd.mainchain_torsion(6) );
 		Real dist_1H = 0.0041 * angle_diff + 2.7092;
-		func::HarmonicFuncOP H1_harm_func(	new func::HarmonicFunc( dist_1H, 0.307 ) );
+		func::HarmonicFuncOP H1_harm_func( new func::HarmonicFunc( dist_1H, 0.307 ) );
 		cst_set.add_constraint( constraints::ConstraintOP( new constraints::AtomPairConstraint( id::AtomID( H1prime_index, i),
 																															 id::AtomID( next_H68_index, i + 1),
 																															 H1_harm_func,
 																															 dna_base_distance ) ) );
 
 		Real dist_2H = 0.0081 * angle_diff + 4.0213;
-		func::HarmonicFuncOP H2_harm_func(	new func::HarmonicFunc( dist_2H, 0.381 ) );
+		func::HarmonicFuncOP H2_harm_func( new func::HarmonicFunc( dist_2H, 0.381 ) );
 		cst_set.add_constraint( constraints::ConstraintOP( new constraints::AtomPairConstraint( id::AtomID( H2prime_index, i),
 																															 id::AtomID( next_H68_index, i + 1),
 																															 H2_harm_func,
 																															 dna_base_distance ) ) );
 
 		Real dist_H68 = 0.0068 * angle_diff + 5.4228;
-		func::HarmonicFuncOP H68_harm_func(	new func::HarmonicFunc( dist_H68, 0.373 ) );
+		func::HarmonicFuncOP H68_harm_func( new func::HarmonicFunc( dist_H68, 0.373 ) );
 		cst_set.add_constraint( constraints::ConstraintOP( new constraints::AtomPairConstraint( id::AtomID( H68_index, i),
 																															 id::AtomID( next_H68_index, i + 1),
 																															 H68_harm_func,
@@ -341,8 +341,8 @@ DNATorsionPotential::add_DNA_torsion_constraint(
 
 	for( Size this_comp = 1 ; this_comp <= torsion_components.size() ; ++this_comp ) {
 //		tr << "Adding torsion at residue " << i << " ids " << id1 << " " << id2 << " " << id3 << " " << id4 << std::endl;
-		constraints::ConstraintOP dihedral = new constraints::DihedralConstraint( id1, id2, id3, id4,
-											torsion_components[ this_comp ], dna_bb_torsion );
+		constraints::ConstraintOP dihedral( new constraints::DihedralConstraint( id1, id2, id3, id4,
+											torsion_components[ this_comp ], dna_bb_torsion ) );
 		cst_set.add_constraint( dihedral );
 
 	}
@@ -363,41 +363,41 @@ DNATorsionPotential::init_dna_torsion_parameters()
 	// -jjh
 
 	// Note there are scaling factors to move Amber parameters into our Amber format
-	alpha_components_.push_back( new func::AmberPeriodicFunc( numeric::conversions::radians( 31.79508), 0.185181, 1.0 ) );
-	alpha_components_.push_back( new func::AmberPeriodicFunc( numeric::conversions::radians(351.95960), 1.256531, 2.0 ) );
-	alpha_components_.push_back( new func::AmberPeriodicFunc( numeric::conversions::radians(357.24748), 0.354858, 3.0 ) );
+	alpha_components_.push_back( utility::pointer::shared_ptr<class core::scoring::func::AmberPeriodicFunc>( new func::AmberPeriodicFunc( numeric::conversions::radians( 31.79508), 0.185181, 1.0 ) ) );
+	alpha_components_.push_back( utility::pointer::shared_ptr<class core::scoring::func::AmberPeriodicFunc>( new func::AmberPeriodicFunc( numeric::conversions::radians(351.95960), 1.256531, 2.0 ) ) );
+	alpha_components_.push_back( utility::pointer::shared_ptr<class core::scoring::func::AmberPeriodicFunc>( new func::AmberPeriodicFunc( numeric::conversions::radians(357.24748), 0.354858, 3.0 ) ) );
 
-	beta_components_.push_back( new func::AmberPeriodicFunc( 0.00000, 1.150000, 3.0 ) );
+	beta_components_.push_back( utility::pointer::shared_ptr<class core::scoring::func::AmberPeriodicFunc>( new func::AmberPeriodicFunc( 0.00000, 1.150000, 3.0 ) ) );
 
-	gamma_components_.push_back( new func::AmberPeriodicFunc( numeric::conversions::radians(190.97653), 1.178040, 1.0 ) );
-	gamma_components_.push_back( new func::AmberPeriodicFunc( numeric::conversions::radians(295.63279), 0.092102, 2.0 ) );
-	gamma_components_.push_back( new func::AmberPeriodicFunc( numeric::conversions::radians(348.09535), 0.962830, 3.0 ) );
+	gamma_components_.push_back( utility::pointer::shared_ptr<class core::scoring::func::AmberPeriodicFunc>( new func::AmberPeriodicFunc( numeric::conversions::radians(190.97653), 1.178040, 1.0 ) ) );
+	gamma_components_.push_back( utility::pointer::shared_ptr<class core::scoring::func::AmberPeriodicFunc>( new func::AmberPeriodicFunc( numeric::conversions::radians(295.63279), 0.092102, 2.0 ) ) );
+	gamma_components_.push_back( utility::pointer::shared_ptr<class core::scoring::func::AmberPeriodicFunc>( new func::AmberPeriodicFunc( numeric::conversions::radians(348.09535), 0.962830, 3.0 ) ) );
 
-	delta_components_.push_back( new func::AmberPeriodicFunc( 0.00000, 1.400000, 3.0 ) );
+	delta_components_.push_back( utility::pointer::shared_ptr<class core::scoring::func::AmberPeriodicFunc>( new func::AmberPeriodicFunc( 0.00000, 1.400000, 3.0 ) ) );
 
-	epsilon_components_.push_back( new func::AmberPeriodicFunc( 0.00000, 1.150000, 3.0 ) );
+	epsilon_components_.push_back( utility::pointer::shared_ptr<class core::scoring::func::AmberPeriodicFunc>( new func::AmberPeriodicFunc( 0.00000, 1.150000, 3.0 ) ) );
 
-	zeta_components_.push_back( new func::AmberPeriodicFunc( 0.00000, 1.200000, 2.0 ) );
-	zeta_components_.push_back( new func::AmberPeriodicFunc( 0.00000, 0.250000, 3.0 ) );
+	zeta_components_.push_back( utility::pointer::shared_ptr<class core::scoring::func::AmberPeriodicFunc>( new func::AmberPeriodicFunc( 0.00000, 1.200000, 2.0 ) ) );
+	zeta_components_.push_back( utility::pointer::shared_ptr<class core::scoring::func::AmberPeriodicFunc>( new func::AmberPeriodicFunc( 0.00000, 0.250000, 3.0 ) ) );
 
 	// CT-CT-OS-CT
-	nu0_components_.push_back( new func::AmberPeriodicFunc( numeric::conversions::radians(180.00000), 0.100000, 2.0 ) );
-	nu0_components_.push_back( new func::AmberPeriodicFunc( 0.00000, 0.383000, 3.0 ) );
+	nu0_components_.push_back( utility::pointer::shared_ptr<class core::scoring::func::AmberPeriodicFunc>( new func::AmberPeriodicFunc( numeric::conversions::radians(180.00000), 0.100000, 2.0 ) ) );
+	nu0_components_.push_back( utility::pointer::shared_ptr<class core::scoring::func::AmberPeriodicFunc>( new func::AmberPeriodicFunc( 0.00000, 0.383000, 3.0 ) ) );
 
 	// CT-CT-CT-OS
-	nu1_components_.push_back( new func::AmberPeriodicFunc( 0.00000, 1.400000, 3.0 ) );
+	nu1_components_.push_back( utility::pointer::shared_ptr<class core::scoring::func::AmberPeriodicFunc>( new func::AmberPeriodicFunc( 0.00000, 1.400000, 3.0 ) ) );
 
 	// CT-CT-CT-CT
-	nu2_components_.push_back( new func::AmberPeriodicFunc( numeric::conversions::radians(180.00000), 0.200000, 1.0 ) );
-	nu2_components_.push_back( new func::AmberPeriodicFunc( numeric::conversions::radians(180.00000), 0.250000, 2.0 ) );
-	nu2_components_.push_back( new func::AmberPeriodicFunc( 0.00000, 0.180000, 3.0 ) );
+	nu2_components_.push_back( utility::pointer::shared_ptr<class core::scoring::func::AmberPeriodicFunc>( new func::AmberPeriodicFunc( numeric::conversions::radians(180.00000), 0.200000, 1.0 ) ) );
+	nu2_components_.push_back( utility::pointer::shared_ptr<class core::scoring::func::AmberPeriodicFunc>( new func::AmberPeriodicFunc( numeric::conversions::radians(180.00000), 0.250000, 2.0 ) ) );
+	nu2_components_.push_back( utility::pointer::shared_ptr<class core::scoring::func::AmberPeriodicFunc>( new func::AmberPeriodicFunc( 0.00000, 0.180000, 3.0 ) ) );
 
 	// CT-CT-CT-OS
-	nu3_components_.push_back( new func::AmberPeriodicFunc( 0.00000, 1.400000, 3.0 ) );
+	nu3_components_.push_back( utility::pointer::shared_ptr<class core::scoring::func::AmberPeriodicFunc>( new func::AmberPeriodicFunc( 0.00000, 1.400000, 3.0 ) ) );
 
 	// CT-CT-OS-CT
-	nu4_components_.push_back( new func::AmberPeriodicFunc( numeric::conversions::radians(180.00000), 0.100000, 2.0 ) );
-	nu4_components_.push_back( new func::AmberPeriodicFunc( 0.00000, 0.383000, 3.0 ) );
+	nu4_components_.push_back( utility::pointer::shared_ptr<class core::scoring::func::AmberPeriodicFunc>( new func::AmberPeriodicFunc( numeric::conversions::radians(180.00000), 0.100000, 2.0 ) ) );
+	nu4_components_.push_back( utility::pointer::shared_ptr<class core::scoring::func::AmberPeriodicFunc>( new func::AmberPeriodicFunc( 0.00000, 0.383000, 3.0 ) ) );
 
 	// Now the relevant atom names
 

@@ -49,7 +49,7 @@ methods::EnergyMethodOP
 SuckerEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new SuckerEnergy;
+	return methods::EnergyMethodOP( new SuckerEnergy );
 }
 
 ScoreTypes
@@ -119,7 +119,7 @@ SuckerEnergy::SuckerEnergy() :
 EnergyMethodOP
 SuckerEnergy::clone() const
 {
-	return new SuckerEnergy();
+	return EnergyMethodOP( new SuckerEnergy() );
 }
 
 

@@ -26,8 +26,8 @@ namespace task_operations {
 //typedef utility::pointer::owning_ptr< RestrictTaskForDocking > RestrictTaskForDockingCOP;
 
 class RestrictToInterface;
-typedef utility::pointer::owning_ptr< RestrictToInterface > RestrictToInterfaceOP;
-typedef utility::pointer::owning_ptr< RestrictToInterface > RestrictToInterfaceCOP;
+typedef utility::pointer::shared_ptr< RestrictToInterface > RestrictToInterfaceOP;
+typedef utility::pointer::shared_ptr< RestrictToInterface > RestrictToInterfaceCOP;
 
 }
 }

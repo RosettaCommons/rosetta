@@ -191,13 +191,13 @@ RemodelLoopMover::~RemodelLoopMover() {}
 
 /// @brief clone this object
 RemodelLoopMover::MoverOP RemodelLoopMover::clone() const {
-	return new RemodelLoopMover( *this );
+	return RemodelLoopMover::MoverOP( new RemodelLoopMover( *this ) );
 }
 
 
 /// @brief create this type of object
 RemodelLoopMover::MoverOP RemodelLoopMover::fresh_instance() const {
-	return new RemodelLoopMover();
+	return RemodelLoopMover::MoverOP( new RemodelLoopMover() );
 }
 
 
@@ -385,7 +385,7 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 
   core::kinematics::FoldTree f;
 
-	LoopsOP repeat_loops = new Loops();
+	LoopsOP repeat_loops( new Loops() );
 
 	std::set< Size > lower_termini;
 	std::set< Size > upper_termini;
@@ -417,12 +417,12 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 							tempCut = tempStop;
 						}
 					}
-					LoopOP newLoop = new Loop( tempStart, tempStop , tempCut);
+					LoopOP newLoop( new Loop( tempStart, tempStop , tempCut) );
 					//TR << "adding loop in repeat propagation: " << tempStart << " " << tempStop <<  " " << tempCut << std::endl;
 					repeat_loops->push_back(*newLoop);
 				}
 				else {
-					LoopOP newLoop = new Loop(loop.start(), loop.stop(), loop.cut());
+					LoopOP newLoop( new Loop(loop.start(), loop.stop(), loop.cut()) );
 					repeat_loops->push_back(*newLoop);
 				}
 			}
@@ -554,7 +554,7 @@ void RemodelLoopMover::repeat_sync( //utility function
 
   core::kinematics::FoldTree f;
 
-	LoopsOP repeat_loops = new Loops();
+	LoopsOP repeat_loops( new Loops() );
 
 	utility::vector1<Size> linkPositions;
 
@@ -664,8 +664,8 @@ void RemodelLoopMover::repeat_propagation( //utility function
 	if (core::pose::symmetry::is_symmetric(pose) && core::pose::symmetry::is_symmetric(repeat_pose)){
 
 		// save the constraints, as it would be lost
-		ConstraintSetOP pose_cst_set = new ConstraintSet( *pose.constraint_set() );
-		ConstraintSetOP repeat_pose_cst_set = new ConstraintSet( *repeat_pose_.constraint_set() );
+		ConstraintSetOP pose_cst_set( new ConstraintSet( *pose.constraint_set() ) );
+		ConstraintSetOP repeat_pose_cst_set( new ConstraintSet( *repeat_pose_.constraint_set() ) );
 
 		extract_asymmetric_unit( pose, junk_for_copy, false);
 		extract_asymmetric_unit( repeat_pose, junk_for_copy_repeat, false);
@@ -688,7 +688,7 @@ void RemodelLoopMover::repeat_propagation( //utility function
 	bool build_across_jxn = false;
 	Size residues_beyond_jxn = 0;
 
-	LoopsOP repeat_loops = new Loops();
+	LoopsOP repeat_loops( new Loops() );
   std::set< Size > lower_termini;
   std::set< Size > upper_termini;
   for ( Size i = 1, ie = pose.conformation().num_chains(); i <= ie; ++i ) {
@@ -728,12 +728,12 @@ void RemodelLoopMover::repeat_propagation( //utility function
 							tempCut = tempStop;
 						}
           }
-          LoopOP newLoop = new Loop( tempStart, tempStop , tempCut);
+          LoopOP newLoop( new Loop( tempStart, tempStop , tempCut) );
           //TR << "adding loop in repeat propagation: " << tempStart << " " << tempStop <<  " " << tempCut << std::endl;
           repeat_loops->push_back(*newLoop);
         }
         else {
-          LoopOP newLoop = new Loop(loop.start(), loop.stop(), loop.cut());
+          LoopOP newLoop( new Loop(loop.start(), loop.stop(), loop.cut()) );
           repeat_loops->push_back(*newLoop);
         }
       }
@@ -843,8 +843,8 @@ void RemodelLoopMover::repeat_propagation( //utility function
 	//re-symmetrize
 	if (is_sym){
 		// save the constraints, as it would be lost
-		ConstraintSetOP pose_cst_set = new ConstraintSet( *pose.constraint_set() );
-		ConstraintSetOP repeat_pose_cst_set = new ConstraintSet( *repeat_pose_.constraint_set() );
+		ConstraintSetOP pose_cst_set( new ConstraintSet( *pose.constraint_set() ) );
+		ConstraintSetOP repeat_pose_cst_set( new ConstraintSet( *repeat_pose_.constraint_set() ) );
 
 	//unfortunately need separate movers for the operations
 		simple_moves::symmetry::SetupForSymmetryMover pre_mover1;
@@ -940,7 +940,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 
 		// only use this type of cst file in this case
 		if (option[OptionKeys::constraints::cst_file].user() ) {
-			protocols::simple_moves::ConstraintSetMoverOP repeat_constraint = new protocols::simple_moves::ConstraintSetMover();
+			protocols::simple_moves::ConstraintSetMoverOP repeat_constraint( new protocols::simple_moves::ConstraintSetMover() );
 			repeat_constraint->apply( repeat_pose_ );
 		}
 
@@ -1084,7 +1084,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 				fa_relax_stage(pose);
 		}
 		//cleanup to integrate with Possu------------------------------------
-		PoseOP pose_prime = new Pose( pose );
+		PoseOP pose_prime( new Pose( pose ) );
 		pose_prime->fold_tree( sealed_ft );
 		// this is for scoring in repeat context
 		if (option[OptionKeys::remodel::repeat_structure].user() ) {
@@ -1169,7 +1169,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			// and store in accumulator
 			if ( check_closure_criteria( pose ) ) {
 				// make a pointer copy for storage, for REPEATs, store only the monomer pose
-				PoseOP pose_prime = new Pose( pose );
+				PoseOP pose_prime( new Pose( pose ) );
 				pose_prime->fold_tree( sealed_ft );
 
 				// this is for scoring in repeat context
@@ -1232,7 +1232,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			// an issue with symmetry info in equal operator assignment, so to be safe explicitly make Pose again
 			if(option[OptionKeys::symmetry::symmetry_definition].user() ){
 				Pose junk_for_copy;
-				core::scoring::constraints::ConstraintSetOP pose_cst_set = new core::scoring::constraints::ConstraintSet( *pose.constraint_set() );
+				core::scoring::constraints::ConstraintSetOP pose_cst_set( new core::scoring::constraints::ConstraintSet( *pose.constraint_set() ) );
 				core::pose::symmetry::extract_asymmetric_unit( repeat_pose_, junk_for_copy, false);
 				pose = junk_for_copy;
 				pose.constraint_set(pose_cst_set);
@@ -1364,7 +1364,7 @@ void RemodelLoopMover::insert_random_smallestmer_per_loop(
 	using namespace basic::options;
 
 	// determine the right set of loops to insert fragments
-	loops::LoopsOP loops_to_model = new loops::Loops();
+	loops::LoopsOP loops_to_model( new loops::Loops() );
 
 	if ( only_broken_loops ) {
 		loops_to_model = determine_loops_to_model( pose );
@@ -1465,7 +1465,7 @@ void RemodelLoopMover::loophash_stage(
 	Pose const constantPose(pose); //needed this because get_rt function for loophash doesn't honor the cut positions needed to build the loop.
 
 	// setup loops
-	loops::LoopsOP loops_to_model = new loops::Loops();
+	loops::LoopsOP loops_to_model( new loops::Loops() );
 
 	//find terminal loops and skip them; loophash can't handle terminal loops
 	for ( Loops::const_iterator l = loops_->begin(), le = loops_->end(); l != le; ++l ) {
@@ -1520,7 +1520,7 @@ void RemodelLoopMover::loophash_stage(
 	local_loopsizes.push_back(loopsizes[loop_number]);
 
 	//test loophashing
-	LoopHashLibraryOP loop_hash_library = new LoopHashLibrary ( local_loopsizes , 1, 0 );
+	LoopHashLibraryOP loop_hash_library( new LoopHashLibrary ( local_loopsizes , 1, 0 ) );
 
 		// movemap
 		MoveMap movemap;
@@ -1577,7 +1577,7 @@ void RemodelLoopMover::loophash_stage(
 
 		Real6 loop_transform;
 
-		PoseOP pose_for_rt = new Pose();
+		PoseOP pose_for_rt( new Pose() );
 
 		// for a pose carrying ligand, find the last peptide edge and only use the
 		// peptide part
@@ -2235,7 +2235,7 @@ void RemodelLoopMover::simultaneous_stage(
 	using numeric::random::random_permutation;
 
 	TR << "** simultaneous_stage" << std::endl;
-	loops::LoopsOP loops_to_model = new loops::Loops(*loops_);
+	loops::LoopsOP loops_to_model( new loops::Loops(*loops_) );
 	TR << "   n_loops = " << loops_to_model->size() << std::endl;
 	if ( loops_to_model->size() == 0 ) { // nothing to do...
 		return;
@@ -2442,7 +2442,7 @@ void RemodelLoopMover::independent_stage(
 
 	// setup loops
 	loops::LoopsOP pre_loops_to_model = determine_loops_to_model( pose );
-	loops::LoopsOP loops_to_model = new loops::Loops();
+	loops::LoopsOP loops_to_model( new loops::Loops() );
 
 	// filter for non-terminal loops
 	for ( Loops::const_iterator l = pre_loops_to_model->begin(), le = pre_loops_to_model->end(); l != le; ++l ) {
@@ -2721,7 +2721,7 @@ void RemodelLoopMover::boost_closure_stage(
 
 	// setup loops
 	loops::LoopsOP pre_loops_to_model = determine_loops_to_model( pose );
-	loops::LoopsOP loops_to_model = new loops::Loops();
+	loops::LoopsOP loops_to_model( new loops::Loops() );
 
 	// filter for non-terminal loops that are within tolerance
 	Real const cbreak_tolerance = 1.0;
@@ -2939,7 +2939,7 @@ void RemodelLoopMover::boost_closure_stage(
 loops::LoopsOP RemodelLoopMover::determine_loops_to_model( Pose & pose ) {
 	using protocols::forge::methods::linear_chainbreak;
 
-	loops::LoopsOP loops_to_model = new loops::Loops();
+	loops::LoopsOP loops_to_model( new loops::Loops() );
 
 	for ( Loops::const_iterator l = loops_->begin(), le = loops_->end(); l != le; ++l ) {
 		bool skip_loop = false;
@@ -3045,7 +3045,7 @@ RemodelLoopMover::create_fragment_movers(
 	for ( FragSetOPs::const_iterator f = fragsets_.begin(), fe = fragsets_.end(); f != fe; ++f ) {
 
 		if ( largest_frag_size == 0 || (*f)->max_frag_length() <= largest_frag_size ) {
-			ClassicFragmentMoverOP cfm = new ClassicFragmentMover( *f, movemap.clone() );
+			ClassicFragmentMoverOP cfm( new ClassicFragmentMover( *f, movemap.clone() ) );
 			cfm->set_check_ss( false );
 			cfm->enable_end_bias_check( false );
 			frag_movers.push_back( cfm );
@@ -3074,7 +3074,7 @@ RemodelLoopMover::create_fragment_movers_limit_size(
 	FragmentMoverOPs frag_movers;
 	for ( FragSetOPs::const_iterator f = fragsets_.begin(); f != fragsets_.end(); ++f ) {
 		if((*f)->max_frag_length()==frag_size || ((frag_size == 999)&&((*f)->max_frag_length()>9))) {
-			ConstantLengthFragSetOP tmp_frags = new ConstantLengthFragSet((*f)->max_frag_length());
+			ConstantLengthFragSetOP tmp_frags( new ConstantLengthFragSet((*f)->max_frag_length()) );
 			for( ConstFrameIterator frame_i = (*f)->begin(); frame_i != (*f)->end(); ++frame_i ){
 				if(allowedPos.find((*frame_i)->start()) != allowedPos.end()){
 						FrameOP tmp_frame = (*frame_i)->clone();
@@ -3091,9 +3091,9 @@ RemodelLoopMover::create_fragment_movers_limit_size(
 			}
 			ClassicFragmentMoverOP cfm;
 			if(smoothMoves)
-				cfm = new SmoothFragmentMover( *f, movemap.clone(), FragmentCostOP( new GunnCost ) );
+				cfm = ClassicFragmentMoverOP( new SmoothFragmentMover( *f, movemap.clone(), FragmentCostOP( new GunnCost ) ) );
 			else
-				cfm = new ClassicFragmentMover( *f, movemap.clone() );
+				cfm = ClassicFragmentMoverOP( new ClassicFragmentMover( *f, movemap.clone() ) );
 			cfm->set_check_ss( false );
 			cfm->enable_end_bias_check( false );
 			frag_movers.push_back( cfm );
@@ -3117,7 +3117,7 @@ void RemodelLoopMover::create_fragment_movers(
 	for ( FragSetOPs::const_iterator f = fragsets_.begin(), fe = fragsets_.end(); f != fe; ++f ) {
 
 		if ( largest_frag_size == 0 || (*f)->max_frag_length() <= largest_frag_size ) {
-			ClassicFragmentMoverOP cfm = new ClassicFragmentMover( *f, movemap.clone() );
+			ClassicFragmentMoverOP cfm( new ClassicFragmentMover( *f, movemap.clone() ) );
 			cfm->set_check_ss( false );
 			cfm->enable_end_bias_check( false );
 			frag_movers.push_back( cfm );

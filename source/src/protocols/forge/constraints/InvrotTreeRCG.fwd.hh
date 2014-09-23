@@ -24,8 +24,8 @@ namespace constraints{
 
 class InvrotTreeRCG;
 
-typedef utility::pointer::owning_ptr< InvrotTreeRCG > InvrotTreeRCGOP;
-typedef utility::pointer::access_ptr< InvrotTreeRCG const > InvrotTreeRCGCAP;
+typedef utility::pointer::shared_ptr< InvrotTreeRCG > InvrotTreeRCGOP;
+typedef utility::pointer::weak_ptr< InvrotTreeRCG const > InvrotTreeRCGCAP;
 
 }
 }

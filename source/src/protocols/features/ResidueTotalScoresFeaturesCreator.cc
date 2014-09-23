@@ -28,7 +28,7 @@ namespace features {
 ResidueTotalScoresFeaturesCreator::ResidueTotalScoresFeaturesCreator() {}
 ResidueTotalScoresFeaturesCreator::~ResidueTotalScoresFeaturesCreator() {}
 FeaturesReporterOP ResidueTotalScoresFeaturesCreator::create_features_reporter() const {
-	return new ResidueTotalScoresFeatures;
+	return FeaturesReporterOP( new ResidueTotalScoresFeatures );
 }
 
 std::string ResidueTotalScoresFeaturesCreator::type_name() const {

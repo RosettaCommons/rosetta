@@ -50,7 +50,7 @@ SymmOnTheFlyNode::SymmOnTheFlyNode(
 	int num_states
 ) :
 	FixedBBNode( owner, node_id, num_states ),
-	rotamer_set_( 0 ),
+	rotamer_set_( /* 0 */ ),
 	rotamers_( num_states ),
 	sc_bounding_spheres_( num_states, std::make_pair( Vector( 0.0 ), Real( 0.0 ) ) ),
 	bb_bounding_sphere_( std::make_pair( Vector( 0.0 ), Real( 0.0 ) )),
@@ -663,7 +663,7 @@ SymmOnTheFlyInteractionGraph::set_score_function( ScoreFunction const & sfxn )
 void
 SymmOnTheFlyInteractionGraph::set_pose( pose::Pose const & pose )
 {
-	pose_ = new pose::Pose( pose );
+	pose_ = pose::PoseOP( new pose::Pose( pose ) );
 	if ( score_function_ ) (*score_function_)(*pose_);
 
 	using conformation::symmetry::SymmetricConformation;

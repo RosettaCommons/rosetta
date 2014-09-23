@@ -21,8 +21,8 @@ namespace scoring_grid {
 
 class GridBase;
 
-typedef utility::pointer::owning_ptr<GridBase> GridBaseOP;
-typedef utility::pointer::owning_ptr<GridBase const> GridBaseCOP;
+typedef utility::pointer::shared_ptr<GridBase> GridBaseOP;
+typedef utility::pointer::shared_ptr<GridBase const> GridBaseCOP;
 
 }
 }

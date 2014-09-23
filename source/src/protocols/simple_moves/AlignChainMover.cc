@@ -38,7 +38,7 @@ AlignChainMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 AlignChainMoverCreator::create_mover() const {
-	return new AlignChainMover;
+	return protocols::moves::MoverOP( new AlignChainMover );
 }
 
 std::string
@@ -49,7 +49,7 @@ AlignChainMoverCreator::mover_name()
 
 AlignChainMover::AlignChainMover()
 	: moves::Mover("AlignChain"),
-	pose_( NULL ),
+	pose_( /* NULL */ ),
 	source_chain_( 0 ),
 	target_chain_( 0 )
 {
@@ -108,13 +108,13 @@ AlignChainMover::get_name() const {
 moves::MoverOP
 AlignChainMover::clone() const
 {
-	return new AlignChainMover( *this );
+	return moves::MoverOP( new AlignChainMover( *this ) );
 }
 
 moves::MoverOP
 AlignChainMover::fresh_instance() const
 {
-	return new AlignChainMover;
+	return moves::MoverOP( new AlignChainMover );
 }
 
 void

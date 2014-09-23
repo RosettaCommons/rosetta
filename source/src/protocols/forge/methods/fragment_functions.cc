@@ -51,7 +51,7 @@ smallmer_from_largemer(
 
 	assert( smallmer_size > 0 );
 
-	ConstantLengthFragSetOP small = new ConstantLengthFragSet( smallmer_size );
+	ConstantLengthFragSetOP small( new ConstantLengthFragSet( smallmer_size ) );
 
 	for ( ConstFrameIterator f = begin; f != end; ++f ) {
 		Size const ie = all_possible_smallmers ? f->length() - smallmer_size + 1 : 1;

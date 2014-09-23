@@ -20,8 +20,8 @@ namespace pose {
 namespace datacache {
 
 class PositionConservedResiduesStore;
-typedef utility::pointer::owning_ptr<PositionConservedResiduesStore> PositionConservedResiduesStoreOP;
-typedef utility::pointer::owning_ptr<PositionConservedResiduesStore const> PositionConservedResiduesStoreCOP;
+typedef utility::pointer::shared_ptr<PositionConservedResiduesStore> PositionConservedResiduesStoreOP;
+typedef utility::pointer::shared_ptr<PositionConservedResiduesStore const> PositionConservedResiduesStoreCOP;
 
 }  // namespace datacache
 }  // namespace pose

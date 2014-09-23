@@ -22,8 +22,8 @@ namespace movers{
 
 //Forwards and OP typedefs
 class PatchdockTransform;
-typedef utility::pointer::owning_ptr< PatchdockTransform > PatchdockTransformOP;
-typedef utility::pointer::owning_ptr< PatchdockTransform const > PatchdockTransformCOP;
+typedef utility::pointer::shared_ptr< PatchdockTransform > PatchdockTransformOP;
+typedef utility::pointer::shared_ptr< PatchdockTransform const > PatchdockTransformCOP;
 
 }//movers
 }//protein_interface_design

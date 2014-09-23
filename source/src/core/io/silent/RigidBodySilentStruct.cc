@@ -75,11 +75,11 @@ bool RigidBodySilentStruct::init_from_lines(
 	if ( iter->substr(0,9) != "SEQUENCE:" ) { //a full new header would change the default columns
 		// get sequence and scorename data from the silent-file data object, because I don't have it!
 		EnergyNamesOP enames = EnergyNamesOP(
-			static_cast< EnergyNames * > ( container.get_shared_silent_data( energynames )() )
+			utility::pointer::static_pointer_cast< core::io::silent::EnergyNames > ( container.get_shared_silent_data( energynames ) )
 		);
 
 		SimpleSequenceDataOP seqdata = SimpleSequenceDataOP(
-			static_cast< SimpleSequenceData * > ( container.get_shared_silent_data( simplesequencedata )() )
+			utility::pointer::static_pointer_cast< core::io::silent::SimpleSequenceData > ( container.get_shared_silent_data( simplesequencedata ) )
 		);
 
 		sequence      ( seqdata->sequence()   );
@@ -165,7 +165,7 @@ bool RigidBodySilentStruct::init_from_lines(
 } // init_from_lines
 
 void RigidBodySilentStruct::fold_tree( kinematics::FoldTree const& f ) {
-	fold_tree_ = new kinematics::FoldTree(f);
+	fold_tree_ = kinematics::FoldTreeOP( new kinematics::FoldTree(f) );
 }
 
 kinematics::FoldTree const& RigidBodySilentStruct::fold_tree() const {
@@ -243,7 +243,7 @@ RigidBodySilentStruct & RigidBodySilentStruct::operator= (
 		add_rt( src.jump(jj) );
 	}
 	if ( src.fold_tree_ ) {
-		fold_tree_ = new kinematics::FoldTree( *src.fold_tree_ );
+		fold_tree_ = kinematics::FoldTreeOP( new kinematics::FoldTree( *src.fold_tree_ ) );
 	}
 	return *this;
 }

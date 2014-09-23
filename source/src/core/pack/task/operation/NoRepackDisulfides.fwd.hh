@@ -29,19 +29,19 @@ class NoRepackDisulfides;
 
 
 /// @brief NoRepackDisulfides owning pointer
-typedef utility::pointer::owning_ptr< NoRepackDisulfides > NoRepackDisulfidesOP;
+typedef utility::pointer::shared_ptr< NoRepackDisulfides > NoRepackDisulfidesOP;
 
 
 /// @brief NoRepackDisulfides const owning pointer
-typedef utility::pointer::owning_ptr< NoRepackDisulfides const > NoRepackDisulfidesCOP;
+typedef utility::pointer::shared_ptr< NoRepackDisulfides const > NoRepackDisulfidesCOP;
 
 
 /// @brief NoRepackDisulfides owning pointer
-typedef utility::pointer::access_ptr< NoRepackDisulfides > NoRepackDisulfidesAP;
+typedef utility::pointer::weak_ptr< NoRepackDisulfides > NoRepackDisulfidesAP;
 
 
 /// @brief NoRepackDisulfides const owning pointer
-typedef utility::pointer::access_ptr< NoRepackDisulfides const > NoRepackDisulfidesCAP;
+typedef utility::pointer::weak_ptr< NoRepackDisulfides const > NoRepackDisulfidesCAP;
 
 
 } // namespace operation

@@ -65,16 +65,16 @@ std::string MultipleOutputWrapperCreator::keyname() const
 
 MoverOP MultipleOutputWrapperCreator::create_mover() const
 {
-	return new MultipleOutputWrapper();
+	return MoverOP( new MultipleOutputWrapper() );
 }
 
 ////////////////////////////////////////////////////////////////////////
 
 MultipleOutputWrapper::MultipleOutputWrapper() :
 	Mover( "MultipleOutputWrapper" ),
-	mover_tag_(NULL),
-	rosetta_scripts_tag_(NULL),
-	reference_pose_(NULL),
+	mover_tag_(/* NULL */),
+	rosetta_scripts_tag_(/* NULL */),
+	reference_pose_(/* NULL */),
 	max_poses_(0),
 	max_attempts_(10),
 	n_poses_(0)
@@ -89,7 +89,7 @@ std::string MultipleOutputWrapper::get_name() const
 ///@brief Process all input poses (provided pose and from previous mover)
 void MultipleOutputWrapper::apply(core::pose::Pose& pose)
 {
-	reference_pose_ = new core::pose::Pose(pose);
+	reference_pose_ = core::pose::PoseOP( new core::pose::Pose(pose) );
 	generate_pose(pose);
 }
 

@@ -70,7 +70,7 @@ setup_working_parameters_for_swa( utility::vector1< Size > const & moving_res_li
 
 	using namespace core::pose::full_model_info;
 
-	StepWiseWorkingParametersOP working_parameters = new working_parameters::StepWiseWorkingParameters;
+	StepWiseWorkingParametersOP working_parameters( new working_parameters::StepWiseWorkingParameters );
 	if ( moving_res_list.size() == 1 ) working_parameters = setup_working_parameters_explicit( moving_res_list[1], pose, native_pose );
 
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
@@ -267,7 +267,7 @@ setup_working_parameters_explicit( Size const rebuild_res, /* this must be in mo
 		}
 	}
 
-	StepWiseWorkingParametersOP working_parameters = new working_parameters::StepWiseWorkingParameters;
+	StepWiseWorkingParametersOP working_parameters( new working_parameters::StepWiseWorkingParameters );
 	working_parameters->set_output_extra_RMSDs( false );
 	working_parameters->set_is_simple_full_length_job_params( false );
 	working_parameters->set_full_to_sub( full_model_info.full_to_sub() ); // will update sub_to_full

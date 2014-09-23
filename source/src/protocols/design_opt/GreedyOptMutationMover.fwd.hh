@@ -23,8 +23,8 @@ namespace protocols {
 namespace design_opt {
 
 class GreedyOptMutationMover;
-typedef utility::pointer::owning_ptr< GreedyOptMutationMover >  GreedyOptMutationMoverOP;
-typedef utility::pointer::owning_ptr< GreedyOptMutationMover const >  GreedyOptMutationMoverCOP;
+typedef utility::pointer::shared_ptr< GreedyOptMutationMover >  GreedyOptMutationMoverOP;
+typedef utility::pointer::shared_ptr< GreedyOptMutationMover const >  GreedyOptMutationMoverCOP;
 
 
 } // namespace design_opt

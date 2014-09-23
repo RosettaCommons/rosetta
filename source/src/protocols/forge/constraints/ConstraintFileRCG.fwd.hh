@@ -24,8 +24,8 @@ namespace constraints{
 
 class ConstraintFileRCG;
 
-typedef utility::pointer::owning_ptr< ConstraintFileRCG > ConstraintFileRCGOP;
-typedef utility::pointer::access_ptr< ConstraintFileRCG const > ConstraintFileRCGCAP;
+typedef utility::pointer::shared_ptr< ConstraintFileRCG > ConstraintFileRCGOP;
+typedef utility::pointer::weak_ptr< ConstraintFileRCG const > ConstraintFileRCGCAP;
 
 } //namespace constraints
 } //namespace forge

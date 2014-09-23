@@ -45,11 +45,11 @@ enum CALIBRATION_ATOM_TYPE {
 typedef std::bitset< MAX_TYPE > CalibrationTypeCumulator;
 //enum CALIBRATION_ATOM_TYPE;
 // Types
-typedef  utility::pointer::owning_ptr< PeakCalibrator >  PeakCalibratorOP;
-typedef  utility::pointer::owning_ptr< PeakCalibrator const >  PeakCalibratorCOP;
+typedef  utility::pointer::shared_ptr< PeakCalibrator >  PeakCalibratorOP;
+typedef  utility::pointer::shared_ptr< PeakCalibrator const >  PeakCalibratorCOP;
 
-typedef  utility::pointer::access_ptr< PeakCalibrator >  PeakCalibratorAP;
-typedef  utility::pointer::access_ptr< PeakCalibrator const >  PeakCalibratorCAP;
+typedef  utility::pointer::weak_ptr< PeakCalibrator >  PeakCalibratorAP;
+typedef  utility::pointer::weak_ptr< PeakCalibrator const >  PeakCalibratorCAP;
 
 }
 }

@@ -195,7 +195,7 @@ int main( int argc, char * argv [] )
 
 	//prepare to calculate the lj energy
 	//scoring function
-	ScoreFunctionOP scorefunc = new ScoreFunction();
+	ScoreFunctionOP scorefunc( new ScoreFunction() );
 	(*scorefunc)( pose );
 	//atom type
 	chemical::AtomTypeSetCOP atom_set(ChemicalManager::get_instance()->atom_type_set(core::chemical::FA_STANDARD));

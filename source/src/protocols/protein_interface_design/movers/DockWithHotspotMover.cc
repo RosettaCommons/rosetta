@@ -79,7 +79,7 @@ DockWithHotspotMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 DockWithHotspotMoverCreator::create_mover() const {
-	return new DockWithHotspotMover;
+	return protocols::moves::MoverOP( new DockWithHotspotMover );
 }
 
 std::string
@@ -119,7 +119,7 @@ void DockWithHotspotMover::apply( Pose & pose ) {
 	bool const apply_ambiguous_constraints(true);
 
 	for (Size i=1; i <= hotspot_filenames_.size(); i++) {
-		protocols::hotspot_hashing::HotspotStubSetOP hotspot_stub_setOP = new protocols::hotspot_hashing::HotspotStubSet;
+		protocols::hotspot_hashing::HotspotStubSetOP hotspot_stub_setOP( new protocols::hotspot_hashing::HotspotStubSet );
 		hotspot_stub_setOP->read_data( hotspot_filenames_[i] );
 		hotspot_stub_setOP->add_hotspot_constraints_to_wholepose( pose, chain_to_redesign, hotspot_stub_setOP,
 				hotspot_distcb_weight_[i], worst_allowed_stub_bonus, apply_self_energies, bump_cutoff,
@@ -132,8 +132,7 @@ void DockWithHotspotMover::apply( Pose & pose ) {
 	//switch to centroid
 	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
 	core::Size const rb_move_jump = 1;
-	protocols::docking::DockingLowResOP docking_lowres_mover =
-			new protocols::docking::DockingLowRes( scorefxn, rb_move_jump );
+	protocols::docking::DockingLowResOP docking_lowres_mover( new protocols::docking::DockingLowRes( scorefxn, rb_move_jump ) );
 	docking_lowres_mover->apply(pose);
 	(*scorefxn_cen)(pose);
 	utility::vector1< core::Size > movable_jumps_ = utility::tools::make_vector1<core::Size>(1);

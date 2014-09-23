@@ -23,8 +23,8 @@ namespace protocols {
 namespace environment {
 
 class AutoCutData;
-typedef utility::pointer::owning_ptr< AutoCutData > AutoCutDataOP;
-typedef utility::pointer::owning_ptr< AutoCutData const > AutoCutDataCOP;
+typedef utility::pointer::shared_ptr< AutoCutData > AutoCutDataOP;
+typedef utility::pointer::shared_ptr< AutoCutData const > AutoCutDataCOP;
 
 } // environment
 } // protocols

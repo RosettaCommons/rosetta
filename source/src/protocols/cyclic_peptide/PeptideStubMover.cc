@@ -244,12 +244,12 @@ PeptideStubMover::parse_my_tag(
     }
 }
 	
-moves::MoverOP PeptideStubMover::clone() const { return new PeptideStubMover( *this ); }
-moves::MoverOP PeptideStubMover::fresh_instance() const { return new PeptideStubMover; }
+moves::MoverOP PeptideStubMover::clone() const { return moves::MoverOP( new PeptideStubMover( *this ) ); }
+moves::MoverOP PeptideStubMover::fresh_instance() const { return moves::MoverOP( new PeptideStubMover ); }
 
 protocols::moves::MoverOP
 PeptideStubMoverCreator::create_mover() const {
-	return new PeptideStubMover;
+	return protocols::moves::MoverOP( new PeptideStubMover );
 }
 
 std::string

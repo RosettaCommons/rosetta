@@ -24,8 +24,8 @@ namespace monte_carlo {
 namespace mover {
 	
 	class TransientCutpointHandler;
-	typedef utility::pointer::owning_ptr< TransientCutpointHandler > TransientCutpointHandlerOP;
-	typedef utility::pointer::owning_ptr< TransientCutpointHandler const > TransientCutpointHandlerCOP;
+	typedef utility::pointer::shared_ptr< TransientCutpointHandler > TransientCutpointHandlerOP;
+	typedef utility::pointer::shared_ptr< TransientCutpointHandler const > TransientCutpointHandlerCOP;
 	
 } //mover
 } //monte_carlo

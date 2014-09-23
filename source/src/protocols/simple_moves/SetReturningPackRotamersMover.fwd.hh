@@ -22,8 +22,8 @@ namespace protocols {
 namespace simple_moves {
 
 class SetReturningPackRotamersMover;
-typedef utility::pointer::owning_ptr< SetReturningPackRotamersMover > SetReturningPackRotamersMoverOP;
-typedef utility::pointer::owning_ptr< SetReturningPackRotamersMover const > SetReturningPackRotamersMoverCOP;
+typedef utility::pointer::shared_ptr< SetReturningPackRotamersMover > SetReturningPackRotamersMoverOP;
+typedef utility::pointer::shared_ptr< SetReturningPackRotamersMover const > SetReturningPackRotamersMoverCOP;
 
 
 } // moves

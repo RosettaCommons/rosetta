@@ -50,7 +50,7 @@ class CacheableString : public CacheableData
 public:
 	CacheableString( std::string str ) : CacheableData(), str_(str) {}
 	virtual ~CacheableString(){};
-	virtual CacheableDataOP clone() const { return new CacheableString(*this); }
+	virtual CacheableDataOP clone() const { return CacheableDataOP( new CacheableString(*this) ); }
 	virtual std::string const & str() const { return str_; }
 private:
 	std::string str_;

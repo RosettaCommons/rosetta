@@ -70,11 +70,11 @@ SecondaryStructureSegmentFeatures::write_schema_to_db(
 	using namespace basic::database::schema_generator;
 
 	//******secondary structure segments******//
-	Column struct_id("struct_id", new DbBigInt(), false);
-	Column segment_id("segment_id", new DbInteger(), false);
-	Column residue_begin("residue_begin", new DbInteger(), false);
-	Column residue_end("residue_end", new DbInteger(), false);
-	Column dssp("dssp", new DbText(1), false);
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
+	Column segment_id("segment_id", DbDataTypeOP( new DbInteger() ), false);
+	Column residue_begin("residue_begin", DbDataTypeOP( new DbInteger() ), false);
+	Column residue_end("residue_end", DbDataTypeOP( new DbInteger() ), false);
+	Column dssp("dssp", DbDataTypeOP( new DbText(1) ), false);
 
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(struct_id);

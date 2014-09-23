@@ -37,10 +37,10 @@ namespace chemical {
 
 class ResidueType;
 
-typedef  utility::pointer::access_ptr< ResidueType >  ResidueTypeAP;
-typedef  utility::pointer::access_ptr< ResidueType const >  ResidueTypeCAP;
-typedef  utility::pointer::owning_ptr< ResidueType >  ResidueTypeOP;
-typedef  utility::pointer::owning_ptr< ResidueType const >  ResidueTypeCOP;
+typedef  utility::pointer::weak_ptr< ResidueType >  ResidueTypeAP;
+typedef  utility::pointer::weak_ptr< ResidueType const >  ResidueTypeCAP;
+typedef  utility::pointer::shared_ptr< ResidueType >  ResidueTypeOP;
+typedef  utility::pointer::shared_ptr< ResidueType const >  ResidueTypeCOP;
 typedef  utility::vector1< ResidueTypeOP >  ResidueTypeOPs;
 typedef  utility::vector1< ResidueTypeCAP >  ResidueTypeCAPs;
 typedef  utility::vector1< ResidueTypeCOP >  ResidueTypeCOPs;

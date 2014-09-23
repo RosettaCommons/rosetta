@@ -22,8 +22,8 @@ namespace qsar{
 namespace scoring_grid {
 
 class ScoreNormalization;
-typedef utility::pointer::owning_ptr< ScoreNormalization > ScoreNormalizationOP;
-typedef utility::pointer::owning_ptr< ScoreNormalization const > ScoreNormalizationCOP;
+typedef utility::pointer::shared_ptr< ScoreNormalization > ScoreNormalizationOP;
+typedef utility::pointer::shared_ptr< ScoreNormalization const > ScoreNormalizationCOP;
 
 }
 } //namesapce

@@ -51,7 +51,7 @@ public:
 
     virtual ~PDDFEnergy() {}
 
-    virtual core::scoring::methods::EnergyMethodOP clone() const { return new PDDFEnergy(); }
+    virtual core::scoring::methods::EnergyMethodOP clone() const { return core::scoring::methods::EnergyMethodOP( new PDDFEnergy() ); }
 
     virtual void finalize_total_energy(core::pose::Pose & pose,core::scoring::ScoreFunction const &,core::scoring::EnergyMap & totals) const;
 
@@ -59,7 +59,7 @@ public:
     ) const {}
 
 	core::scoring::methods::EnergyMethodOP create_energy_method(core::scoring::methods::EnergyMethodOptions const &) const {
-	return new PDDFEnergy();
+	return core::scoring::methods::EnergyMethodOP( new PDDFEnergy() );
     }
 
     utility::vector1<core::Real>&  get_pddf() {

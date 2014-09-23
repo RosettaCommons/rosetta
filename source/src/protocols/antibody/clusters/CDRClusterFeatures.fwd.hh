@@ -22,8 +22,8 @@ namespace antibody {
 namespace clusters {
 	
 class CDRClusterFeatures;
-typedef utility::pointer::owning_ptr< CDRClusterFeatures > CDRClusterFeaturesOP;
-typedef utility::pointer::owning_ptr< CDRClusterFeatures const > CDRClusterFeaturesCOP;
+typedef utility::pointer::shared_ptr< CDRClusterFeatures > CDRClusterFeaturesOP;
+typedef utility::pointer::shared_ptr< CDRClusterFeatures const > CDRClusterFeaturesCOP;
 
 		}
 	}

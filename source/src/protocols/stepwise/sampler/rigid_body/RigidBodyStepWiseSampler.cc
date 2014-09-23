@@ -89,12 +89,12 @@ namespace rigid_body {
 		value_range_.init();
 		clear_rotamer();
 
-		StepWiseSamplerOneValueOP x_rotamer = new StepWiseSamplerOneValue( value_range_.x_values(), "x"   );
-		StepWiseSamplerOneValueOP y_rotamer = new StepWiseSamplerOneValue( value_range_.y_values(), "y"   );
-		StepWiseSamplerOneValueOP z_rotamer = new StepWiseSamplerOneValue( value_range_.z_values(), "z"   );
-		StepWiseSamplerOneValueOP euler_alpha_rotamer = new StepWiseSamplerOneValue( value_range_.euler_alpha_values(), "euler_alpha"   );
-		StepWiseSamplerOneValueOP euler_z_rotamer     = new StepWiseSamplerOneValue( value_range_.euler_z_values(), "euler_beta" );
-		StepWiseSamplerOneValueOP euler_gamma_rotamer = new StepWiseSamplerOneValue( value_range_.euler_gamma_values(), "euler_gamma"  );
+		StepWiseSamplerOneValueOP x_rotamer( new StepWiseSamplerOneValue( value_range_.x_values(), "x"   ) );
+		StepWiseSamplerOneValueOP y_rotamer( new StepWiseSamplerOneValue( value_range_.y_values(), "y"   ) );
+		StepWiseSamplerOneValueOP z_rotamer( new StepWiseSamplerOneValue( value_range_.z_values(), "z"   ) );
+		StepWiseSamplerOneValueOP euler_alpha_rotamer( new StepWiseSamplerOneValue( value_range_.euler_alpha_values(), "euler_alpha"   ) );
+		StepWiseSamplerOneValueOP euler_z_rotamer( new StepWiseSamplerOneValue( value_range_.euler_z_values(), "euler_beta" ) );
+		StepWiseSamplerOneValueOP euler_gamma_rotamer( new StepWiseSamplerOneValue( value_range_.euler_gamma_values(), "euler_gamma"  ) );
 
 		// first rotamer is the inner-most loop.
 		add_external_loop_rotamer( euler_gamma_rotamer );

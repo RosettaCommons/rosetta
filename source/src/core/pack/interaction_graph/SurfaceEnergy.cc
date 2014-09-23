@@ -46,7 +46,7 @@ scoring::methods::EnergyMethodOP
 SurfaceEnergyCreator::create_energy_method(
 	scoring::methods::EnergyMethodOptions const &
 ) const {
-	return new SurfaceEnergy;
+	return scoring::methods::EnergyMethodOP( new SurfaceEnergy );
 }
 
 scoring::ScoreTypes
@@ -64,7 +64,7 @@ SurfaceEnergy::SurfaceEnergy() :
 
 scoring::methods::EnergyMethodOP
 SurfaceEnergy::clone() const {
-	return new SurfaceEnergy();
+	return scoring::methods::EnergyMethodOP( new SurfaceEnergy() );
 }
 
 

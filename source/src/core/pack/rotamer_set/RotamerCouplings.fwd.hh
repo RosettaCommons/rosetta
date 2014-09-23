@@ -30,8 +30,8 @@ namespace rotamer_set {
 class RotamerCouplings;
 
 
-typedef utility::pointer::owning_ptr< RotamerCouplings > RotamerCouplingsOP;
-typedef utility::pointer::owning_ptr< RotamerCouplings const > RotamerCouplingsCOP;
+typedef utility::pointer::shared_ptr< RotamerCouplings > RotamerCouplingsOP;
+typedef utility::pointer::shared_ptr< RotamerCouplings const > RotamerCouplingsCOP;
 
 
 } // namespace rotamer_set

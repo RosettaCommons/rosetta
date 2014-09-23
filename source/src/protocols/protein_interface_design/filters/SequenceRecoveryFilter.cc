@@ -45,8 +45,8 @@ static thread_local basic::Tracer TR( "protocols.protein_interface_design.filter
 ///@brief default ctor
 SequenceRecoveryFilter::SequenceRecoveryFilter() :
 	parent( "SequenceRecovery" ),
-	task_factory_( NULL ),
-	reference_pose_( NULL ),
+	task_factory_( /* NULL */ ),
+	reference_pose_( /* NULL */ ),
 	rate_threshold_( 0.0 ),
 	mutation_threshold_( 100 ),
 	mutations_( 0 ),
@@ -93,7 +93,7 @@ SequenceRecoveryFilter::reference_pose( core::pose::PoseCOP pose )
 void
 SequenceRecoveryFilter::reference_pose( core::pose::Pose const & pose )
 {
-	reference_pose_ = new core::pose::Pose( pose );
+	reference_pose_ = core::pose::PoseCOP( new core::pose::Pose( pose ) );
 }
 
 core::Size
@@ -333,7 +333,7 @@ void SequenceRecoveryFilter::parse_def( utility::lua::LuaObject const & def,
 }
 protocols::filters::FilterOP
 SequenceRecoveryFilter::fresh_instance() const{
-	return new SequenceRecoveryFilter();
+	return protocols::filters::FilterOP( new SequenceRecoveryFilter() );
 }
 
 SequenceRecoveryFilter::~SequenceRecoveryFilter(){}
@@ -341,11 +341,11 @@ SequenceRecoveryFilter::~SequenceRecoveryFilter(){}
 
 protocols::filters::FilterOP
 SequenceRecoveryFilter::clone() const{
-	return new SequenceRecoveryFilter( *this );
+	return protocols::filters::FilterOP( new SequenceRecoveryFilter( *this ) );
 }
 
 protocols::filters::FilterOP
-SequenceRecoveryFilterCreator::create_filter() const { return new SequenceRecoveryFilter; }
+SequenceRecoveryFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SequenceRecoveryFilter ); }
 
 std::string
 SequenceRecoveryFilterCreator::keyname() const { return "SequenceRecovery"; }

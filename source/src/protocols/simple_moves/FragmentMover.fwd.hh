@@ -26,14 +26,14 @@ namespace simple_moves {
 // Forward
 class FragmentMover;
 
-typedef utility::pointer::owning_ptr< FragmentMover > FragmentMoverOP;
-typedef utility::pointer::owning_ptr< FragmentMover const > FragmentMoverCOP;
+typedef utility::pointer::shared_ptr< FragmentMover > FragmentMoverOP;
+typedef utility::pointer::shared_ptr< FragmentMover const > FragmentMoverCOP;
 
 // Forward
 class ClassicFragmentMover;
 
-typedef utility::pointer::owning_ptr< ClassicFragmentMover > ClassicFragmentMoverOP;
-typedef utility::pointer::owning_ptr< ClassicFragmentMover const > ClassicFragmentMoverCOP;
+typedef utility::pointer::shared_ptr< ClassicFragmentMover > ClassicFragmentMoverOP;
+typedef utility::pointer::shared_ptr< ClassicFragmentMover const > ClassicFragmentMoverCOP;
 
 
 } // namespace simple_moves

@@ -53,7 +53,7 @@ namespace rotamer_recovery {
 static Tracer TR("protocol.rotamer_recovery.RRProtocolMover");
 
 RRProtocolMover::RRProtocolMover() :
-	mover_(NULL)
+	mover_(/* NULL */)
 {}
 
 RRProtocolMover::RRProtocolMover(

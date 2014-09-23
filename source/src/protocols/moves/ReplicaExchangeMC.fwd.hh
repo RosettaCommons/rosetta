@@ -21,8 +21,8 @@ namespace protocols {
 namespace moves {
 
 class ReplicaExchangeMC;
-typedef utility::pointer::owning_ptr< ReplicaExchangeMC > ReplicaExchangeMC_OP;
-typedef utility::pointer::owning_ptr< ReplicaExchangeMC const > ReplicaExchangeMC_COP;
+typedef utility::pointer::shared_ptr< ReplicaExchangeMC > ReplicaExchangeMC_OP;
+typedef utility::pointer::shared_ptr< ReplicaExchangeMC const > ReplicaExchangeMC_COP;
 
 } // moves
 } // prot

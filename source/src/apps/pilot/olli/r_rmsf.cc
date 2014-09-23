@@ -139,8 +139,8 @@ void register_options() {
 class RmsfMover;
 
 // Types
-typedef  utility::pointer::owning_ptr< RmsfMover >  RmsfMoverOP;
-typedef  utility::pointer::owning_ptr< RmsfMover const >  RmsfMoverCOP;
+typedef  utility::pointer::shared_ptr< RmsfMover >  RmsfMoverOP;
+typedef  utility::pointer::shared_ptr< RmsfMover const >  RmsfMoverCOP;
 
 class RmsfMover : public moves::Mover {
 public:
@@ -168,7 +168,7 @@ public:
 	Size iref;
 };
 
-typedef utility::pointer::owning_ptr< FitMover > FitMoverOP;
+typedef utility::pointer::shared_ptr< FitMover > FitMoverOP;
 
 void FitMover::apply( core::pose::Pose &pose ) {
 	if ( iref && first ) {
@@ -194,8 +194,8 @@ void run() {
 
 	bool store_energies ( option[ clustering ] );
 
-	RmsfMoverOP rmsf_tool =  new RmsfMover;
-	protocols::jd2::SilentFileJobInputterOP sfd_inputter ( dynamic_cast< protocols::jd2::SilentFileJobInputter* > ( protocols::jd2::JobDistributor::get_instance()->job_inputter().get() ) );
+	RmsfMoverOP rmsf_tool( new RmsfMover );
+	protocols::jd2::SilentFileJobInputterOP sfd_inputter ( utility::pointer::dynamic_pointer_cast< protocols::jd2::SilentFileJobInputter > ( protocols::jd2::JobDistributor::get_instance()->job_inputter() ) );
 	if ( sfd_inputter ) { //option[ in::file::silent ].user() ) {
 		io::silent::SilentFileData const& sfd( sfd_inputter->silent_file_data() );
 		//		sfd.read_file( option[ in::file::silent ]
@@ -264,7 +264,7 @@ void run() {
 
 	if ( option[ OptionKeys::clustering ]() ) {
 
-		protocols::jd2::SilentFileJobInputterOP sfd_inputter ( dynamic_cast< protocols::jd2::SilentFileJobInputter* > ( protocols::jd2::JobDistributor::get_instance()->job_inputter().get() ) );
+		protocols::jd2::SilentFileJobInputterOP sfd_inputter ( utility::pointer::dynamic_pointer_cast< protocols::jd2::SilentFileJobInputter > ( protocols::jd2::JobDistributor::get_instance()->job_inputter() ) );
 		if ( sfd_inputter ) { //option[ in::file::silent ].user() ) {
 			io::silent::SilentFileData const& sfd( sfd_inputter->silent_file_data() );
 			core::io::silent::SilentFileData kept_decoys;
@@ -296,7 +296,7 @@ void run() {
 	}
 
 	if ( option[ dump_fit ]() ) {
-		FitMoverOP fit_tool = new FitMover;
+		FitMoverOP fit_tool( new FitMover );
 		fit_tool->weights_ = weights;
 		if ( icenter > 1 ) {
 			fit_tool->iref = icenter - 1; //ignores the first iref structures before it takes the pose as reference pose.

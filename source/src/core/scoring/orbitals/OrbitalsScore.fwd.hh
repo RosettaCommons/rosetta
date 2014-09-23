@@ -22,7 +22,7 @@ namespace orbitals {
 	
 class OrbitalsScore;
 	
-typedef  utility::pointer::owning_ptr< OrbitalsScore > OrbitalsScoreOP;
+typedef  utility::pointer::shared_ptr< OrbitalsScore > OrbitalsScoreOP;
 	
 }
 }

@@ -77,7 +77,7 @@ public:// virtual constructor
 
 
 	/// @brief make clone
-  PoseMetricCalculatorOP clone() const { return new FragQualCalculator( *this ); }
+  PoseMetricCalculatorOP clone() const { return PoseMetricCalculatorOP( new FragQualCalculator( *this ) ); }
 
 
 public:// mutator

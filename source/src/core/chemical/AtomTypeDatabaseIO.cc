@@ -80,14 +80,14 @@ AtomTypeDatabaseIO::write_atom_types_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column atom_type_set_name("atom_type_set_name", new DbText(64));
-	Column name("name", new DbText(32));
-	Column element("element", new DbText(2));
-	Column lennard_jones_radius("lennard_jones_radius", new DbReal());
-	Column lennard_jones_well_depth("lennard_jones_well_depth", new DbReal());
-	Column lazaridis_karplus_lambda("lazaridis_karplus_lambda", new DbReal());
-	Column lazaridis_karplus_degrees_of_freedom("lazaridis_karplus_degrees_of_freedom", new DbReal());
-	Column lazaridis_karplus_volume("lazaridis_karplus_volume", new DbReal());
+	Column atom_type_set_name("atom_type_set_name", DbDataTypeOP( new DbText(64) ));
+	Column name("name", DbDataTypeOP( new DbText(32) ));
+	Column element("element", DbDataTypeOP( new DbText(2) ));
+	Column lennard_jones_radius("lennard_jones_radius", DbDataTypeOP( new DbReal() ));
+	Column lennard_jones_well_depth("lennard_jones_well_depth", DbDataTypeOP( new DbReal() ));
+	Column lazaridis_karplus_lambda("lazaridis_karplus_lambda", DbDataTypeOP( new DbReal() ));
+	Column lazaridis_karplus_degrees_of_freedom("lazaridis_karplus_degrees_of_freedom", DbDataTypeOP( new DbReal() ));
+	Column lazaridis_karplus_volume("lazaridis_karplus_volume", DbDataTypeOP( new DbReal() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(atom_type_set_name);
@@ -113,7 +113,7 @@ AtomTypeDatabaseIO::write_atom_type_property_values_table_schema(
 	using namespace basic::database;
 	using namespace boost::assign;
 
-	Column property("property", new DbText(32));
+	Column property("property", DbDataTypeOP( new DbText(32) ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(property);
@@ -147,9 +147,9 @@ AtomTypeDatabaseIO::write_atom_type_properties_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column atom_type_set_name("atom_type_set_name", new DbText(64));
-	Column name("name", new DbText(4));
-	Column property("property", new DbText(32));
+	Column atom_type_set_name("atom_type_set_name", DbDataTypeOP( new DbText(64) ));
+	Column name("name", DbDataTypeOP( new DbText(4) ));
+	Column property("property", DbDataTypeOP( new DbText(32) ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(atom_type_set_name);
@@ -186,10 +186,10 @@ AtomTypeDatabaseIO::write_atom_type_extra_parameters_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column atom_type_set_name("atom_type_set_name", new DbText(64));
-	Column name("name", new DbText(32));
-	Column parameter("parameter", new DbText(32));
-	Column value("value", new DbReal());
+	Column atom_type_set_name("atom_type_set_name", DbDataTypeOP( new DbText(64) ));
+	Column name("name", DbDataTypeOP( new DbText(32) ));
+	Column parameter("parameter", DbDataTypeOP( new DbText(32) ));
+	Column value("value", DbDataTypeOP( new DbReal() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(atom_type_set_name);

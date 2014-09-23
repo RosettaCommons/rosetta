@@ -25,20 +25,20 @@ namespace match {
 namespace output {
 
 class WriteUpstreamCoordinateKinemage;
-typedef utility::pointer::owning_ptr< WriteUpstreamCoordinateKinemage > WriteUpstreamCoordinateKinemageOP;
-typedef utility::pointer::owning_ptr< WriteUpstreamCoordinateKinemage const > WriteUpstreamCoordinateKinemageCOP;
+typedef utility::pointer::shared_ptr< WriteUpstreamCoordinateKinemage > WriteUpstreamCoordinateKinemageOP;
+typedef utility::pointer::shared_ptr< WriteUpstreamCoordinateKinemage const > WriteUpstreamCoordinateKinemageCOP;
 
 class WriteUpstreamHitKinemage;
-typedef utility::pointer::owning_ptr< WriteUpstreamHitKinemage > WriteUpstreamHitKinemageOP;
-typedef utility::pointer::owning_ptr< WriteUpstreamHitKinemage const > WriteUpstreamHitKinemageCOP;
+typedef utility::pointer::shared_ptr< WriteUpstreamHitKinemage > WriteUpstreamHitKinemageOP;
+typedef utility::pointer::shared_ptr< WriteUpstreamHitKinemage const > WriteUpstreamHitKinemageCOP;
 
 class DownstreamCoordinateKinemageWriter;
-typedef utility::pointer::owning_ptr< DownstreamCoordinateKinemageWriter > DownstreamCoordinateKinemageWriterOP;
-typedef utility::pointer::owning_ptr< DownstreamCoordinateKinemageWriter const > DownstreamCoordinateKinemageWriterCOP;
+typedef utility::pointer::shared_ptr< DownstreamCoordinateKinemageWriter > DownstreamCoordinateKinemageWriterOP;
+typedef utility::pointer::shared_ptr< DownstreamCoordinateKinemageWriter const > DownstreamCoordinateKinemageWriterCOP;
 
 class SingleDownstreamResidueWriter;
-typedef utility::pointer::owning_ptr< SingleDownstreamResidueWriter > SingleDownstreamResidueWriterOP;
-typedef utility::pointer::owning_ptr< SingleDownstreamResidueWriter const > SingleDownstreamResidueWriterCOP;
+typedef utility::pointer::shared_ptr< SingleDownstreamResidueWriter > SingleDownstreamResidueWriterOP;
+typedef utility::pointer::shared_ptr< SingleDownstreamResidueWriter const > SingleDownstreamResidueWriterCOP;
 
 }
 }

@@ -69,7 +69,7 @@ AddGood2BPairEnergyRotamers::~AddGood2BPairEnergyRotamers(){}
 
 core::pack::rotamer_set::RotamerSetOperationOP
 AddGood2BPairEnergyRotamers::clone() const{
-	return new AddGood2BPairEnergyRotamers( *this );
+	return core::pack::rotamer_set::RotamerSetOperationOP( new AddGood2BPairEnergyRotamers( *this ) );
 }
 
 

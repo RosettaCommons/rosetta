@@ -22,8 +22,8 @@ namespace scoring {
 namespace electron_density {
 
 class ElectronDensityOptions;
-typedef utility::pointer::owning_ptr< ElectronDensityOptions > ElectronDensityOptionsOP;
-typedef utility::pointer::owning_ptr< ElectronDensityOptions const > ElectronDensityOptionsCOP;
+typedef utility::pointer::shared_ptr< ElectronDensityOptions > ElectronDensityOptionsOP;
+typedef utility::pointer::shared_ptr< ElectronDensityOptions const > ElectronDensityOptionsCOP;
 
 } // namespace electron_density
 } //namespace scoring

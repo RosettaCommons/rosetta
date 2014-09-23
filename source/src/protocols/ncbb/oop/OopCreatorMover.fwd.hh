@@ -24,8 +24,8 @@ namespace oop {
 
 
 class OopCreatorMover; // fwd declaration
-typedef utility::pointer::owning_ptr< OopCreatorMover > OopCreatorMoverOP;
-typedef utility::pointer::owning_ptr< OopCreatorMover const > OopCreatorMoverCOP;
+typedef utility::pointer::shared_ptr< OopCreatorMover > OopCreatorMoverOP;
+typedef utility::pointer::shared_ptr< OopCreatorMover const > OopCreatorMoverCOP;
 
 
 } // namespace oop

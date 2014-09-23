@@ -28,7 +28,7 @@ namespace features {
 TrajectoryMapFeaturesCreator::TrajectoryMapFeaturesCreator() {}
 TrajectoryMapFeaturesCreator::~TrajectoryMapFeaturesCreator() {}
 FeaturesReporterOP TrajectoryMapFeaturesCreator::create_features_reporter() const {
-	return new TrajectoryMapFeatures;
+	return FeaturesReporterOP( new TrajectoryMapFeatures );
 }
 
 std::string TrajectoryMapFeaturesCreator::type_name() const {

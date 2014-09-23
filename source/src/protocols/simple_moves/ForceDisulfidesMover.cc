@@ -55,7 +55,7 @@ ForceDisulfidesMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 ForceDisulfidesMoverCreator::create_mover() const {
-	return new ForceDisulfidesMover;
+	return protocols::moves::MoverOP( new ForceDisulfidesMover );
 }
 
 std::string
@@ -66,7 +66,7 @@ ForceDisulfidesMoverCreator::mover_name()
 
 ForceDisulfidesMover::ForceDisulfidesMover() :
 	protocols::moves::Mover("ForceDisulfidesMover"),
-	scorefxn_( NULL )
+	scorefxn_( /* NULL */ )
 { disulfides_.clear(); }
 
 ForceDisulfidesMover::~ForceDisulfidesMover() {}
@@ -74,13 +74,13 @@ ForceDisulfidesMover::~ForceDisulfidesMover() {}
 protocols::moves::MoverOP
 ForceDisulfidesMover::clone() const
 {
-	return new ForceDisulfidesMover( *this );
+	return protocols::moves::MoverOP( new ForceDisulfidesMover( *this ) );
 }
 
 protocols::moves::MoverOP
 ForceDisulfidesMover::fresh_instance() const
 {
-	return new ForceDisulfidesMover();
+	return protocols::moves::MoverOP( new ForceDisulfidesMover() );
 }
 
 void
@@ -92,16 +92,16 @@ ForceDisulfidesMover::apply( Pose & pose ) {
 	using namespace protocols::toolbox::task_operations;
 	using core::pack::task::operation::TaskOperationCOP;
 	
-	DesignAroundOperationOP dao = new DesignAroundOperation;
+	DesignAroundOperationOP dao( new DesignAroundOperation );
 	dao->design_shell( 0.0 );
 	dao->repack_shell( 6.0 );
 	for( utility::vector1< std::pair< core::Size, core::Size > > ::const_iterator pair = disulfides_.begin(); pair != disulfides_.end(); ++pair ){
 		dao->include_residue( pair->first );
 		dao->include_residue( pair->second );
 	}
-	TaskFactoryOP tf = new TaskFactory;
+	TaskFactoryOP tf( new TaskFactory );
 	tf->push_back( dao );
-	tf->push_back( new operation::InitializeFromCommandline );
+	tf->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
 	PackerTaskOP ptask = tf->create_task_and_apply_taskoperations( pose );
 	PackRotamersMover prm( scorefxn(), ptask );
 	TR<<"repacking disulfide surroundings"<<std::endl;

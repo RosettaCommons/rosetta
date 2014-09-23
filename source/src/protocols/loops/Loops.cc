@@ -477,7 +477,7 @@ LoopsFileIOOP Loops::get_loop_file_reader() const
 {
   if ( !loop_file_reader_ )
   {
-    loop_file_reader_ = new LoopsFileIO;
+    loop_file_reader_ = LoopsFileIOOP( new LoopsFileIO );
   }
   return loop_file_reader_;
 }

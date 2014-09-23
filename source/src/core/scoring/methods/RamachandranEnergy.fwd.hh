@@ -25,8 +25,8 @@ namespace methods {
 
 class RamachandranEnergy;
 
-typedef utility::pointer::owning_ptr< RamachandranEnergy > RamachandranEnergyOP;
-typedef utility::pointer::owning_ptr< RamachandranEnergy const > RamachandranEnergyCOP;
+typedef utility::pointer::shared_ptr< RamachandranEnergy > RamachandranEnergyOP;
+typedef utility::pointer::shared_ptr< RamachandranEnergy const > RamachandranEnergyCOP;
 
 } // methods
 } // scoring

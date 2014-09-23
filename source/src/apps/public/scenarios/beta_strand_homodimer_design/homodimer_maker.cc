@@ -147,7 +147,7 @@ public:
 
 
 	virtual MoverOP clone() const {
-		return new HDmakerMover( *this );
+		return MoverOP( new HDmakerMover( *this ) );
 	}
 
 	virtual	MoverOP	fresh_instance() const {
@@ -278,7 +278,7 @@ void HDmakerMover::apply (pose::Pose & pose ) {
 	if( basic::options::option[ struct_file ].active()){
 		std::string struct_filename = option[ struct_file ];
 		TR << "Deleting according to structure file..."<< std::endl;
-		moves::StructureRestrictorOP restrictor = new moves::StructureRestrictor( struct_filename );
+		moves::StructureRestrictorOP restrictor( new moves::StructureRestrictor( struct_filename ) );
 		restrictor->apply(pose);
 	}
 
@@ -377,8 +377,8 @@ void HDmakerMover::apply (pose::Pose & pose ) {
 			Real const max_angle(180.0);
 			//moves the input pose, not the copy
 			pose::Pose anti_pose (pose), parl_pose (pose);
-			rigid::RollMoverOP parl_roll_mover( new rigid::RollMover(1 /*start_res*/, n_residues /*stop*/, min_angle, max_angle, parl_vector, center_xyz ));
-			rigid::RollMoverOP anti_roll_mover( new rigid::RollMover(1 /*start_res*/, n_residues /*stop*/, min_angle, max_angle, anti_vector, center_xyz ));
+			rigid::RollMoverOP parl_roll_mover( new rigid::RollMover(1 /*start_res*/, n_residues /*stop*/, min_angle, max_angle, parl_vector, center_xyz ) );
+			rigid::RollMoverOP anti_roll_mover( new rigid::RollMover(1 /*start_res*/, n_residues /*stop*/, min_angle, max_angle, anti_vector, center_xyz ) );
 
 			//apply to pose and output
 			anti_roll_mover->apply( anti_pose );
@@ -390,7 +390,7 @@ void HDmakerMover::apply (pose::Pose & pose ) {
 			Real anti_dist (6.0); //distance to move 2 CA atoms apart (largest for antiparallel seen)
 			Real parl_dist (5.5); //similar number for parallel sheetsm
 
-			rigid::RigidBodyTransMoverOP push_apart_mover(new rigid::RigidBodyTransMover);
+			rigid::RigidBodyTransMoverOP push_apart_mover( new rigid::RigidBodyTransMover );
 			//figure out which way to push
 			//check if the center residue is in bb:bb hbonds (lame way but will do for now)
 			TR << "C-O vector on center res is" << CO_plane_vector << ",  ";
@@ -434,7 +434,7 @@ void HDmakerMover::apply (pose::Pose & pose ) {
 			TR<<"Number of RB steps to search: "<< numsteps << std::endl;
 
 			//now set up for searching along strand
-			rigid::RigidBodyTransMoverOP sheet_trans_mover(new rigid::RigidBodyTransMover);
+			rigid::RigidBodyTransMoverOP sheet_trans_mover( new rigid::RigidBodyTransMover );
 			//quick bump to line up parallel sheet
 			sheet_trans_mover->trans_axis(parl_vector * (-1));
 			sheet_trans_mover->step_size(3.6); //aprox only
@@ -505,7 +505,7 @@ try {
 	//making our own output
 	basic::options::option[ OptionKeys::jd2::no_output ].def(true);
 
-	protocols::jd2::JobDistributor::get_instance()->go( new HDmakerMover );
+	protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new HDmakerMover ) );
 
   TR<< "Complete." << std::endl;
 } catch ( utility::excn::EXCN_Base const & e ) {

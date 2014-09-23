@@ -39,8 +39,8 @@ public:
 	virtual std::string keyname() const = 0;
 };
 
-typedef utility::pointer::owning_ptr< DataLoaderCreator > DataLoaderCreatorOP;
-typedef utility::pointer::owning_ptr< DataLoaderCreator const > DataLoaderCreatorCOP;
+typedef utility::pointer::shared_ptr< DataLoaderCreator > DataLoaderCreatorOP;
+typedef utility::pointer::shared_ptr< DataLoaderCreator const > DataLoaderCreatorCOP;
 
 } //namespace parser
 } //namespace jd2

@@ -28,11 +28,11 @@ namespace denovo_design {
 class BuildSheet;
 
 // Types
-typedef  utility::pointer::owning_ptr< BuildSheet >  BuildSheetOP;
-typedef  utility::pointer::owning_ptr< BuildSheet const >  BuildSheetCOP;
+typedef  utility::pointer::shared_ptr< BuildSheet >  BuildSheetOP;
+typedef  utility::pointer::shared_ptr< BuildSheet const >  BuildSheetCOP;
 
-typedef  utility::pointer::access_ptr< BuildSheet >  BuildSheetAP;
-typedef  utility::pointer::access_ptr< BuildSheet const >  BuildSheetCAP;
+typedef  utility::pointer::weak_ptr< BuildSheet >  BuildSheetAP;
+typedef  utility::pointer::weak_ptr< BuildSheet const >  BuildSheetCAP;
 
 
 } // namespace denovo_design

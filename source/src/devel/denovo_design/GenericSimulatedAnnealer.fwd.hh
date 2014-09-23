@@ -23,8 +23,8 @@ namespace devel {
 namespace denovo_design {
 
 class GenericSimulatedAnnealer;
-typedef utility::pointer::owning_ptr< GenericSimulatedAnnealer >  GenericSimulatedAnnealerOP;
-typedef utility::pointer::owning_ptr< GenericSimulatedAnnealer const >  GenericSimulatedAnnealerCOP;
+typedef utility::pointer::shared_ptr< GenericSimulatedAnnealer >  GenericSimulatedAnnealerOP;
+typedef utility::pointer::shared_ptr< GenericSimulatedAnnealer const >  GenericSimulatedAnnealerCOP;
 
 
 } // namespace denovo_design

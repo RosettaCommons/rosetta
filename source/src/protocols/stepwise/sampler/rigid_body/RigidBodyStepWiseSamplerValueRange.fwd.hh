@@ -24,8 +24,8 @@ namespace sampler {
 namespace rigid_body {
 	
 	class RigidBodyStepWiseSamplerValueRange;
-	typedef utility::pointer::owning_ptr< RigidBodyStepWiseSamplerValueRange > RigidBodyStepWiseSamplerValueRangeOP;
-	typedef utility::pointer::owning_ptr< RigidBodyStepWiseSamplerValueRange const > RigidBodyStepWiseSamplerValueRangeCOP;
+	typedef utility::pointer::shared_ptr< RigidBodyStepWiseSamplerValueRange > RigidBodyStepWiseSamplerValueRangeOP;
+	typedef utility::pointer::shared_ptr< RigidBodyStepWiseSamplerValueRange const > RigidBodyStepWiseSamplerValueRangeCOP;
 	
 } //rigid_body
 } //sampler

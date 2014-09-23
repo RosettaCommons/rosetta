@@ -21,8 +21,8 @@ namespace qsar {
 
 class qsarMover;
 
-typedef utility::pointer::owning_ptr<qsarMover> qsarMoverOP;
-typedef utility::pointer::owning_ptr<qsarMover const> qsarMoverCOP;
+typedef utility::pointer::shared_ptr<qsarMover> qsarMoverOP;
+typedef utility::pointer::shared_ptr<qsarMover const> qsarMoverCOP;
 
 }
 }

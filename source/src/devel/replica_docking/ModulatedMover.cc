@@ -38,7 +38,7 @@ ModulatedMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ModulatedMoverCreator::create_mover() const {
-  return new ModulatedMover;
+  return protocols::moves::MoverOP( new ModulatedMover );
 }
 
 std::string
@@ -47,7 +47,7 @@ ModulatedMoverCreator::mover_name() {
 }
 
 ModulatedMover::ModulatedMover() :
-  tempering_( NULL )
+  tempering_( /* NULL */ )
 {}
 
 ModulatedMover::ModulatedMover( ModulatedMover const& other ) : ThermodynamicMover( other ) {
@@ -70,13 +70,13 @@ ModulatedMover::get_name() const
 protocols::moves::MoverOP
 ModulatedMover::clone() const
 {
-  return new ModulatedMover(*this);
+  return protocols::moves::MoverOP( new ModulatedMover(*this) );
 }
 
 protocols::moves::MoverOP
 ModulatedMover::fresh_instance() const
 {
-  return new ModulatedMover;
+  return protocols::moves::MoverOP( new ModulatedMover );
 }
 
 void
@@ -88,7 +88,7 @@ ModulatedMover::parse_my_tag(
 	core::pose::Pose const & pose
 ) {
   protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "tempering", "null" ), movers );
-  tempering_ = dynamic_cast< protocols::canonical_sampling::HamiltonianExchange* >( mover() );
+  tempering_ = utility::pointer::dynamic_pointer_cast< protocols::canonical_sampling::HamiltonianExchange > ( mover );
   if ( !tempering_ ) {
     throw utility::excn::EXCN_RosettaScriptsOption( "ModulatedMover requires an tempering argument" );
   }
@@ -133,11 +133,11 @@ ModulatedMover::parse_my_tag(
 		tr.Debug << "check if key " << *key_it << " is provided" << std::endl;
 
 		if ( interps_1_.find( *key_it ) == interps_1_.end() ) {
-			interps_1_[ *key_it ] = new devel::replica_docking::TempFixValue( 1 );
+			interps_1_[ *key_it ] = utility::pointer::shared_ptr<class devel::replica_docking::TempInterpolatorBase>( new devel::replica_docking::TempFixValue( 1 ) );
 			tr.Debug << "parameter for " << *key_it << " not provided for 1st dim, will use fix value 1" << std::endl;
 		}
 		if ( interps_2_.find( *key_it ) == interps_2_.end() ) {
-			interps_2_[ *key_it ] = new devel::replica_docking::TempFixValue( 1 );
+			interps_2_[ *key_it ] = utility::pointer::shared_ptr<class devel::replica_docking::TempInterpolatorBase>( new devel::replica_docking::TempFixValue( 1 ) );
 			tr.Debug << "parameter for " << *key_it << " not provided for 2nd dim, will use fix value 1" << std::endl;
 		}
 	}
@@ -158,7 +158,7 @@ ModulatedMover::parse_my_tag(
     if ( !new_mover ) {
       throw utility::excn::EXCN_RosettaScriptsOption( "you suck" );
     }
-    ThermodynamicMoverOP th_mover( dynamic_cast<ThermodynamicMover*>( new_mover.get() ) );
+    ThermodynamicMoverOP th_mover( utility::pointer::dynamic_pointer_cast< protocols::canonical_sampling::ThermodynamicMover > ( new_mover ) );
     if ( !th_mover) {
       throw utility::excn::EXCN_RosettaScriptsOption( "you still suck: Class "+mover_name_+"is not a ThermodynamicMover" );
     }

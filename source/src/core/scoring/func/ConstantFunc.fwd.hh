@@ -24,7 +24,7 @@ namespace scoring {
 namespace func {
 
 class ConstantFunc;
-typedef utility::pointer::owning_ptr< ConstantFunc > ConstantFuncOP;
+typedef utility::pointer::shared_ptr< ConstantFunc > ConstantFuncOP;
 
 }
 }

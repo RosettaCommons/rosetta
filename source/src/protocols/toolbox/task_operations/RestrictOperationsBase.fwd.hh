@@ -22,8 +22,8 @@ namespace task_operations {
 
 class RestrictOperationsBase;
 
-typedef utility::pointer::owning_ptr< RestrictOperationsBase > RestrictOperationsBaseOP;
-typedef utility::pointer::owning_ptr< RestrictOperationsBase const > RestrictOperationsBaseCOP;
+typedef utility::pointer::shared_ptr< RestrictOperationsBase > RestrictOperationsBaseOP;
+typedef utility::pointer::shared_ptr< RestrictOperationsBase const > RestrictOperationsBaseCOP;
 
 } //namespace protocols
 } //namespace toolbox

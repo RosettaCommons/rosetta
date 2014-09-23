@@ -47,7 +47,7 @@ PSSM2BfactorMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 PSSM2BfactorMoverCreator::create_mover() const {
-	return new PSSM2BfactorMover;
+	return protocols::moves::MoverOP( new PSSM2BfactorMover );
 }
 
 std::string
@@ -89,7 +89,7 @@ PSSM2BfactorMover::apply( Pose & pose )
 
 	BOOST_FOREACH( ConstraintCOP const c, constraints ){
 		if( c->type() == "SequenceProfile" ){
-			SequenceProfileConstraintCOP seqprof_cst( dynamic_cast< SequenceProfileConstraint const * >( c() ) );
+			SequenceProfileConstraintCOP seqprof_cst( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::SequenceProfileConstraint const > ( c ) );
 			runtime_assert( seqprof_cst != 0 );
 			runtime_assert( seqprof_cst->profile_mapping() != 0 );
 			core::Size const seqpos( seqprof_cst->seqpos() );
@@ -149,13 +149,13 @@ PSSM2BfactorMover::get_name() const {
 moves::MoverOP
 PSSM2BfactorMover::clone() const
 {
-	return new PSSM2BfactorMover( *this );
+	return moves::MoverOP( new PSSM2BfactorMover( *this ) );
 }
 
 moves::MoverOP
 PSSM2BfactorMover::fresh_instance() const
 {
-	return new PSSM2BfactorMover;
+	return moves::MoverOP( new PSSM2BfactorMover );
 }
 
 void

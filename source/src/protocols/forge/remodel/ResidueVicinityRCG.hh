@@ -37,12 +37,12 @@ namespace remodel{
 
 class ResidueVicinityRCG;
 
-typedef utility::pointer::owning_ptr< ResidueVicinityRCG > ResidueVicinityRCGOP;
-typedef utility::pointer::access_ptr< ResidueVicinityRCG const > ResidueVicinityRCGCAP;
+typedef utility::pointer::shared_ptr< ResidueVicinityRCG > ResidueVicinityRCGOP;
+typedef utility::pointer::weak_ptr< ResidueVicinityRCG const > ResidueVicinityRCGCAP;
 
 class ResidueVicinityInfo;
-typedef utility::pointer::owning_ptr< ResidueVicinityInfo > ResidueVicinityInfoOP;
-typedef utility::pointer::owning_ptr< ResidueVicinityInfo const > ResidueVicinityInfoCOP;
+typedef utility::pointer::shared_ptr< ResidueVicinityInfo > ResidueVicinityInfoOP;
+typedef utility::pointer::shared_ptr< ResidueVicinityInfo const > ResidueVicinityInfoCOP;
 
 /// @brief small helper class for the ResidueVicinityRCG
 class

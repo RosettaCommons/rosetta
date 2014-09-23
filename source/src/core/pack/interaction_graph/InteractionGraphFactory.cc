@@ -69,7 +69,7 @@ InteractionGraphFactory::create_interaction_graph(
 		/// for symmetry first and return a (pairwise-decomposable) SymmLinearMemoryInteractionGraph if requested.
 		if ( pose::symmetry::is_symmetric( pose )) {
 			T << "Instantiating SymmLinearMemoryInteractionGraph" << std::endl;
-			SymmLinearMemoryInteractionGraphOP symlinmemig = new SymmLinearMemoryInteractionGraph( the_task.num_to_be_packed() );
+			SymmLinearMemoryInteractionGraphOP symlinmemig( new SymmLinearMemoryInteractionGraph( the_task.num_to_be_packed() ) );
 			symlinmemig->set_pose( pose );
 			symlinmemig->set_score_function( sfxn );
 			symlinmemig->set_recent_history_size( the_task.linmem_ig_history_size() );
@@ -78,7 +78,7 @@ InteractionGraphFactory::create_interaction_graph(
 
 		if ( surface_weight ) {
 			T << "Instantiating LinearMemorySurfaceInteractionGraph" << std::endl;
-			LinearMemorySurfaceInteractionGraphOP lmsolig = new LinearMemorySurfaceInteractionGraph( the_task.num_to_be_packed() );
+			LinearMemorySurfaceInteractionGraphOP lmsolig( new LinearMemorySurfaceInteractionGraph( the_task.num_to_be_packed() ) );
 			lmsolig->set_pose( pose );
 			lmsolig->set_packer_task( the_task );
 			lmsolig->set_score_function( sfxn );
@@ -90,7 +90,7 @@ InteractionGraphFactory::create_interaction_graph(
 
 		if ( hpatch_weight ) {
 			T << "Instantiating LinearMemoryHPatchInteractionGraph" << std::endl;
-			LinearMemoryHPatchInteractionGraphOP lmhig = new LinearMemoryHPatchInteractionGraph( the_task.num_to_be_packed() );
+			LinearMemoryHPatchInteractionGraphOP lmhig( new LinearMemoryHPatchInteractionGraph( the_task.num_to_be_packed() ) );
 			lmhig->set_pose( pose );
 			lmhig->set_packer_task( the_task );
 			lmhig->set_score_function( sfxn );
@@ -101,7 +101,7 @@ InteractionGraphFactory::create_interaction_graph(
 		}
 
 		T << "Instantiating LinearMemoryInteractionGraph" << std::endl;
-		LinearMemoryInteractionGraphOP lmig = new LinearMemoryInteractionGraph( the_task.num_to_be_packed() );
+		LinearMemoryInteractionGraphOP lmig( new LinearMemoryInteractionGraph( the_task.num_to_be_packed() ) );
 		lmig->set_pose( pose );
 		lmig->set_score_function( sfxn );
 		lmig->set_recent_history_size( the_task.linmem_ig_history_size() );
@@ -114,7 +114,7 @@ InteractionGraphFactory::create_interaction_graph(
 				if ( rotsets.rotamer_set_for_moltenresidue(1)->rotamer(1)->residue_type_set().name() != chemical::CENTROID ) { //and it's not centroid repacking
 					if ( surface_weight ) { //Note that surface overrides lazy!
 						T << "Instantiating PDSurfaceInteractionGraph" << std::endl;
-						PDSurfaceInteractionGraphOP pdsig = new PDSurfaceInteractionGraph( the_task.num_to_be_packed() );
+						PDSurfaceInteractionGraphOP pdsig( new PDSurfaceInteractionGraph( the_task.num_to_be_packed() ) );
 						pdsig->set_pose( pose );
 						pdsig->set_packer_task( the_task );
 						pdsig->set_rotamer_sets( rotsets );
@@ -123,7 +123,7 @@ InteractionGraphFactory::create_interaction_graph(
 
 					} else if ( hpatch_weight ) {
 						T << "Instantiating PDHPatchInteractionGraph" << std::endl;
-						PDHPatchInteractionGraphOP hig = new PDHPatchInteractionGraph( the_task.num_to_be_packed() );
+						PDHPatchInteractionGraphOP hig( new PDHPatchInteractionGraph( the_task.num_to_be_packed() ) );
 						hig->set_pose( pose );
 						hig->set_packer_task( the_task );
 						hig->set_rotamer_sets( rotsets );
@@ -132,13 +132,13 @@ InteractionGraphFactory::create_interaction_graph(
 
 					} else if ( the_task.lazy_ig() ) {
 						T << "Instantiating LazyInteractionGraph" << std::endl;
-						LazyInteractionGraphOP lazy_ig = new LazyInteractionGraph( the_task.num_to_be_packed() );
+						LazyInteractionGraphOP lazy_ig( new LazyInteractionGraph( the_task.num_to_be_packed() ) );
 						lazy_ig->set_pose( pose );
 						lazy_ig->set_score_function( sfxn );
 						return lazy_ig;
 					} else if ( the_task.double_lazy_ig() ) {
 						T << "Instantiating DoubleLazyInteractionGraph" << std::endl;
-						DoubleLazyInteractionGraphOP double_lazy_ig = new DoubleLazyInteractionGraph( the_task.num_to_be_packed() );
+						DoubleLazyInteractionGraphOP double_lazy_ig( new DoubleLazyInteractionGraph( the_task.num_to_be_packed() ) );
 						double_lazy_ig->set_pose( pose );
 						double_lazy_ig->set_score_function( sfxn );
 						//T << "Setting DoubleLazyIngeractionGraph memory limit to " << the_task.double_lazy_ig_memlimit()  << std::endl;
@@ -146,7 +146,7 @@ InteractionGraphFactory::create_interaction_graph(
 						return double_lazy_ig;
 					} else {
 						T << "Instantiating PDInteractionGraph" << std::endl;
-						return new PDInteractionGraph( the_task.num_to_be_packed() );
+						return InteractionGraphBaseOP( new PDInteractionGraph( the_task.num_to_be_packed() ) );
 					}
 				}
 			}
@@ -157,7 +157,7 @@ InteractionGraphFactory::create_interaction_graph(
 	// 'linmem_ig flag is off and design is not being performed', or 'linmem_ig flag is off and centroid mode design is being performed'
 	//This will also trigger if there are no rotamers
 	T << "Instantiating DensePDInteractionGraph" << std::endl;
-	return new DensePDInteractionGraph( the_task.num_to_be_packed() );
+	return InteractionGraphBaseOP( new DensePDInteractionGraph( the_task.num_to_be_packed() ) );
 }
 
 }

@@ -28,8 +28,8 @@ namespace abinitio {
 class TemplateJumpSetup;
 
 // Types
-typedef  utility::pointer::owning_ptr< TemplateJumpSetup >  TemplateJumpSetupOP;
-typedef  utility::pointer::owning_ptr< TemplateJumpSetup const >  TemplateJumpSetupCOP;
+typedef  utility::pointer::shared_ptr< TemplateJumpSetup >  TemplateJumpSetupOP;
+typedef  utility::pointer::shared_ptr< TemplateJumpSetup const >  TemplateJumpSetupCOP;
 
 
 } // namespace kinematics

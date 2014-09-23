@@ -110,7 +110,7 @@ PlaceStubMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 PlaceStubMoverCreator::create_mover() const {
-	return new PlaceStubMover;
+	return protocols::moves::MoverOP( new PlaceStubMover );
 }
 
 std::string
@@ -123,20 +123,20 @@ PlaceStubMover::PlaceStubMover() :
 	simple_moves::DesignRepackMover( PlaceStubMoverCreator::mover_name() ),
 	score_threshold_( 0.0 ),
 	host_chain_( 2 ),
-	stub_set_( NULL ),
+	stub_set_( /* NULL */ ),
 	add_constraints_( false ),
-	after_placement_filter_( NULL ),
-	final_filter_( NULL ),
-	coord_cst_func_( NULL ),
-	default_fold_tree_( NULL ),
+	after_placement_filter_( /* NULL */ ),
+	final_filter_( /* NULL */ ),
+	coord_cst_func_( /* NULL */ ),
+	default_fold_tree_( /* NULL */ ),
 	leave_coord_csts_after_placement_( false ),
 	place_scaffold_( false ),
 	max_cb_cb_dist_( 4.0 ),
 	hurry_( true ),
 	triage_positions_( true ),
 	stub_energy_threshold_( 1.0 ),
-	residue_level_tasks_for_placed_hotspots_( NULL ),
-	residue_numbers_( NULL )
+	residue_level_tasks_for_placed_hotspots_( /* NULL */ ),
+	residue_numbers_( /* NULL */ )
 {
 	coord_cst_std_.clear();
 	disallowed_host_pos_.clear();
@@ -165,7 +165,7 @@ PlaceStubMover::PlaceStubMover(
 	triage_positions_(triage_positions),
 	stub_energy_threshold_(stub_energy_threshold)
 {
-	if( stub_set ) stub_set_ = new protocols::hotspot_hashing::HotspotStubSet( *stub_set );
+	if( stub_set ) stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new protocols::hotspot_hashing::HotspotStubSet( *stub_set ) );
 	final_filter_ = final_filter->clone();
 }
 
@@ -294,7 +294,7 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 	}
 	using namespace protocols::hotspot_hashing;
 	core::scoring::constraints::ConstraintCOPs stub_constraints;
-	if( stub() != NULL ){ //one stub-based constraint
+	if( stub != NULL ){ //one stub-based constraint
 		runtime_assert( host_residue );
 		core::conformation::Residue const host_res( pose.conformation().residue( host_residue ) );
 		core::Real dummy1, dummy2;
@@ -315,7 +315,7 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 		// I'm circumventing add_hotspot_constraints to pose and adding the constraint directly
 		// since there's no ambiguity here and no need to switch to ala pose etc. And I don't
 		// want all the quality control machinery to be applied to this stub; I know it's good.
-		stub_constraints.push_back( new BackboneStubConstraint( pose, host_residue, fixed_atom_id, host_res, bonus, cb_force ) );
+		stub_constraints.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new BackboneStubConstraint( pose, host_residue, fixed_atom_id, host_res, bonus, cb_force ) ) );
 		stub_constraints = pose.add_constraints( stub_constraints );
 	}// stub() != NULL
 	else{ //multiple stubs
@@ -339,14 +339,14 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 			if( !prevent_repacking_.empty() ){
 				ConstraintCOPs to_be_removed;
 				for( ConstraintCOPs::const_iterator it = constraints.begin(); it != constraints.end(); ++it ){
-					AmbiguousConstraintCOP cst = dynamic_cast< AmbiguousConstraint const * >( (*it).get() );
+					AmbiguousConstraintCOP cst = utility::pointer::dynamic_pointer_cast< core::scoring::constraints::AmbiguousConstraint const > ( (*it) );
 					runtime_assert( cst != 0 );
 
 					using namespace core::scoring::constraints;
 					ConstraintCOP active_constraint = cst->active_constraint();
 
 					if( active_constraint->type() == "BackboneStub" ){
-						BackboneStubConstraintCOP bb_cst = dynamic_cast< BackboneStubConstraint const * >( active_constraint() );
+						BackboneStubConstraintCOP bb_cst = utility::pointer::dynamic_pointer_cast< core::scoring::constraints::BackboneStubConstraint const > ( active_constraint );
 						runtime_assert( bb_cst != 0 );
 						if( std::find( prevent_repacking_.begin(), prevent_repacking_.end(), bb_cst->seqpos() ) != prevent_repacking_.end() )
 							to_be_removed.push_back( *it ); //remove the entire ambiguous constraint, if the active constraint points to a non-repackable residue
@@ -376,7 +376,7 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 	simple_filters::ScoreTypeFilter const stf( stub_scorefxn, backbone_stub_constraint, 1.0 );
 	core::Real const before_min( stf.compute( pose ) );
 	if( before_min >= -0.0001 ){
-		if( stub() != NULL ){
+		if( stub != NULL ){
 			TR<<"no bb stub constraint score even though I computed it analytically! Ask Sarel what's wrong here."<<std::endl;;
 			runtime_assert( stub != 0 );
 		}
@@ -575,7 +575,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 	core::Size const host_chain_begin( pose.conformation().chain_begin( host_chain_ ));
 	core::Size const host_chain_end( pose.conformation().chain_end( host_chain_ ));
 	if( !default_fold_tree_ )
-		default_fold_tree_ = new kinematics::FoldTree( pose.fold_tree() );
+		default_fold_tree_ = core::kinematics::FoldTreeOP( new kinematics::FoldTree( pose.fold_tree() ) );
 
 	// change all interface residues on host_chain_ to ala, except for those that
 	// might already contain stubs or that are prevented from repacking for some other reason.
@@ -680,8 +680,8 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 
 			TR << "Trying host position " << res << std::endl;
 
-			protocols::filters::FilterCOP rep_filter = new simple_filters::EnergyPerResidueFilter(
-				res, soft_rep, core::scoring::fa_rep, 20.0 );
+			protocols::filters::FilterCOP rep_filter( new simple_filters::EnergyPerResidueFilter(
+				res, soft_rep, core::scoring::fa_rep, 20.0 ) );
 			stub_set_->filter( rep_filter );
 			stub->set_filter( rep_filter );
 			bool const self_energy_pass( stub->get_scaffold_status( res ) );
@@ -760,7 +760,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 				TR_debug <<"DEBUG: before remove coord constraints we had "<<before_remove<<" constraints. after: "<<after_remove<<std::endl;
 
 				// this is to make sure that nothing awful has happened during stub-based minimization.
-				protocols::filters::FilterCOP total_energy_filter = new simple_filters::EnergyPerResidueFilter( res, scorefxn, core::scoring::total_score, stub_energy_threshold_ );
+				protocols::filters::FilterCOP total_energy_filter( new simple_filters::EnergyPerResidueFilter( res, scorefxn, core::scoring::total_score, stub_energy_threshold_ ) );
 				bool const interface_energy_pass( total_energy_filter->apply( pose ) );
 				if( interface_energy_pass ){
 					//If a subsequent placement fails, try placing the stub on another position or
@@ -797,7 +797,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 							// repacking is disallowed, the ft and what were the native sidechains. In some
 							// cases, we might want the child placestub movers to remain pristine, so
 							// we modify and apply clones of these movers.
-							movers::PlaceStubMoverOP modified_place_stub( dynamic_cast< PlaceStubMover *>( it->first->clone().get() ) );
+							movers::PlaceStubMoverOP modified_place_stub( utility::pointer::dynamic_pointer_cast< protocols::protein_interface_design::movers::PlaceStubMover > ( it->first->clone() ) );
 							runtime_assert( modified_place_stub != 0 );
 							modified_place_stub->placed_stubs_ = placed_stubs_;
 							utility::vector1< core::Size > new_prev_repack( prevent_repacking() );
@@ -851,7 +851,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 							core::Size const size_before_adding( residue_level_tasks_for_placed_hotspots_->size() );
 							for( utility::vector1< std::pair< core::Size, bool > >::const_iterator placed_stub( placed_stubs_.begin()); placed_stub!=placed_stubs_.end(); ++placed_stub ){
 								using namespace core::pack::task::operation;
-								PreventRepackingOP pr = new PreventRepacking;
+								PreventRepackingOP pr( new PreventRepacking );
 								pr->include_residue( placed_stub->first );
 								residue_level_tasks_for_placed_hotspots_->push_back( pr );
 							}//for placed_stubs_
@@ -1021,9 +1021,9 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 
 	if( tag->hasOption( "stubfile" ) ) { //assigning a unique stubset
 		std::string const stub_fname = tag->getOption<std::string>( "stubfile" ); // Experimental: stub file name
-		stub_set_ = new protocols::hotspot_hashing::HotspotStubSet;
+		stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new protocols::hotspot_hashing::HotspotStubSet );
 		if( data.has( "hotspot_library", stub_fname ) ){
-			stub_set_ = data.get< protocols::hotspot_hashing::HotspotStubSet * >( "hotspot_library", stub_fname );
+			stub_set_ = data.get_ptr<protocols::hotspot_hashing::HotspotStubSet>( "hotspot_library", stub_fname );
 			TR<<"Associated mover with an already read stubset named "<<stub_fname<<std::endl;
 		}
 		else
@@ -1031,7 +1031,7 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 	}
 	else { //assigning the stubset taken from the constraints setup
 		std::string const hs( "hotspot_stubset" );
-		stub_set_ = data.get< HotspotStubSet * >( "constraints", hs );
+		stub_set_ = data.get_ptr<HotspotStubSet>( "constraints", hs );
 	}
 
 	bool const minimize_rb( tag->getOption< bool >( "minimize_rb", 0 ) );
@@ -1049,7 +1049,7 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 			runtime_assert( ap_filter_found );
 		}
 		else
-			after_placement_filter_ = new protocols::filters::TrueFilter;
+			after_placement_filter_ = protocols::filters::FilterOP( new protocols::filters::TrueFilter );
 	}
 
 	std::string const final_filter_name( tag->getOption<std::string>( "final_filter", "true_filter" ) );
@@ -1064,7 +1064,7 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 			runtime_assert( filter_found );
 		}
 		else
-			final_filter_ = new protocols::filters::TrueFilter;
+			final_filter_ = protocols::filters::FilterOP( new protocols::filters::TrueFilter );
 	}
 
 	//parse allowed residues
@@ -1103,7 +1103,7 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 				std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( stub_mover_name ));
 				bool const stub_mover_found( find_mover != movers.end() );
 				if( stub_mover_found ){
-					simple_moves::DesignRepackMoverOP drSOP = dynamic_cast< simple_moves::DesignRepackMover * >( find_mover->second->clone().get() );
+					simple_moves::DesignRepackMoverOP drSOP = utility::pointer::dynamic_pointer_cast< simple_moves::DesignRepackMover > ( find_mover->second->clone() );
 					if( !drSOP ){
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
 						runtime_assert( drSOP != 0 );
@@ -1124,7 +1124,7 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 				std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( mover_name ));
 				bool const mover_found( find_mover != movers.end() );
 				if( mover_found ){
-					simple_moves::DesignRepackMoverOP drOP = dynamic_cast< simple_moves::DesignRepackMover * >( find_mover->second->clone().get() );
+					simple_moves::DesignRepackMoverOP drOP = utility::pointer::dynamic_pointer_cast< simple_moves::DesignRepackMover > ( find_mover->second->clone() );
 					if( !drOP ){
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
 						runtime_assert( drOP != 0 );
@@ -1156,7 +1156,7 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 		//it to us at a later point if we ask for that stub again. Since we
 		//expect the host_chain to be redesignable, we switch all residues
 		//(other than gly/pro) to ala before pairing.
-		core::pose::PoseOP ala_pose = new core::pose::Pose( pose );
+		core::pose::PoseOP ala_pose( new core::pose::Pose( pose ) );
 		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( *ala_pose ));
 		task->initialize_from_command_line().or_include_current( true );
 
@@ -1185,7 +1185,7 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 		core::scoring::ScoreFunctionOP scorefxn( get_score_function() );
 		pack::pack_rotamers( *ala_pose, *scorefxn, task);
 		(*scorefxn)( *ala_pose );
-		stub_set_->pair_with_scaffold( *ala_pose, host_chain_, new protocols::filters::TrueFilter );
+		stub_set_->pair_with_scaffold( *ala_pose, host_chain_, protocols::filters::FilterCOP( new protocols::filters::TrueFilter ) );
 	}// pair stubset scope
 
 	max_cb_cb_dist_ = tag->getOption< core::Real >( "max_cb_dist", 4.0 );

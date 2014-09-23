@@ -145,7 +145,7 @@ private:
 
 };
 
-typedef utility::pointer::owning_ptr< CaToAllAtom > CaToAllAtomOP;
+typedef utility::pointer::shared_ptr< CaToAllAtom > CaToAllAtomOP;
 
 CaToAllAtom::CaToAllAtom(){
 	// RB scoring function; get from command line
@@ -174,9 +174,9 @@ void CaToAllAtom::apply( core::pose::Pose & pose ){
 	std::string filename( basic::options::option[ basic::options::OptionKeys::RBSegmentRelax::rb_file ]().name() );
 
 	using protocols::evaluation::PoseEvaluatorOP;
-	protocols::evaluation::MetaPoseEvaluatorOP evaluator = new protocols::evaluation::MetaPoseEvaluator;
+	protocols::evaluation::MetaPoseEvaluatorOP evaluator( new protocols::evaluation::MetaPoseEvaluator );
 	protocols::evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluator);
-	evaluator->add_evaluation( new protocols::simple_filters::SelectRmsdEvaluator( native_pose_, "_native" ) );
+	evaluator->add_evaluation( PoseEvaluatorOP( new protocols::simple_filters::SelectRmsdEvaluator( native_pose_, "_native" ) ) );
 
 	utility::vector1< core::fragment::FragSetOP > frag_libs;
 	bool hasLoopFile = basic::options::option[ basic::options::OptionKeys::loops::frag_files ].user();
@@ -299,7 +299,7 @@ ca_to_allatom_main( void * )
 //	} // loop over jobs
 //	jobdist->shutdown();
 
-	CaToAllAtomOP ca_to_all_atom = new CaToAllAtom();
+	CaToAllAtomOP ca_to_all_atom( new CaToAllAtom() );
 	protocols::jd2::JobDistributor::get_instance()->go( ca_to_all_atom );
 
 	return 0;

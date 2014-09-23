@@ -40,7 +40,7 @@ methods::EnergyMethodOP
 DNAChiEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new DNAChiEnergy;
+	return methods::EnergyMethodOP( new DNAChiEnergy );
 }
 
 ScoreTypes
@@ -62,7 +62,7 @@ DNAChiEnergy::~DNAChiEnergy() {}
 methods::EnergyMethodOP
 DNAChiEnergy::clone() const
 {
-	return new DNAChiEnergy();
+	return methods::EnergyMethodOP( new DNAChiEnergy() );
 }
 
 /////////////////////////////////////////////////////////////////////////////

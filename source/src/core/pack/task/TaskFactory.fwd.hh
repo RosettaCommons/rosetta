@@ -24,8 +24,8 @@ namespace task {
 class TaskFactory;
 
 typedef boost::shared_ptr<TaskFactory> TaskFactorySP;
-typedef utility::pointer::owning_ptr< TaskFactory > TaskFactoryOP;
-typedef utility::pointer::owning_ptr< TaskFactory const > TaskFactoryCOP;
+typedef utility::pointer::shared_ptr< TaskFactory > TaskFactoryOP;
+typedef utility::pointer::shared_ptr< TaskFactory const > TaskFactoryCOP;
 
 } //namespace task
 } //namespace pack

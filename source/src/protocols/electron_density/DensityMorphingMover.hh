@@ -38,8 +38,8 @@ public:
 
 	std::string get_name() const { return "DensityMorphingMover"; }
 
-	moves::MoverOP clone() const { return new DensityMorphingMover( *this ); }
-	moves::MoverOP fresh_instance() const { return new DensityMorphingMover; }
+	moves::MoverOP clone() const { return moves::MoverOP( new DensityMorphingMover( *this ) ); }
+	moves::MoverOP fresh_instance() const { return moves::MoverOP( new DensityMorphingMover ); }
 
 	virtual void
 	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & );

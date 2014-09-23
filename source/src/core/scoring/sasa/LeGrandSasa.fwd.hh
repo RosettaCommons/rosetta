@@ -23,8 +23,8 @@ namespace sasa {
 
 class LeGrandSasa;
 
-	typedef utility::pointer::owning_ptr< LeGrandSasa> LeGrandSasaOP;
-	typedef utility::pointer::owning_ptr< LeGrandSasa const> LeGrandSasaCOP; 
+	typedef utility::pointer::shared_ptr< LeGrandSasa> LeGrandSasaOP;
+	typedef utility::pointer::shared_ptr< LeGrandSasa const> LeGrandSasaCOP; 
 }
 }
 }

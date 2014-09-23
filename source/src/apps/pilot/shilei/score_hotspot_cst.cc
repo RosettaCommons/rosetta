@@ -150,7 +150,7 @@ public:
 		//std::string hotspot_namei="hotspot_name"+ObjexxFCL::string_of(i);
 		std::string const hotspot_name= basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_names]()[i];
 //			TR << "Reading and generate cst from: " << hotspot_name << std::endl;
-			protocols::hotspot_hashing::HotspotStubSetOP hotspot_stub_setOP = new protocols::hotspot_hashing::HotspotStubSet;
+			protocols::hotspot_hashing::HotspotStubSetOP hotspot_stub_setOP( new protocols::hotspot_hashing::HotspotStubSet );
 			hotspot_stub_setOP->read_data( hotspot_name );
 			hotspot_stub_setOP->add_hotspot_constraints_to_wholepose( pose, chain_to_redesign, hotspot_stub_setOP,
 					basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_distcb_weight][i],
@@ -193,7 +193,7 @@ void* my_main( void* ) {
         using namespace protocols::moves;
 
         SequenceMoverOP seq( new SequenceMover() );
-        seq->add_mover( new run_score_hotspot() );
+        seq->add_mover( MoverOP( new run_score_hotspot() ) );
 
         if ( basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_names ].user() && basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_distcb_weight].user()  &&
              basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_names ].size()==basic::options::option[ basic::options::OptionKeys::score_hotspot_cst::hotspot_distcb_weight].size()) {

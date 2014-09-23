@@ -112,7 +112,7 @@ public:
 
 		rotsets->build_rotamers( pose, *scorefxn, packer_neighbor_graph );
 
-		AtomTreeCollectionOP collection = new AtomTreeCollection( pose, *task );
+		AtomTreeCollectionOP collection( new AtomTreeCollection( pose, *task ) );
 		collection->residue_atomtree_collection( 7 ).set_active_restype_index( 20 );
 		AtomTreeSCMinMinimizerMap scminmap;
 		scminmap.set_total_residue( 20 );

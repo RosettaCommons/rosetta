@@ -244,7 +244,7 @@ PDBJobOutputterCreator::keyname() const
 
 protocols::jd2::JobOutputterOP
 PDBJobOutputterCreator::create_JobOutputter() const {
-        return new PDBJobOutputter;
+        return protocols::jd2::JobOutputterOP( new PDBJobOutputter );
 }
 
 }//jd2

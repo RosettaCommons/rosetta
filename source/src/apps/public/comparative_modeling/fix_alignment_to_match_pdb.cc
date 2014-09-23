@@ -173,24 +173,24 @@ main( int argc, char * argv [] ) {
 					target_ungapped,
 					it->sequence(1)->id(),
 					it->sequence(1)->start()
-				));
+				) );
 
 				SequenceOP t_align_seq( new Sequence(
 					template_ungapped,
 					template_id + "_align_seq",
 					it->sequence(2)->start()
-				));
+				) );
 
 				SequenceOP t_pdb_seq( new Sequence (
 					pdbTemplate_ungapped,
 					template_id + "_pdb_seq",
 					1
-				));
+				) );
 				SequenceOP t_pdb_seq_out( new Sequence (
 					pdbTemplate_ungapped,
 					template_id_full,
 					1
-				));
+				) );
 				//SequenceAlignment intermediate = sw_align.align( t_align_seq, t_pdb_seq, ss );
 				SequenceAlignment intermediate = sw_align.align( t_align_seq, t_pdb_seq, ss );
 				if ( intermediate.identities() != intermediate.length() ) {

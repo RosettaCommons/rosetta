@@ -22,8 +22,8 @@ namespace rotamer_set_operations {
 
 class RigidBodyMoveRSO;
 
-typedef utility::pointer::owning_ptr< RigidBodyMoveRSO > RigidBodyMoveRSOOP;
-typedef utility::pointer::owning_ptr< RigidBodyMoveRSO const > RigidBodyMoveRSOCOP;
+typedef utility::pointer::shared_ptr< RigidBodyMoveRSO > RigidBodyMoveRSOOP;
+typedef utility::pointer::shared_ptr< RigidBodyMoveRSO const > RigidBodyMoveRSOCOP;
 
 } //namespace protocols
 } //namespace toolbox

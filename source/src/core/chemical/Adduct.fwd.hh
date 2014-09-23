@@ -31,7 +31,7 @@ namespace core {
 namespace chemical {
 
 class Adduct;
-typedef utility::pointer::owning_ptr< Adduct > AdductOP;
+typedef utility::pointer::shared_ptr< Adduct > AdductOP;
 
 
 }

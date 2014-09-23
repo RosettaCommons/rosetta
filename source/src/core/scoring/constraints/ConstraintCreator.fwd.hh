@@ -25,8 +25,8 @@ namespace constraints {
 /// creating a particular Constraint class.
 class ConstraintCreator;
 
-typedef utility::pointer::owning_ptr< ConstraintCreator > ConstraintCreatorOP;
-typedef utility::pointer::owning_ptr< ConstraintCreator const > ConstraintCreatorCOP;
+typedef utility::pointer::shared_ptr< ConstraintCreator > ConstraintCreatorOP;
+typedef utility::pointer::shared_ptr< ConstraintCreator const > ConstraintCreatorCOP;
 
 } //namespace constraints
 } //namespace scoring

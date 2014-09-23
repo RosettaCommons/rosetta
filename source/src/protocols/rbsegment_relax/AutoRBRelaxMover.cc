@@ -100,7 +100,7 @@ private:
 	core::Size start_, stop_, cut_;
 };
 
-typedef utility::pointer::owning_ptr< CCDMoveWrapper >  CCDMoveWrapperOP;
+typedef utility::pointer::shared_ptr< CCDMoveWrapper >  CCDMoveWrapperOP;
 
 
 
@@ -112,7 +112,7 @@ AutoRBMover::AutoRBMover() {
 	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function(
 		option[ OptionKeys::RBSegmentRelax::rb_scorefxn ]() );
 
-	movemap_ = new core::kinematics::MoveMap();
+	movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
 
 	nouter_cycles_ = option[ OptionKeys::RBSegmentRelax::nrboutercycles ]();
 	ninner_cycles_ = option[ OptionKeys::RBSegmentRelax::nrbmoves ]();
@@ -128,11 +128,11 @@ AutoRBMover::AutoRBMover() {
 
 	// fa stuff
 	using core::pack::task::operation::TaskOperationCOP;
-	tf_ = new core::pack::task::TaskFactory();
-	tf_->push_back( new core::pack::task::operation::RestrictToRepacking );
-	tf_->push_back( new core::pack::task::operation::InitializeFromCommandline );
-	tf_->push_back( new core::pack::task::operation::IncludeCurrent );
-	tf_->push_back( new core::pack::task::operation::NoRepackDisulfides );
+	tf_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory() );
+	tf_->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+	tf_->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
+	tf_->push_back( TaskOperationCOP( new core::pack::task::operation::IncludeCurrent ) );
+	tf_->push_back( TaskOperationCOP( new core::pack::task::operation::NoRepackDisulfides ) );
 
 	fa_scorefxn_ = core::scoring::get_score_function();
 	fa_scorefxn_->set_weight( core::scoring::chainbreak, 10.0/3.0);
@@ -175,7 +175,7 @@ AutoRBMover::apply( core::pose::Pose & pose ) {
 		for ( utility::vector1< core::fragment::FragSetOP >::const_iterator
 					it = frag_libs_.begin(), it_end = frag_libs_.end();
 					it != it_end; it++ ) {
-			protocols::simple_moves::ClassicFragmentMoverOP cfm = new protocols::simple_moves::ClassicFragmentMover( *it, movemap_ );
+			protocols::simple_moves::ClassicFragmentMoverOP cfm( new protocols::simple_moves::ClassicFragmentMover( *it, movemap_ ) );
 			cfm->set_check_ss( false );
 			cfm->enable_end_bias_check( false );
 			fragmover.push_back( cfm );
@@ -186,7 +186,7 @@ AutoRBMover::apply( core::pose::Pose & pose ) {
 		core::Real temperature = init_temp;
 		core::Real final_temp = 0.6;
 		core::Real const gamma = std::pow(final_temp/init_temp, (1.0/(nouter_cycles_*ninner_cycles_)) );
-		moves::MonteCarloOP mc_ = new moves::MonteCarlo( pose, *scorefxn_, init_temp );
+		moves::MonteCarloOP mc_( new moves::MonteCarlo( pose, *scorefxn_, init_temp ) );
 
 		// movement loop
 		float final_chain_break_weight = 1.0;
@@ -203,7 +203,7 @@ AutoRBMover::apply( core::pose::Pose & pose ) {
 
 		// rigid-body move
 		for (int i=1; i<=(int)rb_chunks_.size(); ++i)
-			random_move.add_mover(new rigid::RigidBodyPerturbMover( i , 3.0 , 1.0 ));
+			random_move.add_mover(MoverOP( new rigid::RigidBodyPerturbMover( i , 3.0 , 1.0 ) ));
 
 		//TODO rigid-chunk fragment insertion
 		//if (allowSSFragInserts_) ;
@@ -212,15 +212,15 @@ AutoRBMover::apply( core::pose::Pose & pose ) {
 		if (allowSeqShiftMoves_) {
 			for (int i=1; i<=(int)rb_chunks_.size(); ++i)
 			for (int j=1; j<=(int)rb_chunks_[i].nContinuousSegments(); ++j) {
-				protocols::moves::SequenceMoverOP seq_shift_move = new protocols::moves::SequenceMover;
-				seq_shift_move->add_mover( new SequenceShiftMover(rb_chunks_[i][j]) );
+				protocols::moves::SequenceMoverOP seq_shift_move( new protocols::moves::SequenceMover );
+				seq_shift_move->add_mover( MoverOP( new SequenceShiftMover(rb_chunks_[i][j]) ) );
 
 				// find adjacent loops
 				for (core::Size k=1; k<=loops_.size(); ++k) {
 					bool adjLoopN = (loops_[k].stop() >= rb_chunks_[i][j].start()-1) && (loops_[k].stop() <= rb_chunks_[i][j].end()+1);
 					bool adjLoopC = (loops_[k].start() >= rb_chunks_[i][j].start()-1) && (loops_[k].start() <= rb_chunks_[i][j].end()+1);
 					if ( adjLoopN || adjLoopC ) {
-						seq_shift_move->add_mover( new CCDMoveWrapper(movemap_, loops_[k].start(), loops_[k].stop(), loops_[k].cut() ) );
+						seq_shift_move->add_mover( MoverOP( new CCDMoveWrapper(movemap_, loops_[k].start(), loops_[k].stop(), loops_[k].cut() ) ) );
 					}
 				}
 				random_move.add_mover(seq_shift_move, 0.5);

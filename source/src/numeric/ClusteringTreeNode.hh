@@ -53,8 +53,8 @@ public:
       new_node->parent_ = new_node->this_weak_ptr_;
       new_node->size_ = 1;
       new_node->distance_ = 0.0;
-      new_node->left_ = 0;
-      new_node->right_ = 0;
+      new_node->left_.reset();
+      new_node->right_.reset();
       return new_node;
     }
 

@@ -37,10 +37,10 @@ public:
 	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
 	virtual filters::FilterOP clone() const {
-		return new SavePoseConstraintToFileFilter( *this );
+		return filters::FilterOP( new SavePoseConstraintToFileFilter( *this ) );
 	}
 	virtual filters::FilterOP fresh_instance() const{
-		return new SavePoseConstraintToFileFilter();
+		return filters::FilterOP( new SavePoseConstraintToFileFilter() );
 	}
 
 	virtual ~SavePoseConstraintToFileFilter(){};

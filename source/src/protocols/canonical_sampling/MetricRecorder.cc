@@ -67,7 +67,7 @@ MetricRecorderCreator::keyname() const {
 
 protocols::moves::MoverOP
 MetricRecorderCreator::create_mover() const {
-	return new MetricRecorder;
+	return protocols::moves::MoverOP( new MetricRecorder );
 }
 
 std::string
@@ -112,13 +112,13 @@ MetricRecorder::operator=( MetricRecorder const & /* other */ )
 protocols::moves::MoverOP
 MetricRecorder::clone() const
 {
-	return new protocols::canonical_sampling::MetricRecorder( *this );
+	return protocols::moves::MoverOP( new protocols::canonical_sampling::MetricRecorder( *this ) );
 }
 
 protocols::moves::MoverOP
 MetricRecorder::fresh_instance() const
 {
-	return new MetricRecorder;
+	return protocols::moves::MoverOP( new MetricRecorder );
 }
 
 std::string

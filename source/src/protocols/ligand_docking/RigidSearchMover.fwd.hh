@@ -23,8 +23,8 @@ namespace ligand_docking {
 
 
 class RigidSearchMover; // fwd declaration
-typedef utility::pointer::owning_ptr< RigidSearchMover > RigidSearchMoverOP;
-typedef utility::pointer::owning_ptr< RigidSearchMover const > RigidSearchMoverCOP;
+typedef utility::pointer::shared_ptr< RigidSearchMover > RigidSearchMoverOP;
+typedef utility::pointer::shared_ptr< RigidSearchMover const > RigidSearchMoverCOP;
 
 
 } // namespace ligand_docking

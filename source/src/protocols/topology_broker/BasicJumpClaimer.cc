@@ -61,12 +61,12 @@ void BasicJumpClaimer::generate_claims( claims::DofClaims& claims ){
 
   //Add new jump claim
   if( ( start_atom_ == "" ) && ( end_atom_ == "" ) ) {
-    claims.push_back( new claims::JumpClaim( get_self_weak_ptr(), std::make_pair( start_label_, start_position_ ),
-				     std::make_pair( end_label_, end_position_ ) ) );
+    claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::JumpClaim( get_self_weak_ptr(), std::make_pair( start_label_, start_position_ ),
+				     std::make_pair( end_label_, end_position_ ) ) ) );
   } else if ( ( start_atom_ != "" ) && ( end_atom_ != "" ) ) {
-    claims.push_back( new claims::JumpClaim( get_self_weak_ptr(), std::make_pair( start_label_, start_position_ ),
+    claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::JumpClaim( get_self_weak_ptr(), std::make_pair( start_label_, start_position_ ),
 				     std::make_pair( end_label_, end_position_ ), start_atom_,
-				     end_atom_ ) );
+				     end_atom_ ) ) );
   } else {
     std::ostringstream msg;
     msg << "BasicJumpClaimer with JumpClaim between '" << start_label_ << "' (position "

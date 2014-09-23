@@ -87,7 +87,7 @@ public:
 		residue_set.read_files(params_files);
 		basic::options::option[basic::options::OptionKeys::run::preserve_header ].value(true);
 
-		tim_enz_io = new protocols::toolbox::match_enzdes_util::EnzConstraintIO(residue_set.get_self_weak_ptr());
+		tim_enz_io = protocols::toolbox::match_enzdes_util::EnzConstraintIOOP( new protocols::toolbox::match_enzdes_util::EnzConstraintIO(residue_set.get_self_weak_ptr()) );
   }
 
   // Shared finalization goes here.
@@ -115,12 +115,12 @@ public:
 		//note: 11 in test pose is gly, so that's not going to count
 		tim_pos[2].push_back(10); tim_pos[2].push_back(11); tim_pos[2].push_back(12); tim_pos[2].push_back(13);
 		tim_pos[3].push_back(4); tim_pos[3].push_back(5);
-		AllowedSeqposForGeomCstOP tim_actpos = new AllowedSeqposForGeomCst( tim_pos );
+		AllowedSeqposForGeomCstOP tim_actpos( new AllowedSeqposForGeomCst( tim_pos ) );
 
 
 	  tim_enz_io->read_enzyme_cstfile("protocols/match_enzdes_util/mocktim.cst");
 
-		InvrotTreeOP tim_invrot_tree = new TheozymeInvrotTree( tim_enz_io );
+		InvrotTreeOP tim_invrot_tree( new TheozymeInvrotTree( tim_enz_io ) );
 		tim_invrot_tree->generate_targets_and_inverse_rotamers();
 		utility::vector1< InvrotCollectorCOP > tim_invrots( tim_invrot_tree->collect_all_inverse_rotamers() );
 		//tree should contain one unique definition

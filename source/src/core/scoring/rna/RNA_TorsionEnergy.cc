@@ -41,7 +41,7 @@ methods::EnergyMethodOP
 RNA_TorsionEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new RNA_TorsionEnergy;
+	return methods::EnergyMethodOP( new RNA_TorsionEnergy );
 }
 
 ScoreTypes
@@ -62,7 +62,7 @@ RNA_TorsionEnergy::RNA_TorsionEnergy() :
 methods::EnergyMethodOP
 RNA_TorsionEnergy::clone() const
 {
-	return new RNA_TorsionEnergy;
+	return methods::EnergyMethodOP( new RNA_TorsionEnergy );
 }
 
 

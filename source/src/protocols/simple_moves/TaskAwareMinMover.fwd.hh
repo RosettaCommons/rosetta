@@ -24,8 +24,8 @@ namespace simple_moves{
 
 //Forwards and OP typedefs
 class TaskAwareMinMover;
-typedef utility::pointer::owning_ptr< TaskAwareMinMover > TaskAwareMinMoverOP;
-typedef utility::pointer::owning_ptr< TaskAwareMinMover const > TaskAwareMinMoverCOP;
+typedef utility::pointer::shared_ptr< TaskAwareMinMover > TaskAwareMinMoverOP;
+typedef utility::pointer::shared_ptr< TaskAwareMinMover const > TaskAwareMinMoverCOP;
 
 }//moves
 }//protocols

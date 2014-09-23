@@ -21,7 +21,7 @@ namespace protocols {
 namespace floppy_tail {
 
 class FloppyTailMover;
-typedef utility::pointer::owning_ptr< FloppyTailMover > FloppyTailMoverOP;
+typedef utility::pointer::shared_ptr< FloppyTailMover > FloppyTailMoverOP;
 
 } //floppy_tail
 } //protocols

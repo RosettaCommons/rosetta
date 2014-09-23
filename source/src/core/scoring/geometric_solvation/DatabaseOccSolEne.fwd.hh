@@ -29,8 +29,8 @@ namespace geometric_solvation {
 
 class DatabaseOccSolEne;
 
-typedef utility::pointer::owning_ptr< DatabaseOccSolEne > DatabaseOccSolEneOP;
-typedef utility::pointer::owning_ptr< DatabaseOccSolEne const > DatabaseOccSolEneCOP;
+typedef utility::pointer::shared_ptr< DatabaseOccSolEne > DatabaseOccSolEneOP;
+typedef utility::pointer::shared_ptr< DatabaseOccSolEne const > DatabaseOccSolEneCOP;
 
 } // geometric_solvation
 } // scoring

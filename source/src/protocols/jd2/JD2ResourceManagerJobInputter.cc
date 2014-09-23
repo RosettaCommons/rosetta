@@ -91,7 +91,7 @@ JD2ResourceManagerJobInputterCreator::keyname() const
 
 protocols::jd2::JobInputterOP
 JD2ResourceManagerJobInputterCreator::create_JobInputter() const {
-	return new JD2ResourceManagerJobInputter;
+	return protocols::jd2::JobInputterOP( new JD2ResourceManagerJobInputter );
 }
 
 
@@ -133,7 +133,7 @@ JD2ResourceManagerJobInputter::pose_from_job(
 		{
 			ResourceOP residue_resource(jd2_resource_manager->get_resource_by_job_tag("residue",input_tag));
 
-			core::chemical::ResidueTypeOP new_residue(dynamic_cast<core::chemical::ResidueType *>(residue_resource()));
+			core::chemical::ResidueTypeOP new_residue(utility::pointer::dynamic_pointer_cast< core::chemical::ResidueType > ( residue_resource ));
 			std::string type_set_name(new_residue->residue_type_set().name());
 			if(!core::chemical::ChemicalManager::get_instance()->residue_type_set(type_set_name)->has_name(new_residue->name()))
 			{
@@ -155,7 +155,7 @@ JD2ResourceManagerJobInputter::pose_from_job(
 			throw utility::excn::EXCN_Msg_Exception( err.str() );
 		}
 
-		PoseOP resource_pose( dynamic_cast< Pose * > ( resource() ) );
+		PoseOP resource_pose( utility::pointer::dynamic_pointer_cast< core::pose::Pose > ( resource ) );
 
 		/// make sure the resource that we requested from the resource manager is in fact a pose.
 		if ( ! resource_pose ) {
@@ -225,7 +225,7 @@ JD2ResourceManagerJobInputter::cleanup_after_job_completion(
 
 			//This might be a ResidueType.  if it is, we should delete the residue from the resource from the ChemicalManager
 			ResourceOP current_residue = jd2_resource_manager->find_resource(*resource_list_it);
-			core::chemical::ResidueTypeOP new_residue(dynamic_cast<core::chemical::ResidueType *>(current_residue()));
+			core::chemical::ResidueTypeOP new_residue(utility::pointer::dynamic_pointer_cast< core::chemical::ResidueType > ( current_residue ));
 
 			if(new_residue)
 			{
@@ -274,7 +274,7 @@ JD2ResourceManagerJobInputter::parse_jobs_tags(
 {
 	//identify options and resources that apply to each job
 	std::map< std::string, std::string > generic_resources_for_job;
-	JobOptionsOP generic_job_options(new JobOptions());
+	JobOptionsOP generic_job_options( new JobOptions() );
 
 	for ( utility::tag::Tag::tags_t::const_iterator
 			tag_iter = jobs_tags->getTags().begin(),
@@ -332,7 +332,7 @@ JD2ResourceManagerJobInputter::parse_job_tag(
 		jobname = jobs_tag->getOption< std::string >( "name" );
 	}
 
-	JobOptionsOP job_options = new JobOptions(generic_job_options);
+	JobOptionsOP job_options( new JobOptions(generic_job_options) );
 	for ( utility::tag::Tag::tags_t::const_iterator
 			tag_iter = jobs_tag->getTags().begin(),
 			tag_iter_end = jobs_tag->getTags().end();
@@ -431,7 +431,7 @@ JD2ResourceManagerJobInputter::parse_jobs_table_tag(
 	string previous_job_name("");
 	string input_tag;
 	std::map< string, string > resources_for_job(generic_resources_for_job);
-	JobOptionsOP job_options = new JobOptions(generic_job_options);
+	JobOptionsOP job_options( new JobOptions(generic_job_options) );
 	while(res.next()){
 		row_number++;
 
@@ -443,7 +443,7 @@ JD2ResourceManagerJobInputter::parse_jobs_table_tag(
 			// record job and reset the invariants
 			record_job(previous_job_name, resources_for_job, job_options, jobs);
 			resources_for_job = generic_resources_for_job;
-			job_options = new JobOptions(generic_job_options);
+			job_options = JobOptionsOP( new JobOptions(generic_job_options) );
 			previous_job_name = job_name;
 
 		}
@@ -523,9 +523,9 @@ JD2ResourceManagerJobInputter::record_job(
 			nstruct = job_options->get_option(OptionKeys::out::nstruct);
 		}
 
-		InnerJobOP inner_job = new InnerJob( job_name, nstruct );
+		InnerJobOP inner_job( new InnerJob( job_name, nstruct ) );
 		for ( Size ii = 1; ii <= nstruct; ++ii ) {
-			jobs.push_back( new Job( inner_job, ii ));
+			jobs.push_back( utility::pointer::shared_ptr<class protocols::jd2::Job>( new Job( inner_job, ii ) ));
 		}
 	} else {
 		if(job_options->has_option(OptionKeys::out::nstruct)){

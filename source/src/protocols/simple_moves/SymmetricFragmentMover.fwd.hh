@@ -26,8 +26,8 @@ namespace simple_moves {
 // Forward
 class SymmetricFragmentMover;
 
-typedef utility::pointer::owning_ptr< SymmetricFragmentMover > SymmetricFragmentMoverOP;
-typedef utility::pointer::owning_ptr< SymmetricFragmentMover const > SymmetricFragmentMoverCOP;
+typedef utility::pointer::shared_ptr< SymmetricFragmentMover > SymmetricFragmentMoverOP;
+typedef utility::pointer::shared_ptr< SymmetricFragmentMover const > SymmetricFragmentMoverCOP;
 
 } // namespace simple_moves
 } // namespace protocols

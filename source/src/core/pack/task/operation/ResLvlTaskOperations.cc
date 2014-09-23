@@ -36,11 +36,11 @@ RestrictToRepackingRLT::~RestrictToRepackingRLT() {}
 
 ResLvlTaskOperationOP
 RestrictToRepackingRLTCreator::create_res_level_task_operation() const {
-	return new RestrictToRepackingRLT;
+	return ResLvlTaskOperationOP( new RestrictToRepackingRLT );
 }
 
 ResLvlTaskOperationOP
-RestrictToRepackingRLT::clone() const { return new RestrictToRepackingRLT( *this ); }
+RestrictToRepackingRLT::clone() const { return ResLvlTaskOperationOP( new RestrictToRepackingRLT( *this ) ); }
 
 void RestrictToRepackingRLT::apply( ResidueLevelTask & rlt ) const
 {
@@ -55,11 +55,11 @@ RestrictAbsentCanonicalAASRLT::~RestrictAbsentCanonicalAASRLT() {}
 
 ResLvlTaskOperationOP
 RestrictAbsentCanonicalAASRLTCreator::create_res_level_task_operation() const {
-	return new RestrictAbsentCanonicalAASRLT;
+	return ResLvlTaskOperationOP( new RestrictAbsentCanonicalAASRLT );
 }
 
 ResLvlTaskOperationOP
-RestrictAbsentCanonicalAASRLT::clone() const { return new RestrictAbsentCanonicalAASRLT( *this ); }
+RestrictAbsentCanonicalAASRLT::clone() const { return ResLvlTaskOperationOP( new RestrictAbsentCanonicalAASRLT( *this ) ); }
 
 void RestrictAbsentCanonicalAASRLT::apply( ResidueLevelTask & rlt ) const
 {
@@ -110,12 +110,12 @@ DisallowIfNonnativeRLT::~DisallowIfNonnativeRLT(){}
 
 ResLvlTaskOperationOP
 DisallowIfNonnativeRLTCreator::create_res_level_task_operation() const {
-	return new DisallowIfNonnativeRLT;
+	return ResLvlTaskOperationOP( new DisallowIfNonnativeRLT );
 }
 
 ResLvlTaskOperationOP DisallowIfNonnativeRLT::clone() const
 {
-	return new DisallowIfNonnativeRLT( *this );
+	return ResLvlTaskOperationOP( new DisallowIfNonnativeRLT( *this ) );
 }
 
 void DisallowIfNonnativeRLT::clear(){
@@ -173,11 +173,11 @@ PreventRepackingRLT::~PreventRepackingRLT() {}
 
 ResLvlTaskOperationOP
 PreventRepackingRLTCreator::create_res_level_task_operation() const {
-	return new PreventRepackingRLT;
+	return ResLvlTaskOperationOP( new PreventRepackingRLT );
 }
 
 ResLvlTaskOperationOP
-PreventRepackingRLT::clone() const { return new PreventRepackingRLT( *this ); }
+PreventRepackingRLT::clone() const { return ResLvlTaskOperationOP( new PreventRepackingRLT( *this ) ); }
 
 void PreventRepackingRLT::apply( ResidueLevelTask & rlt ) const
 {
@@ -195,11 +195,11 @@ AddBehaviorRLT::~AddBehaviorRLT() {}
 
 ResLvlTaskOperationOP
 AddBehaviorRLTCreator::create_res_level_task_operation() const {
-	return new AddBehaviorRLT;
+	return ResLvlTaskOperationOP( new AddBehaviorRLT );
 }
 
 ResLvlTaskOperationOP
-AddBehaviorRLT::clone() const { return new AddBehaviorRLT( *this ); }
+AddBehaviorRLT::clone() const { return ResLvlTaskOperationOP( new AddBehaviorRLT( *this ) ); }
 
 void AddBehaviorRLT::apply( ResidueLevelTask & rlt ) const
 {

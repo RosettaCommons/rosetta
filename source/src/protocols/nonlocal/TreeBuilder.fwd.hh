@@ -19,8 +19,8 @@ namespace protocols {
 namespace nonlocal {
 
 class TreeBuilder;
-typedef utility::pointer::owning_ptr<TreeBuilder> TreeBuilderOP;
-typedef utility::pointer::owning_ptr<TreeBuilder const> TreeBuilderCOP;
+typedef utility::pointer::shared_ptr<TreeBuilder> TreeBuilderOP;
+typedef utility::pointer::shared_ptr<TreeBuilder const> TreeBuilderCOP;
 
 }  // namespace nonlocal
 }  // namespace protocols

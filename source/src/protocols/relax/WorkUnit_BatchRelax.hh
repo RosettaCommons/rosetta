@@ -25,8 +25,8 @@ namespace relax {
 
 
 class WorkUnit_BatchRelax;
-typedef utility::pointer::owning_ptr< WorkUnit_BatchRelax > WorkUnit_BatchRelaxOP;
-typedef utility::pointer::owning_ptr< WorkUnit_BatchRelax const > WorkUnit_BatchRelaxCOP;
+typedef utility::pointer::shared_ptr< WorkUnit_BatchRelax > WorkUnit_BatchRelaxOP;
+typedef utility::pointer::shared_ptr< WorkUnit_BatchRelax const > WorkUnit_BatchRelaxCOP;
 
 class WorkUnit_BatchRelax : public protocols::wum::WorkUnit_SilentStructStore {
 public:

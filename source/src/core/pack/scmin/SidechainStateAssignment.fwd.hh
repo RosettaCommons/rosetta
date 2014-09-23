@@ -25,8 +25,8 @@ namespace scmin {
 /// each sidechain's state is described by a series of chi angles.
 class SidechainStateAssignment;
 
-typedef utility::pointer::owning_ptr< SidechainStateAssignment > SidechainStateAssignmentOP;
-typedef utility::pointer::owning_ptr< SidechainStateAssignment const > SidechainStateAssignmentCOP;
+typedef utility::pointer::shared_ptr< SidechainStateAssignment > SidechainStateAssignmentOP;
+typedef utility::pointer::shared_ptr< SidechainStateAssignment const > SidechainStateAssignmentCOP;
 
 } // namespace scmin
 } // namespace pack

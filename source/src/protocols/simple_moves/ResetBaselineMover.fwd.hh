@@ -20,8 +20,8 @@ namespace protocols {
 namespace simple_moves {
 
 class ResetBaselineMover;
-typedef utility::pointer::owning_ptr< ResetBaselineMover > ResetBaselineMoverOP;
-typedef utility::pointer::owning_ptr< ResetBaselineMover const > ResetBaselineMoverCOP;
+typedef utility::pointer::shared_ptr< ResetBaselineMover > ResetBaselineMoverOP;
+typedef utility::pointer::shared_ptr< ResetBaselineMover const > ResetBaselineMoverCOP;
 
 } // simple_moves
 } // protocols

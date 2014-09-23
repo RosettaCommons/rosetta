@@ -159,7 +159,7 @@ SegmentRebuild & SegmentRebuild::operator =( SegmentRebuild const & rval ) {
 
 /// @brief clone this object
 BuildInstructionOP SegmentRebuild::clone() const {
-	return new SegmentRebuild( *this );
+	return BuildInstructionOP( new SegmentRebuild( *this ) );
 }
 
 

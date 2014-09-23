@@ -25,8 +25,8 @@ namespace rna {
 namespace sugar {
 	
 	class SugarVirtualizeMover;
-	typedef utility::pointer::owning_ptr< SugarVirtualizeMover > SugarVirtualizeMoverOP;
-	typedef utility::pointer::owning_ptr< SugarVirtualizeMover const > SugarVirtualizeMoverCOP;
+	typedef utility::pointer::shared_ptr< SugarVirtualizeMover > SugarVirtualizeMoverOP;
+	typedef utility::pointer::shared_ptr< SugarVirtualizeMover const > SugarVirtualizeMoverCOP;
 	
 } //sugar
 } //rna

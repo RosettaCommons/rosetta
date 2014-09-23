@@ -70,7 +70,7 @@ methods::EnergyMethodOP
 VDW_EnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return new VDW_Energy( options );
+	return methods::EnergyMethodOP( new VDW_Energy( options ) );
 }
 
 ScoreTypes
@@ -95,7 +95,7 @@ VDW_Energy::VDW_Energy( methods::EnergyMethodOptions const & options ):
 methods::EnergyMethodOP
 VDW_Energy::clone() const
 {
-	return new VDW_Energy( *this );
+	return methods::EnergyMethodOP( new VDW_Energy( *this ) );
 }
 
 /// @details  copy c-tor
@@ -336,8 +336,8 @@ VDW_Energy::evaluate_rotamer_pair_energies(
 
 	VDWTrieEvaluator vdw_eval( *this, 6, hydrogen_interaction_cutoff2_, weights[ vdw ] );
 
-	VDWRotamerTrieCOP trie1( static_cast< trie::RotamerTrieBase const * > ( set1.get_trie( vdw_method )() ));
-	VDWRotamerTrieCOP trie2( static_cast< trie::RotamerTrieBase const * > ( set2.get_trie( vdw_method )() ));
+	VDWRotamerTrieCOP trie1( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set1.get_trie( vdw_method ) ));
+	VDWRotamerTrieCOP trie2( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set2.get_trie( vdw_method ) ));
 
 	// figure out which trie countPairFunction needs to be used for this set
 	trie::TrieCountPairBaseOP cp = get_count_pair_function_trie( set1, set2, pose );
@@ -355,8 +355,8 @@ VDW_Energy::get_count_pair_function_trie(
 {
 	conformation::Residue const & res1( pose.residue( set1.resid() ) );
 	conformation::Residue const & res2( pose.residue( set2.resid() ) );
-	trie::RotamerTrieBaseCOP trie1( static_cast< trie::RotamerTrieBase const * > ( set1.get_trie( methods::vdw_method )() ));
-	trie::RotamerTrieBaseCOP trie2( static_cast< trie::RotamerTrieBase const * > ( set2.get_trie( methods::vdw_method )() ));
+	trie::RotamerTrieBaseCOP trie1( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set1.get_trie( methods::vdw_method ) ));
+	trie::RotamerTrieBaseCOP trie2( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set2.get_trie( methods::vdw_method ) ));
 
 	return get_count_pair_function_trie( res1, res2, trie1, trie2 );
 }
@@ -376,11 +376,11 @@ VDW_Energy::get_count_pair_function_trie(
 	Size conn1 = trie1->get_count_pair_data_for_residue( res2.seqpos() );
 	Size conn2 = trie2->get_count_pair_data_for_residue( res1.seqpos() );
 	if ( connection == CP_ONE_BOND ) {
-		return new VDWTrieCountPair1B( conn1, conn2 );
+		return trie::TrieCountPairBaseOP( new VDWTrieCountPair1B( conn1, conn2 ) );
 	} else if ( connection == CP_NO_BONDS ) {
-		return new TrieCountPairAll;
+		return trie::TrieCountPairBaseOP( new TrieCountPairAll );
 	} else {
-		return new TrieCountPairGeneric( res1, res2, conn1, conn2 );
+		return trie::TrieCountPairBaseOP( new TrieCountPairGeneric( res1, res2, conn1, conn2 ) );
 	}
 
 

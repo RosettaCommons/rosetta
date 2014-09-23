@@ -23,7 +23,7 @@ namespace annealer {
 
 class RotamerAssigningAnnealer;
 
-typedef utility::pointer::owning_ptr< RotamerAssigningAnnealer > RotamerAssigningAnnealerOP;
+typedef utility::pointer::shared_ptr< RotamerAssigningAnnealer > RotamerAssigningAnnealerOP;
 
 }//end namespace annealer
 }//end namespace pack

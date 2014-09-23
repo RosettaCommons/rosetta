@@ -22,8 +22,8 @@ namespace docking {
 
 /// @brief this mover does the low-resolution centroid mode phase of the EnsembleDock algorithm
 class DockingLowResEnsemble;
-typedef utility::pointer::owning_ptr< DockingLowResEnsemble > DockingLowResEnsembleOP;
-typedef utility::pointer::owning_ptr< DockingLowResEnsemble const > DockingLowResEnsembleCOP;
+typedef utility::pointer::shared_ptr< DockingLowResEnsemble > DockingLowResEnsembleOP;
+typedef utility::pointer::shared_ptr< DockingLowResEnsemble const > DockingLowResEnsembleCOP;
 
 }
 }

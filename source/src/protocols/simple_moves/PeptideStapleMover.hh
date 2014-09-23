@@ -42,7 +42,7 @@ public:
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 	virtual protocols::moves::MoverOP clone() const {
-		return( new protocols::simple_moves::PeptideStapleMover( seqpos_, staple_gap_ ) );
+		return( protocols::moves::MoverOP( new protocols::simple_moves::PeptideStapleMover( seqpos_, staple_gap_ ) ) );
 	}
 
 private:

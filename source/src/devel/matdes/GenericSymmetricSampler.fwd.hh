@@ -21,8 +21,8 @@ namespace matdes {
 
 class GenericSymmetricSampler;
 
-typedef utility::pointer::owning_ptr< GenericSymmetricSampler > GenericSymmetricSamplerOP;
-typedef utility::pointer::owning_ptr< GenericSymmetricSampler const > GenericSymmetricSamplerCOP;
+typedef utility::pointer::shared_ptr< GenericSymmetricSampler > GenericSymmetricSamplerOP;
+typedef utility::pointer::shared_ptr< GenericSymmetricSampler const > GenericSymmetricSamplerCOP;
 
 
 } // matdes

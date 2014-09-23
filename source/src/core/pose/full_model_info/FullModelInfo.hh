@@ -60,13 +60,13 @@ public:
 	basic::datacache::CacheableDataOP
   clone() const
   {
-    return new FullModelInfo( *this );
+    return basic::datacache::CacheableDataOP( new FullModelInfo( *this ) );
   }
 
 	FullModelInfoOP
   clone_info() const
   {
-    return new FullModelInfo( *this );
+    return FullModelInfoOP( new FullModelInfo( *this ) );
   }
 
 	// properties of full model.

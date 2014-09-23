@@ -80,7 +80,7 @@ SidechainMetropolisHastingsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SidechainMetropolisHastingsMoverCreator::create_mover() const {
-	return new SidechainMetropolisHastingsMover;
+	return protocols::moves::MoverOP( new SidechainMetropolisHastingsMover );
 }
 
 std::string
@@ -129,7 +129,7 @@ SidechainMetropolisHastingsMover::apply( core::pose::Pose & pose )
 
 	scoring::ScoreFunction const& sfxn = monte_carlo()->score_function();
 	pack::interaction_graph::SimpleInteractionGraphOP ig;
-	ig = new pack::interaction_graph::SimpleInteractionGraph(); //commented out debug
+	ig = pack::interaction_graph::SimpleInteractionGraphOP( new pack::interaction_graph::SimpleInteractionGraph() ); //commented out debug
 	ig->set_scorefunction( sfxn );
 
 	utility::vector1< Real > new_chi;
@@ -157,7 +157,7 @@ SidechainMetropolisHastingsMover::apply( core::pose::Pose & pose )
 	//	chi_vectors.resize( pose.total_residue() );
 
 	for ( core::Size i = 1; i <= pose.total_residue(); i++ ){
-		current[ i ] = new core::conformation::Residue( pose.residue( i ) );
+		current[ i ] = utility::pointer::shared_ptr<class core::conformation::Residue>( new core::conformation::Residue( pose.residue( i ) ) );
 	}
 
 
@@ -167,7 +167,7 @@ SidechainMetropolisHastingsMover::apply( core::pose::Pose & pose )
 	Real last_accepted_prop_density( 1.0 );
 	Real last_accepted_dE( 0.0 );
 	for ( Size ct = 1; ct <= ntrials(); ct++) {
-		protocols::simple_moves::sidechain_moves::SidechainMoverBaseOP move = dynamic_cast< protocols::simple_moves::sidechain_moves::SidechainMoverBase* >( random_mover().get() );
+		protocols::simple_moves::sidechain_moves::SidechainMoverBaseOP move = utility::pointer::dynamic_pointer_cast< protocols::simple_moves::sidechain_moves::SidechainMoverBase > ( random_mover() );
 		runtime_assert( move != 0 ); //fow now only Sidechain Movers...
 
 		Size resid = move->suggest_residue_number( pose );
@@ -239,13 +239,13 @@ SidechainMetropolisHastingsMover::get_name() const
 protocols::moves::MoverOP
 SidechainMetropolisHastingsMover::clone() const
 {
-	return new protocols::canonical_sampling::SidechainMetropolisHastingsMover(*this);
+	return protocols::moves::MoverOP( new protocols::canonical_sampling::SidechainMetropolisHastingsMover(*this) );
 }
 
 protocols::moves::MoverOP
 SidechainMetropolisHastingsMover::fresh_instance() const
 {
-	return new SidechainMetropolisHastingsMover;
+	return protocols::moves::MoverOP( new SidechainMetropolisHastingsMover );
 }
 
 void

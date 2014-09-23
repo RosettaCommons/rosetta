@@ -38,7 +38,7 @@ ConservativeDesignOperation::~ConservativeDesignOperation(){}
 core::pack::task::operation::TaskOperationOP
 ConservativeDesignOperation::clone() const
 {
-	return new ConservativeDesignOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new ConservativeDesignOperation( *this ) );
 }
 
 ConservativeDesignOperation::ConservativeDesignOperation(ConservativeDesignOperation const & rhs): core::pack::task::operation::TaskOperation(rhs)

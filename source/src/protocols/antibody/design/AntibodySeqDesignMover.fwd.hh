@@ -28,8 +28,8 @@ namespace design{
 // Forward
 class AntibodySeqDesignMover;
 
-typedef utility::pointer::owning_ptr< AntibodySeqDesignMover > AntibodySeqDesignMoverOP;
-typedef utility::pointer::owning_ptr< AntibodySeqDesignMover const > AntibodySeqDesignMoverCOP;
+typedef utility::pointer::shared_ptr< AntibodySeqDesignMover > AntibodySeqDesignMoverOP;
+typedef utility::pointer::shared_ptr< AntibodySeqDesignMover const > AntibodySeqDesignMoverCOP;
 
 
 } //namespace design

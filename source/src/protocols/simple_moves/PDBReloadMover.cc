@@ -51,7 +51,7 @@ PDBReloadMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 PDBReloadMoverCreator::create_mover() const {
-	return new PDBReloadMover;
+	return protocols::moves::MoverOP( new PDBReloadMover );
 }
 
 std::string
@@ -69,13 +69,13 @@ PDBReloadMover::~PDBReloadMover() {}
 protocols::moves::MoverOP
 PDBReloadMover::clone() const
 {
-	return new PDBReloadMover( *this );
+	return protocols::moves::MoverOP( new PDBReloadMover( *this ) );
 }
 
 protocols::moves::MoverOP
 PDBReloadMover::fresh_instance() const
 {
-	return new PDBReloadMover();
+	return protocols::moves::MoverOP( new PDBReloadMover() );
 }
 
 void

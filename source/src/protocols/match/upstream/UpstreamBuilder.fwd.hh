@@ -23,12 +23,12 @@ namespace match {
 namespace upstream {
 
 class UpstreamBuilder;
-typedef utility::pointer::owning_ptr< UpstreamBuilder > UpstreamBuilderOP;
-typedef utility::pointer::owning_ptr< UpstreamBuilder const > UpstreamBuilderCOP;
+typedef utility::pointer::shared_ptr< UpstreamBuilder > UpstreamBuilderOP;
+typedef utility::pointer::shared_ptr< UpstreamBuilder const > UpstreamBuilderCOP;
 
 class UpstreamResidueProcessor;
-typedef utility::pointer::owning_ptr< UpstreamResidueProcessor > UpstreamResidueProcessorOP;
-typedef utility::pointer::owning_ptr< UpstreamResidueProcessor const > UpstreamResidueProcessorCOP;
+typedef utility::pointer::shared_ptr< UpstreamResidueProcessor > UpstreamResidueProcessorOP;
+typedef utility::pointer::shared_ptr< UpstreamResidueProcessor const > UpstreamResidueProcessorCOP;
 
 }
 }

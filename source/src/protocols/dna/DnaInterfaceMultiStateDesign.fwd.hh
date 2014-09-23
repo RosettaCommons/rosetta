@@ -20,8 +20,8 @@ namespace protocols {
 namespace dna {
 
 class DnaInterfaceMultiStateDesign;
-typedef utility::pointer::owning_ptr< DnaInterfaceMultiStateDesign > DnaInterfaceMultiStateDesignOP;
-typedef utility::pointer::owning_ptr< DnaInterfaceMultiStateDesign const > DnaInterfaceMultiStateDesignCOP;
+typedef utility::pointer::shared_ptr< DnaInterfaceMultiStateDesign > DnaInterfaceMultiStateDesignOP;
+typedef utility::pointer::shared_ptr< DnaInterfaceMultiStateDesign const > DnaInterfaceMultiStateDesignCOP;
 
 } // namespace dna
 } // namespace protocols

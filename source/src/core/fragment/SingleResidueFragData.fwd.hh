@@ -26,8 +26,8 @@ namespace fragment {
 
 class SingleResidueFragData;
 
-typedef utility::pointer::owning_ptr< SingleResidueFragData > SingleResidueFragDataOP;
-typedef utility::pointer::owning_ptr< SingleResidueFragData const > SingleResidueFragDataCOP;
+typedef utility::pointer::shared_ptr< SingleResidueFragData > SingleResidueFragDataOP;
+typedef utility::pointer::shared_ptr< SingleResidueFragData const > SingleResidueFragDataCOP;
 
 
 } // namespace fragment

@@ -22,8 +22,8 @@ namespace rigid{
 
 //Forwards and OP typedefs
 class RotateJumpAxisMover;
-typedef utility::pointer::owning_ptr< RotateJumpAxisMover > RotateJumpAxisMoverOP;
-typedef utility::pointer::owning_ptr< RotateJumpAxisMover const > RotateJumpAxisMoverCOP;
+typedef utility::pointer::shared_ptr< RotateJumpAxisMover > RotateJumpAxisMoverOP;
+typedef utility::pointer::shared_ptr< RotateJumpAxisMover const > RotateJumpAxisMoverCOP;
 
 }//rigid
 }//protocols

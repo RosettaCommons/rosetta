@@ -53,7 +53,7 @@ SwitchChainOrderMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 SwitchChainOrderMoverCreator::create_mover() const {
-	return new SwitchChainOrderMover;
+	return protocols::moves::MoverOP( new SwitchChainOrderMover );
 }
 
 std::string
@@ -64,7 +64,7 @@ SwitchChainOrderMoverCreator::mover_name()
 
 SwitchChainOrderMover::SwitchChainOrderMover()
 	: moves::Mover("SwitchChainOrder"),
-	residue_numbers_( NULL )
+	residue_numbers_( /* NULL */ )
 {
 	scorefxn( core::scoring::get_score_function() );
 }
@@ -93,7 +93,7 @@ SwitchChainOrderMover::apply( Pose & pose )
 		for( core::Size i = chain_begin; i<=chain_end; ++i )
 			positions_in_new_pose.push_back( i );
 		core::Size const new_chain_end( positions_in_new_pose.size() );
-		if( residue_numbers_() != NULL ){
+		if( residue_numbers_ != NULL ){
 			BOOST_FOREACH( core::Size const residue_number, residue_numbers_->obj ){
 				if( residue_number >= chain_begin && residue_number <= chain_end )
 					new_residue_numbers.push_back( residue_number - ( chain_begin - new_chain_begin ) );
@@ -122,7 +122,7 @@ SwitchChainOrderMover::apply( Pose & pose )
 	( *scorefxn() ) ( pose );
 	pose.update_residue_neighbors();
 	TR<<"New pose's foldtree "<<pose.fold_tree()<<std::endl;
-	if( residue_numbers_() != NULL ){
+	if( residue_numbers_ != NULL ){
 		residue_numbers_->obj = new_residue_numbers;
 		TR<<"new residue numbers: ";
 		BOOST_FOREACH( core::Size const res, residue_numbers_->obj )
@@ -139,13 +139,13 @@ SwitchChainOrderMover::get_name() const {
 moves::MoverOP
 SwitchChainOrderMover::clone() const
 {
-	return new SwitchChainOrderMover( *this );
+	return moves::MoverOP( new SwitchChainOrderMover( *this ) );
 }
 
 moves::MoverOP
 SwitchChainOrderMover::fresh_instance() const
 {
-	return new SwitchChainOrderMover;
+	return moves::MoverOP( new SwitchChainOrderMover );
 }
 
 void

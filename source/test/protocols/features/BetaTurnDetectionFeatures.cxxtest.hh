@@ -39,7 +39,7 @@ public:
 
 	void test_ramachandran_hashes() {
 		using namespace protocols::features;
-		BetaTurnDetectionFeaturesOP beta_turns = new BetaTurnDetectionFeatures;
+		BetaTurnDetectionFeaturesOP beta_turns( new BetaTurnDetectionFeatures );
 		
 		// Test edge cases and more normal bounds for trans peptide planes for the case of phi <= 0
 		TS_ASSERT( beta_turns->determine_ramachandran_hash_for_residue_with_dihedrals( 0., 50., 180. ) == "A" );
@@ -77,7 +77,7 @@ public:
 	
 	void test_validate_ramachandran_hash() {
 		using namespace protocols::features;
-		BetaTurnDetectionFeaturesOP beta_turns = new BetaTurnDetectionFeatures;
+		BetaTurnDetectionFeaturesOP beta_turns( new BetaTurnDetectionFeatures );
 		
 		std::string test_string;
 		

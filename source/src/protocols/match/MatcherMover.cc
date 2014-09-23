@@ -62,7 +62,7 @@ MatcherMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 MatcherMoverCreator::create_mover() const {
-	return new MatcherMover;
+	return protocols::moves::MoverOP( new MatcherMover );
 }
 
 std::string
@@ -74,7 +74,7 @@ MatcherMoverCreator::mover_name()
 MatcherMover::MatcherMover( bool incorporate_matches_into_pose ):
 	Mover( "MatcherMover" ),
 	incorporate_matches_into_pose_( incorporate_matches_into_pose ),
-	ligres_(NULL)
+	ligres_(/* NULL */)
 {
 	//we need this for the output to be correct
 	basic::options::option[basic::options::OptionKeys::run::preserve_header ].value(true);
@@ -93,13 +93,13 @@ MatcherMover::MatcherMover( MatcherMover const & rval ) :
 /// @brief clone this object
 MatcherMover::MoverOP MatcherMover::clone() const
 {
-	return new MatcherMover( *this );
+	return MatcherMover::MoverOP( new MatcherMover( *this ) );
 }
 
 /// @brief create this type of object
 MatcherMover::MoverOP MatcherMover::fresh_instance() const
 {
-	return new MatcherMover();
+	return MatcherMover::MoverOP( new MatcherMover() );
 }
 
 ///
@@ -107,7 +107,7 @@ void
 MatcherMover::apply( core::pose::Pose & pose )
 {
 
-	protocols::match::MatcherTaskOP mtask = new protocols::match::MatcherTask;
+	protocols::match::MatcherTaskOP mtask( new protocols::match::MatcherTask );
 
 	core::pose::Pose ligpose;
 	core::pose::Pose save_pose = pose;
@@ -153,7 +153,7 @@ MatcherMover::apply( core::pose::Pose & pose )
 	if( incorporate_matches_into_pose_ ) mtask->output_writer_name("PoseMatchOutputWriter");
 
 	time_t matcher_start_time = time(NULL);
-	protocols::match::MatcherOP matcher = new protocols::match::Matcher;
+	protocols::match::MatcherOP matcher( new protocols::match::Matcher );
 	matcher->initialize_from_task( *mtask );
 
 
@@ -175,7 +175,7 @@ MatcherMover::apply( core::pose::Pose & pose )
 	}
 
 	if( incorporate_matches_into_pose_ ){
-		protocols::match::output::PoseMatchOutputWriterOP outputter( static_cast< protocols::match::output::PoseMatchOutputWriter * >( processor->output_writer().get() ) );
+		protocols::match::output::PoseMatchOutputWriterOP outputter( utility::pointer::static_pointer_cast< protocols::match::output::PoseMatchOutputWriter > ( processor->output_writer() ) );
 		outputter->insert_match_into_pose( pose );
 		// should make another mover to set these constraints  flo and nobu
 		//protocols::enzdes::AddOrRemoveMatchCsts addcsts = protocols::enzdes::AddOrRemoveMatchCsts();
@@ -196,7 +196,7 @@ void
 MatcherMover::set_ligres(
 	core::conformation::ResidueCOP ligres )
 {
-	ligres_ = new core::conformation::Residue(*ligres);
+	ligres_ = core::conformation::ResidueCOP( new core::conformation::Residue(*ligres) );
 }
 
 void

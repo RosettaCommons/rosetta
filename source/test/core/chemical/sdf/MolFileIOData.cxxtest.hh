@@ -647,7 +647,7 @@ public:
 		ElementSetCOP element_types = cm->element_set("default");
 		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
 		orbitals::OrbitalTypeSetCOP orbital_types = cm->orbital_type_set(tag);
-		ResidueTypeSetOP rsd_types = new ResidueTypeSet;
+		ResidueTypeSetOP rsd_types( new ResidueTypeSet );
 
 		sdf::MolFileIOReader molfile_reader;
 

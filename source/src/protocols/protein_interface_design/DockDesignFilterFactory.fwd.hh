@@ -21,8 +21,8 @@ namespace protein_interface_design {
 
 class DockDesignFilterFactory;
 
-typedef utility::pointer::owning_ptr< DockDesignFilterFactory > DockDesignFilterFactoryOP;
-typedef utility::pointer::owning_ptr< DockDesignFilterFactory const > DockDesignFilterFactoryCOP;
+typedef utility::pointer::shared_ptr< DockDesignFilterFactory > DockDesignFilterFactoryOP;
+typedef utility::pointer::shared_ptr< DockDesignFilterFactory const > DockDesignFilterFactoryCOP;
 
 } //namespace protein_interface_design
 } //namespace protocols

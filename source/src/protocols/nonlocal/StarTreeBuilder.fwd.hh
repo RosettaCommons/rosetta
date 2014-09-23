@@ -19,8 +19,8 @@ namespace protocols {
 namespace nonlocal {
 
 class StarTreeBuilder;
-typedef utility::pointer::owning_ptr<StarTreeBuilder> StarTreeBuilderOP;
-typedef utility::pointer::owning_ptr<StarTreeBuilder const> StarTreeBuilderCOP;
+typedef utility::pointer::shared_ptr<StarTreeBuilder> StarTreeBuilderOP;
+typedef utility::pointer::shared_ptr<StarTreeBuilder const> StarTreeBuilderCOP;
 
 }  // namespace nonlocal
 }  // namespace protocols

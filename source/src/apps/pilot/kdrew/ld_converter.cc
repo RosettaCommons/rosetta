@@ -133,8 +133,8 @@ class LDConverterMover : public Mover {
 
 };
 
-typedef utility::pointer::owning_ptr< LDConverterMover > LDConverterMoverOP;
-typedef utility::pointer::owning_ptr< LDConverterMover const > LDConverterMoverCOP;
+typedef utility::pointer::shared_ptr< LDConverterMover > LDConverterMoverOP;
+typedef utility::pointer::shared_ptr< LDConverterMover const > LDConverterMoverCOP;
 
 
 int
@@ -260,8 +260,8 @@ LDConverterMover::apply(
 
 		// create a task factory and task operations
 		using core::pack::task::operation::TaskOperationCOP;
-		TaskFactoryOP tf(new TaskFactory());
-		tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
+		TaskFactoryOP tf( new TaskFactory() );
+		tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 
 		using namespace basic::resource_manager;
 		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() )
@@ -302,9 +302,9 @@ LDConverterMover::apply(
 
 			Real torsion_value( pose.torsion( torsion_id ) );
 
-			core::scoring::func::CircularHarmonicFuncOP circularharm_func  (new core::scoring::func::CircularHarmonicFunc( numeric::conversions::radians( torsion_value ), numeric::conversions::radians( 3.0 ) ) );
+			core::scoring::func::CircularHarmonicFuncOP circularharm_func( new core::scoring::func::CircularHarmonicFunc( numeric::conversions::radians( torsion_value ), numeric::conversions::radians( 3.0 ) ) );
 
-			ConstraintCOP dihedral1 = new DihedralConstraint( id1, id2, id3, id4, circularharm_func );
+			ConstraintCOP dihedral1( new DihedralConstraint( id1, id2, id3, id4, circularharm_func ) );
 
 			pose.add_constraint( dihedral1 );
 		}

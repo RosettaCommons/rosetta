@@ -58,7 +58,7 @@ NonlocalContactsCalculator::NonlocalContactsCalculator(
 		special_region1_intra_nlcontacts_(0),
 		special_region1_to_other_nlcontacts_(0),
 		region1_region2_nlcontacts_(0),
-		nlcontacts_graph_( NULL ),
+		nlcontacts_graph_( /* NULL */ ),
 		min_seq_separation_(min_sequence_separation),
 		cutoffE_(contact_cutoffE)
 {
@@ -79,7 +79,7 @@ NonlocalContactsCalculator::NonlocalContactsCalculator(
 		special_region1_intra_nlcontacts_(0),
 		special_region1_to_other_nlcontacts_(0),
 		region1_region2_nlcontacts_(0),
-		nlcontacts_graph_( NULL ),
+		nlcontacts_graph_( /* NULL */ ),
 		min_seq_separation_(min_sequence_separation),
 		cutoffE_(contact_cutoffE),
 		special_region1_(special_region)
@@ -101,7 +101,7 @@ NonlocalContactsCalculator::NonlocalContactsCalculator(
 		special_region1_intra_nlcontacts_(0),
 		special_region1_to_other_nlcontacts_(0),
 		region1_region2_nlcontacts_(0),
-		nlcontacts_graph_( NULL ),
+		nlcontacts_graph_( /* NULL */ ),
 		min_seq_separation_(min_sequence_separation),
 		cutoffE_(contact_cutoffE),
 		special_region1_(special_region1),
@@ -195,7 +195,7 @@ NonlocalContactsCalculator::recompute( Pose const & this_pose )
 	special_region1_intra_nlcontacts_ = 0;
 	region1_region2_nlcontacts_ = 0;
 
-	nlcontacts_graph_ = new core::graph::Graph( this_pose.total_residue() );
+	nlcontacts_graph_ = core::graph::GraphOP( new core::graph::Graph( this_pose.total_residue() ) );
 
 	EnergyMap cur_weights = this_pose.energies().weights();
 

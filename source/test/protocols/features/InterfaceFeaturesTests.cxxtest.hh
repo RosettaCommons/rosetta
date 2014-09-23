@@ -69,7 +69,7 @@ public:
 		core_init();
 		core::import_pose::pose_from_pdb(multimer_, "protocols/features/2J88.pdb");
 		db_name_ =  "InterfaceFeaturesTest.db3";
-		reporter_ = new protocols::features::InterfaceFeatures();
+		reporter_ = InterfaceFeaturesOP( new protocols::features::InterfaceFeatures() );
 		utility::file::file_delete(db_name_);
 		db_session_ = basic::database::get_db_session(db_name_);
 		TR <<"Setup"<<std::endl;
@@ -100,11 +100,11 @@ public:
 		reporter_->set_pack_together(false); //speed
 		reporter_->set_compute_packstat(false); //speed
 
-		StructureFeaturesOP structure_reporter = new StructureFeatures();
+		StructureFeaturesOP structure_reporter( new StructureFeatures() );
 		structure_reporter->write_schema_to_db(db_session_);
 		StructureID parent_id = structure_reporter->report_features(0, db_session_, "output_tag", "input_tag");
 
-		ResidueFeaturesOP residue_reporter = new ResidueFeatures();
+		ResidueFeaturesOP residue_reporter( new ResidueFeatures() );
 		residue_reporter->write_schema_to_db(db_session_);
 		residue_reporter->report_features(multimer_, relavant_residues, parent_id, db_session_);
 

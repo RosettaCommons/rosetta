@@ -22,8 +22,8 @@ namespace protocols {
 namespace match {
 
 class LoopGrid;
-typedef utility::pointer::owning_ptr< LoopGrid > LoopGridOP;
-typedef utility::pointer::owning_ptr< LoopGrid const > LoopGridCOP;
+typedef utility::pointer::shared_ptr< LoopGrid > LoopGridOP;
+typedef utility::pointer::shared_ptr< LoopGrid const > LoopGridCOP;
 
 }//namespace match
 }//namespace protocols

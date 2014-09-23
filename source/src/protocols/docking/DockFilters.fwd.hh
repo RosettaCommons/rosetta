@@ -21,12 +21,12 @@ namespace protocols {
 namespace docking {
 
 class DockingLowResFilter;
-typedef utility::pointer::owning_ptr< DockingLowResFilter >  DockingLowResFilterOP;
-typedef utility::pointer::owning_ptr< DockingLowResFilter const >  DockingLowResFilterCOP;
+typedef utility::pointer::shared_ptr< DockingLowResFilter >  DockingLowResFilterOP;
+typedef utility::pointer::shared_ptr< DockingLowResFilter const >  DockingLowResFilterCOP;
 
 class DockingHighResFilter;
-typedef utility::pointer::owning_ptr< DockingHighResFilter >  DockingHighResFilterOP;
-typedef utility::pointer::owning_ptr< DockingHighResFilter const >  DockingHighResFilterCOP;
+typedef utility::pointer::shared_ptr< DockingHighResFilter >  DockingHighResFilterOP;
+typedef utility::pointer::shared_ptr< DockingHighResFilter const >  DockingHighResFilterCOP;
 
 
 } //docking

@@ -62,13 +62,13 @@ public:
 	{}
 
 	virtual ConstraintOP clone() const {
-		return new AtomPairConstraint( atom1_, atom2_, func_, score_type() );
+		return ConstraintOP( new AtomPairConstraint( atom1_, atom2_, func_, score_type() ) );
 	}
 
 	///
 	virtual
 	ConstraintOP clone( core::scoring::func::FuncOP func ) const {
-		return new AtomPairConstraint( atom1_, atom2_, func, score_type() );
+		return ConstraintOP( new AtomPairConstraint( atom1_, atom2_, func, score_type() ) );
 	}
 
 

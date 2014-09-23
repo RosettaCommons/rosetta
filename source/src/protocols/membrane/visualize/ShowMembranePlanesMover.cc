@@ -229,13 +229,13 @@ ShowMembranePlanesMover::apply( Pose & pose ) {
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 ShowMembranePlanesMover::clone() const {
-	return new ShowMembranePlanesMover( *this );
+	return protocols::moves::MoverOP( new ShowMembranePlanesMover( *this ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 ShowMembranePlanesMover::fresh_instance() const {
-	return new ShowMembranePlanesMover();
+	return protocols::moves::MoverOP( new ShowMembranePlanesMover() );
 }
 
 /// @brief Pass Rosetta Scripts Options for this Mover
@@ -267,7 +267,7 @@ ShowMembranePlanesMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
 ShowMembranePlanesMoverCreator::create_mover() const {
-	return new ShowMembranePlanesMover();
+	return protocols::moves::MoverOP( new ShowMembranePlanesMover() );
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)

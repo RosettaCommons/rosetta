@@ -31,8 +31,8 @@ namespace pcsTs2 {
 class PCS_Energy_Ts2;
 class PCS_Energy_parameters_manager_Ts2;
 
-typedef utility::pointer::owning_ptr< PCS_Energy_Ts2 > PCS_Energy_Ts2OP;
-typedef utility::pointer::owning_ptr< PCS_Energy_Ts2 const > PCS_Energy_Ts2COP;
+typedef utility::pointer::shared_ptr< PCS_Energy_Ts2 > PCS_Energy_Ts2OP;
+typedef utility::pointer::shared_ptr< PCS_Energy_Ts2 const > PCS_Energy_Ts2COP;
 }
 }
 }

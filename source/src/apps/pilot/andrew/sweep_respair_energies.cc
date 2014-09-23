@@ -115,11 +115,11 @@ create_schema(
 	using namespace basic::database;
 	using namespace basic::database::schema_generator;
 
-	Column respair_id( "respair_id", new DbUUID );
-	Column respair_name( "respair_name", new DbText );
-	Column res1name( "res1name", new DbText );
-	Column res2name( "res2name", new DbText );
-	Column focused_geom_param( "focused_geom_param", new DbText );
+	Column respair_id( "respair_id", DbDataTypeOP( new DbUUID ) );
+	Column respair_name( "respair_name", DbDataTypeOP( new DbText ) );
+	Column res1name( "res1name", DbDataTypeOP( new DbText ) );
+	Column res2name( "res2name", DbDataTypeOP( new DbText ) );
+	Column focused_geom_param( "focused_geom_param", DbDataTypeOP( new DbText ) );
 	PrimaryKey respair_id_pk( respair_id );
 	Schema table_residue_pairs( "residue_pairs", respair_id_pk );
 	table_residue_pairs.add_column( respair_name );
@@ -128,16 +128,16 @@ create_schema(
 	table_residue_pairs.add_column( focused_geom_param );
 	table_residue_pairs.write( db_session );
 
-	Column conf_id( "conf_id", new DbUUID );
+	Column conf_id( "conf_id", DbDataTypeOP( new DbUUID ) );
 	PrimaryKey conf_id_pk( conf_id );
 	ForeignKey respair_id_fk( respair_id, "residue_pairs", "respair_id" );
 	Schema table_conformations( "conformations", conf_id_pk );
 	table_conformations.add_foreign_key( respair_id_fk );
 	table_conformations.write( db_session );
 
-	Column geom_name( "geom_name", new DbText );
+	Column geom_name( "geom_name", DbDataTypeOP( new DbText ) );
 	PrimaryKey geom_name_pk( geom_name );
-	Column geom_desc( "geom_desc", new DbText );
+	Column geom_desc( "geom_desc", DbDataTypeOP( new DbText ) );
 	Schema table_geom_types( "geom_types", geom_name_pk );
 	table_geom_types.add_column( geom_desc );
 	table_geom_types.write( db_session );
@@ -147,14 +147,14 @@ create_schema(
 	respair_id_and_geom_name.push_back( geom_name );
 	PrimaryKey respair_id_and_geom_name_pk( respair_id_and_geom_name );
 	ForeignKey geom_name_fk( geom_name, "geom_types", "geom_name" );
-	Column at1( "at1", new DbText );
-	Column res1( "res1", new DbInteger );
-	Column at2( "at2", new DbText );
-	Column res2( "res2", new DbInteger );
-	Column at3( "at3", new DbText );
-	Column res3( "res3", new DbInteger );
-	Column at4( "at4", new DbText );
-	Column res4( "res4", new DbInteger );
+	Column at1( "at1", DbDataTypeOP( new DbText ) );
+	Column res1( "res1", DbDataTypeOP( new DbInteger ) );
+	Column at2( "at2", DbDataTypeOP( new DbText ) );
+	Column res2( "res2", DbDataTypeOP( new DbInteger ) );
+	Column at3( "at3", DbDataTypeOP( new DbText ) );
+	Column res3( "res3", DbDataTypeOP( new DbInteger ) );
+	Column at4( "at4", DbDataTypeOP( new DbText ) );
+	Column res4( "res4", DbDataTypeOP( new DbInteger ) );
 	Schema table_geom_definitions( "geom_definitions", respair_id_and_geom_name_pk );
 	table_geom_definitions.add_foreign_key( geom_name_fk );
 	table_geom_definitions.add_foreign_key( respair_id_fk );
@@ -173,14 +173,14 @@ create_schema(
 	conf_id_and_geom_name.push_back( geom_name );
 	PrimaryKey conf_id_and_geom_name_pk( conf_id_and_geom_name );
 	ForeignKey conf_id_fk( conf_id, "conformations", "conf_id" );
-	Column geom_value( "geom_value", new DbReal );
+	Column geom_value( "geom_value", DbDataTypeOP( new DbReal ) );
 	Schema table_geometries( "geometries", conf_id_and_geom_name_pk );
 	table_geometries.add_foreign_key( conf_id_fk );
 	table_geometries.add_foreign_key( geom_name_fk );
 	table_geometries.add_column( geom_value );
 	table_geometries.write( db_session );
 
-	Column score_name( "score_name", new DbText );
+	Column score_name( "score_name", DbDataTypeOP( new DbText ) );
 	PrimaryKey score_name_pk( score_name );
 	Schema table_score_types( "score_types", score_name_pk );
 	table_score_types.write( db_session );
@@ -190,7 +190,7 @@ create_schema(
 	conf_id_and_score_name.push_back( score_name );
 	PrimaryKey conf_id_and_score_name_pk( conf_id_and_score_name );
 	ForeignKey score_name_fk( score_name, "score_types", "score_name" );
-	Column score_value( "score_value", new DbReal );
+	Column score_value( "score_value", DbDataTypeOP( new DbReal ) );
 	Schema table_conf_scores( "conf_scores", conf_id_and_score_name_pk );
 	table_conf_scores.add_foreign_key( conf_id_fk );
 	table_conf_scores.add_foreign_key( score_name_fk );
@@ -951,10 +951,10 @@ create_mingraph_for_focused_residue_pair(
 	kinematics::MoveMap mm;
 	mm.set_bb( res1_index, true );
 	mm.set_bb( res2_index, true );
-	minimizer_map = new optimization::MinimizerMap;
+	minimizer_map = core::optimization::MinimizerMapOP( new optimization::MinimizerMap );
 	minimizer_map->setup( pose, mm );
 
-	mingraph = new scoring::MinimizationGraph( pose.total_residue() );
+	mingraph = core::scoring::MinimizationGraphOP( new scoring::MinimizationGraph( pose.total_residue() ) );
 
 	mingraph->add_edge( res1_index, res2_index );
 	scoring::EnergyMap dummy;
@@ -1439,7 +1439,7 @@ int main( int argc, char * argv [] )
 	/// Read score fumction from the command line.
 	core::scoring::ScoreFunctionOP sfxn = core::scoring::get_score_function();
 	using namespace core;
-	scoring::methods::EnergyMethodOptionsOP emopts( new scoring::methods::EnergyMethodOptions( sfxn->energy_method_options() ));
+	scoring::methods::EnergyMethodOptionsOP emopts( new scoring::methods::EnergyMethodOptions( sfxn->energy_method_options() ) );
 	emopts->hbond_options().decompose_bb_hb_into_pair_energies( true );
 	emopts->hbond_options().use_hb_env_dep( false );
 	sfxn->set_energy_method_options( *emopts );

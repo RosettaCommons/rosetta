@@ -23,8 +23,8 @@ namespace metal_interface{
 
 //Forwards and OP typedefs
 class AddZincSiteConstraints;
-typedef utility::pointer::owning_ptr< AddZincSiteConstraints > AddZincSiteConstraintsOP;
-typedef utility::pointer::owning_ptr< AddZincSiteConstraints const > AddZincSiteConstraintsCOP;
+typedef utility::pointer::shared_ptr< AddZincSiteConstraints > AddZincSiteConstraintsOP;
+typedef utility::pointer::shared_ptr< AddZincSiteConstraints const > AddZincSiteConstraintsCOP;
 
 }//metal_interface
 }//protocols

@@ -45,9 +45,9 @@ public:
 
 	// @brief make sure that when we register a residue selector, we can later get it back
 	void test_and_residue_selector_odd_1mod5() {
-		ResidueSelectorOP odd_rs = new OddResidueSelector;
-		ResidueSelectorOP one_mod_5_rs = new XModYResidueSelector( 1, 5 );
-		ResidueSelectorOP and_rs = new AndResidueSelector( odd_rs, one_mod_5_rs );
+		ResidueSelectorOP odd_rs( new OddResidueSelector );
+		ResidueSelectorOP one_mod_5_rs( new XModYResidueSelector( 1, 5 ) );
+		ResidueSelectorOP and_rs( new AndResidueSelector( odd_rs, one_mod_5_rs ) );
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueSubset subset( trpcage.total_residue(), false );
 		and_rs->apply( trpcage, subset );
@@ -63,12 +63,12 @@ public:
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
-		ResidueSelectorOP odd_rs = new OddResidueSelector;
-		ResidueSelectorOP one_mod_5_rs = new XModYResidueSelector( 1, 5 );
+		ResidueSelectorOP odd_rs( new OddResidueSelector );
+		ResidueSelectorOP one_mod_5_rs( new XModYResidueSelector( 1, 5 ) );
 		dm.add( "ResidueSelector", "odd", odd_rs );
 		dm.add( "ResidueSelector", "one_mod_five", one_mod_5_rs );
 
-		ResidueSelectorOP and_rs = new AndResidueSelector;
+		ResidueSelectorOP and_rs( new AndResidueSelector );
 		try {
 			and_rs->parse_my_tag( tag, dm );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -93,7 +93,7 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
-		ResidueSelectorOP and_rs = new AndResidueSelector;
+		ResidueSelectorOP and_rs( new AndResidueSelector );
 		try {
 			and_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should fail
@@ -113,7 +113,7 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
-		ResidueSelectorOP and_rs = new AndResidueSelector;
+		ResidueSelectorOP and_rs( new AndResidueSelector );
 		try {
 			and_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should fail
@@ -130,7 +130,7 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
-		ResidueSelectorOP and_rs = new AndResidueSelector;
+		ResidueSelectorOP and_rs( new AndResidueSelector );
 		try {
 			and_rs->parse_my_tag( tag, dm );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -152,7 +152,7 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
-		ResidueSelectorOP and_rs = new AndResidueSelector;
+		ResidueSelectorOP and_rs( new AndResidueSelector );
 		try {
 			and_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // parsing should fail here

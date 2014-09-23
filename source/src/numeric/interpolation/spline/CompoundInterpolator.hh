@@ -27,8 +27,8 @@ namespace interpolation {
 namespace spline {
 
 class CompoundInterpolator;
-typedef utility::pointer::owning_ptr< CompoundInterpolator > CompoundInterpolatorOP;
-typedef utility::pointer::owning_ptr< CompoundInterpolator const > CompoundInterpolatorCOP;
+typedef utility::pointer::shared_ptr< CompoundInterpolator > CompoundInterpolatorOP;
+typedef utility::pointer::shared_ptr< CompoundInterpolator const > CompoundInterpolatorCOP;
 
 using numeric::Real;
 

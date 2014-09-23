@@ -26,10 +26,10 @@ namespace mm {
 // Forward
 class MMLJEnergyTable;
 
-typedef  utility::pointer::access_ptr< MMLJEnergyTable > MMLJEnergyTableAP;
-typedef  utility::pointer::access_ptr< MMLJEnergyTable const > MMLJEnergyTableCAP;
-typedef  utility::pointer::owning_ptr< MMLJEnergyTable > MMLJEnergyTableOP;
-typedef  utility::pointer::owning_ptr< MMLJEnergyTable const > MMLJEnergyTableCOP;
+typedef  utility::pointer::weak_ptr< MMLJEnergyTable > MMLJEnergyTableAP;
+typedef  utility::pointer::weak_ptr< MMLJEnergyTable const > MMLJEnergyTableCAP;
+typedef  utility::pointer::shared_ptr< MMLJEnergyTable > MMLJEnergyTableOP;
+typedef  utility::pointer::shared_ptr< MMLJEnergyTable const > MMLJEnergyTableCOP;
 
 } // namespace mm
 } // namespace scoring

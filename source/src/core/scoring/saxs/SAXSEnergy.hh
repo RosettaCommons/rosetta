@@ -65,9 +65,9 @@ public:
     virtual methods::EnergyMethodOP clone() const {
 
 	if(saxs_score_variant_ == saxs_fa_score)
-	    return new SAXSEnergy(the_config_file_,q_, reference_intensities_,saxs_score_variant_, methods::EnergyMethodCreatorOP( new SAXSEnergyCreatorFA ) );
+	    return methods::EnergyMethodOP( new SAXSEnergy(the_config_file_,q_, reference_intensities_,saxs_score_variant_, methods::EnergyMethodCreatorOP( new SAXSEnergyCreatorFA ) ) );
 	else
-	    return new SAXSEnergy(the_config_file_,q_, reference_intensities_,saxs_score_variant_, methods::EnergyMethodCreatorOP( new SAXSEnergyCreatorCEN ) );
+	    return methods::EnergyMethodOP( new SAXSEnergy(the_config_file_,q_, reference_intensities_,saxs_score_variant_, methods::EnergyMethodCreatorOP( new SAXSEnergyCreatorCEN ) ) );
     }
 
     virtual void finalize_total_energy(pose::Pose & pose,ScoreFunction const &,EnergyMap & totals) const;
@@ -78,9 +78,9 @@ public:
     methods::EnergyMethodOP create_energy_method(methods::EnergyMethodOptions const &) const {
 
 	if(saxs_score_variant_ == saxs_fa_score)
-	    return new SAXSEnergy(the_config_file_,q_, reference_intensities_,saxs_score_variant_, methods::EnergyMethodCreatorOP( new SAXSEnergyCreatorFA ) );
+	    return methods::EnergyMethodOP( new SAXSEnergy(the_config_file_,q_, reference_intensities_,saxs_score_variant_, methods::EnergyMethodCreatorOP( new SAXSEnergyCreatorFA ) ) );
 	else
-	    return new SAXSEnergy(the_config_file_,q_, reference_intensities_,saxs_score_variant_, methods::EnergyMethodCreatorOP( new SAXSEnergyCreatorCEN ) );
+	    return methods::EnergyMethodOP( new SAXSEnergy(the_config_file_,q_, reference_intensities_,saxs_score_variant_, methods::EnergyMethodCreatorOP( new SAXSEnergyCreatorCEN ) ) );
     }
 
     utility::vector1<Real>& get_reference_intensities() { return reference_intensities_; }

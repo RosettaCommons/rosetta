@@ -123,9 +123,9 @@ KinematicControlOP DoubleLayerKinematicAbinitio::new_kinematics( pose::Pose &pos
 
   KinematicControlOP current_kinematics( NULL );
   if ( rigid_core.size() && coordinate_constraint_weight_ > 0.0 ) {
-    current_kinematics = new CoordinateConstraintKC( false /*ramp*/, coordinate_constraint_weight_ );
+    current_kinematics = KinematicControlOP( new CoordinateConstraintKC( false /*ramp*/, coordinate_constraint_weight_ ) );
   }	else {
-    current_kinematics = new KinematicControl;
+    current_kinematics = KinematicControlOP( new KinematicControl );
   }
   loops::Loops flexible_part( rigid_core.invert( pose.total_residue() ) );
 
@@ -137,7 +137,7 @@ KinematicControlOP DoubleLayerKinematicAbinitio::new_kinematics( pose::Pose &pos
   }
 
   //figure out movemap!
-  kinematics::MoveMapOP movemap = new kinematics::MoveMap;
+  kinematics::MoveMapOP movemap( new kinematics::MoveMap );
   movemap->set_jump( true ); //why is that here ?
 
   if ( mmloops.size() && coordinate_constraint_weight_ == 0.0 ) {
@@ -204,11 +204,11 @@ bool  DoubleLayerKinematicAbinitio::inner_loop( core::pose::Pose& pose ) {
     // sample with this setup
 
     // first sample only extended in stage1
-    kinematics::MoveMapOP extended_movemap = new kinematics::MoveMap( current_kinematics()->movemap() );
+    kinematics::MoveMapOP extended_movemap( new kinematics::MoveMap( current_kinematics()->movemap() ) );
     extended_movemap->set_bb( false );
     extended_loops_.switch_movemap( *extended_movemap, id::BB, true );
 
-    KinematicControlOP stage1_kinematics = new KinematicControl( *current_kinematics() );
+    KinematicControlOP stage1_kinematics( new KinematicControl( *current_kinematics() ) );
     stage1_kinematics->set_movemap( extended_movemap );
     stage1_sampler_->set_kinematics( stage1_kinematics );
 		stage1_sampler_->set_current_tag( get_current_tag() + "_presampled" );

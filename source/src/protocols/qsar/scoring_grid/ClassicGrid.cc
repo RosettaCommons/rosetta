@@ -31,14 +31,14 @@ std::string ClassicGridCreator::keyname() const
 
 GridBaseOP ClassicGridCreator::create_grid(utility::tag::TagCOP tag) const
 {
-	GridBaseOP classic_grid = new ClassicGrid();
+	GridBaseOP classic_grid( new ClassicGrid() );
 	classic_grid->parse_my_tag(tag);
 	return classic_grid;
 }
 
 GridBaseOP ClassicGridCreator::create_grid() const
 {
-	return new ClassicGrid();
+	return GridBaseOP( new ClassicGrid() );
 }
 
 std::string ClassicGridCreator::grid_name()

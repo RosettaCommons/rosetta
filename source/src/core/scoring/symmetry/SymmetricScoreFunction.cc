@@ -241,8 +241,8 @@ SymmetricScoreFunction::setup_for_minimizing(
 		dynamic_cast< SymmetricEnergies & > ( pose.energies()) );
 
 
-	MinimizationGraphOP g  = new MinimizationGraph( pose.total_residue() );
-	MinimizationGraphOP dg = new MinimizationGraph( pose.total_residue() ); // derivative graph
+	MinimizationGraphOP g( new MinimizationGraph( pose.total_residue() ) );
+	MinimizationGraphOP dg( new MinimizationGraph( pose.total_residue() ) ); // derivative graph
 
 	std::list< methods::EnergyMethodCOP > eval_derivs_with_pose_enmeths;
 	for ( AllMethods::const_iterator iter=all_methods().begin(),

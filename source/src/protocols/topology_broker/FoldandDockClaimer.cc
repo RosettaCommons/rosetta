@@ -65,7 +65,7 @@ FoldandDockClaimer::FoldandDockClaimer( pose::Pose const& input_pose ) :
 	//clone
 TopologyClaimerOP
 FoldandDockClaimer::clone() const {
-	return new FoldandDockClaimer( *this );
+	return TopologyClaimerOP( new FoldandDockClaimer( *this ) );
 }
 
 ///@brief type() is specifying the output name of the TopologyClaimer
@@ -90,13 +90,13 @@ FoldandDockClaimer::add_mover(
 {
 	using namespace basic::options;
 
-	moves::MoverOP move_anchor_mover =	new symmetric_docking::SymFoldandDockMoveRbJumpMover;
+	moves::MoverOP move_anchor_mover( new symmetric_docking::SymFoldandDockMoveRbJumpMover );
 	moves::MoverOP rb_trial_mover(
 		(stageID==abinitio::STAGE_4) ?
 		new symmetric_docking::SymFoldandDockRbTrialMover( scorefxn.get_self_ptr(), true ) :
 		new symmetric_docking::SymFoldandDockRbTrialMover( scorefxn.get_self_ptr() )  // smooth RB moves in stage 4
 	);
-	moves::MoverOP slide_mover = new symmetric_docking::SymFoldandDockSlideTrialMover;
+	moves::MoverOP slide_mover( new symmetric_docking::SymFoldandDockSlideTrialMover );
 	core::Real move_anchor_weight(option[ OptionKeys::fold_and_dock::move_anchor_frequency ]()),
 	           rb_weight(option[ OptionKeys::fold_and_dock::rigid_body_frequency ]()),
 	           slide_weight(option[ OptionKeys::fold_and_dock::slide_contact_frequency ]());
@@ -115,8 +115,8 @@ void FoldandDockClaimer::initialize_dofs(
 
 	// Setup symmetry if we have nit already done it
 	// slide chains into contact
-	protocols::simple_moves::symmetry::SetupForSymmetryMoverOP setup_mover = new
-		protocols::simple_moves::symmetry::SetupForSymmetryMover;
+	protocols::simple_moves::symmetry::SetupForSymmetryMoverOP setup_mover( new
+		protocols::simple_moves::symmetry::SetupForSymmetryMover );
 	setup_mover->slide_into_contact(true);
 	if ( !core::pose::symmetry::is_symmetric( pose ) ) {
 		setup_mover->apply( pose ); // calls SymDockingInitialPerturbation
@@ -132,7 +132,7 @@ void FoldandDockClaimer::initialize_dofs(
 
 	// Setup the movemap
 	//SymmetricConformation & symm_conf (dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
-	kinematics::MoveMapOP movemap = new kinematics::MoveMap();
+	kinematics::MoveMapOP movemap( new kinematics::MoveMap() );
 	movemap->set_bb( true );
 	movemap->set_jump( false );
 	core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
@@ -149,8 +149,8 @@ void FoldandDockClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	// Set all cuts to real cuts. We don't want to close any of them...
 	utility::vector1< int > cuts( input_pose_.conformation().fold_tree().cutpoints() );
 	for ( Size i = 1; i <= cuts.size(); ++i ) {
-		new_claims.push_back( new claims::CutClaim( get_self_weak_ptr(), std::make_pair( Parent::label(), cuts[i]),
-																								claims::DofClaim::INIT /* for now... eventually CAN_INIT ? */ ) );
+		new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::CutClaim( get_self_weak_ptr(), std::make_pair( Parent::label(), cuts[i]),
+																								claims::DofClaim::INIT /* for now... eventually CAN_INIT ? */ ) ) );
 	}
 }
 

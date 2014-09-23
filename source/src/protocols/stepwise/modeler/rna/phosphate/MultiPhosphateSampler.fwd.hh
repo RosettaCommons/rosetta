@@ -25,8 +25,8 @@ namespace rna {
 namespace phosphate {
 	
 	class MultiPhosphateSampler;
-	typedef utility::pointer::owning_ptr< MultiPhosphateSampler > MultiPhosphateSamplerOP;
-	typedef utility::pointer::owning_ptr< MultiPhosphateSampler const > MultiPhosphateSamplerCOP;
+	typedef utility::pointer::shared_ptr< MultiPhosphateSampler > MultiPhosphateSamplerOP;
+	typedef utility::pointer::shared_ptr< MultiPhosphateSampler const > MultiPhosphateSamplerCOP;
 	
 } //phosphate
 } //rna

@@ -30,8 +30,8 @@ namespace filters {
 class PsiPredInterface;
 
 // Types
-typedef utility::pointer::owning_ptr< PsiPredInterface > PsiPredInterfaceOP;
-typedef utility::pointer::owning_ptr< PsiPredInterface const > PsiPredInterfaceCOP;
+typedef utility::pointer::shared_ptr< PsiPredInterface > PsiPredInterfaceOP;
+typedef utility::pointer::shared_ptr< PsiPredInterface const > PsiPredInterfaceCOP;
 
 }
 }

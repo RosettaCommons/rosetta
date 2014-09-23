@@ -49,7 +49,7 @@ public:
 	void set_aptr( AOP );
    void status();
 
-	B1OP clone() const { return new B1( *this ); }
+	B1OP clone() const { return B1OP( new B1( *this ) ); }
 
    AOP get();// { return a_pointer_; }
 

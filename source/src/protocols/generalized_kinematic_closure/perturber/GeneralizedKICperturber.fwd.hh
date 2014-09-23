@@ -22,8 +22,8 @@ namespace generalized_kinematic_closure {
 namespace perturber {
 
 class GeneralizedKICperturber; // fwd declaration
-typedef utility::pointer::owning_ptr< GeneralizedKICperturber > GeneralizedKICperturberOP;
-typedef utility::pointer::owning_ptr< GeneralizedKICperturber const > GeneralizedKICperturberCOP;
+typedef utility::pointer::shared_ptr< GeneralizedKICperturber > GeneralizedKICperturberOP;
+typedef utility::pointer::shared_ptr< GeneralizedKICperturber const > GeneralizedKICperturberCOP;
 typedef utility::vector1<GeneralizedKICperturberOP> GeneralizedKICperturberOPs;
 typedef utility::vector1<GeneralizedKICperturberCOP> GeneralizedKICperturberCOPs;
 

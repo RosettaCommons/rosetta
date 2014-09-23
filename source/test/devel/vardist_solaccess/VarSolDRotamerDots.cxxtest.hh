@@ -55,7 +55,7 @@ public:
 	void test_self_overlap() {
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		ResidueOP res10 = new core::conformation::Residue( trpcage.residue( 10 ) );
+		ResidueOP res10( new core::conformation::Residue( trpcage.residue( 10 ) ) );
 		devel::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc;
 		VarSolDRotamerDots dots(res10, vsasa_calc);
 		dots.increment_self_overlap();
@@ -106,8 +106,8 @@ public:
 	void test_residue_pair_overlap() {
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		ResidueOP res10 = new core::conformation::Residue( trpcage.residue( 10 ) );
-		ResidueOP res11 = new core::conformation::Residue( trpcage.residue( 11 ) );
+		ResidueOP res10( new core::conformation::Residue( trpcage.residue( 10 ) ) );
+		ResidueOP res11( new core::conformation::Residue( trpcage.residue( 11 ) ) );
 		devel::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc;
 		VarSolDRotamerDots dots10(res10, vsasa_calc);
 		VarSolDRotamerDots dots11(res11, vsasa_calc);
@@ -205,7 +205,7 @@ public:
 
 	void radii_monotonically_increasing() {
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		ResidueOP res1 = new core::conformation::Residue( trpcage.residue( 1 ) );
+		ResidueOP res1( new core::conformation::Residue( trpcage.residue( 1 ) ) );
 		devel::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc;
 		VarSolDRotamerDots dots1(res1, vsasa_calc);
 		core::Size res1natoms = res1->natoms();
@@ -294,7 +294,7 @@ public:
 
 	void test_shells_evenly_spaced() {
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		ResidueOP res1 = new core::conformation::Residue( trpcage.residue( 1 ) );
+		ResidueOP res1( new core::conformation::Residue( trpcage.residue( 1 ) ) );
 		devel::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc;
 		VarSolDRotamerDots dots1(res1, vsasa_calc);
 		core::Size res1natoms = res1->natoms();
@@ -314,7 +314,7 @@ public:
 
 	void test_radii_setting() {
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		ResidueOP res1 = new core::conformation::Residue( trpcage.residue( 1 ) );
+		ResidueOP res1( new core::conformation::Residue( trpcage.residue( 1 ) ) );
 		devel::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc1;
 		devel::vardist_solaccess::VarSolDistSasaCalculator vsasa_calc2;
 	}

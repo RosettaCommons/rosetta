@@ -24,8 +24,8 @@ namespace rotamer_set {
 
 class RotamerSets;
 
-typedef utility::pointer::owning_ptr< RotamerSets > RotamerSetsOP;
-typedef utility::pointer::owning_ptr< RotamerSets const > RotamerSetsCOP;
+typedef utility::pointer::shared_ptr< RotamerSets > RotamerSetsOP;
+typedef utility::pointer::shared_ptr< RotamerSets const > RotamerSetsCOP;
 
 } // namespace rotamer_set
 } // namespace pack

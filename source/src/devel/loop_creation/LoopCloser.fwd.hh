@@ -22,8 +22,8 @@ namespace devel {
 namespace loop_creation {
 
 class LoopCloser;
-typedef utility::pointer::owning_ptr< LoopCloser > LoopCloserOP;
-typedef utility::pointer::owning_ptr< LoopCloser const > LoopCloserCOP;
+typedef utility::pointer::shared_ptr< LoopCloser > LoopCloserOP;
+typedef utility::pointer::shared_ptr< LoopCloser const > LoopCloserCOP;
 
 } //loop creation
 } //devel

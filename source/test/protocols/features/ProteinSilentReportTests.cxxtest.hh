@@ -68,7 +68,7 @@ public:
     core::scoring::ScoreFunctionOP scfxn(core::scoring::get_score_function());
     scfxn->score(pose_1ten_);
 
-    protein_silent_report_ = new ProteinSilentReport();
+    protein_silent_report_ = protocols::features::ProteinSilentReportOP( new ProteinSilentReport() );
 
     utility::file::file_delete(db_fname);
 		db_session_ = basic::database::get_db_session(db_fname);

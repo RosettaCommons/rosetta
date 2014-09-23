@@ -78,12 +78,12 @@ SymmetricRotamerSets::compute_energies(
 	compute_one_body_energies( pose, scfxn, packer_neighbor_graph, ig );
 
 	PrecomputedPairEnergiesInteractionGraphOP pig =
-		dynamic_cast< PrecomputedPairEnergiesInteractionGraph * > ( ig.get() );
+		utility::pointer::dynamic_pointer_cast< core::pack::interaction_graph::PrecomputedPairEnergiesInteractionGraph > ( ig );
 	if ( pig ) {
 		precompute_two_body_energies( pose, scfxn, packer_neighbor_graph, pig );
 	} else {
 		SymmOnTheFlyInteractionGraphOP symotfig =
-			dynamic_cast< SymmOnTheFlyInteractionGraph * > ( ig.get() );
+			utility::pointer::dynamic_pointer_cast< core::pack::interaction_graph::SymmOnTheFlyInteractionGraph > ( ig );
 		if ( symotfig ) {
 			prepare_symm_otf_interaction_graph( pose, scfxn, packer_neighbor_graph, symotfig );
 		} else {

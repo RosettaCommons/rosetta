@@ -189,7 +189,7 @@ void CrossPeakList::find_assignments() {
 }
 
 void CrossPeakList::update_assignment_list() {
-	assignments_ = new PeakAssignmentResidueMap();
+	assignments_ = PeakAssignmentResidueMapOP( new PeakAssignmentResidueMap() );
 	assignments_->add( *this );
 
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );

@@ -75,7 +75,7 @@ InterfaceRecapitulationMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 InterfaceRecapitulationMoverCreator::create_mover() const {
-	return new InterfaceRecapitulationMover;
+	return protocols::moves::MoverOP( new InterfaceRecapitulationMover );
 }
 
 std::string
@@ -86,9 +86,9 @@ InterfaceRecapitulationMoverCreator::mover_name()
 
 InterfaceRecapitulationMover::InterfaceRecapitulationMover() :
 	Mover( InterfaceRecapitulationMoverCreator::mover_name() ),
-	saved_pose_( NULL ),
-	design_mover_( NULL ),
-	design_mover2_( NULL ),
+	saved_pose_( /* NULL */ ),
+	design_mover_( /* NULL */ ),
+	design_mover2_( /* NULL */ ),
   pssm_( false )
 	{}
 
@@ -159,14 +159,14 @@ InterfaceRecapitulationMover::get_name() const {
 
 void
 InterfaceRecapitulationMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const & movers, core::pose::Pose const & pose ){
-	set_reference_pose( new core::pose::Pose( pose ) );
+	set_reference_pose( core::pose::PoseOP( new core::pose::Pose( pose ) ) );
 	std::string const mover_name( tag->getOption<std::string>( "mover_name" ) );
 	std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( mover_name ));
 	bool const mover_found( find_mover != movers.end() );
 	if( mover_found ){
-		design_mover_ = dynamic_cast< simple_moves::DesignRepackMover * >( find_mover->second() );
+		design_mover_ = utility::pointer::dynamic_pointer_cast< simple_moves::DesignRepackMover > ( find_mover->second );
 		if( !design_mover_ ){
-			design_mover2_ = dynamic_cast< protocols::simple_moves::PackRotamersMover * >( find_mover->second() );
+			design_mover2_ = utility::pointer::dynamic_pointer_cast< protocols::simple_moves::PackRotamersMover > ( find_mover->second );
 			if( !design_mover2_ )
 				throw utility::excn::EXCN_RosettaScriptsOption( "dynamic cast failed in tag in RecapitulateMover. Make sure that the mover is either PackRotamers or DesignRepackMover derived" );
 		}

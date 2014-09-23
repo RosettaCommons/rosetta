@@ -24,21 +24,21 @@ namespace protocols {
 namespace frags {
 
 class TorsionFragment;
-typedef utility::pointer::owning_ptr< TorsionFragment > TorsionFragmentOP;
+typedef utility::pointer::shared_ptr< TorsionFragment > TorsionFragmentOP;
 
 class SingleResidueTorsionFragmentLibrary;
-typedef utility::pointer::owning_ptr< SingleResidueTorsionFragmentLibrary > SingleResidueTorsionFragmentLibraryOP;
+typedef utility::pointer::shared_ptr< SingleResidueTorsionFragmentLibrary > SingleResidueTorsionFragmentLibraryOP;
 
 class	TorsionFragmentLibrary;
-typedef utility::pointer::owning_ptr< TorsionFragmentLibrary > TorsionFragmentLibraryOP;
-typedef utility::pointer::owning_ptr< TorsionFragmentLibrary const > TorsionFragmentLibraryCOP;
+typedef utility::pointer::shared_ptr< TorsionFragmentLibrary > TorsionFragmentLibraryOP;
+typedef utility::pointer::shared_ptr< TorsionFragmentLibrary const > TorsionFragmentLibraryCOP;
 
 class FragLib;
-typedef utility::pointer::owning_ptr< FragLib > FragLibOP;
-typedef utility::pointer::owning_ptr< FragLib const > FragLibCOP;
+typedef utility::pointer::shared_ptr< FragLib > FragLibOP;
+typedef utility::pointer::shared_ptr< FragLib const > FragLibCOP;
 
 class TorsionFragmentMover;
-typedef utility::pointer::owning_ptr< TorsionFragmentMover > TorsionFragmentMoverOP;
+typedef utility::pointer::shared_ptr< TorsionFragmentMover > TorsionFragmentMoverOP;
 
 
 } // ns frags

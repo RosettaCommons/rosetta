@@ -87,7 +87,7 @@ HighResDockerCreator::keyname() const
 
 protocols::moves::MoverOP
 HighResDockerCreator::create_mover() const {
-	return new HighResDocker;
+	return protocols::moves::MoverOP( new HighResDocker );
 }
 
 std::string
@@ -101,8 +101,8 @@ HighResDocker::HighResDocker():
 		Mover("HighResDocker"),
 		num_cycles_(0),
 		repack_every_Nth_(0),
-		score_fxn_(NULL),
-		movemap_builder_(NULL),
+		score_fxn_(/* NULL */),
+		movemap_builder_(/* NULL */),
 		resfile_("")
 {
 	resfile_.clear();
@@ -135,11 +135,11 @@ HighResDocker::HighResDocker(HighResDocker const & that):
 HighResDocker::~HighResDocker() {}
 
 protocols::moves::MoverOP HighResDocker::clone() const {
-	return new HighResDocker( *this );
+	return protocols::moves::MoverOP( new HighResDocker( *this ) );
 }
 
 protocols::moves::MoverOP HighResDocker::fresh_instance() const {
-	return new HighResDocker;
+	return protocols::moves::MoverOP( new HighResDocker );
 }
 
 std::string HighResDocker::get_name() const{
@@ -169,12 +169,12 @@ HighResDocker::parse_my_tag(
 	/// Score Function ///
 	if ( ! tag->hasOption("scorefxn") ) throw utility::excn::EXCN_RosettaScriptsOption("'HighResDocker' requires 'scorefxn' tag");
 	std::string scorefxn_name= tag->getOption<std::string>("scorefxn");
-	score_fxn_= datamap.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name);
+	score_fxn_= datamap.get_ptr<core::scoring::ScoreFunction>( "scorefxns", scorefxn_name);
 
 	/// MoveMapBuilder///
 	if ( ! tag->hasOption("movemap_builder") ) throw utility::excn::EXCN_RosettaScriptsOption("'HighResDocker' requires 'movemap_builder' tag");
 	std::string movemap_builder_name= tag->getOption<std::string>("movemap_builder");
-	movemap_builder_= datamap.get< MoveMapBuilder * >( "movemap_builders", movemap_builder_name);
+	movemap_builder_= datamap.get_ptr<MoveMapBuilder>( "movemap_builders", movemap_builder_name);
 
 	/// Resfile ///
 	if ( tag->hasOption("resfile") ){
@@ -196,7 +196,7 @@ HighResDocker::setup_ligands_to_minimize(core::pose::Pose pose){
 		LigandAreaOP const ligand_area = ligand_area_itr->second;
 		core::Real const & degrees = ligand_area->minimize_ligand_;
 		if(degrees > 0){
-			MinimizeLigandOP minimize_ligand = new MinimizeLigand(chain, degrees);
+			MinimizeLigandOP minimize_ligand( new MinimizeLigand(chain, degrees) );
 			minimize_ligand->apply(pose);
 			minimize_ligands.push_back(minimize_ligand);
 		}
@@ -218,7 +218,7 @@ HighResDocker::tether_ligands(core::pose::Pose & pose){
 		LigandAreaOP const ligand_area = ligand_area_itr->second;
 		core::Real const & tether_size = ligand_area->tether_ligand_;
 		if(tether_size > 0){
-			TetherLigandOP tether_ligand= new TetherLigand(chain, tether_size);
+			TetherLigandOP tether_ligand( new TetherLigand(chain, tether_size) );
 			tether_ligand->apply(pose);
 			ligand_tethers.push_back(tether_ligand);
 		}
@@ -247,7 +247,7 @@ HighResDocker::apply(core::pose::Pose & pose) {
 	assert(movemap_builder_ && score_fxn_ ); // make sure the pointers point
 	core::kinematics::MoveMapOP movemap = movemap_builder_->build(pose);
 
-	protocols::moves::MonteCarloOP monteCarlo = new protocols::moves::MonteCarlo(pose, *score_fxn_, 2.0);/* temperature, from RosettaLigand paper */
+	protocols::moves::MonteCarloOP monteCarlo( new protocols::moves::MonteCarlo(pose, *score_fxn_, 2.0) );/* temperature, from RosettaLigand paper */
 	score_fxn_->score( pose ); // without this neither of the movers below were working
 	// I believe that this may have been related to adding constraints incorrectly at other places in my code.
 	// Rigid body exploration
@@ -268,9 +268,9 @@ HighResDocker::apply(core::pose::Pose & pose) {
 		}
 
 		// Wrap it in something to disable the torsion constraints before packing!
-		pack_mover = new protocols::ligand_docking::UnconstrainedTorsionsMover( pack_mover, minimized_ligands );
+		pack_mover = protocols::moves::MoverOP( new protocols::ligand_docking::UnconstrainedTorsionsMover( pack_mover, minimized_ligands ) );
 
-		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap, score_fxn_, "dfpmin_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ );
+		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap, score_fxn_, "dfpmin_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ ) );
 		min_mover->min_options()->nblist_auto_update(true); // does this cost us lots of time in practice?
 
 		core::Real const score1 = (*score_fxn_)( pose );
@@ -301,7 +301,7 @@ HighResDocker::make_packer_task_from_vector(
 	core::pack::task::PackerTaskOP pack_task = core::pack::task::TaskFactory::create_packer_task(pose);
 	pack_task->initialize_from_command_line(); // -ex1 -ex2  etc.
 
-	core::pack::rotamer_set::UnboundRotamersOperationOP unboundrot_ = new core::pack::rotamer_set::UnboundRotamersOperation();
+	core::pack::rotamer_set::UnboundRotamersOperationOP unboundrot_( new core::pack::rotamer_set::UnboundRotamersOperation() );
 	unboundrot_->initialize_from_command_line();
 	pack_task->append_rotamerset_operation( unboundrot_ );
 
@@ -405,7 +405,7 @@ HighResDocker::create_rigid_body_movers(core::pose::Pose const & pose) const{
 			LigandAreaOP const ligand_area = ligand_area_pair.second;
 			core::Real const & angstroms= ligand_area->high_res_angstroms_;
 			core::Real const & degrees= ligand_area->high_res_degrees_;
-			protocols::moves::MoverOP rigid_body_mover= new protocols::rigid::RigidBodyPerturbMover( jump_id, degrees, angstroms);
+			protocols::moves::MoverOP rigid_body_mover( new protocols::rigid::RigidBodyPerturbMover( jump_id, degrees, angstroms) );
 			rigid_body_movers.push_back(rigid_body_mover);
 		}
 

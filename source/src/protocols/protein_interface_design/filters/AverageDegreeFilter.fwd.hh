@@ -27,8 +27,8 @@ namespace filters {
 class AverageDegreeFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< AverageDegreeFilter >  AverageDegreeFilterOP;
-typedef utility::pointer::owning_ptr< AverageDegreeFilter const >  AverageDegreeFilterCOP;
+typedef utility::pointer::shared_ptr< AverageDegreeFilter >  AverageDegreeFilterOP;
+typedef utility::pointer::shared_ptr< AverageDegreeFilter const >  AverageDegreeFilterCOP;
 
 } // namespace filters
 } //namespace protein_interface_design

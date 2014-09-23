@@ -33,10 +33,10 @@ namespace datacache {
 
 
 class WriteableCacheableMap;
-typedef utility::pointer::owning_ptr< WriteableCacheableMap > WriteableCacheableMapOP;
-typedef utility::pointer::owning_ptr< WriteableCacheableMap const > WriteableCacheableMapCOP;
-typedef utility::pointer::access_ptr< WriteableCacheableMap > WriteableCacheableMapAP;
-typedef utility::pointer::access_ptr< WriteableCacheableMap const > WriteableCacheableMapCAP;
+typedef utility::pointer::shared_ptr< WriteableCacheableMap > WriteableCacheableMapOP;
+typedef utility::pointer::shared_ptr< WriteableCacheableMap const > WriteableCacheableMapCOP;
+typedef utility::pointer::weak_ptr< WriteableCacheableMap > WriteableCacheableMapAP;
+typedef utility::pointer::weak_ptr< WriteableCacheableMap const > WriteableCacheableMapCAP;
 
 
 } // namespace datacache

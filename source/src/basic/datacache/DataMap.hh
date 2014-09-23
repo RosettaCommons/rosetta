@@ -59,7 +59,7 @@ public:
 	);
 	bool has( std::string const type, std::string const name="" ) const;
 	template< class Ty > Ty get( std::string const type, std::string const name ) const;
-	template< class Ty > utility::pointer::owning_ptr< Ty > get_ptr( std::string const type, std::string const name ) const;
+	template< class Ty > utility::pointer::shared_ptr< Ty > get_ptr( std::string const type, std::string const name ) const;
 	std::map< std::string, utility::pointer::ReferenceCountOP > & operator [](
 		std::string const & type
 	);
@@ -108,10 +108,10 @@ DataMap::get( std::string const type, std::string const name ) const {
 /// @throws Throws a utility::excn::EXCN_Msg_Exception in the event that
 /// the requested object cannot be found in the DataMap.
 template< class Ty >
-utility::pointer::owning_ptr< Ty >
+utility::pointer::shared_ptr< Ty >
 DataMap::get_ptr( std::string const type, std::string const name ) const {
 	using namespace utility::pointer;
-	utility::pointer::owning_ptr< Ty > ret( 0 );
+	utility::pointer::shared_ptr< Ty > ret( 0 );
 
 	if( !has( type, name ) ){
 		std::stringstream error_message;
@@ -139,15 +139,15 @@ DataMap::get_ptr( std::string const type, std::string const name ) const {
 /// of the requested type and name exists on the datamap. If so, returns the OP for that item, if not, instantiates
 /// that item on the datamap and returns the OP for it.
 template < class Ty >
-utility::pointer::owning_ptr< Ty >
+utility::pointer::shared_ptr< Ty >
 get_set_from_datamap( std::string const type, std::string const name, basic::datacache::DataMap & data ){
-	utility::pointer::owning_ptr< Ty > obj;
+	utility::pointer::shared_ptr< Ty > obj;
 	if( data.has( type, name ) ){
 		obj = data.get_ptr< Ty >( type, name );
 		TR_hh<<"Getting object-type, name "<<type<<' '<<name<<" from datamap"<<std::endl;
 	}
 	else{
-		obj = utility::pointer::owning_ptr< Ty >( new Ty );
+		obj = utility::pointer::shared_ptr< Ty >( new Ty );
 		data.add( type, name, obj );
 		TR_hh<<"Adding object-type, name "<<type<<' '<<name<<" to datamap"<<std::endl;
 	}

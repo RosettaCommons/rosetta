@@ -23,8 +23,8 @@ namespace sasa {
 
 class SasaCalc;
 
-	typedef utility::pointer::owning_ptr< SasaCalc> SasaCalcOP;
-	typedef utility::pointer::owning_ptr< SasaCalc const> SasaCalcCOP; 
+	typedef utility::pointer::shared_ptr< SasaCalc> SasaCalcOP;
+	typedef utility::pointer::shared_ptr< SasaCalc const> SasaCalcCOP; 
 }
 }
 }

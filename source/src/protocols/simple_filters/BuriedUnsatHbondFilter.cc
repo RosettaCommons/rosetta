@@ -34,7 +34,7 @@ namespace simple_filters {
 static thread_local basic::Tracer buried_unsat_hbond_filter_tracer( "protocols.simple_filters.BuriedUnsatHbondFilter" );
 
 protocols::filters::FilterOP
-BuriedUnsatHbondFilterCreator::create_filter() const { return new BuriedUnsatHbondFilter; }
+BuriedUnsatHbondFilterCreator::create_filter() const { return protocols::filters::FilterOP( new BuriedUnsatHbondFilter ); }
 
 std::string
 BuriedUnsatHbondFilterCreator::keyname() const { return "BuriedUnsatHbonds"; }
@@ -43,7 +43,7 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter( core::Size const upper_threshold
 	Filter( "BuriedUnsatHbonds" ),
 	upper_threshold_( upper_threshold ),
 	jump_num_( jump_num ),
-	task_factory_( NULL )
+	task_factory_( /* NULL */ )
 { }
 
 BuriedUnsatHbondFilter::BuriedUnsatHbondFilter() : filters::Filter( "BuriedUnsatHbonds" ) {}
@@ -58,7 +58,7 @@ BuriedUnsatHbondFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache
 
 	std::string const scorefxn_key( protocols::rosetta_scripts::get_score_function_name(tag) );
 	if ( datamap.has( "scorefxns", scorefxn_key ) ) {
-		sfxn_ = datamap.get< core::scoring::ScoreFunction* >( "scorefxns", scorefxn_key );
+		sfxn_ = datamap.get_ptr<core::scoring::ScoreFunction>( "scorefxns", scorefxn_key );
 	} else {
 		sfxn_ = core::scoring::get_score_function();
 	}
@@ -137,7 +137,7 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 		buried_unsat_hbond_filter_tracer << "UNBOUND: " << unbound_string << std::endl;
 	}
 	else unsat_hbonds = mv_bound.value();
-	if( task_factory_() != NULL ){
+	if( task_factory_ != NULL ){
 		std::string unbound_tmp, bound_tmp;
 
 /// clean the silly stuff in the string. Unfortunately the calculators are organized in such a way that there's no direct access to the values they report so this hack uses the string output...
@@ -166,11 +166,11 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 }
 
 filters::FilterOP BuriedUnsatHbondFilter::clone() const {
-	return new BuriedUnsatHbondFilter( *this );
+	return filters::FilterOP( new BuriedUnsatHbondFilter( *this ) );
 }
 
 filters::FilterOP BuriedUnsatHbondFilter::fresh_instance() const{
-	return new BuriedUnsatHbondFilter();
+	return filters::FilterOP( new BuriedUnsatHbondFilter() );
 }
 
 void

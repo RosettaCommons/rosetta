@@ -24,8 +24,8 @@ namespace match_enzdes_util {
 
 class InvrotTreeNode;
 
-typedef utility::pointer::owning_ptr< InvrotTreeNode > InvrotTreeNodeOP;
-typedef utility::pointer::owning_ptr< InvrotTreeNode const > InvrotTreeNodeCOP;
+typedef utility::pointer::shared_ptr< InvrotTreeNode > InvrotTreeNodeOP;
+typedef utility::pointer::shared_ptr< InvrotTreeNode const > InvrotTreeNodeCOP;
 
 }
 }

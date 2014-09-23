@@ -67,7 +67,7 @@ SetSecStructEnergiesCreator::keyname() const
 
 protocols::moves::MoverOP
 SetSecStructEnergiesCreator::create_mover() const {
-	return new SetSecStructEnergies;
+	return protocols::moves::MoverOP( new SetSecStructEnergies );
 }
 
 std::string
@@ -81,9 +81,9 @@ SetSecStructEnergiesCreator::mover_name()
 SetSecStructEnergies::SetSecStructEnergies() :
 	Super( "SetSecStructEnergies" ),
 	loaded_( false ),
-	blueprint_( NULL ),
+	blueprint_( /* NULL */ ),
 	ss_from_blueprint_( true ),
-	sfx_( NULL ),
+	sfx_( /* NULL */ ),
 	hh_weight_( 1.0 ),
 	hs_weight_( 1.0 ),
 	ss_weight_( 1.0 ),
@@ -91,8 +91,8 @@ SetSecStructEnergies::SetSecStructEnergies() :
 	hs_pair_weight_( 0.0 ),
 	ss_pair_weight_( 0.0 ),
 	rsigma_weight_( 0.0 ),
-	hpairpot_( new NatbiasHelixPairPotential ),
-	hspot_( new NatbiasHelicesSheetPotential )
+	hpairpot_( NatbiasHelixPairPotentialOP( new NatbiasHelixPairPotential ) ),
+	hspot_( NatbiasHelicesSheetPotentialOP( new NatbiasHelicesSheetPotential ) )
 {}
 
 
@@ -109,8 +109,8 @@ SetSecStructEnergies::SetSecStructEnergies( ScoreFunctionOP const sfx, String co
 	hs_pair_weight_( 0.0 ),
 	ss_pair_weight_( 0.0 ),
 	rsigma_weight_( 0.0 ),
-	hpairpot_( new NatbiasHelixPairPotential ),
-	hspot_( new NatbiasHelicesSheetPotential )
+	hpairpot_( NatbiasHelixPairPotentialOP( new NatbiasHelixPairPotential ) ),
+	hspot_( NatbiasHelicesSheetPotentialOP( new NatbiasHelicesSheetPotential ) )
 {
 	set_blueprint( filename );
 }
@@ -129,8 +129,8 @@ SetSecStructEnergies::SetSecStructEnergies( ScoreFunctionOP const sfx, BluePrint
 	hs_pair_weight_( 0.0 ),
 	ss_pair_weight_( 0.0 ),
 	rsigma_weight_( 0.0 ),
-	hpairpot_( new NatbiasHelixPairPotential ),
-	hspot_( new NatbiasHelicesSheetPotential )
+	hpairpot_( NatbiasHelixPairPotentialOP( new NatbiasHelixPairPotential ) ),
+	hspot_( NatbiasHelicesSheetPotentialOP( new NatbiasHelicesSheetPotential ) )
 {}
 
 /// @Brief copy constructor
@@ -158,14 +158,14 @@ SetSecStructEnergies::~SetSecStructEnergies() {}
 SetSecStructEnergies::MoverOP
 SetSecStructEnergies::clone() const
 {
-	return new SetSecStructEnergies( *this );
+	return SetSecStructEnergies::MoverOP( new SetSecStructEnergies( *this ) );
 }
 
 /// @brief create this type of object
 SetSecStructEnergies::MoverOP
 SetSecStructEnergies::fresh_instance() const
 {
-	return new SetSecStructEnergies();
+	return SetSecStructEnergies::MoverOP( new SetSecStructEnergies() );
 }
 
 /// @brief set the centroid level score function
@@ -186,7 +186,7 @@ SetSecStructEnergies::scorefunction( ScoreFunctionOP sfx )
 void
 SetSecStructEnergies::set_blueprint( String const & filename )
 {
-	blueprint_ = new BluePrint( filename );
+	blueprint_ = BluePrintOP( new BluePrint( filename ) );
 }
 
 /// @brief use blueprint
@@ -261,7 +261,7 @@ void SetSecStructEnergies::apply( Pose & pose )
 	if( option[ basic::options::OptionKeys::symmetry::symmetry_definition ].active() ) {
 
 		if ( !is_symmetric( scratch ) ) {
-			SetupForSymmetryMoverOP symm_setup_mover = new SetupForSymmetryMover;
+			SetupForSymmetryMoverOP symm_setup_mover( new SetupForSymmetryMover );
 			symm_setup_mover->apply( scratch );
 		}
 
@@ -274,13 +274,13 @@ void SetSecStructEnergies::apply( Pose & pose )
 	}
 
 	// set NatbiasSecondaryStructure energy
-	SS_Info2_OP ssinfo = new SS_Info2( ss );
-	StrandPairingSetOP spairset = new StrandPairingSet( blueprint_->strand_pairings(), ssinfo );
-	HelixPairingSetOP  hpairset = new HelixPairingSet ( blueprint_->helix_pairings() );
-	HSSTripletSetOP     hss3set = new HSSTripletSet   ( blueprint_->hss_triplets() );
+	SS_Info2_OP ssinfo( new SS_Info2( ss ) );
+	StrandPairingSetOP spairset( new StrandPairingSet( blueprint_->strand_pairings(), ssinfo ) );
+	HelixPairingSetOP  hpairset( new HelixPairingSet ( blueprint_->helix_pairings() ) );
+	HSSTripletSetOP     hss3set( new HSSTripletSet   ( blueprint_->hss_triplets() ) );
 
 	NatbiasSecondaryStructureEnergy sspot;
-	NatbiasStrandPairPotentialOP   spairpot = new NatbiasStrandPairPotential( spairset );
+	NatbiasStrandPairPotentialOP   spairpot( new NatbiasStrandPairPotential( spairset ) );
 	hpairpot_->set_hpairset( hpairset );
 	hpairpot_->show_params();
 
@@ -353,7 +353,7 @@ SetSecStructEnergies::parse_my_tag(
 		runtime_assert( false );
 	}
 
-	sfx_ = data.get< ScoreFunction * >( "scorefxns", sfxn );
+	sfx_ = data.get_ptr<ScoreFunction>( "scorefxns", sfxn );
 	TR << "score function, " << sfxn << ", is used. " << std::endl;
 
 	///

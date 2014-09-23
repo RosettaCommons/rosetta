@@ -92,7 +92,7 @@ LigandMotifSearch::~LigandMotifSearch()
 LigandMotifSearch::LigandMotifSearch()
 	: motif_library_(),
 		target_positions_(),
-		build_positionOPs_(0),
+		build_positionOPs_(/* 0 */),
 		target_conformers_map_(),
 		// Option flags/parameters: default to command line options
 		ztest_cutoff_1_(	basic::options::option[ basic::options::OptionKeys::motifs::z1 ]() ),
@@ -397,7 +397,7 @@ LigandMotifSearch::incorporate_motifs(
 		ms_tr << "in ligand splitter block, found my ligand, lig_pos is " << lig_pos << std::endl;
 		ligand_resi_number = lig_pos;
 // This is to make a ligres object once we find our ligand
-		core::conformation::ResidueOP ligres = new core::conformation::Residue (pose.residue( lig_pos ) );
+		core::conformation::ResidueOP ligres( new core::conformation::Residue (pose.residue( lig_pos ) ) );
 
 // This is to make an atomtypeset to get atomtype integers
 					core::chemical::AtomTypeSetCOP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
@@ -863,7 +863,7 @@ LigandMotifSearch::incorporate_motifs(
 
 					//					ms_tr << "Passed first round tests on 712: RMSD between ligand resi (rosetta #) " <<  ligand_resi_number << " and motif ligand = " << dtest1 << " dtestauto is " << dtest1_auto << " for residue type " << motifcop->restype_name1() << ", rotamer # " << ir2 << ", motif named " << motifcop->remark() << std::endl;
 
-					core::conformation::ResidueOP posebase = new core::conformation::Residue( posecopy.residue( ligand_resi_number ) );
+					core::conformation::ResidueOP posebase( new core::conformation::Residue( posecopy.residue( ligand_resi_number ) ) );
 					if( passed_automorphism ) {
 //  rmsd_list[dtest1_auto] = motifcop->restype_name1() ; //(ADD TO THE MAP)
 						motifcop->place_atoms( *(rotset->nonconst_rotamer(ir2)), *posebase, atoms, trip_atom_1, trip_atom_2, trip_atom_3, false );
@@ -895,11 +895,11 @@ LigandMotifSearch::incorporate_motifs(
 					if( ! tftest ) continue;
 					//ms_tr << "Passed 741! " << std::endl;
 
-					MotifHitOP motifhit = new MotifHit( *motifcop, ligand_resi_number, passed_automorphism );
+					MotifHitOP motifhit( new MotifHit( *motifcop, ligand_resi_number, passed_automorphism ) );
 
 					// If there are no conformers will use the base from the pose, so rmsd can be 0 theoretically
 					if( noconformers ) {
-						core::conformation::ResidueOP posebase2 = new core::conformation::Residue( posecopy2.residue( ligand_resi_number ) );
+						core::conformation::ResidueOP posebase2( new core::conformation::Residue( posecopy2.residue( ligand_resi_number ) ) );
 						if( passed_automorphism ) {
 							motifcop->place_residue(*(rotset->nonconst_rotamer(ir2)), *posebase2,trip_atom_1, trip_atom_2, trip_atom_3 , false );
 						} else {
@@ -1001,7 +1001,7 @@ LigandMotifSearch::incorporate_motifs(
 						// No, because the minimize itself needs the residues to be a part of the pose?
 						// Or maybe instead of copying the pose you could save the residue you are replacing and replace it back?
 						//core::pose::Pose pose_dump( pose );
-						core::conformation::ResidueOP build_rotamer = new core::conformation::Residue( *(motifhitop->build_rotamer()) );
+						core::conformation::ResidueOP build_rotamer( new core::conformation::Residue( *(motifhitop->build_rotamer()) ) );
 						pose_dump.replace_residue( (*ir)->seqpos(), *build_rotamer, false );
 						// The residue is probably already placed . . .
 						//	if( passed_automorphism ) {
@@ -1045,9 +1045,9 @@ LigandMotifSearch::incorporate_motifs(
 						/*if( data_ ) {
 							data_output_file << "Before sidechain refinement constraints score is " << pre_sc_constraint_check << std::endl;
 						}*/
-						core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
+						core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
 						movemap->set_chi( (*ir)->seqpos(), true );
-						protocols::simple_moves::MinMoverOP minmover = new protocols::simple_moves::MinMover( movemap, score_fxn, "dfpmin_armijo_nonmonotone_atol", 0.000001, true );
+						protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover( movemap, score_fxn, "dfpmin_armijo_nonmonotone_atol", 0.000001, true ) );
 						minmover->apply( pose_dump );
 						//core::io::pdb::dump_pdb( pose_dump, pose3_name_full.str() );
 						core::Real sc_constraint_check( pose_dump.energies().total_energies()[ coordinate_constraint ] );
@@ -1324,7 +1324,7 @@ LigandMotifSearch::identify_motif_BuildPositions(
 			Sizes short_target_positions( shorten_target_list( pose, seqpos, target_positions ) );
 			std::set< std::string > allowed_types; // this vector will remain empty in this sitatuation since there is no input Def to limit the types of amino acids allowed
 			//fill_bp_allowed_types( pose, seqpos, allowed_types );
-			BuildPositionOP build_position = new BuildPosition( seqpos, short_target_positions, allowed_types );
+			BuildPositionOP build_position( new BuildPosition( seqpos, short_target_positions, allowed_types ) );
 			build_positionOPs_.push_back( build_position );
 		}
 	} else {
@@ -1343,7 +1343,7 @@ LigandMotifSearch::BuildPosition_from_Size(
 	std::set< std::string > allowed_types; // this set will remain empty in this sitatuation since there is no input Def to limit the types of amino acids allowed
 	// MAKE ANOTHER FUNCTION THAT FILLS ALLOWED_TYPES VIA CHECKING WHAT IS ALLOWED
 	//fill_bp_allowed_types( pose, input_BP, allowed_types );
-	BuildPositionOP build_position = new BuildPosition( input_BP, short_target_positions, allowed_types );
+	BuildPositionOP build_position( new BuildPosition( input_BP, short_target_positions, allowed_types ) );
 	build_positionOPs_.push_back( build_position );
 }
 
@@ -1358,7 +1358,7 @@ LigandMotifSearch::defs2BuildPositions(
 		std::map< Size, std::set< std::string > > mappositions( defs2map( pose, defs ) );
 		for ( std::map<Size, std::set< std::string > >::const_iterator it( mappositions.begin() ),
 					end( mappositions.end() ); it != end; ++it ) {
-			BuildPositionOP build_position = new BuildPosition( it->first, full_tl, it->second );
+			BuildPositionOP build_position( new BuildPosition( it->first, full_tl, it->second ) );
 			build_positionOPs_.push_back( build_position );
 		}
 	} else {
@@ -1379,7 +1379,7 @@ LigandMotifSearch::defs2BuildPositions_findts(
 					end( mappositions.end() ); it != end; ++it ) {
 			Size test(it->first);
 			Sizes short_tl( shorten_target_list( pose, test, full_tl ) );
-			BuildPositionOP build_position = new BuildPosition( it->first, short_tl, it->second );
+			BuildPositionOP build_position( new BuildPosition( it->first, short_tl, it->second ) );
 			build_positionOPs_.push_back( build_position );
 		}
 	} else {
@@ -1421,7 +1421,7 @@ LigandMotifSearch::protein_DNA_motif_build_positions_JA(
 	Sizes & target_positions
 )
 {
-	protocols::dna::DnaInterfaceFinderOP interface = new protocols::dna::DnaInterfaceFinder( 10*10, 3.9*3.9, 6., true );  //how does the z_axis cutoff work here that JA uses, I looked up once, but need ot read again
+	protocols::dna::DnaInterfaceFinderOP interface( new protocols::dna::DnaInterfaceFinder( 10*10, 3.9*3.9, 6., true ) );  //how does the z_axis cutoff work here that JA uses, I looked up once, but need ot read again
 	if ( ! target_positions.empty() ) { // again, this won't work well if there are multiple target positions in vector
 		interface->determine_protein_interface( pose, protein_positions_, target_positions ); // unless target_positions_ is empty - will actually deal with that later, will fill with all DNA in initialize if no protein pos or dna pos are given
 		protocols::dna::DnaNeighbors protein_neighbors = interface->protein_neighbors();
@@ -1445,7 +1445,7 @@ LigandMotifSearch::protein_DNA_motif_target_positions_JA(
 )
 {
 	// JA used 3.7, I picked 3.9 to access a position I knew was important
-	protocols::dna::DnaInterfaceFinderOP interface = new protocols::dna::DnaInterfaceFinder( 10*10, 3.9*3.9, 10., true );  //how does the z_axis cutoff work here that JA uses, I looked up once, but need ot read again
+	protocols::dna::DnaInterfaceFinderOP interface( new protocols::dna::DnaInterfaceFinder( 10*10, 3.9*3.9, 10., true ) );  //how does the z_axis cutoff work here that JA uses, I looked up once, but need ot read again
 	if ( ! build_positions.empty() ) {
 		interface->determine_dna_interface( pose, build_positions, target_positions );
 		protocols::dna::DnaNeighbors dna_neighbors = interface->dna_neighbors();

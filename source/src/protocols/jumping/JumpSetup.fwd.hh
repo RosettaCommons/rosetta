@@ -30,14 +30,14 @@ class JumpSetup;
 class JumpSelector;
 
 // Types
-typedef  utility::pointer::owning_ptr< BaseJumpSetup >  BaseJumpSetupOP;
-typedef  utility::pointer::owning_ptr< BaseJumpSetup const >  BaseJumpSetupCOP;
+typedef  utility::pointer::shared_ptr< BaseJumpSetup >  BaseJumpSetupOP;
+typedef  utility::pointer::shared_ptr< BaseJumpSetup const >  BaseJumpSetupCOP;
 
-typedef  utility::pointer::owning_ptr< JumpSetup >  JumpSetupOP;
-typedef  utility::pointer::owning_ptr< JumpSetup const >  JumpSetupCOP;
+typedef  utility::pointer::shared_ptr< JumpSetup >  JumpSetupOP;
+typedef  utility::pointer::shared_ptr< JumpSetup const >  JumpSetupCOP;
 
-typedef  utility::pointer::owning_ptr< JumpSelector >  JumpSelectorOP;
-typedef  utility::pointer::owning_ptr< JumpSelector const >  JumpSelectorCOP;
+typedef  utility::pointer::shared_ptr< JumpSelector >  JumpSelectorOP;
+typedef  utility::pointer::shared_ptr< JumpSelector const >  JumpSelectorCOP;
 
 
 } // namespace kinematics

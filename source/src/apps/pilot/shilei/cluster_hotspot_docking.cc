@@ -297,7 +297,7 @@ int main(int argc, char *argv[])
 		if (outsize>=output_ddg_clusters) break;
 	}
 
-	core::import_pose::pose_stream::PoseInputStreamOP input = new core::import_pose::pose_stream::SilentFilePoseInputStream( option[ in::file::silent ](), outtaglist);
+	core::import_pose::pose_stream::PoseInputStreamOP input( new core::import_pose::pose_stream::SilentFilePoseInputStream( option[ in::file::silent ](), outtaglist) );
 
 	while ( input->has_another_pose() ) {
 		input->fill_pose( pose );

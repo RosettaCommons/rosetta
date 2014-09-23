@@ -24,7 +24,7 @@ namespace potentials {
 namespace sspot {
 
 class NatbiasStrandPairPotential;
-typedef utility::pointer::owning_ptr< NatbiasStrandPairPotential > NatbiasStrandPairPotentialOP;
+typedef utility::pointer::shared_ptr< NatbiasStrandPairPotential > NatbiasStrandPairPotentialOP;
 
 } // ns sspot
 } // ns potentials

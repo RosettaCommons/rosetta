@@ -84,12 +84,12 @@ public:
 
 private:
 	Translate_info translate_info_;
-	utility::pointer::owning_ptr<core::grid::CartGrid<int> > grid_;
+	utility::pointer::shared_ptr<core::grid::CartGrid<int> > grid_;
 	utility::vector1<core::Size> chain_ids_to_exclude_; // these are invisible the translation grid, so ligand can land on top.
 	std::vector<core::Size> tag_along_jumps_; // these guys tag along, such as waters and metals
 
 	void translate_ligand(
-			utility::pointer::owning_ptr<core::grid::CartGrid<int> >  const & grid,
+			utility::pointer::shared_ptr<core::grid::CartGrid<int> >  const & grid,
 			core::Size const jump_id,
 			core::pose::Pose & pose
 	);
@@ -97,13 +97,13 @@ private:
 	void translate_ligand(core::Size const jump_id,core::pose::Pose & pose, core::Size const & residue_id);
 
 	void uniform_translate_ligand(
-			const utility::pointer::owning_ptr<core::grid::CartGrid<int> >  & grid,
+			const utility::pointer::shared_ptr<core::grid::CartGrid<int> >  & grid,
 			const core::Size jump_id,
 			core::pose::Pose & pose
 	);
 
 	void gaussian_translate_ligand(
-			const utility::pointer::owning_ptr<core::grid::CartGrid<int> >  & grid,
+			const utility::pointer::shared_ptr<core::grid::CartGrid<int> >  & grid,
 			const core::Size jump_id,
 			core::pose::Pose & pose
 	);

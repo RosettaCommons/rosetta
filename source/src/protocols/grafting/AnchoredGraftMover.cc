@@ -162,13 +162,13 @@ AnchoredGraftMover::set_defaults(){
 
 protocols::moves::MoverOP
 AnchoredGraftMover::clone() const{
-	return new AnchoredGraftMover(*this);
+	return protocols::moves::MoverOP( new AnchoredGraftMover(*this) );
 }
 
 protocols::moves::MoverOP
 AnchoredGraftMover::fresh_instance() const
 {
-	return new AnchoredGraftMover;
+	return protocols::moves::MoverOP( new AnchoredGraftMover );
 }
 
 void
@@ -207,11 +207,11 @@ AnchoredGraftMover::parse_my_tag(
 	
 	if (tag->hasOption("cen_scorefxn")){
 		std::string cen_scorefxn = tag->getOption<std::string>("cen_scorefxn");
-		cen_scorefxn_ = data.get<core::scoring::ScoreFunction *>("scorefxns", cen_scorefxn);
+		cen_scorefxn_ = data.get_ptr<core::scoring::ScoreFunction>("scorefxns", cen_scorefxn);
 	}
 	if (tag->hasOption("fa_scorefxn")){
 		std::string fa_scorefxn = tag->getOption<std::string>("fa_scorefxn");
-		fa_scorefxn_ = data.get<core::scoring::ScoreFunction *>("scorefxns", fa_scorefxn);
+		fa_scorefxn_ = data.get_ptr<core::scoring::ScoreFunction>("scorefxns", fa_scorefxn);
 	}
 	
 	if (protocols::rosetta_scripts::has_branch(tag, "MoveMap")){
@@ -219,8 +219,8 @@ AnchoredGraftMover::parse_my_tag(
 		
 	}
 	if (data.has("movemaps", "scaffold_movemap") && data.has("movemaps", "scaffold_movemap")){
-		scaffold_movemap_ = data.get<MoveMap *>("movemaps", "scaffold_movemap");
-		insert_movemap_ = data.get<MoveMap *>("movemaps", "insert_movemap");
+		scaffold_movemap_ = data.get_ptr<MoveMap>("movemaps", "scaffold_movemap");
+		insert_movemap_ = data.get_ptr<MoveMap>("movemaps", "insert_movemap");
 	}
 	else if (protocols::rosetta_scripts::has_branch(tag, "MoveMap")){
 		utility_exit_with_message("Movemaps must be specified using the names scaffold_movemap and insert_movemap");
@@ -323,7 +323,7 @@ AnchoredGraftMover::set_fa_scorefunction(ScoreFunctionCOP score){
 void
 AnchoredGraftMover::set_default_cen_scorefunction(){
 	//cen_scorefxn_=protocols::loops::get_cen_scorefxn();
-	cen_scorefxn_ = new ScoreFunction();
+	cen_scorefxn_ = core::scoring::ScoreFunctionOP( new ScoreFunction() );
 	cen_scorefxn_->set_weight( chainbreak,        20.00);
 	cen_scorefxn_->set_weight( linear_chainbreak, 20.00);
 	cen_scorefxn_->set_weight( cbeta_smooth,      1.0 );
@@ -366,7 +366,7 @@ AnchoredGraftMover::setup_movemap_and_regions(Pose & pose){
 void
 AnchoredGraftMover::set_default_movemap(){
     TR <<"Setting default movemap"<<std::endl;
-	movemap_ = new core::kinematics::MoveMap();
+	movemap_ = MoveMapOP( new core::kinematics::MoveMap() );
 	for (Size i=Nter_loop_start_; i<=Nter_loop_end_; ++i){
 		movemap_->set_bb(i, true);
 		movemap_->set_chi(i, true);
@@ -444,13 +444,13 @@ AnchoredGraftMover::set_regions_from_movemap(Pose & pose){
 MinMoverOP
 AnchoredGraftMover::setup_default_min_mover(){
 
-	MinMoverOP min_mover =  new MinMover(movemap_, cen_scorefxn_, mintype_, 0.01, true /*use_nblist*/ );
+	MinMoverOP min_mover( new MinMover(movemap_, cen_scorefxn_, mintype_, 0.01, true /*use_nblist*/ ) );
 	return min_mover;
 }
 
 SmallMoverOP
 AnchoredGraftMover::setup_default_small_mover(){
-	SmallMoverOP small =  new SmallMover(movemap_, 10, 200); //huge moves for sampling
+	SmallMoverOP small( new SmallMover(movemap_, 10, 200) ); //huge moves for sampling
 	small->angle_max( 'H', 180.0 );
 	small->angle_max( 'E', 180.0 );
 	small->angle_max( 'L', 180.0 );
@@ -477,7 +477,7 @@ AnchoredGraftMover::final_repack(){
 
 protocols::moves::MoverOP
 AnchoredGraftMoverCreator::create_mover() const {
-	return new AnchoredGraftMover;
+	return protocols::moves::MoverOP( new AnchoredGraftMover );
 }
 
 std::string
@@ -526,7 +526,7 @@ AnchoredGraftMover::apply(Pose & pose){
 	Loop Cter_loop = Loop(Nter_loop_start_, Cter_loop_end_, Cter_loop_end_-1);      
 	loops.add_loop(Cter_loop);
 	
-	loop_closure::ccd::CCDLoopClosureMoverOP ccd_mover = new loop_closure::ccd::CCDLoopClosureMover(Cter_loop, movemap_);
+	loop_closure::ccd::CCDLoopClosureMoverOP ccd_mover( new loop_closure::ccd::CCDLoopClosureMover(Cter_loop, movemap_) );
         
 	add_cutpoint_variants_for_ccd(combined, loops);
 	
@@ -536,7 +536,7 @@ AnchoredGraftMover::apply(Pose & pose){
 	
 	//centroidize the pose before we do stuff to it - sidechains are expensive and unnecessary
 	protocols::simple_moves::SwitchResidueTypeSetMover typeset_swap(core::chemical::CENTROID);
-	protocols::simple_moves::ReturnSidechainMoverOP return_sidechains = new  protocols::simple_moves::ReturnSidechainMover(combined );
+	protocols::simple_moves::ReturnSidechainMoverOP return_sidechains( new  protocols::simple_moves::ReturnSidechainMover(combined ) );
 	typeset_swap.apply( combined );
 
 	//TR <<"After type swap" <<std::endl;

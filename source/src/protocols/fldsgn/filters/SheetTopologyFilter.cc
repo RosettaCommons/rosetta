@@ -53,14 +53,14 @@ namespace filters {
 SheetTopologyFilter::SheetTopologyFilter():
 	Filter( "SheetTopology" ),
 	secstruct_input_( false ),
-	ssinfo_( new SS_Info2 )
+	ssinfo_( SS_Info2_OP( new SS_Info2 ) )
 {}
 
 // @brief constructor with arguments
 SheetTopologyFilter::SheetTopologyFilter( StrandPairingSetOP const & sps ):
 	Filter( "SheetTopology" ),
 	secstruct_input_( false ),
-	ssinfo_( new SS_Info2 )
+	ssinfo_( SS_Info2_OP( new SS_Info2 ) )
 {
 	filtered_sheet_topology_ = (*sps).name();
 }
@@ -70,7 +70,7 @@ SheetTopologyFilter::SheetTopologyFilter( String const & sheet_topology ):
 	Filter( "SheetTopology" ),
 	filtered_sheet_topology_( sheet_topology ),
 	secstruct_input_( false ),
-	ssinfo_( new SS_Info2 )
+	ssinfo_( SS_Info2_OP( new SS_Info2 ) )
 {}
 
 // @brief copy constructor
@@ -202,7 +202,7 @@ SheetTopologyFilter::parse_my_tag(
 }
 
 protocols::filters::FilterOP
-SheetTopologyFilterCreator::create_filter() const { return new SheetTopologyFilter; }
+SheetTopologyFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SheetTopologyFilter ); }
 
 std::string
 SheetTopologyFilterCreator::keyname() const { return "SheetTopology"; }

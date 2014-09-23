@@ -23,7 +23,7 @@ namespace methods {
 
 class SpecialRotamerEnergy;
 
-typedef utility::pointer::owning_ptr< SpecialRotamerEnergy > SpecialRotamerEnergyOP;
+typedef utility::pointer::shared_ptr< SpecialRotamerEnergy > SpecialRotamerEnergyOP;
 
 } // methods
 } // scoring

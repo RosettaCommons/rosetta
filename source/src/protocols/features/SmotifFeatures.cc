@@ -81,23 +81,23 @@ SmotifFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) 
 	using namespace utility;
 
 	//******smotifs******//
-	Column struct_id("struct_id", new DbBigInt(), false);
-	Column smotif_id("smotif_id", new DbInteger(), false);
-	Column ss1("secondary_struct_segment_id_1", new DbInteger(), false);
-	Column ss2("secondary_struct_segment_id_2", new DbInteger(), false);
-	Column loop("loop_segment_id", new DbInteger(), false);
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
+	Column smotif_id("smotif_id", DbDataTypeOP( new DbInteger() ), false);
+	Column ss1("secondary_struct_segment_id_1", DbDataTypeOP( new DbInteger() ), false);
+	Column ss2("secondary_struct_segment_id_2", DbDataTypeOP( new DbInteger() ), false);
+	Column loop("loop_segment_id", DbDataTypeOP( new DbInteger() ), false);
 	
 	//Distance, in angstroms, between C-term of SS1 (P1) and N term of SS2 (P2)
-	Column distance("distance", new DbReal(), false);
+	Column distance("distance", DbDataTypeOP( new DbReal() ), false);
 	
 	//Angle between L (vector between P1 and P2) and M1 (principal moment of inertia for SS1)
-	Column hoist("hoist", new DbReal(), false);
+	Column hoist("hoist", DbDataTypeOP( new DbReal() ), false);
 	
 	//Angle between M1 and M2 (principal moment of inertia for SS1 and SS2)
-	Column packing("packing", new DbReal(), false);
+	Column packing("packing", DbDataTypeOP( new DbReal() ), false);
 	
 	//Angle between M2 and Gamma (defined by M1 and normal to plane Pie, which is defined 
-	Column meridian("meridian", new DbReal(), false);
+	Column meridian("meridian", DbDataTypeOP( new DbReal() ), false);
 	
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(struct_id);

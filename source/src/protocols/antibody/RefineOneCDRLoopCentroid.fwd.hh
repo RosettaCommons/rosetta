@@ -21,8 +21,8 @@ namespace protocols {
 namespace antibody {
 
 class RefineOneCDRLoopCentroid;
-typedef utility::pointer::owning_ptr< RefineOneCDRLoopCentroid > RefineOneCDRLoopCentroidOP;
-typedef utility::pointer::owning_ptr< RefineOneCDRLoopCentroid const > RefineOneCDRLoopCentroidCOP;
+typedef utility::pointer::shared_ptr< RefineOneCDRLoopCentroid > RefineOneCDRLoopCentroidOP;
+typedef utility::pointer::shared_ptr< RefineOneCDRLoopCentroid const > RefineOneCDRLoopCentroidCOP;
 
 }
 }

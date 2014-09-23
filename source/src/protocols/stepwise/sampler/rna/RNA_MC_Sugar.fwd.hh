@@ -24,8 +24,8 @@ namespace sampler {
 namespace rna {
 
 class RNA_MC_Sugar;
-typedef utility::pointer::owning_ptr< RNA_MC_Sugar > RNA_MC_SugarOP;
-typedef utility::pointer::access_ptr< RNA_MC_Sugar > RNA_MC_SugarAP;
+typedef utility::pointer::shared_ptr< RNA_MC_Sugar > RNA_MC_SugarOP;
+typedef utility::pointer::weak_ptr< RNA_MC_Sugar > RNA_MC_SugarAP;
 
 } //rna
 } //sampler

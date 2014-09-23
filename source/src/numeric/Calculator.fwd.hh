@@ -21,7 +21,7 @@ namespace numeric {
 
 class Calculator;
 
-typedef utility::pointer::owning_ptr<Calculator> CalculatorOP;
+typedef utility::pointer::shared_ptr<Calculator> CalculatorOP;
 
 } // numeric
 

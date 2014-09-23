@@ -20,7 +20,7 @@ namespace protocols {
 namespace jd2 {
 
 class SilentFileJobOutputter;
-typedef utility::pointer::owning_ptr< SilentFileJobOutputter > SilentFileJobOutputterOP;
+typedef utility::pointer::shared_ptr< SilentFileJobOutputter > SilentFileJobOutputterOP;
 
 }//jd2
 }//protocols

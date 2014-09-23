@@ -37,7 +37,7 @@ SetIGTypeOperation::~SetIGTypeOperation(){}
 
 core::pack::task::operation::TaskOperationOP SetIGTypeOperation::clone() const
 {
-	return new SetIGTypeOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new SetIGTypeOperation( *this ) );
 }
 
 void SetIGTypeOperation::apply( core::pose::Pose const &, core::pack::task::PackerTask & task ) const
@@ -56,7 +56,7 @@ void SetIGTypeOperation::parse_tag( utility::tag::TagCOP tag, basic::datacache::
 
 core::pack::task::operation::TaskOperationOP SetIGTypeOperationCreator::create_task_operation() const
 {
-	return new SetIGTypeOperation;
+	return core::pack::task::operation::TaskOperationOP( new SetIGTypeOperation );
 }
 
 } //task_operations

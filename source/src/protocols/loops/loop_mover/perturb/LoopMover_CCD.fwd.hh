@@ -25,8 +25,8 @@ namespace perturb {
 // Forward
 class LoopMover_Perturb_CCD;
 
-typedef utility::pointer::owning_ptr< LoopMover_Perturb_CCD > LoopMover_Perturb_CCDOP;
-typedef utility::pointer::owning_ptr< LoopMover_Perturb_CCD const > LoopMover_Perturb_CCDCOP;
+typedef utility::pointer::shared_ptr< LoopMover_Perturb_CCD > LoopMover_Perturb_CCDOP;
+typedef utility::pointer::shared_ptr< LoopMover_Perturb_CCD const > LoopMover_Perturb_CCDCOP;
 
 } //namespace perturb
 } //namespace loop_mover

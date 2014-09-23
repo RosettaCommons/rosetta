@@ -20,8 +20,8 @@ namespace rigid {
 
 //Forwards and OP typedefs
 class RollMover;
-typedef utility::pointer::owning_ptr< RollMover > RollMoverOP;
-typedef utility::pointer::owning_ptr< RollMover const > RollMoverCOP;
+typedef utility::pointer::shared_ptr< RollMover > RollMoverOP;
+typedef utility::pointer::shared_ptr< RollMover const > RollMoverCOP;
 
 }//rigid
 }//protocols

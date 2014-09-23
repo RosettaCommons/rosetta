@@ -81,10 +81,10 @@ void
 ResidueFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt(), false);
-	Column resNum("resNum", new DbInteger(), false);
-	Column name3("name3", new DbText(), false);
-	Column res_type("res_type", new DbText(), false);
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
+	Column resNum("resNum", DbDataTypeOP( new DbInteger() ), false);
+	Column name3("name3", DbDataTypeOP( new DbText() ), false);
+	Column res_type("res_type", DbDataTypeOP( new DbText() ), false);
 
 	utility::vector1<Column> residues_pkey_cols;
 	residues_pkey_cols.push_back(struct_id);
@@ -137,7 +137,7 @@ ResidueFeatures::insert_residue_rows(
 	residues_insert.add_column("name3");
 	residues_insert.add_column("res_type");
 
-	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id",struct_id);
+	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
 	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
 		if(!check_relevant_residues(relevant_residues, resNum)) continue;
@@ -146,9 +146,9 @@ ResidueFeatures::insert_residue_rows(
 		string const name3( res.name3() );
 		string const res_type( res.name() );
 
-		RowDataBaseOP resnum_data = new RowData<Size>("resNum",resNum);
-		RowDataBaseOP name3_data = new RowData<string>("name3",name3);
-		RowDataBaseOP res_type_data = new RowData<string>("res_type",res_type);
+		RowDataBaseOP resnum_data( new RowData<Size>("resNum",resNum) );
+		RowDataBaseOP name3_data( new RowData<string>("name3",name3) );
+		RowDataBaseOP res_type_data( new RowData<string>("res_type",res_type) );
 
 		residues_insert.add_row(utility::tools::make_vector(struct_id_data,resnum_data,name3_data,res_type_data));
 

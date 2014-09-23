@@ -23,8 +23,8 @@ namespace modeler {
 namespace rna {
 
 	class StepWiseRNA_PoseSetup;
-	typedef utility::pointer::owning_ptr< StepWiseRNA_PoseSetup > StepWiseRNA_PoseSetupOP;
-	typedef utility::pointer::owning_ptr< StepWiseRNA_PoseSetup const > StepWiseRNA_PoseSetupCOP;
+	typedef utility::pointer::shared_ptr< StepWiseRNA_PoseSetup > StepWiseRNA_PoseSetupOP;
+	typedef utility::pointer::shared_ptr< StepWiseRNA_PoseSetup const > StepWiseRNA_PoseSetupCOP;
 
 } //rna
 } //modeler

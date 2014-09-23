@@ -79,46 +79,37 @@ MetaPoseInputStream streams_from_cmd_line( bool const do_renumber_decoys ) {
 
 	MetaPoseInputStream input;
 	if ( option[ in::file::s ].user() ) {
-		PDBPoseInputStreamOP pdb_input(
-			new PDBPoseInputStream( option[ in::file::s ]() )
-		);
+		PDBPoseInputStreamOP pdb_input( new PDBPoseInputStream( option[ in::file::s ]() ) );
 		input.add_pose_input_stream( pdb_input );
 	}
 	if ( option[ in::file::l ].user() ) {
-		PDBPoseInputStreamOP pdb_list_input(
-			new PDBPoseInputStream( filenames_from_list_file( option[ in::file::l ]() ) )
-		);
+		PDBPoseInputStreamOP pdb_list_input( new PDBPoseInputStream( filenames_from_list_file( option[ in::file::l ]() ) ) );
 		input.add_pose_input_stream( pdb_list_input );
 	}
 
 	if ( option[ in::file::silent ].user() ) {
 		if ( option[ in::file::lazy_silent ]() ) {
-			LazySilentFilePoseInputStreamOP silent_input(
-				new LazySilentFilePoseInputStream( option[ in::file::silent ]() )
-			);
+			LazySilentFilePoseInputStreamOP silent_input( new LazySilentFilePoseInputStream( option[ in::file::silent ]() ) );
 			input.add_pose_input_stream(silent_input);
 
 			if ( option[ in::file::silent_list ].user() ) {
-				LazySilentFilePoseInputStreamOP silent_list_input(
-					new LazySilentFilePoseInputStream( filenames_from_list_file(
+				LazySilentFilePoseInputStreamOP silent_list_input( new LazySilentFilePoseInputStream( filenames_from_list_file(
 						option[ in::file::silent_list ]()
-					) )
-				);
+					) ) );
 				input.add_pose_input_stream(silent_list_input);
 			}
 		} else {
 			SilentFilePoseInputStreamOP silent_input;
 			if ( option[ in::file::tags ].user() ) {
-				silent_input = SilentFilePoseInputStreamOP(
-					new SilentFilePoseInputStream(
+				silent_input = SilentFilePoseInputStreamOP( new SilentFilePoseInputStream(
 						option[ in::file::silent ](),
 						option[ in::file::tags ](),
 						option[ in::file::silent_energy_cut ]()
 					) );
 			} else {
-				silent_input = new SilentFilePoseInputStream(
+				silent_input = SilentFilePoseInputStreamOP( new SilentFilePoseInputStream(
 					option[ in::file::silent ](), option[ in::file::silent_energy_cut ]()
-				);
+				) );
 			}
 			silent_input->renumber_decoys( do_renumber_decoys && option[ in::file::silent_renumber ]() );
 			input.add_pose_input_stream( silent_input );
@@ -139,9 +130,7 @@ MetaPoseInputStream streams_from_cmd_line( bool const do_renumber_decoys ) {
 			std::string sequence
 				= core::sequence::read_fasta_file( option[ in::file::fasta ]()[1] )[1]->sequence();
 
-			PoseInputStreamOP extended_protein_input(
-				new ExtendedPoseInputStream( sequence, ntimes )
-			);
+			PoseInputStreamOP extended_protein_input( new ExtendedPoseInputStream( sequence, ntimes ) );
 			input.add_pose_input_stream( extended_protein_input );
 		}
 	}

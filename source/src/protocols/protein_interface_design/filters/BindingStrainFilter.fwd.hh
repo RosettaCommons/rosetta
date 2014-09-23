@@ -27,8 +27,8 @@ namespace filters {
 class BindingStrainFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< BindingStrainFilter >  BindingStrainFilterOP;
-typedef utility::pointer::owning_ptr< BindingStrainFilter const >  BindingStrainFilterCOP;
+typedef utility::pointer::shared_ptr< BindingStrainFilter >  BindingStrainFilterOP;
+typedef utility::pointer::shared_ptr< BindingStrainFilter const >  BindingStrainFilterCOP;
 
 } // namespace filters
 } //namespace protein_interface_design

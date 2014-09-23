@@ -96,7 +96,7 @@ ProteinInterfaceMultiStateDesignMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 ProteinInterfaceMultiStateDesignMoverCreator::create_mover() const {
-	return new ProteinInterfaceMultiStateDesignMover;
+	return protocols::moves::MoverOP( new ProteinInterfaceMultiStateDesignMover );
 }
 
 std::string
@@ -107,12 +107,12 @@ ProteinInterfaceMultiStateDesignMoverCreator::mover_name()
 
 ProteinInterfaceMultiStateDesignMover::ProteinInterfaceMultiStateDesignMover() :
 	protocols::simple_moves::PackRotamersMover( ProteinInterfaceMultiStateDesignMoverCreator::mover_name() ),
-	gen_alg_(0),
-	multistate_packer_(0),
+	gen_alg_(/* 0 */),
+	multistate_packer_(/* 0 */),
 	// option flags/parameters: default to command line options
 	// parse_my_tag method may change them
 	rb_jump_( 1 ),
-	scorefxn_( 0 ),
+	scorefxn_( /* 0 */ ),
 	generations_(               option[ OptionKeys::ms::generations ]() ),
 	pop_size_(                  option[ OptionKeys::ms::pop_size ]() ),
 	num_packs_(                 option[ OptionKeys::ms::num_packs ]() ),
@@ -202,7 +202,7 @@ ProteinInterfaceMultiStateDesignMover::restrict_sequence_profile(
 		return;
 	TR<<"Restricting the packer task to residues that would not clash in the unbound monomer..."<<std::endl;
 /// Turn all designable positions to ala. Freeze everything else
-	PoseOP ala_pose = new Pose( pose );
+	PoseOP ala_pose( new Pose( pose ) );
 	part_complex( ala_pose, rb_jump_ );
 	PackerTaskOP ala_task = ptask->clone();
 	vector1< bool > allow_ala( num_canonical_aas, false );
@@ -222,7 +222,7 @@ ProteinInterfaceMultiStateDesignMover::restrict_sequence_profile(
 	pack_rotamers( *ala_pose, *scorefxn_, ala_task );
 
   // scorefxn for the bump check
-  core::scoring::ScoreFunctionOP bump_scorefxn = new core::scoring::ScoreFunction;
+  core::scoring::ScoreFunctionOP bump_scorefxn( new core::scoring::ScoreFunction );
   bump_scorefxn->reset();
   bump_scorefxn->set_weight( fa_rep, 1.0 );
 
@@ -284,7 +284,7 @@ ProteinInterfaceMultiStateDesignMover::initialize( Pose & pose )
 
 	// always start with a fresh GeneticAlgorithm
 	// important when reusing ProteinInterfaceMultistateDesign mover
-	gen_alg_ = new GeneticAlgorithm;
+	gen_alg_ = GeneticAlgorithmOP( new GeneticAlgorithm );
 
 	// set up genetic algorithm
 	gen_alg_->set_max_generations( generations_ );
@@ -293,19 +293,19 @@ ProteinInterfaceMultiStateDesignMover::initialize( Pose & pose )
 	gen_alg_->set_frac_by_recomb( fraction_by_recombination_ );
 
 	// set up sequence randomizer
-	PositionSpecificRandomizer::OP rand = new PositionSpecificRandomizer;
+	PositionSpecificRandomizer::OP rand( new PositionSpecificRandomizer );
 	rand->set_mutation_rate( mutate_rate_ );
 
 	TaskFactoryOP my_tf;
 	// if PackRotamerMover base class has no initialized TaskFactory, create default one here
 	if ( ! task_factory() )
 		// Protein-interface design-specific TaskFactory -> PackerTask -> figure out positions to design
-		my_tf = new TaskFactory;
+		my_tf = TaskFactoryOP( new TaskFactory );
 	else // TaskFactory already exists, add to it
-		my_tf = new TaskFactory( *task_factory() );
+		my_tf = TaskFactoryOP( new TaskFactory( *task_factory() ) );
 
-	my_tf->push_back( new InitializeFromCommandline );
-	if ( option[ OptionKeys::packing::resfile ].user() ) my_tf->push_back( new ReadResfile );
+	my_tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
+	if ( option[ OptionKeys::packing::resfile ].user() ) my_tf->push_back( TaskOperationCOP( new ReadResfile ) );
 
 	task_factory( my_tf ); // PackRotamersMover base class setter
 
@@ -331,7 +331,7 @@ ProteinInterfaceMultiStateDesignMover::initialize( Pose & pose )
 				if ( aaset.find( aa ) != aaset.end() ) continue;
 				aaset.insert(aa);
 				TR(t_debug) << "adding choice " << aa << std::endl;
-				choices.push_back( new PosType( i, aa ) );
+				choices.push_back( utility::pointer::shared_ptr<class protocols::genetic_algorithm::EntityElement>( new PosType( i, aa ) ) );
 			}
 			rand->append_choices( choices );
 		}
@@ -341,10 +341,10 @@ ProteinInterfaceMultiStateDesignMover::initialize( Pose & pose )
 	TR(t_info) << "There will be " << rand->library_size() << " possible sequences." << std::endl;
 
 	// set up fitness function
-	multistate_packer_ = new MultiStatePacker( num_packs_ );
+	multistate_packer_ = multistate_design::MultiStatePackerOP( new MultiStatePacker( num_packs_ ) );
 
 	multistate_packer_->set_aggregate_function(
-		new PartitionAggregateFunction( boltz_temp_, anchor_offset_, compare_energy_to_ground_state_ ) );
+		MultiStateAggregateFunction::COP( new PartitionAggregateFunction( boltz_temp_, anchor_offset_, compare_energy_to_ground_state_ ) ) );
 
 	multistate_packer_->set_scorefxn( scorefxn_ );
 
@@ -378,7 +378,7 @@ ProteinInterfaceMultiStateDesignMover::initialize( Pose & pose )
 			for ( vector1<Size>::const_iterator i( design_positions.begin() ),
 						end( design_positions.end() ); i != end; ++i ) {
 				PosType pt( *i, (*s)->pose().residue_type(*i).aa() );
-				traits.push_back( new PosType( pt ));
+				traits.push_back( utility::pointer::shared_ptr<class protocols::genetic_algorithm::EntityElement>( new PosType( pt ) ));
 				TR(t_info) << pt.to_string() << " ";
 			}
 			gen_alg_->add_entity( traits );
@@ -415,8 +415,8 @@ ProteinInterfaceMultiStateDesignMover::output_alternative_states( core::pose::Po
 	using namespace core::pack::task::operation;
 
 	TaskFactoryOP tf( new TaskFactory( *task_factory() ) );// Allow all repackable residues to move, but not redesign
-	tf->push_back( new InitializeFromCommandline );
-	tf->push_back( new RestrictToRepacking );
+	tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
+	tf->push_back( TaskOperationCOP( new RestrictToRepacking ) );
 	PackerTaskCOP ptask_output_pose = tf->create_task_and_apply_taskoperations( output_pose );
 	std::string const output_pose_fname( fname_prefix_ + "_ms_pos_0000.pdb" );
 	core::pose::Pose copy_pose( output_pose );
@@ -451,7 +451,7 @@ ProteinInterfaceMultiStateDesignMover::output_alternative_states( core::pose::Po
 void
 ProteinInterfaceMultiStateDesignMover::output_results( Pose & pose )
 {
-	protocols::dna::PDBOutputOP pdboutput = new protocols::dna::PDBOutput;
+	protocols::dna::PDBOutputOP pdboutput( new protocols::dna::PDBOutput );
 	pdboutput->score_function( *scorefxn_ );
 	pdboutput->reference_pose( pose );
 
@@ -568,7 +568,7 @@ void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
 		core::pose::PoseOP new_pose( new core::pose::Pose );
 		state_poses_.push_back( new_pose );
 		core::import_pose::pose_from_pdb( *new_pose, fname );
-		saved_state_poses_.push_back( new core::pose::Pose( *new_pose ) ); //deep copying new pose so that its saved throughout the run
+		saved_state_poses_.push_back( utility::pointer::shared_ptr<class core::pose::Pose>( new core::pose::Pose( *new_pose ) ) ); //deep copying new pose so that its saved throughout the run
 		state_unbound_.push_back( unbound );
 		state_unfolded_.push_back( unfolded );
 
@@ -592,14 +592,14 @@ void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
 moves::MoverOP
 ProteinInterfaceMultiStateDesignMover::fresh_instance() const
 {
-	return new ProteinInterfaceMultiStateDesignMover;
+	return moves::MoverOP( new ProteinInterfaceMultiStateDesignMover );
 }
 
 ///@brief required in the context of the parser/scripting scheme
 moves::MoverOP
 ProteinInterfaceMultiStateDesignMover::clone() const
 {
-	return new ProteinInterfaceMultiStateDesignMover( *this );
+	return moves::MoverOP( new ProteinInterfaceMultiStateDesignMover( *this ) );
 }
 
 /// @details we build one target (bound) and two competitor (unbound and unfolded) states.
@@ -626,9 +626,9 @@ ProteinInterfaceMultiStateDesignMover::add_states(
 	}
 	if( unfolded_ )
 		unfold_complex( unfolded );
-	PackingStateOP bound_state 		= new PackingState( bound, input_is_positive_ );
-	PackingStateOP unbound_state 	= new PackingState( *unbound, false );
-	PackingStateOP unfolded_state = new PackingState( *unfolded, false );
+	PackingStateOP bound_state( new PackingState( bound, input_is_positive_ ) );
+	PackingStateOP unbound_state( new PackingState( *unbound, false ) );
+	PackingStateOP unfolded_state( new PackingState( *unfolded, false ) );
 
 	bound_state->create_packer_data( scorefxn_, ptask );
 /// Sharing data is only appropriate if the interaction graph is identical
@@ -660,7 +660,7 @@ ProteinInterfaceMultiStateDesignMover::add_states(
 			unfold_complex( state_poses_[ i ] );
 			unfold_complex( saved_state_poses_[ i ] );
 		}
-		PackingStateOP state = new PackingState( *state_poses_[ i ], state_positive_[ i ] );
+		PackingStateOP state( new PackingState( *state_poses_[ i ], state_positive_[ i ] ) );
 		PackerTaskOP state_ptask = task_factory()->create_task_and_apply_taskoperations( *state_poses_[ i ] );
 		if( state_task_factory_[ i ] )
 			state_task_factory_[ i ]->modify_task( pose, state_ptask );

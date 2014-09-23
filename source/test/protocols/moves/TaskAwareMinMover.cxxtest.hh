@@ -67,22 +67,22 @@ public:
 
 		//////////////////////TaskFactory(s)
 		using namespace core::pack::task;
-		TaskFactoryOP task_factory_all = new TaskFactory();
-		operation::PreventRepackingOP prop_all = new operation::PreventRepacking;
+		TaskFactoryOP task_factory_all( new TaskFactory() );
+		operation::PreventRepackingOP prop_all( new operation::PreventRepacking );
 		prop_all->include_residue(1); prop_all->include_residue(2);
 		task_factory_all->push_back( prop_all );
 
-		TaskFactoryOP task_factory_one = new TaskFactory();
-		operation::PreventRepackingOP prop_one = new operation::PreventRepacking;
+		TaskFactoryOP task_factory_one( new TaskFactory() );
+		operation::PreventRepackingOP prop_one( new operation::PreventRepacking );
 		prop_one->include_residue(1);
 		task_factory_one->push_back( prop_one );
 
-		TaskFactoryOP task_factory = new TaskFactory();
-		operation::PreventRepackingOP prop = new operation::PreventRepacking;
+		TaskFactoryOP task_factory( new TaskFactory() );
+		operation::PreventRepackingOP prop( new operation::PreventRepacking );
 		task_factory->push_back( prop );
 
 		///////////////////////starting MoveMaps
-		core::kinematics::MoveMapOP mm_start(new core::kinematics::MoveMap() );
+		core::kinematics::MoveMapOP mm_start( new core::kinematics::MoveMap() );
 		mm_start->set_bb(false); mm_start->set_jump(false); mm_start->set_chi(false);
 
 		/////////////////////////minimizer movers/////////////////////////////////////////
@@ -95,66 +95,66 @@ public:
 		ScoreFunctionOP sf(get_score_function());
 
 		//TA + minmover for all positions fixed
-		protocols::simple_moves::MinMoverOP min_mover_all = new protocols::simple_moves::MinMover(
+		protocols::simple_moves::MinMoverOP min_mover_all( new protocols::simple_moves::MinMover(
 																						mm_start,
 																						sf,
 																						"dfpmin_armijo", //faster and irrelevant for the purpose...
 																						0.01,
-																						true /*use_nblist*/ );
-		protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover_all = new protocols::simple_moves::TaskAwareMinMover(min_mover_all, task_factory_all);
+																						true /*use_nblist*/ ) );
+		protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover_all( new protocols::simple_moves::TaskAwareMinMover(min_mover_all, task_factory_all) );
 
 		//TA + minmover for one position fixed
-		protocols::simple_moves::MinMoverOP min_mover_one = new protocols::simple_moves::MinMover(
+		protocols::simple_moves::MinMoverOP min_mover_one( new protocols::simple_moves::MinMover(
 																						mm_start,
 																						sf,
 																						"dfpmin_armijo", //faster and irrelevant for the purpose...
 																						0.01,
-																						true /*use_nblist*/ );
-		protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover_one = new protocols::simple_moves::TaskAwareMinMover(min_mover_one, task_factory_one);
+																						true /*use_nblist*/ ) );
+		protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover_one( new protocols::simple_moves::TaskAwareMinMover(min_mover_one, task_factory_one) );
 
 		//TA + minmover for no positions fixed
-		protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover(
+		protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(
 																				mm_start,
 																				sf,
 																				"dfpmin_armijo", //faster and irrelevant for the purpose...
 																				0.01,
-																				true /*use_nblist*/ );
-		protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover = new protocols::simple_moves::TaskAwareMinMover(min_mover, task_factory);
+																				true /*use_nblist*/ ) );
+		protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover( new protocols::simple_moves::TaskAwareMinMover(min_mover, task_factory) );
 
 
 		//now the not-task-aware part
-		core::kinematics::MoveMapOP mm_all(new core::kinematics::MoveMap() );
+		core::kinematics::MoveMapOP mm_all( new core::kinematics::MoveMap() );
 		mm_all->set_bb(false); mm_all->set_jump(false); mm_all->set_chi(false);
 
-		core::kinematics::MoveMapOP mm_one(new core::kinematics::MoveMap() );
+		core::kinematics::MoveMapOP mm_one( new core::kinematics::MoveMap() );
 		mm_one->set_bb(false); mm_one->set_jump(false); mm_one->set_chi(1, false); mm_one->set_chi(2, true);
 
-		core::kinematics::MoveMapOP mm(new core::kinematics::MoveMap() );
+		core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap() );
 		mm->set_bb(false); mm->set_jump(false); mm->set_chi(true);
 
 		//MinMover for all positions fixed
-		protocols::simple_moves::MinMoverOP noTA_min_mover_all = new protocols::simple_moves::MinMover(
+		protocols::simple_moves::MinMoverOP noTA_min_mover_all( new protocols::simple_moves::MinMover(
 																								 mm_all,
 																								 sf,
 																								 "dfpmin_armijo", //faster and irrelevant for the purpose...
 																								 0.01,
-																								 true /*use_nblist*/ );
+																								 true /*use_nblist*/ ) );
 
 		//MinMover for one position fixed
-		protocols::simple_moves::MinMoverOP noTA_min_mover_one = new protocols::simple_moves::MinMover(
+		protocols::simple_moves::MinMoverOP noTA_min_mover_one( new protocols::simple_moves::MinMover(
 																								 mm_one,
 																								 sf,
 																								 "dfpmin_armijo", //faster and irrelevant for the purpose...
 																								 0.01,
-																								 true /*use_nblist*/ );
+																								 true /*use_nblist*/ ) );
 
 		//MinMover for no positions fixed
-		protocols::simple_moves::MinMoverOP noTA_min_mover = new protocols::simple_moves::MinMover(
+		protocols::simple_moves::MinMoverOP noTA_min_mover( new protocols::simple_moves::MinMover(
 																						 mm,
 																						 sf,
 																						 "dfpmin_armijo", //faster and irrelevant for the purpose...
 																						 0.01,
-																						 true /*use_nblist*/ );
+																						 true /*use_nblist*/ ) );
 
 		//now make comparisons via pose coordinates compare_atom_coordinates
 		core::Size const precision(6);

@@ -119,7 +119,7 @@ CovalentCompliance::create_singleton_instance()
 }
 
 CovalentCompliance::CovalentCompliance() :
-  covalent_distances_( NULL )
+  covalent_distances_( /* NULL */ )
 {}
 
 CovalentCompliance* CovalentCompliance::get_nonconst_instance() {
@@ -127,7 +127,7 @@ CovalentCompliance* CovalentCompliance::get_nonconst_instance() {
 }
 
 void CovalentCompliance::load_dist_table( std::string const& file ) {
-  covalent_distances_ = new FragsToAtomDist( file );
+  covalent_distances_ = FragsToAtomDistOP( new FragsToAtomDist( file ) );
 }
 
 bool CovalentCompliance::is_compliant( core::id::NamedAtomID const& atom1, core::id::NamedAtomID const& atom2, core::Real cutoff ) const {

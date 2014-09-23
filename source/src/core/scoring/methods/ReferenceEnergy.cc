@@ -39,9 +39,9 @@ ReferenceEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
 	if ( options.has_method_weights( ref ) ) {
-		return new ReferenceEnergy( options.method_weights( ref ) );
+		return methods::EnergyMethodOP( new ReferenceEnergy( options.method_weights( ref ) ) );
 	} else {
-		return new ReferenceEnergy;
+		return methods::EnergyMethodOP( new ReferenceEnergy );
 	}
 }
 
@@ -68,7 +68,7 @@ ReferenceEnergy::~ReferenceEnergy() {}
 EnergyMethodOP
 ReferenceEnergy::clone() const
 {
-	return new ReferenceEnergy( aa_weights_ );
+	return EnergyMethodOP( new ReferenceEnergy( aa_weights_ ) );
 }
 
 

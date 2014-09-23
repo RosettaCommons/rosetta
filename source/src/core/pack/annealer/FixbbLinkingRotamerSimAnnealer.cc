@@ -130,7 +130,7 @@ FixbbLinkingRotamerSimAnnealer::setup_rotamer_links(
 {
 	// setup the rotamer links
 	// for each moltenres
-	rotamer_links_ = new rotamer_set::RotamerLinks();
+	rotamer_links_ = RotamerLinksOP( new rotamer_set::RotamerLinks() );
 	rotamer_links_->resize( rotamer_sets()->nmoltenres() );
 
 	//std::cout << "nmoltenres " << rotamer_sets()->nmoltenres()<< std::endl;

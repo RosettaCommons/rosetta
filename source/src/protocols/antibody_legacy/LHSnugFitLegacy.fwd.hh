@@ -21,8 +21,8 @@ namespace protocols {
 namespace antibody {
 
 class LHSnugFitLegacy;
-typedef utility::pointer::owning_ptr< LHSnugFitLegacy > LHSnugFitLegacyOP;
-typedef utility::pointer::owning_ptr< LHSnugFitLegacy const > LHSnugFitLegacyCOP;
+typedef utility::pointer::shared_ptr< LHSnugFitLegacy > LHSnugFitLegacyOP;
+typedef utility::pointer::shared_ptr< LHSnugFitLegacy const > LHSnugFitLegacyCOP;
 
 }
 }

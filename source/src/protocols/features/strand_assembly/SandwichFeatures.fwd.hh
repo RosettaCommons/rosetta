@@ -22,8 +22,8 @@ namespace features{
 namespace strand_assembly {
 
 class SandwichFeatures;
-typedef utility::pointer::owning_ptr< SandwichFeatures > SandwichFeaturesOP;
-typedef utility::pointer::owning_ptr< SandwichFeatures const > SandwichFeaturesCOP;
+typedef utility::pointer::shared_ptr< SandwichFeatures > SandwichFeaturesOP;
+typedef utility::pointer::shared_ptr< SandwichFeatures const > SandwichFeaturesCOP;
 
 } //namespace strand_assembly
 }// namespace features

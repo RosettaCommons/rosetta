@@ -158,7 +158,7 @@ public:
     zinc1_res_ = pose.total_residue() + 1;
     zinc2_res_ = pose.total_residue() + 2;
 
-    protocols::metal_interface::MatchGrafterOP match_grafter = new protocols::metal_interface::MatchGrafter;
+    protocols::metal_interface::MatchGrafterOP match_grafter( new protocols::metal_interface::MatchGrafter );
     Pose first_graft_pose = match_grafter->graft( match1_, pose );
     //first_graft_pose.dump_pdb("first_graft_pose.pdb");
 
@@ -214,7 +214,7 @@ public:
     point zinc2 = homodimer.residue(zinc2_res_).atom(1).xyz();
     axis const ZnZn_axis = zinc1 - zinc2;
     Size last_residue = homodimer.total_residue(); //((zinc1_res_ - 1) * 2) + 2;
-    protocols::rigid::RollMoverOP ZnZn_axis_rollmover = new protocols::rigid::RollMover( zinc2_res_+1, last_residue, 180, 180, ZnZn_axis, zinc1 );
+    protocols::rigid::RollMoverOP ZnZn_axis_rollmover( new protocols::rigid::RollMover( zinc2_res_+1, last_residue, 180, 180, ZnZn_axis, zinc1 ) );
     ZnZn_axis_rollmover->apply( homodimer );
     //homodimer.dump_pdb("homodimer_ZnZnaxis_rollmove.pdb");
 
@@ -224,7 +224,7 @@ public:
     point ZnZn_midpoint = midpoint(zinc1, zinc2); //#include<numeric/xyzVector.hh>
     axis axis_normal_to_origZn1_origZn2 = cross_product(zinc1, zinc2);
     axis orthogonal_axis = cross_product(zinc1 - zinc2, axis_normal_to_origZn1_origZn2);
-    protocols::rigid::RollMoverOP orthogonal_axis_rollmover = new protocols::rigid::RollMover( zinc2_res_+1, last_residue, 180, 180, orthogonal_axis, ZnZn_midpoint );
+    protocols::rigid::RollMoverOP orthogonal_axis_rollmover( new protocols::rigid::RollMover( zinc2_res_+1, last_residue, 180, 180, orthogonal_axis, ZnZn_midpoint ) );
     orthogonal_axis_rollmover->apply( homodimer );
     //homodimer.dump_pdb("homodimer_orthaxis_rollmove.pdb");
   }
@@ -234,8 +234,8 @@ public:
   //setup
   virtual void
   setup_metalsites( Pose & homodimer ) {
-    protocols::metal_interface::ZincSiteFinderOP find_zinc_1 = new protocols::metal_interface::ZincSiteFinder( zinc1_res_ );
-    protocols::metal_interface::ZincSiteFinderOP find_zinc_2 = new protocols::metal_interface::ZincSiteFinder( zinc2_res_ );
+    protocols::metal_interface::ZincSiteFinderOP find_zinc_1( new protocols::metal_interface::ZincSiteFinder( zinc1_res_ ) );
+    protocols::metal_interface::ZincSiteFinderOP find_zinc_2( new protocols::metal_interface::ZincSiteFinder( zinc2_res_ ) );
 
     msr_1_ = find_zinc_1->find_zinc_site( homodimer );
     msr_2_ = find_zinc_2->find_zinc_site( homodimer );
@@ -259,7 +259,7 @@ public:
   setup_filter_clashes() {
     using namespace core::scoring;
     scorefunction_ = core::scoring::get_score_function();
-    interface_analyzer_ = new protocols::analysis::InterfaceAnalyzerMover( 3, false, scorefunction_ ); // zinc1 and zinc2 get jumps 1 and 2, chain B gets jump 3
+    interface_analyzer_ = protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover( 3, false, scorefunction_ ) ); // zinc1 and zinc2 get jumps 1 and 2, chain B gets jump 3
   }
 
 
@@ -291,7 +291,7 @@ public:
     Size last_residue = homodimer.total_residue(); //((zinc1_res_ - 1) * 2) + 2;
     Real grid_angle = basic::options::option[angle_rotation_increment].value();
 
-    protocols::rigid::RollMoverOP ZnZn_axis_rollmover = new protocols::rigid::RollMover( zinc2_res_+1, last_residue, grid_angle, grid_angle, ZnZn_axis, zinc1 );
+    protocols::rigid::RollMoverOP ZnZn_axis_rollmover( new protocols::rigid::RollMover( zinc2_res_+1, last_residue, grid_angle, grid_angle, ZnZn_axis, zinc1 ) );
 
     for( Size i(1); i <= 360.0/grid_angle; i++ ) {
 
@@ -434,7 +434,7 @@ private:
 
 };
 
-typedef utility::pointer::owning_ptr< zinc2_homodimer_setup > zinc2_homodimer_setupOP;
+typedef utility::pointer::shared_ptr< zinc2_homodimer_setup > zinc2_homodimer_setupOP;
 
 
 int
@@ -450,7 +450,7 @@ main( int argc, char* argv[] )
   option.add( tetrahedral_angle_sumsq_cutoff, "tetrahedral_angle_sumsq_cutoff" ).def(1800);
 
   devel::init(argc, argv);
-  protocols::jd2::JobDistributor::get_instance()->go( new zinc2_homodimer_setup() );
+  protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new zinc2_homodimer_setup() ) );
 
   TR << "************************d**o**n**e**************************************" << std::endl;
 

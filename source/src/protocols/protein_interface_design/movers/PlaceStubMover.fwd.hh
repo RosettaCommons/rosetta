@@ -23,8 +23,8 @@ namespace movers {
 
 class PlaceStubMover;
 
-typedef utility::pointer::owning_ptr< PlaceStubMover > PlaceStubMoverOP;
-typedef utility::pointer::owning_ptr< PlaceStubMover const > PlaceStubMoverCOP;
+typedef utility::pointer::shared_ptr< PlaceStubMover > PlaceStubMoverOP;
+typedef utility::pointer::shared_ptr< PlaceStubMover const > PlaceStubMoverCOP;
 
 }
 }

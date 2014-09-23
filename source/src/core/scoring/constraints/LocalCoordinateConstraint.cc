@@ -86,7 +86,7 @@ ConstraintOP LocalCoordinateConstraint::remapped_clone( pose::Pose const& src, p
 	id::AtomID id3( core::pose::named_atom_id_to_atom_id(atom3, dest ));
 	id::AtomID id4( core::pose::named_atom_id_to_atom_id(atom4, dest ));
 	if ( id1.valid() && id2.valid() && id3.valid() && id4.valid() ) {
-		return new LocalCoordinateConstraint( id1, id::StubID( id2, id3, id4) , xyz_target_, func_, score_type() );
+		return ConstraintOP( new LocalCoordinateConstraint( id1, id::StubID( id2, id3, id4) , xyz_target_, func_, score_type() ) );
 	} else {
 		return NULL;
 	}

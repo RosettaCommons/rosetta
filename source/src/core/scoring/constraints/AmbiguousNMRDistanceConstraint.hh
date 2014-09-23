@@ -72,17 +72,17 @@ public:
 
 	AmbiguousNMRDistanceConstraint() :
 		Constraint( atom_pair_constraint ),
-		func_( NULL )
+		func_( /* NULL */ )
 	{}
 
 	virtual ConstraintOP clone() const {
-		return new AmbiguousNMRDistanceConstraint( atoms1_, atoms2_, func_, score_type() );
+		return ConstraintOP( new AmbiguousNMRDistanceConstraint( atoms1_, atoms2_, func_, score_type() ) );
 	}
 
 	///
 	virtual
 	ConstraintOP clone( func::FuncOP func ) const {
-		return new AmbiguousNMRDistanceConstraint( atoms1_, atoms2_, func, score_type() );
+		return ConstraintOP( new AmbiguousNMRDistanceConstraint( atoms1_, atoms2_, func, score_type() ) );
 	}
 
 

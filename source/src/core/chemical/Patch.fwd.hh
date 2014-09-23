@@ -21,10 +21,10 @@ namespace core {
 namespace chemical {
 
 class PatchCase;
-typedef utility::pointer::owning_ptr< PatchCase > PatchCaseOP;
+typedef utility::pointer::shared_ptr< PatchCase > PatchCaseOP;
 
 class Patch;
-typedef utility::pointer::owning_ptr< Patch > PatchOP;
+typedef utility::pointer::shared_ptr< Patch > PatchOP;
 
 } // chemical
 } // core

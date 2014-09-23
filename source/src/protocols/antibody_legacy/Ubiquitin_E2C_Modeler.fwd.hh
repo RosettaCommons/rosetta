@@ -22,8 +22,8 @@ namespace protocols {
 namespace ub_e2c {
 
 class ubi_e2c_modeler;
-typedef utility::pointer::owning_ptr< ubi_e2c_modeler > ubi_e2c_modelerOP;
-typedef utility::pointer::owning_ptr< ubi_e2c_modeler const >
+typedef utility::pointer::shared_ptr< ubi_e2c_modeler > ubi_e2c_modelerOP;
+typedef utility::pointer::shared_ptr< ubi_e2c_modeler const >
 ubi_e2c_modeler_COP;
 
 } // namespace ub_e2c

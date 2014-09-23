@@ -47,8 +47,8 @@ namespace scoring {
 namespace membrane {
 	
 class FaMPSolvEnergy;
-typedef utility::pointer::owning_ptr< FaMPSolvEnergy > FaMPSolvEnergyOP;
-typedef utility::pointer::owning_ptr< FaMPSolvEnergy const > FaMPSolvEnergyCOP;
+typedef utility::pointer::shared_ptr< FaMPSolvEnergy > FaMPSolvEnergyOP;
+typedef utility::pointer::shared_ptr< FaMPSolvEnergy const > FaMPSolvEnergyCOP;
 	
 } // membrane
 } // scoring

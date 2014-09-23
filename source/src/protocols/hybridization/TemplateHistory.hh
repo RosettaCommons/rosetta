@@ -32,7 +32,7 @@ public:
 	TemplateHistory( core::pose::Pose &pose );
 
 	basic::datacache::CacheableDataOP clone() const {
-		return new TemplateHistory(*this);
+		return basic::datacache::CacheableDataOP( new TemplateHistory(*this) );
 	}
 
 	void setall( int template_id );

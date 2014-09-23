@@ -21,8 +21,8 @@ namespace resource_manager {
 namespace fallback_configuration {
 
 class NativeFallbackConfiguration;
-typedef utility::pointer::owning_ptr< NativeFallbackConfiguration > NativeFallbackConfigurationOP;
-typedef utility::pointer::owning_ptr< NativeFallbackConfiguration const > NativeFallbackConfigurationCOP;
+typedef utility::pointer::shared_ptr< NativeFallbackConfiguration > NativeFallbackConfigurationOP;
+typedef utility::pointer::shared_ptr< NativeFallbackConfiguration const > NativeFallbackConfigurationCOP;
 
 } // fallback_configuration
 } // resource_manager

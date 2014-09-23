@@ -22,8 +22,8 @@ namespace pose {
 namespace metrics {
 
 class PoseMetricCalculator;
-typedef utility::pointer::owning_ptr< PoseMetricCalculator > PoseMetricCalculatorOP;
-typedef utility::pointer::owning_ptr< PoseMetricCalculator const > PoseMetricCalculatorCOP;
+typedef utility::pointer::shared_ptr< PoseMetricCalculator > PoseMetricCalculatorOP;
+typedef utility::pointer::shared_ptr< PoseMetricCalculator const > PoseMetricCalculatorCOP;
 
 } // namespace metrics
 } // namespace pose

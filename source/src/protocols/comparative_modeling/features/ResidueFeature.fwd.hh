@@ -21,8 +21,8 @@ namespace comparative_modeling {
 namespace features {
 
 class ResidueFeature;
-typedef utility::pointer::owning_ptr< ResidueFeature > ResidueFeatureOP;
-typedef utility::pointer::owning_ptr< ResidueFeature const > ResidueFeatureCOP;
+typedef utility::pointer::shared_ptr< ResidueFeature > ResidueFeatureOP;
+typedef utility::pointer::shared_ptr< ResidueFeature const > ResidueFeatureCOP;
 
 } // feature
 } // comparative_modeling

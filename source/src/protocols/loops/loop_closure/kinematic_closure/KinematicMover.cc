@@ -122,7 +122,7 @@ KinematicMover::KinematicMover() :
 	do_rama_check_(false),
 	do_hardsphere_bump_check_(true),
 	do_sfxn_eval_every_iteration_(false),
-	sfxn_( NULL ),
+	sfxn_( /* NULL */ ),
 	last_move_succeeded_ (false),
 	temperature_(1.0),
 	bump_overlap_factor_( basic::options::option[ basic::options::OptionKeys::loops::kic_bump_overlap_factor ]() ), // 0.6; // 0.8; // 0.8^2, allows some atomic overlap
@@ -141,9 +141,9 @@ KinematicMover::~KinematicMover() {}
 KinematicPerturberOP KinematicMover::perturber() {
 	
 	if(!perturber_) {
-		perturber_ = new kinematic_closure::TorsionSamplingKinematicPerturber(
+		perturber_ = KinematicPerturberOP( new kinematic_closure::TorsionSamplingKinematicPerturber(
 			kinematic_closure::KinematicMoverCAP( utility::pointer::dynamic_pointer_cast< KinematicMover const >( get_self_ptr() ) ) 
-		);
+		) );
 	}
 	return perturber_;
 }
@@ -413,7 +413,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 		conformation::ResidueOP pre_nterm( conformation::ResidueFactory::create_residue(
 																						pose.residue(start_res_).type() ) );
 		// create a new conformation containing the n-term copy
-		conformation::ConformationOP extn_op = new conformation::Conformation();
+		conformation::ConformationOP extn_op( new conformation::Conformation() );
 		conformation::Conformation & extn = *extn_op;
 		extn.append_residue_by_bond( *nterm_copy );
 		// attached the pre_nterm residue to the nterm copy
@@ -445,7 +445,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 		conformation::ResidueOP post_cterm( conformation::ResidueFactory::create_residue(
 																						 pose.residue(end_res_).type() ) );
 		// create a new conformation containing the c-term copy
-		conformation::ConformationOP extn_op = new conformation::Conformation();
+		conformation::ConformationOP extn_op( new conformation::Conformation() );
 		conformation::Conformation & extn = *extn_op;
 		extn.append_residue_by_bond( *cterm_copy );
 		// attached the post_cterm residue to the cterm copy

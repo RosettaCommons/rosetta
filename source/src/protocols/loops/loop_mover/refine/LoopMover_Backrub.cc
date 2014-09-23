@@ -169,7 +169,7 @@ void LoopMover_Refine_Backrub::apply(
 
 	//clear segments and set the input pose
 	backrubmover.clear_segments();
-	pose::PoseOP input_poseOP ( new pose::Pose( pose ) );
+	pose::PoseOP input_poseOP( new pose::Pose( pose ) );
 	backrubmover.set_input_pose( input_poseOP );
 
 	// set backrub segments
@@ -205,7 +205,7 @@ void LoopMover_Refine_Backrub::apply(
 	// the following TaskFactory usage allows user-defined PackerTask creation on-demand
 	using namespace pack::task;
 	if ( task_factory == 0 ) {
-		task_factory = new TaskFactory;
+		task_factory = core::pack::task::TaskFactoryOP( new TaskFactory );
 		// TaskOperations replace the following kind of code:
 		// base_packer_task->initialize_from_command_line().or_include_current( true );
 		task_factory->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
@@ -287,7 +287,7 @@ basic::Tracer & LoopMover_Refine_Backrub::tr() const
 LoopMover_Refine_BackrubCreator::~LoopMover_Refine_BackrubCreator() {}
 
 moves::MoverOP LoopMover_Refine_BackrubCreator::create_mover() const {
-  return new LoopMover_Refine_Backrub();
+  return moves::MoverOP( new LoopMover_Refine_Backrub() );
 }
 
 std::string LoopMover_Refine_BackrubCreator::keyname() const {

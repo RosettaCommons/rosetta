@@ -30,8 +30,8 @@ namespace rna {
 
 class RNA_Mg_KnowledgeBasedPotential;
 
-typedef utility::pointer::owning_ptr< RNA_Mg_KnowledgeBasedPotential > RNA_Mg_KnowledgeBasedPotentialOP;
-typedef utility::pointer::owning_ptr< RNA_Mg_KnowledgeBasedPotential const > RNA_Mg_KnowledgeBasedPotentialCOP;
+typedef utility::pointer::shared_ptr< RNA_Mg_KnowledgeBasedPotential > RNA_Mg_KnowledgeBasedPotentialOP;
+typedef utility::pointer::shared_ptr< RNA_Mg_KnowledgeBasedPotential const > RNA_Mg_KnowledgeBasedPotentialCOP;
 
 } //rna
 } //scoring

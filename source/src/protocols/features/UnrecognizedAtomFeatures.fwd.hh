@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class UnrecognizedAtomFeatures;
-typedef utility::pointer::owning_ptr< UnrecognizedAtomFeatures > UnrecognizedAtomFeaturesOP;
-typedef utility::pointer::owning_ptr< UnrecognizedAtomFeatures const > UnrecognizedAtomFeaturesCOP;
+typedef utility::pointer::shared_ptr< UnrecognizedAtomFeatures > UnrecognizedAtomFeaturesOP;
+typedef utility::pointer::shared_ptr< UnrecognizedAtomFeatures const > UnrecognizedAtomFeaturesCOP;
 
 }//features
 }//protocols

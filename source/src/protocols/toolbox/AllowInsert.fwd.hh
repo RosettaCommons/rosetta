@@ -22,8 +22,8 @@ namespace toolbox{
 
 	class AllowInsert;
 
-	typedef utility::pointer::owning_ptr< AllowInsert >AllowInsertOP;
-	typedef utility::pointer::owning_ptr< AllowInsert const >AllowInsertCOP;
+	typedef utility::pointer::shared_ptr< AllowInsert >AllowInsertOP;
+	typedef utility::pointer::shared_ptr< AllowInsert const >AllowInsertCOP;
 
 }
 }

@@ -28,7 +28,7 @@ namespace silent {
 
 	class EnergyNames;
 
-	typedef utility::pointer::owning_ptr< EnergyNames > EnergyNamesOP;
+	typedef utility::pointer::shared_ptr< EnergyNames > EnergyNamesOP;
 } // namespace silent
 } // namespace io
 } // namespace core

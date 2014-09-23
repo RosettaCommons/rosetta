@@ -93,17 +93,17 @@ restrain_ligand_nbr_atom(
 		core::pose::Pose & pose
 ){
 	tether_ligand_tracer.Debug<< "stddev: " << stddev_Angstroms << std::endl;
-	core::scoring::func::FuncOP const restraint_function = new core::scoring::func::HarmonicFunc(0, stddev_Angstroms);
+	core::scoring::func::FuncOP const restraint_function( new core::scoring::func::HarmonicFunc(0, stddev_Angstroms) );
 
 	core::id::AtomID const fixed_pt(pose.atom_tree().root()->atom_id());
 
 	core::conformation::Residue const & residue = pose.residue(lig_id);
-	core::scoring::constraints::ConstraintCOP constraint = new core::scoring::constraints::CoordinateConstraint(
+	core::scoring::constraints::ConstraintCOP constraint( new core::scoring::constraints::CoordinateConstraint(
 			core::id::AtomID( residue.nbr_atom(), lig_id),
 			fixed_pt,
 			residue.nbr_atom_xyz(),
 			restraint_function
-	);
+	) );
 	constraint = pose.add_constraint(constraint);
 
 	return constraint;

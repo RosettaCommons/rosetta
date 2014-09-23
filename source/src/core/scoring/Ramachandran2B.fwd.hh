@@ -21,8 +21,8 @@ namespace scoring {
 
 class Ramachandran2B;
 
-typedef utility::pointer::owning_ptr< Ramachandran2B > Ramachandran2BOP;
-typedef utility::pointer::owning_ptr< Ramachandran2B const > Ramachandran2BCOP;
+typedef utility::pointer::shared_ptr< Ramachandran2B > Ramachandran2BOP;
+typedef utility::pointer::shared_ptr< Ramachandran2B const > Ramachandran2BCOP;
 
 }
 }

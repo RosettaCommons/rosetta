@@ -75,13 +75,13 @@ namespace simple_filters {
 
 /// @brief default constructor
 TaskAwareAlaScan::TaskAwareAlaScan():
-		task_factory_( NULL ),
-		ddG_task_factory_( NULL ),
+		task_factory_( /* NULL */ ),
+		ddG_task_factory_( /* NULL */ ),
 		use_custom_task_( false ),
 		jump_( 1 ),
 		sym_dof_name_( "" ),
 		repeats_( 3 ),
-		scorefxn_( NULL ),
+		scorefxn_( /* NULL */ ),
 		repack_( 1 ),
 		report_diffs_( 0 )
 {}
@@ -126,8 +126,8 @@ TaskAwareAlaScan::TaskAwareAlaScan( TaskAwareAlaScan const & rval ):
 /// @brief destructor
 TaskAwareAlaScan::~TaskAwareAlaScan() {}
 
-protocols::filters::FilterOP TaskAwareAlaScan::clone() const { return new TaskAwareAlaScan( *this ); }
-protocols::filters::FilterOP TaskAwareAlaScan::fresh_instance() const { return new TaskAwareAlaScan(); }
+protocols::filters::FilterOP TaskAwareAlaScan::clone() const { return protocols::filters::FilterOP( new TaskAwareAlaScan( *this ) ); }
+protocols::filters::FilterOP TaskAwareAlaScan::fresh_instance() const { return protocols::filters::FilterOP( new TaskAwareAlaScan() ); }
 
 // setters
 void TaskAwareAlaScan::task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
@@ -370,7 +370,7 @@ void
 TaskAwareAlaScan::parse_ddG_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const & data )
 {
 
-  core::pack::task::TaskFactoryOP new_task_factory = new core::pack::task::TaskFactory;
+  core::pack::task::TaskFactoryOP new_task_factory( new core::pack::task::TaskFactory );
   std::string const t_o_val( tag->getOption<std::string>("ddG_task_operations") );
   typedef utility::vector1< std::string > StringVec;
   StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
@@ -389,7 +389,7 @@ TaskAwareAlaScan::parse_ddG_task_operations( utility::tag::TagCOP tag, basic::da
 }
 
 protocols::filters::FilterOP
-TaskAwareAlaScanCreator::create_filter() const { return new TaskAwareAlaScan; }
+TaskAwareAlaScanCreator::create_filter() const { return protocols::filters::FilterOP( new TaskAwareAlaScan ); }
 
 std::string
 TaskAwareAlaScanCreator::keyname() const { return "TaskAwareAlaScan"; }

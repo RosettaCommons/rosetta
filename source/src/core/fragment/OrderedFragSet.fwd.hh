@@ -27,8 +27,8 @@ namespace fragment {
 // Forward
 class OrderedFragSet;
 
-typedef utility::pointer::owning_ptr< OrderedFragSet > OrderedFragSetOP;
-typedef utility::pointer::owning_ptr< OrderedFragSet const > OrderedFragSetCOP;
+typedef utility::pointer::shared_ptr< OrderedFragSet > OrderedFragSetOP;
+typedef utility::pointer::shared_ptr< OrderedFragSet const > OrderedFragSetCOP;
 
 } // namespace fragment
 } // namespace core

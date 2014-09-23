@@ -63,15 +63,15 @@ public:
 	virtual
 	ConstraintOP clone() const {
 		if ( member_constraints_.size() > 0 ) {
-			return new MultiConstraint( member_constraints_ );
+			return ConstraintOP( new MultiConstraint( member_constraints_ ) );
 		} else {
-			return new MultiConstraint();
+			return ConstraintOP( new MultiConstraint() );
 		}
 	}
 
 	virtual
 	MultiConstraintOP empty_clone() const {
-		return new MultiConstraint;
+		return MultiConstraintOP( new MultiConstraint );
 	}
 
 	/// @brief number of atoms involved in this MultiConstraint container

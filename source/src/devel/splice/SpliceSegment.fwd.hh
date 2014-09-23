@@ -21,8 +21,8 @@ namespace splice {
 
 //Forwards and OP typedefs
 class SpliceSegment;
-typedef utility::pointer::owning_ptr< SpliceSegment > SpliceSegmentOP;
-typedef utility::pointer::owning_ptr< SpliceSegment const > SpliceSegmentCOP;
+typedef utility::pointer::shared_ptr< SpliceSegment > SpliceSegmentOP;
+typedef utility::pointer::shared_ptr< SpliceSegment const > SpliceSegmentCOP;
 
 } //splice
 } //devel

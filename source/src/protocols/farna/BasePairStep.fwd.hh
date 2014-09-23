@@ -22,8 +22,8 @@ namespace protocols {
 namespace farna {
 	
 	class BasePairStep;
-	typedef utility::pointer::owning_ptr< BasePairStep > BasePairStepOP;
-	typedef utility::pointer::owning_ptr< BasePairStep const > BasePairStepCOP;
+	typedef utility::pointer::shared_ptr< BasePairStep > BasePairStepOP;
+	typedef utility::pointer::shared_ptr< BasePairStep const > BasePairStepCOP;
 	
 } //farna
 } //protocols

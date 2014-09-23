@@ -23,8 +23,8 @@ namespace movers{
 
 //Forwards and OP typedefs
 class SaveAndRetrieveSidechains;
-typedef utility::pointer::owning_ptr< SaveAndRetrieveSidechains > SaveAndRetrieveSidechainsOP;
-typedef utility::pointer::owning_ptr< SaveAndRetrieveSidechains const > SaveAndRetrieveSidechainsCOP;
+typedef utility::pointer::shared_ptr< SaveAndRetrieveSidechains > SaveAndRetrieveSidechainsOP;
+typedef utility::pointer::shared_ptr< SaveAndRetrieveSidechains const > SaveAndRetrieveSidechainsCOP;
 
 }//movers
 }//protein_interface_design

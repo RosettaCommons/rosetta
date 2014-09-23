@@ -24,8 +24,8 @@ namespace quota {
 
 class QuotaSelector;
 
-typedef utility::pointer::owning_ptr<QuotaSelector> QuotaSelectorOP;
-typedef utility::pointer::owning_ptr<QuotaSelector const> QuotaSelectorCOP;
+typedef utility::pointer::shared_ptr<QuotaSelector> QuotaSelectorOP;
+typedef utility::pointer::shared_ptr<QuotaSelector const> QuotaSelectorCOP;
 
 } // quota
 } // frag_picker

@@ -193,7 +193,7 @@ public:
   		//std::string hotspot_namei="hotspot_name"+ObjexxFCL::string_of(i);
   		std::string const hotspot_name= basic::options::option[ basic::options::OptionKeys::lowresdock_patchdock_hotspot_cst::hotspot_names]()[i];
 //			TR << "Reading and generate cst from: " << hotspot_name << std::endl;
-	    protocols::hotspot_hashing::HotspotStubSetOP hotspot_stub_setOP = new protocols::hotspot_hashing::HotspotStubSet;
+	    protocols::hotspot_hashing::HotspotStubSetOP hotspot_stub_setOP( new protocols::hotspot_hashing::HotspotStubSet );
 			hotspot_stub_setOP->read_data( hotspot_name );
 		  hotspot_stub_setOP->add_hotspot_constraints_to_wholepose( pose, chain_to_redesign, hotspot_stub_setOP, basic::options::option[ basic::options::OptionKeys::lowresdock_patchdock_hotspot_cst::hotspot_distcb_weight][i], worst_allowed_stub_bonus, apply_self_energies, bump_cutoff, apply_ambiguous_constraints );
 		  //hotspot_stub_setOP->clear();
@@ -208,7 +208,7 @@ public:
 	core::Size const rb_move_jump = 1; // use the first jump as the one between partners
 
   //just call a docking_highres_mover_
-  protocols::docking::DockingLowResOP docking_lowres_mover = new protocols::docking::DockingLowRes( scorefxn, rb_move_jump );
+  protocols::docking::DockingLowResOP docking_lowres_mover( new protocols::docking::DockingLowRes( scorefxn, rb_move_jump ) );
   //docking_lowres_mover->set_trans_magnitude(basic::options::option[ basic::options::OptionKeys::lowresdock_patchdock_hotspot_cst::dockinglowres_tran_mag]);
   //docking_lowres_mover->set_rot_magnitude(basic::options::option[ basic::options::OptionKeys::lowresdock_patchdock_hotspot_cst::dockinglowres_rot_mag]);
 
@@ -259,7 +259,7 @@ void* my_main( void* ) {
         using namespace protocols::moves;
 
         SequenceMoverOP seq( new SequenceMover() );
-        seq->add_mover( new run_score_patchdock_hotspot() );
+        seq->add_mover( MoverOP( new run_score_patchdock_hotspot() ) );
 
         if ( basic::options::option[ basic::options::OptionKeys::lowresdock_patchdock_hotspot_cst::hotspot_names ].user() && basic::options::option[ basic::options::OptionKeys::lowresdock_patchdock_hotspot_cst::hotspot_distcb_weight].user()  &&
              basic::options::option[ basic::options::OptionKeys::lowresdock_patchdock_hotspot_cst::hotspot_names ].size()==basic::options::option[ basic::options::OptionKeys::lowresdock_patchdock_hotspot_cst::hotspot_distcb_weight].size()) {

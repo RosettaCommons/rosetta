@@ -65,7 +65,7 @@ public:
 		local_pos_( local_pos )
 	{}
 
-	virtual DofClaimOP clone() const { return new BBClaim( *this ); }
+	virtual DofClaimOP clone() const { return DofClaimOP( new BBClaim( *this ) ); }
 
 // 	Size get_position() const {
 // 		return pos_;

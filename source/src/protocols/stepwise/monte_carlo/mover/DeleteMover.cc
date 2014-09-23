@@ -69,7 +69,7 @@ namespace mover {
   //////////////////////////////////////////////////////////////////////////
   //constructor!
 	DeleteMover::DeleteMover( ):
-		options_( new options::StepWiseMonteCarloOptions ),
+		options_( options::StepWiseMonteCarloOptionsCOP( new options::StepWiseMonteCarloOptions ) ),
 		minimize_after_delete_( true )
 	{}
 
@@ -110,7 +110,7 @@ namespace mover {
 		interface_res_ = full_model_info.sub_to_full( packer::figure_out_working_interface_res( pose, get_unique_connection_res( pose, residues_to_delete ) ) );
 
 		// do the slice.
-		PoseOP sliced_out_pose_op = new Pose;
+		PoseOP sliced_out_pose_op( new Pose );
 		slice_out_pose( pose, *sliced_out_pose_op, residues_to_delete );
 
 		// get rid of pieces that are single residues. no need to hold on to those.

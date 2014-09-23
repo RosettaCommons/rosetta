@@ -178,7 +178,7 @@ core::pose::PoseCOP get_current_jobs_starting_pose() {
 	core::pose::PoseCOP pose( NULL );
 	if ( jd && jd->job_outputter() && jd->job_inputter() && jd->current_job() ) {
 		JobOP job = jd->current_job();
-		core::pose::PoseOP aPose = new core::pose::Pose;
+		core::pose::PoseOP aPose( new core::pose::Pose );
 		jd->job_inputter()->pose_from_job( *aPose, job);
 		pose = aPose;
 	}
@@ -211,7 +211,7 @@ void set_native_in_mover( protocols::moves::Mover &mover ){
  	using namespace basic::options::OptionKeys;
 
 	if ( option[ in::file::native ].user() ) {
-		core::pose::PoseOP native_pose = new core::pose::Pose;
+		core::pose::PoseOP native_pose( new core::pose::Pose );
 		core::chemical::ResidueTypeSetCOP rsd_set;
  		if ( option[ in::file::fullatom ]() ) {
  			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );

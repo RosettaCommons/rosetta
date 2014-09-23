@@ -146,8 +146,7 @@ FlexPepDockingProtocol::~FlexPepDockingProtocol()
 // cloner
 protocols::moves::MoverOP FlexPepDockingProtocol::clone() const
 {
-	FlexPepDockingProtocolOP clonedObj =
-		new FlexPepDockingProtocol( rb_jump_, fullatom_, view_ );
+	FlexPepDockingProtocolOP clonedObj( new FlexPepDockingProtocol( rb_jump_, fullatom_, view_ ) );
 	clonedObj->scorefxn_ = scorefxn_->clone();
 	clonedObj->flags_ = flags_; // TODO: is this really needed?
 	// TODO: do we need anything else?
@@ -179,38 +178,36 @@ void FlexPepDockingProtocol::set_default()
 
 	// prepare unbound rotamer task-operation (reading from cmd-line -unboundrot)
 	// (NOTE: if -unboundrot is not active - nothing happens)
-	rotamer_set::UnboundRotamersOperationOP unboundrot_oper =
-		new rotamer_set::UnboundRotamersOperation();
+	rotamer_set::UnboundRotamersOperationOP unboundrot_oper( new rotamer_set::UnboundRotamersOperation() );
 	unboundrot_oper->initialize_from_command_line();
-	operation::AppendRotamerSetOP append_ubrot_taskoper =
-		new operation::AppendRotamerSet( unboundrot_oper );
+	operation::AppendRotamerSetOP append_ubrot_taskoper( new operation::AppendRotamerSet( unboundrot_oper ) );
 
 	// all-protein packer settings:
 	using core::pack::task::operation::TaskOperationCOP;
-	allprotein_tf_ = new task::TaskFactory;
-	allprotein_tf_->push_back( new operation::InitializeFromCommandline ); // -ex1,ex2,use_input_sc,etc.
-	allprotein_tf_->push_back( new operation::IncludeCurrent ); // TODO: since our input is a prepacked structure, I always included its side-chains (these are NOT necessarily the native side-chains). But, maybe this should be left to the user (Barak)
-	allprotein_tf_->push_back( new operation::RestrictToRepacking ); // prevents design
+	allprotein_tf_ = core::pack::task::TaskFactoryOP( new task::TaskFactory );
+	allprotein_tf_->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) ); // -ex1,ex2,use_input_sc,etc.
+	allprotein_tf_->push_back( TaskOperationCOP( new operation::IncludeCurrent ) ); // TODO: since our input is a prepacked structure, I always included its side-chains (these are NOT necessarily the native side-chains). But, maybe this should be left to the user (Barak)
+	allprotein_tf_->push_back( TaskOperationCOP( new operation::RestrictToRepacking ) ); // prevents design
 	allprotein_tf_->push_back(append_ubrot_taskoper); // add support to -unboundrot
 	if( option[OptionKeys::packing::resfile].user() )
-		allprotein_tf_->push_back( new operation::ReadResfile );
+		allprotein_tf_->push_back( TaskOperationCOP( new operation::ReadResfile ) );
 
 	// interface packer settings:
-	interface_tf_ = new task::TaskFactory(*allprotein_tf_); // base on settings for allprotein_tf_
+	interface_tf_ = core::pack::task::TaskFactoryOP( new task::TaskFactory(*allprotein_tf_) ); // base on settings for allprotein_tf_
 	if(! flags_.pep_fold_only)
-		interface_tf_->push_back( new protocols::toolbox::task_operations::RestrictToInterface( rb_jump_ ));
+		interface_tf_->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterface( rb_jump_ ) ));
 
-	interface_packer_ = new protocols::simple_moves::PackRotamersMover();
+	interface_packer_ = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover() );
 	interface_packer_->score_function( scorefxn_ );
 	interface_packer_->task_factory( interface_tf_ );
 
-	movemap_ = new core::kinematics::MoveMap();
-	movemap_minimizer_ = new core::kinematics::MoveMap();
+	movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
+	movemap_minimizer_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
 
 	// Loop modeling options
 	// NOTE: most LoopRelax options are initiated automatically from cmd-line
 	// TODO: should refine be set to default? we want to guarantee a full-atom output
-	loop_relax_mover_ = new protocols::comparative_modeling::LoopRelaxMover();
+	loop_relax_mover_ = protocols::comparative_modeling::LoopRelaxMoverOP( new protocols::comparative_modeling::LoopRelaxMover() );
 	loop_relax_mover_->fa_scorefxn(scorefxn_); // TODO: for now we do not touch the centroid part...
 	loop_relax_mover_->remodel("no"); // remodel only in centroid part, if at all? // TODO: rethink this
 	loop_relax_mover_->relax("no"); // We don't want structure relaxation by all means // TODO: inform user
@@ -342,7 +339,7 @@ FlexPepDockingProtocol::set_receptor_constraints( core::pose::Pose & pose )
 	using namespace core::scoring;
 
 	ConstraintSetOP cst_set( new ConstraintSet() );
-	core::scoring::func::HarmonicFuncOP spring = new core::scoring::func::HarmonicFunc( 0 /*mean*/, 1 /*std-dev*/);
+	core::scoring::func::HarmonicFuncOP spring( new core::scoring::func::HarmonicFunc( 0 /*mean*/, 1 /*std-dev*/) );
 	conformation::Conformation const & conformation( pose.conformation() );
 	for (int i=flags_.receptor_first_res();
 			 i <= flags_.receptor_last_res(); i++)
@@ -350,8 +347,8 @@ FlexPepDockingProtocol::set_receptor_constraints( core::pose::Pose & pose )
 			//			Residue const  & reside = pose.residue( i );
 			AtomID CAi ( pose.residue(i).atom_index( " CA " ), i );
 			cst_set->add_constraint
-				(  new CoordinateConstraint
-					 ( CAi, CAi, conformation.xyz( CAi ), spring )
+				(  ConstraintCOP( new CoordinateConstraint
+					 ( CAi, CAi, conformation.xyz( CAi ), spring ) )
 					 );
 		}
 	pose.constraint_set( cst_set );
@@ -465,20 +462,19 @@ FlexPepDockingProtocol::prepack_only(
 	for(core::Size resid = pack_end+1; resid <= pose.total_residue() ; resid++)
 		{task->nonconst_residue_task(resid).prevent_repacking();}
 	// support cmd-line option for unbound rotamers
-	pack::rotamer_set::UnboundRotamersOperationOP unboundrot_oper =
-		new pack::rotamer_set::UnboundRotamersOperation();
+	pack::rotamer_set::UnboundRotamersOperationOP unboundrot_oper( new pack::rotamer_set::UnboundRotamersOperation() );
 	unboundrot_oper->initialize_from_command_line();
 	task->append_rotamerset_operation( unboundrot_oper );
-	protocols::simple_moves::PackRotamersMoverOP prepack_protein = new protocols::simple_moves::PackRotamersMover( scorefxn_, task );
+	protocols::simple_moves::PackRotamersMoverOP prepack_protein( new protocols::simple_moves::PackRotamersMover( scorefxn_, task ) );
 
 	// set up min mover to pre-minimize the side chains + backbone // TODO: 1e-5 - is this a good threshold? optimize this
 	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(mm_protein, scorefxn_, "dfpmin_armijo_nonmonotone", 1e-5, true/*nblist*/, false/*deriv_check*/  ) );
 
 	//set up translate-by-axis movers
 	Real trans_magnitude = 1000;
-	rigid::RigidBodyTransMoverOP translate_away ( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
+	rigid::RigidBodyTransMoverOP translate_away( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
 	translate_away->step_size( trans_magnitude );
-	rigid::RigidBodyTransMoverOP translate_back ( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
+	rigid::RigidBodyTransMoverOP translate_back( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
 	translate_back->step_size( trans_magnitude );
 	translate_back->trans_axis().negate();
 
@@ -559,10 +555,10 @@ FlexPepDockingProtocol::random_rb_pert(
 		float new_score;
 		core::pose::Pose tmpPose;
 		// TODO: sepearate rotation and translation flags
-		rigid::RigidBodyPerturbMoverOP rb_mover = new rigid::RigidBodyPerturbMover(
+		rigid::RigidBodyPerturbMoverOP rb_mover( new rigid::RigidBodyPerturbMover(
 							 rb_jump_ /*jump_num*/,
 							 flags_.rb_rot_size /*rot*/,
-							 flags_.rb_trans_size /*trans*/ );
+							 flags_.rb_trans_size /*trans*/ ) );
 		do {
 				tmpPose = pose;
 				rb_mover->apply(tmpPose);
@@ -732,7 +728,7 @@ FlexPepDockingProtocol::torsions_monte_carlo_minimize(
 
   // create a monte_carlo object
   const float temperature ( 0.8 ); // TODO: tune param
-	moves::MonteCarloOP mc ( new moves::MonteCarlo (pose, *scorefxn_,temperature));
+	moves::MonteCarloOP mc( new moves::MonteCarlo (pose, *scorefxn_,temperature) );
   int n_accepted = 0; // diagnostic counter
   const float rt_energycut = 0.05; // TODO: tune param
 
@@ -803,7 +799,7 @@ FlexPepDockingProtocol::rigidbody_monte_carlo_minimize(
 
   // create a monte_carlo object
   const float temperature ( 0.8 ); // TODO: tune param
-	moves::MonteCarloOP mc ( new moves::MonteCarlo (pose, *scorefxn_,temperature));
+	moves::MonteCarloOP mc( new moves::MonteCarlo (pose, *scorefxn_,temperature) );
   int n_accepted = 0; // diagnostic counter
   const float rt_energycut = 0.05; // TODO: tune param
 
@@ -859,7 +855,7 @@ FlexPepDockingProtocol::peptide_random_loop_model(
 	// set up and model a random loop
 	Size first_res = 	flags_.peptide_first_res(); // TODO: make sure it is ok to use the N' residue
 	Size last_res = flags_.peptide_last_res() - 1; // TODO: add the C' terminal, Dan sais there might be a bug with C' followed by another chain
-	protocols::loops::LoopsOP loops = new protocols::loops::Loops();
+	protocols::loops::LoopsOP loops( new protocols::loops::Loops() );
 	loops->add_loop(first_res, last_res); // TODO: cut defaults to zero, is this a random cut?
 	for(Size i = first_res; i <= last_res ; i++)
 		runtime_assert( movemap_->get_bb(i) ); // verify loop is movable, this should have been always true for the peptide
@@ -897,11 +893,10 @@ FlexPepDockingProtocol::hires_fpdock_protocol(pose::Pose& pose)
 
 	// design operation settings:
 	if(flags_.design_peptide){
-		pack::task::TaskFactoryOP design_tf = new pack::task::TaskFactory;
+		pack::task::TaskFactoryOP design_tf( new pack::task::TaskFactory );
 		if(! flags_.pep_fold_only)
 			{
-				receptor_protector_oper_ =
-					new core::pack::task::operation::RestrictResidueToRepacking();
+				receptor_protector_oper_ = core::pack::task::operation::RestrictResidueToRepackingOP( new core::pack::task::operation::RestrictResidueToRepacking() );
 				receptor_protector_oper_->clear();
 				for(int i = flags_.receptor_first_res();
 						i <= flags_.receptor_last_res(); ++i){
@@ -1003,7 +998,7 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 	TR <<"apply" << std::endl;
 	// if no native provided, use pose as pseudo-native reference
 	if( get_native_pose().get() == NULL ){
-		set_native_pose( new pose::Pose(pose) ); // TODO: debug this - will it work for PoseCOP;
+		set_native_pose( PoseCOP( new pose::Pose(pose) ) ); // TODO: debug this - will it work for PoseCOP;
 		TR.Warning << "WARNING: No native supplied by used - using starting structure as reference for statistics" << std::endl;
 	}
 
@@ -1413,7 +1408,7 @@ void FlexPepDockingProtocol::parse_my_tag(
 			if ( ! data.has( "scorefxns", scorefxn_lowres_key ) ) {
 				throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_lowres_key + " not found in basic::datacache::DataMap.");
 			}
-			scorefxn_lowres_ = data.get< core::scoring::ScoreFunction* >( "scorefxns", scorefxn_lowres_key );
+			scorefxn_lowres_ = data.get_ptr<core::scoring::ScoreFunction>( "scorefxns", scorefxn_lowres_key );
 		}
 
 	flags_.lowres_abinitio = tag->getOption<bool>( "lowres_abinitio", flags_.lowres_abinitio ) ;
@@ -1476,7 +1471,7 @@ void FlexPepDockingProtocol::parse_my_tag(
  // read native pose: (TODO: is this set automatically in scripts?)
  //	protocols::jd2::set_native_in_mover(*fpDock);
  if ( tag->hasOption( "native" ) ) {
-		 core::pose::PoseOP tmp_native_pose = new core::pose::Pose;
+		 core::pose::PoseOP tmp_native_pose( new core::pose::Pose );
 		 core::chemical::ResidueTypeSetCOP rsd_set;
 		 bool centroid_input = tag->getOption<bool>( "centroid_input", false );
 		 if ( centroid_input) {
@@ -1491,7 +1486,7 @@ void FlexPepDockingProtocol::parse_my_tag(
 //////////////////////////FlexPepDockingProtocolCreator//////////////////////////////
 
 moves::MoverOP FlexPepDockingProtocolCreator::create_mover() const {
-	return new FlexPepDockingProtocol(1, true, true);
+	return moves::MoverOP( new FlexPepDockingProtocol(1, true, true) );
 }
 
 std::string FlexPepDockingProtocolCreator::keyname() const {

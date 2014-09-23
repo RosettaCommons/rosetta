@@ -69,7 +69,7 @@ ClashWithTargetFilter::~ClashWithTargetFilter() {}
 
 protocols::filters::FilterOP
 ClashWithTargetFilter::clone() const {
-	return new ClashWithTargetFilter( *this );
+	return protocols::filters::FilterOP( new ClashWithTargetFilter( *this ) );
 }
 
 static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.ClashWithTargetFilter" );
@@ -83,7 +83,7 @@ core::Size ClashWithTargetFilter::compute( core::pose::Pose const & pose ) const
 
   //pose_copy.dump_pdb("input.pdb");
   core::pose::PoseOP ref_pose= core::import_pose::pose_from_pdb( align_to_pdbname_, false ); 
-  protocols::simple_moves::SuperimposeMoverOP SuperimposeMoverOP=new protocols::simple_moves::SuperimposeMover(*ref_pose, ref_start_, ref_end_, pose_start_, pose_end_, true);
+  protocols::simple_moves::SuperimposeMoverOP SuperimposeMoverOP( new protocols::simple_moves::SuperimposeMover(*ref_pose, ref_start_, ref_end_, pose_start_, pose_end_, true) );
 	SuperimposeMoverOP->apply(pose_copy);
   //pose_copy.dump_pdb("inputAlign.pdb");
 
@@ -188,7 +188,7 @@ ClashWithTargetFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache:
 }
 
 protocols::filters::FilterOP
-ClashWithTargetFilterCreator::create_filter() const { return new ClashWithTargetFilter(); }
+ClashWithTargetFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ClashWithTargetFilter() ); }
 
 std::string
 ClashWithTargetFilterCreator::keyname() const { return "ClashWithTarget"; }

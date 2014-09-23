@@ -21,8 +21,8 @@ namespace basic {
 namespace resource_manager {
 
 class LazyResourceManager;
-typedef utility::pointer::owning_ptr< LazyResourceManager > LazyResourceManagerOP;
-typedef utility::pointer::owning_ptr< LazyResourceManager const > LazyResourceManagerCOP;
+typedef utility::pointer::shared_ptr< LazyResourceManager > LazyResourceManagerOP;
+typedef utility::pointer::shared_ptr< LazyResourceManager const > LazyResourceManagerCOP;
 
 } //namespace
 } //namespace

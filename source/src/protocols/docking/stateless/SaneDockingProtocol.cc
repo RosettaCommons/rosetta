@@ -29,11 +29,11 @@ void
 SaneDockingProtocol::apply( core::pose::Pose & pose ) {
 	using namespace core::pose;
 	if ( !get_input_pose() ) {
-		PoseCOP input_pose_op = new core::pose::Pose(pose);
+		PoseCOP input_pose_op( new core::pose::Pose(pose) );
 		set_input_pose (input_pose_op);
 	}
 	if ( !get_native_pose() ) {
-		PoseCOP native_pose_op = new core::pose::Pose(pose);
+		PoseCOP native_pose_op( new core::pose::Pose(pose) );
 		set_native_pose(native_pose_op);
 	}
 	DockingProtocol::apply(pose);

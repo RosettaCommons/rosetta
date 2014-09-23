@@ -187,7 +187,7 @@ InvrotTreeNode::initialize_from_enzcst_io_and_invrots(
 		core::conformation::Residue const & this_target( **(pair_it->first.begin()) );
 		bool all_initialization_successful(true);
 		for( Size j = 1; j <= dependent_mcfi.size(); ++j ){
-			InvrotTreeNodeOP child = new InvrotTreeNode( get_self_weak_ptr() );
+			InvrotTreeNodeOP child( new InvrotTreeNode( get_self_weak_ptr() ) );
 			pair_it->second.push_back( child );
 			if( ! child->initialize_from_enzcst_io( this_target, enzcst_io, dependent_mcfi[j], pose ) ){
 				pair_it = invrots_and_next_nodes_.erase( pair_it ); //note: erasing from vector, not ideal, but the vectors should usually be fairly small and the initialization shenanigans are only called once
@@ -244,7 +244,7 @@ InvrotTreeNode::generate_constraints(
 
 		//1c.
 		if( constraints_this_invrot_node_pair.size() == 1 ) constraints_this_node.push_back( constraints_this_invrot_node_pair[1] );
-		else if( constraints_this_invrot_node_pair.size() > 1 ) constraints_this_node.push_back( new core::scoring::constraints::MultiConstraint( constraints_this_invrot_node_pair ) );
+		else if( constraints_this_invrot_node_pair.size() > 1 ) constraints_this_node.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new core::scoring::constraints::MultiConstraint( constraints_this_invrot_node_pair ) ) );
 
 	}//loop over node_pointer_pairs_
 
@@ -252,7 +252,7 @@ InvrotTreeNode::generate_constraints(
 
 	if( constraints_this_node.size() == 1 ) return constraints_this_node[1];
 
-	return new core::scoring::constraints::AmbiguousConstraint( constraints_this_node );
+	return core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AmbiguousConstraint( constraints_this_node ) );
 }
 
 

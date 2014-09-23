@@ -191,7 +191,7 @@ HybridizeSetupMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 HybridizeSetupMoverCreator::create_mover() const {
-	return new HybridizeSetupMover;
+	return protocols::moves::MoverOP( new HybridizeSetupMover );
 }
 
 std::string
@@ -203,7 +203,7 @@ HybridizeSetupMoverCreator::mover_name() {
 // mover
 HybridizeSetupMover::HybridizeSetupMover()
 {
-	hybridize_setup_ = new protocols::hybridization::HybridizeSetup();
+	hybridize_setup_ = HybridizeSetupOP( new protocols::hybridization::HybridizeSetup() );
 }
 
 // sets default options
@@ -213,7 +213,7 @@ HybridizeSetup::check_and_create_fragments( core::pose::Pose const & pose ) {
 	if (fragments_big_.size() > 0 && fragments_small_.size() > 0) return;
 
 	if (!fragments_big_.size()) {
-		core::fragment::FragSetOP frags = new core::fragment::ConstantLengthFragSet( 9 );
+		core::fragment::FragSetOP frags( new core::fragment::ConstantLengthFragSet( 9 ) );
 
 		// number of residues
 		core::Size nres_tgt = pose.total_residue();
@@ -262,7 +262,7 @@ HybridizeSetup::check_and_create_fragments( core::pose::Pose const & pose ) {
 
 		// pick from vall based on template SS + target sequence
 		for ( core::Size j=1; j<=nres_tgt-8; ++j ) {
-			core::fragment::FrameOP frame = new core::fragment::Frame( j, 9 );
+			core::fragment::FrameOP frame( new core::fragment::Frame( j, 9 ) );
 			frame->add_fragment(
 				core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa( tgt_ss.substr( j-1, 9 ), tgt_seq.substr( j-1, 9 ), 25, true, core::fragment::IndependentBBTorsionSRFD() ) );
 			frags->add( frame );
@@ -270,7 +270,7 @@ HybridizeSetup::check_and_create_fragments( core::pose::Pose const & pose ) {
 		fragments_big_.push_back( frags );
 	}
 	if (!fragments_small_.size()) {
-		core::fragment::FragSetOP frags = new core::fragment::ConstantLengthFragSet( 3 );
+		core::fragment::FragSetOP frags( new core::fragment::ConstantLengthFragSet( 3 ) );
 
 		// make them from big fragments
 		core::fragment::chop_fragments( *fragments_big_[1], *frags );
@@ -287,7 +287,7 @@ void HybridizeSetup::add_template(
 	utility::vector1<core::Size> cst_reses)
 {
 	core::chemical::ResidueTypeSetCOP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
-	core::pose::PoseOP template_pose = new core::pose::Pose();
+	core::pose::PoseOP template_pose( new core::pose::Pose() );
 	core::import_pose::pose_from_pdb( *template_pose, *residue_set, template_fn );
 
 	add_template( template_pose, cst_fn, symm_file, weight, domain_assembly_weight, cst_reses, template_fn );
@@ -309,7 +309,7 @@ void HybridizeSetup::add_template(
 
 	// if pdbinfo doesn't exist (not read from pdb file)
 	if (!template_pose->pdb_info()) {
-		core::pose::PDBInfoOP new_pdb_info = new core::pose::PDBInfo( *template_pose );
+		core::pose::PDBInfoOP new_pdb_info( new core::pose::PDBInfo( *template_pose ) );
 
 		utility::vector1< int > pdb_numbering;
 		utility::vector1< char > pdb_chains;
@@ -475,7 +475,7 @@ void HybridizeSetupMover::apply( core::pose::Pose & pose )
 
     // initialize template history
     // >> keep this after symmetry
-    TemplateHistoryOP history = new TemplateHistory(pose);
+    TemplateHistoryOP history( new TemplateHistory(pose) );
     history->setall( hybridize_setup_->initial_template_index() );
     pose.data().set( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY, history );
 
@@ -664,11 +664,11 @@ HybridizeSetup::run_domain_assembly(){
 	domain_assembly.run();
 }
 
-HybridizeSetupOP HybridizeSetup::clone() const { return new HybridizeSetup( *this ); }
+HybridizeSetupOP HybridizeSetup::clone() const { return HybridizeSetupOP( new HybridizeSetup( *this ) ); }
 
 
-protocols::moves::MoverOP HybridizeSetupMover::clone() const { return new HybridizeSetupMover( *this ); }
-protocols::moves::MoverOP HybridizeSetupMover::fresh_instance() const { return new HybridizeSetupMover; }
+protocols::moves::MoverOP HybridizeSetupMover::clone() const { return protocols::moves::MoverOP( new HybridizeSetupMover( *this ) ); }
+protocols::moves::MoverOP HybridizeSetupMover::fresh_instance() const { return protocols::moves::MoverOP( new HybridizeSetupMover ); }
 
 std::string
 HybridizeSetupMover::get_name() const {

@@ -75,7 +75,7 @@ void ChiWellRmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator 
 
 		core::pose::PoseOP native_pose = NULL;
 		if ( option[ in::file::native ].user() ) {
-			native_pose = new core::pose::Pose;
+			native_pose = core::pose::PoseOP( new core::pose::Pose );
 			core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() );
 		}
 
@@ -129,7 +129,7 @@ void ChiWellRmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator 
 			}
 			if ( fname == "NATIVE" ) target_pose = native_pose;
 			else if ( fname != "IRMS" ) {
-				target_pose = new pose::Pose;
+				target_pose = core::pose::PoseOP( new pose::Pose );
 				core::import_pose::pose_from_pdb( *target_pose, fname );
 			}
 
@@ -191,9 +191,9 @@ void ChiWellRmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator 
 				selection = inverted_selection;
 			}
 			if ( selection_file != "FULL" ) {
-				eval.add_evaluation( new simple_filters::ChiWellRmsdEvaluator( target_pose, nchi_max, sasa_max, selection, column) );
+				eval.add_evaluation( PoseEvaluatorOP( new simple_filters::ChiWellRmsdEvaluator( target_pose, nchi_max, sasa_max, selection, column) ) );
 			}	else {
-				eval.add_evaluation( new simple_filters::ChiWellRmsdEvaluator( target_pose, nchi_max, sasa_max, column ) );
+				eval.add_evaluation( PoseEvaluatorOP( new simple_filters::ChiWellRmsdEvaluator( target_pose, nchi_max, sasa_max, column ) ) );
 			}
 		} // iterate over tripletts in option -rmsd
 	} // option -rmsd

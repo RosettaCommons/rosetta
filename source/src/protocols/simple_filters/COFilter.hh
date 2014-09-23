@@ -46,10 +46,10 @@ public:
 	virtual ~COFilter() {}
 
 	filters::FilterOP clone() const {
-		return new COFilter( *this ); }
+		return filters::FilterOP( new COFilter( *this ) ); }
 
 	filters::FilterOP fresh_instance() const{
-		return new COFilter(); }
+		return filters::FilterOP( new COFilter() ); }
 
 
 	/// @brief Returns true if the given pose passes the filter, false otherwise.

@@ -102,7 +102,7 @@ FragmentLookupOP StructureStoreManager::load_fragment_lookup(std::string lookup_
 		target_store = backend.get_fragment_store(lookup_name);
 	}
 
-	FragmentLookupOP lookup = new FragmentLookup(target_store);
+	FragmentLookupOP lookup( new FragmentLookup(target_store) );
 	return lookup;
 }
 

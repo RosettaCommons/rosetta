@@ -23,7 +23,7 @@ namespace methods {
 
 class YHHPlanarityEnergy;
 
-typedef utility::pointer::owning_ptr< YHHPlanarityEnergy > YHHPlanarityEnergyOP;
+typedef utility::pointer::shared_ptr< YHHPlanarityEnergy > YHHPlanarityEnergyOP;
 
 } // methods
 } // scoring

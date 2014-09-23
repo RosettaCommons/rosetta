@@ -41,7 +41,7 @@ namespace task_operations {
 core::pack::task::operation::TaskOperationOP
 CrystalContactsOperationCreator::create_task_operation() const
 {
-	return new CrystalContactsOperation;
+	return core::pack::task::operation::TaskOperationOP( new CrystalContactsOperation );
 }
 
 
@@ -59,7 +59,7 @@ CrystalContactsOperation::~CrystalContactsOperation() {}
 
 core::pack::task::operation::TaskOperationOP CrystalContactsOperation::clone() const
 {
-	return new CrystalContactsOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new CrystalContactsOperation( *this ) );
 }
 
 void

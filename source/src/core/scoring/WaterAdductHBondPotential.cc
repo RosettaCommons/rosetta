@@ -58,7 +58,7 @@ namespace core {
 namespace scoring {
 
 WaterAdductHBondPotential::WaterAdductHBondPotential() :
-	hbondoptions_( new hbonds::HBondOptions ),
+	hbondoptions_( scoring::hbonds::HBondOptionsOP( new hbonds::HBondOptions ) ),
 	hb_database_( scoring::hbonds::HBondDatabase::get_database())
 {
 	hbondoptions_->use_sp2_chi_penalty( false ); // do not use the chi penalty -- override command line

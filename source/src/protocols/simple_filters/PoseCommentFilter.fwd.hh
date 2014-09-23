@@ -20,8 +20,8 @@ namespace simple_filters {
 
 class PoseComment;
 
-typedef utility::pointer::owning_ptr< PoseComment > PoseCommentOP;
-typedef utility::pointer::owning_ptr< PoseComment const > PoseCommentCOP;
+typedef utility::pointer::shared_ptr< PoseComment > PoseCommentOP;
+typedef utility::pointer::shared_ptr< PoseComment const > PoseCommentCOP;
 
 }
 }

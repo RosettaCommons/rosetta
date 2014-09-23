@@ -51,7 +51,7 @@ AddOrRemoveMatchCstsCreator::keyname() const
 
 protocols::moves::MoverOP
 AddOrRemoveMatchCstsCreator::create_mover() const {
-	return new AddOrRemoveMatchCsts;
+	return protocols::moves::MoverOP( new AddOrRemoveMatchCsts );
 }
 
 std::string
@@ -69,7 +69,7 @@ AddOrRemoveMatchCsts::AddOrRemoveMatchCsts()
 	if( basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ){
 		option_cstfile_ = basic::options::option[basic::options::OptionKeys::enzdes::cstfile].value();
 	}
-	sfxn_ = new core::scoring::ScoreFunction();
+	sfxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
 
 	//this might change in the future to a scorefunction that's fully definable
 	//through a weights file, but atm it's probably safe to simply set the constraint
@@ -94,13 +94,13 @@ AddOrRemoveMatchCsts::~AddOrRemoveMatchCsts(){}
 protocols::moves::MoverOP
 AddOrRemoveMatchCsts::clone() const
 {
-	return new AddOrRemoveMatchCsts( *this );
+	return protocols::moves::MoverOP( new AddOrRemoveMatchCsts( *this ) );
 }
 
 protocols::moves::MoverOP
 AddOrRemoveMatchCsts::fresh_instance() const
 {
-	return new AddOrRemoveMatchCsts();
+	return protocols::moves::MoverOP( new AddOrRemoveMatchCsts() );
 }
 
 void
@@ -211,7 +211,7 @@ AddOrRemoveMatchCsts::get_EnzConstraintIO_for_cstfile(
 	std::map< std::string, toolbox::match_enzdes_util::EnzConstraintIOOP >::iterator cstio_it = cstfile_map_.find( cstfile );
 
 	if( cstio_it == cstfile_map_.end() ){
-		toolbox::match_enzdes_util::EnzConstraintIOOP new_cst_io = new toolbox::match_enzdes_util::EnzConstraintIO( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
+		toolbox::match_enzdes_util::EnzConstraintIOOP new_cst_io( new toolbox::match_enzdes_util::EnzConstraintIO( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) ) );
 		new_cst_io->read_enzyme_cstfile( cstfile );
 		cstfile_map_.insert( std::pair< std::string, toolbox::match_enzdes_util::EnzConstraintIOOP >( cstfile, new_cst_io ) );
 		return new_cst_io;

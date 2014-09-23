@@ -70,7 +70,7 @@ static thread_local basic::Tracer tr( "protocols.jumping" );
 
 FragSetOP
 BaseJumpSetup::generate_jump_frags( JumpSample const& jumps, kinematics::MoveMap const& mm ) const {
-	OrderedFragSetOP frags = new OrderedFragSet;
+	OrderedFragSetOP frags( new OrderedFragSet );
 	FrameList jump_geometries;
 	jumps.generate_jump_frags( *jumping::StandardPairingLibrary::get_instance(),
 		mm,

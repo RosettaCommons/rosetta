@@ -28,19 +28,19 @@ class SetSecStructEnergies;
 
 
 /// @brief SetSecStructEnergies owning pointer
-typedef utility::pointer::owning_ptr< SetSecStructEnergies > SetSecStructEnergies_OP;
+typedef utility::pointer::shared_ptr< SetSecStructEnergies > SetSecStructEnergies_OP;
 
 
 /// @brief SetSecStructEnergies const owning pointer
-typedef utility::pointer::owning_ptr< SetSecStructEnergies const > SetSecStructEnergies_COP;
+typedef utility::pointer::shared_ptr< SetSecStructEnergies const > SetSecStructEnergies_COP;
 
 
 /// @brief SetSecStructEnergies access pointer
-typedef utility::pointer::access_ptr< SetSecStructEnergies > SetSecStructEnergies_AP;
+typedef utility::pointer::weak_ptr< SetSecStructEnergies > SetSecStructEnergies_AP;
 
 
 /// @brief SetSecStructEnergies const access pointer
-typedef utility::pointer::access_ptr< SetSecStructEnergies const > SetSecStructEnergies_CAP;
+typedef utility::pointer::weak_ptr< SetSecStructEnergies const > SetSecStructEnergies_CAP;
 
 } // namespace potentials
 } // namespace fldsgn

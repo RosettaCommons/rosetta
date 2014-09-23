@@ -42,7 +42,7 @@ public:
 
 	SasaCalculatorLegacy( core::Real probe_r = basic::options::option[basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius] ) : probe_radius_(probe_r) {}
 
-	core::pose::metrics::PoseMetricCalculatorOP clone() const { return new core::pose::metrics::simple_calculators::SasaCalculatorLegacy(); };
+	core::pose::metrics::PoseMetricCalculatorOP clone() const { return core::pose::metrics::PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy() ); };
 
 protected:
 	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;

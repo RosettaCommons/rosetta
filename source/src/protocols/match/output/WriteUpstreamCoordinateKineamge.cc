@@ -226,7 +226,7 @@ WriteUpstreamCoordinateKinemage::~WriteUpstreamCoordinateKinemage()
 downstream::DownstreamAlgorithmOP
 WriteUpstreamCoordinateKinemage::clone() const
 {
-	return new WriteUpstreamCoordinateKinemage;
+	return downstream::DownstreamAlgorithmOP( new WriteUpstreamCoordinateKinemage );
 }
 
 /// @brief To be invoked by derived classes, this function completes the building of

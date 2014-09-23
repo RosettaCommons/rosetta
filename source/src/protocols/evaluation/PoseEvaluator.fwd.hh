@@ -32,12 +32,12 @@ typedef MetaPoseEvaluator PoseEvaluators;
 template <class T>
 class SingleValuePoseEvaluator;
 
-typedef utility::pointer::owning_ptr< PoseEvaluator > PoseEvaluatorOP;
-typedef utility::pointer::owning_ptr< PoseEvaluator const > PoseEvaluatorCOP;
+typedef utility::pointer::shared_ptr< PoseEvaluator > PoseEvaluatorOP;
+typedef utility::pointer::shared_ptr< PoseEvaluator const > PoseEvaluatorCOP;
 
-typedef utility::pointer::owning_ptr< MetaPoseEvaluator > MetaPoseEvaluatorOP;
+typedef utility::pointer::shared_ptr< MetaPoseEvaluator > MetaPoseEvaluatorOP;
 typedef MetaPoseEvaluatorOP PoseEvaluatorsOP;
-typedef utility::pointer::owning_ptr< MetaPoseEvaluator const > MetaPoseEvaluatorCOP;
+typedef utility::pointer::shared_ptr< MetaPoseEvaluator const > MetaPoseEvaluatorCOP;
 typedef MetaPoseEvaluatorCOP PoseEvaluatorsCOP;
 
 }

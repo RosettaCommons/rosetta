@@ -22,8 +22,8 @@ namespace protocols {
 namespace domain_assembly {
 
 class CombineChainsMover;
-typedef utility::pointer::owning_ptr< CombineChainsMover > CombineChainsMoverOP;
-typedef utility::pointer::owning_ptr< CombineChainsMover const > CombineChainsMoverCOP;
+typedef utility::pointer::shared_ptr< CombineChainsMover > CombineChainsMoverOP;
+typedef utility::pointer::shared_ptr< CombineChainsMover const > CombineChainsMoverCOP;
 
 
 }//namespace domain_assembly

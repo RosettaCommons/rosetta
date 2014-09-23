@@ -25,8 +25,8 @@ namespace schema_generator{
 class Column;
 typedef utility::vector1< Column > Columns;
 
-typedef utility::pointer::owning_ptr< Column > ColumnOP;
-typedef utility::pointer::owning_ptr< Column const > ColumnCOP;
+typedef utility::pointer::shared_ptr< Column > ColumnOP;
+typedef utility::pointer::shared_ptr< Column const > ColumnCOP;
 
 } //namesapce
 } //namespace

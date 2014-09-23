@@ -50,7 +50,7 @@ main( int argc, char * argv [] )
 		devel::init(argc, argv);
 
 
-		AntibodyModelerProtocolOP ab_m_h3 = new AntibodyModelerProtocol();
+		AntibodyModelerProtocolOP ab_m_h3( new AntibodyModelerProtocol() );
 		TR<<*ab_m_h3<<std::endl;
 		//    exit(-1);
 

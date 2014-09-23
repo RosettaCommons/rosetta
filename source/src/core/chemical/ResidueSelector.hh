@@ -362,7 +362,7 @@ public:
 	ResidueSelector & // allow chaining
 	set_name1( char const n )
 	{
-		selectors_.push_back( new Selector_NAME1( n, true ) );
+		selectors_.push_back( utility::pointer::shared_ptr<class core::chemical::ResidueSelectorSingle>( new Selector_NAME1( n, true ) ) );
 		return *this;
 	}
 
@@ -371,7 +371,7 @@ public:
 	set_aa( AA const aa )
 	{
 		utility::vector1< AA > aas( 1, aa );
-		selectors_.push_back( new Selector_AA( aas, true ) );
+		selectors_.push_back( utility::pointer::shared_ptr<class core::chemical::ResidueSelectorSingle>( new Selector_AA( aas, true ) ) );
 		return *this;
 	}
 
@@ -380,7 +380,7 @@ public:
 	set_property( std::string const property )
 	{
 		utility::vector1< std::string > properties( 1, property );
-		selectors_.push_back( new Selector_PROPERTY( properties, true ) );
+		selectors_.push_back( utility::pointer::shared_ptr<class core::chemical::ResidueSelectorSingle>( new Selector_PROPERTY( properties, true ) ) );
 		return *this;
 	}
 
@@ -388,7 +388,7 @@ public:
 	ResidueSelector & // allow chaining
 	exclude_variants()
 	{
-		selectors_.push_back( new Selector_NO_VARIANTS( true ) );
+		selectors_.push_back( utility::pointer::shared_ptr<class core::chemical::ResidueSelectorSingle>( new Selector_NO_VARIANTS( true ) ) );
 		return *this;
 	}
 
@@ -396,7 +396,7 @@ public:
 	ResidueSelector & // allow chaining
 	match_variants( ResidueType const & rsd_type_to_match )
 	{
-		selectors_.push_back( new Selector_MATCH_VARIANTS( rsd_type_to_match.properties().get_list_of_variants(), true ) );
+		selectors_.push_back( utility::pointer::shared_ptr<class core::chemical::ResidueSelectorSingle>( new Selector_MATCH_VARIANTS( rsd_type_to_match.properties().get_list_of_variants(), true ) ) );
 		return *this;
 	}
 

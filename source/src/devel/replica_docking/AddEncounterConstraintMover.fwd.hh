@@ -8,8 +8,8 @@ namespace devel{
 namespace replica_docking{
 
 class AddEncounterConstraintMover;
-typedef utility::pointer::owning_ptr< AddEncounterConstraintMover > AddEncounterConstraintMoverOP;
-typedef utility::pointer::owning_ptr< AddEncounterConstraintMover const > AddEncounterConstraintMoverCOP;
+typedef utility::pointer::shared_ptr< AddEncounterConstraintMover > AddEncounterConstraintMoverOP;
+typedef utility::pointer::shared_ptr< AddEncounterConstraintMover const > AddEncounterConstraintMoverCOP;
 
 }
 }

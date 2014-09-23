@@ -22,64 +22,64 @@ namespace rigid{
 
 //Forwards and OP typedefs
 class RigidBodyMover;
-typedef utility::pointer::owning_ptr< RigidBodyMover > RigidBodyMoverOP;
-typedef utility::pointer::owning_ptr< RigidBodyMover const > RigidBodyMoverCOP;
+typedef utility::pointer::shared_ptr< RigidBodyMover > RigidBodyMoverOP;
+typedef utility::pointer::shared_ptr< RigidBodyMover const > RigidBodyMoverCOP;
 
 class RigidBodyPerturbMover;
-typedef utility::pointer::owning_ptr< RigidBodyPerturbMover > RigidBodyPerturbMoverOP;
-typedef utility::pointer::owning_ptr< RigidBodyPerturbMover const > RigidBodyPerturbMoverCOP;
+typedef utility::pointer::shared_ptr< RigidBodyPerturbMover > RigidBodyPerturbMoverOP;
+typedef utility::pointer::shared_ptr< RigidBodyPerturbMover const > RigidBodyPerturbMoverCOP;
 
 class RigidBodyPerturbRandomJumpMover;
-typedef utility::pointer::owning_ptr< RigidBodyPerturbRandomJumpMover > RigidBodyPerturbRandomJumpMoverOP;
-typedef utility::pointer::owning_ptr< RigidBodyPerturbRandomJumpMover const > RigidBodyPerturbRandomJumpMoverCOP;
+typedef utility::pointer::shared_ptr< RigidBodyPerturbRandomJumpMover > RigidBodyPerturbRandomJumpMoverOP;
+typedef utility::pointer::shared_ptr< RigidBodyPerturbRandomJumpMover const > RigidBodyPerturbRandomJumpMoverCOP;
 
 class RigidBodyPerturbNoCenterMover;
-typedef utility::pointer::owning_ptr< RigidBodyPerturbNoCenterMover > RigidBodyPerturbNoCenterMoverOP;
-typedef utility::pointer::owning_ptr< RigidBodyPerturbNoCenterMover const > RigidBodyPerturbNoCenterMoverCOP;
+typedef utility::pointer::shared_ptr< RigidBodyPerturbNoCenterMover > RigidBodyPerturbNoCenterMoverOP;
+typedef utility::pointer::shared_ptr< RigidBodyPerturbNoCenterMover const > RigidBodyPerturbNoCenterMoverCOP;
 
 class RigidBodyRandomizeMover;
-typedef utility::pointer::owning_ptr< RigidBodyRandomizeMover > RigidBodyRandomizeMoverOP;
-typedef utility::pointer::owning_ptr< RigidBodyRandomizeMover const > RigidBodyRandomizeMoverCOP;
+typedef utility::pointer::shared_ptr< RigidBodyRandomizeMover > RigidBodyRandomizeMoverOP;
+typedef utility::pointer::shared_ptr< RigidBodyRandomizeMover const > RigidBodyRandomizeMoverCOP;
 
 class RigidBodySpinMover;
-typedef utility::pointer::owning_ptr< RigidBodySpinMover > RigidBodySpinMoverOP;
-typedef utility::pointer::owning_ptr< RigidBodySpinMover const > RigidBodySpinMoverCOP;
+typedef utility::pointer::shared_ptr< RigidBodySpinMover > RigidBodySpinMoverOP;
+typedef utility::pointer::shared_ptr< RigidBodySpinMover const > RigidBodySpinMoverCOP;
 
 class RigidBodyTransMover;
-typedef utility::pointer::owning_ptr< RigidBodyTransMover > RigidBodyTransMoverOP;
-typedef utility::pointer::owning_ptr< RigidBodyTransMover const > RigidBodyTransMoverCOP;
+typedef utility::pointer::shared_ptr< RigidBodyTransMover > RigidBodyTransMoverOP;
+typedef utility::pointer::shared_ptr< RigidBodyTransMover const > RigidBodyTransMoverCOP;
 
 class UniformSphereTransMover;
-typedef utility::pointer::owning_ptr< UniformSphereTransMover > UniformSphereTransMoverOP;
-typedef utility::pointer::owning_ptr< UniformSphereTransMover const > UniformSphereTransMoverCOP;
+typedef utility::pointer::shared_ptr< UniformSphereTransMover > UniformSphereTransMoverOP;
+typedef utility::pointer::shared_ptr< UniformSphereTransMover const > UniformSphereTransMoverCOP;
 
 class RigidBodyDofRandomizeMover;
-typedef utility::pointer::owning_ptr< RigidBodyDofRandomizeMover > RigidBodyDofRandomizeMoverOP;
-typedef utility::pointer::owning_ptr< RigidBodyDofRandomizeMover const > RigidBodyDofRandomizeMoverCOP;
+typedef utility::pointer::shared_ptr< RigidBodyDofRandomizeMover > RigidBodyDofRandomizeMoverOP;
+typedef utility::pointer::shared_ptr< RigidBodyDofRandomizeMover const > RigidBodyDofRandomizeMoverCOP;
 
 class RigidBodyDofSeqRandomizeMover;
-typedef utility::pointer::owning_ptr< RigidBodyDofSeqRandomizeMover > RigidBodyDofSeqRandomizeMoverOP;
-typedef utility::pointer::owning_ptr< RigidBodyDofSeqRandomizeMover const > RigidBodyDofSeqRandomizeMoverCOP;
+typedef utility::pointer::shared_ptr< RigidBodyDofSeqRandomizeMover > RigidBodyDofSeqRandomizeMoverOP;
+typedef utility::pointer::shared_ptr< RigidBodyDofSeqRandomizeMover const > RigidBodyDofSeqRandomizeMoverCOP;
 
 class RigidBodyDofTransMover;
-typedef utility::pointer::owning_ptr< RigidBodyDofTransMover > RigidBodyDofTransMoverOP;
-typedef utility::pointer::owning_ptr< RigidBodyDofTransMover const > RigidBodyDofTransMoverCOP;
+typedef utility::pointer::shared_ptr< RigidBodyDofTransMover > RigidBodyDofTransMoverOP;
+typedef utility::pointer::shared_ptr< RigidBodyDofTransMover const > RigidBodyDofTransMoverCOP;
 
 class RigidBodyDofSeqTransMover;
-typedef utility::pointer::owning_ptr< RigidBodyDofSeqTransMover > RigidBodyDofSeqTransMoverOP;
-typedef utility::pointer::owning_ptr< RigidBodyDofSeqTransMover const > RigidBodyDofSeqTransMoverCOP;
+typedef utility::pointer::shared_ptr< RigidBodyDofSeqTransMover > RigidBodyDofSeqTransMoverOP;
+typedef utility::pointer::shared_ptr< RigidBodyDofSeqTransMover const > RigidBodyDofSeqTransMoverCOP;
 
 class RigidBodyDofRandomTransMover;
-typedef utility::pointer::owning_ptr< RigidBodyDofRandomTransMover > RigidBodyDofRandomTransMoverOP;
-typedef utility::pointer::owning_ptr< RigidBodyDofRandomTransMover const > RigidBodyDofRandomTransMoverCOP;
+typedef utility::pointer::shared_ptr< RigidBodyDofRandomTransMover > RigidBodyDofRandomTransMoverOP;
+typedef utility::pointer::shared_ptr< RigidBodyDofRandomTransMover const > RigidBodyDofRandomTransMoverCOP;
 
 class RigidBodyDofPerturbMover;
-typedef utility::pointer::owning_ptr< RigidBodyDofPerturbMover > RigidBodyDofPerturbMoverOP;
-typedef utility::pointer::owning_ptr< RigidBodyDofPerturbMover const > RigidBodyDofPerturbMoverCOP;
+typedef utility::pointer::shared_ptr< RigidBodyDofPerturbMover > RigidBodyDofPerturbMoverOP;
+typedef utility::pointer::shared_ptr< RigidBodyDofPerturbMover const > RigidBodyDofPerturbMoverCOP;
 
 class RigidBodyDofSeqPerturbMover;
-typedef utility::pointer::owning_ptr< RigidBodyDofSeqPerturbMover > RigidBodyDofSeqPerturbMoverOP;
-typedef utility::pointer::owning_ptr< RigidBodyDofSeqPerturbMover const > RigidBodyDofSeqPerturbMoverCOP;
+typedef utility::pointer::shared_ptr< RigidBodyDofSeqPerturbMover > RigidBodyDofSeqPerturbMoverOP;
+typedef utility::pointer::shared_ptr< RigidBodyDofSeqPerturbMover const > RigidBodyDofSeqPerturbMoverCOP;
 
 }//moves
 }//protocols

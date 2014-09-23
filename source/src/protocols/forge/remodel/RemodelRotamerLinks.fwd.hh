@@ -17,7 +17,7 @@ namespace forge {
 namespace remodel {
 
 class RemodelRotamerLinks;
-typedef utility::pointer::owning_ptr< RemodelRotamerLinks > RemodelRotamerLinksOP;
+typedef utility::pointer::shared_ptr< RemodelRotamerLinks > RemodelRotamerLinksOP;
 
 }
 }

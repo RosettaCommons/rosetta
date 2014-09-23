@@ -89,28 +89,28 @@ generate_relax_from_cmd( bool NULL_if_no_flag ) {
 
 	RelaxProtocolBaseOP protocol;
 	if ( option[ OptionKeys::relax::sequence_file ].user() ) {
-		protocol = new FastRelax( scorefxn, option[ OptionKeys::relax::sequence_file ]() );
+		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn, option[ OptionKeys::relax::sequence_file ]() ) );
 	} else if ( option[ OptionKeys::relax::script ].user() ) {
-		protocol = new FastRelax( scorefxn, option[ OptionKeys::relax::script ]() );
+		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn, option[ OptionKeys::relax::script ]() ) );
 	} else if ( option[ OptionKeys::relax::quick ]() ){
-		protocol = new FastRelax( scorefxn, option[ OptionKeys::relax::default_repeats ]() /*default 5*/);
+		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn, option[ OptionKeys::relax::default_repeats ]() /*default 5*/) );
 	} else if ( option[ OptionKeys::relax::thorough ]() ){
-		protocol = new FastRelax( scorefxn, 15 );
+		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn, 15 ) );
 	} else if ( option[ OptionKeys::relax::fast ]() ) {
-		protocol = new FastRelax( scorefxn, option[ OptionKeys::relax::default_repeats ]() /*default 5*/);
+		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn, option[ OptionKeys::relax::default_repeats ]() /*default 5*/) );
 	} else if ( option[ OptionKeys::relax::classic ]() ) {
-		protocol = new ClassicRelax ( scorefxn );
+		protocol = RelaxProtocolBaseOP( new ClassicRelax ( scorefxn ) );
 	} else if ( option[ OptionKeys::relax::mini ]() ) {
-		protocol = new MiniRelax( scorefxn );
+		protocol = RelaxProtocolBaseOP( new MiniRelax( scorefxn ) );
 	} else if ( option[ OptionKeys::relax::centroid_mode ]()) {
-                protocol = new CentroidRelax();
+                protocol = RelaxProtocolBaseOP( new CentroidRelax() );
 	} else {
 		// default relax should be a quick sequence relax
 		if ( NULL_if_no_flag ){
 			TR.Debug << "no relax protocol specified at command line" << std::endl;
 			return NULL;
 		}
-		protocol = new FastRelax( scorefxn );
+		protocol = RelaxProtocolBaseOP( new FastRelax( scorefxn ) );
 	}
 
 	return protocol;
@@ -118,9 +118,9 @@ generate_relax_from_cmd( bool NULL_if_no_flag ) {
 
 void setup_membrane_topology( pose::Pose & pose, std::string spanfile ) {
   //using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
-  core::scoring::MembraneTopologyOP topologyOP = new core::scoring::MembraneTopology;
+  core::scoring::MembraneTopologyOP topologyOP( new core::scoring::MembraneTopology );
   pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, topologyOP );
-  core::scoring::MembraneTopology & topology=*( static_cast< core::scoring::MembraneTopology * >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY )() ));
+  core::scoring::MembraneTopology & topology=*( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
   topology.initialize(spanfile);
 }
 

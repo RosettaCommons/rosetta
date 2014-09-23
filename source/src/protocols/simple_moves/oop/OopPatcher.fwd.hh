@@ -22,8 +22,8 @@ namespace oop{
 
 //Forwards and OP typedefs
 class OopPatcher;
-typedef utility::pointer::owning_ptr< OopPatcher > OopPatcherOP;
-typedef utility::pointer::owning_ptr< OopPatcher const > OopPatcherCOP;
+typedef utility::pointer::shared_ptr< OopPatcher > OopPatcherOP;
+typedef utility::pointer::shared_ptr< OopPatcher const > OopPatcherCOP;
 
 }//oop
 }//simple_moves

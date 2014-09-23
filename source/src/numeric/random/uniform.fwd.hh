@@ -23,8 +23,8 @@ namespace random {
 
 class uniform_RG;
 
-typedef utility::pointer::owning_ptr< uniform_RG > uniform_RG_OP;
-typedef utility::pointer::owning_ptr< uniform_RG const > uniform_RG_COP;
+typedef utility::pointer::shared_ptr< uniform_RG > uniform_RG_OP;
+typedef utility::pointer::shared_ptr< uniform_RG const > uniform_RG_COP;
 
 } // namespace random
 } // namespace numeric

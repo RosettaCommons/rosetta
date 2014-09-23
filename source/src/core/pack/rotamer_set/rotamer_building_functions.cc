@@ -193,31 +193,31 @@ build_lib_dna_rotamers(
 		ConstraintSetOP cst_set( new ConstraintSet() );
 		func::FuncOP f_target_distance_std_length( new func::HarmonicFunc( target_distance, std_length ) );
 		cst_set->add_constraint(
-			new AtomPairConstraint( 
+			ConstraintCOP( new AtomPairConstraint( 
 				AtomID(rsd.atom_index("O3'"),seqpos),
 				AtomID(next_rsd.atom_index("P"),seqpos+1),
 				f_target_distance_std_length
-			)
+			) )
 		);
 
 		func::FuncOP f_P_bond_angle_std_angle( new func::HarmonicFunc( P_bond_angle, std_angle ) );
 		cst_set->add_constraint(
-			new AngleConstraint(
+			ConstraintCOP( new AngleConstraint(
 				AtomID(next_rsd.atom_index("O5'"),seqpos+1),
 				AtomID(next_rsd.atom_index("P"),seqpos+1),
 				AtomID(rsd.atom_index("O3'"),seqpos),
 				f_P_bond_angle_std_angle
-			)
+			) )
 		);
 		
 		func::FuncOP f_O3_bond_angle_std_angle( new func::HarmonicFunc( O3_bond_angle, std_angle ) );
 		cst_set->add_constraint(
-			new AngleConstraint(
+			ConstraintCOP( new AngleConstraint(
 				AtomID(next_rsd.atom_index("P"),seqpos+1),
 				AtomID(next_rsd.atom_index("O3'"),seqpos),
 				AtomID(rsd.atom_index("C3'"),seqpos),
 				f_O3_bond_angle_std_angle
-			)
+			) )
 		);
 
 		// could also add angle constraints

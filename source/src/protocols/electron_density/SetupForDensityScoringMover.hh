@@ -67,7 +67,7 @@ private:
 // set up fold tree _and_ scoring function for density scoring
 void set_pose_and_scorefxn_for_edens_scoring( core::pose::Pose & pose, core::scoring::ScoreFunction &scorefxn );
 
-typedef utility::pointer::owning_ptr< SetupForDensityScoringMover > SetupForDensityScoringMoverOP;
+typedef utility::pointer::shared_ptr< SetupForDensityScoringMover > SetupForDensityScoringMoverOP;
 
 }
 }

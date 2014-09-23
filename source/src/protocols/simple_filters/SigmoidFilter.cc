@@ -30,7 +30,7 @@ namespace simple_filters {
 static thread_local basic::Tracer TR( "protocols.simple_filters.Sigmoid" );
 
 protocols::filters::FilterOP
-SigmoidFilterCreator::create_filter() const { return new Sigmoid; }
+SigmoidFilterCreator::create_filter() const { return protocols::filters::FilterOP( new Sigmoid ); }
 
 std::string
 SigmoidFilterCreator::keyname() const { return "Sigmoid"; }
@@ -38,7 +38,7 @@ SigmoidFilterCreator::keyname() const { return "Sigmoid"; }
 //default ctor
 Sigmoid::Sigmoid() :
 protocols::filters::Filter( "Sigmoid" ),
-filter_( NULL ),
+filter_( /* NULL */ ),
 steepness_( 1.0 ),
 offset_( 0.0 ),
 baseline_( 0.0 ),

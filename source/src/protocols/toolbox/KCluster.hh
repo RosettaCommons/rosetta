@@ -78,7 +78,7 @@ public:
     void add_new_cluster(core::Size ndx_data)
     {
         center_ndx_.push_back(ndx_data);
-        subclusters_.push_back(new KClusterElement());
+        subclusters_.push_back(utility::pointer::shared_ptr<class protocols::toolbox::KClusterElement>( new KClusterElement() ));
     }
 
     /// @brief set a cluster center's data_ndx

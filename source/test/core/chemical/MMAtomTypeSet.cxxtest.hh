@@ -53,7 +53,7 @@ class MMAtomTypeSetTests : public CxxTest::TestSuite {
 
 		// Want to read the properties file in only once for all the tests in this suite
 		// so do it in the constructor for the test suite.
-		mmatomtypeset = new MMAtomTypeSet();
+		mmatomtypeset = MMAtomTypeSetOP( new MMAtomTypeSet() );
 		mmatomtypeset->read_file( "core/chemical/mm_atom_properties.txt" );
 	}
 

@@ -72,7 +72,7 @@ CavityVolumeFilterCreator::keyname() const
 
 protocols::filters::FilterOP
 CavityVolumeFilterCreator::create_filter() const {
-	return new CavityVolumeFilter();
+	return protocols::filters::FilterOP( new CavityVolumeFilter() );
 }
 
 std::string
@@ -99,13 +99,13 @@ CavityVolumeFilter::~CavityVolumeFilter()
 protocols::filters::FilterOP
 CavityVolumeFilter::clone() const
 {
-	return new CavityVolumeFilter(*this);
+	return protocols::filters::FilterOP( new CavityVolumeFilter(*this) );
 }
 
 protocols::filters::FilterOP
 CavityVolumeFilter::fresh_instance() const
 {
-	return new CavityVolumeFilter();
+	return protocols::filters::FilterOP( new CavityVolumeFilter() );
 }
 
 void

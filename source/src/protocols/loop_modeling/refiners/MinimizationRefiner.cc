@@ -41,7 +41,7 @@ using protocols::simple_moves::MinMoverOP;
 using protocols::simple_moves::symmetry::SymMinMover;
 
 protocols::moves::MoverOP MinimizationRefinerCreator::create_mover() const {
-	return new MinimizationRefiner;
+	return protocols::moves::MoverOP( new MinimizationRefiner );
 }
 
 std::string MinimizationRefinerCreator::keyname() const {
@@ -63,11 +63,11 @@ void MinimizationRefiner::min_options(MinimizerOptionsOP options) {
 	// exact choice of minimizer options.
 
 	if ( ! options) {
-		min_options_ = new MinimizerOptions(
+		min_options_ = core::optimization::MinimizerOptionsOP( new MinimizerOptions(
 				"dfpmin",   // min_type
 				1e-3,       // min_tolerance
 				true,       // use_nblist
-				false);     // deriv_check
+				false) );     // deriv_check
 	} else {
 		min_options_ = options;
 	}

@@ -23,8 +23,8 @@ namespace task_operations{
 class SeqprofConsensusOperation;
 class RestrictConservedLowDdgOperation;
 
-typedef utility::pointer::owning_ptr< SeqprofConsensusOperation > SeqprofConsensusOperationOP;
-typedef utility::pointer::owning_ptr< RestrictConservedLowDdgOperation > RestrictConservedLowDdgOperationOP;
+typedef utility::pointer::shared_ptr< SeqprofConsensusOperation > SeqprofConsensusOperationOP;
+typedef utility::pointer::shared_ptr< RestrictConservedLowDdgOperation > RestrictConservedLowDdgOperationOP;
 
 } // task_operations
 } // toolbox

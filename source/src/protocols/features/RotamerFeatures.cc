@@ -102,24 +102,24 @@ RotamerFeatures::write_residue_rotamers_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt(), false);
-	Column residue_number("residue_number", new DbInteger(), false);
-	Column rotamer_bin("rotamer_bin", new DbInteger(), false);
-	Column nchi("nchi", new DbInteger(), false);
-	Column semi_rotameric("semi_rotameric", new DbInteger(), false);
-	Column chi1_mean("chi1_mean", new DbReal(), true);
-	Column chi2_mean("chi2_mean", new DbReal(), true);
-	Column chi3_mean("chi3_mean", new DbReal(), true);
-	Column chi4_mean("chi4_mean", new DbReal(), true);
-	Column chi1_standard_deviation("chi1_standard_deviation", new DbReal(), true);
-	Column chi2_standard_deviation("chi2_standard_deviation", new DbReal(), true);
-	Column chi3_standard_deviation("chi3_standard_deviation", new DbReal(), true);
-	Column chi4_standard_deviation("chi4_standard_deviation", new DbReal(), true);
-	Column chi1_deviation("chi1_deviation", new DbReal(), true);
-	Column chi2_deviation("chi2_deviation", new DbReal(), true);
-	Column chi3_deviation("chi3_deviation", new DbReal(), true);
-	Column chi4_deviation("chi4_deviation", new DbReal(), true);
-	Column rotamer_bin_probability("rotamer_bin_probability", new DbReal(), false);
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
+	Column residue_number("residue_number", DbDataTypeOP( new DbInteger() ), false);
+	Column rotamer_bin("rotamer_bin", DbDataTypeOP( new DbInteger() ), false);
+	Column nchi("nchi", DbDataTypeOP( new DbInteger() ), false);
+	Column semi_rotameric("semi_rotameric", DbDataTypeOP( new DbInteger() ), false);
+	Column chi1_mean("chi1_mean", DbDataTypeOP( new DbReal() ), true);
+	Column chi2_mean("chi2_mean", DbDataTypeOP( new DbReal() ), true);
+	Column chi3_mean("chi3_mean", DbDataTypeOP( new DbReal() ), true);
+	Column chi4_mean("chi4_mean", DbDataTypeOP( new DbReal() ), true);
+	Column chi1_standard_deviation("chi1_standard_deviation", DbDataTypeOP( new DbReal() ), true);
+	Column chi2_standard_deviation("chi2_standard_deviation", DbDataTypeOP( new DbReal() ), true);
+	Column chi3_standard_deviation("chi3_standard_deviation", DbDataTypeOP( new DbReal() ), true);
+	Column chi4_standard_deviation("chi4_standard_deviation", DbDataTypeOP( new DbReal() ), true);
+	Column chi1_deviation("chi1_deviation", DbDataTypeOP( new DbReal() ), true);
+	Column chi2_deviation("chi2_deviation", DbDataTypeOP( new DbReal() ), true);
+	Column chi3_deviation("chi3_deviation", DbDataTypeOP( new DbReal() ), true);
+	Column chi4_deviation("chi4_deviation", DbDataTypeOP( new DbReal() ), true);
+	Column rotamer_bin_probability("rotamer_bin_probability", DbDataTypeOP( new DbReal() ), false);
 
 	vector1<Column> primary_key_columns;
 	primary_key_columns.push_back(struct_id);

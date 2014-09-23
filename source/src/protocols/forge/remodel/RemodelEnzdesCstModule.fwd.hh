@@ -23,7 +23,7 @@ namespace forge {
 namespace remodel {
 
 class RemodelEnzdesCstModule;
-typedef utility::pointer::owning_ptr< RemodelEnzdesCstModule > RemodelEnzdesCstModuleOP;
+typedef utility::pointer::shared_ptr< RemodelEnzdesCstModule > RemodelEnzdesCstModuleOP;
 
 } // namespace remodel
 } // namespace forge

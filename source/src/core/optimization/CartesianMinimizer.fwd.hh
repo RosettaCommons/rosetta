@@ -23,8 +23,8 @@ namespace optimization {
 
 // Forward
 class CartesianMinimizer;
-typedef utility::pointer::owning_ptr< CartesianMinimizer       > CartesianMinimizerOP;
-typedef utility::pointer::owning_ptr< CartesianMinimizer const > CartesianMinimizerCOP;
+typedef utility::pointer::shared_ptr< CartesianMinimizer       > CartesianMinimizerOP;
+typedef utility::pointer::shared_ptr< CartesianMinimizer const > CartesianMinimizerCOP;
 
 
 } // namespace optimization

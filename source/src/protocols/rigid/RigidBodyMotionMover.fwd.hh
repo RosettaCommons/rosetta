@@ -19,8 +19,8 @@ namespace protocols {
 namespace rigid {
 
 class RigidBodyMotionMover;
-typedef utility::pointer::owning_ptr<RigidBodyMotionMover> RigidBodyMotionMoverOP;
-typedef utility::pointer::owning_ptr<RigidBodyMotionMover const> RigidBodyMotionMoverCOP;
+typedef utility::pointer::shared_ptr<RigidBodyMotionMover> RigidBodyMotionMoverOP;
+typedef utility::pointer::shared_ptr<RigidBodyMotionMover const> RigidBodyMotionMoverCOP;
 
 }  // namespace rigid
 }  // namespace protocols

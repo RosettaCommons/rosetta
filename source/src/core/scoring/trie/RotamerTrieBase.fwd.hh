@@ -22,8 +22,8 @@ namespace scoring {
 namespace trie {
 
 class RotamerTrieBase;
-typedef utility::pointer::owning_ptr< RotamerTrieBase > RotamerTrieBaseOP;
-typedef utility::pointer::owning_ptr< RotamerTrieBase  const > RotamerTrieBaseCOP;
+typedef utility::pointer::shared_ptr< RotamerTrieBase > RotamerTrieBaseOP;
+typedef utility::pointer::shared_ptr< RotamerTrieBase  const > RotamerTrieBaseCOP;
 
 } // namespace trie
 } // namespace scoring

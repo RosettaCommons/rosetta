@@ -298,7 +298,7 @@ void InsertChunkMover::set_bb_xyz_aligned(core::pose::Pose & pose) {
 
 	runtime_assert( pose.data().has( core::pose::datacache::CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) );
 	TemplateHistory &history =
-	*( static_cast< TemplateHistory* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY )() ));
+	*( utility::pointer::static_pointer_cast< protocols::hybridization::TemplateHistory > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) ));
 	history.set( seqpos_start_, seqpos_stop_, template_id_ );
 }
 

@@ -29,7 +29,7 @@ namespace features {
 PoseConformationFeaturesCreator::PoseConformationFeaturesCreator() {}
 PoseConformationFeaturesCreator::~PoseConformationFeaturesCreator() {}
 FeaturesReporterOP PoseConformationFeaturesCreator::create_features_reporter() const {
-	return new PoseConformationFeatures;
+	return FeaturesReporterOP( new PoseConformationFeatures );
 }
 
 std::string PoseConformationFeaturesCreator::type_name() const {

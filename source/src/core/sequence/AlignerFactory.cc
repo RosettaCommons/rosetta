@@ -31,11 +31,11 @@ AlignerFactory::get_aligner(
 	std::string const & type
 ) {
 	if ( type == "local" ) {
-		return new SWAligner;
+		return AlignerOP( new SWAligner );
 	} else if ( type == "global" ) {
-		return new NWAligner;
+		return AlignerOP( new NWAligner );
 	} else if ( type == "mc" ) {
-		return new MCAligner;
+		return AlignerOP( new MCAligner );
 	} else {
 		utility_exit_with_message(
 			"AlignerFactory: unknown Aligner type: " + type

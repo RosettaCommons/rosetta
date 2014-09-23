@@ -55,11 +55,11 @@ public:
 
 	bool apply( core::pose::Pose const & pose ) const;
 	protocols::filters::FilterOP clone() const {
-		return new AtomCountFilter( *this );
+		return protocols::filters::FilterOP( new AtomCountFilter( *this ) );
 	}
 
 	protocols::filters::FilterOP fresh_instance() const{
-		return new AtomCountFilter();
+		return protocols::filters::FilterOP( new AtomCountFilter() );
 	}
 
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose );

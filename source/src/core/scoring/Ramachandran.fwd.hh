@@ -20,8 +20,8 @@ namespace core {
 namespace scoring {
 
 class Ramachandran;
-typedef utility::pointer::owning_ptr<Ramachandran       > RamachandranOP;
-typedef utility::pointer::owning_ptr<Ramachandran const > RamachandranCOP;
+typedef utility::pointer::shared_ptr<Ramachandran       > RamachandranOP;
+typedef utility::pointer::shared_ptr<Ramachandran const > RamachandranCOP;
 
 }
 }

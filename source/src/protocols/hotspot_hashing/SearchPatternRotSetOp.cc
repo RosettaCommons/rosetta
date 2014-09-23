@@ -54,8 +54,7 @@ SearchPatternRotSetOp::SearchPatternRotSetOp( SearchPatternRotSetOp const & othe
 core::pack::rotamer_set::RotamerSetOperationOP
 SearchPatternRotSetOp::clone() const
 {
-	return core::pack::rotamer_set::RotamerSetOperationOP(
-			new SearchPatternRotSetOp(*this));
+	return core::pack::rotamer_set::RotamerSetOperationOP( new SearchPatternRotSetOp(*this) );
 }
 
 
@@ -68,7 +67,7 @@ utility::vector1< core::conformation::ResidueCOP > SearchPatternRotSetOp::get_ri
 
 
 	// Create residue copy in centroid frame
-	core::conformation::ResidueOP source_residue(new core::conformation::Residue(pose.residue(residue_index)));
+	core::conformation::ResidueOP source_residue( new core::conformation::Residue(pose.residue(residue_index)) );
 	TR.Debug << "Setting rigid body confs for residue: " << residue_index << " " << source_residue->name() << std::endl;
   core::kinematics::Stub source_frame = StubGenerator::residueStubCentroidFrame(source_residue);
 	TR.Trace << "Generated target residue centroid frame: ";
@@ -80,7 +79,7 @@ utility::vector1< core::conformation::ResidueCOP > SearchPatternRotSetOp::get_ri
 	{
 		// Create residue copies translating the search frame into the centroid frame
 		
-		core::conformation::ResidueOP search_residue(new core::conformation::Residue(*source_residue));
+		core::conformation::ResidueOP search_residue( new core::conformation::Residue(*source_residue) );
 
 		StubGenerator::moveIntoStubFrame(search_residue, search_stubs_[i]);
 		StubGenerator::moveIntoStubFrame(search_residue, source_frame);
@@ -108,7 +107,7 @@ core::Real SearchPatternRotSetOp::increase_packer_residue_radius(
 )
 {
   // Calculate the centroid frame and centroid location in the centroid frame
-	core::conformation::ResidueCOP source_residue(new core::conformation::Residue(pose.residue(residue_index)));
+	core::conformation::ResidueCOP source_residue( new core::conformation::Residue(pose.residue(residue_index)) );
 	TR.Debug << "Increasing packer residue radius for residue: " << residue_index << " " << source_residue->name() << std::endl;
 
   core::kinematics::Stub centroid_frame = StubGenerator::residueStubCentroidFrame(source_residue);
@@ -146,7 +145,7 @@ AddSearchPatternRotSetOp::~AddSearchPatternRotSetOp(){}
 core::pack::task::operation::TaskOperationOP
 AddSearchPatternRotSetOp::clone() const
 {
-	return new AddSearchPatternRotSetOp(*this);
+	return core::pack::task::operation::TaskOperationOP( new AddSearchPatternRotSetOp(*this) );
 }
 
 /// @details not valid now, extend with search pattern parsing
@@ -167,7 +166,7 @@ AddSearchPatternRotSetOp::apply(
 		return;
 	}
 
-	SearchPatternRotSetOpOP rotsetop(new SearchPatternRotSetOp(pattern_));
+	SearchPatternRotSetOpOP rotsetop( new SearchPatternRotSetOp(pattern_) );
 	task.nonconst_residue_task( target_residue_ ).append_rotamerset_operation( rotsetop );
 }
 

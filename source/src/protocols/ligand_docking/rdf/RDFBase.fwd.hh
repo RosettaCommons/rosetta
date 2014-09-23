@@ -25,7 +25,7 @@ namespace rdf {
 
 class RDFBase;
 
-typedef utility::pointer::owning_ptr<RDFBase> RDFBaseOP;
+typedef utility::pointer::shared_ptr<RDFBase> RDFBaseOP;
 
 }
 }

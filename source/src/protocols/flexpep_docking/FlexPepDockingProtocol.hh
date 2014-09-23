@@ -46,8 +46,8 @@ namespace protocols {
 namespace flexpep_docking {
 
 class FlexPepDockingProtocol;
-typedef utility::pointer::owning_ptr< FlexPepDockingProtocol > FlexPepDockingProtocolOP;
-typedef utility::pointer::owning_ptr< FlexPepDockingProtocol const > FlexPepDockingProtocolCOP;
+typedef utility::pointer::shared_ptr< FlexPepDockingProtocol > FlexPepDockingProtocolOP;
+typedef utility::pointer::shared_ptr< FlexPepDockingProtocol const > FlexPepDockingProtocolCOP;
 
 class FlexPepDockingProtocol : public moves::Mover
 {

@@ -38,9 +38,9 @@ using std::endl;
 typedef numeric::xyzVector<platform::Real> Vec;
 typedef numeric::xyzMatrix<platform::Real> Mat;
 
-Rose::Rose(PoseCOP pin                                                   ) : p(pin),h(new Hash(*p,         BB ,4.0)) {}
-Rose::Rose(PoseCOP pin, sic_dock::PoseCoordPickMode const & coord_picker ) : p(pin),h(new Hash(*p,coord_picker,4.0)) {}
-Rose::Rose(PoseCOP pin, core::id::AtomID_Map<Real>  const & clash_atoms  ) : p(pin),h(new Hash(*p,clash_atoms ,4.0)) {}
+Rose::Rose(PoseCOP pin                                                   ) : p(pin),h(HashCOP( new Hash(*p,         BB ,4.0) )) {}
+Rose::Rose(PoseCOP pin, sic_dock::PoseCoordPickMode const & coord_picker ) : p(pin),h(HashCOP( new Hash(*p,coord_picker,4.0) )) {}
+Rose::Rose(PoseCOP pin, core::id::AtomID_Map<Real>  const & clash_atoms  ) : p(pin),h(HashCOP( new Hash(*p,clash_atoms ,4.0) )) {}
 
 
 
@@ -71,7 +71,7 @@ Size Rose::contacts(RCR o) const {
 }
 
 core::pose::PoseCOP Rose::pose() const {
-	core::pose::PoseOP pose = new core::pose::Pose(*p);
+	core::pose::PoseOP pose( new core::pose::Pose(*p) );
 	for(Size ir = 1; ir <= pose->n_residue(); ++ir) {
 		for(Size ia = 1; ia <= pose->residue_type(ir).natoms(); ++ia) {
 			core::id::AtomID const aid(core::id::AtomID(ia,ir));

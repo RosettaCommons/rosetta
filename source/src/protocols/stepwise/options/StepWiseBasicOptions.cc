@@ -63,7 +63,7 @@ namespace options {
 	StepWiseBasicOptionsOP
 	StepWiseBasicOptions::clone() const
 	{
-		return new StepWiseBasicOptions( *this );
+		return StepWiseBasicOptionsOP( new StepWiseBasicOptions( *this ) );
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////

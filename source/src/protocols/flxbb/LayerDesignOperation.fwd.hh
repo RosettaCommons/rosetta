@@ -21,7 +21,7 @@ namespace flxbb {
 
 class LayerDesignOperation;
 
-typedef utility::pointer::owning_ptr< LayerDesignOperation > LayerDesignOperationOP;
+typedef utility::pointer::shared_ptr< LayerDesignOperation > LayerDesignOperationOP;
 
 } // flxbb
 } // protocols

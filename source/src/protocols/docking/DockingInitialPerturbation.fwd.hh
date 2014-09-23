@@ -21,16 +21,16 @@ namespace protocols {
 namespace docking {
 
 class DockingInitialPerturbation;
-typedef utility::pointer::owning_ptr< DockingInitialPerturbation > DockingInitialPerturbationOP;
-typedef utility::pointer::owning_ptr< DockingInitialPerturbation const > DockingInitialPerturbationCOP;
+typedef utility::pointer::shared_ptr< DockingInitialPerturbation > DockingInitialPerturbationOP;
+typedef utility::pointer::shared_ptr< DockingInitialPerturbation const > DockingInitialPerturbationCOP;
 
 class DockingSlideIntoContact; // fwd declaration
-typedef utility::pointer::owning_ptr< DockingSlideIntoContact > DockingSlideIntoContactOP;
-typedef utility::pointer::owning_ptr< DockingSlideIntoContact const > DockingSlideIntoContactCOP;
+typedef utility::pointer::shared_ptr< DockingSlideIntoContact > DockingSlideIntoContactOP;
+typedef utility::pointer::shared_ptr< DockingSlideIntoContact const > DockingSlideIntoContactCOP;
 
 class FaDockingSlideIntoContact; // fwd declaration
-typedef utility::pointer::owning_ptr< FaDockingSlideIntoContact > FaDockingSlideIntoContactOP;
-typedef utility::pointer::owning_ptr< FaDockingSlideIntoContact const > FaDockingSlideIntoContactCOP;
+typedef utility::pointer::shared_ptr< FaDockingSlideIntoContact > FaDockingSlideIntoContactOP;
+typedef utility::pointer::shared_ptr< FaDockingSlideIntoContact const > FaDockingSlideIntoContactCOP;
 
 } // docking
 } // protocols

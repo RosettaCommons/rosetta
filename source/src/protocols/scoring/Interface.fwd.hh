@@ -22,8 +22,8 @@
 namespace protocols {
 namespace scoring{
 class Interface;
-typedef  utility::pointer::owning_ptr< Interface >  InterfaceOP;
-typedef  utility::pointer::owning_ptr< Interface const >  InterfaceCOP;
+typedef  utility::pointer::shared_ptr< Interface >  InterfaceOP;
+typedef  utility::pointer::shared_ptr< Interface const >  InterfaceCOP;
 
 } // namespace scoring
 } // namespace protocols

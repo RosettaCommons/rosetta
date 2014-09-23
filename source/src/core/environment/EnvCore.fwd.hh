@@ -25,11 +25,11 @@ namespace core {
 namespace environment {
 
 class EnvCore;
-typedef utility::pointer::owning_ptr< EnvCore > EnvCoreOP;
-typedef utility::pointer::owning_ptr< EnvCore const > EnvCoreCOP;
+typedef utility::pointer::shared_ptr< EnvCore > EnvCoreOP;
+typedef utility::pointer::shared_ptr< EnvCore const > EnvCoreCOP;
 
-typedef utility::pointer::access_ptr< EnvCore > EnvCoreAP;
-typedef utility::pointer::access_ptr< EnvCore const > EnvCoreCAP;
+typedef utility::pointer::weak_ptr< EnvCore > EnvCoreAP;
+typedef utility::pointer::weak_ptr< EnvCore const > EnvCoreCAP;
 
 
 } // core

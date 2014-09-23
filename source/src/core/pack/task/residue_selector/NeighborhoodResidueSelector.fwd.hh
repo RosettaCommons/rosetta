@@ -27,8 +27,8 @@ namespace residue_selector {
 
 class NeighborhoodResidueSelector;
 
-typedef utility::pointer::owning_ptr< NeighborhoodResidueSelector > NeighborhoodResidueSelectorOP;
-typedef utility::pointer::owning_ptr< NeighborhoodResidueSelector const > NeighborhoodResidueSelectorCOP;
+typedef utility::pointer::shared_ptr< NeighborhoodResidueSelector > NeighborhoodResidueSelectorOP;
+typedef utility::pointer::shared_ptr< NeighborhoodResidueSelector const > NeighborhoodResidueSelectorCOP;
 
 } //namespace residue_selector
 } //namespace task

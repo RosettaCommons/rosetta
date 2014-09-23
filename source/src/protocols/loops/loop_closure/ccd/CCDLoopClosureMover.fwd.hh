@@ -27,13 +27,13 @@ namespace ccd {
 class CCDLoopClosureMover;
 
 // Types
-typedef  utility::pointer::owning_ptr< CCDLoopClosureMover >  CCDLoopClosureMoverOP;
-typedef  utility::pointer::owning_ptr< CCDLoopClosureMover const >  CCDLoopClosureMoverCOP;
+typedef  utility::pointer::shared_ptr< CCDLoopClosureMover >  CCDLoopClosureMoverOP;
+typedef  utility::pointer::shared_ptr< CCDLoopClosureMover const >  CCDLoopClosureMoverCOP;
 
 // I'm not sure what the heck this is yet; we'll just leave it here for now.... ~Labonte
 class CcdMover;
-typedef utility::pointer::owning_ptr< CcdMover > CcdMoverOP;
-typedef utility::pointer::owning_ptr< CcdMover const > CcdMoverCOP;
+typedef utility::pointer::shared_ptr< CcdMover > CcdMoverOP;
+typedef utility::pointer::shared_ptr< CcdMover const > CcdMoverCOP;
 
 }  // namespace ccd
 }  // namespace loop_closure

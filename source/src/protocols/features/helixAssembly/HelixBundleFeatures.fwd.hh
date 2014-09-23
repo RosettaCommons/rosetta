@@ -22,8 +22,8 @@ namespace features{
 namespace helixAssembly {
 
 class HelixBundleFeatures;
-typedef utility::pointer::owning_ptr< HelixBundleFeatures > HelixBundleFeaturesOP;
-typedef utility::pointer::owning_ptr< HelixBundleFeatures const > HelixBundleFeaturesCOP;
+typedef utility::pointer::shared_ptr< HelixBundleFeatures > HelixBundleFeaturesOP;
+typedef utility::pointer::shared_ptr< HelixBundleFeatures const > HelixBundleFeaturesCOP;
 
 } //namespace helixAssembly
 }// namespace features

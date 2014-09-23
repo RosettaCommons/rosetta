@@ -23,8 +23,8 @@ namespace ligand_docking {
 
 
 class LigandDesign; // fwd declaration
-typedef utility::pointer::owning_ptr< LigandDesign > LigandDesignOP;
-typedef utility::pointer::owning_ptr< LigandDesign const > LigandDesignCOP;
+typedef utility::pointer::shared_ptr< LigandDesign > LigandDesignOP;
+typedef utility::pointer::shared_ptr< LigandDesign const > LigandDesignCOP;
 
 
 } // namespace ligand_docking

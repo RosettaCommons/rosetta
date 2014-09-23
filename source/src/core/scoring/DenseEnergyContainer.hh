@@ -271,7 +271,7 @@ public:
 	virtual
 	LREnergyContainerOP clone() const
 	{
-		return new DenseEnergyContainer( *this );
+		return LREnergyContainerOP( new DenseEnergyContainer( *this ) );
 	}
 
 	DenseEnergyContainer( Size const size_in, ScoreType const score_type_in ):
@@ -306,21 +306,21 @@ public:
 	ResidueNeighborConstIteratorOP
 	const_neighbor_iterator_begin( int resid ) const
 	{
-		return new DenseNeighborConstIterator( resid, resid==1 ? 2 : 1, score_type_, &table_, &computed_ );
+		return ResidueNeighborConstIteratorOP( new DenseNeighborConstIterator( resid, resid==1 ? 2 : 1, score_type_, &table_, &computed_ ) );
 	}
 
 	virtual
 	ResidueNeighborConstIteratorOP
 	const_neighbor_iterator_end( int resid ) const
 	{
-		return new DenseNeighborConstIterator( resid, size_ + 1, score_type_, &table_, &computed_ );
+		return ResidueNeighborConstIteratorOP( new DenseNeighborConstIterator( resid, size_ + 1, score_type_, &table_, &computed_ ) );
 	}
 
 	virtual
 	ResidueNeighborConstIteratorOP
 	const_upper_neighbor_iterator_begin( int resid ) const
 	{
-		return new DenseNeighborConstIterator( resid, resid+1, score_type_, &table_, &computed_ );
+		return ResidueNeighborConstIteratorOP( new DenseNeighborConstIterator( resid, resid+1, score_type_, &table_, &computed_ ) );
 	}
 
 	virtual
@@ -335,21 +335,21 @@ public:
 	ResidueNeighborIteratorOP
 	neighbor_iterator_begin( int resid )
 	{
-		return new DenseNeighborIterator( resid, 1, score_type_, &table_, &computed_ );
+		return ResidueNeighborIteratorOP( new DenseNeighborIterator( resid, 1, score_type_, &table_, &computed_ ) );
 	}
 
 	virtual
 	ResidueNeighborIteratorOP
 	neighbor_iterator_end( int resid )
 	{
-		return new DenseNeighborIterator( resid, size_ + 1, score_type_, &table_, &computed_ );
+		return ResidueNeighborIteratorOP( new DenseNeighborIterator( resid, size_ + 1, score_type_, &table_, &computed_ ) );
 	}
 
 	virtual
 	ResidueNeighborIteratorOP
 	upper_neighbor_iterator_begin( int resid )
 	{
-		return new DenseNeighborIterator( resid, resid+1, score_type_, &table_, &computed_ );
+		return ResidueNeighborIteratorOP( new DenseNeighborIterator( resid, resid+1, score_type_, &table_, &computed_ ) );
 	}
 
 	virtual

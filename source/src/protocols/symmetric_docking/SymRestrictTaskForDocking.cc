@@ -37,7 +37,7 @@ using namespace scoring;
 using namespace pack;
 
 SymRestrictTaskForDocking::SymRestrictTaskForDocking()
-	: scorefxn_( 0 ),
+	: scorefxn_( /* 0 */ ),
 		include_current_( true ),
 		distance_( 0 )
 {}
@@ -56,7 +56,7 @@ SymRestrictTaskForDocking::~SymRestrictTaskForDocking(){}
 
 task::operation::TaskOperationOP SymRestrictTaskForDocking::clone() const
 {
-	return new SymRestrictTaskForDocking( *this );
+	return task::operation::TaskOperationOP( new SymRestrictTaskForDocking( *this ) );
 }
 
 void

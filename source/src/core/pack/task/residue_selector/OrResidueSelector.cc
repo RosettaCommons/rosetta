@@ -149,7 +149,7 @@ std::string OrResidueSelector::class_name() {
 
 ResidueSelectorOP
 OrResidueSelectorCreator::create_residue_selector() const {
-	return new OrResidueSelector;
+	return ResidueSelectorOP( new OrResidueSelector );
 }
 
 std::string

@@ -300,7 +300,7 @@ public:
 		EnvPairPotential envp;
 		envp.compute_centroid_environment( pose );
 		TS_ASSERT( pose.data().has( core::pose::datacache::CacheableDataType::CEN_LIST_INFO ) );
-		CenListInfo const & cenlist( *( static_cast< CenListInfo * >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::CEN_LIST_INFO )() )));
+		CenListInfo const & cenlist( *( utility::pointer::static_pointer_cast< core::scoring::CenListInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::CEN_LIST_INFO ) )));
 
 		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			TS_ASSERT_DELTA( cenlist.fcen6( ii ),  fcen_gold[ ii -1 ][ 0 ], 1E-4 );

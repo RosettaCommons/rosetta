@@ -48,7 +48,7 @@ methods::EnergyMethodOP
 OmegaTetherEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new OmegaTetherEnergy;
+	return methods::EnergyMethodOP( new OmegaTetherEnergy );
 }
 
 ScoreTypes
@@ -70,7 +70,7 @@ OmegaTetherEnergy::OmegaTetherEnergy() :
 EnergyMethodOP
 OmegaTetherEnergy::clone() const
 {
-	return new OmegaTetherEnergy;
+	return EnergyMethodOP( new OmegaTetherEnergy );
 }
 
 /////////////////////////////////////////////////////////////////////////////

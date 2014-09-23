@@ -72,7 +72,7 @@ SequenceCoupling1BDConstraint::~SequenceCoupling1BDConstraint() {}
 
 ConstraintOP
 SequenceCoupling1BDConstraint::clone() const {
-	return new SequenceCoupling1BDConstraint( *this );
+	return ConstraintOP( new SequenceCoupling1BDConstraint( *this ) );
 }
 
 ///@details one line definition "SequenceProfile resindex profilefilename" (profilefilename can also be set to "none" in the constraints file, and specified by -in::file::pssm)
@@ -111,7 +111,7 @@ SequenceCoupling1BDConstraint::read_def(
 
 	// if filename is not "none" by this point, read it even if sequence_profile_ is not currently NULL
 	if ( profile_filename != "none" ) {
-		SequenceCouplingOP c = new SequenceCoupling;
+		SequenceCouplingOP c( new SequenceCoupling );
 		c->read_from_file( FileName(profile_filename) );
 		set_sequence_profile(c);
 	}

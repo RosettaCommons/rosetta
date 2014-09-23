@@ -56,7 +56,7 @@ using namespace ObjexxFCL::format;
 static thread_local basic::Tracer score_type_filter_tracer( "protocols.simple_filters.ScoreTypeFilter" );
 
 protocols::filters::FilterOP
-ScoreTypeFilterCreator::create_filter() const { return new ScoreTypeFilter; }
+ScoreTypeFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ScoreTypeFilter ); }
 
 std::string
 ScoreTypeFilterCreator::keyname() const { return "ScoreType"; }
@@ -129,7 +129,7 @@ ScoreTypeFilter::compute( core::pose::Pose const & pose ) const {
 	using namespace core::pose;
 	using namespace core::scoring;
 
-	PoseOP in_pose = new Pose( pose );
+	PoseOP in_pose( new Pose( pose ) );
 
 	// make sure that scoring weights are compatible with pose's residue type set
 	// check centroid case

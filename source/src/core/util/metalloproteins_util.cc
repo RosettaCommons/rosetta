@@ -199,7 +199,7 @@ add_covalent_linkage_helper(
 		SingleLigandRotamerLibraryOP new_lrots = NULL;
 		if( pose.residue_type(res_pos).is_ligand() &&
 				RotamerLibrary::get_instance().rsd_library_already_loaded( pose.residue_type(res_pos) ) ) {
-			new_lrots = new SingleLigandRotamerLibrary();
+			new_lrots = SingleLigandRotamerLibraryOP( new SingleLigandRotamerLibrary() );
 		}
 
 		ResidueTypeSetOP mod_restype_set = ChemicalManager::get_instance()->nonconst_residue_type_set_op( pose.residue(res_pos).residue_type_set().name() );
@@ -317,7 +317,7 @@ add_covalent_linkage_helper(
 
 				//std::cerr << "old rotamer library has " << old_rotamers.size() << "members";
 				for( utility::vector1< ResidueOP>::const_iterator oldrot_it = old_rotamers.begin(); oldrot_it != old_rotamers.end(); ++oldrot_it){
-					ResidueOP new_rot_res = new Residue( pose.residue(res_pos).residue_type_set().name_map(res_type_mod_name), true);
+					ResidueOP new_rot_res( new Residue( pose.residue(res_pos).residue_type_set().name_map(res_type_mod_name), true) );
 					//set the coordinates
 					//1. we go over the atoms of the NEW residue on purpose, to make sure that no atom gets skipped
 					for( core::Size at_ct = 1; at_ct <= new_rot_res->natoms(); at_ct++){
@@ -613,16 +613,16 @@ auto_setup_all_metal_constraints (
 
 				//Setting up distance constraints:
 				if(distance_constraint_multiplier > 1.0e-10) {
-					HarmonicFuncOP hfunc = new HarmonicFunc( 0.0, 0.1 / sqrt(distance_constraint_multiplier)); //Harmonic function for constraining the position.
-					AtomPairConstraintOP pairconst = new AtomPairConstraint(virtID, otherID, hfunc); //Atom pair constraint holding the virt at the position of the metal-binding atom.
+					HarmonicFuncOP hfunc( new HarmonicFunc( 0.0, 0.1 / sqrt(distance_constraint_multiplier)) ); //Harmonic function for constraining the position.
+					AtomPairConstraintOP pairconst( new AtomPairConstraint(virtID, otherID, hfunc) ); //Atom pair constraint holding the virt at the position of the metal-binding atom.
 					pose.add_constraint(pairconst); //Add the constraint to the pose, and carry on.
 				}
 
 				//Setting up angle constraints:
 				if(angle_constraint_multiplier > 1.0e-10) {
 					core::Real const ang1 = numeric::angle_radians( pose.residue(ir).xyz(1), pose.residue(otherres).xyz(otherres_atom),  pose.residue(otherres).xyz(otherres_atom_parent) ); //Angle between metal-bonding atom-bonding atom's parent.
-					CircularHarmonicFuncOP circfunc1 = new CircularHarmonicFunc( ang1, 0.05/sqrt(angle_constraint_multiplier) ); //Circular harmonic function for constraining angles (works in RADIANS).
-					AngleConstraintOP angleconst1 = new AngleConstraint( metalID, otherID, otherparentID, circfunc1 ); //Angle constraint holding the metal
+					CircularHarmonicFuncOP circfunc1( new CircularHarmonicFunc( ang1, 0.05/sqrt(angle_constraint_multiplier) ) ); //Circular harmonic function for constraining angles (works in RADIANS).
+					AngleConstraintOP angleconst1( new AngleConstraint( metalID, otherID, otherparentID, circfunc1 ) ); //Angle constraint holding the metal
 					pose.add_constraint(angleconst1);
 				}
 

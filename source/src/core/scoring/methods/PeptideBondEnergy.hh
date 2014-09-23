@@ -55,7 +55,7 @@ public:
 	EnergyMethodOP
 	clone() const
 	{
-		return new PeptideBondEnergy;
+		return EnergyMethodOP( new PeptideBondEnergy );
 	}
 
 	/// called at the end of energy evaluation

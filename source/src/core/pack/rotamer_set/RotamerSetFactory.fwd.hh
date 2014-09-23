@@ -23,7 +23,7 @@ namespace rotamer_set {
 
 class RotamerSetFactory;
 
-typedef utility::pointer::owning_ptr< RotamerSetFactory > RotamerSetFactoryOP;
+typedef utility::pointer::shared_ptr< RotamerSetFactory > RotamerSetFactoryOP;
 
 }
 }

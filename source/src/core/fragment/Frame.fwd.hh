@@ -29,8 +29,8 @@ namespace fragment {
 // Forward
 class Frame;
 
-typedef utility::pointer::owning_ptr< Frame > FrameOP;
-typedef utility::pointer::owning_ptr< Frame const > FrameCOP;
+typedef utility::pointer::shared_ptr< Frame > FrameOP;
+typedef utility::pointer::shared_ptr< Frame const > FrameCOP;
 
 
 } // namespace fragment

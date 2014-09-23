@@ -76,7 +76,7 @@ SilentTrajectoryRecorderCreator::keyname() const {
 
 protocols::moves::MoverOP
 SilentTrajectoryRecorderCreator::create_mover() const {
-	return new SilentTrajectoryRecorder;
+	return protocols::moves::MoverOP( new SilentTrajectoryRecorder );
 }
 
 std::string
@@ -102,13 +102,13 @@ SilentTrajectoryRecorder::SilentTrajectoryRecorder(
 protocols::moves::MoverOP
 SilentTrajectoryRecorder::clone() const
 {
-	return new protocols::canonical_sampling::SilentTrajectoryRecorder( *this );
+	return protocols::moves::MoverOP( new protocols::canonical_sampling::SilentTrajectoryRecorder( *this ) );
 }
 
 protocols::moves::MoverOP
 SilentTrajectoryRecorder::fresh_instance() const
 {
-	return new SilentTrajectoryRecorder;
+	return protocols::moves::MoverOP( new SilentTrajectoryRecorder );
 }
 
 std::string
@@ -132,7 +132,7 @@ SilentTrajectoryRecorder::parse_my_tag(
 
 	std::string silent_struct_type = tag->getOption< std::string >( "silent_struct_type", "any" );
 	if ( silent_struct_type != "any" ) {
-		jd2::SilentFileJobOutputterOP silent_job_outputter = new jd2::SilentFileJobOutputter();
+		jd2::SilentFileJobOutputterOP silent_job_outputter( new jd2::SilentFileJobOutputter() );
 		silent_job_outputter->set_forced_silent_struct_type( silent_struct_type );
 		silent_job_outputter->set_write_separate_scorefile( tag->getOption< bool >( "write_extra_scores", false ) );
 		job_outputter_ = silent_job_outputter;

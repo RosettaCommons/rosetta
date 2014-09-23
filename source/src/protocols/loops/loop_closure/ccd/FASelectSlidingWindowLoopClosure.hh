@@ -62,8 +62,8 @@ namespace ccd {
 
 /// Move these forward declarations to FASelectSlidingWindowLoopClosure.fwd.hh
 class FASelectSlidingWindowLoopClosure;
-typedef utility::pointer::owning_ptr< FASelectSlidingWindowLoopClosure > FASelectSlidingWindowLoopClosureOP;
-typedef utility::pointer::owning_ptr< FASelectSlidingWindowLoopClosure const > FASelectSlidingWindowLoopClosureCOP;
+typedef utility::pointer::shared_ptr< FASelectSlidingWindowLoopClosure > FASelectSlidingWindowLoopClosureOP;
+typedef utility::pointer::shared_ptr< FASelectSlidingWindowLoopClosure const > FASelectSlidingWindowLoopClosureCOP;
 
 class FASelectSlidingWindowLoopClosure : public WidthFirstSlidingWindowLoopClosure {
 	typedef  WidthFirstSlidingWindowLoopClosure Parent;

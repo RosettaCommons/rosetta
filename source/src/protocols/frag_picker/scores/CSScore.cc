@@ -245,8 +245,8 @@ FragmentScoringMethodOP MakeCSScore::make(Size priority,
 	if (option[in::file::talos_cs].user()) {
 	  CSTalosIO in(option[in::file::talos_cs]());
 		//  in.write(std::cerr);
-	  return (FragmentScoringMethodOP) new CSScore(priority,
-	                                  lowest_acceptable_value, use_lowest,in);
+	  return (FragmentScoringMethodOP) FragmentScoringMethodOP( new CSScore(priority,
+	                                  lowest_acceptable_value, use_lowest,in) );
 	}
 
 	utility_exit_with_message(

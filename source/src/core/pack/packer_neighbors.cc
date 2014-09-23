@@ -74,7 +74,7 @@ create_packer_graph(
 	using namespace graph;
 
 	//GraphOP g = new Graph( pose.total_residue() );
-	GraphOP g = new Graph( total_nodes );
+	GraphOP g( new Graph( total_nodes ) );
 
 	if ( ! task->design_any() && ! pose.conformation().structure_moved() ) {
 	//if ( false ) {

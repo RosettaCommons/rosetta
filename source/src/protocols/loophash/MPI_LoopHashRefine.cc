@@ -474,7 +474,7 @@ MPI_LoopHashRefine::send_random_library_struct( core::Size dest_rank, core::Size
 	}
 
 	// now fabricate a return WU
-	WorkUnit_SilentStructStoreOP resultpack = new WorkUnit_SilentStructStore( );
+	WorkUnit_SilentStructStoreOP resultpack( new WorkUnit_SilentStructStore( ) );
 	resultpack->set_wu_type( "resultpack" );
 	core::io::silent::SilentStructOP new_struct = library_central_.get_struct_random()->clone();
 	new_struct->add_energy("ssid", newssid);   // overwrite the ssid

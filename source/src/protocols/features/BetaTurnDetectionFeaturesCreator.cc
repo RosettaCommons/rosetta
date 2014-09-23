@@ -29,7 +29,7 @@ namespace features {
 BetaTurnDetectionFeaturesCreator::BetaTurnDetectionFeaturesCreator() {}
 BetaTurnDetectionFeaturesCreator::~BetaTurnDetectionFeaturesCreator() {}
 FeaturesReporterOP BetaTurnDetectionFeaturesCreator::create_features_reporter() const {
-	return new BetaTurnDetectionFeatures;
+	return FeaturesReporterOP( new BetaTurnDetectionFeatures );
 }
 
 std::string BetaTurnDetectionFeaturesCreator::type_name() const {

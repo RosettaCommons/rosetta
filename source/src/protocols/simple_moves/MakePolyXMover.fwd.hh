@@ -21,7 +21,7 @@ namespace protocols {
 namespace simple_moves {
 
 class MakePolyXMover;
-typedef utility::pointer::owning_ptr< MakePolyXMover > MakePolyXMoverOP;
+typedef utility::pointer::shared_ptr< MakePolyXMover > MakePolyXMoverOP;
 
 } // simple_moves
 } // protocols

@@ -23,8 +23,8 @@ namespace constraints {
 
 class AtomPairConstraint;
 
-typedef utility::pointer::owning_ptr< AtomPairConstraint > AtomPairConstraintOP;
-typedef utility::pointer::owning_ptr< AtomPairConstraint const > AtomPairConstraintCOP;
+typedef utility::pointer::shared_ptr< AtomPairConstraint > AtomPairConstraintOP;
+typedef utility::pointer::shared_ptr< AtomPairConstraint const > AtomPairConstraintCOP;
 
 }
 }

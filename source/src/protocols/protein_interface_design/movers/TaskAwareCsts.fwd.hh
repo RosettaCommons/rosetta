@@ -22,8 +22,8 @@ namespace movers{
 
 //Forwards and OP typedefs
 class TaskAwareCsts;
-typedef utility::pointer::owning_ptr< TaskAwareCsts > TaskAwareCstsOP;
-typedef utility::pointer::owning_ptr< TaskAwareCsts const > TaskAwareCstsCOP;
+typedef utility::pointer::shared_ptr< TaskAwareCsts > TaskAwareCstsOP;
+typedef utility::pointer::shared_ptr< TaskAwareCsts const > TaskAwareCstsCOP;
 
 }//movers
 }//protein_interface_design

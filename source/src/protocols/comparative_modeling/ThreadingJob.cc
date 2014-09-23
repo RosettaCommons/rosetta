@@ -48,41 +48,35 @@ ThreadingJob::ThreadingJob(
 	basic::Tracer tr( "protocols.comparative_modeling.ThreadingJob" );
 	using namespace core::sequence;
 
-	SequenceOP query_sequence(
-		new Sequence(
+	SequenceOP query_sequence( new Sequence(
 			alignment->sequence( 1 )->ungapped_sequence(),
 			alignment->sequence( 1 )->id(),
 			alignment->sequence( 1 )->start()
-		)
-	);
+		) );
 
 	SequenceOP aligned_template(
 		alignment->sequence( 2 )->clone()
 	);
 
-	SequenceOP t_align_seq(
-		new Sequence(
+	SequenceOP t_align_seq( new Sequence(
 			aligned_template->ungapped_sequence(),
 			aligned_template->id(),
 			aligned_template->start()
-		)
-	);
+		) );
 
 
-	SequenceOP t_pdb_seq(
-		new Sequence (
+	SequenceOP t_pdb_seq( new Sequence (
 			template_pdb->sequence(),
 			alignment->sequence( 2 )->id(),
 			1
-		)
-	);
+		) );
 
 	// construct an intermediate alignment of the sequence from the alignment
 	// to the sequence in the PDB file.
 	SWAligner sw_align;
 	ScoringSchemeOP ss( new SimpleScoringScheme( 120, 0, -100, 0 ) );
 
-	fasta2template_ = new core::sequence::SequenceAlignment( sw_align.align( t_align_seq, t_pdb_seq, ss ) );
+	fasta2template_ = core::sequence::SequenceAlignmentCOP( new core::sequence::SequenceAlignment( sw_align.align( t_align_seq, t_pdb_seq, ss ) ) );
 	nres_template_  = aligned_template->ungapped_length();
 
 	// std::cerr << "OLD" << std::endl;

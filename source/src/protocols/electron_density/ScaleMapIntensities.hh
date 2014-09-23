@@ -38,8 +38,8 @@ public:
 
 	std::string get_name() const { return "ScaleMapIntensities"; }
 
-	moves::MoverOP clone() const { return new ScaleMapIntensities( *this ); }
-	moves::MoverOP fresh_instance() const { return new ScaleMapIntensities; }
+	moves::MoverOP clone() const { return moves::MoverOP( new ScaleMapIntensities( *this ) ); }
+	moves::MoverOP fresh_instance() const { return moves::MoverOP( new ScaleMapIntensities ); }
 
 	virtual void
 	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & );

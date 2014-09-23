@@ -68,7 +68,7 @@ methods::EnergyMethodOP
 HolesEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new HolesEnergy;
+	return methods::EnergyMethodOP( new HolesEnergy );
 }
 
 ScoreTypes

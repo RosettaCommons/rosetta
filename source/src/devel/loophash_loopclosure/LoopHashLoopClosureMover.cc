@@ -79,7 +79,7 @@ static thread_local basic::Tracer TR( "devel.loophash_loopclosure.LoopHashLoopCl
 	protocols::moves::MoverOP
 	LoopHashLoopClosureMoverCreator::create_mover() const
 	{
-		return new LoopHashLoopClosureMover();
+		return protocols::moves::MoverOP( new LoopHashLoopClosureMover() );
 	}
 
 	std::string
@@ -119,7 +119,7 @@ static thread_local basic::Tracer TR( "devel.loophash_loopclosure.LoopHashLoopCl
 			utility_exit();
 		}
 
-		remodel_ = new protocols::forge::remodel::RemodelMover();
+		remodel_ = protocols::forge::remodel::RemodelMover_OP( new protocols::forge::remodel::RemodelMover() );
 		remodel_->apply(pose);
 	}
 	std::string
@@ -129,12 +129,12 @@ static thread_local basic::Tracer TR( "devel.loophash_loopclosure.LoopHashLoopCl
 	}
 	protocols::moves::MoverOP
 	LoopHashLoopClosureMover::clone() const {
-		return new LoopHashLoopClosureMover( *this );
+		return protocols::moves::MoverOP( new LoopHashLoopClosureMover( *this ) );
 	}
 
 	protocols::moves::MoverOP
 	LoopHashLoopClosureMover::fresh_instance() const {
-		return new LoopHashLoopClosureMover();
+		return protocols::moves::MoverOP( new LoopHashLoopClosureMover() );
 	}
 	const std::vector<std::string> 
 	LoopHashLoopClosureMover::tokenize( const std::string& in_str, 

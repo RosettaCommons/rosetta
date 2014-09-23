@@ -22,8 +22,8 @@ namespace simple_moves{
 
 //Forwards and OP typedefs
 class CutChainMover;
-typedef utility::pointer::owning_ptr< CutChainMover > CutChainMoverOP;
-typedef utility::pointer::owning_ptr< CutChainMover const > CutChainMoverCOP;
+typedef utility::pointer::shared_ptr< CutChainMover > CutChainMoverOP;
+typedef utility::pointer::shared_ptr< CutChainMover const > CutChainMoverCOP;
 
 }//moves
 }//protocols

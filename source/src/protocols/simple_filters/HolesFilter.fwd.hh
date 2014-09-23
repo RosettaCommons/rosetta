@@ -26,8 +26,8 @@ namespace simple_filters {
 class HolesFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< HolesFilter >  HolesFilterOP;
-typedef utility::pointer::owning_ptr< HolesFilter const >  HolesFilterCOP;
+typedef utility::pointer::shared_ptr< HolesFilter >  HolesFilterOP;
+typedef utility::pointer::shared_ptr< HolesFilter const >  HolesFilterCOP;
 
 } // namespace protocols
 } // namespace filters

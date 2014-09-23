@@ -24,8 +24,8 @@ namespace sampler {
 namespace input_streams {
 	
 	class InputStreamStepWiseSampler;
-	typedef utility::pointer::owning_ptr< InputStreamStepWiseSampler > InputStreamStepWiseSamplerOP;
-	typedef utility::pointer::owning_ptr< InputStreamStepWiseSampler const > InputStreamStepWiseSamplerCOP;
+	typedef utility::pointer::shared_ptr< InputStreamStepWiseSampler > InputStreamStepWiseSamplerOP;
+	typedef utility::pointer::shared_ptr< InputStreamStepWiseSampler const > InputStreamStepWiseSamplerCOP;
 	
 } //input_streams
 } //sampler

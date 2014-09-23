@@ -174,10 +174,10 @@ NcontactsCalculator::recompute( Pose const & pose )
 	Size nc_allatm( 0 );
 	Size nc_hpatm( 0 );
 	Size nc_hpres( 0 );
-	topology::SS_Info2_OP ssinfo = new topology::SS_Info2( pose.secstruct() );
+	topology::SS_Info2_OP ssinfo( new topology::SS_Info2( pose.secstruct() ) );
 
-	StrandPairingSetOP spairset = new StrandPairingSet( protocols::fldsgn::topology::calc_strand_pairing_set( pose, ssinfo ) );
-	SheetSetOP sheet_set = new SheetSet( ssinfo, spairset );
+	StrandPairingSetOP spairset( new StrandPairingSet( protocols::fldsgn::topology::calc_strand_pairing_set( pose, ssinfo ) ) );
+	SheetSetOP sheet_set( new SheetSet( ssinfo, spairset ) );
 	// std::cout << *sheet_set;
 
 	Size max_ssele = ssinfo->ss_element_id( nres );

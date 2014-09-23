@@ -68,7 +68,7 @@ SymMinMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SymMinMoverCreator::create_mover() const {
-	return new SymMinMover;
+	return protocols::moves::MoverOP( new SymMinMover );
 }
 
 std::string
@@ -109,7 +109,7 @@ SymMinMover::apply( pose::Pose & pose )
 {
 	// lazy default initialization
 	core::kinematics::MoveMapOP symmetric_movemap;
-	if ( ! movemap() ) symmetric_movemap =  new MoveMap;
+	if ( ! movemap() ) symmetric_movemap = core::kinematics::MoveMapOP( new MoveMap );
 	else symmetric_movemap = movemap()->clone();
 
 	apply_dof_tasks_to_movemap(pose, *symmetric_movemap);
@@ -155,8 +155,8 @@ SymMinMover::get_name() const {
 	return SymMinMoverCreator::mover_name();
 }
 
-protocols::moves::MoverOP SymMinMover::clone() const { return new  SymMinMover( *this ); }
-protocols::moves::MoverOP SymMinMover::fresh_instance() const { return new  SymMinMover; }
+protocols::moves::MoverOP SymMinMover::clone() const { return protocols::moves::MoverOP( new  SymMinMover( *this ) ); }
+protocols::moves::MoverOP SymMinMover::fresh_instance() const { return protocols::moves::MoverOP( new  SymMinMover ); }
 
 void SymMinMover::parse_my_tag(
 	TagCOP const tag,

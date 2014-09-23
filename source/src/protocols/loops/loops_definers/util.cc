@@ -41,7 +41,7 @@ load_loop_definitions(
 	if(data.has("loops_definers", loops_str)){
 		LoopsDefinerOP loops_definer(
 			data.get_ptr< LoopsDefiner >("loops_definers", loops_str));
-		return new Loops(loops_definer->apply(pose));
+		return LoopsOP( new Loops(loops_definer->apply(pose)) );
 	} else {
 		return loops_from_string(loops_str, pose );
 	}

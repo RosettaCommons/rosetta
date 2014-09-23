@@ -24,8 +24,8 @@ namespace simple_moves {
 namespace sidechain_moves {
 
 class SidechainMoverBase;
-typedef utility::pointer::owning_ptr< SidechainMoverBase > SidechainMoverBaseOP;
-typedef utility::pointer::owning_ptr< SidechainMoverBase const > SidechainMoverBaseCOP;
+typedef utility::pointer::shared_ptr< SidechainMoverBase > SidechainMoverBaseOP;
+typedef utility::pointer::shared_ptr< SidechainMoverBase const > SidechainMoverBaseCOP;
 
 } // sidechain_moves
 } // simple_moves

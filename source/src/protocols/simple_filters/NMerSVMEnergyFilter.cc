@@ -51,7 +51,7 @@ using namespace core::scoring;
 static thread_local basic::Tracer TR( "protocols.simple_filters.NMerSVMEnergyFilter" );
 
 protocols::filters::FilterOP
-NMerSVMEnergyFilterCreator::create_filter() const { return new NMerSVMEnergyFilter; }
+NMerSVMEnergyFilterCreator::create_filter() const { return protocols::filters::FilterOP( new NMerSVMEnergyFilter ); }
 
 std::string
 NMerSVMEnergyFilterCreator::keyname() const { return "NMerSVMEnergy"; }

@@ -24,8 +24,8 @@ namespace modeler {
 namespace packer {
 
 	class StepWisePacker;
-	typedef utility::pointer::owning_ptr< StepWisePacker > StepWisePackerOP;
-	typedef utility::pointer::owning_ptr< StepWisePacker const > StepWisePackerCOP;
+	typedef utility::pointer::shared_ptr< StepWisePacker > StepWisePackerOP;
+	typedef utility::pointer::shared_ptr< StepWisePacker const > StepWisePackerCOP;
 
 } //packer
 } //modeler

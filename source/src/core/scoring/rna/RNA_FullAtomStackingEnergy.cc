@@ -62,7 +62,7 @@ methods::EnergyMethodOP
 RNA_FullAtomStackingEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new RNA_FullAtomStackingEnergy;
+	return methods::EnergyMethodOP( new RNA_FullAtomStackingEnergy );
 }
 
 ScoreTypes
@@ -90,7 +90,7 @@ RNA_FullAtomStackingEnergy::RNA_FullAtomStackingEnergy() :
 methods::EnergyMethodOP
 RNA_FullAtomStackingEnergy::clone() const
 {
-  return new RNA_FullAtomStackingEnergy;
+  return methods::EnergyMethodOP( new RNA_FullAtomStackingEnergy );
 }
 
 
@@ -117,7 +117,7 @@ RNA_FullAtomStackingEnergy::setup_for_minimizing(
         NeighborListOP nblist;
         Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
         Real const XX = dist_cutoff_ + 2 * tolerated_motion;
-        nblist = new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX );
+        nblist = NeighborListOP( new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX ) );
         if ( pose.energies().use_nblist_auto_update() ) {
             nblist->set_auto_update( tolerated_motion );
         }
@@ -606,7 +606,7 @@ RNA_FullAtomStackingEnergy::get_count_pair_function(
 {
 	using namespace etable::count_pair;
 	if ( res1 == res2 ) {
-		return new CountPairNone;
+		return etable::count_pair::CountPairFunctionCOP( new CountPairNone );
 	}
 
 	conformation::Residue const & rsd1( pose.residue( res1 ) );
@@ -623,10 +623,10 @@ RNA_FullAtomStackingEnergy::get_count_pair_function(
 {
 	using namespace etable::count_pair;
 
-	if ( !rsd1.is_RNA() ) return new CountPairNone;
-	if ( !rsd2.is_RNA() ) return new CountPairNone;
-	if ( rsd1.seqpos() == rsd2.seqpos() ) return new CountPairNone;
-	return new CountPairAll;
+	if ( !rsd1.is_RNA() ) return etable::count_pair::CountPairFunctionCOP( new CountPairNone );
+	if ( !rsd2.is_RNA() ) return etable::count_pair::CountPairFunctionCOP( new CountPairNone );
+	if ( rsd1.seqpos() == rsd2.seqpos() ) return etable::count_pair::CountPairFunctionCOP( new CountPairNone );
+	return etable::count_pair::CountPairFunctionCOP( new CountPairAll );
 
 }
 

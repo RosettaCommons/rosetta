@@ -153,14 +153,14 @@ main( int argc, char * argv [] )
 
 	//////////////// set native constraints prior to minimization
 	ConstraintSetOP cst_set( new ConstraintSet() );
-	HarmonicFuncOP spring = new HarmonicFunc( 0 /*mean*/, 1 /*std-dev*/);
+	HarmonicFuncOP spring( new HarmonicFunc( 0 /*mean*/, 1 /*std-dev*/) );
 	conformation::Conformation const & conformation( orig_pose.conformation() );
 	for (Size i=1; i <= orig_pose.total_residue(); ++i) {
 //		Residue const  & reside = orig_pose.residue( i ); // commented out to fix compilation error: unused variable 'reside' [-Werror=unused-variable] - Oriel
 		id::AtomID CAi ( orig_pose.residue(i).atom_index( " CA " ), i );
 		cst_set->add_constraint
-		(  new CoordinateConstraint
-		 ( CAi, CAi, conformation.xyz( CAi ), spring )
+		(  ConstraintCOP( new CoordinateConstraint
+		 ( CAi, CAi, conformation.xyz( CAi ), spring ) )
 		 );
 	}
 	orig_pose.constraint_set( cst_set );
@@ -168,7 +168,7 @@ main( int argc, char * argv [] )
 	/////////////////////////////////////////////////////////////////////
 
 	////////////// minimize bb and sc
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
+	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
 	movemap->set_bb(true);
 	movemap->set_chi(true);
 	protocols::simple_moves::MinMover minimizer(movemap, scorefxn, "dfpmin_armijo_atol", 0.01, true /*nb_list*/);
@@ -282,7 +282,7 @@ void derive(core::pose::Pose const & pose) {
 						TR <<  std::endl;
 						if (isc < maxIsc ) {
 								maxIsc = isc;
-								best_pose = new pose::Pose(*curr_pose);
+								best_pose = pose::PoseOP( new pose::Pose(*curr_pose) );
 								best_posb=i;
 						}
 				}
@@ -321,7 +321,7 @@ void derive(core::pose::Pose const & pose) {
 					TR <<  std::endl;	
 					if (isc < maxIsc /*normalize by length - pep_length + 5 */) {
 								maxIsc = isc;
-								best_pose = new pose::Pose(*curr_pose);
+								best_pose = pose::PoseOP( new pose::Pose(*curr_pose) );
 								best_posa=i;
 						}
 				}
@@ -347,14 +347,13 @@ void derive(core::pose::Pose const & pose) {
 Real calculateInterfaceScore ( core::pose::Pose pose, core::scoring::ScoreFunctionOP scorefxn ){
 
     //make a new pose in which the monomers are far apart from one another
-    core::pose::PoseOP unbound_pose = new core::pose::Pose(pose);
+    core::pose::PoseOP unbound_pose( new core::pose::Pose(pose) );
     //translation size = 1000A.
     float trans_magnitude = 1000;
     //rb jump number is assumed to be 1 - this will work for two monomers.
     Size rb_jump = 1;
     //create a Rigid body mover - the mover works on a rigid body jump
-    protocols::rigid::RigidBodyTransMoverOP translate_away (
-                  new protocols::rigid::RigidBodyTransMover( *unbound_pose, rb_jump ) );
+    protocols::rigid::RigidBodyTransMoverOP translate_away( new protocols::rigid::RigidBodyTransMover( *unbound_pose, rb_jump ) );
 
     //set the size of the move
     translate_away->step_size( trans_magnitude );
@@ -384,11 +383,11 @@ core::pose::PoseOP get_subPose(
 		pose::PoseOP other;
 
 		if (pep_chain == 'A') {
-				pose = new pose::Pose(*chainB);
+				pose = pose::PoseOP( new pose::Pose(*chainB) );
 				other = chainA;
 		}
 		else {//pep_chain == B
-				pose = new pose::Pose(*chainA);
+				pose = pose::PoseOP( new pose::Pose(*chainA) );
 				other = chainB;
 		}
 
@@ -421,7 +420,7 @@ core::pose::PoseOP twoChainPose (core::pose::Pose const & src, Size chainA, Size
 		residue_indices.push_back(i);
 	}
 	
-	pose::PoseOP pose = new pose::Pose();
+	pose::PoseOP pose( new pose::Pose() );
 	core::io::pdb::pose_from_pose(*pose, src, residue_indices);
 	return pose;
 }
@@ -441,7 +440,7 @@ core::pose::PoseOP oneChainPose (core::pose::Pose const & src, Size chainA) {
 			residue_indices.push_back(i);
 	}
 	
-	pose::PoseOP pose = new pose::Pose();
+	pose::PoseOP pose( new pose::Pose() );
 	core::io::pdb::pose_from_pose(*pose, src, residue_indices);
 	return pose;
 }

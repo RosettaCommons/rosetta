@@ -123,7 +123,7 @@ NcontactsFilter::parse_my_tag(
 }
 
 protocols::filters::FilterOP
-NcontactsFilterCreator::create_filter() const { return new NcontactsFilter; }
+NcontactsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new NcontactsFilter ); }
 
 std::string
 NcontactsFilterCreator::keyname() const { return "Ncontacts"; }

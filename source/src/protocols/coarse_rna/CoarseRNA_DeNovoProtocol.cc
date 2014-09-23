@@ -113,8 +113,8 @@ CoarseRNA_DeNovoProtocol::CoarseRNA_DeNovoProtocol(
 		all_rna_fragments_file_( basic::database::full_name("1jj2_coarse_coords.txt") ),
 		jump_library_file_( basic::database::full_name("chemical/rna/1jj2_coarse_jumps.dat" ) ),
 		lores_scorefxn_( "farna/coarse_rna.wts" ),
-		rna_structure_parameters_( new protocols::farna::RNA_StructureParameters ),
-		rna_loop_closer_( new protocols::coarse_rna::CoarseRNA_LoopCloser ),
+		rna_structure_parameters_( protocols::farna::RNA_StructureParametersOP( new protocols::farna::RNA_StructureParameters ) ),
+		rna_loop_closer_( protocols::coarse_rna::CoarseRNA_LoopCloserOP( new protocols::coarse_rna::CoarseRNA_LoopCloser ) ),
 		close_loops_( false ),
 		choose_best_solution_( false ),
 		force_ideal_chainbreak_( false ),
@@ -126,7 +126,7 @@ CoarseRNA_DeNovoProtocol::CoarseRNA_DeNovoProtocol(
 
 /// @brief Clone this object
 protocols::moves::MoverOP CoarseRNA_DeNovoProtocol::clone() const {
-	return new CoarseRNA_DeNovoProtocol(*this);
+	return protocols::moves::MoverOP( new CoarseRNA_DeNovoProtocol(*this) );
 }
 
 //////////////////////////////////////////////////
@@ -152,10 +152,10 @@ void CoarseRNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 
 	rna_structure_parameters_->initialize( pose, rna_params_file_, jump_library_file_, true /*ignore_secstruct*/ );
 
-	rna_data_reader_ = new core::io::rna::RNA_DataReader( rna_data_file_ );
+	rna_data_reader_ = core::io::rna::RNA_DataReaderOP( new core::io::rna::RNA_DataReader( rna_data_file_ ) );
 	rna_data_reader_->fill_rna_data_info( pose ); // this seems repeated below? get rid of one instance?
 
-	if( input_res_.size() > 0 )	rna_chunk_library_ = new protocols::farna::RNA_ChunkLibrary( chunk_silent_files_, pose, input_res_ );
+	if( input_res_.size() > 0 )	rna_chunk_library_ = protocols::farna::RNA_ChunkLibraryOP( new protocols::farna::RNA_ChunkLibrary( chunk_silent_files_, pose, input_res_ ) );
 	rna_structure_parameters_->set_allow_insert( rna_chunk_library_->allow_insert() );
 	rna_structure_parameters_->setup_fold_tree_and_jumps_and_variants( pose );
 
@@ -165,8 +165,8 @@ void CoarseRNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 
 	if ( dump_pdb_) std::cout << "Allow insert: " << std::endl;	rna_structure_parameters_->allow_insert()->show();
 
-	protocols::farna::RNA_FragmentsOP rna_fragments = new CoarseRNA_Fragments( all_rna_fragments_file_ );
-	frag_mover_ = new protocols::farna::RNA_FragmentMover( rna_fragments, rna_structure_parameters_->allow_insert() );
+	protocols::farna::RNA_FragmentsOP rna_fragments( new CoarseRNA_Fragments( all_rna_fragments_file_ ) );
+	frag_mover_ = protocols::farna::RNA_FragmentMoverOP( new protocols::farna::RNA_FragmentMover( rna_fragments, rna_structure_parameters_->allow_insert() ) );
 
 	rna_data_reader_->fill_rna_data_info( pose );
 	initialize_constraints( pose );
@@ -177,7 +177,7 @@ void CoarseRNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 	rna_loop_closer_->set_allow_insert( rna_structure_parameters_->allow_insert() );
 	if ( choose_best_solution_ ) rna_loop_closer_->choose_best_solution_based_on_score_function( denovo_scorefxn_ );
 
-	multiple_domain_mover_ = new protocols::farna::MultipleDomainMover( pose, rna_loop_closer_ );
+	multiple_domain_mover_ = protocols::farna::MultipleDomainMoverOP( new protocols::farna::MultipleDomainMover( pose, rna_loop_closer_ ) );
 	domain_move_frequency_ = 0.0;
 	domain_move_frequency_ =  ( multiple_domain_mover_->num_domains() > 1 && !freeze_domains_ ) ? 0.7: 0.0;
 

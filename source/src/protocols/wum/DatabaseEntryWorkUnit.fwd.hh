@@ -22,8 +22,8 @@ namespace protocols{
 namespace wum{
 
 class DatabaseEntryWorkUnit;
-typedef utility::pointer::owning_ptr< DatabaseEntryWorkUnit > DatabaseEntryWorkUnitOP;
-typedef utility::pointer::owning_ptr< DatabaseEntryWorkUnit const > DatabaseEntryWorkUnitCOP;
+typedef utility::pointer::shared_ptr< DatabaseEntryWorkUnit > DatabaseEntryWorkUnitOP;
+typedef utility::pointer::shared_ptr< DatabaseEntryWorkUnit const > DatabaseEntryWorkUnitCOP;
 
 }//namespace wum
 }//namespace protocols

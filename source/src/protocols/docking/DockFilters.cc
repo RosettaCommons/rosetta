@@ -54,17 +54,17 @@ DockingLowResFilter::DockingLowResFilter() : Filter()
 	using namespace protocols::simple_filters;
 	using namespace core::scoring;
 
-	ScoreCutoffFilterOP hascontacts = new ScoreCutoffFilter();
+	ScoreCutoffFilterOP hascontacts( new ScoreCutoffFilter() );
 	hascontacts->set_score_type( interchain_contact );
 	hascontacts->set_unweighted( true );
 	hascontacts->set_cutoff(9.99); // interchain_contact of 10 indicates no contacts
 
-	ScoreCutoffFilterOP fewclashes = new ScoreCutoffFilter();
+	ScoreCutoffFilterOP fewclashes( new ScoreCutoffFilter() );
 	fewclashes->set_score_type( interchain_vdw );
 	fewclashes->set_unweighted( true );
 	fewclashes->set_cutoff(1.0); // no more than 1.0 clash (low-res bump score)
 
-	filters_ = new protocols::filters::FilterCollection();
+	filters_ = protocols::filters::FilterCollectionOP( new protocols::filters::FilterCollection() );
 	filters_->add_filter( hascontacts );
 	filters_->add_filter( fewclashes );
 }
@@ -86,7 +86,7 @@ DockingLowResFilter::set_use_constraints( bool setting, core::Real cutoff )
 
 	use_constraints_ = setting;
 	if ( use_constraints_ ) {
-		ScoreCutoffFilterOP constraint_filter = new ScoreCutoffFilter() ;
+		ScoreCutoffFilterOP constraint_filter( new ScoreCutoffFilter() ) ;
 		constraint_filter->set_score_type( atom_pair_constraint );
 		constraint_filter->set_cutoff( cutoff );
 		constraint_filter->set_unweighted( true );
@@ -116,7 +116,7 @@ DockingHighResFilter::DockingHighResFilter( ) : Filter()
 	movable_jumps_ = utility::tools::make_vector1<core::Size>(1);
 	scorefunction_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking" );
 	score_margin_ = 0.0;
-	scorefilter_ = new protocols::simple_filters::ScoreCutoffFilter();
+	scorefilter_ = protocols::simple_filters::ScoreCutoffFilterOP( new protocols::simple_filters::ScoreCutoffFilter() );
 	scorefilter_->set_score_type( core::scoring::total_score );
 	scorefilter_->set_cutoff( 1000000.0 );
 }
@@ -136,7 +136,7 @@ void DockingHighResFilter::set_score_margin( core::Real new_score_margin )
 }
 
 void DockingHighResFilter::set_scorefunction( core::scoring::ScoreFunctionOP const scorefunction ) { scorefunction_ = scorefunction; }
-protocols::filters::FilterOP DockingHighResFilter::clone() const { return new DockingHighResFilter( *this ); }
+protocols::filters::FilterOP DockingHighResFilter::clone() const { return protocols::filters::FilterOP( new DockingHighResFilter( *this ) ); }
 
 bool
 DockingHighResFilter::apply( core::pose::Pose const & pose ) const

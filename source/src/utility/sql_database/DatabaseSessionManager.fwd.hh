@@ -23,12 +23,12 @@ namespace sql_database {
 
 
 class session;
-typedef pointer::owning_ptr< session > sessionOP;
-typedef pointer::owning_ptr< session const > sessionCOP;
+typedef pointer::shared_ptr< session > sessionOP;
+typedef pointer::shared_ptr< session const > sessionCOP;
 
 class transaction;
-typedef pointer::owning_ptr< transaction > transactionOP;
-typedef pointer::owning_ptr< transaction const > transactionCOP;
+typedef pointer::shared_ptr< transaction > transactionOP;
+typedef pointer::shared_ptr< transaction const > transactionCOP;
 
 class DatabaseConnectionManager;
 

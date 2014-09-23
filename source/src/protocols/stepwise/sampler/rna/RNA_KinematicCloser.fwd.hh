@@ -23,7 +23,7 @@ namespace sampler {
 namespace rna {
 
 class RNA_KinematicCloser;
-typedef utility::pointer::owning_ptr< RNA_KinematicCloser > RNA_KinematicCloserOP;
+typedef utility::pointer::shared_ptr< RNA_KinematicCloser > RNA_KinematicCloserOP;
 
 } //rna
 } //sampler

@@ -62,11 +62,11 @@ private:
 }; //class ConstAbinitioMoverWeight
 
 // Types
-typedef  utility::pointer::owning_ptr< ConstAbinitioMoverWeight >  ConstAbinitioMoverWeightOP;
-typedef  utility::pointer::owning_ptr< ConstAbinitioMoverWeight const >  ConstAbinitioMoverWeightCOP;
+typedef  utility::pointer::shared_ptr< ConstAbinitioMoverWeight >  ConstAbinitioMoverWeightOP;
+typedef  utility::pointer::shared_ptr< ConstAbinitioMoverWeight const >  ConstAbinitioMoverWeightCOP;
 
-typedef  utility::pointer::access_ptr< ConstAbinitioMoverWeight >  ConstAbinitioMoverWeightAP;
-typedef  utility::pointer::access_ptr< ConstAbinitioMoverWeight const >  ConstAbinitioMoverWeightCAP;
+typedef  utility::pointer::weak_ptr< ConstAbinitioMoverWeight >  ConstAbinitioMoverWeightAP;
+typedef  utility::pointer::weak_ptr< ConstAbinitioMoverWeight const >  ConstAbinitioMoverWeightCAP;
 
 }
 }

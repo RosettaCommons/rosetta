@@ -98,7 +98,7 @@ int main( int argc, char * argv [] ) {
     Real PORE_RADIUS = 2.0;
     while(input.has_another_pose()){
 		core::pose::PoseOP input_poseOP;
-		input_poseOP = new core::pose::Pose();
+		input_poseOP = core::pose::PoseOP( new core::pose::Pose() );
 		input.fill_pose(*input_poseOP,*rsd_set);
 		std::string tag = core::pose::tag_from_pose(*input_poseOP);
         std::string outFile = (tag + ".sasa");

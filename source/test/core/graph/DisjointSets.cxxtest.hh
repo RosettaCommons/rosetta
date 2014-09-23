@@ -71,7 +71,7 @@ public:
 	void test_disjoint_sets_example1() {
 		//TR << "Running test_disjoint_sets_example1..." << std::endl;
 
-		g = new graph::Graph(5);
+		g = core::graph::GraphOP( new graph::Graph(5) );
 		g->add_edge(1,2);
 		g->add_edge(1,5);
 		g->add_edge(4,5);

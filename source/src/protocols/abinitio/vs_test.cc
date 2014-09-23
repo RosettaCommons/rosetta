@@ -91,7 +91,7 @@ int run_boinc_debug() {
 	//fragset_small->read_fragment_file( frag_small_file, option[ OptionKeys::abinitio::number_3mer_frags ]() );
 
 	// make a MoveMap
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	movemap->set_bb( true );
 
 	// nstruct iterations

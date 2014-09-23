@@ -53,7 +53,7 @@ class DiagnosticData : public CacheableData
 public:
 	DiagnosticData( std::map < std::string, double >  data_in ) : CacheableData(), data_(data_in) {}
 	virtual ~DiagnosticData(){};
-	virtual CacheableDataOP clone() const { return new DiagnosticData(*this); }
+	virtual CacheableDataOP clone() const { return CacheableDataOP( new DiagnosticData(*this) ); }
 	virtual std::map < std::string, double > const & data() const { return data_; }
 private:
 	std::map < std::string, double > data_;

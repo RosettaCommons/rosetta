@@ -103,7 +103,7 @@ SidechainMoverBase::SidechainMoverBase(
 	last_nchi_(mover.last_nchi_),
 	last_proposal_density_ratio_(mover.last_proposal_density_ratio_)
 {
-	if (mover.task_factory_) task_factory_ = new pack::task::TaskFactory(*mover.task_factory_);
+	if (mover.task_factory_) task_factory_ = core::pack::task::TaskFactoryCOP( new pack::task::TaskFactory(*mover.task_factory_) );
 	if (mover.task_) task_ = mover.task_->clone();
 }
 
@@ -134,7 +134,7 @@ SidechainMoverBase::parse_my_tag(
 			}
 		}
 	} else {
-		new_task_factory->push_back( new pack::task::operation::RestrictToRepacking );
+		new_task_factory->push_back( TaskOperationCOP( new pack::task::operation::RestrictToRepacking ) );
 	}
 
 	task_factory_ = new_task_factory;
@@ -153,12 +153,12 @@ void
 SidechainMoverBase::init_from_options() {
 	using namespace basic::options;
 	using core::pack::task::operation::TaskOperationCOP;
-	core::pack::task::TaskFactoryOP new_task_factory = new pack::task::TaskFactory;
-	new_task_factory->push_back( new pack::task::operation::InitializeFromCommandline );
+	core::pack::task::TaskFactoryOP new_task_factory( new pack::task::TaskFactory );
+	new_task_factory->push_back( TaskOperationCOP( new pack::task::operation::InitializeFromCommandline ) );
 	// design is not supported yet !!!
-	new_task_factory->push_back( new core::pack::task::operation::RestrictToRepacking );
+	new_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
 	if ( option[ OptionKeys::packing::resfile ].user() ) {
-		new_task_factory->push_back( new pack::task::operation::ReadResfile );
+		new_task_factory->push_back( TaskOperationCOP( new pack::task::operation::ReadResfile ) );
 	}
 	set_task_factory( new_task_factory );
 }
@@ -209,7 +209,7 @@ SidechainMoverBase::apply( Pose& pose ) {
 	//select_resnum
 	Size const resnum( suggest_residue_number( pose ) );
 
-	ResidueOP newresidue = new Residue( pose.residue( resnum ) );
+	ResidueOP newresidue( new Residue( pose.residue( resnum ) ) );
 	ResidueOP final = make_move( newresidue );
 
 	if ( !change_chi_without_replacing_residue() || have_mutated_residue() ) {

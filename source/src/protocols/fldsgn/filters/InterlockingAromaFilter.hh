@@ -80,10 +80,10 @@ public:// virtual constructor
 
 
 	// @brief make clone
-	virtual FilterOP clone() const { return new InterlockingAromaFilter( *this ); }
+	virtual FilterOP clone() const { return FilterOP( new InterlockingAromaFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const {	return new InterlockingAromaFilter(); }
+	virtual FilterOP fresh_instance() const {	return FilterOP( new InterlockingAromaFilter() ); }
 
 
 public:// mutator

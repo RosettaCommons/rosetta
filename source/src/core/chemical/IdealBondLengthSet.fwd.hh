@@ -22,10 +22,10 @@ namespace chemical {
 
 class IdealBondLengthSet;
 
-typedef  utility::pointer::access_ptr< IdealBondLengthSet > IdealBondLengthSetAP;
-typedef  utility::pointer::access_ptr< IdealBondLengthSet const > IdealBondLengthSetCAP;
-typedef  utility::pointer::owning_ptr< IdealBondLengthSet > IdealBondLengthSetOP;
-typedef  utility::pointer::owning_ptr< IdealBondLengthSet const > IdealBondLengthSetCOP;
+typedef  utility::pointer::weak_ptr< IdealBondLengthSet > IdealBondLengthSetAP;
+typedef  utility::pointer::weak_ptr< IdealBondLengthSet const > IdealBondLengthSetCAP;
+typedef  utility::pointer::shared_ptr< IdealBondLengthSet > IdealBondLengthSetOP;
+typedef  utility::pointer::shared_ptr< IdealBondLengthSet const > IdealBondLengthSetCOP;
 
 }
 }

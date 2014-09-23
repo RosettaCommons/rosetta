@@ -57,8 +57,8 @@ InterbondAngleScore::InterbondAngleScore(Size priority,
 	utility::vector1<Real> x0(2);
 	utility::vector1<Real> sd(2);
 	using core::scoring::func::FuncOP;
-	factory_.add_type("MINMULTIHARMONIC", new core::scoring::func::MinMultiHarmonicFunc(
-			x0,sd));
+	factory_.add_type("MINMULTIHARMONIC", FuncOP( new core::scoring::func::MinMultiHarmonicFunc(
+			x0,sd) ));
 
 	data_.resize(get_query_size());
 	read_constraints(constraints_file_name);
@@ -73,8 +73,8 @@ InterbondAngleScore::InterbondAngleScore(Size priority,
 	utility::vector1<Real> x0(2);
 	utility::vector1<Real> sd(2);
 	using core::scoring::func::FuncOP;
-	factory_.add_type("MINMULTIHARMONIC", new core::scoring::func::MinMultiHarmonicFunc(
-			x0,sd));
+	factory_.add_type("MINMULTIHARMONIC", FuncOP( new core::scoring::func::MinMultiHarmonicFunc(
+			x0,sd) ));
 
 	data_.resize(get_query_size());
 	read_constraints(constraints_file_name);
@@ -232,7 +232,7 @@ void InterbondAngleScore::read_constraints(
 			}
 
 			FourAtomsConstraintDataOP dat;
-			dat = new FourAtomsConstraintData(func, a1, o2, a2, o3, a3, o4, a4);
+			dat = FourAtomsConstraintDataOP( new FourAtomsConstraintData(func, a1, o2, a2, o3, a3, o4, a4) );
 			if (res1 > data_.size()) {
 				trInterbondAngleScore.Warning
 						<< "Skipping a constraint that involves residue "
@@ -265,9 +265,9 @@ FragmentScoringMethodOP MakeInterbondAngleScore::make(Size priority,
 		trInterbondAngleScore << "Constraints loaded from: "
 				<< option[constraints::cst_file]()[1] << std::endl;
 
-		return (FragmentScoringMethodOP) new InterbondAngleScore(priority,
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new InterbondAngleScore(priority,
 				lowest_acceptable_value, use_lowest, option[constraints::cst_file]()[1],
-				picker->size_of_query(),constrainable_atoms);
+				picker->size_of_query(),constrainable_atoms) );
 	}
 	utility_exit_with_message(
 			"Can't read a constraints file. Provide it with constraints::cst_file flag");

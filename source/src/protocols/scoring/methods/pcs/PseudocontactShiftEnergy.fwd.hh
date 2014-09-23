@@ -31,8 +31,8 @@ namespace pcs {
 class PCS_Energy;
 class PCS_Energy_parameters_manager;
 
-typedef utility::pointer::owning_ptr< PCS_Energy > PCS_EnergyOP;
-typedef utility::pointer::owning_ptr< PCS_Energy const > PCS_EnergyCOP;
+typedef utility::pointer::shared_ptr< PCS_Energy > PCS_EnergyOP;
+typedef utility::pointer::shared_ptr< PCS_Energy const > PCS_EnergyCOP;
 }
 }
 }

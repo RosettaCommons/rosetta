@@ -78,22 +78,22 @@ namespace protein {
 		if ( options->frag_files().size() > 0 ){
 			std::string const frag_file  = options->frag_files()[ 1 ];
 			utility::vector1< Size > const & slice_res = working_parameters->working_res_list();
-			sampler = new ProteinFragmentStepWiseSampler( frag_file, slice_res, moving_res_list );
+			sampler = StepWiseSamplerSizedOP( new ProteinFragmentStepWiseSampler( frag_file, slice_res, moving_res_list ) );
 			if ( input_streams.size() == 1 ) {
-				StepWiseSamplerSizedOP sampler_identity = new InputStreamStepWiseSampler( input_streams[1] );
-				sampler = new StepWiseSamplerSizedComb( sampler_identity /*outer*/, sampler /*inner, fragment generator above*/);
+				StepWiseSamplerSizedOP sampler_identity( new InputStreamStepWiseSampler( input_streams[1] ) );
+				sampler = StepWiseSamplerSizedOP( new StepWiseSamplerSizedComb( sampler_identity /*outer*/, sampler /*inner, fragment generator above*/) );
 			}
 		} else if ( input_streams.size() == 2 ){
 			// assume that we want to "combine" two streams of poses...
 			// This would be the mode if we have a bunch of templates from which we will graft chunks.
 			// Or if we have SWA-based little fragments that we want to paste in.
 			//			runtime_assert( stepwise_pose_setup_ != 0 );
-			StepWiseSamplerSizedOP input_stream_sampler1 = new InputStreamStepWiseSampler( input_streams[1] );
-			StepWiseSamplerSizedOP input_stream_sampler2 = new InputStreamStepWiseSampler( input_streams[2] );
-			sampler= new StepWiseSamplerSizedComb( input_stream_sampler1 /*outer*/, input_stream_sampler2 /*inner*/);
+			StepWiseSamplerSizedOP input_stream_sampler1( new InputStreamStepWiseSampler( input_streams[1] ) );
+			StepWiseSamplerSizedOP input_stream_sampler2( new InputStreamStepWiseSampler( input_streams[2] ) );
+			sampler = StepWiseSamplerSizedOP( new StepWiseSamplerSizedComb( input_stream_sampler1 /*outer*/, input_stream_sampler2 /*inner*/) );
 		} else	if ( options->sample_beta() ) {
 			if ( moving_res_list.size() !=  1 ) utility_exit_with_message( "Sample beta only works for adding one residue to a beta sheet...");
-			sampler =	new ProteinBetaAntiParallelStepWiseSampler( pose, moving_res_list[1] );
+			sampler = StepWiseSamplerSizedOP( new ProteinBetaAntiParallelStepWiseSampler( pose, moving_res_list[1] ) );
 		} else if ( moving_res_list.size() > 0 ) {
 
 			//////////////////////////////////////////////////////////////////////
@@ -122,9 +122,9 @@ namespace protein {
 			// Could also put loose chainbreak closure check here.
 			Pose sampler_pose = pose;
 			backbone_sampler.apply( sampler_pose );
-			sampler =  new ProteinMainChainStepWiseSampler( backbone_sampler.which_torsions(),
+			sampler = StepWiseSamplerSizedOP( new ProteinMainChainStepWiseSampler( backbone_sampler.which_torsions(),
 																							backbone_sampler.main_chain_torsion_set_lists_real(),
-																							options->choose_random() );
+																							options->choose_random() ) );
 			TR << "Using ProteinMainChainStepWiseSampler. Num poses: " << backbone_sampler.main_chain_torsion_set_lists_real().size() << std::endl;
 		} else {
 			sampler = 0; // no op.
@@ -208,7 +208,7 @@ namespace protein {
 		// main loop
 	utility::vector1< std::string > in_files = load_s_and_l();
 
-		SilentFileDataOP silent_file_data = new SilentFileData;
+		SilentFileDataOP silent_file_data( new SilentFileData );
 		std::string const silent_file( option[ out::file::silent ]() );
 
 		Size count( 0 );

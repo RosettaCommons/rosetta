@@ -73,7 +73,7 @@ public:
 	basic::datacache::CacheableDataOP
 	clone() const
 	{
-		return new InterfaceInfo( *this );
+		return basic::datacache::CacheableDataOP( new InterfaceInfo( *this ) );
 	}
 
 	///@brief Removes all jumps from the interface calculation

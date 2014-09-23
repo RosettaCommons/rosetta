@@ -21,12 +21,12 @@ namespace scoring {
 namespace constraints {
 
 class ResidueConstraints;
-typedef utility::pointer::owning_ptr< ResidueConstraints > ResidueConstraintsOP;
-typedef utility::pointer::owning_ptr< ResidueConstraints const > ResidueConstraintsCOP;
+typedef utility::pointer::shared_ptr< ResidueConstraints > ResidueConstraintsOP;
+typedef utility::pointer::shared_ptr< ResidueConstraints const > ResidueConstraintsCOP;
 
 class ConstraintSet;
-typedef utility::pointer::owning_ptr< ConstraintSet > ConstraintSetOP;
-typedef utility::pointer::owning_ptr< ConstraintSet const > ConstraintSetCOP;
+typedef utility::pointer::shared_ptr< ConstraintSet > ConstraintSetOP;
+typedef utility::pointer::shared_ptr< ConstraintSet const > ConstraintSetCOP;
 
 }
 }

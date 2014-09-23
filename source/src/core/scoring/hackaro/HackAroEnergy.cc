@@ -65,7 +65,7 @@ methods::EnergyMethodOP
 HackAroEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new HackAroEnergy;
+	return methods::EnergyMethodOP( new HackAroEnergy );
 }
 
 ScoreTypes
@@ -84,7 +84,7 @@ HackAroEnergy::HackAroEnergy() :
 methods::EnergyMethodOP
 HackAroEnergy::clone() const
 {
-	return new HackAroEnergy;
+	return methods::EnergyMethodOP( new HackAroEnergy );
 }
 
 

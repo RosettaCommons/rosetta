@@ -218,7 +218,7 @@ std::string NeighborhoodResidueSelector::class_name() {
 
 ResidueSelectorOP
 NeighborhoodResidueSelectorCreator::create_residue_selector() const {
-	return new NeighborhoodResidueSelector;
+	return ResidueSelectorOP( new NeighborhoodResidueSelector );
 }
 
 std::string

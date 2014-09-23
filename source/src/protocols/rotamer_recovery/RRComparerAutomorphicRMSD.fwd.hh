@@ -24,8 +24,8 @@ namespace protocols{
 namespace rotamer_recovery{
 
 class RRComparerAutomorphicRMSD;
-typedef utility::pointer::owning_ptr< RRComparerAutomorphicRMSD > RRComparerAutomorphicRMSDOP;
-typedef utility::pointer::owning_ptr< RRComparerAutomorphicRMSD const > RRComparerAutomorphicRMSDCOP;
+typedef utility::pointer::shared_ptr< RRComparerAutomorphicRMSD > RRComparerAutomorphicRMSDOP;
+typedef utility::pointer::shared_ptr< RRComparerAutomorphicRMSD const > RRComparerAutomorphicRMSDCOP;
 
 
 }//rotamer_recovery

@@ -316,7 +316,7 @@ ChainGroupDiscriminator::~ChainGroupDiscriminator() {}
 
 GroupDiscriminatorOP ChainGroupDiscriminator::clone() const
 {
-	return new ChainGroupDiscriminator;
+	return GroupDiscriminatorOP( new ChainGroupDiscriminator );
 }
 
 core::Size
@@ -331,7 +331,7 @@ UserDefinedGroupDiscriminator::~UserDefinedGroupDiscriminator() {}
 
 GroupDiscriminatorOP UserDefinedGroupDiscriminator::clone() const
 {
-	return new UserDefinedGroupDiscriminator;
+	return GroupDiscriminatorOP( new UserDefinedGroupDiscriminator );
 }
 
 core::Size
@@ -374,8 +374,8 @@ GreenPacker::set_scorefunction( ScoreFunction const & sfxn )
 	full_sfxn_ = sfxn.clone();
 
 	/// create context independent and context dependent versions of this score function
-	ci_sfxn_ = new ScoreFunction;
-	cd_sfxn_ = new ScoreFunction;
+	ci_sfxn_ = ScoreFunctionOP( new ScoreFunction );
+	cd_sfxn_ = ScoreFunctionOP( new ScoreFunction );
 
 	set_weights_for_sfxn( *ci_sfxn_, full_sfxn_->ci_2b_types(),    full_sfxn_->weights() );
 	set_weights_for_sfxn( *ci_sfxn_, full_sfxn_->ci_1b_types(),    full_sfxn_->weights() );
@@ -497,7 +497,7 @@ GreenPacker::create_reference_rotamers(
 {
 	using namespace core::pack::rotamer_set;
 
-	reference_rotamer_sets_ = new RotamerSets;
+	reference_rotamer_sets_ = RotamerSetsOP( new RotamerSets );
 	reference_rotamer_sets_->set_task( reference_task_ );
 	reference_rotamer_sets_->build_rotamers( pose, *ci_sfxn_, reference_packer_neighbor_graph_ );
 
@@ -521,8 +521,8 @@ GreenPacker::create_reference_rotamers(
 
 		for ( Size jj = 1; jj <= ii_nrots; ++jj ) {
 			original_rotamers_[ ii_resid ].push_back(
-				new protocols::simple_moves::MinimalRotamer(
-				*reference_rotamer_sets_->rotamer_set_for_moltenresidue( ii )->rotamer( jj ) ) );
+				utility::pointer::shared_ptr<class protocols::simple_moves::MinimalRotamer>( new protocols::simple_moves::MinimalRotamer(
+				*reference_rotamer_sets_->rotamer_set_for_moltenresidue( ii )->rotamer( jj ) ) ) );
 		}
 	}
 }
@@ -537,8 +537,7 @@ GreenPacker::compute_reference_intragroup_rpes(
 		*reference_task_, *reference_rotamer_sets_, pose, *ci_sfxn_ );
 
 	PrecomputedPairEnergiesInteractionGraphOP pig(
-		dynamic_cast< PrecomputedPairEnergiesInteractionGraph * > (
-		ig.get() ));
+		utility::pointer::dynamic_pointer_cast< PrecomputedPairEnergiesInteractionGraph > ( ig ));
 
 	/// if the dynamic cast failed, then the packer task has produced
 	/// an on the fly interaction graph (or some other non-precomputed IG
@@ -560,9 +559,9 @@ GreenPacker::compute_reference_intragroup_rpes(
 	ci_rpes_ = pig;
 
 	/// get rid of unneeded data
-	reference_task_ = 0;
-	reference_rotamer_sets_ = 0;
-	reference_packer_neighbor_graph_ = 0;
+	reference_task_.reset();
+	reference_rotamer_sets_.reset();
+	reference_packer_neighbor_graph_.reset();
 
 }
 
@@ -585,8 +584,8 @@ GreenPacker::create_fresh_packer_neighbor_graph(
 )
 {
 	current_packer_neighbor_graph_ = core::pack::create_packer_graph( pose, *full_sfxn_, current_task_ );
-	current_inter_group_packer_neighbor_graph_ = new Graph( *current_packer_neighbor_graph_ );
-	current_intra_group_packer_neighbor_graph_ = new Graph( *current_packer_neighbor_graph_ );
+	current_inter_group_packer_neighbor_graph_ = GraphOP( new Graph( *current_packer_neighbor_graph_ ) );
+	current_intra_group_packer_neighbor_graph_ = GraphOP( new Graph( *current_packer_neighbor_graph_ ) );
 	drop_intra_group_edges( pose, current_inter_group_packer_neighbor_graph_ );
 	drop_inter_group_edges( pose, current_intra_group_packer_neighbor_graph_ );
 }
@@ -646,7 +645,7 @@ GreenPacker::create_fresh_rotamers(
 	core::pose::Pose & pose
 )
 {
-	current_rotamer_sets_ = new RotamerSets;
+	current_rotamer_sets_ = RotamerSetsOP( new RotamerSets );
 	current_rotamer_sets_->set_task( current_task_ );
 	current_rotamer_sets_->build_rotamers( pose, *full_sfxn_, current_packer_neighbor_graph_ );
 	current_rotamer_sets_->prepare_sets_for_packing( pose, *full_sfxn_ );
@@ -661,8 +660,8 @@ GreenPacker::create_fresh_rotamers(
 
 		for ( Size jj = 1; jj <= ii_nrots; ++jj ) {
 			current_rotamers_[ ii_resid ].push_back(
-				new protocols::simple_moves::MinimalRotamer(
-				*current_rotamer_sets_->rotamer_set_for_moltenresidue( ii )->rotamer( jj ) ) );
+				utility::pointer::shared_ptr<class protocols::simple_moves::MinimalRotamer>( new protocols::simple_moves::MinimalRotamer(
+				*current_rotamer_sets_->rotamer_set_for_moltenresidue( ii )->rotamer( jj ) ) ) );
 		}
 	}
 }
@@ -795,8 +794,7 @@ GreenPacker::compute_energies(
 		*full_sfxn_ );
 
 	PrecomputedPairEnergiesInteractionGraphOP pig(
-		dynamic_cast< PrecomputedPairEnergiesInteractionGraph * > (
-		ig.get() ));
+		utility::pointer::dynamic_pointer_cast< PrecomputedPairEnergiesInteractionGraph > ( ig ));
 
 	/// if the dynamic cast failed, then the packer task has produced
 	/// an on the fly interaction graph (or some other non-precomputed IG
@@ -1116,14 +1114,14 @@ GreenPacker::run_sa(
 void
 GreenPacker::cleanup()
 {
-	current_task_ = 0;
-	current_rotamer_sets_ = 0;
+	current_task_.reset();
+	current_rotamer_sets_.reset();
 	current_rotamers_.clear();
-	current_ig_ = 0;
+	current_ig_.reset();
 
-	current_packer_neighbor_graph_ = 0;
-	current_inter_group_packer_neighbor_graph_ = 0;
-	current_intra_group_packer_neighbor_graph_ = 0;
+	current_packer_neighbor_graph_.reset();
+	current_inter_group_packer_neighbor_graph_.reset();
+	current_intra_group_packer_neighbor_graph_.reset();
 
 	orig_rot_2_curr_rot_.clear();
 	curr_rot_2_orig_rot_.clear();

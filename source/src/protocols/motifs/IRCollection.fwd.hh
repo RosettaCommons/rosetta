@@ -24,8 +24,8 @@ namespace protocols {
 namespace motifs {
 
 class IRCollection;
-typedef utility::pointer::owning_ptr< IRCollection > IRCollectionOP;
-typedef utility::pointer::owning_ptr< IRCollection const > IRCollectionCOP;
+typedef utility::pointer::shared_ptr< IRCollection > IRCollectionOP;
+typedef utility::pointer::shared_ptr< IRCollection const > IRCollectionCOP;
 typedef utility::vector1< IRCollectionOP > IRCollectionOPs;
 
 }

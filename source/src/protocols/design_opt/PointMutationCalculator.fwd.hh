@@ -23,8 +23,8 @@ namespace protocols {
 namespace design_opt {
 
 class PointMutationCalculator;
-typedef utility::pointer::owning_ptr< PointMutationCalculator >  PointMutationCalculatorOP;
-typedef utility::pointer::owning_ptr< PointMutationCalculator const >  PointMutationCalculatorCOP;
+typedef utility::pointer::shared_ptr< PointMutationCalculator >  PointMutationCalculatorOP;
+typedef utility::pointer::shared_ptr< PointMutationCalculator const >  PointMutationCalculatorCOP;
 
 
 } // namespace design_opt

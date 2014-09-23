@@ -20,8 +20,8 @@ namespace basic {
 namespace resource_manager {
 
 class JobOptions;
-typedef utility::pointer::owning_ptr< JobOptions > JobOptionsOP;
-typedef utility::pointer::owning_ptr< JobOptions const > JobOptionsCOP;
+typedef utility::pointer::shared_ptr< JobOptions > JobOptionsOP;
+typedef utility::pointer::shared_ptr< JobOptions const > JobOptionsCOP;
 
 } // jd2
 } // protocols

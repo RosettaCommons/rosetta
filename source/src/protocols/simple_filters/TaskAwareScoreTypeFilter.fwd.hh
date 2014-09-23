@@ -26,8 +26,8 @@ namespace simple_filters {
 class TaskAwareScoreTypeFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< TaskAwareScoreTypeFilter >  TaskAwareScoreTypeFilterOP;
-typedef utility::pointer::owning_ptr< TaskAwareScoreTypeFilter const >  TaskAwareScoreTypeFilterCOP;
+typedef utility::pointer::shared_ptr< TaskAwareScoreTypeFilter >  TaskAwareScoreTypeFilterOP;
+typedef utility::pointer::shared_ptr< TaskAwareScoreTypeFilter const >  TaskAwareScoreTypeFilterCOP;
 
 } // namespace simple_filters
 } //namespace protocols

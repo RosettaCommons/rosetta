@@ -20,8 +20,8 @@ namespace protocols {
 namespace make_rot_lib {
 
 class MakeRotLibMover;
-typedef utility::pointer::owning_ptr< MakeRotLibMover > MakeRotLibMoverOP;
-typedef utility::pointer::owning_ptr< MakeRotLibMover const > MakeRotLibMoverCOP;
+typedef utility::pointer::shared_ptr< MakeRotLibMover > MakeRotLibMoverOP;
+typedef utility::pointer::shared_ptr< MakeRotLibMover const > MakeRotLibMoverCOP;
 
 }//make_rot_lib
 }//protocols

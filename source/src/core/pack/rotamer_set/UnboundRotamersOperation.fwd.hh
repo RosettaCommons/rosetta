@@ -24,8 +24,8 @@ namespace rotamer_set {
 
 
 class UnboundRotamersOperation; // fwd declaration
-typedef utility::pointer::owning_ptr< UnboundRotamersOperation > UnboundRotamersOperationOP;
-typedef utility::pointer::owning_ptr< UnboundRotamersOperation const > UnboundRotamersOperationCOP;
+typedef utility::pointer::shared_ptr< UnboundRotamersOperation > UnboundRotamersOperationOP;
+typedef utility::pointer::shared_ptr< UnboundRotamersOperation const > UnboundRotamersOperationCOP;
 
 
 } // namespace rotamer_set

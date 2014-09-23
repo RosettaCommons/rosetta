@@ -20,8 +20,8 @@ namespace protocols {
 namespace simple_moves {
 
 class ConstraintSetMover;
-typedef utility::pointer::owning_ptr< ConstraintSetMover > ConstraintSetMoverOP;
-typedef utility::pointer::owning_ptr< ConstraintSetMover const > ConstraintSetMoverCOP;
+typedef utility::pointer::shared_ptr< ConstraintSetMover > ConstraintSetMoverOP;
+typedef utility::pointer::shared_ptr< ConstraintSetMover const > ConstraintSetMoverCOP;
 
 } // moves
 } // protocols

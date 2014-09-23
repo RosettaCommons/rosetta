@@ -1011,7 +1011,7 @@ make_frags(
 		std::string const seqsubstr( seq, j-1, frags_length ); //j-1 accounts for string [] from 0
 		list =  core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa( ss_string, seqsubstr, 200, false ); //magic number: 200 fragments per position (not duplicated - this will be like robetta server fragments)
 		core::fragment::FrameOP frame;
-		frame = new core::fragment::Frame( j );
+		frame = core::fragment::FrameOP( new core::fragment::Frame( j ) );
 		frame->add_fragment( list );
 		fragset->add( frame );
 	}
@@ -1048,7 +1048,7 @@ make_1mer_frags(
 		}
 		else list =  core::fragment::picking_old::vall::pick_fragments_by_ss( ss_string, nfrags, true );
 		core::fragment::FrameOP frame;
-		frame = new core::fragment::Frame( j );
+		frame = core::fragment::FrameOP( new core::fragment::Frame( j ) );
 		frame->add_fragment( list );
 		fragset->add( frame );
 	}
@@ -1139,7 +1139,7 @@ gen_pep_bb_sequential(
 		vector1< bool > is_pep( pose.total_residue(), false );
 		for ( Size i = 1; i <= pose.total_residue(); ++i ) is_pep[ i ] = ( i >= pep_begin && i <= pep_end );
 //		vector1< bool > is_insert( nres_pep, false );
-		kinematics::MoveMapOP mm_frag ( new kinematics::MoveMap );
+		kinematics::MoveMapOP mm_frag( new kinematics::MoveMap );
 		for( Size ii = 1; ii <= this_prepend + 1; ++ii ){
 			Size moveable_seqpos( pep_begin + ii - 1 );
 			mm_frag->set_bb( moveable_seqpos, true );
@@ -1153,7 +1153,7 @@ gen_pep_bb_sequential(
 
 		( *cen_scorefxn )( pose );
 		Real best_score( pose.energies().total_energies()[ total_score ] );
-		MonteCarloOP mc_frag ( new MonteCarlo( pose, *cen_scorefxn, 2.0 ) );
+		MonteCarloOP mc_frag( new MonteCarlo( pose, *cen_scorefxn, 2.0 ) );
 
 		//replace prot w/ A/G/P?
 		if( option[ pepspec::no_cen_rottrials ] ){
@@ -1258,10 +1258,10 @@ gen_pep_bb_sequential(
 						if ( repack_this[ i ] ) restrict_to_repack_taskop->include_residue( i );
 						else prevent_repack_taskop->include_residue( i );
 					}
-					rp_task_factory->push_back( new pack::task::operation::IncludeCurrent() );
+					rp_task_factory->push_back( TaskOperationCOP( new pack::task::operation::IncludeCurrent() ) );
 					rp_task_factory->push_back( restrict_to_repack_taskop );
 					rp_task_factory->push_back( prevent_repack_taskop );
-					protocols::simple_moves::RotamerTrialsMoverOP dz_rottrial ( new protocols::simple_moves::RotamerTrialsMover( cen_scorefxn, rp_task_factory ) );
+					protocols::simple_moves::RotamerTrialsMoverOP dz_rottrial( new protocols::simple_moves::RotamerTrialsMover( cen_scorefxn, rp_task_factory ) );
 					dz_rottrial->apply( pose );
 					//check clashes one last time
 					vector1< bool > check_clash( pose.total_residue(), false );
@@ -1316,7 +1316,7 @@ perturb_pep_bb(
 	cg_small->angle_max( 'E', 10.0 );
 	cg_small->angle_max( 'L', 10.0 );
 
-	MonteCarloOP mc_cg ( new MonteCarlo( pose, *cen_scorefxn, 2.0  ) );
+	MonteCarloOP mc_cg( new MonteCarlo( pose, *cen_scorefxn, 2.0  ) );
 	Real best_score( pose.energies().total_energies().dot( cen_scorefxn->weights() ) );
 	for( Size cgmove_loop = 1; cgmove_loop <= n_iter; cgmove_loop++ ){
 		cg_small->apply( pose );
@@ -1361,11 +1361,11 @@ mutate_random_residue(
 			if ( i == seqpos ) restrict_to_repack_taskop->include_residue( i );
 			else prevent_repack_taskop->include_residue( i );
 		}
-		mut_task_factory->push_back( new pack::task::operation::InitializeFromCommandline() );
+		mut_task_factory->push_back( TaskOperationCOP( new pack::task::operation::InitializeFromCommandline() ) );
 		mut_task_factory->push_back( restrict_to_repack_taskop );
 		mut_task_factory->push_back( prevent_repack_taskop );
 	}
-	protocols::simple_moves::RotamerTrialsMoverOP mut_rottrial ( new protocols::simple_moves::RotamerTrialsMover( soft_scorefxn, mut_task_factory ) );
+	protocols::simple_moves::RotamerTrialsMoverOP mut_rottrial( new protocols::simple_moves::RotamerTrialsMover( soft_scorefxn, mut_task_factory ) );
 	mut_rottrial->apply( pose );
 
 	//get seqpos nbrs from energy map
@@ -1388,12 +1388,12 @@ mutate_random_residue(
 			if ( ( i == seqpos || is_nbr[ i ] ) && i != pep_anchor ) restrict_to_repack_taskop->include_residue( i );
 			else prevent_repack_taskop->include_residue( i );
 		}
-		rp_task_factory->push_back( new pack::task::operation::InitializeFromCommandline() );
-		rp_task_factory->push_back( new pack::task::operation::IncludeCurrent() );
+		rp_task_factory->push_back( TaskOperationCOP( new pack::task::operation::InitializeFromCommandline() ) );
+		rp_task_factory->push_back( TaskOperationCOP( new pack::task::operation::IncludeCurrent() ) );
 		rp_task_factory->push_back( restrict_to_repack_taskop );
 		rp_task_factory->push_back( prevent_repack_taskop );
 	}
-	protocols::simple_moves::RotamerTrialsMoverOP rp_rottrial ( new protocols::simple_moves::RotamerTrialsMover( soft_scorefxn, rp_task_factory ) );
+	protocols::simple_moves::RotamerTrialsMoverOP rp_rottrial( new protocols::simple_moves::RotamerTrialsMover( soft_scorefxn, rp_task_factory ) );
 	rp_rottrial->apply( pose );
 
 /*
@@ -1410,10 +1410,10 @@ mutate_random_residue(
 	}
 */
 
-	kinematics::MoveMapOP mm_min ( new kinematics::MoveMap );
+	kinematics::MoveMapOP mm_min( new kinematics::MoveMap );
 	mm_min->set_chi( seqpos );
 	mm_min->set_chi( is_nbr );
-	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "dfpmin", 0.001, true );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "dfpmin", 0.001, true ) );
 	min_mover->apply( pose );
 }
 
@@ -1430,9 +1430,9 @@ packmin_unbound_pep(
 	task->restrict_to_repacking();
 	protocols::simple_moves::PackRotamersMoverOP pack( new protocols::simple_moves::PackRotamersMover( full_scorefxn, task, 1 ) );
 	pack->apply( pose );
-	kinematics::MoveMapOP mm ( new kinematics::MoveMap );
+	kinematics::MoveMapOP mm( new kinematics::MoveMap );
 	mm->set_chi( true );
-	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, full_scorefxn, "dfpmin", 0.001, true );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, full_scorefxn, "dfpmin", 0.001, true ) );
 	min_mover->apply( pose );
 }
 
@@ -1634,7 +1634,7 @@ RunPepSpec()
 
 	// set up the pose_metric_calculators
 	core::pose::metrics::CalculatorFactory & calculator_factory(core::pose::metrics::CalculatorFactory::Instance());
-	protocols::toolbox::pose_metric_calculators::ResidueDecompositionByChainCalculatorOP res_decomp_calculator(new protocols::toolbox::pose_metric_calculators::ResidueDecompositionByChainCalculator());
+	protocols::toolbox::pose_metric_calculators::ResidueDecompositionByChainCalculatorOP res_decomp_calculator( new protocols::toolbox::pose_metric_calculators::ResidueDecompositionByChainCalculator() );
 	calculator_factory.register_calculator("residue_decomposition", res_decomp_calculator);
 	protocols::toolbox::pose_metric_calculators::DecomposeAndReweightEnergiesCalculatorOP decomp_reweight_calculator( new protocols::toolbox::pose_metric_calculators::DecomposeAndReweightEnergiesCalculator( "residue_decomposition" ) );
 	vector1< Real > reweight_vector( 1, 3.0 ); reweight_vector.push_back( 2.0 );
@@ -1798,11 +1798,11 @@ RunPepSpec()
 			pep_end = restart_pep_end;
 
 			//min movemap//
-			kinematics::MoveMapOP mm_min ( new kinematics::MoveMap );
+			kinematics::MoveMapOP mm_min( new kinematics::MoveMap );
 			mm_min->set_chi( is_pep );
 
 			//small-small movemap//
-			kinematics::MoveMapOP mm_move ( new kinematics::MoveMap );
+			kinematics::MoveMapOP mm_move( new kinematics::MoveMap );
 			mm_move->set_bb( is_pep );
 
 			//small CG backbone moves//
@@ -1885,9 +1885,9 @@ RunPepSpec()
 			mm_min->set_chi( is_pep_nbr );
 
 			//define movers//
-			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "dfpmin", 0.001, true );
+			protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm_min, full_scorefxn, "dfpmin", 0.001, true ) );
 
-			MonteCarloOP mc_relax ( new MonteCarlo( pose, *full_scorefxn, 1.0 ) );
+			MonteCarloOP mc_relax( new MonteCarlo( pose, *full_scorefxn, 1.0 ) );
 
 			Real bind_score( get_binding_score( pose, pep_chain, full_scorefxn ) );
 			myMC mc_bind( pose, bind_score, 1.0 );
@@ -1909,8 +1909,8 @@ RunPepSpec()
 					}
 				}
 				using core::pack::task::operation::TaskOperationCOP;
-				if( !option[ pepspec::diversify_pep_seqs ].user() ) dz_task_factory->push_back( new pack::task::operation::InitializeFromCommandline() );
-				dz_task_factory->push_back( new pack::task::operation::IncludeCurrent() );
+				if( !option[ pepspec::diversify_pep_seqs ].user() ) dz_task_factory->push_back( TaskOperationCOP( new pack::task::operation::InitializeFromCommandline() ) );
+				dz_task_factory->push_back( TaskOperationCOP( new pack::task::operation::IncludeCurrent() ) );
 				dz_task_factory->push_back( restrict_to_repack_taskop );
 				dz_task_factory->push_back( prevent_repack_taskop );
 			}
@@ -1923,13 +1923,13 @@ RunPepSpec()
 				if( option[ pepspec::upweight_interface ] ){
 					Real upweight( 2.0 );
 					core::pack::task::IGEdgeReweightContainerOP IGreweight = dz_task->set_IGEdgeReweights();
-					core::pack::task::IGEdgeReweighterOP upweighter = new protocols::toolbox::ResidueGroupIGEdgeUpweighter( upweight, pep_res_vec, nbr_res_vec  );
+					core::pack::task::IGEdgeReweighterOP upweighter( new protocols::toolbox::ResidueGroupIGEdgeUpweighter( upweight, pep_res_vec, nbr_res_vec  ) );
 					IGreweight->add_reweighter( upweighter );
 				}
 
 				protocols::simple_moves::PackRotamersMoverOP dz_pack( new protocols::simple_moves::PackRotamersMover( full_scorefxn, dz_task, 1 ) );
-				protocols::simple_moves::RotamerTrialsMoverOP dz_rottrial ( new protocols::simple_moves::RotamerTrialsMover( full_scorefxn, dz_task_factory ) );
-				SequenceMoverOP design_seq = new SequenceMover;
+				protocols::simple_moves::RotamerTrialsMoverOP dz_rottrial( new protocols::simple_moves::RotamerTrialsMover( full_scorefxn, dz_task_factory ) );
+				SequenceMoverOP design_seq( new SequenceMover );
 				design_seq->add_mover( dz_pack );
 				design_seq->add_mover( dz_rottrial );
 				design_seq->add_mover( min_mover );
@@ -1951,13 +1951,13 @@ RunPepSpec()
 				if( option[ pepspec::upweight_interface ] ){
 					Real upweight( 2.0 );
 					core::pack::task::IGEdgeReweightContainerOP IGreweight = dz_task->set_IGEdgeReweights();
-					core::pack::task::IGEdgeReweighterOP upweighter = new protocols::toolbox::ResidueGroupIGEdgeUpweighter( upweight, pep_res_vec, nbr_res_vec  );
+					core::pack::task::IGEdgeReweighterOP upweighter( new protocols::toolbox::ResidueGroupIGEdgeUpweighter( upweight, pep_res_vec, nbr_res_vec  ) );
 					IGreweight->add_reweighter( upweighter );
 				}
 
 				protocols::simple_moves::PackRotamersMoverOP dz_pack( new protocols::simple_moves::PackRotamersMover( soft_scorefxn, dz_task, 1 ) );
-				protocols::simple_moves::RotamerTrialsMoverOP dz_rottrial ( new protocols::simple_moves::RotamerTrialsMover( soft_scorefxn, dz_task_factory ) );
-				SequenceMoverOP design_seq = new SequenceMover;
+				protocols::simple_moves::RotamerTrialsMoverOP dz_rottrial( new protocols::simple_moves::RotamerTrialsMover( soft_scorefxn, dz_task_factory ) );
+				SequenceMoverOP design_seq( new SequenceMover );
 				design_seq->add_mover( dz_pack );
 				design_seq->add_mover( dz_rottrial );
 				design_seq->add_mover( min_mover );

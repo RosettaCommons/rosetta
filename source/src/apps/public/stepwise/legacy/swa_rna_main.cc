@@ -231,7 +231,7 @@ swa_rna_sample()
 	std::string const silent_file = option[ out::file::silent ]();
 	std::string swa_silent_file, out_tag;
 
-	options::StepWiseModelerOptionsOP stepwise_options = new options::StepWiseModelerOptions;
+	options::StepWiseModelerOptionsOP stepwise_options( new options::StepWiseModelerOptions );
 	stepwise_options->initialize_from_command_line();
 	stepwise_options->set_output_minimized_pose_list( !multiple_shots );
 	stepwise_options->set_disallow_realign( true );
@@ -290,7 +290,7 @@ swa_rna_cluster(){
 
 	working_parameters::StepWiseWorkingParametersCOP working_parameters_COP = working_parameters;
 	//////////////////////////////////////////////////////////////
-	checker::RNA_VDW_BinCheckerOP user_input_VDW_bin_checker = new checker::RNA_VDW_BinChecker();
+	checker::RNA_VDW_BinCheckerOP user_input_VDW_bin_checker( new checker::RNA_VDW_BinChecker() );
 	if ( option[ OptionKeys::stepwise::rna::VDW_rep_screen_info].user() ){ //This is used for post_processing only. Main VDW_rep_checker should be in the sampler.
 		user_input_VDW_bin_checker->set_VDW_rep_alignment_RMSD_CUTOFF( option[ basic::options::OptionKeys::stepwise::rna::VDW_rep_alignment_RMSD_CUTOFF]() );
 		user_input_VDW_bin_checker->set_VDW_rep_delete_matching_res( option[ basic::options::OptionKeys::stepwise::rna::VDW_rep_delete_matching_res ]() );
@@ -668,7 +668,7 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
 	/////Copy the conformation but nothing else. No energy and no cache data (having cache data can cause problem with column_name order in output silent_file!)//////
 	/////OK...this should also copy the virtual_types and the fold_tree?//////////////////////////////////////////////////////////////////////////////////////////////
 	//Pose output_pose=start_pose;
-	ConformationOP copy_conformation = new Conformation();
+	ConformationOP copy_conformation( new Conformation() );
 
 	( *copy_conformation ) = start_pose.conformation();
 

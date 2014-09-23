@@ -36,7 +36,7 @@ DeleteRegionMover::DeleteRegionMover():
 	end_(0),
 	nter_overhang_(0),
 	cter_overhang_(0),
-	tag_(NULL)
+	tag_(/* NULL */)
 {
 	
 }
@@ -47,7 +47,7 @@ DeleteRegionMover::DeleteRegionMover(core::Size res_start, core::Size res_end):
 	end_(res_end),
 	nter_overhang_(0),
 	cter_overhang_(0),
-	tag_(NULL)
+	tag_(/* NULL */)
 {
 	
 }
@@ -103,18 +103,18 @@ DeleteRegionMover::end() const{
 
 protocols::moves::MoverOP
 DeleteRegionMover::clone() const{
-	return new DeleteRegionMover(*this);
+	return protocols::moves::MoverOP( new DeleteRegionMover(*this) );
 }
 
 protocols::moves::MoverOP
 DeleteRegionMover::fresh_instance() const
 {
-	return new DeleteRegionMover;
+	return protocols::moves::MoverOP( new DeleteRegionMover );
 }
 
 protocols::moves::MoverOP
 DeleteRegionMoverCreator::create_mover() const {
-	return new DeleteRegionMover;
+	return protocols::moves::MoverOP( new DeleteRegionMover );
 }
 
 std::string

@@ -68,15 +68,15 @@ using std::pair;
 ///@brief default ctor
 GreedyOptMutationMover::GreedyOptMutationMover() :
 	Mover( GreedyOptMutationMoverCreator::mover_name() ),
-	task_factory_( NULL ),
+	task_factory_( /* NULL */ ),
 //	filters_( NULL ), /* how set default vecgtor of NULLs? */
 //	sample_type_( "low" ),
-	scorefxn_( NULL ),
-	relax_mover_( NULL ),
+	scorefxn_( /* NULL */ ),
+	relax_mover_( /* NULL */ ),
 	dump_pdb_( false ),
 	dump_table_( false ),
 	parallel_( false ),
-	stopping_condition_( NULL ),
+	stopping_condition_( /* NULL */ ),
 	nstruct_iter_( 1 ),
 	stop_before_condition_( false ),
 	skip_best_check_( false ),
@@ -131,12 +131,12 @@ GreedyOptMutationMover::~GreedyOptMutationMover(){}
 //creators
 protocols::moves::MoverOP
 GreedyOptMutationMoverCreator::create_mover() const {
-	return new GreedyOptMutationMover;
+	return protocols::moves::MoverOP( new GreedyOptMutationMover );
 }
 
 protocols::moves::MoverOP
 GreedyOptMutationMover::clone() const{
-	return new GreedyOptMutationMover( *this );
+	return protocols::moves::MoverOP( new GreedyOptMutationMover( *this ) );
 }
 
 //name getters
@@ -848,7 +848,7 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
   if( tag->hasOption( "reset_delta_filters" ) ){
     delta_filter_names = utility::string_split( tag->getOption< std::string >( "reset_delta_filters" ), ',' );
     BOOST_FOREACH( std::string const fname, delta_filter_names ){
-      reset_delta_filters_.push_back( dynamic_cast< protocols::simple_filters::DeltaFilter * >( protocols::rosetta_scripts::parse_filter( fname, filters )() ) );
+      reset_delta_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::DeltaFilter > ( protocols::rosetta_scripts::parse_filter( fname, filters ) ) );
       TR<<"The baseline for Delta Filter "<<fname<<" will be reset upon each accepted mutation"<<std::endl;
     }
   }

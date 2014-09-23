@@ -21,8 +21,8 @@ namespace scoring {
 namespace constraints {
 
 class SequenceProfileConstraint; // fwd declaration
-typedef utility::pointer::owning_ptr< SequenceProfileConstraint > SequenceProfileConstraintOP;
-typedef utility::pointer::owning_ptr< SequenceProfileConstraint const > SequenceProfileConstraintCOP;
+typedef utility::pointer::shared_ptr< SequenceProfileConstraint > SequenceProfileConstraintOP;
+typedef utility::pointer::shared_ptr< SequenceProfileConstraint const > SequenceProfileConstraintCOP;
 
 } // namespace constraints
 } // namespace scoring

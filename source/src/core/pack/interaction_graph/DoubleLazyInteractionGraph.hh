@@ -410,7 +410,7 @@ class DoubleLazyInteractionGraph : public OnTheFlyInteractionGraph
 {
 public:
 	typedef OnTheFlyInteractionGraph parent;
-	typedef utility::pointer::owning_ptr< utility::in_place_list< int > > InPlaceIntListOP;
+	typedef utility::pointer::shared_ptr< utility::in_place_list< int > > InPlaceIntListOP;
 
 public:
 	DoubleLazyInteractionGraph( int numNodes );

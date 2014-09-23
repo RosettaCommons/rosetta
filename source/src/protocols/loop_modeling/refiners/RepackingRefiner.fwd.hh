@@ -18,8 +18,8 @@ namespace refiners {
 
 class RepackingRefiner;
 
-typedef utility::pointer::owning_ptr<RepackingRefiner> RepackingRefinerOP;
-typedef utility::pointer::owning_ptr<RepackingRefiner const> RepackingRefinerCOP;
+typedef utility::pointer::shared_ptr<RepackingRefiner> RepackingRefinerOP;
+typedef utility::pointer::shared_ptr<RepackingRefiner const> RepackingRefinerCOP;
 
 }
 }

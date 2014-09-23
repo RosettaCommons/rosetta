@@ -51,7 +51,7 @@ public:
 
 
   core::pose::metrics::PoseMetricCalculatorOP clone() const {
-    return new PackstatCalculator( special_region_, oversample_); };
+    return core::pose::metrics::PoseMetricCalculatorOP( new PackstatCalculator( special_region_, oversample_) ); };
 
 protected:
 

@@ -31,19 +31,19 @@ class VallFragmentGen;
 
 
 /// @brief VallFragmentGen owning pointer
-typedef utility::pointer::owning_ptr< VallFragmentGen > VallFragmentGenOP;
+typedef utility::pointer::shared_ptr< VallFragmentGen > VallFragmentGenOP;
 
 
 /// @brief VallFragmentGen const owning pointer
-typedef utility::pointer::owning_ptr< VallFragmentGen const > VallFragmentGenCOP;
+typedef utility::pointer::shared_ptr< VallFragmentGen const > VallFragmentGenCOP;
 
 
 /// @brief VallFragmentGen access pointer
-typedef utility::pointer::owning_ptr< VallFragmentGen > VallFragmentGenAP;
+typedef utility::pointer::shared_ptr< VallFragmentGen > VallFragmentGenAP;
 
 
 /// @brief VallFragmentGen const access pointer
-typedef utility::pointer::owning_ptr< VallFragmentGen const > VallFragmentGenCAP;
+typedef utility::pointer::shared_ptr< VallFragmentGen const > VallFragmentGenCAP;
 
 
 } // namespace gen

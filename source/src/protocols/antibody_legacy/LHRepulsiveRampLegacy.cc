@@ -138,7 +138,7 @@ LHRepulsiveRampLegacy::~LHRepulsiveRampLegacy() {}
 
 //clone
 protocols::moves::MoverOP LHRepulsiveRampLegacy::clone() const {
-	return( new LHRepulsiveRampLegacy() );
+	return( protocols::moves::MoverOP( new LHRepulsiveRampLegacy() ) );
 }
 
 
@@ -151,7 +151,7 @@ void LHRepulsiveRampLegacy::init(loops::Loops loops_in, bool camelid ) {
 	is_camelid_ = camelid;
 	all_loops_ = loops_in;
 
-	tf_ = new pack::task::TaskFactory;
+	tf_ = pack::task::TaskFactoryOP( new pack::task::TaskFactory );
 
 }
 
@@ -195,7 +195,7 @@ void LHRepulsiveRampLegacy::finalize_setup(pose::Pose & pose ) {
 	( *dock_scorefxn_ )( pose );
 
 	//setting MoveMap
-	cdr_dock_map_ = new kinematics::MoveMap();
+	cdr_dock_map_ = kinematics::MoveMapOP( new kinematics::MoveMap() );
 	cdr_dock_map_->clear();
 	cdr_dock_map_->set_chi( false );
 	cdr_dock_map_->set_bb( false );
@@ -224,7 +224,7 @@ void LHRepulsiveRampLegacy::finalize_setup(pose::Pose & pose ) {
 	} // check mapping
 
 	using namespace protocols::toolbox::task_operations;
-	tf_->push_back( new RestrictToInterface( rb_jump, loop_residues ) );
+	tf_->push_back( TaskOperationCOP( new RestrictToInterface( rb_jump, loop_residues ) ) );
 
 
 	TR<<"   finish finalize_setup function !!!"<<std::endl;
@@ -321,30 +321,30 @@ void LHRepulsiveRampLegacy::snugfit_MC_min(pose::Pose & pose, core::scoring::Sco
 	using namespace moves;
 
 	simple_moves::MinMoverOP
-	min_mover = new simple_moves::MinMover( cdr_dock_map_, temp_scorefxn,  min_type_, min_threshold_, true/*nb_list*/ );
+	min_mover( new simple_moves::MinMover( cdr_dock_map_, temp_scorefxn,  min_type_, min_threshold_, true/*nb_list*/ ) );
 
 	rigid::RigidBodyPerturbMoverOP
-	rb_perturb = new rigid::RigidBodyPerturbMover(pose, *cdr_dock_map_, rot_mag_, trans_mag_, rigid::partner_downstream, true );
+	rb_perturb( new rigid::RigidBodyPerturbMover(pose, *cdr_dock_map_, rot_mag_, trans_mag_, rigid::partner_downstream, true ) );
 
 	simple_moves::RotamerTrialsMoverOP
-	pack_rottrial = new simple_moves::RotamerTrialsMover( pack_scorefxn_, tf_ );
+	pack_rottrial( new simple_moves::RotamerTrialsMover( pack_scorefxn_, tf_ ) );
 
-	SequenceMoverOP rb_mover = new SequenceMover;
+	SequenceMoverOP rb_mover( new SequenceMover );
 	rb_mover->add_mover( rb_perturb );
 	rb_mover->add_mover( pack_rottrial );
 
 	JumpOutMoverOP
-	rb_mover_min = new JumpOutMover( rb_mover, min_mover, temp_scorefxn, min_threshold_ );
+	rb_mover_min( new JumpOutMover( rb_mover, min_mover, temp_scorefxn, min_threshold_ ) );
 
 
 	MonteCarloOP
-	mc = new MonteCarlo( pose, *temp_scorefxn, temperature_ );
+	mc( new MonteCarlo( pose, *temp_scorefxn, temperature_ ) );
 
 	TrialMoverOP
-	rb_mover_min_trial = new TrialMover( rb_mover_min, mc);
+	rb_mover_min_trial( new TrialMover( rb_mover_min, mc) );
 
 	RepeatMoverOP
-	simple_mcm_repeat = new RepeatMover( rb_mover_min_trial, num_repeats_ );
+	simple_mcm_repeat( new RepeatMover( rb_mover_min_trial, num_repeats_ ) );
 
 
 
@@ -355,7 +355,7 @@ void LHRepulsiveRampLegacy::snugfit_MC_min(pose::Pose & pose, core::scoring::Sco
 
 
 void LHRepulsiveRampLegacy:: set_task_factory(pack::task::TaskFactoryCOP tf) {
-	tf_ = new pack::task::TaskFactory(*tf);
+	tf_ = pack::task::TaskFactoryOP( new pack::task::TaskFactory(*tf) );
 }
 
 

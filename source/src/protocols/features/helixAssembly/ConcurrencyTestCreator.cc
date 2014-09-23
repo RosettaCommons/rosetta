@@ -30,7 +30,7 @@ namespace helixAssembly {
 	ConcurrencyTestCreator::ConcurrencyTestCreator() {}
 	ConcurrencyTestCreator::~ConcurrencyTestCreator() {}
 	FeaturesReporterOP ConcurrencyTestCreator::create_features_reporter() const {
-		return new ConcurrencyTest;
+		return FeaturesReporterOP( new ConcurrencyTest );
 	}
 
 	std::string ConcurrencyTestCreator::type_name() const {

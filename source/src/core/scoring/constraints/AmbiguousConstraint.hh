@@ -57,12 +57,12 @@ public:
 	///
 	virtual
 	ConstraintOP clone() const {
-		return new AmbiguousConstraint(*this);
+		return ConstraintOP( new AmbiguousConstraint(*this) );
 	}
 
 	virtual
 	MultiConstraintOP empty_clone() const {
-		return new AmbiguousConstraint;
+		return MultiConstraintOP( new AmbiguousConstraint );
 	}
 
 	/// @brief

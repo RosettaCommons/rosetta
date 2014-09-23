@@ -46,8 +46,8 @@ public:
 	void apply( Pose & pose );
 
 	virtual std::string get_name() const { return "MRMover"; }
-	protocols::moves::MoverOP clone() const { return new MRMover( *this ); }
-	protocols::moves::MoverOP fresh_instance() const { return new MRMover; }
+	protocols::moves::MoverOP clone() const { return protocols::moves::MoverOP( new MRMover( *this ) ); }
+	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new MRMover ); }
 
 	// density weight
 	void set_centroid_density_weight( core::Real newval ) {
@@ -110,7 +110,7 @@ private:
 	core::Real censcale_;
 };
 
-typedef utility::pointer::owning_ptr< MRMover > MRMoverOP;
+typedef utility::pointer::shared_ptr< MRMover > MRMoverOP;
 
 }
 }

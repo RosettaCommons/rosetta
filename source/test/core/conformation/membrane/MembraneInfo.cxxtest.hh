@@ -63,7 +63,7 @@ public: // test functions
         core_init();
         
         // Load in pose from pdb
-        pose_ = new Pose();
+        pose_ = core::pose::PoseOP( new Pose() );
         pose_from_pdb( *pose_, "protocols/membrane/1C3W_TR_A.pdb" );
         
 		// Initialize Spans from spanfile
@@ -73,7 +73,7 @@ public: // test functions
 		Vector center(0, 0, 0);
 		Vector normal(0, 0, 1);
 		
-		AddMembraneMoverOP add_memb = new AddMembraneMover( center, normal, spanfile, true );
+		AddMembraneMoverOP add_memb( new AddMembraneMover( center, normal, spanfile, true ) );
 		add_memb->apply( *pose_ );
 		
 	}
@@ -173,7 +173,7 @@ public: // test functions
 		TS_TRACE( "Checking that foldtree invariant returns false on a fold tree where membrane residue is not the jump point" );
 		
 		// Make new simple tree
-		FoldTreeOP ft = new FoldTree();
+		FoldTreeOP ft( new FoldTree() );
 		ft->simple_tree( pose_->total_residue() );
 		TS_ASSERT(! pose_->conformation().membrane_info()->check_membrane_fold_tree( *ft ) );
 		

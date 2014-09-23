@@ -71,7 +71,7 @@ FragmentChunkCrms::FragmentChunkCrms(Size priority, Real lowest_acceptable_value
 		bool use_lowest, std::string query_sequence, core::pose::PoseOP reference_pose, FArray1D_int& seqmapping) :
 	FragmentScoringMethod(priority, lowest_acceptable_value, use_lowest, "FragmentChunkCrms") {
 	reference_pose_ = reference_pose;
-  fragment_pose_ = new core::pose::Pose;
+  fragment_pose_ = pose::PoseOP( new core::pose::Pose );
 	n_atoms_ = reference_pose_->total_residue();
 	reference_coordinates_.redimension(3, 4*n_atoms_, 0.0);
 	fill_bb_coords(*reference_pose_, reference_coordinates_, n_atoms_);
@@ -218,7 +218,7 @@ FragmentScoringMethodOP MakeFragmentChunkCrms::make(Size priority,
 
   //trTmScore << "QUERY_SEQUENCE " << picker->get_query_seq_string() << std::endl;
   //Initialized an array and align to each other
-  core::sequence::SequenceOP seq1 ( new core::sequence::Sequence(picker->get_query_seq_string(),"blank",1));
+  core::sequence::SequenceOP seq1( new core::sequence::Sequence(picker->get_query_seq_string(),"blank",1) );
 	core::sequence::SequenceOP seq2;
 	FArray1D_int seqmapping;
 
@@ -226,25 +226,25 @@ FragmentScoringMethodOP MakeFragmentChunkCrms::make(Size priority,
 		trTmScore
 				<< "Reference structure to score fragments by chunkrms loaded from: "
 				<< option[in::file::native]() << std::endl;
-		core::pose::PoseOP nativePose = new core::pose::Pose;
+		core::pose::PoseOP nativePose( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*nativePose, option[in::file::native]());
-    seq2 = new core::sequence::Sequence(*nativePose);
+    seq2 = core::sequence::SequenceOP( new core::sequence::Sequence(*nativePose) );
 		seqmapping.redimension(std::max(seq1->length(),seq2->length()), 0);
 		sequencealign(seq1,seq2,seqmapping);
 
-		return (FragmentScoringMethodOP) new FragmentChunkCrms(priority, lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), nativePose, seqmapping);
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new FragmentChunkCrms(priority, lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), nativePose, seqmapping) );
 
 	} else if (option[in::file::s].user()) {
 		trTmScore
 				<< "Reference structure to score fragments by chunkrms loaded from: "
 				<< option[in::file::s]()[1] << std::endl;
-		core::pose::PoseOP nativePose = new core::pose::Pose;
+		core::pose::PoseOP nativePose( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*nativePose, option[in::file::s]()[1]);
-    seq2 = new core::sequence::Sequence(*nativePose);
+    seq2 = core::sequence::SequenceOP( new core::sequence::Sequence(*nativePose) );
 		seqmapping.redimension(std::max(seq1->length(),seq2->length()), 0);
 		sequencealign(seq1,seq2,seqmapping);
 
-		return (FragmentScoringMethodOP) new FragmentChunkCrms(priority, lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), nativePose, seqmapping);
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new FragmentChunkCrms(priority, lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), nativePose, seqmapping) );
 
 	} else {
 		utility_exit_with_message("Can't read a reference structure. Provide it with in::file::s or in:file:native flag");

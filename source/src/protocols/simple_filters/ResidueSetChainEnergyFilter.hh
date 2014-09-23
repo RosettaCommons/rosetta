@@ -44,10 +44,10 @@ public:
 	);
 	bool apply( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const {
-		return new ResidueSetChainEnergyFilter( *this );
+		return filters::FilterOP( new ResidueSetChainEnergyFilter( *this ) );
 	}
 	filters::FilterOP fresh_instance() const{
-		return new ResidueSetChainEnergyFilter();
+		return filters::FilterOP( new ResidueSetChainEnergyFilter() );
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;

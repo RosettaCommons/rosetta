@@ -62,7 +62,7 @@ public:
 
 
   core::pose::metrics::PoseMetricCalculatorOP clone() const {
-    return new NonlocalContactsCalculator( special_region1_, special_region2_, min_seq_separation_, cutoffE_); };
+    return core::pose::metrics::PoseMetricCalculatorOP( new NonlocalContactsCalculator( special_region1_, special_region2_, min_seq_separation_, cutoffE_) ); };
 
 protected:
 

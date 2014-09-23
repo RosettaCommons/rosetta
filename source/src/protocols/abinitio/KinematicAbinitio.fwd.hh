@@ -28,13 +28,13 @@ namespace abinitio {
 class KinematicAbinitio;
 
 // Types
-typedef  utility::pointer::owning_ptr< KinematicAbinitio >  KinematicAbinitioOP;
-typedef  utility::pointer::owning_ptr< KinematicAbinitio const >  KinematicAbinitioCOP;
+typedef  utility::pointer::shared_ptr< KinematicAbinitio >  KinematicAbinitioOP;
+typedef  utility::pointer::shared_ptr< KinematicAbinitio const >  KinematicAbinitioCOP;
 
 class JumpingFoldConstraintsWrapper;
 
-typedef  utility::pointer::owning_ptr< JumpingFoldConstraintsWrapper >  JumpingFoldConstraintsWrapperOP;
-typedef  utility::pointer::owning_ptr< JumpingFoldConstraintsWrapper const >  JumpingFoldConstraintsWrapperCOP;
+typedef  utility::pointer::shared_ptr< JumpingFoldConstraintsWrapper >  JumpingFoldConstraintsWrapperOP;
+typedef  utility::pointer::shared_ptr< JumpingFoldConstraintsWrapper const >  JumpingFoldConstraintsWrapperCOP;
 
 } // namespace kinematics
 } // namespace core

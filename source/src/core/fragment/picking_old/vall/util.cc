@@ -56,8 +56,8 @@ pick_fragments_by_ss(
 	VallLibrary const & library = FragmentLibraryManager::get_instance()->get_Vall();
 
 	VallLibrarian librarian;
-	librarian.add_fragment_gen( new LengthGen( ss.length() ) );
-	librarian.add_fragment_eval( new IdentityEval( ss, 1.0, randomize ) );
+	librarian.add_fragment_gen( VallFragmentGenCOP( new LengthGen( ss.length() ) ) );
+	librarian.add_fragment_eval( VallFragmentEvalCOP( new IdentityEval( ss, 1.0, randomize ) ) );
 
 	// catalog fragments
 	librarian.catalog( library );
@@ -91,8 +91,8 @@ pick_fragments_by_ss_plus_aa(
 	VallLibrary const & library = FragmentLibraryManager::get_instance()->get_Vall();
 
 	VallLibrarian librarian;
-	librarian.add_fragment_gen( new LengthGen( ss.length() ) );
-	librarian.add_fragment_eval( new IdentityEval( ss, aa, 1.0, 1.0, randomize ) );
+	librarian.add_fragment_gen( VallFragmentGenCOP( new LengthGen( ss.length() ) ) );
+	librarian.add_fragment_eval( VallFragmentEvalCOP( new IdentityEval( ss, aa, 1.0, 1.0, randomize ) ) );
 
 	// catalog fragments
 	librarian.catalog( library );
@@ -129,16 +129,16 @@ pick_fragments(
 	VallLibrary const & library = FragmentLibraryManager::get_instance()->get_Vall();
 
 	VallLibrarian librarian;
-	librarian.add_fragment_gen( new LengthGen( ss.length() ) );
+	librarian.add_fragment_gen( VallFragmentGenCOP( new LengthGen( ss.length() ) ) );
 
 	if( !aa.empty() ) {
-		librarian.add_fragment_eval( new IdentityEval( ss, aa, 1.0, 1.0, randomize ) );
+		librarian.add_fragment_eval( VallFragmentEvalCOP( new IdentityEval( ss, aa, 1.0, 1.0, randomize ) ) );
 	} else {
-		librarian.add_fragment_eval( new IdentityEval( ss, 1.0, randomize ) );
+		librarian.add_fragment_eval( VallFragmentEvalCOP( new IdentityEval( ss, 1.0, randomize ) ) );
 	}
 
 	if( abego.size() > 0 ) {
-		librarian.add_fragment_eval( new ABEGOEval( abego, 1.0, randomize ) );
+		librarian.add_fragment_eval( VallFragmentEvalCOP( new ABEGOEval( abego, 1.0, randomize ) ) );
 	}
 
 	// catalog fragments

@@ -36,7 +36,7 @@ namespace potentials {
 AACompositionEnergyCreator::EnergyMethodOP
 AACompositionEnergyCreator::create_energy_method(	EnergyMethodOptions const & ) const
 {
-	return new AACompositionEnergy;
+	return AACompositionEnergyCreator::EnergyMethodOP( new AACompositionEnergy );
 }
 
 AACompositionEnergyCreator::ScoreTypes
@@ -78,7 +78,7 @@ AACompositionEnergy::~AACompositionEnergy() {}
 AACompositionEnergy::EnergyMethodOP
 AACompositionEnergy::clone() const
 {
-	return new AACompositionEnergy( *this );
+	return AACompositionEnergy::EnergyMethodOP( new AACompositionEnergy( *this ) );
 }
 
 

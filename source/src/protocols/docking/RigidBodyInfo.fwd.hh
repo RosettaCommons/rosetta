@@ -17,7 +17,7 @@ namespace protocols {
 namespace docking {
 
 class RigidBodyInfo;
-typedef utility::pointer::owning_ptr< RigidBodyInfo > RigidBodyInfoOP;
+typedef utility::pointer::shared_ptr< RigidBodyInfo > RigidBodyInfoOP;
 //typedef utility::pointer::owning_ptr< RigidBodyInfo const > RigidBodyInfoCOP;
 
 }

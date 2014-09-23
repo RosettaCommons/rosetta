@@ -24,14 +24,14 @@ class EnzdesCstCache;
 class EnzdesCstParamCache;
 class EnzCstTemplateResCache;
 
-typedef utility::pointer::owning_ptr< EnzdesCstCache > EnzdesCstCacheOP;
-typedef utility::pointer::owning_ptr< EnzdesCstCache const > EnzdesCstCacheCOP;
+typedef utility::pointer::shared_ptr< EnzdesCstCache > EnzdesCstCacheOP;
+typedef utility::pointer::shared_ptr< EnzdesCstCache const > EnzdesCstCacheCOP;
 
-typedef utility::pointer::owning_ptr< EnzdesCstParamCache > EnzdesCstParamCacheOP;
-typedef utility::pointer::owning_ptr< EnzdesCstParamCache const > EnzdesCstParamCacheCOP;
+typedef utility::pointer::shared_ptr< EnzdesCstParamCache > EnzdesCstParamCacheOP;
+typedef utility::pointer::shared_ptr< EnzdesCstParamCache const > EnzdesCstParamCacheCOP;
 
-typedef utility::pointer::owning_ptr< EnzCstTemplateResCache > EnzCstTemplateResCacheOP;
-typedef utility::pointer::owning_ptr< EnzCstTemplateResCache const > EnzCstTemplateResCacheCOP;
+typedef utility::pointer::shared_ptr< EnzCstTemplateResCache > EnzCstTemplateResCacheOP;
+typedef utility::pointer::shared_ptr< EnzCstTemplateResCache const > EnzCstTemplateResCacheCOP;
 
 }
 } // enzdes

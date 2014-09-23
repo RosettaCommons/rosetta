@@ -20,8 +20,8 @@ namespace simple_filters {
 
 class SSMotifFinder;
 
-typedef utility::pointer::owning_ptr< SSMotifFinder > SSMotifFinderOP;
-typedef utility::pointer::owning_ptr< SSMotifFinder const > SSMotifFinderCOP;
+typedef utility::pointer::shared_ptr< SSMotifFinder > SSMotifFinderOP;
+typedef utility::pointer::shared_ptr< SSMotifFinder const > SSMotifFinderCOP;
 
 }
 }

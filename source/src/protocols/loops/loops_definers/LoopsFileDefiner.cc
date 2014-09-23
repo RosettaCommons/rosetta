@@ -55,7 +55,7 @@ LoopsFileDefiner::LoopsFileDefiner(LoopsFileDefiner const & src) : LoopsDefiner(
 LoopsDefinerOP
 LoopsFileDefiner::clone(
 ) const {
-	return new LoopsFileDefiner(*this);
+	return LoopsDefinerOP( new LoopsFileDefiner(*this) );
 }
 
 /// @brief Used to parse an xml-like tag to load parameters and properties.

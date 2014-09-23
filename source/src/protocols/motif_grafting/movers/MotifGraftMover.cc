@@ -176,7 +176,7 @@ void MotifGraftMover::init_parameters(
 				{
 					TR.Info << "Generated " << motif_match_results_.size() << " results." << std::endl;
 					//Create copy of input pose to support result interation
-					gp_p_target_pose_ = new Pose(pose);
+					gp_p_target_pose_ = core::pose::PoseOP( new Pose(pose) );
 				}
 				
 				MotifMatch match = motif_match_results_.top();
@@ -204,7 +204,7 @@ void MotifGraftMover::init_parameters(
 				else
 				{
 					// May produce additional output poses, create a copy of the target pose
-					work_pose = new Pose(*gp_p_target_pose_);
+					work_pose = core::pose::PoseOP( new Pose(*gp_p_target_pose_) );
 				}
 			
 				TR.Debug << "Returning additional output. " << motif_match_results_.size() << " remaining." << std::endl;
@@ -1999,13 +1999,13 @@ a fragment of any size in the scaffold " << std::endl;
 			/**@brief Function used by roseta to create clones of movers**/
 			protocols::moves::MoverOP MotifGraftMover::clone() const
 			{
-				return new MotifGraftMover( *this );
+				return protocols::moves::MoverOP( new MotifGraftMover( *this ) );
 			}
 			
 			/**@brief class instance creator**/
 			protocols::moves::MoverOP MotifGraftCreator::create_mover() const
 			{
-				return new MotifGraftMover;
+				return protocols::moves::MoverOP( new MotifGraftMover );
 			}
 			
 			/**@brief Function that sets the key used to call the mover from RosettaScripts**/

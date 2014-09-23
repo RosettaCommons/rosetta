@@ -24,11 +24,11 @@ namespace scoring {
 class ResSingleMinimizationData;
 class ResPairMinimizationData;
 
-typedef utility::pointer::owning_ptr< ResSingleMinimizationData > ResSingleMinimizationDataOP;
-typedef utility::pointer::owning_ptr< ResSingleMinimizationData const > ResSingleMinimizationDataCOP;
+typedef utility::pointer::shared_ptr< ResSingleMinimizationData > ResSingleMinimizationDataOP;
+typedef utility::pointer::shared_ptr< ResSingleMinimizationData const > ResSingleMinimizationDataCOP;
 
-typedef utility::pointer::owning_ptr< ResPairMinimizationData > ResPairMinimizationDataOP;
-typedef utility::pointer::owning_ptr< ResPairMinimizationData const > ResPairMinimizationDataCOP;
+typedef utility::pointer::shared_ptr< ResPairMinimizationData > ResPairMinimizationDataOP;
+typedef utility::pointer::shared_ptr< ResPairMinimizationData const > ResPairMinimizationDataCOP;
 
 }
 }

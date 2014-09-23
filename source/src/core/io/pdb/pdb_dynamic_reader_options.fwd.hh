@@ -27,8 +27,8 @@ namespace pdb {
 
 class PDB_DReaderOptions;
 
-typedef utility::pointer::owning_ptr< PDB_DReaderOptions > PDB_DReaderOptionsOP;
-typedef utility::pointer::owning_ptr< PDB_DReaderOptions const > PDB_DReaderOptionsCOP;
+typedef utility::pointer::shared_ptr< PDB_DReaderOptions > PDB_DReaderOptionsOP;
+typedef utility::pointer::shared_ptr< PDB_DReaderOptions const > PDB_DReaderOptionsCOP;
 
 } // namespace pdb
 } // namespace io

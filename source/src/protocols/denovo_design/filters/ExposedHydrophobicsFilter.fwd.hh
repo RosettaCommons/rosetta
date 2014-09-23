@@ -28,11 +28,11 @@ namespace filters {
 class ExposedHydrophobicsFilter;
 
 // Types
-typedef  utility::pointer::owning_ptr< ExposedHydrophobicsFilter >  ExposedHydrophobicsFilterOP;
-typedef  utility::pointer::owning_ptr< ExposedHydrophobicsFilter const >  ExposedHydrophobicsFilterCOP;
+typedef  utility::pointer::shared_ptr< ExposedHydrophobicsFilter >  ExposedHydrophobicsFilterOP;
+typedef  utility::pointer::shared_ptr< ExposedHydrophobicsFilter const >  ExposedHydrophobicsFilterCOP;
 
-typedef  utility::pointer::access_ptr< ExposedHydrophobicsFilter >  ExposedHydrophobicsFilterAP;
-typedef  utility::pointer::access_ptr< ExposedHydrophobicsFilter const >  ExposedHydrophobicsFilterCAP;
+typedef  utility::pointer::weak_ptr< ExposedHydrophobicsFilter >  ExposedHydrophobicsFilterAP;
+typedef  utility::pointer::weak_ptr< ExposedHydrophobicsFilter const >  ExposedHydrophobicsFilterCAP;
 
 } // namespace filters
 } // namespace kinematics

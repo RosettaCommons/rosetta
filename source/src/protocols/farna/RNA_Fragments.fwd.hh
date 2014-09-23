@@ -20,7 +20,7 @@ namespace protocols {
 namespace farna {
 
 	class RNA_Fragments;
-	typedef utility::pointer::owning_ptr< RNA_Fragments > RNA_FragmentsOP;
+	typedef utility::pointer::shared_ptr< RNA_Fragments > RNA_FragmentsOP;
 
 } //farna
 } //protocols

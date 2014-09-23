@@ -40,14 +40,14 @@ typedef numeric::xyzVector<Real> Vec;
 typedef numeric::xyzMatrix<Real> Mat;
 
 ImplicitFastClashCheck::ImplicitFastClashCheck(Pose const & pose_in, Real clash_dis, utility::vector1<core::Size> ignore) {
-	pose_ = new core::pose::Pose(pose_in);
+	pose_ = core::pose::PoseCOP( new core::pose::Pose(pose_in) );
 	utility::vector1<Pose> poses;
 	poses.push_back(pose_in);
 	init_clash_check( poses, clash_dis, ignore );
 }
 
 ImplicitFastClashCheck::ImplicitFastClashCheck(Pose const & pose_in, Real clash_dis) {
-	pose_ = new core::pose::Pose(pose_in);
+	pose_ = core::pose::PoseCOP( new core::pose::Pose(pose_in) );
 	utility::vector1<Pose> poses;
 	poses.push_back(pose_in);
 	utility::vector1<core::Size> ignore;
@@ -59,7 +59,7 @@ ImplicitFastClashCheck::ImplicitFastClashCheck(
 	core::Real clash_dis,
 	utility::vector1<core::Size> ignore
 ){
-	pose_ = new core::pose::Pose(poses_in[1]);
+	pose_ = core::pose::PoseCOP( new core::pose::Pose(poses_in[1]) );
 	init_clash_check(poses_in,clash_dis,ignore);
 }
 

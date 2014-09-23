@@ -37,7 +37,7 @@ namespace replica_docking {
 static thread_local basic::Tracer TR( "devel.replica_docking.InteractionScoreFilter" );
 
 protocols::filters::FilterOP
-InteractionScoreFilterCreator::create_filter() const { return new InteractionScoreFilter; }
+InteractionScoreFilterCreator::create_filter() const { return protocols::filters::FilterOP( new InteractionScoreFilter ); }
 
 std::string
 InteractionScoreFilterCreator::keyname() const { return "I_sc"; }
@@ -48,7 +48,7 @@ InteractionScoreFilter::InteractionScoreFilter() :
 	lower_threshold_( -30.0 ),
 	upper_threshold_(0.0),
 	jump_( 1 ),
-	scorefxn_( NULL )
+	scorefxn_( /* NULL */ )
 {
 	scorefxn_ = core::scoring::get_score_function();
 }
@@ -76,12 +76,12 @@ InteractionScoreFilter::~InteractionScoreFilter(){}
 
 protocols::filters::FilterOP
 InteractionScoreFilter::clone() const{
-	return new InteractionScoreFilter( *this );
+	return protocols::filters::FilterOP( new InteractionScoreFilter( *this ) );
 }
 
 protocols::filters::FilterOP
 InteractionScoreFilter::fresh_instance() const{
-	return new InteractionScoreFilter;
+	return protocols::filters::FilterOP( new InteractionScoreFilter );
 }
 
 void

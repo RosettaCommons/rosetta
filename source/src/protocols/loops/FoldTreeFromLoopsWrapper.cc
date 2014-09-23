@@ -38,7 +38,7 @@ static thread_local basic::Tracer TR( "protocols.loops.FoldTreeFromLoopsWrapper"
 FoldTreeFromLoops::FoldTreeFromLoops() :
 Mover( FoldTreeFromLoopsCreator::mover_name() ), loop_str_( "" )
 {
-	loops_ = new Loops;
+	loops_ = LoopsOP( new Loops );
 	loops_->clear();
 }
 
@@ -112,7 +112,7 @@ FoldTreeFromLoopsCreator::keyname() const
 
 protocols::moves::MoverOP
 FoldTreeFromLoopsCreator::create_mover() const {
-	return new FoldTreeFromLoops;
+	return protocols::moves::MoverOP( new FoldTreeFromLoops );
 }
 
 std::string

@@ -54,7 +54,7 @@ public:
 	//computeBoltzWeight(utility::vector0<int> rot_to_pack);//gives rot_to_pack where entry is rotameric id into rotamersets
   utility::vector1<core::Real> computeAllBoltz(core::pose::Pose& pose);
   core::Real computeBoltzWeight(core::pose::Pose& pose, core::Size resi);
-	core::pose::metrics::PoseMetricCalculatorOP clone() const { return new RotamerBoltzCalculator(scorefxn(), temperature()); };
+	core::pose::metrics::PoseMetricCalculatorOP clone() const { return core::pose::metrics::PoseMetricCalculatorOP( new RotamerBoltzCalculator(scorefxn(), temperature()) ); };
 
 protected:
 	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;

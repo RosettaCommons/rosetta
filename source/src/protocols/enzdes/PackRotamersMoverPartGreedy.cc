@@ -63,7 +63,7 @@ PackRotamersMoverPartGreedyCreator::keyname() const
 protocols::moves::MoverOP
 PackRotamersMoverPartGreedyCreator::create_mover() const
 {
-  return new PackRotamersMoverPartGreedy;
+  return protocols::moves::MoverOP( new PackRotamersMoverPartGreedy );
 }
 
 PackRotamersMoverPartGreedy::PackRotamersMoverPartGreedy(
@@ -81,10 +81,10 @@ PackRotamersMoverPartGreedy::PackRotamersMoverPartGreedy(
 
 PackRotamersMoverPartGreedy::PackRotamersMoverPartGreedy() : 
 	protocols::moves::Mover("PackRotamersMoverPartGreedy"),
-	scorefxn_repack_(0),
-	scorefxn_minimize_(0),
-	task_factory_(0),
-	target_residues_(0),
+	scorefxn_repack_(/* 0 */),
+	scorefxn_minimize_(/* 0 */),
+	task_factory_(/* 0 */),
+	target_residues_(/* 0 */),
 	threshold_(0),
 	n_best_(0)
 {}
@@ -139,13 +139,13 @@ PackRotamersMoverPartGreedy::get_name() const {
 protocols::moves::MoverOP
 PackRotamersMoverPartGreedy::clone() const
 {
-  return new PackRotamersMoverPartGreedy( *this );
+  return protocols::moves::MoverOP( new PackRotamersMoverPartGreedy( *this ) );
 }
 
 protocols::moves::MoverOP
 PackRotamersMoverPartGreedy::fresh_instance() const
 {
-  return new PackRotamersMoverPartGreedy;
+  return protocols::moves::MoverOP( new PackRotamersMoverPartGreedy );
 }
 
 
@@ -157,11 +157,11 @@ PackRotamersMoverPartGreedy::apply( Pose & pose )
   core::pose::Pose greedy_pose = pose;
   TR<<"Creating packer task based on specified task operations..."<< std::endl;
   if ( task_factory_ !=0 ){
-  	task_factory_->push_back( new core::pack::task::operation::InitializeFromCommandline );
+  	task_factory_->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
   	task_ = task_factory_->create_task_and_apply_taskoperations( greedy_pose );
   }
   else{
-	core::pack::task::TaskFactoryOP tf = new core::pack::task::TaskFactory();
+	core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory() );
         task_ = tf->create_task_and_apply_taskoperations( greedy_pose );
   }
   (*scorefxn_repack_)(greedy_pose);
@@ -212,7 +212,7 @@ PackRotamersMoverPartGreedy::apply( Pose & pose )
   TR<< std::endl;
   task->initialize_from_command_line().or_include_current( true );
   //Next hand over these to regular PackRotamers mover and we're done!
-  protocols::simple_moves::PackRotamersMoverOP pack =  new protocols::simple_moves::PackRotamersMover( scorefxn_repack_ , task );
+  protocols::simple_moves::PackRotamersMoverOP pack( new protocols::simple_moves::PackRotamersMover( scorefxn_repack_ , task ) );
   pack->apply( pose );
   
 }
@@ -255,7 +255,7 @@ PackRotamersMoverPartGreedy::greedy_around(
 		 	for( utility::vector1< core::Size >::const_iterator neigh_it = cur_neighbors.begin(); neigh_it != cur_neighbors.end(); ++neigh_it ){
 				core::pose::Pose working_pose = inner_pose;
 				// make a task
-				core::pack::task::TaskFactoryOP mut_res = new core::pack::task::TaskFactory();
+				core::pack::task::TaskFactoryOP mut_res( new core::pack::task::TaskFactory() );
 				core::pack::task::PackerTaskOP mutate_residue = mut_res->create_task_and_apply_taskoperations( working_pose );
 			        mutate_residue->initialize_from_command_line().or_include_current( true );
 				// upweight interactions of this position to those within the cluster (to favor intracluster interactions)
@@ -264,7 +264,7 @@ PackRotamersMoverPartGreedy::greedy_around(
 				utility::vector1< core::Size > upweight_2 = neighbors;
 				upweight_2.push_back( *pos_it );
 				//upweight interactions between this position and neighbors
-				IGEdgeReweighterOP ig_up = new protocols::toolbox::ResidueGroupIGEdgeUpweighter( 2.5, upweight_1 , upweight_2 );
+				IGEdgeReweighterOP ig_up( new protocols::toolbox::ResidueGroupIGEdgeUpweighter( 2.5, upweight_1 , upweight_2 ) );
 				mutate_residue->set_IGEdgeReweights()->add_reweighter( ig_up );
 				// fix everything else except this position
 				utility::vector1< bool > keep_aas( core::chemical::num_canonical_aas, true );
@@ -274,14 +274,14 @@ PackRotamersMoverPartGreedy::greedy_around(
 				else mutate_residue->nonconst_residue_task( i ).prevent_repacking();
 				}
 				// Now run design on one position
-				protocols::simple_moves::PackRotamersMoverOP prm =  new protocols::simple_moves::PackRotamersMover( scorefxn, mutate_residue, 1 );
+				protocols::simple_moves::PackRotamersMoverOP prm( new protocols::simple_moves::PackRotamersMover( scorefxn, mutate_residue, 1 ) );
 				prm->apply( working_pose );
 				//Minimize the sidechains of all designed residues so far
-				core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
+				core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
 				movemap->set_jump( false );
   				movemap->set_bb( false );
 				movemap->set_chi( allow_minimization );
-				protocols::simple_moves::MinMoverOP minmover = new protocols::simple_moves::MinMover( movemap, scorefxn_minimize_, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/);
+				protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover( movemap, scorefxn_minimize_, "dfpmin_armijo_nonmonotone_atol", 0.02, true /*use_nblist*/) );
 				minmover->apply(working_pose);
 
 				//Check energy

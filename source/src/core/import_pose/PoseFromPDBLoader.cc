@@ -43,7 +43,7 @@ PoseFromPDBLoader::create_resource(
 		throw utility::excn::EXCN_Msg_Exception( "PoseFromPDBLoader expected to be given a ImportPoseOptions object, " \
 			"but was given a non-ImportPoseOptions object of type '" + options.type() + "', which has the name '" + options.name() + "'." );
 	}
-	pose::PoseOP pose = new pose::Pose();
+	pose::PoseOP pose( new pose::Pose() );
 	pose_from_pdb_stream( *pose, istream, locator_id, *pose_opts_ptr );
 	return pose;
 }
@@ -51,12 +51,12 @@ PoseFromPDBLoader::create_resource(
 basic::resource_manager::ResourceOptionsOP
 PoseFromPDBLoader::default_options() const
 {
-	return new ImportPoseOptions();
+	return basic::resource_manager::ResourceOptionsOP( new ImportPoseOptions() );
 }
 
 basic::resource_manager::ResourceLoaderOP PoseFromPDBLoaderCreator::create_resource_loader() const
 {
-	return new PoseFromPDBLoader();
+	return basic::resource_manager::ResourceLoaderOP( new PoseFromPDBLoader() );
 }
 
 std::string PoseFromPDBLoaderCreator::loader_type() const

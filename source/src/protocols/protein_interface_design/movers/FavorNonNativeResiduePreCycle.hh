@@ -40,7 +40,7 @@ public:
 	protocols::moves::MoverOP clone() const {
 		return( protocols::moves::MoverOP( new FavorNonNativeResiduePreCycle( bonus_ ) ) );
 	}
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new FavorNonNativeResiduePreCycle); }
+	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new FavorNonNativeResiduePreCycle ); }
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	virtual ~FavorNonNativeResiduePreCycle();
 private:

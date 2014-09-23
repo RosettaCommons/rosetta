@@ -44,8 +44,8 @@ namespace simple_moves{
 namespace symmetry {
 
 	class SymDockingInitialPerturbation; // fwd declaration
-	typedef utility::pointer::owning_ptr< SymDockingInitialPerturbation > SymDockingInitialPerturbationOP;
-	typedef utility::pointer::owning_ptr< SymDockingInitialPerturbation const > SymDockingInitialPerturbationCOP;
+	typedef utility::pointer::shared_ptr< SymDockingInitialPerturbation > SymDockingInitialPerturbationOP;
+	typedef utility::pointer::shared_ptr< SymDockingInitialPerturbation const > SymDockingInitialPerturbationCOP;
 
 	class SymDockingInitialPerturbation : public moves::Mover
 	{
@@ -103,8 +103,8 @@ namespace symmetry {
 	};
 
 	class FaSymDockingSlideTogether; // fwd declaration
-	typedef utility::pointer::owning_ptr< FaSymDockingSlideTogether > FaSymDockingSlideTogetherOP;
-	typedef utility::pointer::owning_ptr< FaSymDockingSlideTogether const > FaSymDockingSlideTogetherCOP;
+	typedef utility::pointer::shared_ptr< FaSymDockingSlideTogether > FaSymDockingSlideTogetherOP;
+	typedef utility::pointer::shared_ptr< FaSymDockingSlideTogether const > FaSymDockingSlideTogetherCOP;
 
 	/// @brief Slides docking partners together by monitoring fa_rep.
 	/// @details
@@ -132,8 +132,8 @@ namespace symmetry {
 };
 
 	class SymmetrySlider; // fwd declaration
-	typedef utility::pointer::owning_ptr< SymmetrySlider > SymmetrySliderOP;
-	typedef utility::pointer::owning_ptr< SymmetrySlider const > SymmetrySliderCOP;
+	typedef utility::pointer::shared_ptr< SymmetrySlider > SymmetrySliderOP;
+	typedef utility::pointer::shared_ptr< SymmetrySlider const > SymmetrySliderCOP;
 
 	class SymmetrySlider : public utility::pointer::ReferenceCount
 	{
@@ -195,8 +195,8 @@ namespace symmetry {
 	// function select_jump()
 
 	class SequentialSymmetrySlider; // fwd declaration
-	typedef utility::pointer::owning_ptr< SequentialSymmetrySlider > SequentialSymmetrySliderOP;
-	typedef utility::pointer::owning_ptr< SequentialSymmetrySlider const > SequentialSymmetrySliderCOP;
+	typedef utility::pointer::shared_ptr< SequentialSymmetrySlider > SequentialSymmetrySliderOP;
+	typedef utility::pointer::shared_ptr< SequentialSymmetrySlider const > SequentialSymmetrySliderCOP;
 
 	class SequentialSymmetrySlider : public SymmetrySlider
 	{
@@ -219,8 +219,8 @@ namespace symmetry {
 	// function select_jump()
 
 	class OrderedSequentialSymmetrySlider; // fwd declaration
-	typedef utility::pointer::owning_ptr< OrderedSequentialSymmetrySlider > OrderedSequentialSymmetrySliderOP;
-	typedef utility::pointer::owning_ptr< OrderedSequentialSymmetrySlider const > OrderedSequentialSymmetrySliderCOP;
+	typedef utility::pointer::shared_ptr< OrderedSequentialSymmetrySlider > OrderedSequentialSymmetrySliderOP;
+	typedef utility::pointer::shared_ptr< OrderedSequentialSymmetrySlider const > OrderedSequentialSymmetrySliderCOP;
 
 	class OrderedSequentialSymmetrySlider : public SymmetrySlider
 	{
@@ -245,8 +245,8 @@ namespace symmetry {
 	// Derive your own slide class by specifying what jumps are selected in the
 	// function select_jump()
 	class RandomSymmetrySlider; // fwd declaration
-	typedef utility::pointer::owning_ptr< RandomSymmetrySlider > RandomSymmetrySliderOP;
-	typedef utility::pointer::owning_ptr< RandomSymmetrySlider const > RandomSymmetrySliderCOP;
+	typedef utility::pointer::shared_ptr< RandomSymmetrySlider > RandomSymmetrySliderOP;
+	typedef utility::pointer::shared_ptr< RandomSymmetrySlider const > RandomSymmetrySliderCOP;
 
 	class RandomSymmetrySlider : public SymmetrySlider
 	{

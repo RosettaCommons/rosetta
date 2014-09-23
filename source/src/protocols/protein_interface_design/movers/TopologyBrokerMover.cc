@@ -71,7 +71,7 @@ TopologyBrokerMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 TopologyBrokerMoverCreator::create_mover() const {
-	return new TopologyBrokerMover;
+	return protocols::moves::MoverOP( new TopologyBrokerMover );
 }
 
 std::string
@@ -100,11 +100,11 @@ TopologyBrokerMover::apply( pose::Pose & pose )
   pose2.conformation().delete_residue_range_slow( chain1primet, chain1end);
   core::pose::Pose ref_pose = pose2;
 
-	protocols::protein_interface_design::movers::SaveAndRetrieveSidechainsOP srsc = new protocols::protein_interface_design::movers::SaveAndRetrieveSidechains(ref_pose, true, false, 0);
+	protocols::protein_interface_design::movers::SaveAndRetrieveSidechainsOP srsc( new protocols::protein_interface_design::movers::SaveAndRetrieveSidechains(ref_pose, true, false, 0) );
 
   protocols::abinitio::AbrelaxApplication::register_options();
   protocols::abinitio::register_options_broker();
-  protocols::abinitio::AbrelaxMoverOP abrelax = new protocols::abinitio::AbrelaxMover();
+  protocols::abinitio::AbrelaxMoverOP abrelax( new protocols::abinitio::AbrelaxMover() );
 	//abrelax->set_b_return_unrelaxed_fullatom(true);
 	abrelax->apply( pose2 );
 	//switch to fa output, relax is set in commond line
@@ -134,7 +134,7 @@ TopologyBrokerMover::apply( pose::Pose & pose )
   pose1.append_pose_by_jump(pose2,chain1end);
 	pose=pose1;
 	//copy pdbinfo
-  core::pose::PDBInfoOP pdbinfo = new core::pose::PDBInfo( pose);
+  core::pose::PDBInfoOP pdbinfo( new core::pose::PDBInfo( pose) );
   pose.pdb_info(pdbinfo);
 	
 }

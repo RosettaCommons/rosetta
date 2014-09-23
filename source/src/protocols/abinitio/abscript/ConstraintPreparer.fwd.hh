@@ -24,8 +24,8 @@ namespace abinitio {
 namespace abscript{
 
 class ConstraintPreparer;
-typedef utility::pointer::owning_ptr< ConstraintPreparer > ConstraintPreparerOP;
-typedef utility::pointer::owning_ptr< ConstraintPreparer const > ConstraintPreparerCOP;
+typedef utility::pointer::shared_ptr< ConstraintPreparer > ConstraintPreparerOP;
+typedef utility::pointer::shared_ptr< ConstraintPreparer const > ConstraintPreparerCOP;
 
 } // abscript
 } // abinitio

@@ -33,7 +33,7 @@ std::string GridInitMoverCreator::keyname() const
 
 protocols::moves::MoverOP GridInitMoverCreator::create_mover() const
 {
-	return new GridInitMover;
+	return protocols::moves::MoverOP( new GridInitMover );
 }
 
 std::string GridInitMoverCreator::mover_name()
@@ -53,12 +53,12 @@ GridInitMover::~GridInitMover()
 
 protocols::moves::MoverOP GridInitMover::clone() const
 {
-	return new GridInitMover(*this);
+	return protocols::moves::MoverOP( new GridInitMover(*this) );
 }
 
 protocols::moves::MoverOP GridInitMover::fresh_instance() const
 {
-	return new GridInitMover;
+	return protocols::moves::MoverOP( new GridInitMover );
 }
 
 std::string GridInitMover::get_name() const

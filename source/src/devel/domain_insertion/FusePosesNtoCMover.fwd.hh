@@ -27,12 +27,12 @@ namespace domain_insertion {
 
 class FusePosesNtoCMover;
 
-typedef utility::pointer::owning_ptr< FusePosesNtoCMover > FusePosesNtoCMoverOP;
-typedef utility::pointer::owning_ptr< FusePosesNtoCMover const > FusePosesNtoCMoverCOP;
+typedef utility::pointer::shared_ptr< FusePosesNtoCMover > FusePosesNtoCMoverOP;
+typedef utility::pointer::shared_ptr< FusePosesNtoCMover const > FusePosesNtoCMoverCOP;
 
 class SetupCoiledCoilFoldTreeMover;
-typedef utility::pointer::owning_ptr< SetupCoiledCoilFoldTreeMover > SetupCoiledCoilFoldTreeMoverOP;
-typedef utility::pointer::owning_ptr< SetupCoiledCoilFoldTreeMover const > SetupCoiledCoilFoldTreeMoverCOP;
+typedef utility::pointer::shared_ptr< SetupCoiledCoilFoldTreeMover > SetupCoiledCoilFoldTreeMoverOP;
+typedef utility::pointer::shared_ptr< SetupCoiledCoilFoldTreeMover const > SetupCoiledCoilFoldTreeMoverCOP;
 
 }
 }

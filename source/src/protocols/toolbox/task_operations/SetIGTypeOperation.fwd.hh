@@ -24,8 +24,8 @@ namespace toolbox {
 namespace task_operations {
 
 class SetIGTypeOperation;
-typedef utility::pointer::owning_ptr< SetIGTypeOperation > SetIGTypeOperationOP;
-typedef utility::pointer::owning_ptr< SetIGTypeOperation const > SetIGTypeOperationCOP;
+typedef utility::pointer::shared_ptr< SetIGTypeOperation > SetIGTypeOperationOP;
+typedef utility::pointer::shared_ptr< SetIGTypeOperation const > SetIGTypeOperationCOP;
 
 } //task_operations
 } //toolbox

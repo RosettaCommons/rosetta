@@ -23,8 +23,8 @@ namespace constraints {
 
 class MultiConstraint;
 
-typedef utility::pointer::owning_ptr< MultiConstraint > MultiConstraintOP;
-typedef utility::pointer::owning_ptr< MultiConstraint const > MultiConstraintCOP;
+typedef utility::pointer::shared_ptr< MultiConstraint > MultiConstraintOP;
+typedef utility::pointer::shared_ptr< MultiConstraint const > MultiConstraintCOP;
 
 }
 }

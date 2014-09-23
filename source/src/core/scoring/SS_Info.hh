@@ -237,7 +237,7 @@ public:
 	basic::datacache::CacheableDataOP
 	clone() const
 	{
-		return new SS_Info( *this );
+		return basic::datacache::CacheableDataOP( new SS_Info( *this ) );
 	}
 
 	void

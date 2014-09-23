@@ -18,8 +18,8 @@ namespace loggers {
 
 class ProgressBar;
 
-typedef utility::pointer::owning_ptr<ProgressBar> ProgressBarOP;
-typedef utility::pointer::owning_ptr<ProgressBar const> ProgressBarCOP;
+typedef utility::pointer::shared_ptr<ProgressBar> ProgressBarOP;
+typedef utility::pointer::shared_ptr<ProgressBar const> ProgressBarCOP;
 
 }
 }

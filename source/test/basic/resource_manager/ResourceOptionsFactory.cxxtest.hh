@@ -55,7 +55,7 @@ public:
 class DummyResourceOptionsCreator : public ResourceOptionsCreator {
 public:
 	virtual std::string options_type() const { return "DummyResourceOptions"; }
-	virtual ResourceOptionsOP create_options() const { return new DummyResourceOptions; }
+	virtual ResourceOptionsOP create_options() const { return ResourceOptionsOP( new DummyResourceOptions ); }
 };
 
 
@@ -75,7 +75,7 @@ public:
 
 		ResourceOptionsFactory * factory = ResourceOptionsFactory::get_instance();
 		factory->set_throw_on_double_registration();
-		factory->factory_register( new DummyResourceOptionsCreator );
+		factory->factory_register( ResourceOptionsCreatorOP( new DummyResourceOptionsCreator ) );
 		ResourceOptionsOP resource = factory->create_resource_options( "DummyResourceOptions", tag );
 		TS_ASSERT( resource.get() ); // make sure we got back a non-null pointer
 		DummyResourceOptions * dresource = dynamic_cast< DummyResourceOptions * > ( resource.get() );
@@ -86,7 +86,7 @@ public:
 		try {
 			ResourceOptionsFactory * factory = ResourceOptionsFactory::get_instance();
 			factory->set_throw_on_double_registration();
-			factory->factory_register( new DummyResourceOptionsCreator );
+			factory->factory_register( ResourceOptionsCreatorOP( new DummyResourceOptionsCreator ) );
 			TS_ASSERT( false );
 		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 			std::string expected_error_message = "Double registration of a ResourceOptionsCreator in the ResourceOptionsFactory, named DummyResourceOptions. Are there two registrators for this options object, or have you chosen a previously assigned name to a new resource option?";

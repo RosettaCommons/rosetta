@@ -124,25 +124,25 @@ BuriedUnsatisfiedPolarsCalculator2::assert_calculators() {
 			if(layered_sasa_) {
 				TR << "Registering VarSolDist SASA Calculator" << std::endl;
 				CalculatorFactory::Instance().register_calculator(sasa_calc_name,
-						new devel::vardist_solaccess::VarSolDistSasaCalculator());
+						PoseMetricCalculatorOP( new devel::vardist_solaccess::VarSolDistSasaCalculator() ));
 			}
 			else {
 				TR << "Registering SASA Calculator" << std::endl;
 				CalculatorFactory::Instance().register_calculator(sasa_calc_name,
-						new pose::metrics::simple_calculators::SasaCalculatorLegacy());
+						PoseMetricCalculatorOP( new pose::metrics::simple_calculators::SasaCalculatorLegacy() ));
 			}
 		}
 		std::string num_hbonds_calc_name("num_hbonds_calc_name");
 		if (!CalculatorFactory::Instance().check_calculator_exists( num_hbonds_calc_name ) ) {
 			CalculatorFactory::Instance().register_calculator(num_hbonds_calc_name,
-					new NumberHBondsCalculator());
+					PoseMetricCalculatorOP( new NumberHBondsCalculator() ));
 		}
 		if( !CalculatorFactory::Instance().check_calculator_exists( name_of_weak_bunsat_calc_ ) ){
 			TR << "Registering new basic buried unsat calculator." << std::endl;
 			CalculatorFactory::Instance().register_calculator( name_of_weak_bunsat_calc_,
-					new protocols::toolbox::pose_metric_calculators::
+					PoseMetricCalculatorOP( new protocols::toolbox::pose_metric_calculators::
 					BuriedUnsatisfiedPolarsCalculator(sasa_calc_name, num_hbonds_calc_name,
-					sasa_burial_cutoff_) );
+					sasa_burial_cutoff_) ) );
 		}
 	}
 }
@@ -318,8 +318,7 @@ const
 {
 	TR << "Setting generous_hbonds." << std::endl;
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
-	scoring::methods::EnergyMethodOptionsOP emopts(
-			new scoring::methods::EnergyMethodOptions(
+	scoring::methods::EnergyMethodOptionsOP emopts( new scoring::methods::EnergyMethodOptions(
 			scorefxn->energy_method_options() ) );
 	emopts->hbond_options().decompose_bb_hb_into_pair_energies(true);
 	emopts->hbond_options().use_hb_env_dep(false);

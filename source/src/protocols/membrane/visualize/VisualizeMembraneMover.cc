@@ -121,13 +121,13 @@ VisualizeMembraneMover::~VisualizeMembraneMover() {}
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 VisualizeMembraneMover::clone() const {
-	return ( new VisualizeMembraneMover( *this ) );
+	return ( protocols::moves::MoverOP( new VisualizeMembraneMover( *this ) ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 VisualizeMembraneMover::fresh_instance() const {
-	return new VisualizeMembraneMover();
+	return protocols::moves::MoverOP( new VisualizeMembraneMover() );
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
@@ -160,7 +160,7 @@ VisualizeMembraneMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
 VisualizeMembraneMoverCreator::create_mover() const {
-	return new VisualizeMembraneMover;
+	return protocols::moves::MoverOP( new VisualizeMembraneMover );
 }
 	
 /// @brief Return the Name of this mover (as seen by Rscripts)

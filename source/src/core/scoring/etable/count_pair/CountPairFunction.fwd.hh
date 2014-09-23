@@ -24,8 +24,8 @@ namespace count_pair {
 
 class CountPairFunction;
 
-typedef utility::pointer::owning_ptr< CountPairFunction > CountPairFunctionOP;
-typedef utility::pointer::owning_ptr< CountPairFunction const > CountPairFunctionCOP;
+typedef utility::pointer::shared_ptr< CountPairFunction > CountPairFunctionOP;
+typedef utility::pointer::shared_ptr< CountPairFunction const > CountPairFunctionCOP;
 
 } // namespace count_pair
 } // namespace etable

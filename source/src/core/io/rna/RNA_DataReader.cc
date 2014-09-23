@@ -100,7 +100,7 @@ void
 RNA_DataReader::initialize(	std::string const rna_data_file )
 {
 
-	rna_data_info_with_conventional_numbering_ = new RNA_DataInfo;
+	rna_data_info_with_conventional_numbering_ = core::scoring::rna::data::RNA_DataInfoOP( new RNA_DataInfo );
 	backbone_burial_res_.clear();
 	backbone_exposed_res_.clear();
 
@@ -290,7 +290,7 @@ RNA_DataReader::fill_rna_data_info( pose::Pose & pose )
 {
 	using namespace core::pose::full_model_info;
 
-	RNA_DataInfoOP rna_data_info_new = new RNA_DataInfo;
+	RNA_DataInfoOP rna_data_info_new( new RNA_DataInfo );
 
 	FullModelParametersCOP full_model_parameters;
 	if ( full_model_info_defined( pose ) ) full_model_parameters = nonconst_full_model_info( pose ).full_model_parameters();
@@ -337,7 +337,7 @@ get_rna_data_info( pose::Pose & pose, std::string const & rna_data_file,
 	using namespace core::scoring::rna::data;
 
 	if ( rna_data_file.size() > 0 ) {
-		RNA_DataReaderOP rna_data_reader = new RNA_DataReader( rna_data_file );
+		RNA_DataReaderOP rna_data_reader( new RNA_DataReader( rna_data_file ) );
 		rna_data_reader->fill_rna_data_info( pose );
 	}
 

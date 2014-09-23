@@ -26,10 +26,10 @@ namespace kinematic_closure {
 
 //Forwards and OP typedefs
 class KinematicMover;
-typedef utility::pointer::owning_ptr< KinematicMover > KinematicMoverOP;
-typedef utility::pointer::owning_ptr< KinematicMover const > KinematicMoverCOP;
+typedef utility::pointer::shared_ptr< KinematicMover > KinematicMoverOP;
+typedef utility::pointer::shared_ptr< KinematicMover const > KinematicMoverCOP;
 
-typedef utility::pointer::access_ptr< KinematicMover const > KinematicMoverCAP;
+typedef utility::pointer::weak_ptr< KinematicMover const > KinematicMoverCAP;
 
 } // namespace kinematic_closure
 } // namespace loop_closure

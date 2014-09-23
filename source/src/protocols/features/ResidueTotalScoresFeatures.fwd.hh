@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class ResidueTotalScoresFeatures;
-typedef utility::pointer::owning_ptr< ResidueTotalScoresFeatures > ResidueTotalScoresFeaturesOP;
-typedef utility::pointer::owning_ptr< ResidueTotalScoresFeatures const > ResidueTotalScoresFeaturesCOP;
+typedef utility::pointer::shared_ptr< ResidueTotalScoresFeatures > ResidueTotalScoresFeaturesOP;
+typedef utility::pointer::shared_ptr< ResidueTotalScoresFeatures const > ResidueTotalScoresFeaturesCOP;
 
 }//features
 }//protocols

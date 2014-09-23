@@ -471,7 +471,7 @@ SequenceShiftMover::score(bool step_fn/*=false*/) {
 
 loops::LoopsOP
 SequenceShiftMover::get_residues_to_rebuild() {
-	loops::LoopsOP retval = new loops::Loops;
+	loops::LoopsOP retval( new loops::Loops );
 	if (ref_pose_.total_residue() == 0)
 		return retval;
 

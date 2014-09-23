@@ -20,12 +20,12 @@ namespace protocols {
 namespace simple_moves {
 
 class RotamerTrialsMinMover;
-typedef utility::pointer::owning_ptr< RotamerTrialsMinMover > RotamerTrialsMinMoverOP;
-typedef utility::pointer::owning_ptr< RotamerTrialsMinMover const > RotamerTrialsMinMoverCOP;
+typedef utility::pointer::shared_ptr< RotamerTrialsMinMover > RotamerTrialsMinMoverOP;
+typedef utility::pointer::shared_ptr< RotamerTrialsMinMover const > RotamerTrialsMinMoverCOP;
 
 class EnergyCutRotamerTrialsMinMover;
-typedef utility::pointer::owning_ptr< EnergyCutRotamerTrialsMinMover > EnergyCutRotamerTrialsMinMoverOP;
-typedef utility::pointer::owning_ptr< EnergyCutRotamerTrialsMinMover const > EnergyCutRotamerTrialsMinMoverCOP;
+typedef utility::pointer::shared_ptr< EnergyCutRotamerTrialsMinMover > EnergyCutRotamerTrialsMinMoverOP;
+typedef utility::pointer::shared_ptr< EnergyCutRotamerTrialsMinMover const > EnergyCutRotamerTrialsMinMoverCOP;
 
 } // moves
 } // protocols

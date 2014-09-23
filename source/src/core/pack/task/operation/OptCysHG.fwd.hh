@@ -29,19 +29,19 @@ class OptCysHG;
 
 
 /// @brief OptCysHG owning pointer
-typedef utility::pointer::owning_ptr< OptCysHG > OptCysHGOP;
+typedef utility::pointer::shared_ptr< OptCysHG > OptCysHGOP;
 
 
 /// @brief OptCysHG const owning pointer
-typedef utility::pointer::owning_ptr< OptCysHG const > OptCysHGCOP;
+typedef utility::pointer::shared_ptr< OptCysHG const > OptCysHGCOP;
 
 
 /// @brief OptCysHG owning pointer
-typedef utility::pointer::access_ptr< OptCysHG > OptCysHGAP;
+typedef utility::pointer::weak_ptr< OptCysHG > OptCysHGAP;
 
 
 /// @brief OptCysHG const owning pointer
-typedef utility::pointer::access_ptr< OptCysHG const > OptCysHGCAP;
+typedef utility::pointer::weak_ptr< OptCysHG const > OptCysHGCAP;
 
 
 } // namespace operation

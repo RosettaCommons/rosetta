@@ -28,10 +28,10 @@ namespace protocols {
 namespace rbsegment_relax {
 
 class RBSegmentMover;
-typedef utility::pointer::owning_ptr< RBSegmentMover >  RBSegmentMoverOP;
+typedef utility::pointer::shared_ptr< RBSegmentMover >  RBSegmentMoverOP;
 
 class RBSegment;
-typedef utility::pointer::owning_ptr< RBSegment >  RBSegmentOP;
+typedef utility::pointer::shared_ptr< RBSegment >  RBSegmentOP;
 typedef utility::vector1< RBSegment > CompositeSegment;
 typedef utility::vector1< RBSegment >::iterator RBIt;
 typedef utility::vector1< RBSegment >::const_iterator RBConsIt;

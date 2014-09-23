@@ -32,7 +32,7 @@ static thread_local basic::Tracer TR( "protocols.simple_filters.DeltaFilter" );
 ///@brief default ctor
 DeltaFilter::DeltaFilter() :
 	parent( "Delta" ),
-	filter_( NULL ),
+	filter_( /* NULL */ ),
 	baseline_( 0.0 ),
 	range_( 0.0 ),
 	lower_( false ),
@@ -41,9 +41,9 @@ DeltaFilter::DeltaFilter() :
 	relax_unbound_( false ),
 	changing_baseline_( false ),
 	jump_( 0 ),
-	reference_pose_(NULL),
+	reference_pose_(/* NULL */),
 	ref_baseline_( 1234567890.0 ), // unlikely "uninitialized" sentinel value
-  scorefxn_( NULL )
+  scorefxn_( /* NULL */ )
 {}
 
 bool
@@ -245,18 +245,18 @@ DeltaFilter::parse_my_tag( utility::tag::TagCOP tag,
 
 protocols::filters::FilterOP
 DeltaFilter::fresh_instance() const{
-	return new DeltaFilter();
+	return protocols::filters::FilterOP( new DeltaFilter() );
 }
 
 DeltaFilter::~DeltaFilter(){}
 
 protocols::filters::FilterOP
 DeltaFilter::clone() const{
-	return new DeltaFilter( *this );
+	return protocols::filters::FilterOP( new DeltaFilter( *this ) );
 }
 
 protocols::filters::FilterOP
-DeltaFilterCreator::create_filter() const { return new DeltaFilter; }
+DeltaFilterCreator::create_filter() const { return protocols::filters::FilterOP( new DeltaFilter ); }
 
 std::string
 DeltaFilterCreator::keyname() const { return "Delta"; }

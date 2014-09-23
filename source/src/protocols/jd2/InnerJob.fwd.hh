@@ -21,8 +21,8 @@ namespace protocols {
 namespace jd2 {
 
 class InnerJob;
-typedef utility::pointer::owning_ptr< InnerJob > InnerJobOP;
-typedef utility::pointer::owning_ptr< InnerJob const > InnerJobCOP;
+typedef utility::pointer::shared_ptr< InnerJob > InnerJobOP;
+typedef utility::pointer::shared_ptr< InnerJob const > InnerJobCOP;
 
 } // jd2
 } // protocols

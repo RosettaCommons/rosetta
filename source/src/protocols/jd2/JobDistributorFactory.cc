@@ -162,7 +162,7 @@ ParserOP
 JobDistributorFactory::create_parser()
 {
 	if ( option[ OptionKeys::jd2::dd_parser ].user() )
-		return new protocols::rosetta_scripts::RosettaScriptsParser;
+		return ParserOP( new protocols::rosetta_scripts::RosettaScriptsParser );
 	return NULL;
 }
 

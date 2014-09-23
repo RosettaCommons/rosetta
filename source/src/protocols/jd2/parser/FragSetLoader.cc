@@ -62,7 +62,7 @@ void FragSetLoader::load_data(
 		BOOST_FOREACH(TagCOP tag, tag->getTag( "FRAGMENTS" )->getTags()){
 			std::string const name ( tag->getName() ); // this name is used when fragsets are defined later.
 			runtime_assert( !name.empty() );
-			FragmentReaderOP frop = new FragmentReader( tag );
+			FragmentReaderOP frop( new FragmentReader( tag ) );
 			frag_readers_map[ name ] = frop;
 		}
 	} else {
@@ -78,7 +78,7 @@ void FragSetLoader::load_data(
 		std::string const output ( tag->getOption<std::string>( "output", "" ) );
 		runtime_assert( !name.empty() && frag_name != "" );
 
-		core::fragment::FragSetOP fragset = new core::fragment::OrderedFragSet;
+		core::fragment::FragSetOP fragset( new core::fragment::OrderedFragSet );
 		utility::vector1< std::string > fnames ( utility::string_split( frag_name, ',' ) );
 		BOOST_FOREACH(std::string fname, fnames){
 			std::map< std::string, FragmentReaderOP >::const_iterator itr;
@@ -102,7 +102,7 @@ void FragSetLoader::load_data(
 }
 
 DataLoaderOP
-FragSetLoaderCreator::create_loader() const { return new FragSetLoader; }
+FragSetLoaderCreator::create_loader() const { return DataLoaderOP( new FragSetLoader ); }
 
 std::string
 FragSetLoaderCreator::keyname() const { return "FRAGSETS"; }

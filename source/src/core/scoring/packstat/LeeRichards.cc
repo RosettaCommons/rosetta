@@ -462,7 +462,7 @@ compute_surface_area_leerichards(
 	numeric::xyzVector<Real> plane
 ) {
 	if( plane.length() > 0 ) {
-		AreaAccumulatorOP accum = new AreaAccumulator;
+		AreaAccumulatorOP accum( new AreaAccumulator );
 		AccumulatorOP accumOP(accum);
 		LeeRichards lr( pd, accumOP, slicesize, pr, csa, plane );
 		buried_area_out = accum->buried_area;
@@ -470,21 +470,21 @@ compute_surface_area_leerichards(
 	} else {
 		Real area = 0.0;
 		{
-			AreaAccumulatorOP accum = new AreaAccumulator;
+			AreaAccumulatorOP accum( new AreaAccumulator );
 			AccumulatorOP accumOP(accum);
 			LeeRichards lr( pd, accumOP, slicesize, pr, csa, XYZ(1,0,0) );
 			buried_area_out += accum->buried_area;
 			area += accum->total_area / 3.0;
 		}
 		{
-			AreaAccumulatorOP accum = new AreaAccumulator;
+			AreaAccumulatorOP accum( new AreaAccumulator );
 			AccumulatorOP accumOP(accum);
 			LeeRichards lr( pd, accumOP, slicesize, pr, csa, XYZ(0,1,0) );
 			buried_area_out += accum->buried_area;
 			area += accum->total_area / 3.0;
 		}
 		{
-			AreaAccumulatorOP accum = new AreaAccumulator;
+			AreaAccumulatorOP accum( new AreaAccumulator );
 			AccumulatorOP accumOP(accum);
 			LeeRichards lr( pd, accumOP, slicesize, pr, csa, XYZ(0,0,1) );
 			buried_area_out += accum->buried_area;
@@ -516,7 +516,7 @@ compute_surface_area_leerichards_deriv(
 ) {
 	XYZs rtn(pd->spheres.size(),XYZ(0.0,0.0,0.0));
 	{
-		PerSphereAccumulatorOP accum = new PerSphereAccumulator(pd->spheres);
+		PerSphereAccumulatorOP accum( new PerSphereAccumulator(pd->spheres) );
 		AccumulatorOP accumOP(accum);
 		LeeRichards lr( pd, accumOP, slicesize, pr, csa, XYZ(1,0,0) );
 		for( Size i = 1; i <= pd->spheres.size(); ++i ) {
@@ -525,7 +525,7 @@ compute_surface_area_leerichards_deriv(
 		}
 	}
 	{
-		PerSphereAccumulatorOP accum = new PerSphereAccumulator(pd->spheres);
+		PerSphereAccumulatorOP accum( new PerSphereAccumulator(pd->spheres) );
 		AccumulatorOP accumOP(accum);
 		LeeRichards lr( pd, accumOP, slicesize, pr, csa, XYZ(0,1,0) );
 		for( Size i = 1; i <= pd->spheres.size(); ++i ) {
@@ -534,7 +534,7 @@ compute_surface_area_leerichards_deriv(
 		}
 	}
 	{
-		PerSphereAccumulatorOP accum = new PerSphereAccumulator(pd->spheres);
+		PerSphereAccumulatorOP accum( new PerSphereAccumulator(pd->spheres) );
 		AccumulatorOP accumOP(accum);
 		LeeRichards lr( pd, accumOP, slicesize, pr, csa, XYZ(0,0,1) );
 		for( Size i = 1; i <= pd->spheres.size(); ++i ) {
@@ -597,7 +597,7 @@ compute_packing_score_leerichards(
 	Real slicesize,
 	numeric::xyzVector<Real> plane
 ) {
-	MultiProbePerSphereAccumulatorOP accum = new MultiProbePerSphereAccumulator(pd);
+	MultiProbePerSphereAccumulatorOP accum( new MultiProbePerSphereAccumulator(pd) );
 	AccumulatorOP accumOP = accum;
 	for( Size pri = 1; pri <= 31; pri++ ) {
 		Real pr = Real(31-pri)/10.0;

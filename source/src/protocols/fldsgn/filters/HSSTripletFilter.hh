@@ -87,10 +87,10 @@ public:// virtual constructor
 
 
 	// @brief make clone
-	virtual FilterOP clone() const { return new HSSTripletFilter( *this ); }
+	virtual FilterOP clone() const { return FilterOP( new HSSTripletFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const {	return new HSSTripletFilter(); }
+	virtual FilterOP fresh_instance() const {	return FilterOP( new HSSTripletFilter() ); }
 
 
 public:// mutator

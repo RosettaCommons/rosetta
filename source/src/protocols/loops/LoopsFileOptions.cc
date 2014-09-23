@@ -29,7 +29,7 @@ LoopsFileOptionsCreator::options_type() const { return "LoopsFileOptions"; }
 
 /// @details Return an owning pointer to a newly constructed default instance of LoopsFileOptions.
 basic::resource_manager::ResourceOptionsOP
-LoopsFileOptionsCreator::create_options() const { return new LoopsFileOptions; }
+LoopsFileOptionsCreator::create_options() const { return basic::resource_manager::ResourceOptionsOP( new LoopsFileOptions ); }
 
 /// @details The prohibit_single_residue_loops property is set to true by default.
 LoopsFileOptions::LoopsFileOptions() : prohibit_single_residue_loops_( true ) {}

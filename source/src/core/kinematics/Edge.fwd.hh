@@ -30,8 +30,8 @@ class Edge;
 
 
 // Types
-typedef  utility::pointer::access_ptr< Edge >  EdgeAP;
-typedef  utility::pointer::owning_ptr< Edge >  EdgeOP;
+typedef  utility::pointer::weak_ptr< Edge >  EdgeAP;
+typedef  utility::pointer::shared_ptr< Edge >  EdgeOP;
 
 
 } // namespace kinematics

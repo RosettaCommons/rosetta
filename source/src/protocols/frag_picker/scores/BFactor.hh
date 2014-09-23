@@ -66,8 +66,8 @@ public:
 
 	FragmentScoringMethodOP make(Size priority, Real lowest_acceptable_value, bool use_lowest,
 			FragmentPickerOP picker, std::string) {
-		return (FragmentScoringMethodOP) new BFactor(priority,
-				lowest_acceptable_value, use_lowest, picker->get_query_seq_string());
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new BFactor(priority,
+				lowest_acceptable_value, use_lowest, picker->get_query_seq_string()) );
 	}
 };
 

@@ -85,11 +85,11 @@ namespace splice {
 TailSegmentMover::TailSegmentMover(): protocols::moves::Mover("TailSegment"),
 	start_(0),
 	stop_(0),
-	fullatom_scorefunction_(NULL),
-	task_factory_(NULL),
-	movemap_(NULL),
-	movemap_lesstail_(NULL),
-	foldtree_(NULL),
+	fullatom_scorefunction_(/* NULL */),
+	task_factory_(/* NULL */),
+	movemap_(/* NULL */),
+	movemap_lesstail_(/* NULL */),
+	foldtree_(/* NULL */),
 	temp_initial_(1.5),
 	temp_final_(0.5)
 {
@@ -119,7 +119,7 @@ TailSegmentMover & TailSegmentMover::operator=( TailSegmentMover const & rhs ){
 	task_factory_						= rhs.task_factory_->clone();
 	movemap_								= rhs.movemap_->clone();
 	movemap_lesstail_				= rhs.movemap_lesstail_->clone();
-	foldtree_								= new core::kinematics::FoldTree(*rhs.foldtree_); //no clone operation, and no proper copy ctor
+	foldtree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(*rhs.foldtree_) ); //no clone operation, and no proper copy ctor
 	return *this;
 }
 
@@ -137,7 +137,7 @@ void TailSegmentMover::set_task_factory(
 {
 	// make local, non-const copy from const input
 	runtime_assert( task_factory_in != 0 );
-	task_factory_ = new core::pack::task::TaskFactory( *task_factory_in );
+	task_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory( *task_factory_in ) );
 }
 
 void TailSegmentMover::apply( core::pose::Pose & pose ){
@@ -151,16 +151,16 @@ void TailSegmentMover::apply( core::pose::Pose & pose ){
 
 
 	/////////////////////////////generate full repack&minimize mover//////////////////////////////
-	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
+	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
 	pack_mover->task_factory( task_factory_ );
 	pack_mover->score_function( fullatom_scorefunction_ );
 
-	protocols::simple_moves::MinMoverOP min_mover_fa = new protocols::simple_moves::MinMover(
+	protocols::simple_moves::MinMoverOP min_mover_fa( new protocols::simple_moves::MinMover(
 		movemap_,
 		fullatom_scorefunction_,
 		"dfpmin_armijo_nonmonotone",
 		0.01,
-		true /*use_nblist*/ );
+		true /*use_nblist*/ ) );
 
 	using protocols::simple_moves::TaskAwareMinMoverOP;
 	using protocols::simple_moves::TaskAwareMinMover;
@@ -180,8 +180,8 @@ void TailSegmentMover::apply( core::pose::Pose & pose ){
 	}
 	using namespace protocols::toolbox::task_operations;
 	TR<<"The start and and residue of the tail segment are:"<<start_<<"-"<<stop_<<std::endl;
-	core::pack::task::TaskFactoryOP task_factory_min = new core::pack::task::TaskFactory; //set specific task factory for minimization
-	DesignAroundOperationOP dao = new DesignAroundOperation;
+	core::pack::task::TaskFactoryOP task_factory_min( new core::pack::task::TaskFactory ); //set specific task factory for minimization
+	DesignAroundOperationOP dao( new DesignAroundOperation );
 	dao->design_shell(0.001); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
 	dao->repack_shell(6);
 	for (core::Size i = start_; i <=stop_;++i) {
@@ -189,7 +189,7 @@ void TailSegmentMover::apply( core::pose::Pose & pose ){
 
 	} //for
 	task_factory_min->push_back(dao);
-	protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover_fa = new protocols::simple_moves::TaskAwareMinMover(min_mover_fa, task_factory_min);
+	protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover_fa( new protocols::simple_moves::TaskAwareMinMover(min_mover_fa, task_factory_min) );
 
 	/////////////////////////repack/minimize once to fix sidechains//////////////////////////////////
 	// TR << "packing" << std::endl;
@@ -200,12 +200,12 @@ void TailSegmentMover::apply( core::pose::Pose & pose ){
 	//////////////////////////////////////// backbone mover/////////////////////////////////////////
 	protocols::moves::RandomMoverOP backbone_mover_fa( new protocols::moves::RandomMover() );
 
-	protocols::simple_moves::BackboneMoverOP small_mover_fa = new protocols::simple_moves::SmallMover(movemap_, 0.8, 0);
+	protocols::simple_moves::BackboneMoverOP small_mover_fa( new protocols::simple_moves::SmallMover(movemap_, 0.8, 0) );
 	small_mover_fa->angle_max( 'H', 4.0 );
 	small_mover_fa->angle_max( 'E', 4.0 );
 	small_mover_fa->angle_max( 'L', 4.0 );
 
-	protocols::simple_moves::BackboneMoverOP shear_mover_fa = new protocols::simple_moves::ShearMover(movemap_, 0.8, 0);
+	protocols::simple_moves::BackboneMoverOP shear_mover_fa( new protocols::simple_moves::ShearMover(movemap_, 0.8, 0) );
 	shear_mover_fa->angle_max( 'H', 4.0 );
 	shear_mover_fa->angle_max( 'E', 4.0 );
 	shear_mover_fa->angle_max( 'L', 4.0 );
@@ -220,7 +220,7 @@ void TailSegmentMover::apply( core::pose::Pose & pose ){
 	/////////////////////////////////rotamer trials mover///////////////////////////////////////////
 	using protocols::simple_moves::RotamerTrialsMoverOP;
 	using protocols::simple_moves::EnergyCutRotamerTrialsMover;
-	protocols::simple_moves::RotamerTrialsMoverOP rt_mover(new protocols::simple_moves::EnergyCutRotamerTrialsMover(
+	protocols::simple_moves::RotamerTrialsMoverOP rt_mover( new protocols::simple_moves::EnergyCutRotamerTrialsMover(
 			fullatom_scorefunction_,
 			task_factory_,
 			mc_fa,

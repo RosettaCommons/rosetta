@@ -669,7 +669,7 @@ void WrapperOptEMultifunc::init(
 				std::string iiname = ScoreTypeManager::name_from_score_type( free_score_list_[ ii ] );
 				OptEVariableExpressionOP varexp;
 				if ( dof_variables_.find( iiname ) == dof_variables_.end() ) {
-					varexp = new OptEVariableExpression( iiname );
+					varexp = OptEVariableExpressionOP( new OptEVariableExpression( iiname ) );
 					dof_variables_[ iiname ] = varexp;
 				} else {
 					varexp = (dof_variables_.find( iiname ))->second;
@@ -681,7 +681,7 @@ void WrapperOptEMultifunc::init(
 				//std::cout << "Adding reference energy dof: " << ii << " " << iiname << std::endl;
 				// Assumption: the reference energy should not alrady be in the dof list
 				assert( dof_variables_.find( iiname ) == dof_variables_.end() );
-				OptEVariableExpressionOP varexp = new OptEVariableExpression( iiname );
+				OptEVariableExpressionOP varexp( new OptEVariableExpression( iiname ) );
 				dof_variables_[ iiname ] = varexp;
 				optE_dof_expressions_[ ii ] = varexp;
 				active_variables_[ ii ].insert( iiname );
@@ -819,7 +819,7 @@ WrapperOptEMultifunc::register_variable_expression( std::string varname )
 		if ( dof_variables_.find( varname ) != dof_variables_.end() ) {
 			return dof_variables_[ varname ];
 		} else {
-			OptEVariableExpressionOP varexp = new OptEVariableExpression( varname );
+			OptEVariableExpressionOP varexp( new OptEVariableExpression( varname ) );
 			if ( fixed_score_names_.find( varname ) == fixed_score_names_.end() ) {
 				/// This is not a fixed dof, therefor it must be updated at each score evaluation.
 				dof_variables_[ varname ] = varexp;

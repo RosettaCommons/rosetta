@@ -55,7 +55,7 @@ CoordinateConstraint::CoordinateConstraint() :
 	Constraint( coordinate_constraint ),
 	atom_( id::BOGUS_ATOM_ID ),
 	fixed_atom_( id::BOGUS_ATOM_ID ),
-	func_( NULL ) {}
+	func_( /* NULL */ ) {}
 
 ///c-tor
 CoordinateConstraint::CoordinateConstraint(
@@ -81,7 +81,7 @@ CoordinateConstraint::type() const {
 
 ConstraintOP
 CoordinateConstraint::clone() const {
-	return new CoordinateConstraint( *this );
+	return ConstraintOP( new CoordinateConstraint( *this ) );
 }
 
 
@@ -135,7 +135,7 @@ ConstraintOP CoordinateConstraint::remapped_clone( pose::Pose const& src, pose::
 	id::AtomID id2( named_atom_id_to_atom_id( atom2, dest, false /*raise exception*/ ) );
 
 	if ( id1.valid() && id2.valid() ) {
-		return new CoordinateConstraint( id1, id2, xyz_target_, func_, score_type() );
+		return ConstraintOP( new CoordinateConstraint( id1, id2, xyz_target_, func_, score_type() ) );
 	} else {
 		return NULL;
 	}

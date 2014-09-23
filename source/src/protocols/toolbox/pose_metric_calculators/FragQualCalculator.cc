@@ -64,7 +64,7 @@ FragQualCalculator::FragQualCalculator():
 	ratio_cutoff_goodfrag_( 0.3 ),
 	total_goodfrags_( 0 ),
 	coverage_( 0 ),
-	frag_( NULL ),
+	frag_( /* NULL */ ),
 	begin_( 0 ),
 	end_( 0 ),
 	verbose_( false )
@@ -262,7 +262,7 @@ FragQualCalculator::parse_my_tag(
 	String const fset_string ( tag->getOption<String>( "frag", "" ) );
 	runtime_assert( ! fset_string.empty() );
 	if ( data.has( "fragsets", fset_string ) ) {
-		frag_ = data.get< FragSet* >( "fragsets", fset_string );
+		frag_ = data.get_ptr<FragSet>( "fragsets", fset_string );
 	} else {
 		throw utility::excn::EXCN_RosettaScriptsOption("fragsets " + fset_string + " not found in basic::datacache::DataMap.");
 	}

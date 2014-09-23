@@ -39,7 +39,7 @@ methods::EnergyMethodOP
 P_AA_EnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new P_AA_Energy;
+	return methods::EnergyMethodOP( new P_AA_Energy );
 }
 
 ScoreTypes
@@ -62,7 +62,7 @@ P_AA_Energy::P_AA_Energy() :
 
 EnergyMethodOP
 P_AA_Energy::clone() const {
-	return new P_AA_Energy;
+	return EnergyMethodOP( new P_AA_Energy );
 }
 
 

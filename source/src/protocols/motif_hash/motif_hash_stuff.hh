@@ -96,8 +96,8 @@ namespace motif_hash {
 	// class MotifHit;
 	class MotifHits;
 	class MotifRotamerSetOperation;
-	typedef utility::pointer::owning_ptr<MotifRotamerSetOperation      > MotifRotamerSetOperationOP;
-	typedef utility::pointer::owning_ptr<MotifRotamerSetOperation const> MotifRotamerSetOperationCOP;
+	typedef utility::pointer::shared_ptr<MotifRotamerSetOperation      > MotifRotamerSetOperationOP;
+	typedef utility::pointer::shared_ptr<MotifRotamerSetOperation const> MotifRotamerSetOperationCOP;
 
 
 	Real align_motif_pose_super(
@@ -467,7 +467,7 @@ public:
 	XformScoreCOP xform_score_ee_from_cli();
 	XformScoreCOP xform_score_hh_from_cli();
 private:
-	MotifHashManager():cli_motif_hash_(NULL),cli_xform_score_(NULL),cli_xform_score_ee_(NULL),cli_xform_score_eh_(NULL),cli_xform_score_he_(NULL),cli_xform_score_hh_(NULL),cli_xform_score_sspair_(NULL) {}
+	MotifHashManager():cli_motif_hash_(/* NULL */),cli_xform_score_(NULL),cli_xform_score_ee_(NULL),cli_xform_score_eh_(NULL),cli_xform_score_he_(NULL),cli_xform_score_hh_(NULL),cli_xform_score_sspair_(NULL) {}
 	static MotifHashManager * instance_;
 	MotifHashOP cli_motif_hash_;
 	XformScoreOP cli_xform_score_, cli_xform_score_ee_, cli_xform_score_eh_, cli_xform_score_he_, cli_xform_score_hh_, cli_xform_score_sspair_;
@@ -511,7 +511,7 @@ class MotifRotamerSetOperation : public core::pack::rotamer_set::RotamerSetOpera
 
 	virtual ~MotifRotamerSetOperation(){}
 
-	core::pack::rotamer_set::RotamerSetOperationOP clone() const { return new MotifRotamerSetOperation(*this); }
+	core::pack::rotamer_set::RotamerSetOperationOP clone() const { return core::pack::rotamer_set::RotamerSetOperationOP( new MotifRotamerSetOperation(*this) ); }
 
 	void alter_rotamer_set(
 		core::pose::Pose const & pose,

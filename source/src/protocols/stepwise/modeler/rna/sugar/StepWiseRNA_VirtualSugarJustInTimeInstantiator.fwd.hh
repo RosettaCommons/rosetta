@@ -25,8 +25,8 @@ namespace rna {
 namespace sugar {
 	
 	class StepWiseRNA_VirtualSugarJustInTimeInstantiator;
-	typedef utility::pointer::owning_ptr< StepWiseRNA_VirtualSugarJustInTimeInstantiator > StepWiseRNA_VirtualSugarJustInTimeInstantiatorOP;
-	typedef utility::pointer::owning_ptr< StepWiseRNA_VirtualSugarJustInTimeInstantiator const > StepWiseRNA_VirtualSugarJustInTimeInstantiatorCOP;
+	typedef utility::pointer::shared_ptr< StepWiseRNA_VirtualSugarJustInTimeInstantiator > StepWiseRNA_VirtualSugarJustInTimeInstantiatorOP;
+	typedef utility::pointer::shared_ptr< StepWiseRNA_VirtualSugarJustInTimeInstantiator const > StepWiseRNA_VirtualSugarJustInTimeInstantiatorCOP;
 	
 } //sugar
 } //rna

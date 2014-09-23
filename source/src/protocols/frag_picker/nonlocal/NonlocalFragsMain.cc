@@ -56,7 +56,7 @@ void NonlocalFrags_main() {
 
 	NonlocalFragsOP mover;
 
-  mover = new NonlocalFrags();
+  mover = NonlocalFragsOP( new NonlocalFrags() );
 
   try {
     JobDistributor::get_instance()->go(mover);

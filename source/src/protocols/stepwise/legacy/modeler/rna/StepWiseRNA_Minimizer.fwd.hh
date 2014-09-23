@@ -25,8 +25,8 @@ namespace modeler {
 namespace rna {
 
 	class StepWiseRNA_Minimizer;
-	typedef utility::pointer::owning_ptr< StepWiseRNA_Minimizer > StepWiseRNA_MinimizerOP;
-	typedef utility::pointer::owning_ptr< StepWiseRNA_Minimizer const > StepWiseRNA_MinimizerCOP;
+	typedef utility::pointer::shared_ptr< StepWiseRNA_Minimizer > StepWiseRNA_MinimizerOP;
+	typedef utility::pointer::shared_ptr< StepWiseRNA_Minimizer const > StepWiseRNA_MinimizerCOP;
 
 } //rna
 } //modeler

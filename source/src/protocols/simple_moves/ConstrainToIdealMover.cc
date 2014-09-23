@@ -95,8 +95,8 @@ ConstrainToIdealMoverCreator::mover_name()
 
 ConstrainToIdealMover::ConstrainToIdealMover()
 	: protocols::moves::Mover("ConstrainToIdealMover"),
-		allow_insert_(NULL), //requires pose to initialize
-		mm_(new core::kinematics::MoveMap()),
+		allow_insert_(/* NULL */), //requires pose to initialize
+		mm_(core::kinematics::MoveMapOP( new core::kinematics::MoveMap() )),
 		supplied_movemap_(false)
 {}
 
@@ -124,8 +124,8 @@ ConstrainToIdealMover::get_name() const {
 	return "ConstrainToIdealMover"; //ConstrainToIdealMoverCreator::mover_name();
 }
 
-protocols::moves::MoverOP ConstrainToIdealMover::fresh_instance() const { return new ConstrainToIdealMover; }
-protocols::moves::MoverOP ConstrainToIdealMover::clone() const { return new ConstrainToIdealMover( *this ); }
+protocols::moves::MoverOP ConstrainToIdealMover::fresh_instance() const { return protocols::moves::MoverOP( new ConstrainToIdealMover ); }
+protocols::moves::MoverOP ConstrainToIdealMover::clone() const { return protocols::moves::MoverOP( new ConstrainToIdealMover( *this ) ); }
 
 ///@details supply a MoveMap to be further modified by this mover; otherwise it will modify a blank one; notice it sets a boolean flag to mark the source of the movemap
 void ConstrainToIdealMover::set_movemap( core::kinematics::MoveMapOP movemap ) {
@@ -149,8 +149,8 @@ void ConstrainToIdealMover::apply( core::pose::Pose & pose ){
 
 	//handle mm - if we don't have a freshly externally supplied one, throw the old one out.
 	//this is not a clear() operation in case someone is still sharing the old pointer
-	if(!supplied_movemap_ || !mm_) mm_ = new core::kinematics::MoveMap();
-	if(!allow_insert_) allow_insert_ = new protocols::toolbox::AllowInsert(pose);
+	if(!supplied_movemap_ || !mm_) mm_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
+	if(!allow_insert_) allow_insert_ = protocols::toolbox::AllowInsertOP( new protocols::toolbox::AllowInsert(pose) );
 
 	core::pose::Pose pose_reference;
 	create_pose_reference(pose, pose_reference);
@@ -227,12 +227,12 @@ ConstrainToIdealMover::add_bond_constraint(
 															 pose_reference.residue( atom_id2.rsd() ).xyz( atom_name2 ) ).length();
 
 
-		core::scoring::func::FuncOP dist_harm_func_( new core::scoring::func::HarmonicFunc( bond_length, bond_length_sd_ ));
+		core::scoring::func::FuncOP dist_harm_func_( new core::scoring::func::HarmonicFunc( bond_length, bond_length_sd_ ) );
 
-		cst_set->add_constraint( new AtomPairConstraint( atom_id1 ,
+		cst_set->add_constraint( ConstraintCOP( new AtomPairConstraint( atom_id1 ,
 																										 atom_id2,
 																										 dist_harm_func_,
-																										 rna_bond_geometry ) );
+																										 rna_bond_geometry ) ) );
 		if ( false ) {
 			TR << "PUTTING CONSTRAINT ON DISTANCE: " <<
 				atom_id2.rsd() << " " << atom_name1 << "; "  <<
@@ -285,9 +285,9 @@ ConstrainToIdealMover::add_bond_angle_constraint(
 
 		if (bond_angle < 0.001 ) TR << "WHAT THE HELL????????? " << std::endl;
 
-		core::scoring::func::FuncOP angle_harm_func_( new core::scoring::func::HarmonicFunc( bond_angle, bond_angle_sd_ ));
-		cst_set->add_constraint( new AngleConstraint(
-																								 atom_id2 , atom_id1, atom_id3, angle_harm_func_,	rna_bond_geometry ) );
+		core::scoring::func::FuncOP angle_harm_func_( new core::scoring::func::HarmonicFunc( bond_angle, bond_angle_sd_ ) );
+		cst_set->add_constraint( ConstraintCOP( new AngleConstraint(
+																								 atom_id2 , atom_id1, atom_id3, angle_harm_func_,	rna_bond_geometry ) ) );
 
 		if ( false ) {
 			TR << "PUTTING CONSTRAINT ON ANGLE: " <<

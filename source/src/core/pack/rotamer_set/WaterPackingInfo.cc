@@ -37,7 +37,7 @@ WaterPackingInfo::WaterPackingInfo( WaterPackingInfo const & src ):
 
 basic::datacache::CacheableDataOP
 WaterPackingInfo::clone() const {
-	return new WaterPackingInfo( *this );
+	return basic::datacache::CacheableDataOP( new WaterPackingInfo( *this ) );
 }
 
 WaterAnchorInfo &

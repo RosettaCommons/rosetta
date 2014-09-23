@@ -25,8 +25,8 @@ namespace output {
 
 class OutputWriter;
 
-typedef utility::pointer::owning_ptr< OutputWriter > OutputWriterOP;
-typedef utility::pointer::owning_ptr< OutputWriter const > OutputWriterCOP;
+typedef utility::pointer::shared_ptr< OutputWriter > OutputWriterOP;
+typedef utility::pointer::shared_ptr< OutputWriter const > OutputWriterCOP;
 
 }
 }

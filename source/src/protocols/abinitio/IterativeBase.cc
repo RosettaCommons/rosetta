@@ -380,7 +380,7 @@ IterativeBase::IterativeBase(std::string name_in )
 
 		last_accepted_decoys_in_idle_( 0 ),
 
-		reference_pose_( NULL ),
+		reference_pose_( /* NULL */ ),
 
 		cen_score_( option[ iterative::cen_score ]() ),
 		cen_score_patch_( option[ iterative::cen_score_patch ]() ),
@@ -395,9 +395,9 @@ IterativeBase::IterativeBase(std::string name_in )
 		super_quick_relax_of_centroids_( option[ iterative::centroid_quickrelax ]() ),
 		use_dynamic_weights_for_sampling_( option[ iterative::normalize::sampling ]() ),
 		delay_noesy_reassign_( option[ iterative::delay_noesy_reassign ]() ),
-		rdc_data_( NULL ),
-		cst_data_( NULL ),
-		cst_fa_data_( NULL ),
+		rdc_data_( /* NULL */ ),
+		cst_data_( /* NULL */ ),
+		cst_fa_data_( /* NULL */ ),
 		vanilla_options_( basic::options::option )
 {
 	never_switched_noe_filter_=true;
@@ -442,7 +442,7 @@ IterativeBase::IterativeBase(std::string name_in )
 
 	/// -- setup native pose
 	if ( option[ in::file::native ].user() ) {
-		core::pose::PoseOP native_pose = new core::pose::Pose;
+		core::pose::PoseOP native_pose( new core::pose::Pose );
 		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() );
 		reference_pose_ = native_pose;
 		mem_tr << "setup native pose" << std::endl;
@@ -499,7 +499,7 @@ void IterativeBase::initialize() {
 	///@brief set scorefxn used for evaluation
 		setup_filter_cst( overall_cstfilter_weight() );
 		//		set_weight( "prefa_clean_score3", option[ iterative::centroid_before_quickrelax_weight ]() );
-		add_evaluation( new simple_filters::RDC_Evaluator("rdc"), scorefxn->get_weight( scoring::rdc ) );
+		add_evaluation( evaluation::PoseEvaluatorCOP( new simple_filters::RDC_Evaluator("rdc") ), scorefxn->get_weight( scoring::rdc ) );
 		scorefxn->set_weight( scoring::rdc, 0 );
 	} else {
 		set_weight( "score", 0.0 ); //don't use score that comes back --- but the score_final thing
@@ -531,7 +531,7 @@ void IterativeBase::initialize() {
 		set_weight( "score_fa", option[ iterative::fullatom_after_quickrelax_weight ]() );
 
 		// --- setup scorefxn a NULL scorefxn since we cannot evaluate a centroid score anymore (could do that by changing residue_type_set...)
-		core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction;
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		set_scorefxn( scorefxn );
 		set_weight( "score", 0 );
 	}
@@ -669,7 +669,7 @@ void  IterativeBase::rescore() {
 void IterativeBase::collect_hedge_structures( core::io::silent::SilentStructOP evaluated_decoy, Batch const& batch ) {
 	//	if ( !evaluate_local() ) return;
 	if ( !hedge_archive_ ) {
-		hedge_archive_ = new HedgeArchive( name()+"_hedge" );
+		hedge_archive_ = HedgeArchiveOP( new HedgeArchive( name()+"_hedge" ) );
 		hedge_archive_->initialize();
 		hedge_archive_->set_evaluators( evaluators(), weights() );
 	}
@@ -1625,7 +1625,7 @@ void IterativeBase::reassign_noesy_data( Batch& batch ) {
 
 	//initialize noesy-module
 	if ( !noesy_module_ ) {
-		noesy_module_ = new protocols::noesy_assign::NoesyModule( target_sequence_ );
+		noesy_module_ = protocols::noesy_assign::NoesyModuleOP( new protocols::noesy_assign::NoesyModule( target_sequence_ ) );
 	} else {
 		noesy_module_->reset();
 	}
@@ -1685,14 +1685,13 @@ void IterativeBase::reassign_noesy_data( Batch& batch ) {
 
 	//switch out filter constraints --- if evaluate-local() otherwise we do this only once ( triggered from idle() )
 	if ( evaluate_local() && option[ iterative::update_noesy_filter_cst ]() ) { //change filter restraints if we are local-evaluators
-		topology_broker::ConstraintClaimerOP cst =
-			new topology_broker::ConstraintClaimer( current_noesy_sampling_file_+".filter", "noesy_autoassign_cst" );
+		topology_broker::ConstraintClaimerOP cst( new topology_broker::ConstraintClaimer( current_noesy_sampling_file_+".filter", "noesy_autoassign_cst" ) );
 		cst->set_combine_ratio( bCombineNoesyCst_ ? 2 : 1 );
 		cst->set_fullatom( true );
 		cst->set_centroid( false );
 		cst->set_skip_redundant( option[ iterative::skip_redundant_constraints ]() );
 		cst->set_filter_weight( get_weight( "noesy_autoassign_cst" )/overall_cstfilter_weight_ );
-		add_evaluation( new topology_broker::ConstraintEvaluatorWrapper( cst->tag(), cst ), cst->filter_weight()*overall_cstfilter_weight_ );
+		add_evaluation( evaluation::PoseEvaluatorCOP( new topology_broker::ConstraintEvaluatorWrapper( cst->tag(), cst ) ), cst->filter_weight()*overall_cstfilter_weight_ );
 		rescore(); //rescore now, since we probably have more time now, when later when the decoys are arriving...
 	}
 	basic::prof_show();
@@ -1766,14 +1765,13 @@ void IterativeBase::replace_noesy_filter_constraints() {
 	if ( noesy_assign::NoesyModule::cmdline_options_activated() ) {
 		std::string const cst_file( fullatom ? first_noesy_fa_cst_file_ : first_noesy_cst_file_ );
 		Real weight( get_weight( "noesy_autoassign_cst" )/overall_cstfilter_weight_ );
-		topology_broker::ConstraintClaimerOP cst =
-			new topology_broker::ConstraintClaimer( cst_file, "noesy_autoassign_cst" );
+		topology_broker::ConstraintClaimerOP cst( new topology_broker::ConstraintClaimer( cst_file, "noesy_autoassign_cst" ) );
 		cst->set_combine_ratio( 2 );
 		cst->set_fullatom( true );
 		cst->set_centroid( false );
 		cst->set_skip_redundant( option[ OptionKeys::iterative::skip_redundant_constraints ]() );
 		cst->set_filter_weight( weight );
-		add_evaluation( new topology_broker::ConstraintEvaluatorWrapper( cst->tag(), cst ), cst->filter_weight()*overall_cstfilter_weight_ );
+		add_evaluation( evaluation::PoseEvaluatorCOP( new topology_broker::ConstraintEvaluatorWrapper( cst->tag(), cst ) ), cst->filter_weight()*overall_cstfilter_weight_ );
 	}
 	rescore_nonlocal_archive();
 }
@@ -1841,11 +1839,11 @@ void IterativeBase::rescore_nonlocal_archive() {
 		std::string fa_score = option[ iterative::fa_score ]();
 		core::scoring::ScoreFunctionOP fa_scfxn( NULL );
 		fa_scfxn = core::scoring::ScoreFunctionFactory::create_score_function( fa_score );
-		add_evaluation( new simple_filters::ScoreEvaluator( "score_fa", fa_scfxn, true /*fullname*/ ), option[ iterative::fullatom_after_quickrelax_weight ]() );
+		add_evaluation( evaluation::PoseEvaluatorCOP( new simple_filters::ScoreEvaluator( "score_fa", fa_scfxn, true /*fullname*/ ) ), option[ iterative::fullatom_after_quickrelax_weight ]() );
 	}
 
 	set_scorefxn( scfxn );
-	add_evaluation( new simple_filters::ScoreEvaluator( "_final", scfxn ), 1.0 );
+	add_evaluation( evaluation::PoseEvaluatorCOP( new simple_filters::ScoreEvaluator( "_final", scfxn ) ), 1.0 );
 	rescore();
 	save_to_file();
 	set_scorefxn( NULL );
@@ -1903,7 +1901,7 @@ PairingStatisticsOP IterativeBase::compute_beta_topology() {
 		option[ jumps::contact_score ].def( 0.2 );
 	}
 
-	beta_topol = new PairingStatistics;
+	beta_topol = PairingStatisticsOP( new PairingStatistics );
 	PairingStatistics::ModelFreq model_freq;
 	core::Size ct( 1 );
 	for ( const_decoy_iterator it = decoys().begin(); it != decoys().end(); ++it, ++ct ) {
@@ -1982,13 +1980,13 @@ void IterativeBase::compute_cores() {
 void IterativeBase::add_core_evaluator( loops::Loops const& core, std::string const& core_tag ) {
 	utility::vector1< Size> selection;
 	core.get_residues( selection );
-	if ( reference_pose_ ) add_evaluation( new simple_filters::SelectRmsdEvaluator( reference_pose_, selection, core_tag ) );
+	if ( reference_pose_ ) add_evaluation( evaluation::PoseEvaluatorCOP( new simple_filters::SelectRmsdEvaluator( reference_pose_, selection, core_tag ) ) );
 	core.write_loops_to_file( name()+"/"+core_tag+".gen.rigid", "RIGID" ); //so we have them for other evaluations
 }
 
 void IterativeBase::restore_status( std::istream& is ) {
 	Parent::restore_status( is );
-	hedge_archive_ = new HedgeArchive( name()+"_hedge" );
+	hedge_archive_ = HedgeArchiveOP( new HedgeArchive( name()+"_hedge" ) );
 	hedge_archive_->restore_from_file();
 	int bla; std::string tag;
 	is >> tag >> bla;
@@ -2038,14 +2036,13 @@ void IterativeBase::restore_status( std::istream& is ) {
 	}
 	update_noesy_filter_files( current_noesy_sampling_file_, false );
 	if ( evaluate_local() && current_noesy_sampling_file_ != "n/a" ) { //change filter restraints if we are local-evaluators
-		topology_broker::ConstraintClaimerOP cst =
-			new topology_broker::ConstraintClaimer( current_noesy_sampling_file_+".filter", "noesy_autoassign_cst" );
+		topology_broker::ConstraintClaimerOP cst( new topology_broker::ConstraintClaimer( current_noesy_sampling_file_+".filter", "noesy_autoassign_cst" ) );
 		cst->set_combine_ratio( bCombineNoesyCst_ ? 2 : 1 );
 		cst->set_fullatom( true );
 		cst->set_centroid( false );
 		cst->set_skip_redundant( option[ iterative::skip_redundant_constraints ]() );
 		cst->set_filter_weight( get_weight( "noesy_autoassign_cst" )/overall_cstfilter_weight_ );
-		add_evaluation( new topology_broker::ConstraintEvaluatorWrapper( cst->tag(), cst ), cst->filter_weight()*overall_cstfilter_weight_ );
+		add_evaluation( evaluation::PoseEvaluatorCOP( new topology_broker::ConstraintEvaluatorWrapper( cst->tag(), cst ) ), cst->filter_weight()*overall_cstfilter_weight_ );
 	}
 	bCombineNoesyCst_ = stage() < STAGE2_RESAMPLING; //will be overwritten in next reassign NOESY... take guess until then...
 }
@@ -2069,7 +2066,7 @@ void IterativeBase::save_status( std::ostream& os ) const {
 
 void IterativeBase::setup_default_evaluators() {
 	Parent::setup_default_evaluators();
-	add_evaluation( new simple_filters::JumpNrEvaluator );
+	add_evaluation( evaluation::PoseEvaluatorCOP( new simple_filters::JumpNrEvaluator ) );
 }
 
 
@@ -2133,7 +2130,7 @@ void IterativeBase::cluster() {
 void IterativeBase::score( pose::Pose & pose ) const {
 	//to speed up things we cache the RDC data in the archive
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::rdc ].user() ) {
-		if ( !rdc_data_ ) rdc_data_ = new core::scoring::ResidualDipolarCoupling;
+		if ( !rdc_data_ ) rdc_data_ = core::scoring::ResidualDipolarCouplingOP( new core::scoring::ResidualDipolarCoupling );
 		core::scoring::store_RDC_in_pose( rdc_data_, pose );
 	}
 	Parent::score( pose );
@@ -2149,7 +2146,7 @@ IterativeBase::test_broker_settings( Batch const& batch ) {
 	OptionCollection vanilla_options( option );
   option.load_options_from_file( batch.flag_file() );
 	try {
-		topology_broker::TopologyBrokerOP topology_broker = new topology_broker::TopologyBroker();
+		topology_broker::TopologyBrokerOP topology_broker( new topology_broker::TopologyBroker() );
 		topology_broker::add_cmdline_claims( *topology_broker );
 		tr.Debug << "setting of broker::setup  " << std::endl;
 		utility::vector1< std::string > files( option[ OptionKeys::broker::setup ]() );
@@ -2175,7 +2172,7 @@ void IterativeBase::init_from_decoy_set( core::io::silent::SilentFileData const&
 	if ( !b_old_eval_state ) {
 		tr.Debug << "switch to local evaluation for reading of initial pool" << std::endl;
 		set_evaluate_local( true );//set this temporarily
-		add_evaluation( new simple_filters::ScoreEvaluator( "_final", scorefxn_non_const() ), 1.0 );
+		add_evaluation( evaluation::PoseEvaluatorCOP( new simple_filters::ScoreEvaluator( "_final", scorefxn_non_const() ) ), 1.0 );
 	}
 
 	//read decoys and evaluate
@@ -2194,7 +2191,7 @@ void IterativeBase::init_from_decoy_set( core::io::silent::SilentFileData const&
 void IterativeBase::setup_filter_cst( core::Real overall_weight ) {
 	using namespace topology_broker;
 	tr.Info << "setup filter-cst module in IterativeBase"<<std::endl;
-	TopologyBrokerOP topology_broker = new TopologyBroker();
+	TopologyBrokerOP topology_broker( new TopologyBroker() );
 	add_cmdline_claims( *topology_broker, false );
 	tr.Trace << "topology_broker is initiailized with " << topology_broker->num_claimers() << " claimers "<< std::endl;
 	core::Size ct( 1 );
@@ -2213,7 +2210,7 @@ void IterativeBase::setup_filter_cst( core::Real overall_weight ) {
 			} else {
 				name = "filter_cst_"+name+"_"+ObjexxFCL::lead_zero_string_of( ct, 2 );;
 			}
-			add_evaluation( new ConstraintEvaluatorWrapper( name, cst_claimer ), weight*overall_weight );
+			add_evaluation( evaluation::PoseEvaluatorCOP( new ConstraintEvaluatorWrapper( name, cst_claimer ) ), weight*overall_weight );
 		}//if cst_claimer
 	} // for claimer
 }
@@ -2238,13 +2235,12 @@ void IterativeBase::setup_autoNOE() {
 	//add full-atom restraints as Evaluator (since a full-atom structure is sent back after relax)
 	if ( evaluate_local() ) {
 		tr.Debug << "cool we have local-scoring active"<<std::endl;
-		topology_broker::ConstraintClaimerOP cst =
-			new topology_broker::ConstraintClaimer( current_noesy_sampling_file_+".filter", "noesy_autoassign_cst" );
+		topology_broker::ConstraintClaimerOP cst( new topology_broker::ConstraintClaimer( current_noesy_sampling_file_+".filter", "noesy_autoassign_cst" ) );
 		cst->set_combine_ratio( bCombineNoesyCst_ ? 2 : 1 );
 		cst->set_fullatom( true );
 		cst->set_centroid( false );
 		cst->set_filter_weight( option[ iterative::cenpool_noesy_cst_weight ]() );
-		add_evaluation( new topology_broker::ConstraintEvaluatorWrapper( cst->tag(), cst ), cst->filter_weight()*overall_cstfilter_weight_ );
+		add_evaluation( evaluation::PoseEvaluatorCOP( new topology_broker::ConstraintEvaluatorWrapper( cst->tag(), cst ) ), cst->filter_weight()*overall_cstfilter_weight_ );
 	}
 
 	//hash-string of the low30 decoy-tags to quickly determine if a new AutoNOE run should be done.

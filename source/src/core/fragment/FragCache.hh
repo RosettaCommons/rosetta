@@ -127,8 +127,8 @@ public:
 	typedef utility::vector1< core::Size > IndexList;
 	typedef utility::vector1< core::Real > ScoreList;
 	typedef XCacheUnit TCacheUnit;
-	typedef utility::pointer::access_ptr< TCacheUnit > TCacheUnitAP;
-	typedef utility::pointer::owning_ptr< TCacheUnit > TCacheUnitOP;
+	typedef utility::pointer::weak_ptr< TCacheUnit > TCacheUnitAP;
+	typedef utility::pointer::shared_ptr< TCacheUnit > TCacheUnitOP;
 	typedef std::pair< FragID, T > ScoredFrag;
 	typedef utility::vector1< ScoredFrag> ScoredList;
 

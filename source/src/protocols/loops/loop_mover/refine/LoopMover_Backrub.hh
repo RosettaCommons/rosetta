@@ -61,7 +61,7 @@ public:
 
 	/// @brief Clone this object
 	virtual protocols::moves::MoverOP clone() const {
-		return new LoopMover_Refine_Backrub(*this); // <--- TaskFactory.hh has to be #included here because this class's copy constructor is undefined, and this function is being invoked in the header
+		return protocols::moves::MoverOP( new LoopMover_Refine_Backrub(*this) ); // <--- TaskFactory.hh has to be #included here because this class's copy constructor is undefined, and this function is being invoked in the header
 	}
 
 	void apply( core::pose::Pose & pose );

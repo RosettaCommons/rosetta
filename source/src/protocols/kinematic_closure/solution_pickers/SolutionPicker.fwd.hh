@@ -18,8 +18,8 @@ namespace solution_pickers {
 
 class SolutionPicker;
 
-typedef utility::pointer::owning_ptr<SolutionPicker> SolutionPickerOP;
-typedef utility::pointer::owning_ptr<SolutionPicker const> SolutionPickerCOP;
+typedef utility::pointer::shared_ptr<SolutionPicker> SolutionPickerOP;
+typedef utility::pointer::shared_ptr<SolutionPicker const> SolutionPickerCOP;
 
 }
 }

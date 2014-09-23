@@ -59,7 +59,7 @@ public :
 	core::Real translate_by() const { return translate_by_; }
 	void translate_by( core::Real translate_by ) { translate_by_ = translate_by; }
 	virtual ~ddG();
-	protocols::moves::MoverOP fresh_instance() const { return (protocols::moves::MoverOP) new ddG; }
+	protocols::moves::MoverOP fresh_instance() const { return (protocols::moves::MoverOP) protocols::moves::MoverOP( new ddG ); }
 	protocols::moves::MoverOP clone() const;
 	void parse_my_tag(  utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const& );
 

@@ -20,8 +20,8 @@ namespace dna {
 
 class DNAParameters;
 
-typedef utility::pointer::owning_ptr< DNAParameters > DNAParametersOP;
-typedef utility::pointer::owning_ptr< DNAParameters const > DNAParametersCOP;
+typedef utility::pointer::shared_ptr< DNAParameters > DNAParametersOP;
+typedef utility::pointer::shared_ptr< DNAParameters const > DNAParametersCOP;
 
 } // namespace dna
 } // namespace protocols

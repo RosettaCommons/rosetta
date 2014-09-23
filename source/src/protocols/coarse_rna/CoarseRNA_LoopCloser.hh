@@ -44,7 +44,7 @@ public:
 
 	/// @brief Clone this object
 	virtual protocols::moves::MoverOP clone() const {
-		return new CoarseRNA_LoopCloser(*this);
+		return protocols::moves::MoverOP( new CoarseRNA_LoopCloser(*this) );
 	}
 
 	/// @brief Apply the loop-rebuild protocol to the input pose

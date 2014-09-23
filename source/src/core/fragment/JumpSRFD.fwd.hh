@@ -27,13 +27,13 @@ namespace fragment {
 // Forward
 class UpJumpSRFD;
 
-typedef utility::pointer::owning_ptr< UpJumpSRFD > UpJumpSRFDOP;
-typedef utility::pointer::owning_ptr< UpJumpSRFD const > UpJumpSRFDCOP;
+typedef utility::pointer::shared_ptr< UpJumpSRFD > UpJumpSRFDOP;
+typedef utility::pointer::shared_ptr< UpJumpSRFD const > UpJumpSRFDCOP;
 
 class DownJumpSRFD;
 
-typedef utility::pointer::owning_ptr< DownJumpSRFD > DownJumpSRFDOP;
-typedef utility::pointer::owning_ptr< DownJumpSRFD const > DownJumpSRFDCOP;
+typedef utility::pointer::shared_ptr< DownJumpSRFD > DownJumpSRFDOP;
+typedef utility::pointer::shared_ptr< DownJumpSRFD const > DownJumpSRFDCOP;
 
 
 } // namespace fragment

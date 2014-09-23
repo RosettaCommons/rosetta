@@ -27,8 +27,8 @@ namespace residue_selector {
 
 class OrResidueSelector;
 
-typedef utility::pointer::owning_ptr< OrResidueSelector > OrResidueSelectorOP;
-typedef utility::pointer::owning_ptr< OrResidueSelector const > OrResidueSelectorCOP;
+typedef utility::pointer::shared_ptr< OrResidueSelector > OrResidueSelectorOP;
+typedef utility::pointer::shared_ptr< OrResidueSelector const > OrResidueSelectorCOP;
 
 } //namespace residue_selector
 } //namespace task

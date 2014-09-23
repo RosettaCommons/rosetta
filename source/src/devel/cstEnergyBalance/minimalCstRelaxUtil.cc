@@ -172,7 +172,7 @@ core::scoring::constraints::ConstraintSetOP convert_caAtomsToConstrain_to_coordC
 		Size residue_id = *caAtomsToConstrain_start;
 		tr.Debug << "constraining " << residue_id << std::endl;
 		Residue const & rsd( pose.residue(residue_id) );
-		cst_set->add_constraint(new CoordinateConstraint(AtomID(rsd.atom_index("CA"),residue_id), AtomID(1,pose.total_residue()), rsd.xyz(atom_name),core::scoring::func::FuncOP(new core::scoring::func::HarmonicFunc(0.0,default_coord_sdev))));
+		cst_set->add_constraint(ConstraintCOP( new CoordinateConstraint(AtomID(rsd.atom_index("CA"),residue_id), AtomID(1,pose.total_residue()), rsd.xyz(atom_name),core::scoring::func::FuncOP(new core::scoring::func::HarmonicFunc(0.0,default_coord_sdev))) ));
 		caAtomsToConstrain_start++;
 	}
 return(cst_set);
@@ -252,7 +252,7 @@ std::set<Size> get_coreDistDeviationResiduesToConstrain(const Real distDeviation
 				if(lastContigRes-firstContigRes >= 3){
 					//The case where the residues were contiguous
 					tmp_residuesToConstrain.clear();
-					core::pose::PoseOP	subset_poseOP = new core::pose::Pose(unmodified_pose,firstContigRes,lastContigRes);
+					core::pose::PoseOP	subset_poseOP( new core::pose::Pose(unmodified_pose,firstContigRes,lastContigRes) );
 					tmp_residuesToConstrain = get_coreResiduesToConstrain(CORE_RES_TO_CONSTRAIN,*subset_poseOP);
 					tmp_resSet_iter = tmp_residuesToConstrain.begin();
 					while(tmp_resSet_iter != tmp_residuesToConstrain.end()){
@@ -280,7 +280,7 @@ std::set<Size> get_coreDistDeviationResiduesToConstrain(const Real distDeviation
 		if(lastContigRes-firstContigRes >= 3){
 			//The case where the residues were contiguous
 			tmp_residuesToConstrain.clear();
-			core::pose::PoseOP	subset_poseOP = new core::pose::Pose(unmodified_pose,firstContigRes,lastContigRes);
+			core::pose::PoseOP	subset_poseOP( new core::pose::Pose(unmodified_pose,firstContigRes,lastContigRes) );
 			tmp_residuesToConstrain = get_coreResiduesToConstrain(CORE_RES_TO_CONSTRAIN,*subset_poseOP);
 			tmp_resSet_iter = tmp_residuesToConstrain.begin();
 			while(tmp_resSet_iter != tmp_residuesToConstrain.end()){
@@ -318,12 +318,12 @@ std::set<Size> get_residuesToConstrain(const Size /*coordCstGapInitial*/, const 
 	//Get input pdbs-------------------------------------------------------------
 	std::set< Size > caAtomsToConstrain;
 	//if missing density exists fix gaps.
-	protocols::simple_moves::MissingDensityToJumpMoverOP fixMissingDensityMover (new protocols::simple_moves::MissingDensityToJumpMover());
+	protocols::simple_moves::MissingDensityToJumpMoverOP fixMissingDensityMover( new protocols::simple_moves::MissingDensityToJumpMover() );
 	fixMissingDensityMover->apply(pose);
 	core::scoring::ScoreFunctionOP scorefxn_ = get_score_function();
 	core::scoring::ScoreFunctionOP scorefxn_w_csts_ = get_score_function();
 	scorefxn_w_csts_->set_weight( coordinate_constraint, COORDINATE_CST_WT );
-	core::pose::PoseOP relaxed_poseOP = new core::pose::Pose(pose);
+	core::pose::PoseOP relaxed_poseOP( new core::pose::Pose(pose) );
 	Real dist_deviation_thresh = DIST_DEVIATION_THRESH_START;
 	//single round of relax--------------------
 	FastRelax relaxer( scorefxn_,RDS_OF_RELAX,"NO CST RAMPING");
@@ -336,7 +336,7 @@ std::set<Size> get_residuesToConstrain(const Size /*coordCstGapInitial*/, const 
 		std::set< Size > coreDistDeviationResiduesToConstrain = get_coreDistDeviationResiduesToConstrain(dist_deviation_thresh,*relaxed_poseOP,pose);
 		std::set_union(coreResiduesToConstrain.begin(), coreResiduesToConstrain.end(), coreDistDeviationResiduesToConstrain.begin(),  coreDistDeviationResiduesToConstrain.end(), std::inserter(caAtomsToConstrain, caAtomsToConstrain.begin()));
 		ConstraintSetOP cst_set = convert_caAtomsToConstrain_to_coordCsts(caAtomsToConstrain,pose);
-		core::pose::PoseOP rd2relaxed_poseOP = new core::pose::Pose(pose);
+		core::pose::PoseOP rd2relaxed_poseOP( new core::pose::Pose(pose) );
 		add_virtual_residue_to_cterm(*rd2relaxed_poseOP);
 		rd2relaxed_poseOP->constraint_set(cst_set);
 		FastRelax relaxer2( scorefxn_w_csts_,RDS_OF_RELAX,"NO CST RAMPING");
@@ -353,7 +353,7 @@ std::set<Size> get_residuesToConstrain(const Size /*coordCstGapInitial*/, const 
 				std::set_union(caAtomsToConstrain.begin(), caAtomsToConstrain.end(), distDeviationResiduesToConstrain.begin(), distDeviationResiduesToConstrain.end(), std::inserter(tmp_caAtomsToConstrain, tmp_caAtomsToConstrain.begin()));
 				caAtomsToConstrain = tmp_caAtomsToConstrain;
 				cst_set = convert_caAtomsToConstrain_to_coordCsts(caAtomsToConstrain,pose);
-				rd2relaxed_poseOP = new core::pose::Pose(pose);
+				rd2relaxed_poseOP = core::pose::PoseOP( new core::pose::Pose(pose) );
 				add_virtual_residue_to_cterm(*rd2relaxed_poseOP);
 				rd2relaxed_poseOP->constraint_set(cst_set);
 				relaxer2.apply(*rd2relaxed_poseOP);

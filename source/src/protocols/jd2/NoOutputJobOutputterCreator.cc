@@ -28,7 +28,7 @@ NoOutputJobOutputterCreator::keyname() const
 
 protocols::jd2::JobOutputterOP
 NoOutputJobOutputterCreator::create_JobOutputter() const {
-        return new NoOutputJobOutputter;
+        return protocols::jd2::JobOutputterOP( new NoOutputJobOutputter );
 }
 
 } // namespace jd2

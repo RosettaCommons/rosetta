@@ -23,7 +23,7 @@ namespace sampler {
 namespace rna {
 
 class RNA_SuiteStepWiseSampler;
-typedef utility::pointer::owning_ptr< RNA_SuiteStepWiseSampler > RNA_SuiteStepWiseSamplerOP;
+typedef utility::pointer::shared_ptr< RNA_SuiteStepWiseSampler > RNA_SuiteStepWiseSamplerOP;
 
 } //rna
 } //sampler

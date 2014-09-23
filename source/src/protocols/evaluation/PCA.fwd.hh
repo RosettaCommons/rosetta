@@ -39,7 +39,7 @@ namespace protocols {
 namespace evaluation {
 
 class PCA;
-typedef utility::pointer::owning_ptr< PCA > PCA_OP;
+typedef utility::pointer::shared_ptr< PCA > PCA_OP;
 
 }
 }

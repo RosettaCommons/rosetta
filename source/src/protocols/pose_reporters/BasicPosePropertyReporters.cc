@@ -53,12 +53,12 @@ namespace pose_reporters {
 
 // Creator
 protocols::rosetta_scripts::PosePropertyReporterOP EnergyReporterCreator::create_reporter() const {
-  return new EnergyReporter();
+  return protocols::rosetta_scripts::PosePropertyReporterOP( new EnergyReporter() );
 }
 
 // Reporter
 EnergyReporter::EnergyReporter() :
-	scorefxn_(NULL),
+	scorefxn_(/* NULL */),
 	scoretype_(core::scoring::dummy_score_type)
 {
 }
@@ -97,12 +97,12 @@ void EnergyReporter::parse_my_tag(
 
 // Creator
 protocols::rosetta_scripts::PosePropertyReporterOP FilterReporterCreator::create_reporter() const {
-  return new FilterReporter();
+  return protocols::rosetta_scripts::PosePropertyReporterOP( new FilterReporter() );
 }
 
 // Reporter
 FilterReporter::FilterReporter() :
-	filter_(NULL)
+	filter_(/* NULL */)
 {
 }
 
@@ -170,7 +170,7 @@ void FilterReporter::parse_my_tag(
 
 // Creator
 protocols::rosetta_scripts::PosePropertyReporterOP RMSDReporterCreator::create_reporter() const {
-  return new RMSDReporter();
+  return protocols::rosetta_scripts::PosePropertyReporterOP( new RMSDReporter() );
 }
 
 // Reporter

@@ -47,7 +47,7 @@ GaussianChainTripleFunc::GaussianChainTripleFunc( Real const gaussian_variance,
 FuncOP
 GaussianChainTripleFunc::clone() const
 {
-	return new GaussianChainTripleFunc( gaussian_variance_, loop_fixed_cost_, D2_, D3_ );
+	return FuncOP( new GaussianChainTripleFunc( gaussian_variance_, loop_fixed_cost_, D2_, D3_ ) );
 }
 
 void

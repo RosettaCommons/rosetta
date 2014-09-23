@@ -65,7 +65,7 @@ InterGroupNeighborsCalculator::InterGroupNeighborsCalculator( InterGroupNeighbor
 InterGroupNeighborsCalculator::~InterGroupNeighborsCalculator() {}
 
 core::pose::metrics::PoseMetricCalculatorOP InterGroupNeighborsCalculator::clone() const
-{ return new InterGroupNeighborsCalculator(*this); }
+{ return core::pose::metrics::PoseMetricCalculatorOP( new InterGroupNeighborsCalculator(*this) ); }
 
 void
 InterGroupNeighborsCalculator::lookup(

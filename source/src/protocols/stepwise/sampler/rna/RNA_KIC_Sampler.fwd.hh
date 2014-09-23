@@ -23,7 +23,7 @@ namespace sampler {
 namespace rna {
 
 class RNA_KIC_Sampler;
-typedef utility::pointer::owning_ptr< RNA_KIC_Sampler > RNA_KIC_SamplerOP;
+typedef utility::pointer::shared_ptr< RNA_KIC_Sampler > RNA_KIC_SamplerOP;
 
 } //rna
 } //sampler

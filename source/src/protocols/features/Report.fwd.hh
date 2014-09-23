@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class Report;
-typedef utility::pointer::owning_ptr< Report > ReportOP;
-typedef utility::pointer::owning_ptr< Report const > ReportCOP;
+typedef utility::pointer::shared_ptr< Report > ReportOP;
+typedef utility::pointer::shared_ptr< Report const > ReportCOP;
 
 }//namespace
 }//namespace

@@ -207,7 +207,7 @@ SegmentInsert & SegmentInsert::operator =( SegmentInsert const & rval ) {
 
 /// @brief clone this object
 BuildInstructionOP SegmentInsert::clone() const {
-	return new SegmentInsert( *this );
+	return BuildInstructionOP( new SegmentInsert( *this ) );
 }
 
 

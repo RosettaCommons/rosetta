@@ -27,11 +27,11 @@ namespace noesy_assign {
 class PeakAssignment;
 
 // Types
-typedef  utility::pointer::owning_ptr< PeakAssignment >  PeakAssignmentOP;
-typedef  utility::pointer::owning_ptr< PeakAssignment const >  PeakAssignmentCOP;
+typedef  utility::pointer::shared_ptr< PeakAssignment >  PeakAssignmentOP;
+typedef  utility::pointer::shared_ptr< PeakAssignment const >  PeakAssignmentCOP;
 
-typedef  utility::pointer::access_ptr< PeakAssignment >  PeakAssignmentAP;
-typedef  utility::pointer::access_ptr< PeakAssignment const >  PeakAssignmentCAP;
+typedef  utility::pointer::weak_ptr< PeakAssignment >  PeakAssignmentAP;
+typedef  utility::pointer::weak_ptr< PeakAssignment const >  PeakAssignmentCAP;
 
 }
 }

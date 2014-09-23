@@ -28,11 +28,11 @@ namespace filters {
 class SSShapeComplementarityFilter;
 
 // Types
-typedef  utility::pointer::owning_ptr< SSShapeComplementarityFilter >  SSShapeComplementarityFilterOP;
-typedef  utility::pointer::owning_ptr< SSShapeComplementarityFilter const >  SSShapeComplementarityFilterCOP;
+typedef  utility::pointer::shared_ptr< SSShapeComplementarityFilter >  SSShapeComplementarityFilterOP;
+typedef  utility::pointer::shared_ptr< SSShapeComplementarityFilter const >  SSShapeComplementarityFilterCOP;
 
-typedef  utility::pointer::access_ptr< SSShapeComplementarityFilter >  SSShapeComplementarityFilterAP;
-typedef  utility::pointer::access_ptr< SSShapeComplementarityFilter const >  SSShapeComplementarityFilterCAP;
+typedef  utility::pointer::weak_ptr< SSShapeComplementarityFilter >  SSShapeComplementarityFilterAP;
+typedef  utility::pointer::weak_ptr< SSShapeComplementarityFilter const >  SSShapeComplementarityFilterCAP;
 
 } // namespace filters
 } // namespace denovo_design

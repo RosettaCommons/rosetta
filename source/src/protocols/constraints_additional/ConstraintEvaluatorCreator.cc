@@ -82,7 +82,7 @@ void ConstraintEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
     for ( Size ct = 1; ct <= cst_target.size(); ct ++ ) {
       std::string tag( ObjexxFCL::string_of( ct ) );
       if ( cst_col_name.size() >= ct ) tag = cst_col_name[ ct ];
-      eval.add_evaluation( new ConstraintEvaluator( tag, cst_target[ ct ] ) );
+      eval.add_evaluation( PoseEvaluatorOP( new ConstraintEvaluator( tag, cst_target[ ct ] ) ) );
     }
   }
 

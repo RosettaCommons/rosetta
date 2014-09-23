@@ -54,7 +54,7 @@ HotspotStub::HotspotStub(
 	protocols::filters::FilterCOP filter
 ) :
 	utility::pointer::ReferenceCount(),
-	residue_(new core::conformation::Residue(*residue)), // jk note: deep copy
+	residue_(core::conformation::ResidueCOP( new core::conformation::Residue(*residue) )), // jk note: deep copy
 	bonus_value_(bonus_value),
 	pose_( pose ),
 	filter_( filter ),
@@ -142,7 +142,7 @@ HotspotStub::scaffold_match( core::Size const seqpos )
 	core::Size const scaffold_position = seqpos - host_chain_begin;
 	if ( scaffold_status_[ scaffold_position ] == unchecked ) {
 		using namespace core::conformation;
-		ResidueCOP saved_res = new Residue( pose_->residue( seqpos ) );
+		ResidueCOP saved_res( new Residue( pose_->residue( seqpos ) ) );
 		ResidueCOP stub( residue_ );
 		using namespace core::chemical;
 

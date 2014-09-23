@@ -59,12 +59,12 @@ public:
 	void setUp() {
 		protocols_init();
 
-		the_pose = new Pose;
+		the_pose = PoseOP( new Pose );
 		core::import_pose::centroid_pose_from_pdb( *the_pose, "protocols/scoring/dock_in.pdb" );
 	}
 
 	void tearDown() {
-		the_pose = 0;
+		the_pose.reset();
 	}
 
 	void test_InterchainPairEnergyTest() {

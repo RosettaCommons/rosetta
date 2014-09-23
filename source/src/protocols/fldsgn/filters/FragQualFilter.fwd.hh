@@ -27,8 +27,8 @@ namespace filters {
 class FragQualFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< FragQualFilter >  FragQualFilterOP;
-typedef utility::pointer::owning_ptr< FragQualFilter const >  FragQualFilterCOP;
+typedef utility::pointer::shared_ptr< FragQualFilter >  FragQualFilterOP;
+typedef utility::pointer::shared_ptr< FragQualFilter const >  FragQualFilterCOP;
 
 } // namespace protocols
 } // namespace fldsgn

@@ -23,8 +23,8 @@ namespace grafting {
 /// @brief  
 class InsertPoseIntoPoseMover;
 
-typedef utility::pointer::owning_ptr<InsertPoseIntoPoseMover> InsertPoseIntoPoseMoverOP;
-typedef utility::pointer::owning_ptr<InsertPoseIntoPoseMover const> InsertPoseIntoPoseMoverCOP;
+typedef utility::pointer::shared_ptr<InsertPoseIntoPoseMover> InsertPoseIntoPoseMoverOP;
+typedef utility::pointer::shared_ptr<InsertPoseIntoPoseMover const> InsertPoseIntoPoseMoverCOP;
 
 }}  // namespace grafting_protocls
 

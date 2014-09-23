@@ -330,7 +330,7 @@ public:
 			* core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID ),
 			"devel/znhash/1EER_cn4_0043.pdb" );
 
-		devel::znhash::ZnCoordinationScorerOP znscore = new devel::znhash::ZnCoordinationScorer;
+		devel::znhash::ZnCoordinationScorerOP znscore( new devel::znhash::ZnCoordinationScorer );
 		znscore->set_symm_resid( 167 );
 		znscore->set_reference_pdb( "devel/znhash/1EER_A.pdb" );
 		znscore->set_matcher_constraint_file_name( "devel/znhash/ZNX.cst" );
@@ -341,7 +341,7 @@ public:
 
 		znscore->finalize_after_all_matches_added();
 		znscore->set_clash_weight( 0.0 );
-		devel::znhash::ZnCoordinationConstraintOP zncst = new devel::znhash::ZnCoordinationConstraint( znscore );
+		devel::znhash::ZnCoordinationConstraintOP zncst( new devel::znhash::ZnCoordinationConstraint( znscore ) );
 		c4_centroid_pose.add_constraint( zncst );
 
 		core::scoring::ScoreFunction sfxn;

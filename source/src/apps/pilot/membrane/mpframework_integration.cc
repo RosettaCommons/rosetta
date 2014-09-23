@@ -47,7 +47,7 @@ main( int argc, char * argv [] )
 	
 		devel::init(argc, argv);
 
-		AddMembraneMoverOP add_mem = new AddMembraneMover(); 
+		AddMembraneMoverOP add_mem( new AddMembraneMover() ); 
 		protocols::jd2::JobDistributor::get_instance()->go( add_mem );
 
 		return 0; 

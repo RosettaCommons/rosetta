@@ -23,8 +23,8 @@ namespace stepwise {
 namespace screener {
 	
 	class ResidueContactScreener;
-	typedef utility::pointer::owning_ptr< ResidueContactScreener > ResidueContactScreenerOP;
-	typedef utility::pointer::owning_ptr< ResidueContactScreener const > ResidueContactScreenerCOP;
+	typedef utility::pointer::shared_ptr< ResidueContactScreener > ResidueContactScreenerOP;
+	typedef utility::pointer::shared_ptr< ResidueContactScreener const > ResidueContactScreenerCOP;
 	
 } //screener
 } //stepwise

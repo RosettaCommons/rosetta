@@ -54,7 +54,7 @@ public:
 
 	virtual TopologyClaimerOP // clone
 	clone() const {
-		return new PcsEnergyController( *this );
+		return TopologyClaimerOP( new PcsEnergyController( *this ) );
 	}
 
 	///@brief type() is specifying the output name of the TopologyClaimer

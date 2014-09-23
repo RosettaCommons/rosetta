@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class ProteinSilentReport;
-typedef utility::pointer::owning_ptr< ProteinSilentReport > ProteinSilentReportOP;
-typedef utility::pointer::owning_ptr< ProteinSilentReport const > ProteinSilentReportCOP;
+typedef utility::pointer::shared_ptr< ProteinSilentReport > ProteinSilentReportOP;
+typedef utility::pointer::shared_ptr< ProteinSilentReport const > ProteinSilentReportCOP;
 
 }//namespace
 }//namespace

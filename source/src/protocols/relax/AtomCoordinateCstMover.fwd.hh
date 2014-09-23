@@ -27,8 +27,8 @@ namespace relax {
 class AtomCoordinateCstMover;
 
 // Types
-typedef  utility::pointer::owning_ptr< AtomCoordinateCstMover >  AtomCoordinateCstMoverOP;
-typedef  utility::pointer::owning_ptr< AtomCoordinateCstMover const >  AtomCoordinateCstMoverCOP;
+typedef  utility::pointer::shared_ptr< AtomCoordinateCstMover >  AtomCoordinateCstMoverOP;
+typedef  utility::pointer::shared_ptr< AtomCoordinateCstMover const >  AtomCoordinateCstMoverCOP;
 
 } // namespace relax
 } // namespace protocols

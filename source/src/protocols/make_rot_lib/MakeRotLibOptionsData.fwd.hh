@@ -20,8 +20,8 @@ namespace protocols {
 namespace make_rot_lib {
 
 class MakeRotLibOptionsData;
-typedef utility::pointer::owning_ptr< MakeRotLibOptionsData > MakeRotLibOptionsDataOP;
-typedef utility::pointer::owning_ptr< MakeRotLibOptionsData const > MakeRotLibOptionsDataCOP;
+typedef utility::pointer::shared_ptr< MakeRotLibOptionsData > MakeRotLibOptionsDataOP;
+typedef utility::pointer::shared_ptr< MakeRotLibOptionsData const > MakeRotLibOptionsDataCOP;
 
 }//make_rot_lib
 }//protocols

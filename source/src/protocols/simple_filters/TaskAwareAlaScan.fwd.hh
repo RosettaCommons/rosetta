@@ -21,8 +21,8 @@ namespace simple_filters {
 
 class TaskAwareAlaScan;
 
-typedef utility::pointer::owning_ptr< TaskAwareAlaScan > TaskAwareAlaScanOP;
-typedef utility::pointer::owning_ptr< TaskAwareAlaScan const > TaskAwareAlaScanCOP;
+typedef utility::pointer::shared_ptr< TaskAwareAlaScan > TaskAwareAlaScanOP;
+typedef utility::pointer::shared_ptr< TaskAwareAlaScan const > TaskAwareAlaScanCOP;
 
 }
 }

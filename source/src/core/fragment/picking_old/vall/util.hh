@@ -40,7 +40,7 @@ AnnotatedFragDataOP extent_to_fragdata(
 	VallResidueIterator end,	
 	BBTorsionSRFD const & srfd_type = BBTorsionSRFD()
 ) {
-	AnnotatedFragDataOP fragdata = new AnnotatedFragData( begin->id(), begin->resi() );
+	AnnotatedFragDataOP fragdata( new AnnotatedFragData( begin->id(), begin->resi() ) );
 
   for ( VallResidueIterator r = begin; r != end; ++r ) {
 		fragdata->add_residue( r->bbtorsion_srfd( srfd_type ) );

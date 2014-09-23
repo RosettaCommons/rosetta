@@ -27,12 +27,12 @@ namespace topology {
 	class BetaAlphaBetaMotif;
 	class BetaAlphaBetaMotifSet;
 
-	typedef utility::pointer::owning_ptr< BetaAlphaBetaMotif > BetaAlphaBetaMotifOP;
-	typedef utility::pointer::owning_ptr< BetaAlphaBetaMotif const > BetaAlphaBetaMotifCOP;
+	typedef utility::pointer::shared_ptr< BetaAlphaBetaMotif > BetaAlphaBetaMotifOP;
+	typedef utility::pointer::shared_ptr< BetaAlphaBetaMotif const > BetaAlphaBetaMotifCOP;
 
 	typedef utility::vector1< BetaAlphaBetaMotifOP > BetaAlphaBetaMotifs;
-	typedef utility::pointer::owning_ptr< BetaAlphaBetaMotifSet > BetaAlphaBetaMotifSetOP;
-	typedef utility::pointer::owning_ptr< BetaAlphaBetaMotifSet const > BetaAlphaBetaMotifSetCOP;
+	typedef utility::pointer::shared_ptr< BetaAlphaBetaMotifSet > BetaAlphaBetaMotifSetOP;
+	typedef utility::pointer::shared_ptr< BetaAlphaBetaMotifSet const > BetaAlphaBetaMotifSetCOP;
 
 
 } // topology

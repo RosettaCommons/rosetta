@@ -39,8 +39,8 @@ namespace domain_assembly {
 
 class DomainAssemblyCommand;
 
-typedef utility::pointer::owning_ptr< DomainAssemblyCommand > DomainAssemblyCommandOP;
-typedef utility::pointer::owning_ptr< DomainAssemblyCommand const > DomainAssemblyCommandCOP;
+typedef utility::pointer::shared_ptr< DomainAssemblyCommand > DomainAssemblyCommandOP;
+typedef utility::pointer::shared_ptr< DomainAssemblyCommand const > DomainAssemblyCommandCOP;
 
 //pares_domain_file will need to take vector of domain objects
 //reaader function needs to pass one member of vector function to reader at a time

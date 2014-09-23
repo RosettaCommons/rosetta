@@ -23,8 +23,8 @@ namespace ligand_docking {
 
 
 class RandomConformerMover; // fwd declaration
-typedef utility::pointer::owning_ptr< RandomConformerMover > RandomConformerMoverOP;
-typedef utility::pointer::owning_ptr< RandomConformerMover const > RandomConformerMoverCOP;
+typedef utility::pointer::shared_ptr< RandomConformerMover > RandomConformerMoverOP;
+typedef utility::pointer::shared_ptr< RandomConformerMover const > RandomConformerMoverCOP;
 
 
 } // namespace ligand_docking

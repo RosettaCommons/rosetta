@@ -124,7 +124,7 @@ GenBornPoseInfo::initialize( pose::Pose const & pose )
 	placeholder_info_.resize( nres, 0 );
 
 	for ( Size i=1; i<= nres; ++i ) {
-		if ( !residue_info_[i] ) residue_info_[i] = new GenBornResidueInfo( pose.residue(i) );
+		if ( !residue_info_[i] ) residue_info_[i] = utility::pointer::shared_ptr<class core::scoring::GenBornResidueInfo>( new GenBornResidueInfo( pose.residue(i) ) );
 		else  residue_info_[i]->initialize( pose.residue(i) );
 	}
 
@@ -158,7 +158,7 @@ GenBornRotamerSetInfo::initialize( RotamerSetBase const & rotamer_set )
 	Size const nrot( rotamer_set.num_rotamers() );
 	residue_info_.resize( nrot );
 	for ( Size i=1; i<= nrot; ++i ) {
-		residue_info_[i] = new GenBornResidueInfo( *rotamer_set.rotamer(i) );
+		residue_info_[i] = utility::pointer::shared_ptr<class core::scoring::GenBornResidueInfo>( new GenBornResidueInfo( *rotamer_set.rotamer(i) ) );
 	}
 }
 
@@ -269,9 +269,9 @@ GenBornPotential::get_all_born_radii(
 	GenBornPoseInfoOP gb_info;
 
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO ) ) {
-		gb_info = static_cast< GenBornPoseInfo* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO )() );
+		gb_info = utility::pointer::static_pointer_cast< core::scoring::GenBornPoseInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO ) );
 	} else {
-		gb_info = new GenBornPoseInfo();
+		gb_info = GenBornPoseInfoOP( new GenBornPoseInfo() );
 	}
 
 	//jjh zero out arrays
@@ -320,9 +320,9 @@ GenBornPotential::setup_for_packing(
 	GenBornPoseInfoOP gb_info;
 
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO ) ) {
-		gb_info = static_cast< GenBornPoseInfo* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO )() );
+		gb_info = utility::pointer::static_pointer_cast< core::scoring::GenBornPoseInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO ) );
 	} else {
-		gb_info = new GenBornPoseInfo();
+		gb_info = GenBornPoseInfoOP( new GenBornPoseInfo() );
 	}
 
 	//jjh zero out arrays
@@ -389,7 +389,7 @@ GenBornPotential::build_placeholders(
 			} else {
 				std::cout << "WARNING: no mechanism for building genborn placeholders at non-protein positions\n" <<
 					"Using existing residue coords" << std::endl;
-				gb_info.set_placeholder( i, existing_rsd.clone(), new GenBornResidueInfo( existing_rsd ) );
+				gb_info.set_placeholder( i, existing_rsd.clone(), GenBornResidueInfoOP( new GenBornResidueInfo( existing_rsd ) ) );
 			}
 		}
 	}

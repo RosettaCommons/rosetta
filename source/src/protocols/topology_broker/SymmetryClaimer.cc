@@ -52,7 +52,7 @@ static thread_local basic::Tracer tr( "protocols.topo_broker", basic::t_info );
 namespace protocols {
 namespace topology_broker {
 
-SymmetryClaimer::SymmetryClaimer() : symm_data_ ( NULL ){}
+SymmetryClaimer::SymmetryClaimer() : symm_data_ ( /* NULL */ ){}
 
 SymmetryClaimer::SymmetryClaimer( SymmetryClaimer const& src ) :
 	TopologyClaimer( src ),
@@ -65,7 +65,7 @@ bool SymmetryClaimer::read_tag( std::string tag, std::istream& in ){
 		std::string symdef_filename;
 		in >> symdef_filename;
 		tr.Debug << "Symmetry Definition filename read: " << symdef_filename << std::endl;
-		symm_data_ = new core::conformation::symmetry::SymmData();
+		symm_data_ = core::conformation::symmetry::SymmDataOP( new core::conformation::symmetry::SymmData() );
 		symm_data_->read_symmetry_data_from_file(symdef_filename);
 		return true;
 	}
@@ -74,9 +74,9 @@ bool SymmetryClaimer::read_tag( std::string tag, std::istream& in ){
 }
 
 void SymmetryClaimer::generate_symmetry_claims( claims::SymmetryClaims& symm_claims ){
-    symm_claims.push_back( new claims::SymmetryClaim( get_self_weak_ptr(), symm_data_,
+    symm_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::SymmetryClaim>( new claims::SymmetryClaim( get_self_weak_ptr(), symm_data_,
                            symm_data_->get_symmetry_name(),
-                           claims::DofClaim::INIT ) );
+                           claims::DofClaim::INIT ) ) );
 }
 
 void SymmetryClaimer::symmetry_duplicate( claims::DofClaims& pre_accepted,
@@ -99,9 +99,9 @@ void SymmetryClaimer::symmetry_duplicate( claims::DofClaims& pre_accepted,
     		std::ostringstream new_label_stream;
     		new_label_stream << old_claim->label() << ":Symm" << j;
 
-    		pre_accepted.push_back( new claims::SequenceClaim( get_self_weak_ptr(),
+    		pre_accepted.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::SequenceClaim( get_self_weak_ptr(),
                     				old_claim->annotated_sequence(),
-                    				new_label_stream.str() ) );
+                    				new_label_stream.str() ) ) );
     	}
     }
 
@@ -129,7 +129,7 @@ void SymmetryClaimer::symmetry_duplicate( claims::DofClaims& pre_accepted,
         //append it to the end of the monomer i
         pose.append_residue_by_jump( *rsd, pose.total_residue() );
 
-        pre_accepted.push_back(new claims::SequenceClaim( get_self_weak_ptr(), "X", tag ));
+        pre_accepted.push_back(utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::SequenceClaim( get_self_weak_ptr(), "X", tag ) ));
     }
 
 }

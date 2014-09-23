@@ -69,7 +69,7 @@ MiniRelax::~MiniRelax() {}
 
 protocols::moves::MoverOP
 MiniRelax::clone() const {
-	return new MiniRelax(*this);
+	return protocols::moves::MoverOP( new MiniRelax(*this) );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

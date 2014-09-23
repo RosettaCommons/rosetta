@@ -26,10 +26,10 @@ namespace mm {
 // Forward
 class MMTorsionLibrary;
 
-typedef  utility::pointer::access_ptr< MMTorsionLibrary > MMTorsionLibraryAP;
-typedef  utility::pointer::access_ptr< MMTorsionLibrary const > MMTorsionLibraryCAP;
-typedef  utility::pointer::owning_ptr< MMTorsionLibrary > MMTorsionLibraryOP;
-typedef  utility::pointer::owning_ptr< MMTorsionLibrary const > MMTorsionLibraryCOP;
+typedef  utility::pointer::weak_ptr< MMTorsionLibrary > MMTorsionLibraryAP;
+typedef  utility::pointer::weak_ptr< MMTorsionLibrary const > MMTorsionLibraryCAP;
+typedef  utility::pointer::shared_ptr< MMTorsionLibrary > MMTorsionLibraryOP;
+typedef  utility::pointer::shared_ptr< MMTorsionLibrary const > MMTorsionLibraryCOP;
 
 } // namespace mm
 } // namespace scoring

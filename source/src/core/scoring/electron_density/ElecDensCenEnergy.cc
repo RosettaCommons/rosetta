@@ -67,7 +67,7 @@ methods::EnergyMethodOP
 ElecDensCenEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new ElecDensCenEnergy;
+	return methods::EnergyMethodOP( new ElecDensCenEnergy );
 }
 
 ScoreTypes
@@ -94,7 +94,7 @@ ElecDensCenEnergy::ElecDensCenEnergy() : parent( methods::EnergyMethodCreatorOP(
 /// clone
 EnergyMethodOP
 ElecDensCenEnergy::clone() const {
-	return new ElecDensCenEnergy( *this );
+	return EnergyMethodOP( new ElecDensCenEnergy( *this ) );
 }
 
 
@@ -155,7 +155,7 @@ ElecDensCenEnergy::setup_for_scoring(
 		create_new_lre_container = true;
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		OneToAllEnergyContainerOP dec( static_cast< OneToAllEnergyContainer * > ( lrc.get() ) );
+		OneToAllEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::OneToAllEnergyContainer > ( lrc ) );
 		// make sure size or root did not change
 		if ( dec->size() != pose.total_residue() || dec->fixed() != virt_res_idx ) {
 			create_new_lre_container = true;
@@ -164,7 +164,7 @@ ElecDensCenEnergy::setup_for_scoring(
 
 	if ( create_new_lre_container ) {
 		TR.Debug << "Creating new LRE container (" << pose.total_residue() << ")" << std::endl;
-		LREnergyContainerOP new_dec = new OneToAllEnergyContainer( virt_res_idx, pose.total_residue(),  elec_dens_whole_structure_ca );
+		LREnergyContainerOP new_dec( new OneToAllEnergyContainer( virt_res_idx, pose.total_residue(),  elec_dens_whole_structure_ca ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 

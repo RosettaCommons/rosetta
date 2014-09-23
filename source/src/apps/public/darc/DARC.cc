@@ -234,7 +234,7 @@ int main( int argc, char * argv [] ) {
 		if(option[ darc_score_only ]()){
 			utility::vector1< core::pose::PoseOP > rot_poses(small_mol_pose.total_residue());
 			for (Size ii = 1; ii <= small_mol_pose.total_residue(); ++ii){
-				rot_poses[ii] = new core::pose::Pose(small_mol_pose, ii, ii);
+				rot_poses[ii] = utility::pointer::shared_ptr<class core::pose::Pose>( new core::pose::Pose(small_mol_pose, ii, ii) );
 				protocols::pockets::PlaidFingerprint conf_pf( *rot_poses[ii], npf );
 				std::cout << "DARC SCORE (unaligned) :" <<  conf_pf.fp_compare( npf, missing_pt_wt, steric_wt, extra_pt_wt ) <<std::endl;
 			}
@@ -274,7 +274,7 @@ int main( int argc, char * argv [] ) {
 			p_max[7] = 0.00001;
 			utility::vector1< core::pose::PoseOP > rot_poses(small_mol_pose.total_residue());
 			for (Size ii = 1; ii <= small_mol_pose.total_residue(); ++ii){
-				rot_poses[ii] = new core::pose::Pose(small_mol_pose, ii, ii);
+				rot_poses[ii] = utility::pointer::shared_ptr<class core::pose::Pose>( new core::pose::Pose(small_mol_pose, ii, ii) );
 				protocols::pockets::PlaidFingerprint conf_pf( *rot_poses[ii], npf );
 				//std::cout << "DARC SCORE (unaligned) :" <<  conf_pf.fp_compare( npf, missing_pt_wt, steric_wt, extra_pt_wt ) <<std::endl;
 				protocols::pockets::FingerprintMultifunc fpm(npf, conf_pf, missing_pt_wt, steric_wt, extra_pt_wt, 1);
@@ -320,13 +320,13 @@ int main( int argc, char * argv [] ) {
 			std::string hbond_calc_name = "hbond";
 			std::string packstat_calc_name = "packstat";
 			std::string burunsat_calc_name = "burunsat";
-			core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy;
+			core::pose::metrics::PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy );
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( sasa_calc_name, sasa_calculator );
-			core::pose::metrics::PoseMetricCalculatorOP hb_calc = new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator();
+			core::pose::metrics::PoseMetricCalculatorOP hb_calc( new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator() );
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( hbond_calc_name, hb_calc );
-			core::pose::metrics::PoseMetricCalculatorOP packstat_calc =	new protocols::toolbox::pose_metric_calculators::PackstatCalculator();
+			core::pose::metrics::PoseMetricCalculatorOP packstat_calc( new protocols::toolbox::pose_metric_calculators::PackstatCalculator() );
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( packstat_calc_name, packstat_calc );
-			core::pose::metrics::PoseMetricCalculatorOP burunsat_calc = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator(sasa_calc_name, hbond_calc_name);
+			core::pose::metrics::PoseMetricCalculatorOP burunsat_calc( new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator(sasa_calc_name, hbond_calc_name) );
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( burunsat_calc_name, burunsat_calc );
 
 			// add constraint
@@ -338,7 +338,7 @@ int main( int argc, char * argv [] ) {
 			Real cst_weight = 1;
 
 			ConstraintSetOP cst_set( new ConstraintSet() );
-			core::scoring::func::HarmonicFuncOP spring = new core::scoring::func::HarmonicFunc( 0 /*mean*/, coord_sdev /*std-dev*/);
+			core::scoring::func::HarmonicFuncOP spring( new core::scoring::func::HarmonicFunc( 0 /*mean*/, coord_sdev /*std-dev*/) );
 			conformation::Conformation const & conformation( bound_pose.conformation() );
 
 			// jk we need an anchor in order to use CoordinateConstraint !!!
@@ -354,8 +354,8 @@ int main( int argc, char * argv [] ) {
 				for ( Size ii = 1; ii<= nat_i_rsd.nheavyatoms(); ++ii ) {
 					AtomID CAi ( ii, i );
 					cst_set->add_constraint
-						(  new CoordinateConstraint
-							 ( CAi, AtomID(1,my_anchor), conformation.xyz( CAi ), spring )
+						(  ConstraintCOP( new CoordinateConstraint
+							 ( CAi, AtomID(1,my_anchor), conformation.xyz( CAi ), spring ) )
 							 );
 				}
 			}
@@ -415,7 +415,7 @@ int main( int argc, char * argv [] ) {
 
 			if (option[ print_output_complex ]){
 				//align minimized pose to the original docked pose and dump pdb complex and ligand
-				protocols::simple_moves::SuperimposeMoverOP sp_mover = new protocols::simple_moves::SuperimposeMover();
+				protocols::simple_moves::SuperimposeMoverOP sp_mover( new protocols::simple_moves::SuperimposeMover() );
 				sp_mover->set_reference_pose( pre_min_darc_pose, 1, (pre_min_darc_pose.total_residue()-1) );
 				sp_mover->set_target_range( 1, (bound_pose.total_residue()-1) );
 				sp_mover->apply( bound_pose );

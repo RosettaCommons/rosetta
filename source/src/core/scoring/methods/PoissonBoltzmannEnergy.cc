@@ -63,7 +63,7 @@ PBLifetimeCache::~PBLifetimeCache()
 basic::datacache::CacheableDataOP 
 PBLifetimeCache::clone() const
 {
-	return new PBLifetimeCache(*this);
+	return basic::datacache::CacheableDataOP( new PBLifetimeCache(*this) );
 }
 void 
 PBLifetimeCache::set_charged_residues_map( const std::map<std::string, bool> & charged_residues_map )
@@ -80,7 +80,7 @@ PBLifetimeCache::set_conformational_data( const std::string& energy_state,
 																					const core::pose::Pose & pose,
 																					PoissonBoltzmannPotentialOP pbp )
 {
-	pose_by_state_[energy_state] = new core::pose::Pose(pose);
+	pose_by_state_[energy_state] = utility::pointer::shared_ptr<const class core::pose::Pose>( new core::pose::Pose(pose) );
 	pb_by_state_[energy_state] = pbp;
 }
 std::map<std::string, bool> & 
@@ -127,7 +127,7 @@ methods::EnergyMethodOP
 PoissonBoltzmannEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new PoissonBoltzmannEnergy;
+	return methods::EnergyMethodOP( new PoissonBoltzmannEnergy );
 }
 
 ScoreTypes
@@ -160,7 +160,7 @@ PoissonBoltzmannEnergy::PoissonBoltzmannEnergy() :
 EnergyMethodOP
 PoissonBoltzmannEnergy::clone() const
 {
-	return new PoissonBoltzmannEnergy( *this );
+	return EnergyMethodOP( new PoissonBoltzmannEnergy( *this ) );
 }
 methods::LongRangeEnergyType
 PoissonBoltzmannEnergy::long_range_type() const { return methods::PB_elec_lr; }
@@ -241,7 +241,7 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 	}
 	else{
 		TR << "No cached pose for state: " << energy_state << std::endl;
-		poisson_boltzmann_potential_ = new PoissonBoltzmannPotential();
+		poisson_boltzmann_potential_ = scoring::PoissonBoltzmannPotentialOP( new PoissonBoltzmannPotential() );
 		poisson_boltzmann_potential_->solve_pb(pose, energy_state, charged_residues_);
 	}
 
@@ -272,7 +272,7 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 		create_new_lre_container = true;
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		OneToAllEnergyContainerOP dec( static_cast< OneToAllEnergyContainer * > ( lrc.get() ) );
+		OneToAllEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::OneToAllEnergyContainer > ( lrc ) );
 		// make sure size or root did not change
 		if ( dec->size() != pose.total_residue() ) {
 			create_new_lre_container = true;
@@ -281,7 +281,7 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 	
 	if ( create_new_lre_container ) {
 		TR << "Creating new one-to-all energy container (" << pose.total_residue() << ")" << std::endl;
-		LREnergyContainerOP new_dec = new OneToAllEnergyContainer( fixed_residue_, pose.total_residue(), PB_elec );
+		LREnergyContainerOP new_dec( new OneToAllEnergyContainer( fixed_residue_, pose.total_residue(), PB_elec ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 	

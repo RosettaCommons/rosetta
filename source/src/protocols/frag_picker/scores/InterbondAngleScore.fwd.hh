@@ -26,9 +26,9 @@ namespace scores {
 /// @brief forward declaration for InterbondAngleScore
 class InterbondAngleScore;
 
-typedef utility::pointer::owning_ptr<InterbondAngleScore>
+typedef utility::pointer::shared_ptr<InterbondAngleScore>
 		InterbondAngleScoreOP;
-typedef utility::pointer::owning_ptr<InterbondAngleScore const>
+typedef utility::pointer::shared_ptr<InterbondAngleScore const>
 		InterbondAngleScoreCOP;
 
 } // scores

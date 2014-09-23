@@ -20,8 +20,8 @@ namespace simple_moves {
 namespace symmetry {
 
 class SymPackRotamersMover;
-typedef utility::pointer::owning_ptr< SymPackRotamersMover > SymPackRotamersMoverOP;
-typedef utility::pointer::owning_ptr< SymPackRotamersMover const > SymPackRotamersMoverCOP;
+typedef utility::pointer::shared_ptr< SymPackRotamersMover > SymPackRotamersMoverOP;
+typedef utility::pointer::shared_ptr< SymPackRotamersMover const > SymPackRotamersMoverCOP;
 
 }	// symmetry
 } // moves

@@ -243,7 +243,7 @@ FastRelaxCreator::keyname() const
 
 protocols::moves::MoverOP
 FastRelaxCreator::create_mover() const {
-  return new FastRelax();
+  return protocols::moves::MoverOP( new FastRelax() );
 }
 
 std::string
@@ -261,7 +261,7 @@ FastRelax::FastRelax(
 ) :
 	RelaxProtocolBase("FastRelax" ),
 	checkpoints_("FastRelax"),
-	movemap_tag_( NULL )
+	movemap_tag_( /* NULL */ )
 {
 	set_to_default();
 	if( standard_repeats == 0 ) standard_repeats = default_repeats_;
@@ -280,7 +280,7 @@ FastRelax::FastRelax(
 ) :
 	RelaxProtocolBase("FastRelax", scorefxn_in ),
 	checkpoints_("FastRelax"),
-	movemap_tag_( NULL )
+	movemap_tag_( /* NULL */ )
 {
 	set_to_default();
 	if( standard_repeats == 0 ) standard_repeats = default_repeats_;
@@ -299,7 +299,7 @@ FastRelax::FastRelax(
 ) :
 	RelaxProtocolBase("FastRelax", scorefxn_in ),
 	checkpoints_("FastRelax"),
-	movemap_tag_( NULL )
+	movemap_tag_( /* NULL */ )
 {
 	set_to_default();
 	read_script_file( script_file );
@@ -312,7 +312,7 @@ FastRelax::FastRelax(
 ) :
 	RelaxProtocolBase("FastRelax", scorefxn_in ),
 	checkpoints_("FastRelax"),
-	movemap_tag_( NULL )
+	movemap_tag_( /* NULL */ )
 {
 	set_to_default();
 	if( standard_repeats == 0 ) standard_repeats = default_repeats_;
@@ -327,7 +327,7 @@ FastRelax::~FastRelax() {}
 /// Return a copy of ourselves
 protocols::moves::MoverOP
 FastRelax::clone() const {
-	return new FastRelax(*this);
+	return protocols::moves::MoverOP( new FastRelax(*this) );
 }
 
 void
@@ -343,7 +343,7 @@ FastRelax::parse_my_tag(
 	
 	set_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data )->clone() );
 
-	core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
+	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 	mm->set_chi( true );
 	mm->set_bb( true );
 	mm->set_jump( true );
@@ -355,7 +355,7 @@ FastRelax::parse_my_tag(
 	core::pack::task::TaskFactoryOP tf = protocols::rosetta_scripts::parse_task_operations( tag, data );
 	if ( tf->size() > 0){
 		if (!enable_design_){
-			tf->push_back(new core::pack::task::operation::RestrictToRepacking);
+			tf->push_back(TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ));
 		}
 		set_task_factory( tf );
 	}
@@ -420,7 +420,7 @@ void FastRelax::parse_def( utility::lua::LuaObject const & def,
 		set_scorefxn( score_fxns["score12"].to<core::scoring::ScoreFunctionSP>()->clone()  );
 	}
 
-	core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
+	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 	mm->set_chi( true );
 	mm->set_bb( true );
 	mm->set_jump( true );
@@ -531,9 +531,9 @@ void FastRelax::do_minimize(
 
   protocols::simple_moves::MinMoverOP min_mover;
   if ( core::pose::symmetry::is_symmetric( pose ) )  {
-    min_mover = new simple_moves::symmetry::SymMinMover( local_movemap, local_scorefxn, min_type(), tolerance, true );
+    min_mover = protocols::simple_moves::MinMoverOP( new simple_moves::symmetry::SymMinMover( local_movemap, local_scorefxn, min_type(), tolerance, true ) );
   } else {
-    min_mover = new protocols::simple_moves::MinMover( local_movemap, local_scorefxn, min_type(), tolerance, true );
+    min_mover = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover( local_movemap, local_scorefxn, min_type(), tolerance, true ) );
   }
 	min_mover->cartesian( cartesian() );
 	if (max_iter() > 0) min_mover->max_iter( max_iter() );
@@ -638,7 +638,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 	//Change behavior of Task to be initialized in PackRotamersMover to allow design directly within FastRelax
 	// Jadolfbr 5/2/2013
-	TaskFactoryOP local_tf = new TaskFactory();
+	TaskFactoryOP local_tf( new TaskFactory() );
 
 	//If a user gives a TaskFactory, completely respect it.
 
@@ -646,17 +646,17 @@ void FastRelax::apply( core::pose::Pose & pose ){
 		local_tf = get_task_factory()->clone();
 	}
 	else{
-		local_tf->push_back(new InitializeFromCommandline());
+		local_tf->push_back(TaskOperationCOP( new InitializeFromCommandline() ));
 		if (option[ OptionKeys::relax::respect_resfile]() && option[ OptionKeys::packing::resfile].user() ) {
-			local_tf->push_back(new ReadResfile());
+			local_tf->push_back(TaskOperationCOP( new ReadResfile() ));
 			TR << "Using Resfile for packing step. " <<std::endl;
 		}
 		else {
 			//Keep the same behavior as before if no resfile given for design.
 			//Though, as mentioned in the doc, movemap now overrides chi_move as it was supposed to.
 
-			local_tf->push_back(new RestrictToRepacking());
-			PreventRepackingOP turn_off_packing = new PreventRepacking();
+			local_tf->push_back(TaskOperationCOP( new RestrictToRepacking() ));
+			PreventRepackingOP turn_off_packing( new PreventRepacking() );
 			for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
 				if (! local_movemap->get_chi(pos) ){
 					turn_off_packing->include_residue(pos);
@@ -666,17 +666,17 @@ void FastRelax::apply( core::pose::Pose & pose ){
 		}
 	}
 	//Include current rotamer by default - as before.
-	local_tf->push_back(new IncludeCurrent());
+	local_tf->push_back(TaskOperationCOP( new IncludeCurrent() ));
 
 	if( limit_aroma_chi2() ) {
-		local_tf->push_back(new toolbox::task_operations::LimitAromaChi2Operation());
+		local_tf->push_back(TaskOperationCOP( new toolbox::task_operations::LimitAromaChi2Operation() ));
 	}
 
-	protocols::simple_moves::PackRotamersMoverOP pack_full_repack_ = new protocols::simple_moves::PackRotamersMover( local_scorefxn );
+	protocols::simple_moves::PackRotamersMoverOP pack_full_repack_( new protocols::simple_moves::PackRotamersMover( local_scorefxn ) );
 
 	// If symmetric pose then create a symmetric rotamers mover
 	if ( core::pose::symmetry::is_symmetric( pose ) )  {
-		pack_full_repack_ = new simple_moves::symmetry::SymPackRotamersMover( local_scorefxn);
+		pack_full_repack_ = protocols::simple_moves::PackRotamersMoverOP( new simple_moves::symmetry::SymPackRotamersMover( local_scorefxn) );
 	}
 	pack_full_repack_->task_factory(local_tf);
 
@@ -703,7 +703,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 
 	// Obtain the native pose
-	if( !get_native_pose() ) set_native_pose( new Pose( start_pose ) );
+	if( !get_native_pose() ) set_native_pose( PoseCOP( new Pose( start_pose ) ) );
 
 	// Statistic information
 	std::vector< core::Real > best_score_log;
@@ -1291,9 +1291,9 @@ void FastRelax::batch_apply(
 		// 453 mb
 		if( i == 0 ){
 			if ( get_task_factory() ) {
-				pack_full_repack_ = new protocols::simple_moves::PackRotamersMover();
+				pack_full_repack_ = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover() );
 				if ( core::pose::symmetry::is_symmetric( pose ) )  {
-					pack_full_repack_ = new simple_moves::symmetry::SymPackRotamersMover();
+					pack_full_repack_ = protocols::simple_moves::PackRotamersMoverOP( new simple_moves::symmetry::SymPackRotamersMover() );
 				}
 				pack_full_repack_->score_function(local_scorefxn);
 				pack_full_repack_->task_factory(get_task_factory());
@@ -1310,9 +1310,9 @@ void FastRelax::batch_apply(
 				}
 				task_->initialize_from_command_line().restrict_to_repacking().restrict_to_residues(allow_repack);
 				task_->or_include_current( true );
-				pack_full_repack_ = new protocols::simple_moves::PackRotamersMover( local_scorefxn, task_ );
+				pack_full_repack_ = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( local_scorefxn, task_ ) );
 				if ( core::pose::symmetry::is_symmetric( pose ) )  {
-					pack_full_repack_ = new simple_moves::symmetry::SymPackRotamersMover( local_scorefxn, task_ );
+					pack_full_repack_ = protocols::simple_moves::PackRotamersMoverOP( new simple_moves::symmetry::SymPackRotamersMover( local_scorefxn, task_ ) );
 				}
 			}
 

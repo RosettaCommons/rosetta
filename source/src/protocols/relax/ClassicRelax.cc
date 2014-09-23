@@ -104,7 +104,7 @@ ClassicRelaxCreator::keyname() const
 
 protocols::moves::MoverOP
 ClassicRelaxCreator::create_mover() const {
-	return new ClassicRelax;
+	return protocols::moves::MoverOP( new ClassicRelax );
 }
 
 std::string
@@ -196,7 +196,7 @@ ClassicRelax::ClassicRelax( ClassicRelax const & other ) :
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 protocols::moves::MoverOP ClassicRelax::clone() const	{
-	return new ClassicRelax(*this);
+	return protocols::moves::MoverOP( new ClassicRelax(*this) );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -311,9 +311,9 @@ void ClassicRelax::set_tolerance( core::Real new_tolerance ){
 void ClassicRelax::set_default_minimizer() {
 	// options for minimizer
 	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )  {
-		min_mover_ = new simple_moves::symmetry::SymMinMover( get_movemap(), get_scorefxn(), min_type, min_tolerance, nb_list );
+		min_mover_ = protocols::simple_moves::MinMoverOP( new simple_moves::symmetry::SymMinMover( get_movemap(), get_scorefxn(), min_type, min_tolerance, nb_list ) );
 	} else {
-		min_mover_ = new protocols::simple_moves::MinMover( get_movemap(), get_scorefxn(), min_type, min_tolerance, nb_list );
+		min_mover_ = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover( get_movemap(), get_scorefxn(), min_type, min_tolerance, nb_list ) );
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -333,7 +333,7 @@ void ClassicRelax::set_default_moveset_phase1()
 	shear_mover->angle_max( 'L', 3.0 );
 
 	// create a Random Mover, fill it with individual moves
-	moves::RandomMoverOP moveset_phase1_temp = new moves::RandomMover();
+	moves::RandomMoverOP moveset_phase1_temp( new moves::RandomMover() );
 	//moveset_phase1_temp ->add_mover( small_mover );
 	//moveset_phase1_temp ->add_mover( shear_mover );
 
@@ -357,7 +357,7 @@ void ClassicRelax::set_default_moveset_phase2()
 	shear_mover->angle_max( 'L', 3.0 );
 
 	// create a Random Mover, fill it with individual moves
-	moves::RandomMoverOP moveset_phase2_temp = new moves::RandomMover();
+	moves::RandomMoverOP moveset_phase2_temp( new moves::RandomMover() );
 	moveset_phase2_temp ->add_mover( small_mover );
 	moveset_phase2_temp ->add_mover( shear_mover );
 
@@ -365,7 +365,7 @@ void ClassicRelax::set_default_moveset_phase2()
 	if( basic::options::option[ basic::options::OptionKeys::relax::wobblemoves ].user() &&
 			basic::options::option[ basic::options::OptionKeys::in::file::frag3 ].user() ){
 		std::string frag3_file  = basic::options::option[ basic::options::OptionKeys::in::file::frag3 ]();
-		core::fragment::ConstantLengthFragSetOP fragset3mer = new core::fragment::ConstantLengthFragSet( 3 );
+		core::fragment::ConstantLengthFragSetOP fragset3mer( new core::fragment::ConstantLengthFragSet( 3 ) );
 		fragset3mer->read_fragment_file( frag3_file );
 		protocols::simple_moves::WobbleMoverOP wobble_mover( new protocols::simple_moves::WobbleMover( fragset3mer, get_movemap(), protocols::simple_moves::FragmentCostOP( new protocols::simple_moves::GunnCost ) ) );
 
@@ -394,7 +394,7 @@ void ClassicRelax::set_default_moveset_phase3()
 	shear_mover->angle_max( 'L', 3.0 );
 
 	// create a Random Mover, fill it with individual moves
-	moves::RandomMoverOP moveset_phase3_temp = new moves::RandomMover();
+	moves::RandomMoverOP moveset_phase3_temp( new moves::RandomMover() );
 	moveset_phase3_temp ->add_mover( small_mover );
 	moveset_phase3_temp ->add_mover( shear_mover );
 
@@ -405,7 +405,7 @@ void ClassicRelax::set_default_moveset_phase3()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void ClassicRelax::check_default_mc( core::pose::Pose &pose) {
 	if( use_default_mc_ ){
-		mc_ = new moves::MonteCarlo( pose , *get_scorefxn() , 0.8 );
+		mc_ = moves::MonteCarloOP( new moves::MonteCarlo( pose , *get_scorefxn() , 0.8 ) );
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -433,24 +433,24 @@ void ClassicRelax::check_default_full_repacker( core::pose::Pose & pose, core::k
 		
 		// Add TF behavior Jadolfbr 5/2/2013 
 		
-		core::pack::task::TaskFactoryOP local_tf = new core::pack::task::TaskFactory();
+		core::pack::task::TaskFactoryOP local_tf( new core::pack::task::TaskFactory() );
 	
 		//If a user gives a TaskFactory, completely respect it.
 		if (get_task_factory()){
 			local_tf = get_task_factory()->clone();
 		}
 		else{
-			local_tf->push_back(new InitializeFromCommandline());
+			local_tf->push_back(TaskOperationCOP( new InitializeFromCommandline() ));
 			if (option[ OptionKeys::relax::respect_resfile]() && option[ OptionKeys::packing::resfile].user() ) {
-				local_tf->push_back(new ReadResfile());
+				local_tf->push_back(TaskOperationCOP( new ReadResfile() ));
 				TR << "Using Resfile for packing step. " <<std::endl;
 			}
 			else {
 				//Keep the same behavior as before if no resfile given for design.  
 				//Though, as mentioned in the doc, movemap now overrides chi_move as it should.
 				
-				local_tf->push_back(new RestrictToRepacking());
-				PreventRepackingOP turn_off_packing = new PreventRepacking();
+				local_tf->push_back(TaskOperationCOP( new RestrictToRepacking() ));
+				PreventRepackingOP turn_off_packing( new PreventRepacking() );
 				for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
 					if (! movemap.get_chi(pos) ){
 						turn_off_packing->include_residue(pos);
@@ -460,16 +460,16 @@ void ClassicRelax::check_default_full_repacker( core::pose::Pose & pose, core::k
 			}
 		}
 		//Include current rotamer by default - as before.
-		local_tf->push_back(new IncludeCurrent());
+		local_tf->push_back(TaskOperationCOP( new IncludeCurrent() ));
 	
 		if( limit_aroma_chi2() ) {
-			local_tf->push_back(new protocols::toolbox::task_operations::LimitAromaChi2Operation());
+			local_tf->push_back(TaskOperationCOP( new protocols::toolbox::task_operations::LimitAromaChi2Operation() ));
 		}
 	
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-			pack_full_repack_ = new simple_moves::symmetry::SymPackRotamersMover( get_scorefxn());
+			pack_full_repack_ = protocols::simple_moves::PackRotamersMoverOP( new simple_moves::symmetry::SymPackRotamersMover( get_scorefxn()) );
 		} else {
-			pack_full_repack_ = new protocols::simple_moves::PackRotamersMover( get_scorefxn());
+			pack_full_repack_ = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( get_scorefxn()) );
 		}
 		pack_full_repack_->task_factory(local_tf);
 		
@@ -494,24 +494,24 @@ void ClassicRelax::check_default_rottrial( core::pose::Pose & pose, core::kinema
 		
 		// Add TF behavior Jadolfbr 5/2/2013 
 		
-		core::pack::task::TaskFactoryOP local_tf = new core::pack::task::TaskFactory();
+		core::pack::task::TaskFactoryOP local_tf( new core::pack::task::TaskFactory() );
 	
 		//If a user gives a TaskFactory, completely respect it.
 		if (get_task_factory()){
 			local_tf = get_task_factory()->clone();
 		}
 		else{
-			local_tf->push_back(new InitializeFromCommandline());
+			local_tf->push_back(TaskOperationCOP( new InitializeFromCommandline() ));
 			if (option[ OptionKeys::relax::respect_resfile]() && option[ OptionKeys::packing::resfile].user() ) {
-				local_tf->push_back(new ReadResfile());
+				local_tf->push_back(TaskOperationCOP( new ReadResfile() ));
 				TR << "Using Resfile for packing step. " <<std::endl;
 			}
 			else {
 				//Keep the same behavior as before if no resfile given for design.  
 				//Though, as mentioned in the doc, movemap now overrides chi_move as it should.
 				
-				local_tf->push_back(new RestrictToRepacking());
-				PreventRepackingOP turn_off_packing = new PreventRepacking();
+				local_tf->push_back(TaskOperationCOP( new RestrictToRepacking() ));
+				PreventRepackingOP turn_off_packing( new PreventRepacking() );
 				for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
 					if (! movemap.get_chi(pos) ){
 						turn_off_packing->include_residue(pos);
@@ -521,17 +521,17 @@ void ClassicRelax::check_default_rottrial( core::pose::Pose & pose, core::kinema
 			}
 		}
 		//Include current rotamer by default - as before.
-		local_tf->push_back(new IncludeCurrent());
+		local_tf->push_back(TaskOperationCOP( new IncludeCurrent() ));
 	
 		if( limit_aroma_chi2() ) {
-			local_tf->push_back(new protocols::toolbox::task_operations::LimitAromaChi2Operation());
+			local_tf->push_back(TaskOperationCOP( new protocols::toolbox::task_operations::LimitAromaChi2Operation() ));
 		}
 		(*get_scorefxn())( pose );
 		/// Now handled automatically.  scorefxn_->accumulate_residue_total_energies( pose ); // fix this
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-			pack_rottrial_ = new simple_moves::symmetry::SymEnergyCutRotamerTrialsMover( get_scorefxn(), local_tf, mc_, energycut );
+			pack_rottrial_ = protocols::simple_moves::RotamerTrialsMoverOP( new simple_moves::symmetry::SymEnergyCutRotamerTrialsMover( get_scorefxn(), local_tf, mc_, energycut ) );
 		 } else {
-			pack_rottrial_ = new protocols::simple_moves::EnergyCutRotamerTrialsMover( get_scorefxn(), local_tf, mc_, energycut );
+			pack_rottrial_ = protocols::simple_moves::RotamerTrialsMoverOP( new protocols::simple_moves::EnergyCutRotamerTrialsMover( get_scorefxn(), local_tf, mc_, energycut ) );
 		}
 	}
 
@@ -610,9 +610,7 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 		//phase1_cycle->add_mover( moveset_phase1_ );
 		phase1_cycle->add_mover( repack_cycle );
 
-		moves::JumpOutMoverOP phase1_min(
-			new moves::JumpOutMover( phase1_cycle, min_mover_, get_scorefxn(), 1E6 )
-		);
+		moves::JumpOutMoverOP phase1_min( new moves::JumpOutMover( phase1_cycle, min_mover_, get_scorefxn(), 1E6 ) );
 
 		moves::TrialMoverOP phase1_trial( new moves::TrialMover( phase1_min, mc_ ) );
 
@@ -626,16 +624,16 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 			final_weights[ angle_constraint ] = 0;
 			final_weights[ dihedral_constraint ] = 0;
 
-			full_cycle_phase1_ = new moves::RampingMover(
+			full_cycle_phase1_ = moves::RampingMoverOP( new moves::RampingMover(
 				phase1_trial, get_scorefxn(),
 				starting_weights, final_weights,
-				lj_ramp_cycles, lj_ramp_inner_cycles, mc_ );
-			full_cycle_phase1_->set_func_for_weight( coordinate_constraint, new moves::FastLinearFunc( 0, 0.6 ) );
-			full_cycle_phase1_->set_func_for_weight( atom_pair_constraint, new moves::FastLinearFunc( 0, 0.6 ) );
+				lj_ramp_cycles, lj_ramp_inner_cycles, mc_ ) );
+			full_cycle_phase1_->set_func_for_weight( coordinate_constraint, RampingFuncOP( new moves::FastLinearFunc( 0, 0.6 ) ) );
+			full_cycle_phase1_->set_func_for_weight( atom_pair_constraint, RampingFuncOP( new moves::FastLinearFunc( 0, 0.6 ) ) );
 		} else {
-			full_cycle_phase1_ = new moves::RampingMover(
+			full_cycle_phase1_ = moves::RampingMoverOP( new moves::RampingMover(
 				phase1_trial, get_scorefxn(), scoring::fa_rep,
-				lj_ramp_cycles, lj_ramp_inner_cycles, mc_ );
+				lj_ramp_cycles, lj_ramp_inner_cycles, mc_ ) );
 			full_cycle_phase1_->start_weight( start_rep_weight * get_scorefxn()->weights()[ scoring::fa_rep ] );
 			full_cycle_phase1_->end_weight( end_rep_weight * get_scorefxn()->weights()[ scoring::fa_rep ]  );
 		}
@@ -719,7 +717,7 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 		moves::TrialMoverOP phase2_trial( new moves::TrialMover( phase2_min, mc_ ) );
 
 		moves::RepeatMoverOP full_cycle_phase2_;
-		full_cycle_phase2_ = new moves::RepeatMover( phase2_trial, int( core::Real(stage2_cycles) * basic::options::option[ basic::options::OptionKeys::relax::cycle_ratio] / 4.0 ) );
+		full_cycle_phase2_ = moves::RepeatMoverOP( new moves::RepeatMover( phase2_trial, int( core::Real(stage2_cycles) * basic::options::option[ basic::options::OptionKeys::relax::cycle_ratio] / 4.0 ) ) );
 
 		full_cycle_phase2_->apply( pose );
 
@@ -785,7 +783,7 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 		moves::TrialMoverOP phase3_trial( new moves::TrialMover( phase3_min, mc_ ) );
 
 		moves::RepeatMoverOP full_cycle_phase3_;
-		full_cycle_phase3_ = new moves::RepeatMover( phase3_trial, int( core::Real(stage3_cycles) * basic::options::option[ basic::options::OptionKeys::relax::cycle_ratio])  );
+		full_cycle_phase3_ = moves::RepeatMoverOP( new moves::RepeatMover( phase3_trial, int( core::Real(stage3_cycles) * basic::options::option[ basic::options::OptionKeys::relax::cycle_ratio])  ) );
 
 		full_cycle_phase3_->apply( pose );
 

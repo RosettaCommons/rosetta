@@ -55,7 +55,7 @@ get_rna_secstruct( core::pose::Pose & pose )
 		set_rna_secstruct( pose, std::string( pose.total_residue(), 'X' ) );
 	}
 
-	return ( static_cast< RNA_SecStructInfo const * >(pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO )() ) )->get_secstruct();
+	return ( utility::pointer::static_pointer_cast< protocols::farna::RNA_SecStructInfo const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO ) ) )->get_secstruct();
 }
 
 /// @details Either returns a non-const reference to the rna_scoring object already stored
@@ -67,7 +67,7 @@ set_rna_secstruct(  core::pose::Pose & pose, std::string const rna_secstruct_str
 	//using core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO;
 
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO ) ) {
-		( static_cast< RNA_SecStructInfo * >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO )()) )->set_secstruct( rna_secstruct_string );
+		( utility::pointer::static_pointer_cast< protocols::farna::RNA_SecStructInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO ) ) )->set_secstruct( rna_secstruct_string );
 	}
 	// else
 	RNA_SecStructInfoOP rna_secstruct_info( new RNA_SecStructInfo( rna_secstruct_string ) );

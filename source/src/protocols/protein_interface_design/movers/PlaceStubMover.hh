@@ -166,7 +166,7 @@ private: // data members
 	/// should not be changed to design movers down stream. Note that this is a different implementation than
 	/// the one used in PlaceSimultaneously.
 	core::pack::task::TaskFactoryOP residue_level_tasks_for_placed_hotspots_;
-  utility::pointer::owning_ptr< basic::datacache::DataMapObj< utility::vector1< core::Size > > > residue_numbers_; /// dflt NULL; a vector of residue numbers placed on the basic::datacache::DataMap which specifies all the placed residues. Useful to communicate between movers and filters, without the pesky NotifyMovers strategy
+  utility::pointer::shared_ptr< basic::datacache::DataMapObj< utility::vector1< core::Size > > > residue_numbers_; /// dflt NULL; a vector of residue numbers placed on the basic::datacache::DataMap which specifies all the placed residues. Useful to communicate between movers and filters, without the pesky NotifyMovers strategy
   std::string user_defined_name_; // reserved for keeping the name of the current stub placement mover
 };
 

@@ -25,8 +25,8 @@ namespace optimization {
 // Forward
 class LineMinimizationAlgorithm;
 
-typedef utility::pointer::owning_ptr< LineMinimizationAlgorithm > LineMinimizationAlgorithmOP;
-typedef utility::pointer::owning_ptr< LineMinimizationAlgorithm const > LineMinimizationAlgorithmCOP;
+typedef utility::pointer::shared_ptr< LineMinimizationAlgorithm > LineMinimizationAlgorithmOP;
+typedef utility::pointer::shared_ptr< LineMinimizationAlgorithm const > LineMinimizationAlgorithmCOP;
 
 } // namespace optimization
 } // namespace core

@@ -71,7 +71,7 @@ core::scoring::ScoreTypes PDDFEnergyCreator::score_types_for_method() const {
 
 core::scoring::methods::EnergyMethodOP PDDFEnergyCreator::create_energy_method( core::scoring::methods::EnergyMethodOptions const &) const {
 
-	return new PDDFEnergy();
+	return core::scoring::methods::EnergyMethodOP( new PDDFEnergy() );
 }
 
 /// c-tors

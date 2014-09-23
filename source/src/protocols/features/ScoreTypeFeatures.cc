@@ -111,9 +111,9 @@ ScoreTypeFeatures::write_schema_to_db(
 	using namespace basic::database::schema_generator;
 
 	//******score_types******//
-	Column batch_id("batch_id", new DbInteger(), false);
-	Column score_type_id("score_type_id", new DbInteger(), false);
-	Column score_type_name("score_type_name", new DbText(), false);
+	Column batch_id("batch_id", DbDataTypeOP( new DbInteger() ), false);
+	Column score_type_id("score_type_id", DbDataTypeOP( new DbInteger() ), false);
+	Column score_type_name("score_type_name", DbDataTypeOP( new DbText() ), false);
 
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(batch_id);

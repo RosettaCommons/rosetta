@@ -259,14 +259,14 @@ struct ConstraintConfig {
 	core::chemical::ResidueTypeSetCOP crs,frs;
 	virtual ~ConstraintConfig() {}
 	ConstraintConfig()
-	: nres(0),nsub(0),nhub(0),CSTSDMULT(1),fname("NONE"),ss(0),templates_fname(0),templates_fa(0),templates_cen(0),
-	  template_sc(0),template_sc_resi(0),cst_sc(0),cst_bb(0),dcst(0),crs(NULL),frs(NULL)
+	: nres(0),nsub(0),nhub(0),CSTSDMULT(1),fname("NONE"),ss(/* 0 */),templates_fname(0),templates_fa(0),templates_cen(0),
+	  template_sc(/* 0 */),template_sc_resi(0),cst_sc(0),cst_bb(0),dcst(0),crs(NULL),frs(NULL)
 	{
 		init();
 	}
 	ConstraintConfig(string cfgfile)
-	: nres(0),nsub(0),nhub(0),CSTSDMULT(1),fname("NONE"),ss(0),templates_fname(0),templates_fa(0),templates_cen(0),
-	  template_sc(0),template_sc_resi(0),cst_sc(0),cst_bb(0),dcst(0),crs(NULL),frs(NULL)
+	: nres(0),nsub(0),nhub(0),CSTSDMULT(1),fname("NONE"),ss(/* 0 */),templates_fname(0),templates_fa(0),templates_cen(0),
+	  template_sc(/* 0 */),template_sc_resi(0),cst_sc(0),cst_bb(0),dcst(0),crs(NULL),frs(NULL)
 	{
 		TR << "reading config file: " << cfgfile << endl;
 		fname = cfgfile;
@@ -418,19 +418,19 @@ struct ConstraintConfig {
 		if(id2.rsd() > nsub*nres) utility_exit_with_message("2nd constraint rsd "+str(id2.rsd())+" outside of nres*nsub");
 		if(id1.rsd() > nres     ) return;//utility_exit_with_message("1st constraint rsd "+str(id1.rsd())+" outside of primary subunit");
 		//TR << "SYMCST " << id1.rsd() << "-" << id2.rsd() << endl;
-		p.add_constraint( new AtomPairConstraint( id1 , id2 , core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(d,sd) ) ) );
+		p.add_constraint( scoring::constraints::ConstraintCOP( new AtomPairConstraint( id1 , id2 , core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(d,sd) ) ) ) );
 		int sub2 = (id2.rsd()-1)/nres + 1;
 		if(sub2 > 1 && sub2 <= (int)nhub) {
 			AtomID id1B( id2.atomno(), id2.rsd() - nres * (sub2-1)             );
 			AtomID id2B( id1.atomno(), id1.rsd() - nres * (sub2-1) + nhub*nres );
 			//TR << "SYMCST " << id1.rsd() << "-" << id2.rsd() << " " << id1B.rsd() << "-" << id2B.rsd() << endl;
-			p.add_constraint( new AtomPairConstraint( id1B, id2B, core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(d,sd) ) ) );
+			p.add_constraint( scoring::constraints::ConstraintCOP( new AtomPairConstraint( id1B, id2B, core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(d,sd) ) ) ) );
 		}
 		if(sub2 > (int)nhub) { // !!!!!!!!!!!!!! assuming dimer cst on higher sym!
 			AtomID id1B( id2.atomno(), id2.rsd() - nres * (sub2-1) );
 			AtomID id2B( id1.atomno(), id1.rsd() + nres * (sub2-1) );
 			//TR << "SYMCST " << id1.rsd() << "-" << id2.rsd() << " " << id1B.rsd() << "-" << id2B.rsd() << endl;
-			p.add_constraint( new AtomPairConstraint( id1B, id2B, core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(d,sd) ) ) );
+			p.add_constraint( scoring::constraints::ConstraintCOP( new AtomPairConstraint( id1B, id2B, core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(d,sd) ) ) ) );
 		}
 	}
 	int hub_seq_sep(int r1, int r2) const {
@@ -794,7 +794,7 @@ struct ConstraintConfig {
 					AtomID id2( p.residue(i->dres2).atom_index(aname2), i->dres2 );
 						//TR << "constraint: " << ssep << " " << i->dres1 << "," << aname1 << " " << i->dres2 << "," << aname2 << " " << d << endl;
 					add_sym_cst( p, id1, id2, d, CSTSDMULT/2.0*sqrt(d) );
-					p.add_constraint( new AtomPairConstraint( id1, id2, core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(d,CSTSDMULT/2.0*sqrt(d)) ) ) );
+					p.add_constraint( scoring::constraints::ConstraintCOP( new AtomPairConstraint( id1, id2, core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(d,CSTSDMULT/2.0*sqrt(d)) ) ) ) );
 				}
 			}
 		}
@@ -890,17 +890,17 @@ struct HubDenovo {
 	HubDenovo(
 		std::string cstcfgfile
 	):	cfg(cstcfgfile),
-		sf3(NULL),
-		sfsym(NULL),
-		sfasym(NULL),
-		sfsymnocst(NULL),
-		rlxcst(NULL),
-		rlxnocst(NULL),
-		des(NULL),
-		fragins3(NULL),
-		fraginsL(NULL),
-		fragins(NULL),
-		cenmin(NULL)
+		sf3(/* NULL */),
+		sfsym(/* NULL */),
+		sfasym(/* NULL */),
+		sfsymnocst(/* NULL */),
+		rlxcst(/* NULL */),
+		rlxnocst(/* NULL */),
+		des(/* NULL */),
+		fragins3(/* NULL */),
+		fraginsL(/* NULL */),
+		fragins(/* NULL */),
+		cenmin(/* NULL */)
 	{
 		TR << "RESIDUE NUMBER MAPPING" << endl;
 		for(std::map<string,Sizes>::const_iterator i = cfg.ssmap.begin(); i != cfg.ssmap.end(); ++i){
@@ -928,24 +928,24 @@ struct HubDenovo {
 		core::fragment::FragSetOP frags3 = make_frag_set(cfg.ss                 ,fds,hub_.n_residue()+1);
 		core::fragment::FragSetOP fragsl = make_frag_set(cfg.ssstr().substr(0,6),fds,hub_.n_residue()+1);
 
-		fragins3  = new protocols::simple_moves::ClassicFragmentMover(frags3);
-		fraginsL  = new protocols::simple_moves::ClassicFragmentMover(fragsl);
+		fragins3 = protocols::moves::MoverOP( new protocols::simple_moves::ClassicFragmentMover(frags3) );
+		fraginsL = protocols::moves::MoverOP( new protocols::simple_moves::ClassicFragmentMover(fragsl) );
 		{
-			protocols::moves::RandomMoverOP tmp = new protocols::moves::RandomMover;
+			protocols::moves::RandomMoverOP tmp( new protocols::moves::RandomMover );
 			tmp->add_mover(fragins3,0.7);
 			tmp->add_mover(fraginsL,0.3);
 			fragins = tmp;
 		}
-		des      = new protocols::flxbb::FlxbbDesign( sfsym, sfsym );
-		rlxcst   = new protocols::relax::FastRelax (sfsym);
-		rlxnocst = new protocols::relax::FastRelax(sfsymnocst);
+		des = protocols::moves::MoverOP( new protocols::flxbb::FlxbbDesign( sfsym, sfsym ) );
+		rlxcst = protocols::moves::MoverOP( new protocols::relax::FastRelax (sfsym) );
+		rlxnocst = protocols::moves::MoverOP( new protocols::relax::FastRelax(sfsymnocst) );
 
-		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 		movemap->set_jump(false);
 		movemap->set_bb(true);
 		movemap->set_bb(1,false);
 		movemap->set_chi(true);
-		famin = new protocols::simple_moves::symmetry::SymMinMover( movemap, sfsymnocst, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+		famin = protocols::moves::MoverOP( new protocols::simple_moves::symmetry::SymMinMover( movemap, sfsymnocst, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ) );
 
 		if(option[OptionKeys::hub_pdb].user()){
 			hub_ = *core::import_pose::pose_from_pdb(*rtsfa, option[OptionKeys::hub_pdb]() );
@@ -1044,7 +1044,7 @@ struct HubDenovo {
 		using core::conformation::symmetry::SymDof;
 		core::conformation::symmetry::SymmetryInfoCOP si = core::pose::symmetry::symmetry_info(p);
 		std::map<Size,SymDof> const & dofs = si->get_dofs();
-		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 		movemap->set_jump(false);
 		movemap->set_bb(true);
 		movemap->set_chi(true);
@@ -1059,24 +1059,24 @@ struct HubDenovo {
 			p.set_jump(i->first,j);
 			break;
 		}
-		cenmin = new protocols::simple_moves::symmetry::SymMinMover( movemap, sf3, "dfpmin_armijo_nonmonotone", 1e-3, true, false, false );
+		cenmin = protocols::moves::MoverOP( new protocols::simple_moves::symmetry::SymMinMover( movemap, sf3, "dfpmin_armijo_nonmonotone", 1e-3, true, false, false ) );
 
 		Size STOP = cfg.get_highest_intrahub_seqsep() + 4;
 		//TR << "rnd 1 ssep STOP " << STOP << endl;
-		protocols::moves::RandomMoverOP mymover = new protocols::moves::RandomMover;
+		protocols::moves::RandomMoverOP mymover( new protocols::moves::RandomMover );
 		mymover->add_mover(fragins,0.8);
 		if( dofs.size() > 0 ){
-			mymover->add_mover(new SymRBMover(p,0.2,0.4),0.2);
-			mymover->add_mover(new SymRBMover(p,1.1,1.4),0.05);
+			mymover->add_mover(MoverOP( new SymRBMover(p,0.2,0.4) ),0.2);
+			mymover->add_mover(MoverOP( new SymRBMover(p,1.1,1.4) ),0.05);
 		}
 
 		Real temp = 2.0;
 		Pose last_cor_ori = p;
 		for(Size icst = 1; icst <= STOP; ++icst) {
 			cfg.apply_csts(p,icst,icst > 15);
-			protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( p, *sf3, temp );
+			protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( p, *sf3, temp ) );
 			mc->set_autotemp( true, temp );	mc->set_temperature( temp );
-			protocols::moves::RepeatMover( new protocols::moves::TrialMover( mymover, mc ), 4000/cfg.nres ).apply( p );
+			protocols::moves::RepeatMover( MoverOP( new protocols::moves::TrialMover( mymover, mc ) ), 4000/cfg.nres ).apply( p );
 			mc->reset( p );
 			if(icst%5==0) {
 				cenmin->apply(p);
@@ -1094,9 +1094,9 @@ struct HubDenovo {
 		//Real cstwt = sf3->get_weight(core::scoring::atom_pair_constraint);
 		for(Size i = 1; i < 5; ++i) {
 			//sf3->set_weight(core::scoring::atom_pair_constraint,cstwt/Real(i*i));
-			protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( p, *sf3, temp );
+			protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( p, *sf3, temp ) );
 			mc->set_autotemp( true, temp );	mc->set_temperature( temp );
-			protocols::moves::RepeatMover( new protocols::moves::TrialMover( mymover, mc ), 400 ).apply( p );
+			protocols::moves::RepeatMover( MoverOP( new protocols::moves::TrialMover( mymover, mc ) ), 400 ).apply( p );
 			mc->reset( p );
 			cenmin->apply(p);
 			TR <<"fin " << i <<" "<<  sf3->score(p) << endl;
@@ -1118,7 +1118,7 @@ struct HubDenovo {
 		sf->show(p);
 		sf->set_weight(core::scoring::atom_pair_constraint,1.0);
 		sf->set_weight(core::scoring::    angle_constraint,1.0);
-		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 		movemap->set_jump(false);
 		movemap->set_bb(true);
 		movemap->set_bb(1,false);

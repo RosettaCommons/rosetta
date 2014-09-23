@@ -236,7 +236,7 @@ RBSegmentRelax_main() {
 //	}
 //	jobdist->shutdown();
 
-	RBSegmentRelaxImplOP rb_segment_relax_impl= new RBSegmentRelaxImpl();
+	RBSegmentRelaxImplOP rb_segment_relax_impl( new RBSegmentRelaxImpl() );
 	protocols::jd2::JobDistributor::get_instance()->go( rb_segment_relax_impl );
 
 	return 0;

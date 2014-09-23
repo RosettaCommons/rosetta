@@ -204,7 +204,7 @@ CoarseRNA_LoopCloser::output_forward_backward_res(){
 bool
 CoarseRNA_LoopCloser::figure_out_pivots( core::pose::Pose const & pose ){
 
-	if ( !allow_insert_ ) allow_insert_ = new protocols::toolbox::AllowInsert( pose );
+	if ( !allow_insert_ ) allow_insert_ = protocols::toolbox::AllowInsertOP( new protocols::toolbox::AllowInsert( pose ) );
 
 	figure_out_forward_backward_res_by_backtracking( pose );
 
@@ -840,7 +840,7 @@ CoarseRNA_LoopCloser::get_all_solutions( core::pose::Pose & pose,
 
 		fill_solution( pose, n );
 
-		core::pose::PoseOP pose_save = new Pose;
+		core::pose::PoseOP pose_save( new Pose );
 		*pose_save = pose;
 		pose_list.push_back( pose_save );
 

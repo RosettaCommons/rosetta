@@ -26,8 +26,8 @@ namespace simple_filters {
 class ShapeComplementarityFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< ShapeComplementarityFilter >  ShapeComplementarityFilterOP;
-typedef utility::pointer::owning_ptr< ShapeComplementarityFilter const >  ShapeComplementarityFilterCOP;
+typedef utility::pointer::shared_ptr< ShapeComplementarityFilter >  ShapeComplementarityFilterOP;
+typedef utility::pointer::shared_ptr< ShapeComplementarityFilter const >  ShapeComplementarityFilterCOP;
 
 } // namespace protocols
 } // namespace filters

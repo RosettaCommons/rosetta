@@ -21,8 +21,8 @@ namespace protocols {
 namespace loophash {
 
 class LoopHashLibrary;
-typedef utility::pointer::owning_ptr< LoopHashLibrary > LoopHashLibraryOP;
-typedef utility::pointer::owning_ptr< LoopHashLibrary const > LoopHashLibraryCOP;
+typedef utility::pointer::shared_ptr< LoopHashLibrary > LoopHashLibraryOP;
+typedef utility::pointer::shared_ptr< LoopHashLibrary const > LoopHashLibraryCOP;
 
 
 }

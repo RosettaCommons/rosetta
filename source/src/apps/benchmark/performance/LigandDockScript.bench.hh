@@ -42,7 +42,7 @@ core::scoring::ScoreFunctionOP
 make_scorefxn(std::string weights_tag){
 	using namespace core::scoring;
 
-	ScoreFunctionOP sfxn = new ScoreFunction();
+	ScoreFunctionOP sfxn( new ScoreFunction() );
 	sfxn->reset();
 
 	// manipulate EnergyMethodOptions here
@@ -94,34 +94,34 @@ public:
 		rotate_info_.distribution = get_distribution("uniform");
 
 		//// Creation of high_res_docker
-		LigandAreaOP docking_sidechain = new LigandArea();
+		LigandAreaOP docking_sidechain( new LigandArea() );
 		docking_sidechain->chain_ = 'X';
 		docking_sidechain->cutoff_= 6.0;
 		docking_sidechain->add_nbr_radius_ = true;
 		docking_sidechain->all_atom_mode_ = true;
 		docking_sidechain->minimize_ligand_ = 10;
 
-		InterfaceBuilderOP sc_4_docking = new InterfaceBuilder(utility::vector1<LigandAreaOP>(1, docking_sidechain));
-		MoveMapBuilderOP docking_movemap = new MoveMapBuilder(sc_4_docking, 0, true);
+		InterfaceBuilderOP sc_4_docking( new InterfaceBuilder(utility::vector1<LigandAreaOP>(1, docking_sidechain)) );
+		MoveMapBuilderOP docking_movemap( new MoveMapBuilder(sc_4_docking, 0, true) );
 		high_res_docker_ = HighResDocker(6, 3, std::vector<std::string>(1,"X"), make_scorefxn("ligand_soft_rep") , docking_movemap);
 
 		/////// Creation of final_minimizer
-		LigandAreaOP final_sidechain = new LigandArea();
+		LigandAreaOP final_sidechain( new LigandArea() );
 		final_sidechain->chain_ = 'X';
 		final_sidechain->cutoff_= 6.0;
 		final_sidechain->add_nbr_radius_ = true;
 		final_sidechain->all_atom_mode_ = true;
 		//////////////////////////////
-		LigandAreaOP final_backbone = new LigandArea();
+		LigandAreaOP final_backbone( new LigandArea() );
 		final_backbone->chain_ = 'X';
 		final_backbone->cutoff_= 7.0;
 		final_backbone->add_nbr_radius_ = false;
 		final_backbone->all_atom_mode_ = true;
 		final_backbone->Calpha_restraints_ = 0.3;
 		/////////////////////////////
-		InterfaceBuilderOP sc_4_final = new InterfaceBuilder(utility::vector1<LigandAreaOP>(1, final_sidechain));
-		InterfaceBuilderOP bb_4_final = new InterfaceBuilder(utility::vector1<LigandAreaOP>(1, final_backbone), 3);
-		MoveMapBuilderOP final_movemap = new MoveMapBuilder(sc_4_final, bb_4_final, true);
+		InterfaceBuilderOP sc_4_final( new InterfaceBuilder(utility::vector1<LigandAreaOP>(1, final_sidechain)) );
+		InterfaceBuilderOP bb_4_final( new InterfaceBuilder(utility::vector1<LigandAreaOP>(1, final_backbone), 3) );
+		MoveMapBuilderOP final_movemap( new MoveMapBuilder(sc_4_final, bb_4_final, true) );
 		final_minimizer_ = FinalMinimizer( make_scorefxn("ligand"), final_movemap);
 	}
 
@@ -141,10 +141,10 @@ public:
 	{}
 
 	virtual protocols::moves::MoverOP clone() const{
-		return new LigandDockBench( *this );
+		return protocols::moves::MoverOP( new LigandDockBench( *this ) );
 	}
 	virtual protocols::moves::MoverOP fresh_instance() const{
-		return new LigandDockBench;
+		return protocols::moves::MoverOP( new LigandDockBench );
 	}
 	virtual std::string get_name() const{ return "LigandDockBench";}
 
@@ -164,7 +164,7 @@ public:
 	}
 
 };
-typedef utility::pointer::owning_ptr<LigandDockBench> LigandDockBenchOP;
+typedef utility::pointer::shared_ptr<LigandDockBench> LigandDockBenchOP;
 
 
 class LigandDockScriptBenchmark : public PerformanceBenchmark

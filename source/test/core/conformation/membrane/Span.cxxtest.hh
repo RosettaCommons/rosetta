@@ -62,32 +62,32 @@ public: // test functions
 		using namespace core::conformation::membrane;
 		
 		// normal span
-		SpanOP span1 = new Span( 1, 20 );
+		SpanOP span1( new Span( 1, 20 ) );
 		TS_TRACE("...span1...");
 		TS_ASSERT_EQUALS( span1->is_valid(), true );
 
 		// start > end
-		SpanOP span2 = new Span( 10, 5 );
+		SpanOP span2( new Span( 10, 5 ) );
 		TS_TRACE("...span2...");
 		TS_ASSERT_EQUALS( span2->is_valid(), false );
 
 		// zero end
-		SpanOP span3 = new Span( 4, 0 );
+		SpanOP span3( new Span( 4, 0 ) );
 		TS_TRACE("...span3...");
 		TS_ASSERT_EQUALS( span3->is_valid(), false );
 
 		// zero start
-		SpanOP span4 = new Span( 0, 5 );
+		SpanOP span4( new Span( 0, 5 ) );
 		TS_TRACE("...span4...");
 		TS_ASSERT_EQUALS( span4->is_valid(), false );
 
 		// too short, only warning
-		SpanOP span5 = new Span( 1, 3 );
+		SpanOP span5( new Span( 1, 3 ) );
 		TS_TRACE("...span5...");
 		TS_ASSERT_EQUALS( span5->is_valid(), true );
 
 		// too long, only warning
-		SpanOP span6 = new Span( 5, 35 );
+		SpanOP span6( new Span( 5, 35 ) );
 		TS_TRACE("...span6...");
 		TS_ASSERT_EQUALS( span6->is_valid(), true );
 		

@@ -24,11 +24,11 @@ namespace protocols {
 namespace environment {
 
 class Environment;
-typedef utility::pointer::owning_ptr< Environment > EnvironmentOP;
-typedef utility::pointer::owning_ptr< Environment const > EnvironmentCOP;
+typedef utility::pointer::shared_ptr< Environment > EnvironmentOP;
+typedef utility::pointer::shared_ptr< Environment const > EnvironmentCOP;
 
-typedef utility::pointer::access_ptr< Environment > EnvironmentAP;
-typedef utility::pointer::access_ptr< Environment const > EnvironmentCAP;
+typedef utility::pointer::weak_ptr< Environment > EnvironmentAP;
+typedef utility::pointer::weak_ptr< Environment const > EnvironmentCAP;
 
 } // environment
 } // protocols

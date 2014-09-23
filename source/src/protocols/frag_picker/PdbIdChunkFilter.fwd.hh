@@ -26,16 +26,16 @@ class PdbIdChunkFilter;
 class AllowPdbIdFilter;
 class DenyPdbIdFilter;
 
-typedef utility::pointer::owning_ptr<PdbIdChunkFilter> PdbIdChunkFilterOP;
-typedef utility::pointer::owning_ptr<PdbIdChunkFilter const>
+typedef utility::pointer::shared_ptr<PdbIdChunkFilter> PdbIdChunkFilterOP;
+typedef utility::pointer::shared_ptr<PdbIdChunkFilter const>
 		PdbIdChunkFilterCOP;
 
-typedef utility::pointer::owning_ptr<AllowPdbIdFilter> AllowPdbIdFilterOP;
-typedef utility::pointer::owning_ptr<AllowPdbIdFilter const>
+typedef utility::pointer::shared_ptr<AllowPdbIdFilter> AllowPdbIdFilterOP;
+typedef utility::pointer::shared_ptr<AllowPdbIdFilter const>
 		AllowPdbIdFilterCOP;
 
-typedef utility::pointer::owning_ptr<DenyPdbIdFilter> DenyPdbIdFilterOP;
-typedef utility::pointer::owning_ptr<DenyPdbIdFilter const> DenyPdbIdFilterCOP;
+typedef utility::pointer::shared_ptr<DenyPdbIdFilter> DenyPdbIdFilterOP;
+typedef utility::pointer::shared_ptr<DenyPdbIdFilter const> DenyPdbIdFilterCOP;
 
 } // frag_picker
 } // protocols

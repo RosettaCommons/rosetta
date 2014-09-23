@@ -22,11 +22,11 @@ namespace protocols {
 namespace enzdes {
 
 class EnzdesBaseProtocol;
-typedef utility::pointer::owning_ptr< EnzdesBaseProtocol > EnzdesBaseProtocolOP;
-typedef utility::pointer::owning_ptr< EnzdesBaseProtocol const > EnzdesBaseProtocolCOP;
+typedef utility::pointer::shared_ptr< EnzdesBaseProtocol > EnzdesBaseProtocolOP;
+typedef utility::pointer::shared_ptr< EnzdesBaseProtocol const > EnzdesBaseProtocolCOP;
 
-typedef utility::pointer::access_ptr< EnzdesBaseProtocol > EnzdesBaseProtocolAP;
-typedef utility::pointer::access_ptr< EnzdesBaseProtocol const > EnzdesBaseProtocolCAP;
+typedef utility::pointer::weak_ptr< EnzdesBaseProtocol > EnzdesBaseProtocolAP;
+typedef utility::pointer::weak_ptr< EnzdesBaseProtocol const > EnzdesBaseProtocolCAP;
 
 
 }  //namespace enzdes

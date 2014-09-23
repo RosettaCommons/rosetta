@@ -23,8 +23,8 @@ namespace stepwise {
 namespace screener {
 	
 	class PackScreener;
-	typedef utility::pointer::owning_ptr< PackScreener > PackScreenerOP;
-	typedef utility::pointer::owning_ptr< PackScreener const > PackScreenerCOP;
+	typedef utility::pointer::shared_ptr< PackScreener > PackScreenerOP;
+	typedef utility::pointer::shared_ptr< PackScreener const > PackScreenerCOP;
 	
 } //screener
 } //stepwise

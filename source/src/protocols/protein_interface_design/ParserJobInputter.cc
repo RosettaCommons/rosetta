@@ -75,7 +75,7 @@ ParserJobInputterCreator::keyname() const
 
 protocols::jd2::JobInputterOP
 ParserJobInputterCreator::create_JobInputter() const {
-        return new ParserJobInputter;
+        return protocols::jd2::JobInputterOP( new ParserJobInputter );
 }
 
 }//protein_interface_design

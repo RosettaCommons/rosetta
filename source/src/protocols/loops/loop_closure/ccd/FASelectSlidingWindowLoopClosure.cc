@@ -183,7 +183,7 @@ FASelectSlidingWindowLoopClosure::select_final_loop( Pose& more_cut, Pose& less_
 		if ( tr.Trace.visible() )	fa_pose.dump_pdb("set_fold_tree_fa_pose.pdb");
 
 
-		FrameOP fa_frame_ = new Frame( loop_.start(), FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), loop_.size() ) ) );
+		FrameOP fa_frame_( new Frame( loop_.start(), FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), loop_.size() ) ) ) );
 		fa_frame_->steal( centroid_pose );
 		fa_frame_->apply( 1, fa_pose );
 
@@ -259,7 +259,7 @@ core::Real FASelectSlidingWindowLoopClosure::fascore( Pose& pose ) const {
 	// default move map
 	(*scorefxn)( pose ); //score to update tenAneighbour graph
 	bool const fix_natsc = basic::options::option[ basic::options::OptionKeys::loops::fix_natsc ];
-	kinematics::MoveMapOP mm_all_loops = new kinematics::MoveMap; // DJM tmp
+	kinematics::MoveMapOP mm_all_loops( new kinematics::MoveMap ); // DJM tmp
 	loops_set_move_map( pose, loops, fix_natsc, *mm_all_loops); // DJM tmp
 
 	//	scorefxn->set_weight( scoring::chainbreak, 10 );
@@ -270,7 +270,7 @@ core::Real FASelectSlidingWindowLoopClosure::fascore( Pose& pose ) const {
 }
 
 void FASelectSlidingWindowLoopClosure::set_fullatom_pose( core::pose::Pose& fa_pose ) {
-	fa_pose_ = new core::pose::Pose( fa_pose );
+	fa_pose_ = core::pose::PoseOP( new core::pose::Pose( fa_pose ) );
 }
 
 } // namespace ccd

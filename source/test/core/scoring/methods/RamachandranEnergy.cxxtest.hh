@@ -82,14 +82,14 @@ class RamachandranEnergyTests : public CxxTest::TestSuite {
 		the_pose = create_test_in_pdb_poseop();
 		//core::import_pose::pose_from_pdb( *the_pose, "core/scoring/methods/test_in.pdb" );
 
-		rama_energy = new RamachandranEnergy;
+		rama_energy = RamachandranEnergyOP( new RamachandranEnergy );
 
 	}
 
 	// Shared finalization goes here.
 	void tearDown() {
-		the_pose = 0;
-		rama_energy = 0;
+		the_pose.reset();
+		rama_energy.reset();
 	}
 
 

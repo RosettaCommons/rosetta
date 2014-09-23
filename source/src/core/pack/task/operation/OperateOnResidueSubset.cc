@@ -45,8 +45,8 @@ static thread_local basic::Tracer TR( "core.pack.task.operation.OperateOnResidue
 
 OperateOnResidueSubset::OperateOnResidueSubset()
 	: parent(),
-		op_(0),
-		residue_selector_(0)
+		op_(/* 0 */),
+		residue_selector_(/* 0 */)
 {}
 
 OperateOnResidueSubset::OperateOnResidueSubset(
@@ -78,12 +78,12 @@ OperateOnResidueSubset::~OperateOnResidueSubset() {}
 
 TaskOperationOP OperateOnResidueSubsetCreator::create_task_operation() const
 {
-	return new OperateOnResidueSubset;
+	return TaskOperationOP( new OperateOnResidueSubset );
 }
 
 TaskOperationOP OperateOnResidueSubset::clone() const
 {
-	return new OperateOnResidueSubset( *this );
+	return TaskOperationOP( new OperateOnResidueSubset( *this ) );
 }
 
 void

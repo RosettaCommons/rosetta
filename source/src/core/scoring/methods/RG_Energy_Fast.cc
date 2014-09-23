@@ -54,7 +54,7 @@ methods::EnergyMethodOP
 RG_Energy_FastCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new RG_Energy_Fast;
+	return methods::EnergyMethodOP( new RG_Energy_Fast );
 }
 
 ScoreTypes
@@ -67,7 +67,7 @@ RG_Energy_FastCreator::score_types_for_method() const {
 
 /// c-tor
 RG_Energy_Fast::RG_Energy_Fast() :
-	parent( new RG_Energy_FastCreator )
+	parent( EnergyMethodCreatorOP( new RG_Energy_FastCreator ) )
 {}
 
 
@@ -75,7 +75,7 @@ RG_Energy_Fast::RG_Energy_Fast() :
 EnergyMethodOP
 RG_Energy_Fast::clone() const
 {
-	return new RG_Energy_Fast;
+	return EnergyMethodOP( new RG_Energy_Fast );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -286,17 +286,17 @@ RG_Energy_Fast::eval_atom_derivative(
 RG_MinData const &
 RG_Energy_Fast::mindata_from_pose( pose::Pose const & pose) const {
 	using namespace core::pose::datacache;
-	return *( static_cast< RG_MinData const * >( pose.data().get_const_ptr( CacheableDataType::RG_MINDATA )() ));
+	return *( utility::pointer::static_pointer_cast< core::scoring::methods::RG_MinData const > ( pose.data().get_const_ptr( CacheableDataType::RG_MINDATA ) ));
 
 }
 
 RG_MinData &
 RG_Energy_Fast::nonconst_mindata_from_pose( pose::Pose & pose) const {
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::RG_MINDATA ) ) {
-		return *( static_cast< RG_MinData* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::RG_MINDATA )() ));
+		return *( utility::pointer::static_pointer_cast< core::scoring::methods::RG_MinData > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::RG_MINDATA ) ));
 	}
 	// else
-	RG_MinDataOP rgmindata = new RG_MinData;
+	RG_MinDataOP rgmindata( new RG_MinData );
 	pose.data().set( core::pose::datacache::CacheableDataType::RG_MINDATA, rgmindata );
 	return *rgmindata;
 }

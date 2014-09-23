@@ -24,8 +24,8 @@ namespace match_enzdes_util {
 
 class LigandConformer;
 
-typedef utility::pointer::owning_ptr< LigandConformer > LigandConformerOP;
-typedef utility::pointer::owning_ptr< LigandConformer const > LigandConformerCOP;
+typedef utility::pointer::shared_ptr< LigandConformer > LigandConformerOP;
+typedef utility::pointer::shared_ptr< LigandConformer const > LigandConformerCOP;
 
 }
 }

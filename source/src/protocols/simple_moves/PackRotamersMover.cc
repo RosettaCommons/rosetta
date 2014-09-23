@@ -70,7 +70,7 @@ PackRotamersMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 PackRotamersMoverCreator::create_mover() const {
-	return new PackRotamersMover;
+	return protocols::moves::MoverOP( new PackRotamersMover );
 }
 
 std::string
@@ -81,22 +81,22 @@ PackRotamersMoverCreator::mover_name()
 
 PackRotamersMover::PackRotamersMover() :
 	protocols::moves::Mover("PackRotamersMover"),
-	scorefxn_(0),
-	task_(0),
+	scorefxn_(/* 0 */),
+	task_(/* 0 */),
 	nloop_( option[ OptionKeys::packing::ndruns ].value() ),
-	task_factory_(0),
-	rotamer_sets_( new rotamer_set::RotamerSets ),
-	ig_(0)
+	task_factory_(/* 0 */),
+	rotamer_sets_( RotamerSetsOP( new rotamer_set::RotamerSets ) ),
+	ig_(/* 0 */)
 {}
 
 PackRotamersMover::PackRotamersMover( std::string const & type_name ) :
 	protocols::moves::Mover( type_name ),
-	scorefxn_(0),
-	task_(0),
+	scorefxn_(/* 0 */),
+	task_(/* 0 */),
 	nloop_( option[ OptionKeys::packing::ndruns ].value() ),
-	task_factory_(0),
-	rotamer_sets_( new rotamer_set::RotamerSets ),
-	ig_(0)
+	task_factory_(/* 0 */),
+	rotamer_sets_( RotamerSetsOP( new rotamer_set::RotamerSets ) ),
+	ig_(/* 0 */)
 {}
 
 // constructors with arguments
@@ -109,9 +109,9 @@ PackRotamersMover::PackRotamersMover(
 	scorefxn_( scorefxn ),
 	task_( task ),
 	nloop_( nloop ),
-	task_factory_(0),
-	rotamer_sets_( new rotamer_set::RotamerSets ),
-	ig_(0)
+	task_factory_(/* 0 */),
+	rotamer_sets_( RotamerSetsOP( new rotamer_set::RotamerSets ) ),
+	ig_(/* 0 */)
 {}
 
 PackRotamersMover::~PackRotamersMover(){}
@@ -124,8 +124,8 @@ PackRotamersMover::PackRotamersMover( PackRotamersMover const & other ) :
 	task_ = other.task();
 	nloop_ = other.nloop();
 	task_factory_ = other.task_factory();
-	rotamer_sets_ = new rotamer_set::RotamerSets;
-	ig_ = 0;
+	rotamer_sets_ = RotamerSetsOP( new rotamer_set::RotamerSets );
+	ig_.reset();
 }
 
 void
@@ -261,14 +261,14 @@ PackRotamersMover::parse_task_operations(
 protocols::moves::MoverOP
 PackRotamersMover::fresh_instance() const
 {
-	return new PackRotamersMover;
+	return protocols::moves::MoverOP( new PackRotamersMover );
 }
 
 ///@brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 PackRotamersMover::clone() const
 {
-	return new protocols::simple_moves::PackRotamersMover( *this );
+	return protocols::moves::MoverOP( new protocols::simple_moves::PackRotamersMover( *this ) );
 }
 
 ///@brief get rotamers, energies. Also performs lazy initialization of ScoreFunction, PackerTask.

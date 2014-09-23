@@ -56,7 +56,7 @@ RandomConformersCreator::keyname() const
 
 protocols::moves::MoverOP
 RandomConformersCreator::create_mover() const {
-	return new RandomConformers;
+	return protocols::moves::MoverOP( new RandomConformers );
 }
 
 std::string
@@ -79,11 +79,11 @@ RandomConformers::RandomConformers(RandomConformers const & that):
 RandomConformers::~RandomConformers() {}
 
 protocols::moves::MoverOP RandomConformers::clone() const {
-	return new RandomConformers( *this );
+	return protocols::moves::MoverOP( new RandomConformers( *this ) );
 }
 
 protocols::moves::MoverOP RandomConformers::fresh_instance() const {
-	return new RandomConformers;
+	return protocols::moves::MoverOP( new RandomConformers );
 }
 
 std::string RandomConformers::get_name() const{
@@ -126,7 +126,7 @@ void RandomConformers::apply(core::pose::Pose & pose) {
 void RandomConformers::apply_residue(core::Size const residue_id, core::pose::Pose & pose) {
 	using namespace protocols::moves;
 	using core::conformation::ResidueOP;
-	RandomConformerMoverOP rcm = new RandomConformerMover(residue_id);
+	RandomConformerMoverOP rcm( new RandomConformerMover(residue_id) );
 	rcm->apply(pose);
 /// TODO accomplish the below code within the scripter
 //	UnconstrainedTorsionsMoverOP utm =

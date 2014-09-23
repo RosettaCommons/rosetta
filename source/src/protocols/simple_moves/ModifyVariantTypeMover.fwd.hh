@@ -24,8 +24,8 @@ namespace protocols {
 namespace simple_moves {
 
 class ModifyVariantTypeMover;
-typedef utility::pointer::owning_ptr< ModifyVariantTypeMover > ModifyVariantTypeMoverOP;
-typedef utility::pointer::owning_ptr< ModifyVariantTypeMover const > ModifyVariantTypeMoverCOP;
+typedef utility::pointer::shared_ptr< ModifyVariantTypeMover > ModifyVariantTypeMoverOP;
+typedef utility::pointer::shared_ptr< ModifyVariantTypeMover const > ModifyVariantTypeMoverCOP;
 
 } // moves
 } // protocols

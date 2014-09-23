@@ -135,7 +135,7 @@ SymDockingHiRes::~SymDockingHiRes() {}
 
 //clone
 protocols::moves::MoverOP SymDockingHiRes::clone() const {
-	return new SymDockingHiRes(*this);
+	return protocols::moves::MoverOP( new SymDockingHiRes(*this) );
 }
 // what type of minimization is used?
 void SymDockingHiRes::set_min_type( std::string min_type_in ) { min_type_ = min_type_in;}
@@ -189,12 +189,12 @@ void SymDockingHiRes::set_default( core::pose::Pose & pose ) {
 		repack_period_ = 8;
 
 		//sets up MC object
-		mc_ = new moves::MonteCarlo( pose, *scorefxn_, temperature_ );
+		mc_ = moves::MonteCarloOP( new moves::MonteCarlo( pose, *scorefxn_, temperature_ ) );
 
 		//sets up default movemap
 		bb_ = false;
 		chi_ = false;
-		movemap_ = new kinematics::MoveMap();
+		movemap_ = core::kinematics::MoveMapOP( new kinematics::MoveMap() );
 		movemap_->set_chi( chi_ );
 		movemap_->set_bb( bb_ );
 		core::pose::symmetry::make_symmetric_movemap( pose, *movemap_ );
@@ -373,9 +373,9 @@ void SymDockingHiRes::set_dock_min_protocol() {
 
 	TR << "::::::::::::::::::DOCK_MIN:::::::::::::::::::" << std::endl;
 
-	protocols::simple_moves::MinMoverOP min_mover = new simple_moves::symmetry::SymMinMover( movemap_, scorefxn_, min_type_, min_tolerance_, nb_list_ );
-	TrialMoverOP minimize_trial = new TrialMover( min_mover, mc_ );
-	docking_highres_protocol_mover_ = new SequenceMover;
+	protocols::simple_moves::MinMoverOP min_mover( new simple_moves::symmetry::SymMinMover( movemap_, scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
+	TrialMoverOP minimize_trial( new TrialMover( min_mover, mc_ ) );
+	docking_highres_protocol_mover_ = moves::SequenceMoverOP( new SequenceMover );
 	docking_highres_protocol_mover_->add_mover( minimize_trial );
 }
 
@@ -414,10 +414,10 @@ void SymDockingHiRes::set_dock_mcm_protocol( core::pose::Pose & pose ) {
   std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
 
 	//set up rigid body movers
-	rigid::RigidBodyDofSeqPerturbMoverOP rb_perturb = new rigid::RigidBodyDofSeqPerturbMover( dofs , rot_magnitude_, trans_magnitude_ );
+	rigid::RigidBodyDofSeqPerturbMoverOP rb_perturb( new rigid::RigidBodyDofSeqPerturbMover( dofs , rot_magnitude_, trans_magnitude_ ) );
 
 	//set up minimizer movers
-	protocols::simple_moves::MinMoverOP min_mover = new simple_moves::symmetry::SymMinMover( movemap_, scorefxn_, min_type_, min_tolerance_, nb_list_ );
+	protocols::simple_moves::MinMoverOP min_mover( new simple_moves::symmetry::SymMinMover( movemap_, scorefxn_, min_type_, min_tolerance_, nb_list_ ) );
 
 	//set up sidechain movers for each movable jump
 	//tf_->push_back( new RestrictToInterface( 1 ) );
@@ -427,22 +427,22 @@ void SymDockingHiRes::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	for (std::map<Size,SymDof>::iterator i=dofs.begin(),i_end=dofs.end(); i!=i_end; ++i) {
 		movable_jumps.push_back( i->first );
 	}
-	tf_->push_back( new RestrictToInterface( movable_jumps ) );
+	tf_->push_back( TaskOperationCOP( new RestrictToInterface( movable_jumps ) ) );
 
-	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new simple_moves::symmetry::SymRotamerTrialsMover( scorefxn_pack_, tf_ );
+	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new simple_moves::symmetry::SymRotamerTrialsMover( scorefxn_pack_, tf_ ) );
 
-	SequenceMoverOP interface_repack_and_move_loops = new moves::SequenceMover;
+	SequenceMoverOP interface_repack_and_move_loops( new moves::SequenceMover );
 
 	std::string const flex_bb_docking_type = option[ OptionKeys::docking::flexible_bb_docking ]();
 	if ( flex_bb_docking_type == "fixedbb" ) {
 		// Call pack_rotamers, no backbone movement
-		protocols::simple_moves::PackRotamersMoverOP pack_interface_repack = new simple_moves::symmetry::SymPackRotamersMover( scorefxn_pack_ );
+		protocols::simple_moves::PackRotamersMoverOP pack_interface_repack( new simple_moves::symmetry::SymPackRotamersMover( scorefxn_pack_ ) );
 		pack_interface_repack->task_factory(tf_);
 		interface_repack_and_move_loops->add_mover( pack_interface_repack );
 	} else {
 
 		// Call pack_rotamer before and after loop movement
-		protocols::simple_moves::PackRotamersMoverOP pack_interface_repack = new simple_moves::symmetry::SymPackRotamersMover( scorefxn_pack_ );
+		protocols::simple_moves::PackRotamersMoverOP pack_interface_repack( new simple_moves::symmetry::SymPackRotamersMover( scorefxn_pack_ ) );
 		pack_interface_repack->task_factory(tf_);
 		interface_repack_and_move_loops->add_mover( pack_interface_repack );
 
@@ -459,29 +459,29 @@ void SymDockingHiRes::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	}
 
 
-	TrialMoverOP pack_interface_and_move_loops_trial = new TrialMover( interface_repack_and_move_loops, mc_ );
+	TrialMoverOP pack_interface_and_move_loops_trial( new TrialMover( interface_repack_and_move_loops, mc_ ) );
 
 //	protocols::simple_moves::RotamerTrialsMinMoverOP rtmin = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn_pack_, tf_ );
 //	TrialMoverOP rtmin_trial = new TrialMover( rtmin, mc_ );
 
 	//InterfaceSidechainMinMoverOP scmin_mover = new InterfaceSidechainMinMover(rb_jump_, scorefxn_pack_ );
-	SymSidechainMinMoverOP scmin_mover = new SymSidechainMinMover(scorefxn_pack_, tf_ );
-	TrialMoverOP scmin_trial = new TrialMover( scmin_mover, mc_ );
+	SymSidechainMinMoverOP scmin_mover( new SymSidechainMinMover(scorefxn_pack_, tf_ ) );
+	TrialMoverOP scmin_trial( new TrialMover( scmin_mover, mc_ ) );
 
 	// the standard mcm cycle : rb perturbation->rotamer trials->minimization->MC accept
-	SequenceMoverOP rb_mover = new SequenceMover;
+	SequenceMoverOP rb_mover( new SequenceMover );
 	rb_mover->add_mover( rb_perturb );
 	if ( repack_switch_ ) rb_mover->add_mover( pack_rottrial );
 
 	core::Real minimization_threshold = 15.0;
-	JumpOutMoverOP rb_mover_min = new JumpOutMover( rb_mover, min_mover, scorefxn_, minimization_threshold );
-	TrialMoverOP rb_mover_min_trial = new TrialMover( rb_mover_min, mc_ );
+	JumpOutMoverOP rb_mover_min( new JumpOutMover( rb_mover, min_mover, scorefxn_, minimization_threshold ) );
+	TrialMoverOP rb_mover_min_trial( new TrialMover( rb_mover_min, mc_ ) );
 
 	//every step (rb_mover_min_trial): the standard mcm cycle
 	//every 8th step (repack_step): standard mcm cycle + repacking
 	//try moving loops too, if desired
 
-	SequenceMoverOP repack_step = new SequenceMover;
+	SequenceMoverOP repack_step( new SequenceMover );
 	repack_step->add_mover(rb_mover_min_trial);
 
 	if ( repack_switch_ ){
@@ -490,26 +490,26 @@ void SymDockingHiRes::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 		if (scmin_) repack_step->add_mover(scmin_trial);
 		}
 
-	CycleMoverOP rb_mover_min_trial_repack  = new CycleMover;
+	CycleMoverOP rb_mover_min_trial_repack( new CycleMover );
 	for ( Size i=1; i<repack_period_; ++i ) rb_mover_min_trial_repack->add_mover( rb_mover_min_trial );
 	rb_mover_min_trial_repack->add_mover( repack_step );
 
 	//set up initial repack mover
-	SequenceMoverOP initial_repack = new SequenceMover;
+	SequenceMoverOP initial_repack( new SequenceMover );
 	initial_repack->add_mover(pack_interface_and_move_loops_trial);
 	//if (rtmin_) initial_repack->add_mover(rtmin_trial);
 	if (scmin_) initial_repack->add_mover(scmin_trial);
 
 	//set up initial and final min_trial movers for docking
-	TrialMoverOP minimize_trial = new TrialMover( min_mover, mc_ );
+	TrialMoverOP minimize_trial( new TrialMover( min_mover, mc_ ) );
 
 	//set up mcm cycles and mcm_repack cycles
-	RepeatMoverOP mcm_four_cycles = new RepeatMover( rb_mover_min_trial, 4 );
-	RepeatMoverOP mcm_fortyfive_cycles = new RepeatMover( rb_mover_min_trial_repack, 45 );
+	RepeatMoverOP mcm_four_cycles( new RepeatMover( rb_mover_min_trial, 4 ) );
+	RepeatMoverOP mcm_fortyfive_cycles( new RepeatMover( rb_mover_min_trial_repack, 45 ) );
 	//set up protocol mover
 	TR << "::::::::::::::::::DOCK_MCM:::::::::::::::::::" << std::endl;
 
-	docking_highres_protocol_mover_ = new SequenceMover;
+	docking_highres_protocol_mover_ = moves::SequenceMoverOP( new SequenceMover );
 	if (repack_switch_) docking_highres_protocol_mover_->add_mover( initial_repack );
 	docking_highres_protocol_mover_->add_mover( minimize_trial );
 	docking_highres_protocol_mover_->add_mover( mcm_four_cycles );
@@ -525,29 +525,29 @@ void SymDockingHiRes::setup_packing( core::pose::Pose & pose ) {
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 	//set upconstructor packer options
-	tf_ = new TaskFactory;
+	tf_ = core::pack::task::TaskFactoryOP( new TaskFactory );
 	if( init_task_factory_ )
 	{
 		TR << "Using user-defined TaskFactory." << std::endl;
-		tf_ = new TaskFactory( *init_task_factory_ );
+		tf_ = core::pack::task::TaskFactoryOP( new TaskFactory( *init_task_factory_ ) );
 	}
 	if( design_ ) {
 		TR << "Designing during docking" << std::endl;
 	}
 	else { // default case -- restrict everything to repacking.
-		tf_->push_back( new RestrictToRepacking );
+		tf_->push_back( TaskOperationCOP( new RestrictToRepacking ) );
 	}
 //	tf_->push_back( new OperateOnCertainResidues( new PreventRepackingRLT, new ResidueLacksProperty("PROTEIN") ) );
-	tf_->push_back( new InitializeFromCommandline );
-	tf_->push_back( new IncludeCurrent );
-	tf_->push_back( new NoRepackDisulfides );
-	if( option[OptionKeys::packing::resfile].user() ) tf_->push_back( new ReadResfile );
+	tf_->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
+	tf_->push_back( TaskOperationCOP( new IncludeCurrent ) );
+	tf_->push_back( TaskOperationCOP( new NoRepackDisulfides ) );
+	if( option[OptionKeys::packing::resfile].user() ) tf_->push_back( TaskOperationCOP( new ReadResfile ) );
 
 	// incorporating Ian's UnboundRotamer operation.
 	// note that nothing happens if unboundrot option is inactive!
-	core::pack::rotamer_set::UnboundRotamersOperationOP unboundrot = new core::pack::rotamer_set::UnboundRotamersOperation();
+	core::pack::rotamer_set::UnboundRotamersOperationOP unboundrot( new core::pack::rotamer_set::UnboundRotamersOperation() );
 	unboundrot->initialize_from_command_line();
-	operation::AppendRotamerSetOP unboundrot_operation = new operation::AppendRotamerSet( unboundrot );
+	operation::AppendRotamerSetOP unboundrot_operation( new operation::AppendRotamerSet( unboundrot ) );
 	tf_->push_back( unboundrot_operation );
 	core::pack::dunbrack::load_unboundrot(pose); // adds scoring bonuses for the "unbound" rotamers, if any
 
@@ -579,12 +579,12 @@ void SymDockingHiRes::set_dock_ppk_protocol( core::pose::Pose & pose ) {
 
 	PackerTaskOP task = tf_->create_task_and_apply_taskoperations( pose ); // does not include restrict to interface
 
-	protocols::simple_moves::PackRotamersMoverOP prepack_full_repack = new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn_pack_, task );
+	protocols::simple_moves::PackRotamersMoverOP prepack_full_repack( new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn_pack_, task ) );
 	//RotamerTrialsMinMoverOP rtmin_mover = new symmetry::SymRotamerTrialsMinMover( scorefxn_pack_, *task );
-	SymSidechainMinMoverOP scmin_mover = new SymSidechainMinMover(scorefxn_pack_, task);
+	SymSidechainMinMoverOP scmin_mover( new SymSidechainMinMover(scorefxn_pack_, task) );
 
 	// set up protocol
-	docking_highres_protocol_mover_ = new SequenceMover;
+	docking_highres_protocol_mover_ = moves::SequenceMoverOP( new SequenceMover );
 	if (scmin_) docking_highres_protocol_mover_->add_mover( scmin_mover );
 	docking_highres_protocol_mover_->add_mover( translate_away );
 	docking_highres_protocol_mover_->add_mover( prepack_full_repack );

@@ -20,8 +20,8 @@ namespace core {
 namespace sequence {
 
 class Aligner;
-typedef utility::pointer::owning_ptr< Aligner > AlignerOP;
-typedef utility::pointer::owning_ptr< Aligner const > AlignerCOP;
+typedef utility::pointer::shared_ptr< Aligner > AlignerOP;
+typedef utility::pointer::shared_ptr< Aligner const > AlignerCOP;
 
 } // sequence
 } // core

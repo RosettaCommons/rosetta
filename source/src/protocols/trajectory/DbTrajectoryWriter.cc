@@ -112,10 +112,10 @@ void DbTrajectoryWriter::write_schema_to_db() const { // {{{1
 
 	sessionOP db_session = basic::database::get_db_session();
 
-	Column job_id("job_id", new DbBigInt(), false);
-	Column iteration("iteration", new DbBigInt(), false);
-	Column score("score", new DbReal(), false);
-	Column silent_pose("silent_pose", new DbText(), false);
+	Column job_id("job_id", DbDataTypeOP( new DbBigInt() ), false);
+	Column iteration("iteration", DbDataTypeOP( new DbBigInt() ), false);
+	Column score("score", DbDataTypeOP( new DbReal() ), false);
+	Column silent_pose("silent_pose", DbDataTypeOP( new DbText() ), false);
 
 	PrimaryKey composite_key(make_vector1(job_id, iteration));
 	Schema trajectories("trajectories", composite_key);
@@ -138,21 +138,20 @@ void DbTrajectoryWriter::write_cache_to_db() const { // {{{1
 	trajectory_insert.add_column("score");
 	trajectory_insert.add_column("silent_pose");
 
-	RowDataBaseOP job = new RowData<Size>("job_id", job_id_);
+	RowDataBaseOP job( new RowData<Size>("job_id", job_id_) );
 
 	BOOST_FOREACH(Frame frame, frame_cache_) {
 		stringstream string_stream;
 		SilentFileData silent_file;
-		SilentStructOP silent_data =
-			new BinarySilentStruct(frame.pose, "db");
+		SilentStructOP silent_data( new BinarySilentStruct(frame.pose, "db") );
 		silent_file._write_silent_struct(*silent_data, string_stream);
 
-		RowDataBaseOP iteration = new RowData<Size>(
-				"iteration", frame.iteration);
-		RowDataBaseOP score = new RowData<Real>(
-				"score", frame.pose.energies().total_energy());
-		RowDataBaseOP silent_pose = new RowData<string>(
-				"silent_pose", string_stream.str());
+		RowDataBaseOP iteration( new RowData<Size>(
+				"iteration", frame.iteration) );
+		RowDataBaseOP score( new RowData<Real>(
+				"score", frame.pose.energies().total_energy()) );
+		RowDataBaseOP silent_pose( new RowData<string>(
+				"silent_pose", string_stream.str()) );
 
 		trajectory_insert.add_row(make_vector(job, iteration, score, silent_pose));
 	}

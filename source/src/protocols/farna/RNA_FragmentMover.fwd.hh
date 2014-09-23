@@ -21,7 +21,7 @@
 namespace protocols {
 namespace farna {
 
-	typedef utility::pointer::owning_ptr< RNA_FragmentMover > RNA_FragmentMoverOP;
+	typedef utility::pointer::shared_ptr< RNA_FragmentMover > RNA_FragmentMoverOP;
 
 } //farna
 } //protocols

@@ -45,7 +45,7 @@ namespace screener {
 	BaseCentroidScreener::BaseCentroidScreener( modeler::rna::checker::RNA_BaseCentroidCheckerOP base_centroid_checker,
 																							core::kinematics::Stub const & moving_res_base_stub ):
 		base_centroid_checker_( base_centroid_checker ),
-		screening_pose_( 0 ),
+		screening_pose_( /* 0 */ ),
 		force_centroid_interaction_( true ),
 		using_stub_( true ),
 		moving_res_base_stub_( moving_res_base_stub )

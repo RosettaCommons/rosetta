@@ -24,8 +24,8 @@ namespace sampler {
 namespace rigid_body {
 
 	class EulerAngles;
-	typedef utility::pointer::owning_ptr< EulerAngles > EulerAnglesOP;
-	typedef utility::pointer::owning_ptr< EulerAngles const > EulerAnglesCOP;
+	typedef utility::pointer::shared_ptr< EulerAngles > EulerAnglesOP;
+	typedef utility::pointer::shared_ptr< EulerAngles const > EulerAnglesCOP;
 
 } //rigid_body
 } //sampler

@@ -21,7 +21,7 @@ namespace protocols {
 namespace simple_moves {
 
 	class ConsensusDesignMover;
-	typedef utility::pointer::owning_ptr< ConsensusDesignMover > ConsensusDesignMoverOP;
+	typedef utility::pointer::shared_ptr< ConsensusDesignMover > ConsensusDesignMoverOP;
 
 } // moves
 } // protocols

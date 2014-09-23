@@ -91,7 +91,7 @@ void NativeEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eva
 
 	core::pose::PoseOP native_pose = NULL;
 	if ( option[ in::file::native ].user() ) {
-		native_pose = new core::pose::Pose;
+		native_pose = core::pose::PoseOP( new core::pose::Pose );
 		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() );
 	}
 
@@ -99,30 +99,30 @@ void NativeEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eva
 	// set rmsd native
 	if ( native_pose && option[ in::file::native ].user() ) {
 		if ( option[ OptionKeys::symmetry::symmetric_rmsd ].user() ){
-				eval.add_evaluation( new SymmetricRmsdEvaluator( native_pose, "" ) );
+				eval.add_evaluation( PoseEvaluatorOP( new SymmetricRmsdEvaluator( native_pose, "" ) ) );
 		}
 
 		if ( option[ in::file::native_exclude_res ].user() ) {
-			eval.add_evaluation( new SelectRmsdEvaluator(
+			eval.add_evaluation( PoseEvaluatorOP( new SelectRmsdEvaluator(
 				native_pose,
 				core::scoring::invert_exclude_residues(
-				native_pose->total_residue(), option[ in::file::native_exclude_res ]()), "" )
+				native_pose->total_residue(), option[ in::file::native_exclude_res ]()), "" ) )
 			);
 			if ( option[ OptionKeys::evaluation::gdtmm ]() ) {
-				eval.add_evaluation( new SelectGdtEvaluator(
+				eval.add_evaluation( PoseEvaluatorOP( new SelectGdtEvaluator(
 					native_pose,
 					core::scoring::invert_exclude_residues( native_pose->total_residue(),
-					option[ in::file::native_exclude_res ]()), "" )
+					option[ in::file::native_exclude_res ]()), "" ) )
 				);
 			}
 		} else if ( option[ OptionKeys::abinitio::rmsd_residues ].user() ){
 			core::Size start = option[ OptionKeys::abinitio::rmsd_residues ]()[ 1 ];
 			Size end = option[ OptionKeys::abinitio::rmsd_residues ]()[ 2 ];
-			eval.add_evaluation( new RmsdEvaluator( native_pose, start, end,  "", option[ OptionKeys::abinitio::bGDT ]() ) );
+			eval.add_evaluation( PoseEvaluatorOP( new RmsdEvaluator( native_pose, start, end,  "", option[ OptionKeys::abinitio::bGDT ]() ) ) );
 		} else {
-			eval.add_evaluation( new SelectRmsdEvaluator( native_pose, "" ) );
-			if ( option[ OptionKeys::evaluation::gdtmm ]() ) eval.add_evaluation( new SelectGdtEvaluator( native_pose, "" ) );
-			eval.add_evaluation( new SelectMaxsubEvaluator( native_pose, "" ) );
+			eval.add_evaluation( PoseEvaluatorOP( new SelectRmsdEvaluator( native_pose, "" ) ) );
+			if ( option[ OptionKeys::evaluation::gdtmm ]() ) eval.add_evaluation( PoseEvaluatorOP( new SelectGdtEvaluator( native_pose, "" ) ) );
+			eval.add_evaluation( PoseEvaluatorOP( new SelectMaxsubEvaluator( native_pose, "" ) ) );
 		}
 	} // if ( native_pose_ )
 	
@@ -144,9 +144,9 @@ void NativeEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eva
 			loops::Loops core( loops );
 			utility::vector1< Size> selection;
 			core.get_residues( selection );
-			if ( native_pose ) eval.add_evaluation( new simple_filters::SelectRmsdEvaluator( native_pose, selection, rmsd_core[ ct ].base() ) );
+			if ( native_pose ) eval.add_evaluation( PoseEvaluatorOP( new simple_filters::SelectRmsdEvaluator( native_pose, selection, rmsd_core[ ct ].base() ) ) );
 			if ( option[ OptionKeys::evaluation::score_with_rmsd ]() ) {
-				eval.add_evaluation( new simple_filters::TruncatedScoreEvaluator( rmsd_core[ ct ].base(), selection ) );
+				eval.add_evaluation( PoseEvaluatorOP( new simple_filters::TruncatedScoreEvaluator( rmsd_core[ ct ].base(), selection ) ) );
 			}
 		}
 	}

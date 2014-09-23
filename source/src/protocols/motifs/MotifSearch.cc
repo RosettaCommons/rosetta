@@ -83,7 +83,7 @@ MotifSearch::~MotifSearch()
 MotifSearch::MotifSearch()
 	: motif_library_(),
 		target_positions_(),
-		build_positionOPs_(0),
+		build_positionOPs_(/* 0 */),
 		target_conformers_map_(),
 		// Option flags/parameters: default to command line options
 		ztest_cutoff_1_(	basic::options::option[ basic::options::OptionKeys::motifs::z1 ]() ),
@@ -464,7 +464,7 @@ MotifSearch::incorporate_motifs(
 									passed_automorphism = false;
 								}
 							}
-							core::conformation::ResidueOP posebase = new core::conformation::Residue( posecopy.residue( *bpos ) );
+							core::conformation::ResidueOP posebase( new core::conformation::Residue( posecopy.residue( *bpos ) ) );
 							if( passed_automorphism ) {
 								motifcop->place_atoms( *(rotset->nonconst_rotamer(ir2)), *posebase, atoms, false );
 							} else {
@@ -500,11 +500,11 @@ MotifSearch::incorporate_motifs(
 				if( passed_quick_and_dirty ) break;
 				if( ! tftest ) continue;
 
-				MotifHitOP motifhit = new MotifHit( *motifcop, bestpos, passed_automorphism );
+				MotifHitOP motifhit( new MotifHit( *motifcop, bestpos, passed_automorphism ) );
 
 				// If there are no conformers will use the base from the pose, so rmsd can be 0 theoretically
 				if( noconformers ) {
-					core::conformation::ResidueOP posebase2 = new core::conformation::Residue( posecopy2.residue( bestpos) );
+					core::conformation::ResidueOP posebase2( new core::conformation::Residue( posecopy2.residue( bestpos) ) );
 					if( passed_automorphism ) {
 						motifcop->place_residue(*(rotset->nonconst_rotamer(ir2)), *posebase2, false );
 					} else {
@@ -615,7 +615,7 @@ MotifSearch::incorporate_motifs(
 						// No, because the minimize itself needs the residues to be a part of the pose?
 						// Or maybe instead of copying the pose you could save the residue you are replacing and replace it back?
 						//core::pose::Pose pose_dump( pose );
-						core::conformation::ResidueOP build_rotamer = new core::conformation::Residue( *(motifhitop->build_rotamer()) );
+						core::conformation::ResidueOP build_rotamer( new core::conformation::Residue( *(motifhitop->build_rotamer()) ) );
 						pose_dump.replace_residue( (*ir)->seqpos(), *build_rotamer, false );
 						// The residue is probably already placed . . .
 					//	if( passed_automorphism ) {
@@ -658,9 +658,9 @@ MotifSearch::incorporate_motifs(
 						/*if( data_ ) {
 							data_output_file << "Before sidechain refinement constraints score is " << pre_sc_constraint_check << std::endl;
 						}*/
-						core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
+						core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
 						movemap->set_chi( (*ir)->seqpos(), true );
-						protocols::simple_moves::MinMoverOP minmover = new protocols::simple_moves::MinMover( movemap, score_fxn, "dfpmin_armijo_nonmonotone_atol", 0.000001, true );
+						protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover( movemap, score_fxn, "dfpmin_armijo_nonmonotone_atol", 0.000001, true ) );
 						minmover->apply( pose_dump );
 						//core::io::pdb::dump_pdb( pose_dump, pose3_name_full.str() );
 						core::Real sc_constraint_check( pose_dump.energies().total_energies()[ coordinate_constraint ] );
@@ -841,7 +841,7 @@ MotifSearch::identify_motif_BuildPositions(
 			if( restrict_to_wt_ ) {
 				allowed_types.insert( pose.residue( seqpos ).name3() );
 			}
-			BuildPositionOP build_position = new BuildPosition( seqpos, short_target_positions, allowed_types );
+			BuildPositionOP build_position( new BuildPosition( seqpos, short_target_positions, allowed_types ) );
 			build_positionOPs_.push_back( build_position );
 		}
 	} else {
@@ -861,7 +861,7 @@ MotifSearch::BuildPosition_from_Size(
 	if( restrict_to_wt_ ) {
 		allowed_types.insert( pose.residue( input_BP ).name3() );
 	}
-	BuildPositionOP build_position = new BuildPosition( input_BP, short_target_positions, allowed_types );
+	BuildPositionOP build_position( new BuildPosition( input_BP, short_target_positions, allowed_types ) );
 	build_positionOPs_.push_back( build_position );
 }
 
@@ -876,7 +876,7 @@ MotifSearch::defs2BuildPositions(
 		std::map< Size, std::set< std::string > > mappositions( bpdefs2map( pose, defs ) );
 		for ( std::map<Size, std::set< std::string > >::const_iterator it( mappositions.begin() ),
 				end( mappositions.end() ); it != end; ++it ) {
-			BuildPositionOP build_position = new BuildPosition( it->first, full_tl, it->second );
+			BuildPositionOP build_position( new BuildPosition( it->first, full_tl, it->second ) );
 			build_positionOPs_.push_back( build_position );
 		}
 	} else {
@@ -897,7 +897,7 @@ MotifSearch::defs2BuildPositions_findts(
 				end( mappositions.end() ); it != end; ++it ) {
 			Size test(it->first);
 			Sizes short_tl( shorten_target_list( pose, test, full_tl ) );
-			BuildPositionOP build_position = new BuildPosition( it->first, short_tl, it->second );
+			BuildPositionOP build_position( new BuildPosition( it->first, short_tl, it->second ) );
 			build_positionOPs_.push_back( build_position );
 		}
 	} else {
@@ -939,7 +939,7 @@ MotifSearch::protein_DNA_motif_build_positions_JA(
 	Sizes & target_positions
 )
 {
-	protocols::dna::DnaInterfaceFinderOP interface = new protocols::dna::DnaInterfaceFinder( 10*10, 3.9*3.9, 6., true );
+	protocols::dna::DnaInterfaceFinderOP interface( new protocols::dna::DnaInterfaceFinder( 10*10, 3.9*3.9, 6., true ) );
 	if ( ! target_positions.empty() ) { // again, this won't work well if there are multiple target positions in vector
 		interface->determine_protein_interface( pose, protein_positions_, target_positions ); // unless target_positions_ is empty - will actually deal with that later, will fill with all DNA in initialize if no protein pos or dna pos are given
 		protocols::dna::DnaNeighbors protein_neighbors = interface->protein_neighbors();
@@ -963,7 +963,7 @@ MotifSearch::protein_DNA_motif_target_positions_JA(
 )
 {
 	// JA used 3.7, I picked 3.9 to access a position I knew was important
-	protocols::dna::DnaInterfaceFinderOP interface = new protocols::dna::DnaInterfaceFinder( 10*10, 3.9*3.9, 6., true );
+	protocols::dna::DnaInterfaceFinderOP interface( new protocols::dna::DnaInterfaceFinder( 10*10, 3.9*3.9, 6., true ) );
 	if ( ! build_positions.empty() ) {
 		interface->determine_dna_interface( pose, build_positions, target_positions );
 		protocols::dna::DnaNeighbors dna_neighbors = interface->dna_neighbors();

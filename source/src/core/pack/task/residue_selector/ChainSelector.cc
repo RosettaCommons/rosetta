@@ -136,7 +136,7 @@ void ChainSelector::select_chain_by_pdb_chain_char(
 
 ResidueSelectorOP
 ChainSelectorCreator::create_residue_selector() const {
-	return new ChainSelector;
+	return ResidueSelectorOP( new ChainSelector );
 }
 
 std::string

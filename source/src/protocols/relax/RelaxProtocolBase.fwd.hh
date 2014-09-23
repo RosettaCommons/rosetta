@@ -28,11 +28,11 @@ namespace relax {
 class RelaxProtocolBase;
 
 // Types
-typedef  utility::pointer::owning_ptr< RelaxProtocolBase >  RelaxProtocolBaseOP;
-typedef  utility::pointer::owning_ptr< RelaxProtocolBase const >  RelaxProtocolBaseCOP;
+typedef  utility::pointer::shared_ptr< RelaxProtocolBase >  RelaxProtocolBaseOP;
+typedef  utility::pointer::shared_ptr< RelaxProtocolBase const >  RelaxProtocolBaseCOP;
 
-typedef  utility::pointer::access_ptr< RelaxProtocolBase >  RelaxProtocolBaseAP;
-typedef  utility::pointer::access_ptr< RelaxProtocolBase const >  RelaxProtocolBaseCAP;
+typedef  utility::pointer::weak_ptr< RelaxProtocolBase >  RelaxProtocolBaseAP;
+typedef  utility::pointer::weak_ptr< RelaxProtocolBase const >  RelaxProtocolBaseCAP;
 
 
 } // namespace kinematics

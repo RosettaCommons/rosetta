@@ -110,7 +110,7 @@ public:
   RNA_DataInfoOP
   clone() const
   {
-    return new RNA_DataInfo( *this );
+    return RNA_DataInfoOP( new RNA_DataInfo( *this ) );
   }
 
 

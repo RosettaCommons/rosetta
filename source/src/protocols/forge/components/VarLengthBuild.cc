@@ -191,13 +191,13 @@ VarLengthBuild::~VarLengthBuild() {}
 
 /// @brief clone this object
 protocols::moves::MoverOP VarLengthBuild::clone() const {
-	return new VarLengthBuild( *this );
+	return protocols::moves::MoverOP( new VarLengthBuild( *this ) );
 }
 
 
 /// @brief create a new instance of this type of object
 protocols::moves::MoverOP VarLengthBuild::fresh_instance() const {
-	return new VarLengthBuild();
+	return protocols::moves::MoverOP( new VarLengthBuild() );
 }
 
 
@@ -508,7 +508,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 
       std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
 
-			LoopsOP loops = new Loops();
+			LoopsOP loops( new Loops() );
 
 			//Temporary fix: special case for denovo type, needed artificially
 			//padding residues.  in reality all loops would be padded, but for
@@ -519,7 +519,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 			//	std::cout << "man handle loop." << std::endl;
 				loops->add_loop( Loop(1, remodel_data_.blueprint.size()+2, 0, 0, true) );
 			} else {
-        loops = new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) );
+        loops = LoopsOP( new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) ) );
 			}
 
       Pose bufferPose(archive_pose);
@@ -646,7 +646,7 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 
 	// data to feed to other parts of rosetta
 	Intervals fragment_only_regions;
-	loops::LoopsOP loops = new loops::Loops();
+	loops::LoopsOP loops( new loops::Loops() );
 
 	// identify regions to rebuild and pick fragments
 	std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
@@ -773,7 +773,7 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 
 	if ( (!ignore_cmdline_enzdes_cstfile_) && basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ){
 
-		protocols::forge::remodel::RemodelEnzdesCstModuleOP cstOP = new protocols::forge::remodel::RemodelEnzdesCstModule(remodel_data_);
+		protocols::forge::remodel::RemodelEnzdesCstModuleOP cstOP( new protocols::forge::remodel::RemodelEnzdesCstModule(remodel_data_) );
 
 		//safety
 		pose.remove_constraints();
@@ -792,7 +792,7 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 				//safety
 				pose.remove_constraints();
 
-				protocols::simple_moves::ConstraintSetMoverOP constraint = new protocols::simple_moves::ConstraintSetMover();
+				protocols::simple_moves::ConstraintSetMoverOP constraint( new protocols::simple_moves::ConstraintSetMover() );
 				constraint->apply( pose );
 
 				sfx_->set_weight(core::scoring::atom_pair_constraint, 1.0);
@@ -846,12 +846,12 @@ VarLengthBuild::MoverOP VarLengthBuild::loop_mover_instance(
 	using protocols::loops::loop_mover::IndependentLoopMover;
 	using protocols::loops::LoopMoverFactory;
 
-	typedef utility::pointer::owning_ptr< IndependentLoopMover > IndependentLoopMoverOP;
+	typedef utility::pointer::shared_ptr< IndependentLoopMover > IndependentLoopMoverOP;
 
 	MoverOP lm;
 
 	if ( loop_mover_str_ == "RemodelLoopMover" ) { // use RemodelLoopMover
-		RemodelLoopMoverOP loop_mover = new RemodelLoopMover( loops );
+		RemodelLoopMoverOP loop_mover( new RemodelLoopMover( loops ) );
 		loop_mover->remodelData(remodel_data_);
 		loop_mover->scorefunction( *sfx_ );
 
@@ -881,7 +881,7 @@ VarLengthBuild::MoverOP VarLengthBuild::loop_mover_instance(
 
 		// protocols::loops really needs to get refactored; when this happens the
 		// artificial cast and setup below will change.
-		IndependentLoopMoverOP loop_mover( static_cast< IndependentLoopMover * >( loops::LoopMoverFactory::get_instance()->create_loop_mover( loop_mover_str_, loops ).get() ) );
+		IndependentLoopMoverOP loop_mover( utility::pointer::static_pointer_cast< protocols::loops::loop_mover::IndependentLoopMover > ( loops::LoopMoverFactory::get_instance()->create_loop_mover( loop_mover_str_, loops ) ) );
 		loop_mover->set_scorefxn( sfx_ );
 		loop_mover->set_strict_loops( true ); // no sliding window
 
@@ -922,7 +922,7 @@ void VarLengthBuild::pick_all_fragments(
 	// pick full-mers
 	if ( use_fullmer_ ) {
 		if ( !fragfull_.get() ){
-			fragfull_ = new OrderedFragSet();
+			fragfull_ = OrderedFragSetOP( new OrderedFragSet() );
 		}
 
 		fragfull_->add( pick_fragments( complete_ss, complete_aa, complete_abego, interval, interval.length(), n_frags ) );
@@ -930,7 +930,7 @@ void VarLengthBuild::pick_all_fragments(
 
 	// pick 9-mers
 	if ( !frag9_.get() ) {
-		frag9_ = new ConstantLengthFragSet( 9 );
+		frag9_ = ConstantLengthFragSetOP( new ConstantLengthFragSet( 9 ) );
 	}
 	if ( basic::options::option[basic::options::OptionKeys::in::file::frag9].user() ){
     frag9_->read_fragment_file( basic::options::option[basic::options::OptionKeys::in::file::frag9]());
@@ -940,9 +940,9 @@ void VarLengthBuild::pick_all_fragments(
 
 	// pick 3-mers
 	if ( !frag3_.get() ) {
-		frag3_ = new ConstantLengthFragSet( 3 );
+		frag3_ = ConstantLengthFragSetOP( new ConstantLengthFragSet( 3 ) );
 	}
-	ConstantLengthFragSetOP tmp_frag3 = new ConstantLengthFragSet( 3 );
+	ConstantLengthFragSetOP tmp_frag3( new ConstantLengthFragSet( 3 ) );
 	if ( basic::options::option[basic::options::OptionKeys::in::file::frag3].user() ){
     tmp_frag3->read_fragment_file( basic::options::option[basic::options::OptionKeys::in::file::frag3]());
     frag3_->read_fragment_file( basic::options::option[basic::options::OptionKeys::in::file::frag3]());
@@ -953,7 +953,7 @@ void VarLengthBuild::pick_all_fragments(
 
 	// make 1-mers from 3-mers
 	if ( !frag1_.get() ) {
-		frag1_ = new ConstantLengthFragSet( 1 );
+		frag1_ = ConstantLengthFragSetOP( new ConstantLengthFragSet( 1 ) );
 	}
 	frag1_->add( *smallmer_from_largemer( tmp_frag3->begin(), tmp_frag3->end(), 1 ) );
 }
@@ -1020,7 +1020,7 @@ VarLengthBuild::FrameList VarLengthBuild::pick_fragments(
 			abego_sub.clear(); // make sure it is empty
 		}
 
-		FrameOP frame = new Frame( interval.left + j, frag_length );
+		FrameOP frame( new Frame( interval.left + j, frag_length ) );
 
 		frame->add_fragment( pick_fragments( ss_sub, aa_sub, abego_sub, n_frags, true, IndependentBBTorsionSRFD() ) );
 

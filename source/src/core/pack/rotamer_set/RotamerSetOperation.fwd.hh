@@ -28,13 +28,13 @@ namespace rotamer_set {
 class RotamerOperation;
 class RotamerSetOperation;
 
-typedef utility::pointer::owning_ptr< RotamerOperation > RotamerOperationOP;
-typedef utility::pointer::owning_ptr< RotamerOperation const > RotamerOperationCOP;
+typedef utility::pointer::shared_ptr< RotamerOperation > RotamerOperationOP;
+typedef utility::pointer::shared_ptr< RotamerOperation const > RotamerOperationCOP;
 
 typedef std::list< RotamerOperationOP > RotamerOperations;
 
-typedef utility::pointer::owning_ptr< RotamerSetOperation > RotamerSetOperationOP;
-typedef utility::pointer::owning_ptr< RotamerSetOperation const > RotamerSetOperationCOP;
+typedef utility::pointer::shared_ptr< RotamerSetOperation > RotamerSetOperationOP;
+typedef utility::pointer::shared_ptr< RotamerSetOperation const > RotamerSetOperationCOP;
 
 typedef std::list< RotamerSetOperationOP > RotSetOperationList;
 typedef std::list< RotamerSetOperationOP >::const_iterator RotSetOperationListIterator;

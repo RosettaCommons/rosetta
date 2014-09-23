@@ -65,7 +65,7 @@ HelixPairingFilter::HelixPairingFilter( HelixPairings const & hpairs ):
 	bend_angle_( 20.0 ),
 	cross_angle_( 45.0 ),
 	align_angle_( 25.0 ),
-	hpairset_( new HelixPairingSet( hpairs ) )
+	hpairset_( HelixPairingSetOP( new HelixPairingSet( hpairs ) ) )
 {}
 
 // @brief constructor with arguments
@@ -77,7 +77,7 @@ HelixPairingFilter::HelixPairingFilter( String const & hpairs ):
 	cross_angle_( 45.0 ),
 	align_angle_( 25.0 )
 {
-	hpairset_ = new HelixPairingSet( hpairs );
+	hpairset_ = HelixPairingSetOP( new HelixPairingSet( hpairs ) );
 }
 
 // @brief copy constructor
@@ -95,13 +95,13 @@ HelixPairingFilter::HelixPairingFilter( HelixPairingFilter const & rval ):
 // @brief set filtered sheet_topology by HelixPairings
 void HelixPairingFilter::helix_pairings( HelixPairings const & hpairs )
 {
-	hpairset_ = new HelixPairingSet( hpairs );
+	hpairset_ = HelixPairingSetOP( new HelixPairingSet( hpairs ) );
 }
 
 // @brief set filtered sheet_topology by SrandPairingSetOP
 void HelixPairingFilter::helix_pairings( String const & hpairs )
 {
-	hpairset_ = new HelixPairingSet( hpairs );
+	hpairset_ = HelixPairingSetOP( new HelixPairingSet( hpairs ) );
 }
 
 /// @brief
@@ -143,7 +143,7 @@ HelixPairingFilter::apply( Pose const & pose ) const
 	runtime_assert( secstruct_.length() == pose.total_residue() );
 
 	// set SS_Info
-	SS_Info2_OP  ss_info = new SS_Info2( pose, secstruct_ );
+	SS_Info2_OP  ss_info( new SS_Info2( pose, secstruct_ ) );
 	Helices const & helices( ss_info->helices() );
 
 	// calc geometry of helixpairing
@@ -229,7 +229,7 @@ HelixPairingFilter::compute( Pose const & pose ) const
 	runtime_assert( secstruct_.length() == pose.total_residue() );
 
 	// set SS_Info
-	SS_Info2_OP  ss_info = new SS_Info2( pose, secstruct_ );
+	SS_Info2_OP  ss_info( new SS_Info2( pose, secstruct_ ) );
 	// Helices const & helices( ss_info->helices() ); // Unused variable causes warning.
 
 	// calc geometry of helixpairing
@@ -305,7 +305,7 @@ HelixPairingFilter::parse_my_tag(
 }
 
 protocols::filters::FilterOP
-HelixPairingFilterCreator::create_filter() const { return new HelixPairingFilter; }
+HelixPairingFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HelixPairingFilter ); }
 
 std::string
 HelixPairingFilterCreator::keyname() const { return "HelixPairing"; }

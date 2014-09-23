@@ -79,7 +79,7 @@ SetTorsionCreator::keyname() const
 
 protocols::moves::MoverOP
 SetTorsionCreator::create_mover() const {
-	return new SetTorsion;
+	return protocols::moves::MoverOP( new SetTorsion );
 }
 
 std::string

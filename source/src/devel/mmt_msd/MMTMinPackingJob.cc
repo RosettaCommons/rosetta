@@ -58,7 +58,7 @@ void MMTMinPackingJob::setup()
 void MMTMinPackingJob::optimize()
 {
 
-	best_assignment_ = new core::pack::scmin::SidechainStateAssignment( rotsets_->nmoltenres() );
+	best_assignment_ = core::pack::scmin::SidechainStateAssignmentOP( new core::pack::scmin::SidechainStateAssignment( rotsets_->nmoltenres() ) );
 
 	core::pack::min_pack_optimize(
 		pose(),	sfxn(),	task(), rotsets_, scminmap_,
@@ -119,11 +119,11 @@ MMTMinPackingJob::final_energy() const
 
 
 void MMTMinPackingJob::clean_up() {
-	rotsets_ = 0;
-	scminmap_ = 0;
-	mingraph_ = 0;
-	atc_ = 0;
-	min_options_ = 0;
+	rotsets_.reset();
+	scminmap_.reset();
+	mingraph_.reset();
+	atc_.reset();
+	min_options_.reset();
 	MMTPackingJob::clean_up();
 }
 

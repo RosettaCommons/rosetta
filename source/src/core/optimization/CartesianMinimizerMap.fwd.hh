@@ -23,8 +23,8 @@ namespace optimization {
 
 class CartesianMinimizerMap;
 
-typedef utility::pointer::owning_ptr< CartesianMinimizerMap > CartesianMinimizerMapOP;
-typedef utility::pointer::owning_ptr< CartesianMinimizerMap const > CartesianMinimizerMapCOP;
+typedef utility::pointer::shared_ptr< CartesianMinimizerMap > CartesianMinimizerMapOP;
+typedef utility::pointer::shared_ptr< CartesianMinimizerMap const > CartesianMinimizerMapCOP;
 
 } // namespace
 } // namespace core

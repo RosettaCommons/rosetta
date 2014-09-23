@@ -112,10 +112,10 @@ public:
 
 
 	filters::FilterOP clone() const {
-		return new PackerNeighborGraphFilter( *this ); }
+		return filters::FilterOP( new PackerNeighborGraphFilter( *this ) ); }
 
 	filters::FilterOP fresh_instance() const {
-		return new PackerNeighborGraphFilter(); }
+		return filters::FilterOP( new PackerNeighborGraphFilter() ); }
 
 
 
@@ -164,8 +164,8 @@ private:
 };
 
 
-typedef utility::pointer::owning_ptr< PackerNeighborGraphFilter >  PackerNeighborGraphFilterOP;
-typedef utility::pointer::owning_ptr< PackerNeighborGraphFilter const >  PackerNeighborGraphFilterCOP;
+typedef utility::pointer::shared_ptr< PackerNeighborGraphFilter >  PackerNeighborGraphFilterOP;
+typedef utility::pointer::shared_ptr< PackerNeighborGraphFilter const >  PackerNeighborGraphFilterCOP;
 
 } // filters
 } // protocols

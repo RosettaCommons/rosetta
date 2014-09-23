@@ -33,10 +33,10 @@ namespace datacache {
 
 
 class CacheableStringFloatMap;
-typedef utility::pointer::owning_ptr< CacheableStringFloatMap > CacheableStringFloatMapOP;
-typedef utility::pointer::owning_ptr< CacheableStringFloatMap const > CacheableStringFloatMapCOP;
-typedef utility::pointer::access_ptr< CacheableStringFloatMap > CacheableStringFloatMapAP;
-typedef utility::pointer::access_ptr< CacheableStringFloatMap const > CacheableStringFloatMapCAP;
+typedef utility::pointer::shared_ptr< CacheableStringFloatMap > CacheableStringFloatMapOP;
+typedef utility::pointer::shared_ptr< CacheableStringFloatMap const > CacheableStringFloatMapCOP;
+typedef utility::pointer::weak_ptr< CacheableStringFloatMap > CacheableStringFloatMapAP;
+typedef utility::pointer::weak_ptr< CacheableStringFloatMap const > CacheableStringFloatMapCAP;
 
 
 } // namespace datacache

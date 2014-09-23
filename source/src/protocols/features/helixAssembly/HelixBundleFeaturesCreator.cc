@@ -30,7 +30,7 @@ namespace helixAssembly {
 HelixBundleFeaturesCreator::HelixBundleFeaturesCreator() {}
 HelixBundleFeaturesCreator::~HelixBundleFeaturesCreator() {}
 FeaturesReporterOP HelixBundleFeaturesCreator::create_features_reporter() const {
-	return new HelixBundleFeatures;
+	return FeaturesReporterOP( new HelixBundleFeatures );
 }
 
 std::string HelixBundleFeaturesCreator::type_name() const {

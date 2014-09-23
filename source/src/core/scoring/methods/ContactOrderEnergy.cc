@@ -48,7 +48,7 @@ methods::EnergyMethodOP
 ContactOrderEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new ContactOrderEnergy;
+	return methods::EnergyMethodOP( new ContactOrderEnergy );
 }
 
 ScoreTypes
@@ -68,7 +68,7 @@ ContactOrderEnergy::ContactOrderEnergy() :
 EnergyMethodOP
 ContactOrderEnergy::clone() const
 {
-    return new ContactOrderEnergy();
+    return EnergyMethodOP( new ContactOrderEnergy() );
 }
 
 /////////////////////////////////////////////////////////////////////////////

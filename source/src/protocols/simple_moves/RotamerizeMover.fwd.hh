@@ -20,8 +20,8 @@ namespace protocols {
 namespace simple_moves {
 
 class RotamerizeMover;
-typedef utility::pointer::owning_ptr< RotamerizeMover > RotamerizeMoverOP;
-typedef utility::pointer::owning_ptr< RotamerizeMover const > RotamerizeMoverCOP;
+typedef utility::pointer::shared_ptr< RotamerizeMover > RotamerizeMoverOP;
+typedef utility::pointer::shared_ptr< RotamerizeMover const > RotamerizeMoverCOP;
 
 } // simple_moves
 } // protocols

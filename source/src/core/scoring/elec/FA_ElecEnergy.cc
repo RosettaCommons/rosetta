@@ -105,7 +105,7 @@ methods::EnergyMethodOP
 FA_ElecEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return new FA_ElecEnergy( options );
+	return methods::EnergyMethodOP( new FA_ElecEnergy( options ) );
 }
 
 ScoreTypes
@@ -153,7 +153,7 @@ FA_ElecEnergy::initialize() {
 methods::EnergyMethodOP
 FA_ElecEnergy::clone() const
 {
-	return new FA_ElecEnergy( *this );
+	return methods::EnergyMethodOP( new FA_ElecEnergy( *this ) );
 }
 
 void
@@ -176,7 +176,7 @@ FA_ElecEnergy::setup_for_minimizing(
 		NeighborListOP nblist;
 		Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
 		Real const XX = coulomb().max_dis() + 2 * tolerated_motion;
-		nblist = new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX);
+		nblist = NeighborListOP( new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX) );
 		if ( pose.energies().use_nblist_auto_update() ) {
 			nblist->set_auto_update( tolerated_motion );
 		}
@@ -225,7 +225,7 @@ FA_ElecEnergy::setup_for_packing(
 
 	set_nres_mono(pose);
 
-	TrieCollectionOP tries = new TrieCollection;
+	TrieCollectionOP tries( new TrieCollection );
 	tries->total_residue( pose.total_residue() );
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		// Do not compute energy for virtual residues.
@@ -494,8 +494,8 @@ FA_ElecEnergy::setup_for_minimizing_for_residue_pair(
 	assert( rsd1.seqpos() < rsd2.seqpos() );
 
 	// update the existing nblist if it's already present in the min_data object
-	ResiduePairNeighborListOP nblist( static_cast< ResiduePairNeighborList * > (pair_data.get_data( elec_pair_nblist )() ));
-	if ( ! nblist ) nblist = new ResiduePairNeighborList;
+	ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( elec_pair_nblist ) ));
+	if ( ! nblist ) nblist = ResiduePairNeighborListOP( new ResiduePairNeighborList );
 
 	/// STOLEN CODE!
 	Real const tolerated_narrow_nblist_motion = 0.75; //option[ run::nblist_autoupdate_narrow ];
@@ -900,8 +900,8 @@ FA_ElecEnergy::evaluate_rotamer_pair_energies(
 	//EtableRotamerTrieBaseOP trie1 = create_rotamer_trie( set1, pose );
 	//EtableRotamerTrieBaseOP trie2 = create_rotamer_trie( set2, pose );
 
-	RotamerTrieBaseCOP trie1( static_cast< trie::RotamerTrieBase const * > ( set1.get_trie( elec_method )() ));
-	RotamerTrieBaseCOP trie2( static_cast< trie::RotamerTrieBase const * > ( set2.get_trie( elec_method )() ));
+	RotamerTrieBaseCOP trie1( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set1.get_trie( elec_method ) ));
+	RotamerTrieBaseCOP trie2( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set2.get_trie( elec_method ) ));
 
 	// figure out which trie countPairFunction needs to be used for this set
 	TrieCountPairBaseOP cp = get_count_pair_function_trie( set1, set2, pose, sfxn );
@@ -973,7 +973,7 @@ FA_ElecEnergy::evaluate_rotamer_background_energies(
 	wbb_sc_ = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_bb_sc ];
 	wsc_sc_ = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_sc_sc ];
 
-	RotamerTrieBaseCOP trie1( static_cast< trie::RotamerTrieBase const * > ( set.get_trie( elec_method )() ));
+	RotamerTrieBaseCOP trie1( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set.get_trie( elec_method ) ));
 	RotamerTrieBaseCOP trie2 = ( static_cast< TrieCollection const & >
 		( pose.energies().data().get( EnergiesCacheableDataType::ELEC_TRIE_COLLECTION )) ).trie( residue.seqpos() );
 
@@ -1043,7 +1043,7 @@ FA_ElecEnergy::get_count_pair_function(
 {
 	using namespace etable::count_pair;
 	if ( res1 == res2 ) {
-		return new CountPairNone;
+		return etable::count_pair::CountPairFunctionCOP( new CountPairNone );
 	}
 
 	conformation::Residue const & rsd1( pose.residue( res1 ) );
@@ -1060,12 +1060,12 @@ FA_ElecEnergy::get_count_pair_function(
 {
 	using namespace etable::count_pair;
 
-	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return new CountPairNone;
+	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return etable::count_pair::CountPairFunctionCOP( new CountPairNone );
 
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		return CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 	}
-	return new CountPairAll;
+	return etable::count_pair::CountPairFunctionCOP( new CountPairAll );
 
 }
 
@@ -1169,8 +1169,8 @@ FA_ElecEnergy::get_count_pair_function_trie(
 	conformation::Residue const & res1( pose.residue( set1.resid() ) );
 	conformation::Residue const & res2( pose.residue( set2.resid() ) );
 
-	trie::RotamerTrieBaseCOP trie1( static_cast< trie::RotamerTrieBase const * > ( set1.get_trie( methods::elec_method )() ));
-	trie::RotamerTrieBaseCOP trie2( static_cast< trie::RotamerTrieBase const * > ( set2.get_trie( methods::elec_method )() ));
+	trie::RotamerTrieBaseCOP trie1( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set1.get_trie( methods::elec_method ) ));
+	trie::RotamerTrieBaseCOP trie2( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set2.get_trie( methods::elec_method ) ));
 
 	return get_count_pair_function_trie( res1, res2, trie1, trie2, pose, sfxn );
 }
@@ -1191,7 +1191,7 @@ FA_ElecEnergy::get_count_pair_function_trie(
 	using namespace etable::etrie;
 
 	TrieCountPairBaseOP tcpfxn;
-	if ( ! defines_score_for_residue_pair(res1, res2, true) ) return new TrieCountPairNone();
+	if ( ! defines_score_for_residue_pair(res1, res2, true) ) return trie::TrieCountPairBaseOP( new TrieCountPairNone() );
 
 	/// code needs to be added here to deal with multiple bonds (and psuedubonds!) between residues,
 	/// but ultimately, this code is incompatible with designing both disulfides and non-disulfies
@@ -1201,11 +1201,11 @@ FA_ElecEnergy::get_count_pair_function_trie(
 	Size conn2 = trie2->get_count_pair_data_for_residue( res1.seqpos() );
 
 	if ( connection == CP_ONE_BOND ) {
-		tcpfxn = new TrieCountPair1BC4( conn1, conn2 );
+		tcpfxn = TrieCountPairBaseOP( new TrieCountPair1BC4( conn1, conn2 ) );
 	} else if ( connection == CP_NO_BONDS) {
-		tcpfxn = new TrieCountPairAll;
+		tcpfxn = TrieCountPairBaseOP( new TrieCountPairAll );
 	} else {
-		tcpfxn = new TrieCountPairGeneric( res1, res2, conn1, conn2 );
+		tcpfxn = TrieCountPairBaseOP( new TrieCountPairGeneric( res1, res2, conn1, conn2 ) );
 	}
 	return tcpfxn;
 

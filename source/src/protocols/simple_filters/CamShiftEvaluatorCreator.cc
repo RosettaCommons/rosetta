@@ -92,7 +92,7 @@ void CamShiftEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & e
         utility_exit_with_message(
                "need to specify dupletss <cs_shifts> <column> with option -evaluation:cam_shifts   last read: "+fname );
       }
-      eval.add_evaluation( new CamShiftEvaluator( column, fname ) );
+      eval.add_evaluation( PoseEvaluatorOP( new CamShiftEvaluator( column, fname ) ) );
     }
   }
 

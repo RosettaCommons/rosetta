@@ -82,7 +82,7 @@ SymUnsatHbondFilter::SymUnsatHbondFilter():
 	write2pdb_( 0 ),
   mode_( "bound_vs_unbound" ),
 	compare_to_ref_( 0 ),
-  reference_pose_( NULL )
+  reference_pose_( /* NULL */ )
 {}
 
 // @brief constructor with arguments 
@@ -113,12 +113,12 @@ SymUnsatHbondFilter::SymUnsatHbondFilter( SymUnsatHbondFilter const & rval ):
 
 protocols::filters::FilterOP
 SymUnsatHbondFilter::fresh_instance() const{
-  return new SymUnsatHbondFilter();
+  return protocols::filters::FilterOP( new SymUnsatHbondFilter() );
 }
 
 protocols::filters::FilterOP
 SymUnsatHbondFilter::clone() const{
-  return new SymUnsatHbondFilter( *this );
+  return protocols::filters::FilterOP( new SymUnsatHbondFilter( *this ) );
 }
 
 // @brief getters
@@ -190,32 +190,32 @@ SymUnsatHbondFilter::compute( core::pose::Pose const & pose, bool const & verb, 
 	//fpd we need to score pose here
 	core::scoring::ScoreFunctionOP scorehbond, scorehbond_refp;
 	if (core::conformation::symmetry::is_symmetric( pose.conformation() )) {
-		scorehbond = new core::scoring::symmetry::SymmetricScoreFunction( );
+		scorehbond = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( ) );
 	} else {
-		scorehbond = new core::scoring::ScoreFunction( );
+		scorehbond = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction( ) );
 	}
 	if( compare_to_ref_ ) {
 		if (core::conformation::symmetry::is_symmetric( refp.conformation() )) {
-			scorehbond_refp = new core::scoring::symmetry::SymmetricScoreFunction( );
+			scorehbond_refp = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( ) );
 		} else {
-			scorehbond_refp = new core::scoring::ScoreFunction( );
+			scorehbond_refp = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction( ) );
 		}
 	}
 
 	(*scorehbond)(bound);
-  core::pose::metrics::PoseMetricCalculatorOP unsat_calc_bound = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default");
+  core::pose::metrics::PoseMetricCalculatorOP unsat_calc_bound( new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default") );
   basic::MetricValue< core::id::AtomID_Map<bool> > bound_Amap;
   unsat_calc_bound->get("atom_bur_unsat", bound_Amap, bound);
 
 	(*scorehbond)(unbound);
-  core::pose::metrics::PoseMetricCalculatorOP unsat_calc_unbound = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default");
+  core::pose::metrics::PoseMetricCalculatorOP unsat_calc_unbound( new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default") );
   basic::MetricValue< core::id::AtomID_Map<bool> > unbound_Amap;
   unsat_calc_unbound->get("atom_bur_unsat", unbound_Amap, unbound);
 
   basic::MetricValue< core::id::AtomID_Map<bool> > unbound_refp_Amap;
 	if( compare_to_ref_ ) {
 		(*scorehbond_refp)(unbound_refp);
- 		core::pose::metrics::PoseMetricCalculatorOP unsat_calc_unbound_refp = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default");
+ 		core::pose::metrics::PoseMetricCalculatorOP unsat_calc_unbound_refp( new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("default", "default") );
  		unsat_calc_unbound_refp->get("atom_bur_unsat", unbound_refp_Amap, unbound_refp);
 	}
 	// Modes: bound_vs_unbound, unbound_design_vs_reference, unbound_mutated_sidechains, all
@@ -440,7 +440,7 @@ SymUnsatHbondFilter::report( std::ostream & out, core::pose::Pose const & pose )
 }
 
 protocols::filters::FilterOP 
-SymUnsatHbondFilterCreator::create_filter() const { return new SymUnsatHbondFilter; }
+SymUnsatHbondFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SymUnsatHbondFilter ); }
 
 std::string 
 SymUnsatHbondFilterCreator::keyname() const { return "SymUnsatHbonds"; }

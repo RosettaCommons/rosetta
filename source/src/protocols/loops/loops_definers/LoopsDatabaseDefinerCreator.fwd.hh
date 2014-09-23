@@ -25,8 +25,8 @@ namespace loops_definers {
 /// creating a particular LoopsDefiner class.
 class LoopsDatabaseDefinerCreator;
 
-typedef utility::pointer::owning_ptr< LoopsDatabaseDefinerCreator > LoopsDatabaseDefinerCreatorOP;
-typedef utility::pointer::owning_ptr< LoopsDatabaseDefinerCreator const > LoopsDatabaseDefinerCreatorCOP;
+typedef utility::pointer::shared_ptr< LoopsDatabaseDefinerCreator > LoopsDatabaseDefinerCreatorOP;
+typedef utility::pointer::shared_ptr< LoopsDatabaseDefinerCreator const > LoopsDatabaseDefinerCreatorCOP;
 
 } //namespace
 } //namespace

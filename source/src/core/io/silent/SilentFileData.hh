@@ -418,7 +418,7 @@ public:
 		}
 
 		SilentStructOP operator->() const {
-			return it_->second();
+			return it_->second;
 		}
 
 		SilentStructOP operator*() const {
@@ -472,7 +472,7 @@ public:
 		}
 
 		SilentStructOP operator->() const {
-			return it_->second();
+			return it_->second;
 		}
 
 		SilentStructOP operator*() const {

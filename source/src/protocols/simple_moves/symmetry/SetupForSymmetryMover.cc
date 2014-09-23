@@ -61,7 +61,7 @@ SetupForSymmetryMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SetupForSymmetryMoverCreator::create_mover() const {
-	return new SetupForSymmetryMover;
+	return protocols::moves::MoverOP( new SetupForSymmetryMover );
 }
 
 std::string
@@ -76,7 +76,7 @@ ExtractAsymmetricUnitMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ExtractAsymmetricUnitMoverCreator::create_mover() const {
-	return new ExtractAsymmetricUnitMover;
+	return protocols::moves::MoverOP( new ExtractAsymmetricUnitMover );
 }
 
 std::string
@@ -93,7 +93,7 @@ ExtractAsymmetricPoseMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ExtractAsymmetricPoseMoverCreator::create_mover() const {
-	return new ExtractAsymmetricPoseMover;
+	return protocols::moves::MoverOP( new ExtractAsymmetricPoseMover );
 }
 
 std::string
@@ -116,7 +116,7 @@ SetupForSymmetryMover::SetupForSymmetryMover( std::string const & symmdef_file) 
 	slide_(false),
 	symmdef_()
 {
-	symmdef_ = new core::conformation::symmetry::SymmData();
+	symmdef_ = core::conformation::symmetry::SymmDataOP( new core::conformation::symmetry::SymmData() );
 	symmdef_->read_symmetry_data_from_file(symmdef_file);
 }
 
@@ -132,7 +132,7 @@ SetupForSymmetryMover::apply( core::pose::Pose & pose )
 
 	if(!symmdef_){
 		if(option[ OptionKeys::symmetry::symmetry_definition].user()){
-			symmdef_ = new core::conformation::symmetry::SymmData();
+			symmdef_ = core::conformation::symmetry::SymmDataOP( new core::conformation::symmetry::SymmData() );
 			symmdef_->read_symmetry_data_from_file(
 				option[OptionKeys::symmetry::symmetry_definition]);
 
@@ -156,8 +156,7 @@ SetupForSymmetryMover::apply( core::pose::Pose & pose )
 
 	// (Optionally) set rigid-body dofs from file
 	//    SymDockingInitialPerturbation's behavior is controlled by flags and does nothing by default
-	protocols::moves::MoverOP symdock =
-		new protocols::simple_moves::symmetry::SymDockingInitialPerturbation(slide_);
+	protocols::moves::MoverOP symdock( new protocols::simple_moves::symmetry::SymDockingInitialPerturbation(slide_) );
 	symdock->apply( pose );
 }
 
@@ -178,7 +177,7 @@ void SetupForSymmetryMover::parse_my_tag(
 	}
 
 	if(tag->hasOption("definition")){
-		symmdef_ = new core::conformation::symmetry::SymmData();
+		symmdef_ = core::conformation::symmetry::SymmDataOP( new core::conformation::symmetry::SymmData() );
 		symmdef_->read_symmetry_data_from_file(
 			tag->getOption<std::string>("definition"));
 		option[OptionKeys::symmetry::symmetry_definition].value( "dummy" );
@@ -189,7 +188,7 @@ void SetupForSymmetryMover::parse_my_tag(
 		option[OptionKeys::symmetry::symmetry_definition].value( "dummy" );
 
 	} else if(option[ OptionKeys::symmetry::symmetry_definition].user()){
-		symmdef_ = new core::conformation::symmetry::SymmData();
+		symmdef_ = core::conformation::symmetry::SymmDataOP( new core::conformation::symmetry::SymmData() );
 		symmdef_->read_symmetry_data_from_file(
 			option[OptionKeys::symmetry::symmetry_definition]);
 

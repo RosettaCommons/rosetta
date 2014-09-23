@@ -19,8 +19,8 @@ namespace protocols {
 namespace hybridization {
 
 class HybridizeFoldtreeMover;
-typedef utility::pointer::owning_ptr<HybridizeFoldtreeMover> HybridizeFoldtreeMoverOP;
-typedef utility::pointer::owning_ptr<HybridizeFoldtreeMover const> HybridizeFoldtreeMoverCOP;
+typedef utility::pointer::shared_ptr<HybridizeFoldtreeMover> HybridizeFoldtreeMoverOP;
+typedef utility::pointer::shared_ptr<HybridizeFoldtreeMover const> HybridizeFoldtreeMoverCOP;
 
 }  //  namespace hybridization
 }  // namespace protocols

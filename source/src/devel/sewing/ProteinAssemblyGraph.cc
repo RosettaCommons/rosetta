@@ -257,7 +257,7 @@ ProteinAssemblyGraph::print_tree(
 	cppdb::statement select_pair_residues_stmt =
 	basic::database::safely_prepare_statement(select_pair_residues, db_session_);
 	
-	protocols::features::ProteinSilentReportOP protein_silent_report = new protocols::features::ProteinSilentReport();
+	protocols::features::ProteinSilentReportOP protein_silent_report( new protocols::features::ProteinSilentReport() );
 	
 	std::map<std::string, core::pose::Pose> output_poses;
 	//std::map<Node, core::pose::Pose> poses;

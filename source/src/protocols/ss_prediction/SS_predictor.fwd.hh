@@ -28,11 +28,11 @@ namespace ss_prediction {
 class SS_predictor;
 
 // Types
-typedef  utility::pointer::owning_ptr< SS_predictor >  SS_predictorOP;
-typedef  utility::pointer::owning_ptr< SS_predictor const >  SS_predictorCOP;
+typedef  utility::pointer::shared_ptr< SS_predictor >  SS_predictorOP;
+typedef  utility::pointer::shared_ptr< SS_predictor const >  SS_predictorCOP;
 
-typedef  utility::pointer::access_ptr< SS_predictor >  SS_predictorAP;
-typedef  utility::pointer::access_ptr< SS_predictor const >  SS_predictorCAP;
+typedef  utility::pointer::weak_ptr< SS_predictor >  SS_predictorAP;
+typedef  utility::pointer::weak_ptr< SS_predictor const >  SS_predictorCAP;
 
 
 } // namespace ss_prediction

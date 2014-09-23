@@ -56,7 +56,7 @@ methods::EnergyMethodOP
 NMerSVMEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new NMerSVMEnergy;
+	return methods::EnergyMethodOP( new NMerSVMEnergy );
 }
 
 ScoreTypes
@@ -238,7 +238,7 @@ NMerSVMEnergy::read_aa_encoding_matrix( std::string const fname ){
 EnergyMethodOP
 NMerSVMEnergy::clone() const
 {
-	return new NMerSVMEnergy( *this );
+	return EnergyMethodOP( new NMerSVMEnergy( *this ) );
 }
 
 //methods called by const methods must be const!

@@ -84,13 +84,13 @@ RemodelAccumulator::~RemodelAccumulator(){}
 
 /// @brief clone this object
 RemodelAccumulator::MoverOP RemodelAccumulator::clone() const {
-	return new RemodelAccumulator( *this );
+	return RemodelAccumulator::MoverOP( new RemodelAccumulator( *this ) );
 }
 
 
 /// @brief create this type of object
 RemodelAccumulator::MoverOP RemodelAccumulator::fresh_instance() const {
-	return new RemodelAccumulator();
+	return RemodelAccumulator::MoverOP( new RemodelAccumulator() );
 }
 
 
@@ -103,7 +103,7 @@ void RemodelAccumulator::apply( Pose & pose, core::Real & score ){
     using namespace basic::options;
 
 //make the object's own collection of poses
-    core::pose::PoseOP pose_pt = new core::pose::Pose( pose );
+    core::pose::PoseOP pose_pt( new core::pose::Pose( pose ) );
 
     pose_store_.insert(std::pair<core::Real, core::pose::PoseOP>(score, pose_pt));
     keep_top_pose(option[OptionKeys::remodel::save_top] );
@@ -130,7 +130,7 @@ void RemodelAccumulator::apply( Pose & pose ){
     using namespace basic::options;
 
 //make the object's own collection of poses
-    core::pose::PoseOP pose_pt = new core::pose::Pose( pose );
+    core::pose::PoseOP pose_pt( new core::pose::Pose( pose ) );
 
     ScoreFunctionOP scorefxn( get_score_function());
     sfxn_ = scorefxn;
@@ -276,7 +276,7 @@ core::Size RemodelAccumulator::recover_checkpoint()
 
 				if(option[OptionKeys::remodel::repeat_structure].user()){
 					if(option[OptionKeys::constraints::cst_file].user()){
-						protocols::simple_moves::ConstraintSetMoverOP repeat_constraint = new protocols::simple_moves::ConstraintSetMover();
+						protocols::simple_moves::ConstraintSetMoverOP repeat_constraint( new protocols::simple_moves::ConstraintSetMover() );
 						repeat_constraint->apply( dummyPose );
 					}
 
@@ -326,13 +326,13 @@ core::Size RemodelAccumulator::recover_checkpoint()
 
 void RemodelAccumulator::cluster_pose(){
 	runtime_assert(cluster_switch_);
-	cluster_ = new protocols::cluster::ClusterPhilStyle();
+	cluster_ = ClusterPhilStyleOP( new protocols::cluster::ClusterPhilStyle() );
 	run_cluster();
 }
 
 void RemodelAccumulator::cluster_loop(){
 	runtime_assert(cluster_switch_);
-	cluster_ = new protocols::cluster::ClusterPhilStyle_Loop(working_model_.loops);
+	cluster_ = ClusterPhilStyleOP( new protocols::cluster::ClusterPhilStyle_Loop(working_model_.loops) );
 	//debug
 TR << "loops to build " << working_model_.loops << std::endl;
 	run_cluster();

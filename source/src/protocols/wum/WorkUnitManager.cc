@@ -220,7 +220,7 @@ bool WorkUnitManager::read_work_unit( WorkUnitBaseOP &qualified_wu,  std::istrea
 	raw_data_ptr[size_of_raw_data-1] = 0;
 	TR.Debug << "  READ WU: Data: " << std::endl;
 
-	WorkUnitBaseOP wu = new WorkUnitBase;
+	WorkUnitBaseOP wu( new WorkUnitBase );
   runtime_assert( wu != 0 );
 	wu->raw_data_load( raw_data_ptr, size_of_raw_data );
 	delete [] raw_data_ptr;
@@ -268,7 +268,7 @@ WorkUnitQueue::mem_stats(
 	for( const_iterator it = begin(); it != end(); it++ ){
 		WU_memory += (*it)->mem_footprint();
 		WorkUnitBaseOP wu_op = *it;
-		WorkUnit_SilentStructStoreOP structure_wu = dynamic_cast<  WorkUnit_SilentStructStore * > ( wu_op() );
+		WorkUnit_SilentStructStoreOP structure_wu = utility::pointer::dynamic_pointer_cast< protocols::wum::WorkUnit_SilentStructStore > ( wu_op );
 		if ( structure_wu.get() == NULL ) continue;
 		SilentStructStore &decoys = structure_wu->decoys();
 		n_structs += structure_wu->decoys().size();

@@ -18,8 +18,8 @@ namespace utilities {
 
 class LoopMoverGroup;
 
-typedef utility::pointer::owning_ptr<LoopMoverGroup> LoopMoverGroupOP;
-typedef utility::pointer::owning_ptr<LoopMoverGroup const> LoopMoverGroupCOP;
+typedef utility::pointer::shared_ptr<LoopMoverGroup> LoopMoverGroupOP;
+typedef utility::pointer::shared_ptr<LoopMoverGroup const> LoopMoverGroupCOP;
 
 }
 }

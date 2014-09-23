@@ -75,7 +75,7 @@ MolecularMassFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::D
 }
 
 protocols::filters::FilterOP
-MolecularMassFilterCreator::create_filter() const { return new MolecularMassFilter; }
+MolecularMassFilterCreator::create_filter() const { return protocols::filters::FilterOP( new MolecularMassFilter ); }
 
 std::string
 MolecularMassFilterCreator::keyname() const { return "MolecularMass"; }

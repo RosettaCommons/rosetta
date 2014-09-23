@@ -24,8 +24,8 @@ namespace task {
 namespace rna {
 
 	class RNA_ResidueLevelTask;
-	typedef utility::pointer::owning_ptr< RNA_ResidueLevelTask > RNA_ResidueLevelTaskOP;
-	typedef utility::pointer::owning_ptr< RNA_ResidueLevelTask const > RNA_ResidueLevelTaskCOP;
+	typedef utility::pointer::shared_ptr< RNA_ResidueLevelTask > RNA_ResidueLevelTaskOP;
+	typedef utility::pointer::shared_ptr< RNA_ResidueLevelTask const > RNA_ResidueLevelTaskCOP;
 
 } //rna
 } //task

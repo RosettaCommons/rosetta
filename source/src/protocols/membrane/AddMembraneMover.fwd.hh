@@ -30,8 +30,8 @@ namespace protocols {
 namespace membrane {
 
 class AddMembraneMover;
-typedef utility::pointer::owning_ptr< AddMembraneMover > AddMembraneMoverOP;
-typedef utility::pointer::owning_ptr< AddMembraneMover const > AddMembraneMoverCOP;
+typedef utility::pointer::shared_ptr< AddMembraneMover > AddMembraneMoverOP;
+typedef utility::pointer::shared_ptr< AddMembraneMover const > AddMembraneMoverCOP;
 
 } // membrane
 } // protocols

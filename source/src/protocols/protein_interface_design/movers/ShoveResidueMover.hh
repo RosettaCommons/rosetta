@@ -40,8 +40,8 @@ public:
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );
 
-	protocols::moves::MoverOP clone() const { return new ShoveResidueMover( *this ); }
-	protocols::moves::MoverOP fresh_instance() const { return new ShoveResidueMover; }
+	protocols::moves::MoverOP clone() const { return protocols::moves::MoverOP( new ShoveResidueMover( *this ) ); }
+	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new ShoveResidueMover ); }
 
 private:
 	bool remove_shove_variant_;

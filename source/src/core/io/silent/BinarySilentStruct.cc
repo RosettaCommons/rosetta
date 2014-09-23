@@ -94,7 +94,7 @@ BinarySilentStruct::BinarySilentStruct( Size const nres_in )
 	bJumps_use_IntraResStub_ = false;
 	nres  ( nres_in );
 	resize( nres_in );
-	symminfo_ = new core::conformation::symmetry::SymmetryInfo();
+	symminfo_ = core::conformation::symmetry::SymmetryInfoOP( new core::conformation::symmetry::SymmetryInfo() );
 	symminfo_->set_use_symmetry(false);
 }
 
@@ -107,7 +107,7 @@ BinarySilentStruct::BinarySilentStruct()
 	bJumps_use_IntraResStub_ = false;
 	nres( 0 );
 	decoy_tag( "empty" );
-	symminfo_ = new core::conformation::symmetry::SymmetryInfo();
+	symminfo_ = core::conformation::symmetry::SymmetryInfoOP( new core::conformation::symmetry::SymmetryInfo() );
 	symminfo_->set_use_symmetry(false);
 }
 
@@ -117,7 +117,7 @@ BinarySilentStruct::BinarySilentStruct(
 	std::string tag
 ) {
 	bJumps_use_IntraResStub_ = false;
-	symminfo_ = new core::conformation::symmetry::SymmetryInfo();
+	symminfo_ = core::conformation::symmetry::SymmetryInfoOP( new core::conformation::symmetry::SymmetryInfo() );
 	symminfo_->set_use_symmetry(false);
 	fill_struct( pose, tag );
 } // BinarySilentStruct
@@ -264,12 +264,11 @@ bool BinarySilentStruct::init_from_lines(
 		// get sequence and scorename data from the silent-file data object,
 		// because I don't have it!
 		EnergyNamesOP enames = EnergyNamesOP(
-			static_cast< EnergyNames * >
-			( container.get_shared_silent_data( energynames )() )
+			utility::pointer::static_pointer_cast< core::io::silent::EnergyNames > ( container.get_shared_silent_data( energynames ) )
 		);
 
 		SimpleSequenceDataOP seqdata = SimpleSequenceDataOP(
-			static_cast< SimpleSequenceData * > ( container.get_shared_silent_data( simplesequencedata )() )
+			utility::pointer::static_pointer_cast< core::io::silent::SimpleSequenceData > ( container.get_shared_silent_data( simplesequencedata ) )
 		);
 
 		sequence      ( seqdata->sequence()   );

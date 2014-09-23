@@ -22,8 +22,8 @@ namespace protocols {
 namespace ligand_docking {
 
 class MoveMapBuilder; // fwd declaration
-typedef utility::pointer::owning_ptr< MoveMapBuilder > MoveMapBuilderOP;
-typedef utility::pointer::owning_ptr< MoveMapBuilder const > MoveMapBuilderCOP;
+typedef utility::pointer::shared_ptr< MoveMapBuilder > MoveMapBuilderOP;
+typedef utility::pointer::shared_ptr< MoveMapBuilder const > MoveMapBuilderCOP;
 typedef utility::vector1<MoveMapBuilderOP> MoveMapBuilderOPs;
 typedef utility::vector1<MoveMapBuilderCOP> MoveMapBuilderCOPs;
 

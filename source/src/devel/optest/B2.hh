@@ -61,7 +61,7 @@ public:
 	void set_a( A const & a );
 	void status();
 	void increment_a();
-	B2OP clone() const { return new B2( *this ); }
+	B2OP clone() const { return B2OP( new B2( *this ) ); }
 
 private:
    int some_int_;

@@ -28,11 +28,11 @@ namespace topology_broker {
 class DisulfJumpClaimer;
 
 // Types
-typedef  utility::pointer::owning_ptr< DisulfJumpClaimer >  DisulfJumpClaimerOP;
-typedef  utility::pointer::owning_ptr< DisulfJumpClaimer const >  DisulfJumpClaimerCOP;
+typedef  utility::pointer::shared_ptr< DisulfJumpClaimer >  DisulfJumpClaimerOP;
+typedef  utility::pointer::shared_ptr< DisulfJumpClaimer const >  DisulfJumpClaimerCOP;
 
-typedef  utility::pointer::access_ptr< DisulfJumpClaimer >  DisulfJumpClaimerAP;
-typedef  utility::pointer::access_ptr< DisulfJumpClaimer const >  DisulfJumpClaimerCAP;
+typedef  utility::pointer::weak_ptr< DisulfJumpClaimer >  DisulfJumpClaimerAP;
+typedef  utility::pointer::weak_ptr< DisulfJumpClaimer const >  DisulfJumpClaimerCAP;
 
 
 } // namespace kinematics

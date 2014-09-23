@@ -28,8 +28,8 @@ namespace abinitio {
 class FoldConstraints;
 
 // Types
-typedef  utility::pointer::owning_ptr< FoldConstraints >  FoldConstraintsOP;
-typedef  utility::pointer::owning_ptr< FoldConstraints const >  FoldConstraintsCOP;
+typedef  utility::pointer::shared_ptr< FoldConstraints >  FoldConstraintsOP;
+typedef  utility::pointer::shared_ptr< FoldConstraints const >  FoldConstraintsCOP;
 
 
 } // namespace kinematics

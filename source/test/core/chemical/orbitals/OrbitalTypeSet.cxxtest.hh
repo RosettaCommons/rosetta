@@ -85,7 +85,7 @@ class OrbitalTypeSetTests : public CxxTest::TestSuite {
 
 		// Want to read the properties file in only once for all the tests in this suite
 		// so do it in the constructor for the test suite.
-		orbitaltypeset = new orbitals::OrbitalTypeSet( "core/chemical/orbitals/");
+		orbitaltypeset = orbitals::OrbitalTypeSetOP( new orbitals::OrbitalTypeSet( "core/chemical/orbitals/") );
 		//atom_type_set = new atom_type_set( "core/chemical/");
 		//atom_type_set->read_file( "core/chemical/atom_properties.txt" );
 	}

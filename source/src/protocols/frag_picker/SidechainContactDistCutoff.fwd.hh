@@ -19,8 +19,8 @@ namespace protocols {
 namespace frag_picker {
 
 class SidechainContactDistCutoff;
-typedef utility::pointer::owning_ptr<SidechainContactDistCutoff> SidechainContactDistCutoffOP;
-typedef utility::pointer::owning_ptr<SidechainContactDistCutoff const> SidechainContactDistCutoffCOP;
+typedef utility::pointer::shared_ptr<SidechainContactDistCutoff> SidechainContactDistCutoffOP;
+typedef utility::pointer::shared_ptr<SidechainContactDistCutoff const> SidechainContactDistCutoffCOP;
 
 }  // namespace frag_picker
 }  // namespace protocols

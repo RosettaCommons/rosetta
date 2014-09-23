@@ -22,21 +22,21 @@ namespace protocols {
 namespace genetic_algorithm {
 
 class EntityElement;
-typedef utility::pointer::owning_ptr< EntityElement > EntityElementOP;
-typedef utility::pointer::owning_ptr< EntityElement const > EntityElementCOP;
+typedef utility::pointer::shared_ptr< EntityElement > EntityElementOP;
+typedef utility::pointer::shared_ptr< EntityElement const > EntityElementCOP;
 
 typedef utility::vector1< EntityElementOP > EntityElements;
 
 
 class EntityElementCreator;
-typedef utility::pointer::owning_ptr< EntityElementCreator > EntityElementCreatorOP;
-typedef utility::pointer::owning_ptr< EntityElementCreator const > EntityElementCreatorCOP;
+typedef utility::pointer::shared_ptr< EntityElementCreator > EntityElementCreatorOP;
+typedef utility::pointer::shared_ptr< EntityElementCreator const > EntityElementCreatorCOP;
 
 class EntityElementFactory;
 
 class Entity;
-typedef utility::pointer::owning_ptr< Entity > EntityOP;
-typedef utility::pointer::owning_ptr< Entity const > EntityCOP;
+typedef utility::pointer::shared_ptr< Entity > EntityOP;
+typedef utility::pointer::shared_ptr< Entity const > EntityCOP;
 
 struct Vec1Hash;
 

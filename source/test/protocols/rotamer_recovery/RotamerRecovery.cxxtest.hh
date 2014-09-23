@@ -142,7 +142,7 @@ public:
 
 		TaskFactory task_factory;
 
-		task_factory.push_back( new RestrictToRepacking );
+		task_factory.push_back( TaskOperationCOP( new RestrictToRepacking ) );
 		packer_task_1ten_ = task_factory.create_task_and_apply_taskoperations( pose_1ten_ );
 
 	}

@@ -22,143 +22,143 @@ namespace expression_parser {
 
 ///// TOKEN CLASSES /////
 class Token;
-typedef utility::pointer::owning_ptr< Token > TokenOP;
-typedef utility::pointer::owning_ptr< Token const > TokenCOP;
+typedef utility::pointer::shared_ptr< Token > TokenOP;
+typedef utility::pointer::shared_ptr< Token const > TokenCOP;
 
 class LiteralToken;
-typedef utility::pointer::owning_ptr< LiteralToken > LiteralTokenOP;
-typedef utility::pointer::owning_ptr< LiteralToken const > LiteralTokenCOP;
+typedef utility::pointer::shared_ptr< LiteralToken > LiteralTokenOP;
+typedef utility::pointer::shared_ptr< LiteralToken const > LiteralTokenCOP;
 
 class VariableToken;
-typedef utility::pointer::owning_ptr< VariableToken > VariableTokenOP;
-typedef utility::pointer::owning_ptr< VariableToken const > VariableTokenCOP;
+typedef utility::pointer::shared_ptr< VariableToken > VariableTokenOP;
+typedef utility::pointer::shared_ptr< VariableToken const > VariableTokenCOP;
 
 class FunctionToken;
-typedef utility::pointer::owning_ptr< FunctionToken > FunctionTokenOP;
-typedef utility::pointer::owning_ptr< FunctionToken const > FunctionTokenCOP;
+typedef utility::pointer::shared_ptr< FunctionToken > FunctionTokenOP;
+typedef utility::pointer::shared_ptr< FunctionToken const > FunctionTokenCOP;
 
 class SimpleToken;
-typedef utility::pointer::owning_ptr< SimpleToken > SimpleTokenOP;
-typedef utility::pointer::owning_ptr< SimpleToken const > SimpleTokenCOP;
+typedef utility::pointer::shared_ptr< SimpleToken > SimpleTokenOP;
+typedef utility::pointer::shared_ptr< SimpleToken const > SimpleTokenCOP;
 
 
 //// TOKEN CONTAINER /////
 
 class TokenSet;
-typedef utility::pointer::owning_ptr< TokenSet > TokenSetOP;
-typedef utility::pointer::owning_ptr< TokenSet const > TokenSetCOP;
+typedef utility::pointer::shared_ptr< TokenSet > TokenSetOP;
+typedef utility::pointer::shared_ptr< TokenSet const > TokenSetCOP;
 
 
 ///// SCANNER CLASS /////
 
 class ArithmeticScanner;
-typedef utility::pointer::owning_ptr< ArithmeticScanner > ArithmeticScannerOP;
-typedef utility::pointer::owning_ptr< ArithmeticScanner const > ArithmeticScannerCOP;
+typedef utility::pointer::shared_ptr< ArithmeticScanner > ArithmeticScannerOP;
+typedef utility::pointer::shared_ptr< ArithmeticScanner const > ArithmeticScannerCOP;
 
 
 ///// ABSTRACT SYNTAX TREE CLASSES /////
 
 class ArithmeticASTNode;
-typedef utility::pointer::owning_ptr< ArithmeticASTNode > ArithmeticASTNodeOP;
-typedef utility::pointer::owning_ptr< ArithmeticASTNode const > ArithmeticASTNodeCOP;
+typedef utility::pointer::shared_ptr< ArithmeticASTNode > ArithmeticASTNodeOP;
+typedef utility::pointer::shared_ptr< ArithmeticASTNode const > ArithmeticASTNodeCOP;
 
 class ArithmeticASTExpression;
-typedef utility::pointer::owning_ptr< ArithmeticASTExpression > ArithmeticASTExpressionOP;
-typedef utility::pointer::owning_ptr< ArithmeticASTExpression const > ArithmeticASTExpressionCOP;
+typedef utility::pointer::shared_ptr< ArithmeticASTExpression > ArithmeticASTExpressionOP;
+typedef utility::pointer::shared_ptr< ArithmeticASTExpression const > ArithmeticASTExpressionCOP;
 
 class ArithmeticASTFunction;
-typedef utility::pointer::owning_ptr< ArithmeticASTFunction > ArithmeticASTFunctionOP;
-typedef utility::pointer::owning_ptr< ArithmeticASTFunction const > ArithmeticASTFunctionCOP;
+typedef utility::pointer::shared_ptr< ArithmeticASTFunction > ArithmeticASTFunctionOP;
+typedef utility::pointer::shared_ptr< ArithmeticASTFunction const > ArithmeticASTFunctionCOP;
 
 class ArithmeticASTTerm;
-typedef utility::pointer::owning_ptr< ArithmeticASTTerm > ArithmeticASTTermOP;
-typedef utility::pointer::owning_ptr< ArithmeticASTTerm const > ArithmeticASTTermCOP;
+typedef utility::pointer::shared_ptr< ArithmeticASTTerm > ArithmeticASTTermOP;
+typedef utility::pointer::shared_ptr< ArithmeticASTTerm const > ArithmeticASTTermCOP;
 
 class ArithmeticASTFactor;
-typedef utility::pointer::owning_ptr< ArithmeticASTFactor > ArithmeticASTFactorOP;
-typedef utility::pointer::owning_ptr< ArithmeticASTFactor const > ArithmeticASTFactorCOP;
+typedef utility::pointer::shared_ptr< ArithmeticASTFactor > ArithmeticASTFactorOP;
+typedef utility::pointer::shared_ptr< ArithmeticASTFactor const > ArithmeticASTFactorCOP;
 
 class ArithmeticASTValue;
-typedef utility::pointer::owning_ptr< ArithmeticASTValue > ArithmeticASTValueOP;
-typedef utility::pointer::owning_ptr< ArithmeticASTValue const > ArithmeticASTValueCOP;
+typedef utility::pointer::shared_ptr< ArithmeticASTValue > ArithmeticASTValueOP;
+typedef utility::pointer::shared_ptr< ArithmeticASTValue const > ArithmeticASTValueCOP;
 
 class ArithmeticASTRestTerm;
-typedef utility::pointer::owning_ptr< ArithmeticASTRestTerm > ArithmeticASTRestTermOP;
-typedef utility::pointer::owning_ptr< ArithmeticASTRestTerm const > ArithmeticASTRestTermCOP;
+typedef utility::pointer::shared_ptr< ArithmeticASTRestTerm > ArithmeticASTRestTermOP;
+typedef utility::pointer::shared_ptr< ArithmeticASTRestTerm const > ArithmeticASTRestTermCOP;
 
 class ArithmeticASTRestExpression;
-typedef utility::pointer::owning_ptr< ArithmeticASTRestExpression > ArithmeticASTRestExpressionOP;
-typedef utility::pointer::owning_ptr< ArithmeticASTRestExpression const > ArithmeticASTRestExpressionCOP;
+typedef utility::pointer::shared_ptr< ArithmeticASTRestExpression > ArithmeticASTRestExpressionOP;
+typedef utility::pointer::shared_ptr< ArithmeticASTRestExpression const > ArithmeticASTRestExpressionCOP;
 
 
 ///// AST Visitors /////
 
 class ASTVisitor;
-typedef utility::pointer::owning_ptr< ASTVisitor > ASTVisitorOP;
-typedef utility::pointer::owning_ptr< ASTVisitor const > ASTVisitorCOP;
+typedef utility::pointer::shared_ptr< ASTVisitor > ASTVisitorOP;
+typedef utility::pointer::shared_ptr< ASTVisitor const > ASTVisitorCOP;
 
 class ASTPrinter;
-typedef utility::pointer::owning_ptr< ASTPrinter > ASTPrinterOP;
-typedef utility::pointer::owning_ptr< ASTPrinter const > ASTPrinterCOP;
+typedef utility::pointer::shared_ptr< ASTPrinter > ASTPrinterOP;
+typedef utility::pointer::shared_ptr< ASTPrinter const > ASTPrinterCOP;
 
 
 //// EXPRESSION CLASSES ////
 
 class Expression;
-typedef utility::pointer::owning_ptr< Expression > ExpressionOP;
-typedef utility::pointer::owning_ptr< Expression const > ExpressionCOP;
+typedef utility::pointer::shared_ptr< Expression > ExpressionOP;
+typedef utility::pointer::shared_ptr< Expression const > ExpressionCOP;
 
 class LiteralExpression;
-typedef utility::pointer::owning_ptr< LiteralExpression > LiteralExpressionOP;
-typedef utility::pointer::owning_ptr< LiteralExpression const > LiteralExpressionCOP;
+typedef utility::pointer::shared_ptr< LiteralExpression > LiteralExpressionOP;
+typedef utility::pointer::shared_ptr< LiteralExpression const > LiteralExpressionCOP;
 
 class VariableExpression;
-typedef utility::pointer::owning_ptr< VariableExpression > VariableExpressionOP;
-typedef utility::pointer::owning_ptr< VariableExpression const > VariableExpressionCOP;
+typedef utility::pointer::shared_ptr< VariableExpression > VariableExpressionOP;
+typedef utility::pointer::shared_ptr< VariableExpression const > VariableExpressionCOP;
 
 class UnaryExpression;
-typedef utility::pointer::owning_ptr< UnaryExpression > UnaryExpressionOP;
-typedef utility::pointer::owning_ptr< UnaryExpression const > UnaryExpressionCOP;
+typedef utility::pointer::shared_ptr< UnaryExpression > UnaryExpressionOP;
+typedef utility::pointer::shared_ptr< UnaryExpression const > UnaryExpressionCOP;
 
 class BinaryExpression;
-typedef utility::pointer::owning_ptr< BinaryExpression > BinaryExpressionOP;
-typedef utility::pointer::owning_ptr< BinaryExpression const > BinaryExpressionCOP;
+typedef utility::pointer::shared_ptr< BinaryExpression > BinaryExpressionOP;
+typedef utility::pointer::shared_ptr< BinaryExpression const > BinaryExpressionCOP;
 
 class SquarerootExpression;
-typedef utility::pointer::owning_ptr< SquarerootExpression > SquarerootExpressionOP;
-typedef utility::pointer::owning_ptr< SquarerootExpression const > SquarerootExpressionCOP;
+typedef utility::pointer::shared_ptr< SquarerootExpression > SquarerootExpressionOP;
+typedef utility::pointer::shared_ptr< SquarerootExpression const > SquarerootExpressionCOP;
 
 class AddExpression;
-typedef utility::pointer::owning_ptr< AddExpression > AddExpressionOP;
-typedef utility::pointer::owning_ptr< AddExpression const > AddExpressionCOP;
+typedef utility::pointer::shared_ptr< AddExpression > AddExpressionOP;
+typedef utility::pointer::shared_ptr< AddExpression const > AddExpressionCOP;
 
 class SubtractExpression;
-typedef utility::pointer::owning_ptr< SubtractExpression > SubtractExpressionOP;
-typedef utility::pointer::owning_ptr< SubtractExpression const > SubtractExpressionCOP;
+typedef utility::pointer::shared_ptr< SubtractExpression > SubtractExpressionOP;
+typedef utility::pointer::shared_ptr< SubtractExpression const > SubtractExpressionCOP;
 
 class MultiplyExpression;
-typedef utility::pointer::owning_ptr< MultiplyExpression > MultiplyExpressionOP;
-typedef utility::pointer::owning_ptr< MultiplyExpression const > MultiplyExpressionCOP;
+typedef utility::pointer::shared_ptr< MultiplyExpression > MultiplyExpressionOP;
+typedef utility::pointer::shared_ptr< MultiplyExpression const > MultiplyExpressionCOP;
 
 class DivideExpression;
-typedef utility::pointer::owning_ptr< DivideExpression > DivideExpressionOP;
-typedef utility::pointer::owning_ptr< DivideExpression const > DivideExpressionCOP;
+typedef utility::pointer::shared_ptr< DivideExpression > DivideExpressionOP;
+typedef utility::pointer::shared_ptr< DivideExpression const > DivideExpressionCOP;
 
 class MaxExpression;
-typedef utility::pointer::owning_ptr< MaxExpression > MaxExpressionOP;
-typedef utility::pointer::owning_ptr< MaxExpression const > MaxExpressionCOP;
+typedef utility::pointer::shared_ptr< MaxExpression > MaxExpressionOP;
+typedef utility::pointer::shared_ptr< MaxExpression const > MaxExpressionCOP;
 
 class MinExpression;
-typedef utility::pointer::owning_ptr< MinExpression > MinExpressionOP;
-typedef utility::pointer::owning_ptr< MinExpression const > MinExpressionCOP;
+typedef utility::pointer::shared_ptr< MinExpression > MinExpressionOP;
+typedef utility::pointer::shared_ptr< MinExpression const > MinExpressionCOP;
 
 class MetaMaxExpression;
-typedef utility::pointer::owning_ptr< MetaMaxExpression > MetaMaxExpressionOP;
-typedef utility::pointer::owning_ptr< MetaMaxExpression const > MetaMaxExpressionCOP;
+typedef utility::pointer::shared_ptr< MetaMaxExpression > MetaMaxExpressionOP;
+typedef utility::pointer::shared_ptr< MetaMaxExpression const > MetaMaxExpressionCOP;
 
 class MetaMinExpression;
-typedef utility::pointer::owning_ptr< MetaMinExpression > MetaMinExpressionOP;
-typedef utility::pointer::owning_ptr< MetaMinExpression const > MetaMinExpressionCOP;
+typedef utility::pointer::shared_ptr< MetaMinExpression > MetaMinExpressionOP;
+typedef utility::pointer::shared_ptr< MetaMinExpression const > MetaMinExpressionCOP;
 
 } // expression_parser
 } // numeric

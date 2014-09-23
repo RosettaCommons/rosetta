@@ -25,8 +25,8 @@ namespace indexed_structure_store
 struct FragmentSpecification;
 class FragmentStore;
 
-typedef utility::pointer::owning_ptr<FragmentStore> FragmentStoreOP;
-typedef utility::pointer::owning_ptr<FragmentStore const> FragmentStoreCOP;
+typedef utility::pointer::shared_ptr<FragmentStore> FragmentStoreOP;
+typedef utility::pointer::shared_ptr<FragmentStore const> FragmentStoreCOP;
 
 }
 }

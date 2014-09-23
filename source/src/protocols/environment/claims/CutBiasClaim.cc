@@ -116,7 +116,7 @@ void CutBiasClaim::yield_elements( FoldTreeSketch const&, CutBiasElements& eleme
 }
 
 EnvClaimOP CutBiasClaim::clone() const {
-  return new CutBiasClaim( *this );
+  return EnvClaimOP( new CutBiasClaim( *this ) );
 }
 
 std::string CutBiasClaim::type() const{

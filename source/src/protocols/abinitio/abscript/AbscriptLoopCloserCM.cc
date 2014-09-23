@@ -84,7 +84,7 @@ AbscriptLoopCloserCMCreator::keyname() const {
 
 protocols::moves::MoverOP
 AbscriptLoopCloserCMCreator::create_mover() const {
-  return new AbscriptLoopCloserCM;
+  return protocols::moves::MoverOP( new AbscriptLoopCloserCM );
 }
 
 std::string
@@ -113,9 +113,9 @@ claims::EnvClaims AbscriptLoopCloserCM::yield_claims( core::pose::Pose const& in
   claims::EnvClaims claims;
 
   // We want to control everything that will be relevant to the output pose (which should be the same as the input.
-  claims::TorsionClaimOP claim = new claims::TorsionClaim(
+  claims::TorsionClaimOP claim( new claims::TorsionClaim(
 	utility::pointer::static_pointer_cast< ClaimingMover > ( get_self_ptr() ),
-	label(), std::make_pair( 1, in_pose.total_residue() ) );
+	label(), std::make_pair( 1, in_pose.total_residue() ) ) );
   claim->strength( claims::CAN_CONTROL, claims::DOES_NOT_CONTROL );
 
   claims.push_back( claim );
@@ -177,9 +177,9 @@ bool AbscriptLoopCloserCM::attempt_ccd( core::pose::Pose& pose ){
   try {
     checkpoint::CheckPointer checkpointer( "AbscriptLoopCloserCM" );
     SlidingWindowLoopClosureOP closing_protocol;
-    closing_protocol = new WidthFirstSlidingWindowLoopClosure( fragset_,
+    closing_protocol = SlidingWindowLoopClosureOP( new WidthFirstSlidingWindowLoopClosure( fragset_,
                                                                scorefxn_,
-                                                               movemap_ );
+                                                               movemap_ ) );
 
     jumping::close_chainbreaks( closing_protocol,
                                pose,
@@ -234,7 +234,7 @@ void AbscriptLoopCloserCM::parse_my_tag( utility::tag::TagCOP tag,
 }
 
 void AbscriptLoopCloserCM::attempt_idealize( core::pose::Pose& pose ) {
-  idealize::IdealizeMoverOP idealizer(new idealize::IdealizeMover);
+  idealize::IdealizeMoverOP idealizer( new idealize::IdealizeMover );
   idealizer->fast( false );
 
   utility::vector1< core::Size > pos_list;
@@ -258,7 +258,7 @@ void AbscriptLoopCloserCM::passport_updated() {
   if( has_passport() ){
     movemap_ = passport()->render_movemap();
   } else {
-    movemap_ = new core::kinematics::MoveMap();
+    movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
     movemap_->set_bb( true );
   }
 }
@@ -276,7 +276,7 @@ std::string AbscriptLoopCloserCM::get_name() const {
 }
 
 moves::MoverOP AbscriptLoopCloserCM::clone() const {
-  return new AbscriptLoopCloserCM( *this );
+  return moves::MoverOP( new AbscriptLoopCloserCM( *this ) );
 }
 
 } // abscript

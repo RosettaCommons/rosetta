@@ -37,10 +37,10 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const {
-		return new ResidueDistanceFilter( *this );
+		return filters::FilterOP( new ResidueDistanceFilter( *this ) );
 	}
 	filters::FilterOP fresh_instance() const{
-		return new ResidueDistanceFilter();
+		return filters::FilterOP( new ResidueDistanceFilter() );
 	}
 
 	virtual ~ResidueDistanceFilter();

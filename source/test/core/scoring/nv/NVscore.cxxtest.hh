@@ -67,14 +67,14 @@ class NVscoreTests : public CxxTest::TestSuite {
 		the_pose = create_test_in_pdb_poseop();
 		//core::import_pose::pose_from_pdb( *the_pose, "core/scoring/methods/test_in.pdb" );
 
-		nv_score = new NVscore;
+		nv_score = NVscoreOP( new NVscore );
 
 	}
 
 	// Shared finalization goes here.
 	void tearDown() {
-		the_pose = 0;
-		nv_score = 0;
+		the_pose.reset();
+		nv_score.reset();
 	}
 
 

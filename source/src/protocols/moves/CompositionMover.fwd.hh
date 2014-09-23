@@ -20,8 +20,8 @@ namespace protocols {
 namespace moves {
 
 class CompositionMover;
-typedef utility::pointer::owning_ptr< CompositionMover > CompositionMoverOP;
-typedef utility::pointer::owning_ptr< CompositionMover const > CompositionMoverCOP;
+typedef utility::pointer::shared_ptr< CompositionMover > CompositionMoverOP;
+typedef utility::pointer::shared_ptr< CompositionMover const > CompositionMoverCOP;
 
 } // moves
 } // protocols

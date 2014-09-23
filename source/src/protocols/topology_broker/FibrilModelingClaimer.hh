@@ -55,7 +55,7 @@ public:
 
 	//clone
 	virtual TopologyClaimerOP clone() const {
-		return new FibrilModelingClaimer( *this );
+		return TopologyClaimerOP( new FibrilModelingClaimer( *this ) );
 	}
 
 	///@brief type() is specifying the output name of the TopologyClaimer

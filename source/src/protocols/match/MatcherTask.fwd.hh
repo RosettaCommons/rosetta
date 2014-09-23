@@ -23,8 +23,8 @@ namespace match {
 
 class MatcherTask;
 
-typedef utility::pointer::owning_ptr< MatcherTask > MatcherTaskOP;
-typedef utility::pointer::owning_ptr< MatcherTask const > MatcherTaskCOP;
+typedef utility::pointer::shared_ptr< MatcherTask > MatcherTaskOP;
+typedef utility::pointer::shared_ptr< MatcherTask const > MatcherTaskCOP;
 
 }
 }

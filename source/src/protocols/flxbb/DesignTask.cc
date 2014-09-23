@@ -50,10 +50,10 @@ using namespace basic::options::OptionKeys;
 /// @brief default constructor
 DesignTask::DesignTask():
 	ncycle_( 1 ),
-	scorefxn_( NULL ),
-	mover_( NULL ),
-	filter_structs_( NULL ),
-	task_( NULL ),
+	scorefxn_( /* NULL */ ),
+	mover_( /* NULL */ ),
+	filter_structs_( /* NULL */ ),
+	task_( /* NULL */ ),
 	resfile_( "" )
 {
 	if ( option[ packing::resfile ].user() ) resfile_ = option[ packing::resfile ].value().at(1);
@@ -228,15 +228,14 @@ void DesignTask_Layer::setup( pose::Pose const & pose, pack::task::PackerTaskOP 
 {
 
 	using namespace core::pack;
-	operation::InitializeFromCommandlineOP cmop = new operation::InitializeFromCommandline;
+	operation::InitializeFromCommandlineOP cmop( new operation::InitializeFromCommandline );
 	cmop->apply( pose, *task );
 	//DesignLayerOperationOP op = new DesignLayerOperation( dsgn_core_, dsgn_boundary_, dsgn_surface_ );
-	protocols::flxbb::LayerDesignOperationOP op
-		= new protocols::flxbb::LayerDesignOperation( dsgn_core_, dsgn_boundary_, dsgn_surface_ );
+	protocols::flxbb::LayerDesignOperationOP op( new protocols::flxbb::LayerDesignOperation( dsgn_core_, dsgn_boundary_, dsgn_surface_ ) );
 
 	if( resfile() != "" ){
 		TR << "Resfile is applied, except for the positions of AUTO " << std::endl;
-		operation::ReadResfileOP rrop = new operation::ReadResfile( resfile() );
+		operation::ReadResfileOP rrop( new operation::ReadResfile( resfile() ) );
 		rrop->apply( pose, *task );
 	}
 
@@ -281,12 +280,12 @@ DesignTask_Normal::~DesignTask_Normal() {}
 void DesignTask_Normal::setup( pose::Pose const & pose, pack::task::PackerTaskOP const task ){
 
 	using namespace core::pack;
-	operation::InitializeFromCommandlineOP cmop = new operation::InitializeFromCommandline;
+	operation::InitializeFromCommandlineOP cmop( new operation::InitializeFromCommandline );
 
 	// set packertask based on resfile
 	if( resfile() != "" ){
 		TR << "Resfile " << resfile() << " is applied." << std::endl;
-		operation::ReadResfileOP rrop = new operation::ReadResfile( resfile() );
+		operation::ReadResfileOP rrop( new operation::ReadResfile( resfile() ) );
 		rrop->apply( pose, *task );
 	}
 	// initialize from command line

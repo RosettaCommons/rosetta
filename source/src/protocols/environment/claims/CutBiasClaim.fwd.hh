@@ -29,11 +29,11 @@ namespace claims {
 class CutBiasClaim;
 
 // Types
-typedef  utility::pointer::owning_ptr< CutBiasClaim >  CutBiasClaimOP;
-typedef  utility::pointer::owning_ptr< CutBiasClaim const >  CutBiasClaimCOP;
+typedef  utility::pointer::shared_ptr< CutBiasClaim >  CutBiasClaimOP;
+typedef  utility::pointer::shared_ptr< CutBiasClaim const >  CutBiasClaimCOP;
 
-typedef  utility::pointer::access_ptr< CutBiasClaim >  CutBiasClaimAP;
-typedef  utility::pointer::access_ptr< CutBiasClaim const >  CutBiasClaimCAP;
+typedef  utility::pointer::weak_ptr< CutBiasClaim >  CutBiasClaimAP;
+typedef  utility::pointer::weak_ptr< CutBiasClaim const >  CutBiasClaimCAP;
 
 }
 }

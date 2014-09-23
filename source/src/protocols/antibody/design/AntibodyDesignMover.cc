@@ -63,13 +63,13 @@ using core::pose::Pose;
 using std::string;
 
 AntibodyDesignMover::AntibodyDesignMover() : protocols::moves::Mover(),
-		graft_designer_(NULL),
-		seq_designer_(NULL),
-		modeler_(NULL),
-		scorefxn_(NULL)
+		graft_designer_(/* NULL */),
+		seq_designer_(/* NULL */),
+		modeler_(/* NULL */),
+		scorefxn_(/* NULL */)
 {
 	ab_info_ = NULL;
-	cdr_db_parser_ = new AntibodyDatabaseManager();
+	cdr_db_parser_ = AntibodyDatabaseManagerOP( new AntibodyDatabaseManager() );
 	protocols::moves::Mover::type( "AntibodyDesign" );
 	read_options();
 	set_scorefxn(get_score_function());
@@ -85,7 +85,7 @@ AntibodyDesignMover::get_name() const {
     
 protocols::moves::MoverOP
 AntibodyDesignMover::clone() const {
-	return new AntibodyDesignMover(*this);
+	return protocols::moves::MoverOP( new AntibodyDesignMover(*this) );
 }
 
 void
@@ -199,9 +199,9 @@ AntibodyDesignMover::model_post_design(core::pose::Pose& pose){
 	
 	//If no constraints are set - add constraints to pose CDRs.
 	
-	SnugDockOP snug = new SnugDock();
+	SnugDockOP snug( new SnugDock() );
 	snug->set_scorefxn(scorefxn_->clone());
-	snug->set_antibody_info(new AntibodyInfo(pose, AHO_Scheme, North));//Updated info for movemaps, foldtrees.
+	snug->set_antibody_info(AntibodyInfoOP( new AntibodyInfo(pose, AHO_Scheme, North) ));//Updated info for movemaps, foldtrees.
 	
 	snug->apply(pose);
 	
@@ -260,7 +260,7 @@ AntibodyDesignMover::apply(core::pose::Pose& pose){
 	}
 	
 	if (! ab_info_){
-		ab_info_ = new AntibodyInfo(pose, AHO_Scheme, North);
+		ab_info_ = AntibodyInfoOP( new AntibodyInfo(pose, AHO_Scheme, North) );
 		ab_info_->show(TR);
 
 	}
@@ -272,18 +272,18 @@ AntibodyDesignMover::apply(core::pose::Pose& pose){
 	setup_scorefxn(design_scorefxn_);
 	
 	if (!modeler_ ){
-		modeler_ = new AntibodyDesignModeler(ab_info_);
+		modeler_ = AntibodyDesignModelerOP( new AntibodyDesignModeler(ab_info_) );
 		modeler_->set_scorefunction(scorefxn_);
 		modeler_->set_cdr_range(CDRNameEnum_start, CDRNameEnum_total, true); //For CDR-CDR interactions
 	}
 	
 	if (! graft_designer_ ){
-		graft_designer_ = new AntibodyGraftDesignMover(ab_info_);
+		graft_designer_ = AntibodyGraftDesignMoverOP( new AntibodyGraftDesignMover(ab_info_) );
 		graft_designer_->set_scorefunction(scorefxn_);
 	}
 	
 	if (! seq_designer_ ){
-		seq_designer_ = new AntibodySeqDesignMover(ab_info_);
+		seq_designer_ = AntibodySeqDesignMoverOP( new AntibodySeqDesignMover(ab_info_) );
 		seq_designer_->set_scorefxn(design_scorefxn_);
 	}
     
@@ -326,7 +326,7 @@ AntibodyDesignMover::apply(core::pose::Pose& pose){
 	else{
 		//ab_info_->setup_CDR_clusters(pose);
 		//current_constraint_result = protocols::antibody::add_harmonic_cluster_constraints(ab_info_, pose);
-		final_pose_ensemble.push_back( new Pose());
+		final_pose_ensemble.push_back( utility::pointer::shared_ptr<class core::pose::Pose>( new Pose() ));
 		*(final_pose_ensemble[1]) = pose;
 	}
 	

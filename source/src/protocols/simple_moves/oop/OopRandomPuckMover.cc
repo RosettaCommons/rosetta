@@ -99,22 +99,22 @@ void OopRandomPuckMover::apply( core::pose::Pose & pose ){
 	{
 		if ( is_d_chiral( restype ) )
 		{
-			oop_mover = new oop::OopDPuckPlusMover( random_pos ) ;
+			oop_mover = oop::OopMoverOP( new oop::OopDPuckPlusMover( random_pos ) ) ;
 		}
 		else
 		{
-			oop_mover = new oop::OopPuckPlusMover( random_pos ) ;
+			oop_mover = oop::OopMoverOP( new oop::OopPuckPlusMover( random_pos ) ) ;
 		}
 	}
 	else if (random_pucker == "OOP_PUCK_MINUS" )
 	{
 		if ( is_d_chiral ( restype ) )
 		{
-			oop_mover = new oop::OopDPuckMinusMover( random_pos ) ;
+			oop_mover = oop::OopMoverOP( new oop::OopDPuckMinusMover( random_pos ) ) ;
 		}
 		else
 		{
-			oop_mover = new oop::OopPuckMinusMover( random_pos ) ;
+			oop_mover = oop::OopMoverOP( new oop::OopPuckMinusMover( random_pos ) ) ;
 		}
 	}
 

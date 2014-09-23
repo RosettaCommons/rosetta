@@ -175,12 +175,12 @@ FragmentScoringMethodOP MakeGunnCostScore::make(Size priority,
 		trGunnScore
 				<< "Reference structure to score fragments by Gunn cost loaded from: "
 				<< option[in::file::s]()[1] << std::endl;
-		core::pose::PoseOP nativePose = new core::pose::Pose;
+		core::pose::PoseOP nativePose( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*nativePose, option[in::file::s]()[1]);
 
-		return (FragmentScoringMethodOP) new GunnCostScore(priority,
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new GunnCostScore(priority,
 				lowest_acceptable_value, use_lowest, nativePose,
-				frag_sizes_tmp,longest_chunk);
+				frag_sizes_tmp,longest_chunk) );
 	}
 	utility_exit_with_message(
 			"Can't read a reference structure. Provide it with in::file::s flag");

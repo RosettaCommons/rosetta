@@ -58,7 +58,7 @@ ClassicMatchAlgorithm::~ClassicMatchAlgorithm() {}
 
 DownstreamAlgorithmOP
 ClassicMatchAlgorithm::clone() const {
-	return new ClassicMatchAlgorithm( *this );
+	return DownstreamAlgorithmOP( new ClassicMatchAlgorithm( *this ) );
 }
 
 void

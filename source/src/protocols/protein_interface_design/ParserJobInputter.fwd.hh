@@ -21,8 +21,8 @@ namespace protein_interface_design {
 
 class ParserJobInputter;
 
-typedef utility::pointer::owning_ptr< ParserJobInputter > PatchdockJobInputterOP;
-typedef utility::pointer::owning_ptr< ParserJobInputter const > PatchdockJobInputterCOP;
+typedef utility::pointer::shared_ptr< ParserJobInputter > PatchdockJobInputterOP;
+typedef utility::pointer::shared_ptr< ParserJobInputter const > PatchdockJobInputterCOP;
 
 } //namespace protein_interface_design
 } //namespace protocols

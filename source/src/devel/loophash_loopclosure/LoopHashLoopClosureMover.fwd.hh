@@ -20,10 +20,10 @@
 namespace devel {
 namespace loophash_loopclosure {
 class  LoopHashLoopClosureMover;
-typedef utility::pointer::owning_ptr< LoopHashLoopClosureMover > LoopHashLoopClosureMoverOP;
-typedef utility::pointer::owning_ptr< LoopHashLoopClosureMover const > LoopHashLoopClosureMoverCOP;
-typedef utility::pointer::access_ptr< LoopHashLoopClosureMover > LoopHashLoopClosureMoverAP;
-typedef utility::pointer::access_ptr< LoopHashLoopClosureMover const > LoopHashLoopClosureMoverCAP;
+typedef utility::pointer::shared_ptr< LoopHashLoopClosureMover > LoopHashLoopClosureMoverOP;
+typedef utility::pointer::shared_ptr< LoopHashLoopClosureMover const > LoopHashLoopClosureMoverCOP;
+typedef utility::pointer::weak_ptr< LoopHashLoopClosureMover > LoopHashLoopClosureMoverAP;
+typedef utility::pointer::weak_ptr< LoopHashLoopClosureMover const > LoopHashLoopClosureMoverCAP;
 }
 }
 #endif

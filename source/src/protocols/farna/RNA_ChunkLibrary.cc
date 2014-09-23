@@ -221,7 +221,7 @@ namespace farna {
 
 		// allow_insert keeps track of where chunks are placed -- only allow
 		// fragment insertions *outside* these regions.
-		allow_insert_ = new toolbox::AllowInsert( pose );
+		allow_insert_ = toolbox::AllowInsertOP( new toolbox::AllowInsert( pose ) );
 		covered_by_chunk_.dimension( sequence_of_big_pose.size(), false );
 
 		utility::vector1< std::string > all_input_files;
@@ -555,7 +555,7 @@ namespace farna {
 		using namespace core::id;
 		using namespace core::pose;
 
-		if ( !base_pair_step_library_ ) base_pair_step_library_ = new BasePairStepLibrary;
+		if ( !base_pair_step_library_ ) base_pair_step_library_ = BasePairStepLibraryOP( new BasePairStepLibrary );
 		base_pair_step_library_->initialize();
 
 		toolbox::AllowInsertOP allow_insert_original = allow_insert_->clone();

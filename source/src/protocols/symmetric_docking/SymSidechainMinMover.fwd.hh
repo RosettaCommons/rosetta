@@ -20,12 +20,12 @@ namespace protocols {
 namespace symmetric_docking {
 
 class SymSidechainMinMover;
-typedef utility::pointer::owning_ptr< SymSidechainMinMover > SymSidechainMinMoverOP;
-typedef utility::pointer::owning_ptr< SymSidechainMinMover > SymSidechainMinMoverCOP;
+typedef utility::pointer::shared_ptr< SymSidechainMinMover > SymSidechainMinMoverOP;
+typedef utility::pointer::shared_ptr< SymSidechainMinMover > SymSidechainMinMoverCOP;
 
 class SymInterfaceSidechainMinMover;
-typedef utility::pointer::owning_ptr< SymInterfaceSidechainMinMover > SymInterfaceSidechainMinMoverOP;
-typedef utility::pointer::owning_ptr< SymInterfaceSidechainMinMover > SymInterfaceSidechainMinMoverCOP;
+typedef utility::pointer::shared_ptr< SymInterfaceSidechainMinMover > SymInterfaceSidechainMinMoverOP;
+typedef utility::pointer::shared_ptr< SymInterfaceSidechainMinMover > SymInterfaceSidechainMinMoverCOP;
 
 }
 }

@@ -22,8 +22,8 @@ namespace protocols {
 namespace simple_moves {
 
 class MembraneTopology;
-typedef utility::pointer::owning_ptr< MembraneTopology > MembraneTopologyOP;
-typedef utility::pointer::owning_ptr< MembraneTopology const > MembraneTopologyCOP;
+typedef utility::pointer::shared_ptr< MembraneTopology > MembraneTopologyOP;
+typedef utility::pointer::shared_ptr< MembraneTopology const > MembraneTopologyCOP;
 
 } // moves
 } // protocols

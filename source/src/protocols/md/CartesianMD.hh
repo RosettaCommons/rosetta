@@ -51,7 +51,7 @@ public:
 	virtual ~CartesianMD();
 
 	// From Mover
-	virtual	protocols::moves::MoverOP	fresh_instance() const { return new CartesianMD(); };
+	virtual	protocols::moves::MoverOP	fresh_instance() const { return protocols::moves::MoverOP( new CartesianMD() ); };
 	virtual protocols::moves::MoverOP clone() const;
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;

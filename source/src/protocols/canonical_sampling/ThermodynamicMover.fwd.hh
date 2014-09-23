@@ -22,8 +22,8 @@ namespace canonical_sampling{
 
 //Forwards and OP typedefs
 class ThermodynamicMover;
-typedef utility::pointer::owning_ptr< ThermodynamicMover > ThermodynamicMoverOP;
-typedef utility::pointer::owning_ptr< ThermodynamicMover const > ThermodynamicMoverCOP;
+typedef utility::pointer::shared_ptr< ThermodynamicMover > ThermodynamicMoverOP;
+typedef utility::pointer::shared_ptr< ThermodynamicMover const > ThermodynamicMoverCOP;
 
 } //canonical_sampling
 } //protocols

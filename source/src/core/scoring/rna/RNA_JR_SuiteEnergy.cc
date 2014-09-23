@@ -42,7 +42,7 @@ namespace rna {
 methods::EnergyMethodOP
 RNA_JR_SuiteEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
-) const {	return new RNA_JR_SuiteEnergy; }
+) const {	return methods::EnergyMethodOP( new RNA_JR_SuiteEnergy ); }
 
 ScoreTypes
 RNA_JR_SuiteEnergyCreator::score_types_for_method() const {
@@ -58,7 +58,7 @@ RNA_JR_SuiteEnergy::RNA_JR_SuiteEnergy() :
 
 /// clone
 methods::EnergyMethodOP
-RNA_JR_SuiteEnergy::clone() const { return new RNA_JR_SuiteEnergy; }
+RNA_JR_SuiteEnergy::clone() const { return methods::EnergyMethodOP( new RNA_JR_SuiteEnergy ); }
 
 ///////////////////////////////////////////////////////////////////////////////
 void

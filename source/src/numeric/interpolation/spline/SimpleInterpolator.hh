@@ -30,8 +30,8 @@ using numeric::Real;
 using utility::vector1;
 
 class SimpleInterpolator;
-typedef utility::pointer::owning_ptr< SimpleInterpolator > SimpleInterpolatorOP;
-typedef utility::pointer::owning_ptr< SimpleInterpolator const > SimpleInterpolatorCOP;
+typedef utility::pointer::shared_ptr< SimpleInterpolator > SimpleInterpolatorOP;
+typedef utility::pointer::shared_ptr< SimpleInterpolator const > SimpleInterpolatorCOP;
 
 class SimpleInterpolator : public Interpolator {
 
@@ -68,7 +68,7 @@ private:
 
 };
 
-typedef utility::pointer::owning_ptr< Interpolator > InterpolatorOP;
+typedef utility::pointer::shared_ptr< Interpolator > InterpolatorOP;
 
 } // end namespace spline
 } // end namespace interpolation

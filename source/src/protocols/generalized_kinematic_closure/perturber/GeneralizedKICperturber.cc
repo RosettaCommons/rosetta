@@ -362,14 +362,14 @@ void GeneralizedKICperturber::init_bbgmover(
 	utility::vector1< std::pair< core::Size, core::Size > > const &residue_map
 ) {
 	if (!bbgmover_) {
-		bbgmover_ = new simple_moves::BBGaussianMover();
+		bbgmover_ = simple_moves::BBGaussianMoverOP( new simple_moves::BBGaussianMover() );
 
 		Size looplength = loop_pose.n_residue();
 		//reset movemap, default is empty (no move)
 		//the first(0) and the last(N-1) res are anchors
 		//1 and N-2 res are pivots
 		//all controled by residue list
-		core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
+		core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 
 		for (Size i=1, imax=residues_.size(); i<=imax; i++) {
 			for (Size j=1, jmax=residue_map.size(); j<=jmax; j++) {

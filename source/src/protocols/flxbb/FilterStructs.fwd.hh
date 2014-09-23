@@ -23,9 +23,9 @@ class FilterStructs;
 class FilterStructs_Packstat;
 class FilterStructs_TotalCharge;
 
-typedef utility::pointer::owning_ptr< FilterStructs > FilterStructsOP;
-typedef utility::pointer::owning_ptr< FilterStructs_Packstat > FilterStructs_PackstatOP;
-typedef utility::pointer::owning_ptr< FilterStructs_TotalCharge > FilterStructs_TotalChargeOP;
+typedef utility::pointer::shared_ptr< FilterStructs > FilterStructsOP;
+typedef utility::pointer::shared_ptr< FilterStructs_Packstat > FilterStructs_PackstatOP;
+typedef utility::pointer::shared_ptr< FilterStructs_TotalCharge > FilterStructs_TotalChargeOP;
 
 
 } // flxbb

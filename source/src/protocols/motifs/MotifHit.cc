@@ -39,8 +39,8 @@ MotifHit::MotifHit(
 ) : motifcop_( motif.clone() ),
 		vbpos_( vbpos ),
 		passed_automorphism_( passed_automorphism ),
-		build_rotamer_(0),
-		target_conformer_(0)
+		build_rotamer_(/* 0 */),
+		target_conformer_(/* 0 */)
 {}
 
 MotifHit::~MotifHit()
@@ -59,7 +59,7 @@ MotifHit::MotifHit( MotifHit const & src ) :
 MotifHitOP
 MotifHit::clone() const
 {
-	return new MotifHit(*this);
+	return MotifHitOP( new MotifHit(*this) );
 }
 
 void

@@ -182,7 +182,7 @@ namespace align {
 			// carve out subset of residues for rms calculation.
 			PoseOP rms_pose = pose;
 			if ( calc_rms_res_.size() > 0 ) {
-				rms_pose = new Pose;
+				rms_pose = PoseOP( new Pose );
 				pdbslice( *rms_pose, *pose, calc_rms_res_ );
 			}
 			Size const found_close_cluster = check_for_closeness( rms_pose );

@@ -65,7 +65,7 @@ main( int argc, char * argv [] ) {
 
 	protocols::moves::MoverOP protocol = generate_relax_from_cmd();
 	if ( option[ constraints::cst_fa_file ].user() ) {
-		SequenceMoverOP seqmov = new SequenceMover;
+		SequenceMoverOP seqmov( new SequenceMover );
 		protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
 		loadCsts->constraint_file( get_cst_fa_file_option() );
 		seqmov->add_mover( loadCsts );

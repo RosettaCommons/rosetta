@@ -56,7 +56,7 @@ NeighborsByDistanceCalculator::NeighborsByDistanceCalculator( NeighborsByDistanc
 {}
 
 core::pose::metrics::PoseMetricCalculatorOP NeighborsByDistanceCalculator::clone() const
-{ return new NeighborsByDistanceCalculator(*this); }
+{ return core::pose::metrics::PoseMetricCalculatorOP( new NeighborsByDistanceCalculator(*this) ); }
 
 void
 NeighborsByDistanceCalculator::lookup(

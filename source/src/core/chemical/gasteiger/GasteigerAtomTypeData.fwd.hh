@@ -22,8 +22,8 @@ namespace gasteiger {
 
 class GasteigerAtomTypeData;
 
-typedef  utility::pointer::owning_ptr< GasteigerAtomTypeData >  GasteigerAtomTypeDataOP;
-typedef  utility::pointer::owning_ptr< GasteigerAtomTypeData const >  GasteigerAtomTypeDataCOP;
+typedef  utility::pointer::shared_ptr< GasteigerAtomTypeData >  GasteigerAtomTypeDataOP;
+typedef  utility::pointer::shared_ptr< GasteigerAtomTypeData const >  GasteigerAtomTypeDataCOP;
 
 } // gasteiger
 } // chemical

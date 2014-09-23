@@ -22,8 +22,8 @@ namespace pack {
 namespace interaction_graph {
 
 class DensePDInteractionGraph;
-typedef utility::pointer::owning_ptr< DensePDInteractionGraph > DensePDInteractionGraphOP;
-typedef utility::pointer::owning_ptr< DensePDInteractionGraph const > DensePDInteractionGraphCOP;
+typedef utility::pointer::shared_ptr< DensePDInteractionGraph > DensePDInteractionGraphOP;
+typedef utility::pointer::shared_ptr< DensePDInteractionGraph const > DensePDInteractionGraphCOP;
 
 } // namespace interaction_graph
 } // namespace pack

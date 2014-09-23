@@ -25,8 +25,8 @@ namespace pose {
 
 class PDBInfo;
 
-typedef utility::pointer::owning_ptr< PDBInfo > PDBInfoOP;
-typedef utility::pointer::owning_ptr< PDBInfo const > PDBInfoCOP;
+typedef utility::pointer::shared_ptr< PDBInfo > PDBInfoOP;
+typedef utility::pointer::shared_ptr< PDBInfo const > PDBInfoCOP;
 
 } // namespace pose
 } // namespace core

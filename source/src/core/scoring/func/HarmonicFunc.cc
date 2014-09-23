@@ -35,7 +35,7 @@ namespace func {
 FuncOP
 HarmonicFunc::clone() const
 {
-	return new HarmonicFunc( x0_, sd_ );
+	return FuncOP( new HarmonicFunc( x0_, sd_ ) );
 }
 
 Real

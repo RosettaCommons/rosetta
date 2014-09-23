@@ -53,7 +53,7 @@ DetectSymmetryMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 DetectSymmetryMoverCreator::create_mover() const {
-	return new DetectSymmetry;
+	return protocols::moves::MoverOP( new DetectSymmetry );
 }
 
 std::string

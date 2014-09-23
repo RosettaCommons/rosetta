@@ -21,8 +21,8 @@ namespace protocols {
 namespace moves {
 
 class NullMover;
-typedef utility::pointer::owning_ptr< NullMover > NullMoverOP;
-typedef utility::pointer::owning_ptr< NullMover const > NullMoverCOP;
+typedef utility::pointer::shared_ptr< NullMover > NullMoverOP;
+typedef utility::pointer::shared_ptr< NullMover const > NullMoverCOP;
 
 } // moves
 } // protocols

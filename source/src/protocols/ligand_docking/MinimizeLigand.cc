@@ -76,7 +76,7 @@ MinimizeLigand::apply( core::pose::Pose & pose ){
 	core::Size const end = pose.conformation().chain_end(chain_id);
 	for (; begin <= end; ++begin) {
 		ligand_torsion_restraints_.push_back(
-			new protocols::ligand_docking::ResidueTorsionRestraints(pose, begin, degrees_));
+			utility::pointer::shared_ptr<class protocols::ligand_docking::ResidueTorsionRestraints>( new protocols::ligand_docking::ResidueTorsionRestraints(pose, begin, degrees_) ));
 	}
 }
 

@@ -120,7 +120,7 @@ std::string NotResidueSelector::class_name() {
 
 ResidueSelectorOP
 NotResidueSelectorCreator::create_residue_selector() const {
-	return new NotResidueSelector;
+	return ResidueSelectorOP( new NotResidueSelector );
 }
 
 std::string

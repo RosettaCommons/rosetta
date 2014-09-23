@@ -26,8 +26,8 @@ namespace fragment {
 // Forward
 class ConstantLengthFragSet;
 
-typedef utility::pointer::owning_ptr< ConstantLengthFragSet > ConstantLengthFragSetOP;
-typedef utility::pointer::owning_ptr< ConstantLengthFragSet const > ConstantLengthFragSetCOP;
+typedef utility::pointer::shared_ptr< ConstantLengthFragSet > ConstantLengthFragSetOP;
+typedef utility::pointer::shared_ptr< ConstantLengthFragSet const > ConstantLengthFragSetCOP;
 
 
 } // namespace fragment

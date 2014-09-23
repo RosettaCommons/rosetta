@@ -56,7 +56,7 @@ void* star_main(void*) {
   using protocols::moves::MoverOP;
 
   check_required();
-  MoverOP mover = new StarAbinitio();
+  MoverOP mover( new StarAbinitio() );
 
   try {
     JobDistributor::get_instance()->go(mover);

@@ -18,8 +18,8 @@ namespace loggers {
 
 class PdbLogger;
 
-typedef utility::pointer::owning_ptr<PdbLogger> PdbLoggerOP;
-typedef utility::pointer::owning_ptr<PdbLogger const> PdbLoggerCOP;
+typedef utility::pointer::shared_ptr<PdbLogger> PdbLoggerOP;
+typedef utility::pointer::shared_ptr<PdbLogger const> PdbLoggerCOP;
 
 }
 }

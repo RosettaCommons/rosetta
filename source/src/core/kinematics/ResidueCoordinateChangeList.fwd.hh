@@ -31,7 +31,7 @@ namespace kinematics {
 // Forward
 class ResidueCoordinateChangeList;
 
-typedef utility::pointer::owning_ptr< ResidueCoordinateChangeList > ResidueCoordinateChangeListOP;
+typedef utility::pointer::shared_ptr< ResidueCoordinateChangeList > ResidueCoordinateChangeListOP;
 
 typedef utility::vector1< Size >                  ResidueIndexList;
 typedef utility::vector1< Size >::const_iterator  ResidueListIterator;

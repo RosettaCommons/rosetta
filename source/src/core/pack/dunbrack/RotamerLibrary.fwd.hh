@@ -23,8 +23,8 @@ namespace pack {
 namespace dunbrack {
 
 class RotamerLibrary;
-typedef utility::pointer::owning_ptr< RotamerLibrary > RotamerLibraryOP;
-typedef utility::pointer::owning_ptr< RotamerLibrary const > RotamerLibraryCOP;
+typedef utility::pointer::shared_ptr< RotamerLibrary > RotamerLibraryOP;
+typedef utility::pointer::shared_ptr< RotamerLibrary const > RotamerLibraryCOP;
 
 } // dunbrack
 } // pack

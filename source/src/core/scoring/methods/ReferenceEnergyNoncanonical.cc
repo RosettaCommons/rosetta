@@ -39,9 +39,9 @@ ReferenceEnergyNoncanonicalCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
 	if ( options.has_method_weights( ref_nc ) ) {
-		return new ReferenceEnergyNoncanonical( options.method_weights( ref_nc ) );
+		return methods::EnergyMethodOP( new ReferenceEnergyNoncanonical( options.method_weights( ref_nc ) ) );
 	} else {
-		return new ReferenceEnergyNoncanonical;
+		return methods::EnergyMethodOP( new ReferenceEnergyNoncanonical );
 	}
 }
 
@@ -55,13 +55,13 @@ ReferenceEnergyNoncanonicalCreator::score_types_for_method() const {
 
 
 ReferenceEnergyNoncanonical::ReferenceEnergyNoncanonical() :
-	parent( new ReferenceEnergyNoncanonicalCreator )
+	parent( EnergyMethodCreatorOP( new ReferenceEnergyNoncanonicalCreator ) )
 {
  init_res_list();
 }
 
 ReferenceEnergyNoncanonical::ReferenceEnergyNoncanonical( utility::vector1< Real > const & weight_list ):
-	parent( new ReferenceEnergyNoncanonicalCreator ),
+	parent( EnergyMethodCreatorOP( new ReferenceEnergyNoncanonicalCreator ) ),
 	weights_( weight_list )
 {
  init_res_list();
@@ -73,7 +73,7 @@ ReferenceEnergyNoncanonical::~ReferenceEnergyNoncanonical() {}
 EnergyMethodOP
 ReferenceEnergyNoncanonical::clone() const
 {
-	return new ReferenceEnergyNoncanonical( weights_ );
+	return EnergyMethodOP( new ReferenceEnergyNoncanonical( weights_ ) );
 }
 
 /// This is a terrible terrible terrible hack that will do for now.

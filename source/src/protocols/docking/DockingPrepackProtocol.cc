@@ -75,7 +75,7 @@ DockingPrepackProtocol::DockingPrepackProtocol(): DockingHighRes()
 void DockingPrepackProtocol::setup_defaults()
 {
 	trans_magnitude_ = 1000.0;
-	pack_operations_= new SequenceMover();
+	pack_operations_ = SequenceMoverOP( new SequenceMover() );
 	dock_ppk_ = false;
 }
 
@@ -128,19 +128,19 @@ void DockingPrepackProtocol::score_and_output(std::string outfilename,
 
 void DockingPrepackProtocol::setup_pack_operation_movers()
 {
-	prepack_full_repack_ = new protocols::simple_moves::PackRotamersMover();
+	prepack_full_repack_ = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover() );
 	prepack_full_repack_->score_function( scorefxn_pack() );
 	prepack_full_repack_->task_factory( task_factory() );
 	pack_operations_->add_mover(prepack_full_repack_);
 
 	if ( rt_min() ){
-		rtmin_mover_ = new protocols::simple_moves::RotamerTrialsMinMover( );
+		rtmin_mover_ = protocols::simple_moves::RotamerTrialsMinMoverOP( new protocols::simple_moves::RotamerTrialsMinMover( ) );
 		rtmin_mover_->score_function( scorefxn_pack() );
 		rtmin_mover_->task_factory( task_factory() );
 		pack_operations_->add_mover(rtmin_mover_);
 	}
 	if ( sc_min() ){
-		scmin_mover_ =new SidechainMinMover();
+		scmin_mover_ = SidechainMinMoverOP( new SidechainMinMover() );
 		scmin_mover_->set_scorefxn( scorefxn_pack() );
 		scmin_mover_->set_task_factory( task_factory() );
 		pack_operations_->add_mover( scmin_mover_ );
@@ -182,7 +182,7 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 
 	//bringing the packed structures together
 	for(  DockJumps::const_iterator jump= movable_jumps().begin() ; jump != movable_jumps().end(); ++jump ) {
-		rigid::RigidBodyTransMoverOP translate_back ( new rigid::RigidBodyTransMover(pose, *jump) );
+		rigid::RigidBodyTransMoverOP translate_back( new rigid::RigidBodyTransMover(pose, *jump) );
 		translate_back->step_size( trans_magnitude_ );
 		translate_back->trans_axis().negate();
 		translate_back->apply(pose);

@@ -75,7 +75,7 @@ MolarMassFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 }
 
 protocols::filters::FilterOP
-MolarMassFilterCreator::create_filter() const { return new MolarMassFilter; }
+MolarMassFilterCreator::create_filter() const { return protocols::filters::FilterOP( new MolarMassFilter ); }
 
 std::string
 MolarMassFilterCreator::keyname() const { return "MolarMass"; }

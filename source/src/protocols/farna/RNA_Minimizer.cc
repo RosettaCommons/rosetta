@@ -135,7 +135,7 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 
 	/////////////////////////////////////////////////////
 	kinematics::MoveMap mm;
-	if (!allow_insert_) allow_insert_ = new toolbox::AllowInsert( pose ); // initialized to let all dofs move.
+	if (!allow_insert_) allow_insert_ = toolbox::AllowInsertOP( new toolbox::AllowInsert( pose ) ); // initialized to let all dofs move.
 	update_allow_insert_with_extra_minimize_res( pose );
  	setup_movemap( mm, pose );
 

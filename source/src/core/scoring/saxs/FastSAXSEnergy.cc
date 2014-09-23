@@ -137,7 +137,7 @@ ScoreTypes FastSAXSEnergyCreator::score_types_for_method() const {
 }
 
 methods::EnergyMethodOP FastSAXSEnergyCreator::create_energy_method( methods::EnergyMethodOptions const &) const {
-	return new FastSAXSEnergy();
+	return methods::EnergyMethodOP( new FastSAXSEnergy() );
 }
 
 FastSAXSEnergy::FastSAXSEnergy() :
@@ -149,7 +149,7 @@ FastSAXSEnergy::FastSAXSEnergy() :
 
 /// clone
 methods::EnergyMethodOP FastSAXSEnergy::clone() const {
-	return new FastSAXSEnergy( *this );
+	return methods::EnergyMethodOP( new FastSAXSEnergy( *this ) );
 }
 
 void FastSAXSEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {

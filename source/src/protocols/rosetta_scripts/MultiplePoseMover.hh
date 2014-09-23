@@ -40,8 +40,8 @@ namespace protocols {
 namespace rosetta_scripts {
 
 class MultiplePoseMover;
-typedef utility::pointer::owning_ptr< MultiplePoseMover > MultiplePoseMoverOP;
-typedef utility::pointer::owning_ptr< MultiplePoseMover const > MultiplePoseMoverCOP;
+typedef utility::pointer::shared_ptr< MultiplePoseMover > MultiplePoseMoverOP;
+typedef utility::pointer::shared_ptr< MultiplePoseMover const > MultiplePoseMoverCOP;
 
 class MultiplePoseMover : public protocols::moves::Mover {
 
@@ -53,11 +53,11 @@ public:
 	virtual ~MultiplePoseMover() {};
 
 	protocols::moves::MoverOP clone() const {
-		return new MultiplePoseMover(*this);
+		return protocols::moves::MoverOP( new MultiplePoseMover(*this) );
 	}
 
 	protocols::moves::MoverOP fresh_instance() const {
-		return new MultiplePoseMover();
+		return protocols::moves::MoverOP( new MultiplePoseMover() );
 	}
 
 	void apply(core::pose::Pose& pose);

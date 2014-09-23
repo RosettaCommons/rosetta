@@ -108,7 +108,7 @@ bool PDBSilentStruct::init_from_lines(
 	if ( iter->substr(0,6) != "SCORE:" ) {
 		// get sequence and scorename data from the silent-file data object, because I don't have it!
 		EnergyNamesOP enames = EnergyNamesOP(
-			static_cast< EnergyNames * > ( container.get_shared_silent_data( energynames )() )
+			utility::pointer::static_pointer_cast< core::io::silent::EnergyNames > ( container.get_shared_silent_data( energynames ) )
 		);
 
 		energy_names_ = enames->energy_names();

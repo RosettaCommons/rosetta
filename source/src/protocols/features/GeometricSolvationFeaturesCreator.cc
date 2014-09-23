@@ -29,7 +29,7 @@ namespace features {
 GeometricSolvationFeaturesCreator::GeometricSolvationFeaturesCreator() {}
 GeometricSolvationFeaturesCreator::~GeometricSolvationFeaturesCreator() {}
 FeaturesReporterOP GeometricSolvationFeaturesCreator::create_features_reporter() const {
-	return new GeometricSolvationFeatures;
+	return FeaturesReporterOP( new GeometricSolvationFeatures );
 }
 
 std::string GeometricSolvationFeaturesCreator::type_name() const {

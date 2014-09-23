@@ -43,7 +43,7 @@ utility::vector1<core::chemical::AA> VallResidue::order_ = order_vector();
 
 /// @brief default constructor
 VallResidue::VallResidue() :
-	utility::pointer::ReferenceCount(), key_(0),id_(""),profile_(20),profile_struct_(20),sec_shift_data_(0),
+	utility::pointer::ReferenceCount(), key_(0),id_(""),profile_(20),profile_struct_(20),sec_shift_data_(/* 0 */),
 			position_index_(0), section_index_(0) {
 }
 
@@ -135,7 +135,7 @@ VallResidue & VallResidue::operator =(VallResidue const & rval) {
 
 /// @brief build a BBTorsionSRFD from this page
 VallResidue::BBTorsionSRFDOP VallResidue::bbtorsion_srfd() const {
-	BBTorsionSRFDOP srfd = new BBTorsionSRFD();
+	BBTorsionSRFDOP srfd( new BBTorsionSRFD() );
 
 	srfd->set_sequence(aa_);
 	srfd->set_secstruct(ss_);

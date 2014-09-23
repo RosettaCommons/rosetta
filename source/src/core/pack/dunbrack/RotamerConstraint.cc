@@ -60,7 +60,7 @@ void load_unboundrot(pose::Pose & pose)
 		for(Size i = 1; i <= option[ OptionKeys::packing::unboundrot ]().size(); ++i) {
 			std::string filename = option[ OptionKeys::packing::unboundrot ]()[i].name();
 			TR << "Adding 'unbound' rotamers from " << filename << std::endl;
-			PoseOP pose = new Pose();
+			PoseOP pose( new Pose() );
 			//core::import_pose::pose_from_pdb( *pose, filename );
 			core::io::pdb::build_pose_from_pdb_as_is( *pose, filename );
 			unboundrot_poses.push_back( pose );
@@ -90,7 +90,7 @@ void load_unboundrot(pose::Pose & pose, core::pose::PoseCOPs const & unboundrot_
 			if( core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( rsd.type() ).expired() ) continue; // no point in creating constraint
 			if( by_res_type.find( rsd.type().name() ) == by_res_type.end() ) { // first one, create constraint
 				TR.Debug << "Creating rotamer constraint for " << rsd.type().name() << " at " << rsd_num << std::endl;
-				RotamerConstraintOP constraint = new RotamerConstraint( *unboundrot_poses[pose_num], rsd_num );
+				RotamerConstraintOP constraint( new RotamerConstraint( *unboundrot_poses[pose_num], rsd_num ) );
 				pose.add_constraint( constraint );
 				by_res_type[ rsd.type().name() ] = constraint;
 			} else { // subsequent one, just add residue

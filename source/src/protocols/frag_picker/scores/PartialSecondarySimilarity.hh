@@ -95,10 +95,10 @@ public:
 		if( ! query_prediction ) {
 			utility_exit_with_message("Unable to find secondary structure prediction for "+prediction_id);
 		}
-		return (FragmentScoringMethodOP) new PartialSecondarySimilarity(priority,
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new PartialSecondarySimilarity(priority,
 						lowest_acceptable_value, use_lowest,
 						query_prediction,prediction_id,
-						sequence_length,vall_max_len);
+						sequence_length,vall_max_len) );
 	}
 };
 

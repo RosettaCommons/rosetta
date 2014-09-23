@@ -52,7 +52,7 @@ LoopLengthChangeCreator::keyname() const
 
 protocols::moves::MoverOP
 LoopLengthChangeCreator::create_mover() const {
-	return new LoopLengthChange;
+	return protocols::moves::MoverOP( new LoopLengthChange );
 }
 
 std::string

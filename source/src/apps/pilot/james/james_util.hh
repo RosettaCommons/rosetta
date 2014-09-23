@@ -213,8 +213,7 @@ utility::vector1< core::Real > calc_blosum_scores(
 
 	utility::io::izstream stream;
 	basic::database::open( stream, "sequence/BLOSUM62" );
-	ScoringSchemeOP blosum_score(
-		new MatrixScoringScheme( 0, 0, FileName("/work/tex/minirosetta_database/sequence/BLOSUM62")));
+	ScoringSchemeOP blosum_score( new MatrixScoringScheme( 0, 0, FileName("/work/tex/minirosetta_database/sequence/BLOSUM62")) );
 
 	vector1< Real > scores( aln.length(), 0.0 );
 	for ( Size ii = 1; ii <= aln.length(); ++ii ) {

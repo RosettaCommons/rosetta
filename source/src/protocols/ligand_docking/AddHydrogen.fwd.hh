@@ -23,8 +23,8 @@ namespace ligand_docking {
 
 
 class AddHydrogen; // fwd declaration
-typedef utility::pointer::owning_ptr< AddHydrogen > AddHydrogenOP;
-typedef utility::pointer::owning_ptr< AddHydrogen const > AddHydrogenCOP;
+typedef utility::pointer::shared_ptr< AddHydrogen > AddHydrogenOP;
+typedef utility::pointer::shared_ptr< AddHydrogen const > AddHydrogenCOP;
 
 
 } // namespace ligand_docking

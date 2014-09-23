@@ -43,7 +43,7 @@ namespace filters {
 LRmsdFilter::LRmsdFilter() :
   protocols::filters::Filter( "LRmsd" ),
   threshold_( 5.0 ),
-  reference_pose_( NULL )
+  reference_pose_( /* NULL */ )
 {}
 
 LRmsdFilter::LRmsdFilter(protocols::docking::DockJumps const movable_jumps,
@@ -59,7 +59,7 @@ LRmsdFilter::~LRmsdFilter() {}
 
 protocols::filters::FilterOP
 LRmsdFilter::clone() const {
-	return new LRmsdFilter( *this );
+	return protocols::filters::FilterOP( new LRmsdFilter( *this ) );
 }
 
 static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.LRmsdFilter" );
@@ -105,7 +105,7 @@ LRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &
 		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data_map );
 	}
 	else{
-		reference_pose_ = new core::pose::Pose( reference_pose );
+		reference_pose_ = core::pose::PoseOP( new core::pose::Pose( reference_pose ) );
 		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() )
 			core::import_pose::pose_from_pdb( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] );
 	}
@@ -120,7 +120,7 @@ LRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &
 }
 
 protocols::filters::FilterOP
-LRmsdFilterCreator::create_filter() const { return new LRmsdFilter; }
+LRmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new LRmsdFilter ); }
 
 std::string
 LRmsdFilterCreator::keyname() const { return "LRmsd"; }

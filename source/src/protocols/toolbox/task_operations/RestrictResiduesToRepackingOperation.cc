@@ -69,12 +69,12 @@ namespace protocols {
 			core::pack::task::operation::TaskOperationOP
 			RestrictResiduesToRepackingOperationCreator::create_task_operation() const
 			{
-				return new RestrictResiduesToRepackingOperation;
+				return core::pack::task::operation::TaskOperationOP( new RestrictResiduesToRepackingOperation );
 			}
 			
 			core::pack::task::operation::TaskOperationOP RestrictResiduesToRepackingOperation::clone() const
 			{
-				return new RestrictResiduesToRepackingOperation( *this );
+				return core::pack::task::operation::TaskOperationOP( new RestrictResiduesToRepackingOperation( *this ) );
 			}
 	
 		

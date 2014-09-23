@@ -26,7 +26,7 @@ class PDNode;
 class PDEdge;
 class PDInteractionGraph;
 
-typedef utility::pointer::owning_ptr< PDInteractionGraph > PDInteractionGraphOP;
+typedef utility::pointer::shared_ptr< PDInteractionGraph > PDInteractionGraphOP;
 
 } // namespace interaction_graph
 } // namespace pack

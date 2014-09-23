@@ -90,7 +90,7 @@ void StructureSimilarityEvaluatorCreator::add_evaluators( evaluation::MetaPoseEv
 			silent_input.fill_pose( pose, *rsd_set );
 			poses.push_back( pose );
 		}
-		eval.add_evaluation( new StructuralSimilarityEvaluator(poses) );
+		eval.add_evaluation( PoseEvaluatorOP( new StructuralSimilarityEvaluator(poses) ) );
 	}
 
 }

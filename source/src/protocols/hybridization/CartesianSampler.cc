@@ -145,7 +145,7 @@ CartesianSamplerCreator::keyname() const {
 
 protocols::moves::MoverOP
 CartesianSamplerCreator::create_mover() const {
-	return new CartesianSampler;
+	return protocols::moves::MoverOP( new CartesianSampler );
 }
 
 std::string
@@ -205,8 +205,8 @@ CartesianSampler::update_fragment_library_pointers() {
 	}
 }
 
-protocols::moves::MoverOP CartesianSampler::clone() const { return new CartesianSampler( *this ); }
-protocols::moves::MoverOP CartesianSampler::fresh_instance() const { return new CartesianSampler; }
+protocols::moves::MoverOP CartesianSampler::clone() const { return protocols::moves::MoverOP( new CartesianSampler( *this ) ); }
+protocols::moves::MoverOP CartesianSampler::fresh_instance() const { return protocols::moves::MoverOP( new CartesianSampler ); }
 
 // get frag->pose transform, return RMS
 core::Real
@@ -291,14 +291,14 @@ CartesianSampler::apply_fragcsts( core::pose::Pose &working_frag,	core::pose::Po
 	if (!nterm) {
 		for (core::uint j = 0; j < overlap_; ++j) {
 			for (core::uint i = 1; i <= 3; ++i) {
-				core::scoring::func::FuncOP fx = new core::scoring::func::HarmonicFunc( 0.0, 1.0 );
+				core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
 				working_frag.add_constraint(
-					new CoordinateConstraint(
+					scoring::constraints::ConstraintCOP( new CoordinateConstraint(
 						core::id::AtomID(i,j+1),
 						core::id::AtomID(2,working_frag.total_residue()),
 						pose.residue(startpos+j).atom(i).xyz(),
 						fx
-					)
+					) )
 				);
 			}
 		}
@@ -306,14 +306,14 @@ CartesianSampler::apply_fragcsts( core::pose::Pose &working_frag,	core::pose::Po
 	if (!cterm) {
 		for (int j=len-overlap_; j<len; ++j) {
 			for (int i=1; i<=3; ++i) {
-				core::scoring::func::FuncOP fx = new core::scoring::func::HarmonicFunc( 0.0, 1.0 );
+				core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
 				working_frag.add_constraint(
-					new CoordinateConstraint(
+					scoring::constraints::ConstraintCOP( new CoordinateConstraint(
 						core::id::AtomID(i,j+1),
 						core::id::AtomID(2,working_frag.total_residue()),
 						pose.residue(startpos+j).atom(i).xyz(),
 						fx
-					)
+					) )
 				);
 			}
 		}
@@ -349,7 +349,7 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 	// see if the pose has NCS
 	simple_moves::symmetry::NCSResMappingOP ncs;
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ) {
-		ncs = ( static_cast< simple_moves::symmetry::NCSResMapping* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING )() ));
+		ncs = ( utility::pointer::static_pointer_cast< simple_moves::symmetry::NCSResMapping > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ));
 	}
 
 	protocols::simple_moves::SwitchResidueTypeSetMover to_fa("fa_standard");
@@ -381,9 +381,9 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 
 	if (bbmove_ && nonsymm_fa_scorefxn->get_weight( core::scoring::coordinate_constraint ) == 0)
 		nonsymm_fa_scorefxn->set_weight( core::scoring::coordinate_constraint , 1 );
-	core::pack::task::TaskFactoryOP main_task_factory = new core::pack::task::TaskFactory;
-	main_task_factory->push_back( new core::pack::task::operation::RestrictToRepacking );
-	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
+	core::pack::task::TaskFactoryOP main_task_factory( new core::pack::task::TaskFactory );
+	main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
 	pack_mover->task_factory( main_task_factory );
 	pack_mover->score_function( nonsymm_fa_scorefxn );
 
@@ -411,9 +411,9 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 
 
 		// set up packer
-		core::pack::task::TaskFactoryOP main_task_factory = new core::pack::task::TaskFactory;
-		main_task_factory->push_back( new core::pack::task::operation::RestrictToRepacking );
-		protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
+		core::pack::task::TaskFactoryOP main_task_factory( new core::pack::task::TaskFactory );
+		main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
+		protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
 		pack_mover->task_factory( main_task_factory );
 		pack_mover->score_function( nonsymm_fa_scorefxn );
 
@@ -423,7 +423,7 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 		// if fullatom do a repack here
 		if (fullatom_) {
 			if ( core::pose::symmetry::is_symmetric(pose) ) {
-				protocols::simple_moves::PackRotamersMoverOP sympack_mover = new protocols::simple_moves::symmetry::SymPackRotamersMover;
+				protocols::simple_moves::PackRotamersMoverOP sympack_mover( new protocols::simple_moves::symmetry::SymPackRotamersMover );
 				sympack_mover->task_factory( main_task_factory );
 				sympack_mover->score_function( fa_scorefxn_ );
 				sympack_mover->apply( pose );
@@ -436,7 +436,7 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 		// scorefunctions
 		if (nonsymm_fa_scorefxn->get_weight( core::scoring::elec_dens_fast ) == 0)
 			nonsymm_fa_scorefxn->set_weight( core::scoring::elec_dens_fast , 20 );
-		core::scoring::ScoreFunctionOP densonly = new core::scoring::ScoreFunction();
+		core::scoring::ScoreFunctionOP densonly( new core::scoring::ScoreFunction() );
 		densonly->set_weight( core::scoring::elec_dens_fast, 5.0 );
 
 		// prepare fragment
@@ -577,9 +577,9 @@ CartesianSampler::apply_constraints( core::pose::Pose &pose )
 				if (symm_info && !symm_info->bb_is_independent( tgt_resid_j ) ) continue;
 				if (symm_info && !symm_info->bb_is_independent( tgt_resid_k ) )	continue;
 
-				FuncOP fx = new ScalarWeightedFunc( ref_cst_weight_, FuncOP( new USOGFunc( dist, COORDDEV ) ) );
+				FuncOP fx( new ScalarWeightedFunc( ref_cst_weight_, FuncOP( new USOGFunc( dist, COORDDEV ) ) ) );
 				pose.add_constraint(
-						new AtomPairConstraint( core::id::AtomID(2,tgt_resid_j), core::id::AtomID(2,tgt_resid_k), fx )
+						scoring::constraints::ConstraintCOP( new AtomPairConstraint( core::id::AtomID(2,tgt_resid_j), core::id::AtomID(2,tgt_resid_k), fx ) )
 					);
 			}
 		}
@@ -614,7 +614,7 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 		edm.setWindow( 3 );  // smoother to use 3-res window
 
 		// score the pose
-		core::scoring::ScoreFunctionOP myscore = new core::scoring::ScoreFunction();
+		core::scoring::ScoreFunctionOP myscore( new core::scoring::ScoreFunction() );
 		myscore->set_weight( core::scoring::elec_dens_window, 1.0 );
 
 		// make sure interaction graph gets computed
@@ -669,7 +669,7 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 		core::Real Rtemp=1;  // again, this is a guess
 
 		// score the pose
-		core::scoring::ScoreFunctionOP myscore = new core::scoring::ScoreFunction();
+		core::scoring::ScoreFunctionOP myscore( new core::scoring::ScoreFunction() );
 		myscore->set_weight( core::scoring::rama, 1.0 );
 		if (core::pose::symmetry::is_symmetric(pose) ) {
 			myscore = core::scoring::symmetry::symmetrize_scorefunction(*myscore);
@@ -774,7 +774,7 @@ CartesianSampler::apply( Pose & pose ) {
 	// see if the pose has NCS
 	simple_moves::symmetry::NCSResMappingOP ncs;
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ) {
-		ncs = ( static_cast< simple_moves::symmetry::NCSResMapping* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING )() ));
+		ncs = ( utility::pointer::static_pointer_cast< simple_moves::symmetry::NCSResMapping > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ));
 	}
 
 	// using the current fragment_bias_strategy_, compute bias
@@ -796,8 +796,8 @@ CartesianSampler::apply( Pose & pose ) {
 	bool fullatom_input = pose.is_fullatom();
 	protocols::moves::MoverOP restore_sc;
 	if (fullatom_input && !fullatom_) {
-	  restore_sc = new protocols::simple_moves::ReturnSidechainMover( pose );
-		protocols::moves::MoverOP tocen = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
+	  restore_sc = protocols::moves::MoverOP( new protocols::simple_moves::ReturnSidechainMover( pose ) );
+		protocols::moves::MoverOP tocen( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
 		tocen->apply( pose );
 	} else if (!fullatom_input && fullatom_) {
 		utility_exit_with_message("ERROR! Expected fullatom input.");
@@ -824,7 +824,7 @@ CartesianSampler::apply( Pose & pose ) {
 
 	Pose pose_in = pose;
 	(*scorefxn_)(pose);
-	protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *mc_scorefxn_, temp_ );
+	protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose, *mc_scorefxn_, temp_ ) );
 
 	if (TR.Debug.visible()) {
 		scorefxn_->show_line_headers(TR);
@@ -904,7 +904,7 @@ CartesianSampler::apply( Pose & pose ) {
 	if (recover_low_) mc->recover_low(pose);
 
 	if (fullatom_input && !fullatom_) {
-		protocols::moves::MoverOP tofa = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD );
+		protocols::moves::MoverOP tofa( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD ) );
 		tofa->apply( pose );
 		restore_sc->apply( pose );
 	}
@@ -993,7 +993,7 @@ CartesianSampler::parse_my_tag(
 	if (tag->hasOption( "loops_in" ) ) {
 		std::string looptag = tag->getOption<std::string>( "loops_in" );
 		runtime_assert( data.has( "loops", looptag ) );
-		loops_ = data.get< protocols::loops::Loops * >( "loops", looptag );
+		loops_ = data.get_ptr<protocols::loops::Loops>( "loops", looptag );
 	}
 
 	// fragments

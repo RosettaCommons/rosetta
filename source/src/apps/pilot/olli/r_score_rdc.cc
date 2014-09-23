@@ -96,12 +96,12 @@ void register_options() {
 class RDCToolMover;
 
 // Types
-typedef  utility::pointer::owning_ptr< RDCToolMover >  RDCToolMoverOP;
-typedef  utility::pointer::owning_ptr< RDCToolMover const >  RDCToolMoverCOP;
+typedef  utility::pointer::shared_ptr< RDCToolMover >  RDCToolMoverOP;
+typedef  utility::pointer::shared_ptr< RDCToolMover const >  RDCToolMoverCOP;
 
 class RDCToolMover : public moves::Mover {
 public:
-	RDCToolMover() : myRDCs_( NULL ) {};
+	RDCToolMover() : myRDCs_( /* NULL */ ) {};
 	virtual void apply( core::pose::Pose& );
 	virtual std::string get_name() const {
 		return "RDC-Tool";
@@ -134,7 +134,7 @@ void RDCToolMover::dump_averages() {
 void RDCToolMover::apply( core::pose::Pose &pose ) {
 
 	if ( !myRDCs_ ) {
-		myRDCs_ = new ResidualDipolarCoupling;
+		myRDCs_ = ResidualDipolarCouplingOP( new ResidualDipolarCoupling );
 		ResidualDipolarCoupling::RDC_lines data = myRDCs_->get_RDC_data();
 		if ( option[ average ].user() ) {
 			average_RDCs_.resize( data.size(), 0.0 );
@@ -165,7 +165,7 @@ void RDCToolMover::apply( core::pose::Pose &pose ) {
 					filtered.push_back( *it );
 				}
 			}
-			myRDCs_ = new ResidualDipolarCoupling( filtered );
+			myRDCs_ = ResidualDipolarCouplingOP( new ResidualDipolarCoupling( filtered ) );
 		} // end filter
 	} //end init myRDCs_
 	store_RDC_in_pose( myRDCs_, pose );
@@ -197,11 +197,11 @@ void RDCToolMover::apply( core::pose::Pose &pose ) {
 	std::cout << fname << " R: " << someRDCs->R() << " Q: " << someRDCs->Q() << std::endl;
 	++nstruct_;
 	if ( option[ score_app::linmin ]() ) {
-		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 		movemap->set_bb( true ); movemap->set_chi( true );
-		protocols::simple_moves::MinMoverOP minmover = new protocols::simple_moves::MinMover(
+		protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover(
 					 movemap, score.clone(), "linmin", 1e-4,
-					 false /*use_nblist*/, true /*deriv_check*/, true /*verbose driv check*/ );
+					 false /*use_nblist*/, true /*deriv_check*/, true /*verbose driv check*/ ) );
 		minmover->apply( pose );
 	}
 
@@ -215,7 +215,7 @@ void run() {
 		basic::options::option[ basic::options::OptionKeys::in::path::database ].def( "/work/olange/minirosetta_database");
 	}
 
-	RDCToolMoverOP cst_tool =  new RDCToolMover;
+	RDCToolMoverOP cst_tool( new RDCToolMover );
 	protocols::jd2::JobDistributor::get_instance()->go( cst_tool, jd2::JobOutputterOP( new jd2::NoOutputJobOutputter ) );
 
 

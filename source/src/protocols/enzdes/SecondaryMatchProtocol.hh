@@ -34,13 +34,13 @@ namespace protocols{
 namespace enzdes{
 
 class SecondaryMatchProtocol;
-typedef utility::pointer::owning_ptr< SecondaryMatchProtocol > SecondaryMatchProtocolOP;
-typedef utility::pointer::owning_ptr< SecondaryMatchProtocol const > SecondaryMatchProtocolCOP;
-typedef utility::pointer::access_ptr< SecondaryMatchProtocol const > SecondaryMatchProtocolCAP;
+typedef utility::pointer::shared_ptr< SecondaryMatchProtocol > SecondaryMatchProtocolOP;
+typedef utility::pointer::shared_ptr< SecondaryMatchProtocol const > SecondaryMatchProtocolCOP;
+typedef utility::pointer::weak_ptr< SecondaryMatchProtocol const > SecondaryMatchProtocolCAP;
 
 class PoseFoundResiduesCombination;
 
-typedef utility::pointer::owning_ptr< PoseFoundResiduesCombination > PoseFoundResiduesCombinationOP;
+typedef utility::pointer::shared_ptr< PoseFoundResiduesCombination > PoseFoundResiduesCombinationOP;
 
 
 

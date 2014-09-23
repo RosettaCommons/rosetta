@@ -25,8 +25,8 @@ namespace constraints_additional {
 
 //forward declaration for private class
 class MaxSeqSepConstraintSet;
-typedef utility::pointer::owning_ptr< MaxSeqSepConstraintSet > MaxSeqSepConstraintSetOP;
-typedef utility::pointer::owning_ptr< MaxSeqSepConstraintSet const> MaxSeqSepConstraintSetCOP;
+typedef utility::pointer::shared_ptr< MaxSeqSepConstraintSet > MaxSeqSepConstraintSetOP;
+typedef utility::pointer::shared_ptr< MaxSeqSepConstraintSet const> MaxSeqSepConstraintSetCOP;
 
 }
 }

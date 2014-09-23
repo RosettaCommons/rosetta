@@ -21,8 +21,8 @@ namespace simple_filters {
 
 class InterfaceBindingEnergyDensityFilter;
 
-typedef utility::pointer::owning_ptr< InterfaceBindingEnergyDensityFilter > InterfaceBindingEnergyDensityFilterOP;
-typedef utility::pointer::owning_ptr< InterfaceBindingEnergyDensityFilter const > InterfaceBindingEnergyDensityFilterCOP;
+typedef utility::pointer::shared_ptr< InterfaceBindingEnergyDensityFilter > InterfaceBindingEnergyDensityFilterOP;
+typedef utility::pointer::shared_ptr< InterfaceBindingEnergyDensityFilter const > InterfaceBindingEnergyDensityFilterCOP;
 
 }
 }

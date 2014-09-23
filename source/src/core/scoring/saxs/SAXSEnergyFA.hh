@@ -117,7 +117,7 @@ public:
 
     /// c-tor
     SAXSEnergyFA() : SAXSEnergy( fa_cfg_file_,
-	    chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD),saxs_fa_score,new SAXSEnergyCreatorFA) {}
+	    chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD),saxs_fa_score,methods::EnergyMethodCreatorOP( new SAXSEnergyCreatorFA )) {}
 
 };
 

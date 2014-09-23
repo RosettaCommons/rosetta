@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class HBondFeatures;
-typedef utility::pointer::owning_ptr< HBondFeatures > HBondFeaturesOP;
-typedef utility::pointer::owning_ptr< HBondFeatures const > HBondFeaturesCOP;
+typedef utility::pointer::shared_ptr< HBondFeatures > HBondFeaturesOP;
+typedef utility::pointer::shared_ptr< HBondFeatures const > HBondFeaturesCOP;
 
 }//features
 }//protocols

@@ -36,8 +36,8 @@ namespace protocols {
 namespace cluster {
 
 class GatherPosesMover;
-typedef utility::pointer::owning_ptr< GatherPosesMover > GatherPosesMoverOP;
-typedef utility::pointer::owning_ptr< GatherPosesMover const > GatherPosesMoverCOP;
+typedef utility::pointer::shared_ptr< GatherPosesMover > GatherPosesMoverOP;
+typedef utility::pointer::shared_ptr< GatherPosesMover const > GatherPosesMoverCOP;
 
 class GatherPosesMover: public moves::Mover {
 public:
@@ -95,8 +95,8 @@ private:
 // Main base class for making constraints out of groups of structures
 
 class EnsembleConstraints;
-typedef utility::pointer::owning_ptr< EnsembleConstraints > EnsembleConstraintsOP;
-typedef utility::pointer::owning_ptr< EnsembleConstraints const > EnsembleConstraintsCOP;
+typedef utility::pointer::shared_ptr< EnsembleConstraints > EnsembleConstraintsOP;
+typedef utility::pointer::shared_ptr< EnsembleConstraints const > EnsembleConstraintsCOP;
 
 class EnsembleConstraints: public protocols::cluster::GatherPosesMover {
 public:
@@ -112,8 +112,8 @@ public:
 
 // A super simple implementation of the above - jsut create bounds for close CA atoms.
 class EnsembleConstraints_Simple;
-typedef utility::pointer::owning_ptr< EnsembleConstraints_Simple > EnsembleConstraints_SimpleOP;
-typedef utility::pointer::owning_ptr< EnsembleConstraints_Simple const > EnsembleConstraints_SimpleCOP;
+typedef utility::pointer::shared_ptr< EnsembleConstraints_Simple > EnsembleConstraints_SimpleOP;
+typedef utility::pointer::shared_ptr< EnsembleConstraints_Simple const > EnsembleConstraints_SimpleCOP;
 
 class EnsembleConstraints_Simple: public protocols::cluster::EnsembleConstraints {
 public:
@@ -121,7 +121,7 @@ public:
 		minimum_width_ = minimum_width;
 	};
 #ifndef BOINC // gives windows build error
-	protocols::moves::MoverOP clone() const { return new EnsembleConstraints_Simple( *this ) ; }
+	protocols::moves::MoverOP clone() const { return protocols::moves::MoverOP( new EnsembleConstraints_Simple( *this ) ) ; }
 #endif
 	virtual void createConstraints( std::ostream &out);
 	virtual std::string get_name() const;
@@ -134,8 +134,8 @@ protected:
 
 
 class ClusterBase;
-typedef utility::pointer::owning_ptr< ClusterBase > ClusterBaseOP;
-typedef utility::pointer::owning_ptr< ClusterBase const > ClusterBaseCOP;
+typedef utility::pointer::shared_ptr< ClusterBase > ClusterBaseOP;
+typedef utility::pointer::shared_ptr< ClusterBase const > ClusterBaseCOP;
 
 struct Cluster {
 public:
@@ -249,14 +249,14 @@ protected:
 
 
 class ClusterPhilStyle;
-typedef utility::pointer::owning_ptr< ClusterPhilStyle > ClusterPhilStyleOP;
-typedef utility::pointer::owning_ptr< ClusterPhilStyle const > ClusterPhilStyleCOP;
+typedef utility::pointer::shared_ptr< ClusterPhilStyle > ClusterPhilStyleOP;
+typedef utility::pointer::shared_ptr< ClusterPhilStyle const > ClusterPhilStyleCOP;
 
 class ClusterPhilStyle: public ClusterBase {
 public:
 	ClusterPhilStyle();
 	virtual ~ClusterPhilStyle() {};
-	protocols::moves::MoverOP clone() const { return new ClusterPhilStyle( *this ) ; }
+	protocols::moves::MoverOP clone() const { return protocols::moves::MoverOP( new ClusterPhilStyle( *this ) ) ; }
 	virtual std::string get_name() const;
 	virtual void do_clustering( core::Size max_total_cluster );
 
@@ -273,7 +273,7 @@ public:
 	virtual ~ClusterPhilStyle_Loop() {}
 	virtual std::string get_name() const;
 	protocols::moves::MoverOP clone() const {
-		return new ClusterPhilStyle_Loop( *this );
+		return protocols::moves::MoverOP( new ClusterPhilStyle_Loop( *this ) );
 	}
 
 	virtual core::Real
@@ -295,7 +295,7 @@ public:
 	virtual ~ClusterPhilStyle_PoseReporter() {}
 	virtual std::string get_name() const;
 	protocols::moves::MoverOP clone() const {
-		return new ClusterPhilStyle_PoseReporter( *this );
+		return protocols::moves::MoverOP( new ClusterPhilStyle_PoseReporter( *this ) );
 	}
 
 	virtual core::Real
@@ -309,15 +309,15 @@ private:
 };
 
 class AssignToClustersMover;
-typedef utility::pointer::owning_ptr< AssignToClustersMover > AssignToClustersMoverOP;
-typedef utility::pointer::owning_ptr< AssignToClustersMover const > AssignToClustersMoverCOP;
+typedef utility::pointer::shared_ptr< AssignToClustersMover > AssignToClustersMoverOP;
+typedef utility::pointer::shared_ptr< AssignToClustersMover const > AssignToClustersMoverCOP;
 
 class AssignToClustersMover: public GatherPosesMover {
 public:
 	AssignToClustersMover( ClusterBaseOP cluster_base );
 #ifndef BOINC // gives windows build error
 	protocols::moves::MoverOP clone() const {
-		return new AssignToClustersMover( *this );
+		return protocols::moves::MoverOP( new AssignToClustersMover( *this ) );
 	}
 #endif
 	virtual void apply( core::pose::Pose & pose );

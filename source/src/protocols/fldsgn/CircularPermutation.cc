@@ -63,7 +63,7 @@ CircularPermutationCreator::keyname() const
 
 protocols::moves::MoverOP
 CircularPermutationCreator::create_mover() const {
-	return new CircularPermutation;
+	return protocols::moves::MoverOP( new CircularPermutation );
 }
 
 std::string
@@ -99,7 +99,7 @@ CircularPermutation::~CircularPermutation() {}
 CircularPermutation::MoverOP
 CircularPermutation::clone() const
 {
-  return new CircularPermutation( *this );
+  return CircularPermutation::MoverOP( new CircularPermutation( *this ) );
 }
 
 
@@ -107,7 +107,7 @@ CircularPermutation::clone() const
 CircularPermutation::MoverOP
 CircularPermutation::fresh_instance() const
 {
-  return new CircularPermutation();
+  return CircularPermutation::MoverOP( new CircularPermutation() );
 }
 
 

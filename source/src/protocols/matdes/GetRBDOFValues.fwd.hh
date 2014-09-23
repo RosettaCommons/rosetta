@@ -26,8 +26,8 @@ namespace matdes {
 class GetRBDOFValues;
 
 // Types
-typedef utility::pointer::owning_ptr< GetRBDOFValues >  GetRBDOFValuesOP;
-typedef utility::pointer::owning_ptr< GetRBDOFValues const >  GetRBDOFValuesCOP;
+typedef utility::pointer::shared_ptr< GetRBDOFValues >  GetRBDOFValuesOP;
+typedef utility::pointer::shared_ptr< GetRBDOFValues const >  GetRBDOFValuesCOP;
 
 } // namespace matdes
 } // namespace protocols

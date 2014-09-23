@@ -29,7 +29,7 @@ namespace chemical {
 
 basic::resource_manager::ResourceLoaderOP ResidueLoaderCreator::create_resource_loader() const
 {
-	return new ResidueLoader;
+	return basic::resource_manager::ResourceLoaderOP( new ResidueLoader );
 }
 
 std::string ResidueLoaderCreator::loader_type() const
@@ -64,7 +64,7 @@ ResidueLoader::create_resource(
 
 basic::resource_manager::ResourceOptionsOP ResidueLoader::default_options() const
 {
-	return new ResidueLoaderOptions();
+	return basic::resource_manager::ResourceOptionsOP( new ResidueLoaderOptions() );
 }
 
 }

@@ -34,7 +34,7 @@ public:
 	SquareWellFunc( Real const x0_in, Real const well_depth_in ): x0_( x0_in ), well_depth_( well_depth_in ){}
 
 	FuncOP
-	clone() const { return new SquareWellFunc( *this ); }
+	clone() const { return FuncOP( new SquareWellFunc( *this ) ); }
 
 	Real func( Real const x ) const;
 	Real dfunc( Real const x ) const;

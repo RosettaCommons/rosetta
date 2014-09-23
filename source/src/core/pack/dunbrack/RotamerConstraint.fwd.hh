@@ -24,8 +24,8 @@ namespace dunbrack {
 
 
 class RotamerConstraint; // fwd declaration
-typedef utility::pointer::owning_ptr< RotamerConstraint > RotamerConstraintOP;
-typedef utility::pointer::owning_ptr< RotamerConstraint const > RotamerConstraintCOP;
+typedef utility::pointer::shared_ptr< RotamerConstraint > RotamerConstraintOP;
+typedef utility::pointer::shared_ptr< RotamerConstraint const > RotamerConstraintCOP;
 
 
 } // namespace dunbrack

@@ -27,8 +27,8 @@ namespace residue_selector {
 
 class AndResidueSelector;
 
-typedef utility::pointer::owning_ptr< AndResidueSelector > AndResidueSelectorOP;
-typedef utility::pointer::owning_ptr< AndResidueSelector const > AndResidueSelectorCOP;
+typedef utility::pointer::shared_ptr< AndResidueSelector > AndResidueSelectorOP;
+typedef utility::pointer::shared_ptr< AndResidueSelector const > AndResidueSelectorCOP;
 
 } //namespace residue_selector
 } //namespace task

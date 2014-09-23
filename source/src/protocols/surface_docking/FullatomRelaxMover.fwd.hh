@@ -26,7 +26,7 @@ namespace protocols {
 namespace surface_docking {
 
 class FullatomRelaxMover;
-typedef utility::pointer::owning_ptr< FullatomRelaxMover > FullatomRelaxMoverOP;
+typedef utility::pointer::shared_ptr< FullatomRelaxMover > FullatomRelaxMoverOP;
 
 }
 }

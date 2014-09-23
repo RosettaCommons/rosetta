@@ -87,10 +87,10 @@ public:// virtual constructor
 
 
 	// @brief make clone
-	virtual FilterOP clone() const { return new HelixPairingFilter( *this ); }
+	virtual FilterOP clone() const { return FilterOP( new HelixPairingFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const {	return new HelixPairingFilter(); }
+	virtual FilterOP fresh_instance() const {	return FilterOP( new HelixPairingFilter() ); }
 
 
 public:// mutator

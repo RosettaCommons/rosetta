@@ -105,7 +105,7 @@ public:
 
 		using protocols::docking::DockingProtocolOP;
 		using protocols::docking::DockingProtocol;
-		DockingProtocolOP docking_protocol = new DockingProtocol(); //Defaults to rb_jump = 1, consistent with the value used
+		DockingProtocolOP docking_protocol( new DockingProtocol() ); //Defaults to rb_jump = 1, consistent with the value used
 
 		test::UTracer UT("protocols/docking/DockingProtocolFunctions.u");
 
@@ -126,7 +126,7 @@ public:
 
 		UT << "Testing DockingProtocol.setup_foldtree()for multichain..."<< std::endl;
 		core::import_pose::pose_from_pdb( multichain_pose, "protocols/docking/DockingMultiChain.pdb" );
-		DockingProtocolOP docking_protocol2 = new DockingProtocol();
+		DockingProtocolOP docking_protocol2( new DockingProtocol() );
 		protocols::docking::setup_foldtree( multichain_pose, "AB_E", docking_protocol2->movable_jumps() );
 		UT << multichain_pose.fold_tree() << std::endl;
 
@@ -183,25 +183,25 @@ public:
 		using namespace core::pack::task::operation;
 		using namespace protocols::toolbox::task_operations;
 
-		TaskFactoryOP tf = new TaskFactory;
-		tf->push_back( new InitializeFromCommandline );
-		tf->push_back( new IncludeCurrent );
-		tf->push_back( new RestrictToRepacking );
-		tf->push_back( new RestrictToInterface( rb_jump ) );
+		TaskFactoryOP tf( new TaskFactory );
+		tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
+		tf->push_back( TaskOperationCOP( new IncludeCurrent ) );
+		tf->push_back( TaskOperationCOP( new RestrictToRepacking ) );
+		tf->push_back( TaskOperationCOP( new RestrictToInterface( rb_jump ) ) );
 
 		core::pack::task::PackerTaskOP task = tf->create_task_and_apply_taskoperations( fullatom_pose );
 
 		core::Real temperature = 0.8;
-		protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo(fullatom_pose, *scorefxn_dockmin, temperature);
+		protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo(fullatom_pose, *scorefxn_dockmin, temperature) );
 
-		protocols::simple_moves::PackRotamersMoverOP pack_interface_repack = new protocols::simple_moves::PackRotamersMover( scorefxn_pack, task );
+		protocols::simple_moves::PackRotamersMoverOP pack_interface_repack( new protocols::simple_moves::PackRotamersMover( scorefxn_pack, task ) );
 
 		pack_interface_repack->apply(fullatom_pose);
 
 		mc->reset(fullatom_pose);
 
 		core::Real energy_cut = 0.01;
-		protocols::simple_moves::RotamerTrialsMoverOP rotamer_trials = new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn_dockmin, *task, mc, energy_cut );
+		protocols::simple_moves::RotamerTrialsMoverOP rotamer_trials( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn_dockmin, *task, mc, energy_cut ) );
 		rotamer_trials->apply(fullatom_pose);
 
 		test::UTracer UT("protocols/docking/DockingPacking.pdb");
@@ -215,7 +215,7 @@ public:
 
 		DockingSlideIntoContact slide( rb_jump );
 
-		protocols::rigid::RigidBodyTransMoverOP trans_mover = new protocols::rigid::RigidBodyTransMover(centroid_pose, rb_jump);
+		protocols::rigid::RigidBodyTransMoverOP trans_mover( new protocols::rigid::RigidBodyTransMover(centroid_pose, rb_jump) );
 		trans_mover->step_size(10.26);
 		trans_mover->apply(centroid_pose);
 		slide.apply( centroid_pose );
@@ -231,7 +231,7 @@ public:
 
 		core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" ) ;
 
-		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
+		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
 		movemap->set_chi(false);
 		movemap->set_bb(false);
 		movemap->set_jump(rb_jump, true);
@@ -240,7 +240,7 @@ public:
 		std::string min_type = "dfpmin_armijo_nonmonotone";
 		bool nb_list = true;
 
-		protocols::simple_moves::MinMoverOP minmover = new protocols::simple_moves::MinMover(movemap, scorefxn, min_type, tolerance, nb_list);
+		protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover(movemap, scorefxn, min_type, tolerance, nb_list) );
 		minmover->apply(fullatom_pose);
 		test::UTracer UT("protocols/docking/DockingRigidBodyMinimize.pdb");
 		UT.abs_tolerance(0.003);
@@ -249,8 +249,8 @@ public:
 		}
 
 	void test_DockingProtocol_clone(){
-		protocols::docking::DockingProtocolOP dockerprot1 = new protocols::docking::DockingProtocol() ;
-		protocols::docking::DockingProtocolOP dockerprot2 = static_cast< protocols::docking::DockingProtocol * > ( dockerprot1->clone()() );
+		protocols::docking::DockingProtocolOP dockerprot1( new protocols::docking::DockingProtocol() ) ;
+		protocols::docking::DockingProtocolOP dockerprot2 = utility::pointer::static_pointer_cast< protocols::docking::DockingProtocol > ( dockerprot1->clone() );
 		TS_ASSERT( dockerprot1.get() != dockerprot2.get() );
 		TS_ASSERT( dockerprot1->to_centroid() != dockerprot2->to_centroid() );
 		TS_ASSERT( dockerprot1->docking_lowres_mover() != dockerprot2->docking_lowres_mover() );
@@ -265,7 +265,7 @@ public:
 		
 		basic::options::option[ basic::options::OptionKeys::docking::partners ].value( "E_I" );
 		
-		protocols::docking::EllipsoidalRandomizationMoverOP mover = new EllipsoidalRandomizationMover( rb_jump, false );
+		protocols::docking::EllipsoidalRandomizationMoverOP mover( new EllipsoidalRandomizationMover( rb_jump, false ) );
 		mover->apply( fullatom_pose );
 		
 		core::Real a_axis = mover->get_a_axis();

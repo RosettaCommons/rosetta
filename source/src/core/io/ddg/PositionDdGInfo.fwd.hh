@@ -24,8 +24,8 @@ namespace io {
 namespace PositionDdGInfo {
 	
 	class PositionDdGInfo;
-	typedef utility::pointer::owning_ptr< PositionDdGInfo > PositionDdGInfoOP;
-	typedef utility::pointer::owning_ptr< PositionDdGInfo const >PositionDdGInfoCOP;
+	typedef utility::pointer::shared_ptr< PositionDdGInfo > PositionDdGInfoOP;
+	typedef utility::pointer::shared_ptr< PositionDdGInfo const >PositionDdGInfoCOP;
 	
 } // core
 } //io

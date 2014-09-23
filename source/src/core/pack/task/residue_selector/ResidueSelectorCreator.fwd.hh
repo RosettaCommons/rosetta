@@ -26,8 +26,8 @@ namespace residue_selector {
 
 class ResidueSelectorCreator;
 
-typedef utility::pointer::owning_ptr< ResidueSelectorCreator > ResidueSelectorCreatorOP;
-typedef utility::pointer::owning_ptr< ResidueSelectorCreator const > ResidueSelectorCreatorCOP;
+typedef utility::pointer::shared_ptr< ResidueSelectorCreator > ResidueSelectorCreatorOP;
+typedef utility::pointer::shared_ptr< ResidueSelectorCreator const > ResidueSelectorCreatorCOP;
 
 
 } //namespace residue_selector

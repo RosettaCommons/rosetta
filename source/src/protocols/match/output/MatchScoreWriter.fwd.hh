@@ -23,8 +23,8 @@ namespace output {
 /// @brief Simple class to write out a score file for the matcher
 class MatchScoreWriter;
 
-typedef utility::pointer::owning_ptr<MatchScoreWriter> MatchScoreWriterOP;
-typedef utility::pointer::owning_ptr<MatchScoreWriter const> MatchScoreWriterCOP;
+typedef utility::pointer::shared_ptr<MatchScoreWriter> MatchScoreWriterOP;
+typedef utility::pointer::shared_ptr<MatchScoreWriter const> MatchScoreWriterCOP;
 
 }  // namespace output
 }  // namespace match

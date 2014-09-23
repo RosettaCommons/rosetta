@@ -61,12 +61,12 @@ static thread_local basic::Tracer tr( "devel.domain_insertion.FusePosesNtoCMover
 
 FusePosesNtoCMover::FusePosesNtoCMover()
 :
-	fuse_pose_(NULL), sfxn_(NULL), sfxn_nocb_(NULL),
+	fuse_pose_(/* NULL */), sfxn_(NULL), sfxn_nocb_(NULL),
 	//mostly arbitrary numbers, but can be modified through RS tag
 	superpose_window_(3), relax_window_(0), max_number_allowed_clashes_(10),
 	hardsphere_clash_limit_(2.5), max_allowed_rms_(5.0),
 	nterm_span_tag_(""),
-	relax_mover_(NULL), rs_specified_relax_mover_(false), debugmode_(false)
+	relax_mover_(/* NULL */), rs_specified_relax_mover_(false), debugmode_(false)
 {
 	chains_to_use_.push_back('A');
 	chain_mappings_.clear();
@@ -95,7 +95,7 @@ FusePosesNtoCMover::~FusePosesNtoCMover(){}
 
 protocols::moves::MoverOP
 FusePosesNtoCMover::clone() const{
-	return new FusePosesNtoCMover( *this );
+	return protocols::moves::MoverOP( new FusePosesNtoCMover( *this ) );
 }
 
 
@@ -202,7 +202,7 @@ FusePosesNtoCMover::parse_my_tag(
 )
 {
 	if( tag->hasOption("fuse_pose") ){
-		fuse_pose_ = new core::pose::Pose();
+		fuse_pose_ = core::pose::PoseOP( new core::pose::Pose() );
 		core::import_pose::pose_from_pdb( *fuse_pose_, tag->getOption<std::string>( "fuse_pose") );
 	}
 	else utility_exit_with_message("FusePosesNtoCMover needs to be supplied with a fuse_pose.");
@@ -348,9 +348,9 @@ FusePosesNtoCMover::generate_default_relax_mover(
 	using core::pack::task::operation::TaskOperationCOP;
 	
 	Size repeats( debugmode_ ? 1 : 5 );
-	protocols::relax::FastRelaxOP frelax(new protocols::relax::FastRelax( sfxn_, repeats ) );
+	protocols::relax::FastRelaxOP frelax( new protocols::relax::FastRelax( sfxn_, repeats ) );
 
-	core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
+	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 	mm->set_chi(true);
 	mm->set_bb( false );
 	mm->set_jump( false );
@@ -361,8 +361,8 @@ FusePosesNtoCMover::generate_default_relax_mover(
 	frelax->set_movemap( mm );
 
 	core::pack::task::TaskFactoryOP taskf( new core::pack::task::TaskFactory() );
-	taskf->push_back( new core::pack::task::operation::InitializeFromCommandline() );
-	taskf->push_back( new core::pack::task::operation::RestrictToRepacking() );
+	taskf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline() ) );
+	taskf->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking() ) );
 
 	frelax->set_task_factory( taskf );
 
@@ -574,7 +574,7 @@ FusePosesNtoCMover::truncate_pose_at_fusion_site(
 ) const
 {
 
-	core::pose::PoseOP to_return = new core::pose::Pose( pose );
+	core::pose::PoseOP to_return( new core::pose::Pose( pose ) );
 	for( Size chain_it(1); chain_it <= chains_to_use_.size(); ++chain_it ){
 
 		char chain( chains_to_use_[ chain_it ] );
@@ -749,7 +749,7 @@ FusePosesNtoCMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 FusePosesNtoCMoverCreator::create_mover() const {
-	return new FusePosesNtoCMover;
+	return protocols::moves::MoverOP( new FusePosesNtoCMover );
 }
 
 std::string
@@ -776,7 +776,7 @@ SetupCoiledCoilFoldTreeMover::~SetupCoiledCoilFoldTreeMover()
 
 protocols::moves::MoverOP
 SetupCoiledCoilFoldTreeMover::clone() const{
-	return new SetupCoiledCoilFoldTreeMover( *this );
+	return protocols::moves::MoverOP( new SetupCoiledCoilFoldTreeMover( *this ) );
 }
 
 
@@ -891,7 +891,7 @@ SetupCoiledCoilFoldTreeMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 SetupCoiledCoilFoldTreeMoverCreator::create_mover() const {
-	return new SetupCoiledCoilFoldTreeMover();
+	return protocols::moves::MoverOP( new SetupCoiledCoilFoldTreeMover() );
 }
 
 std::string

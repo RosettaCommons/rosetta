@@ -176,16 +176,16 @@ int main(int argc, char* argv[]) {
 	// instantiate PoseInputStream based on input option
 	if (option[in::file::silent].user()) {
 		if (option[in::file::tags].user()) {
-			input = new SilentFilePoseInputStream(option[in::file::silent](),
-					option[in::file::tags](), option[contactMap::energy_cutoff]());
+			input = PoseInputStreamOP( new SilentFilePoseInputStream(option[in::file::silent](),
+					option[in::file::tags](), option[contactMap::energy_cutoff]()) );
 		} else {
-			input = new SilentFilePoseInputStream(option[in::file::silent](),
-					option[contactMap::energy_cutoff]());
+			input = PoseInputStreamOP( new SilentFilePoseInputStream(option[in::file::silent](),
+					option[contactMap::energy_cutoff]()) );
 		}
 	} else if (option[in::file::s].user()) {
-		input = new PDBPoseInputStream(option[in::file::s]());
+		input = PoseInputStreamOP( new PDBPoseInputStream(option[in::file::s]()) );
 	}else if ( option[ in::file::l ].user() ) {
-		input = new PDBPoseInputStream( core::import_pose::pose_stream::filenames_from_list_file( option[ in::file::l ]() ) );
+		input = PoseInputStreamOP( new PDBPoseInputStream( core::import_pose::pose_stream::filenames_from_list_file( option[ in::file::l ]() ) ) );
 	}
 
 	// use first pose initialize ContactMaps

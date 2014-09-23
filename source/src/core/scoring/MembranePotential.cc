@@ -1238,7 +1238,7 @@ MembraneEmbed const &
 MembraneEmbed_from_pose( pose::Pose const & pose )
 {
 	assert( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED ) );
-	return *( static_cast< MembraneEmbed const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED )() ));
+	return *( utility::pointer::static_pointer_cast< core::scoring::MembraneEmbed const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED ) ));
 }
 
 /// @brief Add a non const membrane embedding object to the pose cache
@@ -1249,10 +1249,10 @@ MembraneEmbed & nonconst_MembraneEmbed_from_pose( pose::Pose & pose )
 {
 
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED ) ) {
-		return *( static_cast< MembraneEmbed * >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED )() ));
+		return *( utility::pointer::static_pointer_cast< core::scoring::MembraneEmbed > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED ) ));
 	}
 
-	MembraneEmbedOP membrane_embed = new MembraneEmbed;
+	MembraneEmbedOP membrane_embed( new MembraneEmbed );
 	pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED, membrane_embed );
 	return *membrane_embed;
 }

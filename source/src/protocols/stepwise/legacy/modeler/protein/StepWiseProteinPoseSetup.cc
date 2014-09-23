@@ -109,7 +109,7 @@ namespace protein {
 		cutpoint_closed_( cutpoint_closed ),
 		is_cutpoint_( desired_sequence_.size(), false ),
 		secstruct_( "" ),
-		working_parameters_( new stepwise::modeler::working_parameters::StepWiseWorkingParameters ),
+		working_parameters_( stepwise::modeler::working_parameters::StepWiseWorkingParametersOP( new stepwise::modeler::working_parameters::StepWiseWorkingParameters ) ),
 		virtualize_5prime_phosphates_( true ),
 		add_peptide_plane_variants_( false ),
 		remove_nterminus_variant_( false ),
@@ -675,8 +675,8 @@ namespace protein {
 		// To read in constraints, need to use full desired_sequence pose,
 		// since there's a careful check of atom names...
 		// Hey, this has to happen after the variants are figured out!!!
-		cst_set_ = ConstraintIO::get_instance()->read_constraints( cst_file_, new ConstraintSet, full_pose );
-		core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction;
+		cst_set_ = ConstraintIO::get_instance()->read_constraints( cst_file_, ConstraintSetOP( new ConstraintSet ), full_pose );
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction );
 		scorefxn->set_weight( core::scoring::atom_pair_constraint, 1.0 );
 		scorefxn->set_weight( core::scoring::coordinate_constraint, 1.0 );
 		full_pose.constraint_set( cst_set_ );
@@ -1208,7 +1208,7 @@ namespace protein {
 
 		TR.Debug << "NATIVE sequence: " << get_native_pose()->annotated_sequence( true ) << std::endl;
 
-		working_native_pose = new Pose;
+		working_native_pose = core::pose::PoseOP( new Pose );
 		get_working_pose( *get_native_pose(), *working_native_pose );
 		if (add_virt_res_)	add_aa_virt_rsd_as_root(*working_native_pose);
 
@@ -1225,14 +1225,14 @@ namespace protein {
 			core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_ );
 			import_pose::pose_from_pdb( full_align_pose, *rsd_set, align_file_ );
 
-			working_align_pose_ = new pose::Pose;
+			working_align_pose_ = core::pose::PoseOP( new pose::Pose );
 			get_working_pose( full_align_pose, *working_align_pose_ );
 
 			TR.Debug << "PoseSetup: Align to file: " << align_file_ << std::endl;
 		} else {
 			if ( get_native_pose() ) {
 
-				working_align_pose_ = new pose::Pose;
+				working_align_pose_ = core::pose::PoseOP( new pose::Pose );
 				*working_align_pose_ = *working_native_pose;
 
 				TR.Debug << "PoseSetup: Align to NATIVE" << std::endl;
@@ -1549,7 +1549,7 @@ namespace protein {
 				}
 
 				// distance from O3' to P
-				cst_set->add_constraint( new AtomPairConstraint( atom_id1, atom_id2, repulsion_func ) );
+				cst_set->add_constraint( ConstraintCOP( new AtomPairConstraint( atom_id1, atom_id2, repulsion_func ) ) );
 
 			}
 		}
@@ -1598,8 +1598,8 @@ namespace protein {
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseProteinPoseSetup::setup_full_model_info( core::pose::Pose & pose ) const {
-		FullModelInfoOP full_model_info = new FullModelInfo( desired_sequence_, cutpoint_open_,
-																												 working_parameters_->working_res_list() );
+		FullModelInfoOP full_model_info( new FullModelInfo( desired_sequence_, cutpoint_open_,
+																												 working_parameters_->working_res_list() ) );
 
 		FullModelParametersOP full_model_parameters = full_model_info->full_model_parameters()->clone();
 		utility::vector1< Size > const & is_working_res = working_parameters_->is_working_res();

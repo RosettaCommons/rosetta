@@ -18,8 +18,8 @@ namespace utilities {
 
 class AcceptanceCheck;
 
-typedef utility::pointer::owning_ptr<AcceptanceCheck> AcceptanceCheckOP;
-typedef utility::pointer::owning_ptr<AcceptanceCheck const> AcceptanceCheckCOP;
+typedef utility::pointer::shared_ptr<AcceptanceCheck> AcceptanceCheckOP;
+typedef utility::pointer::shared_ptr<AcceptanceCheck const> AcceptanceCheckCOP;
 
 }
 }

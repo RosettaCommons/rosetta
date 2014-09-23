@@ -173,7 +173,7 @@ void RefineOneCDRLoopCentroid::loop_centroid_relax(
 
 	//setting MoveMap
 	kinematics::MoveMapOP loop_map;
-	loop_map = new kinematics::MoveMap();
+	loop_map = kinematics::MoveMapOP( new kinematics::MoveMap() );
 	loop_map->clear();
 	loop_map->set_chi( false );
 	loop_map->set_bb( false );
@@ -204,7 +204,7 @@ void RefineOneCDRLoopCentroid::loop_centroid_relax(
 	if( benchmark_ ) min_tolerance = 1.0;
 	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
 	bool nb_list = true;
-	MinMoverOP loop_min_mover = new MinMover( loop_map, lowres_scorefxn_, min_type, min_tolerance, nb_list );
+	MinMoverOP loop_min_mover( new MinMover( loop_map, lowres_scorefxn_, min_type, min_tolerance, nb_list ) );
 
 	// more params
 	Size n_small_moves ( numeric::max(Size(5), Size(loop_size/2)) );
@@ -224,8 +224,8 @@ void RefineOneCDRLoopCentroid::loop_centroid_relax(
 
 	Real high_move_temp = 2.00;
 	// minimize amplitude of moves if correct parameter is set
-	BackboneMoverOP small_mover = new SmallMover( loop_map, high_move_temp, n_small_moves );
-	BackboneMoverOP shear_mover = new ShearMover( loop_map, high_move_temp, n_small_moves );
+	BackboneMoverOP small_mover( new SmallMover( loop_map, high_move_temp, n_small_moves ) );
+	BackboneMoverOP shear_mover( new ShearMover( loop_map, high_move_temp, n_small_moves ) );
 	small_mover->angle_max( 'H', 2.0 );
 	small_mover->angle_max( 'E', 5.0 );
 	small_mover->angle_max( 'L', 6.0 );
@@ -234,8 +234,8 @@ void RefineOneCDRLoopCentroid::loop_centroid_relax(
 	shear_mover->angle_max( 'E', 5.0 );
 	shear_mover->angle_max( 'L', 6.0 );
 
-	CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover( one_loop, loop_map );
-	RepeatMoverOP ccd_cycle = new RepeatMover(ccd_moves, n_small_moves);
+	CCDLoopClosureMoverOP ccd_moves( new CCDLoopClosureMover( one_loop, loop_map ) );
+	RepeatMoverOP ccd_cycle( new RepeatMover(ccd_moves, n_small_moves) );
 
 	SequenceMoverOP wiggle_cdr_centroid_loop_( new SequenceMover() );
 	wiggle_cdr_centroid_loop_->add_mover( small_mover );
@@ -251,7 +251,7 @@ void RefineOneCDRLoopCentroid::loop_centroid_relax(
 	Real temperature = init_temp;
 
 	MonteCarloOP mc;
-	mc = new protocols::moves::MonteCarlo( pose_in, *lowres_scorefxn_, temperature );
+	mc = MonteCarloOP( new protocols::moves::MonteCarlo( pose_in, *lowres_scorefxn_, temperature ) );
 	mc->reset( pose_in ); // monte carlo reset
 
 	// outer cycle

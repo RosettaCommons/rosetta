@@ -41,7 +41,7 @@ using namespace std;
 static thread_local basic::Tracer TR( "devel.splice.FoldUnitsFilter" );
 
 protocols::filters::FilterOP
-FoldUnitsFilterCreator::create_filter() const { return new FoldUnitsFilter; }
+FoldUnitsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FoldUnitsFilter ); }
 
 std::string
 FoldUnitsFilterCreator::keyname() const { return "FoldUnits"; }

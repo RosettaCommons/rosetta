@@ -234,12 +234,11 @@ rebuild_test(){
   utility::vector1< core::Size > const moving_res_list = option[ sample_res ]();
 
 	// move following to its own function?
-	StepWiseProteinPoseSetupOP stepwise_pose_setup =
-		new StepWiseProteinPoseSetup( moving_res_list, /*the first element of moving_res_list is the modeler_res*/
+	StepWiseProteinPoseSetupOP stepwise_pose_setup( new StepWiseProteinPoseSetup( moving_res_list, /*the first element of moving_res_list is the modeler_res*/
 																	desired_sequence,
 																	input_streams,
 																	option[ OptionKeys::full_model::cutpoint_open ](),
-																	option[ OptionKeys::full_model::cutpoint_closed ]() );
+																	option[ OptionKeys::full_model::cutpoint_closed ]() ) );
 	stepwise_pose_setup->set_native_pose( native_pose );
 	// it would be better to have reasonable defaults for the following...
 	stepwise_pose_setup->set_fixed_res( option[ OptionKeys::stepwise::fixed_res ]() );
@@ -271,7 +270,7 @@ rebuild_test(){
 	Vector center_vector = ( native_pose != 0 ) ? get_center_of_mass( *native_pose ) : Vector( 0.0 );
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400, false, ( native_pose != 0 ), center_vector );
 
-	options::StepWiseModelerOptionsOP stepwise_options = new options::StepWiseModelerOptions;
+	options::StepWiseModelerOptionsOP stepwise_options( new options::StepWiseModelerOptions );
 	stepwise_options->initialize_from_command_line();
 	stepwise_options->set_output_minimized_pose_list( true );
 	stepwise_options->set_silent_file( option[ out::file::silent ]() );
@@ -307,7 +306,7 @@ initialize_native_pose( core::pose::PoseOP & native_pose, core::chemical::Residu
 
 	if ( !option[ in::file::native ].user() ) return;
 
-	native_pose = new Pose;
+	native_pose = core::pose::PoseOP( new Pose );
 
 	std::string native_pdb_file  = option[ in::file::native ];
 	import_pose::pose_from_pdb( *native_pose, *rsd_set.lock(), native_pdb_file );
@@ -384,7 +383,7 @@ calc_rms_test(){
 	PoseOP pose_op,native_pose;
 	ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 	utility::vector1< std::string > const silent_files_in( option[ in::file::silent ]() );
-	SilentFilePoseInputStreamOP input = new SilentFilePoseInputStream( silent_files_in );
+	SilentFilePoseInputStreamOP input( new SilentFilePoseInputStream( silent_files_in ) );
 
 	native_pose = PoseOP( new Pose );
 	std::string native_pdb_file  = option[ in::file::native ];

@@ -21,8 +21,8 @@ namespace protocols {
 namespace generalized_kinematic_closure {
 
 class GeneralizedKIC; // fwd declaration
-typedef utility::pointer::owning_ptr< GeneralizedKIC > GeneralizedKICOP;
-typedef utility::pointer::owning_ptr< GeneralizedKIC const > GeneralizedKICCOP;
+typedef utility::pointer::shared_ptr< GeneralizedKIC > GeneralizedKICOP;
+typedef utility::pointer::shared_ptr< GeneralizedKIC const > GeneralizedKICCOP;
 typedef utility::vector1<GeneralizedKICOP> GeneralizedKICOPs;
 typedef utility::vector1<GeneralizedKICCOP> GeneralizedKICCOPs;
 

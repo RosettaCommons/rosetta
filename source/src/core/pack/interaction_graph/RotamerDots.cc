@@ -517,7 +517,7 @@ ObjexxFCL::FArray2D_ubyte const * RotamerDots::lg_masks_( 0 );
 /// @begin RotamerDots::RotamerDots
 ///
 RotamerDots::RotamerDots():
-	rotamer_(0),
+	rotamer_(/* 0 */),
 	num_atoms_(0),
 	sasa_(0),
 	sasa_is_current_(false)
@@ -1887,7 +1887,7 @@ void RotamerDotsCache::print( std::ostream & os ) const {
 Real const InvRotamerDots::max_dist_from_dot_to_intersection = 0.8;
 
 InvRotamerDots::InvRotamerDots() :
-	rotamer_( 0 )
+	rotamer_( /* 0 */ )
 {}
 
 

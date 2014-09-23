@@ -27,8 +27,8 @@ namespace fragment {
 class SecondaryStructure;
 
 // Types
-typedef  utility::pointer::owning_ptr< SecondaryStructure >  SecondaryStructureOP;
-typedef  utility::pointer::owning_ptr< SecondaryStructure const >  SecondaryStructureCOP;
+typedef  utility::pointer::shared_ptr< SecondaryStructure >  SecondaryStructureOP;
+typedef  utility::pointer::shared_ptr< SecondaryStructure const >  SecondaryStructureCOP;
 
 } // namespace fragment
 } // namespace core

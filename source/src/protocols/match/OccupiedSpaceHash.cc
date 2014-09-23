@@ -128,7 +128,7 @@ OccupiedSpaceHash::initialize()
 	dim_prods_[ 2 ] = n_xyz_bins_[ 3 ]   * dim_prods_[ 3 ];
 	dim_prods_[ 1 ] = n_xyz_bins_[ 2 ]   * dim_prods_[ 2 ];
 
-	threeD_projection_ = new Bool3DGrid;
+	threeD_projection_ = Bool3DGridOP( new Bool3DGrid );
 	threeD_projection_->set_bounding_box( bb_ );
 	threeD_projection_->set_bin_width( xyz_bin_widths_[ 1 ] );
 }

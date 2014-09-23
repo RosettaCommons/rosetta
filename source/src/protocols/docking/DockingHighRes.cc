@@ -123,9 +123,9 @@ DockingHighRes::DockingHighRes( DockingHighRes const & old_instance ) :
 
 	movable_jumps_ = old_instance.movable_jumps_;
 	if( old_instance.tf_ ){
-		tf_ = new core::pack::task::TaskFactory( *old_instance.tf_ );
+		tf_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory( *old_instance.tf_ ) );
 	}
-	tf2_ = new DockTaskFactory( *old_instance.tf2_ );
+	tf2_ = protocols::docking::DockTaskFactoryOP( new DockTaskFactory( *old_instance.tf2_ ) );
 }
 
 void DockingHighRes::init( DockJumps const movable_jumps )
@@ -138,7 +138,7 @@ void DockingHighRes::init( DockJumps const movable_jumps )
 
 	movable_jumps_ = movable_jumps;
 	tf_ = NULL; //might need this
-	tf2_ = new DockTaskFactory();
+	tf2_ = protocols::docking::DockTaskFactoryOP( new DockTaskFactory() );
 }
 
 //destructor
@@ -147,7 +147,7 @@ DockingHighRes::~DockingHighRes() {}
 void
 DockingHighRes::set_task_factory( core::pack::task::TaskFactoryCOP tf )
 {
-	tf_ = new core::pack::task::TaskFactory( *tf );
+	tf_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory( *tf ) );
 }
 
 void  DockingHighRes::set_ignore_default_task( bool ignore_default_task )

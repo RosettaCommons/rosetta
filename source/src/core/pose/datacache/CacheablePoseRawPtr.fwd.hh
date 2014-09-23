@@ -25,10 +25,10 @@ namespace datacache {
 
 
 class CacheablePoseRawPtr;
-typedef utility::pointer::owning_ptr< CacheablePoseRawPtr > CacheablePoseRawPtrOP;
-typedef utility::pointer::owning_ptr< CacheablePoseRawPtr const > CacheablePoseRawPtrCOP;
-typedef utility::pointer::access_ptr< CacheablePoseRawPtr > CacheablePoseRawPtrAP;
-typedef utility::pointer::access_ptr< CacheablePoseRawPtr const > CacheablePoseRawPtrCAP;
+typedef utility::pointer::shared_ptr< CacheablePoseRawPtr > CacheablePoseRawPtrOP;
+typedef utility::pointer::shared_ptr< CacheablePoseRawPtr const > CacheablePoseRawPtrCOP;
+typedef utility::pointer::weak_ptr< CacheablePoseRawPtr > CacheablePoseRawPtrAP;
+typedef utility::pointer::weak_ptr< CacheablePoseRawPtr const > CacheablePoseRawPtrCAP;
 
 
 } // namespace datacache

@@ -25,8 +25,8 @@ namespace fldsgn {
 namespace topology {
 
 class DimerPairing;
-typedef utility::pointer::owning_ptr< DimerPairing > DimerPairingOP;
-typedef utility::pointer::owning_ptr< DimerPairing const > DimerPairingCOP;
+typedef utility::pointer::shared_ptr< DimerPairing > DimerPairingOP;
+typedef utility::pointer::shared_ptr< DimerPairing const > DimerPairingCOP;
 
 class DimerPairings;
 

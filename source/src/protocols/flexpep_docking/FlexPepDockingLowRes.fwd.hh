@@ -21,8 +21,8 @@ namespace protocols {
 namespace flexpep_docking {
 
   class FlexPepDockingLowRes;
-  typedef utility::pointer::owning_ptr< FlexPepDockingLowRes > FlexPepDockingLowResOP;
-  typedef utility::pointer::owning_ptr< FlexPepDockingLowRes const > FlexPepDockingLowResCOP;
+  typedef utility::pointer::shared_ptr< FlexPepDockingLowRes > FlexPepDockingLowResOP;
+  typedef utility::pointer::shared_ptr< FlexPepDockingLowRes const > FlexPepDockingLowResCOP;
 
 } // moves
 } // protocols

@@ -52,7 +52,7 @@ AddSidechainConstraintsToHotspotsCreator::keyname() const
 
 protocols::moves::MoverOP
 AddSidechainConstraintsToHotspotsCreator::create_mover() const {
-	return new AddSidechainConstraintsToHotspots;
+	return protocols::moves::MoverOP( new AddSidechainConstraintsToHotspots );
 }
 
 std::string

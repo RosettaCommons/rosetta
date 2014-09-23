@@ -22,10 +22,10 @@ namespace chemical {
 
 class ElementSet;
 
-typedef  utility::pointer::access_ptr< ElementSet > ElementSetAP;
-typedef  utility::pointer::access_ptr< ElementSet const > ElementSetCAP;
-typedef  utility::pointer::owning_ptr< ElementSet > ElementSetOP;
-typedef  utility::pointer::owning_ptr< ElementSet const > ElementSetCOP;
+typedef  utility::pointer::weak_ptr< ElementSet > ElementSetAP;
+typedef  utility::pointer::weak_ptr< ElementSet const > ElementSetCAP;
+typedef  utility::pointer::shared_ptr< ElementSet > ElementSetOP;
+typedef  utility::pointer::shared_ptr< ElementSet const > ElementSetCOP;
 
 
 }

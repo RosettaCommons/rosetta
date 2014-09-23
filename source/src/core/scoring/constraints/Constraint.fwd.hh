@@ -27,8 +27,8 @@ namespace constraints {
 
 class Constraint;
 
-typedef utility::pointer::owning_ptr< Constraint > ConstraintOP;
-typedef utility::pointer::owning_ptr< Constraint const > ConstraintCOP;
+typedef utility::pointer::shared_ptr< Constraint > ConstraintOP;
+typedef utility::pointer::shared_ptr< Constraint const > ConstraintCOP;
 typedef utility::vector1< ConstraintOP > ConstraintOPs;
 typedef utility::vector1< ConstraintCOP > ConstraintCOPs;
 

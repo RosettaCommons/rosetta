@@ -26,10 +26,10 @@ namespace mm {
 // Forward
 class MMLJLibrary;
 
-typedef  utility::pointer::access_ptr< MMLJLibrary > MMLJLibraryAP;
-typedef  utility::pointer::access_ptr< MMLJLibrary const > MMLJLibraryCAP;
-typedef  utility::pointer::owning_ptr< MMLJLibrary > MMLJLibraryOP;
-typedef  utility::pointer::owning_ptr< MMLJLibrary const > MMLJLibraryCOP;
+typedef  utility::pointer::weak_ptr< MMLJLibrary > MMLJLibraryAP;
+typedef  utility::pointer::weak_ptr< MMLJLibrary const > MMLJLibraryCAP;
+typedef  utility::pointer::shared_ptr< MMLJLibrary > MMLJLibraryOP;
+typedef  utility::pointer::shared_ptr< MMLJLibrary const > MMLJLibraryCOP;
 
 } // namespace mm
 } // namespace scoring

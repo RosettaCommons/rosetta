@@ -137,13 +137,13 @@ RemodelGlobalFrame::~RemodelGlobalFrame(){}
 /// @brief clone this object
 protocols::moves::MoverOP
 RemodelGlobalFrame::clone() const {
-	return new RemodelGlobalFrame( *this );
+	return protocols::moves::MoverOP( new RemodelGlobalFrame( *this ) );
 }
 
 /// @brief create this type of object
 protocols::moves::MoverOP
 RemodelGlobalFrame::fresh_instance() const {
-	return new RemodelGlobalFrame();
+	return protocols::moves::MoverOP( new RemodelGlobalFrame() );
 }
 
 void RemodelGlobalFrame::apply( core::pose::Pose & pose )
@@ -163,7 +163,7 @@ void RemodelGlobalFrame::get_helical_params( core::pose::Pose & pose ) {
 	//Size numRes = pose.total_residue();  // unused ~Labonte
 
 	// dumping information into PDB header
-  core::pose::PDBInfoOP temp_pdbinfo( new core::pose::PDBInfo(pose,true));
+  core::pose::PDBInfoOP temp_pdbinfo( new core::pose::PDBInfo(pose,true) );
 
   core::pose::RemarkInfo remark;
 	//capture stream
@@ -308,7 +308,7 @@ TR.Debug << "align seg 1" << std::endl;
 	bool is_sym = false;
 	if ( is_symmetric( pose ) ){  // if symmetrical, has to extract monomer for the transformation
 		is_sym = true;
-		ConstraintSetOP pose_cst_set = new ConstraintSet( *pose.constraint_set() );
+		ConstraintSetOP pose_cst_set( new ConstraintSet( *pose.constraint_set() ) );
 		Pose junk_for_copy;
 		extract_asymmetric_unit( pose, junk_for_copy, false);
 		pose=junk_for_copy;
@@ -518,7 +518,7 @@ TR.Debug << "align seg 5" << std::endl;
 */
 
 		if (is_sym) { //re-symmetrize
-						ConstraintSetOP pose_cst_set = new ConstraintSet( *pose.constraint_set() );
+						ConstraintSetOP pose_cst_set( new ConstraintSet( *pose.constraint_set() ) );
 						simple_moves::symmetry::SetupForSymmetryMover pre_mover1;
 						pre_mover1.apply( pose );
 						pose.constraint_set(pose_cst_set);
@@ -552,7 +552,7 @@ TR.Debug << "setup RGF cst 1" << std::endl;
 				//native_cst_set = new ConstraintSet(*input_pose_cst_set);
 
 				//duplicate the native_set and add the new ones to it.
-				input_pose_cst_set = new ConstraintSet(*native_cst_set);
+				input_pose_cst_set = ConstraintSetOP( new ConstraintSet(*native_cst_set) );
 
 				// Extract the first segment from pose for generating the ideal decoy
 
@@ -560,7 +560,7 @@ TR.Debug << "setup RGF cst 1" << std::endl;
 				for(Size i = 1; i <= seg_size; ++i){
     			residue_indices.push_back(i);
   			}
-				PoseOP singleton_pose = new Pose;
+				PoseOP singleton_pose( new Pose );
 				core::chemical::ResidueTypeSet const & typeSet = (pose.residue(1).residue_type_set());
 				core::io::pdb::pose_from_pose( *singleton_pose, pose, typeSet, residue_indices);
 
@@ -573,7 +573,7 @@ TR.Debug << "setup RGF cst 1" << std::endl;
     			residue_indices.push_back(i);
   			}
 
-				PoseOP double_pose = new Pose;
+				PoseOP double_pose( new Pose );
 				core::io::pdb::pose_from_pose( *double_pose, pose, typeSet, residue_indices);
 
 TR.Debug << "setup RGF cst 2" << std::endl;
@@ -655,7 +655,7 @@ TR.Debug << "setup RGF cst 4" << std::endl;
 				}
 
 TR.Debug << "setup RGF cst 5" << std::endl;
-			  input_pose_cst_set->add_constraint(new protocols::constraints_additional::BindingSiteConstraint( atms, *double_pose));
+			  input_pose_cst_set->add_constraint(ConstraintCOP( new protocols::constraints_additional::BindingSiteConstraint( atms, *double_pose) ));
 
 TR.Debug << "setup RGF cst 6" << std::endl;
 				pose.constraint_set(input_pose_cst_set);
@@ -689,7 +689,7 @@ TR.Debug << "setup RGF cst 1" << std::endl;
 				//native_cst_set = new ConstraintSet(*input_pose_cst_set);
 
 				//duplicate the native_set and add the new ones to it.
-				input_pose_cst_set = new ConstraintSet(*native_cst_set);
+				input_pose_cst_set = ConstraintSetOP( new ConstraintSet(*native_cst_set) );
 
 				Size repeat_number = option[OptionKeys::remodel::repeat_structure];
 
@@ -770,7 +770,7 @@ TR.Debug << "setup RGF cst 1" << std::endl;
 					Vector idealCM_1( COM_target(0,i), COM_target(1,i), COM_target(2,i));
 
 					//constraint
-					input_pose_cst_set->add_constraint( new protocols::constraints_additional::COMCoordinateConstraint( ID_1s, idealCM_1, sd, tolerance ));
+					input_pose_cst_set->add_constraint( ConstraintCOP( new protocols::constraints_additional::COMCoordinateConstraint( ID_1s, idealCM_1, sd, tolerance ) ));
 				}
 
 				pose.constraint_set(input_pose_cst_set);
@@ -925,12 +925,12 @@ TR.Debug << "post_restore" << std::endl;
 
 void
 RemodelGlobalFrame::set_native_cst_set( ConstraintSet const & cst_set){
-	native_cst_set = new ConstraintSet(cst_set);
+	native_cst_set = ConstraintSetOP( new ConstraintSet(cst_set) );
 }
 
 void
 RemodelGlobalFrame::set_native_cst_set( Pose const & pose ){
-	native_cst_set = new ConstraintSet( *pose.constraint_set() );
+	native_cst_set = ConstraintSetOP( new ConstraintSet( *pose.constraint_set() ) );
 }
 
 void

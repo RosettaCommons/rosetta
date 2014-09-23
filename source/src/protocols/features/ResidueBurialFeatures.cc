@@ -63,7 +63,7 @@ using utility::vector1;
 using cppdb::statement;
 
 ResidueBurialFeatures::ResidueBurialFeatures() :
-	nv_score_(new NVscore())
+	nv_score_(core::scoring::nv::NVscoreOP( new NVscore() ))
 {}
 
 ResidueBurialFeatures::ResidueBurialFeatures(ResidueBurialFeatures const & src) :
@@ -89,14 +89,14 @@ ResidueBurialFeatures::write_residue_burial_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt());
-	Column resNum("resNum", new DbInteger());
-	Column ten_a_neighbors("ten_a_neighbors", new DbInteger());
-	Column twelve_a_neighbors("twelve_a_neighbors", new DbInteger());
-	Column neigh_vect_raw("neigh_vect_raw", new DbReal());
-	Column sasa_r100("sasa_r100", new DbReal());
-	Column sasa_r140("sasa_r140", new DbReal());
-	Column sasa_r200("sasa_r200", new DbReal());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column resNum("resNum", DbDataTypeOP( new DbInteger() ));
+	Column ten_a_neighbors("ten_a_neighbors", DbDataTypeOP( new DbInteger() ));
+	Column twelve_a_neighbors("twelve_a_neighbors", DbDataTypeOP( new DbInteger() ));
+	Column neigh_vect_raw("neigh_vect_raw", DbDataTypeOP( new DbReal() ));
+	Column sasa_r100("sasa_r100", DbDataTypeOP( new DbReal() ));
+	Column sasa_r140("sasa_r140", DbDataTypeOP( new DbReal() ));
+	Column sasa_r200("sasa_r200", DbDataTypeOP( new DbReal() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);

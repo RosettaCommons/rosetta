@@ -21,8 +21,8 @@ namespace task_operations {
 
 class SelectByDensityFitOperation;
 
-typedef utility::pointer::owning_ptr< SelectByDensityFitOperation > SelectByDensityFitOperationOP;
-typedef utility::pointer::owning_ptr< SelectByDensityFitOperation const > SelectByDensityFitOperationCOP;
+typedef utility::pointer::shared_ptr< SelectByDensityFitOperation > SelectByDensityFitOperationOP;
+typedef utility::pointer::shared_ptr< SelectByDensityFitOperation const > SelectByDensityFitOperationCOP;
 
 } //namespace task_operations
 } //namespace toolbox

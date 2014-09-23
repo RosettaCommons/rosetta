@@ -19,8 +19,8 @@ namespace protocols {
 namespace seeded_abinitio {
 
 class SeedFoldTree;
-typedef utility::pointer::owning_ptr<SeedFoldTree> SeedFoldTreeOP;
-typedef utility::pointer::owning_ptr<SeedFoldTree const> SeedFoldTreeCOP;
+typedef utility::pointer::shared_ptr<SeedFoldTree> SeedFoldTreeOP;
+typedef utility::pointer::shared_ptr<SeedFoldTree const> SeedFoldTreeCOP;
 
 }  // namespace seeded_abinitio
 }  // namespace protocols

@@ -22,8 +22,8 @@ namespace protocols {
 namespace match {
 
 class MatchPositionModifier;
-typedef utility::pointer::owning_ptr< MatchPositionModifier > MatchPositionModifierOP;
-typedef utility::pointer::owning_ptr< MatchPositionModifier const > MatchPositionModifierCOP;
+typedef utility::pointer::shared_ptr< MatchPositionModifier > MatchPositionModifierOP;
+typedef utility::pointer::shared_ptr< MatchPositionModifier const > MatchPositionModifierCOP;
 
 }
 }

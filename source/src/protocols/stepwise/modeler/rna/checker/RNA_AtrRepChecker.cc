@@ -91,7 +91,7 @@ namespace checker {
 	void
 	RNA_AtrRepChecker::initialize_scorefxn(){
 		// Bare minimum to check for contact (fa_atr) but not clash (fa_rep)
-		atr_rep_screening_scorefxn_ =  new core::scoring::ScoreFunction;
+		atr_rep_screening_scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
 		atr_rep_screening_scorefxn_->set_weight( core::scoring::fa_atr , 0.23 );
 		atr_rep_screening_scorefxn_->set_weight( core::scoring::fa_rep , 0.12 );
 	}

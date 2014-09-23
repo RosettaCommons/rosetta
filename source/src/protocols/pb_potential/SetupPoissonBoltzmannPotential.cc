@@ -59,7 +59,7 @@ SetupPBCreator::~SetupPoissonBoltzmannPotentialCreator()
 protocols::moves::MoverOP
 SetupPBCreator::create_mover() const
 {
-  return new SetupPoissonBoltzmannPotential;
+  return protocols::moves::MoverOP( new SetupPoissonBoltzmannPotential );
 }
 std::string
 SetupPBCreator::keyname() const
@@ -115,7 +115,7 @@ SetupPB::get_name() const {
 }
 protocols::moves::MoverOP
 SetupPB::clone() const {
-  return new SetupPoissonBoltzmannPotential( *this );
+  return protocols::moves::MoverOP( new SetupPoissonBoltzmannPotential( *this ) );
 }
 
 void
@@ -194,7 +194,7 @@ SetupPB::parse_my_tag( utility::tag::TagCOP tag,
 	//-------------------------------------------------------------------------
 	// Initialize DDG for pre-scoring, which compute bound & unbound energies.
 	//-------------------------------------------------------------------------
-	ddg_ = new protocols::simple_moves::ddG();
+	ddg_ = protocols::simple_moves::ddGOP( new protocols::simple_moves::ddG() );
 
 	// Must turn this ON to enable caculation of bound/unbound states.
 	// HIGHLY ILLEGAL CONST_CAST TO MODIFY THE INPUT TAG!
@@ -218,7 +218,7 @@ runtime_assert(false);
 protocols::moves::MoverOP
 SetupPB::fresh_instance() const {
 
-  return new SetupPoissonBoltzmannPotential();
+  return protocols::moves::MoverOP( new SetupPoissonBoltzmannPotential() );
 }
 }
 }

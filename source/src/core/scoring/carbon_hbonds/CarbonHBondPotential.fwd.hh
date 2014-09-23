@@ -24,8 +24,8 @@ namespace carbon_hbonds {
 
 class CarbonHBondPotential;
 
-typedef  utility::pointer::owning_ptr< CarbonHBondPotential > CarbonHBondPotentialOP;
-typedef  utility::pointer::owning_ptr< CarbonHBondPotential const > CarbonHBondPotentialCOP;
+typedef  utility::pointer::shared_ptr< CarbonHBondPotential > CarbonHBondPotentialOP;
+typedef  utility::pointer::shared_ptr< CarbonHBondPotential const > CarbonHBondPotentialCOP;
 
 }
 }

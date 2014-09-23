@@ -104,7 +104,7 @@ DockingNoRepack1::~DockingNoRepack1(){}
 
 core::pack::task::operation::TaskOperationOP DockingNoRepack1::clone() const
 {
-	return new DockingNoRepack1( *this );
+	return core::pack::task::operation::TaskOperationOP( new DockingNoRepack1( *this ) );
 }
 
 void
@@ -132,7 +132,7 @@ DockingNoRepack2::~DockingNoRepack2(){}
 
 core::pack::task::operation::TaskOperationOP DockingNoRepack2::clone() const
 {
-	return new DockingNoRepack2( *this );
+	return core::pack::task::operation::TaskOperationOP( new DockingNoRepack2( *this ) );
 }
 
 void
@@ -162,12 +162,12 @@ RestrictToInterface::RestrictToInterface(utility::vector1<bool> loop_residues):
 
 core::pack::task::operation::TaskOperationOP RestrictToInterfaceCreator::create_task_operation() const
 {
-	return new RestrictToInterface;
+	return core::pack::task::operation::TaskOperationOP( new RestrictToInterface );
 }
 
 core::pack::task::operation::TaskOperationOP RestrictToInterface::clone() const
 {
-	return new RestrictToInterface( *this );
+	return core::pack::task::operation::TaskOperationOP( new RestrictToInterface( *this ) );
 }
 
 void

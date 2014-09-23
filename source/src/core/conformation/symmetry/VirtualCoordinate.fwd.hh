@@ -20,8 +20,8 @@ namespace conformation {
 namespace symmetry {
 
 class VirtualCoordinate;
-typedef utility::pointer::owning_ptr< VirtualCoordinate > VirtualCoordinateOP;
-typedef utility::pointer::owning_ptr< VirtualCoordinate const > VirtualCoordinateCOP;
+typedef utility::pointer::shared_ptr< VirtualCoordinate > VirtualCoordinateOP;
+typedef utility::pointer::shared_ptr< VirtualCoordinate const > VirtualCoordinateCOP;
 
 } // symmetry
 } // conformation

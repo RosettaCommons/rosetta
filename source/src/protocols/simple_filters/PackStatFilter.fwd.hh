@@ -26,8 +26,8 @@ namespace simple_filters {
 class PackStatFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< PackStatFilter >  PackStatFilterOP;
-typedef utility::pointer::owning_ptr< PackStatFilter const >  PackStatFilterCOP;
+typedef utility::pointer::shared_ptr< PackStatFilter >  PackStatFilterOP;
+typedef utility::pointer::shared_ptr< PackStatFilter const >  PackStatFilterCOP;
 
 } // namespace protocols
 } // namespace filters

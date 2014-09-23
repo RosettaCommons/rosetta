@@ -27,16 +27,16 @@ class LoopFromFileData;
 class LoopsFileIO;
 
 class LoopsFileData;
-typedef utility::pointer::owning_ptr< LoopsFileData > LoopsFileDataOP;
-typedef utility::pointer::owning_ptr< LoopsFileData const > LoopsFileDataCOP;
+typedef utility::pointer::shared_ptr< LoopsFileData > LoopsFileDataOP;
+typedef utility::pointer::shared_ptr< LoopsFileData const > LoopsFileDataCOP;
 
 class GuardedLoopsFromFile;
 
-typedef utility::pointer::owning_ptr< LoopsFileIO > LoopsFileIOOP;
-typedef utility::pointer::owning_ptr< LoopsFileIO const > LoopsFileIOCOP;
+typedef utility::pointer::shared_ptr< LoopsFileIO > LoopsFileIOOP;
+typedef utility::pointer::shared_ptr< LoopsFileIO const > LoopsFileIOCOP;
 
-typedef utility::pointer::owning_ptr< GuardedLoopsFromFile > GuardedLoopsFromFileOP;
-typedef utility::pointer::owning_ptr< GuardedLoopsFromFile const > GuardedLoopsFromFileCOP;
+typedef utility::pointer::shared_ptr< GuardedLoopsFromFile > GuardedLoopsFromFileOP;
+typedef utility::pointer::shared_ptr< GuardedLoopsFromFile const > GuardedLoopsFromFileCOP;
 
 } //namespace loops
 } //namespace protocols

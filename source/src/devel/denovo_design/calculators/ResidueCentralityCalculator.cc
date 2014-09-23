@@ -230,7 +230,7 @@ generate_nodes( core::pose::Pose const & pose )
 	for ( core::Size i=1; i<=pose.total_residue(); i++ ){
 		std::string resname = pose.residue( i ).name3() + boost::lexical_cast<std::string>( i );
 		TR.Debug << "Adding node " << resname << std::endl;
-		nodes.push_back( new Node( resname, i ) );
+		nodes.push_back( utility::pointer::shared_ptr<class devel::denovo_design::calculators::Node>( new Node( resname, i ) ) );
 	} // for each residue
 
 	TR << "nodes size=" << nodes.size() << ", computing edges..."; TR.flush();

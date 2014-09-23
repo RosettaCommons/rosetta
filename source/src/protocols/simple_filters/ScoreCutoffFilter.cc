@@ -269,7 +269,7 @@ ScoreCutoffFilter::output_residue_pair_energies( std::ostream & ostr, core::pose
 }
 
 filters::FilterOP
-ScoreCutoffFilterCreator::create_filter() const { return new ScoreCutoffFilter; }
+ScoreCutoffFilterCreator::create_filter() const { return filters::FilterOP( new ScoreCutoffFilter ); }
 
 std::string
 ScoreCutoffFilterCreator::keyname() const { return "ScoreCutoffFilter"; }

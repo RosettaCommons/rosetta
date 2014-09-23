@@ -33,8 +33,8 @@ namespace protocols {
 namespace scoring {
 
 class InterfaceInfo;
-typedef utility::pointer::owning_ptr< InterfaceInfo > InterfaceInfoOP;
-typedef utility::pointer::owning_ptr< InterfaceInfo const > InterfaceInfoCOP;
+typedef utility::pointer::shared_ptr< InterfaceInfo > InterfaceInfoOP;
+typedef utility::pointer::shared_ptr< InterfaceInfo const > InterfaceInfoCOP;
 
 } // ns scoring
 } // ns core

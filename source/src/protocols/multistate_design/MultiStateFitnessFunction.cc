@@ -31,8 +31,8 @@ namespace multistate_design {
 
 MultiStateFitnessFunction::MultiStateFitnessFunction()
 	: genetic_algorithm::FitnessFunction(),
-		aggregate_function_(NULL),
-		scorefxn_(0),
+		aggregate_function_(/* NULL */),
+		scorefxn_(/* 0 */),
 		best_fitness_(0.)
 {}
 
@@ -41,7 +41,7 @@ MultiStateFitnessFunction::~MultiStateFitnessFunction(){}
 void
 MultiStateFitnessFunction::add_state( core::pose::Pose const & pose, bool is_positive )
 {
-	add_state( new SingleState( pose, is_positive ) );
+	add_state( SingleStateOP( new SingleState( pose, is_positive ) ) );
 }
 
 void
@@ -50,7 +50,7 @@ MultiStateFitnessFunction::add_state( SingleStateOP state )
 	states_.push_back( state );
 	// for real-time pose tracking of best trait set vs. positive state pose(s) (graphics)
 	if ( state->is_positive_state() ) {
-		core::pose::PoseOP pose = new core::pose::Pose;
+		core::pose::PoseOP pose( new core::pose::Pose );
 		*pose = state->pose();
 // ja this is annoying during iterative protocols because there is no way(?) to close old viewers
 //		protocols::viewer::add_conformation_viewer( pose->conformation(), "Best fitness" );

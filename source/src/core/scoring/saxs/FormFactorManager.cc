@@ -56,7 +56,7 @@ void FormFactorManager::load_ff(std::string file_name) {
 	    std::string n,f;
 	    bool g;
 	    line_stream >> n >> f >> g;
-	    FormFactorOP c = new FormFactor(n,f);
+	    FormFactorOP c( new FormFactor(n,f) );
 	    c->is_glob(g);
 	    trFormFactorManager.Debug << "Form factor for atom >"<<n<<"< loaded from a file: "<<f<<std::endl;
 	    register_ff( n,c);
@@ -75,7 +75,7 @@ void FormFactorManager::load_ff_from_db(std::string file_name) {
 	    std::string n,f;
 	    bool g;
 	    line_stream >> n >> f >> g;
-	    FormFactorOP c = new FormFactor( n, basic::database::full_name("scoring/score_functions/saxs/"+f) );
+	    FormFactorOP c( new FormFactor( n, basic::database::full_name("scoring/score_functions/saxs/"+f) ) );
 	    c->is_glob(g);
 	    trFormFactorManager.Warning << "Form factor for atom >"<<n<<"< loaded from a minirosetta database file: "<<f<<std::endl;
 	    register_ff( n,c);

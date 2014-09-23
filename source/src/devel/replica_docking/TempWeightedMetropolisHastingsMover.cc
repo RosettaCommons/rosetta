@@ -43,7 +43,7 @@ TempWeightedMetropolisHastingsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 TempWeightedMetropolisHastingsMoverCreator::create_mover() const {
-	return new TempWeightedMetropolisHastingsMover;
+	return protocols::moves::MoverOP( new TempWeightedMetropolisHastingsMover );
 }
 
 std::string
@@ -72,12 +72,12 @@ TempWeightedMetropolisHastingsMover::get_name() const {
 
 protocols::moves::MoverOP
 TempWeightedMetropolisHastingsMover::clone() const {
-	return new devel::replica_docking::TempWeightedMetropolisHastingsMover(*this);
+	return protocols::moves::MoverOP( new devel::replica_docking::TempWeightedMetropolisHastingsMover(*this) );
 }
 
 protocols::moves::MoverOP
 TempWeightedMetropolisHastingsMover::fresh_instance() const {
-	return new TempWeightedMetropolisHastingsMover;
+	return protocols::moves::MoverOP( new TempWeightedMetropolisHastingsMover );
 }
 
 void
@@ -105,7 +105,7 @@ TempWeightedMetropolisHastingsMover::add_mover(
 				wc=TempInterpolatorFactory::get_instance()->new_tempInterpolator( wc_tag, tempering()->nlevels_per_dim(dim) );
 				tr.Debug << "weight controller for " << dim << "th dimension is generated with " << tempering()->nlevels_per_dim(dim) << " levels" << std::endl;
 			} else {
-				wc=new devel::replica_docking::TempFixValue(1);
+				wc = TempInterpolatorBaseOP( new devel::replica_docking::TempFixValue(1) );
 				tr.Debug << "Fix value weight controller used for " << dim << "th dimension" << std::endl;
 			}
 
@@ -121,11 +121,11 @@ TempWeightedMetropolisHastingsMover::add_mover(
 	}
 	tr.Debug << "added_1 " << added_1 << " added_2 " << added_2 << std::endl;
 	if ( !added_1 ) {
-		weight_contro_1_.push_back( new devel::replica_docking::TempFixValue( 1 ) );
+		weight_contro_1_.push_back( utility::pointer::shared_ptr<class devel::replica_docking::TempInterpolatorBase>( new devel::replica_docking::TempFixValue( 1 ) ) );
 		tr.Debug << "added fix value interpolator to 1st dimension " << std::endl;
 	}
 	if ( !added_2 ) {
-		weight_contro_2_.push_back( new devel::replica_docking::TempFixValue( 1 ) );
+		weight_contro_2_.push_back( utility::pointer::shared_ptr<class devel::replica_docking::TempInterpolatorBase>( new devel::replica_docking::TempFixValue( 1 ) ) );
 		tr.Debug << "added fix value interpolator to 2nd dimension " << std::endl;
 	}
 

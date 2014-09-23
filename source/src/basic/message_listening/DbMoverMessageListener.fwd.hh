@@ -24,8 +24,8 @@ namespace message_listening {
 
 
 class DbMoverMessageListener;
-typedef utility::pointer::owning_ptr< DbMoverMessageListener > DbMoverMessageListenerOP;
-typedef utility::pointer::owning_ptr< DbMoverMessageListener const > DbMoverMessageListenerCOP;
+typedef utility::pointer::shared_ptr< DbMoverMessageListener > DbMoverMessageListenerOP;
+typedef utility::pointer::shared_ptr< DbMoverMessageListener const > DbMoverMessageListenerCOP;
 
 } //namespace
 } //namespace

@@ -23,8 +23,8 @@ namespace optimization {
 
 // Forward
 class AtomTreeMinimizer;
-typedef utility::pointer::owning_ptr< AtomTreeMinimizer       > AtomTreeMinimizerOP;
-typedef utility::pointer::owning_ptr< AtomTreeMinimizer const > AtomTreeMinimizerCOP;
+typedef utility::pointer::shared_ptr< AtomTreeMinimizer       > AtomTreeMinimizerOP;
+typedef utility::pointer::shared_ptr< AtomTreeMinimizer const > AtomTreeMinimizerCOP;
 
 
 } // namespace optimization

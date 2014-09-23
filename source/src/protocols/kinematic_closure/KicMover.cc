@@ -52,7 +52,7 @@ using protocols::loop_modeling::FoldTreeRequest;
 using protocols::loop_modeling::FTR_LOOPS_WITH_CUTS;
 
 protocols::moves::MoverOP KicMoverCreator::create_mover() const { // {{{1
-	return new KicMover;
+	return protocols::moves::MoverOP( new KicMover );
 }
 
 std::string KicMoverCreator::keyname() const { // {{{1
@@ -62,19 +62,19 @@ std::string KicMoverCreator::keyname() const { // {{{1
 
 KicMover::KicMover() { // {{{1
 	using perturbers::PerturberOP;
-	perturbers_ = new perturbers::PerturberSet;
-	perturbers_->add(new perturbers::RamaPerturber);
-	perturbers_->add(new perturbers::BondAnglePerturber);
+	perturbers_ = perturbers::PerturberSetOP( new perturbers::PerturberSet );
+	perturbers_->add(PerturberOP( new perturbers::RamaPerturber ));
+	perturbers_->add(PerturberOP( new perturbers::BondAnglePerturber ));
 	perturbers_->mark_as_default();
 
-	pivot_picker_ = new pivot_pickers::StandardPivots;
-	solution_picker_ = new solution_pickers::FilteredSolutions;
+	pivot_picker_ = pivot_pickers::PivotPickerOP( new pivot_pickers::StandardPivots );
+	solution_picker_ = solution_pickers::SolutionPickerOP( new solution_pickers::FilteredSolutions );
 }
 
 KicMover::~KicMover() {} // {{{1
 
 bool KicMover::do_apply(Pose & pose, Loop const & loop) { // {{{1
-	ClosureProblemOP problem = new ClosureProblem();
+	ClosureProblemOP problem( new ClosureProblem() );
 	problem->frame(pose, loop, pivot_picker_);
 
 	bool problem_solved = false;

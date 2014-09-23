@@ -21,8 +21,8 @@ namespace rosetta_scripts {
 
 class PosePropertyReporterFactory;
 
-typedef utility::pointer::owning_ptr< PosePropertyReporterFactory > PosePropertyReporterFactoryOP;
-typedef utility::pointer::owning_ptr< PosePropertyReporterFactory const > PosePropertyReporterFactoryCOP;
+typedef utility::pointer::shared_ptr< PosePropertyReporterFactory > PosePropertyReporterFactoryOP;
+typedef utility::pointer::shared_ptr< PosePropertyReporterFactory const > PosePropertyReporterFactoryCOP;
 
 } //namespace rosetta_scripts
 } //namespace protocols

@@ -67,7 +67,7 @@ std::string ContactMapCreator::keyname() const {
 }
 
 protocols::moves::MoverOP ContactMapCreator::create_mover() const {
-	return new ContactMap;
+	return protocols::moves::MoverOP( new ContactMap );
 }
 
 std::string ContactMapCreator::mover_name() {
@@ -113,11 +113,11 @@ ContactMap::~ContactMap() {
 
 
 moves::MoverOP ContactMap::clone() const {
-	return new ContactMap(*this);
+	return moves::MoverOP( new ContactMap(*this) );
 }
 
 moves::MoverOP ContactMap::fresh_instance() const {
-	return new ContactMap;
+	return moves::MoverOP( new ContactMap );
 }
 
 std::string ContactMap::get_name() const {

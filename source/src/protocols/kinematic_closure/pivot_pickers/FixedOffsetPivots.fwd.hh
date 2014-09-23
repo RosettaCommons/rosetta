@@ -18,8 +18,8 @@ namespace pivot_pickers {
 
 class FixedOffsetPivots;
 
-typedef utility::pointer::owning_ptr<FixedOffsetPivots> FixedOffsetPivotsOP;
-typedef utility::pointer::owning_ptr<FixedOffsetPivots const> FixedOffsetPivotsCOP;
+typedef utility::pointer::shared_ptr<FixedOffsetPivots> FixedOffsetPivotsOP;
+typedef utility::pointer::shared_ptr<FixedOffsetPivots const> FixedOffsetPivotsCOP;
 
 }
 }

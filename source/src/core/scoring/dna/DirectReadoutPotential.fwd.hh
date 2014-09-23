@@ -30,8 +30,8 @@ namespace dna {
 
 class DirectReadoutPotential;
 
-typedef utility::pointer::owning_ptr< DirectReadoutPotential > DirectReadoutPotentialOP;
-typedef utility::pointer::owning_ptr< DirectReadoutPotential const > DirectReadoutPotentialCOP;
+typedef utility::pointer::shared_ptr< DirectReadoutPotential > DirectReadoutPotentialOP;
+typedef utility::pointer::shared_ptr< DirectReadoutPotential const > DirectReadoutPotentialCOP;
 
 }
 }

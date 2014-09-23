@@ -73,7 +73,7 @@ MinimizeBackboneCreator::keyname() const
 
 protocols::moves::MoverOP
 MinimizeBackboneCreator::create_mover() const {
-	return new MinimizeBackbone;
+	return protocols::moves::MoverOP( new MinimizeBackbone );
 }
 
 std::string
@@ -101,11 +101,11 @@ MinimizeBackbone::MinimizeBackbone(MinimizeBackbone const & that):
 MinimizeBackbone::~MinimizeBackbone() {}
 
 protocols::moves::MoverOP MinimizeBackbone::clone() const {
-	return new MinimizeBackbone( *this );
+	return protocols::moves::MoverOP( new MinimizeBackbone( *this ) );
 }
 
 protocols::moves::MoverOP MinimizeBackbone::fresh_instance() const {
-	return new MinimizeBackbone;
+	return protocols::moves::MoverOP( new MinimizeBackbone );
 }
 
 std::string MinimizeBackbone::get_name() const{
@@ -127,7 +127,7 @@ MinimizeBackbone::parse_my_tag(
 	if ( ! tag->hasOption("interface") ) throw utility::excn::EXCN_RosettaScriptsOption("'HighResDocker' requires 'interface' tag (comma separated chains to dock)");
 
 	std::string interface_name= tag->getOption<std::string>("interface");
-	interface_builder_= datamap.get< protocols::ligand_docking::InterfaceBuilder * >( "interface_builders", interface_name);
+	interface_builder_= datamap.get_ptr<protocols::ligand_docking::InterfaceBuilder>( "interface_builders", interface_name);
 }
 
 /// setting up backbone_minimization foldtree
@@ -191,7 +191,7 @@ core::kinematics::FoldTreeOP MinimizeBackbone::create_fold_tree_with_cutpoints(
 		ligand_options::Interface const & interface,
 		core::pose::Pose & pose
 ) {
-	core::kinematics::FoldTreeOP f_new= new core::kinematics::FoldTree();// Deleting edges is bad so add them to a new foldtree
+	core::kinematics::FoldTreeOP f_new( new core::kinematics::FoldTree() );// Deleting edges is bad so add them to a new foldtree
 
 	int new_jump = f->num_jump();
 
@@ -288,8 +288,7 @@ MinimizeBackbone::create_fold_tree_with_ligand_jumps_from_attach_pts(
 ) const {
 	std::map<core::Size, core::Size> jump_to_attach = find_attach_pts(interface, pose);
 
-	core::kinematics::FoldTreeOP new_fold_tree =
-			new core::kinematics::FoldTree();
+	core::kinematics::FoldTreeOP new_fold_tree( new core::kinematics::FoldTree() );
 
 	for (
 			core::kinematics::FoldTree::const_iterator e = f_const.begin(),
@@ -362,15 +361,13 @@ void MinimizeBackbone::restrain_protein_Calpha(
 	assert( found != ligand_areas.end() );// this shouldn't be possible
 	LigandAreaOP const ligand_area= found->second;
 	core::id::AtomID const atom_ID(residue.atom_index("CA"), residue_id);
-	core::scoring::func::FuncOP const harmonic_function=
-			new core::scoring::func::HarmonicFunc(0, ligand_area->Calpha_restraints_);
-	core::scoring::constraints::ConstraintOP const constraint =
-			new core::scoring::constraints::CoordinateConstraint(
+	core::scoring::func::FuncOP const harmonic_function( new core::scoring::func::HarmonicFunc(0, ligand_area->Calpha_restraints_) );
+	core::scoring::constraints::ConstraintOP const constraint( new core::scoring::constraints::CoordinateConstraint(
 					atom_ID,
 					fixed_pt,
 					residue.xyz("CA"),
 					harmonic_function
-			)
+			) )
 	;
 	minimize_backbone_tracer.Debug << "Restraining C-alpha of residue " << residue_id << " with "<< ligand_area->Calpha_restraints_<< std::endl;
 	pose.add_constraint(constraint);

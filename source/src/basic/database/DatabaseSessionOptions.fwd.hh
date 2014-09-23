@@ -21,8 +21,8 @@ namespace basic {
 namespace database {
 
 class DatabaseSessionOptions;
-typedef utility::pointer::owning_ptr< DatabaseSessionOptions > DatabaseSessionOptionsOP;
-typedef utility::pointer::owning_ptr< DatabaseSessionOptions const > DatabaseSessionOptionsCOP;
+typedef utility::pointer::shared_ptr< DatabaseSessionOptions > DatabaseSessionOptionsOP;
+typedef utility::pointer::shared_ptr< DatabaseSessionOptions const > DatabaseSessionOptionsCOP;
 
 } // database
 } // basic

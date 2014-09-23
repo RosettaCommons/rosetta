@@ -111,7 +111,7 @@ public:
 		rs.push_back( 45 );
 		rs.push_back( 55 );
 
-		RotamerSubsetsOP rsubset = new RotamerSubsets( *rotsets, rs );
+		RotamerSubsetsOP rsubset( new RotamerSubsets( *rotsets, rs ) );
 		/*std::cout << "Rotsubset with " << rsubset->nrotamers() << " rotamers" << std::endl;
 		for ( Size ii = 1; ii <= rsubset->nrotamers(); ++ii ) {
 			std::cout << "Rotamer " << ii << " mr#: " << rsubset->moltenres_for_rotamer( ii ) << " rot#: "

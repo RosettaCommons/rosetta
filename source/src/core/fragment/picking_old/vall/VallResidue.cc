@@ -117,7 +117,7 @@ VallResidue & VallResidue::operator =( VallResidue const & rval ) {
 /// @return A BBTorsionSRFD of the given type initialized with the backbone
 ///  torsion information from this page.
 VallResidue::BBTorsionSRFDOP VallResidue::bbtorsion_srfd( BBTorsionSRFD const & srfd_type ) const {
-	BBTorsionSRFDOP srfd = static_cast< BBTorsionSRFD * >( srfd_type.create().get() );
+	BBTorsionSRFDOP srfd = utility::pointer::static_pointer_cast< BBTorsionSRFD > ( srfd_type.create() );
 
 	srfd->set_sequence( aa_ );
 	srfd->set_secstruct( ss_ );

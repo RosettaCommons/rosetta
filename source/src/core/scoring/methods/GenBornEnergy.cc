@@ -69,7 +69,7 @@ methods::EnergyMethodOP
 GenBornEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return new GenBornEnergy( options );
+	return methods::EnergyMethodOP( new GenBornEnergy( options ) );
 }
 
 ScoreTypes
@@ -98,7 +98,7 @@ GenBornEnergy::GenBornEnergy( EnergyMethodOptions const & options ):
 EnergyMethodOP
 GenBornEnergy::clone() const
 {
-	return new GenBornEnergy( *this );
+	return EnergyMethodOP( new GenBornEnergy( *this ) );
 }
 
 bool
@@ -173,14 +173,14 @@ GenBornEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) con
 
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		DenseEnergyContainerOP dec( static_cast< DenseEnergyContainer * > ( lrc.get() ) );
+		DenseEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::DenseEnergyContainer > ( lrc ) );
 		if ( dec->size() != pose.total_residue() ) {
 			create_new_lre_container = true;
 		}
 	}
 
 	if ( create_new_lre_container ) {
-		LREnergyContainerOP new_dec = new DenseEnergyContainer( pose.total_residue(), gb_elec );
+		LREnergyContainerOP new_dec( new DenseEnergyContainer( pose.total_residue(), gb_elec ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 

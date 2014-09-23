@@ -21,8 +21,8 @@ namespace moves {
 
 class MoverFactory;
 
-typedef utility::pointer::owning_ptr< MoverFactory > MoverFactoryOP;
-typedef utility::pointer::owning_ptr< MoverFactory const > MoverFactoryCOP;
+typedef utility::pointer::shared_ptr< MoverFactory > MoverFactoryOP;
+typedef utility::pointer::shared_ptr< MoverFactory const > MoverFactoryCOP;
 
 } //namespace moves
 } //namespace protocols

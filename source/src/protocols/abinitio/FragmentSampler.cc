@@ -126,7 +126,7 @@ FragmentSampler::~FragmentSampler() {}
 moves::MoverOP
 FragmentSampler::clone() const
 {
-	return new FragmentSampler( *this );
+	return moves::MoverOP( new FragmentSampler( *this ) );
 }
 
 void FragmentSampler::checkpointed_cycle_block(
@@ -261,7 +261,7 @@ void FragmentSampler::set_defaults() {
 void FragmentSampler::set_default_mc(
  	scoring::ScoreFunction const & scorefxn
 ) {
-	set_mc( new moves::MonteCarlo( scorefxn, temperature_ ) );
+	set_mc( moves::MonteCarloOP( new moves::MonteCarlo( scorefxn, temperature_ ) ) );
 	canonical_sampling::mc_convergence_checks::setup_convergence_checks_from_cmdline( *mc_ );
 }
 
@@ -499,7 +499,7 @@ void FragmentSampler::do_stage3_cycles( pose::Pose &pose ) {
 			                                       false /*fullatom */, true /*fold tree */ )) {
 
 				tr.Debug << "  Score stage3 loop iteration " << lct1 << " " << lct2 << std::endl;
-				moves::TrialMoverOP stage3_trials = new moves::TrialMover( mover( pose, current_stage_id, current_scorefxn(), progress ), mc_ptr() );
+				moves::TrialMoverOP stage3_trials( new moves::TrialMover( mover( pose, current_stage_id, current_scorefxn(), progress ), mc_ptr() ) );
 					moves::RepeatMover( stage3_trials, stage3_cycles() ).apply( pose );
 
 				recover_low( pose, current_stage_id );
@@ -521,7 +521,7 @@ void FragmentSampler::do_stage4_cycles( pose::Pose &pose ) {
 
 		if (!get_checkpoints().recover_checkpoint( pose, get_current_tag(), "stage4_kk_" + ObjexxFCL::string_of(kk), false /* fullatom */, true /* fold_tree */ )) {
 			tr.Debug << "start " << stage4_cycles() << " cycles" << std::endl;
-			moves::TrialMoverOP stage4_trials = new moves::TrialMover( mover( pose, STAGE_4, current_scorefxn(), 1.0*kk/nloop_stage4 ), mc_ptr() );
+			moves::TrialMoverOP stage4_trials( new moves::TrialMover( mover( pose, STAGE_4, current_scorefxn(), 1.0*kk/nloop_stage4 ), mc_ptr() ) );
 				moves::RepeatMover( stage4_trials, stage4_cycles() ).apply( pose );
 			tr.Debug << "finished" << std::endl;
 
@@ -629,8 +629,7 @@ bool FragmentSampler::check_loops(core::pose::Pose& pose)
 	core::scoring::MembraneTopologyOP topology;
 	if (pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) )
 	{
-		topology = static_cast< core::scoring::MembraneTopology * >
-		( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY) () );
+		topology = utility::pointer::static_pointer_cast< core::scoring::MembraneTopology > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY)  );
 	}else{
 		utility_exit_with_message("Must have MembraneTopology!");
 	}
@@ -640,7 +639,7 @@ bool FragmentSampler::check_loops(core::pose::Pose& pose)
 	topology->initialize(spanfile);
 
 	//read in loophash database (DB made in a separate step before running Abinitio)
-	protocols::loophash::LoopHashLibraryOP library = new protocols::loophash::LoopHashLibrary( loop_sizes );
+	protocols::loophash::LoopHashLibraryOP library( new protocols::loophash::LoopHashLibrary( loop_sizes ) );
 	numeric::geometry::hashing::Real6 loop_transform; //this is the RT for the loop in question (how far apart are the residues)
 	library->load_db();
 

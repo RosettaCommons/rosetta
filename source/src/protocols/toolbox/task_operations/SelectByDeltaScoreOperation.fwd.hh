@@ -21,7 +21,7 @@ namespace task_operations {
 
 class SelectByDeltaScoreOperation;
 
-typedef utility::pointer::owning_ptr< SelectByDeltaScoreOperation > SelectByDeltaScoreOperationOP;
+typedef utility::pointer::shared_ptr< SelectByDeltaScoreOperation > SelectByDeltaScoreOperationOP;
 
 } //namespace task_operations
 } //namespace toolbox

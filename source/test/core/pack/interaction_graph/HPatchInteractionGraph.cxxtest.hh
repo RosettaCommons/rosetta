@@ -154,7 +154,7 @@ public:
 		scorefxn->setup_for_packing( pose, designtask->repacking_residues(), designtask->designing_residues() );
 
 		// --- RotamerSets ---
-		rotsets = new rotamer_set::RotamerSets();
+		rotsets = rotamer_set::RotamerSetsOP( new rotamer_set::RotamerSets() );
 		rotsets->set_task( designtask ); // sets the moltenres_2_resid and resid_2_moltenres arrays
 		TR << "Building rotamers..." << std::endl;
 		packer_neighbor_graph = create_packer_graph( pose, *scorefxn, designtask );
@@ -172,7 +172,7 @@ public:
 
 		// --- InteractionGraph ---
 		TR << "Instantiating PDHPatchInteractionGraph..." << std::endl;
-		pdhig = new interaction_graph::PDHPatchInteractionGraph( designtask->num_to_be_packed() );
+		pdhig = interaction_graph::PDHPatchInteractionGraphOP( new interaction_graph::PDHPatchInteractionGraph( designtask->num_to_be_packed() ) );
 		pdhig->set_pose( pose );
 		pdhig->set_packer_task( *designtask );
 		pdhig->set_rotamer_sets( *rotsets );
@@ -874,7 +874,7 @@ public:
 		// for this test, we don't want to use the PDIG that's created in the fixture
 
 		// TR << "Instantiating LinearMemoryHPatchInteractionGraph..." << std::endl;
-		lmhig = new interaction_graph::LinearMemoryHPatchInteractionGraph( designtask->num_to_be_packed() );
+		lmhig = interaction_graph::LinearMemoryHPatchInteractionGraphOP( new interaction_graph::LinearMemoryHPatchInteractionGraph( designtask->num_to_be_packed() ) );
 		lmhig->set_pose( pose );
 		lmhig->set_packer_task( *designtask );
 		lmhig->set_score_function( *scorefxn );

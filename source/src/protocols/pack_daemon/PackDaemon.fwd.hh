@@ -24,41 +24,41 @@ namespace pack_daemon {
 
 class PackDaemon;
 
-typedef utility::pointer::owning_ptr< PackDaemon > PackDaemonOP;
-typedef utility::pointer::owning_ptr< PackDaemon const > PackDaemonCOP;
+typedef utility::pointer::shared_ptr< PackDaemon > PackDaemonOP;
+typedef utility::pointer::shared_ptr< PackDaemon const > PackDaemonCOP;
 
 class DaemonSet;
 
-typedef utility::pointer::owning_ptr< DaemonSet > DaemonSetOP;
-typedef utility::pointer::owning_ptr< DaemonSet const > DaemonSetCOP;
+typedef utility::pointer::shared_ptr< DaemonSet > DaemonSetOP;
+typedef utility::pointer::shared_ptr< DaemonSet const > DaemonSetCOP;
 
 class NPDPropCalculator;
-typedef utility::pointer::owning_ptr< NPDPropCalculator > NPDPropCalculatorOP;
-typedef utility::pointer::owning_ptr< NPDPropCalculator const > NPDPropCalculatorCOP;
+typedef utility::pointer::shared_ptr< NPDPropCalculator > NPDPropCalculatorOP;
+typedef utility::pointer::shared_ptr< NPDPropCalculator const > NPDPropCalculatorCOP;
 
 class NPDPropCalculatorCreator;
-typedef utility::pointer::owning_ptr< NPDPropCalculatorCreator > NPDPropCalculatorCreatorOP;
-typedef utility::pointer::owning_ptr< NPDPropCalculatorCreator const > NPDPropCalculatorCreatorCOP;
+typedef utility::pointer::shared_ptr< NPDPropCalculatorCreator > NPDPropCalculatorCreatorOP;
+typedef utility::pointer::shared_ptr< NPDPropCalculatorCreator const > NPDPropCalculatorCreatorCOP;
 
 class QuickRepacker;
 
-typedef utility::pointer::owning_ptr< QuickRepacker > QuickRepackerOP;
-typedef utility::pointer::owning_ptr< QuickRepacker const > QuickRepackerCOP;
+typedef utility::pointer::shared_ptr< QuickRepacker > QuickRepackerOP;
+typedef utility::pointer::shared_ptr< QuickRepacker const > QuickRepackerCOP;
 
 class BasicSimAnnealerRepacker;
 
-typedef utility::pointer::owning_ptr< BasicSimAnnealerRepacker > BasicSimAnnealerRepackerOP;
-typedef utility::pointer::owning_ptr< BasicSimAnnealerRepacker const > BasicSimAnnealerRepackerCOP;
+typedef utility::pointer::shared_ptr< BasicSimAnnealerRepacker > BasicSimAnnealerRepackerOP;
+typedef utility::pointer::shared_ptr< BasicSimAnnealerRepacker const > BasicSimAnnealerRepackerCOP;
 
 class DenseIGRepacker;
 
-typedef utility::pointer::owning_ptr< DenseIGRepacker > DenseIGRepackerOP;
-typedef utility::pointer::owning_ptr< DenseIGRepacker const > DenseIGRepackerCOP;
+typedef utility::pointer::shared_ptr< DenseIGRepacker > DenseIGRepackerOP;
+typedef utility::pointer::shared_ptr< DenseIGRepacker const > DenseIGRepackerCOP;
 
 class DoubleDenseIGRepacker;
 
-typedef utility::pointer::owning_ptr< DoubleDenseIGRepacker > DoubleDenseIGRepackerOP;
-typedef utility::pointer::owning_ptr< DoubleDenseIGRepacker const > DoubleDenseIGRepackerCOP;
+typedef utility::pointer::shared_ptr< DoubleDenseIGRepacker > DoubleDenseIGRepackerOP;
+typedef utility::pointer::shared_ptr< DoubleDenseIGRepacker const > DoubleDenseIGRepackerCOP;
 
 }
 }

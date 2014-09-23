@@ -25,8 +25,8 @@ namespace output {
 
 class UpstreamHitCacher;
 
-typedef utility::pointer::owning_ptr< UpstreamHitCacher > UpstreamHitCacherOP;
-typedef utility::pointer::owning_ptr< UpstreamHitCacher const > UpstreamHitCacherCOP;
+typedef utility::pointer::shared_ptr< UpstreamHitCacher > UpstreamHitCacherOP;
+typedef utility::pointer::shared_ptr< UpstreamHitCacher const > UpstreamHitCacherCOP;
 
 
 }

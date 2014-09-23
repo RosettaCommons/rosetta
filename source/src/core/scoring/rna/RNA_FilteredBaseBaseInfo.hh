@@ -54,7 +54,7 @@ public:
   basic::datacache::CacheableDataOP
   clone() const
   {
-    return new RNA_FilteredBaseBaseInfo( *this );
+    return basic::datacache::CacheableDataOP( new RNA_FilteredBaseBaseInfo( *this ) );
   }
 
   Size

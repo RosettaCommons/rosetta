@@ -75,10 +75,10 @@ public:
   std::string get_name() const;
 
   virtual
-  moves::MoverOP fresh_instance() const { return new ConstraintPreparer(); }
+  moves::MoverOP fresh_instance() const { return moves::MoverOP( new ConstraintPreparer() ); }
 
   virtual
-  moves::MoverOP clone() const { return new ConstraintPreparer( *this ); }
+  moves::MoverOP clone() const { return moves::MoverOP( new ConstraintPreparer( *this ) ); }
 
   //prepares use the prepare method instead of apply
   virtual

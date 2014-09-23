@@ -98,13 +98,13 @@ HelixBundleFeatures::write_schema_to_db(utility::sql_database::sessionOP db_sess
 {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt(), false /*not null*/, false /*don't autoincrement*/);
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false /*not null*/, false /*don't autoincrement*/);
 
 	/******helix_bundles******/
-	Column bundle_id("bundle_id", new DbInteger(), false /*not null*/, false /*autoincrement*/);
+	Column bundle_id("bundle_id", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*autoincrement*/);
 //	Column bundle_id("bundle_id", new DbInteger(), false /*not null*/, true /*autoincrement*/);
-	Column bundle_size("bundle_size", new DbInteger(), false, false);
-	Column helix_size("helix_size", new DbInteger(), false, false);
+	Column bundle_size("bundle_size", DbDataTypeOP( new DbInteger() ), false, false);
+	Column helix_size("helix_size", DbDataTypeOP( new DbInteger() ), false, false);
 
 	utility::vector1<Column> helix_bundle_pkey_cols;
 	helix_bundle_pkey_cols.push_back(struct_id);
@@ -118,13 +118,13 @@ HelixBundleFeatures::write_schema_to_db(utility::sql_database::sessionOP db_sess
 	helix_bundles.write(db_session);
 
 	/******bundle_helices******/
-	Column helix_id("helix_id", new DbInteger(), false /*not null*/, false /*autoincrement*/);
+	Column helix_id("helix_id", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*autoincrement*/);
 //	Column helix_id("helix_id", new DbInteger(), false /*not null*/, true /*autoincrement*/);
-	Column flipped("flipped", new DbInteger());
-	Column sasa("sasa", new DbReal());
+	Column flipped("flipped", DbDataTypeOP( new DbInteger() ));
+	Column sasa("sasa", DbDataTypeOP( new DbReal() ));
 
-	Column residue_begin("residue_begin", new DbInteger());
-	Column residue_end("residue_end", new DbInteger());
+	Column residue_begin("residue_begin", DbDataTypeOP( new DbInteger() ));
+	Column residue_end("residue_end", DbDataTypeOP( new DbInteger() ));
 
 	utility::vector1<Column> bundle_helix_pkey_cols;
 	bundle_helix_pkey_cols.push_back(struct_id);
@@ -162,15 +162,15 @@ HelixBundleFeatures::write_schema_to_db(utility::sql_database::sessionOP db_sess
 	bundle_helices.write(db_session);
 
 	/******helix_pairs******/
-	Column pair_id("pair_id", new DbInteger(), false /*not null*/, false /*autoincrement*/);
+	Column pair_id("pair_id", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*autoincrement*/);
 //	Column pair_id("pair_id", new DbInteger(), false /*not null*/, true /*autoincrement*/);
-	Column helix_id_1("helix_id_1", new DbInteger(), false, false);
-	Column helix_id_2("helix_id_2", new DbInteger(), false, false);
-	Column shared_fa_atr("shared_fa_atr", new DbReal(), false, false);
-	Column interacting_fraction("interacting_fraction", new DbReal(), false, false);
-	Column crossing_angle("crossing_angle", new DbReal(), false, false);
-	Column end_1_distance("end_1_distance", new DbReal(), false, false);
-	Column end_2_distance("end_2_distance", new DbReal(), false, false);
+	Column helix_id_1("helix_id_1", DbDataTypeOP( new DbInteger() ), false, false);
+	Column helix_id_2("helix_id_2", DbDataTypeOP( new DbInteger() ), false, false);
+	Column shared_fa_atr("shared_fa_atr", DbDataTypeOP( new DbReal() ), false, false);
+	Column interacting_fraction("interacting_fraction", DbDataTypeOP( new DbReal() ), false, false);
+	Column crossing_angle("crossing_angle", DbDataTypeOP( new DbReal() ), false, false);
+	Column end_1_distance("end_1_distance", DbDataTypeOP( new DbReal() ), false, false);
+	Column end_2_distance("end_2_distance", DbDataTypeOP( new DbReal() ), false, false);
 
 	utility::vector1<Column> helix_pair_pkey_cols;
 	helix_pair_pkey_cols.push_back(struct_id);
@@ -234,13 +234,13 @@ utility::vector1<HelicalFragmentOP> HelixBundleFeatures::get_helix_fragments(Str
 		if(residue_begin - prev_residue_end == 2 && all_helices.size() > 0)
 		{
 			all_helices.pop_back();
-			all_helices.push_back(new HelicalFragment(prev_residue_begin, residue_end));
+			all_helices.push_back(utility::pointer::shared_ptr<class protocols::features::helixAssembly::HelicalFragment>( new HelicalFragment(prev_residue_begin, residue_end) ));
 			TR  << "combining helix segments: " << prev_residue_begin << "-" << prev_residue_end
 				<< " and " << residue_begin << "-" << residue_end << std::endl;
 		}
 		else
 		{
-			all_helices.push_back(new HelicalFragment(residue_begin, residue_end));
+			all_helices.push_back(utility::pointer::shared_ptr<class protocols::features::helixAssembly::HelicalFragment>( new HelicalFragment(residue_begin, residue_end) ));
 		}
 		prev_residue_begin=residue_begin;
 		prev_residue_end=residue_end;
@@ -261,8 +261,8 @@ utility::vector1<HelicalFragmentOP> HelixBundleFeatures::get_helix_fragments(Str
 
 				core::Size end_res = start_res+helix_size_-1;
 
-				HelicalFragmentOP frag_1 = new HelicalFragment(start_res, end_res);//normal direction
-				HelicalFragmentOP frag_2 = new HelicalFragment(end_res, start_res);//reversed
+				HelicalFragmentOP frag_1( new HelicalFragment(start_res, end_res) );//normal direction
+				HelicalFragmentOP frag_2( new HelicalFragment(end_res, start_res) );//reversed
 
 				all_helix_fragments.push_back(frag_1);
 				all_helix_fragments.push_back(frag_2);

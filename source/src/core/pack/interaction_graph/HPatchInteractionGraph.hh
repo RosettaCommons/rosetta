@@ -3261,7 +3261,7 @@ void HPatchInteractionGraph< V, E, G >::set_background_residue_rotamer_dots( Siz
 	Size bgid = resid_2_bgenumeration_[ residue ];
 	// the use of an OP here seems silly. though, storing a reference in a class is not as easy as it sounds.
 	// it seems like a raw pointer here would make the most sense, since I'm not allocating any memory, but oh well.
-	conformation::ResidueOP rotamer_op = new conformation::Residue( rotamer ); // calls copy constructor
+	conformation::ResidueOP rotamer_op( new conformation::Residue( rotamer ) ); // calls copy constructor
 	get_hpatch_bg_node( bgid )->set_rotamer( rotamer_op );
 
 	bool exclude_hydrogens = true;
@@ -3281,7 +3281,7 @@ void HPatchInteractionGraph< V, E, G >::set_background_residue_rotamer_dots( Siz
 template < typename V, typename E, typename G >
 void HPatchInteractionGraph< V, E, G >::set_rotamer_dots_for_node_state( Size node_index, Size state, conformation::Residue const & rotamer ) {
 
-	conformation::ResidueOP rotamer_op = new conformation::Residue( rotamer ); // calls copy constructor
+	conformation::ResidueOP rotamer_op( new conformation::Residue( rotamer ) ); // calls copy constructor
 	bool exclude_hydrogens = true;
 	bool use_expanded_polar_atom_radii = true;
 	RotamerDots rd( rotamer_op, exclude_hydrogens, use_expanded_polar_atom_radii );

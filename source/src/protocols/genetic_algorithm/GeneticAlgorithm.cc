@@ -47,8 +47,8 @@ static thread_local basic::Tracer TR( "protocols.genetic_algorithm" );
 
 GeneticAlgorithmBase::GeneticAlgorithmBase() :
 	utility::pointer::ReferenceCount(),
-	entity_randomizer_(0),
-	entity_template_(0),
+	entity_randomizer_(/* 0 */),
+	entity_template_(/* 0 */),
 	current_generation_(1),
 	max_generations_(0),
 	max_population_size_(0),
@@ -634,7 +634,7 @@ GeneticAlgorithmBase::new_entity()
 	if (entity_template_) {
 		return entity_template_->clone();
 	} else {
-		return new Entity;
+		return Entity::OP( new Entity );
 	}
 }
 
@@ -659,7 +659,7 @@ core::Size GeneticAlgorithmBase::checkpoint_write_interval() const
 
 GeneticAlgorithm::GeneticAlgorithm() :
 	GeneticAlgorithmBase(),
-	fitness_function_(0)
+	fitness_function_(/* 0 */)
 {}
 
 GeneticAlgorithm::~GeneticAlgorithm() {}

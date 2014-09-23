@@ -27,8 +27,8 @@ namespace protocols {
 namespace moves {
 
 class MoveMapMover;
-typedef utility::pointer::owning_ptr< MoveMapMover > MoveMapMoverOP;
-typedef utility::pointer::owning_ptr< MoveMapMover const > MoveMapMoverCOP;
+typedef utility::pointer::shared_ptr< MoveMapMover > MoveMapMoverOP;
+typedef utility::pointer::shared_ptr< MoveMapMover const > MoveMapMoverCOP;
 
 } // moves
 } // protocols

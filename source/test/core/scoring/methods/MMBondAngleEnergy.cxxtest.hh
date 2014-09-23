@@ -141,7 +141,7 @@ public:
 		// init pose
 		pose = create_test_in_pdb_poseop();
 		//core::import_pose::pose_from_pdb( *pose, "core/scoring/methods/test_in.pdb" );
-		pose_ideal = new Pose();
+		pose_ideal = PoseOP( new Pose() );
 		core::pose::make_pose_from_sequence(*pose_ideal, "ACDEFGHIKLMNQRSTVWY", "fa_standard");
 
 		// init delta
@@ -150,8 +150,8 @@ public:
 	}
 
 	void tearDown() {
-		pose = 0;
-		pose_ideal = 0;
+		pose.reset();
+		pose_ideal.reset();
 	}
 
 	// --------------- Test Cases --------------- //
@@ -166,7 +166,7 @@ public:
 
 		EnergyMethodOptionsOP energy_method_options( new EnergyMethodOptions );
 
-		energy_method_options->bond_angle_residue_type_param_set(new core::scoring::mm::MMBondAngleResidueTypeParamSet());
+		energy_method_options->bond_angle_residue_type_param_set(scoring::mm::MMBondAngleResidueTypeParamSetOP( new core::scoring::mm::MMBondAngleResidueTypeParamSet() ));
 
 		MMBondAngleEnergyOP mmbondangleenergy( new MMBondAngleEnergy(*energy_method_options) );
 

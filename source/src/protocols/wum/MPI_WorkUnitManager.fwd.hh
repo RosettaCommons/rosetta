@@ -22,8 +22,8 @@ namespace wum {
 // Forward
 class MPI_WorkUnitManager;
 
-typedef utility::pointer::owning_ptr< MPI_WorkUnitManager > MPI_WorkUnitManagerOP;
-typedef utility::pointer::owning_ptr< MPI_WorkUnitManager const > MPI_WorkUnitManagerCOP;
+typedef utility::pointer::shared_ptr< MPI_WorkUnitManager > MPI_WorkUnitManagerOP;
+typedef utility::pointer::shared_ptr< MPI_WorkUnitManager const > MPI_WorkUnitManagerCOP;
 
 } //namespace loops
 } //namespace protocols

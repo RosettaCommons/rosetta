@@ -21,7 +21,7 @@ namespace chemical {
 namespace rna {
 
 class RNA_FittedTorsionInfo;
-typedef utility::pointer::owning_ptr< RNA_FittedTorsionInfo > RNA_FittedTorsionInfoOP;
+typedef utility::pointer::shared_ptr< RNA_FittedTorsionInfo > RNA_FittedTorsionInfoOP;
 
 class GaussianParameter;
 

@@ -98,9 +98,9 @@ void add_constraints(core::pose::Pose & pose, Size rsd1, Size rsd2) {
 
             core::Real COORDDEV = 1.0;
             core::Real dist = pose.residue(ires).xyz(2).distance( pose.residue(jres).xyz(2) );
-            FuncOP fx = new ScalarWeightedFunc( 1.0, FuncOP( new USOGFunc( dist, COORDDEV ) ) );
+            FuncOP fx( new ScalarWeightedFunc( 1.0, FuncOP( new USOGFunc( dist, COORDDEV ) ) ) );
             pose.add_constraint(
-                new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(2,ires), core::id::AtomID(2,jres), fx )
+                scoring::constraints::ConstraintCOP( new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(2,ires), core::id::AtomID(2,jres), fx ) )
 			);
         }
     }
@@ -108,7 +108,7 @@ void add_constraints(core::pose::Pose & pose, Size rsd1, Size rsd2) {
 
 void optimize(core::pose::Pose & pose, Size rsd1, Size rsd2, core::scoring::ScoreFunctionOP scorefxn, Size ncycles, core::Real max_delta_torsion) {
     protocols::moves::MonteCarloOP mc;
-    mc= new protocols::moves::MonteCarlo( pose, *scorefxn, 2 );
+    mc = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( pose, *scorefxn, 2 ) );
 
     for (Size icycle=1; icycle<=ncycles; ++ icycle) {
         Size ires = numeric::random::rg().random_range(rsd1, rsd2);
@@ -261,7 +261,7 @@ void BackboneTorsionPerturbation::apply( core::pose::Pose & pose ) {
         task = core::pack::task::TaskFactory::create_packer_task( pose );
         task->initialize_from_command_line().restrict_to_repacking();
 	}
-    pack_full_repack_ = new protocols::simple_moves::PackRotamersMover( scorefxn_, task );
+    pack_full_repack_ = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( scorefxn_, task ) );
     //task->show_all_residue_tasks();
 
     pose.conformation().detect_disulfides();
@@ -272,13 +272,13 @@ void BackboneTorsionPerturbation::apply( core::pose::Pose & pose ) {
     core::Size counters(0);
 
     perturbed_res_ = 0;
-    mc= new protocols::moves::MonteCarlo( pose, *scorefxn_, temperature_ );
+    mc = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( pose, *scorefxn_, temperature_ ) );
     mc->set_autotemp( false, temperature_ );
     ncycles = pose.total_residue() * increase_cycles_;
 
-    minimizer_ = new core::optimization::AtomTreeMinimizer();
+    minimizer_ = core::optimization::AtomTreeMinimizerOP( new core::optimization::AtomTreeMinimizer() );
     //minimizer_ = new core::optimization::CartesianMinimizer();
-	options_ =  new core::optimization::MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
+	options_ = core::optimization::MinimizerOptionsOP( new core::optimization::MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.01, true, false, false ) );
 
 	options_->max_iter(20);
 	mm_.set_bb  ( true );
@@ -359,7 +359,7 @@ BackboneTorsionPerturbation::parse_my_tag(
             residue_list_.push_back(ires);
     }
     if (tag->hasOption( "native") ) {
-        native_ = new core::pose::Pose;
+        native_ = core::pose::PoseOP( new core::pose::Pose );
         core::import_pose::pose_from_pdb( *native_, tag->getOption< std::string >( "native" ) );
     }
 
@@ -392,10 +392,10 @@ BackboneTorsionPerturbation::parse_my_tag(
 }
 
 moves::MoverOP BackboneTorsionPerturbation::clone() const {
-	return new BackboneTorsionPerturbation( *this );
+	return moves::MoverOP( new BackboneTorsionPerturbation( *this ) );
 }
 moves::MoverOP BackboneTorsionPerturbation::fresh_instance() const {
-	return new BackboneTorsionPerturbation;
+	return moves::MoverOP( new BackboneTorsionPerturbation );
 }
 
 std::string
@@ -405,7 +405,7 @@ BackboneTorsionPerturbation::get_name() const {
 
 protocols::moves::MoverOP
 BackboneTorsionPerturbationCreator::create_mover() const {
-	return new BackboneTorsionPerturbation;
+	return protocols::moves::MoverOP( new BackboneTorsionPerturbation );
 }
 
 std::string

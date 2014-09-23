@@ -181,17 +181,13 @@ void test_alignment_mapping() {
 
 void test_simple_aligner() {
 	using namespace core::sequence;
-	SequenceOP seq1(
-		new Sequence(
+	SequenceOP seq1( new Sequence(
 			"PKALIVYGSTTGNTEYTAETIARELADAGYEVDSRDAASVEAGGLFEGFDLVLLGCSTWGDDSIELQDDFIPLFDSLEETGAQGRKVACFGCGDSSWEYFCGAVDAIEEKLKNLGAEIVQDGLRIDGDPRAARDDIVGWAHDVRGAI",
 			"1f4pA_full", 1
-		)
-	);
-	SequenceOP seq2(
-		new Sequence(
+		) );
+	SequenceOP seq2( new Sequence(
 			"FEGFDLVLLGCSTWGDDSIELQDDFIPLFDSLEETGAQGRKVACFG", "1f4pA_frag", 46
-		)
-	);
+		) );
 
 	SWAligner local_aligner;
 	ScoringSchemeOP ss( new SimpleScoringScheme( 6, 1, -4, -1 ) );

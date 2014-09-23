@@ -22,8 +22,8 @@ namespace task_operations {
 
 class RestrictByCalculatorsOperation;
 
-typedef utility::pointer::owning_ptr< RestrictByCalculatorsOperation > RestrictByCalculatorsOperationOP;
-typedef utility::pointer::owning_ptr< RestrictByCalculatorsOperation const > RestrictByCalculatorsOperationCOP;
+typedef utility::pointer::shared_ptr< RestrictByCalculatorsOperation > RestrictByCalculatorsOperationOP;
+typedef utility::pointer::shared_ptr< RestrictByCalculatorsOperation const > RestrictByCalculatorsOperationCOP;
 
 } //namespace protocols
 } //namespace toolbox

@@ -23,13 +23,13 @@ namespace constraints {
 
 class NamedAtomPairConstraint;
 
-typedef utility::pointer::owning_ptr< NamedAtomPairConstraint > NamedAtomPairConstraintOP;
-typedef utility::pointer::owning_ptr< NamedAtomPairConstraint const > NamedAtomPairConstraintCOP;
+typedef utility::pointer::shared_ptr< NamedAtomPairConstraint > NamedAtomPairConstraintOP;
+typedef utility::pointer::shared_ptr< NamedAtomPairConstraint const > NamedAtomPairConstraintCOP;
 
 class Obsolet_NamedAtomPairConstraint;
 
-typedef utility::pointer::owning_ptr< Obsolet_NamedAtomPairConstraint > Obsolet_NamedAtomPairConstraintOP;
-typedef utility::pointer::owning_ptr< Obsolet_NamedAtomPairConstraint const > Obsolet_NamedAtomPairConstraintCOP;
+typedef utility::pointer::shared_ptr< Obsolet_NamedAtomPairConstraint > Obsolet_NamedAtomPairConstraintOP;
+typedef utility::pointer::shared_ptr< Obsolet_NamedAtomPairConstraint const > Obsolet_NamedAtomPairConstraintCOP;
 
 }
 }

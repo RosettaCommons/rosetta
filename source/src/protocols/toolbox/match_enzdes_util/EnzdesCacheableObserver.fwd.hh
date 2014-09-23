@@ -23,10 +23,10 @@ namespace match_enzdes_util {
 
 class EnzdesCacheableObserver;
 
-typedef utility::pointer::owning_ptr< EnzdesCacheableObserver > EnzdesCacheableObserverOP;
-typedef utility::pointer::owning_ptr< EnzdesCacheableObserver const > EnzdesCacheableObserverCOP;
-typedef utility::pointer::access_ptr< EnzdesCacheableObserver const > EnzdesCacheableObserverCAP;
-typedef utility::pointer::access_ptr< EnzdesCacheableObserver > EnzdesCacheableObserverAP;
+typedef utility::pointer::shared_ptr< EnzdesCacheableObserver > EnzdesCacheableObserverOP;
+typedef utility::pointer::shared_ptr< EnzdesCacheableObserver const > EnzdesCacheableObserverCOP;
+typedef utility::pointer::weak_ptr< EnzdesCacheableObserver const > EnzdesCacheableObserverCAP;
+typedef utility::pointer::weak_ptr< EnzdesCacheableObserver > EnzdesCacheableObserverAP;
 
 } //match_enzdes_util
 } //toolbox

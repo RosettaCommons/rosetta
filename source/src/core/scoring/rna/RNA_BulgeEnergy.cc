@@ -36,7 +36,7 @@ methods::EnergyMethodOP
 RNA_BulgeEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new RNA_BulgeEnergy;
+	return methods::EnergyMethodOP( new RNA_BulgeEnergy );
 }
 
 ScoreTypes
@@ -59,7 +59,7 @@ RNA_BulgeEnergy::~RNA_BulgeEnergy() {}
 core::scoring::methods::EnergyMethodOP
 RNA_BulgeEnergy::clone() const
 {
-	return new RNA_BulgeEnergy;
+	return core::scoring::methods::EnergyMethodOP( new RNA_BulgeEnergy );
 }
 
 /////////////////////////////////////////////////////////////////////////////

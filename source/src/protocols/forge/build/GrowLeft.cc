@@ -97,7 +97,7 @@ GrowLeft & GrowLeft::operator =( GrowLeft const & rval ) {
 
 /// @brief clone this object
 BuildInstructionOP GrowLeft::clone() const {
-	return new GrowLeft( *this );
+	return BuildInstructionOP( new GrowLeft( *this ) );
 }
 
 

@@ -21,12 +21,12 @@ namespace resource_manager{
 namespace locator {
 
 class FileStream;
-typedef utility::pointer::owning_ptr< FileStream > FileStreamOP;
-typedef utility::pointer::owning_ptr< FileStream const > FileStreamCOP;
+typedef utility::pointer::shared_ptr< FileStream > FileStreamOP;
+typedef utility::pointer::shared_ptr< FileStream const > FileStreamCOP;
 
 class FileSystemResourceLocator;
-typedef utility::pointer::owning_ptr< FileSystemResourceLocator > FileSystemResourceLocatorOP;
-typedef utility::pointer::owning_ptr< FileSystemResourceLocator const > FileSystemResourceLocatorCOP;
+typedef utility::pointer::shared_ptr< FileSystemResourceLocator > FileSystemResourceLocatorOP;
+typedef utility::pointer::shared_ptr< FileSystemResourceLocator const > FileSystemResourceLocatorCOP;
 
 }// namespace
 }// namespace

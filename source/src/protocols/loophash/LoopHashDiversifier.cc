@@ -79,7 +79,7 @@ LoopHashDiversifierCreator::keyname() const
 
 protocols::moves::MoverOP
 LoopHashDiversifierCreator::create_mover() const {
-	return new LoopHashDiversifier;
+	return protocols::moves::MoverOP( new LoopHashDiversifier );
 }
 
 std::string
@@ -93,7 +93,7 @@ LoopHashDiversifier::~LoopHashDiversifier() {}
 	
 LoopHashDiversifier::LoopHashDiversifier() :
 	protocols::moves::Mover( LoopHashDiversifierCreator::mover_name() ),
-	library_( NULL ),
+	library_( /* NULL */ ),
 	min_inter_ss_bbrms_( 0.0 ),
 	max_inter_ss_bbrms_( 100000.0 ),
 	min_intra_ss_bbrms_( 0.0 ),
@@ -110,15 +110,15 @@ LoopHashDiversifier::LoopHashDiversifier() :
 	diversify_loop_only_( true ),
 	ideal_( false ),
 	filter_by_phipsi_( false ),
-	cenfilter_( NULL ),
-	ranking_cenfilter_( NULL ),
-	scorefxn_cen_cst_(NULL),
-	scorefxn_rama_cst_(NULL)
+	cenfilter_( /* NULL */ ),
+	ranking_cenfilter_( /* NULL */ ),
+	scorefxn_cen_cst_(/* NULL */),
+	scorefxn_rama_cst_(/* NULL */)
 {
 	loop_sizes_.clear();
 	loop_sizes_.push_back(window_size_);
 	
-	library_ = new LoopHashLibrary( loop_sizes() , 1 , 0 );
+	library_ = LoopHashLibraryOP( new LoopHashLibrary( loop_sizes() , 1 , 0 ) );
 	library_->load_mergeddb();
 	library_->mem_foot_print();
 }
@@ -172,7 +172,7 @@ LoopHashDiversifier::LoopHashDiversifier(
 	loop_sizes_.clear();
 	loop_sizes_.push_back(window_size_);
 	
-	library_ = new LoopHashLibrary( loop_sizes() , 1 , 0 );
+	library_ = LoopHashLibraryOP( new LoopHashLibrary( loop_sizes() , 1 , 0 ) );
 	library_->load_mergeddb();
 	library_->mem_foot_print();
 }
@@ -398,19 +398,19 @@ LoopHashDiversifier::parse_my_tag(
 	if( tag->hasOption("scorefxn_cen_cst") )
 	{
 		std::string scorefxn_name = tag->getOption<string>( "scorefxn_cen_cst" );
-		scorefxn_cen_cst_ = data.get< ScoreFunction* >( "scorefxns", scorefxn_name );
+		scorefxn_cen_cst_ = data.get_ptr<ScoreFunction>( "scorefxns", scorefxn_name );
 	}
 	if( tag->hasOption("scorefxn_rama_cst") )
 	{
 		std::string scorefxn_name = tag->getOption<string>( "scorefxn_rama_cst" );
-		scorefxn_rama_cst_ = data.get< ScoreFunction* >( "scorefxns", scorefxn_name );
+		scorefxn_rama_cst_ = data.get_ptr<ScoreFunction>( "scorefxns", scorefxn_name );
 	}
 	
 	//Currently use only window_size fragment sizes
 	add_loop_size( window_size_ ) ;
 
 	// path to DB -- if not specified then command-line flag is used
-	library_ = new LoopHashLibrary( loop_sizes() , 1 , 0 );
+	library_ = LoopHashLibraryOP( new LoopHashLibrary( loop_sizes() , 1 , 0 ) );
 	if ( tag->hasOption( "db_path" )) {
 		std::string db_path = tag->getOption< string >( "db_path" );
 		library_->set_db_path( db_path );

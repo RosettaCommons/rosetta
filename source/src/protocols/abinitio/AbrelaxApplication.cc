@@ -373,7 +373,7 @@ private:
 	using namespace core::scoring::constraints; // has to be core, now that protocols::scoring is visible
 class ShowViolation : public PoseEvaluator {
 public:
-	ShowViolation( ) : constraints_( NULL ) {}
+	ShowViolation( ) : constraints_( /* NULL */ ) {}
 	virtual void apply( pose::Pose& pose, std::string tag, io::silent::SilentStruct &pss ) const;
 	core::Size size() const { return 1; };
 	std::string name( core::Size ) const { return "viol"; };
@@ -384,7 +384,7 @@ private:
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class ComputeTotalDistCst : public PoseEvaluator {
 public:
-	ComputeTotalDistCst( ) : constraints_( NULL ) {};
+	ComputeTotalDistCst( ) : constraints_( /* NULL */ ) {};
 	virtual void apply( pose::Pose& pose, std::string tag, io::silent::SilentStruct &pss ) const;
 	core::Size size() const { return 1; };
 	std::string name( core::Size ) const { return "total"; };
@@ -395,17 +395,17 @@ private:
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///@detail c'stor - nothing special
 AbrelaxApplication::AbrelaxApplication() :
-	silent_score_file_( NULL ),
-	native_pose_( NULL ),
-	pca_( NULL ),
+	silent_score_file_( /* NULL */ ),
+	native_pose_( /* NULL */ ),
+	pca_( /* NULL */ ),
 	bRelax_ ( false ),
-	cstset_( NULL ),
-	jump_def_ ( NULL ),
-	templates_( NULL ),
-	fragset_large_( NULL ),
-	fragset_small_top25_( NULL ),
-	fragset_small_( NULL ),
-	evaluator_ ( new MetaPoseEvaluator ),
+	cstset_( /* NULL */ ),
+	jump_def_ ( /* NULL */ ),
+	templates_( /* NULL */ ),
+	fragset_large_( /* NULL */ ),
+	fragset_small_top25_( /* NULL */ ),
+	fragset_small_( /* NULL */ ),
+	evaluator_ ( evaluation::MetaPoseEvaluatorOP( new MetaPoseEvaluator ) ),
 	abrelax_checkpoints_( "Abrelax" )
 {}
 
@@ -447,20 +447,20 @@ void AbrelaxApplication::setup() {
 
 	if ( option[ constraints::no_linearize_bounded ] ) {
 		tr.Info << "use fully harmonic potential for BOUNDED " << std::endl;
-		ConstraintIO::get_func_factory().add_type("BOUNDED", new BoundFunc(0,0,0,1000,"dummy") );
+		ConstraintIO::get_func_factory().add_type("BOUNDED", FuncOP( new BoundFunc(0,0,0,1000,"dummy") ) );
 	}
 	if ( option[ constraints::named ] ) {
 		tr.Info << "use named constraints in AtomPairConstraint to avoid problems with cutpoint-variants " << std::endl;
 		core::scoring::constraints::ConstraintFactory::get_instance()->replace_creator(
-			new constraints_additional::NamedAtomPairConstraintCreator );
+			ConstraintCreatorCOP( new constraints_additional::NamedAtomPairConstraintCreator ) );
 	}
 
-	silent_score_file_ = new io::silent::SilentFileData;
+	silent_score_file_ = core::io::silent::SilentFileDataOP( new io::silent::SilentFileData );
 	silent_score_file_-> set_filename( std::string( option[ out::sf ]()  ) );
 
 	// read native pose
 	if ( option[ in::file::native ].user() ) {
-		native_pose_ = new pose::Pose;
+		native_pose_ = core::pose::PoseOP( new pose::Pose );
 		core::import_pose::pose_from_pdb( *native_pose_, option[ in::file::native ]() );
 
 		pose::set_ss_from_phipsi( *native_pose_ );
@@ -497,18 +497,18 @@ void AbrelaxApplication::setup() {
 	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluator_);
 
 	core::pose::metrics::PoseMetricCalculatorOP
-		clash_calculator = new protocols::toolbox::pose_metric_calculators::ClashCountCalculator( 2.0 );
+		clash_calculator( new protocols::toolbox::pose_metric_calculators::ClashCountCalculator( 2.0 ) );
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "clashes", clash_calculator );
-	add_evaluation( new simple_filters::PoseMetricEvaluator<core::Size>( "clashes", "total" ) );
-	add_evaluation( new simple_filters::PoseMetricEvaluator<core::Size>( "clashes", "bb" ) );
+	add_evaluation( evaluation::PoseEvaluatorOP( new simple_filters::PoseMetricEvaluator<core::Size>( "clashes", "total" ) ) );
+	add_evaluation( evaluation::PoseEvaluatorOP( new simple_filters::PoseMetricEvaluator<core::Size>( "clashes", "bb" ) ) );
 
-	if ( option[ constraints::viol ]() ) add_evaluation( new ShowViolation );
-	if ( option[ constraints::compute_total_dist_cst ] ) add_evaluation( new ComputeTotalDistCst );
+	if ( option[ constraints::viol ]() ) add_evaluation( evaluation::PoseEvaluatorOP( new ShowViolation ) );
+	if ( option[ constraints::compute_total_dist_cst ] ) add_evaluation( evaluation::PoseEvaluatorOP( new ComputeTotalDistCst ) );
 	// read PCA info
 	if ( option[ OptionKeys::in::file::pca ].user() ) {
-		pca_ = new PCA;
+		pca_ = evaluation::PCA_OP( new PCA );
 		pca_->read_eigvec_file( option[ OptionKeys::in::file::pca ](), *native_pose_, 2 );
-		add_evaluation( new PcaEvaluator( pca_ ) );
+		add_evaluation( evaluation::PoseEvaluatorOP( new PcaEvaluator( pca_ ) ) );
 	}
 }
 
@@ -539,17 +539,15 @@ bool AbrelaxApplication::close_loops( pose::Pose &pose, core::scoring::ScoreFunc
 
 		// Oh - we've not tried at all yet - let's go then!
 		// make a MoveMap ... could be coming from somewhere else, though
-		kinematics::MoveMapOP movemap = new kinematics::MoveMap;
+		kinematics::MoveMapOP movemap( new kinematics::MoveMap );
 		movemap->set_bb( true );
 
 		// a weird bug occurs if we make a copy of a copy of the pose and set the new fold-tree
 		// the behaviour is very different from setting the same fold-tree into the copy of the pose
-		loops::loop_closure::ccd::SlidingWindowLoopClosureOP closure_protocol =
-			new loops::loop_closure::ccd::SlidingWindowLoopClosure( fragset_small_, scorefxn, movemap );
+		loops::loop_closure::ccd::SlidingWindowLoopClosureOP closure_protocol( new loops::loop_closure::ccd::SlidingWindowLoopClosure( fragset_small_, scorefxn, movemap ) );
 
 		if ( option[ OptionKeys::loops::alternative_closure_protocol ]() ) {
-			closure_protocol =
-				new loops::loop_closure::ccd::WidthFirstSlidingWindowLoopClosure( fragset_small_, scorefxn, movemap );
+			closure_protocol = loops::loop_closure::ccd::SlidingWindowLoopClosureOP( new loops::loop_closure::ccd::WidthFirstSlidingWindowLoopClosure( fragset_small_, scorefxn, movemap ) );
 		}
 
 		// set options here if you like
@@ -566,7 +564,7 @@ bool AbrelaxApplication::close_loops( pose::Pose &pose, core::scoring::ScoreFunc
 		bool  bIdeal( !option[ OptionKeys::loops::non_ideal_loop_closing ]() );
 		closure_protocol->set_bIdealLoopClosing( bIdeal );
 
-		ProtocolOP debug_output = new Protocol;
+		ProtocolOP debug_output( new Protocol );
 		debug_output->set_evaluation( evaluator_ );
 
 		success = true;
@@ -627,7 +625,7 @@ void AbrelaxApplication::process_decoy(
 		evaluation::MetaPoseEvaluator eval_jumps;
 		native_pose_->fold_tree( pose.fold_tree() );
 		for ( Size nj = 1; nj<= pose.num_jump(); ++nj ) {
-			eval_jumps.add_evaluation( new simple_filters::JumpEvaluator( *native_pose_, nj) );
+			eval_jumps.add_evaluation( PoseEvaluatorOP( new simple_filters::JumpEvaluator( *native_pose_, nj) ) );
 		}
 		eval_jumps.apply( pose, tag, pss );
 	}
@@ -652,12 +650,12 @@ void AbrelaxApplication::add_constraints( pose::Pose & pose ) {
 	if ( bFirst ) {
 		if ( option[ constraints::cst_file ].user() ) {
 				// reads and sets constraints
-				cstset_ = ConstraintIO::get_instance()->read_constraints(core::scoring::constraints::get_cst_file_option(),	new ConstraintSet, pose	);
+				cstset_ = ConstraintIO::get_instance()->read_constraints(core::scoring::constraints::get_cst_file_option(),	ConstraintSetOP( new ConstraintSet ), pose	);
 		}
 	}
 
 	if ( bFirst && templates_ ) {
-		if ( !cstset_ ) cstset_ = new ConstraintSet;
+		if ( !cstset_ ) cstset_ = core::scoring::constraints::ConstraintSetOP( new ConstraintSet );
 		templates_->add_target_constraints( cstset_, pose );
 		if ( option[ templates::strand_constraint ] ) {
 			ConstraintCOPs my_strand_cst;
@@ -666,7 +664,7 @@ void AbrelaxApplication::add_constraints( pose::Pose & pose ) {
 			} else if ( option[ jumps::topology_file ].user() ) {
 				utility::io::izstream is( option[ jumps::topology_file ] );
 				if ( is.good() ) {
-					PairingStatisticsOP ps = new PairingStatistics;
+					PairingStatisticsOP ps( new PairingStatistics );
 					is >> *ps;
 					tr.Info << *ps << std::endl;
 					my_strand_cst = StrandConstraints( *ps ).build_constraints( pose );
@@ -677,7 +675,7 @@ void AbrelaxApplication::add_constraints( pose::Pose & pose ) {
 					utility_exit_with_message(" strand_constraint nees a topology info: either via templates or -topology_file ");
 			}
 			cstset_->add_constraints( my_strand_cst );
-			add_evaluation( new constraints_additional::ConstraintEvaluator( "strand", my_strand_cst ) );
+			add_evaluation( evaluation::PoseEvaluatorOP( new constraints_additional::ConstraintEvaluator( "strand", my_strand_cst ) ) );
 
 			if ( native_pose_ ) {//just a temporary hack to test the StrandConstraint
 				pose::Pose test_pose = *native_pose_;
@@ -706,7 +704,7 @@ void AbrelaxApplication::add_constraints( pose::Pose & pose ) {
 		ConstraintCOPs filtered;
 		core::scoring::constraints::cull_violators( cstset_->get_all_constraints(),
 			filtered, *native_pose_, option[ constraints::cull_with_native ]() );
-		cstset_=new ConstraintSet;
+		cstset_ = core::scoring::constraints::ConstraintSetOP( new ConstraintSet );
 		cstset_->add_constraints( filtered );
 	}
 
@@ -722,7 +720,7 @@ void AbrelaxApplication::add_constraints( pose::Pose & pose ) {
 		Size const neval ( option[ constraints::evaluate_max_seq_sep ]().size() );
 		for ( Size i = 1; i<= neval; i++ ) {
 			Size const seq_sep( option[ constraints::evaluate_max_seq_sep ]()[ i ] );
-			add_evaluation( new constraints_additional::ConstraintEvaluator( "seq_sep_"+utility::to_string( seq_sep) , *cstset_, 1, seq_sep ) );
+			add_evaluation( evaluation::PoseEvaluatorOP( new constraints_additional::ConstraintEvaluator( "seq_sep_"+utility::to_string( seq_sep) , *cstset_, 1, seq_sep ) ) );
 		}
 	}
 
@@ -781,7 +779,7 @@ void AbrelaxApplication::do_rerun() {
 
 	core::io::silent::SilentFileDataOP outsfd( NULL );
 	if ( option[ out::file::silent ].user() ) {
-		outsfd = new	core::io::silent::SilentFileData();
+		outsfd = core::io::silent::SilentFileDataOP( new	core::io::silent::SilentFileData() );
 	}
 
 	core::scoring::ScoreFunctionOP scorefxn( NULL );
@@ -822,7 +820,7 @@ void AbrelaxApplication::do_rerun() {
 				scorefxn->set_weight( core::scoring::overlap_chainbreak, 1.0 );
 
 				if ( option[ OptionKeys::abinitio::close_loops ] ) {
-					add_evaluation( new simple_filters::RmsdEvaluator( pose::PoseOP( new pose::Pose( pose ) ), std::string("closure"), option[ OptionKeys::abinitio::bGDT ]() ) );
+					add_evaluation( evaluation::PoseEvaluatorOP( new simple_filters::RmsdEvaluator( pose::PoseOP( new pose::Pose( pose ) ), std::string("closure"), option[ OptionKeys::abinitio::bGDT ]() ) ) );
 					close_loops( pose, scorefxn, tag );
 				}
 
@@ -857,7 +855,7 @@ void AbrelaxApplication::do_rerun() {
 		scorefxn->set_weight( core::scoring::overlap_chainbreak, 1.0 );
 
 		if ( option[ OptionKeys::abinitio::close_loops ] ) { //otherwise the column (needed for non-native decoys) doesn't show up in score-file
-			add_evaluation( new simple_filters::RmsdEvaluator( pose::PoseOP( new pose::Pose( *native_pose_ ) ), std::string("closure"), option[ OptionKeys::abinitio::bGDT ]() ) );
+			add_evaluation( evaluation::PoseEvaluatorOP( new simple_filters::RmsdEvaluator( pose::PoseOP( new pose::Pose( *native_pose_ ) ), std::string("closure"), option[ OptionKeys::abinitio::bGDT ]() ) ) );
 		}
 
 		process_decoy( *native_pose_, *scorefxn,  "NATIVE", *ss );
@@ -899,7 +897,7 @@ void AbrelaxApplication::do_distributed_rerun() {
 	// setup profiling
 	evaluation::TimeEvaluatorOP run_time( NULL );
 	if ( !option[ OptionKeys::run::no_prof_info_in_silentout ] ) {
-		add_evaluation( run_time = new evaluation::TimeEvaluator ); //just don't use this in integration tests!
+		add_evaluation( run_time = evaluation::TimeEvaluatorOP( new evaluation::TimeEvaluator ) ); //just don't use this in integration tests!
 	}
 
 	loops_in_ = protocols::loops::Loops( true );
@@ -921,7 +919,7 @@ void AbrelaxApplication::do_distributed_rerun() {
 	typedef utility::vector1< BasicJobOP > JobList;
 	JobList input_jobs;
 	for ( TagList::const_iterator it = input_tags.begin(), eit = input_tags.end(); it!=eit; ++it ) {
-		BasicJobOP job = new BasicJob( *it, "rerun", nstruct);
+		BasicJobOP job( new BasicJob( *it, "rerun", nstruct) );
 		input_jobs.push_back( job );
 	}
 
@@ -1004,7 +1002,7 @@ void AbrelaxApplication::do_distributed_rerun() {
 
 		bool loop_closure_failed( false );
 		if ( option[ OptionKeys::abinitio::close_loops ] ) {
-			add_evaluation( new simple_filters::RmsdEvaluator( pose::PoseOP( new pose::Pose( pose ) ), std::string("closure"), option[ OptionKeys::abinitio::bGDT ]() ) );
+			add_evaluation( evaluation::PoseEvaluatorOP( new simple_filters::RmsdEvaluator( pose::PoseOP( new pose::Pose( pose ) ), std::string("closure"), option[ OptionKeys::abinitio::bGDT ]() ) ) );
 			loop_closure_failed = !close_loops( pose, centroid_scorefxn, tag );
 		}
 
@@ -1091,7 +1089,7 @@ void AbrelaxApplication::copy_structure( core::pose::Pose & extended_pose, core:
 	fragment::Frame long_frame(1, seg_len);
 
 	//create apropriate length FragData object
-	FragData frag( new BBTorsionSRFD, seg_len );
+	FragData frag( SingleResidueFragDataOP( new BBTorsionSRFD ), seg_len );
 
 	// get torsion angles from native pose
 	frag.steal( desired_pose, long_frame );
@@ -1174,8 +1172,8 @@ void AbrelaxApplication::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& f
 
 	if ( templates_ && !option[ templates::no_pick_fragments ]() ) {
 		if ( option[ templates::vary_frag_size ] ) {
-			fragset_templates_ = new OrderedFragSet;
-			templates_->pick_large_frags( *fragset_templates_, new BBTorsionSRFD, option[ templates::nr_large_copies ] );
+			fragset_templates_ = core::fragment::FragSetOP( new OrderedFragSet );
+			templates_->pick_large_frags( *fragset_templates_, core::fragment::SingleResidueFragDataOP( new BBTorsionSRFD ), option[ templates::nr_large_copies ] );
 			tr.Info << " merge template frags with standard library " << std::endl;
 			fragset_large_ = merge_frags(
 					*fragset_templates_,
@@ -1191,22 +1189,22 @@ void AbrelaxApplication::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& f
 				Size const nr_large_copies( option[ templates::nr_large_copies ] );
 				fragset_large_ = templates_->pick_frags(
 								fragset_large_,
-								new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large_->max_frag_length() ),
+								core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large_->max_frag_length() ) ),
 								min_nr_frags,
 								nr_large_copies );
 			} else {
-				Size nr = templates_->pick_frags( *fragset_large_, new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large_->max_frag_length() ) );
+				Size nr = templates_->pick_frags( *fragset_large_, core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large_->max_frag_length() ) ) );
 				tr.Info << nr << " " << fragset_large_->max_frag_length() << "mer fragments picked from homolog structures" << std::endl;
 			}
 			if ( option[ templates::pick_multiple_sizes ] ) {
 				Size nr = templates_->pick_frags(
 								*fragset_large_,
-								new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), 18 )
+								core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), 18 ) )
 				);
 				tr.Info << nr << " 18mer fragments picked from homolog structures" << std::endl;
 				nr = templates_->pick_frags(
 								*fragset_large_,
-								new FragData( SingleResidueFragDataOP(  new BBTorsionSRFD ), 24 )
+								core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP(  new BBTorsionSRFD ), 24 ) )
 				);
 				tr.Info << nr << " 27mer fragments picked from homolog structures" << std::endl;
 			}
@@ -1217,12 +1215,12 @@ void AbrelaxApplication::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& f
 			Size const nr_small_copies( option[ templates::nr_small_copies ] );
 			fragset_small_ = templates_->pick_frags(
 								fragset_small_,
-								new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small_->max_frag_length() ),
+								core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small_->max_frag_length() ) ),
 									min_nr_frags,
 								nr_small_copies );
 		} else {
 			//pick torsion fragments fragset_small
-			Size nr2 = templates_->pick_frags( *fragset_small_, new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small_->max_frag_length() ) );
+			Size nr2 = templates_->pick_frags( *fragset_small_, core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small_->max_frag_length() ) ) );
 			tr.Info << nr2 << " " << fragset_small_->max_frag_length() << "mer fragments picked from homolog structures" << std::endl;
 		}
 	} // templates && !templates:no_pick_fragments
@@ -1230,9 +1228,9 @@ void AbrelaxApplication::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& f
 	if ( native_pose_ && ( option[ OptionKeys::abinitio::steal_3mers ]() || option[ OptionKeys::abinitio::steal_9mers ]() )) {
 		tr.Info << " stealing fragments from native pose: ATTENTION: native pose has to be IDEALIZED!!! " << std::endl;
 		if ( option[ OptionKeys::abinitio::steal_9mers ]() ) steal_frag_set_from_pose( *native_pose_, *fragset_large_,
-			new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large_->max_frag_length() ) );
+			core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large_->max_frag_length() ) ) );
 		if ( option[ OptionKeys::abinitio::steal_3mers ]() ) steal_frag_set_from_pose( *native_pose_, *fragset_small_,
-			new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small_->max_frag_length() ) );
+			core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small_->max_frag_length() ) ) );
 	} else if ( ( option[ OptionKeys::abinitio::steal_3mers ]() || option[ OptionKeys::abinitio::steal_9mers ]() ) && !native_pose_ && !templates_ ) {
 		tr.Warning << "cannot steal fragments without native pose or homologue structures " << std::endl;
 	}
@@ -1263,7 +1261,7 @@ void AbrelaxApplication::setup_templates() {
 	}
 
 	if ( native_pose_ ) tr.Info << "native strand pairings " << core::scoring::dssp::StrandPairingSet( *native_pose_ );
-	templates_ = new Templates( option[ templates::config ], native_pose_ );
+	templates_ = TemplatesOP( new Templates( option[ templates::config ], native_pose_ ) );
 	templates_->target_sequence() = sequence_; // a hack until class SequenceMapping works better
 	// want to pick fragments from templates... make sure they are not initialized yet
 	runtime_assert( !fragset_large_ );
@@ -1283,19 +1281,19 @@ void AbrelaxApplication::setup_templates() {
 	// setup jumps
 	bool bDoubleDef = false;
 	jump_def_ = NULL;
-	ss_def_ = new core::fragment::SecondaryStructure( *fragset_small_, false /*no JustUseCentralResidue */ );
+	ss_def_ = core::fragment::SecondaryStructureOP( new core::fragment::SecondaryStructure( *fragset_small_, false /*no JustUseCentralResidue */ ) );
 
 	if ( option [ jumps::extra_frags_for_ss ].user() ) {
 		FragSetOP ss_frags = FragmentIO().read_data( option[ jumps::extra_frags_for_ss ]() );
-		ss_def_ = new core::fragment::SecondaryStructure( *ss_frags, false );
+		ss_def_ = core::fragment::SecondaryStructureOP( new core::fragment::SecondaryStructure( *ss_frags, false ) );
 	}
 	if ( option[ jumps::loop_definition_from_file ].user() ) {
-		ss_def_ = new core::fragment::SecondaryStructure();
+		ss_def_ = core::fragment::SecondaryStructureOP( new core::fragment::SecondaryStructure() );
 		ss_def_->read_from_file( option[ jumps::loop_definition_from_file ]() );
 	}
 
 	if ( option[ jumps::fix_jumps ].user() ) {
-		JumpSetupOP ptr = new JumpSetup( extended_pose.total_residue() );
+		JumpSetupOP ptr( new JumpSetup( extended_pose.total_residue() ) );
 		ptr->read_file( option[ jumps::fix_jumps ]() );
 		// initialize jumping
 		jumping::JumpSample current_jumps( ptr->create_jump_sample() );
@@ -1308,7 +1306,7 @@ void AbrelaxApplication::setup_templates() {
 	}
 	if ( option[ jumps::jump_lib ].user() ) {
 		bDoubleDef = jump_def_ != 0;
-		JumpSelectorOP ptr = new JumpSelector( native_pose_->secstruct() );
+		JumpSelectorOP ptr( new JumpSelector( native_pose_->secstruct() ) );
 		ptr->read_file( option[ jumps::jump_lib ] );
 		jump_def_ = ptr;
 	}
@@ -1329,10 +1327,10 @@ void AbrelaxApplication::setup_templates() {
 		if ( option[ jumps::sheets ].user() ) {
 			sheets = option[ jumps::sheets ]();
 			// done: instantiate sheet-builder
-			jump_def_ = new SheetBuilder( ss_def_, pairings, sheets );
+			jump_def_ = jumping::BaseJumpSetupOP( new SheetBuilder( ss_def_, pairings, sheets ) );
 		} else {
 			sheets = option[ jumps::random_sheets ]();
-			jump_def_ = new RandomSheetBuilder( ss_def_, pairings, sheets );
+			jump_def_ = jumping::BaseJumpSetupOP( new RandomSheetBuilder( ss_def_, pairings, sheets ) );
 		}
 	}
 
@@ -1341,21 +1339,21 @@ void AbrelaxApplication::setup_templates() {
 		if ( !is.good() ) {
 			utility_exit_with_message(" did not find topology_file: " + std::string( option[ jumps::topology_file ]() ) );
 		}
-		PairingStatisticsOP ps = new PairingStatistics;
+		PairingStatisticsOP ps( new PairingStatistics );
 		is >> *ps;
 		if ( is.fail() ) {
 			utility_exit_with_message(" error reading file: " + std::string( option[ jumps::topology_file ]() ) );
 		}
 		tr.Info << *ps << std::endl;
 		core::scoring::dssp::PairingList helix_pairings; //empty for now
-		jump_def_ = new TemplateJumpSetup( NULL, ss_def_, ps, helix_pairings );
+		jump_def_ = jumping::BaseJumpSetupOP( new TemplateJumpSetup( NULL, ss_def_, ps, helix_pairings ) );
 	}
 
 	if ( option[ templates::pairings ] ) {
 		bDoubleDef = false;
 		if ( option[ jumps::fix_jumps ].user() ) {
 			tr.Info << "use fixed jumps but take jump-geometries from template! " << std::endl;
-			jump_def_ = new FixTemplateJumpSetup( *templates_->create_jump_def( ss_def_ ), jump_def_ );
+			jump_def_ = jumping::BaseJumpSetupOP( new FixTemplateJumpSetup( *templates_->create_jump_def( ss_def_ ), jump_def_ ) );
 		} else {
 			bDoubleDef = jump_def_ != 0;
 			jump_def_ = templates_->create_jump_def( ss_def_ );
@@ -1366,7 +1364,7 @@ void AbrelaxApplication::setup_templates() {
 
 	if ( option[ jumps::residue_pair_jump_file ].user() ) {
 		bDoubleDef = jump_def_ != 0;
-		ResiduePairJumpSetupOP ptr = new ResiduePairJumpSetup( extended_pose.total_residue() );
+		ResiduePairJumpSetupOP ptr( new ResiduePairJumpSetup( extended_pose.total_residue() ) );
 		ptr->read_file( option[ jumps::residue_pair_jump_file ]() );
 		jump_def_ = ptr;
 	}
@@ -1377,15 +1375,15 @@ void AbrelaxApplication::setup_templates() {
 
 	if ( jump_def_ ) {
 		//yields columns named nrjumps
-		add_evaluation( new simple_filters::JumpNrEvaluator );
+		add_evaluation( evaluation::PoseEvaluatorOP( new simple_filters::JumpNrEvaluator ) );
 	}
 }
 
 void AbrelaxApplication::setup_membrane_topology(	pose::Pose & pose, std::string spanfile ) const {
 	//using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
-	core::scoring::MembraneTopologyOP topologyOP = new core::scoring::MembraneTopology;
+	core::scoring::MembraneTopologyOP topologyOP( new core::scoring::MembraneTopology );
 	pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, topologyOP );
-	core::scoring::MembraneTopology & topology=*( static_cast< core::scoring::MembraneTopology * >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY )() ));
+	core::scoring::MembraneTopology & topology=*( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
 	topology.initialize(spanfile);
 }
 
@@ -1452,7 +1450,7 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 			std::cout << "Reading spanfile " << spanfile <<"\n";
 			setup_membrane_topology(extended_pose, spanfile);
 			//read in membrane jumps if available
-			membrane_jumps_=new MembraneJump;
+			membrane_jumps_ = jumping::MembraneJumpOP( new MembraneJump );
 			std::cout << "1.TEMPLATE SIZE: " << membrane_jumps_->template_size() << "\n";
 			std::cout << "1.PAIRING SIZE:  " << membrane_jumps_->pairings_size() << "\n";
 			if(option[ jumps::pairing_file ].user() && option[ jumps::jump_lib].user())
@@ -1469,7 +1467,7 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 	}
 
 	// make a MoveMap
-	kinematics::MoveMapOP movemap = new	kinematics::MoveMap;
+	kinematics::MoveMapOP movemap( new	kinematics::MoveMap );
 	movemap->set_bb( true );
 
 	if ( option[ OptionKeys::abinitio::fix_residues_to_native ].user() ) {
@@ -1480,7 +1478,7 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 			if ( !(end >= start) ) utility_exit_with_message("end < start in abinitio:fix_residues_to_native");
 			fragment::Frame long_frame(start, end-start+1 );
 			//create apropriate length FragData object
-			FragData frag( new BBTorsionSRFD, end-start+1 );
+			FragData frag( SingleResidueFragDataOP( new BBTorsionSRFD ), end-start+1 );
 
 			// get torsion angles from native pose
 			frag.steal( *native_pose_, long_frame );
@@ -1522,7 +1520,7 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 		add_constraints( extended_pose );
 		core::kinematics::simple_visualize_fold_tree( extended_pose.fold_tree(), tr.Debug );
 
-		KinematicAbinitioOP sampler = new KinematicAbinitio( fragset_small_, fragset_large_, movemap /*this movemap will be ignored*/ );
+		KinematicAbinitioOP sampler( new KinematicAbinitio( fragset_small_, fragset_large_, movemap /*this movemap will be ignored*/ ) );
 		ResolutionSwitcher res_switch(
 																	extended_pose,
 																	extended_pose.is_fullatom(),
@@ -1534,16 +1532,15 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 		sampler->init( res_switch.start_pose() );
 
 		if ( option[ OptionKeys::abinitio::close_loops ]() ) {
-			loops::loop_closure::ccd::SlidingWindowLoopClosureOP closure_protocol = new loops::loop_closure::ccd::SlidingWindowLoopClosure;
+			loops::loop_closure::ccd::SlidingWindowLoopClosureOP closure_protocol( new loops::loop_closure::ccd::SlidingWindowLoopClosure );
 
 			if ( option[ OptionKeys::loops::alternative_closure_protocol ]() ) {
-				closure_protocol =
-					new loops::loop_closure::ccd::WidthFirstSlidingWindowLoopClosure;
+				closure_protocol = loops::loop_closure::ccd::SlidingWindowLoopClosureOP( new loops::loop_closure::ccd::WidthFirstSlidingWindowLoopClosure );
 			}
 
 			if ( option[ OptionKeys::loops::fa_closure_protocol ]() ) {
 				loops::loop_closure::ccd::FASelectSlidingWindowLoopClosureOP prot;
-				closure_protocol = prot = new loops::loop_closure::ccd::FASelectSlidingWindowLoopClosure;
+				closure_protocol = prot = loops::loop_closure::ccd::FASelectSlidingWindowLoopClosureOP( new loops::loop_closure::ccd::FASelectSlidingWindowLoopClosure );
 				//spaeter kann man hier einen ResolutionSwitcher uebergeben.
 				runtime_assert( extended_pose.is_fullatom() );
 				prot->set_fullatom_pose( extended_pose );
@@ -1570,7 +1567,7 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 			std::string filename( option[ OptionKeys::loops::extended_loop_file ]().name() );
             loops::Loops extended_loops_in( filename ); // <== TODO: select these using density score
 			extended_loops_in.verify_against( extended_pose );
-			KinematicAbinitioOP stage1_sampler = new KinematicAbinitio( *sampler );
+			KinematicAbinitioOP stage1_sampler( new KinematicAbinitio( *sampler ) );
 			sampler->bSkipStage1_ = true;
 
 			stage1_sampler->init( res_switch.start_pose() ); //sets default options
@@ -1578,7 +1575,7 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 			stage1_sampler->bSkipStage4_ = true;
 			stage1_sampler->closure_protocol( NULL );
 			loops::Loops rigid_core( loops_in_.invert( extended_pose.total_residue() ) );
-			controller = new DoubleLayerKinematicAbinitio(
+			controller = LoopJumpFoldCstOP( new DoubleLayerKinematicAbinitio(
 					jump_def_,
 					extended_loops_in,
 					rigid_core,
@@ -1587,16 +1584,16 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 					ss_def_,
 					option[ loopfcst::coord_cst_weight ],
 					option[ loopfcst::coord_cst_all_atom ]
-					);
+					) );
 		} else {
-			controller = new LoopJumpFoldCst(
+			controller = LoopJumpFoldCstOP( new LoopJumpFoldCst(
 					jump_def_,
 					loops_in_,
 					sampler,
 					ss_def_,
 					option[ loopfcst::coord_cst_weight ],
 					option[ loopfcst::coord_cst_all_atom ]
-					);
+					) );
 		}
 
 		controller->set_input_pose_is_fa( extended_pose.is_fullatom() );
@@ -1622,7 +1619,7 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 		// setup abinitio protocol: one of either, MembraneAbinitio / ClassicAbinitio/ FoldConstraints/ JumpingFoldConstraints
 		if ( option[  basic::options::OptionKeys::abinitio::membrane ]() ) {
 			tr.Info << "run MembraneAbinitio.... " << std::endl;
-			prot_ptr = new MembraneAbinitio( fragset_small_, fragset_small_top25_,fragset_large_, movemap);
+			prot_ptr = ProtocolOP( new MembraneAbinitio( fragset_small_, fragset_small_top25_,fragset_large_, movemap) );
 			tr.Info << "After new MembraneAbinitio.... " << std::endl;
 		} else {
 			if ( jump_def_ ) {
@@ -1630,7 +1627,7 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 			// it doesn't matter if we have no constraints the extra FoldConstraints part in the Jumping protocl
 			// won't do anything
 			JumpingFoldConstraintsWrapperOP pp;
-			pp = new JumpingFoldConstraintsWrapper( fragset_small_, fragset_large_, movemap, jump_def_ );
+			pp = JumpingFoldConstraintsWrapperOP( new JumpingFoldConstraintsWrapper( fragset_small_, fragset_large_, movemap, jump_def_ ) );
 			if ( native_pose_ ) pp->set_native_pose( native_pose_ ); //to steal native jumps
 			pp->set_show_viol_level( option[ constraints::viol_level ] );
 			prot_ptr = pp;
@@ -1639,13 +1636,13 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 				// We have constraints: run xxxFoldConstraints
 				tr.Info << "run FoldConstraints....." << std::endl;
 				FoldConstraintsOP pp;
-				pp = new FoldConstraints( fragset_small_, fragset_large_, movemap );
+				pp = FoldConstraintsOP( new FoldConstraints( fragset_small_, fragset_large_, movemap ) );
 				pp->set_show_viol_level( option[ constraints::viol_level ] );
 				prot_ptr = pp;
 			} else {
 				/// no constraints ---> ClassicAbinitio
 					tr.Info << "run ClassicAbinitio....." << std::endl;
-					prot_ptr = new ClassicAbinitio( fragset_small_, fragset_large_, movemap );
+					prot_ptr = ProtocolOP( new ClassicAbinitio( fragset_small_, fragset_large_, movemap ) );
 				}
 			}
 		}
@@ -1682,7 +1679,7 @@ bool AbrelaxApplication::check_filters( core::pose::Pose & pose ) {
 	if( ( option[basic::options::OptionKeys::filters::set_pddf_filter ].user() ) &&
 	    ( option[basic::options::OptionKeys::score::saxs::ref_pddf ].user() ) ) {
 
-	    protocols::simple_filters::PDDFScoreFilterOP pddf_filter = new protocols::simple_filters::PDDFScoreFilter();
+	    protocols::simple_filters::PDDFScoreFilterOP pddf_filter( new protocols::simple_filters::PDDFScoreFilter() );
 	    bool flag = pddf_filter->apply(pose);
 	    core::pose::setPoseExtraScore( pose, "pddf_score", pddf_filter->recent_score());
 	    if( ! flag ) return false;	// We need this flag because filter's score must be set before this if statement
@@ -1691,7 +1688,7 @@ bool AbrelaxApplication::check_filters( core::pose::Pose & pose ) {
 	if( ( option[basic::options::OptionKeys::filters::set_saxs_filter ].user() ) &&
 	    ( option[basic::options::OptionKeys::score::saxs::ref_spectrum ].user() ) ) {
 
-	    protocols::simple_filters::SAXSScoreFilterOP saxs_filter = new protocols::simple_filters::SAXSScoreFilter();
+	    protocols::simple_filters::SAXSScoreFilterOP saxs_filter( new protocols::simple_filters::SAXSScoreFilter() );
 	    bool flag = saxs_filter->apply(pose);
 	    core::pose::setPoseExtraScore( pose, "saxs_score", saxs_filter->recent_score());
 	    if( ! flag ) return false;	// We need this flag because filter's score must be set before this if statement
@@ -1762,12 +1759,12 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 
 		// create jobs
 		for ( TagList::const_iterator it = input_tags.begin(), eit = input_tags.end(); it!=eit; ++it ) {
-			BasicJobOP job = new BasicJob( *it, "resample", nstruct);
+			BasicJobOP job( new BasicJob( *it, "resample", nstruct) );
 			tr.Debug << "create resample job" << *it << std::endl;
 			input_jobs.push_back( job );
 		}
 	} else { //default behaviour
-		BasicJobOP job = new BasicJob("" /*no input tag*/, "abinitio_relax", nstruct);
+		BasicJobOP job( new BasicJob("" /*no input tag*/, "abinitio_relax", nstruct) );
 		input_jobs.push_back( job );
 	}
 
@@ -1786,7 +1783,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 
 	evaluation::TimeEvaluatorOP run_time( NULL );
 	if ( !option[ OptionKeys::run::no_prof_info_in_silentout ]() ) {
-		add_evaluation( run_time = new evaluation::TimeEvaluator ); //just don't use this in integration tests!
+		add_evaluation( run_time = evaluation::TimeEvaluatorOP( new evaluation::TimeEvaluator ) ); //just don't use this in integration tests!
 		abinitio_protocol.set_evaluation( evaluator_ );
 	}
 
@@ -1823,9 +1820,9 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 		//using core::pose::datacache::CacheableDataType::SS_KILLHAIRPINS_INFO;
 		if ( option[ OptionKeys::abinitio::kill_hairpins ].user() ) {
 			using namespace basic::datacache;
-			fold_pose.data().set( core::pose::datacache::CacheableDataType::SS_KILLHAIRPINS_INFO, DataCache_CacheableData::DataOP( new core::scoring::SS_Killhairpins_Info) );
+			fold_pose.data().set( core::pose::datacache::CacheableDataType::SS_KILLHAIRPINS_INFO, DataCache_CacheableData::DataOP( new core::scoring::SS_Killhairpins_Info ) );
 			runtime_assert( fold_pose.data().has( core::pose::datacache::CacheableDataType::SS_KILLHAIRPINS_INFO ) );
-			core::scoring::SS_Killhairpins_Info & hairpins=*( static_cast< core::scoring::SS_Killhairpins_Info * >( fold_pose.data().get_ptr( core::pose::datacache::CacheableDataType::SS_KILLHAIRPINS_INFO )() ));
+			core::scoring::SS_Killhairpins_Info & hairpins=*( utility::pointer::static_pointer_cast< core::scoring::SS_Killhairpins_Info > ( fold_pose.data().get_ptr( core::pose::datacache::CacheableDataType::SS_KILLHAIRPINS_INFO ) ));
 			hairpins.setup_killhairpins();
 		}
 
@@ -1913,14 +1910,14 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 				res_switch.apply( fold_pose );
 
 				if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) 	{
-					ConstraintSetOP cstset_ = ConstraintIO::get_instance()->read_constraints( get_cst_fa_file_option(), new ConstraintSet, fold_pose );
+					ConstraintSetOP cstset_ = ConstraintIO::get_instance()->read_constraints( get_cst_fa_file_option(), ConstraintSetOP( new ConstraintSet ), fold_pose );
 					fold_pose.constraint_set( cstset_ );
 				}
 			}
 
 			if( option[ basic::options::OptionKeys::abinitio::close_loops_by_idealizing ]() ){
 				// record cutpoints
-				protocols::loops::LoopsOP cloops = new protocols::loops::Loops();
+				protocols::loops::LoopsOP cloops( new protocols::loops::Loops() );
 				for ( Size ncut = 1; ncut <= (Size) fold_pose.fold_tree().num_cutpoint(); ncut++ ) {
 					Size cutpoint = fold_pose.fold_tree().cutpoint( ncut );
 					protocols::loops::Loop newloop (
@@ -2179,7 +2176,7 @@ void ComputeTotalDistCst::apply( pose::Pose &pose, std::string, io::silent::Sile
 	using namespace basic::options::OptionKeys;
 	if ( pose.constraint_set()->has_residue_pair_constraints() ) {
 		if ( !constraints_ ) {
-			constraints_ = new ConstraintSet( *pose.constraint_set() ); //get rid of MAX_SEQ_SEP
+			constraints_ = ConstraintSetOP( new ConstraintSet( *pose.constraint_set() ) ); //get rid of MAX_SEQ_SEP
 		}
 		if ( option[ constraints::compute_total_dist_cst ]() ) {
 			pose::Pose my_pose ( pose ); //copy of pose, don't want to change any score terms.

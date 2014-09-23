@@ -21,8 +21,8 @@ namespace jd2 {
 
 class JobInputterFactory;
 
-typedef utility::pointer::owning_ptr< JobInputterFactory > JobInputterFactoryOP;
-typedef utility::pointer::owning_ptr< JobInputterFactory const > JobInputterFactoryCOP;
+typedef utility::pointer::shared_ptr< JobInputterFactory > JobInputterFactoryOP;
+typedef utility::pointer::shared_ptr< JobInputterFactory const > JobInputterFactoryCOP;
 
 } //namespace jd2
 } //namespace protocols

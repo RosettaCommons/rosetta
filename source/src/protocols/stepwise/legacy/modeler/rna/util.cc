@@ -562,7 +562,7 @@ namespace rna {
 	void
 	print_WorkingParameters_info( working_parameters::StepWiseWorkingParametersCOP const & const_WP, std::string const WP_name, std::ostream & outstream /* = std::cout */, bool const is_simple_full_length_WP  ){
 
-		working_parameters::StepWiseWorkingParametersOP WP = new working_parameters::StepWiseWorkingParameters;
+		working_parameters::StepWiseWorkingParametersOP WP( new working_parameters::StepWiseWorkingParameters );
 
 		( *WP ) = ( *const_WP );
 

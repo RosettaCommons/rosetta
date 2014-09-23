@@ -46,8 +46,8 @@ EnzdesLoopInfo::~EnzdesLoopInfo() {}
 
 ResInteractions::ResInteractions() :
 	targ_res_(0), num_interactions_(1),
-	dis_(NULL), loop_ang_(NULL), targ_ang_(NULL),
-	loop_dih_(NULL), targ_dih_(NULL), lt_dih_(NULL)
+	dis_(/* NULL */), loop_ang_(NULL), targ_ang_(NULL),
+	loop_dih_(/* NULL */), targ_dih_(NULL), lt_dih_(NULL)
 {
 	targ_atom_names_.push_back( "CA" );
 	loopres_atom_names_.push_back( "CA" );
@@ -202,51 +202,51 @@ ResInteractions::process_input_line_tokens(
 		if( tokens.size() < 3 ){ tr << "too little information given for distance_LT." << std::endl;
 			return false;
 		}
-		if( tokens.size() == 3 ) dis_ = new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), generic_force_K, 0.0 );
-		else dis_ = new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), 0.0 );
+		if( tokens.size() == 3 ) dis_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), generic_force_K, 0.0 ) );
+		else dis_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), 0.0 ) );
 		to_return = true;
 	}
 	else if( tokens[1] == "angle_loop" ){
 		if( tokens.size() < 3 ){ tr << "too little information given for angle_loop." << std::endl;
 			return false;
 		}
-		if( tokens.size() == 3 ) loop_ang_ = new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), generic_force_K, generic_period );
-		else loop_ang_ = new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), generic_period );
+		if( tokens.size() == 3 ) loop_ang_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), generic_force_K, generic_period ) );
+		else loop_ang_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), generic_period ) );
 		to_return = true;
 	}
 	else if( tokens[1] == "angle_targ" ){
 		if( tokens.size() < 3 ){ tr << "too little information given for angle_targ." << std::endl;
 			return false;
 		}
-		if( tokens.size() == 3 ) targ_ang_ = new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), generic_force_K, generic_period );
-		else targ_ang_ = new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), generic_period );
+		if( tokens.size() == 3 ) targ_ang_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), generic_force_K, generic_period ) );
+		else targ_ang_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), generic_period ) );
 		to_return = true;
 	}
 	else if( tokens[1] == "dih_loop" ){
 		if( tokens.size() < 3 ){ tr << "too little information given for dih_loop." << std::endl;
 			return false;
 		}
-		if( tokens.size() == 3 ) loop_dih_ = new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), generic_force_K, generic_period );
-		else if( tokens.size() == 4 ) loop_dih_ = new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), generic_period );
-		else loop_dih_ = new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), atof( tokens[5].c_str() ) );
+		if( tokens.size() == 3 ) loop_dih_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), generic_force_K, generic_period ) );
+		else if( tokens.size() == 4 ) loop_dih_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), generic_period ) );
+		else loop_dih_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), atof( tokens[5].c_str() ) ) );
 		to_return = true;
 	}
 	else if( tokens[1] == "dih_targ" ){
 		if( tokens.size() < 3 ){ tr << "too little information given for dih_loop." << std::endl;
 			return false;
 		}
-		if( tokens.size() == 3 ) targ_dih_ = new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), generic_force_K, generic_period );
-		else if( tokens.size() == 4 ) targ_dih_ = new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), generic_period );
-		else targ_dih_ = new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), atof( tokens[5].c_str() ) );
+		if( tokens.size() == 3 ) targ_dih_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), generic_force_K, generic_period ) );
+		else if( tokens.size() == 4 ) targ_dih_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), generic_period ) );
+		else targ_dih_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), atof( tokens[5].c_str() ) ) );
 		to_return = true;
 	}
 	else if( tokens[1] == "dih_LT" ){
 		if( tokens.size() < 3 ){ tr << "too little information given for dih_loop." << std::endl;
 			return false;
 		}
-		if( tokens.size() == 3 ) lt_dih_ = new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), generic_force_K, generic_period );
-		else if( tokens.size() == 4 ) lt_dih_ = new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), generic_period );
-		else lt_dih_ = new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), atof( tokens[5].c_str() ) );
+		if( tokens.size() == 3 ) lt_dih_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), generic_force_K, generic_period ) );
+		else if( tokens.size() == 4 ) lt_dih_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), generic_period ) );
+		else lt_dih_ = toolbox::match_enzdes_util::GeomSampleInfoOP( new GeomSampleInfo( atof( tokens[2].c_str() ), atof( tokens[3].c_str() ), atof( tokens[4].c_str() ), atof( tokens[5].c_str() ) ) );
 		to_return = true;
 	}
 
@@ -668,7 +668,7 @@ EnzdesLoopsFile::read_loops_file(
 			counted_loops++;
 			tr << "reading loop block " << counted_loops << "... " << std::endl;
 
-			EnzdesLoopInfoOP el = new EnzdesLoopInfo();
+			EnzdesLoopInfoOP el( new EnzdesLoopInfo() );
 
 			if( el->read_loops_file_block( data ) ){
 

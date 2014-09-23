@@ -69,7 +69,7 @@ LoopsExplicitDefiner::LoopsExplicitDefiner(LoopsExplicitDefiner const & src) : L
 LoopsDefinerOP
 LoopsExplicitDefiner::clone(
 ) const {
-	return new LoopsExplicitDefiner(*this);
+	return LoopsDefinerOP( new LoopsExplicitDefiner(*this) );
 }
 
 SerializedLoop

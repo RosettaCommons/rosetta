@@ -29,7 +29,7 @@ namespace features {
 JobDataFeaturesCreator::JobDataFeaturesCreator() {}
 JobDataFeaturesCreator::~JobDataFeaturesCreator() {}
 FeaturesReporterOP JobDataFeaturesCreator::create_features_reporter() const {
-	return new JobDataFeatures;
+	return FeaturesReporterOP( new JobDataFeatures );
 }
 
 std::string JobDataFeaturesCreator::type_name() const {

@@ -59,7 +59,7 @@ public:
 	basic::datacache::CacheableDataOP
 	clone() const
 	{
-		return new CenListInfo( *this );
+		return basic::datacache::CacheableDataOP( new CenListInfo( *this ) );
 	}
 
 	Size

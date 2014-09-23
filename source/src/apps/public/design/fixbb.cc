@@ -82,15 +82,15 @@ main( int argc, char * argv [] )
 
 	//create a task factory: this will create a new PackerTask for each input pose
 	using core::pack::task::operation::TaskOperationCOP;
-	core::pack::task::TaskFactoryOP main_task_factory = new core::pack::task::TaskFactory;
-	main_task_factory->push_back( new core::pack::task::operation::InitializeFromCommandline );
+	core::pack::task::TaskFactoryOP main_task_factory( new core::pack::task::TaskFactory );
+	main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 
 	/// As of 2010/07/16, the ReadResfile operation is a no-op unless a resfile has been
 	/// supplied on the command line, through the ResourceManager, or programmatically.
 	/// Therefore, it is safe to add it without first checking to see if something has been
 	/// provided on the command line.  If that check were here, then a resfile provided
 	/// through the ResourceManager would not get read.
-	main_task_factory->push_back( new core::pack::task::operation::ReadResfile );
+	main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::ReadResfile ) );
 
 	//create a ScoreFunction from commandline options
 	core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function();
@@ -98,7 +98,7 @@ main( int argc, char * argv [] )
 	/// TEMP!
 	if ( false ) {
 		using namespace core;
-		scoring::methods::EnergyMethodOptionsOP emopts( new scoring::methods::EnergyMethodOptions( score_fxn->energy_method_options() ));
+		scoring::methods::EnergyMethodOptionsOP emopts( new scoring::methods::EnergyMethodOptions( score_fxn->energy_method_options() ) );
 		emopts->hbond_options().use_hb_env_dep( false );
 		emopts->hbond_options().decompose_bb_hb_into_pair_energies( true );
 		score_fxn->set_energy_method_options( *emopts );
@@ -107,27 +107,27 @@ main( int argc, char * argv [] )
 
 
 	//create the PackRotamersMover which will do the packing
-	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
+	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
 
 	// Use the symmetric packer if necessary
 	if ( option[ symmetry::symmetry_definition ].user() ) {
-		pack_mover = new protocols::simple_moves::symmetry::SymPackRotamersMover;
+		pack_mover = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::symmetry::SymPackRotamersMover );
 	}
 
 	pack_mover->task_factory( main_task_factory );
 	pack_mover->score_function( score_fxn );
 
 	//This sequence mover will contain packing for sure, and may contain minimization
-	protocols::moves::SequenceMoverOP seq_mover = new protocols::moves::SequenceMover;
+	protocols::moves::SequenceMoverOP seq_mover( new protocols::moves::SequenceMover );
 
 	// make symmetric pose if necessary
 	if ( option[ symmetry::symmetry_definition ].user() )  {
 		using protocols::moves::MoverOP;
-	    seq_mover->add_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
+	    seq_mover->add_mover( MoverOP( new protocols::simple_moves::symmetry::SetupForSymmetryMover ) );
 	}
 
 	if ( option[ min_pack ] || option[ off_rotamer_pack ] ) {
-		protocols::simple_moves::MinPackMoverOP minpack_mover = new protocols::simple_moves::MinPackMover;
+		protocols::simple_moves::MinPackMoverOP minpack_mover( new protocols::simple_moves::MinPackMover );
 		minpack_mover->task_factory( main_task_factory );
 		minpack_mover->score_function( score_fxn );
 		if ( option[ off_rotamer_pack ] ) minpack_mover->off_rotamer_pack( true );
@@ -138,27 +138,27 @@ main( int argc, char * argv [] )
 
 	//If sidechain minimization is requested, include that too
 	if ( option[ minimize_sidechains ] ) {
-            core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+            core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
             protocols::simple_moves::MinMoverOP min_mover;
             if (option [ symmetry::symmetry_definition ].user() ){
-                min_mover = new protocols::simple_moves::symmetry::SymMinMover(
+                min_mover = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::symmetry::SymMinMover(
 			movemap,
 			score_fxn,
 			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
 			0.01,
 			true
-		);
+		) );
             }
             else {
-		min_mover = new protocols::simple_moves::MinMover(
+		min_mover = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover(
 			movemap,
 			score_fxn,
 			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
 			0.01,
 			true
-		);
+		) );
             }
-	    protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover = new protocols::simple_moves::TaskAwareMinMover(min_mover, main_task_factory);
+	    protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover( new protocols::simple_moves::TaskAwareMinMover(min_mover, main_task_factory) );
             seq_mover->add_mover( TAmin_mover );
 	} // end optional side chain minimization
 

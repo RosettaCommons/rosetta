@@ -23,8 +23,8 @@ namespace simple_moves{
 
 //Forwards and OP typedefs
 class ConstrainToIdealMover;
-typedef utility::pointer::owning_ptr< ConstrainToIdealMover > ConstrainToIdealMoverOP;
-typedef utility::pointer::owning_ptr< ConstrainToIdealMover const > ConstrainToIdealMoverCOP;
+typedef utility::pointer::shared_ptr< ConstrainToIdealMover > ConstrainToIdealMoverOP;
+typedef utility::pointer::shared_ptr< ConstrainToIdealMover const > ConstrainToIdealMoverCOP;
 
 }//moves
 }//protocols

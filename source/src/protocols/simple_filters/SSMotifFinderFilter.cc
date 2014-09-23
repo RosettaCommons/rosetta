@@ -45,7 +45,7 @@ namespace simple_filters {
 static thread_local basic::Tracer TR( "protocols.simple_filters.SSMotifFinder" );
 
 protocols::filters::FilterOP
-SSMotifFinderFilterCreator::create_filter() const { return new SSMotifFinder; }
+SSMotifFinderFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SSMotifFinder ); }
 
 std::string
 SSMotifFinderFilterCreator::keyname() const { return "SSMotifFinder"; }
@@ -55,7 +55,7 @@ SSMotifFinder::SSMotifFinder() :
 protocols::filters::Filter( "SSMotifFinder" ),
 from_res_( 0 ),
 to_res_( 0 ),
-template_pose_( NULL ),
+template_pose_( /* NULL */ ),
 template_stem1_( 0 ),
 template_stem2_ ( 0 ),
 rmsd_( 0.0 ),
@@ -76,7 +76,7 @@ SSMotifFinder::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap
 	pdbname( tag->getOption< std::string >( "pdbname" ) );
 
 	std::string template_pose_filename( tag->getOption< std::string >( "template_pose" ) );
-	template_pose_ = new core::pose::Pose;
+	template_pose_ = core::pose::PoseOP( new core::pose::Pose );
 	core::import_pose::pose_from_pdb( *template_pose_, template_pose_filename );
 	template_stem1(core::pose::parse_resnum(tag->getOption<std::string>("template_stem1", "0"), *template_pose_));
 	template_stem2(core::pose::parse_resnum(tag->getOption<std::string>("template_stem2", "0"), *template_pose_));

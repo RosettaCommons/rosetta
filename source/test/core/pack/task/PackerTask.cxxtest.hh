@@ -61,8 +61,8 @@ public:
 	}
 
 	void tearDown() {
-		pose = 0;
-		task = 0;
+		pose.reset();
+		task.reset();
 	}
 
 	

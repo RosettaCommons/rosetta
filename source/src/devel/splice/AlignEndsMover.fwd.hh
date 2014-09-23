@@ -19,8 +19,8 @@
 namespace devel{
     namespace splice{
         class AlignEndsMover;
-        typedef utility::pointer::owning_ptr< AlignEndsMover > AlignEndsMoverOP;
-        typedef utility::pointer::owning_ptr< AlignEndsMover const > AlignEndsMoverCOP;
+        typedef utility::pointer::shared_ptr< AlignEndsMover > AlignEndsMoverOP;
+        typedef utility::pointer::shared_ptr< AlignEndsMover const > AlignEndsMoverCOP;
     } // simple_moves
 } // protocols
 

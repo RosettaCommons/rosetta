@@ -59,7 +59,7 @@ methods::EnergyMethodOP
 MPCbetaEnergyCreator::create_energy_method(
 										   methods::EnergyMethodOptions const &
 										   ) const {
-	return new MPCbetaEnergy;
+	return methods::EnergyMethodOP( new MPCbetaEnergy );
 }
 
 /// @brief Return Applicable Score Type for Method (MPCbeta)
@@ -73,14 +73,14 @@ MPCbetaEnergyCreator::score_types_for_method() const {
 
 /// @brief Default Constructor
 MPCbetaEnergy::MPCbetaEnergy() :
-	parent( new MPCbetaEnergyCreator ),
+	parent( EnergyMethodCreatorOP( new MPCbetaEnergyCreator ) ),
 	mpdata_( ScoringManager::get_instance()->get_MembraneData() )
 {}
 
 /// @brief Clone Method
 EnergyMethodOP
 MPCbetaEnergy::clone() const {
-	return new MPCbetaEnergy;
+	return EnergyMethodOP( new MPCbetaEnergy );
 }
 
 /// @brief Setup Centroid and Mmebrane Potential for Scoring

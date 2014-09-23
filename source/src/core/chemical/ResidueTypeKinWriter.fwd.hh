@@ -23,8 +23,8 @@ namespace chemical {
 
 class ResidueTypeKinWriter;
 
-typedef utility::pointer::owning_ptr< ResidueTypeKinWriter > ResidueTypeKinWriterOP;
-typedef utility::pointer::owning_ptr< ResidueTypeKinWriter const > ResidueTypeKinWriterCOP;
+typedef utility::pointer::shared_ptr< ResidueTypeKinWriter > ResidueTypeKinWriterOP;
+typedef utility::pointer::shared_ptr< ResidueTypeKinWriter const > ResidueTypeKinWriterCOP;
 
 } // chemical
 } // core

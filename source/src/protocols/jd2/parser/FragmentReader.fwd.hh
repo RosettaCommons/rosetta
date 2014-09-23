@@ -22,7 +22,7 @@ namespace parser {
 
 class FragmentReader;
 
-typedef utility::pointer::owning_ptr< FragmentReader > FragmentReaderOP;
+typedef utility::pointer::shared_ptr< FragmentReader > FragmentReaderOP;
 
 } //namespace parser
 } //namespace jd2

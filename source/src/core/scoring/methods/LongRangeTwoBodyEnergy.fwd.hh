@@ -23,8 +23,8 @@ namespace methods {
 
 class LongRangeTwoBodyEnergy;
 
-typedef utility::pointer::owning_ptr< LongRangeTwoBodyEnergy > LongRangeTwoBodyEnergyOP;
-typedef utility::pointer::owning_ptr< LongRangeTwoBodyEnergy const > LongRangeTwoBodyEnergyCOP;
+typedef utility::pointer::shared_ptr< LongRangeTwoBodyEnergy > LongRangeTwoBodyEnergyOP;
+typedef utility::pointer::shared_ptr< LongRangeTwoBodyEnergy const > LongRangeTwoBodyEnergyCOP;
 
 }
 }

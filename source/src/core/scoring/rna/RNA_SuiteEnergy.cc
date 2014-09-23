@@ -46,7 +46,7 @@ namespace rna {
 methods::EnergyMethodOP
 RNA_SuiteEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
-) const {	return new RNA_SuiteEnergy; }
+) const {	return methods::EnergyMethodOP( new RNA_SuiteEnergy ); }
 
 ScoreTypes
 RNA_SuiteEnergyCreator::score_types_for_method() const {
@@ -79,7 +79,7 @@ RNA_SuiteEnergy::setup_for_scoring(
 		create_new_lre_container = true;
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		PeptideBondedEnergyContainerOP dec( static_cast< PeptideBondedEnergyContainer * > ( lrc.get() ) );
+		PeptideBondedEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::PeptideBondedEnergyContainer > ( lrc ) );
 		Size nres = pose.total_residue();
 		if( core::pose::symmetry::is_symmetric(pose) )
 			nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
@@ -94,7 +94,7 @@ RNA_SuiteEnergy::setup_for_scoring(
 			nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
 		utility::vector1< ScoreType > s_types;
 		s_types.push_back( rna_suite );
-		LREnergyContainerOP new_dec = new PeptideBondedEnergyContainer( nres, s_types );
+		LREnergyContainerOP new_dec( new PeptideBondedEnergyContainer( nres, s_types ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 }

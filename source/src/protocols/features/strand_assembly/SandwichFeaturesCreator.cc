@@ -27,7 +27,7 @@ namespace strand_assembly {
 SandwichFeaturesCreator::SandwichFeaturesCreator() {}
 SandwichFeaturesCreator::~SandwichFeaturesCreator() {}
 FeaturesReporterOP SandwichFeaturesCreator::create_features_reporter() const {
-	return new SandwichFeatures;
+	return FeaturesReporterOP( new SandwichFeatures );
 }
 
 std::string SandwichFeaturesCreator::type_name() const {

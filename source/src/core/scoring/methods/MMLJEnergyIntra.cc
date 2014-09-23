@@ -61,7 +61,7 @@ methods::EnergyMethodOP
 MMLJEnergyIntraCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new MMLJEnergyIntra;
+	return methods::EnergyMethodOP( new MMLJEnergyIntra );
 }
 
 ScoreTypes
@@ -73,7 +73,7 @@ MMLJEnergyIntraCreator::score_types_for_method() const {
 }
 
 MMLJEnergyIntra::MMLJEnergyIntra() :
-	parent( new MMLJEnergyIntraCreator ),
+	parent( EnergyMethodCreatorOP( new MMLJEnergyIntraCreator ) ),
 	potential_( scoring::ScoringManager::get_instance()->get_MMLJEnergyTable() )
 {}
 
@@ -81,7 +81,7 @@ MMLJEnergyIntra::MMLJEnergyIntra() :
 EnergyMethodOP
 MMLJEnergyIntra::clone() const
 {
-  return new MMLJEnergyIntra();
+  return EnergyMethodOP( new MMLJEnergyIntra() );
 }
 
 void
@@ -105,8 +105,7 @@ MMLJEnergyIntra::setup_for_minimizing(
 			min_map.domain_map(),
 			library.nblist_dis2_cutoff_XX(),
 			library.nblist_dis2_cutoff_XH(),
-			library.nblist_dis2_cutoff_HH())
-		);
+			library.nblist_dis2_cutoff_HH()) );
 
 		if ( pose.energies().use_nblist_auto_update() ) {
 			// setting this to one angstrom fudge factor

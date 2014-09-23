@@ -16,8 +16,8 @@ namespace protocols {
 namespace trajectory {
 
 class DbTrajectoryWriter;
-typedef utility::pointer::owning_ptr<DbTrajectoryWriter> DbTrajectoryWriterOP;
-typedef utility::pointer::owning_ptr<DbTrajectoryWriter const> DbTrajectoryWriterCOP;
+typedef utility::pointer::shared_ptr<DbTrajectoryWriter> DbTrajectoryWriterOP;
+typedef utility::pointer::shared_ptr<DbTrajectoryWriter const> DbTrajectoryWriterCOP;
 
 }
 }

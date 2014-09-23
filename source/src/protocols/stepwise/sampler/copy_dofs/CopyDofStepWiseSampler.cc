@@ -35,7 +35,7 @@ namespace copy_dofs {
 			core::pose::PoseOP pose_copy = starting_pose.clone();
 			copy_dof_mover.apply( *pose_copy );
 			pose_list_.push_back( pose_copy );
-			copy_dof_movers_.push_back( new simple_moves::CopyDofMover( *pose_copy, res_map ) );
+			copy_dof_movers_.push_back( utility::pointer::shared_ptr<class protocols::simple_moves::CopyDofMover>( new simple_moves::CopyDofMover( *pose_copy, res_map ) ) );
 		}
 	}
 
@@ -44,7 +44,7 @@ namespace copy_dofs {
 																 std::map< Size, Size > const & res_map ):
 		pose_list_( pose_list )
 	{
-		for ( Size n = 1; n <= pose_list.size(); n++ ) copy_dof_movers_.push_back( new simple_moves::CopyDofMover( *pose_list[n], res_map ) );
+		for ( Size n = 1; n <= pose_list.size(); n++ ) copy_dof_movers_.push_back( utility::pointer::shared_ptr<class protocols::simple_moves::CopyDofMover>( new simple_moves::CopyDofMover( *pose_list[n], res_map ) ) );
 	}
 
 	///////////////////////////////////////////////////

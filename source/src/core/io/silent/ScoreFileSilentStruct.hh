@@ -53,7 +53,7 @@ public:
 	);
 
 	virtual SilentStructOP clone() const {
-		return new ScoreFileSilentStruct( *this );
+		return SilentStructOP( new ScoreFileSilentStruct( *this ) );
 	}
 
 	/// @brief Re-dimension the storage capacity of this ScoreFileSilentStruct to the given number of

@@ -100,7 +100,7 @@ SetCrystWeightMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SetCrystWeightMoverCreator::create_mover() const {
-	return new SetCrystWeightMover;
+	return protocols::moves::MoverOP( new SetCrystWeightMover );
 }
 
 std::string
@@ -117,7 +117,7 @@ RecomputeDensityMapMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 RecomputeDensityMapMoverCreator::create_mover() const {
-	return new RecomputeDensityMapMover;
+	return protocols::moves::MoverOP( new RecomputeDensityMapMover );
 }
 
 std::string
@@ -134,7 +134,7 @@ LoadDensityMapMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 LoadDensityMapMoverCreator::create_mover() const {
-	return new LoadDensityMapMover;
+	return protocols::moves::MoverOP( new LoadDensityMapMover );
 }
 
 std::string
@@ -151,7 +151,7 @@ FitBfactorsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 FitBfactorsMoverCreator::create_mover() const {
-	return new FitBfactorsMover;
+	return protocols::moves::MoverOP( new FitBfactorsMover );
 }
 
 std::string
@@ -168,7 +168,7 @@ UpdateSolventMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 UpdateSolventMoverCreator::create_mover() const {
-	return new UpdateSolventMover;
+	return protocols::moves::MoverOP( new UpdateSolventMover );
 }
 
 std::string
@@ -185,7 +185,7 @@ TagPoseWithRefinementStatsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 TagPoseWithRefinementStatsMoverCreator::create_mover() const {
-	return new TagPoseWithRefinementStatsMover;
+	return protocols::moves::MoverOP( new TagPoseWithRefinementStatsMover );
 }
 
 std::string
@@ -202,7 +202,7 @@ SetRefinementOptionsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SetRefinementOptionsMoverCreator::create_mover() const {
-	return new SetRefinementOptionsMover;
+	return protocols::moves::MoverOP( new SetRefinementOptionsMover );
 }
 
 std::string
@@ -221,8 +221,8 @@ void SetCrystWeightMover::apply( core::pose::Pose & pose ) {
 		using namespace core::optimization::symmetry;
 
 		// report!
-		core::scoring::ScoreFunctionOP rosetta_scorefxn = new core::scoring::ScoreFunction();
-		core::scoring::ScoreFunctionOP xtal_scorefxn = new core::scoring::ScoreFunction();
+		core::scoring::ScoreFunctionOP rosetta_scorefxn( new core::scoring::ScoreFunction() );
+		core::scoring::ScoreFunctionOP xtal_scorefxn( new core::scoring::ScoreFunction() );
 
 		rosetta_scorefxn->set_weight( core::scoring::xtal_ml, 0.0 );
 		xtal_scorefxn->set_weight( core::scoring::xtal_ml, 1.0 );
@@ -353,7 +353,7 @@ void SetCrystWeightMover::parse_my_tag(
 
 	// also can specify defaults
 	if ( tag->hasOption("jump") ) {
-		if ( ! mm_ ) mm_ = new MoveMap;
+		if ( ! mm_ ) mm_ = core::kinematics::MoveMapOP( new MoveMap );
 		utility::vector1<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );
 		// string 'ALL' makes all jumps movable
 		if (jumps.size() == 1 && (jumps[1] == "ALL" || jumps[1] == "All" || jumps[1] == "all") ) {
@@ -367,22 +367,22 @@ void SetCrystWeightMover::parse_my_tag(
 	}
 	if ( tag->hasOption("chi") ) {
 		bool const value( tag->getOption<bool>("chi") );
-		if ( ! mm_ ) mm_ = new MoveMap;
+		if ( ! mm_ ) mm_ = core::kinematics::MoveMapOP( new MoveMap );
 		mm_->set_chi(value);
 	}
 	if ( tag->hasOption("bb") ) {
 		bool const value( tag->getOption<bool>("bb") );
-		if ( ! mm_ ) mm_ = new MoveMap;
+		if ( ! mm_ ) mm_ = core::kinematics::MoveMapOP( new MoveMap );
 		mm_->set_bb(value);
 	}
 	if ( tag->hasOption("bondangle") ) {
 		bool const value( tag->getOption<bool>("bondangle") );
-		if ( ! mm_ ) mm_ = new MoveMap;
+		if ( ! mm_ ) mm_ = core::kinematics::MoveMapOP( new MoveMap );
 		mm_->set( core::id::THETA, value );
 	}
 	if ( tag->hasOption("bondlength") ) {
 		bool const value( tag->getOption<bool>("bondlength") );
-		if ( ! mm_ ) mm_ = new MoveMap;
+		if ( ! mm_ ) mm_ = core::kinematics::MoveMapOP( new MoveMap );
 		mm_->set( core::id::D, value );
 	}
 
@@ -558,7 +558,7 @@ void TagPoseWithRefinementStatsMover::apply( core::pose::Pose & pose ) {
 		if (!get_native_pose()) protocols::jd2::set_native_in_mover(*this);
 		core::pose::PoseCOP native = get_native_pose();
 
-		core::sequence::SequenceOP model_seq ( new core::sequence::Sequence( pose_asu.sequence(),  "model",  1 ) );
+		core::sequence::SequenceOP model_seq( new core::sequence::Sequence( pose_asu.sequence(),  "model",  1 ) );
 		core::sequence::SequenceOP native_seq( new core::sequence::Sequence( native->sequence(), "native", 1 ) );
 		core::sequence::SequenceAlignment aln = align_naive(model_seq,native_seq);
 

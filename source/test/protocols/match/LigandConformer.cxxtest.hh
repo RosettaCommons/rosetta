@@ -123,7 +123,7 @@ class LigandConformerTests : public CxxTest::TestSuite {
 		Size const oat2id( carbaryl_pose.residue(1).atom_index( oat2 ) );
 		Size const oat3id( carbaryl_pose.residue(1).atom_index( oat3 ) );
 
-		LigandConformerOP ligconf = new LigandConformer;
+		LigandConformerOP ligconf( new LigandConformer );
 		ligconf->initialize_from_residue(
 			at4id, at5id, at6id, oat1id, oat2id, oat3id, carbaryl_pose.residue(1) );
 
@@ -214,7 +214,7 @@ class LigandConformerTests : public CxxTest::TestSuite {
 		Size const oat2id( carbaryl_pose.residue(1).atom_index( oat2 ) );
 		Size const oat3id( carbaryl_pose.residue(1).atom_index( oat3 ) );
 
-		LigandConformerOP ligconf = new LigandConformer;
+		LigandConformerOP ligconf( new LigandConformer );
 		ligconf->initialize_from_residue(
 			dat1id, dat2id, dat3id, oat1id, oat2id, oat3id, carbaryl_pose.residue(1) );
 

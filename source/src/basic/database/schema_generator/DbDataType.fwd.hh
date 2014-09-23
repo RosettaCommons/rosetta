@@ -28,8 +28,8 @@ namespace schema_generator{
 	class DbDataType;
 	typedef utility::vector1< DbDataType > DbDataTypes;
 	
-	typedef utility::pointer::owning_ptr< DbDataType > DbDataTypeOP;
-	typedef utility::pointer::owning_ptr< DbDataType const > DbDataTypeCOP;
+	typedef utility::pointer::shared_ptr< DbDataType > DbDataTypeOP;
+	typedef utility::pointer::shared_ptr< DbDataType const > DbDataTypeCOP;
 	
 } //namesapce
 } //namespace

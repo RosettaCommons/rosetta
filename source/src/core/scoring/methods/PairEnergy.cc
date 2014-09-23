@@ -53,7 +53,7 @@ methods::EnergyMethodOP
 PairEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new PairEnergy;
+	return methods::EnergyMethodOP( new PairEnergy );
 }
 
 ScoreTypes
@@ -78,7 +78,7 @@ PairEnergy::PairEnergy() :
 EnergyMethodOP
 PairEnergy::clone() const
 {
-	return new PairEnergy();
+	return EnergyMethodOP( new PairEnergy() );
 }
 
 ///

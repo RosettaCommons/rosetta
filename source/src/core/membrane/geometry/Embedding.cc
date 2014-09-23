@@ -87,7 +87,7 @@ Embedding::Embedding( SpanningTopologyOP topology ){
         core::Vector normal(0, 0, 1);
 
         // create object and push back into vector
-        EmbeddingDefOP span_embedding = new EmbeddingDef( normal, center );
+        EmbeddingDefOP span_embedding( new EmbeddingDef( normal, center ) );
         span_embeddings_.push_back( span_embedding );
     }
 
@@ -121,7 +121,7 @@ Embedding::Embedding( SpanningTopologyOP topology, PoseOP pose, EmbeddingDefOP u
     core::Vector const translation_normal( user_embedding->normal() - computed_embedding->normal() );
 
     // create embedding object
-    EmbeddingDefOP translation = new EmbeddingDef( translation_normal, translation_center );
+    EmbeddingDefOP translation( new EmbeddingDef( translation_normal, translation_center ) );
 
     // translate span embeddings
     for ( Size i = 1; i <= span_embeddings_.size(); ++i ){
@@ -187,7 +187,7 @@ EmbeddingDefOP Embedding::sum_of_parts( utility::vector1< EmbeddingDefOP > parts
     normal /= parts.size();
 
     // Create new embedding setup and return it
-    EmbeddingDefOP embedding = new EmbeddingDef( normal, center );
+    EmbeddingDefOP embedding( new EmbeddingDef( normal, center ) );
     return embedding;
 }// sum of parts
 
@@ -206,7 +206,7 @@ utility::vector1< EmbeddingDefOP > Embedding::from_spans( SpanningTopologyOP top
         Size end( topology->span( i )->end() );
 
         // create embedding object and fill it from span
-        EmbeddingDefOP embedding = new EmbeddingDef( *from_span( start, end, pose ) );
+        EmbeddingDefOP embedding( new EmbeddingDef( *from_span( start, end, pose ) ) );
 
         // add embedding to vector
         span_embeddings_.push_back( embedding );
@@ -247,7 +247,7 @@ EmbeddingDefOP Embedding::from_span( Size start, Size end, PoseOP pose ){
     normal.normalize();
 
     // Create new embedding and return it
-    EmbeddingDefOP embedding = new EmbeddingDef( normal, center );
+    EmbeddingDefOP embedding( new EmbeddingDef( normal, center ) );
     return embedding;
 }// from single span
 

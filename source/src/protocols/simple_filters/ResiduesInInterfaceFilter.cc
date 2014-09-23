@@ -73,7 +73,7 @@ namespace simple_filters {
 static thread_local basic::Tracer residues_in_interface_tracer( "protocols.simple_filters.ResiduesInInterfaceFilter" );
 	
 protocols::filters::FilterOP
-ResiduesInInterfaceFilterCreator::create_filter() const { return new ResiduesInInterfaceFilter; }
+ResiduesInInterfaceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ResiduesInInterfaceFilter ); }
 
 std::string
 ResiduesInInterfaceFilterCreator::keyname() const { return "ResInInterface"; }

@@ -33,10 +33,10 @@ class StemFinder : public filters::Filter
     StemFinder();
     virtual ~StemFinder();
 		filters::FilterOP clone() const {
-			return new StemFinder( *this );
+			return filters::FilterOP( new StemFinder( *this ) );
 		}
 		filters::FilterOP fresh_instance() const{
-			return new StemFinder();
+			return filters::FilterOP( new StemFinder() );
 		}
 
 		virtual bool apply( core::pose::Pose const & pose ) const;

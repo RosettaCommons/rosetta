@@ -28,8 +28,8 @@ namespace symmetry {
 
 class SymmData;
 
-typedef  utility::pointer::owning_ptr< SymmData >  SymmDataOP;
-typedef  utility::pointer::owning_ptr< SymmData const >  SymmDataCOP;
+typedef  utility::pointer::shared_ptr< SymmData >  SymmDataOP;
+typedef  utility::pointer::shared_ptr< SymmData const >  SymmDataCOP;
 
 } // namespace symmetry
 } // namespace conformation

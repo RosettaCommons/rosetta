@@ -25,8 +25,8 @@ namespace moves {
 
 class MonteCarlo;
 
-typedef utility::pointer::owning_ptr< MonteCarlo > MonteCarloOP;
-typedef utility::pointer::owning_ptr< MonteCarlo const > MonteCarloCOP;
+typedef utility::pointer::shared_ptr< MonteCarlo > MonteCarloOP;
+typedef utility::pointer::shared_ptr< MonteCarlo const > MonteCarloCOP;
 
 
 } // moves

@@ -57,7 +57,7 @@ RingConformationMover::RingConformationMover(): Mover()
 	using namespace kinematics;
 
 	// Set default MoveMap.
-	MoveMapOP default_movemap = new MoveMap();
+	MoveMapOP default_movemap( new MoveMap() );
 	default_movemap->set_nu(true);
 
 	init(default_movemap);
@@ -125,13 +125,13 @@ RingConformationMover::get_name() const
 protocols::moves::MoverOP
 RingConformationMover::clone() const
 {
-	return new RingConformationMover(*this);
+	return protocols::moves::MoverOP( new RingConformationMover(*this) );
 }
 
 protocols::moves::MoverOP
 RingConformationMover::fresh_instance() const
 {
-	return new RingConformationMover();
+	return protocols::moves::MoverOP( new RingConformationMover() );
 }
 
 

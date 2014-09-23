@@ -37,7 +37,7 @@ namespace buns {
 static thread_local basic::Tracer TR( "devel.buns.BuriedUnsatHbondFilter2" );
 
 protocols::filters::FilterOP
-BuriedUnsatHbondFilter2Creator::create_filter() const { return new BuriedUnsatHbondFilter2; }
+BuriedUnsatHbondFilter2Creator::create_filter() const { return protocols::filters::FilterOP( new BuriedUnsatHbondFilter2 ); }
 
 std::string
 BuriedUnsatHbondFilter2Creator::keyname() const { return "BuriedUnsatHbonds2"; }
@@ -46,8 +46,8 @@ BuriedUnsatHbondFilter2::BuriedUnsatHbondFilter2( core::Size const upper_thresho
 	protocols::filters::Filter( "BuriedUnsatHbonds2" ),
 	upper_threshold_( upper_threshold ),
 	jump_num_( jump_num ),
-	task_factory_( NULL ),
-	calc_( NULL)
+	task_factory_( /* NULL */ ),
+	calc_( /* NULL */)
 { }
 
 BuriedUnsatHbondFilter2::BuriedUnsatHbondFilter2() : protocols::filters::Filter( "BuriedUnsatHbonds2" ) {}
@@ -60,7 +60,7 @@ BuriedUnsatHbondFilter2::parse_my_tag( utility::tag::TagCOP tag, basic::datacach
 	jump_num_ = tag->getOption<core::Size>( "jump_number", 1 );
 	upper_threshold_ = tag->getOption<core::Size>( "cutoff", 20 );
 
-	calc_ = new devel::buns::BuriedUnsatisfiedPolarsCalculator2("default");
+	calc_ = devel::buns::BuriedUnsatisfiedPolarsCalculator2OP( new devel::buns::BuriedUnsatisfiedPolarsCalculator2("default") );
 
 	if (tag->hasOption("generous_hbonds"))
 		calc_->set_generous_hbonds(tag->getOption<bool>( "generous_hbonds", true  ));
@@ -79,7 +79,7 @@ BuriedUnsatHbondFilter2::parse_my_tag( utility::tag::TagCOP tag, basic::datacach
 
 	std::string const scorefxn_key( protocols::rosetta_scripts::get_score_function_name(tag) );
 	if ( datamap.has( "scorefxns", scorefxn_key ) ) {
-		sfxn_ = datamap.get< core::scoring::ScoreFunction* >( "scorefxns", scorefxn_key );
+		sfxn_ = datamap.get_ptr<core::scoring::ScoreFunction>( "scorefxns", scorefxn_key );
 	} else {
 		sfxn_ = core::scoring::get_score_function();
 	}
@@ -162,7 +162,7 @@ BuriedUnsatHbondFilter2::compute( core::pose::Pose const & pose ) const {
 
 	core::Size unsat_hbonds( 0 );
 
-	if( task_factory_() == NULL ) {
+	if( task_factory_ == NULL ) {
 		unsat_hbonds = total_buns_bound.value() - total_buns_unbound.value();
 	}
 	else {
@@ -183,11 +183,11 @@ BuriedUnsatHbondFilter2::compute( core::pose::Pose const & pose ) const {
 }
 
 protocols::filters::FilterOP BuriedUnsatHbondFilter2::clone() const {
-	return new BuriedUnsatHbondFilter2( *this );
+	return protocols::filters::FilterOP( new BuriedUnsatHbondFilter2( *this ) );
 }
 
 protocols::filters::FilterOP BuriedUnsatHbondFilter2::fresh_instance() const{
-	return new BuriedUnsatHbondFilter2();
+	return protocols::filters::FilterOP( new BuriedUnsatHbondFilter2() );
 }
 
 void

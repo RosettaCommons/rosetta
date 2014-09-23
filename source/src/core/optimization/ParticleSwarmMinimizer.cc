@@ -82,7 +82,7 @@ ParticleOPs ParticleSwarmMinimizer::run(Size num_cycles, Multifunc & f_fitness, 
 {
 	ParticleOPs particles;
 	for(Size i = 1; i <= num_part; ++i) {
-		ParticleOP p = new Particle(size_);
+		ParticleOP p( new Particle(size_) );
 		for(Size j = 1; j <= size_; ++j) {
 			p->p_[j] = p_min_[j] + numeric::random::rg().uniform()*p_range_[j];
 		}
@@ -103,7 +103,7 @@ ParticleOPs ParticleSwarmMinimizer::run(Size num_cycles, Multifunc & f_fitness, 
 {
 	ParticleOPs particles;
 	for(Size i = 1; i <= num_part; ++i) {
-		ParticleOP p = new Particle(size_);
+		ParticleOP p( new Particle(size_) );
 		for(Size j = 1; j <= size_; ++j) {
 			p->p_[j] = init_values[j] + numeric::random::rg().uniform() - numeric::random::rg().uniform(); // want to go up *and* down by a little bit
 			// init values should never be outside min/max range

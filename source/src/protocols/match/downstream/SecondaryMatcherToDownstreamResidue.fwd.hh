@@ -25,8 +25,8 @@ namespace match {
 namespace downstream {
 
 class SecondaryMatcherToDownstreamResidue;
-typedef utility::pointer::owning_ptr< SecondaryMatcherToDownstreamResidue > SecondaryMatcherToDownstreamResidueOP;
-typedef utility::pointer::owning_ptr< SecondaryMatcherToDownstreamResidue const > SecondaryMatcherToDownstreamResidueCOP;
+typedef utility::pointer::shared_ptr< SecondaryMatcherToDownstreamResidue > SecondaryMatcherToDownstreamResidueOP;
+typedef utility::pointer::shared_ptr< SecondaryMatcherToDownstreamResidue const > SecondaryMatcherToDownstreamResidueCOP;
 
 }
 }

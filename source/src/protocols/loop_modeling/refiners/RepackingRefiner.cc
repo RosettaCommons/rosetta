@@ -39,7 +39,7 @@ using core::scoring::ScoreFunctionCOP;
 using protocols::loops::Loop;
 
 protocols::moves::MoverOP RepackingRefinerCreator::create_mover() const {
-	return new RepackingRefiner;
+	return protocols::moves::MoverOP( new RepackingRefiner );
 }
 
 std::string RepackingRefinerCreator::keyname() const {
@@ -52,9 +52,9 @@ RepackingRefiner::RepackingRefiner() {
 	using core::pack::task::operation::InitializeFromCommandline;
 	using core::pack::task::operation::IncludeCurrent;
 
-	task_factory_ = new TaskFactory;
-	task_factory_->push_back(new InitializeFromCommandline);
-	task_factory_->push_back(new IncludeCurrent);
+	task_factory_ = TaskFactoryOP( new TaskFactory );
+	task_factory_->push_back(TaskOperationCOP( new InitializeFromCommandline ));
+	task_factory_->push_back(TaskOperationCOP( new IncludeCurrent ));
 
 	// Should read resfile if present.
 }

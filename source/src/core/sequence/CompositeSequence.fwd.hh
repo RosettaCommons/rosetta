@@ -20,8 +20,8 @@ namespace core {
 namespace sequence {
 
 class CompositeSequence;
-typedef utility::pointer::owning_ptr< CompositeSequence > CompositeSequenceOP;
-typedef utility::pointer::owning_ptr< CompositeSequence const > CompositeSequenceCOP;
+typedef utility::pointer::shared_ptr< CompositeSequence > CompositeSequenceOP;
+typedef utility::pointer::shared_ptr< CompositeSequence const > CompositeSequenceCOP;
 
 } // sequence
 } // core

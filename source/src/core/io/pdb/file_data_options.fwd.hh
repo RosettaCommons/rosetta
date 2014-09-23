@@ -27,8 +27,8 @@ namespace pdb {
 
 class FileDataOptions;
 
-typedef utility::pointer::owning_ptr< FileDataOptions > FileDataOptionsOP;
-typedef utility::pointer::owning_ptr< FileDataOptions const > FileDataOptionsCOP;
+typedef utility::pointer::shared_ptr< FileDataOptions > FileDataOptionsOP;
+typedef utility::pointer::shared_ptr< FileDataOptions const > FileDataOptionsCOP;
 
 } // namespace pdb
 } // namespace io

@@ -21,8 +21,8 @@ namespace core {
 namespace scoring {
 
 class NeighborList;
-typedef utility::pointer::owning_ptr< NeighborList > NeighborListOP;
-typedef utility::pointer::owning_ptr< NeighborList const > NeighborListCOP;
+typedef utility::pointer::shared_ptr< NeighborList > NeighborListOP;
+typedef utility::pointer::shared_ptr< NeighborList const > NeighborListCOP;
 
 } // namespace scoring
 } // namespace core

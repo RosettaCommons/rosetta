@@ -22,7 +22,7 @@ namespace task_operations{
 
 class RestrictNativeResiduesOperation;
 
-typedef utility::pointer::owning_ptr< RestrictNativeResiduesOperation > RestrictNativeResiduesOperationOP;
+typedef utility::pointer::shared_ptr< RestrictNativeResiduesOperation > RestrictNativeResiduesOperationOP;
 
 } // task_operations
 } // toolbox

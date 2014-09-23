@@ -103,7 +103,7 @@ public:
   /// clone
   virtual
   EnergyMethodOP
-  clone() const { return new GoapEnergy(*this); }
+  clone() const { return EnergyMethodOP( new GoapEnergy(*this) ); }
 
   virtual
   void

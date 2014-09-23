@@ -59,7 +59,7 @@ RandomMutationCreator::keyname() const
 
 protocols::moves::MoverOP
 RandomMutationCreator::create_mover() const {
-	return new RandomMutation;
+	return protocols::moves::MoverOP( new RandomMutation );
 }
 
 std::string
@@ -70,8 +70,8 @@ RandomMutationCreator::mover_name()
 
 RandomMutation::RandomMutation() :
 	Mover( RandomMutationCreator::mover_name() ),
-	task_factory_( NULL ),
-	scorefxn_( NULL )
+	task_factory_( /* NULL */ ),
+	scorefxn_( /* NULL */ )
 {
 }
 
@@ -90,7 +90,7 @@ RandomMutation::apply( core::pose::Pose & pose )
 		if( pose.total_residue() == task_->total_residue() ) {
 			task = task_;
 		} else {
-			task_ = 0; // Invalidate cached task.
+			task_.reset(); // Invalidate cached task.
 		}
 	}
 	if ( ! task ) {
@@ -138,9 +138,9 @@ RandomMutation::apply( core::pose::Pose & pose )
   TR<<"Mutating residue "<<pose.residue( random_entry ).name3()<<random_entry<<" to ";
 	protocols::simple_moves::PackRotamersMoverOP pack;
   if( core::pose::symmetry::is_symmetric( pose ) )
-  	pack =  new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue );
+  	pack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::symmetry::SymPackRotamersMover( scorefxn(), mutate_residue ) );
   else
-    pack = new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue );
+    pack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue ) );
   pack->apply( pose );
   TR<<pose.residue( random_entry ).name3()<<std::endl;
   (*scorefxn())(pose);

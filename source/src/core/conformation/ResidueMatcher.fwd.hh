@@ -30,8 +30,8 @@ namespace conformation {
 
 class ResidueMatcher;
 
-typedef  utility::pointer::owning_ptr< ResidueMatcher >  ResidueMatcherOP;
-typedef  utility::pointer::owning_ptr< ResidueMatcher const >  ResidueMatcherCOP;
+typedef  utility::pointer::shared_ptr< ResidueMatcher >  ResidueMatcherOP;
+typedef  utility::pointer::shared_ptr< ResidueMatcher const >  ResidueMatcherCOP;
 
 } // namespace conformation
 } // namespace core

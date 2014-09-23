@@ -64,7 +64,7 @@ public: // test functions
 		option[ OptionKeys::membrane_new::anchored_foldtree ](true);
         
         // Load in pose from pdb
-        pose_ = new Pose();
+        pose_ = core::pose::PoseOP( new Pose() );
         pose_from_pdb( *pose_, "protocols/membrane/1C3W_TR_A.pdb" );
 		
 		// Add virtual atom to the root of the pose
@@ -86,7 +86,7 @@ public: // test functions
 		
 		// Move the CA of the first residue to the center
 		Vector new_position(0, 0, 0);
-		UniformPositionTranslationMoverOP translate = new UniformPositionTranslationMover( new_position, 1 );
+		UniformPositionTranslationMoverOP translate( new UniformPositionTranslationMover( new_position, 1 ) );
 		translate->apply( *pose_ );
 		
 		// Grab the first CA of the first pose residue
@@ -112,7 +112,7 @@ public: // test functions
 		// Move the CA of the first residue to the center
 		Vector axis(0, 0, 1);
 		Real theta(2.289);
-		UniformPositionRotationMoverOP rotate = new UniformPositionRotationMover( theta, axis, 1 );
+		UniformPositionRotationMoverOP rotate( new UniformPositionRotationMover( theta, axis, 1 ) );
 		rotate->apply( *pose_ );
 		
 		// Grab the first CA of the first pose residue

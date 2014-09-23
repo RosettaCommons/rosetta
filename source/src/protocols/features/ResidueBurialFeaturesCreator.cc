@@ -29,7 +29,7 @@ namespace features {
 ResidueBurialFeaturesCreator::ResidueBurialFeaturesCreator() {}
 ResidueBurialFeaturesCreator::~ResidueBurialFeaturesCreator() {}
 FeaturesReporterOP ResidueBurialFeaturesCreator::create_features_reporter() const {
-	return new ResidueBurialFeatures;
+	return FeaturesReporterOP( new ResidueBurialFeatures );
 }
 
 std::string ResidueBurialFeaturesCreator::type_name() const {

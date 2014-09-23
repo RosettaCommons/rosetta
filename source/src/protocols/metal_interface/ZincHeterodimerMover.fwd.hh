@@ -23,8 +23,8 @@ namespace metal_interface{
 
 //Forwards and OP typedefs
 class ZincHeterodimerMover;
-typedef utility::pointer::owning_ptr< ZincHeterodimerMover > ZincHeterodimerMoverOP;
-typedef utility::pointer::owning_ptr< ZincHeterodimerMover const > ZincHeterodimerMoverCOP;
+typedef utility::pointer::shared_ptr< ZincHeterodimerMover > ZincHeterodimerMoverOP;
+typedef utility::pointer::shared_ptr< ZincHeterodimerMover const > ZincHeterodimerMoverCOP;
 
 }//metal_interface
 }//protocols

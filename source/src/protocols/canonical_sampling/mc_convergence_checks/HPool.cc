@@ -528,7 +528,7 @@ bool HPool_RMSD::load_lib(core::Size nc)
     if (utility::file::file_exists(filename))
     {
         TR << "loading new cluster..." << std::endl;
-        subpools_[nc] = new HPool_RMSD(filename, level_+1);
+        subpools_[nc] = utility::pointer::shared_ptr<class protocols::canonical_sampling::mc_convergence_checks::HPool_RMSD>( new HPool_RMSD(filename, level_+1) );
         return true;
     }
     return false;

@@ -150,7 +150,7 @@ FoldConstraints::~FoldConstraints() {}
 
 moves::MoverOP
 FoldConstraints::clone() const {
- return new FoldConstraints(*this);
+ return moves::MoverOP( new FoldConstraints(*this) );
 }
 
 
@@ -362,7 +362,7 @@ FoldConstraints::apply( core::pose::Pose & pose ) {
 	if ( !bIgnoreSequenceSeparation() ) {
 		tr.Debug << "introduce MaxSeqSep Filter for constraints \n";
 		orig_constraints = pose.constraint_set()->clone();
-		constraints_ = new constraints_additional::MaxSeqSepConstraintSet( *orig_constraints, pose.fold_tree() );
+		constraints_ = constraints_additional::MaxSeqSepConstraintSetOP( new constraints_additional::MaxSeqSepConstraintSet( *orig_constraints, pose.fold_tree() ) );
 		constraints_->set_max_seq_sep( pose.total_residue() ); // so it is prepared for stage4.
 		pose.constraint_set( constraints_ );
 	}
@@ -386,7 +386,7 @@ FoldConstraints::get_name() const {
 void
 FoldConstraints::setup_default_min_move() {
 	tr.Info << "setup basic minmove" << std::endl;
-	min_move_ = new protocols::simple_moves::MinMover;
+	min_move_ = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover );
 	min_move_->movemap( movemap() );
 	min_move_->min_type( "dfpmin" );
 }

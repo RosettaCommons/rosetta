@@ -25,8 +25,8 @@ namespace refine {
 // Forward
 class ShearMinCCDTrial;
 
-typedef utility::pointer::owning_ptr< ShearMinCCDTrial > ShearMinCCDTrialOP;
-typedef utility::pointer::owning_ptr< ShearMinCCDTrial const > ShearMinCCDTrialCOP;
+typedef utility::pointer::shared_ptr< ShearMinCCDTrial > ShearMinCCDTrialOP;
+typedef utility::pointer::shared_ptr< ShearMinCCDTrial const > ShearMinCCDTrialCOP;
 
 } //namespace refine
 } //namespace loop_mover

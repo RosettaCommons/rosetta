@@ -134,7 +134,7 @@ GraftMoverBase::~GraftMoverBase() {}
 
 void
 GraftMoverBase::set_piece(Pose const & piece, Size Nter_overhang_length, Size Cter_overhang_length){
-	piece_ = new core::pose::Pose(piece);
+	piece_ = PoseOP( new core::pose::Pose(piece) );
 	Nter_overhang_length_ = Nter_overhang_length;
 	Cter_overhang_length_=Cter_overhang_length;
 	insertion_length_ = piece.total_residue()-Cter_overhang_length_-Nter_overhang_length_;

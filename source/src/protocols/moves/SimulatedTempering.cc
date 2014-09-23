@@ -47,7 +47,7 @@ SimulatedTempering::SimulatedTempering(
 	temperatures_( temperatures ),
 	weights_( weights ),
 	scorefxn_( scorefxn ),
-	rep_scorefxn_( new ScoreFunction ),
+	rep_scorefxn_( core::scoring::ScoreFunctionOP( new ScoreFunction ) ),
 	temp_id_( 1 ),
 	cached_score_( ( *scorefxn )( pose ) ),
 	rep_cutoff_( 0 )

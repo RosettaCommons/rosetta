@@ -104,7 +104,7 @@ class GasteigerAtomTyperTests : public CxxTest::TestSuite {
 		core::chemical::ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set("fa_standard") );
 		core::chemical::ResidueTypeOP restype;
 
-		restype = new core::chemical::ResidueType( residue_set->name_map( "ASP" ) );
+		restype = core::chemical::ResidueTypeOP( new core::chemical::ResidueType( residue_set->name_map( "ASP" ) ) );
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		// This is being typed as a free amine, rather than as an amide (because we don't have connection info)
@@ -121,14 +121,14 @@ class GasteigerAtomTyperTests : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS( restype->atom("1HB").gasteiger_atom_type()->get_name(), "H_S" );
 		TS_ASSERT_EQUALS( restype->atom("2HB").gasteiger_atom_type()->get_name(), "H_S" );
 
-    restype = new core::chemical::ResidueType( residue_set->name_map( "GLN" ) );
+    restype = core::chemical::ResidueTypeOP( new core::chemical::ResidueType( residue_set->name_map( "GLN" ) ) );
     core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("CD").gasteiger_atom_type()->get_name(), "C_TrTrTrPi" );
 		TS_ASSERT_EQUALS( restype->atom("OE1").gasteiger_atom_type()->get_name(), "O_Tr2Tr2TrPi" );
 		TS_ASSERT_EQUALS( restype->atom("NE2").gasteiger_atom_type()->get_name(), "N_TrTrTrPi2" );
 
-    restype = new core::chemical::ResidueType( residue_set->name_map( "TYR" ) );
+    restype = core::chemical::ResidueTypeOP( new core::chemical::ResidueType( residue_set->name_map( "TYR" ) ) );
     core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("CG").gasteiger_atom_type()->get_name(), "C_TrTrTrPi" );
@@ -142,7 +142,7 @@ class GasteigerAtomTyperTests : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS( restype->atom("HH").gasteiger_atom_type()->get_name(), "H_S" );
 		TS_ASSERT_EQUALS( restype->atom("HD2").gasteiger_atom_type()->get_name(), "H_S" );
 
-    restype = new core::chemical::ResidueType( residue_set->name_map( "HIS" ) );
+    restype = core::chemical::ResidueTypeOP( new core::chemical::ResidueType( residue_set->name_map( "HIS" ) ) );
     core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("CG").gasteiger_atom_type()->get_name(), "C_TrTrTrPi" );
@@ -152,21 +152,21 @@ class GasteigerAtomTyperTests : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS( restype->atom("NE2").gasteiger_atom_type()->get_name(), "N_TrTrTrPi2" );
 		TS_ASSERT_EQUALS( restype->atom("HE2").gasteiger_atom_type()->get_name(), "H_S" );
 
-    restype = new core::chemical::ResidueType( residue_set->name_map( "HIS_D" ) );
+    restype = core::chemical::ResidueTypeOP( new core::chemical::ResidueType( residue_set->name_map( "HIS_D" ) ) );
     core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("ND1").gasteiger_atom_type()->get_name(), "N_TrTrTrPi2" );
 		TS_ASSERT_EQUALS( restype->atom("NE2").gasteiger_atom_type()->get_name(), "N_Tr2TrTrPi" );
 		TS_ASSERT_EQUALS( restype->atom("HD1").gasteiger_atom_type()->get_name(), "H_S" );
 
-    restype = new core::chemical::ResidueType( residue_set->name_map( "TRP" ) );
+    restype = core::chemical::ResidueTypeOP( new core::chemical::ResidueType( residue_set->name_map( "TRP" ) ) );
     core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("CD1").gasteiger_atom_type()->get_name(), "C_TrTrTrPi" );
 		TS_ASSERT_EQUALS( restype->atom("NE1").gasteiger_atom_type()->get_name(), "N_TrTrTrPi2" );
 		TS_ASSERT_EQUALS( restype->atom("CD2").gasteiger_atom_type()->get_name(), "C_TrTrTrPi" );
 
-    restype = new core::chemical::ResidueType( residue_set->name_map( "ARG" ) );
+    restype = core::chemical::ResidueTypeOP( new core::chemical::ResidueType( residue_set->name_map( "ARG" ) ) );
     core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("NE").gasteiger_atom_type()->get_name(), "N_TrTrTrPi2" );
@@ -174,25 +174,25 @@ class GasteigerAtomTyperTests : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS( restype->atom("NH1").gasteiger_atom_type()->get_name(), "N_TrTrTrPi2" );
 		TS_ASSERT_EQUALS( restype->atom("NH2").gasteiger_atom_type()->get_name(), "N_TrTrTrPi2" );
 
-    restype = new core::chemical::ResidueType( residue_set->name_map( "LYS" ) );
+    restype = core::chemical::ResidueTypeOP( new core::chemical::ResidueType( residue_set->name_map( "LYS" ) ) );
     core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("NZ").gasteiger_atom_type()->get_name(), "N_TeTeTeTe" );
 
-    restype = new core::chemical::ResidueType( residue_set->name_map( "MET" ) );
+    restype = core::chemical::ResidueTypeOP( new core::chemical::ResidueType( residue_set->name_map( "MET" ) ) );
     core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("CG").gasteiger_atom_type()->get_name(), "C_TeTeTeTe" );
 		TS_ASSERT_EQUALS( restype->atom("SD").gasteiger_atom_type()->get_name(), "S_Te2Te2TeTe" );
 		TS_ASSERT_EQUALS( restype->atom("CE").gasteiger_atom_type()->get_name(), "C_TeTeTeTe" );
 
-    restype = new core::chemical::ResidueType( residue_set->name_map( "CYS" ) );
+    restype = core::chemical::ResidueTypeOP( new core::chemical::ResidueType( residue_set->name_map( "CYS" ) ) );
     core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("CB").gasteiger_atom_type()->get_name(), "C_TeTeTeTe" );
 		TS_ASSERT_EQUALS( restype->atom("SG").gasteiger_atom_type()->get_name(), "S_Te2Te2TeTe" );
 
-    restype = new core::chemical::ResidueType( residue_set->name_map( "GUA" ) );
+    restype = core::chemical::ResidueTypeOP( new core::chemical::ResidueType( residue_set->name_map( "GUA" ) ) );
     core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("P").gasteiger_atom_type()->get_name(), "P_TeTeTeTePi" );
@@ -216,19 +216,19 @@ class GasteigerAtomTyperTests : public CxxTest::TestSuite {
 		core::chemical::ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set("fa_standard") );
 		core::chemical::ResidueTypeOP restype;
 
-		restype = new core::chemical::ResidueType( residue_set->name_map( "NA" ) );
+		restype = core::chemical::ResidueTypeOP( new core::chemical::ResidueType( residue_set->name_map( "NA" ) ) );
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("NA").gasteiger_atom_type()->get_name(), "Na_" );
 		TS_ASSERT_EQUALS( restype->atom("V1").gasteiger_atom_type()->get_name(), "FAKE" );
 		TS_ASSERT_EQUALS( restype->atom("V2").gasteiger_atom_type()->get_name(), "FAKE" );
 
-		restype = new core::chemical::ResidueType( residue_set->name_map( "FE" ) ); // Formal charge of 3, transition metal
+		restype = core::chemical::ResidueTypeOP( new core::chemical::ResidueType( residue_set->name_map( "FE" ) ) ); // Formal charge of 3, transition metal
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("FE").gasteiger_atom_type()->get_name(), "Fe_" );
 
-		restype = new core::chemical::ResidueType( residue_set->name_map( "PRO" ) );
+		restype = core::chemical::ResidueTypeOP( new core::chemical::ResidueType( residue_set->name_map( "PRO" ) ) );
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("NV").gasteiger_atom_type()->get_name(), "FAKE" );

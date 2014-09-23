@@ -25,8 +25,8 @@ namespace refine {
 // Forward
 class SmallMinCCDTrial;
 
-typedef utility::pointer::owning_ptr< SmallMinCCDTrial > SmallMinCCDTrialOP;
-typedef utility::pointer::owning_ptr< SmallMinCCDTrial const > SmallMinCCDTrialCOP;
+typedef utility::pointer::shared_ptr< SmallMinCCDTrial > SmallMinCCDTrialOP;
+typedef utility::pointer::shared_ptr< SmallMinCCDTrial const > SmallMinCCDTrialCOP;
 
 } //namespace refine
 } //namespace loop_mover

@@ -65,10 +65,10 @@ public:
 		mmatomtypeset->read_file( "core/chemical/mm_atom_properties.txt" );
 
 		// init the mmtorsionlibrary
-		mmtorsionlibrary = new MMTorsionLibrary( "core/scoring/mm/mm_torsion_params.txt" , mmatomtypeset );
+		mmtorsionlibrary = MMTorsionLibraryOP( new MMTorsionLibrary( "core/scoring/mm/mm_torsion_params.txt" , mmatomtypeset ) );
 
 		// init the mmtorsionscore
-		mmtorsionscore = new MMTorsionScore( *mmtorsionlibrary );
+		mmtorsionscore = MMTorsionScoreOP( new MMTorsionScore( *mmtorsionlibrary ) );
 	 }
 
 	virtual ~MMTorsionScoreTests() {}

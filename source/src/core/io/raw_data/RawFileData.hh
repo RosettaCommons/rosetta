@@ -119,7 +119,7 @@ namespace raw_data {
 			}
 
 			RawStructOP operator->() {
-				return it_->second();
+				return it_->second;
 			}
 
 			RawStructOP operator*() const {
@@ -163,7 +163,7 @@ namespace raw_data {
 			}
 
 			RawStructOP operator->() const {
-				return it_->second();
+				return it_->second;
 			}
 
 			RawStructOP operator*() const {

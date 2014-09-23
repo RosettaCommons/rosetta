@@ -24,8 +24,8 @@ namespace scoring {
 namespace func {
 
 class GaussianChainDoubleFunc;
-typedef utility::pointer::owning_ptr< GaussianChainDoubleFunc > GaussianChainDoubleFuncOP;
-typedef utility::pointer::owning_ptr< GaussianChainDoubleFunc const > GaussianChainDoubleFuncCOP;
+typedef utility::pointer::shared_ptr< GaussianChainDoubleFunc > GaussianChainDoubleFuncOP;
+typedef utility::pointer::shared_ptr< GaussianChainDoubleFunc const > GaussianChainDoubleFuncCOP;
 
 }
 }

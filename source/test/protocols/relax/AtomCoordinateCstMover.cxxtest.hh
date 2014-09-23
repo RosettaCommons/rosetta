@@ -126,7 +126,7 @@ public:
 		core::pose::Pose pose(pdb1rpb_pose());
 		core::pose::addVirtualResAsRoot(pose);
 
-		core::pose::PoseOP native = new core::pose::Pose;
+		core::pose::PoseOP native( new core::pose::Pose );
 		core::import_pose::pose_from_pdb( *native, "protocols/relax/AtomCoordinateCstMover_native.pdb" );
 
 		//option[ OptionKeys::relax::constrain_relax_to_native_coords ].value( true );
@@ -178,7 +178,7 @@ public:
 		core::pose::Pose pose(pdb1rpb_pose());
 		core::pose::addVirtualResAsRoot(pose);
 
-		core::pose::PoseOP native = new core::pose::Pose;
+		core::pose::PoseOP native( new core::pose::Pose );
 		core::import_pose::pose_from_pdb( *native, "protocols/relax/AtomCoordinateCstMover_native.pdb" );
 
 		//option[ OptionKeys::relax::constrain_relax_to_native_coords ].value( true );
@@ -209,7 +209,7 @@ public:
 
 		core::pose::addVirtualResAsRoot(pose);
 
-		core::pose::PoseOP native = new core::pose::Pose;
+		core::pose::PoseOP native( new core::pose::Pose );
 		core::import_pose::pose_from_pdb( *native, "protocols/relax/1a19_trunc.pdb" );
 
 		//option[ OptionKeys::relax::constrain_relax_to_native_coords ].value( true );

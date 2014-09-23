@@ -81,13 +81,13 @@ std::string SnugDockProtocol::get_name() const {
 //@brief clone operator, calls the copy constructor
 protocols::moves::MoverOP
 SnugDockProtocol::clone() const {
-	return new SnugDockProtocol( *this );
+	return protocols::moves::MoverOP( new SnugDockProtocol( *this ) );
 }
 
 ///@brief fresh_instance returns a default-constructed object for JD2
 protocols::moves::MoverOP
 SnugDockProtocol::fresh_instance() const {
-	return new SnugDockProtocol();
+	return protocols::moves::MoverOP( new SnugDockProtocol() );
 }
 
 ///@brief This mover retains state such that a fresh version is needed if the input Pose is about to change
@@ -122,13 +122,13 @@ void SnugDockProtocol::setup_objects( Pose const & pose ) {
 
 	/// AntibodyInfo is used to store information about the Ab-Ag complex and to generate useful helper objects based on
 	/// that information (e.g. the various FoldTrees that are needed for SnugDock).
-	antibody_info_ = new AntibodyInfo( pose );
+	antibody_info_ = AntibodyInfoOP( new AntibodyInfo( pose ) );
 
 	setup_loop_refinement_movers();
 	docking()->add_additional_low_resolution_step( low_res_refine_cdr_h2_ );
 	docking()->add_additional_low_resolution_step( low_res_refine_cdr_h3_ );
 
-	SnugDockOP high_resolution_phase = new SnugDock;
+	SnugDockOP high_resolution_phase( new SnugDock );
 	high_resolution_phase->set_antibody_info( antibody_info_ );
 	docking()->set_docking_highres_mover( high_resolution_phase );
 
@@ -150,20 +150,20 @@ void SnugDockProtocol::setup_loop_refinement_movers() {
 	low_res_loop_refinement_scorefxn->set_weight( scoring::overlap_chainbreak, 10./3. );
 	low_res_loop_refinement_scorefxn->set_weight( scoring::atom_pair_constraint, 100 );
 
-	low_res_refine_cdr_h2_ = new RefineOneCDRLoop(
+	low_res_refine_cdr_h2_ = RefineOneCDRLoopOP( new RefineOneCDRLoop(
 	    antibody_info_,
 	    h2,
 	    loop_refinement_method_,
 	    low_res_loop_refinement_scorefxn
-	);
+	) );
 	low_res_refine_cdr_h2_->set_h3_filter( false );
 
-	low_res_refine_cdr_h3_ = new RefineOneCDRLoop(
+	low_res_refine_cdr_h3_ = RefineOneCDRLoopOP( new RefineOneCDRLoop(
 	    antibody_info_,
 	    h3,
 	    loop_refinement_method_,
 	    low_res_loop_refinement_scorefxn
-	);
+	) );
 	low_res_refine_cdr_h3_->set_h3_filter( h3_filter_ );
 	low_res_refine_cdr_h3_->set_num_filter_tries( h3_filter_tolerance_ );
 }
@@ -211,7 +211,7 @@ docking::DockingProtocolOP SnugDockProtocol::docking() const {
 	if ( ! docking_ ) {
 		/// The full DockingProtocol is used with a custom high resolution phase and post-low-resolution phase
 		/// All FoldTrees will be setup through AntibodyInfo so DockingProtocol's autofoldtree setup is disabled.
-		docking_ = new docking::DockingProtocol;
+		docking_ = docking::DockingProtocolOP( new docking::DockingProtocol );
 		docking_->set_autofoldtree( false );
 	}
 	return docking_;

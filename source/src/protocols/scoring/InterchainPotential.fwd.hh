@@ -36,7 +36,7 @@ namespace scoring {
 class InterchainPotential;
 
 class InterfaceInfo;
-typedef utility::pointer::owning_ptr< InterfaceInfo > InterfaceInfoOP;
+typedef utility::pointer::shared_ptr< InterfaceInfo > InterfaceInfoOP;
 
 } // ns scoring
 } // ns core

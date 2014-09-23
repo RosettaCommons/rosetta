@@ -24,8 +24,8 @@ namespace legacy {
 namespace screener {
 	
 	class SimplePoseSelection;
-	typedef utility::pointer::owning_ptr< SimplePoseSelection > SimplePoseSelectionOP;
-	typedef utility::pointer::owning_ptr< SimplePoseSelection const > SimplePoseSelectionCOP;
+	typedef utility::pointer::shared_ptr< SimplePoseSelection > SimplePoseSelectionOP;
+	typedef utility::pointer::shared_ptr< SimplePoseSelection const > SimplePoseSelectionCOP;
 	
 } //screener
 } //legacy

@@ -67,7 +67,7 @@ void RotamerDumpMover::apply(core::pose::Pose & pose)
 
 
 	core::pack::task::PackerTaskCOP packer_task( task_factory_->create_task_and_apply_taskoperations(pose));
-	core::pack::rotamer_set::RotamerSetsOP rotamer_sets(new core::pack::rotamer_set::RotamerSets());
+	core::pack::rotamer_set::RotamerSetsOP rotamer_sets( new core::pack::rotamer_set::RotamerSets() );
 
 	score_function_->setup_for_packing(pose, packer_task->repacking_residues(), packer_task->designing_residues());
 
@@ -160,7 +160,7 @@ std::string RotamerDumpMover::get_twobody_energy_table(core::pack::interaction_g
 	core::Size elements = 0;
 
 	core::pack::interaction_graph::PrecomputedPairEnergiesInteractionGraphOP p_ig =
-	dynamic_cast< core::pack::interaction_graph::PrecomputedPairEnergiesInteractionGraph * > ( ig.get() );
+	utility::pointer::dynamic_pointer_cast< core::pack::interaction_graph::PrecomputedPairEnergiesInteractionGraph > ( ig );
 
 	if(!p_ig)
 	{

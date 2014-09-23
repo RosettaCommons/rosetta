@@ -74,7 +74,7 @@ FragmentStoreOP BinaryFragmentStoreBackend::get_fragment_store(std::string store
 	numeric::Size num_entries = utility::json_spirit::get_int(md_object, "num_entries");
 	TR.Debug << "Loading: " << store_path << " size:" << num_entries << std::endl;
 
-  FragmentStoreOP fragment_store = new FragmentStore(fragment_spec, num_entries);
+  FragmentStoreOP fragment_store( new FragmentStore(fragment_spec, num_entries) );
 
 	std::string coordinates_path = store_path + "/" + utility::json_spirit::get_string(md_object, "coordinates_file");
   std::fstream coordinates_file;

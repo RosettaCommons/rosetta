@@ -33,7 +33,7 @@ public:
 	  Real const A_Hertz , Real const B_Hertz, Real const C_Hertz, Real const Dphi_radians, Real const x0_Hertz, Real const sd_Hertz, Real const offset=0.0
 											 ):A_(A_Hertz), B_(B_Hertz), C_(C_Hertz), Dphi_(Dphi_radians), x0_( x0_Hertz ), sd_( sd_Hertz ), offset_( offset ) {}
 
-	FuncOP clone() const { return new KarplusFunc( *this ); }
+	FuncOP clone() const { return FuncOP( new KarplusFunc( *this ) ); }
 
 	Real func( Real const x ) const;
 	Real dfunc( Real const x ) const;

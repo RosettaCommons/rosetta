@@ -87,7 +87,7 @@ calc_interaction_energy( const core::pose::Pose & pose, const core::scoring::Sco
 		 */
 		core::pose::Pose unbound_pose = complex_pose;
 		Real trans_magnitude = 1000;
-		rigid::RigidBodyTransMoverOP translate_away ( new rigid::RigidBodyTransMover( unbound_pose, rb_jump ) );
+		rigid::RigidBodyTransMoverOP translate_away( new rigid::RigidBodyTransMover( unbound_pose, rb_jump ) );
 		translate_away->step_size( trans_magnitude );
 		translate_away->apply( unbound_pose );
 
@@ -247,9 +247,9 @@ calc_Fnat( const core::pose::Pose & pose, const core::pose::Pose & native_pose, 
 		//identify native contacts across the interface
 		//this will probably be changed to use PoseMetrics once I figure out how to use them - Sid
 		for ( Size i=1; i<= partner1.size(); i++){
-			ResidueOP rsd1 = new Residue(native_docking_pose.residue(partner1[i]));
+			ResidueOP rsd1( new Residue(native_docking_pose.residue(partner1[i])) );
 			for ( Size j=1; j<=partner2.size();j++){
-				ResidueOP rsd2 = new Residue(native_docking_pose.residue(partner2[j]));
+				ResidueOP rsd2( new Residue(native_docking_pose.residue(partner2[j])) );
 				contact_list(i,j)=calc_res_contact(rsd1, rsd2, cutoff);
 			}
 		}
@@ -263,8 +263,8 @@ calc_Fnat( const core::pose::Pose & pose, const core::pose::Pose & native_pose, 
 				if (contact_list(i,j)){
 					//		out << partner1[i] << "  " << partner2[j] << "\n";
 					native_ncontact++;
-					ResidueOP rsd1 = new Residue(pose.residue(partner1[i]));
-					ResidueOP rsd2 = new Residue(pose.residue(partner2[j]));
+					ResidueOP rsd1( new Residue(pose.residue(partner1[i])) );
+					ResidueOP rsd2( new Residue(pose.residue(partner2[j])) );
 					if (calc_res_contact(rsd1, rsd2, cutoff)) decoy_ncontact++;
 				}
 			}
@@ -321,8 +321,8 @@ calc_Fnat( const core::pose::Pose & pose, std::string const& list_file, DockJump
 		//identify which native contacts are recovered in the decoy
 		for ( Size i=1; i<=partner1.size(); i++){
 			TR.Debug << partner1[i] << "  " << partner2[i] << std::endl;
-					ResidueOP rsd1 = new Residue(pose.residue(partner1[i]));
-					ResidueOP rsd2 = new Residue(pose.residue(partner2[i]));
+					ResidueOP rsd1( new Residue(pose.residue(partner1[i])) );
+					ResidueOP rsd2( new Residue(pose.residue(partner2[i])) );
 					if (calc_res_contact(rsd1, rsd2, cutoff)) decoy_ncontact++;
 		}
 
@@ -387,9 +387,9 @@ calc_Fnonnat(  const core::pose::Pose & pose, const core::pose::Pose & native_po
 		//identify native contacts across the interface
 		//this will probably be changed to use PoseMetrics once I figure out how to use them - Sid
 		for ( Size i=1; i<= partner1.size(); i++){
-			ResidueOP rsd1 = new Residue(native_docking_pose.residue(partner1[i]));
+			ResidueOP rsd1( new Residue(native_docking_pose.residue(partner1[i])) );
 			for ( Size j=1; j<=partner2.size();j++){
-				ResidueOP rsd2 = new Residue(native_docking_pose.residue(partner2[j]));
+				ResidueOP rsd2( new Residue(native_docking_pose.residue(partner2[j])) );
 				if ( calc_res_contact(rsd1, rsd2, cutoff) ) {
 					std::pair< core::Size, core::Size > elem( partner1[i],partner2[j] );
 					contact_list.push_back(elem);
@@ -404,8 +404,8 @@ calc_Fnonnat(  const core::pose::Pose & pose, const core::pose::Pose & native_po
 
 		for ( Size i=1; i<cutpoint-1; i++) {
 			for ( Size j=cutpoint; j<=pose.total_residue(); j++ ) {
-				ResidueOP rsd1 = new Residue( pose.residue( i ) );
-				ResidueOP rsd2 = new Residue( pose.residue( j ) );
+				ResidueOP rsd1( new Residue( pose.residue( i ) ) );
+				ResidueOP rsd2( new Residue( pose.residue( j ) ) );
 				if ( calc_res_contact( rsd2, rsd1, cutoff ) ) {
 					std::pair< core::Size, core::Size> elem( j, i);
 					//					for ( std::list< std::pair< core::Size, core::Size> >::iterator it = contact_list.begin(); it != contact_list.end(); ++it ) {
@@ -495,8 +495,8 @@ calc_Fnonnat( const core::pose::Pose & pose, std::string const& list_file, DockJ
 
 		for ( Size i=1; i<cutpoint-1; i++) {
 			for ( Size j=cutpoint; j<=pose.total_residue(); j++ ) {
-				ResidueOP rsd1 = new Residue( pose.residue( i ) );
-				ResidueOP rsd2 = new Residue( pose.residue( j ) );
+				ResidueOP rsd1( new Residue( pose.residue( i ) ) );
+				ResidueOP rsd2( new Residue( pose.residue( j ) ) );
 				TR.Debug << "distance between residue pair " << i << " " << j << std::endl;
 				if ( calc_res_contact( rsd2, rsd1, cutoff ) ) {
 					std::pair< core::Size, core::Size> elem( j, i);

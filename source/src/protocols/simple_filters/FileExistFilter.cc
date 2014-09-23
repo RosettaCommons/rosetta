@@ -29,7 +29,7 @@ using namespace core::scoring;
 static thread_local basic::Tracer TR( "protocols.simple_filters.FileExistFilter" );
 
 protocols::filters::FilterOP
-FileExistFilterCreator::create_filter() const { return new FileExistFilter; }
+FileExistFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FileExistFilter ); }
 
 std::string
 FileExistFilterCreator::keyname() const { return "FileExist"; }

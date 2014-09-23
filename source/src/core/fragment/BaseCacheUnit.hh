@@ -40,8 +40,8 @@ namespace core {
 namespace fragment {
 
 class BaseCacheUnit;
-typedef utility::pointer::owning_ptr< BaseCacheUnit > BaseCacheUnitOP;
-typedef utility::pointer::access_ptr< BaseCacheUnit > BaseCacheUnitAP;
+typedef utility::pointer::shared_ptr< BaseCacheUnit > BaseCacheUnitOP;
+typedef utility::pointer::weak_ptr< BaseCacheUnit > BaseCacheUnitAP;
 
 class BaseCacheUnit : public utility::pointer::ReferenceCount {
 public:

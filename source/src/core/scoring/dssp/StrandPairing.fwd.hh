@@ -30,11 +30,11 @@ class StrandPairing;
 class StrandPairingSet;
 
 // Types
-typedef  utility::pointer::owning_ptr< StrandPairing >  StrandPairingOP;
-typedef  utility::pointer::owning_ptr< StrandPairing const >  StrandPairingCOP;
+typedef  utility::pointer::shared_ptr< StrandPairing >  StrandPairingOP;
+typedef  utility::pointer::shared_ptr< StrandPairing const >  StrandPairingCOP;
 
-typedef  utility::pointer::owning_ptr< StrandPairingSet > StrandPairingSetOP;
-typedef  utility::pointer::owning_ptr< StrandPairingSet const >  StrandPairingSetCOP;
+typedef  utility::pointer::shared_ptr< StrandPairingSet > StrandPairingSetOP;
+typedef  utility::pointer::shared_ptr< StrandPairingSet const >  StrandPairingSetCOP;
 
 } // namespace dssp
 } // namespace scoring

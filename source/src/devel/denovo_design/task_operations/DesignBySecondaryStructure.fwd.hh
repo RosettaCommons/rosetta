@@ -25,8 +25,8 @@ namespace task_operations {
   class DesignBySecondaryStructureOperation;
 
   // Types
-  typedef utility::pointer::owning_ptr< DesignBySecondaryStructureOperation > DesignBySecondaryStructureOperationOP;
-  typedef utility::pointer::owning_ptr< DesignBySecondaryStructureOperation const > DesignBySecondaryStructureOperationCOP;
+  typedef utility::pointer::shared_ptr< DesignBySecondaryStructureOperation > DesignBySecondaryStructureOperationOP;
+  typedef utility::pointer::shared_ptr< DesignBySecondaryStructureOperation const > DesignBySecondaryStructureOperationCOP;
 
 }
 }

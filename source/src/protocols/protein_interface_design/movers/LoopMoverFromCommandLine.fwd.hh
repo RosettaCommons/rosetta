@@ -22,8 +22,8 @@ namespace movers{
 
 //Forwards and OP typedefs
 class LoopMoverFromCommandLine;
-typedef utility::pointer::owning_ptr< LoopMoverFromCommandLine > LoopMoverFromCommandLineOP;
-typedef utility::pointer::owning_ptr< LoopMoverFromCommandLine const > LoopMoverFromCommandLineCOP;
+typedef utility::pointer::shared_ptr< LoopMoverFromCommandLine > LoopMoverFromCommandLineOP;
+typedef utility::pointer::shared_ptr< LoopMoverFromCommandLine const > LoopMoverFromCommandLineCOP;
 
 }//moves
 }//protocols

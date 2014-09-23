@@ -51,8 +51,8 @@ DualMonteCarlo::DualMonteCarlo(
 ):
 	MC_(MC_pose, MC_scorefunction, temperature)
 {
-	last_accepted_pose_ = new core::pose::Pose();
-	lowest_score_pose_ = new core::pose::Pose();
+	last_accepted_pose_ = core::pose::PoseOP( new core::pose::Pose() );
+	lowest_score_pose_ = core::pose::PoseOP( new core::pose::Pose() );
 	score_function_ = DMC_scorefunction.clone();
 	reset( DMC_pose, MC_pose );
 }

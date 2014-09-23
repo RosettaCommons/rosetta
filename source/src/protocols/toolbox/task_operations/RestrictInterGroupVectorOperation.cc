@@ -96,13 +96,13 @@ RestrictInterGroupVectorOperation::~RestrictInterGroupVectorOperation() {}
 core::pack::task::operation::TaskOperationOP
 RestrictInterGroupVectorOperationCreator::create_task_operation() const
 {
-  return new RestrictInterGroupVectorOperation;
+  return core::pack::task::operation::TaskOperationOP( new RestrictInterGroupVectorOperation );
 }
 
 ///@details be warned if you use clone that you'll not get a new interface calculator
 core::pack::task::operation::TaskOperationOP RestrictInterGroupVectorOperation::clone() const
 {
-  return new RestrictInterGroupVectorOperation( *this );
+  return core::pack::task::operation::TaskOperationOP( new RestrictInterGroupVectorOperation( *this ) );
 }
 
 ///@details setters

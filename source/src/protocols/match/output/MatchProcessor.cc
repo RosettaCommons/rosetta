@@ -44,8 +44,8 @@ namespace output {
 static thread_local basic::Tracer TR( "protocols.match.output.MatchProcessor" );
 
 MatchProcessor::MatchProcessor()
-	: match_processing_successful_(false), writer_(NULL),
-		num_matches_processed_(0), up_down_filt_(NULL), up_coll_filt_(NULL)
+	: match_processing_successful_(false), writer_(/* NULL */),
+		num_matches_processed_(0), up_down_filt_(/* NULL */), up_coll_filt_(NULL)
 {
 	filter_failcounts_.clear();
 }

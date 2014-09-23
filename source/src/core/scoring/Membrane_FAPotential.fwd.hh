@@ -30,12 +30,12 @@ namespace core {
 	namespace scoring {
 		
 		class Membrane_FAEmbed;
-		typedef utility::pointer::owning_ptr< Membrane_FAEmbed > Membrane_FAEmbedOP;
-		typedef utility::pointer::owning_ptr< Membrane_FAEmbed const > Membrane_FAEmbedCOP;
+		typedef utility::pointer::shared_ptr< Membrane_FAEmbed > Membrane_FAEmbedOP;
+		typedef utility::pointer::shared_ptr< Membrane_FAEmbed const > Membrane_FAEmbedCOP;
 		
 		class Membrane_FAPotential;
-		typedef  utility::pointer::owning_ptr< Membrane_FAPotential > Membrane_FAPotentialOP;
-		typedef  utility::pointer::owning_ptr< Membrane_FAPotential const > Membrane_FAPotentialCOP;
+		typedef  utility::pointer::shared_ptr< Membrane_FAPotential > Membrane_FAPotentialOP;
+		typedef  utility::pointer::shared_ptr< Membrane_FAPotential const > Membrane_FAPotentialCOP;
 		
 	} // scoring
 } // core

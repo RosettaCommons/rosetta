@@ -38,10 +38,10 @@ public:
 	}
 
 	ScoringSchemeOP clone() const {
-		return new CompassScoringScheme(
+		return ScoringSchemeOP( new CompassScoringScheme(
 			gap_open(),
 			gap_extend()
-		);
+		) );
 	}
 
 	/// @brief dtor

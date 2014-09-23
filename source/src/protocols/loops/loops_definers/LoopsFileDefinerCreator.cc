@@ -26,7 +26,7 @@ LoopsFileDefinerCreator::~LoopsFileDefinerCreator() {}
 
 LoopsDefinerOP
 LoopsFileDefinerCreator::create_loops_definer() const {
-	return new LoopsFileDefiner;
+	return LoopsDefinerOP( new LoopsFileDefiner );
 }
 
 string

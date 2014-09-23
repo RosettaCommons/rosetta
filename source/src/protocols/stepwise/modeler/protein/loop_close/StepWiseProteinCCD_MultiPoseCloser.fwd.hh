@@ -25,8 +25,8 @@ namespace protein {
 namespace loop_close {
 	
 	class StepWiseProteinCCD_MultiPoseCloser;
-	typedef utility::pointer::owning_ptr< StepWiseProteinCCD_MultiPoseCloser > StepWiseProteinCCD_MultiPoseCloserOP;
-	typedef utility::pointer::owning_ptr< StepWiseProteinCCD_MultiPoseCloser const > StepWiseProteinCCD_MultiPoseCloserCOP;
+	typedef utility::pointer::shared_ptr< StepWiseProteinCCD_MultiPoseCloser > StepWiseProteinCCD_MultiPoseCloserOP;
+	typedef utility::pointer::shared_ptr< StepWiseProteinCCD_MultiPoseCloser const > StepWiseProteinCCD_MultiPoseCloserCOP;
 	
 } //loop_close
 } //protein

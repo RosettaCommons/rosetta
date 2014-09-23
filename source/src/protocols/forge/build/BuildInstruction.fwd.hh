@@ -29,19 +29,19 @@ class BuildInstruction;
 
 
 /// @brief owning pointer for BuildInstruction
-typedef utility::pointer::owning_ptr< BuildInstruction > BuildInstructionOP;
+typedef utility::pointer::shared_ptr< BuildInstruction > BuildInstructionOP;
 
 
 /// @brief owning pointer for const BuildInstruction
-typedef utility::pointer::owning_ptr< BuildInstruction const > BuildInstructionCOP;
+typedef utility::pointer::shared_ptr< BuildInstruction const > BuildInstructionCOP;
 
 
 /// @brief access pointer for BuildInstruction
-typedef utility::pointer::access_ptr< BuildInstruction > BuildInstructionAP;
+typedef utility::pointer::weak_ptr< BuildInstruction > BuildInstructionAP;
 
 
 /// @brief access pointer for const BuildInstruction
-typedef utility::pointer::access_ptr< BuildInstruction const > BuildInstructionCAP;
+typedef utility::pointer::weak_ptr< BuildInstruction const > BuildInstructionCAP;
 
 
 } // namespace build

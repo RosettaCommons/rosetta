@@ -83,7 +83,7 @@ void OopRandomSmallMover::apply( core::pose::Pose & pose ){
 	//kdrew: randomly choose position from oop_seq_positions
 	core::Size random_pos = oop_seq_positions_[int(numeric::random::rg().uniform()*oop_seq_positions_.size())+1];
 
-	oop::OopMoverOP oop_mover ( new oop::OopMover( random_pos ) );
+	oop::OopMoverOP oop_mover( new oop::OopMover( random_pos ) );
 	Real small_angle = max_small_angle_/2.0; ///< this is max_angle/2, which is the deviation from the angle input
 	Real phi_angle = basic::periodic_range( pose.phi( random_pos ) - small_angle + numeric::random::rg().uniform() * max_small_angle_, 360.0 );
 	//kdrew: no phi angle for n-terms, angle that gets changed is CYP-N-Ca-C

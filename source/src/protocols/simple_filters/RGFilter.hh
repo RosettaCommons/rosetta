@@ -46,10 +46,10 @@ public:
 	virtual ~RGFilter() {}
 
 	filters::FilterOP clone() const {
-		return new RGFilter( *this ); }
+		return filters::FilterOP( new RGFilter( *this ) ); }
 
 	filters::FilterOP fresh_instance() const{
-		return new RGFilter(); }
+		return filters::FilterOP( new RGFilter() ); }
 
 
 	/// @brief Returns true if the given pose passes the filter, false otherwise.

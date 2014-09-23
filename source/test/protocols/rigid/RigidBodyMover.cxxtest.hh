@@ -82,8 +82,8 @@ public:
 		core::Real rot_mag(3.0);
 		core::Real trans_mag(8.0);
 
-		RigidBodyPerturbMoverOP RB_mover = new RigidBodyPerturbMover(rb_jump, rot_mag, trans_mag,
-				protocols::rigid::partner_downstream, false);
+		RigidBodyPerturbMoverOP RB_mover( new RigidBodyPerturbMover(rb_jump, rot_mag, trans_mag,
+				protocols::rigid::partner_downstream, false) );
 
 		/////////////////////////run
 		RB_mover->apply(pose);
@@ -108,8 +108,8 @@ public:
 				core::scoring::PRE_TALARIS_2013_STANDARD_WTS, core::scoring::DOCK_PATCH ) ;
 		(*scorefxn)(pose);  //sets up EnergyGraph for interface calculation
 
-		RigidBodyPerturbMoverOP RB_mover = new RigidBodyPerturbMover(rb_jump, rot_mag, trans_mag,
-				protocols::rigid::partner_downstream, true);
+		RigidBodyPerturbMoverOP RB_mover( new RigidBodyPerturbMover(rb_jump, rot_mag, trans_mag,
+				protocols::rigid::partner_downstream, true) );
 
 		/////////////////////////run
 		RB_mover->apply(pose);
@@ -129,7 +129,7 @@ public:
 		core::Real rot_mag(3.0);
 		core::Real trans_mag(8.0);
 
-		RigidBodyPerturbNoCenterMoverOP RB_mover = new RigidBodyPerturbNoCenterMover(rb_jump, rot_mag, trans_mag);
+		RigidBodyPerturbNoCenterMoverOP RB_mover( new RigidBodyPerturbNoCenterMover(rb_jump, rot_mag, trans_mag) );
 
 		/////////////////////////run
 		RB_mover->apply(pose);
@@ -147,8 +147,8 @@ public:
 		using protocols::rigid::RigidBodyRandomizeMoverOP;
 		using protocols::rigid::RigidBodyRandomizeMover;
 
-		RigidBodyRandomizeMoverOP RB_mover = new RigidBodyRandomizeMover(pose, rb_jump,
-				protocols::rigid::partner_downstream);
+		RigidBodyRandomizeMoverOP RB_mover( new RigidBodyRandomizeMover(pose, rb_jump,
+				protocols::rigid::partner_downstream) );
 
 		/////////////////////////run
 		RB_mover->apply(pose);
@@ -166,7 +166,7 @@ public:
 		using protocols::rigid::RigidBodySpinMoverOP;
 		using protocols::rigid::RigidBodySpinMover;
 
-		RigidBodySpinMoverOP RB_mover = new RigidBodySpinMover(rb_jump);
+		RigidBodySpinMoverOP RB_mover( new RigidBodySpinMover(rb_jump) );
 
 		/////////////////////////run
 		RB_mover->apply(pose);
@@ -184,7 +184,7 @@ public:
 		using protocols::rigid::RigidBodyTransMoverOP;
 		using protocols::rigid::RigidBodyTransMover;
 
-		RigidBodyTransMoverOP RB_mover = new RigidBodyTransMover(pose, rb_jump);
+		RigidBodyTransMoverOP RB_mover( new RigidBodyTransMover(pose, rb_jump) );
 
 		/////////////////////////run
 		RB_mover->apply(pose);
@@ -202,7 +202,7 @@ public:
 		using protocols::rigid::RigidBodyTransMoverOP;
 		using protocols::rigid::RigidBodyTransMover;
 
-		RigidBodyTransMoverOP RB_mover = new RigidBodyTransMover();
+		RigidBodyTransMoverOP RB_mover( new RigidBodyTransMover() );
 
 		basic::datacache::DataMap data;
 		Filters_map filters;

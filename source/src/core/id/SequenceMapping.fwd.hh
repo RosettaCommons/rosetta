@@ -21,8 +21,8 @@ namespace core {
 namespace id {
 
 class SequenceMapping;
-typedef utility::pointer::owning_ptr< SequenceMapping > SequenceMappingOP;
-typedef utility::pointer::owning_ptr< SequenceMapping const > SequenceMappingCOP;
+typedef utility::pointer::shared_ptr< SequenceMapping > SequenceMappingOP;
+typedef utility::pointer::shared_ptr< SequenceMapping const > SequenceMappingCOP;
 
 
 }

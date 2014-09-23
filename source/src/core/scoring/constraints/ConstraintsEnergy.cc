@@ -49,7 +49,7 @@ methods::EnergyMethodOP
 ConstraintsEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new ConstraintsEnergy;
+	return methods::EnergyMethodOP( new ConstraintsEnergy );
 }
 
 ScoreTypes
@@ -83,7 +83,7 @@ ConstraintsEnergy::~ConstraintsEnergy() {}
 methods::EnergyMethodOP
 ConstraintsEnergy::clone() const
 {
-	return new ConstraintsEnergy;
+	return methods::EnergyMethodOP( new ConstraintsEnergy );
 }
 
 methods::LongRangeEnergyType
@@ -135,7 +135,7 @@ ConstraintsEnergy::residue_pair_energy_ext(
 	EnergyMap & emap
 ) const
 {
-	CstMinimizationDataCOP res_cst = static_cast< CstMinimizationData const * > ( min_data.get_data( cst_respair_data )() );
+	CstMinimizationDataCOP res_cst = utility::pointer::static_pointer_cast< core::scoring::constraints::CstMinimizationData const > ( min_data.get_data( cst_respair_data ) );
 	if (!res_cst) return;
 	//	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
 	res_cst->constraints().residue_pair_energy( rsd1, rsd2, sfxn.weights(), emap );
@@ -199,7 +199,7 @@ ConstraintsEnergy::setup_for_scoring_for_residue_pair(
 	ResPairMinimizationData & data_cache
 ) const
 {
-	CstMinimizationDataOP res_cst = static_cast< CstMinimizationData * > ( data_cache.get_data( cst_respair_data )() );
+	CstMinimizationDataOP res_cst = utility::pointer::static_pointer_cast< core::scoring::constraints::CstMinimizationData > ( data_cache.get_data( cst_respair_data ) );
 	if (!res_cst) return;
 	//	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
 	res_cst->constraints().setup_for_scoring( func::ResiduePairXYZ( rsd1, rsd2 ), sfxn );
@@ -223,7 +223,7 @@ ConstraintsEnergy::setup_for_derivatives_for_residue_pair(
 	ResPairMinimizationData & data_cache
 ) const
 {
-	CstMinimizationDataOP res_cst = static_cast< CstMinimizationData * > ( data_cache.get_data( cst_respair_data )() );
+	CstMinimizationDataOP res_cst = utility::pointer::static_pointer_cast< core::scoring::constraints::CstMinimizationData > ( data_cache.get_data( cst_respair_data ) );
 	if (!res_cst) return;
 	//	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
 	res_cst->constraints().setup_for_derivatives( func::ResiduePairXYZ( rsd1, rsd2 ), sfxn );
@@ -264,7 +264,7 @@ ConstraintsEnergy::eval_residue_pair_derivatives(
 	utility::vector1< DerivVectorPair > & r2_atom_derivs
 ) const
 {
-	CstMinimizationDataCOP res_cst = static_cast< CstMinimizationData const * > ( min_data.get_data( cst_respair_data )() );
+	CstMinimizationDataCOP res_cst = utility::pointer::static_pointer_cast< core::scoring::constraints::CstMinimizationData const > ( min_data.get_data( cst_respair_data ) );
 	if (!res_cst) return;
 	//	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
 	for ( Size ii = 1; ii <= rsd1.natoms(); ++ii ) {
@@ -327,7 +327,7 @@ ConstraintsEnergy::eval_intrares_energy_ext(
 	EnergyMap & emap
 ) const
 {
-	CstMinimizationDataCOP res_cst = static_cast< CstMinimizationData const * > ( data_cache.get_data( cst_res_data )() );
+	CstMinimizationDataCOP res_cst = utility::pointer::static_pointer_cast< core::scoring::constraints::CstMinimizationData const > ( data_cache.get_data( cst_res_data ) );
 	if (!res_cst) return;
 	res_cst->constraints().intra_residue_energy( rsd, sfxn.weights(), emap );
 }
@@ -348,7 +348,7 @@ ConstraintsEnergy::setup_for_scoring_for_residue(
 ) const
 {
 	//	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
-	CstMinimizationDataOP res_cst = static_cast< CstMinimizationData * > ( min_data.get_data( cst_res_data )() );
+	CstMinimizationDataOP res_cst = utility::pointer::static_pointer_cast< core::scoring::constraints::CstMinimizationData > ( min_data.get_data( cst_res_data ) );
 	if (!res_cst) return;
 	res_cst->constraints().setup_for_scoring( func::ResidueXYZ( rsd ), sfxn );
 }
@@ -370,7 +370,7 @@ ConstraintsEnergy::setup_for_derivatives_for_residue(
 ) const
 {
 	//	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
-	CstMinimizationDataOP res_cst = static_cast< CstMinimizationData * > ( min_data.get_data( cst_res_data )() );
+	CstMinimizationDataOP res_cst = utility::pointer::static_pointer_cast< core::scoring::constraints::CstMinimizationData > ( min_data.get_data( cst_res_data ) );
 	if (!res_cst) return;
 	res_cst->constraints().setup_for_derivatives( func::ResidueXYZ( rsd ), sfxn );
 }
@@ -404,7 +404,7 @@ ConstraintsEnergy::eval_intrares_derivatives(
 ) const
 {
 	//	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
-	CstMinimizationDataCOP res_cst = static_cast< CstMinimizationData const * > ( min_data.get_data( cst_res_data )() );
+	CstMinimizationDataCOP res_cst = utility::pointer::static_pointer_cast< core::scoring::constraints::CstMinimizationData const > ( min_data.get_data( cst_res_data ) );
 	if (!res_cst) return;
 	for ( Size ii = 1; ii <= rsd.natoms(); ++ii ) {
 		res_cst->constraints().eval_intrares_atom_derivative(
@@ -467,14 +467,14 @@ ConstraintsEnergy::prepare_constraints_energy_container( pose::Pose & pose ) con
 		create_new_cstcontainer = true; // pbmod
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( constraints_lr );
-		CstEnergyContainerOP cec( static_cast< CstEnergyContainer * > ( lrc.get() ) );
+		CstEnergyContainerOP cec( utility::pointer::static_pointer_cast< core::scoring::constraints::CstEnergyContainer > ( lrc ) );
 		if ( ! cec->matches( pose.constraint_set()) ) {
 			create_new_cstcontainer = true;
 		}
 	}
 
 	if ( create_new_cstcontainer ) {
-		CstEnergyContainerOP new_cec = new CstEnergyContainer( pose );
+		CstEnergyContainerOP new_cec( new CstEnergyContainer( pose ) );
 		energies.set_long_range_container( constraints_lr, new_cec );
 	}
 

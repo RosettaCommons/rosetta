@@ -84,7 +84,7 @@ methods::EnergyMethodOP
 StackElecEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return new StackElecEnergy( options );
+	return methods::EnergyMethodOP( new StackElecEnergy( options ) );
 }
 
 ScoreTypes
@@ -125,7 +125,7 @@ StackElecEnergy::StackElecEnergy( StackElecEnergy const & src ):
 methods::EnergyMethodOP
 StackElecEnergy::clone() const
 {
-  return new StackElecEnergy( *this );
+  return methods::EnergyMethodOP( new StackElecEnergy( *this ) );
 }
 
 
@@ -208,7 +208,7 @@ StackElecEnergy::setup_for_minimizing(
 			NeighborListOP nblist;
 			Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
 			Real const XX = coulomb().max_dis() + 2 * tolerated_motion;
-			nblist = new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX );
+			nblist = NeighborListOP( new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX ) );
 			if ( pose.energies().use_nblist_auto_update() ) {
 				nblist->set_auto_update( tolerated_motion );
 			}
@@ -251,7 +251,7 @@ StackElecEnergy::get_count_pair_function(
 {
     using namespace etable::count_pair;
     if ( res1 == res2 ) {
-        return new CountPairNone;
+        return etable::count_pair::CountPairFunctionCOP( new CountPairNone );
     }
 
     conformation::Residue const & rsd1( pose.residue( res1 ) );
@@ -268,12 +268,12 @@ StackElecEnergy::get_count_pair_function(
 {
     using namespace etable::count_pair;
 
-    if ( ! defines_score_for_residue_pair( rsd1, rsd2, true ) ) return new CountPairNone;
+    if ( ! defines_score_for_residue_pair( rsd1, rsd2, true ) ) return etable::count_pair::CountPairFunctionCOP( new CountPairNone );
 
     if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
         return CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
     }
-    return new CountPairAll;
+    return etable::count_pair::CountPairFunctionCOP( new CountPairAll );
 
 }
 
@@ -318,8 +318,8 @@ StackElecEnergy::setup_for_minimizing_for_residue_pair(
     //assert( rsd1.seqpos() < rsd2.seqpos() );
 
     // update the existing nblist if it's already present in the min_data object
-    ResiduePairNeighborListOP nblist( static_cast< ResiduePairNeighborList * > ( pair_data.get_data( elec_pair_nblist )() ) );
-    if ( ! nblist ) nblist = new ResiduePairNeighborList;
+    ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( elec_pair_nblist ) ) );
+    if ( ! nblist ) nblist = ResiduePairNeighborListOP( new ResiduePairNeighborList );
 
     /// STOLEN CODE!
     Real const tolerated_narrow_nblist_motion = 0.75; //option[ run::nblist_autoupdate_narrow ];

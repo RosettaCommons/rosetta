@@ -125,15 +125,15 @@ void RBSegmentRelax::initialize( utility::vector1< core::fragment::FragSetOP > c
 
 	// set up default movesets ( start and end positions are set in apply() )
 	if (! option[ OptionKeys::RBSegmentRelax::skip_seqshift_moves ]() ) {
-		HelixMoveSet_.push_back( new SequenceShiftMover(  ) );
-		StrandMoveSet_.push_back( new SequenceShiftMover(  ) );
+		HelixMoveSet_.push_back( utility::pointer::shared_ptr<class protocols::rbsegment_relax::RBSegmentMover>( new SequenceShiftMover(  ) ) );
+		StrandMoveSet_.push_back( utility::pointer::shared_ptr<class protocols::rbsegment_relax::RBSegmentMover>( new SequenceShiftMover(  ) ) );
 	}
 
 	if (! option[ OptionKeys::RBSegmentRelax::skip_rb_moves ]() ) {
-		HelixMoveSet_.push_back( new HelicalGaussianMover( helical_sigR, helical_sigT, helical_sigOffAxisR, helical_sigOffAxisT ) );
-		StrandMoveSet_.push_back( new StrandTwistingMover( strand_sigR, strand_sigT, strand_sigOffAxisR, strand_sigOffAxisT ) );
-		GenericRBMoveSet_.push_back( new GaussianRBSegmentMover( genericRB_sigR , genericRB_sigT ) );
-		CompositeSegmentMoveSet_.push_back( new GaussianRBSegmentMover( genericRB_sigR , genericRB_sigT ) );
+		HelixMoveSet_.push_back( utility::pointer::shared_ptr<class protocols::rbsegment_relax::RBSegmentMover>( new HelicalGaussianMover( helical_sigR, helical_sigT, helical_sigOffAxisR, helical_sigOffAxisT ) ) );
+		StrandMoveSet_.push_back( utility::pointer::shared_ptr<class protocols::rbsegment_relax::RBSegmentMover>( new StrandTwistingMover( strand_sigR, strand_sigT, strand_sigOffAxisR, strand_sigOffAxisT ) ) );
+		GenericRBMoveSet_.push_back( utility::pointer::shared_ptr<class protocols::rbsegment_relax::RBSegmentMover>( new GaussianRBSegmentMover( genericRB_sigR , genericRB_sigT ) ) );
+		CompositeSegmentMoveSet_.push_back( utility::pointer::shared_ptr<class protocols::rbsegment_relax::RBSegmentMover>( new GaussianRBSegmentMover( genericRB_sigR , genericRB_sigT ) ) );
 	}
 
 	// frags
@@ -210,8 +210,8 @@ protocols::viewer::add_conformation_viewer( pose_noloops.conformation() );
 	bool doFragInserts=false;
 	FragInsertAndAlignMoverOP frag_ins;
 	if ( option[ OptionKeys::loops::vall_file ].user() && !option[ OptionKeys::RBSegmentRelax::skip_fragment_moves ]() ) {
-		frag_ins = new 
-FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ );
+		frag_ins = FragInsertAndAlignMoverOP( new 
+FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ ) );
 		doFragInserts = true;
 
 		if (bootstrap_) {
@@ -346,7 +346,7 @@ FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ );
 	//     allow the MC object to be exposed in the interface
 	//  -  A side effect of this is that the viewer -- that needs the MC object --
 	//     can only be called here.  Again, this should be fixed in the future
-	mc_ = new protocols::moves::MonteCarlo( pose_noloops , *scorefxn_ , init_temp );
+	mc_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( pose_noloops , *scorefxn_ , init_temp ) );
 
 	// wrap in a MC search for 'cycles' iteration
 	int total_cycles = cycles_;
@@ -424,7 +424,7 @@ FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ );
 
 		// cut loops & restore original loop conformation
 		// dilate loops
-		protocols::loops::LoopsOP loops = new protocols::loops::Loops( loops_input_ );
+		protocols::loops::LoopsOP loops( new protocols::loops::Loops( loops_input_ ) );
 		for ( loops::Loops::iterator it = loops->v_begin(), it_end = loops->v_end(); it != it_end; ++it ) {
 			if (!pose.fold_tree().is_cutpoint( it->start() - 1 ) )
 				it->set_start( it->start() - 1 );

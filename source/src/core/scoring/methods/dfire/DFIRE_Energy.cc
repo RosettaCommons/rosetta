@@ -50,7 +50,7 @@ methods::EnergyMethodOP
 DFIRE_EnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new DFIRE_Energy;
+	return methods::EnergyMethodOP( new DFIRE_Energy );
 }
 
 ScoreTypes
@@ -93,14 +93,14 @@ DFIRE_Energy::setup_for_scoring(
 
 	} else {
 		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		DenseEnergyContainerOP dec( static_cast< DenseEnergyContainer * > ( lrc.get() ) );
+		DenseEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::DenseEnergyContainer > ( lrc ) );
 		if ( dec->size() != pose.total_residue() ) {
 			create_new_lre_container = true;
 		}
 	}
 
 	if ( create_new_lre_container ) {
-		LREnergyContainerOP new_dec = new DenseEnergyContainer( pose.total_residue(), gb_elec );
+		LREnergyContainerOP new_dec( new DenseEnergyContainer( pose.total_residue(), gb_elec ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 }
@@ -110,7 +110,7 @@ DFIRE_Energy::setup_for_scoring(
 EnergyMethodOP
 DFIRE_Energy::clone() const
 {
-	return new DFIRE_Energy;
+	return EnergyMethodOP( new DFIRE_Energy );
 }
 
 /////////////////////////////////////////////////////////////////////////////

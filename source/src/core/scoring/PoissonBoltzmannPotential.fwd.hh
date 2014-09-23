@@ -22,10 +22,10 @@ namespace scoring {
 
 class PoissonBoltzmannPotential;
 
-typedef utility::pointer::owning_ptr< PoissonBoltzmannPotential > PoissonBoltzmannPotentialOP;
-typedef utility::pointer::owning_ptr< PoissonBoltzmannPotential const > PoissonBoltzmannPotentialCOP;
-typedef utility::pointer::access_ptr< PoissonBoltzmannPotential > PoissonBoltzmannPotentialAP;
-typedef utility::pointer::access_ptr< PoissonBoltzmannPotential const > PoissonBoltzmannPotentialCAP;
+typedef utility::pointer::shared_ptr< PoissonBoltzmannPotential > PoissonBoltzmannPotentialOP;
+typedef utility::pointer::shared_ptr< PoissonBoltzmannPotential const > PoissonBoltzmannPotentialCOP;
+typedef utility::pointer::weak_ptr< PoissonBoltzmannPotential > PoissonBoltzmannPotentialAP;
+typedef utility::pointer::weak_ptr< PoissonBoltzmannPotential const > PoissonBoltzmannPotentialCAP;
 }
 }
 

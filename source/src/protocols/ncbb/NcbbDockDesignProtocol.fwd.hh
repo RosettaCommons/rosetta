@@ -23,8 +23,8 @@ namespace ncbb {
 
 
 class NcbbDockDesignProtocol; // fwd declaration
-typedef utility::pointer::owning_ptr< NcbbDockDesignProtocol > NcbbDockDesignProtocolOP;
-typedef utility::pointer::owning_ptr< NcbbDockDesignProtocol const > NcbbDockDesignProtocolCOP;
+typedef utility::pointer::shared_ptr< NcbbDockDesignProtocol > NcbbDockDesignProtocolOP;
+typedef utility::pointer::shared_ptr< NcbbDockDesignProtocol const > NcbbDockDesignProtocolCOP;
 
 
 } // namespace ncbb

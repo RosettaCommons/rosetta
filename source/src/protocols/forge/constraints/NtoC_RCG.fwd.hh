@@ -23,7 +23,7 @@ namespace forge{
 namespace constraints{
 
 class NtoC_RCG;
-typedef utility::pointer::owning_ptr< NtoC_RCG > NtoC_RCGOP;
+typedef utility::pointer::shared_ptr< NtoC_RCG > NtoC_RCGOP;
 
 } //namespace constraints
 } //namespace forge

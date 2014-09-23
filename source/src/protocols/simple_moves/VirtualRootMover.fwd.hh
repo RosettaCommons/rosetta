@@ -22,8 +22,8 @@ namespace simple_moves{
 
 //Forwards and OP typedefs
 class VirtualRootMover;
-typedef utility::pointer::owning_ptr< VirtualRootMover > VirtualRootMoverOP;
-typedef utility::pointer::owning_ptr< VirtualRootMover const > VirtualRootMoverCOP;
+typedef utility::pointer::shared_ptr< VirtualRootMover > VirtualRootMoverOP;
+typedef utility::pointer::shared_ptr< VirtualRootMover const > VirtualRootMoverCOP;
 
 }//simple_moves
 }//protocols

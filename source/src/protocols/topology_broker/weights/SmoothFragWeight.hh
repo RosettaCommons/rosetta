@@ -58,11 +58,11 @@ private:
 }; //class SmoothFragWeight
 
 // Types
-typedef  utility::pointer::owning_ptr< SmoothFragWeight >  SmoothFragWeightOP;
-typedef  utility::pointer::owning_ptr< SmoothFragWeight const >  SmoothFragWeightCOP;
+typedef  utility::pointer::shared_ptr< SmoothFragWeight >  SmoothFragWeightOP;
+typedef  utility::pointer::shared_ptr< SmoothFragWeight const >  SmoothFragWeightCOP;
 
-typedef  utility::pointer::access_ptr< SmoothFragWeight >  SmoothFragWeightAP;
-typedef  utility::pointer::access_ptr< SmoothFragWeight const >  SmoothFragWeightCAP;
+typedef  utility::pointer::weak_ptr< SmoothFragWeight >  SmoothFragWeightAP;
+typedef  utility::pointer::weak_ptr< SmoothFragWeight const >  SmoothFragWeightCAP;
 
 }
 }

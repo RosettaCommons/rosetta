@@ -28,8 +28,8 @@ namespace rotamer_set {
 class RotamerSet;
 
 typedef utility::vector1< conformation::ResidueOP > Rotamers;
-typedef utility::pointer::owning_ptr< RotamerSet > RotamerSetOP;
-typedef utility::pointer::owning_ptr< RotamerSet const > RotamerSetCOP;
+typedef utility::pointer::shared_ptr< RotamerSet > RotamerSetOP;
+typedef utility::pointer::shared_ptr< RotamerSet const > RotamerSetCOP;
 
 
 } // namespace rotamer_set

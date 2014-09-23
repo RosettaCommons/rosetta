@@ -22,8 +22,8 @@ namespace denovo_protein_design{
 
 //Forwards and OP typedefs
 class DesignRelaxMover;
-typedef utility::pointer::owning_ptr< DesignRelaxMover > DesignRelaxMoverOP;
-typedef utility::pointer::owning_ptr< DesignRelaxMover const > DesignRelaxMoverCOP;
+typedef utility::pointer::shared_ptr< DesignRelaxMover > DesignRelaxMoverOP;
+typedef utility::pointer::shared_ptr< DesignRelaxMover const > DesignRelaxMoverCOP;
 
 }//DenovoProteinDesign
 }//devel

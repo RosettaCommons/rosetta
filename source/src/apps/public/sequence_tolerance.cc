@@ -145,7 +145,7 @@ sequence_tolerance_main( void * )
 	if ( !option[ in::file::s ].user() ) return 0;
 	pdbnames = option[ in::file::s ]().vector();
 	// load pdb
-	pose::PoseOP pose = new pose::Pose;
+	pose::PoseOP pose( new pose::Pose );
 	core::import_pose::pose_from_pdb( *pose, pdbnames.front() );
 	protocols::dna::add_constraints_from_file( *pose ); // (if specified by options)
 
@@ -157,7 +157,7 @@ sequence_tolerance_main( void * )
 	ga.set_frac_by_recomb( option[ ms::fraction_by_recombination ]() );
 
 	// create an entity template object from which all entities will be cloned
-	Entity::OP entity_template(new protocols::multistate_design::MultiStateEntity);
+	Entity::OP entity_template( new protocols::multistate_design::MultiStateEntity );
 	ga.set_entity_template(entity_template);
 
 	// enable checkpointing and load if the checkpoint files exist
@@ -168,14 +168,14 @@ sequence_tolerance_main( void * )
 	ga.read_checkpoint();
 
 	// set up the EntityRandomizer
-	PositionSpecificRandomizer::OP rand = new PositionSpecificRandomizer;
+	PositionSpecificRandomizer::OP rand( new PositionSpecificRandomizer );
 	rand->set_mutation_rate( option[ ms::mutate_rate ]() );
 	rand->set_entity_template(entity_template);
 
-	TaskFactoryOP taskfactory = new TaskFactory;
-	taskfactory->push_back( new operation::InitializeFromCommandline );
+	TaskFactoryOP taskfactory( new TaskFactory );
+	taskfactory->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
 	if ( option[ packing::resfile ].user() ) {
-		taskfactory->push_back( new operation::ReadResfile );
+		taskfactory->push_back( TaskOperationCOP( new operation::ReadResfile ) );
 	}
 	PackerTaskOP ptask = taskfactory->create_task_and_apply_taskoperations( *pose );
 
@@ -199,7 +199,7 @@ sequence_tolerance_main( void * )
 				if ( aaset.find( aa ) != aaset.end() ) continue;
 				aaset.insert(aa);
 				TR(t_debug) << "adding choice " << aa << std::endl;
-				choices.push_back( new PosType( i, aa ) );
+				choices.push_back( utility::pointer::shared_ptr<class protocols::genetic_algorithm::EntityElement>( new PosType( i, aa ) ) );
 			}
 			rand->append_choices( choices );
 		}
@@ -209,29 +209,25 @@ sequence_tolerance_main( void * )
 	ga.set_rand( rand );
 
 	// set up the FitnessFunction
-	MultiStatePackerOP func = new MultiStatePacker(option[ ms::num_packs ]());
-	func->set_aggregate_function(new MultiStateAggregateFunction());
+	MultiStatePackerOP func( new MultiStatePacker(option[ ms::num_packs ]()) );
+	func->set_aggregate_function(MultiStateAggregateFunction::COP( new MultiStateAggregateFunction() ));
 	ScoreFunctionOP score_function( core::scoring::get_score_function() );
 	func->set_scorefxn( score_function );
 
 	// set up the PoseMetricCalculators to be used by the SingleStateFitnessFunction
 	core::pose::metrics::CalculatorFactory & calculator_factory(core::pose::metrics::CalculatorFactory::Instance());
 
-	ResidueDecompositionByChainCalculatorOP res_decomp_calculator(new ResidueDecompositionByChainCalculator());
+	ResidueDecompositionByChainCalculatorOP res_decomp_calculator( new ResidueDecompositionByChainCalculator() );
 	calculator_factory.register_calculator("residue_decomposition", res_decomp_calculator);
 
-	DecomposeAndReweightEnergiesCalculatorOP decomp_reweight_calculator(
-		new DecomposeAndReweightEnergiesCalculator("residue_decomposition")
-	);
+	DecomposeAndReweightEnergiesCalculatorOP decomp_reweight_calculator( new DecomposeAndReweightEnergiesCalculator("residue_decomposition") );
 	if ( option[ seq_tol::fitness_master_weights ].user() ) {
 		decomp_reweight_calculator->master_weight_vector(option[ seq_tol::fitness_master_weights ]());
 	}
 	calculator_factory.register_calculator("fitness", decomp_reweight_calculator);
 
 	// done setting up the PoseMetricCalculators
-	protocols::multistate_design::MetricCalculatorFitnessFunctionOP metric_fitness_function(
-		new protocols::multistate_design::MetricCalculatorFitnessFunction("fitness", "weighted_total")
-	);
+	protocols::multistate_design::MetricCalculatorFitnessFunctionOP metric_fitness_function( new protocols::multistate_design::MetricCalculatorFitnessFunction("fitness", "weighted_total") );
 
 	// evaluate and output the fitness of the input pose
 	func->scorefxn()->score(*pose);
@@ -242,31 +238,31 @@ sequence_tolerance_main( void * )
 	// tell the FitnessFunction to add the vector of components without master weighting to MultiStateEntity objects
 	func->add_metric_value_getter(
 		"fitness_comp",
-		MetricValueGetter("fitness", "weighted_total_no_master_vector", new basic::MetricValue<utility::vector1<Real> >)
+		MetricValueGetter("fitness", "weighted_total_no_master_vector", basic::MetricValueBaseCOP( new basic::MetricValue<utility::vector1<Real> > ))
 	);
 
 	if ( option[ seq_tol::unsat_polars ] ) {
 		// tell the FitnessFunction to add buried unsatisfied polars to MultiStateEntity objects
-		calculator_factory.register_calculator("sasa", new core::pose::metrics::simple_calculators::SasaCalculatorLegacy());
-		calculator_factory.register_calculator("num_hbonds", new NumberHBondsCalculator());
-		calculator_factory.register_calculator("unsat_polars", new BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds"));
+		calculator_factory.register_calculator("sasa", PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy() ));
+		calculator_factory.register_calculator("num_hbonds", PoseMetricCalculatorOP( new NumberHBondsCalculator() ));
+		calculator_factory.register_calculator("unsat_polars", PoseMetricCalculatorOP( new BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds") ));
 		func->add_metric_value_getter(
 			"unsat_polars",
-			MetricValueGetter("unsat_polars", "all_bur_unsat_polars", new basic::MetricValue<Size>)
+			MetricValueGetter("unsat_polars", "all_bur_unsat_polars", basic::MetricValueBaseCOP( new basic::MetricValue<Size> ))
 		);
 	}
 
 	if ( option[ seq_tol::surface ] ) {
 		// tell the FitnessFunction to add the surface score to MultiStateEntity objects
-		calculator_factory.register_calculator("surface", new SurfaceCalculator());
+		calculator_factory.register_calculator("surface", PoseMetricCalculatorOP( new SurfaceCalculator() ));
 		func->add_metric_value_getter(
 			"surface",
-			MetricValueGetter("surface", "total_surface", new basic::MetricValue<Real>)
+			MetricValueGetter("surface", "total_surface", basic::MetricValueBaseCOP( new basic::MetricValue<Real> ))
 		);
 	}
 
 	// add target state to the FitnessFunction
-	PackingStateOP target_state = new PackingState( *pose, true );
+	PackingStateOP target_state( new PackingState( *pose, true ) );
 	target_state->fitness_function( metric_fitness_function );
 	target_state->create_packer_data( func->scorefxn(), ptask );
 	func->add_state( target_state );
@@ -290,7 +286,7 @@ sequence_tolerance_main( void * )
 			for ( utility::vector1<Size>::const_iterator i( design_positions.begin() ),
 						end( design_positions.end() ); i != end; ++i ) {
 				PosType pt( *i, (*s)->pose().residue_type(*i).aa() );
-				traits.push_back( new PosType( pt ) );
+				traits.push_back( utility::pointer::shared_ptr<class protocols::genetic_algorithm::EntityElement>( new PosType( pt ) ) );
 				TR(t_info) << pt.to_string() << " ";
 			}
 			ga.add_entity( traits );
@@ -315,7 +311,7 @@ sequence_tolerance_main( void * )
 	}
 
 	// output resulting solution(s)
-	protocols::dna::PDBOutputOP pdboutput = new protocols::dna::PDBOutput;
+	protocols::dna::PDBOutputOP pdboutput( new protocols::dna::PDBOutput );
 	pdboutput->reference_pose( *pose );
 	pdboutput->score_function( *score_function );
 
@@ -346,7 +342,7 @@ sequence_tolerance_main( void * )
 		// output pdb with information
 		std::string traitstring;
 		for ( core::Size traitnum = 1; traitnum <= entity.traits().size(); ++traitnum ) {
-			PosTypeCOP postype = dynamic_cast< PosType const * > ( entity.traits()[traitnum].get() );
+			PosTypeCOP postype = utility::pointer::dynamic_pointer_cast< protocols::multistate_design::PosType const > ( entity.traits()[traitnum] );
 			if ( ! postype ) {
 				utility_exit_with_message( "PosType dynamic cast failed for entity element with name " + entity.traits()[traitnum]->name() );
 			}

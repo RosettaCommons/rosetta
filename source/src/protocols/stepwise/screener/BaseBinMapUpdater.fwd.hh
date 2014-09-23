@@ -23,8 +23,8 @@ namespace stepwise {
 namespace screener {
 	
 	class BaseBinMapUpdater;
-	typedef utility::pointer::owning_ptr< BaseBinMapUpdater > BaseBinMapUpdaterOP;
-	typedef utility::pointer::owning_ptr< BaseBinMapUpdater const > BaseBinMapUpdaterCOP;
+	typedef utility::pointer::shared_ptr< BaseBinMapUpdater > BaseBinMapUpdaterOP;
+	typedef utility::pointer::shared_ptr< BaseBinMapUpdater const > BaseBinMapUpdaterCOP;
 	
 } //screener
 } //stepwise

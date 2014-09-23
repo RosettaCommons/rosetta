@@ -22,8 +22,8 @@ namespace pack {
 namespace interaction_graph {
 
 class DoubleDensePDInteractionGraph;
-typedef utility::pointer::owning_ptr< DoubleDensePDInteractionGraph > DoubleDensePDInteractionGraphOP;
-typedef utility::pointer::owning_ptr< DoubleDensePDInteractionGraph const > DoubleDensePDInteractionGraphCOP;
+typedef utility::pointer::shared_ptr< DoubleDensePDInteractionGraph > DoubleDensePDInteractionGraphOP;
+typedef utility::pointer::shared_ptr< DoubleDensePDInteractionGraph const > DoubleDensePDInteractionGraphCOP;
 
 } // namespace interaction_graph
 } // namespace pack

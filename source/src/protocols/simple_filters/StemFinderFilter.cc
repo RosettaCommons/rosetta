@@ -35,7 +35,7 @@ namespace simple_filters {
 static thread_local basic::Tracer TR( "protocols.simple_filters.StemFinder" );
 
 protocols::filters::FilterOP
-StemFinderFilterCreator::create_filter() const { return new StemFinder; }
+StemFinderFilterCreator::create_filter() const { return protocols::filters::FilterOP( new StemFinder ); }
 
 std::string
 StemFinderFilterCreator::keyname() const { return "StemFinder"; }

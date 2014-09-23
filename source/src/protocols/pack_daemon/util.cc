@@ -64,7 +64,7 @@ create_entity_resfile_contents(
 	make_pose_from_sequence( ala_pose, ala_seq, core::chemical::FA_STANDARD );
 	entity_task = TaskFactory::create_packer_task( ala_pose );
 
-	entity_resfile_contents = new ResfileContents( ala_pose, resfile );
+	entity_resfile_contents = core::pack::task::ResfileContentsOP( new ResfileContents( ala_pose, resfile ) );
 
 	/// apply the resfile operations to the entity_task_ for later error checking
 	for ( core::Size ii = 1; ii <= entity_task->total_residue(); ++ii ) {

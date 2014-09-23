@@ -23,8 +23,8 @@ namespace grafting {
 /// @brief  
 class DeleteRegionMover;
 
-typedef utility::pointer::owning_ptr<DeleteRegionMover> DeleteRegionMoverOP;
-typedef utility::pointer::owning_ptr<DeleteRegionMover const> DeleteRegionMoverCOP;
+typedef utility::pointer::shared_ptr<DeleteRegionMover> DeleteRegionMoverOP;
+typedef utility::pointer::shared_ptr<DeleteRegionMover const> DeleteRegionMoverCOP;
 
 }}  // namespace grafting_protocls
 

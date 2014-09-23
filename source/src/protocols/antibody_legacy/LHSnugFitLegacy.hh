@@ -66,7 +66,7 @@ public:
 	virtual std::string get_name() const;
 
 	void set_task_factory(core::pack::task::TaskFactoryCOP tf) {
-		tf_ = new core::pack::task::TaskFactory(*tf);
+		tf_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory(*tf) );
 	}
 
 private:

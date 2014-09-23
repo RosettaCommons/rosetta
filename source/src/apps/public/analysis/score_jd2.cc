@@ -81,11 +81,11 @@ public:
 	std::string get_name() const { return "MyScoreMover"; }
 
 	virtual MoverOP clone() const {
-		return new MyScoreMover( *this );
+		return MoverOP( new MyScoreMover( *this ) );
 	}
 
 	virtual	MoverOP	fresh_instance() const {
-		return new MyScoreMover;
+		return MoverOP( new MyScoreMover );
 	}
 
 	void set_keep_input_scores(){ keep_scores_flag_ = true; }
@@ -177,7 +177,7 @@ main( int argc, char * argv [] )
 
 	//The following lines are to ensure one can rescore the pcs energy term (that uses TopologyClaimer)
 	if( option[ broker::setup ].user() ){
-		protocols::topology_broker::TopologyBrokerOP top_bro_OP = new  topology_broker::TopologyBroker();
+		protocols::topology_broker::TopologyBrokerOP top_bro_OP( new  topology_broker::TopologyBroker() );
 		try{
 			add_cmdline_claims(*top_bro_OP, false /*do_I_need_fragments */);
 		}
@@ -188,11 +188,11 @@ main( int argc, char * argv [] )
 	}
 
 	//MyScoreMover* scoremover = new MyScoreMover;
-	MoverOP scoremover = new MyScoreMover;
+	MoverOP scoremover( new MyScoreMover );
 
 	// add constraints from cmd line
 	if ( option[ OptionKeys::constraints::cst_fa_file ].user() || option[ OptionKeys::constraints::cst_file ].user() ) {
-			protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
+			protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
 			protocols::simple_moves::ConstraintSetMoverOP loadCsts( new protocols::simple_moves::ConstraintSetMover );
 			if( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
 				loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );
@@ -207,16 +207,16 @@ main( int argc, char * argv [] )
 	// set pose for density scoring if a map was input
 	//   + (potentially) dock map into density
 	if ( option[ edensity::mapfile ].user() ) {
-		protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
-		seqmov->add_mover( new protocols::electron_density::SetupForDensityScoringMover );
+		protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
+		seqmov->add_mover( MoverOP( new protocols::electron_density::SetupForDensityScoringMover ) );
 		seqmov->add_mover( scoremover );
 		scoremover = seqmov;
 	}
 
 	// set pose for symmetry
 	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-		protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
-		seqmov->add_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
+		protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
+		seqmov->add_mover( MoverOP( new protocols::simple_moves::symmetry::SetupForSymmetryMover ) );
 		seqmov->add_mover( scoremover );
 		scoremover = seqmov;
 	}
@@ -228,7 +228,7 @@ main( int argc, char * argv [] )
 	// the  JobOutputter scorefile() function produces (which for example skips Evaluators!!)
 
 	// Set up a job outputter that writes a scorefile and no PDBs and no Silent Files.
-	SilentFileJobOutputterOP jobout = new SilentFileJobOutputter;
+	SilentFileJobOutputterOP jobout( new SilentFileJobOutputter );
 	jobout->set_write_no_structures();
 	jobout->set_write_separate_scorefile(true);
 

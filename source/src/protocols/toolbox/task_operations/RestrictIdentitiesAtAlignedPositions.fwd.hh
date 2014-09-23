@@ -22,8 +22,8 @@ namespace task_operations {
 
 class RestrictIdentitiesAtAlignedPositionsOperation;
 
-typedef utility::pointer::owning_ptr< RestrictIdentitiesAtAlignedPositionsOperation > RestrictIdentitiesAtAlignedPositionsOperationOP;
-typedef utility::pointer::owning_ptr< RestrictIdentitiesAtAlignedPositionsOperation const > RestrictIdentitiesAtAlignedPositionsOperationCOP;
+typedef utility::pointer::shared_ptr< RestrictIdentitiesAtAlignedPositionsOperation > RestrictIdentitiesAtAlignedPositionsOperationOP;
+typedef utility::pointer::shared_ptr< RestrictIdentitiesAtAlignedPositionsOperation const > RestrictIdentitiesAtAlignedPositionsOperationCOP;
 
 } //namespace protocols
 } //namespace toolbox

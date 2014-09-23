@@ -142,7 +142,7 @@ NoesyModule::~NoesyModule() {}
 
 ///Constructor   - read input files / requires options to be initialized
 NoesyModule::NoesyModule( std::string const& fasta_sequence ) :
-  crosspeaks_( NULL ),
+  crosspeaks_( /* NULL */ ),
 	sequence_( fasta_sequence )
 	//  main_resonances_( new ResonanceList( fasta_sequence ) )
 {
@@ -184,7 +184,7 @@ void NoesyModule::read_input_files() {
 
   { //scope
 		//read peak lists
-		crosspeaks_ = new CrossPeakList();
+		crosspeaks_ = CrossPeakListOP( new CrossPeakList() );
 		Size nfiles( option[ OptionKeys::noesy::in::peaks ]().size() );
 
 		//loop-all files: read one file at a time
@@ -213,7 +213,7 @@ void NoesyModule::read_input_files() {
 			throw utility::excn::EXCN_BadInput( "odd number of entries in option -noesy:in:peak_resonance_pairs, always provide pairs of files  <*.peaks> <*.prot>" );
 		}
 		for ( core::Size ifile = 1; ifile <= n_pair_files; ifile += 2 ) {
-			ResonanceListOP resonances = new ResonanceList( sequence() );
+			ResonanceListOP resonances( new ResonanceList( sequence() ) );
 			utility::io::izstream res_input_file( option[ OptionKeys::noesy::in::peak_resonance_pairs ]()[ ifile+1 ] );
 			if ( res_input_file.good() ) {
 				resonances->read_from_stream( res_input_file );
@@ -270,9 +270,9 @@ void NoesyModule::write_assignments( std::string file_name ) {
 	PeakFileFormatOP format;
 	std::string const format_str( option[ OptionKeys::noesy::out::format ]() );
 	if ( format_str == "xeasy" ) {
-		format = new PeakFileFormat_xeasy();
+		format = PeakFileFormatOP( new PeakFileFormat_xeasy() );
 	} else if ( format_str == "sparky" ) {
-		format = new PeakFileFormat_Sparky();
+		format = PeakFileFormatOP( new PeakFileFormat_Sparky() );
 	} else utility_exit_with_message( "NOE_data output format "+format_str+" is not known! ");
 	format->set_write_atom_names( option[ OptionKeys::noesy::out::names ]() );
 	format->set_write_only_highest_VC( option[ OptionKeys::noesy::out::unambiguous ]() );
@@ -335,8 +335,8 @@ void NoesyModule::generate_constraint_files(
   core::pose::Pose centroid_pose = pose;
 	core::util::switch_to_residue_type_set( centroid_pose, core::chemical::CENTROID );
 
-	ConstraintSetOP cstset = new ConstraintSet;
-	ConstraintSetOP centroid_cstset = new ConstraintSet;
+	ConstraintSetOP cstset( new ConstraintSet );
+	ConstraintSetOP centroid_cstset( new ConstraintSet );
 	tr.Info << "generate constraints..." << std::endl;
 	crosspeaks_->generate_fa_and_cen_constraints(
 	   	 cstset,

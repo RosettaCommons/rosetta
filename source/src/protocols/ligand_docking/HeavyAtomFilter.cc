@@ -73,7 +73,7 @@ HeavyAtomFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 }
 
 protocols::filters::FilterOP
-HeavyAtomFilterCreator::create_filter() const { return new HeavyAtomFilter; }
+HeavyAtomFilterCreator::create_filter() const { return protocols::filters::FilterOP( new HeavyAtomFilter ); }
 
 std::string
 HeavyAtomFilterCreator::keyname() const { return "HeavyAtom"; }

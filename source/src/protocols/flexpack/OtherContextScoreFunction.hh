@@ -94,8 +94,8 @@ private:
 };
 
 /// CREATE A .FWD.HH FILE AND PUT THIS TYPEDEF THERE
-typedef utility::pointer::owning_ptr< OtherContextScoreFunction > OtherContextScoreFunctionOP;
-typedef utility::pointer::owning_ptr< OtherContextScoreFunction const > OtherContextScoreFunctionCOP;
+typedef utility::pointer::shared_ptr< OtherContextScoreFunction > OtherContextScoreFunctionOP;
+typedef utility::pointer::shared_ptr< OtherContextScoreFunction const > OtherContextScoreFunctionCOP;
 
 }
 }

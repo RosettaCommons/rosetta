@@ -24,9 +24,9 @@ namespace saxs {
 
 class FormFactorManager;
 
-typedef utility::pointer::owning_ptr<FormFactorManager>
+typedef utility::pointer::shared_ptr<FormFactorManager>
 		FormFactorManagerOP;
-typedef utility::pointer::owning_ptr<FormFactorManager const>
+typedef utility::pointer::shared_ptr<FormFactorManager const>
 		FormFactorManagerCOP;
 
 } // saxs

@@ -23,8 +23,8 @@ namespace protocols {
 namespace matdes {
 
 class MatDesPointMutationCalculator;
-typedef utility::pointer::owning_ptr< MatDesPointMutationCalculator >  MatDesPointMutationCalculatorOP;
-typedef utility::pointer::owning_ptr< MatDesPointMutationCalculator const >  MatDesPointMutationCalculatorCOP;
+typedef utility::pointer::shared_ptr< MatDesPointMutationCalculator >  MatDesPointMutationCalculatorOP;
+typedef utility::pointer::shared_ptr< MatDesPointMutationCalculator const >  MatDesPointMutationCalculatorCOP;
 
 
 } // namespace matdes

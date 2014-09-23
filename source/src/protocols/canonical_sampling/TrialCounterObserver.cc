@@ -46,7 +46,7 @@ TrialCounterObserverCreator::keyname() const {
 
 protocols::moves::MoverOP
 TrialCounterObserverCreator::create_mover() const {
-	return new TrialCounterObserver;
+	return protocols::moves::MoverOP( new TrialCounterObserver );
 }
 
 std::string
@@ -69,7 +69,7 @@ std::string TrialCounterObserver::get_name() const {
 
 protocols::moves::MoverOP
 TrialCounterObserver::clone() const {
-	return new TrialCounterObserver( *this );
+	return protocols::moves::MoverOP( new TrialCounterObserver( *this ) );
 }
 
 

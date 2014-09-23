@@ -51,13 +51,13 @@ public:
 
   //
   SingleResidueFragDataOP clone() const {
-    return new SecstructSRFD( *this );
+    return SingleResidueFragDataOP( new SecstructSRFD( *this ) );
   };
 
 	/// @brief create a new instance of this object
 	virtual
 	SingleResidueFragDataOP create() const {
-		return new SecstructSRFD();
+		return SingleResidueFragDataOP( new SecstructSRFD() );
 	}
 
   /// get secstruct for this position

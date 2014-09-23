@@ -66,7 +66,7 @@ StoreCombinedStoredTasksMover::apply( core::pose::Pose & pose )
 	} else {
 		core::Size total_residue;
 		// Grab a reference to the data and check that the user-defined tasks are present.
-		protocols::toolbox::task_operations::STMStoredTask & stored_tasks = *( static_cast< protocols::toolbox::task_operations::STMStoredTask* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS )() ) );
+		protocols::toolbox::task_operations::STMStoredTask & stored_tasks = *( utility::pointer::static_pointer_cast< protocols::toolbox::task_operations::STMStoredTask > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::STM_STORED_TASKS ) ) );
 		if (!stored_tasks.has_task(task1_)) {
 			utility_exit_with_message("No stored task with the name " + task1_ + " found");
 		} else if (!stored_tasks.has_task(task2_)) {
@@ -163,17 +163,17 @@ std::string StoreCombinedStoredTasksMover::get_name() const { return "StoreCombi
 
 protocols::moves::MoverOP
 StoreCombinedStoredTasksMoverCreator::create_mover() const {
-	return new StoreCombinedStoredTasksMover;
+	return protocols::moves::MoverOP( new StoreCombinedStoredTasksMover );
 }
 
 protocols::moves::MoverOP
 StoreCombinedStoredTasksMover::clone() const {
-	return new StoreCombinedStoredTasksMover( *this );
+	return protocols::moves::MoverOP( new StoreCombinedStoredTasksMover( *this ) );
 }
 
 protocols::moves::MoverOP
 StoreCombinedStoredTasksMover::fresh_instance() const {
-	return new StoreCombinedStoredTasksMover;
+	return protocols::moves::MoverOP( new StoreCombinedStoredTasksMover );
 }
 
 } // task_operations

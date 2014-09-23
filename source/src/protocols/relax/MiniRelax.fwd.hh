@@ -22,7 +22,7 @@ namespace protocols {
 namespace relax {
 
 	class MiniRelax;
-	typedef utility::pointer::owning_ptr< MiniRelax > MiniRelaxOP;
+	typedef utility::pointer::shared_ptr< MiniRelax > MiniRelaxOP;
 
 }
 }

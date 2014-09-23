@@ -84,7 +84,7 @@ core::scoring::methods::EnergyMethodOP
 PseudocontactShiftEnergyCreator::create_energy_method(
 	core::scoring::methods::EnergyMethodOptions const &
 ) const {
-	return new PCS_Energy;
+	return core::scoring::methods::EnergyMethodOP( new PCS_Energy );
 }
 
 core::scoring::ScoreTypes
@@ -125,7 +125,7 @@ PCS_Energy::PCS_Energy() :
 /// clone
 core::scoring::methods::EnergyMethodOP
 PCS_Energy::clone() const{
-	return new PCS_Energy;
+	return core::scoring::methods::EnergyMethodOP( new PCS_Energy );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -151,7 +151,7 @@ PCS_Energy::PCS_data_from_pose(core::pose::Pose & pose) const{
 
 	if ( (!have_exclusions_changed) &&
 			 ( pose.data().has( core::pose::datacache::CacheableDataType::PSEUDOCONTACT_SHIFT_DATA ) ) ){
-		return *( static_cast< PCS_data * >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::PSEUDOCONTACT_SHIFT_DATA )() ) );
+		return *( utility::pointer::static_pointer_cast< protocols::scoring::methods::pcs::PCS_data > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::PSEUDOCONTACT_SHIFT_DATA ) ) );
 	}
 
 	bool has_exclude_residues = PCS_Energy_parameters_manager::get_instance()->has_exclude_residues_vector();
@@ -176,9 +176,9 @@ PCS_Energy::PCS_data_from_pose(core::pose::Pose & pose) const{
 	if (has_exclude_residues) {
 		utility::vector1< bool > exclude_residues;
 		exclude_residues = PCS_Energy_parameters_manager::get_instance()->get_vector_exclude_residues();
-		pcs_d = new PCS_data(pcs_d_i, exclude_residues);
+		pcs_d = PCS_dataOP( new PCS_data(pcs_d_i, exclude_residues) );
 	} else {
-		pcs_d = new PCS_data(pcs_d_i);
+		pcs_d = PCS_dataOP( new PCS_data(pcs_d_i) );
 	}
 
 	if ( have_exclusions_changed ) {

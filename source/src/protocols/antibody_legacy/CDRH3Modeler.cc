@@ -206,7 +206,7 @@ void CDRH3Modeler::apply( pose::Pose & pose_in ) {
 
 		// Packer
 		protocols::simple_moves::PackRotamersMoverOP packer;
-		packer = new protocols::simple_moves::PackRotamersMover( highres_scorefxn_ );
+		packer = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( highres_scorefxn_ ) );
 		packer->task_factory(tf_);
 		packer->apply( antibody_in_.Fv );
 	}
@@ -218,7 +218,7 @@ void CDRH3Modeler::apply( pose::Pose & pose_in ) {
 			if( antibody_refine_ && !snug_fit_ )
 				repack_cycles = 3;
 			protocols::simple_moves::PackRotamersMoverOP packer;
-			packer = new protocols::simple_moves::PackRotamersMover( highres_scorefxn_ );
+			packer = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( highres_scorefxn_ ) );
 			packer->task_factory(tf_);
 			packer->nloop( repack_cycles );
 			packer->apply( antibody_in_.Fv );
@@ -280,7 +280,7 @@ void CDRH3Modeler::build_centroid_loop() {
 	simple_one_loop_fold_tree( antibody_in_.Fv, cdr_h3 );
 
 	// silly hack to make extended loops to work
-	loops::LoopsOP cdr_h3_loop_list = new loops::Loops();
+	loops::LoopsOP cdr_h3_loop_list( new loops::Loops() );
 	cdr_h3_loop_list->add_loop( cdr_h3 );
 	/* Commented out by BDW with JX's consent
 	loops::loop_mover::LoopMoverOP my_loop_move =  new loops::loop_mover::LoopMover( cdr_h3_loop_list );
@@ -740,7 +740,7 @@ void CDRH3Modeler::scored_frag_close (
 
 	//setting MoveMap
 	kinematics::MoveMapOP cdrh3_map;
-	cdrh3_map = new kinematics::MoveMap();
+	cdrh3_map = kinematics::MoveMapOP( new kinematics::MoveMap() );
 	cdrh3_map->clear();
 	cdrh3_map->set_chi( true );
 	cdrh3_map->set_bb( false );
@@ -752,15 +752,15 @@ void CDRH3Modeler::scored_frag_close (
 	// setup monte_carlo
 	Real temp( 2.0);
 	MonteCarloOP mc, outer_mc;
-	mc = new moves::MonteCarlo( pose_in, *lowres_scorefxn_, temp );
-	outer_mc = new moves::MonteCarlo( pose_in, *lowres_scorefxn_, temp );
+	mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *lowres_scorefxn_, temp ) );
+	outer_mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *lowres_scorefxn_, temp ) );
 	Size buffer( (is_camelid_ && antibody_in_.extended_) ? 2 : 0 );
 	while( !loop_found && ( total_cycles++ < cycles1) ) {
 		// insert random fragments over the whole loop
 		for(Size ii = trimmed_cdr_h3.start(); ii<=trimmed_cdr_h3.stop()
 		        - ( buffer + (frag_size - 1 ) ); ii++ ) {
-			ClassicFragmentMoverOP cfm = new ClassicFragmentMover( frags_to_use,
-			        cdrh3_map);
+			ClassicFragmentMoverOP cfm( new ClassicFragmentMover( frags_to_use,
+			        cdrh3_map) );
 			cfm->set_check_ss( false );
 			cfm->enable_end_bias_check( false );
 			cfm->define_start_window( ii );
@@ -773,8 +773,8 @@ void CDRH3Modeler::scored_frag_close (
 		Size local_h3_attempts(0);
 		for ( Size c2 = 1; c2 <= cycles2; ++c2 ) {
 			// apply a random fragment
-			ClassicFragmentMoverOP cfm = new ClassicFragmentMover( frags_to_use,
-			        cdrh3_map);
+			ClassicFragmentMoverOP cfm( new ClassicFragmentMover( frags_to_use,
+			        cdrh3_map) );
 			cfm->set_check_ss( false );
 			cfm->enable_end_bias_check( false );
 			cfm->apply( pose_in );
@@ -802,13 +802,13 @@ void CDRH3Modeler::scored_frag_close (
 			if ( (c2 > cycles2/2 && numeric::random::rg().uniform() * cycles2 < c2) ||
 			        ( trimmed_cdr_h3.size() <= 5) ) {
 				// in 2nd half of simulation, start trying to close the loop:
-				CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover( trimmed_cdr_h3, cdrh3_map );
+				CCDLoopClosureMoverOP ccd_moves( new CCDLoopClosureMover( trimmed_cdr_h3, cdrh3_map ) );
 				RepeatMoverOP ccd_cycle;
 				if( trimmed_cdr_h3.size() <= 5 ) {
-					ccd_cycle = new RepeatMover(ccd_moves,500*trimmed_cdr_h3.size());
+					ccd_cycle = RepeatMoverOP( new RepeatMover(ccd_moves,500*trimmed_cdr_h3.size()) );
 					ccd_cycle->apply( pose_in );
 				} else {
-					ccd_cycle = new RepeatMover(ccd_moves, 10*trimmed_cdr_h3.size());
+					ccd_cycle = RepeatMoverOP( new RepeatMover(ccd_moves, 10*trimmed_cdr_h3.size()) );
 					ccd_cycle->apply( pose_in );
 				}
 				mc->boltzmann( pose_in );
@@ -816,8 +816,8 @@ void CDRH3Modeler::scored_frag_close (
 		}
 
 		mc->recover_low( pose_in );
-		CCDLoopClosureMoverOP ccd_closure = new CCDLoopClosureMover(
-		    trimmed_cdr_h3, cdrh3_map );
+		CCDLoopClosureMoverOP ccd_closure( new CCDLoopClosureMover(
+		    trimmed_cdr_h3, cdrh3_map ) );
 		ccd_closure->tolerance( ccd_threshold );
 		ccd_closure->max_cycles( 500 );
 		ccd_closure->apply( pose_in );
@@ -1074,7 +1074,7 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 
 	//setting MoveMap
 	kinematics::MoveMapOP cdrh3_map;
-	cdrh3_map = new kinematics::MoveMap();
+	cdrh3_map = kinematics::MoveMapOP( new kinematics::MoveMap() );
 	cdrh3_map->clear();
 	cdrh3_map->set_chi( false );
 	cdrh3_map->set_bb( false );
@@ -1122,8 +1122,8 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 	ChangeFoldTreeMoverOP one_loop_fold_tree;
 	ChangeFoldTreeMoverOP with_flank_fold_tree;
 	simple_fold_tree( pose_in, loop_begin - 1, cutpoint, loop_end + 1 );
-	one_loop_fold_tree = new ChangeFoldTreeMover( pose_in.fold_tree() );
-	with_flank_fold_tree = new ChangeFoldTreeMover( pose_in.fold_tree() );
+	one_loop_fold_tree = ChangeFoldTreeMoverOP( new ChangeFoldTreeMover( pose_in.fold_tree() ) );
+	with_flank_fold_tree = ChangeFoldTreeMoverOP( new ChangeFoldTreeMover( pose_in.fold_tree() ) );
 
 	//////////////////
 	// setup fold_tree
@@ -1131,7 +1131,7 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 	if( current_loop_is_H3_  && flank_relax_ && freeze_h3_) {
 		simple_fold_tree( pose_in, loop_begin - h3_flank_ - 1, cutpoint,
 		                  loop_end + h3_flank_ + 1 );
-		with_flank_fold_tree = new ChangeFoldTreeMover( pose_in.fold_tree() );
+		with_flank_fold_tree = ChangeFoldTreeMoverOP( new ChangeFoldTreeMover( pose_in.fold_tree() ) );
 		for( Size i = 1; i <= pose_in.total_residue(); i++ )
 			if( (i >= (loop_begin - h3_flank_)) && (i <= (loop_end + h3_flank_)))
 				flank_allow_bb_move[i] = true;
@@ -1159,10 +1159,10 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 	                      allow_repack);
 	cdrh3_map->set_chi( allow_repack );
 
-	protocols::simple_moves::PackRotamersMoverOP loop_repack=new protocols::simple_moves::PackRotamersMover(highres_scorefxn_);
+	protocols::simple_moves::PackRotamersMoverOP loop_repack( new protocols::simple_moves::PackRotamersMover(highres_scorefxn_) );
 	setup_packer_task( start_pose_ );
 	( *highres_scorefxn_ )( pose_in );
-	tf_->push_back( new RestrictToInterface( allow_repack ) );
+	tf_->push_back( TaskOperationCOP( new RestrictToInterface( allow_repack ) ) );
 	loop_repack->task_factory(tf_);
 	// loop_repack->apply( pose_in );
 
@@ -1170,8 +1170,8 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 	if( benchmark_ ) min_tolerance = 1.0;
 	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
 	bool nb_list = true;
-	protocols::simple_moves::MinMoverOP loop_min_mover = new protocols::simple_moves::MinMover( cdrh3_map,
-	        highres_scorefxn_, min_type, min_tolerance, nb_list );
+	protocols::simple_moves::MinMoverOP loop_min_mover( new protocols::simple_moves::MinMover( cdrh3_map,
+	        highres_scorefxn_, min_type, min_tolerance, nb_list ) );
 
 	// more params
 	Size n_small_moves ( numeric::max(Size(5), Size(loop_size/2)) );
@@ -1189,12 +1189,12 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 
 	Real high_move_temp = 2.00;
 	// minimize amplitude of moves if correct parameter is set
-	protocols::simple_moves::BackboneMoverOP small_mover = new protocols::simple_moves::SmallMover( cdrh3_map,
+	protocols::simple_moves::BackboneMoverOP small_mover( new protocols::simple_moves::SmallMover( cdrh3_map,
 	        high_move_temp,
-	        n_small_moves );
-	protocols::simple_moves::BackboneMoverOP shear_mover = new protocols::simple_moves::ShearMover( cdrh3_map,
+	        n_small_moves ) );
+	protocols::simple_moves::BackboneMoverOP shear_mover( new protocols::simple_moves::ShearMover( cdrh3_map,
 	        high_move_temp,
-	        n_small_moves );
+	        n_small_moves ) );
 	if( min_base_relax_ ) {
 		small_mover->angle_max( 'H', 0.5 );
 		small_mover->angle_max( 'E', 0.5 );
@@ -1211,8 +1211,8 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 		shear_mover->angle_max( 'L', 6.0 );
 	}
 
-	CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover( one_loop, cdrh3_map );
-	RepeatMoverOP ccd_cycle = new RepeatMover(ccd_moves, n_small_moves);
+	CCDLoopClosureMoverOP ccd_moves( new CCDLoopClosureMover( one_loop, cdrh3_map ) );
+	RepeatMoverOP ccd_cycle( new RepeatMover(ccd_moves, n_small_moves) );
 
 	SequenceMoverOP wiggle_cdr_h3( new SequenceMover() );
 	wiggle_cdr_h3->add_mover( one_loop_fold_tree );
@@ -1234,9 +1234,9 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 	cdrh3_map->set_chi( allow_repack );
 	setup_packer_task( start_pose_ );
 	( *highres_scorefxn_ )( pose_in );
-	tf_->push_back( new RestrictToInterface( allow_repack ) );
-	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover(
-	    highres_scorefxn_, tf_ );
+	tf_->push_back( TaskOperationCOP( new RestrictToInterface( allow_repack ) ) );
+	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover(
+	    highres_scorefxn_, tf_ ) );
 
 	pack_rottrial->apply( pose_in );
 
@@ -1247,7 +1247,7 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 	Real temperature = init_temp;
 
 	MonteCarloOP mc;
-	mc = new moves::MonteCarlo( pose_in, *highres_scorefxn_, temperature );
+	mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *highres_scorefxn_, temperature ) );
 	mc->reset( pose_in ); // monte carlo reset
 
 	bool relaxed_H3_found_ever( false );
@@ -1276,9 +1276,9 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 			cdrh3_map->set_chi( allow_repack );
 			setup_packer_task( start_pose_ );
 			( *highres_scorefxn_ )( pose_in );
-			tf_->push_back( new RestrictToInterface( allow_repack ) );
-			protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover(
-			    highres_scorefxn_, tf_ );
+			tf_->push_back( TaskOperationCOP( new RestrictToInterface( allow_repack ) ) );
+			protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover(
+			    highres_scorefxn_, tf_ ) );
 			pack_rottrial->apply( pose_in );
 
 			bool relaxed_H3_found_current(false);
@@ -1320,10 +1320,10 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 
 			if ( numeric::mod(j,Size(20))==0 || j==inner_cycles ) {
 				// repack trial
-				loop_repack = new protocols::simple_moves::PackRotamersMover( highres_scorefxn_ );
+				loop_repack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( highres_scorefxn_ ) );
 				setup_packer_task( start_pose_ );
 				( *highres_scorefxn_ )( pose_in );
-				tf_->push_back( new RestrictToInterface( allow_repack ) );
+				tf_->push_back( TaskOperationCOP( new RestrictToInterface( allow_repack ) ) );
 				loop_repack->task_factory( tf_ );
 				loop_repack->apply( pose_in );
 				mc->boltzmann( pose_in );
@@ -1391,7 +1391,7 @@ CDRH3Modeler::loop_centroid_relax( pose::Pose & pose_in, Size const loop_begin, 
 
 	//setting MoveMap
 	kinematics::MoveMapOP loop_map;
-	loop_map = new kinematics::MoveMap();
+	loop_map = kinematics::MoveMapOP( new kinematics::MoveMap() );
 	loop_map->clear();
 	loop_map->set_chi( false );
 	loop_map->set_bb( false );
@@ -1428,8 +1428,8 @@ CDRH3Modeler::loop_centroid_relax( pose::Pose & pose_in, Size const loop_begin, 
 	if( benchmark_ ) min_tolerance = 1.0;
 	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
 	bool nb_list = true;
-	protocols::simple_moves::MinMoverOP loop_min_mover = new protocols::simple_moves::MinMover( loop_map,
-	        lowres_scorefxn_, min_type, min_tolerance, nb_list );
+	protocols::simple_moves::MinMoverOP loop_min_mover( new protocols::simple_moves::MinMover( loop_map,
+	        lowres_scorefxn_, min_type, min_tolerance, nb_list ) );
 
 	// more params
 	Size n_small_moves ( numeric::max(Size(5), Size(loop_size/2)) );
@@ -1447,12 +1447,12 @@ CDRH3Modeler::loop_centroid_relax( pose::Pose & pose_in, Size const loop_begin, 
 
 	Real high_move_temp = 2.00;
 	// minimize amplitude of moves if correct parameter is set
-	protocols::simple_moves::BackboneMoverOP small_mover = new protocols::simple_moves::SmallMover( loop_map,
+	protocols::simple_moves::BackboneMoverOP small_mover( new protocols::simple_moves::SmallMover( loop_map,
 	        high_move_temp,
-	        n_small_moves );
-	protocols::simple_moves::BackboneMoverOP shear_mover = new protocols::simple_moves::ShearMover( loop_map,
+	        n_small_moves ) );
+	protocols::simple_moves::BackboneMoverOP shear_mover( new protocols::simple_moves::ShearMover( loop_map,
 	        high_move_temp,
-	        n_small_moves );
+	        n_small_moves ) );
 	small_mover->angle_max( 'H', 2.0 );
 	small_mover->angle_max( 'E', 5.0 );
 	small_mover->angle_max( 'L', 6.0 );
@@ -1461,8 +1461,8 @@ CDRH3Modeler::loop_centroid_relax( pose::Pose & pose_in, Size const loop_begin, 
 	shear_mover->angle_max( 'E', 5.0 );
 	shear_mover->angle_max( 'L', 6.0 );
 
-	CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover( one_loop, loop_map );
-	RepeatMoverOP ccd_cycle = new RepeatMover(ccd_moves, n_small_moves);
+	CCDLoopClosureMoverOP ccd_moves( new CCDLoopClosureMover( one_loop, loop_map ) );
+	RepeatMoverOP ccd_cycle( new RepeatMover(ccd_moves, n_small_moves) );
 
 	SequenceMoverOP wiggle_cdr_h3( new SequenceMover() );
 	wiggle_cdr_h3->add_mover( small_mover );
@@ -1478,7 +1478,7 @@ CDRH3Modeler::loop_centroid_relax( pose::Pose & pose_in, Size const loop_begin, 
 	Real temperature = init_temp;
 
 	MonteCarloOP mc;
-	mc = new moves::MonteCarlo( pose_in, *lowres_scorefxn_, temperature );
+	mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *lowres_scorefxn_, temperature ) );
 	mc->reset( pose_in ); // monte carlo reset
 
 	// outer cycle
@@ -1517,27 +1517,25 @@ CDRH3Modeler::setup_packer_task(
 	using namespace pack::task::operation;
 
 	if( init_task_factory_ ) {
-		tf_ = new TaskFactory( *init_task_factory_ );
+		tf_ = core::pack::task::TaskFactoryOP( new TaskFactory( *init_task_factory_ ) );
 		TR << "CDRH3Modeler Reinitializing Packer Task" << std::endl;
 		return;
 	} else
-		tf_ = new TaskFactory;
+		tf_ = core::pack::task::TaskFactoryOP( new TaskFactory );
 
 	TR << "CDRH3Modeler Setting Up Packer Task" << std::endl;
 
-	tf_->push_back( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueLacksProperty("PROTEIN") ) ) );
-	tf_->push_back( new InitializeFromCommandline );
-	tf_->push_back( new IncludeCurrent );
-	tf_->push_back( new RestrictToRepacking );
-	tf_->push_back( new NoRepackDisulfides );
+	tf_->push_back( TaskOperationCOP( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueLacksProperty("PROTEIN") ) ) ) );
+	tf_->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
+	tf_->push_back( TaskOperationCOP( new IncludeCurrent ) );
+	tf_->push_back( TaskOperationCOP( new RestrictToRepacking ) );
+	tf_->push_back( TaskOperationCOP( new NoRepackDisulfides ) );
 
 	// incorporating Ian's UnboundRotamer operation.
 	// note that nothing happens if unboundrot option is inactive!
-	pack::rotamer_set::UnboundRotamersOperationOP unboundrot =
-	    new pack::rotamer_set::UnboundRotamersOperation();
+	pack::rotamer_set::UnboundRotamersOperationOP unboundrot( new pack::rotamer_set::UnboundRotamersOperation() );
 	unboundrot->initialize_from_command_line();
-	operation::AppendRotamerSetOP unboundrot_operation =
-	    new operation::AppendRotamerSet( unboundrot );
+	operation::AppendRotamerSetOP unboundrot_operation( new operation::AppendRotamerSet( unboundrot ) );
 	tf_->push_back( unboundrot_operation );
 	// adds scoring bonuses for the "unbound" rotamers, if any
 	core::pack::dunbrack::load_unboundrot( pose_in );

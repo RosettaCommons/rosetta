@@ -24,8 +24,8 @@ namespace methods {
 
 class OneBodyEnergy;
 
-typedef utility::pointer::owning_ptr< OneBodyEnergy > OneBodyEnergyOP;
-typedef utility::pointer::owning_ptr< OneBodyEnergy const > OneBodyEnergyCOP;
+typedef utility::pointer::shared_ptr< OneBodyEnergy > OneBodyEnergyOP;
+typedef utility::pointer::shared_ptr< OneBodyEnergy const > OneBodyEnergyCOP;
 
 
 } // methods

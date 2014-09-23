@@ -45,7 +45,7 @@ CellOP
 DP_Matrix::operator ()( Size row, Size col ) const {
 	// matrix is implicitly surrounded by 0's
 	if ( row < 1 || row > rows() || col < 1 || col > cols() ) {
-		return new Cell( 0 );
+		return CellOP( new Cell( 0 ) );
 	}
 
 	return scoring_matrix_[ row ][ col ];

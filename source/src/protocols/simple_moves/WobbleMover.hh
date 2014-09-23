@@ -41,8 +41,8 @@ namespace protocols {
 namespace simple_moves {
 
 class WobbleMover;
-typedef utility::pointer::owning_ptr< WobbleMover > WobbleMoverOP;
-typedef utility::pointer::owning_ptr< const WobbleMover > WobbleMoverCOP;
+typedef utility::pointer::shared_ptr< WobbleMover > WobbleMoverOP;
+typedef utility::pointer::shared_ptr< const WobbleMover > WobbleMoverCOP;
 
 
 ///@brief A protocols::moves::Mover class for a classic-wobble analog: a smooth move followed by ccd closure

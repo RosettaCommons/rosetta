@@ -23,8 +23,8 @@ namespace stepwise {
 namespace screener {
 	
 	class AnchorSugarScreener;
-	typedef utility::pointer::owning_ptr< AnchorSugarScreener > AnchorSugarScreenerOP;
-	typedef utility::pointer::owning_ptr< AnchorSugarScreener const > AnchorSugarScreenerCOP;
+	typedef utility::pointer::shared_ptr< AnchorSugarScreener > AnchorSugarScreenerOP;
+	typedef utility::pointer::shared_ptr< AnchorSugarScreener const > AnchorSugarScreenerCOP;
 	
 } //screener
 } //stepwise

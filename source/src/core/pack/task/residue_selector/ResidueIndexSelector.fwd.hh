@@ -27,8 +27,8 @@ namespace residue_selector {
 
 class ResidueIndexSelector;
 
-typedef utility::pointer::owning_ptr< ResidueIndexSelector > ResidueIndexSelectorOP;
-typedef utility::pointer::owning_ptr< ResidueIndexSelector const > ResidueIndexSelectorCOP;
+typedef utility::pointer::shared_ptr< ResidueIndexSelector > ResidueIndexSelectorOP;
+typedef utility::pointer::shared_ptr< ResidueIndexSelector const > ResidueIndexSelectorCOP;
 
 } //namespace residue_selector
 } //namespace task

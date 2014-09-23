@@ -76,7 +76,7 @@ methods::EnergyMethodOP
 ProQ_EnergyCreator::create_energy_method(
 		methods::EnergyMethodOptions const &
 ) const {
-	return new ProQ_Energy;
+	return methods::EnergyMethodOP( new ProQ_Energy );
 }
 
 ScoreTypes
@@ -145,7 +145,7 @@ EnergyMethodOP
 ProQ_Energy::clone() const
 {
 	//std::cout << "Cloning ProQ... " << nres_ << "\n";
-	return new ProQ_Energy ( *this );
+	return EnergyMethodOP( new ProQ_Energy ( *this ) );
 }
 
 /////////////////////////////////////////////////////////////////////////////

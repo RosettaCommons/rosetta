@@ -118,7 +118,7 @@ StubScoreFilter::parse_my_tag( utility::tag::TagCOP tag,
 
 protocols::filters::FilterOP
 StubScoreFilter::fresh_instance() const{
-	return new StubScoreFilter();
+	return protocols::filters::FilterOP( new StubScoreFilter() );
 }
 
 StubScoreFilter::~StubScoreFilter(){}
@@ -126,11 +126,11 @@ StubScoreFilter::~StubScoreFilter(){}
 
 protocols::filters::FilterOP
 StubScoreFilter::clone() const{
-	return new StubScoreFilter( *this );
+	return protocols::filters::FilterOP( new StubScoreFilter( *this ) );
 }
 
 protocols::filters::FilterOP
-StubScoreFilterCreator::create_filter() const { return new StubScoreFilter; }
+StubScoreFilterCreator::create_filter() const { return protocols::filters::FilterOP( new StubScoreFilter ); }
 
 std::string
 StubScoreFilterCreator::keyname() const { return "StubScore"; }

@@ -49,7 +49,7 @@ public: // typedefs
 	typedef core::pack::task::PackerTask PackerTask;
 	typedef protocols::moves::MoverOP MoverOP;
 	typedef protocols::forge::remodel::RemodelData RemodelData;
-	typedef utility::pointer::owning_ptr< protocols::cluster::ClusterPhilStyle > ClusterPhilStyleOP;
+	typedef utility::pointer::shared_ptr< protocols::cluster::ClusterPhilStyle > ClusterPhilStyleOP;
 
 
 public: //constructor/destructor

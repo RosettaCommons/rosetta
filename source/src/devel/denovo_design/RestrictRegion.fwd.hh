@@ -28,11 +28,11 @@ namespace denovo_design {
 class RestrictRegion;
 
 // Types
-typedef  utility::pointer::owning_ptr< RestrictRegion >  RestrictRegionOP;
-typedef  utility::pointer::owning_ptr< RestrictRegion const >  RestrictRegionCOP;
+typedef  utility::pointer::shared_ptr< RestrictRegion >  RestrictRegionOP;
+typedef  utility::pointer::shared_ptr< RestrictRegion const >  RestrictRegionCOP;
 
-typedef  utility::pointer::access_ptr< RestrictRegion >  RestrictRegionAP;
-typedef  utility::pointer::access_ptr< RestrictRegion const >  RestrictRegionCAP;
+typedef  utility::pointer::weak_ptr< RestrictRegion >  RestrictRegionAP;
+typedef  utility::pointer::weak_ptr< RestrictRegion const >  RestrictRegionCAP;
 
 
 } // namespace denovo_design

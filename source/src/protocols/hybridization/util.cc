@@ -119,7 +119,7 @@ void setup_centroid_constraints(
 		// automatic constraints
 		generate_centroid_constraints( pose, templates, template_weights, ignore_res_for_AUTO );
 	} else if (!cen_cst_file.empty() && cen_cst_file != "NONE") {
-		ConstraintSetOP constraint_set = ConstraintIO::get_instance()->read_constraints_new( cen_cst_file, new ConstraintSet, pose );
+		ConstraintSetOP constraint_set = ConstraintIO::get_instance()->read_constraints_new( cen_cst_file, ConstraintSetOP( new ConstraintSet ), pose );
 		pose.constraint_set( constraint_set );  //reset constraints
 	}
 }
@@ -139,13 +139,13 @@ void setup_fullatom_constraints(
 		protocols::simple_moves::AddConstraintsToCurrentConformationMover add_constraints;
 		add_constraints.apply(pose);
 	} else if (!fa_cst_file.empty() && fa_cst_file != "NONE") {
-		ConstraintSetOP constraint_set = ConstraintIO::get_instance()->read_constraints_new( fa_cst_file, new ConstraintSet, pose );
+		ConstraintSetOP constraint_set = ConstraintIO::get_instance()->read_constraints_new( fa_cst_file, ConstraintSetOP( new ConstraintSet ), pose );
 		pose.constraint_set( constraint_set );  //reset constraints
 	} else if (cen_cst_file == "AUTO") {
 		// automatic constraints
 		generate_centroid_constraints( pose, templates, template_weights );
 	} else if (!cen_cst_file.empty() && cen_cst_file != "NONE") {
-		ConstraintSetOP constraint_set = ConstraintIO::get_instance()->read_constraints_new( cen_cst_file, new ConstraintSet, pose );
+		ConstraintSetOP constraint_set = ConstraintIO::get_instance()->read_constraints_new( cen_cst_file, ConstraintSetOP( new ConstraintSet ), pose );
 		pose.constraint_set( constraint_set );  //reset constraints
 	}
 }
@@ -207,9 +207,9 @@ void generate_centroid_constraints(
 						resid_k = symm_info->bb_follows( resid_k );
 
 					using namespace core::scoring::func;
-					FuncOP fx = new ScalarWeightedFunc( 1.0, FuncOP( new USOGFunc( dist, COORDDEV ) ) );
+					FuncOP fx( new ScalarWeightedFunc( 1.0, FuncOP( new USOGFunc( dist, COORDDEV ) ) ) );
 					pose.add_constraint(
-						new AtomPairConstraint( core::id::AtomID(2,resid_j), core::id::AtomID(2,resid_k), fx )
+						scoring::constraints::ConstraintCOP( new AtomPairConstraint( core::id::AtomID(2,resid_j), core::id::AtomID(2,resid_k), fx ) )
 					);
 				}
 			}
@@ -225,14 +225,14 @@ void setup_user_coordinate_constraints(
 	core::Real COORDDEV = 0.39894;
 
 	for (core::Size i=1; i<=reses.size(); ++i) {
-	  core::scoring::func::FuncOP fx = new core::scoring::func::USOGFunc( 0, COORDDEV );
+	  core::scoring::func::FuncOP fx( new core::scoring::func::USOGFunc( 0, COORDDEV ) );
 	  pose.add_constraint(
-			new core::scoring::constraints::CoordinateConstraint(
+			scoring::constraints::ConstraintCOP( new core::scoring::constraints::CoordinateConstraint(
 				core::id::AtomID(2,reses[i]),
 				core::id::AtomID(2,pose.total_residue()),
 				pose.residue(reses[i]).atom(2).xyz(),
 				fx
-			) );
+			) ) );
 	}
 }
 
@@ -322,12 +322,12 @@ void setup_interface_coordinate_constraints(
             if (symm_info && !symm_info->bb_is_independent( j ) )
                j = symm_info->bb_follows( j );
 
-			core::scoring::func::FuncOP fx = new core::scoring::func::HarmonicFunc( 0.0, COORDDEV*MAXDIST/MINDIST_NONMOVEj);
+			core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, COORDDEV*MAXDIST/MINDIST_NONMOVEj) );
             pose.add_constraint(
-                    new core::scoring::constraints::CoordinateConstraint( core::id::AtomID(pose.residue_type(j).atom_index("CA"),j),
+                    scoring::constraints::ConstraintCOP( new core::scoring::constraints::CoordinateConstraint( core::id::AtomID(pose.residue_type(j).atom_index("CA"),j),
                                                core::id::AtomID(pose.residue_type(best_anchor).atom_index("CA"),best_anchor),
 																							 pose.residue(j).xyz(pose.residue_type(j).atom_index("CA")),
-																							 fx));
+																							 fx) ));
                                // new BoundFunc( 0, bound_width_, coord_dev_, "xyz" )) );
 
 					}
@@ -401,9 +401,9 @@ void setup_interface_atompair_constraints(
                    if (symm_info && !symm_info->bb_is_independent( resid_k ) )
                      resid_k = symm_info->bb_follows( resid_k );
 
-                   FuncOP fx = new ScalarWeightedFunc( weighting_factor, FuncOP( new USOGFunc( dist, COORDDEV ) ) );
+                   FuncOP fx( new ScalarWeightedFunc( weighting_factor, FuncOP( new USOGFunc( dist, COORDDEV ) ) ) );
                    pose.add_constraint(
-                     new AtomPairConstraint( core::id::AtomID(2,resid_j), core::id::AtomID(2,resid_k), fx )
+                     scoring::constraints::ConstraintCOP( new AtomPairConstraint( core::id::AtomID(2,resid_j), core::id::AtomID(2,resid_k), fx ) )
                    );
              } //add constraints
           } //add contraints with MINSEQSEP MAXDIST
@@ -431,9 +431,9 @@ void add_strand_pairs_cst(core::pose::Pose & pose, utility::vector1< std::pair< 
 		core::Real dist = pose.residue(strand_pair.first).xyz(2).distance( pose.residue(strand_pair.second).xyz(2) );
 		if ( dist <= MAXDIST ) {
 			using namespace core::scoring::func;
-			FuncOP fx = new ScalarWeightedFunc( 4.0, FuncOP( new USOGFunc( dist, COORDDEV ) ) ); // try to lock it down with a high weight
+			FuncOP fx( new ScalarWeightedFunc( 4.0, FuncOP( new USOGFunc( dist, COORDDEV ) ) ) ); // try to lock it down with a high weight
 			pose.add_constraint(
-				new AtomPairConstraint(	core::id::AtomID(2,strand_pair.first), core::id::AtomID(2,strand_pair.second), fx )
+				scoring::constraints::ConstraintCOP( new AtomPairConstraint(	core::id::AtomID(2,strand_pair.first), core::id::AtomID(2,strand_pair.second), fx ) )
 			);
 		}
 	}
@@ -472,9 +472,9 @@ void add_non_protein_cst(core::pose::Pose & pose, core::Real const self_cst_weig
 				core::Real dist = pose.residue(ires).xyz(iatom).distance( pose.residue(jres).xyz(jatom) );
 				if ( dist <= MAXDIST ) {
 					using namespace core::scoring::func;
-					FuncOP fx = new ScalarWeightedFunc( het_prot_cst_weight, FuncOP( new USOGFunc( dist, COORDDEV ) ) );
+					FuncOP fx( new ScalarWeightedFunc( het_prot_cst_weight, FuncOP( new USOGFunc( dist, COORDDEV ) ) ) );
 					pose.add_constraint(
-						new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires), core::id::AtomID(jatom,jres), fx )
+						scoring::constraints::ConstraintCOP( new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires), core::id::AtomID(jatom,jres), fx ) )
 					);
 				}
 			}
@@ -499,9 +499,9 @@ void add_non_protein_cst(core::pose::Pose & pose, core::Real const self_cst_weig
 					core::Real dist = pose.residue(ires).xyz(iatom).distance( pose.residue(jres).xyz(jatom) );
 					if ( dist <= MAXDIST ) {
 						using namespace core::scoring::func;
-						FuncOP fx = new ScalarWeightedFunc( self_cst_weight, FuncOP( new USOGFunc( dist, COORDDEV ) ) );
+						FuncOP fx( new ScalarWeightedFunc( self_cst_weight, FuncOP( new USOGFunc( dist, COORDDEV ) ) ) );
 						pose.add_constraint(
-							new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires), core::id::AtomID(jatom,jres), fx )
+							scoring::constraints::ConstraintCOP( new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires), core::id::AtomID(jatom,jres), fx ) )
 						);
 					}
 				}
@@ -792,7 +792,7 @@ apply_transformation(
 
 core::fragment::FragSetOP
 create_fragment_set( core::pose::Pose const & pose, core::Size len, core::Size nfrag ) {
-	core::fragment::FragSetOP fragset = new core::fragment::ConstantLengthFragSet( len );
+	core::fragment::FragSetOP fragset( new core::fragment::ConstantLengthFragSet( len ) );
 	core::scoring::dssp::Dssp dssp( pose );
 
 	// number of residues
@@ -809,7 +809,7 @@ create_fragment_set( core::pose::Pose const & pose, core::Size len, core::Size n
 			crosses_cut |= pose.fold_tree().is_cutpoint( k );
 
 		if (!crosses_cut) {
-			core::fragment::FrameOP frame = new core::fragment::Frame( j, len );
+			core::fragment::FrameOP frame( new core::fragment::Frame( j, len ) );
 			frame->add_fragment(
 				core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa(
 					tgt_ss.substr( j-1, len ), tgt_seq.substr( j-1, len ), nfrag, true, core::fragment::IndependentBBTorsionSRFD()
@@ -823,7 +823,7 @@ create_fragment_set( core::pose::Pose const & pose, core::Size len, core::Size n
 
 core::fragment::FragSetOP
 create_fragment_set_no_ssbias( core::pose::Pose const & pose, core::Size len, core::Size nfrag, char force_ss ) {
-	core::fragment::FragSetOP fragset = new core::fragment::ConstantLengthFragSet( len );
+	core::fragment::FragSetOP fragset( new core::fragment::ConstantLengthFragSet( len ) );
 
 	// number of residues
 	core::Size nres_tgt = get_num_residues_nonvirt( pose );
@@ -839,7 +839,7 @@ create_fragment_set_no_ssbias( core::pose::Pose const & pose, core::Size len, co
 			crosses_cut |= pose.fold_tree().is_cutpoint( k );
 
 		if (!crosses_cut) {
-			core::fragment::FrameOP frame = new core::fragment::Frame( j, len );
+			core::fragment::FrameOP frame( new core::fragment::Frame( j, len ) );
 			frame->add_fragment(
 				core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa(
 					tgt_ss, tgt_seq.substr( j-1, len ), nfrag, true, core::fragment::IndependentBBTorsionSRFD()
@@ -854,7 +854,7 @@ create_fragment_set_no_ssbias( core::pose::Pose const & pose, core::Size len, co
 
 core::fragment::FragSetOP
 create_fragment_set_no_ssbias( core::pose::Pose const & pose, std::set<core::Size> user_pos, core::Size len, core::Size nfrag, char force_ss ) {
-	core::fragment::FragSetOP fragset = new core::fragment::ConstantLengthFragSet( len );
+	core::fragment::FragSetOP fragset( new core::fragment::ConstantLengthFragSet( len ) );
 
 	// number of residues
 	core::Size nres_tgt = get_num_residues_nonvirt( pose );
@@ -879,7 +879,7 @@ create_fragment_set_no_ssbias( core::pose::Pose const & pose, std::set<core::Siz
 
 		if (legalpos) {
 			anyLegalpos = true;
-			core::fragment::FrameOP frame = new core::fragment::Frame( j, len );
+			core::fragment::FrameOP frame( new core::fragment::Frame( j, len ) );
 			frame->add_fragment(
 				core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa(
 					tgt_ss, tgt_seq.substr( j-1, len ), nfrag, true, core::fragment::IndependentBBTorsionSRFD()
@@ -917,9 +917,9 @@ protocols::loops::Loops renumber_with_pdb_info(
 core::Real get_gdtmm( core::pose::Pose & native, core::pose::Pose & pose, core::sequence::SequenceAlignmentOP & aln ) {
 	runtime_assert( native.total_residue() > 0 && pose.total_residue() > 0 );
 	if ( !aln ) {
-		core::sequence::SequenceOP model_seq ( new core::sequence::Sequence( pose.sequence(),  "model",  1 ) );
+		core::sequence::SequenceOP model_seq( new core::sequence::Sequence( pose.sequence(),  "model",  1 ) );
 		core::sequence::SequenceOP native_seq( new core::sequence::Sequence( native.sequence(), "native", 1 ) );
-		aln = new core::sequence::SequenceAlignment;
+		aln = core::sequence::SequenceAlignmentOP( new core::sequence::SequenceAlignment );
 		*aln = align_naive(model_seq,native_seq);
 	}
 

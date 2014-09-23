@@ -20,8 +20,8 @@ namespace jd2 {
 namespace archive {
 
 class VarianceStatisticsArchive;
-typedef utility::pointer::owning_ptr<VarianceStatisticsArchive> VarianceStatisticsArchiveOP;
-typedef utility::pointer::owning_ptr<VarianceStatisticsArchive const> VarianceStatisticsArchiveCOP;
+typedef utility::pointer::shared_ptr<VarianceStatisticsArchive> VarianceStatisticsArchiveOP;
+typedef utility::pointer::shared_ptr<VarianceStatisticsArchive const> VarianceStatisticsArchiveCOP;
 
 }
 }

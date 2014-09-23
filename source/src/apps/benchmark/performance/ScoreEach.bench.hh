@@ -70,7 +70,7 @@ public:
 	}
 
 	virtual void setUp() {
-		pose_ = new core::pose::Pose;
+		pose_ = core::pose::PoseOP( new core::pose::Pose );
 		if (centroid_) {
 			core::chemical::ResidueTypeSetCOP rts = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );
 			core::import_pose::pose_from_pdb(*pose_, *rts, in_file_);
@@ -90,7 +90,7 @@ public:
 		}
 		enmethtype_ = enmeth_->method_type();
 
-		scorefxn_ = new core::scoring::ScoreFunction;
+		scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
 		try{
 			// do this once in case there are one time setup requirements
 			scorefxn_->set_weight(score_type_, 1);
@@ -157,7 +157,7 @@ public:
 		utility::vector1< core::conformation::Residue const * > res( pose_->total_residue() );
 		for ( Size ii = 1; ii <= pose_->total_residue(); ++ii ) { res[ ii ] = & pose_->residue( ii ); }
 
-		if ( ! dynamic_cast< OneBodyEnergy const * > ( enmeth_() ) ) {
+		if ( ! utility::pointer::dynamic_pointer_cast< core::scoring::methods::OneBodyEnergy const > ( enmeth_ ) ) {
 			TR.Error
 				<< "Unable to Test scoring with score type '"
 				<< core::scoring::ScoreTypeManager::name_from_score_type(score_type_)
@@ -165,7 +165,7 @@ public:
 				<< "Failed dynamic cast of energy method to OneBodyEnergy" << std::endl;
 		}
 
-		OneBodyEnergy const & e1b( static_cast< OneBodyEnergy const & > ( *enmeth_() ));
+		OneBodyEnergy const & e1b( static_cast< OneBodyEnergy const & > ( *enmeth_ ));
 		EnergyMap emap;
 		core::Size reps( base_scale_factor_*scaleFactor );
 		if( reps == 0 ) { reps = 1; } // Do at least one repetion, regardless of scaling.
@@ -186,7 +186,7 @@ public:
 		utility::vector1< core::conformation::Residue const * > res( pose_->total_residue() );
 		for ( Size ii = 1; ii <= pose_->total_residue(); ++ii ) { res[ ii ] = & pose_->residue( ii ); }
 
-		if ( ! dynamic_cast< ShortRangeTwoBodyEnergy const * > ( enmeth_() ) ) {
+		if ( ! utility::pointer::dynamic_pointer_cast< core::scoring::methods::ShortRangeTwoBodyEnergy const > ( enmeth_ ) ) {
 			TR.Error
 				<< "Unable to Test scoring with score type '"
 				<< core::scoring::ScoreTypeManager::name_from_score_type(score_type_)
@@ -194,7 +194,7 @@ public:
 				<< "Failed dynamic cast of energy method to ShortRangeTwoBodyEnergy" << std::endl;
 		}
 
-		ShortRangeTwoBodyEnergy const & e2b( static_cast< ShortRangeTwoBodyEnergy const & > (*enmeth_()) );
+		ShortRangeTwoBodyEnergy const & e2b( static_cast< ShortRangeTwoBodyEnergy const & > (*enmeth_) );
 		EnergyMap emap;
 		core::Size reps( base_scale_factor_*scaleFactor );
 		if( reps == 0 ) { reps = 1; } // Do at least one repetion, regardless of scaling.
@@ -217,7 +217,7 @@ public:
 		using namespace core::scoring;
 		using namespace core::scoring::methods;
 		using namespace core::graph;
-		if ( ! dynamic_cast< LongRangeTwoBodyEnergy const * > ( enmeth_() ) ) {
+		if ( ! utility::pointer::dynamic_pointer_cast< core::scoring::methods::LongRangeTwoBodyEnergy const > ( enmeth_ ) ) {
 			TR.Error
 				<< "Unable to Test scoring with score type '"
 				<< core::scoring::ScoreTypeManager::name_from_score_type(score_type_)
@@ -228,7 +228,7 @@ public:
 		utility::vector1< core::conformation::Residue const * > res( pose_->total_residue() );
 		for ( Size ii = 1; ii <= pose_->total_residue(); ++ii ) { res[ ii ] = & pose_->residue( ii ); }
 
-		LongRangeTwoBodyEnergy const & e2b( static_cast< LongRangeTwoBodyEnergy const & > (*enmeth_()) );
+		LongRangeTwoBodyEnergy const & e2b( static_cast< LongRangeTwoBodyEnergy const & > (*enmeth_) );
 		EnergyMap emap;
 		LREnergyContainerOP lrec = pose_->energies().nonconst_long_range_container( e2b.long_range_type() );
 
@@ -250,9 +250,9 @@ public:
 	}
 
 	virtual void tearDown() {
-		pose_ = 0;
-		scorefxn_ = 0;
-		enmeth_ = 0;
+		pose_.reset();
+		scorefxn_.reset();
+		enmeth_.reset();
 	}
 
 private:

@@ -24,8 +24,8 @@ namespace match {
 namespace downstream {
 
 class SecMatchResiduePairEvaluator;
-typedef utility::pointer::owning_ptr< SecMatchResiduePairEvaluator > SecMatchResiduePairEvaluatorOP;
-typedef utility::pointer::owning_ptr< SecMatchResiduePairEvaluator const > SecMatchResiduePairEvaluatorCOP;
+typedef utility::pointer::shared_ptr< SecMatchResiduePairEvaluator > SecMatchResiduePairEvaluatorOP;
+typedef utility::pointer::shared_ptr< SecMatchResiduePairEvaluator const > SecMatchResiduePairEvaluatorCOP;
 
 
 }

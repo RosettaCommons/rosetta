@@ -56,9 +56,9 @@ SecondaryStructurePool::SecondaryStructurePool(Size total_size,std::string pool_
 	buffer_factor_ = buffer_factor;
 	ss_type_ = ss_type;
 	CompareByScoreCombination ordering(components_, weights_);
-	storage_ = new BoundedQuotaContainer(ordering,this_size_,this_size_*buffer_factor);
-	FragmentCandidateOP worst_f = new FragmentCandidate(1,1,0,1);
-	scores::FragmentScoreMapOP worst_s = new scores::FragmentScoreMap(n_scores);
+	storage_ = BoundedQuotaContainerOP( new BoundedQuotaContainer(ordering,this_size_,this_size_*buffer_factor) );
+	FragmentCandidateOP worst_f( new FragmentCandidate(1,1,0,1) );
+	scores::FragmentScoreMapOP worst_s( new scores::FragmentScoreMap(n_scores) );
 	storage_->set_worst(std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP>(worst_f,worst_s));
 	for(Size i=1;i<=n_scores;i++)
 	    worst_s->set_score_component(99999.9999,i);

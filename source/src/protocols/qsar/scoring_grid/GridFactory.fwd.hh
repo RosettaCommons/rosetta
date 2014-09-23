@@ -21,8 +21,8 @@ namespace scoring_grid {
 
 class GridFactory;
 
-typedef utility::pointer::owning_ptr<GridFactory> GridFactoryOP;
-typedef utility::pointer::owning_ptr<GridFactory const > GridFactoryCOP;
+typedef utility::pointer::shared_ptr<GridFactory> GridFactoryOP;
+typedef utility::pointer::shared_ptr<GridFactory const > GridFactoryCOP;
 
 }
 }

@@ -57,10 +57,10 @@ public:
 class FoldTreeSketch : public utility::pointer::ReferenceCount {
 
 class Node;
-typedef utility::pointer::owning_ptr< Node > NodeOP;
-typedef utility::pointer::owning_ptr< Node const > NodeCOP;
-typedef utility::pointer::access_ptr< Node > NodeAP;
-typedef utility::pointer::access_ptr< Node const > NodeCAP;
+typedef utility::pointer::shared_ptr< Node > NodeOP;
+typedef utility::pointer::shared_ptr< Node const > NodeCOP;
+typedef utility::pointer::weak_ptr< Node > NodeAP;
+typedef utility::pointer::weak_ptr< Node const > NodeCAP;
 
 public:
 

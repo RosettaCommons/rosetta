@@ -27,7 +27,7 @@ B1 const & B1::operator = ( B1 const & src )
 
 
 void B1::set_default_A() {
-	a_pointer_ = new A;
+	a_pointer_ = AOP( new A );
 }
 
 

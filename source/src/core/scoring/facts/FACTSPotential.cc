@@ -155,12 +155,11 @@ void FACTSPotential::setup_for_scoring(pose::Pose & pose, bool const & packing) 
 	FACTSPoseInfoOP facts_info;
 
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) ) {
-		facts_info = static_cast< FACTSPoseInfo* >
-				( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO )() );
+		facts_info = utility::pointer::static_pointer_cast< core::scoring::FACTSPoseInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) );
 		// commenting out below would always set whole residues as enumeration_shell
 		//facts_info->update_enumeration_shell( pose, true );
 	} else {
-		facts_info = new FACTSPoseInfo();
+		facts_info = FACTSPoseInfoOP( new FACTSPoseInfo() );
 	}
 
 	facts_info->initialize( pose, FACTSrsdtypemap_ );
@@ -1135,18 +1134,16 @@ void FACTSPotential::setup_for_derivatives( pose::Pose & pose ) const
 	Vector cross_v;
 
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) ) {
-		facts_info = static_cast< FACTSPoseInfo* >
-			( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO )() );
+		facts_info = utility::pointer::static_pointer_cast< core::scoring::FACTSPoseInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) );
 	} else {
-		facts_info = new FACTSPoseInfo();
+		facts_info = FACTSPoseInfoOP( new FACTSPoseInfo() );
 	}
 
 	// Check whether information is changed from the given pose - if changed, call setup_for_scoring again
 	if( facts_info->is_changed( pose ) ){
 		TR.Debug << "Pose changed since last scoring, call setup_for_scoring..." << std::endl;
 		setup_for_scoring( pose, false );
-		facts_info = static_cast< FACTSPoseInfo* >
-			( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO )() );
+		facts_info = utility::pointer::static_pointer_cast< core::scoring::FACTSPoseInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) );
 	}
 
 	// This is to make sure that context-dependent derivative arrays are initialized at least once
@@ -1477,10 +1474,9 @@ void FACTSPotential::setup_for_packing(
 	FACTSPoseInfoOP facts_info;
 
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) ) {
-		facts_info = static_cast< FACTSPoseInfo* >
-			( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO )() );
+		facts_info = utility::pointer::static_pointer_cast< core::scoring::FACTSPoseInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) );
 	} else {
-		facts_info = new FACTSPoseInfo();
+		facts_info = FACTSPoseInfoOP( new FACTSPoseInfo() );
 		setup_for_scoring( pose, true );
 	}
 
@@ -1528,7 +1524,7 @@ void FACTSPotential::update_residue_for_packing(pose::Pose & pose,Size const seq
 
 	if ( it == FACTSrsdtypemap_.end() ) {
 		TR << "Adding new FACTS residue type info: " << rsdtype.name() << std::endl;
-		FACTSRsdTypeInfoOP rsdtypeinfo = new FACTSRsdTypeInfo;
+		FACTSRsdTypeInfoOP rsdtypeinfo( new FACTSRsdTypeInfo );
 		rsdtypeinfo->create_info( rsdtype );
 		FACTSrsdtypemap_[ &rsdtype ] = rsdtypeinfo;
 		it = FACTSrsdtypemap_.find( &rsdtype );

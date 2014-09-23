@@ -46,15 +46,15 @@ class BinarySilentStruct;
 class RNA_SilentStruct;
 
 // owning pointers
-typedef utility::pointer::owning_ptr< SharedSilentData > SharedSilentDataOP;
-typedef utility::pointer::owning_ptr< EnergyNames > EnergyNamesOP;
-typedef utility::pointer::owning_ptr< SimpleSequenceData > SimpleSequenceDataOP;
+typedef utility::pointer::shared_ptr< SharedSilentData > SharedSilentDataOP;
+typedef utility::pointer::shared_ptr< EnergyNames > EnergyNamesOP;
+typedef utility::pointer::shared_ptr< SimpleSequenceData > SimpleSequenceDataOP;
 
-typedef utility::pointer::owning_ptr< SilentStruct > SilentStructOP;
-typedef utility::pointer::owning_ptr< SilentStruct const > SilentStructCOP;
-typedef utility::pointer::owning_ptr< ProteinSilentStruct > ProteinSilentStructOP;
-typedef utility::pointer::owning_ptr< BinarySilentStruct > BinarySilentStructOP;
-typedef utility::pointer::owning_ptr< RNA_SilentStruct > RNA_SilentStructOP;
+typedef utility::pointer::shared_ptr< SilentStruct > SilentStructOP;
+typedef utility::pointer::shared_ptr< SilentStruct const > SilentStructCOP;
+typedef utility::pointer::shared_ptr< ProteinSilentStruct > ProteinSilentStructOP;
+typedef utility::pointer::shared_ptr< BinarySilentStruct > BinarySilentStructOP;
+typedef utility::pointer::shared_ptr< RNA_SilentStruct > RNA_SilentStructOP;
 
 	// data types
 typedef std::map< std::string, SilentStructOP > Structure_Map;

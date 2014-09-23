@@ -24,8 +24,8 @@ namespace membrane {
 namespace geometry {
 
 class EmbeddingDef;
-typedef utility::pointer::owning_ptr< EmbeddingDef > EmbeddingDefOP;
-typedef utility::pointer::owning_ptr< EmbeddingDef const > EmbeddingDefCOP;
+typedef utility::pointer::shared_ptr< EmbeddingDef > EmbeddingDefOP;
+typedef utility::pointer::shared_ptr< EmbeddingDef const > EmbeddingDefCOP;
 
 } // geometry
 } // membrane

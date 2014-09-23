@@ -124,7 +124,7 @@ HolesFilter::parse_my_tag(
 }
 
 filters::FilterOP
-HolesFilterCreator::create_filter() const { return new HolesFilter; }
+HolesFilterCreator::create_filter() const { return filters::FilterOP( new HolesFilter ); }
 
 std::string
 HolesFilterCreator::keyname() const { return "Holes"; }

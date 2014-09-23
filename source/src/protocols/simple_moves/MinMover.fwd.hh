@@ -22,8 +22,8 @@ namespace simple_moves{
 
 //Forwards and OP typedefs
 class MinMover;
-typedef utility::pointer::owning_ptr< MinMover > MinMoverOP;
-typedef utility::pointer::owning_ptr< MinMover const > MinMoverCOP;
+typedef utility::pointer::shared_ptr< MinMover > MinMoverOP;
+typedef utility::pointer::shared_ptr< MinMover const > MinMoverCOP;
 
 }//moves
 }//protocols

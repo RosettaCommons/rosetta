@@ -90,12 +90,12 @@ setup_MCM_trial(
 {
 	using namespace protocols::moves;
 
-	SequenceMoverOP seq = new SequenceMover();
+	SequenceMoverOP seq( new SequenceMover() );
 	seq->add_mover( perturb  );
 	seq->add_mover( pack     );
 	seq->add_mover( minimize );
 
-	return new TrialMover( seq, mc );
+	return protocols::moves::TrialMoverOP( new TrialMover( seq, mc ) );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -190,18 +190,17 @@ ProteinDNA_Relax::apply( pose::Pose & pose )
 	RB_MoverOP rb_mover( new RB_Mover( mm, trans_mag_, rot_mag_ ) );
 
 	// rotamer trials w/ energycut
-	protocols::simple_moves::EnergyCutRotamerTrialsMoverOP rottrial_mover
-		( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn_, *rottrial_task, mc, energycut_ ) );
+	protocols::simple_moves::EnergyCutRotamerTrialsMoverOP rottrial_mover( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn_, *rottrial_task, mc, energycut_ ) );
 
 	// trials:
 	TrialMoverOP rb_min_trial = setup_MCM_trial( rb_mover, rottrial_mover, min_mover, mc );
 
-	TrialMoverOP pack_trial = new TrialMover( pack_mover, mc );
+	TrialMoverOP pack_trial( new TrialMover( pack_mover, mc ) );
 
-	TrialMoverOP min_trial = new TrialMover( min_mover, mc );
+	TrialMoverOP min_trial( new TrialMover( min_mover, mc ) );
 
 	// now the inner cycles mover
-	RepeatMoverOP rb_min_cycle = new RepeatMover( rb_min_trial, inner_cycles_ );
+	RepeatMoverOP rb_min_cycle( new RepeatMover( rb_min_trial, inner_cycles_ ) );
 
 	// ramp up repulsive, dunbrack(?)
 	//

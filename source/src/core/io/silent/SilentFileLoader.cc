@@ -54,7 +54,7 @@ SilentFileLoaderCreator::~SilentFileLoaderCreator() {}
 
 ResourceLoaderOP
 SilentFileLoaderCreator::create_resource_loader() const {
-	return new SilentFileLoader;
+	return ResourceLoaderOP( new SilentFileLoader );
 }
 
 string
@@ -101,7 +101,7 @@ SilentFileLoader::create_resource(
 		throw utility::excn::EXCN_BadInput( "SilentFileLoader failed to load silent file with locator_id '" + locator_id + "'." );
 	}
 
-	PoseOP pose( new Pose());
+	PoseOP pose( new Pose() );
 	ss->fill_pose(*pose);
 
 	if(pose->total_residue() == 0){
@@ -119,7 +119,7 @@ SilentFileLoader::create_resource(
 ResourceOptionsOP
 SilentFileLoader::default_options(
 ) const {
-	return new SilentFileOptions();
+	return ResourceOptionsOP( new SilentFileOptions() );
 }
 
 } // namespace

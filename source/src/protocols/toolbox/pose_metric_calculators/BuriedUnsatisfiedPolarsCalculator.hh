@@ -54,7 +54,7 @@ public:
 
 
   core::pose::metrics::PoseMetricCalculatorOP clone() const {
-    return new BuriedUnsatisfiedPolarsCalculator( name_of_sasa_calc_, name_of_hbond_calc_, burial_sasa_cutoff_); };
+    return core::pose::metrics::PoseMetricCalculatorOP( new BuriedUnsatisfiedPolarsCalculator( name_of_sasa_calc_, name_of_hbond_calc_, burial_sasa_cutoff_) ); };
 
 	std::string const & name_of_hbond_calc() const { return name_of_hbond_calc_; }
 	std::string const & name_of_sasa_calc() const { return name_of_sasa_calc_; }

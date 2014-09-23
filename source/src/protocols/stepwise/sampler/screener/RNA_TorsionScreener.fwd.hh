@@ -22,7 +22,7 @@ namespace sampler {
 namespace screener {
 
 class RNA_TorsionScreener;
-typedef utility::pointer::owning_ptr< RNA_TorsionScreener > RNA_TorsionScreenerOP;
+typedef utility::pointer::shared_ptr< RNA_TorsionScreener > RNA_TorsionScreenerOP;
 
 } //screener
 } //sampler

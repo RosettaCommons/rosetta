@@ -25,19 +25,19 @@ namespace match_enzdes_util {
 
 class InvrotTreeNodeBase;
 
-typedef utility::pointer::owning_ptr< InvrotTreeNodeBase > InvrotTreeNodeBaseOP;
-typedef utility::pointer::owning_ptr< InvrotTreeNodeBase const > InvrotTreeNodeBaseCOP;
+typedef utility::pointer::shared_ptr< InvrotTreeNodeBase > InvrotTreeNodeBaseOP;
+typedef utility::pointer::shared_ptr< InvrotTreeNodeBase const > InvrotTreeNodeBaseCOP;
 
-typedef utility::pointer::access_ptr< InvrotTreeNodeBase > InvrotTreeNodeBaseAP;
-typedef utility::pointer::access_ptr< InvrotTreeNodeBase const > InvrotTreeNodeBaseCAP;
+typedef utility::pointer::weak_ptr< InvrotTreeNodeBase > InvrotTreeNodeBaseAP;
+typedef utility::pointer::weak_ptr< InvrotTreeNodeBase const > InvrotTreeNodeBaseCAP;
 
 class  AllowedSeqposForGeomCst;
-typedef utility::pointer::owning_ptr< AllowedSeqposForGeomCst >AllowedSeqposForGeomCstOP;
-typedef utility::pointer::owning_ptr< AllowedSeqposForGeomCst const > AllowedSeqposForGeomCstCOP;
+typedef utility::pointer::shared_ptr< AllowedSeqposForGeomCst >AllowedSeqposForGeomCstOP;
+typedef utility::pointer::shared_ptr< AllowedSeqposForGeomCst const > AllowedSeqposForGeomCstCOP;
 
 class InvrotCollector;
-typedef utility::pointer::owning_ptr< InvrotCollector >InvrotCollectorOP;
-typedef utility::pointer::owning_ptr< InvrotCollector const > InvrotCollectorCOP;
+typedef utility::pointer::shared_ptr< InvrotCollector >InvrotCollectorOP;
+typedef utility::pointer::shared_ptr< InvrotCollector const > InvrotCollectorCOP;
 
 
 }

@@ -24,8 +24,8 @@ namespace pose_metric_calculators{
 
 //Forwards and OP typedefs
 class NeighborsByDistanceCalculator;
-typedef utility::pointer::owning_ptr< NeighborsByDistanceCalculator > NeighborsByDistanceCalculatorOP;
-typedef utility::pointer::owning_ptr< NeighborsByDistanceCalculator const > NeighborsByDistanceCalculatorCOP;
+typedef utility::pointer::shared_ptr< NeighborsByDistanceCalculator > NeighborsByDistanceCalculatorOP;
+typedef utility::pointer::shared_ptr< NeighborsByDistanceCalculator const > NeighborsByDistanceCalculatorCOP;
 
 }//PoseMetricCalculators
 }//toolbox

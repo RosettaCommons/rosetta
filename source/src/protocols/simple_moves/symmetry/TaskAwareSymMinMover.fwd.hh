@@ -21,8 +21,8 @@ namespace symmetry {
 
 class TaskAwareSymMinMover;
 
-typedef utility::pointer::owning_ptr< TaskAwareSymMinMover > TaskAwareSymMinMoverOP;
-typedef utility::pointer::owning_ptr< TaskAwareSymMinMover const > TaskAwareSymMinMoverCOP;
+typedef utility::pointer::shared_ptr< TaskAwareSymMinMover > TaskAwareSymMinMoverOP;
+typedef utility::pointer::shared_ptr< TaskAwareSymMinMover const > TaskAwareSymMinMoverCOP;
 
 
 } // symmetry

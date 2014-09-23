@@ -18,8 +18,8 @@ namespace utilities {
 
 class RepeatedMover;
 
-typedef utility::pointer::owning_ptr<RepeatedMover> RepeatedMoverOP;
-typedef utility::pointer::owning_ptr<RepeatedMover const> RepeatedMoverCOP;
+typedef utility::pointer::shared_ptr<RepeatedMover> RepeatedMoverOP;
+typedef utility::pointer::shared_ptr<RepeatedMover const> RepeatedMoverCOP;
 
 }
 }

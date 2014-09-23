@@ -98,7 +98,7 @@ public:
 		TS_ASSERT( bbskel.resnum_map( 13 ) == 0 );
 		TS_ASSERT( bbskel.resnum_map( 14 ) == 0 );
 		
-		MoveMapOP mm = new MoveMap;
+		MoveMapOP mm( new MoveMap );
 		bbskel.set_movemap( mm );
 
 		// .

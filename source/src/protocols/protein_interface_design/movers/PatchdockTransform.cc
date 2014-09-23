@@ -42,7 +42,7 @@ PatchdockTransformCreator::keyname() const
 
 protocols::moves::MoverOP
 PatchdockTransformCreator::create_mover() const {
-	return new PatchdockTransform;
+	return protocols::moves::MoverOP( new PatchdockTransform );
 }
 
 std::string
@@ -54,7 +54,7 @@ PatchdockTransformCreator::mover_name()
 PatchdockTransform::PatchdockTransform() :
 	Mover()
 {
-	pd_reader_ = new protocols::protein_interface_design::PatchdockReader; // initialize the patchdock reader object
+	pd_reader_ = PatchdockReaderOP( new protocols::protein_interface_design::PatchdockReader ); // initialize the patchdock reader object
 }
 
 PatchdockTransform::~PatchdockTransform() {}

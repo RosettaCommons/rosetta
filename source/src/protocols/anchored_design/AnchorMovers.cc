@@ -169,8 +169,8 @@ void dump_cutpoint_info( core::pose::Pose const & pose)
 AnchoredDesignMover::AnchoredDesignMover( protocols::anchored_design::AnchorMoversDataOP interface_in ) :
 	Mover(),
 	interface_( interface_in ),
-	RMSD_only_this_pose_( 0 ),
-	IAM_( new protocols::analysis::InterfaceAnalyzerMover(ANCHOR_TARGET) ),
+	RMSD_only_this_pose_( /* 0 */ ),
+	IAM_( protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover(ANCHOR_TARGET) ) ),
 	rmsd_(false),
 	RMSD_only_this_(EMPTY_STRING),
 	delete_interface_native_sidechains_(false),
@@ -191,9 +191,9 @@ AnchoredDesignMover::AnchoredDesignMover( protocols::anchored_design::AnchorMove
 
 //@brief constructor with no arguments
 AnchoredDesignMover::AnchoredDesignMover() :
-	interface_( 0 ), //NULL pointer
-	RMSD_only_this_pose_( 0 ),
-	IAM_( new protocols::analysis::InterfaceAnalyzerMover(ANCHOR_TARGET) ),
+	interface_( /* 0 */ ), //NULL pointer
+	RMSD_only_this_pose_( /* 0 */ ),
+	IAM_( protocols::analysis::InterfaceAnalyzerMoverOP( new protocols::analysis::InterfaceAnalyzerMover(ANCHOR_TARGET) ) ),
 	rmsd_(false),
 	RMSD_only_this_(EMPTY_STRING),
 	delete_interface_native_sidechains_(false),
@@ -256,7 +256,7 @@ void AnchoredDesignMover::init_on_new_input(core::pose::Pose const & pose) {
 	//If the interface_ object doesn't exist yet, we must create one, giving it a pose to help it initialize
 	//it will exist if this object was created via the AnchorMoversData-supplying constructor
 	if(!interface_)
-		interface_ = new protocols::anchored_design::AnchorMoversData(pose);
+		interface_ = protocols::anchored_design::AnchorMoversDataOP( new protocols::anchored_design::AnchorMoversData(pose) );
 
 	//If nobody told us not to autoinitialize, read the options system for our other data
 	if(autoinitialize_) read_options();
@@ -265,7 +265,7 @@ void AnchoredDesignMover::init_on_new_input(core::pose::Pose const & pose) {
 	if(RMSD_only_this_ != EMPTY_STRING) {
 		core::pose::Pose dummy;
 		core::import_pose::pose_from_pdb(dummy, RMSD_only_this_);
-		RMSD_only_this_pose_ = new core::pose::Pose(dummy);
+		RMSD_only_this_pose_ = core::pose::PoseCOP( new core::pose::Pose(dummy) );
 	}
 
 	return;
@@ -282,7 +282,7 @@ void AnchoredDesignMover::apply( core::pose::Pose & pose )
 
 	//pre-pre-processing
 	if( rmsd_ ){
-		start_pose = new core::pose::Pose(pose);
+		start_pose = core::pose::PoseCOP( new core::pose::Pose(pose) );
 	}
 
 	if( RMSD_only_this_ != EMPTY_STRING ){
@@ -530,7 +530,7 @@ void AnchoredDesignMover::delete_interface_native_sidechains(core::pose::Pose & 
 
 	//create a TaskFactory for the deletion.  Notice that it DOES NOT read all user inputs (ignoring the resfile and command line) and thus can only be used when you satisfy its assumptions.  The assumptions are that you are A) doing fixed-sequence benchmarking, and B) starting from the correct interface structure.  The factory is set up to detect the interface and repack those side chains, excepting the anchor, to with many rotamers.  It does NOT pay attention to the flags that allow repacking of the anchor.  It ASSUMES that the AnchorMoversData class has pregenerated some PoseMetricCalculators.
 	using namespace core::pack::task;
-	core::pack::task::TaskFactoryOP tf(new core::pack::task::TaskFactory());
+	core::pack::task::TaskFactoryOP tf( new core::pack::task::TaskFactory() );
 
 	//some code copied from AnchorClass.cc:AnchorMoversData::set_unset_packertask_factory.  I chose to copy (gasp) because I do want the two to be uncoupled; if the other code evolves this should stay the same.  Of course, the PoseMetricCalculators are still a dependency...
 	//operation to detect interface/loops; depends on preexistence of these calculators
@@ -541,7 +541,7 @@ void AnchoredDesignMover::delete_interface_native_sidechains(core::pose::Pose & 
 	calcs_and_calcns.push_back(std::make_pair(neighborhood_calc, "neighbors"));
 
 	using protocols::toolbox::task_operations::RestrictByCalculatorsOperation;
-	operation::TaskOperationOP rbcop(new RestrictByCalculatorsOperation( calcs_and_calcns ));
+	operation::TaskOperationOP rbcop( new RestrictByCalculatorsOperation( calcs_and_calcns ) );
 
 	tf->push_back(rbcop);
 
@@ -555,8 +555,8 @@ void AnchoredDesignMover::delete_interface_native_sidechains(core::pose::Pose & 
 
 	//operations to allow ex flags to saturation
 	for(core::Size i(1), end(pose.total_residue()); i<=end; ++i){
-		tf->push_back(operation::RotamerExplosionOP( new core::pack::task::operation::RotamerExplosion(i, core::pack::task::EX_ONE_STDDEV, 4)));
-		tf->push_back(operation::ExtraChiCutoffOP( new core::pack::task::operation::ExtraChiCutoff(i, 0)));
+		tf->push_back(operation::RotamerExplosionOP( new core::pack::task::operation::RotamerExplosion(i, core::pack::task::EX_ONE_STDDEV, 4) ));
+		tf->push_back(operation::ExtraChiCutoffOP( new core::pack::task::operation::ExtraChiCutoff(i, 0) ));
 		//tf->push_back(operation::IncludeCurrentOP( new core::pack::task::operation::IncludeCurrent())); //this is exactly what we do not want - useful for testing that it worked right...
 	}
 
@@ -568,7 +568,7 @@ void AnchoredDesignMover::delete_interface_native_sidechains(core::pose::Pose & 
 
 	//pose.dump_pdb("pre_delete_interface_sidechains_test.pdb");
 	//create a PackRotamersMover and do it
-	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
+	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
 	pack_mover->task_factory( tf );
 	pack_mover->score_function( interface_->get_fullatom_scorefunction() );
 	pack_mover->apply(pose);
@@ -621,11 +621,11 @@ AnchoredDesignMover::get_name() const {
 }
 
 protocols::moves::MoverOP AnchoredDesignMover::fresh_instance() const {
-	return new AnchoredDesignMover;
+	return protocols::moves::MoverOP( new AnchoredDesignMover );
 }
 
 protocols::moves::MoverOP AnchoredDesignMover::clone() const {
-	return new AnchoredDesignMover(*this);
+	return protocols::moves::MoverOP( new AnchoredDesignMover(*this) );
 }
 
 bool AnchoredDesignMover::reinitialize_for_each_job() const { return false; }
@@ -930,7 +930,7 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 
 	protocols::simple_moves::SwitchResidueTypeSetMover typeset_swap(core::chemical::CENTROID);
 	typeset_swap.apply( pose );
-	if(debug_) posecopy = new core::pose::Pose( pose );
+	if(debug_) posecopy = core::pose::PoseOP( new core::pose::Pose( pose ) );
 
 	//centroid score
 	T_perturb << "centroid score of starting PDB: " << (*(interface_->get_centroid_scorefunction()))(pose) << std::endl;
@@ -990,13 +990,13 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 			//make kinematic perturber
 			using protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber;
 			using protocols::loops::loop_closure::kinematic_closure::KinematicPerturberOP;
-			KinematicPerturberOP TsamplingKP( new TorsionSamplingKinematicPerturber(kin_mover_cap));
+			KinematicPerturberOP TsamplingKP( new TorsionSamplingKinematicPerturber(kin_mover_cap) );
 			TsamplingKP->set_movemap(interface_->movemap_cen(i));
 			kin_mover->set_perturber(TsamplingKP);
 
 			using protocols::loops::loop_closure::kinematic_closure::KinematicWrapperOP;
 			using protocols::loops::loop_closure::kinematic_closure::KinematicWrapper;
-			KinematicWrapperOP kin_wrapper( new KinematicWrapper(kin_mover, interface_->loop(i)));
+			KinematicWrapperOP kin_wrapper( new KinematicWrapper(kin_mover, interface_->loop(i)) );
 			kin_wrapper->respect_this_movemap(interface_->movemap_cen(i));
 			oneloop_random->add_mover(kin_wrapper, 1);
 			T_perturb << "creating KinematicWrapper with loop " << loop_start << " " << loop_end << std::endl;
@@ -1009,7 +1009,7 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 				core::Size nmoves(5);
 				using protocols::simple_moves::SmallMover;
 				using protocols::simple_moves::SmallMoverOP;
-				protocols::simple_moves::SmallMoverOP small_mover = new protocols::simple_moves::SmallMover(interface_->movemap_cen(i), 0.8, nmoves);
+				protocols::simple_moves::SmallMoverOP small_mover( new protocols::simple_moves::SmallMover(interface_->movemap_cen(i), 0.8, nmoves) );
 				small_mover->angle_max( 'H', 180.0 );
 				small_mover->angle_max( 'E', 180.0 );
 				small_mover->angle_max( 'L', 180.0 );
@@ -1020,7 +1020,7 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 				/*T_perturb << "For loop start " << loop_start << " end " << loop_end
 					<< " fragments exist; preferring fragments over small moves" << std::endl;*/
 				using protocols::simple_moves::ClassicFragmentMover;
-				protocols::simple_moves::ClassicFragmentMoverOP frag_mover = new ClassicFragmentMover(interface_->get_frags(), interface_->movemap_cen(i));
+				protocols::simple_moves::ClassicFragmentMoverOP frag_mover( new ClassicFragmentMover(interface_->get_frags(), interface_->movemap_cen(i)) );
 				frag_mover->enable_end_bias_check(false);
 				perturb_mover = frag_mover;
 				T_perturb << "creating fragment-based perturbation for loop " << loop_start << " " << loop_end << std::endl;
@@ -1065,12 +1065,12 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 	/////////////////////////minimizer mover/////////////////////////////////////////
 	using protocols::simple_moves::MinMoverOP;
 	using protocols::simple_moves::MinMover;
-	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover(
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(
 																			interface_->movemap_cen_all(),
 																			interface_->get_centroid_scorefunction_min(),
 																			min_type_,
 																			0.01,
-																			true /*use_nblist*/ );
+																			true /*use_nblist*/ ) );
 
 	perturb_sequence->add_mover(min_mover);
 
@@ -1088,7 +1088,7 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 																	pose,
 																	*(interface_->get_centroid_scorefunction()),
 																	perturb_temp_ ) );//temperature, default 0.8
-	protocols::moves::TrialMoverOP trial_mover = new protocols::moves::TrialMover( perturb_sequence, mc );
+	protocols::moves::TrialMoverOP trial_mover( new protocols::moves::TrialMover( perturb_sequence, mc ) );
 
 	/////////////////////////wrap in a for loop output preference/////////////////////////////////
 	T_perturb << "   Current     Low    total cycles =" << perturb_cycles_ << std::endl;
@@ -1118,25 +1118,25 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 
 	/////////////////////////////generate full repack&minimize mover//////////////////////////////
 	using core::pack::task::TaskFactoryOP; using core::pack::task::TaskFactory;
-	TaskFactoryOP task_factory = new TaskFactory(*(interface_->get_late_factory())); //late factory = more rotamers
+	TaskFactoryOP task_factory( new TaskFactory(*(interface_->get_late_factory())) ); //late factory = more rotamers
 	task_factory->push_back(core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ));
 
-	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
+	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
 	pack_mover->task_factory( task_factory );
 	pack_mover->score_function( interface_->get_fullatom_scorefunction() );
 
 	//using protocols::simple_moves::MinMoverOP;	//using protocols::simple_moves::MinMover;
-	protocols::simple_moves::MinMoverOP min_mover_fa = new protocols::simple_moves::MinMover(
+	protocols::simple_moves::MinMoverOP min_mover_fa( new protocols::simple_moves::MinMover(
 																				 interface_->movemap_cen_all(), //even though this is fullatom; we do not yet want to minimize inside the anchor if we are using constraints
 																				 interface_->get_fullatom_scorefunction(),
 																				 min_type_,
 																				 0.01,
-																				 true /*use_nblist*/ );
+																				 true /*use_nblist*/ ) );
 
 	//definitely want sidechain minimization here
 	using protocols::simple_moves::TaskAwareMinMoverOP;
 	using protocols::simple_moves::TaskAwareMinMover;
-	protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover_fa = new protocols::simple_moves::TaskAwareMinMover(min_mover_fa, task_factory);
+	protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover_fa( new protocols::simple_moves::TaskAwareMinMover(min_mover_fa, task_factory) );
 	pack_mover->apply( pose );
 	TAmin_mover_fa->apply( pose );
 
@@ -1253,7 +1253,7 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 
 	//variables used for debugging output
 	core::pose::PoseOP posecopy( NULL );
-	if(debug_) posecopy = new core::pose::Pose(pose);
+	if(debug_) posecopy = core::pose::PoseOP( new core::pose::Pose(pose) );
 	int counter(1);
 	std::stringstream outputfilename;
 
@@ -1285,32 +1285,32 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 																	refine_temp_ ) ); //temperature, default 0.8
 
 	/////////////////////////////generate full repack mover//////////////////////////////
-	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
+	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
 	pack_mover->task_factory( interface_->get_task_factory() );
 	pack_mover->score_function( interface_->get_fullatom_scorefunction() );
 
 	//////////////////////////////////generate minimizer mover/////////////////////////
 	using protocols::simple_moves::MinMoverOP;
 	using protocols::simple_moves::MinMover;
-	protocols::simple_moves::MinMoverOP packing_min_mover = new protocols::simple_moves::MinMover(
+	protocols::simple_moves::MinMoverOP packing_min_mover( new protocols::simple_moves::MinMover(
 																							interface_->movemap_fa_all(),
 																							interface_->get_fullatom_scorefunction(),
 																							min_type_,
 																							0.01,
-																							true /*use_nblist*/ );
+																							true /*use_nblist*/ ) );
 
 	using protocols::simple_moves::TaskAwareMinMoverOP;
 	using protocols::simple_moves::TaskAwareMinMover;
-	protocols::simple_moves::TaskAwareMinMoverOP packing_TAmin_mover = new protocols::simple_moves::TaskAwareMinMover(packing_min_mover, interface_->get_task_factory());
+	protocols::simple_moves::TaskAwareMinMoverOP packing_TAmin_mover( new protocols::simple_moves::TaskAwareMinMover(packing_min_mover, interface_->get_task_factory()) );
 
 	////////////////////////////////////create repacking sequence///////////////////////////
 	using protocols::moves::SequenceMover;
 	using protocols::moves::SequenceMoverOP;
-	SequenceMoverOP repack_sequence = new SequenceMover(pack_mover, packing_TAmin_mover);
+	SequenceMoverOP repack_sequence( new SequenceMover(pack_mover, packing_TAmin_mover) );
 
 	//////////////////////////create refinement sequence////////////////////////////////
 	//make the refine sequence mover.  other movers are inserted into it (their handles go out of scope!)
-	protocols::moves::SequenceMoverOP refine_sequence = new protocols::moves::SequenceMover;
+	protocols::moves::SequenceMoverOP refine_sequence( new protocols::moves::SequenceMover );
 	protocols::moves::SequenceMoverOP allloops_subsequence( new protocols::moves::SequenceMover() );
 	protocols::moves::RandomMoverOP backbone_mover( new protocols::moves::RandomMover() );
 
@@ -1350,7 +1350,7 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 			//make kinematic perturber
 			using protocols::loops::loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber;
 			using protocols::loops::loop_closure::kinematic_closure::VicinitySamplingKinematicPerturberOP;
-			VicinitySamplingKinematicPerturberOP TsamplingKP( new VicinitySamplingKinematicPerturber(kin_mover_cap));
+			VicinitySamplingKinematicPerturberOP TsamplingKP( new VicinitySamplingKinematicPerturber(kin_mover_cap) );
 			TsamplingKP->set_movemap(interface_->movemap_fa(i));
 			//TsamplingKP->set_sample_vicinity( vicinity_sampling_ );
 			TsamplingKP->set_degree_vicinity( vicinity_degree_ );
@@ -1358,7 +1358,7 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 
 			using protocols::loops::loop_closure::kinematic_closure::KinematicWrapperOP;
 			using protocols::loops::loop_closure::kinematic_closure::KinematicWrapper;
-			KinematicWrapperOP kin_wrapper( new KinematicWrapper(kin_mover, interface_->loop(i)));
+			KinematicWrapperOP kin_wrapper( new KinematicWrapper(kin_mover, interface_->loop(i)) );
 			kin_wrapper->respect_this_movemap(interface_->movemap_fa(i));
 			oneloop_random->add_mover(kin_wrapper, 1);
 			T_perturb << "creating KinematicWrapper with loop " << loop_start << " " << loop_end << std::endl;
@@ -1367,8 +1367,8 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 		if (!internal || !refine_CCD_off_) { //termini and ccd loops
 
 			core::Size nmoves(1);
-			protocols::moves::MoverOP small_mover = new protocols::simple_moves::SmallMover(interface_->movemap_fa(i), 0.8, nmoves);
-			protocols::moves::MoverOP shear_mover = new protocols::simple_moves::ShearMover(interface_->movemap_fa(i), 0.8, nmoves);
+			protocols::moves::MoverOP small_mover( new protocols::simple_moves::SmallMover(interface_->movemap_fa(i), 0.8, nmoves) );
+			protocols::moves::MoverOP shear_mover( new protocols::simple_moves::ShearMover(interface_->movemap_fa(i), 0.8, nmoves) );
 			T_refine << "creating Small & ShearMover for loop " << loop_start << " " << loop_end << std::endl;
 
 			//generate "real" movers
@@ -1383,7 +1383,7 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 			if (internal && !refine_CCD_off_) {
 				using protocols::loops::loop_closure::ccd::CCDLoopClosureMover;
 				using protocols::moves::MoverOP;
-				MoverOP CCD_mover = new CCDLoopClosureMover(interface_->loop(i), interface_->movemap_fa_omegafixed(i));
+				MoverOP CCD_mover( new CCDLoopClosureMover(interface_->loop(i), interface_->movemap_fa_omegafixed(i)) );
 				oneloop_subsequence->add_mover(CCD_mover);
 				T_refine << "creating CCD-closure after perturbation for loop " << loop_start << " " << loop_end << std::endl;
 
@@ -1424,12 +1424,12 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 	//rotamer trials work only for repacking, no design
 	using core::pack::task::TaskFactoryOP;
 	using core::pack::task::TaskFactory;
-	TaskFactoryOP rt_task_factory = new TaskFactory(*(interface_->get_task_factory())); //local copy so we can modify it
+	TaskFactoryOP rt_task_factory( new TaskFactory(*(interface_->get_task_factory())) ); //local copy so we can modify it
 	rt_task_factory->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
 
 	using protocols::simple_moves::RotamerTrialsMoverOP;
 	using protocols::simple_moves::EnergyCutRotamerTrialsMover;
-	protocols::simple_moves::RotamerTrialsMoverOP rt_mover(new protocols::simple_moves::EnergyCutRotamerTrialsMover(
+	protocols::simple_moves::RotamerTrialsMoverOP rt_mover( new protocols::simple_moves::EnergyCutRotamerTrialsMover(
 																																interface_->get_fullatom_scorefunction(),
 																																rt_task_factory,
 																																mc,
@@ -1439,12 +1439,12 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 	refine_sequence->add_mover(rt_mover);
 
 	/////////////////////////minimizer mover/////////////////////////////////////////
-	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover(
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover(
 																			interface_->movemap_fa_all(),
 																			interface_->get_fullatom_scorefunction(),
 																			min_type_,
 																			0.01,
-																			true /*use_nblist*/ );
+																			true /*use_nblist*/ ) );
 	refine_sequence->add_mover( min_mover );
 
 	if(debug_){
@@ -1455,13 +1455,13 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 
 	//////////////////cycle mover controls when backbone perturbations occur versus repacking///////////////
 	//this mover should do backbone refinement first <many> times it is called, then repack, then repeat
-	protocols::moves::CycleMoverOP refine_repack_cycle = new protocols::moves::CycleMover;
+	protocols::moves::CycleMoverOP refine_repack_cycle( new protocols::moves::CycleMover );
 	for(core::Size i = 1; i < refine_repack_cycles_; i++) refine_repack_cycle->add_mover(refine_sequence);
 	refine_repack_cycle->add_mover(repack_sequence);
 	//could swap so that repack_trial is first and remove its explicit apply() above
 
 	////////////////////////////////////Trial mover wraps sequence/////////////////////////////////////////
-	protocols::moves::TrialMoverOP refine_master = new protocols::moves::TrialMover( refine_repack_cycle, mc );
+	protocols::moves::TrialMoverOP refine_master( new protocols::moves::TrialMover( refine_repack_cycle, mc ) );
 
 	/////////////////////////wrap in a for loop output preference/////////////////////////////////
 
@@ -1473,7 +1473,7 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 		if ( i == refine_latefactory ) {
 			pack_mover->task_factory(interface_->get_late_factory());
 			//RT still needs restrict to repacking
-			TaskFactoryOP rt_late_factory = new TaskFactory(*(interface_->get_late_factory()));
+			TaskFactoryOP rt_late_factory( new TaskFactory(*(interface_->get_late_factory())) );
 			rt_late_factory->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
 			rt_mover->task_factory(rt_late_factory);
 		}

@@ -71,7 +71,7 @@ public:
 		core_init();
 		core::import_pose::pose_from_pdb( pose_, "protocols/abinitio/2GB3.pdb" );
 
-		fragset3mer_  = new ConstantLengthFragSet( 3 );
+		fragset3mer_ = ConstantLengthFragSetOP( new ConstantLengthFragSet( 3 ) );
 		fragset3mer_->read_fragment_file( "protocols/abinitio/mfr_aa2GB3_03_05.200_v1_3" );
 
 	}
@@ -93,7 +93,7 @@ void WobbleMoverTest::test_wobble() {
 	using namespace protocols;
 	using namespace simple_moves;
 	using namespace scoring;
-	kinematics::MoveMapOP movemap ( new kinematics::MoveMap ); //dummy ( functionality not used yet )
+	kinematics::MoveMapOP movemap( new kinematics::MoveMap ); //dummy ( functionality not used yet )
 	//Size len (3);
 	movemap->set_bb( true );
 	//	for (Size ii=1; ii<=6; ii++ ) {
@@ -102,7 +102,7 @@ void WobbleMoverTest::test_wobble() {
 	//	TS_ASSERT( !movemap->get_bb( ii ) );
 	//}
 	Pose pose = pose_;
-	protocols::simple_moves::WobbleMover wobbles( fragset3mer_, movemap, new GunnCost( 7.0 ) );
+	protocols::simple_moves::WobbleMover wobbles( fragset3mer_, movemap, protocols::simple_moves::FragmentCostOP( new GunnCost( 7.0 ) ) );
 	//	moves::TrialMover wobble_min_trial
 
 #if 0

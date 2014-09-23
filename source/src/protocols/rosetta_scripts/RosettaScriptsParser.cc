@@ -226,12 +226,12 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(
 	typedef std::pair< std::string const, protocols::filters::FilterOP > StringFilter_pair;
 
 	//setting up some defaults
-	protocols::filters::FilterOP true_filter = new protocols::filters::TrueFilter;
-	protocols::filters::FilterOP false_filter = new protocols::filters::FalseFilter;
+	protocols::filters::FilterOP true_filter( new protocols::filters::TrueFilter );
+	protocols::filters::FilterOP false_filter( new protocols::filters::FalseFilter );
 	filters.insert( StringFilter_pair( "true_filter", true_filter ) );
 	filters.insert( StringFilter_pair( "false_filter", false_filter ) );
 
-	MoverOP null_mover = new protocols::moves::NullMover();
+	MoverOP null_mover( new protocols::moves::NullMover() );
 	movers.insert( StringMover_pair( "null", null_mover) );
 
 	// default scorefxns
@@ -685,7 +685,7 @@ void RosettaScriptsParser::import_tags(
 			break; // All done
 
 		// Go up the tree
-		curr_level_tag = curr_level_tag->getParent();
+		curr_level_tag_ap = curr_level_tag->getParent();
 
 	} // while
 
@@ -771,19 +771,19 @@ RosettaScriptsParser::register_factory_prototypes()
 	using namespace core::pose::metrics;
 
 	if( !CalculatorFactory::Instance().check_calculator_exists( "sasa_interface" ) ){
-		PoseMetricCalculatorOP int_sasa_calculator = new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator( chain1, chain2 );
+		PoseMetricCalculatorOP int_sasa_calculator( new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator( chain1, chain2 ) );
 		CalculatorFactory::Instance().register_calculator( "sasa_interface", int_sasa_calculator );
 	}
 	if( !CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ){
-		PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy();
+		PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy() );
 		CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 	}
 	if( !CalculatorFactory::Instance().check_calculator_exists( "ligneigh" ) ){
-		PoseMetricCalculatorOP lig_neighbor_calc = new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( chain1, chain2 );
+		PoseMetricCalculatorOP lig_neighbor_calc( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( chain1, chain2 ) );
 		CalculatorFactory::Instance().register_calculator( "ligneigh", lig_neighbor_calc );
 	}
 	if( !CalculatorFactory::Instance().check_calculator_exists( "liginterfE" ) ){
-		PoseMetricCalculatorOP lig_interf_E_calc = new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator( "ligneigh" );
+		PoseMetricCalculatorOP lig_interf_E_calc( new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator( "ligneigh" ) );
 		CalculatorFactory::Instance().register_calculator( "liginterfE", lig_interf_E_calc );
 	}
 }

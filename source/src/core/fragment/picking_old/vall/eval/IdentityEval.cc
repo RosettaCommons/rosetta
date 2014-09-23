@@ -118,7 +118,7 @@ IdentityEval & IdentityEval::operator =( IdentityEval const & rval ) {
 
 /// @brief clone this object
 VallFragmentEvalOP IdentityEval::clone() const {
-	return new IdentityEval( *this );
+	return VallFragmentEvalOP( new IdentityEval( *this ) );
 }
 
 

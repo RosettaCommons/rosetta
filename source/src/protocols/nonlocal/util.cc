@@ -130,7 +130,7 @@ void limit_chunk_size(core::Size min_chunk_sz,
   assert(regions);
   assert(min_chunk_sz <= max_chunk_sz);
 
-  protocols::loops::LoopsOP output = new protocols::loops::Loops();
+  protocols::loops::LoopsOP output( new protocols::loops::Loops() );
   for (Loops::const_iterator i = regions->begin(); i != regions->end(); ++i) {
     utility::vector1<Loop> pieces;
     decompose(min_chunk_sz, max_chunk_sz, *i, &pieces);

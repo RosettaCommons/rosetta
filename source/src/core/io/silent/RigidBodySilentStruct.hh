@@ -48,7 +48,7 @@ public:
 		core::pose::Pose const & pose,
 		std::string tag = "empty_tag"
 	) {
-		symminfo_ = new core::conformation::symmetry::SymmetryInfo();
+		symminfo_ = core::conformation::symmetry::SymmetryInfoOP( new core::conformation::symmetry::SymmetryInfo() );
 		symminfo_->set_use_symmetry(false);
 		fill_struct( pose, tag );
 		write_fold_tree_ = false;
@@ -58,7 +58,7 @@ public:
 	{
 		nres( 0 );
 		decoy_tag( "empty_tag" );
-		symminfo_ = new core::conformation::symmetry::SymmetryInfo();
+		symminfo_ = core::conformation::symmetry::SymmetryInfoOP( new core::conformation::symmetry::SymmetryInfo() );
 		symminfo_->set_use_symmetry(false);
 		write_fold_tree_ = false;
 	}
@@ -66,7 +66,7 @@ public:
 	/// @brief Returns a new RigidBodySilentStruct with a copy of the information
 	/// in this RigidBodySilentStruct.
 	virtual SilentStructOP clone() const {
-		return new RigidBodySilentStruct( *this );
+		return SilentStructOP( new RigidBodySilentStruct( *this ) );
 	}
 
 	// destructor
@@ -115,7 +115,7 @@ public:
 	bool is_symmetric() const { return symminfo_->get_use_symmetry();	}
 
 	void symmetry_info( core::conformation::symmetry::SymmetryInfo & s ) {
-		symminfo_ = new core::conformation::symmetry::SymmetryInfo( s );
+		symminfo_ = core::conformation::symmetry::SymmetryInfoOP( new core::conformation::symmetry::SymmetryInfo( s ) );
 	}
 
 	core::conformation::symmetry::SymmetryInfoCOP symmetry_info( ) const {

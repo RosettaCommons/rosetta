@@ -82,8 +82,7 @@ void RNA_MC_Suite::init() {
 	}
 
 	for ( Size i = 1; i <= 5; ++i ) {
-		MC_OneTorsionOP sampler(
-				new MC_OneTorsion( torsion_ids_[i], init_torsions_[i] ) );
+		MC_OneTorsionOP sampler( new MC_OneTorsion( torsion_ids_[i], init_torsions_[i] ) );
 		sampler->set_gaussian_stdev( gaussian_stdev_ );
 		if ( sample_near_a_form_ ) {
 			Real const min_angle( a_form_torsions_[i] - a_form_range_ );
@@ -94,8 +93,8 @@ void RNA_MC_Suite::init() {
 	}
 
 	for ( Size i = 1; i <= 2; ++i ) {
-		MC_OneTorsionOP chi_sampler = new MC_OneTorsion(
-				torsion_ids_[5 + i], init_torsions_[5 + i] );
+		MC_OneTorsionOP chi_sampler( new MC_OneTorsion(
+				torsion_ids_[5 + i], init_torsions_[5 + i] ) );
 		chi_sampler->set_gaussian_stdev( gaussian_stdev_ );
 		if ( sample_near_a_form_ ) {
 			Real const min_angle( a_form_torsions_[5 + i] - a_form_range_ );
@@ -103,8 +102,8 @@ void RNA_MC_Suite::init() {
 			chi_sampler->set_angle_range( min_angle, max_angle );
 			chi_sampler->set_angle_range( min_angle, max_angle );
 		}
-		RNA_MC_SugarOP sugar_sampler = new RNA_MC_Sugar(
-				rsd_id_ - 1 + i, pucker_flip_rate_, init_pucker_ );
+		RNA_MC_SugarOP sugar_sampler( new RNA_MC_Sugar(
+				rsd_id_ - 1 + i, pucker_flip_rate_, init_pucker_ ) );
 		sugar_sampler->set_skip_same_pucker( skip_same_pucker_ );
 		sugar_sampler->set_idealize_coord( idealize_coord_ );
 		chi_samplers_.push_back( chi_sampler );

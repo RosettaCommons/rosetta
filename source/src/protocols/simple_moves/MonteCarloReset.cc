@@ -52,7 +52,7 @@ MonteCarloResetCreator::keyname() const
 
 protocols::moves::MoverOP
 MonteCarloResetCreator::create_mover() const {
-	return new MonteCarloReset;
+	return protocols::moves::MoverOP( new MonteCarloReset );
 }
 
 std::string
@@ -70,7 +70,7 @@ MonteCarloReset::get_name() const {
 /// @brief default constructor
 MonteCarloReset::MonteCarloReset():
 	Mover("MonteCarloReset"),
-	MC_mover_( NULL )
+	MC_mover_( /* NULL */ )
 {
 }
 
@@ -81,14 +81,14 @@ MonteCarloReset::~MonteCarloReset(){}
 MoverOP
 MonteCarloReset::clone() const
 {
-	return new MonteCarloReset( *this );
+	return MoverOP( new MonteCarloReset( *this ) );
 }
 
 /// @brief create this type of object
 MoverOP
 MonteCarloReset::fresh_instance() const
 {
-	return new MonteCarloReset();
+	return MoverOP( new MonteCarloReset() );
 }
 
 GenericMonteCarloMoverOP
@@ -108,7 +108,7 @@ MonteCarloReset::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Fi
 	if( find_mover == movers.end() )
 		throw utility::excn::EXCN_RosettaScriptsOption( "MC mover not found by MonteCarloReset" );
 
-	set_MC( dynamic_cast< GenericMonteCarloMover * >( find_mover->second() ) );
+	set_MC( utility::pointer::dynamic_pointer_cast< protocols::simple_moves::GenericMonteCarloMover > ( find_mover->second ) );
 	Pose temp_pose( pose );
 	get_MC()->initialize();
 	get_MC()->reset( temp_pose );

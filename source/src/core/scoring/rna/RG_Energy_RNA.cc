@@ -50,7 +50,7 @@ methods::EnergyMethodOP
 RG_Energy_RNACreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new RG_Energy_RNA;
+	return methods::EnergyMethodOP( new RG_Energy_RNA );
 }
 
 ScoreTypes
@@ -70,7 +70,7 @@ RG_Energy_RNA::RG_Energy_RNA() :
 methods::EnergyMethodOP
 RG_Energy_RNA::clone() const
 {
-	return new RG_Energy_RNA;
+	return methods::EnergyMethodOP( new RG_Energy_RNA );
 }
 
 

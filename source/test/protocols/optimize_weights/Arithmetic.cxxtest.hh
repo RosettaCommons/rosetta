@@ -80,10 +80,10 @@ class ArithmeticTests : public CxxTest::TestSuite {
 		//std::cout << "2:\n" << tokstr2 << std::endl;
 		//std::cout << "3:\n" << tokstr3 << std::endl;
 		//std::cout << "4:\n" << tokstr4 << std::endl;
-		ArithmeticASTExpressionOP expr1 = new ArithmeticASTExpression;
-		ArithmeticASTExpressionOP expr2 = new ArithmeticASTExpression;
-		ArithmeticASTExpressionOP expr3 = new ArithmeticASTExpression;
-		ArithmeticASTExpressionOP expr4 = new ArithmeticASTExpression;
+		ArithmeticASTExpressionOP expr1( new ArithmeticASTExpression );
+		ArithmeticASTExpressionOP expr2( new ArithmeticASTExpression );
+		ArithmeticASTExpressionOP expr3( new ArithmeticASTExpression );
+		ArithmeticASTExpressionOP expr4( new ArithmeticASTExpression );
 		expr1->parse( *tokens1 );
 		expr2->parse( *tokens2 );
 		expr3->parse( *tokens3 );
@@ -150,10 +150,10 @@ class ArithmeticTests : public CxxTest::TestSuite {
 		//std::cout << "3:\n" << tokstr3 << std::endl;
 		//std::cout << "4:\n" << tokstr4 << std::endl;
 
-		ArithmeticASTExpressionOP expr1 = new ArithmeticASTExpression;
-		ArithmeticASTExpressionOP expr2 = new ArithmeticASTExpression;
-		ArithmeticASTExpressionOP expr3 = new ArithmeticASTExpression;
-		ArithmeticASTExpressionOP expr4 = new ArithmeticASTExpression;
+		ArithmeticASTExpressionOP expr1( new ArithmeticASTExpression );
+		ArithmeticASTExpressionOP expr2( new ArithmeticASTExpression );
+		ArithmeticASTExpressionOP expr3( new ArithmeticASTExpression );
+		ArithmeticASTExpressionOP expr4( new ArithmeticASTExpression );
 		expr1->parse( *tokens1 );
 		expr2->parse( *tokens2 );
 		expr3->parse( *tokens3 );
@@ -214,10 +214,10 @@ class ArithmeticTests : public CxxTest::TestSuite {
 		//std::cout << "3:\n" << tokstr3 << std::endl;
 		//std::cout << "4:\n" << tokstr4 << std::endl;
 
-		ArithmeticASTExpressionOP expr1 = new ArithmeticASTExpression;
-		ArithmeticASTExpressionOP expr2 = new ArithmeticASTExpression;
-		ArithmeticASTExpressionOP expr3 = new ArithmeticASTExpression;
-		ArithmeticASTExpressionOP expr4 = new ArithmeticASTExpression;
+		ArithmeticASTExpressionOP expr1( new ArithmeticASTExpression );
+		ArithmeticASTExpressionOP expr2( new ArithmeticASTExpression );
+		ArithmeticASTExpressionOP expr3( new ArithmeticASTExpression );
+		ArithmeticASTExpressionOP expr4( new ArithmeticASTExpression );
 		expr1->parse( *tokens1 );
 		expr2->parse( *tokens2 );
 		expr3->parse( *tokens3 );

@@ -54,7 +54,7 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
-		ResidueSelectorOP index_rs = new ResidueIndexSelector;
+		ResidueSelectorOP index_rs( new ResidueIndexSelector );
 		try {
 			index_rs->parse_my_tag( tag, dm );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -83,7 +83,7 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
-		ResidueSelectorOP index_rs = new ResidueIndexSelector;
+		ResidueSelectorOP index_rs( new ResidueIndexSelector );
 		try {
 			index_rs->parse_my_tag( tag, dm );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -113,7 +113,7 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
-		ResidueSelectorOP index_rs = new ResidueIndexSelector;
+		ResidueSelectorOP index_rs( new ResidueIndexSelector );
 		try {
 			index_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); //parsing should fail!
@@ -131,7 +131,7 @@ public:
 
 		bad_index << "2,4," << trpcage.total_residue() + 1;
 
-		ResidueSelectorOP index_rs = new ResidueIndexSelector( bad_index.str() );
+		ResidueSelectorOP index_rs( new ResidueIndexSelector( bad_index.str() ) );
 
 		ResidueSubset subset( trpcage.total_residue(), false );
 		try {
@@ -150,7 +150,7 @@ public:
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		std::string bad_index = "2,4,7D";
 
-		ResidueSelectorOP index_rs = new ResidueIndexSelector( bad_index );
+		ResidueSelectorOP index_rs( new ResidueIndexSelector( bad_index ) );
 
 		ResidueSubset subset( trpcage.total_residue(), false );
 		try {

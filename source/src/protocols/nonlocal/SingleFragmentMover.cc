@@ -104,7 +104,7 @@ void SingleFragmentMover::apply(core::pose::Pose& pose) {
     chunks_.clear();
     probs_.clear();
     initialize_chunks(current_tree);
-    previous_tree_ = new core::kinematics::FoldTree(current_tree);
+    previous_tree_ = FoldTreeOP( new core::kinematics::FoldTree(current_tree) );
   }
 
   // randomly select the insertion position
@@ -131,11 +131,11 @@ std::string SingleFragmentMover::get_name() const {
 }
 
 protocols::moves::MoverOP SingleFragmentMover::clone() const {
-  return new SingleFragmentMover(*this);
+  return protocols::moves::MoverOP( new SingleFragmentMover(*this) );
 }
 
 protocols::moves::MoverOP SingleFragmentMover::fresh_instance() const {
-  return new SingleFragmentMover();
+  return protocols::moves::MoverOP( new SingleFragmentMover() );
 }
 
 void SingleFragmentMover::parse_my_tag(const utility::tag::TagCOP tag,
@@ -155,7 +155,7 @@ void SingleFragmentMover::parse_my_tag(const utility::tag::TagCOP tag,
   FragSetOP fragments = FragmentIO().read_data(fragments_file);
 
   // initially, all backbone torsions are movable
-  MoveMapOP movable = new MoveMap();
+  MoveMapOP movable( new MoveMap() );
   protocols::rosetta_scripts::parse_movemap(tag, pose, movable, data);
 
   // optional flags
@@ -182,7 +182,7 @@ void SingleFragmentMover::parse_def( utility::lua::LuaObject const & def,
   FragSetOP fragments = FragmentIO().read_data(fragments_file);
 
   // initially, all backbone torsions are movable
-  MoveMapOP movable = new MoveMap();
+  MoveMapOP movable( new MoveMap() );
 	movable->set_bb( true );
 	movable->set_chi( true );
 	movable->set_jump( true );
@@ -228,7 +228,7 @@ void SingleFragmentMover::initialize_chunks(const core::kinematics::FoldTree& tr
     // the <p> and the next cutpoint is less than fragment length. In this case,
     // the Region::start() exceeds Region::stop(). It's impossible to perform
     // fragment insertions on this region given the current fragment library.
-    RegionOP region = new Region(p, q - fragment_len);
+    RegionOP region( new Region(p, q - fragment_len) );
     if (region->increasing()) {
       // Ensure that the chunk is valid before adding it to the list. Mainly, this
       // means that there must be at least 1 movable residue.

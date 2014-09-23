@@ -23,8 +23,8 @@ namespace task {
 namespace operation {
 
 class OperateOnCertainResidues;
-typedef utility::pointer::owning_ptr< OperateOnCertainResidues > OperateOnCertainResiduesOP;
-typedef utility::pointer::owning_ptr< OperateOnCertainResidues > OperateOnCertainResiduesCOP;
+typedef utility::pointer::shared_ptr< OperateOnCertainResidues > OperateOnCertainResiduesOP;
+typedef utility::pointer::shared_ptr< OperateOnCertainResidues > OperateOnCertainResiduesCOP;
 
 } //namespace operation
 } //namespace task

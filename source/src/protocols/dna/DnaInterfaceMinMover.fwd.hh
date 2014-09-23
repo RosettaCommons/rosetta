@@ -20,8 +20,8 @@ namespace protocols {
 namespace dna {
 
 class DnaInterfaceMinMover;
-typedef utility::pointer::owning_ptr< DnaInterfaceMinMover > DnaInterfaceMinMoverOP;
-typedef utility::pointer::owning_ptr< DnaInterfaceMinMover const > DnaInterfaceMinMoverCOP;
+typedef utility::pointer::shared_ptr< DnaInterfaceMinMover > DnaInterfaceMinMoverOP;
+typedef utility::pointer::shared_ptr< DnaInterfaceMinMover const > DnaInterfaceMinMoverCOP;
 
 } // namespace dna
 } // namespace protocols

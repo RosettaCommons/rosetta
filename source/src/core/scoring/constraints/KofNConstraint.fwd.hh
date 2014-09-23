@@ -24,8 +24,8 @@ namespace constraints {
 
 class KofNConstraint;
 
-typedef utility::pointer::owning_ptr< KofNConstraint > KofNConstraintOP;
-typedef utility::pointer::owning_ptr< KofNConstraint const > KofNConstraintCOP;
+typedef utility::pointer::shared_ptr< KofNConstraint > KofNConstraintOP;
+typedef utility::pointer::shared_ptr< KofNConstraint const > KofNConstraintCOP;
 
 }
 }

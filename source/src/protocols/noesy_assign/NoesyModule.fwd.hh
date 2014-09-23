@@ -28,11 +28,11 @@ namespace noesy_assign {
 class NoesyModule;
 
 // Types
-typedef  utility::pointer::owning_ptr< NoesyModule >  NoesyModuleOP;
-typedef  utility::pointer::owning_ptr< NoesyModule const >  NoesyModuleCOP;
+typedef  utility::pointer::shared_ptr< NoesyModule >  NoesyModuleOP;
+typedef  utility::pointer::shared_ptr< NoesyModule const >  NoesyModuleCOP;
 
-typedef  utility::pointer::access_ptr< NoesyModule >  NoesyModuleAP;
-typedef  utility::pointer::access_ptr< NoesyModule const >  NoesyModuleCAP;
+typedef  utility::pointer::weak_ptr< NoesyModule >  NoesyModuleAP;
+typedef  utility::pointer::weak_ptr< NoesyModule const >  NoesyModuleCAP;
 
 }
 }

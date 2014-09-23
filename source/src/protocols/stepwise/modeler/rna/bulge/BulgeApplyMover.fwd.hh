@@ -25,8 +25,8 @@ namespace rna {
 namespace bulge {
 	
 	class BulgeApplyMover;
-	typedef utility::pointer::owning_ptr< BulgeApplyMover > BulgeApplyMoverOP;
-	typedef utility::pointer::owning_ptr< BulgeApplyMover const > BulgeApplyMoverCOP;
+	typedef utility::pointer::shared_ptr< BulgeApplyMover > BulgeApplyMoverOP;
+	typedef utility::pointer::shared_ptr< BulgeApplyMover const > BulgeApplyMoverCOP;
 	
 } //bulge
 } //rna

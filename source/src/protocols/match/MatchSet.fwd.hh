@@ -24,8 +24,8 @@ namespace match {
 
 class HitHasher;
 
-typedef utility::pointer::owning_ptr< HitHasher > HitHasherOP;
-typedef utility::pointer::owning_ptr< HitHasher const > HitHasherCOP;
+typedef utility::pointer::shared_ptr< HitHasher > HitHasherOP;
+typedef utility::pointer::shared_ptr< HitHasher const > HitHasherCOP;
 
 }
 }

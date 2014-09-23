@@ -79,7 +79,7 @@ UniformRigidBodyCMCreator::mover_name() {
 
 UniformRigidBodyCM::UniformRigidBodyCM():
   ClaimingMover(),
-  mover_( new UniformRigidBodyMover() )
+  mover_( UniformRigidBodyMoverOP( new UniformRigidBodyMover() ) )
 {}
 
 UniformRigidBodyCM::UniformRigidBodyCM( std::string const& name,
@@ -91,7 +91,7 @@ UniformRigidBodyCM::UniformRigidBodyCM( std::string const& name,
   name_( name ),
   mobile_label_( mobile_label ),
   stationary_label_( stationary_label ),
-  mover_( new UniformRigidBodyMover( 0, rotation_magnitude, translation_magnitude ) )
+  mover_( UniformRigidBodyMoverOP( new UniformRigidBodyMover( 0, rotation_magnitude, translation_magnitude ) ) )
 {}
 
 void UniformRigidBodyCM::passport_updated(){
@@ -148,10 +148,10 @@ claims::EnvClaims UniformRigidBodyCM::yield_claims( core::pose::Pose const&,
   claims::EnvClaims claim_list;
 
   ClaimingMoverOP this_ptr( utility::pointer::static_pointer_cast< ClaimingMover >( get_self_ptr() ) );
-  claims::JumpClaimOP jclaim = new claims::JumpClaim( this_ptr,
+  claims::JumpClaimOP jclaim( new claims::JumpClaim( this_ptr,
                                                       name() + DOCKJUMP_TAG,
                                                       mobile_label_,
-                                                      stationary_label_ );
+                                                      stationary_label_ ) );
 
   jclaim->strength( claims::MUST_CONTROL, claims::CAN_CONTROL );
   jclaim->create_vrt_if_necessary( true );

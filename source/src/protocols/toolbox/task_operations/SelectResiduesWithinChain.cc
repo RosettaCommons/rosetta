@@ -57,12 +57,12 @@ SelectResiduesWithinChainOperation::~SelectResiduesWithinChainOperation() {}
 core::pack::task::operation::TaskOperationOP
 SelectResiduesWithinChainOperationCreator::create_task_operation() const
 {
-	return new SelectResiduesWithinChainOperation;
+	return core::pack::task::operation::TaskOperationOP( new SelectResiduesWithinChainOperation );
 }
 
 core::pack::task::operation::TaskOperationOP SelectResiduesWithinChainOperation::clone() const
 {
-	return new SelectResiduesWithinChainOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new SelectResiduesWithinChainOperation( *this ) );
 }
 
 ///@brief restricts to repacking all residues outside of design_shell_ around each residue
@@ -103,12 +103,12 @@ SelectResiduesWithinChainOperation::apply( core::pose::Pose const & pose, core::
 	TR<<std::endl;
 	OperateOnCertainResidues oocr_repacking, oocr_prevent_repacking;
 	if( packing_residues.size() ){
-		oocr_repacking.op( new RestrictToRepackingRLT );
+		oocr_repacking.op( ResLvlTaskOperationCOP( new RestrictToRepackingRLT ) );
 		oocr_repacking.residue_indices( packing_residues );
 		oocr_repacking.apply( pose, task );
 	}
 	if( prevent_repacking_residues.size() ){
-		oocr_prevent_repacking.op( new PreventRepackingRLT );
+		oocr_prevent_repacking.op( ResLvlTaskOperationCOP( new PreventRepackingRLT ) );
 		oocr_prevent_repacking.residue_indices( prevent_repacking_residues );
 		oocr_prevent_repacking.apply( pose, task );
 	}

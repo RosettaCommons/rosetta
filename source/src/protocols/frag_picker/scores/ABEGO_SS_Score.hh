@@ -37,8 +37,8 @@ namespace scores {
 typedef utility::vector1<utility::vector1<Real> > Matrix;
 
 class ABEGO_SS_Score;
-typedef utility::pointer::owning_ptr< ABEGO_SS_Score > ABEGO_SS_ScoreOP;
-typedef utility::pointer::owning_ptr< ABEGO_SS_Score const > ABEGO_SS_ScoreCOP;
+typedef utility::pointer::shared_ptr< ABEGO_SS_Score > ABEGO_SS_ScoreOP;
+typedef utility::pointer::shared_ptr< ABEGO_SS_Score const > ABEGO_SS_ScoreCOP;
 
 class ABEGO_SS_Score: public CachingScoringMethod {
 public:
@@ -62,7 +62,7 @@ public:
 		    ratios_.push_back( row );
 		}
 		for(Size ibin=1;ibin<=n_classes_;ibin++)
-		    maps_.push_back( new quota::ABEGO_SS_Map(prediction_file.get_pool_bins(ibin)) );
+		    maps_.push_back( utility::pointer::shared_ptr<class protocols::frag_picker::quota::ABEGO_SS_Map>( new quota::ABEGO_SS_Map(prediction_file.get_pool_bins(ibin)) ) );
 	}
 
 	~ABEGO_SS_Score() {}

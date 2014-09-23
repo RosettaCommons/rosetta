@@ -21,8 +21,8 @@ namespace core {
 namespace optimization {
 
 class Multifunc;
-typedef utility::pointer::owning_ptr< Multifunc > MultifuncOP;
-typedef utility::pointer::owning_ptr< Multifunc const > MultifuncCOP;
+typedef utility::pointer::shared_ptr< Multifunc > MultifuncOP;
+typedef utility::pointer::shared_ptr< Multifunc const > MultifuncCOP;
 
 } // namespace optimization
 } // namespace core

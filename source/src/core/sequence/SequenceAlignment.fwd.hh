@@ -20,8 +20,8 @@ namespace core {
 namespace sequence {
 
 class SequenceAlignment;
-typedef utility::pointer::owning_ptr< SequenceAlignment > SequenceAlignmentOP;
-typedef utility::pointer::owning_ptr< SequenceAlignment const > SequenceAlignmentCOP;
+typedef utility::pointer::shared_ptr< SequenceAlignment > SequenceAlignmentOP;
+typedef utility::pointer::shared_ptr< SequenceAlignment const > SequenceAlignmentCOP;
 
 } // sequence
 } // core

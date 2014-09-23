@@ -21,8 +21,8 @@ namespace protocols {
 namespace antibody {
 
 class AntibodyModelerProtocol;
-typedef utility::pointer::owning_ptr< AntibodyModelerProtocol > AntibodyModelerProtocolOP;
-typedef utility::pointer::owning_ptr< AntibodyModelerProtocol const > AntibodyModelerProtocolCOP;
+typedef utility::pointer::shared_ptr< AntibodyModelerProtocol > AntibodyModelerProtocolOP;
+typedef utility::pointer::shared_ptr< AntibodyModelerProtocol const > AntibodyModelerProtocolCOP;
 
 }
 }

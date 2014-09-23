@@ -65,16 +65,16 @@ std::string AdditionalOutputWrapperCreator::keyname() const
 
 MoverOP AdditionalOutputWrapperCreator::create_mover() const
 {
-	return new AdditionalOutputWrapper();
+	return MoverOP( new AdditionalOutputWrapper() );
 }
 
 ////////////////////////////////////////////////////////////////////////
 
 AdditionalOutputWrapper::AdditionalOutputWrapper() :
 	Mover( "AdditionalOutputWrapper" ),
-	mover_tag_(NULL),
-	rosetta_scripts_tag_(NULL),
-	reference_pose_(NULL),
+	mover_tag_(/* NULL */),
+	rosetta_scripts_tag_(/* NULL */),
+	reference_pose_(/* NULL */),
 	max_poses_(0),
 	n_poses_(0)
 {
@@ -88,7 +88,7 @@ std::string AdditionalOutputWrapper::get_name() const
 ///@brief Process all input poses (provided pose and from previous mover)
 void AdditionalOutputWrapper::apply(core::pose::Pose& pose)
 {
-	reference_pose_ = new core::pose::Pose(pose);
+	reference_pose_ = core::pose::PoseOP( new core::pose::Pose(pose) );
 	generate_pose(pose);
 	++n_poses_;
 }

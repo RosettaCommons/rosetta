@@ -23,8 +23,8 @@ namespace stepwise {
 namespace screener {
 	
 	class NativeRMSD_Screener;
-	typedef utility::pointer::owning_ptr< NativeRMSD_Screener > NativeRMSD_ScreenerOP;
-	typedef utility::pointer::owning_ptr< NativeRMSD_Screener const > NativeRMSD_ScreenerCOP;
+	typedef utility::pointer::shared_ptr< NativeRMSD_Screener > NativeRMSD_ScreenerOP;
+	typedef utility::pointer::shared_ptr< NativeRMSD_Screener const > NativeRMSD_ScreenerCOP;
 	
 } //screener
 } //stepwise

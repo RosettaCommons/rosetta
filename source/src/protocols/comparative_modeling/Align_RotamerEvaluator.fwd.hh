@@ -20,8 +20,8 @@ namespace protocols {
 namespace comparative_modeling {
 
 class Align_RotamerEvaluator;
-typedef utility::pointer::owning_ptr< Align_RotamerEvaluator > Align_RotamerEvaluatorOP;
-typedef utility::pointer::owning_ptr< Align_RotamerEvaluator const > Align_RotamerEvaluatorCOP;
+typedef utility::pointer::shared_ptr< Align_RotamerEvaluator > Align_RotamerEvaluatorOP;
+typedef utility::pointer::shared_ptr< Align_RotamerEvaluator const > Align_RotamerEvaluatorCOP;
 
 } // comparative_modeling
 } // protocols

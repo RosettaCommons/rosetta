@@ -24,8 +24,8 @@ namespace simple_moves {
 namespace sidechain_moves {
 
 class JumpRotamerSidechainMover;
-typedef utility::pointer::owning_ptr< JumpRotamerSidechainMover > JumpRotamerSidechainMoverOP;
-typedef utility::pointer::owning_ptr< JumpRotamerSidechainMover const > JumpRotamerSidechainMoverCOP;
+typedef utility::pointer::shared_ptr< JumpRotamerSidechainMover > JumpRotamerSidechainMoverOP;
+typedef utility::pointer::shared_ptr< JumpRotamerSidechainMover const > JumpRotamerSidechainMoverCOP;
 
 } // sidechain_moves
 } // simple_moves

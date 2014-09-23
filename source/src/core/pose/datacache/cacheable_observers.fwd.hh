@@ -26,14 +26,14 @@ namespace datacache {
 
 /// @brief forward declaration for LengthEventCollector
 class LengthEventCollector;
-typedef utility::pointer::owning_ptr< LengthEventCollector const > LengthEventCollectorCAP;
-typedef utility::pointer::owning_ptr< LengthEventCollector > LengthEventCollectorAP;
-typedef utility::pointer::owning_ptr< LengthEventCollector const > LengthEventCollectorCOP;
-typedef utility::pointer::owning_ptr< LengthEventCollector > LengthEventCollectorOP;
+typedef utility::pointer::shared_ptr< LengthEventCollector const > LengthEventCollectorCAP;
+typedef utility::pointer::shared_ptr< LengthEventCollector > LengthEventCollectorAP;
+typedef utility::pointer::shared_ptr< LengthEventCollector const > LengthEventCollectorCOP;
+typedef utility::pointer::shared_ptr< LengthEventCollector > LengthEventCollectorOP;
 
 class SpecialSegmentsObserver;
-typedef utility::pointer::owning_ptr< SpecialSegmentsObserver const > SpecialSegmentsObserverCOP;
-typedef utility::pointer::owning_ptr< SpecialSegmentsObserver > SpecialSegmentsObserverOP;
+typedef utility::pointer::shared_ptr< SpecialSegmentsObserver const > SpecialSegmentsObserverCOP;
+typedef utility::pointer::shared_ptr< SpecialSegmentsObserver > SpecialSegmentsObserverOP;
 
 } // namespace datacache
 } // namespace pose

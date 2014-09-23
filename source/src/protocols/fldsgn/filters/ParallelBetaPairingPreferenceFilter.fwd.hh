@@ -27,8 +27,8 @@ namespace filters {
 class ParallelBetaPairingPreferenceFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< ParallelBetaPairingPreferenceFilter >  ParallelBetaPairingPreferenceFilterOP;
-typedef utility::pointer::owning_ptr< ParallelBetaPairingPreferenceFilter const >  ParallelBetaPairingPreferenceFilterCOP;
+typedef utility::pointer::shared_ptr< ParallelBetaPairingPreferenceFilter >  ParallelBetaPairingPreferenceFilterOP;
+typedef utility::pointer::shared_ptr< ParallelBetaPairingPreferenceFilter const >  ParallelBetaPairingPreferenceFilterCOP;
 
 } // namespace protocols
 } // namespace fldsgn

@@ -23,8 +23,8 @@ namespace stepwise {
 namespace screener {
 	
 	class PhosphateScreener;
-	typedef utility::pointer::owning_ptr< PhosphateScreener > PhosphateScreenerOP;
-	typedef utility::pointer::owning_ptr< PhosphateScreener const > PhosphateScreenerCOP;
+	typedef utility::pointer::shared_ptr< PhosphateScreener > PhosphateScreenerOP;
+	typedef utility::pointer::shared_ptr< PhosphateScreener const > PhosphateScreenerCOP;
 	
 } //screener
 } //stepwise

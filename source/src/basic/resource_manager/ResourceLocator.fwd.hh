@@ -20,12 +20,12 @@ namespace basic{
 namespace resource_manager{
 
 class ResourceStream;
-typedef utility::pointer::owning_ptr< ResourceStream > ResourceStreamOP;
-typedef utility::pointer::owning_ptr< ResourceStream const > ResourceStreamCOP;
+typedef utility::pointer::shared_ptr< ResourceStream > ResourceStreamOP;
+typedef utility::pointer::shared_ptr< ResourceStream const > ResourceStreamCOP;
 
 class ResourceLocator;
-typedef utility::pointer::owning_ptr< ResourceLocator > ResourceLocatorOP;
-typedef utility::pointer::owning_ptr< ResourceLocator const > ResourceLocatorCOP;
+typedef utility::pointer::shared_ptr< ResourceLocator > ResourceLocatorOP;
+typedef utility::pointer::shared_ptr< ResourceLocator const > ResourceLocatorCOP;
 
 }// namespace
 }// namespace

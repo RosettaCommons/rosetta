@@ -265,8 +265,8 @@ MatchConstraintFileInfo::MatchConstraintFileInfo(
 	core::Size index,
 	core::chemical::ResidueTypeSetCAP restype_set )
 : index_( index ), is_covalent_(false),
-	dis_U1D1_( NULL ), ang_U1D2_(NULL), ang_U2D1_(NULL),
-	tor_U1D3_(NULL), tor_U3D1_(NULL), tor_U2D2_(NULL),
+	dis_U1D1_( /* NULL */ ), ang_U1D2_(NULL), ang_U2D1_(NULL),
+	tor_U1D3_(/* NULL */), tor_U3D1_(NULL), tor_U2D2_(NULL),
 	restype_set_( restype_set ), native_ (false)
 {
 	allowed_seqpos_.clear();
@@ -386,7 +386,7 @@ MatchConstraintFileInfo::read_data( utility::io::izstream & data )
 		else if ( key == "CONSTRAINT::") {
 			line_stream >> tag;
 
-			GeomSampleInfoOP gs_info = new GeomSampleInfo( tag );
+			GeomSampleInfoOP gs_info( new GeomSampleInfo( tag ) );
 
 			if( !gs_info->read_data( line_stream ) ) return false;
 
@@ -597,7 +597,7 @@ MatchConstraintFileInfo::inverse_rotamers_against_residue(
 							HTReal ht_nn = ht_mm * exgs.transform( HT_tor_U1D3, nn );
 
 							for( core::Size rotcount(1); rotcount <= rotamers.size(); ++rotcount ){
-								core::conformation::ResidueOP rot = new core::conformation::Residue( *(rotamers[rotcount]) );
+								core::conformation::ResidueOP rot( new core::conformation::Residue( *(rotamers[rotcount]) ) );
 								for( core::Size atm = 1; atm <= rot->natoms(); ++atm ){
 									rot->set_xyz( atm, invrot_conformers[rotcount].coordinate_in_D3_frame( atm, ht_nn ) );
 								}
@@ -697,7 +697,7 @@ ExternalGeomSamplerOP
 MatchConstraintFileInfo::create_exgs() const
 {
 
-	ExternalGeomSamplerOP exgs = new ExternalGeomSampler();
+	ExternalGeomSamplerOP exgs( new ExternalGeomSampler() );
 
 	utility::vector1< std::string > tags_undefined_gsi;
 
@@ -759,7 +759,7 @@ MatchConstraintFileInfoList::read_data( utility::io::izstream & data )
 
 	core::Size new_index = mcfis_.size() + 1;
 
-	MatchConstraintFileInfoOP mcfi = new MatchConstraintFileInfo( new_index, restype_set_ );
+	MatchConstraintFileInfoOP mcfi( new MatchConstraintFileInfo( new_index, restype_set_ ) );
 
 	if( mcfi->read_data( data ) ){
 

@@ -20,8 +20,8 @@ namespace protocols {
 namespace kinematic_closure {
 
 class ClosureProblem;
-typedef utility::pointer::owning_ptr<ClosureProblem> ClosureProblemOP;
-typedef utility::pointer::owning_ptr<ClosureProblem const> ClosureProblemCOP;
+typedef utility::pointer::shared_ptr<ClosureProblem> ClosureProblemOP;
+typedef utility::pointer::shared_ptr<ClosureProblem const> ClosureProblemCOP;
 
 } // namespace kinematic_closure
 } // namespace protocols

@@ -61,7 +61,7 @@ namespace abinitio {
 
 /// Move these forward declarations to ClassicAbinitio.fwd.hh
 class ClassicAbinitio;
-typedef utility::pointer::owning_ptr< ClassicAbinitio > ClassicAbinitioOP;
+typedef utility::pointer::shared_ptr< ClassicAbinitio > ClassicAbinitioOP;
 
 //@ brief The Classic Abinitio protocol from rosetta++
 /*!

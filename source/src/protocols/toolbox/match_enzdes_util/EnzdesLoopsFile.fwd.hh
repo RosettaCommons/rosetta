@@ -29,12 +29,12 @@ namespace toolbox {
 namespace match_enzdes_util {
 
 class EnzdesLoopsFile;
-typedef utility::pointer::owning_ptr< EnzdesLoopsFile > EnzdesLoopsFileOP;
-typedef utility::pointer::owning_ptr< EnzdesLoopsFile const > EnzdesLoopsFileCOP;
+typedef utility::pointer::shared_ptr< EnzdesLoopsFile > EnzdesLoopsFileOP;
+typedef utility::pointer::shared_ptr< EnzdesLoopsFile const > EnzdesLoopsFileCOP;
 
 class EnzdesLoopInfo;
-typedef utility::pointer::owning_ptr< EnzdesLoopInfo > EnzdesLoopInfoOP;
-typedef utility::pointer::owning_ptr< EnzdesLoopInfo const > EnzdesLoopInfoCOP;
+typedef utility::pointer::shared_ptr< EnzdesLoopInfo > EnzdesLoopInfoOP;
+typedef utility::pointer::shared_ptr< EnzdesLoopInfo const > EnzdesLoopInfoCOP;
 
 } //match_enzdes_util
 } //toolbox

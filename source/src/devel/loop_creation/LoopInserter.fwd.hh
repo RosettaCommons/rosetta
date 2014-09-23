@@ -21,8 +21,8 @@ namespace devel {
 namespace loop_creation {
 
 class LoopInserter;
-typedef utility::pointer::owning_ptr< LoopInserter > LoopInserterOP;
-typedef utility::pointer::owning_ptr< LoopInserter const > LoopInserterCOP;
+typedef utility::pointer::shared_ptr< LoopInserter > LoopInserterOP;
+typedef utility::pointer::shared_ptr< LoopInserter const > LoopInserterCOP;
 
 } //loop creation
 } //devel

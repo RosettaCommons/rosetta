@@ -133,9 +133,9 @@ FragmentScoringMethodOP MakeABEGO_SS_Score::make(Size priority, Real lowest_acce
 	if ( !option[ in::file::torsion_bin_probs ].user() ) {
 		utility_exit_with_message("Error: no input file specified for ABEGO_SS score; use in::file::torsion_bin_probs option");
 	}
-	return (FragmentScoringMethodOP) new ABEGO_SS_Score(priority,
+	return (FragmentScoringMethodOP) FragmentScoringMethodOP( new ABEGO_SS_Score(priority,
 		lowest_acceptable_value, use_lowest,option[ in::file::torsion_bin_probs ](),
-		vall_max_len);
+		vall_max_len) );
 }
 
 } // scores

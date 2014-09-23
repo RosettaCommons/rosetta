@@ -71,7 +71,7 @@ methods::EnergyMethodOP
 ChemicalShiftAnisotropyEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new ChemicalShiftAnisotropyEnergy;
+	return methods::EnergyMethodOP( new ChemicalShiftAnisotropyEnergy );
 }
 
 ScoreTypes
@@ -95,7 +95,7 @@ ChemicalShiftAnisotropyEnergy::ChemicalShiftAnisotropyEnergy() :
 EnergyMethodOP
 ChemicalShiftAnisotropyEnergy::clone() const
 {
-  return new ChemicalShiftAnisotropyEnergy();
+  return EnergyMethodOP( new ChemicalShiftAnisotropyEnergy() );
 }
 
 void ChemicalShiftAnisotropyEnergy::setup_for_scoring(
@@ -156,7 +156,7 @@ ChemicalShiftAnisotropyEnergy::csa_from_pose(
 {
  	ChemicalShiftAnisotropyOP csa_info( retrieve_CSA_from_pose( pose ) );
 	if ( !csa_info ) {
-		csa_info = new ChemicalShiftAnisotropy;
+		csa_info = ChemicalShiftAnisotropyOP( new ChemicalShiftAnisotropy );
 		store_CSA_in_pose( csa_info, pose );
 	}
 	return *csa_info;

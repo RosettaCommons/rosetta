@@ -22,8 +22,8 @@ namespace scoring {
 
 class P_AA;
 
-typedef  utility::pointer::owning_ptr< P_AA > P_AAOP;
-typedef  utility::pointer::owning_ptr< P_AA const > P_AACOP;
+typedef  utility::pointer::shared_ptr< P_AA > P_AAOP;
+typedef  utility::pointer::shared_ptr< P_AA const > P_AACOP;
 
 } // namespace scoring
 } // namespace core

@@ -24,8 +24,8 @@ namespace frag_picker {
 /// @brief forward declaration for VallChunkFilter
 class VallChunkFilter;
 
-typedef utility::pointer::owning_ptr<VallChunkFilter> VallChunkFilterOP;
-typedef utility::pointer::owning_ptr<VallChunkFilter const> VallChunkFilterCOP;
+typedef utility::pointer::shared_ptr<VallChunkFilter> VallChunkFilterOP;
+typedef utility::pointer::shared_ptr<VallChunkFilter const> VallChunkFilterCOP;
 
 } // frag_picker
 } // protocols

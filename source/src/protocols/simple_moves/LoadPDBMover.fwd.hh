@@ -20,8 +20,8 @@ namespace protocols {
 namespace simple_moves {
 
 class LoadPDBMover;
-typedef utility::pointer::owning_ptr< LoadPDBMover > LoadPDBMoverOP;
-typedef utility::pointer::owning_ptr< LoadPDBMover const > LoadPDBMoverCOP;
+typedef utility::pointer::shared_ptr< LoadPDBMover > LoadPDBMoverOP;
+typedef utility::pointer::shared_ptr< LoadPDBMover const > LoadPDBMoverCOP;
 
 } // simple_moves
 } // protocols

@@ -27,13 +27,13 @@ namespace simple_moves {
 
 /// @brief Uniform Rotation Mover
 class UniformPositionRotationMover;
-typedef utility::pointer::owning_ptr< UniformPositionRotationMover > UniformPositionRotationMoverOP;
-typedef utility::pointer::owning_ptr< UniformPositionRotationMover const > UniformPositionRotationMoverCOP;
+typedef utility::pointer::shared_ptr< UniformPositionRotationMover > UniformPositionRotationMoverOP;
+typedef utility::pointer::shared_ptr< UniformPositionRotationMover const > UniformPositionRotationMoverCOP;
 
 /// @brief Uniform Translation Mover
 class UniformPositionTranslationMover;
-typedef utility::pointer::owning_ptr< UniformPositionTranslationMover > UniformPositionTranslationMoverOP;
-typedef utility::pointer::owning_ptr< UniformPositionTranslationMover const > UniformPositionTranslationMoverCOP;
+typedef utility::pointer::shared_ptr< UniformPositionTranslationMover > UniformPositionTranslationMoverOP;
+typedef utility::pointer::shared_ptr< UniformPositionTranslationMover const > UniformPositionTranslationMoverCOP;
 
 
 } // simple_moves

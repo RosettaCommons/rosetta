@@ -65,17 +65,17 @@ void
 CDRClusterFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const {
 	using namespace basic::database::schema_generator;
 	
-	Column struct_id("struct_id", new DbBigInt());
-	Column chain("chain", new DbText());
-	Column CDR("CDR", new DbText());
-	Column length("length", new DbInteger());
-	Column fullcluster("fullcluster", new DbText());
-	Column dis("dis", new DbReal());
-	Column normDis("normDis", new DbReal());
-	Column normDis_deg("normDis_deg", new DbReal());
-	Column resnum_begin("resnum_begin", new DbInteger());
-	Column resnum_end("resnum_end", new DbInteger());
-	Column sequence("sequence", new DbText());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column chain("chain", DbDataTypeOP( new DbText() ));
+	Column CDR("CDR", DbDataTypeOP( new DbText() ));
+	Column length("length", DbDataTypeOP( new DbInteger() ));
+	Column fullcluster("fullcluster", DbDataTypeOP( new DbText() ));
+	Column dis("dis", DbDataTypeOP( new DbReal() ));
+	Column normDis("normDis", DbDataTypeOP( new DbReal() ));
+	Column normDis_deg("normDis_deg", DbDataTypeOP( new DbReal() ));
+	Column resnum_begin("resnum_begin", DbDataTypeOP( new DbInteger() ));
+	Column resnum_end("resnum_end", DbDataTypeOP( new DbInteger() ));
+	Column sequence("sequence", DbDataTypeOP( new DbText() ));
 	
 	
 	Columns primary_keys;
@@ -111,7 +111,7 @@ CDRClusterFeatures::features_reporter_dependencies() const {
 void
 CDRClusterFeatures::parse_my_tag(utility::tag::TagCOP tag, basic::datacache::DataMap&, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &) {
 	cdrs_.clear();
-	AntibodyEnumManagerOP enum_manager = new AntibodyEnumManager();
+	AntibodyEnumManagerOP enum_manager( new AntibodyEnumManager() );
 	std::string cdrs = tag->getOption< std::string >("cdrs", "L1,L2,L3,H1,H2,H3");
 	std::string scheme = tag->getOption< std::string >("numbering_scheme", "AHO_Scheme");
 	
@@ -147,7 +147,7 @@ core::Size
 CDRClusterFeatures::report_features(core::pose::Pose const & pose, utility::vector1< bool > const & , StructureID struct_id, utility::sql_database::sessionOP db_session) {
 	using cppdb::statement;
 	
-	AntibodyInfoOP ab_info = new AntibodyInfo(pose, numbering_scheme_, North);
+	AntibodyInfoOP ab_info( new AntibodyInfo(pose, numbering_scheme_, North) );
 	
 	//utility::vector1<bool > relavent_residues = residues;
 	

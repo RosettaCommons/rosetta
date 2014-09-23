@@ -71,7 +71,7 @@ void ResidueSelectorLoader::load_data(
 }
 
 DataLoaderOP
-ResidueSelectorLoaderCreator::create_loader() const { return new ResidueSelectorLoader; }
+ResidueSelectorLoaderCreator::create_loader() const { return DataLoaderOP( new ResidueSelectorLoader ); }
 
 std::string
 ResidueSelectorLoaderCreator::keyname() const { return "RESIDUE_SELECTORS"; }

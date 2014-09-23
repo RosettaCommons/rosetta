@@ -23,8 +23,8 @@ namespace methods {
 
 class ContextIndependentTwoBodyEnergy;
 
-typedef utility::pointer::owning_ptr< ContextIndependentTwoBodyEnergy > ContextIndependentTwoBodyEnergyOP;
-typedef utility::pointer::owning_ptr< ContextIndependentTwoBodyEnergy const > ContextIndependentTwoBodyEnergyCOP;
+typedef utility::pointer::shared_ptr< ContextIndependentTwoBodyEnergy > ContextIndependentTwoBodyEnergyOP;
+typedef utility::pointer::shared_ptr< ContextIndependentTwoBodyEnergy const > ContextIndependentTwoBodyEnergyCOP;
 
 } // methods
 } // scoring

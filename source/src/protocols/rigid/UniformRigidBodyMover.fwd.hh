@@ -23,8 +23,8 @@ namespace protocols {
 namespace rigid {
 
 class UniformRigidBodyMover;
-typedef utility::pointer::owning_ptr< UniformRigidBodyMover > UniformRigidBodyMoverOP;
-typedef utility::pointer::owning_ptr< UniformRigidBodyMover const > UniformRigidBodyMoverCOP;
+typedef utility::pointer::shared_ptr< UniformRigidBodyMover > UniformRigidBodyMoverOP;
+typedef utility::pointer::shared_ptr< UniformRigidBodyMover const > UniformRigidBodyMoverCOP;
 
 } // abinitio
 } // protocols

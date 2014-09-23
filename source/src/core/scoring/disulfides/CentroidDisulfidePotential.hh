@@ -143,7 +143,7 @@ class Cb_Distance_Func : public func::Func
 public:
 	Cb_Distance_Func();
 	virtual ~Cb_Distance_Func();
-	func::FuncOP clone() const { return new Cb_Distance_Func( *this ); }
+	func::FuncOP clone() const { return func::FuncOP( new Cb_Distance_Func( *this ) ); }
 	virtual core::Real func( core::Real const ) const;
 	virtual core::Real dfunc( core::Real const ) const;
 private:
@@ -165,7 +165,7 @@ class Cen_Distance_Func : public func::Func
 public:
 	Cen_Distance_Func();
 	virtual ~Cen_Distance_Func();
-	func::FuncOP clone() const { return new Cen_Distance_Func( *this ); }
+	func::FuncOP clone() const { return func::FuncOP( new Cen_Distance_Func( *this ) ); }
 	virtual core::Real func( core::Real const ) const;
 	virtual core::Real dfunc( core::Real const ) const;
 private:
@@ -180,7 +180,7 @@ class CaCbCb_Angle_Func : public func::Func
 public:
 	CaCbCb_Angle_Func();
 	virtual ~CaCbCb_Angle_Func();
-	func::FuncOP clone() const { return new CaCbCb_Angle_Func( *this ); }
+	func::FuncOP clone() const { return func::FuncOP( new CaCbCb_Angle_Func( *this ) ); }
 	virtual core::Real func( core::Real const ) const;
 	virtual core::Real dfunc( core::Real const ) const;
 private:
@@ -195,7 +195,7 @@ class NCaCaC_Dihedral_Func : public func::Func
 public:
 	NCaCaC_Dihedral_Func();
 	virtual ~NCaCaC_Dihedral_Func();
-	func::FuncOP clone() const { return new NCaCaC_Dihedral_Func( *this ); }
+	func::FuncOP clone() const { return func::FuncOP( new NCaCaC_Dihedral_Func( *this ) ); }
 	virtual core::Real func( core::Real const ) const;
 	virtual core::Real dfunc( core::Real const ) const;
 private:
@@ -210,7 +210,7 @@ class CaCbCbCa_Dihedral_Func : public func::Func
 public:
 	CaCbCbCa_Dihedral_Func();
 	virtual ~CaCbCbCa_Dihedral_Func();
-	func::FuncOP clone() const { return new CaCbCbCa_Dihedral_Func( *this ); }
+	func::FuncOP clone() const { return func::FuncOP( new CaCbCbCa_Dihedral_Func( *this ) ); }
 	virtual core::Real func( core::Real const ) const;
 	virtual core::Real dfunc( core::Real const ) const;
 private:

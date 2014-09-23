@@ -76,7 +76,7 @@ CCDLoopClosureMover::CCDLoopClosureMover() : Mover()
 	Loop empty_loop;
 
 	// Set default MoveMap.
-	MoveMapOP default_movemap = new MoveMap();
+	MoveMapOP default_movemap( new MoveMap() );
 	default_movemap->set_bb( true );
 
 	init( empty_loop, default_movemap );
@@ -96,7 +96,7 @@ CCDLoopClosureMover::CCDLoopClosureMover( protocols::loops::Loop const & loop ) 
 	using kinematics::MoveMapOP;
 
 	// Set default MoveMap.
-	MoveMapOP default_movemap = new MoveMap();
+	MoveMapOP default_movemap( new MoveMap() );
 	for ( core::uint resnum = loop.start(); resnum <= loop.stop(); ++resnum ) {
 		default_movemap->set_bb( resnum, true );
 	}
@@ -180,13 +180,13 @@ CCDLoopClosureMover::get_name() const
 protocols::moves::MoverOP
 CCDLoopClosureMover::clone() const
 {
-	return new CCDLoopClosureMover( *this );
+	return protocols::moves::MoverOP( new CCDLoopClosureMover( *this ) );
 }
 
 protocols::moves::MoverOP
 CCDLoopClosureMover::fresh_instance() const
 {
-	return new CCDLoopClosureMover();
+	return protocols::moves::MoverOP( new CCDLoopClosureMover() );
 }
 
 void
@@ -438,7 +438,7 @@ void
 CCDLoopClosureMover::copy_data( CCDLoopClosureMover & to, CCDLoopClosureMover const & from ) const
 {
 	to.loop_ = from.loop_;
-	to.movemap_ = new kinematics::MoveMap( * from.movemap_ );  // deep copy pointer
+	to.movemap_ = core::kinematics::MoveMapCOP( new kinematics::MoveMap( * from.movemap_ ) );  // deep copy pointer
 
 	to.max_per_move_torsion_delta_ = from.max_per_move_torsion_delta_;
 	to.max_total_torsion_delta_ = from.max_total_torsion_delta_;
@@ -764,10 +764,10 @@ RamaCheckBaseOP CCDLoopClosureMover::rama() const
 	if ( rama_.get() == NULL ) {
 		if ( ! use_rama_2B() ) {
 			// one-body Ramachandran score
-			rama_ = new RamaCheck1B;
+			rama_ = RamaCheckBaseOP( new RamaCheck1B );
 		} else {
 			// two-body Ramachandran score
-			rama_ = new RamaCheck2B;
+			rama_ = RamaCheckBaseOP( new RamaCheck2B );
 		}
 	}
 
@@ -809,7 +809,7 @@ CCDLoopClosureMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 CCDLoopClosureMoverCreator::create_mover() const {
-	return new CCDLoopClosureMover;
+	return protocols::moves::MoverOP( new CCDLoopClosureMover );
 }
 
 std::string

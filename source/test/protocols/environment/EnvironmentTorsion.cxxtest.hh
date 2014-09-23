@@ -101,9 +101,9 @@ public:
     claims::EnvClaims claims;
 
     if( claim_ ){
-      claims::TorsionClaimOP new_claim = new claims::TorsionClaim( 
+      claims::TorsionClaimOP new_claim( new claims::TorsionClaim( 
 		utility::pointer::dynamic_pointer_cast< protocols::environment::ClaimingMover >(get_self_ptr()),
-		LocalPosition( "BASE", resnum_ ) );
+		LocalPosition( "BASE", resnum_ ) ) );
       new_claim->strength( control_str_, init_str_ );
       claims.push_back( new_claim );
     }
@@ -128,7 +128,7 @@ private:
   claims::ControlStrength init_str_;
 };
 
-typedef utility::pointer::owning_ptr< TorsionMover > TorsionMoverOP;
+typedef utility::pointer::shared_ptr< TorsionMover > TorsionMoverOP;
 
 } //environment
 } //protocols
@@ -170,8 +170,8 @@ public:
     using namespace protocols::environment;
     using namespace core::environment;
 
-    TorsionMoverOP mover = new TorsionMover( false, false );
-    EnvironmentOP env_op = new Environment( "env" );
+    TorsionMoverOP mover( new TorsionMover( false, false ) );
+    EnvironmentOP env_op( new Environment( "env" ) );
     Environment & env = *env_op;
 
     core::pose::Pose brokered;
@@ -188,12 +188,12 @@ public:
     using namespace protocols::environment;
     using namespace core::environment;
 
-    TorsionMoverOP tier1_mover = new TorsionMover( true, true );
-    TorsionMoverOP tier2_mover = new TorsionMover( true, true );
+    TorsionMoverOP tier1_mover( new TorsionMover( true, true ) );
+    TorsionMoverOP tier2_mover( new TorsionMover( true, true ) );
 
-    EnvironmentOP env1_op = new Environment( "tier1" );
+    EnvironmentOP env1_op( new Environment( "tier1" ) );
     Environment & env1 = *env1_op;
-    EnvironmentOP env2_op = new Environment( "tier2" );
+    EnvironmentOP env2_op( new Environment( "tier2" ) );
     Environment & env2 = *env2_op;
 
     env1.register_mover( tier1_mover );
@@ -238,12 +238,12 @@ public:
     using namespace core::environment;
 
     //Tests that
-    TorsionMoverOP allowed_mover = new TorsionMover( true, true );
-    TorsionMoverOP duplicate_claim_mover = new TorsionMover( true, true );
-    TorsionMoverOP no_claim_mover = new TorsionMover( false, true );
-    TorsionMoverOP unreg_mover = new TorsionMover( true, true );
+    TorsionMoverOP allowed_mover( new TorsionMover( true, true ) );
+    TorsionMoverOP duplicate_claim_mover( new TorsionMover( true, true ) );
+    TorsionMoverOP no_claim_mover( new TorsionMover( false, true ) );
+    TorsionMoverOP unreg_mover( new TorsionMover( true, true ) );
 
-    EnvironmentOP env_op = new Environment( "torsion" );
+    EnvironmentOP env_op( new Environment( "torsion" ) );
     Environment & env = *env_op;
 
     env.register_mover( allowed_mover );
@@ -320,10 +320,10 @@ public:
     using namespace core::environment;
 
     // Veirfy coexeistance of must and can control
-    TorsionMoverOP must_mover = new TorsionMover( true, true, claims::MUST_CONTROL );
-    TorsionMoverOP can_mover = new TorsionMover( true, true, claims::CAN_CONTROL );
+    TorsionMoverOP must_mover( new TorsionMover( true, true, claims::MUST_CONTROL ) );
+    TorsionMoverOP can_mover( new TorsionMover( true, true, claims::CAN_CONTROL ) );
 
-    EnvironmentOP env_op = new Environment( "env" );
+    EnvironmentOP env_op( new Environment( "env" ) );
     Environment & env = *env_op;
 
     env.register_mover( must_mover );
@@ -344,10 +344,10 @@ public:
     using namespace protocols::environment;
     using namespace core::environment;
 
-    TorsionMoverOP exclusive_mover = new TorsionMover( true, true, claims::EXCLUSIVE );
-    TorsionMoverOP can_mover = new TorsionMover( true, true, claims::CAN_CONTROL );
+    TorsionMoverOP exclusive_mover( new TorsionMover( true, true, claims::EXCLUSIVE ) );
+    TorsionMoverOP can_mover( new TorsionMover( true, true, claims::CAN_CONTROL ) );
 
-    EnvironmentOP env_op = new Environment( "env" );
+    EnvironmentOP env_op( new Environment( "env" ) );
     Environment & env = *env_op;
 
     env.register_mover( exclusive_mover );
@@ -370,10 +370,10 @@ public:
     using namespace protocols::environment;
     using namespace core::environment;
 
-    TorsionMoverOP exclusive_mover = new TorsionMover( true, true, claims::EXCLUSIVE );
-    TorsionMoverOP must_mover = new TorsionMover( true, true, claims::MUST_CONTROL );
+    TorsionMoverOP exclusive_mover( new TorsionMover( true, true, claims::EXCLUSIVE ) );
+    TorsionMoverOP must_mover( new TorsionMover( true, true, claims::MUST_CONTROL ) );
 
-    EnvironmentOP env_op = new Environment( "env" );
+    EnvironmentOP env_op( new Environment( "env" ) );
     Environment & env = *env_op;
 
     env.register_mover( exclusive_mover );
@@ -391,23 +391,23 @@ public:
     using namespace protocols::environment;
     using namespace core::environment;
 
-    TorsionMoverOP must_init_mover = new TorsionMover( true, true,
+    TorsionMoverOP must_init_mover( new TorsionMover( true, true,
 																											 claims::DOES_NOT_CONTROL,
-																											 claims::EXCLUSIVE );
-    TorsionMoverOP must_init_mover2 = new TorsionMover( true, true,
+																											 claims::EXCLUSIVE ) );
+    TorsionMoverOP must_init_mover2( new TorsionMover( true, true,
 																												claims::DOES_NOT_CONTROL,
-																												claims::EXCLUSIVE );
-    TorsionMoverOP active_can_init_mover = new TorsionMover( true, true,
+																												claims::EXCLUSIVE ) );
+    TorsionMoverOP active_can_init_mover( new TorsionMover( true, true,
 																														 claims::DOES_NOT_CONTROL,
-																														 claims::CAN_CONTROL );
-    TorsionMoverOP inactive_can_init_mover = new TorsionMover( true, false,
+																														 claims::CAN_CONTROL ) );
+    TorsionMoverOP inactive_can_init_mover( new TorsionMover( true, false,
 																															 claims::DOES_NOT_CONTROL,
-																															 claims::CAN_CONTROL );
+																															 claims::CAN_CONTROL ) );
 
     core::pose::Pose protected_pose;
 
     { // 2xMUST_INIT are not compatible
-	  EnvironmentOP env_op = new Environment( "env" );
+	  EnvironmentOP env_op( new Environment( "env" ) );
 	  Environment & env = *env_op;
 
       env.register_mover( must_init_mover );
@@ -416,7 +416,7 @@ public:
     }
 
     { // MUST_INIT takes precedence over CAN_INIT and does not complain.
-      EnvironmentOP env_op = new Environment( "env" );
+      EnvironmentOP env_op( new Environment( "env" ) );
       Environment & env = *env_op;
 
       env.register_mover( must_init_mover );

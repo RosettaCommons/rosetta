@@ -35,9 +35,9 @@ class ChiSet : public utility::pointer::ReferenceCount
 {
 public:
 	ChiSet():
-		chi( 0 ),
-		rot( 0 ),
-		ex_chi_steps( 0 ),
+		chi( /* 0 */ ),
+		rot( /* 0 */ ),
+		ex_chi_steps( /* 0 */ ),
 		probability( 0.0 )
 	{}
 

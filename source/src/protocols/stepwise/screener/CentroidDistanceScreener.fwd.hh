@@ -23,8 +23,8 @@ namespace stepwise {
 namespace screener {
 	
 	class CentroidDistanceScreener;
-	typedef utility::pointer::owning_ptr< CentroidDistanceScreener > CentroidDistanceScreenerOP;
-	typedef utility::pointer::owning_ptr< CentroidDistanceScreener const > CentroidDistanceScreenerCOP;
+	typedef utility::pointer::shared_ptr< CentroidDistanceScreener > CentroidDistanceScreenerOP;
+	typedef utility::pointer::shared_ptr< CentroidDistanceScreener const > CentroidDistanceScreenerCOP;
 	
 } //screener
 } //stepwise

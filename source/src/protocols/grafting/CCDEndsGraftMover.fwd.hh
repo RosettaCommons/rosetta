@@ -23,8 +23,8 @@ namespace grafting {
 /// @brief  
 class CCDEndsGraftMover;
 
-	typedef utility::pointer::owning_ptr<CCDEndsGraftMover> CCDEndsGraftMoverOP;
-	typedef utility::pointer::owning_ptr<CCDEndsGraftMover const> CCDEndsGraftMoverCOP;
+	typedef utility::pointer::shared_ptr<CCDEndsGraftMover> CCDEndsGraftMoverOP;
+	typedef utility::pointer::shared_ptr<CCDEndsGraftMover const> CCDEndsGraftMoverCOP;
 
 }}  // namespace grafting_protocls
 

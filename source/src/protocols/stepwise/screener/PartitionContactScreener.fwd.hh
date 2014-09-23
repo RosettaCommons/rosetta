@@ -23,8 +23,8 @@ namespace stepwise {
 namespace screener {
 	
 	class PartitionContactScreener;
-	typedef utility::pointer::owning_ptr< PartitionContactScreener > PartitionContactScreenerOP;
-	typedef utility::pointer::owning_ptr< PartitionContactScreener const > PartitionContactScreenerCOP;
+	typedef utility::pointer::shared_ptr< PartitionContactScreener > PartitionContactScreenerOP;
+	typedef utility::pointer::shared_ptr< PartitionContactScreener const > PartitionContactScreenerCOP;
 	
 } //screener
 } //stepwise

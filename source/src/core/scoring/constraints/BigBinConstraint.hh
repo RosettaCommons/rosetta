@@ -50,7 +50,7 @@ public:
 	}
 
 	virtual ConstraintOP clone() const {
-		return new BigBinConstraint( res_, bin_, sdev_ );
+		return ConstraintOP( new BigBinConstraint( res_, bin_, sdev_ ) );
 	}
 
 	void score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;

@@ -94,7 +94,7 @@ PcsDataCenterManager::get_PCS_data_all() {
 basic::datacache::CacheableDataOP
 PcsDataCenterManager::clone() const {
 	//	TR_PcsDataCenterManager << "clone called" << std::endl;
-	return new PcsDataCenterManager( *this );
+	return basic::datacache::CacheableDataOP( new PcsDataCenterManager( *this ) );
 }
 
 std::ostream &

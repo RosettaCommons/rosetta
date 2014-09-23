@@ -27,8 +27,8 @@ namespace domain_insertion {
 
 class InsertionSiteTestMover;
 
-typedef utility::pointer::owning_ptr< InsertionSiteTestMover > InsertionSiteTestMoverOP;
-typedef utility::pointer::owning_ptr< InsertionSiteTestMover const > InsertionSiteTestMoverCOP;
+typedef utility::pointer::shared_ptr< InsertionSiteTestMover > InsertionSiteTestMoverOP;
+typedef utility::pointer::shared_ptr< InsertionSiteTestMover const > InsertionSiteTestMoverCOP;
 
 
 }

@@ -64,7 +64,7 @@ NormalModeMinimizerCreator::keyname() const
 
 protocols::moves::MoverOP
 NormalModeMinimizerCreator::create_mover() const {
-	return new NormalModeMinimizer;
+	return protocols::moves::MoverOP( new NormalModeMinimizer );
 }
 
 std::string
@@ -79,7 +79,7 @@ static thread_local basic::Tracer nma_tr( "protocols.normalmode", basic::t_debug
 
 
 NormalModeMinimizer::NormalModeMinimizer() {
-	options_ = new MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
+	options_ = MinimizerOptionsOP( new MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.01, true, false, false ) );
 	options_->max_iter(200);
 }
 
@@ -87,11 +87,11 @@ NormalModeMinimizer::~NormalModeMinimizer() {}
 
 void
 NormalModeMinimizer::apply( pose::Pose & pose ) {
-	if ( ! movemap_ ) movemap_ = new MoveMap;
+	if ( ! movemap_ ) movemap_ = core::kinematics::MoveMapOP( new MoveMap );
 	if ( ! scorefxn_ ) scorefxn_ = get_score_function(); // get a default (INITIALIZED!) ScoreFunction
 
 	if ( options_->deriv_check() ) {
-		deriv_check_result_ = new NumericalDerivCheckResult;
+		deriv_check_result_ = NumericalDerivCheckResultOP( new NumericalDerivCheckResult );
 		deriv_check_result_->send_to_stdout( options_->deriv_check_to_stdout() );
 	}
 
@@ -179,17 +179,17 @@ void NormalModeMinimizer::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	Pose const & pose )
 {
-	if ( ! movemap_ ) movemap_ = new MoveMap;
+	if ( ! movemap_ ) movemap_ = core::kinematics::MoveMapOP( new MoveMap );
 
 	std::string const scorefxn_name( tag->getOption< std::string >( "scorefxn", "score12" ) );
-	scorefxn_ = data.get< ScoreFunction * >( "scorefxns", scorefxn_name );
+	scorefxn_ = data.get_ptr<ScoreFunction>( "scorefxns", scorefxn_name );
 
 	// high-level movemap
 	bool const chi( tag->getOption< bool >( "chi" ) ), bb( tag->getOption< bool >( "bb" ) );
 	movemap_->set_chi( chi );
 	movemap_->set_bb( bb );
 	if ( tag->hasOption("jump") ) {
-		if ( ! movemap_ ) movemap_ = new MoveMap;
+		if ( ! movemap_ ) movemap_ = core::kinematics::MoveMapOP( new MoveMap );
 		utility::vector1<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );
 
 		// string 'ALL' makes all jumps movable

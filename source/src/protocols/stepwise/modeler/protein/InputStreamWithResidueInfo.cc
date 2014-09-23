@@ -90,19 +90,19 @@ namespace protein {
 
 		if( option_s1.user() ) {
 			// pdb input(s).
-			input1 = new PDBPoseInputStream( option_s1() );
+			input1 = PoseInputStreamOP( new PDBPoseInputStream( option_s1() ) );
 
 		} else if ( option_silent1.size() > 0 ){
 
 			if ( option_tags1.user() > 0) {
-				input1 = new SilentFilePoseInputStream( option_silent1() ,
-																								option_tags1() );
+				input1 = PoseInputStreamOP( new SilentFilePoseInputStream( option_silent1() ,
+																								option_tags1() ) );
 			} else {
-				input1 = new SilentFilePoseInputStream( option_silent1() );
+				input1 = PoseInputStreamOP( new SilentFilePoseInputStream( option_silent1() ) );
 			}
 		} else {
 			// create a pose stream with a single blank pose...
-			input1 = new ExtendedPoseInputStream( "", 1 ); // hmm...
+			input1 = PoseInputStreamOP( new ExtendedPoseInputStream( "", 1 ) ); // hmm...
 		}
 
 		return input1;
@@ -127,20 +127,20 @@ namespace protein {
 		if ( option[ s1 ].user()  || option[ silent1 ].user()  ) { // assume new style of input.
 			utility::vector1< Size > slice_res_1 = blank_size_vector;
 			if ( option[ slice_res1 ].user() ) slice_res_1 =  option[ slice_res1]();
-			InputStreamWithResidueInfoOP stream1 = new InputStreamWithResidueInfo(
+			InputStreamWithResidueInfoOP stream1( new InputStreamWithResidueInfo(
 																																						setup_pose_input_stream( option[ s1 ], option[ silent1 ], option[ tags1 ] ),
 																																						option[ input_res1 ](),
-																																						slice_res_1 );
+																																						slice_res_1 ) );
 			if ( option[ backbone_only1 ]() ) stream1->set_backbone_only( true );
 			input_streams.push_back( stream1 );
 
 			if ( option[ input_res2 ].user() ) {
 				utility::vector1< Size > slice_res_2 = blank_size_vector;
 				if ( option[ slice_res2 ].user() ) slice_res_2 =  option[ slice_res2]();
-				InputStreamWithResidueInfoOP stream2 = new InputStreamWithResidueInfo(
+				InputStreamWithResidueInfoOP stream2( new InputStreamWithResidueInfo(
 																																							setup_pose_input_stream( option[ s2 ], option[ silent2 ], option[ tags2 ] ),
 																																							option[ input_res2 ](),
-																																							slice_res_2 );
+																																							slice_res_2 ) );
 				if ( option[ backbone_only2 ]() ) stream2->set_backbone_only( true );
 				input_streams.push_back( stream2 );
 			}
@@ -248,7 +248,7 @@ namespace protein {
 		// Read in pose.
 		core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_ );
 		runtime_assert( rsd_set != 0 );
-		import_pose_ = new core::pose::Pose;
+		import_pose_ = pose::PoseOP( new core::pose::Pose );
 		pose_input_stream_->fill_pose( *import_pose_, *rsd_set );
 	}
 

@@ -31,11 +31,11 @@ namespace claims {
 class BBClaim;
 
 // Types
-typedef  utility::pointer::owning_ptr< BBClaim >  BBClaimOP;
-typedef  utility::pointer::owning_ptr< BBClaim const >  BBClaimCOP;
+typedef  utility::pointer::shared_ptr< BBClaim >  BBClaimOP;
+typedef  utility::pointer::shared_ptr< BBClaim const >  BBClaimCOP;
 
-typedef  utility::pointer::access_ptr< BBClaim >  BBClaimAP;
-typedef  utility::pointer::access_ptr< BBClaim const >  BBClaimCAP;
+typedef  utility::pointer::weak_ptr< BBClaim >  BBClaimAP;
+typedef  utility::pointer::weak_ptr< BBClaim const >  BBClaimCAP;
 
 }
 }

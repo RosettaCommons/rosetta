@@ -29,10 +29,10 @@ namespace kinematics {
 class FoldTree;
 
 // Types
-typedef  utility::pointer::access_ptr< FoldTree >  FoldTreeAP;
-typedef  utility::pointer::access_ptr< FoldTree const >  FoldTreeCAP;
-typedef  utility::pointer::owning_ptr< FoldTree >  FoldTreeOP;
-typedef  utility::pointer::owning_ptr< FoldTree const >  FoldTreeCOP;
+typedef  utility::pointer::weak_ptr< FoldTree >  FoldTreeAP;
+typedef  utility::pointer::weak_ptr< FoldTree const >  FoldTreeCAP;
+typedef  utility::pointer::shared_ptr< FoldTree >  FoldTreeOP;
+typedef  utility::pointer::shared_ptr< FoldTree const >  FoldTreeCOP;
 
 
 } // namespace kinematics

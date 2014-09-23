@@ -24,10 +24,10 @@ namespace cenrot {
 
 class SingleResidueCenrotLibrary;
 
-typedef utility::pointer::owning_ptr< SingleResidueCenrotLibrary > SingleResidueCenrotLibraryOP;
-typedef utility::pointer::access_ptr< SingleResidueCenrotLibrary > SingleResidueCenrotLibraryAP;
-typedef utility::pointer::owning_ptr< SingleResidueCenrotLibrary const > SingleResidueCenrotLibraryCOP;
-typedef utility::pointer::access_ptr< SingleResidueCenrotLibrary const > SingleResidueCenrotLibraryCAP;
+typedef utility::pointer::shared_ptr< SingleResidueCenrotLibrary > SingleResidueCenrotLibraryOP;
+typedef utility::pointer::weak_ptr< SingleResidueCenrotLibrary > SingleResidueCenrotLibraryAP;
+typedef utility::pointer::shared_ptr< SingleResidueCenrotLibrary const > SingleResidueCenrotLibraryCOP;
+typedef utility::pointer::weak_ptr< SingleResidueCenrotLibrary const > SingleResidueCenrotLibraryCAP;
 
 } // cenrot
 } // dunbrack

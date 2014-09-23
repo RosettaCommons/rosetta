@@ -152,7 +152,7 @@ public:
   virtual bool is_exposed( pose::Pose & pose, Size & resid, vector1< Real > sasa_values );
 
   virtual MoverOP clone() const {
-    return new ExposedStrandMover( *this );
+    return MoverOP( new ExposedStrandMover( *this ) );
   }
 
   virtual std::string get_name() const{
@@ -435,7 +435,7 @@ void ExposedStrandMover::apply (core::pose::Pose & pose ) {
   if( basic::options::option[ struct_file ].active()){
       struct_filename_ = option[ struct_file ];
       TR << "Deleting according to structure file..."<< std::endl;
-      protocols::moves::StructureRestrictorOP restrictor = new protocols::moves::StructureRestrictor(struct_filename_ );
+      protocols::moves::StructureRestrictorOP restrictor( new protocols::moves::StructureRestrictor(struct_filename_ ) );
       restrictor->apply(pose);
   }
 
@@ -445,7 +445,7 @@ void ExposedStrandMover::apply (core::pose::Pose & pose ) {
   //core::scoring::TenANeighborGraph tang (pose.energies().tenA_neighbor_graph());
 
   //set up sasa calculator
-  core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy;
+  core::pose::metrics::PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy );
   if( core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "sasa_calc" ) ){
 		//TR << "sasa calculator already exists...continuing" << std::endl;
   } else {
@@ -675,7 +675,7 @@ try {
   // init
   devel::init(argc, argv);
 
-  protocols::jd2::JobDistributor::get_instance()->go( new ExposedStrandMover );
+  protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new ExposedStrandMover ) );
 
   std::cout << "Done! -------------------------------"<< std::endl;
 } catch ( utility::excn::EXCN_Base const & e ) {

@@ -22,8 +22,8 @@ namespace rna {
 
 class RNA_TorsionPotential;
 
-typedef  utility::pointer::owning_ptr< RNA_TorsionPotential > RNA_TorsionPotentialOP;
-typedef  utility::pointer::owning_ptr< RNA_TorsionPotential const > RNA_TorsionPotentialCOP;
+typedef  utility::pointer::shared_ptr< RNA_TorsionPotential > RNA_TorsionPotentialOP;
+typedef  utility::pointer::shared_ptr< RNA_TorsionPotential const > RNA_TorsionPotentialCOP;
 
 } //rna
 } //scoring

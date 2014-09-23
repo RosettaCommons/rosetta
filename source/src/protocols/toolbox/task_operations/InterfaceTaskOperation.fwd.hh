@@ -24,8 +24,8 @@ namespace task_operations {
 
 
 class InterfaceTaskOperation;
-typedef utility::pointer::owning_ptr< InterfaceTaskOperation > InterfaceTaskOperationOP;
-typedef utility::pointer::owning_ptr< InterfaceTaskOperation > InterfaceTaskOperationCOP;
+typedef utility::pointer::shared_ptr< InterfaceTaskOperation > InterfaceTaskOperationOP;
+typedef utility::pointer::shared_ptr< InterfaceTaskOperation > InterfaceTaskOperationCOP;
 
 }
 }

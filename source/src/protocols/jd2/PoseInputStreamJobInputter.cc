@@ -105,7 +105,7 @@ PoseInputStreamJobInputterCreator::keyname() const
 
 protocols::jd2::JobInputterOP
 PoseInputStreamJobInputterCreator::create_JobInputter() const {
-        return new PoseInputStreamJobInputter;
+        return protocols::jd2::JobInputterOP( new PoseInputStreamJobInputter );
 }
 
 } // jd2

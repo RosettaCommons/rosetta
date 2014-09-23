@@ -24,8 +24,8 @@ namespace scoring {
 namespace func {
 
 class SquareWellFunc;
-typedef utility::pointer::owning_ptr< SquareWellFunc > SquareWellFuncOP;
-typedef utility::pointer::owning_ptr< SquareWellFunc const > SquareWellFuncCOP;
+typedef utility::pointer::shared_ptr< SquareWellFunc > SquareWellFuncOP;
+typedef utility::pointer::shared_ptr< SquareWellFunc const > SquareWellFuncCOP;
 
 //class CircularSquareWellFunc;
 //typedef utility::pointer::owning_ptr< CircularSquareWellFunc > CircularSquareWellFuncOP;

@@ -25,8 +25,8 @@ namespace match {
 namespace downstream {
 
 class ClassicMatchAlgorithm;
-typedef utility::pointer::owning_ptr< ClassicMatchAlgorithm > ClassicMatchAlgorithmOP;
-typedef utility::pointer::owning_ptr< ClassicMatchAlgorithm const > ClassicMatchAlgorithmCOP;
+typedef utility::pointer::shared_ptr< ClassicMatchAlgorithm > ClassicMatchAlgorithmOP;
+typedef utility::pointer::shared_ptr< ClassicMatchAlgorithm const > ClassicMatchAlgorithmCOP;
 
 }
 }

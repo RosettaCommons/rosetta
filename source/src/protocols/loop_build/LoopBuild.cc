@@ -113,7 +113,7 @@ LoopBuild_main( bool  ) {
 	looprelax_mover.remodel( remodel );
 	looprelax_mover.intermedrelax( intermedrelax );
 
-	LoopBuildMoverOP loopbuild_mover = new protocols::loop_build::LoopBuildMover(looprelax_mover);
+	LoopBuildMoverOP loopbuild_mover( new protocols::loop_build::LoopBuildMover(looprelax_mover) );
 
 
 	protocols::jd2::JobDistributor::get_instance()->go(loopbuild_mover);

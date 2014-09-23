@@ -61,7 +61,7 @@ GrowLigandCreator::keyname() const
 
 protocols::moves::MoverOP
 GrowLigandCreator::create_mover() const {
-	return new GrowLigand;
+	return protocols::moves::MoverOP( new GrowLigand );
 }
 
 std::string
@@ -103,17 +103,17 @@ GrowLigand::set_fragments(){
 	grow_ligand_tracer<< fragment_types.size()<< " fragment_types"<< std::endl;
 
 	BOOST_FOREACH(core::chemical::ResidueTypeCOP fragment_type, fragment_types){
-		fragments_.push_back( new core::conformation::Residue(*fragment_type, true) );
+		fragments_.push_back( utility::pointer::shared_ptr<const class core::conformation::Residue>( new core::conformation::Residue(*fragment_type, true) ) );
 		grow_ligand_tracer<< "frag_name: "<< fragment_type->name()<< std::endl;
 	}
 }
 
 protocols::moves::MoverOP GrowLigand::clone() const {
-	return new GrowLigand( *this );
+	return protocols::moves::MoverOP( new GrowLigand( *this ) );
 }
 
 protocols::moves::MoverOP GrowLigand::fresh_instance() const {
-	return new GrowLigand;
+	return protocols::moves::MoverOP( new GrowLigand );
 }
 
 std::string GrowLigand::get_name() const{
@@ -157,7 +157,7 @@ GrowLigand::apply( core::pose::Pose & pose )
 	}
 
 	core::Size grow_from = numeric::random::rg().random_element(unconnected_residues);
-	core::Size grow_from_connection= random_connection(&pose.residue(grow_from));
+	core::Size grow_from_connection= random_connection(pose.residue(grow_from).get_self_ptr());
 	core::conformation::ResidueCOP growth = numeric::random::rg().random_element(fragments_);
 	core::Size growth_connection= random_connection(growth);
 	bool const build_ideal_geometry= true;

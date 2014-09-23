@@ -52,7 +52,7 @@ TaskAwareSymMinMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 TaskAwareSymMinMoverCreator::create_mover() const {
-	return new TaskAwareSymMinMover;
+	return protocols::moves::MoverOP( new TaskAwareSymMinMover );
 }
 
 std::string
@@ -85,12 +85,12 @@ TaskAwareSymMinMover::TaskAwareSymMinMover(const TaskAwareSymMinMover& rval) :
 
 protocols::moves::MoverOP 
 TaskAwareSymMinMover::clone() const {
-	return new TaskAwareSymMinMover( *this );
+	return protocols::moves::MoverOP( new TaskAwareSymMinMover( *this ) );
 }
 
 protocols::moves::MoverOP 
 TaskAwareSymMinMover::fresh_instance() const {
-	return new TaskAwareSymMinMover();
+	return protocols::moves::MoverOP( new TaskAwareSymMinMover() );
 }
 
 
@@ -100,7 +100,7 @@ TaskAwareSymMinMover::apply(Pose & pose) {
 	runtime_assert( task_factory_ != 0 );
 
 	// Initialize a MoveMap, set all moves to false
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	movemap->set_jump(false);
 	movemap->set_bb(false);
 	movemap->set_chi(false);

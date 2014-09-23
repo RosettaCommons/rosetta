@@ -46,7 +46,7 @@ MultiStateEntity::MultiStateEntity( MultiStateEntity const & entity ) :
 MultiStateEntity::~MultiStateEntity() {}
 
 MultiStateEntity::EntityOP
-MultiStateEntity::clone() const { return new MultiStateEntity(*this); }
+MultiStateEntity::clone() const { return MultiStateEntity::EntityOP( new MultiStateEntity(*this) ); }
 
 void MultiStateEntity::show( std::ostream & os ) const
 {

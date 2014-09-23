@@ -23,7 +23,7 @@ namespace methods {
 
 class P_AA_Energy;
 
-typedef utility::pointer::owning_ptr< P_AA_Energy > P_AA_EnergyOP;
+typedef utility::pointer::shared_ptr< P_AA_Energy > P_AA_EnergyOP;
 
 } // methods
 } // scoring

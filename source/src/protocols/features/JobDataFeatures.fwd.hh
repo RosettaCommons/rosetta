@@ -19,8 +19,8 @@ namespace protocols {
 namespace features {
 
 class JobDataFeatures;
-typedef utility::pointer::owning_ptr<JobDataFeatures> JobDataFeaturesOP;
-typedef utility::pointer::owning_ptr<JobDataFeatures const> JobDataFeaturesCOP;
+typedef utility::pointer::shared_ptr<JobDataFeatures> JobDataFeaturesOP;
+typedef utility::pointer::shared_ptr<JobDataFeatures const> JobDataFeaturesCOP;
 
 }
 }

@@ -34,7 +34,7 @@ using namespace core::scoring;
 static thread_local basic::Tracer TR( "protocols.simple_filters.FileRemoveFilter" );
 
 protocols::filters::FilterOP
-FileRemoveFilterCreator::create_filter() const { return new FileRemoveFilter; }
+FileRemoveFilterCreator::create_filter() const { return protocols::filters::FilterOP( new FileRemoveFilter ); }
 
 std::string
 FileRemoveFilterCreator::keyname() const { return "FileRemove"; }

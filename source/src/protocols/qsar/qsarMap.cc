@@ -82,7 +82,7 @@ void qsarMap::fill_with_value(core::Size value,utility::vector1<std::string> gri
 		for(core::Size grid_index = 1; grid_index <= grids_to_use.size(); ++grid_index)
 		{
 			//qsarType current_type(static_cast<qsarType>(enum_index));
-			qsarPointOP current_point(new qsarPoint(grids_to_use[grid_index],value,atom_name,residue_));
+			qsarPointOP current_point( new qsarPoint(grids_to_use[grid_index],value,atom_name,residue_) );
 			std::string point_name(grids_to_use[grid_index]+"_"+atom_name);
 			this->add_point(point_name,current_point);
 		}

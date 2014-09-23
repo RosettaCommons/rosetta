@@ -25,8 +25,8 @@ namespace protocols {
 namespace hybridization {
 			
 class CartesianSampler;
-typedef utility::pointer::owning_ptr< CartesianSampler > CartesianSamplerOP;
-typedef utility::pointer::owning_ptr< CartesianSampler const > CartesianSamplerCOP;
+typedef utility::pointer::shared_ptr< CartesianSampler > CartesianSamplerOP;
+typedef utility::pointer::shared_ptr< CartesianSampler const > CartesianSamplerCOP;
 
 
 } // hybridize 

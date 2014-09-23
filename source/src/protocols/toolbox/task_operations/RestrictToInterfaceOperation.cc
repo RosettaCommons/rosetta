@@ -70,7 +70,7 @@ void RestrictToInterfaceOperation::make_calculator( core::Size upper_chain, core
 							<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
 	using core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator;
-	CalculatorFactory::Instance().register_calculator( calculator_name_, new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( upper_chain, lower_chain ) );
+	CalculatorFactory::Instance().register_calculator( calculator_name_, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( upper_chain, lower_chain ) ) );
 	}
 }
 
@@ -85,13 +85,13 @@ RestrictToInterfaceOperation::~RestrictToInterfaceOperation() {}
 core::pack::task::operation::TaskOperationOP
 RestrictToInterfaceOperationCreator::create_task_operation() const
 {
-	return new RestrictToInterfaceOperation;
+	return core::pack::task::operation::TaskOperationOP( new RestrictToInterfaceOperation );
 }
 
 ///@details be warned if you use clone that you'll not get a new interface calculator
 core::pack::task::operation::TaskOperationOP RestrictToInterfaceOperation::clone() const
 {
-	return new RestrictToInterfaceOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new RestrictToInterfaceOperation( *this ) );
 }
 
 void

@@ -28,8 +28,8 @@ namespace copydofs {
 	typedef utility::vector1< std::pair< id::DOF_ID, core::Real > > CopyDofsInfo;
 
 	class CopyDofs;
-	typedef utility::pointer::owning_ptr< CopyDofs > CopyDofsOP;
-	typedef utility::pointer::owning_ptr< CopyDofs const > CopyDofsCOP;
+	typedef utility::pointer::shared_ptr< CopyDofs > CopyDofsOP;
+	typedef utility::pointer::shared_ptr< CopyDofs const > CopyDofsCOP;
 
 } //copydofs
 } //pose

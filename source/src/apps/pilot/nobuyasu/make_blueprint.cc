@@ -97,16 +97,16 @@ main( int argc, char * argv [] )
 	dsm.apply( pose );
 
 	// out secondaray structure info
-	SS_Info2_OP ssinfo = new SS_Info2( pose, pose.secstruct() );
+	SS_Info2_OP ssinfo( new SS_Info2( pose, pose.secstruct() ) );
 	output << *ssinfo;
 
 	// calc strand pairing set
-	StrandPairingSetOP spairset = new StrandPairingSet( protocols::fldsgn::topology::calc_strand_pairing_set( pose, ssinfo ) );
+	StrandPairingSetOP spairset( new StrandPairingSet( protocols::fldsgn::topology::calc_strand_pairing_set( pose, ssinfo ) ) );
 	output << *spairset;
 	output << "SSPAIR " << spairset->name() << std::endl;
 
 	// calc sheet
-	SheetSetOP sheet_set = new SheetSet( ssinfo, spairset );
+	SheetSetOP sheet_set( new SheetSet( ssinfo, spairset ) );
 	output << *sheet_set;
 
 	// calc bab

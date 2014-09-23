@@ -202,33 +202,27 @@ core::id::SequenceMapping ThreadingMover::get_qt_mapping(
 	using namespace core::id;
 	using namespace core::sequence;
 
-	SequenceOP query_sequence(
-		new Sequence(
+	SequenceOP query_sequence( new Sequence(
 			align_.sequence( 1 )->ungapped_sequence(),
 			align_.sequence( 1 )->id(),
 			align_.sequence( 1 )->start()
-		)
-	);
+		) );
 
 	SequenceOP aligned_template(
 		align_.sequence(template_index_)->clone()
 	);
 
-	SequenceOP t_align_seq(
-		new Sequence(
+	SequenceOP t_align_seq( new Sequence(
 			aligned_template->ungapped_sequence(),
 			aligned_template->id() + "_align_seq",
 			aligned_template->start()
-		)
-	);
+		) );
 
-	SequenceOP t_pdb_seq(
-		new Sequence (
+	SequenceOP t_pdb_seq( new Sequence (
 			template_pose_.sequence(),
 			aligned_template->id() + "_pdb_seq",
 			1
-		)
-	);
+		) );
 
 	// construct an intermediate alignment of the sequence from the alignment
 	// to the sequence in the PDB file.
@@ -469,13 +463,13 @@ ThreadingMover::get_name() const {
 protocols::moves::MoverOP
 ThreadingMover::clone() const
 {
-	return new ThreadingMover(*this);
+	return protocols::moves::MoverOP( new ThreadingMover(*this) );
 }
 
 protocols::moves::MoverOP
 ThreadingMover::fresh_instance() const
 {
-	return new ThreadingMover();
+	return protocols::moves::MoverOP( new ThreadingMover() );
 }
 
 } // comparative_modeling

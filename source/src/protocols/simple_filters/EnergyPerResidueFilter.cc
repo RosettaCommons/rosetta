@@ -49,7 +49,7 @@ namespace simple_filters {
 static thread_local basic::Tracer energy_per_residue_filter_tracer( "protocols.simple_filters.EnergyPerResidueFilter" );
 
 protocols::filters::FilterOP
-EnergyPerResidueFilterCreator::create_filter() const { return new EnergyPerResidueFilter; }
+EnergyPerResidueFilterCreator::create_filter() const { return protocols::filters::FilterOP( new EnergyPerResidueFilter ); }
 
 std::string
 EnergyPerResidueFilterCreator::keyname() const { return "EnergyPerResidue"; }
@@ -487,7 +487,7 @@ EnergyPerResidueFilter::compute( core::pose::Pose const & pose , core::Size cons
 
 		if( bb_bb_ ){
 			energy_per_residue_filter_tracer << "decomposing bb hydrogen bond terms" << std::endl;
-    	core::scoring::methods::EnergyMethodOptionsOP energy_options(new core::scoring::methods::EnergyMethodOptions(scorefxn_->energy_method_options()));
+    	core::scoring::methods::EnergyMethodOptionsOP energy_options( new core::scoring::methods::EnergyMethodOptions(scorefxn_->energy_method_options()) );
     	energy_options->hbond_options().decompose_bb_hb_into_pair_energies(true);
     	scorefxn_->set_energy_method_options(*energy_options);
 	    (*scorefxn_)( in_pose );
@@ -529,7 +529,7 @@ EnergyPerResidueFilter::compute( core::pose::Pose const & pose ) const
 
     if( bb_bb_ ){
       energy_per_residue_filter_tracer << "decomposing bb hydrogen bond terms" << std::endl;
-      core::scoring::methods::EnergyMethodOptionsOP energy_options(new core::scoring::methods::EnergyMethodOptions(scorefxn_->energy_method_options()));
+      core::scoring::methods::EnergyMethodOptionsOP energy_options( new core::scoring::methods::EnergyMethodOptions(scorefxn_->energy_method_options()) );
       energy_options->hbond_options().decompose_bb_hb_into_pair_energies(true);
       scorefxn_->set_energy_method_options(*energy_options);
     }

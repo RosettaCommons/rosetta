@@ -21,12 +21,12 @@ namespace simple_moves {
 namespace symmetry {
 
 class SetupNCSMover;
-typedef utility::pointer::owning_ptr< SetupNCSMover > SetupNCSMoverOP;
-typedef utility::pointer::owning_ptr< SetupNCSMover const > SetupNCSMoverCOP;
+typedef utility::pointer::shared_ptr< SetupNCSMover > SetupNCSMoverOP;
+typedef utility::pointer::shared_ptr< SetupNCSMover const > SetupNCSMoverCOP;
 
 class NCSResMapping;
-typedef utility::pointer::owning_ptr< NCSResMapping > NCSResMappingOP;
-typedef utility::pointer::owning_ptr< NCSResMapping const > NCSResMappingCOP;
+typedef utility::pointer::shared_ptr< NCSResMapping > NCSResMappingOP;
+typedef utility::pointer::shared_ptr< NCSResMapping const > NCSResMappingCOP;
 
 } // symmetry
 } // moves

@@ -25,9 +25,9 @@ namespace scores {
 /// @brief forward declaration for score histogram
 class AdaptiveScoreHistogram;
 
-typedef utility::pointer::owning_ptr<AdaptiveScoreHistogram>
+typedef utility::pointer::shared_ptr<AdaptiveScoreHistogram>
 		AdaptiveScoreHistogramOP;
-typedef utility::pointer::owning_ptr<AdaptiveScoreHistogram const>
+typedef utility::pointer::shared_ptr<AdaptiveScoreHistogram const>
 		AdaptiveScoreHistogramCOP;
 
 } // scores

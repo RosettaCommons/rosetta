@@ -126,7 +126,7 @@ public:
 
 		TS_ASSERT( dist_sq == 2 );
 		TS_ASSERT( nearest->location() == closest );
-		WrappedRealOP val = dynamic_cast< WrappedReal * > ( nearest->data()() );
+		WrappedRealOP val = utility::pointer::dynamic_pointer_cast< WrappedReal > ( nearest->data() );
 		TS_ASSERT( val->val() == 8.0 );
 	}
 
@@ -144,16 +144,16 @@ public:
 
 		// add some randomly high values for consideration.
 		container.insert(
-			new KDPoint( vector1< Real >( 4, 25 ),
-			sq_vec_distance( vector1< Real >( 4, 25 ), origin ) )
+			KDPointOP( new KDPoint( vector1< Real >( 4, 25 ),
+			sq_vec_distance( vector1< Real >( 4, 25 ), origin ) ) )
 		);
 		container.insert(
-			new KDPoint( vector1< Real >( 4, 67 ),
-			sq_vec_distance( vector1< Real >( 4, 67 ), origin ) )
+			KDPointOP( new KDPoint( vector1< Real >( 4, 67 ),
+			sq_vec_distance( vector1< Real >( 4, 67 ), origin ) ) )
 		);
 		container.insert(
-			new KDPoint( vector1< Real >( 4, 99 ),
-			sq_vec_distance( vector1< Real >( 4, 99 ), origin ) )
+			KDPointOP( new KDPoint( vector1< Real >( 4, 99 ),
+			sq_vec_distance( vector1< Real >( 4, 99 ), origin ) ) )
 		);
 		for ( Size ii = 1; ii <= 20; ++ii ) {
 			vector1< Real > k_loc( ndim, ii );
@@ -179,24 +179,24 @@ public:
 		{ // scope for merging test
 			KDPointList container2( wanted );
 			container2.insert(
-				new KDPoint( vector1< Real >( 4, 2.5 ),
-				sq_vec_distance( vector1< Real >( 4, 2.5 ), origin ) )
+				KDPointOP( new KDPoint( vector1< Real >( 4, 2.5 ),
+				sq_vec_distance( vector1< Real >( 4, 2.5 ), origin ) ) )
 			);
 			container2.insert(
-				new KDPoint( vector1< Real >( 4, 25 ),
-				sq_vec_distance( vector1< Real >( 4, 25 ), origin ) )
+				KDPointOP( new KDPoint( vector1< Real >( 4, 25 ),
+				sq_vec_distance( vector1< Real >( 4, 25 ), origin ) ) )
 			);
 			container2.insert(
-				new KDPoint( vector1< Real >( 4, 67 ),
-				sq_vec_distance( vector1< Real >( 4, 67 ), origin ) )
+				KDPointOP( new KDPoint( vector1< Real >( 4, 67 ),
+				sq_vec_distance( vector1< Real >( 4, 67 ), origin ) ) )
 			);
 			container2.insert(
-				new KDPoint( vector1< Real >( 4, 99 ),
-				sq_vec_distance( vector1< Real >( 4, 99 ), origin ) )
+				KDPointOP( new KDPoint( vector1< Real >( 4, 99 ),
+				sq_vec_distance( vector1< Real >( 4, 99 ), origin ) ) )
 			);
 			container2.insert(
-				new KDPoint( vector1< Real >( 4, 99 ),
-				sq_vec_distance( vector1< Real >( 4, 99 ), origin ) )
+				KDPointOP( new KDPoint( vector1< Real >( 4, 99 ),
+				sq_vec_distance( vector1< Real >( 4, 99 ), origin ) ) )
 			);
 			TS_ASSERT( container2.size() == 5 );
 			TS_ASSERT( container2.worst_distance() == 39204 );
@@ -242,7 +242,7 @@ public:
 		TS_ASSERT( values[4]->distance() == 50 );
 		TS_ASSERT( values[5]->distance() == 65 );
 
-		WrappedRealOP nearest_val = dynamic_cast< WrappedReal * > ( values[1]->data()() );
+		WrappedRealOP nearest_val = utility::pointer::dynamic_pointer_cast< WrappedReal > ( values[1]->data() );
 		TS_ASSERT( nearest_val->val() == 8.0 );
 	}
 
@@ -271,7 +271,7 @@ public:
 		TS_ASSERT( values[4]->distance() == 50 );
 		TS_ASSERT( values[5]->distance() == 65 );
 
-		WrappedRealOP nearest_val = dynamic_cast< WrappedReal * > ( values[1]->data()() );
+		WrappedRealOP nearest_val = utility::pointer::dynamic_pointer_cast< WrappedReal > ( values[1]->data() );
 		TS_ASSERT( nearest_val->val() == 8.0 );
 	}
 

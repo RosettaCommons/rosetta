@@ -23,8 +23,8 @@ namespace elec {
 
 class FA_ElecEnergy;
 
-typedef utility::pointer::owning_ptr< FA_ElecEnergy > FA_ElecEnergyOP;
-typedef utility::pointer::owning_ptr< FA_ElecEnergy const > FA_ElecEnergyCOP;
+typedef utility::pointer::shared_ptr< FA_ElecEnergy > FA_ElecEnergyOP;
+typedef utility::pointer::shared_ptr< FA_ElecEnergy const > FA_ElecEnergyCOP;
 
 }
 }

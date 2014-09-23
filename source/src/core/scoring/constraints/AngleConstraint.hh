@@ -42,7 +42,7 @@ public:
 	}
 
 	virtual ConstraintOP clone() const {
-		return new AngleConstraint( atom1_, atom2_, atom3_, func_, score_type() );
+		return ConstraintOP( new AngleConstraint( atom1_, atom2_, atom3_, func_, score_type() ) );
 	}
 
 	/// @brief read in constraint defiinition

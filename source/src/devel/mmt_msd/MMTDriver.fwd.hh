@@ -22,18 +22,18 @@ namespace mmt_msd {
 
 class JobsForSequence;
 
-typedef utility::pointer::owning_ptr< JobsForSequence > JobsForSequenceOP;
-typedef utility::pointer::owning_ptr< JobsForSequence const > JobsForSequenceCOP;
+typedef utility::pointer::shared_ptr< JobsForSequence > JobsForSequenceOP;
+typedef utility::pointer::shared_ptr< JobsForSequence const > JobsForSequenceCOP;
 
 class OneGenerationJobInfo;
 
-typedef utility::pointer::owning_ptr< OneGenerationJobInfo > OneGenerationJobInfoOP;
-typedef utility::pointer::owning_ptr< OneGenerationJobInfo const > OneGenerationJobInfoCOP;
+typedef utility::pointer::shared_ptr< OneGenerationJobInfo > OneGenerationJobInfoOP;
+typedef utility::pointer::shared_ptr< OneGenerationJobInfo const > OneGenerationJobInfoCOP;
 
 class MMTDriver;
 
-typedef utility::pointer::owning_ptr< MMTDriver > MMTDriverOP;
-typedef utility::pointer::owning_ptr< MMTDriver const > MMTDriverCOP;
+typedef utility::pointer::shared_ptr< MMTDriver > MMTDriverOP;
+typedef utility::pointer::shared_ptr< MMTDriver const > MMTDriverCOP;
 
 }
 }

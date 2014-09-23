@@ -23,11 +23,11 @@ namespace scoring {
 
 class ImplicitFastClashCheck;
 
-typedef utility::pointer::owning_ptr< ImplicitFastClashCheck > ImplicitFastClashCheckOP;
-typedef utility::pointer::owning_ptr< ImplicitFastClashCheck const > ImplicitFastClashCheckCOP;
+typedef utility::pointer::shared_ptr< ImplicitFastClashCheck > ImplicitFastClashCheckOP;
+typedef utility::pointer::shared_ptr< ImplicitFastClashCheck const > ImplicitFastClashCheckCOP;
 
-typedef utility::pointer::access_ptr< ImplicitFastClashCheck > ImplicitFastClashCheckAP;
-typedef utility::pointer::access_ptr< ImplicitFastClashCheck const > ImplicitFastClashCheckCAP;
+typedef utility::pointer::weak_ptr< ImplicitFastClashCheck > ImplicitFastClashCheckAP;
+typedef utility::pointer::weak_ptr< ImplicitFastClashCheck const > ImplicitFastClashCheckCAP;
 
 } // namespace scoring
 } // namespace protocols

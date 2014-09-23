@@ -161,7 +161,7 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 	Pose native_pose_copy = *get_native_pose();
 	native_pose_copy.fold_tree(  core::kinematics::FoldTree(  native_pose_copy.total_residue() ) );
 
-	PoseOP working_native_pose = new Pose;
+	PoseOP working_native_pose( new Pose );
 
 	//First option is to pass in the full length native
 	if ( native_pose_copy.sequence() ==  working_parameters_->full_sequence() ){
@@ -736,7 +736,7 @@ StepWiseRNA_PoseSetup::add_terminal_res_repulsion( core::pose::Pose & pose ) con
 			}
 
 			// distance from O3' to P
-			cst_set->add_constraint( new AtomPairConstraint( atom_id1, atom_id2, repulsion_func ) );
+			cst_set->add_constraint( ConstraintCOP( new AtomPairConstraint( atom_id1, atom_id2, repulsion_func ) ) );
 
 		}
 	}
@@ -998,7 +998,7 @@ StepWiseRNA_PoseSetup::setup_full_model_info( pose::Pose & pose ) const {
 		full_sequence += 'X';
 	}
 
-	FullModelInfoOP full_model_info = new FullModelInfo( full_sequence,  cutpoint_open_list, working_res );
+	FullModelInfoOP full_model_info( new FullModelInfo( full_sequence,  cutpoint_open_list, working_res ) );
 	FullModelParametersOP full_model_parameters = full_model_info->full_model_parameters()->clone();
 	utility::vector1< core::Size > extra_minimize_res;
 	utility::vector1< Size > fixed_domain; // convert from old convention to new one stored in full_model info.

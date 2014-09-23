@@ -98,7 +98,7 @@ FoldTreeSketch::FoldTreeSketch( FoldTreeSketch const& rhs ):
 {
 
   for ( core::Size i = 1; i <= rhs.nodes_.size(); ++i ) {
-    nodes_.push_back( new Node( *rhs.nodes_[ i ] ) );
+    nodes_.push_back( utility::pointer::shared_ptr<class core::environment::FoldTreeSketch::Node>( new Node( *rhs.nodes_[ i ] ) ) );
   }
   n_jumps_ = rhs.n_jumps_;
 }
@@ -224,7 +224,7 @@ void FoldTreeSketch::render( core::kinematics::FoldTree& ft ) const{
 }
 
 core::kinematics::FoldTreeOP FoldTreeSketch::render() const{
-  kinematics::FoldTreeOP ft = new kinematics::FoldTree();
+  kinematics::FoldTreeOP ft( new kinematics::FoldTree() );
   render( *ft );
   return ft;
 }
@@ -382,9 +382,9 @@ bool FoldTreeSketch::cuttable( utility::vector1< Size > const& cycle ) const {
 
 FoldTreeSketch::Node::Node( Size i ):
   seqid_( i ),
-  pep_prev_( NULL ),
-  pep_next_( NULL ),
-  parent_( NULL )
+  pep_prev_( /* NULL */ ),
+  pep_next_( /* NULL */ ),
+  parent_( /* NULL */ )
 {}
 
 FoldTreeSketch::NodeOP FoldTreeSketch::Node::newNode( Size i ) {

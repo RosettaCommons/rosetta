@@ -29,11 +29,11 @@ typedef std::map< core::Size, core::Size > ResMap;
 // Forward
 class MiniPose;
 
-typedef utility::pointer::owning_ptr< MiniPose > MiniPoseOP;
-typedef utility::pointer::owning_ptr< MiniPose const > MiniPoseCOP;
+typedef utility::pointer::shared_ptr< MiniPose > MiniPoseOP;
+typedef utility::pointer::shared_ptr< MiniPose const > MiniPoseCOP;
 
-typedef utility::pointer::access_ptr< MiniPose > MiniPoseAP;
-typedef utility::pointer::access_ptr< MiniPose const > MiniPoseCAP;
+typedef utility::pointer::weak_ptr< MiniPose > MiniPoseAP;
+typedef utility::pointer::weak_ptr< MiniPose const > MiniPoseCAP;
 
 } // namespace pose
 } // namespace core

@@ -19,8 +19,8 @@ namespace protocols {
 namespace abinitio {
 
 class AbrelaxMover;
-typedef utility::pointer::owning_ptr<AbrelaxMover> AbrelaxMoverOP;
-typedef utility::pointer::owning_ptr<AbrelaxMover const> AbrelaxMoverCOP;
+typedef utility::pointer::shared_ptr<AbrelaxMover> AbrelaxMoverOP;
+typedef utility::pointer::shared_ptr<AbrelaxMover const> AbrelaxMoverCOP;
 
 }
 }

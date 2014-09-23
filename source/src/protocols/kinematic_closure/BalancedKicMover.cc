@@ -48,19 +48,19 @@ namespace kinematic_closure {
 // Member functions:
 
 BalancedKicMover::BalancedKicMover() { // {{{1
-	perturbers_ = new perturbers::PerturberSet;
+	perturbers_ = perturbers::PerturberSetOP( new perturbers::PerturberSet );
 	perturbers_->add(perturbers::PerturberOP( new perturbers::RamaPerturber ));
 	perturbers_->mark_as_default();
 
 	loop_ = Loop(0, 0);
-	pivot_picker_ = new pivot_pickers::StandardPivots;
+	pivot_picker_ = pivot_pickers::PivotPickerOP( new pivot_pickers::StandardPivots );
 	is_fold_tree_stale_ = true;
 }
 
 BalancedKicMover::~BalancedKicMover() {} // {{{1
 
 void BalancedKicMover::apply(Pose & pose) { // {{{1
-	ClosureProblemOP problem = new ClosureProblem();
+	ClosureProblemOP problem( new ClosureProblem() );
 	ClosureSolutionCOP solution;
 	SolutionList unperturbed_solutions, perturbed_solutions;
 

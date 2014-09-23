@@ -63,7 +63,7 @@ namespace topology_broker {
 
 using namespace core;
 
-TemplateJumpClaimer::TemplateJumpClaimer() : templates_( NULL )
+TemplateJumpClaimer::TemplateJumpClaimer() : templates_( /* NULL */ )
 {
 	set_keep_jumps_from_input_pose( false );
 }
@@ -76,7 +76,7 @@ TemplateJumpClaimer::TemplateJumpClaimer( std::string config_file,  weights::Abi
 }
 
 void TemplateJumpClaimer::read_config_file( std::string const& file ) {
-	templates_ = new abinitio::Templates( file, NULL /* native_pose_*/ );
+	templates_ = abinitio::TemplatesOP( new abinitio::Templates( file, NULL /* native_pose_*/ ) );
 	//	templates_->target_sequence() = sequence_; // a hack until class SequenceMapping works better
 	// want to pick fragments from templates... make sure they are not initialized yet
 	//runtime_assert( !fragset_large_ );
@@ -94,13 +94,13 @@ void TemplateJumpClaimer::read_topol_file( std::string const& file ) {
 		if ( !is.good() ) {
 			utility_exit_with_message(" did not find topology_file: " + file );
 		}
-		abinitio::PairingStatisticsOP ps = new abinitio::PairingStatistics;
+		abinitio::PairingStatisticsOP ps( new abinitio::PairingStatistics );
 		is >> *ps;
 		tr.Info << *ps << std::endl;
 		core::scoring::dssp::PairingList helix_pairings; //empty for now
-		core::fragment::SecondaryStructureOP ss_def = new core::fragment::SecondaryStructure;
+		core::fragment::SecondaryStructureOP ss_def( new core::fragment::SecondaryStructure );
 		ss_def->extend( 1500 ); //HACK number of residues
-		set_jump_def( new abinitio::TemplateJumpSetup( NULL, ss_def, ps, helix_pairings ) );
+		set_jump_def( jumping::BaseJumpSetupOP( new abinitio::TemplateJumpSetup( NULL, ss_def, ps, helix_pairings ) ) );
 }
 
 bool TemplateJumpClaimer::read_tag( std::string tag, std::istream& is ) {
@@ -128,7 +128,7 @@ bool TemplateJumpClaimer::read_tag( std::string tag, std::istream& is ) {
 	} else if ( tag == "SS_INFO" ) {
 		std::string file;
 		is >> file;
-		ss_def_ = new core::fragment::SecondaryStructure;
+		ss_def_ = core::fragment::SecondaryStructureOP( new core::fragment::SecondaryStructure );
 		ss_def_->read_psipred_ss2( file );
 	} else if ( tag == "mover_weight" ) {
 		read_mover_weight( is );
@@ -148,8 +148,8 @@ void TemplateJumpClaimer::init_after_reading() {
 	if ( pairings_.size() ) {
 		if ( !ss_def_ ) EXCN_Input( "If you use PAIRING_FILE you also have to specify SS_INFO " );
 		if ( !sheets_.size() ) EXCN_Input( "If you use PAIRING_FILE you also have to specify SHEET or RANDOM_SHEET " );
-		if ( bRandomSheet_ ) set_jump_def( new jumping::RandomSheetBuilder( ss_def_, pairings_, sheets_ ) );
-		else set_jump_def( new jumping::SheetBuilder( ss_def_, pairings_, sheets_ ) );
+		if ( bRandomSheet_ ) set_jump_def( jumping::BaseJumpSetupOP( new jumping::RandomSheetBuilder( ss_def_, pairings_, sheets_ ) ) );
+		else set_jump_def( jumping::BaseJumpSetupOP( new jumping::SheetBuilder( ss_def_, pairings_, sheets_ ) ) );
 	}
 }
 

@@ -202,7 +202,7 @@ namespace packer {
 		pose_to_split.remove_constraints(); // floating point errors if coordinate constraints are in there.
 		split_pose( pose_to_split, working_moving_res_list_ );
 
-		pose_init_ = 0; //don't copy any side chains into pose.
+		pose_init_.reset(); //don't copy any side chains into pose.
 		runtime_assert( working_pack_res_.size() > 0 );
 		apply( pose_to_split );
 

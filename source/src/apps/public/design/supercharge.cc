@@ -431,16 +431,16 @@ public:
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;
 		using namespace basic::options;
-		TaskFactoryOP task_factory = new TaskFactory();
-		task_factory->push_back(new operation::InitializeFromCommandline()); //ex1, ex1, minimize sidechains, use_input_sc
+		TaskFactoryOP task_factory( new TaskFactory() );
+		task_factory->push_back(TaskOperationCOP( new operation::InitializeFromCommandline() )); //ex1, ex1, minimize sidechains, use_input_sc
 
 		// first, read in user resfile.  Intended to only contain NATAA or NATRO to specify additional residues to not mutation  MUST have ALLAA as default!!
 		if ( option[ OptionKeys::packing::resfile ].user() ) {
-			task_factory->push_back( new operation::ReadResfile );
+			task_factory->push_back( TaskOperationCOP( new operation::ReadResfile ) );
 			TR << "Reading resfile from user input... make sure ALLAA is set as the default in your resfile!!" << std::endl;
 		}
 
-		task_factory->push_back( new operation::ReadResfile( out_path_ + '/' + "resfile_output_Asc" ) ); // reads the resfile previously created, adds to the user resfile (if provided)
+		task_factory->push_back( TaskOperationCOP( new operation::ReadResfile( out_path_ + '/' + "resfile_output_Asc" ) ) ); // reads the resfile previously created, adds to the user resfile (if provided)
 
 		using namespace core::scoring;
 		ScoreFunctionOP scorefxn = get_score_function();
@@ -452,7 +452,7 @@ public:
 		utility::file::FileName input_pdbname( pose.pdb_info()->name() );
 		std::string input_namebase( input_pdbname.base() );
 
-		protocols::simple_moves::PackRotamersMoverOP packrot_mover = new protocols::simple_moves::PackRotamersMover;
+		protocols::simple_moves::PackRotamersMoverOP packrot_mover( new protocols::simple_moves::PackRotamersMover );
 		packrot_mover->score_function( scorefxn );
 		packrot_mover->task_factory( task_factory );
 		packrot_mover->apply( pose ); /////////////////APPLY PACKROT MOVER
@@ -499,8 +499,8 @@ public:
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;
 		using namespace basic::options;
-		TaskFactoryOP task_factory = new TaskFactory();
-    task_factory->push_back(new operation::InitializeFromCommandline()); //use_input_sc
+		TaskFactoryOP task_factory( new TaskFactory() );
+    task_factory->push_back(TaskOperationCOP( new operation::InitializeFromCommandline() )); //use_input_sc
 
 		using namespace core::scoring;
 		ScoreFunctionOP scorefxn = get_score_function();
@@ -509,7 +509,7 @@ public:
 		scorefxn->set_energy_method_options( energymethodoptions );
 		scorefxn_ = scorefxn;
 
-		protocols::simple_moves::PackRotamersMoverOP packrot_mover = new protocols::simple_moves::PackRotamersMover;
+		protocols::simple_moves::PackRotamersMoverOP packrot_mover( new protocols::simple_moves::PackRotamersMover );
 		packrot_mover->score_function( scorefxn_ );
 
 		core::pack::task::operation::RestrictToRepackingOP restrict_to_repack( new core::pack::task::operation::RestrictToRepacking() );
@@ -517,15 +517,15 @@ public:
 
 		packrot_mover->task_factory( task_factory );
 
-		kinematics::MoveMapOP movemap_sc = new kinematics::MoveMap;
-		kinematics::MoveMapOP movemap_scbb = new kinematics::MoveMap;
+		kinematics::MoveMapOP movemap_sc( new kinematics::MoveMap );
+		kinematics::MoveMapOP movemap_scbb( new kinematics::MoveMap );
 		movemap_sc->set_chi( true );
 		movemap_sc->set_bb( false );
 		movemap_scbb->set_chi( true );
 		movemap_scbb->set_bb( true );
 
-		protocols::simple_moves::MinMoverOP min_sc = new protocols::simple_moves::MinMover( movemap_sc, scorefxn_, "dfpmin_armijo", 0.01, true );
-		protocols::simple_moves::MinMoverOP min_scbb = new protocols::simple_moves::MinMover( movemap_scbb, scorefxn_, "dfpmin_armijo", 0.01, true );
+		protocols::simple_moves::MinMoverOP min_sc( new protocols::simple_moves::MinMover( movemap_sc, scorefxn_, "dfpmin_armijo", 0.01, true ) );
+		protocols::simple_moves::MinMoverOP min_scbb( new protocols::simple_moves::MinMover( movemap_scbb, scorefxn_, "dfpmin_armijo", 0.01, true ) );
 
 
 		TR << "Packrotamers" << std::endl;
@@ -573,7 +573,7 @@ public:
 					}
 					else {
 						using pose::metrics::PoseMetricCalculatorOP;
-						pose::metrics::CalculatorFactory::Instance().register_calculator( calcname.str(), new protocols::toolbox::pose_metric_calculators::NeighborsByDistanceCalculator(res) );
+						pose::metrics::CalculatorFactory::Instance().register_calculator( calcname.str(), PoseMetricCalculatorOP( new protocols::toolbox::pose_metric_calculators::NeighborsByDistanceCalculator(res) ) );
 					}
 					calcname.str("");
 					++biggest_calc;
@@ -798,16 +798,16 @@ public:
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;
 		using namespace basic::options;
-		TaskFactoryOP task_factory = new TaskFactory();
-		task_factory->push_back(new operation::InitializeFromCommandline()); //ex1, ex1, minimize sidechains, use_input_sc
+		TaskFactoryOP task_factory( new TaskFactory() );
+		task_factory->push_back(TaskOperationCOP( new operation::InitializeFromCommandline() )); //ex1, ex1, minimize sidechains, use_input_sc
 
 		// first, read in user resfile.  Intended to only contain NATAA or NATRO to specify additional residues to not mutation  MUST have ALLAA as default!!
 		if ( option[ OptionKeys::packing::resfile ].user() ) {
-			task_factory->push_back( new operation::ReadResfile );
+			task_factory->push_back( TaskOperationCOP( new operation::ReadResfile ) );
 			TR << "Reading resfile from user input... make sure ALLAA is set as the default in your resfile!!" << std::endl;
 		}
 
-		task_factory->push_back( new operation::ReadResfile( out_path_ + '/' + "resfile_output_Rsc" ) ); // reads the resfile previously created, adds to the user resfile (if provided)
+		task_factory->push_back( TaskOperationCOP( new operation::ReadResfile( out_path_ + '/' + "resfile_output_Rsc" ) ) ); // reads the resfile previously created, adds to the user resfile (if provided)
 
 		using namespace core::scoring;
 		ScoreFunctionOP scorefxn = get_score_function();
@@ -824,7 +824,7 @@ public:
 		TR << "Using SCORE12 with custom reference weights\n" << *customref_scorefxn << std::flush;
 		scorefxn_ = scorefxn;
 
-		protocols::simple_moves::PackRotamersMoverOP packrot_mover = new protocols::simple_moves::PackRotamersMover;
+		protocols::simple_moves::PackRotamersMoverOP packrot_mover( new protocols::simple_moves::PackRotamersMover );
 		packrot_mover->score_function( customref_scorefxn );
 		packrot_mover->task_factory( task_factory );
 
@@ -1080,12 +1080,12 @@ public:
     using namespace core::pack::task;
     using namespace core::pack::task::operation;
     using namespace basic::options;
-    TaskFactoryOP task_factory = new TaskFactory();
-    task_factory->push_back(new operation::InitializeFromCommandline()); //need for use_input_sc
+    TaskFactoryOP task_factory( new TaskFactory() );
+    task_factory->push_back(TaskOperationCOP( new operation::InitializeFromCommandline() )); //need for use_input_sc
 		core::pack::task::operation::RestrictToRepackingOP restrict_to_repack( new core::pack::task::operation::RestrictToRepacking() );
     task_factory->push_back( restrict_to_repack );
 
-		protocols::simple_moves::PackRotamersMoverOP packrot_mover = new protocols::simple_moves::PackRotamersMover;
+		protocols::simple_moves::PackRotamersMoverOP packrot_mover( new protocols::simple_moves::PackRotamersMover );
     packrot_mover->score_function( scorefxn_ );
     packrot_mover->task_factory( task_factory );
 
@@ -1371,7 +1371,7 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 };
 
-typedef utility::pointer::owning_ptr< supercharge > superchargeOP;
+typedef utility::pointer::shared_ptr< supercharge > superchargeOP;
 
 int main( int argc, char* argv[] )
 {
@@ -1407,7 +1407,7 @@ int main( int argc, char* argv[] )
 
 	devel::init(argc, argv);
 
-  protocols::jd2::JobDistributor::get_instance()->go(new supercharge);
+  protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new supercharge ));
 
   TR << "************************d**o**n**e**************************************" << std::endl;
 

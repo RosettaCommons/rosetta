@@ -29,8 +29,8 @@ namespace scoring {
 namespace constraints {
 
 class CstMinimizationData;
-typedef utility::pointer::owning_ptr< CstMinimizationData > CstMinimizationDataOP;
-typedef utility::pointer::owning_ptr< CstMinimizationData const > CstMinimizationDataCOP;
+typedef utility::pointer::shared_ptr< CstMinimizationData > CstMinimizationDataOP;
+typedef utility::pointer::shared_ptr< CstMinimizationData const > CstMinimizationDataCOP;
 
 class CstMinimizationData : public basic::datacache::CacheableData
 {
@@ -42,7 +42,7 @@ public:
 	CstMinimizationData() {}
 	CstMinimizationData( ConstraintsOP constraints ) : constraints_( constraints ) {}
 	virtual ~CstMinimizationData() {}
-	virtual CacheableDataOP clone() const { return new CstMinimizationData( *this ); };
+	virtual CacheableDataOP clone() const { return CacheableDataOP( new CstMinimizationData( *this ) ); };
 
 	Constraints const & constraints() const { return *constraints_; }
 	void set_constraints( ConstraintsOP constraints ) { constraints_ = constraints; }

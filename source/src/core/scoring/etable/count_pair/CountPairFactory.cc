@@ -68,23 +68,23 @@ CountPairFactory::create_count_pair_function(
 				Size res2connat = res2.residue_connection( res2.connections_to_residue( res1 )[ 1 ] ).atomno();
 				switch ( crossover ) {
 					case CP_CROSSOVER_3 :
-						cpfxn = new CountPair1B< CountPairCrossover3 >( res1, res1connat, res2, res2connat );
+						cpfxn = CountPairFunctionOP( new CountPair1B< CountPairCrossover3 >( res1, res1connat, res2, res2connat ) );
 					break;
 					case CP_CROSSOVER_4 :
-						cpfxn = new CountPair1B< CountPairCrossover4 >( res1, res1connat, res2, res2connat );
+						cpfxn = CountPairFunctionOP( new CountPair1B< CountPairCrossover4 >( res1, res1connat, res2, res2connat ) );
 					break;
 				}
 			}
 			break;
 			default: {
-				CountPairGenericOP gcpfxn = new CountPairGeneric( res1, res2 );
+				CountPairGenericOP gcpfxn( new CountPairGeneric( res1, res2 ) );
 				gcpfxn->set_crossover( crossover == CP_CROSSOVER_3 ? 3 : 4 );
 				cpfxn = gcpfxn;
 			}
 			break;
 		}
 	} else {
-		cpfxn = new CountPairAll;
+		cpfxn = CountPairFunctionOP( new CountPairAll );
 	}
 	return cpfxn;
 }
@@ -174,10 +174,10 @@ CountPairFactory::create_intrares_count_pair_function(
 
 	switch ( crossover ) {
 		case CP_CROSSOVER_3 :
-			cpfxn = new CountPairIntraRes< CountPairCrossover3 >( res );
+			cpfxn = CountPairFunctionOP( new CountPairIntraRes< CountPairCrossover3 >( res ) );
 		break;
 		case CP_CROSSOVER_4 :
-			cpfxn = new CountPairIntraRes< CountPairCrossover4 >( res );
+			cpfxn = CountPairFunctionOP( new CountPairIntraRes< CountPairCrossover4 >( res ) );
 		break;
 	}
 

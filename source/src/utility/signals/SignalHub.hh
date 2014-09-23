@@ -270,7 +270,7 @@ protected: // re-usable link container methods
 			return *i; // implicit LinkUnitOP -> Link creation
 		}
 
-		links.push_back( new LinkUnit( new Function( bind( fn, ptr, _1 ) ) ) );
+		links.push_back( utility::pointer::shared_ptr<struct utility::signals::LinkUnit>( new LinkUnit( new Function( bind( fn, ptr, _1 ) ) ) ) );
 		return links.back(); // implicit LinkUnitOP -> Link creation
 	}
 

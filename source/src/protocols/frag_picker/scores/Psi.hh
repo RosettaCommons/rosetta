@@ -80,9 +80,9 @@ public:
 
 	FragmentScoringMethodOP make(Size priority, Real lowest_acceptable_value, bool use_lowest,
 				FragmentPickerOP picker, std::string) {
-		return (FragmentScoringMethodOP) new Psi(priority,
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new Psi(priority,
         lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), picker->get_query_psi_prediction(),
-				picker->get_query_psi_prediction_conf());
+				picker->get_query_psi_prediction_conf()) );
   }
 
 };

@@ -20,7 +20,7 @@ namespace protocols {
 namespace docking {
 
 class DockingProtocol;
-typedef utility::pointer::owning_ptr< DockingProtocol > DockingProtocolOP;
+typedef utility::pointer::shared_ptr< DockingProtocol > DockingProtocolOP;
 
 }
 }

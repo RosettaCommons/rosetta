@@ -22,8 +22,8 @@ namespace wum {
 // Forward
 class WorkUnitManager;
 
-typedef utility::pointer::owning_ptr< WorkUnitManager > WorkUnitManagerOP;
-typedef utility::pointer::owning_ptr< WorkUnitManager const > WorkUnitManagerCOP;
+typedef utility::pointer::shared_ptr< WorkUnitManager > WorkUnitManagerOP;
+typedef utility::pointer::shared_ptr< WorkUnitManager const > WorkUnitManagerCOP;
 
 } //namespace loops
 } //namespace protocols

@@ -24,8 +24,8 @@ namespace simple_moves {
 namespace symmetry {
 
 class SymmetricRMSMover;
-typedef utility::pointer::owning_ptr< SymmetricRMSMover > SymmetricRMSMoverOP;
-typedef utility::pointer::owning_ptr< SymmetricRMSMover const > SymmetricRMSMoverCOP;
+typedef utility::pointer::shared_ptr< SymmetricRMSMover > SymmetricRMSMoverOP;
+typedef utility::pointer::shared_ptr< SymmetricRMSMover const > SymmetricRMSMoverCOP;
 
 } // symmetry
 } // moves

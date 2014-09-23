@@ -25,16 +25,16 @@ namespace scores {
 /// @brief forward declaration for FragmentScoreManager
 class AtomPairConstraintsScore;
 
-typedef utility::pointer::owning_ptr<AtomPairConstraintsScore>
+typedef utility::pointer::shared_ptr<AtomPairConstraintsScore>
 		AtomPairConstraintsScoreOP;
-typedef utility::pointer::owning_ptr<AtomPairConstraintsScore const>
+typedef utility::pointer::shared_ptr<AtomPairConstraintsScore const>
 		AtomPairConstraintsScoreCOP;
 
 class AtomPairConstraintsData;
 
-typedef utility::pointer::owning_ptr<AtomPairConstraintsData>
+typedef utility::pointer::shared_ptr<AtomPairConstraintsData>
 		AtomPairConstraintsDataOP;
-typedef utility::pointer::owning_ptr<AtomPairConstraintsData const>
+typedef utility::pointer::shared_ptr<AtomPairConstraintsData const>
 		AtomPairConstraintsDataCOP;
 
 } // scores

@@ -43,7 +43,7 @@ methods::EnergyMethodOP
 LoopCloseEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new LoopCloseEnergy;
+	return methods::EnergyMethodOP( new LoopCloseEnergy );
 }
 
 ScoreTypes
@@ -63,7 +63,7 @@ LoopCloseEnergy::LoopCloseEnergy() :
 methods::EnergyMethodOP
 LoopCloseEnergy::clone() const
 {
-	return new LoopCloseEnergy;
+	return methods::EnergyMethodOP( new LoopCloseEnergy );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -85,7 +85,7 @@ LoopCloseEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const &
 /////////////////////////////////////////////////////////////////////////////
 void
 LoopCloseEnergy::update_loop_atoms_and_lengths( pose::Pose & pose ) const {
-	if ( !loop_graph_ ) loop_graph_ = new scoring::loop_graph::LoopGraph;
+	if ( !loop_graph_ ) loop_graph_ = core::scoring::loop_graph::LoopGraphOP( new scoring::loop_graph::LoopGraph );
 	loop_graph_->update( pose );
 }
 

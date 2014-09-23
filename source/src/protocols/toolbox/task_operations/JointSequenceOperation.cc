@@ -52,7 +52,7 @@ namespace task_operations{
 core::pack::task::operation::TaskOperationOP
 JointSequenceOperationCreator::create_task_operation() const
 {
-	return new JointSequenceOperation;
+	return core::pack::task::operation::TaskOperationOP( new JointSequenceOperation );
 }
 
 /// @brief default constructor
@@ -61,7 +61,7 @@ JointSequenceOperation::JointSequenceOperation():
 	use_current_pose_(true),
 	use_natro_(false),
   use_fasta_(false),
-	ubr_(0),
+	ubr_(/* 0 */),
 	chain_(0)
 {
 }
@@ -72,7 +72,7 @@ JointSequenceOperation::~JointSequenceOperation() {}
 /// @brief clone
 core::pack::task::operation::TaskOperationOP
 JointSequenceOperation::clone() const {
-	return new JointSequenceOperation( *this );
+	return core::pack::task::operation::TaskOperationOP( new JointSequenceOperation( *this ) );
 }
 
 /// @brief all AA that have a higher probability in the seqprofile
@@ -269,7 +269,7 @@ JointSequenceOperation::add_pose( Pose const & pose )
 	if( new_pose.pdb_info() ) {
 		name = new_pose.pdb_info()->name();
 	}
-	sequences_.push_back( new core::sequence::Sequence(new_pose.sequence(), name) );
+	sequences_.push_back( utility::pointer::shared_ptr<class core::sequence::Sequence>( new core::sequence::Sequence(new_pose.sequence(), name) ) );
 
 }
 
@@ -277,7 +277,7 @@ JointSequenceOperation::add_pose( Pose const & pose )
 /// and add the rotamers to the set of possible rotamers (if use_natro_ is set)
 void
 JointSequenceOperation::add_native_pdb( std::string filename ) {
-	core::pose::PoseOP poseop(new core::pose::Pose);
+	core::pose::PoseOP poseop( new core::pose::Pose );
 	core::import_pose::pose_from_pdb( *poseop, filename );
 	add_native_pose( poseop );
 }
@@ -303,10 +303,10 @@ JointSequenceOperation::use_current_pose( bool ucp )
 void
 JointSequenceOperation::use_natro( bool unr ) {
 	if( !use_natro_ && unr ) {
-		ubr_ = new core::pack::rotamer_set::UnboundRotamersOperation;
+		ubr_ = core::pack::rotamer_set::UnboundRotamersOperationOP( new core::pack::rotamer_set::UnboundRotamersOperation );
 	}
 	if( use_natro_ && !unr ) {
-		ubr_ = 0; // Allow owning pointer to garbage collect as necessary.
+		ubr_.reset(); // Allow owning pointer to garbage collect as necessary.
 	}
 	use_natro_ = unr;
 }
@@ -323,7 +323,7 @@ JointSequenceOperation::add_native_fasta( std::string fasta_file ) {
 
   //core::sequence::SequenceOPSequenceOP native_sequence = new Sequence(fasta_file,"fasta",1);
 	std::string name("unknown");
-  sequences_.push_back( new core::sequence::Sequence(fasta_file, name) );
+  sequences_.push_back( utility::pointer::shared_ptr<class core::sequence::Sequence>( new core::sequence::Sequence(fasta_file, name) ) );
 
   //string query_sequence ( read_fasta_file( option[ in::file::fasta ]()[1])[1]->sequence() );
   //core::pose::PoseOP poseop(new core::pose::Pose);

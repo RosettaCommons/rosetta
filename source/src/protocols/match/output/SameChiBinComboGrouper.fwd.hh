@@ -25,8 +25,8 @@ namespace output {
 
 class SameChiBinComboGrouper;
 
-typedef utility::pointer::owning_ptr< SameChiBinComboGrouper > SameChiBinComboGrouperOP;
-typedef utility::pointer::owning_ptr< SameChiBinComboGrouper const > SameChiBinComboGrouperCOP;
+typedef utility::pointer::shared_ptr< SameChiBinComboGrouper > SameChiBinComboGrouperOP;
+typedef utility::pointer::shared_ptr< SameChiBinComboGrouper const > SameChiBinComboGrouperCOP;
 
 
 }

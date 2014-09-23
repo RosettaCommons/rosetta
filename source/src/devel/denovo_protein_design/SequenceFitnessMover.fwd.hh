@@ -22,8 +22,8 @@ namespace denovo_protein_design{
 
 //Forwards and OP typedefs
 class SequenceFitnessMover;
-typedef utility::pointer::owning_ptr< SequenceFitnessMover > SequenceFitnessMoverOP;
-typedef utility::pointer::owning_ptr< SequenceFitnessMover const > SequenceFitnessMoverCOP;
+typedef utility::pointer::shared_ptr< SequenceFitnessMover > SequenceFitnessMoverOP;
+typedef utility::pointer::shared_ptr< SequenceFitnessMover const > SequenceFitnessMoverCOP;
 
 }//DenovoProteinDesign
 }//devel

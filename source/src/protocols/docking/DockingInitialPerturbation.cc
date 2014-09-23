@@ -82,7 +82,7 @@ DockingInitialPerturbationCreator::keyname() const
 protocols::moves::MoverOP
 DockingInitialPerturbationCreator::create_mover() const
 {
-	return new DockingInitialPerturbation;
+	return protocols::moves::MoverOP( new DockingInitialPerturbation );
 }
 
 std::string
@@ -110,7 +110,7 @@ DockingInitialPerturbation::DockingInitialPerturbation()
  :
 	Mover(),
 	slide_( true ),
-	rigid_body_info_( NULL )
+	rigid_body_info_( /* NULL */ )
 {
 	Mover::type( "DockingInitialPerturbation" );
 	movable_jumps_ = utility::tools::make_vector1<core::Size>(1);
@@ -124,7 +124,7 @@ DockingInitialPerturbation::DockingInitialPerturbation(
 ) :
 	Mover(),
 	slide_(slide),
-	rigid_body_info_( NULL )
+	rigid_body_info_( /* NULL */ )
 {
 	Mover::type( "DockingInitialPerturbation" );
 	movable_jumps_ = utility::tools::make_vector1<core::Size>(rb_jump);
@@ -139,7 +139,7 @@ DockingInitialPerturbation::DockingInitialPerturbation(
 	Mover(),
 	slide_( slide ),
 	movable_jumps_( movable_jumps ),
-	rigid_body_info_( NULL )
+	rigid_body_info_( /* NULL */ )
 {
 	Mover::type( "DockingInitialPerturbation" );
 	if ( movable_jumps_.size() > 1 ) multiple_jumps_ = true;
@@ -172,7 +172,7 @@ DockingInitialPerturbation::set_default()
 
 protocols::moves::MoverOP
 DockingInitialPerturbation::clone() const {
-	return new DockingInitialPerturbation( *this );
+	return protocols::moves::MoverOP( new DockingInitialPerturbation( *this ) );
 }
 
 //destructor
@@ -321,8 +321,8 @@ DockingInitialPerturbation::apply_body(core::pose::Pose & pose, core::Size jump_
 		//TR << "option[ docking::parallel ]()" << trans << "\n";
 		TR << "option[ docking::dock_pert ]()" << pert_mags[rot] << ' ' << pert_mags[trans] << std::endl;
 		rigid::RigidBodyPerturbMoverOP mover;
-		if (center_at_interface_) mover = new rigid::RigidBodyPerturbMover( jump_number, pert_mags[rot], pert_mags[trans], rigid::partner_downstream, true );
-		else mover = new rigid::RigidBodyPerturbMover( jump_number, pert_mags[rot], pert_mags[trans] );
+		if (center_at_interface_) mover = rigid::RigidBodyPerturbMoverOP( new rigid::RigidBodyPerturbMover( jump_number, pert_mags[rot], pert_mags[trans], rigid::partner_downstream, true ) );
+		else mover = rigid::RigidBodyPerturbMoverOP( new rigid::RigidBodyPerturbMover( jump_number, pert_mags[rot], pert_mags[trans] ) );
 		mover->apply( pose );
 	}
 
@@ -369,7 +369,7 @@ DockingInitialPerturbation::parse_my_tag(
 ) {
 	if ( !data_map.has( "RigidBodyInfo", "docking_setup" ) ) {
 		TR << "RigidBodyInfo not found in basic::datacache::DataMap" << std::endl;
-		rigid_body_info_ = new protocols::docking::RigidBodyInfo;
+		rigid_body_info_ = protocols::docking::RigidBodyInfoOP( new protocols::docking::RigidBodyInfo );
 		data_map.add( "RigidBodyInfo", "docking_setup", rigid_body_info_ );
 		//		throw utility::excn::EXCN_RosettaScriptsOption( "RigidBodyInfo not found in basic::datacache::DataMap, DockingInitialPerturbation can not be done, so exit here!" );
 	} else {
@@ -457,10 +457,10 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 	rigid::RigidBodyTransMoverOP mover;
 	
 	if (slide_axis_.length() != 0){
-		mover = new rigid::RigidBodyTransMover( slide_axis_, rb_jump_ );
+		mover = rigid::RigidBodyTransMoverOP( new rigid::RigidBodyTransMover( slide_axis_, rb_jump_ ) );
 	}
 	else{
-		mover = new rigid::RigidBodyTransMover( pose, rb_jump_ );
+		mover = rigid::RigidBodyTransMoverOP( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
 	}
 	( *scorefxn_ )( pose );
 
@@ -523,7 +523,7 @@ std::ostream &operator<< ( std::ostream & os, DockingSlideIntoContact const & mo
 FaDockingSlideIntoContact::FaDockingSlideIntoContact()
 {
 	Mover::type( "FaDockingSlideIntoContact" );
-	scorefxn_ = new core::scoring::ScoreFunction();
+	scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
 	scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );
 	slide_axis_(0.0);
 }
@@ -535,21 +535,21 @@ FaDockingSlideIntoContact::FaDockingSlideIntoContact(
 ) : Mover(), rb_jump_(rb_jump), tolerance_(0.2), slide_axis_(0.0)
 {
 	Mover::type( "FaDockingSlideIntoContact" );
-	scorefxn_ = new core::scoring::ScoreFunction();
+	scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
 	scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );
 }
 
 FaDockingSlideIntoContact::FaDockingSlideIntoContact( utility::vector1<core::Size> rb_jumps):
 		Mover(), rb_jumps_(rb_jumps),tolerance_(0.2),slide_axis_(0.0){
 	Mover::type( "FaDockingSlideIntoContact" );
-	scorefxn_ = new core::scoring::ScoreFunction();
+	scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
 	scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );
 }
 	
 FaDockingSlideIntoContact::FaDockingSlideIntoContact( core::Size const rb_jump, core::Vector const slide_axis): Mover(), rb_jump_(rb_jump), tolerance_(0.2), slide_axis_(slide_axis)
 {
 	Mover::type( "FaDockingSlideIntoContact" );
-	scorefxn_ = new core::scoring::ScoreFunction();
+	scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
 	scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );
 }
 

@@ -354,7 +354,7 @@ public:
 		ElementSetCOP element_types = cm->element_set("default");
 		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
 		OrbitalTypeSetCOP orbital_types = cm->orbital_type_set(tag);
-		ResidueTypeSetOP rsd_types = new ResidueTypeSet;
+		ResidueTypeSetOP rsd_types( new ResidueTypeSet );
 
 		utility::io::izstream paramslist("core/chemical/params/retype_list.txt");
 		std::string filename("params/type_test1.params");
@@ -367,7 +367,7 @@ public:
 			if( TR.Debug.visible() ) {
 				print_chis(TR.Debug, *rsd);
 			}
-			core::chemical::ResidueTypeOP copy(new core::chemical::ResidueType( *rsd) );
+			core::chemical::ResidueTypeOP copy( new core::chemical::ResidueType( *rsd) );
 			core::chemical::find_bonds_in_rings( *copy ); //Ring bond annotations needed
 			copy->autodetermine_chi_bonds();
 			copy->finalize();
@@ -416,7 +416,7 @@ public:
 		ElementSetCOP element_types = cm->element_set("default");
 		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
 		OrbitalTypeSetCOP orbital_types = cm->orbital_type_set(tag);
-		ResidueTypeSetOP rsd_types = new ResidueTypeSet;
+		ResidueTypeSetOP rsd_types( new ResidueTypeSet );
 
 		utility::io::izstream paramslist("core/chemical/params/retype_list.txt");
 		std::string filename;
@@ -474,7 +474,7 @@ public:
 			}
 			if( mistake ) {
 				core::chemical::sdf::MolWriter writer;
-				writer.output_residue("core/chemical/"+ filename + "_orig.mol", new core::conformation::Residue( *restype_ref, true) );
+				writer.output_residue("core/chemical/"+ filename + "_orig.mol", core::conformation::ResidueCOP( new core::conformation::Residue( *restype_ref, true) ) );
 				writer.output_residue("core/chemical/"+ filename + "_after.mol", restype );
 
 				TR << "### For Restype Before " << std::endl;

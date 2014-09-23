@@ -356,7 +356,7 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 
-		OriginalBackboneBuildPointOP res2bp = new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 );
+		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
 		ResidueTypeSet const & res2_set( trpcage.residue( 2 ).residue_type_set() );
 		ResidueTypeCOPs const & aas( res2_set.aa_map( aa_phe ));
@@ -412,7 +412,7 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 
-		OriginalBackboneBuildPointOP res2bp = new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 );
+		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
 		ResidueTypeSet const & res2_set( trpcage.residue( 2 ).residue_type_set() );
 		ResidueTypeCOPs const & aas( res2_set.aa_map( aa_phe ));
@@ -436,15 +436,15 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 
 		std::ostringstream sout;
 
-		WriteUpstreamCoordinateKinemageOP dsalgorithm = new WriteUpstreamCoordinateKinemage( sout );
+		WriteUpstreamCoordinateKinemageOP dsalgorithm( new WriteUpstreamCoordinateKinemage( sout ) );
 
 		build_set.set_downstream_algorithm( dsalgorithm );
 
 		ProteinUpstreamBuilder scbuilder;
 		scbuilder.add_build_set( build_set );
-		scbuilder.set_sampler( new DunbrackSCSampler );
+		scbuilder.set_sampler( ProteinSCSamplerCOP( new DunbrackSCSampler ) );
 
-		BumpGridOP bbgrid = new BumpGrid;
+		BumpGridOP bbgrid( new BumpGrid );
 		scbuilder.set_bb_grid( bbgrid );
 
 		scbuilder.build( *res2bp );
@@ -464,7 +464,7 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 
-		OriginalBackboneBuildPointOP res2bp = new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 );
+		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
 		ResidueTypeSet const & res2_set( trpcage.residue( 2 ).residue_type_set() );
 		ResidueTypeCOPs const & aas( res2_set.aa_map( aa_phe ));
@@ -488,10 +488,10 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 
 		std::ostringstream sout, sout2;
 
-		WriteUpstreamCoordinateKinemageOP dsalgorithm = new WriteUpstreamCoordinateKinemage( sout );
+		WriteUpstreamCoordinateKinemageOP dsalgorithm( new WriteUpstreamCoordinateKinemage( sout ) );
 		dsalgorithm->return_pseudo_hits( true );
 
-		WriteUpstreamHitKinemageOP kin_processor = new WriteUpstreamHitKinemage( sout2 );
+		WriteUpstreamHitKinemageOP kin_processor( new WriteUpstreamHitKinemage( sout2 ) );
 		kin_processor->set_master( "rotamers" );
 		kin_processor->animate( true );
 		kin_processor->dominant( true );
@@ -501,9 +501,9 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 
 		ProteinUpstreamBuilder scbuilder;
 		scbuilder.add_build_set( build_set );
-		scbuilder.set_sampler( new DunbrackSCSampler );
+		scbuilder.set_sampler( ProteinSCSamplerCOP( new DunbrackSCSampler ) );
 
-		BumpGridOP bbgrid = new BumpGrid;
+		BumpGridOP bbgrid( new BumpGrid );
 		scbuilder.set_bb_grid( bbgrid );
 
 		std::list< Hit > hitlist = scbuilder.build( *res2bp );
@@ -551,7 +551,7 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 
-		OriginalBackboneBuildPointOP res2bp = new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 );
+		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
 		ResidueTypeSet const & res2_set( trpcage.residue( 2 ).residue_type_set() );
 		ResidueTypeCOPs const & aas( res2_set.aa_map( aa_phe ));
@@ -575,10 +575,10 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 
 		std::ostringstream sout, sout2;
 
-		WriteUpstreamCoordinateKinemageOP dsalgorithm = new WriteUpstreamCoordinateKinemage( sout );
+		WriteUpstreamCoordinateKinemageOP dsalgorithm( new WriteUpstreamCoordinateKinemage( sout ) );
 		dsalgorithm->return_pseudo_hits( true );
 
-		WriteUpstreamHitKinemageOP kin_processor = new WriteUpstreamHitKinemage( sout2 );
+		WriteUpstreamHitKinemageOP kin_processor( new WriteUpstreamHitKinemage( sout2 ) );
 		kin_processor->set_master( "rotamers" );
 		kin_processor->animate( true );
 		kin_processor->dominant( true );
@@ -588,9 +588,9 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 
 		ProteinUpstreamBuilder scbuilder;
 		scbuilder.add_build_set( build_set );
-		scbuilder.set_sampler( new DunbrackSCSampler );
+		scbuilder.set_sampler( ProteinSCSamplerCOP( new DunbrackSCSampler ) );
 
-		BumpGridOP bbgrid = new BumpGrid;
+		BumpGridOP bbgrid( new BumpGrid );
 		scbuilder.set_bb_grid( bbgrid );
 
 		std::list< Hit > hitlist = scbuilder.build( *res2bp );
@@ -629,13 +629,13 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 		using namespace core::chemical;
 
 
-		typedef utility::pointer::owning_ptr< FullChiSampleSet > FullChiSampleSetOP;
+		typedef utility::pointer::shared_ptr< FullChiSampleSet > FullChiSampleSetOP;
 
 		FullChiSampleSetOP sampset_dry_run, sampset_regular;
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 
-		OriginalBackboneBuildPointOP res2bp = new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 );
+		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
 		ResidueTypeSet const & res2_set( trpcage.residue( 2 ).residue_type_set() );
 		ResidueTypeCOPs const & aas( res2_set.aa_map( aa_phe ));
@@ -652,7 +652,7 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 			}
 		}
 
-		ProteinSCSamplerOP sampler_ = new DunbrackSCSampler;
+		ProteinSCSamplerOP sampler_( new DunbrackSCSampler );
 		ProteinSCSampler::DunbrackRotamerSampleDataVector
 			rotamer_samples = sampler_->samples( *res2bp, build_set.restype() );
 
@@ -665,8 +665,8 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 				build_set.set_sample_strategy_for_chi( 1, strat );
 				build_set.set_sample_strategy_for_chi( 2, strat );
 
-				sampset_dry_run = new FullChiSampleSet( build_set, rotamer_samples[ ii ], true );
-				sampset_regular = new FullChiSampleSet( build_set, rotamer_samples[ ii ], false );
+				sampset_dry_run = FullChiSampleSetOP( new FullChiSampleSet( build_set, rotamer_samples[ ii ], true ) );
+				sampset_regular = FullChiSampleSetOP( new FullChiSampleSet( build_set, rotamer_samples[ ii ], false ) );
 
 				TS_ASSERT( sampset_dry_run->num_chi_samples_total() == sampset_regular->num_chi_samples_total() );
 			}
@@ -681,13 +681,13 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 		using namespace core::chemical;
 
 
-		typedef utility::pointer::owning_ptr< FullChiSampleSet > FullChiSampleSetOP;
+		typedef utility::pointer::shared_ptr< FullChiSampleSet > FullChiSampleSetOP;
 
 		FullChiSampleSetOP sampset_dry_run, sampset_regular;
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 
-		OriginalBackboneBuildPointOP res2bp = new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 );
+		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
 		ResidueTypeSet const & res2_set( trpcage.residue( 2 ).residue_type_set() );
 		ResidueTypeCOPs const & aas( res2_set.aa_map( aa_phe ));
@@ -704,7 +704,7 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 			}
 		}
 
-		ProteinSCSamplerOP sampler_ = new DunbrackSCSampler;
+		ProteinSCSamplerOP sampler_( new DunbrackSCSampler );
 		ProteinSCSampler::DunbrackRotamerSampleDataVector
 			rotamer_samples = sampler_->samples( *res2bp, build_set.restype() );
 
@@ -720,8 +720,8 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 			build_set.set_sample_strategy_for_chi( 1, strat1 );
 			build_set.set_sample_strategy_for_chi( 2, default_strat );
 
-			sampset_dry_run = new FullChiSampleSet( build_set, rotamer_samples[ ii ], true );
-			sampset_regular = new FullChiSampleSet( build_set, rotamer_samples[ ii ], false );
+			sampset_dry_run = FullChiSampleSetOP( new FullChiSampleSet( build_set, rotamer_samples[ ii ], true ) );
+			sampset_regular = FullChiSampleSetOP( new FullChiSampleSet( build_set, rotamer_samples[ ii ], false ) );
 
 			TS_ASSERT( sampset_dry_run->num_chi_samples_total() == sampset_regular->num_chi_samples_total() );
 
@@ -736,14 +736,14 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 		using namespace core::chemical;
 
 
-		typedef utility::pointer::owning_ptr< FullChiSampleSet > FullChiSampleSetOP;
+		typedef utility::pointer::shared_ptr< FullChiSampleSet > FullChiSampleSetOP;
 		typedef core::pack::dunbrack::DunbrackRotamerSampleData DunbrackRotamerSampleData;
 
 		FullChiSampleSetOP sampset_dry_run, sampset_regular;
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 
-		OriginalBackboneBuildPointOP res2bp = new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 );
+		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
 		ResidueTypeSet const & res2_set( trpcage.residue( 2 ).residue_type_set() );
 		ResidueTypeCOPs const & aas( res2_set.aa_map( aa_phe ));
@@ -794,8 +794,8 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 			strat1.set_sample_level( core::pack::task::ExtraRotSample( ii ) );
 			build_set.set_sample_strategy_for_chi( 1, strat1 );
 
-			sampset_dry_run = new FullChiSampleSet( build_set, nrchi_sample, true );
-			sampset_regular = new FullChiSampleSet( build_set, nrchi_sample, false );
+			sampset_dry_run = FullChiSampleSetOP( new FullChiSampleSet( build_set, nrchi_sample, true ) );
+			sampset_regular = FullChiSampleSetOP( new FullChiSampleSet( build_set, nrchi_sample, false ) );
 
 			TS_ASSERT( sampset_dry_run->num_chi_samples_total() == sampset_regular->num_chi_samples_total() );
 		}
@@ -809,8 +809,8 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 			strat1.set_sample_level( core::pack::task::ExtraRotSample( ii ) );
 			build_set.set_sample_strategy_for_chi( 1, strat1 );
 
-			sampset_dry_run = new FullChiSampleSet( build_set, nrchi_sample, true );
-			sampset_regular = new FullChiSampleSet( build_set, nrchi_sample, false );
+			sampset_dry_run = FullChiSampleSetOP( new FullChiSampleSet( build_set, nrchi_sample, true ) );
+			sampset_regular = FullChiSampleSetOP( new FullChiSampleSet( build_set, nrchi_sample, false ) );
 
 			TS_ASSERT( sampset_dry_run->num_chi_samples_total() == sampset_regular->num_chi_samples_total() );
 		}

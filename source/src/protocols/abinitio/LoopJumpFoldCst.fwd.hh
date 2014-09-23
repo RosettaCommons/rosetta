@@ -28,8 +28,8 @@ namespace abinitio {
 class LoopJumpFoldCst;
 
 // Types
-typedef  utility::pointer::owning_ptr< LoopJumpFoldCst >  LoopJumpFoldCstOP;
-typedef  utility::pointer::owning_ptr< LoopJumpFoldCst const >  LoopJumpFoldCstCOP;
+typedef  utility::pointer::shared_ptr< LoopJumpFoldCst >  LoopJumpFoldCstOP;
+typedef  utility::pointer::shared_ptr< LoopJumpFoldCst const >  LoopJumpFoldCstCOP;
 
 } // namespace kinematics
 } // namespace core

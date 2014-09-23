@@ -21,8 +21,8 @@ namespace splice {
     
 class DesignInterfacesOperation;
 
-typedef utility::pointer::owning_ptr< DesignInterfacesOperation > DesignInterfacesOperationOP;
-typedef utility::pointer::owning_ptr< DesignInterfacesOperation const > DesignInterfacesOperationCOP;
+typedef utility::pointer::shared_ptr< DesignInterfacesOperation > DesignInterfacesOperationOP;
+typedef utility::pointer::shared_ptr< DesignInterfacesOperation const > DesignInterfacesOperationCOP;
 
 } //namespace splice
 } //namespace devel

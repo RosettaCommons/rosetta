@@ -104,9 +104,9 @@ try {
   //---------- Set up a picker.
   FragmentPickerOP pickIt;
   if(option[frags::p_value_selection]() == true)
-    pickIt = new FragmentPicker("PValuedFragmentScoreManager");
+    pickIt = FragmentPickerOP( new FragmentPicker("PValuedFragmentScoreManager") );
   else
-    pickIt = new FragmentPicker();
+    pickIt = FragmentPickerOP( new FragmentPicker() );
   pickIt->parse_command_line();
   trace << "After setup; size of a query is: " << pickIt->size_of_query() << std::endl;
 

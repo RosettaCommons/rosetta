@@ -25,8 +25,8 @@ namespace checkpoint {
 class CheckPointer;
 
 // Types
-typedef  utility::pointer::owning_ptr< CheckPointer >  CheckPointerOP;
-typedef  utility::pointer::owning_ptr< CheckPointer const >  CheckPointerCOP;
+typedef  utility::pointer::shared_ptr< CheckPointer >  CheckPointerOP;
+typedef  utility::pointer::shared_ptr< CheckPointer const >  CheckPointerCOP;
 
 
 } // namespace kinematics

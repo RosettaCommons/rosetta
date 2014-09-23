@@ -90,7 +90,7 @@ ScoreMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 ScoreMoverCreator::create_mover() const {
-	return new ScoreMover;
+	return protocols::moves::MoverOP( new ScoreMover );
 }
 
 std::string
@@ -112,7 +112,7 @@ ScoreMover::ScoreMover(
 	std::string const & weights, std::string const & patch /* = "" */
 ) :
 	protocols::moves::Mover( ScoreMoverCreator::mover_name() ),
-	score_function_(0),
+	score_function_(/* 0 */),
 	verbose_(true),
 	scorefile_("")
 {
@@ -133,10 +133,10 @@ ScoreMover::ScoreMover( ScoreFunctionOP score_function_in ) :
 {}
 
 moves::MoverOP ScoreMover::clone() const {
-	return new ScoreMover( *this );
+	return moves::MoverOP( new ScoreMover( *this ) );
 }
 moves::MoverOP ScoreMover::fresh_instance() const {
-	return new ScoreMover;
+	return moves::MoverOP( new ScoreMover );
 }
 
 void
@@ -213,7 +213,7 @@ void ScoreMover::parse_my_tag(
 	if ( tag->hasOption("scorefxn") ) {
 		std::string const scorefxn_key( tag->getOption<std::string>("scorefxn") );
 		if ( datamap.has( "scorefxns", scorefxn_key ) ) {
-			score_function_ = datamap.get< ScoreFunction* >( "scorefxns", scorefxn_key );
+			score_function_ = datamap.get_ptr<ScoreFunction>( "scorefxns", scorefxn_key );
 		} else {
 			throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap.");
 		}

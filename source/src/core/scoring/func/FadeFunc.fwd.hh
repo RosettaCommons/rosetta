@@ -24,8 +24,8 @@ namespace scoring {
 namespace func {
 
 class FadeFunc;
-typedef utility::pointer::owning_ptr< FadeFunc > FadeFuncOP;
-typedef utility::pointer::owning_ptr< FadeFunc const > FadeFuncCOP;
+typedef utility::pointer::shared_ptr< FadeFunc > FadeFuncOP;
+typedef utility::pointer::shared_ptr< FadeFunc const > FadeFuncCOP;
 
 //class CircularFadeFunc;
 //typedef utility::pointer::owning_ptr< CircularFadeFunc > CircularFadeFuncOP;

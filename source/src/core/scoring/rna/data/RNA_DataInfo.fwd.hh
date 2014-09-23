@@ -36,12 +36,12 @@ namespace data {
 	};
 
   class RNA_DataInfo;
-  typedef utility::pointer::owning_ptr< RNA_DataInfo > RNA_DataInfoOP;
-  typedef utility::pointer::access_ptr< RNA_DataInfo > RNA_DataInfoAP;
+  typedef utility::pointer::shared_ptr< RNA_DataInfo > RNA_DataInfoOP;
+  typedef utility::pointer::weak_ptr< RNA_DataInfo > RNA_DataInfoAP;
 
 	class RNA_Reactivity;
-  typedef utility::pointer::owning_ptr< RNA_Reactivity > RNA_ReactivityOP;
-  typedef utility::pointer::access_ptr< RNA_Reactivity > RNA_ReactivityAP;
+  typedef utility::pointer::shared_ptr< RNA_Reactivity > RNA_ReactivityOP;
+  typedef utility::pointer::weak_ptr< RNA_Reactivity > RNA_ReactivityAP;
 
 } //data
 } //rna

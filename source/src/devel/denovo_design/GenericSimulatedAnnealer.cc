@@ -49,7 +49,7 @@ GenericSimulatedAnnealerCreator::keyname() const
 
 protocols::moves::MoverOP
 GenericSimulatedAnnealerCreator::create_mover() const {
-  return new GenericSimulatedAnnealer;
+  return protocols::moves::MoverOP( new GenericSimulatedAnnealer );
 }
 
 std::string
@@ -62,7 +62,7 @@ GenericSimulatedAnnealerCreator::mover_name()
 GenericSimulatedAnnealer::GenericSimulatedAnnealer():
 	GenericMonteCarloMover(),
 	history_( 10 ),
-	periodic_mover_( NULL ),
+	periodic_mover_( /* NULL */ ),
 	eval_period_( 0 ),
 	checkpoint_file_( "" ),
 	keep_checkpoint_file_( false ),
@@ -81,14 +81,14 @@ GenericSimulatedAnnealer::~GenericSimulatedAnnealer(){}
 protocols::moves::MoverOP
 GenericSimulatedAnnealer::clone() const
 {
-  return new GenericSimulatedAnnealer( *this );
+  return protocols::moves::MoverOP( new GenericSimulatedAnnealer( *this ) );
 }
 
 /// @brief create this type of object
 protocols::moves::MoverOP
 GenericSimulatedAnnealer::fresh_instance() const
 {
-  return new GenericSimulatedAnnealer();
+  return protocols::moves::MoverOP( new GenericSimulatedAnnealer() );
 }
 
 core::Real

@@ -16,8 +16,8 @@ namespace protocols {
 namespace simple_moves {
 
 class BBConRotMover;
-typedef utility::pointer::owning_ptr< BBConRotMover > BBConRotMoverOP;
-typedef utility::pointer::owning_ptr< BBConRotMover const > BBConRotMoverCOP;
+typedef utility::pointer::shared_ptr< BBConRotMover > BBConRotMoverOP;
+typedef utility::pointer::shared_ptr< BBConRotMover const > BBConRotMoverCOP;
 
 } // moves
 } // protocols

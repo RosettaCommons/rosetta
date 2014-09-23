@@ -18,8 +18,8 @@ namespace perturbers {
 
 class WalkingBondAnglePerturber;
 
-typedef utility::pointer::owning_ptr<WalkingBondAnglePerturber> WalkingBondAnglePerturberOP;
-typedef utility::pointer::owning_ptr<WalkingBondAnglePerturber const> WalkingBondAnglePerturberCOP;
+typedef utility::pointer::shared_ptr<WalkingBondAnglePerturber> WalkingBondAnglePerturberOP;
+typedef utility::pointer::shared_ptr<WalkingBondAnglePerturber const> WalkingBondAnglePerturberCOP;
 
 }
 }

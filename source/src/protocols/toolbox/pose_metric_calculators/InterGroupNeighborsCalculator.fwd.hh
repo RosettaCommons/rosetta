@@ -24,8 +24,8 @@ namespace pose_metric_calculators{
 
 //Forwards and OP typedefs
 class InterGroupNeighborsCalculator;
-typedef utility::pointer::owning_ptr< InterGroupNeighborsCalculator > InterGroupNeighborsCalculatorOP;
-typedef utility::pointer::owning_ptr< InterGroupNeighborsCalculator const > InterGroupNeighborsCalculatorCOP;
+typedef utility::pointer::shared_ptr< InterGroupNeighborsCalculator > InterGroupNeighborsCalculatorOP;
+typedef utility::pointer::shared_ptr< InterGroupNeighborsCalculator const > InterGroupNeighborsCalculatorCOP;
 
 }//PoseMetricCalculators
 }//toolbox

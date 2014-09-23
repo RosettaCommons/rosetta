@@ -58,10 +58,10 @@ OrderedFragSet::OrderedFragSet() {}
 OrderedFragSet::~OrderedFragSet() {}
 
 FragSetOP OrderedFragSet::clone() const {
-	return new OrderedFragSet( *this );
+	return FragSetOP( new OrderedFragSet( *this ) );
 }
 FragSetOP OrderedFragSet::empty_clone() const {
-	return new OrderedFragSet();
+	return FragSetOP( new OrderedFragSet() );
 }
 
 ///@brief get fragments that start somewhere between start and end
@@ -96,19 +96,19 @@ Size OrderedFragSet::frames( Size pos, FrameList &out_frames ) const
 }
 
 ConstFrameIterator OrderedFragSet::begin() const {
- return ConstFrameIterator( new OrderedFragSetIterator_( frames_.begin(), frames_.end() ) );
+ return ConstFrameIterator( FrameIteratorWorker_OP( new OrderedFragSetIterator_( frames_.begin(), frames_.end() ) ) );
 }
 
 ConstFrameIterator OrderedFragSet::end() const {
- return ConstFrameIterator( new OrderedFragSetIterator_( frames_.end(), frames_.end() ) );
+ return ConstFrameIterator( FrameIteratorWorker_OP( new OrderedFragSetIterator_( frames_.end(), frames_.end() ) ) );
 }
 
 FrameIterator OrderedFragSet::nonconst_begin() {
- return FrameIterator( new OrderedFragSetIterator_( frames_.begin(), frames_.end() ) );
+ return FrameIterator( FrameIteratorWorker_OP( new OrderedFragSetIterator_( frames_.begin(), frames_.end() ) ) );
 }
 
 FrameIterator OrderedFragSet::nonconst_end() {
- return FrameIterator( new OrderedFragSetIterator_( frames_.end(), frames_.end() ) );
+ return FrameIterator( FrameIteratorWorker_OP( new OrderedFragSetIterator_( frames_.end(), frames_.end() ) ) );
 }
 
 bool OrderedFragSet::empty() const {

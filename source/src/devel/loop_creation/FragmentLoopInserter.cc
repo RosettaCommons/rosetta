@@ -75,7 +75,7 @@ FragmentLoopInserterCreator::keyname() const
 
 protocols::moves::MoverOP
 FragmentLoopInserterCreator::create_mover() const {
-	return new FragmentLoopInserter;
+	return protocols::moves::MoverOP( new FragmentLoopInserter );
 }
 
 std::string
@@ -180,7 +180,7 @@ FragmentLoopInserter::find_loop_fragments(
 
 				//Some fragments randomly don't have coords, should probably use torsion rmsds
 				fragment::BBTorsionSRFDCOP test_residue =
-					dynamic_cast< const fragment::BBTorsionSRFD* > (cur_frag.get_residue(1)());
+					utility::pointer::dynamic_pointer_cast< fragment::BBTorsionSRFD const > ( cur_frag.get_residue(1) );
 				if(test_residue->x()==0 && test_residue->y()==0 && test_residue->z()==0)
 				{
 					continue;
@@ -192,7 +192,7 @@ FragmentLoopInserter::find_loop_fragments(
 				{
 					Size cur_resnum = j;
 					fragment::BBTorsionSRFDCOP fragment_residue =
-						dynamic_cast< const fragment::BBTorsionSRFD* > (cur_frag.get_residue(cur_resnum)());
+						utility::pointer::dynamic_pointer_cast< fragment::BBTorsionSRFD const > ( cur_frag.get_residue(cur_resnum) );
 
 					frag_coords_to_match[j] = numeric::xyzVector<Real>(fragment_residue->x(),
 						fragment_residue->y(), fragment_residue->z());
@@ -203,7 +203,7 @@ FragmentLoopInserter::find_loop_fragments(
 				{
 					Size cur_resnum = cur_frag.size()-(num_flanking_residues_to_match_-j);
 					fragment::BBTorsionSRFDCOP fragment_residue =
-						dynamic_cast< const fragment::BBTorsionSRFD* > (cur_frag.get_residue(cur_resnum)());
+						utility::pointer::dynamic_pointer_cast< fragment::BBTorsionSRFD const > ( cur_frag.get_residue(cur_resnum) );
 
 					frag_coords_to_match[num_flanking_residues_to_match_+j] =
 						numeric::xyzVector<Real>(fragment_residue->x(), fragment_residue->y(), fragment_residue->z());

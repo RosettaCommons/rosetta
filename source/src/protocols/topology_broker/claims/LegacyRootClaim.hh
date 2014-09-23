@@ -61,7 +61,7 @@ public:
 		local_position_ ( local_position )
 	{}
 
-	virtual DofClaimOP clone() const { return new LegacyRootClaim( *this ); }
+	virtual DofClaimOP clone() const { return DofClaimOP( new LegacyRootClaim( *this ) ); }
 
 	Size get_position() const {
 		return pos1_;

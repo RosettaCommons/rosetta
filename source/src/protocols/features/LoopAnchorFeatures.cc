@@ -98,9 +98,9 @@ LoopAnchorFeatures::write_loop_anchors_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt());
-	Column residue_begin("residue_begin", new DbInteger());
-	Column residue_end("residue_end", new DbInteger());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column residue_begin("residue_begin", DbDataTypeOP( new DbInteger() ));
+	Column residue_end("residue_end", DbDataTypeOP( new DbInteger() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -137,17 +137,17 @@ LoopAnchorFeatures::write_loop_anchor_transforms_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt());
-	Column residue_begin("residue_begin", new DbInteger());
-	Column residue_end("residue_end", new DbInteger());
-	Column x("x", new DbReal());
-	Column y("y", new DbReal());
-	Column z("z", new DbReal());
-	Column phi("phi", new DbReal());
-	Column psi("psi", new DbReal());
-	Column theta("theta", new DbReal());
-	Column alpha101("alpha101", new DbReal());
-	Column tau101("tau101", new DbReal());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column residue_begin("residue_begin", DbDataTypeOP( new DbInteger() ));
+	Column residue_end("residue_end", DbDataTypeOP( new DbInteger() ));
+	Column x("x", DbDataTypeOP( new DbReal() ));
+	Column y("y", DbDataTypeOP( new DbReal() ));
+	Column z("z", DbDataTypeOP( new DbReal() ));
+	Column phi("phi", DbDataTypeOP( new DbReal() ));
+	Column psi("psi", DbDataTypeOP( new DbReal() ));
+	Column theta("theta", DbDataTypeOP( new DbReal() ));
+	Column alpha101("alpha101", DbDataTypeOP( new DbReal() ));
+	Column tau101("tau101", DbDataTypeOP( new DbReal() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);

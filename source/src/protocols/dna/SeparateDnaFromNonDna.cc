@@ -43,7 +43,7 @@ SeparateDnaFromNonDnaCreator::keyname() const
 
 protocols::moves::MoverOP
 SeparateDnaFromNonDnaCreator::create_mover() const {
-	return new SeparateDnaFromNonDna;
+	return protocols::moves::MoverOP( new SeparateDnaFromNonDna );
 }
 
 std::string
@@ -192,14 +192,14 @@ void SeparateDnaFromNonDna::parse_my_tag(
 moves::MoverOP
 SeparateDnaFromNonDna::fresh_instance() const
 {
-	return new SeparateDnaFromNonDna;
+	return moves::MoverOP( new SeparateDnaFromNonDna );
 }
 
 ///@brief required in the context of the parser/scripting scheme
 moves::MoverOP
 SeparateDnaFromNonDna::clone() const
 {
-	return new SeparateDnaFromNonDna( *this );
+	return moves::MoverOP( new SeparateDnaFromNonDna( *this ) );
 }
 
 } // dna

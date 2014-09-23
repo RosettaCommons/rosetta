@@ -19,8 +19,8 @@ namespace loggers {
 
 class Logger;
 
-typedef utility::pointer::owning_ptr<Logger> LoggerOP;
-typedef utility::pointer::owning_ptr<Logger const> LoggerCOP;
+typedef utility::pointer::shared_ptr<Logger> LoggerOP;
+typedef utility::pointer::shared_ptr<Logger const> LoggerCOP;
 typedef utility::vector1<LoggerOP> LoggerList;
 
 }

@@ -65,7 +65,7 @@ RegionalConnections::check_if_connected_residues_belong_to_regions(
 
 
 PackerNeighborGraphFilter::PackerNeighborGraphFilter()
-: task_( NULL ), sfxn_( NULL ), task_invalidated_( false )
+: task_( /* NULL */ ), sfxn_( NULL ), task_invalidated_( false )
 {
 	required_connections_per_res_.clear();
 	required_connections_between_regions_.clear();

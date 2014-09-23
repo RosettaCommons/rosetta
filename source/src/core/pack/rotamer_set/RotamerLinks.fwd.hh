@@ -26,8 +26,8 @@ namespace rotamer_set {
 class RotamerLinks;
 
 
-typedef utility::pointer::owning_ptr< RotamerLinks > RotamerLinksOP;
-typedef utility::pointer::owning_ptr< RotamerLinks const > RotamerLinksCOP;
+typedef utility::pointer::shared_ptr< RotamerLinks > RotamerLinksOP;
+typedef utility::pointer::shared_ptr< RotamerLinks const > RotamerLinksCOP;
 
 
 } // namespace rotamer_set

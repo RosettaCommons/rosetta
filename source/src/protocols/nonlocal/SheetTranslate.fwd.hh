@@ -19,8 +19,8 @@ namespace protocols {
 namespace nonlocal {
 
 class SheetTranslate;
-typedef utility::pointer::owning_ptr<SheetTranslate> SheetTranslateOP;
-typedef utility::pointer::owning_ptr<SheetTranslate const> SheetTranslateCOP;
+typedef utility::pointer::shared_ptr<SheetTranslate> SheetTranslateOP;
+typedef utility::pointer::shared_ptr<SheetTranslate const> SheetTranslateCOP;
 
 }  // namespace nonlocal
 }  // namespace protocols

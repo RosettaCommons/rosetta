@@ -22,10 +22,10 @@ namespace scoring {
 namespace methods {
 
 class Rama2BOffsetEnergy;
-typedef  utility::pointer::access_ptr< Rama2BOffsetEnergy > Rama2BOffsetEnergyAP;
-typedef  utility::pointer::access_ptr< Rama2BOffsetEnergy const > Rama2BOffsetEnergyCAP;
-typedef  utility::pointer::owning_ptr< Rama2BOffsetEnergy > Rama2BOffsetEnergyOP;
-typedef  utility::pointer::owning_ptr< Rama2BOffsetEnergy const > Rama2BOffsetEnergyCOP;
+typedef  utility::pointer::weak_ptr< Rama2BOffsetEnergy > Rama2BOffsetEnergyAP;
+typedef  utility::pointer::weak_ptr< Rama2BOffsetEnergy const > Rama2BOffsetEnergyCAP;
+typedef  utility::pointer::shared_ptr< Rama2BOffsetEnergy > Rama2BOffsetEnergyOP;
+typedef  utility::pointer::shared_ptr< Rama2BOffsetEnergy const > Rama2BOffsetEnergyCOP;
 
 } // namespace methods
 } // namespace scoring

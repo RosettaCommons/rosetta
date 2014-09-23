@@ -920,7 +920,7 @@ void PlainSilentFileJobDistributor::dump_pose(
 	std::string output_tag = get_output_tag( job, struct_n );
 
 	using namespace core::io::silent;
-	SilentFileDataOP sfd = new core::io::silent::SilentFileData();
+	SilentFileDataOP sfd( new core::io::silent::SilentFileData() );
 	SilentStructOP ss = SilentStructFactory::get_instance()->get_instance()->get_silent_struct_out();
 	ss->fill_struct( pose, output_tag );
 	sfd->write_silent_struct( *ss, silent_file );
@@ -1007,7 +1007,7 @@ void PlainSilentFileJobDistributor::dump_silent(
 
 	// std::string output_tag = get_output_tag( struct_n );
 	// silent_struct.decoy_tag( output_tag );
-	core::io::silent::SilentFileDataOP sfd = new core::io::silent::SilentFileData();
+	core::io::silent::SilentFileDataOP sfd( new core::io::silent::SilentFileData() );
 	sfd->write_silent_struct( silent_struct, silent_file );
 	this->end_critical_section();
 }

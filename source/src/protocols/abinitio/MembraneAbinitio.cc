@@ -195,10 +195,10 @@ MembraneAbinitio::MembraneAbinitio(
 	} else { */
 
 		using namespace protocols::simple_moves;
-	  bms25  = new ClassicFragmentMover( fragset_small_top25, movemap );
-	  bms  = new ClassicFragmentMover( fragset_small, movemap );
-	  bml  = new ClassicFragmentMover( fragset_large, movemap );
-	  sms  = new SmoothFragmentMover ( fragset_small, movemap, FragmentCostOP( new GunnCost ) );
+	  bms25 = simple_moves::ClassicFragmentMoverOP( new ClassicFragmentMover( fragset_small_top25, movemap ) );
+	  bms = simple_moves::ClassicFragmentMoverOP( new ClassicFragmentMover( fragset_small, movemap ) );
+	  bml = simple_moves::ClassicFragmentMoverOP( new ClassicFragmentMover( fragset_large, movemap ) );
+	  sms = simple_moves::ClassicFragmentMoverOP( new SmoothFragmentMover ( fragset_small, movemap, FragmentCostOP( new GunnCost ) ) );
 //	}
 /*
 	bms->set_end_bias( option[ OptionKeys::abinitio::end_bias_2 ] ); //default is 30.0
@@ -227,7 +227,7 @@ MembraneAbinitio::init( core::pose::Pose const& pose ) {
 moves::MoverOP
 MembraneAbinitio::clone() const
 {
-	return new MembraneAbinitio( *this );
+	return moves::MoverOP( new MembraneAbinitio( *this ) );
 }
 
 void MembraneAbinitio::apply( pose::Pose & pose ) {
@@ -557,24 +557,24 @@ void MembraneAbinitio::update_moves() {
 void MembraneAbinitio::set_trials() {
 	// setup loop1
 	assert( brute_move_large_ );
-	trial_large_ = new moves::TrialMover( brute_move_large_, mc_ );
+	trial_large_ = moves::TrialMoverOP( new moves::TrialMover( brute_move_large_, mc_ ) );
 	//	trial_large_->keep_stats_type( false );
 	//trial_large_->keep_stats_type( moves::all_stats );
 
 	assert( brute_move_small_ );
-	trial_small_ = new moves::TrialMover( brute_move_small_, mc_ );
+	trial_small_ = moves::TrialMoverOP( new moves::TrialMover( brute_move_small_, mc_ ) );
 	//trial_small_->set_keep_stats( false );
 	//	trial_small_->keep_stats_type( false );
 	//trial_small_->keep_stats_type( moves::all_stats );
 
 	assert( brute_move_small_top25_ );
-	trial_small_top25_ = new moves::TrialMover( brute_move_small_top25_, mc_ );
+	trial_small_top25_ = moves::TrialMoverOP( new moves::TrialMover( brute_move_small_top25_, mc_ ) );
  	//trial_small_top25_ ->set_keep_stats( false );
 	//trial_small_top25_ ->keep_stats_type( false );
 	//trial_small_top25_ ->keep_stats_type( moves::all_stats );
 
 	assert( smooth_move_small_ );
-	smooth_trial_small_ = new moves::TrialMover( smooth_move_small_, mc_ );
+	smooth_trial_small_ = moves::TrialMoverOP( new moves::TrialMover( smooth_move_small_, mc_ ) );
 	//	smooth_trial_small_->set_keep_stats( false );
 	//smooth_trial_small_->keep_stats_type( false );
 	//smooth_trial_small_ ->keep_stats_type( moves::all_stats );
@@ -582,7 +582,7 @@ void MembraneAbinitio::set_trials() {
 
 //@detail sets Monto-Carlo object to default
 void MembraneAbinitio::set_default_mc( pose::Pose const& pose, scoring::ScoreFunction const& scorefxn ) {
-	set_mc( new moves::MonteCarlo( pose, scorefxn, temperature_ ) );
+	set_mc( moves::MonteCarloOP( new moves::MonteCarlo( pose, scorefxn, temperature_ ) ) );
 }
 
 //@detail sets Monto-Carlo object
@@ -925,7 +925,7 @@ void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 		TMHs=total_tmhelix;
 	}
 	topology.set_tmh_inserted(TMHs);
-	kinematics::MoveMapOP new_mm = new kinematics::MoveMap( *movemap() );
+	kinematics::MoveMapOP new_mm( new kinematics::MoveMap( *movemap() ) );
 	if(done)
 	{
 		new_mm->set_bb( true );
@@ -1010,7 +1010,7 @@ void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 
 void MembraneAbinitio::move_all_inserted( core::pose::Pose & pose) {
 	core::scoring::MembraneTopology & topology( nonconst_MembraneTopology_from_pose( pose ));
-	kinematics::MoveMapOP new_mm = new kinematics::MoveMap( *movemap() );
+	kinematics::MoveMapOP new_mm( new kinematics::MoveMap( *movemap() ) );
 	for(Size i=1;i<=pose.total_residue();++i){
 		if(topology.allow_scoring(i)){
 			new_mm->set_bb(i,true);
@@ -1276,7 +1276,7 @@ int MembraneAbinitio::do_stage2_cycles( pose::Pose &pose ) {
 	cycle->add_mover( trial_small_top25_->mover() );
 
 	Size nr_cycles = stage2_cycles(); // ( short_insert_region ? 2 : 1 );
-	moves::TrialMoverOP trials = new moves::TrialMover( cycle, mc_ptr() );
+	moves::TrialMoverOP trials( new moves::TrialMover( cycle, mc_ptr() ) );
 	moves::RepeatMover( trials, nr_cycles ).apply(pose);
 	//	clock_t stop = clock();
 	//	double t = (double) (stop-start)/CLOCKS_PER_SEC;
@@ -1540,7 +1540,7 @@ void MembraneAbinitio::prepare_stage1( core::pose::Pose &pose ) {
 	mc_->reset( pose );
 	(*score_stage1_)( pose );
 	//score_stage1_->accumulate_residue_total_energies( pose ); // fix this
-	kinematics::MoveMapOP new_mm = new kinematics::MoveMap( *movemap() );
+	kinematics::MoveMapOP new_mm( new kinematics::MoveMap( *movemap() ) );
 	new_mm->set_bb( true );
 	set_movemap(new_mm);
 }
@@ -1712,7 +1712,7 @@ void MembraneAbinitio::output_debug_structure( core::pose::Pose & pose, std::str
 	{
 		//using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
 
-		return *( static_cast< core::scoring::MembraneTopology const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY )() ));
+		return *( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
 	}
 
 	/// @details Either returns a non-const reference to the cenlist object already stored
@@ -1724,10 +1724,10 @@ void MembraneAbinitio::output_debug_structure( core::pose::Pose & pose, std::str
 		//using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
 
 		if ( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ) {
-			return *( static_cast< core::scoring::MembraneTopology * >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY )() ));
+			return *( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
 		}
 		// else
-		core::scoring::MembraneTopologyOP membrane_topology = new core::scoring::MembraneTopology;
+		core::scoring::MembraneTopologyOP membrane_topology( new core::scoring::MembraneTopology );
 		pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, membrane_topology );
 		return *membrane_topology;
 	}
@@ -1737,7 +1737,7 @@ void MembraneAbinitio::output_debug_structure( core::pose::Pose & pose, std::str
 	{
 		//using core::pose::datacache::CacheableDataType::MEMBRANE_EMBED;
 
-		return *( static_cast< core::scoring::MembraneEmbed const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED )() ));
+		return *( utility::pointer::static_pointer_cast< core::scoring::MembraneEmbed const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED ) ));
 	}
 
 	/// @details Either returns a non-const reference to the cenlist object already stored
@@ -1749,10 +1749,10 @@ void MembraneAbinitio::output_debug_structure( core::pose::Pose & pose, std::str
 		//using core::pose::datacache::CacheableDataType::MEMBRANE_EMBED;
 
 		if ( pose.data().has( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED ) ) {
-			return *( static_cast< core::scoring::MembraneEmbed * >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED )() ));
+			return *( utility::pointer::static_pointer_cast< core::scoring::MembraneEmbed > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED ) ));
 		}
 		// else
-		core::scoring::MembraneEmbedOP membrane_embed = new core::scoring::MembraneEmbed;
+		core::scoring::MembraneEmbedOP membrane_embed( new core::scoring::MembraneEmbed );
 		pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_EMBED, membrane_embed );
 		return *membrane_embed;
 	}

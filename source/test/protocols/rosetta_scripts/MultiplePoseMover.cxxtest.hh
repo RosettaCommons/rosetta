@@ -50,7 +50,7 @@ public:
 	DummyMultipleOutputMover() : npose_(0), pos_(1), max_poses_(100) {};
 
 	protocols::moves::MoverOP clone() const {
-		return new DummyMultipleOutputMover(*this);
+		return protocols::moves::MoverOP( new DummyMultipleOutputMover(*this) );
 	}
 
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) {
@@ -70,7 +70,7 @@ public:
 			return NULL;
 		if(base_pose_.total_residue() < 1)
 			base_pose_ = create_trpcage_ideal_pose();
-		core::pose::PoseOP p ( new core::pose::Pose(base_pose_) );
+		core::pose::PoseOP p( new core::pose::Pose(base_pose_) );
 		generate_pose( *p );
 		return p;
 	}
@@ -98,7 +98,7 @@ private:
 
 class DummyMultipleOutputMoverCreator : public protocols::moves::MoverCreator {
 public:
-	protocols::moves::MoverOP create_mover() const { return new DummyMultipleOutputMover; }
+	protocols::moves::MoverOP create_mover() const { return protocols::moves::MoverOP( new DummyMultipleOutputMover ); }
 	std::string keyname() const { return mover_name(); }
 	static std::string mover_name() { return "DummyMultipleOutputMover"; }
 };
@@ -107,7 +107,7 @@ class DummyFilter : public protocols::filters::TrueFilter { };
 
 class DummyFilterCreator : public protocols::filters::FilterCreator {
 public:
-	protocols::filters::FilterOP create_filter() const { return new DummyFilter; }
+	protocols::filters::FilterOP create_filter() const { return protocols::filters::FilterOP( new DummyFilter ); }
 	std::string keyname() const { return "DummyFilter"; }
 };
 
@@ -120,14 +120,14 @@ public:
 		std::cout << "DummyHalfFilter at " << i_ << ", returing: " << r << std::endl;
 		return r;
 	}
-	protocols::filters::FilterOP clone() const { return new DummyHalfFilter; }
-	protocols::filters::FilterOP fresh_instance() const { return new DummyHalfFilter; }
-	protocols::filters::FilterOP create_filter() const { return new DummyHalfFilter; }
+	protocols::filters::FilterOP clone() const { return protocols::filters::FilterOP( new DummyHalfFilter ); }
+	protocols::filters::FilterOP fresh_instance() const { return protocols::filters::FilterOP( new DummyHalfFilter ); }
+	protocols::filters::FilterOP create_filter() const { return protocols::filters::FilterOP( new DummyHalfFilter ); }
 };
 
 class DummyHalfFilterCreator : public protocols::filters::FilterCreator {
 public:
-	protocols::filters::FilterOP create_filter() const { return new DummyHalfFilter; }
+	protocols::filters::FilterOP create_filter() const { return protocols::filters::FilterOP( new DummyHalfFilter ); }
 	std::string keyname() const { return "DummyHalfFilter"; }
 };
 
@@ -151,9 +151,9 @@ public:
 		static bool first_run = true;
 		if(first_run) {
 			using protocols::filters::FilterCreatorOP;
-			protocols::moves::MoverFactory::get_instance()->factory_register( new DummyMultipleOutputMoverCreator );
-			protocols::filters::FilterFactory::get_instance()->factory_register( new DummyFilterCreator );
-			protocols::filters::FilterFactory::get_instance()->factory_register( new DummyHalfFilterCreator );
+			protocols::moves::MoverFactory::get_instance()->factory_register( MoverCreatorOP( new DummyMultipleOutputMoverCreator ) );
+			protocols::filters::FilterFactory::get_instance()->factory_register( FilterCreatorOP( new DummyFilterCreator ) );
+			protocols::filters::FilterFactory::get_instance()->factory_register( FilterCreatorOP( new DummyHalfFilterCreator ) );
 			first_run = false;
 		}
 	}

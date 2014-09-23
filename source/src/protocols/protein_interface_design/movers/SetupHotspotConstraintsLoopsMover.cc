@@ -145,7 +145,7 @@ SetupHotspotConstraintsLoopsMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 SetupHotspotConstraintsLoopsMoverCreator::create_mover() const {
-	return new SetupHotspotConstraintsLoopsMover;
+	return protocols::moves::MoverOP( new SetupHotspotConstraintsLoopsMover );
 }
 
 std::string
@@ -209,7 +209,7 @@ SetupHotspotConstraintsLoopsMover::SetupHotspotConstraintsLoopsMover(
 // 	colonyE_( colonyE)
 {
 //		packer_task_ = packer_task->clone();
-	hotspot_stub_set_ = new protocols::hotspot_hashing::HotspotStubSet( *hotspot_stub_set );
+	hotspot_stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new protocols::hotspot_hashing::HotspotStubSet( *hotspot_stub_set ) );
 }
 
 SetupHotspotConstraintsLoopsMover::SetupHotspotConstraintsLoopsMover( SetupHotspotConstraintsLoopsMover const & init ) :
@@ -226,7 +226,7 @@ SetupHotspotConstraintsLoopsMover::SetupHotspotConstraintsLoopsMover( SetupHotsp
 	loop_start_( init.loop_start_ ),
 	loop_stop_( init.loop_stop_ )
 {
-	hotspot_stub_set_ = new protocols::hotspot_hashing::HotspotStubSet( *init.hotspot_stub_set_ );
+	hotspot_stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new protocols::hotspot_hashing::HotspotStubSet( *init.hotspot_stub_set_ ) );
 }
 
 core::Size
@@ -316,11 +316,11 @@ SetupHotspotConstraintsLoopsMover::generate_csts(
 					if ( apply_ambiguous_constraints_ ) {
 						// Push it onto ambig_csts for this residue
 						ct_cst++;
-						ambig_csts.push_back( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant_ ) );
+						ambig_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant_ ) ) );
 					} else {
 						ct_cst++;
 						// Apply it directly
-						constraints.push_back( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant_ ) );
+						constraints.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant_ ) ) );
 					}
 				}	else hs_stub->second->set_scaffold_status( resnum, protocols::hotspot_hashing::reject );
 				//else tr.Info << " FailSelfEnergy=" << stub_bonus_value << std::endl;
@@ -331,7 +331,7 @@ SetupHotspotConstraintsLoopsMover::generate_csts(
 
 		// Finally, add the constraint corresponding to this resnum to the main set
 		if ( ( apply_ambiguous_constraints_ ) && ( ambig_csts.size() > 0 ) )
-			constraints.push_back( new core::scoring::constraints::AmbiguousConstraint(ambig_csts) );
+			constraints.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new core::scoring::constraints::AmbiguousConstraint(ambig_csts) ) );
 	}
 	return ct_cst;
 }
@@ -345,7 +345,7 @@ SetupHotspotConstraintsLoopsMover::apply( core::pose::Pose & pose ) {
 		constraints = pose.add_constraints( constraints );
 		tr.Info << "Applied " << ct_cst << " hotspots in " << constraints.size() << " constraints to the pose." << std::endl;
 	} else { //CB_force is <1e-19
-		core::scoring::constraints::ConstraintSetOP empty_constraint_set = new core::scoring::constraints::ConstraintSet;
+		core::scoring::constraints::ConstraintSetOP empty_constraint_set( new core::scoring::constraints::ConstraintSet );
 		pose.constraint_set( empty_constraint_set );
 	}
 }
@@ -381,7 +381,7 @@ SetupHotspotConstraintsLoopsMover::parse_my_tag( TagCOP const tag, basic::dataca
 	tr.Debug << "setup hotspots for loop " << loop_start_ << " to " << loop_stop_ << std::endl;
   colonyE_ = tag->getOption<bool>( "colonyE", 0 );
 
-  hotspot_stub_set_ = new hotspot_hashing::HotspotStubSet;
+  hotspot_stub_set_ = protocols::hotspot_hashing::HotspotStubSetOP( new hotspot_hashing::HotspotStubSet );
 	if( tag->hasOption( "stubfile" ) ){
   	std::string const hotspot_fname( tag->getOption<std::string>( "stubfile", "stubs.pdb" ) );
   	hotspot_stub_set_->read_data( hotspot_fname );
@@ -394,7 +394,7 @@ SetupHotspotConstraintsLoopsMover::parse_my_tag( TagCOP const tag, basic::dataca
 				std::string const file_name( curr_tag2->getOption< std::string >( "file_name" ) );
 				std::string const nickname( curr_tag2->getOption< std::string >( "nickname" ) );
 				core::Size const stub_num( curr_tag2->getOption< core::Size >( "stub_num", 100000 ) );
-				hotspot_hashing::HotspotStubSetOP temp_stubset = new hotspot_hashing::HotspotStubSet;
+				hotspot_hashing::HotspotStubSetOP temp_stubset( new hotspot_hashing::HotspotStubSet );
 				temp_stubset->read_data( file_name );
 				temp_stubset->remove_random_stubs_from_set( temp_stubset->size() - stub_num );
   			hotspot_stub_set_->add_stub_set( *temp_stubset );

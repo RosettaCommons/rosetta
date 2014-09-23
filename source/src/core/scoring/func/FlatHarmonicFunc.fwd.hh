@@ -24,8 +24,8 @@ namespace scoring {
 namespace func {
 
 class FlatHarmonicFunc;
-typedef utility::pointer::owning_ptr< FlatHarmonicFunc > FlatHarmonicFuncOP;
-typedef utility::pointer::owning_ptr< FlatHarmonicFunc const > FlatHarmonicFuncCOP;
+typedef utility::pointer::shared_ptr< FlatHarmonicFunc > FlatHarmonicFuncOP;
+typedef utility::pointer::shared_ptr< FlatHarmonicFunc const > FlatHarmonicFuncCOP;
 
 } // constraints
 } // scoring

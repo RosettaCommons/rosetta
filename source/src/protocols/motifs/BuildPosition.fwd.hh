@@ -22,8 +22,8 @@ namespace protocols {
 namespace motifs {
 
 class BuildPosition;
-typedef utility::pointer::owning_ptr< BuildPosition > BuildPositionOP;
-typedef utility::pointer::owning_ptr< BuildPosition const > BuildPositionCOP;
+typedef utility::pointer::shared_ptr< BuildPosition > BuildPositionOP;
+typedef utility::pointer::shared_ptr< BuildPosition const > BuildPositionCOP;
 typedef utility::vector1< BuildPositionOP > BuildPositionOPs;
 typedef utility::vector1< BuildPositionCOP > BuildPositionCOPs;
 

@@ -28,11 +28,11 @@ namespace topology_broker {
 class TemplateFragmentClaimer;
 
 // Types
-typedef  utility::pointer::owning_ptr< TemplateFragmentClaimer >  TemplateFragmentClaimerOP;
-typedef  utility::pointer::owning_ptr< TemplateFragmentClaimer const >  TemplateFragmentClaimerCOP;
+typedef  utility::pointer::shared_ptr< TemplateFragmentClaimer >  TemplateFragmentClaimerOP;
+typedef  utility::pointer::shared_ptr< TemplateFragmentClaimer const >  TemplateFragmentClaimerCOP;
 
-typedef  utility::pointer::access_ptr< TemplateFragmentClaimer >  TemplateFragmentClaimerAP;
-typedef  utility::pointer::access_ptr< TemplateFragmentClaimer const >  TemplateFragmentClaimerCAP;
+typedef  utility::pointer::weak_ptr< TemplateFragmentClaimer >  TemplateFragmentClaimerAP;
+typedef  utility::pointer::weak_ptr< TemplateFragmentClaimer const >  TemplateFragmentClaimerCAP;
 
 
 } // namespace kinematics

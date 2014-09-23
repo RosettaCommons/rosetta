@@ -50,7 +50,7 @@ RBInMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 RBInMoverCreator::create_mover() const {
-	return new RBInMover;
+	return protocols::moves::MoverOP( new RBInMover );
 }
 
 std::string
@@ -208,13 +208,13 @@ RBInMover::get_name() const {
 moves::MoverOP
 RBInMover::clone() const
 {
-	return new RBInMover( *this );
+	return moves::MoverOP( new RBInMover( *this ) );
 }
 
 moves::MoverOP
 RBInMover::fresh_instance() const
 {
-	return new RBInMover;
+	return moves::MoverOP( new RBInMover );
 }
 
 void

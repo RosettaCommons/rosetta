@@ -145,7 +145,7 @@ void H3PerturbCCD::set_default() {
 
 //clone
 protocols::moves::MoverOP H3PerturbCCD::clone() const {
-	return( new H3PerturbCCD() );
+	return( protocols::moves::MoverOP( new H3PerturbCCD() ) );
 }
 
 
@@ -158,8 +158,8 @@ void H3PerturbCCD::finalize_setup( pose::Pose & pose_in ) {
 
 	read_and_store_fragments(  );
 
-	mc_ = new protocols::moves::MonteCarlo( pose_in, *lowres_scorefxn_, Temperature_ );
-	outer_mc_ = new protocols::moves::MonteCarlo( pose_in, *lowres_scorefxn_, Temperature_ );
+	mc_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( pose_in, *lowres_scorefxn_, Temperature_ ) );
+	outer_mc_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( pose_in, *lowres_scorefxn_, Temperature_ ) );
 
 }
 
@@ -230,7 +230,7 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
 	//JQX: all the chi angles of all the side chains are flexible
 	//     only the backbone of the trimmed_cdr_h3 is flexible
 	kinematics::MoveMapOP cdrh3_map;
-	cdrh3_map = new kinematics::MoveMap();
+	cdrh3_map = kinematics::MoveMapOP( new kinematics::MoveMap() );
 	cdrh3_map->clear();
 	cdrh3_map->set_chi(true );
 	cdrh3_map->set_bb (false);
@@ -253,7 +253,7 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
 		//TR<<"trimmed_cdr_h3.start() = "<<trimmed_cdr_h3.start()<<std::endl;
 		//TR<<"trimmed_cdr_h3.stop() - ( buffer + (frag_size - 1 ) ) = "<<trimmed_cdr_h3.stop() - ( buffer + (frag_size - 1 ) )<<std::endl;
 		for(Size ii = trimmed_cdr_h3.start(); ii<=trimmed_cdr_h3.stop() - ( buffer + (frag_size - 1 ) ); ii++ ) {
-			ClassicFragmentMoverOP cfm = new ClassicFragmentMover( frags_to_use, cdrh3_map);
+			ClassicFragmentMoverOP cfm( new ClassicFragmentMover( frags_to_use, cdrh3_map) );
 			cfm->set_check_ss( false );
 			cfm->enable_end_bias_check( false );
 			cfm->define_start_window( ii );
@@ -269,7 +269,7 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
 		for ( Size c2 = 1; c2 <= num_cycles2; ++c2 ) {
 			TR<<"c1="<<total_cycles<<"    "<<"c2="<<c2<<std::endl;
 			// apply a random fragment
-			ClassicFragmentMoverOP cfm = new ClassicFragmentMover( frags_to_use, cdrh3_map);
+			ClassicFragmentMoverOP cfm( new ClassicFragmentMover( frags_to_use, cdrh3_map) );
 			cfm->set_check_ss( false );
 			cfm->enable_end_bias_check( false );
 			cfm->apply( pose_in );
@@ -303,13 +303,13 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
 			// JQX: this "RG.uniform() * num_cycles2 < c2" is so weird, not sure what Aroop really wants to do
 			if ( (c2 > num_cycles2/2 && numeric::random::rg().uniform() * num_cycles2 < c2) || ( trimmed_cdr_h3.size() <= 5) ) {
 				// in 2nd half of simulation, start trying to close the loop:
-				CCDLoopClosureMoverOP ccd_moves = new CCDLoopClosureMover( trimmed_cdr_h3, cdrh3_map );
+				CCDLoopClosureMoverOP ccd_moves( new CCDLoopClosureMover( trimmed_cdr_h3, cdrh3_map ) );
 				protocols::moves::RepeatMoverOP ccd_cycle;
 				if( trimmed_cdr_h3.size() <= 5 ) {
-					ccd_cycle = new protocols::moves::RepeatMover(ccd_moves,500*trimmed_cdr_h3.size());
+					ccd_cycle = protocols::moves::RepeatMoverOP( new protocols::moves::RepeatMover(ccd_moves,500*trimmed_cdr_h3.size()) );
 					ccd_cycle->apply( pose_in );
 				} else {
-					ccd_cycle = new protocols::moves::RepeatMover(ccd_moves, 10*trimmed_cdr_h3.size());
+					ccd_cycle = protocols::moves::RepeatMoverOP( new protocols::moves::RepeatMover(ccd_moves, 10*trimmed_cdr_h3.size()) );
 					ccd_cycle->apply( pose_in );
 				}
 				mc_->boltzmann( pose_in );
@@ -319,7 +319,7 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
 
 		mc_->recover_low( pose_in );
 
-		CCDLoopClosureMoverOP ccd_closure = new CCDLoopClosureMover(trimmed_cdr_h3, cdrh3_map );
+		CCDLoopClosureMoverOP ccd_closure( new CCDLoopClosureMover(trimmed_cdr_h3, cdrh3_map ) );
 		ccd_closure->tolerance( ccd_threshold_ );
 		ccd_closure->max_cycles( max_ccd_cycles_ );
 		ccd_closure->apply( pose_in );

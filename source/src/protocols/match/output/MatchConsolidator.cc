@@ -73,7 +73,7 @@ MatchConsolidator::process_match(
 
 	if ( group > match_groups_.size() ) {
 		match_groups_.resize( group );
-		match_groups_[ group ] = new BestMatchesCollection( n_to_output_per_group_, false );
+		match_groups_[ group ] = utility::pointer::shared_ptr<class protocols::match::output::BestMatchesCollection>( new BestMatchesCollection( n_to_output_per_group_, false ) );
 	}
 	Real score = evaluator_->score( m );
 	match_groups_[ group ]->add_match( m, score );
@@ -97,7 +97,7 @@ MatchConsolidator::process_match(
 
 	if ( group > match_groups_.size() ) {
 		match_groups_.resize( group );
-		match_groups_[ group ] = new BestMatchesCollection( n_to_output_per_group_, true );
+		match_groups_[ group ] = utility::pointer::shared_ptr<class protocols::match::output::BestMatchesCollection>( new BestMatchesCollection( n_to_output_per_group_, true ) );
 	}
 	Real score = evaluator_->score( m );
 	match_groups_[ group ]->add_match_dspos1( m, score );

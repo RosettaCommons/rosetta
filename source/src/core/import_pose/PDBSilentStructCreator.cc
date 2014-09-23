@@ -29,7 +29,7 @@ PDBSilentStructCreator::PDBSilentStructCreator() {}
 PDBSilentStructCreator::~PDBSilentStructCreator() {}
 
 core::io::silent::SilentStructOP PDBSilentStructCreator::create_silent_struct() const {
-	return new PDBSilentStruct;
+	return core::io::silent::SilentStructOP( new PDBSilentStruct );
 }
 
 std::string PDBSilentStructCreator::keyname() const {

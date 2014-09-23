@@ -93,7 +93,7 @@ public:
 		ScoreFunctionOP sfxn = get_score_function();
 		daemon.set_score_function( *sfxn );
 
-		EntityCorrespondenceOP ec = new EntityCorrespondence;
+		EntityCorrespondenceOP ec( new EntityCorrespondence );
 		ec->set_pose( trpcage );
 		ec->set_num_entities( 2 );
 		ec->add_resid_to_entity_list( 1, 12 );
@@ -264,12 +264,12 @@ public:
 		}
 		ScoreFunctionOP sfxn = get_score_function();
 
-		RotamerSetsOP rot_sets = new RotamerSets;
+		RotamerSetsOP rot_sets( new RotamerSets );
 		InteractionGraphBaseOP ig;
 		core::pack::pack_rotamers_setup( *trpcage, *sfxn, task, rot_sets, ig );
 
 		PrecomputedPairEnergiesInteractionGraphOP precomp_ig
-			= dynamic_cast< PrecomputedPairEnergiesInteractionGraph * > ( ig.get() );
+			= utility::pointer::dynamic_pointer_cast< core::pack::interaction_graph::PrecomputedPairEnergiesInteractionGraph > ( ig );
 
 		TS_ASSERT( precomp_ig != 0 );
 		if ( ! precomp_ig ) return;
@@ -330,7 +330,7 @@ public:
 		TS_ASSERT( all_good );
 		if ( ! all_good ) return;
 
-		DenseIGRepackerOP repacker = new DenseIGRepacker( trpcage, task, precomp_ig, rot_sets );
+		DenseIGRepackerOP repacker( new DenseIGRepacker( trpcage, task, precomp_ig, rot_sets ) );
 		RotamerSubsetsOP rotsubset = repacker->create_rotamer_subsets_from_rot_to_pack( rtp );
 		DensePDInteractionGraphOP denseig = repacker->create_dense_pdig_from_rot_to_pack( rtp, rotsubset );
 
@@ -381,12 +381,12 @@ public:
 		}
 		ScoreFunctionOP sfxn = get_score_function();
 
-		RotamerSetsOP rot_sets = new RotamerSets;
+		RotamerSetsOP rot_sets( new RotamerSets );
 		InteractionGraphBaseOP ig;
 		core::pack::pack_rotamers_setup( *trpcage, *sfxn, task, rot_sets, ig );
 
 		PrecomputedPairEnergiesInteractionGraphOP precomp_ig
-			= dynamic_cast< PrecomputedPairEnergiesInteractionGraph * > ( ig.get() );
+			= utility::pointer::dynamic_pointer_cast< core::pack::interaction_graph::PrecomputedPairEnergiesInteractionGraph > ( ig );
 
 		TS_ASSERT( precomp_ig != 0 );
 		if ( ! precomp_ig ) return;
@@ -447,7 +447,7 @@ public:
 		TS_ASSERT( all_good );
 		if ( ! all_good ) return;
 
-		DoubleDenseIGRepackerOP repacker = new DoubleDenseIGRepacker( trpcage, task, precomp_ig, rot_sets );
+		DoubleDenseIGRepackerOP repacker( new DoubleDenseIGRepacker( trpcage, task, precomp_ig, rot_sets ) );
 		RotamerSubsetsOP rotsubset = repacker->create_rotamer_subsets_from_rot_to_pack( rtp );
 		DoubleDensePDInteractionGraphOP double_dense_ig = repacker->create_dense_pdig_from_rot_to_pack( rtp, rotsubset );
 

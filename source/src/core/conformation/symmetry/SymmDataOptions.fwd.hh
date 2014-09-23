@@ -22,8 +22,8 @@ namespace conformation {
 namespace symmetry {
 
 class SymmDataOptions;
-typedef utility::pointer::owning_ptr< SymmDataOptions > SymmDataOptionsOP;
-typedef utility::pointer::owning_ptr< SymmDataOptions const > SymmDataOptionsCOP;
+typedef utility::pointer::shared_ptr< SymmDataOptions > SymmDataOptionsOP;
+typedef utility::pointer::shared_ptr< SymmDataOptions const > SymmDataOptionsCOP;
 } // namespace
 } // namespace
 } // namespace

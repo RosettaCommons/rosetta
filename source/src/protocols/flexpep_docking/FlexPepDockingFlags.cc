@@ -266,7 +266,7 @@ FlexPepDockingFlags::updateChains
 	core::pose::PDBInfoCOP pdbinfo = pose.pdb_info();
 	if(!pdbinfo){
 		TR.Warning << "Missing PDBInfo in input pose - generating default PDBInfo from pose object" << std::endl;
-		pdbinfo = new core::pose::PDBInfo(pose);
+		pdbinfo = core::pose::PDBInfoCOP( new core::pose::PDBInfo(pose) );
  	}
 	core::Size resi = 1;
 	// get receptor chain if needed

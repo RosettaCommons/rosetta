@@ -42,7 +42,7 @@ public:
 	basic::datacache::CacheableDataOP
 	clone() const
 	{
-		return new BasePartner( *this );
+		return basic::datacache::CacheableDataOP( new BasePartner( *this ) );
 	}
 
 	Size

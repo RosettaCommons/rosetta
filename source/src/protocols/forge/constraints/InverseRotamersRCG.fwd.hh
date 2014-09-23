@@ -24,8 +24,8 @@ namespace constraints{
 
 class InverseRotamersRCG;
 
-typedef utility::pointer::owning_ptr< InverseRotamersRCG > InverseRotamersRCGOP;
-typedef utility::pointer::access_ptr< InverseRotamersRCG const > InverseRotamersRCGCAP;
+typedef utility::pointer::shared_ptr< InverseRotamersRCG > InverseRotamersRCGOP;
+typedef utility::pointer::weak_ptr< InverseRotamersRCG const > InverseRotamersRCGCAP;
 
 }
 }

@@ -27,8 +27,8 @@ namespace match {
 namespace downstream {
 
 class DownstreamAlgorithm;
-typedef utility::pointer::owning_ptr< DownstreamAlgorithm > DownstreamAlgorithmOP;
-typedef utility::pointer::owning_ptr< DownstreamAlgorithm const > DownstreamAlgorithmCOP;
+typedef utility::pointer::shared_ptr< DownstreamAlgorithm > DownstreamAlgorithmOP;
+typedef utility::pointer::shared_ptr< DownstreamAlgorithm const > DownstreamAlgorithmCOP;
 
 }
 }

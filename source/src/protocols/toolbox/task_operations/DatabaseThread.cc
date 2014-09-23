@@ -53,7 +53,7 @@ DatabaseThread::DatabaseThread() : parent(),
     target_sequence_(""),
     template_file_(""),
     database_fname_( "" ),
-    template_pose_(NULL),
+    template_pose_(/* NULL */),
     start_res_(0),
     end_res_(0 ),
     allow_design_around_(true )
@@ -66,12 +66,12 @@ DatabaseThread::~DatabaseThread() {}
 core::pack::task::operation::TaskOperationOP
 DatabaseThreadCreator::create_task_operation() const
 {
-	return new DatabaseThread;
+	return core::pack::task::operation::TaskOperationOP( new DatabaseThread );
 }
 
 core::pack::task::operation::TaskOperationOP DatabaseThread::clone() const
 {
-	return new DatabaseThread( *this );
+	return core::pack::task::operation::TaskOperationOP( new DatabaseThread( *this ) );
 }
 
     
@@ -159,7 +159,7 @@ DatabaseThread::parse_tag(TagCOP tag, DataMap &)
 {
   target_sequence( tag->getOption< std::string >( "target_sequence","" ) );
   template_file( tag->getOption< std::string >( "template_file") );
-  template_pose_ = new core::pose::Pose;
+  template_pose_ = core::pose::PoseOP( new core::pose::Pose );
 	core::import_pose::pose_from_pdb( *template_pose_, template_file_ );
 	database_fname( tag->getOption< std::string >( "database","" ) );
   if (target_sequence()==""){

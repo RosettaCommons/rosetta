@@ -231,7 +231,7 @@ AtomOP
 JumpAtom::clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const
 {
 
-	JumpAtomOP new_me = new JumpAtom(*this);
+	JumpAtomOP new_me( new JumpAtom(*this) );
 
 	atom_pointer[ id() ] = new_me;
 

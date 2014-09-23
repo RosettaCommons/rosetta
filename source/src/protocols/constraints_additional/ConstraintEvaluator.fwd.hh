@@ -24,8 +24,8 @@ namespace protocols {
 namespace constraints_additional {
 
 class ConstraintEvaluator;
-typedef utility::pointer::owning_ptr< ConstraintEvaluator > ConstraintEvaluatorOP;
-typedef utility::pointer::owning_ptr< ConstraintEvaluator const > ConstraintEvaluatorCOP;
+typedef utility::pointer::shared_ptr< ConstraintEvaluator > ConstraintEvaluatorOP;
+typedef utility::pointer::shared_ptr< ConstraintEvaluator const > ConstraintEvaluatorCOP;
 
 }
 }

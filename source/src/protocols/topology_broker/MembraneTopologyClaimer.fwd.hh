@@ -28,11 +28,11 @@ namespace topology_broker {
 class MembraneTopologyClaimer;
 
 // Types
-typedef  utility::pointer::owning_ptr< MembraneTopologyClaimer >  MembraneTopologyClaimerOP;
-typedef  utility::pointer::owning_ptr< MembraneTopologyClaimer const >  MembraneTopologyClaimerCOP;
+typedef  utility::pointer::shared_ptr< MembraneTopologyClaimer >  MembraneTopologyClaimerOP;
+typedef  utility::pointer::shared_ptr< MembraneTopologyClaimer const >  MembraneTopologyClaimerCOP;
 
-typedef  utility::pointer::access_ptr< MembraneTopologyClaimer >  MembraneTopologyClaimerAP;
-typedef  utility::pointer::access_ptr< MembraneTopologyClaimer const >  MembraneTopologyClaimerCAP;
+typedef  utility::pointer::weak_ptr< MembraneTopologyClaimer >  MembraneTopologyClaimerAP;
+typedef  utility::pointer::weak_ptr< MembraneTopologyClaimer const >  MembraneTopologyClaimerCAP;
 
 } // namespace protocols
 } // namespace topology_broker

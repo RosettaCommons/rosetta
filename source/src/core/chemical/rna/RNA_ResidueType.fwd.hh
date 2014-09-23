@@ -22,10 +22,10 @@ namespace rna {
 
 class RNA_ResidueType;
 
-typedef  utility::pointer::access_ptr< RNA_ResidueType >  RNA_ResidueTypeAP;
-typedef  utility::pointer::access_ptr< RNA_ResidueType const >  RNA_ResidueTypeCAP;
-typedef  utility::pointer::owning_ptr< RNA_ResidueType >  RNA_ResidueTypeOP;
-typedef  utility::pointer::owning_ptr< RNA_ResidueType const >  RNA_ResidueTypeCOP;
+typedef  utility::pointer::weak_ptr< RNA_ResidueType >  RNA_ResidueTypeAP;
+typedef  utility::pointer::weak_ptr< RNA_ResidueType const >  RNA_ResidueTypeCAP;
+typedef  utility::pointer::shared_ptr< RNA_ResidueType >  RNA_ResidueTypeOP;
+typedef  utility::pointer::shared_ptr< RNA_ResidueType const >  RNA_ResidueTypeCOP;
 
 }
 }

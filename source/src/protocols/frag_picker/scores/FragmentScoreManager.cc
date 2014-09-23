@@ -89,7 +89,7 @@ FragmentScoreManager::~FragmentScoreManager() {}
 /// what is the correct size of the map i.e. how many scoring terms have been registered.
 FragmentScoreMapOP FragmentScoreManager::create_empty_map() {
 
-	    return new FragmentScoreMap(score_weights_.size());
+	    return FragmentScoreMapOP( new FragmentScoreMap(score_weights_.size()) );
 }
 
 
@@ -145,7 +145,7 @@ void FragmentScoreManager::do_caching(VallChunkOP chunk) {
 	for (Size iScore = 1; iScore <= scores_.size(); ++iScore) {
 		if (( zeros_score_later_ ) && ( fabs(score_weights_[iScore]) < 0.000001 ))	continue;
 		CachingScoringMethodOP score =
-				dynamic_cast<CachingScoringMethod*> (scores_[iScore].get());
+				utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::CachingScoringMethod > ( scores_[iScore] );
 		if (score != 0)
 			score->do_caching(chunk);
 	}
@@ -155,7 +155,7 @@ void FragmentScoreManager::clean_up() {
 
 	for (Size iScore = 1; iScore <= scores_.size(); ++iScore) {
 		CachingScoringMethodOP score =
-				dynamic_cast<CachingScoringMethod*> (scores_[iScore].get());
+				utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::CachingScoringMethod > ( scores_[iScore] );
 		if (score != 0)
 			score->clean_up();
 	}
@@ -267,7 +267,7 @@ bool FragmentScoreManager::score_fragment_from_cache(
 		if (( zeros_score_later_ ) && ( fabs(score_weights_[iScore]) < 0.000001 ))
 		    continue;
 		CachingScoringMethodOP s =
-			dynamic_cast<CachingScoringMethod*> (scores_[iScore].get());
+			utility::pointer::dynamic_pointer_cast< protocols::frag_picker::scores::CachingScoringMethod > ( scores_[iScore] );
 		if ( s != 0 ) {
 			if ( !s->cached_score(candidate, empty_map) )
 				return false;
@@ -291,49 +291,49 @@ FragmentScoreManager::FragmentScoreManager() {
 	default_width_ = 6;
 	zeros_score_later_ = true;
 
-	register_score_maker(new MakeSecondaryIdentity());
-	register_score_maker(new MakeSequenceIdentity());
-	register_score_maker(new MakeBFactor());
-	register_score_maker(new MakeDisulfideIdentity());
-	register_score_maker(new MakeDisulfideDistance());
-	register_score_maker(new MakePCS_FragDistance());
-	register_score_maker(new MakeProlinePhiScore());
-	register_score_maker(new MakeRamaScore());
-	register_score_maker(new MakeRDCScore());
-	register_score_maker(new MakeProfileScore());
-	register_score_maker(new MakeProfileScoreL1());
-	register_score_maker(new MakeProfileScoreBlosum62());
-	register_score_maker(new MakeProfileScoreSubMatrix());
-	register_score_maker(new MakeProfileScoreDistWeight());
-	register_score_maker(new MakeSecondarySimilarity());
-	register_score_maker(new MakeTalosSSSimilarity());
-	register_score_maker(new MakePartialSecondarySimilarity());
-	register_score_maker(new MakeTorsionBinSimilarity());
-	register_score_maker(new MakeFragmentCrmsd());
-	register_score_maker(new MakeFragmentChunkCrms());
-	register_score_maker(new MakeMidPhiOut());
-	register_score_maker(new MakeMidPsiOut());
-	register_score_maker(new MakePhiPsiRmsd());
-	register_score_maker(new MakePhiPsiSquareWell());
-	register_score_maker(new MakeJCoupling());
-	register_score_maker(new MakeAtomPairConstraintsScore());
-	register_score_maker(new MakeDihedralConstraintsScore());
-	register_score_maker(new MakeCSScore());
-	register_score_maker(new MakeAmbigCSScore());
-	register_score_maker(new MakeTorsionBinSimilarity());
-	register_score_maker(new MakeInterbondAngleScore());
-	register_score_maker(new MakeGunnCostScore());
-	register_score_maker(new MakeABEGO_SS_Score());
-	register_score_maker(new MakeFragmentAllAtomCrmsd());
-	register_score_maker(new MakeConstScore());
-	register_score_maker(new MakeFragmentDME());
-	register_score_maker(new MakeHydrophobicitySimilarity());
-	register_score_maker(new MakeHydrophobicityProfileSimilarity());
-	register_score_maker(new MakeSolventAccessibility());
-	register_score_maker(new MakePhi());
-	register_score_maker(new MakePsi());
-	register_score_maker(new MakeProfileScoreStructL1());
-	register_score_maker(new MakeFragmentCrmsdResDepth());
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeSecondaryIdentity() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeSequenceIdentity() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeBFactor() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeDisulfideIdentity() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeDisulfideDistance() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakePCS_FragDistance() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeProlinePhiScore() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeRamaScore() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeRDCScore() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeProfileScore() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeProfileScoreL1() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeProfileScoreBlosum62() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeProfileScoreSubMatrix() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeProfileScoreDistWeight() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeSecondarySimilarity() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeTalosSSSimilarity() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakePartialSecondarySimilarity() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeTorsionBinSimilarity() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeFragmentCrmsd() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeFragmentChunkCrms() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeMidPhiOut() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeMidPsiOut() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakePhiPsiRmsd() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakePhiPsiSquareWell() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeJCoupling() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeAtomPairConstraintsScore() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeDihedralConstraintsScore() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeCSScore() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeAmbigCSScore() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeTorsionBinSimilarity() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeInterbondAngleScore() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeGunnCostScore() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeABEGO_SS_Score() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeFragmentAllAtomCrmsd() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeConstScore() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeFragmentDME() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeHydrophobicitySimilarity() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeHydrophobicityProfileSimilarity() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeSolventAccessibility() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakePhi() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakePsi() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeProfileScoreStructL1() ));
+	register_score_maker(MakeFragmentScoringMethodOP( new MakeFragmentCrmsdResDepth() ));
 
 }
 

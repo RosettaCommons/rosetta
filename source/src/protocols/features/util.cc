@@ -99,8 +99,8 @@ set_protocol_and_batch_id(
 	utility::vector1<FeaturesReporterOP> features_reporters,
 	sessionOP db_session
 ){
-	ProtocolFeaturesOP protocol_features = new ProtocolFeatures();
-	BatchFeaturesOP batch_features = new BatchFeatures();
+	ProtocolFeaturesOP protocol_features( new ProtocolFeatures() );
+	BatchFeaturesOP batch_features( new BatchFeatures() );
 
 	db_session->begin_transaction();
 	protocol_id = protocol_features->report_features(protocol_id, db_session);
@@ -128,8 +128,8 @@ get_protocol_and_batch_id(
 
 	int protocol_id = 0;
 	int batch_id = 0;
-	ProtocolFeaturesOP protocol_features = new ProtocolFeatures();
-	BatchFeaturesOP batch_features = new BatchFeatures();
+	ProtocolFeaturesOP protocol_features( new ProtocolFeatures() );
+	BatchFeaturesOP batch_features( new BatchFeatures() );
 
 	int rank = 0;
 
@@ -240,7 +240,7 @@ write_features_reporters_table(
 
 	Schema features_reporters_schema(
 		"features_reporters",
-		PrimaryKey( Column("report_name", new DbTextKey())));
+		PrimaryKey( Column("report_name", DbDataTypeOP( new DbTextKey() ))));
 
 	features_reporters_schema.write(db_session);
 
@@ -271,8 +271,8 @@ write_batch_reports_table(
 	using namespace basic::database::schema_generator;
 
 	Schema batch_reports("batch_reports");
-	Column report_name("report_name", new DbTextKey());
-	Column batch_id_col("batch_id", new DbInteger());
+	Column report_name("report_name", DbDataTypeOP( new DbTextKey() ));
+	Column batch_id_col("batch_id", DbDataTypeOP( new DbInteger() ));
 
 	batch_reports.add_foreign_key(
 		ForeignKey(batch_id_col, "batches", "batch_id", true /*defer*/));
@@ -282,7 +282,7 @@ write_batch_reports_table(
 	utility::vector1<Column> batch_reports_unique;
 	batch_reports_unique.push_back(batch_id_col);
 	batch_reports_unique.push_back(report_name);
-	batch_reports.add_constraint( new UniqueConstraint(batch_reports_unique) );
+	batch_reports.add_constraint( ConstraintOP( new UniqueConstraint(batch_reports_unique) ) );
 
 	batch_reports.write(db_session);
 

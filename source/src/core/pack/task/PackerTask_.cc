@@ -76,7 +76,7 @@ ResidueLevelTask_::ResidueLevelTask_(
 	include_current_( false ),
 	adducts_( true ),
 	original_residue_type_( original_residue.type().get_self_weak_ptr() ),
-	target_residue_type_(0),
+	target_residue_type_(/* 0 */),
 	designing_( original_residue.is_protein() || original_residue.is_peptoid() ), // default -- design at all protein residues
 	repacking_( true ),
 	optimize_H_mode_( false ),
@@ -149,7 +149,7 @@ ResidueLevelTask_::ResidueLevelTask_(
 		// for non-amino acids, default is to include only the existing residuetype
 		allowed_residue_types_.push_back( original_residue.type().get_self_ptr() );
 	}
-	if ( original_residue.is_RNA() ) rna_task_ = new rna::RNA_ResidueLevelTask;
+	if ( original_residue.is_RNA() ) rna_task_ = rna::RNA_ResidueLevelTaskOP( new rna::RNA_ResidueLevelTask );
 	// The intention is for all ResidueTasks to *start off* as repackable.
 	// Some, like protein AAs and DNA, also start off designable.
 	determine_if_designing();
@@ -1468,7 +1468,7 @@ PackerTask_::update_commutative(
 
 
 	if(o.IG_edge_reweights_) {
-		IG_edge_reweights_  = new IGEdgeReweightContainer(nres_);
+		IG_edge_reweights_ = IGEdgeReweightContainerOP( new IGEdgeReweightContainer(nres_) );
 		for(utility::vector1< IGEdgeReweighterOP >::const_iterator i = o.IG_edge_reweights_->reweighters_begin();
 			i != o.IG_edge_reweights_->reweighters_end(); ++i) {
 			IG_edge_reweights_->add_reweighter(*i);
@@ -1578,7 +1578,7 @@ PackerTaskOP
 PackerTask_::clone() const
 {
 	// rely on compiler-generated copy ctor
-	PackerTaskOP newtask( new PackerTask_( *this ));
+	PackerTaskOP newtask( new PackerTask_( *this ) );
 	return newtask;
 }
 
@@ -2077,14 +2077,14 @@ PackerTask_::designing_residues() const
 bool
 PackerTask_::rotamer_couplings_exist() const
 {
-	return ( rotamer_couplings_() != 0 );
+	return ( rotamer_couplings_ != 0 );
 }
 
 ///@brief const accessor for the RotamerCouplings object
 PackerTask::RotamerCouplingsCOP
 PackerTask_::rotamer_couplings() const
 {
-	return rotamer_couplings_();
+	return rotamer_couplings_;
 }
 
 ///@brief setter for the RotamerCouplings object
@@ -2102,14 +2102,14 @@ PackerTask_::rotamer_couplings( PackerTask::RotamerCouplingsCOP setting )
 bool
 PackerTask_::rotamer_links_exist() const
 {
-	return ( rotamer_links_() != 0 );
+	return ( rotamer_links_ != 0 );
 }
 
 ///@brief const accessor for the RotamerCouplings object
 PackerTask::RotamerLinksCOP
 PackerTask_::rotamer_links() const
 {
-	return rotamer_links_();
+	return rotamer_links_;
 }
 
 ///@brief setter for the RotamerCouplings object
@@ -2131,7 +2131,7 @@ IGEdgeReweightContainerOP
 PackerTask_::set_IGEdgeReweights()
 {
 	if( !IG_edge_reweights_ ){
-		IG_edge_reweights_ = new IGEdgeReweightContainer( nres_ );
+		IG_edge_reweights_ = IGEdgeReweightContainerOP( new IGEdgeReweightContainer( nres_ ) );
 	}
 	return IG_edge_reweights_;
 

@@ -119,7 +119,7 @@ InterfaceAnalyzerMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 InterfaceAnalyzerMoverCreator::create_mover() const {
-	return new InterfaceAnalyzerMover();
+	return protocols::moves::MoverOP( new InterfaceAnalyzerMover() );
 }
 
 std::string
@@ -332,9 +332,7 @@ InterfaceAnalyzerMover::setup_scorefxn() {
 		TR << "NULL scorefunction. Initialize from cmd line." << std::endl;
 		sf_ = core::scoring::get_score_function();
 	 }
-	core::scoring::methods::EnergyMethodOptionsOP emopts(
-		new core::scoring::methods::EnergyMethodOptions( sf_->energy_method_options() )
-	);
+	core::scoring::methods::EnergyMethodOptionsOP emopts( new core::scoring::methods::EnergyMethodOptions( sf_->energy_method_options() ) );
 	emopts->hbond_options().decompose_bb_hb_into_pair_energies( true );
 	sf_->set_energy_method_options( *emopts );
 
@@ -732,7 +730,7 @@ void InterfaceAnalyzerMover::register_calculators()
 		Warning() << "In InterfaceAnalyzerMover, calculator " << Sasa_
 		<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
-		CalculatorFactory::Instance().register_calculator( Sasa_, new core::pose::metrics::simple_calculators::SasaCalculator2);
+		CalculatorFactory::Instance().register_calculator( Sasa_, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::SasaCalculator2 ));
 	}
 
 	InterfaceNeighborDefinition_ = "InterfaceNeighborDefinition_" + ijump;
@@ -740,7 +738,7 @@ void InterfaceAnalyzerMover::register_calculators()
 		Warning() << "In InterfaceAnalyzerMover, calculator " << InterfaceNeighborDefinition_
 		<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
-		CalculatorFactory::Instance().register_calculator( InterfaceNeighborDefinition_, new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator(chain1_, chain2_));
+		CalculatorFactory::Instance().register_calculator( InterfaceNeighborDefinition_, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator(chain1_, chain2_) ));
 	}
 
 	InterfaceSasaDefinition_ = "InterfaceSasaDefinition_" + ijump;
@@ -748,7 +746,7 @@ void InterfaceAnalyzerMover::register_calculators()
 		Warning() << "In InterfaceAnalyzerMover, calculator " << InterfaceSasaDefinition_
 		<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
-		CalculatorFactory::Instance().register_calculator( InterfaceSasaDefinition_, new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator(chain1_, chain2_));
+		CalculatorFactory::Instance().register_calculator( InterfaceSasaDefinition_, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator(chain1_, chain2_) ));
 	}
 
 	InterfaceDeltaEnergetics_ = "InterfaceDeltaEnergetics_" + ijump;
@@ -756,7 +754,7 @@ void InterfaceAnalyzerMover::register_calculators()
 		Warning() << "In InterfaceAnalyzerMover, calculator " << InterfaceDeltaEnergetics_
 		<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
-		CalculatorFactory::Instance().register_calculator( InterfaceDeltaEnergetics_, new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator(InterfaceNeighborDefinition_));
+		CalculatorFactory::Instance().register_calculator( InterfaceDeltaEnergetics_, PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator(InterfaceNeighborDefinition_) ));
 	}
 
 	NumberHBonds_ = "NumberHBonds_" + ijump;
@@ -764,7 +762,7 @@ void InterfaceAnalyzerMover::register_calculators()
 		Warning() << "In InterfaceAnalyzerMover, calculator " << NumberHBonds_
 		<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
-		CalculatorFactory::Instance().register_calculator( NumberHBonds_, new NumberHBondsCalculator);
+		CalculatorFactory::Instance().register_calculator( NumberHBonds_, PoseMetricCalculatorOP( new NumberHBondsCalculator ));
 	}
 
 	BuriedUnsatisfiedPolars_ = "BuriedUnsatisfiedPolars_" + ijump;
@@ -772,7 +770,7 @@ void InterfaceAnalyzerMover::register_calculators()
 		Warning() << "In InterfaceAnalyzerMover, calculator " << BuriedUnsatisfiedPolars_
 		<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
-		CalculatorFactory::Instance().register_calculator(  BuriedUnsatisfiedPolars_, new BuriedUnsatisfiedPolarsCalculator(Sasa_, NumberHBonds_));
+		CalculatorFactory::Instance().register_calculator(  BuriedUnsatisfiedPolars_, PoseMetricCalculatorOP( new BuriedUnsatisfiedPolarsCalculator(Sasa_, NumberHBonds_) ));
 	}
 
 
@@ -789,7 +787,7 @@ void InterfaceAnalyzerMover::register_intergroup_calculator(){
 		Warning() << "In InterfaceAnalyzerMover, calculator " << InterGroupNeighborsCalculator_
 		<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
-		CalculatorFactory::Instance().register_calculator(  InterGroupNeighborsCalculator_, new InterGroupNeighborsCalculator(chain_groups_, basic::options::option[basic::options::OptionKeys::pose_metrics::inter_group_neighbors_cutoff] ) );
+		CalculatorFactory::Instance().register_calculator(  InterGroupNeighborsCalculator_, PoseMetricCalculatorOP( new InterGroupNeighborsCalculator(chain_groups_, basic::options::option[basic::options::OptionKeys::pose_metrics::inter_group_neighbors_cutoff] ) ) );
 	}
 }
 
@@ -807,7 +805,7 @@ void InterfaceAnalyzerMover::score_separated_chains( core::pose::Pose & complexe
 
 	//setup mover to pack interface
 	//core::Size ndruns = option[packing::ndruns];
-	protocols::simple_moves::PackRotamersMoverOP repacker = new protocols::simple_moves::PackRotamersMover(sf_ );
+	protocols::simple_moves::PackRotamersMoverOP repacker( new protocols::simple_moves::PackRotamersMover(sf_ ) );
 
 	if ( pack_input_ ){
 		core::pack::task::PackerTaskOP task = setup_task(complexed_pose);
@@ -1574,13 +1572,13 @@ InterfaceAnalyzerMover::setup_task(core::pose::Pose & pose){
 	using namespace protocols::toolbox::task_operations;
 	//set up the task to match this calculation
 	//set up a packer task
-	TaskFactoryOP tf = new TaskFactory();
-	tf->push_back( new InitializeFromCommandline() );
+	TaskFactoryOP tf( new TaskFactory() );
+	tf->push_back( TaskOperationCOP( new InitializeFromCommandline() ) );
 	//force include current to prevent wonky results
-	tf->push_back( new IncludeCurrent() );
-	tf->push_back( new RestrictToRepacking() );
+	tf->push_back( TaskOperationCOP( new IncludeCurrent() ) );
+	tf->push_back( TaskOperationCOP( new RestrictToRepacking() ) );
 
-	if( use_resfile_ ) tf->push_back( new ReadResfile() );
+	if( use_resfile_ ) tf->push_back( TaskOperationCOP( new ReadResfile() ) );
 
 	
 	core::pack::task::PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
@@ -1911,14 +1909,14 @@ void InterfaceAnalyzerMover::print_pymol_selection_of_packing( core::pose::Pose 
 protocols::moves::MoverOP
 InterfaceAnalyzerMover::fresh_instance() const
 {
-	return new InterfaceAnalyzerMover;
+	return protocols::moves::MoverOP( new InterfaceAnalyzerMover );
 }
 
 ///@brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 InterfaceAnalyzerMover::clone() const
 {
-	return new InterfaceAnalyzerMover( *this );
+	return protocols::moves::MoverOP( new InterfaceAnalyzerMover( *this ) );
 }
 
 core::Real InterfaceAnalyzerMover::get_interface_dG() const {return data_.dG[total]; } //previous functionality: redundant with get_separated_interface_energy, but supports other protocols

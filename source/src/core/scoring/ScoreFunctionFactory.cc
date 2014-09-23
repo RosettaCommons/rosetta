@@ -64,13 +64,13 @@ ScoreFunctionFactory::create_score_function( std::string weights_tag, utility::v
 	// create a new scorefunction
 	ScoreFunctionOP scorefxn;
 	if ( basic::options::option[ basic::options::OptionKeys::score::min_score_score ].user() ) {
-		scorefxn = new MinScoreScoreFunction( basic::options::option[ basic::options::OptionKeys::score::min_score_score ]() );
+		scorefxn = ScoreFunctionOP( new MinScoreScoreFunction( basic::options::option[ basic::options::OptionKeys::score::min_score_score ]() ) );
 	} else if ( basic::options::option[ basic::options::OptionKeys::score::docking_interface_score ]() ) {
-		scorefxn = new DockingScoreFunction;
+		scorefxn = ScoreFunctionOP( new DockingScoreFunction );
 	} else if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )	{
-		scorefxn = new SymmetricScoreFunction;
+		scorefxn = ScoreFunctionOP( new SymmetricScoreFunction );
 	} else {
-		scorefxn = new ScoreFunction;
+		scorefxn = ScoreFunctionOP( new ScoreFunction );
 	}
 
 	/// Avoid loading the score12 patch if we're using
@@ -227,7 +227,7 @@ core::scoring::ScoreFunctionOP get_score_function( bool const is_fullatom /* def
 
 	//if( option[ score::empty ]() || option[ abinitio::membrane ]() /*fullatom not implemented for membrane yet */) return scorefxn;
 
-	if( option[ score::empty ]() ) return new core::scoring::ScoreFunction();
+	if( option[ score::empty ]() ) return core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
 
 	std::string weight_set = option[ score::weights ];
 	utility::vector1< std::string > patch_tags = option[ score::patch ]();

@@ -229,7 +229,7 @@ StepWiseRNA_VirtualSugarSampler::setup_sugar_conformations( utility::vector1< Po
 	checker::RNA_AtrRepCheckerOP atr_rep_checker;
 	utility::vector1< Size > const & moving_partition_res = working_parameters_->working_moving_partition_res();
 	if ( moving_partition_res.has_value( sugar_modeling_.moving_res ) == moving_partition_res.has_value( sugar_modeling_.reference_res ) ){
-		atr_rep_checker = new checker::RNA_AtrRepChecker( pose, sugar_modeling_.moving_res, sugar_modeling_.reference_res, 0 /*gap_size = 0 forces loose rep_cutoff (10.0 )*/ );
+		atr_rep_checker = checker::RNA_AtrRepCheckerOP( new checker::RNA_AtrRepChecker( pose, sugar_modeling_.moving_res, sugar_modeling_.reference_res, 0 /*gap_size = 0 forces loose rep_cutoff (10.0 )*/ ) );
 	}
 
 	pose::Pose pose_init = pose;//Hard copy
@@ -431,8 +431,8 @@ StepWiseRNA_VirtualSugarSampler::bulge_chain_closure_complete( utility::vector1<
 																															 pose::Pose & viewer_pose ){
 	utility::vector1< PoseOP > output_pose_list;
 	Size const rebuild_res = sugar_modeling_.bulge_res;
-	StepWiseModelerOP stepwise_modeler = new StepWiseModeler( rebuild_res, scorefxn_ );
-	options::StepWiseModelerOptionsOP options = new options::StepWiseModelerOptions;
+	StepWiseModelerOP stepwise_modeler( new StepWiseModeler( rebuild_res, scorefxn_ ) );
+	options::StepWiseModelerOptionsOP options( new options::StepWiseModelerOptions );
 	options->set_use_phenix_geo( use_phenix_geo_ );
 	options->set_kic_modeler_if_relevant( true /*erraser modeler for speed & completeness*/ );
 	options->set_num_pose_minimize( 1 );
@@ -513,10 +513,10 @@ StepWiseRNA_VirtualSugarSampler::bulge_chain_closure_legacy( utility::vector1< P
 	Size num_closed_chain_pose = 0;
 
 	utility::vector1< RNA_AtrRepCheckerOP > atr_rep_checkers_;
-	for ( Size n = 1; n <= pose_list.size(); n++ )	atr_rep_checkers_.push_back( new RNA_AtrRepChecker( *(pose_list[n]), bulge_suite, bulge_rsd, 0 /*gap_size*/ ) );
+	for ( Size n = 1; n <= pose_list.size(); n++ )	atr_rep_checkers_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::modeler::rna::checker::RNA_AtrRepChecker>( new RNA_AtrRepChecker( *(pose_list[n]), bulge_suite, bulge_rsd, 0 /*gap_size*/ ) ) );
 
-	RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker_ = new RNA_ChainClosableGeometryChecker( sugar_modeling_.five_prime_chain_break, 0 /*gap_size*/ );
-	RNA_ChainClosureCheckerOP chain_closure_checker_       = new RNA_ChainClosureChecker( screening_pose, sugar_modeling_.five_prime_chain_break );
+	RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker_( new RNA_ChainClosableGeometryChecker( sugar_modeling_.five_prime_chain_break, 0 /*gap_size*/ ) );
+	RNA_ChainClosureCheckerOP chain_closure_checker_( new RNA_ChainClosureChecker( screening_pose, sugar_modeling_.five_prime_chain_break ) );
 	chain_closure_checker_->set_reinitialize_CCD_torsions( true );
 
 	utility::vector1< bool > is_chain_close( pose_list.size(), false );
@@ -619,7 +619,7 @@ StepWiseRNA_VirtualSugarSampler::bulge_chain_minimize_legacy( utility::vector1< 
 	mm.set( TorsionID( sugar_modeling_.bulge_res + 1, id::BB,  2 ), true ); //beta
 	mm.set( TorsionID( sugar_modeling_.bulge_res + 1, id::BB,  3 ), true ); //gamma
 
-	ScoreFunctionOP bulge_chain_closure_scorefxn = new ScoreFunction;
+	ScoreFunctionOP bulge_chain_closure_scorefxn( new ScoreFunction );
 	bulge_chain_closure_scorefxn->set_weight( fa_rep , 0.12 );
 	bulge_chain_closure_scorefxn->set_weight( angle_constraint, 1.0 );
 	bulge_chain_closure_scorefxn->set_weight( atom_pair_constraint, 1.0 );
@@ -697,7 +697,7 @@ StepWiseRNA_VirtualSugarSampler::setup_VDW_bin_checker( pose::Pose const & input
 
 	utility::vector1 < core::Size > ignore_res_list = make_vector1( sugar_modeling_.moving_res, sugar_modeling_.bulge_res, sugar_modeling_.reference_res );
 
-	VDW_bin_checker_ = new checker::RNA_VDW_BinChecker();
+	VDW_bin_checker_ = checker::RNA_VDW_BinCheckerOP( new checker::RNA_VDW_BinChecker() );
 	VDW_bin_checker_->create_VDW_screen_bin( input_pose, ignore_res_list, sugar_modeling_.is_prepend, reference_stub.v, false /*verbose*/ );
 }
 

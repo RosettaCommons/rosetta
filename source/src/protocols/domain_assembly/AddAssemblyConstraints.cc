@@ -83,7 +83,7 @@ void AddAssemblyConstraints::apply( core::pose::Pose & pose ) {
 					atom2( pose.residue_type(ii).atom_index(atom_name), ii );
 				core::scoring::func::FuncOP func( new core::scoring::func::LinearPenaltyFunction( dist_cutoff, score, range, slope ) );
 
-				ConstraintOP cst = new AtomPairConstraint(atom1,atom2,func);
+				ConstraintOP cst( new AtomPairConstraint(atom1,atom2,func) );
 				cst_set->add_constraint(cst);
 				break;
 			}

@@ -35,8 +35,8 @@ namespace screener {
 															Size const moving_res ):
 		atr_rep_checker_( atr_rep_checker ),
 		base_centroid_checker_( base_centroid_checker ),
-		bulge_apply_mover_( new modeler::rna::bulge::BulgeApplyMover( moving_res ) ),
-		bulge_unapply_mover_( new modeler::rna::bulge::BulgeUnApplyMover( moving_res ) )
+		bulge_apply_mover_( modeler::rna::bulge::BulgeApplyMoverOP( new modeler::rna::bulge::BulgeApplyMover( moving_res ) ) ),
+		bulge_unapply_mover_( modeler::rna::bulge::BulgeUnApplyMoverOP( new modeler::rna::bulge::BulgeUnApplyMover( moving_res ) ) )
 	{}
 
 	//Destructor

@@ -18,8 +18,8 @@ namespace pivot_pickers {
 
 class PivotPicker;
 
-typedef utility::pointer::owning_ptr<PivotPicker> PivotPickerOP;
-typedef utility::pointer::owning_ptr<PivotPicker const> PivotPickerCOP;
+typedef utility::pointer::shared_ptr<PivotPicker> PivotPickerOP;
+typedef utility::pointer::shared_ptr<PivotPicker const> PivotPickerCOP;
 
 }
 }

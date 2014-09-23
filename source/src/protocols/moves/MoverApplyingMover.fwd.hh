@@ -27,8 +27,8 @@ namespace protocols {
 namespace moves {
 
 class MoverApplyingMover;
-typedef utility::pointer::owning_ptr< MoverApplyingMover > MoverApplyingMoverOP;
-typedef utility::pointer::owning_ptr< MoverApplyingMover const > MoverApplyingMoverCOP;
+typedef utility::pointer::shared_ptr< MoverApplyingMover > MoverApplyingMoverOP;
+typedef utility::pointer::shared_ptr< MoverApplyingMover const > MoverApplyingMoverCOP;
 
 } // moves
 } // protocols

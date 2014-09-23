@@ -52,7 +52,7 @@ DumpPdbCreator::keyname() const
 
 protocols::moves::MoverOP
 DumpPdbCreator::create_mover() const {
-	return new DumpPdb;
+	return protocols::moves::MoverOP( new DumpPdb );
 }
 
 std::string
@@ -64,14 +64,14 @@ DumpPdbCreator::mover_name()
 DumpPdb::DumpPdb():
 	protocols::moves::Mover( DumpPdbCreator::mover_name() ),
 	fname_("dump.pdb"),
-	scorefxn_(0),
+	scorefxn_(/* 0 */),
 	addtime_(false)
 {}
 
 DumpPdb::DumpPdb( std::string const fname ) :
 	protocols::moves::Mover( DumpPdbCreator::mover_name() ),
   fname_(fname),
-	scorefxn_(0),
+	scorefxn_(/* 0 */),
 	addtime_(false)
 {}
 

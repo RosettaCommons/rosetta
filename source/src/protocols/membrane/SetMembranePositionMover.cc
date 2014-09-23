@@ -145,13 +145,13 @@ SetMembranePositionMover::apply( Pose & pose ) {
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 SetMembranePositionMover::clone() const {
-	return ( new SetMembranePositionMover( *this ) );
+	return ( protocols::moves::MoverOP( new SetMembranePositionMover( *this ) ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 SetMembranePositionMover::fresh_instance() const {
-	return new SetMembranePositionMover();
+	return protocols::moves::MoverOP( new SetMembranePositionMover() );
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
@@ -170,7 +170,7 @@ SetMembranePositionMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
 SetMembranePositionMoverCreator::create_mover() const {
-	return new SetMembranePositionMover;
+	return protocols::moves::MoverOP( new SetMembranePositionMover );
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
@@ -275,13 +275,13 @@ SetMembraneNomalMover::apply( Pose & pose ) {
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 SetMembraneNomalMover::clone() const {
-	return ( new SetMembraneNomalMover( *this ) );
+	return ( protocols::moves::MoverOP( new SetMembraneNomalMover( *this ) ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 SetMembraneNomalMover::fresh_instance() const {
-	return new SetMembraneNomalMover();
+	return protocols::moves::MoverOP( new SetMembraneNomalMover() );
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
@@ -301,7 +301,7 @@ SetMembraneNomalMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
 SetMembraneNomalMoverCreator::create_mover() const {
-	return new SetMembraneNomalMover;
+	return protocols::moves::MoverOP( new SetMembraneNomalMover );
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)
@@ -406,13 +406,13 @@ SetMembraneCenterMover::apply( Pose & pose ) {
 /// @brief Create a Clone of this mover
 protocols::moves::MoverOP
 SetMembraneCenterMover::clone() const {
-	return ( new SetMembraneCenterMover( *this ) );
+	return ( protocols::moves::MoverOP( new SetMembraneCenterMover( *this ) ) );
 }
 
 /// @brief Create a Fresh Instance of this Mover
 protocols::moves::MoverOP
 SetMembraneCenterMover::fresh_instance() const {
-	return new SetMembraneCenterMover();
+	return protocols::moves::MoverOP( new SetMembraneCenterMover() );
 }
 
 /// @brief Pase Rosetta Scripts Options for this Mover
@@ -431,7 +431,7 @@ SetMembraneCenterMover::parse_my_tag(
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
 SetMembraneCenterMoverCreator::create_mover() const {
-	return new SetMembraneCenterMover;
+	return protocols::moves::MoverOP( new SetMembraneCenterMover );
 }
 
 /// @brief Return the Name of this mover (as seen by Rscripts)

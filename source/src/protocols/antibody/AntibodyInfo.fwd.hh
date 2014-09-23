@@ -27,10 +27,10 @@ namespace antibody {
 // Forward
 class AntibodyInfo;
 
-typedef utility::pointer::owning_ptr< AntibodyInfo > AntibodyInfoOP;
-typedef utility::pointer::owning_ptr< AntibodyInfo const > AntibodyInfoCOP;
-typedef  utility::pointer::access_ptr< AntibodyInfo >  AntibodyInfoAP;
-typedef  utility::pointer::access_ptr< AntibodyInfo const >  AntibodyInfoCAP;
+typedef utility::pointer::shared_ptr< AntibodyInfo > AntibodyInfoOP;
+typedef utility::pointer::shared_ptr< AntibodyInfo const > AntibodyInfoCOP;
+typedef  utility::pointer::weak_ptr< AntibodyInfo >  AntibodyInfoAP;
+typedef  utility::pointer::weak_ptr< AntibodyInfo const >  AntibodyInfoCAP;
 
 
 

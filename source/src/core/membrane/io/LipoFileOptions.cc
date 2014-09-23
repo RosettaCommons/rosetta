@@ -60,7 +60,7 @@ LipoFileOptionsCreator::options_type() const { return "LipoFileOptions"; }
 
 /// @brief Creator class - return lipo file options class
 basic::resource_manager::ResourceOptionsOP
-LipoFileOptionsCreator::create_options() const { return new LipoFileOptions; }
+LipoFileOptionsCreator::create_options() const { return basic::resource_manager::ResourceOptionsOP( new LipoFileOptions ); }
 
 
 } // io

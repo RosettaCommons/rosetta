@@ -26,8 +26,8 @@ struct Strands;
 struct Helices;
 class SS_Info;
 
-typedef utility::pointer::owning_ptr< SS_Info > SS_InfoOP;
-typedef utility::pointer::owning_ptr< SS_Info const > SS_InfoCOP;
+typedef utility::pointer::shared_ptr< SS_Info > SS_InfoOP;
+typedef utility::pointer::shared_ptr< SS_Info const > SS_InfoCOP;
 
 } // namespace scoring
 } // namespace core

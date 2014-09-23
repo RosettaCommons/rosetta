@@ -85,10 +85,10 @@ public:// virtual constructor
 
 
 	// @brief make clone
-	virtual FilterOP clone() const { return new SheetTopologyFilter( *this ); }
+	virtual FilterOP clone() const { return FilterOP( new SheetTopologyFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const {	return new SheetTopologyFilter(); }
+	virtual FilterOP fresh_instance() const {	return FilterOP( new SheetTopologyFilter() ); }
 
 
 public:// mutator

@@ -30,8 +30,8 @@ namespace membrane {
 namespace visualize {
 
 class ShowMembranePlanesMover; 
-typedef utility::pointer::owning_ptr< ShowMembranePlanesMover > ShowMembranePlanesMoverOP; 
-typedef utility::pointer::owning_ptr< ShowMembranePlanesMover const > ShowMembranePlanesMoverCOP; 
+typedef utility::pointer::shared_ptr< ShowMembranePlanesMover > ShowMembranePlanesMoverOP; 
+typedef utility::pointer::shared_ptr< ShowMembranePlanesMover const > ShowMembranePlanesMoverCOP; 
 
 } // visualize
 } // membrane

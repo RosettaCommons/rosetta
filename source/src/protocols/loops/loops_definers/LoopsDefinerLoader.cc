@@ -78,7 +78,7 @@ void LoopsDefinerLoader::load_data(
 }
 
 jd2::parser::DataLoaderOP
-LoopsDefinerLoaderCreator::create_loader() const { return new LoopsDefinerLoader; }
+LoopsDefinerLoaderCreator::create_loader() const { return jd2::parser::DataLoaderOP( new LoopsDefinerLoader ); }
 
 string
 LoopsDefinerLoaderCreator::keyname() const { return "LOOP_DEFINITIONS"; }

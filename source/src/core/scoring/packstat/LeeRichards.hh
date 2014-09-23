@@ -68,7 +68,7 @@ namespace packstat {
 		virtual void accumulate_dxdy( core::id::AtomID atom, core::Real dx, core::Real dy, bool buried ) = 0;
 		//dz// virtual void accumulate_dz  ( core::id::AtomID atom, core::Real dz ) = 0;
 	};
-	typedef utility::pointer::owning_ptr<Accumulator> AccumulatorOP;
+	typedef utility::pointer::shared_ptr<Accumulator> AccumulatorOP;
 
 	struct AreaAccumulator : public Accumulator {
 		AreaAccumulator() : total_area(0.0), buried_area(0.0) {}
@@ -84,7 +84,7 @@ namespace packstat {
 		void reset() { total_area = 0.0; }
 		core::Real total_area, buried_area;
 	};
-	typedef utility::pointer::owning_ptr<AreaAccumulator> AreaAccumulatorOP;
+	typedef utility::pointer::shared_ptr<AreaAccumulator> AreaAccumulatorOP;
 
 	struct LR_AtomData {
 		LR_AtomData() : area(0.0),dx(0.0),dy(0.0)/*,dz(0.0)*/ {}
@@ -108,7 +108,7 @@ namespace packstat {
 		//dz// }
 		core::id::AtomID_Map<LR_AtomData> atom_map_;
 	};
-	typedef utility::pointer::owning_ptr<PerSphereAccumulator> PerSphereAccumulatorOP;
+	typedef utility::pointer::shared_ptr<PerSphereAccumulator> PerSphereAccumulatorOP;
 
 	struct LR_MP_AtomData {
 		LR_MP_AtomData() : area(N_PROBES,0.0),dx(N_PROBES,0.0),dy(N_PROBES,0.0),barea(N_PROBES,0.0),bdx(N_PROBES,0.0),bdy(N_PROBES,0.0) {}
@@ -138,7 +138,7 @@ namespace packstat {
 		core::pose::Pose pose_;
 		std::string tag_;
 	};
-	typedef utility::pointer::owning_ptr<MultiProbePoseAccumulator> MultiProbePoseAccumulatorOP;
+	typedef utility::pointer::shared_ptr<MultiProbePoseAccumulator> MultiProbePoseAccumulatorOP;
 
 
 	struct MultiProbePerSphereAccumulator : public Accumulator {
@@ -179,7 +179,7 @@ namespace packstat {
 		core::Size pr_idx_;
 		PosePackDataOP pd_;
 	};
-	typedef utility::pointer::owning_ptr<MultiProbePerSphereAccumulator> MultiProbePerSphereAccumulatorOP;
+	typedef utility::pointer::shared_ptr<MultiProbePerSphereAccumulator> MultiProbePerSphereAccumulatorOP;
 
 	struct Point {
 		Point(core::Real _x,core::Real _y) : x(_x),y(_y) {}

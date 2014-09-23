@@ -73,7 +73,7 @@ PerturbChiSidechainMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 PerturbChiSidechainMoverCreator::create_mover() const {
-	return new PerturbChiSidechainMover;
+	return protocols::moves::MoverOP( new PerturbChiSidechainMover );
 }
 
 std::string
@@ -102,7 +102,7 @@ PerturbChiSidechainMover::PerturbChiSidechainMover(
 
 protocols::moves::MoverOP
 PerturbChiSidechainMover::clone() const {
-	return new protocols::simple_moves::sidechain_moves::PerturbChiSidechainMover(*this);
+	return protocols::moves::MoverOP( new protocols::simple_moves::sidechain_moves::PerturbChiSidechainMover(*this) );
 }
 
 void

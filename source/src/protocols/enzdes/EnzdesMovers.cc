@@ -196,7 +196,7 @@ EnzdesConstraintReporter::add_constrained_nonligand_atom(
 moves::MoverOP
 PredesignPerturbMoverCreator::create_mover() const
 {
-	return new PredesignPerturbMover;
+	return moves::MoverOP( new PredesignPerturbMover );
 }
 
 std::string
@@ -299,7 +299,7 @@ PredesignPerturbMover::apply(
 )
 {
   //make a poly ala of the designable
- 	protocols::enzdes::EnzdesBaseProtocolOP enzprot = new protocols::enzdes::EnzdesBaseProtocol();
+ 	protocols::enzdes::EnzdesBaseProtocolOP enzprot( new protocols::enzdes::EnzdesBaseProtocol() );
   core::pose::Pose org_Pose(pose);
   core::pack::task::PackerTaskOP task;
 	if ( task_factory_ !=0 ) task = task_factory_->create_task_and_apply_taskoperations( pose );
@@ -307,10 +307,10 @@ PredesignPerturbMover::apply(
 	task	= enzprot -> create_enzdes_pack_task( pose, true );
   set_docking_pose( pose, task );
 
-  protocols::moves::MonteCarloOP MCpredock = new protocols::moves::MonteCarlo(
+  protocols::moves::MonteCarloOP MCpredock( new protocols::moves::MonteCarlo(
 		pose,
 		*(core::scoring::ScoreFunctionFactory::create_score_function( "enzdes_polyA_min" ) ),
-		2.0 /* temperature, from RosettaLigand paper */);
+		2.0 /* temperature, from RosettaLigand paper */) );
   MCpredock->reset( pose );
   MCpredock->reset_counters();
 
@@ -382,7 +382,7 @@ PredesignPerturbMover::get_name() const
 //-------RepackLigandSiteWithoutLigandMover----------//
 
 RepackLigandSiteWithoutLigandMover::RepackLigandSiteWithoutLigandMover()
-	: sfxn_(NULL), lig_seqpos_(0), enzcst_io_(NULL), calculate_silent_Es_(false)
+	: sfxn_(/* NULL */), lig_seqpos_(0), enzcst_io_(NULL), calculate_silent_Es_(false)
 {
 	silent_Es_.clear();
 }
@@ -390,7 +390,7 @@ RepackLigandSiteWithoutLigandMover::RepackLigandSiteWithoutLigandMover()
 RepackLigandSiteWithoutLigandMover::RepackLigandSiteWithoutLigandMover(
 	core::scoring::ScoreFunctionCOP sfxn,
 	bool calculate_silent_Es
-	) : sfxn_(sfxn), lig_seqpos_(0), enzcst_io_(NULL), calculate_silent_Es_(calculate_silent_Es)
+	) : sfxn_(sfxn), lig_seqpos_(0), enzcst_io_(/* NULL */), calculate_silent_Es_(calculate_silent_Es)
 {
 	silent_Es_.clear();
 }
@@ -449,7 +449,7 @@ RepackLigandSiteWithoutLigandMover::apply(
 	}
 	core::pose::PoseOP startpose;
 	utility::vector1< core::Size > special_res;
-	if( calculate_silent_Es_ ) startpose = new core::pose::Pose( pose );
+	if( calculate_silent_Es_ ) startpose = core::pose::PoseOP( new core::pose::Pose( pose ) );
 
 	//1. if there are constraints between protein and ligand, we should take them out.
 	if( enzcst_io_ ){
@@ -462,7 +462,7 @@ RepackLigandSiteWithoutLigandMover::apply(
 	}
 
 	//2. construct the proper task
-	DetectProteinLigandInterfaceOP detect_enzdes_interface = new DetectProteinLigandInterface();
+	DetectProteinLigandInterfaceOP detect_enzdes_interface( new DetectProteinLigandInterface() );
   detect_enzdes_interface->set_design(false);
 	core::pack::task::TaskFactory taskfactory;
   taskfactory.push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline() ) );
@@ -475,7 +475,7 @@ RepackLigandSiteWithoutLigandMover::apply(
 	//pose.dump_pdb( "rlswlm_after_rigid.pdb");
 
 	//4. repack
-	protocols::simple_moves::PackRotamersMoverOP packer = new protocols::simple_moves::PackRotamersMover(sfxn_, ptask_);
+	protocols::simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover(sfxn_, ptask_) );
 	packer->apply( pose );
 	//pose.dump_pdb( "rlswlm_after_repack.pdb");
 
@@ -549,7 +549,7 @@ RepackLigandSiteWithoutLigandMover::get_ptask() const {
 moves::MoverOP
 UpdateEnzdesHeaderMoverCreator::create_mover() const
 {
-	return new UpdateEnzdesHeaderMover();
+	return moves::MoverOP( new UpdateEnzdesHeaderMover() );
 }
 
 std::string

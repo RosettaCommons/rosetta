@@ -21,8 +21,8 @@ namespace datacache {
 
 class WriteableCacheableDataFactory;
 
-typedef utility::pointer::owning_ptr< WriteableCacheableDataFactory > WriteableCacheableDataFactoryOP;
-typedef utility::pointer::owning_ptr< WriteableCacheableDataFactory const > WriteableCacheableDataFactoryCOP;
+typedef utility::pointer::shared_ptr< WriteableCacheableDataFactory > WriteableCacheableDataFactoryOP;
+typedef utility::pointer::shared_ptr< WriteableCacheableDataFactory const > WriteableCacheableDataFactoryCOP;
 
 } //namespace datacache
 } //namespace basic

@@ -25,8 +25,8 @@ namespace methods {
 
 class ContextIndependentOneBodyEnergy;
 
-typedef utility::pointer::owning_ptr< ContextIndependentOneBodyEnergy > ContextIndependentOneBodyEnergyOP;
-typedef utility::pointer::owning_ptr< ContextIndependentOneBodyEnergy const > ContextIndependentOneBodyEnergyCOP;
+typedef utility::pointer::shared_ptr< ContextIndependentOneBodyEnergy > ContextIndependentOneBodyEnergyOP;
+typedef utility::pointer::shared_ptr< ContextIndependentOneBodyEnergy const > ContextIndependentOneBodyEnergyCOP;
 
 
 } // methods

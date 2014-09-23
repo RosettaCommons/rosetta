@@ -22,8 +22,8 @@ namespace io {
 namespace silent {
 
 class SilentFileLoader;
-typedef utility::pointer::owning_ptr< SilentFileLoader > SilentFileLoaderOP;
-typedef utility::pointer::owning_ptr< SilentFileLoader const > SilentFileLoaderCOP;
+typedef utility::pointer::shared_ptr< SilentFileLoader > SilentFileLoaderOP;
+typedef utility::pointer::shared_ptr< SilentFileLoader const > SilentFileLoaderCOP;
 
 } // namespace
 } // namespace

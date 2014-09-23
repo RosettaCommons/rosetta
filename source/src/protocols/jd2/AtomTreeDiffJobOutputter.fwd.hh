@@ -20,8 +20,8 @@ namespace protocols {
 namespace jd2 {
 
 class AtomTreeDiffJobOutputter;
-typedef utility::pointer::owning_ptr< AtomTreeDiffJobOutputter > AtomTreeDiffJobOutputterOP;
-typedef utility::pointer::owning_ptr< AtomTreeDiffJobOutputter const > AtomTreeDiffJobOutputterCOP;
+typedef utility::pointer::shared_ptr< AtomTreeDiffJobOutputter > AtomTreeDiffJobOutputterOP;
+typedef utility::pointer::shared_ptr< AtomTreeDiffJobOutputter const > AtomTreeDiffJobOutputterCOP;
 
 }//jd2
 }//protocols

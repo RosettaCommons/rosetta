@@ -764,14 +764,14 @@ public:
 		utility::vector1< RotamerDotsOP > rdots( 20 );
 		utility::vector1< InvRotamerDotsOP > invdots( 20 );
 		for ( Size ii = 1; ii <= 20; ++ii ) {
-			rdots[ ii ] = new RotamerDots( pose.residue(ii).clone(), true, true );
+			rdots[ ii ] = utility::pointer::shared_ptr<class core::pack::interaction_graph::RotamerDots>( new RotamerDots( pose.residue(ii).clone(), true, true ) );
 			rdots[ ii ]->increment_self_overlap();
 		}
 		for ( Size ii = 1; ii <= 20; ++ii ) {
 			for ( Size jj = ii+1; jj <= 20; ++jj ) {
 				rdots[ii]->increment_both( *rdots[jj] );
 			}
-			invdots[ii] = new InvRotamerDots();
+			invdots[ii] = utility::pointer::shared_ptr<class core::pack::interaction_graph::InvRotamerDots>( new InvRotamerDots() );
 			invdots[ii]->setup_from_rotamer_dots( *rdots[ii] );
 		}
 		//invdots[17]->write_exposed_dots_to_kinemage( std::cout, true );
@@ -813,14 +813,14 @@ public:
 		utility::vector1< RotamerDotsOP > rdots( 107 );
 		utility::vector1< InvRotamerDotsOP > invdots( 107 );
 		for ( Size ii = 1; ii <= 107; ++ii ) {
-			rdots[ ii ] = new RotamerDots( second_pose.residue(ii).clone(), exclude_hydrogens, use_expanded_polar_atom_radii );
+			rdots[ ii ] = utility::pointer::shared_ptr<class core::pack::interaction_graph::RotamerDots>( new RotamerDots( second_pose.residue(ii).clone(), exclude_hydrogens, use_expanded_polar_atom_radii ) );
 			rdots[ ii ]->increment_self_overlap();
 		}
 		for ( Size ii = 1; ii <= 107; ++ii ) {
 			for ( Size jj = ii+1; jj <= 107; ++jj ) {
 				rdots[ii]->increment_both( *rdots[jj] );
 			}
-			invdots[ii] = new InvRotamerDots();
+			invdots[ii] = utility::pointer::shared_ptr<class core::pack::interaction_graph::InvRotamerDots>( new InvRotamerDots() );
 			invdots[ii]->setup_from_rotamer_dots( *rdots[ii] );
 		}
 		AtomID ala84_cb( second_pose.residue_type(84).atom_index( "CB" ), 84 );

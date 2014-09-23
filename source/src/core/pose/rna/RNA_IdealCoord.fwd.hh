@@ -22,7 +22,7 @@ namespace pose {
 namespace rna {
 
 class RNA_IdealCoord;
-typedef utility::pointer::owning_ptr< RNA_IdealCoord > RNA_IdealCoordOP;
+typedef utility::pointer::shared_ptr< RNA_IdealCoord > RNA_IdealCoordOP;
 
 }
 }

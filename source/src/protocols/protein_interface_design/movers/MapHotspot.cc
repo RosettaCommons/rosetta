@@ -79,7 +79,7 @@ MapHotspotCreator::keyname() const
 
 protocols::moves::MoverOP
 MapHotspotCreator::create_mover() const {
-	return new MapHotspot;
+	return protocols::moves::MoverOP( new MapHotspot );
 }
 
 std::string
@@ -178,9 +178,9 @@ MapHotspot::create_rotamer_set( core::pose::Pose const & pose, core::Size const 
 	using namespace core::scoring;
 	TaskFactory tf;
 	ScoreFunctionCOP scorefxn( get_score_function() );
-	RotamerExplosionOP rotamer_exp_operation = new RotamerExplosion( hotspot_resnum, EX_THREE_THIRD_STEP_STDDEVS, explosion );
-	InitializeFromCommandlineOP init_from_commandline = new InitializeFromCommandline;
-	RestrictResidueToRepackingOP restrict_to_rep_operation = new RestrictResidueToRepacking;
+	RotamerExplosionOP rotamer_exp_operation( new RotamerExplosion( hotspot_resnum, EX_THREE_THIRD_STEP_STDDEVS, explosion ) );
+	InitializeFromCommandlineOP init_from_commandline( new InitializeFromCommandline );
+	RestrictResidueToRepackingOP restrict_to_rep_operation( new RestrictResidueToRepacking );
 	restrict_to_rep_operation->include_residue( hotspot_resnum );
 	tf.push_back( rotamer_exp_operation );
 	tf.push_back( restrict_to_rep_operation );
@@ -189,7 +189,7 @@ MapHotspot::create_rotamer_set( core::pose::Pose const & pose, core::Size const 
 	RotamerSetFactory rsf;
 	RotamerSetOP rotset = rsf.create_rotamer_set( pose.residue( hotspot_resnum ) );
 	rotset->set_resid( hotspot_resnum );
-	graph::GraphOP packer_graph = new graph::Graph( pose.total_residue() );
+	graph::GraphOP packer_graph( new graph::Graph( pose.total_residue() ) );
 	rotset->build_rotamers( pose, *scorefxn, *ptask, packer_graph, false );
 	TR<<"Created rotamer set for residue "<<hotspot_resnum<<"with explosion="<<explosion<<std::endl;
 	return( rotset );

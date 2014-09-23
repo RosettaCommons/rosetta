@@ -54,11 +54,11 @@ public:
 
 	/// @brief clone has to be overridden only if clone invocation is expected.
 	virtual moves::MoverOP clone() const {
-		return new IdealizeMover( *this );
+		return moves::MoverOP( new IdealizeMover( *this ) );
 	}
 
 	virtual moves::MoverOP fresh_instance() const {
-		return new IdealizeMover;
+		return moves::MoverOP( new IdealizeMover );
 	}
 
 	IdealizeMover &

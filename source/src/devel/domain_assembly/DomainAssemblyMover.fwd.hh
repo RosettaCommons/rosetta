@@ -23,8 +23,8 @@ namespace domain_assembly{
 
 class DomainAssemblyMover;
 
-typedef utility::pointer::owning_ptr< DomainAssemblyMover > DomainAssemblyMoverOP;
-typedef utility::pointer::owning_ptr< DomainAssemblyMover const > DomainAssemblyMoverCOP;
+typedef utility::pointer::shared_ptr< DomainAssemblyMover > DomainAssemblyMoverOP;
+typedef utility::pointer::shared_ptr< DomainAssemblyMover const > DomainAssemblyMoverCOP;
 
 }
 }

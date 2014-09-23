@@ -25,8 +25,8 @@ namespace rna {
 namespace sugar {
 
 	class SugarModeling;
-	typedef utility::pointer::owning_ptr< SugarModeling > SugarModelingOP;
-	typedef utility::pointer::owning_ptr< SugarModeling const > SugarModelingCOP;
+	typedef utility::pointer::shared_ptr< SugarModeling > SugarModelingOP;
+	typedef utility::pointer::shared_ptr< SugarModeling const > SugarModelingCOP;
 
 } //sugar
 } //rna

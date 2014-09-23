@@ -99,7 +99,7 @@ void update_pdb_info( core::pose::PDBInfoCOP input_pdb_info, core::pose::Pose& p
     //ASSUMPTION: all new residues are virtual
     core::Size const new_vrts = pose.total_residue() - input_pdb_info->nres();
 
-    core::pose::PDBInfoOP new_info = new core::pose::PDBInfo( *input_pdb_info );
+    core::pose::PDBInfoOP new_info( new core::pose::PDBInfo( *input_pdb_info ) );
 
     for( Size i = 1; i <= new_vrts; ++i ){
       new_info->append_res( new_info->nres(), 3 );
@@ -141,13 +141,13 @@ EnvClaimBroker::EnvClaimBroker( EnvironmentCAP env,
 
   // Build a temporary conformation for which we manipulate the fold tree. After the fold tree is set,
   // we "seal it" as a ProtectedConformation for initializing DoFs.
-  ConformationOP tmp_conf_op = new Conformation( in_conf );
+  ConformationOP tmp_conf_op( new Conformation( in_conf ) );
   Conformation & tmp_conf = *tmp_conf_op;
 
   broker_fold_tree( tmp_conf, pose.data() );
   result_.ann = ann_;
 
-  ProtectedConformationOP conf = new ProtectedConformation( env, tmp_conf );
+  ProtectedConformationOP conf( new ProtectedConformation( env, tmp_conf ) );
   conf->attach_annotation( ann_ );
 
   BOOST_FOREACH( MoverPassMap::value_type pair, movers_and_passes ){
@@ -179,7 +179,7 @@ void EnvClaimBroker::broker_fold_tree( Conformation& conf,
                                        basic::datacache::BasicDataCache& datacache ){
 
   core::environment::FoldTreeSketch fts( conf.size() );
-  result_.closer_ft = new core::kinematics::FoldTree( conf.fold_tree() );
+  result_.closer_ft = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree( conf.fold_tree() ) );
 
   //FTElements: virtual residues ---------------------------------------------------------------
   ResElemVect r_elems = collect_elements< ResidueElement >( fts );
@@ -251,7 +251,7 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
   if( datamap && datamap->find( "AutoCutData" ) != datamap->end() ){
     BOOST_FOREACH( basic::datacache::WriteableCacheableDataOP data,
                    datamap->find( "AutoCutData" )->second ) {
-      AutoCutDataOP auto_cut_data = dynamic_cast< AutoCutData* >( data.get() );
+      AutoCutDataOP auto_cut_data = utility::pointer::dynamic_pointer_cast< protocols::environment::AutoCutData > ( data );
       assert( auto_cut_data );
 
       if( auto_cut_data->hash() == hash ){
@@ -529,17 +529,17 @@ EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const& movers_and_passes,
   }
 
   // Create a sandboxed copy of the map
-  WriteableCacheableMapOP orig_map = dynamic_cast< WriteableCacheableMap* >( pose.data().get_ptr( CacheableDataType::WRITEABLE_DATA ).get() );
+  WriteableCacheableMapOP orig_map = utility::pointer::dynamic_pointer_cast< basic::datacache::WriteableCacheableMap > ( pose.data().get_ptr( CacheableDataType::WRITEABLE_DATA ) );
 
   // Store the newly inserted cache objects here.
-  WriteableCacheableMapOP new_cached_data = new WriteableCacheableMap();
+  WriteableCacheableMapOP new_cached_data( new WriteableCacheableMap() );
 
   //Claiming
   for( MoverPassMap::const_iterator mp_it = movers_and_passes.begin();
       mp_it != movers_and_passes.end(); ++mp_it ){
 
     // a modifiable sandbox_map must be passed in separately, as pose is a const&.
-    WriteableCacheableMapOP sandbox_map = new WriteableCacheableMap( *orig_map );
+    WriteableCacheableMapOP sandbox_map( new WriteableCacheableMap( *orig_map ) );
 
     claims::EnvClaims in_claims = mp_it->first->yield_claims( pose, sandbox_map );
     BOOST_FOREACH( EnvClaimOP claim, in_claims ){
@@ -643,9 +643,9 @@ void EnvClaimBroker::process_elements( JumpElemVect const& elems,
     std::pair< Size, Size > const pos_pair = std::make_pair( abs_p1, abs_p2 );
 
     // Build the JumpData -- we use this for jump overlap checks.
-    BrokeredJumpDataOP new_jump = new BrokeredJumpData( pos_pair,
+    BrokeredJumpDataOP new_jump( new BrokeredJumpData( pos_pair,
                                                         std::make_pair( element.atom1, element.atom2 ),
-                                                        element.force_stub_intra_residue );
+                                                        element.force_stub_intra_residue ) );
 
     if( !fts.has_jump( abs_p1, abs_p2 ) ){
       fts.insert_jump( abs_p1, abs_p2 );

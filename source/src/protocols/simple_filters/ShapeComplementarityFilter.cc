@@ -441,7 +441,7 @@ void ShapeComplementarityFilter::parse_def( utility::lua::LuaObject const & def,
 }
 
 filters::FilterOP
-ShapeComplementarityFilterCreator::create_filter() const { return new ShapeComplementarityFilter; }
+ShapeComplementarityFilterCreator::create_filter() const { return filters::FilterOP( new ShapeComplementarityFilter ); }
 
 std::string
 ShapeComplementarityFilterCreator::keyname() const { return "ShapeComplementarity"; }

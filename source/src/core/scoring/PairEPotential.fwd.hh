@@ -21,8 +21,8 @@ namespace scoring {
 
 class PairEPotential;
 
-typedef utility::pointer::owning_ptr< PairEPotential > PairEPotentialOP;
-typedef utility::pointer::owning_ptr< PairEPotential const > PairEPotentialCOP;
+typedef utility::pointer::shared_ptr< PairEPotential > PairEPotentialOP;
+typedef utility::pointer::shared_ptr< PairEPotential const > PairEPotentialCOP;
 
 }
 }

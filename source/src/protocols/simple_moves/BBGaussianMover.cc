@@ -64,7 +64,7 @@ BBGaussianMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 BBGaussianMoverCreator::create_mover() const {
-    return new BBGaussianMover;
+    return protocols::moves::MoverOP( new BBGaussianMover );
 }
 
 std::string
@@ -102,7 +102,7 @@ BBGaussianMover::~BBGaussianMover(){
 
 protocols::moves::MoverOP
 BBGaussianMover::clone() const {
-    protocols::simple_moves::BBGaussianMoverOP mp = new BBGaussianMover();
+    protocols::simple_moves::BBGaussianMoverOP mp( new BBGaussianMover() );
     mp->factorA(factorA_);
     mp->factorB(factorB_);
     mp->movemap(movemap_);
@@ -129,7 +129,7 @@ void BBGaussianMover::init()
 {
     protocols::moves::Mover::type("BBGaussianMover");
     //default fix everything
-    core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+    core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
     movemap_=movemap;
 
     //build end atom list
@@ -712,7 +712,7 @@ void BBGaussianMover::parse_my_tag(
         }
 
         //reset movemap, default is empty (no move)
-        core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
+        core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
         protocols::rosetta_scripts::parse_movemap( tag, pose, mm, data, false );
         movemap(mm);
 
@@ -775,7 +775,7 @@ bool BBGaussianMover::preserve_detailed_balance() const
 BBG8T3AMover::BBG8T3AMover():BBGaussianMover()
 {
     protocols::moves::Mover::type("BBG8T3AMover");
-    core::kinematics::MoveMapOP mymm = new core::kinematics::MoveMap;
+    core::kinematics::MoveMapOP mymm( new core::kinematics::MoveMap );
     mymm->set_bb(true); //use all bb dof
     movemap(mymm);
     resize(3,8,4);
@@ -783,7 +783,7 @@ BBG8T3AMover::BBG8T3AMover():BBGaussianMover()
 
 protocols::moves::MoverOP
 BBG8T3AMover::clone() const {
-    protocols::simple_moves::BBG8T3AMoverOP mp = new BBG8T3AMover();
+    protocols::simple_moves::BBG8T3AMoverOP mp( new BBG8T3AMover() );
     mp->factorA(factorA_);
     mp->factorB(factorB_);
     mp->movemap(movemap_);

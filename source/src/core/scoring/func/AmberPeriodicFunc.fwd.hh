@@ -24,8 +24,8 @@ namespace scoring {
 namespace func {
 
 class AmberPeriodicFunc;
-typedef utility::pointer::owning_ptr< AmberPeriodicFunc > AmberPeriodicFuncOP;
-typedef utility::pointer::owning_ptr< AmberPeriodicFunc const > AmberPeriodicFuncCOP;
+typedef utility::pointer::shared_ptr< AmberPeriodicFunc > AmberPeriodicFuncOP;
+typedef utility::pointer::shared_ptr< AmberPeriodicFunc const > AmberPeriodicFuncCOP;
 
 }
 }

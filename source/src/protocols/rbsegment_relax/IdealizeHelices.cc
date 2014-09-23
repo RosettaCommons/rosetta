@@ -90,7 +90,7 @@ IdealizeHelicesMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 IdealizeHelicesMoverCreator::create_mover() const {
-	return new IdealizeHelicesMover;
+	return protocols::moves::MoverOP( new IdealizeHelicesMover );
 }
 
 std::string
@@ -114,15 +114,15 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 	// see if the pose has NCS
 	simple_moves::symmetry::NCSResMappingOP ncs;
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ) {
-		ncs = ( static_cast< simple_moves::symmetry::NCSResMapping* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING )() ));
+		ncs = ( utility::pointer::static_pointer_cast< simple_moves::symmetry::NCSResMapping > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ));
 	}
 
 	// pose to centroid
 	bool fullatom_input = pose.is_fullatom();
 	protocols::moves::MoverOP restore_sc;
 	if (fullatom_input) {
-	  restore_sc = new protocols::simple_moves::ReturnSidechainMover( pose );
-		protocols::moves::MoverOP tocen = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
+	  restore_sc = protocols::moves::MoverOP( new protocols::simple_moves::ReturnSidechainMover( pose ) );
+		protocols::moves::MoverOP tocen( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
 		tocen->apply( pose );
 	}
 
@@ -200,7 +200,7 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 
 			// add CSTS
 			for (Size iatom = 1; iatom <= 4; ++iatom) {
-				ideal_pose.add_constraint( new CoordinateConstraint( AtomID(iatom,resid), AtomID(1,vrt_index), x_j, core::scoring::func::FuncOP( new BoundFunc(0.0,cst_width_,1.0,"") ) ) );
+				ideal_pose.add_constraint( scoring::constraints::ConstraintCOP( new CoordinateConstraint( AtomID(iatom,resid), AtomID(1,vrt_index), x_j, core::scoring::func::FuncOP( new BoundFunc(0.0,cst_width_,1.0,"") ) ) ) );
 			}
 
 			com2 += x_j;

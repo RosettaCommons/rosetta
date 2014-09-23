@@ -34,8 +34,8 @@ namespace genetic_algorithm {
 class EntityRandomizer : public utility::pointer::ReferenceCount {
 
 public:
-	typedef utility::pointer::owning_ptr< EntityRandomizer > OP;
-	typedef utility::pointer::owning_ptr< EntityRandomizer const > COP;
+	typedef utility::pointer::shared_ptr< EntityRandomizer > OP;
+	typedef utility::pointer::shared_ptr< EntityRandomizer const > COP;
 	typedef Entity::OP EntityOP;
 	typedef Entity::COP EntityCOP;
 
@@ -79,8 +79,8 @@ private:
 ///@brief different set of choices at each position in Entity's traits
 class PositionSpecificRandomizer : public EntityRandomizer {
 public:
-	typedef utility::pointer::owning_ptr< PositionSpecificRandomizer > OP;
-	typedef utility::pointer::owning_ptr< PositionSpecificRandomizer const > COP;
+	typedef utility::pointer::shared_ptr< PositionSpecificRandomizer > OP;
+	typedef utility::pointer::shared_ptr< PositionSpecificRandomizer const > COP;
 
 	virtual ~PositionSpecificRandomizer();
 	virtual void append_choices( EntityElements const & choices );

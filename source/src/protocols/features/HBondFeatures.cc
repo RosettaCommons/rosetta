@@ -182,8 +182,8 @@ HBondFeatures::write_hbond_chem_types_table_schema(
 	using namespace basic::database::schema_generator;
 	using boost::assign::list_of;
 
-	Column chem_type("chem_type", new DbText(255));
-	Column label("label", new DbText(255));
+	Column chem_type("chem_type", DbDataTypeOP( new DbText(255) ));
+	Column label("label", DbDataTypeOP( new DbText(255) ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(chem_type);
@@ -242,15 +242,15 @@ HBondFeatures::write_hbond_sites_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt());
-	Column site_id("site_id", new DbInteger());
-	Column resNum("resNum", new DbInteger());
-	Column atmNum("atmNum", new DbInteger());
-	Column is_donor("is_donor", new DbInteger());
-	Column chain("chain", new DbInteger());
-	Column resType("resType", new DbText());
-	Column atmType("atmType", new DbText());
-	Column HBChemType("HBChemType", new DbText(255));
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column site_id("site_id", DbDataTypeOP( new DbInteger() ));
+	Column resNum("resNum", DbDataTypeOP( new DbInteger() ));
+	Column atmNum("atmNum", DbDataTypeOP( new DbInteger() ));
+	Column is_donor("is_donor", DbDataTypeOP( new DbInteger() ));
+	Column chain("chain", DbDataTypeOP( new DbInteger() ));
+	Column resType("resType", DbDataTypeOP( new DbText() ));
+	Column atmType("atmType", DbDataTypeOP( new DbText() ));
+	Column HBChemType("HBChemType", DbDataTypeOP( new DbText(255) ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -292,13 +292,13 @@ HBondFeatures::write_hbond_sites_pdb_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt());
-	Column site_id("site_id", new DbInteger());
-	Column chain("chain", new DbText(1));
-	Column resNum("resNum", new DbInteger());
-	Column iCode("iCode", new DbText(1));
-	Column heavy_atom_temperature("heavy_atom_temperature", new DbReal());
-	Column heavy_atom_occupancy("heavy_atom_occupancy", new DbReal());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column site_id("site_id", DbDataTypeOP( new DbInteger() ));
+	Column chain("chain", DbDataTypeOP( new DbText(1) ));
+	Column resNum("resNum", DbDataTypeOP( new DbInteger() ));
+	Column iCode("iCode", DbDataTypeOP( new DbText(1) ));
+	Column heavy_atom_temperature("heavy_atom_temperature", DbDataTypeOP( new DbReal() ));
+	Column heavy_atom_occupancy("heavy_atom_occupancy", DbDataTypeOP( new DbReal() ));
 
 
 	Columns primary_key_columns;
@@ -331,13 +331,13 @@ HBondFeatures::write_hbond_site_environment_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt());
-	Column site_id("site_id", new DbInteger());
-	Column sasa_r100("sasa_r100", new DbReal());
-	Column sasa_r140("sasa_r140", new DbReal());
-	Column sasa_r200("sasa_r200", new DbReal());
-	Column hbond_energy("hbond_energy", new DbReal());
-	Column num_hbonds("num_hbonds", new DbInteger());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column site_id("site_id", DbDataTypeOP( new DbInteger() ));
+	Column sasa_r100("sasa_r100", DbDataTypeOP( new DbReal() ));
+	Column sasa_r140("sasa_r140", DbDataTypeOP( new DbReal() ));
+	Column sasa_r200("sasa_r200", DbDataTypeOP( new DbReal() ));
+	Column hbond_energy("hbond_energy", DbDataTypeOP( new DbReal() ));
+	Column num_hbonds("num_hbonds", DbDataTypeOP( new DbInteger() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -369,20 +369,20 @@ HBondFeatures::write_hbond_site_atoms_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt());
-	Column site_id("site_id", new DbInteger());
-	Column atm_x("atm_x", new DbReal());
-	Column atm_y("atm_y", new DbReal());
-	Column atm_z("atm_z", new DbReal());
-	Column base_x("base_x", new DbReal());
-	Column base_y("base_y", new DbReal());
-	Column base_z("base_z", new DbReal());
-	Column bbase_x("bbase_x", new DbReal());
-	Column bbase_y("bbase_y", new DbReal());
-	Column bbase_z("bbase_z", new DbReal());
-	Column base2_x("base2_x", new DbReal());
-	Column base2_y("base2_y", new DbReal());
-	Column base2_z("base2_z", new DbReal());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column site_id("site_id", DbDataTypeOP( new DbInteger() ));
+	Column atm_x("atm_x", DbDataTypeOP( new DbReal() ));
+	Column atm_y("atm_y", DbDataTypeOP( new DbReal() ));
+	Column atm_z("atm_z", DbDataTypeOP( new DbReal() ));
+	Column base_x("base_x", DbDataTypeOP( new DbReal() ));
+	Column base_y("base_y", DbDataTypeOP( new DbReal() ));
+	Column base_z("base_z", DbDataTypeOP( new DbReal() ));
+	Column bbase_x("bbase_x", DbDataTypeOP( new DbReal() ));
+	Column bbase_y("bbase_y", DbDataTypeOP( new DbReal() ));
+	Column bbase_z("bbase_z", DbDataTypeOP( new DbReal() ));
+	Column base2_x("base2_x", DbDataTypeOP( new DbReal() ));
+	Column base2_y("base2_y", DbDataTypeOP( new DbReal() ));
+	Column base2_z("base2_z", DbDataTypeOP( new DbReal() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -421,16 +421,16 @@ HBondFeatures::write_hbonds_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt());
-	Column hbond_id("hbond_id", new DbInteger());
-	Column don_id("don_id", new DbInteger());
-	Column acc_id("acc_id", new DbInteger());
-	Column HBEvalType("HBEvalType", new DbInteger());
-	Column energy("energy", new DbReal());
-	Column envWeight("envWeight", new DbReal());
-	Column score_weight("score_weight", new DbReal());
-	Column donRank("donRank", new DbInteger());
-	Column accRank("accRank", new DbInteger());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column hbond_id("hbond_id", DbDataTypeOP( new DbInteger() ));
+	Column don_id("don_id", DbDataTypeOP( new DbInteger() ));
+	Column acc_id("acc_id", DbDataTypeOP( new DbInteger() ));
+	Column HBEvalType("HBEvalType", DbDataTypeOP( new DbInteger() ));
+	Column energy("energy", DbDataTypeOP( new DbReal() ));
+	Column envWeight("envWeight", DbDataTypeOP( new DbReal() ));
+	Column score_weight("score_weight", DbDataTypeOP( new DbReal() ));
+	Column donRank("donRank", DbDataTypeOP( new DbInteger() ));
+	Column accRank("accRank", DbDataTypeOP( new DbInteger() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -474,20 +474,20 @@ HBondFeatures::write_hbond_lennard_jones_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt());
-	Column hbond_id("hbond_id", new DbInteger());
-	Column don_acc_atrE("don_acc_atrE", new DbReal());
-	Column don_acc_repE("don_acc_repE", new DbReal());
-	Column don_acc_solv("don_acc_solv", new DbReal());
-	Column don_acc_base_atrE("don_acc_base_atrE", new DbReal());
-	Column don_acc_base_repE("don_acc_base_repE", new DbReal());
-	Column don_acc_base_solv("don_acc_base_solv", new DbReal());
-	Column h_acc_atrE("h_acc_atrE", new DbReal());
-	Column h_acc_repE("h_acc_repE", new DbReal());
-	Column h_acc_solv("h_acc_solv", new DbReal());
-	Column h_acc_base_atrE("h_acc_base_atrE", new DbReal());
-	Column h_acc_base_repE("h_acc_base_repE", new DbReal());
-	Column h_acc_base_solv("h_acc_base_solv", new DbReal());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column hbond_id("hbond_id", DbDataTypeOP( new DbInteger() ));
+	Column don_acc_atrE("don_acc_atrE", DbDataTypeOP( new DbReal() ));
+	Column don_acc_repE("don_acc_repE", DbDataTypeOP( new DbReal() ));
+	Column don_acc_solv("don_acc_solv", DbDataTypeOP( new DbReal() ));
+	Column don_acc_base_atrE("don_acc_base_atrE", DbDataTypeOP( new DbReal() ));
+	Column don_acc_base_repE("don_acc_base_repE", DbDataTypeOP( new DbReal() ));
+	Column don_acc_base_solv("don_acc_base_solv", DbDataTypeOP( new DbReal() ));
+	Column h_acc_atrE("h_acc_atrE", DbDataTypeOP( new DbReal() ));
+	Column h_acc_repE("h_acc_repE", DbDataTypeOP( new DbReal() ));
+	Column h_acc_solv("h_acc_solv", DbDataTypeOP( new DbReal() ));
+	Column h_acc_base_atrE("h_acc_base_atrE", DbDataTypeOP( new DbReal() ));
+	Column h_acc_base_repE("h_acc_base_repE", DbDataTypeOP( new DbReal() ));
+	Column h_acc_base_solv("h_acc_base_solv", DbDataTypeOP( new DbReal() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -526,12 +526,12 @@ HBondFeatures::write_hbond_geom_coords_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt());
-	Column hbond_id("hbond_id", new DbInteger());
-	Column AHdist("AHdist", new DbReal());
-	Column cosBAH("cosBAH", new DbReal());
-	Column cosAHD("cosAHD", new DbReal());
-	Column chi("chi", new DbReal());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column hbond_id("hbond_id", DbDataTypeOP( new DbInteger() ));
+	Column AHdist("AHdist", DbDataTypeOP( new DbReal() ));
+	Column cosBAH("cosBAH", DbDataTypeOP( new DbReal() ));
+	Column cosAHD("cosAHD", DbDataTypeOP( new DbReal() ));
+	Column chi("chi", DbDataTypeOP( new DbReal() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -562,9 +562,9 @@ HBondFeatures::write_hbond_dehydrons_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt());
-	Column hbond_id("hbond_id", new DbInteger());
-	Column wrapping_count("wrapping_count", new DbInteger());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column hbond_id("hbond_id", DbDataTypeOP( new DbInteger() ));
+	Column wrapping_count("wrapping_count", DbDataTypeOP( new DbInteger() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -603,7 +603,7 @@ HBondFeatures::parse_my_tag(
 ) {
 	if(tag->hasOption("scorefxn")){
 		string const scorefxn_name(tag->getOption<string>("scorefxn"));
-		scfxn_ = data.get<ScoreFunction*>("scorefxns", scorefxn_name);
+		scfxn_ = data.get_ptr<ScoreFunction>("scorefxns", scorefxn_name);
 	} else {
 		scfxn_ = get_score_function();
 	}

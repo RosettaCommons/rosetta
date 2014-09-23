@@ -82,7 +82,7 @@ MetropolisHastingsMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 MetropolisHastingsMoverCreator::create_mover() const {
-	return new MetropolisHastingsMover;
+	return protocols::moves::MoverOP( new MetropolisHastingsMover );
 }
 
 std::string
@@ -91,7 +91,7 @@ MetropolisHastingsMoverCreator::mover_name() {
 }
 
 MetropolisHastingsMover::MetropolisHastingsMover() :
-	monte_carlo_(0),
+	monte_carlo_(/* 0 */),
 	ntrials_(1000)
 {}
 
@@ -139,7 +139,7 @@ MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
 	if ( !tempering_ ) {
 		//get this done before "initialize_simulation" is called no movers and observers
 		tr.Info << "no temperature controller in MetropolisHastings defined... generating FixedTemperatureController" << std::endl;
-		tempering_= new protocols::canonical_sampling::FixedTemperatureController( monte_carlo_->temperature() );
+		tempering_ = TemperatureControllerOP( new protocols::canonical_sampling::FixedTemperatureController( monte_carlo_->temperature() ) );
 		tempering_->set_monte_carlo( monte_carlo_ ); // MonteCarlo required for tempering_->observe_after_metropolis();
 	}
 	using namespace core;
@@ -245,13 +245,13 @@ MetropolisHastingsMover::get_name() const
 protocols::moves::MoverOP
 MetropolisHastingsMover::clone() const
 {
-	return new protocols::canonical_sampling::MetropolisHastingsMover(*this);
+	return protocols::moves::MoverOP( new protocols::canonical_sampling::MetropolisHastingsMover(*this) );
 }
 
 protocols::moves::MoverOP
 MetropolisHastingsMover::fresh_instance() const
 {
-	return new MetropolisHastingsMover;
+	return protocols::moves::MoverOP( new MetropolisHastingsMover );
 }
 
 bool
@@ -278,12 +278,12 @@ MetropolisHastingsMover::parse_my_tag(
 
 	bool wte_sampling( tag->getOption< bool >( "wte", false ) );
 	if ( wte_sampling ) {
-		BiasEnergyOP bias_energy = new WTEBiasEnergy(); // stride, omega, gamma );
+		BiasEnergyOP bias_energy( new WTEBiasEnergy() ); // stride, omega, gamma );
 		bias_energy->parse_my_tag( tag, data, filters, movers, pose );
 		add_observer( bias_energy );
-		monte_carlo_ = new BiasedMonteCarlo( *score_fxn, temperature, bias_energy );
+		monte_carlo_ = protocols::moves::MonteCarloOP( new BiasedMonteCarlo( *score_fxn, temperature, bias_energy ) );
 	} else {
-		monte_carlo_ = new protocols::moves::MonteCarlo( *score_fxn, temperature );
+		monte_carlo_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( *score_fxn, temperature ) );
 	}
 
 	//add movers and observers
@@ -304,9 +304,9 @@ MetropolisHastingsMover::parse_my_tag(
 			mover = mover_factory->newMover(subtag, data, filters, movers, pose);
 		}
 
-		ThermodynamicMoverOP th_mover( dynamic_cast<ThermodynamicMover *>( mover() ) );
-		ThermodynamicObserverOP th_observer( dynamic_cast<ThermodynamicObserver *>( mover() ) );
-		TemperatureControllerOP temp_controller( dynamic_cast< TemperatureController* >( mover() ) );
+		ThermodynamicMoverOP th_mover( utility::pointer::dynamic_pointer_cast< protocols::canonical_sampling::ThermodynamicMover > ( mover ) );
+		ThermodynamicObserverOP th_observer( utility::pointer::dynamic_pointer_cast< protocols::canonical_sampling::ThermodynamicObserver > ( mover ) );
+		TemperatureControllerOP temp_controller( utility::pointer::dynamic_pointer_cast< protocols::canonical_sampling::TemperatureController > ( mover ) );
 		//figure out if ThermodynamicMover or ThermodynamicObserver
 		if ( th_mover ) { //its a mover
 			core::Real const weight( subtag->getOption< core::Real >( "sampling_weight", 1 ) );
@@ -461,7 +461,7 @@ MetropolisHastingsMover::add_backrub_mover(
 {
 	if (!weight) return;
 
-	protocols::backrub::BackrubMoverOP backrub_mover(new protocols::backrub::BackrubMover);
+	protocols::backrub::BackrubMoverOP backrub_mover( new protocols::backrub::BackrubMover );
 	backrub_mover->branchopt().read_database();
 
 	add_mover(backrub_mover, weight);
@@ -475,8 +475,7 @@ MetropolisHastingsMover::add_kic_mover(
 {
 	if (!weight) return;
 
-	protocols::kinematic_closure::BalancedKicMoverOP kic_mover(
-			new protocols::kinematic_closure::BalancedKicMover);
+	protocols::kinematic_closure::BalancedKicMoverOP kic_mover( new protocols::kinematic_closure::BalancedKicMover );
 	kic_mover->set_loop(loop);
 
 	add_mover(kic_mover, weight);
@@ -492,9 +491,9 @@ MetropolisHastingsMover::add_small_mover(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	protocols::simple_moves::SmallMoverOP small_mover(new protocols::simple_moves::SmallMover);
+	protocols::simple_moves::SmallMoverOP small_mover( new protocols::simple_moves::SmallMover );
 	small_mover->nmoves(1);
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	if (utility::file::file_exists(option[ in::file::movemap ])) {
 		movemap->init_from_file(option[ in::file::movemap ]);
 	} else {
@@ -515,9 +514,9 @@ MetropolisHastingsMover::add_shear_mover(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	protocols::simple_moves::ShearMoverOP shear_mover(new protocols::simple_moves::ShearMover);
+	protocols::simple_moves::ShearMoverOP shear_mover( new protocols::simple_moves::ShearMover );
 	shear_mover->nmoves(1);
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	if (utility::file::file_exists(option[ in::file::movemap ])) {
 		movemap->init_from_file(option[ in::file::movemap ]);
 	} else {
@@ -542,16 +541,16 @@ MetropolisHastingsMover::add_sidechain_mover(
 	using namespace basic::options::OptionKeys;
 	using core::pack::task::operation::TaskOperationCOP;
 
-	core::pack::task::TaskFactoryOP main_task_factory = new core::pack::task::TaskFactory;
-	main_task_factory->push_back( new core::pack::task::operation::InitializeFromCommandline );
+	core::pack::task::TaskFactoryOP main_task_factory( new core::pack::task::TaskFactory );
+	main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 	if ( option[ packing::resfile ].user() ) {
-		main_task_factory->push_back( new core::pack::task::operation::ReadResfile );
+		main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::ReadResfile ) );
 	} else {
-		main_task_factory->push_back( new core::pack::task::operation::RestrictToRepacking );
+		main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
 	}
-	if (preserve_cbeta) main_task_factory->push_back( new core::pack::task::operation::PreserveCBeta );
+	if (preserve_cbeta) main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::PreserveCBeta ) );
 
-	protocols::simple_moves::sidechain_moves::SidechainMoverOP sidechain_mover(new protocols::simple_moves::sidechain_moves::SidechainMover);
+	protocols::simple_moves::sidechain_moves::SidechainMoverOP sidechain_mover( new protocols::simple_moves::sidechain_moves::SidechainMover );
 	sidechain_mover->set_task_factory(main_task_factory);
 	sidechain_mover->set_prob_uniform(prob_uniform);
 	sidechain_mover->set_prob_withinrot(prob_withinrot);
@@ -574,16 +573,16 @@ MetropolisHastingsMover::add_sidechain_mc_mover(
 	using namespace basic::options::OptionKeys;
 	using core::pack::task::operation::TaskOperationCOP;
 
-	core::pack::task::TaskFactoryOP main_task_factory = new core::pack::task::TaskFactory;
-	main_task_factory->push_back( new core::pack::task::operation::InitializeFromCommandline );
+	core::pack::task::TaskFactoryOP main_task_factory( new core::pack::task::TaskFactory );
+	main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 	if ( option[ packing::resfile ].user() ) {
-		main_task_factory->push_back( new core::pack::task::operation::ReadResfile );
+		main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::ReadResfile ) );
 	} else {
-		main_task_factory->push_back( new core::pack::task::operation::RestrictToRepacking );
+		main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
 	}
-	if (preserve_cbeta) main_task_factory->push_back( new core::pack::task::operation::PreserveCBeta );
+	if (preserve_cbeta) main_task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::PreserveCBeta ) );
 
-	protocols::simple_moves::sidechain_moves::SidechainMCMoverOP sidechain_mc_mover(new protocols::simple_moves::sidechain_moves::SidechainMCMover);
+	protocols::simple_moves::sidechain_moves::SidechainMCMoverOP sidechain_mc_mover( new protocols::simple_moves::sidechain_moves::SidechainMCMover );
 	sidechain_mc_mover->set_task_factory(main_task_factory);
 	sidechain_mc_mover->set_prob_uniform(prob_uniform);
 	sidechain_mc_mover->set_prob_withinrot(prob_withinrot);

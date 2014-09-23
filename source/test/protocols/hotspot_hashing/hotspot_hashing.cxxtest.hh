@@ -709,7 +709,7 @@ namespace
 
 				residue_pose.dump_pdb("sic_residue_pose_" + boost::lexical_cast<std::string>(rotation_degrees) + ".pdb");
 
-				SearchPatternOP slide_pattern(new ConstPattern(slide_stub));
+				SearchPatternOP slide_pattern( new ConstPattern(slide_stub) );
 
 				{
 					core::pose::Pose pre_slide;

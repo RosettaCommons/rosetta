@@ -8,8 +8,8 @@ namespace optest {
 
 class B1;
 
-typedef utility::pointer::owning_ptr< B1 > B1OP;
-typedef utility::pointer::owning_ptr< B1 const > B1COP;
+typedef utility::pointer::shared_ptr< B1 > B1OP;
+typedef utility::pointer::shared_ptr< B1 const > B1COP;
 
 }
 }

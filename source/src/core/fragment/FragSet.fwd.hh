@@ -34,8 +34,8 @@ namespace fragment {
 // Forward
 class FragSet;
 
-typedef utility::pointer::owning_ptr< FragSet > FragSetOP;
-typedef utility::pointer::owning_ptr< FragSet const > FragSetCOP;
+typedef utility::pointer::shared_ptr< FragSet > FragSetOP;
+typedef utility::pointer::shared_ptr< FragSet const > FragSetCOP;
 
 typedef std::pair< Size, Size > Range; //does such a type already exist ?
 

@@ -90,15 +90,15 @@ rna_score_test()
 	PoseInputStreamOP input;
 	if ( option[ in::file::silent ].user() ) {
 		if ( option[ in::file::tags ].user() ) {
-			input = new SilentFilePoseInputStream(
+			input = PoseInputStreamOP( new SilentFilePoseInputStream(
 																						option[ in::file::silent ](),
 																						option[ in::file::tags ]()
-																						);
+																						) );
 		} else {
-			input = new SilentFilePoseInputStream( option[ in::file::silent ]() );
+			input = PoseInputStreamOP( new SilentFilePoseInputStream( option[ in::file::silent ]() ) );
 		}
 	} else {
-		input = new PDBPoseInputStream( option[ in::file::s ]() );
+		input = PoseInputStreamOP( new PDBPoseInputStream( option[ in::file::s ]() ) );
 	}
 
 	// native pose setup

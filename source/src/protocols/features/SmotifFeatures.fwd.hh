@@ -20,8 +20,8 @@
 #include <utility/pointer/owning_ptr.hh>
 
 class SmotifFeatures;
-typedef utility::pointer::owning_ptr< SmotifFeatures > SmotifFeaturesOP;
-typedef utility::pointer::owning_ptr< SmotifFeatures const > SmotifFeaturesCOP;
+typedef utility::pointer::shared_ptr< SmotifFeatures > SmotifFeaturesOP;
+typedef utility::pointer::shared_ptr< SmotifFeatures const > SmotifFeaturesCOP;
 
 #endif
 

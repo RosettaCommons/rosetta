@@ -117,9 +117,9 @@ static thread_local basic::Tracer TR( "protocols.symmetric_docking.SymDockProtoc
 
 void SymDock_main() {
 	using namespace protocols::simple_moves::symmetry;
-  SetupForSymmetryMoverOP setup_mover = new SetupForSymmetryMover;
-  SymDockProtocolOP dock_mover = new SymDockProtocol;
-  protocols::moves::SequenceMoverOP seq_mover = new protocols::moves::SequenceMover;
+  SetupForSymmetryMoverOP setup_mover( new SetupForSymmetryMover );
+  SymDockProtocolOP dock_mover( new SymDockProtocol );
+  protocols::moves::SequenceMoverOP seq_mover( new protocols::moves::SequenceMover );
   seq_mover->add_mover( setup_mover );
   seq_mover->add_mover( dock_mover );
   protocols::jd2::JobDistributor::get_instance()->go( seq_mover );
@@ -176,7 +176,7 @@ SymDockProtocol::~SymDockProtocol() {}
 //clone
 protocols::moves::MoverOP
 SymDockProtocol::clone() const {
-		return( new SymDockProtocol(  fullatom_, local_refine_, view_, docking_score_low_, docking_score_high_ ) );
+		return( protocols::moves::MoverOP( new SymDockProtocol(  fullatom_, local_refine_, view_, docking_score_low_, docking_score_high_ ) ) );
 	}
 
 //set functions
@@ -204,14 +204,14 @@ void SymDockProtocol::set_local_refine( bool const local_refine_in )
 void SymDockProtocol::set_lowres_scorefxn( core::scoring::ScoreFunctionOP docking_score_low_in )
 {
 	docking_score_low_ = docking_score_low_in;
-	docking_low_ = 0;
+	docking_low_.reset();
 }
 
 void SymDockProtocol::set_highres_scorefxn( core::scoring::ScoreFunctionOP docking_score_high_in )
 {
 	docking_score_high_ = docking_score_high_in;
 	docking_score_high_min_ = docking_score_high_in;
-	docking_high_ = 0;
+	docking_high_.reset();
 }
 
 void SymDockProtocol::set_highres_scorefxn(
@@ -317,7 +317,7 @@ SymDockProtocol::register_options()
 
 	//set native pose
 	if( basic::options::option[basic::options::OptionKeys::in::file::native].user() ){
-		core::pose::PoseOP native_pose = new core::pose::Pose();
+		core::pose::PoseOP native_pose( new core::pose::Pose() );
 		core::import_pose::pose_from_pdb( *native_pose, basic::options::option[basic::options::OptionKeys::in::file::native].value() );
 		this->set_native_pose( native_pose );
 	}
@@ -337,11 +337,11 @@ SymDockProtocol::apply( pose::Pose & pose )
 	add_conformation_viewer( pose.conformation(), "start_pose", 450, 450 );
 
 	//initialize docking protocol movers
-	if (!docking_low_) docking_low_ = new SymDockingLowRes( docking_score_low_ );
-	if (!docking_high_) docking_high_ = new SymDockingHiRes( docking_score_high_min_, docking_score_pack_ );
+	if (!docking_low_) docking_low_ = protocols::symmetric_docking::SymDockingLowResOP( new SymDockingLowRes( docking_score_low_ ) );
+	if (!docking_high_) docking_high_ = protocols::symmetric_docking::SymDockingHiResOP( new SymDockingHiRes( docking_score_high_min_, docking_score_pack_ ) );
 
 	// make sure the input pose has the right size
-	core::pose::PoseOP input_pose = new core::pose::Pose();
+	core::pose::PoseOP input_pose( new core::pose::Pose() );
 	*input_pose = pose;
 	docking_low_->set_input_pose( input_pose );
 	docking_high_->set_input_pose( input_pose );
@@ -527,7 +527,7 @@ SymDockProtocol::docking_lowres_filter( core::pose::Pose & pose){
 
 	if( ( option[basic::options::OptionKeys::filters::set_saxs_filter ].user() ) &&
 	    ( option[basic::options::OptionKeys::score::saxs::ref_spectrum ].user() ) ) {
-		protocols::simple_filters::SAXSScoreFilterOP saxs_filter = new protocols::simple_filters::SAXSScoreFilter();
+		protocols::simple_filters::SAXSScoreFilterOP saxs_filter( new protocols::simple_filters::SAXSScoreFilter() );
     if( ! saxs_filter->apply(pose) )
 			passed_filter = false;
 		core::pose::setPoseExtraScore( pose, "saxs_score", saxs_filter->recent_score());
@@ -583,17 +583,17 @@ SymDockProtocol::recover_sidechains( core::pose::Pose & pose, const core::pose::
 	using core::pack::task::operation::TaskOperationOP;
 
 	// pack over each movable interface
-		TaskFactoryOP tf = new TaskFactory;
-		tf->push_back( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueLacksProperty("PROTEIN") ) ) );
-		tf->push_back( new InitializeFromCommandline );
-		tf->push_back( new IncludeCurrent );
-		tf->push_back( new RestrictToRepacking );
-		tf->push_back( new NoRepackDisulfides );
-		if( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) tf->push_back( new ReadResfile );
+		TaskFactoryOP tf( new TaskFactory );
+		tf->push_back( TaskOperationCOP( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueLacksProperty("PROTEIN") ) ) ) );
+		tf->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
+		tf->push_back( TaskOperationCOP( new IncludeCurrent ) );
+		tf->push_back( TaskOperationCOP( new RestrictToRepacking ) );
+		tf->push_back( TaskOperationCOP( new NoRepackDisulfides ) );
+		if( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) tf->push_back( TaskOperationCOP( new ReadResfile ) );
 		//tf->push_back( new SymRestrictTaskForDocking( docking_score_pack_, true, 1000 ) );
-		tf->push_back( new RestrictToInterface( 1 ) );
+		tf->push_back( TaskOperationCOP( new RestrictToInterface( 1 ) ) );
 
-		protocols::simple_moves::PackRotamersMoverOP dock_pack = new protocols::simple_moves::symmetry::SymPackRotamersMover(docking_score_pack_);
+		protocols::simple_moves::PackRotamersMoverOP dock_pack( new protocols::simple_moves::symmetry::SymPackRotamersMover(docking_score_pack_) );
 		dock_pack->task_factory( tf );
 		dock_pack->apply( pose );
 
@@ -602,7 +602,7 @@ SymDockProtocol::recover_sidechains( core::pose::Pose & pose, const core::pose::
 	//		rtmin_trial->apply( pose );
 		}
 		if (basic::options::option[ basic::options::OptionKeys::docking::sc_min ]()){
-			SymInterfaceSidechainMinMoverOP scmin_mover = new SymInterfaceSidechainMinMover(docking_score_pack_, 1000);
+			SymInterfaceSidechainMinMoverOP scmin_mover( new SymInterfaceSidechainMinMover(docking_score_pack_, 1000) );
 			scmin_mover->apply(pose);
 		}
 }
@@ -628,7 +628,7 @@ SymDockProtocol::calc_interaction_energy( core::pose::Pose & pose ){
         dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
 	std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
-	rigid::RigidBodyDofSeqTransMoverOP translate_away ( new rigid::RigidBodyDofSeqTransMover( dofs ) );
+	rigid::RigidBodyDofSeqTransMoverOP translate_away( new rigid::RigidBodyDofSeqTransMover( dofs ) );
 	translate_away->step_size( trans_magnitude );
 
 	//Don't use patches for computer Isc, problematic with constraints for unbound
@@ -805,7 +805,7 @@ SymDockProtocolCreator::keyname() const
 
 protocols::moves::MoverOP
 SymDockProtocolCreator::create_mover() const {
-    return new SymDockProtocol();
+    return protocols::moves::MoverOP( new SymDockProtocol() );
 }
 
 std::string

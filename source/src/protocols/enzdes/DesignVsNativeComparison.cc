@@ -73,7 +73,7 @@ DesignVsNativeComparison::compare_to_native(
 		std::string native_path = basic::options::option[basic::options::OptionKeys::enzdes::compare_native].value();
 
 		std::string native_filename = native_path + pdb_code + ".pdb";
-		core::pose::PoseOP new_native = new core::pose::Pose();
+		core::pose::PoseOP new_native( new core::pose::Pose() );
 
 		core::import_pose::pose_from_pdb( *new_native, native_filename );
 
@@ -94,7 +94,7 @@ DesignVsNativeComparison::compare_to_native(
 	core::Real native_totalE = native->energies().total_energies().dot( native->energies().weights() );
 
 	//remove the ligand from the pose, so the comparison makes sense
-	core::pose::PoseOP pureprotpose = new core::pose::Pose( pose );
+	core::pose::PoseOP pureprotpose( new core::pose::Pose( pose ) );
 
 	toolbox::pose_manipulation::remove_non_protein_residues( *pureprotpose );
 

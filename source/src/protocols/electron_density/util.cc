@@ -129,8 +129,7 @@ protocols::loops::Loops findLoopFromDensity( core::pose::Pose & pose, core::Real
 	utility::vector1< core::Real > perResCC( nres ), smoothPerResCC( nres );
 
 	// align to map
-	protocols::electron_density::SetupForDensityScoringMoverOP dockindens
-		( new protocols::electron_density::SetupForDensityScoringMover );
+	protocols::electron_density::SetupForDensityScoringMoverOP dockindens( new protocols::electron_density::SetupForDensityScoringMover );
 	dockindens->apply( pose );
 
 	// per-res score
@@ -273,7 +272,7 @@ core::Real dockPoseIntoMap( core::pose::Pose & pose, std::string align_in /* =""
 		align = option[ OptionKeys::edensity::realign ]();
 
 	// minimization
-	core::scoring::ScoreFunctionOP scorefxn_dens = new core::scoring::ScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn_dens( new core::scoring::ScoreFunction() );
 	if ( core::pose::symmetry::is_symmetric(pose) )
 		scorefxn_dens = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_dens );
 	core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *scorefxn_dens );
@@ -343,7 +342,7 @@ core::Real dockPoseIntoMap( core::pose::Pose & pose, std::string align_in /* =""
 		int root = pose.fold_tree().root();
 		utility::vector1< core::kinematics::Edge > root_edges = pose.fold_tree().get_outgoing_edges (root);
 
-		core::kinematics::MoveMapOP rbmm = new core::kinematics::MoveMap;
+		core::kinematics::MoveMapOP rbmm( new core::kinematics::MoveMap );
 		rbmm->set_bb( false ); rbmm->set_chi( false );
 		// TODO? a flag which toggles minimization of:
 		//  a) all rigid-body DOFs
@@ -360,7 +359,7 @@ core::Real dockPoseIntoMap( core::pose::Pose & pose, std::string align_in /* =""
 			core::scoring::ScoreFunctionOP symmscorefxn_dens = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_dens );
 
 			core::pose::symmetry::make_symmetric_movemap( pose, *rbmm );
-			moves::MoverOP min_mover = new simple_moves::symmetry::SymMinMover( rbmm, symmscorefxn_dens,  "dfpmin_armijo_nonmonotone", 1e-5, true );
+			moves::MoverOP min_mover( new simple_moves::symmetry::SymMinMover( rbmm, symmscorefxn_dens,  "dfpmin_armijo_nonmonotone", 1e-5, true ) );
 
 			bool densInMinimizer = core::scoring::electron_density::getDensityMap().getUseDensityInMinimizer();
 			core::scoring::electron_density::getDensityMap().setUseDensityInMinimizer( true );
@@ -370,7 +369,7 @@ core::Real dockPoseIntoMap( core::pose::Pose & pose, std::string align_in /* =""
 			symmscorefxn_dens->show( TR, pose ); TR<<std::endl;
 			dens_score = (*symmscorefxn_dens)( pose );
 		} else {
-			moves::MoverOP min_mover = new protocols::simple_moves::MinMover( rbmm, scorefxn_dens, "dfpmin_armijo_nonmonotone", 1e-5, true );
+			moves::MoverOP min_mover( new protocols::simple_moves::MinMover( rbmm, scorefxn_dens, "dfpmin_armijo_nonmonotone", 1e-5, true ) );
 
 			bool densInMinimizer = core::scoring::electron_density::getDensityMap().getUseDensityInMinimizer();
 			core::scoring::electron_density::getDensityMap().setUseDensityInMinimizer( true );

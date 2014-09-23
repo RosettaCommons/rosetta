@@ -209,8 +209,8 @@ FragmentScoringMethodOP MakePCS_FragDistance::make(Size priority,
 
 		runtime_assert( largest_fragment > 0 );
 
-		return (FragmentScoringMethodOP) new PCS_FragDistance(priority, lowest_acceptable_value, use_lowest,
-																													target_ca_dev, target_ca_dist, largest_fragment, max_length);
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new PCS_FragDistance(priority, lowest_acceptable_value, use_lowest,
+																													target_ca_dev, target_ca_dist, largest_fragment, max_length) );
 	}
 
 		utility_exit_with_message(

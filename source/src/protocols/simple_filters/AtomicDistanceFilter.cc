@@ -179,7 +179,7 @@ void AtomicDistanceFilter::parse_my_tag( utility::tag::TagCOP tag,
 }
 
 protocols::filters::FilterOP
-AtomicDistanceFilterCreator::create_filter() const { return new AtomicDistanceFilter; }
+AtomicDistanceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new AtomicDistanceFilter ); }
 
 std::string
 AtomicDistanceFilterCreator::keyname() const { return "AtomicDistance"; }

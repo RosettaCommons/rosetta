@@ -32,22 +32,22 @@ class Histogram;
  */
 template<class X, class Y>
 struct HistogramOP {
-	typedef utility::pointer::owning_ptr< Histogram<X,Y> > Type;
+	typedef utility::pointer::shared_ptr< Histogram<X,Y> > Type;
 };
 
 template<class X, class Y>
 struct HistogramCOP {
-	typedef utility::pointer::owning_ptr< Histogram<X,Y> const > Type;
+	typedef utility::pointer::shared_ptr< Histogram<X,Y> const > Type;
 };
 
 template<class X, class Y>
 struct HistogramAP {
-	typedef utility::pointer::access_ptr< Histogram<X,Y> > Type;
+	typedef utility::pointer::weak_ptr< Histogram<X,Y> > Type;
 };
 
 template<class X, class Y>
 struct HistogramCAP {
-	typedef utility::pointer::access_ptr< Histogram<X,Y> const > Type;
+	typedef utility::pointer::weak_ptr< Histogram<X,Y> const > Type;
 };
 
 } //interpolation

@@ -26,8 +26,8 @@ namespace fragment {
 // Forward
 class FragSetCollection;
 
-typedef utility::pointer::owning_ptr< FragSetCollection > FragSetCollectionOP;
-typedef utility::pointer::owning_ptr< FragSetCollection const > FragSetCollectionCOP;
+typedef utility::pointer::shared_ptr< FragSetCollection > FragSetCollectionOP;
+typedef utility::pointer::shared_ptr< FragSetCollection const > FragSetCollectionCOP;
 
 
 } // namespace fragment

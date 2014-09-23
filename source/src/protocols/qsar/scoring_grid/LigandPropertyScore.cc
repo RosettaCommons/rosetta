@@ -24,14 +24,14 @@ namespace scoring_grid {
 
 GridBaseOP LigandPropertyScoreCreator::create_grid(utility::tag::TagCOP tag) const
 {
-	GridBaseOP ligand_property_score = new LigandPropertyScore();
+	GridBaseOP ligand_property_score( new LigandPropertyScore() );
 	ligand_property_score->parse_my_tag(tag);
 	return ligand_property_score;
 }
 
 GridBaseOP LigandPropertyScoreCreator::create_grid() const
 {
-	return new LigandPropertyScore();
+	return GridBaseOP( new LigandPropertyScore() );
 }
 
 std::string LigandPropertyScoreCreator::keyname() const

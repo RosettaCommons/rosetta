@@ -24,7 +24,7 @@ namespace methods {
 
 class WholeStructureEnergy;
 
-typedef utility::pointer::owning_ptr< WholeStructureEnergy > WholeStructureEnergyOP;
+typedef utility::pointer::shared_ptr< WholeStructureEnergy > WholeStructureEnergyOP;
 
 
 } // methods

@@ -28,8 +28,8 @@ namespace match {
 class Matcher;
 class MatcherOutputStats;
 
-typedef utility::pointer::owning_ptr< Matcher > MatcherOP;
-typedef utility::pointer::owning_ptr< Matcher const > MatcherCOP;
+typedef utility::pointer::shared_ptr< Matcher > MatcherOP;
+typedef utility::pointer::shared_ptr< Matcher const > MatcherCOP;
 
 }
 }

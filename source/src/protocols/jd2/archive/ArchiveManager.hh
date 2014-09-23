@@ -200,7 +200,7 @@ private:
 class BaseArchiveManager {
 public:
   ///@brief ctor is protected; singleton pattern
-  BaseArchiveManager() : theArchive_( NULL ) {};
+  BaseArchiveManager() : theArchive_( /* NULL */ ) {};
 	virtual ~BaseArchiveManager() {};  //virtual destructor because we have virtual functions
 
 public:

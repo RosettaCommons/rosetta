@@ -24,8 +24,8 @@ namespace ligand_docking {
 
 class LigandArea;
 
-typedef utility::pointer::owning_ptr< LigandArea > LigandAreaOP;
-typedef utility::pointer::owning_ptr< LigandArea const > LigandAreaCOP;
+typedef utility::pointer::shared_ptr< LigandArea > LigandAreaOP;
+typedef utility::pointer::shared_ptr< LigandArea const > LigandAreaCOP;
 typedef utility::vector1< LigandAreaOP > LigandAreaOPs;
 typedef utility::vector1< LigandAreaCOP > LigandAreaCOPs;
 

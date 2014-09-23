@@ -22,16 +22,16 @@ namespace devel {
 namespace znhash {
 
 class InitializeZNCoordinationConstraintMover;
-typedef utility::pointer::owning_ptr< InitializeZNCoordinationConstraintMover > InitializeZNCoordinationConstraintMoverOP;
-typedef utility::pointer::owning_ptr< InitializeZNCoordinationConstraintMover const > InitializeZNCoordinationConstraintMoverCOP;
+typedef utility::pointer::shared_ptr< InitializeZNCoordinationConstraintMover > InitializeZNCoordinationConstraintMoverOP;
+typedef utility::pointer::shared_ptr< InitializeZNCoordinationConstraintMover const > InitializeZNCoordinationConstraintMoverCOP;
 
 class ZNCoordinationConstraintReporterMover;
-typedef utility::pointer::owning_ptr< ZNCoordinationConstraintReporterMover > ZNCoordinationConstraintReporterMoverOP;
-typedef utility::pointer::owning_ptr< ZNCoordinationConstraintReporterMover const > ZNCoordinationConstraintReporterMoverCOP;
+typedef utility::pointer::shared_ptr< ZNCoordinationConstraintReporterMover > ZNCoordinationConstraintReporterMoverOP;
+typedef utility::pointer::shared_ptr< ZNCoordinationConstraintReporterMover const > ZNCoordinationConstraintReporterMoverCOP;
 
 class ZNCoordinationConstraintPlacerMover;
-typedef utility::pointer::owning_ptr< ZNCoordinationConstraintPlacerMover > ZNCoordinationConstraintPlacerMoverOP;
-typedef utility::pointer::owning_ptr< ZNCoordinationConstraintPlacerMover const > ZNCoordinationConstraintPlacerMoverCOP;
+typedef utility::pointer::shared_ptr< ZNCoordinationConstraintPlacerMover > ZNCoordinationConstraintPlacerMoverOP;
+typedef utility::pointer::shared_ptr< ZNCoordinationConstraintPlacerMover const > ZNCoordinationConstraintPlacerMoverCOP;
 
 class DisableZnCoordinationResiduesTaskOp;
 

@@ -24,8 +24,8 @@ namespace match {
 namespace downstream {
 
 class ScoringSecMatchRPE;
-typedef utility::pointer::owning_ptr< ScoringSecMatchRPE > ScoringSecMatchRPEOP;
-typedef utility::pointer::owning_ptr< ScoringSecMatchRPE const > ScoringSecMatchRPECOP;
+typedef utility::pointer::shared_ptr< ScoringSecMatchRPE > ScoringSecMatchRPEOP;
+typedef utility::pointer::shared_ptr< ScoringSecMatchRPE const > ScoringSecMatchRPECOP;
 
 
 }

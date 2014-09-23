@@ -20,7 +20,7 @@ namespace protocols {
 namespace dna {
 
 class RestrictDesignToProteinDNAInterface;
-typedef utility::pointer::owning_ptr< RestrictDesignToProteinDNAInterface > RestrictDesignToProteinDNAInterfaceOP;
+typedef utility::pointer::shared_ptr< RestrictDesignToProteinDNAInterface > RestrictDesignToProteinDNAInterfaceOP;
 
 }
 }

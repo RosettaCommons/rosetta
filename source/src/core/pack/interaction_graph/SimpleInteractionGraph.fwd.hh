@@ -25,8 +25,8 @@ class SimpleNode;
 class SimpleEdge;
 class SimpleInteractionGraph;
 
-typedef utility::pointer::owning_ptr< SimpleInteractionGraph > SimpleInteractionGraphOP;
-typedef utility::pointer::owning_ptr< SimpleInteractionGraph const > SimpleInteractionGraphCOP;
+typedef utility::pointer::shared_ptr< SimpleInteractionGraph > SimpleInteractionGraphOP;
+typedef utility::pointer::shared_ptr< SimpleInteractionGraph const > SimpleInteractionGraphCOP;
 
 }
 }

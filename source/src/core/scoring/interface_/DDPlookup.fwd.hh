@@ -18,8 +18,8 @@ namespace interface_ {
 
 class DDPlookup;
 
-typedef utility::pointer::owning_ptr< DDPlookup > DDPlookupOP;
-typedef utility::pointer::owning_ptr< DDPlookup const > DDPlookupCOP;
+typedef utility::pointer::shared_ptr< DDPlookup > DDPlookupOP;
+typedef utility::pointer::shared_ptr< DDPlookup const > DDPlookupCOP;
 
 
 } // Interface_

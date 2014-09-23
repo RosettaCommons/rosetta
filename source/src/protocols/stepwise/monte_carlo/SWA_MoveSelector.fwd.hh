@@ -23,8 +23,8 @@ namespace stepwise {
 namespace monte_carlo {
 	
 	class SWA_MoveSelector;
-	typedef utility::pointer::owning_ptr< SWA_MoveSelector > SWA_MoveSelectorOP;
-	typedef utility::pointer::owning_ptr< SWA_MoveSelector const > SWA_MoveSelectorCOP;
+	typedef utility::pointer::shared_ptr< SWA_MoveSelector > SWA_MoveSelectorOP;
+	typedef utility::pointer::shared_ptr< SWA_MoveSelector const > SWA_MoveSelectorCOP;
 	
 } //monte_carlo
 } //stepwise

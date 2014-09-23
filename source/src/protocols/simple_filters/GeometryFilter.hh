@@ -42,10 +42,10 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const {
-		return new GeometryFilter( *this );
+		return filters::FilterOP( new GeometryFilter( *this ) );
 	}
 	filters::FilterOP fresh_instance() const{
-		return new GeometryFilter();
+		return filters::FilterOP( new GeometryFilter() );
 	}
 
 	virtual ~GeometryFilter();

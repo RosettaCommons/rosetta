@@ -122,7 +122,7 @@ read_movemap_from_da_linker_file()
 	std::string filename_linkers = option[ OptionKeys::DomainAssembly::da_linker_file ]();
 	utility::vector1< std::pair < Size, Size > >  linker_ranges;
 	read_linker_file( filename_linkers, linker_ranges );
-  kinematics::MoveMapOP mm ( new kinematics::MoveMap );
+  kinematics::MoveMapOP mm( new kinematics::MoveMap );
 	set_movemap_for_linkers ( linker_ranges, mm );
 	return mm;
 }
@@ -226,7 +226,7 @@ optimize_linkers_centroid_mode(
 	// read fragments file
 	core::fragment::ConstantLengthFragSetOP fragset3mer = NULL;
 	if (basic::options::option[ basic::options::OptionKeys::in::file::frag3].user()){
-		fragset3mer = new core::fragment::ConstantLengthFragSet( 3 );
+		fragset3mer = core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( 3 ) );
 		fragset3mer->read_fragment_file( basic::options::option[ basic::options::OptionKeys::in::file::frag3 ]() );
 	}
 
@@ -239,8 +239,8 @@ optimize_linkers_centroid_mode(
 	//// STAGE 1 /////
 	TrialMoverOP centroid_trial_mover = NULL;
 	if ( fragset3mer ) {
-		protocols::simple_moves::FragmentMoverOP frag_mover = new protocols::simple_moves::ClassicFragmentMover(fragset3mer, mm);
-		centroid_trial_mover = new TrialMover( frag_mover, mc );
+		protocols::simple_moves::FragmentMoverOP frag_mover( new protocols::simple_moves::ClassicFragmentMover(fragset3mer, mm) );
+		centroid_trial_mover = TrialMoverOP( new TrialMover( frag_mover, mc ) );
 	} else {
 		// if no fragments, use coarse small moves
 		Size nmoves ( 1 );
@@ -248,10 +248,10 @@ optimize_linkers_centroid_mode(
 		coarse_small_mover->angle_max( 'H', 180.0 );  // max angle displacement 180 degrees
 		coarse_small_mover->angle_max( 'E', 180.0 );
 		coarse_small_mover->angle_max( 'L', 180.0 );
-		centroid_trial_mover = new TrialMover( coarse_small_mover, mc );
+		centroid_trial_mover = TrialMoverOP( new TrialMover( coarse_small_mover, mc ) );
 	}
 
-	RepeatMoverOP inner_centroid_loop = new RepeatMover( centroid_trial_mover, inside_steps_stage1 );
+	RepeatMoverOP inner_centroid_loop( new RepeatMover( centroid_trial_mover, inside_steps_stage1 ) );
 
 	std::cout << "   Current  Low " << std::endl;
 	for ( Size i = 1; i <= outside_steps_stage1; ++i ) {
@@ -262,8 +262,8 @@ optimize_linkers_centroid_mode(
 	//// END STAGE 1 ////
 
 	////// STAGE 2 ///////
-	TrialMoverOP stage2_trial = new TrialMover( small_mover, mc );
-	RepeatMoverOP stage2 = new RepeatMover( stage2_trial, inside_steps_stage2 );
+	TrialMoverOP stage2_trial( new TrialMover( small_mover, mc ) );
+	RepeatMoverOP stage2( new RepeatMover( stage2_trial, inside_steps_stage2 ) );
 
 	std::cout << "   Current  Low " << std::endl;
 	for ( Size i = 1; i <= outside_steps_stage2; ++i ) {
@@ -390,7 +390,7 @@ optimize_linkers_fullatom_mode(
 	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial_mover( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn, *base_packer_task, mc, 0.01 /*energycut*/ ) );
 
 	// MOVER minimization
-	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, scorefxn, "dfpmin", 0.001, true /*use_nblist*/ );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn, "dfpmin", 0.001, true /*use_nblist*/ ) );
 	//TrialMoverOP min_trial_mover( new TrialMover( min_mover, mc ) );
 
 	// Initial Minimization //
@@ -399,11 +399,11 @@ optimize_linkers_fullatom_mode(
 	//std::cout << " Score after initial fullatom minimization " << mc->last_accepted_score() << std::endl;
 
 	//// STAGE1 ////
-	SequenceMoverOP stage1_seq = new SequenceMover;
+	SequenceMoverOP stage1_seq( new SequenceMover );
 	stage1_seq -> add_mover( small_mover );
 	stage1_seq -> add_mover( pack_rottrial_mover );
-	TrialMoverOP stage1_trial = new TrialMover( stage1_seq, mc );
-	protocols::moves::RepeatMoverOP stage1_inner_loop = new RepeatMover( stage1_trial, 15 /*100 cycles*/ );
+	TrialMoverOP stage1_trial( new TrialMover( stage1_seq, mc ) );
+	protocols::moves::RepeatMoverOP stage1_inner_loop( new RepeatMover( stage1_trial, 15 /*100 cycles*/ ) );
 
 	std::cout << "   Current  Low " << std::endl;
 	for ( Size i = 1; i <= 10; ++i ) {
@@ -419,12 +419,12 @@ optimize_linkers_fullatom_mode(
 	//// END STAGE1 ////
 
 	//// STAGE2 ////
-	SequenceMoverOP stage2_seq = new SequenceMover;
+	SequenceMoverOP stage2_seq( new SequenceMover );
 	stage2_seq->add_mover( small_mover );
 	stage2_seq->add_mover( pack_rottrial_mover );
 	stage2_seq->add_mover( min_mover );
-	TrialMoverOP stage2_trial = new TrialMover( stage2_seq, mc );
-	RepeatMoverOP stage2_inner_loop = new RepeatMover( stage2_trial, 10 /*cycles*/ );
+	TrialMoverOP stage2_trial( new TrialMover( stage2_seq, mc ) );
+	RepeatMoverOP stage2_inner_loop( new RepeatMover( stage2_trial, 10 /*cycles*/ ) );
 
 	std::cout << "   Current  Low " << std::endl;
 	for ( Size i = 1; i <= 10; ++i ) {
@@ -508,7 +508,7 @@ optimize_linkers_rna_fullatom_mode(
 	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial_mover( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn_cont, *base_packer_task, mc, 0.01 ) );
 
 	// MOVER: minimization
-	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, scorefxn_cont, "dfpmin", 0.001, true );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( mm, scorefxn_cont, "dfpmin", 0.001, true ) );
 
 	// MOVER: coarse small moves
 	protocols::simple_moves::SmallMoverOP coarse_small_mover( new protocols::simple_moves::SmallMover( mm, 0.8, 1 ) );
@@ -525,12 +525,12 @@ optimize_linkers_rna_fullatom_mode(
 
 		//// STAGE 1 ////
 	min_mover -> apply( full_pose );
-	SequenceMoverOP stage1_seq = new SequenceMover;
+	SequenceMoverOP stage1_seq( new SequenceMover );
 	stage1_seq -> add_mover( coarse_small_mover );
 	stage1_seq -> add_mover( pack_rottrial_mover );
 	//stage1_seq -> add_mover( min_mover );
-	TrialMoverOP stage1_trial = new TrialMover( stage1_seq, mc );
-	protocols::moves::RepeatMoverOP stage1_inner_loop = new RepeatMover( stage1_trial, inside_steps_stage1 );
+	TrialMoverOP stage1_trial( new TrialMover( stage1_seq, mc ) );
+	protocols::moves::RepeatMoverOP stage1_inner_loop( new RepeatMover( stage1_trial, inside_steps_stage1 ) );
 
 	std::cout << "   Current  Low " << std::endl;
 	for ( Size i = 1; i <= outside_steps_stage1; ++i ) {
@@ -549,12 +549,12 @@ optimize_linkers_rna_fullatom_mode(
 
 
 	////// STAGE 2 ///////
-	SequenceMoverOP stage2_seq = new SequenceMover;
+	SequenceMoverOP stage2_seq( new SequenceMover );
 	stage2_seq -> add_mover( semi_small_mover );
 	stage2_seq -> add_mover( pack_rottrial_mover );
 	stage2_seq -> add_mover( rna_fragment_mover );
-	TrialMoverOP stage2_trial = new TrialMover( stage2_seq, mc );
-	protocols::moves::RepeatMoverOP stage2_inner_loop = new RepeatMover( stage2_trial, inside_steps_stage2 );
+	TrialMoverOP stage2_trial( new TrialMover( stage2_seq, mc ) );
+	protocols::moves::RepeatMoverOP stage2_inner_loop( new RepeatMover( stage2_trial, inside_steps_stage2 ) );
 
 	for ( Size i = 1; i <= outside_steps_stage2; ++i ) {
 		stage2_inner_loop -> apply( full_pose );
@@ -578,12 +578,12 @@ optimize_linkers_rna_fullatom_mode(
 	//////////////////////////////////////////////////////////////////////////////////////////////
 
 	//// STAGE3 ////
-	SequenceMoverOP stage3_seq = new SequenceMover;
+	SequenceMoverOP stage3_seq( new SequenceMover );
 	stage3_seq -> add_mover( rna_fragment_mover );
 	stage3_seq -> add_mover( small_mover );
 	stage3_seq -> add_mover( pack_rottrial_mover );
-	TrialMoverOP stage3_trial = new TrialMover( stage3_seq, mc );
-	protocols::moves::RepeatMoverOP stage3_inner_loop = new RepeatMover( stage3_trial, inside_steps_stage2 );
+	TrialMoverOP stage3_trial( new TrialMover( stage3_seq, mc ) );
+	protocols::moves::RepeatMoverOP stage3_inner_loop( new RepeatMover( stage3_trial, inside_steps_stage2 ) );
 
 	std::cout << "   Current  Low " << std::endl;
 	for ( Size i = 1; i <= outside_steps_stage2; ++i ) {
@@ -602,13 +602,13 @@ optimize_linkers_rna_fullatom_mode(
 	//// END STAGE3 ////
 
 	//// STAGE4 ////
-	SequenceMoverOP stage4_seq = new SequenceMover;
+	SequenceMoverOP stage4_seq( new SequenceMover );
 	stage4_seq->add_mover( rna_fragment_mover );
 	stage4_seq->add_mover( small_mover );
 	stage4_seq->add_mover( pack_rottrial_mover );
 	stage4_seq->add_mover( min_mover );
-	TrialMoverOP stage4_trial = new TrialMover( stage4_seq, mc );
-	RepeatMoverOP stage4_inner_loop = new RepeatMover( stage4_trial, inside_steps_stage1  );
+	TrialMoverOP stage4_trial( new TrialMover( stage4_seq, mc ) );
+	RepeatMoverOP stage4_inner_loop( new RepeatMover( stage4_trial, inside_steps_stage1  ) );
 
 	std::cout << "   Current  Low " << std::endl;
 	for ( Size i = 1; i <= outside_steps_stage1; ++i ) {

@@ -50,7 +50,7 @@ methods::EnergyMethodOP
 RNA_VDW_EnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new RNA_VDW_Energy;
+	return methods::EnergyMethodOP( new RNA_VDW_Energy );
 }
 
 ScoreTypes
@@ -72,7 +72,7 @@ RNA_VDW_Energy::RNA_VDW_Energy() :
 methods::EnergyMethodOP
 RNA_VDW_Energy::clone() const
 {
-	return new RNA_VDW_Energy;
+	return methods::EnergyMethodOP( new RNA_VDW_Energy );
 }
 
 /////////////////////////////////////////////////////////////////////////////

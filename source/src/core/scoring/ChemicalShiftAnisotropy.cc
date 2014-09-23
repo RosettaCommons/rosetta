@@ -73,16 +73,16 @@ extern void store_CSA_in_pose(ChemicalShiftAnisotropyOP csa_info, core::pose::Po
 
 extern ChemicalShiftAnisotropyCOP retrieve_CSA_from_pose( core::pose::Pose const& pose) {
 	if (pose.data().has(core::pose::datacache::CacheableDataType::CHEMICAL_SHIFT_ANISOTROPY_DATA)) {
-		return static_cast<ChemicalShiftAnisotropy const *> (pose.data().get_const_ptr(
-				core::pose::datacache::CacheableDataType::CHEMICAL_SHIFT_ANISOTROPY_DATA)());
+		return utility::pointer::static_pointer_cast< core::scoring::ChemicalShiftAnisotropy const > ( pose.data().get_const_ptr(
+				core::pose::datacache::CacheableDataType::CHEMICAL_SHIFT_ANISOTROPY_DATA) );
 	};
 	return NULL;
 }
 
 extern ChemicalShiftAnisotropyOP retrieve_CSA_from_pose(core::pose::Pose& pose) {
 	if (pose.data().has(core::pose::datacache::CacheableDataType::CHEMICAL_SHIFT_ANISOTROPY_DATA)) {
-		return static_cast<ChemicalShiftAnisotropy*> (pose.data().get_ptr(
-				core::pose::datacache::CacheableDataType::CHEMICAL_SHIFT_ANISOTROPY_DATA)());
+		return utility::pointer::static_pointer_cast< core::scoring::ChemicalShiftAnisotropy > ( pose.data().get_ptr(
+				core::pose::datacache::CacheableDataType::CHEMICAL_SHIFT_ANISOTROPY_DATA) );
 	};
 	return NULL;
 }

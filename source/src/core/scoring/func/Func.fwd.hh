@@ -28,8 +28,8 @@ namespace func {
 ///
 
 class Func;
-typedef utility::pointer::owning_ptr< Func > FuncOP;
-typedef utility::pointer::owning_ptr< const Func > FuncCOP;
+typedef utility::pointer::shared_ptr< Func > FuncOP;
+typedef utility::pointer::shared_ptr< const Func > FuncCOP;
 
 }
 }

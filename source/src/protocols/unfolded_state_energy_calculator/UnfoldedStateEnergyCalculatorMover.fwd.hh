@@ -22,8 +22,8 @@ namespace unfolded_state_energy_calculator {
 
 class UnfoldedStateEnergyCalculatorMover;
 
-typedef utility::pointer::owning_ptr< UnfoldedStateEnergyCalculatorMover > UnfoldedStateEnergyCalculatorMoverOP;
-typedef utility::pointer::owning_ptr< UnfoldedStateEnergyCalculatorMover const > UnfoldedStateEnergyCalculatorMoverCOP;
+typedef utility::pointer::shared_ptr< UnfoldedStateEnergyCalculatorMover > UnfoldedStateEnergyCalculatorMoverOP;
+typedef utility::pointer::shared_ptr< UnfoldedStateEnergyCalculatorMover const > UnfoldedStateEnergyCalculatorMoverCOP;
 
 } // UnfoldedStateEnergyCalculator
 } // protocols

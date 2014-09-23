@@ -29,19 +29,19 @@ class RelativeConnectRight;
 
 
 /// @brief owning pointer for RelativeConnectRight
-typedef utility::pointer::owning_ptr< RelativeConnectRight > RelativeConnectRightOP;
+typedef utility::pointer::shared_ptr< RelativeConnectRight > RelativeConnectRightOP;
 
 
 /// @brief owning pointer for const RelativeConnectRight
-typedef utility::pointer::owning_ptr< RelativeConnectRight const > RelativeConnectRightCOP;
+typedef utility::pointer::shared_ptr< RelativeConnectRight const > RelativeConnectRightCOP;
 
 
 /// @brief access pointer for RelativeConnectRight
-typedef utility::pointer::access_ptr< RelativeConnectRight > RelativeConnectRightAP;
+typedef utility::pointer::weak_ptr< RelativeConnectRight > RelativeConnectRightAP;
 
 
 /// @brief access pointer for const RelativeConnectRight
-typedef utility::pointer::access_ptr< RelativeConnectRight const > RelativeConnectRightCAP;
+typedef utility::pointer::weak_ptr< RelativeConnectRight const > RelativeConnectRightCAP;
 
 
 } // namespace build

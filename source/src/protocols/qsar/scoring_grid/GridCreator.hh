@@ -40,8 +40,8 @@ private:
 	// core::Real weight_;
 };
 
-typedef utility::pointer::owning_ptr<GridCreator> GridCreatorOP;
-typedef utility::pointer::owning_ptr<GridCreator const> GridCreatorCOP;
+typedef utility::pointer::shared_ptr<GridCreator> GridCreatorOP;
+typedef utility::pointer::shared_ptr<GridCreator const> GridCreatorCOP;
 
 }
 }

@@ -23,8 +23,8 @@ namespace stepwise {
 namespace screener {
 	
 	class O2PrimeScreener;
-	typedef utility::pointer::owning_ptr< O2PrimeScreener > O2PrimeScreenerOP;
-	typedef utility::pointer::owning_ptr< O2PrimeScreener const > O2PrimeScreenerCOP;
+	typedef utility::pointer::shared_ptr< O2PrimeScreener > O2PrimeScreenerOP;
+	typedef utility::pointer::shared_ptr< O2PrimeScreener const > O2PrimeScreenerCOP;
 	
 } //screener
 } //stepwise

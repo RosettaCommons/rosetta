@@ -25,8 +25,8 @@ namespace task {
 class PackerTask;
 class ResidueLevelTask;
 
-typedef utility::pointer::owning_ptr< PackerTask > PackerTaskOP;
-typedef utility::pointer::owning_ptr< PackerTask const > PackerTaskCOP;
+typedef utility::pointer::shared_ptr< PackerTask > PackerTaskOP;
+typedef utility::pointer::shared_ptr< PackerTask const > PackerTaskCOP;
 
 
 }

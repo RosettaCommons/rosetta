@@ -58,7 +58,7 @@ public:
 	~FragmentClaimer();
 
 	virtual TopologyClaimerOP clone() const {
-		return new FragmentClaimer( *this );
+		return TopologyClaimerOP( new FragmentClaimer( *this ) );
 	}
 
 	virtual void generate_claims( claims::DofClaims& );

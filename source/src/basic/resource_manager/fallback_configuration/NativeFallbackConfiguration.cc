@@ -86,7 +86,7 @@ NativeFallbackConfiguration::get_native_filename_from_options() const
 basic::resource_manager::FallbackConfigurationOP
 NativeFallbackConfigurationCreator::create_fallback_configuration() const
 {
-	return new NativeFallbackConfiguration;
+	return basic::resource_manager::FallbackConfigurationOP( new NativeFallbackConfiguration );
 }
 
 std::string

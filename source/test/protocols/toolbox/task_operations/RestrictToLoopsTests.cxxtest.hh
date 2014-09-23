@@ -52,15 +52,15 @@ public:
 	void setUp() {
 		protocols_init();
 		core::pose::make_pose_from_sequence(pose_, "AAAAAAAAA", "fa_standard");
-		loops_ = new Loops; loops_->add_loop(2, 4); loops_->add_loop(6, 8);
+		loops_ = LoopsOP( new Loops ); loops_->add_loop(2, 4); loops_->add_loop(6, 8);
 	}
 
 	void test_copy_constructor() {
-		RestrictToLoopsOP restrict_to_loops = new RestrictToLoops;
+		RestrictToLoopsOP restrict_to_loops( new RestrictToLoops );
 		restrict_to_loops->set_design_loop(true);
 		restrict_to_loops->set_loops(loops_);
 
-		RestrictToLoopsOP clone = new RestrictToLoops(*restrict_to_loops);
+		RestrictToLoopsOP clone( new RestrictToLoops(*restrict_to_loops) );
 		restrict_to_loops->set_design_loop(false);
 		restrict_to_loops->set_loops(NULL);
 
@@ -72,14 +72,14 @@ public:
 	}
 
 	void test_set_loops() {
-		RestrictToLoopsOP restrict_to_loops = new RestrictToLoops;
+		RestrictToLoopsOP restrict_to_loops( new RestrictToLoops );
 		restrict_to_loops->set_loops(loops_);
 
 		test_task_operation(restrict_to_loops, pose_, "011101110", "000000000");
 	}
 
 	void test_set_loops_from_file() {
-		RestrictToLoopsOP restrict_to_loops = new RestrictToLoops;
+		RestrictToLoopsOP restrict_to_loops( new RestrictToLoops );
 		restrict_to_loops->set_loops_from_file(
 				"protocols/toolbox/task_operations/loops.txt");
 
@@ -87,7 +87,7 @@ public:
 	}
 
 	void test_set_design_loops() {
-		RestrictToLoopsOP restrict_to_loops = new RestrictToLoops;
+		RestrictToLoopsOP restrict_to_loops( new RestrictToLoops );
 		restrict_to_loops->set_design_loop(true);
 		restrict_to_loops->set_loops(loops_);
 

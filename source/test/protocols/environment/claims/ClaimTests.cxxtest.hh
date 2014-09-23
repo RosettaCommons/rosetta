@@ -72,11 +72,11 @@ public:
     protocols::environment::EnvironmentOP env_op( new protocols::environment::Environment( "env" ) );
     protocols::environment::Environment & env = *env_op;
 
-    TorsionClaimOP claim = new TorsionClaim( NULL, core::environment::LocalPosition( "BASE", SEQPOS ) );
+    TorsionClaimOP claim( new TorsionClaim( NULL, core::environment::LocalPosition( "BASE", SEQPOS ) ) );
     claim->strength( CAN_CONTROL, DOES_NOT_CONTROL );
     claim->claim_sidechain( false );
     claim->claim_backbone( true );
-    TesterOP claim_test = new Tester;
+    TesterOP claim_test( new Tester );
     claim_test->init( claim );
 
     env.register_mover( claim_test );
@@ -120,14 +120,14 @@ public:
     protocols::environment::Environment & env = *env_op;
 
     LocalPositions envpos;
-    envpos.push_back( new LocalPosition( "BASE", SEQPOS1 ) );
-    envpos.push_back( new LocalPosition( "BASE", SEQPOS2 ) );
+    envpos.push_back( utility::pointer::shared_ptr<class core::environment::LocalPosition>( new LocalPosition( "BASE", SEQPOS1 ) ) );
+    envpos.push_back( utility::pointer::shared_ptr<class core::environment::LocalPosition>( new LocalPosition( "BASE", SEQPOS2 ) ) );
 
-    TorsionClaimOP claim = new TorsionClaim( NULL, envpos );
+    TorsionClaimOP claim( new TorsionClaim( NULL, envpos ) );
     claim->strength( CAN_CONTROL, DOES_NOT_CONTROL );
     claim->claim_sidechain( false );
     claim->claim_backbone( true );
-    TesterOP claim_test = new Tester();
+    TesterOP claim_test( new Tester() );
     claim_test->init( claim );
 
     env.register_mover( claim_test );
@@ -174,11 +174,11 @@ public:
     protocols::environment::EnvironmentOP env_op( new protocols::environment::Environment( "env" ) );
     protocols::environment::Environment & env = *env_op;
 
-    TorsionClaimOP claim = new TorsionClaim( NULL, "BASE", std::make_pair( SEQPOS_START, SEQPOS_END ) );
+    TorsionClaimOP claim( new TorsionClaim( NULL, "BASE", std::make_pair( SEQPOS_START, SEQPOS_END ) ) );
     claim->strength( CAN_CONTROL, DOES_NOT_CONTROL );
     claim->claim_sidechain( false );
     claim->claim_backbone( true );
-    TesterOP claim_test = new Tester();
+    TesterOP claim_test( new Tester() );
     claim_test->init( claim );
 
     env.register_mover( claim_test );

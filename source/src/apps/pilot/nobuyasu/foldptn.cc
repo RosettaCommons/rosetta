@@ -124,11 +124,11 @@ public: // constructor/deconstructor
 		// read blueprint
 		ssinput_ = false;
 		if( option[ blue ].user() ) {
-			BluePrintOP blueprint = new BluePrint( option[ blue ]() );
-			ssinfo_ = new SS_Info2( blueprint->secstruct() );
+			BluePrintOP blueprint( new BluePrint( option[ blue ]() ) );
+			ssinfo_ = protocols::fldsgn::topology::SS_Info2_OP( new SS_Info2( blueprint->secstruct() ) );
 			ssinput_ = true;
 		} else {
-			ssinfo_ = new SS_Info2;
+			ssinfo_ = protocols::fldsgn::topology::SS_Info2_OP( new SS_Info2 );
 		}
 
 		// set scorefxn
@@ -163,7 +163,7 @@ public: // constructor/deconstructor
 	protocols::moves::MoverOP
 	fresh_instance() const
 	{
-		return new Foldptn;
+		return protocols::moves::MoverOP( new Foldptn );
 	}
 
 
@@ -187,13 +187,12 @@ public: // apply
 			ssinfo_->initialize( pose, dssp.get_dssp_secstruct() );
 		}
 
-		StrandPairingSetOP spairset
-			= new StrandPairingSet( protocols::fldsgn::topology::calc_strand_pairing_set( pose, ssinfo_ ) );
+		StrandPairingSetOP spairset( new StrandPairingSet( protocols::fldsgn::topology::calc_strand_pairing_set( pose, ssinfo_ ) ) );
 
 		SheetFoldType sfold = sm_.foldtype_from_spairs( spairset->name_wo_rgstr() );
 
 		// calc sheet
-		SheetSetOP sheet_set = new SheetSet( ssinfo_, spairset );
+		SheetSetOP sheet_set( new SheetSet( ssinfo_, spairset ) );
 		sheet_set->calc_geometry( ssinfo_ );
 
 		// calc bab
@@ -283,7 +282,7 @@ private: // data
 
 };
 
-typedef utility::pointer::owning_ptr< Foldptn > FoldptnOP;
+typedef utility::pointer::shared_ptr< Foldptn > FoldptnOP;
 
 
 int
@@ -297,7 +296,7 @@ main( int argc, char * argv [] )
 
 	// mover
 	protocols::moves::MoverOP protocol;
-	protocol = new Foldptn();
+	protocol = protocols::moves::MoverOP( new Foldptn() );
 
 	// run
 	protocols::jd2::JobDistributor::get_instance()->go( protocol );

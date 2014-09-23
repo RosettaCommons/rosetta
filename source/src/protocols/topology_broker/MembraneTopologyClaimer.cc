@@ -80,7 +80,7 @@ MembraneTopologyClaimer::set_pose_from_broker(core::pose::Pose& pose)
 core::kinematics::FoldTreeOP
 MembraneTopologyClaimer::get_fold_tree(core::pose::Pose& pose)
 {
-	return new core::kinematics::FoldTree(pose.fold_tree());
+	return core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(pose.fold_tree()) );
 }
 
 
@@ -96,9 +96,9 @@ MembraneTopologyClaimer::pre_process(core::pose::Pose& pose)
 	runtime_assert ( option[in::file::spanfile].user() );
 
 	std::string const spanfile = option[ in::file::spanfile ]();
-	core::scoring::MembraneTopologyOP topologyOP = new core::scoring::MembraneTopology;
+	core::scoring::MembraneTopologyOP topologyOP( new core::scoring::MembraneTopology );
 	pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, topologyOP );
-	core::scoring::MembraneTopology & topology=*( static_cast< core::scoring::MembraneTopology * >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY )() ));
+	core::scoring::MembraneTopology & topology=*( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
 	topology.initialize(spanfile);
 
 	if ( basic::options::option[basic::options::OptionKeys::membrane::fixed_membrane] ) {
@@ -122,14 +122,14 @@ MembraneTopologyClaimer::add_mover(
 		//core::Real move_pose_to_membrane_weight(1.0);
 		//random_mover.add_mover( move_pose_to_membrane, move_pose_to_membrane_weight);
 
-		moves::MoverOP membrane_center_perturbation_mover =	new rigid::MembraneCenterPerturbationMover;
+		moves::MoverOP membrane_center_perturbation_mover( new rigid::MembraneCenterPerturbationMover );
 		core::Real membrane_center_perturbation_weight(2.0);
 		random_mover.add_mover( membrane_center_perturbation_mover, membrane_center_perturbation_weight );
 
 		// TR << pose.fold_tree();
 		// if pose is symmetric or option has symmetry, no rotation trial
 		if ( !core::pose::symmetry::is_symmetric( pose ) ) {
-			moves::MoverOP membrane_normal_perturbation_mover =	new rigid::MembraneNormalPerturbationMover;
+			moves::MoverOP membrane_normal_perturbation_mover( new rigid::MembraneNormalPerturbationMover );
 			core::Real membrane_normal_perturbation_weight(5.0);
 			random_mover.add_mover( membrane_normal_perturbation_mover, membrane_normal_perturbation_weight);
 		}
@@ -153,16 +153,16 @@ MembraneTopologyClaimer::generate_claims( claims::DofClaims& dof_claims )
 	{
 		if(static_cast<int>(i) == pose.fold_tree().root())
 		{
-			dof_claims.push_back(new claims::LegacyRootClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT));
-			dof_claims.push_back(new claims::BBClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT));
+			dof_claims.push_back(utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::LegacyRootClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ));
+			dof_claims.push_back(utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::BBClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ));
 		}else if(pose.residue(i).is_virtual_residue() || pose.residue(i).name3() == "XXX" || pose.residue(i).name3() == "VRT")
 		{
-			dof_claims.push_back(new claims::BBClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT));
+			dof_claims.push_back(utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::BBClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ));
 		}
 	}
 	for(Size jump_num = 1; jump_num <= pose.fold_tree().num_jump(); ++jump_num)
 	{
-		dof_claims.push_back(new claims::JumpClaim(get_self_weak_ptr(),jump_array(1,jump_num),jump_array(2,jump_num),claims::DofClaim::CAN_INIT));
+		dof_claims.push_back(utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::JumpClaim(get_self_weak_ptr(),jump_array(1,jump_num),jump_array(2,jump_num),claims::DofClaim::CAN_INIT) ));
 	}
 }
 
@@ -175,9 +175,9 @@ void MembraneTopologyClaimer::initialize_dofs( core::pose::Pose& pose, claims::D
 	runtime_assert ( option[in::file::spanfile].user() );
 
 	std::string const spanfile = option[ in::file::spanfile ]();
-	core::scoring::MembraneTopologyOP topologyOP = new core::scoring::MembraneTopology;
+	core::scoring::MembraneTopologyOP topologyOP( new core::scoring::MembraneTopology );
 	pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, topologyOP );
-	core::scoring::MembraneTopology & topology=*( static_cast< core::scoring::MembraneTopology * >( 		pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY )() ));
+	core::scoring::MembraneTopology & topology=*( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
 	topology.initialize(spanfile);
 
 	if ( basic::options::option[basic::options::OptionKeys::membrane::fixed_membrane] ) {

@@ -29,8 +29,8 @@ namespace membrane {
 
 	/// @brief Mmebrane Base Potnetial Class
 	class MembraneData;
-	typedef utility::pointer::owning_ptr< MembraneData > MembraneDataOP;
-	typedef utility::pointer::owning_ptr< MembraneData const > MembraneDataCOP;
+	typedef utility::pointer::shared_ptr< MembraneData > MembraneDataOP;
+	typedef utility::pointer::shared_ptr< MembraneData const > MembraneDataCOP;
 	
 } // membrane
 } // scoring

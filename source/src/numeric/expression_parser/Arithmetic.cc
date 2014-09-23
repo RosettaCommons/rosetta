@@ -340,7 +340,7 @@ void ArithmeticScanner::add_function(
 TokenSetOP
 ArithmeticScanner::scan( std::string const & input_string )
 {
-	TokenSetOP tokens = new TokenSet;
+	TokenSetOP tokens( new TokenSet );
 	Size pos_token_begin( 0 ), pos_curr( 0 );
 	bool scanning_literal = false;
 	while ( pos_curr <= input_string.size() ) {
@@ -406,16 +406,16 @@ ArithmeticScanner::scan( std::string const & input_string )
 			scanning_literal = false;
 
 			if ( input_string[ pos_curr ] == '(' ) {
-			   tokens->append( new SimpleToken( LEFT_PAREN ) );
+			   tokens->append( TokenCOP( new SimpleToken( LEFT_PAREN ) ) );
 				++pos_token_begin;
 			} else if ( input_string[ pos_curr ] == ')' ) {
-			   tokens->append( new SimpleToken( RIGHT_PAREN ) );
+			   tokens->append( TokenCOP( new SimpleToken( RIGHT_PAREN ) ) );
 				++pos_token_begin;
 			} else if ( input_string[ pos_curr ] == ',' ) {
-			   tokens->append( new SimpleToken( COMMA ) );
+			   tokens->append( TokenCOP( new SimpleToken( COMMA ) ) );
 				++pos_token_begin;
 			} else if ( input_string[ pos_curr ] == '+' ) {
-			   tokens->append( new SimpleToken( PLUS_SYMBOL ) );
+			   tokens->append( TokenCOP( new SimpleToken( PLUS_SYMBOL ) ) );
 				++pos_token_begin;
 			} else if ( input_string[ pos_curr ] == '-' ) {
 				if ( pos_curr + 1 < input_string.size() &&
@@ -423,14 +423,14 @@ ArithmeticScanner::scan( std::string const & input_string )
 					scanning_literal = true;
 					pos_token_begin = pos_curr;
 				} else {
-					tokens->append( new SimpleToken( SUBTRACT_SYMBOL ));
+					tokens->append( TokenCOP( new SimpleToken( SUBTRACT_SYMBOL ) ));
 					++pos_token_begin;
 				}
 			} else if (input_string[ pos_curr ] == '*' ) {
-			   tokens->append( new SimpleToken( MULTIPLY_SYMBOL ) );
+			   tokens->append( TokenCOP( new SimpleToken( MULTIPLY_SYMBOL ) ) );
 				++pos_token_begin;
 			} else if (input_string[ pos_curr ] == '/' ) {
-			   tokens->append( new SimpleToken( DIVIDE_SYMBOL ) );
+			   tokens->append( TokenCOP( new SimpleToken( DIVIDE_SYMBOL ) ) );
 				++pos_token_begin;
 			} else if ( is_numeral( input_string[ pos_curr ] )) {
 				scanning_literal = true;
@@ -490,7 +490,7 @@ ArithmeticScanner::scan_literal( std::string const & input_string ) const
 		}
 	}
 	numeric::Real value = utility::from_string( input_string, numeric::Real( 0.0 ) );
-	return new LiteralToken( value );
+	return LiteralTokenOP( new LiteralToken( value ) );
 }
 
 TokenOP
@@ -514,11 +514,11 @@ ArithmeticScanner::scan_identifier( std::string const & input_string ) const
 
 	/// try inserting as a variable
 	if ( variables_.find( input_string ) != variables_.end() ) {
-		return new VariableToken( input_string );
+		return TokenOP( new VariableToken( input_string ) );
 	}
 	/// ok -- now try inserting as a function
 	if ( functions_.find( input_string ) != functions_.end() ) {
-		return new FunctionToken( input_string, functions_.find( input_string )->second );
+		return TokenOP( new FunctionToken( input_string, functions_.find( input_string )->second ) );
 	}
 
 	log_error();
@@ -577,10 +577,10 @@ ArithmeticASTExpression::parse( TokenSet & tokens )
 	}
 
 	//std::cout << "ASTExpression " << token_type_name( tokens.top()->type() );
-	ArithmeticASTTermOP child1 = new ArithmeticASTTerm;
+	ArithmeticASTTermOP child1( new ArithmeticASTTerm );
 	child1->parse( tokens );
 	children_.push_back( child1 );
-	ArithmeticASTRestExpressionOP child2 = new ArithmeticASTRestExpression;
+	ArithmeticASTRestExpressionOP child2( new ArithmeticASTRestExpression );
 	child2->parse( tokens );
 	children_.push_back( child2 );
 }
@@ -622,7 +622,7 @@ ArithmeticASTFunction::parse( TokenSet & tokens )
 			utility_exit_with_message( "Error in ArithmeticASTFunction parse: non function input!" );
 		}
 		TokenCOP toptoken = tokens.top();
-		function_ = FunctionTokenCOP( dynamic_cast< FunctionToken const * > (toptoken()) );
+		function_ = FunctionTokenCOP( utility::pointer::dynamic_pointer_cast< numeric::expression_parser::FunctionToken const > ( toptoken ) );
 		if ( ! function_ ) {
 			utility_exit_with_message( "Error.  Dynamic cast from token claiming to be FUNCTION type failed" );
 		}
@@ -641,7 +641,7 @@ ArithmeticASTFunction::parse( TokenSet & tokens )
 		tokens.pop();
 
 		for ( Size ii = 1; ii < func_nargs; ++ii ) {
-			ArithmeticASTExpressionOP exp = new ArithmeticASTExpression;
+			ArithmeticASTExpressionOP exp( new ArithmeticASTExpression );
 			exp->parse( tokens );
 			if ( tokens.top()->type() != COMMA ) {
 			   tokens.log_error();
@@ -653,7 +653,7 @@ ArithmeticASTFunction::parse( TokenSet & tokens )
 
 			children_.push_back( exp );
 		}
-		ArithmeticASTExpressionOP exp = new ArithmeticASTExpression;
+		ArithmeticASTExpressionOP exp( new ArithmeticASTExpression );
 		exp->parse( tokens );
 		children_.push_back( exp );
 		if ( tokens.top()->type() != RIGHT_PAREN ) {
@@ -699,10 +699,10 @@ ArithmeticASTTerm::parse( TokenSet & tokens )
 		tokens.log_error();
 		utility_exit_with_message("Error parsing ArithmeticASTTerm.  Empty token list!" );
 	}
-	ArithmeticASTFactorOP factor = new ArithmeticASTFactor;
+	ArithmeticASTFactorOP factor( new ArithmeticASTFactor );
 	factor->parse( tokens );
 	children_.push_back( factor );
-	ArithmeticASTRestTermOP rest_term = new ArithmeticASTRestTerm;
+	ArithmeticASTRestTermOP rest_term( new ArithmeticASTRestTerm );
 	rest_term->parse( tokens );
 	children_.push_back( rest_term );
 }
@@ -732,15 +732,15 @@ ArithmeticASTFactor::parse( TokenSet & tokens )
 {
 	TokenType toptype = tokens.top()->type();
 	if ( toptype == FUNCTION ) {
-		ArithmeticASTFunctionOP func = new ArithmeticASTFunction;
+		ArithmeticASTFunctionOP func( new ArithmeticASTFunction );
 		func->parse( tokens );
 		child_ = func;
 	} else if ( toptype == VARIABLE || toptype == LITERAL ) {
-		ArithmeticASTValueOP val = new ArithmeticASTValue;
+		ArithmeticASTValueOP val( new ArithmeticASTValue );
 		val->parse( tokens );
 		child_ = val;
 	} else if ( toptype == LEFT_PAREN ) {
-		ArithmeticASTExpressionOP exp = new ArithmeticASTExpression;
+		ArithmeticASTExpressionOP exp( new ArithmeticASTExpression );
 		tokens.pop();
 		exp->parse( tokens );
 		child_ = exp;
@@ -786,14 +786,14 @@ ArithmeticASTValue::parse( TokenSet & tokens )
 	TokenType toptoken = tokens.top()->type();
 	if ( toptoken == VARIABLE ) {
 		is_literal_ = false;
-		VariableTokenCOP vartok = VariableTokenCOP( dynamic_cast< VariableToken const * > ( tokens.top()() ) );
+		VariableTokenCOP vartok = VariableTokenCOP( utility::pointer::dynamic_pointer_cast< numeric::expression_parser::VariableToken const > ( tokens.top() ) );
 		if ( vartok->name() == "UNASSIGNED_VARIABLE_NAME" ) {
 			utility_exit_with_message( "Illegal variable name in ArithmeticASTValue -- UNASSIGNED_VARIABLE_NAME is a reserved string" );
 		}
 		variable_name_ = vartok->name();
 		tokens.pop();
 	} else if ( toptoken == LITERAL ) {
-		LiteralTokenCOP littok = LiteralTokenCOP( dynamic_cast< LiteralToken const * > ( tokens.top()() ) );
+		LiteralTokenCOP littok = LiteralTokenCOP( utility::pointer::dynamic_pointer_cast< numeric::expression_parser::LiteralToken const > ( tokens.top() ) );
 		literal_value_ = littok->value();
 		is_literal_ = true;
 		tokens.pop();
@@ -846,10 +846,10 @@ ArithmeticASTRestTerm::parse( TokenSet & tokens )
 	if ( toptoken == MULTIPLY_SYMBOL || toptoken == DIVIDE_SYMBOL ) {
 		rest_term_token_ = toptoken;
 		tokens.pop();
-		ArithmeticASTFactorOP factor = new ArithmeticASTFactor;
+		ArithmeticASTFactorOP factor( new ArithmeticASTFactor );
 		factor->parse( tokens );
 		children_.push_back( factor );
-		ArithmeticASTRestTermOP restterm = new ArithmeticASTRestTerm;
+		ArithmeticASTRestTermOP restterm( new ArithmeticASTRestTerm );
 		restterm->parse( tokens );
 		children_.push_back( restterm );
 	}
@@ -901,10 +901,10 @@ ArithmeticASTRestExpression::parse( TokenSet & tokens )
 	if ( toptoken == PLUS_SYMBOL || toptoken == SUBTRACT_SYMBOL ) {
 		rest_expression_token_ = toptoken;
 		tokens.pop();
-		ArithmeticASTTermOP term = new ArithmeticASTTerm;
+		ArithmeticASTTermOP term( new ArithmeticASTTerm );
 		term->parse( tokens );
 		children_.push_back( term );
-		ArithmeticASTRestExpressionOP restexpr = new ArithmeticASTRestExpression;
+		ArithmeticASTRestExpressionOP restexpr( new ArithmeticASTRestExpression );
 		restexpr->parse( tokens );
 		children_.push_back( restexpr );
 	}
@@ -1160,10 +1160,10 @@ ExpressionCreator::visit( ArithmeticASTExpression const & node)
 
 	if ( expressions.size() == 1 ) {
 		last_constructed_expression_ = expressions[ 1 ];
-		semi_constructed_expression_ = 0;
+		semi_constructed_expression_.reset();
 	} else if ( expressions.size() == 2 ) {
 		last_constructed_expression_ = expressions[ 2 ];
-		semi_constructed_expression_ = 0;
+		semi_constructed_expression_.reset();
 	} else {
 		utility_exit_with_message( "Visited too many children of ArithmeticASTExpression.  Cannot proceed! #children= " +
 			utility::to_string( expressions.size() ) );
@@ -1205,7 +1205,7 @@ ExpressionCreator::visit( ArithmeticASTTerm const & node )
 
 	for ( std::list< ArithmeticASTNodeCOP >::const_iterator iter = node.children_begin(),
 			iter_end = node.children_end(); iter != iter_end; ++iter ) {
-		last_constructed_expression_ = 0; // in case the child doesn't zero this out?
+		last_constructed_expression_.reset(); // in case the child doesn't zero this out?
 		(*iter)->visit( *this );
 		if ( last_constructed_expression_ ) {
 			expressions.push_back( last_constructed_expression_ );
@@ -1214,10 +1214,10 @@ ExpressionCreator::visit( ArithmeticASTTerm const & node )
 	}
 	if ( expressions.size() == 1 ) {
 		last_constructed_expression_ = expressions[ 1 ];
-		semi_constructed_expression_ = 0;
+		semi_constructed_expression_.reset();
 	} else if ( expressions.size() == 2 ) {
 		last_constructed_expression_ = expressions[ 2 ];
-		semi_constructed_expression_ = 0;
+		semi_constructed_expression_.reset();
 	} else {
 		utility_exit_with_message( "Visited too many children of ArithmeticASTTerm.  Cannot proceed! #children= " +
 			utility::to_string( expressions.size() ) );
@@ -1234,7 +1234,7 @@ void
 ExpressionCreator::visit( ArithmeticASTValue const & node )
 {
 	if ( node.is_literal() ) {
-		last_constructed_expression_ = new LiteralExpression( node.literal_value() );
+		last_constructed_expression_ = ExpressionCOP( new LiteralExpression( node.literal_value() ) );
 	} else {
 		last_constructed_expression_ = handle_variable_expression( node );
 	}
@@ -1244,28 +1244,28 @@ void
 ExpressionCreator::visit( ArithmeticASTRestTerm const & node )
 {
 	if ( node.children_begin() == node.children_end() ) {
-		last_constructed_expression_ = 0;
-		semi_constructed_expression_ = 0;
+		last_constructed_expression_.reset();
+		semi_constructed_expression_.reset();
 	} else {
 		ExpressionCOP parents_semi_constructed_expression = semi_constructed_expression_;
 		ExpressionCOP my_completed_expression;
-		semi_constructed_expression_ = 0;
+		semi_constructed_expression_.reset();
 
 		utility::vector1< ExpressionCOP > expressions;
 		expressions.reserve( 2 );
 
 		for ( std::list< ArithmeticASTNodeCOP >::const_iterator iter = node.children_begin(),
 				iter_end = node.children_end(); iter != iter_end; ++iter ) {
-			last_constructed_expression_ = 0; // in case the child doesn't zero this out?
+			last_constructed_expression_.reset(); // in case the child doesn't zero this out?
 			(*iter)->visit( *this );
 			if ( last_constructed_expression_ ) {
 				expressions.push_back( last_constructed_expression_ );
 				if ( iter == node.children_begin()) {
 
 					if ( node.rest_term_token() == MULTIPLY_SYMBOL ) {
-						semi_constructed_expression_ = new MultiplyExpression( parents_semi_constructed_expression, last_constructed_expression_ );
+						semi_constructed_expression_ = ExpressionCOP( new MultiplyExpression( parents_semi_constructed_expression, last_constructed_expression_ ) );
 					} else if ( node.rest_term_token() == DIVIDE_SYMBOL ) {
-						semi_constructed_expression_ = new DivideExpression( parents_semi_constructed_expression, last_constructed_expression_ );
+						semi_constructed_expression_ = ExpressionCOP( new DivideExpression( parents_semi_constructed_expression, last_constructed_expression_ ) );
 					} else {
 						utility_exit_with_message( "Error visiting ArithmeticASTRestExpression: expected MULTIPLY_SYMBOL or DIVIDE_SYMBOL; got " + token_type_name( node.rest_term_token() ) );
 					}
@@ -1279,7 +1279,7 @@ ExpressionCreator::visit( ArithmeticASTRestTerm const & node )
 		} else if ( expressions.size() == 2 ) {
 			// last_constructed_expression_ is already current and was set by child
 			assert( last_constructed_expression_ );
-			semi_constructed_expression_ = 0;
+			semi_constructed_expression_.reset();
 		} else {
 			utility_exit_with_message( "Error in visiting children of ArithmeticASTRestTerm: too many children ("
 				+ utility::to_string( expressions.size() ) + ")" );
@@ -1291,27 +1291,27 @@ void
 ExpressionCreator::visit( ArithmeticASTRestExpression const & node )
 {
 	if ( node.children_begin() == node.children_end() ) {
-		last_constructed_expression_ = 0;
-		semi_constructed_expression_ = 0;
+		last_constructed_expression_.reset();
+		semi_constructed_expression_.reset();
 	} else {
 		ExpressionCOP parents_semi_constructed_expression = semi_constructed_expression_;
 		ExpressionCOP my_completed_expression;
-		semi_constructed_expression_ = 0;
+		semi_constructed_expression_.reset();
 
 		utility::vector1< ExpressionCOP > expressions;
 		expressions.reserve( 2 );
 
 		for ( std::list< ArithmeticASTNodeCOP >::const_iterator iter = node.children_begin(),
 				iter_end = node.children_end(); iter != iter_end; ++iter ) {
-			last_constructed_expression_ = 0; // in case the child doesn't zero this out?
+			last_constructed_expression_.reset(); // in case the child doesn't zero this out?
 			(*iter)->visit( *this );
 			if ( last_constructed_expression_ ) {
 				expressions.push_back( last_constructed_expression_ );
 				if ( iter == node.children_begin()) {
 					if ( node.rest_expression_token() == PLUS_SYMBOL ) {
-						semi_constructed_expression_ = new AddExpression( parents_semi_constructed_expression, last_constructed_expression_ );
+						semi_constructed_expression_ = ExpressionCOP( new AddExpression( parents_semi_constructed_expression, last_constructed_expression_ ) );
 					} else if ( node.rest_expression_token() == SUBTRACT_SYMBOL ) {
-						semi_constructed_expression_ = new SubtractExpression( parents_semi_constructed_expression, last_constructed_expression_ );
+						semi_constructed_expression_ = ExpressionCOP( new SubtractExpression( parents_semi_constructed_expression, last_constructed_expression_ ) );
 					} else {
 						utility_exit_with_message( "Error visiting ArithmeticASTRestTerm: expected PLUS_SYMBOL or SUBTRACT_SYMBOL; got " + token_type_name( node.rest_expression_token() ) );
 					}
@@ -1324,7 +1324,7 @@ ExpressionCreator::visit( ArithmeticASTRestExpression const & node )
 		} else if ( expressions.size() == 2 ) {
 			// last_constructed_expression_ is already current and was set by child
 			assert( last_constructed_expression_ );
-			semi_constructed_expression_ = 0;
+			semi_constructed_expression_.reset();
 		} else {
 			utility_exit_with_message( "Error in visiting children of ArithmeticASTRestExpression: too many children ("
 				+ utility::to_string( expressions.size() ) + ")" );
@@ -1342,8 +1342,8 @@ ExpressionCreator::visit( ArithmeticASTNode const & )
 ExpressionCOP
 ExpressionCreator::create_expression_tree( ArithmeticASTExpression const & expr )
 {
-	last_constructed_expression_ = 0;
-	semi_constructed_expression_ = 0;
+	last_constructed_expression_.reset();
+	semi_constructed_expression_.reset();
 	visit( expr );
 	return last_constructed_expression_;
 }
@@ -1370,19 +1370,19 @@ ExpressionCreator::handle_function_expression(
 			utility_exit_with_message( "Error constructing MaxExpression; Did not create 2 arguments, created "
 				+ utility::to_string( count_args ) + " argument" + (count_args == 1 ? "." : "s.") );
 		}
-		return new MaxExpression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new MaxExpression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "min" ) {
 		if ( count_args != 2 ) {
 			utility_exit_with_message( "Error constructing MinExpression; Did not create 2 arguments, created "
 				+ utility::to_string( count_args ) +" argument"+ (count_args == 1 ? "." : "s.") );
 		}
-		return new MinExpression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new MinExpression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "sqrt" ) {
 		if ( count_args != 1 ) {
 			utility_exit_with_message( "Error constructing SquarerootExpression; Did not create 1 arguments, created "
 				+ utility::to_string( count_args ) +" arguments." );
 		}
-		return new SquarerootExpression( args[ 1 ] );
+		return ExpressionCOP( new SquarerootExpression( args[ 1 ] ) );
 	}
 
 	return 0;
@@ -1408,7 +1408,7 @@ SimpleExpressionCreator::add_variable( std::string const & varname )
 	if ( variables_.find( varname ) != variables_.end() ) {
 		utility_exit_with_message( "Error adding variable: '" + varname + "'; already present in variables_ map." );
 	}
-	variables_[ varname ] = new VariableExpression( varname );
+	variables_[ varname ] = utility::pointer::shared_ptr<class numeric::expression_parser::VariableExpression>( new VariableExpression( varname ) );
 }
 
 
@@ -1462,28 +1462,28 @@ BooleanExpressionCreator::handle_function_expression(
 	std::string const fname = function->name();
 	if ( fname == "EQUALS" ) {
 		assert( args.size() == 2 );
-		return new EqualsExpression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new EqualsExpression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "GT" ) {
 		assert( args.size() == 2 );
-		return new GT_Expression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new GT_Expression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "GTE" ) {
 		assert( args.size() == 2 );
-		return new GTE_Expression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new GTE_Expression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "LT" ) {
 		assert( args.size() == 2 );
-		return new LT_Expression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new LT_Expression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "LTE" ) {
 		assert( args.size() == 2 );
-		return new LTE_Expression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new LTE_Expression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname ==  "AND" ) {
 		assert( args.size() == 2 );
-		return new AndExpression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new AndExpression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "OR" ) {
 		assert( args.size() == 2 );
-		return new OrExpression( args[ 1 ], args[ 2 ] );
+		return ExpressionCOP( new OrExpression( args[ 1 ], args[ 2 ] ) );
 	} else if ( fname == "NOT" ) {
 		assert( args.size() == 1 );
-		return new NotExpression( args[ 1 ] );
+		return ExpressionCOP( new NotExpression( args[ 1 ] ) );
 	} else {
 		utility_exit_with_message( "Unrecognized function name in BooleanExpressionCreator: '" + fname + "'" );
 		return 0;
@@ -1558,7 +1558,7 @@ ExpressionCOP
 VariableExpression::differentiate( std::string const & varname ) const
 {
 	if ( name_ == varname ) {
-		return new LiteralExpression( 1.0 );
+		return ExpressionCOP( new LiteralExpression( 1.0 ) );
 	}
 	return 0;
 }
@@ -1572,7 +1572,7 @@ VariableExpression::active_variables() const
 }
 
 
-UnaryExpression::UnaryExpression() : ex_( 0 ) {}
+UnaryExpression::UnaryExpression() : ex_( /* 0 */ ) {}
 UnaryExpression::~UnaryExpression() {}
 
 UnaryExpression::UnaryExpression( ExpressionCOP ex ) : ex_( ex ) {}
@@ -1595,7 +1595,7 @@ UnaryExpression::active_variables() const
 }
 
 
-BinaryExpression::BinaryExpression() : e1_( 0 ), e2_( 0 ) {}
+BinaryExpression::BinaryExpression() : e1_( /* 0 */ ), e2_( 0 ) {}
 BinaryExpression::~BinaryExpression() {}
 BinaryExpression::BinaryExpression( ExpressionCOP e1, ExpressionCOP e2 ) : e1_( e1 ), e2_( e2 ) {}
 
@@ -1646,11 +1646,11 @@ SquarerootExpression::differentiate( std::string const & varname ) const
 {
 	ExpressionCOP dex_dvar = ex()->differentiate( varname );
 	if ( dex_dvar ) {
-		LiteralExpressionOP onehalf = new LiteralExpression( 0.5 );
+		LiteralExpressionOP onehalf( new LiteralExpression( 0.5 ) );
 		//LiteralExpressionOP one = new LiteralExpression( 1.0 );
-		SquarerootExpressionOP sqrt = new SquarerootExpression( ex() );
-		DivideExpressionOP invsqrt = new DivideExpression( dex_dvar, sqrt );
-		MultiplyExpressionOP derivative = new MultiplyExpression( onehalf, invsqrt );
+		SquarerootExpressionOP sqrt( new SquarerootExpression( ex() ) );
+		DivideExpressionOP invsqrt( new DivideExpression( dex_dvar, sqrt ) );
+		MultiplyExpressionOP derivative( new MultiplyExpression( onehalf, invsqrt ) );
 		return derivative;
 	}
 	return 0;
@@ -1676,8 +1676,8 @@ AbsoluteValueExpression::differentiate( std::string const & varname ) const
 	if (  (*ex())() > 0 ) {
 		return dex_dvar;
 	} else {
-		LiteralExpressionOP negone = new LiteralExpression( -1 );
-		return new MultiplyExpression( negone, dex_dvar );
+		LiteralExpressionOP negone( new LiteralExpression( -1 ) );
+		return ExpressionCOP( new MultiplyExpression( negone, dex_dvar ) );
 	}
 }
 
@@ -1700,7 +1700,7 @@ AddExpression::differentiate( std::string const & varname ) const
 	if ( ! de1 && ! de2 ) {
 		return 0;
 	} else if ( de1 && de2 ) {
-		return new AddExpression( de1, de2 );
+		return ExpressionCOP( new AddExpression( de1, de2 ) );
 	} else if ( de1 ) {
 		return de1;
 	} else {
@@ -1728,12 +1728,12 @@ SubtractExpression::differentiate( std::string const & varname ) const
 	if ( ! de1 && ! de2 ) {
 		return 0;
 	} else if ( de1 && de2 ) {
-		return new SubtractExpression( de1, de2 );
+		return ExpressionCOP( new SubtractExpression( de1, de2 ) );
 	} else if ( de1 ) {
 		return de1;
 	} else {
-		LiteralExpressionCOP negone = new LiteralExpression( -1 );
-		return new MultiplyExpression( negone, de2 );
+		LiteralExpressionCOP negone( new LiteralExpression( -1 ) );
+		return ExpressionCOP( new MultiplyExpression( negone, de2 ) );
 	}
 
 }
@@ -1757,13 +1757,13 @@ MultiplyExpression::differentiate( std::string const & varname ) const
 	if ( ! de1 && ! de2 ) {
 		return 0;
 	} else if ( de1 && de2 ) {
-		ExpressionCOP a = new MultiplyExpression( de1, e2() );
-		ExpressionCOP b = new MultiplyExpression( e1(), de2 );
-		return new AddExpression( a, b );
+		ExpressionCOP a( new MultiplyExpression( de1, e2() ) );
+		ExpressionCOP b( new MultiplyExpression( e1(), de2 ) );
+		return ExpressionCOP( new AddExpression( a, b ) );
 	} else if ( de1 ) {
-		return new MultiplyExpression( de1, e2() );
+		return ExpressionCOP( new MultiplyExpression( de1, e2() ) );
 	} else {
-		return new MultiplyExpression( de2, e1() );
+		return ExpressionCOP( new MultiplyExpression( de2, e1() ) );
 	}
 
 }
@@ -1787,19 +1787,19 @@ DivideExpression::differentiate( std::string const & varname ) const
 	if ( ! de1 && ! de2 ) {
 		return 0;
 	} else if ( de1 && de2 ) {
-		MultiplyExpressionOP num1 = new MultiplyExpression( de1, e2() );
-		MultiplyExpressionOP num2 = new MultiplyExpression( de2, e1() );
-		SubtractExpressionOP diff = new SubtractExpression( num1, num2 );
-		MultiplyExpressionOP sqr  = new MultiplyExpression( e2(), e2() );
-		return new DivideExpression( diff, sqr );
+		MultiplyExpressionOP num1( new MultiplyExpression( de1, e2() ) );
+		MultiplyExpressionOP num2( new MultiplyExpression( de2, e1() ) );
+		SubtractExpressionOP diff( new SubtractExpression( num1, num2 ) );
+		MultiplyExpressionOP sqr( new MultiplyExpression( e2(), e2() ) );
+		return ExpressionCOP( new DivideExpression( diff, sqr ) );
 	} else if ( de1 ) {
-		return new DivideExpression( de1, e2() );
+		return ExpressionCOP( new DivideExpression( de1, e2() ) );
 	} else {
-		LiteralExpressionOP negone = new LiteralExpression( -1.0 );
-		MultiplyExpressionOP de2_e1 = new MultiplyExpression( de2, e1() );
-		MultiplyExpressionOP num   = new MultiplyExpression( negone, de2_e1 );
-		MultiplyExpressionOP sqr   = new MultiplyExpression( e2(), e2() );
-		return new DivideExpression( num, sqr );
+		LiteralExpressionOP negone( new LiteralExpression( -1.0 ) );
+		MultiplyExpressionOP de2_e1( new MultiplyExpression( de2, e1() ) );
+		MultiplyExpressionOP num( new MultiplyExpression( negone, de2_e1 ) );
+		MultiplyExpressionOP sqr( new MultiplyExpression( e2(), e2() ) );
+		return ExpressionCOP( new DivideExpression( num, sqr ) );
 	}
 
 }
@@ -1824,10 +1824,10 @@ MaxExpression::differentiate( std::string const & varname ) const
 		return 0;
 	}
 
-	if ( de1 == 0 ) de1 = new LiteralExpression( 0.0 );
-	if ( de2 == 0 ) de2 = new LiteralExpression( 0.0 );
+	if ( de1 == 0 ) de1 = ExpressionCOP( new LiteralExpression( 0.0 ) );
+	if ( de2 == 0 ) de2 = ExpressionCOP( new LiteralExpression( 0.0 ) );
 
-	return new MetaMaxExpression( e1(), e2(), de1, de2 );
+	return ExpressionCOP( new MetaMaxExpression( e1(), e2(), de1, de2 ) );
 
 }
 
@@ -1858,10 +1858,10 @@ MinExpression::differentiate( std::string const & varname ) const
 		return 0;
 	}
 
-	if ( de1 == 0 ) de1 = new LiteralExpression( 0.0 );
-	if ( de2 == 0 ) de2 = new LiteralExpression( 0.0 );
+	if ( de1 == 0 ) de1 = ExpressionCOP( new LiteralExpression( 0.0 ) );
+	if ( de2 == 0 ) de2 = ExpressionCOP( new LiteralExpression( 0.0 ) );
 
-	return new MetaMinExpression( e1(), e2(), de1, de2 );
+	return ExpressionCOP( new MetaMinExpression( e1(), e2(), de1, de2 ) );
 
 }
 
@@ -1899,9 +1899,9 @@ MetaMaxExpression::differentiate( std::string const & varname ) const
 
 	if ( ! dee1 && ! dee2 ) return 0;
 
-	if ( ! dee1 ) dee1 = new LiteralExpression( 0.0 );
-	if ( ! dee2 ) dee2 = new LiteralExpression( 0.0 );
-	return new MetaMaxExpression( e1_, e2_, dee1, dee2 );
+	if ( ! dee1 ) dee1 = ExpressionCOP( new LiteralExpression( 0.0 ) );
+	if ( ! dee2 ) dee2 = ExpressionCOP( new LiteralExpression( 0.0 ) );
+	return ExpressionCOP( new MetaMaxExpression( e1_, e2_, dee1, dee2 ) );
 
 }
 
@@ -1938,9 +1938,9 @@ MetaMinExpression::differentiate( std::string const & varname ) const
 
 	if ( ! dee1 && ! dee2 ) return 0;
 
-	if ( ! dee1 ) dee1 = new LiteralExpression( 0.0 );
-	if ( ! dee2 ) dee2 = new LiteralExpression( 0.0 );
-	return new MetaMinExpression( e1_, e2_, dee1, dee2 );
+	if ( ! dee1 ) dee1 = ExpressionCOP( new LiteralExpression( 0.0 ) );
+	if ( ! dee2 ) dee2 = ExpressionCOP( new LiteralExpression( 0.0 ) );
+	return ExpressionCOP( new MetaMinExpression( e1_, e2_, dee1, dee2 ) );
 
 }
 

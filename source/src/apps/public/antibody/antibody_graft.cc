@@ -50,7 +50,7 @@ main( int argc, char * argv [] )
 		devel::init(argc, argv);
 
 
-		GraftCDRLoopsProtocolOP abm = new GraftCDRLoopsProtocol();
+		GraftCDRLoopsProtocolOP abm( new GraftCDRLoopsProtocol() );
     TR<<*abm<<std::endl;
 		//    exit(-1);
 

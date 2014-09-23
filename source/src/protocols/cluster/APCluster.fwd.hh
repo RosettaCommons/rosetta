@@ -23,8 +23,8 @@ namespace cluster {
 
 
 class APCluster; // fwd declaration
-typedef utility::pointer::owning_ptr< APCluster > APClusterOP;
-typedef utility::pointer::owning_ptr< APCluster const > APClusterCOP;
+typedef utility::pointer::shared_ptr< APCluster > APClusterOP;
+typedef utility::pointer::shared_ptr< APCluster const > APClusterCOP;
 
 
 } // namespace cluster

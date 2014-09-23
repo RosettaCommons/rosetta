@@ -101,7 +101,7 @@ RelaxProtocolBase::RelaxProtocolBase( core::scoring::ScoreFunctionOP score_in ) 
 	parent( "RelaxProtocol" ),
 	min_type_("dfpmin_armijo_nonmonotone"),
 	scorefxn_( score_in ),
-	task_factory_(NULL)
+	task_factory_(/* NULL */)
 {
 	set_defaults();
 }
@@ -109,8 +109,8 @@ RelaxProtocolBase::RelaxProtocolBase( core::scoring::ScoreFunctionOP score_in ) 
 RelaxProtocolBase::RelaxProtocolBase( std::string const & movername ) :
 	parent( movername ),
 	min_type_("dfpmin_armijo_nonmonotone"),
-	scorefxn_( 0 ),
-	task_factory_(NULL)
+	scorefxn_( /* 0 */ ),
+	task_factory_(/* NULL */)
 {
 	set_defaults();
 }
@@ -119,7 +119,7 @@ RelaxProtocolBase::RelaxProtocolBase( std::string const & movername, core::scori
 	parent( movername ),
 	min_type_("dfpmin_armijo_nonmonotone"),
 	scorefxn_(score_in ),
-	task_factory_(NULL)
+	task_factory_(/* NULL */)
 {
 	set_defaults();
 }
@@ -280,7 +280,7 @@ void RelaxProtocolBase::set_default_coordinate_settings(){
 void RelaxProtocolBase::set_default_movemap(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	movemap_ = new core::kinematics::MoveMap();
+	movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap() );
 
 	if (option[ OptionKeys::in::file::movemap ].user()) {
 
@@ -366,9 +366,9 @@ void RelaxProtocolBase::register_options()
 		task->initialize_from_command_line().restrict_to_repacking().restrict_to_residues(allow_repack);
 		task->or_include_current( true );
 		if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )  {
-			full_repack = new simple_moves::symmetry::SymPackRotamersMover( disulf_score_only, task );
+			full_repack = protocols::simple_moves::PackRotamersMoverOP( new simple_moves::symmetry::SymPackRotamersMover( disulf_score_only, task ) );
 		} else {
-			full_repack = new protocols::simple_moves::PackRotamersMover( disulf_score_only, task );
+			full_repack = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( disulf_score_only, task ) );
 		}
 
 		( *disulf_score_only )( pose );
@@ -406,7 +406,7 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 		}
 
 		if( constrain_relax_segments_ ){
-			coord_cst_mover.set_loop_segments( new protocols::loops::Loops(  option[ OptionKeys::relax::constrain_relax_segments ]() ) );
+			coord_cst_mover.set_loop_segments( protocols::loops::LoopsCOP( new protocols::loops::Loops(  option[ OptionKeys::relax::constrain_relax_segments ]() ) ) );
 		}
 
 		//if -relax::coord_cst_width is given, the code instead uses _bounded_ constraints on
@@ -443,7 +443,7 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 			std::string const filename = cst_files( i_cst );
 			ConstraintSetOP user_csts
 				= ConstraintIO::get_instance()->read_constraints_new( filename,
-          new ConstraintSet, pose );
+          ConstraintSetOP( new ConstraintSet ), pose );
 			pose.constraint_set( user_csts );
 		}
 	} // if constrain_user_defined_

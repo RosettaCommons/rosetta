@@ -155,11 +155,11 @@ public:
 											 core::scoring::symmetry::SymmetricScoreFunctionOP scorefxn);
 
 	virtual MoverOP clone() const {
-		return new HDdesignMover( *this );
+		return MoverOP( new HDdesignMover( *this ) );
 	}
 
 	virtual	MoverOP	fresh_instance() const {
-		return new HDdesignMover;
+		return MoverOP( new HDdesignMover );
 	}
 	virtual
 	std::string
@@ -196,7 +196,7 @@ HDdesignMover::HDdesignMover() {
 	// variable definitions
 	scorefxn_a = core::scoring::get_score_function();
 	scorefxn_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_a );
-	tf_design_ = new TaskFactory();
+	tf_design_ = TaskFactoryOP( new TaskFactory() );
 	//movemap_ = new core::kinematics::MoveMap();
 	//options
 	ala_interface_ = option[ make_ala_interface];
@@ -226,14 +226,14 @@ void HDdesignMover::cloak_and_setup( pose::Pose & pose ){
 		zero_vector.push_back(0.0);
 		basic::options::option[ OptionKeys::symmetry::perturb_rigid_body_dofs ].value(zero_vector);
 		//setup apply
-		protocols::simple_moves::symmetry::SetupForSymmetryMoverOP setup_mover = new protocols::simple_moves::symmetry::SetupForSymmetryMover;
+		protocols::simple_moves::symmetry::SetupForSymmetryMoverOP setup_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
 		setup_mover->apply(pose);
 		//uncloak
 		basic::options::option[ OptionKeys::symmetry::perturb_rigid_body_dofs ].value(pert_mags);
 	}
 	else{
 		//setup apply
-		protocols::simple_moves::symmetry::SetupForSymmetryMoverOP setup_mover = new protocols::simple_moves::symmetry::SetupForSymmetryMover;
+		protocols::simple_moves::symmetry::SetupForSymmetryMoverOP setup_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
 		setup_mover->apply(pose);
 	}
 
@@ -251,7 +251,7 @@ void HDdesignMover::register_calculators(){
 	else{
 		CalculatorFactory::Instance().register_calculator(
 																											InterfaceNeighborDefinition_,
-																											new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator(chain1, chain2));
+																											PoseMetricCalculatorOP( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator(chain1, chain2) ));
 		//TR<<"Registering calculator " << InterfaceNeighborDefinition_ << std::endl;
 	}
 }//end register_calculators
@@ -261,23 +261,23 @@ void HDdesignMover::task_constraint_setup( pose::Pose & pose ){
 	//allowed_aas_[ chemical::aa_cys ] = false;
 	//task factory setup
 	tf_design_->clear();
-	tf_design_->push_back(  new InitializeFromCommandline() );
-	tf_design_->push_back( new operation::IncludeCurrent );
+	tf_design_->push_back(  TaskOperationCOP( new InitializeFromCommandline() ) );
+	tf_design_->push_back( TaskOperationCOP( new operation::IncludeCurrent ) );
 	//if using a resfile ignore all other task restrictions
 	if( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ){
 		TR << "Using resfile, ignoring all other task info" << std::endl;
-		tf_design_->push_back( new operation::ReadResfile() );
+		tf_design_->push_back( TaskOperationCOP( new operation::ReadResfile() ) );
 	}
 	else{
 		if( option[ disallow_res ].user() ){
 			TR << "Not allowing residues: " << disallow_res_ << " unless native" << std::endl;
-			DisallowIfNonnativeOP disallow_op = new DisallowIfNonnative();
+			DisallowIfNonnativeOP disallow_op( new DisallowIfNonnative() );
 			disallow_op->disallow_aas(disallow_res_);
 			tf_design_->push_back(disallow_op);
 		}
 
 		//restrict to interface
-		tf_design_->push_back( new protocols::toolbox::task_operations::RestrictToInterfaceOperation( InterfaceNeighborDefinition_ ) );
+		tf_design_->push_back( TaskOperationCOP( new protocols::toolbox::task_operations::RestrictToInterfaceOperation( InterfaceNeighborDefinition_ ) ) );
 	}
 
 
@@ -293,7 +293,7 @@ void HDdesignMover::task_constraint_setup( pose::Pose & pose ){
 // 		favor_native_constraints.clear();
 // 		}
 		for( core::Size i = 1; i <= pose.total_residue(); ++i){
-			ConstraintOP resconstraint = new ResidueTypeConstraint( pose, i, bonus );
+			ConstraintOP resconstraint( new ResidueTypeConstraint( pose, i, bonus ) );
 			favor_native_constraints.push_back( resconstraint );
 		}
 		//adds to pose and scorefxn
@@ -326,7 +326,7 @@ void HDdesignMover::sym_repack_minimize( pose::Pose & pose ){
 	TR<< "Fold tree for pose: \n" << pose.fold_tree() << std::endl;
 #endif
 
-	kinematics::MoveMapOP mm = new kinematics::MoveMap;
+	kinematics::MoveMapOP mm( new kinematics::MoveMap );
  	mm->set_bb( true ); mm->set_chi( true ); mm->set_jump( true );
 // 	make_symmetric_movemap( pose, *mm );
 
@@ -352,10 +352,10 @@ void HDdesignMover::sym_repack_minimize( pose::Pose & pose ){
 // 	}	//end the movemap creation
 
 
-	protocols::simple_moves::symmetry::SymMinMoverOP sym_minmover = new protocols::simple_moves::symmetry::SymMinMover(mm, scorefxn_, option[ OptionKeys::run::min_type ].value(), 0.001, true /*use_nblist*/ );
+	protocols::simple_moves::symmetry::SymMinMoverOP sym_minmover( new protocols::simple_moves::symmetry::SymMinMover(mm, scorefxn_, option[ OptionKeys::run::min_type ].value(), 0.001, true /*use_nblist*/ ) );
 
 	task_design_ = tf_design_->create_task_and_apply_taskoperations( pose );
-  protocols::simple_moves::symmetry::SymPackRotamersMoverOP sym_pack_design = new protocols::simple_moves::symmetry::SymPackRotamersMover(scorefxn_, task_design_);
+  protocols::simple_moves::symmetry::SymPackRotamersMoverOP sym_pack_design( new protocols::simple_moves::symmetry::SymPackRotamersMover(scorefxn_, task_design_) );
 
 	TR<< "Monomer total residues: "<< monomer_nres_ << " Repacked/Designed residues: "
 		<< task_design_->num_to_be_packed() / 2 << std::endl;
@@ -376,8 +376,8 @@ void HDdesignMover::sym_repack_minimize( pose::Pose & pose ){
 
 //mutate the interface to all alanine if needed
 void HDdesignMover::ala_interface(core::pose::Pose & pose ){
- 	build_ala_mover_ = new protocols::protein_interface_design::movers::BuildAlaPose( true, true, 8.0) ;
- 	get_sidechains_mover_=new protocols::protein_interface_design::movers::SaveAndRetrieveSidechains(pose);
+ 	build_ala_mover_ = protocols::protein_interface_design::movers::BuildAlaPoseOP( new protocols::protein_interface_design::movers::BuildAlaPose( true, true, 8.0) ) ;
+ 	get_sidechains_mover_ = protocols::protein_interface_design::movers::SaveAndRetrieveSidechainsOP( new protocols::protein_interface_design::movers::SaveAndRetrieveSidechains(pose) );
  	build_ala_mover_->apply( pose );
 }  //end ala _interface
 
@@ -486,7 +486,7 @@ void HDdesignMover::apply (pose::Pose & pose ) {
  	//Docking first unless skipped
 	if ( !skip_hd_docking_ ){
 		//using namespace core::scoring;
-		symmetric_docking::SymDockProtocolOP dock_mover = new symmetric_docking::SymDockProtocol;
+		symmetric_docking::SymDockProtocolOP dock_mover( new symmetric_docking::SymDockProtocol );
 		dock_mover->apply(pose);
 		scoring::ScoreFunctionOP dock_score_apple = scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
 		core::scoring::symmetry::SymmetricScoreFunctionOP sym_dock_score = core::scoring::symmetry::symmetrize_scorefunction( *dock_score_apple );
@@ -497,18 +497,18 @@ void HDdesignMover::apply (pose::Pose & pose ) {
 
 		//Symmetric dock messes something up when it does centroid mode, repack whole protein if need be
 		//if( !option[ OptionKeys::docking::docking_local_refine ]() ){
-		TaskFactoryOP  tf_nataa = new TaskFactory();
-		tf_nataa->push_back(  new InitializeFromCommandline() );
-		tf_nataa->push_back( new operation::IncludeCurrent );
+		TaskFactoryOP  tf_nataa( new TaskFactory() );
+		tf_nataa->push_back(  TaskOperationCOP( new InitializeFromCommandline() ) );
+		tf_nataa->push_back( TaskOperationCOP( new operation::IncludeCurrent ) );
 		//want to just repack the wt pose, NO design
-		RestrictResidueToRepackingOP repack_op = new RestrictResidueToRepacking();
+		RestrictResidueToRepackingOP repack_op( new RestrictResidueToRepacking() );
 		for( Size ii = 1; ii<= pose.n_residue(); ++ii) {
 			repack_op->include_residue( ii );
 		}
 		//fill task factory with these restrictions
 		tf_nataa->push_back( repack_op );
 		PackerTaskOP task_nataa = tf_nataa->create_task_and_apply_taskoperations( pose );
-		protocols::simple_moves::symmetry::SymPackRotamersMoverOP sym_pack_nataa = new protocols::simple_moves::symmetry::SymPackRotamersMover(scorefxn_, task_nataa);
+		protocols::simple_moves::symmetry::SymPackRotamersMoverOP sym_pack_nataa( new protocols::simple_moves::symmetry::SymPackRotamersMover(scorefxn_, task_nataa) );
 		sym_pack_nataa->apply( pose );
 		TR << "Default SCORE after all NATAA repack: " << (*scorefxn_)(pose) << std::endl;
 		//JobDistributor::get_instance()->job_outputter()->other_pose( job_me, pose, "nataarepack_");
@@ -530,9 +530,9 @@ void HDdesignMover::apply (pose::Pose & pose ) {
 	//JobDistributor::get_instance()->job_outputter()->other_pose( job_me, pose, "postpackmin_");
 
 	//final minimization step
-	kinematics::MoveMapOP mm = new kinematics::MoveMap;
+	kinematics::MoveMapOP mm( new kinematics::MoveMap );
  	mm->set_bb( true ); mm->set_chi( true ); mm->set_jump( true );
-	protocols::simple_moves::symmetry::SymMinMoverOP sym_minmover_final = new protocols::simple_moves::symmetry::SymMinMover( mm, scorefxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
+	protocols::simple_moves::symmetry::SymMinMoverOP sym_minmover_final( new protocols::simple_moves::symmetry::SymMinMover( mm, scorefxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ ) );
 	sym_minmover_final->apply(pose);
 	TR << "Final minimization  SCORE:" <<  (* scorefxn_ )(pose) << std::endl;
 
@@ -547,7 +547,7 @@ void HDdesignMover::apply (pose::Pose & pose ) {
  	}
 
 	//find ddg
-	protocols::simple_moves::ddGOP ddG_mover = new protocols::simple_moves::ddG( scorefxn_, 1 /*jump*/ /* , true */ ); //ddG autodetects symmetry now
+	protocols::simple_moves::ddGOP ddG_mover( new protocols::simple_moves::ddG( scorefxn_, 1 /*jump*/ /* , true */ ) ); //ddG autodetects symmetry now
 	ddG_mover->calculate(pose);
 	core::Real ddgvalue = ddG_mover->sum_ddG();
 	//some dirty filtering
@@ -591,7 +591,7 @@ main( int argc, char * argv [] )
   // init
   devel::init(argc, argv);
 
-  protocols::jd2::JobDistributor::get_instance()->go( new HDdesignMover );
+  protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new HDdesignMover ) );
 
   std::cout << "Done! -------------------------------"<< std::endl;
 	} catch ( utility::excn::EXCN_Base const & e ) {

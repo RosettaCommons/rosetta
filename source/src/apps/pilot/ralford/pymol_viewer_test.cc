@@ -83,25 +83,25 @@ public:
 		using namespace core::scoring; 
 		using namespace core::kinematics;
 		// Add a Membrane
-		AddMembraneMoverOP add_memb = new AddMembraneMover(); 
+		AddMembraneMoverOP add_memb( new AddMembraneMover() ); 
 		add_memb->apply( pose ); 
 
 		// Set the Initial Position of the Membrane
-		MembranePositionFromTopologyMoverOP init_memb = new MembranePositionFromTopologyMover();
+		MembranePositionFromTopologyMoverOP init_memb( new MembranePositionFromTopologyMover() );
 		init_memb->apply( pose ); 
 
 		ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function("fa_menv_smooth_2014");
 
 		TR << "Setting up a new movemap" << std::endl;
 		// Setup a MoveMap Object
-		MoveMapOP mm = new MoveMap(); 
+		MoveMapOP mm( new MoveMap() ); 
 		mm->set_bb( false ); 
 		mm->set_chi( false ); 
 		mm->set_jump( true ); 
 
-		MinMoverOP stage1_min = new MinMover( mm, sfxn, "lbfgs_armijo_nonmonotone", 0.1, false );
-		MinMoverOP stage2_min = new MinMover( mm, sfxn, "lbfgs_armijo_nonmonotone", 0.01, false );
-		MinMoverOP stage3_min = new MinMover( mm, sfxn, "lbfgs_armijo_nonmonotone", 0.001, false );
+		MinMoverOP stage1_min( new MinMover( mm, sfxn, "lbfgs_armijo_nonmonotone", 0.1, false ) );
+		MinMoverOP stage2_min( new MinMover( mm, sfxn, "lbfgs_armijo_nonmonotone", 0.01, false ) );
+		MinMoverOP stage3_min( new MinMover( mm, sfxn, "lbfgs_armijo_nonmonotone", 0.001, false ) );
 
 		stage1_min->apply( pose ); 
 		stage2_min->apply( pose );  
@@ -131,7 +131,7 @@ public:
 
 		TR << "Setting up a new movemap" << std::endl;
 		// Setup a MoveMap Object
-		MoveMapOP mm = new MoveMap(); 
+		MoveMapOP mm( new MoveMap() ); 
 		mm->set_bb_true_range( 1, 183 ); 
 		mm->set_chi( true ); 
 		mm->set_jump( true ); 
@@ -139,37 +139,37 @@ public:
 		// Reweight fa_rep to 0.2, repack, and minimize @ 0.1 tol
 		TR << "Running cycle 1 - low repulsive weight, pretty good tolerance..." << std::endl;
 		sfxn->set_weight( fa_rep, 0.2 ); 
-		PackRotamersMoverOP stage1_pack = new PackRotamersMover( sfxn, repack_task );
-		MinMoverOP stage1_min = new MinMover( mm, sfxn, "lbfgs_armijo_nonmonotone", 0.1, false ); 
+		PackRotamersMoverOP stage1_pack( new PackRotamersMover( sfxn, repack_task ) );
+		MinMoverOP stage1_min( new MinMover( mm, sfxn, "lbfgs_armijo_nonmonotone", 0.1, false ) ); 
 		stage1_pack->apply( pose ); 
 		stage1_min->apply( pose ); 
 
 		// Reweight fa_rep to 0.2, repack, and minimize @ 0.01 tol
 		sfxn->set_weight( fa_rep, 0.25 ); 
-		PackRotamersMoverOP stage2_pack = new PackRotamersMover( sfxn, repack_task );
-		MinMoverOP stage2_min = new MinMover( mm, sfxn, "lbfgs_armijo_nonmonotone", 0.01, false ); 
+		PackRotamersMoverOP stage2_pack( new PackRotamersMover( sfxn, repack_task ) );
+		MinMoverOP stage2_min( new MinMover( mm, sfxn, "lbfgs_armijo_nonmonotone", 0.01, false ) ); 
 		stage2_pack->apply( pose ); 
 		stage2_min->apply( pose ); 
 
 		// Reweight fa_rep to 0.2, repack, and minimize @ 0.001 tol
 		sfxn->set_weight( fa_rep, 0.55 ); 
-		PackRotamersMoverOP stage3_pack = new PackRotamersMover( sfxn, repack_task );
-		MinMoverOP stage3_min = new MinMover( mm, sfxn, "lbfgs_armijo_nonmonotone", 0.001, false ); 
+		PackRotamersMoverOP stage3_pack( new PackRotamersMover( sfxn, repack_task ) );
+		MinMoverOP stage3_min( new MinMover( mm, sfxn, "lbfgs_armijo_nonmonotone", 0.001, false ) ); 
 		stage3_pack->apply( pose ); 
 		stage3_min->apply( pose ); 
 
 		// Reweight fa_rep to 0.2, repack, and minimize @ 0.0001 tol
 		sfxn->set_weight( fa_rep, 1.0 ); 
-		PackRotamersMoverOP stage4_pack = new PackRotamersMover( sfxn, repack_task );
-		MinMoverOP stage4_min = new MinMover( mm, sfxn, "lbfgs_armijo_nonmonotone", 0.0001, false ); 
+		PackRotamersMoverOP stage4_pack( new PackRotamersMover( sfxn, repack_task ) );
+		MinMoverOP stage4_min( new MinMover( mm, sfxn, "lbfgs_armijo_nonmonotone", 0.0001, false ) ); 
 		stage4_pack->apply( pose ); 
 		stage4_min->apply( pose );
 
 	}
 };
 
-typedef utility::pointer::owning_ptr< MembraneViewMover > MembraneViewMoverOP;
-typedef utility::pointer::owning_ptr< MembraneViewMover const > MembraneViewMoverCOP; 
+typedef utility::pointer::shared_ptr< MembraneViewMover > MembraneViewMoverOP;
+typedef utility::pointer::shared_ptr< MembraneViewMover const > MembraneViewMoverCOP; 
 
 /// @brief Main method
 int
@@ -184,7 +184,7 @@ main( int argc, char * argv [] )
 		protocols::jd2::register_options();
 
 		// Minimize with mp
-		MembraneViewMoverOP mpview = new MembraneViewMover();
+		MembraneViewMoverOP mpview( new MembraneViewMover() );
 		protocols::jd2::JobDistributor::get_instance()->go( mpview );
 
 		return 0; 

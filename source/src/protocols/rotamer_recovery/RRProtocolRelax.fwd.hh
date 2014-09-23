@@ -21,8 +21,8 @@ namespace protocols{
 namespace rotamer_recovery{
 
 class RRProtocolRelax;
-typedef utility::pointer::owning_ptr< RRProtocolRelax > RRProtocolRelaxOP;
-typedef utility::pointer::owning_ptr< RRProtocolRelax const > RRProtocolRelaxCOP;
+typedef utility::pointer::shared_ptr< RRProtocolRelax > RRProtocolRelaxOP;
+typedef utility::pointer::shared_ptr< RRProtocolRelax const > RRProtocolRelaxCOP;
 
 } // namespace
 } // namespace

@@ -63,7 +63,7 @@ ComputeLigandRDFCreator::keyname() const
 
 protocols::moves::MoverOP
 ComputeLigandRDFCreator::create_mover() const {
-	return new ComputeLigandRDF;
+	return protocols::moves::MoverOP( new ComputeLigandRDF );
 }
 
 std::string
@@ -96,11 +96,11 @@ ComputeLigandRDF::ComputeLigandRDF(ComputeLigandRDF const & that) :
 }
 
 protocols::moves::MoverOP ComputeLigandRDF::clone() const {
-	return new ComputeLigandRDF( *this );
+	return protocols::moves::MoverOP( new ComputeLigandRDF( *this ) );
 }
 
 protocols::moves::MoverOP ComputeLigandRDF::fresh_instance() const {
-	return new ComputeLigandRDF;
+	return protocols::moves::MoverOP( new ComputeLigandRDF );
 }
 
 void ComputeLigandRDF::apply( core::pose::Pose & pose )

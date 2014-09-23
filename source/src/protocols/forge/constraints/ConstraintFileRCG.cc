@@ -43,7 +43,7 @@ ConstraintFileCstGeneratorCreator::keyname() const
 protocols::moves::MoverOP
 ConstraintFileCstGeneratorCreator::create_mover() const
 {
-	return new ConstraintFileRCG();
+	return protocols::moves::MoverOP( new ConstraintFileRCG() );
 }
 
 std::string
@@ -93,13 +93,13 @@ ConstraintFileRCG::get_name() const
 protocols::moves::MoverOP
 ConstraintFileRCG::fresh_instance() const
 {
-	return new ConstraintFileRCG();
+	return protocols::moves::MoverOP( new ConstraintFileRCG() );
 }
 
 protocols::moves::MoverOP
 ConstraintFileRCG::clone() const
 {
-	return new ConstraintFileRCG( *this );
+	return protocols::moves::MoverOP( new ConstraintFileRCG( *this ) );
 }
 
 /// @brief
@@ -117,7 +117,7 @@ ConstraintFileRCG::generate_remodel_constraints( Pose const & pose )
 	if ( filename_ == "" ) {
 		utility_exit_with_message( "ConstraintFileCstGenerator requires that a constraint filename be specified." );
 	}
-	ConstraintSetOP constraints = ConstraintIO::get_instance()->read_constraints( filename_, new ConstraintSet, pose );
+	ConstraintSetOP constraints = ConstraintIO::get_instance()->read_constraints( filename_, ConstraintSetOP( new ConstraintSet ), pose );
 	this->add_constraints( constraints->get_all_constraints() );
 } //generate constraints
 

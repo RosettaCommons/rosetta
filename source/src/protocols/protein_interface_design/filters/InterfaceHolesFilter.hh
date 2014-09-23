@@ -37,10 +37,10 @@ public:
 	}
 	bool apply( core::pose::Pose const & pose ) const;
 	protocols::filters::FilterOP clone() const {
-		return new InterfaceHolesFilter( *this );
+		return protocols::filters::FilterOP( new InterfaceHolesFilter( *this ) );
 	}
 	protocols::filters::FilterOP fresh_instance() const{
-		return new InterfaceHolesFilter();
+		return protocols::filters::FilterOP( new InterfaceHolesFilter() );
 	}
   InterfaceHolesFilter( InterfaceHolesFilter const & init ) :
 	//utility::pointer::ReferenceCount(),

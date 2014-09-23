@@ -39,7 +39,7 @@ LoadUnboundRotMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 LoadUnboundRotMoverCreator::create_mover() const {
-	return new LoadUnboundRotMover;
+	return protocols::moves::MoverOP( new LoadUnboundRotMover );
 }
 
 std::string
@@ -65,8 +65,8 @@ LoadUnboundRotMover::get_name() const {
 	return LoadUnboundRotMoverCreator::mover_name();
 }
 
-protocols::moves::MoverOP LoadUnboundRotMover::fresh_instance() const { return new LoadUnboundRotMover; }
-protocols::moves::MoverOP LoadUnboundRotMover::clone() const { return new LoadUnboundRotMover( *this ); }
+protocols::moves::MoverOP LoadUnboundRotMover::fresh_instance() const { return protocols::moves::MoverOP( new LoadUnboundRotMover ); }
+protocols::moves::MoverOP LoadUnboundRotMover::clone() const { return protocols::moves::MoverOP( new LoadUnboundRotMover( *this ) ); }
 
 ///@brief parse XML (specifically in the context of the parser/scripting scheme); it's a no-op
 void

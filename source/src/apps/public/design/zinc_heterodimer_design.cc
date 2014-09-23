@@ -326,7 +326,7 @@ main( int argc, char* argv[] )
 	basic::options::option[ basic::options::OptionKeys::in::file::s ].value(whole_name.name());
 	//combined.dump_scored_pdb("reread_partner1_metal_partner2.pdb", *score_fxn);
 
-	protocols::moves::MoverOP mover(new protocols::metal_interface::ZincHeterodimerMover( metal_site, partner1_to_metal, metal_to_partner2 ));
+	protocols::moves::MoverOP mover( new protocols::metal_interface::ZincHeterodimerMover( metal_site, partner1_to_metal, metal_to_partner2 ) );
 
 	protocols::jd2::JobDistributor::get_instance()->go(mover);
 

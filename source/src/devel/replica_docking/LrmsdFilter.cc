@@ -44,7 +44,7 @@ namespace devel {
 namespace replica_docking {
 
 protocols::filters::FilterOP
-LrmsdFilterCreator::create_filter() const { return new LrmsdFilter; }
+LrmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new LrmsdFilter ); }
 
 std::string
 LrmsdFilterCreator::keyname() const { return "Lrmsd"; }
@@ -65,7 +65,7 @@ LrmsdFilter::LrmsdFilter( core::Size const rb_jump,core::Real const lower_thresh
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	if ( option[ in::file::native ].user() ) {
-		core::pose::PoseOP native_pose = new core::pose::Pose();
+		core::pose::PoseOP native_pose( new core::pose::Pose() );
 		core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]);
  		native_pose_ = native_pose;
 	} else {
@@ -82,12 +82,12 @@ LrmsdFilter::~LrmsdFilter(){}
 
 protocols::filters::FilterOP
 LrmsdFilter::clone() const{
-	return new LrmsdFilter( *this );
+	return protocols::filters::FilterOP( new LrmsdFilter( *this ) );
 }
 
 protocols::filters::FilterOP
 LrmsdFilter::fresh_instance() const{
-	return new LrmsdFilter;
+	return protocols::filters::FilterOP( new LrmsdFilter );
 }
 
 void

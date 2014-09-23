@@ -22,10 +22,10 @@ namespace pack {
 namespace dunbrack {
 
 class SingleLigandRotamerLibrary;
-typedef utility::pointer::owning_ptr< SingleLigandRotamerLibrary > SingleLigandRotamerLibraryOP;
-typedef utility::pointer::owning_ptr< SingleLigandRotamerLibrary const > SingleLigandRotamerLibraryCOP;
-typedef utility::pointer::access_ptr< SingleLigandRotamerLibrary > SingleLigandRotamerLibraryAP;
-typedef utility::pointer::access_ptr< SingleLigandRotamerLibrary const > SingleLigandRotamerLibraryCAP;
+typedef utility::pointer::shared_ptr< SingleLigandRotamerLibrary > SingleLigandRotamerLibraryOP;
+typedef utility::pointer::shared_ptr< SingleLigandRotamerLibrary const > SingleLigandRotamerLibraryCOP;
+typedef utility::pointer::weak_ptr< SingleLigandRotamerLibrary > SingleLigandRotamerLibraryAP;
+typedef utility::pointer::weak_ptr< SingleLigandRotamerLibrary const > SingleLigandRotamerLibraryCAP;
 
 } // namespace dunbrack
 } // namespace scoring

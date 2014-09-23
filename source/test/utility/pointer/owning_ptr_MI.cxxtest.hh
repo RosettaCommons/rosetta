@@ -83,9 +83,9 @@ class OwningPtrMITests : public CxxTest::TestSuite {
 	public:
 
 	/// @brief Explicit owning pointer
-	void test_owning_ptr_MI_explicit() {
+	void test_shared_ptr_MI_explicit() {
 
-		typedef  utility::pointer::owning_ptr< Atom >  AtomP;
+		typedef  utility::pointer::shared_ptr< Atom >  AtomP;
 		Atom * Cp = new Atom_( 12.0, 0.0 ); // Raw heap pointer
 
 		TS_ASSERT( Atom::nAtoms == 1 );

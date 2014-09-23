@@ -20,8 +20,8 @@ namespace protocols {
 namespace multistate_design {
 
 class SingleStateFitnessFunction;
-typedef utility::pointer::owning_ptr< SingleStateFitnessFunction > SingleStateFitnessFunctionOP;
-typedef utility::pointer::owning_ptr< SingleStateFitnessFunction const > SingleStateFitnessFunctionCOP;
+typedef utility::pointer::shared_ptr< SingleStateFitnessFunction > SingleStateFitnessFunctionOP;
+typedef utility::pointer::shared_ptr< SingleStateFitnessFunction const > SingleStateFitnessFunctionCOP;
 
 }
 }

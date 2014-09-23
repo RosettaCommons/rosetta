@@ -24,8 +24,8 @@ namespace simple_moves {
 
 class ChainSplitMover;
 
-typedef utility::pointer::owning_ptr< ChainSplitMover > ChainSplitMoverOP;
-typedef utility::pointer::owning_ptr< ChainSplitMover const > ChainSplitMoverCOP;
+typedef utility::pointer::shared_ptr< ChainSplitMover > ChainSplitMoverOP;
+typedef utility::pointer::shared_ptr< ChainSplitMover const > ChainSplitMoverCOP;
 
 }
 }

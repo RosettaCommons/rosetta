@@ -28,11 +28,11 @@ namespace denovo_design {
 class FastDesign;
 
 // Types
-typedef  utility::pointer::owning_ptr< FastDesign >  FastDesignOP;
-typedef  utility::pointer::owning_ptr< FastDesign const >  FastDesignCOP;
+typedef  utility::pointer::shared_ptr< FastDesign >  FastDesignOP;
+typedef  utility::pointer::shared_ptr< FastDesign const >  FastDesignCOP;
 
-typedef  utility::pointer::access_ptr< FastDesign >  FastDesignAP;
-typedef  utility::pointer::access_ptr< FastDesign const >  FastDesignCAP;
+typedef  utility::pointer::weak_ptr< FastDesign >  FastDesignAP;
+typedef  utility::pointer::weak_ptr< FastDesign const >  FastDesignCAP;
 
 
 } // namespace denovo_design

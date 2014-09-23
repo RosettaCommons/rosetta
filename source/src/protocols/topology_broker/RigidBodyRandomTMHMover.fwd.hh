@@ -21,8 +21,8 @@ namespace protocols{
 namespace topology_broker{
 
 class RigidBodyRandomTMHMover;
-typedef utility::pointer::owning_ptr<RigidBodyRandomTMHMover> RigidBodyRandomTMHMoverOP;
-typedef utility::pointer::owning_ptr<RigidBodyRandomTMHMover const> RigidBodyRandomTMHMoverCOP;
+typedef utility::pointer::shared_ptr<RigidBodyRandomTMHMover> RigidBodyRandomTMHMoverOP;
+typedef utility::pointer::shared_ptr<RigidBodyRandomTMHMover const> RigidBodyRandomTMHMoverCOP;
 
 }
 }

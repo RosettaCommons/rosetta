@@ -22,8 +22,8 @@ namespace basic {
 namespace resource_manager {
 
 class ResourceLoaderCreator;
-typedef utility::pointer::owning_ptr< ResourceLoaderCreator > ResourceLoaderCreatorOP;
-typedef utility::pointer::owning_ptr< ResourceLoaderCreator const > ResourceLoaderCreatorCOP;
+typedef utility::pointer::shared_ptr< ResourceLoaderCreator > ResourceLoaderCreatorOP;
+typedef utility::pointer::shared_ptr< ResourceLoaderCreator const > ResourceLoaderCreatorCOP;
 
 } // namespace resource_manager
 } // namespace basic

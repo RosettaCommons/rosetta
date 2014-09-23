@@ -79,7 +79,7 @@ LoophashLoopInserterCreator::keyname() const
 
 protocols::moves::MoverOP
 LoophashLoopInserterCreator::create_mover() const {
-	return new LoophashLoopInserter;
+	return protocols::moves::MoverOP( new LoophashLoopInserter );
 }
 
 std::string
@@ -139,7 +139,7 @@ LoophashLoopInserter::init(
 			{
 				actual_lh_fragment_sizes[i]=loop_sizes_[i]+(2*num_flanking_residues_to_match_);
 			}
-			lh_library_ = new LoopHashLibrary( actual_lh_fragment_sizes );
+			lh_library_ = protocols::loophash::LoopHashLibraryOP( new LoopHashLibrary( actual_lh_fragment_sizes ) );
 			lh_library_->load_mergeddb();
 		}
 		lh_initialized_=true;

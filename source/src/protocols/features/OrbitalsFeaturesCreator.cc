@@ -29,7 +29,7 @@ namespace features {
 OrbitalsFeaturesCreator::OrbitalsFeaturesCreator() {}
 OrbitalsFeaturesCreator::~OrbitalsFeaturesCreator() {}
 FeaturesReporterOP OrbitalsFeaturesCreator::create_features_reporter() const {
-	return new OrbitalsFeatures;
+	return FeaturesReporterOP( new OrbitalsFeatures );
 }
 
 std::string OrbitalsFeaturesCreator::type_name() const {

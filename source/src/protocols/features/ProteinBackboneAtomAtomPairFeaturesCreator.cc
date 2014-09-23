@@ -29,7 +29,7 @@ namespace features {
 ProteinBackboneAtomAtomPairFeaturesCreator::ProteinBackboneAtomAtomPairFeaturesCreator() {}
 ProteinBackboneAtomAtomPairFeaturesCreator::~ProteinBackboneAtomAtomPairFeaturesCreator() {}
 FeaturesReporterOP ProteinBackboneAtomAtomPairFeaturesCreator::create_features_reporter() const {
-	return new ProteinBackboneAtomAtomPairFeatures;
+	return FeaturesReporterOP( new ProteinBackboneAtomAtomPairFeatures );
 }
 
 std::string ProteinBackboneAtomAtomPairFeaturesCreator::type_name() const {

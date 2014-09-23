@@ -18,8 +18,8 @@
 #include <utility/pointer/owning_ptr.hh>
 
 class SecondaryStructureSegmentFeatures;
-typedef utility::pointer::owning_ptr< SecondaryStructureSegmentFeatures > SecondaryStructureSegmentFeaturesOP;
-typedef utility::pointer::owning_ptr< SecondaryStructureSegmentFeatures const > SecondaryStructureSegmentFeaturesCOP;
+typedef utility::pointer::shared_ptr< SecondaryStructureSegmentFeatures > SecondaryStructureSegmentFeaturesOP;
+typedef utility::pointer::shared_ptr< SecondaryStructureSegmentFeatures const > SecondaryStructureSegmentFeaturesCOP;
 
 #endif
 

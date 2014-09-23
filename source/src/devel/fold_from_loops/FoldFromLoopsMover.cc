@@ -136,7 +136,7 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 	core::util::switch_to_residue_type_set( input_pose, core::chemical::CENTROID );
 
 
-	core::kinematics::MoveMapOP  movemap = new core::kinematics::MoveMap();
+	core::kinematics::MoveMapOP  movemap( new core::kinematics::MoveMap() );
 
 
 	fold_tree_cutpoints_generator(loops_, cut_points, input_pose , f);
@@ -179,13 +179,13 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 
 
 
-	protocols::abinitio::ClassicAbinitioOP abinitio = new protocols::abinitio::ClassicAbinitio( frag_small_, frag_large_ ,movemap );
+	protocols::abinitio::ClassicAbinitioOP abinitio( new protocols::abinitio::ClassicAbinitio( frag_small_, frag_large_ ,movemap ) );
 
 		if (option [OptionKeys::fold_from_loops::native_ca_cst].user() ){
 
 				input_pose.constraint_set( ca_csts_ );
 
-				abinitio = new protocols::abinitio::FoldConstraints( frag_small_, frag_large_ ,movemap );
+				abinitio = protocols::abinitio::ClassicAbinitioOP( new protocols::abinitio::FoldConstraints( frag_small_, frag_large_ ,movemap ) );
 
 			}
 
@@ -232,7 +232,7 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 
 
 
-					protocols::loops::loop_closure::ccd::SlidingWindowLoopClosureOP closure_protocol = new protocols::loops::loop_closure::ccd::SlidingWindowLoopClosure( frag_small_, scorefxn_centr, movemap );
+					protocols::loops::loop_closure::ccd::SlidingWindowLoopClosureOP closure_protocol( new protocols::loops::loop_closure::ccd::SlidingWindowLoopClosure( frag_small_, scorefxn_centr, movemap ) );
 
 
 					closure_protocol->scored_frag_cycle_ratio( 0.2 );

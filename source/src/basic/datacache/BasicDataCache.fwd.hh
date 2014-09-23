@@ -37,19 +37,19 @@ class BasicDataCache;
 
 
 /// @brief BasicDataCache owning pointer
-typedef utility::pointer::owning_ptr< BasicDataCache > BasicDataCacheOP;
+typedef utility::pointer::shared_ptr< BasicDataCache > BasicDataCacheOP;
 
 
 /// @brief BasicDataCache const owning pointer
-typedef utility::pointer::owning_ptr< BasicDataCache const > BasicDataCacheCOP;
+typedef utility::pointer::shared_ptr< BasicDataCache const > BasicDataCacheCOP;
 
 
 /// @brief BasicDataCache access pointer
-typedef utility::pointer::access_ptr< BasicDataCache > BasicDataCacheAP;
+typedef utility::pointer::weak_ptr< BasicDataCache > BasicDataCacheAP;
 
 
 /// @brief BasicDataCache const access pointer
-typedef utility::pointer::access_ptr< BasicDataCache const > BasicDataCacheCAP;
+typedef utility::pointer::weak_ptr< BasicDataCache const > BasicDataCacheCAP;
 
 
 } // namespace datacache

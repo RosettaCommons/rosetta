@@ -55,7 +55,7 @@ HotspotHasherMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 HotspotHasherMoverCreator::create_mover() const {
-	return new HotspotHasherMover;
+	return protocols::moves::MoverOP( new HotspotHasherMover );
 }
 
 std::string
@@ -238,7 +238,7 @@ HotspotHasherMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & 
 			runtime_assert( filter_found );
 		}
 		else
-			hotspot_filter_ = new protocols::filters::TrueFilter;
+			hotspot_filter_ = protocols::filters::FilterOP( new protocols::filters::TrueFilter );
 	}
 
 	// residues

@@ -79,7 +79,7 @@ methods::EnergyMethodOP
 MMLJEnergyInterCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new MMLJEnergyInter;
+	return methods::EnergyMethodOP( new MMLJEnergyInter );
 }
 
 ScoreTypes
@@ -91,7 +91,7 @@ MMLJEnergyInterCreator::score_types_for_method() const {
 }
 
 MMLJEnergyInter::MMLJEnergyInter() :
-	parent( new MMLJEnergyInterCreator ),
+	parent( EnergyMethodCreatorOP( new MMLJEnergyInterCreator ) ),
 	potential_( scoring::ScoringManager::get_instance()->get_MMLJEnergyTable() )
 {}
 
@@ -99,7 +99,7 @@ MMLJEnergyInter::MMLJEnergyInter() :
 EnergyMethodOP
 MMLJEnergyInter::clone() const
 {
-  return new MMLJEnergyInter();
+  return EnergyMethodOP( new MMLJEnergyInter() );
 }
 
 void
@@ -123,8 +123,7 @@ MMLJEnergyInter::setup_for_minimizing(
 			min_map.domain_map(),
 			library.nblist_dis2_cutoff_XX(),
 			library.nblist_dis2_cutoff_XH(),
-			library.nblist_dis2_cutoff_HH())
-		);
+			library.nblist_dis2_cutoff_HH()) );
 
 		if ( pose.energies().use_nblist_auto_update() ) {
 			// setting this to one angstrom fudge factor
@@ -150,7 +149,7 @@ MMLJEnergyInter::setup_for_packing(
 {
 	using namespace trie;
 
-	TrieCollectionOP tries = new TrieCollection;
+	TrieCollectionOP tries( new TrieCollection );
 	tries->total_residue( pose.total_residue() );
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		// Do not compute energy for virtual residues.
@@ -423,8 +422,8 @@ MMLJEnergyInter::evaluate_rotamer_pair_energies(
 // 	// save weight information so that its available during tvt execution
 // 	elec_weight_ = weights[ fa_elec ];
 
-	RotamerTrieBaseCOP trie1( static_cast< trie::RotamerTrieBase const * > ( set1.get_trie( mm_lj_energy_inter_method )() ));
-	RotamerTrieBaseCOP trie2( static_cast< trie::RotamerTrieBase const * > ( set2.get_trie( mm_lj_energy_inter_method )() ));
+	RotamerTrieBaseCOP trie1( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set1.get_trie( mm_lj_energy_inter_method ) ));
+	RotamerTrieBaseCOP trie2( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set2.get_trie( mm_lj_energy_inter_method ) ));
 
 	// figure out which trie countPairFunction needs to be used for this set
 	TrieCountPairBaseOP cp = get_count_pair_function_trie( set1, set2, pose, sfxn );
@@ -458,7 +457,7 @@ MMLJEnergyInter::evaluate_rotamer_background_energies(
 	utility::vector1< core::PackerEnergy > temp_vector1( set.num_rotamers(), 0.0 );
 	utility::vector1< core::PackerEnergy > temp_vector2( set.num_rotamers(), 0.0 );
 
-	RotamerTrieBaseCOP trie1( static_cast< RotamerTrieBase const * > ( set.get_trie( mm_lj_energy_inter_method )() ) );
+	RotamerTrieBaseCOP trie1( utility::pointer::static_pointer_cast< core::scoring::trie::RotamerTrieBase const > ( set.get_trie( mm_lj_energy_inter_method ) ) );
 	RotamerTrieBaseCOP trie2 = ( static_cast< TrieCollection const & >
 		( pose.energies().data().get( EnergiesCacheableDataType::MM_LJ_TRIE_COLLECTION )) ).trie( residue.seqpos() );
 
@@ -549,8 +548,8 @@ MMLJEnergyInter::get_count_pair_function_trie(
 	conformation::Residue const & res1( pose.residue( set1.resid() ) );
 	conformation::Residue const & res2( pose.residue( set2.resid() ) );
 
-	trie::RotamerTrieBaseCOP trie1( static_cast< trie::RotamerTrieBase const * > ( set1.get_trie( methods::mm_lj_energy_inter_method )() ));
-	trie::RotamerTrieBaseCOP trie2( static_cast< trie::RotamerTrieBase const * > ( set2.get_trie( methods::mm_lj_energy_inter_method )() ));
+	trie::RotamerTrieBaseCOP trie1( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set1.get_trie( methods::mm_lj_energy_inter_method ) ));
+	trie::RotamerTrieBaseCOP trie2( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set2.get_trie( methods::mm_lj_energy_inter_method ) ));
 
 	return get_count_pair_function_trie( res1, res2, trie1, trie2, pose, sfxn );
 }
@@ -577,9 +576,9 @@ MMLJEnergyInter::get_count_pair_function_trie(
 	Size conn2 = trie2->get_count_pair_data_for_residue( res1.seqpos() );
 
 	if ( connection != CP_NO_BONDS ) {
-		tcpfxn = new TrieCountPair1BC3( conn1, conn2 );
+		tcpfxn = TrieCountPairBaseOP( new TrieCountPair1BC3( conn1, conn2 ) );
 	} else {
-		tcpfxn = new TrieCountPairAll;
+		tcpfxn = TrieCountPairBaseOP( new TrieCountPairAll );
 	}
 	return tcpfxn;
 

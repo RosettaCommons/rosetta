@@ -35,10 +35,10 @@ public:
 	FoldUnitsFilter();
 	bool apply( core::pose::Pose const & pose ) const;
 	protocols::filters::FilterOP clone() const {
-		return new FoldUnitsFilter( *this );
+		return protocols::filters::FilterOP( new FoldUnitsFilter( *this ) );
 	}
 	protocols::filters::FilterOP fresh_instance() const{
-		return new FoldUnitsFilter();
+		return protocols::filters::FilterOP( new FoldUnitsFilter() );
 	}
 
 	core::Real compute( core::pose::Pose const & pose ) const;

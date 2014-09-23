@@ -144,7 +144,7 @@ ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(chemical::AtomTypeSetCOP
 	// Make sure we're up to date first.
 	normalize();
 
-	ResidueTypeOP restype = new core::chemical::ResidueType( atom_types, elements, mm_atom_types, NULL );
+	ResidueTypeOP restype( new core::chemical::ResidueType( atom_types, elements, mm_atom_types, NULL ) );
 
 	// Reasonable defaults for:
 	// aa_, rotamer_aa_, <properties suite>, variant_types_,

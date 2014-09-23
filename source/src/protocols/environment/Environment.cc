@@ -52,7 +52,7 @@ namespace environment {
 
 Environment::Environment( std::string name ):
   Parent( name ),
-  broker_( NULL ),
+  broker_( /* NULL */ ),
   bAutoCut_( false ),
   bInheritCuts_( true )
 {}
@@ -68,9 +68,9 @@ Environment::~Environment() {
 
 void Environment::register_mover( moves::MoverOP mover ){
   // I think this is kind of ugly, but I don't think this happens too often, so it's probably ok.
-  ClaimingMoverOP claiming_mover = dynamic_cast< ClaimingMover* >( mover.get() );
-  moves::MoverContainerOP mover_container = dynamic_cast< moves::MoverContainer* >( mover.get() );
-  moves::MoverApplyingMoverOP mover_applier = dynamic_cast< moves::MoverApplyingMover* >( mover.get() );
+  ClaimingMoverOP claiming_mover = utility::pointer::dynamic_pointer_cast< protocols::environment::ClaimingMover > ( mover );
+  moves::MoverContainerOP mover_container = utility::pointer::dynamic_pointer_cast< moves::MoverContainer > ( mover );
+  moves::MoverApplyingMoverOP mover_applier = utility::pointer::dynamic_pointer_cast< moves::MoverApplyingMover > ( mover );
 
   if( claiming_mover ) {
     if( !is_registered( claiming_mover ) ){
@@ -108,12 +108,12 @@ core::pose::Pose Environment::start( core::pose::Pose const& in_pose ){
     set_superenv( conf_ptr->environment() );
 
     // Keep old annotations by copy-constructing a new annotations object.
-    ann_ = new SequenceAnnotation( *( conf_ptr->annotations() ) );
+    ann_ = SequenceAnnotationOP( new SequenceAnnotation( *( conf_ptr->annotations() ) ) );
   } else {
     set_superenv( core::environment::EnvCoreCAP() );
 
     // Unprotected Conformation objects don't have annotations (yet?). We then build the annotation object.
-    ann_ = new SequenceAnnotation( in_conf->size() );
+    ann_ = SequenceAnnotationOP( new SequenceAnnotation( in_conf->size() ) );
   }
 
   tr.Debug << "Start environment: '" << name() << "'" << std::endl;
@@ -174,7 +174,7 @@ core::conformation::ConformationOP Environment::end( ProtectedConformationCOP co
 
   core::pose::Pose pose;
 
-  ConformationOP ret_conf = new Conformation( *conf );
+  ConformationOP ret_conf( new Conformation( *conf ) );
   pose.set_new_conformation( ret_conf );
 
   remove_nonpermenant_features( pose );
@@ -191,9 +191,9 @@ core::conformation::ConformationOP Environment::end( ProtectedConformationCOP co
 
   // Reprotect Conformation if there's a superenvironment.
   if( ! superenv().expired() ){
-    ret_conf = new ProtectedConformation( superenv(), pose.conformation() );
+    ret_conf = ConformationOP( new ProtectedConformation( superenv(), pose.conformation() ) );
   } else {
-    ret_conf = new Conformation( pose.conformation() );
+    ret_conf = ConformationOP( new Conformation( pose.conformation() ) );
   }
 
   cancel_passports();
@@ -290,7 +290,7 @@ core::pose::Pose Environment::broker( core::pose::Pose const& in_pose ){
 
   core::pose::Pose out_pose;
   try{
-    broker_ = new EnvClaimBroker( get_self_weak_ptr(), mover_passports, in_pose, ann_ );
+    broker_ = EnvClaimBrokerOP( new EnvClaimBroker( get_self_weak_ptr(), mover_passports, in_pose, ann_ ) );
     out_pose = broker_->result().pose;
   } catch ( ... ){
     // For exception safety. Revoke (possibly unfinished and/or now invalid) passports
@@ -336,7 +336,7 @@ EnvironmentCAP Environment::superenv() const{
     assert( env != 0 );
     return EnvironmentCAP( env );
   } else {
-    return 0;
+    return EnvironmentCAP();
   }
 }
 

@@ -50,7 +50,7 @@ methods::EnergyMethodOP
 MembraneEnvPenaltiesCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new MembraneEnvPenalties;
+	return methods::EnergyMethodOP( new MembraneEnvPenalties );
 }
 
 ScoreTypes
@@ -65,7 +65,7 @@ MembraneEnvPenaltiesCreator::score_types_for_method() const {
 
 /// c-tor
 MembraneEnvPenalties::MembraneEnvPenalties() :
-	parent( new MembraneEnvPenaltiesCreator ),
+	parent( EnergyMethodCreatorOP( new MembraneEnvPenaltiesCreator ) ),
 	potential_( ScoringManager::get_instance()->get_MembranePotential() )
 {}
 
@@ -74,7 +74,7 @@ MembraneEnvPenalties::MembraneEnvPenalties() :
 EnergyMethodOP
 MembraneEnvPenalties::clone() const
 {
-	return new MembraneEnvPenalties();
+	return EnergyMethodOP( new MembraneEnvPenalties() );
 }
 
 

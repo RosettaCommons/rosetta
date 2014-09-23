@@ -54,12 +54,12 @@ OptCysHG::~OptCysHG() {}
 
 TaskOperationOP OptCysHGCreator::create_task_operation() const
 {
-	return new OptCysHG;
+	return TaskOperationOP( new OptCysHG );
 }
 
 /// @brief clone this object
 OptCysHG::TaskOperationOP OptCysHG::clone() const {
-	return new OptCysHG( *this );
+	return OptCysHG::TaskOperationOP( new OptCysHG( *this ) );
 }
 
 

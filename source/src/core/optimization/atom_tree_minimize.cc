@@ -544,7 +544,7 @@ numerical_derivative_check(
 
 	// setup for saving diagnostics
 	NumDerivCheckDataOP min_debug;
-	if ( deriv_check_result ) min_debug = new NumDerivCheckData( nangles, n_increment );
+	if ( deriv_check_result ) min_debug = NumDerivCheckDataOP( new NumDerivCheckData( nangles, n_increment ) );
 
 // 	min_debug->nangles = nangles;
 // 	if ( nangles > int( min_debug->abs_deriv_dev.size1() ) ) {

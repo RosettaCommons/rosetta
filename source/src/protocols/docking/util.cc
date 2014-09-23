@@ -380,7 +380,7 @@ setup_foldtree(
 	using namespace protocols::scoring;
 	//using core::pose::datacache::CacheableDataType::INTERFACE_INFO;
 
-	InterfaceInfoOP docking_interface = new InterfaceInfo( movable_jumps );
+	InterfaceInfoOP docking_interface( new InterfaceInfo( movable_jumps ) );
 	pose.data().set(
 		core::pose::datacache::CacheableDataType::INTERFACE_INFO,
 		docking_interface);

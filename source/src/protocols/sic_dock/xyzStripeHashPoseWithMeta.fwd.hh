@@ -16,8 +16,8 @@ namespace protocols {
 namespace sic_dock {
 
 	class xyzStripeHashPoseWithMeta;
-    typedef utility::pointer::owning_ptr< xyzStripeHashPoseWithMeta > xyzStripeHashPoseWithMetaOP;
-	typedef utility::pointer::owning_ptr< xyzStripeHashPoseWithMeta const > xyzStripeHashPoseWithMetaCOP;
+    typedef utility::pointer::shared_ptr< xyzStripeHashPoseWithMeta > xyzStripeHashPoseWithMetaOP;
+	typedef utility::pointer::shared_ptr< xyzStripeHashPoseWithMeta const > xyzStripeHashPoseWithMetaCOP;
 
 
 }

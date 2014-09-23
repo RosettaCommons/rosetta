@@ -59,8 +59,8 @@ using numeric::conversions::DEGREES;
 
 // Forward declarations {{{1
 class ClosureTest;
-typedef utility::pointer::owning_ptr<ClosureTest> ClosureTestOP;
-typedef utility::pointer::owning_ptr<ClosureTest const> ClosureTestCOP;
+typedef utility::pointer::shared_ptr<ClosureTest> ClosureTestOP;
+typedef utility::pointer::shared_ptr<ClosureTest const> ClosureTestCOP;
 // }}}1
 
 class ClosureTest : public Perturber { // {{{1
@@ -109,7 +109,7 @@ ClosureTest::ClosureTest( // {{{1
 	if (loop.cut() == 0) loop.set_cut(loop.midpoint());
 	num_solutions = num_solutions_;
 	jacobians.resize(num_solutions);
-	pivot_picker = new LoopPivots;
+	pivot_picker = PivotPickerOP( new LoopPivots );
 	precision = 1e-3;
 }
 

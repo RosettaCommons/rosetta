@@ -52,17 +52,17 @@ DisulfJumpClaimer::DisulfJumpClaimer() :
 DisulfJumpClaimer::~DisulfJumpClaimer() {}
 
 TopologyClaimerOP DisulfJumpClaimer::clone() const {
-	return new DisulfJumpClaimer( *this );
+	return TopologyClaimerOP( new DisulfJumpClaimer( *this ) );
 }
 
 void DisulfJumpClaimer::new_decoy() {
 	generate_jump_frags( *jumping::StandardDisulfPairingLibrary::get_instance(), all_frames_ );
 
- 	core::fragment::FragSetOP jump_frags = new core::fragment::OrderedFragSet;
+ 	core::fragment::FragSetOP jump_frags( new core::fragment::OrderedFragSet );
  	jump_frags->add( all_frames_ );
 
 	simple_moves::ClassicFragmentMoverOP mover;
-  mover = new simple_moves::ClassicFragmentMover( jump_frags, movemap_ );
+  mover = simple_moves::ClassicFragmentMoverOP( new simple_moves::ClassicFragmentMover( jump_frags, movemap_ ) );
 	mover->type( mover_tag() );
   mover->set_check_ss( false ); // this doesn't make sense with jump fragments
 	mover->enable_end_bias_check( false ); //no sense for discontinuous fragments
@@ -135,8 +135,7 @@ void DisulfJumpClaimer::generate_jump_frags(
 		int const startpos( all_jump_pairings_[i].pos1 );
 		int const endpos( all_jump_pairings_[i].pos2 );
 
-		core::fragment::JumpingFrameOP frame =
-			new core::fragment::JumpingFrame( startpos, endpos, 2 );
+		core::fragment::JumpingFrameOP frame( new core::fragment::JumpingFrame( startpos, endpos, 2 ) );
 
 		frame->set_pos( 1, startpos );
 		frame->set_pos( 2, endpos );
@@ -202,10 +201,10 @@ void DisulfJumpClaimer::generate_claims( claims::DofClaims& new_claims ) {
 
 		all_jump_pairings_.push_back( dis_pair );
 
-		new_claims.push_back( new claims::JumpClaim( get_self_weak_ptr(),
+		new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::JumpClaim( get_self_weak_ptr(),
 																								 claim->local_pos1(),
 																								 claim->local_pos2(),
-																								 claims::DofClaim::INIT ) );
+																								 claims::DofClaim::INIT ) ) );
 	}
 
 	// get flexible jumps ( beta-sheet stuff etc. )
@@ -246,11 +245,11 @@ bool DisulfJumpClaimer::read_tag( std::string tag, std::istream& is ) {
 		claims::LocalPosition local_pos2 = std::make_pair( label2, pos2 );
 
 		//Use jump claim's atom to keep track of the secondary structure (a bit hacky, I know)
-		claims::JumpClaimOP disulf_bond = new claims::JumpClaim( get_self_weak_ptr(),
+		claims::JumpClaimOP disulf_bond( new claims::JumpClaim( get_self_weak_ptr(),
 																														 std::make_pair( label1, pos1 ),
 																														 std::make_pair( label2, pos2 ),
 																														 ss1,
-																														 ss2 );
+																														 ss2 ) );
 
 		local_disulf_data_.push_back( disulf_bond );
 

@@ -43,7 +43,7 @@ static thread_local basic::Tracer TR_pymol( "protocols.protein_interface_design.
 ///@brief default ctor
 DesignableResiduesFilter::DesignableResiduesFilter() :
 	parent( "DesignableResidues" ),
-	task_factory_( NULL ),
+	task_factory_( /* NULL */ ),
 	lower_threshold_( 0 ),
 	upper_threshold_( 1000 ),
 	packable_( false ),
@@ -202,18 +202,18 @@ void DesignableResiduesFilter::parse_def( utility::lua::LuaObject const & def,
 
 protocols::filters::FilterOP
 DesignableResiduesFilter::fresh_instance() const{
-	return new DesignableResiduesFilter();
+	return protocols::filters::FilterOP( new DesignableResiduesFilter() );
 }
 
 DesignableResiduesFilter::~DesignableResiduesFilter(){}
 
 protocols::filters::FilterOP
 DesignableResiduesFilter::clone() const{
-	return new DesignableResiduesFilter( *this );
+	return protocols::filters::FilterOP( new DesignableResiduesFilter( *this ) );
 }
 
 protocols::filters::FilterOP
-DesignableResiduesFilterCreator::create_filter() const { return new DesignableResiduesFilter; }
+DesignableResiduesFilterCreator::create_filter() const { return protocols::filters::FilterOP( new DesignableResiduesFilter ); }
 
 std::string
 DesignableResiduesFilterCreator::keyname() const { return "DesignableResidues"; }

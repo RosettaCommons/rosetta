@@ -29,19 +29,19 @@ class BDR;
 
 
 /// @brief BDR owning pointer
-typedef utility::pointer::owning_ptr< BDR > BDR_OP;
+typedef utility::pointer::shared_ptr< BDR > BDR_OP;
 
 
 /// @brief BDR const owning pointer
-typedef utility::pointer::owning_ptr< BDR const > BDR_COP;
+typedef utility::pointer::shared_ptr< BDR const > BDR_COP;
 
 
 /// @brief BDR access pointer
-typedef utility::pointer::access_ptr< BDR > BDR_AP;
+typedef utility::pointer::weak_ptr< BDR > BDR_AP;
 
 
 /// @brief BDR const access pointer
-typedef utility::pointer::access_ptr< BDR const > BDR_CAP;
+typedef utility::pointer::weak_ptr< BDR const > BDR_CAP;
 
 
 } // namespace components

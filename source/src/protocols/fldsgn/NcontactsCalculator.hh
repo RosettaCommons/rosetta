@@ -72,7 +72,7 @@ public:// virtual constructor
 
 
 	/// @brief make clone
-  PoseMetricCalculatorOP clone() const { return new NcontactsCalculator( *this ); }
+  PoseMetricCalculatorOP clone() const { return PoseMetricCalculatorOP( new NcontactsCalculator( *this ) ); }
 
 
 public:// mutator

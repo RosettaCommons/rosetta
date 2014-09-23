@@ -23,8 +23,8 @@ namespace stepwise {
 namespace screener {
 	
 	class StepWiseResiduePairScreener;
-	typedef utility::pointer::owning_ptr< StepWiseResiduePairScreener > StepWiseResiduePairScreenerOP;
-	typedef utility::pointer::owning_ptr< StepWiseResiduePairScreener const > StepWiseResiduePairScreenerCOP;
+	typedef utility::pointer::shared_ptr< StepWiseResiduePairScreener > StepWiseResiduePairScreenerOP;
+	typedef utility::pointer::shared_ptr< StepWiseResiduePairScreener const > StepWiseResiduePairScreenerCOP;
 	
 } //screener
 } //stepwise

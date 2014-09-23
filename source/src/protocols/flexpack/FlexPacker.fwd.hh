@@ -23,8 +23,8 @@ namespace protocols {
 namespace flexpack {
 
 class FlexPacker;
-typedef utility::pointer::owning_ptr< FlexPacker > FlexPackerOP;
-typedef utility::pointer::owning_ptr< FlexPacker const > FlexPackerCOP;
+typedef utility::pointer::shared_ptr< FlexPacker > FlexPackerOP;
+typedef utility::pointer::shared_ptr< FlexPacker const > FlexPackerCOP;
 
 }
 }

@@ -305,10 +305,9 @@ public:
 			if ( nn == nfrags ) worst_score = -score;
 			else if ( nn == 1 ) best_score = -score;
 
-			core::fragment::FragDataOP current_fragment = new core::fragment::FragData;
+			core::fragment::FragDataOP current_fragment( new core::fragment::FragData );
 			for ( Size k=0; k< frag_size; ++k ) {
-				core::fragment::BBTorsionSRFDOP res_torsions(
-				                new core::fragment::BBTorsionSRFD( 3 ,secstruct_[ vall_pos + k ], sequence_ [ vall_pos+k ] ) ); // 3 protein torsions
+				core::fragment::BBTorsionSRFDOP res_torsions( new core::fragment::BBTorsionSRFD( 3 ,secstruct_[ vall_pos + k ], sequence_ [ vall_pos+k ] ) ); // 3 protein torsions
 				res_torsions->set_torsion   ( 1, phi_   [ vall_pos + k ]  ); // ugly numbers 1-3, but pose.set_phi also uses explicit numbers
 				res_torsions->set_torsion   ( 2, psi_   [ vall_pos + k ]  );
 				res_torsions->set_torsion   ( 3, omega_ [ vall_pos + k ]  );

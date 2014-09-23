@@ -23,8 +23,8 @@ namespace comparative_modeling {
 
 	//forward declarations
 	class IgnoreSubsetConstraintSet;
-	typedef utility::pointer::owning_ptr< IgnoreSubsetConstraintSet > IgnoreSubsetConstraintSetOP;
-	typedef utility::pointer::owning_ptr< IgnoreSubsetConstraintSet const> IgnoreSubsetConstraintSetCOP;
+	typedef utility::pointer::shared_ptr< IgnoreSubsetConstraintSet > IgnoreSubsetConstraintSetOP;
+	typedef utility::pointer::shared_ptr< IgnoreSubsetConstraintSet const> IgnoreSubsetConstraintSetCOP;
 
 }
 }

@@ -57,7 +57,7 @@ ShortBackrubMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ShortBackrubMoverCreator::create_mover() const {
-	return new ShortBackrubMover;
+	return protocols::moves::MoverOP( new ShortBackrubMover );
 }
 
 std::string
@@ -67,7 +67,7 @@ ShortBackrubMoverCreator::mover_name() {
 
 // default constructor
 ShortBackrubMover::ShortBackrubMover() : protocols::moves::Mover(),
-		backrubmover_(new protocols::backrub::BackrubMover())
+		backrubmover_(protocols::backrub::BackrubMoverOP( new protocols::backrub::BackrubMover() ))
 {
 	protocols::moves::Mover::type( "ShortBackrub" );
 	backrubmover_->branchopt().read_database();
@@ -82,7 +82,7 @@ ShortBackrubMover::ShortBackrubMover() : protocols::moves::Mover(),
 
 // constructor that sets the input pose for the BackrubMover
 ShortBackrubMover::ShortBackrubMover( core::pose::PoseOP pose ) : protocols::moves::Mover(),
-		backrubmover_(new protocols::backrub::BackrubMover())
+		backrubmover_(protocols::backrub::BackrubMoverOP( new protocols::backrub::BackrubMover() ))
 {
 	protocols::moves::Mover::type( "ShortBackrub" );
 	backrubmover_->branchopt().read_database();
@@ -114,14 +114,14 @@ ShortBackrubMover::~ShortBackrubMover(){}
 ShortBackrubMover::MoverOP
 ShortBackrubMover::clone() const
 {
-	return new protocols::simple_moves::ShortBackrubMover( *this );
+	return ShortBackrubMover::MoverOP( new protocols::simple_moves::ShortBackrubMover( *this ) );
 }
 
 // create this type of object
 ShortBackrubMover::MoverOP
 ShortBackrubMover::fresh_instance() const
 {
-	return new protocols::simple_moves::ShortBackrubMover();
+	return ShortBackrubMover::MoverOP( new protocols::simple_moves::ShortBackrubMover() );
 }
 
 void
@@ -248,7 +248,7 @@ ShortBackrubMover::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	Pose const & pose)
 {
-	backrubmover_->set_input_pose(new core::pose::Pose(pose));
+	backrubmover_->set_input_pose(PoseCOP( new core::pose::Pose(pose) ));
 	backrubmover_->clear_segments();
 	backrubmover_->add_mainchain_segments();
 	backrubmover_->branchopt().read_database();

@@ -30,16 +30,16 @@ namespace fragment {
 // Forward
 class FragData;
 
-typedef utility::pointer::owning_ptr< FragData > FragDataOP;
-typedef utility::pointer::owning_ptr< FragData const > FragDataCOP;
+typedef utility::pointer::shared_ptr< FragData > FragDataOP;
+typedef utility::pointer::shared_ptr< FragData const > FragDataCOP;
 
 typedef utility::vector1< FragDataCOP > FragDataCOPs;
 typedef utility::vector1< FragDataOP > FragDataOPs;
 
 class AnnotatedFragData;
 
-typedef utility::pointer::owning_ptr< AnnotatedFragData > AnnotatedFragDataOP;
-typedef utility::pointer::owning_ptr< AnnotatedFragData const > AnnotatedFragDataCOP;
+typedef utility::pointer::shared_ptr< AnnotatedFragData > AnnotatedFragDataOP;
+typedef utility::pointer::shared_ptr< AnnotatedFragData const > AnnotatedFragDataCOP;
 
 
 } // namespace fragment

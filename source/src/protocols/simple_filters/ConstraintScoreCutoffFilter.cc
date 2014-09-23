@@ -120,7 +120,7 @@ ConstraintScoreCutoffFilter::report( std::ostream & /*ostr*/, core::pose::Pose c
 
 
 filters::FilterOP
-ConstraintScoreCutoffFilterCreator::create_filter() const { return new ConstraintScoreCutoffFilter; }
+ConstraintScoreCutoffFilterCreator::create_filter() const { return filters::FilterOP( new ConstraintScoreCutoffFilter ); }
 
 std::string
 ConstraintScoreCutoffFilterCreator::keyname() const { return "ConstraintScoreCutoffFilter"; }

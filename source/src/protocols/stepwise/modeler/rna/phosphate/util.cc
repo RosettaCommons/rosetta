@@ -190,7 +190,7 @@ namespace phosphate {
 		//			phosphate_scorefxn = scorefxn->clone();
 		//			//for ( Size n = 1; n <= end_of_score_type_enumeration; n++ ) phosphate_scorefxn->set_weight( ScoreType(n), 0.0 );
 		//		} else {
-		phosphate_scorefxn = new ScoreFunction; // creating anew seems wasteful, but having problems with setting from input scorefxn.
+		phosphate_scorefxn = ScoreFunctionOP( new ScoreFunction ); // creating anew seems wasteful, but having problems with setting from input scorefxn.
 			//		}
 		phosphate_scorefxn->set_weight( scoring::fa_atr, 0.1); // argh seems to trigger etable?
 		phosphate_scorefxn->set_weight( scoring::fa_rep, 0.1);

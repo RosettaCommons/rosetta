@@ -44,11 +44,11 @@ public:
 	}
 
 	virtual ConstraintOP clone() const {
-		return new DistancePairConstraint(
+		return ConstraintOP( new DistancePairConstraint(
 			atomA1_, atomA2_,
 			atomB1_, atomB2_,
 			func_, score_type()
-		);
+		) );
 	}
 
   Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1 ) const;

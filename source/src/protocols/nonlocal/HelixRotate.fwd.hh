@@ -19,8 +19,8 @@ namespace protocols {
 namespace nonlocal {
 
 class HelixRotate;
-typedef utility::pointer::owning_ptr<HelixRotate> HelixRotateOP;
-typedef utility::pointer::owning_ptr<HelixRotate const> HelixRotateCOP;
+typedef utility::pointer::shared_ptr<HelixRotate> HelixRotateOP;
+typedef utility::pointer::shared_ptr<HelixRotate const> HelixRotateCOP;
 
 }  // namespace nonlocal
 }  // namespace protocols

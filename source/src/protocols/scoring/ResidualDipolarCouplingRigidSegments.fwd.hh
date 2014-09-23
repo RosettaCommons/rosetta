@@ -23,8 +23,8 @@ namespace protocols {
 namespace scoring {
 
 class ResidualDipolarCouplingRigidSegments;
-typedef utility::pointer::owning_ptr< ResidualDipolarCouplingRigidSegments > ResidualDipolarCouplingRigidSegmentsOP;
-typedef utility::pointer::owning_ptr< ResidualDipolarCouplingRigidSegments const > ResidualDipolarCouplingRigidSegmentsCOP;
+typedef utility::pointer::shared_ptr< ResidualDipolarCouplingRigidSegments > ResidualDipolarCouplingRigidSegmentsOP;
+typedef utility::pointer::shared_ptr< ResidualDipolarCouplingRigidSegments const > ResidualDipolarCouplingRigidSegmentsCOP;
 
 } // protocols
 } //scoring

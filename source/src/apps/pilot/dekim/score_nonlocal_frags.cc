@@ -92,11 +92,11 @@ public:
 	std::string get_name() const { return "NonLocalFragsScoreMover"; }
 
 	virtual MoverOP clone() const {
-		return new MyScoreMover( *this );
+		return MoverOP( new MyScoreMover( *this ) );
 	}
 
 	virtual	MoverOP	fresh_instance() const {
-		return new MyScoreMover;
+		return MoverOP( new MyScoreMover );
 	}
 
 private:
@@ -127,7 +127,7 @@ MyScoreMover::MyScoreMover():
 	}
 
 	if ( option[ OptionKeys::in::file::rdc ].user() ) {
-		rdc_file_ = new core::scoring::ResidualDipolarCoupling;
+		rdc_file_ = core::scoring::ResidualDipolarCouplingOP( new core::scoring::ResidualDipolarCoupling );
 		rdc_raw_data_ = rdc_file_->get_RDC_data();
 		has_rdc_ = true;
 	}
@@ -175,7 +175,7 @@ void MyScoreMover::apply( core::pose::Pose& pose ) {
 	// quick SC minimization
 	core::optimization::AtomTreeMinimizer mzr;
 	core::optimization::MinimizerOptions options( "dfpmin_armijo_nonmonotone", 1e-5, true, false );
-	core::kinematics::MoveMapOP mm_min = new core::kinematics::MoveMap();
+	core::kinematics::MoveMapOP mm_min( new core::kinematics::MoveMap() );
 	mm_min->set_bb( false );
 	mm_min->set_chi( true );
 	mzr.run( pose, *mm_min, *sfxn_, options );
@@ -230,8 +230,7 @@ void MyScoreMover::apply( core::pose::Pose& pose ) {
 			weight = ((-29/max)*rdc_data_given_fragment_lines.size()) + 30;  // linear weight
 			if (weight > 30) weight = 30;
 			pose::Pose rdc_pose = orig_pose;
-			core::scoring::ResidualDipolarCouplingOP rdc_data_given_fragment =
-				new core::scoring::ResidualDipolarCoupling ( rdc_data_given_fragment_lines );
+			core::scoring::ResidualDipolarCouplingOP rdc_data_given_fragment( new core::scoring::ResidualDipolarCoupling ( rdc_data_given_fragment_lines ) );
 			//rdc_data_given_fragment->show(std::cout);
 			//std::cout << std::endl;
 			core::scoring::store_RDC_in_pose( rdc_data_given_fragment, rdc_pose );
@@ -297,7 +296,7 @@ main( int argc, char * argv [] )
 	devel::init(argc, argv);
 
 	//MyScoreMover* scoremover = new MyScoreMover;
-	MoverOP scoremover = new MyScoreMover;
+	MoverOP scoremover( new MyScoreMover );
 
 	using namespace protocols::jd2;
 
@@ -306,7 +305,7 @@ main( int argc, char * argv [] )
 	// the  JobOutputter scorefile() function produces (which for example skips Evaluators!!)
 
 	// Set up a job outputter that writes a scorefile and no PDBs and no Silent Files.
-	SilentFileJobOutputterOP jobout = new SilentFileJobOutputter;
+	SilentFileJobOutputterOP jobout( new SilentFileJobOutputter );
 	jobout->set_write_no_structures();
 	jobout->set_write_separate_scorefile(true);
 

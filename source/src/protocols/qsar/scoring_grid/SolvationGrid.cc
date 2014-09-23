@@ -38,7 +38,7 @@ std::string SolvationGridCreator::keyname() const
 
 GridBaseOP SolvationGridCreator::create_grid(utility::tag::TagCOP tag) const
 {
-    GridBaseOP solvation_grid= new SolvationGrid();
+    GridBaseOP solvation_grid( new SolvationGrid() );
     
     solvation_grid->parse_my_tag(tag);
     
@@ -47,7 +47,7 @@ GridBaseOP SolvationGridCreator::create_grid(utility::tag::TagCOP tag) const
 
 GridBaseOP SolvationGridCreator::create_grid() const
 {
-    return new SolvationGrid();
+    return GridBaseOP( new SolvationGrid() );
 }
 
 

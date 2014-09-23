@@ -20,7 +20,7 @@ namespace protocols {
 namespace flxbb{
 
 class InterlockAroma;
-typedef utility::pointer::owning_ptr< InterlockAroma > InterlockAromaOP;
+typedef utility::pointer::shared_ptr< InterlockAroma > InterlockAromaOP;
 
 
 } // namespace flxbb

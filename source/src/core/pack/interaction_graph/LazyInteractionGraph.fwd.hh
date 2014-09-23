@@ -25,8 +25,8 @@ class LazyNode;
 class LazyEdge;
 class LazyInteractionGraph;
 
-typedef utility::pointer::owning_ptr< LazyInteractionGraph > LazyInteractionGraphOP;
-typedef utility::pointer::owning_ptr< LazyInteractionGraph const > LazyInteractionGraphCOP;
+typedef utility::pointer::shared_ptr< LazyInteractionGraph > LazyInteractionGraphOP;
+typedef utility::pointer::shared_ptr< LazyInteractionGraph const > LazyInteractionGraphCOP;
 
 }
 }

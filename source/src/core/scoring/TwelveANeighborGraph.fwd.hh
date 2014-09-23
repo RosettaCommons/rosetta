@@ -24,8 +24,8 @@ class TwelveANeighborNode;
 class TwelveANeighborEdge;
 class TwelveANeighborGraph;
 
-typedef utility::pointer::owning_ptr< TwelveANeighborGraph > TwelveANeighborGraphOP;
-typedef utility::pointer::owning_ptr< TwelveANeighborGraph const > TwelveANeighborGraphCOP;
+typedef utility::pointer::shared_ptr< TwelveANeighborGraph > TwelveANeighborGraphOP;
+typedef utility::pointer::shared_ptr< TwelveANeighborGraph const > TwelveANeighborGraphCOP;
 
 } // scoring
 } // core

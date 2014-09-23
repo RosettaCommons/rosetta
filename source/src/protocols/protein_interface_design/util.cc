@@ -178,7 +178,7 @@ get_bbcsts( core::pose::Pose const & pose ) {
 	for( ConstraintCOPs::const_iterator it = original_csts.begin(), end = original_csts.end(); it != end; ++it ) {
 		ConstraintCOP cst( *it );
 		if( cst->type() == "AmbiguousConstraint" ) {
-			AmbiguousConstraintCOP ambiguous_cst = AmbiguousConstraintCOP( dynamic_cast<AmbiguousConstraint const *>( cst() ) ); //downcast to derived ambiguous constraint
+			AmbiguousConstraintCOP ambiguous_cst = AmbiguousConstraintCOP( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::AmbiguousConstraint const > ( cst ) ); //downcast to derived ambiguous constraint
 			if( ambiguous_cst) { // safety check for downcasting
 				if( ambiguous_cst->active_constraint()->type() == "BackboneStub" ) {
 					new_csts.push_back( ambiguous_cst->active_constraint() );
@@ -255,7 +255,7 @@ remove_coordinate_constraints_from_pose( core::pose::Pose & pose )
   for( ConstraintCOPs::const_iterator it = original_csts.begin(), end = original_csts.end(); it != end; ++it ) {
     ConstraintCOP cst( *it );
     if( cst->type() == "CoordinateConstraint" ) {
-      ConstraintCOP crd_cst = dynamic_cast< CoordinateConstraint const *>( cst() ); //downcast to derived ambiguous constraint
+      ConstraintCOP crd_cst = utility::pointer::dynamic_pointer_cast< core::scoring::constraints::CoordinateConstraint const > ( cst ); //downcast to derived ambiguous constraint
       if( crd_cst) { // safety check for downcasting
          crd_csts.push_back( cst ); // add the entire ambiguous cst, since it contained a bbcst
       }

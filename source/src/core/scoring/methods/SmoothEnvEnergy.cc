@@ -48,7 +48,7 @@ methods::EnergyMethodOP
 SmoothEnvEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new SmoothEnvEnergy;
+	return methods::EnergyMethodOP( new SmoothEnvEnergy );
 }
 
 ScoreTypes
@@ -71,7 +71,7 @@ SmoothEnvEnergy::SmoothEnvEnergy() :
 /// clone
 EnergyMethodOP
 SmoothEnvEnergy::clone() const {
-	return new SmoothEnvEnergy;
+	return EnergyMethodOP( new SmoothEnvEnergy );
 }
 
 

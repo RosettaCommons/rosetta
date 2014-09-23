@@ -113,10 +113,10 @@ public:
 public:// virtual constructor
 
 	// @brief make clone
-	virtual FilterOP clone() const { return new FragmentLookupFilter( *this ); }
+	virtual FilterOP clone() const { return FilterOP( new FragmentLookupFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const {	return new FragmentLookupFilter(); }
+	virtual FilterOP fresh_instance() const {	return FilterOP( new FragmentLookupFilter() ); }
 
 public:
 

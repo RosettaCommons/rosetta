@@ -156,7 +156,7 @@ RemodelMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 RemodelMoverCreator::create_mover() const {
-	return new RemodelMover;
+	return protocols::moves::MoverOP( new RemodelMover );
 }
 
 std::string
@@ -252,7 +252,7 @@ RemodelMover::RemodelMover( RemodelMover const & rval )
 
 {
 	if ( rval.vlb_.get() ) {
-		vlb_ = new VarLengthBuild( *rval.vlb_ );
+		vlb_ = VarLengthBuildOP( new VarLengthBuild( *rval.vlb_ ) );
 	}
 }
 
@@ -327,25 +327,25 @@ void RemodelMover::register_user_options() {
 
 /// @brief clone for parser
 RemodelMover::MoverOP RemodelMover::clone() const {
-	return new RemodelMover( *this );
+	return RemodelMover::MoverOP( new RemodelMover( *this ) );
 }
 
 
 /// @brief fresh instance for parser
 RemodelMover::MoverOP RemodelMover::fresh_instance() const {
-	return new RemodelMover();
+	return RemodelMover::MoverOP( new RemodelMover() );
 }
 
 
 /// @brief clone this object
 RemodelMover::MoverOP RemodelMover::clone() {
-	return new RemodelMover( *this );
+	return RemodelMover::MoverOP( new RemodelMover( *this ) );
 }
 
 
 /// @brief create this type of object
 RemodelMover::MoverOP RemodelMover::fresh_instance() {
-	return new RemodelMover();
+	return RemodelMover::MoverOP( new RemodelMover() );
 }
 
 
@@ -504,7 +504,7 @@ void RemodelMover::apply( Pose & pose ) {
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "Remodel" );
 #endif
 	if (!last_input_pose_  || !SamePose(*last_input_pose_, pose) || accumulator_.size() == 0) {
-		last_input_pose_ = new core::pose::Pose(pose);
+		last_input_pose_ = core::pose::PoseOP( new core::pose::Pose(pose) );
 
 
 
@@ -731,7 +731,7 @@ void RemodelMover::apply( Pose & pose ) {
 			// setup calculators
 			pose::metrics::CalculatorFactory::Instance().remove_calculator( neighborhood_calc_name() );
 			pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc_name(),
-				new toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( manager_.union_of_intervals_containing_undefined_positions() ) );
+				PoseMetricCalculatorOP( new toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( manager_.union_of_intervals_containing_undefined_positions() ) ) );
 		}
 
 		/*
@@ -855,7 +855,7 @@ void RemodelMover::apply( Pose & pose ) {
 			if (option[OptionKeys::enzdes::cstfile].user() ) {
 				TR << "apply(): constraint file found on command line. updating score functions to include constraint terms." << std::endl;
 
-				forge::remodel::RemodelEnzdesCstModuleOP cstOP = new forge::remodel::RemodelEnzdesCstModule(remodel_data);
+				forge::remodel::RemodelEnzdesCstModuleOP cstOP( new forge::remodel::RemodelEnzdesCstModule(remodel_data) );
 
 				// RemodelEnzdesCstModule cst(remodel_data);
 				//safety
@@ -877,7 +877,7 @@ void RemodelMover::apply( Pose & pose ) {
 					//safety
 					pose.remove_constraints();
 
-					protocols::simple_moves::ConstraintSetMoverOP constraint = new protocols::simple_moves::ConstraintSetMover();
+					protocols::simple_moves::ConstraintSetMoverOP constraint( new protocols::simple_moves::ConstraintSetMover() );
 					constraint->apply( pose );
 
 					fullatom_sfx_->set_weight(core::scoring::atom_pair_constraint, 1.0);
@@ -922,7 +922,7 @@ void RemodelMover::apply( Pose & pose ) {
 
 		                Pose disulf_copy_pose = pose;
 
-						kinematics::MoveMapOP combined_mm = new kinematics::MoveMap;
+						kinematics::MoveMapOP combined_mm( new kinematics::MoveMap );
 
 						combined_mm->import( remodel_data_.natro_movemap_ );
 						combined_mm->import( manager_.movemap() );
@@ -966,7 +966,7 @@ void RemodelMover::apply( Pose & pose ) {
 					kinematics::FoldTree cenFT = pose.fold_tree();
 					pose.fold_tree(originalTree);
 
-					kinematics::MoveMapOP cmmop = new kinematics::MoveMap;
+					kinematics::MoveMapOP cmmop( new kinematics::MoveMap );
 					//pose.dump_pdb("pretest.pdb");
 
 					cmmop->import( remodel_data_.natro_movemap_ );
@@ -1060,7 +1060,7 @@ void RemodelMover::apply( Pose & pose ) {
 					}*/
 
 					//simple_moves::MinMoverOP minMover = new simple_moves::MinMover( cmmop , centroid_sfx_, "dfpmin_armijo", 0.01, true);
-					simple_moves::MinMoverOP minMover = new simple_moves::MinMover( cmmop , centroid_sfx_, "lbfgs_armijo", 0.01, true);
+					simple_moves::MinMoverOP minMover( new simple_moves::MinMover( cmmop , centroid_sfx_, "lbfgs_armijo", 0.01, true) );
 					TR << "cen_minimize pose foldtree: " << pose.fold_tree() << std::endl;
 					minMover->apply(pose);
 
@@ -1244,7 +1244,7 @@ void RemodelMover::apply( Pose & pose ) {
 		
 			//rank poses by score, unless we are doing fast_disulfide, in which case we want to rank by entropy.
 			if (rosetta_scripts_fast_disulfide_) {
-				simple_filters::DisulfideEntropyFilterOP DisulfideEntropy=new simple_filters::DisulfideEntropyFilter();
+				simple_filters::DisulfideEntropyFilterOP DisulfideEntropy( new simple_filters::DisulfideEntropyFilter() );
 				score = - DisulfideEntropy->compute_residual( *(*it) );
 			}	else {
 				simple_filters::ScoreTypeFilter const pose_total_score( scorefxn, total_score, 100 );
@@ -1266,12 +1266,12 @@ void RemodelMover::apply( Pose & pose ) {
 
 	TR << "Remodel poses remaining from original run: " << accumulator_.size() << std::endl;
 	// update PDBinfo
-	pose.pdb_info( new core::pose::PDBInfo( pose ));
+	pose.pdb_info( PDBInfoOP( new core::pose::PDBInfo( pose ) ));
 
 	// setup calculators
 	pose::metrics::CalculatorFactory::Instance().remove_calculator( neighborhood_calc_name() );
 	pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc_name(),
-		new toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( manager_.union_of_intervals_containing_undefined_positions() ) );
+		PoseMetricCalculatorOP( new toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( manager_.union_of_intervals_containing_undefined_positions() ) ) );
 
 	/*
 	// do design-refine iteration
@@ -1292,14 +1292,14 @@ void RemodelMover::apply( Pose & pose ) {
 
 	pose::metrics::CalculatorFactory::Instance().register_calculator(
 		loops_buns_polar_calc_name(),
-		new toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator( "default", "default", manager_.union_of_intervals_containing_undefined_positions() )
+		PoseMetricCalculatorOP( new toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator( "default", "default", manager_.union_of_intervals_containing_undefined_positions() ) )
 	);
 
 	basic::MetricValue< std::set< Size > > loops_neighborhood;
 	pose.metric( neighborhood_calc_name(), "neighbors", loops_neighborhood );
 	pose::metrics::CalculatorFactory::Instance().register_calculator(
 		neighborhood_buns_polar_calc_name(),
-		new toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator( "default", "default", loops_neighborhood.value() )
+		PoseMetricCalculatorOP( new toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator( "default", "default", loops_neighborhood.value() ) )
 	);
 
 }
@@ -1389,7 +1389,7 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 	// run VLB to build the new section, if no segments have been added/deleted
 	// we use the same VLB so that fragment caching works properly
 	if ( !vlb_.get() ) {
-		vlb_ = new VarLengthBuild( manager_ , remodel_data_ );
+		vlb_ = VarLengthBuildOP( new VarLengthBuild( manager_ , remodel_data_ ) );
 	}
 	if (!working_model_.abego.empty()){
 		//the following block simply packages the string to feed to vlb
@@ -1456,7 +1456,7 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 				using protocols::forge::methods::intervals_to_loops;
 				std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
 
-				LoopsOP loops = new Loops();
+				LoopsOP loops( new Loops() );
 
 				//Temporary fix: special case for denovo type, needed artificially
 				//padding residues.  in reality all loops would be padded, but for
@@ -1464,7 +1464,7 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 				if (loop_intervals.size() == 1 && (*(loop_intervals.begin())).left == 1 && (*(loop_intervals.begin())).right == remodel_data_.blueprint.size()){
 					loops->add_loop( Loop(1, remodel_data_.blueprint.size()+2, 0, 0, true) );
 				} else {
-					loops = new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) );
+					loops = LoopsOP( new Loops( intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) ) );
 				}
 
 				RemodelLoopMover RLM(loops);
@@ -1559,7 +1559,7 @@ bool RemodelMover::design_refine_seq_relax( Pose & pose, RemodelDesignMover & de
 	scoring::constraints::ConstraintSetOP cst_set_post_built;
 	if (option[OptionKeys::remodel::repeat_structure].user() ) {
 		// at this stage it should hold generic cstfile and res_type_linking constraints
-		cst_set_post_built = new scoring::constraints::ConstraintSet( *pose.constraint_set() );
+		cst_set_post_built = scoring::constraints::ConstraintSetOP( new scoring::constraints::ConstraintSet( *pose.constraint_set() ) );
 	}
 
 	Size asym_length;
@@ -1726,7 +1726,7 @@ bool RemodelMover::design_refine_cart_relax(
 	sfx->set_weight(core::scoring::cart_bonded, 0.5);
 
 
- 	core::kinematics::MoveMapOP cmmop = new core::kinematics::MoveMap;
+ 	core::kinematics::MoveMapOP cmmop( new core::kinematics::MoveMap );
 	//pose.dump_pdb("pretest.pdb");
 
 	if(option[OptionKeys::remodel::free_relax].user()) {
@@ -1752,7 +1752,7 @@ bool RemodelMover::design_refine_cart_relax(
 		std::cout << "chiM at " << i << " " << manager_.movemap().get_chi(i) << std::endl;
 	}
 
-	simple_moves::MinMoverOP minMover = new simple_moves::MinMover( cmmop , sfx , "lbfgs_armijo", 0.01, true);
+	simple_moves::MinMoverOP minMover( new simple_moves::MinMover( cmmop , sfx , "lbfgs_armijo", 0.01, true) );
 	minMover->cartesian(true);
 
 
@@ -1761,7 +1761,7 @@ bool RemodelMover::design_refine_cart_relax(
 
 	// at this stage it should hold generic cstfile and res_type_linking
 	// constraints
-		cst_set_post_built = new ConstraintSet( *pose.constraint_set() );
+		cst_set_post_built = ConstraintSetOP( new ConstraintSet( *pose.constraint_set() ) );
 	}
 
 	protocols::simple_moves::symmetry::SetupNCSMover setup_ncs;
@@ -1882,7 +1882,7 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 	forge::build::BuildManager::Original2Modified original2modified_interval_endpoints = manager_.original2modified_interval_endpoints();
 
 	// collect loops
-	loops::LoopsOP loops = new loops::Loops( forge::methods::intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) );
+	loops::LoopsOP loops( new loops::Loops( forge::methods::intervals_to_loops( loop_intervals.begin(), loop_intervals.end() ) ) );
 
 	// refine Mover used doesn't setup a fold tree, so do it here
 	//FoldTree loop_ft = protocols::forge::methods::fold_tree_from_loops( pose, loops );
@@ -1904,8 +1904,8 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 
 	// setup the refine TaskFactory
 	pack::task::TaskFactoryOP refine_tf = generic_taskfactory();
-	refine_tf->push_back( new toolbox::task_operations::RestrictToNeighborhoodOperation( neighborhood_calc_name() ) );
-	refine_tf->push_back( new pack::task::operation::RestrictToRepacking() );
+	refine_tf->push_back( TaskOperationCOP( new toolbox::task_operations::RestrictToNeighborhoodOperation( neighborhood_calc_name() ) ) );
+	refine_tf->push_back( TaskOperationCOP( new pack::task::operation::RestrictToRepacking() ) );
 
 	// safety, clear the energies object
 	pose.energies().clear();
@@ -1926,7 +1926,7 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 		if (!option[OptionKeys::remodel::swap_refine_confirm_protocols].user() ) {
 			// refine the new section
 			loops::loop_mover::refine::LoopMover_Refine_CCD refine( loops, sfx );
-			kinematics::MoveMapOP combined_mm = new kinematics::MoveMap();
+			kinematics::MoveMapOP combined_mm( new kinematics::MoveMap() );
 
 			////// fix dna
 			for ( Size i=1; i<=pose.total_residue() ; ++i ) {
@@ -1952,9 +1952,9 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 				}
 			}
 
-			pack::task::operation::OperateOnCertainResiduesOP natroRes = new pack::task::operation::OperateOnCertainResidues;
+			pack::task::operation::OperateOnCertainResiduesOP natroRes( new pack::task::operation::OperateOnCertainResidues );
 			natroRes->residue_indices( natroPositions );
-			natroRes->op( new pack::task::operation::PreventRepackingRLT );
+			natroRes->op( ResLvlTaskOperationCOP( new pack::task::operation::PreventRepackingRLT ) );
 			refine_tf->push_back( natroRes );
 
 			refine.false_movemap( combined_mm );
@@ -2027,7 +2027,7 @@ bool RemodelMover::confirm_sequence( core::pose::Pose & pose ) {
 	//pose.dump_pdb("pre_KICpose.pdb");
 
 	// collect loops
-	loops::LoopsOP confirmation_loops = new loops::Loops( intervals_to_confirmation_loops( loop_intervals.begin(), loop_intervals.end(), pose.total_residue() ) );
+	loops::LoopsOP confirmation_loops( new loops::Loops( intervals_to_confirmation_loops( loop_intervals.begin(), loop_intervals.end(), pose.total_residue() ) ) );
 
 	// refine Mover used doesn't setup a fold tree, so do it here
 	kinematics::FoldTree loop_ft;
@@ -2055,11 +2055,11 @@ bool RemodelMover::confirm_sequence( core::pose::Pose & pose ) {
 		//	scramble_mover.randomize_stage(pose);
 
 		TaskFactoryOP refine_tf = generic_taskfactory();
-		refine_tf->push_back( new RestrictToNeighborhoodOperation( neighborhood_calc_name() ) );
-		refine_tf->push_back( new RestrictToRepacking() );
+		refine_tf->push_back( TaskOperationCOP( new RestrictToNeighborhoodOperation( neighborhood_calc_name() ) ) );
+		refine_tf->push_back( TaskOperationCOP( new RestrictToRepacking() ) );
 
 		loops::loop_mover::refine::LoopMover_Refine_CCD refine( confirmation_loops, fullatom_sfx_ );
-		kinematics::MoveMapOP combined_mm = new kinematics::MoveMap();
+		kinematics::MoveMapOP combined_mm( new kinematics::MoveMap() );
 
 		////// fix dna
 		for ( Size i=1; i<=pose.total_residue() ; ++i ) {
@@ -2160,13 +2160,13 @@ RemodelMover::TaskFactoryOP RemodelMover::generic_taskfactory() {
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 
-	TaskFactoryOP tf = new TaskFactory();
+	TaskFactoryOP tf( new TaskFactory() );
 
-	tf->push_back( new InitializeFromCommandline() ); // also inits -ex options
-	tf->push_back( new IncludeCurrent() ); // enforce keeping of input sidechains
-	tf->push_back( new NoRepackDisulfides() );
+	tf->push_back( TaskOperationCOP( new InitializeFromCommandline() ) ); // also inits -ex options
+	tf->push_back( TaskOperationCOP( new IncludeCurrent() ) ); // enforce keeping of input sidechains
+	tf->push_back( TaskOperationCOP( new NoRepackDisulfides() ) );
   if (!option[OptionKeys::remodel::design::allow_rare_aro_chi].user()){
-		tf->push_back( new LimitAromaChi2Operation() );
+		tf->push_back( TaskOperationCOP( new LimitAromaChi2Operation() ) );
 	}
 
 	// load resfile op only if requested
@@ -2207,7 +2207,7 @@ void RemodelMover::process_continuous_design_string( Interval const & original_i
 				break;
 		}
 
-		design_tf->push_back( new pack::task::operation::RestrictAbsentCanonicalAAS( i + offset, allowed_aa_types ) );
+		design_tf->push_back( TaskOperationCOP( new pack::task::operation::RestrictAbsentCanonicalAAS( i + offset, allowed_aa_types ) ) );
 	}
 }
 
@@ -2244,7 +2244,7 @@ void RemodelMover::process_insert_design_string( Interval const & original_inter
 	aa.replace( insert_char_idx, 1, insert_nres, insert_char );
 
 	// setup TaskOperations
-	pack::task::operation::RestrictResidueToRepackingOP repack_op = new pack::task::operation::RestrictResidueToRepacking();
+	pack::task::operation::RestrictResidueToRepackingOP repack_op( new pack::task::operation::RestrictResidueToRepacking() );
 
 	Size const left_offset = interval.left;
 	for ( Size i = 0, ie = aa.size(); i < ie; ++i ) {
@@ -2264,7 +2264,7 @@ void RemodelMover::process_insert_design_string( Interval const & original_inter
 			allowed_aa_types[ chemical::aa_from_oneletter_code( aa.at( i ) ) ] = true;
 		}
 
-		design_tf->push_back( new pack::task::operation::RestrictAbsentCanonicalAAS( i + left_offset, allowed_aa_types ) );
+		design_tf->push_back( TaskOperationCOP( new pack::task::operation::RestrictAbsentCanonicalAAS( i + left_offset, allowed_aa_types ) ) );
 	}
 
 	design_tf->push_back( repack_op );

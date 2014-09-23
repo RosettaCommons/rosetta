@@ -26,8 +26,8 @@ namespace clusters {
 // Forward
 class CDRClusterEnumManager;
 
-typedef utility::pointer::owning_ptr< CDRClusterEnumManager > CDRClusterEnumManagerOP;
-typedef utility::pointer::owning_ptr< CDRClusterEnumManager const > CDRClusterEnumManagerCOP;
+typedef utility::pointer::shared_ptr< CDRClusterEnumManager > CDRClusterEnumManagerOP;
+typedef utility::pointer::shared_ptr< CDRClusterEnumManager const > CDRClusterEnumManagerCOP;
 
 } //namespace clusters
 } //namespace antibody

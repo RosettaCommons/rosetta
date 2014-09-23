@@ -18,8 +18,8 @@ namespace protocols {
 namespace dna {
 
 class SeparateDnaFromNonDna;
-typedef utility::pointer::owning_ptr< SeparateDnaFromNonDna > SeparateDnaFromNonDnaOP;
-typedef utility::pointer::owning_ptr< SeparateDnaFromNonDna const > SeparateDnaFromNonDnaCOP;
+typedef utility::pointer::shared_ptr< SeparateDnaFromNonDna > SeparateDnaFromNonDnaOP;
+typedef utility::pointer::shared_ptr< SeparateDnaFromNonDna const > SeparateDnaFromNonDnaCOP;
 
 } // dna
 } // protocols

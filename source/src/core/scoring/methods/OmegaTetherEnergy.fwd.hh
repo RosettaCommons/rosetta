@@ -25,8 +25,8 @@ namespace methods {
 
 class OmegaTetherEnergy;
 
-typedef utility::pointer::owning_ptr< OmegaTetherEnergy > OmegaTetherEnergyOP;
-typedef utility::pointer::owning_ptr< OmegaTetherEnergy const > OmegaTetherEnergyCOP;
+typedef utility::pointer::shared_ptr< OmegaTetherEnergy > OmegaTetherEnergyOP;
+typedef utility::pointer::shared_ptr< OmegaTetherEnergy const > OmegaTetherEnergyCOP;
 
 } // methods
 } // scoring

@@ -79,7 +79,7 @@ methods::EnergyMethodOP
 FA_ElecEnergyAroAllCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return new FA_ElecEnergyAroAll( options );
+	return methods::EnergyMethodOP( new FA_ElecEnergyAroAll( options ) );
 }
 
 ScoreTypes
@@ -110,7 +110,7 @@ FA_ElecEnergyAroAll::FA_ElecEnergyAroAll( FA_ElecEnergyAroAll const & src ):
 methods::EnergyMethodOP
 FA_ElecEnergyAroAll::clone() const
 {
-	return new FA_ElecEnergyAroAll( *this );
+	return methods::EnergyMethodOP( new FA_ElecEnergyAroAll( *this ) );
 }
 
 ///

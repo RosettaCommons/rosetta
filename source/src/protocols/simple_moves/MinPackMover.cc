@@ -66,7 +66,7 @@ MinPackMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 MinPackMoverCreator::create_mover() const {
-	return new MinPackMover;
+	return protocols::moves::MoverOP( new MinPackMover );
 }
 
 std::string
@@ -77,9 +77,9 @@ MinPackMoverCreator::mover_name()
 
 MinPackMover::MinPackMover() :
 	protocols::moves::Mover("MinPackMover"),
-	scorefxn_(0),
-	task_(0),
-	task_factory_(0),
+	scorefxn_(/* 0 */),
+	task_(/* 0 */),
+	task_factory_(/* 0 */),
 	off_rotamer_pack_( false )
 {
 	init();
@@ -87,9 +87,9 @@ MinPackMover::MinPackMover() :
 
 MinPackMover::MinPackMover( std::string const & type_name ) :
 	protocols::moves::Mover( type_name ),
-	scorefxn_(0),
-	task_(0),
-	task_factory_(0),
+	scorefxn_(/* 0 */),
+	task_(/* 0 */),
+	task_factory_(/* 0 */),
 	off_rotamer_pack_( false )
 {
 	init();
@@ -101,8 +101,8 @@ MinPackMover::MinPackMover(
 ) :
 	protocols::moves::Mover("MinPackMover"),
 	scorefxn_( scorefxn ),
-	task_( 0 ),
-	task_factory_(0),
+	task_( /* 0 */ ),
+	task_factory_(/* 0 */),
 	off_rotamer_pack_( false )
 {
 	init();
@@ -116,7 +116,7 @@ MinPackMover::MinPackMover(
 	protocols::moves::Mover("MinPackMover"),
 	scorefxn_( scorefxn ),
 	task_( task ),
-	task_factory_(0),
+	task_factory_(/* 0 */),
 	off_rotamer_pack_( false )
 {
 	init();
@@ -249,14 +249,14 @@ MinPackMover::parse_task_operations(
 protocols::moves::MoverOP
 MinPackMover::fresh_instance() const
 {
-	return new MinPackMover;
+	return protocols::moves::MoverOP( new MinPackMover );
 }
 
 ///@brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 MinPackMover::clone() const
 {
-	return new protocols::simple_moves::MinPackMover( *this );
+	return protocols::moves::MoverOP( new protocols::simple_moves::MinPackMover( *this ) );
 }
 
 

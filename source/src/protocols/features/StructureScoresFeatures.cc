@@ -133,10 +133,10 @@ StructureScoresFeatures::write_schema_to_db(
 	using namespace basic::database::schema_generator;
 
 	//******structure_scores******//
-	Column batch_id("batch_id", new DbInteger(), false);
-	Column struct_id("struct_id", new DbBigInt(), false);
-	Column score_type_id("score_type_id", new DbInteger(), false);
-	Column score_value("score_value", new DbInteger(), false);
+	Column batch_id("batch_id", DbDataTypeOP( new DbInteger() ), false);
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
+	Column score_type_id("score_type_id", DbDataTypeOP( new DbInteger() ), false);
+	Column score_value("score_value", DbDataTypeOP( new DbInteger() ), false);
 
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(batch_id);
@@ -186,7 +186,7 @@ StructureScoresFeatures::parse_my_tag(
 ) {
 	if(tag->hasOption("scorefxn")){
 		string scorefxn_name = tag->getOption<string>("scorefxn");
-		scfxn_ = data.get<ScoreFunction*>("scorefxns", scorefxn_name);
+		scfxn_ = data.get_ptr<ScoreFunction>("scorefxns", scorefxn_name);
 	} else {
 		stringstream error_msg;
 		error_msg
@@ -284,8 +284,8 @@ StructureScoresFeatures::insert_structure_score_rows(
 
 	core::Real total_score_value= 0.0;
 	Size const batch_id(get_batch_id(struct_id, db_session));
-	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id",struct_id);
-	RowDataBaseOP batch_id_data = new RowData<Size>("batch_id",batch_id);
+	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
+	RowDataBaseOP batch_id_data( new RowData<Size>("batch_id",batch_id) );
 
 	for(Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id){
 		ScoreType type(static_cast<ScoreType>(score_type_id));
@@ -293,8 +293,8 @@ StructureScoresFeatures::insert_structure_score_rows(
 		if(!score_value) continue;
 		total_score_value += score_value;
 
-		RowDataBaseOP score_type_id_data = new RowData<Size>("score_type_id",score_type_id);
-		RowDataBaseOP score_value_data = new RowData<Real>("score_value",score_value);
+		RowDataBaseOP score_type_id_data( new RowData<Size>("score_type_id",score_type_id) );
+		RowDataBaseOP score_value_data( new RowData<Real>("score_value",score_value) );
 
 		structure_scores_insert.add_row(
 			utility::tools::make_vector(batch_id_data,struct_id_data,score_type_id_data,score_value_data));
@@ -302,8 +302,8 @@ StructureScoresFeatures::insert_structure_score_rows(
 	}
 
 	// add the total_score type
-	RowDataBaseOP total_id_data = new RowData<Size>("score_type_id",total_score);
-	RowDataBaseOP total_score_data = new RowData<Real>("score_value",total_score_value);
+	RowDataBaseOP total_id_data( new RowData<Size>("score_type_id",total_score) );
+	RowDataBaseOP total_score_data( new RowData<Real>("score_value",total_score_value) );
 
 	structure_scores_insert.add_row(
 		utility::tools::make_vector(batch_id_data,struct_id_data,total_id_data,total_score_data));

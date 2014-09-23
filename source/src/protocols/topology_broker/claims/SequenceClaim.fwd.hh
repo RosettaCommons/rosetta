@@ -31,11 +31,11 @@ namespace claims {
 class SequenceClaim;
 
 // Types
-typedef  utility::pointer::owning_ptr< SequenceClaim >  SequenceClaimOP;
-typedef  utility::pointer::owning_ptr< SequenceClaim const >  SequenceClaimCOP;
+typedef  utility::pointer::shared_ptr< SequenceClaim >  SequenceClaimOP;
+typedef  utility::pointer::shared_ptr< SequenceClaim const >  SequenceClaimCOP;
 
-typedef  utility::pointer::access_ptr< SequenceClaim >  SequenceClaimAP;
-typedef  utility::pointer::access_ptr< SequenceClaim const >  SequenceClaimCAP;
+typedef  utility::pointer::weak_ptr< SequenceClaim >  SequenceClaimAP;
+typedef  utility::pointer::weak_ptr< SequenceClaim const >  SequenceClaimCAP;
 
 typedef utility::vector1< SequenceClaimOP > SequenceClaims;
 

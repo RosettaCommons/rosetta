@@ -140,9 +140,9 @@ ScoreFunction::reset()
 	#endif
 
 	score_function_info_current_ = true;
-	score_function_info_ = new ScoreFunctionInfo;
+	score_function_info_ = ScoreFunctionInfoOP( new ScoreFunctionInfo );
 	any_intrares_energies_ = false;
-	energy_method_options_ = new methods::EnergyMethodOptions;
+	energy_method_options_ = methods::EnergyMethodOptionsOP( new methods::EnergyMethodOptions );
 	initialize_methods_arrays();
 	weights_.clear();
 }
@@ -298,12 +298,12 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 				central_atoms.push_back( central_atom );
 			}
 			if ( ! energy_method_options_->bond_angle_residue_type_param_set() ) {
-				energy_method_options_->bond_angle_residue_type_param_set( new core::scoring::mm::MMBondAngleResidueTypeParamSet() );
+				energy_method_options_->bond_angle_residue_type_param_set( scoring::mm::MMBondAngleResidueTypeParamSetOP( new core::scoring::mm::MMBondAngleResidueTypeParamSet() ) );
 			}
 			energy_method_options_->bond_angle_residue_type_param_set()->central_atoms_to_score( central_atoms );
 		} else if ( tag == "BOND_ANGLE_USE_RESIDUE_TYPE_THETA0" ) {
 			if ( ! energy_method_options_->bond_angle_residue_type_param_set() ) {
-				energy_method_options_->bond_angle_residue_type_param_set( new core::scoring::mm::MMBondAngleResidueTypeParamSet() );
+				energy_method_options_->bond_angle_residue_type_param_set( scoring::mm::MMBondAngleResidueTypeParamSetOP( new core::scoring::mm::MMBondAngleResidueTypeParamSet() ) );
 			}
 			energy_method_options_->bond_angle_residue_type_param_set()->use_residue_type_theta0( true );
 		} else if ( tag == "UNFOLDED_ENERGIES_TYPE" ) {
@@ -443,7 +443,7 @@ ScoreFunction::assign( ScoreFunction const & src )
 	weights_ = src.weights_;
 
 	// deep copy of the energy method options
-	energy_method_options_ = new methods::EnergyMethodOptions( * src.energy_method_options_ );
+	energy_method_options_ = methods::EnergyMethodOptionsOP( new methods::EnergyMethodOptions( * src.energy_method_options_ ) );
 
 	// copy the methods:
 	initialize_methods_arrays(); // clears & sizes the arrays
@@ -457,7 +457,7 @@ ScoreFunction::assign( ScoreFunction const & src )
 
 	/// SL: Fri Jun 29 12:51:25 EDT 2007 @744 /Internet Time/
 	score_function_info_current_ = src.score_function_info_current_;
-	score_function_info_ = new ScoreFunctionInfo( *src.score_function_info_ );
+	score_function_info_ = ScoreFunctionInfoOP( new ScoreFunctionInfo( *src.score_function_info_ ) );
 
 	any_intrares_energies_ = src.any_intrares_energies_;
 }
@@ -2277,7 +2277,7 @@ ScoreFunction::setup_for_minimizing(
 	/// of the minimization-graph control over derivative evaluation.
 
 
-	MinimizationGraphOP g = new MinimizationGraph( pose.total_residue() );
+	MinimizationGraphOP g( new MinimizationGraph( pose.total_residue() ) );
 	std::list< methods::EnergyMethodCOP > eval_derivs_with_pose_enmeths;
 	for ( AllMethods::const_iterator iter=all_methods_.begin(),
 			iter_end= all_methods_.end(); iter != iter_end; ++iter ) {
@@ -2695,7 +2695,7 @@ ScoreFunction::info() const
 		score_function_info_->initialize_from( *this );
 		score_function_info_current_ = true;
 	}
-	return new ScoreFunctionInfo( *score_function_info_ );
+	return ScoreFunctionInfoOP( new ScoreFunctionInfo( *score_function_info_ ) );
 }
 
 ScoreFunction::AllMethods const & ScoreFunction::all_methods() const {
@@ -2727,41 +2727,41 @@ ScoreFunction::add_method( methods::EnergyMethodOP method )
 	case ci_2b:
 		// there must be an easier way to cast these owning pointers!
 		ci_2b_methods_.push_back
-			( static_cast< ContextIndependentTwoBodyEnergy* >( method() ) );
+			( utility::pointer::static_pointer_cast< core::scoring::methods::ContextIndependentTwoBodyEnergy > ( method ) );
 		break;
 
 	case cd_2b:
 		cd_2b_methods_.push_back
-			( static_cast< ContextDependentTwoBodyEnergy* >( method() ) );
+			( utility::pointer::static_pointer_cast< core::scoring::methods::ContextDependentTwoBodyEnergy > ( method ) );
 		break;
 
 	case ci_1b:
 		ci_1b_methods_.push_back
-			( static_cast< ContextIndependentOneBodyEnergy* >( method() ) );
+			( utility::pointer::static_pointer_cast< core::scoring::methods::ContextIndependentOneBodyEnergy > ( method ) );
 		break;
 
 	case cd_1b:
 		cd_1b_methods_.push_back
-			( static_cast< ContextDependentOneBodyEnergy* >( method() ) );
+			( utility::pointer::static_pointer_cast< core::scoring::methods::ContextDependentOneBodyEnergy > ( method ) );
 		break;
 
 	case ci_lr_2b:
 		ci_lr_2b_methods_.push_back(
-			static_cast< ContextIndependentLRTwoBodyEnergy* >( method() ) );
+			utility::pointer::static_pointer_cast< core::scoring::methods::ContextIndependentLRTwoBodyEnergy > ( method ) );
 		lr_2b_methods_.push_back(
-			static_cast< LongRangeTwoBodyEnergy* >( method() ) );
+			utility::pointer::static_pointer_cast< core::scoring::methods::LongRangeTwoBodyEnergy > ( method ) );
 		break;
 
 	case cd_lr_2b:
 		cd_lr_2b_methods_.push_back(
-			static_cast< ContextDependentLRTwoBodyEnergy* >( method() ) );
+			utility::pointer::static_pointer_cast< core::scoring::methods::ContextDependentLRTwoBodyEnergy > ( method ) );
 		lr_2b_methods_.push_back(
-			static_cast< LongRangeTwoBodyEnergy* >( method() ) );
+			utility::pointer::static_pointer_cast< core::scoring::methods::LongRangeTwoBodyEnergy > ( method ) );
 		break;
 
 	case ws:
 		ws_methods_.push_back(
-			static_cast< WholeStructureEnergy* >( method() ) );
+			utility::pointer::static_pointer_cast< core::scoring::methods::WholeStructureEnergy > ( method ) );
 		break;
 
 	default:
@@ -2845,39 +2845,39 @@ ScoreFunction::remove_method( methods::EnergyMethodOP method )
 	case ci_2b:
 		// there must be an easier way to cast these owning pointers!
 		vector1_remove( ci_2b_methods_,
-			ContextIndependentTwoBodyEnergyOP(( static_cast< ContextIndependentTwoBodyEnergy* >( method() ) )));
+			ContextIndependentTwoBodyEnergyOP(( utility::pointer::static_pointer_cast< core::scoring::methods::ContextIndependentTwoBodyEnergy > ( method ) )));
 		break;
 
 	case cd_2b:
 		vector1_remove( cd_2b_methods_,
-			ContextDependentTwoBodyEnergyOP(( static_cast< ContextDependentTwoBodyEnergy* >( method() ) ) ));
+			ContextDependentTwoBodyEnergyOP(( utility::pointer::static_pointer_cast< core::scoring::methods::ContextDependentTwoBodyEnergy > ( method ) ) ));
 		break;
 
 	case ci_1b:
 		vector1_remove( ci_1b_methods_,
-			ContextIndependentOneBodyEnergyOP(( static_cast< ContextIndependentOneBodyEnergy* >( method() ) )));
+			ContextIndependentOneBodyEnergyOP(( utility::pointer::static_pointer_cast< core::scoring::methods::ContextIndependentOneBodyEnergy > ( method ) )));
 		break;
 
 	case cd_1b:
 		vector1_remove( cd_1b_methods_,
-			ContextDependentOneBodyEnergyOP(( static_cast< ContextDependentOneBodyEnergy* >( method() ) )));
+			ContextDependentOneBodyEnergyOP(( utility::pointer::static_pointer_cast< core::scoring::methods::ContextDependentOneBodyEnergy > ( method ) )));
 		break;
 
 	case ci_lr_2b:
 		rebuild_lr_methods = true;
 		vector1_remove( ci_lr_2b_methods_,
-			ContextIndependentLRTwoBodyEnergyOP(static_cast< ContextIndependentLRTwoBodyEnergy* >( method() )));
+			ContextIndependentLRTwoBodyEnergyOP(utility::pointer::static_pointer_cast< core::scoring::methods::ContextIndependentLRTwoBodyEnergy > ( method )));
 		break;
 
 	case cd_lr_2b:
 		rebuild_lr_methods = true;
 		vector1_remove( cd_lr_2b_methods_,
-			ContextDependentLRTwoBodyEnergyOP( static_cast< ContextDependentLRTwoBodyEnergy* >( method() )));
+			ContextDependentLRTwoBodyEnergyOP( utility::pointer::static_pointer_cast< core::scoring::methods::ContextDependentLRTwoBodyEnergy > ( method )));
 		break;
 
 	case ws:
 		vector1_remove( ws_methods_,
-			WholeStructureEnergyOP( static_cast< WholeStructureEnergy* >( method() )));
+			WholeStructureEnergyOP( utility::pointer::static_pointer_cast< core::scoring::methods::WholeStructureEnergy > ( method )));
 		break;
 
 	default:

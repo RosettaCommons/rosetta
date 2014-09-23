@@ -22,8 +22,8 @@ namespace protocols {
 namespace ligand_docking {
 
 class TetherLigand; // fwd declaration
-typedef utility::pointer::owning_ptr< TetherLigand > TetherLigandOP;
-typedef utility::pointer::owning_ptr< TetherLigand const > TetherLigandCOP;
+typedef utility::pointer::shared_ptr< TetherLigand > TetherLigandOP;
+typedef utility::pointer::shared_ptr< TetherLigand const > TetherLigandCOP;
 typedef utility::vector1<TetherLigandOP> TetherLigandOPs;
 typedef utility::vector1<TetherLigandCOP> TetherLigandCOPs;
 

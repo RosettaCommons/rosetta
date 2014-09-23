@@ -24,8 +24,8 @@ namespace methods {
 
 class ContextIndependentLRTwoBodyEnergy;
 
-typedef utility::pointer::owning_ptr< ContextIndependentLRTwoBodyEnergy > ContextIndependentLRTwoBodyEnergyOP;
-typedef utility::pointer::owning_ptr< ContextIndependentLRTwoBodyEnergy const > ContextIndependentLRTwoBodyEnergyCOP;
+typedef utility::pointer::shared_ptr< ContextIndependentLRTwoBodyEnergy > ContextIndependentLRTwoBodyEnergyOP;
+typedef utility::pointer::shared_ptr< ContextIndependentLRTwoBodyEnergy const > ContextIndependentLRTwoBodyEnergyCOP;
 
 } // methods
 } // scoring

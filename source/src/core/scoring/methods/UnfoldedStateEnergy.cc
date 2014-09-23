@@ -53,9 +53,9 @@ UnfoldedStateEnergyCreator::create_energy_method( methods::EnergyMethodOptions c
 			e[ (ScoreType) ii ] = v[ii];
 		}
 
-		return new UnfoldedStateEnergy( options.unfolded_energies_type(), e );
+		return methods::EnergyMethodOP( new UnfoldedStateEnergy( options.unfolded_energies_type(), e ) );
 	}
-	return new UnfoldedStateEnergy( options.unfolded_energies_type() );
+	return methods::EnergyMethodOP( new UnfoldedStateEnergy( options.unfolded_energies_type() ) );
 }
 
 ScoreTypes
@@ -92,7 +92,7 @@ UnfoldedStateEnergy::~UnfoldedStateEnergy() {}
 
 EnergyMethodOP
 UnfoldedStateEnergy::clone() const {
-	return new UnfoldedStateEnergy( type_, score_type_weights_ );
+	return EnergyMethodOP( new UnfoldedStateEnergy( type_, score_type_weights_ ) );
 }
 
 void

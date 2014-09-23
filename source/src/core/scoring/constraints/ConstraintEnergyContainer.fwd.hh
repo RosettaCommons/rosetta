@@ -26,8 +26,8 @@ class CstResNeighbConstIterator;
 
 class CstEnergyContainer;
 
-typedef utility::pointer::owning_ptr< CstEnergyContainer > CstEnergyContainerOP;
-typedef utility::pointer::owning_ptr< CstEnergyContainer const > CstEnergyContainerCOP;
+typedef utility::pointer::shared_ptr< CstEnergyContainer > CstEnergyContainerOP;
+typedef utility::pointer::shared_ptr< CstEnergyContainer const > CstEnergyContainerCOP;
 
 }
 }

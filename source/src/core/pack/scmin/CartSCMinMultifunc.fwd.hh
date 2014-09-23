@@ -23,8 +23,8 @@ namespace scmin {
 
 class CartSCMinMultifunc;
 
-typedef utility::pointer::owning_ptr< CartSCMinMultifunc > CartSCMinMultifuncOP;
-typedef utility::pointer::owning_ptr< CartSCMinMultifunc > CartSCMinMultifuncCOP;
+typedef utility::pointer::shared_ptr< CartSCMinMultifunc > CartSCMinMultifuncOP;
+typedef utility::pointer::shared_ptr< CartSCMinMultifunc > CartSCMinMultifuncCOP;
 
 } // namespace scmin
 } // namespace pack

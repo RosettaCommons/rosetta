@@ -28,8 +28,8 @@ namespace denovo_design {
 class DumpStatsSS;
 
 // Types
-typedef  utility::pointer::owning_ptr< DumpStatsSS >  DumpStatsSSOP;
-typedef  utility::pointer::owning_ptr< DumpStatsSS const >  DumpStatsCOP;
+typedef  utility::pointer::shared_ptr< DumpStatsSS >  DumpStatsSSOP;
+typedef  utility::pointer::shared_ptr< DumpStatsSS const >  DumpStatsCOP;
 } // namespace denovo_design
 } // namespace devel
 

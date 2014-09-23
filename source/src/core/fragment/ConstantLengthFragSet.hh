@@ -85,12 +85,12 @@ public:
 
 	virtual FragSetOP clone() const
 	{
-		return new ConstantLengthFragSet( *this );
+		return FragSetOP( new ConstantLengthFragSet( *this ) );
 	}
 
 	virtual FragSetOP empty_clone() const
 	{
-		return new ConstantLengthFragSet();
+		return FragSetOP( new ConstantLengthFragSet() );
 	}
 
 	/// @brief Loads the contents of  <filename>  into the ConstantLengthFragSet

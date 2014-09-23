@@ -94,7 +94,7 @@ SSamountFilter::~SSamountFilter() {}
 
 protocols::filters::FilterOP
 SSamountFilter::clone() const {
-	return new SSamountFilter( *this );
+	return protocols::filters::FilterOP( new SSamountFilter( *this ) );
 }
 
 static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.SSamountFilter" );
@@ -244,7 +244,7 @@ void SSamountFilter::parse_my_tag( utility::tag::TagCOP tag,
 }
 
 protocols::filters::FilterOP SSamountFilterCreator::create_filter() const { 
-	return new SSamountFilter; 
+	return protocols::filters::FilterOP( new SSamountFilter ); 
 }
 
 std::string SSamountFilterCreator::keyname() const { 

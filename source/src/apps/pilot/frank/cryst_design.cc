@@ -2205,7 +2205,7 @@ my_main( void* ) {
 	using namespace protocols::moves;
 
 	SequenceMoverOP seq( new SequenceMover() );
-	seq->add_mover( new CrystDock() );
+	seq->add_mover( MoverOP( new CrystDock() ) );
 
 	// force some options
 	option[ out::nooutput ].value(true);

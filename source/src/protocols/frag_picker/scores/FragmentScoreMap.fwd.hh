@@ -25,8 +25,8 @@ namespace scores {
 /// @brief forward declaration for FragmentScoreMap
 class FragmentScoreMap;
 
-typedef utility::pointer::owning_ptr<FragmentScoreMap> FragmentScoreMapOP;
-typedef utility::pointer::owning_ptr<FragmentScoreMap const>
+typedef utility::pointer::shared_ptr<FragmentScoreMap> FragmentScoreMapOP;
+typedef utility::pointer::shared_ptr<FragmentScoreMap const>
 		FragmentScoreMapCOP;
 
 } // scores

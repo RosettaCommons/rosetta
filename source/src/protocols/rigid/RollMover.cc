@@ -198,21 +198,21 @@ RollMoverCreator::mover_name()
 
 protocols::moves::MoverOP
 RollMoverCreator::create_mover() const {
-	return new RollMover;
+	return protocols::moves::MoverOP( new RollMover );
 }
 
 ///@brief required in the context of the parser/scripting scheme
 moves::MoverOP
 RollMover::fresh_instance() const
 {
-	return new RollMover;
+	return moves::MoverOP( new RollMover );
 }
 
 ///@brief required in the context of the parser/scripting scheme
 moves::MoverOP
 RollMover::clone() const
 {
-	return new RollMover( *this );
+	return moves::MoverOP( new RollMover( *this ) );
 }
 
 ///@brief

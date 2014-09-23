@@ -24,8 +24,8 @@ namespace scoring {
 namespace func {
 
 class HarmonicFunc;
-typedef utility::pointer::owning_ptr< HarmonicFunc > HarmonicFuncOP;
-typedef utility::pointer::owning_ptr< HarmonicFunc const > HarmonicFuncCOP;
+typedef utility::pointer::shared_ptr< HarmonicFunc > HarmonicFuncOP;
+typedef utility::pointer::shared_ptr< HarmonicFunc const > HarmonicFuncCOP;
 
 } // constraints
 } // scoring

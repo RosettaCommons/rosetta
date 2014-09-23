@@ -21,8 +21,8 @@ namespace protocols{
 namespace rotamer_recovery{
 
 class RotamerRecoveryFactory;
-typedef utility::pointer::owning_ptr< RotamerRecoveryFactory > RotamerRecoveryFactoryOP;
-typedef utility::pointer::owning_ptr< RotamerRecoveryFactory const > RotamerRecoveryFactoryCOP;
+typedef utility::pointer::shared_ptr< RotamerRecoveryFactory > RotamerRecoveryFactoryOP;
+typedef utility::pointer::shared_ptr< RotamerRecoveryFactory const > RotamerRecoveryFactoryCOP;
 
 }// namespace
 }// namespace

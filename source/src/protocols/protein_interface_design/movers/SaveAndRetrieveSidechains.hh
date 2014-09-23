@@ -44,7 +44,7 @@ class SaveAndRetrieveSidechains : public simple_moves::DesignRepackMover
 public:
 	typedef core::pose::Pose Pose;
 	typedef core::pose::PoseOP PoseOP;
-	typedef utility::pointer::owning_ptr< basic::datacache::DataMapObj< bool > > BoolDataCacheBoolOP;
+	typedef utility::pointer::shared_ptr< basic::datacache::DataMapObj< bool > > BoolDataCacheBoolOP;
 public:
 	SaveAndRetrieveSidechains();
 	SaveAndRetrieveSidechains(

@@ -24,8 +24,8 @@ namespace idealize {
 class IdealizeMover;
 
 // Types
-typedef utility::pointer::owning_ptr< IdealizeMover > IdealizeMoverOP;
-typedef utility::pointer::owning_ptr< IdealizeMover const > IdealizeMoverCOP;
+typedef utility::pointer::shared_ptr< IdealizeMover > IdealizeMoverOP;
+typedef utility::pointer::shared_ptr< IdealizeMover const > IdealizeMoverCOP;
 
 }
 }

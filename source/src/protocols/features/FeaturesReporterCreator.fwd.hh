@@ -24,8 +24,8 @@ namespace features {
 /// creating a particular FeaturesReporter class.
 class FeaturesReporterCreator;
 
-typedef utility::pointer::owning_ptr< FeaturesReporterCreator > FeaturesReporterCreatorOP;
-typedef utility::pointer::owning_ptr< FeaturesReporterCreator const > FeaturesReporterCreatorCOP;
+typedef utility::pointer::shared_ptr< FeaturesReporterCreator > FeaturesReporterCreatorOP;
+typedef utility::pointer::shared_ptr< FeaturesReporterCreator const > FeaturesReporterCreatorCOP;
 
 } //namespace
 } //namespace

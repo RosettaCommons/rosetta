@@ -59,12 +59,12 @@ NoRepackDisulfides::~NoRepackDisulfides() {}
 
 TaskOperationOP NoRepackDisulfidesCreator::create_task_operation() const
 {
-	return new NoRepackDisulfides;
+	return TaskOperationOP( new NoRepackDisulfides );
 }
 
 /// @brief clone this object
 NoRepackDisulfides::TaskOperationOP NoRepackDisulfides::clone() const {
-	return new NoRepackDisulfides( *this );
+	return NoRepackDisulfides::TaskOperationOP( new NoRepackDisulfides( *this ) );
 }
 
 /// @brief apply operations to PackerTask

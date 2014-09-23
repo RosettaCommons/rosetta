@@ -23,8 +23,8 @@ namespace stepwise {
 namespace modeler {
 	
 	class StepWiseConnectionSampler;
-	typedef utility::pointer::owning_ptr< StepWiseConnectionSampler > StepWiseConnectionSamplerOP;
-	typedef utility::pointer::owning_ptr< StepWiseConnectionSampler const > StepWiseConnectionSamplerCOP;
+	typedef utility::pointer::shared_ptr< StepWiseConnectionSampler > StepWiseConnectionSamplerOP;
+	typedef utility::pointer::shared_ptr< StepWiseConnectionSampler const > StepWiseConnectionSamplerCOP;
 	
 } //modeler
 } //stepwise

@@ -20,8 +20,8 @@ namespace devel {
 namespace domain_assembly {
 
 class DomainAssemblyJobInputter;
-typedef utility::pointer::owning_ptr< DomainAssemblyJobInputter > DomainAssemblyJobInputterOP;
-typedef utility::pointer::owning_ptr< DomainAssemblyJobInputter const > DomainAssemblyJobInputterCOP;
+typedef utility::pointer::shared_ptr< DomainAssemblyJobInputter > DomainAssemblyJobInputterOP;
+typedef utility::pointer::shared_ptr< DomainAssemblyJobInputter const > DomainAssemblyJobInputterCOP;
 
 }// domain_assembly
 }// devel

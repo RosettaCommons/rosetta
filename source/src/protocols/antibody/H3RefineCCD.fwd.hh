@@ -21,8 +21,8 @@ namespace protocols {
 namespace antibody {
 
 class H3RefineCCD;
-typedef utility::pointer::owning_ptr< H3RefineCCD > H3RefineCCDOP;
-typedef utility::pointer::owning_ptr< H3RefineCCD const > H3RefineCCDCOP;
+typedef utility::pointer::shared_ptr< H3RefineCCD > H3RefineCCDOP;
+typedef utility::pointer::shared_ptr< H3RefineCCD const > H3RefineCCDCOP;
 
 }
 }

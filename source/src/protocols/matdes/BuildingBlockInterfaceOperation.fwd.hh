@@ -21,8 +21,8 @@ namespace matdes {
 
 class BuildingBlockInterfaceOperation;
 
-typedef utility::pointer::owning_ptr< BuildingBlockInterfaceOperation > BuildingBlockInterfaceOperationOP;
-typedef utility::pointer::owning_ptr< BuildingBlockInterfaceOperation const > BuildingBlockInterfaceOperationCOP;
+typedef utility::pointer::shared_ptr< BuildingBlockInterfaceOperation > BuildingBlockInterfaceOperationOP;
+typedef utility::pointer::shared_ptr< BuildingBlockInterfaceOperation const > BuildingBlockInterfaceOperationCOP;
 
 } //namespace matdes
 } //namespace protocols

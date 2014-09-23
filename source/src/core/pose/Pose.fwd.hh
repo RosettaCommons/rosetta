@@ -32,11 +32,11 @@ class Pose;
 
 typedef boost::shared_ptr < Pose > PoseSP;
 
-typedef utility::pointer::owning_ptr< Pose > PoseOP;
-typedef utility::pointer::owning_ptr< Pose const > PoseCOP;
+typedef utility::pointer::shared_ptr< Pose > PoseOP;
+typedef utility::pointer::shared_ptr< Pose const > PoseCOP;
 
-typedef utility::pointer::access_ptr< Pose > PoseAP;
-typedef utility::pointer::access_ptr< Pose const > PoseCAP;
+typedef utility::pointer::weak_ptr< Pose > PoseAP;
+typedef utility::pointer::weak_ptr< Pose const > PoseCAP;
 
 typedef utility::vector1< PoseOP > PoseOPs;
 typedef utility::vector1< PoseCOP > PoseCOPs;

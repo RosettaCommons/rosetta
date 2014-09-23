@@ -20,7 +20,7 @@ namespace protocols {
 namespace farna {
 
 	class RNA_JumpLibrary;
-	typedef utility::pointer::owning_ptr< RNA_JumpLibrary > RNA_JumpLibraryOP;
+	typedef utility::pointer::shared_ptr< RNA_JumpLibrary > RNA_JumpLibraryOP;
 
 } //farna
 } //protocols

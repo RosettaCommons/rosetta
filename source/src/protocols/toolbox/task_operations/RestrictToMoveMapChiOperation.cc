@@ -139,7 +139,7 @@ RestrictToMoveMapChiOperation::apply(Pose const & pose, core::pack::task::Packer
 	
 TaskOperationOP
 RestrictToMoveMapChiOperation::clone() const {
-	return new RestrictToMoveMapChiOperation( *this );
+	return TaskOperationOP( new RestrictToMoveMapChiOperation( *this ) );
 }
 	
 } //operation

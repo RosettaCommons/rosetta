@@ -84,7 +84,7 @@ public:
 		task->or_include_current(false);
 		task->restrict_to_repacking();
 
-		rotsets = new core::pack::rotamer_set::RotamerSets();
+		rotsets = core::pack::rotamer_set::RotamerSetsOP( new core::pack::rotamer_set::RotamerSets() );
 		ig = core::pack::pack_rotamers_setup( input_pose, *scorefxn, task, rotsets );
 	}
 

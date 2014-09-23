@@ -38,8 +38,8 @@ namespace membrane {
 /// @brief Class: Membrane Info
 /// @details Handles memrbane conformation, foldtree, and maintains membrane info
 class MembraneInfo;
-typedef utility::pointer::owning_ptr< MembraneInfo > MembraneInfoOP;
-typedef utility::pointer::owning_ptr< MembraneInfo const > MembraneInfoCOP;
+typedef utility::pointer::shared_ptr< MembraneInfo > MembraneInfoOP;
+typedef utility::pointer::shared_ptr< MembraneInfo const > MembraneInfoCOP;
 		
 } // membrane
 } // conformation

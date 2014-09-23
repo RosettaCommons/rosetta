@@ -22,8 +22,8 @@ namespace features {
 		
 class InterfaceFeatures;
 
-	typedef utility::pointer::owning_ptr< protocols::features::InterfaceFeatures > InterfaceFeaturesOP;
-	typedef utility::pointer::owning_ptr< InterfaceFeatures const > InterfaceFeaturesCOP;
+	typedef utility::pointer::shared_ptr< protocols::features::InterfaceFeatures > InterfaceFeaturesOP;
+	typedef utility::pointer::shared_ptr< InterfaceFeatures const > InterfaceFeaturesCOP;
 
 }
 }

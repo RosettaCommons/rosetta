@@ -21,8 +21,8 @@ namespace protocols {
 namespace ligand_docking {
 
 class ResidueTorsionRestraints; // fwd declaration
-typedef utility::pointer::owning_ptr< ResidueTorsionRestraints > ResidueTorsionRestraintsOP;
-typedef utility::pointer::owning_ptr< ResidueTorsionRestraints const > ResidueTorsionRestraintsCOP;
+typedef utility::pointer::shared_ptr< ResidueTorsionRestraints > ResidueTorsionRestraintsOP;
+typedef utility::pointer::shared_ptr< ResidueTorsionRestraints const > ResidueTorsionRestraintsCOP;
 
 } // namespace ligand_docking
 } // namespace protocols

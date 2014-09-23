@@ -341,7 +341,7 @@ switch_to_residue_type_set(
 			task->initialize_from_command_line().or_include_current( true );
 			task->restrict_to_repacking();
 
-			core::kinematics::MoveMapOP mm(new core::kinematics::MoveMap);
+			core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 			mm->set_bb( false );
 
 			// Set up each residue individually

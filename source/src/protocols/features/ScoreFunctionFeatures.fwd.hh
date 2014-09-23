@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class ScoreFunctionFeatures;
-typedef utility::pointer::owning_ptr< ScoreFunctionFeatures > ScoreFunctionFeaturesOP;
-typedef utility::pointer::owning_ptr< ScoreFunctionFeatures const > ScoreFunctionFeaturesCOP;
+typedef utility::pointer::shared_ptr< ScoreFunctionFeatures > ScoreFunctionFeaturesOP;
+typedef utility::pointer::shared_ptr< ScoreFunctionFeatures const > ScoreFunctionFeaturesCOP;
 
 }// namespace
 }// namespace

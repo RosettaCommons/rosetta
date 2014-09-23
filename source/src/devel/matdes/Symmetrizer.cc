@@ -58,7 +58,7 @@ SymmetrizerMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 SymmetrizerMoverCreator::create_mover() const {
-	return new Symmetrizer;
+	return protocols::moves::MoverOP( new Symmetrizer );
 }
 
 std::string
@@ -85,12 +85,12 @@ Symmetrizer::Symmetrizer() :
 
 protocols::moves::MoverOP 
 Symmetrizer::clone() const {
-	return new Symmetrizer( *this );
+	return protocols::moves::MoverOP( new Symmetrizer( *this ) );
 }
 
 protocols::moves::MoverOP 
 Symmetrizer::fresh_instance() const {
-				return new Symmetrizer();
+				return protocols::moves::MoverOP( new Symmetrizer() );
 }
 
 

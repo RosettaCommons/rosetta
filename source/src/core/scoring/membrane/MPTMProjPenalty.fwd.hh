@@ -27,8 +27,8 @@ namespace scoring {
 namespace membrane {
 	
 class MPTMProjPenalty;
-typedef utility::pointer::owning_ptr< MPTMProjPenalty > MPTMProjPenaltyOP;
-typedef utility::pointer::owning_ptr< MPTMProjPenalty const > MPTMProjPenaltyCOP;
+typedef utility::pointer::shared_ptr< MPTMProjPenalty > MPTMProjPenaltyOP;
+typedef utility::pointer::shared_ptr< MPTMProjPenalty const > MPTMProjPenaltyCOP;
 	
 } // membrane
 } // scoring

@@ -28,11 +28,11 @@ namespace filters {
 class FoldabilityFilter;
 
 // Types
-typedef  utility::pointer::owning_ptr< FoldabilityFilter >  FoldabilityFilterOP;
-typedef  utility::pointer::owning_ptr< FoldabilityFilter const >  FoldabilityFilterCOP;
+typedef  utility::pointer::shared_ptr< FoldabilityFilter >  FoldabilityFilterOP;
+typedef  utility::pointer::shared_ptr< FoldabilityFilter const >  FoldabilityFilterCOP;
 
-typedef  utility::pointer::access_ptr< FoldabilityFilter >  FoldabilityFilterAP;
-typedef  utility::pointer::access_ptr< FoldabilityFilter const >  FoldabilityFilterCAP;
+typedef  utility::pointer::weak_ptr< FoldabilityFilter >  FoldabilityFilterAP;
+typedef  utility::pointer::weak_ptr< FoldabilityFilter const >  FoldabilityFilterCAP;
 
 } // namespace filters
 } // namespace denovo_design

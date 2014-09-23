@@ -22,8 +22,8 @@ namespace chiral{
 
 //Forwards and OP typedefs
 class ChiralMover;
-typedef utility::pointer::owning_ptr< ChiralMover > ChiralMoverOP;
-typedef utility::pointer::owning_ptr< ChiralMover const > ChiralMoverCOP;
+typedef utility::pointer::shared_ptr< ChiralMover > ChiralMoverOP;
+typedef utility::pointer::shared_ptr< ChiralMover const > ChiralMoverCOP;
 
 }//chiral
 }//simple_moves

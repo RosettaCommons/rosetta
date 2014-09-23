@@ -21,7 +21,7 @@ namespace scoring {
 
 class UnfoldedStatePotential;
 
-typedef utility::pointer::owning_ptr< UnfoldedStatePotential > UnfoldedStatePotentialOP;
+typedef utility::pointer::shared_ptr< UnfoldedStatePotential > UnfoldedStatePotentialOP;
 
 } // namespace scoring
 } // namespace core

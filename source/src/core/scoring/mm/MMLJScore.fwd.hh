@@ -27,10 +27,10 @@ namespace mm {
 // Forward
 class MMLJScore;
 
-typedef  utility::pointer::access_ptr< MMLJScore > MMLJScoreAP;
-typedef  utility::pointer::access_ptr< MMLJScore const > MMLJScoreCAP;
-typedef  utility::pointer::owning_ptr< MMLJScore > MMLJScoreOP;
-typedef  utility::pointer::owning_ptr< MMLJScore const > MMLJScoreCOP;
+typedef  utility::pointer::weak_ptr< MMLJScore > MMLJScoreAP;
+typedef  utility::pointer::weak_ptr< MMLJScore const > MMLJScoreCAP;
+typedef  utility::pointer::shared_ptr< MMLJScore > MMLJScoreOP;
+typedef  utility::pointer::shared_ptr< MMLJScore const > MMLJScoreCOP;
 
 } // namespace mm
 } // namespace scoring

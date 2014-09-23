@@ -24,8 +24,8 @@ namespace scoring {
 namespace func {
 
 class CircularSigmoidalFunc;
-typedef utility::pointer::owning_ptr< CircularSigmoidalFunc > CircularSigmoidalFuncOP;
-typedef utility::pointer::owning_ptr< CircularSigmoidalFunc const > CircularSigmoidalFuncCOP;
+typedef utility::pointer::shared_ptr< CircularSigmoidalFunc > CircularSigmoidalFuncOP;
+typedef utility::pointer::shared_ptr< CircularSigmoidalFunc const > CircularSigmoidalFuncCOP;
 
 }
 }

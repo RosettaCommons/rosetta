@@ -20,7 +20,7 @@ namespace protocols {
 namespace jd2 {
 
 class FileJobOutputter;
-typedef utility::pointer::owning_ptr< FileJobOutputter > FileJobOutputterOP;
+typedef utility::pointer::shared_ptr< FileJobOutputter > FileJobOutputterOP;
 
 }//jd2
 }//protocols

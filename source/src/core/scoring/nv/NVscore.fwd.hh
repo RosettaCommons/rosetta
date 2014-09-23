@@ -23,8 +23,8 @@ namespace nv {
 
 class NVscore;
 
-typedef utility::pointer::owning_ptr< NVscore > NVscoreOP;
-typedef utility::pointer::owning_ptr< NVscore const > NVscoreCOP;
+typedef utility::pointer::shared_ptr< NVscore > NVscoreOP;
+typedef utility::pointer::shared_ptr< NVscore const > NVscoreCOP;
 
 } //NV
 } //scoring

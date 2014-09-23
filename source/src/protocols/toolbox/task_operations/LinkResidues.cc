@@ -48,12 +48,12 @@ LinkResidues::~LinkResidues() {}
 core::pack::task::operation::TaskOperationOP
 LinkResiduesCreator::create_task_operation() const
 {
-	return new LinkResidues;
+	return core::pack::task::operation::TaskOperationOP( new LinkResidues );
 }
 
 core::pack::task::operation::TaskOperationOP LinkResidues::clone() const
 {
-	return new LinkResidues( *this );
+	return core::pack::task::operation::TaskOperationOP( new LinkResidues( *this ) );
 }
 
 void LinkResidues::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const

@@ -29,12 +29,12 @@ namespace protocols {
 namespace membrane {
 
 class RandomPositionRotationMover;
-typedef utility::pointer::owning_ptr< RandomPositionRotationMover > RandomPositionRotationMoverOP;
-typedef utility::pointer::owning_ptr< RandomPositionRotationMover const > RandomPositionRotationMoverCOP;
+typedef utility::pointer::shared_ptr< RandomPositionRotationMover > RandomPositionRotationMoverOP;
+typedef utility::pointer::shared_ptr< RandomPositionRotationMover const > RandomPositionRotationMoverCOP;
 
 class RandomPositionTranslationMover;
-typedef utility::pointer::owning_ptr< RandomPositionTranslationMover > RandomPositionTranslationMoverOP;
-typedef utility::pointer::owning_ptr< RandomPositionTranslationMover const > RandomPositionTranslationMoverCOP;
+typedef utility::pointer::shared_ptr< RandomPositionTranslationMover > RandomPositionTranslationMoverOP;
+typedef utility::pointer::shared_ptr< RandomPositionTranslationMover const > RandomPositionTranslationMoverCOP;
 
 } // membrane
 } // protocols

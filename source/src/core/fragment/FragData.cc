@@ -72,7 +72,7 @@ FragData::FragData( SingleResidueFragDataOP SRFD, Size n) : valid_( false ), sco
 
 
 FragDataOP FragData::clone() const {
-	FragDataOP fd = new FragData( size() );
+	FragDataOP fd( new FragData( size() ) );
 	for ( Size pos = 1; pos<=size(); pos++ ) {
 		fd->data_[pos] = data_[pos]->clone();
 	};
@@ -214,7 +214,7 @@ bool FragData::steal( pose::Pose const& pose, Frame const& frame ) {
 FragDataOP FragData::generate_sub_fragment( Size start, Size stop ) const {
 	runtime_assert( stop >= start );
 	runtime_assert( stop <= size() );
-	FragDataOP new_frag = new FragData;
+	FragDataOP new_frag( new FragData );
 	for ( Size pos = start; pos<=stop; pos++ ) {
 		new_frag->add_residue( data_[ pos ] ); //reuse of data
 	}
@@ -268,7 +268,7 @@ void FragData::show_classic( std::ostream &os ) const {
 }
 
 FragDataOP AnnotatedFragData::clone() const {
-	return new AnnotatedFragData( pdbid_, startpos_, *Parent::clone() );
+	return FragDataOP( new AnnotatedFragData( pdbid_, startpos_, *Parent::clone() ) );
 }
 
 void AnnotatedFragData::copy(FragData const& frag_data)
@@ -282,7 +282,7 @@ void AnnotatedFragData::copy(FragData const& frag_data)
 FragDataOP AnnotatedFragData::generate_sub_fragment( Size start, Size stop ) const {
 	runtime_assert( stop >= start );
 	runtime_assert( stop <= size() );
-	FragDataOP new_frag = new AnnotatedFragData(pdbid_, startpos_ + start - 1, chain_);
+	FragDataOP new_frag( new AnnotatedFragData(pdbid_, startpos_ + start - 1, chain_) );
 
 	for ( Size pos = start; pos<=stop; pos++ ) {
 		new_frag->add_residue( data_[ pos] ); //reuse of data

@@ -75,7 +75,7 @@ ContingentFilter::parse_my_tag( utility::tag::TagCOP const,
 }
 
 FilterOP
-ContingentFilterCreator::create_filter() const { return new ContingentFilter; }
+ContingentFilterCreator::create_filter() const { return FilterOP( new ContingentFilter ); }
 
 std::string
 ContingentFilterCreator::keyname() const { return "ContingentFilter"; }

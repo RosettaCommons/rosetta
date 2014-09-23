@@ -24,8 +24,8 @@ namespace abinitio {
 namespace abscript {
 
 class FragmentJumpCM;
-typedef utility::pointer::owning_ptr< FragmentJumpCM > FragmentJumpCMOP;
-typedef utility::pointer::owning_ptr< FragmentJumpCM const > FragmentJumpCMCOP;
+typedef utility::pointer::shared_ptr< FragmentJumpCM > FragmentJumpCMOP;
+typedef utility::pointer::shared_ptr< FragmentJumpCM const > FragmentJumpCMCOP;
 
 } // abscript
 } // abinitio

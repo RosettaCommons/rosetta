@@ -64,7 +64,7 @@ InteractingRotamerExplosion::~InteractingRotamerExplosion() {}
 
 core::pack::task::operation::TaskOperationOP InteractingRotamerExplosion::clone() const
 {
-	return new InteractingRotamerExplosion( *this );
+	return core::pack::task::operation::TaskOperationOP( new InteractingRotamerExplosion( *this ) );
 }
 
 ///@brief restricts to repacking all residues outside of design_shell_ around each residue
@@ -95,7 +95,7 @@ InteractingRotamerExplosion::apply( core::pose::Pose const & pose, core::pack::t
 		}
 		if( out_of_all_target_res_radius ) continue;
 
-		rotamer_set_operations::AddGood2BPairEnergyRotamersOP rotsetop = new rotamer_set_operations::AddGood2BPairEnergyRotamers(i, ex_level_, target_seqpos, score_cutoff_, false );
+		rotamer_set_operations::AddGood2BPairEnergyRotamersOP rotsetop( new rotamer_set_operations::AddGood2BPairEnergyRotamers(i, ex_level_, target_seqpos, score_cutoff_, false ) );
 		if( debug_ ) rotsetop->set_debug( true );
 		task.nonconst_residue_task(i).append_rotamerset_operation( rotsetop );
 		report_string += (utility::to_string( i ) + ", ");
@@ -118,7 +118,7 @@ InteractingRotamerExplosion::parse_tag( TagCOP tag , DataMap & )
 core::pack::task::operation::TaskOperationOP
 InteractingRotamerExplosionCreator::create_task_operation() const
 {
-	return new InteractingRotamerExplosion;
+	return core::pack::task::operation::TaskOperationOP( new InteractingRotamerExplosion );
 }
 
 } //namespace protocols

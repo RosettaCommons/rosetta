@@ -328,7 +328,7 @@ public:
 
 	/// @brief test observer auto-detach when Conformation is destroyed
 	void test_PDBInfo_detach_on_destroy() {
-		ConformationOP conf = new Conformation( pose.conformation() );
+		ConformationOP conf( new Conformation( pose.conformation() ) );
 		PDBInfo info = *pose.pdb_info();
 
 		info.attach_to( *conf );

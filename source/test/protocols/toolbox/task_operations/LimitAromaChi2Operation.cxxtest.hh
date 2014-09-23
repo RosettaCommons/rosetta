@@ -116,7 +116,7 @@ public: //
 		ScoreFunctionOP scfxn = core::scoring::get_score_function();
 
 		// set LimitAromaChi2Operation		
-		LimitAromaChi2OperationOP limitar = new LimitAromaChi2Operation;
+		LimitAromaChi2OperationOP limitar( new LimitAromaChi2Operation );
 		limitar->chi2max( 100 );
 		limitar->chi2min(  50 );
 		limitar->include_trp( false );

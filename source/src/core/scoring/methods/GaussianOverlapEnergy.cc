@@ -53,7 +53,7 @@ methods::EnergyMethodOP
 GaussianOverlapEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new GaussianOverlapEnergy;
+	return methods::EnergyMethodOP( new GaussianOverlapEnergy );
 }
 
 ScoreTypes
@@ -127,7 +127,7 @@ GaussianOverlapEnergy::GaussianOverlapEnergy() :
 EnergyMethodOP
 GaussianOverlapEnergy::clone() const
 {
-	return new GaussianOverlapEnergy();
+	return EnergyMethodOP( new GaussianOverlapEnergy() );
 }
 
 

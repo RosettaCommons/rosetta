@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class ProteinResidueConformationFeatures;
-typedef utility::pointer::owning_ptr< ProteinResidueConformationFeatures > ProteinResidueConformationFeaturesOP;
-typedef utility::pointer::owning_ptr< ProteinResidueConformationFeatures const > ProteinResidueConformationFeaturesCOP;
+typedef utility::pointer::shared_ptr< ProteinResidueConformationFeatures > ProteinResidueConformationFeaturesOP;
+typedef utility::pointer::shared_ptr< ProteinResidueConformationFeatures const > ProteinResidueConformationFeaturesCOP;
 
 }//features
 }//protocols

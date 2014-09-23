@@ -52,7 +52,7 @@ namespace sspot {
 NatbiasSecondaryStructureEnergyCreator::EnergyMethodOP
 NatbiasSecondaryStructureEnergyCreator::create_energy_method(	EnergyMethodOptions const & ) const
 {
-	return new NatbiasSecondaryStructureEnergy;
+	return NatbiasSecondaryStructureEnergyCreator::EnergyMethodOP( new NatbiasSecondaryStructureEnergy );
 }
 
 NatbiasSecondaryStructureEnergyCreator::ScoreTypes
@@ -75,9 +75,9 @@ NatbiasSecondaryStructureEnergy::NatbiasSecondaryStructureEnergy() :
 	use_hhpot_( false ),
 	use_hspot_( false ),
 	use_nobias_( false ),
-	sspot_( NULL ),
-	hhpot_( NULL ),
-	hspot_( NULL )
+	sspot_( /* NULL */ ),
+	hhpot_( /* NULL */ ),
+	hspot_( /* NULL */ )
 {}
 
 
@@ -99,7 +99,7 @@ NatbiasSecondaryStructureEnergy::NatbiasSecondaryStructureEnergy( NatbiasSeconda
 NatbiasSecondaryStructureEnergy::EnergyMethodOP
 NatbiasSecondaryStructureEnergy::clone() const
 {
-	return new NatbiasSecondaryStructureEnergy( *this );
+	return NatbiasSecondaryStructureEnergy::EnergyMethodOP( new NatbiasSecondaryStructureEnergy( *this ) );
 }
 
 /// @brief set native secondary structure
@@ -115,7 +115,7 @@ NatbiasSecondaryStructureEnergy::set_natbias_spairpot( StrandPairingSetOP const 
 {
 	using protocols::fldsgn::potentials::sspot::NatbiasStrandPairPotential;
 	use_sspot_ = true;
-	sspot_ = new NatbiasStrandPairPotential( spairset );
+	sspot_ = NatbiasStrandPairPotentialOP( new NatbiasStrandPairPotential( spairset ) );
 }
 
 
@@ -125,7 +125,7 @@ NatbiasSecondaryStructureEnergy::set_natbias_hpairpot( HelixPairingSetOP const h
 {
 	using protocols::fldsgn::potentials::sspot::NatbiasHelixPairPotential;
 	use_hhpot_ = true;
-	hhpot_ = new NatbiasHelixPairPotential( hpairset );
+	hhpot_ = NatbiasHelixPairPotentialOP( new NatbiasHelixPairPotential( hpairset ) );
 }
 
 /// @brief set HelicesSheetPotential
@@ -134,7 +134,7 @@ NatbiasSecondaryStructureEnergy::set_natbias_helices_sheet_pot( HSSTripletSetOP 
 {
 	using protocols::fldsgn::potentials::sspot::NatbiasHelicesSheetPotential;
 	use_hspot_ = true;
-	hspot_ = new NatbiasHelicesSheetPotential( hss3set );
+	hspot_ = NatbiasHelicesSheetPotentialOP( new NatbiasHelicesSheetPotential( hss3set ) );
 }
 
 
@@ -186,7 +186,7 @@ NatbiasSecondaryStructureEnergy::finalize_total_energy(
 
 	Real ss_score( 0.0 ), hh_score( 0.0 ), hs_score( 0.0 );
 
-	SS_Info2_OP ssinfo = new SS_Info2( pose, native_secstruct_ );
+	SS_Info2_OP ssinfo( new SS_Info2( pose, native_secstruct_ ) );
 
 	if( use_sspot_ ) sspot_->score( pose, *ssinfo, ss_score );
 

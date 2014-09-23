@@ -73,7 +73,7 @@ get_frags_map( ) {
 
 core::fragment::FragSetOP make_frag_set(std::string ss, std::map<std::string, core::fragment::FragDataCOPs > & fds, int start=1,int stop=-1) {
 	using namespace core::fragment;
-	FragSetOP frags = new ConstantLengthFragSet();
+	FragSetOP frags( new ConstantLengthFragSet() );
 	if(-1==stop) stop = ss.size() + 1 - 3;
 	if((int)1 >= stop) return NULL;
 	for( core::Size i = (core::Size)start; i <= (core::Size)stop; ++i ) {
@@ -81,7 +81,7 @@ core::fragment::FragSetOP make_frag_set(std::string ss, std::map<std::string, co
 		bool mkframe = true;
 		for(core::Size j = 0; j < ss3.size(); ++j) if(ss3[j]!='H'&&ss3[j]!='E'&&ss3[j]!='L'&&ss3[j]!='_') mkframe = false;
 		if(!mkframe) utility_exit_with_message("oaisnrt");
-		FrameOP frame = new Frame(i,3);
+		FrameOP frame( new Frame(i,3) );
 		utility::vector1<char> ss0,ss1,ss2;
 		if('_'==ss3[0]) { ss0.push_back('H'); ss0.push_back('E'); ss0.push_back('L'); } else ss0.push_back(ss3[0]);
 		if('_'==ss3[1]) { ss1.push_back('H'); ss1.push_back('E'); ss1.push_back('L'); } else ss1.push_back(ss3[1]);
@@ -119,9 +119,9 @@ core::fragment::FragSetOP make_frag_set_9mers(core::Size nres) {
 	std::ifstream in("input/loop_helix.9mers");
 	read_fragdata(fds9,in);
 
-	FragSetOP frags = new ConstantLengthFragSet();
+	FragSetOP frags( new ConstantLengthFragSet() );
 	for( core::Size i = 1; i <= nres-8; ++i ) {
-		FrameOP frame = new Frame(i,9);
+		FrameOP frame( new Frame(i,9) );
 		for( FragDataCOPs::iterator fi = fds9.begin(); fi != fds9.end(); ++fi ) {
 			frame->add_fragment(*fi);
 		}

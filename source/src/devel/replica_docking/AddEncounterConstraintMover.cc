@@ -61,7 +61,7 @@ AddEncounterConstraintMoverCreator::keyname() const
 
 moves::MoverOP
 AddEncounterConstraintMoverCreator::create_mover() const {
-  return new AddEncounterConstraintMover;
+  return moves::MoverOP( new AddEncounterConstraintMover );
 }
 
 std::string
@@ -80,7 +80,7 @@ AddEncounterConstraintMover::AddEncounterConstraintMover()
 
 moves::MoverOP
 AddEncounterConstraintMover::clone() const {
-  return new AddEncounterConstraintMover( *this );
+  return moves::MoverOP( new AddEncounterConstraintMover( *this ) );
 }
 
 AddEncounterConstraintMover::~AddEncounterConstraintMover(){}
@@ -162,8 +162,8 @@ AddEncounterConstraintMover::generate_encounter_cst( pose::Pose & pose) {
     if ( dist_pos2 < tmp ){ dist_pos2 = tmp; }
   }
   tr.Debug << "dist_pos1: " << std::sqrt(dist_pos1) << "; dist_pos2: " << std::sqrt(dist_pos2) << std::endl;
-  func::FuncOP bound_func = new constraints::BoundFunc(0.1, std::sqrt(dist_pos1) + std::sqrt(dist_pos2) + gap_, 0.5, 10000, "Encounter");
-  constraints::AtomPairConstraintCOP cst = new constraints::AtomPairConstraint( atom_pos1, atom_pos2, bound_func );
+  func::FuncOP bound_func( new constraints::BoundFunc(0.1, std::sqrt(dist_pos1) + std::sqrt(dist_pos2) + gap_, 0.5, 10000, "Encounter") );
+  constraints::AtomPairConstraintCOP cst( new constraints::AtomPairConstraint( atom_pos1, atom_pos2, bound_func ) );
 
   return cst;
 }

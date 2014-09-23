@@ -23,8 +23,8 @@ namespace stepwise {
 namespace screener {
 	
 	class RNA_ChainClosableGeometryStubBasedScreener;
-	typedef utility::pointer::owning_ptr< RNA_ChainClosableGeometryStubBasedScreener > RNA_ChainClosableGeometryStubBasedScreenerOP;
-	typedef utility::pointer::owning_ptr< RNA_ChainClosableGeometryStubBasedScreener const > RNA_ChainClosableGeometryStubBasedScreenerCOP;
+	typedef utility::pointer::shared_ptr< RNA_ChainClosableGeometryStubBasedScreener > RNA_ChainClosableGeometryStubBasedScreenerOP;
+	typedef utility::pointer::shared_ptr< RNA_ChainClosableGeometryStubBasedScreener const > RNA_ChainClosableGeometryStubBasedScreenerCOP;
 	
 } //screener
 } //stepwise

@@ -79,7 +79,7 @@ namespace modeler {
 		working_calc_rms_res_( working_parameters->working_calc_rms_res() ), // only for output -- may deprecate.
 		vary_bond_geometry_( false ), // it remains unclear whether this is really different from cartesian.
 		allow_virtual_o2prime_hydrogens_( options->allow_virtual_side_chains() && !options_->o2prime_legacy_mode() ),
-		protein_ccd_closer_( new protein::loop_close::StepWiseProteinCCD_Closer( working_parameters ) )
+		protein_ccd_closer_( protein::loop_close::StepWiseProteinCCD_CloserOP( new protein::loop_close::StepWiseProteinCCD_Closer( working_parameters ) ) )
 	{
 		set_native_pose( working_parameters->working_native_pose() );
 		runtime_assert( !options_->skip_coord_constraints() );
@@ -165,10 +165,10 @@ namespace modeler {
 	void
 	StepWiseMinimizer::setup_minimizers() {
 		using namespace core::optimization;
-		atom_tree_minimizer_ = new AtomTreeMinimizer;
-		cartesian_minimizer_ = new CartesianMinimizer;
+		atom_tree_minimizer_ = core::optimization::AtomTreeMinimizerOP( new AtomTreeMinimizer );
+		cartesian_minimizer_ = core::optimization::CartesianMinimizerOP( new CartesianMinimizer );
     bool const use_nblist( true );
-    minimizer_options_ = new MinimizerOptions( options_->min_type(), options_->min_tolerance(), use_nblist, false, false );
+    minimizer_options_ = core::optimization::MinimizerOptionsOP( new MinimizerOptions( options_->min_type(), options_->min_tolerance(), use_nblist, false, false ) );
     minimizer_options_->nblist_auto_update( true );
 	}
 

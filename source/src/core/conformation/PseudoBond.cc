@@ -85,7 +85,7 @@ PseudoBondCollection::clone_with_new_sequence_numbering(
 	utility::vector1< int > const & old2new
 ) const
 {
-	PseudoBondCollectionOP new_pbc = new PseudoBondCollection;
+	PseudoBondCollectionOP new_pbc( new PseudoBondCollection );
 	for ( PBIter pbiter = iter_begin(), pbiter_end = iter_end();
 			pbiter != pbiter_end; ++pbiter ) {
 		PseudoBond new_pb( *pbiter );

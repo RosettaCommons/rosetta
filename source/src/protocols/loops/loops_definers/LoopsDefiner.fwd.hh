@@ -24,8 +24,8 @@ namespace loops_definers {
 // Forward
 class LoopsDefiner;
 
-typedef utility::pointer::owning_ptr< LoopsDefiner > LoopsDefinerOP;
-typedef utility::pointer::owning_ptr< LoopsDefiner const > LoopsDefinerCOP;
+typedef utility::pointer::shared_ptr< LoopsDefiner > LoopsDefinerOP;
+typedef utility::pointer::shared_ptr< LoopsDefiner const > LoopsDefinerCOP;
 
 } //namespace
 } //namespace

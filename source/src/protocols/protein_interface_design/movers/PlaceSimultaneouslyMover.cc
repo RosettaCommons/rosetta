@@ -108,7 +108,7 @@ PlaceSimultaneouslyMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 PlaceSimultaneouslyMoverCreator::create_mover() const {
-	return new PlaceSimultaneouslyMover;
+	return protocols::moves::MoverOP( new PlaceSimultaneouslyMover );
 }
 
 std::string
@@ -234,7 +234,7 @@ PlaceSimultaneouslyMover::create_task_for_hotspot_packing( core::pose::Pose cons
 		runtime_assert( pos );
 		HotspotStubSetCOP hs_set = stubset_pos.first;
 		using namespace core::pack::task::operation;
-		RotamerExplosionOP re_op = new RotamerExplosion( pos, EX_THREE_THIRD_STEP_STDDEVS, explosion_ );
+		RotamerExplosionOP re_op( new RotamerExplosion( pos, EX_THREE_THIRD_STEP_STDDEVS, explosion_ ) );
 		utility::vector1< bool > allowed_aas( chemical::num_canonical_aas, false );
 		BOOST_FOREACH( ResidueAuctionItem const item, auction_->auction_results() ){
 			HotspotStubSetCOP hs_set_curr( item.second.second.first );
@@ -243,7 +243,7 @@ PlaceSimultaneouslyMover::create_task_for_hotspot_packing( core::pose::Pose cons
 			chemical::ResidueType const type( hs_stub_curr->residue()->type() );
 			allowed_aas[ hs_stub_curr->residue()->type().aa() ] = true;
 		}//foreach item in auction_->auction_results()
-		RestrictAbsentCanonicalAASOP rac_op = new RestrictAbsentCanonicalAAS( pos, allowed_aas );
+		RestrictAbsentCanonicalAASOP rac_op( new RestrictAbsentCanonicalAAS( pos, allowed_aas ) );
 
 		residue_level_tasks_for_placed_hotspots_->push_back( rac_op );
 		residue_level_tasks_for_placed_hotspots_->push_back( re_op );
@@ -268,7 +268,7 @@ PlaceSimultaneouslyMover::create_task_for_allhotspot_packing( core::pose::Pose c
     runtime_assert( pos );
     HotspotStubSetCOP hs_set = stubset_pos.first;
     using namespace core::pack::task::operation;
-    RotamerExplosionOP re_op = new RotamerExplosion( pos, EX_THREE_THIRD_STEP_STDDEVS, explosion_ );
+    RotamerExplosionOP re_op( new RotamerExplosion( pos, EX_THREE_THIRD_STEP_STDDEVS, explosion_ ) );
     utility::vector1< bool > allowed_aas( chemical::num_canonical_aas, false );
     BOOST_FOREACH( ResidueAuctionItem const item, auction_->auction_results() ){
       HotspotStubSetCOP hs_set_curr( item.second.second.first );
@@ -279,7 +279,7 @@ PlaceSimultaneouslyMover::create_task_for_allhotspot_packing( core::pose::Pose c
       TR << "RestrictAbsentCanonicalAAS: " << pos << " " << hs_stub_curr->residue()->type().aa() << " " << item.first <<  std::endl;
 			}
     }//foreach item in auction_->auction_results()
-    RestrictAbsentCanonicalAASOP rac_op = new RestrictAbsentCanonicalAAS( pos, allowed_aas );
+    RestrictAbsentCanonicalAASOP rac_op( new RestrictAbsentCanonicalAAS( pos, allowed_aas ) );
 
     residue_level_tasks_for_placed_hotspots_->push_back( rac_op );
     residue_level_tasks_for_placed_hotspots_->push_back( re_op );
@@ -394,7 +394,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
            //Size residue= each_auction_result->second.first;  // unused ~Labonte
            residue_level_tasks_for_placed_hotspots_->clear();
            core::pack::task::TaskFactoryOP pack_around_placed_hotspots_ = residue_level_tasks_for_placed_hotspots_->clone();
-           pack_around_placed_hotspots_->push_back( new core::pack::task::operation::RestrictToRepacking );
+           pack_around_placed_hotspots_->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
            core::pack::task::operation::PreventRepackingOP prop( new core::pack::task::operation::PreventRepacking );
 
            for( core::Size i=1; i<=saved_pose.total_residue(); ++i ){
@@ -479,7 +479,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
        //core::pack::task::TaskFactoryOP pack_around_placed_hotspots_ = new core::pack::task::TaskFactory;
        //if( task_factory() )
        //  *pack_around_placed_hotspots_ = *(task_factory());
-       pack_around_placed_hotspots_->push_back( new core::pack::task::operation::RestrictToRepacking );
+       pack_around_placed_hotspots_->push_back( TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
        core::pack::task::operation::PreventRepackingOP prop( new core::pack::task::operation::PreventRepacking );
 
 			//  task->/*initialize_from_command_line().*/or_include_current( true ); // we don't want rotamer explosion with ex1 ex2
@@ -763,7 +763,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 	std::string const after_placement_filter_name( tag->getOption<std::string>( "after_placement_filter", "true_filter" ) );
 	Filters_map::const_iterator ap_filter( filters.find( after_placement_filter_name ) );
 	if( after_placement_filter_name == "true_filter" )
-		after_placement_filter_ = new protocols::filters::TrueFilter;
+		after_placement_filter_ = protocols::filters::FilterOP( new protocols::filters::TrueFilter );
 	else
 		after_placement_filter_ = ap_filter->second->clone();
 	//parsing stub minimize movers and design movers for place stub
@@ -780,7 +780,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 				std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( stub_mover_name ));
 				bool const stub_mover_found( find_mover != movers.end() );
 				if( stub_mover_found ){
-					simple_moves::DesignRepackMoverOP drSOP = dynamic_cast< simple_moves::DesignRepackMover * >( find_mover->second->clone().get() );
+					simple_moves::DesignRepackMoverOP drSOP = utility::pointer::dynamic_pointer_cast< simple_moves::DesignRepackMover > ( find_mover->second->clone() );
 					if( !drSOP ){
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
 						runtime_assert( drSOP != 0 );
@@ -800,7 +800,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 				std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( mover_name ));
 				bool const mover_found( find_mover != movers.end() );
 				if( mover_found ){
-					simple_moves::DesignRepackMoverOP drOP = dynamic_cast< simple_moves::DesignRepackMover * >( find_mover->second.get() );
+					simple_moves::DesignRepackMoverOP drOP = utility::pointer::dynamic_pointer_cast< simple_moves::DesignRepackMover > ( find_mover->second );
 					if( !drOP ){
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
 						runtime_assert( drOP != 0 );
@@ -827,9 +827,9 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 			utility::vector0< TagCOP > const & stubset_tags( btag->getTags() );
 			BOOST_FOREACH( TagCOP const stubset_tag, stubset_tags ){
 				std::string const stub_fname = stubset_tag->getOption< std::string >( "stubfile" );
-				HotspotStubSetOP stubset = new HotspotStubSet;
+				HotspotStubSetOP stubset( new HotspotStubSet );
 				if( data.has( "hotspot_library", stub_fname ) ){
-					stubset = data.get< protocols::hotspot_hashing::HotspotStubSet * >( "hotspot_library", stub_fname );
+					stubset = data.get_ptr<protocols::hotspot_hashing::HotspotStubSet>( "hotspot_library", stub_fname );
 					TR<<"Associated mover with an already read stubset named "<<stub_fname<<std::endl;
 				}
 				else
@@ -837,7 +837,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 
                 stub_sets_.push_back(std::make_pair(stubset, std::make_pair(HotspotStubOP( new HotspotStub() ), 0)));  // REQUIRED FOR WINDOWS
 				//stub_sets_.push_back( StubSetStubPos( stubset, std::pair< HotspotStubOP, core::Size >( 0, 0 ) ) );
-				core::pose::PoseOP ala_pose = new core::pose::Pose( pose );
+				core::pose::PoseOP ala_pose( new core::pose::Pose( pose ) );
 				pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( *ala_pose ));
 				task->initialize_from_command_line().or_include_current( true );
 
@@ -866,7 +866,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 				core::scoring::ScoreFunctionOP scorefxn( get_score_function() );
 				pack::pack_rotamers( *ala_pose, *scorefxn, task);
 				(*scorefxn)( *ala_pose );
-				stubset->pair_with_scaffold( *ala_pose, host_chain_, new protocols::filters::TrueFilter );
+				stubset->pair_with_scaffold( *ala_pose, host_chain_, protocols::filters::FilterCOP( new protocols::filters::TrueFilter ) );
 				std::string const stub_set_filter_name( stubset_tag->getOption< std::string >( "filter_name", "true_filter" ) );
 				Filters_map::const_iterator stub_set_filter( filters.find( stub_set_filter_name ) );
 				runtime_assert( stub_set_filter != filters.end() );
@@ -894,13 +894,13 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 PlaceSimultaneouslyMover::PlaceSimultaneouslyMover() :
 	simple_moves::DesignRepackMover( PlaceSimultaneouslyMoverCreator::mover_name() )
 {
-	residue_level_tasks_for_placed_hotspots_ = new core::pack::task::TaskFactory;//watch out! Never allocate a new task factory for this guy after parsing has been done, b/c in parsing all task aware movers will be watching it through their task_factory_
+	residue_level_tasks_for_placed_hotspots_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory );//watch out! Never allocate a new task factory for this guy after parsing has been done, b/c in parsing all task aware movers will be watching it through their task_factory_
 //	user_defined_auction_ = false;
 //	user_defined_stub_score_filter_ = false;
 //	user_defined_bbstub_minimization_ = false;
-	auction_ = new PlacementAuctionMover;
-	rbstub_minimization_ = new PlacementMinimizationMover;
-	stub_score_filter_ = new protocols::protein_interface_design::filters::StubScoreFilter;
+	auction_ = PlacementAuctionMoverOP( new PlacementAuctionMover );
+	rbstub_minimization_ = PlacementMinimizationMoverOP( new PlacementMinimizationMover );
+	stub_score_filter_ = protocols::protein_interface_design::filters::StubScoreFilterOP( new protocols::protein_interface_design::filters::StubScoreFilter );
 	stub_sets_.clear();
 	stub_set_filters_.clear();
 	host_chain_=2;

@@ -157,7 +157,7 @@ public:
 		//scorefxn->set_weight( hbond_bb_sc, 1.1 );
 		//scorefxn->set_weight( hbond_sc, 1.1 );
 
-		EnergyMethodOptionsOP emopts( new EnergyMethodOptions( scorefxn->energy_method_options() ));
+		EnergyMethodOptionsOP emopts( new EnergyMethodOptions( scorefxn->energy_method_options() ) );
 		emopts->hbond_options().decompose_bb_hb_into_pair_energies( true );
 		scorefxn->set_energy_method_options( *emopts );
 

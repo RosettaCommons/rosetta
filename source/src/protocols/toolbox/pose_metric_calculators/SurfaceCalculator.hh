@@ -37,7 +37,7 @@ public:
 
 public:
 
-	core::pose::metrics::PoseMetricCalculatorOP clone() const { return new SurfaceCalculator( remove_nonprotein_res_ ); };
+	core::pose::metrics::PoseMetricCalculatorOP clone() const { return core::pose::metrics::PoseMetricCalculatorOP( new SurfaceCalculator( remove_nonprotein_res_ ) ); };
 
 protected:
 

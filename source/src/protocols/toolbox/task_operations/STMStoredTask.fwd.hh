@@ -21,8 +21,8 @@ namespace toolbox {
 namespace task_operations {
 
 class STMStoredTask;
-typedef utility::pointer::owning_ptr< STMStoredTask > STMStoredTaskOP;
-typedef utility::pointer::owning_ptr< STMStoredTask const > STMStoredTaskCOP;
+typedef utility::pointer::shared_ptr< STMStoredTask > STMStoredTaskOP;
+typedef utility::pointer::shared_ptr< STMStoredTask const > STMStoredTaskCOP;
 
 } // task_operations
 } // toolbox

@@ -25,8 +25,8 @@ class LinearMemNode;
 class LinearMemEdge;
 class LinearMemoryInteractionGraph;
 
-typedef utility::pointer::owning_ptr< LinearMemoryInteractionGraph > LinearMemoryInteractionGraphOP;
-typedef utility::pointer::owning_ptr< LinearMemoryInteractionGraph const > LinearMemoryInteractionGraphCOP;
+typedef utility::pointer::shared_ptr< LinearMemoryInteractionGraph > LinearMemoryInteractionGraphOP;
+typedef utility::pointer::shared_ptr< LinearMemoryInteractionGraph const > LinearMemoryInteractionGraphCOP;
 
 
 }

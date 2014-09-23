@@ -20,8 +20,8 @@ namespace protocols {
 namespace multistate_design {
 
 class MetricCalculatorFitnessFunction;
-typedef utility::pointer::owning_ptr< MetricCalculatorFitnessFunction > MetricCalculatorFitnessFunctionOP;
-typedef utility::pointer::owning_ptr< MetricCalculatorFitnessFunction const > MetricCalculatorFitnessFunctionCOP;
+typedef utility::pointer::shared_ptr< MetricCalculatorFitnessFunction > MetricCalculatorFitnessFunctionOP;
+typedef utility::pointer::shared_ptr< MetricCalculatorFitnessFunction const > MetricCalculatorFitnessFunctionCOP;
 
 }
 }

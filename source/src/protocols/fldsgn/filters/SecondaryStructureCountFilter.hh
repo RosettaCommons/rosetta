@@ -67,10 +67,10 @@ public:// virtual constructor
 
 
 	// @brief make clone
-	virtual FilterOP clone() const { return new SecondaryStructureCountFilter( *this ); }
+	virtual FilterOP clone() const { return FilterOP( new SecondaryStructureCountFilter( *this ) ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const {	return new SecondaryStructureCountFilter(); }
+	virtual FilterOP fresh_instance() const {	return FilterOP( new SecondaryStructureCountFilter() ); }
 
 public:// accessor
 

@@ -23,8 +23,8 @@ namespace rna {
 namespace checker {
 
 	class RNA_BaseCentroidChecker;
-	typedef utility::pointer::owning_ptr< RNA_BaseCentroidChecker > RNA_BaseCentroidCheckerOP;
-	typedef utility::pointer::owning_ptr< RNA_BaseCentroidChecker const > RNA_BaseCentroidCheckerCOP;
+	typedef utility::pointer::shared_ptr< RNA_BaseCentroidChecker > RNA_BaseCentroidCheckerOP;
+	typedef utility::pointer::shared_ptr< RNA_BaseCentroidChecker const > RNA_BaseCentroidCheckerCOP;
 
 } //checker
 } //rna

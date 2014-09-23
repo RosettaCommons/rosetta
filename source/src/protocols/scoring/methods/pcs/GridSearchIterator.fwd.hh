@@ -26,8 +26,8 @@ namespace pcs{
 
 class GridSearchIterator;
 
-typedef utility::pointer::owning_ptr< GridSearchIterator > GridSearchIteratorOP;
-typedef utility::pointer::owning_ptr< GridSearchIterator const > GridSearchIteratorCOP;
+typedef utility::pointer::shared_ptr< GridSearchIterator > GridSearchIteratorOP;
+typedef utility::pointer::shared_ptr< GridSearchIterator const > GridSearchIteratorCOP;
 
 }//namespace pcs
 }//namespace methods

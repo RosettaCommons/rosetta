@@ -162,7 +162,7 @@ int main( int argc, char * argv [] ){
 
 	//Register calculators
 	std::string sasa_calc_name = "sasa";
-	core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy;
+	core::pose::metrics::PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy );
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( sasa_calc_name, sasa_calculator );
 
 	//Set-up atomID for SASA calculations by atom

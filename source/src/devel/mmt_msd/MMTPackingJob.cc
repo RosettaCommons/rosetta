@@ -155,9 +155,9 @@ void MMTPackingJob::compute_npd_properties()
 
 
 void MMTPackingJob::clean_up() {
-	pose_ = 0;
-	sfxn_ = 0;
-	task_ = 0;
+	pose_.reset();
+	sfxn_.reset();
+	task_.reset();
 }
 
 }

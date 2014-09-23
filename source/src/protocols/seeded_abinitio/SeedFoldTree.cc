@@ -72,7 +72,7 @@ namespace protocols{
 
 	protocols::moves::MoverOP
 	SeedFoldTreeCreator::create_mover() const {
-		return new SeedFoldTree;
+		return protocols::moves::MoverOP( new SeedFoldTree );
 	}
 
 	std::string
@@ -86,8 +86,8 @@ namespace protocols{
 
 	SeedFoldTree::SeedFoldTree() :
 	protocols::moves::Mover( SeedFoldTreeCreator::mover_name() ),
-	fold_tree_( NULL ),
-	scorefxn_( NULL )
+	fold_tree_( /* NULL */ ),
+	scorefxn_( /* NULL */ )
 	{}
 
 	SeedFoldTree::SeedFoldTree( core::kinematics::FoldTreeOP ft ) :
@@ -336,7 +336,7 @@ SeedFoldTree::set_foldtree(
 	using namespace kinematics;
 	using namespace protocols::seeded_abinitio;
 
-	fold_tree_ = new core::kinematics::FoldTree;
+	fold_tree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree );
 	fold_tree_->clear();
 	Size seed_num = loops.size();
 
@@ -688,7 +688,7 @@ SeedFoldTree::apply( core::pose::Pose & pose )
 	if( chain_num <= 2 ){
 		TR<<"Previous fold tree: "<< pose.fold_tree()<<'\n';
 		TR<<"reseting foldtree"<<std::endl;
-		pose::PoseOP poseOP = new pose::Pose( pose );
+		pose::PoseOP poseOP( new pose::Pose( pose ) );
 		fold_tree_ = set_foldtree( poseOP, template_pdb_->secstruct(), all_seeds_ , protein_not_folded );
 		//fold_tree_ = set_foldtree( pose, template_pdb_ , all_seeds_ , protein_not_folded );
 	}
@@ -777,7 +777,7 @@ SeedFoldTree::parse_my_tag( TagCOP const tag,
 	}//end b-tags
 
 	std::string const template_pdb_fname( tag->getOption< std::string >( "template_pdb" ));
-	template_pdb_ =  new core::pose::Pose ;
+	template_pdb_ = core::pose::PoseOP( new core::pose::Pose ) ;
 	core::import_pose::pose_from_pdb( *template_pdb_, template_pdb_fname );
 
 	}//end parse my tag

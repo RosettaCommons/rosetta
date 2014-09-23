@@ -51,7 +51,7 @@ public:
 	void setUp() {
 		core_init();
 
-		scorefxn_ = new core::scoring::ScoreFunction;
+		scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
 		scorefxn_->set_weight(core::scoring::res_type_constraint, 1.0);
 	}
 

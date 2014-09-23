@@ -23,8 +23,8 @@ namespace optimization {
 
 class MinimizerMap;
 
-typedef utility::pointer::owning_ptr< MinimizerMap > MinimizerMapOP;
-typedef utility::pointer::owning_ptr< MinimizerMap const > MinimizerMapCOP;
+typedef utility::pointer::shared_ptr< MinimizerMap > MinimizerMapOP;
+typedef utility::pointer::shared_ptr< MinimizerMap const > MinimizerMapCOP;
 
 } // namespace
 } // namespace core

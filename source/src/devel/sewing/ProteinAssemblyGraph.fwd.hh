@@ -23,8 +23,8 @@ namespace devel {
 namespace sewing {
 
 class ProteinAssemblyGraph;
-typedef utility::pointer::owning_ptr< ProteinAssemblyGraph > ProteinAssemblyGraphOP;
-typedef utility::pointer::owning_ptr< ProteinAssemblyGraph const > ProteinAssemblyGraphCOP;
+typedef utility::pointer::shared_ptr< ProteinAssemblyGraph > ProteinAssemblyGraphOP;
+typedef utility::pointer::shared_ptr< ProteinAssemblyGraph const > ProteinAssemblyGraphCOP;
 
 } //sewing namespace
 } //devel namespace

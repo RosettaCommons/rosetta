@@ -53,7 +53,7 @@ LK_hackCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
 	etable::EtableCOP etable( ScoringManager::get_instance()->etable( options.etable_type() ) );
-	return new LK_hack( *etable );
+	return methods::EnergyMethodOP( new LK_hack( *etable ) );
 }
 
 ScoreTypes
@@ -97,7 +97,7 @@ Real const LK_SigmoidalFunc::cos_flipped_ANGLE_CUTOFF_LOW(  std::cos( pi - LK_Si
 
 LK_SigmoidalFunc::LK_SigmoidalFunc() {}
 
-core::scoring::func::FuncOP LK_SigmoidalFunc::clone() const { return new LK_SigmoidalFunc; }
+core::scoring::func::FuncOP LK_SigmoidalFunc::clone() const { return core::scoring::func::FuncOP( new LK_SigmoidalFunc ); }
 
 /// @brief a Sigmoidal function that ramps from 1 to 0 over a certain range.
 /// Thanks to Mike Tyka for having a sigmoidal function on the top of his head.
@@ -137,7 +137,7 @@ LK_SigmoidalFunc::dfunc( Real const x ) const
 }
 
 LK_hack::LK_hack( etable::Etable const & etable_in ) :
-	parent( new LK_hackCreator ),
+	parent( EnergyMethodCreatorOP( new LK_hackCreator ) ),
 	etable_(etable_in),
 	solv1_(etable_in.solv1()),
 	solv2_(etable_in.solv2()),
@@ -156,7 +156,7 @@ LK_hack::atomic_interaction_cutoff() const
 EnergyMethodOP
 LK_hack::clone() const
 {
-	return new LK_hack( *this );
+	return EnergyMethodOP( new LK_hack( *this ) );
 }
 
 LK_hack::LK_hack( LK_hack const & src ):
@@ -480,7 +480,7 @@ LK_hack::calculate_derivatives_for_residue_pair
 {
 	using namespace etable::count_pair;
 
-	core::scoring::func::FuncOP lkfunc = new LK_SigmoidalFunc;
+	core::scoring::func::FuncOP lkfunc( new LK_SigmoidalFunc );
 	AngleConstraint lk_angle_cst( lkfunc ); //Using the stupid and dangerous version of the AngleConstraint ctor
 
 	conformation::Residue const & lowerres( pose.residue( lower_res_id ) );

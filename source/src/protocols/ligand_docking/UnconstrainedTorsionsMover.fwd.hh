@@ -22,8 +22,8 @@ namespace protocols {
 namespace ligand_docking {
 
 class UnconstrainedTorsionsMover; // fwd declaration
-typedef utility::pointer::owning_ptr< UnconstrainedTorsionsMover > UnconstrainedTorsionsMoverOP;
-typedef utility::pointer::owning_ptr< UnconstrainedTorsionsMover const > UnconstrainedTorsionsMoverCOP;
+typedef utility::pointer::shared_ptr< UnconstrainedTorsionsMover > UnconstrainedTorsionsMoverOP;
+typedef utility::pointer::shared_ptr< UnconstrainedTorsionsMover const > UnconstrainedTorsionsMoverCOP;
 
 } // namespace ligand_docking
 } // namespace protocols

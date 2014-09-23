@@ -23,8 +23,8 @@ namespace metal_interface{
 
 //Forwards and OP typedefs
 class MatchGrafter;
-typedef utility::pointer::owning_ptr< MatchGrafter > MatchGrafterOP;
-typedef utility::pointer::owning_ptr< MatchGrafter const > MatchGrafterCOP;
+typedef utility::pointer::shared_ptr< MatchGrafter > MatchGrafterOP;
+typedef utility::pointer::shared_ptr< MatchGrafter const > MatchGrafterCOP;
 
 }//metal_interface
 }//protocols

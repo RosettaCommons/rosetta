@@ -127,8 +127,8 @@ utility::vector1<FragmentCandidateOP> read_fragment_candidates(
 					pdb_id = "";
 					continue;
 				}
-				FragmentCandidateOP c = new FragmentCandidate(qpos, vpos,
-						chunk, n_res);
+				FragmentCandidateOP c( new FragmentCandidate(qpos, vpos,
+						chunk, n_res) );
 				if (n_frags < max_nfrags_per_pos) candidates.push_back(c);
 				++n_frags;
 				n_res = 0;
@@ -268,7 +268,7 @@ void FragmentCandidate::output_silent(core::io::silent::SilentFileData & sfd, co
 		// quick SC minimization
 		core::optimization::AtomTreeMinimizer mzr;
 		core::optimization::MinimizerOptions options( "dfpmin_armijo_nonmonotone", 1e-5, true, false );
-		core::kinematics::MoveMapOP mm_min = new core::kinematics::MoveMap();
+		core::kinematics::MoveMapOP mm_min( new core::kinematics::MoveMap() );
 		mm_min->set_bb( false );
 		mm_min->set_chi( true );
 		mzr.run( relax_pose, *mm_min, *sfxn, options );

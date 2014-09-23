@@ -79,7 +79,7 @@ RelativeConnectRight & RelativeConnectRight::operator =( RelativeConnectRight co
 
 /// @brief clone this object
 BuildInstructionOP RelativeConnectRight::clone() const {
-	return new RelativeConnectRight( *this );
+	return BuildInstructionOP( new RelativeConnectRight( *this ) );
 }
 
 

@@ -57,7 +57,7 @@ public:
 	/// @brief Return a ResourceOptionsOP with the default set of options.
 	virtual
 	basic::resource_manager::ResourceOptionsOP
-	default_options() const { return new LoopHashLibraryOptions();}
+	default_options() const { return basic::resource_manager::ResourceOptionsOP( new LoopHashLibraryOptions() );}
 };
 
 } // namespace

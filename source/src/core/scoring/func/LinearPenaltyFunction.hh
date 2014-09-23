@@ -33,7 +33,7 @@ public:
 	    x_middle_( x_middle ), well_depth_( well_depth ), half_width_ ( half_width ), slope_ ( slope ) {}
 
 	FuncOP
-	clone() const { return new LinearPenaltyFunction( *this ); }
+	clone() const { return FuncOP( new LinearPenaltyFunction( *this ) ); }
 
 	Real func( Real const x ) const;
 	Real dfunc( Real const x ) const;

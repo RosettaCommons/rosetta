@@ -142,7 +142,7 @@ public:
 		Pose pose = create_trpcage_ideal_pose();
 		protocols::simple_moves::SwitchResidueTypeSetMover to_cenrot("centroid_rot");
 		to_cenrot.apply(pose);
-		ScoreFunctionOP sfop = new ScoreFunction();
+		ScoreFunctionOP sfop( new ScoreFunction() );
 		ScoreFunction & sfxn(*sfop);
 		//dun
 		sfxn.set_weight( cen_rot_dun, 1.0 );
@@ -158,8 +158,8 @@ public:
 
 		//repack
 		using namespace core::pack::task;
-		TaskFactoryOP main_task_factory = new TaskFactory;
-		operation::RestrictToRepackingOP rtrop = new operation::RestrictToRepacking;
+		TaskFactoryOP main_task_factory( new TaskFactory );
+		operation::RestrictToRepackingOP rtrop( new operation::RestrictToRepacking );
 		main_task_factory->push_back( rtrop );
 
 		protocols::simple_moves::PackRotamersMover packrotamersmover;

@@ -24,8 +24,8 @@ namespace simple_moves{
 
 //Forwards and OP typedefs
 class ReturnSidechainMover;
-typedef utility::pointer::owning_ptr< ReturnSidechainMover > ReturnSidechainMoverOP;
-typedef utility::pointer::owning_ptr< ReturnSidechainMover const > ReturnSidechainMoverCOP;
+typedef utility::pointer::shared_ptr< ReturnSidechainMover > ReturnSidechainMoverOP;
+typedef utility::pointer::shared_ptr< ReturnSidechainMover const > ReturnSidechainMoverCOP;
 
 }//moves
 }//protocols

@@ -36,8 +36,8 @@ enum EnergyMethodType {
 /// base class for the energy method hierarchy
 class EnergyMethod;
 
-typedef utility::pointer::owning_ptr< EnergyMethod > EnergyMethodOP;
-typedef utility::pointer::owning_ptr< EnergyMethod const > EnergyMethodCOP;
+typedef utility::pointer::shared_ptr< EnergyMethod > EnergyMethodOP;
+typedef utility::pointer::shared_ptr< EnergyMethod const > EnergyMethodCOP;
 
 }
 }

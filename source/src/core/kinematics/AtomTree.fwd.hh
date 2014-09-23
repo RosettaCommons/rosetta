@@ -27,11 +27,11 @@ namespace kinematics {
 class AtomTree;
 
 // Types
-typedef  utility::pointer::access_ptr< AtomTree >  AtomTreeAP;
-typedef  utility::pointer::access_ptr< AtomTree const >  AtomTreeCAP;
+typedef  utility::pointer::weak_ptr< AtomTree >  AtomTreeAP;
+typedef  utility::pointer::weak_ptr< AtomTree const >  AtomTreeCAP;
 
-typedef  utility::pointer::owning_ptr< AtomTree >  AtomTreeOP;
-typedef  utility::pointer::owning_ptr< AtomTree const >  AtomTreeCOP;
+typedef  utility::pointer::shared_ptr< AtomTree >  AtomTreeOP;
+typedef  utility::pointer::shared_ptr< AtomTree const >  AtomTreeCOP;
 
 
 } // namespace kinematics

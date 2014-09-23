@@ -22,27 +22,27 @@ namespace protocols {
 namespace enzdes {
 
 class SetCatalyticResPackBehavior;
-typedef utility::pointer::owning_ptr< SetCatalyticResPackBehavior > SetCatalyticResPackBehaviorOP;
-typedef utility::pointer::owning_ptr< SetCatalyticResPackBehavior const > SetCatalyticResPackBehaviorCOP;
+typedef utility::pointer::shared_ptr< SetCatalyticResPackBehavior > SetCatalyticResPackBehaviorOP;
+typedef utility::pointer::shared_ptr< SetCatalyticResPackBehavior const > SetCatalyticResPackBehaviorCOP;
 
 class DetectProteinLigandInterface;
-typedef utility::pointer::owning_ptr< DetectProteinLigandInterface > DetectProteinLigandInterfaceOP;
-typedef utility::pointer::owning_ptr< DetectProteinLigandInterface const > DetectProteinLigandInterfaceCOP;
+typedef utility::pointer::shared_ptr< DetectProteinLigandInterface > DetectProteinLigandInterfaceOP;
+typedef utility::pointer::shared_ptr< DetectProteinLigandInterface const > DetectProteinLigandInterfaceCOP;
 
-typedef utility::pointer::access_ptr< DetectProteinLigandInterface > DetectProteinLigandInterfaceAP;
-typedef utility::pointer::access_ptr< DetectProteinLigandInterface const > DetectProteinLigandInterfaceCAP;
+typedef utility::pointer::weak_ptr< DetectProteinLigandInterface > DetectProteinLigandInterfaceAP;
+typedef utility::pointer::weak_ptr< DetectProteinLigandInterface const > DetectProteinLigandInterfaceCAP;
 
 class ProteinLigandInterfaceUpweighter;
-typedef utility::pointer::owning_ptr< ProteinLigandInterfaceUpweighter > ProteinLigandInterfaceUpweighterOP;
-typedef utility::pointer::owning_ptr< ProteinLigandInterfaceUpweighter const > ProteinLigandInterfaceUpweighterCOP;
+typedef utility::pointer::shared_ptr< ProteinLigandInterfaceUpweighter > ProteinLigandInterfaceUpweighterOP;
+typedef utility::pointer::shared_ptr< ProteinLigandInterfaceUpweighter const > ProteinLigandInterfaceUpweighterCOP;
 
 class AddRigidBodyLigandConfs;
-typedef utility::pointer::owning_ptr< AddRigidBodyLigandConfs > AddRigidBodyLigandConfsOP;
-typedef utility::pointer::owning_ptr< AddRigidBodyLigandConfs const > AddRigidBodyLigandConfsCOP;
+typedef utility::pointer::shared_ptr< AddRigidBodyLigandConfs > AddRigidBodyLigandConfsOP;
+typedef utility::pointer::shared_ptr< AddRigidBodyLigandConfs const > AddRigidBodyLigandConfsCOP;
 
 class AddLigandMotifRotamers;
-typedef utility::pointer::owning_ptr< AddLigandMotifRotamers > AddLigandMotifRotamersOP;
-typedef utility::pointer::owning_ptr< AddLigandMotifRotamers const > AddLigandMotifRotamersCOP;
+typedef utility::pointer::shared_ptr< AddLigandMotifRotamers > AddLigandMotifRotamersOP;
+typedef utility::pointer::shared_ptr< AddLigandMotifRotamers const > AddLigandMotifRotamersCOP;
 
 }  //namespace enzdes
 }  //namespace protocols

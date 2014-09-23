@@ -22,7 +22,7 @@ namespace jd2 {
 
 
 class ScreeningJobInputter;
-typedef utility::pointer::owning_ptr< ScreeningJobInputter > ScreeningJobInputterOP;
+typedef utility::pointer::shared_ptr< ScreeningJobInputter > ScreeningJobInputterOP;
 
 }
 }

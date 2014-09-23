@@ -40,7 +40,7 @@ namespace methods {
 methods::EnergyMethodOP
 ChainbreakEnergyCreator::create_energy_method( methods::EnergyMethodOptions const & ) const
 {
-	return new ChainbreakEnergy;
+	return methods::EnergyMethodOP( new ChainbreakEnergy );
 }
 
 ScoreTypes

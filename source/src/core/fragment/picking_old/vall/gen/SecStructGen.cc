@@ -63,7 +63,7 @@ SecStructGen & SecStructGen::operator =( SecStructGen const & rval ) {
 
 /// @brief clone this object
 VallFragmentGenOP SecStructGen::clone() const {
-	return new SecStructGen( *this );
+	return VallFragmentGenOP( new SecStructGen( *this ) );
 }
 
 

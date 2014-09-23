@@ -58,7 +58,7 @@ namespace coarse_rna{
 
 	};
 
-	typedef utility::pointer::owning_ptr< SourcePositions > SourcePositionsOP;
+	typedef utility::pointer::shared_ptr< SourcePositions > SourcePositionsOP;
 
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////

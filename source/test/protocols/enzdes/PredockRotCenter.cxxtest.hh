@@ -88,9 +88,9 @@ public:
        residue_set.read_files(params_files);
        basic::options::option[basic::options::OptionKeys::run::preserve_header ].value(true);
 
-       enz_io = new protocols::toolbox::match_enzdes_util::EnzConstraintIO(residue_set.get_self_weak_ptr());
+       enz_io = protocols::toolbox::match_enzdes_util::EnzConstraintIOOP( new protocols::toolbox::match_enzdes_util::EnzConstraintIO(residue_set.get_self_weak_ptr()) );
 
-       predock = new protocols::enzdes::PredesignPerturbMover();
+       predock = protocols::enzdes::PredesignPerturbMoverOP( new protocols::enzdes::PredesignPerturbMover() );
   }
 
   // Shared finalization goes here.
@@ -101,7 +101,7 @@ public:
   {
     pose::Pose pose;
     core::import_pose::pose_from_pdb(pose, "protocols/enzdes/ligtest_it.pdb");
-    scoring::ScoreFunctionOP scorefxn = new scoring::ScoreFunction;
+    scoring::ScoreFunctionOP scorefxn( new scoring::ScoreFunction );
     scorefxn->reset();
     enz_io->read_enzyme_cstfile("protocols/enzdes/ligtest_it.cst");
     enz_io->add_constraints_to_pose(pose, scorefxn, false);

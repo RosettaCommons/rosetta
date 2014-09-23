@@ -63,9 +63,9 @@ HyperRectangleOP get_percentile_bounds(
 		}
 	} // rows
 
-	return new HyperRectangle(
+	return HyperRectangleOP( new HyperRectangle(
 		upper, lower
-	);
+	) );
 }
 
 void transform_percentile_single_pt(

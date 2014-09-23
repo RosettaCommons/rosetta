@@ -29,7 +29,7 @@ namespace features {
 RotamerRecoveryFeaturesCreator::RotamerRecoveryFeaturesCreator() {}
 RotamerRecoveryFeaturesCreator::~RotamerRecoveryFeaturesCreator() {}
 FeaturesReporterOP RotamerRecoveryFeaturesCreator::create_features_reporter() const {
-	return new RotamerRecoveryFeatures;
+	return FeaturesReporterOP( new RotamerRecoveryFeatures );
 }
 
 std::string RotamerRecoveryFeaturesCreator::type_name() const {

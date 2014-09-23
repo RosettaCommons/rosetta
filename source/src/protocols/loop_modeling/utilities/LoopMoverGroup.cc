@@ -45,11 +45,11 @@ void LoopMoverGroup::add_mover(LoopMoverOP mover) { // {{{1
 }
 
 void LoopMoverGroup::add_filter(protocols::filters::FilterOP filter) { // {{{1
-	add_mover(new utilities::LoopFilter(filter));
+	add_mover(LoopMoverOP( new utilities::LoopFilter(filter) ));
 }
 
 LoopMoverGroupOP LoopMoverGroup::add_mover_group() { // {{{1
-	LoopMoverGroupOP group = new LoopMoverGroup;
+	LoopMoverGroupOP group( new LoopMoverGroup );
 	add_mover(group);
 	return group;
 }

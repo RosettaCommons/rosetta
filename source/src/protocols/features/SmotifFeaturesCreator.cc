@@ -27,7 +27,7 @@ namespace features {
 SmotifFeaturesCreator::SmotifFeaturesCreator() {}
 SmotifFeaturesCreator::~SmotifFeaturesCreator() {}
 FeaturesReporterOP SmotifFeaturesCreator::create_features_reporter() const {
-	return new SmotifFeatures;
+	return FeaturesReporterOP( new SmotifFeatures );
 }
 
 std::string SmotifFeaturesCreator::type_name() const {

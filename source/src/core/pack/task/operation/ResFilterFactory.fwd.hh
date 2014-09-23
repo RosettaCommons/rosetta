@@ -23,8 +23,8 @@ namespace operation {
 
 class ResFilterFactory;
 
-typedef utility::pointer::owning_ptr< ResFilterFactory > ResFilterFactoryOP;
-typedef utility::pointer::owning_ptr< ResFilterFactory const > ResFilterFactoryCOP;
+typedef utility::pointer::shared_ptr< ResFilterFactory > ResFilterFactoryOP;
+typedef utility::pointer::shared_ptr< ResFilterFactory const > ResFilterFactoryCOP;
 
 } //namespace operation
 } //namespace task

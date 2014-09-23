@@ -22,8 +22,8 @@ namespace oop{
 
 //Forwards and OP typedefs
 class OopMover;
-typedef utility::pointer::owning_ptr< OopMover > OopMoverOP;
-typedef utility::pointer::owning_ptr< OopMover const > OopMoverCOP;
+typedef utility::pointer::shared_ptr< OopMover > OopMoverOP;
+typedef utility::pointer::shared_ptr< OopMover const > OopMoverCOP;
 
 }//oop
 }//simple_moves

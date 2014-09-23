@@ -44,7 +44,7 @@ MembraneTopologyCreator::keyname() const
 
 protocols::moves::MoverOP
 MembraneTopologyCreator::create_mover() const {
-	return new MembraneTopology;
+	return protocols::moves::MoverOP( new MembraneTopology );
 }
 
 std::string
@@ -62,7 +62,7 @@ MembraneTopology::MembraneTopology() :
 {}
 
 void MembraneTopology::apply( Pose & pose ) {
-	core::scoring::MembraneTopologyOP membrane_topology = new core::scoring::MembraneTopology;
+	core::scoring::MembraneTopologyOP membrane_topology( new core::scoring::MembraneTopology );
 	membrane_topology->initialize( span_file_ );
 	pose.data().set( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY, membrane_topology );
 	TR<<"Setting pose's membrane topology according to span file "<<span_file()<<std::endl;

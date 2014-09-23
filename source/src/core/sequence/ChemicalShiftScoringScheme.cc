@@ -41,10 +41,10 @@ Real ChemicalShiftScoringScheme::score(
 	using core::Real;
 
 	ChemicalShiftSequenceOP prof1 = ChemicalShiftSequenceOP(
-		dynamic_cast< ChemicalShiftSequence * > ( seq1() )
+		utility::pointer::dynamic_pointer_cast< core::sequence::ChemicalShiftSequence > ( seq1 )
 	);
 	ChemicalShiftSequenceOP prof2 = ChemicalShiftSequenceOP(
-		dynamic_cast< ChemicalShiftSequence * > ( seq2() )
+		utility::pointer::dynamic_pointer_cast< core::sequence::ChemicalShiftSequence > ( seq2 )
 	);
 
 	runtime_assert( pos1 <= prof1->length() );

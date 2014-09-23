@@ -93,7 +93,7 @@ void PalesEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval
         utility_exit_with_message(
                "need to specify dupletss <pales_rdcs> <column>  with option -evaluation:pales   last read: "+fname );
       }
-      eval.add_evaluation( new PalesEvaluator( column, fname ) );
+      eval.add_evaluation( PoseEvaluatorOP( new PalesEvaluator( column, fname ) ) );
     }
   }
 

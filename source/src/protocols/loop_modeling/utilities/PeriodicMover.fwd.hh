@@ -18,8 +18,8 @@ namespace utilities {
 
 class PeriodicMover;
 
-typedef utility::pointer::owning_ptr<PeriodicMover> PeriodicMoverOP;
-typedef utility::pointer::owning_ptr<PeriodicMover const> PeriodicMoverCOP;
+typedef utility::pointer::shared_ptr<PeriodicMover> PeriodicMoverOP;
+typedef utility::pointer::shared_ptr<PeriodicMover const> PeriodicMoverCOP;
 
 }
 }

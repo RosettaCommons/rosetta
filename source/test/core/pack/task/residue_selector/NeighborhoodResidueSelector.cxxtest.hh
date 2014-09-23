@@ -52,10 +52,10 @@ public:
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
-		ResidueSelectorOP odd_rs = new OddResidueSelector;
+		ResidueSelectorOP odd_rs( new OddResidueSelector );
 		dm.add( "ResidueSelector", "odd", odd_rs );
 
-		ResidueSelectorOP neighbor_rs = new NeighborhoodResidueSelector;
+		ResidueSelectorOP neighbor_rs( new NeighborhoodResidueSelector );
 		try {
 			neighbor_rs->parse_my_tag( tag, dm );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -84,10 +84,10 @@ public:
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
-		ResidueSelectorOP odd_rs = new OddResidueSelector;
+		ResidueSelectorOP odd_rs( new OddResidueSelector );
 		dm.add( "ResidueSelector", "odd", odd_rs );
 
-		ResidueSelectorOP neighbor_rs = new NeighborhoodResidueSelector;
+		ResidueSelectorOP neighbor_rs( new NeighborhoodResidueSelector );
 		try {
 			neighbor_rs->parse_my_tag( tag, dm );
 			TS_ASSERT ( false );
@@ -105,7 +105,7 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
-		ResidueSelectorOP neighbor_rs = new NeighborhoodResidueSelector;
+		ResidueSelectorOP neighbor_rs( new NeighborhoodResidueSelector );
 		try {
 			neighbor_rs->parse_my_tag( tag, dm );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -134,7 +134,7 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
-		ResidueSelectorOP neighbor_rs = new NeighborhoodResidueSelector;
+		ResidueSelectorOP neighbor_rs( new NeighborhoodResidueSelector );
 		try {
 			neighbor_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); //parsing should fail!
@@ -151,7 +151,7 @@ public:
 		bad_focus.insert(1);
 		bad_focus.insert(trpcage.total_residue() + 1);
 
-		ResidueSelectorOP neighbor_rs = new NeighborhoodResidueSelector(bad_focus, 10.0);
+		ResidueSelectorOP neighbor_rs( new NeighborhoodResidueSelector(bad_focus, 10.0) );
 
 		ResidueSubset subset( trpcage.total_residue(), false );
 		try {
@@ -172,7 +172,7 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
-		ResidueSelectorOP neighbor_rs = new NeighborhoodResidueSelector;
+		ResidueSelectorOP neighbor_rs( new NeighborhoodResidueSelector );
 		try {
 			neighbor_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should fail
@@ -189,8 +189,8 @@ public:
 		std::set< core::Size > focus_set;
 		focus_set.insert(2);
 		focus_set.insert(3);
-		NeighborhoodResidueSelectorOP neighbor_rs = new NeighborhoodResidueSelector(focus_set, 5.0);
-		ResidueSelectorOP odd_rs = new OddResidueSelector;
+		NeighborhoodResidueSelectorOP neighbor_rs( new NeighborhoodResidueSelector(focus_set, 5.0) );
+		ResidueSelectorOP odd_rs( new OddResidueSelector );
 
 		ResidueSubset subset( trpcage.total_residue(), false );
 
@@ -225,7 +225,7 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
-		ResidueSelectorOP neighbor_rs = new NeighborhoodResidueSelector;
+		ResidueSelectorOP neighbor_rs( new NeighborhoodResidueSelector );
 		try {
 			neighbor_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should fail
@@ -243,7 +243,7 @@ public:
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
-		ResidueSelectorOP neighbor_rs = new NeighborhoodResidueSelector;
+		ResidueSelectorOP neighbor_rs( new NeighborhoodResidueSelector );
 		try {
 			neighbor_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should fail

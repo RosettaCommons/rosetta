@@ -67,7 +67,7 @@ namespace simple_filters {
 static thread_local basic::Tracer TR( "protocols.simple_filters.GeometryFilter" );
 
 protocols::filters::FilterOP
-GeometryFilterCreator::create_filter() const { return new GeometryFilter; }
+GeometryFilterCreator::create_filter() const { return protocols::filters::FilterOP( new GeometryFilter ); }
 
 std::string
 GeometryFilterCreator::keyname() const { return "Geometry"; }
@@ -178,7 +178,7 @@ GeometryFilter::compute( core::pose::Pose const & pose ) const {
 
 	if (filename_ != "none"){
 		TR << "Evaluate constraint energy?" << std::endl;
-		ConstraintSetMoverOP cst_set_mover = new ConstraintSetMover();
+		ConstraintSetMoverOP cst_set_mover( new ConstraintSetMover() );
 		cst_set_mover->constraint_file( filename_ );
 		cst_set_mover->apply( copy_pose );
 

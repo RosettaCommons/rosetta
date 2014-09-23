@@ -85,9 +85,9 @@ PoseCommentsFeatures::write_schema_to_db(utility::sql_database::sessionOP db_ses
 	using namespace basic::database::schema_generator;
 
 	//******pose_comments******//
-	Column struct_id("struct_id", new DbBigInt(), false);
-	Column comment_key("comment_key", new DbTextKey(), false);
-	Column value("value", new DbText(), false);
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false);
+	Column comment_key("comment_key", DbDataTypeOP( new DbTextKey() ), false);
+	Column value("value", DbDataTypeOP( new DbText() ), false);
 
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(struct_id);
@@ -127,12 +127,12 @@ PoseCommentsFeatures::report_features(
 
 	typedef map< string, string >::value_type kv_pair;
 
-	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id",struct_id);
+	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
 	BOOST_FOREACH(kv_pair const & kv, get_all_comments(pose)){
 
-		RowDataBaseOP comment_key_data =new RowData<string>("comment_key",kv.first);
-		RowDataBaseOP value_data = new RowData<string>("value",kv.second);
+		RowDataBaseOP comment_key_data( new RowData<string>("comment_key",kv.first) );
+		RowDataBaseOP value_data( new RowData<string>("value",kv.second) );
 
 		pose_comments_insert.add_row(utility::tools::make_vector(struct_id_data,comment_key_data,value_data));
 	}

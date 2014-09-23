@@ -113,7 +113,7 @@ GenericJobInputterCreator::keyname() const
 
 protocols::jd2::JobInputterOP
 GenericJobInputterCreator::create_JobInputter() const {
-	return new GenericJobInputter;
+	return protocols::jd2::JobInputterOP( new GenericJobInputter );
 }
 
 }// comparative_modeling

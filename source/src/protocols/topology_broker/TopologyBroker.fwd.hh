@@ -20,11 +20,11 @@ namespace protocols {
 namespace topology_broker {
 
 class TopologyBroker;
-typedef utility::pointer::owning_ptr<TopologyBroker> TopologyBrokerOP;
-typedef utility::pointer::owning_ptr<TopologyBroker const> TopologyBrokerCOP;
+typedef utility::pointer::shared_ptr<TopologyBroker> TopologyBrokerOP;
+typedef utility::pointer::shared_ptr<TopologyBroker const> TopologyBrokerCOP;
 
-typedef utility::pointer::access_ptr<TopologyBroker> TopologyBrokerAP;
-typedef utility::pointer::access_ptr<TopologyBroker const> TopologyBrokerCAP;
+typedef utility::pointer::weak_ptr<TopologyBroker> TopologyBrokerAP;
+typedef utility::pointer::weak_ptr<TopologyBroker const> TopologyBrokerCAP;
 
 }
 }

@@ -34,7 +34,7 @@ public:
 	NCSResMapping( core::pose::Pose &pose );
 
 	basic::datacache::CacheableDataOP clone() const {
-		return new NCSResMapping(*this);
+		return basic::datacache::CacheableDataOP( new NCSResMapping(*this) );
 	}
 
 	utility::vector1< core::Size > get_equiv( core::Size resid );

@@ -21,8 +21,8 @@ namespace md {
 
 class CartesianMD;
 
-typedef utility::pointer::owning_ptr< CartesianMD > CartesianMDOP;
-typedef utility::pointer::owning_ptr< CartesianMD const > CartesianMDCOP;
+typedef utility::pointer::shared_ptr< CartesianMD > CartesianMDOP;
+typedef utility::pointer::shared_ptr< CartesianMD const > CartesianMDCOP;
 
 } //movers
 } //protocols

@@ -204,21 +204,21 @@ FragmentScoringMethodOP MakeFragmentDME::make(Size priority,
 		trDMEScore
 				<< "Reference structure to score fragments by DME loaded from: "
 				<< option[in::file::native]() << std::endl;
-		core::pose::PoseOP nativePose = new core::pose::Pose;
+		core::pose::PoseOP nativePose( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*nativePose, option[in::file::native]());
 
-		return (FragmentScoringMethodOP) new FragmentDME(priority,
-				lowest_acceptable_value, use_lowest, nativePose);
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new FragmentDME(priority,
+				lowest_acceptable_value, use_lowest, nativePose) );
 	}
 	if (option[in::file::s].user()) {
 		trDMEScore
 				<< "Reference structure to score fragments by DME loaded from: "
 				<< option[in::file::s]()[1] << std::endl;
-		core::pose::PoseOP nativePose = new core::pose::Pose;
+		core::pose::PoseOP nativePose( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*nativePose, option[in::file::s]()[1]);
 
-		return (FragmentScoringMethodOP) new FragmentDME(priority,
-				lowest_acceptable_value, use_lowest, nativePose);
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new FragmentDME(priority,
+				lowest_acceptable_value, use_lowest, nativePose) );
 	}
 	if (option[in::file::xyz].user()) {
 
@@ -244,8 +244,8 @@ FragmentScoringMethodOP MakeFragmentDME::make(Size priority,
 		}
 		trDMEScore <<  xyz.size() << " atoms found in the reference" << std::endl;
 
-		return (FragmentScoringMethodOP) new FragmentDME(priority,
-				lowest_acceptable_value, use_lowest, xyz);
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new FragmentDME(priority,
+				lowest_acceptable_value, use_lowest, xyz) );
 	}
 	utility_exit_with_message(
 			"Can't read a reference structure. Provide it with in::file::s flag");

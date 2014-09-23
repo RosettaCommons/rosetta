@@ -23,8 +23,8 @@ namespace stepwise {
 namespace sampler {
 	
 	class NoOpStepWiseSampler;
-	typedef utility::pointer::owning_ptr< NoOpStepWiseSampler > NoOpStepWiseSamplerOP;
-	typedef utility::pointer::owning_ptr< NoOpStepWiseSampler const > NoOpStepWiseSamplerCOP;
+	typedef utility::pointer::shared_ptr< NoOpStepWiseSampler > NoOpStepWiseSamplerOP;
+	typedef utility::pointer::shared_ptr< NoOpStepWiseSampler const > NoOpStepWiseSamplerCOP;
 	
 } //sampler
 } //stepwise

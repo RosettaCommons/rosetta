@@ -22,8 +22,8 @@ namespace protocols {
 namespace domain_assembly {
 
 class AssembleLinkerMover;
-typedef utility::pointer::owning_ptr< AssembleLinkerMover > AssembleLinkerMoverOP;
-typedef utility::pointer::owning_ptr< AssembleLinkerMover const > AssembleLinkerMoverCOP;
+typedef utility::pointer::shared_ptr< AssembleLinkerMover > AssembleLinkerMoverOP;
+typedef utility::pointer::shared_ptr< AssembleLinkerMover const > AssembleLinkerMoverCOP;
 
 
 }//namespace domain_assembly

@@ -35,7 +35,7 @@ FlexbbIGFactory::create_flexbb_interaction_graph(
 	core::scoring::ScoreFunction const & scorefxn
 )
 {
-	MinimalistFlexbbInteractionGraphOP ig = new MinimalistFlexbbInteractionGraph( flexrots.nmoltenres() );
+	MinimalistFlexbbInteractionGraphOP ig( new MinimalistFlexbbInteractionGraph( flexrots.nmoltenres() ) );
 	ig->set_pose( pose );
 	ig->set_scorefxn( scorefxn );
 	return ig;

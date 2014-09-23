@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 		devel::init(argc, argv);
 
 		// Construct the mover.
-		RingConformationMoverOP my_mover = new RingConformationMover();
+		RingConformationMoverOP my_mover( new RingConformationMover() );
 
 		// Distribute the mover.
 		JobDistributor::get_instance()->go(my_mover);

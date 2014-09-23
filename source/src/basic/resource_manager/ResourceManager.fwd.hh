@@ -21,8 +21,8 @@ namespace basic {
 namespace resource_manager {
 
 class ResourceManager;
-typedef utility::pointer::owning_ptr< ResourceManager > ResourceManagerOP;
-typedef utility::pointer::owning_ptr< ResourceManager const > ResourceManagerCOP;
+typedef utility::pointer::shared_ptr< ResourceManager > ResourceManagerOP;
+typedef utility::pointer::shared_ptr< ResourceManager const > ResourceManagerCOP;
 
 
 } // namespace resource_manager

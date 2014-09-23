@@ -65,7 +65,7 @@ PrepackMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 PrepackMoverCreator::create_mover() const {
-	return new PrepackMover;
+	return protocols::moves::MoverOP( new PrepackMover );
 }
 
 std::string
@@ -76,10 +76,10 @@ PrepackMoverCreator::mover_name()
 
 PrepackMover::PrepackMover() :
 	protocols::simple_moves::PackRotamersMover( PrepackMoverCreator::mover_name() ),
-	scorefxn_( NULL ),
+	scorefxn_( /* NULL */ ),
 	jump_num_( 0 ),
 	min_bb_( false ),
-	mm_( NULL )
+	mm_( /* NULL */ )
 {}
 
 PrepackMover::PrepackMover(
@@ -112,28 +112,28 @@ void PrepackMover::apply( pose::Pose & pose )
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 	TaskFactoryOP tf;
-	if( task_factory() ) tf = new TaskFactory( *task_factory() );
-	else tf = new TaskFactory;
-	tf->push_back( new operation::InitializeFromCommandline );
-	tf->push_back( new operation::IncludeCurrent );
-	tf->push_back( new operation::RestrictToRepacking );
-	tf->push_back( new operation::NoRepackDisulfides );
+	if( task_factory() ) tf = TaskFactoryOP( new TaskFactory( *task_factory() ) );
+	else tf = TaskFactoryOP( new TaskFactory );
+	tf->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
+	tf->push_back( TaskOperationCOP( new operation::IncludeCurrent ) );
+	tf->push_back( TaskOperationCOP( new operation::RestrictToRepacking ) );
+	tf->push_back( TaskOperationCOP( new operation::NoRepackDisulfides ) );
 
 	// incorporating Ian's UnboundRotamer operation.
 	// note that nothing happens if unboundrot option is inactive!
-	core::pack::rotamer_set::UnboundRotamersOperationOP unboundrot = new core::pack::rotamer_set::UnboundRotamersOperation();
+	core::pack::rotamer_set::UnboundRotamersOperationOP unboundrot( new core::pack::rotamer_set::UnboundRotamersOperation() );
 	unboundrot->initialize_from_command_line();
-	core::pack::task::operation::AppendRotamerSetOP unboundrot_operation = new core::pack::task::operation::AppendRotamerSet( unboundrot );
+	core::pack::task::operation::AppendRotamerSetOP unboundrot_operation( new core::pack::task::operation::AppendRotamerSet( unboundrot ) );
 	tf->push_back( unboundrot_operation );
 	core::pack::dunbrack::load_unboundrot(pose); // adds scoring bonuses for the "unbound" rotamers, if any
 
 	using namespace protocols::toolbox::task_operations;
-	if (basic::options::option[ basic::options::OptionKeys::docking::norepack1 ]()) tf->push_back( new DockingNoRepack1( jump_num_) );
-	if (basic::options::option[ basic::options::OptionKeys::docking::norepack2 ]()) tf->push_back( new DockingNoRepack2( jump_num_) );
+	if (basic::options::option[ basic::options::OptionKeys::docking::norepack1 ]()) tf->push_back( TaskOperationCOP( new DockingNoRepack1( jump_num_) ) );
+	if (basic::options::option[ basic::options::OptionKeys::docking::norepack2 ]()) tf->push_back( TaskOperationCOP( new DockingNoRepack2( jump_num_) ) );
 
 	//in case there is a resfile, information in this resfile overrides the computed task
 	if( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
-		tf->push_back( new operation::ReadResfile );
+		tf->push_back( TaskOperationCOP( new operation::ReadResfile ) );
 	}
 	PackerTaskOP task = tf->create_task_and_apply_taskoperations( pose );
 
@@ -151,7 +151,7 @@ void PrepackMover::apply( pose::Pose & pose )
 		}
   }
 	else{
-		mm_general = new core::kinematics::MoveMap;
+		mm_general = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
 		mm_general->clear();
 	}
 	if( min_bb() ){ //premin bb+sc
@@ -164,7 +164,7 @@ void PrepackMover::apply( pose::Pose & pose )
 	protocols::rigid::RigidBodyTransMoverOP translate;
 	if( (jump_num_ > 0) && (pose.conformation().num_chains() > 1) ) {
 		TR<<"Translating along jump #"<<jump_num_<<std::endl;
-		translate = new protocols::rigid::RigidBodyTransMover( pose, jump_num_ ) ;
+		translate = protocols::rigid::RigidBodyTransMoverOP( new protocols::rigid::RigidBodyTransMover( pose, jump_num_ ) ) ;
 		translate->step_size( 1000.0 );
 		translate->apply( pose );
 	}
@@ -213,7 +213,7 @@ PrepackMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, 
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	min_bb( tag->getOption< bool >( "min_bb", 0 ));
 	if( min_bb() ) {
-		mm_ = new core::kinematics::MoveMap;
+		mm_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
 		mm()->clear();
 		protocols::rosetta_scripts::parse_movemap( tag, pose, mm_, data );
 	}

@@ -28,11 +28,11 @@ namespace topology_broker {
 class TMHTopologySamplerClaimer;
 
 // Types
-typedef  utility::pointer::owning_ptr< TMHTopologySamplerClaimer >  TMHTopologySamplerClaimerOP;
-typedef  utility::pointer::owning_ptr< TMHTopologySamplerClaimer const >  TMHTopologySamplerClaimerCOP;
+typedef  utility::pointer::shared_ptr< TMHTopologySamplerClaimer >  TMHTopologySamplerClaimerOP;
+typedef  utility::pointer::shared_ptr< TMHTopologySamplerClaimer const >  TMHTopologySamplerClaimerCOP;
 
-typedef  utility::pointer::access_ptr< TMHTopologySamplerClaimer >  TMHTopologySamplerClaimerAP;
-typedef  utility::pointer::access_ptr< TMHTopologySamplerClaimer const >  TMHTopologySamplerClaimerCAP;
+typedef  utility::pointer::weak_ptr< TMHTopologySamplerClaimer >  TMHTopologySamplerClaimerAP;
+typedef  utility::pointer::weak_ptr< TMHTopologySamplerClaimer const >  TMHTopologySamplerClaimerCAP;
 
 
 } // namespace protocols

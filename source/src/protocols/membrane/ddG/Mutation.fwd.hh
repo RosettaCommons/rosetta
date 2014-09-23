@@ -30,8 +30,8 @@ namespace membrane {
 namespace ddG {
 
 class Mutation;
-typedef utility::pointer::owning_ptr< Mutation > MutationOP;
-typedef utility::pointer::owning_ptr< Mutation const > MutationCOP;
+typedef utility::pointer::shared_ptr< Mutation > MutationOP;
+typedef utility::pointer::shared_ptr< Mutation const > MutationCOP;
 
 } // membrane
 } // conformation

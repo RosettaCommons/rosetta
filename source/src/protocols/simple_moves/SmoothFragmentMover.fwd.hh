@@ -26,13 +26,13 @@ namespace simple_moves {
 // Forward
 class SmoothFragmentMover;
 
-typedef utility::pointer::owning_ptr< SmoothFragmentMover > SmoothFragmentMoverOP;
-typedef utility::pointer::owning_ptr< SmoothFragmentMover const > SmoothFragmentMoverCOP;
+typedef utility::pointer::shared_ptr< SmoothFragmentMover > SmoothFragmentMoverOP;
+typedef utility::pointer::shared_ptr< SmoothFragmentMover const > SmoothFragmentMoverCOP;
 
 class FragmentCost;
 
-typedef utility::pointer::owning_ptr< FragmentCost > FragmentCostOP;
-typedef utility::pointer::owning_ptr< FragmentCost const > FragmentCostCOP;
+typedef utility::pointer::shared_ptr< FragmentCost > FragmentCostOP;
+typedef utility::pointer::shared_ptr< FragmentCost const > FragmentCostCOP;
 
 } // namespace simple_moves
 } // namespace protocols

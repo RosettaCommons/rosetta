@@ -28,7 +28,7 @@ namespace func {
 ///
 
 class SumFunc;
-typedef utility::pointer::owning_ptr< SumFunc > SumFuncOP;
+typedef utility::pointer::shared_ptr< SumFunc > SumFuncOP;
 
 }
 }

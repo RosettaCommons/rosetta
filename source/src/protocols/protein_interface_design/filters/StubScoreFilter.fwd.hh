@@ -27,8 +27,8 @@ namespace filters {
 class StubScoreFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< StubScoreFilter >  StubScoreFilterOP;
-typedef utility::pointer::owning_ptr< StubScoreFilter const >  StubScoreFilterCOP;
+typedef utility::pointer::shared_ptr< StubScoreFilter >  StubScoreFilterOP;
+typedef utility::pointer::shared_ptr< StubScoreFilter const >  StubScoreFilterCOP;
 
 } // namespace filters
 } //namespace protein_interface_design

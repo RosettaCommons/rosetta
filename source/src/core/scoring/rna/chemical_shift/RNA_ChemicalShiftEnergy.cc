@@ -47,7 +47,7 @@ methods::EnergyMethodOP
 RNA_ChemicalShiftEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new RNA_ChemicalShiftEnergy;
+	return methods::EnergyMethodOP( new RNA_ChemicalShiftEnergy );
 }
 
 ScoreTypes
@@ -68,7 +68,7 @@ RNA_ChemicalShiftEnergy::RNA_ChemicalShiftEnergy():
 methods::EnergyMethodOP
 RNA_ChemicalShiftEnergy::clone() const
 {
-	return new RNA_ChemicalShiftEnergy;
+	return methods::EnergyMethodOP( new RNA_ChemicalShiftEnergy );
 }
 
 

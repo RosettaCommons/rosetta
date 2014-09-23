@@ -77,7 +77,7 @@ public:
 		//core::import_pose::pose_from_pdb( *pose, "core/scoring/methods/test_in.pdb" );
 
 		//init mmtorsionenergy
-		mmtorsionenergy = new MMTorsionEnergy;
+		mmtorsionenergy = MMTorsionEnergyOP( new MMTorsionEnergy );
 
 		// init delta
 		delta = 0.0001;
@@ -85,8 +85,8 @@ public:
 	}
 
 	void tearDown() {
-		pose = 0;
-		mmtorsionenergy = 0;
+		pose.reset();
+		mmtorsionenergy.reset();
 	}
 
 	// --------------- Test Cases --------------- //

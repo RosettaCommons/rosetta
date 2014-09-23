@@ -65,7 +65,7 @@ public:
 	TemplateFragmentClaimer( std::string config_file, core::Size fragsize, weights::AbinitioMoverWeightOP weight = NULL );
 
 	virtual TopologyClaimerOP clone() const {
-		return new TemplateFragmentClaimer( *this );
+		return TopologyClaimerOP( new TemplateFragmentClaimer( *this ) );
 	}
 
 	void read_config_file( std::string const& file );

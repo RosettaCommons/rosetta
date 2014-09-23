@@ -53,7 +53,7 @@ static thread_local basic::Tracer TR( "protocols.protein_interface_design.filter
 ////////////  Creator ////////////////////////
 FilterOP
 SpecificResiduesNearInterfaceFilterCreator::create_filter() const {
-	return new SpecificResiduesNearInterfaceFilter;
+	return FilterOP( new SpecificResiduesNearInterfaceFilter );
 }
 
 string
@@ -66,7 +66,7 @@ SpecificResiduesNearInterfaceFilterCreator::keyname() const {
 ///@brief default ctor
 SpecificResiduesNearInterfaceFilter::SpecificResiduesNearInterfaceFilter() :
 	parent( "SpecificResiduesNearInterfaceFilter" ),
-	task_factory_(NULL),
+	task_factory_(/* NULL */),
 	rb_jump_(1)
 {}
 
@@ -81,12 +81,12 @@ SpecificResiduesNearInterfaceFilter::~SpecificResiduesNearInterfaceFilter(){}
 
 FilterOP
 SpecificResiduesNearInterfaceFilter::fresh_instance() const{
-	return new SpecificResiduesNearInterfaceFilter();
+	return FilterOP( new SpecificResiduesNearInterfaceFilter() );
 }
 
 FilterOP
 SpecificResiduesNearInterfaceFilter::clone() const{
-	return new SpecificResiduesNearInterfaceFilter( *this );
+	return FilterOP( new SpecificResiduesNearInterfaceFilter( *this ) );
 }
 
 

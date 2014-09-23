@@ -58,8 +58,8 @@ static thread_local basic::Tracer TR( "core.scoring.constraints.SequenceProfileC
 SequenceProfileConstraint::SequenceProfileConstraint()
 	: Constraint( res_type_constraint ),
 		seqpos_(0),
-		sequence_profile_(NULL),
-		mapping_(NULL),
+		sequence_profile_(/* NULL */),
+		mapping_(/* NULL */),
 		weight_( 1.0 )
 {}
 
@@ -92,7 +92,7 @@ SequenceProfileConstraint::~SequenceProfileConstraint() {}
 
 ConstraintOP
 SequenceProfileConstraint::clone() const {
-	return new core::scoring::constraints::SequenceProfileConstraint( *this );
+	return ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( *this ) );
 }
 
 ///@details one line definition "SequenceProfile resindex profilefilename" (profilefilename can also be set to "none" in the constraints file, and specified by -in::file::pssm)
@@ -234,7 +234,7 @@ SequenceProfileConstraint::remap_resid(
 		new_map->downstream_combine( *mapping_ ); // Combine new->old and old->profile into new->profile
 	}
 
-	return new core::scoring::constraints::SequenceProfileConstraint(	newseqpos, sequence_profile_, new_map );
+	return ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint(	newseqpos, sequence_profile_, new_map ) );
 }
 
 ConstraintOP
@@ -244,7 +244,7 @@ SequenceProfileConstraint::remapped_clone(
 	id::SequenceMappingCOP map /*=NULL*/ ) const
 {
 	if ( ! map ) {
-		return new core::scoring::constraints::SequenceProfileConstraint(	seqpos_, sequence_profile_, mapping_ );
+		return ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint(	seqpos_, sequence_profile_, mapping_ ) );
 	}
 
 	// Hereafter map is valid
@@ -260,7 +260,7 @@ SequenceProfileConstraint::remapped_clone(
 		new_map->downstream_combine( *mapping_ ); // Combine new->old and old->profile into new->profile
 	}
 
-	return new core::scoring::constraints::SequenceProfileConstraint(	newseqpos, sequence_profile_, new_map );
+	return ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint(	newseqpos, sequence_profile_, new_map ) );
 }
 
 
@@ -316,7 +316,7 @@ SequenceProfileConstraintCreator::~SequenceProfileConstraintCreator() {}
 core::scoring::constraints::ConstraintOP
 SequenceProfileConstraintCreator::create_constraint() const
 {
-        return new SequenceProfileConstraint;
+        return core::scoring::constraints::ConstraintOP( new SequenceProfileConstraint );
 }
 
 std::string

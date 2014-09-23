@@ -77,8 +77,8 @@ class NonlocalUtilTest : public CxxTest::TestSuite {
   void test_limit_chunk_size() {
     const SequenceAlignment& alignment = alignments_[1];
 
-    protocols::loops::LoopsOP aligned  = new Loops();
-    protocols::loops::LoopsOP unaligned = new Loops();
+    protocols::loops::LoopsOP aligned( new Loops() );
+    protocols::loops::LoopsOP unaligned( new Loops() );
     
     protocols::nonlocal::find_regions_with_minimum_size
         (alignment, MIN_CHUNK_SZ, aligned, unaligned);

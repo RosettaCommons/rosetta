@@ -23,8 +23,8 @@ namespace ligand_docking {
 
 class InterfaceBuilder;
 
-typedef utility::pointer::owning_ptr< InterfaceBuilder > InterfaceBuilderOP;
-typedef utility::pointer::owning_ptr< InterfaceBuilder const > InterfaceBuilderCOP;
+typedef utility::pointer::shared_ptr< InterfaceBuilder > InterfaceBuilderOP;
+typedef utility::pointer::shared_ptr< InterfaceBuilder const > InterfaceBuilderCOP;
 typedef utility::vector1< InterfaceBuilderOP > InterfaceBuilderOPs;
 typedef utility::vector1< InterfaceBuilderCOP > InterfaceBuilderCOPs;
 

@@ -266,7 +266,7 @@ MinimizeStoredRBConfs::rb_minimize_all_confs(
 	core::pose::Pose mod_pose = pose;
 	Size seqpos( confs[1]->seqpos() );
 	Size natoms( confs[1]->natoms() );
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
+	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
 	movemap->set_jump( pose.fold_tree().get_jump_that_builds_residue( seqpos ), true );
 	protocols::simple_moves::MinMover minmover( movemap, sfxn_, "dfpmin", 0.1, true );
 

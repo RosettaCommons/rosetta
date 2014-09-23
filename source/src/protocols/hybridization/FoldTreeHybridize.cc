@@ -142,7 +142,7 @@ using namespace basic::options::OptionKeys;
 
 
 FoldTreeHybridize::FoldTreeHybridize() :
-		hybridize_setup_(NULL),
+		hybridize_setup_(/* NULL */),
 		foldtree_mover_()
 {
 	init();
@@ -174,7 +174,7 @@ FoldTreeHybridize::FoldTreeHybridize (
 	// abinitio frags
 	frag_libs_small_.push_back(fragments_small_in);
 	frag_libs_big_.push_back(fragments_big_in);
-	frag_libs_1mer_.push_back( new core::fragment::ConstantLengthFragSet( 1 ) );
+	frag_libs_1mer_.push_back( utility::pointer::shared_ptr<class core::fragment::FragSet>( new core::fragment::ConstantLengthFragSet( 1 ) ) );
 	chop_fragments( *frag_libs_small_[1], *frag_libs_1mer_[1] );
 }
 
@@ -189,7 +189,7 @@ void FoldTreeHybridize::setup_for_parser()
 
 
 	for (core::Size ipose=1; ipose<=hybridize_setup_->template_poses().size(); ++ipose) {
-		template_poses_.push_back( new core::pose::Pose( *(hybridize_setup_->template_poses()[ipose]) ) );
+		template_poses_.push_back( utility::pointer::shared_ptr<class core::pose::Pose>( new core::pose::Pose( *(hybridize_setup_->template_poses()[ipose]) ) ) );
 	}
 	template_wts_ = hybridize_setup_->template_wts();
 	template_chunks_ = hybridize_setup_->template_chunks();
@@ -201,7 +201,7 @@ void FoldTreeHybridize::setup_for_parser()
 	// abinitio frags
 	frag_libs_small_ = hybridize_setup_->fragments_small();
 	frag_libs_big_ = hybridize_setup_->fragments_big();
-	frag_libs_1mer_.push_back( new core::fragment::ConstantLengthFragSet( 1 ) );
+	frag_libs_1mer_.push_back( utility::pointer::shared_ptr<class core::fragment::FragSet>( new core::fragment::ConstantLengthFragSet( 1 ) ) );
 	chop_fragments( *frag_libs_small_[1], *frag_libs_1mer_[1] );
 
 	std::string cst_fn = hybridize_setup_->template_cst_fn()[initial_template_index_];
@@ -253,10 +253,10 @@ FoldTreeHybridize::init() {
 	// evaluation
 	// native
 	if ( option[ in::file::native ].user() ) {
-		native_ = new core::pose::Pose;
+		native_ = core::pose::PoseOP( new core::pose::Pose );
 		core::import_pose::pose_from_pdb( *native_, option[ in::file::native ]() );
 	} else if ( option[ evaluation::align_rmsd_target ].user() ) {
-		native_ = new core::pose::Pose;
+		native_ = core::pose::PoseOP( new core::pose::Pose );
 		utility::vector1< std::string > const & align_rmsd_target( option[ evaluation::align_rmsd_target ]() );
 		core::import_pose::pose_from_pdb( *native_, align_rmsd_target[1] ); // just use the first one for now
 	}
@@ -367,13 +367,11 @@ void FoldTreeHybridize::add_gap_constraints_to_pose(core::pose::Pose & pose, Loo
 		Size jatom = pose.residue_type(gap_stop ).atom_index("CA");
 
 		TR << "Add constraint to residue " << I(4,gap_start) << " and residue " << I(4,gap_stop) << std::endl;
-		core::scoring::func::FuncOP fx = new core::scoring::constraints::BoundFunc( 0, gap_distance(gap_size), stdev, "gap" );
-		pose.add_constraint( core::scoring::constraints::ConstraintCOP(
-			new core::scoring::constraints::AtomPairConstraint(
+		core::scoring::func::FuncOP fx( new core::scoring::constraints::BoundFunc( 0, gap_distance(gap_size), stdev, "gap" ) );
+		pose.add_constraint( core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AtomPairConstraint(
 				core::id::AtomID(iatom,gap_start),
 				core::id::AtomID(jatom,gap_stop),
-				fx )
-		) );
+				fx ) ) );
 
 	}
 }
@@ -389,7 +387,7 @@ FoldTreeHybridize::setup_foldtree(core::pose::Pose & pose) {
 	if ( option[ OptionKeys::in::file::psipred_ss2 ].user() )
 		ok = set_secstruct_from_psipred_ss2(pose);
 	if (!ok) {
-		core::fragment::SecondaryStructureOP ss_def = new core::fragment::SecondaryStructure( *frag_libs_small_[1], num_residues_nonvirt, false );
+		core::fragment::SecondaryStructureOP ss_def( new core::fragment::SecondaryStructure( *frag_libs_small_[1], num_residues_nonvirt, false ) );
 		for ( core::Size i = 1; i<= num_residues_nonvirt; ++i ) {
 			pose.set_secstruct( i, ss_def->secstruct(i) );
 		}
@@ -834,12 +832,12 @@ FoldTreeHybridize::add_strand_pairings() {
 
 	// get sheet-topology
 	//  this code is taken from protocols/jumping and protocols/abinitio
-	core::fragment::SecondaryStructureOP ss_def = new core::fragment::SecondaryStructure( *frag_libs_small_[1], false ); // get SS from frags
+	core::fragment::SecondaryStructureOP ss_def( new core::fragment::SecondaryStructure( *frag_libs_small_[1], false ) ); // get SS from frags
 	protocols::jumping::BaseJumpSetupOP jump_def;
 	if (sheets_.size()) {
-		jump_def = new protocols::jumping::SheetBuilder( ss_def, pairings, sheets_ );
+		jump_def = protocols::jumping::BaseJumpSetupOP( new protocols::jumping::SheetBuilder( ss_def, pairings, sheets_ ) );
 	} else {
-		jump_def = new protocols::jumping::RandomSheetBuilder( ss_def, pairings, random_sheets_ );
+		jump_def = protocols::jumping::BaseJumpSetupOP( new protocols::jumping::RandomSheetBuilder( ss_def, pairings, random_sheets_ ) );
 	}
 	core::Size attempts( 10 );
 	do {
@@ -851,7 +849,7 @@ FoldTreeHybridize::add_strand_pairings() {
 	TR << "jump_sample: " << jump_sample_ << std::endl; // debug
 
 	// generate the jump fragments
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	movemap->set_bb( true );
 	movemap->set_jump( true );
 	jump_frags_ = jump_def->generate_jump_frags( jump_sample_, *movemap );
@@ -902,7 +900,7 @@ FoldTreeHybridize::add_strand_pairing(
 	protocols::simple_moves::ClassicFragmentMoverOP jump_mover = get_pairings_jump_mover();
 
 	// create a pose with the strand pairing
-	core::pose::PoseOP pairing_pose = new core::pose::Pose();
+	core::pose::PoseOP pairing_pose( new core::pose::Pose() );
 	protocols::simple_moves::ExtendedPoseMover m(target_sequence_);
 	m.apply(*pairing_pose);
 	pairing_pose->fold_tree( jump_sample_.fold_tree() );
@@ -920,7 +918,7 @@ FoldTreeHybridize::add_strand_pairing(
 	utility::vector1< core::Size > pairing_positions;
 	pairing_positions.push_back(pairing.Pos1());
 	pairing_positions.push_back(pairing.Pos2());
-	core::pose::PoseOP trimmed_pairing_pose = new core::pose::Pose();
+	core::pose::PoseOP trimmed_pairing_pose( new core::pose::Pose() );
 	core::pose::create_subpose( *pairing_pose, pairing_positions, pairing_fold_tree, *trimmed_pairing_pose );
 	// add correct resnums to PDBInfo
 	utility::vector1< int > pdb_numbering;
@@ -1144,10 +1142,10 @@ void FoldTreeHybridize::filter_templates(std::set< core::Size > const & template
 
 protocols::simple_moves::ClassicFragmentMoverOP FoldTreeHybridize::get_pairings_jump_mover() {
 	assert( jump_frags_ );
-  core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+  core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
   movemap->set_bb( true );
   movemap->set_jump( true );
-  protocols::simple_moves::ClassicFragmentMoverOP jump_mover = new protocols::simple_moves::ClassicFragmentMover( jump_frags_, movemap );
+  protocols::simple_moves::ClassicFragmentMoverOP jump_mover( new protocols::simple_moves::ClassicFragmentMover( jump_frags_, movemap ) );
   jump_mover->type( "JumpMoves" );
   jump_mover->set_check_ss( false ); // this doesn't make sense with jump fragments
   jump_mover->enable_end_bias_check( false ); //no sense for discontinuous fragments
@@ -1175,7 +1173,7 @@ std::set< core::Size > FoldTreeHybridize::get_pairings_residues() {
 /// fragments, 1.5 angstrom rmsd convergence. It checks after 200 cycles
 /// compared to 100 used in ClassicAbinitio
 class hConvergenceCheck;
-typedef  utility::pointer::owning_ptr< hConvergenceCheck >  hConvergenceCheckOP;
+typedef  utility::pointer::shared_ptr< hConvergenceCheck >  hConvergenceCheckOP;
 
 class hConvergenceCheck : public moves::PoseCondition {
 public:
@@ -1309,8 +1307,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 
 	use_random_template = true;
 	//Size max_registry_shift = max_registry_shift_;
-	ChunkTrialMoverOP random_sample_chunk_mover(
-		new ChunkTrialMover(template_poses_, template_chunks_, ss_chunks_pose_, use_random_template, random_chunk, residue_sample_template_,  residue_max_registry_shift_) );
+	ChunkTrialMoverOP random_sample_chunk_mover( new ChunkTrialMover(template_poses_, template_chunks_, ss_chunks_pose_, use_random_template, random_chunk, residue_sample_template_,  residue_max_registry_shift_) );
 	//random_sample_chunk_mover->set_movable_region(allowed_to_move_);
 
 	// ignore strand pair templates, they will be sampled by a jump mover
@@ -1449,7 +1446,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
     TR.Info <<  "   Folding with score0 for max of " << stage1_max_cycles << std::endl;
 		using namespace ObjexxFCL::format;
 		AllResiduesChanged done( pose, residue_weights, jump_anchors );
-		protocols::moves::MonteCarloOP mc1 = new protocols::moves::MonteCarlo( pose, *score0, temp );
+		protocols::moves::MonteCarloOP mc1( new protocols::moves::MonteCarlo( pose, *score0, temp ) );
 		mc1->set_autotemp( false, temp );
 		(*score0)(pose);
 		bool all_res_changed = false;
@@ -1496,12 +1493,12 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		TR.Debug << scoring::name_from_score_type(scoring::linear_chainbreak) << " " << setting << std::endl;
 		score1->set_weight(scoring::linear_chainbreak, setting);
 
-		protocols::moves::MonteCarloOP mc2 = new protocols::moves::MonteCarlo( pose, *score1, temp );
+		protocols::moves::MonteCarloOP mc2( new protocols::moves::MonteCarlo( pose, *score1, temp ) );
 		mc2->set_autotemp( true, temp );
 		mc2->set_temperature( temp ); // temperature might have changed due to autotemp..
 		mc2->reset( pose );
 		(*score1)(pose);
-		moves::TrialMoverOP stage2_trials = new moves::TrialMover( random_chunk_and_frag_mover, mc2 );
+		moves::TrialMoverOP stage2_trials( new moves::TrialMover( random_chunk_and_frag_mover, mc2 ) );
 		stage2_trials->keep_stats_type( moves::accept_reject );
 		moves::RepeatMover( stage2_trials, stage2_max_cycles ).apply( pose );
 
@@ -1529,7 +1526,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
     TR.Info <<  "   Folding with score2 and score5 for " << stage3_max_cycles <<std::endl;
 		hConvergenceCheckOP convergence_checker ( NULL );
 		if ( !option[ abinitio::skip_convergence_check ] ) {
-			convergence_checker = new hConvergenceCheck;
+			convergence_checker = hConvergenceCheckOP( new hConvergenceCheck );
 			std::list< core::Size > residue_selection_big_frags;
 			std::list< core::Size > residue_selection_small_frags;
 			for (core::Size i = 1; i<=residue_weights.size(); ++i) {
@@ -1559,8 +1556,8 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 			TR.Debug << scoring::name_from_score_type(scoring::linear_chainbreak) << " " << chbrk_weight_stage_3b << std::endl;
 			score5->set_weight(scoring::linear_chainbreak, chbrk_weight_stage_3b);
 
-			protocols::moves::MonteCarloOP mc3 = new protocols::moves::MonteCarlo( pose, *score2, temp );
-			moves::TrialMoverOP stage3_trials = new moves::TrialMover( random_chunk_and_frag_mover, mc3 );
+			protocols::moves::MonteCarloOP mc3( new protocols::moves::MonteCarlo( pose, *score2, temp ) );
+			moves::TrialMoverOP stage3_trials( new moves::TrialMover( random_chunk_and_frag_mover, mc3 ) );
 			stage3_trials->keep_stats_type( moves::accept_reject );
 
 			if ( numeric::mod( nmacro, 2 ) != 0 || nmacro > 6 ) {
@@ -1626,7 +1623,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 				score3->set_weight( core::scoring::overlap_chainbreak, progress );
 			}
 
-			protocols::moves::MonteCarloOP mc4 = new protocols::moves::MonteCarlo( pose, *score3, temp );
+			protocols::moves::MonteCarloOP mc4( new protocols::moves::MonteCarlo( pose, *score3, temp ) );
 			mc4->set_autotemp( true, temp );
 			mc4->set_temperature( temp );
 			mc4->reset( pose );
@@ -1634,10 +1631,10 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 			moves::TrialMoverOP stage4_trials;
 			if ( nmacro == 1 ) {
 				TR.Info << "Stage 4 loop iteration " << nmacro << ": small fragments trials" << std::endl;
-				stage4_trials = new moves::TrialMover( random_chunk_and_small_frag_mover, mc4 );
+				stage4_trials = moves::TrialMoverOP( new moves::TrialMover( random_chunk_and_small_frag_mover, mc4 ) );
 			} else {
 				TR.Info << "Stage 4 loop iteration " << nmacro << ": small fragments smooth trials" << std::endl;
-				stage4_trials = new moves::TrialMover(random_chunk_and_small_frag_smooth_mover,  mc4);
+				stage4_trials = moves::TrialMoverOP( new moves::TrialMover(random_chunk_and_small_frag_smooth_mover,  mc4) );
 			}
 			moves::RepeatMover( stage4_trials, stage4_max_cycles ).apply(pose);
 			TR.Debug << "finished" << std::endl;
@@ -1649,8 +1646,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	}
 	else { // cenrot version stage4
 		// switch to cenrot model
-		protocols::moves::MoverOP tocenrot =
-			new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID_ROT );
+		protocols::moves::MoverOP tocenrot( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID_ROT ) );
 		tocenrot->apply( pose );
 		// setup score
 		core::scoring::ScoreFunctionOP score_cenrot =
@@ -1658,8 +1654,8 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		// packer
 		using namespace core::pack::task;
 		simple_moves::PackRotamersMoverOP pack_rotamers;
-		pack_rotamers = new protocols::simple_moves::PackRotamersMover();
-		TaskFactoryOP main_task_factory = new TaskFactory;
+		pack_rotamers = simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover() );
+		TaskFactoryOP main_task_factory( new TaskFactory );
 		main_task_factory->push_back( operation::TaskOperationCOP( new operation::RestrictToRepacking ) );
 		pack_rotamers->task_factory(main_task_factory);
 		pack_rotamers->score_function(score_cenrot);
@@ -1687,7 +1683,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 				score_cenrot->set_weight( core::scoring::overlap_chainbreak, progress );
 			}
 
-			protocols::moves::MonteCarloOP mc4 = new protocols::moves::MonteCarlo( pose, *score_cenrot, temp );
+			protocols::moves::MonteCarloOP mc4( new protocols::moves::MonteCarlo( pose, *score_cenrot, temp ) );
 			mc4->set_autotemp( true, temp );
 			mc4->set_temperature( temp );
 			mc4->reset( pose );
@@ -1695,10 +1691,10 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 			moves::TrialMoverOP stage4_trials;
 			if ( nmacro == 1 ) {
 				TR.Info << "Stage 4 loop iteration " << nmacro << ": small fragments trials" << std::endl;
-				stage4_trials = new moves::TrialMover( combo_small, mc4 );
+				stage4_trials = moves::TrialMoverOP( new moves::TrialMover( combo_small, mc4 ) );
 			} else {
 				TR.Info << "Stage 4 loop iteration " << nmacro << ": small fragments smooth trials" << std::endl;
-				stage4_trials = new moves::TrialMover( combo_smooth,  mc4);
+				stage4_trials = moves::TrialMoverOP( new moves::TrialMover( combo_smooth,  mc4) );
 			}
 			moves::RepeatMover( stage4_trials, stage4_max_cycles ).apply(pose);
 			TR.Debug << "finished" << std::endl;
@@ -1768,8 +1764,8 @@ std::string FoldTreeHybridize::get_name() const
 	return "FoldTreeHybridize";
 }
 
-protocols::moves::MoverOP FoldTreeHybridize::clone() const { return new FoldTreeHybridize( *this ); }
-protocols::moves::MoverOP FoldTreeHybridize::fresh_instance() const { return new FoldTreeHybridize; }
+protocols::moves::MoverOP FoldTreeHybridize::clone() const { return protocols::moves::MoverOP( new FoldTreeHybridize( *this ) ); }
+protocols::moves::MoverOP FoldTreeHybridize::fresh_instance() const { return protocols::moves::MoverOP( new FoldTreeHybridize ); }
 
 void
 FoldTreeHybridize::parse_my_tag(
@@ -1905,7 +1901,7 @@ FoldTreeHybridizeCreator::keyname() const {
 
 protocols::moves::MoverOP
 FoldTreeHybridizeCreator::create_mover() const {
-	return new FoldTreeHybridize;
+	return protocols::moves::MoverOP( new FoldTreeHybridize );
 }
 
 std::string

@@ -45,7 +45,7 @@ PDDFScoreFilter::PDDFScoreFilter() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	score_ = new protocols::scoring::methods::saxs::PDDFEnergy();
+	score_ = protocols::scoring::methods::saxs::PDDFEnergyOP( new protocols::scoring::methods::saxs::PDDFEnergy() );
 	cutoff_ = basic::options::option[ basic::options::OptionKeys::filters::set_pddf_filter ]();
 	score_value_ = cutoff_+1;
 }

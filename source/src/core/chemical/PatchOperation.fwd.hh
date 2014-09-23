@@ -21,7 +21,7 @@ namespace core {
 namespace chemical {
 
 class PatchOperation;
-typedef utility::pointer::owning_ptr< PatchOperation > PatchOperationOP;
+typedef utility::pointer::shared_ptr< PatchOperation > PatchOperationOP;
 
 } // chemical
 } // core

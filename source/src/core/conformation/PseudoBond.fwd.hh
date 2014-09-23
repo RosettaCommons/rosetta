@@ -25,8 +25,8 @@ class PseudoBond;
 
 class PseudoBondCollection;
 
-typedef utility::pointer::owning_ptr< PseudoBondCollection > PseudoBondCollectionOP;
-typedef utility::pointer::owning_ptr< PseudoBondCollection const > PseudoBondCollectionCOP;
+typedef utility::pointer::shared_ptr< PseudoBondCollection > PseudoBondCollectionOP;
+typedef utility::pointer::shared_ptr< PseudoBondCollection const > PseudoBondCollectionCOP;
 
 
 } // conformation

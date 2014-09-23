@@ -20,8 +20,8 @@ namespace protocols {
 namespace make_rot_lib {
 
 class MakeRotLibJobInputter;
-typedef utility::pointer::owning_ptr< MakeRotLibJobInputter > MakeRotLibJobInputterOP;
-typedef utility::pointer::owning_ptr< MakeRotLibJobInputter const > MakeRotLibJobInputterCOP;
+typedef utility::pointer::shared_ptr< MakeRotLibJobInputter > MakeRotLibJobInputterOP;
+typedef utility::pointer::shared_ptr< MakeRotLibJobInputter const > MakeRotLibJobInputterCOP;
 
 }//make_rot_lib
 }//protocols

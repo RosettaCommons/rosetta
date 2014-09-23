@@ -22,21 +22,21 @@ namespace scoring {
 
 ///
 class GenBornResidueInfo;
-typedef utility::pointer::owning_ptr< GenBornResidueInfo > GenBornResidueInfoOP;
+typedef utility::pointer::shared_ptr< GenBornResidueInfo > GenBornResidueInfoOP;
 
 ///
 class GenBornPoseInfo;
-typedef utility::pointer::owning_ptr< GenBornPoseInfo > GenBornPoseInfoOP;
+typedef utility::pointer::shared_ptr< GenBornPoseInfo > GenBornPoseInfoOP;
 
 ///
 class GenBornRotamerSetInfo;
-typedef utility::pointer::owning_ptr< GenBornRotamerSetInfo > GenBornRotamerSetInfoOP;
+typedef utility::pointer::shared_ptr< GenBornRotamerSetInfo > GenBornRotamerSetInfoOP;
 
 ///
 class GenBornPotential;
 
-typedef  utility::pointer::owning_ptr< GenBornPotential > GenBornPotentialOP;
-typedef  utility::pointer::owning_ptr< GenBornPotential const > GenBornPotentialCOP;
+typedef  utility::pointer::shared_ptr< GenBornPotential > GenBornPotentialOP;
+typedef  utility::pointer::shared_ptr< GenBornPotential const > GenBornPotentialCOP;
 
 
 

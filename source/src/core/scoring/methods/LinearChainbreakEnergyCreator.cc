@@ -33,7 +33,7 @@ namespace core {
 				// in the event that the caller does not specify a sequence separation
 				// constraint. Currently, cst_max_seq_sep() defaults to +inf.
 				Size allowable_sequence_separation = opt.cst_max_seq_sep();
-				return new LinearChainbreakEnergy(allowable_sequence_separation);
+				return EnergyMethodOP( new LinearChainbreakEnergy(allowable_sequence_separation) );
       }
 
       ScoreTypes

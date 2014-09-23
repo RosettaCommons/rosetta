@@ -41,7 +41,7 @@ DnaChains::DnaChains( DnaChains const & other )
 
 DnaChainsOP DnaChains::clone() const
 {
-	return new DnaChains( *this );
+	return DnaChainsOP( new DnaChains( *this ) );
 }
 
 bool

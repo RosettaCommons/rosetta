@@ -137,8 +137,8 @@ class HbsCreatorMover : public Mover {
 
 };
 
-typedef utility::pointer::owning_ptr< HbsCreatorMover > HbsCreatorMoverOP;
-typedef utility::pointer::owning_ptr< HbsCreatorMover const > HbsCreatorMoverCOP;
+typedef utility::pointer::shared_ptr< HbsCreatorMover > HbsCreatorMoverOP;
+typedef utility::pointer::shared_ptr< HbsCreatorMover const > HbsCreatorMoverCOP;
 
 
 int
@@ -220,7 +220,7 @@ HbsCreatorMover::apply(
 
 			}
 			else if (pdb_res_num == final_res) { // also applies the post patch
-				hbs::HbsPatcherOP hbs_patcher (new hbs::HbsPatcher( i ) );
+				hbs::HbsPatcherOP hbs_patcher( new hbs::HbsPatcher( i ) );
 				//pose.dump_pdb( "prepatch.pdb");
 				hbs_patcher->apply( pose );
 				//pose.dump_pdb( "postpatch.pdb");
@@ -327,8 +327,8 @@ HbsCreatorMover::apply(
 
 		// create a task factory and task operations
 		using core::pack::task::operation::TaskOperationCOP;
-		TaskFactoryOP tf(new TaskFactory());
-		tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
+		TaskFactoryOP tf( new TaskFactory() );
+		tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 
 		using namespace basic::resource_manager;
 		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() )
@@ -372,9 +372,9 @@ HbsCreatorMover::apply(
 
 			Real torsion_value( pose.torsion( torsion_id ) );
 
-			core::scoring::func::CircularHarmonicFuncOP circularharm_func  (new core::scoring::func::CircularHarmonicFunc( numeric::conversions::radians( torsion_value ), numeric::conversions::radians( 10.0 ) ) );
+			core::scoring::func::CircularHarmonicFuncOP circularharm_func( new core::scoring::func::CircularHarmonicFunc( numeric::conversions::radians( torsion_value ), numeric::conversions::radians( 10.0 ) ) );
 
-			ConstraintCOP dihedral1 = new DihedralConstraint( id1, id2, id3, id4, circularharm_func );
+			ConstraintCOP dihedral1( new DihedralConstraint( id1, id2, id3, id4, circularharm_func ) );
 
 			pose.add_constraint( dihedral1 );
 		}

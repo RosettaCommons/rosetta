@@ -27,25 +27,25 @@ namespace build {
 /// @brief forward declaration for RelativeSequencePosition
 struct RelativeSequencePosition;
 /// @brief owning pointer for RelativeSequencePosition
-typedef utility::pointer::owning_ptr< RelativeSequencePosition > RelativeSequencePositionOP;
+typedef utility::pointer::shared_ptr< RelativeSequencePosition > RelativeSequencePositionOP;
 /// @brief owning pointer for const RelativeSequencePosition
-typedef utility::pointer::owning_ptr< RelativeSequencePosition const > RelativeSequencePositionCOP;
+typedef utility::pointer::shared_ptr< RelativeSequencePosition const > RelativeSequencePositionCOP;
 /// @brief access pointer for RelativeSequencePosition
-typedef utility::pointer::access_ptr< RelativeSequencePosition > RelativeSequencePositionAP;
+typedef utility::pointer::weak_ptr< RelativeSequencePosition > RelativeSequencePositionAP;
 /// @brief access pointer for const RelativeSequencePosition
-typedef utility::pointer::access_ptr< RelativeSequencePosition const > RelativeSequencePositionCAP;
+typedef utility::pointer::weak_ptr< RelativeSequencePosition const > RelativeSequencePositionCAP;
 
 
 /// @brief forward declaration for CountFromLeft
 struct CountFromLeft;
 /// @brief owning pointer for CountFromLeft
-typedef utility::pointer::owning_ptr< CountFromLeft > CountFromLeftOP;
+typedef utility::pointer::shared_ptr< CountFromLeft > CountFromLeftOP;
 /// @brief owning pointer for const CountFromLeft
-typedef utility::pointer::owning_ptr< CountFromLeft const > CountFromLeftCOP;
+typedef utility::pointer::shared_ptr< CountFromLeft const > CountFromLeftCOP;
 /// @brief access pointer for CountFromLeft
-typedef utility::pointer::access_ptr< CountFromLeft > CountFromLeftAP;
+typedef utility::pointer::weak_ptr< CountFromLeft > CountFromLeftAP;
 /// @brief access pointer for const CountFromLeft
-typedef utility::pointer::access_ptr< CountFromLeft const > CountFromLeftCAP;
+typedef utility::pointer::weak_ptr< CountFromLeft const > CountFromLeftCAP;
 
 
 } // namespace build

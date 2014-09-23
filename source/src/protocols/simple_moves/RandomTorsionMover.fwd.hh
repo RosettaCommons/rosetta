@@ -22,8 +22,8 @@ namespace simple_moves{
 
 class RandomTorsionMover;
 
-typedef utility::pointer::owning_ptr< RandomTorsionMover > RandomTorsionMoverOP;
-typedef utility::pointer::owning_ptr< RandomTorsionMover const > RandomTorsionMoverCOP;
+typedef utility::pointer::shared_ptr< RandomTorsionMover > RandomTorsionMoverOP;
+typedef utility::pointer::shared_ptr< RandomTorsionMover const > RandomTorsionMoverCOP;
 
 } // simple_moves
 } // protocols

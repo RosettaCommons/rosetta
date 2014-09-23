@@ -104,7 +104,7 @@ LoopMoverFromCommandLineCreator::keyname() const
 
 protocols::moves::MoverOP
 LoopMoverFromCommandLineCreator::create_mover() const {
-	return new LoopMoverFromCommandLine;
+	return protocols::moves::MoverOP( new LoopMoverFromCommandLine );
 }
 
 std::string	LoopMoverFromCommandLineCreator::mover_name()
@@ -156,7 +156,7 @@ LoopMoverFromCommandLine::LoopMoverFromCommandLine(
 		hires_score_ = hires_score;
 		lores_score = lores_score->clone();
 		loop_file_name_= loop_file_name;
-		loops_ = new protocols::loops::Loops( *loops );
+		loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops( *loops ) );
 		design(false);
 }
 
@@ -171,7 +171,7 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 	pose.conformation().detect_disulfides(); // I don't think that this is important but just in case
 	core::pose::Pose native_pose = pose;
 	loops::set_secstruct_from_psipred_ss2( pose );
-	LoopsOP loops = new protocols::loops::Loops( loop_file_name_ );
+	LoopsOP loops( new protocols::loops::Loops( loop_file_name_ ) );
 	loops->verify_against(pose);
 	loops->auto_choose_cutpoints(pose);
 	if( loops->size() == 0)  {
@@ -183,16 +183,16 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 		TR << *loops << std::endl;
 	}
 	if( loops->size() > 0 ) {
-		core::pack::task::TaskFactoryOP task_factory = new core::pack::task::TaskFactory;
-		task_factory->push_back( new core::pack::task::operation::InitializeFromCommandline );
-		task_factory->push_back( new core::pack::task::operation::IncludeCurrent );
-		task_factory->push_back( new core::pack::task::operation::NoRepackDisulfides );
+		core::pack::task::TaskFactoryOP task_factory( new core::pack::task::TaskFactory );
+		task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
+		task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::IncludeCurrent ) );
+		task_factory->push_back( TaskOperationCOP( new core::pack::task::operation::NoRepackDisulfides ) );
 		// set up temporary fold tree for loop closure
 		TR.Debug << "Original FoldTree " << pose.fold_tree() << std::endl;
 		core::kinematics::FoldTree old_ft( pose.fold_tree() );
 		for( Loops::iterator it = loops->v_begin(); it != loops->v_end(); ++it ) {
 						it->set_extended( true ); // set all loops to extended (needed for CCD mover to really perturb)
-						protocols::loops::LoopsOP single_loop = new protocols::loops::Loops();
+						protocols::loops::LoopsOP single_loop( new protocols::loops::Loops() );
 						single_loop->add_loop(*it);
 		core::kinematics::FoldTree new_ft = protocols::forge::methods::fold_tree_from_loops( pose, *single_loop );
 		pose.fold_tree( new_ft );
@@ -222,7 +222,7 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 		if( protocol_ == "kinematic" ) {
 						if( perturb_ ) {
 							protocols::loops::loop_mover::perturb::LoopMover_Perturb_KIC perturb(single_loop, lores_score_ );
-							perturb.set_native_pose( new core::pose::Pose ( native_pose ) );
+							perturb.set_native_pose( PoseCOP( new core::pose::Pose ( native_pose ) ) );
 							perturb.apply( pose );
 						}
 						core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
@@ -230,7 +230,7 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 						if( refine_ ) {
 							protocols::loops::loop_mover::refine::LoopMover_Refine_KIC refine( single_loop, hires_score_ );
 							refine.set_redesign_loop(false); // design?
-							refine.set_native_pose( new core::pose::Pose ( native_pose ) );
+							refine.set_native_pose( PoseCOP( new core::pose::Pose ( native_pose ) ) );
 							pose.update_residue_neighbors();
 							refine.apply( pose );
 						}
@@ -251,7 +251,7 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 						perturb.add_fragments( frag_libs[i] );
 					}
 					perturb.set_strict_loops( true );
-					perturb.set_native_pose( new core::pose::Pose ( native_pose ) );
+					perturb.set_native_pose( PoseCOP( new core::pose::Pose ( native_pose ) ) );
 					perturb.apply( pose );
 				}
 			core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
@@ -263,7 +263,7 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 				}
 				//core::pack::task::PackerTaskOP task = task_factory->create_task_and_apply_taskoperations( pose );
 				refine.set_redesign_loop( false );
-				refine.set_native_pose( new core::pose::Pose ( native_pose ) );
+				refine.set_native_pose( PoseCOP( new core::pose::Pose ( native_pose ) ) );
 				refine.apply( pose );
 			}//refine
 		}//ccd

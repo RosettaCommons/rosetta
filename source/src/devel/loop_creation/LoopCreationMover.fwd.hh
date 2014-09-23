@@ -22,8 +22,8 @@ namespace devel {
 namespace loop_creation {
 	
 	class LoopCreationMover;
-	typedef utility::pointer::owning_ptr< LoopCreationMover > LoopCreationMoverOP;
-	typedef utility::pointer::owning_ptr< LoopCreationMover const > LoopCreationMoverCOP;
+	typedef utility::pointer::shared_ptr< LoopCreationMover > LoopCreationMoverOP;
+	typedef utility::pointer::shared_ptr< LoopCreationMover const > LoopCreationMoverCOP;
 	
 } //loop creation
 } //devel

@@ -1460,7 +1460,7 @@ RotamericSingleResiduePeptoidLibrary< T >::enumerate_chi_sets(
 		}
 		first_rotamer = false;
 
-		ChiSetOP chi_set = new ChiSet( nchi );
+		ChiSetOP chi_set( new ChiSet( nchi ) );
 		for ( Size ii = 1; ii <= nchi; ++ii ) {
 			chi_set->chi[ ii ] = total_chi[ ii ][ lex[ ii ] ];
 			chi_set->ex_chi_steps[ ii ] = total_ex_steps[ ii ][ lex[ ii ] ];

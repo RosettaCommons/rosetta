@@ -25,8 +25,8 @@ namespace protein {
 namespace checker {
 	
 	class ProteinAtrRepChecker;
-	typedef utility::pointer::owning_ptr< ProteinAtrRepChecker > ProteinAtrRepCheckerOP;
-	typedef utility::pointer::owning_ptr< ProteinAtrRepChecker const > ProteinAtrRepCheckerCOP;
+	typedef utility::pointer::shared_ptr< ProteinAtrRepChecker > ProteinAtrRepCheckerOP;
+	typedef utility::pointer::shared_ptr< ProteinAtrRepChecker const > ProteinAtrRepCheckerCOP;
 	
 } //checker
 } //protein

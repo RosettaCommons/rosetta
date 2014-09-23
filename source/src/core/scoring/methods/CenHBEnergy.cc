@@ -54,7 +54,7 @@ methods::EnergyMethodOP
 CenHBEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new CenHBEnergy( );
+	return methods::EnergyMethodOP( new CenHBEnergy( ) );
 }
 
 ScoreTypes
@@ -74,7 +74,7 @@ CenHBEnergy::CenHBEnergy( ):
 /// clone
 EnergyMethodOP
 CenHBEnergy::clone() const {
-	return new CenHBEnergy( *this );
+	return EnergyMethodOP( new CenHBEnergy( *this ) );
 }
 
 /// @details  copy c-tor

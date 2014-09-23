@@ -73,7 +73,7 @@ IterativeLoophashLoopInserterCreator::keyname() const
 
 protocols::moves::MoverOP
 IterativeLoophashLoopInserterCreator::create_mover() const {
-	return new IterativeLoophashLoopInserter;
+	return protocols::moves::MoverOP( new IterativeLoophashLoopInserter );
 }
 
 std::string

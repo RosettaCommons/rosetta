@@ -32,10 +32,10 @@ class Operator : public filters::Filter
     Operator();
     virtual ~Operator();
 		filters::FilterOP clone() const {
-			return new Operator( *this );
+			return filters::FilterOP( new Operator( *this ) );
 		}
 		filters::FilterOP fresh_instance() const{
-			return new Operator();
+			return filters::FilterOP( new Operator() );
 		}
 
 		virtual bool apply( core::pose::Pose const & pose ) const;

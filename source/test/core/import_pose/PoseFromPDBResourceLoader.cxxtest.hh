@@ -68,7 +68,7 @@ public:
 		lazy_resource_manager->add_resource_tag_by_job_tag( rDesc, jTag, rTag );
 		lazy_resource_manager->add_resource_configuration( rTag, my_config );
 		ResourceOP my_resource = lazy_resource_manager->get_resource_by_job_tag( rDesc, jTag );
-		core::pose::PoseCOP idealized_input_pose = dynamic_cast< core::pose::Pose const * > ( my_resource() );
+		core::pose::PoseCOP idealized_input_pose = utility::pointer::dynamic_pointer_cast< core::pose::Pose const > ( my_resource );
 
 		TS_ASSERT( idealized_input_pose ); // make sure we got back the right resource type
 

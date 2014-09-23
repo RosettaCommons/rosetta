@@ -48,7 +48,7 @@ class GraphTests : public CxxTest::TestSuite {
 	// Shared initialization goes here.
 	void setUp() {
 
-		g = new Graph(10);
+		g = GraphOP( new Graph(10) );
 		g->add_edge(1,2);
 		g->add_edge(2,3);
 		g->add_edge(3,4);
@@ -160,7 +160,7 @@ class GraphTests : public CxxTest::TestSuite {
 
 	void test_operator_assignment() {
 
-		GraphOP g2 = new Graph();
+		GraphOP g2( new Graph() );
 		*g2 = *g;
 
 		TS_ASSERT( g2->get_edge_exists(1,2) );
@@ -188,7 +188,7 @@ class GraphTests : public CxxTest::TestSuite {
 
 	void test_copy_constructor() {
 
-		GraphOP g2 = new Graph( *g );
+		GraphOP g2( new Graph( *g ) );
 
 		TS_ASSERT( g2->get_edge_exists(1,2) );
 		TS_ASSERT( g2->get_edge_exists(2,3) );

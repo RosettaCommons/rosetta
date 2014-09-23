@@ -32,10 +32,10 @@ namespace basic {
 namespace datacache {
 
 class CacheableData;
-typedef utility::pointer::owning_ptr< CacheableData > CacheableDataOP;
-typedef utility::pointer::owning_ptr< CacheableData const > CacheableDataCOP;
-typedef utility::pointer::access_ptr< CacheableData > CacheableDataAP;
-typedef utility::pointer::access_ptr< CacheableData const > CacheableDataCAP;
+typedef utility::pointer::shared_ptr< CacheableData > CacheableDataOP;
+typedef utility::pointer::shared_ptr< CacheableData const > CacheableDataCOP;
+typedef utility::pointer::weak_ptr< CacheableData > CacheableDataAP;
+typedef utility::pointer::weak_ptr< CacheableData const > CacheableDataCAP;
 
 
 } // namespace datacache

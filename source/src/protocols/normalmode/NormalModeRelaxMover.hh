@@ -139,7 +139,7 @@ public:
 
 	virtual
 	protocols::moves::MoverOP
-	clone() const {	return new CartesianNormalModeMover(*this); }
+	clone() const {	return protocols::moves::MoverOP( new CartesianNormalModeMover(*this) ); }
 
 	virtual 
 	void apply( core::pose::Pose & pose );
@@ -183,7 +183,7 @@ public:
 
 	virtual
 	protocols::moves::MoverOP
-	clone() const {	return new TorsionNormalModeMover(*this); }
+	clone() const {	return protocols::moves::MoverOP( new TorsionNormalModeMover(*this) ); }
 
 	virtual 
 	void apply( core::pose::Pose & pose );

@@ -65,12 +65,12 @@ public:
 	///
 	virtual
 	ConstraintOP clone() const {
-		return new KofNConstraint(*this);
+		return ConstraintOP( new KofNConstraint(*this) );
 	}
 
 	virtual
 	MultiConstraintOP empty_clone() const {
-		return new KofNConstraint;
+		return MultiConstraintOP( new KofNConstraint );
 	}
 
 	/// @brief

@@ -20,8 +20,8 @@ namespace protocols {
 namespace jd2 {
 
 class JobOutputter;
-typedef utility::pointer::owning_ptr< JobOutputter > JobOutputterOP;
-typedef utility::pointer::owning_ptr< JobOutputter const > JobOutputterCOP;
+typedef utility::pointer::shared_ptr< JobOutputter > JobOutputterOP;
+typedef utility::pointer::shared_ptr< JobOutputter const > JobOutputterCOP;
 
 }//jd2
 }//protocols

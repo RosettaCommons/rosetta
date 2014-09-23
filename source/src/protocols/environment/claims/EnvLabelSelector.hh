@@ -65,7 +65,7 @@ public:
 
   LocalPositions const& local_positions() const{ return positions_; }
 
-  void add_position( LocalPosition const& p ){ positions_.push_back( new LocalPosition( p ) ); }
+  void add_position( LocalPosition const& p ){ positions_.push_back( utility::pointer::shared_ptr<class core::environment::LocalPosition>( new LocalPosition( p ) ) ); }
 
   virtual
   std::string

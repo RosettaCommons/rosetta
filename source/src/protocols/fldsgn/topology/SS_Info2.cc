@@ -309,7 +309,7 @@ SS_Info2::~SS_Info2(){}
 basic::datacache::CacheableDataOP
 SS_Info2::clone() const
 {
-	return new SS_Info2( *this );
+	return basic::datacache::CacheableDataOP( new SS_Info2( *this ) );
 }
 
 
@@ -491,27 +491,27 @@ SS_Info2::identify_ss( String const & secstruct )
 		if ( ss !="E" && flag_E == true ) {
 			flag_E = false;
 			if( ( i - beginE ) >= 2 ) {
-				strands_.push_back( new Strand( beginE, i-1 ) );
+				strands_.push_back( utility::pointer::shared_ptr<class protocols::fldsgn::topology::Strand>( new Strand( beginE, i-1 ) ) );
 			} else {
-				strands_.push_back( new Strand( beginE, beginE ) );
+				strands_.push_back( utility::pointer::shared_ptr<class protocols::fldsgn::topology::Strand>( new Strand( beginE, beginE ) ) );
 			}
 		}
 
 		if ( ss !="H" && flag_H == true ) {
 			flag_H = false;
 			if( ( i-beginH ) >= 2 ) {
-				helices_.push_back( new Helix( beginH, i-1 ) );
+				helices_.push_back( utility::pointer::shared_ptr<class protocols::fldsgn::topology::Helix>( new Helix( beginH, i-1 ) ) );
 			} else {
-				helices_.push_back( new Helix( beginH, beginH ) );
+				helices_.push_back( utility::pointer::shared_ptr<class protocols::fldsgn::topology::Helix>( new Helix( beginH, beginH ) ) );
 			}
 		}
 
 		if( ss !="L" && flag_L == true ) {
 			flag_L = false;
 			if( ( i-beginL ) >= 2 ) {
-				loops_.push_back( new Loop( beginL, i-1 ) );
+				loops_.push_back( utility::pointer::shared_ptr<class protocols::fldsgn::topology::Loop>( new Loop( beginL, i-1 ) ) );
 			} else {
-				loops_.push_back( new Loop( beginL, beginL ) );
+				loops_.push_back( utility::pointer::shared_ptr<class protocols::fldsgn::topology::Loop>( new Loop( beginL, beginL ) ) );
 			}
 		}
 
@@ -525,23 +525,23 @@ SS_Info2::identify_ss( String const & secstruct )
 
 	if( flag_E == true ) {
 		if( ( secstruct.length() - beginE + 1 ) >= 2 ) {
-			strands_.push_back( new Strand( beginE, secstruct.length() ) );
+			strands_.push_back( utility::pointer::shared_ptr<class protocols::fldsgn::topology::Strand>( new Strand( beginE, secstruct.length() ) ) );
 		} else {
-			strands_.push_back( new Strand( beginE, beginE ) );
+			strands_.push_back( utility::pointer::shared_ptr<class protocols::fldsgn::topology::Strand>( new Strand( beginE, beginE ) ) );
 		}
 	}
 	if( flag_H == true ) {
 		if( ( secstruct.length() - beginH + 1 ) >= 2 ) {
-			helices_.push_back( new Helix( beginH, secstruct.length() ) );
+			helices_.push_back( utility::pointer::shared_ptr<class protocols::fldsgn::topology::Helix>( new Helix( beginH, secstruct.length() ) ) );
 		} else {
-			helices_.push_back( new Helix( beginH, beginH ) );
+			helices_.push_back( utility::pointer::shared_ptr<class protocols::fldsgn::topology::Helix>( new Helix( beginH, beginH ) ) );
 		}
 	}
 	if( flag_L == true ) {
 		if( ( secstruct.length() - beginL + 1 ) >= 2 ) {
-			loops_.push_back( new Loop( beginL, secstruct.length() ) );
+			loops_.push_back( utility::pointer::shared_ptr<class protocols::fldsgn::topology::Loop>( new Loop( beginL, secstruct.length() ) ) );
 		} else {
-			loops_.push_back( new Loop( beginL, beginL ) );
+			loops_.push_back( utility::pointer::shared_ptr<class protocols::fldsgn::topology::Loop>( new Loop( beginL, beginL ) ) );
 		}
 	}
 

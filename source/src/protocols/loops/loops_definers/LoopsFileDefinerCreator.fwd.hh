@@ -25,8 +25,8 @@ namespace loops_definers {
 /// creating a particular LoopsDefiner class.
 class LoopsFileDefinerCreator;
 
-typedef utility::pointer::owning_ptr< LoopsFileDefinerCreator > LoopsFileDefinerCreatorOP;
-typedef utility::pointer::owning_ptr< LoopsFileDefinerCreator const > LoopsFileDefinerCreatorCOP;
+typedef utility::pointer::shared_ptr< LoopsFileDefinerCreator > LoopsFileDefinerCreatorOP;
+typedef utility::pointer::shared_ptr< LoopsFileDefinerCreator const > LoopsFileDefinerCreatorCOP;
 
 } //namespace
 } //namespace

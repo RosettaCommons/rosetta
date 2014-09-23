@@ -20,8 +20,8 @@ namespace protocols {
 namespace antibody {
 
 class GraftedStemOptimizer;
-typedef utility::pointer::owning_ptr< GraftedStemOptimizer > GraftedStemOptimizerOP;
-typedef utility::pointer::owning_ptr<const GraftedStemOptimizer> GraftedStemOptimizerCOP;
+typedef utility::pointer::shared_ptr< GraftedStemOptimizer > GraftedStemOptimizerOP;
+typedef utility::pointer::shared_ptr<const GraftedStemOptimizer> GraftedStemOptimizerCOP;
 } // antibody
 } // protocols
 

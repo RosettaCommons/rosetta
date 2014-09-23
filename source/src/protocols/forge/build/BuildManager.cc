@@ -120,13 +120,13 @@ BuildManager & BuildManager::operator =( BuildManager const & rval ) {
 
 /// @brief clone this object
 BuildManagerOP BuildManager::clone() const {
-	return new BuildManager( *this );
+	return BuildManagerOP( new BuildManager( *this ) );
 }
 
 
 /// @brief create a new instance of this type of object
 BuildManagerOP BuildManager::create() const {
-	return new BuildManager();
+	return BuildManagerOP( new BuildManager() );
 }
 
 
@@ -373,7 +373,7 @@ using core::conformation::get_anchor_atomno;
 
 	// create the new SequenceMapping consisting of oldnew() plus
 	// old2new_region_endpoints() information
-	seqmap_ = new SequenceMapping();
+	seqmap_ = SequenceMappingOP( new SequenceMapping() );
 	for ( Size r = 1; r <= old_nres; ++r ) {
 		Original2Modified::const_iterator i = original2modified_.find( r );
 		if ( i != original2modified_.end() ) {
@@ -447,7 +447,7 @@ BuildManager::MoveMap BuildManager::movemap() const {
 }
 
 BuildManager::MoveMapOP BuildManager::movemap_as_OP() const {
-	MoveMapOP combined_mm = new MoveMap();
+	MoveMapOP combined_mm( new MoveMap() );
 
 	if ( !modify_was_successful_ ) {
 		return combined_mm;

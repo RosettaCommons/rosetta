@@ -24,8 +24,8 @@ namespace sampler {
 namespace protein {
 	
 	class ProteinMainChainStepWiseSampler;
-	typedef utility::pointer::owning_ptr< ProteinMainChainStepWiseSampler > ProteinMainChainStepWiseSamplerOP;
-	typedef utility::pointer::owning_ptr< ProteinMainChainStepWiseSampler const > ProteinMainChainStepWiseSamplerCOP;
+	typedef utility::pointer::shared_ptr< ProteinMainChainStepWiseSampler > ProteinMainChainStepWiseSamplerOP;
+	typedef utility::pointer::shared_ptr< ProteinMainChainStepWiseSampler const > ProteinMainChainStepWiseSamplerCOP;
 	
 } //protein
 } //sampler

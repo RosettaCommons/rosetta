@@ -203,7 +203,7 @@ SilentFileJobInputterCreator::keyname() const
 
 protocols::jd2::JobInputterOP
 SilentFileJobInputterCreator::create_JobInputter() const {
-	return new SilentFileJobInputter;
+	return protocols::jd2::JobInputterOP( new SilentFileJobInputter );
 }
 
 } // jd2

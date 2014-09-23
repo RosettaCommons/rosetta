@@ -25,8 +25,8 @@ namespace perturb {
 // Forward
 class LoopMover_Perturb_KIC;
 
-typedef utility::pointer::owning_ptr< LoopMover_Perturb_KIC > LoopMover_Perturb_KICOP;
-typedef utility::pointer::owning_ptr< LoopMover_Perturb_KIC const > LoopMover_Perturb_KICCOP;
+typedef utility::pointer::shared_ptr< LoopMover_Perturb_KIC > LoopMover_Perturb_KICOP;
+typedef utility::pointer::shared_ptr< LoopMover_Perturb_KIC const > LoopMover_Perturb_KICCOP;
 
 } //namespace perturb
 } //namespace loop_mover

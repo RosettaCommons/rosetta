@@ -23,10 +23,10 @@ namespace canonical_sampling {
 // Forward
 class BiasEnergy;
 
-typedef utility::pointer::owning_ptr< BiasEnergy > BiasEnergyOP;
-typedef utility::pointer::owning_ptr< BiasEnergy const > BiasEnergyCOP;
-typedef utility::pointer::access_ptr< BiasEnergy > BiasEnergyAP;
-typedef utility::pointer::access_ptr< BiasEnergy const > BiasEnergyCAP;
+typedef utility::pointer::shared_ptr< BiasEnergy > BiasEnergyOP;
+typedef utility::pointer::shared_ptr< BiasEnergy const > BiasEnergyCOP;
+typedef utility::pointer::weak_ptr< BiasEnergy > BiasEnergyAP;
+typedef utility::pointer::weak_ptr< BiasEnergy const > BiasEnergyCAP;
 
 // Forward
 

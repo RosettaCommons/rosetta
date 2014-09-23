@@ -74,16 +74,16 @@ extern void store_DC_in_pose(DipolarCouplingOP dc_info, core::pose::Pose& pose) 
 
 extern DipolarCouplingCOP retrieve_DC_from_pose( core::pose::Pose const& pose) {
 	if (pose.data().has(core::pose::datacache::CacheableDataType::CHEMICAL_SHIFT_ANISOTROPY_DATA)) {
-		return static_cast<DipolarCoupling const *> (pose.data().get_const_ptr(
-				core::pose::datacache::CacheableDataType::CHEMICAL_SHIFT_ANISOTROPY_DATA)());
+		return utility::pointer::static_pointer_cast< core::scoring::DipolarCoupling const > ( pose.data().get_const_ptr(
+				core::pose::datacache::CacheableDataType::CHEMICAL_SHIFT_ANISOTROPY_DATA) );
 	};
 	return NULL;
 }
 
 extern DipolarCouplingOP retrieve_DC_from_pose(core::pose::Pose& pose) {
 	if (pose.data().has(core::pose::datacache::CacheableDataType::CHEMICAL_SHIFT_ANISOTROPY_DATA)) {
-		return static_cast<DipolarCoupling*> (pose.data().get_ptr(
-				core::pose::datacache::CacheableDataType::CHEMICAL_SHIFT_ANISOTROPY_DATA)());
+		return utility::pointer::static_pointer_cast< core::scoring::DipolarCoupling > ( pose.data().get_ptr(
+				core::pose::datacache::CacheableDataType::CHEMICAL_SHIFT_ANISOTROPY_DATA) );
 	};
 	return NULL;
 }

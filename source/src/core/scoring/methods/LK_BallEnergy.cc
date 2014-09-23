@@ -84,7 +84,7 @@ methods::EnergyMethodOP
 LK_BallEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return new LK_BallEnergy( options );
+	return methods::EnergyMethodOP( new LK_BallEnergy( options ) );
 }
 
 ScoreTypes
@@ -137,7 +137,7 @@ public:
 	LKB_ResPairMinData();
 	virtual ~LKB_ResPairMinData() {}
 	virtual basic::datacache::CacheableDataOP clone() const
-	{ return new LKB_ResPairMinData( *this ); }
+	{ return basic::datacache::CacheableDataOP( new LKB_ResPairMinData( *this ) ); }
 
 	void
 	initialize(
@@ -162,8 +162,8 @@ private:
 	bool initialized_;
 };
 
-typedef utility::pointer::owning_ptr< LKB_ResPairMinData >       LKB_ResPairMinDataOP;
-typedef utility::pointer::owning_ptr< LKB_ResPairMinData const > LKB_ResPairMinDataCOP;
+typedef utility::pointer::shared_ptr< LKB_ResPairMinData >       LKB_ResPairMinDataOP;
+typedef utility::pointer::shared_ptr< LKB_ResPairMinData const > LKB_ResPairMinDataCOP;
 
 LKB_ResPairMinData::LKB_ResPairMinData():
 	initialized_( false )
@@ -197,7 +197,7 @@ retrieve_nonconst_lkb_pairdata(
 		assert( utility::pointer::dynamic_pointer_cast< LKB_ResPairMinData > ( pairdata.get_data( lkb_respair_data ) ));
 		lkb_pairdata = utility::pointer::static_pointer_cast< LKB_ResPairMinData > ( pairdata.get_data( lkb_respair_data ) );
 	} else {
-		lkb_pairdata = new LKB_ResPairMinData;
+		lkb_pairdata = LKB_ResPairMinDataOP( new LKB_ResPairMinData );
 		pairdata.set_data( lkb_respair_data, lkb_pairdata );
 	}
 	return *lkb_pairdata;
@@ -225,7 +225,7 @@ retrieve_nonconst_lkb_resdata(
 		assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo > ( resdata.get_data( lkb_res_data ) ) );
 		lkb_resdata = utility::pointer::static_pointer_cast< LKB_ResidueInfo > ( resdata.get_data( lkb_res_data ) );
 	} else {
-		lkb_resdata = new LKB_ResidueInfo;
+		lkb_resdata = LKB_ResidueInfoOP( new LKB_ResidueInfo );
 		resdata.set_data( lkb_res_data, lkb_resdata );
 	}
 	return *lkb_resdata;
@@ -248,7 +248,7 @@ retrieve_lkb_resdata_ptr(
 												)
 {
 	assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data ) ) );
-	return ( static_cast< LKB_ResidueInfo const * > ( resdata.get_data( lkb_res_data )() ) );
+	return ( utility::pointer::static_pointer_cast< core::scoring::methods::LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data ) ) );
 }
 
 
@@ -340,7 +340,7 @@ LK_BallEnergy::atomic_interaction_cutoff() const
 EnergyMethodOP
 LK_BallEnergy::clone() const
 {
-	return new LK_BallEnergy( *this );
+	return EnergyMethodOP( new LK_BallEnergy( *this ) );
 }
 
 
@@ -367,7 +367,7 @@ compute_and_store_pose_waters(
 	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
 //	using namespace core::pack::rotamer_set; // WaterPackingInfo
 	LKB_PoseInfoOP info( new LKB_PoseInfo() );
-	for ( Size i=1; i<= pose.total_residue(); ++i ) info->append( new LKB_ResidueInfo( pose, pose.residue(i) ) );
+	for ( Size i=1; i<= pose.total_residue(); ++i ) info->append( LKB_ResidueInfoOP( new LKB_ResidueInfo( pose, pose.residue(i) ) ) );
 	pose.data().set( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO, info );
 	//std::cout << "LK_BallEnergy.cc: " << __LINE__ << std::endl;
 }
@@ -507,7 +507,7 @@ LK_BallEnergy::prepare_rotamers_for_packing(
 	LKB_RotamerSetInfoOP info( new LKB_RotamerSetInfo );
 
 	for ( Size n=1; n<= rotamer_set.num_rotamers(); ++n ) {
-		info->append( new LKB_ResidueInfo( pose, *( rotamer_set.rotamer( n ) ) ) );
+		info->append( LKB_ResidueInfoOP( new LKB_ResidueInfo( pose, *( rotamer_set.rotamer( n ) ) ) ) );
 	}
 
 	rotamer_set.data().set( conformation::RotamerSetCacheableDataType::LK_BALL_ROTAMER_SET_INFO, info );

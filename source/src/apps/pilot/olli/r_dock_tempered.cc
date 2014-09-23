@@ -43,7 +43,7 @@ main( int argc, char * argv [] )
   devel::init(argc, argv);
   //	core::init::init_random_generators(3,numeric::random::_RND_TestRun_, "mt19937"); //JQX from Sergery
 
-	JobDistributor::get_instance()->go( new TemperedDocking() );
+	JobDistributor::get_instance()->go( protocols::moves::MoverOP( new TemperedDocking() ) );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

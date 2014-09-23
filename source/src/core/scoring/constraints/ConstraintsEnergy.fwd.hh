@@ -24,8 +24,8 @@ namespace constraints {
 
 class ConstraintsEnergy;
 
-typedef utility::pointer::owning_ptr< ConstraintsEnergy > ConstraintsEnergyOP;
-typedef utility::pointer::owning_ptr< ConstraintsEnergy const > ConstraintsEnergyCOP;
+typedef utility::pointer::shared_ptr< ConstraintsEnergy > ConstraintsEnergyOP;
+typedef utility::pointer::shared_ptr< ConstraintsEnergy const > ConstraintsEnergyCOP;
 
 }
 }

@@ -64,7 +64,7 @@ StartFromCreator::keyname() const
 
 protocols::moves::MoverOP
 StartFromCreator::create_mover() const {
-	return new StartFrom;
+	return protocols::moves::MoverOP( new StartFrom );
 }
 
 std::string
@@ -93,11 +93,11 @@ StartFrom::StartFrom(StartFrom const & that):
 StartFrom::~StartFrom() {}
 
 protocols::moves::MoverOP StartFrom::clone() const {
-	return new StartFrom( *this );
+	return protocols::moves::MoverOP( new StartFrom( *this ) );
 }
 
 protocols::moves::MoverOP StartFrom::fresh_instance() const {
-	return new StartFrom;
+	return protocols::moves::MoverOP( new StartFrom );
 }
 
 std::string StartFrom::get_name() const{

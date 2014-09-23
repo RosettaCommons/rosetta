@@ -143,7 +143,7 @@ PackstatCalculator::recompute( Pose const & this_pose )
 
 		if( has_nonprot_res ){
 
-			PoseOP pureprotpose = new Pose( this_pose );
+			PoseOP pureprotpose( new Pose( this_pose ) );
 
 			pose_manipulation::remove_non_protein_residues( *pureprotpose );
 

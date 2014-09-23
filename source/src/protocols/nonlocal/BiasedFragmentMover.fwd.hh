@@ -19,8 +19,8 @@ namespace protocols {
 namespace nonlocal {
 
 class BiasedFragmentMover;
-typedef utility::pointer::owning_ptr<BiasedFragmentMover> BiasedFragmentMoverOP;
-typedef utility::pointer::owning_ptr<BiasedFragmentMover const> BiasedFragmentMoverCOP;
+typedef utility::pointer::shared_ptr<BiasedFragmentMover> BiasedFragmentMoverOP;
+typedef utility::pointer::shared_ptr<BiasedFragmentMover const> BiasedFragmentMoverCOP;
 
 }  // namespace nonlocal
 }  // namespace protocols

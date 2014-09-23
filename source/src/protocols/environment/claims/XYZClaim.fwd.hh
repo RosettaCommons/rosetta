@@ -29,11 +29,11 @@ namespace claims {
 class XYZClaim;
 
 // Types
-typedef  utility::pointer::owning_ptr< XYZClaim >  XYZClaimOP;
-typedef  utility::pointer::owning_ptr< XYZClaim const >  XYZClaimCOP;
+typedef  utility::pointer::shared_ptr< XYZClaim >  XYZClaimOP;
+typedef  utility::pointer::shared_ptr< XYZClaim const >  XYZClaimCOP;
 
-typedef  utility::pointer::access_ptr< XYZClaim >  XYZClaimAP;
-typedef  utility::pointer::access_ptr< XYZClaim const >  XYZClaimCAP;
+typedef  utility::pointer::weak_ptr< XYZClaim >  XYZClaimAP;
+typedef  utility::pointer::weak_ptr< XYZClaim const >  XYZClaimCAP;
 
 }
 }

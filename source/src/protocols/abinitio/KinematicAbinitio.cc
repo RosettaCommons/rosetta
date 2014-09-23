@@ -328,12 +328,12 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 		if ( !sfd.has_tag( tag ) ) {
 			utility_exit_with_message( "resampling for " + tag + " failed, not found in silent file " + filename );
 		}
-		ConstraintSetOP cst_set = new ConstraintSet( *pose.constraint_set() ); //keep constraints from pose, (make new to remove constant)
+		ConstraintSetOP cst_set( new ConstraintSet( *pose.constraint_set() ) ); //keep constraints from pose, (make new to remove constant)
 		sfd.get_structure( tag ).fill_pose( pose ); //fill pose and fold-tree from file
 		pose.constraint_set( cst_set ); // put constraint set back into place
 
 		//retrieve fold_tree from pose
-		KinematicControlOP recovered_control = new KinematicControl( kinematics() );
+		KinematicControlOP recovered_control( new KinematicControl( kinematics() ) );
 		if ( option[ resample::jumps ] ) {
 			using namespace jumping;
 			using namespace fragment;
@@ -341,7 +341,7 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 			target_jumps.steal_orientation_and_pleating( pose );
 			tr.Warning << "enable JUMP MOVES in resamplin --- these are taken from SS-library"
 								 <<" no matter where original structures came from" << std::endl;
-			FragSetOP jump_frags = new OrderedFragSet;
+			FragSetOP jump_frags( new OrderedFragSet );
 			//generate fragments from all homologes
 			core::fragment::FrameList jump_frames;
 			target_jumps.generate_jump_frames( jump_frames, kinematics().movemap() );
@@ -360,7 +360,7 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 														*jump_frags
 				);
 			using namespace protocols::simple_moves;
-			simple_moves::ClassicFragmentMoverOP jump_mover = new ClassicFragmentMover( jump_frags, kinematics().movemap_ptr() );
+			simple_moves::ClassicFragmentMoverOP jump_mover( new ClassicFragmentMover( jump_frags, kinematics().movemap_ptr() ) );
 			jump_mover->type( "JumpMoves" );
 			jump_mover->set_check_ss( false ); // this doesn't make sense with jump fragments
 			jump_mover->enable_end_bias_check( false ); //no sense for discontinuous fragments
@@ -428,7 +428,7 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 			Real const skip_rate( option[ fold_cst::constraint_skip_rate ]() );
 			tr.Info << "Skip some constraints: " << skip_rate << std::endl;
 			ConstraintCOPs cst_list = orig_constraints->get_all_constraints();
-			ConstraintSetOP filtered_cst = new ConstraintSet; //empty
+			ConstraintSetOP filtered_cst( new ConstraintSet ); //empty
 			for ( ConstraintCOPs::const_iterator it = cst_list.begin(), eit = cst_list.end();
 						it != eit; ++it ) {
 				Real local_skip( 1.0 );
@@ -544,7 +544,7 @@ moves::MoverOP KinematicAbinitio::create_jump_moves( moves::MoverOP std_mover ) 
   simple_moves::FragmentMoverOP jump_mover = kinematics().jump_mover();
 	if ( !jump_mover ) return std_mover;
 
-  moves::RandomMoverOP combi_move ( new moves::RandomMover );
+  moves::RandomMoverOP combi_move( new moves::RandomMover );
   Size nfrag_moves( option[ jumps::invrate_jump_move ] );
   for ( Size i = 1; i<=nfrag_moves; i++ ) { // a simple way of changing the relative frequencies
     combi_move->add_mover( std_mover );
@@ -599,14 +599,14 @@ moves::MoverOP KinematicAbinitio::create_bb_moves(
 
 moves::TrialMoverOP KinematicAbinitio::stage1_mover( pose::Pose &, moves::TrialMoverOP trials ) {
 	if ( kinematics().jump_mover() ) {
-		return new moves::TrialMover( create_jump_moves( trials->mover() ), mc_ptr() );
+		return moves::TrialMoverOP( new moves::TrialMover( create_jump_moves( trials->mover() ), mc_ptr() ) );
   } else return trials;
 }
 
 
 moves::TrialMoverOP KinematicAbinitio::stage2_mover( pose::Pose &, moves::TrialMoverOP trials ) {
 	if ( kinematics().jump_mover() ) {
-		return new moves::TrialMover( create_jump_moves( trials->mover() ), mc_ptr() );
+		return moves::TrialMoverOP( new moves::TrialMover( create_jump_moves( trials->mover() ), mc_ptr() ) );
   } else return trials;
 }
 
@@ -627,7 +627,7 @@ moves::TrialMoverOP KinematicAbinitio::stage3_mover( pose::Pose &pose, int, int,
     Real crank_up_angle = 6.0; //factor to make the small_moves larger: after-all we are in centroid mode
     moves = create_bb_moves( pose, moves, bLargeWobble, crank_up_angle );
   }
-	moves::TrialMoverOP retval = new moves::TrialMover( moves, mc_ptr() );
+	moves::TrialMoverOP retval( new moves::TrialMover( moves, mc_ptr() ) );
 	retval->keep_stats_type( moves::accept_reject );
 	return retval;
   //return new moves::TrialMover( moves, mc_ptr() );
@@ -647,7 +647,7 @@ moves::TrialMoverOP KinematicAbinitio::stage4_mover( pose::Pose &pose, int kk, m
     Real crank_up_angle = 5.0; //factor to make the small_moves larger: after-all we are in centroid mode
     moves = create_bb_moves( pose, moves, bLargeWobble, crank_up_angle );
   }
-  return new moves::TrialMover( moves, mc_ptr() );
+  return moves::TrialMoverOP( new moves::TrialMover( moves, mc_ptr() ) );
 }
 
 
@@ -674,18 +674,18 @@ JumpingFoldConstraintsWrapper::apply( core::pose::Pose& pose ) {
 	}
 
 	//allow jumps to move
-	kinematics::MoveMapOP new_movemap = new	kinematics::MoveMap( *movemap() );
+	kinematics::MoveMapOP new_movemap( new	kinematics::MoveMap( *movemap() ) );
 	new_movemap->set_jump( true );
 
 	core::fragment::FragSetOP jump_frags;
 	jump_frags = jump_def_->generate_jump_frags( current_jumps, *new_movemap );
 	using namespace protocols::simple_moves;
-	simple_moves::ClassicFragmentMoverOP jump_mover = new ClassicFragmentMover( jump_frags, new_movemap );
+	simple_moves::ClassicFragmentMoverOP jump_mover( new ClassicFragmentMover( jump_frags, new_movemap ) );
 	jump_mover->type( "JumpMoves" );
 	jump_mover->set_check_ss( false ); // this doesn't make sense with jump fragments
 	jump_mover->enable_end_bias_check( false ); //no sense for discontinuous fragments
 
-	abinitio::KinematicControlOP kc = new abinitio::KinematicControl;
+	abinitio::KinematicControlOP kc( new abinitio::KinematicControl );
 	kc->set_sampling_fold_tree( current_jumps.fold_tree() );
 	tr.Debug << "JumpingFoldConstraintsWrapper: sampling fold_tree " << current_jumps.fold_tree() << std::endl;
 	kc->set_final_fold_tree( pose.fold_tree() );

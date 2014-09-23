@@ -23,8 +23,8 @@ namespace protocols {
 namespace simple_moves {
 
 class PeptideStapleMover;
-typedef utility::pointer::owning_ptr< PeptideStapleMover > PeptideStapleMoverOP;
-typedef utility::pointer::owning_ptr< PeptideStapleMover const > PeptideStapleMoverCOP;
+typedef utility::pointer::shared_ptr< PeptideStapleMover > PeptideStapleMoverOP;
+typedef utility::pointer::shared_ptr< PeptideStapleMover const > PeptideStapleMoverCOP;
 
 } // moves
 } // protocols

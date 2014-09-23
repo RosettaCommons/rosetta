@@ -72,11 +72,11 @@ private:
 }; //class SmallFragWeight
 
 // Types
-typedef  utility::pointer::owning_ptr< SmallFragWeight >  SmallFragWeightOP;
-typedef  utility::pointer::owning_ptr< SmallFragWeight const >  SmallFragWeightCOP;
+typedef  utility::pointer::shared_ptr< SmallFragWeight >  SmallFragWeightOP;
+typedef  utility::pointer::shared_ptr< SmallFragWeight const >  SmallFragWeightCOP;
 
-typedef  utility::pointer::access_ptr< SmallFragWeight >  SmallFragWeightAP;
-typedef  utility::pointer::access_ptr< SmallFragWeight const >  SmallFragWeightCAP;
+typedef  utility::pointer::weak_ptr< SmallFragWeight >  SmallFragWeightAP;
+typedef  utility::pointer::weak_ptr< SmallFragWeight const >  SmallFragWeightCAP;
 
 }
 }

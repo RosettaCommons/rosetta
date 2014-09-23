@@ -105,7 +105,7 @@ SurfaceEnergies::~SurfaceEnergies() {}
 EnergiesOP
 SurfaceEnergies::clone() const
 {
-  return new SurfaceEnergies( *this );
+  return EnergiesOP( new SurfaceEnergies( *this ) );
 }
 
 	

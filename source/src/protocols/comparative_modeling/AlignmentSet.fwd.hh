@@ -20,8 +20,8 @@ namespace protocols {
 namespace comparative_modeling {
 
 class AlignmentSet;
-typedef utility::pointer::owning_ptr< AlignmentSet > AlignmentSetOP;
-typedef utility::pointer::owning_ptr< AlignmentSet const > AlignmentSetCOP;
+typedef utility::pointer::shared_ptr< AlignmentSet > AlignmentSetOP;
+typedef utility::pointer::shared_ptr< AlignmentSet const > AlignmentSetCOP;
 
 } // comparative_modeling
 } // protocols

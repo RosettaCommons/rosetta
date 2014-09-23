@@ -24,8 +24,8 @@ namespace abinitio {
 namespace abscript {
 
 class AbscriptLoopCloserCM;
-typedef utility::pointer::owning_ptr< AbscriptLoopCloserCM > AbscriptLoopCloserCMOP;
-typedef utility::pointer::owning_ptr< AbscriptLoopCloserCM const > AbscriptLoopCloserCMCOP;
+typedef utility::pointer::shared_ptr< AbscriptLoopCloserCM > AbscriptLoopCloserCMOP;
+typedef utility::pointer::shared_ptr< AbscriptLoopCloserCM const > AbscriptLoopCloserCMCOP;
 
 } // abscript
 } // abinitio

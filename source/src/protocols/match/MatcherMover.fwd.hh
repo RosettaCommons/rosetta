@@ -24,8 +24,8 @@ namespace protocols {
 namespace match {
 
 class MatcherMover;
-typedef utility::pointer::owning_ptr< MatcherMover > MatcherMoverOP;
-typedef utility::pointer::owning_ptr< MatcherMover const > MatcherMoverCOP;
+typedef utility::pointer::shared_ptr< MatcherMover > MatcherMoverOP;
+typedef utility::pointer::shared_ptr< MatcherMover const > MatcherMoverCOP;
 
 }
 }

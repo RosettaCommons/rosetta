@@ -20,7 +20,7 @@ namespace ligand_docking {
 
 class StartFrom;
 
-typedef utility::pointer::owning_ptr<StartFrom> StartFromOP;
+typedef utility::pointer::shared_ptr<StartFrom> StartFromOP;
 
 }
 }

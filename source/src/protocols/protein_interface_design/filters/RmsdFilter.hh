@@ -41,7 +41,7 @@ public:
 	bool apply( core::pose::Pose const & pose ) const;
 	protocols::filters::FilterOP clone() const;
 	protocols::filters::FilterOP fresh_instance() const{
-		return new RmsdFilter();
+		return protocols::filters::FilterOP( new RmsdFilter() );
 	}
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
     void reference_pose( core::pose::PoseOP ref ) { reference_pose_ = ref; }

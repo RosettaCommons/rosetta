@@ -23,9 +23,9 @@ namespace frag_picker {
 
 class FragmentSelectingRule;
 
-typedef utility::pointer::owning_ptr<FragmentSelectingRule>
+typedef utility::pointer::shared_ptr<FragmentSelectingRule>
 		FragmentSelectingRuleOP;
-typedef utility::pointer::owning_ptr<FragmentSelectingRule const>
+typedef utility::pointer::shared_ptr<FragmentSelectingRule const>
 		FragmentSelectingRuleCOP;
 
 } // frag_picker

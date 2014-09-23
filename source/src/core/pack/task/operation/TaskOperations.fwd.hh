@@ -37,20 +37,20 @@ class IncludeCurrent;
 class RotamerExplosion;
 class ExtraChiCutoff;
 
-typedef utility::pointer::owning_ptr< RestrictToRepacking > RestrictToRepackingOP;
-typedef utility::pointer::owning_ptr< RestrictResidueToRepacking > RestrictResidueToRepackingOP;
-typedef utility::pointer::owning_ptr< RestrictAbsentCanonicalAAS > RestrictAbsentCanonicalAASOP;
-typedef utility::pointer::owning_ptr< DisallowIfNonnative > DisallowIfNonnativeOP;
-typedef utility::pointer::owning_ptr< InitializeFromCommandline > InitializeFromCommandlineOP;
-typedef utility::pointer::owning_ptr< ReadResfile > ReadResfileOP;
-typedef utility::pointer::owning_ptr< SetRotamerCouplings > SetRotamerCouplingsOP;
-typedef utility::pointer::owning_ptr< AppendRotamer > AppendRotamerOP;
-typedef utility::pointer::owning_ptr< AppendRotamerSet > AppendRotamerSetOP;
-typedef utility::pointer::owning_ptr< PreserveCBeta > PreserveCBetaOP;
-typedef utility::pointer::owning_ptr< PreventRepacking > PreventRepackingOP;
-typedef utility::pointer::owning_ptr< IncludeCurrent > IncludeCurrentOP;
-typedef utility::pointer::owning_ptr< RotamerExplosion > RotamerExplosionOP;
-typedef utility::pointer::owning_ptr< ExtraChiCutoff > ExtraChiCutoffOP;
+typedef utility::pointer::shared_ptr< RestrictToRepacking > RestrictToRepackingOP;
+typedef utility::pointer::shared_ptr< RestrictResidueToRepacking > RestrictResidueToRepackingOP;
+typedef utility::pointer::shared_ptr< RestrictAbsentCanonicalAAS > RestrictAbsentCanonicalAASOP;
+typedef utility::pointer::shared_ptr< DisallowIfNonnative > DisallowIfNonnativeOP;
+typedef utility::pointer::shared_ptr< InitializeFromCommandline > InitializeFromCommandlineOP;
+typedef utility::pointer::shared_ptr< ReadResfile > ReadResfileOP;
+typedef utility::pointer::shared_ptr< SetRotamerCouplings > SetRotamerCouplingsOP;
+typedef utility::pointer::shared_ptr< AppendRotamer > AppendRotamerOP;
+typedef utility::pointer::shared_ptr< AppendRotamerSet > AppendRotamerSetOP;
+typedef utility::pointer::shared_ptr< PreserveCBeta > PreserveCBetaOP;
+typedef utility::pointer::shared_ptr< PreventRepacking > PreventRepackingOP;
+typedef utility::pointer::shared_ptr< IncludeCurrent > IncludeCurrentOP;
+typedef utility::pointer::shared_ptr< RotamerExplosion > RotamerExplosionOP;
+typedef utility::pointer::shared_ptr< ExtraChiCutoff > ExtraChiCutoffOP;
 
 } //namespace operation
 } //namespace task

@@ -333,8 +333,8 @@ void initsyms(){
 			tan_alpha_    = tan(numeric::conversions::radians(alpha_));
 		}
 	};
-	typedef utility::pointer::owning_ptr<Arch      > ArchOP;
-	typedef utility::pointer::owning_ptr<Arch const> ArchCOP;
+	typedef utility::pointer::shared_ptr<Arch      > ArchOP;
+	typedef utility::pointer::shared_ptr<Arch const> ArchCOP;
 
 	class ArchT32 : public Arch { public: ArchT32(){ init( "T32",
 		3, Vec( 1.00000000000000, 1.00000000000000, 1.00000000000000 ).normalized()   ,
@@ -858,10 +858,10 @@ struct TCDock {
 		arch_(_arch),
 		cmp1_(_pose1),
 		cmp2_(_pose2),
-		rigid_sfxn_(NULL),
-		final_sfxn_(NULL),
-		lnscore_(NULL),
-		mhscore_(NULL),
+		rigid_sfxn_(/* NULL */),
+		final_sfxn_(/* NULL */),
+		lnscore_(/* NULL */),
+		mhscore_(/* NULL */),
 		abort_(false),
 		conf_count_(0),
 		xform_out_(NULL)
@@ -1002,14 +1002,14 @@ struct TCDock {
 		Real CLD(basic::options::option[basic::options::OptionKeys::sicdock::  clash_dis]());
 
 		TR << "creating score functions" << std::endl;
-		protocols::sic_dock::RigidScoreCOP cbscore = new protocols::sic_dock::CBScore(cmp1olig_,cmp2olig_,CLD,CTD,cmp1wtmap_,cmp2wtmap_);
-		protocols::sic_dock::JointScoreOP jtscore = new protocols::sic_dock::JointScore;
-		protocols::sic_dock::JointScoreOP fnscore = new protocols::sic_dock::JointScore;
+		protocols::sic_dock::RigidScoreCOP cbscore( new protocols::sic_dock::CBScore(cmp1olig_,cmp2olig_,CLD,CTD,cmp1wtmap_,cmp2wtmap_) );
+		protocols::sic_dock::JointScoreOP jtscore( new protocols::sic_dock::JointScore );
+		protocols::sic_dock::JointScoreOP fnscore( new protocols::sic_dock::JointScore );
 		rigid_sfxn_ = jtscore;
 		final_sfxn_ = fnscore;
 
 		if(option[basic::options::OptionKeys::mh::xform_score_data].user()){
-			mhscore_ = new protocols::sic_dock::scores::MotifHashRigidScore(cmp1olig_,cmp2olig_);
+			mhscore_ = protocols::sic_dock::scores::MotifHashRigidScoreCOP( new protocols::sic_dock::scores::MotifHashRigidScore(cmp1olig_,cmp2olig_) );
 			jtscore->add_score(mhscore_,option[tcdock::motif_hash_weight]());
 			// Real const approx_surf = std::pow((Real)cmp1olig_.n_residue(),0.666666) * std::pow((Real)cmp2olig_.n_residue(),0.666666);
 			// Real const hackcut = approx_surf/25.0 * option[tcdock::hash_speed_filter_hack]();
@@ -1019,7 +1019,7 @@ struct TCDock {
 		}
 		if(option[tcdock::max_linker_len]() > 0){
 			string lnscore_tag = cmp1name_+"_"+cmp2name_+arch().name()+"_";
-			lnscore_ = new protocols::sic_dock::LinkerScore(cmp1olig_,cmp2olig_,option[tcdock::max_linker_len](),option[tcdock::linker_lookup_radius](),lnscore_tag);
+			lnscore_ = protocols::sic_dock::LinkerScoreCOP( new protocols::sic_dock::LinkerScore(cmp1olig_,cmp2olig_,option[tcdock::max_linker_len](),option[tcdock::linker_lookup_radius](),lnscore_tag) );
 			jtscore->add_score(lnscore_,1.0);
 			// fnscore->add_score(lnscore_,1.0);
 		}
@@ -2133,19 +2133,19 @@ int main (int argc, char *argv[]) {
 	string archname = option[tcdock::architecture]();
 	vector1<string> comp1pdbs(option[tcdock::component1]()), comp2pdbs(option[tcdock::component2]());
 	ArchCOP arch;
-	     if( "I53"  ==archname ) arch = new ArchI53;
-	else if( "I52"  ==archname ) arch = new ArchI52;
-	else if( "I32"  ==archname ) arch = new ArchI32;
-	else if( "O43"  ==archname ) arch = new ArchO43;
-	else if( "O42"  ==archname ) arch = new ArchO42;
-	else if( "O32"  ==archname ) arch = new ArchO32;
-	else if( "T32"  ==archname ) arch = new ArchT32;
-	else if( "T33"  ==archname ) arch = new ArchT33;
-	else if( "P4_42"==archname ) arch = new ArchP4_42;
-	else if( "P4m_42d"==archname ) arch = new ArchP4m_42d;
-	else if( "P4g_42d"==archname ) arch = new ArchP4g_42d;
-	else if( "P6_32"==archname ) arch = new ArchP6_32;
-	else if( "P6m_32d"==archname ) arch = new ArchP6m_32d;
+	     if( "I53"  ==archname ) arch = ArchCOP( new ArchI53 );
+	else if( "I52"  ==archname ) arch = ArchCOP( new ArchI52 );
+	else if( "I32"  ==archname ) arch = ArchCOP( new ArchI32 );
+	else if( "O43"  ==archname ) arch = ArchCOP( new ArchO43 );
+	else if( "O42"  ==archname ) arch = ArchCOP( new ArchO42 );
+	else if( "O32"  ==archname ) arch = ArchCOP( new ArchO32 );
+	else if( "T32"  ==archname ) arch = ArchCOP( new ArchT32 );
+	else if( "T33"  ==archname ) arch = ArchCOP( new ArchT33 );
+	else if( "P4_42"==archname ) arch = ArchCOP( new ArchP4_42 );
+	else if( "P4m_42d"==archname ) arch = ArchCOP( new ArchP4m_42d );
+	else if( "P4g_42d"==archname ) arch = ArchCOP( new ArchP4g_42d );
+	else if( "P6_32"==archname ) arch = ArchCOP( new ArchP6_32 );
+	else if( "P6m_32d"==archname ) arch = ArchCOP( new ArchP6m_32d );
 	else utility_exit_with_message("don't know what architecture you're asking for!");
 
 	TR << "tcdock: " << archname << ", tcdock.cc build date: " << __DATE__ << " " <<  __TIME__ << endl;

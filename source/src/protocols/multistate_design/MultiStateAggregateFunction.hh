@@ -30,8 +30,8 @@ namespace multistate_design {
 class MultiStateAggregateFunction : public utility::pointer::ReferenceCount {
 
 public:
-	typedef utility::pointer::owning_ptr< MultiStateAggregateFunction > OP;
-	typedef utility::pointer::owning_ptr< MultiStateAggregateFunction const > COP;
+	typedef utility::pointer::shared_ptr< MultiStateAggregateFunction > OP;
+	typedef utility::pointer::shared_ptr< MultiStateAggregateFunction const > COP;
 
 	MultiStateAggregateFunction() {}
 	virtual ~MultiStateAggregateFunction() {}

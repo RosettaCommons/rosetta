@@ -59,7 +59,7 @@ CoupledMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 CoupledMoverCreator::create_mover() const {
-	return new CoupledMover;
+	return protocols::moves::MoverOP( new CoupledMover );
 }
 
 std::string
@@ -80,12 +80,12 @@ CoupledMover::CoupledMover() : protocols::moves::Mover()
 	ligand_resnum_ = 0;
 	rotation_magnitude_ = 1;
 	translation_magnitude_ = 0.1;
-	short_backrub_mover_ = new protocols::simple_moves::ShortBackrubMover();
+	short_backrub_mover_ = protocols::simple_moves::ShortBackrubMoverOP( new protocols::simple_moves::ShortBackrubMover() );
 	short_backrub_mover_->set_rotation_std_dev(rotation_std_dev_);
-	boltzmann_rotamer_mover_ = new protocols::simple_moves::BoltzmannRotamerMover();
+	boltzmann_rotamer_mover_ = protocols::simple_moves::BoltzmannRotamerMoverOP( new protocols::simple_moves::BoltzmannRotamerMover() );
 	boltzmann_rotamer_mover_->set_temperature(temperature_);
 	boltzmann_rotamer_mover_->set_bias_sampling(bias_sampling_);
-	rigid_body_mover_ = new protocols::rigid::RigidBodyPerturbMover();
+	rigid_body_mover_ = protocols::rigid::RigidBodyPerturbMoverOP( new protocols::rigid::RigidBodyPerturbMover() );
 	rigid_body_mover_->rot_magnitude(rotation_magnitude_);
 	rigid_body_mover_->trans_magnitude(translation_magnitude_);
 }
@@ -107,12 +107,12 @@ CoupledMover::CoupledMover(
 	ligand_jump_id_ = 0;
 	rotation_magnitude_ = 1;
 	translation_magnitude_ = 0.1;
-	short_backrub_mover_ = new protocols::simple_moves::ShortBackrubMover(pose);
+	short_backrub_mover_ = protocols::simple_moves::ShortBackrubMoverOP( new protocols::simple_moves::ShortBackrubMover(pose) );
 	short_backrub_mover_->set_rotation_std_dev(rotation_std_dev_);
-	boltzmann_rotamer_mover_ = new protocols::simple_moves::BoltzmannRotamerMover(score_fxn, packer_task);
+	boltzmann_rotamer_mover_ = protocols::simple_moves::BoltzmannRotamerMoverOP( new protocols::simple_moves::BoltzmannRotamerMover(score_fxn, packer_task) );
 	boltzmann_rotamer_mover_->set_temperature(temperature_);
 	boltzmann_rotamer_mover_->set_bias_sampling(bias_sampling_);
-	rigid_body_mover_ = new protocols::rigid::RigidBodyPerturbMover();
+	rigid_body_mover_ = protocols::rigid::RigidBodyPerturbMoverOP( new protocols::rigid::RigidBodyPerturbMover() );
 	rigid_body_mover_->rot_magnitude(rotation_magnitude_);
 	rigid_body_mover_->trans_magnitude(translation_magnitude_);
 	score_fxn_ = score_fxn;
@@ -137,12 +137,12 @@ CoupledMover::CoupledMover(
 	ligand_jump_id_ = pose->fold_tree().get_jump_that_builds_residue(ligand_resnum);
 	rotation_magnitude_ = 1;
 	translation_magnitude_ = 0.1;
-	short_backrub_mover_ = new protocols::simple_moves::ShortBackrubMover(pose);
+	short_backrub_mover_ = protocols::simple_moves::ShortBackrubMoverOP( new protocols::simple_moves::ShortBackrubMover(pose) );
 	short_backrub_mover_->set_rotation_std_dev(rotation_std_dev_);
-	boltzmann_rotamer_mover_ = new protocols::simple_moves::BoltzmannRotamerMover(score_fxn, packer_task);
+	boltzmann_rotamer_mover_ = protocols::simple_moves::BoltzmannRotamerMoverOP( new protocols::simple_moves::BoltzmannRotamerMover(score_fxn, packer_task) );
 	boltzmann_rotamer_mover_->set_temperature(temperature_);
 	boltzmann_rotamer_mover_->set_bias_sampling(bias_sampling_);
-	rigid_body_mover_ = new protocols::rigid::RigidBodyPerturbMover(ligand_jump_id_, rotation_magnitude_, translation_magnitude_);
+	rigid_body_mover_ = protocols::rigid::RigidBodyPerturbMoverOP( new protocols::rigid::RigidBodyPerturbMover(ligand_jump_id_, rotation_magnitude_, translation_magnitude_) );
 	score_fxn_ = score_fxn;
 	packer_task_ = packer_task;
 }
@@ -174,14 +174,14 @@ CoupledMover::~CoupledMover(){}
 CoupledMover::MoverOP
 CoupledMover::clone() const
 {
-	return new protocols::simple_moves::CoupledMover( *this );
+	return CoupledMover::MoverOP( new protocols::simple_moves::CoupledMover( *this ) );
 }
 
 // create this type of object
 CoupledMover::MoverOP
 CoupledMover::fresh_instance() const
 {
-	return new protocols::simple_moves::CoupledMover();
+	return CoupledMover::MoverOP( new protocols::simple_moves::CoupledMover() );
 }
 
 void
@@ -243,7 +243,7 @@ void CoupledMover::set_ligand_resnum( core::Size ligand_resnum ) {
 }
 void CoupledMover::set_ligand_jump_id( core::Size ligand_jump_id ) {
 	ligand_jump_id_ = ligand_jump_id;
-	rigid_body_mover_ = new protocols::rigid::RigidBodyPerturbMover(ligand_jump_id_, rotation_magnitude_, translation_magnitude_);
+	rigid_body_mover_ = protocols::rigid::RigidBodyPerturbMoverOP( new protocols::rigid::RigidBodyPerturbMover(ligand_jump_id_, rotation_magnitude_, translation_magnitude_) );
 }
 void CoupledMover::set_rotation_magnitude( core::Real rotation_magnitude ) {
 	rotation_magnitude_ = rotation_magnitude;
@@ -330,7 +330,7 @@ CoupledMover::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	Pose const & pose)
 {
-	short_backrub_mover_ = new protocols::simple_moves::ShortBackrubMover(core::pose::PoseOP(new core::pose::Pose(pose)));
+	short_backrub_mover_ = protocols::simple_moves::ShortBackrubMoverOP( new protocols::simple_moves::ShortBackrubMover(core::pose::PoseOP(new core::pose::Pose(pose))) );
 }
 
 } // moves

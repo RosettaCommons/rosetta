@@ -60,14 +60,14 @@ BranchAngleOptimizer::BranchAngleOptimizer(
 	core::scoring::mm::MMBondAngleLibrary const & mm_bondangle_library
 ):
 	mm_bondangle_library_( mm_bondangle_library ),
-	bond_angle_residue_type_param_set_(NULL),
+	bond_angle_residue_type_param_set_(/* NULL */),
 	tolerance_(0.0000001),
 	initialized_(false)
 {}
 
 BranchAngleOptimizer::BranchAngleOptimizer():
 	mm_bondangle_library_( scoring::ScoringManager::get_instance()->get_MMBondAngleLibrary() ),
-	bond_angle_residue_type_param_set_(NULL),
+	bond_angle_residue_type_param_set_(/* NULL */),
 	tolerance_(0.0000001),
 	initialized_(false)
 {}
@@ -123,7 +123,7 @@ BranchAngleOptimizer::bond_angle_residue_type_param_set(
 	core::scoring::mm::MMBondAngleResidueTypeParamSetCOP param_set
 )
 {
-	bond_angle_residue_type_param_set_ = new core::scoring::mm::MMBondAngleResidueTypeParamSet( *param_set );
+	bond_angle_residue_type_param_set_ = core::scoring::mm::MMBondAngleResidueTypeParamSetOP( new core::scoring::mm::MMBondAngleResidueTypeParamSet( *param_set ) );
 }
 
 /// @detailed

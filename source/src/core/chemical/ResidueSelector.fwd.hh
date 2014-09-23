@@ -20,10 +20,10 @@ namespace core {
 namespace chemical {
 
 class ResidueSelectorSingle;
-typedef utility::pointer::owning_ptr< ResidueSelectorSingle > ResidueSelectorSingleOP;
+typedef utility::pointer::shared_ptr< ResidueSelectorSingle > ResidueSelectorSingleOP;
 
 class ResidueSelector;
-typedef utility::pointer::owning_ptr< ResidueSelector > ResidueSelectorOP;
+typedef utility::pointer::shared_ptr< ResidueSelector > ResidueSelectorOP;
 
 } // chemical
 } // core

@@ -722,13 +722,13 @@ EllipsoidalRandomizationMover::get_normal_to_plane() const
 protocols::moves::MoverOP
 EllipsoidalRandomizationMover::clone() const
 {
-	return new EllipsoidalRandomizationMover( *this );
+	return protocols::moves::MoverOP( new EllipsoidalRandomizationMover( *this ) );
 }
 	
 protocols::moves::MoverOP
 EllipsoidalRandomizationMover::fresh_instance() const
 {
-	return new EllipsoidalRandomizationMover();
+	return protocols::moves::MoverOP( new EllipsoidalRandomizationMover() );
 }
 	
 void

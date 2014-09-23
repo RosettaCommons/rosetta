@@ -55,7 +55,7 @@ public:
 	// test for reading fragments and vall files
 	void test_read_vall_fragments() {
 
-	    chunks_ = new VallProvider();
+	    chunks_ = protocols::frag_picker::VallProviderOP( new VallProvider() );
 	    chunks_->vallChunksFromLibrary("protocols/frag_picker/1a32A-H1.vall");
 	    TS_ASSERT( chunks_->size() == 229);
 
@@ -67,7 +67,7 @@ public:
 	// test for reading vall file twice (should be appended)
 	void test_read_vall2() {
 
-	    VallProviderOP chunks = new VallProvider();
+	    VallProviderOP chunks( new VallProvider() );
 	    chunks->vallChunksFromLibrary("protocols/frag_picker/1a32A-H1.vall");
 	    TS_ASSERT( chunks->size() == 229);
 	    Real k1 = (Real) chunks->at(chunks->size())->key();
@@ -84,11 +84,11 @@ public:
 
 	    utility::vector1<std::pair<FragmentCandidateOP,scores::FragmentScoreMapOP> > fs_in;
 	    utility::vector1<std::pair<FragmentCandidateOP,scores::FragmentScoreMapOP> > fs_out;
-	    scores::FragmentScoreMapOP empty_score_map = new scores::FragmentScoreMap(0);
+	    scores::FragmentScoreMapOP empty_score_map( new scores::FragmentScoreMap(0) );
 	    for(Size i=1;i<=in_frags_.size();i++)
 		fs_in.push_back( std::pair<FragmentCandidateOP,scores::FragmentScoreMapOP>(in_frags_[i],empty_score_map) );
 
-	    FragmentSelectingRuleOP sel = new DiversifyCrmsdSelector(10,0.8);
+	    FragmentSelectingRuleOP sel( new DiversifyCrmsdSelector(10,0.8) );
 	    sel->select_fragments( fs_in, fs_out);
 	    TS_ASSERT( fs_out.size() <=10);
 	}
@@ -97,7 +97,7 @@ public:
 
 	    utility::vector1<std::pair<FragmentCandidateOP,scores::FragmentScoreMapOP> > fs_in;
 	    utility::vector1<std::pair<FragmentCandidateOP,scores::FragmentScoreMapOP> > fs_out;
-	    scores::FragmentScoreMapOP empty_score_map = new scores::FragmentScoreMap(0);
+	    scores::FragmentScoreMapOP empty_score_map( new scores::FragmentScoreMap(0) );
 	    for(Size i=1;i<=in_frags_.size();i++)
 		fs_in.push_back( std::pair<FragmentCandidateOP,scores::FragmentScoreMapOP>(in_frags_[i],empty_score_map) );
 
@@ -121,11 +121,11 @@ public:
 
 	    utility::vector1<std::pair<FragmentCandidateOP,scores::FragmentScoreMapOP> > fs_in;
 	    utility::vector1<std::pair<FragmentCandidateOP,scores::FragmentScoreMapOP> > fs_out;
-	    scores::FragmentScoreMapOP empty_score_map = new scores::FragmentScoreMap(0);
+	    scores::FragmentScoreMapOP empty_score_map( new scores::FragmentScoreMap(0) );
 	    for(Size i=1;i<=in_frags_.size();i++)
 		fs_in.push_back( std::pair<FragmentCandidateOP,scores::FragmentScoreMapOP>(in_frags_[i],empty_score_map) );
 
-	    FragmentSelectingRuleOP sel = new DiversifyCrmsdByClustering(10);
+	    FragmentSelectingRuleOP sel( new DiversifyCrmsdByClustering(10) );
 	    sel->select_fragments( fs_in, fs_out);
 	    TS_ASSERT( fs_out.size() <=10);
 	}

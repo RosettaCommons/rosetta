@@ -41,10 +41,10 @@ public:
 	);
 	bool apply( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const {
-		return new NMerSVMEnergyFilter( *this );
+		return filters::FilterOP( new NMerSVMEnergyFilter( *this ) );
 	}
 	filters::FilterOP fresh_instance() const{
-		return new NMerSVMEnergyFilter();
+		return filters::FilterOP( new NMerSVMEnergyFilter() );
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;

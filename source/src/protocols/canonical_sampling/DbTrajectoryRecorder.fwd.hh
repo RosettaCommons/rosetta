@@ -16,8 +16,8 @@ namespace protocols {
 namespace canonical_sampling {
 
 class DbTrajectoryRecorder;
-typedef utility::pointer::owning_ptr< DbTrajectoryRecorder > DbTrajectoryRecorderOP;
-typedef utility::pointer::owning_ptr< DbTrajectoryRecorder const > DbTrajectoryRecorderCOP;
+typedef utility::pointer::shared_ptr< DbTrajectoryRecorder > DbTrajectoryRecorderOP;
+typedef utility::pointer::shared_ptr< DbTrajectoryRecorder const > DbTrajectoryRecorderCOP;
 
 }
 }

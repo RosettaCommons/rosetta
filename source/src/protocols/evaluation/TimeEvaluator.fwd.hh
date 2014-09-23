@@ -27,8 +27,8 @@ namespace evaluation {
 
 class TimeEvaluator;
 
-typedef utility::pointer::owning_ptr< TimeEvaluator > TimeEvaluatorOP;
-typedef utility::pointer::owning_ptr< TimeEvaluator const > TimeEvaluatorCOP;
+typedef utility::pointer::shared_ptr< TimeEvaluator > TimeEvaluatorOP;
+typedef utility::pointer::shared_ptr< TimeEvaluator const > TimeEvaluatorCOP;
 
 
 }

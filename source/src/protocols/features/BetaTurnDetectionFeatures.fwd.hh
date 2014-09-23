@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class BetaTurnDetectionFeatures;
-typedef utility::pointer::owning_ptr< BetaTurnDetectionFeatures > BetaTurnDetectionFeaturesOP;
-typedef utility::pointer::owning_ptr< BetaTurnDetectionFeatures const > BetaTurnDetectionFeaturesCOP;
+typedef utility::pointer::shared_ptr< BetaTurnDetectionFeatures > BetaTurnDetectionFeaturesOP;
+typedef utility::pointer::shared_ptr< BetaTurnDetectionFeatures const > BetaTurnDetectionFeaturesCOP;
 
 }//features
 }//protocols

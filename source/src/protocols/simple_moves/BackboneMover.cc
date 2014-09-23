@@ -64,7 +64,7 @@ BackboneMover::BackboneMover() :
 	preserve_detailed_balance_(false)
 {
 	moves::Mover::type( "BackboneMoverBase" );
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	movemap->set_bb( true ); // allow all backbone residues to move
 	movemap_=movemap; // and make this a constant object
 	angle_max( 'H', 0.0 ); // helix
@@ -284,7 +284,7 @@ SmallMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 SmallMoverCreator::create_mover() const {
-	return new SmallMover;
+	return protocols::moves::MoverOP( new SmallMover );
 }
 
 std::string
@@ -322,12 +322,12 @@ SmallMover::get_name() const {
 
 protocols::moves::MoverOP
 SmallMover::clone() const {
-	return new SmallMover(*this);
+	return protocols::moves::MoverOP( new SmallMover(*this) );
 }
 
 protocols::moves::MoverOP
 SmallMover::fresh_instance() const {
-	return new SmallMover();
+	return protocols::moves::MoverOP( new SmallMover() );
 }
 
 void SmallMover::setup_list( core::pose::Pose & pose )
@@ -431,7 +431,7 @@ bool SmallMover::make_move( core::pose::Pose & pose )
 
 void SmallMover::test_move( core::pose::Pose & pose)
 {
-	kinematics::MoveMapOP mmap = new kinematics::MoveMap();
+	kinematics::MoveMapOP mmap( new kinematics::MoveMap() );
 	mmap->set_chi( true );
 	mmap->set_bb( true );
 
@@ -447,7 +447,7 @@ ShearMoverCreator::keyname() const {
 
 protocols::moves::MoverOP
 ShearMoverCreator::create_mover() const {
-	return new protocols::simple_moves::ShearMover;
+	return protocols::moves::MoverOP( new protocols::simple_moves::ShearMover );
 }
 
 std::string
@@ -485,12 +485,12 @@ ShearMover::get_name() const {
 
 protocols::moves::MoverOP
 ShearMover::clone() const {
-	return new protocols::simple_moves::ShearMover(*this);
+	return protocols::moves::MoverOP( new protocols::simple_moves::ShearMover(*this) );
 }
 
 protocols::moves::MoverOP
 ShearMover::fresh_instance() const {
-	return new protocols::simple_moves::ShearMover();
+	return protocols::moves::MoverOP( new protocols::simple_moves::ShearMover() );
 }
 
 void protocols::simple_moves::ShearMover::setup_list( core::pose::Pose & pose )
@@ -607,7 +607,7 @@ bool protocols::simple_moves::ShearMover::make_move( core::pose::Pose & pose )
 
 void protocols::simple_moves::ShearMover::test_move( core::pose::Pose & pose)
 {
-	kinematics::MoveMapOP mmap = new kinematics::MoveMap();
+	kinematics::MoveMapOP mmap( new kinematics::MoveMap() );
 	mmap->set_chi( true );
 	mmap->set_bb( true );
 

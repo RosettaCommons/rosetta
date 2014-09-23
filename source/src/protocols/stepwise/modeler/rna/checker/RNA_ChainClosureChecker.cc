@@ -47,7 +47,7 @@ namespace checker {
 		reinitialize_CCD_torsions_( false ),
 		verbose_( false )
 	{
-		chain_break_scorefxn_ =  new core::scoring::ScoreFunction;
+		chain_break_scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
 		chain_break_scorefxn_->set_weight( core::scoring::angle_constraint, 1.0 );
 		chain_break_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 1.0 );
 	}

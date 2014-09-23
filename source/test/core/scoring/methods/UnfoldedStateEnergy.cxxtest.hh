@@ -66,7 +66,7 @@ class UnfoldedStateEnergyTests : public CxxTest::TestSuite {
 		TOLERATED_ERROR = 0.001;
 		core_init();
 
-		the_pose = new Pose;
+		the_pose = PoseOP( new Pose );
 		core::chemical::ResidueTypeSetCOP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 		core::pose::make_pose_from_sequence( *the_pose, "DFGLK", *rsd_set );
 
@@ -74,7 +74,7 @@ class UnfoldedStateEnergyTests : public CxxTest::TestSuite {
 
 	// Shared finalization goes here.
 	void tearDown() {
-		the_pose = 0;
+		the_pose.reset();
 	}
 
 
@@ -89,7 +89,7 @@ class UnfoldedStateEnergyTests : public CxxTest::TestSuite {
 		// PHE 3.6792 -0.7291 -1.7340 -6.6803 -0.0053 0.0000 0.4257 0.0216 0.0055 0.0000 0.1227 -0.2181 -1.0325 0.1014
 		// GLY 1.6906 -0.4879 -1.2009 -0.0181 -0.0033 0.0000 0.3093 0.0139 0.0093 0.0000 -0.6594 -0.1474 0.0000 1.0637
 		
-		UnfoldedStateEnergyOP unweighted_unf_energy = new UnfoldedStateEnergy( scoring::UNFOLDED_SCORE12 );
+		UnfoldedStateEnergyOP unweighted_unf_energy( new UnfoldedStateEnergy( scoring::UNFOLDED_SCORE12 ) );
 
 		EnergyMap emap;
 		emap.zero();
@@ -110,7 +110,7 @@ class UnfoldedStateEnergyTests : public CxxTest::TestSuite {
 		EnergyMap emap; // same emap used for initalization and holding scores
 		emap.zero();
 
-		UnfoldedStateEnergyOP unweighted_unf_energy = new UnfoldedStateEnergy( scoring::UNFOLDED_SCORE12, emap );
+		UnfoldedStateEnergyOP unweighted_unf_energy( new UnfoldedStateEnergy( scoring::UNFOLDED_SCORE12, emap ) );
 
 		unweighted_unf_energy->residue_energy( the_pose->residue(2), *the_pose, emap );
 		TS_ASSERT_DELTA( emap[ unfolded ], 0.0, TOLERATED_ERROR );
@@ -146,7 +146,7 @@ class UnfoldedStateEnergyTests : public CxxTest::TestSuite {
 		emap[ unfolded ] = 0.61846;
 		emap[ ref ] = 0.0;
 
-		UnfoldedStateEnergyOP weighted_unf_energy_emap = new UnfoldedStateEnergy( scoring::UNFOLDED_SCORE12, emap );
+		UnfoldedStateEnergyOP weighted_unf_energy_emap( new UnfoldedStateEnergy( scoring::UNFOLDED_SCORE12, emap ) );
 
 		// atr  rep  sol  intra_rep  pro  pair  hb_sr_bb  hb_lr_bb  hb_bb_sc  hb_sc  rama  omega  dun  paapp
 		// LEU -3.1780 0.71276 1.75359 2.00079 0.01865 0.00000 0.00000 0.00000 -0.0044 0.00000 -0.1056 0.20147 0.60841 -0.1721

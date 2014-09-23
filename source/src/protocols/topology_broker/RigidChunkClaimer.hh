@@ -58,7 +58,7 @@ public:
 
 	//clone
 	virtual TopologyClaimerOP clone() const {
-		return new RigidChunkClaimer( *this );
+		return TopologyClaimerOP( new RigidChunkClaimer( *this ) );
 	}
 
 	///@brief type() is specifying the output name of the TopologyClaimer
@@ -200,7 +200,7 @@ private:
 	};
 
 	// Types
-	typedef utility::pointer::owning_ptr< JumpCalculator >  JumpCalculatorOP;
+	typedef utility::pointer::shared_ptr< JumpCalculator >  JumpCalculatorOP;
 	JumpCalculatorOP current_jump_calculator_;
 
 }; //class RigidChunkClaimer

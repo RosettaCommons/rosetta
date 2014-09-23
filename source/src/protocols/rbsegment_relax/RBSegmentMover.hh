@@ -199,7 +199,7 @@ public:
 		std::cerr << "HelicalGaussianMover : Setting params (" << sigAxisR_ << ", " << sigAxisT_ << ", " << sigOffAxisR_ << ", " << sigOffAxisT_ << ")\n";
 	}
 
-	virtual protocols::moves::MoverOP clone() const { return RBSegmentMoverOP(new HelicalGaussianMover(*this)); }
+	virtual protocols::moves::MoverOP clone() const { return RBSegmentMoverOP( new HelicalGaussianMover(*this) ); }
 
 	/// @brief Apply a +1 or -1 residue "shift" to this helix
 	void apply( core::pose::Pose & pose );
@@ -258,7 +258,7 @@ public:
 
 	/// @brief clone this object
 	virtual protocols::moves::MoverOP
-	clone() const { return RBSegmentMoverOP(new SequenceShiftMover(*this)); }
+	clone() const { return RBSegmentMoverOP( new SequenceShiftMover(*this) ); }
 
 	/// @brief set movement parameters.  ignore all input args
 	virtual void
@@ -342,7 +342,7 @@ public:
 	}
 
 	/// @brief clone this object
-	virtual protocols::moves::MoverOP clone() const { return RBSegmentMoverOP(new GaussianRBSegmentMover(*this)); }
+	virtual protocols::moves::MoverOP clone() const { return RBSegmentMoverOP( new GaussianRBSegmentMover(*this) ); }
 
 	/// @brief Randomly perturb the segment
 	void apply( core::pose::Pose & pose );
@@ -414,7 +414,7 @@ public:
 		std::cerr << "StrandTwistingMover : Setting params (" << sigAxisR_ << ", " << sigAxisT_ << ", " << sigOffAxisR_ << ", " << sigOffAxisT_ << ")\n";
 	}
 
-	virtual protocols::moves::MoverOP clone() const { return RBSegmentMoverOP(new StrandTwistingMover(*this)); }
+	virtual protocols::moves::MoverOP clone() const { return RBSegmentMoverOP( new StrandTwistingMover(*this) ); }
 
 	/// @brief Apply a +1 or -1 residue "shift" to this helix
 	void apply( core::pose::Pose & pose );

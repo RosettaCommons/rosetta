@@ -28,11 +28,11 @@ namespace core {
 namespace scoring {
 
 class DenseNeighborIterator;
-typedef utility::pointer::owning_ptr< DenseNeighborIterator > DenseNeighborIteratorOP;
+typedef utility::pointer::shared_ptr< DenseNeighborIterator > DenseNeighborIteratorOP;
 
 
 class DenseEnergyContainer;
-typedef utility::pointer::owning_ptr< DenseEnergyContainer > DenseEnergyContainerOP;
+typedef utility::pointer::shared_ptr< DenseEnergyContainer > DenseEnergyContainerOP;
 
 } // namespace scoring
 } // namespace core

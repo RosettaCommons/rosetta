@@ -62,8 +62,8 @@ public:
 
     void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
-    FilterOP clone() const { return new RemoveLigandFilter( *this ); }
-    FilterOP fresh_instance() const { return new RemoveLigandFilter; }
+    FilterOP clone() const { return FilterOP( new RemoveLigandFilter( *this ) ); }
+    FilterOP fresh_instance() const { return FilterOP( new RemoveLigandFilter ); }
 private:
     core::Real threshold_;
     MoverOP mover_;

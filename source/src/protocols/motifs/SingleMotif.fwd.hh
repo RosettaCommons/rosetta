@@ -22,8 +22,8 @@ namespace protocols {
 namespace motifs {
 
 class SingleMotif;
-typedef utility::pointer::owning_ptr< SingleMotif > SingleMotifOP;
-typedef utility::pointer::owning_ptr< SingleMotif const > SingleMotifCOP;
+typedef utility::pointer::shared_ptr< SingleMotif > SingleMotifOP;
+typedef utility::pointer::shared_ptr< SingleMotif const > SingleMotifCOP;
 typedef utility::vector1< SingleMotifOP > SingleMotifOPs;
 typedef utility::vector1< SingleMotifCOP > SingleMotifCOPs;
 

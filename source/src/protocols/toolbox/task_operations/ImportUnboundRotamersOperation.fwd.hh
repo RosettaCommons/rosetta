@@ -24,8 +24,8 @@ namespace task_operations {
 
 class ImportUnboundRotamersOperation;
 
-typedef utility::pointer::owning_ptr< ImportUnboundRotamersOperation > ImportUnboundRotamersOperationOP;
-typedef utility::pointer::owning_ptr< ImportUnboundRotamersOperation const > ImportUnboundRotamersOperationCOP;
+typedef utility::pointer::shared_ptr< ImportUnboundRotamersOperation > ImportUnboundRotamersOperationOP;
+typedef utility::pointer::shared_ptr< ImportUnboundRotamersOperation const > ImportUnboundRotamersOperationCOP;
 
 
 }

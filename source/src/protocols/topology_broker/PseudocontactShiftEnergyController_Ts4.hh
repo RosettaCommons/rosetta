@@ -54,7 +54,7 @@ public:
                  	PseudocontactShiftEnergyController_Ts4(); //for factory
 
 	virtual TopologyClaimerOP clone() const {
-		return new PseudocontactShiftEnergyController_Ts4( *this );
+		return TopologyClaimerOP( new PseudocontactShiftEnergyController_Ts4( *this ) );
 	}
 
 	///@brief type() is specifying the output name of the TopologyClaimer

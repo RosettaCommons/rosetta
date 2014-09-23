@@ -46,7 +46,7 @@ namespace func {
 
 		virtual
 		FuncOP
-		clone() const { return new ScalarWeightedFunc( *this ); }
+		clone() const { return FuncOP( new ScalarWeightedFunc( *this ) ); }
 
 		virtual
 		Real func( Real const x ) const;

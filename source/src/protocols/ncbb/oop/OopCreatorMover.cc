@@ -184,7 +184,7 @@ OopCreatorMover::apply(
 	all_positions.insert( all_positions.end(), plus_positions.begin(), plus_positions.end() );
 	for ( Size i = 1; i <= plus_positions.size(); i++)
 	{
-		OopPatcherOP oop_patcher (new OopPatcher( plus_positions[i] ) );
+		OopPatcherOP oop_patcher( new OopPatcher( plus_positions[i] ) );
 		oop_patcher->apply( pose );
         
 		OopPuckPlusMoverOP opm_plus( new OopPuckPlusMover( plus_positions[i] ) );
@@ -195,7 +195,7 @@ OopCreatorMover::apply(
 	all_positions.insert( all_positions.end(), minus_positions.begin(), minus_positions.end() );
 	for ( Size i = 1; i <= minus_positions.size(); i++)
 	{
-		OopPatcherOP oop_patcher (new OopPatcher( minus_positions[i] ) );
+		OopPatcherOP oop_patcher( new OopPatcher( minus_positions[i] ) );
 		oop_patcher->apply( pose );
         
 		OopPuckMinusMoverOP opm_minus( new OopPuckMinusMover( minus_positions[i] ) );
@@ -206,7 +206,7 @@ OopCreatorMover::apply(
 	all_positions.insert( all_positions.end(), d_plus_positions.begin(), d_plus_positions.end() );
 	for ( Size i = 1; i <= d_plus_positions.size(); i++)
 	{
-		OopPatcherOP oop_patcher (new OopPatcher( d_plus_positions[i] ) );
+		OopPatcherOP oop_patcher( new OopPatcher( d_plus_positions[i] ) );
 		oop_patcher->apply( pose );
         
 		OopDPuckPlusMoverOP opm_plus( new OopDPuckPlusMover( d_plus_positions[i] ) );
@@ -217,7 +217,7 @@ OopCreatorMover::apply(
 	all_positions.insert( all_positions.end(), d_minus_positions.begin(), d_minus_positions.end() );
 	for ( Size i = 1; i <= d_minus_positions.size(); i++)
 	{
-		OopPatcherOP oop_patcher (new OopPatcher( d_minus_positions[i] ) );
+		OopPatcherOP oop_patcher( new OopPatcher( d_minus_positions[i] ) );
 		oop_patcher->apply( pose );
         
 		OopDPuckMinusMoverOP opm_minus( new OopDPuckMinusMover( d_minus_positions[i] ) );
@@ -228,7 +228,7 @@ OopCreatorMover::apply(
 	all_positions.insert( all_positions.end(), low_e_puck_positions.begin(), low_e_puck_positions.end() );
 	for ( Size i = 1; i <= low_e_puck_positions.size(); ++i)
 	{
-		OopPatcherOP oop_patcher (new OopPatcher( low_e_puck_positions[i] ) );
+		OopPatcherOP oop_patcher( new OopPatcher( low_e_puck_positions[i] ) );
 		oop_patcher->apply( pose );
 		//kdrew: poor man's version for now, if L use PuckPlus, if D use DPuckPlus
 		if( is_l_chiral( pose.residue_type( low_e_puck_positions[i] ) ) )
@@ -356,8 +356,8 @@ OopCreatorMover::apply(
 	{
 		// create a task factory and task operations
 		using core::pack::task::operation::TaskOperationCOP;
-		TaskFactoryOP tf(new TaskFactory());
-		tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
+		TaskFactoryOP tf( new TaskFactory() );
+		tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
         
 		using namespace basic::resource_manager;
 		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() )
@@ -420,8 +420,8 @@ OopCreatorMover::apply(
 	{
 		// create a task factory and task operations
 		using core::pack::task::operation::TaskOperationCOP;
-		TaskFactoryOP tf(new TaskFactory());
-		tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
+		TaskFactoryOP tf( new TaskFactory() );
+		tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
         
 		using namespace basic::resource_manager;
 		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() )
@@ -461,8 +461,8 @@ OopCreatorMover::apply(
 			//kdrew: put constraint on omega angle
 			pose.conformation().get_torsion_angle_atom_ids( torsion_id, id1, id2, id3, id4 );
 			Real torsion_value( pose.torsion( torsion_id ) );
-			CircularHarmonicFuncOP circularharm_func  (new CircularHarmonicFunc( radians( torsion_value ), radians( 10.0 ) ) );
-			ConstraintCOP dihedral1 = new DihedralConstraint( id1, id2, id3, id4, circularharm_func );
+			CircularHarmonicFuncOP circularharm_func( new CircularHarmonicFunc( radians( torsion_value ), radians( 10.0 ) ) );
+			ConstraintCOP dihedral1( new DihedralConstraint( id1, id2, id3, id4, circularharm_func ) );
 			pose.add_constraint( dihedral1 );
 		}
 		//kdrew: if constraint weight is not set on commandline or elsewhere, set to 1.0
@@ -486,7 +486,7 @@ OopCreatorMover::apply(
 protocols::moves::MoverOP
 OopCreatorMover::clone() const
 {
-  return new OopCreatorMover ();
+  return protocols::moves::MoverOP( new OopCreatorMover () );
 }
 
 void
@@ -560,7 +560,7 @@ OopCreatorMover::parse_my_tag
 // MoverCreator
 moves::MoverOP
 OopCreatorMoverCreator::create_mover() const {
-    return new OopCreatorMover();
+    return moves::MoverOP( new OopCreatorMover() );
 }
     
 std::string OopCreatorMoverCreator::keyname() const {

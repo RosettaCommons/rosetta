@@ -33,7 +33,7 @@ std::string FavorSymmetricSequenceCreator::keyname() const
 
 protocols::moves::MoverOP FavorSymmetricSequenceCreator::create_mover() const
 {
-	return new FavorSymmetricSequence;
+	return protocols::moves::MoverOP( new FavorSymmetricSequence );
 }
 
 std::string FavorSymmetricSequenceCreator::mover_name()
@@ -60,7 +60,7 @@ FavorSymmetricSequence::FavorSymmetricSequence(FavorSymmetricSequence const & sr
 
 protocols::moves::MoverOP FavorSymmetricSequence::clone() const
 {
-	return new FavorSymmetricSequence(*this);
+	return protocols::moves::MoverOP( new FavorSymmetricSequence(*this) );
 }
 
 void FavorSymmetricSequence::apply(core::pose::Pose & pose)

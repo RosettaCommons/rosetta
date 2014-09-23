@@ -159,12 +159,12 @@ AtomAtomPairFeatures::write_atom_pairs_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt());
-	Column atom_type("atom_type", new DbText());
-	Column element("element", new DbText());
-	Column lower_break("lower_break", new DbReal());
-	Column upper_break("upper_break", new DbReal());
-	Column count("count", new DbInteger());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column atom_type("atom_type", DbDataTypeOP( new DbText() ));
+	Column element("element", DbDataTypeOP( new DbText() ));
+	Column lower_break("lower_break", DbDataTypeOP( new DbReal() ));
+	Column upper_break("upper_break", DbDataTypeOP( new DbReal() ));
+	Column count("count", DbDataTypeOP( new DbInteger() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);

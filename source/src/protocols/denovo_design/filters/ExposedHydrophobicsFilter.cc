@@ -64,7 +64,7 @@ ExposedHydrophobicsFilterCreator::keyname() const
 
 protocols::filters::FilterOP
 ExposedHydrophobicsFilterCreator::create_filter() const {
-	return new ExposedHydrophobicsFilter();
+	return protocols::filters::FilterOP( new ExposedHydrophobicsFilter() );
 }
 
 std::string
@@ -92,13 +92,13 @@ ExposedHydrophobicsFilter::~ExposedHydrophobicsFilter()
 protocols::filters::FilterOP
 ExposedHydrophobicsFilter::clone() const
 {
-	return new ExposedHydrophobicsFilter(*this);
+	return protocols::filters::FilterOP( new ExposedHydrophobicsFilter(*this) );
 }
 
 protocols::filters::FilterOP
 ExposedHydrophobicsFilter::fresh_instance() const
 {
-	return new ExposedHydrophobicsFilter();
+	return protocols::filters::FilterOP( new ExposedHydrophobicsFilter() );
 }
 
 void

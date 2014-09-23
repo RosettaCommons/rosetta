@@ -22,12 +22,12 @@ namespace canonical_sampling {
 namespace mc_convergence_checks{
 
 struct PoolData;
-typedef utility::pointer::owning_ptr< PoolData > PoolDataOP;
-typedef utility::pointer::owning_ptr< PoolData const > PoolDataCOP;
+typedef utility::pointer::shared_ptr< PoolData > PoolDataOP;
+typedef utility::pointer::shared_ptr< PoolData const > PoolDataCOP;
 
 class HierarchicalLevel;
-typedef utility::pointer::owning_ptr< HierarchicalLevel > HierarchicalLevelOP;
-typedef utility::pointer::owning_ptr< HierarchicalLevel const > HierarchicalLevelCOP;
+typedef utility::pointer::shared_ptr< HierarchicalLevel > HierarchicalLevelOP;
+typedef utility::pointer::shared_ptr< HierarchicalLevel const > HierarchicalLevelCOP;
 
 
 }

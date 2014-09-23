@@ -36,10 +36,10 @@ public:
 	ReportFilter();
 	bool apply( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const {
-		return new ReportFilter( *this );
+		return filters::FilterOP( new ReportFilter( *this ) );
 	}
 	filters::FilterOP fresh_instance() const{
-		return new ReportFilter();
+		return filters::FilterOP( new ReportFilter() );
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
@@ -60,7 +60,7 @@ public:
 private:
     void checkpoint_read() const; // read from a checkpoint
     void checkpoint_write() const; // write from a checkpoint
-	utility::pointer::owning_ptr< basic::datacache::DataMapObj< std::string > > report_string_; //dflt ""
+	utility::pointer::shared_ptr< basic::datacache::DataMapObj< std::string > > report_string_; //dflt ""
 	protocols::filters::FilterOP filter_; //dflt NULL; either filter or report_string should be turned on
 	std::string report_filter_name_; // the user defined filter name used in reporting
     mutable core::Real filter_val_; // stores filter_'s report_sm value at the time of apply call. Then, when report_sm for teh ReportFilter is called it reports the saved value

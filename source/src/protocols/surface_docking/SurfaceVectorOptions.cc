@@ -27,7 +27,7 @@ std::string
 SurfaceVectorOptionsCreator::options_type() const { return "SurfaceVectorOptions"; }
 
 basic::resource_manager::ResourceOptionsOP
-SurfaceVectorOptionsCreator::create_options() const { return new SurfaceVectorOptions; }
+SurfaceVectorOptionsCreator::create_options() const { return basic::resource_manager::ResourceOptionsOP( new SurfaceVectorOptions ); }
 
 
 SurfaceVectorOptions::SurfaceVectorOptions() : basic::resource_manager::ResourceOptions() {}

@@ -68,7 +68,7 @@ public:
 	//MetalloClaimer( simple_moves::FragmentMoverOP );
 
 	virtual TopologyClaimerOP clone() const {
-		return new MetalloClaimer( *this );
+		return TopologyClaimerOP( new MetalloClaimer( *this ) );
 	}
 
 	virtual void generate_sequence_claims( claims::DofClaims& dc ) {

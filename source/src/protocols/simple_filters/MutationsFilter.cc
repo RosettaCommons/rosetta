@@ -40,8 +40,8 @@ static thread_local basic::Tracer TR( "protocols.simple_filters.MutationsFilter"
 ///@brief default ctor
 MutationsFilter::MutationsFilter() :
 	parent( "Mutations" ),
-	task_factory_( NULL ),
-	reference_pose_( NULL ),
+	task_factory_( /* NULL */ ),
+	reference_pose_( /* NULL */ ),
 	rate_threshold_( 0.0 ),
 	mutation_threshold_( 100 ),
 	mutations_( 0 ),
@@ -89,7 +89,7 @@ MutationsFilter::reference_pose( core::pose::PoseCOP pose )
 void
 MutationsFilter::reference_pose( core::pose::Pose const & pose )
 {
-	reference_pose_ = new core::pose::Pose( pose );
+	reference_pose_ = core::pose::PoseCOP( new core::pose::Pose( pose ) );
 }
 
 core::Size
@@ -317,7 +317,7 @@ MutationsFilter::parse_my_tag( utility::tag::TagCOP tag,
 
 protocols::filters::FilterOP
 MutationsFilter::fresh_instance() const{
-	return new MutationsFilter();
+	return protocols::filters::FilterOP( new MutationsFilter() );
 }
 
 MutationsFilter::~MutationsFilter(){}
@@ -325,11 +325,11 @@ MutationsFilter::~MutationsFilter(){}
 
 protocols::filters::FilterOP
 MutationsFilter::clone() const{
-	return new MutationsFilter( *this );
+	return protocols::filters::FilterOP( new MutationsFilter( *this ) );
 }
 
 protocols::filters::FilterOP
-MutationsFilterCreator::create_filter() const { return new MutationsFilter; }
+MutationsFilterCreator::create_filter() const { return protocols::filters::FilterOP( new MutationsFilter ); }
 
 std::string
 MutationsFilterCreator::keyname() const { return "Mutations"; }

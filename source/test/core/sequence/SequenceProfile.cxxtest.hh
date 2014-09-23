@@ -156,13 +156,9 @@ public:
 		using utility::file::FileName;
 		using namespace core::sequence;
 
-		SequenceProfileOP prof1(
-			new SequenceProfile( FileName("core/sequence/1aho_.fasta.pssm" ) )
-		);
+		SequenceProfileOP prof1( new SequenceProfile( FileName("core/sequence/1aho_.fasta.pssm" ) ) );
 		prof1->convert_profile_to_probs(); // was previously implicit in constructor
-		SequenceProfileOP prof2(
-			new SequenceProfile( FileName("core/sequence/1aho_hom.fasta.pssm" ) )
-		);
+		SequenceProfileOP prof2( new SequenceProfile( FileName("core/sequence/1aho_hom.fasta.pssm" ) ) );
 		prof2->convert_profile_to_probs(); // was previously implicit in constructor
 		TS_ASSERT( prof1->length() == 64 );
 		TS_ASSERT( prof2->length() == 65 );
@@ -170,7 +166,7 @@ public:
 //		core::Real const TOLERATED_ERROR( 0.00001 );
 
 		ScoringSchemeOP simple_ss( new SimpleScoringScheme( 6, 1, -8, -1 ) );
-		ScoringSchemeOP prof_sim ( new ProfSimScoringScheme( -1, -0.1 ) );
+		ScoringSchemeOP prof_sim( new ProfSimScoringScheme( -1, -0.1 ) );
 
 		NWAligner nw_align;
 
@@ -202,9 +198,7 @@ public:
 	void test_sequence_manipulation() {
 		using utility::file::FileName;
 		using namespace core::sequence;
-		SequenceProfileOP prof(
-			new SequenceProfile( FileName("core/sequence/1aho_.fasta.pssm" ) )
-		);
+		SequenceProfileOP prof( new SequenceProfile( FileName("core/sequence/1aho_.fasta.pssm" ) ) );
 
 		TS_ASSERT( prof->sequence() == "VKDGYIVDDVNCTYFCGRNAYCNEECTKLKGESGYCQWASPYGNACYCYKLPDHVRTKGPGRCH" );
 		TS_ASSERT( prof->prof_row(1).size() == 20 );

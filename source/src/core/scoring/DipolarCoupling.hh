@@ -66,7 +66,7 @@ public:
 
 	//this class lives in the PoseCache.... need to provide clone()
 	basic::datacache::CacheableDataOP clone() const {
-		return new DipolarCoupling(*this);
+		return basic::datacache::CacheableDataOP( new DipolarCoupling(*this) );
 	}
 
 	///@brief compute dc score for given pose (non-constant due to membrane)

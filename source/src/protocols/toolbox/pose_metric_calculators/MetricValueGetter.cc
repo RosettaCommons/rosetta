@@ -25,7 +25,7 @@ namespace pose_metric_calculators {
 MetricValueGetter::MetricValueGetter() :
 	calculator_(""),
 	key_(""),
-	metric_value_template_(NULL)
+	metric_value_template_(/* NULL */)
 {}
 
 MetricValueGetter::MetricValueGetter(

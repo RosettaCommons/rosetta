@@ -62,7 +62,7 @@ RDCScore::RDCScore(
 	use_lowest, 
 	"RDCScore"
 	) {
-	rdc_file_ = new core::scoring::ResidualDipolarCoupling;
+	rdc_file_ = core::scoring::ResidualDipolarCouplingOP( new core::scoring::ResidualDipolarCoupling );
 	rdc_raw_data_ = rdc_file_->get_RDC_data(); 
 } 
 
@@ -132,8 +132,7 @@ bool RDCScore::score(
 	}
 	
 	//read rdc data as lines
-	core::scoring::ResidualDipolarCouplingOP rdc_data_given_fragment =
-		new core::scoring::ResidualDipolarCoupling ( rdc_data_given_fragment_lines );
+	core::scoring::ResidualDipolarCouplingOP rdc_data_given_fragment( new core::scoring::ResidualDipolarCoupling ( rdc_data_given_fragment_lines ) );
   core::scoring::store_RDC_in_pose( rdc_data_given_fragment, frag_pose );
 
 	///////////////////////////////////////////////////////////////
@@ -158,11 +157,11 @@ FragmentScoringMethodOP MakeRDCScore::make(
 		std::string 
 	) {
 		return ( FragmentScoringMethodOP ) 
-			new RDCScore(
+			FragmentScoringMethodOP( new RDCScore(
 			  priority,
 			  lowest_acceptable_value,
 			  use_lowest
-			);
+			) );
 	}
 
 } // scores

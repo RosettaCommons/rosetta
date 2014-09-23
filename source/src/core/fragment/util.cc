@@ -115,7 +115,7 @@ void steal_constant_length_frag_set_from_pose ( pose::Pose const& pose_in, Const
 
 		//steal backbone torsion fragment
 		if ( free_of_cut ) {
-			frame = new Frame( pos, FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), len ) ) );
+			frame = FrameOP( new Frame( pos, FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), len ) ) ) );
 			frame->steal( pose );
 			fragset.add( frame );
 		}
@@ -130,7 +130,7 @@ void steal_frag_set_from_pose ( pose::Pose const& pose_in, FragSet& fragset, cor
 	pose::Pose pose = pose_in;
 	pose::set_ss_from_phipsi( pose );
 	for ( Size pos = 1; pos <= pose.total_residue() - len + 1; ++pos ) {
-		frame = new Frame( pos, frag_type );
+		frame = FrameOP( new Frame( pos, frag_type ) );
 		frame->steal( pose );
 		fragset.add( frame );
 	}
@@ -144,7 +144,7 @@ void steal_frag_set_from_pose ( pose::Pose const& pose_in, Size const begin, Siz
 	pose::Pose pose = pose_in;
 	pose::set_ss_from_phipsi( pose );
 	for ( Size pos = begin; pos <= end - len + 1; ++pos ) {
-		frame = new Frame( pos, frag_type );
+		frame = FrameOP( new Frame( pos, frag_type ) );
 		frame->steal( pose );
 		fragset.add( frame );
 	}
@@ -164,7 +164,7 @@ void steal_frag_set_from_pose (
 	pose::set_ss_from_phipsi( pose );
 	for ( std::set< core::Size >::const_iterator pos = selected_residues.begin();
 				pos != selected_residues.end(); ++pos ) {
-		frame = new Frame( *pos, frag_type );
+		frame = FrameOP( new Frame( *pos, frag_type ) );
 		frame->steal( pose );
 		fragset.add( frame );
 	}
@@ -177,7 +177,7 @@ void chop_fragments( core::fragment::FragSet& source, core::fragment::FragSet& d
 	runtime_assert( tlen < slen );
 	FrameList dest_frames;
 	for ( Size pos = 1; pos <= source.max_pos() + slen - tlen; pos++ ) {
-		dest_frames.push_back( new Frame( pos, tlen ) );
+		dest_frames.push_back( utility::pointer::shared_ptr<class core::fragment::Frame>( new Frame( pos, tlen ) ) );
 	}
 	for ( ConstFrameIterator it=source.begin(), eit=source.end(); it!=eit; ++it ) {
 		Frame const& fr( **it );
@@ -440,7 +440,7 @@ void read_std_frags_from_cmd( FragSetOP& fragset_large, FragSetOP& fragset_small
 
 	if ( option[ OptionKeys::abinitio::steal_3mers ]() || option[ OptionKeys::abinitio::steal_9mers ]() ) {
 		// read native pose to get sequence
-		pose::PoseOP native_pose = new pose::Pose;
+		pose::PoseOP native_pose( new pose::Pose );
 		if ( option[ in::file::native ].user() ) {
 			core::import_pose::pose_from_pdb( *native_pose, option[ in::file::native ]() );
 			pose::set_ss_from_phipsi( *native_pose );
@@ -450,12 +450,12 @@ void read_std_frags_from_cmd( FragSetOP& fragset_large, FragSetOP& fragset_small
 		tr.Info << " stealing fragments from native pose: ATTENTION: native pose has to be IDEALIZED!!! " << std::endl;
 		//		utility_exit_with_message(" stealing fragments from pose: currently not supported! ask Oliver " );
 		if ( option[ OptionKeys::abinitio::steal_9mers ]() ) {
-			if ( !fragset_large ) fragset_large = new ConstantLengthFragSet( 9 );
-			steal_frag_set_from_pose( *native_pose, *fragset_large,	new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large->max_frag_length() ) );
+			if ( !fragset_large ) fragset_large = FragSetOP( new ConstantLengthFragSet( 9 ) );
+			steal_frag_set_from_pose( *native_pose, *fragset_large,	core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large->max_frag_length() ) ) );
 		}
 		if ( option[ OptionKeys::abinitio::steal_3mers ]() ) {
-			if ( !fragset_small ) fragset_small = new ConstantLengthFragSet( 3 );
-			steal_frag_set_from_pose( *native_pose, *fragset_small,	new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small->max_frag_length() ) );
+			if ( !fragset_small ) fragset_small = FragSetOP( new ConstantLengthFragSet( 3 ) );
+			steal_frag_set_from_pose( *native_pose, *fragset_small,	core::fragment::FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small->max_frag_length() ) ) );
 		}
 	}
 
@@ -531,7 +531,7 @@ fragment_set_slice( core::fragment::ConstantLengthFragSetOP & fragset,
 
 	Size const len( fragset->max_frag_length() );
 
-	ConstantLengthFragSetOP fragset_new = new ConstantLengthFragSet;
+	ConstantLengthFragSetOP fragset_new( new ConstantLengthFragSet );
 
 	for ( Size n = 1; n <= (slice_res.size() - len + 1); n++ ) {
 
@@ -550,7 +550,7 @@ fragment_set_slice( core::fragment::ConstantLengthFragSetOP & fragset,
 		assert( frames.size() == 1 );
 
 		FrameOP & frame( frames[1] );
-		FrameOP frame_new = new Frame( n, len );
+		FrameOP frame_new( new Frame( n, len ) );
 
 		for ( Size k = 1; k <= frame->nr_frags(); k++ ) {
 			frame_new->add_fragment( frame->fragment_ptr( k ) );

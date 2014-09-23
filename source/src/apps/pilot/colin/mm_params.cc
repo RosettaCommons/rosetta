@@ -193,7 +193,7 @@ main
 	for (core::Size rttheta0 = 0; rttheta0 <= 1; ++rttheta0) {
 		if (rttheta0) {
 			std::cout << "ResidueType theta0" << std::endl;
-			core::scoring::mm::MMBondAngleResidueTypeParamSetOP param_set(new core::scoring::mm::MMBondAngleResidueTypeParamSet());
+			core::scoring::mm::MMBondAngleResidueTypeParamSetOP param_set( new core::scoring::mm::MMBondAngleResidueTypeParamSet() );
 			param_set->use_residue_type_theta0(true);
 			branchopt.bond_angle_residue_type_param_set(param_set);
 		} else {

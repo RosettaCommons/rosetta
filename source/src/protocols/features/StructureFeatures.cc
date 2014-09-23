@@ -96,7 +96,7 @@ StructureFeatures::write_schema_to_db(
 
 	TR.Debug << "Writing StructureFeatures schema." << std::endl;
 
-	Column struct_id("struct_id", new DbBigInt(), false /*not null*/, true);
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ), false /*not null*/, true);
 
 	if (db_session->is_db_partitioned())
 	{
@@ -111,12 +111,12 @@ StructureFeatures::write_schema_to_db(
 
 		TR.Debug << "Setting struct_id autoincrement prefix for partitioned DB. Partition: " << db_session->get_db_partition() << " Prefix: " << structure_prefix << std::endl;
 
-		struct_id = Column("struct_id", new DbBigInt(), false /*not null*/, true, structure_prefix + 1);
+		struct_id = Column("struct_id", DbDataTypeOP( new DbBigInt() ), false /*not null*/, true, structure_prefix + 1);
 	}
 
-	Column batch_id("batch_id", new DbInteger());
-	Column tag("tag", new DbText(255));
-	Column input_tag("input_tag", new DbText());
+	Column batch_id("batch_id", DbDataTypeOP( new DbInteger() ));
+	Column tag("tag", DbDataTypeOP( new DbText(255) ));
+	Column input_tag("input_tag", DbDataTypeOP( new DbText() ));
 
 	/***structures***/
 	Schema structures("structures", PrimaryKey(struct_id));
@@ -137,7 +137,7 @@ StructureFeatures::write_schema_to_db(
 	utility::vector1<Column> unique_cols;
 	unique_cols.push_back(tag);
 	unique_cols.push_back(batch_id);
-	sampled_structures.add_constraint(new UniqueConstraint(unique_cols));
+	sampled_structures.add_constraint(ConstraintOP( new UniqueConstraint(unique_cols) ));
 
 	sampled_structures.write(db_session);
 }
@@ -162,9 +162,9 @@ StructureFeatures::report_features(
 	structures_insert.add_column("tag");
 	structures_insert.add_column("input_tag");
 
-	RowDataBaseOP batch_id_data = new RowData<Size>("batch_id",batch_id);
-	RowDataBaseOP tag_data = new RowData<string>("tag",tag);
-	RowDataBaseOP input_tag_data = new RowData<string>("input_tag",input_tag);
+	RowDataBaseOP batch_id_data( new RowData<Size>("batch_id",batch_id) );
+	RowDataBaseOP tag_data( new RowData<string>("tag",tag) );
+	RowDataBaseOP input_tag_data( new RowData<string>("input_tag",input_tag) );
 
 	structures_insert.add_row(utility::tools::make_vector(batch_id_data,tag_data,input_tag_data));
 
@@ -188,9 +188,9 @@ void StructureFeatures::mark_structure_as_sampled(
 	sampled_insert.add_column("tag");
 	sampled_insert.add_column("input_tag");
 
-	RowDataBaseOP batch_id_data = new RowData<Size>("batch_id",batch_id);
-	RowDataBaseOP tag_data = new RowData<string>("tag",tag);
-	RowDataBaseOP input_tag_data = new RowData<string>("input_tag",input_tag);
+	RowDataBaseOP batch_id_data( new RowData<Size>("batch_id",batch_id) );
+	RowDataBaseOP tag_data( new RowData<string>("tag",tag) );
+	RowDataBaseOP input_tag_data( new RowData<string>("input_tag",input_tag) );
 
 	sampled_insert.add_row(utility::tools::make_vector(batch_id_data,tag_data,input_tag_data));
 	sampled_insert.write_to_database(db_session);

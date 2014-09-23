@@ -124,8 +124,8 @@ public:
 		
 		TR << "Combine MoveMaps" << std::endl;
 		
-		MoveMapOP scaffold_mm = new MoveMap();
-		MoveMapOP insert_mm = new MoveMap();
+		MoveMapOP scaffold_mm( new MoveMap() );
+		MoveMapOP insert_mm( new MoveMap() );
 		
 		scaffold_mm->set_bb(22, true);
 		scaffold_mm->set_bb(23, true);
@@ -167,7 +167,7 @@ public:
 		
 		//////////////CCD Ends Graft ///////////////////////////////////
 		TR << "Testing CCDEndsGraftMover Mover" << std::endl;
-		CCDEndsGraftMoverOP cdr_grafter = new protocols::grafting::CCDEndsGraftMover(start, end, piece, nter_overhang, cter_overhang);
+		CCDEndsGraftMoverOP cdr_grafter( new protocols::grafting::CCDEndsGraftMover(start, end, piece, nter_overhang, cter_overhang) );
 		core::pose::Pose scaffold_copy = core::pose::Pose(scaffold_pose);
 		
 		cdr_grafter->set_scaffold_flexibility(flex, flex);
@@ -192,7 +192,7 @@ public:
 
 		////////////Anchored Graft /////////////////////////////////////
 		TR<< "Testing AnchoredGraft Mover" << std::endl;
-		AnchoredGraftMoverOP anchored_grafter = new protocols::grafting::AnchoredGraftMover(start, end, true);
+		AnchoredGraftMoverOP anchored_grafter( new protocols::grafting::AnchoredGraftMover(start, end, true) );
 		scaffold_copy = core::pose::Pose(scaffold_pose);
 		
 		anchored_grafter->set_piece(piece, nter_overhang, cter_overhang);

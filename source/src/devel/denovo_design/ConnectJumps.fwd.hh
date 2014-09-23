@@ -28,11 +28,11 @@ namespace denovo_design {
 class ConnectJumps;
 
 // Types
-typedef  utility::pointer::owning_ptr< ConnectJumps >  ConnectJumpsOP;
-typedef  utility::pointer::owning_ptr< ConnectJumps const >  ConnectJumpsCOP;
+typedef  utility::pointer::shared_ptr< ConnectJumps >  ConnectJumpsOP;
+typedef  utility::pointer::shared_ptr< ConnectJumps const >  ConnectJumpsCOP;
 
-typedef  utility::pointer::access_ptr< ConnectJumps >  ConnectJumpsAP;
-typedef  utility::pointer::access_ptr< ConnectJumps const >  ConnectJumpsCAP;
+typedef  utility::pointer::weak_ptr< ConnectJumps >  ConnectJumpsAP;
+typedef  utility::pointer::weak_ptr< ConnectJumps const >  ConnectJumpsCAP;
 
 
 } // namespace denovo_design

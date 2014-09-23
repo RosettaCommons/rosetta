@@ -121,11 +121,11 @@ AsymFoldandDockRbTrialMover::apply( core::pose::Pose & pose )
 	}
 
 	// Setup Monte Carlo object
-	protocols::moves::MonteCarloOP monteCarlo_ = new protocols::moves::MonteCarlo(pose, *scorefxn_, 2.0 );
+	protocols::moves::MonteCarloOP monteCarlo_( new protocols::moves::MonteCarlo(pose, *scorefxn_, 2.0 ) );
 
 
 	// Setup the movemap
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
+	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
 	movemap->set_bb( false );
 	movemap->set_chi( false );
 	movemap->set_jump( true );

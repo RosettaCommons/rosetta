@@ -149,7 +149,7 @@ ParallelBetaPairingPreferenceFilter::compute( Pose const & pose ) const
 	float dssp_hbond_threshold = -0.5;
 
 	Dssp dssp( pose );
-	SS_Info2_OP ssinfo = new SS_Info2( pose, dssp.get_dssp_secstruct() );
+	SS_Info2_OP ssinfo( new SS_Info2( pose, dssp.get_dssp_secstruct() ) );
 	StrandPairingSet spairset = calc_strand_pairing_set( pose, ssinfo );
 
 	Size num_pair( 0 );
@@ -222,7 +222,7 @@ ParallelBetaPairingPreferenceFilter::parse_my_tag(
 }
 
 protocols::filters::FilterOP
-ParallelBetaPairingPreferenceFilterCreator::create_filter() const { return new ParallelBetaPairingPreferenceFilter; }
+ParallelBetaPairingPreferenceFilterCreator::create_filter() const { return protocols::filters::FilterOP( new ParallelBetaPairingPreferenceFilter ); }
 
 std::string
 ParallelBetaPairingPreferenceFilterCreator::keyname() const { return "ParallelBetaPairingPreference"; }

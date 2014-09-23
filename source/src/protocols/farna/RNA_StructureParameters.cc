@@ -287,7 +287,7 @@ void
 RNA_StructureParameters::initialize_allow_insert( core::pose::Pose & pose  )
 {
 
- 	allow_insert_ = new toolbox::AllowInsert( pose );
+ 	allow_insert_ = toolbox::AllowInsertOP( new toolbox::AllowInsert( pose ) );
 
  	if (allow_insert_res_.size() > 0 ) {
  		allow_insert_->set( false );

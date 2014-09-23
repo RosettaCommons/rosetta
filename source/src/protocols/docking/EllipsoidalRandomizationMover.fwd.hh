@@ -21,8 +21,8 @@ namespace protocols {
 namespace docking {
 	/// @brief this mover randomly places one docking partner about an ellipsoid representation of the other
 	class EllipsoidalRandomizationMover;
-	typedef utility::pointer::owning_ptr< EllipsoidalRandomizationMover > EllipsoidalRandomizationMoverOP;
-	typedef utility::pointer::owning_ptr< EllipsoidalRandomizationMover const > EllipsoidalRandomizationMoverCOP;
+	typedef utility::pointer::shared_ptr< EllipsoidalRandomizationMover > EllipsoidalRandomizationMoverOP;
+	typedef utility::pointer::shared_ptr< EllipsoidalRandomizationMover const > EllipsoidalRandomizationMoverCOP;
 
 } //docking
 } //protocols

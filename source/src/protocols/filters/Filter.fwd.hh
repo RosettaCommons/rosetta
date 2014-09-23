@@ -35,12 +35,12 @@ class Filter;
 class FilterCollection;
 
 // Types
-typedef utility::pointer::owning_ptr< Filter >  FilterOP;
-typedef utility::pointer::owning_ptr< Filter const >  FilterCOP;
+typedef utility::pointer::shared_ptr< Filter >  FilterOP;
+typedef utility::pointer::shared_ptr< Filter const >  FilterCOP;
 typedef boost::shared_ptr < Filter > FilterSP;
 
-typedef utility::pointer::owning_ptr< FilterCollection >  FilterCollectionOP;
-typedef utility::pointer::owning_ptr< FilterCollection const >  FilterCollectionCOP;
+typedef utility::pointer::shared_ptr< FilterCollection >  FilterCollectionOP;
+typedef utility::pointer::shared_ptr< FilterCollection const >  FilterCollectionCOP;
 
 typedef utility::vector1< FilterOP > FilterOPs;
 typedef utility::vector1< FilterCOP > FilterCOPs;

@@ -227,8 +227,8 @@ namespace packstat {
 		Real cluster_min_volume;
 	};
 
-	typedef utility::pointer::owning_ptr< SasaResult  > SasaResultOP;
-	typedef utility::pointer::owning_ptr< SasaOptions > SasaOptionsOP;
+	typedef utility::pointer::shared_ptr< SasaResult  > SasaResultOP;
+	typedef utility::pointer::shared_ptr< SasaOptions > SasaOptionsOP;
 
 	struct CavityBallCluster {
 		numeric::xyzVector<core::Real> center;

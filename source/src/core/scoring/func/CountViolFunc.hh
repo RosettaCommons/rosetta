@@ -45,7 +45,7 @@ namespace func {
 		~CountViolFunc() {};
 
 		FuncOP
-		clone() const { return new CountViolFunc( *this ); }
+		clone() const { return FuncOP( new CountViolFunc( *this ) ); }
 
 		Real func( Real const x ) const;
 		Real dfunc( Real const x ) const;

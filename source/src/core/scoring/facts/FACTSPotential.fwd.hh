@@ -24,26 +24,26 @@ namespace scoring {
   //Declaring a class of type FACTSResidueInfo
   class FACTSRsdTypeInfo;
 	//Creating an alias for a pointer of type FACTSResidueInfo
-  typedef utility::pointer::owning_ptr< FACTSRsdTypeInfo > FACTSRsdTypeInfoOP;
-  typedef utility::pointer::owning_ptr< FACTSRsdTypeInfo const > FACTSRsdTypeInfoCOP;
+  typedef utility::pointer::shared_ptr< FACTSRsdTypeInfo > FACTSRsdTypeInfoOP;
+  typedef utility::pointer::shared_ptr< FACTSRsdTypeInfo const > FACTSRsdTypeInfoCOP;
 
   //Declaring a class of type FACTSResidueInfo
   class FACTSResidueInfo;
 	//Creating an alias for a pointer of type FACTSResidueInfo
-  typedef utility::pointer::owning_ptr< FACTSResidueInfo > FACTSResidueInfoOP;
+  typedef utility::pointer::shared_ptr< FACTSResidueInfo > FACTSResidueInfoOP;
 
 	//Declaring a class of type FACTSPoseInfo
 	class FACTSPoseInfo;
 	//Creating an alias for a pointer of type FACTSPoseInfo
-	typedef utility::pointer::owning_ptr< FACTSPoseInfo > FACTSPoseInfoOP;
+	typedef utility::pointer::shared_ptr< FACTSPoseInfo > FACTSPoseInfoOP;
 
 	class FACTSRotamerSetInfo;
-	typedef utility::pointer::owning_ptr< FACTSRotamerSetInfo > FACTSRotamerSetInfoOP;
+	typedef utility::pointer::shared_ptr< FACTSRotamerSetInfo > FACTSRotamerSetInfoOP;
 
 	//Declaring a class of type FACTSPotential
 	class FACTSPotential;
 	//Creating an alias for a pointer of type FACTSResidueInfo
-  typedef utility::pointer::owning_ptr< FACTSPotential > FACTSPotentialOP;
+  typedef utility::pointer::shared_ptr< FACTSPotential > FACTSPotentialOP;
 
 	typedef std::map< chemical::ResidueType const *, FACTSRsdTypeInfoCOP > FACTSRsdTypeMap;
 

@@ -42,11 +42,11 @@ SecMatchEvaluatorFactory::create_SecMatchResiduePairEvaluatorOP(
 ){
 	Size found = SecMatchStr.find("SCORING_SECMATCH");
 	if (found!=std::string::npos){
-		ScoringSecMatchRPEOP ssmOP = new ScoringSecMatchRPE ( SecMatchStr, upstream_pose );
+		ScoringSecMatchRPEOP ssmOP( new ScoringSecMatchRPE ( SecMatchStr, upstream_pose ) );
 		return ssmOP;
 	}
 
-	GeometrySecMatchRPEOP gsmOP = new GeometrySecMatchRPE ( mcfi, downstream_inds, upstream_inds );
+	GeometrySecMatchRPEOP gsmOP( new GeometrySecMatchRPE ( mcfi, downstream_inds, upstream_inds ) );
 	return gsmOP;
 }
 

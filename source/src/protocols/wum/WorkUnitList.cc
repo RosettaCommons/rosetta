@@ -36,7 +36,7 @@ const WorkUnitBaseCOP WorkUnitList::get_work_unit( const std::string &name ) con
 	if( iter == work_unit_list_.end() ){
 		utility_exit_with_message( "ERROR: Cannot find WorkUnit named '" + name + "'" );
 	}
-	return iter->second();
+	return iter->second;
 }
 
 // Copy over all the WorkUnitOPs from source to the current workUnitlist.

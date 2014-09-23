@@ -40,7 +40,7 @@ InterfaceHolesFilter::compute( core::pose::Pose const & pose ) const
 	using namespace core;
 	using namespace core::scoring;
 	pose::Pose copy_pose = pose;
-	ScoreFunctionOP sfxn = new ScoreFunction;
+	ScoreFunctionOP sfxn( new ScoreFunction );
 	sfxn->set_weight( holes_decoy, 1.0 );
 	core::Real const weight( (*sfxn)[ ScoreType( holes_decoy ) ] );
 	protocols::scoring::Interface iface( rb_jump_ );
@@ -107,7 +107,7 @@ InterfaceHolesFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 }
 
 protocols::filters::FilterOP
-InterfaceHolesFilterCreator::create_filter() const { return new InterfaceHolesFilter; }
+InterfaceHolesFilterCreator::create_filter() const { return protocols::filters::FilterOP( new InterfaceHolesFilter ); }
 
 std::string
 InterfaceHolesFilterCreator::keyname() const { return "InterfaceHoles"; }

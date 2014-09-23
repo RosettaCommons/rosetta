@@ -238,8 +238,8 @@ TorsionSamplingKinematicPerturber::perturb_chain(
 
 		//Looping over all CA angles:
 		for(core::Size ir = startres, curatom = pvatom1; ir<=endres; ++ir) {
-			if( !kinmover()->is_beta_aminoacid(pose.residue(ir)) /*Add checks here as other backbones are added*/ ) bond_ang[curatom] = bangle_min + numeric::random::rg().uniform() * bangle_sd; //Shouldn't this be bangle_avg() + RG.gaussian() * bangle_sd?
-			curatom += kinmover()->count_bb_atoms_in_residue(pose, ir);
+			if( !kinmover_op->is_beta_aminoacid(pose.residue(ir)) /*Add checks here as other backbones are added*/ ) bond_ang[curatom] = bangle_min + numeric::random::rg().uniform() * bangle_sd; //Shouldn't this be bangle_avg() + RG.gaussian() * bangle_sd?
+			curatom += kinmover_op->count_bb_atoms_in_residue(pose, ir);
 		}
 	} //if( vary_ca_bond_angles_ )
 

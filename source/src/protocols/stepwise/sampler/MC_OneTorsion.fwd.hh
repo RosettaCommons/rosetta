@@ -23,8 +23,8 @@ namespace stepwise {
 namespace sampler {
 
 class MC_OneTorsion;
-typedef utility::pointer::owning_ptr< MC_OneTorsion > MC_OneTorsionOP;
-typedef utility::pointer::access_ptr< MC_OneTorsion > MC_OneTorsionAP;
+typedef utility::pointer::shared_ptr< MC_OneTorsion > MC_OneTorsionOP;
+typedef utility::pointer::weak_ptr< MC_OneTorsion > MC_OneTorsionAP;
 
 } //sampler
 } //stepwise

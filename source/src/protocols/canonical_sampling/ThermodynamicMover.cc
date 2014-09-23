@@ -94,7 +94,7 @@ ThermodynamicMover::last_inner_score_temperature_delta()
 protocols::canonical_sampling::MetropolisHastingsMoverAP
 ThermodynamicMover::metropolis_hastings_mover()
 {
-	return 0;
+	return protocols::canonical_sampling::MetropolisHastingsMoverAP();
 }
 
 void

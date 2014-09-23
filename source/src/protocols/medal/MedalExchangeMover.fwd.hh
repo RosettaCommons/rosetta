@@ -19,8 +19,8 @@ namespace protocols {
 namespace medal {
 
 class MedalFreeMover;
-typedef utility::pointer::owning_ptr<MedalFreeMover> MedalFreeMoverOP;
-typedef utility::pointer::owning_ptr<MedalFreeMover const> MedalFreeMoverCOP;
+typedef utility::pointer::shared_ptr<MedalFreeMover> MedalFreeMoverOP;
+typedef utility::pointer::shared_ptr<MedalFreeMover const> MedalFreeMoverCOP;
 
 }  // namespace medal
 }  // namespace protocols

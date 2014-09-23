@@ -61,7 +61,7 @@ int main( int argc, char * argv [] ) {
   devel::init(argc, argv);
 
 	// configure the idealize mover
-	IdealizeMoverOP idealizer = new IdealizeMover();
+	IdealizeMoverOP idealizer( new IdealizeMover() );
 
 	if ( option[ coordinate_constraint_weight ].user() ) {
 		idealizer->coordinate_constraint_weight( option[ coordinate_constraint_weight ]() ) ;
@@ -77,8 +77,8 @@ int main( int argc, char * argv [] ) {
 
 	// optionally set pose for symmetry
 	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-		SequenceMoverOP seqmov = new SequenceMover();
-		seqmov->add_mover( new SetupForSymmetryMover() );
+		SequenceMoverOP seqmov( new SequenceMover() );
+		seqmov->add_mover( MoverOP( new SetupForSymmetryMover() ) );
 		seqmov->add_mover( mover );
 		mover = seqmov;
 	}

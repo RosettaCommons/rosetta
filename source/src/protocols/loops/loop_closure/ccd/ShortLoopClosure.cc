@@ -84,7 +84,7 @@ ShortLoopClosure::ShortLoopClosure(
 ) : LoopClosure(),
     orig_loop_( loop_def )
 {
-  scoring::ScoreFunctionOP scorefxn = new scoring::ScoreFunction;
+  scoring::ScoreFunctionOP scorefxn( new scoring::ScoreFunction );
   scorefxn->set_weight( scoring::linear_chainbreak, 1.0 );
   scorefxn->set_weight( scoring::overlap_chainbreak, 3.0 );
   set_scorefxn( scorefxn );
@@ -92,7 +92,7 @@ ShortLoopClosure::ShortLoopClosure(
   set_temperature( 0.0 );
 
 //  this is now done in base-class
-  kinematics::MoveMapOP movemap = new kinematics::MoveMap;
+  kinematics::MoveMapOP movemap( new kinematics::MoveMap );
 //   //*movemap = *movemap_in; no copying since seqpos don't make sense
  	movemap->set_bb( true ); //alternatively go through "movemap_in and translate settings for each bb
 	movemap->set_bb( 1, false );

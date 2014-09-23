@@ -168,7 +168,7 @@ LoopMover_Refine_CCD::show(std::ostream & output) const
 
 //clone
 protocols::moves::MoverOP LoopMover_Refine_CCD::clone() const {
-		return new LoopMover_Refine_CCD(*this);
+		return protocols::moves::MoverOP( new LoopMover_Refine_CCD(*this) );
 }
 
 
@@ -177,7 +177,7 @@ void LoopMover_Refine_CCD::set_default_settings()
 		redesign_loop_ = false;
 		packing_isolated_to_active_loops_ = false;
 		flank_residue_min_ = false; // added by JQX
-		move_map_ = new core::kinematics::MoveMap;
+		move_map_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
 		inner_cycles_ = max_inner_cycles_;
 		current_cycle_number_ = 0;
 		original_fold_tree_ = NULL;
@@ -232,7 +232,7 @@ void LoopMover_Refine_CCD::set_task_factory(
 {
 	// make local, non-const copy from const input
 	runtime_assert( task_factory_in != 0 );
-	task_factory_ = new core::pack::task::TaskFactory( *task_factory_in );
+	task_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory( *task_factory_in ) );
 }
 
 core::pack::task::TaskFactoryCOP LoopMover_Refine_CCD::get_task_factory() const { return task_factory_; }
@@ -250,7 +250,7 @@ LoopMover_Refine_CCD::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 		break;
 	}
 	if( specified_movemap ){
-		move_map( new core::kinematics::MoveMap );
+		move_map( LoopMover::MoveMapOP( new core::kinematics::MoveMap ) );
 		move_map_->set_bb( false );
 		move_map_->set_chi( false );
 		move_map_->set_jump( false );
@@ -287,7 +287,7 @@ void LoopMover_Refine_CCD::apply( core::pose::Pose & pose )
 	/// must be called once the Pose has become available.
 	resolve_loop_indices( pose );
 
-	if ( ! get_native_pose() ) set_native_pose( new core::pose::Pose( pose ) );
+	if ( ! get_native_pose() ) set_native_pose( PoseCOP( new core::pose::Pose( pose ) ) );
 	if( use_loops_from_observer_cache() ) this->set_loops_from_pose_observer_cache( pose );
 
 	setup_foldtree_and_add_cutpoint_variants( pose );
@@ -301,7 +301,7 @@ void LoopMover_Refine_CCD::apply( core::pose::Pose & pose )
 	// make sure we have scored before we instantiate monte carlo and before we ask for a tenA neighbor graph
 	(*ramping_scorefxn())(pose);
 
-	protocols::moves::MonteCarloOP mc = new moves::MonteCarlo( pose, *ramping_scorefxn(), temp_initial_ );
+	protocols::moves::MonteCarloOP mc( new moves::MonteCarlo( pose, *ramping_scorefxn(), temp_initial_ ) );
 	pack::task::PackerTaskOP pack_task = get_packer_task( pose );
 	pack::pack_rotamers( pose, *ramping_scorefxn(), pack_task );
 	std::string move_type = "repack";
@@ -378,7 +378,7 @@ basic::Tracer & LoopMover_Refine_CCD::tr() const
 LoopMover_Refine_CCDCreator::~LoopMover_Refine_CCDCreator() {}
 
 moves::MoverOP LoopMover_Refine_CCDCreator::create_mover() const {
-  return new LoopMover_Refine_CCD();
+  return moves::MoverOP( new LoopMover_Refine_CCD() );
 }
 
 std::string LoopMover_Refine_CCDCreator::keyname() const {
@@ -407,7 +407,7 @@ void LoopMover_Refine_CCD::setup_foldtree_and_add_cutpoint_variants( core::pose:
 {
 	if( set_fold_tree_from_loops_ ){
 		core::kinematics::FoldTree f_new;
-		original_fold_tree_ = new core::kinematics::FoldTree( pose.fold_tree() );
+		original_fold_tree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree( pose.fold_tree() ) );
 		loops::fold_tree_from_loops( pose, *( this->loops() ), f_new);
 		pose.fold_tree( f_new );
 	}
@@ -424,12 +424,12 @@ core::pack::task::PackerTaskOP LoopMover_Refine_CCD::get_packer_task( core::pose
 		using namespace core::pack::task::operation;
 		using toolbox::task_operations::RestrictToLoopsAndNeighbors;
 		using toolbox::task_operations::RestrictToLoopsAndNeighborsOP;
-		task_factory_ = new TaskFactory;
-		task_factory_->push_back( new InitializeFromCommandline );
-		task_factory_->push_back( new IncludeCurrent );
-		task_factory_->push_back( new NoRepackDisulfides );
+		task_factory_ = core::pack::task::TaskFactoryOP( new TaskFactory );
+		task_factory_->push_back( TaskOperationCOP( new InitializeFromCommandline ) );
+		task_factory_->push_back( TaskOperationCOP( new IncludeCurrent ) );
+		task_factory_->push_back( TaskOperationCOP( new NoRepackDisulfides ) );
 
-		RestrictToLoopsAndNeighborsOP restrict_to_loops_and_neighbors = new RestrictToLoopsAndNeighbors();
+		RestrictToLoopsAndNeighborsOP restrict_to_loops_and_neighbors( new RestrictToLoopsAndNeighbors() );
 
 		// This can be simplified by making a constructor that takes these settings as arguments
 		restrict_to_loops_and_neighbors->set_cutoff_distance( 10.0 );

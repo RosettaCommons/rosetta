@@ -83,10 +83,10 @@ public:// virtual constructor
 
 
 	/// @brief make clone
-	virtual FilterOP clone() const { return new NcontactsFilter( *this ); }
+	virtual FilterOP clone() const { return FilterOP( new NcontactsFilter( *this ) ); }
 
 	/// @brief make fresh instance
-	virtual FilterOP fresh_instance() const {	return new NcontactsFilter(); }
+	virtual FilterOP fresh_instance() const {	return FilterOP( new NcontactsFilter() ); }
 
 
 public:// accessor

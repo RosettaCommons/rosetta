@@ -53,14 +53,14 @@ static thread_local basic::Tracer TR( "protocols.dna.WatsonCrickRotamerCouplings
 
 TaskOperationOP WatsonCrickRotamerCouplingsCreator::create_task_operation() const
 {
-	return new WatsonCrickRotamerCouplings;
+	return TaskOperationOP( new WatsonCrickRotamerCouplings );
 }
 
 WatsonCrickRotamerCouplings::~WatsonCrickRotamerCouplings() {}
 
 TaskOperationOP WatsonCrickRotamerCouplings::clone() const
 {
-	return new WatsonCrickRotamerCouplings( *this );
+	return TaskOperationOP( new WatsonCrickRotamerCouplings( *this ) );
 }
 
 void

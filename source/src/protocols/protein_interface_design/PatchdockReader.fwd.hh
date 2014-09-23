@@ -20,8 +20,8 @@ namespace protein_interface_design {
 
 class PatchdockReader;
 
-typedef utility::pointer::owning_ptr< PatchdockReader > PatchdockReaderOP;
-typedef utility::pointer::owning_ptr< PatchdockReader const > PatchdockReaderCOP;
+typedef utility::pointer::shared_ptr< PatchdockReader > PatchdockReaderOP;
+typedef utility::pointer::shared_ptr< PatchdockReader const > PatchdockReaderCOP;
 
 } //namespace protein_interface_design
 } //namespace protocols

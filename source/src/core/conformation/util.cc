@@ -167,7 +167,7 @@ insert_ideal_mainchain_bonds(
 	Residue const & rsd( conformation.residue( seqpos ) );
 
 	// create a mini-conformation with
-	ConformationOP idl_op = new Conformation();
+	ConformationOP idl_op( new Conformation() );
 	Conformation & idl = *idl_op;
 	{
 		ResidueOP idl_rsd( ResidueFactory::create_residue( rsd.type() ) );
@@ -257,7 +257,7 @@ insert_ideal_bonds_at_polymer_junction(
 	}
 
 	// create a mini-conformation with ideal bond lengths and angles
-	ConformationOP idl_op = new Conformation();
+	ConformationOP idl_op( new Conformation() );
 	Conformation & idl = *idl_op;
 	{
 		ResidueOP idl_rsd( ResidueFactory::create_residue( rsd.type() ) );
@@ -313,7 +313,7 @@ idealize_position(
 
 	//// create a mini-conformation with completely ideal residue ( and nbrs, if appropriate )
 
-	ConformationOP idl_op = new Conformation();
+	ConformationOP idl_op( new Conformation() );
 	Conformation & idl = *idl_op;
 	{
 		ResidueOP idl_rsd( ResidueFactory::create_residue( rsd.type() ) );
@@ -449,9 +449,9 @@ is_ideal_position(
 	Residue const rsd( conf.residue( seqpos ) );
 
 	// I. Create mini-conformations for both idealized and original residue + nbrs, if appropriate )
-	ConformationOP miniconf_op = new Conformation();
+	ConformationOP miniconf_op( new Conformation() );
 	Conformation & miniconf = *miniconf_op;
-	ConformationOP miniconf_idl_op = new Conformation();
+	ConformationOP miniconf_idl_op( new Conformation() );
 	Conformation & miniconf_idl = *miniconf_idl_op;
 	{
 		miniconf.append_residue_by_bond( rsd );
@@ -767,7 +767,7 @@ build_jump_edge(
 	build_residue_tree( root_atomno, *residues[ estop ], atom_pointer[ estop ], true /*Jump*/ );
 
 	// now wire in the new residue connection
-	anchor_atom->insert_atom( atom_pointer[ id::AtomID( root_atomno, estop ) ]() );
+	anchor_atom->insert_atom( atom_pointer[ id::AtomID( root_atomno, estop ) ] );
 
 
 	// 	std::cout << "build_jump_edge: " << edge << ' ' <<  estop << ' ' << root_atomno << ' ' <<
@@ -812,7 +812,7 @@ build_polymer_edge(
 		kinematics::tree::AtomOP anchor_atom( atom_pointer( id::AtomID( anchor_atomno, anchor_pos ) ) );
 		kinematics::tree::AtomOP   root_atom( atom_pointer( id::AtomID(   root_atomno,        pos ) ) );
 		assert( anchor_atom && root_atom );
-		anchor_atom->insert_atom( root_atom() );
+		anchor_atom->insert_atom( root_atom );
 		//std::cout << "build_polymer_edge: " << edge << ' ' <<  pos << ' ' << root_atomno << ' ' <<
 		//	anchor_pos << ' ' << anchor_atomno << std::endl;
 		//if ( pos == start+dir ) first_anchor = AtomID( anchor_atomno, anchor_pos );
@@ -851,7 +851,7 @@ build_chemical_edge(
 	kinematics::tree::AtomOP   root_atom( atom_pointer( id::AtomID(   root_atomno, estop  ) ) );
 	assert( anchor_atom && root_atom );
 
-	anchor_atom->insert_atom( root_atom() );
+	anchor_atom->insert_atom( root_atom );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1633,11 +1633,11 @@ promote_sameresidue_child_of_jump_atom(
 	assert( edge.is_jump() );
 	Size root_pos( edge.stop() ), anchor_atomno, root_atomno;
 	get_anchor_and_root_atoms( *residues[ edge.start() ], *residues[ root_pos ], edge, anchor_atomno, root_atomno );
-	kinematics::tree::AtomOP root_atom( atom_pointer[ id::AtomID( root_atomno, root_pos ) ]() );
+	kinematics::tree::AtomOP root_atom( atom_pointer[ id::AtomID( root_atomno, root_pos ) ] );
 	assert( root_atom->is_jump() );
 	kinematics::tree::AtomOP same_residue_child( 0 );
 	for ( Size i=0; i< root_atom->n_nonjump_children(); ++i ) {
-		kinematics::tree::AtomOP child( atom_pointer[ root_atom->get_nonjump_atom( i )->id() ]() ); // want nonconst, use atom_pointer
+		kinematics::tree::AtomOP child( atom_pointer[ root_atom->get_nonjump_atom( i )->id() ] ); // want nonconst, use atom_pointer
 		if ( Size(child->id().rsd()) == root_pos ) {
 			same_residue_child = child;
 			break;

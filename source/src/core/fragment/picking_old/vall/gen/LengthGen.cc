@@ -63,7 +63,7 @@ LengthGen & LengthGen::operator =( LengthGen const & rval ) {
 
 /// @brief clone this object
 VallFragmentGenOP LengthGen::clone() const {
-	return new LengthGen( *this );
+	return VallFragmentGenOP( new LengthGen( *this ) );
 }
 
 

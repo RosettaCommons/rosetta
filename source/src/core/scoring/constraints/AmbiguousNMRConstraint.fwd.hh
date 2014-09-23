@@ -23,8 +23,8 @@ namespace constraints {
 
 class AmbiguousNMRConstraint;
 
-typedef utility::pointer::owning_ptr< AmbiguousNMRConstraint > AmbiguousNMRConstraintOP;
-typedef utility::pointer::owning_ptr< AmbiguousNMRConstraint const > AmbiguousNMRConstraintCOP;
+typedef utility::pointer::shared_ptr< AmbiguousNMRConstraint > AmbiguousNMRConstraintOP;
+typedef utility::pointer::shared_ptr< AmbiguousNMRConstraint const > AmbiguousNMRConstraintCOP;
 
 }
 }

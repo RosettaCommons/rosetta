@@ -28,8 +28,8 @@ namespace noesy_assign {
 class PeakFileFormat;
 
 // // Types
-typedef  utility::pointer::owning_ptr< PeakFileFormat >  PeakFileFormatOP;
-typedef  utility::pointer::owning_ptr< PeakFileFormat const >  PeakFileFormatCOP;
+typedef  utility::pointer::shared_ptr< PeakFileFormat >  PeakFileFormatOP;
+typedef  utility::pointer::shared_ptr< PeakFileFormat const >  PeakFileFormatCOP;
 
 // typedef  utility::pointer::access_ptr< PeakFileFormat >  PeakFileFormatAP;
 // typedef  utility::pointer::access_ptr< PeakFileFormat const >  PeakFileFormatCAP;

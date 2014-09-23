@@ -21,8 +21,8 @@ namespace replica_docking {
 
 class FnonnatFilter;
 
-typedef utility::pointer::owning_ptr< FnonnatFilter > FnonnatFilterOP;
-typedef utility::pointer::owning_ptr< FnonnatFilter const > FnonnatFilterCOP;
+typedef utility::pointer::shared_ptr< FnonnatFilter > FnonnatFilterOP;
+typedef utility::pointer::shared_ptr< FnonnatFilter const > FnonnatFilterCOP;
 
 }
 }

@@ -49,7 +49,7 @@ methods::EnergyMethodOP
 DistanceChainbreakEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new DistanceChainbreakEnergy;
+	return methods::EnergyMethodOP( new DistanceChainbreakEnergy );
 }
 
 ScoreTypes

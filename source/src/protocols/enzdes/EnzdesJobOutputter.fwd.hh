@@ -22,7 +22,7 @@ namespace protocols {
 namespace enzdes {
 
 class EnzdesJobOutputter;
-typedef utility::pointer::owning_ptr< EnzdesJobOutputter > EnzdesJobOutputterOP;
+typedef utility::pointer::shared_ptr< EnzdesJobOutputter > EnzdesJobOutputterOP;
 
 }//enzdes
 }//protocols

@@ -23,8 +23,8 @@ namespace protocols {
 namespace design_opt {
 
 class ParetoOptMutationMover;
-typedef utility::pointer::owning_ptr< ParetoOptMutationMover >  ParetoOptMutationMoverOP;
-typedef utility::pointer::owning_ptr< ParetoOptMutationMover const >  ParetoOptMutationMoverCOP;
+typedef utility::pointer::shared_ptr< ParetoOptMutationMover >  ParetoOptMutationMoverOP;
+typedef utility::pointer::shared_ptr< ParetoOptMutationMover const >  ParetoOptMutationMoverCOP;
 
 
 } // namespace design_opt

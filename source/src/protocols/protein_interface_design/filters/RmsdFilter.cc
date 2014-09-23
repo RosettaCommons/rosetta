@@ -58,7 +58,7 @@ RmsdFilter::RmsdFilter() :
 	superimpose_( true ),
 	symmetry_( false ),
 	threshold_( 5.0 ),
-	reference_pose_( NULL ),
+	reference_pose_( /* NULL */ ),
 	selection_from_segment_cache_(false),
 	superimpose_on_all_( false ),
   specify_both_spans_( false ),
@@ -95,7 +95,7 @@ RmsdFilter::~RmsdFilter() {}
 
 protocols::filters::FilterOP
 RmsdFilter::clone() const {
-	return new RmsdFilter( *this );
+	return protocols::filters::FilterOP( new RmsdFilter( *this ) );
 }
 
 static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.RmsdFilter" );
@@ -268,7 +268,7 @@ RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 		reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data_map );
 	}
 	else{
-		reference_pose_ = new core::pose::Pose( reference_pose );
+		reference_pose_ = core::pose::PoseOP( new core::pose::Pose( reference_pose ) );
 		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() )
 			core::import_pose::pose_from_pdb( *reference_pose_, basic::options::option[ basic::options::OptionKeys::in::file::native ] );
 	}
@@ -371,7 +371,7 @@ RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 }
 
 protocols::filters::FilterOP
-RmsdFilterCreator::create_filter() const { return new RmsdFilter; }
+RmsdFilterCreator::create_filter() const { return protocols::filters::FilterOP( new RmsdFilter ); }
 
 std::string
 RmsdFilterCreator::keyname() const { return "Rmsd"; }

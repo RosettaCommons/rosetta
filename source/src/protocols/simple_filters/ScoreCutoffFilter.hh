@@ -52,10 +52,10 @@ public:
 	ScoreCutoffFilter( core::Real cutoff_in );
 
 	filters::FilterOP clone() const {
-		return new ScoreCutoffFilter( *this ); }
+		return filters::FilterOP( new ScoreCutoffFilter( *this ) ); }
 
 	filters::FilterOP fresh_instance() const {
-		return new ScoreCutoffFilter(); }
+		return filters::FilterOP( new ScoreCutoffFilter() ); }
 
 	virtual void report( std::ostream & ostr, core::pose::Pose const & pose ) const;
 

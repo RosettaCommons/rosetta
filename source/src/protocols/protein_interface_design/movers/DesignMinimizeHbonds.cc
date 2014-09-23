@@ -57,7 +57,7 @@ DesignMinimizeHbondsCreator::keyname() const
 
 protocols::moves::MoverOP
 DesignMinimizeHbondsCreator::create_mover() const {
-	return new DesignMinimizeHbonds;
+	return protocols::moves::MoverOP( new DesignMinimizeHbonds );
 }
 
 std::string

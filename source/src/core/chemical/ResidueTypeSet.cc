@@ -472,7 +472,7 @@ void
 ResidueTypeSet::add_residue_type_to_maps( ResidueTypeOP rsd_ptr )
 {
 
-	residue_types_const_.push_back( rsd_ptr() );
+	residue_types_const_.push_back( rsd_ptr );
 
 	// name should be unique!
 	if ( name_map_.count( rsd_ptr->name() ) ) {
@@ -487,23 +487,23 @@ ResidueTypeSet::add_residue_type_to_maps( ResidueTypeOP rsd_ptr )
 
 	// map by AA
 	if ( rsd_ptr->aa() != aa_unk ) {
-		aa_map_[ rsd_ptr->aa() ].push_back( rsd_ptr() );
+		aa_map_[ rsd_ptr->aa() ].push_back( rsd_ptr );
 	}
 
 	// add aa type
 	aas_defined_.push_back( rsd_ptr->aa() );
 
 	// map by pdb string
-	name3_map_[ rsd_ptr->name3() ].push_back( rsd_ptr() );
+	name3_map_[ rsd_ptr->name3() ].push_back( rsd_ptr );
 
 	// map by interchangeability group
-	interchangeability_group_map_[ rsd_ptr->interchangeability_group() ].push_back( rsd_ptr() );
+	interchangeability_group_map_[ rsd_ptr->interchangeability_group() ].push_back( rsd_ptr );
 
 	// For specialty amino acids, add them to the name three maps both with their PDB strings and
 	// with their specialty string -- the first three letters of the residue name.
 	// E.g., CYD will appear in both lists for name3_map_[ "CYS" ] and name3_map_[ "CYD" ]
 	if ( rsd_ptr->name3() != rsd_ptr->name().substr(0,3) ) {
-		name3_map_[ rsd_ptr->name().substr(0,3) ].push_back( rsd_ptr() );
+		name3_map_[ rsd_ptr->name().substr(0,3) ].push_back( rsd_ptr );
 	}
 
 }

@@ -24,8 +24,8 @@ namespace legacy {
 namespace screener {
 	
 	class RNA_AtrRepScreener;
-	typedef utility::pointer::owning_ptr< RNA_AtrRepScreener > RNA_AtrRepScreenerOP;
-	typedef utility::pointer::owning_ptr< RNA_AtrRepScreener const > RNA_AtrRepScreenerCOP;
+	typedef utility::pointer::shared_ptr< RNA_AtrRepScreener > RNA_AtrRepScreenerOP;
+	typedef utility::pointer::shared_ptr< RNA_AtrRepScreener const > RNA_AtrRepScreenerCOP;
 	
 } //screener
 } //legacy

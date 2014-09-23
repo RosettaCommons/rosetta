@@ -21,12 +21,12 @@ namespace protocols{
 namespace rotamer_recovery{
 
 class RRReporter;
-typedef utility::pointer::owning_ptr< RRReporter > RRReporterOP;
-typedef utility::pointer::owning_ptr< RRReporter const > RotamerReporterCOP;
+typedef utility::pointer::shared_ptr< RRReporter > RRReporterOP;
+typedef utility::pointer::shared_ptr< RRReporter const > RotamerReporterCOP;
 
 class RRReporterSimple;
-typedef utility::pointer::owning_ptr< RRReporterSimple > RRReporterSimpleOP;
-typedef utility::pointer::owning_ptr< RRReporterSimple const > RotamerReporterSimpleCOP;
+typedef utility::pointer::shared_ptr< RRReporterSimple > RRReporterSimpleOP;
+typedef utility::pointer::shared_ptr< RRReporterSimple const > RotamerReporterSimpleCOP;
 
 }//rotamer_recovery
 }//protocols

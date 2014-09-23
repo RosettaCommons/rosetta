@@ -173,13 +173,13 @@ DomainAssemblyMover::evaluate_pose( core::pose::Pose const & pose) const {
 protocols::moves::MoverOP
 DomainAssemblyMover::clone() const
 {
-	return new DomainAssemblyMover( *this );
+	return protocols::moves::MoverOP( new DomainAssemblyMover( *this ) );
 }
 
 protocols::moves::MoverOP
 DomainAssemblyMover::fresh_instance() const
 {
-	return new DomainAssemblyMover;
+	return protocols::moves::MoverOP( new DomainAssemblyMover );
 }
 
 std::string
@@ -213,8 +213,8 @@ DomainAssemblyMover::run_centroid_stage( core::pose::Pose & pose )
 	//// STAGE 1 /////
 	protocols::moves::TrialMoverOP centroid_trial_mover = NULL;
 	if ( fragset3mer_ ) {
-		protocols::simple_moves::FragmentMoverOP frag_mover = new protocols::simple_moves::ClassicFragmentMover(fragset3mer_, movemap_ );
-		centroid_trial_mover = new protocols::moves::TrialMover( frag_mover, mc );
+		protocols::simple_moves::FragmentMoverOP frag_mover( new protocols::simple_moves::ClassicFragmentMover(fragset3mer_, movemap_ ) );
+		centroid_trial_mover = protocols::moves::TrialMoverOP( new protocols::moves::TrialMover( frag_mover, mc ) );
 	} else {
 		// if no fragments, use coarse small moves
 		Size nmoves ( 1 );
@@ -222,10 +222,10 @@ DomainAssemblyMover::run_centroid_stage( core::pose::Pose & pose )
 		coarse_small_mover->angle_max( 'H', 180.0 );  // max angle displacement 180 degrees
 		coarse_small_mover->angle_max( 'E', 180.0 );
 		coarse_small_mover->angle_max( 'L', 180.0 );
-		centroid_trial_mover = new protocols::moves::TrialMover( coarse_small_mover, mc );
+		centroid_trial_mover = protocols::moves::TrialMoverOP( new protocols::moves::TrialMover( coarse_small_mover, mc ) );
 	}
 
-	protocols::moves::RepeatMoverOP inner_centroid_loop = new protocols::moves::RepeatMover( centroid_trial_mover, inside_steps_stage1 );
+	protocols::moves::RepeatMoverOP inner_centroid_loop( new protocols::moves::RepeatMover( centroid_trial_mover, inside_steps_stage1 ) );
 
 	for ( Size i = 1; i <= outside_steps_stage1; ++i ) {
 		inner_centroid_loop -> apply( pose );
@@ -233,8 +233,8 @@ DomainAssemblyMover::run_centroid_stage( core::pose::Pose & pose )
 	//// END STAGE 1 ////
 
 	////// STAGE 2 ///////
-	protocols::moves::TrialMoverOP stage2_trial = new protocols::moves::TrialMover( small_mover, mc );
-	protocols::moves::RepeatMoverOP stage2 = new protocols::moves::RepeatMover( stage2_trial, inside_steps_stage2 );
+	protocols::moves::TrialMoverOP stage2_trial( new protocols::moves::TrialMover( small_mover, mc ) );
+	protocols::moves::RepeatMoverOP stage2( new protocols::moves::RepeatMover( stage2_trial, inside_steps_stage2 ) );
 
 	for ( Size i = 1; i <= outside_steps_stage2; ++i ) {
 		stage2 -> apply( pose );
@@ -270,7 +270,7 @@ DomainAssemblyMover::run_centroid_stage( core::pose::Pose & pose )
 					residues_in_other_domains.insert( domain_set.begin(), domain_set.end() );
 			}
 			if( !residues_in_other_domains.empty() ) { // this can only happen if we're looking at exactly one domain...
-				protocols::simple_filters::DomainInterfaceFilterOP di_filter = new protocols::simple_filters::DomainInterfaceFilter;
+				protocols::simple_filters::DomainInterfaceFilterOP di_filter( new protocols::simple_filters::DomainInterfaceFilter );
 				std::set< core::Size > one_residue_dummy_set;
 				one_residue_dummy_set.insert( *buried_it );
 				di_filter->query_region( one_residue_dummy_set );
@@ -332,24 +332,22 @@ DomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 	std::vector< std::string > domain_definitions;
 	get_domain_definition( pose, domain_definitions );
 
-	residue_selector::NotResidueSelectorOP not_rs = new core::pack::task::residue_selector::NotResidueSelector;
-	residue_selector::OrResidueSelectorOP or_rs = new core::pack::task::residue_selector::OrResidueSelector;
+	residue_selector::NotResidueSelectorOP not_rs( new core::pack::task::residue_selector::NotResidueSelector );
+	residue_selector::OrResidueSelectorOP or_rs( new core::pack::task::residue_selector::OrResidueSelector );
 
 	// add all possible interdomain interfaces to the ORResidueSelector for repacking
 	for( core::Size ii = 0; ii < domain_definitions.size(); ++ii ) {
 		for( core::Size jj = ii+1; jj < domain_definitions.size(); ++jj ) {
-			residue_selector::InterGroupInterfaceByVectorSelectorOP vector_rs = new residue_selector::InterGroupInterfaceByVectorSelector;
+			residue_selector::InterGroupInterfaceByVectorSelectorOP vector_rs( new residue_selector::InterGroupInterfaceByVectorSelector );
 			vector_rs->group1_resstring( domain_definitions[ii] );
 			vector_rs->group2_resstring( domain_definitions[jj] );
 			or_rs->add_residue_selector( vector_rs );
 		}
 	}
 
-	or_rs->add_residue_selector( new residue_selector::ResidueIndexSelector( get_linker_definition( pose ) ) );
+	or_rs->add_residue_selector( ResidueSelectorCOP( new residue_selector::ResidueIndexSelector( get_linker_definition( pose ) ) ) );
 	not_rs->set_residue_selector( or_rs );
-	operation::OperateOnResidueSubsetOP rsOperation(
-		new operation::OperateOnResidueSubset( ResLvlTaskOperationCOP( new operation::PreventRepackingRLT() ), not_rs )
-	);
+	operation::OperateOnResidueSubsetOP rsOperation( new operation::OperateOnResidueSubset( ResLvlTaskOperationCOP( new operation::PreventRepackingRLT() ), not_rs ) );
 
 	// global repack of the side chains
 	core::pack::task::PackerTaskOP base_packer_task( core::pack::task::TaskFactory::create_packer_task( pose ));
@@ -374,14 +372,14 @@ DomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial_mover( new protocols::simple_moves::EnergyCutRotamerTrialsMover( scorefxn, *base_packer_task, mc, 0.01 /*energycut*/ ) );
 
 	// MOVER minimization
-	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap_, scorefxn, "dfpmin", 0.001, true /*use_nblist*/ );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap_, scorefxn, "dfpmin", 0.001, true /*use_nblist*/ ) );
 
 	//// STAGE1 ////
-	protocols::moves::SequenceMoverOP stage1_seq = new protocols::moves::SequenceMover;
+	protocols::moves::SequenceMoverOP stage1_seq( new protocols::moves::SequenceMover );
 	stage1_seq -> add_mover( small_mover );
 	stage1_seq -> add_mover( pack_rottrial_mover );
-	protocols::moves::TrialMoverOP stage1_trial = new protocols::moves::TrialMover( stage1_seq, mc );
-	protocols::moves::RepeatMoverOP stage1_inner_loop = new protocols::moves::RepeatMover( stage1_trial, 25 /*100 cycles*/ );
+	protocols::moves::TrialMoverOP stage1_trial( new protocols::moves::TrialMover( stage1_seq, mc ) );
+	protocols::moves::RepeatMoverOP stage1_inner_loop( new protocols::moves::RepeatMover( stage1_trial, 25 /*100 cycles*/ ) );
 
 	std::cout << "   Current  Low " << std::endl;
 	for ( Size i = 1; i <= 20; ++i ) {
@@ -397,12 +395,12 @@ DomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 	//// END STAGE1 ////
 
 	//// STAGE2 ////
-	protocols::moves::SequenceMoverOP stage2_seq = new protocols::moves::SequenceMover;
+	protocols::moves::SequenceMoverOP stage2_seq( new protocols::moves::SequenceMover );
 	stage2_seq->add_mover( small_mover );
 	stage2_seq->add_mover( pack_rottrial_mover );
 	stage2_seq->add_mover( min_mover );
-	protocols::moves::TrialMoverOP stage2_trial = new protocols::moves::TrialMover( stage2_seq, mc );
-	protocols::moves::RepeatMoverOP stage2_inner_loop = new protocols::moves::RepeatMover( stage2_trial, 50 /*cycles*/ );
+	protocols::moves::TrialMoverOP stage2_trial( new protocols::moves::TrialMover( stage2_seq, mc ) );
+	protocols::moves::RepeatMoverOP stage2_inner_loop( new protocols::moves::RepeatMover( stage2_trial, 50 /*cycles*/ ) );
 
 	std::cout << "   Current  Low " << std::endl;
 	for ( Size i = 1; i <= 20; ++i ) {
@@ -435,25 +433,23 @@ void DomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) {
 	std::vector< std::string > domain_definitions;
 	get_domain_definition( pose, domain_definitions );
 
-	residue_selector::NotResidueSelectorOP not_rs = new core::pack::task::residue_selector::NotResidueSelector;
-	residue_selector::OrResidueSelectorOP or_rs = new core::pack::task::residue_selector::OrResidueSelector;
+	residue_selector::NotResidueSelectorOP not_rs( new core::pack::task::residue_selector::NotResidueSelector );
+	residue_selector::OrResidueSelectorOP or_rs( new core::pack::task::residue_selector::OrResidueSelector );
 
 	// add all possible interdomain interfaces to the ORResidueSelector for repacking
 	for( core::Size ii = 0; ii < domain_definitions.size(); ++ii ) {
 		for( core::Size jj = ii+1; jj < domain_definitions.size(); ++jj ) {
-			residue_selector::InterGroupInterfaceByVectorSelectorOP vector_rs = new residue_selector::InterGroupInterfaceByVectorSelector;
+			residue_selector::InterGroupInterfaceByVectorSelectorOP vector_rs( new residue_selector::InterGroupInterfaceByVectorSelector );
 			vector_rs->group1_resstring( domain_definitions[ii] );
 			vector_rs->group2_resstring( domain_definitions[jj] );
 			or_rs->add_residue_selector( vector_rs );
 		}
 	}
 
-	or_rs->add_residue_selector( new residue_selector::ResidueIndexSelector( get_linker_definition( pose ) ) );
+	or_rs->add_residue_selector( ResidueSelectorCOP( new residue_selector::ResidueIndexSelector( get_linker_definition( pose ) ) ) );
 	not_rs->set_residue_selector( or_rs );
 
-	operation::OperateOnResidueSubsetOP repack_interface_operation(
-		new operation::OperateOnResidueSubset( operation::ResLvlTaskOperationOP( new operation::PreventRepackingRLT() ), not_rs )
-	);
+	operation::OperateOnResidueSubsetOP repack_interface_operation( new operation::OperateOnResidueSubset( operation::ResLvlTaskOperationOP( new operation::PreventRepackingRLT() ), not_rs ) );
 
 	// global repack of the side chains
 	core::pack::task::PackerTaskOP base_packer_task( core::pack::task::TaskFactory::create_packer_task( pose ));
@@ -491,7 +487,7 @@ void DomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) {
 			movemap_->set_chi( to_repack );
 			//movemap_->set_bb( to_repack );
 
-			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap_, scorefxn, "dfpmin_armijo_nonmonotone", 0.001, true /*use_nblist*/ );
+			protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap_, scorefxn, "dfpmin_armijo_nonmonotone", 0.001, true /*use_nblist*/ ) );
 			min_mover->apply( pose );
 
 			// repack residues at the domain interface
@@ -706,12 +702,12 @@ DomainAssemblyMover::initialize_fragments_from_commandline()
 	core::fragment::ConstantLengthFragSetOP fragset3mer = NULL;
 	core::fragment::ConstantLengthFragSetOP fragset9mer = NULL;
 	if (basic::options::option[ basic::options::OptionKeys::in::file::frag3].user()){
-		fragset3mer = new core::fragment::ConstantLengthFragSet( 3 );
+		fragset3mer = core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( 3 ) );
 		fragset3mer->read_fragment_file( basic::options::option[ basic::options::OptionKeys::in::file::frag3 ]() );
 		fragset3mer_ = fragset3mer;
 	}
 	if (basic::options::option[ basic::options::OptionKeys::in::file::frag9].user()){
-		fragset9mer = new core::fragment::ConstantLengthFragSet( 9 );
+		fragset9mer = core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( 9 ) );
 		fragset9mer->read_fragment_file( basic::options::option[ basic::options::OptionKeys::in::file::frag9 ]() );
 		fragset9mer_ = fragset9mer;
 	}

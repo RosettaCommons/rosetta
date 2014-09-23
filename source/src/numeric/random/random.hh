@@ -148,7 +148,7 @@ private: // Fields
 
 }; // RandomGenerator
 
-typedef utility::pointer::owning_ptr< RandomGenerator > RandomGeneratorOP;
+typedef utility::pointer::shared_ptr< RandomGenerator > RandomGeneratorOP;
 
 } // namespace random
 } // namespace numeric

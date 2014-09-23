@@ -74,7 +74,7 @@ void* graphics_main(protocols::moves::MoverOP mover) {
 
 void* StarAbinitio_main(void*) {
   check_required();
-  return graphics_main(new StarAbinitio());
+  return graphics_main(protocols::moves::MoverOP( new StarAbinitio() ));
 }
 
 }  // namespace star

@@ -36,7 +36,7 @@ OtherContextScoreFunction::OtherContextScoreFunction(
 	core::pose::Pose const & context_pose
 ) :
 	ScoreFunction(),
-	context_pose_( new core::pose::Pose( context_pose ) ),
+	context_pose_( core::pose::PoseOP( new core::pose::Pose( context_pose ) ) ),
 	scored_context_pose_( false )
 {
 }
@@ -50,7 +50,7 @@ OtherContextScoreFunction::pre_scoring()
 void
 OtherContextScoreFunction::set_context_pose( core::pose::Pose const & pose )
 {
-	context_pose_ = new core::pose::Pose( pose );
+	context_pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
 	scored_context_pose_ = false;
 }
 

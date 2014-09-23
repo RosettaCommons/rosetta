@@ -97,31 +97,31 @@ TopologyClaimerFactory::create_singleton_instance()
 
 // Registers commonly used claimers with the name returned by claimer->type()
 TopologyClaimerFactory::TopologyClaimerFactory() {
-	add_type(new RigidChunkClaimer());
-	add_type(new SequenceClaimer());
-	add_type(new FragmentJumpClaimer());
-	add_type(new DisulfJumpClaimer());
-	add_type(new FragmentClaimer());
-	add_type(new ConstraintClaimer());
-	add_type(new MembraneTopologyClaimer());
-	add_type(new MetalloClaimer());
-	add_type(new TemplateJumpClaimer());
-	add_type(new CoordConstraintClaimer());
-	add_type(new StartStructClaimer());
-	add_type(new CutBiasClaimer());
-	add_type(new DensityScoringClaimer());
-	add_type(new PseudocontactShiftEnergyController());
-  add_type(new PseudocontactShiftEnergyController_Ts1());
-  add_type(new PseudocontactShiftEnergyController_Ts2());
-  add_type(new PseudocontactShiftEnergyController_Ts3());
-  add_type(new PseudocontactShiftEnergyController_Ts4());
-	add_type(new PcsEnergyController());
-	add_type(new FoldandDockClaimer());
-	add_type(new FibrilModelingClaimer());
-	add_type(new AsymFoldandDockClaimer());
-	add_type(new TMHTopologySamplerClaimer());
-	add_type(new SymmetryClaimer());
-	add_type(new BasicJumpClaimer());
+	add_type(TopologyClaimerOP( new RigidChunkClaimer() ));
+	add_type(TopologyClaimerOP( new SequenceClaimer() ));
+	add_type(TopologyClaimerOP( new FragmentJumpClaimer() ));
+	add_type(TopologyClaimerOP( new DisulfJumpClaimer() ));
+	add_type(TopologyClaimerOP( new FragmentClaimer() ));
+	add_type(TopologyClaimerOP( new ConstraintClaimer() ));
+	add_type(TopologyClaimerOP( new MembraneTopologyClaimer() ));
+	add_type(TopologyClaimerOP( new MetalloClaimer() ));
+	add_type(TopologyClaimerOP( new TemplateJumpClaimer() ));
+	add_type(TopologyClaimerOP( new CoordConstraintClaimer() ));
+	add_type(TopologyClaimerOP( new StartStructClaimer() ));
+	add_type(TopologyClaimerOP( new CutBiasClaimer() ));
+	add_type(TopologyClaimerOP( new DensityScoringClaimer() ));
+	add_type(TopologyClaimerOP( new PseudocontactShiftEnergyController() ));
+  add_type(TopologyClaimerOP( new PseudocontactShiftEnergyController_Ts1() ));
+  add_type(TopologyClaimerOP( new PseudocontactShiftEnergyController_Ts2() ));
+  add_type(TopologyClaimerOP( new PseudocontactShiftEnergyController_Ts3() ));
+  add_type(TopologyClaimerOP( new PseudocontactShiftEnergyController_Ts4() ));
+	add_type(TopologyClaimerOP( new PcsEnergyController() ));
+	add_type(TopologyClaimerOP( new FoldandDockClaimer() ));
+	add_type(TopologyClaimerOP( new FibrilModelingClaimer() ));
+	add_type(TopologyClaimerOP( new AsymFoldandDockClaimer() ));
+	add_type(TopologyClaimerOP( new TMHTopologySamplerClaimer() ));
+	add_type(TopologyClaimerOP( new SymmetryClaimer() ));
+	add_type(TopologyClaimerOP( new BasicJumpClaimer() ));
 }
 
 TopologyClaimerFactory::~TopologyClaimerFactory() {

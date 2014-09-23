@@ -21,8 +21,8 @@ namespace protocols{
 namespace features{
 
 class ResidueBurialFeatures;
-typedef utility::pointer::owning_ptr< ResidueBurialFeatures > ResidueBurialFeaturesOP;
-typedef utility::pointer::owning_ptr< ResidueBurialFeatures const > ResidueBurialFeaturesCOP;
+typedef utility::pointer::shared_ptr< ResidueBurialFeatures > ResidueBurialFeaturesOP;
+typedef utility::pointer::shared_ptr< ResidueBurialFeatures const > ResidueBurialFeaturesCOP;
 
 }//features
 }//protocols

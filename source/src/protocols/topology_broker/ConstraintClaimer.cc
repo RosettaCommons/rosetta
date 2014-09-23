@@ -64,7 +64,7 @@ using namespace scoring::constraints;
 ConstraintClaimer::ConstraintClaimer() :
 	filename_( "NO_FILE"),
 	tag_( "NO_TAG" ),
-	constraints_( NULL ),
+	constraints_( /* NULL */ ),
 	bCentroid_( true ),
 	bFullatom_( false ),
 	bCmdFlag_( false ),
@@ -79,7 +79,7 @@ ConstraintClaimer::ConstraintClaimer() :
 ConstraintClaimer::ConstraintClaimer( std::string filename, std::string tag ) :
 	filename_( filename ),
 	tag_( tag ),
-	constraints_( NULL ),
+	constraints_( /* NULL */ ),
 	bCentroid_( true ),
 	bFullatom_( false ),
 	bCmdFlag_( false ),
@@ -94,7 +94,7 @@ ConstraintClaimer::ConstraintClaimer( std::string filename, std::string tag ) :
 ConstraintClaimer::ConstraintClaimer( bool CmdFlag, bool centroid, bool fullatom )
 	:	filename_( "" ),
 		tag_( "" ),
-		constraints_( NULL ),
+		constraints_( /* NULL */ ),
 		bCentroid_( centroid ),
 		bFullatom_( fullatom ),
 		bCmdFlag_( CmdFlag ),
@@ -171,7 +171,7 @@ void ConstraintClaimer::add_constraints( core::pose::Pose& pose ) const {
 	}
 	if ( !constraints_ || sequence_ != new_sequence ) {
 		tr.Info << " read constraints from " << filename_ << "\n for pose " << new_sequence << "..." << std::endl;
-		constraints_ = ConstraintIO::get_instance()->read_constraints( filename_, new ConstraintSet, pose );
+		constraints_ = ConstraintIO::get_instance()->read_constraints( filename_, ConstraintSetOP( new ConstraintSet ), pose );
 		sequence_ = new_sequence;
 	} else {
 		ConstraintSetOP new_cst(NULL);
@@ -188,7 +188,7 @@ void ConstraintClaimer::add_constraints( core::pose::Pose& pose ) const {
 			constraints_->show_definition( tr.Error, constraint_ref_pose_ );
 			tr.Error << std::endl;
 			tr.Error << " try to recover by reading in original constraints from " << filename_ << "\n for pose " << new_sequence << "..." << std::endl;
-			new_cst = ConstraintIO::get_instance()->read_constraints( filename_, new ConstraintSet, pose );
+			new_cst = ConstraintIO::get_instance()->read_constraints( filename_, ConstraintSetOP( new ConstraintSet ), pose );
 		}
 
 		constraints_ = new_cst;

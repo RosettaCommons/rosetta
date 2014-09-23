@@ -117,16 +117,16 @@ ProteinRMSDNoSuperpositionFeatures::write_protein_rmsd_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbBigInt());
-	Column reference_tag("reference_tag", new DbText(255));
-	Column protein_CA("protein_CA", new DbReal());
-	Column protein_CA_or_CB("protein_CA_or_CB", new DbReal());
-	Column protein_backbone("protein_backbone", new DbReal());
-	Column protein_backbone_including_O("protein_backbone_including_O", new DbReal());
-	Column protein_backbone_sidechain_heavyatom("protein_backbone_sidechain_heavyatom", new DbReal());
-	Column heavyatom("heavyatom", new DbReal());
-	Column nbr_atom("nbr_atom", new DbReal());
-	Column all_atom("all_atom", new DbReal());
+	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
+	Column reference_tag("reference_tag", DbDataTypeOP( new DbText(255) ));
+	Column protein_CA("protein_CA", DbDataTypeOP( new DbReal() ));
+	Column protein_CA_or_CB("protein_CA_or_CB", DbDataTypeOP( new DbReal() ));
+	Column protein_backbone("protein_backbone", DbDataTypeOP( new DbReal() ));
+	Column protein_backbone_including_O("protein_backbone_including_O", DbDataTypeOP( new DbReal() ));
+	Column protein_backbone_sidechain_heavyatom("protein_backbone_sidechain_heavyatom", DbDataTypeOP( new DbReal() ));
+	Column heavyatom("heavyatom", DbDataTypeOP( new DbReal() ));
+	Column nbr_atom("nbr_atom", DbDataTypeOP( new DbReal() ));
+	Column all_atom("all_atom", DbDataTypeOP( new DbReal() ));
 
 	Columns primary_key_columns;
 	primary_key_columns.push_back(struct_id);
@@ -184,7 +184,7 @@ void
 ProteinRMSDNoSuperpositionFeatures::reference_pose_from_options(core::pose::Pose const & pose) {
 	using namespace basic::options;
 	if (option[OptionKeys::in::file::native].user()) {
-		PoseOP ref_pose = new core::pose::Pose();
+		PoseOP ref_pose( new core::pose::Pose() );
 		string native_pdb_fname(option[OptionKeys::in::file::native]());
 		pose_from_pdb(*ref_pose, native_pdb_fname);
 		tr << "Adding features reporter '" << type_name() << "' referencing '"
@@ -192,7 +192,7 @@ ProteinRMSDNoSuperpositionFeatures::reference_pose_from_options(core::pose::Pose
 		reference_pose(ref_pose);
 	} else {
 		tr << "Setting '" << type_name() << "' to reference the starting structure." << endl;
-		reference_pose(new Pose(pose));
+		reference_pose(PoseCOP( new Pose(pose) ));
 	}
 }
 

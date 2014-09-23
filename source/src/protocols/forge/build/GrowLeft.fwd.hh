@@ -29,19 +29,19 @@ class GrowLeft;
 
 
 /// @brief owning pointer for GrowLeft
-typedef utility::pointer::owning_ptr< GrowLeft > GrowLeftOP;
+typedef utility::pointer::shared_ptr< GrowLeft > GrowLeftOP;
 
 
 /// @brief owning pointer for const GrowLeft
-typedef utility::pointer::owning_ptr< GrowLeft const > GrowLeftCOP;
+typedef utility::pointer::shared_ptr< GrowLeft const > GrowLeftCOP;
 
 
 /// @brief access pointer for GrowLeft
-typedef utility::pointer::access_ptr< GrowLeft > GrowLeftAP;
+typedef utility::pointer::weak_ptr< GrowLeft > GrowLeftAP;
 
 
 /// @brief access pointer for const GrowLeft
-typedef utility::pointer::access_ptr< GrowLeft const > GrowLeftCAP;
+typedef utility::pointer::weak_ptr< GrowLeft const > GrowLeftCAP;
 
 
 } // namespace build

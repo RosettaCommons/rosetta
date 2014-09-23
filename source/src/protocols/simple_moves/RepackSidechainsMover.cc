@@ -63,7 +63,7 @@ RepackSidechainsMoverCreator::keyname() const
 
 protocols::moves::MoverOP
 RepackSidechainsMoverCreator::create_mover() const {
-	return new RepackSidechainsMover;
+	return protocols::moves::MoverOP( new RepackSidechainsMover );
 }
 
 std::string
@@ -74,7 +74,7 @@ RepackSidechainsMoverCreator::mover_name()
 
 RepackSidechainsMover::RepackSidechainsMover() :
  	protocols::moves::Mover("RepackSidechainsMover"),
-	scorefxn_(0)
+	scorefxn_(/* 0 */)
 {}
 
 // RepackSidechainsMover::RepackSidechainsMover( std::string const & type_name ) :
@@ -158,14 +158,14 @@ RepackSidechainsMover::parse_score_function(
 protocols::moves::MoverOP
 RepackSidechainsMover::fresh_instance() const
 {
-	return new RepackSidechainsMover;
+	return protocols::moves::MoverOP( new RepackSidechainsMover );
 }
 
 ///@brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 RepackSidechainsMover::clone() const
 {
-	return new protocols::simple_moves::RepackSidechainsMover( *this );
+	return protocols::moves::MoverOP( new protocols::simple_moves::RepackSidechainsMover( *this ) );
 }
 
 // setters

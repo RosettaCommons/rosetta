@@ -27,7 +27,7 @@
 namespace protocols {
 namespace surface_docking {
 class SurfaceParameters;
-typedef utility::pointer::owning_ptr< SurfaceParameters > SurfaceParametersOP;
+typedef utility::pointer::shared_ptr< SurfaceParameters > SurfaceParametersOP;
 
 } //surface_docking
 } //protocols

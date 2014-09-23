@@ -134,7 +134,7 @@ class RigidLigandBuilderTests : public CxxTest::TestSuite {
 		Size const oat2id( carbaryl_pose.residue(1).atom_index( oat2 ) );
 		Size const oat3id( carbaryl_pose.residue(1).atom_index( oat3 ) );
 
-		RigidLigandBuilderOP rigid_builder = new RigidLigandBuilder;
+		RigidLigandBuilderOP rigid_builder( new RigidLigandBuilder );
 		rigid_builder->initialize_from_residue(
 			at4id, at5id, at6id, oat1id, oat2id, oat3id, carbaryl_pose.residue(1) );
 
@@ -254,7 +254,7 @@ class RigidLigandBuilderTests : public CxxTest::TestSuite {
 			*(ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )),
 			"protocols/match/E1cb_carbaryl_1his_oxy_1bb_10_2.pdb" );
 
-		OriginalBackboneBuildPointOP res2bp = new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 );
+		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 
 		BuildSet build_set;
 		build_set.set_residue_type( cys_restype );
@@ -289,7 +289,7 @@ class RigidLigandBuilderTests : public CxxTest::TestSuite {
 		Size const oat2id( carbaryl_pose.residue(1).atom_index( oat2 ) );
 		Size const oat3id( carbaryl_pose.residue(1).atom_index( oat3 ) );
 
-		RigidLigandBuilderOP rigid_builder = new RigidLigandBuilder;
+		RigidLigandBuilderOP rigid_builder( new RigidLigandBuilder );
 		rigid_builder->initialize_from_residue(
 			at4id, at5id, at6id, oat1id, oat2id, oat3id, carbaryl_pose.residue(1) );
 		rigid_builder->initialize_upstream_residue( cys_restype ); /// do not initialize bonded data.
@@ -301,17 +301,17 @@ class RigidLigandBuilderTests : public CxxTest::TestSuite {
 			bb_grid->or_with( *resbgop );
 		}
 
-		ClassicMatchAlgorithmOP match_algorithm = new ClassicMatchAlgorithm( 1 );
+		ClassicMatchAlgorithmOP match_algorithm( new ClassicMatchAlgorithm( 1 ) );
 		match_algorithm->set_residue_type( cys_restype );
 		match_algorithm->add_external_geom_sampler(
 			exsampler, 1, "CA", "CB", "SG",	rigid_builder );
-		WriteUpstreamCoordinateKinemageOP dsalgorithm = new WriteUpstreamCoordinateKinemage( fout );
+		WriteUpstreamCoordinateKinemageOP dsalgorithm( new WriteUpstreamCoordinateKinemage( fout ) );
 		dsalgorithm->set_match_algorithm( match_algorithm );
 		dsalgorithm->set_n_downstream_to_output( 5 );
 		match_algorithm->set_bb_grid( bb_grid );
 		rigid_builder->set_bb_grid( bb_grid );
 
-		SingleDownstreamResidueWriterOP downstream_writer = new SingleDownstreamResidueWriter;
+		SingleDownstreamResidueWriterOP downstream_writer( new SingleDownstreamResidueWriter );
 		downstream_writer->set_restype( carbaryl_pose.residue(1).type().get_self_ptr() );
 		downstream_writer->set_downstream_builder( rigid_builder );
 		downstream_writer->set_downstream_master( "carbaryl" );
@@ -322,7 +322,7 @@ class RigidLigandBuilderTests : public CxxTest::TestSuite {
 
 		ProteinUpstreamBuilder scbuilder;
 		scbuilder.add_build_set( build_set );
-		scbuilder.set_sampler( new DunbrackSCSampler );
+		scbuilder.set_sampler( ProteinSCSamplerCOP( new DunbrackSCSampler ) );
 
 		scbuilder.build( *res2bp );
 
@@ -394,7 +394,7 @@ class RigidLigandBuilderTests : public CxxTest::TestSuite {
 		Size const oat2id( mbh_pose.residue(1).atom_index( oat2 ) );
 		Size const oat3id( mbh_pose.residue(1).atom_index( oat3 ) );
 
-		RigidLigandBuilderOP rigid_builder = new RigidLigandBuilder;
+		RigidLigandBuilderOP rigid_builder( new RigidLigandBuilder );
 		rigid_builder->initialize_from_residue(
 			at4id, at5id, at6id, oat1id, oat2id, oat3id, mbh_pose.residue(1) );
 		rigid_builder->initialize_upstream_residue( cys_restype ); /// do not initialize bonded data.
@@ -406,17 +406,17 @@ class RigidLigandBuilderTests : public CxxTest::TestSuite {
 			bb_grid->or_with( *resbgop );
 		}
 
-		ClassicMatchAlgorithmOP match_algorithm = new ClassicMatchAlgorithm( 1 );
+		ClassicMatchAlgorithmOP match_algorithm( new ClassicMatchAlgorithm( 1 ) );
 		match_algorithm->set_residue_type( cys_restype );
 		match_algorithm->add_external_geom_sampler(
 			exsampler, 1, "CA", "CB", "SG",	rigid_builder );
-		WriteUpstreamCoordinateKinemageOP dsalgorithm = new WriteUpstreamCoordinateKinemage( fout );
+		WriteUpstreamCoordinateKinemageOP dsalgorithm( new WriteUpstreamCoordinateKinemage( fout ) );
 		dsalgorithm->set_match_algorithm( match_algorithm );
 		dsalgorithm->set_n_downstream_to_output( 15 );
 		match_algorithm->set_bb_grid( bb_grid );
 		rigid_builder->set_bb_grid( bb_grid );
 
-		SingleDownstreamResidueWriterOP downstream_writer = new SingleDownstreamResidueWriter;
+		SingleDownstreamResidueWriterOP downstream_writer( new SingleDownstreamResidueWriter );
 		downstream_writer->set_restype( mbh_pose.residue(1).type().get_self_ptr() );
 		downstream_writer->set_downstream_builder( rigid_builder );
 		downstream_writer->set_downstream_master( "MBH" );
@@ -427,9 +427,9 @@ class RigidLigandBuilderTests : public CxxTest::TestSuite {
 
 		ProteinUpstreamBuilder scbuilder;
 		scbuilder.add_build_set( build_set );
-		scbuilder.set_sampler( new DunbrackSCSampler );
+		scbuilder.set_sampler( ProteinSCSamplerCOP( new DunbrackSCSampler ) );
 
-		OriginalBackboneBuildPointOP res2bp = new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 );
+		OriginalBackboneBuildPointOP res2bp( new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 ) );
 		scbuilder.build( *res2bp );
 
 		fout.close();

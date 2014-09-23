@@ -21,8 +21,8 @@ namespace filters {
 
 class FilterFactory;
 
-typedef utility::pointer::owning_ptr< FilterFactory > FilterFactoryOP;
-typedef utility::pointer::owning_ptr< FilterFactory const > FilterFactoryCOP;
+typedef utility::pointer::shared_ptr< FilterFactory > FilterFactoryOP;
+typedef utility::pointer::shared_ptr< FilterFactory const > FilterFactoryCOP;
 
 } //namespace filters
 } //namespace protocols

@@ -112,40 +112,40 @@ public:
 
 		score_function_->score(*pose_1ten_);
 
-		structure_reporter_  = new StructureFeatures();
+		structure_reporter_ = protocols::features::StructureFeaturesOP( new StructureFeatures() );
 
-		features_reporters_.push_back(new AtomAtomPairFeatures());
-		features_reporters_.push_back(new AtomInResidueAtomInResiduePairFeatures());
-		features_reporters_.push_back(new AtomTypesFeatures());
-		features_reporters_.push_back(new BetaTurnDetectionFeatures());
-		features_reporters_.push_back(new ChargeChargeFeatures());
-		features_reporters_.push_back(new GeometricSolvationFeatures());
-		features_reporters_.push_back(new HBondFeatures(score_function_));
-		features_reporters_.push_back(new HBondParameterFeatures(score_function_));
-		features_reporters_.push_back(new JobDataFeatures());
-		features_reporters_.push_back(new LoopAnchorFeatures());
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new AtomAtomPairFeatures() ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new AtomInResidueAtomInResiduePairFeatures() ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new AtomTypesFeatures() ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new BetaTurnDetectionFeatures() ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new ChargeChargeFeatures() ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new GeometricSolvationFeatures() ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new HBondFeatures(score_function_) ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new HBondParameterFeatures(score_function_) ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new JobDataFeatures() ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new LoopAnchorFeatures() ));
 		//features_reporters_.push_back(new OrbitalsFeatures());
-		features_reporters_.push_back(new PairFeatures());
-		features_reporters_.push_back(new PdbDataFeatures());
-		features_reporters_.push_back(new PoseCommentsFeatures());
-		features_reporters_.push_back(new PoseConformationFeatures());
-		features_reporters_.push_back(new ProteinBackboneTorsionAngleFeatures());
-		features_reporters_.push_back(new ProteinBackboneAtomAtomPairFeatures());
-		features_reporters_.push_back(new ProteinResidueConformationFeatures());
-		features_reporters_.push_back(new ProteinRMSDFeatures(pose_1ten_));
-		features_reporters_.push_back(new RadiusOfGyrationFeatures());
-		features_reporters_.push_back(new ResidueFeatures());
-		features_reporters_.push_back(new ResidueScoresFeatures(score_function_));
-		features_reporters_.push_back(new ResidueTypesFeatures());
-		features_reporters_.push_back(new ResidueBurialFeatures());
-		features_reporters_.push_back(new ResidueSecondaryStructureFeatures());
-		features_reporters_.push_back(new RotamerBoltzmannWeightFeatures(score_function_));
-		features_reporters_.push_back(new RotamerRecoveryFeatures(score_function_));
-		features_reporters_.push_back(new SaltBridgeFeatures());
-		features_reporters_.push_back(new StructureScoresFeatures(score_function_));
-		features_reporters_.push_back(new strand_assembly::SandwichFeatures());
-		features_reporters_.push_back(new strand_assembly::StrandBundleFeatures());
-		features_reporters_.push_back(new UnrecognizedAtomFeatures());
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new PairFeatures() ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new PdbDataFeatures() ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new PoseCommentsFeatures() ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new PoseConformationFeatures() ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new ProteinBackboneTorsionAngleFeatures() ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new ProteinBackboneAtomAtomPairFeatures() ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new ProteinResidueConformationFeatures() ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new ProteinRMSDFeatures(pose_1ten_) ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new RadiusOfGyrationFeatures() ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new ResidueFeatures() ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new ResidueScoresFeatures(score_function_) ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new ResidueTypesFeatures() ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new ResidueBurialFeatures() ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new ResidueSecondaryStructureFeatures() ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new RotamerBoltzmannWeightFeatures(score_function_) ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new RotamerRecoveryFeatures(score_function_) ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new SaltBridgeFeatures() ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new StructureScoresFeatures(score_function_) ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new strand_assembly::SandwichFeatures() ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new strand_assembly::StrandBundleFeatures() ));
+		features_reporters_.push_back(utility::pointer::shared_ptr<class protocols::features::FeaturesReporter>( new UnrecognizedAtomFeatures() ));
 
     // Use arbitrary outputtag and inputtag, instead of being dependent on getting this from JD2
     output_tag_ = "FeaturesReporterTests_outputtag";
@@ -236,11 +236,11 @@ public:
 
   void test_trajectory_report_to_db() {
     using protocols::features::TrajectoryReportToDBOP;
-    TrajectoryReportToDBOP traj_reporter = new protocols::features::TrajectoryReportToDB(
+    TrajectoryReportToDBOP traj_reporter( new protocols::features::TrajectoryReportToDB(
       db_session_, "fake_batch_name", "fake_batch_description",
       false, // false = don't use transactions
       1 // cache_size
-    );
+    ) );
 
     // Verify that default stride is 1 (to help make sure changes to this default are noticed)
     TS_ASSERT(traj_reporter->get_stride() == 1);

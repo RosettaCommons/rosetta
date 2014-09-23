@@ -24,10 +24,10 @@ namespace protocols {
 namespace flexpep_docking {
 
 class FlexPepDockingFlags;
-typedef utility::pointer::access_ptr< FlexPepDockingFlags > FlexPepDockingFlagsAP;
-typedef utility::pointer::access_ptr< FlexPepDockingFlags const > FlexPepDockingFlagsCAP;
-typedef utility::pointer::owning_ptr< FlexPepDockingFlags > FlexPepDockingFlagsOP;
-typedef utility::pointer::owning_ptr< FlexPepDockingFlags const > FlexPepDockingFlagsCOP;
+typedef utility::pointer::weak_ptr< FlexPepDockingFlags > FlexPepDockingFlagsAP;
+typedef utility::pointer::weak_ptr< FlexPepDockingFlags const > FlexPepDockingFlagsCAP;
+typedef utility::pointer::shared_ptr< FlexPepDockingFlags > FlexPepDockingFlagsOP;
+typedef utility::pointer::shared_ptr< FlexPepDockingFlags const > FlexPepDockingFlagsCOP;
 
 } // namespace flexpep_docking
 } // namespace protocols

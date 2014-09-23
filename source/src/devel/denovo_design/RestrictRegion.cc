@@ -77,7 +77,7 @@ RestrictRegionCreator::keyname() const
 
 protocols::moves::MoverOP
 RestrictRegionCreator::create_mover() const {
-	return new RestrictRegion();
+	return protocols::moves::MoverOP( new RestrictRegion() );
 }
 
 std::string
@@ -105,8 +105,8 @@ RestrictRegion::RestrictRegion() :
 	psipred_cmd_( "" ),
 	enable_max_trp_( false ),
 	max_trp_( 1 ),
-	task_factory_( NULL ),
-	scorefxn_( NULL ),
+	task_factory_( /* NULL */ ),
+	scorefxn_( /* NULL */ ),
 	regions_to_mutate_( 1 ),
 	last_type_( "" )
 {
@@ -142,7 +142,7 @@ RestrictRegion::~RestrictRegion()
 /// Return a copy of ourselves
 protocols::moves::MoverOP
 RestrictRegion::clone() const {
-	return new RestrictRegion(*this);
+	return protocols::moves::MoverOP( new RestrictRegion(*this) );
 }
 
 void
@@ -172,24 +172,24 @@ RestrictRegion::parse_my_tag(
 	bool tmpOpSet = false;
 	std::string type( type_ );
 	if((type == "psipred")||( type == "random" )){
-		task_operations::HighestEnergyRegionOperationOP op = new task_operations::DesignBySecondaryStructureOperation(
-					blueprint_file_,psipred_cmd_,false,false );
+		task_operations::HighestEnergyRegionOperationOP op( new task_operations::DesignBySecondaryStructureOperation(
+					blueprint_file_,psipred_cmd_,false,false ) );
 		highestEnergyRegionOperation_ops_.push_back(op);
 		tmpOpSet = true;
 	}
 	if(type == "score"){
-		task_operations::HighestEnergyRegionOperationOP op = new task_operations::HighestEnergyRegionOperation();
+		task_operations::HighestEnergyRegionOperationOP op( new task_operations::HighestEnergyRegionOperation() );
 		op->set_scorefxn( scorefxn_ );
 		highestEnergyRegionOperation_ops_.push_back(op);
 		tmpOpSet = true;
 	}
 	if((type == "packstat") ||(type == "random" )){
-		task_operations::HighestEnergyRegionOperationOP op = new task_operations::DesignByPackStatOperation();
+		task_operations::HighestEnergyRegionOperationOP op( new task_operations::DesignByPackStatOperation() );
 		highestEnergyRegionOperation_ops_.push_back(op);
 		tmpOpSet = true;
 	}
 	if((type == "random_mutation")||(type == "random" )){
-		task_operations::HighestEnergyRegionOperationOP op = new task_operations::DesignRandomRegionOperation();
+		task_operations::HighestEnergyRegionOperationOP op( new task_operations::DesignRandomRegionOperation() );
 		highestEnergyRegionOperation_ops_.push_back(op);
 		tmpOpSet = true;
 	}
@@ -272,7 +272,7 @@ RestrictRegion::apply( core::pose::Pose & pose )
 			++( metric_stats_[ last_type_ ].first );
 		}
 	}
-	previous_pose_ = new core::pose::Pose( pose );
+	previous_pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
 	// set operation to find worst region
  	task_operations::HighestEnergyRegionOperationOP op = highestEnergyRegionOperation_ops_[numeric::random::random_range(1,highestEnergyRegionOperation_ops_.size())];
 	type_ = op->get_name();

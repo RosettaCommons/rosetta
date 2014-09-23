@@ -28,11 +28,11 @@ namespace noesy_assign {
 class CrossPeakList;
 
 // Types
-typedef  utility::pointer::owning_ptr< CrossPeakList >  CrossPeakListOP;
-typedef  utility::pointer::owning_ptr< CrossPeakList const >  CrossPeakListCOP;
+typedef  utility::pointer::shared_ptr< CrossPeakList >  CrossPeakListOP;
+typedef  utility::pointer::shared_ptr< CrossPeakList const >  CrossPeakListCOP;
 
-typedef  utility::pointer::access_ptr< CrossPeakList >  CrossPeakListAP;
-typedef  utility::pointer::access_ptr< CrossPeakList const >  CrossPeakListCAP;
+typedef  utility::pointer::weak_ptr< CrossPeakList >  CrossPeakListAP;
+typedef  utility::pointer::weak_ptr< CrossPeakList const >  CrossPeakListCAP;
 
 }
 }

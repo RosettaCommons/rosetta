@@ -56,11 +56,11 @@ EnvClaimOP EnvClaim::make_claim( std::string const& name,
                                  ClaimingMoverOP owner,
                                  utility::tag::TagCOP tag,
                                  basic::datacache::DataMap& datamap ) {
-  if      ( name == "CutBiasClaim" ) return new CutBiasClaim( owner, tag, datamap );
-  else if ( name == "JumpClaim" )    return new JumpClaim( owner, tag, datamap );
-  else if ( name == "TorsionClaim" ) return new TorsionClaim( owner, tag, datamap );
-  else if ( name == "VrtResClaim" )  return new VirtResClaim( owner, tag, datamap );
-  else if ( name == "XYZClaim" )     return new XYZClaim( owner, tag, datamap );
+  if      ( name == "CutBiasClaim" ) return EnvClaimOP( new CutBiasClaim( owner, tag, datamap ) );
+  else if ( name == "JumpClaim" )    return EnvClaimOP( new JumpClaim( owner, tag, datamap ) );
+  else if ( name == "TorsionClaim" ) return EnvClaimOP( new TorsionClaim( owner, tag, datamap ) );
+  else if ( name == "VrtResClaim" )  return EnvClaimOP( new VirtResClaim( owner, tag, datamap ) );
+  else if ( name == "XYZClaim" )     return EnvClaimOP( new XYZClaim( owner, tag, datamap ) );
   else throw utility::excn::EXCN_RosettaScriptsOption( "'" + name + "' is not a known EnvClaim type." );
 }
 

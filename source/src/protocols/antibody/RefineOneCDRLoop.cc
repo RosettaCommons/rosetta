@@ -128,7 +128,7 @@ RefineOneCDRLoop::~RefineOneCDRLoop() {}
 
 //clone
 protocols::moves::MoverOP RefineOneCDRLoop::clone() const {
-	return( new RefineOneCDRLoop() );
+	return( protocols::moves::MoverOP( new RefineOneCDRLoop() ) );
 }
 
 
@@ -158,12 +158,12 @@ void RefineOneCDRLoop::apply(core::pose::Pose &pose) {
 	}
 
 	if(refine_mode_ == "legacy_centroid_refine_ccd") {
-		RefineOneCDRLoopCentroidOP legacy_centroid_refine_ccd = new RefineOneCDRLoopCentroid( ab_info_, cdr_loop_name_, scorefxn_ );
+		RefineOneCDRLoopCentroidOP legacy_centroid_refine_ccd( new RefineOneCDRLoopCentroid( ab_info_, cdr_loop_name_, scorefxn_ ) );
 		legacy_centroid_refine_ccd -> apply(pose);
 	}  //the legacy centroid_refine_ccd method
 
 	else if( refine_mode_ == "legacy_refine_ccd" ) {
-		H3RefineCCDOP legacy_refine_ccd = new H3RefineCCD(ab_info_, cdr_loop_name_, scorefxn_);
+		H3RefineCCDOP legacy_refine_ccd( new H3RefineCCD(ab_info_, cdr_loop_name_, scorefxn_) );
 		legacy_refine_ccd -> pass_start_pose(start_pose_);
 		if (!flank_relax_) {
 			legacy_refine_ccd->turn_off_flank_relax();
@@ -188,7 +188,7 @@ void RefineOneCDRLoop::apply(core::pose::Pose &pose) {
 		}
 		//JQX: be careful, no fold_tree operations are conducted in the two movers below.
 
-		loops::LoopsOP pass_loops = new loops::Loops();
+		loops::LoopsOP pass_loops( new loops::Loops() );
 		pass_loops->add_loop(  one_cdr_loop  );
 
 

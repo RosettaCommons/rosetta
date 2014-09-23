@@ -25,8 +25,8 @@ namespace refine {
 // Forward
 class LoopRefineInnerCycleContainer;
 
-typedef utility::pointer::owning_ptr< LoopRefineInnerCycleContainer > LoopRefineInnerCycleContainerOP;
-typedef utility::pointer::owning_ptr< LoopRefineInnerCycleContainer const > LoopRefineInnerCycleContainerCOP;
+typedef utility::pointer::shared_ptr< LoopRefineInnerCycleContainer > LoopRefineInnerCycleContainerOP;
+typedef utility::pointer::shared_ptr< LoopRefineInnerCycleContainer const > LoopRefineInnerCycleContainerCOP;
 
 } //namespace refine
 } //namespace loop_mover

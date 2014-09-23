@@ -24,8 +24,8 @@ namespace oop {
 
 
 class OopDockDesignProtocol; // fwd declaration
-typedef utility::pointer::owning_ptr< OopDockDesignProtocol > OopDockDesignProtocolOP;
-typedef utility::pointer::owning_ptr< OopDockDesignProtocol const > OopDockDesignProtocolCOP;
+typedef utility::pointer::shared_ptr< OopDockDesignProtocol > OopDockDesignProtocolOP;
+typedef utility::pointer::shared_ptr< OopDockDesignProtocol const > OopDockDesignProtocolCOP;
 
 
 } // namespace oop

@@ -20,8 +20,8 @@ namespace simple_filters {
 
 class Operator;
 
-typedef utility::pointer::owning_ptr< Operator > OperatorOP;
-typedef utility::pointer::owning_ptr< Operator const > OperatorCOP;
+typedef utility::pointer::shared_ptr< Operator > OperatorOP;
+typedef utility::pointer::shared_ptr< Operator const > OperatorCOP;
 
 }
 }

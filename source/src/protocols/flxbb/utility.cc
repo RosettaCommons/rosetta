@@ -85,12 +85,12 @@ constraints_sheet( Pose const & pose, BluePrintOP const & blueprint, Real const 
 	Real ub( condist );
 	Real sd( 1.0 );
 	String tag( "constraints_in_beta_sheet" );
-	ScalarWeightedFuncOP cstfunc = new ScalarWeightedFunc( coef, core::scoring::func::FuncOP( new BoundFunc( lb, ub, sd, tag ) ) );
+	ScalarWeightedFuncOP cstfunc( new ScalarWeightedFunc( coef, core::scoring::func::FuncOP( new BoundFunc( lb, ub, sd, tag ) ) ) );
 
 	//flo sep '12 add more accurate constraints by also constraining proper angles along paired residues
-	core::scoring::func::FuncOP cacb_dihedral_func = new core::scoring::constraints::OffsetPeriodicBoundFunc(-0.9,0.9, sqrt(1.0/42.0), "dihed_cacb", 6.28, 0.0 );
-	core::scoring::func::FuncOP bb_dihedral_func = new core::scoring::constraints::OffsetPeriodicBoundFunc(-0.52,0.52, sqrt(1.0/42.0), "dihed_bb", 3.14, 0.0 );
-	core::scoring::func::FuncOP bb_angle_func = new BoundFunc(1.22,1.92, sqrt(1.0/42.0), "angle_bb");
+	core::scoring::func::FuncOP cacb_dihedral_func( new core::scoring::constraints::OffsetPeriodicBoundFunc(-0.9,0.9, sqrt(1.0/42.0), "dihed_cacb", 6.28, 0.0 ) );
+	core::scoring::func::FuncOP bb_dihedral_func( new core::scoring::constraints::OffsetPeriodicBoundFunc(-0.52,0.52, sqrt(1.0/42.0), "dihed_bb", 3.14, 0.0 ) );
+	core::scoring::func::FuncOP bb_angle_func( new BoundFunc(1.22,1.92, sqrt(1.0/42.0), "angle_bb") );
 
 	// set constraints to csts
   Size nres( pose.total_residue() );
@@ -105,7 +105,7 @@ constraints_sheet( Pose const & pose, BluePrintOP const & blueprint, Real const 
 	TR << "Constrains between CA-CA atoms in sheet are applied for the following residues. " << std::endl;
 	TR << "dist=" << condist << ", coef=" << coef << std::endl;
 
-	SS_Info2_OP ssinfo = new SS_Info2( pose, blueprint->secstruct() );
+	SS_Info2_OP ssinfo( new SS_Info2( pose, blueprint->secstruct() ) );
 	StrandPairingSet spairset( blueprint->strand_pairings(), ssinfo );
 	StrandPairings spairs = spairset.strand_pairings();
 	for ( utility::vector1< StrandPairingOP >::const_iterator it=spairs.begin(); it!=spairs.end(); ++it ) {
@@ -116,7 +116,7 @@ constraints_sheet( Pose const & pose, BluePrintOP const & blueprint, Real const 
 			TR << iaa << ' ' << jaa << std::endl;
 			core::id::AtomID atom1( pose.residue_type( iaa ).atom_index( "CA" ), iaa );
 			core::id::AtomID atom2( pose.residue_type( jaa ).atom_index( "CA" ), jaa );
-			csts.push_back( new AtomPairConstraint( atom1, atom2, cstfunc ) );
+			csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new AtomPairConstraint( atom1, atom2, cstfunc ) ) );
 			//flo sep '12: constrain dihedral, might be more accurate
 			if( basic::options::option[ basic::options::OptionKeys::flxbb::constraints_sheet_include_cacb_pseudotorsion ].value() ){
 				core::id::AtomID resi_n( pose.residue_type( iaa ).atom_index( "N" ), iaa );
@@ -125,20 +125,20 @@ constraints_sheet( Pose const & pose, BluePrintOP const & blueprint, Real const 
         core::id::AtomID resj_n( pose.residue_type( jaa ).atom_index( "N" ), jaa );
         core::id::AtomID resj_c( pose.residue_type( jaa ).atom_index( "C" ), jaa );
         core::id::AtomID resj_o( pose.residue_type( jaa ).atom_index( "O" ), jaa );
-				csts.push_back( new core::scoring::constraints::DihedralConstraint( resi_o, resi_n, resi_c, resj_c, bb_dihedral_func ) );
-				csts.push_back( new core::scoring::constraints::DihedralConstraint( resj_o, resj_n, resj_c, resi_c, bb_dihedral_func ) );
+				csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::DihedralConstraint( resi_o, resi_n, resi_c, resj_c, bb_dihedral_func ) ) );
+				csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::DihedralConstraint( resj_o, resj_n, resj_c, resi_c, bb_dihedral_func ) ) );
 				if( spair.orient() == 'P' ){
-					csts.push_back( new core::scoring::constraints::AngleConstraint( resi_n, resi_c, resj_c, bb_angle_func ) );
-					csts.push_back( new core::scoring::constraints::AngleConstraint( resj_n, resj_c, resi_c, bb_angle_func ) );
+					csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::AngleConstraint( resi_n, resi_c, resj_c, bb_angle_func ) ) );
+					csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::AngleConstraint( resj_n, resj_c, resi_c, bb_angle_func ) ) );
 				}
 				else if( spair.orient() == 'A' ){
-          csts.push_back( new core::scoring::constraints::AngleConstraint( resi_n, resi_c, resj_n, bb_angle_func ) );
-          csts.push_back( new core::scoring::constraints::AngleConstraint( resj_n, resj_c, resi_n, bb_angle_func ) );
+          csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::AngleConstraint( resi_n, resi_c, resj_n, bb_angle_func ) ) );
+          csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::AngleConstraint( resj_n, resj_c, resi_n, bb_angle_func ) ) );
 				}
 				if( (pose.residue_type( iaa ).name3() == "GLY") || (pose.residue_type( jaa ).name3() == "GLY" ) ) continue; // don't bother restraining cacb dihedral with gly
 				core::id::AtomID resi_cb( pose.residue_type( iaa ).atom_index( "CB" ), iaa );
       	core::id::AtomID resj_cb( pose.residue_type( jaa ).atom_index( "CB" ), jaa );
-				csts.push_back( new core::scoring::constraints::DihedralConstraint( resi_cb, atom1, atom2, resj_cb, cacb_dihedral_func ) );
+				csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::DihedralConstraint( resi_cb, atom1, atom2, resj_cb, cacb_dihedral_func ) ) );
 			}
 			// flo sep '12 over
 		} // for( Size i=1 )
@@ -168,12 +168,12 @@ constraints_NtoC( Pose const & pose, Real const coef, Real const condist )
 	Real ub( condist );
 	Real sd( 1.0 );
 	String tag( "constraint_between_N_&_C_terminal_Calpha" );
-	ScalarWeightedFuncOP cstfunc = new ScalarWeightedFunc( coef, core::scoring::func::FuncOP( new BoundFunc( lb, ub, sd, tag ) ) );
+	ScalarWeightedFuncOP cstfunc( new ScalarWeightedFunc( coef, core::scoring::func::FuncOP( new BoundFunc( lb, ub, sd, tag ) ) ) );
 
   Size nres( pose.total_residue() );
 	core::id::AtomID atom1( pose.residue_type( 1 ).atom_index( "CA" ), 1 );
 	core::id::AtomID atom2( pose.residue_type( nres ).atom_index( "CA" ), nres );
-	csts.push_back( new AtomPairConstraint( atom1, atom2, cstfunc ) );
+	csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new AtomPairConstraint( atom1, atom2, cstfunc ) ) );
 
 	TR << "Constraints between N- and C- terminal: 1-" << nres << ", dist=" << condist << ", coef=" << coef << std::endl;
 
@@ -200,7 +200,7 @@ constraints_sheet( Pose const & pose, Real const coef, Real const condist )
 	Real ub( condist );
 	Real sd( 1.0 );
 	std::string tag( "constraints_in_beta_sheet" );
-	ScalarWeightedFuncOP cstfunc = new ScalarWeightedFunc( coef, core::scoring::func::FuncOP( new BoundFunc( lb, ub, sd, tag ) ) );
+	ScalarWeightedFuncOP cstfunc( new ScalarWeightedFunc( coef, core::scoring::func::FuncOP( new BoundFunc( lb, ub, sd, tag ) ) ) );
 
 	// set secondary structure
 	Dssp dssp( pose );
@@ -244,7 +244,7 @@ constraints_sheet( Pose const & pose, Real const coef, Real const condist )
 						TR << iresid << ' ' << jresid << std::endl;
 						core::id::AtomID atom1( pose.residue_type( iresid ).atom_index( "CA" ), iresid );
 						core::id::AtomID atom2( pose.residue_type( jresid ).atom_index( "CA" ), jresid );
-						csts.push_back( new AtomPairConstraint( atom1, atom2, cstfunc ) );
+						csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new AtomPairConstraint( atom1, atom2, cstfunc ) ) );
 					}
 
 				}// jresid

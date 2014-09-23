@@ -22,8 +22,8 @@ namespace canonical_sampling {
 // Forward
 class BiasedMonteCarlo;
 
-typedef utility::pointer::owning_ptr< BiasedMonteCarlo > BiasedMonteCarloOP;
-typedef utility::pointer::owning_ptr< BiasedMonteCarlo const > BiasedMonteCarloCOP;
+typedef utility::pointer::shared_ptr< BiasedMonteCarlo > BiasedMonteCarloOP;
+typedef utility::pointer::shared_ptr< BiasedMonteCarlo const > BiasedMonteCarloCOP;
 
 } // namespace canonical_sampling
 } // namespace protocols

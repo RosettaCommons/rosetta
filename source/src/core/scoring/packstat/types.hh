@@ -67,7 +67,7 @@ struct PosePackData : public utility::pointer::ReferenceCount {
 	XYZs centers;
 	utility::vector1<std::string> labels;
 };
-typedef utility::pointer::owning_ptr<PosePackData> PosePackDataOP;
+typedef utility::pointer::shared_ptr<PosePackData> PosePackDataOP;
 
 
 } // namespace packstat

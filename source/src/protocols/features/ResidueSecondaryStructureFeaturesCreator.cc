@@ -29,7 +29,7 @@ namespace features {
 ResidueSecondaryStructureFeaturesCreator::ResidueSecondaryStructureFeaturesCreator() {}
 ResidueSecondaryStructureFeaturesCreator::~ResidueSecondaryStructureFeaturesCreator() {}
 FeaturesReporterOP ResidueSecondaryStructureFeaturesCreator::create_features_reporter() const {
-	return new ResidueSecondaryStructureFeatures;
+	return FeaturesReporterOP( new ResidueSecondaryStructureFeatures );
 }
 
 std::string ResidueSecondaryStructureFeaturesCreator::type_name() const {

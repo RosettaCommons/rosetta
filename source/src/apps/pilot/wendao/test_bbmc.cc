@@ -550,22 +550,22 @@ my_main( void* )
 	// create a TaskFactory with the resfile
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
-	TaskFactoryOP main_task_factory = new TaskFactory;
-	main_task_factory->push_back( new operation::InitializeFromCommandline );
+	TaskFactoryOP main_task_factory( new TaskFactory );
+	main_task_factory->push_back( TaskOperationCOP( new operation::InitializeFromCommandline ) );
 	if ( option[ packing::resfile ].user() ) {
-		main_task_factory->push_back( new operation::ReadResfile );
+		main_task_factory->push_back( TaskOperationCOP( new operation::ReadResfile ) );
 	}
 	else {
-		operation::RestrictToRepackingOP rtrop = new operation::RestrictToRepacking;
+		operation::RestrictToRepackingOP rtrop( new operation::RestrictToRepacking );
 		main_task_factory->push_back( rtrop );
 	}
 	// C-beta atoms should not be altered during packing because branching atoms are optimized
-	main_task_factory->push_back( new operation::PreserveCBeta );
+	main_task_factory->push_back( TaskOperationCOP( new operation::PreserveCBeta ) );
 
 	//setup score function
 	core::scoring::ScoreFunctionOP score_fxn;
 	if ( option[mc::noscore] ) {
-		score_fxn = new core::scoring::ScoreFunction();
+		score_fxn = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
 	}
 	else if ( option[mc::centroid] ) {
 		if ( option[score::weights].user() ) {
@@ -621,7 +621,7 @@ my_main( void* )
 
 	//setup Movemap
 	if ( option[ mc::movemap ].user() ) {
-		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+		core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 		movemap->init_from_file(option[ mc::movemap ]);
 		smallmover.movemap(movemap);
 		bbgmover.movemap(movemap);
@@ -668,12 +668,12 @@ my_main( void* )
 	ResidueTypeSetCOP rsd_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 	PoseOP native_pose;
 	if ( option[in::file::native].user() ) {
-		native_pose = new Pose();
+		native_pose = PoseOP( new Pose() );
 		core::import_pose::pose_from_pdb( *native_pose, *rsd_set, option[ in::file::native ]() );
 	}
 
 	//setup starting pose
-	PoseOP pose = new Pose();
+	PoseOP pose( new Pose() );
 	Pose &p(*pose);
 	if ( option[ in::file::s ].user() ) {
 		core::import_pose::pose_from_pdb( p, *rsd_set, option[ in::file::s ]().vector()[ 0 ] );
@@ -716,8 +716,8 @@ my_main( void* )
 				//add constraints on CA
 				Size CA_i = nat_i_rsd.atom_index("CA");
 				core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
-				p.add_constraint( new core::scoring::constraints::CoordinateConstraint(
-					AtomID(CA_i,i), AtomID(1, p.fold_tree().root()), nat_i_rsd.xyz( CA_i ), fx ) );
+				p.add_constraint( scoring::constraints::ConstraintCOP( new core::scoring::constraints::CoordinateConstraint(
+					AtomID(CA_i,i), AtomID(1, p.fold_tree().root()), nat_i_rsd.xyz( CA_i ), fx ) ) );
 
 		}
 	}
@@ -901,9 +901,9 @@ my_main( void* )
 		// if a minimization movemap was specified, go through a series of minimizations
 		if ( option[ mc::minimize_movemap ].user() ) {
 			// setup the MoveMaps
-			core::kinematics::MoveMapOP minimize_movemap = new core::kinematics::MoveMap;
+			core::kinematics::MoveMapOP minimize_movemap( new core::kinematics::MoveMap );
 			minimize_movemap->init_from_file(option[ mc::minimize_movemap ]);
-			core::kinematics::MoveMapOP minimize_movemap_progressive = new core::kinematics::MoveMap;
+			core::kinematics::MoveMapOP minimize_movemap_progressive( new core::kinematics::MoveMap );
 
 			// setup the MinMover
 			protocols::simple_moves::MinMover minmover;
@@ -947,14 +947,14 @@ my_main( void* )
 	if ( option[ mc::replica ] ) {
 		//setup RE
 		std::cout << "Seting up Replica Exchange ..." << std::endl;
-		mc = new ReplicaExchangeMC(p,*score_fxn, option[mc::re_tlist](), option[mc::re_ninterval]);
+		mc = MonteCarloOP( new ReplicaExchangeMC(p,*score_fxn, option[mc::re_tlist](), option[mc::re_ninterval]) );
 		std::cout << "Rank: " <<  rank << " Done!" << std::endl;
 		//get the right kT
 		kT = option[mc::re_tlist]()[rank+1];
 	}
 	else {
 		//setup normal mc
-		mc = new MonteCarlo(p, *score_fxn, kT);
+		mc = MonteCarloOP( new MonteCarlo(p, *score_fxn, kT) );
 	}
 
 	//setup Sicechainmover correction

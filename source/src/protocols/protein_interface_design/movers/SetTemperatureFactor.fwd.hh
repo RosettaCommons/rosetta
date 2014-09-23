@@ -23,8 +23,8 @@ namespace movers{
 
 //Forwards and OP typedefs
 class SetTemperatureFactor;
-typedef utility::pointer::owning_ptr< SetTemperatureFactor > SetTemperatureFactorOP;
-typedef utility::pointer::owning_ptr< SetTemperatureFactor const > SetTemperatureFactorCOP;
+typedef utility::pointer::shared_ptr< SetTemperatureFactor > SetTemperatureFactorOP;
+typedef utility::pointer::shared_ptr< SetTemperatureFactor const > SetTemperatureFactorCOP;
 
 }//movers
 }//protein_interface_design

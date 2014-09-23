@@ -84,8 +84,8 @@ protected:
 	bool use_numbers_;
 };
 
-typedef utility::pointer::owning_ptr< ResidueDecompositionByChainCalculator > ResidueDecompositionByChainCalculatorOP;
-typedef utility::pointer::owning_ptr< ResidueDecompositionByChainCalculator const > ResidueDecompositionByChainCalculatorCOP;
+typedef utility::pointer::shared_ptr< ResidueDecompositionByChainCalculator > ResidueDecompositionByChainCalculatorOP;
+typedef utility::pointer::shared_ptr< ResidueDecompositionByChainCalculator const > ResidueDecompositionByChainCalculatorCOP;
 
 
 } // namespace pose_metric_calculators

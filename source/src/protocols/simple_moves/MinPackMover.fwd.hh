@@ -20,8 +20,8 @@ namespace protocols {
 namespace simple_moves {
 
 class MinPackMover;
-typedef utility::pointer::owning_ptr< MinPackMover > MinPackMoverOP;
-typedef utility::pointer::owning_ptr< MinPackMover const > MinPackMoverCOP;
+typedef utility::pointer::shared_ptr< MinPackMover > MinPackMoverOP;
+typedef utility::pointer::shared_ptr< MinPackMover const > MinPackMoverCOP;
 
 } // moves
 } // protocols

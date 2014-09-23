@@ -47,7 +47,7 @@ methods::EnergyMethodOP
 MMTorsionEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new MMTorsionEnergy;
+	return methods::EnergyMethodOP( new MMTorsionEnergy );
 }
 
 ScoreTypes
@@ -72,7 +72,7 @@ MMTorsionEnergy::MMTorsionEnergy() :
 EnergyMethodOP
 MMTorsionEnergy::clone() const
 {
-	return new MMTorsionEnergy;
+	return EnergyMethodOP( new MMTorsionEnergy );
 }
 
 ///

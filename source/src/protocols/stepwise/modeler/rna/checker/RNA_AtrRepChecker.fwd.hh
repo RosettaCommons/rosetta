@@ -25,8 +25,8 @@ namespace rna {
 namespace checker {
 	
 	class RNA_AtrRepChecker;
-	typedef utility::pointer::owning_ptr< RNA_AtrRepChecker > RNA_AtrRepCheckerOP;
-	typedef utility::pointer::owning_ptr< RNA_AtrRepChecker const > RNA_AtrRepCheckerCOP;
+	typedef utility::pointer::shared_ptr< RNA_AtrRepChecker > RNA_AtrRepCheckerOP;
+	typedef utility::pointer::shared_ptr< RNA_AtrRepChecker const > RNA_AtrRepCheckerCOP;
 	
 } //checker
 } //rna

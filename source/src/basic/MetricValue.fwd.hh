@@ -28,8 +28,8 @@ namespace basic {
 
 class MetricValueBase;
 
-typedef utility::pointer::owning_ptr< MetricValueBase > MetricValueBaseOP;
-typedef utility::pointer::owning_ptr< MetricValueBase const > MetricValueBaseCOP;
+typedef utility::pointer::shared_ptr< MetricValueBase > MetricValueBaseOP;
+typedef utility::pointer::shared_ptr< MetricValueBase const > MetricValueBaseCOP;
 
 } // namespace basic
 

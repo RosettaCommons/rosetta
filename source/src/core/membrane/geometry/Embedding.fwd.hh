@@ -28,8 +28,8 @@ namespace membrane {
 namespace geometry {
 
 class Embedding;
-typedef utility::pointer::owning_ptr< Embedding > EmbeddingOP;
-typedef utility::pointer::owning_ptr< Embedding const > EmbeddingCOP;
+typedef utility::pointer::shared_ptr< Embedding > EmbeddingOP;
+typedef utility::pointer::shared_ptr< Embedding const > EmbeddingCOP;
 
 } // geometry
 } // membrane

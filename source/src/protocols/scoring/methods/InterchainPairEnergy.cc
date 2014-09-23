@@ -48,7 +48,7 @@ core::scoring::methods::EnergyMethodOP
 InterchainPairEnergyCreator::create_energy_method(
 	core::scoring::methods::EnergyMethodOptions const &
 ) const {
-	return new InterchainPairEnergy;
+	return core::scoring::methods::EnergyMethodOP( new InterchainPairEnergy );
 }
 
 core::scoring::ScoreTypes
@@ -72,7 +72,7 @@ InterchainPairEnergy::InterchainPairEnergy() :
 core::scoring::methods::EnergyMethodOP
 InterchainPairEnergy::clone() const
 {
-	return new InterchainPairEnergy();
+	return core::scoring::methods::EnergyMethodOP( new InterchainPairEnergy() );
 }
 
 ///

@@ -27,7 +27,7 @@ namespace features {
 SecondaryStructureSegmentFeaturesCreator::SecondaryStructureSegmentFeaturesCreator() {}
 SecondaryStructureSegmentFeaturesCreator::~SecondaryStructureSegmentFeaturesCreator() {}
 FeaturesReporterOP SecondaryStructureSegmentFeaturesCreator::create_features_reporter() const {
-	return new SecondaryStructureSegmentFeatures;
+	return FeaturesReporterOP( new SecondaryStructureSegmentFeatures );
 }
 
 std::string SecondaryStructureSegmentFeaturesCreator::type_name() const {

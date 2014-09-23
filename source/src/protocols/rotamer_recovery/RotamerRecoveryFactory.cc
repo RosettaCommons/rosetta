@@ -243,10 +243,10 @@ RotamerRecoveryFactory::get_rotamer_recovery(
 	string const & comparer_name,
 	string const & reporter_name
 ) {
-	return new RotamerRecovery(
+	return RotamerRecoveryOP( new RotamerRecovery(
 		get_rotamer_recovery_protocol(protocol_name),
 		get_rotamer_recovery_comparer(comparer_name),
-		get_rotamer_recovery_reporter(reporter_name));
+		get_rotamer_recovery_reporter(reporter_name)) );
 }
 
 } // namespace

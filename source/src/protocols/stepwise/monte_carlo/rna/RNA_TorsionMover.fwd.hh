@@ -27,7 +27,7 @@ namespace monte_carlo {
 namespace rna {
 
 	class RNA_TorsionMover;
-	typedef utility::pointer::owning_ptr< RNA_TorsionMover > RNA_TorsionMoverOP;
+	typedef utility::pointer::shared_ptr< RNA_TorsionMover > RNA_TorsionMoverOP;
 
 } //rna
 } //monte_carlo

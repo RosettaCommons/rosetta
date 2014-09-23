@@ -22,8 +22,8 @@ namespace backrub{
 
 // Forwards and OP typedefs
 class BackrubSidechainMover;
-typedef utility::pointer::owning_ptr< BackrubSidechainMover > BackrubSidechainMoverOP;
-typedef utility::pointer::owning_ptr< BackrubSidechainMover const > BackrubSidechainMoverCOP;
+typedef utility::pointer::shared_ptr< BackrubSidechainMover > BackrubSidechainMoverOP;
+typedef utility::pointer::shared_ptr< BackrubSidechainMover const > BackrubSidechainMoverCOP;
 
 } //moves
 } //protocols

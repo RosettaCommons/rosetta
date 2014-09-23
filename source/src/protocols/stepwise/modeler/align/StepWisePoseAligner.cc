@@ -412,15 +412,15 @@ namespace align {
 		Size const my_anchor( pose.fold_tree().root() ); //Change to use the root of the current foldtree as done by Rocco in AtomCoordinateCstMover - JAB.
 
 		ConstraintSetOP cst_set = pose.constraint_set()->clone();
-		FuncOP constraint_func = new FlatHarmonicFunc( constraint_x0, 1.0, constraint_tol );
+		FuncOP constraint_func( new FlatHarmonicFunc( constraint_x0, 1.0, constraint_tol ) );
 		//FuncOP constraint_func = new FadeFunc( -0.7, 1.5, 0.8, -1.0, 0.0)) );
 
 		for ( std::map< id::AtomID, id::AtomID >::const_iterator
 			 it=atom_id_map.begin(), it_end = atom_id_map.end(); it != it_end; ++it ) {
 			id::AtomID const mapped_atom = it->second;
-			ConstraintOP constraint = new CoordinateConstraint ( it->first, id::AtomID(1, my_anchor),
+			ConstraintOP constraint( new CoordinateConstraint ( it->first, id::AtomID(1, my_anchor),
 																													 reference_pose.residue(mapped_atom.rsd()).xyz(mapped_atom.atomno()),
-																													 constraint_func );
+																													 constraint_func ) );
 			cst_set->add_constraint( constraint );
 		}
 

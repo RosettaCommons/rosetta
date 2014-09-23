@@ -22,7 +22,7 @@ namespace stepwise {
 namespace sampler {
 
 class MC_Comb;
-typedef utility::pointer::owning_ptr< MC_Comb > MC_CombOP;
+typedef utility::pointer::shared_ptr< MC_Comb > MC_CombOP;
 
 } //sampler
 } //stepwise

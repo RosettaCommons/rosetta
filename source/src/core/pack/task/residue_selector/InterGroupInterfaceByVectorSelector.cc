@@ -172,7 +172,7 @@ void
 InterGroupInterfaceByVectorSelector::group1_set( std::set< Size > const & setting )
 {
 	group1_set_ = setting;
-	group1_selector_ = 0;
+	group1_selector_.reset();
 	group1_resstring_ = "";
 }
 
@@ -181,7 +181,7 @@ std::string const & InterGroupInterfaceByVectorSelector::group1_resstring() cons
 void InterGroupInterfaceByVectorSelector::group1_resstring( std::string const & setting ) {
 	group1_resstring_ = setting;
 	group1_set_.clear();
-	group1_selector_ = 0;
+	group1_selector_.reset();
 }
 
 
@@ -207,7 +207,7 @@ void
 InterGroupInterfaceByVectorSelector::group2_set( std::set< Size > const & setting )
 {
 	group2_set_ = setting;
-	group2_selector_ = 0;
+	group2_selector_.reset();
 	group2_resstring_ = "";
 }
 
@@ -216,7 +216,7 @@ std::string const & InterGroupInterfaceByVectorSelector::group2_resstring() cons
 void InterGroupInterfaceByVectorSelector::group2_resstring( std::string const & setting ) {
 	group2_resstring_ = setting;
 	group2_set_.clear();
-	group2_selector_ = 0;
+	group2_selector_.reset();
 }
 
 Real InterGroupInterfaceByVectorSelector::cb_dist_cut() const { return cb_dist_cut_; }
@@ -267,7 +267,7 @@ InterGroupInterfaceByVectorSelector::set_from_residue_list_string(
 
 ResidueSelectorOP
 InterGroupInterfaceByVectorSelectorCreator::create_residue_selector() const {
-	return new InterGroupInterfaceByVectorSelector;
+	return ResidueSelectorOP( new InterGroupInterfaceByVectorSelector );
 }
 
 std::string

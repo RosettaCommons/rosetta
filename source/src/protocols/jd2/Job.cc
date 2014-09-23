@@ -56,7 +56,7 @@ Job::~Job(){}
 
 ///@brief returns a copy of this object whose "output fields" are zeroed out.  Used by the JobDistributor in cases where the job fails and must be retried to prevent accumulation of Job state after a failure.  This implementation was chosen over a clear_all_output function to prevent mover A from deleting mover B's hard work!  You probably should not be trying to call this function.
 JobOP Job::copy_without_output() const{
-	return new Job(inner_job_, nstruct_index_);
+	return JobOP( new Job(inner_job_, nstruct_index_) );
 }
 
 InnerJobCOP Job::inner_job() const { return inner_job_; }
@@ -103,7 +103,7 @@ core::pose::PoseCOP Job::get_pose() const {
 	} else { //if not ask job-inputter
 		protocols::jd2::JobDistributor* jd
 			= protocols::jd2::JobDistributor::get_instance();
-		core::pose::PoseOP aPose = new core::pose::Pose;
+		core::pose::PoseOP aPose( new core::pose::Pose );
 		// in the following call we use a copy of the job-output. the idea is that if the inputter has not stored the
 		// pose in the Job-Object already he will not do it now... in principle one could also use a const_cast which has
 		// basically the same effect -- the copy copies a pointer and an integer...
@@ -180,12 +180,18 @@ void Job::call_output_observers( core::pose::Pose const & pose )
 			it     = output_observers_.begin(),
 			it_end = output_observers_.end();
 			it != it_end; ++it ) {
+#ifdef PTR_MODERN
+		JobOutputterObserverOP observer = (*it).lock();
+		if(observer)
+			observer->add_values_to_job( pose, *this );
+#else
 		(*it)->add_values_to_job( pose, *this );
+#endif
 	}
 }
 
 
-JobCOP const JD2_BOGUS_JOB( new Job( (new InnerJob("EMPTY_JOB_use_jd2", 0)), 0) );
+JobCOP const JD2_BOGUS_JOB( new Job( InnerJobOP( new InnerJob("EMPTY_JOB_use_jd2", 0)), 0 ) );
 
 bool
 operator==(

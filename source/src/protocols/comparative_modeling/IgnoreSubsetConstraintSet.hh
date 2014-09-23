@@ -47,7 +47,7 @@ public:
 
 
   ConstraintSetOP clone() const {
-    return new IgnoreSubsetConstraintSet( *this );
+    return ConstraintSetOP( new IgnoreSubsetConstraintSet( *this ) );
   }
 
   void

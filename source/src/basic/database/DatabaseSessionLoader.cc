@@ -50,7 +50,7 @@ DatabaseSessionOptionsCreator::~DatabaseSessionOptionsCreator() {}
 
 basic::resource_manager::ResourceOptionsOP
 DatabaseSessionOptionsCreator::create_options() const {
-	return new DatabaseSessionOptions;
+	return basic::resource_manager::ResourceOptionsOP( new DatabaseSessionOptions );
 }
 
 std::string
@@ -62,7 +62,7 @@ DatabaseSessionOptionsCreator::options_type() const {
 basic::resource_manager::ResourceLoaderOP
 DatabaseSessionLoaderCreator::create_resource_loader() const
 {
-	return new DatabaseSessionLoader();
+	return basic::resource_manager::ResourceLoaderOP( new DatabaseSessionLoader() );
 }
 
 std::string DatabaseSessionLoaderCreator::loader_type() const

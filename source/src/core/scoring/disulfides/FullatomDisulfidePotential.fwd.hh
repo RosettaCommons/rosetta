@@ -24,21 +24,21 @@ namespace disulfides {
 
 class FullatomDisulfidePotential;
 
-typedef utility::pointer::owning_ptr< FullatomDisulfidePotential > FullatomDisulfidePotentialOP;
-typedef utility::pointer::owning_ptr< FullatomDisulfidePotential const > FullatomDisulfidePotentialCOP;
+typedef utility::pointer::shared_ptr< FullatomDisulfidePotential > FullatomDisulfidePotentialOP;
+typedef utility::pointer::shared_ptr< FullatomDisulfidePotential const > FullatomDisulfidePotentialCOP;
 
-typedef utility::pointer::access_ptr< FullatomDisulfidePotential > FullatomDisulfidePotentialAP;
-typedef utility::pointer::access_ptr< FullatomDisulfidePotential const > FullatomDisulfidePotentialCAP;
+typedef utility::pointer::weak_ptr< FullatomDisulfidePotential > FullatomDisulfidePotentialAP;
+typedef utility::pointer::weak_ptr< FullatomDisulfidePotential const > FullatomDisulfidePotentialCAP;
 
 class CBSG_Dihedral_Func;
 class SGSG_Dihedral_Func;
 class CB_Angle_Func;
 class SG_Dist_Func;
 
-typedef utility::pointer::owning_ptr< CBSG_Dihedral_Func > CBSG_Dihedral_FuncOP;
-typedef utility::pointer::owning_ptr< SGSG_Dihedral_Func > SGSG_Dihedral_FuncOP;
-typedef utility::pointer::owning_ptr< CB_Angle_Func > CB_Angle_FuncOP;
-typedef utility::pointer::owning_ptr< SG_Dist_Func > SG_Dist_FuncOP;
+typedef utility::pointer::shared_ptr< CBSG_Dihedral_Func > CBSG_Dihedral_FuncOP;
+typedef utility::pointer::shared_ptr< SGSG_Dihedral_Func > SGSG_Dihedral_FuncOP;
+typedef utility::pointer::shared_ptr< CB_Angle_Func > CB_Angle_FuncOP;
+typedef utility::pointer::shared_ptr< SG_Dist_Func > SG_Dist_FuncOP;
 
 
 

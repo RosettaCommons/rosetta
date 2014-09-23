@@ -305,7 +305,7 @@ void safe_secstruct( pose::Pose& pose ) {
 
 core::fragment::JumpingFrameOP generate_empty_jump_frame( Size startpos, Size endpos, Size length ) {
   using namespace core::fragment;
-  JumpingFrameOP frame = new JumpingFrame( startpos, endpos, length );
+  JumpingFrameOP frame( new JumpingFrame( startpos, endpos, length ) );
   if ( length <= 1 || length > 4 ) utility_exit_with_message("called generate_jump_frame with inappropriate length argument");
   Size pos = 1;
   if ( length == 4 ) frame->set_pos( pos++, startpos );
@@ -317,16 +317,16 @@ core::fragment::JumpingFrameOP generate_empty_jump_frame( Size startpos, Size en
 
 core::fragment::JumpingFrameOP generate_jump_frame( Size startpos, Size endpos, bool bWithTorsion ) {
   using namespace core::fragment;
-  FragDataOP frag_data = new FragData;
+  FragDataOP frag_data( new FragData );
   if ( bWithTorsion ) {
-    BBTorsionSRFDOP start =  new BBTorsionSRFD( 3, 'E', 'X' );
+    BBTorsionSRFDOP start( new BBTorsionSRFD( 3, 'E', 'X' ) );
     frag_data->add_residue( start );
   }
-  frag_data->add_residue( new UpJumpSRFD );
-  frag_data->add_residue( new DownJumpSRFD );
+  frag_data->add_residue( SingleResidueFragDataOP( new UpJumpSRFD ) );
+  frag_data->add_residue( SingleResidueFragDataOP( new DownJumpSRFD ) );
 
   if ( bWithTorsion ) {
-    BBTorsionSRFDOP stop =  new BBTorsionSRFD( 3, 'E', 'X' );
+    BBTorsionSRFDOP stop( new BBTorsionSRFD( 3, 'E', 'X' ) );
     frag_data->add_residue( stop );
   }
   JumpingFrameOP frame = generate_empty_jump_frame( startpos, endpos, frag_data->size() ); //see above

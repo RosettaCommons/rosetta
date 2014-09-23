@@ -21,7 +21,7 @@ namespace io {
 namespace rna {
 
 	class RNA_DataReader;
-	typedef utility::pointer::owning_ptr< RNA_DataReader > RNA_DataReaderOP;
+	typedef utility::pointer::shared_ptr< RNA_DataReader > RNA_DataReaderOP;
 
 } //rna
 } //io

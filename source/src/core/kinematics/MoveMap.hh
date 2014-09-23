@@ -122,7 +122,7 @@ public:
 	MoveMap(){}
 
 	MoveMapOP clone() const {
-		return new MoveMap( *this );
+		return MoveMapOP( new MoveMap( *this ) );
 	}
 
 	/// @brief clear -- sets all to FALSE

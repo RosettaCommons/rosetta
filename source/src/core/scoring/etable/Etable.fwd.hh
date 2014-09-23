@@ -23,9 +23,9 @@ namespace etable {
 
 class Etable;
 
-typedef utility::pointer::owning_ptr< Etable > EtableOP;
-typedef utility::pointer::owning_ptr< Etable const > EtableCOP;
-typedef utility::pointer::access_ptr< Etable const > EtableCAP;
+typedef utility::pointer::shared_ptr< Etable > EtableOP;
+typedef utility::pointer::shared_ptr< Etable const > EtableCOP;
+typedef utility::pointer::weak_ptr< Etable const > EtableCAP;
 
 } // etable
 } // scoring

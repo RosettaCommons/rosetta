@@ -24,7 +24,7 @@ namespace count_pair {
 
 class CountPairGeneric;
 
-typedef utility::pointer::owning_ptr< CountPairGeneric > CountPairGenericOP;
+typedef utility::pointer::shared_ptr< CountPairGeneric > CountPairGenericOP;
 
 } // namespace count_pair
 } // namespace etable

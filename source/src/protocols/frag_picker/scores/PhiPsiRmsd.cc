@@ -240,7 +240,7 @@ FragmentScoringMethodOP MakePhiPsiRmsd::make(Size priority,
 		//line_stream >> input_file;
 		Size pos = input_file.find(".pdb");
 		if (pos != std::string::npos) {
-			core::pose::PoseOP nativePose = new core::pose::Pose;
+			core::pose::PoseOP nativePose( new core::pose::Pose );
 			core::import_pose::pose_from_pdb(*nativePose, input_file);
 			trPhiPsiRmsd
 					<< "Reference structure for Phi,Psi scoring loaded from a PDB file: "
@@ -248,8 +248,8 @@ FragmentScoringMethodOP MakePhiPsiRmsd::make(Size priority,
 			trPhiPsiRmsd.Debug << "its sequence is:\n"
 					<< nativePose->sequence() << std::endl;
 
-			return (FragmentScoringMethodOP) new PhiPsiRmsd(priority,
-					lowest_acceptable_value, use_lowest, nativePose);
+			return (FragmentScoringMethodOP) FragmentScoringMethodOP( new PhiPsiRmsd(priority,
+					lowest_acceptable_value, use_lowest, nativePose) );
 		}
 		pos = input_file.find(".tab");
 		if (pos != std::string::npos) {
@@ -258,8 +258,8 @@ FragmentScoringMethodOP MakePhiPsiRmsd::make(Size priority,
 					<< input_file << std::endl;
 			PhiPsiTalosIO in(input_file);
 			in.write(trPhiPsiRmsd.Debug);
-			return (FragmentScoringMethodOP) new PhiPsiRmsd(priority,
-					lowest_acceptable_value, use_lowest, in);
+			return (FragmentScoringMethodOP) FragmentScoringMethodOP( new PhiPsiRmsd(priority,
+					lowest_acceptable_value, use_lowest, in) );
 		}
 
 	}
@@ -270,30 +270,30 @@ FragmentScoringMethodOP MakePhiPsiRmsd::make(Size priority,
 				<< input_file << std::endl;
 		PhiPsiTalosIO in(option[in::file::talos_phi_psi]());
 		in.write(trPhiPsiRmsd.Debug);
-		return (FragmentScoringMethodOP) new PhiPsiRmsd(priority,
-				lowest_acceptable_value, use_lowest, in);
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new PhiPsiRmsd(priority,
+				lowest_acceptable_value, use_lowest, in) );
 	}
 	if (option[in::file::native].user()) {
-		core::pose::PoseOP nativePose = new core::pose::Pose;
+		core::pose::PoseOP nativePose( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*nativePose, option[in::file::native]());
 		trPhiPsiRmsd << "Reference file for Phi,Psi scoring loaded from "
 				<< option[in::file::native]() << std::endl;
 		trPhiPsiRmsd.Debug << "its sequence is:\n" << nativePose->sequence()
 				<< std::endl;
 
-		return (FragmentScoringMethodOP) new PhiPsiRmsd(priority,
-				lowest_acceptable_value, use_lowest, nativePose);
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new PhiPsiRmsd(priority,
+				lowest_acceptable_value, use_lowest, nativePose) );
 	}
 	if (option[in::file::s].user()) {
-		core::pose::PoseOP nativePose = new core::pose::Pose;
+		core::pose::PoseOP nativePose( new core::pose::Pose );
 		core::import_pose::pose_from_pdb(*nativePose, option[in::file::s]()[1]);
 		trPhiPsiRmsd << "Reference file for Phi,Psi scoring loaded from "
 				<< option[in::file::s]()[1] << std::endl;
 		trPhiPsiRmsd.Debug << "its sequence is:\n" << nativePose->sequence()
 				<< std::endl;
 
-		return (FragmentScoringMethodOP) new PhiPsiRmsd(priority,
-				lowest_acceptable_value, use_lowest, nativePose);
+		return (FragmentScoringMethodOP) FragmentScoringMethodOP( new PhiPsiRmsd(priority,
+				lowest_acceptable_value, use_lowest, nativePose) );
 	}
 
 	utility_exit_with_message(

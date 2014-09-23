@@ -48,7 +48,7 @@ GaussianChainQuadrupleFunc::GaussianChainQuadrupleFunc( Real const gaussian_vari
 FuncOP
 GaussianChainQuadrupleFunc::clone() const
 {
-	return new GaussianChainQuadrupleFunc( gaussian_variance_, loop_fixed_cost_, D2_, D3_, D4_ );
+	return FuncOP( new GaussianChainQuadrupleFunc( gaussian_variance_, loop_fixed_cost_, D2_, D3_, D4_ ) );
 }
 
 void

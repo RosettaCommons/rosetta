@@ -22,8 +22,8 @@ namespace denovo_protein_design{
 
 //Forwards and OP typedefs
 class CreateStartingStructureMover;
-typedef utility::pointer::owning_ptr< CreateStartingStructureMover > CreateStartingStructureMoverOP;
-typedef utility::pointer::owning_ptr< CreateStartingStructureMover const > CreateStartingStructureMoverCOP;
+typedef utility::pointer::shared_ptr< CreateStartingStructureMover > CreateStartingStructureMoverOP;
+typedef utility::pointer::shared_ptr< CreateStartingStructureMover const > CreateStartingStructureMoverCOP;
 
 }//DenovoProteinDesign
 }//devel

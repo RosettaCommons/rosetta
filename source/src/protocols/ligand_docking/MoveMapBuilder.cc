@@ -70,8 +70,8 @@ set_jumps(
 
 MoveMapBuilder::MoveMapBuilder():
 		ReferenceCount(),
-		sc_interface_builder_(NULL),
-		bb_interface_builder_(NULL),
+		sc_interface_builder_(/* NULL */),
+		bb_interface_builder_(/* NULL */),
 		minimize_water_(false)
 {}
 
@@ -104,11 +104,11 @@ MoveMapBuilder::parse_my_tag(
 ){
 	if ( tag->hasOption("sc_interface") ){
 		std::string sc_interface_name= tag->getOption<std::string>("sc_interface");
-		sc_interface_builder_= datamap.get< protocols::ligand_docking::InterfaceBuilder * >( "interface_builders", sc_interface_name);
+		sc_interface_builder_= datamap.get_ptr<protocols::ligand_docking::InterfaceBuilder>( "interface_builders", sc_interface_name);
 	}
 	if ( tag->hasOption("bb_interface") ){
 		std::string bb_interface_name= tag->getOption<std::string>("bb_interface");
-		bb_interface_builder_= datamap.get< protocols::ligand_docking::InterfaceBuilder * >( "interface_builders", bb_interface_name);
+		bb_interface_builder_= datamap.get_ptr<protocols::ligand_docking::InterfaceBuilder>( "interface_builders", bb_interface_name);
 	}
 
 	if ( tag->hasOption("minimize_water") ){
@@ -121,7 +121,7 @@ MoveMapBuilder::parse_my_tag(
 
 core::kinematics::MoveMapOP
 MoveMapBuilder::build(core::pose::Pose const & pose) const{
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
+	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
 
 	LigandAreas const & ligand_areas1 = sc_interface_builder_->get_ligand_areas();
 	LigandAreas const & ligand_areas2 = sc_interface_builder_->get_ligand_areas();

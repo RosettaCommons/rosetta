@@ -26,10 +26,10 @@ namespace mm {
 // Forward
 class MMBondLengthLibrary;
 
-typedef  utility::pointer::access_ptr< MMBondLengthLibrary > MMBondLengthLibraryAP;
-typedef  utility::pointer::access_ptr< MMBondLengthLibrary const > MMBondLengthLibraryCAP;
-typedef  utility::pointer::owning_ptr< MMBondLengthLibrary > MMBondLengthLibraryOP;
-typedef  utility::pointer::owning_ptr< MMBondLengthLibrary const > MMBondLengthLibraryCOP;
+typedef  utility::pointer::weak_ptr< MMBondLengthLibrary > MMBondLengthLibraryAP;
+typedef  utility::pointer::weak_ptr< MMBondLengthLibrary const > MMBondLengthLibraryCAP;
+typedef  utility::pointer::shared_ptr< MMBondLengthLibrary > MMBondLengthLibraryOP;
+typedef  utility::pointer::shared_ptr< MMBondLengthLibrary const > MMBondLengthLibraryCOP;
 
 } // namespace mm
 } // namespace scoring

@@ -148,11 +148,11 @@ void setup_grid_manager(GridWeights const & /*weights*/)
 	GridManager* grid_manager( GridManager::get_instance() );
 	grid_manager->reset();
 
-	SingleGridOP atr(new AtrGrid());
-	SingleGridOP rep(new RepGrid());
-	SingleGridOP vdw(new VdwGrid());
-	SingleGridOP hba(new HbaGrid());
-	SingleGridOP hbd(new HbdGrid());
+	SingleGridOP atr( new AtrGrid() );
+	SingleGridOP rep( new RepGrid() );
+	SingleGridOP vdw( new VdwGrid() );
+	SingleGridOP hba( new HbaGrid() );
+	SingleGridOP hbd( new HbdGrid() );
 
 	grid_manager->insert_grid("atr",atr);
 	grid_manager->insert_grid("rep",rep);
@@ -169,7 +169,7 @@ protocols::moves::MoverOP setup_start_coords()
 	utility::vector1<core::Real> coord_vect = basic::options::option[basic::options::OptionKeys::docking::ligand::start_from]();
 	core::Vector start_coords(coord_vect[1],coord_vect[2],coord_vect[3]);
 
-	protocols::ligand_docking::StartFromOP start_from(new protocols::ligand_docking::StartFrom());
+	protocols::ligand_docking::StartFromOP start_from( new protocols::ligand_docking::StartFrom() );
 	start_from->coords(start_coords,"default");
 	start_from->chain("X");
 
@@ -187,7 +187,7 @@ protocols::moves::MoverOP setup_transform_mover()
 	core::Size cycles(8000);
 	core::Real temp(100.0);
 
-	protocols::moves::MoverOP transform(new protocols::ligand_docking::Transform(chain,box_size,move_distance,angle,cycles,temp));
+	protocols::moves::MoverOP transform( new protocols::ligand_docking::Transform(chain,box_size,move_distance,angle,cycles,temp) );
 	return transform;
 
 
@@ -196,7 +196,7 @@ protocols::moves::MoverOP setup_transform_mover()
 protocols::moves::MoverOP setup_slide_mover()
 {
 	std::string chain("X");
-	protocols::moves::MoverOP slide_together(new protocols::ligand_docking::SlideTogether(chain));
+	protocols::moves::MoverOP slide_together( new protocols::ligand_docking::SlideTogether(chain) );
 	return slide_together;
 }
 
@@ -207,7 +207,7 @@ protocols::moves::MoverOP setup_score_mover()
 
 	core::scoring::ScoreFunctionOP score_fxn(core::scoring::get_score_function_legacy( "score12prime.wts" ));
 
-	protocols::ligand_docking::InterfaceScoreCalculatorOP score_mover(new protocols::ligand_docking::InterfaceScoreCalculator());
+	protocols::ligand_docking::InterfaceScoreCalculatorOP score_mover( new protocols::ligand_docking::InterfaceScoreCalculator() );
 
 	score_mover->chains(chains);
 	score_mover->score_fxn(score_fxn);
@@ -217,7 +217,7 @@ protocols::moves::MoverOP setup_score_mover()
 
 protocols::moves::MoverOP setup_lowres_protocol()
 {
-	protocols::moves::SequenceMoverOP lowres_protocol_mover(new protocols::moves::SequenceMover());
+	protocols::moves::SequenceMoverOP lowres_protocol_mover( new protocols::moves::SequenceMover() );
 
 	lowres_protocol_mover->add_mover(setup_start_coords());
 	lowres_protocol_mover->add_mover(setup_transform_mover());

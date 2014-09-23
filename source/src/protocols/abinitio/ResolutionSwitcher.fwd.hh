@@ -28,8 +28,8 @@ namespace abinitio {
 class ResolutionSwitcher;
 
 // Types
-typedef  utility::pointer::owning_ptr< ResolutionSwitcher >  ResolutionSwitcherOP;
-typedef  utility::pointer::owning_ptr< ResolutionSwitcher const >  ResolutionSwitcherCOP;
+typedef  utility::pointer::shared_ptr< ResolutionSwitcher >  ResolutionSwitcherOP;
+typedef  utility::pointer::shared_ptr< ResolutionSwitcher const >  ResolutionSwitcherCOP;
 
 
 } // namespace kinematics

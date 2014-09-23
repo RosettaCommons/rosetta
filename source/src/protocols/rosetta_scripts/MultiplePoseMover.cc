@@ -63,7 +63,7 @@ std::string MultiplePoseMoverCreator::keyname() const
 
 protocols::moves::MoverOP MultiplePoseMoverCreator::create_mover() const
 {
-	return new MultiplePoseMover();
+	return protocols::moves::MoverOP( new MultiplePoseMover() );
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -73,9 +73,9 @@ MultiplePoseMover::MultiplePoseMover() :
 	cached_(false),
 	max_input_poses_(0),
 	max_output_poses_(0),
-	rosetta_scripts_tag_(NULL),
-	selector_tag_(NULL),
-	previous_mover_(NULL),
+	rosetta_scripts_tag_(/* NULL */),
+	selector_tag_(/* NULL */),
+	previous_mover_(/* NULL */),
 	poses_input_(0),
 	poses_output_(0)
 {

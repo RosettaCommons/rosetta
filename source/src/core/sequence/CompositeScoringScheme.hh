@@ -51,11 +51,11 @@ public:
 	ScoringSchemeOP clone() const {
 		// maybe clone the scoring_schemes() if object re-use ever causes a weird
 		// problem.
-		return new CompositeScoringScheme(
+		return ScoringSchemeOP( new CompositeScoringScheme(
 			gap_open(),
 			gap_extend(),
 			scoring_schemes()
-		);
+		) );
 	}
 
 	utility::vector1< ScoringSchemeOP > scoring_schemes() const {

@@ -25,8 +25,8 @@ namespace methods {
 
 class PoissonBoltzmannEnergy;
 
-typedef utility::pointer::owning_ptr< PoissonBoltzmannEnergy > PoissonBoltzmannEnergyOP;
-typedef utility::pointer::owning_ptr< PoissonBoltzmannEnergy const > PoissonBoltzmannEnergyCOP;
+typedef utility::pointer::shared_ptr< PoissonBoltzmannEnergy > PoissonBoltzmannEnergyOP;
+typedef utility::pointer::shared_ptr< PoissonBoltzmannEnergy const > PoissonBoltzmannEnergyCOP;
 
 } // methods
 } // scoring

@@ -68,9 +68,9 @@ void run_test() {
 	TR << "Pre-stub score is: " << pose.energies().total_energy() << std::endl;
 
 	// jk Read the stub set here
-	protocols::hotspot_hashing::HotspotStubSetOP hotspot_stub_setOP = new protocols::hotspot_hashing::HotspotStubSet;
+	protocols::hotspot_hashing::HotspotStubSetOP hotspot_stub_setOP( new protocols::hotspot_hashing::HotspotStubSet );
 	hotspot_stub_setOP->read_data( "jacobHGH1.stubs" );
-	protocols::hotspot_hashing::HotspotStubSetCOP saved_hotspot_stub_setCOP = new protocols::hotspot_hashing::HotspotStubSet( *hotspot_stub_setOP );
+	protocols::hotspot_hashing::HotspotStubSetCOP saved_hotspot_stub_setCOP( new protocols::hotspot_hashing::HotspotStubSet( *hotspot_stub_setOP ) );
 
 	// jk Setup the PackerTask which will be used in setting up the constraints.
 	core::Size const chain_to_redesign = 2;
@@ -105,7 +105,7 @@ void run_test() {
 	TR << "Stub score after constraint removal is: " << pose.energies().total_energies()[ core::scoring::backbone_stub_constraint ] << std::endl;
 
 	// Apply weak (long-range) constraints
-	hotspot_stub_setOP = new protocols::hotspot_hashing::HotspotStubSet( *saved_hotspot_stub_setCOP );
+	hotspot_stub_setOP = protocols::hotspot_hashing::HotspotStubSetOP( new protocols::hotspot_hashing::HotspotStubSet( *saved_hotspot_stub_setCOP ) );
 	hotspot_stub_setOP->add_hotspot_constraints_to_pose( pose, chain_to_redesign, hotspot_stub_setOP, 0.0001, worst_allowed_stub_bonus, apply_self_energies, bump_cutoff, apply_ambiguous_constraints );
 	(*scorefxn)(pose);
 	TR << "Total score with long-range constraints is: " << pose.energies().total_energies()[ core::scoring::total_score ] << std::endl;
@@ -126,13 +126,13 @@ void run_test() {
 	TR << "Unbound stub score with long-range constraints is: " << pose.energies().total_energies()[ core::scoring::backbone_stub_constraint ] << std::endl;
 
 	// do a minimization, with deriv_check
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
 	movemap->set_chi( false );
 	movemap->set_bb( false );
 	movemap->set_jump( rb_move_jump, true );
 	bool const deriv_check(true);
 	bool const deriv_check_verbose(true);
-	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn, "linmin", 0.00001, true, deriv_check, deriv_check_verbose );
+	protocols::simple_moves::MinMoverOP min_mover( new protocols::simple_moves::MinMover( movemap, scorefxn, "linmin", 0.00001, true, deriv_check, deriv_check_verbose ) );
 	//	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin", 0.0001, true, deriv_check, deriv_check_verbose );
 	(*scorefxn)(pose);
 	min_mover->apply( pose );

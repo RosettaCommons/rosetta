@@ -30,11 +30,11 @@ namespace claims {
 class ClaimStrength;
 
 // Types
-typedef  utility::pointer::owning_ptr< ClaimStrength >  ClaimStrengthOP;
-typedef  utility::pointer::owning_ptr< ClaimStrength const >  ClaimStrengthCOP;
+typedef  utility::pointer::shared_ptr< ClaimStrength >  ClaimStrengthOP;
+typedef  utility::pointer::shared_ptr< ClaimStrength const >  ClaimStrengthCOP;
 
-typedef  utility::pointer::access_ptr< ClaimStrength >  ClaimStrengthAP;
-typedef  utility::pointer::access_ptr< ClaimStrength const >  ClaimStrengthCAP;
+typedef  utility::pointer::weak_ptr< ClaimStrength >  ClaimStrengthAP;
+typedef  utility::pointer::weak_ptr< ClaimStrength const >  ClaimStrengthCAP;
 
 }
 }

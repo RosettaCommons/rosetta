@@ -24,8 +24,8 @@ namespace monte_carlo {
 namespace mover {
 	
 	class FromScratchMover;
-	typedef utility::pointer::owning_ptr< FromScratchMover > FromScratchMoverOP;
-	typedef utility::pointer::owning_ptr< FromScratchMover const > FromScratchMoverCOP;
+	typedef utility::pointer::shared_ptr< FromScratchMover > FromScratchMoverOP;
+	typedef utility::pointer::shared_ptr< FromScratchMover const > FromScratchMoverCOP;
 	
 } //mover
 } //monte_carlo

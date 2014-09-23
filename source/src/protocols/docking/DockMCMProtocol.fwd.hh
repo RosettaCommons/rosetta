@@ -21,8 +21,8 @@ namespace protocols {
 namespace docking {
 	/// @brief this mover does the high resolution refinement stage of the RosettaDock algorithm
 	class DockMCMProtocol;
-	typedef utility::pointer::owning_ptr< DockMCMProtocol > DockMCMProtocolOP;
-	typedef utility::pointer::owning_ptr< DockMCMProtocol const > DockMCMProtocolCOP;
+	typedef utility::pointer::shared_ptr< DockMCMProtocol > DockMCMProtocolOP;
+	typedef utility::pointer::shared_ptr< DockMCMProtocol const > DockMCMProtocolCOP;
 
 } //docking
 } //protocols

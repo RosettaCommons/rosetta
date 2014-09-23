@@ -24,16 +24,16 @@ namespace simple_moves {
 namespace symmetry {
 
 class SetupForSymmetryMover;
-typedef utility::pointer::owning_ptr< SetupForSymmetryMover > SetupForSymmetryMoverOP;
-typedef utility::pointer::owning_ptr< SetupForSymmetryMover const > SetupForSymmetryMoverCOP;
+typedef utility::pointer::shared_ptr< SetupForSymmetryMover > SetupForSymmetryMoverOP;
+typedef utility::pointer::shared_ptr< SetupForSymmetryMover const > SetupForSymmetryMoverCOP;
 
 class ExtractAsymmetricUnitMover;
-typedef utility::pointer::owning_ptr< SetupForSymmetryMover > ExtractAsymmetricUnitMoverOP;
-typedef utility::pointer::owning_ptr< SetupForSymmetryMover const > ExtractAsymmetricUnitMoverCOP;
+typedef utility::pointer::shared_ptr< SetupForSymmetryMover > ExtractAsymmetricUnitMoverOP;
+typedef utility::pointer::shared_ptr< SetupForSymmetryMover const > ExtractAsymmetricUnitMoverCOP;
 
 class ExtractAsymmetricPoseMover;
-typedef utility::pointer::owning_ptr< ExtractAsymmetricPoseMover > ExtractAsymmetricPoseMoverOP;
-typedef utility::pointer::owning_ptr< ExtractAsymmetricPoseMover const > ExtractAsymmetricPoseMoverCOP;
+typedef utility::pointer::shared_ptr< ExtractAsymmetricPoseMover > ExtractAsymmetricPoseMoverOP;
+typedef utility::pointer::shared_ptr< ExtractAsymmetricPoseMover const > ExtractAsymmetricPoseMoverCOP;
 
 
 }

@@ -20,8 +20,8 @@ namespace protocols {
 namespace simple_moves {
 
 class BoltzmannRotamerMover;
-typedef utility::pointer::owning_ptr< BoltzmannRotamerMover > BoltzmannRotamerMoverOP;
-typedef utility::pointer::owning_ptr< BoltzmannRotamerMover const > BoltzmannRotamerMoverCOP;
+typedef utility::pointer::shared_ptr< BoltzmannRotamerMover > BoltzmannRotamerMoverOP;
+typedef utility::pointer::shared_ptr< BoltzmannRotamerMover const > BoltzmannRotamerMoverCOP;
 
 } // moves
 } // protocols

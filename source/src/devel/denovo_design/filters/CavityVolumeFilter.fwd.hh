@@ -28,11 +28,11 @@ namespace filters {
 class CavityVolumeFilter;
 
 // Types
-typedef  utility::pointer::owning_ptr< CavityVolumeFilter >  CavityVolumeFilterOP;
-typedef  utility::pointer::owning_ptr< CavityVolumeFilter const >  CavityVolumeFilterCOP;
+typedef  utility::pointer::shared_ptr< CavityVolumeFilter >  CavityVolumeFilterOP;
+typedef  utility::pointer::shared_ptr< CavityVolumeFilter const >  CavityVolumeFilterCOP;
 
-typedef  utility::pointer::access_ptr< CavityVolumeFilter >  CavityVolumeFilterAP;
-typedef  utility::pointer::access_ptr< CavityVolumeFilter const >  CavityVolumeFilterCAP;
+typedef  utility::pointer::weak_ptr< CavityVolumeFilter >  CavityVolumeFilterAP;
+typedef  utility::pointer::weak_ptr< CavityVolumeFilter const >  CavityVolumeFilterCAP;
 
 } // namespace filters
 } // namespace denovo_design

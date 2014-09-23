@@ -19,8 +19,8 @@ namespace protocols {
 namespace star {
 
 class StarAbinitio;
-typedef utility::pointer::owning_ptr<StarAbinitio> StarAbinitioOP;
-typedef utility::pointer::owning_ptr<StarAbinitio const> StarAbinitioCOP;
+typedef utility::pointer::shared_ptr<StarAbinitio> StarAbinitioOP;
+typedef utility::pointer::shared_ptr<StarAbinitio const> StarAbinitioCOP;
 
 }  // namespace star
 }  // namespace protocols

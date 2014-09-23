@@ -70,8 +70,8 @@ typedef Bin3D_hash    xyzbin_equals;
 struct bin_index_hasher;
 
 class SixDCoordinateBinner;
-typedef utility::pointer::owning_ptr< SixDCoordinateBinner > SixDCoordinateBinnerOP;
-typedef utility::pointer::owning_ptr< SixDCoordinateBinner const > SixDCoordinateBinnerCOP;
+typedef utility::pointer::shared_ptr< SixDCoordinateBinner > SixDCoordinateBinnerOP;
+typedef utility::pointer::shared_ptr< SixDCoordinateBinner const > SixDCoordinateBinnerCOP;
 
 
 } //hashing

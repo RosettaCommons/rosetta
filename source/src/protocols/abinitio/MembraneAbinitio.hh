@@ -52,7 +52,7 @@ namespace abinitio {
 
 /// Move these forward declarations to MembraneAbinitio.fwd.hh
 class MembraneAbinitio;
-typedef utility::pointer::owning_ptr< MembraneAbinitio > MembraneAbinitioOP;
+typedef utility::pointer::shared_ptr< MembraneAbinitio > MembraneAbinitioOP;
 
 //@ brief The Classic Abinitio protocol from rosetta++
 /*!

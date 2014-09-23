@@ -58,10 +58,10 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	FilterOP clone() const {
-		return new LigDSasaFilter( *this );
+		return FilterOP( new LigDSasaFilter( *this ) );
 	}
 	FilterOP fresh_instance() const{
-		return new LigDSasaFilter();
+		return FilterOP( new LigDSasaFilter() );
 	}
 
 	virtual ~LigDSasaFilter();
@@ -87,10 +87,10 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Size compute( core::pose::Pose const & pose ) const;
 	FilterOP clone() const {
-		return new LigBurialFilter( *this );
+		return FilterOP( new LigBurialFilter( *this ) );
 	}
 	FilterOP fresh_instance() const{
-		return new LigBurialFilter();
+		return FilterOP( new LigBurialFilter() );
 	}
 
 	virtual ~LigBurialFilter();
@@ -120,10 +120,10 @@ LigInterfaceEnergyFilter() : Filter( "LigInterfaceEnergy" ) {}
 	LigInterfaceEnergyFilter( LigInterfaceEnergyFilter const &init );
 	bool apply( core::pose::Pose const & pose ) const;
 	FilterOP clone() const {
-		return new LigInterfaceEnergyFilter( *this );
+		return FilterOP( new LigInterfaceEnergyFilter( *this ) );
 	}
 	FilterOP fresh_instance() const{
-		return new LigInterfaceEnergyFilter();
+		return FilterOP( new LigInterfaceEnergyFilter() );
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
@@ -162,10 +162,10 @@ EnzScoreFilter() : Filter( "EnzScore" ) {}
 	EnzScoreFilter( EnzScoreFilter const &init );
 	bool apply( core::pose::Pose const & pose ) const;
 	FilterOP clone() const {
-		return new EnzScoreFilter( *this );
+		return FilterOP( new EnzScoreFilter( *this ) );
 	}
 	FilterOP fresh_instance() const{
-		return new EnzScoreFilter();
+		return FilterOP( new EnzScoreFilter() );
 	}
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
@@ -199,10 +199,10 @@ DiffAtomSasaFilter() : Filter( "DiffAtomBurial" ) {}
   //DiffAtomSasaFilter( DiffAtomSasaFilter const &init );
   bool apply( core::pose::Pose const & pose ) const;
   FilterOP clone() const {
-    return new DiffAtomSasaFilter( *this );
+    return FilterOP( new DiffAtomSasaFilter( *this ) );
   }
   FilterOP fresh_instance() const{
-    return new DiffAtomSasaFilter();
+    return FilterOP( new DiffAtomSasaFilter() );
   }
 
   void report( std::ostream & out, core::pose::Pose const & pose ) const;
@@ -229,10 +229,10 @@ RepackWithoutLigandFilter() : Filter( "RepackWithoutLigand" ) {}
   RepackWithoutLigandFilter( core::scoring::ScoreFunctionOP scorefxn, core::Real rms_thresh, core::Real energy_thresh, utility::vector1< core::Size > rms_target_res  );
   bool apply( core::pose::Pose const & pose ) const;
   FilterOP clone() const {
-    return new RepackWithoutLigandFilter( *this );
+    return FilterOP( new RepackWithoutLigandFilter( *this ) );
   }
   FilterOP fresh_instance() const{
-    return new RepackWithoutLigandFilter();
+    return FilterOP( new RepackWithoutLigandFilter() );
   }
 
   void report( std::ostream & out, core::pose::Pose const & pose ) const;
@@ -294,11 +294,11 @@ public:
   bool apply( core::pose::Pose const & pose ) const;
 
   FilterOP clone() const {
-    return new EnzdesScorefileFilter( *this );
+    return FilterOP( new EnzdesScorefileFilter( *this ) );
   }
 
   FilterOP fresh_instance() const{
-    return new EnzdesScorefileFilter();
+    return FilterOP( new EnzdesScorefileFilter() );
   }
 
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
@@ -387,11 +387,11 @@ public:
   bool apply( core::pose::Pose const & pose ) const;
 
   FilterOP clone() const {
-    return new ResidueConformerFilter( *this );
+    return FilterOP( new ResidueConformerFilter( *this ) );
   }
 
   FilterOP fresh_instance() const{
-    return new ResidueConformerFilter();
+    return FilterOP( new ResidueConformerFilter() );
   }
 
 	virtual void report( std::ostream &, core::pose::Pose const & pose ) const;
