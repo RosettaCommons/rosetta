@@ -85,6 +85,6 @@ print 'pdb chain letter and residue number for residue 5, is ', pose.pdb_info().
 
 # Creating residue example
 chm = rosetta.core.chemical.ChemicalManager.get_instance()
-rts = chm.residue_type_set('fa_standard').get()
+rts = chm.residue_type_set('fa_standard')
 ala = rosetta.core.conformation.ResidueFactory.create_residue( rts.name_map('ALA') )
 print ala
