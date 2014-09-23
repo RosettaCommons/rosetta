@@ -643,11 +643,11 @@ public:
 		using namespace core::chemical;
 		ChemicalManager * cm(ChemicalManager::get_instance());
 		std::string const tag(FA_STANDARD);
-		AtomTypeSetCAP atom_types = cm->atom_type_set(tag);
-		ElementSetCAP element_types = cm->element_set("default");
-		MMAtomTypeSetCAP mm_atom_types = cm->mm_atom_type_set(tag);
-		orbitals::OrbitalTypeSetCAP orbital_types = cm->orbital_type_set(tag);
-		ResidueTypeSet rsd_types;
+		AtomTypeSetCOP atom_types = cm->atom_type_set(tag);
+		ElementSetCOP element_types = cm->element_set("default");
+		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
+		orbitals::OrbitalTypeSetCOP orbital_types = cm->orbital_type_set(tag);
+		ResidueTypeSetOP rsd_types = new ResidueTypeSet;
 
 		sdf::MolFileIOReader molfile_reader;
 
@@ -661,7 +661,7 @@ public:
 
 				// Read reference
 				core::chemical::ResidueTypeOP rsd_ref = read_topology_file(paramsfile,
-						atom_types, element_types, mm_atom_types, orbital_types, &rsd_types);
+						atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
 
 				// Read molfile (reader has sensible defaults for typesets in use)
 				utility::vector1< sdf::MolFileIOMoleculeOP > data( molfile_reader.parse_file( molfile ) );

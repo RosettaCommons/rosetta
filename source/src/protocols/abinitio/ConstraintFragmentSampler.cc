@@ -212,7 +212,7 @@ void ConstraintFragmentSampler::set_max_seq_sep( pose::Pose& pose, core::Size se
 	bool const bHaveChainbreaks( topology_broker().has_chainbreaks_to_close() );
 
 	if (bHaveConstraints)
-		runtime_assert( constraints_ );
+		runtime_assert( constraints_ != 0 );
 
 	if ( bHaveConstraints || bHaveChainbreaks ) {
 		if ( bHaveConstraints) {

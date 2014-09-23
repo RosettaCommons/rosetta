@@ -130,7 +130,8 @@ bool FloatingResonance::match2D(
 			if ( label_match ) {
 				ResonanceAPs const& protons( connected_resonances() );
 				for ( ResonanceAPs::const_iterator pit = protons.begin(); pit != protons.end(); ++pit ) {
-					matches.push_back( std::make_pair( (*pit)->label(), label() ) );
+					ResonanceOP r( *pit );
+					matches.push_back( std::make_pair( r->label(), label() ) );
 				}
 				return true;
 			}

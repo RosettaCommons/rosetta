@@ -39,7 +39,7 @@ namespace environment {
 using core::environment::DofPassport;
 using core::environment::DofPassportCOP;
 
-  ClaimingMover::ClaimingMover():
+ClaimingMover::ClaimingMover():
   Mover(),
   passports_()
 {}
@@ -47,7 +47,8 @@ using core::environment::DofPassportCOP;
 ClaimingMover::ClaimingMover( ClaimingMover const& other ):
   Mover( other ),
   passports_( other.passports_ )
-{}
+{
+}
 
 ClaimingMover::~ClaimingMover() {}
 
@@ -70,40 +71,45 @@ core::environment::DofPassportCOP ClaimingMover::passport() const {
 
 EnvironmentCAP ClaimingMover::active_environment() const {
   if( passports_.empty()) {
-    return NULL;
+    return EnvironmentCAP();
   } else {
     return passports_.top().first;
   }
 }
 
 
-void ClaimingMover::push_passport( EnvironmentCAP env, DofPassportCOP pass ){
+void ClaimingMover::push_passport( EnvironmentCAP env_ap, DofPassportCOP pass ){
   // Bad-state checks:
   // 1) If there's a superenvironment that mover is registered with, there SHOULD be a superenv passport
   // 2) If not, there should be an empty passport stack.
-  if( env->superenv() && env->superenv()->is_registered( this ) ){
-    if( passports_.top().first->id() == env->superenv()->id() ){
+  EnvironmentCOP env( env_ap );
+  EnvironmentCOP superenv( env->superenv().lock() );
+  if( superenv && superenv->is_registered( utility::pointer::static_pointer_cast< ClaimingMover >( get_self_ptr() ) ) ){
+		EnvironmentCOP passport_env = passports_.top().first.lock();
+    if( passport_env && passport_env->id() == superenv->id() ){
       throw EXCN_Env_Passport( "ClaimingMover being double-assigned a passport for an environment.",
-                               get_name(), env );
+                               get_name(), env_ap );
     }
   } else {
     if( !( passports_.empty() ) ){
       throw EXCN_Env_Passport( "ClaimingMover lacks a superenvironment passport for a superenvironment with which it is registerd.",
-                               get_name(), env );
+                               get_name(), env_ap );
     }
   }
 
-  passports_.push( std::make_pair( env, pass ) );
+  passports_.push( std::make_pair( env_ap, pass ) );
 }
 
-void ClaimingMover::pop_passport( EnvironmentCAP env ) {
+void ClaimingMover::pop_passport( EnvironmentCAP env_ap ) {
   // passport_cancel should never be called on an empty passport stack
   if( passports_.empty() ) {
-    throw EXCN_Env_Passport( "Environment trying to pop a passport on an empty pass stack.", get_name(), env );
+    throw EXCN_Env_Passport( "Environment trying to pop a passport on an empty pass stack.", get_name(), env_ap );
   }
   // in fact, we should only ever cancel our own passports. (Should this be an assert?)
-  if( passports_.top().first->id() != env->id() ){
-    throw EXCN_Env_Passport( "Environment trying to pop a passport it did not issue.", get_name(), env );
+  EnvironmentCOP env( env_ap );
+  EnvironmentCOP passport_env = passports_.top().first.lock();
+  if( passport_env->id() != env->id() ){
+    throw EXCN_Env_Passport( "Environment trying to pop a passport it did not issue.", get_name(), env_ap );
   }
   passports_.pop();
   passport_updated();

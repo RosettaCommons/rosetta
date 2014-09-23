@@ -90,7 +90,8 @@ ForceDisulfidesMover::apply( Pose & pose ) {
 
 	using namespace core::pack::task;
 	using namespace protocols::toolbox::task_operations;
-
+	using core::pack::task::operation::TaskOperationCOP;
+	
 	DesignAroundOperationOP dao = new DesignAroundOperation;
 	dao->design_shell( 0.0 );
 	dao->repack_shell( 6.0 );
@@ -101,7 +102,7 @@ ForceDisulfidesMover::apply( Pose & pose ) {
 	TaskFactoryOP tf = new TaskFactory;
 	tf->push_back( dao );
 	tf->push_back( new operation::InitializeFromCommandline );
-	PackerTaskOP ptask = tf()->create_task_and_apply_taskoperations( pose );
+	PackerTaskOP ptask = tf->create_task_and_apply_taskoperations( pose );
 	PackRotamersMover prm( scorefxn(), ptask );
 	TR<<"repacking disulfide surroundings"<<std::endl;
 	prm.apply( pose );

@@ -171,7 +171,8 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 	set_single_loop_fold_tree( pose, loop );
 
 	// generate movemap after fold_tree is set
-	kinematics::MoveMapOP mm_one_loop = new kinematics::MoveMap(), mm_one_loop_symm = new kinematics::MoveMap();
+	kinematics::MoveMapOP mm_one_loop = new kinematics::MoveMap();
+	kinematics::MoveMapOP mm_one_loop_symm = new kinematics::MoveMap();
 	set_move_map_for_centroid_loop( loop, *mm_one_loop );
 	set_move_map_for_centroid_loop( loop, *mm_one_loop_symm );
 	if ( core::pose::symmetry::is_symmetric( pose ) )  {

@@ -17,9 +17,8 @@ namespace kinematic_closure {
 
 class KicMover;
 
-using utility::pointer::owning_ptr;
-typedef owning_ptr<KicMover> KicMoverOP;
-typedef owning_ptr<KicMover const> KicMoverCOP;
+typedef utility::pointer::owning_ptr<KicMover> KicMoverOP;
+typedef utility::pointer::owning_ptr<KicMover const> KicMoverCOP;
 
 }
 }

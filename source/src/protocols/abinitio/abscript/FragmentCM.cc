@@ -73,7 +73,7 @@ FragmentCMCreator::keyname() const {
 
 protocols::moves::MoverOP
 FragmentCMCreator::create_mover() const {
-  return ClaimingMoverOP( new FragmentCM() );
+  return new FragmentCM;
 }
 
 std::string
@@ -103,13 +103,13 @@ FragmentCM::FragmentCM( simple_moves::FragmentMoverOP mover,
 FragmentCM::~FragmentCM() {}
 
 void FragmentCM::set_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector ) {
-  if( Parent::state_check( __FUNCTION__, ( selector() == selector.get() ) ) ){
+  if( Parent::state_check( __FUNCTION__, ( selector.get() == selector_.get() ) ) ){
     selector_ = selector;
   }
 }
 
 void FragmentCM::set_mover( simple_moves::FragmentMoverOP mover ){
-  if( Parent::state_check( __FUNCTION__, ( mover() == mover_ ) ) ){
+  if( Parent::state_check( __FUNCTION__, ( mover.get() == mover_.get() ) ) ){
     mover_ = mover;
     type( get_name() );
   }
@@ -157,7 +157,7 @@ void FragmentCM::parse_my_tag( utility::tag::TagCOP tag,
   if( frag_type == "classic" ){
     set_mover( new simple_moves::ClassicFragmentMover( frag_io.read_data( tag->getOption< std::string >( frag_file_tag ) ) ) );
   } else if( frag_type == "smooth" ){
-    set_mover( new simple_moves::SmoothFragmentMover( frag_io.read_data( tag->getOption< std::string >( frag_file_tag ) ), new simple_moves::GunnCost() ) );
+    set_mover( new simple_moves::SmoothFragmentMover( frag_io.read_data( tag->getOption< std::string >( frag_file_tag ) ), protocols::simple_moves::FragmentCostOP( new simple_moves::GunnCost() ) ) );
   } else {
     std::ostringstream ss;
     ss << "The fragment type " << frag_type << " is not valid. The options "
@@ -167,7 +167,7 @@ void FragmentCM::parse_my_tag( utility::tag::TagCOP tag,
 
   initialize( tag->getOption< bool >( "initialize", true ) );
 
-  set_selector( datamap.get< core::pack::task::residue_selector::ResidueSelector const* >( "ResidueSelector", tag->getOption<std::string>( "selector" ) ) );
+  set_selector( datamap.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) ) );
 }
 
 claims::EnvClaims FragmentCM::yield_claims( core::pose::Pose const& pose,
@@ -177,7 +177,10 @@ claims::EnvClaims FragmentCM::yield_claims( core::pose::Pose const& pose,
 
   if( yield_cut_bias() ){
     core::fragment::SecondaryStructureOP ss = new core::fragment::SecondaryStructure( *( mover()->fragments() ) );
-    claim_list.push_back( new environment::claims::CutBiasClaim( this, "BASE", *ss ) );
+    claim_list.push_back( new environment::claims::CutBiasClaim(
+		utility::pointer::static_pointer_cast< ClaimingMover > ( get_self_ptr() ),
+		"BASE",
+		*ss ) );
   }
 
   int shift = 0;
@@ -188,7 +191,8 @@ claims::EnvClaims FragmentCM::yield_claims( core::pose::Pose const& pose,
     mover()->set_fragments( mover()->fragments()->clone_shifted( shift ) );
   }
 
-  TorsionClaimOP new_claim = new TorsionClaim( this, "BASE",
+  TorsionClaimOP new_claim = new TorsionClaim( utility::pointer::static_pointer_cast< ClaimingMover > ( get_self_ptr() ),
+                                               "BASE",
                                                std::make_pair( mover()->fragments()->min_pos(),
                                                                mover()->fragments()->max_pos() ) );
 

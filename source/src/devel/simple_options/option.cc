@@ -20,6 +20,8 @@
 
 #if defined(WIN32) || defined(__CYGWIN__)
 	#include <ctime>
+#else
+	#include <unistd.h>
 #endif
 
 

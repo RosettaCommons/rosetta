@@ -345,7 +345,8 @@ FusePosesNtoCMover::generate_default_relax_mover(
 	core::pose::Pose const & //pose
 ) const
 {
-
+	using core::pack::task::operation::TaskOperationCOP;
+	
 	Size repeats( debugmode_ ? 1 : 5 );
 	protocols::relax::FastRelaxOP frelax(new protocols::relax::FastRelax( sfxn_, repeats ) );
 

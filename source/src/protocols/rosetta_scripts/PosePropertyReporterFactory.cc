@@ -72,7 +72,7 @@ PosePropertyReporterFactory::~PosePropertyReporterFactory(){}
 void
 PosePropertyReporterFactory::factory_register( PosePropertyReporterCreatorOP creator )
 {
-	runtime_assert( creator );
+	runtime_assert( creator != 0 );
 	std::string const pose_selector_type( creator->keyname() );
 	if ( pose_selector_type == "UNDEFINED NAME" ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("Can't map derived PosePropertyReporter with undefined type name.");
@@ -115,7 +115,7 @@ PosePropertyReporterFactory::newPosePropertyReporter(
 	core::pose::Pose const & pose
 ) {
 	PosePropertyReporterOP selector( newPosePropertyReporter( tag->getName() ) );
-	runtime_assert( selector );
+	runtime_assert( selector != 0 );
 	selector->parse_my_tag( tag, data, filters, movers, pose );
 	return selector;
 }

@@ -93,10 +93,10 @@ strip_whitespace( std::string const & name )
 VD const ResidueType::null_vertex = boost::graph_traits<ResidueGraph>::null_vertex();
 
 ResidueType::ResidueType(
-		AtomTypeSetCAP atom_types,
-		ElementSetCAP elements,
-		MMAtomTypeSetCAP mm_atom_types,
-		orbitals::OrbitalTypeSetCAP orbital_types
+		AtomTypeSetCOP atom_types,
+		ElementSetCOP elements,
+		MMAtomTypeSetCOP mm_atom_types,
+		orbitals::OrbitalTypeSetCOP orbital_types
 ) : utility::pointer::ReferenceCount(),
 		atom_types_( atom_types ),
 		elements_( elements ),
@@ -149,6 +149,9 @@ ResidueType::~ResidueType()
 
 ResidueType::ResidueType(ResidueType const & residue_type):
 		utility::pointer::ReferenceCount(),
+#ifdef PTR_MODERN
+		utility::pointer::enable_shared_from_this< ResidueType >(),
+#endif
 		atom_types_( residue_type.atom_types_ ),
 		elements_( residue_type.elements_ ),
 		mm_atom_types_( residue_type.mm_atom_types_ ),
@@ -461,10 +464,11 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 ResidueTypeSet const &
 ResidueType::residue_type_set() const
 {
-	if ( residue_type_set_ == 0 ) {
+	ResidueTypeSetCOP residue_type_set = residue_type_set_.lock();
+	if ( !residue_type_set ) {
 		utility_exit_with_message( "ResidueType::residue_type_set: pointer is not set!");
 	}
-	return *residue_type_set_;
+	return *residue_type_set;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -676,7 +680,8 @@ ResidueType::atom_type( Size const atomno ) const
 {
 	PyAssert((atomno > 0) && (atomno <= ordered_atoms_.size()), "ResidueType::atom_type( Size const atomno ): atomno is not in this ResidueType!");
 	assert( (atomno > 0) && (atomno <= ordered_atoms_.size()) );
-	return ( *atom_types_ )[ graph_[ ordered_atoms_[atomno] ].atom_type_index() ];
+	AtomTypeSetCOP atom_types( atom_types_ );
+	return ( *atom_types )[ graph_[ ordered_atoms_[atomno] ].atom_type_index() ];
 }
 
 AtomType const &
@@ -688,7 +693,8 @@ ResidueType::atom_type( VD const vd ) const
 			"ResidueType::atom_type( VD const vd ): vd is not in this ResidueType!");
 	assert( (vd != ResidueGraph::null_vertex()) &&
 			( std::find(ordered_atoms_.begin(), ordered_atoms_.end(), vd) != ordered_atoms_.end()) );
-	return ( *atom_types_ )[ graph_[ vd ].atom_type_index() ];
+	AtomTypeSetCOP atom_types( atom_types_ );
+	return ( *atom_types )[ graph_[ vd ].atom_type_index() ];
 }
 
 /// @brief Get the atom name by index
@@ -863,7 +869,8 @@ ResidueType::add_atom(
 	assert(atom_name_to_vd_.find( strip_whitespace(atom_name)) == atom_name_to_vd_.end());
 
 	// the next calls will fail if the type name is unrecognized
-	Size const mm_type( mm_atom_types_->atom_type_index( mm_atom_type_name ) );
+	MMAtomTypeSetCOP mm_atom_types( mm_atom_types_ );
+	Size const mm_type( mm_atom_types->atom_type_index( mm_atom_type_name ) );
 
 	// Element information will be set by set_atom_type() below.
 	ElementCOP element;
@@ -885,7 +892,7 @@ ResidueType::add_atom(
 	// Less than here, as patching can remove atoms from the graph before it removes them from ordered_atoms_
 	assert( boost::num_vertices(graph_) <= ordered_atoms_.size() );
 
-	AtomAP graph_atom = &graph_[v];
+	// Atom const * graph_atom = &graph_[v];
 
 	// Needed to reset the internal state.
 	set_atom_type( v, atom_type_name );
@@ -1061,7 +1068,8 @@ ResidueType::set_mm_atom_type( std::string const & atom_name, std::string const 
 MMAtomType const &
 ResidueType::mm_atom_type( Size const atomno ) const
 {
-	return ( *mm_atom_types_ )[graph_[ ordered_atoms_[atomno] ].mm_atom_type_index() ];
+	MMAtomTypeSetCOP mm_atom_types( mm_atom_types_ );
+	return ( *mm_atom_types )[graph_[ ordered_atoms_[atomno] ].mm_atom_type_index() ];
 }
 
 /// @brief Manually set the gasteiger typeset - will use the default set otherwise
@@ -1130,7 +1138,8 @@ ResidueType::n_orbitals() const
 orbitals::OrbitalType const &
 ResidueType::orbital_type(int const orbital_index)const
 {
-	return ( *orbital_types_ )[ orbitals_[ orbital_index ].orbital_type_index() ];
+	orbitals::OrbitalTypeSetCOP orbital_types( orbital_types_ );
+	return ( *orbital_types )[ orbitals_[ orbital_index ].orbital_type_index() ];
 }
 
 // Return a pointer to the object containing the set of ring conformers possible for this saccharide.
@@ -1153,7 +1162,8 @@ ResidueType::add_orbital(
 
 	// store the atom type
 	// the next call will fail if the orbital type name is unrecognized
-	Size type( orbital_types_->orbital_type_index( orbital_type_name ) );
+	orbitals::OrbitalTypeSetCOP orbital_types( orbital_types_ );
+	Size type( orbital_types->orbital_type_index( orbital_type_name ) );
 
 	// store the name
 	orbitals_.push_back(Orbital(orbital_name, type, Vector(0.0)));
@@ -2718,10 +2728,10 @@ ResidueType::update_derived_data()
 		//It appears that the rna_residue_type_ is shared across multiple ResidueType object, if the rna_residue_type_ is not reinitialized here!
 		rna_residue_type_ = new core::chemical::rna::RNA_ResidueType;
 		//update_last_controlling_chi is treated separately for RNA case. Parin Sripakdeevong, June 26, 2011
-		rna_residue_type_->rna_update_last_controlling_chi( this, last_controlling_chi_, atoms_last_controlled_by_chi_);
-		rna_residue_type_->update_derived_rna_data( this );
+		rna_residue_type_->rna_update_last_controlling_chi( get_self_weak_ptr(), last_controlling_chi_, atoms_last_controlled_by_chi_);
+		rna_residue_type_->update_derived_rna_data( get_self_weak_ptr() );
 	} else if ( properties_->has_property( CARBOHYDRATE ) ) {
-		carbohydrate_info_ = new chemical::carbohydrates::CarbohydrateInfo( this );
+		carbohydrate_info_ = new chemical::carbohydrates::CarbohydrateInfo( get_self_weak_ptr() );
 		update_last_controlling_chi();
 	} else {
 		update_last_controlling_chi();

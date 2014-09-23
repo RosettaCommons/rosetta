@@ -17,6 +17,7 @@
 //project headers
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 
 namespace protocols {
@@ -30,6 +31,11 @@ public:
 
 #include <utility/pointer/access_ptr.hh>
 typedef utility::pointer::access_ptr< JobOutputterObserver const > JobOutputterObserverAP;
+
+#ifdef PTR_MODERN
+#include <utility/pointer/owning_ptr.hh>
+typedef utility::pointer::shared_ptr< JobOutputterObserver const > JobOutputterObserverOP;
+#endif
 
 } // namespace jd2
 } // namespace protocols

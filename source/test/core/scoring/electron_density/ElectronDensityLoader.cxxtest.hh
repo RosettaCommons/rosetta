@@ -98,8 +98,7 @@ public:
 		ResourceOP my_resource = lazy_resource_manager->get_resource_by_job_tag(
 			rDesc, jTag );
 		core::scoring::electron_density::ElectronDensityOP electron_density(
-			dynamic_cast< core::scoring::electron_density::ElectronDensity & > (
-				*my_resource));
+			utility::pointer::dynamic_pointer_cast< core::scoring::electron_density::ElectronDensity >(my_resource));
 
 		// make sure we got back the right resource type
 		TS_ASSERT( electron_density );

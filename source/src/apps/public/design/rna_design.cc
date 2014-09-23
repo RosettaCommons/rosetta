@@ -174,7 +174,7 @@ rna_design_test()
 	using namespace core::chemical;
 	using namespace core::scoring;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	pose::Pose pose;
@@ -264,7 +264,7 @@ ss_ds_ts_assign_test()
 	using namespace core::chemical;
 	using namespace core::scoring;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	pose::PoseOP pose_op( new pose::Pose );

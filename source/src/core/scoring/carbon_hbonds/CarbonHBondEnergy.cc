@@ -84,7 +84,7 @@ CarbonHBondEnergyCreator::score_types_for_method() const {
 
 ///@brief copy c-tor
 CarbonHBondEnergy::CarbonHBondEnergy() :
-	parent( new CarbonHBondEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new CarbonHBondEnergyCreator ) ),
 	carbon_hbond_potential_( ScoringManager::get_instance()->get_CarbonHBondPotential() ),
 	max_dis_( carbon_hbond_potential_.max_dis() ),
 	max_dis2_( max_dis_*max_dis_ ),

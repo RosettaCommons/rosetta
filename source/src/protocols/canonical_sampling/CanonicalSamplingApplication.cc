@@ -113,7 +113,7 @@ canonical_sampling_main(){
 		TaskFactoryOP main_task_factory = new TaskFactory;
 		operation::RestrictToRepackingOP rtrop = new operation::RestrictToRepacking;
 		main_task_factory->push_back( rtrop );
-		main_task_factory->push_back( new operation::ReadResfile );
+		main_task_factory->push_back( operation::TaskOperationOP( new operation::ReadResfile ) );
 		scm->set_task_factory(main_task_factory);
 
 		if( options::option[ OptionKeys::canonical_sampling::probabilities::sc_prob_uniform ].user() ) {
@@ -194,7 +194,7 @@ canonical_sampling_main(){
 		new mc_convergence_checks::Pool_RMSD(options::option[mc::known_structures]);
 	csm->set_poolrmsd(pool_ptr);
 	if( no_jd2_output ) {
-		protocols::jd2::JobDistributor::get_instance()->go( csm, new protocols::jd2::NoOutputJobOutputter );
+		protocols::jd2::JobDistributor::get_instance()->go( csm, protocols::jd2::JobOutputterOP( new protocols::jd2::NoOutputJobOutputter ) );
 	} else {
 		protocols::jd2::JobDistributor::get_instance()->go( csm );
 	}

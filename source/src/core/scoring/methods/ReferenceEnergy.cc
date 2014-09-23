@@ -55,11 +55,11 @@ ReferenceEnergyCreator::score_types_for_method() const {
 
 
 ReferenceEnergy::ReferenceEnergy() :
-	parent( new ReferenceEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new ReferenceEnergyCreator ) )
 {}
 
 ReferenceEnergy::ReferenceEnergy( utility::vector1< Real > const & aa_weights_in ):
-	parent( new ReferenceEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new ReferenceEnergyCreator ) ),
 	aa_weights_( aa_weights_in )
 {}
 

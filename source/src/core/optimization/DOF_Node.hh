@@ -175,7 +175,7 @@ public:
 	void
 	set_parent( DOF_NodeOP setting )
 	{
-		assert( setting() != this ); // an object in an OP should never point to itself
+		assert( setting.get() != this ); // an object in an OP should never point to itself
 		parent_ = setting;
 	}
 

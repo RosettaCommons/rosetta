@@ -79,7 +79,18 @@ std::string SerializableState_get( SerializableStateSP state, std::string key );
 #endif
 
 
-class Mover : public utility::pointer::ReferenceCount {
+class Mover : public utility::pointer::ReferenceCount
+#ifdef PTR_MODERN
+	// New version
+	, public utility::pointer::enable_shared_from_this< Mover >
+{
+#else
+{
+	// Old intrusive ref-counter version
+	inline MoverCOP shared_from_this() const { return MoverCOP( this ); }
+	inline MoverOP shared_from_this() { return MoverOP( this ); }
+#endif
+
 public:
 	typedef utility::tag::TagCOP TagCOP;
 	typedef core::pose::Pose Pose;
@@ -98,6 +109,12 @@ public:
 	static std::string name() {
 		return "UNDEFINED NAME";
 	}
+
+	// self pointers
+	inline MoverCOP get_self_ptr() const { return shared_from_this(); }
+	inline MoverOP  get_self_ptr() { return shared_from_this(); }
+	inline MoverCAP get_self_weak_ptr() const { return MoverCAP( shared_from_this() ); }
+	inline MoverAP  get_self_weak_ptr() { return MoverAP( shared_from_this() ); }
 
 	// elscripts functions
 	virtual void apply( core::io::serialization::PipeMap & pmap);

@@ -32,7 +32,7 @@ namespace moves {
 CyclicMover::CyclicMover() : iterations_(0) {}
 
 void CyclicMover::enqueue(MoverOP mover) {
-  assert(mover());
+  assert(mover);
   movers_.push_back(mover);
 }
 

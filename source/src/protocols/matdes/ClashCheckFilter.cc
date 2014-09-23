@@ -148,7 +148,7 @@ core::Size ClashCheckFilter::compute( Pose const & pose, bool const & v, bool co
 	intra_subs2 = get_jump_name_to_subunits(pose,sym_dof_name_list[2]);
 	}
 
-	runtime_assert( task_factory() );
+	runtime_assert( task_factory() != 0 );
   core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 
 	utility::vector1<Real> clashing_pos;

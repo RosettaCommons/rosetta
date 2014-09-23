@@ -72,7 +72,7 @@ PoseSelectorFactory::~PoseSelectorFactory(){}
 void
 PoseSelectorFactory::factory_register( PoseSelectorCreatorOP creator )
 {
-	runtime_assert( creator );
+	runtime_assert( creator != 0 );
 	std::string const pose_selector_type( creator->keyname() );
 	if ( pose_selector_type == "UNDEFINED NAME" ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("Can't map derived PoseSelector with undefined type name.");
@@ -115,7 +115,7 @@ PoseSelectorFactory::newPoseSelector(
 	core::pose::Pose const & pose	
 ) {
 	PoseSelectorOP selector( newPoseSelector( tag->getName() ) );
-	runtime_assert( selector );
+	runtime_assert( selector != 0 );
 	selector->parse_my_tag( tag, data, filters, movers, pose );
 	return selector;
 }

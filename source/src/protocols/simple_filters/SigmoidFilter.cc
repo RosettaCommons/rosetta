@@ -136,7 +136,7 @@ core::Real
 Sigmoid::compute(
 	core::pose::Pose const & pose
 ) const {
-	runtime_assert( filter()() ); /// if I'm null the filter has not been set
+	runtime_assert( filter().get() ); /// if I'm null the filter has not been set
   core::Real const val( filter()->report_sm( pose ) - baseline_ );
   core::Real const transform( 1.0 / ( ( 1.0 + std::exp( ( val - offset_ ) * steepness_ ) ) ) );
 	core::Real const complement( negate() ? 1.0 - transform : transform ); // negate means to take the complement of the transform

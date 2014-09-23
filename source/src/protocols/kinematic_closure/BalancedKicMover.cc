@@ -49,7 +49,7 @@ namespace kinematic_closure {
 
 BalancedKicMover::BalancedKicMover() { // {{{1
 	perturbers_ = new perturbers::PerturberSet;
-	perturbers_->add(new perturbers::RamaPerturber);
+	perturbers_->add(perturbers::PerturberOP( new perturbers::RamaPerturber ));
 	perturbers_->mark_as_default();
 
 	loop_ = Loop(0, 0);
@@ -193,7 +193,7 @@ bool BalancedKicMover::is_solution_trivial(
 			unperturbed_solutions, perturbed_solutions);
 
 	BOOST_FOREACH(ClosureSolutionCOP solution, all_solutions) {
-		distance = solution->get_distance(problem);
+		distance = solution->get_distance(problem.get());
 		if (distance < closest_distance) {
 			closest_distance = distance;
 			closest_solution = solution;

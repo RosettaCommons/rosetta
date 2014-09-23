@@ -193,7 +193,7 @@ struct FilterBucket {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 
-		runtime_assert( library_ );
+		runtime_assert( library_ != 0 );
 
 		long starttime = time(NULL);
 

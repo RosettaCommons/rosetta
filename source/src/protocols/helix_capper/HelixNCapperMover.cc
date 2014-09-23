@@ -229,11 +229,11 @@ static thread_local basic::Tracer TR( "HelixNCapperMover" );
 				core::Real nh_hbond_sum( 0.0 );
 
 				for (Size i = 1; i<= hbond_set.nhbonds(); i++) {
-					HBondCOP hbond(hbond_set.hbond(i));
-					if( hbond->don_res() != resid ) continue;
-					if( !hbond->don_hatm_is_protein_backbone() ) continue;
+					HBond const & hbond = hbond_set.hbond(i);
+					if( hbond.don_res() != resid ) continue;
+					if( !hbond.don_hatm_is_protein_backbone() ) continue;
 
-					nh_hbond_sum += hbond->energy()/2;
+					nh_hbond_sum += hbond.energy()/2;
 				}
 
 				features.push_back( nh_hbond_sum );

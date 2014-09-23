@@ -2931,7 +2931,7 @@ HPatchInteractionGraph<V, E, G>::set_pose( pose::Pose const & pose ) {
 		dynamic_cast<pack::interaction_graph::LinearMemoryInteractionGraph*>(this)->set_pose( pose );
 	}
 
-	pose_ = new pose::Pose( pose );
+	pose_ = pose::PoseOP( new pose::Pose( pose ) );
 }
 
 
@@ -2960,7 +2960,7 @@ HPatchInteractionGraph<V, E, G>::set_packer_task( task::PackerTask const & the_t
 template < typename V, typename E, typename G >
 void
 HPatchInteractionGraph<V, E, G>::set_rotamer_sets( rotamer_set::RotamerSets const & rotsets ) {
-	rotamer_sets_ = new rotamer_set::RotamerSets( rotsets );
+	rotamer_sets_ = rotamer_set::RotamerSetsOP( new rotamer_set::RotamerSets( rotsets ) );
 }
 
 
@@ -4473,7 +4473,7 @@ Real HPatchInteractionGraph< V, E, G >::calculate_alt_state_hpatch_score() {
 		//TR_HIG << "calculate_alt_state_hpatch_score(): bgE(" << fc_node_index << "," << bg_node_index << "), ";
 		//TR_HIG << "node " << fc_node_index << ": " << fc_node_current_state << " " << ii_rsd->name3();
 #endif
-		conformation::ResidueCOP jj_rsd( pose().residue( bgenumeration_2_resid_[ bg_node_index ] ) );
+		conformation::Residue const & jj_rsd( pose().residue( bgenumeration_2_resid_[ bg_node_index ] ) );
 		utility::vector1< Size > const & bg_exp_hphobes( get_hpatch_bg_node( bg_node_index )->alt_state_exp_hphobes() );
 		Size const bg_djs_offset = bg_exp_hphobe_djs_offsets_[ bg_node_index ];
 
@@ -4490,7 +4490,7 @@ Real HPatchInteractionGraph< V, E, G >::calculate_alt_state_hpatch_score() {
 
 		update_disjoint_sets_using_cache(
 			*ii_rsd, get_hpatch_node( fc_node_index )->alt_state_inv_dots(), fc_exp_hphobes, fc_djs_offset,
-			*jj_rsd, get_hpatch_bg_node( bg_node_index )->alt_state_inv_dots(), bg_exp_hphobes, bg_djs_offset,
+			jj_rsd, get_hpatch_bg_node( bg_node_index )->alt_state_inv_dots(), bg_exp_hphobes, bg_djs_offset,
 			atom_atom_overlaps, ds );
 
 	} // for loop over all bg edges

@@ -27,6 +27,7 @@
 #include <protocols/enzdes/enzdes_util.hh>
 
 // Project Headers
+#include <core/chemical/ResidueType.hh>
 #include <core/conformation/Conformation.hh>
 #include <protocols/scoring/Interface.hh>
 #include <core/id/AtomID.hh>
@@ -1374,7 +1375,7 @@ ResidueConformerFilter::parse_my_tag(utility::tag::TagCOP tag , basic::datacache
 
 	if ( tag->hasOption("restype") ){
 		std::string resname =  tag->getOption<std::string>( "restype","" );
-		restype_ = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map( resname );
+		restype_ = & core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map( resname );
 	}
 	else throw utility::excn::EXCN_RosettaScriptsOption("For ResidueConformerFilter, the desired residue type needs to be specified.");
 

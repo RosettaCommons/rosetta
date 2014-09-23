@@ -86,7 +86,7 @@ public:
 	virtual void init( core::pose::Pose const& pose );
 
   KinematicControlOP current_kinematics() {
-    runtime_assert( current_kinematics_ );
+    runtime_assert( current_kinematics_ != 0 );
     return current_kinematics_;
   }
 

@@ -189,12 +189,12 @@ PerturbRotamerSidechainMover::build_rotamer_list(
 	rotamers.clear();
 	rotamers.reserve( 200 ); //no idea but that should be plenty.
 
-	SingleResidueRotamerLibraryCAP residue_rotamer_library(
+	SingleResidueRotamerLibraryCOP residue_rotamer_library(
   	 rotamer_library().get_rsd_library( residue.type() )
 	);
 
-	SingleResidueDunbrackLibraryCAP residue_dunbrack_library(
-		dynamic_cast< SingleResidueDunbrackLibrary const * >( residue_rotamer_library.get() )
+	SingleResidueDunbrackLibraryCOP residue_dunbrack_library(
+		utility::pointer::dynamic_pointer_cast< SingleResidueDunbrackLibrary const >( residue_rotamer_library )
 	);
 
 	if ( !residue_dunbrack_library ) return;

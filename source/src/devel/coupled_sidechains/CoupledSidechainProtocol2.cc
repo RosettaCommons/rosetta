@@ -185,7 +185,7 @@ CoupledSidechainProtocol::setup_objects() {
 	scoring::ScoreFunctionOP scorefunction( core::scoring::get_score_function() );
 
 	core::pack::task::TaskFactoryOP task_factory( new core::pack::task::TaskFactory );
-	task_factory->push_back( new core::pack::task::operation::RestrictToRepacking );
+	task_factory->push_back( core::pack::task::operation::TaskOperationOP( new core::pack::task::operation::RestrictToRepacking ) );
 
 	protocols::canonical_sampling::SimulatedTemperingOP tempering  = new protocols::canonical_sampling::SimulatedTempering();
 	moves::MonteCarloOP mc_object = new moves::MonteCarlo( *scorefunction, 0.6 );
@@ -194,7 +194,7 @@ CoupledSidechainProtocol::setup_objects() {
 	sampler_ = new protocols::canonical_sampling::SidechainMetropolisHastingsMover( stride_ );
 	sampler_->set_monte_carlo( mc_object );
 	sampler_->set_tempering( tempering );
-	sampler_->add_observer( new protocols::canonical_sampling::SilentTrajectoryRecorder );
+	sampler_->add_observer( protocols::canonical_sampling::ThermodynamicObserverOP( new protocols::canonical_sampling::SilentTrajectoryRecorder ) );
 	sampler_->set_ntrials( ntrials_ );
 	if ( prob_withinrot_ > 0.0 ) {
 		protocols::simple_moves::sidechain_moves::SidechainMoverBaseOP mover( new protocols::simple_moves::sidechain_moves::PerturbRotamerSidechainMover );

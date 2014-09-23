@@ -26,6 +26,7 @@
 	#include <core/pose/PDBInfo.hh>
 	#include <core/pack/rotamer_set/RotamerSet.hh>
 	#include <core/pack/task/TaskFactory.hh>
+	#include <core/pose/Pose.fwd.hh>
 	#include <core/pose/Pose.hh>
 	#include <core/pose/annotated_sequence.hh>
 	#include <core/pose/util.hh>
@@ -2110,7 +2111,7 @@ static thread_local basic::Tracer TR( "protocols.motif_hash" );
 		return instance_;
 	}
 
-	MotifHashCAP MotifHashManager::motif_hash_from_cli(){
+	MotifHashCOP MotifHashManager::motif_hash_from_cli(){
 		if( cli_motif_hash_ == 0 ){
 			ResPairMotifs motifs; load_motifs( option[basic::options::OptionKeys::mh::input_motifs](), motifs );
 			TR << "create motif hash" << endl;
@@ -2120,7 +2121,7 @@ static thread_local basic::Tracer TR( "protocols.motif_hash" );
 		return cli_motif_hash_;
 	}
 
-	XformScore* get_xform_score_from_file(XformScore *xs,vector1<string> const & datfiles,XformScore *defaultval=NULL){
+	XformScoreOP get_xform_score_from_file(XformScoreOP xs,vector1<string> const & datfiles,XformScoreOP defaultval=NULL){
 		if( xs == 0 ){
 			if(datfiles.size()){
 				xs = new XformScore;
@@ -2135,12 +2136,12 @@ static thread_local basic::Tracer TR( "protocols.motif_hash" );
 		return xs;
 	}
 
-	XformScoreCAP MotifHashManager::xform_score_from_cli()       { return get_xform_score_from_file(cli_xform_score_       ,option[basic::options::OptionKeys::mh::xform_score_data        ]());  }
-	XformScoreCAP MotifHashManager::xform_score_ee_from_cli()    { return get_xform_score_from_file(cli_xform_score_ee_    ,option[basic::options::OptionKeys::mh::xform_score_data_ee     ](),cli_xform_score_);  }
-	XformScoreCAP MotifHashManager::xform_score_eh_from_cli()    { return get_xform_score_from_file(cli_xform_score_eh_    ,option[basic::options::OptionKeys::mh::xform_score_data_eh     ](),cli_xform_score_);  }
-	XformScoreCAP MotifHashManager::xform_score_he_from_cli()    { return get_xform_score_from_file(cli_xform_score_he_    ,option[basic::options::OptionKeys::mh::xform_score_data_he     ](),cli_xform_score_);  }
-	XformScoreCAP MotifHashManager::xform_score_hh_from_cli()    { return get_xform_score_from_file(cli_xform_score_hh_    ,option[basic::options::OptionKeys::mh::xform_score_data_hh     ](),cli_xform_score_);  }
-	XformScoreCAP MotifHashManager::xform_score_sspair_from_cli(){ return get_xform_score_from_file(cli_xform_score_sspair_,option[basic::options::OptionKeys::mh::xform_score_data_sspair]());  }
+	XformScoreCOP MotifHashManager::xform_score_from_cli()       { return get_xform_score_from_file(cli_xform_score_       ,option[basic::options::OptionKeys::mh::xform_score_data        ]());  }
+	XformScoreCOP MotifHashManager::xform_score_ee_from_cli()    { return get_xform_score_from_file(cli_xform_score_ee_    ,option[basic::options::OptionKeys::mh::xform_score_data_ee     ](),cli_xform_score_);  }
+	XformScoreCOP MotifHashManager::xform_score_eh_from_cli()    { return get_xform_score_from_file(cli_xform_score_eh_    ,option[basic::options::OptionKeys::mh::xform_score_data_eh     ](),cli_xform_score_);  }
+	XformScoreCOP MotifHashManager::xform_score_he_from_cli()    { return get_xform_score_from_file(cli_xform_score_he_    ,option[basic::options::OptionKeys::mh::xform_score_data_he     ](),cli_xform_score_);  }
+	XformScoreCOP MotifHashManager::xform_score_hh_from_cli()    { return get_xform_score_from_file(cli_xform_score_hh_    ,option[basic::options::OptionKeys::mh::xform_score_data_hh     ](),cli_xform_score_);  }
+	XformScoreCOP MotifHashManager::xform_score_sspair_from_cli(){ return get_xform_score_from_file(cli_xform_score_sspair_,option[basic::options::OptionKeys::mh::xform_score_data_sspair]());  }
 
 
 	bool MotifHit::operator<(MotifHit const & other) const{
@@ -2402,7 +2403,7 @@ static thread_local basic::Tracer TR( "protocols.motif_hash" );
 	motifs_(motifs)
  {
 	BOOST_FOREACH(MotifHit const & h, motifs_){
-		Pose *pose = new Pose;
+		core::pose::PoseOP pose( new Pose );
 		h.motif.fill_pose_with_motif(*pose);
 		align_motif_pose_super(*pose,refpose,h.residue1,refpose,h.residue2);
 		if(h.residue1>(int)res1_poses_.size()) res1_poses_.resize(h.residue1);

@@ -70,7 +70,7 @@ InterchainEnvEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 InterchainEnvEnergy::InterchainEnvEnergy() :
-	parent( new InterchainEnvEnergyCreator ),
+	parent( core::scoring::methods::EnergyMethodCreatorOP( new InterchainEnvEnergyCreator ) ),
 	potential_( InterchainPotential::get_instance() )
 {}
 

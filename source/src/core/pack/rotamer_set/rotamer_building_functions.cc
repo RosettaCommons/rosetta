@@ -191,12 +191,34 @@ build_lib_dna_rotamers(
 		// tt << "P-O3 dist.=" << target_distance << ", P_bond_angle=" << P_bond_angle << ", O3_bond_angle=" << O3_bond_angle << std::endl;
 
 		ConstraintSetOP cst_set( new ConstraintSet() );
-		cst_set->add_constraint( new AtomPairConstraint( AtomID(rsd.atom_index("O3'"),seqpos), AtomID(next_rsd.atom_index("P"),seqpos+1),
-														 new func::HarmonicFunc( target_distance, std_length ) ) );
-		cst_set->add_constraint( new AngleConstraint   ( AtomID(next_rsd.atom_index("O5'"),seqpos+1), AtomID(next_rsd.atom_index("P"),seqpos+1),
-														 AtomID(rsd.atom_index("O3'"),seqpos), new func::HarmonicFunc( P_bond_angle, std_angle ) ) );
-		cst_set->add_constraint( new AngleConstraint   ( AtomID(next_rsd.atom_index("P"),seqpos+1),   AtomID(next_rsd.atom_index("O3'"),seqpos),
-														 AtomID(rsd.atom_index("C3'"),seqpos), new func::HarmonicFunc( O3_bond_angle, std_angle ) ) );
+		func::FuncOP f_target_distance_std_length( new func::HarmonicFunc( target_distance, std_length ) );
+		cst_set->add_constraint(
+			new AtomPairConstraint( 
+				AtomID(rsd.atom_index("O3'"),seqpos),
+				AtomID(next_rsd.atom_index("P"),seqpos+1),
+				f_target_distance_std_length
+			)
+		);
+
+		func::FuncOP f_P_bond_angle_std_angle( new func::HarmonicFunc( P_bond_angle, std_angle ) );
+		cst_set->add_constraint(
+			new AngleConstraint(
+				AtomID(next_rsd.atom_index("O5'"),seqpos+1),
+				AtomID(next_rsd.atom_index("P"),seqpos+1),
+				AtomID(rsd.atom_index("O3'"),seqpos),
+				f_P_bond_angle_std_angle
+			)
+		);
+		
+		func::FuncOP f_O3_bond_angle_std_angle( new func::HarmonicFunc( O3_bond_angle, std_angle ) );
+		cst_set->add_constraint(
+			new AngleConstraint(
+				AtomID(next_rsd.atom_index("P"),seqpos+1),
+				AtomID(next_rsd.atom_index("O3'"),seqpos),
+				AtomID(rsd.atom_index("C3'"),seqpos),
+				f_O3_bond_angle_std_angle
+			)
+		);
 
 		// could also add angle constraints
 		mini_pose.constraint_set( cst_set );
@@ -554,7 +576,7 @@ build_dna_rotamers(
 	utility::vector1< ResidueOP > new_rotamers;
 
 	pack::task::ExtraRotSample const level
-		( task.residue_task( resid ).extrachi_sample_level( true /*buried*/, 1 /*chi*/, concrete_residue ) );
+		( task.residue_task( resid ).extrachi_sample_level( true /*buried*/, 1 /*chi*/, *concrete_residue ) );
 
 	// need to improve this logic:
 	if ( level == task::EX_SIX_QUARTER_STEP_STDDEVS ) {
@@ -1290,15 +1312,15 @@ build_moving_O_water_rotamers_dependent(
 	ResidueOP tp5( conformation::ResidueFactory::create_residue( h2o_type.residue_type_set().name_map("TP5") ) );
 
 	// build a list of residue/rotamers at this dna position to loop over
-	utility::vector1< conformation::ResidueCAP > rsd1_list;
+	utility::vector1< conformation::ResidueCOP > rsd1_list;
 	if ( task.pack_residue(i) ) {
 		// get the rotamerset
 		RotamerSetCOP rotset( rotsets.rotamer_set_for_residue( i ) );
 		for ( Size ii=1; ii<= rotset->num_rotamers(); ++ii ) {
-			rsd1_list.push_back( rotset->rotamer(ii)() );
+			rsd1_list.push_back( rotset->rotamer(ii) );
 		}
 	} else {
-		rsd1_list.push_back( &(pose.residue(i) ) );
+		rsd1_list.push_back( pose.residue(i).get_self_ptr() );
 	}
 
 	// here we assume that the two residues bridged by water must be neighbors...
@@ -1319,15 +1341,15 @@ build_moving_O_water_rotamers_dependent(
 		// fixed-fixed interactions were already hit inside the first pass of building
 		if ( !task.pack_residue( i ) && !task.pack_residue( j ) ) continue;
 
-		utility::vector1< conformation::ResidueCAP > rsd2_list;
+		utility::vector1< conformation::ResidueCOP > rsd2_list;
 		if ( task.pack_residue(j) ) {
 			// get the rotamerset
 			RotamerSetCOP rotset( rotsets.rotamer_set_for_residue( j ) );
 			for ( Size jj=1; jj<= rotset->num_rotamers(); ++jj ) {
-				rsd2_list.push_back( rotset->rotamer(jj)() );
+				rsd2_list.push_back( rotset->rotamer(jj) );
 			}
 		} else {
-			rsd2_list.push_back( &(pose.residue(j) ) );
+			rsd2_list.push_back( pose.residue(j).get_self_ptr() );
 		}
 
 

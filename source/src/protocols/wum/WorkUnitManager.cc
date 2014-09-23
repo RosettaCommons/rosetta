@@ -221,7 +221,7 @@ bool WorkUnitManager::read_work_unit( WorkUnitBaseOP &qualified_wu,  std::istrea
 	TR.Debug << "  READ WU: Data: " << std::endl;
 
 	WorkUnitBaseOP wu = new WorkUnitBase;
-  runtime_assert( wu );
+  runtime_assert( wu != 0 );
 	wu->raw_data_load( raw_data_ptr, size_of_raw_data );
 	delete [] raw_data_ptr;
 
@@ -231,7 +231,7 @@ bool WorkUnitManager::read_work_unit( WorkUnitBaseOP &qualified_wu,  std::istrea
   // for the interpretation of the serial data can take place.
 
 	qualified_wu = work_unit_list().get_work_unit( *wu )->clone();
-  runtime_assert( qualified_wu );
+  runtime_assert( qualified_wu != 0 );
 	// cope over data (the header and the serial data)
 	(*qualified_wu) = (*wu);
 

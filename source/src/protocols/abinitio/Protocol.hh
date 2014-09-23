@@ -79,7 +79,7 @@ public:
 	}
 
 	abinitio::KinematicControl const& kinematics() {
-		runtime_assert( kinematic_control_ );
+		runtime_assert( kinematic_control_ != 0 );
 		return *kinematic_control_;
 	}
 

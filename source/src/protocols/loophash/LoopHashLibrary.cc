@@ -376,7 +376,7 @@ LoopHashLibrary::create_db()
 	}
 
 	// also obtain data from input structures
-	core::chemical::ResidueTypeSetCAP rsd_set;
+	core::chemical::ResidueTypeSetCOP rsd_set;
 	if ( option[ in::file::fullatom ]() ) {
 		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 	} else {

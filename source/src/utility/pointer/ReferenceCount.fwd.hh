@@ -8,27 +8,18 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   utility/pointer/ReferenceCount.fwd.hh
-/// @brief  utility::pointer::ReferenceCount forward declarations
-/// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
+/// @brief  ReferenceCount base class -- dispatch class
+/// @author Luki Goldschmidt <lugo@uw.edu>
 
+#ifdef PTR_REFCOUNT
+#include <utility/pointer/refcount/ReferenceCount.fwd.hh>
+#endif
 
-#ifndef INCLUDED_utility_pointer_ReferenceCount_fwd_hh
-#define INCLUDED_utility_pointer_ReferenceCount_fwd_hh
+#ifdef PTR_STD
+#include <utility/pointer/std/ReferenceCount.fwd.hh>
+#endif
 
-#include <utility/pointer/owning_ptr.hh>
+#ifdef PTR_BOOST
+#include <utility/pointer/boost/ReferenceCount.fwd.hh>
+#endif
 
-namespace utility {
-namespace pointer {
-
-
-// Forward
-class ReferenceCount;
-
-typedef owning_ptr< ReferenceCount > ReferenceCountOP;
-typedef owning_ptr< ReferenceCount const > ReferenceCountCOP;
-
-} // namespace pointer
-} // namespace utility
-
-
-#endif // INCLUDED_utility_pointer_ReferenceCount_FWD_HH

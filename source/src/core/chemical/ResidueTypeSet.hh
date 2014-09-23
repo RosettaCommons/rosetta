@@ -25,12 +25,12 @@
 // STL headers
 #include <list>
 
-#include <core/chemical/AtomTypeSet.fwd.hh>
-#include <core/chemical/ElementSet.fwd.hh>
-#include <core/chemical/MMAtomTypeSet.fwd.hh>
+#include <core/chemical/AtomTypeSet.hh>
+#include <core/chemical/ElementSet.hh>
+#include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
+#include <core/chemical/orbitals/OrbitalTypeSet.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -38,9 +38,6 @@
 
 //Auto Headers
 #include <core/chemical/Adduct.fwd.hh>
-#ifdef PYROSETTA
-	#include <core/chemical/ResidueType.hh>
-#endif
 
 
 
@@ -56,7 +53,17 @@ namespace chemical {
 
 
 class ResidueTypeSet : public utility::pointer::ReferenceCount
+#ifdef PTR_MODERN
+	// New C++11 version
+	, public utility::pointer::enable_shared_from_this< ResidueTypeSet >
 {
+#else
+{
+	// Old intrusive ref-counter version
+	inline ResidueTypeSetCOP shared_from_this() const { return ResidueTypeSetCOP( this ); }
+	inline ResidueTypeSetOP shared_from_this() { return ResidueTypeSetOP( this ); }
+#endif
+
 public:
 	typedef std::list< AA >::const_iterator AAsIter;
 	typedef	std::map< std::string, ResidueTypeCOP >::const_iterator const_residue_iterator;
@@ -70,12 +77,21 @@ public:
 	/// @brief constructor from directory
 	ResidueTypeSet(
 		std::string const & name,
-		std::string const & directory,
+		std::string const & directory
+	);
+
+	virtual ~ResidueTypeSet();
+
+	void init(
 		std::vector< std::string > const & extra_res_param_files = std::vector< std::string >(),
 		std::vector< std::string > const & extra_patch_files = std::vector< std::string >()
 	);
 
-	virtual ~ResidueTypeSet();
+	/// self pointers
+	inline ResidueTypeSetCOP get_self_ptr() const { return shared_from_this(); }
+	inline ResidueTypeSetOP  get_self_ptr() { return shared_from_this(); }
+	inline ResidueTypeSetCAP get_self_weak_ptr() const { return ResidueTypeSetCAP( shared_from_this() ); }
+	//inline ResidueTypeSetAP  get_self_weak_ptr() { return ResidueTypeSetAP( shared_from_this() ); }
 
 	/// @brief name of the residue type set
 	std::string const &
@@ -83,25 +99,25 @@ public:
 		return name_;
 	}
 
-	AtomTypeSetCAP atom_type_set() const { return atom_types_; }
-	ElementSetCAP element_set() const { return elements_; }
-	MMAtomTypeSetCAP mm_atom_type_set() const { return mm_atom_types_; }
-	orbitals::OrbitalTypeSetCAP orbital_type_set() const { return orbital_types_; }
+	AtomTypeSetCOP atom_type_set() const { return atom_types_; }
+	ElementSetCOP element_set() const { return elements_; }
+	MMAtomTypeSetCOP mm_atom_type_set() const { return mm_atom_types_; }
+	orbitals::OrbitalTypeSetCOP orbital_type_set() const { return orbital_types_; }
 
-	void atom_type_set(AtomTypeSetCAP atom_types) {
-		runtime_assert( ! atom_types_ ); // Don't change a set default.
+	void atom_type_set(AtomTypeSetCOP atom_types) {
+		runtime_assert( !atom_types_ ); // Don't change a set default.
 		atom_types_ = atom_types;
 	}
-	void element_set(ElementSetCAP elements) {
-		runtime_assert( ! elements_ ); // Don't change a set default.
+	void element_set(ElementSetCOP elements) {
+		runtime_assert( !elements_ ); // Don't change a set default.
 		elements_ = elements;
 	}
-	void mm_atom_type_set(MMAtomTypeSetCAP mm_atom_types) {
-		runtime_assert( ! mm_atom_types_ ); // Don't change a set default.
+	void mm_atom_type_set(MMAtomTypeSetCOP mm_atom_types) {
+		runtime_assert( !mm_atom_types_ ); // Don't change a set default.
 		mm_atom_types_ = mm_atom_types;
 	}
-	void orbital_type_set(orbitals::OrbitalTypeSetCAP orbital_types) {
-		runtime_assert( ! orbital_types_ ); // Don't change a set default.
+	void orbital_type_set(orbitals::OrbitalTypeSetCOP orbital_types) {
+		runtime_assert( !orbital_types_ ); // Don't change a set default.
 		orbital_types_ = orbital_types;
 	}
 
@@ -263,10 +279,10 @@ private:
 	// The default subsidiary typesets, typically specified in the database summary file.
 	// You can add a residue type with a different subsidiary typeset, but you'll have to
 	// construct it yourself.
-	AtomTypeSetCAP atom_types_;
-	ElementSetCAP elements_;
-	MMAtomTypeSetCAP mm_atom_types_;
-	orbitals::OrbitalTypeSetCAP orbital_types_;
+	AtomTypeSetCOP atom_types_;
+	ElementSetCOP elements_;
+	MMAtomTypeSetCOP mm_atom_types_;
+	orbitals::OrbitalTypeSetCOP orbital_types_;
 
 	/// @brief the residues
 	ResidueTypeOPs residue_types_;

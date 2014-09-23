@@ -179,7 +179,7 @@ EnzRepackMinimize::create_ptask( core::pose::Pose & pose )
 
 	using namespace core::pack::task;
 	TR<<"Creating packer task based on specified task operations..."<< std::endl;
-	task_factory_->push_back( new operation::InitializeFromCommandline );
+	task_factory_->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
 	PackerTaskOP task = task_factory_->create_task_and_apply_taskoperations( pose );
 	return task;
 }

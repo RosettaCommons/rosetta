@@ -210,7 +210,7 @@ SequenceCouplingConstraint::score(
 ) const
 {
 	if ( weights[ this->score_type() ] == 0 ) return; // what's the point?
-	runtime_assert( sequence_coupling_ );
+	runtime_assert( sequence_coupling_ != 0 );
 
 	chemical::AA aa1( xyz_func.residue( seqpos1_ ).type().aa() );
 	chemical::AA aa2( xyz_func.residue( seqpos2_ ).type().aa() );

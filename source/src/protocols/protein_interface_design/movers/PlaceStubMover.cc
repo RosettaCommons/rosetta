@@ -340,14 +340,14 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 				ConstraintCOPs to_be_removed;
 				for( ConstraintCOPs::const_iterator it = constraints.begin(); it != constraints.end(); ++it ){
 					AmbiguousConstraintCOP cst = dynamic_cast< AmbiguousConstraint const * >( (*it).get() );
-					runtime_assert( cst );
+					runtime_assert( cst != 0 );
 
 					using namespace core::scoring::constraints;
 					ConstraintCOP active_constraint = cst->active_constraint();
 
 					if( active_constraint->type() == "BackboneStub" ){
 						BackboneStubConstraintCOP bb_cst = dynamic_cast< BackboneStubConstraint const * >( active_constraint() );
-						runtime_assert( bb_cst );
+						runtime_assert( bb_cst != 0 );
 						if( std::find( prevent_repacking_.begin(), prevent_repacking_.end(), bb_cst->seqpos() ) != prevent_repacking_.end() )
 							to_be_removed.push_back( *it ); //remove the entire ambiguous constraint, if the active constraint points to a non-repackable residue
 					}
@@ -378,7 +378,7 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 	if( before_min >= -0.0001 ){
 		if( stub() != NULL ){
 			TR<<"no bb stub constraint score even though I computed it analytically! Ask Sarel what's wrong here."<<std::endl;;
-			runtime_assert( stub() != NULL );
+			runtime_assert( stub != 0 );
 		}
 		protocols::hotspot_hashing::remove_hotspot_constraints_from_pose( pose );
 		TR<<"removing stub constraints from pose\n";
@@ -399,7 +399,7 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 	core::Size before_apply_stub_minimize_mover(0);
 	core::Real before_min_cb_force(0);
 
-	if( stub() != NULL ){
+	if( stub != 0 ){
 		before_min_distance = pose.residue( host_residue ).xyz( "CB" ).distance( stub->residue()->xyz( "CB" ) );
 		curr_bonus = stub->bonus_value();
 		before_apply_stub_minimize_mover = pose.constraint_set()->get_all_constraints().size();//coordinate constraint shouldnt change
@@ -798,7 +798,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 							// cases, we might want the child placestub movers to remain pristine, so
 							// we modify and apply clones of these movers.
 							movers::PlaceStubMoverOP modified_place_stub( dynamic_cast< PlaceStubMover *>( it->first->clone().get() ) );
-							runtime_assert( modified_place_stub );
+							runtime_assert( modified_place_stub != 0 );
 							modified_place_stub->placed_stubs_ = placed_stubs_;
 							utility::vector1< core::Size > new_prev_repack( prevent_repacking() );
 							for( utility::vector1< std::pair< core::Size, bool > >::const_iterator it=placed_stubs_.begin(), end=placed_stubs_.end(); it!=end; ++it )
@@ -1106,7 +1106,7 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 					simple_moves::DesignRepackMoverOP drSOP = dynamic_cast< simple_moves::DesignRepackMover * >( find_mover->second->clone().get() );
 					if( !drSOP ){
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
-						runtime_assert( drSOP );
+						runtime_assert( drSOP != 0 );
 					}//done cast check
 					stub_minimize_movers_.push_back( std::make_pair( drSOP, bb_stub_constraint_weight) );
 					TR<<"added stub minimize mover "<<stub_mover_name<<" to minimize towards the stub. Using this weight for the bb stub constraints: "<< bb_stub_constraint_weight<<'\n';
@@ -1127,7 +1127,7 @@ PlaceStubMover::parse_my_tag( TagCOP const tag,
 					simple_moves::DesignRepackMoverOP drOP = dynamic_cast< simple_moves::DesignRepackMover * >( find_mover->second->clone().get() );
 					if( !drOP ){
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
-						runtime_assert( drOP );
+						runtime_assert( drOP != 0 );
 					}
 					design_movers_.push_back( std::make_pair( drOP, apply_coord_constraints ) );
 					coord_cst_std_.push_back( coord_cst_std );

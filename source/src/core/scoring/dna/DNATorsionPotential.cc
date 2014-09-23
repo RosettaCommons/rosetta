@@ -141,30 +141,32 @@ DNATorsionPotential::add_sugar_ring_closure_constraints( conformation::Residue c
 	Size const o3prime_index = rsd.atom_index( "O3'" );
 	Size const c4prime_index = rsd.atom_index( "C4'" );
 
-	cst_set.add_constraint( new constraints::AtomPairConstraint( id::AtomID( c2prime_index, i),
+	constraints::ConstraintCOP pair_constraint( new constraints::AtomPairConstraint( id::AtomID( c2prime_index, i),
 																															 id::AtomID( c3prime_index, i),
 																															 c2prime_c3prime_dist_harm_func_,
 																															 dna_sugar_close ) );
 
-	constraints::ConstraintOP angle1 = new constraints::AngleConstraint( id::AtomID( c4prime_index, i),
+	cst_set.add_constraint( pair_constraint );
+	
+	constraints::ConstraintOP angle1( new constraints::AngleConstraint( id::AtomID( c4prime_index, i),
 																																			 id::AtomID( c3prime_index, i),
 																																			 id::AtomID( c2prime_index, i),
 																																			 c4prime_c3prime_c2prime_angle_harm_func_,
-																																			 dna_sugar_close );
+																																			 dna_sugar_close ) );
 	cst_set.add_constraint( angle1 );
 
-	constraints::ConstraintOP angle2 = new constraints::AngleConstraint( id::AtomID( o3prime_index, i),
+	constraints::ConstraintOP angle2( new constraints::AngleConstraint( id::AtomID( o3prime_index, i),
 																																			 id::AtomID( c3prime_index, i),
 																																			 id::AtomID( c2prime_index, i),
 																																			 o3prime_c3prime_c2prime_angle_harm_func_,
-																																			 dna_sugar_close );
+																																			 dna_sugar_close ) );
 	cst_set.add_constraint( angle2 );
 
-	constraints::ConstraintOP angle3 = new constraints::AngleConstraint( id::AtomID( c3prime_index, i),
+	constraints::ConstraintOP angle3( new constraints::AngleConstraint( id::AtomID( c3prime_index, i),
 																																			 id::AtomID( c2prime_index, i),
 																																			 id::AtomID( c1prime_index, i),
 																																			 c3prime_c2prime_c1prime_angle_harm_func_,
-																																			 dna_sugar_close );
+																																			 dna_sugar_close ) );
 	cst_set.add_constraint( angle3 );
 
 	// Need to add an improper dihedral to keep the hydrogens correct on C2'
@@ -201,24 +203,24 @@ DNATorsionPotential::add_dna_base_distance_constraints(
 		Real angle_diff ( rsd.mainchain_torsion(5) - rsd.mainchain_torsion(6) );
 		Real dist_1H = 0.0041 * angle_diff + 2.7092;
 		func::HarmonicFuncOP H1_harm_func(	new func::HarmonicFunc( dist_1H, 0.307 ) );
-		cst_set.add_constraint( new constraints::AtomPairConstraint( id::AtomID( H1prime_index, i),
+		cst_set.add_constraint( constraints::ConstraintOP( new constraints::AtomPairConstraint( id::AtomID( H1prime_index, i),
 																															 id::AtomID( next_H68_index, i + 1),
 																															 H1_harm_func,
-																															 dna_base_distance ) );
+																															 dna_base_distance ) ) );
 
 		Real dist_2H = 0.0081 * angle_diff + 4.0213;
 		func::HarmonicFuncOP H2_harm_func(	new func::HarmonicFunc( dist_2H, 0.381 ) );
-		cst_set.add_constraint( new constraints::AtomPairConstraint( id::AtomID( H2prime_index, i),
+		cst_set.add_constraint( constraints::ConstraintOP( new constraints::AtomPairConstraint( id::AtomID( H2prime_index, i),
 																															 id::AtomID( next_H68_index, i + 1),
 																															 H2_harm_func,
-																															 dna_base_distance ) );
+																															 dna_base_distance ) ) );
 
 		Real dist_H68 = 0.0068 * angle_diff + 5.4228;
 		func::HarmonicFuncOP H68_harm_func(	new func::HarmonicFunc( dist_H68, 0.373 ) );
-		cst_set.add_constraint( new constraints::AtomPairConstraint( id::AtomID( H68_index, i),
+		cst_set.add_constraint( constraints::ConstraintOP( new constraints::AtomPairConstraint( id::AtomID( H68_index, i),
 																															 id::AtomID( next_H68_index, i + 1),
 																															 H68_harm_func,
-																															 dna_base_distance ) );
+																															 dna_base_distance ) ) );
 //	std::cout << "TEST" << " angle " << angle_diff << " dist_1H " << dist_1H << std::endl;
 }
 }

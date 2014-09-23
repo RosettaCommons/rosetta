@@ -41,7 +41,7 @@ utility::pointer::owning_ptr<MoverSubclass> parse_tag(std::string tag_string) {
 		protocols::moves::MoverFactory::get_instance()->newMover(
 				tag, data, filters, movers, pose);
 	utility::pointer::owning_ptr<MoverSubclass> mover = 
-		dynamic_cast<MoverSubclass*>(base_mover.get());
+		utility::pointer::dynamic_pointer_cast<MoverSubclass>(base_mover);
 
 	TSM_ASSERT("Instantiated the wrong type of mover", mover.get());
 

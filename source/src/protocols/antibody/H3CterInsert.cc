@@ -279,7 +279,7 @@ void H3CterInsert::read_H3_cter_fragment( ) {
 			}
 			//TR<<res_name<<"   .vs.    "<<aa_1name[aa_1name.size() - 5 + i]<<"    "<<seq_match<<std::endl;
 
-			utility::pointer::owning_ptr< BBTorsionSRFD > res_torsions(
+			BBTorsionSRFDOP res_torsions(
 			    new BBTorsionSRFD( 3, 'L', res_name ) ); // 3 protein torsions
 
 			// ugly numbers 1-3, but pose.set_phi also uses explicit numbers

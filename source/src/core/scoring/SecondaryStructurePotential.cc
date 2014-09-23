@@ -103,7 +103,8 @@ retrieve_nonconst_ss_info_from_pose( pose::Pose & pose )
 
 	if ( !pose.data().has( core::pose::datacache::CacheableDataType::SS_INFO ) ) {
 		// create new one
-		pose.data().set( core::pose::datacache::CacheableDataType::SS_INFO, new SS_Info() );
+		using basic::datacache::DataCache_CacheableData;
+		pose.data().set( core::pose::datacache::CacheableDataType::SS_INFO, DataCache_CacheableData::DataOP( new SS_Info() ) );
 	}
 	assert( pose.data().has( core::pose::datacache::CacheableDataType::SS_INFO ) );
 	assert( dynamic_cast< SS_Info *>( &( pose.data().get( core::pose::datacache::CacheableDataType::SS_INFO ))));

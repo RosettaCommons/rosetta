@@ -371,6 +371,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
    } else if ( auction_->get_stub_scorefxn() == "backbone_stub_linear_constraint") {
         using namespace core::pack;
         using namespace core::pack::task;
+        using core::pack::task::operation::TaskOperationCOP;
         protocols::scoring::Interface interface_obj(pose.num_jump());
         pose.update_residue_neighbors(); // o/w fails assertion `graph_state_ == GOOD`
         interface_obj.distance( 8 );
@@ -782,7 +783,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 					simple_moves::DesignRepackMoverOP drSOP = dynamic_cast< simple_moves::DesignRepackMover * >( find_mover->second->clone().get() );
 					if( !drSOP ){
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
-						runtime_assert( drSOP );
+						runtime_assert( drSOP != 0 );
 					}//done cast check
 					minimization_movers_.push_back( std::make_pair( drSOP, bb_stub_constraint_weight) );
 					TR<<"added stub minimize mover "<<stub_mover_name<<" to minimize towards the stub. Using this weight for the bb stub constraints: "<< bb_stub_constraint_weight<<std::endl;
@@ -802,7 +803,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 					simple_moves::DesignRepackMoverOP drOP = dynamic_cast< simple_moves::DesignRepackMover * >( find_mover->second.get() );
 					if( !drOP ){
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
-						runtime_assert( drOP );
+						runtime_assert( drOP != 0 );
 					}
 					design_movers_.push_back( std::make_pair( drOP, ( apply_coord_constraints ? coord_cst_std : -1 ) ) );
 					TR<<"added design mover "<<mover_name<<" to place simultaneously ";
@@ -834,7 +835,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 				else
 					stubset->read_data( stub_fname );
 
-                stub_sets_.push_back(std::make_pair(stubset, std::make_pair(new HotspotStub(), 0)));  // REQUIRED FOR WINDOWS
+                stub_sets_.push_back(std::make_pair(stubset, std::make_pair(HotspotStubOP( new HotspotStub() ), 0)));  // REQUIRED FOR WINDOWS
 				//stub_sets_.push_back( StubSetStubPos( stubset, std::pair< HotspotStubOP, core::Size >( 0, 0 ) ) );
 				core::pose::PoseOP ala_pose = new core::pose::Pose( pose );
 				pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( *ala_pose ));
@@ -879,8 +880,8 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 	if( minimization_movers_.size() == 0 )
 		TR<<"No StubMinimize movers defined by user, defaulting to minimize_rb and _sc of stubs only" << std::endl;
 
-	auction_->task_factory( data.get< TaskFactory * >( "TaskFactory", "placement" ) );
-	rbstub_minimization_->task_factory( data.get< TaskFactory * >( "TaskFactory", "placement" ) );
+	auction_->task_factory( data.get_ptr< TaskFactory >( "TaskFactory", "placement" ) );
+	rbstub_minimization_->task_factory( data.get_ptr< TaskFactory >( "TaskFactory", "placement" ) );
 //	stub_score_filter_->parse_my_tag( tag, data, filters, movers, pose );
 //	stub_score_filter_->stub_sets( stub_sets_ );
 	TR<<"Using "<<minimization_repeats_before_placement_<<" minimization steps before placement (bbcst constraints on)" << std::endl;

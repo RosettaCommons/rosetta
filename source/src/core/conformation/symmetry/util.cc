@@ -284,7 +284,8 @@ setup_symmetric_conformation(
 	Size njump_orig = src_conformation.fold_tree().num_jump();
 
 	// maybe a little inefficient: first build a standard conformation, then construct symmetric conformation at the end
-	conformation::Conformation conf( src_conformation );
+	conformation::ConformationOP conf_op = src_conformation.clone();
+	conformation::Conformation & conf = *conf_op;
 
 	// recenter the pose to the origin?
 	if ( symmdata.get_recenter() ) {

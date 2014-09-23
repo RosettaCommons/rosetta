@@ -57,16 +57,16 @@ JumpClaim::JumpClaim( ClaimingMoverOP owner,
   i_str_( Parent::parse_ctrl_str( tag->getOption< std::string >( "initialization_strength", "DOES_NOT_CONTROL" ) ) )
 {
   if( datamap.has( "ResidueSelector", pos1().label() ) ){
-    this->queue_for_annotation( pos1().label(), datamap.get< ResidueSelector const* >( "ResidueSelector", pos1().label() ) );
+    this->queue_for_annotation( pos1().label(), datamap.get_ptr< ResidueSelector const >( "ResidueSelector", pos1().label() ) );
   }
   if( datamap.has( "ResidueSelector", pos2().label() ) ){
-    this->queue_for_annotation( pos2().label(), datamap.get< ResidueSelector const* >( "ResidueSelector", pos2().label() ) );
+    this->queue_for_annotation( pos2().label(), datamap.get_ptr< ResidueSelector const >( "ResidueSelector", pos2().label() ) );
   }
 
   if( tag->hasOption( "cut" ) ){
     cut( LocalPosition( tag->getOption< std::string >( "cut" ) ) );
     if( datamap.has( "ResidueSelector", cut().label() ) ){
-      this->queue_for_annotation( cut().label(), datamap.get< ResidueSelector const* >( "ResidueSelector", cut().label() ) );
+      this->queue_for_annotation( cut().label(), datamap.get_ptr< ResidueSelector const >( "ResidueSelector", cut().label() ) );
     }
   }
   if( tag->hasOption( "atom1" ) && tag->hasOption( "atom2" ) ){

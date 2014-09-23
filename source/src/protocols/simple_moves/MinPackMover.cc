@@ -155,7 +155,7 @@ MinPackMover::apply( Pose & pose )
 	if ( task_factory_ ) {
 		task = task_factory_->create_task_and_apply_taskoperations( pose );
 	} else {
-		runtime_assert( task_ );
+		runtime_assert( task_ != 0 );
 		runtime_assert( task_is_valid( pose ) );
 		task = task_;
 	}
@@ -180,7 +180,8 @@ MinPackMover::task_is_valid( Pose const & pose ) const
 {
 	if ( task_->total_residue() != pose.total_residue() ) return false;
 	for ( Size i(1); i <= pose.total_residue(); ++i ) {
-		if ( ! task_->residue_task(i).is_original_type( &pose.residue_type(i) ) ) return false;
+		chemical::ResidueTypeCOP r( pose.residue_type(i).get_self_ptr() );
+		if ( ! task_->residue_task(i).is_original_type( r ) ) return false;
 	}
 	return true;
 }
@@ -262,7 +263,7 @@ MinPackMover::clone() const
 // setters
 void MinPackMover::score_function( ScoreFunctionCOP sf )
 {
-	runtime_assert( sf );
+	runtime_assert( sf != 0 );
 	scorefxn_ = sf;
 }
 
@@ -270,7 +271,7 @@ void MinPackMover::task( task::PackerTaskCOP t ) { task_ = t; }
 
 void MinPackMover::task_factory( TaskFactoryCOP tf )
 {
-	runtime_assert( tf );
+	runtime_assert( tf != 0 );
 	task_factory_ = tf;
 }
 

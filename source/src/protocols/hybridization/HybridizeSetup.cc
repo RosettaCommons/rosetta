@@ -286,7 +286,7 @@ void HybridizeSetup::add_template(
 	core::Real domain_assembly_weight,
 	utility::vector1<core::Size> cst_reses)
 {
-	core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
+	core::chemical::ResidueTypeSetCOP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 	core::pose::PoseOP template_pose = new core::pose::Pose();
 	core::import_pose::pose_from_pdb( *template_pose, *residue_set, template_fn );
 

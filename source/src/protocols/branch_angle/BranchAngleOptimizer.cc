@@ -143,9 +143,9 @@ BranchAngleOptimizer::optimize_angles(
 
 	//TR << "Optimizing Backbone: " << main_atomid1 << center_atomid << main_atomid2 << std::endl;
 
-	kinematics::tree::AtomCOP main_atom1(& pose.atom_tree().atom(main_atomid1));
-	kinematics::tree::AtomCOP const center_atom(& pose.atom_tree().atom(center_atomid));
-	kinematics::tree::AtomCOP main_atom2(& pose.atom_tree().atom(main_atomid2));
+	kinematics::tree::AtomCOP main_atom1( pose.atom_tree().atom(main_atomid1).get_self_ptr() );
+	kinematics::tree::AtomCOP const center_atom( pose.atom_tree().atom(center_atomid).get_self_ptr() );
+	kinematics::tree::AtomCOP main_atom2( pose.atom_tree().atom(main_atomid2).get_self_ptr() );
 
 	Size coef_index(0);
 
@@ -166,7 +166,7 @@ BranchAngleOptimizer::optimize_angles(
 
 		//TR << "Optimizing 1 Branching Atom: " << branch_atomid1 << std::endl;
 
-		kinematics::tree::AtomCOP const branch_atom1(& pose.atom_tree().atom(branch_atomid1));
+		kinematics::tree::AtomCOP const branch_atom1( pose.atom_tree().atom(branch_atomid1).get_self_ptr() );
 
 		// switch main atoms if necessary for having a working stub
 		if (branch_atom1->input_stub_atom2() == main_atom2) {
@@ -220,8 +220,8 @@ BranchAngleOptimizer::optimize_angles(
 
 		//TR << "Optimizing 2 Branching Atoms: " << branch_atomid1 << branch_atomid2 << std::endl;
 
-		kinematics::tree::AtomCOP branch_atom1(& pose.atom_tree().atom(branch_atomid1));
-		kinematics::tree::AtomCOP branch_atom2(& pose.atom_tree().atom(branch_atomid2));
+		kinematics::tree::AtomCOP branch_atom1( pose.atom_tree().atom(branch_atomid1).get_self_ptr() );
+		kinematics::tree::AtomCOP branch_atom2( pose.atom_tree().atom(branch_atomid2).get_self_ptr() );
 
 		// switch main atoms (and branching atom chirality) if necessary for having a working stub
 		if (branch_atom1->input_stub_atom2() == main_atom2 && branch_atom2->input_stub_atom2() == main_atom2) {
@@ -321,7 +321,7 @@ BranchAngleOptimizer::overall_params(
 {
 	//kinematics::tree::AtomCOP main_atom1(& pose.atom_tree().atom(main_atomid1));
 	//kinematics::tree::AtomCOP const center_atom(& pose.atom_tree().atom(center_atomid));
-	kinematics::tree::AtomCOP main_atom2(& pose.atom_tree().atom(main_atomid2));
+	kinematics::tree::AtomCOP main_atom2( pose.atom_tree().atom(main_atomid2).get_self_ptr() );
 
 	//TR << "Getting Overall Parameters: " << main_atomid1 << center_atomid << main_atomid2 << std::endl;
 
@@ -341,7 +341,7 @@ BranchAngleOptimizer::overall_params(
 
 		//TR << "1 Branching Atom: " << branch_atomid1 << std::endl;
 
-		kinematics::tree::AtomCOP const branch_atom1(& pose.atom_tree().atom(branch_atomid1));
+		kinematics::tree::AtomCOP const branch_atom1( pose.atom_tree().atom(branch_atomid1).get_self_ptr() );
 
 		// switch main atoms if necessary for having a working stub
 		if (branch_atom1->input_stub_atom2() == main_atom2) {
@@ -375,8 +375,8 @@ BranchAngleOptimizer::overall_params(
 
 		//TR << "2 Branching Atoms: " << branch_atomid1 << branch_atomid2 << std::endl;
 
-		kinematics::tree::AtomCOP branch_atom1(& pose.atom_tree().atom(branch_atomid1));
-		kinematics::tree::AtomCOP branch_atom2(& pose.atom_tree().atom(branch_atomid2));
+		kinematics::tree::AtomCOP branch_atom1( pose.atom_tree().atom(branch_atomid1).get_self_ptr() );
+		kinematics::tree::AtomCOP branch_atom2( pose.atom_tree().atom(branch_atomid2).get_self_ptr() );
 
 		// switch main atoms (and branching atom chirality) if necessary for having a working stub
 		if (branch_atom1->input_stub_atom2() == main_atom2 && branch_atom2->input_stub_atom2() == main_atom2) {
@@ -1183,8 +1183,8 @@ get_branching_atoms2(
 	kinematics::tree::AtomCOP const parent(main_atom2->parent());
 
 	// check to see if parent exsits and that the correct number of bonded atoms are present
-	runtime_assert(parent);
-	runtime_assert(parent->get_nonjump_atom(3));
+	runtime_assert(parent != 0);
+	runtime_assert(parent->get_nonjump_atom(3) != 0);
 	runtime_assert(!parent->get_nonjump_atom(4));
 
 	branch_atom1 = 0;
@@ -1203,8 +1203,8 @@ get_branching_atoms2(
 		}
 	}
 
-	runtime_assert(branch_atom1);
-	runtime_assert(branch_atom2);
+	runtime_assert(branch_atom1 != 0);
+	runtime_assert(branch_atom2 != 0);
 
 	// get dihedral offsets of the two branching atoms adjusted to [0, 2*pi)
 	Real dihedral1(parent->dihedral_between_bonded_children(main_atom2, branch_atom1));

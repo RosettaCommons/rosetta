@@ -167,7 +167,7 @@ BuildSheet::parse_my_tag(
 void BuildSheet::apply( core::pose::Pose & pose )
 {
 	core::pose::Pose newpose;
-	newpose.pdb_info( new core::pose::PDBInfo( pose, true ) );
+	newpose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( pose, true ) ) );
 	sheet_.generate_residue_positions();
 	sheet_.dump_ca_coords( "ca_coords.pdb" );
 	ParametricSheet::SheetGeometry const geom( sheet_.calc_geometry() );
@@ -689,12 +689,13 @@ BuildSheet::build_dihedral_map()
 
 /// @brief builds a small idealized strand fragment to be used for parameterized stuff
 core::pose::Pose
-BuildSheet::build_ideal_strand( core::chemical::ResidueTypeSetCAP restype_set,
+BuildSheet::build_ideal_strand( core::chemical::ResidueTypeSetCAP restype_set_ap,
 		std::string const & res_name,
 		core::Size const len ) const {
 	core::pose::Pose pose;
+	core::chemical::ResidueTypeSetCOP restype_set( restype_set_ap );
 	for ( core::Size i=1; i<=len; ++i ) {
-		core::conformation::ResidueOP new_res = core::conformation::ResidueFactory::create_residue( restype_set->name_map( res_name ) );
+		core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( restype_set->name_map( res_name ) ) );
 		if ( pose.total_residue() == 0 ) {
 			pose.append_residue_by_jump( *new_res, pose.total_residue() );
 		} else {

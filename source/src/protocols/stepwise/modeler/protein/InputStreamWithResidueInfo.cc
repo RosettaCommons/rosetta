@@ -246,9 +246,10 @@ namespace protein {
 	void
 	InputStreamWithResidueInfo::advance_to_next_pose_segment(){
 		// Read in pose.
-		runtime_assert( rsd_set_ != 0 );
+		core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_ );
+		runtime_assert( rsd_set != 0 );
 		import_pose_ = new core::pose::Pose;
-		pose_input_stream_->fill_pose( *import_pose_, *rsd_set_ );
+		pose_input_stream_->fill_pose( *import_pose_, *rsd_set );
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -323,8 +324,9 @@ namespace protein {
 	////////////////////////////////////////////////////////////////////////////////////////
 	Size
 	InputStreamWithResidueInfo::compute_size(){
-		runtime_assert( rsd_set_ != 0 );
-		utility::vector1< core::pose::PoseOP > import_pose_list_ = pose_input_stream_->get_all_poses( *rsd_set_ );
+		core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_ );
+		runtime_assert( rsd_set != 0 );
+		utility::vector1< core::pose::PoseOP > import_pose_list_ = pose_input_stream_->get_all_poses( *rsd_set );
 		Size const size = import_pose_list_.size();
 		pose_input_stream_->reset();
 		return size;
@@ -406,9 +408,7 @@ namespace protein {
 			utility::vector1< std::string > silent_files1, pdb_tags1;
 			silent_files1.push_back( silent_files_in[ i ] );
 			pdb_tags1.push_back( pdb_tags[ i ] );
-			InputStreamWithResidueInfoOP input_stream=  new InputStreamWithResidueInfo(
-																										new SilentFilePoseInputStream( silent_files1, pdb_tags1 ),
-																										input_res_vectors[ i ] );
+			InputStreamWithResidueInfoOP input_stream( new InputStreamWithResidueInfo( import_pose::pose_stream::PoseInputStreamOP( new SilentFilePoseInputStream( silent_files1, pdb_tags1 ) ), input_res_vectors[ i ] ) );
 			input_streams_with_residue_info.push_back( input_stream );
 		}
 		// Then PDBs.
@@ -420,8 +420,7 @@ namespace protein {
 			}
 			utility::vector1< std::string > pose_names;
 			pose_names.push_back( pose_name );
-			InputStreamWithResidueInfoOP input_stream = new InputStreamWithResidueInfo( new PDBPoseInputStream( pose_names ),
-																																									input_res_vectors[ i ] );
+			InputStreamWithResidueInfoOP input_stream( new InputStreamWithResidueInfo( import_pose::pose_stream::PoseInputStreamOP( new PDBPoseInputStream( pose_names ) ), input_res_vectors[ i ] ) );
 			input_streams_with_residue_info.push_back( input_stream );
 		}
 

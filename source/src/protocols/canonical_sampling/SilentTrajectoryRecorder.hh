@@ -87,7 +87,7 @@ protected:
 	/// written.
 	virtual void 	write_model(
 		core::pose::Pose const & pose,
-		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
+		protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover = 0
 	);
 
 	core::Size score_stride_;

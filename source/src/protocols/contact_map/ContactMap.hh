@@ -198,8 +198,8 @@ public:
 	std::string long_string_rep(core::Size n_poses=0) const;
 
 	/// @brief	Accessor functions for private class variables
-	ContactPartnerAP partner1() {return utility::pointer::access_ptr<ContactPartner>(partner1_);}
-	ContactPartnerAP partner2() {return utility::pointer::access_ptr<ContactPartner>(partner2_);}
+	ContactPartner * partner1() {return &partner1_;}
+	ContactPartner * partner2() {return &partner2_;}
 
 private:
 	ContactPartner partner1_;

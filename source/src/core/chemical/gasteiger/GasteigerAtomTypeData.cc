@@ -478,9 +478,10 @@ std::vector<std::string> const & GasteigerAtomTypeData::AtomicOrbitalTypes_strin
     //! @brief read from std::istream
     //! @param ISTREAM input stream
     //! @return istream which was read from
-    std::istream &GasteigerAtomTypeData::read( std::istream &ISTREAM, ElementSetCAP ele_set)
+    std::istream &GasteigerAtomTypeData::read( std::istream &ISTREAM, ElementSetCAP ele_set_ap)
     {
-    	runtime_assert( ele_set );
+        ElementSetCOP ele_set( ele_set_ap );
+    	// runtime_assert( ele_set ); // ^ above will throw an exception is ele_set_ap is invalid or null
     	// write member
     	ISTREAM >> name_;
     	std::string symbol;

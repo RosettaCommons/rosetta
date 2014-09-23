@@ -82,7 +82,7 @@ SegmentInsert::SegmentInsert(
 	bool const keep_known_bb_torsions_at_junctions,
 	SegmentInsertConnectionScheme::Enum connection_scheme
 ) :
-	Super( i, &insert.residue( 1 ).residue_type_set() ),
+	Super( i, insert.residue( 1 ).residue_type_set().get_self_ptr() ),
 	interval_( i ),
 	ss_( ss ),
 	keep_known_bb_torsions_at_junctions_( keep_known_bb_torsions_at_junctions ),
@@ -136,7 +136,7 @@ SegmentInsert::SegmentInsert(
 	bool const keep_known_bb_torsions_at_junctions,
 	SegmentInsertConnectionScheme::Enum connection_scheme
 ) :
-	Super( i, &insert.residue( 1 ).residue_type_set() ),
+	Super( i, insert.residue( 1 ).residue_type_set().get_self_ptr() ),
 	interval_( i ),
 	ss_( ss ),
 	aa_( aa ),

@@ -80,7 +80,7 @@ ResFilterFactory::factory_register( ResFilterCreatorOP creator )
 void
 ResFilterFactory::add_creator( ResFilterCreatorOP creator )
 {
-	runtime_assert( creator );
+	runtime_assert( creator != 0 );
 	filter_creator_map_[ creator->keyname() ] = creator;
 }
 

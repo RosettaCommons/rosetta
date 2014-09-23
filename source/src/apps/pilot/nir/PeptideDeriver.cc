@@ -223,8 +223,8 @@ void derive(core::pose::Pose const & pose) {
 		pose::PoseOP chainA = chains[1];
 		pose::PoseOP chainB = chains[2];
 
-		conformation::Conformation a = chainA->conformation();
-		conformation::Conformation b = chainB->conformation();
+		conformation::Conformation & a = chainA->conformation();
+		conformation::Conformation & b = chainB->conformation();
 		core::Size a_start = a.chain_begin(1);
 		core::Size a_end = a.chain_end(1);
 		core::Size b_start = b.chain_begin(1);

@@ -22,11 +22,11 @@ ClusteringTreeNodeOP ClusteringTreeNode::visit_next_leaf() {
 
 	if(flag_ == 1) {
 	    flag_ = 2;
-	    return right_;
+	    return right();
 	}
 	if(flag_ == 0) {
 	    flag_ = 1;
-	    return left_;
+	    return left();
 	}
 
 	return 0;

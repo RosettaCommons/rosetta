@@ -160,7 +160,7 @@ void ConstraintEvaluator::prepare_pose( core::pose::Pose const& pose_in, core::p
 
 	}
 
-	runtime_assert( now_cst );
+	runtime_assert( now_cst != 0 );
 
 	constraints_additional::MaxSeqSepConstraintSetOP new_cst( NULL );
 	if ( max_seq_sep_ > 0 ) {

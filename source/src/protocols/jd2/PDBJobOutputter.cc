@@ -207,8 +207,8 @@ void protocols::jd2::PDBJobOutputter::extract_extra_scores(
 	// ARBITRARY_STRING_DATA
 	if( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) ) {
 		basic::datacache::CacheableStringMapCOP data
-			= dynamic_cast< basic::datacache::CacheableStringMap const * >
-				( pose.data().get_raw_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
+			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringMap const >
+				( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA ) );
 		assert( data.get() != NULL );
 
 		for(std::map< std::string, std::string >::const_iterator it( data->map().begin() ), end( data->map().end() );
@@ -222,8 +222,8 @@ void protocols::jd2::PDBJobOutputter::extract_extra_scores(
 	// ARBITRARY_FLOAT_DATA
 	if( pose.data().has( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) ) {
 		basic::datacache::CacheableStringFloatMapCOP data
-			= dynamic_cast< basic::datacache::CacheableStringFloatMap const * >
-				( pose.data().get_raw_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
+			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringFloatMap const >
+				( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
 		assert( data.get() != NULL );
 
 		for(std::map< std::string, float >::const_iterator it( data->map().begin() ), end( data->map().end() );

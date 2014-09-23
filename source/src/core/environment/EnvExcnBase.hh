@@ -35,17 +35,26 @@ namespace environment {
 class EXCN_Env_Exception : public utility::excn::EXCN_Msg_Exception {
   typedef utility::excn::EXCN_Msg_Exception Parent;
 public:
-  EXCN_Env_Exception( EnvCoreCAP env ) : Parent("") {
+  EXCN_Env_Exception( EnvCoreCAP env_ap ) : Parent("") {
+    EnvCoreCOP env = env_ap.lock(); // avoids throwing weak_ptr exception
     std::ostringstream elab_msg;
-    elab_msg << "Environment exception in environment: '" << env->name();
 
-    EnvCoreCAP superenv = env->superenv().get();
-    while( superenv != 0 ){
-      elab_msg << superenv->name() << ">";
-      superenv = superenv->superenv().get();
+    if(!env) {
+      elab_msg << "Environment exception in unknown environment!";
+
+    } else {
+      elab_msg << "Environment exception in environment: '" << env->name();
+
+      EnvCoreCAP superenv = env->superenv();
+      while( ! superenv.expired() ) {
+        EnvCoreCOP superenv_op = superenv.lock();
+        if(!superenv_op) break;
+        elab_msg << superenv_op->name() << ">";
+        superenv = superenv_op->superenv();
+      }
+
+      elab_msg << "'";
     }
-
-    elab_msg << "'";
 
     add_msg( elab_msg.str() );
   }

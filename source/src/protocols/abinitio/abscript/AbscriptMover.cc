@@ -481,9 +481,9 @@ void AbscriptMover::add_frags( std::string const& small_fragfile,
   FragSetOP frags_large = big_frag_io.read_data( large_fragfile );
 
   //embed standard movers in movers that will claim and unlock for them.
-  FragmentCMOP claim_large  = new FragmentCM( new ClassicFragmentMover( frags_large ) );
-  FragmentCMOP claim_small  = new FragmentCM( new ClassicFragmentMover( frags_small ) );
-  FragmentCMOP claim_smooth = new FragmentCM( new SmoothFragmentMover( frags_small, new GunnCost() ) );
+  FragmentCMOP claim_large  = new FragmentCM( simple_moves::FragmentMoverOP( new ClassicFragmentMover( frags_large ) ) );
+  FragmentCMOP claim_small  = new FragmentCM( simple_moves::FragmentMoverOP( new ClassicFragmentMover( frags_small ) ) );
+  FragmentCMOP claim_smooth = new FragmentCM( simple_moves::FragmentMoverOP( new SmoothFragmentMover( frags_small, simple_moves::FragmentCostOP( new GunnCost() ) ) ) );
 
   if( selector ){
     claim_large->set_selector( selector );

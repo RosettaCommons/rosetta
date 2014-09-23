@@ -63,6 +63,7 @@ public:
 		//213, 204, and 265 are appropriate residues from the dock_in pdb
 
 		//set up the Neighbors calculators
+		using core::pose::metrics::PoseMetricCalculatorOP;
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "nbdc_buried", new protocols::toolbox::pose_metric_calculators::NeighborsByDistanceCalculator(213) );
 
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "nbdc_surface", new protocols::toolbox::pose_metric_calculators::NeighborsByDistanceCalculator(204) );
@@ -199,6 +200,7 @@ public:
 		domains.push_back(pair_of_domains);
 
 		//set up the calculator
+		using core::pose::metrics::PoseMetricCalculatorOP;
 		std::string const calc_d("IGNC_d");
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc_d, new protocols::toolbox::pose_metric_calculators::InterGroupNeighborsCalculator(domains) );
 

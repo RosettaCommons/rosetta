@@ -50,7 +50,7 @@ class MMBondAngleScoreTests : public CxxTest::TestSuite {
 public:
 
 	MMBondAngleLibraryOP mmbondanglelibrary;
-	MMAtomTypeSetAP mmatomtypeset;
+	MMAtomTypeSetOP mmatomtypeset;
 	MMBondAngleScoreOP mmbondanglescore;
 
 	// --------------- Suite-level Fixture --------------- //
@@ -65,7 +65,7 @@ public:
 		mmatomtypeset->read_file( "core/chemical/mm_atom_properties.txt" );
 
 		// init the mmbondanglelibrary
-		mmbondanglelibrary = new MMBondAngleLibrary( "core/scoring/mm/par_all27_prot_na.prm" , mmatomtypeset );
+		mmbondanglelibrary = new MMBondAngleLibrary( "core/scoring/mm/par_all27_prot_na.prm" , MMAtomTypeSetAP( mmatomtypeset ) );
 
 		// init the mmbondanglescore
 		mmbondanglescore = new MMBondAngleScore( *mmbondanglelibrary );

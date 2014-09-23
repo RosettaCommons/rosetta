@@ -590,10 +590,9 @@ SingleResidueDunbrackLibrary::hokey_template_workaround()
 	SemiRotamericSingleResidueDunbrackLibrary< ONE >   srsrdl_1( chemical::aa_ala, true, true ); //e.g. asn,phe
 	SemiRotamericSingleResidueDunbrackLibrary< TWO >   srsrdl_2( chemical::aa_ala, true, true ); // e.g. glu
 	// three and four do not exist... they could in the future if needed.
-
-	chemical::ResidueType rt( 0, 0, 0, 0 );
+	
+	chemical::ResidueType rt( NULL, NULL, NULL, NULL );
 	conformation::Residue rsd( rt, true );
-
 	RotamerLibraryScratchSpace scratch;
 	Size4 rotwell;
 	Size i(0);
@@ -638,7 +637,10 @@ SingleResidueDunbrackLibrary::hokey_template_workaround()
 	srsrdl_1.best_rotamer_energy( rsd, true, scratch );
 	srsrdl_2.best_rotamer_energy( rsd, true, scratch );
 
-	pose::Pose pose; scoring::ScoreFunction sfxn; pack::task::PackerTask_ task( pose );
+	pose::Pose pose;
+	scoring::ScoreFunction sfxn;
+	pack::task::PackerTask_ task( pose );
+
 	core::graph::GraphOP png;
 	chemical::ResidueTypeCOP cr;
 	utility::vector1< utility::vector1< Real > > ecs;

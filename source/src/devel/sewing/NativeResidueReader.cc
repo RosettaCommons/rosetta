@@ -48,7 +48,7 @@ NativeResidueReader::generateResiduesFromFile(utility::file::FileName file){
 	utility::io::izstream input_stream(file);
 
 	//generate residue type set from FA_STANDARD
-	core::chemical::ResidueTypeSetCAP residue_set
+	core::chemical::ResidueTypeSetCOP residue_set
 		( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
 
 	std::map<core::Size, utility::vector1<core::conformation::ResidueOP> > res_map;

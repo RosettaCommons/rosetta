@@ -58,13 +58,13 @@ class DisulfideMatchingNeighborIterator : public ResidueNeighborIterator {
 public:
 
 	DisulfideMatchingNeighborIterator(
-		DisulfideMatchingEnergyContainerAP owner,
+		DisulfideMatchingEnergyContainer * owner,
 		Size focused_node,
 		Size disulfide_index
 	);
 
 	DisulfideMatchingNeighborIterator(
-		DisulfideMatchingEnergyContainerAP owner
+		DisulfideMatchingEnergyContainer * owner
 	);
 
 	virtual ~DisulfideMatchingNeighborIterator();
@@ -90,7 +90,7 @@ public:
 	virtual bool energy_computed() const;
 
 private:
-	DisulfideMatchingEnergyContainerAP owner_;
+	DisulfideMatchingEnergyContainer * owner_;
 	Size focused_residue_;
 	Size disulfide_index_;
 };
@@ -99,12 +99,12 @@ private:
 class DisulfideMatchingNeighborConstIterator : public ResidueNeighborConstIterator {
 public:
 	DisulfideMatchingNeighborConstIterator(
-		DisulfideMatchingEnergyContainerCAP owner,
+		DisulfideMatchingEnergyContainer const * owner,
 		Size focused_node,
 		Size disulfide_index
 	);
 
-	DisulfideMatchingNeighborConstIterator( DisulfideMatchingEnergyContainerCAP owner );
+	DisulfideMatchingNeighborConstIterator( DisulfideMatchingEnergyContainer const * owner );
 
 	virtual ~DisulfideMatchingNeighborConstIterator();
 
@@ -125,7 +125,7 @@ public:
 	virtual bool energy_computed() const;
 
 private:
-	DisulfideMatchingEnergyContainerCAP owner_;
+	DisulfideMatchingEnergyContainer const * owner_;
 	Size focused_residue_;
 	Size disulfide_index_;
 

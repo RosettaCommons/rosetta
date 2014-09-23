@@ -177,7 +177,7 @@ LigandConformer::initialize_from_residue(
 		utility_exit_with_message( "ERROR in LigandConformer: cannot build a residue with fewer than three atoms" );
 	}
 
-	ligand_restype_ = & residue.type();
+	ligand_restype_ = residue.type().get_self_ptr();
 	HTReal D3frame( residue.xyz( D1 ), residue.xyz( D2 ), residue.xyz( D3 ) );
 	HTReal oframe( residue.xyz( orientation_atom1 ), residue.xyz( orientation_atom2 ), residue.xyz( orientation_atom3 ) );
 

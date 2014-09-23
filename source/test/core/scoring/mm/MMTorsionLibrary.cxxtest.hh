@@ -49,7 +49,7 @@ class MMTorsionLibraryTests : public CxxTest::TestSuite {
 public:
 
 	MMTorsionLibraryOP mmtorsionlibrary;
-	MMAtomTypeSetAP mmatomtypeset;
+	MMAtomTypeSetOP mmatomtypeset;
 	mm_torsion_param_set* params1;
 	mm_torsion_param_set* params2;
 	mm_torsion_param_set* params3;
@@ -62,7 +62,7 @@ public:
 		// Only want to read in copy of the library once not for each test so init here in ctor
 
 		// init the mmatomtypeset
-		mmatomtypeset = new MMAtomTypeSet;
+		mmatomtypeset = MMAtomTypeSetOP( new MMAtomTypeSet );
 		mmatomtypeset->read_file( "core/chemical/mm_atom_properties.txt" );
 
 		// init the mmtorsionlibrary

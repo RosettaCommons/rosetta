@@ -166,6 +166,8 @@ public: // tests
 	/// @brief test cataloging function
 	void test_catalog() {
 		using namespace core::fragment::picking_old::vall;
+		using namespace core::fragment::picking_old::vall::gen;
+		using namespace core::fragment::picking_old::vall::eval;
 
 		// read the test library
 		VallLibrary library;
@@ -185,6 +187,8 @@ public: // tests
 	/// @brief test SecStructGen
 	void test_SecStructGen() {
 		using namespace core::fragment::picking_old::vall;
+		using namespace core::fragment::picking_old::vall::gen;
+		using namespace core::fragment::picking_old::vall::eval;
 
 		// read the test library
 		VallLibrary library;

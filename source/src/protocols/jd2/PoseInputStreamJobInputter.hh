@@ -47,7 +47,7 @@ public:
 	virtual JobInputterInputSource::Enum input_source() const;
 
 private:
-	core::chemical::ResidueTypeSetCAP rsd_set_;
+	core::chemical::ResidueTypeSetCOP rsd_set_;
 	core::import_pose::pose_stream::MetaPoseInputStream input_;
 }; // PoseInputStreamJobInputter
 

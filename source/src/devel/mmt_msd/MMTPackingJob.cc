@@ -67,9 +67,9 @@ MMTPackingJob::get_sfxn() const { return *sfxn_; }
 core::pack::task::PackerTaskCOP
 MMTPackingJob::get_task() const { return task_; }
 
-bool MMTPackingJob::has_pose() const { return pose_; }
-bool MMTPackingJob::has_sfxn() const { return sfxn_; }
-bool MMTPackingJob::has_task() const { return task_; }
+bool MMTPackingJob::has_pose() const { return pose_ != 0; }
+bool MMTPackingJob::has_sfxn() const { return sfxn_ != 0; }
+bool MMTPackingJob::has_task() const { return task_ != 0; }
 
 void
 MMTPackingJob::go()

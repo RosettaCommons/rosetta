@@ -36,7 +36,7 @@ class WorkUnit_LoopHash: public protocols::wum::WorkUnit_SilentStructStore {
     virtual void run();
 
 		virtual protocols::wum::WorkUnitBaseOP clone() const {
-			runtime_assert( library_ );
+			runtime_assert( library_ != 0 );
 			return new WorkUnit_LoopHash( *this );
 		}
 

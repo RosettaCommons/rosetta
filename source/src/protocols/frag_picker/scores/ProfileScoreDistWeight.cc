@@ -50,7 +50,7 @@ static thread_local basic::Tracer trProfScoreDistWeight(
 
 void ProfileScoreDistWeight::do_caching(VallChunkOP chunk) {
 
-	std::string tmp = chunk()->chunk_key();
+	std::string tmp = chunk->chunk_key();
 	if (tmp.compare(cached_scores_id_) == 0)
 		return;
 	cached_scores_id_ = tmp;

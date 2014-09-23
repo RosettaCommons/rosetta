@@ -100,7 +100,7 @@ bool MinimizationRefiner::do_apply(Pose & pose) {
 	Loops const & loops = get_loops();
 	ScoreFunctionCOP score_function = get_score_function();
 	MoveMapOP move_map = move_map_from_loops(pose, loops, false, 10.0, false);
-	MinMoverOP minimizer = is_symmetric(pose) ? new SymMinMover : new MinMover;
+	MinMoverOP minimizer( is_symmetric(pose) ? new SymMinMover : new MinMover );
 
 	minimizer->score_function(score_function);
 	minimizer->movemap(move_map);

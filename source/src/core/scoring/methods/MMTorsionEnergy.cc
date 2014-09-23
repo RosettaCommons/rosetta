@@ -65,7 +65,7 @@ typedef std::pair< mm::mm_torsion_atom_quad, core::Real > mm_torsion_atom_quad_a
 typedef utility::vector1< mm_torsion_atom_quad_angle_pair >::const_iterator mmtaqap_iter;
 
 MMTorsionEnergy::MMTorsionEnergy() :
-	parent( new MMTorsionEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new MMTorsionEnergyCreator ) )
 {}
 
 /// clone

@@ -53,7 +53,7 @@ PackStatEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 PackStatEnergy::PackStatEnergy() :
-	parent( new PackStatEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new PackStatEnergyCreator ) )
 {}
 
 

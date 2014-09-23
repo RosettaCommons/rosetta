@@ -211,7 +211,7 @@ class CartesianBondedEnergyTests : public CxxTest::TestSuite {
 
 	void fail_test_create_parameters_for_restype()
 	{
-		core::chemical::ResidueTypeSetCAP rs;
+		core::chemical::ResidueTypeSetCOP rs;
 		std::string rss = core::chemical::FA_STANDARD;
 
 		EnergyMethodOptions opts;

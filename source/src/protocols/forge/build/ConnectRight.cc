@@ -45,7 +45,7 @@ ConnectRight::ConnectRight() :
 	left_position_( 0 ),
 	right_position_( 0 ),
 	use_rt_( false ),
-	interval_( 0, 0 )
+	interval_( 0.0, 0.0 )
 {
 	init();
 }
@@ -64,7 +64,7 @@ ConnectRight::ConnectRight(
 	Size const right_position,
 	Pose const & pose_right
 ) :
-	Super( Interval( left_position, left_position ), &pose_right.residue( 1 ).residue_type_set() ),
+	Super( Interval( left_position, left_position ), pose_right.residue( 1 ).residue_type_set().get_self_ptr() ),
 	left_position_( left_position ),
 	right_position_( right_position ),
 	pose_right_( pose_right ),
@@ -314,6 +314,7 @@ void ConnectRight::modify_impl( Pose & pose_left ) {
 	using core::kinematics::Edge;
 	using core::kinematics::FoldTree;
 	using core::pose::PDBInfo;
+	using core::pose::PDBInfoOP;
 	using protocols::forge::methods::merge;
 
 	// cache data
@@ -372,7 +373,7 @@ void ConnectRight::modify_impl( Pose & pose_left ) {
 
 		// if pose_left doesn't have PDBInfo, create it
 		if ( pose_left.pdb_info().get() == NULL ) {
-			pose_left.pdb_info( new PDBInfo( pose_left ) );
+			pose_left.pdb_info( PDBInfoOP( new PDBInfo( pose_left ) ) );
 		}
 
 		// force obsolete

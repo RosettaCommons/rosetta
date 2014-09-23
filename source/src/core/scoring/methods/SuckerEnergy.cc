@@ -61,7 +61,7 @@ SuckerEnergyCreator::score_types_for_method() const {
 
 
 SuckerEnergy::SuckerEnergy() :
-	parent( new SuckerEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new SuckerEnergyCreator ) )
 {
 	utility::io::izstream izin;
 	basic::database::open( izin, basic::options::option[ basic::options::OptionKeys::in::file::sucker_params ]() );

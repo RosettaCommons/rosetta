@@ -62,7 +62,7 @@ OmegaTetherEnergyCreator::score_types_for_method() const {
 
 /// ctor
 OmegaTetherEnergy::OmegaTetherEnergy() :
-	parent( new OmegaTetherEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new OmegaTetherEnergyCreator ) ),
 	potential_( ScoringManager::get_instance()->get_OmegaTether() )
 {}
 

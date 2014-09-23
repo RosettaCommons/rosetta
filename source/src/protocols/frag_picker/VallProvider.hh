@@ -35,7 +35,18 @@ namespace protocols {
 namespace frag_picker {
 
 /// @brief  a vector of vall chunks
-class VallProvider: public utility::pointer::ReferenceCount {
+class VallProvider: public utility::pointer::ReferenceCount
+#ifdef PTR_MODERN
+	// New version
+	, public utility::pointer::enable_shared_from_this< VallProvider >
+{
+#else
+{
+	// Old intrusive ref-counter version
+	inline VallProviderCOP shared_from_this() const { return VallProviderCOP( this ); }
+	inline VallProviderOP shared_from_this() { return VallProviderOP( this ); }
+#endif
+
 public:
 
 	/// @brief
@@ -45,6 +56,11 @@ public:
 		largest_chunk_size_ = 0;
 	}
 	virtual ~VallProvider();
+
+	inline VallProviderCOP get_self_ptr() const { return shared_from_this(); }
+	inline VallProviderOP  get_self_ptr() { return shared_from_this(); }
+	inline VallProviderCAP get_self_weak_ptr() const { return VallProviderCAP( shared_from_this() ); }
+	inline VallProviderAP  get_self_weak_ptr() { return VallProviderAP( shared_from_this() ); }
 
 	/// @brief Vall reader
 	/// THe defaults should ensure that the file is fully read if startline and endline ar not specified. endline = 0 means read to the end.

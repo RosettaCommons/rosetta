@@ -60,7 +60,7 @@ SequenceProfileMover::apply( core::pose::Pose & pose )
     SequenceProfileOP profile = new SequenceProfile;
     profile->read_from_checkpoint( cst_file_name_ );
     for( core::Size seqpos( 1 ), end( pose.total_residue() ); seqpos <= end; ++seqpos )
-        pose.add_constraint( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile ) );
+        pose.add_constraint( core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile ) ) );
 
     TR << "Added sequence profile constraints specified in file " << cst_file_name_ << "." << std::endl;
 }
@@ -98,7 +98,7 @@ SequenceProfileMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap 
     if( profile_wgt_ ) {
         using namespace utility::pointer;
 		for( std::map< std::string, ReferenceCountOP >::const_iterator it=data[ "scorefxns" ].begin(); it!=data[ "scorefxns" ].end(); ++it ){
-			ScoreFunctionOP scorefxn( *data.get< ScoreFunction * >( "scorefxns", it->first ) );
+			ScoreFunctionOP scorefxn( data.get_ptr< ScoreFunction >( "scorefxns", it->first ) );
 			scorefxn->set_weight( res_type_constraint, profile_wgt_ );
             TR << "setting " << it->first << " res_type_constraint to " << profile_wgt_ << "\n";
 		}

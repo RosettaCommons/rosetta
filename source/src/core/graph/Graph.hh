@@ -673,7 +673,22 @@ private:
 
 /// @brief A Graph with constant time edge insertion and deletion.  Extensible.
 class Graph : public utility::pointer::ReferenceCount
+#ifdef PTR_MODERN
+	// New version
+	, public utility::pointer::enable_shared_from_this< Graph >
 {
+#else
+{
+	// Old intrusive ref-counter version
+	inline GraphCOP shared_from_this() const { return GraphCOP( this ); }
+	inline GraphOP shared_from_this() { return GraphOP( this ); }
+#endif
+
+public:
+	/// self pointers
+	inline GraphCOP get_self_ptr() const { return shared_from_this(); }
+	inline GraphOP get_self_ptr() { return shared_from_this(); }
+
 public:
 	typedef utility::vector1< Node* > NodeVector;
 

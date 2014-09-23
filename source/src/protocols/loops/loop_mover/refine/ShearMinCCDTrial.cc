@@ -132,13 +132,14 @@ void ShearMinCCDTrial::apply( Pose & pose )
 	pack::task::PackerTaskOP task_before_bb_perturbation = task_factory()->create_task_and_apply_taskoperations( pose );
 	task_before_bb_perturbation->set_bump_check( true );
 	
-	Loops::const_iterator it( loop_mover()->loops()->one_random_loop() );
+	LoopMover_Refine_CCDOP loop_mover_op( loop_mover() ); // lock AP
+	Loops::const_iterator it( loop_mover_op->loops()->one_random_loop() );
 	Loops one_loop;
 	one_loop.add_loop( it );
 	
 	// set up movemap properly
 	kinematics::MoveMapOP mm_one_loop( new kinematics::MoveMap() );
-	loop_mover()->setup_movemap( pose, one_loop, task_before_bb_perturbation->repacking_residues(), mm_one_loop );
+	loop_mover_op->setup_movemap( pose, one_loop, task_before_bb_perturbation->repacking_residues(), mm_one_loop );
 	
 	protocols::simple_moves::ShearMover shear_moves( mm_one_loop, mc()->temperature(), nmoves_ );
 	shear_moves.apply( pose );
@@ -151,10 +152,10 @@ void ShearMinCCDTrial::apply( Pose & pose )
 	(*scorefxn())(pose); // update 10A nbr graph, silly way to do this
 	
 	kinematics::MoveMapOP all_loops_movemap = movemap();
-	loop_mover()->setup_movemap( pose, *loop_mover()->loops(), task_after_bb_perturbation->repacking_residues(), all_loops_movemap );
-	if(loop_mover()->flank_residue_min())
+	loop_mover_op->setup_movemap( pose, *loop_mover_op->loops(), task_after_bb_perturbation->repacking_residues(), all_loops_movemap );
+	if(loop_mover_op->flank_residue_min())
 	{
-		add_loop_flank_residues_bb_to_movemap(*loop_mover()->loops(), *all_loops_movemap);
+		add_loop_flank_residues_bb_to_movemap(*loop_mover_op->loops(), *all_loops_movemap);
 	} // added by JQX
 	
 
@@ -192,7 +193,8 @@ core::optimization::AtomTreeMinimizerOP ShearMinCCDTrial::minimizer( core::pose:
 	if (! minimizer_){
 		if ( core::pose::symmetry::is_symmetric( pose ) )
 		{
-			minimizer_ = dynamic_cast<core::optimization::AtomTreeMinimizer*>( new core::optimization::symmetry::SymAtomTreeMinimizer );
+			// minimizer_ = dynamic_cast<core::optimization::AtomTreeMinimizer*>( new core::optimization::symmetry::SymAtomTreeMinimizer );
+			minimizer_ = new core::optimization::symmetry::SymAtomTreeMinimizer;
 		} else {
 			minimizer_ = new core::optimization::AtomTreeMinimizer;
 		}

@@ -1069,8 +1069,7 @@ LoopRlxMover::setup_packer_task(
 
 	TR << "LoopRlxMover Setting Up Packer Task" << std::endl;
 
-	tf_->push_back( new OperateOnCertainResidues( new PreventRepackingRLT,
-	                new ResidueLacksProperty("PROTEIN") ) );
+	tf_->push_back( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueLacksProperty("PROTEIN") ) ) );
 	tf_->push_back( new InitializeFromCommandline );
 	tf_->push_back( new IncludeCurrent );
 	tf_->push_back( new RestrictToRepacking );

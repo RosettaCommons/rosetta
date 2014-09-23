@@ -91,7 +91,7 @@ ContextDependentGeometricSolEnergyCreator::score_types_for_method() const {
 ///@brief copy c-tor
 ContextDependentGeometricSolEnergy::ContextDependentGeometricSolEnergy( methods::EnergyMethodOptions const & opts
 ) :
-	parent( new ContextDependentGeometricSolEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new ContextDependentGeometricSolEnergyCreator ) ),
 	options_( new methods::EnergyMethodOptions( opts ) ),
 	evaluator_( new GeometricSolEnergyEvaluator( opts ) ),
   precalculated_bb_bb_energy_(0.0f),

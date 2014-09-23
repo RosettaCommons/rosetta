@@ -91,7 +91,7 @@ ProQ_EnergyCreator::score_types_for_method() const {
 
 /// c-tor
 ProQ_Energy::ProQ_Energy() :
-			parent( new ProQ_EnergyCreator ),
+			parent( methods::EnergyMethodCreatorOP( new ProQ_EnergyCreator ) ),
 			potential_( ScoringManager::get_instance()->get_ProQPotential() )
 {
 	initialize();

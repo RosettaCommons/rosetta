@@ -264,7 +264,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 	// clear the evaluators or else different input pdbs may cause a runtime error
 	// when doing rmsd evaluations
 	jd->job_outputter()->clear_evaluators();
-	jd->job_outputter()->add_evaluation( new simple_filters::RmsdEvaluator( new pose::Pose( unmodified_pose ), "" ));
+	jd->job_outputter()->add_evaluation( new simple_filters::RmsdEvaluator( pose::PoseOP( new pose::Pose( unmodified_pose ) ), "" ) );
 
 	//scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();
 	scoring::ScoreFunctionOP scorefxn = scoring::get_score_function();

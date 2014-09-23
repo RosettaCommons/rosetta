@@ -83,7 +83,7 @@ rna_score_test()
 	using namespace protocols::stepwise::modeler;
 	using namespace protocols::stepwise::full_model_info;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD /*RNA*/ );
 
 	// input stream

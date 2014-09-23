@@ -235,7 +235,7 @@ SewingDesigner::apply( pose::Pose & pose )
 
 		std::string const nb_calc("loop_neighboorhood_calculator");
 		pose::metrics::CalculatorFactory::Instance().register_calculator( nb_calc,
-			new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_residues ) );
+			core::pose::metrics::PoseMetricCalculatorOP( new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_residues ) ) );
 
 		basic::MetricValue< std::set< Size > > neighbor_mv;
 		pose.metric( nb_calc, "neighbors", neighbor_mv);
@@ -437,8 +437,9 @@ SewingDesigner::record_statistics(
 	TR << "Helix residue select: " << pymol_helix_select << std::endl;
 	TR << "Loop residue select: " << pymol_loop_select << std::endl;
 
+	using namespace basic::datacache;
 	pose.data().set(core::pose::datacache::CacheableDataType::SCORE_MAP,
-					new basic::datacache::DiagnosticData(native_retention_map));
+					DataCache_CacheableData::DataOP( new basic::datacache::DiagnosticData(native_retention_map) ) );
 	TR << "Percent of native helix residues (buried): " << native_helix_percent_buried << std::endl;
 	TR << "Percent of native helix residues (exposed): " << native_helix_percent_exposed << std::endl;
 	TR << "Percent of native loop residues: " << native_loop_percent << std::endl;
@@ -486,7 +487,7 @@ SewingDesigner::design_neighborhood(
 		//Add AppendResidueRotamerSet task operation to the task factory. This task operation
 		//adds the rotamer set to the residue-level task for the given residue
 		task_factory->push_back(
-			new core::pack::task::operation::AppendResidueRotamerSet(map_it->first, nat_ro_set.clone()) );
+			core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::AppendResidueRotamerSet(map_it->first, nat_ro_set.clone()) ) );
 	}
 
 

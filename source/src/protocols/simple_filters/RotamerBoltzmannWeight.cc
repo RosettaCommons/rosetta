@@ -198,7 +198,7 @@ RotamerBoltzmannWeight::apply(core::pose::Pose const & ) const
 utility::vector1< core::Size >
 RotamerBoltzmannWeight::first_pass_ala_scan( core::pose::Pose const & pose ) const
 {
-	runtime_assert( task_factory() );
+	runtime_assert( task_factory() != 0 );
 	TR<<"----------First pass alanine scanning to identify hot spot residues------------"<<std::endl;
 	utility::vector1< core::Size > hotspot_residues;
 	hotspot_residues.clear();
@@ -317,6 +317,7 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	using namespace core::pack::rotamer_set;
 	using namespace core::pack::task;
 	using namespace core::conformation;
+	using core::pack::task::operation::TaskOperationCOP;
 
 	TR<<"-----Computing Boltzmann weight for residue "<<resi<<std::endl;
 /// build a rotamer set for resi while pruning clashes against a poly-alanine background

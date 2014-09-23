@@ -113,7 +113,9 @@ claims::EnvClaims AbscriptLoopCloserCM::yield_claims( core::pose::Pose const& in
   claims::EnvClaims claims;
 
   // We want to control everything that will be relevant to the output pose (which should be the same as the input.
-  claims::TorsionClaimOP claim = new claims::TorsionClaim( this, label(), std::make_pair( 1, in_pose.total_residue() ) );
+  claims::TorsionClaimOP claim = new claims::TorsionClaim(
+	utility::pointer::static_pointer_cast< ClaimingMover > ( get_self_ptr() ),
+	label(), std::make_pair( 1, in_pose.total_residue() ) );
   claim->strength( claims::CAN_CONTROL, claims::DOES_NOT_CONTROL );
 
   claims.push_back( claim );
@@ -128,7 +130,7 @@ void AbscriptLoopCloserCM::apply( core::pose::Pose& in_pose ){
 
   //Produce unprotected pose
   core::pose::Pose pose( in_pose );
-  pose.set_new_conformation( new core::conformation::Conformation( in_pose.conformation() ) );
+  pose.set_new_conformation( in_pose.conformation().clone() );
 
   tr.Debug << "Closing loops with current fold tree: " << in_pose.fold_tree();
   tr.Debug << "Using final fold tree: " << *final_ft_ << std::endl;

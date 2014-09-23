@@ -52,21 +52,15 @@ SymmetricConformation::SymmetricConformation():
 	Tsymm_.clear();
 }
 
-	/// @brief  Default CTOR
-SymmetricConformation::SymmetricConformation( Conformation const & conf, SymmetryInfo const & symm_info ):
-		Conformation( conf ),
-		symm_info_( symm_info.clone() )
+/// @brief  Default CTOR
+SymmetricConformation::SymmetricConformation(Conformation const & conf, SymmetryInfo const & symm_info):
+		Conformation(conf),
+		symm_info_()
 {
-	Tsymm_.clear();
-}
-
-/// @brief copy constructor
-SymmetricConformation::SymmetricConformation( SymmetricConformation const & src ):
-	Conformation( src ),
-	symm_info_( src.symm_info_->clone() )
-{
+	symm_info_ = symm_info.clone();
 	Tsymm_.clear();  // force recompute
 }
+
 
 /// @brief operator=
 Conformation &
@@ -96,7 +90,9 @@ SymmetricConformation::operator=( Conformation const & src )
 ConformationOP
 SymmetricConformation::clone() const
 {
-  return new SymmetricConformation( *this );
+	SymmetricConformationOP copy = new SymmetricConformation(*this, *symm_info_);
+	copy->Tsymm_.clear();  // force recompute
+	return copy;
 }
 
 bool
@@ -750,7 +746,7 @@ SymmetricConformation::recalculate_transforms( ) {
 				}
 			}
 
-			ResidueCAP vrt_res_cap(0);
+			Residue const * vrt_res_cap = 0;
 			if ( vrt_ctrl ) {
 				vrt_res_cap = &( residue( vrt_ctrl ) ); /// the standard logic, if virtual rsds are present
 			} else {
@@ -811,7 +807,7 @@ SymmetricConformation::recalculate_transforms( ) {
 					/// could pretty easily add dna,rna,etc here
 					utility_exit_with_message("not setup for non-protein residues as anchor-rsds for virtual-rsd-less symm poses");
 				}
-				vrt_res_cap = vrt_res_op();
+				vrt_res_cap = vrt_res_op.get();
 			}
 			runtime_assert( vrt_res_cap ); // ensure success
 
@@ -906,16 +902,16 @@ SymmetricConformation::insert_conformation_by_jump(
 		core::Size insert_i = (i-1)*nres_monomer+asymm_insert;
 		core::Size anchor_i = (i-1)*nres_monomer+asymm_anchor;
 
-		Conformation new_new_conf = new_conf;
+		ConformationOP new_new_conf = new_conf.clone();
 		if ( !symm_info_->bb_is_independent( anchor_i ) ) {
 			// transform coords
-			for (core::Size j=1; j<=new_new_conf.size(); ++j) {
-				for (core::Size k=1; k<=new_new_conf.residue(j).natoms(); ++k) {
-					new_new_conf.set_xyz(core::id::AtomID(k,j) , apply_transformation( new_conf.residue(j).xyz(k), nres_monomer, anchor_i ) );
+			for (core::Size j=1; j<=new_new_conf->size(); ++j) {
+				for (core::Size k=1; k<=new_new_conf->residue(j).natoms(); ++k) {
+					new_new_conf->set_xyz(core::id::AtomID(k,j) , apply_transformation( new_conf.residue(j).xyz(k), nres_monomer, anchor_i ) );
 				}
 			}
 		}
-		Conformation::insert_conformation_by_jump( new_new_conf, insert_i, nmonomer_jumps+i, anchor_i, 0, anchor_atom, root_atom );
+		Conformation::insert_conformation_by_jump( *new_new_conf, insert_i, nmonomer_jumps+i, anchor_i, 0, anchor_atom, root_atom );
 	}
 
 	// update symminfo
@@ -978,7 +974,7 @@ SymmetricConformation::detect_disulfides()
 	std::string const distance_atom = fullatom? "SG" : "CB";
 
 	// Create point graph
-	PointGraphOP pg = new PointGraph;
+	PointGraphOP pg( new PointGraph );
 	pg->set_num_vertices( num_cys );
 	Distance maxrad( 0.0 );
 	Distance maxd( typical_disulfide_distance + tolerance );

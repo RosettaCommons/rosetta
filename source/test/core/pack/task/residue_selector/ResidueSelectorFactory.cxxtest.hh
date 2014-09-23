@@ -74,8 +74,8 @@ public:
 		factory->factory_register( new DummyResidueSelectorCreator );
 		basic::datacache::DataMap dm;
 		ResidueSelectorOP selector = factory->new_residue_selector( "DummyResidueSelector", 0, dm );
-		TS_ASSERT( selector() ); // make sure we got back a non-null pointer
-		DummyResidueSelector * dselector = dynamic_cast< DummyResidueSelector * > ( selector() );
+		TS_ASSERT( selector.get() ); // make sure we got back a non-null pointer
+		DummyResidueSelector * dselector = dynamic_cast< DummyResidueSelector * > ( selector.get() );
 		TS_ASSERT( dselector ); // make sure we got back the right residue selector kind
 	}
 

@@ -63,8 +63,8 @@ using namespace protocols::simple_moves;
 /// @brief Construct a Default Membrane Position Mover
 SetMembranePositionMover::SetMembranePositionMover() :
 	Mover(),
-	center_( 0, 0, 0 ),
-	normal_( 0, 0, 1 )
+	center_( 0.0, 0.0, 0.0 ),
+	normal_( 0.0, 0.0, 1.0 )
 {}
 
 /// @brief Custom Constructor
@@ -194,7 +194,7 @@ SetMembranePositionMoverCreator::mover_name() {
 /// @brief Construct a Default Membrane Position Mover
 SetMembraneNomalMover::SetMembraneNomalMover() :
 	Mover(),
-	normal_( 0, 0, 1 )
+	normal_( 0.0, 0.0, 1.0 )
 {}
 
 /// @brief Custom Constructor
@@ -325,7 +325,7 @@ SetMembraneNomalMoverCreator::mover_name() {
 /// @brief Construct a Default Membrane Position Mover
 SetMembraneCenterMover::SetMembraneCenterMover() :
 	Mover(),
-	center_( 0, 0, 0 )
+	center_( 0.0, 0.0, 0.0 )
 {}
 
 /// @brief Custom Constructor

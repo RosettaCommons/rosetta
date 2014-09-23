@@ -360,17 +360,17 @@ GenBornPotential::build_placeholders(
 			Residue const & existing_rsd( pose.residue(i) );
 			// build a placeholder at this position
 			if ( existing_rsd.is_protein() ) {
-				chemical::ResidueTypeCOP protein_placeholder_residue_type( &( residue_set.name_map("GB_AA_PLACEHOLDER") ) );
+				chemical::ResidueTypeCOP protein_placeholder_residue_type( residue_set.name_map("GB_AA_PLACEHOLDER").get_self_ptr() );
 				// use appropriate termini variants if necessary:
 				if ( existing_rsd.is_lower_terminus() ) {
-					protein_placeholder_residue_type =
-						&(residue_set.get_residue_type_with_variant_added( *protein_placeholder_residue_type,
-								chemical::LOWER_TERMINUS_VARIANT ) );
+					protein_placeholder_residue_type = chemical::ResidueTypeCOP(
+						residue_set.get_residue_type_with_variant_added( *protein_placeholder_residue_type,
+																															 chemical::LOWER_TERMINUS_VARIANT ).get_self_ptr() );
 				}
 				if ( existing_rsd.is_upper_terminus() ) {
-					protein_placeholder_residue_type =
-						&(residue_set.get_residue_type_with_variant_added( *protein_placeholder_residue_type,
-								chemical::UPPER_TERMINUS_VARIANT ) );
+					protein_placeholder_residue_type = chemical::ResidueTypeCOP(
+						residue_set.get_residue_type_with_variant_added( *protein_placeholder_residue_type,
+																															 chemical::UPPER_TERMINUS_VARIANT ).get_self_ptr() );
 				}
 
 				conformation::ResidueOP rsd

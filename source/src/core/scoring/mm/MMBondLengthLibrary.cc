@@ -61,10 +61,10 @@ static thread_local basic::Tracer TR( "core.mm.MMBondLengthLibrary" );
 /// @details Construct a MMBondLengthLibrary instant from a filename string and constant access pointer to an MMAtomTypeSet
 MMBondLengthLibrary::MMBondLengthLibrary(
 	 std::string filename,
-	 core::chemical::MMAtomTypeSetCAP mm_atom_set
+	 core::chemical::MMAtomTypeSetCOP mm_atom_set
 )
 {
-	mm_atom_set_ = mm_atom_set;
+	mm_atom_set_ = core::chemical::MMAtomTypeSetCAP( mm_atom_set );
 
 	// read the file
 	std::string line;
@@ -88,12 +88,12 @@ MMBondLengthLibrary::MMBondLengthLibrary(
 		l >> atom_type_string_1 >> atom_type_string_2;
 
 		// skip the parameters if any of the atom types don't exist
-		if ( ! mm_atom_set_->contains_atom_type( atom_type_string_1 ) ) continue;
-		if ( ! mm_atom_set_->contains_atom_type( atom_type_string_2 ) ) continue;
+		if ( ! mm_atom_set->contains_atom_type( atom_type_string_1 ) ) continue;
+		if ( ! mm_atom_set->contains_atom_type( atom_type_string_2 ) ) continue;
 
 		// get atom-type_index from atom set
-		int atom_type_int1 = mm_atom_set_->atom_type_index( atom_type_string_1 );
-		int atom_type_int2 = mm_atom_set_->atom_type_index( atom_type_string_2 );
+		int atom_type_int1 = mm_atom_set->atom_type_index( atom_type_string_1 );
+		int atom_type_int2 = mm_atom_set->atom_type_index( atom_type_string_2 );
 
 		// get k_b and b_0
 		Real k_b, b_0;
@@ -105,7 +105,7 @@ MMBondLengthLibrary::MMBondLengthLibrary(
 	}
 
 	/// apl -- add "no-op" pair for virtual atoms
-	int const virt_type = mm_atom_set_->atom_type_index("VIRT");
+	int const virt_type = mm_atom_set->atom_type_index("VIRT");
 	Real const noop_kb( 0.0 );
 	Real const noop_b0( 0.0 );
 	mm_bondlength_library_.insert( std::make_pair(
@@ -130,14 +130,15 @@ MMBondLengthLibrary::lookup( int atom1, int atom2 ) const {
 		// backward
 		return mm_bondlength_library_.equal_range( mm_bondlength_atom_pair( atom2, atom1 ) );
 	}
-	int const virt_atom_type = mm_atom_set_->atom_type_index( virt_string );
+	core::chemical::MMAtomTypeSetCOP mm_atom_set( mm_atom_set_ );
+	int const virt_atom_type = mm_atom_set->atom_type_index( virt_string );
 
 	/// Virtual atoms get no mm-parameters.  Return the no-op torsion object
 	if ( atom1 == virt_atom_type || atom2 == virt_atom_type ) {
 		return mm_bondlength_library_.equal_range( mm_bondlength_atom_pair( virt_atom_type, virt_atom_type ));
 	}
 
-	TR << "No parameters for " << (*mm_atom_set_)[atom1].name() << "-" << (*mm_atom_set_)[atom2].name() << std::endl;
+	TR << "No parameters for " << (*mm_atom_set)[atom1].name() << "-" << (*mm_atom_set)[atom2].name() << std::endl;
 	utility_exit_with_message("COULD NOT FIND BOND LENGTH PARAMS" );
 
 	return mm_bondlength_library_citer_pair(); ///< meaningless, just for removing gcc warning.
@@ -145,9 +146,10 @@ MMBondLengthLibrary::lookup( int atom1, int atom2 ) const {
 
 mm_bondlength_library_citer_pair
 MMBondLengthLibrary::lookup ( std::string atom1, std::string atom2 ) const {
+	core::chemical::MMAtomTypeSetCOP mm_atom_set( mm_atom_set_ );
 	return (*this).lookup(
-		mm_atom_set_->atom_type_index( atom1 ),
-		mm_atom_set_->atom_type_index( atom2 ) );
+		mm_atom_set->atom_type_index( atom1 ),
+		mm_atom_set->atom_type_index( atom2 ) );
 }
 
 void

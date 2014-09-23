@@ -317,7 +317,6 @@ MembraneInfo::check_membrane_fold_tree( FoldTree const & ft_in ) const {
 	
 	// Otherwise, looks reasonable!
 	return true;
-	
 }
 
 /////////////////////

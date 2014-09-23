@@ -169,12 +169,12 @@ FragmentReader::parse_tag( TagCOP const & tag )
 void
 FragmentReader::set_fragments( Pose const & pose_in, FragSetOP const & fragset )
 {
- 	using core::fragment::FragData;
-	using core::fragment::IndependentBBTorsionSRFD;
+ 	using namespace core::fragment;
+
 	if( begin_ == 0 ){
-		core::fragment::steal_frag_set_from_pose( pose_in, *fragset, new FragData( new IndependentBBTorsionSRFD, frag_size_ ) );
+		core::fragment::steal_frag_set_from_pose( pose_in, *fragset, new FragData( SingleResidueFragDataOP( new IndependentBBTorsionSRFD ), frag_size_ ) );
 	}else{
-		core::fragment::steal_frag_set_from_pose( pose_in, begin_, end_ , *fragset, new FragData( new IndependentBBTorsionSRFD, frag_size_ ) );
+		core::fragment::steal_frag_set_from_pose( pose_in, begin_, end_ , *fragset, new FragData( SingleResidueFragDataOP( new IndependentBBTorsionSRFD ), frag_size_ ) );
 	}
 }
 
@@ -186,13 +186,13 @@ FragmentReader::apply( FragSetOP & fragset )
 
 	if( read_type_ == "silent" ){
 
-		using core::chemical::ResidueTypeSetCAP;
+		using core::chemical::ResidueTypeSetCOP;
 		using core::chemical::ChemicalManager;
 		using core::chemical::CENTROID;
 		using core::import_pose::pose_stream::SilentFilePoseInputStreamOP;
 		using core::import_pose::pose_stream::SilentFilePoseInputStream;
 
-		ResidueTypeSetCAP residue_set = ChemicalManager::get_instance()->residue_type_set( CENTROID );
+		ResidueTypeSetCOP residue_set = ChemicalManager::get_instance()->residue_type_set( CENTROID );
 		SilentFilePoseInputStreamOP silent_input = new SilentFilePoseInputStream( filename_ );
 
 		Size num( 0 );

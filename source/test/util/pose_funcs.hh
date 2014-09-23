@@ -57,7 +57,7 @@ pose_from_string(
 	Pose pose;
 	core::io::pdb::PDB_DReaderOptions options;
 	core::io::pdb::FileData fd = core::io::pdb::PDB_DReader::createFileData( pdbstring, options );
-	ResidueTypeSetCAP residue_set
+	ResidueTypeSetCOP residue_set
 		( ChemicalManager::get_instance()->residue_type_set( residue_type_set_name ) );
 	core::import_pose::build_pose( fd, pose, *residue_set);
 	return pose;
@@ -96,7 +96,7 @@ poseop_from_string(
 	PoseOP pose = new Pose;
 	core::io::pdb::PDB_DReaderOptions options;
 	core::io::pdb::FileData fd = core::io::pdb::PDB_DReader::createFileData( pdbstring, options );
-	ResidueTypeSetCAP residue_set
+	ResidueTypeSetCOP residue_set
 		( ChemicalManager::get_instance()->residue_type_set( residue_type_set_name ) );
 	core::import_pose::build_pose( fd,*pose, *residue_set);
 	return pose;

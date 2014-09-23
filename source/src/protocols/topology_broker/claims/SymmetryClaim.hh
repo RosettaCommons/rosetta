@@ -55,7 +55,7 @@ namespace claims {
 // pos=0 claims will be assigned a position from the broker.
 class SymmetryClaim : public DofClaim {
 public:
-    SymmetryClaim( TopologyClaimer* tc, core::conformation::symmetry::SymmDataOP symmdata,
+    SymmetryClaim( TopologyClaimerAP tc, core::conformation::symmetry::SymmDataOP symmdata,
                   std::string const& label, ClaimRight right )  :
         DofClaim( tc, right ),
         label_( label ),

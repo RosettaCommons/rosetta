@@ -148,7 +148,7 @@ void LoopGrid::create_grid_and_by_two_sphere( Bool3DGridOP &gridop,
                         if (center.distance_squared(bin_center_point) > too_far_away_cutoff2) continue;
 
                         //go through this residue
-                        core::conformation::ResidueCOP res( &pose_.residue(n) );
+                        core::conformation::ResidueCOP res( pose_.residue(n).get_self_ptr() );
                         Size na = res->atoms().size();
                         for (Size ia=1; ia<=na && not_bump; ia++)
                         {

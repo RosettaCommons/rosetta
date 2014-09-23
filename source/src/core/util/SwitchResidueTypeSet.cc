@@ -88,7 +88,7 @@ switch_to_residue_type_set(
 	}
 
 	if (type_set_name==chemical::CENTROID_ROT) {
-		ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID_ROT );
+		ResidueTypeSetCOP rsd_set = ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID_ROT );
 
 		//loop for each residue
 		for ( core::Size i=1; i<= pose.total_residue(); ++i ) {
@@ -259,7 +259,7 @@ switch_to_residue_type_set(
 
 
 	// retrieve proper residue_type_set
-	core::chemical::ResidueTypeSetCAP target_residue_type_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( type_set_name ) );
+	core::chemical::ResidueTypeSetCOP target_residue_type_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( type_set_name ) );
 	// loop each position and find new type that matches from the new type set
 	for ( core::Size i=1; i<= pose.total_residue(); ++i ) {
 		if (symm_info && !symm_info->bb_is_independent(i)) continue;

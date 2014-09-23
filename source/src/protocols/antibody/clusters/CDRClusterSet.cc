@@ -19,7 +19,7 @@ namespace antibody {
 namespace clusters {
 	using namespace protocols::antibody;
 	
-CDRClusterSet::CDRClusterSet(AntibodyInfoAP ab_info){
+CDRClusterSet::CDRClusterSet(AntibodyInfo * ab_info){
 	ab_info_ = ab_info;
 	cluster_matcher_ = new CDRClusterMatcher();
 	clear();

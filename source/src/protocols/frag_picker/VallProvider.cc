@@ -183,7 +183,7 @@ Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Siz
 	}
 	std::string prior_id = "";
 	Size prior_resi = 0;
-	VallChunkOP current_section = new VallChunk(this);
+	VallChunkOP current_section = new VallChunk(get_self_weak_ptr());
 	std::string line;
 	getline(stream, line);
 	while(line[0] == '#') getline(stream, line);
@@ -238,7 +238,7 @@ Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Siz
 					<< " having " << current_section->size() << " residues "
 					<< " at index " << size() << ". The largest chunk's size is: "
 					<<largest_chunk_size_<<std::endl;
-			current_section = new VallChunk(this);
+			current_section = new VallChunk(get_self_weak_ptr());
 			prior_id = current_residue->id();
 		}
 		prior_resi = current_residue->resi();

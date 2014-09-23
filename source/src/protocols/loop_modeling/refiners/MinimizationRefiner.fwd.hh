@@ -17,10 +17,8 @@ namespace loop_modeling {
 namespace refiners {
 
 class MinimizationRefiner;
-using utility::pointer::owning_ptr;
-
-typedef owning_ptr<MinimizationRefiner> MinimizationRefinerOP;
-typedef owning_ptr<MinimizationRefiner const> MinimizationRefinerCOP;
+typedef utility::pointer::owning_ptr<MinimizationRefiner> MinimizationRefinerOP;
+typedef utility::pointer::owning_ptr<MinimizationRefiner const> MinimizationRefinerCOP;
 
 }
 }

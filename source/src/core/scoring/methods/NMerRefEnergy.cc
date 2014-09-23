@@ -77,14 +77,14 @@ NMerRefEnergy::initialize_from_options()
 }
 
 NMerRefEnergy::NMerRefEnergy() :
-	parent( new NMerRefEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new NMerRefEnergyCreator ) )
 {
 	NMerRefEnergy::initialize_from_options();
 	read_nmer_tables_from_options();
 }
 
 NMerRefEnergy::NMerRefEnergy( std::map< std::string, core::Real > const & nmer_ref_energies_in ):
-	parent( new NMerRefEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new NMerRefEnergyCreator ) )
 {
 	NMerRefEnergy::initialize_from_options();
 

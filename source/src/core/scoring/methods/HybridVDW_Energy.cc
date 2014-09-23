@@ -65,7 +65,7 @@ Real const vdw_scale_factor( 0.8 );
 
 /// @details  C-TOR
 HybridVDW_Energy::HybridVDW_Energy() :
-	parent( new HybridVDW_EnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new HybridVDW_EnergyCreator ) ),
 	atom_vdw_( ScoringManager::get_instance()->get_AtomVDW( chemical::HYBRID_FA_STANDARD_CENTROID ) )
 {}
 

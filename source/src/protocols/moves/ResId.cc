@@ -72,7 +72,7 @@ void
 modify_ResId_based_object( utility::pointer::ReferenceCountOP const obj, core::Size const resid ){
 	using namespace protocols::filters;
 
-	ResId * resid1 = dynamic_cast< ResId * >( obj() );
+	ResId * resid1 = dynamic_cast< ResId * >( obj.get() );
 	bool const is_this_a_resid( resid1 );
 	if( is_this_a_resid ){
 		if( resid1->modifiable() )

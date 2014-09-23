@@ -79,7 +79,7 @@ namespace simple_moves {
 		using namespace core;
 		using namespace chemical;
 		using namespace conformation;
-		ResidueTypeSetCAP residue_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 		return ResidueFactory::create_residue( residue_set->name_map("SUCK") );
 	}
 
@@ -120,7 +120,7 @@ namespace simple_moves {
 			return;
 		}
 		CacheableDataOP cd = pose.data().get_ptr( core::pose::datacache::CacheableDataType::POSE_BEFORE_CAVITIES_ADDED );
-		core::pose::PoseOP cache_pose = dynamic_cast< core::pose::datacache::CacheablePoseRawPtr*>(cd())->pose();
+		core::pose::Pose * cache_pose = utility::pointer::dynamic_pointer_cast< core::pose::datacache::CacheablePoseRawPtr>(cd)->pose(); // is this dynamic_cast correct?
 		pose.data().set( core::pose::datacache::CacheableDataType::POSE_BEFORE_CAVITIES_ADDED, NULL );
 		Pose orig_pose = *cache_pose;
 		orig_pose.copy_segment( orig_pose.total_residue(), pose, 1, 1 );
@@ -138,7 +138,8 @@ namespace simple_moves {
 		clear_suckers(pose);
 
 		using namespace basic;
-		pose.data().set( core::pose::datacache::CacheableDataType::POSE_BEFORE_CAVITIES_ADDED, new CacheablePoseRawPtr( new Pose(pose)) );
+		using namespace basic::datacache;
+		pose.data().set( core::pose::datacache::CacheableDataType::POSE_BEFORE_CAVITIES_ADDED, DataCache_CacheableData::DataOP( new CacheablePoseRawPtr( new Pose(pose)) ) );
 
 		CavBalls cbs = get_cavities(pose, 10.0, min_nb_, 3.0 );
 		int Ncb = max_cav_;

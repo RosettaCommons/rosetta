@@ -141,7 +141,7 @@ methods::EnergyMethodOP FastSAXSEnergyCreator::create_energy_method( methods::En
 }
 
 FastSAXSEnergy::FastSAXSEnergy() :
-	parent( new FastSAXSEnergyCreator ) {
+	parent( methods::EnergyMethodCreatorOP( new FastSAXSEnergyCreator ) ) {
 	chi2=0;
 	dchi2_dca.clear();
 	dchi2_dsc.clear();

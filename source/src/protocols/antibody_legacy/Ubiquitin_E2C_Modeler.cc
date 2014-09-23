@@ -746,8 +746,8 @@ void ubi_e2c_modeler::apply( pose::Pose & pose_in ) {
 		score_map_["AL_k48r_tail_rmsg"] = calc_Lrmsd( pose_in, start_pose,
 		                                  flex_cter_ ); // option
 
-	pose_in.data().set( core::pose::datacache::CacheableDataType::SCORE_MAP, new basic::datacache::
-	                    DiagnosticData(score_map_));
+	using namespace basic::datacache;
+	pose_in.data().set( core::pose::datacache::CacheableDataType::SCORE_MAP, DataCache_CacheableData::DataOP( new basic::datacache::DiagnosticData(score_map_) ) );
 
 	TR << "UBI Outputing structure after " << tries << " times" << std::endl;
 
@@ -1726,8 +1726,7 @@ ubi_e2c_modeler::setup_packer_task(
 
 	TR << "UBI Setting Up Packer Task" << std::endl;
 
-	tf_->push_back( new OperateOnCertainResidues( new PreventRepackingRLT,
-	                new ResidueLacksProperty("PROTEIN") ) );
+	tf_->push_back( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueLacksProperty("PROTEIN") ) ) );
 	tf_->push_back( new InitializeFromCommandline );
 	tf_->push_back( new IncludeCurrent );
 	tf_->push_back( new RestrictToRepacking );
@@ -2418,6 +2417,7 @@ void ubi_e2c_modeler::monoub_assign_CSPs(
 } // monoub_assign_CSPs
 
 void ubi_e2c_modeler::monoub_apply( pose::Pose & pose_in ) {
+	using namespace basic::datacache;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::scoring;
@@ -2502,8 +2502,8 @@ void ubi_e2c_modeler::monoub_apply( pose::Pose & pose_in ) {
 
 	score_map_["AJ_monoub_rms"] = monoub_calc_Lrmsd( pose_in, start_pose );
 
-	pose_in.data().set( core::pose::datacache::CacheableDataType::SCORE_MAP, new basic::datacache::
-	                    DiagnosticData(score_map_));
+	pose_in.data().set( core::pose::datacache::CacheableDataType::SCORE_MAP, 
+		DataCache_CacheableData::DataOP( new basic::datacache::DiagnosticData(score_map_) ));
 
 	TR << "UBI Mono Ubi Outputing structure after " << tries << " times"
 	   << std::endl;

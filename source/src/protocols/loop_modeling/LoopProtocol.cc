@@ -78,7 +78,7 @@ string LoopProtocolCreator::keyname() const { // {{{1
 // }}}1
 
 LoopProtocol::LoopProtocol() { // {{{1
-	protocol_ = register_nested_loop_mover(new utilities::LoopMoverGroup);
+	protocol_ = utility::pointer::static_pointer_cast< utilities::LoopMoverGroup >( register_nested_loop_mover( LoopMoverOP(new utilities::LoopMoverGroup) ) );
 	movers_ = protocol_->add_mover_group();
 	refiners_ = protocol_->add_mover_group();
 	monte_carlo_ = NULL;

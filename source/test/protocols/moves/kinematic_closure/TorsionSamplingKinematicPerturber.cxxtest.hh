@@ -76,7 +76,7 @@ public:
 		}
 
 		kin_mover = new protocols::loops::loop_closure::kinematic_closure::KinematicMover();
-		kin_mover_cap = *kin_mover;
+		kin_mover_cap = protocols::loops::loop_closure::kinematic_closure::KinematicMoverCAP( kin_mover );
 
 		TsamplingKP = new protocols::loops::loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber(kin_mover_cap);
 		kin_mover->set_perturber(TsamplingKP);

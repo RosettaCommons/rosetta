@@ -78,6 +78,8 @@ public:
 
 };
 
+typedef utility::pointer::owning_ptr< DummyResourceOptions > DummyResourceOptionsOP;
+
 class DummyResourceOptionsCreator : public ResourceOptionsCreator {
 public:
 	virtual std::string options_type() const { return "DummyResourceOptions"; }
@@ -103,7 +105,7 @@ public:
 		}
 		DummyResource * dummy_ptr = new DummyResource;
 		dummy_ptr->somevar_ = dopts->somevar_;
-		return dummy_ptr;
+		return utility::pointer::ReferenceCountOP(dummy_ptr);
 	}
 
 	virtual
@@ -424,7 +426,7 @@ public:
 		my_config.loader_type = "LoopsFile";
 		my_config.resource_options_tag = resource_options_tag;
 
-		utility::pointer::owning_ptr< DummyResourceOptions > dro = new DummyResourceOptions();
+		DummyResourceOptionsOP dro = new DummyResourceOptions();
 
 		ResourceManager * resource_manager = ResourceManager::get_instance();
 		LazyResourceManager * lazy_resource_manager = dynamic_cast< LazyResourceManager * > ( resource_manager );
@@ -465,7 +467,7 @@ public:
 		}
 		try {
 			TS_ASSERT( jd2rm->has_resource_options( "dummyopt1" ) );
-			TS_ASSERT( dynamic_cast< DummyResourceOptions * > ( jd2rm->find_resource_options( "dummyopt1" )() ));
+			TS_ASSERT( dynamic_cast< DummyResourceOptions * > ( jd2rm->find_resource_options( "dummyopt1" ).get() ));
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::cerr << "Raised exception " << e.msg() << std::endl;
 			TS_ASSERT( false );
@@ -491,11 +493,11 @@ public:
 		}
 		try {
 			TS_ASSERT( jd2rm->has_resource_options( "dummyopt1" ) );
-			TS_ASSERT( dynamic_cast< DummyResourceOptions * > ( jd2rm->find_resource_options( "dummyopt1" )() ));
-			TS_ASSERT( dynamic_cast< DummyResourceOptions * > ( jd2rm->find_resource_options( "dummyopt1" )() )->somevar_ == 5 );
+			TS_ASSERT( dynamic_cast< DummyResourceOptions * > ( jd2rm->find_resource_options( "dummyopt1" ).get() ));
+			TS_ASSERT( dynamic_cast< DummyResourceOptions * > ( jd2rm->find_resource_options( "dummyopt1" ).get() )->somevar_ == 5 );
 			TS_ASSERT( jd2rm->has_resource_options( "dummyopt2" ) );
-			TS_ASSERT( dynamic_cast< DummyResourceOptions * > ( jd2rm->find_resource_options( "dummyopt2" )() ));
-			TS_ASSERT( dynamic_cast< DummyResourceOptions * > ( jd2rm->find_resource_options( "dummyopt2" )() )->somevar_ == 6 );
+			TS_ASSERT( dynamic_cast< DummyResourceOptions * > ( jd2rm->find_resource_options( "dummyopt2" ).get() ));
+			TS_ASSERT( dynamic_cast< DummyResourceOptions * > ( jd2rm->find_resource_options( "dummyopt2" ).get() )->somevar_ == 6 );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::cerr << "Raised exception " << e.msg() << std::endl;
 			TS_ASSERT( false );
@@ -829,7 +831,7 @@ public:
 			TS_ASSERT( false );
 		}
 		TS_ASSERT( dummy );
-		DummyResource * dummy_downcasted = dynamic_cast< DummyResource * > ( dummy() );
+		DummyResource * dummy_downcasted = dynamic_cast< DummyResource * > ( dummy.get() );
 		TS_ASSERT( dummy_downcasted );
 		// make sure the ResourceOptions specified by the FallbackConfiguration was used to
 		// construct this resource

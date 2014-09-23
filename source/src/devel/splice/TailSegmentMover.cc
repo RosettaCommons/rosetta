@@ -119,7 +119,7 @@ TailSegmentMover & TailSegmentMover::operator=( TailSegmentMover const & rhs ){
 	task_factory_						= rhs.task_factory_->clone();
 	movemap_								= rhs.movemap_->clone();
 	movemap_lesstail_				= rhs.movemap_lesstail_->clone();
-	foldtree_								= new core::kinematics::FoldTree(rhs.foldtree_); //no clone operation, and no proper copy ctor
+	foldtree_								= new core::kinematics::FoldTree(*rhs.foldtree_); //no clone operation, and no proper copy ctor
 	return *this;
 }
 
@@ -136,7 +136,7 @@ void TailSegmentMover::set_task_factory(
 )
 {
 	// make local, non-const copy from const input
-	runtime_assert( task_factory_in );
+	runtime_assert( task_factory_in != 0 );
 	task_factory_ = new core::pack::task::TaskFactory( *task_factory_in );
 }
 

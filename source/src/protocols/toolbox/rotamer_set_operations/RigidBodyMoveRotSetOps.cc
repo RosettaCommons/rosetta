@@ -75,11 +75,11 @@ RigidBodyMoveBaseRSO::alter_rotamer_set(
 	core::chemical::ResidueTypeCOP concrete_residue;
 	if( rotamer_set.num_rotamers() != 0 )
 	{
-		concrete_residue = (*rotamer_set.begin())->type();
+		concrete_residue = (*rotamer_set.begin())->type().get_self_ptr();
 	}
 	else
 	{
-		concrete_residue = pose.residue( sequence_position ).type();
+		concrete_residue = pose.residue( sequence_position ).type().get_self_ptr();
 	}
 
 	for (core::Size i = 1; i <= rigid_body_confs.size(); i++)
@@ -108,7 +108,7 @@ RigidBodyMoveBaseRSO::alter_rotamer_set(
 	core::pack::dunbrack::SingleResidueRotamerLibraryCAP rotlib =
 		core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( *concrete_residue );
 
-	if(rotlib)
+	if(!rotlib.expired())
 	{
 		tr.Debug << "At seqpos " << sequence_position << " retrieved rotamer library." << std::endl;
 	}
@@ -129,9 +129,10 @@ RigidBodyMoveBaseRSO::alter_rotamer_set(
 
 		// Generate full list of candidate rotamers at the rb conf if a rotamer library is available
 		// otherwise just add the additional rb conf.
-		if( rotlib )
+		core::pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib_op = rotlib.lock();
+		if( rotlib_op )
 		{
-			rotlib->fill_rotamer_vector( pose, sfxn, ptask, packer_neighbor_graph, concrete_residue, existing_residue, extra_chi_steps, buried, suggested_rotamers_this_rbconf);
+			rotlib_op->fill_rotamer_vector( pose, sfxn, ptask, packer_neighbor_graph, concrete_residue, existing_residue, extra_chi_steps, buried, suggested_rotamers_this_rbconf);
 		}
 		else
 		{

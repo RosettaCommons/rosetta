@@ -87,7 +87,7 @@ void load_unboundrot(pose::Pose & pose, core::pose::PoseCOPs const & unboundrot_
 				TR << "Can't use " << rsd.type().name() << " " << rsd_num << " for residue constraint -- protein only." << std::endl;
 				continue;
 			}
-			if( core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( rsd.type() )() == 0 ) continue; // no point in creating constraint
+			if( core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( rsd.type() ).expired() ) continue; // no point in creating constraint
 			if( by_res_type.find( rsd.type().name() ) == by_res_type.end() ) { // first one, create constraint
 				TR.Debug << "Creating rotamer constraint for " << rsd.type().name() << " at " << rsd_num << std::endl;
 				RotamerConstraintOP constraint = new RotamerConstraint( *unboundrot_poses[pose_num], rsd_num );
@@ -165,7 +165,8 @@ RotamerConstraint::score(
 	EnergyMap & emap
 ) const
 {
-	if( rotlib_() == NULL ) return;
+	SingleResidueRotamerLibraryCOP rotlib( rotlib_ );
+	if( ! rotlib ) return;
 	if( weights[ this->score_type() ] == 0 ) return; // what's the point?
 
 	conformation::Residue const & rsd( xyz_func.residue(seqpos_) );
@@ -177,8 +178,8 @@ RotamerConstraint::score(
 	for(Size i = 1, i_end = favored_rotamer_numbers_.size(); i <= i_end; ++i) {
 		if( rot == favored_rotamer_numbers_[i] ) {
 			pack::dunbrack::RotamerLibraryScratchSpace scratch;
-			Real const best_rotE = rotlib_->best_rotamer_energy(rsd, false /* => global min */, scratch);
-			Real const this_rotE = rotlib_->best_rotamer_energy(rsd, true /* => local min */, scratch);
+			Real const best_rotE = rotlib->best_rotamer_energy(rsd, false /* => global min */, scratch);
+			Real const this_rotE = rotlib->best_rotamer_energy(rsd, true /* => local min */, scratch);
 			assert( best_rotE <= this_rotE );
 			TR << "rotamer constraint active for " << seqpos_ << " thisE = " << this_rotE << " bestE = " << best_rotE << " dE = " << ( best_rotE - this_rotE ) << std::endl;
 			emap[ this->score_type() ] +=  ( best_rotE - this_rotE );

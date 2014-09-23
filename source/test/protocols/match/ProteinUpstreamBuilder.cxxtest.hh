@@ -489,7 +489,7 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 		std::ostringstream sout, sout2;
 
 		WriteUpstreamCoordinateKinemageOP dsalgorithm = new WriteUpstreamCoordinateKinemage( sout );
-		dsalgorithm()->return_pseudo_hits( true );
+		dsalgorithm->return_pseudo_hits( true );
 
 		WriteUpstreamHitKinemageOP kin_processor = new WriteUpstreamHitKinemage( sout2 );
 		kin_processor->set_master( "rotamers" );
@@ -576,7 +576,7 @@ class ProteinUpstreamBuilderTests : public CxxTest::TestSuite {
 		std::ostringstream sout, sout2;
 
 		WriteUpstreamCoordinateKinemageOP dsalgorithm = new WriteUpstreamCoordinateKinemage( sout );
-		dsalgorithm()->return_pseudo_hits( true );
+		dsalgorithm->return_pseudo_hits( true );
 
 		WriteUpstreamHitKinemageOP kin_processor = new WriteUpstreamHitKinemage( sout2 );
 		kin_processor->set_master( "rotamers" );

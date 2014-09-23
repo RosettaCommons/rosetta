@@ -190,35 +190,32 @@ DisulfideMatchingPotential::disulfide_RT(
 		Residue const& res1,
 		Residue const& res2 ) const
 {
-	conformation::ResidueCAP res1_ptr(&res1);
-	conformation::ResidueCAP res2_ptr(&res2);
-
 	Size const MAX_POS( 5 );
 	ObjexxFCL::FArray2D_float Epos1(3, MAX_POS), Epos2(3,MAX_POS);
 
-	Epos1(1,2) = res1_ptr->atom(res1_ptr->atom_index("CA")).xyz()(1);
-	Epos1(2,2) = res1_ptr->atom(res1_ptr->atom_index("CA")).xyz()(2);
-	Epos1(3,2) = res1_ptr->atom(res1_ptr->atom_index("CA")).xyz()(3);
+	Epos1(1,2) = res1.atom(res1.atom_index("CA")).xyz()(1);
+	Epos1(2,2) = res1.atom(res1.atom_index("CA")).xyz()(2);
+	Epos1(3,2) = res1.atom(res1.atom_index("CA")).xyz()(3);
 
-	Epos1(1,1) = res1_ptr->atom(res1_ptr->atom_index("N")).xyz()(1);
-	Epos1(2,1) = res1_ptr->atom(res1_ptr->atom_index("N")).xyz()(2);
-	Epos1(3,1) = res1_ptr->atom(res1_ptr->atom_index("N")).xyz()(3);
+	Epos1(1,1) = res1.atom(res1.atom_index("N")).xyz()(1);
+	Epos1(2,1) = res1.atom(res1.atom_index("N")).xyz()(2);
+	Epos1(3,1) = res1.atom(res1.atom_index("N")).xyz()(3);
 
-	Epos1(1,4) = res1_ptr->atom(res1_ptr->atom_index("C")).xyz()(1);
-	Epos1(2,4) = res1_ptr->atom(res1_ptr->atom_index("C")).xyz()(2);
-	Epos1(3,4) = res1_ptr->atom(res1_ptr->atom_index("C")).xyz()(3);
+	Epos1(1,4) = res1.atom(res1.atom_index("C")).xyz()(1);
+	Epos1(2,4) = res1.atom(res1.atom_index("C")).xyz()(2);
+	Epos1(3,4) = res1.atom(res1.atom_index("C")).xyz()(3);
 
-	Epos2(1,2) = res2_ptr->atom(res2_ptr->atom_index("CA")).xyz()(1);
-	Epos2(2,2) = res2_ptr->atom(res2_ptr->atom_index("CA")).xyz()(2);
-	Epos2(3,2) = res2_ptr->atom(res2_ptr->atom_index("CA")).xyz()(3);
+	Epos2(1,2) = res2.atom(res2.atom_index("CA")).xyz()(1);
+	Epos2(2,2) = res2.atom(res2.atom_index("CA")).xyz()(2);
+	Epos2(3,2) = res2.atom(res2.atom_index("CA")).xyz()(3);
 
-	Epos2(1,1) = res2_ptr->atom(res2_ptr->atom_index("N")).xyz()(1);
-	Epos2(2,1) = res2_ptr->atom(res2_ptr->atom_index("N")).xyz()(2);
-	Epos2(3,1) = res2_ptr->atom(res2_ptr->atom_index("N")).xyz()(3);
+	Epos2(1,1) = res2.atom(res2.atom_index("N")).xyz()(1);
+	Epos2(2,1) = res2.atom(res2.atom_index("N")).xyz()(2);
+	Epos2(3,1) = res2.atom(res2.atom_index("N")).xyz()(3);
 
-	Epos2(1,4) = res2_ptr->atom(res2_ptr->atom_index("C")).xyz()(1);
-	Epos2(2,4) = res2_ptr->atom(res2_ptr->atom_index("C")).xyz()(2);
-	Epos2(3,4) = res2_ptr->atom(res2_ptr->atom_index("C")).xyz()(3);
+	Epos2(1,4) = res2.atom(res2.atom_index("C")).xyz()(1);
+	Epos2(2,4) = res2.atom(res2.atom_index("C")).xyz()(2);
+	Epos2(3,4) = res2.atom(res2.atom_index("C")).xyz()(3);
 
 	//core::scoring::disulfides::RT_helper helper;
 

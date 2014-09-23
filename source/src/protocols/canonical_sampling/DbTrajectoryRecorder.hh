@@ -109,7 +109,7 @@ private:
 	/// written.
 	void 	write_model(
 		core::pose::Pose const & pose,
-		protocols::canonical_sampling::MetropolisHastingsMoverCAP mover=0
+		protocols::canonical_sampling::MetropolisHastingsMover const * mover=0
 	);
 
 private:

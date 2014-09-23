@@ -247,13 +247,13 @@ FoldabilityFilter::compute( core::pose::Pose const & pose ) const
 	posecopy.energies().clear();
 	core::pose::Pose saved_pose( posecopy );
 
-	runtime_assert( vlb_ );
+	runtime_assert( vlb_ != 0 );
 	// only set the manager if something has changed... otherwise it will pick new fragments each time the mover is called
 	if ( ( ss != cached_ss_ ) || ( aa != cached_aa_ ) || ( start_res_ != cached_start_ ) || ( end != cached_end_ ) ) {
 		// the build manager
 		protocols::forge::build::BuildManager manager;
 		// add the instruction to rebuild this segment
-		manager.add( new protocols::forge::build::GrowRight( start_res_, ss, aa ) );
+		manager.add( protocols::forge::build::BuildInstructionOP( new protocols::forge::build::GrowRight( start_res_, ss, aa ) ) );
 		// clear fragment cache and set buildmanager
 		vlb_->manager( manager );
 		// set cache

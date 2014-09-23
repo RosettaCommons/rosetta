@@ -586,6 +586,7 @@ void protocols::anchored_design::AnchorMoversData::set_unset_scorefunctions()
 void protocols::anchored_design::AnchorMoversData::set_unset_packertask_factory()
 {
 	using namespace core::pack::task;
+	using namespace core::pose::metrics;
 
 	//set up interface-plus-neighbors-positions operation
 	core::Size const numloop = num_loops();
@@ -928,7 +929,7 @@ void protocols::anchored_design::AnchorMoversData::anchor_noise_constraints_setu
 
 		TR << "anchor_noise_constraints constraint, opp_CA, center, sd: " << opp_CA->second << " " << opp_CA->first << " " << sd << std::endl;
 
-		pose.add_constraint(new AtomPairConstraint(anchor_ID, opp_CA->second, anchor_func));
+		pose.add_constraint(core::scoring::constraints::ConstraintCOP( new AtomPairConstraint(anchor_ID, opp_CA->second, anchor_func) ));
 		//++opp_CA;
 	}
 

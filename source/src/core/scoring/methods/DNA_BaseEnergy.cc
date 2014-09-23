@@ -66,7 +66,7 @@ using namespace dna; //////////////////// NOTE NOTE NOTE
 std::string const dna_deriv_atom( " C5 " );
 
 DNA_BaseEnergy::DNA_BaseEnergy() :
-	parent( new DNA_BaseEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new DNA_BaseEnergyCreator ) ),
 	potential_( ScoringManager::get_instance()->get_DNA_BasePotential() )
 {}
 

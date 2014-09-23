@@ -291,12 +291,13 @@ CartesianSampler::apply_fragcsts( core::pose::Pose &working_frag,	core::pose::Po
 	if (!nterm) {
 		for (core::uint j = 0; j < overlap_; ++j) {
 			for (core::uint i = 1; i <= 3; ++i) {
+				core::scoring::func::FuncOP fx = new core::scoring::func::HarmonicFunc( 0.0, 1.0 );
 				working_frag.add_constraint(
 					new CoordinateConstraint(
 						core::id::AtomID(i,j+1),
 						core::id::AtomID(2,working_frag.total_residue()),
 						pose.residue(startpos+j).atom(i).xyz(),
-						new core::scoring::func::HarmonicFunc( 0.0, 1.0 )
+						fx
 					)
 				);
 			}
@@ -305,12 +306,13 @@ CartesianSampler::apply_fragcsts( core::pose::Pose &working_frag,	core::pose::Po
 	if (!cterm) {
 		for (int j=len-overlap_; j<len; ++j) {
 			for (int i=1; i<=3; ++i) {
+				core::scoring::func::FuncOP fx = new core::scoring::func::HarmonicFunc( 0.0, 1.0 );
 				working_frag.add_constraint(
 					new CoordinateConstraint(
 						core::id::AtomID(i,j+1),
 						core::id::AtomID(2,working_frag.total_residue()),
 						pose.residue(startpos+j).atom(i).xyz(),
-						new core::scoring::func::HarmonicFunc( 0.0, 1.0 )
+						fx
 					)
 				);
 			}
@@ -336,6 +338,8 @@ CartesianSampler::apply_transform( core::pose::Pose &frag, core::Vector const &p
 
 bool
 CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &frame ) {
+	using core::pack::task::operation::TaskOperationCOP;
+	
 	core::Size start = frame.start(),len = frame.length();
 	runtime_assert( overlap_>=1 && overlap_<=len/2);
 
@@ -522,6 +526,7 @@ void
 CartesianSampler::apply_constraints( core::pose::Pose &pose )
 {
 	using namespace core::scoring::constraints;
+	using namespace core::scoring::func;
 
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
@@ -572,10 +577,9 @@ CartesianSampler::apply_constraints( core::pose::Pose &pose )
 				if (symm_info && !symm_info->bb_is_independent( tgt_resid_j ) ) continue;
 				if (symm_info && !symm_info->bb_is_independent( tgt_resid_k ) )	continue;
 
+				FuncOP fx = new ScalarWeightedFunc( ref_cst_weight_, FuncOP( new USOGFunc( dist, COORDDEV ) ) );
 				pose.add_constraint(
-						new AtomPairConstraint( core::id::AtomID(2,tgt_resid_j), core::id::AtomID(2,tgt_resid_k),
-							new core::scoring::func::ScalarWeightedFunc( ref_cst_weight_, new core::scoring::func::USOGFunc( dist, COORDDEV ) )
-						)
+						new AtomPairConstraint( core::id::AtomID(2,tgt_resid_j), core::id::AtomID(2,tgt_resid_k), fx )
 					);
 			}
 		}
@@ -649,7 +653,7 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 		core::Real Btemp=25;  // no idea what value makes sense here
 		                      // with Btemp = 25, a B=100 is ~54 times more likely to be sampled than B=0
 
-		runtime_assert( pose.pdb_info() );
+		runtime_assert( pose.pdb_info() != 0 );
 		for (int r=1; r<=(int)nres; ++r) {
 			core::Real Bsum=0;
 			core::Size nbb = pose.residue_type(r).last_backbone_atom();
@@ -923,19 +927,19 @@ CartesianSampler::parse_my_tag(
 	// scorefunction
 	if( tag->hasOption( "scorefxn" ) ) {
 		std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn" ) );
-		set_scorefunction ( data.get< ScoreFunction * >( "scorefxns", scorefxn_name ) );
+		set_scorefunction ( data.get_ptr< ScoreFunction >( "scorefxns", scorefxn_name ) );
 	}
 
 	// fullatom scorefunction
 	if( tag->hasOption( "fascorefxn" ) ) {
 		std::string const scorefxn_name( tag->getOption<std::string>( "fascorefxn" ) );
-		set_fa_scorefunction ( data.get< ScoreFunction * >( "scorefxns", scorefxn_name ) );
+		set_fa_scorefunction ( data.get_ptr< ScoreFunction >( "scorefxns", scorefxn_name ) );
 	}
 
 	// mc scorefunction
 	if( tag->hasOption( "mcscorefxn" ) ) {
 		std::string const scorefxn_name( tag->getOption<std::string>( "mcscorefxn" ) );
-		mc_scorefxn_ = data.get< ScoreFunction * >( "scorefxns", scorefxn_name );
+		mc_scorefxn_ = data.get_ptr< ScoreFunction >( "scorefxns", scorefxn_name );
 	}
 
 	// options

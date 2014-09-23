@@ -131,7 +131,7 @@ void OperateOnResidueSubset::parse_tag( TagCOP tag , DataMap & datamap )
 	if ( tag->hasOption( "selector" ) ) {
 		selector_name = tag->getOption< std::string >( "selector" );
 		try {
-			selector = datamap.get< ResidueSelector const * >( "ResidueSelector", selector_name );
+			selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_name );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from OperateOnResidueSubset::parse_tag\n" + e.msg();
 			throw utility::excn::EXCN_Msg_Exception( error_message );

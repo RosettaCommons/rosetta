@@ -809,8 +809,8 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::best_rotamer_energy(
 					}
 
   } else {
-				core::pack::dunbrack::SingleResidueRotamerLibraryCAP rotlib = RotamerLibrary::get_instance().get_rsd_library( rsd.type() );
-				core::pack::dunbrack::SingleResidueDunbrackLibraryCAP dunlib( static_cast< SingleResidueDunbrackLibrary const * > ( rotlib() ));
+				core::pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance().get_rsd_library( rsd.type() ).lock();
+				core::pack::dunbrack::SingleResidueDunbrackLibraryCOP dunlib( utility::pointer::static_pointer_cast< SingleResidueDunbrackLibrary const > ( rotlib ));
 
 				Real const phi( parent::get_phi_from_rsd( rsd ) );
     		Real const psi( parent::get_psi_from_rsd( rsd ) );
@@ -1790,7 +1790,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::bbind_chisamples_for_rotamer_chi
 	chisample_prob.push_back( nrsample.prob_ );
 	//Real const min_extrachi_sd = 0.0; // ???
 
-	ExtraRotSample ex_samp_level = rtask.extrachi_sample_level( buried, chi_index, &rsd_type );
+	ExtraRotSample ex_samp_level = rtask.extrachi_sample_level( buried, chi_index, rsd_type );
 
 	if ( ex_samp_level == NO_EXTRA_CHI_SAMPLES ) return;
 
@@ -1846,7 +1846,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::bbdep_chisamples_for_rotamer_chi
 	total_rot.push_back( nrsample.nrchi_bin_ );
 	chisample_prob.push_back( nrsample.prob_ );
 
-	ExtraRotSample ex_samp_level = rtask.extrachi_sample_level( buried, chi_index, &rsd_type );
+	ExtraRotSample ex_samp_level = rtask.extrachi_sample_level( buried, chi_index, rsd_type );
 
 	if ( ex_samp_level == NO_EXTRA_CHI_SAMPLES ) return;
 

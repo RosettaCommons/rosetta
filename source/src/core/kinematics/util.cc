@@ -79,7 +79,6 @@ add_atom(
 
 	// create new atom
 	AtomOP const atom_p( add_jump_atom ? static_cast< Atom* >( new JumpAtom()) : static_cast< Atom* >(new BondedAtom()));
-	atom_p->set_weak_ptr_to_self( atom_p() );
 
 	// fill in the atom_ptr data
 	assert( atom_ptr[ atomno ] == 0 );
@@ -143,7 +142,6 @@ setup_cloned_atom(
 {
 	utility_exit_with_message("needs to be refactored to meet new tree-building guidelines");
 	tree::AtomOP new_atom( new tree::BondedAtom() );
-	/// Remember to add a call here to new_atom->set_weak_ptr_to_self when this is refactored, if ever
 	/*
 	new_atom->parent(0);
 	new_atom->id ( old_atom->id () );

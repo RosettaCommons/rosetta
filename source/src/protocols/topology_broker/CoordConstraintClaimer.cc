@@ -141,7 +141,7 @@ void CoordConstraintClaimer::generate_claims( claims::DofClaims& new_claims ) {
 		}
 		runtime_assert( root_ != 0 );
 	}
-	if ( !bLocal_ ) new_claims.push_back( new claims::LegacyRootClaim( this, root_, claims::DofClaim::NEED_TO_KNOW ) );
+	if ( !bLocal_ ) new_claims.push_back( new claims::LegacyRootClaim( get_self_weak_ptr(), root_, claims::DofClaim::NEED_TO_KNOW ) );
 }
 
 void CoordConstraintClaimer::read_cst_pose() {
@@ -171,7 +171,7 @@ void CoordConstraintClaimer::add_constraints( core::pose::Pose& pose ) const {
 			 in broker setup either provide PDB_FILE or set CST_FROM_INPUT_POSE");
 
 		//constraints_ should be defined, since new_decoy()
-		runtime_assert( constraints_ );
+		runtime_assert( constraints_ != 0 );
 
 		//get constraints
 		if ( !bUseXYZ_in_cstfile_ ) {
@@ -201,15 +201,15 @@ void CoordConstraintClaimer::add_constraints( core::pose::Pose& pose ) const {
 }
 
 void CoordConstraintClaimer::set_cst_root() {
-	runtime_assert( cst_pose_ );
+	runtime_assert( cst_pose_ != 0 );
 	id::StubID cst_fix_stub_ID( core::pose::named_stub_id_to_stub_id( id::NamedStubID( "N","CA","C", root_ ), *cst_pose_ ));
-	runtime_assert( constraints_ );
+	runtime_assert( constraints_ != 0 );
 	ConstraintCOPs all_cst = constraints_->get_all_constraints();
 	ConstraintSetOP new_set = new ConstraintSet;
 	for ( ConstraintCOPs::const_iterator it = all_cst.begin(), eit = all_cst.end(); it!=eit; ++it ) {
 		ConstraintOP new_cst = (*it)->clone();
 		LocalCoordinateConstraintOP ll_cst = dynamic_cast< LocalCoordinateConstraint* > ( new_cst.get() );
-		runtime_assert( ll_cst ); //only these should be in the constraint set!
+		runtime_assert( ll_cst != 0 ); //only these should be in the constraint set!
 		ll_cst->set_fixed_stub( cst_fix_stub_ID );
 		new_set->add_constraint( ll_cst );
 	}
@@ -302,8 +302,8 @@ void CoordConstraintClaimer::superimpose( pose::Pose const& pose ) const {
 
 	for ( ConstraintCOPs::const_iterator it = all_cst.begin(), eit = all_cst.end(); it!=eit; ++it, ++n ) {
 		//		ConstraintOP new_cst = (*it)->clone();
-		LocalCoordinateConstraintCOP ll_cst = dynamic_cast< LocalCoordinateConstraint const* > ( it->get() );
-		runtime_assert( ll_cst ); //only these should be in the constraint set!
+		LocalCoordinateConstraintCOP ll_cst = utility::pointer::dynamic_pointer_cast< LocalCoordinateConstraint const > ( *it );
+		runtime_assert( ll_cst != 0 ); //only these should be in the constraint set!
 		Vector xyz_ref( pose.xyz( ll_cst->atom( 1 ) ) );
 		//n = ll_cst->atom( 1 ).rsd(); //uncomment for debugging
 		tr.Trace << "constraint for atom " << ll_cst->atom( 1 ) << std::endl;

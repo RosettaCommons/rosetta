@@ -94,7 +94,7 @@ methods::LongRangeEnergyType
 PattersonCorrEnergy::long_range_type() const { return patterson_corr_energy; }
 
 /// c-tor
-PattersonCorrEnergy::PattersonCorrEnergy() : parent( new PattersonCorrEnergyCreator ) {
+PattersonCorrEnergy::PattersonCorrEnergy() : parent( methods::EnergyMethodCreatorOP( new PattersonCorrEnergyCreator ) ) {
 	map_loaded = core::scoring::electron_density::getDensityMap().isMapLoaded();  // loads map
 	scoreRepacks = basic::options::option[ basic::options::OptionKeys::patterson::use_on_repack ]();
 }

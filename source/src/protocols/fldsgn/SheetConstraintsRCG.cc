@@ -257,11 +257,11 @@ SheetConstraintsRCG::generate_remodel_constraints( Pose const & pose )
 	core::Real ub( dist_ );
 	core::Real sd( 1.0 );
 	std::string tag( "constraints_in_beta_sheet" );
-	core::scoring::func::ScalarWeightedFuncOP cstfunc = new core::scoring::func::ScalarWeightedFunc( weight_, new BoundFunc( lb, ub, sd, tag ) );
+	core::scoring::func::ScalarWeightedFuncOP cstfunc = new core::scoring::func::ScalarWeightedFunc( weight_, core::scoring::func::FuncOP( new BoundFunc( lb, ub, sd, tag ) ) );
 	// TL Oct '12 add weights to angle/dihedral constraints
-	ScalarWeightedFuncOP cacb_dihedral_func = new ScalarWeightedFunc( weight_, new OffsetPeriodicBoundFunc(-cacb_dihedral_tolerance_,cacb_dihedral_tolerance_, std::sqrt(1.0/42.0), "dihed_cacb", 6.28, 0.0 ) );
-	ScalarWeightedFuncOP bb_dihedral_func = new ScalarWeightedFunc( weight_, new OffsetPeriodicBoundFunc(-bb_dihedral_tolerance_,bb_dihedral_tolerance_, std::sqrt(1.0/42.0), "dihed_bb", 3.14, 0.0 ) );
-	ScalarWeightedFuncOP bb_angle_func = new ScalarWeightedFunc( weight_, new BoundFunc(1.57-angle_tolerance_,1.57+angle_tolerance_, sqrt(1.0/42.0), "angle_bb") );
+	ScalarWeightedFuncOP cacb_dihedral_func = new ScalarWeightedFunc( weight_, core::scoring::func::FuncOP( new OffsetPeriodicBoundFunc(-cacb_dihedral_tolerance_,cacb_dihedral_tolerance_, std::sqrt(1.0/42.0), "dihed_cacb", 6.28, 0.0 ) ) );
+	ScalarWeightedFuncOP bb_dihedral_func = new ScalarWeightedFunc( weight_, core::scoring::func::FuncOP( new OffsetPeriodicBoundFunc(-bb_dihedral_tolerance_,bb_dihedral_tolerance_, std::sqrt(1.0/42.0), "dihed_bb", 3.14, 0.0 ) ) );
+	ScalarWeightedFuncOP bb_angle_func = new ScalarWeightedFunc( weight_, core::scoring::func::FuncOP( new BoundFunc(1.57-angle_tolerance_,1.57+angle_tolerance_, sqrt(1.0/42.0), "angle_bb") ) );
 
 	// set constraints to csts
 	core::Size nres( pose.total_residue() );
@@ -272,7 +272,7 @@ SheetConstraintsRCG::generate_remodel_constraints( Pose const & pose )
 			TR << pose.residue( i ).name3() << i << " = ligand" << std::endl;
 		}
 	}
-	runtime_assert( blueprint_ );
+	runtime_assert( blueprint_ != 0 );
 	TR << "Blueprint num res=" << blueprint_->total_residue() << std::endl;
 	TR << "Pose nres protein=" << nres << std::endl;
 	runtime_assert( nres == blueprint_->total_residue() );

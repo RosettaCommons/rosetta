@@ -63,8 +63,8 @@ methods::EnergyMethodOP
 LK_PolarNonPolarEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return new LK_PolarNonPolarEnergy( *( ScoringManager::get_instance()->etable( options.etable_type() )),
-																		 options.analytic_etable_evaluation() );
+	etable::EtableCOP etable( ScoringManager::get_instance()->etable( options.etable_type() ) );
+	return new LK_PolarNonPolarEnergy( *etable, options.analytic_etable_evaluation() );
 	// for some reason I don't yet understand, cannot switch to 'modern' version which would prevent
 	// a redundant etable setup. -- rhiju
 	//	return new LK_PolarNonPolarEnergy( *( ScoringManager::get_instance()->etable( options )),
@@ -85,7 +85,7 @@ LK_PolarNonPolarEnergyCreator::score_types_for_method() const {
 
 
 LK_PolarNonPolarEnergy::LK_PolarNonPolarEnergy( etable::Etable const & etable_in, bool const analytic_etable_evaluation ):
-	parent( new LK_PolarNonPolarEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new LK_PolarNonPolarEnergyCreator ) ),
 	safe_max_dis2_( etable_in.get_safe_max_dis2() ),
 	max_dis_( etable_in.max_dis() ),
 	verbose_( false )

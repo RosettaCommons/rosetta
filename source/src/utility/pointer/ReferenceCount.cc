@@ -7,26 +7,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   utility/pointer/ReferenceCount.hh
-/// @brief  Base class for reference-counted single inheritance polymorphic classes
-/// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
+/// @file   utility/pointer/ReferenceCount.cc
+/// @brief  ReferenceCount base class -- dispatch class
+/// @author Luki Goldschmidt <lugo@uw.edu>
 
-
-// Unit headers
-#include <utility/pointer/ReferenceCount.hh>
-
-
-namespace utility {
-namespace pointer {
-
-
-/// @brief ReferenceCount static member definitions
-
-#ifdef MULTI_THREADED
-long const ReferenceCount::max_count_ = 123456789;
-#else
-ReferenceCount::Size const ReferenceCount::max_count_ = static_cast< ReferenceCount::Size >( -1 );
+#ifdef PTR_REFCOUNT
+#include <utility/pointer/refcount/ReferenceCount.cc>
 #endif
-
-} // namespace pointer
-} // namespace utility

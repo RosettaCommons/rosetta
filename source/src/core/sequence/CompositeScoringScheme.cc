@@ -53,8 +53,8 @@ Real CompositeScoringScheme::score(
 	Real total_score( 0.0 );
 	CompositeSequenceOP cs1( dynamic_cast< CompositeSequence * >( seq1() ) );
 	CompositeSequenceOP cs2( dynamic_cast< CompositeSequence * >( seq2() ) );
-	runtime_assert( cs1 );
-	runtime_assert( cs2 );
+	runtime_assert( cs1 != 0 );
+	runtime_assert( cs2 != 0 );
 	runtime_assert( cs1->n_seqs() == cs2->n_seqs() );
 	runtime_assert( count()       == cs2->n_seqs() );
 

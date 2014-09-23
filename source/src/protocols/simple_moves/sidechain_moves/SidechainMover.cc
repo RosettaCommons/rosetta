@@ -181,14 +181,14 @@ SidechainMover::parse_my_tag(
 		for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
 					t_o_key != end; ++t_o_key ) {
 			if ( data.has( "task_operations", *t_o_key ) ) {
-				new_task_factory->push_back( data.get< core::pack::task::operation::TaskOperation* >( "task_operations", *t_o_key ) );
+				new_task_factory->push_back( data.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", *t_o_key ) );
 			} else {
 				throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
 			}
 		}
 
 	} else {
-
+		using core::pack::task::operation::TaskOperationCOP;
 		new_task_factory->push_back( new core::pack::task::operation::RestrictToRepacking );
 	}
 
@@ -330,11 +330,11 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue )
 
 	if (residue_type->aa() != (input_residue->type()).aa()) last_mutation_ = true;
 
-	core::pack::dunbrack::SingleResidueRotamerLibraryCAP residue_rotamer_library(
+	core::pack::dunbrack::SingleResidueRotamerLibraryCOP residue_rotamer_library(
 		rotamer_library_.get_rsd_library(*residue_type)
 	);
-	core::pack::dunbrack::SingleResidueDunbrackLibraryCAP residue_dunbrack_library(
-		dynamic_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const * >(residue_rotamer_library.get())
+	core::pack::dunbrack::SingleResidueDunbrackLibraryCOP residue_dunbrack_library(
+		utility::pointer::dynamic_pointer_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const >(residue_rotamer_library)
 	);
 
 	/// last_chi_angles_ holds degrees for a short period;
@@ -423,7 +423,7 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue )
 	// swap in a new residue if necessary
 	core::conformation::ResidueOP previous_residue = input_residue;
 	core::conformation::ResidueOP new_residue;
-	if (residue_type() != & previous_residue->type() ) { // apl, note: pointer comparison is faster
+	if (residue_type.get() != & previous_residue->type() ) { // apl, note: pointer comparison is faster
 		if ( TR.visible( basic::t_debug )) {
 			TR.Debug << "previous residue " << previous_residue->type().name() << " doesn't match new res-name " << residue_type->name() << std::endl;
 		}
@@ -669,11 +669,11 @@ SidechainMover::proposal_density(
 
 	core::Real density(0);
 
-	core::pack::dunbrack::SingleResidueRotamerLibraryCAP residue_rotamer_library(
+	core::pack::dunbrack::SingleResidueRotamerLibraryCOP residue_rotamer_library(
 		rotamer_library_.get_rsd_library(proposed_residue.type())
 	);
-	core::pack::dunbrack::SingleResidueDunbrackLibraryCAP residue_dunbrack_library(
-		dynamic_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const * >(residue_rotamer_library.get())
+	core::pack::dunbrack::SingleResidueDunbrackLibraryCOP residue_dunbrack_library(
+		utility::pointer::dynamic_pointer_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const >(residue_rotamer_library)
 	);
 
 	if (residue_dunbrack_library) {

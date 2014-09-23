@@ -149,7 +149,7 @@ FibrilModelingClaimer::add_mover(
 	}
 
 	rb_weight = option( rigid_body_frequency );
-	moves::MoverOP rb_trial_mover =	new symmetric_docking::SymFoldandDockRbTrialMover( &scorefxn );
+	moves::MoverOP rb_trial_mover =	new symmetric_docking::SymFoldandDockRbTrialMover( scorefxn.get_self_ptr() );
 	random_mover.add_mover( rb_trial_mover, rb_weight );
 
 	slide_weight = option( slide_contact_frequency );
@@ -182,7 +182,7 @@ void FibrilModelingClaimer::initialize_dofs(
 
 	for ( claims::DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
         it != eit; ++it ) {
-    if ( (*it)->owner()==this ) {
+    if ( (*it)->owner().lock().get() == this ) {
       (*it)->toggle( *movemap, true );
 		}
 	}
@@ -192,7 +192,7 @@ void FibrilModelingClaimer::generate_claims( claims::DofClaims& new_claims ) {
   // Set all cuts to real cuts. We don't want to close any of them...
 	utility::vector1< int > cuts( input_pose_.conformation().fold_tree().cutpoints() );
 	for ( Size i = 1; i <= cuts.size(); ++i ) {
-    new_claims.push_back( new claims::CutClaim( this, std::make_pair( Parent::label(), cuts[i]),
+    new_claims.push_back( new claims::CutClaim( get_self_weak_ptr(), std::make_pair( Parent::label(), cuts[i]),
 																								claims::DofClaim::INIT /* for now... eventually CAN_INIT ? */ ) );
   }
 }
@@ -202,14 +202,14 @@ bool FibrilModelingClaimer::allow_claim( claims::DofClaim const& foreign_claim )
 
 	using namespace core::conformation::symmetry;
 
-	if ( foreign_claim.owner() == this ) return true; // always allow your own claims!
+	if ( foreign_claim.owner().lock().get() == this ) return true; // always allow your own claims!
 
 	//std::cout<<"claim_pos "<<foreign_claim.pos( 1 )<<" "<<is_symmetric( input_pose_ )<<std::endl;
 	if ( core::conformation::symmetry::is_symmetric( *symminfo_ ) ) {
 
 
 		// check foreign claim
-		claims::BBClaimCOP bb_ptr( dynamic_cast< const claims::BBClaim* >( &foreign_claim ) );
+		claims::BBClaim const *bb_ptr( dynamic_cast< const claims::BBClaim* >( &foreign_claim ) );
 		if ( bb_ptr ) {
 			if ( ! symminfo_->bb_is_independent( bb_ptr->global_position() ) ) return false;
 		} // DofClaim::BB

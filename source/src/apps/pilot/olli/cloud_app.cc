@@ -82,7 +82,7 @@ private:
 };
 
 CloudArchiveManagerWrapper::CloudArchiveManagerWrapper() {
-	set_archive( new protocols::abinitio::IterativeAbrelax );
+	set_archive( protocols::jd2::archive::AbstractArchiveBaseOP( new protocols::abinitio::IterativeAbrelax ) );
 }
 
 void CloudArchiveManagerWrapper::save_archive() {

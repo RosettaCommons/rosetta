@@ -231,7 +231,7 @@ void LoopMover_Refine_CCD::set_task_factory(
 )
 {
 	// make local, non-const copy from const input
-	runtime_assert( task_factory_in );
+	runtime_assert( task_factory_in != 0 );
 	task_factory_ = new core::pack::task::TaskFactory( *task_factory_in );
 }
 
@@ -315,7 +315,7 @@ void LoopMover_Refine_CCD::apply( core::pose::Pose & pose )
 
 	LoopRefineInnerCycleOP inner_cycle = LoopRefineInnerCycleFactory::get_instance()->create_inner_cycle(
 			IC_RefineCCDStandard,
-			this,
+			LoopMover_Refine_CCDAP( utility::pointer::static_pointer_cast< LoopMover_Refine_CCD >(get_self_ptr()) ),
 			mc,
 			ramping_scorefxn(),
 			task_factory_

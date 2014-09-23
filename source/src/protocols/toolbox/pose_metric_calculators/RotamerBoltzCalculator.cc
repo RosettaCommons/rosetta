@@ -125,6 +125,7 @@ namespace pose_metric_calculators {
 
   core::pack::task::PackerTaskOP RotamerBoltzCalculator::init_task(core::pose::Pose& pose, core::Size resi){
 	  using namespace core::pack::task;
+	  using namespace core::pack::task::operation;
 	  using namespace core::pack::rotamer_set;
 	  using namespace core::conformation;
 

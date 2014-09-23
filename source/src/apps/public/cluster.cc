@@ -181,7 +181,7 @@ main( int argc, char * argv [] ) {
 ///		std::cout << "Estimated thinout factor to seed with " << max_O2_clustering << " structures: " << thinout_factor << " ( " << expected_n_decoys << " ) " << std::endl;
 ///	}
 
-	core::chemical::ResidueTypeSetCAP rsd_set;
+	core::chemical::ResidueTypeSetCOP rsd_set;
 	if ( option[ in::file::fullatom ]() ) {
 		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 	} else {

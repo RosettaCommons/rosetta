@@ -75,7 +75,7 @@ class UnfoldedStatePotentialTests : public CxxTest::TestSuite {
 		core_init();
 
 		pose = new Pose;
-		core::chemical::ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+		core::chemical::ResidueTypeSetCOP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 		core::pose::make_pose_from_sequence( *pose, "DFGLK", *rsd_set );
 
 		unfE_potential = new UnfoldedStatePotential( basic::database::full_name( "scoring/score_functions/unfolded/unfolded_state_residue_energies_score12" ) );

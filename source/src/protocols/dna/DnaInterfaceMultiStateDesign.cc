@@ -132,7 +132,7 @@ DnaInterfaceMultiStateDesign::apply( Pose & pose )
 void
 DnaInterfaceMultiStateDesign::copy_dna_chains( DnaChainsOP dna_chains )
 {
-	runtime_assert( dna_chains );
+	runtime_assert( dna_chains != 0 );
 	dna_chains_ = new DnaChains( *dna_chains );
 }
 
@@ -415,8 +415,8 @@ DnaInterfaceMultiStateDesign::add_dna_states(
 	PackerTaskCOP ptask
 )
 {
-	runtime_assert( dna_chains_ );
-	runtime_assert( multistate_packer_ );
+	runtime_assert( dna_chains_ != 0 );
+	runtime_assert( multistate_packer_ != 0 );
 
 	// temporary copy of Pose used to build DNA target and competitor states
 	Pose mutpose( pose );

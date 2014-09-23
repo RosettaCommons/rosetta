@@ -57,7 +57,7 @@ MatchProcessor::~MatchProcessor()
 void
 MatchProcessor::begin_processing()
 {
-	runtime_assert( writer_ );
+	runtime_assert( writer_ != 0 );
 	num_matches_processed_ = 0;
 	match_processing_successful_ = false;
 	filter_failcounts_.clear();
@@ -165,7 +165,7 @@ MatchProcessor::add_filter( MatchFilterOP filter )
 {
 
 	UpstreamCollisionFilterCOP up_coll_filt(
-		dynamic_cast< UpstreamCollisionFilter * > ( filter.get() ) );
+		utility::pointer::dynamic_pointer_cast< UpstreamCollisionFilter > ( filter ) );
 	if( up_coll_filt ){
 		up_coll_filt_ = up_coll_filt;
 		return;  //upstream collision filter not happening at match enumeration stage anymore
@@ -175,13 +175,13 @@ MatchProcessor::add_filter( MatchFilterOP filter )
 
 	/// Is this a state-accululating filter?
 	StateAccumulatingMatchFilterOP filter_with_state(
-		dynamic_cast< StateAccumulatingMatchFilter * > ( filter.get() ) );
+		utility::pointer::dynamic_pointer_cast< StateAccumulatingMatchFilter > ( filter ) );
 	if ( filter_with_state ) {
 		filters_with_state_.push_back( filter_with_state );
 	}
 
 	UpstreamDownstreamCollisionFilterCOP up_down_filt(
-		dynamic_cast< UpstreamDownstreamCollisionFilter * > ( filter.get() ) );
+		utility::pointer::dynamic_pointer_cast< UpstreamDownstreamCollisionFilter > ( filter ) );
 	if( up_down_filt ) up_down_filt_ = up_down_filt;
 
 }

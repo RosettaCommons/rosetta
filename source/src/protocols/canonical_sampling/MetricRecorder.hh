@@ -168,7 +168,7 @@ public: // Methods
 	void
 	reset(
 		core::pose::Pose const & pose,
-		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
+		protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover = 0
 	);
 
 	/// @brief Write information like temperature, score, and torsion angles to a 
@@ -176,7 +176,7 @@ public: // Methods
 	void
 	update_after_boltzmann(
 		core::pose::Pose const & pose,
-		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
+		protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover = 0
 	);
 
 	/// @brief Just invoke update_after_boltzmann() with a const pose.

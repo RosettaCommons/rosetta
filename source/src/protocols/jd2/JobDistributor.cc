@@ -440,7 +440,9 @@ JobDistributor::run_one_job(
 	using namespace basic::options;
 
 	protocols::moves::MoverOP mover_copy(mover);
-	core::pose::Pose pose;
+	core::pose::PoseOP pose_op( new core::pose::Pose );
+	core::pose::Pose & pose = *pose_op;
+
 #ifdef BOINC_GRAPHICS
 	// attach boinc graphics pose observer
 	protocols::boinc::Boinc::attach_graphics_current_pose_observer( pose );

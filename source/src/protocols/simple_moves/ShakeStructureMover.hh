@@ -56,7 +56,7 @@ public:
 	void set_nrounds( int new_nrounds );
 	void set_ramp_fa_rep(bool truefalse);
 	void set_minimize_with_cst(bool truefalse);
-	void set_scorefunction(core::scoring::ScoreFunction & s);
+	void set_scorefunction(core::scoring::ScoreFunctionOP s);
 	void set_ensemble_diversity(core::Real ca_rmsd);
 	void set_rmsd_target_tolerance(core::Real tol);
 	void set_sc_min(bool truefalse);

@@ -472,10 +472,11 @@ public:
 		core::pose::Pose pose(create_pdb_string_2res_1ten_2res_trp_cage_pose());
 
 		//"AtomPair  CA     1  CA     3 HARMONIC 10 0.29\n"
+		core::scoring::func::FuncOP fx = new core::scoring::func::HarmonicFunc( 10.0, 0.29 );
 		core::scoring::constraints::ConstraintCOP cst13( new core::scoring::constraints::AtomPairConstraint(
 				core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
 				core::id::AtomID( pose.residue( 3 ).atom_index( "CA" ), 3 ),
-				new core::scoring::func::HarmonicFunc( 10.0, 0.29 ) ) );
+				fx ) );
 
 		pose.add_constraint(cst13);
 
@@ -595,10 +596,11 @@ public:
 		core::pose::Pose pose(create_pdb_string_2res_1ten_2res_trp_cage_pose());
 
 		//"AtomPair  CA     1  CA     3 HARMONIC 14 0.2\n"
+		core::scoring::func::FuncOP fx = new core::scoring::func::HarmonicFunc( 14.0, 0.2 );
 		core::scoring::constraints::ConstraintCOP cst13( new core::scoring::constraints::AtomPairConstraint(
 				core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
 				core::id::AtomID( pose.residue( 3 ).atom_index( "CA" ), 3 ),
-				new core::scoring::func::HarmonicFunc( 14.0, 0.2 ) ) );
+				fx ) );
 
 		pose.add_constraint(cst13);
 
@@ -710,10 +712,11 @@ public:
 		core::pose::Pose pose(create_pdb_string_2res_1ten_2res_trp_cage_pose());
 
 		//"AtomPair  CA     1  CA     3 HARMONIC 10 0.29\n"
+		core::scoring::func::FuncOP fx = new core::scoring::func::HarmonicFunc( 10.5, 0.29 );
 		core::scoring::constraints::ConstraintCOP cst13( new core::scoring::constraints::AtomPairConstraint(
 				core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
 				core::id::AtomID( pose.residue( 3 ).atom_index( "CA" ), 3 ),
-				new core::scoring::func::HarmonicFunc( 10.5, 0.29 ) ) );
+				fx ) );
 
 		pose.add_constraint(cst13);
 
@@ -833,10 +836,11 @@ public:
 		core::pose::Pose pose(create_pdb_string_2res_1ten_2res_trp_cage_pose());
 
 		//"AtomPair  CA     1  CA     3 HARMONIC 14 0.1\n"
+		core::scoring::func::FuncOP fx = new core::scoring::func::HarmonicFunc( 14.0, 0.1 );
 		core::scoring::constraints::ConstraintCOP cst13( new core::scoring::constraints::AtomPairConstraint(
 				core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
 				core::id::AtomID( pose.residue( 3 ).atom_index( "CA" ), 3 ),
-				new core::scoring::func::HarmonicFunc( 14.0, 0.1 ) ) );
+				fx ) );
 
 		pose.add_constraint(cst13);
 

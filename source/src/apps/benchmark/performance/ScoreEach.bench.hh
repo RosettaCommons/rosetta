@@ -72,7 +72,7 @@ public:
 	virtual void setUp() {
 		pose_ = new core::pose::Pose;
 		if (centroid_) {
-			core::chemical::ResidueTypeSetCAP rts = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );
+			core::chemical::ResidueTypeSetCOP rts = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );
 			core::import_pose::pose_from_pdb(*pose_, *rts, in_file_);
 		} else {
 			core::import_pose::pose_from_pdb(*pose_, in_file_);

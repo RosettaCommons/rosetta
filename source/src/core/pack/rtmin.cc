@@ -215,7 +215,7 @@ RTMin::rtmin(
 			if ( ! bgres[ jjres ] && ! input_task->being_packed( jjres )) {
 				inactive_neighbors.push_back( jjres );
 				residue_is_inactive_neighbor[ jjres ] = true;
-				bgres[ jjres ] = new Residue( pose.residue( jjres ) );
+				bgres[ jjres ] = ResidueOP( new Residue( pose.residue( jjres ) ) );
 				scminmap->set_natoms_for_residue( jjres, bgres[ jjres ]->natoms() );
 				/// Do setup_for_minimizing for background nodes once and leave them alone for
 				/// the rest of the trajectory
@@ -257,7 +257,7 @@ RTMin::rtmin(
 				if ( ! bgres[ jjres ] && ! input_task->being_packed( jjres )) {
 					inactive_neighbors.push_back( jjres );
 					residue_is_inactive_neighbor[ jjres ] = true;
-					bgres[ jjres ] = new Residue( pose.residue( jjres ) );
+					bgres[ jjres ] = ResidueOP( new Residue( pose.residue( jjres ) ) );
 					scminmap->set_natoms_for_residue( jjres, bgres[ jjres ]->natoms() );
 					// Do setup_for_minimizing for background nodes once and leave them alone for
 					// the rest of the trajectory
@@ -332,7 +332,7 @@ RTMin::rtmin(
 			Size jjresid = (*eiter)->get_other_ind( iiresid );
 			if ( ! bgres[ jjresid ] ) {
 				/// we have an active residue which we have not yet visited in the rtmin traversal
-				bgres[ jjresid ] = new Residue( pose.residue( jjresid ) );
+				bgres[ jjresid ] = ResidueOP( new Residue( pose.residue( jjresid ) ) );
 				scfxn.setup_for_minimizing_for_node(
 					* mingraph.get_minimization_node( jjresid ),
 					* bgres[ jjresid ],
@@ -489,7 +489,7 @@ RTMin::rtmin(
 
 		}
 		ii_atc->residue_atomtree_collection( iiresid ).update_from_momento( momento );
-		bgres[ iiresid ] = new Residue( ii_atc->residue_atomtree_collection( iiresid ).active_residue() );
+		bgres[ iiresid ] = ResidueOP( new Residue( ii_atc->residue_atomtree_collection( iiresid ).active_residue() ) );
 
 		/// NOW, we must call setup_for_scoring_for_residue for this residue we've just replaced, and
 		/// for the edges adjacent to this residue and to other non-background residues so that the guarantee

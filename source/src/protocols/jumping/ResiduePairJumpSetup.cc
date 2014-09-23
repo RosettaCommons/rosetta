@@ -74,7 +74,7 @@ ResiduePairJumpSetup::read_file( std::string fname ) {
 		utility_exit_with_message( "Unable to open constraints file: " + fname +"\n");
 	}
 
-	core::chemical::ResidueTypeSetCAP residue_type_set(
+	core::chemical::ResidueTypeSetCOP residue_type_set(
 		core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 	);
 

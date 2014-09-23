@@ -81,13 +81,13 @@ public:
 		// the ResidueTypeSet is already initialized.
 		using namespace core::chemical;
 		utility::vector1< std::string > params_files;
-		ResidueTypeSetCAP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+		ResidueTypeSetCOP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
 		if(!residue_set.has_name("1n1")) params_files.push_back("protocols/match_enzdes_util/1n1.params");
 		residue_set.read_files(params_files);
 		basic::options::option[basic::options::OptionKeys::run::preserve_header ].value(true);
 
-		tim_enz_io = new protocols::toolbox::match_enzdes_util::EnzConstraintIO(& residue_set);
+		tim_enz_io = new protocols::toolbox::match_enzdes_util::EnzConstraintIO(residue_set.get_self_weak_ptr());
   }
 
   // Shared finalization goes here.

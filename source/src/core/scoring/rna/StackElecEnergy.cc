@@ -98,7 +98,7 @@ StackElecEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 StackElecEnergy::StackElecEnergy( methods::EnergyMethodOptions const & options ) :
-	parent( new StackElecEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new StackElecEnergyCreator ) ),
 	coulomb_( options ),
 	base_base_only_( false ), //true will be faster computation but appears less accurate (and less physically consistent)
 	verbose_( false ),

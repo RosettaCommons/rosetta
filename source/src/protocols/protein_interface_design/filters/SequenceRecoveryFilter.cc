@@ -177,8 +177,8 @@ void SequenceRecoveryFilter::apply( core::io::serialization::PipeMap & pmap ) {
 
 core::Real
 SequenceRecoveryFilter::compute( core::pose::Pose const & pose, bool const & write ) const{
-	runtime_assert( task_factory() );
-	runtime_assert( reference_pose() );
+	runtime_assert( task_factory() != 0 );
+	runtime_assert( reference_pose() != 0 );
 	core::Size total_residue_ref;
 	core::pose::Pose asym_ref_pose;
 	if(core::pose::symmetry::is_symmetric( *reference_pose() )) { 

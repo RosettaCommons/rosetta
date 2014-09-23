@@ -149,6 +149,9 @@ RedesignDomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 	get_domain_definition( pose, domain_definitions );
 
 	using namespace core::pack::task;
+	using namespace core::pack::task::operation;
+	using residue_selector::ResidueSelectorCOP;
+	
 	residue_selector::NotResidueSelectorOP not_rs = new core::pack::task::residue_selector::NotResidueSelector;
 	residue_selector::OrResidueSelectorOP or_rs = new core::pack::task::residue_selector::OrResidueSelector;
 
@@ -164,9 +167,7 @@ RedesignDomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 
 	or_rs->add_residue_selector( new residue_selector::ResidueIndexSelector( get_linker_definition( pose ) ) );
 	not_rs->set_residue_selector( or_rs );
-	operation::OperateOnResidueSubsetOP repack_operation = new operation::OperateOnResidueSubset(
-		new operation::PreventRepackingRLT(),
-		not_rs	);
+	operation::OperateOnResidueSubsetOP repack_operation = new operation::OperateOnResidueSubset( ResLvlTaskOperationOP( new operation::PreventRepackingRLT() ), not_rs );
 
 	// global repack of the side chains
 	core::pack::task::PackerTaskOP base_packer_task( core::pack::task::TaskFactory::create_packer_task( pose ));
@@ -238,7 +239,9 @@ RedesignDomainAssemblyMover::run_fullatom_stage( core::pose::Pose & pose )
 }
 
 void RedesignDomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) {
-using namespace core::pack::task;
+	using namespace core::pack::task;
+	using namespace core::pack::task::operation;
+	using residue_selector::ResidueSelectorCOP;
 
 	// recover sidechains if pose has been loaded from centriod PDB...
 	// rather check if pose is in centroid mode and try recovering sidechains.
@@ -266,15 +269,10 @@ using namespace core::pack::task;
 
 	interface_or_linker_rs->add_residue_selector( new residue_selector::ResidueIndexSelector( get_linker_definition( pose ) ) );
 	not_interface_or_linker_rs->set_residue_selector( interface_or_linker_rs );
-	operation::OperateOnResidueSubsetOP block_outside_interface_operation = new operation::OperateOnResidueSubset(
-			new operation::PreventRepackingRLT(),
-			not_interface_or_linker_rs	);
+	operation::OperateOnResidueSubsetOP block_outside_interface_operation = new operation::OperateOnResidueSubset( ResLvlTaskOperationOP( new operation::PreventRepackingRLT() ), not_interface_or_linker_rs );;
 
 	residue_selector::ResidueIndexSelectorOP repack_only_rs = new residue_selector::ResidueIndexSelector( residues_to_repack_only_ );
-	operation::OperateOnResidueSubsetOP block_design_operation = new operation::OperateOnResidueSubset(
-		new operation::RestrictToRepackingRLT(),
-		repack_only_rs
-	);
+	operation::OperateOnResidueSubsetOP block_design_operation = new operation::OperateOnResidueSubset( ResLvlTaskOperationOP( new operation::RestrictToRepackingRLT() ), repack_only_rs );
 
 	// global repack of the side chains
 	core::pack::task::PackerTaskOP base_packer_task( core::pack::task::TaskFactory::create_packer_task( pose ));

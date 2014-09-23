@@ -142,6 +142,7 @@ RotamerRecoveryMover::RotamerRecoveryMover() :
 	scfxn_(NULL),
 	task_factory_(new TaskFactory)
 {
+	using core::pack::task::operation::TaskOperationCOP;
 	task_factory_->push_back( new InitializeFromCommandline );
 	task_factory_->push_back( new RestrictToRepacking );
 }
@@ -200,7 +201,7 @@ RotamerRecoveryMover::reinitialize_for_new_input() const {
 void
 RotamerRecoveryMover::apply( Pose & pose
 ) {
-	runtime_assert( rotamer_recovery_ );
+	runtime_assert( rotamer_recovery_ != 0 );
 	ScoreFunctionOP scfxn( score_function());
 	scfxn->setup_for_scoring(pose);
 	PackerTaskOP packer_task( task_factory_->create_task_and_apply_taskoperations( pose ));

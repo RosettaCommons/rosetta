@@ -156,9 +156,9 @@ public:
 	/// @brief Make a ResidueType from this object
 	/// rsd_type_set is used for context - the residue is not actually added to the set.
 	/// @details Not const as it calls normalize() to fix up missing data first.
-	ResidueTypeOP convert_to_ResidueType(chemical::AtomTypeSetCAP atom_types,
-			chemical::ElementSetCAP elements,
-			chemical::MMAtomTypeSetCAP mm_atom_types
+	ResidueTypeOP convert_to_ResidueType(chemical::AtomTypeSetCOP atom_types,
+			chemical::ElementSetCOP elements,
+			chemical::MMAtomTypeSetCOP mm_atom_types
 		);
 
 private:

@@ -67,6 +67,7 @@ void ChemicalShiftEvaluatorCreator::add_evaluators( protocols::evaluation::MetaP
 	using namespace core;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	using namespace protocols::evaluation;
 
 
 	if ( option[ OptionKeys::evaluation::chemical_shifts ].user() ) {

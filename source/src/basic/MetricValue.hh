@@ -58,7 +58,7 @@ public:
 	void set( T const & inp ) { data_ = inp; };
 	std::string print() const { std::ostringstream ostream; ostream << data_; return ostream.str(); };
 	T const & value() const { return data_; };
-	virtual MetricValueBaseOP clone() const { return new MetricValue(*this); }
+	virtual MetricValueBaseOP clone() const { return MetricValueBaseOP( new MetricValue(*this) ); }
 private:
 	T data_;
 };

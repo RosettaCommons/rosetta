@@ -71,7 +71,7 @@ RNA_Mg_EnergyCreator::score_types_for_method() const {
 
 
 RNA_Mg_Energy::RNA_Mg_Energy() :
-	parent( new RNA_Mg_EnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new RNA_Mg_EnergyCreator ) ),
 	rna_mg_knowledge_based_potential_( new RNA_Mg_KnowledgeBasedPotential ),
 	hbond_options_( new core::scoring::hbonds::HBondOptions ), // useful helper functions
 	verbose_( basic::options::option[ basic::options::OptionKeys::rescore::verbose ]() )

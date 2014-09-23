@@ -71,7 +71,7 @@ ElecDensAtomwiseEnergy::long_range_type() const {
 }
 
 ElecDensAtomwiseEnergy::ElecDensAtomwiseEnergy() :
-	parent ( new ElecDensAtomwiseEnergyCreator ) {
+	parent ( methods::EnergyMethodCreatorOP( new ElecDensAtomwiseEnergyCreator ) ) {
 	//Load map
 	get_density_map();
 }

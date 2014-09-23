@@ -107,7 +107,7 @@ DnaInterfaceMinMover::DnaInterfaceMinMover( DnaInterfaceFinderOP interface )
 		chi_(true),
 		bb_(false)
 {
-	runtime_assert( interface );
+	runtime_assert( interface != 0 );
 	reset_from_interface();
 	min_type( option[ OptionKeys::run::min_type ]() );
 	tolerance( option[ OptionKeys::run::min_tolerance ]() );
@@ -116,7 +116,7 @@ DnaInterfaceMinMover::DnaInterfaceMinMover( DnaInterfaceFinderOP interface )
 void
 DnaInterfaceMinMover::use_interface( DnaInterfaceFinderOP interface )
 {
-	runtime_assert( interface );
+	runtime_assert( interface != 0 );
 	interface_ = interface;
 	reset_from_interface();
 }
@@ -124,7 +124,7 @@ DnaInterfaceMinMover::use_interface( DnaInterfaceFinderOP interface )
 void
 DnaInterfaceMinMover::reset_from_interface()
 {
-	runtime_assert( interface_ );
+	runtime_assert( interface_ != 0 );
 	MoveMapOP new_movemap( new MoveMap );
 	// sidechain minimization for all amino acids in the vicinity of nucleotide bases
 	// (according to 'interface', which need not represent the entire protein-DNA interface)
@@ -180,13 +180,13 @@ DnaInterfaceMinMover::parse_my_tag(
 	if ( tag->hasOption("scorefxn") ) {
 		std::string const key( tag->getOption<std::string>("scorefxn") );
 		if ( datamap.has( "scorefxns", key ) ) {
-			score_function( datamap.get< ScoreFunction* >( "scorefxns", key ) );
+			score_function( datamap.get_ptr< ScoreFunction >( "scorefxns", key ) );
 		}
 	}
 	if ( tag->hasOption("dna_interface_finder") ) {
 		std::string const key( tag->getOption<std::string>("dna_interface_finder") );
 		if ( datamap.has( "dna_interface_finder", key ) ) {
-			use_interface( datamap.get< DnaInterfaceFinder* >( "dna_interface_finder", key ) );
+			use_interface( datamap.get_ptr< DnaInterfaceFinder >( "dna_interface_finder", key ) );
 		}
 	}
 	if ( tag->hasOption("min_type") ) {

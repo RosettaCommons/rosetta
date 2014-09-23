@@ -89,7 +89,7 @@ ElecDensAllAtomCenEnergy::long_range_type() const { return methods::elec_dens_al
 
 /// c-tor
 ElecDensAllAtomCenEnergy::ElecDensAllAtomCenEnergy() :
-	parent( new ElecDensAllAtomCenEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new ElecDensAllAtomCenEnergyCreator ) )
 {}
 
 
@@ -179,7 +179,7 @@ ElecDensAllAtomCenEnergy::setup_for_scoring(
 	// make a copy
 	core::conformation::symmetry::SymmetryInfoCOP symminfo(0);
 	if (core::pose::symmetry::is_symmetric(pose)) {
-		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info().get();
+		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info();
 	}
 
 	// do the actual matching here; split scores among individual residues

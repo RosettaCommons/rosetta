@@ -129,7 +129,7 @@ NMerSVMEnergy::initialize_from_options()
 }
 
 NMerSVMEnergy::NMerSVMEnergy() :
-	parent( new NMerSVMEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new NMerSVMEnergyCreator ) )
 {
 	NMerSVMEnergy::initialize_from_options();
 	read_nmer_svms_from_options();
@@ -137,7 +137,7 @@ NMerSVMEnergy::NMerSVMEnergy() :
 
 //init from scratch w/ a vecotr of libsvm model filenames
 NMerSVMEnergy::NMerSVMEnergy( utility::vector1< std::string > const & svm_fnames ):
-	parent( new NMerSVMEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new NMerSVMEnergyCreator ) )
 {
 	NMerSVMEnergy::initialize_from_options();
 

@@ -212,7 +212,7 @@ predict_chem_map_test()
 
 	vector1 < std::string> pdb_files( option[ in::file::s ]() );
 	std::string const file_path( option[ in::path::pdb ]( 1 ) );
-	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+	ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
 	Size count( 0 );
 	std::string outfile;

@@ -18,9 +18,8 @@ namespace openers {
 
 class BondAngleOpener;
 
-using utility::pointer::owning_ptr;
-typedef owning_ptr<BondAngleOpener> BondAngleOpenerOP;
-typedef owning_ptr<BondAngleOpener const> BondAngleOpenerCOP;
+typedef utility::pointer::owning_ptr<BondAngleOpener> BondAngleOpenerOP;
+typedef utility::pointer::owning_ptr<BondAngleOpener const> BondAngleOpenerCOP;
 
 }
 }

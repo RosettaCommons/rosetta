@@ -195,6 +195,8 @@ void common_setup() {
 	using core::scoring::constraints::BoundFunc;
 	using core::scoring::constraints::ConstraintFactory;
 	using core::scoring::constraints::ConstraintIO;
+	using core::scoring::constraints::ConstraintCreatorCOP;
+	using core::scoring::func::FuncOP;
 	using protocols::constraints_additional::NamedAtomPairConstraintCreator;
 
 	if ( option[ constraints::no_linearize_bounded ] ) {
@@ -216,7 +218,7 @@ void Broker_main() {
 	protocols::jd2::JobDistributor* jd2( protocols::jd2::JobDistributor::get_instance() );
 	protocols::jd2::archive::MPIArchiveJobDistributor* archive_jd = dynamic_cast< protocols::jd2::archive::MPIArchiveJobDistributor* >( jd2 );
 	if ( archive_jd && archive_jd->is_archive_rank() ) {
-		archive_jd->set_archive( new IterativeAbrelax );
+		archive_jd->set_archive( protocols::jd2::archive::ArchiveBaseOP( new IterativeAbrelax ) );
 	}
 	protocols::jd2::JobDistributor::get_instance()->go(m);
 }

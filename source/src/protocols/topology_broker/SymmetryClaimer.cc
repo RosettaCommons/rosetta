@@ -74,7 +74,7 @@ bool SymmetryClaimer::read_tag( std::string tag, std::istream& in ){
 }
 
 void SymmetryClaimer::generate_symmetry_claims( claims::SymmetryClaims& symm_claims ){
-    symm_claims.push_back( new claims::SymmetryClaim( this, symm_data_,
+    symm_claims.push_back( new claims::SymmetryClaim( get_self_weak_ptr(), symm_data_,
                            symm_data_->get_symmetry_name(),
                            claims::DofClaim::INIT ) );
 }
@@ -86,8 +86,8 @@ void SymmetryClaimer::symmetry_duplicate( claims::DofClaims& pre_accepted,
     utility::vector1< claims::SequenceClaimOP > original_claims;
     for ( claims::DofClaims::iterator claim = pre_accepted.begin();
          claim != pre_accepted.end(); ++claim ) {
-		claims::SequenceClaimOP seq_ptr( dynamic_cast< claims::SequenceClaim* >( claim->get() ) );
-		runtime_assert( seq_ptr );
+		claims::SequenceClaimOP seq_ptr( utility::pointer::dynamic_pointer_cast< claims::SequenceClaim >( *claim ) );
+		runtime_assert( seq_ptr != 0 );
 		original_claims.push_back( seq_ptr );
 	}
 
@@ -99,7 +99,7 @@ void SymmetryClaimer::symmetry_duplicate( claims::DofClaims& pre_accepted,
     		std::ostringstream new_label_stream;
     		new_label_stream << old_claim->label() << ":Symm" << j;
 
-    		pre_accepted.push_back( new claims::SequenceClaim( this,
+    		pre_accepted.push_back( new claims::SequenceClaim( get_self_weak_ptr(),
                     				old_claim->annotated_sequence(),
                     				new_label_stream.str() ) );
     	}
@@ -129,7 +129,7 @@ void SymmetryClaimer::symmetry_duplicate( claims::DofClaims& pre_accepted,
         //append it to the end of the monomer i
         pose.append_residue_by_jump( *rsd, pose.total_residue() );
 
-        pre_accepted.push_back(new claims::SequenceClaim( this, "X", tag ));
+        pre_accepted.push_back(new claims::SequenceClaim( get_self_weak_ptr(), "X", tag ));
     }
 
 }

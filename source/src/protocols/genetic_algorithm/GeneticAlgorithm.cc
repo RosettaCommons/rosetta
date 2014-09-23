@@ -92,7 +92,7 @@ GeneticAlgorithmBase::add_entity( EntityElements const & traits )
 Entity::OP
 GeneticAlgorithmBase::add_entity( EntityOP entity )
 {
-	runtime_assert( entity );
+	runtime_assert( entity != 0 );
 	TraitEntityHashMap::iterator hash_it( entity_cache_.find( entity->traits() ) );
 	//Vec1Hash h;
 	if ( hash_it == entity_cache_.end() ) {
@@ -131,7 +131,7 @@ GeneticAlgorithmBase::add_parent_entity( EntityElements const & traits )
 Entity::OP
 GeneticAlgorithmBase::add_parent_entity( EntityOP entity )
 {
-	runtime_assert( entity );
+	runtime_assert( entity != 0 );
 	TraitEntityHashMap::iterator hash_it( entity_cache_.find( entity->traits() ) );
 	if ( hash_it != entity_cache_.end() ) {
 		// use an equivalent hashed entity if it exists
@@ -322,7 +322,7 @@ GeneticAlgorithmBase::best_entities( core::Size num ) // nonconst method to perm
 	EntityCAPs best_entities;
 	pop_const_iter entity( generations_[current_generation_].begin() );
 	while ( best_entities.size() < num && entity != generations_[current_generation_].end() ) {
-		best_entities.push_back( (*entity)() );
+		best_entities.push_back( EntityCAP(*entity) );
 		++entity;
 	}
 	return best_entities;

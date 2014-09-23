@@ -133,15 +133,16 @@ void ConformerSwitchMover::apply( core::pose::Pose & pose )
 
 	// make sure that the pose has ARBITRARY_FLOAT_DATA in the DataCache
 	if ( !pose.data().has( ( CacheableDataType::ARBITRARY_FLOAT_DATA ) ) ){
+		using namespace basic::datacache;
 		pose.data().set(
 			CacheableDataType::ARBITRARY_FLOAT_DATA,
-			new basic::datacache::CacheableStringFloatMap()
+			DataCache_CacheableData::DataOP( new basic::datacache::CacheableStringFloatMap() )
 		);
 	}
 
-	basic::datacache::CacheableStringFloatMap *data
-		= dynamic_cast< basic::datacache::CacheableStringFloatMap* >
-		( pose.data().get_raw_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA) );
+	basic::datacache::CacheableStringFloatMapOP data
+		= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringFloatMap >
+		( pose.data().get_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA) );
 
 	data->map()[ ensemble_->partner() ] = ensemble_->lowres_reference_energy(conf_num);
 	pose.data().set( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA, data );

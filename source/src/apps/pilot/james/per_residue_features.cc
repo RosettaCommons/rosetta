@@ -130,7 +130,7 @@ int main( int argc, char* argv [] ) {
 	using utility::file_basename;
 
 	MetaPoseInputStream input = streams_from_cmd_line();
-	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
 
 	std::ostream & output( std::cout );
 	while ( input.has_another_pose() ) {

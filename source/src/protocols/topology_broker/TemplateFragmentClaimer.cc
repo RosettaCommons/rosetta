@@ -75,7 +75,7 @@ void TemplateFragmentClaimer::read_config_file( std::string const& file ) {
 	}
 
 	fragment::FragSetOP fragset_large = new fragment::ConstantLengthFragSet( frag_size_ );
-	Size nr = templates_->pick_frags( *fragset_large, new fragment::FragData( new fragment::BBTorsionSRFD, frag_size_ ) );
+	Size nr = templates_->pick_frags( *fragset_large, new fragment::FragData( core::fragment::SingleResidueFragDataOP( new fragment::BBTorsionSRFD ), frag_size_ ) );
 	tr.Info << nr << " " << fragset_large->max_frag_length() << "mer fragments picked from homolog structures" << std::endl;
 	set_mover( new simple_moves::ClassicFragmentMover( fragset_large ) );
 }

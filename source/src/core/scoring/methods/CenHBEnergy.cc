@@ -67,7 +67,7 @@ CenHBEnergyCreator::score_types_for_method() const {
 
 /// @details  C-TOR with method options object
 CenHBEnergy::CenHBEnergy( ):
-	parent( new CenHBEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new CenHBEnergyCreator ) ),
 	potential_( ScoringManager::get_instance()->get_CenHBPotential( ) ) { }
 
 

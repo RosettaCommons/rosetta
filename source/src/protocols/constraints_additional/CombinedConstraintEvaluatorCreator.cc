@@ -20,6 +20,7 @@
 // Package Headers
 #include <protocols/evaluation/PoseEvaluator.fwd.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
+#include <protocols/constraints_additional/ConstraintEvaluator.hh>
 #include <protocols/constraints_additional/CombinedConstraintEvaluator.hh>
 #include <core/io/silent/silent.fwd.hh>
 
@@ -78,7 +79,7 @@ void CombinedConstraintEvaluatorCreator::add_evaluators( evaluation::MetaPoseEva
     for ( Size ct = 1; ct <= cst_target.size(); ct ++ ) {
       std::string tag( ObjexxFCL::string_of( ct ) );
       if ( cst_col_name.size() >= ct ) tag = cst_col_name[ ct ];
-      eval.add_evaluation( new CombinedConstraintEvaluator( tag, cst_target[ ct ], 2, option[ OptionKeys::evaluation::combine_statistics ] ) );
+      eval.add_evaluation( protocols::evaluation::PoseEvaluatorOP( new CombinedConstraintEvaluator( tag, cst_target[ ct ], 2, option[ OptionKeys::evaluation::combine_statistics ] ) ) );
     }
   }
 

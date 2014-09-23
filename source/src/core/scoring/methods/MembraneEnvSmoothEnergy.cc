@@ -72,7 +72,7 @@ DistanceSquared const end_sig2   = end_sig*end_sig;
 ////////////////////////////////////////////////////////////////////////////
 
 MembraneEnvSmoothEnergy::MembraneEnvSmoothEnergy() :
-	parent( new MembraneEnvSmoothEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new MembraneEnvSmoothEnergyCreator ) )
 {
 	Size const max_aa( 20 );
 	Size const env_log_table_cen10_bins( 40 );

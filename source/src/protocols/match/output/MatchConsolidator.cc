@@ -48,8 +48,8 @@ MatchConsolidator::~MatchConsolidator() {}
 void
 MatchConsolidator::begin_processing()
 {
-	runtime_assert( grouper_ );
-	runtime_assert( evaluator_ );
+	runtime_assert( grouper_ != 0 );
+	runtime_assert( evaluator_ != 0 );
 	MatchProcessor::begin_processing();
 	match_groups_.clear();
 	grouper_->reset();
@@ -61,9 +61,9 @@ MatchConsolidator::process_match(
 	match const & m
 )
 {
-	runtime_assert( grouper_ );
-	runtime_assert( evaluator_ );
-	runtime_assert( writer_ );
+	runtime_assert( grouper_ != 0 );
+	runtime_assert( evaluator_ != 0 );
+	runtime_assert( writer_ != 0 );
 	//runtime_assert( match_dspos1_groups_.size() == 0 );
 	note_match_processed();
 
@@ -85,9 +85,9 @@ MatchConsolidator::process_match(
 	match_dspos1 const & m
 )
 {
-	runtime_assert( grouper_ );
-	runtime_assert( evaluator_ );
-	runtime_assert( writer_ );
+	runtime_assert( grouper_ != 0 );
+	runtime_assert( evaluator_ != 0 );
+	runtime_assert( writer_ != 0 );
 	//runtime_assert( match_groups_.size() == 0 );
 	note_match_processed();
 
@@ -111,9 +111,9 @@ MatchConsolidator::end_processing()
 	/// Can only handle regular match objects or match_dspos1's but not both.
 	//runtime_assert( match_dspos1_groups_.size() == 0 || match_groups_.size() == 0 );
 
-	runtime_assert( grouper_ );
-	runtime_assert( evaluator_ );
-	runtime_assert( match_score_writer_ );
+	runtime_assert( grouper_ != 0 );
+	runtime_assert( evaluator_ != 0 );
+	runtime_assert( match_score_writer_ != 0 );
 
 	//std::cout << std::endl;
 	//std::cout << "match groups: " << match_groups_.size() << std::endl;

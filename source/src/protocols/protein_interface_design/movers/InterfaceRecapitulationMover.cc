@@ -116,7 +116,7 @@ InterfaceRecapitulationMover::~InterfaceRecapitulationMover() {}
 
 void
 InterfaceRecapitulationMover::apply( core::pose::Pose & pose ){
-	runtime_assert( saved_pose_ );
+	runtime_assert( saved_pose_ != 0 );
 	runtime_assert( design_mover_ || design_mover2_ );
 	core::pack::task::PackerTaskCOP task;
 	if( design_mover_ ){

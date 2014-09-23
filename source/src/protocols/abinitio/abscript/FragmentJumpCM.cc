@@ -136,7 +136,7 @@ void FragmentJumpCM::parse_my_tag( utility::tag::TagCOP tag,
 
   initialize( tag->getOption< bool >( "initialize", true ) );
 
-  set_selector( datamap.get< core::pack::task::residue_selector::ResidueSelector const* >( "ResidueSelector", tag->getOption<std::string>( "selector" ) ) );
+  set_selector( datamap.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) ) );
   set_moverkey( tag->getOption< std::string >( "name" , "" ) );
 
   tr.Debug << "Initialzed " << get_name();
@@ -213,6 +213,7 @@ claims::EnvClaims FragmentJumpCM::build_claims( utility::vector1< bool > const& 
   setup_fragments( jump_sample );
 
   int shift = residue_selection.index( true )-1;
+  ClaimingMoverOP this_ptr = utility::pointer::static_pointer_cast< ClaimingMover > ( get_self_ptr() );
 
   for( int i = 1; i <= (int) jump_sample.size(); i++ ){
     Size const up = jump_sample.jumps()( 1, i ) + shift;
@@ -220,7 +221,7 @@ claims::EnvClaims FragmentJumpCM::build_claims( utility::vector1< bool > const& 
 
     std::string jump_name = get_name() + "Jump" + utility::to_string( i );
 
-    claims::JumpClaimOP jclaim = new claims::JumpClaim( this,
+    claims::JumpClaimOP jclaim = new claims::JumpClaim( this_ptr,
                                                         jump_name,
                                                         LocalPosition( "BASE", up ),
                                                         LocalPosition( "BASE", dn ) );
@@ -239,8 +240,8 @@ claims::EnvClaims FragmentJumpCM::build_claims( utility::vector1< bool > const& 
 
     // Jump Fragments make the mover into a bit of an access primadonna because jump fragments
     // include torsions from the residues at takeoff and landing
-    claims::TorsionClaimOP tclaim_up = new claims::TorsionClaim( this, LocalPosition( "BASE", up ) );
-    claims::TorsionClaimOP tclaim_dn = new claims::TorsionClaim( this, LocalPosition( "BASE", dn ) );
+    claims::TorsionClaimOP tclaim_up = new claims::TorsionClaim( this_ptr, LocalPosition( "BASE", up ) );
+    claims::TorsionClaimOP tclaim_dn = new claims::TorsionClaim( this_ptr, LocalPosition( "BASE", dn ) );
 
     tclaim_up->strength( claims::CAN_CONTROL, claims::CAN_CONTROL );
     tclaim_dn->strength( claims::CAN_CONTROL, claims::CAN_CONTROL );

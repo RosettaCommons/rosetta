@@ -611,7 +611,7 @@ RNA_StructureParameters::check_forward_backward(
 	if ( pose.residue( jump_pos ).is_coarse() || !pose.residue( jump_pos ).is_RNA() )  return true;
 
 	Size atomno = pose.residue( jump_pos ).atom_index( " O5'" );
-	AtomCOP current_atom ( & pose.atom_tree().atom( id::AtomID( atomno,jump_pos) ) );
+	AtomCOP current_atom ( pose.atom_tree().atom( id::AtomID( atomno,jump_pos) ).get_self_ptr() );
 	id::AtomID const parent_id( current_atom->parent()->id() );
 	std::string const & parent_name( pose.residue(parent_id.rsd()).atom_name(parent_id.atomno()) );
 	if ( parent_name == " P  " ) {

@@ -92,9 +92,11 @@ AsymFoldandDockClaimer::add_mover(
 	using namespace protocols::simple_moves;
 
 	moves::MoverOP move_anchor_mover =  new simple_moves::asym_fold_and_dock::AsymFoldandDockMoveRbJumpMover( chain_break_res_ );
-	moves::MoverOP rb_trial_mover =	(stageID==abinitio::STAGE_4) ?
-		new simple_moves::asym_fold_and_dock::AsymFoldandDockRbTrialMover( &scorefxn, true ) :
-		new simple_moves::asym_fold_and_dock::AsymFoldandDockRbTrialMover( &scorefxn );  // smooth RB moves in stage 4
+	moves::MoverOP rb_trial_mover (
+		(stageID==abinitio::STAGE_4) ?
+		new simple_moves::asym_fold_and_dock::AsymFoldandDockRbTrialMover( scorefxn.get_self_ptr(), true ) :
+		new simple_moves::asym_fold_and_dock::AsymFoldandDockRbTrialMover( scorefxn.get_self_ptr() )  // smooth RB moves in stage 4
+	);
 	moves::MoverOP slide_mover = new protocols::docking::DockingSlideIntoContact( docking_jump_ );
 	core::Real move_anchor_weight(1.0),
 	           rb_weight(option[ OptionKeys::fold_and_dock::rigid_body_frequency ]()),
@@ -187,7 +189,7 @@ void AsymFoldandDockClaimer::initialize_dofs(
 
 	for ( claims::DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
           it != eit; ++it ) {
-		if ( (*it)->owner()==this ) {
+		if ( (*it)->owner().lock().get() == this ) {
 			(*it)->toggle( *movemap, true );
 		}
 	}
@@ -203,7 +205,7 @@ void AsymFoldandDockClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	utility::vector1< int > cuts( input_pose_.conformation().fold_tree().cutpoints() );
 	for ( Size i = 1; i <= cuts.size(); ++i ) {
 
-		new_claims.push_back( new claims::CutClaim( this, std::make_pair( Parent::label(), cuts[i]),
+		new_claims.push_back( new claims::CutClaim( get_self_weak_ptr(), std::make_pair( Parent::label(), cuts[i]),
 																								claims::DofClaim::INIT // for now... eventually CAN_INIT ?
 																								) );
 	}

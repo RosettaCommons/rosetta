@@ -305,7 +305,7 @@ MetricRecorder::add_torsion(
 void
 MetricRecorder::reset(
 	core::pose::Pose const & pose,
-	protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
+	protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover //= 0
 )
 {
 	step_count_ = 0;
@@ -316,7 +316,7 @@ MetricRecorder::reset(
 void
 MetricRecorder::update_after_boltzmann(
 	core::pose::Pose const & pose,
-	protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
+	protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover //= 0
 )
 {
 	if (recorder_stream_.filename() == "") {
@@ -334,9 +334,9 @@ MetricRecorder::update_after_boltzmann(
 
 	core::Size replica = protocols::jd2::current_replica();
 
-	TemperingBaseCAP tempering = 0;
+	TemperingBaseCOP tempering = 0;
 	if (metropolis_hastings_mover) {
-		tempering = dynamic_cast< TemperingBase const * >( metropolis_hastings_mover->tempering()() );
+		tempering = utility::pointer::dynamic_pointer_cast< TemperingBase const >( metropolis_hastings_mover->tempering() );
 	}
 
 	if (step_count_ == 0) {

@@ -307,7 +307,7 @@ JD2ResourceManager::read_resource_options_table_tag(
 
 		std::map< string, TagOP >::iterator t(tags.find(tag));
 		if(t == tags.end()){
-			TagOP newtag = new Tag();
+			TagOP newtag( new Tag() );
 			newtag->setOption("tag", tag);
 			newtag->setName(type);
 			if(!key.empty()){

@@ -44,6 +44,7 @@ class SaveAndRetrieveSidechains : public simple_moves::DesignRepackMover
 public:
 	typedef core::pose::Pose Pose;
 	typedef core::pose::PoseOP PoseOP;
+	typedef utility::pointer::owning_ptr< basic::datacache::DataMapObj< bool > > BoolDataCacheBoolOP;
 public:
 	SaveAndRetrieveSidechains();
 	SaveAndRetrieveSidechains(
@@ -69,7 +70,7 @@ private:
 	PoseOP init_pose_;
 	bool allsc_, ensure_variant_matching_, two_step_,multi_use_; // two_step: dflt false; on first apply, record sidechains, on second apply, enforce them.
 	core::Size jumpid_;
-	utility::pointer::owning_ptr< basic::datacache::DataMapObj< bool > > first_apply_; // internal for two_step_
+	BoolDataCacheBoolOP first_apply_; // internal for two_step_
 };
 
 } // movers

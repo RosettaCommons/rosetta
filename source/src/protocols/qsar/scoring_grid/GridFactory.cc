@@ -76,7 +76,7 @@ GridFactory::~GridFactory()
 void
 GridFactory::factory_register(GridCreatorOP creator)
 {
-	runtime_assert(creator);
+	runtime_assert(creator != 0 );
 	std::string grid_type( creator->keyname());
 	//qsarType grid_enum = qsarTypeManager::qsar_type_from_name(grid_type);
 	if(grid_type == "UNDEFINED NAME")

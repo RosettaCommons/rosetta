@@ -181,7 +181,7 @@ DockSetupMover::parse_my_tag(
 		data_map.add( "RigidBodyInfo", "docking_setup", rigid_body_info_ );
 		tr.Debug << "added RigidBodyInfo into basic::datacache::DataMap" << std::endl;
 	} else {
-		rigid_body_info_ = data_map.get< protocols::docking::RigidBodyInfo* >( "RigidBodyInfo", "docking_setup" );
+		rigid_body_info_ = data_map.get_ptr< protocols::docking::RigidBodyInfo >( "RigidBodyInfo", "docking_setup" );
 		assert( rigid_body_info_ );
 		tr.Debug << "RigidBodyInfo supposed to be in basic::datacache::DataMap, but somehow failed to get it from basic::datacache::DataMap" << std::endl;
 	}

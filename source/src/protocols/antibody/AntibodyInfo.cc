@@ -1705,6 +1705,7 @@ AntibodyInfo::get_TaskFactory_OneCDR(pose::Pose & pose, CDRNameEnum const & cdr_
 
 	select_loop_residues( pose, *get_CDR_in_loopsop(cdr_name), true/*include_neighbors*/, sc_is_packable);
 	using namespace protocols::toolbox::task_operations;
+	using core::pack::task::operation::TaskOperationCOP;
 
 	pack::task::TaskFactoryOP tf ;
 	tf= setup_packer_task(pose);

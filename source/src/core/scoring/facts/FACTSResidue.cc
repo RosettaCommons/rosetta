@@ -154,11 +154,11 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
 	chemical::ResidueTypeOP	rsd_for_charge;
 
 	if( utility::file::file_exists( filename ) ) {
-		chemical::AtomTypeSetCAP atom_types = chemical::ChemicalManager::get_instance()->atom_type_set("fa_standard");
-		chemical::ElementSetCAP elements = chemical::ChemicalManager::get_instance()->element_set("default");
-		chemical::MMAtomTypeSetCAP mm_atom_types = chemical::ChemicalManager::get_instance()->mm_atom_type_set("fa_standard");
-		chemical::orbitals::OrbitalTypeSetCAP orbital_types = chemical::ChemicalManager::get_instance()->orbital_type_set("fa_standard");
-		chemical::ResidueTypeSetCAP rsd_type_set = chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
+		chemical::AtomTypeSetCOP atom_types = chemical::ChemicalManager::get_instance()->atom_type_set("fa_standard");
+		chemical::ElementSetCOP elements = chemical::ChemicalManager::get_instance()->element_set("default");
+		chemical::MMAtomTypeSetCOP mm_atom_types = chemical::ChemicalManager::get_instance()->mm_atom_type_set("fa_standard");
+		chemical::orbitals::OrbitalTypeSetCOP orbital_types = chemical::ChemicalManager::get_instance()->orbital_type_set("fa_standard");
+		chemical::ResidueTypeSetCOP rsd_type_set = chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 		rsd_for_charge = chemical::read_topology_file( filename, atom_types, elements, mm_atom_types, orbital_types, rsd_type_set );
 
 	} else {
@@ -582,7 +582,7 @@ void FACTSRotamerSetInfo::initialize( RotamerSet const & rotamer_set, FACTSRsdTy
       it = rsdtypemap.find( &rsdtype );
     }
     
-    residue_info_[i] = new FACTSResidueInfo( *rotamer_set.rotamer(i), it->second, true );
+    residue_info_[i] = FACTSResidueInfoOP( new FACTSResidueInfo( *rotamer_set.rotamer(i), it->second, true ) );
   }
 } // FACTSRotamerSetInfo
 

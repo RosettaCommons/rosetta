@@ -66,6 +66,7 @@ void ConstraintEvaluatorWrapperCreator::register_options() {
 
 void ConstraintEvaluatorWrapperCreator::add_evaluators( evaluation::MetaPoseEvaluator & eval ) const {
 	using namespace core;
+	using namespace evaluation;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 

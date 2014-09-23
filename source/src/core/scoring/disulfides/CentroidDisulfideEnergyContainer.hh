@@ -58,13 +58,13 @@ class CentroidDisulfideNeighborIterator : public ResidueNeighborIterator {
 public:
 
 	CentroidDisulfideNeighborIterator(
-		CentroidDisulfideEnergyContainerAP owner,
+		CentroidDisulfideEnergyContainer * owner,
 		Size focused_node,
 		Size disulfide_index
 	);
 
 	CentroidDisulfideNeighborIterator(
-		CentroidDisulfideEnergyContainerAP owner
+		CentroidDisulfideEnergyContainer * owner
 	);
 
 	virtual ~CentroidDisulfideNeighborIterator();
@@ -90,7 +90,7 @@ public:
 	virtual bool energy_computed() const;
 
 private:
-	CentroidDisulfideEnergyContainerAP owner_;
+	CentroidDisulfideEnergyContainer * owner_;
 	Size focused_residue_;
 	Size disulfide_index_;
 };
@@ -99,12 +99,12 @@ private:
 class CentroidDisulfideNeighborConstIterator : public ResidueNeighborConstIterator {
 public:
 	CentroidDisulfideNeighborConstIterator(
-		CentroidDisulfideEnergyContainerCAP owner,
+		CentroidDisulfideEnergyContainer const * owner,
 		Size focused_node,
 		Size disulfide_index
 	);
 
-	CentroidDisulfideNeighborConstIterator( CentroidDisulfideEnergyContainerCAP owner );
+	CentroidDisulfideNeighborConstIterator( CentroidDisulfideEnergyContainer const * owner );
 
 	virtual ~CentroidDisulfideNeighborConstIterator();
 
@@ -125,7 +125,7 @@ public:
 	virtual bool energy_computed() const;
 
 private:
-	CentroidDisulfideEnergyContainerCAP owner_;
+	CentroidDisulfideEnergyContainer const * owner_;
 	Size focused_residue_;
 	Size disulfide_index_;
 

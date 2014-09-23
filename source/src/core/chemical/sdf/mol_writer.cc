@@ -224,21 +224,21 @@ std::list<std::string> MolWriter::compose_atoms(core::conformation::ResidueCOP r
 	{
 		core::Vector xyz_coords(residue->xyz(index));
 		core::chemical::AtomType const atom_type = residue->atom_type(index);
-		core::chemical::ResidueTypeCOP residue_type = & residue->type();
+		core::chemical::ResidueType const & residue_type = residue->type();
 		std::string element = atom_type.element();
 		//Rosetta stores elements as allcaps for whatever reason, this will turn CL -> Cl
 		if(element.size() == 2)
 		{
 			element[1] = tolower(element[1]);
 		}
-		core::Real charge = residue_type->atom(index).charge();
+		core::Real charge = residue_type.atom(index).charge();
 		std::string atom_string;
 		core::Size hydrogen_count = 0;
 		core::Size heavy_bond_count = 0;
-		if(index <= residue_type->nheavyatoms())
+		if(index <= residue_type.nheavyatoms())
 		{
-			hydrogen_count = residue_type->number_bonded_hydrogens(index);
-			heavy_bond_count = residue_type->number_bonded_heavyatoms(index);
+			hydrogen_count = residue_type.number_bonded_hydrogens(index);
+			heavy_bond_count = residue_type.number_bonded_heavyatoms(index);
 		}else
 		{
 			hydrogen_count = 0;
@@ -354,7 +354,7 @@ std::list<std::string> MolWriter::compose_bonds(core::conformation::ResidueCOP r
 
 std::list<std::string> MolWriter::compose_properties(core::conformation::ResidueCOP residue)
 {
-	runtime_assert( residue );
+	runtime_assert( residue != 0 );
 	std::list<std::string> lines;
 	if(ctab_mode_ == V3000)
 	{
@@ -397,10 +397,10 @@ std::list<std::string> MolWriter::compose_typeinfo(core::conformation::ResidueCO
 
 	std::string header = "> <Rosetta AtomTypes>\n";
 	std::string type_data = "";
-	core::chemical::ResidueTypeCOP residue_type = & residue->type();
+	core::chemical::ResidueType const & residue_type = residue->type();
 	for(core::Size index =1; index <= residue->natoms();++index)
 	{
-		std::string atom_type_name = residue_type->atom_type(index).name();
+		std::string atom_type_name = residue_type.atom_type(index).name();
 		std::string data_string = "("+utility::to_string<core::Size>(index)+","+atom_type_name+") ";
 		type_data.append(data_string);
 	}

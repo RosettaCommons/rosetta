@@ -306,16 +306,16 @@ void ZincHeterodimerMover::generate_factory(){
 	using namespace core::pack::task;
 	using namespace basic::options;
 	TaskFactoryOP task_factory = new TaskFactory();
-	task_factory->push_back(new operation::InitializeFromCommandline());
+	task_factory->push_back(operation::TaskOperationOP( new operation::InitializeFromCommandline() ));
 	if ( option[ OptionKeys::packing::resfile ].user() ) {
-		task_factory->push_back( new operation::ReadResfile );
+		task_factory->push_back(operation::TaskOperationOP( new operation::ReadResfile ));
 	}
 	operation::PreventRepackingOP prop = new operation::PreventRepacking();
 	for(utility::vector1< core::Size >::const_iterator it(metal_site_.begin()), end(metal_site_.end());	it != end; ++it)
 		{prop->include_residue(*it);}
 	task_factory->push_back(prop);
 	//this assumes that the two protein partners are chains 1 and 3 - this is dangerous!!!!
-	task_factory->push_back(new protocols::toolbox::task_operations::RestrictToInterfaceOperation(1, 3));
+	task_factory->push_back(operation::TaskOperationOP( new protocols::toolbox::task_operations::RestrictToInterfaceOperation(1, 3) ));
 
 	TR << "using default TaskFactory (init from command line, read resfile, prevent repacking at metal site, detect interface" << std::endl;
 

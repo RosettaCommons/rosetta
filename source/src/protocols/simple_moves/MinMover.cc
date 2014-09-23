@@ -149,7 +149,7 @@ MinMover::min_options( MinimizerOptionsOP min_options) {
 void
 MinMover::movemap( MoveMapCOP movemap_in )
 {
-	runtime_assert( movemap_in );
+	runtime_assert( movemap_in != 0 );
 	movemap_ = new MoveMap( *movemap_in );
 }
 
@@ -166,7 +166,7 @@ MinMover::movemap() const
 void
 MinMover::score_function( ScoreFunctionCOP scorefxn_in )
 {
-	runtime_assert( scorefxn_in );
+	runtime_assert( scorefxn_in != 0 );
 	scorefxn_ = scorefxn_in;
 }
 
@@ -241,7 +241,7 @@ void
 MinMover::apply(pose::Pose & pose) {
 	// lazy default initialization
 	MoveMapOP active_movemap;
-	if ( ! movemap() ) movemap() = new MoveMap;
+	if ( ! movemap() ) movemap() = MoveMapOP( new MoveMap );
 	else active_movemap = movemap()->clone();
 
 	apply_dof_tasks_to_movemap(pose, *active_movemap);
@@ -454,7 +454,7 @@ MinMover::parse_dof_task_type(
 
 	BOOST_FOREACH( string t_o_key, t_o_keys ){
 		if ( data.has( "task_operations", t_o_key ) ) {
-			task_factory->push_back( data.get< TaskOperation * >( "task_operations", t_o_key ) );
+			task_factory->push_back( data.get_ptr< TaskOperation >( "task_operations", t_o_key ) );
 			TR << "\t " << tag_name << ": " << t_o_key << std::endl;
 		} else {
 			utility_exit_with_message("TaskOperation " + t_o_key + " not found in basic::datacache::DataMap.");

@@ -198,9 +198,9 @@ public:
 class QuaternionGridManager : public utility::pointer::ReferenceCount {
 public:
 	static QuaternionGridManager * get_instance();
-	QuaternionGridCAP request_by_name(std::string const & name);
-	QuaternionGridCAP request_by_size(long target_size);
-	QuaternionGridCAP request_by_radius(numeric::Real target_radius);
+	QuaternionGridCOP request_by_name(std::string const & name);
+	QuaternionGridCOP request_by_size(long target_size);
+	QuaternionGridCOP request_by_radius(numeric::Real target_radius);
 
 #ifdef MULTI_THREADED
 #ifdef CXX11
@@ -231,7 +231,7 @@ private:
 #endif
 
 	utility::vector1<QuatDBMetadata> by_size_,by_radius_,by_cover_;
-	std::map<std::string,QuaternionGridCAP> grids_;
+	std::map<std::string,QuaternionGridCOP> grids_;
 };
 
 }

@@ -22,6 +22,7 @@
 
 #include <core/pose/Pose.hh>
 #include <basic/datacache/BasicDataCache.hh>
+#include <basic/datacache/DataCache.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
@@ -481,7 +482,8 @@ SymDockProtocol::apply( pose::Pose & pose )
 	if ( option[ OptionKeys::run::debug ]() ) basic::prof_show();
 
 	// cache the score map to the pose
-	if( !hurry_ ) pose.data().set(core::pose::datacache::CacheableDataType::SCORE_MAP, new basic::datacache::DiagnosticData(score_map_));
+	using namespace basic::datacache;
+	if( !hurry_ ) pose.data().set(core::pose::datacache::CacheableDataType::SCORE_MAP, DataCache_CacheableData::DataOP( new basic::datacache::DiagnosticData(score_map_) ) );
 
 }
 
@@ -578,10 +580,11 @@ SymDockProtocol::recover_sidechains( core::pose::Pose & pose, const core::pose::
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 	using namespace protocols::toolbox::task_operations;
+	using core::pack::task::operation::TaskOperationOP;
 
 	// pack over each movable interface
 		TaskFactoryOP tf = new TaskFactory;
-		tf->push_back( new OperateOnCertainResidues( new PreventRepackingRLT, new ResidueLacksProperty("PROTEIN") ) );
+		tf->push_back( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueLacksProperty("PROTEIN") ) ) );
 		tf->push_back( new InitializeFromCommandline );
 		tf->push_back( new IncludeCurrent );
 		tf->push_back( new RestrictToRepacking );

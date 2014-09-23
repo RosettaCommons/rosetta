@@ -169,7 +169,7 @@ ModulatedMover::parse_my_tag(
 utility::tag::TagCOP
 ModulatedMover::generate_mover_tag( core::Size temp_level, std::string const& prefix ) const {
   using namespace utility::tag;
-  TagOP tag = new Tag;
+  TagOP tag( new Tag() );
   tag->setName(mover_name_);
 
 	GridCoord grid_coord( tempering_->level_2_grid_coord( temp_level ) );

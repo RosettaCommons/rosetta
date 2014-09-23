@@ -40,6 +40,10 @@
 #include <string>
 #include <utility/vector1.hh>
 
+#ifdef MULTI_THREADED
+#include <utility/thread/ReadWriteMutex.hh>
+#endif
+
 // OpenCL headers
 #include <basic/gpu/Timer.hh>
 #ifdef USEOPENCL
@@ -263,6 +267,11 @@ protected:
 
   // Surface generation configuration
 	virtual int AssignAttentionNumbers(std::vector<Atom>& atom);
+
+#ifdef MULTI_THREADED
+private:
+	utility::thread::ReadWriteMutex sc_radii_mutex_;
+#endif
 
 private:
 

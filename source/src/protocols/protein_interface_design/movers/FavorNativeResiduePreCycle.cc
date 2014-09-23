@@ -62,7 +62,7 @@ FavorNativeResiduePreCycle::parse_my_tag( TagCOP const tag, basic::datacache::Da
 
 	bonus_ = tag->getOption<core::Real>( "bonus", 1.5 );
 	for( std::map< std::string, ReferenceCountOP >::const_iterator it = (data)[ "scorefxns" ].begin(); it!=(data)[ "scorefxns" ].end(); ++it ){
-		ScoreFunctionOP scorefxn( *data.get< ScoreFunction * >( "scorefxns", it->first ) );
+		ScoreFunctionOP scorefxn( data.get_ptr< ScoreFunction >( "scorefxns", it->first ) );
 		if( scorefxn->get_weight( res_type_constraint ) == 0.0 ){
 			scorefxn->set_weight( res_type_constraint, bonus_ );
 			TR<<"Setting res_type_constraint weight in scorefxn "<<it->first<<" to "<<bonus_<<'\n';

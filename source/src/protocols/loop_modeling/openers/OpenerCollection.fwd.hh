@@ -18,9 +18,8 @@ namespace openers {
 
 class OpenerCollection;
 
-using utility::pointer::owning_ptr;
-typedef owning_ptr<OpenerCollection> OpenerCollectionOP;
-typedef owning_ptr<OpenerCollection const> OpenerCollectionCOP;
+typedef utility::pointer::owning_ptr<OpenerCollection> OpenerCollectionOP;
+typedef utility::pointer::owning_ptr<OpenerCollection const> OpenerCollectionCOP;
 
 }
 }

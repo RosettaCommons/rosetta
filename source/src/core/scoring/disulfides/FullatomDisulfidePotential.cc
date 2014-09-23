@@ -957,11 +957,11 @@ numeric::interpolation::HistogramCOP<core::Real,core::Real>::Type
 SG_Dist_Func::fa_ssdist_scores()
 {
 	using namespace numeric::interpolation;
-	static HistogramCOP<Real,Real>::Type scores(0);
+	static HistogramCOP<Real,Real>::Type scores(0); // NEEDS FIXING: static in multi-threading?
 	if(scores == 0) {
 		utility::io::izstream scores_stream;
 		basic::database::open( scores_stream, "scoring/score_functions/disulfides/fa_SS_distance_score");
-		scores = new Histogram<Real,Real>( scores_stream() );
+		scores = HistogramCOP<Real,Real>::Type( new Histogram<Real,Real>( scores_stream() ) );
 		scores_stream.close();
 	}
 	return scores;

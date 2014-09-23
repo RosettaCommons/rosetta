@@ -89,8 +89,8 @@ IteratedConvergenceMover::IteratedConvergenceMover( IteratedConvergenceMover con
 void
 IteratedConvergenceMover::apply( Pose & pose )
 {
-	runtime_assert(submover_);
-	runtime_assert(filter_);
+	runtime_assert(submover_ != 0);
+	runtime_assert(filter_ != 0);
 
 	core::Real refval(filter_->report_sm(pose));
 	core::Size ncyc(0);
@@ -175,13 +175,13 @@ IteratedConvergenceMover::clone() const
 // setters
 void IteratedConvergenceMover::submover( MoverOP mover )
 {
-	runtime_assert( mover );
+	runtime_assert( mover != 0 );
 	submover_ = mover;
 }
 
 void IteratedConvergenceMover::filter( filters::FilterCOP filter )
 {
-	runtime_assert( filter );
+	runtime_assert( filter != 0 );
 	filter_ = filter;
 }
 

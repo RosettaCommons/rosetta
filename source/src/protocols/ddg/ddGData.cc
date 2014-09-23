@@ -101,7 +101,7 @@ void ddGData::get_next_filenames(){
 utility::vector1<pose::Pose> ddGData::read_mut_data()
 {
 	utility::vector1<pose::Pose> curr_mut;
-	core::chemical::ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+	core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 	if(!inputstream.eof() && !curr_mut_read){
 		curr_mut_read = true;
 	}
@@ -138,7 +138,7 @@ utility::vector1<pose::Pose> ddGData::read_mut_data()
 }
 
 utility::vector1<pose::Pose> ddGData::read_wt_data(){
-	core::chemical::ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+	core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 	utility::vector1<pose::Pose> curr_wt;
 	if(!inputstream.eof() && !curr_wt_read){
 		curr_wt_read = true;

@@ -108,8 +108,8 @@ ResidueAtomTreeCollection::ResidueAtomTreeCollection(
 			allowed_iter != allowed_end; ++allowed_iter ) {
 		++ii;
 
-		residue_representatives_[ ii ] = new conformation::Residue(
-			**allowed_iter, orig_res, conformation, rltask.preserve_c_beta() );
+		residue_representatives_[ ii ] = conformation::ResidueOP( new conformation::Residue(
+			**allowed_iter, orig_res, conformation, rltask.preserve_c_beta() ) );
 		residue_representatives_[ ii ]->seqpos( 1 ); // temporary -- while we construct the atom tree, pretend we're residue 1.
 		kinematics::AtomPointer2D tree_atoms2d( 1 ); // 1 residue AtomTree.
 		tree_atoms2d[ 1 ].resize( residue_representatives_[ ii ]->natoms() );
@@ -117,7 +117,7 @@ ResidueAtomTreeCollection::ResidueAtomTreeCollection(
 
 		conformation::build_residue_tree( 1, *residue_representatives_[ ii ], tree_atoms1d, true );
 		std::copy( tree_atoms1d.begin(), tree_atoms1d.end(), tree_atoms2d[1].begin() );
-		atom_tree_representatives_[ ii ] = new kinematics::AtomTree( tree_atoms2d );
+		atom_tree_representatives_[ ii ] = kinematics::AtomTreeOP( new kinematics::AtomTree( tree_atoms2d ) );
 
 		residue_representatives_[ ii ]->seqpos( resid ); // restore the original sequence position
 	}
@@ -143,7 +143,7 @@ ResidueAtomTreeCollection::ResidueAtomTreeCollection(
 
 		conformation::build_residue_tree( 1, *residue_representatives_[ ii ], tree_atoms1d, true );
 		std::copy( tree_atoms1d.begin(), tree_atoms1d.end(), tree_atoms2d[1].begin() );
-		atom_tree_representatives_[ ii ] = new kinematics::AtomTree( tree_atoms2d );
+		atom_tree_representatives_[ ii ] = kinematics::AtomTreeOP( new kinematics::AtomTree( tree_atoms2d ) );
 
 		residue_representatives_[ ii ]->seqpos( resid ); // restore the original sequence position
 	}
@@ -361,10 +361,10 @@ AtomTreeCollection::AtomTreeCollection(
 	for ( Size ii = 1; ii <= rsets.nmoltenres(); ++ii ) {
 		resid_2_moltenresid_[ rsets.moltenres_2_resid( ii ) ] = ii;
 		moltenresid_2_resid_[ ii ] = rsets.moltenres_2_resid( ii );
-		res_collections_[ ii ] = new ResidueAtomTreeCollection(
+		res_collections_[ ii ] = ResidueAtomTreeCollectionOP( new ResidueAtomTreeCollection(
 			*rsets.rotamer_set_for_moltenresidue( ii ),
 			moltenresid_2_resid_[ ii ]
-		);
+		) );
 	}
 }
 
@@ -384,8 +384,8 @@ AtomTreeCollection::AtomTreeCollection(
 		++count_moltenres;
 		resid_2_moltenresid_[ ii ] = count_moltenres;
 		moltenresid_2_resid_[ count_moltenres ] = ii;
-		res_collections_[ count_moltenres ] =
-			new ResidueAtomTreeCollection( task.residue_task( ii ),  pose.conformation(), pose.residue( ii ) );
+		res_collections_[ count_moltenres ] = ResidueAtomTreeCollectionOP(
+			new ResidueAtomTreeCollection( task.residue_task( ii ),  pose.conformation(), pose.residue( ii ) ) );
 	}
 }
 
@@ -396,7 +396,7 @@ AtomTreeCollection::AtomTreeCollection(
 )
 {
 	res_collections_.resize( 1 );
-	res_collections_[ 1 ] = new ResidueAtomTreeCollection( rset, resid  );
+	res_collections_[ 1 ] = ResidueAtomTreeCollectionOP( new ResidueAtomTreeCollection( rset, resid  ) );
 }
 
 AtomTreeCollection::AtomTreeCollection(
@@ -406,7 +406,7 @@ AtomTreeCollection::AtomTreeCollection(
 )
 {
 	res_collections_.resize( 1 );
-	res_collections_[ 1 ] = new ResidueAtomTreeCollection( rltask, pose.conformation(), pose.residue( resid ) );
+	res_collections_[ 1 ] = ResidueAtomTreeCollectionOP( new ResidueAtomTreeCollection( rltask, pose.conformation(), pose.residue( resid ) ) );
 }
 
 AtomTreeCollection::~AtomTreeCollection() {}

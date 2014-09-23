@@ -61,7 +61,7 @@ class MMTorsionLibrary  : public utility::pointer::ReferenceCount
 
 public:
 	/// @brief ctor
-	MMTorsionLibrary( std::string filename, core::chemical::MMAtomTypeSetCAP mm_atom_set );
+	MMTorsionLibrary( std::string filename, core::chemical::MMAtomTypeSetCOP mm_atom_set );
 	virtual ~MMTorsionLibrary();
 
 	/// @brief lookup by atom type ints

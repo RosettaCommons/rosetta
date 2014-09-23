@@ -145,15 +145,16 @@ void DockingEnsemble::recover_conformer_sidechains( core::pose::Pose & pose )
 
 	// make sure that the pose has ARBITRARY_FLOAT_DATA in the DataCache
 	if ( !pose.data().has( ( CacheableDataType::ARBITRARY_FLOAT_DATA ) ) ){
+		using namespace basic::datacache;
 		pose.data().set(
 			CacheableDataType::ARBITRARY_FLOAT_DATA,
-			new basic::datacache::CacheableStringFloatMap()
+			DataCache_CacheableData::DataOP( new basic::datacache::CacheableStringFloatMap() )
 		);
 	}
 
 	basic::datacache::CacheableStringFloatMapOP data
-		= dynamic_cast< basic::datacache::CacheableStringFloatMap * >
-		( pose.data().get_raw_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA) );
+		= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringFloatMap >
+		( pose.data().get_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA) );
 
 	data->map()[ partner_ ] = highres_reference_energies_[conf_num_];
 	pose.data().set( core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA, data );

@@ -58,7 +58,7 @@ public:
 	//get_size
 	core::Size get_size(core::Size nsubc)
 	{
-		return (subpools_[nsubc]())?subpools_[nsubc]->size():0;
+		return (subpools_[nsubc].get())?subpools_[nsubc]->size():0;
 	}
 
 	//void add(core::pose::Pose const &, std::string &);

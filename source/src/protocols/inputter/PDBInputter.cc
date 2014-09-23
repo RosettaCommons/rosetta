@@ -45,7 +45,7 @@ PDBInputter::~PDBInputter(){}
 
 core::pose::PoseSP PDBInputter::get_nth_pose( int n ) {
 	offset_ = true;
-	core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+	core::chemical::ResidueTypeSetCOP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 	core::pose::PoseSP tmppose(new core::pose::Pose());
 	if( multiply_over_all_ ) {
 		// we go through all the filenames once, then more times according to multiplier

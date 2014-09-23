@@ -134,7 +134,8 @@ int main( int argc, char ** argv ) {
 
     cout << "inv_kin_lig_loop_design::cloning pose0" << endl;
     core::pose::PoseOP pose1 = cloner.clone();
-    pose1->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, new basic::datacache::CacheableString(curr_job->output_tag(curr_nstruct)));
+    using namespace basic::datacache;
+    pose1->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, DataCache_CacheableData::DataOP( new basic::datacache::CacheableString(curr_job->output_tag(curr_nstruct)) ));
 
     cout << "inv_kin_lig_loop_design::dumping clone" << endl;
     core::io::pdb::dump_pdb( *pose1, "out0.pdb" );

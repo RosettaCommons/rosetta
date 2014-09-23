@@ -57,8 +57,9 @@
 #include <core/kinematics/Jump.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
 
-#ifdef USEBOOSTSERIALIZE
 #include <core/conformation/Conformation.hh>
+
+#ifdef USEBOOSTSERIALIZE
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/PDBInfo.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -160,7 +161,17 @@ Common Methods:
     Pose.sequence
     Pose.total_residue
 **/
-class Pose : public utility::pointer::ReferenceCount {
+class Pose : public utility::pointer::ReferenceCount
+#ifdef PTR_MODERN
+	// New version
+	, public utility::pointer::enable_shared_from_this< Pose >
+{
+#else
+{
+	// Old intrusive ref-counter version
+	inline PoseCOP shared_from_this() const { return PoseCOP( this ); }
+	inline PoseOP shared_from_this() { return PoseOP( this ); }
+#endif
 
 public:
 	typedef id::AtomID AtomID;
@@ -170,6 +181,7 @@ public:
 	typedef conformation::Residue Residue;
 	typedef conformation::Conformation Conformation;
 	typedef conformation::ConformationOP ConformationOP;
+	typedef conformation::ConformationCOP ConformationCOP;
 	typedef pose::datacache::ObserverCache ObserverCache;
 	typedef pose::datacache::ObserverCacheOP ObserverCacheOP;
 	typedef pose::signals::ConformationEvent ConformationEvent;
@@ -217,6 +229,12 @@ public:
 	PoseOP
 	clone() const;
 
+	/// self pointers
+	inline PoseCOP get_self_ptr() const { return shared_from_this(); }
+	inline PoseOP get_self_ptr() { return shared_from_this(); }
+	inline PoseCAP get_self_weak_ptr() const { return PoseCAP( shared_from_this() ); }
+	inline PoseAP get_self_weak_ptr() { return PoseAP( shared_from_this() ); }
+
 	////////////////////////////////////////
 	// tree builders / modifiers
 
@@ -238,6 +256,20 @@ public:
 	conformation()
 	{
 		return *conformation_;
+	}
+
+	/// @brief Returns the pose Conformation pointer (const access)
+	ConformationCOP
+	conformation_ptr() const
+	{
+		return conformation_;
+	}
+
+	/// @brief Returns the pose Conformation pointer (const access)
+	ConformationOP &
+	conformation_ptr()
+	{
+		return conformation_;
 	}
 
 	/// @brief Returns the pose FoldTree

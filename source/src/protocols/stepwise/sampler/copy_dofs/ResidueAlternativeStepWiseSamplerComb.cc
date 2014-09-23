@@ -21,6 +21,7 @@
 static thread_local basic::Tracer TR( "protocols.sampler.copy_dofs.ResidueAlternativeStepWiseSamplerComb" );
 
 using namespace core;
+using core::conformation::Residue;
 
 namespace protocols {
 namespace stepwise {

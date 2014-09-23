@@ -60,7 +60,7 @@ int main(int argc, char*argv[])
 		core::chemical::ChemicalManager::get_instance()->orbital_type_set("fa_standard");
 	core::chemical::ElementSetCAP element_set =
 		core::chemical::ChemicalManager::get_instance()->element_set("default");
-	core::chemical::ResidueTypeSetCAP residue_types =
+	core::chemical::ResidueTypeSetCOP residue_types =
 		core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 
 	utility::vector1<std::string> res_file_paths(basic::options::option[basic::options::OptionKeys::in::file::extra_res_fa]());

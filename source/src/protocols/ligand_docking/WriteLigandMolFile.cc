@@ -155,7 +155,7 @@ void WriteLigandMolFile::apply(core::pose::Pose & pose)
     
 	core::Size chain_id = core::pose::get_chain_id_from_chain(chain_,pose);
 	core::Size residue_index = pose.conformation().chain_begin(chain_id);
-	core::conformation::ResidueCOP ligand_residue(pose.conformation().residue(residue_index));
+	core::conformation::ResidueCOP ligand_residue(pose.conformation().residue(residue_index).get_self_ptr());
     
     utility::file::create_directory(directory_);
     

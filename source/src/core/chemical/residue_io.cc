@@ -477,10 +477,11 @@ read_topology_file(
 		chemical::MMAtomTypeSetCAP mm_atom_types,
 		chemical::orbitals::OrbitalTypeSetCAP orbital_atom_types,
 		//chemical::CSDAtomTypeSetCAP csd_atom_types kwk commenting out until they have been fully implemented
-		chemical::ResidueTypeSetCAP rsd_type_set
+		chemical::ResidueTypeSetCAP rsd_type_set_ap
 )
 {
-	assert( rsd_type_set );
+	chemical::ResidueTypeSetCOP rsd_type_set( rsd_type_set_ap );
+	assert( rsd_type_set != 0 ); // not really needed
 
 	using id::AtomID;
 	using id::DOF_ID;
@@ -522,8 +523,8 @@ read_topology_file(
 	// things are being assigned correctly, i.e., adding bonds correctly, setting icoor values with correct placement
 	// of stub atoms, etc., etc.
 
-	ResidueTypeOP rsd( new ResidueType( atom_types, elements, mm_atom_types, orbital_atom_types ) ); //kwk commenting out until atom types are fully implemented , csd_atom_types ) );
-	rsd->residue_type_set( rsd_type_set );  // Give this rsd_type a backpointer to its set.
+	ResidueTypeOP rsd( new ResidueType( atom_types.lock(), elements.lock(), mm_atom_types.lock(), orbital_atom_types.lock() ) ); //kwk commenting out until atom types are fully implemented , csd_atom_types ) );
+	rsd->residue_type_set( rsd_type_set_ap );  // Give this rsd_type a backpointer to its set.
 
 	// Add the atoms.
 	Size const nlines( lines.size() );

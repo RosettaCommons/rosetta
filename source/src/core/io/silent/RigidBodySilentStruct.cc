@@ -169,7 +169,7 @@ void RigidBodySilentStruct::fold_tree( kinematics::FoldTree const& f ) {
 }
 
 kinematics::FoldTree const& RigidBodySilentStruct::fold_tree() const {
-	runtime_assert( fold_tree_ );
+	runtime_assert( fold_tree_ != 0 );
 	return *fold_tree_;
 }
 

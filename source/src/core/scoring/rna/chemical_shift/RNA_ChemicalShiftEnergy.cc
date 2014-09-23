@@ -60,7 +60,7 @@ RNA_ChemicalShiftEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 RNA_ChemicalShiftEnergy::RNA_ChemicalShiftEnergy():
-	parent( new RNA_ChemicalShiftEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( methods::EnergyMethodCreatorOP( new RNA_ChemicalShiftEnergyCreator ) ) ),
 	rna_chemical_shift_potential_( ScoringManager::get_instance()->get_RNA_ChemicalShiftPotential() )
 {}
 

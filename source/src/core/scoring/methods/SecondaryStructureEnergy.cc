@@ -65,7 +65,7 @@ SecondaryStructureEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 SecondaryStructureEnergy::SecondaryStructureEnergy() :
-	parent( new SecondaryStructureEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new SecondaryStructureEnergyCreator ) ),
 	potential_( ScoringManager::get_instance()->get_SecondaryStructurePotential() )
 {}
 

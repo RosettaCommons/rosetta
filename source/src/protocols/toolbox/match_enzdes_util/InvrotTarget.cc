@@ -38,7 +38,7 @@ namespace match_enzdes_util {
 static thread_local basic::Tracer tr( "protocols.toolbox.match_enzdes_util.InvrotTarget" );
 
 InvrotTarget::InvrotTarget()
-	: InvrotTreeNodeBase( NULL )
+	: InvrotTreeNodeBase( InvrotTreeNodeBaseCAP() )
 {
 	representative_target_res_for_geom_cst_.clear();
 	all_target_res_.clear();
@@ -97,7 +97,7 @@ InvrotTarget::initialize_tree_nodes_from_enzcst_io(
 		std::pair< Size, Size> const & target_res( enzcst_io->target_downstream_res()[i] );
 		if( (target_res.first == 1 ) && (target_res.second == 1 ) ){
 			mcfi_to_build.push_back( i );
-			next_nodes_.push_back( new InvrotTreeNode( this ) );
+			next_nodes_.push_back( InvrotTreeNodeOP( new InvrotTreeNode( get_self_weak_ptr() ) ) );
 		}
 	}
 
@@ -130,7 +130,7 @@ InvrotTarget::collect_all_inverse_rotamers(
 	invrot_collectors.push_back(  new InvrotCollector( num_residue_lists ) );
 
 	//2. put target res into 0th element
-	invrot_collectors[ invrot_collectors.size() ]->set_invrots_for_listnum( 0, all_target_res_, this, 1 );
+	invrot_collectors[ invrot_collectors.size() ]->set_invrots_for_listnum( 0, all_target_res_, get_self_ptr(), 1 );
 
 	//3. collect daughter node invrots
 	for( Size i = 1; i <= next_nodes_.size(); ++i ){

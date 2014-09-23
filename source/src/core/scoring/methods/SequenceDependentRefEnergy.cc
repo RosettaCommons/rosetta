@@ -61,13 +61,13 @@ SequenceDependentRefEnergyCreator::score_types_for_method() const {
 
 
 SequenceDependentRefEnergy::SequenceDependentRefEnergy() :
-	parent( new SequenceDependentRefEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new SequenceDependentRefEnergyCreator ) )
 {
 	read_energy_weight_table();
 }
 
 SequenceDependentRefEnergy::SequenceDependentRefEnergy( utility::vector1< utility::vector1< Real > > const & aa_seq_weights_in ):
-	parent( new SequenceDependentRefEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new SequenceDependentRefEnergyCreator ) )
 {
 	aa_seq_weights_.clear();
 	for ( utility::vector1<utility::vector1< Real > >::const_iterator it = aa_seq_weights_in.begin(); it != aa_seq_weights_in.end(); ++it ) {

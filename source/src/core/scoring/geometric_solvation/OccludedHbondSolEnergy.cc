@@ -99,7 +99,7 @@ OccludedHbondSolEnergy::OccludedHbondSolEnergy(
 	methods::EnergyMethodOptions const & options,
 	bool const verbose )
 :
-	parent( new OccludedHbondSolEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new OccludedHbondSolEnergyCreator ) ),
 	occ_hbond_sol_database_( ScoringManager::get_instance()->get_DatabaseOccSolEne( options.etable_type(), MIN_OCC_ENERGY ) ),
 	verbose_( verbose )
 {

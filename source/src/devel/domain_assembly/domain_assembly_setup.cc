@@ -96,7 +96,7 @@ DomainInfo::process_domain( )
 	}
 
 
-	ResidueTypeSetCAP residue_set ( ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) );
+	ResidueTypeSetCOP residue_set ( ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) );
 
 	// add n-terminal linker if requested
 	std::string linker_sequence_n = Nterm_linker_;

@@ -744,19 +744,19 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 																			 1.0  );
 
 		fade_alpha_ap_ = new func::SumFunc();
-		fade_alpha_ap_->add_func(
+		fade_alpha_ap_->add_func( func::FuncOP(
 														 new func::FadeFunc(
 																					-180.0 - alpha_fade_,
 																					-120.0 + 0.5 * alpha_fade_,
 																					alpha_fade_,
-																					1.0  ) );
+																					1.0  ) ) );
 
-		fade_alpha_ap_->add_func(
+		fade_alpha_ap_->add_func( func::FuncOP(
 														 new func::FadeFunc(
 																					 100.0 - 0.5 * alpha_fade_,
 																					 180.0 + alpha_fade_,
 																					 alpha_fade_,
-																					 1.0  ) );
+																					 1.0  ) ) );
 	}
 
 } //rna

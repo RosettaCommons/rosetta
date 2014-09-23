@@ -1593,7 +1593,7 @@ void RemodelLoopMover::loophash_stage(
 		for(core::Size i = 1; i <= max_res; ++i){
 				residue_indices.push_back(i);
 		}
-		ResidueTypeSetCAP residue_set(
+		ResidueTypeSetCOP residue_set(
 				ChemicalManager::get_instance()->residue_type_set( CENTROID )
 		);
 		core::io::pdb::pose_from_pose(*pose_for_rt, constantPose, *residue_set, residue_indices);
@@ -3091,7 +3091,7 @@ RemodelLoopMover::create_fragment_movers_limit_size(
 			}
 			ClassicFragmentMoverOP cfm;
 			if(smoothMoves)
-				cfm = new SmoothFragmentMover( *f, movemap.clone(), new GunnCost );
+				cfm = new SmoothFragmentMover( *f, movemap.clone(), FragmentCostOP( new GunnCost ) );
 			else
 				cfm = new ClassicFragmentMover( *f, movemap.clone() );
 			cfm->set_check_ss( false );
@@ -3277,7 +3277,7 @@ void RemodelLoopMover::set_starting_sequence(Pose & pose){
 		for(Size ii=1; ii<=swap_sequence.size(); ++ii){
 		  char aa = swap_sequence[ii-1];
 		  AA my_aa = aa_from_oneletter_code( aa );
-			ResidueTypeSetCAP const &residue_set(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID ));
+			ResidueTypeSetCOP const &residue_set(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID ));
 		  ResidueTypeCOPs const & rsd_type_list( residue_set->aa_map( my_aa ) );
 		  ResidueType const & rsd_type( *(rsd_type_list[ 1 ]) );
 		  if(option[OptionKeys::remodel::repeat_structure].user()){

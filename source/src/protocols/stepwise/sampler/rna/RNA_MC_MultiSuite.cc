@@ -66,8 +66,8 @@ void  RNA_MC_MultiSuite::add_external_loop_rotamer(
 	MC_StepWiseSamplerOP const & rotamer
 ) {
 	RNA_MC_SuiteOP new_rotamer;
-	new_rotamer =	dynamic_cast<RNA_MC_Suite *>( rotamer() );
-	runtime_assert( new_rotamer );
+	new_rotamer = utility::pointer::dynamic_pointer_cast< RNA_MC_Suite >( rotamer );
+	runtime_assert( new_rotamer != 0 );
 	suite_samplers_.push_back( new_rotamer );
 	MC_Comb::add_external_loop_rotamer( rotamer );
 }

@@ -53,7 +53,10 @@ methods::EnergyMethodOP
 Fa_MbsolvEnergyCreator::create_energy_method(
   methods::EnergyMethodOptions const & options
 ) const {
-  return new Fa_MbsolvEnergy( *( ScoringManager::get_instance()->etable( options.etable_type() )), *( ScoringManager::get_instance()->memb_etable( options.etable_type() )) );
+  return new Fa_MbsolvEnergy(
+  	*( ScoringManager::get_instance()->etable( options.etable_type() ).lock() ),
+  	*( ScoringManager::get_instance()->memb_etable( options.etable_type() ).lock() ) 
+  );
 }
 
 ScoreTypes
@@ -64,7 +67,7 @@ Fa_MbsolvEnergyCreator::score_types_for_method() const {
 }
 
 Fa_MbsolvEnergy::Fa_MbsolvEnergy( etable::Etable const & etable_in, etable::MembEtable const & memb_etable_in):
-  parent( new Fa_MbsolvEnergyCreator ),
+  parent( methods::EnergyMethodCreatorOP( new Fa_MbsolvEnergyCreator ) ),
 	etable_(etable_in),
   memb_etable_(memb_etable_in),
 	solv1_(memb_etable_in.solv1()),

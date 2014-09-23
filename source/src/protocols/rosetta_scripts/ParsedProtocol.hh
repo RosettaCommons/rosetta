@@ -69,6 +69,7 @@ public:
   typedef utility::vector1< MoverFilterPair > MoverFilterVector;
 	typedef MoverFilterVector::iterator iterator;
 	typedef MoverFilterVector::const_iterator const_iterator;
+
 public:
 	ParsedProtocol();
 	virtual ~ParsedProtocol();

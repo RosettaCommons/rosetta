@@ -190,7 +190,7 @@ SetupHotspotConstraintsMover::parse_my_tag( TagCOP const tag, basic::datacache::
 
 	for( std::map< std::string, utility::pointer::ReferenceCountOP >::const_iterator it = (data)[ "scorefxns" ].begin(); it!=(data)[ "scorefxns" ].end(); ++it ){
 		using namespace core::scoring;
-		ScoreFunctionOP scorefxn( *data.get< ScoreFunction * >( "scorefxns", it->first) );
+		ScoreFunctionOP scorefxn( data.get_ptr< ScoreFunction >( "scorefxns", it->first) );
 		if ( stub_energy_fxn_ == "backbone_stub_constraint" ) {
 			core::Real const weight( scorefxn->get_weight( backbone_stub_constraint ) );
 		   if( weight == 0.0 ){

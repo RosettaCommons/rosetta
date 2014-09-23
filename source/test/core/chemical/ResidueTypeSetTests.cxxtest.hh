@@ -63,7 +63,7 @@ public:
 		string rss;
 		ResidueTypeSetOP rs;
 		rss = FA_STANDARD;
-		rs = ChemicalManager::get_instance()->nonconst_residue_type_set(rss );
+		rs = ChemicalManager::get_instance()->nonconst_residue_type_set(rss ).get_self_ptr();
 		TR << A(width, rss) << I(width,rs->residue_types().size()) << endl;
 
 		//rss = CENTROID;
@@ -107,17 +107,18 @@ public:
 		std::vector< std::string > extra_params_files( 1, "core/chemical/1pqc.params");
 		std::vector< std::string > extra_patch_files( 1, "core/chemical/1pqc_test.patch");
 
-		ResidueTypeSet rtset( FA_STANDARD, basic::database::full_name( "chemical/residue_type_sets/"+FA_STANDARD+"/" ), extra_params_files, extra_patch_files );
+		ResidueTypeSetOP rtset = new ResidueTypeSet( FA_STANDARD, basic::database::full_name( "chemical/residue_type_sets/"+FA_STANDARD+"/" ) );
+		rtset->init( extra_params_files, extra_patch_files );
 
-		TS_ASSERT( rtset.has_name3("QC1") );
-		TS_ASSERT( rtset.has_name("QC1") );
-		TS_ASSERT( rtset.has_name("QC1:1pqcTestPatch") );
+		TS_ASSERT( rtset->has_name3("QC1") );
+		TS_ASSERT( rtset->has_name("QC1") );
+		TS_ASSERT( rtset->has_name("QC1:1pqcTestPatch") );
 
-		ResidueType const & plain( rtset.name_map("QC1") );
-		ResidueType const & decorated( rtset.name_map("QC1:1pqcTestPatch") );
+		ResidueType const & plain( rtset->name_map("QC1") );
+		ResidueType const & decorated( rtset->name_map("QC1:1pqcTestPatch") );
 
 		// This is here mainly to make sure it doesn't crash.
-		ResidueType const & dec_gen( rtset.get_residue_type_with_variant_added( plain, SPECIAL_ROT ) );
+		ResidueType const & dec_gen( rtset->get_residue_type_with_variant_added( plain, SPECIAL_ROT ) );
 
 		TS_ASSERT_EQUALS( plain.natoms(), 43 );
 		TS_ASSERT_EQUALS( decorated.natoms(), 48 );
@@ -142,15 +143,17 @@ public:
 
 		std::vector< std::string > extra_params_files( 1, "core/chemical/1pqc.params");
 		std::vector< std::string > extra_patch_files;
-		ResidueTypeSet rtset( FA_STANDARD, basic::database::full_name( "chemical/residue_type_sets/"+FA_STANDARD+"/" ), extra_params_files, extra_patch_files );
+		
+		ResidueTypeSetOP rtset = new ResidueTypeSet( FA_STANDARD, basic::database::full_name( "chemical/residue_type_sets/"+FA_STANDARD+"/" ) );
+		rtset->init( extra_params_files, extra_patch_files );
+		
+		TS_ASSERT(rtset->has_name("QC1"));
+		TS_ASSERT(rtset->has_name3("QC1"));
 
-		TS_ASSERT(rtset.has_name("QC1"));
-		TS_ASSERT(rtset.has_name3("QC1"));
+		rtset->remove_residue_type("QC1");
 
-		rtset.remove_residue_type("QC1");
-
-		TS_ASSERT(!rtset.has_name("QC1"));
-		TS_ASSERT(!rtset.has_name3("QC1"));
+		TS_ASSERT(!rtset->has_name("QC1"));
+		TS_ASSERT(!rtset->has_name3("QC1"));
 	}
 
 

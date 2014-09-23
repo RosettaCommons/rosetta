@@ -184,7 +184,7 @@ void Transform::apply(core::pose::Pose & pose)
     core::Real best_score(last_score);
     core::pose::Pose best_pose(pose);
     core::pose::Pose starting_pose(pose);
-    core::conformation::UltraLightResidue best_ligand(&pose.residue(begin));
+    core::conformation::UltraLightResidue best_ligand(pose.residue(begin).get_self_ptr());
 	core::conformation::UltraLightResidue original_ligand(best_ligand);
 
 	core::Real temperature = transform_info_.temperature;

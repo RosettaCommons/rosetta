@@ -89,7 +89,16 @@ void lregister_ScoreFunction( lua_State * lstate );
 /// Rosetta. It also contains weights that are applied to each of those
 /// components. Only scoring components with non-zero weights are calculated.
 class ScoreFunction : public utility::pointer::ReferenceCount
+#ifdef PTR_MODERN
+	// New version
+	, public utility::pointer::enable_shared_from_this< ScoreFunction >
 {
+#else
+{
+	// Old intrusive ref-counter version
+	inline ScoreFunctionCOP shared_from_this() const { return ScoreFunctionCOP( this ); }
+	inline ScoreFunctionOP shared_from_this() { return ScoreFunctionOP( this ); }
+#endif
 
 	/////////////////////////////////////////////////////////////////////////////
 	// typedefs
@@ -121,6 +130,12 @@ public:
 	ScoreFunction();
 
 	virtual ~ScoreFunction();
+
+	/// self pointers
+	inline ScoreFunctionCOP get_self_ptr() const { return shared_from_this(); }
+	inline ScoreFunctionOP get_self_ptr() { return shared_from_this(); }
+	// inline ScoreFunctionCAP get_self_weak_ptr() const { return ScoreFunctionCAP( shared_from_this() ); }
+	// inline ScoreFunctionAP get_self_weak_ptr() { return ScoreFunctionAP( shared_from_this() ); }
 
 private:
 	///@brief The ScoreFunction copy constructor is explicitly private

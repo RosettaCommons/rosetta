@@ -250,6 +250,10 @@ void MolecularSurfaceCalculator::GenerateMolecularSurfaces()
 
 int MolecularSurfaceCalculator::ReadScRadii()
 {
+#ifdef MULTI_THREADED
+	utility::thread::WriteLockGuard lock( sc_radii_mutex_ );
+#endif
+
 	char const *fn = "scoring/score_functions/sc/sc_radii.lib";
 	ATOM_RADIUS radius;
 	utility::io::izstream in;

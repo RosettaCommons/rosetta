@@ -68,7 +68,7 @@ RNA_SugarCloseEnergyCreator::score_types_for_method() const {
 
 /// ctor
 RNA_SugarCloseEnergy::RNA_SugarCloseEnergy() :
-	parent( new RNA_SugarCloseEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new RNA_SugarCloseEnergyCreator ) ),
 	scale_rna_torsion_tether_( 0.05 ), // THIS IS A SCALING FACTOR FOR ALL CONSTRAINTS.
 	scale_rna_torsion_sd_( 1.0 / std::sqrt( scale_rna_torsion_tether_ ) ),
 	o4prime_c1prime_bond_length_( 1.414 ),
@@ -201,23 +201,23 @@ RNA_SugarCloseEnergy::add_sugar_ring_closure_constraints( conformation::Residue 
 		RNA_FittedTorsionInfo rna_torsion_fitted_info;
 		Real const delta_cutoff = rna_torsion_fitted_info.delta_cutoff();
 		if ( delta < delta_cutoff ) { //NORTH
-			dist_cst = new AtomPairConstraint( o4prime_id, c1prime_id,
-											   new func::HarmonicFunc( o4prime_c1prime_bond_north_, scale_rna_torsion_sd_ * bond_sd_ ), rna_sugar_close );
-			angle1 = new AngleConstraint( o4prime_id, c1prime_id, c2prime_id,
-				new func::HarmonicFunc( o4prime_c1prime_c2prime_angle_north_, scale_rna_torsion_sd_ * angle_sd1_ ), rna_sugar_close );
-			angle2 = new AngleConstraint( c4prime_id, o4prime_id, c1prime_id,
-				new func::HarmonicFunc( c4prime_o4prime_c1prime_angle_north_, scale_rna_torsion_sd_ * angle_sd1_ ), rna_sugar_close );
-			angle3 = new AngleConstraint( o4prime_id, c1prime_id, first_base_atom_id,
-				new func::HarmonicFunc( o4prime_c1prime_n1_9_angle_north_, scale_rna_torsion_sd_ * angle_sd2_ ), rna_sugar_close );
+			func::FuncOP f_dist_cst = new func::HarmonicFunc( o4prime_c1prime_bond_north_, scale_rna_torsion_sd_ * bond_sd_ );
+			dist_cst = new AtomPairConstraint( o4prime_id, c1prime_id, f_dist_cst, rna_sugar_close );
+			func::FuncOP f_angle1 = new func::HarmonicFunc( o4prime_c1prime_c2prime_angle_north_, scale_rna_torsion_sd_ * angle_sd1_ );
+			angle1 = new AngleConstraint( o4prime_id, c1prime_id, c2prime_id, f_angle1, rna_sugar_close );
+			func::FuncOP f_angle2 = new func::HarmonicFunc( c4prime_o4prime_c1prime_angle_north_, scale_rna_torsion_sd_ * angle_sd1_ );
+			angle2 = new AngleConstraint( c4prime_id, o4prime_id, c1prime_id, f_angle2, rna_sugar_close );
+			func::FuncOP f_angle3 = new func::HarmonicFunc( o4prime_c1prime_n1_9_angle_north_, scale_rna_torsion_sd_ * angle_sd2_ );
+			angle3 = new AngleConstraint( o4prime_id, c1prime_id, first_base_atom_id, f_angle3, rna_sugar_close );
 		} else { //SOUTH
-			dist_cst = new AtomPairConstraint( o4prime_id, c1prime_id,
-				new func::HarmonicFunc( o4prime_c1prime_bond_south_, scale_rna_torsion_sd_ * bond_sd_ ), rna_sugar_close );
-			angle1 = new AngleConstraint( o4prime_id, c1prime_id, c2prime_id,
-				new func::HarmonicFunc( o4prime_c1prime_c2prime_angle_south_, scale_rna_torsion_sd_ * angle_sd1_ ), rna_sugar_close );
-			angle2 = new AngleConstraint( c4prime_id, o4prime_id, c1prime_id,
-				new func::HarmonicFunc( c4prime_o4prime_c1prime_angle_south_, scale_rna_torsion_sd_ * angle_sd1_ ), rna_sugar_close );
-			angle3 = new AngleConstraint( o4prime_id, c1prime_id, first_base_atom_id,
-				new func::HarmonicFunc( o4prime_c1prime_n1_9_angle_south_, scale_rna_torsion_sd_ * angle_sd2_ ), rna_sugar_close );
+			func::FuncOP f_dist_cst = new func::HarmonicFunc( o4prime_c1prime_bond_south_, scale_rna_torsion_sd_ * bond_sd_ );
+			dist_cst = new AtomPairConstraint( o4prime_id, c1prime_id, f_dist_cst, rna_sugar_close );
+			func::FuncOP f_angle1 = new func::HarmonicFunc( o4prime_c1prime_c2prime_angle_south_, scale_rna_torsion_sd_ * angle_sd1_ );
+			angle1 = new AngleConstraint( o4prime_id, c1prime_id, c2prime_id, f_angle1, rna_sugar_close );
+			func::FuncOP f_angle2 = new func::HarmonicFunc( c4prime_o4prime_c1prime_angle_south_, scale_rna_torsion_sd_ * angle_sd1_ );
+			angle2 = new AngleConstraint( c4prime_id, o4prime_id, c1prime_id, f_angle2, rna_sugar_close );
+			func::FuncOP f_angle3 = new func::HarmonicFunc( o4prime_c1prime_n1_9_angle_south_, scale_rna_torsion_sd_ * angle_sd2_ );
+			angle3 = new AngleConstraint( o4prime_id, c1prime_id, first_base_atom_id, f_angle3, rna_sugar_close );
 		}
 	} else {
 		dist_cst =

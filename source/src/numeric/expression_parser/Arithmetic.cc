@@ -1757,7 +1757,9 @@ MultiplyExpression::differentiate( std::string const & varname ) const
 	if ( ! de1 && ! de2 ) {
 		return 0;
 	} else if ( de1 && de2 ) {
-		return new AddExpression( new MultiplyExpression( de1, e2() ), new MultiplyExpression( e1(), de2 ) );
+		ExpressionCOP a = new MultiplyExpression( de1, e2() );
+		ExpressionCOP b = new MultiplyExpression( e1(), de2 );
+		return new AddExpression( a, b );
 	} else if ( de1 ) {
 		return new MultiplyExpression( de1, e2() );
 	} else {
@@ -1785,8 +1787,8 @@ DivideExpression::differentiate( std::string const & varname ) const
 	if ( ! de1 && ! de2 ) {
 		return 0;
 	} else if ( de1 && de2 ) {
-		MultiplyExpressionOP num1 = new MultiplyExpression( de1(), e2() );
-		MultiplyExpressionOP num2 = new MultiplyExpression( de2(), e1() );
+		MultiplyExpressionOP num1 = new MultiplyExpression( de1, e2() );
+		MultiplyExpressionOP num2 = new MultiplyExpression( de2, e1() );
 		SubtractExpressionOP diff = new SubtractExpression( num1, num2 );
 		MultiplyExpressionOP sqr  = new MultiplyExpression( e2(), e2() );
 		return new DivideExpression( diff, sqr );
@@ -1794,7 +1796,8 @@ DivideExpression::differentiate( std::string const & varname ) const
 		return new DivideExpression( de1, e2() );
 	} else {
 		LiteralExpressionOP negone = new LiteralExpression( -1.0 );
-		MultiplyExpressionOP num   = new MultiplyExpression( negone, new MultiplyExpression( de2, e1() ));
+		MultiplyExpressionOP de2_e1 = new MultiplyExpression( de2, e1() );
+		MultiplyExpressionOP num   = new MultiplyExpression( negone, de2_e1 );
 		MultiplyExpressionOP sqr   = new MultiplyExpression( e2(), e2() );
 		return new DivideExpression( num, sqr );
 	}

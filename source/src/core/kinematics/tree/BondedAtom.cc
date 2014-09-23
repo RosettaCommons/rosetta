@@ -56,12 +56,12 @@ BondedAtom::dfs(
 	Atom_::dfs( changeset, res_change_list, start_atom_index );
 	if ( start_atom_index == dof_refold_index() ) {
 		if ( dof_change_propagates_to_younger_siblings_ ) {
-			assert( parent_ );
-			Atoms_Iterator iter = parent_->atoms_begin();
+			AtomOP parent( parent_ ); // must have parent
+			Atoms_Iterator iter = parent->atoms_begin();
 			/// you had better find yourself in your parent's atom list.
-			while ( (*iter)() != this ) { ++iter; assert( iter != parent_->atoms_end() );}
+			while ( (*iter).get() != this ) { ++iter; assert( iter != parent->atoms_end() );}
 			++iter; // point to your next-youngest sibling.
-			while ( iter != parent_->atoms_end() ) {
+			while ( iter != parent->atoms_end() ) {
 				(*iter)->dfs( changeset, res_change_list, start_atom_index );
 				++iter;
 			}
@@ -91,12 +91,12 @@ BondedAtom::update_xyz_coords()
 	BondedAtom::update_xyz_coords( stub );
 
 	if ( local_dof_change_propagates_to_younger_siblings ) {
-		assert( parent_ );
-		Atoms_Iterator iter = parent_->atoms_begin();
+		AtomOP parent( parent_ ); // must have parent
+		Atoms_Iterator iter = parent->atoms_begin();
 		/// you had better find yourself in your parent's atom list.
-		while ( (*iter)() != this ) { ++iter; assert( iter != Atom_::parent()->atoms_end() );}
+		while ( (*iter).get() != this ) { ++iter; assert( iter != parent->atoms_end() );}
 		++iter; // point to your next-youngest sibling.
-		while ( iter != parent_->atoms_end() ) {
+		while ( iter != parent->atoms_end() ) {
 			(*iter)->update_xyz_coords( stub );
 			++iter;
 		}
@@ -302,7 +302,6 @@ BondedAtom::clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const
 {
 
 	BondedAtomOP new_me = new BondedAtom( *this );
-	new_me->set_weak_ptr_to_self( new_me() );
 
 	atom_pointer[ id() ] = new_me; // handles memory management
 
@@ -322,7 +321,7 @@ BondedAtom::clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const
 	// copy atoms
 	for ( Atoms_ConstIterator a=atoms_begin(), a_end = atoms_end();
 				a != a_end; ++a ) {
-		new_me->append_atom( (*a)->clone( new_me() /*the new parent*/, atom_pointer ) );
+		new_me->append_atom( (*a)->clone( AtomAP(new_me) /*the new parent*/, atom_pointer ) );
 	}
 
 	return new_me;
@@ -429,15 +428,25 @@ BondedAtom::keep_dof_fixed(
 {
 	if ( type == D ) {
 		return false;
-	} else if ( type == THETA ) {
-		return ( parent()->is_jump() && id() == parent()->stub_atom2_id() );
+	}
+
+	if ( type == THETA ) {
+		AtomCOP parent( parent_ ); // must have parent
+		return ( parent->is_jump() && id() == parent->stub_atom2_id() );
 	} else if ( type == PHI ) {
-		return
-			( ( parent()->is_jump() &&
-				( id() == parent()->stub_atom2_id() ||
-					id() == parent()->stub_atom3_id() ) ) ||
-				( parent()->parent() && parent()->parent()->is_jump() &&
-					id() == parent()->parent()->stub_atom3_id() ) );
+		AtomCOP parent( parent_ ); // must have parent
+		if( ( parent->is_jump() &&
+				( id() == parent->stub_atom2_id() ||
+					id() == parent->stub_atom3_id() ) ) ) {
+				return true;
+		}
+
+		AtomCOP parent_parent = parent->parent();
+		if( parent_parent && parent_parent->is_jump() && id() == parent_parent->stub_atom3_id() ) {
+			return true;
+		}
+		return false;
+		
 	} else {
 		std::cout << "BondedAtom::keep_dof_fixed: BAD_TYPE: " <<type <<
 			std::endl;

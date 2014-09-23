@@ -332,7 +332,7 @@ PointMutationCalculator::mutate_and_relax(
 		pack = new protocols::simple_moves::PackRotamersMover( scorefxn(), mutate_residue );
 	}
 	pack->apply( pose );
-	if( rtmin() ){
+	if( rtmin ){
 		 // definition/allocation of RTmin mover must flag dependant, as some scoreterms are incompatable with RTmin initilization
 		if( core::pose::symmetry::is_symmetric( pose ) ) {
 			utility_exit_with_message("Cannot currently use PointMutationCalculator (GreedyOptMutation/ParetoOptMutation) with rtmin on a symmetric pose!");

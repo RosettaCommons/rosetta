@@ -81,7 +81,7 @@ InvrotTreeNode::initialize_from_enzcst_io(
 	//target residue has explicit ambiguity
 	//we have to put in an early catch for this somewhere..
 	if( all_invrots.size() == 0 ){
-		all_invrots =  enzcst_io->mcfi_list( invrot_geomcst)->inverse_rotamers_against_residue( enzcst_io->mcfi_list( invrot_geomcst )->mcfi( 1 )->downstream_res(), &target_residue );
+		all_invrots =  enzcst_io->mcfi_list( invrot_geomcst)->inverse_rotamers_against_residue( enzcst_io->mcfi_list( invrot_geomcst )->mcfi( 1 )->downstream_res(), target_residue.get_self_ptr() );
 
 		//2. do clash check against all parent residues
 		//if all get removed, this means this is a dead end
@@ -187,7 +187,7 @@ InvrotTreeNode::initialize_from_enzcst_io_and_invrots(
 		core::conformation::Residue const & this_target( **(pair_it->first.begin()) );
 		bool all_initialization_successful(true);
 		for( Size j = 1; j <= dependent_mcfi.size(); ++j ){
-			InvrotTreeNodeOP child = new InvrotTreeNode( this );
+			InvrotTreeNodeOP child = new InvrotTreeNode( get_self_weak_ptr() );
 			pair_it->second.push_back( child );
 			if( ! child->initialize_from_enzcst_io( this_target, enzcst_io, dependent_mcfi[j], pose ) ){
 				pair_it = invrots_and_next_nodes_.erase( pair_it ); //note: erasing from vector, not ideal, but the vectors should usually be fairly small and the initialization shenanigans are only called once
@@ -264,10 +264,10 @@ InvrotTreeNode::generate_constraints(
 core::id::AtomID
 InvrotTreeNode::get_fixed_pt( core::pose::Pose const & pose ) const
 {
-	InvrotTreeNodeBaseCAP parent(this->parent_node() );
+	InvrotTreeNodeBaseCOP parent(this->parent_node() );
 	if( !parent ) utility_exit_with_message("the impossible just happened");
 
-	utility::vector1< std::list< core::conformation::ResidueCOP > > parent_res( parent->all_target_residues( this ) );
+	utility::vector1< std::list< core::conformation::ResidueCOP > > parent_res( parent->all_target_residues( get_self_weak_ptr() ) );
   std::string target_name3( (*parent_res[1].begin())->name3() );
   core::Vector const & xyz_to_find( (*parent_res[1].begin())->nbr_atom_xyz() );
 
@@ -293,14 +293,14 @@ InvrotTreeNode::all_target_residues( InvrotTreeNodeBaseCAP child_node ) const
 	utility::vector1< std::list< core::conformation::ResidueCOP > > to_return;
 
 	//1. get the target residues of the parent node
-	InvrotTreeNodeBaseCAP parent(this->parent_node() );
-	if( parent ) to_return = parent->all_target_residues( this );
+	InvrotTreeNodeBaseCOP parent = this->parent_node().lock();
+	if( parent ) to_return = parent->all_target_residues( get_self_weak_ptr() );
 	//2. add the target residues from this node
 	//corresponding to the asking child node
 	bool child_found(false);
 	for( Size i =1; i <= invrots_and_next_nodes_.size(); ++i ){
 		for( Size j =1; j <= invrots_and_next_nodes_[i].second.size(); ++j ){
-			if( &(*child_node) == &(*(invrots_and_next_nodes_[i].second[j])) ){
+			if( utility::pointer::equal(child_node, invrots_and_next_nodes_[i].second[j]) ){
 				to_return.push_back( invrots_and_next_nodes_[i].first );
 				child_found = true;
 				break;
@@ -324,7 +324,7 @@ InvrotTreeNode::remove_invrots_clashing_with_parent_res(
 ) const
 {
 
-	InvrotTreeNodeBaseCAP parent(this->parent_node() );
+	InvrotTreeNodeBaseCOP parent = this->parent_node().lock();
 
 	//in case there's no parent, i.e. in the unit test
 	//or potential use of this outside the tree, there
@@ -332,7 +332,7 @@ InvrotTreeNode::remove_invrots_clashing_with_parent_res(
 	if( !parent ) return;
 
 	//1. get all parent rotamers
-	utility::vector1< std::list< core::conformation::ResidueCOP > > all_targets ( (*parent).all_target_residues( this ) );
+	utility::vector1< std::list< core::conformation::ResidueCOP > > all_targets ( parent->all_target_residues( get_self_weak_ptr() ) );
 
 	if( covalent ) all_targets.pop_back(); //covalent: we ignore the last list, since this represents the immediate parent residues
 
@@ -415,9 +415,9 @@ InvrotTreeNode::collect_all_inverse_rotamers(
 	for( Size i =1; i <= invrot_collectors.size(); ++i ){
 		std::map< InvrotTreeNodeBaseCOP, Size > const & collector_map( invrot_collectors[i]->owner_nodes_and_locations() );
 		//safety
-		if( collector_map.find( this ) != collector_map.end() ) utility_exit_with_message("InvrotTreeNode being asked to fill a collector that it apparently already previously filled.");
+		if( collector_map.find( get_self_ptr() ) != collector_map.end() ) utility_exit_with_message("InvrotTreeNode being asked to fill a collector that it apparently already previously filled.");
 
-		std::map< InvrotTreeNodeBaseCOP, Size >::const_iterator map_it( collector_map.find( &(*(this->parent_node())) ) );
+		std::map< InvrotTreeNodeBaseCOP, Size >::const_iterator map_it( collector_map.find( this->parent_node().lock() ) );
 
 		if( map_it != collector_map.end() ){
 			if( map_it->second == this->location_in_parent_node() ){
@@ -446,10 +446,10 @@ InvrotTreeNode::collect_all_inverse_rotamers(
 			invrot_collectors.push_back( invrot_collectors[ collectors_to_fill[i] ]->clone() );
 		}
 
-		invrot_collectors[ collectors_to_fill[ i ] ]->set_invrots_for_listnum( geom_cst_, invrots_and_next_nodes_[1].first, this, 1 );
+		invrot_collectors[ collectors_to_fill[ i ] ]->set_invrots_for_listnum( geom_cst_, invrots_and_next_nodes_[1].first, get_self_ptr(), 1 );
 
 		for( Size j =2; j <= invrots_and_next_nodes_.size(); ++j ){
-			invrot_collectors[ overflow_start + j - 1 ]->set_invrots_for_listnum( geom_cst_, invrots_and_next_nodes_[j].first, this, j );
+			invrot_collectors[ overflow_start + j - 1 ]->set_invrots_for_listnum( geom_cst_, invrots_and_next_nodes_[j].first, get_self_ptr(), j );
 		}
 	}
 

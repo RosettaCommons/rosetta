@@ -141,7 +141,7 @@ public:
 	/// creation.  When context graphs are requested that have not been created, they
 	/// must be created and their edges must be updated to represent the current conformation
 	/// of the pose.
-	void set_owner( pose::PoseAP owner );
+	void set_owner( pose::Pose * owner );
 
 	//////////////////////////
 	/// energy access
@@ -587,7 +587,7 @@ protected:
 	void
 	set_max_context_neighbor_cutoff( Real val ) const;
 
-	pose::PoseAP
+	pose::Pose *
 	owner() const;
 
 	/// @brief Read access for the domain map. There is only one
@@ -727,7 +727,9 @@ private:
 	/// In order to do lazy context-graph creation, the Energies object must be able to access
 	/// coordinates stored in the pose. This now means an Energies object cannot
 	/// live independently of a Pose!
-	pose::PoseAP owner_;
+	// Should eventually be PoseAP once Pose's c'tor is protected and an instantiator
+	// method is implemented (w/ copy via clone).
+	pose::Pose * owner_;
 
 	mutable EnergyGraphOP energy_graph_;
 

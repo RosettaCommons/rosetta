@@ -54,6 +54,7 @@ DihedralConstraintsScore::DihedralConstraintsScore(Size priority,
 	AtomBasedConstraintsScore(priority, lowest_acceptable_value, use_lowest, query_size,
 			constrainable_atoms, "DihedralConstraintsScore") {
 
+	using core::scoring::func::FuncOP;
 	factory_.add_type("PERIODIC", new core::scoring::func::PeriodicFunc(
 			0, 0, 0, 0));
 
@@ -67,6 +68,7 @@ DihedralConstraintsScore::DihedralConstraintsScore(Size priority,
 	AtomBasedConstraintsScore(priority, lowest_acceptable_value, use_lowest, query_size,
 			"DihedralConstraintsScore") {
 
+	using core::scoring::func::FuncOP;
 	factory_.add_type("PERIODIC", new core::scoring::func::PeriodicFunc(
 			0, 0, 0, 0));
 

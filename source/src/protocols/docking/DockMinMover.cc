@@ -57,9 +57,9 @@ DockMinMover::DockMinMover(
 ) : DockingHighRes(movable_jumps, scorefxn, scorefxn) {
 	//need to set this up with default values;
 	set_default();
-	mc_= new MonteCarlo( *scorefxn(), 0.8 );
+	mc_= new MonteCarlo( *scorefxn, 0.8 );
 	protocols::simple_moves::MinMoverOP min_mover =new protocols::simple_moves::MinMover
-				( movemap_, scorefxn(), min_type_, min_tolerance_, nb_list_ );
+				( movemap_, scorefxn, min_type_, min_tolerance_, nb_list_ );
 	minimize_trial_ = new TrialMover( min_mover, mc_ );
 }
 
@@ -75,7 +75,7 @@ DockMinMover::DockMinMover(
 	set_default();
 	mc_=mc;
 	protocols::simple_moves::MinMoverOP min_mover =new protocols::simple_moves::MinMover
-			    ( movemap_, scorefxn(), min_type_, min_tolerance_, nb_list_ );
+			    ( movemap_, scorefxn, min_type_, min_tolerance_, nb_list_ );
 	minimize_trial_ = new TrialMover( min_mover, mc_ );
 }
 
@@ -98,7 +98,7 @@ DockMinMover::DockMinMover(
 	nb_list_=nb_list;
 	mc_=mc;
 	protocols::simple_moves::MinMoverOP min_mover =new protocols::simple_moves::MinMover
-				( movemap_, scorefxn(), min_type_, min_tolerance_, nb_list_ );
+				( movemap_, scorefxn, min_type_, min_tolerance_, nb_list_ );
 	minimize_trial_ = new TrialMover( min_mover, mc_ );
 }
 

@@ -98,8 +98,8 @@ void run() {
   using namespace basic::options::OptionKeys;
   using namespace core::id;
 
-  core::chemical::ResidueTypeSetCAP cen_residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );
-  core::chemical::ResidueTypeSetCAP  fa_residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+  core::chemical::ResidueTypeSetCOP cen_residue_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID ) );
+  core::chemical::ResidueTypeSetCOP  fa_residue_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
   //Real tmpdis = option[willmatch::max_dis_metal]();  // unused ~Labonte
   // Real const MXDSMTL = tmpdis*tmpdis;
   // Real const MXAGMTL = option[willmatch::max_ang_metal]();
@@ -215,7 +215,7 @@ void run() {
     Real cgcg_thresh2 = 9.9*9.9;
     Real cgcd_thresh2 = 8.5*8.5;
     Real cdcd_thresh2 = 7.0*7.0;
-    core::pack::dunbrack::SingleResidueRotamerLibraryCAP rlib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( rtarg );
+    core::pack::dunbrack::SingleResidueRotamerLibraryCOP rlib( core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( rtarg ) );
     core::pack::dunbrack::RotamerLibraryScratchSpace scratch;
     Size dhit=0,ehit=0;
     for(vector1<Size>::const_iterator rit = scanres.begin(); rit != scanres.end(); ++rit) {

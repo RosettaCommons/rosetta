@@ -128,16 +128,16 @@ utility::vector1< ResidueTypeOP > convert_to_ResidueType( utility::vector1< MolF
 			std::string atom_type_tag,
 			std::string elements_tag,
 			std::string mm_atom_type_tag) {
-	AtomTypeSetCAP atom_types = ChemicalManager::get_instance()->atom_type_set( atom_type_tag );
-	ElementSetCAP elements = ChemicalManager::get_instance()->element_set( elements_tag );
-	MMAtomTypeSetCAP mm_atom_types = ChemicalManager::get_instance()->mm_atom_type_set( mm_atom_type_tag );
+	AtomTypeSetCOP atom_types( ChemicalManager::get_instance()->atom_type_set( atom_type_tag ) );
+	ElementSetCOP elements( ChemicalManager::get_instance()->element_set( elements_tag ) );
+	MMAtomTypeSetCOP mm_atom_types( ChemicalManager::get_instance()->mm_atom_type_set( mm_atom_type_tag ) );
 	return convert_to_ResidueType(molfile_data, atom_types, elements, mm_atom_types);
 }
 
 utility::vector1< ResidueTypeOP > convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > molfile_data,
-			AtomTypeSetCAP atom_types,
-			ElementSetCAP element_type_set,
-			MMAtomTypeSetCAP mm_atom_types) {
+			AtomTypeSetCOP atom_types,
+			ElementSetCOP element_type_set,
+			MMAtomTypeSetCOP mm_atom_types) {
 	utility::vector1< ResidueTypeOP > restypes;
 	utility::vector1< MolFileIOMoleculeOP >::iterator iter, end;
 	for( iter = molfile_data.begin(), end = molfile_data.end(); iter != end; ++iter ) {

@@ -88,7 +88,7 @@ ResidualDipolarCouplingEnergyCreator::score_types_for_method() const {
 //@brief
 //////////////////////////////////////////////////////
 ResidualDipolarCouplingEnergy::ResidualDipolarCouplingEnergy() :
-	parent( new ResidualDipolarCouplingEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new ResidualDipolarCouplingEnergyCreator ) )
 {}
 
 

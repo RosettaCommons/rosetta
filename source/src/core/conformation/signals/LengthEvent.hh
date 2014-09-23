@@ -139,7 +139,7 @@ struct LengthEvent : public GeneralEvent {
 	///  update/re-sync inside Pose, which may have consequences if you're depending
 	///  upon multiple residue operations to be setup (such as bond angle/length
 	///  changes) prior to an internal update.
-	ResidueCAP residue;
+	Residue const * residue;
 
 
 };

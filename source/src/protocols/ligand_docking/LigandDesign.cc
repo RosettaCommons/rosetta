@@ -91,7 +91,7 @@ LigandDesign::set_fragments(){
 	core::chemical::ResidueSelector rs;
 	rs.set_property("FRAGMENT");
 	core::chemical::ChemicalManager *cm= core::chemical::ChemicalManager::get_instance();
-	core::chemical::ResidueTypeSetCAP rsd_set= cm->residue_type_set( core::chemical::FA_STANDARD );
+	core::chemical::ResidueTypeSetCOP rsd_set= cm->residue_type_set( core::chemical::FA_STANDARD );
 	core::chemical::ResidueTypeCOPs fragment_types= rs.select( *rsd_set );
 	ligand_design_tracer<< fragment_types.size()<< " fragment_types"<< std::endl;
 
@@ -233,7 +233,7 @@ void LigandDesign::fragments_to_string() const{
 		core::conformation::Residue const & res= *fragment;
 		std::string name= res.name();
 		core::Size total= res.n_residue_connections();
-		core::Size incomplete= get_incomplete_connections(&res).size();
+		core::Size incomplete= get_incomplete_connections(res.get_self_ptr()).size();
 		ligand_design_tracer<< "name, total, incomplete"<< name<< " "<< total<<" "<< incomplete<< std::endl;
 	}
 }

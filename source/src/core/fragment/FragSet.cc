@@ -104,7 +104,7 @@ void FragSet::insert_fragID_list( FragID_List& list ) {
 			for ( FragID_List::iterator sit=it; sit!=eit; ++sit, spos++ ) {
 				if ( sit->frame_ptr() == it->frame_ptr() ) {
 					handled[ spos ] = true;
-					new_frame->add_fragment( &( sit->fragment() ) );
+					new_frame->add_fragment( sit->fragment().get_self_ptr() );
 					new_frame->clone_cache_data( it->frame(), it->id(), new_frame->nr_frags() /* last added fragment */ );
 				};
 			}
@@ -144,7 +144,7 @@ void FragSet::add( FragID const& frag_id ) {
 		for ( FrameList::iterator it = present_frames.begin(),
 						eit = present_frames.end(); it!=eit; ++it ) {
 			if ( (*it)->is_mergeable( aFrame ) ) {
-				Size const new_id( (*it)->add_fragment( const_cast< FragData*>( frag_id.fragment_ptr().get() ) ) );
+				Size const new_id( (*it)->add_fragment( utility::pointer::const_pointer_cast< FragData >( frag_id.fragment_ptr() ) ) );
 				(*it)->clone_cache_data( aFrame, frag_id.id(), new_id );
 				return; //finished early
 			}
@@ -153,7 +153,7 @@ void FragSet::add( FragID const& frag_id ) {
 	//didn't found mergable frames at this sequence position
 	// make a new empty frame for this Fragment
 	FrameOP new_frame = aFrame.clone();
-	Size const new_id( new_frame->add_fragment( const_cast< FragData*>( frag_id.fragment_ptr().get() ) ) );
+	Size const new_id( new_frame->add_fragment( utility::pointer::const_pointer_cast< FragData >( frag_id.fragment_ptr() ) ) );
 	new_frame->clone_cache_data( aFrame, frag_id.id(), new_id );
 	add_( new_frame );
 }

@@ -35,7 +35,7 @@ class NVlookupTests : public CxxTest::TestSuite {
 
 public:
 
-	NVlookupCOP nv_lookup;
+	NVlookup const * nv_lookup;
 
 	// --------------- Fixtures --------------- //
 

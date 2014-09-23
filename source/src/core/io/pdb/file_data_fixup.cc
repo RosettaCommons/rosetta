@@ -466,7 +466,7 @@ get_closest_sister(  Vector const & xyz_sister1,
 /// @details Pass-by-value is deliberate, as we want to strip the elements of whitespace
 core::Real
 bonding_distance_threshold( std::string element1, std::string element2 ) {
-	core::chemical::ElementSetCAP element_types = core::chemical::ChemicalManager::get_instance()->element_set("default");
+	core::chemical::ElementSetCOP element_types = core::chemical::ChemicalManager::get_instance()->element_set("default");
 
 	utility::strip_whitespace( element1 );
 	utility::strip_whitespace( element2 );

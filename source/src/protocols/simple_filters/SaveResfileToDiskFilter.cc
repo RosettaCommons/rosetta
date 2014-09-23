@@ -127,7 +127,7 @@ utility::vector1< core::Size > SaveResfileToDiskFilter::select_residues( Pose co
 	utility::vector1< core::Size > selected_residues;
 
 	// Prepare the PackerTask
-	runtime_assert( task_factory() );
+	runtime_assert( task_factory() != 0 );
   core::pack::task::PackerTaskCOP task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 
 	// Find out which residues are packable or designable

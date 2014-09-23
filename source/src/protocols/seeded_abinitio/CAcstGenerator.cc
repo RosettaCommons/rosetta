@@ -203,7 +203,7 @@ void add_dist_constraints(
 									core::conformation::Residue res_in_pose = pose.residue( pos + start_relevant_chain - 1 );
 									core::conformation::Residue res_in_pose2= pose.residue( pos_2 + start_relevant_chain - 1);
 
-									cst->add_constraint( new AtomPairConstraint ( AtomID(res_in_pose.atom_index("CA"), pos + start_relevant_chain - 1), AtomID(res_in_pose2.atom_index("CA"),pos_2 + start_relevant_chain - 1), new core::scoring::func::HarmonicFunc( distance_ca, stddev ) ) );
+									cst->add_constraint( new AtomPairConstraint ( AtomID(res_in_pose.atom_index("CA"), pos + start_relevant_chain - 1), AtomID(res_in_pose2.atom_index("CA"),pos_2 + start_relevant_chain - 1), core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( distance_ca, stddev ) ) ) );
 								}
 								}
 						}
@@ -234,11 +234,11 @@ CAcstGenerator::apply( pose::Pose & pose ){
 	if( from_chain_ == 0 ){
 		TR<<"user did not specify for which chain constraints should be derrived, defaulting to all chains"<<std::endl;
 		if( template_presence_ ){
-			donor_poseOP = *template_pdb_ ;
+			donor_poseOP = template_pdb_;
 			TR<<"derriving CA distance constraints from the template pdb, since a template was given"<<std::endl;
 		}
 		else
-			donor_poseOP = pose;
+			donor_poseOP = pose.get_self_ptr();
 	}
 
 	//statements to prevent bogus from happening

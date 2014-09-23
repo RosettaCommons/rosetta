@@ -264,7 +264,7 @@ build_proton_chi_rotamers(
 		pack::task::ResidueLevelTask const & residue_task,
 		utility::vector1< conformation::ResidueOP > & rotamers )
 {
-
+	using namespace conformation;
 	Size const n_proton_chi = concrete_residue->n_proton_chi();
 	bool const & include_virtual_side_chain = residue_task.include_virtual_side_chain(); /* this means 2'-OH for RNA*/
 
@@ -275,7 +275,7 @@ build_proton_chi_rotamers(
 
 		for ( Size ii = 1; ii <= n_proton_chi; ++ii ) {
 			pack::dunbrack::expand_proton_chi( residue_task.extrachi_sample_level( true /*nneighb test*/,
-					concrete_residue->proton_chi_2_chi( ii ), concrete_residue ),
+					concrete_residue->proton_chi_2_chi( ii ), *concrete_residue ),
 					concrete_residue, ii, proton_chi_chisets);
 		}
 
@@ -410,7 +410,7 @@ build_rna_rotamers(
 	using namespace conformation;
 
 	pack::task::ExtraRotSample const level
-		( task.residue_task( resid ).extrachi_sample_level( true /*buried*/, 1 /*chi*/, concrete_residue ) );
+		( task.residue_task( resid ).extrachi_sample_level( true /*buried*/, 1 /*chi*/, *concrete_residue ) );
 
 	//////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////

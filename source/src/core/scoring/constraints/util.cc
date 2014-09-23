@@ -381,8 +381,8 @@ add_coordinate_constraints( pose::Pose & pose, Real const coord_sdev /* = 10.0 *
 		}
 		for ( Size ii = 1; ii <= last_atom; ++ii ) {
 
-			cst_set->add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii),
-																												 new func::HarmonicFunc( 0.0, coord_sdev ) ) );
+			func::FuncOP f( new func::HarmonicFunc( 0.0, coord_sdev ) );
+			cst_set->add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii), f ) );
 		}
 	}
 
@@ -410,8 +410,8 @@ add_coordinate_constraints( pose::Pose & pose, core::Size const start_res, core:
 		}
 		for ( Size ii = 1; ii<= last_atom; ++ii ) {
 
-			cst_set->add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii),
-																												 new func::HarmonicFunc( 0.0, coord_sdev ) ) );
+			func::FuncOP f( new func::HarmonicFunc( 0.0, coord_sdev ) );
+			cst_set->add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii), f ) );
 		}
 	}
 
@@ -622,7 +622,7 @@ void skip_redundant_constraints( ConstraintCOPs& in, Size total_residue, Size in
 
 	for (	utility::vector1< ConstraintCOP >::const_iterator it = in.begin(); it != in.end(); ++it ) {
 		AmbiguousNMRConstraintCOP cst_in_casted;
-		cst_in_casted = dynamic_cast< AmbiguousNMRConstraint const* >( (*it).get() );
+		cst_in_casted = utility::pointer::dynamic_pointer_cast< AmbiguousNMRConstraint const >( *it );
 		if ( cst_in_casted ) {
 			tr.Debug << "casted to AmbiguousNMRConstraint: " << std::endl;
 			for (	utility::vector1< ConstraintCOP >::const_iterator multi_it = cst_in_casted->member_constraints().begin(); multi_it != cst_in_casted->member_constraints().end(); ++multi_it ) {
@@ -644,7 +644,7 @@ void skip_redundant_constraints( ConstraintCOPs& in, Size total_residue, Size in
 	for (	utility::vector1< ConstraintCOP >::const_iterator it = in.begin(); it != in.end(); ++it ) {
 
 		AmbiguousNMRConstraintCOP cst_in_casted;
-		cst_in_casted = dynamic_cast< AmbiguousNMRConstraint const* >( (*it).get() );
+		cst_in_casted = utility::pointer::dynamic_pointer_cast< AmbiguousNMRConstraint const >( *it );
 		bool keep( false );
 		if ( cst_in_casted ) {
 			for (	utility::vector1< ConstraintCOP >::const_iterator multi_it = cst_in_casted->member_constraints().begin(); multi_it != cst_in_casted->member_constraints().end(); ++multi_it ) {

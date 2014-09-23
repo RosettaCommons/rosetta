@@ -134,9 +134,9 @@ lzs(
 		}
 
 
-KRSQuery::KRSQuery(KRSQueryType typ                                                   ) : type(typ),cen(0,0,0),axs(1,0,0),ori(0,1,0),disth(0.5),angth(0.0175),clash( 2.8) {}
+KRSQuery::KRSQuery(KRSQueryType typ                                                   ) : type(typ),cen(0.0,0.0,0.0),axs(1,0,0),ori(0.0,1.0,0.0),disth(0.5),angth(0.0175),clash( 2.8) {}
 KRSQuery::KRSQuery(KRSQueryType typ, Vec c, Vec a, Vec o, Real dt, Real at, Real clsh ) : type(typ),cen(  c  ),axs(  a  ),ori(  o  ),disth( dt),angth(  at  ),clash(clsh) {}
-KRSQuery::KRSQuery(KRSQueryType typ, Vec c, Vec a,        Real dt, Real at, Real clsh ) : type(typ),cen(  c  ),axs(  a  ),ori(0,0,0),disth( dt),angth(  at  ),clash(clsh) {}
+KRSQuery::KRSQuery(KRSQueryType typ, Vec c, Vec a,        Real dt, Real at, Real clsh ) : type(typ),cen(  c  ),axs(  a  ),ori(0.0,0.0,0.0),disth( dt),angth(  at  ),clash(clsh) {}
 
 
 FunGroupTK::FunGroupTK(
@@ -147,6 +147,7 @@ FunGroupTK::FunGroupTK(
 {
 		ifc_ = new ImplicitFastClashCheck(*pose_,2.2);
 		frs_ = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
+		core::chemical::ResidueTypeSetCOP frs( frs_ );
 		vector1<string> res_types;
 		res_types.push_back("ASP");
 		res_types.push_back("CYS");
@@ -154,7 +155,7 @@ FunGroupTK::FunGroupTK(
 		for(vector1<string>::const_iterator it = res_types.begin(); it != res_types.end(); ++it) {
 				rsd_[*it].resize(pose_->n_residue());
 				for(vector1<Size>::const_iterator i=pos_.begin(); i!=pos_.end(); ++i) {
-						ResidueOP rsd = core::conformation::ResidueFactory::create_residue(frs_->name_map(*it),pose_->residue(*i),pose_->conformation());
+						ResidueOP rsd = core::conformation::ResidueFactory::create_residue(frs->name_map(*it),pose_->residue(*i),pose_->conformation());
 						stb_[*it].push_back(Stub(rsd->xyz(5),rsd->xyz(2),rsd->xyz(1)));
 						rsd_[*it][*i] = rsd;
 				}

@@ -22,10 +22,9 @@ void read_fragdata( core::fragment::FragDataCOPs & fds, std::istream & in ) {
 	while( in >> n ) {
 	 	std::string pdb;
 		char buf[999];
-		FragDataOP fd = new FragData;
+		FragDataOP fd( new FragData );
 		for( core::Size i = 1; i <= n; ++i ) {
-			utility::pointer::owning_ptr<SingleResidueFragData> srfd;
-			srfd = new BBTorsionSRFD;
+			SingleResidueFragDataOP srfd( new BBTorsionSRFD );
 			in >> pdb;
 			in.getline(buf,999);
 			std::istringstream iss(buf);

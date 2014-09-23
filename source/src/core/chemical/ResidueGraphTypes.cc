@@ -54,21 +54,24 @@ namespace chemical {
 
 
         bool HeavyAtomFilter::operator()(VD const vd) const{
-            return (*atom_types_)[ (*graph_)[vd].atom_type_index() ].is_heavyatom();
+            AtomTypeSetCOP atom_types( atom_types_ );
+            return (*atom_types)[ (*graph_)[vd].atom_type_index() ].is_heavyatom();
         }
 
         bool AcceptorAtomFilter::operator()(VD const vd) const{
-            return (*atom_types_)[ (*graph_)[vd].atom_type_index() ].is_acceptor();
+            AtomTypeSetCOP atom_types( atom_types_ );
+            return (*atom_types)[ (*graph_)[vd].atom_type_index() ].is_acceptor();
         }
 
         bool HeavyAtomWithPolarHydrogensFilter::operator()(VD const vd) const{
 
+            AtomTypeSetCOP atom_types( atom_types_ );
             for(OutEdgeIterPair ep = boost::out_edges(vd, *graph_); ep.first != ep.second; ++ep.first){
             	OutEdgeIter e_iter= ep.first;
             	ED ed = *e_iter;
             	VD target = boost::target(ed, *graph_);
                 Atom const& a =  (*graph_)[target];
-                AtomType const& at = (*atom_types_)[ a.atom_type_index() ];
+                AtomType const& at = (*atom_types)[ a.atom_type_index() ];
                 if( at.is_polar_hydrogen() ) return true;
             }
             return false;
@@ -76,12 +79,13 @@ namespace chemical {
 
         bool HeavyAtomWithHydrogensFilter::operator()(VD const vd) const{
 
+            AtomTypeSetCOP atom_types( atom_types_ );
             for(OutEdgeIterPair ep = boost::out_edges(vd, *graph_); ep.first != ep.second; ++ep.first){
             	OutEdgeIter e_iter= ep.first;
                 ED ed = *e_iter;
                 VD target = boost::target(ed, *graph_);
                 Atom const& a =  (*graph_)[target];
-                AtomType const& at = (*atom_types_)[ a.atom_type_index() ];
+                AtomType const& at = (*atom_types)[ a.atom_type_index() ];
                 if( at.is_hydrogen() ) return true;
             }
             return false;
@@ -89,18 +93,22 @@ namespace chemical {
 
 
         bool HydrogenAtomFilter::operator()(VD const vd) const{
-            return (*atom_types_)[ (*graph_)[vd].atom_type_index() ].is_hydrogen();
+            AtomTypeSetCOP atom_types( atom_types_ );
+            return (*atom_types)[ (*graph_)[vd].atom_type_index() ].is_hydrogen();
         }
 
         bool AromaticAtomFilter::operator()(VD const vd) const{
-            return (*atom_types_)[ (*graph_)[vd].atom_type_index() ].is_aromatic();
+            AtomTypeSetCOP atom_types( atom_types_ );
+            return (*atom_types)[ (*graph_)[vd].atom_type_index() ].is_aromatic();
         }
         bool PolarHydrogenFilter::operator()(VD const vd) const{
-            return (*atom_types_)[ (*graph_)[vd].atom_type_index() ].is_polar_hydrogen();
+            AtomTypeSetCOP atom_types( atom_types_ );
+            return (*atom_types)[ (*graph_)[vd].atom_type_index() ].is_polar_hydrogen();
         }
 
         bool APolarHydrogenFilter::operator()(VD const vd) const{
-            return  (*atom_types_)[ (*graph_)[vd].atom_type_index() ].is_hydrogen() && !(*atom_types_)[ (*graph_)[vd].atom_type_index() ].is_polar_hydrogen();
+            AtomTypeSetCOP atom_types( atom_types_ );
+            return  (*atom_types)[ (*graph_)[vd].atom_type_index() ].is_hydrogen() && !(*atom_types)[ (*graph_)[vd].atom_type_index() ].is_polar_hydrogen();
         }
 
 }

@@ -75,7 +75,7 @@ CoarseEtableEnergy::CoarseEtableEnergy(
 	coarse::CoarseEtableCAP coarse_etable_in
 ) :
  	BaseEtableEnergy< CoarseEtableEnergy >(
-		new CoarseEtableEnergyCreator,
+		methods::EnergyMethodCreatorOP( new CoarseEtableEnergyCreator ),
 		etable_in, options,
 		coarse_fa_atr, coarse_fa_rep, coarse_fa_sol ),
 	coarse_etable_( coarse_etable_in )

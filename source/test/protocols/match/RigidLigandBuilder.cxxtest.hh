@@ -312,7 +312,7 @@ class RigidLigandBuilderTests : public CxxTest::TestSuite {
 		rigid_builder->set_bb_grid( bb_grid );
 
 		SingleDownstreamResidueWriterOP downstream_writer = new SingleDownstreamResidueWriter;
-		downstream_writer->set_restype( & (carbaryl_pose.residue(1).type()) );
+		downstream_writer->set_restype( carbaryl_pose.residue(1).type().get_self_ptr() );
 		downstream_writer->set_downstream_builder( rigid_builder );
 		downstream_writer->set_downstream_master( "carbaryl" );
 
@@ -417,7 +417,7 @@ class RigidLigandBuilderTests : public CxxTest::TestSuite {
 		rigid_builder->set_bb_grid( bb_grid );
 
 		SingleDownstreamResidueWriterOP downstream_writer = new SingleDownstreamResidueWriter;
-		downstream_writer->set_restype( & (mbh_pose.residue(1).type()) );
+		downstream_writer->set_restype( mbh_pose.residue(1).type().get_self_ptr() );
 		downstream_writer->set_downstream_builder( rigid_builder );
 		downstream_writer->set_downstream_master( "MBH" );
 

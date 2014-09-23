@@ -556,7 +556,7 @@ namespace align {
 	StepWisePoseAligner::get_root_triad_atom_id_map( pose::Pose const & pose ) const {
 		Size const root_res = pose.fold_tree().root();
 		Size const root_atomno = get_root_residue_root_atomno( pose.residue( root_res ), pose.fold_tree() );
-		core::kinematics::tree::AtomCOP root_atom ( & pose.atom_tree().atom_dont_do_update( id::AtomID( root_atomno, root_res ) ) );
+		core::kinematics::tree::AtomCOP root_atom ( pose.atom_tree().atom_dont_do_update( id::AtomID( root_atomno, root_res ) ).get_self_ptr() );
 		utility::vector1< core::kinematics::tree::AtomCOP > stub_atoms =
 			make_vector1( root_atom->stub_atom1(),
 										root_atom->stub_atom2(),

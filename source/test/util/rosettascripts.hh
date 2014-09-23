@@ -82,13 +82,13 @@ inline TagCOP tagptr_from_string(std::string input) {
 
 ///@brief setup filters map with some of the the RosettaScript defaults
 inline void prime_Filters( Filters_map & filters ) {
-	filters["true_filter"] = new protocols::filters::TrueFilter;
-	filters["false_filter"] = new protocols::filters::FalseFilter;
+	filters["true_filter"] = protocols::filters::FilterOP( new protocols::filters::TrueFilter );
+	filters["false_filter"] = protocols::filters::FilterOP( new protocols::filters::FalseFilter );
 }
 
 ///@brief setup movers map with some of the the RosettaScript defaults
 inline void prime_Movers( Movers_map & movers ) {
-	movers["null"] = new protocols::moves::NullMover;
+	movers["null"] = protocols::moves::MoverOP( new protocols::moves::NullMover );
 }
 
 ///@brief setup data map with *some* of the the RosettaScript defaults

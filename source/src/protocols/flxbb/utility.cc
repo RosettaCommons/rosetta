@@ -85,7 +85,7 @@ constraints_sheet( Pose const & pose, BluePrintOP const & blueprint, Real const 
 	Real ub( condist );
 	Real sd( 1.0 );
 	String tag( "constraints_in_beta_sheet" );
-	ScalarWeightedFuncOP cstfunc = new ScalarWeightedFunc( coef, new BoundFunc( lb, ub, sd, tag ) );
+	ScalarWeightedFuncOP cstfunc = new ScalarWeightedFunc( coef, core::scoring::func::FuncOP( new BoundFunc( lb, ub, sd, tag ) ) );
 
 	//flo sep '12 add more accurate constraints by also constraining proper angles along paired residues
 	core::scoring::func::FuncOP cacb_dihedral_func = new core::scoring::constraints::OffsetPeriodicBoundFunc(-0.9,0.9, sqrt(1.0/42.0), "dihed_cacb", 6.28, 0.0 );
@@ -168,7 +168,7 @@ constraints_NtoC( Pose const & pose, Real const coef, Real const condist )
 	Real ub( condist );
 	Real sd( 1.0 );
 	String tag( "constraint_between_N_&_C_terminal_Calpha" );
-	ScalarWeightedFuncOP cstfunc = new ScalarWeightedFunc( coef, new BoundFunc( lb, ub, sd, tag ) );
+	ScalarWeightedFuncOP cstfunc = new ScalarWeightedFunc( coef, core::scoring::func::FuncOP( new BoundFunc( lb, ub, sd, tag ) ) );
 
   Size nres( pose.total_residue() );
 	core::id::AtomID atom1( pose.residue_type( 1 ).atom_index( "CA" ), 1 );
@@ -200,7 +200,7 @@ constraints_sheet( Pose const & pose, Real const coef, Real const condist )
 	Real ub( condist );
 	Real sd( 1.0 );
 	std::string tag( "constraints_in_beta_sheet" );
-	ScalarWeightedFuncOP cstfunc = new ScalarWeightedFunc( coef, new BoundFunc( lb, ub, sd, tag ) );
+	ScalarWeightedFuncOP cstfunc = new ScalarWeightedFunc( coef, core::scoring::func::FuncOP( new BoundFunc( lb, ub, sd, tag ) ) );
 
 	// set secondary structure
 	Dssp dssp( pose );

@@ -59,7 +59,7 @@ FreeResidueBonusEnergyCreator::score_types_for_method() const {
 	
 /// c-tor
 FreeResidueBonusEnergy::FreeResidueBonusEnergy() :
-	parent( new FreeResidueBonusEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new FreeResidueBonusEnergyCreator ) )
 {
 }
 

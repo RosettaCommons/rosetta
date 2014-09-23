@@ -135,7 +135,7 @@ VallResidue & VallResidue::operator =(VallResidue const & rval) {
 
 /// @brief build a BBTorsionSRFD from this page
 VallResidue::BBTorsionSRFDOP VallResidue::bbtorsion_srfd() const {
-	BBTorsionSRFD * srfd = new BBTorsionSRFD();
+	BBTorsionSRFDOP srfd = new BBTorsionSRFD();
 
 	srfd->set_sequence(aa_);
 	srfd->set_secstruct(ss_);

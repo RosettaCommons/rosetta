@@ -18,9 +18,8 @@ namespace perturbers {
 
 class IdealizeNonPhiPsi;
 
-using utility::pointer::owning_ptr;
-typedef owning_ptr<IdealizeNonPhiPsi> IdealizeNonPhiPsiOP;
-typedef owning_ptr<IdealizeNonPhiPsi const> IdealizeNonPhiPsiCOP;
+typedef utility::pointer::owning_ptr<IdealizeNonPhiPsi> IdealizeNonPhiPsiOP;
+typedef utility::pointer::owning_ptr<IdealizeNonPhiPsi const> IdealizeNonPhiPsiCOP;
 
 }
 }

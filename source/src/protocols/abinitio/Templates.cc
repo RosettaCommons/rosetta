@@ -450,7 +450,7 @@ TemplateJumpSetupOP Templates::create_jump_def( core::fragment::SecondaryStructu
 		using namespace fragment;
 		tr.Info << "TemplateJumpSetup will be initialized with secondary structure from homologs " << std::endl;
 		ConstantLengthFragSet fragset;
-		pick_frags( fragset, new FragData( new SecstructSRFD, 1 ) ); //for ss-structure 1mers are enough
+		pick_frags( fragset, new FragData( SingleResidueFragDataOP( new SecstructSRFD ), 1 ) ); //for ss-structure 1mers are enough
 		ss_def = new core::fragment::SecondaryStructure( fragset, target_total_residue() );
 	}
 // 	utility::io::ozstream dump("ss_def_for_jumps");
@@ -459,7 +459,7 @@ TemplateJumpSetupOP Templates::create_jump_def( core::fragment::SecondaryStructu
 // 	}
 	core::scoring::dssp::PairingsList helix_pairings;
 	if ( option[ templates::helix_pairings ].user() ) read_pairings( option[ templates::helix_pairings ], helix_pairings );
-	return new TemplateJumpSetup( this, ss_def, strand_stats_, helix_pairings );
+	return new TemplateJumpSetup( get_self_ptr(), ss_def, strand_stats_, helix_pairings );
 }
 
 

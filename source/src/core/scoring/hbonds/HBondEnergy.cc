@@ -231,7 +231,7 @@ HBondEnergyCreator::score_types_for_method() const {
 
 /// ctor
 HBondEnergy::HBondEnergy( HBondOptions const & opts ):
-	parent( new HBondEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( methods::EnergyMethodCreatorOP( new HBondEnergyCreator ) ) ),
 	options_( new HBondOptions( opts )),
 	database_( HBondDatabase::get_database(opts.params_database_tag()) )
 {}
@@ -264,7 +264,7 @@ HBondEnergy::setup_for_packing(
 	using EnergiesCacheableDataType::HBOND_TRIE_COLLECTION;
 
 	pose.update_residue_neighbors();
-	hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( options_ ) );
+	hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( *options_ ) );
 
 	// membrane object initialization
 	if (options_->Mbhbond()) {
@@ -553,7 +553,7 @@ HBondEnergy::residue_pair_energy_ext(
 	if ( rsd1.xyz( rsd1.nbr_atom() ).distance_squared( rsd2.xyz( rsd2.nbr_atom() ) )
 		> std::pow( rsd1.nbr_radius() + rsd2.nbr_radius() + atomic_interaction_cutoff(), 2 ) ) return;
 
-	assert( dynamic_cast< HBondResPairMinData const * > ( pairdata.get_data( hbond_respair_data )() ));
+	assert( utility::pointer::dynamic_pointer_cast< HBondResPairMinData const > ( pairdata.get_data( hbond_respair_data ) ));
 	HBondResPairMinData const & hb_pair_dat( static_cast< HBondResPairMinData const & > ( pairdata.get_data_ref( hbond_respair_data ) ));
 
 	// membrane dependent hbond potential hack
@@ -691,11 +691,11 @@ HBondEnergy::setup_for_minimizing_for_residue_pair(
 	if ( data_cache.get_data( hbond_respair_data ) ) {
 		// assume that hbpairdat has already been pointed at its two residues, and that it may need to update
 		// its size based on a change to the number of atoms from a previous initialization.
-		assert( dynamic_cast< HBondResPairMinData * > ( data_cache.get_data( hbond_respair_data )() ));
+		assert( utility::pointer::dynamic_pointer_cast< HBondResPairMinData > ( data_cache.get_data( hbond_respair_data ) ));
 		hbpairdat = static_cast< HBondResPairMinData * > ( data_cache.get_data( hbond_respair_data )() );
 	} else {
-		assert( dynamic_cast< HBondResidueMinData const * > ( res1_data_cache.get_data( hbond_res_data )() ));
-		assert( dynamic_cast< HBondResidueMinData const * > ( res2_data_cache.get_data( hbond_res_data )() ));
+		assert( utility::pointer::dynamic_pointer_cast< HBondResidueMinData const > ( res1_data_cache.get_data( hbond_res_data ) ));
+		assert( utility::pointer::dynamic_pointer_cast< HBondResidueMinData const > ( res2_data_cache.get_data( hbond_res_data ) ));
 
 		hbpairdat = new HBondResPairMinData;
 		hbpairdat->set_res1_data( static_cast< HBondResidueMinData const * > ( res1_data_cache.get_data( hbond_res_data )() ));
@@ -963,7 +963,7 @@ HBondEnergy::eval_residue_pair_derivatives(
 
 	HBondSet const & hbondset = static_cast< HBondSet const & > (pose.energies().data().get( HBOND_SET ));
 
-	assert( dynamic_cast< HBondResPairMinData const * > ( min_data.get_data( hbond_respair_data )() ));
+	assert( utility::pointer::dynamic_pointer_cast< HBondResPairMinData const > ( min_data.get_data( hbond_respair_data ) ));
 	HBondResPairMinData const & hb_pair_dat = static_cast< HBondResPairMinData const & > ( min_data.get_data_ref( hbond_respair_data ) );
 
 	Size const rsd1nneighbs( hb_pair_dat.res1_data().nneighbors() );

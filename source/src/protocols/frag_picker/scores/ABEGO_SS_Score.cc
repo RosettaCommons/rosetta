@@ -65,7 +65,7 @@ bool ABEGO_SS_Score::score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) 
 
 void ABEGO_SS_Score::do_caching(VallChunkOP chunk) {
 
-	std::string tmp = chunk()->chunk_key();
+	std::string tmp = chunk->chunk_key();
 	if (tmp.compare(cached_scores_id_) == 0)
 		return;
 	cached_scores_id_ = tmp;

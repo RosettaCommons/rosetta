@@ -37,7 +37,18 @@
 namespace utility {
 namespace tag {
 
-class Tag : public utility::pointer::ReferenceCount {
+class Tag : public utility::pointer::ReferenceCount
+#ifdef PTR_MODERN
+	// New version
+	, public utility::pointer::enable_shared_from_this< Tag >
+{
+#else
+{
+	// Old intrusive ref-counter version
+	inline TagCOP shared_from_this() const { return TagCOP( this ); }
+	inline TagOP shared_from_this() { return TagOP( this ); }
+#endif
+
 public:
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~Tag();
@@ -48,13 +59,19 @@ public:
 public:
 	Tag();
 
+	/// self pointers
+	inline TagCOP get_self_ptr() const { return shared_from_this(); }
+	inline TagOP get_self_ptr() { return shared_from_this(); }
+	inline TagCAP get_self_weak_ptr() const { return TagCAP( shared_from_this() ); }
+	inline TagAP get_self_weak_ptr() { return TagAP( shared_from_this() ); }
+
 	void clear();
 	size_t size() const;
 
 	void setName(std::string const& name);
 	std::string const& getName() const { return name_; }
 
-	TagCOP const & getParent() const { return parentTag_; }
+	TagCAP const & getParent() const { return parentTag_; }
 
 	void addTag( TagOP tag );
 	utility::vector0< TagCOP > const & getTags() const;
@@ -134,6 +151,9 @@ public:
 	TagCOP const &
 	operator[](std::string const& key) const;
 
+	Tag &
+	operator=(Tag const &other);
+
 	void die_for_unaccessed_options() const;
 	void die_for_unaccessed_options_recursively() const;
 
@@ -146,14 +166,13 @@ public:
 	TagOP clone() const;
 
 private:
-
 	std::string name_;
 	options_t mOptions_;
 	mutable options_t accessed_options_;
 	tags_t vTags_;
 	std::map<std::string,tags_t> mvTags_;
 	static utility::vector0<TagCOP> const vEmpty_; // need to return this from getTags
-	TagCOP parentTag_;
+	TagCAP parentTag_;
 
 }; // class Tag
 

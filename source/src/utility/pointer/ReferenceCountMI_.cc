@@ -8,21 +8,9 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   utility/pointer/ReferenceCountMI_.cc
-/// @brief  Base class for reference-counted multiple inheritance polymorphic classes
-/// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
+/// @brief  ReferenceCount base class -- dispatch class
+/// @author Luki Goldschmidt <lugo@uw.edu>
 
-
-// Unit headers
-#include <utility/pointer/ReferenceCountMI_.hh>
-
-
-namespace utility {
-namespace pointer {
-
-
-/// @brief ReferenceCountMI_ static member definitions
-ReferenceCountMI_::Size const ReferenceCountMI_::max_count_ = static_cast< ReferenceCountMI_::Size >( -1 );
-
-
-} // namespace pointer
-} // namespace utility
+#ifdef PTR_REFCOUNT
+#include <utility/pointer/refcount/ReferenceCountMI_.cc>
+#endif

@@ -57,7 +57,7 @@ RNA_SuiteEnergyCreator::score_types_for_method() const {
 
 /// ctor
 RNA_SuiteEnergy::RNA_SuiteEnergy() :
-	parent( new RNA_SuiteEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new RNA_SuiteEnergyCreator ) ),
 	rna_suite_potential_( ScoringManager::get_instance()->get_RNA_SuitePotential() )
 {}
 ///////////////////////////////////////////////////////////////////////////////

@@ -68,6 +68,7 @@ void ConstraintEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
 	using namespace core;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	using protocols::evaluation::PoseEvaluatorOP;
 
 
   if ( option[ OptionKeys::evaluation::constraints ].user() ) {

@@ -72,7 +72,7 @@ class EnvClaimBroker : public utility::pointer::ReferenceCount {
   typedef utility::vector1< core::Real > BiasVector;
 
 public:
-  EnvClaimBroker( Environment const& env,
+  EnvClaimBroker( EnvironmentCAP env,
                   MoverPassMap const& movers_and_passes,
                   core::pose::Pose const& in_pose,
                   SequenceAnnotationOP ann );
@@ -164,7 +164,7 @@ private:
   SequenceAnnotationOP ann_;
   claims::EnvClaims claims_;
   BrokerResult result_;
-  Environment const& env_;
+  EnvironmentCAP env_;
 
 }; // EnvClaimBroker
 

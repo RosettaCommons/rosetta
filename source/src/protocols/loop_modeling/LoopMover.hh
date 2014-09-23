@@ -173,8 +173,7 @@ protected:
 	/// this loop mover.  Fold tree requests made by nested movers will be taken 
 	/// into account by the parent.  This synchronization is entirely managed by 
 	/// LoopMover, so subclasses don't need to do anything special.
-	template <class LoopMoverSubclassOP>
-	LoopMoverSubclassOP register_nested_loop_mover(LoopMoverSubclassOP mover) {
+	LoopMoverOP register_nested_loop_mover(LoopMoverOP mover) {
 		mover->trust_fold_tree();
 		mover->set_loops(loops_);
 		mover->set_score_function(score_function_);

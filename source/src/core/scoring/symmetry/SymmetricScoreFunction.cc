@@ -938,31 +938,31 @@ SymmetricScoreFunction::symmetrical_allow_hbonds( pose::Pose & pose ) const
 {
 	using EnergiesCacheableDataType::HBOND_SET;
 
-	hbonds::HBondSetOP hbond_set
+	hbonds::HBondSet & hbond_set
 		( static_cast< hbonds::HBondSet & > ( pose.energies().data().get( HBOND_SET )));
 
 	SymmetricConformation & SymmConf (
   	dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
 	SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
-	for ( Size i = 1; i <= hbond_set->nhbonds(); ++i ) {
-		hbonds::HBond const & hbond( hbond_set->hbond(i) );
+	for ( Size i = 1; i <= hbond_set.nhbonds(); ++i ) {
+		hbonds::HBond const & hbond( hbond_set.hbond(i) );
 		Size acc( hbond.acc_res() );
 		Size don( hbond.don_res() );
 		if ( symm_info->fa_is_independent( acc ) ) {
 			for ( std::vector<Size>::const_iterator clone=symm_info->bb_clones(acc).begin(), clone_end=symm_info->bb_clones(acc).end();
 			      clone != clone_end; ++clone ) {
-				hbond_set->set_backbone_backbone_acceptor( *clone, hbond_set->acc_bbg_in_bb_bb_hbond( acc ) );
+				hbond_set.set_backbone_backbone_acceptor( *clone, hbond_set.acc_bbg_in_bb_bb_hbond( acc ) );
 			}
 		}
 		if ( symm_info->fa_is_independent( don ) ) {
 			for ( std::vector<Size>::const_iterator clone=symm_info->bb_clones(don).begin(), clone_end=symm_info->bb_clones(don).end();
 			      clone != clone_end; ++clone ) {
-				hbond_set->set_backbone_backbone_acceptor( *clone, hbond_set->acc_bbg_in_bb_bb_hbond( don ) );
+				hbond_set.set_backbone_backbone_acceptor( *clone, hbond_set.acc_bbg_in_bb_bb_hbond( don ) );
 			}
 		}
 	}
-	pose.energies().data().set( HBOND_SET, hbond_set );
+	pose.energies().data().set( HBOND_SET, basic::datacache::CacheableDataOP( hbond_set.get_self_ptr() ) );
 }
 
 void
@@ -971,8 +971,8 @@ SymmetricScoreFunction::set_symmetric_residue_neighbors_hbonds( pose::Pose & pos
 
 	using EnergiesCacheableDataType::HBOND_SET;
 
-	hbonds::HBondSetOP hbond_set
-		( static_cast< hbonds::HBondSet &  >
+	hbonds::HBondSet & hbond_set
+		( static_cast< hbonds::HBondSet & >
      ( pose.energies().data().get( HBOND_SET )));
 
   SymmetricConformation & SymmConf (
@@ -983,12 +983,12 @@ SymmetricScoreFunction::set_symmetric_residue_neighbors_hbonds( pose::Pose & pos
     if ( symm_info->get_use_symmetry() ) {
       if ( !symm_info->fa_is_independent( res ) ) {
         int symm_res ( symm_info->bb_follows( res ) );
-				int neighbors_symm ( hbond_set->nbrs( symm_res ) );
-				hbond_set->set_nbrs( res, neighbors_symm );
+				int neighbors_symm ( hbond_set.nbrs( symm_res ) );
+				hbond_set.set_nbrs( res, neighbors_symm );
 			}
 		}
   }
-	pose.energies().data().set( HBOND_SET, hbond_set );
+	pose.energies().data().set( HBOND_SET, basic::datacache::CacheableDataOP( hbond_set.get_self_ptr() ) );
 }
 
 void
@@ -999,7 +999,11 @@ SymmetricScoreFunction::set_symmetric_cenlist( pose::Pose & pose ) const
 
 	//using core::pose::datacache::CacheableDataType::CEN_LIST_INFO;
 
-	CenListInfoOP cenlist( *( static_cast< CenListInfo * >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::CEN_LIST_INFO )() )));
+	CenListInfoOP cenlist(
+		utility::pointer::static_pointer_cast< CenListInfo >( 
+			pose.data().get_ptr( core::pose::datacache::CacheableDataType::CEN_LIST_INFO )
+		)
+	);
 
   SymmetricConformation & SymmConf (
         dynamic_cast<SymmetricConformation &> ( pose.conformation()) );

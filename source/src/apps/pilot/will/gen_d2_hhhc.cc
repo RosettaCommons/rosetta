@@ -807,8 +807,8 @@ void run(std::string fname) {
   // Size ANGLE_INCR=30;
 
   // setup stuff
-  ResidueTypeSetCAP frs=ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-  ScoreFunctionOP sfstd=get_score_function();
+  ResidueTypeSetCOP frs( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+  ScoreFunctionOP sfstd( get_score_function() );
 
   // read pose info
   Pose natp,his,cys;

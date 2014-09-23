@@ -80,6 +80,7 @@ void AlignRmsdTargetEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvalua
 	using namespace core;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	using protocols::evaluation::PoseEvaluatorOP;
 
 	if ( option[ OptionKeys::evaluation::align_rmsd_target ].user() ) {
 		using std::string;

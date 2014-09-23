@@ -2201,7 +2201,7 @@ void IterativeBase::setup_filter_cst( core::Real overall_weight ) {
 	for ( TopologyBroker::const_iterator it = topology_broker->begin();
 				it != topology_broker->end(); ++it, ++ct ) {
 		tr.Trace << "found claimer of type " << (*it)->type() << "trying to cast now..."<< std::endl;
-		ConstraintClaimerCOP cst_claimer = dynamic_cast< ConstraintClaimer* >( (*it).get() );
+		ConstraintClaimerCOP cst_claimer = utility::pointer::dynamic_pointer_cast< ConstraintClaimer const >( *it );
 		if ( cst_claimer ) {
 			tr.Info << "found cst-claimer with filter_name " << cst_claimer->filter_name()
 							<< " filter_weight " << cst_claimer->filter_weight() << std::endl;

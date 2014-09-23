@@ -64,7 +64,7 @@ MonteCarlo::MonteCarlo( MonteCarlo const & src ) :
 	last_accepted_pose_( src.last_accepted_pose_ ? new core::pose::Pose( * src.last_accepted_pose_ ) : 0 ),
 	lowest_score_pose_( src.lowest_score_pose_ ? new core::pose::Pose( * src.lowest_score_pose_ ) : 0 ),
 	temperature_( src.temperature_ ),
-	score_function_( src.score_function_ ? src.score_function_->clone() : static_cast< core::scoring::ScoreFunction * > (0) ),
+	score_function_( src.score_function_ ? src.score_function_->clone() : core::scoring::ScoreFunctionOP(0) ),
 	autotemp_( src.autotemp_ ),
 	quench_temp_( src.quench_temp_ ),
 	last_accept_( src.last_accept_ ),

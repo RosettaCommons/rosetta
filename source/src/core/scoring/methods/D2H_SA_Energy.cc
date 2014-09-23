@@ -67,7 +67,7 @@ D2H_SA_EnergyCreator::score_types_for_method() const {
 
 /// c-tor
 D2H_SA_Energy::D2H_SA_Energy() :
-	parent( new D2H_SA_EnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new D2H_SA_EnergyCreator ) )
 {
 	HDX_data_defined_=false;
 	chain_=0;

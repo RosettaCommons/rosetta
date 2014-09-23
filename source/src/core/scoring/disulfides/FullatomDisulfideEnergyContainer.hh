@@ -43,13 +43,13 @@ class DisulfResNeighbIterator : public ResidueNeighborIterator {
 public:
 
 	DisulfResNeighbIterator(
-		FullatomDisulfideEnergyContainerAP owner,
+		FullatomDisulfideEnergyContainer * owner,
 		Size focused_node,
 		Size disulfide_index
 	);
 
 	DisulfResNeighbIterator(
-		FullatomDisulfideEnergyContainerAP owner
+		FullatomDisulfideEnergyContainer * owner
 	);
 
 	virtual ~DisulfResNeighbIterator();
@@ -75,7 +75,7 @@ public:
 	virtual bool energy_computed() const;
 
 private:
-	FullatomDisulfideEnergyContainerAP owner_;
+	FullatomDisulfideEnergyContainer * owner_;
 	Size focused_residue_;
 	Size disulfide_index_;
 };
@@ -83,12 +83,12 @@ private:
 class DisulfResNeighbConstIterator : public ResidueNeighborConstIterator {
 public:
 	DisulfResNeighbConstIterator(
-		FullatomDisulfideEnergyContainerCAP owner,
+		FullatomDisulfideEnergyContainer const * owner,
 		Size focused_node,
 		Size disulfide_index
 	);
 
-	DisulfResNeighbConstIterator( FullatomDisulfideEnergyContainerCAP owner );
+	DisulfResNeighbConstIterator( FullatomDisulfideEnergyContainer const * owner );
 
 	virtual ~DisulfResNeighbConstIterator();
 
@@ -109,7 +109,7 @@ public:
 	virtual bool energy_computed() const;
 
 private:
-	FullatomDisulfideEnergyContainerCAP owner_;
+	FullatomDisulfideEnergyContainer const * owner_;
 	Size focused_residue_;
 	Size disulfide_index_;
 

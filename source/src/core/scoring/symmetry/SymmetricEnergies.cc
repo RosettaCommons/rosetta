@@ -258,13 +258,15 @@ SymmetricEnergies::require_context_graph_( scoring::ContextGraphType type, bool 
 		set_max_context_neighbor_cutoff( cgraphs[type]->neighbor_cutoff() );
 	}
 
+	core::pose::Pose & pose = *owner();
+
 	if ( external ) {
 		required_cgraphs[type] = true;
 
 		using namespace graph;
 
 		core::conformation::PointGraphOP point_graph = new core::conformation::PointGraph;
-		fill_point_graph( *owner(), point_graph );
+		fill_point_graph( pose, point_graph );
 		for ( uint ii = 1, ii_end = size(); ii <= ii_end; ++ii ) {
 			for ( core::conformation::PointGraph::UpperEdgeListConstIter
 					ii_iter = point_graph->get_vertex( ii ).upper_edge_list_begin(),
@@ -277,11 +279,11 @@ SymmetricEnergies::require_context_graph_( scoring::ContextGraphType type, bool 
 		}
 	}
   SymmetricConformation const & SymmConf (
-    dynamic_cast<SymmetricConformation const &> ( (*owner()).conformation()) );
+    dynamic_cast<SymmetricConformation const &> ( pose.conformation() ) );
   SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
 
 	/// Manually set the neighbour count for the context_graph to be symmetrical
-	for ( uint res = 1; res <= (*owner()).total_residue(); ++res ) {
+	for ( uint res = 1; res <= pose.total_residue(); ++res ) {
 		if ( !SymmConf.Symmetry_Info()->fa_is_independent( res ) ) {
 			int symm_res ( SymmConf.Symmetry_Info()->bb_follows( res ) );
 			int neighbors_symm ( cgraphs[ type ]->get_node( symm_res )->num_neighbors_counting_self() );

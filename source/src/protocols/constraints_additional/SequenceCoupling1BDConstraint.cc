@@ -138,7 +138,7 @@ SequenceCoupling1BDConstraint::score(
 ) const
 {
 	if ( weights[ this->score_type() ] == 0 ) return; // what's the point?
-	runtime_assert( sequence_profile() );
+	runtime_assert( sequence_profile() != 0 );
 
 	chemical::AA aa( xyz_func.residue( seqpos()).type().aa() );
 	utility::vector1< utility::vector1< Real > > const & profile( sequence_profile()->profile() );

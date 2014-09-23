@@ -302,6 +302,7 @@ EnzdesBaseProtocol::create_enzdes_pack_task(
 
 	using namespace core::pack::task;
 	using namespace basic::options;
+	using core::pack::task::operation::TaskOperationCOP;
 
 	//make sure the design targets are up to date
 	design_targets( pose );
@@ -348,7 +349,8 @@ EnzdesBaseProtocol::setup_sequence_recovery_cache(
 	//Set wt sequence at the same time. That is the first and only time
 	//that the wt sequence gets initiated
   if ( ! toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> get_seq_recovery_cache() ){
-    toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> set_seq_recovery_cache( new toolbox::match_enzdes_util:: EnzdesSeqRecoveryCache );
+    using namespace toolbox::match_enzdes_util;
+    toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> set_seq_recovery_cache( new EnzdesSeqRecoveryCache );
   	toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> get_seq_recovery_cache() -> set_sequence( pose );
   }
 
@@ -745,7 +747,8 @@ EnzdesBaseProtocol::exchange_ligands_in_pose(
 		if( pose.residue(i).name3() == res_to_superimpose_.first ) ligs_to_exchange.push_back( i );
 	}
 
-	core::conformation::Residue new_res( restype_set_->name_map( res_to_superimpose_.second ), true );
+	core::chemical::ResidueTypeSetCOP restype_set( restype_set_ );
+	core::conformation::Residue new_res( restype_set->name_map( res_to_superimpose_.second ), true );
 
 	for( utility::vector1< core::Size >::const_iterator pos_it = ligs_to_exchange.begin();
 			 pos_it != ligs_to_exchange.end(); ++pos_it )

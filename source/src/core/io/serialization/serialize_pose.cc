@@ -393,7 +393,7 @@ namespace serialization {
 					read_binary(chainid, buf);
 					bool const is_lower_terminus( j==1 || chainid != prevchain );
 // new residue
-					ResidueTypeSetCAP target_residue_type_set( ChemicalManager::get_instance()->residue_type_set( type_set ) );
+					ResidueTypeSetCOP target_residue_type_set( ChemicalManager::get_instance()->residue_type_set( type_set ) );
 					ResidueOP new_rsd = ResidueFactory::create_residue( target_residue_type_set->name_map( type_name ) ); //, residue, pose.conformation() );
 					new_rsd->chain(chainid);
 					if (j > 1 && (is_lower_terminus || !new_rsd->is_polymer() || !pose.residue_type(j-1).is_polymer() )){

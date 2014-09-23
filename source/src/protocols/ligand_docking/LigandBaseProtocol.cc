@@ -983,12 +983,12 @@ LigandBaseProtocol::get_non_bb_clashing_rotamers(
 	//graph::GraphOP neighbor_graph = pack::create_packer_graph( pose, *scofx, help_task );
 	graph::GraphOP neighbor_graph = new graph::Graph( pose.energies().energy_graph() );
 
-	chemical::ResidueTypeCOP res_type = & pose.residue_type( seqpos );
+	chemical::ResidueTypeCOP res_type = pose.residue_type( seqpos ).get_self_ptr();
 	conformation::Residue const & existing_residue( pose.residue( seqpos ) );
 
 	utility::vector1< utility::vector1< Real > > extra_chi_steps( res_type->nchi() );
 
-	pack::dunbrack::SingleResidueRotamerLibraryCAP rotlib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( *res_type );
+	pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib( core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( *res_type ) );
 
 	if( rotlib ){
 		rotlib->fill_rotamer_vector( pose, *scofx, *help_task, neighbor_graph, res_type, existing_residue, extra_chi_steps, true /*buried*/, suggested_rotamers );

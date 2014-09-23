@@ -129,7 +129,7 @@ public:
 	void test_InterGroupInterfaceByVectorSelector_parse_my_tag() {
 		std::string tag_string = "<InterfaceByVector name=int_rs grp1_selector=res1to20 grp2_selector=res45to66 />";
 		std::stringstream ss( tag_string );
-		utility::tag::TagOP tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 		ResidueSelectorOP range1_rs = new ResRangeSelector( 1, 20 );
@@ -163,7 +163,7 @@ public:
 	void test_InterGroupInterfaceByVectorSelector_parse_my_tag_no_provided_grp1_data() {
 		std::string tag_string = "<InterfaceByVector name=int_rs grp2_selector=res45to66 />";
 		std::stringstream ss( tag_string );
-		utility::tag::TagOP tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 		ResidueSelectorOP range1_rs = new ResRangeSelector( 1, 20 );
@@ -187,7 +187,7 @@ public:
 	void test_InterGroupInterfaceByVectorSelector_parse_my_tag_no_provided_grp2_data() {
 		std::string tag_string = "<InterfaceByVector name=int_rs grp1_selector=res45to66 />";
 		std::stringstream ss( tag_string );
-		utility::tag::TagOP tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 		ResidueSelectorOP range1_rs = new ResRangeSelector( 1, 20 );
@@ -212,7 +212,7 @@ public:
 	void test_InterGroupInterfaceByVectorSelector_parse_my_tag_selectors_not_in_datamap() {
 		std::string tag_string = "<InterfaceByVector name=int_rs grp1_selector=bogus grp2_selector=res45to66 />";
 		std::stringstream ss( tag_string );
-		utility::tag::TagOP tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
@@ -234,7 +234,7 @@ public:
 	void test_InterGroupInterfaceByVectorSelector_parse_my_tag_fail_only_one_subselector() {
 		std::string tag_string = "<InterfaceByVector name=int_rs grp1_selector=bogus>\n\t<Index resnames=12-17 />\n</InterfaceByVector>";
 		std::stringstream ss( tag_string );
-		utility::tag::TagOP tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 	

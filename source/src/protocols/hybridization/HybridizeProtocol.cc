@@ -327,7 +327,7 @@ HybridizeProtocol::init() {
 			core::import_pose::pose_from_pdb( *native_, option[ in::file::native ]() );
 		}
 		else {
-			core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
+			core::chemical::ResidueTypeSetCOP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 			core::import_pose::pose_from_pdb( *native_, *residue_set, option[ in::file::native ]()  );
 		}
 	} else if ( option[ evaluation::align_rmsd_target ].user() ) {
@@ -587,7 +587,7 @@ void HybridizeProtocol::add_template(
 	core::Size cluster_id,
 	utility::vector1<core::Size> cst_reses)
 {
-	core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
+	core::chemical::ResidueTypeSetCOP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 	core::pose::PoseOP template_pose = new core::pose::Pose();
 	core::import_pose::pose_from_pdb( *template_pose, *residue_set, template_fn );
 
@@ -678,7 +678,7 @@ void HybridizeProtocol::read_template_structures(utility::vector1 < utility::fil
 	templates_.clear();
 	templates_.resize(template_filenames.size());
 
-	core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
+	core::chemical::ResidueTypeSetCOP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 
 	for (core::Size i_ref=1; i_ref<= template_filenames.size(); ++i_ref) {
 		templates_[i_ref] = new core::pose::Pose();
@@ -1081,7 +1081,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		}
 		// get fragment history
 		runtime_assert( pose.data().has( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) );
-		history = *( static_cast< TemplateHistory* >( pose.data().get_ptr( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY )() ));
+		history = utility::pointer::static_pointer_cast< TemplateHistory >( pose.data().get_ptr( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) );
 
 		TR << "History :";
 		for (Size i=1; i<= history->size(); ++i ) { TR << I(4,i); }

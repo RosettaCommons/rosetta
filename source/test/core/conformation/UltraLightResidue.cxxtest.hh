@@ -29,7 +29,7 @@ public:
 	}
 
 	void test_ultralight() {
-		core::conformation::UltraLightResidue light_res(&(pose_.residue(3)));
+		core::conformation::UltraLightResidue light_res(pose_.residue(3).get_self_ptr());
 
 		TS_ASSERT_EQUALS(pose_.residue(3).natoms(),light_res.natoms());
 

@@ -110,7 +110,7 @@ LoopMover_Refine_Backrub::LoopMover_Refine_Backrub(
 LoopMover_Refine_Backrub::~LoopMover_Refine_Backrub(){}
 
 void LoopMover_Refine_Backrub::set_task_factory( core::pack::task::TaskFactoryOP value ){ task_factory = value;}
-bool LoopMover_Refine_Backrub::get_task_factory(){return task_factory;}
+bool LoopMover_Refine_Backrub::get_task_factory(){return task_factory != 0;}
 
 
 void LoopMover_Refine_Backrub::apply(
@@ -208,11 +208,11 @@ void LoopMover_Refine_Backrub::apply(
 		task_factory = new TaskFactory;
 		// TaskOperations replace the following kind of code:
 		// base_packer_task->initialize_from_command_line().or_include_current( true );
-		task_factory->push_back( new operation::InitializeFromCommandline );
-		task_factory->push_back( new operation::IncludeCurrent );
+		task_factory->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
+		task_factory->push_back( operation::TaskOperationCOP( new operation::IncludeCurrent ) );
 		if ( option[ OptionKeys::packing::resfile ].user() ) {
 			// Note - resfile is obeyed, so use NATAA as default to maintain protocol behavior
-			task_factory->push_back( new core::pack::task::operation::ReadResfile );
+			task_factory->push_back( operation::TaskOperationCOP( new core::pack::task::operation::ReadResfile ) );
 			tr() << "Activating design" << std::endl;
 		}
 	}

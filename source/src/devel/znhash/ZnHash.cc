@@ -235,7 +235,7 @@ ZnCoordinationScorer::ZnCoordinationScorer() : utility::pointer::ReferenceCount(
 	znwelldepth_( 3.0 ),
 	asymm_atids_( core::id::AtomID( 0, 0 ) ),
 	focused_clone_atids_( core::id::AtomID( 0, 0 ) ),
-	third_resid_( 0, 0 )
+	third_resid_( 0u, 0u )
 {
 	reset_reach(); // the reach for the hash is deteremined by the znreach, the orbital distances from the zn and the orbital reach.
 
@@ -884,19 +884,18 @@ ZnCoordinationScorer::insert_match_onto_pose(
 		assert( &restypeset == & matchres.type().residue_type_set() );
 
 		// find the appropriate residue type for this position
-		core::chemical::ResidueTypeCOP newrestype( & matchres.type() );
+		core::chemical::ResidueTypeCOP newrestype( matchres.type().get_self_ptr() );
 		utility::vector1< std::string > const & matchres_variants =
 				matchres.type().properties().get_list_of_variants();
 		for ( Size jj = 1; jj <= matchres_variants.size(); ++jj ) {
 			if ( ! dstres.type().has_variant_type( matchres_variants[ jj ]  )) {
 				core::chemical::ResidueTypeCOP variantfree_newrestype;
 				// TODO: Refactor this to avoid working with strings.
-				variantfree_newrestype = & (
+				variantfree_newrestype =
 						restypeset.get_residue_type_with_variant_removed(
 								*newrestype,
 								core::chemical::ResidueProperties::get_variant_from_string( matchres_variants[ jj ] )
-						)
-				);
+						).get_self_ptr();
 				if ( ! variantfree_newrestype  ) {
 					std::cerr << "Error could not remove variant " << matchres_variants[ jj ] << " from restype " <<
 						newrestype->name() << std::endl;
@@ -912,12 +911,11 @@ ZnCoordinationScorer::insert_match_onto_pose(
 			if ( ! newrestype->has_variant_type( dstres_variants[ jj ]  )) {
 				core::chemical::ResidueTypeCOP variantful_newrestype;
 				// TODO: Refactor this to avoid working with strings.
-				variantful_newrestype = & (
+				variantful_newrestype =
 						restypeset.get_residue_type_with_variant_added(
 								*newrestype,
 								core::chemical::ResidueProperties::get_variant_from_string( dstres_variants[ jj ] )
-						)
-				);
+						).get_self_ptr();
 				if ( ! variantful_newrestype  ) {
 					std::cerr << "Error could not add variant " << dstres_variants[ jj ] << " to restype " <<
 						newrestype->name() << std::endl;

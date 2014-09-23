@@ -97,16 +97,16 @@ ligand_dock_main_jd1()
 				if( is_int(tags[i]) ) tag_as_int = int_of(tags[i]);
 				if( atdiff->has_tag( tags[i] ) ) {
 					input_jobs.push_back(new BasicJob( tags[i], tags[i], nstruct ));
-				} else if( 0 < tag_as_int && tag_as_int <= atdiff()->scores().size() ) {
-					input_jobs.push_back(new BasicJob( atdiff()->scores()[tag_as_int].first, atdiff()->scores()[tag_as_int].first, nstruct ));
+				} else if( 0 < tag_as_int && tag_as_int <= atdiff->scores().size() ) {
+					input_jobs.push_back(new BasicJob( atdiff->scores()[tag_as_int].first, atdiff->scores()[tag_as_int].first, nstruct ));
 				} else {
 					utility_exit_with_message("Can't find tag "+tags[i]);
 				}
 			}
 		} else {
 			// Just do them all!
-			for(core::Size i = 1; i <= atdiff()->scores().size(); ++i) {
-				input_jobs.push_back(new BasicJob( atdiff()->scores()[i].first, atdiff()->scores()[i].first, nstruct ));
+			for(core::Size i = 1; i <= atdiff->scores().size(); ++i) {
+				input_jobs.push_back(new BasicJob( atdiff->scores()[i].first, atdiff->scores()[i].first, nstruct ));
 			}
 		}
 	} else {
@@ -130,7 +130,7 @@ ligand_dock_main_jd1()
 	protocols::toolbox::match_enzdes_util::EnzConstraintIOOP constraint_io = NULL;
 	if( option[basic::options::OptionKeys::enzdes::cstfile].user() ){
 		//we need the residue type set, assuming FA standard is used
-		core::chemical::ResidueTypeSetCAP restype_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+		core::chemical::ResidueTypeSetCOP restype_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 		option[basic::options::OptionKeys::run::preserve_header ].value(true);
 		constraint_io = new protocols::toolbox::match_enzdes_util::EnzConstraintIO( restype_set );
 		constraint_io->read_enzyme_cstfile(basic::options::option[basic::options::OptionKeys::enzdes::cstfile]);
@@ -162,8 +162,9 @@ ligand_dock_main_jd1()
 		}
 
 		// Make a modifiable copy of the pose read from disk
+		using namespace basic::datacache;
 		core::pose::PoseOP the_pose = new core::pose::Pose( *input_pose );
-		the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, new basic::datacache::CacheableString(curr_job->output_tag(curr_nstruct)));
+		the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, DataCache_CacheableData::DataOP( new basic::datacache::CacheableString(curr_job->output_tag(curr_nstruct)) ));
 		dockingProtocol->apply( *the_pose );
 
 		// Score new structure and add to silent file

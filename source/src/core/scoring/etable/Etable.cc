@@ -95,7 +95,7 @@ Etable::Etable(
 ) :
 	// from atop_props_in:
 	atom_set_                 ( atom_set_in ),
-	n_atomtypes_              ( atom_set_in->n_atomtypes() ),
+	n_atomtypes_              ( atom_set_in.lock()->n_atomtypes() ),
 
 	// from options
 	max_dis_                  ( options.max_dis ),
@@ -177,9 +177,10 @@ Etable::dimension_etable_arrays()
 
 void
 Etable::initialize_from_input_atomset(
-	chemical::AtomTypeSetCAP atom_set_in
+	chemical::AtomTypeSetCAP atom_set_in_ap
 )
 {
+	chemical::AtomTypeSetCOP atom_set_in( atom_set_in_ap );
 	for ( int i=1; i<= n_atomtypes_; ++i ) {
 		lj_radius_[i] = (*atom_set_in)[i].lj_radius();
 		lj_wdepth_[i] = (*atom_set_in)[i].lj_wdepth();
@@ -195,8 +196,9 @@ Etable::initialize_from_input_atomset(
 
 	// APL -- hydrophobic desolvation only; turn off hydrophilic desolvation penalty
 	if ( option[ score::no_lk_polar_desolvation ] ) {
+		chemical::AtomTypeSetCOP atom_set( atom_set_ );
 		for ( int i=1; i<= n_atomtypes_; ++i ) {
-			if ( (*atom_set_)[i].is_acceptor() || (*atom_set_)[i].is_donor() ) {
+			if ( (*atom_set)[i].is_acceptor() || (*atom_set)[i].is_donor() ) {
 				lk_dgfree_[i] = 0.0;
 			}
 		}
@@ -223,13 +225,14 @@ Etable::calculate_nblist_distance_thresholds(
 
 void
 Etable::read_alternate_parameter_set(
-	chemical::AtomTypeSetCAP atom_set_in,
+	chemical::AtomTypeSetCAP atom_set_in_ap,
 	std::string const alternate_parameter_set
 )
 {
 	if ( alternate_parameter_set.size() ) {
 		// uses alternate paramers
 		std::string param_name;
+		chemical::AtomTypeSetCOP atom_set_in( atom_set_in_ap );
 
 		param_name = "LJ_RADIUS_"+alternate_parameter_set;
 		if ( atom_set_in->has_extra_parameter( param_name ) ) {
@@ -287,10 +290,11 @@ Etable::calculate_hydrogen_atom_reach()
 void
 Etable::initialize_carbontypes_to_linearize_fasol()
 {
-	carbon_types.push_back( atom_set_->atom_type_index("CH1") );
-	carbon_types.push_back( atom_set_->atom_type_index("CH2") );
-	carbon_types.push_back( atom_set_->atom_type_index("CH3") );
-	carbon_types.push_back( atom_set_->atom_type_index("aroC") );
+	chemical::AtomTypeSetCOP atom_set( atom_set_);
+	carbon_types.push_back( atom_set->atom_type_index("CH1") );
+	carbon_types.push_back( atom_set->atom_type_index("CH2") );
+	carbon_types.push_back( atom_set->atom_type_index("CH3") );
+	carbon_types.push_back( atom_set->atom_type_index("aroC") );
 }
 
 CubicPolynomial
@@ -758,8 +762,8 @@ Etable::modify_pot_one_pair(
 	}
 
 	{
-
-		Size const OCbb_idx = atom_set_->atom_type_index("OCbb");
+		chemical::AtomTypeSetCOP atom_set( atom_set_ );
+		Size const OCbb_idx = atom_set->atom_type_index("OCbb");
 		if ( atype1 == OCbb_idx && atype2 == OCbb_idx && ! skip_mod_OCbb_OCbb_rep ) {
 			ExtraQuadraticRepulsion OCbb_OCbb_exrep;
 			OCbb_OCbb_exrep.xlo = 2.1; OCbb_OCbb_exrep.xhi = 3.6; OCbb_OCbb_exrep.slope = 2;
@@ -828,8 +832,9 @@ Etable::modify_pot_one_pair(
 	// zero out the attractive and solvation energies for the REPLS and HREPS atom types
 	//
 	//	TR << "setting up REPLONLY residues to zero" << std::endl;
-	Size repls_idx = atom_set_->atom_type_index( "REPLS" );
-	Size hreps_idx = atom_set_->atom_type_index( "HREPS" );
+	chemical::AtomTypeSetCOP atom_set( atom_set_ );
+	Size repls_idx = atom_set->atom_type_index( "REPLS" );
+	Size hreps_idx = atom_set->atom_type_index( "HREPS" );
 	if ( atype1 == repls_idx || atype2 == repls_idx || atype1 == hreps_idx || atype2 == hreps_idx ) {
 		Size last_rep_bin( 0 );
 		for ( int i = 1; i <= etable_disbins; i++ ){
@@ -1765,7 +1770,8 @@ Etable::zero_hydrogen_and_water_ljatr_one_pair(
 	dfasol.dimension( etable_disbins );
 	dfasol1.dimension( etable_disbins );
 
-	Size const HOH = atom_set_->atom_type_index("HOH");
+	chemical::AtomTypeSetCOP atom_set( atom_set_ );
+	Size const HOH = atom_set->atom_type_index("HOH");
 	if ( atype1 == HOH || atype2 == HOH || atom_type(atype1).is_hydrogen() || atom_type(atype2).is_hydrogen() ) {
 
 		// cbk  don't give hydrogens or water attractive lennard-jones

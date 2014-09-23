@@ -75,7 +75,7 @@ void restore_hack( core::pose::Pose & pose ) {
 	core::import_pose::PDBSilentStruct ss;
 
 	ss.fill_struct( pose );
-	ss.fill_pose( pose, *(core::chemical::rsd_set_from_cmd_line()) );
+	ss.fill_pose( pose, *(core::chemical::rsd_set_from_cmd_line().lock()) );
 }
 
 //class FullLengthPose {
@@ -159,7 +159,7 @@ main( int argc, char* argv [] ) {
 	// options, random initialization
 	devel::init( argc, argv );
 
-	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
 	MetaPoseInputStream input = streams_from_cmd_line();
 	std::string sequence = core::sequence::read_fasta_file(
 		option[ in::file::fasta ]()[1]

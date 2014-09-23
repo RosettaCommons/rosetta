@@ -90,7 +90,7 @@ void SequenceClaimer::make_sequence_claim() {
 	);
 	sequence_claim_ =
 		new claims::SequenceClaim(
-				this,
+				get_self_weak_ptr(),
 				my_pose.annotated_sequence(),
 				label(),
 				priority_
@@ -167,13 +167,13 @@ void SequenceClaimer::init_after_reading() {
 void SequenceClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	//Make a new cut at the end of this sequence.
 	//TODO: Make TopologyBroker get rid of cuts outside valid sequence.
-	new_claims.push_back( new claims::CutClaim( this, std::make_pair( label(), sequence_claim_->length() ) ) );
+	new_claims.push_back( new claims::CutClaim( get_self_weak_ptr(), std::make_pair( label(), sequence_claim_->length() ) ) );
 
 	//special --- if only 1 residue chain... the torsion will be irrelvant and probably unclaimed
 	// ... make broker happy but don't do anything...
 	if ( sequence_claim_->length() == 1 ) {
 
-		new_claims.push_back( new claims::BBClaim( this, std::make_pair( label(), 1 ) ) );
+		new_claims.push_back( new claims::BBClaim( get_self_weak_ptr(), std::make_pair( label(), 1 ) ) );
 	}
 }
 

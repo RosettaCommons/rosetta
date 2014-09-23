@@ -275,7 +275,7 @@ SequenceProfileConstraint::score(
 ) const
 {
 	if ( weights[ this->score_type() ] == 0 ) return; // what's the point?
-	runtime_assert( sequence_profile_ );
+	runtime_assert( sequence_profile_ != 0 );
 
 	core::Size profile_pos( seqpos_ );
 	if( mapping_ ) {

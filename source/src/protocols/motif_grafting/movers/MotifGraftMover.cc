@@ -763,7 +763,7 @@ void MotifGraftMover::init_parameters(
 				//Will store the stitched pose
 				core::pose::Pose p_result;
 				//Create PDB info for the p_result pose
-				p_result.pdb_info( new core::pose::PDBInfo(p_result, true) );
+				p_result.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo(p_result, true) ) );
 				
 				//Get a copy of the scaffold rotated to the final position
 				core::pose::Pose p_scaffold_rotated = get_rotated_and_translated_pose(p_scaffold, m2s_dat.RotM, m2s_dat.TvecA, m2s_dat.TvecB);

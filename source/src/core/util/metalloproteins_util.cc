@@ -202,8 +202,7 @@ add_covalent_linkage_helper(
 			new_lrots = new SingleLigandRotamerLibrary();
 		}
 
-		utility::pointer::access_ptr< ResidueTypeSet > mod_restype_set =
-				& ChemicalManager::get_instance()->nonconst_residue_type_set( pose.residue(res_pos).residue_type_set().name() );
+		ResidueTypeSetOP mod_restype_set = ChemicalManager::get_instance()->nonconst_residue_type_set_op( pose.residue(res_pos).residue_type_set().name() );
 
 		//first get all residue types that correspond to the type in question
 		ResidueTypeCOPs res_to_modify = mod_restype_set->name3_map( pose.residue_type(res_pos).name3() );
@@ -306,9 +305,8 @@ add_covalent_linkage_helper(
 		//and last but not least we have to regenerate the rotamer library for the ligand
 		if( pose.residue_type( res_pos ).is_ligand() ) {
 
-			SingleLigandRotamerLibraryCAP old_lrots(
-				static_cast< SingleLigandRotamerLibrary const * >
-				( RotamerLibrary::get_instance().get_rsd_library( pose.residue_type( res_pos ))() ));
+			SingleResidueRotamerLibraryCOP old_rrots = RotamerLibrary::get_instance().get_rsd_library( pose.residue_type( res_pos ) ).lock();
+			SingleLigandRotamerLibraryCOP old_lrots = utility::pointer::static_pointer_cast< SingleLigandRotamerLibrary const >( old_rrots );
 
 			if( old_lrots != 0 ){
 

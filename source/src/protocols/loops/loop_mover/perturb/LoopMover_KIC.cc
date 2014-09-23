@@ -305,9 +305,10 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 
 	// perform the initial perturbation
 	// setup the kinematic mover
-
-	loop_closure::kinematic_closure::KinematicMover myKinematicMover;
-
+	loop_closure::kinematic_closure::KinematicMoverOP myKinematicMover_op( new loop_closure::kinematic_closure::KinematicMover );
+	loop_closure::kinematic_closure::KinematicMoverCAP myKinematicMover_cap( myKinematicMover_op );
+	loop_closure::kinematic_closure::KinematicMover & myKinematicMover = *myKinematicMover_op;
+	
 	//tr() << "kinematic mover generated, now setting up perturber... " << std::endl;
 
 	// AS: select from different perturbers implemented for NGK
@@ -343,7 +344,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 		}
 
 		loop_closure::kinematic_closure::TorsionRestrictedKinematicPerturberOP perturber =
-			new loop_closure::kinematic_closure::TorsionRestrictedKinematicPerturber ( &myKinematicMover, torsion_bins );
+			new loop_closure::kinematic_closure::TorsionRestrictedKinematicPerturber ( myKinematicMover_cap, torsion_bins );
 
 		// to make the code cleaner this should really be a generic function, even though some classes may not use it
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
@@ -351,23 +352,23 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	} else if ( basic::options::option[ basic::options::OptionKeys::loops::kic_rama2b ]() && basic::options::option[ basic::options::OptionKeys::loops::taboo_sampling ]() ) {  // TabooSampling with rama2b (neighbor-dependent phi/psi lookup)
 		loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturberOP
 		perturber =
-        new loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturber( &myKinematicMover );
+        new loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturber( myKinematicMover_cap );
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	} else if ( basic::options::option[ basic::options::OptionKeys::loops::taboo_sampling ] ) { // TabooSampling (std rama)
-		loop_closure::kinematic_closure::TabooSamplingKinematicPerturberOP perturber = new loop_closure::kinematic_closure::TabooSamplingKinematicPerturber ( &myKinematicMover );
+		loop_closure::kinematic_closure::TabooSamplingKinematicPerturberOP perturber = new loop_closure::kinematic_closure::TabooSamplingKinematicPerturber ( myKinematicMover_cap );
 
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	} else if ( basic::options::option[ basic::options::OptionKeys::loops::kic_rama2b ]() ) { // rama2b
 		loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturberOP	perturber =
-			new loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturber( &myKinematicMover );
+			new loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturber( myKinematicMover_cap );
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	} else { // default behavior [for now] -- std KIC
 		loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP
 		perturber =
-		new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( &myKinematicMover );
+		new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( myKinematicMover_cap );
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	}
@@ -461,7 +462,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 		if (option[ OptionKeys::loops::vicinity_sampling ]()) {
 			// AS Oct 3 2012: replace TorsionRestrictedKinematicPerturber by VicinitySamplingKinematicPerturber
 			loop_closure::kinematic_closure::VicinitySamplingKinematicPerturberOP v_perturber =
-			new loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber( &myKinematicMover );
+			new loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber( myKinematicMover_cap );
 			v_perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 			v_perturber->set_degree_vicinity( option[ OptionKeys::loops::vicinity_degree ]() );
 			myKinematicMover.set_perturber( v_perturber );

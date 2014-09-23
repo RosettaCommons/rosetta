@@ -132,7 +132,7 @@ void PlaceProbeMover::execute_one_search(core::pose::Pose & pose, core::Size sea
 	
 	perform_local_refinement(pose, residueindex);
 
-	core::conformation::ResidueCOP post_refinement_residue(pose.residue(residueindex));
+	core::conformation::ResidueCOP post_refinement_residue(pose.residue(residueindex).get_self_ptr());
 
 	{
 		core::kinematics::Stub post_refinement_centroid_transform = StubGenerator::residueStubCentroidFrame(post_refinement_residue);
@@ -215,7 +215,8 @@ core::pack::task::PackerTaskOP PlaceProbeMover::create_refinement_packing_task(c
 {
 	TR.Debug << "Creating refinement packing task." << std::endl;
 	core::pack::task::TaskFactory taskfactory;
-
+	using core::pack::task::operation::TaskOperationCOP;
+	
   taskfactory.push_back( new core::pack::task::operation::InitializeFromCommandline() );
 	taskfactory.push_back( new AddSearchPatternRotSetOp(
 																target_residue,

@@ -140,6 +140,7 @@ FastDesign::parse_my_tag(
 	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 ) {
+	using core::pack::task::operation::TaskOperationCOP;
 	// make sure we create a task factory before parsing FastRelax::parse_my_tag
 	// otherwise no design will occur
 	core::pack::task::TaskFactoryOP local_tf = new core::pack::task::TaskFactory();
@@ -437,7 +438,7 @@ FastDesign::set_constraint_weight( core::scoring::ScoreFunctionOP local_scorefxn
 																	 core::scoring::EnergyMap const & full_weights,
 																	 core::Real const weight ) const
 {
-	runtime_assert( local_scorefxn );
+	runtime_assert( local_scorefxn != 0 );
 	local_scorefxn->set_weight( core::scoring::coordinate_constraint, full_weights[ core::scoring::coordinate_constraint ] * weight );
 	local_scorefxn->set_weight( core::scoring::atom_pair_constraint, full_weights[ core::scoring::atom_pair_constraint ] * weight );
 	local_scorefxn->set_weight( core::scoring::angle_constraint, full_weights[ core::scoring::angle_constraint ] * weight );

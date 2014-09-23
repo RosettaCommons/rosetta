@@ -15,6 +15,7 @@
 #define INCLUDED_protocols_canonical_sampling_BiasEnergy_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/access_ptr.hh>
 
 namespace protocols {
 namespace canonical_sampling {
@@ -24,6 +25,8 @@ class BiasEnergy;
 
 typedef utility::pointer::owning_ptr< BiasEnergy > BiasEnergyOP;
 typedef utility::pointer::owning_ptr< BiasEnergy const > BiasEnergyCOP;
+typedef utility::pointer::access_ptr< BiasEnergy > BiasEnergyAP;
+typedef utility::pointer::access_ptr< BiasEnergy const > BiasEnergyCAP;
 
 // Forward
 

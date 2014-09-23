@@ -17,12 +17,15 @@
 #define INCLUDED_protocols_abinitio_Templates_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/access_ptr.hh>
 
 namespace protocols {
 namespace abinitio {
 
 //forward declaration for private class
 class Templates;
+typedef utility::pointer::access_ptr< Templates > TemplatesAP;
+typedef utility::pointer::access_ptr< Templates const > TemplatesCAP;
 typedef utility::pointer::owning_ptr< Templates > TemplatesOP;
 typedef utility::pointer::owning_ptr< Templates const > TemplatesCOP;
 

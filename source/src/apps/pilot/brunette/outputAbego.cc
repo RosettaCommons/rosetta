@@ -60,7 +60,7 @@ int main( int argc, char * argv [] ) {
 		using core::import_pose::pose_from_pdb;
 		devel::init(argc, argv);
 		MetaPoseInputStream input = streams_from_cmd_line();
-    		ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+    		ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
 		while(input.has_another_pose()){
 			core::pose::PoseOP input_poseOP;
 			input_poseOP = new core::pose::Pose();

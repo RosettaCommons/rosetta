@@ -55,7 +55,7 @@ EnvCoreCAP EnvCore::superenv() const{
 }
 
 void EnvCore::set_superenv( EnvCoreCAP env ){
-  if( superenv_ == 0 || superenv_ == env ){
+  if( superenv_.expired() || utility::pointer::equal(superenv_, env) ){
     superenv_ = env;
   } else {
     throw utility::excn::EXCN_Msg_Exception( "Superenvironment already assigned.");

@@ -55,7 +55,7 @@ public:
 	}
 
 	basic::datacache::CacheableDataOP clone() const {
-		return new SigmoidWeightedCenList( *this );
+		return basic::datacache::CacheableDataOP( new SigmoidWeightedCenList( *this ) );
 	}
 
 	Size size() const { return fcen6_.size();}

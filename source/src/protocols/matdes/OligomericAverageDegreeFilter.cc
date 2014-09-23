@@ -131,7 +131,7 @@ void OligomericAverageDegreeFilter::multicomp( bool const mcomp ) { multicomp_ =
 core::Real OligomericAverageDegreeFilter::compute( Pose const & pose, bool const & verbose, bool const & write ) const
 {
 
-	runtime_assert( task_factory() );
+	runtime_assert( task_factory() != 0 );
 	utility::vector1<std::string> sym_dof_name_list;
 	std::string sym_dof_name;
   core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );

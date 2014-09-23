@@ -61,6 +61,7 @@ std::string KicMoverCreator::keyname() const { // {{{1
 // }}}1
 
 KicMover::KicMover() { // {{{1
+	using perturbers::PerturberOP;
 	perturbers_ = new perturbers::PerturberSet;
 	perturbers_->add(new perturbers::RamaPerturber);
 	perturbers_->add(new perturbers::BondAnglePerturber);

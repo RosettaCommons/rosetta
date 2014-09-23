@@ -61,10 +61,10 @@ void BasicJumpClaimer::generate_claims( claims::DofClaims& claims ){
 
   //Add new jump claim
   if( ( start_atom_ == "" ) && ( end_atom_ == "" ) ) {
-    claims.push_back( new claims::JumpClaim( this, std::make_pair( start_label_, start_position_ ),
+    claims.push_back( new claims::JumpClaim( get_self_weak_ptr(), std::make_pair( start_label_, start_position_ ),
 				     std::make_pair( end_label_, end_position_ ) ) );
   } else if ( ( start_atom_ != "" ) && ( end_atom_ != "" ) ) {
-    claims.push_back( new claims::JumpClaim( this, std::make_pair( start_label_, start_position_ ),
+    claims.push_back( new claims::JumpClaim( get_self_weak_ptr(), std::make_pair( start_label_, start_position_ ),
 				     std::make_pair( end_label_, end_position_ ), start_atom_,
 				     end_atom_ ) );
   } else {
@@ -80,9 +80,9 @@ void BasicJumpClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClaim
 {
 	claims::JumpClaimOP our_claim;
 	for( claims::DofClaims::const_iterator claim = claims.begin(); claim != claims.end(); ++claim ){
-		if( claim->get()->owner() == this ){
-			our_claim = dynamic_cast< claims::JumpClaim* >( claim->get() );
-			runtime_assert( our_claim );
+		if( claim->get()->owner().lock().get() == this ){
+			our_claim = utility::pointer::dynamic_pointer_cast< claims::JumpClaim >( *claim );
+			runtime_assert( our_claim != 0 );
 		}
 	}
 

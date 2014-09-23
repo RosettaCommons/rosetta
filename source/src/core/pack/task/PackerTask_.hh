@@ -72,7 +72,7 @@ public:
 	extrachi_sample_level(
 		bool buried,
 		int chi,
-		chemical::ResidueTypeCOP concrete_residue
+		chemical::ResidueType const & concrete_residue
 	) const;
 
 	///@brief initialize options from command line flags

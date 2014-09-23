@@ -116,7 +116,7 @@ FullatomDisulfideEnergyCreator::score_types_for_method() const {
 
 FullatomDisulfideEnergy::FullatomDisulfideEnergy( FullatomDisulfidePotential const & potential )
 :
-	parent( new FullatomDisulfideEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( methods::EnergyMethodCreatorOP( new FullatomDisulfideEnergyCreator ) ) ),
 	potential_( potential )
 {}
 
@@ -214,7 +214,7 @@ FullatomDisulfideEnergy::residue_pair_energy_ext(
 	conformation::Residue const & rsdl( rsd1.seqpos() < rsd2.seqpos() ? rsd1 : rsd2 );
 	conformation::Residue const & rsdu( rsd1.seqpos() < rsd2.seqpos() ? rsd2 : rsd1 );
 
-	assert( dynamic_cast< DisulfMinData const * > ( min_data.get_data( fa_dslf_respair_data )() ) );
+	assert( utility::pointer::dynamic_pointer_cast< DisulfMinData const > ( min_data.get_data( fa_dslf_respair_data ) ) );
 	DisulfMinData const & disulf_inds = static_cast< DisulfMinData const & > ( *min_data.get_data( fa_dslf_respair_data ) );
 
 
@@ -297,7 +297,7 @@ FullatomDisulfideEnergy::eval_residue_pair_derivatives(
 		return;
 	}
 
-	assert( dynamic_cast< DisulfMinData const * > ( min_data.get_data( fa_dslf_respair_data )() ) );
+	assert( utility::pointer::dynamic_pointer_cast< DisulfMinData const > ( min_data.get_data( fa_dslf_respair_data ) ) );
 	DisulfMinData const & disulf_inds = static_cast< DisulfMinData const & > ( *min_data.get_data( fa_dslf_respair_data ) );
 
 	/// this could be substantially more efficient, but there are only ever a handful of disulfides in proteins,

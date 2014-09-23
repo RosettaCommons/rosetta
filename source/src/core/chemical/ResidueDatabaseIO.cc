@@ -484,10 +484,10 @@ void ResidueDatabaseIO::write_residuetype_to_database(
 }
 
 core::chemical::ResidueTypeOP ResidueDatabaseIO::read_residuetype_from_database(
-	chemical::AtomTypeSetCAP atom_types,
-	chemical::ElementSetCAP elements,
-	chemical::MMAtomTypeSetCAP mm_atom_types,
-	chemical::orbitals::OrbitalTypeSetCAP orbital_atom_types,
+	chemical::AtomTypeSetCOP atom_types,
+	chemical::ElementSetCOP elements,
+	chemical::MMAtomTypeSetCOP mm_atom_types,
+	chemical::orbitals::OrbitalTypeSetCOP orbital_atom_types,
 	std::string const & residue_type_set_name,
 	std::string const & residue_type_name,
 	utility::sql_database::sessionOP db_session

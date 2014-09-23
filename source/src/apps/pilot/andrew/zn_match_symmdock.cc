@@ -209,6 +209,7 @@ int main( int argc, char * argv [] )
 	dock_mover->set_fullatom( false );
 	seq_mover->add_mover( dock_mover );
 
+	using protocols::moves::MoverOP;
 
 	// 4. Go to full atom
 	seq_mover->add_mover( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD ));

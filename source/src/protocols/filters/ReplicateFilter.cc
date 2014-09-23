@@ -74,7 +74,7 @@ ReplicateFilter::report( std::ostream & out, core::pose::Pose const & pose) cons
 
 core::Real 
 ReplicateFilter::compute(core::pose::Pose const & pose) const {
-  runtime_assert( subfilter_ );
+  runtime_assert( subfilter_ != 0 );
 	if( lower_trim_ + upper_trim_ >= replicates_ ) {
 		TR.Warning << "Replicate Filter trims off all values - returning 0." << std::endl;
 	}	

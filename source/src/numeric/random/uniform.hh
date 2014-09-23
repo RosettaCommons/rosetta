@@ -30,6 +30,8 @@
 #include <string>
 #include <cstdlib> //required by GCC 4.3.2
 
+#include <assert.h>
+
 namespace numeric {
 namespace random {
 

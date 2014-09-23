@@ -116,7 +116,7 @@ FavorSequenceProfile::apply( core::pose::Pose & pose )
 		profile = new core::sequence::SequenceProfile;
 		profile->generate_from_sequence(seq, matrix_);
 	} else {
-		runtime_assert( ref_profile_ );
+		runtime_assert( ref_profile_ != 0 );
 		profile = new core::sequence::SequenceProfile( *ref_profile_);
 	}
 
@@ -169,7 +169,7 @@ FavorSequenceProfile::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::
 		typedef utility::vector1< std::string > StringVec;
 		StringVec const sf_keys( utility::string_split( sf_val, ',' ) );
 		for ( StringVec::const_iterator it( sf_keys.begin() ), end( sf_keys.end() ); it != end; ++it ) {
-			ScoreFunctionOP scorefxn( *data.get< ScoreFunction * >( "scorefxns", *it ) );
+			ScoreFunctionOP scorefxn( data.get_ptr< ScoreFunction >( "scorefxns", *it ) );
 			if( scorefxn->get_weight( res_type_constraint ) == 0.0 ){
 				scorefxn->set_weight( res_type_constraint, 1 );
 				TR<<"Turning on res_type_constraint weight in scorefxn "<<*it<<std::endl;

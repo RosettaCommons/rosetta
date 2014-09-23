@@ -378,7 +378,7 @@ TaskAwareAlaScan::parse_ddG_task_operations( utility::tag::TagCOP tag, basic::da
   for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
         t_o_key != end; ++t_o_key ) {
     if ( data.has( "task_operations", *t_o_key ) ) {
-      new_task_factory->push_back( data.get< core::pack::task::operation::TaskOperation * >( "task_operations", *t_o_key ) );
+      new_task_factory->push_back( data.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", *t_o_key ) );
       TR<<*t_o_key<<' ';
     } else {
       utility_exit_with_message("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");

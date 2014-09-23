@@ -87,6 +87,7 @@ public:
 		using namespace core;
 		using namespace core::pack::task;
 		using protocols::toolbox::task_operations::RestrictNonSurfaceToRepackingOperation;
+		using core::pack::task::operation::TaskOperationCOP;
 		//using namespace ObjexxFCL::format;
 
 		TR << "Running test_RestrictNonSurfaceToRepackingOperation..." << std::endl;

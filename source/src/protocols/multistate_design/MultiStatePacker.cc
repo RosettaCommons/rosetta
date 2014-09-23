@@ -159,8 +159,8 @@ MultiStatePacker::single_state_design( bool restrict_to_canonical /* = true */ )
 {
 	for ( SingleStateOPs::iterator ss( states().begin() ), end( states().end() );
 	      ss != end; ++ss ) {
-		PackingStateOP state = dynamic_cast< PackingState* >( (*ss)() );
-		runtime_assert( state );
+		PackingStateOP state = utility::pointer::dynamic_pointer_cast< PackingState >( (*ss) );
+		runtime_assert( state != 0 );
 		utility::vector0< int > rot_to_pack;
 		// this is important if alternate states are represented in the rotamer set (e.g. for DNA)
 		if ( restrict_to_canonical ) restrict_to_canonical_aas( *state, rot_to_pack );
@@ -178,8 +178,8 @@ MultiStatePacker::evaluate(
 	core::Size single_state_num
 )
 {
-	PackingStateOP state = dynamic_cast< PackingState* >( states()[single_state_num]() );
-	runtime_assert( state );
+	PackingStateOP state = utility::pointer::dynamic_pointer_cast< PackingState >( states()[single_state_num] );
+	runtime_assert( state != 0 );
 
 	// Filter down to the rotamers needed for this single sequence
 	utility::vector0<int> rot_to_pack;
@@ -228,7 +228,7 @@ limit_rotamer_set(
 	for ( Size rot_i(1); rot_i <= nrotamers; ++rot_i ) {
 
 		Size const rot_pos( rotsets.res_for_rotamer( rot_i ) );
-		core::chemical::ResidueTypeCOP rot_type( rotsets.rotamer( rot_i )->type() );
+		core::chemical::ResidueTypeCOP rot_type( rotsets.rotamer( rot_i )->type().get_self_ptr() );
 
 		core::chemical::AA seq_type( core::chemical::aa_unk );
 		for ( vector1< genetic_algorithm::EntityElementOP >::const_iterator
@@ -237,7 +237,7 @@ limit_rotamer_set(
 			if ( ! it->get() ) {
 				utility_exit_with_message( "Null pointer in EntityElement array" );
 			}
-			PosTypeCOP postype( dynamic_cast< PosType const * > ( it->get() ) );
+			PosTypeCOP postype( utility::pointer::dynamic_pointer_cast< PosType const > ( *it ) );
 			if ( ! postype ) {
 				utility_exit_with_message( "Dynamic cast to PosType failed for object of type " + (*it)->name() );
 			}

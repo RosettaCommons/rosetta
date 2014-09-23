@@ -16,6 +16,7 @@
 #define INCLUDED_protocols_rosetta_scripts_ParsedProtocol_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/access_ptr.hh>
 
 namespace protocols {
 namespace rosetta_scripts {
@@ -24,6 +25,8 @@ class ParsedProtocol;
 
 typedef utility::pointer::owning_ptr< ParsedProtocol > ParsedProtocolOP;
 typedef utility::pointer::owning_ptr< ParsedProtocol const > ParsedProtocolCOP;
+typedef utility::pointer::access_ptr< ParsedProtocol > ParsedProtocolAP;
+typedef utility::pointer::access_ptr< ParsedProtocol const > ParsedProtocolCAP;
 
 } // namespace protocols
 } // namespace rosetta_scripts

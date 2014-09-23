@@ -328,7 +328,7 @@ TaskOperationOP RotamerExplosionCreator::create_task_operation() const
 
 TaskOperationOP RotamerExplosion::clone() const
 {
-	return( new RotamerExplosion( *this ) );
+	return TaskOperationOP( new RotamerExplosion( *this ) );
 }
 
 void
@@ -1118,7 +1118,7 @@ TaskOperationOP ExtraRotamersCreator::create_task_operation() const
 
 TaskOperationOP ExtraRotamers::clone() const
 {
-	return( new ExtraRotamers( *this ) );
+	return TaskOperationOP( new ExtraRotamers( *this ) );
 }
 
 void
@@ -1187,7 +1187,7 @@ TaskOperationOP ExtraChiCutoffCreator::create_task_operation() const
 
 TaskOperationOP ExtraChiCutoff::clone() const
 {
-	return( new ExtraChiCutoff( *this ) );
+	return TaskOperationOP( new ExtraChiCutoff( *this ) );
 }
 
 void

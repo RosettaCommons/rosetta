@@ -18,9 +18,8 @@ namespace perturbers {
 
 class WalkingPerturber;
 
-using utility::pointer::owning_ptr;
-typedef owning_ptr<WalkingPerturber> WalkingPerturberOP;
-typedef owning_ptr<WalkingPerturber const> WalkingPerturberCOP;
+typedef utility::pointer::owning_ptr<WalkingPerturber> WalkingPerturberOP;
+typedef utility::pointer::owning_ptr<WalkingPerturber const> WalkingPerturberCOP;
 
 }
 }

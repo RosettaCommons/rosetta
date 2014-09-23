@@ -99,14 +99,14 @@ void ContinuousRotamerSet::build_rotamers(
 		++count_restype_ind;
 		aa_for_rotblock_[ count_restype_ind ] = (*allowed_iter)->aa();
 		restype_for_rotblock_[ count_restype_ind ] = (*allowed_iter);
-		dunbrack::SingleResidueRotamerLibraryCAP rotlib =
-			dunbrack::RotamerLibrary::get_instance().get_rsd_library( **allowed_iter );
+		dunbrack::SingleResidueRotamerLibraryCOP rotlib =
+			dunbrack::RotamerLibrary::get_instance().get_rsd_library( **allowed_iter ).lock();
 		if ( rotlib ) {
 			// OK -- two options -- we're dealing with a Dunbrack library, in which case, we should
 			// store DunbrackRotamerSampleData, or, we're dealing with some other kind of library,
 			// in which case, we need to quit (TO DO: support ligand rotamers)
-			dunbrack::SingleResidueDunbrackLibraryCAP dunlib =
-				dynamic_cast<dunbrack::SingleResidueDunbrackLibrary const * > ( rotlib() );
+			dunbrack::SingleResidueDunbrackLibraryCOP dunlib =
+				utility::pointer::dynamic_pointer_cast<dunbrack::SingleResidueDunbrackLibrary const > ( rotlib );
 			if ( dunlib ) {
 				samples_[ count_restype_ind ] = dunlib->get_all_rotamer_samples( pose.phi( resid ), pose.psi( resid ) );
 			} else {
@@ -117,7 +117,7 @@ void ContinuousRotamerSet::build_rotamers(
 			// noop
 		}
 
-		if ( (*allowed_iter)() == & pose.residue_type( resid ) && task.residue_task( resid ).include_current() ) {
+		if ( (*allowed_iter).get() == & pose.residue_type( resid ) && task.residue_task( resid ).include_current() ) {
 			/// save coordinates for this residue
 			input_rotamer_rotblock_ = count_restype_ind;
 			conformation::Residue const & res = pose.residue( resid );

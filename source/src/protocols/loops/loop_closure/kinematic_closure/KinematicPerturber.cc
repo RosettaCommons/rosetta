@@ -77,17 +77,19 @@ KinematicPerturber::set_pose_after_closure(
 ) const
 {
 
-	core::Size start( kinmover_->start_res() );
-	core::Size end( kinmover_->end_res() );
+	KinematicMoverCOP kinmover_op( kinmover() );
+	
+	core::Size start( kinmover_op->start_res() );
+	core::Size end( kinmover_op->end_res() );
 	core::Size first_atom_index ( (pose.residue(start).is_lower_terminus() ?
-		kinmover_->count_bb_atoms_in_residue(pose, start) + 1 :
-		kinmover_->count_bb_atoms_in_residue(pose, start-1) + 1) );
+		kinmover_op->count_bb_atoms_in_residue(pose, start) + 1 :
+		kinmover_op->count_bb_atoms_in_residue(pose, start-1) + 1) );
 
 	// AS: if any of the (potentially) omega-sampling flags is set, omega needs to be copied from the torsions vector
 	bool also_copy_omega = ( basic::options::option[ basic::options::OptionKeys::loops::sample_omega_at_pre_prolines ]() || basic::options::option[ basic::options::OptionKeys::loops::kic_omega_sampling ]() ) || ( basic::options::option[ basic::options::OptionKeys::loops::restrict_kic_sampling_to_torsion_string ].user() || basic::options::option[ basic::options::OptionKeys::loops::derive_torsion_string_from_native_pose ]() ) ;
 
 	for( core::Size res = start, ia = first_atom_index; res <= end; res++ ){
-		if(kinmover_->is_beta_aminoacid(pose.residue(res))) { //If this is a beta-amino acid, set phi, theta, psi, and possibly omega
+		if(kinmover_op->is_beta_aminoacid(pose.residue(res))) { //If this is a beta-amino acid, set phi, theta, psi, and possibly omega
 			using namespace core;
 			using namespace core::id;
 
@@ -213,25 +215,26 @@ TorsionSamplingKinematicPerturber::perturb_chain(
 )
 {
 	core::kinematics::MoveMapCOP mm(get_movemap());
+	KinematicMoverCOP kinmover_op( kinmover() );
 
 	//Get the start and end residues:
-	core::Size startres = kinmover()->start_res();
-	core::Size endres = kinmover()->end_res();
+	core::Size startres = kinmover_op->start_res();
+	core::Size endres = kinmover_op->end_res();
 
 	// Get the number of backbone atoms stored for the padding residues:
 	// Number of backbone atoms for the first residue in the segment
 	// (start_res_ - 1 or the prepended start_res_ if start_res_ is a terminus)
 	core::Size start_minus_one_bb_atom_count = pose.residue(startres).is_lower_terminus() ?
-		kinmover()->count_bb_atoms_in_residue(pose, startres) :
-		kinmover()->count_bb_atoms_in_residue(pose, startres - 1);
+		kinmover_op->count_bb_atoms_in_residue(pose, startres) :
+		kinmover_op->count_bb_atoms_in_residue(pose, startres - 1);
 
 
 	if( vary_ca_bond_angles_ ){ //For now, ONLY CA bond angles of alpha-amino acids will be varied.
 
 		core::Size pvatom1 = start_minus_one_bb_atom_count + 2; // Second backbone atom of start_res_ (CA if alpha or beta-amino acid).
 
-		core::Real bangle_min( kinmover()->BANGLE_MIN() );
-		core::Real bangle_sd( kinmover()->BANGLE_SD() );
+		core::Real bangle_min( kinmover_op->BANGLE_MIN() );
+		core::Real bangle_sd( kinmover_op->BANGLE_SD() );
 
 		//Looping over all CA angles:
 		for(core::Size ir = startres, curatom = pvatom1; ir<=endres; ++ir) {
@@ -247,7 +250,7 @@ TorsionSamplingKinematicPerturber::perturb_chain(
 
 		if(!mm || mm->get_bb(cur_res)){ //if movemap is null, or (if not null) if movemap says mobile
 
-			if(kinmover()->is_beta_aminoacid(pose.residue(cur_res))) { //If this is a beta-amino acid, select backbone dihedral values:
+			if(kinmover_op->is_beta_aminoacid(pose.residue(cur_res))) { //If this is a beta-amino acid, select backbone dihedral values:
 				perturb_beta_residue(torsions[i], torsions[i+1], torsions[i+2], 1);
 				i+=4; //Leave omega (CM-C-N-CA) alone and increment i to point at the first torsion of the next residue.
 			} else { //Default case -- if this is an alpha-amino acid:
@@ -259,7 +262,7 @@ TorsionSamplingKinematicPerturber::perturb_chain(
 			}
 
 		} else {
-			i += kinmover()->count_bb_atoms_in_residue(pose, cur_res); //ensure i indexing increases
+			i += kinmover_op->count_bb_atoms_in_residue(pose, cur_res); //ensure i indexing increases
 		}
 
 	}
@@ -274,12 +277,12 @@ TorsionSamplingKinematicPerturber::perturb_chain(
 
 			if ( pose.aa( cur_res+1 ) == core::chemical::aa_pro || pose.aa( cur_res+1 ) == core::chemical::aa_dpr ) { //L-proline or D-proline.
 				i++; //phi
-				if(kinmover()->is_beta_aminoacid(pose.residue(cur_res))) i++; //theta
+				if(kinmover_op->is_beta_aminoacid(pose.residue(cur_res))) i++; //theta
 				i++; //psi
 				torsions[i++] = ( static_cast<int>( numeric::random::rg().uniform()*2 ) ? (core::chemical::is_canonical_D_aa(pose.residue(cur_res).aa()) ? -1.0 : 1.0 ) * OMEGA_MEAN : 0.0 );  // flip a coin -- either 179.8 (trans) or 0.0 (cis).  If it's a D-amino acid, it's multiplied by -1.0 if it's a D-Pro.
 
 			} else {
-				i += kinmover()->count_bb_atoms_in_residue(pose, cur_res); //Increment i by the number of torsion angles in this residue.
+				i += kinmover_op->count_bb_atoms_in_residue(pose, cur_res); //Increment i by the number of torsion angles in this residue.
 			}
 		}
 	} else if ( basic::options::option[ basic::options::OptionKeys::loops::kic_omega_sampling ]() ) {
@@ -291,9 +294,9 @@ TorsionSamplingKinematicPerturber::perturb_chain(
 		// as a proxy, using 1/1000 for now
 		static const core::Real cis_prob_threshold = 0.001; //VKM, 26 Aug 2013: this was 0.0001, but the comment above says 1/1000.  I'm switching this to 0.001, since I think that was the intent...
 
-		for( core::Size i=4, cur_res = kinmover()->start_res(); i<= tor_end; cur_res++ ){
+		for( core::Size i=4, cur_res = kinmover_op->start_res(); i<= tor_end; cur_res++ ){
 			i++; //phi
-			if(kinmover()->is_beta_aminoacid(pose.residue(cur_res))) i++; //theta
+			if(kinmover_op->is_beta_aminoacid(pose.residue(cur_res))) i++; //theta
 			i++; //psi
 			core::Real trans_prob = 1;
 			if ( pose.aa( cur_res+1 ) == core::chemical::aa_pro || pose.aa( cur_res+1 ) == core::chemical::aa_dpr ) { //L- or D-proline
@@ -320,18 +323,19 @@ TorsionSamplingKinematicPerturber::set_pose_after_closure(
 
 	//	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful, sample_omega_for_pre_prolines_ );
 	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful ); //This correctly handles beta-amino acids, now.
+	KinematicMoverCOP kinmover_op( kinmover() );
 
-	core::Size startres = kinmover()->start_res(); //The first residue in the segment
-	core::Size endres = kinmover()->end_res(); //The last residue in the segment
+	core::Size startres = kinmover_op->start_res(); //The first residue in the segment
+	core::Size endres = kinmover_op->end_res(); //The last residue in the segment
 	//The index of the first backbone atom of the first residue in the segment (i.e. index in the torsions, bond_ang, and bon_len lists):
-	core::Size starting_atom = (pose.residue(startres).is_lower_terminus() ? kinmover()->count_bb_atoms_in_residue(pose, startres) + 1 : kinmover()->count_bb_atoms_in_residue(pose, startres-1) + 1 ) ;
+	core::Size starting_atom = (pose.residue(startres).is_lower_terminus() ? kinmover_op->count_bb_atoms_in_residue(pose, startres) + 1 : kinmover_op->count_bb_atoms_in_residue(pose, startres-1) + 1 ) ;
 
 	if(!closure_successful || vary_ca_bond_angles_ ){ // if the closure wasn't successful, we may need to overwrite previously idealized angles
 		core::Real offset( 0.0 );
 
 		// C-N-CA
 		for (Size res=startres, atom=starting_atom; res<=endres; res++) {
-			if(kinmover()->is_beta_aminoacid(pose.residue(res))) {
+			if(kinmover_op->is_beta_aminoacid(pose.residue(res))) {
 				//For now, do nothing for beta-amino acids.
 			} else { //Default case -- alpha-amino acid:
 				const core::id::AtomID atomid_N (1, res);
@@ -342,12 +346,12 @@ TorsionSamplingKinematicPerturber::set_pose_after_closure(
 				if (pose.has_dof(dof_of_interest))
 					pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_ang[atom]));
 			}
-			atom += kinmover()->count_bb_atoms_in_residue(pose, res);
+			atom += kinmover_op->count_bb_atoms_in_residue(pose, res);
 		}
 
 		// N-CA-C -- these are all within the same residue, so jumps are not an issue
 		for (Size res=startres, atom=starting_atom+1; res<=endres; res++) {
-			if(kinmover()->is_beta_aminoacid(pose.residue(res))) {
+			if(kinmover_op->is_beta_aminoacid(pose.residue(res))) {
 				//For now, do nothing for beta-amino acids.
 			} else { //Default case -- alpha-amino acid:
 				const core::id::AtomID atomid_N (1, res);
@@ -356,12 +360,12 @@ TorsionSamplingKinematicPerturber::set_pose_after_closure(
 				pose.set_dof(pose.atom_tree().bond_angle_dof_id(atomid_N, atomid_CA, atomid_C, offset ),
 							 numeric::conversions::radians(180 - bond_ang[atom]));
 			}
-			atom += kinmover()->count_bb_atoms_in_residue(pose, res);
+			atom += kinmover_op->count_bb_atoms_in_residue(pose, res);
 		}
 
 		// CA-C-N
 		for (Size res=startres, atom=starting_atom+2; res<=endres; res++) {
-			if(kinmover()->is_beta_aminoacid(pose.residue(res))) {
+			if(kinmover_op->is_beta_aminoacid(pose.residue(res))) {
 				//For now, do nothing for beta-amino acids.
 			} else { //Default case -- alpha-amino acid:
 				const core::id::AtomID atomid_N (1, res+1);
@@ -371,7 +375,7 @@ TorsionSamplingKinematicPerturber::set_pose_after_closure(
 				if (pose.has_dof(dof_of_interest)) //In case this is a terminus
 					pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_ang[atom]));
 			}
-			atom += kinmover()->count_bb_atoms_in_residue(pose, res);
+			atom += kinmover_op->count_bb_atoms_in_residue(pose, res);
 		}
 
 	}
@@ -381,7 +385,7 @@ TorsionSamplingKinematicPerturber::set_pose_after_closure(
 
 		// N-CA
 		for (Size res=startres, atom=starting_atom; res<=endres; res++) {
-			if(kinmover()->is_beta_aminoacid(pose.residue(res))) {
+			if(kinmover_op->is_beta_aminoacid(pose.residue(res))) {
 				//For now, do nothing for beta-amino acids.
 			} else { //Default case -- alpha-amino acid:
 				const core::id::AtomID atomid_N (1, res);
@@ -389,12 +393,12 @@ TorsionSamplingKinematicPerturber::set_pose_after_closure(
 
 				pose.set_dof(pose.atom_tree().bond_length_dof_id(atomid_N, atomid_CA ), bond_len[atom]);
 			}
-			atom += kinmover()->count_bb_atoms_in_residue(pose, res);
+			atom += kinmover_op->count_bb_atoms_in_residue(pose, res);
 		}
 
 		// CA-C
 		for (Size res=startres, atom=starting_atom+1; res<=endres; res++) {
-			if(kinmover()->is_beta_aminoacid(pose.residue(res))) {
+			if(kinmover_op->is_beta_aminoacid(pose.residue(res))) {
 				//For now, do nothing for beta-amino acids.
 			} else { //Default case -- alpha-amino acid:
 				const core::id::AtomID atomid_CA(2, res);
@@ -402,12 +406,12 @@ TorsionSamplingKinematicPerturber::set_pose_after_closure(
 
 				pose.set_dof(pose.atom_tree().bond_length_dof_id(atomid_CA, atomid_C ), bond_len[atom]);
 			}
-			atom += kinmover()->count_bb_atoms_in_residue(pose, res);
+			atom += kinmover_op->count_bb_atoms_in_residue(pose, res);
 		}
 
 		// C-N
 		for (Size res=startres, atom=starting_atom+2; res<=endres; res++) {
-			if(kinmover()->is_beta_aminoacid(pose.residue(res))) {
+			if(kinmover_op->is_beta_aminoacid(pose.residue(res))) {
 				//For now, do nothing for beta-amino acids.
 			} else { //Default case -- alpha-amino acid:
 				const core::id::AtomID atomid_C (3, res);
@@ -418,7 +422,7 @@ TorsionSamplingKinematicPerturber::set_pose_after_closure(
 					pose.set_dof(dof_of_interest, bond_len[atom]);
 				}
 			}
-			atom += kinmover()->count_bb_atoms_in_residue(pose, res);
+			atom += kinmover_op->count_bb_atoms_in_residue(pose, res);
 		}
 
 	}
@@ -451,13 +455,14 @@ VicinitySamplingKinematicPerturber::perturb_chain(
 												  )
 {
 	core::kinematics::MoveMapCOP mm(get_movemap());
+	KinematicMoverCOP kinmover_op( kinmover() );
 
 	if( vary_ca_bond_angles_ ){
 
-		core::Size pvatom3( (3* (kinmover()->segment_length() + 1)) - 1 );
+		core::Size pvatom3( (3* (kinmover_op->segment_length() + 1)) - 1 );
 
-		core::Real bangle_min( kinmover()->BANGLE_MIN() );
-		core::Real bangle_sd( kinmover()->BANGLE_SD() );
+		core::Real bangle_min( kinmover_op->BANGLE_MIN() );
+		core::Real bangle_sd( kinmover_op->BANGLE_SD() );
 
 		//what is this iterating over?
 		for( Size i = 5; i <= pvatom3; i+=3 ) {
@@ -469,7 +474,7 @@ VicinitySamplingKinematicPerturber::perturb_chain(
 
 	core::Size tor_end = torsions.size() - 3;
 
-	for( core::Size i=4, cur_res = kinmover()->start_res(); i<= tor_end; cur_res++ ){
+	for( core::Size i=4, cur_res = kinmover_op->start_res(); i<= tor_end; cur_res++ ){
 		//if(mm) TR << "current residue " << cur_res << "mm reports " << mm->get_bb(cur_res) << std::endl;
 
 		if(!mm || mm->get_bb(cur_res)){ //if movemap is null, or (if not null) if movemap says mobile
@@ -507,13 +512,14 @@ VicinitySamplingKinematicPerturber::set_pose_after_closure(
 
 	//	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful, sample_omega_for_pre_prolines_ );
 	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful );
+	KinematicMoverCOP kinmover_op( kinmover() );
 
 	if(!closure_successful || vary_ca_bond_angles_ ){ // if the closure wasn't successful, we may need to overwrite previously idealized angles
 		core::Real offset( 0.0 );
 
 
 		// C-N-CA
-		for (Size res=kinmover()->start_res(), atom=4; res<= kinmover()->end_res(); res++, atom+=3) {
+		for (Size res=kinmover_op->start_res(), atom=4; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_N (1, res);
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res-1);
@@ -526,7 +532,7 @@ VicinitySamplingKinematicPerturber::set_pose_after_closure(
 
 
 		// N-CA-C -- these are all within the same residue, so jumps are not an issue
-		for (Size res=kinmover()->start_res(), atom=5; res<= kinmover()->end_res(); res++, atom+=3) {
+		for (Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_N (1, res);
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res);
@@ -535,7 +541,7 @@ VicinitySamplingKinematicPerturber::set_pose_after_closure(
 		}
 
 		// CA-C-N
-		for (Size res=kinmover()->start_res(), atom=6; res<= kinmover()->end_res(); res++, atom+=3) {
+		for (Size res=kinmover_op->start_res(), atom=6; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_N (1, res+1);
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res);
@@ -551,7 +557,7 @@ VicinitySamplingKinematicPerturber::set_pose_after_closure(
 	if(!closure_successful) { // if sampling of bond lengths is added, activate this section
 
 		// N-CA
-		for (Size res=kinmover()->start_res(), atom=4; res<= kinmover()->end_res(); res++, atom+=3) {
+		for (Size res=kinmover_op->start_res(), atom=4; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_N (1, res);
 			const core::id::AtomID atomid_CA(2, res);
 
@@ -560,7 +566,7 @@ VicinitySamplingKinematicPerturber::set_pose_after_closure(
 		}
 
 		// CA-C
-		for (Size res=kinmover()->start_res(), atom=5; res<= kinmover()->end_res(); res++, atom+=3) {
+		for (Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res);
 
@@ -569,7 +575,7 @@ VicinitySamplingKinematicPerturber::set_pose_after_closure(
 		}
 
 		// C-N
-		for (Size res=kinmover()->start_res(), atom=6; res<= kinmover()->end_res(); res++, atom+=3) {
+		for (Size res=kinmover_op->start_res(), atom=6; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_C (3, res);
 			const core::id::AtomID atomid_N (1, res+1);
 
@@ -637,7 +643,8 @@ TorsionSweepingKinematicPerturber::perturb_chain(
 	if ( sweep_iterator_.at_end() ) {
 		utility_exit_with_message("TorsionSweepingKinematicPerturber asked to perturb chain even though sweep iterator is at end."); }
 
-	core::Size start( kinmover()->start_res() );
+	KinematicMoverCOP kinmover_op( kinmover() );
+	core::Size start( kinmover_op->start_res() );
 
 	for ( Size ii = 1; ii <= nonpivot_res_to_sweep_.size(); ++ii ) {
 		Size torsion_ind = 3 * ( nonpivot_res_to_sweep_[ ii ] - start + 1 ) + sweep_torsion_ids_[ ii ];
@@ -674,13 +681,14 @@ NeighborDependentTorsionSamplingKinematicPerturber::perturb_chain(
 																  )
 {
 	core::kinematics::MoveMapCOP mm(get_movemap());
+	KinematicMoverCOP kinmover_op( kinmover() );
 
 	if( vary_ca_bond_angles_ ){
 
-		core::Size pvatom3( (3* (kinmover()->segment_length() + 1)) - 1 );
+		core::Size pvatom3( (3* (kinmover_op->segment_length() + 1)) - 1 );
 
-		core::Real bangle_min( kinmover()->BANGLE_MIN() );
-		core::Real bangle_sd( kinmover()->BANGLE_SD() );
+		core::Real bangle_min( kinmover_op->BANGLE_MIN() );
+		core::Real bangle_sd( kinmover_op->BANGLE_SD() );
 
 		for( Size i = 5; i <= pvatom3; i+=3 ) {
 			bond_ang[ i ] = bangle_min + numeric::random::rg().uniform() * bangle_sd;
@@ -692,7 +700,7 @@ NeighborDependentTorsionSamplingKinematicPerturber::perturb_chain(
 
 	core::Size tor_end = torsions.size() - 3;
 
-	for( core::Size i=4, cur_res = kinmover()->start_res(); i<= tor_end; cur_res++ ){
+	for( core::Size i=4, cur_res = kinmover_op->start_res(); i<= tor_end; cur_res++ ){
 
 		if(!mm || mm->get_bb(cur_res)){ //if movemap is null, or (if not null) if movemap says mobile
 
@@ -720,7 +728,7 @@ NeighborDependentTorsionSamplingKinematicPerturber::perturb_chain(
 
 		static const core::Real OMEGA_MEAN( 179.8 );
 
-		for( core::Size i=4, cur_res = kinmover()->start_res(); i<= tor_end; cur_res++ ){
+		for( core::Size i=4, cur_res = kinmover_op->start_res(); i<= tor_end; cur_res++ ){
 
 			if ( pose.aa( cur_res+1 ) == core::chemical::aa_pro ) {
 
@@ -754,13 +762,14 @@ NeighborDependentTorsionSamplingKinematicPerturber::set_pose_after_closure(
 
 	//	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful, sample_omega_for_pre_prolines_ );
 	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful );
+	KinematicMoverCOP kinmover_op( kinmover() );
 
 	if(!closure_successful || vary_ca_bond_angles_ ){ // if the closure wasn't successful, we may need to overwrite previously idealized angles
 		core::Real offset( 0.0 );
 
 
 		// C-N-CA
-		for (Size res=kinmover()->start_res(), atom=4; res<= kinmover()->end_res(); res++, atom+=3) {
+		for (Size res=kinmover_op->start_res(), atom=4; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_N (1, res);
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res-1);
@@ -773,7 +782,7 @@ NeighborDependentTorsionSamplingKinematicPerturber::set_pose_after_closure(
 
 
 		// N-CA-C -- these are all within the same residue, so jumps are not an issue
-		for (Size res=kinmover()->start_res(), atom=5; res<= kinmover()->end_res(); res++, atom+=3) {
+		for (Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_N (1, res);
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res);
@@ -782,7 +791,7 @@ NeighborDependentTorsionSamplingKinematicPerturber::set_pose_after_closure(
 		}
 
 		// CA-C-N
-		for (Size res=kinmover()->start_res(), atom=6; res<= kinmover()->end_res(); res++, atom+=3) {
+		for (Size res=kinmover_op->start_res(), atom=6; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_N (1, res+1);
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res);
@@ -798,7 +807,7 @@ NeighborDependentTorsionSamplingKinematicPerturber::set_pose_after_closure(
 	if(!closure_successful) { // if sampling of bond lengths is added, activate this section
 
 		// N-CA
-		for (Size res=kinmover()->start_res(), atom=4; res<= kinmover()->end_res(); res++, atom+=3) {
+		for (Size res=kinmover_op->start_res(), atom=4; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_N (1, res);
 			const core::id::AtomID atomid_CA(2, res);
 
@@ -807,7 +816,7 @@ NeighborDependentTorsionSamplingKinematicPerturber::set_pose_after_closure(
 		}
 
 		// CA-C
-		for (Size res=kinmover()->start_res(), atom=5; res<= kinmover()->end_res(); res++, atom+=3) {
+		for (Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res);
 
@@ -816,7 +825,7 @@ NeighborDependentTorsionSamplingKinematicPerturber::set_pose_after_closure(
 		}
 
 		// C-N
-		for (Size res=kinmover()->start_res(), atom=6; res<= kinmover()->end_res(); res++, atom+=3) {
+		for (Size res=kinmover_op->start_res(), atom=6; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_C (3, res);
 			const core::id::AtomID atomid_N (1, res+1);
 
@@ -868,13 +877,14 @@ TorsionRestrictedKinematicPerturber::perturb_chain(
 )
 {
 	core::kinematics::MoveMapCOP mm(get_movemap());
+	KinematicMoverCOP kinmover_op( kinmover() );
 
 	if( vary_ca_bond_angles_ ){ // is this appropriate here?
 
-		core::Size pvatom3( (3* (kinmover()->segment_length() + 1)) - 1 );
+		core::Size pvatom3( (3* (kinmover_op->segment_length() + 1)) - 1 );
 
-		core::Real bangle_min( kinmover()->BANGLE_MIN() );
-		core::Real bangle_sd( kinmover()->BANGLE_SD() );
+		core::Real bangle_min( kinmover_op->BANGLE_MIN() );
+		core::Real bangle_sd( kinmover_op->BANGLE_SD() );
 
 		for( Size i = 5; i <= pvatom3; i+=3 ) {
 			bond_ang[ i ] = bangle_min + numeric::random::rg().uniform() * bangle_sd;
@@ -886,9 +896,9 @@ TorsionRestrictedKinematicPerturber::perturb_chain(
 
 	core::Size tor_end = torsions.size() - 3;
 
-	core::Size torsion_string_offset = kinmover()->start_res() - kinmover()->loop_begin(); //offset to fetch the torsion bin for the subsegment we're currently sampling -- the string is always for the entire loop -- maybe we should make sure that this doesn't generate a segmentation fault?
+	core::Size torsion_string_offset = kinmover_op->start_res() - kinmover_op->loop_begin(); //offset to fetch the torsion bin for the subsegment we're currently sampling -- the string is always for the entire loop -- maybe we should make sure that this doesn't generate a segmentation fault?
 
-	for( core::Size i=4, cur_res = kinmover()->start_res(); i<= tor_end; cur_res++ ){
+	for( core::Size i=4, cur_res = kinmover_op->start_res(); i<= tor_end; cur_res++ ){
 		if(!mm || mm->get_bb(cur_res)){ //if movemap is null, or (if not null) if movemap says mobile
 
 			core::Real rama_phi, rama_psi;
@@ -915,7 +925,7 @@ TorsionRestrictedKinematicPerturber::perturb_chain(
 	static const core::Real OMEGA_STDDEV( 6.3 );
 	core::Real rand_omega;
 
-	for( core::Size i=4, cur_res = kinmover()->start_res(); i<= tor_end; cur_res++ ){ // note that this ignores any movemaps for now -- usally they just refer to phi/psi, but it'd be better to check
+	for( core::Size i=4, cur_res = kinmover_op->start_res(); i<= tor_end; cur_res++ ){ // note that this ignores any movemaps for now -- usally they just refer to phi/psi, but it'd be better to check
 
 		if ( basic::options::option[ basic::options::OptionKeys::loops::kic_omega_sampling ]() || pose.aa( cur_res+1 ) == core::chemical::aa_pro) {
 			rand_omega = OLD_OMEGA_MEAN; // mainly for legacy purposes -- at least the means should be adjusted to match
@@ -956,13 +966,14 @@ TorsionRestrictedKinematicPerturber::set_pose_after_closure(
 
 	//	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful, sample_omega_for_pre_prolines_ );
 	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful );
+	KinematicMoverCOP kinmover_op( kinmover() );
 
 	if(!closure_successful || vary_ca_bond_angles_ ){ // if the closure wasn't successful, we may need to overwrite previously idealized angles
 		core::Real offset( 0.0 );
 
 
 		// C-N-CA
-		for (Size res=kinmover()->start_res(), atom=4; res<= kinmover()->end_res(); res++, atom+=3) {
+		for (Size res=kinmover_op->start_res(), atom=4; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_N (1, res);
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res-1);
@@ -975,7 +986,7 @@ TorsionRestrictedKinematicPerturber::set_pose_after_closure(
 
 
 		// N-CA-C -- these are all within the same residue, so jumps are not an issue
-		for (Size res=kinmover()->start_res(), atom=5; res<= kinmover()->end_res(); res++, atom+=3) {
+		for (Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_N (1, res);
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res);
@@ -984,7 +995,7 @@ TorsionRestrictedKinematicPerturber::set_pose_after_closure(
 		}
 
 		// CA-C-N
-		for (Size res=kinmover()->start_res(), atom=6; res<= kinmover()->end_res(); res++, atom+=3) {
+		for (Size res=kinmover_op->start_res(), atom=6; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_N (1, res+1);
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res);
@@ -1000,7 +1011,7 @@ TorsionRestrictedKinematicPerturber::set_pose_after_closure(
 	if(!closure_successful) { // if sampling of bond lengths is added, activate this section
 
 		// N-CA
-		for (Size res=kinmover()->start_res(), atom=4; res<= kinmover()->end_res(); res++, atom+=3) {
+		for (Size res=kinmover_op->start_res(), atom=4; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_N (1, res);
 			const core::id::AtomID atomid_CA(2, res);
 
@@ -1009,7 +1020,7 @@ TorsionRestrictedKinematicPerturber::set_pose_after_closure(
 		}
 
 		// CA-C
-		for (Size res=kinmover()->start_res(), atom=5; res<= kinmover()->end_res(); res++, atom+=3) {
+		for (Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res);
 
@@ -1018,7 +1029,7 @@ TorsionRestrictedKinematicPerturber::set_pose_after_closure(
 		}
 
 		// C-N
-		for (Size res=kinmover()->start_res(), atom=6; res<= kinmover()->end_res(); res++, atom+=3) {
+		for (Size res=kinmover_op->start_res(), atom=6; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_C (3, res);
 			const core::id::AtomID atomid_N (1, res+1);
 
@@ -1080,8 +1091,9 @@ BaseTabooPerturber::refill_torsion_string_vector()
 
 	// data structure to hold the vector of torsion bins, with frequencies dependent on the amino
 	// acid type, for each position in the loop
+	KinematicMoverCOP kinmover_op( kinmover() );
 	utility::vector1< torsion_bin_string > torsion_bins_per_position;
-	utility::vector1< core::chemical::AA > loop_sequence = kinmover()->get_loop_sequence();
+	utility::vector1< core::chemical::AA > loop_sequence = kinmover_op->get_loop_sequence();
 	torsion_bins_per_position.resize(loop_sequence.size()); // check if we need +1 here somewhere...
 	core::Real ideal_freq, current_freq;
 	for (core::Size i = 1; i <= loop_sequence.size(); i++) {
@@ -1096,7 +1108,7 @@ BaseTabooPerturber::refill_torsion_string_vector()
 			if ( mcs_i->first == ppo_torbin_X )	continue;
 
 			ideal_freq = core::Real(mcs_i->second) / entries_for_X;
-			current_freq = kinmover()->frequency_in_taboo_map( i-1, mcs_i->first ); // calculated on a string, i.e., base is 0
+			current_freq = kinmover_op->frequency_in_taboo_map( i-1, mcs_i->first ); // calculated on a string, i.e., base is 0
 
 			//TR << "for residue " << loop_sequence[i] << ", torsion bin " << mcs_i->first << " has " << mcs_i->second << " entries --> " << ideal_freq << " while current freq is " << current_freq << std::endl;
 
@@ -1128,7 +1140,7 @@ BaseTabooPerturber::refill_torsion_string_vector()
 			new_torsion_string.push_back( torsion_bins_per_position[i][j] );
 		}
 		// check if we have already sampled this string -- if not, add it to the list
-		if ( !( kinmover()->is_in_taboo_map(new_torsion_string) ) ) {
+		if ( !( kinmover_op->is_in_taboo_map(new_torsion_string) ) ) {
 			random_torsion_strings_.push_back(new_torsion_string);
 		}
 
@@ -1159,8 +1171,10 @@ BaseTabooPerturber::next_torsion_string()
 
 	runtime_assert(random_torsion_strings_.size() > 0); // shouldn't happen any more...
 
+	KinematicMoverCOP kinmover_op( kinmover() );
+
 	// make sure the torsion string we're returning hasn't been tested yet
-	while ( kinmover()->is_in_taboo_map(random_torsion_strings_[random_torsion_strings_.size()]) ) {
+	while ( kinmover_op->is_in_taboo_map(random_torsion_strings_[random_torsion_strings_.size()]) ) {
 		//TR << random_torsion_strings_[random_torsion_strings_.size()] << " has already been tested, next... " << std::endl;
 		random_torsion_strings_.pop_back();
 		while ( random_torsion_strings_.size() == 0 ) { // refill if necessary
@@ -1185,13 +1199,14 @@ BaseTabooPerturber::perturb_chain(
 )
 {
 	core::kinematics::MoveMapCOP mm(get_movemap());
+	KinematicMoverCOP kinmover_op( kinmover() );
 
 	if( vary_ca_bond_angles_ ){ // is this appropriate here?
 
-		core::Size pvatom3( (3* (kinmover()->segment_length() + 1)) - 1 );
+		core::Size pvatom3( (3* (kinmover_op->segment_length() + 1)) - 1 );
 
-		core::Real bangle_min( kinmover()->BANGLE_MIN() );
-		core::Real bangle_sd( kinmover()->BANGLE_SD() );
+		core::Real bangle_min( kinmover_op->BANGLE_MIN() );
+		core::Real bangle_sd( kinmover_op->BANGLE_SD() );
 
 		//what is this iterating over?
 		for ( Size i = 5; i <= pvatom3; i+=3 ) {
@@ -1210,11 +1225,11 @@ BaseTabooPerturber::perturb_chain(
 	// offset to fetch the torsion bin for the subsegment we're currently sampling -- the string
 	// is always for the entire loop -- maybe we should make sure that this doesn't generate a
 	// segmentation fault?
-	core::Size torsion_string_offset = kinmover()->start_res() - kinmover()->loop_begin();
+	core::Size torsion_string_offset = kinmover_op->start_res() - kinmover_op->loop_begin();
 
 	//std::cerr << "Torsion string is " << torsion_string << ", offset is " << torsion_string_offset << std::endl;
 
-	for ( core::Size i=4, cur_res = kinmover()->start_res(); i<= tor_end; cur_res++ ) {
+	for ( core::Size i=4, cur_res = kinmover_op->start_res(); i<= tor_end; cur_res++ ) {
 		if (!mm || mm->get_bb(cur_res)) { //if movemap is null, or (if not null) if movemap says mobile
 
 			core::Real rama_phi, rama_psi;
@@ -1238,7 +1253,7 @@ BaseTabooPerturber::perturb_chain(
 
 		static const core::Real OMEGA_MEAN( 179.8 );
 
-		for( core::Size i=4, cur_res = kinmover()->start_res(); i<= tor_end; cur_res++ ){
+		for( core::Size i=4, cur_res = kinmover_op->start_res(); i<= tor_end; cur_res++ ){
 
 			if ( pose.aa( cur_res+1 ) == core::chemical::aa_pro ) {
 
@@ -1270,7 +1285,7 @@ BaseTabooPerturber::perturb_chain(
 		// as a proxy, using 1/1000 for now
 		static const core::Real cis_prob_threshold = 0.0001;
 
-		for( core::Size i=4, cur_res = kinmover()->start_res(); i<= tor_end; cur_res++ ){
+		for( core::Size i=4, cur_res = kinmover_op->start_res(); i<= tor_end; cur_res++ ){
 			i++; //phi
 			i++; //psi
 			core::Real trans_prob = 1;
@@ -1300,13 +1315,14 @@ BaseTabooPerturber::set_pose_after_closure(
 
 	//	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful, sample_omega_for_pre_prolines_ );
 	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful );
+	KinematicMoverCOP kinmover_op( kinmover() );
 
 	if(!closure_successful || vary_ca_bond_angles_ ){ // if the closure wasn't successful, we may need to overwrite previously idealized angles
 		core::Real offset( 0.0 );
 
 
 		// C-N-CA
-		for (Size res=kinmover()->start_res(), atom=4; res<= kinmover()->end_res(); res++, atom+=3) {
+		for (Size res=kinmover_op->start_res(), atom=4; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_N (1, res);
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res-1);
@@ -1319,7 +1335,7 @@ BaseTabooPerturber::set_pose_after_closure(
 
 
 		// N-CA-C -- these are all within the same residue, so jumps are not an issue
-		for (Size res=kinmover()->start_res(), atom=5; res<= kinmover()->end_res(); res++, atom+=3) {
+		for (Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_N (1, res);
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res);
@@ -1328,7 +1344,7 @@ BaseTabooPerturber::set_pose_after_closure(
 		}
 
 		// CA-C-N
-		for (Size res=kinmover()->start_res(), atom=6; res<= kinmover()->end_res(); res++, atom+=3) {
+		for (Size res=kinmover_op->start_res(), atom=6; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_N (1, res+1);
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res);
@@ -1344,7 +1360,7 @@ BaseTabooPerturber::set_pose_after_closure(
 	if(!closure_successful) { // if sampling of bond lengths is added, activate this section
 
 		// N-CA
-		for (Size res=kinmover()->start_res(), atom=4; res<= kinmover()->end_res(); res++, atom+=3) {
+		for (Size res=kinmover_op->start_res(), atom=4; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_N (1, res);
 			const core::id::AtomID atomid_CA(2, res);
 
@@ -1353,7 +1369,7 @@ BaseTabooPerturber::set_pose_after_closure(
 		}
 
 		// CA-C
-		for (Size res=kinmover()->start_res(), atom=5; res<= kinmover()->end_res(); res++, atom+=3) {
+		for (Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_CA(2, res);
 			const core::id::AtomID atomid_C (3, res);
 
@@ -1362,7 +1378,7 @@ BaseTabooPerturber::set_pose_after_closure(
 		}
 
 		// C-N
-		for (Size res=kinmover()->start_res(), atom=6; res<= kinmover()->end_res(); res++, atom+=3) {
+		for (Size res=kinmover_op->start_res(), atom=6; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_C (3, res);
 			const core::id::AtomID atomid_N (1, res+1);
 
@@ -1436,9 +1452,10 @@ NeighborDependentTabooSamplingKinematicPerturber::get_random_phi_psi_for_residue
 ) const
 {
 	core::conformation::ppo_torsion_bin remapped_torbin = core::conformation::remap_cis_omega_torsion_bins_to_trans( torbin );
-	if ( resid == kinmover()->loop_begin() ) {
+	KinematicMoverCOP kinmover_op( kinmover() );
+	if ( resid == kinmover_op->loop_begin() ) {
 		rama_.random_phipsi_from_rama_by_torsion_bin_right( pose.aa(resid), pose.aa(resid+1), phi, psi, remapped_torbin );
-	} else if ( resid == kinmover()->loop_end() ) {
+	} else if ( resid == kinmover_op->loop_end() ) {
 		rama_.random_phipsi_from_rama_by_torsion_bin_left( pose.aa(resid-1), pose.aa(resid), phi, psi, remapped_torbin );
 	} else if ( static_cast<int>( numeric::random::rg().uniform()*2 ) ) {
 		rama_.random_phipsi_from_rama_by_torsion_bin_right( pose.aa(resid), pose.aa(resid+1), phi, psi, remapped_torbin );

@@ -141,7 +141,7 @@ CyclizationMover::setup_connections( core::pose::Pose & pose )
 	cterm_connect_type_name.erase( std::remove( cterm_connect_type_name.begin(), cterm_connect_type_name.end(), ' ' ), cterm_connect_type_name.end() );
 
 	// get CtermConnect and NtermConnect variant types
-	ResidueTypeSetCAP rsd_type_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+	ResidueTypeSetCOP rsd_type_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 	ResidueType const & nterm_connect_type( rsd_type_set->name_map( nterm_connect_type_name ) );
 	ResidueType const & cterm_connect_type( rsd_type_set->name_map( cterm_connect_type_name ) );
 
@@ -178,7 +178,7 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 	ResidueType const & cterm_connect_type(	pose.residue( cterm_rsd_num_ ).type() );
 
 	// get base variants of ResidueTypes of N-terminus and C-terminus
-	ResidueTypeSetCAP rsd_type_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+	ResidueTypeSetCOP rsd_type_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 	// remove spaces if the name3 really only has 2 letters, Damn it Tim!
 	std::string nterm_base_type_name( nterm_connect_type.name3() );
 	std::string cterm_base_type_name( cterm_connect_type.name3() );
@@ -219,20 +219,20 @@ CyclizationMover::setup_constraints( core::pose::Pose & pose )
 	TR << "Cterm atom " << cterm_base_uc_icoor.stub_atom1().atomno() << " is " << cterm_base_uc_icoor.d() << " from its upper connect" << std::endl;
 	Real ap_cst_length( ( nterm_base_lc_icoor.d() + cterm_base_uc_icoor.d() ) / 2 );
 	TR << "Adding AtomPairConstraint of length:" << ap_cst_length << std::endl;
-	ConstraintOP b1( new AtomPairConstraint( nterm_n, cterm_c, new HarmonicFunc( ap_cst_length, 0.01 ) ) );
+	ConstraintOP b1( new AtomPairConstraint( nterm_n, cterm_c, core::scoring::func::FuncOP( new HarmonicFunc( ap_cst_length, 0.01 ) ) ) );
 	pose.add_constraint( b1 );
 
 	// create two AngleConstraints
 	TR << "Nterm atom " << nterm_base_lc_icoor.stub_atom2().atomno() << " and " << nterm_base_lc_icoor.stub_atom1().atomno() << " make and angle of " << nterm_base_lc_icoor.theta() << "with its lower connect" << std::endl;
 	Real a1_cst_radian( numeric::constants::r::pi - nterm_base_lc_icoor.theta() );
 	TR << "Adding AngleConstraint of radian: " << a1_cst_radian << std::endl;
-	ConstraintOP a1( new AngleConstraint( nterm_ca, nterm_n, cterm_c, new HarmonicFunc( a1_cst_radian, 0.1 ) ) );
+	ConstraintOP a1( new AngleConstraint( nterm_ca, nterm_n, cterm_c, core::scoring::func::FuncOP( new HarmonicFunc( a1_cst_radian, 0.1 ) ) ) );
 	pose.add_constraint( a1 );
 
 	TR << "Cterm atom " << cterm_base_uc_icoor.stub_atom2().atomno() << " and " << cterm_base_uc_icoor.stub_atom1().atomno() << " make and angle of " << cterm_base_uc_icoor.theta() << "with its upper connect" << std::endl;
 	Real a2_cst_radian( numeric::constants::r::pi - cterm_base_uc_icoor.theta() );
 	TR << "Adding AngleConstraint of radian: " << a2_cst_radian << std::endl;
-	ConstraintOP a2( new AngleConstraint( nterm_n, cterm_c, cterm_ca, new HarmonicFunc( a2_cst_radian, 0.1 ) ) );
+	ConstraintOP a2( new AngleConstraint( nterm_n, cterm_c, cterm_ca, core::scoring::func::FuncOP( new HarmonicFunc( a2_cst_radian, 0.1 ) ) ) );
 	pose.add_constraint( a2 );
 
 }

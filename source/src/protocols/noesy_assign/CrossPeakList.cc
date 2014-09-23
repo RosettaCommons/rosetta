@@ -255,7 +255,7 @@ void CrossPeakList::set_trivial_decoy_compatibility_score() {
 void CrossPeakList::update_symmetry_score() {
 	tr.Info << " symmetry score " << std::endl;
 	if ( !assignments_ ) update_assignment_list();
-	runtime_assert( assignments_ );
+	runtime_assert( assignments_ != 0 );
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	Real const min_sym_cont( params.min_contribution_symmetric_peaks_ );
 	assignments().check_for_symmetric_peaks( *this, min_sym_cont < 0.99 );
@@ -264,7 +264,7 @@ void CrossPeakList::update_symmetry_score() {
 void CrossPeakList::network_analysis() { //ResonanceList const& resonances ) {
 	tr.Info << " network analysis ... " << std::endl;
 	if ( !assignments_ ) update_assignment_list();
-	runtime_assert( assignments_ );
+	runtime_assert( assignments_ != 0 );
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	if ( params.network_mode_ == "orig" ) {
 		Size n_assignments( count_assignments() );

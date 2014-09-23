@@ -77,7 +77,7 @@ void NotResidueSelector::parse_my_tag(
 		}
 	
 		try {
-			ResidueSelectorCOP selector = datamap.get< ResidueSelector const * >( "ResidueSelector", selector_str );
+			ResidueSelectorCOP selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_str );
 			set_residue_selector(selector);
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::stringstream error_msg;

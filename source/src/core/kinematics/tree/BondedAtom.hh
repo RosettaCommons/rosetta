@@ -34,7 +34,7 @@ namespace tree {
 
 extern Jump BOGUS_JUMP; // for return statement to keep compiler happy
 
-/// @brief an atom which are bonded to its parentt, derived from Atom_
+/// @brief an atom which are bonded to its parent, derived from Atom_
 ///
 /// See @ref atomtree_overview "AtomTree overview and concepts" for details.
 ///
@@ -225,7 +225,7 @@ public: // Properties
 	AtomCOP
 	stub_atom1() const
 	{
-		return this;
+		return get_self_ptr();
 	}
 
 
@@ -253,18 +253,19 @@ public: // Properties
 	stub_atom3() const
 	{
 		//std::cout << "stub_atom3: " << this << ' ' << parent_ << std::endl();
-		if ( parent()->is_jump() ) {
-			assert( parent()->stub_defined() ); // weird behavior otherwise
-			AtomCOP p_stub2( parent()->stub_atom2() );
+		AtomCOP parent_op = parent(); // must have parent
+		if ( parent_op->is_jump() ) {
+			assert( parent_op->stub_defined() ); // weird behavior otherwise
+			AtomCOP p_stub2( parent_op->stub_atom2() );
 			AtomID const & p_stub2_id( p_stub2->id() );
 			if ( id() == p_stub2_id ) {
 				// very special case!!
-				return parent()->stub_atom3();
+				return parent_op->stub_atom3();
 			} else {
 				return p_stub2;
 			}
 		} else {
-			return parent()->stub_atom2();
+			return parent_op->stub_atom2();
 		}
 	}
 

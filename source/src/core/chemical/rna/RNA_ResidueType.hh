@@ -63,10 +63,10 @@ private:
 	public:
 
 	void
-	update_derived_rna_data( ResidueTypeCOP const residue_type_in );
+	update_derived_rna_data( ResidueTypeCAP residue_type_in );
 
 	void
-	rna_update_last_controlling_chi( ResidueTypeCOP const residue_type_in,
+	rna_update_last_controlling_chi( ResidueTypeCAP residue_type_in,
 																utility::vector1< core::Size > & last_controlling_chi,
 																utility::vector1< AtomIndices >  &  atoms_last_controlled_by_chi );
 
@@ -161,7 +161,7 @@ public:
 	//For fast look whether atom is VIRTUAL type.
 	utility::vector1< bool > is_virtual_;
 
-	ResidueTypeCOP residue_type_; //Pointer to the main ResidueType object that this RNA_ResidueType object belongs to.
+	ResidueTypeCAP residue_type_; //Pointer to the main ResidueType object that this RNA_ResidueType object belongs to.
 
 	Size chi_number_pseudoalpha_;
 	Size chi_number_pseudobeta_;

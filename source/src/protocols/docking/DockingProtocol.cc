@@ -282,6 +282,7 @@ void DockingProtocol::setup_objects()
 	to_centroid_ = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
 
 	//generate to_all_atom mover: 	to_all_atom_ =
+	using protocols::moves::MoverOP;
 	protocols::moves::SequenceMoverOP to_all_atom_and_repack = new protocols::moves::SequenceMover;
 	to_all_atom_and_repack->add_mover( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD ) );
 	to_all_atom_and_repack->add_mover( new protocols::simple_moves::RepackSidechainsMover( docking_scorefxn_pack_ ) );

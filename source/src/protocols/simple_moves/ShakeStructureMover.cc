@@ -231,7 +231,7 @@ ShakeStructureMover::set_minimize_with_cst(bool truefalse){
 }
 
 void
-ShakeStructureMover::set_scorefunction(core::scoring::ScoreFunction & s){
+ShakeStructureMover::set_scorefunction(core::scoring::ScoreFunctionOP s){
 	scorefxn = s;
 	scorefunction_initialized=true;
 }
@@ -476,7 +476,7 @@ ShakeStructureMover::setup_ca_constraints(
 			Vector const CA_j(pose.residue(j).xyz(" CA "));
 			Real const CA_dist = (CA_i - CA_j).length();
 			if(CA_dist < CA_cutoff){
-				ConstraintCOP cst(new AtomPairConstraint( AtomID(pose.residue(i).atom_index(" CA "),i),AtomID(pose.residue(j).atom_index(" CA "),j),new core::scoring::func::HarmonicFunc(CA_dist, cst_tol)));
+				ConstraintCOP cst(new AtomPairConstraint( AtomID(pose.residue(i).atom_index(" CA "),i),AtomID(pose.residue(j).atom_index(" CA "),j), core::scoring::func::FuncOP(new core::scoring::func::HarmonicFunc(CA_dist, cst_tol)) ));
 				pose.add_constraint(cst);
 			}
 		}

@@ -74,7 +74,7 @@ namespace rigid_body {
 																			core::conformation::Residue const & template_moving_residue,
 																			core::kinematics::Stub const & reference_stub ):
 		moving_res_( moving_res ),
-		moving_residue_at_origin_( template_moving_residue ),
+		moving_residue_at_origin_( template_moving_residue.clone() ),
 		reference_stub_( reference_stub ),
 		reference_res_( 0 ) // unknown with this old style of initialization
 	{}
@@ -245,7 +245,7 @@ namespace rigid_body {
 		std::string downstream_atom_name = pose.fold_tree().downstream_atom( jump_no );
 		Size const i = seq_num;
 		Size const j = pose.residue_type( i ).atom_index( downstream_atom_name );
-		kinematics::tree::AtomCOP current_atom ( & pose.atom_tree().atom_dont_do_update( AtomID(j,i) ) );
+		kinematics::tree::AtomCOP current_atom ( pose.atom_tree().atom_dont_do_update( AtomID(j,i) ).get_self_ptr() );
 		runtime_assert( current_atom->is_jump() );
 
 		core::kinematics::tree::AtomCOP input_stub_atom1( current_atom->input_stub_atom1() );

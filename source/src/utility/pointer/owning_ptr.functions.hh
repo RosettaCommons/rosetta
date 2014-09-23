@@ -7,45 +7,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   utility/pointer/owning_ptr.functions.hh
-/// @brief  owning_ptr acquire and release functions
-/// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
-///
-/// @remarks
-///  @li Objects owned by owning_ptr should inherit from ReferenceCount to get the
-///      reference counting mechanism and the add_ref and remove_ref functions.
+/// @file   utility/pointer/owning_ptr.functions.hh.hh
+/// @brief  owning pointer functions -- dispatch class
+/// @author Luki Goldschmidt <lugo@uw.edu>
 
-
-#ifndef INCLUDED_utility_pointer_owning_ptr_functions_hh
-#define INCLUDED_utility_pointer_owning_ptr_functions_hh
-
-
-namespace utility {
-namespace pointer {
-
-
-/// @brief Add a reference to the object acquired by an owning_ptr
-template< typename T >
-inline
-void
-owning_ptr_acquire( T * p )
-{
-	p->add_ref();
-}
-
-
-/// @brief Remove a reference from the object released by an owning_ptr
-template< typename T >
-inline
-void
-owning_ptr_release( T * p )
-{
-	p->remove_ref();
-}
-
-
-} // namespace pointer
-} // namespace utility
-
-
-#endif // INCLUDED_utility_pointer_owning_ptr_functions_HH
+#ifdef PTR_REFCOUNT
+#include <utility/pointer/refcount/owning_ptr.functions.hh>
+#endif

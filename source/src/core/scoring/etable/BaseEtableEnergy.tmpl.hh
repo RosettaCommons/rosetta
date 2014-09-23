@@ -1232,7 +1232,7 @@ BaseEtableEnergy< Derived >::residue_pair_energy_ext(
 		}
 	}*/
 	///prepare_for_residue_pair( 1,2, pose ); // set inter-res
-	assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( etab_pair_nblist )() ));
+	assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( etab_pair_nblist ) ));
 	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( etab_pair_nblist ) ) );
 	Real dsq;
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
@@ -1507,7 +1507,7 @@ BaseEtableEnergy< Derived >::eval_residue_pair_derivatives(
 	assert( r1_at_derivs.size() >= rsd1.natoms() );
 	assert( r2_at_derivs.size() >= rsd2.natoms() );
 
-	assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( etab_pair_nblist )() ));
+	assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( etab_pair_nblist ) ));
 	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( etab_pair_nblist )) );
 
 	//prepare_for_residue_pair( 1, 2, pose ); // set inter-res
@@ -1750,7 +1750,7 @@ BaseEtableEnergy< Derived >::eval_intrares_energy_ext(
 {
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
-	assert( dynamic_cast< ResidueNblistData const * > (min_data.get_data( etab_single_nblist )() ));
+	assert( utility::pointer::dynamic_pointer_cast< ResidueNblistData const > (min_data.get_data( etab_single_nblist ) ));
 	ResidueNblistData const & nblist( static_cast< ResidueNblistData const & > ( min_data.get_data_ref( etab_single_nblist ) ) );
 
 	//prepare_for_residue_pair( 1,1, pose ); // set intra-res
@@ -1816,7 +1816,7 @@ BaseEtableEnergy< Derived >::eval_intrares_derivatives(
 {
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
-	assert( dynamic_cast< ResidueNblistData const * > (min_data.get_data( etab_single_nblist )() ));
+	assert( utility::pointer::dynamic_pointer_cast< ResidueNblistData const > (min_data.get_data( etab_single_nblist ) ));
 	ResidueNblistData const & nblist( static_cast< ResidueNblistData const & > ( min_data.get_data_ref( etab_single_nblist )) );
 
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );

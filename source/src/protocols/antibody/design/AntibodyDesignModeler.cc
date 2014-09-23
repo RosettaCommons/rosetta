@@ -74,7 +74,7 @@ using namespace protocols::toolbox::task_operations;
 using namespace protocols::antibody::clusters;
 using core::Size;      
 using std::string;
-            
+using core::pack::task::operation::TaskOperationCOP;
         
 AntibodyDesignModeler::AntibodyDesignModeler(AntibodyInfoOP ab_info){
 	ab_info_ = ab_info;

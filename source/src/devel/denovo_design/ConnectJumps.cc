@@ -160,7 +160,7 @@ ConnectJumps::parse_my_tag(
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void ConnectJumps::apply( core::pose::Pose & pose )
 {
-	runtime_assert( scorefxn_ );
+	runtime_assert( scorefxn_ != 0 );
 	// DSSP the shit out of this pose
 	protocols::moves::DsspMover dssp;
 	dssp.apply( pose );
@@ -255,13 +255,13 @@ void ConnectJumps::apply( core::pose::Pose & pose )
 	Pose archive_pose = pose;
 	Pose modified_archive_pose = archive_pose;
 
-	runtime_assert( vlb_ );
+	runtime_assert( vlb_ != 0 );
 	if ( ( ss != cached_ss_ ) || ( aa != cached_aa_ ) || ( cached_start_ != left ) || ( cached_end_ != right ) ) {
 		// the build manager
 		protocols::forge::build::BuildManager manager;
 
 		// add the instruction to rebuild this segment
-		manager.add( new protocols::forge::build::SegmentRebuild( protocols::forge::build::Interval( left, right ), ss, aa ) );
+		manager.add( protocols::forge::build::BuildInstructionOP( new protocols::forge::build::SegmentRebuild( protocols::forge::build::Interval( left, right ), ss, aa ) ) );
 
 		//clear fragment cache and set build manager
 		vlb_->manager( manager );
@@ -327,11 +327,12 @@ ConnectJumps::create_coordinate_cst( core::pose::Pose const & pose,
 		atom = pose.residue_type(resi).atom_index("CA");
 	}
 
+	core::scoring::func::FuncOP fx = new core::scoring::func::HarmonicFunc(0.0, 0.5);
 	return new core::scoring::constraints::CoordinateConstraint(
 			core::id::AtomID(atom,resi),
 			core::id::AtomID(pose.residue(1).nbr_atom(),1),
 			pose.residue(resi).xyz(atom),
-			new core::scoring::func::HarmonicFunc(0.0, 0.5) );
+			fx );
 }
 
 } // namespace denovo_design

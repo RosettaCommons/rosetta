@@ -351,9 +351,9 @@ SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation(
 	for ( std::list< DownstreamAlgorithmOP >::const_iterator iter = dsalgs.begin(),
 			iter_end = dsalgs.end(); iter != iter_end; ++iter ) {
 		SecondaryMatcherToDownstreamResidueOP secmatcher =
-			dynamic_cast< SecondaryMatcherToDownstreamResidue * > ( iter->get() );
-		runtime_assert( secmatcher );
-		if ( secmatcher != this ) {
+			utility::pointer::dynamic_pointer_cast< SecondaryMatcherToDownstreamResidue> ( *iter );
+		runtime_assert( secmatcher != 0 );
+		if ( secmatcher.get() != this ) {
 			secmatcher->set_target_rotamer_coords( target_downstream_coords_ );
 		}
 		secmatchers.push_back( secmatcher );
@@ -430,8 +430,8 @@ SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation_for_geomcst(
 			iter = dsalgs.begin(), iter_end = dsalgs.end();
 			iter != iter_end; ++iter ) {
 		if ( iter->get() != this ) {
-			SecondaryMatcherToDownstreamResidueOP other = dynamic_cast< SecondaryMatcherToDownstreamResidue * > ( iter->get() );
-			runtime_assert( other );
+			SecondaryMatcherToDownstreamResidueOP other = utility::pointer::dynamic_pointer_cast< SecondaryMatcherToDownstreamResidue > ( *iter );
+			runtime_assert( other != 0 );
 			other->set_focused_geomcst_id( focused_geomcst_id_ );
 			//set downstram atom coords needed for all downstream algorithms
 			//and also downstreambuilders that are needed to get coordinates
@@ -506,7 +506,7 @@ SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation_at_target_build_
 
 //	DownstreamBuilderOP dsbuilder = matcher.downstream_builder( focused_geomcst_id_ );
   //set_dsbuilder( matcher.downstream_builder( focused_geomcst_id_ ) );
-	runtime_assert( get_dsbuilder() );
+	runtime_assert( get_dsbuilder() != 0 );
 
 	core::conformation::Residue dsrescoords( *downstream_restype_, false );
 	utility::vector1< core::Vector > coords( downstream_atom_coordinates_needed_.size() );

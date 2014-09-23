@@ -171,7 +171,7 @@ public:
 		core::Size const UBQ_term = UBQlength;
 
 		//replace cysteine
-		core::chemical::ResidueTypeSetCAP fa_standard(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD));
+		core::chemical::ResidueTypeSetCOP fa_standard(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD));
 		core::chemical::ResidueType const & cyd_rsd_type( fa_standard->name_map("CYD") );
 		//GTPase.dump_pdb("prereplace_GTPase.pdb");
 		GTPase.replace_residue( GTPase_cyd_, core::conformation::Residue(cyd_rsd_type, true), true);
@@ -322,6 +322,7 @@ public:
 		task_factory_->push_back(prevent);
 
 		if(false){
+			using core::pose::metrics::PoseMetricCalculatorOP;
 			std::string const interface_calc("UBQGTPase_InterfaceNeighborDefinitionCalculator");
 			std::string const neighborhood_calc("UBQGTPase_NeighborhoodByDistanceCalculator");
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc, new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(2)) );
@@ -426,6 +427,7 @@ public:
 				core::pose::metrics::CalculatorFactory::Instance().remove_calculator(calc);
 				TR.Error << "removed a PoseMetricCalculator " << calc << ", track down why" << std::endl;
 			}
+			using core::pose::metrics::PoseMetricCalculatorOP;
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc, new protocols::toolbox::pose_metric_calculators::InterGroupNeighborsCalculator(vector_of_pairs) );
 
 			//now that calculator exists, add the sucker to the TaskFactory via RestrictByCalculatorsOperation

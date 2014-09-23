@@ -62,11 +62,14 @@ public:
 
     core::Size const SEQPOS = 5;
 
-    protocols::environment::Environment env( "env" );
-		protocols::environment::TesterOP noclaim_test( new protocols::environment::Tester() );
+    protocols::environment::EnvironmentOP env_op( new protocols::environment::Environment( "env" ) );
+    protocols::environment::Environment & env = *env_op;
+    protocols::environment::TesterOP noclaim_test( new protocols::environment::Tester() );
     XYZClaimOP claim = new XYZClaim( NULL, core::environment::LocalPosition( "BASE", SEQPOS ) );
     claim->strength( CAN_CONTROL, DOES_NOT_CONTROL );
-		protocols::environment::TesterOP xyzclaim_test = new protocols::environment::Tester( claim );
+
+    protocols::environment::TesterOP xyzclaim_test = new protocols::environment::Tester;
+    xyzclaim_test->init( claim );
 
     env.register_mover( noclaim_test );
     env.register_mover( xyzclaim_test );

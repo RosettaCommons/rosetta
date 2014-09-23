@@ -22,6 +22,8 @@
 #include <ostream>
 #include <string>
 
+#include <assert.h>
+
 namespace core {
 namespace scoring {
 namespace hbonds {

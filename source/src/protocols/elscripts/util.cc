@@ -54,7 +54,7 @@ parse_taskdef( LuaObject const & taskdef,
 		bool taskfound = false;
 		for (LuaIterator j=tasks.begin(), end; j != end; ++j) {
 			if( j.skey() == task_name ) {
-				new_task_factory->push_back( (*j).to<TaskOperationSP>() );
+				new_task_factory->push_back( (*j).to<TaskOperationOP>() );
 				taskfound = true;
 				break;
 			}
@@ -71,7 +71,11 @@ sp_parse_taskdef( LuaObject const & taskdef,
 	using namespace core::pack::task::operation;
 	TaskFactoryOP tmpop = parse_taskdef( taskdef, tasks );
 	TaskFactorySP tmpsp( tmpop.get() );
+#ifdef PTR_MODERN
+	tmpop.reset(); // No relinquish_ownership in std::shared_ptr
+#else
 	tmpop.relinquish_ownership();
+#endif
 	return tmpsp;
 }
 

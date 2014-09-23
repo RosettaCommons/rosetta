@@ -114,13 +114,13 @@ void OperateOnCertainResidues::residue_indices( utility::vector1< Size > const &
 
 void OperateOnCertainResidues::op( ResLvlTaskOperationCOP op_in )
 {
-	runtime_assert( op_in );
+	runtime_assert( op_in != 0 );
 	op_ = op_in->clone();
 }
 
 void OperateOnCertainResidues::filter( ResFilterCOP filter_in )
 {
-	runtime_assert( filter_in );
+	runtime_assert( filter_in != 0 );
 	filter_ = filter_in->clone();
 }
 

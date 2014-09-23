@@ -116,7 +116,7 @@ main( int argc, char * argv [] )
 	if(!sc.Init())
 		return 1;
 
-	core::chemical::ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+	core::chemical::ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 	std::string molecule_1 = option[ basic::options::OptionKeys::sc::molecule_1 ];
 	std::string molecule_2 = option[ basic::options::OptionKeys::sc::molecule_2 ];
 

@@ -310,7 +310,7 @@ initialize_native_pose( core::pose::PoseOP & native_pose, core::chemical::Residu
 	native_pose = new Pose;
 
 	std::string native_pdb_file  = option[ in::file::native ];
-	import_pose::pose_from_pdb( *native_pose, *rsd_set, native_pdb_file );
+	import_pose::pose_from_pdb( *native_pose, *rsd_set.lock(), native_pdb_file );
 
 	native_pose->conformation().detect_disulfides();
 	if (!option[ disulfide_file ].user() ){
@@ -388,7 +388,7 @@ calc_rms_test(){
 
 	native_pose = PoseOP( new Pose );
 	std::string native_pdb_file  = option[ in::file::native ];
-	import_pose::pose_from_pdb( *native_pose, *rsd_set, native_pdb_file );
+	import_pose::pose_from_pdb( *native_pose, *rsd_set.lock(), native_pdb_file );
 
 	std::string const silent_file_out( option[ out::file::silent  ]() );
 	core::io::silent::SilentFileDataOP sfd_dummy;

@@ -367,7 +367,7 @@ void ClassicRelax::set_default_moveset_phase2()
 		std::string frag3_file  = basic::options::option[ basic::options::OptionKeys::in::file::frag3 ]();
 		core::fragment::ConstantLengthFragSetOP fragset3mer = new core::fragment::ConstantLengthFragSet( 3 );
 		fragset3mer->read_fragment_file( frag3_file );
-		protocols::simple_moves::WobbleMoverOP wobble_mover( new protocols::simple_moves::WobbleMover( fragset3mer, get_movemap(), new protocols::simple_moves::GunnCost  ) );
+		protocols::simple_moves::WobbleMoverOP wobble_mover( new protocols::simple_moves::WobbleMover( fragset3mer, get_movemap(), protocols::simple_moves::FragmentCostOP( new protocols::simple_moves::GunnCost ) ) );
 
 		moveset_phase2_temp ->add_mover( wobble_mover );
 		moveset_phase2_temp ->add_mover( wobble_mover );
@@ -559,7 +559,7 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose::datacache;
 
-	runtime_assert( get_scorefxn() );
+	runtime_assert( get_scorefxn() != 0 );
 	(*get_scorefxn())(pose);
 
 	/// Invoke parent local_movemap initialization routines
@@ -808,7 +808,8 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 
 	// cache the score map to the pose
 	// why does this obliterate any scores that were already there?
-	pose.data().set(CacheableDataType::SCORE_MAP, new basic::datacache::DiagnosticData(score_map));
+	using namespace basic::datacache;
+	pose.data().set(CacheableDataType::SCORE_MAP, DataCache_CacheableData::DataOP( new basic::datacache::DiagnosticData(score_map) ));
 
 
 	(*get_scorefxn())(pose);

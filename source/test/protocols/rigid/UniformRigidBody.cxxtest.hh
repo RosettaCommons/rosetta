@@ -76,7 +76,8 @@ public:
     UniformRigidBodyCMOP rigpert = new UniformRigidBodyCM( "perturb", LocalPosition( "BASE", 1 ), LocalPosition( "BASE", pose.total_residue() ) );
     UniformRigidBodyCMOP rigpert_dup = new UniformRigidBodyCM( "perturb2", LocalPosition( "BASE", 1 ), LocalPosition( "BASE", pose.total_residue() ) );
 
-    Environment env( "env" );
+    EnvironmentOP env_op = new Environment( "env" );
+    Environment & env = *env_op;
     env.register_mover( rigpert );
     env.register_mover( rigpert_dup );
 

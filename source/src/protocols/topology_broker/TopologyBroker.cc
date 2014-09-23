@@ -115,6 +115,9 @@ TopologyBroker::~TopologyBroker() {}
 
 TopologyBroker::TopologyBroker( const TopologyBroker& tp ) :
 	ReferenceCount(),
+#ifdef PTR_MODERN
+	utility::pointer::enable_shared_from_this< TopologyBroker >(),
+#endif
 	claimers_( tp.claimers_ )
 {
 	current_claims_ = tp.current_claims_;
@@ -147,7 +150,7 @@ TopologyBroker const& TopologyBroker::operator = ( TopologyBroker const& src ) {
 
 void TopologyBroker::add( TopologyClaimerOP cl ) {
 	claimers_.push_back( cl );
-	cl->set_broker( this );
+	cl->set_broker( get_self_weak_ptr() );
 }
 
 void TopologyBroker::generate_sequence_claims( claims::DofClaims& all_claims ) {
@@ -173,7 +176,7 @@ SymmetryClaimerOP TopologyBroker::resolve_symmetry_claims( claims::SymmetryClaim
 	}
 	else if ( symm_claims.size() == 1 ){
         claims::SymmetryClaimOP symmclaim = symm_claims.at(1);
-        SymmetryClaimerOP symmclaimer = dynamic_cast< SymmetryClaimer* > ( symmclaim->owner() );
+        SymmetryClaimerOP symmclaimer = utility::pointer::dynamic_pointer_cast< SymmetryClaimer > ( symmclaim->owner().lock() );
 
 		return symmclaimer;
 	}
@@ -215,7 +218,7 @@ core::fragment::FragSetCOP TopologyBroker::loop_frags( core::kinematics::MoveMap
 		runtime_assert( !(new_frags && frags ) );
 		if ( new_frags ) frags = new_frags;
 	}
-	runtime_assert( frags );
+	runtime_assert( frags != 0 );
 	runtime_assert( !frags->empty() );
 	return frags;
 }
@@ -294,7 +297,7 @@ void TopologyBroker::accept_claims( claims::DofClaims& claims ) {
 		//	(*claim)->show(tr.Trace);
 		//	tr.Trace << std::endl;
 		//}
-		(*claim)->owner()->claim_accepted( *claim );
+		(*claim)->owner().lock()->claim_accepted( *claim );
 	}
 }
 
@@ -316,7 +319,7 @@ bool TopologyBroker::broking( claims::DofClaims const& all_claims, claims::DofCl
 		}
 		if ( !allow ) {
 			tr.Trace << "declined: " << **claim << std::endl;
-			fatal = !(*claim)->owner()->accept_declined_claim( **claim );
+			fatal = !(*claim)->owner().lock()->accept_declined_claim( **claim );
 		} else {
 			tr.Trace << "accepted: " << **claim << std::endl;
 			pre_accepted.push_back( *claim );
@@ -331,8 +334,8 @@ bool TopologyBroker::has_sequence_claimer() {
 
 	core::Size nres( 0 );
 	for ( claims::DofClaims::iterator claim = seq_claims.begin();	claim != seq_claims.end(); ++claim ) {
-		claims::SequenceClaimOP seq_ptr( dynamic_cast< claims::SequenceClaim* >( claim->get() ) );
-		runtime_assert( seq_ptr );
+		claims::SequenceClaimOP seq_ptr( utility::pointer::dynamic_pointer_cast< claims::SequenceClaim >( *claim ) );
+		runtime_assert( seq_ptr != 0 );
 		nres += seq_ptr->length();
 	}
 	return nres > 0;
@@ -350,9 +353,9 @@ void TopologyBroker::build_fold_tree( claims::DofClaims& claims, Size nres ) {
 	//building the fold tree from DofClaims and jumps
 	tr.Debug << "build fold tree ... " << std::endl;
 	for ( claims::DofClaims::iterator claim=claims.begin();	claim != claims.end(); ++claim ) {
-		claims::JumpClaimOP jump_ptr( dynamic_cast< claims::JumpClaim* >( claim->get() ) );
-		claims::CutClaimOP cut_ptr( dynamic_cast< claims::CutClaim* >( claim->get() ) );
-		claims::LegacyRootClaimOP root_ptr( dynamic_cast< claims::LegacyRootClaim* >( claim->get() ) );
+		claims::JumpClaimOP jump_ptr( utility::pointer::dynamic_pointer_cast< claims::JumpClaim >( *claim ) );
+		claims::CutClaimOP cut_ptr( utility::pointer::dynamic_pointer_cast< claims::CutClaim >( *claim ) );
+		claims::LegacyRootClaimOP root_ptr( utility::pointer::dynamic_pointer_cast< claims::LegacyRootClaim >( *claim ) );
 
 		if ( jump_ptr ) { // JumpClaim ------------------------------------
 			if ( jump_ptr->exclusive() ) {
@@ -364,7 +367,7 @@ void TopologyBroker::build_fold_tree( claims::DofClaims& claims, Size nres ) {
 			Size global_position = sequence_number_resolver_->find_global_pose_number( cut_ptr->get_position() );
 			if( global_position >= nres || global_position < 1){
 				tr.Debug << "Cut claim requesting cut at (global) position " << global_position << " by claimer '"
-								 << cut_ptr->owner()->label() << "' being ignored/erased because it is outside the valid sequence region "
+								 << cut_ptr->owner().lock()->label() << "' being ignored/erased because it is outside the valid sequence region "
 								 << "[1, " << nres << "]. This is expected behavior from one (and only one) sequence claimer." << std::endl;
 
 				claims.erase( claim );
@@ -410,7 +413,7 @@ void TopologyBroker::build_fold_tree( claims::DofClaims& claims, Size nres ) {
 	Size i = 0;
 	Size n_non_removed( 0 );
 	for ( claims::JumpClaims::iterator jump_it = sorted_jumps.begin();	jump_it != sorted_jumps.end(); ++jump_it ) {
-		claims::JumpClaimOP jump_ptr = jump_it->get();
+		claims::JumpClaimOP jump_ptr( *jump_it );
 		++i;
 		jumps( 1, i) = sequence_number_resolver_->find_global_pose_number(jump_ptr->local_pos1());
 		jumps( 2, i) = sequence_number_resolver_->find_global_pose_number(jump_ptr->local_pos2());
@@ -465,7 +468,7 @@ void TopologyBroker::build_fold_tree( claims::DofClaims& claims, Size nres ) {
 		if(!fold_tree_->is_cutpoint( (int) global_seqpos  ) ){
 			std::ostringstream msg;
 			msg << "The requested cutpoint at " << global_seqpos << " (claimed by Claimer with label '"
-					<< must_cut.at(i).first->owner()->label() << "') was not found in constructed fold tree. "
+					<< must_cut.at(i).first->owner().lock()->label() << "') was not found in constructed fold tree. "
 					<< "This is sometimes because more cuts are claimed than jumps." << std::endl
 					<< "In this case, there are " << must_cut.size() << " CutClaims and " << sorted_jumps.size()
 					<< " JumpClaims. A trivial (but scientifically invalid) solution would be to add a "
@@ -548,7 +551,7 @@ void TopologyBroker::initialize_sequence( claims::DofClaims& claims, core::pose:
 	tr.flush();
 	sequence_claims_.clear();
 	for ( claims::DofClaims::iterator claim=claims.begin();	claim != claims.end(); ++claim ) {
-		claims::SequenceClaimOP seq_ptr( dynamic_cast< claims::SequenceClaim* >( claim->get() ) );
+		claims::SequenceClaimOP seq_ptr( utility::pointer::dynamic_pointer_cast< claims::SequenceClaim >( *claim ) );
 		if ( seq_ptr ){
 			sequence_claims_.push_back ( seq_ptr );
 		}
@@ -613,7 +616,7 @@ void TopologyBroker::initialize_dofs( claims::DofClaims& claims, core::pose::Pos
 	claims::DofClaims jumps( pose.num_jump(), NULL );
 	for ( claims::DofClaims::iterator claim = claims.begin();	claim != claims.end(); ++claim ) {
 
-		claims::BBClaimOP bb_claim ( dynamic_cast< claims::BBClaim* >( claim->get() ) );
+		claims::BBClaimOP bb_claim ( utility::pointer::dynamic_pointer_cast< claims::BBClaim >( *claim ) );
 
 		if ( bb_claim ){
 			claims::LocalPosition pos = bb_claim->local_position();
@@ -622,8 +625,8 @@ void TopologyBroker::initialize_dofs( claims::DofClaims& claims, core::pose::Pos
 				global_position = sequence_number_resolver_->find_global_pose_number( pos );
 			} catch ( std::out_of_range ) {
 				std::ostringstream msg;
-				msg << "BBClaim at (" << pos.first << ", " << pos.second << ") claimed by " << bb_claim->owner()->type()
-						<< " using label '" << bb_claim->owner()->label() << "' is has an invalid label. The global sequence position"
+				msg << "BBClaim at (" << pos.first << ", " << pos.second << ") claimed by " << bb_claim->owner().lock()->type()
+						<< " using label '" << bb_claim->owner().lock()->label() << "' is has an invalid label. The global sequence position"
 						<< " cannot be globally resolved." << std::endl;
 				throw EXCN_BadInput( msg.str() );
 			}
@@ -641,7 +644,7 @@ void TopologyBroker::initialize_dofs( claims::DofClaims& claims, core::pose::Pos
 			else runtime_assert( bb_claim->right() < claims::DofClaim::EXCLUSIVE );
 		}
 
-		claims::JumpClaimOP jump_ptr( dynamic_cast< claims::JumpClaim* >( claim->get() ) );
+		claims::JumpClaimOP jump_ptr( utility::pointer::dynamic_pointer_cast< claims::JumpClaim >( *claim ) );
 		if ( jump_ptr ) {
 			std::pair< std::string, core::Size > jump_start = jump_ptr->local_pos1();
 			std::pair< std::string, core::Size > jump_end   = jump_ptr->local_pos2();
@@ -714,7 +717,7 @@ void TopologyBroker::initialize_cuts( claims::DofClaims& claims, core::pose::Pos
 	//and the fold-tree cut-point nr for those which we keep since they have been CUT-Claimed
 	claims::DofClaims cuts( pose.num_jump(), NULL );
 	for ( claims::DofClaims::iterator claim = claims.begin();	claim != claims.end(); ++claim ) {
-		claims::CutClaimOP cut_ptr ( dynamic_cast< claims::CutClaim* >( claim->get() ) );
+		claims::CutClaimOP cut_ptr ( utility::pointer::dynamic_pointer_cast< claims::CutClaim >( *claim ) );
 		if ( cut_ptr ){
 			Size global_sequence_position = sequence_number_resolver_->find_global_pose_number( cut_ptr->get_position() );
 			Size cut_nr ( pose.fold_tree().cutpoint_map( global_sequence_position ) );

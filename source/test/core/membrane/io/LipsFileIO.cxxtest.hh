@@ -87,7 +87,7 @@ public: // tests
 		TS_TRACE("Testing a correctly initialized lips data file");
         
 		// Loading a lipid acc file (should use an actual resource description now
-		LipidAccInfoOP lips_exp = lfio_->get_lips_exp_from_lipofile( test_lipsfile_ );
+		core::conformation::membrane::LipidAccInfoOP lips_exp = lfio_->get_lips_exp_from_lipofile( test_lipsfile_ );
         
 		// Check for non-null pointer access
 		TS_ASSERT( lips_exp );

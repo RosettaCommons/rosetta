@@ -144,7 +144,7 @@ PoissonBoltzmannEnergyCreator::score_types_for_method() const {
 //*****************************************************************
 /// ctor
 PoissonBoltzmannEnergy::PoissonBoltzmannEnergy() :
-	parent( new PoissonBoltzmannEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new PoissonBoltzmannEnergyCreator ) ),
 	fixed_residue_(1),
 	epsilon_(2.0)
 	//,

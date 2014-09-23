@@ -124,7 +124,7 @@ orient_residue_for_ideal_bond(
 
 	//	Real bond_length= lookup_bond_length(fixed_rsd_atom_type_index, moving_rsd_atom_type_index);
 		core::chemical::ChemicalManager *cm= core::chemical::ChemicalManager::get_instance();
-		core::chemical::IdealBondLengthSetCAP ideal_bond_lengths= cm->ideal_bond_length_set( core::chemical::FA_STANDARD );
+		core::chemical::IdealBondLengthSetCOP ideal_bond_lengths( cm->ideal_bond_length_set( core::chemical::FA_STANDARD ) );
 
 		Real bond_length= ideal_bond_lengths->get_bond_length( fixed_rsd_atom_type_index, moving_rsd_atom_type_index);
 		Vector old_bond= a3-a2;
@@ -167,7 +167,8 @@ insert_ideal_mainchain_bonds(
 	Residue const & rsd( conformation.residue( seqpos ) );
 
 	// create a mini-conformation with
-	Conformation idl;
+	ConformationOP idl_op = new Conformation();
+	Conformation & idl = *idl_op;
 	{
 		ResidueOP idl_rsd( ResidueFactory::create_residue( rsd.type() ) );
 		idl.append_residue_by_bond( *idl_rsd );
@@ -256,7 +257,8 @@ insert_ideal_bonds_at_polymer_junction(
 	}
 
 	// create a mini-conformation with ideal bond lengths and angles
-	Conformation idl;
+	ConformationOP idl_op = new Conformation();
+	Conformation & idl = *idl_op;
 	{
 		ResidueOP idl_rsd( ResidueFactory::create_residue( rsd.type() ) );
 		idl.append_residue_by_bond( *idl_rsd );
@@ -311,7 +313,8 @@ idealize_position(
 
 	//// create a mini-conformation with completely ideal residue ( and nbrs, if appropriate )
 
-	Conformation idl;
+	ConformationOP idl_op = new Conformation();
+	Conformation & idl = *idl_op;
 	{
 		ResidueOP idl_rsd( ResidueFactory::create_residue( rsd.type() ) );
 		idl.append_residue_by_bond( *idl_rsd );
@@ -446,7 +449,10 @@ is_ideal_position(
 	Residue const rsd( conf.residue( seqpos ) );
 
 	// I. Create mini-conformations for both idealized and original residue + nbrs, if appropriate )
-	Conformation miniconf, miniconf_idl;
+	ConformationOP miniconf_op = new Conformation();
+	Conformation & miniconf = *miniconf_op;
+	ConformationOP miniconf_idl_op = new Conformation();
+	Conformation & miniconf_idl = *miniconf_idl_op;
 	{
 		miniconf.append_residue_by_bond( rsd );
 		ResidueOP prsd_idl( ResidueFactory::create_residue( rsd.type() ) );
@@ -684,7 +690,7 @@ remove_upper_terminus_type_from_conformation_residue(
 void
 build_tree(
 	kinematics::FoldTree const & fold_tree,
-	conformation::ResidueCAPs const & residues,
+	conformation::ResidueCOPs const & residues,
 	kinematics::AtomPointer2D & atom_pointer
 	)
 {
@@ -740,7 +746,7 @@ build_tree(
 void
 build_jump_edge(
 	kinematics::Edge const & edge,
-	conformation::ResidueCAPs const & residues,
+	conformation::ResidueCOPs const & residues,
 	kinematics::AtomPointer2D & atom_pointer
 	)
 {
@@ -783,7 +789,7 @@ build_jump_edge(
 void
 build_polymer_edge(
 	kinematics::Edge const & edge,
-	conformation::ResidueCAPs const & residues,
+	conformation::ResidueCOPs const & residues,
 	kinematics::AtomPointer2D & atom_pointer
 	)
 {
@@ -826,7 +832,7 @@ build_polymer_edge(
 void
 build_chemical_edge(
 	kinematics::Edge const & edge,
-	conformation::ResidueCAPs const & residues,
+	conformation::ResidueCOPs const & residues,
 	kinematics::AtomPointer2D & atom_pointer
 	)
 {
@@ -947,7 +953,7 @@ get_root_residue_root_atomno(
 
 void
 build_residue_tree(
-	conformation::ResidueCAPs const & residues,
+	conformation::ResidueCOPs const & residues,
 	conformation::Residue const & rsd,
 	kinematics::FoldTree const & fold_tree,
 	kinematics::AtomPointer1D & atom_ptr
@@ -1352,7 +1358,7 @@ void
 get_residue_connections(
 	conformation::Residue const & new_rsd,
 	kinematics::FoldTree const & fold_tree,
-	conformation::ResidueCAPs const & residues,
+	conformation::ResidueCOPs const & residues,
 	id::BondID & new_rsd_in,
 	utility::vector1< id::BondID > & new_rsd_out
 	)
@@ -1396,7 +1402,7 @@ replace_residue_in_atom_tree(
 	conformation::Residue const & new_rsd,
 	//conformation::Residue const & old_rsd,
 	kinematics::FoldTree const & fold_tree,
-	conformation::ResidueCAPs const & residues,
+	conformation::ResidueCOPs const & residues,
 	kinematics::AtomTree & atom_tree
 	)
 {
@@ -1430,7 +1436,7 @@ void
 insert_residue_into_atom_tree(
 	conformation::Residue const & new_rsd,
 	kinematics::FoldTree const & fold_tree,
-	conformation::ResidueCAPs const & residues,
+	conformation::ResidueCOPs const & residues,
 	kinematics::AtomTree & atom_tree
 	)
 {
@@ -1606,7 +1612,7 @@ get_anchor_and_root_atoms(
 void
 promote_sameresidue_child_of_jump_atom(
 	kinematics::Edge const & edge,
-	conformation::ResidueCAPs const & residues,
+	conformation::ResidueCOPs const & residues,
 	kinematics::AtomTree & atom_tree
 )
 {
@@ -1620,7 +1626,7 @@ promote_sameresidue_child_of_jump_atom(
 void
 promote_sameresidue_child_of_jump_atom(
 	kinematics::Edge const & edge,
-	conformation::ResidueCAPs const & residues,
+	conformation::ResidueCOPs const & residues,
 	kinematics::AtomPointer2D const & atom_pointer
 )
 {
@@ -1898,7 +1904,7 @@ form_disulfide(Conformation & conformation, Size lower_res, Size upper_res)
 	// Verify we're dealing with a FA conformation
 	runtime_assert( conformation.is_fullatom() );
 
-	chemical::ResidueTypeSetCAP restype_set =
+	chemical::ResidueTypeSetCOP restype_set =
 		chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
 
 	// Break existing disulfide bonds to lower

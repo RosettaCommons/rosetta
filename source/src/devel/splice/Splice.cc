@@ -884,6 +884,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 		//	pose.dump_pdb( "after_sequence_thread.pdb" );
 			using namespace protocols::toolbox::task_operations;
 			using namespace core::pack::task;
+			using namespace core::pack::task::operation;
 			ThreadSequenceOperationOP tso = new ThreadSequenceOperation;
 				tso->target_sequence(threaded_seq);
 				tso->start_res(from_res());
@@ -977,7 +978,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				dao_for_threading->repack_shell(0);
 				tf_thread->push_back(dao_for_threading);
 				tf_thread->push_back(tso);
-				PackerTaskOP ptask = tf_thread()->create_task_and_apply_taskoperations(pose);
+				PackerTaskOP ptask = tf_thread->create_task_and_apply_taskoperations(pose);
 				protocols::simple_moves::PackRotamersMover prm(scorefxn(), ptask);
 				prm.apply(pose);
 				if (debug_)
@@ -1000,10 +1001,12 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				/// the torsion in the loop are maintained. Allow repacking around the loop.
 				/// If disulfide occurs in the range that is allowed to minimize, adjust that region to not include disulf
 				core::scoring::ScoreFunctionOP scorefxn_local(scorefxn()->clone());	/// in case you want to modify the scorefxn. Currently not used
-				protocols::loops::loop_mover::refine::LoopMover_Refine_CCD ccd_mover(loops, scorefxn_local);
+				protocols::loops::loop_mover::refine::LoopMover_Refine_CCDOP ccd_mover (
+					new protocols::loops::loop_mover::refine::LoopMover_Refine_CCD(loops, scorefxn_local)
+				);
 				TailSegmentMover tsm;	//Object used for designing the tail segments of a protein
-				ccd_mover.temp_initial(1.5);
-				ccd_mover.temp_final(0.5);
+				ccd_mover->temp_initial(1.5);
+				ccd_mover->temp_final(0.5);
 				core::kinematics::MoveMapOP mm;
 				mm = new core::kinematics::MoveMap;
 				mm->set_chi(false);
@@ -1048,9 +1051,9 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				//	TR<<"Residues allowed to minimize"<<std::endl;
 
 				mm->show();
-				tf()->create_task_and_apply_taskoperations(pose);
-				ccd_mover.set_task_factory(tf);
-				ccd_mover.move_map(mm);
+				tf->create_task_and_apply_taskoperations(pose);
+				ccd_mover->set_task_factory(tf);
+				ccd_mover->move_map(mm);
 
 			//	pose.dump_pdb("before_ccd.pdb");
 				//pose.dump_pdb("before_coordinate_constraints");
@@ -1068,7 +1071,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				//TR_constraints<<"score function after CB constraints"<<std::endl;
 					//			scorefxn()->show(pose);
 				if (CG_const_){
-				PackerTaskOP ptask_for_coor_const(tf()->create_task_and_apply_taskoperations(pose));
+				PackerTaskOP ptask_for_coor_const(tf->create_task_and_apply_taskoperations(pose));
 				add_coordinate_constraints(pose, *source_pose_, from_res(), to_res() + residue_diff, anchor_res,"CG",ptask_for_coor_const);	//add coordiante constraints to loop
 				TR_constraints<<"score function after CG constraints"<<std::endl;
 												scorefxn()->show(pose);
@@ -1105,7 +1108,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 
 				TR<<"fold tree before ccd"<<pose.fold_tree()<<std::endl;
 				if (!(boost::iequals(tail_segment_, "c")))//if adding c-ter tail then we don't need ccd
-					ccd_mover.apply(pose);//if tail segment is on we don't need ccd
+					ccd_mover->apply(pose);//if tail segment is on we don't need ccd
 
 				TR << "Weighted score function after ccd:" << std::endl;
 				scorefxn()->show(pose);
@@ -1228,7 +1231,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					//TR_constraints<<"score function after CB constraints"<<std::endl;
 					//			scorefxn()->show(pose);
 					if (CG_const_){
-						PackerTaskOP ptask_for_coor_const(tf()->create_task_and_apply_taskoperations(pose));
+						PackerTaskOP ptask_for_coor_const(tf->create_task_and_apply_taskoperations(pose));
 						add_coordinate_constraints(pose, *source_pose_, tail_start, tail_end, disulfide_res,"CG",ptask_for_coor_const);	//add coordiante constraints to loop
 						//TR_constraints<<"score function after CG constraints"<<std::endl;
 						//scorefxn()->show(pose);
@@ -1318,7 +1321,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					if (conf.num_chains()>1)
 						tf_in->push_back(new PreventChainFromRepackingOperation(2));
 
-					PackerTaskOP ptask = tf_in()->create_task_and_apply_taskoperations(pose);
+					PackerTaskOP ptask = tf_in->create_task_and_apply_taskoperations(pose);
 					protocols::simple_moves::PackRotamersMover prm(scorefxn(), ptask);
 					utility::vector1<core::Size> Repackable_residues = residue_packer_states(pose, tf_in, 0, 1);
 					TR << "Residues Allowed to Repack: "<< std::endl;
@@ -1453,7 +1456,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				tf_in->push_back(new operation::NoRepackDisulfides);
 				tf_in->push_back(dao);
 
-				PackerTaskOP ptask = tf_in()->create_task_and_apply_taskoperations(pose);
+				PackerTaskOP ptask = tf_in->create_task_and_apply_taskoperations(pose);
 				protocols::simple_moves::PackRotamersMover prm(scorefxn(), ptask);
 				//		pose.conformation().detect_disulfides();
 				//		pose.update_residue_neighbors();
@@ -1479,7 +1482,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				if (rtmin()) {		//To prevent rtmin when not needed - Assaf Alon
 					TaskFactoryOP tf_rtmin = new TaskFactory(*tf);//this taskfactory (tf_rttmin) is only used here. I don't want to affect other places in splice, gideonla aug13
 					tf_rtmin->push_back(new operation::RestrictToRepacking()); //W don't rtmin to do design
-					ptask = tf_rtmin()->create_task_and_apply_taskoperations(pose);
+					ptask = tf_rtmin->create_task_and_apply_taskoperations(pose);
 					protocols::simple_moves::RotamerTrialsMinMover rtmin(scorefxn(), *ptask);
 					rtmin.apply(pose);
 					if (debug_)

@@ -516,7 +516,9 @@ EnzdesFlexBBProtocol::add_flexible_region(
 {
 	if( clear_existing ) flex_regions_.clear();
 	core::Size length( end - start +1 );
-	flex_regions_.push_back( new EnzdesFlexibleRegion( flex_regions_.size() + 1, start, end, length, pose, this ) );
+	flex_regions_.push_back( new EnzdesFlexibleRegion( flex_regions_.size() + 1, start, end, length, pose,
+		EnzdesFlexBBProtocolCAP( utility::pointer::dynamic_pointer_cast< EnzdesFlexBBProtocol >( get_self_ptr() ) )
+	) );
 }
 
 
@@ -586,7 +588,9 @@ EnzdesFlexBBProtocol::determine_flexible_regions(
 
 			core::Size length( lstop - lstart +1 );
 
-			flex_regions_.push_back( new EnzdesFlexibleRegion( i, lstart, lstop, length, pose, this ) );
+			flex_regions_.push_back( new EnzdesFlexibleRegion( i, lstart, lstop, length, pose, 
+				EnzdesFlexBBProtocolCAP( utility::pointer::dynamic_pointer_cast< EnzdesFlexBBProtocol >( get_self_ptr() ) )
+			) );
 			tr << " " << lstart << "-" << lstop;
 
 			core::Size min_length( enz_loops_file_->loop_info( i )->min_length() );
@@ -612,7 +616,9 @@ EnzdesFlexBBProtocol::determine_flexible_regions(
 		for( utility::vector1< loops::Loop >::const_iterator lit = loops_helper.v_begin(); lit != loops_helper.v_end(); ++lit){
 			no_flex_regions++;
 			core::Size lstart( lit->start() ), lstop( lit->stop() );
-			flex_regions_.push_back( new EnzdesFlexibleRegion( no_flex_regions, lstart, lstop, lstop - lstart + 1, pose, this ) );
+			flex_regions_.push_back( new EnzdesFlexibleRegion( no_flex_regions, lstart, lstop, lstop - lstart + 1, pose, 
+				EnzdesFlexBBProtocolCAP( utility::pointer::dynamic_pointer_cast< EnzdesFlexBBProtocol >( get_self_ptr() ) )
+			) );
 			tr << " " << lstart << "-" << lstop;
 
 			if( lit->is_extended() ){
@@ -658,7 +664,9 @@ EnzdesFlexBBProtocol::determine_flexible_regions(
 				while( flex_res[j] && (j <= pose.total_residue()) ) j++;
 
 				no_flex_regions++;
-				flex_regions_.push_back( new EnzdesFlexibleRegion( no_flex_regions, i, j - 1, (j - i), pose, this ) );
+				flex_regions_.push_back( new EnzdesFlexibleRegion( no_flex_regions, i, j - 1, (j - i), pose, 
+					EnzdesFlexBBProtocolCAP( utility::pointer::dynamic_pointer_cast< EnzdesFlexBBProtocol >( get_self_ptr() ) )
+				) );
 				//fragment_counters_.push_back( 1 );
 				tr << "found " << i << "-" << j - 1 << ", ";
 				i = j;
@@ -727,7 +735,11 @@ EnzdesFlexBBProtocol::generate_ensemble_for_region(
 
 	kinematic_mover_->set_pivots(rbegin, rmid, rend);
 
-	protocols::loops::loop_closure::kinematic_closure::VicinitySamplingKinematicPerturberOP perturber = new protocols::loops::loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber( &(*kinematic_mover_) );
+	protocols::loops::loop_closure::kinematic_closure::VicinitySamplingKinematicPerturberOP perturber(
+		new protocols::loops::loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber( 
+			protocols::loops::loop_closure::kinematic_closure::KinematicMoverCAP( kinematic_mover_ )
+		)
+	);
 
 	if ( basic::options::option[ basic::options::OptionKeys::enzdes::kic_loop_sampling ] ) {
 
@@ -1361,7 +1373,7 @@ EnzdesFlexibleRegion::EnzdesFlexibleRegion(
 	core::fragment::Frame( start, end, nr_res ),
 	index_(index_in),
 	enzdes_protocol_( enz_prot ),
-	design_targets_( enz_prot->design_targets( pose ) ),
+	design_targets_( enz_prot.lock()->design_targets( pose ) ), // FIXME: check lock() status?
 	target_proximity_to_native_conformation_(
 		basic::options::option[basic::options::OptionKeys::enzdes::max_bb_deviation_from_startstruct] ),
 	target_proximity_to_other_conformations_(
@@ -1401,7 +1413,8 @@ EnzdesFlexibleRegion::contains_catalytic_res() const
 toolbox::match_enzdes_util::EnzdesLoopInfoCOP
 EnzdesFlexibleRegion::enz_loop_info() const
 {
-	toolbox::match_enzdes_util::EnzdesLoopsFileCOP loop_file = enzdes_protocol_->enz_loops_file();
+	EnzdesFlexBBProtocolCOP enzdes_protocol( enzdes_protocol_ );
+	toolbox::match_enzdes_util::EnzdesLoopsFileCOP loop_file = enzdes_protocol->enz_loops_file();
 
 	if( !loop_file ){
 		utility_exit_with_message("no enzdes loops file was read, but the info therein requested." );
@@ -1444,6 +1457,7 @@ EnzdesFlexibleRegion::assemble_enzdes_fragdata(
 	using namespace core::fragment;
 
 	FragDataOP new_fragdata = new FragData();
+	EnzdesFlexBBProtocolCOP enzdes_protocol( enzdes_protocol_ );
 
 // tex 8/16/08
 // lines containing core::id::AtomID[3] aren't portable. /// WHY NOT?!!?!
@@ -1474,7 +1488,7 @@ EnzdesFlexibleRegion::assemble_enzdes_fragdata(
 
 		angles.push_back( newpair );
 
-		if( enzdes_protocol_->is_catalytic_position( pose, i ) ){
+		if( enzdes_protocol->is_catalytic_position( pose, i ) ){
 			srfd = new BBTorsionAndAnglesSRFD( angles ); //temporary, we will do something different for the catalytic res
 		}
 		else { srfd = new BBTorsionAndAnglesSRFD( angles ); }
@@ -1528,12 +1542,13 @@ EnzdesFlexibleRegion::sort_ensemble_by_designability(
 	std::set< core::Size > ten_A_neighbors = get_10A_neighbors( pose );
 
 	PackerTaskOP looptask_template = task->clone();
+	EnzdesFlexBBProtocolCOP enzdes_protocol( enzdes_protocol_ );
 
 	for( core::Size i = 1; i <= pose.total_residue(); ++i ){
 
 		if( looptask_template->design_residue( i )
 			&& !this->contains_seqpos( i )
-			&& !enzdes_protocol_->is_catalytic_position(pose, i) )
+			&& !enzdes_protocol->is_catalytic_position(pose, i) )
 			{
 				looptask_template->nonconst_residue_task(i).prevent_repacking();
 				other_design_res.push_back( i );
@@ -1546,7 +1561,7 @@ EnzdesFlexibleRegion::sort_ensemble_by_designability(
 				looptask_template->nonconst_residue_task(i).prevent_repacking();
 			}
 
-		if( this->contains_seqpos( i ) && !looptask_template->design_residue(i) && !enzdes_protocol_->is_catalytic_position(pose, i) ){
+		if( this->contains_seqpos( i ) && !looptask_template->design_residue(i) && !enzdes_protocol->is_catalytic_position(pose, i) ){
 			utility_exit_with_message("Task is corrupted when trying to screen ensemble for region "+utility::to_string(index_));
 		}
 	}
@@ -2225,9 +2240,7 @@ EnzdesFlexBBProtocol::test_flexbb_rotamer_sets(
 	core::pack::task::PackerTaskCOP task
 ){
 
-	using namespace flexpack::rotamer_set;
-
-	FlexbbRotamerSetsOP flexset = new FlexbbRotamerSets( task );
+	flexpack::rotamer_set::FlexbbRotamerSetsOP flexset = new flexpack::rotamer_set::FlexbbRotamerSets( task );
 
 	std::cerr << "FlexbbRotamerSet test: done initialising set." << std::endl;
 

@@ -75,7 +75,7 @@ SwitchChainOrderMover::apply( Pose & pose )
 	core::pose::Pose new_pose(pose);
 	core::kinematics::FoldTree new_ft;
 	new_ft.clear();
-	core::conformation::Conformation const conf( pose.conformation() );
+	core::conformation::Conformation const & conf = pose.conformation();
 	TR<<"Number of chains in pose: "<<conf.num_chains()<<std::endl;
 	core::Size chain_count( 1 );
 	utility::vector1< core::Size > new_residue_numbers;
@@ -107,7 +107,7 @@ SwitchChainOrderMover::apply( Pose & pose )
 	new_ft.reorder( 1 );
 	core::pose::create_subpose( pose, positions_in_new_pose, new_ft, new_pose );
 	new_pose.update_residue_neighbors();
-	new_pose.pdb_info( new core::pose::PDBInfo( new_pose, true ) ); //reinitialize the PDBInfo
+	new_pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( new_pose, true ) ) ); //reinitialize the PDBInfo
 	
 	//When applying switch then comments are erased from the pose. adding condition that if -pdb comments true flag is turned on then copy comments to new pose. gideonla 1/5/13
 	if (basic::options::option[ basic::options::OptionKeys::out::file::pdb_comments ].value()){

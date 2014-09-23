@@ -128,7 +128,7 @@ void FASelectSlidingWindowLoopClosure::register_options() {
 void
 FASelectSlidingWindowLoopClosure::select_final_loop( Pose& more_cut, Pose& less_cut ) {
 	using namespace fragment;
-	runtime_assert( closure_fragments() );
+	runtime_assert( closure_fragments() != 0 );
 	// in case that we jump out... add extra scrores
 	core::pose::setPoseExtraScore( more_cut, "post_relax_looprms", -1 );
   core::pose::setPoseExtraScore( more_cut, "fa_score", -1 );
@@ -183,7 +183,7 @@ FASelectSlidingWindowLoopClosure::select_final_loop( Pose& more_cut, Pose& less_
 		if ( tr.Trace.visible() )	fa_pose.dump_pdb("set_fold_tree_fa_pose.pdb");
 
 
-		FrameOP fa_frame_ = new Frame( loop_.start(), new FragData( new BBTorsionSRFD, loop_.size() ) );
+		FrameOP fa_frame_ = new Frame( loop_.start(), FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), loop_.size() ) ) );
 		fa_frame_->steal( centroid_pose );
 		fa_frame_->apply( 1, fa_pose );
 

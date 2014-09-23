@@ -54,10 +54,10 @@ main( int argc, char *argv[] )
 
 		ChemicalManager * cm( ChemicalManager::get_instance() );
 		string const tag( FA_STANDARD );
-		AtomTypeSetCAP atom_types = cm->atom_type_set( tag );
-		ElementSetCAP element_types = cm->element_set( "default" );
-		MMAtomTypeSetCAP mm_atom_types = cm->mm_atom_type_set( tag );
-		OrbitalTypeSetCAP orbital_types = cm->orbital_type_set( tag );
+		AtomTypeSetCOP atom_types = cm->atom_type_set( tag );
+		ElementSetCOP element_types = cm->element_set( "default" );
+		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set( tag );
+		OrbitalTypeSetCOP orbital_types = cm->orbital_type_set( tag );
 
 		ResidueType rsd( atom_types, element_types, mm_atom_types, orbital_types );
 

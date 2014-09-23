@@ -18,9 +18,8 @@ namespace solution_pickers {
 
 class NearbySolutionsOnly;
 
-using utility::pointer::owning_ptr;
-typedef owning_ptr<NearbySolutionsOnly> NearbySolutionsOnlyOP;
-typedef owning_ptr<NearbySolutionsOnly const> NearbySolutionsOnlyCOP;
+typedef utility::pointer::owning_ptr<NearbySolutionsOnly> NearbySolutionsOnlyOP;
+typedef utility::pointer::owning_ptr<NearbySolutionsOnly const> NearbySolutionsOnlyCOP;
 
 }
 }

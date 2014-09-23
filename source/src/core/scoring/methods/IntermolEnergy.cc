@@ -66,7 +66,7 @@ IntermolEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 IntermolEnergy::IntermolEnergy() :
-	parent( new IntermolEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new IntermolEnergyCreator ) ),
 	penalty_at_1M_( 2.30 ), // calibrated outside.
 	log_conc_( std::log( basic::options::option[ basic::options::OptionKeys::score::conc ]() ) ) // in kT
 {}

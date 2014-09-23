@@ -119,7 +119,7 @@ constrain_pose_res_to_invrots(
 
 	for( core::Size i =1; i <= seqpos.size(); ++i ){
 
-		core::conformation::ResidueCOP cur_remodel_res( &pose.residue( seqpos[i] ) );
+		core::conformation::ResidueCOP cur_remodel_res( pose.residue( seqpos[i] ).get_self_ptr() );
 		if( cur_remodel_res->name3() == "GLY" ) continue;
 		totrescount++;
 
@@ -161,7 +161,7 @@ cst_residue_in_pose(
 	if( !enz_ob ) return NULL;
 
 	EnzCstTemplateResCacheCOP res_cache( enz_ob->cst_cache()->param_cache( geomcst )->template_res_cache( geomcst_template_res) );
-	runtime_assert( res_cache );
+	runtime_assert( res_cache != 0 );
 	if( res_cache->not_in_pose() ) return NULL;
 
 	runtime_assert( res_cache->seqpos_map_size() == 1 );

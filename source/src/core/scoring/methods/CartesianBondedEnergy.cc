@@ -1531,7 +1531,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 //////////////////////
 /// EnergyMethod
 CartesianBondedEnergy::CartesianBondedEnergy( methods::EnergyMethodOptions const & options ) :
-	parent( new CartesianBondedEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new CartesianBondedEnergyCreator ) ),
 	pro_nv_("NV")
 {
 	// if flag _or_ energy method wants a linear potential, make the potential linear

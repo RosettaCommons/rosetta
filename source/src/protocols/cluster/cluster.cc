@@ -160,8 +160,8 @@ GatherPosesMover::get_distance_measure(
 	if ( option[ OptionKeys::cluster::hotspot_hash ]() ) {
 		Size const resnum1 = pose1.total_residue();
 		Size const resnum2 = pose2.total_residue();
-		conformation::ResidueCOP res1( pose1.residue(resnum1) );
-		conformation::ResidueCOP res2( pose2.residue(resnum2) );
+		conformation::ResidueCOP res1( pose1.residue(resnum1).get_self_ptr() );
+		conformation::ResidueCOP res2( pose2.residue(resnum2).get_self_ptr() );
 		//return protocols::hotspot_hashing::residue_sc_rmsd_no_super( res1, res2 );
 		return core::scoring::residue_sc_rmsd_no_super( res1, res2 );
 	}

@@ -50,7 +50,16 @@ namespace flexpack {
 namespace rotamer_set {
 
 class FlexbbRotamerSets : public core::pack::rotamer_set::RotamerSetsBase
+#ifdef PTR_MODERN
+	// New version
+	, public utility::pointer::enable_shared_from_this< FlexbbRotamerSets >
 {
+#else
+{
+	// Old intrusive ref-counter version
+	inline FlexbbRotamerSetsCOP shared_from_this() const { return FlexbbRotamerSetsCOP( this ); }
+	inline FlexbbRotamerSetsOP shared_from_this() { return FlexbbRotamerSetsOP( this ); }
+#endif
 public:
 	typedef core::Size Size;
 	typedef core::PackerEnergy PackerEnergy;
@@ -64,6 +73,11 @@ public:
 
 	virtual ~FlexbbRotamerSets();
 
+	inline FlexbbRotamerSetsCOP get_self_ptr() const { return shared_from_this(); }
+	inline FlexbbRotamerSetsOP  get_self_ptr() { return shared_from_this(); }
+	inline FlexbbRotamerSetsCAP get_self_weak_ptr() const { return FlexbbRotamerSetsCAP( shared_from_this() ); }
+	inline FlexbbRotamerSetsAP  get_self_weak_ptr() { return FlexbbRotamerSetsAP( shared_from_this() ); }
+	
 	void
 	set_frames(
 		Pose const & pose,

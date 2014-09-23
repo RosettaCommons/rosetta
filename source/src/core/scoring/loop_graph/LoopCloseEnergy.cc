@@ -56,7 +56,7 @@ LoopCloseEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 LoopCloseEnergy::LoopCloseEnergy() :
-	parent( new LoopCloseEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new LoopCloseEnergyCreator ) )
 {}
 
 /// clone

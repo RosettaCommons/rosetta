@@ -63,7 +63,7 @@ CutBiasClaim::CutBiasClaim( ClaimingMoverOP owner,
   }
 
   if( datamap.has( "ResidueSelector", label_ ) ){
-    this->queue_for_annotation( label_, datamap.get< ResidueSelector const* >( "ResidueSelector", label_ ) );
+    this->queue_for_annotation( label_, datamap.get_ptr< ResidueSelector const >( "ResidueSelector", label_ ) );
   }
 }
 

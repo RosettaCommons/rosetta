@@ -127,7 +127,7 @@ TrajectoryRecorder::parse_my_tag(
 void
 TrajectoryRecorder::reset(
 	protocols::moves::MonteCarlo const &,
-	protocols::canonical_sampling::MetropolisHastingsMoverCAP //=0
+	protocols::canonical_sampling::MetropolisHastingsMover const * //=0
 ) {
 	model_count_ = 0;
 	step_count_ = 0;
@@ -136,7 +136,7 @@ TrajectoryRecorder::reset(
 void
 TrajectoryRecorder::update_after_boltzmann(
 	core::pose::Pose const & pose,
-	protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
+	protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover //= 0
 	) {
 	++step_count_;
 

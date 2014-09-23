@@ -374,7 +374,7 @@ void RNA_SilentStruct::fill_pose(
 	core::pose::Pose & pose
 ) const {
 	using namespace core::chemical;
-	ResidueTypeSetCAP residue_set;
+	ResidueTypeSetCOP residue_set;
 	if ( fullatom() ) {
 		residue_set = ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 	}
@@ -394,7 +394,7 @@ void RNA_SilentStruct::fill_pose(
 		tr.Info << "Using ideal geometry from params files..." << std::endl;
 		//RHIJU HACK!
 		//tr.Info << "USING RNA PARAMS FILES " << std::endl;
-		static const ResidueTypeSetCAP rna_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+		static const ResidueTypeSetCOP rna_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 		core::pose::make_pose_from_sequence( pose, sequence(), *rna_residue_set );
 	}
 	tr.Debug << "FOLD TREE: " << fold_tree();

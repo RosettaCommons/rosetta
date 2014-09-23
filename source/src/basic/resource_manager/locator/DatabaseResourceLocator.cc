@@ -47,6 +47,7 @@ using basic::database::safely_read_from_database;
 using cppdb::statement;
 using cppdb::result;
 using utility::sql_database::session;
+using utility::sql_database::sessionOP;
 
 static Tracer TR("basic.resource_manager.locator.DatabaseResourceLocator");
 
@@ -126,8 +127,8 @@ DatabaseResourceLocator::locate_resource_stream(
 		throw utility::excn::EXCN_Msg_Exception(err_msg.str());
 	}
 
-	session * db_session(dynamic_cast< session * > (
-			ResourceManager::get_instance()->find_resource(database_session_resource_tag_)()));
+	sessionOP db_session(utility::pointer::dynamic_pointer_cast< session > (
+			ResourceManager::get_instance()->find_resource(database_session_resource_tag_)));
 
 	if(!db_session){
 		stringstream err_msg;

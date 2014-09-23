@@ -171,7 +171,7 @@ EnzdesRemodelProtocol::apply(
 	for( core::Size regcount = 1; regcount <= flex_regions_.size(); ++regcount ){
 		if( !flex_regions_[ regcount ]->remodelable() ) continue;
 
-		EnzdesRemodelMover remodel_mover( this, mod_task, flex_regions_[ regcount ] );
+		EnzdesRemodelMover remodel_mover( utility::pointer::dynamic_pointer_cast< EnzdesFlexBBProtocol >(get_self_ptr()), mod_task, flex_regions_[ regcount ] );
 
 		remodel_mover.apply( pose );
 
@@ -530,7 +530,8 @@ EnzdesRemodelMover::remodel_pose(
 
 	bmanager.add( build_instr );
 
-	VarLengthBuild vlb( bmanager );
+	VarLengthBuildOP vlb_op( new VarLengthBuild(bmanager) );
+	VarLengthBuild & vlb = *vlb_op;
 
 	//set the scorefunction that contains our constrained weights
 	vlb.scorefunction( *vlb_sfxn_ );
@@ -568,15 +569,15 @@ EnzdesRemodelMover::remodel_pose(
 		}
 		std::set< Size > res_to_repack;
 		for( Size i = 0; i < num_aa_each_side_to_replace; ++i){
-			pose.replace_residue( flex_region_->start() + i, core::conformation::Residue( *(init_aa_[i+1]), true), true);
+			pose.replace_residue( flex_region_->start() + i, core::conformation::Residue( *(init_aa_[i+1].lock()), true), true);
 
-			pose.replace_residue( flex_region_->stop() - i, core::conformation::Residue( *(init_aa_[init_aa_.size()-i]), true), true);
+			pose.replace_residue( flex_region_->stop() - i, core::conformation::Residue( *(init_aa_[init_aa_.size()-i].lock()), true), true);
 
 			res_to_repack.insert( flex_region_->start() + i ); res_to_repack.insert( flex_region_->stop() - i );
 		}
 		if( oddlength ){
 			res_to_repack.insert( flex_region_->start() + num_aa_each_side_to_replace );
-			pose.replace_residue( flex_region_->start() + num_aa_each_side_to_replace, core::conformation::Residue( *(init_aa_[num_aa_each_side_to_replace+1]), true), true);
+			pose.replace_residue( flex_region_->start() + num_aa_each_side_to_replace, core::conformation::Residue( *(init_aa_[num_aa_each_side_to_replace+1].lock()), true), true);
 		}
 		core::pack::task::PackerTaskOP task = new core::pack::task::PackerTask_( pose );
 		task->initialize_from_command_line();
@@ -584,7 +585,7 @@ EnzdesRemodelMover::remodel_pose(
 			if( res_to_repack.find( i ) != res_to_repack.end() ) task->nonconst_residue_task( i ).restrict_to_repacking();
 			else task->nonconst_residue_task( i ).prevent_repacking();
 		}
-		protocols::simple_moves::PackRotamersMoverOP packrot = new protocols::simple_moves::PackRotamersMover( &(*enz_prot_->get_scorefxn()), task );
+		protocols::simple_moves::PackRotamersMoverOP packrot = new protocols::simple_moves::PackRotamersMover( enz_prot_->get_scorefxn(), task );
 		packrot->apply( pose );
 		(*enz_prot_->reduced_scorefxn())( pose );
 	} // if(keep_existing_aa_identities)
@@ -698,7 +699,7 @@ EnzdesRemodelMover::examine_initial_conformation(
 
 	if( keep_existing_aa_identities_ ){
 		init_aa_.clear();
-		for( Size i = flex_region_->start(); i <= flex_region_->stop(); ++i ) init_aa_.push_back( &(pose.residue_type( i )) );
+		for( Size i = flex_region_->start(); i <= flex_region_->stop(); ++i ) init_aa_.push_back( pose.residue_type( i ).get_self_weak_ptr() );
 	}
 
 
@@ -921,7 +922,7 @@ EnzdesRemodelMover::apply_random_lowE_ligconf(
 	utility::vector1< core::Size > all_ligands( protocols::ligand_docking::get_ligand_seqpos( pose ) );
 
 	for( core::Size lig_num = 1; lig_num <= all_ligands.size(); ++lig_num ){
-		core::conformation::ResidueCOP cur_lig( &pose.residue( all_ligands[lig_num] ) );
+		core::conformation::ResidueCOP cur_lig( pose.residue( all_ligands[lig_num] ).get_self_ptr() );
 		utility::vector1< core::conformation::ResidueCOP > ligrots;
 		enz_prot_->get_non_bb_clashing_rotamers( pose, all_ligands[lig_num], scofx, ligrots );
 		ligrots.push_back( cur_lig ); //save current lig at the last position
@@ -953,11 +954,12 @@ EnzdesRemodelMover::apply_random_lowE_ligconf(
 void
 EnzdesRemodelMover::translate_atomnames_to_restype_set_atomids(
 	core::pose::Pose const & pose,
-	core::chemical::ResidueTypeSetCAP restype_set,
+	core::chemical::ResidueTypeSetCAP restype_set_cap,
 	core::Size const seqpos,
 	utility::vector1< std::string > const & atom_names,
 	utility::vector1< core::Size > & atom_ids )
 {
+	core::chemical::ResidueTypeSetCOP restype_set( restype_set_cap );
 	atom_ids.clear();
 
 	for( utility::vector1< std::string >::const_iterator at_it = atom_names.begin();
@@ -985,10 +987,11 @@ EnzdesRemodelMover::translate_res_interactions_to_rvinfos(
 	core::pose::Pose const & pose,
 	core::Size const targ_pos,
 	core::Size const example_loop_seqpos,
-	core::chemical::ResidueTypeSetCAP restype_set,
+	core::chemical::ResidueTypeSetCAP restype_set_cap,
 	protocols::toolbox::match_enzdes_util::ResInteractions const & res_ints
 )
 {
+	core::chemical::ResidueTypeSetCOP restype_set( restype_set_cap );
 	core::Real dummy_val(0.0);
 	utility::vector1< core::Size > targ_atom_ids, loopres_atom_ids;
 	translate_atomnames_to_restype_set_atomids( pose, restype_set, targ_pos, res_ints.targ_atom_names(), targ_atom_ids );
@@ -1127,7 +1130,7 @@ EnzdesRemodelMover::secmatch_after_remodel(
 
 	//if no parameters are missing, return right away
 	protocols::toolbox::match_enzdes_util::EnzConstraintIOCOP cstio( protocols::enzdes::enzutil::get_enzcst_io( pose ) );
-	if( (!cstio) || cstio()->enz_cst_params_missing_in_pose( pose ).size() == 0 ) return true;
+	if( (!cstio) || cstio->enz_cst_params_missing_in_pose( pose ).size() == 0 ) return true;
 
 	tr << "There are catalytic interactions missing in the pose, starting secondary matcher..." << std::endl;
 	cstio->remove_constraints_from_pose( pose, false, true );
@@ -1140,7 +1143,7 @@ EnzdesRemodelMover::secmatch_after_remodel(
 			core::Size present_template( cst_params->get_missing_template_other_res( pose )->param_index() );
 			core::Size present_seqpos( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( i )->template_res_cache( present_template )->seqpos_map_begin()->first );
 			if( !ligres ){
-				ligres = &(pose.residue( present_seqpos ));
+				ligres = pose.residue( present_seqpos ).get_self_ptr();
 				break;
 			}
 		}
@@ -1252,8 +1255,9 @@ EnzdesRemodelMover::setup_rcgs(
 	}
 
 	if( cen_rv_infos.size() != 0 ){
-		vlb.add_rcg( new protocols::forge::remodel::ResidueVicinityRCG( flex_region_->start(), flex_region_->stop(), cen_rv_infos ) );
-		rcgs_.push_back( new protocols::forge::remodel::ResidueVicinityRCG( flex_region_->start(), flex_region_->stop(), fa_rv_infos ) );
+		using namespace protocols::forge::remodel;
+		vlb.add_rcg( new ResidueVicinityRCG( flex_region_->start(), flex_region_->stop(), cen_rv_infos ) );
+		rcgs_.push_back( new ResidueVicinityRCG( flex_region_->start(), flex_region_->stop(), fa_rv_infos ) );
 	}
 }
 
@@ -1264,8 +1268,10 @@ EnzdesRemodelMover::setup_rcgs_from_inverse_rotamers(
 )
 {
 	for( core::Size i =1; i <= target_inverse_rotamers_.size(); ++i) {
-		vlb.add_rcg( new protocols::forge::constraints::InverseRotamersRCG( flex_region_->start(), flex_region_->stop(),target_inverse_rotamers_[i] ) );
-		rcgs_.push_back( new protocols::forge::constraints::InverseRotamersRCG( flex_region_->start(), flex_region_->stop(), target_inverse_rotamers_[i] ) );
+		using namespace protocols::forge::constraints;
+		using namespace protocols::forge::remodel;
+		vlb.add_rcg( new InverseRotamersRCG( flex_region_->start(), flex_region_->stop(),target_inverse_rotamers_[i] ) );
+		rcgs_.push_back( new InverseRotamersRCG( flex_region_->start(), flex_region_->stop(), target_inverse_rotamers_[i] ) );
 	}
 }
 
@@ -1294,7 +1300,7 @@ EnzdesRemodelMover::create_target_inverse_rotamers(
 				utility_exit_with_message("When trying to build inverse rotamers in enzdes remodel, !=1 target residues were found to be saved in the cst cache");
 			}
 			core::Size targ_seqpos( temp_res_cache->seqpos_map_begin()->first );
-			target_inverse_rotamers_.push_back( enzcst_io->mcfi_list( i )->inverse_rotamers_against_residue( param_index, &(pose.residue( targ_seqpos ) ) ) );
+			target_inverse_rotamers_.push_back( enzcst_io->mcfi_list( i )->inverse_rotamers_against_residue( param_index, pose.residue( targ_seqpos ).get_self_ptr() ) );
 			invrots_build = true;
 
 			//note: if the target residue is also in a region being remodelled,
@@ -1332,7 +1338,7 @@ EnzdesRemodelMover::create_target_inverse_rotamers(
 							target_inverse_rotamers_.push_back( std::list<core::conformation::ResidueCOP> () );
 							if( include_existing_conf_as_invrot_target_) target_inverse_rotamers_[ target_inverse_rotamers_.size() ].push_back( new core::conformation::Residue( pose.residue( seqpos ) ) );
 							invrots_build = true;
-							std::list< core::conformation::ResidueCOP > cur_inv_rots( enzcst_io->mcfi_list( i )->inverse_rotamers_against_residue( other_res, &(pose.residue( other_seqpos ) ) ) );
+							std::list< core::conformation::ResidueCOP > cur_inv_rots( enzcst_io->mcfi_list( i )->inverse_rotamers_against_residue( other_res, pose.residue( other_seqpos ).get_self_ptr() ) );
 							if( cur_inv_rots.size() != 0 ) target_inverse_rotamers_[ target_inverse_rotamers_.size() ].splice( target_inverse_rotamers_[ target_inverse_rotamers_.size() ].end(), cur_inv_rots );
 						}
 						else{

@@ -75,7 +75,7 @@ operator==(
 	return
 		!(a.input_tag_.compare(b.input_tag_)) &&
 		a.nstruct_max_ == b.nstruct_max_ &&
-		a.pose_() == b.pose_() &&
+		a.pose_.get() == b.pose_.get() &&
 		a.bad_ == b.bad_;
 }
 
@@ -98,7 +98,7 @@ InnerJob::show(
 		<< "nstruct max: " << nstruct_max_ << std::endl
 		<< "bad: " << (bad_ ? "true" : "false" ) << std::endl
 		<< "Pose:";
-	if( pose_() ){
+	if( pose_ ){
 		out << std::endl << *pose_ << std::endl;
 	} else {
 		out << " NULL" << std::endl;

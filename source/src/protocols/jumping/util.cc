@@ -99,7 +99,7 @@ close_chainbreaks(
     final_fold_tree = final_fold_tree_in;
   }
   //some sanity checks
-  runtime_assert( closure_protocol );
+  runtime_assert( closure_protocol != 0 );
   //runtime_assert  that all cut-points in final_fold_tree are also contained the actual fold_tree
   for ( Size ncut = 1; ncut <= (Size)final_fold_tree.num_cutpoint(); ncut++ ) {
     if( !open_pose.fold_tree().is_cutpoint( final_fold_tree.cutpoint( ncut ) ) ){

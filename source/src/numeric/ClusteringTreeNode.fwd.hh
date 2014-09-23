@@ -22,6 +22,7 @@ namespace numeric {
 class ClusteringTreeNode;
 
 typedef utility::pointer::owning_ptr<ClusteringTreeNode> ClusteringTreeNodeOP;
+typedef utility::pointer::access_ptr<ClusteringTreeNode> ClusteringTreeNodeAP;
 
 } // numeric
 

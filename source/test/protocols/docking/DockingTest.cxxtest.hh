@@ -251,13 +251,13 @@ public:
 	void test_DockingProtocol_clone(){
 		protocols::docking::DockingProtocolOP dockerprot1 = new protocols::docking::DockingProtocol() ;
 		protocols::docking::DockingProtocolOP dockerprot2 = static_cast< protocols::docking::DockingProtocol * > ( dockerprot1->clone()() );
-		TS_ASSERT( dockerprot1() != dockerprot2() );
+		TS_ASSERT( dockerprot1.get() != dockerprot2.get() );
 		TS_ASSERT( dockerprot1->to_centroid() != dockerprot2->to_centroid() );
 		TS_ASSERT( dockerprot1->docking_lowres_mover() != dockerprot2->docking_lowres_mover() );
 		TS_ASSERT( dockerprot1->to_all_atom() != dockerprot2->to_all_atom() );
 		TS_ASSERT( dockerprot1->docking_highres_mover() != dockerprot2->docking_highres_mover() );
 		TS_ASSERT( dockerprot1->perturber() != dockerprot2->perturber() );
-		TS_ASSERT( dynamic_cast< protocols::simple_moves::SwitchResidueTypeSetMover const * > ( dockerprot2->to_centroid()() ) );
+		TS_ASSERT( dynamic_cast< protocols::simple_moves::SwitchResidueTypeSetMover const * > ( dockerprot2->to_centroid().get() ) );
 	}
 	
 	void test_EllipsoidalRandomizationMover() {

@@ -41,7 +41,7 @@ static thread_local basic::Tracer TR( "protocols.filters.AtomicContactFilter" );
 ///@brief default ctor
 AtomicContactFilter::AtomicContactFilter() :
 	parent( "AtomicContact" ),
-	protocols::moves::ResId( 0 )
+	protocols::moves::ResId( 0u )
 {}
 
 ///@brief Constructor with a single target residue

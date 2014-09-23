@@ -119,7 +119,7 @@ void RigidChunkClaimer::receive_message( ClaimerMessage& cm ) {
 		//find good residue
 		if ( !current_rigid_core_.size() ) return;
 		msg.good_fix_pos_ =	current_rigid_core_.begin()->start() + numeric::nint( 0.5 * current_rigid_core_.begin()->size() ) - 1;
-		msg.received_by_me( this );
+		msg.received_by_me( get_self_weak_ptr() );
 	}
 }
 
@@ -227,7 +227,7 @@ void RigidChunkClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	//	new_claims.push_back( new CutBiasClaim( *this ) ); we don't need this claim type --- always call manipulate_cut_bias
 	for ( Loops::const_iterator loop_it = current_rigid_core_.begin(); loop_it != current_rigid_core_.end(); ++loop_it ) {
 		for ( Size pos = loop_it->start(); pos <= loop_it->stop(); ++pos ) {
-			new_claims.push_back( new claims::BBClaim( this,
+			new_claims.push_back( new claims::BBClaim( get_self_weak_ptr(),
 																								 std::make_pair( label(), pos ),
 																								 claims::DofClaim::EXCLUSIVE ) );
 		}
@@ -263,11 +263,11 @@ void RigidChunkClaimer::new_decoy( core::pose::Pose const& pose ) {
 }
 
 bool RigidChunkClaimer::allow_claim( claims::DofClaim const& foreign_claim ) {
-	if ( foreign_claim.owner() == this ) return true; // always allow your own claims!
+	if ( foreign_claim.owner().lock().get() == this ) return true; // always allow your own claims!
 
 	// check foreign claim
 
-	claims::BBClaimCOP bb_ptr( dynamic_cast< const claims::BBClaim* >( &foreign_claim ) );
+	claims::BBClaim const *bb_ptr( dynamic_cast< const claims::BBClaim* >( &foreign_claim ) );
 
 	if ( bb_ptr && current_rigid_core_.is_loop_residue( bb_ptr->global_position() ) ) {
 		if ( bExclusive_ ) { 	// if we want exclusive claim this is not acceptable
@@ -278,24 +278,24 @@ bool RigidChunkClaimer::allow_claim( claims::DofClaim const& foreign_claim ) {
 		}
 	} // DofClaim::BB
 
-	claims::JumpClaimCOP jump_ptr( dynamic_cast< const claims::JumpClaim* >( &foreign_claim ) );
+	claims::JumpClaim const *jump_ptr( dynamic_cast< const claims::JumpClaim* >( &foreign_claim ) );
 
 	if ( jump_ptr ) {
-		runtime_assert( current_jump_calculator_ );
+		runtime_assert( current_jump_calculator_ != 0 );
 		if ( current_jump_calculator_->irrelevant_jump( jump_ptr->global_pos1(), jump_ptr->global_pos2() ) ) {
 			return true;
 		} else if ( !current_jump_calculator_->good_jump( jump_ptr->global_pos1(), jump_ptr->global_pos2() ) ) {
 			return false;
 		} else if ( bExclusive_ ) { // but probably a good jump --- since it has a physical reason.
 			//reclaim the claim
-			current_jumps_.push_back( new claims::JumpClaim( this, jump_ptr->local_pos1(), jump_ptr->local_pos2(), claims::DofClaim::EXCLUSIVE ) );
+			current_jumps_.push_back( new claims::JumpClaim( get_self_weak_ptr(), jump_ptr->local_pos1(), jump_ptr->local_pos2(), claims::DofClaim::EXCLUSIVE ) );
 			return false;
 		} else {
 			current_jumps_.push_back( foreign_claim.clone() ); //ok - remember this jump, since it connects rigid1 and rigid2
 		}
 	} // DofClaim::JUMP
 
-	claims::CutClaimCOP cut_ptr( dynamic_cast< const claims::CutClaim* >( &foreign_claim ) );
+	claims::CutClaim const *cut_ptr( dynamic_cast< const claims::CutClaim* >( &foreign_claim ) );
 
 	if ( cut_ptr ) {
 		for ( loops::Loops::const_iterator region = current_rigid_core_.begin(); region != current_rigid_core_.end(); ++region ) {
@@ -696,7 +696,7 @@ RigidChunkClaimer::JumpCalculator::generate_rigidity_jumps( RigidChunkClaimer* p
 			Size target_pos (	rigid_loops[ region ].start()
 							 + static_cast< Size >( 0.5*( rigid_loops[ region ].stop()-rigid_loops[ region ].start() ) ) );
 
-			extra_jumps.push_back( new claims::JumpClaim( parent_claimer,
+			extra_jumps.push_back( new claims::JumpClaim( parent_claimer ? parent_claimer->get_self_weak_ptr() : TopologyClaimerAP(),
 																										std::make_pair( label, anchor),
 																										std::make_pair( label, target_pos),
 																										claims::DofClaim::EXCLUSIVE ) );

@@ -68,7 +68,7 @@ SolvationGrid::~SolvationGrid()
 
 void SolvationGrid::refresh(core::pose::Pose const & pose, core::Vector const & /*center*/)
 {
-    core::scoring::etable::EtableCAP etable(
+    core::scoring::etable::EtableCOP etable(
         core::scoring::ScoringManager::get_instance()->etable("FA_STANDARD_DEFAULT"));
     
     core::scoring::etable::TableLookupEvaluator etable_evaluator(*etable);

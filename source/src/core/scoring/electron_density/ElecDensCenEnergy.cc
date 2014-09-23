@@ -88,7 +88,7 @@ methods::LongRangeEnergyType
 ElecDensCenEnergy::long_range_type() const { return elec_dens_cen_energy; }
 
 /// c-tor
-ElecDensCenEnergy::ElecDensCenEnergy() : parent( new ElecDensCenEnergyCreator ) {}
+ElecDensCenEnergy::ElecDensCenEnergy() : parent( methods::EnergyMethodCreatorOP( new ElecDensCenEnergyCreator ) ) {}
 
 
 /// clone

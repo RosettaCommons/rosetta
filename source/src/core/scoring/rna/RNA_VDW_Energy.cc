@@ -62,7 +62,7 @@ RNA_VDW_EnergyCreator::score_types_for_method() const {
 
 
 RNA_VDW_Energy::RNA_VDW_Energy() :
-	parent( new RNA_VDW_EnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new RNA_VDW_EnergyCreator ) ),
 	rna_atom_vdw_( ScoringManager::get_instance()->get_RNA_AtomVDW() ), // need to make the table choice configurable
 	vdw_scale_factor_( 0.8 ) // hack from rosetta++
 {}

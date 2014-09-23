@@ -76,7 +76,7 @@ JobInputterFactory::~JobInputterFactory(){}
 void
 JobInputterFactory::factory_register( JobInputterCreatorOP creator )
 {
-	runtime_assert( creator );
+	runtime_assert( creator != 0 );
 	std::string const job_inputter_type( creator->keyname() );
 	if ( job_inputter_creator_map_.find( job_inputter_type ) != job_inputter_creator_map_.end() ) {
 		utility_exit_with_message("JobInputterFactory::factory_register already has a mover creator with name \"" + job_inputter_type + "\".  Conflicting JobInputter names" );

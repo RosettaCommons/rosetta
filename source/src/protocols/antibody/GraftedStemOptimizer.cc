@@ -404,6 +404,7 @@ GraftedStemOptimizer::get_stem_taskfactory( pose::Pose & pose, std::string const
 	}
 
 	using namespace protocols::toolbox::task_operations;
+	using namespace core::pack::task::operation;
 	tf->push_back( new RestrictToInterface(sc_is_packable) );
 
 	//tf->create_task_and_apply_taskoperations(pose);

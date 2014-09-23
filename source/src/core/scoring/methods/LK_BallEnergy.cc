@@ -194,8 +194,8 @@ retrieve_nonconst_lkb_pairdata(
 {
 	LKB_ResPairMinDataOP lkb_pairdata(0);
 	if ( pairdata.get_data( lkb_respair_data ) ) {
-		assert( dynamic_cast< LKB_ResPairMinData * > ( pairdata.get_data( lkb_respair_data )() ));
-		lkb_pairdata = static_cast< LKB_ResPairMinData * > ( pairdata.get_data( lkb_respair_data )() );
+		assert( utility::pointer::dynamic_pointer_cast< LKB_ResPairMinData > ( pairdata.get_data( lkb_respair_data ) ));
+		lkb_pairdata = utility::pointer::static_pointer_cast< LKB_ResPairMinData > ( pairdata.get_data( lkb_respair_data ) );
 	} else {
 		lkb_pairdata = new LKB_ResPairMinData;
 		pairdata.set_data( lkb_respair_data, lkb_pairdata );
@@ -210,7 +210,7 @@ retrieve_lkb_pairdata(
 											ResPairMinimizationData const & pairdata
 											)
 {
-	assert( dynamic_cast< LKB_ResPairMinData const * > ( pairdata.get_data( lkb_respair_data )() ) );
+	assert( utility::pointer::dynamic_pointer_cast< LKB_ResPairMinData const > ( pairdata.get_data( lkb_respair_data ) ) );
 	return ( static_cast< LKB_ResPairMinData const & > ( pairdata.get_data_ref( lkb_respair_data ) ) );
 }
 /////////////////////////////////////// mindata retrieval functions
@@ -222,8 +222,8 @@ retrieve_nonconst_lkb_resdata(
 {
 	LKB_ResidueInfoOP lkb_resdata( 0 );
 	if ( resdata.get_data( lkb_res_data ) ) {
-		assert( dynamic_cast< LKB_ResidueInfo * > ( resdata.get_data( lkb_res_data )() ) );
-		lkb_resdata = static_cast< LKB_ResidueInfo * > ( resdata.get_data( lkb_res_data )() );
+		assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo > ( resdata.get_data( lkb_res_data ) ) );
+		lkb_resdata = utility::pointer::static_pointer_cast< LKB_ResidueInfo > ( resdata.get_data( lkb_res_data ) );
 	} else {
 		lkb_resdata = new LKB_ResidueInfo;
 		resdata.set_data( lkb_res_data, lkb_resdata );
@@ -237,7 +237,7 @@ retrieve_lkb_resdata(
 										ResSingleMinimizationData const & resdata
 										)
 {
-	assert( dynamic_cast< LKB_ResidueInfo const * > ( resdata.get_data( lkb_res_data )() ) );
+	assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data ) ) );
 	return ( static_cast< LKB_ResidueInfo const & > ( resdata.get_data_ref( lkb_res_data ) ) );
 }
 /////////////////////////////////////// mindata retrieval functions
@@ -247,7 +247,7 @@ retrieve_lkb_resdata_ptr(
 												ResSingleMinimizationData const & resdata
 												)
 {
-	assert( dynamic_cast< LKB_ResidueInfo const * > ( resdata.get_data( lkb_res_data )() ) );
+	assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data ) ) );
 	return ( static_cast< LKB_ResidueInfo const * > ( resdata.get_data( lkb_res_data )() ) );
 }
 
@@ -296,13 +296,14 @@ retrieve_lkb_resdata_ptr(
 // }
 
 LK_BallEnergy::LK_BallEnergy( EnergyMethodOptions const & options ):
-	parent             ( new LK_BallEnergyCreator ),
-	etable_            ( *ScoringManager::get_instance()->etable( options.etable_type() ) ),
-	solv1_             (  ScoringManager::get_instance()->etable( options.etable_type() )->solv1()),
-	solv2_             (  ScoringManager::get_instance()->etable( options.etable_type() )->solv2()),
-	dsolv1_            (  ScoringManager::get_instance()->etable( options.etable_type() )->dsolv1()),
-	safe_max_dis2_     (  ScoringManager::get_instance()->etable( options.etable_type() )->get_safe_max_dis2() ),
-	etable_bins_per_A2_(  ScoringManager::get_instance()->etable( options.etable_type() )->get_bins_per_A2() ),
+	parent             ( methods::EnergyMethodCreatorOP( new LK_BallEnergyCreator ) ),
+	etable_            (  ScoringManager::get_instance()->etable( options.etable_type() ) ),
+	// TODO: locking once of casting to etable::EtableCOP would be better
+	solv1_             (  ScoringManager::get_instance()->etable( options.etable_type() ).lock()->solv1()),
+	solv2_             (  ScoringManager::get_instance()->etable( options.etable_type() ).lock()->solv2()),
+	dsolv1_            (  ScoringManager::get_instance()->etable( options.etable_type() ).lock()->dsolv1()),
+	safe_max_dis2_     (  ScoringManager::get_instance()->etable( options.etable_type() ).lock()->get_safe_max_dis2() ),
+	etable_bins_per_A2_(  ScoringManager::get_instance()->etable( options.etable_type() ).lock()->get_bins_per_A2() ),
 	use_intra_dna_cp_crossover_4_( true )
 {
 	setup_d2_bounds();
@@ -330,7 +331,8 @@ LK_BallEnergy::LK_BallEnergy( EnergyMethodOptions const & options ):
 Distance
 LK_BallEnergy::atomic_interaction_cutoff() const
 {
-	return etable_.max_dis();
+	etable::EtableCOP etable_op( etable_ );
+	return etable_op->max_dis();
 }
 
 
@@ -521,7 +523,9 @@ void
 LK_BallEnergy::setup_d2_bounds()
 {
 	Real const h2o_radius( 1.4 );
-	chemical::AtomTypeSet const & atom_set( *etable_.atom_set() );
+	etable::EtableCOP etable_op( etable_ );
+	chemical::AtomTypeSetCOP atom_set_op( etable_op->atom_set() );
+	chemical::AtomTypeSet const & atom_set( *atom_set_op );
 	d2_low_.resize( atom_set.n_atomtypes() );
 	for ( Size i=1; i<= atom_set.n_atomtypes(); ++i ) {
 		chemical::AtomType const & atype( atom_set[ i ] );
@@ -1426,7 +1430,7 @@ LK_BallEnergy::eval_residue_pair_derivatives(
 	LKB_ResidueInfo const & rsd1_info( retrieve_lkb_resdata( res1data ) );
 	LKB_ResidueInfo const & rsd2_info( retrieve_lkb_resdata( res2data ) );
 
-	assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( etab_pair_nblist )() ));
+	assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( etab_pair_nblist ) ));
 	ResiduePairNeighborList const & nblist
 		( static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( etab_pair_nblist )) );
 
@@ -1458,7 +1462,7 @@ get_parallel_h_for_arg(
 	assert( rsd_type.aa() == aa_arg );
 	typedef std::map< ResidueTypeCOP, utility::vector1< Size > > H_Map;
 	static H_Map hmap;
-	ResidueTypeCOP rsd_type_ptr( &rsd_type );
+	ResidueTypeCOP rsd_type_ptr( rsd_type.get_self_ptr() );
 	H_Map::const_iterator iter = hmap.find( rsd_type_ptr );
 	if ( iter == hmap.end() ) {
 		// first time seeing this arginine residue type

@@ -69,6 +69,7 @@ void ChiWellRmsdEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator 
 	using namespace core;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	using protocols::evaluation::PoseEvaluatorOP;
 	tr.Info << "Evaluation Creator active ... " << std::endl;
 	if ( option[ OptionKeys::evaluation::chirmsd ].user() ) {
 

@@ -77,7 +77,7 @@ AlignChainMover::apply( Pose & in_pose )
 {
 	utility::vector1< core::Size > in_pose_positions, target_positions;
 	in_pose_positions.clear(); target_positions.clear();
-	runtime_assert( pose() );
+	runtime_assert( pose() != 0 );
 	core::Size const in_pose_chain_begin( source_chain() == 0 ? 1 : in_pose.conformation().chain_begin( source_chain() ) );
 	core::Size const in_pose_chain_end  ( source_chain() == 0 ? in_pose.total_residue() : in_pose.conformation().chain_end( source_chain() ) );
 	core::Size const target_pose_chain_begin( target_chain() == 0 ? 1 : pose()->conformation().chain_begin( target_chain() ) );

@@ -487,7 +487,7 @@ output_mg_to_silent_file( utility::vector1< Vector > & mg_positions,
 	using namespace core::id;
 	using namespace core::io::silent;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 	core::chemical::ResidueTypeCOPs const & rsd_type_list ( rsd_set->name3_map ( " MG" ) );
 	core::conformation::ResidueOP new_res ( core::conformation::ResidueFactory::create_residue ( *rsd_type_list[1] ) );
@@ -536,7 +536,7 @@ output_mg_to_PDB( utility::vector1< Vector > & mg_positions,
 	using namespace core::id;
 	using namespace core::io::silent;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 	core::chemical::ResidueTypeCOPs const & rsd_type_list ( rsd_set->name3_map ( " MG" ) );
 	core::conformation::ResidueOP new_res ( core::conformation::ResidueFactory::create_residue ( *rsd_type_list[1] ) );
@@ -588,8 +588,7 @@ mg_scan_test()
 	pose::Pose pose;
 	//Size total_residues( 0 );  // unused ~Labonte
 
-	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" ) );
 	import_pose::pose_from_pdb( pose, *rsd_set,  file_path + '/' + pdb_file );
 
 	if ( count == 0 ) protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 600, 600 );

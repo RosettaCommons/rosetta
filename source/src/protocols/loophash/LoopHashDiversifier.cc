@@ -182,7 +182,7 @@ void
 LoopHashDiversifier::apply( Pose & pose )
 {
 	using namespace core::io::silent;
-	runtime_assert( library_ );
+	runtime_assert( library_ != 0 );
 	Pose const saved_pose( pose );
 
 	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );

@@ -57,9 +57,9 @@ public:
 
 		ChemicalManager * cm(ChemicalManager::get_instance());
 		std::string const tag(FA_STANDARD);
-		ResidueTypeSetCAP rsd_types = cm->residue_type_set(tag);
+		ResidueTypeSetCOP rsd_types = cm->residue_type_set(tag);
 
-		ResidueTypeCOP rsd_ref( rsd_types->name_map("LYS") );
+		ResidueTypeCOP rsd_ref( rsd_types->name_map("LYS").get_self_ptr() );
 		ResidueTypeOP rsd;
 		std::set< std::string > names;
 
@@ -129,13 +129,13 @@ public:
 		ChemicalManager * cm(ChemicalManager::get_instance());
 		std::string const tag(FA_STANDARD);
 		// minirosett_database/chemical/atom_type_sets/<tag>
-		AtomTypeSetCAP atom_types = cm->atom_type_set(tag);
+		AtomTypeSetCOP atom_types = cm->atom_type_set(tag);
 		// minirosetta_database/chemical/element_sets/<tag>
-		ElementSetCAP element_types = cm->element_set("default");
+		ElementSetCOP element_types = cm->element_set("default");
 		// minirosetta_database/chemical/mm_atom_type_sets/<tag>
-		MMAtomTypeSetCAP mm_atom_types = cm->mm_atom_type_set(tag);
+		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
 
-		ResidueTypeOP rsd = new ResidueType( atom_types, element_types, mm_atom_types, 0);
+		ResidueTypeOP rsd = new ResidueType( atom_types, element_types, mm_atom_types, NULL );
 
 		rsd->add_atom( "C1", "aroC", "VIRT", 0 );
 		rsd->add_atom( "C2", "aroC", "VIRT", 0 );
@@ -236,13 +236,13 @@ public:
 		ChemicalManager * cm(ChemicalManager::get_instance());
 		std::string const tag(FA_STANDARD);
 		// minirosett_database/chemical/atom_type_sets/<tag>
-		AtomTypeSetCAP atom_types = cm->atom_type_set(tag);
+		AtomTypeSetCOP atom_types = cm->atom_type_set(tag);
 		// minirosetta_database/chemical/element_sets/<tag>
-		ElementSetCAP element_types = cm->element_set("default");
+		ElementSetCOP element_types = cm->element_set("default");
 		// minirosetta_database/chemical/mm_atom_type_sets/<tag>
-		MMAtomTypeSetCAP mm_atom_types = cm->mm_atom_type_set(tag);
+		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
 
-		ResidueTypeOP rsd = new ResidueType( atom_types, element_types, mm_atom_types, 0);
+		ResidueTypeOP rsd = new ResidueType( atom_types, element_types, mm_atom_types, NULL );
 
 		rsd->add_atom( "C1", "aroC", "VIRT", 0 );
 		rsd->add_atom( "C2", "aroC", "VIRT", 0 );
@@ -336,7 +336,7 @@ public:
 
 		ChemicalManager * cm(ChemicalManager::get_instance());
 		std::string const tag(FA_STANDARD);
-		ResidueTypeSetCAP rsd_types = cm->residue_type_set(tag);
+		ResidueTypeSetCOP rsd_types = cm->residue_type_set(tag);
 
 		ResidueTypeOP rsd = new ResidueType( rsd_types->name_map("TYR") );
 

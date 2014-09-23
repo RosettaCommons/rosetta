@@ -62,7 +62,7 @@ WaterAdductHBondEnergyCreator::score_types_for_method() const {
 
 
 WaterAdductHBondEnergy::WaterAdductHBondEnergy() :
-	parent( new WaterAdductHBondEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new WaterAdductHBondEnergyCreator ) ),
 	potential_( ScoringManager::get_instance()->get_WaterAdductHBondPotential() )
 {}
 

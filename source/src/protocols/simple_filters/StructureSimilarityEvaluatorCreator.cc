@@ -74,6 +74,7 @@ void StructureSimilarityEvaluatorCreator::add_evaluators( evaluation::MetaPoseEv
 	using namespace core;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	using protocols::evaluation::PoseEvaluatorOP;
 
 	if ( option[ OptionKeys::evaluation::structural_similarity ].user() ) {
 		using std::string;
@@ -82,7 +83,7 @@ void StructureSimilarityEvaluatorCreator::add_evaluators( evaluation::MetaPoseEv
 		SilentFilePoseInputStream silent_input(
 			option[ OptionKeys::evaluation::structural_similarity ]()
 		);
-		core::chemical::ResidueTypeSetCAP rsd_set = core::chemical::rsd_set_from_cmd_line();
+		core::chemical::ResidueTypeSetCOP rsd_set( core::chemical::rsd_set_from_cmd_line() );
 		utility::vector1< core::pose::Pose > poses;
 		while( silent_input.has_another_pose() ) {
 			core::pose::Pose pose;

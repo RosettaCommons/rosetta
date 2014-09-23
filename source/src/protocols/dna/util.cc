@@ -482,7 +482,7 @@ design_residues_list(
 		}
 		else if ( !ptask.pack_residue( index ) ) continue;
 		design_residues.push_back(
-			PositionType( index, &pose.residue_type( index ), ptask.design_residue( index ) ) );
+			PositionType( index, pose.residue_type( index ).get_self_ptr(), ptask.design_residue( index ) ) );
 	}
 }
 
@@ -570,13 +570,13 @@ restrict_dna_rotamers(
 	for ( Size roti(1); roti <= nrot; ++roti ) {
 
 		Size const rotpos( rotamer_sets->res_for_rotamer(roti) );
-		ResidueTypeCOP rot_type( rotamer_sets->rotamer(roti)->type() );
+		ResidueType const & rot_type( rotamer_sets->rotamer(roti)->type() );
 
 		ResTypeSequence::const_iterator seqindex( seq.find( rotpos ) );
 		if ( seqindex != seq.end() ) {
 			// compare only the name3's on order to allow variants
 			std::string seq_typename( (seqindex->second)->name3() ),
-									rot_typename( rot_type->name3() );
+									rot_typename( rot_type.name3() );
 			if ( seq_typename != rot_typename ) continue;
 		}
 		rot_to_pack.push_back( roti );
@@ -600,12 +600,12 @@ restrict_to_single_sequence(
 	Size const nrot( rotamer_sets->nrotamers() );
 	for ( Size roti(1); roti <= nrot; ++roti ) {
 		Size const rotpos( rotamer_sets->res_for_rotamer(roti) );
-		ResidueTypeCOP rot_type( rotamer_sets->rotamer(roti)->type() );
+		ResidueType const & rot_type( rotamer_sets->rotamer(roti)->type() );
 		// a comparison operator is not defined for the ResidueType class
 		// compare names here
 		// name3 comparison should allow variants
 		std::string seq_typename( ( single_sequence[ rotpos ] )->name3() ),
-								rot_typename( rot_type->name3() );
+								rot_typename( rot_type.name3() );
 		if ( seq_typename != rot_typename ) continue;
 		rot_to_pack.push_back( roti );
 	}

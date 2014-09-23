@@ -18,9 +18,8 @@ namespace perturbers {
 
 class UniformPerturber;
 
-using utility::pointer::owning_ptr;
-typedef owning_ptr<UniformPerturber> UniformPerturberOP;
-typedef owning_ptr<UniformPerturber const> UniformPerturberCOP;
+typedef utility::pointer::owning_ptr<UniformPerturber> UniformPerturberOP;
+typedef utility::pointer::owning_ptr<UniformPerturber const> UniformPerturberCOP;
 
 }
 }

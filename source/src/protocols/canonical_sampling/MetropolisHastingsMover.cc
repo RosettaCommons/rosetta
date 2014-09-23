@@ -106,15 +106,15 @@ MetropolisHastingsMover::MetropolisHastingsMover(
 	weighted_sampler_(metropolis_hastings_mover.weighted_sampler_)
 {
 	for (core::Size i = 1; i <= metropolis_hastings_mover.movers_.size(); ++i) {
-		movers_.push_back(reinterpret_cast<ThermodynamicMover *>(metropolis_hastings_mover.movers_[i]()));
+		movers_.push_back(utility::pointer::dynamic_pointer_cast<ThermodynamicMover>(metropolis_hastings_mover.movers_[i]));
 	}
 
 	for (core::Size i = 1; i <= metropolis_hastings_mover.observers_.size(); ++i) {
-		observers_.push_back(reinterpret_cast<ThermodynamicObserver *>(metropolis_hastings_mover.observers_[i]()));
+		observers_.push_back(utility::pointer::dynamic_pointer_cast<ThermodynamicObserver>(metropolis_hastings_mover.observers_[i]));
 	}
 
 	if (metropolis_hastings_mover.tempering_) {
-		tempering_ = reinterpret_cast<TemperatureController *>(metropolis_hastings_mover.tempering_());
+		tempering_ = utility::pointer::dynamic_pointer_cast<TemperatureController>(metropolis_hastings_mover.tempering_);
 		if (monte_carlo_) tempering_->set_monte_carlo(monte_carlo_);
 	}
 }
@@ -162,11 +162,13 @@ MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
 
 	for (core::Size i = 1; i <= movers_.size(); ++i) {
 		tr.Info << "Initializing " << movers_[i]->get_name() << std::endl;
-		movers_[i]->set_metropolis_hastings_mover(this);
+		movers_[i]->set_metropolis_hastings_mover(
+			MetropolisHastingsMoverAP( utility::pointer::static_pointer_cast< MetropolisHastingsMover >( get_self_ptr() ) )
+		);
 		movers_[i]->initialize_simulation(pose, *this, cycle_number);
 	}
 
-	runtime_assert( monte_carlo_ );
+	runtime_assert( monte_carlo_ != 0 );
 	monte_carlo_->reset(pose);
 	monte_carlo_->reset_counters();
 
@@ -538,6 +540,7 @@ MetropolisHastingsMover::add_sidechain_mover(
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	using core::pack::task::operation::TaskOperationCOP;
 
 	core::pack::task::TaskFactoryOP main_task_factory = new core::pack::task::TaskFactory;
 	main_task_factory->push_back( new core::pack::task::operation::InitializeFromCommandline );
@@ -569,6 +572,7 @@ MetropolisHastingsMover::add_sidechain_mc_mover(
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	using core::pack::task::operation::TaskOperationCOP;
 
 	core::pack::task::TaskFactoryOP main_task_factory = new core::pack::task::TaskFactory;
 	main_task_factory->push_back( new core::pack::task::operation::InitializeFromCommandline );

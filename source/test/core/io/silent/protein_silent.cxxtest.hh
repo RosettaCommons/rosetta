@@ -88,10 +88,10 @@ public:
 
 	// shared data
 	pose::PoseOP start_pose;
-	core::chemical::ResidueTypeSetCAP	rsd_set;
+	core::chemical::ResidueTypeSetCOP	rsd_set;
 
 	pose::PoseOP centroid_pose_;
-	core::chemical::ResidueTypeSetCAP	cen_rsd_set_;
+	core::chemical::ResidueTypeSetCOP	cen_rsd_set_;
 
 	// Shared initialization goes here.
 	void setUp() {

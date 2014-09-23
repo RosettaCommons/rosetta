@@ -164,7 +164,7 @@ void DockTaskFactory::set_interface_definition_task_operation(  protocols::toolb
 }
 void
 DockTaskFactory::create_and_attach_task_factory(
-	DockingHighResOP docker,
+	DockingHighRes * docker,
 	core::pose::Pose const & pose
 ) const
 {

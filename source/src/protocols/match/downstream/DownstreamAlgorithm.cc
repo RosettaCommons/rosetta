@@ -122,7 +122,7 @@ DownstreamAlgorithm::set_dsbuilder(
 	DownstreamBuilderOP dsbuilder )
 {
   if (dsbuilder_) {
-		dsbuilder_.reset_to_null();
+		dsbuilder_.reset(); // to NULL
   }
 	dsbuilder_ = dsbuilder;
 }

@@ -38,6 +38,7 @@
 #include <iostream>
 
 using namespace core; 
+using namespace protocols::environment;
 
 class FragmentCMTest : public CxxTest::TestSuite {
 public:
@@ -69,9 +70,10 @@ public:
     core::fragment::FragmentIO frag_io( 1, 1, true );
 
     protocols::abinitio::abscript::FragmentCMOP fragmover =
-      new protocols::abinitio::abscript::FragmentCM( new protocols::simple_moves::ClassicFragmentMover( frag_io.read_data( "protocols/abinitio/abscript/one_frag3_per_pos" ) ) );
+      new protocols::abinitio::abscript::FragmentCM( protocols::simple_moves::FragmentMoverOP( new protocols::simple_moves::ClassicFragmentMover( frag_io.read_data( "protocols/abinitio/abscript/one_frag3_per_pos" ) ) ) );
 
-    protocols::environment::Environment env( "env" );
+    EnvironmentOP env_op = new Environment( "env" );
+    Environment & env = *env_op;
     env.register_mover( fragmover );
 
     core::pose::Pose ppose;
@@ -105,11 +107,12 @@ public:
 
     core::fragment::FragmentIO frag_io( 1, 1, true );
 
-    protocols::abinitio::abscript::FragmentCMOP fragmover = new protocols::abinitio::abscript::FragmentCM( new protocols::simple_moves::ClassicFragmentMover( frag_io.read_data( "protocols/abinitio/abscript/one_frag3_per_pos" ) ) );
+    protocols::abinitio::abscript::FragmentCMOP fragmover = new protocols::abinitio::abscript::FragmentCM( protocols::simple_moves::FragmentMoverOP( new protocols::simple_moves::ClassicFragmentMover( frag_io.read_data( "protocols/abinitio/abscript/one_frag3_per_pos" ) ) ) );
 
     fragmover->set_selector( selector );
 
-    protocols::environment::Environment env( "env" );
+    EnvironmentOP env_op = new Environment( "env" );
+    Environment & env = *env_op;
     env.register_mover( fragmover );
 
     utility::vector1< bool > selection( pose.total_residue(), false );
@@ -172,10 +175,11 @@ public:
 		BBTorsionSRFDCOP r1_sfrd = static_cast< BBTorsionSRFD const* >( onefrag_fragset->begin()->fragment(1).get_residue(1).get() );
 
 		protocols::abinitio::abscript::FragmentCMOP fragmover =
-      new protocols::abinitio::abscript::FragmentCM( new protocols::simple_moves::ClassicFragmentMover( onefrag_fragset ) );
+			new protocols::abinitio::abscript::FragmentCM( protocols::simple_moves::FragmentMoverOP( new protocols::simple_moves::ClassicFragmentMover( onefrag_fragset ) ) );
 		TS_ASSERT_THROWS_NOTHING( fragmover->initialize( false ) );
 
-		protocols::environment::Environment env( "env" );
+		EnvironmentOP env_op = new Environment( "env" );
+		Environment & env = *env_op;
 		env.register_mover( fragmover );
 
 		core::pose::Pose ppose;

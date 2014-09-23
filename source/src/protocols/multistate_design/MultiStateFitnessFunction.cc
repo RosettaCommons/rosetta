@@ -61,7 +61,7 @@ MultiStateFitnessFunction::add_state( SingleStateOP state )
 core::Real
 MultiStateFitnessFunction::evaluate( protocols::genetic_algorithm::Entity & entity )
 {
-	runtime_assert(aggregate_function_);
+	runtime_assert(aggregate_function_ != 0);
 
 	if ( dynamic_cast< protocols::multistate_design::MultiStateEntity * >( &entity ) ) {
 		protocols::multistate_design::MultiStateEntity & multi_state_entity =
@@ -98,7 +98,7 @@ MultiStateFitnessFunction::evaluate_positive_states( protocols::genetic_algorith
 	core::Real fitness(0.);
 	for ( SingleStateOPs::iterator s( states_.begin() ), end( states_.end() ); s != end; ++s ) {
 		if ( !(*s)->is_positive_state() ) continue;
-		fitness += evaluate( entity, *s );
+		fitness += evaluate( entity, *s ? 1 : 0 ); // FIXME: is this correct? OP -> core::Size
 	}
 	return fitness;
 }

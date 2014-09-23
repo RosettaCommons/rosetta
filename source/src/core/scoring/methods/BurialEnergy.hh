@@ -33,7 +33,7 @@ namespace methods {
 class BurialEnergy : public ContextDependentOneBodyEnergy {
 public:
 
-	BurialEnergy() : ContextDependentOneBodyEnergy( new BurialEnergyCreator ) {
+	BurialEnergy() : ContextDependentOneBodyEnergy( methods::EnergyMethodCreatorOP( new BurialEnergyCreator ) ) {
 		init_from_file();
 	}
 

@@ -1514,7 +1514,7 @@ RotamericSingleResiduePeptoidLibrary< T >::chisamples_for_rotamer_and_chi(
 				}
 			}
 		} else if ( rsd_type.is_proton_chi( chi_index ) ) {
-			pack::task::ExtraRotSample ex_samp_level = rtask.extrachi_sample_level( buried, chi_index, &rsd_type );
+			pack::task::ExtraRotSample ex_samp_level = rtask.extrachi_sample_level( buried, chi_index, rsd_type );
 
 			//std::cout << "chi_index: " << chi_index << " ex_samp_level " << ex_samp_level << std::endl;
 			bool const skip_extra_proton_chi_samples = ( ex_samp_level == pack::task::NO_EXTRA_CHI_SAMPLES );

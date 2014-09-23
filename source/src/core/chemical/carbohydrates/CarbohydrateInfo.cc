@@ -231,7 +231,8 @@ CarbohydrateInfo::base_name() const
 {
 	using namespace std;
 
-	string const code = residue_type_->name3();
+	core::chemical::ResidueTypeCOP residue_type( residue_type_ );
+	string const code = residue_type->name3();
 	string const root = root_from_code(code);
 
 	// First cover accepted trivial names.
@@ -283,17 +284,15 @@ CarbohydrateInfo::branch_point(core::uint i) const
 // Empty constructor
 CarbohydrateInfo::CarbohydrateInfo() : utility::pointer::ReferenceCount()
 {
-	chemical::ResidueTypeCAP residue_type;
-
-	init(residue_type);
+	init(core::chemical::ResidueTypeCAP());
 }
 
 // Initialize data members from properties.
 void
-CarbohydrateInfo::init(core::chemical::ResidueTypeCAP residue_type)
+CarbohydrateInfo::init(core::chemical::ResidueTypeCAP residue_type_in)
 {
 	// Set default values.
-	residue_type_ = residue_type;
+	residue_type_ = residue_type_in;
 	anomeric_carbon_ = 1;  // assumes that most sugars will be aldoses if not specified by .params file
 	anomeric_carbon_name_ = "C1";
 	cyclic_oxygen_ = 0;  // assumes linear
@@ -304,7 +303,9 @@ CarbohydrateInfo::init(core::chemical::ResidueTypeCAP residue_type)
 	stereochem_ = 'D';  // assumes that most sugars will have D stereochemistry
 	ring_size_ = 0;  // assumes linear
 	anomer_ = "";  // assumes linear
-	if (residue_type_->is_lower_terminus()){
+	
+	core::chemical::ResidueTypeCOP residue_type( residue_type_ );
+	if (residue_type->is_lower_terminus()){
 		is_glycoside_ = false;
 	} else {
 		is_glycoside_ = true;
@@ -352,9 +353,10 @@ CarbohydrateInfo::get_n_carbons() const
 {
 	using namespace std;
 
+	core::chemical::ResidueTypeCOP residue_type( residue_type_ );
 	for (uint carbon_num = MAX_C_SIZE_LIMIT; carbon_num >= MIN_C_SIZE_LIMIT; --carbon_num) {
 		char carbon_num_char = '0' + carbon_num;  // quick way to convert int to char
-		if (residue_type_->has(string(1, 'C') + string(1, carbon_num_char) /*convert chars to strings to concatenate*/)) {
+		if (residue_type->has(string(1, 'C') + string(1, carbon_num_char) /*convert chars to strings to concatenate*/)) {
 			return carbon_num;
 		}
 	}
@@ -372,7 +374,8 @@ CarbohydrateInfo::read_and_set_properties()
 	using namespace std;
 	using namespace utility;
 
-	vector1<string> properties = residue_type_->properties().get_list_of_properties();
+	core::chemical::ResidueTypeCOP residue_type( residue_type_ );
+	vector1<string> properties = residue_type->properties().get_list_of_properties();
 	string property;
 	uint position;  // location of modification; 0 for a property that does not have an associated position
 	modifications_.resize(n_carbons_);
@@ -494,16 +497,16 @@ CarbohydrateInfo::read_and_set_properties()
 		utility_exit_with_message("An acyclic sugar cannot be alpha or beta; check the .params file.");
 	}
 
-	anomeric_carbon_index_ = residue_type_->atom_index(anomeric_carbon_name_);
+	anomeric_carbon_index_ = residue_type->atom_index(anomeric_carbon_name_);
 
 	// Determine cyclic oxygen from "cut bond" neighbor to the anomeric carbon, if applicable.
 	if (ring_size_ != 0) {
-		cyclic_oxygen_index_ = residue_type_->cut_bond_neighbor(anomeric_carbon_index_)[1];
-		cyclic_oxygen_name_ = residue_type_->atom_name(cyclic_oxygen_index_);
+		cyclic_oxygen_index_ = residue_type->cut_bond_neighbor(anomeric_carbon_index_)[1];
+		cyclic_oxygen_name_ = residue_type->atom_name(cyclic_oxygen_index_);
 		string const cyclic_oxygen_position = cyclic_oxygen_name_.substr(2, 1);  // 3rd col. (index 2) is the atom #
 		cyclic_oxygen_ = atoi(&cyclic_oxygen_position[0]);
 		// TODO: There will likely be a better way to do this once Andrew finishes the virtual shadowing code.
-		virtual_cyclic_oxygen_index_ = residue_type_->atom_index("VO" + cyclic_oxygen_position);
+		virtual_cyclic_oxygen_index_ = residue_type->atom_index("VO" + cyclic_oxygen_position);
 	}
 }
 
@@ -514,21 +517,23 @@ CarbohydrateInfo::determine_polymer_connections()
 	using namespace std;
 	using namespace id;
 
+	core::chemical::ResidueTypeCOP residue_type( residue_type_ );
+
 	// Main chain connections
-	if (!residue_type_->is_upper_terminus()) {
-		uint upper_atom_index = residue_type_->upper_connect_atom();
-		string atom_name = residue_type_->atom_name(upper_atom_index);
+	if (!residue_type->is_upper_terminus()) {
+		uint upper_atom_index = residue_type->upper_connect_atom();
+		string atom_name = residue_type->atom_name(upper_atom_index);
 		mainchain_glycosidic_bond_acceptor_ = atoi(&atom_name[2]);  // 3rd column (index 2) is the atom number
 	} else {
 		mainchain_glycosidic_bond_acceptor_ = 0;
 	}
 
 	// Branch points
-	Size n_connections = residue_type_->n_residue_connections();
+	Size n_connections = residue_type->n_residue_connections();
 	for (uint i = 1; i <= n_connections; ++i) {
-		if (i == residue_type_->lower_connect_id() || i == residue_type_->upper_connect_id()) continue;
-		uint branch_atom_index = residue_type_->residue_connect_atom_index(i);
-		string branch_atom_name = residue_type_->atom_name(branch_atom_index);
+		if (i == residue_type->lower_connect_id() || i == residue_type->upper_connect_id()) continue;
+		uint branch_atom_index = residue_type->residue_connect_atom_index(i);
+		string branch_atom_name = residue_type->atom_name(branch_atom_index);
 		if (branch_atom_name[1] == 'O') {  // 2nd column (index 1) is the element; must be oxygen
 			branch_points_.push_back(atoi(&branch_atom_name[2]));  // 3rd column (index 2) is the atom number
 		}
@@ -553,8 +558,10 @@ CarbohydrateInfo::determine_IUPAC_names()
 {
 	using namespace std;
 
+	core::chemical::ResidueTypeCOP residue_type( residue_type_ );
+
 	// Determine root.
-	string const code = residue_type_->name3();
+	string const code = residue_type->name3();
 	string const root = root_from_code(code);
 
 	// Flag for special cases.
@@ -565,10 +572,10 @@ CarbohydrateInfo::determine_IUPAC_names()
 	stringstream short_prefixes(stringstream::out);
 
 	// Connectivity
-	if (!residue_type_->is_upper_terminus()) {
+	if (!residue_type->is_upper_terminus()) {
 		long_prefixes << "->" << mainchain_glycosidic_bond_acceptor_ << ")-";
 	}
-	if (!residue_type_->is_lower_terminus()) {
+	if (!residue_type->is_lower_terminus()) {
 		long_prefixes << anomer_ << '-';
 	}
 	short_prefixes << long_prefixes.str();
@@ -624,7 +631,7 @@ CarbohydrateInfo::determine_IUPAC_names()
 			short_suffix << 's';
 			break;
 	}
-	if (residue_type_->is_lower_terminus()) {
+	if (residue_type->is_lower_terminus()) {
 		if (is_glycoside_) {
 			if (is_uronic_acid()) {
 				long_suffix << "uronoside";

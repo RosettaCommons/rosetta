@@ -109,7 +109,7 @@ static thread_local basic::Tracer tr( "core.scoring.custom_pair_distance.Fullato
 
 // constructor
 FullatomCustomPairDistanceEnergy::FullatomCustomPairDistanceEnergy() :
-	parent( new FullatomCustomPairDistanceEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new FullatomCustomPairDistanceEnergyCreator ) )
 {
   set_pair_and_func_map();
 }
@@ -200,7 +200,7 @@ FullatomCustomPairDistanceEnergy::residue_pair_energy_ext(
 ) const
 {
 	assert( rsd1.seqpos() < rsd2.seqpos() );
-	assert( dynamic_cast< RespairInteractions const * > (pair_data.get_data( fa_custom_pair_dist_data )() ));
+	assert( utility::pointer::dynamic_pointer_cast< RespairInteractions const > (pair_data.get_data( fa_custom_pair_dist_data ) ));
 
 	RespairInteractions const & respair_intxns( static_cast< RespairInteractions const & > (pair_data.get_data_ref( fa_custom_pair_dist_data ) ));
 	Energy score( 0.0 );
@@ -255,7 +255,7 @@ FullatomCustomPairDistanceEnergy::eval_residue_pair_derivatives(
 {
 	assert( rsd1.seqpos() < rsd2.seqpos() );
 	assert( rsd1.seqpos() < rsd2.seqpos() );
-	assert( dynamic_cast< RespairInteractions const * > (pair_data.get_data( fa_custom_pair_dist_data )() ));
+	assert( utility::pointer::dynamic_pointer_cast< RespairInteractions const > (pair_data.get_data( fa_custom_pair_dist_data ) ));
 
 	RespairInteractions const & respair_intxns( static_cast< RespairInteractions const & > (pair_data.get_data_ref( fa_custom_pair_dist_data ) ));
 	for (	std::list< atoms_and_func_struct >::const_iterator
@@ -390,8 +390,8 @@ FullatomCustomPairDistanceEnergy::find(
 ) const
 {
 	ResTypePair respair;
-	respair[1] = rsd1.type();
-	respair[2] = rsd2.type();
+	respair[1] = chemical::ResidueTypeCOP( rsd1.type().get_self_ptr() );
+	respair[2] = chemical::ResidueTypeCOP( rsd2.type().get_self_ptr() );
 	return pair_and_func_map_.find( respair );
 }
 
@@ -462,7 +462,7 @@ FullatomCustomPairDistanceEnergy::set_pair_and_func_map()
 			tr.Debug << "SCORE_FUNCTION: " << score_function_name << " (min: " <<
 				pair_func.func_->min_dis() << " max: " << pair_func.func_->max_dis() << ")" << std::endl;
 
-			ResidueTypeSetCAP restype_set =
+			ResidueTypeSetCOP restype_set =
 				ChemicalManager::get_instance()->residue_type_set( residue_type_set );
 
 			// get all possible residue types for each residue pair
@@ -525,7 +525,7 @@ FullatomCustomPairDistanceEnergy::version() const
 DistanceFunc::DistanceFunc( std::string const name ) {
 	utility::io::izstream scores_stream;
 	basic::database::open( scores_stream, "scoring/score_functions/custom_pair_distance/" + name);
-	scores_hist_ = new numeric::interpolation::Histogram<Real,Real>( scores_stream() );
+	scores_hist_ = numeric::interpolation::HistogramCOP<Real,Real>::Type( new numeric::interpolation::Histogram<Real,Real>( scores_stream() ) );
 	scores_stream.close();
 }
 

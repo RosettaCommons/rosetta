@@ -89,7 +89,7 @@ main( int argc, char* argv [] ) {
 
 	basic::Tracer tr( "extract_pdbs" );
 
-	core::chemical::ResidueTypeSetCAP rsd_set( NULL );
+	core::chemical::ResidueTypeSetCOP rsd_set( NULL );
 	if ( 	option[ out::file::residue_type_set ].user() ) {
 		rsd_set = ChemicalManager::get_instance()->residue_type_set(
 					option[ out::file::residue_type_set ]()

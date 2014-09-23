@@ -63,7 +63,7 @@ RG_Energy_RNACreator::score_types_for_method() const {
 
 /// c-tor
 RG_Energy_RNA::RG_Energy_RNA() :
-	parent( new RG_Energy_RNACreator )
+	parent( methods::EnergyMethodCreatorOP( new RG_Energy_RNACreator ) )
 {}
 
 /// clone

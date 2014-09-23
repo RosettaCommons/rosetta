@@ -110,6 +110,7 @@ void PrepackMover::apply( pose::Pose & pose )
 	// make a local packertask, reading resfiles and including current rotamers, excluding disulfides
 	TR << "Performing repack..." << std::endl;
 	using namespace core::pack::task;
+	using namespace core::pack::task::operation;
 	TaskFactoryOP tf;
 	if( task_factory() ) tf = new TaskFactory( *task_factory() );
 	else tf = new TaskFactory;

@@ -676,14 +676,14 @@ HBondFeatures::report_features(
 	initialize_atomid_map(site_hbond_energies, pose);
 
 	for (Size i = 1; i<= hbond_set.nhbonds(); i++) {
-		HBondCOP hbond(hbond_set.hbond(i));
-		if(!check_relevant_residues( relevant_residues, hbond->don_res(), hbond->acc_res() )) continue;
+		HBond const & hbond(hbond_set.hbond(i));
+		if(!check_relevant_residues( relevant_residues, hbond.don_res(), hbond.acc_res() )) continue;
 
-		site_partners(hbond->don_res(),hbond->don_hatm()).push_back(hbond);
-		site_hbond_energies(hbond->don_res(),hbond->don_hatm()) += hbond->energy()/2;
+		site_partners(hbond.don_res(),hbond.don_hatm()).push_back(hbond.get_self_ptr());
+		site_hbond_energies(hbond.don_res(),hbond.don_hatm()) += hbond.energy()/2;
 
-		site_partners(hbond->acc_res(),hbond->acc_atm()).push_back(hbond);
-		site_hbond_energies(hbond->acc_res(),hbond->acc_atm()) += hbond->energy()/2;
+		site_partners(hbond.acc_res(),hbond.acc_atm()).push_back(hbond.get_self_ptr());
+		site_hbond_energies(hbond.acc_res(),hbond.acc_atm()) += hbond.energy()/2;
 
 	}
 
@@ -1057,9 +1057,10 @@ HBondFeatures::insert_hbond_lennard_jones_row(
 	Real h_acc_base_atrE, h_acc_base_repE, h_acc_base_solv;
 
 	if ( !(scfxn_->energy_method_options().analytic_etable_evaluation()) ) {
-		TableLookupEtableEnergy const etable_energy(
-			*ScoringManager::get_instance()->etable(
-				scfxn_->energy_method_options().etable_type() ),
+		core::scoring::etable::EtableCOP etable(
+			ScoringManager::get_instance()->etable(
+				scfxn_->energy_method_options().etable_type() ) );
+		TableLookupEtableEnergy const etable_energy( *etable,
 			scfxn_->energy_method_options() );
 
 		etable_energy.atom_pair_energy(
@@ -1086,9 +1087,10 @@ HBondFeatures::insert_hbond_lennard_jones_row(
 			h_acc_base_atrE, h_acc_base_repE, h_acc_base_solv,
 			bb_dummy, dsq_dummy );
 	} else {
+		core::scoring::etable::EtableCOP etable( ScoringManager::get_instance()->etable(
+				scfxn_->energy_method_options().etable_type() ) );
 		AnalyticEtableEnergy const etable_energy(
-			*ScoringManager::get_instance()->etable(
-				scfxn_->energy_method_options().etable_type() ),
+			*etable,
 			scfxn_->energy_method_options() );
 
 		etable_energy.atom_pair_energy(

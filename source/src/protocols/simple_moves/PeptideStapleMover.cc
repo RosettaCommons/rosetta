@@ -108,12 +108,12 @@ void PeptideStapleMover::apply( core::pose::Pose & pose )
 	}
 
 	core::chemical::ResidueTypeSet const & residue_set ( pose.residue(1).residue_type_set() );
-	core::chemical::ResidueTypeCOP stapleA_type;
-	core::chemical::ResidueTypeCOP stapleB_type;
+	core::chemical::ResidueType const * stapleA_type = NULL;
+	core::chemical::ResidueType const * stapleB_type = NULL;
 
 	if ( staple_gap_ == 4 ) {
-		stapleA_type = residue_set.name_map("STAPLE08A") ;
-		stapleB_type = residue_set.name_map("STAPLE08B") ;
+		stapleA_type = &residue_set.name_map("STAPLE08A") ;
+		stapleB_type = &residue_set.name_map("STAPLE08B") ;
 	}
 
 	// create staple residues on top of
@@ -159,18 +159,23 @@ void PeptideStapleMover::derive_staple_constraints_( core::pose::Pose & pose )
 	TR << " jj conn: " << pose.residue( jj ).atom_name( jj_conn_atom );
 	TR << " jj vc: " << pose.residue( jj ).atom_name( jj_vc_atom );
 
+	{
+	core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 0.001 ) );
 	ConstraintOP apc1 = new AtomPairConstraint(
 		AtomID( seqpos_conn_atom, seqpos_ ),
 		AtomID( jj_vc_atom, jj ),
-		new core::scoring::func::HarmonicFunc( 0.0, 0.001 ) );
+		fx );
+	pose.add_constraint( apc1 );
+	}
 
+	{
+	core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 0.001 ) );
 	ConstraintOP apc2 = new AtomPairConstraint(
 		AtomID( jj_conn_atom, jj ),
 		AtomID( seqpos_vc_atom, seqpos_ ),
-		new core::scoring::func::HarmonicFunc( 0.0, 0.001 ) );
-
-	pose.add_constraint( apc1 );
+		fx );
 	pose.add_constraint( apc2 );
+	}
 
 	Size const seqpos_conn_atom_base = pose.residue( seqpos_ ).type().icoor( seqpos_conn_atom ).stub_atom( 1 ).atomno();
 	Size const jj_conn_atom_base = pose.residue( jj ).type().icoor( jj_conn_atom ).stub_atom( 1 ).atomno();
@@ -181,44 +186,54 @@ void PeptideStapleMover::derive_staple_constraints_( core::pose::Pose & pose )
 	TR << "seqpos_conn_atom_base: " << seqpos_conn_atom_base << " " << pose.residue( seqpos_ ).atom_name( seqpos_conn_atom_base ) << " " << seqpos_ideal_angle << std::endl;
 	TR << "jj_conn_atom_base: " << jj_conn_atom_base << " " << pose.residue( jj ).atom_name( jj_conn_atom_base ) << " " << jj_ideal_angle << std::endl;
 
+	{
+	core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( jj_ideal_angle, 0.01 ) );
 	ConstraintOP bac1 = new AngleConstraint(
 		AtomID( seqpos_conn_atom, seqpos_),
 		AtomID( seqpos_vc_atom, seqpos_ ),
 		AtomID( jj_conn_atom_base, jj ),
-		new core::scoring::func::HarmonicFunc( jj_ideal_angle, 0.01 ) );
+		fx );
+	pose.add_constraint( bac1 );
+	}
 
+	{
+	core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( seqpos_ideal_angle, 0.01 ) );
 	ConstraintOP bac2 = new AngleConstraint(
 		AtomID( seqpos_conn_atom_base, seqpos_),
 		AtomID( jj_vc_atom, jj ),
 		AtomID( jj_conn_atom, jj ),
-		new core::scoring::func::HarmonicFunc( seqpos_ideal_angle, 0.01 ) );
-
-	pose.add_constraint( bac1 );
+		fx );
 	pose.add_constraint( bac2 );
+	}
 
 	Real cross_connection_dihedral_val (0);
 /*	if ( basic::options::option[ cross_connection_dihedral ].user() ) {
 		cross_connection_dihedral_val = basic::options::option[ cross_connection_dihedral ]();
 	}
 */
+
+	{
+	core::scoring::func::FuncOP fx( new core::scoring::func::CircularHarmonicFunc( cross_connection_dihedral_val * numeric::constants::d::pi / 180.0, 0.1 ) );
 	ConstraintOP dcst = new DihedralConstraint(
 		AtomID( seqpos_conn_atom_base, seqpos_ ),
 		AtomID( seqpos_conn_atom, seqpos_ ),
 		AtomID( jj_conn_atom, jj ),
 		AtomID( jj_conn_atom_base, jj ),
-		new core::scoring::func::CircularHarmonicFunc( cross_connection_dihedral_val * numeric::constants::d::pi / 180.0, 0.1 ) );
+		fx );
 	pose.add_constraint( dcst );
+	}
 
 	utility::vector1< AtomIndices > const & seqpos_chi( pose.residue( seqpos_ ).chi_atoms() );
 	for ( Size kk = 1; kk <= seqpos_chi.size(); ++kk ) {
 		Real ideal_dihedral = pose.residue( seqpos_ ).type().icoor( seqpos_chi[ kk ][ 4 ] ).phi();
 		TR << "seqpos ideal dihedral: " << ideal_dihedral << " " << ideal_dihedral * 180 / numeric::constants::d::pi << std::endl;
+		core::scoring::func::FuncOP fx( new core::scoring::func::CircularHarmonicFunc( ideal_dihedral, 0.1 ) );
 		ConstraintOP dcst = new DihedralConstraint(
 			AtomID( seqpos_chi[ kk ][ 1 ], seqpos_ ),
 			AtomID( seqpos_chi[ kk ][ 2 ], seqpos_ ),
 			AtomID( seqpos_chi[ kk ][ 3 ], seqpos_ ),
 			AtomID( seqpos_chi[ kk ][ 4 ], seqpos_ ),
-			new core::scoring::func::CircularHarmonicFunc( ideal_dihedral, 0.1 ) );
+			fx );
 		pose.add_constraint( dcst );
 	}
 
@@ -226,12 +241,13 @@ void PeptideStapleMover::derive_staple_constraints_( core::pose::Pose & pose )
 	for ( Size kk = 1; kk <= jj_chi.size(); ++kk ) {
 		Real ideal_dihedral = pose.residue( jj ).type().icoor( jj_chi[ kk ][ 4 ] ).phi();
 		TR << "jj ideal dihedral: " << ideal_dihedral << " " << ideal_dihedral * 180 / numeric::constants::d::pi << std::endl;
+		core::scoring::func::FuncOP fx( new core::scoring::func::CircularHarmonicFunc( ideal_dihedral, 0.1 ) );
 		ConstraintOP dcst = new DihedralConstraint(
 			AtomID( jj_chi[ kk ][ 1 ], jj ),
 			AtomID( jj_chi[ kk ][ 2 ], jj ),
 			AtomID( jj_chi[ kk ][ 3 ], jj ),
 			AtomID( jj_chi[ kk ][ 4 ], jj ),
-			new core::scoring::func::CircularHarmonicFunc( ideal_dihedral, 0.1 ) );
+			fx );
 		pose.add_constraint( dcst );
 	}
 	//pose.add_constraint( cst_set );

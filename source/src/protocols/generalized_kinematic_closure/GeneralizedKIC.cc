@@ -198,10 +198,10 @@ GeneralizedKIC::parse_my_tag(
 	if( tag->hasOption("stop_when_solution_found") ) set_n_closure_attempts_is_a_maximum( tag->getOption<bool>("stop_when_solution_found", false) );
 	if( tag->hasOption( "contingent_filter" )) {
 		FilterOP curfilter = protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "contingent_filter" ), filters  );
-		runtime_assert_string_msg( curfilter, "Invalid filter specified with contingent_filter tag in GeneralizedKIC." );
+		runtime_assert_string_msg( curfilter != 0, "Invalid filter specified with contingent_filter tag in GeneralizedKIC." );
 		rosettascripts_filter_exists_=true;
-		rosettascripts_filter_ = dynamic_cast< ContingentFilter*>(curfilter.get());
-		runtime_assert_string_msg( rosettascripts_filter_, "Only a ContingentFilter can be passed to GeneralizedKIC with the contingent_filter tag." );
+		rosettascripts_filter_ = utility::pointer::dynamic_pointer_cast< ContingentFilter >(curfilter);
+		runtime_assert_string_msg( rosettascripts_filter_ != 0, "Only a ContingentFilter can be passed to GeneralizedKIC with the contingent_filter tag." );
 		rosettascripts_filter_->set_value(true); //By default, the contingent filter is set to "True".
 		TR << "GeneralizedKIC mover \"" << tag->getOption<std::string>("name", "") << "\" linked to ContingentFilter filter \"" << tag->getOption< std::string >("contingent_filter") << "\".  The filter's value will be set by the success of the kinematic closure." << std::endl; 
 	}

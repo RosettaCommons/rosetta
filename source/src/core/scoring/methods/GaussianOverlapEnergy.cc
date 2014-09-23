@@ -65,7 +65,7 @@ GaussianOverlapEnergyCreator::score_types_for_method() const {
 
 
 GaussianOverlapEnergy::GaussianOverlapEnergy() :
-	parent( new GaussianOverlapEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new GaussianOverlapEnergyCreator ) )
 {
 
 /*

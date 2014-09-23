@@ -307,7 +307,7 @@ fix_sugar_coords(
 
 		// "Don't do update" --> my hack to prevent lots of refolds. I just want information about whether the
 		// atom is a jump_atom, what its stub atoms are, etc... in principle could try to use input_stub_atom1_id(), etc.
-		kinematics::tree::AtomCOP current_atom ( & reference_pose.atom_tree().atom_dont_do_update( AtomID(j,i) ) );
+		kinematics::tree::AtomCOP current_atom ( reference_pose.atom_tree().atom_dont_do_update( AtomID(j,i) ).get_self_ptr() );
 		kinematics::tree::AtomCOP input_stub_atom1( current_atom->input_stub_atom1() );
 
 		if ( !input_stub_atom1) continue;
@@ -371,9 +371,9 @@ initialize_atoms_for_which_we_need_new_dofs(
 	//
 	conformation::Residue const & rsd( pose.residue( i ) );
 
- 	kinematics::tree::AtomCOP c1prime_atom ( & pose.atom_tree().atom( AtomID( rsd.atom_index( " C1'" ), i ) ) );
- 	kinematics::tree::AtomCOP o2prime_atom ( & pose.atom_tree().atom( AtomID( rsd.atom_index( " O2'" ), i ) ) );
- 	kinematics::tree::AtomCOP c2prime_atom ( & pose.atom_tree().atom( AtomID( rsd.atom_index( " C2'" ), i ) ) );
+ 	kinematics::tree::AtomCOP c1prime_atom ( pose.atom_tree().atom( AtomID( rsd.atom_index( " C1'" ), i ) ).get_self_ptr() );
+ 	kinematics::tree::AtomCOP o2prime_atom ( pose.atom_tree().atom( AtomID( rsd.atom_index( " O2'" ), i ) ).get_self_ptr() );
+ 	kinematics::tree::AtomCOP c2prime_atom ( pose.atom_tree().atom( AtomID( rsd.atom_index( " C2'" ), i ) ).get_self_ptr() );
 
 	if ( (c1prime_atom->parent()->id()).atomno() == first_base_atom_index( rsd ) ) {
 		// There's a jump to this residue.
@@ -541,7 +541,7 @@ apply_pucker(
 		using namespace core::id;
 		using namespace core::io::pdb;
 
-		static const ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(	core::chemical::FA_RNA );
+		static const ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(	core::chemical::FA_RNA );
 
 		chemical::AA res_aa = aa_from_name( "RAD" );
 		ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *( rsd_set->aa_map( res_aa )[1] ) ) ;

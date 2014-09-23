@@ -74,6 +74,7 @@ Relax_main( bool ) {
 	using namespace protocols::jobdist;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	using protocols::moves::MoverOP;
 
 	protocols::moves::MoverOP protocol = generate_relax_from_cmd();
 	protocols::jd2::set_native_in_mover( *protocol );

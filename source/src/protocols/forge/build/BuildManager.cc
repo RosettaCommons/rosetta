@@ -111,7 +111,7 @@ BuildManager & BuildManager::operator =( BuildManager const & rval ) {
 		reconstruct_dependencies( rval.instruction_dependencies_ );
 
 		original2modified_ = rval.original2modified_;
-		seqmap_ = rval.seqmap_.get() ? new SequenceMapping( *rval.seqmap_ ) : 0;
+		seqmap_ = SequenceMappingOP( rval.seqmap_.get() ? new SequenceMapping( *rval.seqmap_ ) : 0 );
 		modify_was_successful_ = rval.modify_was_successful_;
 	}
 	return *this;
@@ -137,7 +137,7 @@ void BuildManager::reset_accounting() {
 		(**i).reset_accounting();
 	}
 	original2modified_.clear();
-	seqmap_.reset_to_null();
+	seqmap_.reset(); // to NULL
 	modify_was_successful_ = false;
 }
 
@@ -171,7 +171,7 @@ void BuildManager::create_directed_dependency( BuildInstructionOP u, BuildInstru
 	runtime_assert( v_iter != instructions_.end() );
 
 	// link the two instructions, safe even if two instructions already linked
-	v->add_dependency_to( u.get() );
+	v->add_dependency_to( BuildInstructionAP( u ) );
 
 	// add to the edge list
 	instruction_dependencies_.push_back(

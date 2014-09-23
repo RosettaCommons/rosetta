@@ -136,7 +136,7 @@ void run(){
 	using namespace io::silent;
 	SilentFileData sfd;
 	core::pose::Pose pose;
-	core::chemical::ResidueTypeSetCAP rsd_set;
+	core::chemical::ResidueTypeSetCOP rsd_set;
 	int ct = 1;
 	if (!option[ reslist ]().empty() ){
 		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( option[ out::file::residue_type_set ]() );

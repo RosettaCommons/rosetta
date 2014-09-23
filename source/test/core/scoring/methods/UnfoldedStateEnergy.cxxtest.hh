@@ -67,7 +67,7 @@ class UnfoldedStateEnergyTests : public CxxTest::TestSuite {
 		core_init();
 
 		the_pose = new Pose;
-		core::chemical::ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+		core::chemical::ResidueTypeSetCOP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 		core::pose::make_pose_from_sequence( *the_pose, "DFGLK", *rsd_set );
 
 	}

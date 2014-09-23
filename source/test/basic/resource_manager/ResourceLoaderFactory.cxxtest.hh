@@ -82,8 +82,8 @@ public:
 		factory->set_throw_on_double_registration();
 		factory->factory_register( new DummyResourceLoaderCreator );
 		ResourceLoaderOP loader = factory->create_resource_loader( "DummyResource" );
-		TS_ASSERT( loader() ); // make sure we got back a non-null pointer
-		DummyResourceLoader * dloader = dynamic_cast< DummyResourceLoader * > ( loader() );
+		TS_ASSERT( loader.get() ); // make sure we got back a non-null pointer
+		DummyResourceLoader * dloader = dynamic_cast< DummyResourceLoader * > ( loader.get() );
 		TS_ASSERT( dloader ); // make sure we got back the right resource loader kind
 	}
 

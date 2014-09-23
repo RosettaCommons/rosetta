@@ -18,6 +18,7 @@
 
 // Package headers
 #include <protocols/topology_broker/TopologyBroker.fwd.hh>
+#include <protocols/topology_broker/TopologyBroker.hh>
 #include <protocols/topology_broker/claims/SymmetryClaim.hh>
 #include <protocols/topology_broker/claims/DofClaim.hh>
 #include <protocols/topology_broker/claims/SequenceClaim.hh>
@@ -63,7 +64,18 @@ namespace topology_broker {
 
 // 		 initialize_dofs( init_claims [ subset of your claims ] ) ///only act on internal dofs -- no structure building
 
-class TopologyClaimer : public utility::pointer::ReferenceCount {
+class TopologyClaimer : public utility::pointer::ReferenceCount
+#ifdef PTR_MODERN
+	// New version
+	, public utility::pointer::enable_shared_from_this< TopologyClaimer >
+{
+#else
+{
+	// Old intrusive ref-counter version
+	inline TopologyClaimerCOP shared_from_this() const { return TopologyClaimerCOP( this ); }
+	inline TopologyClaimerOP shared_from_this() { return TopologyClaimerOP( this ); }
+#endif
+
 public:
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~TopologyClaimer(){}
@@ -80,6 +92,12 @@ public:
 	{
 		if ( !weight ) abinitio_mover_weight_ = new weights::ConstAbinitioMoverWeight( 1.0 );
 	};
+
+	/// self pointers
+	inline TopologyClaimerCOP get_self_ptr() const { return shared_from_this(); }
+	inline TopologyClaimerOP get_self_ptr() { return shared_from_this(); }
+	inline TopologyClaimerCAP get_self_weak_ptr() const { return TopologyClaimerCAP( shared_from_this() ); }
+	inline TopologyClaimerAP get_self_weak_ptr() { return TopologyClaimerAP( shared_from_this() ); }
 
 	///@brief clone it!
 	virtual TopologyClaimerOP clone() const = 0;
@@ -198,8 +216,9 @@ public:
 
 	///@brief return the broker we are collaborating with
 	TopologyBroker const& broker() const{
-		runtime_assert( broker_ ); //don't use before claimer is added to its broker
-		return *broker_;
+		TopologyBrokerCOP broker( broker_ );
+		runtime_assert( broker != 0 ); //don't use before claimer is added to its broker
+		return *broker; // NEEDS FIXING: returning reference to temporairly locked weak_ptr
 	}
 
 	///@brief a new decoy --- random choices to be made ? make them here

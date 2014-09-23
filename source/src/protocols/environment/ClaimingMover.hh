@@ -60,7 +60,7 @@ public:
   ClaimingMover( ClaimingMover const& );
 
   virtual ~ClaimingMover();
-
+  
   /// @brief   Returns a list of claims for this mover.
   /// @details The pose passed as an argument is used for reference informational
   ///          purposes only (for example, you want to know the sequence) or access
@@ -82,6 +82,7 @@ public:
   ///        the loops after the environment closes. Perhaps this could be
   ///        replaced by a claim type?
   virtual bool is_loop_closer() const { return false; }
+
 
 protected:
 

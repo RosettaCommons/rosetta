@@ -56,7 +56,7 @@ void TopologyClaimer::initialize_dofs( core::pose::Pose&, claims::DofClaims cons
 	claims::DofClaims my_claims;
 	for ( claims::DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
 				it != eit; ++it ) {
-		if ( (*it)->owner()==this ) {
+		if ( (*it)->owner().lock().get() == this ) {
 			my_claims.push_back( *it );
 		}
 	}

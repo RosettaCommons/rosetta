@@ -487,7 +487,7 @@ void write_cluster_frags( FragSetOP predicted_frags, FragSetOP fill_frags, FragS
 
 
 	//at this point we should have a complete fragment set in new_frags...
-	runtime_assert( new_frags );
+	runtime_assert( new_frags != 0 );
 	tr.Info << " fill_frags: " << fill_frags->max_frag_length() << " new_frag: " << fill_frags->max_frag_length() << std::endl;
 
 

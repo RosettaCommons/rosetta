@@ -140,7 +140,7 @@ RotamerBoltzmannWeightFeatures::parse_my_tag(
 	if(tag->hasOption("scorefxn")){
 		string scorefxn_name = tag->getOption<string>("scorefxn");
 		rotamer_boltzmann_weight_->scorefxn(
-			data.get<ScoreFunction*>("scorefxns", scorefxn_name));
+			data.get_ptr<ScoreFunction>("scorefxns", scorefxn_name));
 	} else {
 		stringstream error_msg;
 		error_msg

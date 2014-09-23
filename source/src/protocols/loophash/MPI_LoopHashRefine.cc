@@ -130,7 +130,7 @@ MPI_LoopHashRefine::load_structures_from_cmdline_into_library( core::Size struct
 	start_timer( TIMING_IO_READ  );
 	TR << "Reading in structures..." << std::endl;
 
-	core::chemical::ResidueTypeSetCAP rsd_set;
+	core::chemical::ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
 	core::import_pose::pose_stream::MetaPoseInputStream input = core::import_pose::pose_stream::streams_from_cmd_line();
@@ -150,7 +150,7 @@ MPI_LoopHashRefine::load_structures_from_cmdline_into_library( core::Size struct
 		input.fill_pose( pose, *rsd_set );
 		
 		if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
-			core::scoring::constraints::ConstraintSetOP cstset = core::scoring::constraints::ConstraintIO::get_instance()->read_constraints( core::scoring::constraints::get_cst_fa_file_option(), new core::scoring::constraints::ConstraintSet, pose  ); 
+			core::scoring::constraints::ConstraintSetOP cstset( core::scoring::constraints::ConstraintIO::get_instance()->read_constraints( core::scoring::constraints::get_cst_fa_file_option(), core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet ), pose  ) );
 			TR << "Read constraints: " << ( cstset->has_constraints() ? "YES" : "NONE" ) << std::endl;
 			pose.constraint_set( cstset ); 
 		}  
@@ -397,7 +397,7 @@ MPI_LoopHashRefine::add_structure_to_library_single_replace( core::io::silent::S
 		if ( metropolis_replace ) {
 			total_metropolis_accepts_++;
 			TR << "ReplacingACC: " << format_silent_struct( *ssid_match) << " with " << format_silent_struct( pss ) << "  " << energy_diff_T << std::endl;
-			*ssid_match = pss;
+			*ssid_match = pss.get_self_ptr();
 			return true;
 		}else{
 			TR << "ReplacingREJ: " << format_silent_struct( *ssid_match) << " with " << format_silent_struct( pss ) << "  " << energy_diff_T << std::endl;
@@ -425,7 +425,7 @@ MPI_LoopHashRefine::add_structures_to_library( SilentStructStore &new_structs, s
 	for( SilentStructStore::const_iterator it = new_structs.begin();
 		 it != new_structs.end(); ++it )
 	{
-		runtime_assert( *it );
+		runtime_assert( *it != 0 );
 		TR << "Add structure... " << format_silent_struct( *it ) << std::endl;
 		bool local_result = add_structure_to_library( *(*it), add_algorithm );
 		result = result || local_result;

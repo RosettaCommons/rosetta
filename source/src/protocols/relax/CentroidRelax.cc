@@ -332,7 +332,7 @@ namespace relax {
         }
         else{
             TR <<"Starting RAMPED Protocol"<<std::endl;
-            EnergyMap cen_emap = cen_scorefxn_()->weights();
+            EnergyMap cen_emap = cen_scorefxn_->weights();
             TR <<"Total Rounds : " <<rounds_ <<std::endl;
             TR <<"Total Ramps  : " <<def_parameters.vdw_params.size() <<std::endl;
             //Outer loop

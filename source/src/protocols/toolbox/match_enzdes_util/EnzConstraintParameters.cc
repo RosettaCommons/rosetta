@@ -119,7 +119,8 @@ CovalentConnectionReplaceInfo::remove_covalent_connection_from_pose(
 			utility_exit_with_message("Error when trying to remove covalent connection: for resB, pose residue basename should be "+resB_modname_+", but is "+residue_type_base_name( pose.residue_type(resB_seqpos_))+"\n.");
 		}
 
-		core::conformation::Residue newA_res( restype_set_->name_map(resA_basename_), true);
+		core::chemical::ResidueTypeSetCOP restype_set( restype_set_ );
+		core::conformation::Residue newA_res( restype_set->name_map(resA_basename_), true);
 
 		utility::vector1< std::string > curA_variants =
 				pose.residue_type( resA_seqpos_ ).properties().get_list_of_variants();
@@ -134,7 +135,7 @@ CovalentConnectionReplaceInfo::remove_covalent_connection_from_pose(
 			}
 		}
 
-		core::conformation::Residue newB_res( restype_set_->name_map(resB_basename_), true);
+		core::conformation::Residue newB_res( restype_set->name_map(resB_basename_), true);
 
 		utility::vector1< std::string > curB_variants =
 				pose.residue_type( resB_seqpos_ ).properties().get_list_of_variants();
@@ -162,24 +163,6 @@ CovalentConnectionReplaceInfo::remap_resid(
 	if( (resA_seqpos_ == 0) || (resB_seqpos_ == 0 ) ) utility_exit_with_message("A covalently constrained residue apparently got deleted from the pose");
 }
 
-EnzConstraintParameters::EnzConstraintParameters(
-	core::Size cst_block,
-	core::chemical::ResidueTypeSetCAP src_restype_set,
-	EnzConstraintIOCAP src_enz_io
-)
-: utility::pointer::ReferenceCount(),
-	mcfi_(NULL),
-	ndisAB_(0), nangleA_(0), nangleB_(0), ntorsionA_(0), ntorsionB_(0), ntorsionAB_(0),
-	restype_set_( src_restype_set), enz_io_( src_enz_io ), cst_block_(cst_block)
-{
-	resA_ = new EnzCstTemplateRes(src_restype_set, this);
-	resA_->set_param_index( 1 );
-	resB_ = new EnzCstTemplateRes(src_restype_set, this);
-	resB_->set_param_index( 2 );
-	disAB_ = NULL; angleA_ = NULL; angleB_ = NULL; torsionA_ = NULL; torsionB_ = NULL; torsionAB_ = NULL;
-	is_covalent_ = false;
-	empty_ = true;
-}
 EnzConstraintParameters::EnzConstraintParameters()
 : utility::pointer::ReferenceCount(),
 	resA_(NULL), resB_(NULL), mcfi_(NULL),disAB_(NULL),
@@ -188,15 +171,43 @@ EnzConstraintParameters::EnzConstraintParameters()
 	ndisAB_(0), nangleA_(0), nangleB_(0), ntorsionA_(0),
 	ntorsionB_(0), ntorsionAB_(0),
 	is_covalent_(false), empty_(true),
-	restype_set_( NULL), enz_io_( NULL), cst_block_(0)
+	restype_set_( NULL),
+	enz_io_( NULL),
+	cst_block_(0)
 {}
 EnzConstraintParameters::~EnzConstraintParameters(){}
+
+void EnzConstraintParameters::init(
+	core::Size cst_block,
+	core::chemical::ResidueTypeSetCAP src_restype_set,
+	EnzConstraintIOCAP src_enz_io
+) {
+	init();
+
+	cst_block_ = cst_block;
+	restype_set_ = src_restype_set;
+	enz_io_ = src_enz_io;
+
+	resA_->set_param_index( 1 );
+	resB_->set_param_index( 2 );
+	disAB_ = NULL; angleA_ = NULL; angleB_ = NULL; torsionA_ = NULL; torsionB_ = NULL; torsionAB_ = NULL;
+	is_covalent_ = false;
+	empty_ = true;
+}
+
+void EnzConstraintParameters::init() {
+	resA_ = new EnzCstTemplateRes(restype_set_, get_self_weak_ptr());
+	resB_ = new EnzCstTemplateRes(restype_set_, get_self_weak_ptr());
+}
 
 /// @brief copy constructor
 /// @brief WARNING: currently this probably doesn't copy the functions or active pose constraints
 EnzConstraintParameters::EnzConstraintParameters( EnzConstraintParameters const & other )
 :
 	utility::pointer::ReferenceCount(),
+#ifdef PTR_MODERN
+	utility::pointer::enable_shared_from_this< EnzConstraintParameters >(),
+#endif
 	mcfi_(other.mcfi_),
 	disAB_(other.disAB_), angleA_(other.angleA_), angleB_(other.angleB_),
 	torsionA_(other.torsionA_), torsionB_(other.torsionB_), torsionAB_(other.torsionAB_),
@@ -207,10 +218,12 @@ EnzConstraintParameters::EnzConstraintParameters( EnzConstraintParameters const 
 	cst_block_(other.cst_block_) //debatable whether this should be kept, but it's useful
 {
 
-	resA_ = new EnzCstTemplateRes( other.resA_, this );
-	resB_ = new EnzCstTemplateRes( other.resB_, this );
+	// Now in init():
+	//resA_ = new EnzCstTemplateRes( other.resA_, get_self_weak_ptr() );
+	//resB_ = new EnzCstTemplateRes( other.resB_, get_self_weak_ptr() );
+	
 	// we want an independent copy of the object, so the original reference is erased
-	enz_io_ = NULL;
+	enz_io_.reset();
 }
 
 
@@ -224,9 +237,9 @@ EnzConstraintParameters::set_mcfi(
 
 	mcfi_ = mcfi;
 
-	resA_ = new EnzCstTemplateRes( mcfi_->enz_cst_template_res( 1 ), this );
+	resA_ = new EnzCstTemplateRes( mcfi_->enz_cst_template_res( 1 ), get_self_weak_ptr() );
 	resA_->set_param_index( 1 );
-	resB_ = new EnzCstTemplateRes( mcfi_->enz_cst_template_res( 2 ), this );
+	resB_ = new EnzCstTemplateRes( mcfi_->enz_cst_template_res( 2 ), get_self_weak_ptr() );
 	resB_->set_param_index( 2 );
 	resA_->identical_info_consistency_check();
 	resB_->identical_info_consistency_check();
@@ -315,7 +328,7 @@ EnzConstraintParameters::generate_active_pose_constraints(
 	bool all_constraints_empty = true;
 
 	EnzdesCstParamCacheOP param_cache(protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ ) );
-	runtime_assert( param_cache );
+	runtime_assert( param_cache != 0 );
 	param_cache->active_pose_constraints_.clear();
 	if( param_cache->covalent_connections_.size() != 0 ) remove_covalent_connections_from_pose( pose );
 
@@ -516,9 +529,9 @@ EnzConstraintParameters::make_constraint_covalent(
 	std::string resB_base = residue_type_base_name( pose.residue_type(resB_pos) );
 	std::string resA_var, resB_var;
 
-	make_constraint_covalent_helper( pose, resA_, resA_pos, resA_At, ntorsionA_, nangleA_, disAB_, resA_var );
+	make_constraint_covalent_helper( pose, resA_, resA_pos, resA_At, ntorsionA_, nangleA_, 0 /* disAB_ */, resA_var ); // FIXME: FuncOP disAB_ -> Real?
 
-	make_constraint_covalent_helper( pose, resB_, resB_pos, resB_At, ntorsionB_, nangleB_, disAB_, resB_var );
+	make_constraint_covalent_helper( pose, resB_, resB_pos, resB_At, ntorsionB_, nangleB_, 0 /* disAB_ */, resB_var ); // FIXME: FuncOP disAB_ -> Real?
 
 	if(basic::options::option[basic::options::OptionKeys::enzdes::enz_debug] ){
 		pose.dump_pdb("after_resmod.pdb");
@@ -536,7 +549,7 @@ EnzConstraintParameters::make_constraint_covalent(
 	);
 	EnzdesCstParamCacheOP param_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ ) );
 
-	param_cache->covalent_connections_.push_back( new CovalentConnectionReplaceInfo(resA_base, resB_base, resA_var, resB_var, resA_pos, resB_pos, restype_set_ ) ); //new
+	param_cache->covalent_connections_.push_back( new CovalentConnectionReplaceInfo(resA_base, resB_base, resA_var, resB_var, resA_pos, resB_pos, restype_set_.lock() ) ); //new
 
 } //make_constraint_covalent
 
@@ -587,9 +600,10 @@ EnzConstraintParameters::make_constraint_covalent_helper(
 		}
 	}
 	std::string res_type_mod_name( current_residue_type_basename + res_varname + current_residue_type_patches_name );
+	core::chemical::ResidueTypeSetCOP restype_set( restype_set_ );
 
 	//check whether the modified residues have already been created earlier
-	if( !restype_set_->has_name(res_type_mod_name) ){
+	if( !restype_set->has_name(res_type_mod_name) ){
 
 		//holy jesus, we have to change the residue type set.
 		//we not only need to clone, modify and add  the residue type
@@ -608,7 +622,7 @@ EnzConstraintParameters::make_constraint_covalent_helper(
 			new_lrots = new SingleLigandRotamerLibrary();
 		}
 
-		utility::pointer::access_ptr< ResidueTypeSet > mod_restype_set = & ChemicalManager::get_instance()->nonconst_residue_type_set( restype_set_->name() );
+		ResidueTypeSetOP mod_restype_set( ChemicalManager::get_instance()->nonconst_residue_type_set( restype_set->name() ).get_self_ptr() );
 
 		//first get all residue types that correspond to the type in question
 		ResidueTypeCOPs res_to_modify = mod_restype_set->name3_map( pose.residue_type(res_pos).name3() );
@@ -651,9 +665,9 @@ EnzConstraintParameters::make_constraint_covalent_helper(
 		//and last but not least we have to regenerate the rotamer library for the ligand
 		if( pose.residue_type( res_pos ).is_ligand() ) {
 
-			SingleLigandRotamerLibraryCAP old_lrots(
-				static_cast< SingleLigandRotamerLibrary const * >
-				( RotamerLibrary::get_instance().get_rsd_library( pose.residue_type( res_pos ))() ));
+			SingleLigandRotamerLibraryCOP old_lrots(
+				utility::pointer::static_pointer_cast< SingleLigandRotamerLibrary const >
+				( RotamerLibrary::get_instance().get_rsd_library( pose.residue_type( res_pos )).lock() ));
 
 			if( old_lrots != 0 ){
 
@@ -664,7 +678,7 @@ EnzConstraintParameters::make_constraint_covalent_helper(
 
 				//std::cerr << "old rotamer library has " << old_rotamers.size() << "members";
 				for( utility::vector1< ResidueOP>::const_iterator oldrot_it = old_rotamers.begin(); oldrot_it != old_rotamers.end(); ++oldrot_it){
-					ResidueOP new_rot_res = new Residue( restype_set_->name_map(res_type_mod_name), true);
+					ResidueOP new_rot_res = new Residue( restype_set->name_map(res_type_mod_name), true);
 					//set the coordinates
 					//1. we go over the atoms of the NEW residue on purpose, to make sure that no atom gets skipped
 					for( core::Size at_ct = 1; at_ct <= new_rot_res->natoms(); at_ct++){
@@ -688,7 +702,7 @@ EnzConstraintParameters::make_constraint_covalent_helper(
 		}
 	}
 
-	core::conformation::Residue new_res( restype_set_->name_map(res_type_mod_name), true);
+	core::conformation::Residue new_res( restype_set->name_map(res_type_mod_name), true);
 
 	replace_residue_keeping_all_atom_positions( pose, new_res, res_pos );
 

@@ -316,11 +316,11 @@ int tree_distance(
 	kinematics::tree::AtomCOP descendent
 )
 {
-	kinematics::tree::AtomCOP current(descendent);
+	kinematics::tree::Atom const * current = descendent.get();
 
 	for (int tdist = 0; current; ++tdist) {
-		if (ancestor == current) return tdist;
-		current = current->parent();
+		if (ancestor.get() == current) return tdist;
+		current = current->parent().get();
 	}
 
 	return -1;
@@ -347,11 +347,11 @@ protocols::backrub::BackrubMover::add_segment(
 {
 	PoseCOP input_pose(get_input_pose());
 
-	runtime_assert(input_pose);
+	runtime_assert( input_pose != 0);
 
 	// get references to Atom tree atoms
-	kinematics::tree::AtomCOP start_atom(&input_pose->atom_tree().atom(start_atomid));
-	kinematics::tree::AtomCOP end_atom(&input_pose->atom_tree().atom(end_atomid));
+	kinematics::tree::AtomCOP start_atom(input_pose->atom_tree().atom(start_atomid).get_self_ptr());
+	kinematics::tree::AtomCOP end_atom(input_pose->atom_tree().atom(end_atomid).get_self_ptr());
 
 	// calculate initial tree distance
 	int tdist(tree_distance(start_atom, end_atom));
@@ -404,8 +404,9 @@ protocols::backrub::BackrubMover::add_segment(
 	// Find the first two atoms on the path from start to end
 	id::AtomID start_atomid1(end_atom->parent()->id());
 	id::AtomID start_atomid2(end_atom->id());
-	for (kinematics::tree::AtomCOP current_atom = end_atom->parent()->parent(); current_atom != start_atom;
-	     current_atom = current_atom->parent()) {
+	for (kinematics::tree::Atom const * current_atom = end_atom->parent()->parent().get();
+			current_atom != start_atom.get();
+			current_atom = current_atom->parent().get() ) {
 		start_atomid2 = start_atomid1;
 		start_atomid1 = current_atom->id();
 	}
@@ -850,10 +851,10 @@ protocols::backrub::BackrubMover::dof_id_ranges(
 		BackrubSegment & segment(segments_[i]);
 
 		// get references to Atom tree atoms
-		kinematics::tree::AtomCOP start_atom(&pose.atom_tree().atom(segment.start_atomid()));
-		kinematics::tree::AtomCOP start_atom1(&pose.atom_tree().atom(segment.start_atomid1()));
-		kinematics::tree::AtomCOP start_atom2(&pose.atom_tree().atom(segment.start_atomid2()));
-		kinematics::tree::AtomCOP end_atom(&pose.atom_tree().atom(segment.end_atomid()));
+		kinematics::tree::AtomCOP start_atom(pose.atom_tree().atom(segment.start_atomid()).get_self_ptr());
+		kinematics::tree::AtomCOP start_atom1(pose.atom_tree().atom(segment.start_atomid1()).get_self_ptr());
+		kinematics::tree::AtomCOP start_atom2(pose.atom_tree().atom(segment.start_atomid2()).get_self_ptr());
+		kinematics::tree::AtomCOP end_atom(pose.atom_tree().atom(segment.end_atomid()).get_self_ptr());
 		kinematics::tree::AtomCOP end_atom1(end_atom->get_nonjump_atom(0));
 		kinematics::tree::AtomCOP end_atom2(end_atom1 ? end_atom1->get_nonjump_atom(0) : kinematics::tree::AtomCOP( 0 ) );
 
@@ -930,10 +931,10 @@ protocols::backrub::BackrubMover::random_angle(
 	BackrubSegment & segment(segments_[segment_id]);
 
 	// get references to Atom tree atoms
-	kinematics::tree::AtomCOP start_atom(&pose.atom_tree().atom(segment.start_atomid()));
-	kinematics::tree::AtomCOP start_atom1(&pose.atom_tree().atom(segment.start_atomid1()));
-	kinematics::tree::AtomCOP start_atom2(&pose.atom_tree().atom(segment.start_atomid2()));
-	kinematics::tree::AtomCOP end_atom(&pose.atom_tree().atom(segment.end_atomid()));
+	kinematics::tree::AtomCOP start_atom(pose.atom_tree().atom(segment.start_atomid()).get_self_ptr());
+	kinematics::tree::AtomCOP start_atom1(pose.atom_tree().atom(segment.start_atomid1()).get_self_ptr());
+	kinematics::tree::AtomCOP start_atom2(pose.atom_tree().atom(segment.start_atomid2()).get_self_ptr());
+	kinematics::tree::AtomCOP end_atom(pose.atom_tree().atom(segment.end_atomid()).get_self_ptr());
 	kinematics::tree::AtomCOP end_atom1(end_atom->get_nonjump_atom(0));
 	kinematics::tree::AtomCOP end_atom2(end_atom1 ? end_atom1->get_nonjump_atom(0) : kinematics::tree::AtomCOP(0) );
 
@@ -1043,10 +1044,10 @@ protocols::backrub::BackrubMover::rotate_segment(
 	BackrubSegment & segment(segments_[segment_id]);
 
 	// get references to Atom tree atoms
-	kinematics::tree::AtomCOP start_atom(&pose.atom_tree().atom(segment.start_atomid()));
-	kinematics::tree::AtomCOP start_atom1(&pose.atom_tree().atom(segment.start_atomid1()));
-	kinematics::tree::AtomCOP start_atom2(&pose.atom_tree().atom(segment.start_atomid2()));
-	kinematics::tree::AtomCOP end_atom(&pose.atom_tree().atom(segment.end_atomid()));
+	kinematics::tree::AtomCOP start_atom(pose.atom_tree().atom(segment.start_atomid()).get_self_ptr());
+	kinematics::tree::AtomCOP start_atom1(pose.atom_tree().atom(segment.start_atomid1()).get_self_ptr());
+	kinematics::tree::AtomCOP start_atom2(pose.atom_tree().atom(segment.start_atomid2()).get_self_ptr());
+	kinematics::tree::AtomCOP end_atom(pose.atom_tree().atom(segment.end_atomid()).get_self_ptr());
 	kinematics::tree::AtomCOP end_atom1(end_atom->get_nonjump_atom(0));
 	kinematics::tree::AtomCOP end_atom2(end_atom1 ? end_atom1->get_nonjump_atom(0) : kinematics::tree::AtomCOP(0) );
 

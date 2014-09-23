@@ -46,7 +46,7 @@ LegacyKicSampler::LegacyKicSampler() {
 
 	mover_ = new KinematicMover();
 	TorsionSamplingKinematicPerturberOP perturber =
-		new TorsionSamplingKinematicPerturber(mover_.get());
+		new TorsionSamplingKinematicPerturber(protocols::loops::loop_closure::kinematic_closure::KinematicMoverCAP(mover_));
 
 	mover_->set_perturber(perturber);
 }

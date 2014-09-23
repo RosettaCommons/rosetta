@@ -19,9 +19,11 @@
 // Classes
 #include <utility/pointer/access_ptr.fwd.hh>
 #include <utility/pointer/owning_ptr.fwd.hh>
+
+#ifdef PTR_REFCOUNT
 #include <utility/pointer/ReferenceCount.fwd.hh>
 #include <utility/pointer/ReferenceCountMI.fwd.hh>
 #include <utility/pointer/ReferenceCountMI_.fwd.hh>
-
+#endif
 
 #endif // INCLUDED_utility_pointer_all_FWD_HH

@@ -429,7 +429,7 @@ void ZNCoordinationConstraintPlacerMover::apply( core::pose::Pose & p )
 {
 
 	// remove the existing ZnHash constraint from the Pose.
-	p.constraint_set( new core::scoring::constraints::ConstraintSet );
+	p.constraint_set( core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet ) );
 
 	// Record which residues have been identified by the zncoordcst as best for coordinating zinc
 	// devel::znhash::ZnCoordinationScorerOP zn_score = init_zn_->zn_score();
@@ -1221,7 +1221,7 @@ LoadZnCoordNumHbondCalculatorMover::apply( core::pose::Pose & )
 	if ( CalculatorFactory::Instance().check_calculator_exists( "bur_unsat_calc_default_hbond_calc" ) ) {
 		CalculatorFactory::Instance().remove_calculator( "bur_unsat_calc_default_hbond_calc" );
 	}
-	CalculatorFactory::Instance().register_calculator( "bur_unsat_calc_default_hbond_calc", new ZnCoordNumHbondCalculator );
+	CalculatorFactory::Instance().register_calculator( "bur_unsat_calc_default_hbond_calc", core::pose::metrics::PoseMetricCalculatorOP( new ZnCoordNumHbondCalculator ) );
 }
 
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)

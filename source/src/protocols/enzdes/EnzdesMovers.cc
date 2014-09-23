@@ -113,9 +113,9 @@ EnzdesConstraintReporter::find_constraints_to_ligand(
 				iter != iter_end; ++iter ) {
 			mv_tr.Info <<(*iter)->type() << std::endl;
 			if ( (*iter)->type() == "MultiConstraint" || (*iter)->type() == "AmbiguousConstraint" ) {
-				add_constrained_atoms_from_multiconstraint( dynamic_cast <MultiConstraint const * > ((*iter)()) );
+				add_constrained_atoms_from_multiconstraint( utility::pointer::dynamic_pointer_cast <MultiConstraint const > (*iter) );
 			} else if ( ((*iter)->type()) == "AtomPair") {
-				add_constrained_atoms_from_atom_pair_constraint( dynamic_cast <AtomPairConstraint const * > ((*iter)()) );
+				add_constrained_atoms_from_atom_pair_constraint( utility::pointer::dynamic_pointer_cast <AtomPairConstraint const > (*iter) );
 			} // else, ignore this constraint
 		}
 	}
@@ -132,11 +132,11 @@ EnzdesConstraintReporter::add_constrained_atoms_from_multiconstraint(
 			MC_it=multi_constraint_members.begin();
 			MC_it!=multi_constraint_members.end(); MC_it++) {
 		if ( ((*MC_it)->type()) == "AtomPair") {
-			assert( dynamic_cast <core::scoring::constraints::AtomPairConstraint const * > ((*MC_it)()) );
-			add_constrained_atoms_from_atom_pair_constraint( dynamic_cast <core::scoring::constraints::AtomPairConstraint const * > ((*MC_it)()) );
+			assert( utility::pointer::dynamic_pointer_cast <core::scoring::constraints::AtomPairConstraint const > ((*MC_it)) );
+			add_constrained_atoms_from_atom_pair_constraint( utility::pointer::dynamic_pointer_cast <core::scoring::constraints::AtomPairConstraint const > ((*MC_it)) );
 		} else if ( ((*MC_it)->type()) == "MultiConstraint" || ((*MC_it)->type()) == "AmbiguousConstraint" ) {
-			assert( dynamic_cast <core::scoring::constraints::MultiConstraint const * > ((*MC_it)()) );
-			add_constrained_atoms_from_multiconstraint( (dynamic_cast <core::scoring::constraints::MultiConstraint const * > ((*MC_it)())) );
+			assert( utility::pointer::dynamic_pointer_cast <core::scoring::constraints::MultiConstraint const > ((*MC_it)) );
+			add_constrained_atoms_from_multiconstraint( (utility::pointer::dynamic_pointer_cast <core::scoring::constraints::MultiConstraint const > ((*MC_it))) );
 		} // else, ignore this constraint
 	}
 }
@@ -429,7 +429,7 @@ void
 RepackLigandSiteWithoutLigandMover::apply(
 	core::pose::Pose & pose )
 {
-	runtime_assert( sfxn_ );
+	runtime_assert( sfxn_ != 0 );
 	//tmp hack
 	//the constraints can be a headache in this situation, so well completely take them out for now
 	// the problem is that some constrained interactions can be covalent, and the EnzConstraintIO
@@ -465,7 +465,7 @@ RepackLigandSiteWithoutLigandMover::apply(
 	DetectProteinLigandInterfaceOP detect_enzdes_interface = new DetectProteinLigandInterface();
   detect_enzdes_interface->set_design(false);
 	core::pack::task::TaskFactory taskfactory;
-  taskfactory.push_back( new core::pack::task::operation::InitializeFromCommandline() );
+  taskfactory.push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline() ) );
   taskfactory.push_back( detect_enzdes_interface);
 	ptask_ = taskfactory.create_task_and_apply_taskoperations( pose );
 

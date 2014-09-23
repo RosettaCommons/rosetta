@@ -366,7 +366,7 @@ void TemperedDocking::setup_objects()
 
 	sampler_->add_mover( rb_mover_, 1.0 );
 	sampler_->set_tempering( tempering_ );
-	sampler_->add_observer( new protocols::canonical_sampling::SilentTrajectoryRecorder );
+	sampler_->add_observer( protocols::canonical_sampling::ThermodynamicObserverOP( new protocols::canonical_sampling::SilentTrajectoryRecorder ) );
 	sync_objects_with_flags();
 }
 

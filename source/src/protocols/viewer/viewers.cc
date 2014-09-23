@@ -1957,9 +1957,8 @@ add_monte_carlo_silent_viewer(
 	bool fullatom = false
 )
 {
-	SilentObserverOP
-		viewer1( new SilentObserver( name_in + "_last_accepted", fullatom ) ),
-		viewer2( new SilentObserver( name_in + "_best_accepted", fullatom ) );
+	SilentObserverOP viewer1( new SilentObserver( name_in + "_last_accepted", fullatom ) );
+	SilentObserverOP viewer2( new SilentObserver( name_in + "_best_accepted", fullatom ) );
 
 	std::cout << "attaching viewers!" << std::endl;
 	mc.attach_observer_to_last_accepted_pose( *viewer1 );

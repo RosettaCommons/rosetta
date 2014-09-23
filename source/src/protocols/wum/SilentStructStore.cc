@@ -109,8 +109,8 @@ SilentStructStore::~SilentStructStore() {}
 
 		bool operator () (const SilentStructOP& left, const SilentStructOP& right)
 		{
-			runtime_assert( left );
-			runtime_assert( right );
+			runtime_assert( left != 0 );
+			runtime_assert( right != 0 );
 			return left->get_energy( field_ ) < right->get_energy( field_ );
 		}
 	private:
@@ -172,7 +172,7 @@ static thread_local basic::Tracer TR( "SilentStructStore" );
     for( std::vector < SilentStructOP >::const_iterator it = mergestore.store_.begin();
          it != mergestore.store_.end();
          ++it ){
-      runtime_assert( *it );
+      runtime_assert( *it != 0 );
 			store_.push_back( *it );
     }
   }
@@ -184,7 +184,7 @@ static thread_local basic::Tracer TR( "SilentStructStore" );
 	  using namespace basic::options;
 	  using namespace basic::options::OptionKeys;
 
-    core::chemical::ResidueTypeSetCAP rsd_set;
+    core::chemical::ResidueTypeSetCOP rsd_set;
 		if ( option[ in::file::fullatom ]() ) {
 		  rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 		} else {
@@ -261,7 +261,7 @@ static thread_local basic::Tracer TR( "SilentStructStore" );
 			for( std::vector < SilentStructOP >::const_iterator it = store_.begin();
 					 it != store_.end();
 					 ++it ){
-      	runtime_assert( *it );
+      	runtime_assert( *it != 0 );
 				sfd.write_silent_struct( (*(*it)), out );
 			}
 		}
@@ -295,7 +295,7 @@ static thread_local basic::Tracer TR( "SilentStructStore" );
          it != store_.end();
          ++it ){
       out << count << " ";
-      runtime_assert( *it );
+      runtime_assert( *it != 0 );
       (*it)->print_scores( out );
     }
     out << "----------------------------------------------" << std::endl;

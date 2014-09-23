@@ -77,7 +77,8 @@ public:
   void test_ProteinInterfaceDesignOperation() {
 
     using namespace core::pack::task;
-    using  protocols::toolbox::task_operations::ProteinInterfaceDesignOperation;
+    using protocols::toolbox::task_operations::ProteinInterfaceDesignOperation;
+	using core::pack::task::operation::TaskOperationCOP;
 		TaskFactory PID_factory;
     PID_factory.push_back( new ProteinInterfaceDesignOperation() );
 		TR << "Running test_ProteinInterfaceDesignOperation" << std::endl;

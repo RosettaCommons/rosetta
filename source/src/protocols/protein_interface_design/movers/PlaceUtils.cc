@@ -363,7 +363,7 @@ parse_stub_sets( utility::tag::TagCOP tag, core::pose::Pose const & pose, core::
 			TR<<"Associating mover with stub file "<<stub_fname<<std::endl;
 			stubset->read_data( stub_fname );
 		}
-        stub_sets.push_back(std::make_pair(stubset, std::make_pair(new HotspotStub(), 0)));  // REQUIRED FOR WINDOWS
+        stub_sets.push_back(std::make_pair(stubset, std::make_pair(HotspotStubOP( new HotspotStub() ), 0)));  // REQUIRED FOR WINDOWS
 		//stub_sets.push_back( PlaceSimultaneouslyMover::StubSetStubPos( stubset, std::pair< HotspotStubOP, core::Size >( 0, 0 ) ) );
 
 		core::pose::PoseOP ala_pose = new core::pose::Pose( pose );

@@ -355,6 +355,7 @@ OopCreatorMover::apply(
 	if ( final_repack_ )
 	{
 		// create a task factory and task operations
+		using core::pack::task::operation::TaskOperationCOP;
 		TaskFactoryOP tf(new TaskFactory());
 		tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
         
@@ -418,6 +419,7 @@ OopCreatorMover::apply(
 	if ( final_repack_)
 	{
 		// create a task factory and task operations
+		using core::pack::task::operation::TaskOperationCOP;
 		TaskFactoryOP tf(new TaskFactory());
 		tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
         

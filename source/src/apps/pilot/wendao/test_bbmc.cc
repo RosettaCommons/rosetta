@@ -549,6 +549,7 @@ my_main( void* )
 
 	// create a TaskFactory with the resfile
 	using namespace core::pack::task;
+	using namespace core::pack::task::operation;
 	TaskFactoryOP main_task_factory = new TaskFactory;
 	main_task_factory->push_back( new operation::InitializeFromCommandline );
 	if ( option[ packing::resfile ].user() ) {
@@ -664,7 +665,7 @@ my_main( void* )
 	}
 
 	//setup native pose for rmsd
-	ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+	ResidueTypeSetCOP rsd_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 	PoseOP native_pose;
 	if ( option[in::file::native].user() ) {
 		native_pose = new Pose();
@@ -714,9 +715,9 @@ my_main( void* )
 
 				//add constraints on CA
 				Size CA_i = nat_i_rsd.atom_index("CA");
+				core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
 				p.add_constraint( new core::scoring::constraints::CoordinateConstraint(
-					AtomID(CA_i,i), AtomID(1, p.fold_tree().root()), nat_i_rsd.xyz( CA_i ),
-					new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) ) );
+					AtomID(CA_i,i), AtomID(1, p.fold_tree().root()), nat_i_rsd.xyz( CA_i ), fx ) );
 
 		}
 	}
@@ -1029,7 +1030,7 @@ my_main( void* )
 			core::Real temp = ss->get_energy( "temperature" );
 			TR << "temperature of structure with tag: " << tags[ii] << " is: " << temp << " comparing the kT " << kT << std::endl;
 			if( fabs(temp - kT) <= 1.0e-4 ) {
-				runtime_assert( ss );
+				runtime_assert( ss != 0 );
 				TR << "found the structure!" << std::endl;
 				//runtime_assert(p);
 				ss->fill_pose(p);

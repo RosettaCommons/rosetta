@@ -52,7 +52,7 @@ DNAChiEnergyCreator::score_types_for_method() const {
 
 /// ctor
 DNAChiEnergy::DNAChiEnergy() :
-	parent( new DNAChiEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new DNAChiEnergyCreator ) ),
 	potential_( ScoringManager::get_instance()->get_DNABFormPotential() )
 {}
 

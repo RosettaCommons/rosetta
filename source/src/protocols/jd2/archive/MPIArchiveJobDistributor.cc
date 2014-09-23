@@ -111,7 +111,7 @@ MPIArchiveJobDistributor::go( protocols::moves::MoverOP mover )
 		/// Archive
 		tr.Warning << "Archive starts... " << std::endl;
 		archive::ArchiveManager archive( archive_rank(), master_rank(), file_buf_rank() );
-		runtime_assert( theArchive_ );
+		runtime_assert( theArchive_ != 0 );
 		archive.go( theArchive_ );
 		tr.Warning << "send STOP to FileBuffer " << std::endl;
 		protocols::jd2::WriteOut_MpiFileBuffer buffer( file_buf_rank() );

@@ -91,9 +91,11 @@ FoldandDockClaimer::add_mover(
 	using namespace basic::options;
 
 	moves::MoverOP move_anchor_mover =	new symmetric_docking::SymFoldandDockMoveRbJumpMover;
-	moves::MoverOP rb_trial_mover =	(stageID==abinitio::STAGE_4) ?
-		new symmetric_docking::SymFoldandDockRbTrialMover( &scorefxn, true ) :
-		new symmetric_docking::SymFoldandDockRbTrialMover( &scorefxn );  // smooth RB moves in stage 4
+	moves::MoverOP rb_trial_mover(
+		(stageID==abinitio::STAGE_4) ?
+		new symmetric_docking::SymFoldandDockRbTrialMover( scorefxn.get_self_ptr(), true ) :
+		new symmetric_docking::SymFoldandDockRbTrialMover( scorefxn.get_self_ptr() )  // smooth RB moves in stage 4
+	);
 	moves::MoverOP slide_mover = new symmetric_docking::SymFoldandDockSlideTrialMover;
 	core::Real move_anchor_weight(option[ OptionKeys::fold_and_dock::move_anchor_frequency ]()),
 	           rb_weight(option[ OptionKeys::fold_and_dock::rigid_body_frequency ]()),
@@ -137,7 +139,7 @@ void FoldandDockClaimer::initialize_dofs(
 
 	for ( claims::DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end();
           it != eit; ++it ) {
-		if ( (*it)->owner()==this ) {
+		if ( (*it)->owner().lock().get() == this ) {
 			(*it)->toggle( *movemap, true );
 		}
 	}
@@ -147,7 +149,7 @@ void FoldandDockClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	// Set all cuts to real cuts. We don't want to close any of them...
 	utility::vector1< int > cuts( input_pose_.conformation().fold_tree().cutpoints() );
 	for ( Size i = 1; i <= cuts.size(); ++i ) {
-		new_claims.push_back( new claims::CutClaim( this, std::make_pair( Parent::label(), cuts[i]),
+		new_claims.push_back( new claims::CutClaim( get_self_weak_ptr(), std::make_pair( Parent::label(), cuts[i]),
 																								claims::DofClaim::INIT /* for now... eventually CAN_INIT ? */ ) );
 	}
 }

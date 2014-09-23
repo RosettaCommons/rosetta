@@ -92,8 +92,17 @@ private:
 
 
 /// @brief class that holds all the parameters for one specific constraint
-class EnzConstraintParameters : public utility::pointer::ReferenceCount {
-
+class EnzConstraintParameters : public utility::pointer::ReferenceCount
+#ifdef PTR_MODERN
+	// New version
+	, public utility::pointer::enable_shared_from_this< EnzConstraintParameters >
+{
+#else
+{
+	// Old intrusive ref-counter version
+	inline EnzConstraintParametersCOP shared_from_this() const { return EnzConstraintParametersCOP( this ); }
+	inline EnzConstraintParametersOP shared_from_this() { return EnzConstraintParametersOP( this ); }
+#endif
 
 public:
 
@@ -103,14 +112,22 @@ public:
 
 	EnzConstraintParameters();
 
-	EnzConstraintParameters(
+	void init(
 		core::Size cst_block,
 		core::chemical::ResidueTypeSetCAP src_restype_set,
-		EnzConstraintIOCAP src_enz_io);
+		EnzConstraintIOCAP src_enz_io
+	);
+	void init(); // partial init, on copy
 
 	EnzConstraintParameters( EnzConstraintParameters const & other );
 
 	virtual ~EnzConstraintParameters();
+
+	/// self pointers
+	inline EnzConstraintParametersCOP get_self_ptr() const { return shared_from_this(); }
+	inline EnzConstraintParametersOP get_self_ptr() { return shared_from_this(); }
+	inline EnzConstraintParametersCAP get_self_weak_ptr() const { return EnzConstraintParametersCAP( shared_from_this() ); }
+	//inline EnzConstraintParametersAP get_self_weak_ptr() { return EnzConstraintParametersAP( shared_from_this() ); }
 
 	void
 	show_definitions() const;

@@ -536,7 +536,7 @@ bool HPool_RMSD::load_lib(core::Size nc)
 
 void HPool_RMSD::clear_lib(core::Size nc)
 {
-    subpools_[nc].reset_to_null();
+    subpools_[nc].reset(); // to NULL
 }
 
 }//mc_conv

@@ -150,6 +150,7 @@ public:
 
 		static bool first_run = true;
 		if(first_run) {
+			using protocols::filters::FilterCreatorOP;
 			protocols::moves::MoverFactory::get_instance()->factory_register( new DummyMultipleOutputMoverCreator );
 			protocols::filters::FilterFactory::get_instance()->factory_register( new DummyFilterCreator );
 			protocols::filters::FilterFactory::get_instance()->factory_register( new DummyHalfFilterCreator );
@@ -215,9 +216,9 @@ public:
 			TS_ASSERT( tag4->getName() == "ROSETTASCRIPTS" && tag4 != tag1 );
 
 			// Check parents
-			TS_ASSERT( tag4->getParent() == tag3 );
-			TS_ASSERT( tag3->getParent() == tag2 );
-			TS_ASSERT( (bool)tag1->getParent() == false );
+			TS_ASSERT( tag4->getParent().lock() == tag3 );
+			TS_ASSERT( tag3->getParent().lock() == tag2 );
+			TS_ASSERT( tag1->getParent().expired() );
 
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::cerr << "Raised exception: " << e.msg() << std::endl;

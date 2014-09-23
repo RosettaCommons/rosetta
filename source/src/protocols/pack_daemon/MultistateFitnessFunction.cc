@@ -129,7 +129,7 @@ TopEntitySet::update_entity_history(
 			n_tied_for_worst_ = 1;
 		}
 
-		top_entities_.push_back( std::make_pair( new Entity( ent ), seanpds ) );
+		top_entities_.push_back( std::make_pair( EntityOP( new Entity( ent ) ), seanpds ) );
 		std::push_heap( top_entities_.begin(), top_entities_.end(), EntityHistoryLT() );
 		added_new_entity = true;
 
@@ -177,7 +177,7 @@ TopEntitySet::update_entity_history(
 			}
 
 		}
-		top_entities_.push_back( std::make_pair( new Entity( ent ), seanpds ) );
+		top_entities_.push_back( std::make_pair( EntityOP( new Entity( ent ) ), seanpds ) );
 		std::push_heap( top_entities_.begin(), top_entities_.end(), EntityHistoryLT() );
 		added_new_entity = true;
 	}

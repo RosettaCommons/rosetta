@@ -63,8 +63,8 @@ MatchOutputter::process_match(
 	if( !this->passes_filters( m ) ) return;
 
 	if ( writer_ ) {
-		runtime_assert( evaluator_ );
-		runtime_assert( match_score_writer_ );
+		runtime_assert( evaluator_ != 0 );
+		runtime_assert( match_score_writer_ != 0 );
 		writer_->record_match( m , evaluator_ , match_score_writer_ );
 	}
 }

@@ -134,8 +134,8 @@ class transaction : public cppdb::transaction, public utility::pointer::Referenc
 
 public:
 
-	transaction(sessionOP session) :
-		cppdb::transaction(*session)
+	transaction(session & session) :
+		cppdb::transaction(session)
 	{}
 
 };

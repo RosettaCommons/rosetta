@@ -201,7 +201,7 @@ void run() {
 		//		sfd.read_file( option[ in::file::silent ]
 		rmsf_tool->eval_.push_back_CA_xyz_from_silent_file( sfd, store_energies );
 	} else {
-		protocols::jd2::JobDistributor::get_instance()->go( rmsf_tool, new jd2::NoOutputJobOutputter );
+		protocols::jd2::JobDistributor::get_instance()->go( rmsf_tool, jd2::JobOutputterOP( new jd2::NoOutputJobOutputter ) );
 	}
 
 	FArray1D_double weights( rmsf_tool->eval_.n_atoms(), 1.0 );
@@ -301,7 +301,7 @@ void run() {
 		if ( icenter > 1 ) {
 			fit_tool->iref = icenter - 1; //ignores the first iref structures before it takes the pose as reference pose.
 			protocols::jd2::JobDistributor::get_instance()->restart();
-			protocols::jd2::JobDistributor::get_instance()->go( fit_tool, new jd2::NoOutputJobOutputter );
+			protocols::jd2::JobDistributor::get_instance()->go( fit_tool, jd2::JobOutputterOP( new jd2::NoOutputJobOutputter ) );
 		}
 		protocols::jd2::JobDistributor::get_instance()->restart();
 		protocols::jd2::JobDistributor::get_instance()->go( fit_tool );

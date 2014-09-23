@@ -45,7 +45,7 @@ using namespace kinematics;
 void
 make_pose_from_sequence_(
 	std::string sequence,
-	chemical::ResidueTypeSet residue_set,
+	chemical::ResidueTypeSet & residue_set,
 	pose::Pose& pose
 ) {
 	using namespace chemical;

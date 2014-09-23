@@ -57,7 +57,18 @@
 namespace protocols {
 namespace abinitio {
 
-class Templates : public utility::pointer::ReferenceCount {
+class Templates : public utility::pointer::ReferenceCount
+#ifdef PTR_MODERN
+	// New version
+	, public utility::pointer::enable_shared_from_this< Templates >
+{
+#else
+{
+	// Old intrusive ref-counter version
+	inline TemplatesCOP shared_from_this() const { return TemplatesCOP( this ); }
+	inline TemplatesOP shared_from_this() { return TemplatesOP( this ); }
+#endif
+
 public:
   typedef std::map< std::string, TemplateOP > TemplateMap;
 
@@ -69,6 +80,7 @@ public:
 
 	Templates( std::string const& config_file, core::pose::PoseCOP native = NULL );
 	virtual ~Templates();
+	
 	core::fragment::FragSetOP pick_frags( core::fragment::FragSetOP, core::fragment::FragDataCOP frag_type, Size min_nr_frags, Size ncopies = 1 ) const;
 	Size pick_frags( core::fragment::FragSet&, core::fragment::FragDataCOP frag_type, Size ncopies = 1 ) const;
 
@@ -138,6 +150,11 @@ public:
 	PairingStatistics const& strand_pairing_stats() {
 		return *strand_stats_;
 	}
+
+	inline TemplatesCOP get_self_ptr() const { return shared_from_this(); }
+	inline TemplatesOP  get_self_ptr() { return shared_from_this(); }
+	inline TemplatesCAP get_self_weak_ptr() const { return TemplatesCAP( shared_from_this() ); }
+	inline TemplatesAP  get_self_weak_ptr() { return TemplatesAP( shared_from_this() ); }
 
 private:
 	void get_cst_list( TemplateList& cst_list, TemplateList& cull_list ) const;

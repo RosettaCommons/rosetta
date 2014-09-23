@@ -75,7 +75,7 @@ ResidueLevelTask_::ResidueLevelTask_(
 :
 	include_current_( false ),
 	adducts_( true ),
-	original_residue_type_( original_residue.type() ), // fix this CAP construction from const &
+	original_residue_type_( original_residue.type().get_self_weak_ptr() ),
 	target_residue_type_(0),
 	designing_( original_residue.is_protein() || original_residue.is_peptoid() ), // default -- design at all protein residues
 	repacking_( true ),
@@ -131,7 +131,7 @@ ResidueLevelTask_::ResidueLevelTask_(
 		}
 		// allow noncanonical AAs and D-amino acids to be repacked
 		if (original_residue.aa() == aa_unk || core::chemical::is_canonical_D_aa( original_residue.aa() ) )
-			allowed_residue_types_.push_back( & (original_residue.type()) );
+			allowed_residue_types_.push_back( original_residue.type().get_self_ptr() );
 	} else if ( original_residue.is_DNA() ) {
 		// default: all canonical DNA types w/ adducts
 	  ResidueTypeCOPs dna_types( ResidueSelector().set_property("DNA").select( residue_set ) );
@@ -144,10 +144,10 @@ ResidueLevelTask_::ResidueLevelTask_(
 	} else if ( original_residue.is_RNA() ) {
 		ResidueType const & match_residue_type(
 				residue_set.get_residue_type_with_variant_removed( original_residue.type(), chemical::VIRTUAL_O2PRIME_HYDROGEN ) );
-		allowed_residue_types_.push_back( & match_residue_type );
+		allowed_residue_types_.push_back( match_residue_type.get_self_ptr() );
 	} else {
 		// for non-amino acids, default is to include only the existing residuetype
-		allowed_residue_types_.push_back( & (original_residue.type()) ); // fix this: creating CAP from const &
+		allowed_residue_types_.push_back( original_residue.type().get_self_ptr() );
 	}
 	if ( original_residue.is_RNA() ) rna_task_ = new rna::RNA_ResidueLevelTask;
 	// The intention is for all ResidueTasks to *start off* as repackable.
@@ -168,15 +168,15 @@ ExtraRotSample
 ResidueLevelTask_::extrachi_sample_level(
 	bool buried,
 	int chi,
-	chemical::ResidueTypeCOP concrete_residue
+	chemical::ResidueType const & concrete_residue
 ) const
 {
 
-	if ( concrete_residue->is_DNA() ) {
+	if ( concrete_residue.is_DNA() ) {
 		runtime_assert( chi == 1 );
 		return exdna_sample_level_;
 	}
-	if ( concrete_residue->is_aromatic()  && chi <= 2 ) {
+	if ( concrete_residue.is_aromatic()  && chi <= 2 ) {
 		if ( chi == 1 ) {
 			if (  buried ) {
 				return ex1aro_sample_level_;
@@ -333,7 +333,7 @@ void ResidueLevelTask_::target_type( chemical::AA aa ) {
 	target_type( original_residue_type_->residue_type_set().aa_map( aa ).front() );
 }
 void ResidueLevelTask_::target_type( std::string name ) {
-	target_type( &original_residue_type_->residue_type_set().name_map( name ) );
+	target_type( original_residue_type_->residue_type_set().name_map( name ).get_self_ptr() );
 }
 
 void ResidueLevelTask_::or_adducts( bool setting )

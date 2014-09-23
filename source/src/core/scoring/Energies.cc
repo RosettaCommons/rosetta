@@ -143,7 +143,7 @@ Energies::operator = ( Energies const & rhs )
 	context_graphs_.resize( scoring::num_context_graph_types);
 	use_nblist_ =  rhs.use_nblist_;
 	use_nblist_auto_update_ = rhs.use_nblist_auto_update_;
-	minimization_graph_ = ( rhs.minimization_graph_ ? new MinimizationGraph( * rhs.minimization_graph_ ) : 0 );
+	minimization_graph_ = MinimizationGraphOP( rhs.minimization_graph_ ? new MinimizationGraph( * rhs.minimization_graph_ ) : 0 );
 	onebody_energies_ =  rhs.onebody_energies_;
 	residue_total_energies_uptodate_ = false;
 	//std::fill( residue_total_energies_.begin(), residue_total_energies_.end(), EnergyMap() ); // unncessary
@@ -202,7 +202,7 @@ Energies::clone() const
 
 
 void
-Energies::set_owner( pose::PoseAP owner ) {
+Energies::set_owner( pose::Pose * owner ) {
 	if ( owner == 0 ) {
 		owner_ = 0;
 	} else if ( owner_ != 0 ) {
@@ -412,7 +412,7 @@ Energies::set_max_context_neighbor_cutoff( Real val ) const
 	max_context_neighbor_cutoff_ = val;
 }
 
-pose::PoseAP
+pose::Pose *
 Energies::owner() const
 {
 	return owner_;

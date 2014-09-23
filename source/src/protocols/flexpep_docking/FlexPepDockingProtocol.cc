@@ -186,6 +186,7 @@ void FlexPepDockingProtocol::set_default()
 		new operation::AppendRotamerSet( unboundrot_oper );
 
 	// all-protein packer settings:
+	using core::pack::task::operation::TaskOperationCOP;
 	allprotein_tf_ = new task::TaskFactory;
 	allprotein_tf_->push_back( new operation::InitializeFromCommandline ); // -ex1,ex2,use_input_sc,etc.
 	allprotein_tf_->push_back( new operation::IncludeCurrent ); // TODO: since our input is a prepacked structure, I always included its side-chains (these are NOT necessarily the native side-chains). But, maybe this should be left to the user (Barak)
@@ -626,7 +627,7 @@ FlexPepDockingProtocol::backrub_move(
 		// read known and unknown optimization parameters from the database
 		// ? backrubmover.branchopt().read_database();
 		backrubmover.clear_segments();
-		backrubmover.set_input_pose(&pose);
+		backrubmover.set_input_pose(pose.get_self_ptr());
 
 		// determine list of residues to backrub
 		utility::vector1<core::Size> resnums;
@@ -658,7 +659,7 @@ FlexPepDockingProtocol::polyAla(
 		using namespace core::conformation;
 		using namespace core::chemical;
 
-		ResidueTypeSetCAP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
+		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 		//   ResidueTypeSet const & residue_set ( pose.residue(1).residue_type_set() );
 		ResidueType const & restype( residue_set->name_map( "ALA" ) );
 		ResidueOP ala;
@@ -1131,7 +1132,7 @@ FlexPepDockingProtocol::markNativeInterface
 	if(! flags_.pep_fold_only) // docking mode
 		{
 			native_interface
-				= new protocols::scoring::Interface(rb_jump_);
+				= protocols::scoring::InterfaceOP( new protocols::scoring::Interface(rb_jump_) );
 			native_interface->distance(8); // between CB atoms, CA for Gly (to be precise, the anchor atom is set within the mini DB)
 			native_pose.update_residue_neighbors();
 			native_interface->calculate( native_pose );
@@ -1476,7 +1477,7 @@ void FlexPepDockingProtocol::parse_my_tag(
  //	protocols::jd2::set_native_in_mover(*fpDock);
  if ( tag->hasOption( "native" ) ) {
 		 core::pose::PoseOP tmp_native_pose = new core::pose::Pose;
-		 core::chemical::ResidueTypeSetCAP rsd_set;
+		 core::chemical::ResidueTypeSetCOP rsd_set;
 		 bool centroid_input = tag->getOption<bool>( "centroid_input", false );
 		 if ( centroid_input) {
 			 core::import_pose::centroid_pose_from_pdb( *tmp_native_pose, tag->getOption<std::string>("native") );

@@ -65,7 +65,7 @@ static thread_local basic::Tracer TR( "core.scoring.disulfides.DisulfideMatching
 DisulfideMatchingEnergy::DisulfideMatchingEnergy(
 	DisulfideMatchingPotential const & potential
 ) :
-	parent( new DisulfideMatchingEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( methods::EnergyMethodCreatorOP( new DisulfideMatchingEnergyCreator ) ) ),
 	potential_( potential )
 {}
 

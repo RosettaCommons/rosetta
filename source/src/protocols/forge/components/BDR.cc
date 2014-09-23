@@ -190,6 +190,7 @@ void BDR::fullatom_scorefunction( ScoreFunctionOP sfx ) {
 /// @brief apply defined moves to given Pose
 void BDR::apply( Pose & pose ) {
 	using core::pose::metrics::CalculatorFactory;
+	using core::pose::metrics::PoseMetricCalculatorOP;
 	using basic::MetricValue;
 	using core::scoring::dssp::Dssp;
 	using protocols::moves::MS_SUCCESS;
@@ -362,6 +363,7 @@ bool BDR::design_refine(
 	using core::pack::task::operation::RestrictResidueToRepacking;
 	using core::pack::task::operation::RestrictResidueToRepackingOP;
 	using core::pack::task::operation::RestrictToRepacking;
+	using core::pack::task::operation::TaskOperationCOP;
 	using core::scoring::ScoreFunctionOP;
 	using core::scoring::ScoreFunctionFactory;
 	using protocols::forge::build::SegmentInsert;
@@ -485,6 +487,7 @@ BDR::TaskFactoryOP BDR::generic_taskfactory() {
 	using core::pack::task::operation::InitializeFromCommandline;
 	using core::pack::task::operation::ReadResfile;
 	using core::pack::task::operation::ReadResfileOP;
+	using core::pack::task::operation::TaskOperationCOP;
 	using core::pack::task::TaskFactory;
 	using core::pack::task::operation::NoRepackDisulfides;
 
@@ -515,7 +518,7 @@ void BDR::process_continuous_design_string(
 )
 {
 	using core::pack::task::operation::RestrictAbsentCanonicalAAS;
-
+	using core::pack::task::operation::TaskOperationCOP;
 	using core::chemical::aa_from_oneletter_code;
 
 	Size const offset = original2modified_interval_endpoints.find( original_interval.left )->second;
@@ -550,6 +553,7 @@ void BDR::process_insert_design_string(
 	using core::pack::task::operation::RestrictAbsentCanonicalAAS;
 	using core::pack::task::operation::RestrictResidueToRepacking;
 	using core::pack::task::operation::RestrictResidueToRepackingOP;
+	using core::pack::task::operation::TaskOperationCOP;
 	using protocols::forge::build::Interval;
 	using protocols::forge::build::SegmentInsert;
 

@@ -94,7 +94,7 @@ void MonteCarloUtil::parse_my_tag(
 		throw utility::excn::EXCN_RosettaScriptsOption("the option mode must be set to either reset or recover_low in MonteCarloUtil");
 	}
 	
-	mc_ = *data.get<protocols::moves::MonteCarlo*>( "montecarlos",mc_name);
+	mc_ = data.get_ptr<protocols::moves::MonteCarlo>( "montecarlos",mc_name);
 }
 	
 protocols::moves::MoverOP MonteCarloUtil::clone() const
@@ -275,7 +275,7 @@ void TrialMover::parse_my_tag(
 		throw utility::excn::EXCN_RosettaScriptsOption( "TrialMover was not able to find the mover named '" + movername + "' in the Movers_map" );
 	}
 	mover_ = find_mover->second;
-	mc_ = *data.get< protocols::moves::MonteCarlo * >( "montecarlos", mc_name );
+	mc_ = data.get_ptr< protocols::moves::MonteCarlo>( "montecarlos", mc_name );
 
 	// 3. stats_type.
 	std::string const statstype( tag->getOption< std::string > ( "keep_stats", "no_stats" ));

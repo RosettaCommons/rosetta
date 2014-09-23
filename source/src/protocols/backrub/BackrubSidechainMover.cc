@@ -109,11 +109,11 @@ protocols::backrub::BackrubSidechainMover::BackrubSidechainMover(
 {
 	if (mover.backrub_mover_) {
 		backrub_mover_ = dynamic_cast<protocols::backrub::BackrubMover *>(mover.backrub_mover_->clone()());
-		runtime_assert(backrub_mover_);
+		runtime_assert(backrub_mover_ != 0);
 	}
 	if (mover.sidechain_mover_) {
 		sidechain_mover_ = dynamic_cast<protocols::simple_moves::sidechain_moves::SidechainMover *>(mover.sidechain_mover_->clone()());
-		runtime_assert(sidechain_mover_);
+		runtime_assert(sidechain_mover_ != 0);
 	}
 }
 
@@ -160,7 +160,7 @@ protocols::backrub::BackrubSidechainMover::parse_my_tag(
 		for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
 					t_o_key != end; ++t_o_key ) {
 			if ( data.has( "task_operations", *t_o_key ) ) {
-				new_task_factory->push_back( data.get< core::pack::task::operation::TaskOperation* >( "task_operations", *t_o_key ) );
+				new_task_factory->push_back( data.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", *t_o_key ) );
 			} else {
 				throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
 			}
@@ -168,7 +168,7 @@ protocols::backrub::BackrubSidechainMover::parse_my_tag(
 
 	} else {
 
-		new_task_factory->push_back( new core::pack::task::operation::RestrictToRepacking );
+		new_task_factory->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
 	}
 
 	set_task_factory(new_task_factory);
@@ -315,7 +315,7 @@ protocols::backrub::BackrubSidechainMover::set_task_factory(
 	core::pack::task::TaskFactoryOP task_factory
 )
 {
-	task_factory->push_back(new core::pack::task::operation::RestrictToRepacking);
+	task_factory->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
 	sidechain_mover_->set_task_factory(task_factory);
 }
 

@@ -44,7 +44,18 @@ namespace fragment {
 
 typedef utility::vector1 < Size > PositionList;
 
-class FragData : public utility::pointer::ReferenceCount {
+class FragData : public utility::pointer::ReferenceCount
+#ifdef PTR_MODERN
+	// New version
+	, public utility::pointer::enable_shared_from_this< FragData >
+{
+#else
+{
+	// Old intrusive ref-counter version
+	inline FragDataCOP shared_from_this() const { return FragDataCOP( this ); }
+	inline FragDataOP shared_from_this() { return FragDataOP( this ); }
+#endif
+
 typedef	utility::vector1 < SingleResidueFragDataOP > SRFD_List;
 
 public:
@@ -59,6 +70,12 @@ public:
 
 	virtual
 	FragDataOP clone() const;
+
+	/// self pointers
+	inline FragDataCOP get_self_ptr() const { return shared_from_this(); }
+	inline FragDataOP get_self_ptr() { return shared_from_this(); }
+	//inline FragDataCAP get_self_weak_ptr() const { return FragDataCAP( shared_from_this() ); }
+	//inline FragDataAP get_self_weak_ptr() { return FragDataAP( shared_from_this() ); }
 
 	//might be overwritten to shortcut for continous changes
 	virtual Size apply( kinematics::MoveMap const&, pose::Pose&, Size start, Size end ) const; // continous application to length residues

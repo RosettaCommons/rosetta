@@ -96,7 +96,7 @@ LoopMover_SlidingWindow::LoopMover_SlidingWindow(
 		set_scorefxn( scorefxn );
 	} else {
 		set_scorefxn( loops::get_cen_scorefxn() );
-		scorefxn()->set_weight( scoring::chainbreak, 1.0*10.0/3.0);
+		scorefxn->set_weight( scoring::chainbreak, 1.0*10.0/3.0);
 	}
 
 	protocols::moves::Mover::type("LoopMover_SlidingWindow");

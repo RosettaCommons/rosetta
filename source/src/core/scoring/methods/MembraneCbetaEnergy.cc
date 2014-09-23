@@ -64,7 +64,7 @@ MembraneCbetaEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 MembraneCbetaEnergy::MembraneCbetaEnergy() :
-	parent( new MembraneCbetaEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new MembraneCbetaEnergyCreator ) ),
 	potential_( ScoringManager::get_instance()->get_MembranePotential() )
 {}
 

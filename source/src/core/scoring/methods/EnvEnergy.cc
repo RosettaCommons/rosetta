@@ -63,7 +63,7 @@ EnvEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 EnvEnergy::EnvEnergy() :
-	parent( new EnvEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new EnvEnergyCreator ) ),
 	potential_( ScoringManager::get_instance()->get_EnvPairPotential() )
 {}
 

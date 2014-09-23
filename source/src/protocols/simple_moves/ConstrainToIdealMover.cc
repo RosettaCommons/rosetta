@@ -311,8 +311,8 @@ ConstrainToIdealMover::check_if_really_connected(
 	if (  atom_id1.rsd() == atom_id2.rsd() ) return true;
 
 
-	core::kinematics::tree::AtomCOP atom1 ( & pose.atom_tree().atom( atom_id1 ) );
-	core::kinematics::tree::AtomCOP atom2 ( & pose.atom_tree().atom( atom_id2 ) );
+	core::kinematics::tree::AtomCOP atom1 ( pose.atom_tree().atom( atom_id1 ).get_self_ptr() );
+	core::kinematics::tree::AtomCOP atom2 ( pose.atom_tree().atom( atom_id2 ).get_self_ptr() );
 
 	if ( atom1->parent() == atom2 ) return true;
 	if ( atom2->parent() == atom1 ) return true;
@@ -380,7 +380,7 @@ ConstrainToIdealMover::vary_bond_geometry(
 			//			TR << "checking: " << j << " " << residue.atom_name( j ) <<  i_want_this_atom_to_move( residue, j ) << std::endl;
 			if ( !i_want_this_atom_to_move( residue, j ) ) continue;
 
-			core::kinematics::tree::AtomCOP current_atom ( & pose.atom_tree().atom( AtomID(j,i) ) );
+			core::kinematics::tree::AtomCOP current_atom ( pose.atom_tree().atom( AtomID(j,i) ).get_self_ptr() );
 			if ( current_atom->is_jump() ) continue;
 
 			///////////////////
@@ -518,7 +518,7 @@ ConstrainToIdealMover::create_pose_reference(
 	core::pose::Pose & pose_reference )
 {
 	using namespace core::chemical;
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 	make_pose_from_sequence( pose_reference, pose.sequence(),	*rsd_set );
 	apply_ideal_coordinates_for_alternative_pucker( pose, pose_reference );

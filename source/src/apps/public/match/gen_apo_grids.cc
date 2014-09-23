@@ -198,11 +198,11 @@ int main( int argc, char * argv [] )
 	ScoreFunctionOP scorefunc = new ScoreFunction();
 	(*scorefunc)( pose );
 	//atom type
-	chemical::AtomTypeSetCAP atom_set(ChemicalManager::get_instance()->atom_type_set(core::chemical::FA_STANDARD));
+	chemical::AtomTypeSetCOP atom_set(ChemicalManager::get_instance()->atom_type_set(core::chemical::FA_STANDARD));
 	core::Size n_atomtypes = atom_set->n_atomtypes();
 
 	//for pair energy
-	etable::EtableCAP et = ScoringManager::get_instance()->etable( "FA_STANDARD_DEFAULT");
+	etable::EtableCOP et( ScoringManager::get_instance()->etable( "FA_STANDARD_DEFAULT") );
 	core::Real min_dis = 0.01;
 	core::Real min_dis2 = min_dis*min_dis;
 	core::Real max_dis = 6.0;
@@ -344,7 +344,7 @@ int main( int argc, char * argv [] )
 		//go through all residues
 		for( core::Size j=1, m=pose.n_residue(); j<=m; j++)
 		{
-			core::conformation::ResidueCOP res( &pose.residue(j) );
+			core::conformation::ResidueCOP res( pose.residue(j).get_self_ptr() );
 			//go through all atoms
 			for( core::Size k=1, n=res->atoms().size(); k<=n; k++)
 			{
@@ -470,7 +470,7 @@ int main( int argc, char * argv [] )
 		//for each residue
 		for( core::Size j=1; j<=pose.n_residue(); j++)
 		{
-			core::conformation::ResidueCOP res( &pose.residue(j) );
+			core::conformation::ResidueCOP res( pose.residue(j).get_self_ptr() );
 			bool flag=true;
 
 			//for each atom
@@ -577,7 +577,7 @@ int main( int argc, char * argv [] )
                     for ( core::Size m=1; m <= active_res_ndx.size() && flag; m++ )
                     {
                         //for each active res
-                        core::conformation::ResidueCOP res( &pose.residue(active_res_ndx[m]) );
+                        core::conformation::ResidueCOP res( pose.residue(active_res_ndx[m]).get_self_ptr() );
                         //for each atom
                         for ( core::Size n=1; n <= res->atoms().size() && flag; n++ )
                         {

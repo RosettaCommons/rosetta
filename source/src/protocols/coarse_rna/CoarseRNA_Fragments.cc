@@ -86,7 +86,7 @@ CoarseRNA_Fragments::~CoarseRNA_Fragments() {}
 		using namespace core::pose;
 		using namespace core::kinematics;
 
-		ResidueTypeSetCAP rsd_set( ChemicalManager::get_instance()->residue_type_set( "coarse_rna" ) );
+		ResidueTypeSetCOP rsd_set( ChemicalManager::get_instance()->residue_type_set( "coarse_rna" ) );
 
 		if ( frag_source_file_.substr( frag_source_file_.size()-4, frag_source_file_.size() ) == ".pdb" ){
 			Pose pose;

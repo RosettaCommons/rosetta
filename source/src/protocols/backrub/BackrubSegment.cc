@@ -46,9 +46,9 @@ protocols::backrub::BackrubSegment::start_atoms1(
 {
 	kinematics::AtomTree const & atom_tree(pose.atom_tree());
 
-	start_atom = & atom_tree.atom(start_atomid_);
+	start_atom = atom_tree.atom(start_atomid_).get_self_ptr();
 	start_atom_m1 = start_atom->stub_atom2();
-	start_atom_p1 = & atom_tree.atom(start_atomid1_);
+	start_atom_p1 = atom_tree.atom(start_atomid1_).get_self_ptr();
 }
 
 void
@@ -64,7 +64,7 @@ protocols::backrub::BackrubSegment::start_atoms2(
 	start_atoms1(pose, start_atom_m1, start_atom, start_atom_p1);
 
 	start_atom_m2 = start_atom->stub_atom3();
-	start_atom_p2 = & pose.atom_tree().atom(start_atomid2_);
+	start_atom_p2 = pose.atom_tree().atom(start_atomid2_).get_self_ptr();
 }
 
 protocols::backrub::BackrubSegment::BondAngleKey
@@ -90,7 +90,7 @@ protocols::backrub::BackrubSegment::end_atoms1(
 	core::kinematics::tree::AtomCOP & end_atom_p1
 ) const
 {
-	end_atom = & pose.atom_tree().atom(end_atomid_);
+	end_atom = pose.atom_tree().atom(end_atomid_).get_self_ptr();
 	end_atom_m1 = end_atom->parent();
 	end_atom_p1 = end_atom->get_nonjump_atom(0);
 }
@@ -107,7 +107,7 @@ protocols::backrub::BackrubSegment::end_atoms2(
 {
 	end_atoms1(pose, end_atom_m1, end_atom, end_atom_p1);
 
-	runtime_assert(end_atom_m1);
+	runtime_assert(end_atom_m1 != 0);
 
 	end_atom_m2 = end_atom_m1->parent();
 	end_atom_p2 = end_atom_p1 ? end_atom_p1->get_nonjump_atom(0) : core::kinematics::tree::AtomCOP(0) ;
@@ -146,9 +146,9 @@ protocols::backrub::BackrubSegment::bond_angle_atoms(
 	runtime_assert(bond_angle_key.key1().valid());
 	runtime_assert(bond_angle_key.key2().valid());
 
-	atom_m1 = & atom_tree.atom(bond_angle_key.key1());
-	atom = & atom_tree.atom(bond_angle_key.key2());
-	atom_p1 = bond_angle_key.key3().valid() ? & atom_tree.atom(bond_angle_key.key3()) : NULL;
+	atom_m1 = atom_tree.atom(bond_angle_key.key1()).get_self_ptr();
+	atom = atom_tree.atom(bond_angle_key.key2()).get_self_ptr();
+	atom_p1 = bond_angle_key.key3().valid() ? atom_tree.atom(bond_angle_key.key3()).get_self_ptr() : core::kinematics::tree::AtomCOP();
 }
 
 } // moves

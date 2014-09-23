@@ -280,7 +280,7 @@ VisualizeMembraneMover::create_membrane_virtual( Vector pos, bool fullatom ) {
 	using namespace core::chemical;
 	
 	// Grab the current residue typeset and create a new residue
-	ResidueTypeSetCAP const & residue_set(
+	ResidueTypeSetCOP const & residue_set(
 		core::chemical::ChemicalManager::get_instance()->residue_type_set( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
 		);
 	

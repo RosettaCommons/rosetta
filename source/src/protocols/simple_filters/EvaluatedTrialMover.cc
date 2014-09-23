@@ -63,6 +63,7 @@ EvaluatedTrialMover::EvaluatedTrialMover(
 	TrialMover( mover_in, mc_in),
 	tag_( tag )
 {
+	using protocols::evaluation::PoseEvaluatorOP;
 	evaluator_ = new evaluation::MetaPoseEvaluator;
 	evaluator_->add_evaluation( new simple_filters::ScoreEvaluator( "full",mc_in->score_function().clone() ) );
 	evaluator_->add_evaluation( evaluator_in );

@@ -154,7 +154,8 @@ EnzConstraintIO::read_enzyme_cstfile( std::string fname ) {
 				utility_exit_with_message("Error when reading cstfile. Stray VARIABLE_CST::END tag in file.");
 			}
 			in_variable_block = false;
-			parameters = new EnzConstraintParameters(counted_blocks, restype_set_, this);
+			parameters = new EnzConstraintParameters();
+			parameters->init(counted_blocks, restype_set_, get_self_weak_ptr());
 			//parameters->set_mcfi_list( mcfil );
 			cst_pairs_.push_back( parameters );
 			mcfi_lists_.push_back( mcfil );
@@ -172,7 +173,8 @@ EnzConstraintIO::read_enzyme_cstfile( std::string fname ) {
 			if( mcfil->read_data( data ) ){
 
 				if( !in_variable_block ){
-					parameters = new EnzConstraintParameters(counted_blocks, restype_set_, this);
+					parameters = new EnzConstraintParameters;
+					parameters->init(counted_blocks, restype_set_, get_self_weak_ptr());
 					//parameters->set_mcfi_list( mcfil );
 					cst_pairs_.push_back( parameters );
 					mcfi_lists_.push_back( mcfil );
@@ -415,14 +417,14 @@ EnzConstraintIO::add_constraints_to_pose(
 {
 	//tmp hack
 	EnzdesCstCacheOP cst_cache = protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache();
-	if( !cst_cache ) protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_cst_cache( new EnzdesCstCache( this, cst_pairs_.size() ) );
+	if( !cst_cache ) protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_cst_cache( new EnzdesCstCache( get_self_ptr(), cst_pairs_.size() ) );
 	//tmp hack over
 
 	//in case this function gets called twice, we remove constraints from the pose
 	remove_constraints_from_pose( pose, false, false );
 
 	//new
-	protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_cst_cache( new EnzdesCstCache( this, cst_pairs_.size() ) );
+	protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_cst_cache( new EnzdesCstCache( get_self_ptr(), cst_pairs_.size() ) );
 
 	process_pdb_header( pose, accept_blocks_missing_header );
 

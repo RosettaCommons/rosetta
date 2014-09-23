@@ -43,7 +43,7 @@ public:
 	MinimizerBenchmark(std::string name) : PerformanceBenchmark(name) {};
 
 	virtual void setUp() {
-		start_pose = new pose::Pose();
+		start_pose = pose::PoseOP( new pose::Pose() );
 		core::import_pose::pose_from_pdb(*start_pose, "test_in.pdb");
 
 		scorefxn = core::scoring::get_score_function();

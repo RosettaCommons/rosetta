@@ -94,7 +94,7 @@ add_relevant_restypes_to_subset(
 
 			basename_set.insert( basename );
 
-			restype_subset.insert( &restype_set->name_map( basename ) );
+			restype_subset.insert( restype_set.lock()->name_map( basename ).get_self_ptr() );
 
 		}
 	}
@@ -306,7 +306,7 @@ MatchConstraintFileInfo::template_atom_inds(
 		utility_exit_with_message( "template res with code blabla not found in MatchConstraintFileInfo ");
 	}
 
-	return map_it->second->atom_inds_for_restype( which_template_atom, &restype );
+	return map_it->second->atom_inds_for_restype( which_template_atom, restype.get_self_ptr() );
 
 }
 
@@ -368,7 +368,7 @@ MatchConstraintFileInfo::read_data( utility::io::izstream & data )
 
 				if( map_it == enz_template_res_.end() ){
 
-					std::pair< core::Size, EnzCstTemplateResOP > to_insert( map_id, new EnzCstTemplateRes( restype_set_ ) );
+					std::pair< core::Size, EnzCstTemplateResOP > to_insert( map_id, EnzCstTemplateResOP( new EnzCstTemplateRes( restype_set_ ) ) );
 
 					enz_template_res_.insert( to_insert );
 
@@ -444,6 +444,7 @@ void
 MatchConstraintFileInfo::process_data()
 {
 
+	core::chemical::ResidueTypeSetCOP restype_set( restype_set_ );
 
 	for( std::map< core::Size, EnzCstTemplateResOP >::iterator map_it = enz_template_res_.begin();
 			 map_it != enz_template_res_.end(); ++map_it ) {
@@ -453,7 +454,7 @@ MatchConstraintFileInfo::process_data()
 		std::set< core::chemical::ResidueTypeCOP > restypes_this_res;
 		for( core::Size j = 1; j <= res_name3s.size(); ++j ) {
 			utility::vector1< core::chemical::ResidueTypeCOP > all_restypes_this_name3 =
-				restype_set_->name3_map( res_name3s[j] );
+				restype_set->name3_map( res_name3s[j] );
 			add_relevant_restypes_to_subset( restypes_this_res, all_restypes_this_name3, restype_set_ );
 		}
 
@@ -495,9 +496,10 @@ MatchConstraintFileInfo::inverse_rotamers_against_residue(
 	//if we're dealing with backbone interaction, only build glycine rotamers
 	bool backbone_interaction(false);
 	if( this->is_backbone( invrot_template ) ){
+		core::chemical::ResidueTypeSetCOP restype_set( restype_set_ );
 		backbone_interaction = true;
 		invrot_restypes.clear();
-		invrot_restypes.push_back( &(restype_set_->name_map("ALA")) );
+		invrot_restypes.push_back( restype_set->name_map("ALA").get_self_ptr() );
 		tr << "Only Ala inverse rotamers will be built because it is a backbone interaction." << std::endl;
 	}
 	for( core::Size ii =1; ii <= invrot_restypes.size(); ++ii ){
@@ -822,6 +824,7 @@ MatchConstraintFileInfoList::determine_upstream_restypes()
 	gly_vec.push_back("GLY");
 
 	std::set< core::chemical::ResidueTypeCOP > restype_temp_set;
+	core::chemical::ResidueTypeSetCOP restype_set( restype_set_ );
 
 	for( core::Size i =1 ; i <= mcfis_.size(); ++i){
 
@@ -836,7 +839,7 @@ MatchConstraintFileInfoList::determine_upstream_restypes()
 		for( core::Size j = 1; j <= res_name3s.size(); ++j ) {
 
 			utility::vector1< core::chemical::ResidueTypeCOP > all_restypes_this_name3 =
-				restype_set_->name3_map( res_name3s[j] );
+				restype_set->name3_map( res_name3s[j] );
 
 			add_relevant_restypes_to_subset( restypes_this_mcfi, all_restypes_this_name3, restype_set_ );
 

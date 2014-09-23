@@ -50,7 +50,7 @@ class MapCacheUnit : public core::fragment::BaseCacheUnit {
 	typedef std::map< core::Size, T > TMap;
 public:
 	BaseCacheUnitOP clone() const {
-		return new MapCacheUnit<T>;
+		return BaseCacheUnitOP( new MapCacheUnit<T> );
 	};
 
 	void remap_value( BaseCacheUnit const& source, Size source_id, Size new_id ) {
@@ -86,7 +86,7 @@ class VectorCacheUnit : public core::fragment::BaseCacheUnit {
 	typedef utility::vector1< T > TVector;
 public:
 	BaseCacheUnitOP clone() const {
-		return new VectorCacheUnit<T>;
+		return BaseCacheUnitOP( new VectorCacheUnit<T> );
 	}
 
 	void remap_value( BaseCacheUnit const& source, Size source_id, Size new_id ) {

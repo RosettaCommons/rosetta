@@ -62,7 +62,7 @@ using numeric::constants::r::pi;
 /// code that has been specifically written to solve a closure problem.
 
 ClosureSolution::ClosureSolution(
-		ClosureProblemCOP problem, Size const index,
+		ClosureProblem const * problem, Size const index,
 		ParameterList const & torsion_angles,
 		ParameterList const & bond_angles,
 		ParameterList const & bond_lengths)
@@ -305,7 +305,7 @@ Real ClosureSolution::get_jacobian() const {
 /// @details Note that this is not a rigorous distance metric.  It's just meant
 /// to distinguish one solution that's nearly identical to the given problem
 /// from several solutions that aren't.
-Real ClosureSolution::get_distance(ClosureProblemCOP problem) const {
+Real ClosureSolution::get_distance(ClosureProblem const * problem) const {
 	Real distance = 0;
 
 	for (Size i = 1; i <= problem->num_atoms(); i++) {

@@ -195,7 +195,7 @@ void QuaternionGridManager::fill_metadata() {
     // cout << endl;
 }
 
-QuaternionGridCAP QuaternionGridManager::request_by_name(std::string const & name){
+QuaternionGridCOP QuaternionGridManager::request_by_name(std::string const & name){
     if(grids_.find(name)==grids_.end()){
         utility::io::izstream infile;
         basic::database::open(infile,"sampling/orientations/orientgridall/data/"+name+".grid");
@@ -205,13 +205,13 @@ QuaternionGridCAP QuaternionGridManager::request_by_name(std::string const & nam
     return grids_[name];
 }
 
-QuaternionGridCAP QuaternionGridManager::request_by_size(long target_size){
+QuaternionGridCOP QuaternionGridManager::request_by_size(long target_size){
     for(numeric::Size i = 1; i <= by_size_.size(); ++i)
         if( target_size >= by_size_[i].N )
             return request_by_name(by_size_[i].name);
     return request_by_name(by_size_.back().name);
 }
-QuaternionGridCAP QuaternionGridManager::request_by_radius(numeric::Real target_radius){
+QuaternionGridCOP QuaternionGridManager::request_by_radius(numeric::Real target_radius){
     for(numeric::Size i = 1; i <= by_radius_.size(); ++i)
         if( target_radius >= by_radius_[i].radius )
             return request_by_name(by_radius_[i].name);

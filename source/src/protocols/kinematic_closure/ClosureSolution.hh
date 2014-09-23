@@ -51,7 +51,7 @@ class ClosureSolution : public ReferenceCount, private noncopyable {
 		/// @brief Constructor used internally to build a solution from the 
 		/// internal degrees of freedom returned by the closure algorithm.
 		ClosureSolution(
-				ClosureProblemCOP const problem,
+				ClosureProblem const * problem,
 				Size const solution_index,
 				ParameterList const & torsion_angles,
 				ParameterList const & bond_angles,
@@ -79,7 +79,7 @@ class ClosureSolution : public ReferenceCount, private noncopyable {
 
 		/// @ brief Return a distance metric indicating how similar this solution 
 		/// is to the given problem.
-		Real get_distance(ClosureProblemCOP problem) const;
+		Real get_distance(ClosureProblem const * problem) const;
 
 	// Private Helpers {{{1
 	private:
@@ -93,7 +93,7 @@ class ClosureSolution : public ReferenceCount, private noncopyable {
 	// Data Members {{{1
 	private:
 
-		ClosureProblemCOP const problem_;
+		ClosureProblem const * problem_;
 		Size const index_;
 
 		ParameterList const bond_lengths_;

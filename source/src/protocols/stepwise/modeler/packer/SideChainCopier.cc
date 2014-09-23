@@ -75,7 +75,7 @@ using namespace core::conformation;
 
 			}	else if ( pose.residue_type( n ).is_protein() ) {
 
-				ResidueOP rsd = reference_pose_.residue( n ).clone();
+				core::conformation::ResidueOP rsd = reference_pose_.residue( n ).clone();
 
 				bool const orient_backbone = ( ( reference_pose_.residue( n ).xyz( 1 ) - pose.residue( n ).xyz( 1 ) ).length() > orient_backbone_tolerance );
 				if ( orient_backbone ) rsd->place( pose.residue( n ), pose.conformation() );

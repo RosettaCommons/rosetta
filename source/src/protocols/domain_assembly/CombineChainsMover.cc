@@ -46,7 +46,7 @@ void CombineChainsMover::apply( core::pose::Pose & pose ) {
 	core::sequence::SequenceOP seq = new core::sequence::Sequence( pose.sequence(), "this comment here is really irrelevant..." );
 
 	core::pose::Pose extended_pose;
-        core::chemical::ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(
+        core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(
 	                option[ in::file::residue_type_set ]() );
 	core::pose::make_pose_from_sequence(extended_pose, pose.sequence(), *rsd_set);
 

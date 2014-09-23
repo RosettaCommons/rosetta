@@ -73,13 +73,13 @@ main
 
 	TR << "Initialization Successful" << std::endl;
 
-	core::scoring::mm::MMBondAngleLibraryCAP mm_bondangle_library(
+	core::scoring::mm::MMBondAngleLibrary const & mm_bondangle_library(
 		core::scoring::ScoringManager::get_instance()->get_MMBondAngleLibrary()
 	);
 
 	//mm_bondangle_library->pretty_print();
 
-	core::chemical::ResidueTypeSetCAP residue_set(
+	core::chemical::ResidueTypeSetCOP residue_set(
 		core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )
 	);
 
@@ -92,7 +92,7 @@ main
 
 	core::scoring::mm::MMBondAngleResidueTypeParamSet residue_type_param_set;
 
-	residue_type_param_set.mm_bondangle_library(mm_bondangle_library);
+	residue_type_param_set.mm_bondangle_library(&mm_bondangle_library);
 	residue_type_param_set.use_residue_type_theta0(option[ mm_params::use_residue_type_theta0 ]);
 	residue_type_param_set.central_atoms_to_score(option[ mm_params::central_atoms_to_score ]);
 
@@ -140,7 +140,7 @@ main
 
 				TR << " (" << type1 << "-" << type2 << "-" << type3 << ")";
 
-				core::scoring::mm::mm_bondangle_library_citer_pair mm_pair(mm_bondangle_library->lookup(type1, type2, type3));
+				core::scoring::mm::mm_bondangle_library_citer_pair mm_pair(mm_bondangle_library.lookup(type1, type2, type3));
 				core::Real mm_theta0(0);
 				core::Real mm_Ktheta(0);
 				bool mm_set(false);
@@ -207,7 +207,8 @@ main
 				for (core::Size aa3 = 1; aa3 <= all_aas.length(); ++aa3) {
 					protseq[2] = all_aas[aa3-1];
 					for (core::Size revft = 0; revft <= 1; ++revft) {
-						core::pose::Pose pose;
+						core::pose::PoseOP pose_op( new core::pose::Pose );
+						core::pose::Pose & pose = *pose_op;
 						core::pose::make_pose_from_sequence(pose, protseq, "fa_standard");
 						if (revft) {
 							core::kinematics::FoldTree foldtree;

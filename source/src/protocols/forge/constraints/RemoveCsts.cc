@@ -120,7 +120,7 @@ RemoveCsts::clone() const
 void
 RemoveCsts::set_generator( protocols::forge::remodel::RemodelConstraintGeneratorOP generator )
 {
-	runtime_assert( generator );
+	runtime_assert( generator != 0 );
 	generator_ = generator;
 }
 

@@ -92,9 +92,10 @@ void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::po
 			if( coordconstraint_segments.is_loop_residue( i ) ) {
 				Residue const & nat_i_rsd( pose.residue(i) );
 				for ( Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
+					func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) );
 					pose.add_constraint( new CoordinateConstraint(
 								AtomID(ii,i), AtomID(1,nres), nat_i_rsd.xyz( ii ),
-								new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) ) );
+								fx ) );
 				}
 			}
 		}

@@ -542,7 +542,7 @@ SimpleInteractionGraph::initialize( pose::Pose const & pose){
 	TR.Debug << "calling initialize on pose " << std::endl;
 	set_pose_no_initialize( pose );
 	//Real current_energy = (*sfxn_)(*pose_);	//DEBUG
-	runtime_assert( pose_ );
+	runtime_assert( pose_ != 0 );
 	//Graph::delete_everything();//DEBUG
 	if ( num_nodes() != pose.total_residue() ) {
 	  set_num_nodes( pose.total_residue() );

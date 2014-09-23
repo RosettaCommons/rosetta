@@ -222,8 +222,9 @@ pose_from_pdb(
 	}
 
 	//fpd If the conformation is not of type core::Conformation, reset it
-	if ( !pose.conformation().same_type_as_me( conformation::Conformation(), true ) ) {
-		pose.set_new_conformation( new conformation::Conformation() );
+	conformation::ConformationOP conformation_op = new conformation::Conformation();
+	if ( !pose.conformation().same_type_as_me( *conformation_op, true ) ) {
+		pose.set_new_conformation( conformation_op );
 	}
 
 	io::pdb::FileData fd = core::import_pose::PDB_DReader::createFileData(res, options);
@@ -261,7 +262,7 @@ pose_from_pdb(
 ) {
 	using namespace chemical;
 
-	ResidueTypeSetCAP residue_set( options.centroid() ?
+	ResidueTypeSetCOP residue_set( options.centroid() ?
 		ChemicalManager::get_instance()->residue_type_set( CENTROID ) :
 		ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )
 	);
@@ -288,7 +289,7 @@ poseOPs_from_pdbs(
 ) {
 	using namespace chemical;
 
-	ResidueTypeSetCAP residue_set( options.centroid() ?
+	ResidueTypeSetCOP residue_set( options.centroid() ?
 		ChemicalManager::get_instance()->residue_type_set( CENTROID ) :
 		ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )
 	);
@@ -303,7 +304,7 @@ poses_from_pdbs(
 	bool read_fold_tree
 ) {
 	using namespace chemical;
-	ResidueTypeSetCAP residue_set
+	ResidueTypeSetCOP residue_set
 		( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 
 	return core::import_pose::poses_from_pdbs( *residue_set, filenames, read_fold_tree );
@@ -386,7 +387,7 @@ pose_from_pdb(
 )
 {
 	using namespace chemical;
-	ResidueTypeSetCAP residue_set(
+	ResidueTypeSetCOP residue_set(
 		ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )
 	);
 	core::import_pose::pose_from_pdb( poses, *residue_set, filename, read_fold_tree );
@@ -496,7 +497,7 @@ pose_from_pdbstring(
 {
 	io::pdb::FileData fd = import_pose::PDB_DReader::createFileData( pdbcontents, options );
 	fd.filename = filename;
-	chemical::ResidueTypeSetCAP residue_set
+	chemical::ResidueTypeSetCOP residue_set
 		( chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD ) );
 	core::import_pose::build_pose( fd, pose, *residue_set, options );
 
@@ -548,7 +549,7 @@ void pose_from_pdb_stream(
 	std::string pdb_file_contents;
 	utility::slurp( pdb_stream, pdb_file_contents );
 
-	chemical::ResidueTypeSetCAP residue_set( chemical::ChemicalManager::get_instance()->residue_type_set( options.residue_type_set()) );
+	chemical::ResidueTypeSetCOP residue_set( chemical::ChemicalManager::get_instance()->residue_type_set( options.residue_type_set()) );
 	pose_from_pdbstring( pose, pdb_file_contents, *residue_set, options, filename);
 	read_additional_pdb_data( pdb_file_contents, pose, options, options.read_fold_tree() );
 }
@@ -561,7 +562,7 @@ centroid_pose_from_pdb(
 )
 {
 	using namespace chemical;
-	ResidueTypeSetCAP residue_set
+	ResidueTypeSetCOP residue_set
 		( ChemicalManager::get_instance()->residue_type_set( CENTROID ) );
 
 	core::import_pose::pose_from_pdb( pose, *residue_set, filename, read_fold_tree);
@@ -647,8 +648,8 @@ void build_pose_as_is2(
 	// If pose contains carbohydrate residues, assure that their virtual atoms have the correct coordinates.
 	if (pose.conformation().contains_carbohydrate_residues()) {
 		for (uint i = 1, n_residues = pose.total_residue(); i <= n_residues; ++i) {
-			ResidueTypeCAP res_type = & pose.residue_type(i);
-			if (res_type->is_carbohydrate()) {
+			ResidueType const & res_type = pose.residue_type(i);
+			if (res_type.is_carbohydrate()) {
 				pose::carbohydrates::align_virtual_atoms_in_carbohydrate_residue(pose, i);
 			}
 		}

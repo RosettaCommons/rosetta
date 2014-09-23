@@ -314,15 +314,15 @@ private:
 	{
 		ResidueType const &residue_type( mobile_res.type() );
 
-		SingleResidueRotamerLibraryCAP residue_rotamer_library(
+		SingleResidueRotamerLibraryCOP residue_rotamer_library(
 			rotamer_library_.get_rsd_library(residue_type)
 		);
 
-		SingleResidueCenrotLibraryCAP residue_cenrot_library(
-			dynamic_cast< SingleResidueCenrotLibrary const * >(residue_rotamer_library.get())
+		SingleResidueCenrotLibraryCOP residue_cenrot_library(
+			utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >(residue_rotamer_library)
 		);
 
-		assert( residue_cenrot_library );
+		assert( residue_cenrot_library != 0 );
 
 		utility::vector1< CentroidRotamerSampleData > samples(
 			residue_cenrot_library->get_rotamer_samples(mobile_res)
@@ -570,6 +570,7 @@ public:
 		}
 
 		//repack
+		using core::pack::task::operation::TaskOperationCOP;
 		pack_rotamers_ = new protocols::simple_moves::PackRotamersMover();
 		TaskFactoryOP main_task_factory = new TaskFactory;
 		main_task_factory->push_back( new operation::RestrictToRepacking );
@@ -744,9 +745,10 @@ public:
 		movemap->set_bb( true );
 
 		fragset_small_ = FragmentIO(option[ abinitio::number_3mer_frags ] ).read_data( option[in::file::frag3] );
-		sms_ = new SmoothFragmentMover ( fragset_small_, movemap, new GunnCost );
+		sms_ = new SmoothFragmentMover ( fragset_small_, movemap, FragmentCostOP( new GunnCost ) );
 
 		//repack
+		using core::pack::task::operation::TaskOperationCOP;
 		pack_rotamers_ = new protocols::simple_moves::PackRotamersMover();
 		TaskFactoryOP main_task_factory = new TaskFactory;
 		main_task_factory->push_back( new operation::RestrictToRepacking );
@@ -1061,6 +1063,17 @@ public:
 };
 
 
+typedef utility::pointer::owning_ptr< RepackCenrotMover > RepackCenrotMoverOP;
+typedef utility::pointer::owning_ptr< RepackCenrotMover > RepackCenrotMoverOP;
+typedef utility::pointer::owning_ptr< RepackMinCenrotMover > RepackMinCenrotMoverOP;
+typedef utility::pointer::owning_ptr< CenRotRelaxMover > CenRotRelaxMoverOP;
+typedef utility::pointer::owning_ptr< SmoothFragRepackMover > SmoothFragRepackMoverOP;
+typedef utility::pointer::owning_ptr< CenRotDockingMover > CenRotDockingMoverOP;
+typedef utility::pointer::owning_ptr< CenRotRBRelaxMover > CenRotRBRelaxMoverOP;
+typedef utility::pointer::owning_ptr< RescoreCenrot > RescoreCenrotOP;
+typedef utility::pointer::owning_ptr< MinCenrotMover > MinCenrotMoverOP;
+typedef utility::pointer::owning_ptr< CenRotCanonicalMover > CenRotCanonicalMoverOP;
+
 ///////////////////////////////////////////////////////////////////
 void*
 my_main( void* ) {
@@ -1092,54 +1105,53 @@ my_main( void* ) {
 
 		//repack
 		if (option[repack_cenrot]) {
-			utility::pointer::owning_ptr< RepackCenrotMover > repack = new RepackCenrotMover();
+			RepackCenrotMoverOP repack( new RepackCenrotMover() );
 			repack->set_scfxn(score_fxn);
 			do_cenrot->add_mover(repack);
 		}
 
 		if (option[min::cenrot]) {
-			utility::pointer::owning_ptr< MinCenrotMover > mincenrot = new MinCenrotMover();
+			MinCenrotMoverOP mincenrot( new MinCenrotMover() );
 			do_cenrot->add_mover(mincenrot);
 		}
 
 		if (option[repack_min]) {
-			utility::pointer::owning_ptr< RepackMinCenrotMover > repackmincenrot = new RepackMinCenrotMover();
+			RepackMinCenrotMoverOP repackmincenrot( new RepackMinCenrotMover() );
 			do_cenrot->add_mover(repackmincenrot);
 		}
 
 		//relax
 		if (option[relax_cenrot]) {
-			utility::pointer::owning_ptr< CenRotRelaxMover > relax = new CenRotRelaxMover();
+			CenRotRelaxMoverOP relax( new CenRotRelaxMover() );
 			do_cenrot->add_mover(relax);
 		}
 
 		if (option[frag_repack]) {
-			utility::pointer::owning_ptr< SmoothFragRepackMover > fragrepack = new SmoothFragRepackMover();
+			SmoothFragRepackMoverOP fragrepack( new SmoothFragRepackMover() );
 			do_cenrot->add_mover(fragrepack);
 		}
 
 		if (option[docking_cenrot]) {
-			utility::pointer::owning_ptr< CenRotDockingMover > cenrotdock = new CenRotDockingMover();
+			CenRotDockingMoverOP cenrotdock( new CenRotDockingMover() );
 			if (option[docking_skip_repack]) cenrotdock->skip_repack();
 			do_cenrot->add_mover(cenrotdock);
 		}
 
 		if (option[rbrelax_cenrot]) {
-			utility::pointer::owning_ptr< CenRotRBRelaxMover > rbrelax = new CenRotRBRelaxMover();
+			CenRotRBRelaxMoverOP rbrelax( new CenRotRBRelaxMover() );
 			do_cenrot->add_mover(rbrelax);
 		}
 
 		if (option[cenrot_canonical]) {
-			utility::pointer::owning_ptr< CenRotCanonicalMover > cenrotcan = new CenRotCanonicalMover();
+			CenRotCanonicalMoverOP cenrotcan( new CenRotCanonicalMover() );
 			do_cenrot->add_mover(cenrotcan);
 		}
 
 		//rescore anyway
-		utility::pointer::owning_ptr< RescoreCenrot > rescore = new RescoreCenrot();
+		RescoreCenrotOP rescore( new RescoreCenrot() );
 		rescore->set_scfxn(score_fxn);
 		if (option[in::file::native].user()) {
-			ResidueTypeSetCAP rsd_set;
-			rsd_set=ChemicalManager::get_instance()->residue_type_set( "centroid" );
+			ResidueTypeSetCOP rsd_set( ChemicalManager::get_instance()->residue_type_set( "centroid" ) );
 			core::pose::PoseOP native_pose;
 			native_pose = new Pose();
 			core::import_pose::pose_from_pdb( *native_pose, *rsd_set, option[ in::file::native ]() );

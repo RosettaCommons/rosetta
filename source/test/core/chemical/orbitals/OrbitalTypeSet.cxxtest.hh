@@ -134,8 +134,8 @@ class OrbitalTypeSetTests : public CxxTest::TestSuite {
 
 	void dont_test_orbital_atom_pairing_for_ligand(){
 		core::chemical::ChemicalManager* chemical_manager = core::chemical::ChemicalManager::get_instance();
-		orbitals::OrbitalTypeSetCAP orbital_set = chemical_manager->orbital_type_set("fa_standard");
-		core::chemical::AtomTypeSetCAP atom_type_set = chemical_manager->atom_type_set("fa_standard");
+		orbitals::OrbitalTypeSetCOP orbital_set = chemical_manager->orbital_type_set("fa_standard");
+		core::chemical::AtomTypeSetCOP atom_type_set = chemical_manager->atom_type_set("fa_standard");
 
 
 		orbitals::OrbitalType c_pi_sp2=orbital_set->operator [](1);

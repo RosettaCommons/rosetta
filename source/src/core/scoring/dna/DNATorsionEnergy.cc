@@ -64,7 +64,7 @@ DNATorsionEnergyCreator::score_types_for_method() const {
 
 /// ctor
 DNATorsionEnergy::DNATorsionEnergy():
-	parent( new DNATorsionEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new DNATorsionEnergyCreator ) ),
 	dna_torsion_potential_( ScoringManager::get_instance()->get_DNATorsionPotential() ),
 	constraints_ready_( false ),
 	verbose_( false )

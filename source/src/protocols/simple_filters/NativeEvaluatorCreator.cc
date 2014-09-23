@@ -87,6 +87,7 @@ void NativeEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eva
 	using namespace core;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	using protocols::evaluation::PoseEvaluatorOP;
 
 	core::pose::PoseOP native_pose = NULL;
 	if ( option[ in::file::native ].user() ) {

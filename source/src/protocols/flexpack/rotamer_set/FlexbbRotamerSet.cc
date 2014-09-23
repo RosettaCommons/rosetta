@@ -29,8 +29,10 @@ namespace protocols {
 namespace flexpack {
 namespace rotamer_set {
 
-FlexbbRotamerSet::FlexbbRotamerSet()
-	: parent(), existing_residue_( 0 ), owner_( 0 )
+FlexbbRotamerSet::FlexbbRotamerSet() :
+	parent(),
+	existing_residue_( 0 ), 
+	owner_( 0 )
 {}
 
 FlexbbRotamerSet::~FlexbbRotamerSet()
@@ -97,6 +99,7 @@ FlexbbRotamerSet::bump_check(
 	using namespace core::conformation;
 
 	core::Real bumpE( 0.0 );
+	protocols::flexpack::rotamer_set::FlexbbRotamerSetsCOP owner( owner_ );
 
 	for ( core::graph::Graph::EdgeListConstIter
 			ir  = packer_neighbor_graph->get_node( resid() )->const_edge_list_begin(),
@@ -107,7 +110,7 @@ FlexbbRotamerSet::bump_check(
 
 		int const neighbor_id( (*ir)->get_other_ind( resid() ) );
 
-		core::Size bbconfs_this_neighbor( owner_->nbbconfs_for_res( neighbor_id ) );
+		core::Size bbconfs_this_neighbor( owner->nbbconfs_for_res( neighbor_id ) );
 
 		utility::vector1< Residue const * > check_residues;
 
@@ -115,7 +118,7 @@ FlexbbRotamerSet::bump_check(
 
 		else{
 			for( core::Size bbconf = 1; bbconf <= bbconfs_this_neighbor ; ++bbconf) {
-				check_residues.push_back( & owner_->backbone_for_resid_bbconf( neighbor_id, bbconf ) );
+				check_residues.push_back( & owner->backbone_for_resid_bbconf( neighbor_id, bbconf ) );
 			}
 		}
 

@@ -429,7 +429,7 @@ TaskOperationMPM::TaskOperationMPM(
 	tr << "TaskOperationMPM getting task_op of type " << task_op_name << " with tag '" << tagstring << "'." << std::endl;
 
 	//2. instantiate a tag object from the string
-	utility::tag::TagOP tag = new utility::tag::Tag;
+	utility::tag::TagOP tag( new utility::tag::Tag() );
 	std::istringstream tagstream(tagstring);
 	tag->read(tagstream);
 

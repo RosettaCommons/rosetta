@@ -814,7 +814,10 @@ ProteinUpstreamBuilder::build(
 		//TR << "Building residue type: " << rescoords.type().name() << std::endl;
 
 		core::pack::dunbrack::RotamerLibraryScratchSpace dunscratch; //in case we're checking fa_dun for rotamer
-		core::pack::dunbrack::SingleResidueRotamerLibraryCAP rotlib(  core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( rescoords.type() ) );
+		// Warning: rotlib is assumed to be always valid, yet it throws a bad_weak_ptr exception in the match integration test -- what should it be?
+		// Do we expect the rotamer library to be always there? Was:
+		// core::pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib(  core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( rescoords.type() ) );
+		core::pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( rescoords.type() ).lock();
 		bool check_fa_dun( build_sets_[ii].check_fa_dun() );
 		core::Real fa_dun_cutoff( build_sets_[ii].fa_dun_cutoff() );
 		if( check_fa_dun ){
@@ -972,7 +975,7 @@ ProteinUpstreamBuilder::build(
 		/// avoid_building_any_rotamers_dueto_native_ specific usage of native residue only.
 		if ( use_input_sc_ || avoid_building_any_rotamers_dueto_native_) {
 
-			OriginalBackboneBuildPointCOP orig =
+			OriginalBackboneBuildPoint const * orig =
 				dynamic_cast< OriginalBackboneBuildPoint const * > ( & build_point );
 			if ( orig && & (orig->input_conformation().type()) == & (build_sets_[ ii ].restype()) ) {
 				/// restype match
@@ -1120,7 +1123,7 @@ ProteinUpstreamBuilder::recover_hits(
 		/// Is the hit from the input side chain?
 		//Kui Native 110809 - need more testing for native 2nd matching
 		if ( use_input_sc_ || avoid_building_any_rotamers_dueto_native_ ) {
-			OriginalBackboneBuildPointCOP orig =
+			OriginalBackboneBuildPoint const * orig =
 				dynamic_cast< OriginalBackboneBuildPoint const * > ( & build_point );
 			if ( orig && & (orig->input_conformation().type()) == & (build_sets_[ ii ].restype()) ) {
 				/// restype match
@@ -1150,7 +1153,7 @@ ProteinUpstreamBuilder::n_restypes_to_build() const
 core::chemical::ResidueTypeCOP
 ProteinUpstreamBuilder::restype( Size which_restype ) const
 {
-	return & ( build_sets_[ which_restype ].restype() );
+	return build_sets_[ which_restype ].restype().get_self_ptr();
 }
 
 
@@ -1221,7 +1224,7 @@ BuildSet &
 ProteinUpstreamBuilder::build_set( core::chemical::ResidueTypeCOP restype )
 {
 	for ( Size ii = 1; ii <= build_sets_.size(); ++ii ) {
-		if ( & (build_sets_[ ii ].restype()) == restype() ) {
+		if ( &build_sets_[ ii ].restype() == &(*restype()) ) {
 			return build_sets_[ ii ];
 		}
 	}

@@ -185,7 +185,7 @@ void FragmentSampler::apply( pose::Pose & pose ) {
 
 	tr.Info << "Fragment Sampler: " << get_current_tag() << std::endl;
 
-	runtime_assert( topology_broker_ ); // really this protocol doesn't make much sense without it
+	runtime_assert( topology_broker_ != 0 ); // really this protocol doesn't make much sense without it
 	mc().clear_poses(); // these two statements were only necessary after march 18 2009... something ALF did recently ?
 	mc().reset( pose );
 	//	current_scorefxn()( pose );
@@ -285,7 +285,7 @@ void FragmentSampler::topology_broker( topology_broker::TopologyBrokerOP set ) {
 }
 
 topology_broker::TopologyBroker const& FragmentSampler::topology_broker() {
-	runtime_assert( topology_broker_ );
+	runtime_assert( topology_broker_ != 0 );
 	return *topology_broker_;
 }
 
@@ -378,8 +378,7 @@ void FragmentSampler::current_scorefxn( scoring::ScoreFunction const& scorefxn )
 
 //@brief set individual weight of current scorefunction --- does not change the predefined scores: score_stageX_
 void FragmentSampler::set_current_weight( core::scoring::ScoreType type, core::Real setting ) {
-	scoring::ScoreFunctionCOP scorefxn_const ( mc().score_function() );
-	scoring::ScoreFunctionOP scorefxn = scorefxn_const->clone();
+	scoring::ScoreFunctionOP scorefxn = mc().score_function().clone();
 	scorefxn->set_weight( type, setting );
 	mc().score_function( *scorefxn ); //trigger rescore
 }
@@ -439,7 +438,7 @@ FragmentSampler::mover( pose::Pose const& pose, StageID stage_id, core::scoring:
 }
 
 void FragmentSampler::do_stage1_cycles( pose::Pose &pose ) {
-	moves::RepeatMover( new moves::TrialMover( mover( pose, STAGE_1, current_scorefxn() ), mc_ptr() ), stage1_cycles() ).apply( pose );
+	moves::RepeatMover( moves::MoverOP( new moves::TrialMover( mover( pose, STAGE_1, current_scorefxn() ), mc_ptr() ) ), stage1_cycles() ).apply( pose );
 	mc().reset( pose ); // make sure that we keep the final structure
 	if(option[OptionKeys::abinitio::explicit_pdb_debug])
 	{
@@ -452,7 +451,7 @@ void FragmentSampler::do_stage1_cycles( pose::Pose &pose ) {
 }
 
 void FragmentSampler::do_stage2_cycles( pose::Pose &pose ) {
-	moves::RepeatMover( new moves::TrialMover( mover( pose, STAGE_2, current_scorefxn() ), mc_ptr() ), stage2_cycles() ).apply( pose );
+	moves::RepeatMover( moves::MoverOP( new moves::TrialMover( mover( pose, STAGE_2, current_scorefxn() ), mc_ptr() ) ), stage2_cycles() ).apply( pose );
 	if(option[OptionKeys::abinitio::explicit_pdb_debug])
 	{
 		jd2::output_intermediate_pose( pose, "stage2_cycles" );

@@ -118,8 +118,8 @@ public:
 		nonzero_deriv_only_( false )
 	{}
 	inline void set_score_function( core::scoring::ScoreFunction const & sfxn ) { sfxn_ = sfxn.clone(); }
-	inline void set_pose( core::pose::Pose const & p ) { pose_ = new core::pose::Pose( p ); }
-	inline void set_movemap( core::kinematics::MoveMap const & mm ) { move_map_ = new core::kinematics::MoveMap( mm ); }
+	inline void set_pose( core::pose::Pose const & p ) { pose_ = core::pose::PoseOP( new core::pose::Pose( p ) ); }
+	inline void set_movemap( core::kinematics::MoveMap const & mm ) { move_map_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap( mm ) ); }
 	inline void set_nblist_auto_update( bool setting ) { auto_update_ = setting; }
 	inline void set_nonzero_deriv_only( bool setting ) { nonzero_deriv_only_ = setting; }
 	inline void add_res_for_deriv( core::Size resid ) { res_for_derivs_list_.push_back( resid ); }
@@ -130,9 +130,9 @@ public:
 	void validate_atom_deriv_list( AtomDerivList const & atderivs, core::Real tolerance = 1e-12 )
 	{
 
-		TS_ASSERT( pose_ );
-		TS_ASSERT( sfxn_ );
-		TS_ASSERT( move_map_ );
+		TS_ASSERT( pose_ != 0 );
+		TS_ASSERT( sfxn_ != 0 );
+		TS_ASSERT( move_map_ != 0 );
 		if ( ! pose_ || ! sfxn_ || ! move_map_ ) {
 			std::cout << "ERROR: AtomDerivValidator incorrectly initialized" << std::endl;
 			return;
@@ -191,9 +191,9 @@ public:
 	void compute_pose_atom_derivs()
 	{
 
-		TS_ASSERT( pose_ );
-		TS_ASSERT( sfxn_ );
-		TS_ASSERT( move_map_ );
+		TS_ASSERT( pose_ != 0 );
+		TS_ASSERT( sfxn_ != 0 );
+		TS_ASSERT( move_map_ != 0 );
 		if ( ! pose_ || ! sfxn_ || ! move_map_ ) {
 			std::cout << "ERROR: AtomDerivValidator incorrectly initialized" << std::endl;
 			return;
@@ -392,9 +392,9 @@ public:
 	std::pair< core::Real, core::Real >
 	setup_for_minimizing() {
 
-		TS_ASSERT( pose_ );
-		TS_ASSERT( sfxn_ );
-		TS_ASSERT( move_map_ );
+		TS_ASSERT( pose_ != 0 );
+		TS_ASSERT( sfxn_ != 0 );
+		TS_ASSERT( move_map_ != 0 );
 		if ( ! pose_ || ! sfxn_ || ! move_map_ ) {
 			std::cerr << "ERROR: AtomDerivValidator incorrectly initialized" << std::endl;
 			return std::make_pair( -1234, -1234 );
@@ -403,7 +403,7 @@ public:
 		core::Real start_score = (*sfxn_)(*pose_);
 
 		/// BEGIN AtomTreeMinimizer setup block
-		min_map_ = new core::optimization::MinimizerMap;
+		min_map_ = core::optimization::MinimizerMapOP( new core::optimization::MinimizerMap );
 		min_map_->setup( *pose_, *move_map_ );
 
 		pose_->energies().set_use_nblist( *pose_, min_map_->domain_map(), auto_update_ );

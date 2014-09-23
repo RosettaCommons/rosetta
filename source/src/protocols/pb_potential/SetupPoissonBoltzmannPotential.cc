@@ -200,7 +200,7 @@ SetupPB::parse_my_tag( utility::tag::TagCOP tag,
 	// HIGHLY ILLEGAL CONST_CAST TO MODIFY THE INPUT TAG!
 	// INSTEAD, THIS CODE SHOULD REQUIRE THAT "repack 1" IS SET
 	// IN THE INPUT, AND FAIL IF IT IS NOT SET.
-	( const_cast< utility::tag::Tag * > (tag()) )->setOption<bool>("repack",1);
+	( utility::pointer::const_pointer_cast< utility::tag::Tag > (tag) )->setOption<bool>("repack",1);
 
 	std::string scorefxn_name = tag->getOption<std::string>("scorefxn");
 	if( scorefxn_name != "" ) {

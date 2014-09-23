@@ -131,7 +131,7 @@ ChemicalManager::create_singleton_instance()
 
 /// @details if the tag is not in the map, input it from a database file and add it
 /// to the map for future look-up.
-AtomTypeSetCAP
+AtomTypeSetCOP
 ChemicalManager::atom_type_set( std::string const & tag )
 {
 	AtomTypeSets::const_iterator iter;
@@ -176,7 +176,7 @@ ChemicalManager::create_atom_type_set(
 
 /// @details if the tag is not in the map, input it from a database file and add it
 /// to the map for future look-up.
-ElementSetCAP
+ElementSetCOP
 ChemicalManager::element_set( std::string const & tag )
 {
 	ElementSets::const_iterator iter;
@@ -215,7 +215,7 @@ ChemicalManager::create_element_set( std::string const & tag ) const
 
 /// @details if the tag is not in the map, input it from a database file and add it
 /// to the map for future look-up.
-orbitals::OrbitalTypeSetCAP
+orbitals::OrbitalTypeSetCOP
 ChemicalManager::orbital_type_set( std::string const & tag )
 {
 	OrbitalTypeSets::const_iterator iter;
@@ -252,7 +252,7 @@ ChemicalManager::create_orbital_type_set( std::string const & tag ) const
 
 /// @details if the tag is not in the map, input it from a database file and add it
 /// to the map for future look-up.
-MMAtomTypeSetCAP
+MMAtomTypeSetCOP
 ChemicalManager::mm_atom_type_set( std::string const & tag )
 {
 	MMAtomTypeSets::const_iterator iter;
@@ -311,7 +311,7 @@ ChemicalManager::create_mm_atom_type_set( std::string const & tag ) const
 
 ///@ details if the tag is not in the map, input it from a database file and add it
 ///to the map for future look-up.
-ResidueTypeSetCAP
+ResidueTypeSetCOP
 ChemicalManager::residue_type_set( std::string tag )
 {
 
@@ -431,10 +431,10 @@ ChemicalManager::create_residue_type_set( std::string const & tag ) const {
 		// but it is allowed to (indirectly) modify the singleton instance (which, to be fair,
 		// is this instance) through singleton accessor functions.  In particular,
 		// it will lead to the creation of the following *Sets for fa_standard.
-		core::chemical::AtomTypeSetCAP atom_types = ChemicalManager::get_instance()->atom_type_set("fa_standard");
-		core::chemical::ElementSetCAP elements = ChemicalManager::get_instance()->element_set("default");
-		core::chemical::MMAtomTypeSetCAP mm_atom_types = ChemicalManager::get_instance()->mm_atom_type_set("fa_standard");
-		core::chemical::orbitals::OrbitalTypeSetCAP orbital_types = ChemicalManager::get_instance()->orbital_type_set("fa_standard");
+		core::chemical::AtomTypeSetCOP atom_types = ChemicalManager::get_instance()->atom_type_set("fa_standard");
+		core::chemical::ElementSetCOP elements = ChemicalManager::get_instance()->element_set("default");
+		core::chemical::MMAtomTypeSetCOP mm_atom_types = ChemicalManager::get_instance()->mm_atom_type_set("fa_standard");
+		core::chemical::orbitals::OrbitalTypeSetCOP orbital_types = ChemicalManager::get_instance()->orbital_type_set("fa_standard");
 
 		sdf::MolFileIOReader molfile_reader;
 		for(Size i=1, e = molfilevec.size(); i <= e;++i)
@@ -554,16 +554,14 @@ ChemicalManager::create_residue_type_set( std::string const & tag ) const {
 
 
 	std::string const directory( temp_str );
-	ResidueTypeSetOP new_set( new ResidueTypeSet( tag, directory, extra_params_files, extra_patch_files ) );
-	ResidueTypeSetCAP new_setCAP(*new_set);
+	ResidueTypeSetOP new_set( new ResidueTypeSet( tag, directory ) );
+	new_set->init( extra_params_files, extra_patch_files );
 
 	for(core::Size index =0 ;index < extra_residues.size();++index)
 	{
 		//TR << extra_residues[index]->name3() <<std::endl;
 		new_set->add_residue_type(extra_residues[index]);
-		extra_residues[index]->residue_type_set(new_setCAP);
-		ResidueTypeSetCAP new_set_cap(new_set.get());
-		extra_residues[index]->residue_type_set(new_set_cap);
+		extra_residues[index]->residue_type_set(ResidueTypeSetCAP(new_set));
 	}
 
 	return new_set;
@@ -581,9 +579,18 @@ ChemicalManager::nonconst_residue_type_set( std::string const & tag )
 	return *( residue_type_sets_.find( tag )->second );
 }
 
+ResidueTypeSetOP
+ChemicalManager::nonconst_residue_type_set_op( std::string const & tag )
+{
+	// trigger initialization if necessary:
+	residue_type_set( tag );
+
+	return residue_type_sets_.find( tag )->second;
+}
+
 /// @details if the tag is not in the map, input it from a database file and add it
 /// to the map for future look-up.
-IdealBondLengthSetCAP
+IdealBondLengthSetCOP
 ChemicalManager::ideal_bond_length_set( std::string const & tag )
 {
 	IdealBondLengthSets::const_iterator iter;

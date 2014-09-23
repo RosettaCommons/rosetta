@@ -60,7 +60,7 @@ RamachandranEnergyCreator::score_types_for_method() const {
 
 /// ctor
 RamachandranEnergy::RamachandranEnergy() :
-	parent( new RamachandranEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new RamachandranEnergyCreator ) ),
 	potential_( ScoringManager::get_instance()->get_Ramachandran() )
 {}
 

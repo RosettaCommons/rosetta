@@ -103,7 +103,7 @@ namespace copydofs {
 			Size const i = (it->first).rsd(); //Residue index in big pose.
 			Size const j = (it->first).atomno(); //Atom-number index in big pose.
 
- 			core::kinematics::tree::AtomCOP current_atom ( & reference_pose.atom_tree().atom_dont_do_update( AtomID(j,i) ) );
+ 			core::kinematics::tree::AtomCOP current_atom = reference_pose.atom_tree().atom_dont_do_update( AtomID(j,i) ).get_self_ptr();
 
 			if ( !get_scratch_atom_id( current_atom_scratch_atom_id, atom_id_map_, current_atom ) ) {
 				if ( verbose ){ std::cout << "No current atom id? " << " skipping " <<  pose.residue( i ).name1() << i << " " << pose.residue( i ).atom_name( j ) << std::endl;}

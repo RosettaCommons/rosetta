@@ -95,7 +95,7 @@ ResidueDecompositionByChainCalculator::recompute(
 		}
 
 	} else {
-		runtime_assert(this_pose.pdb_info());
+		runtime_assert(this_pose.pdb_info() != 0);
 		// create a map from chain letter to set number
 		std::map<char, core::Size> chain_map;
 		if (chain_letters_.size()) {

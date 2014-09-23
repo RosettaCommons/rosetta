@@ -49,9 +49,9 @@ main( int argc, char *argv[] )
 
 
 		// Extract residues for ease of use.
-		ResidueCAP res1 = & pose.residue(1);
-		ResidueCAP res2 = & pose.residue(2);
-		ResidueCAP res3 = & pose.residue(3);
+		ResidueCOP res1 = pose.residue(1).get_self_ptr();
+		ResidueCOP res2 = pose.residue(2).get_self_ptr();
+		ResidueCOP res3 = pose.residue(3).get_self_ptr();
 
 		cout << "Getters:" << endl;
 		cout << " Residue 1: " << res1->name() << endl;

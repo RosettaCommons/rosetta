@@ -14,6 +14,7 @@
 #ifndef INCLUDED_basic_sampling_orientations_QuaternionGrid_fwd_hh
 #define INCLUDED_basic_sampling_orientations_QuaternionGrid_fwd_hh
 
+#include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
 
 namespace basic {
@@ -21,6 +22,7 @@ namespace sampling {
 namespace orientations {
 
 class QuaternionGrid;
+typedef utility::pointer::owning_ptr<QuaternionGrid const> QuaternionGridCOP;
 typedef utility::pointer::access_ptr<QuaternionGrid const> QuaternionGridCAP;
 
 class QuaternionGridManager;

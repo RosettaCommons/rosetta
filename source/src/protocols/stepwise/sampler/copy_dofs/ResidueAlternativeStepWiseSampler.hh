@@ -22,9 +22,6 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.fwd.hh>
 
-using namespace core::conformation;
-using namespace core::pose;
-
 namespace protocols {
 namespace stepwise {
 namespace sampler {
@@ -60,11 +57,11 @@ namespace copy_dofs {
 
 	public:
 
-		Residue const &
+		core::conformation::Residue const &
 		get_residue_at_origin();
 
-		Residue const &
-		get_residue_at_origin_with_matching_type( Residue const & rsd_in );
+		core::conformation::Residue const &
+		get_residue_at_origin_with_matching_type( core::conformation::Residue const & rsd_in );
 
 		/// @brief Name of the class
 		virtual std::string get_name() const;
@@ -83,12 +80,12 @@ namespace copy_dofs {
 		initialize_residues();
 
 		void
-		initialize_residues_for_type( Residue const & rsd_in );
+		initialize_residues_for_type( core::conformation::Residue const & rsd_in );
 
 	private:
 
 		Size const representative_seqpos_;
-		std::map< std::string, utility::vector1< ResidueOP > > residues_for_each_type_;
+		std::map< std::string, utility::vector1< core::conformation::ResidueOP > > residues_for_each_type_;
 		std::string original_type_;
 
 	};

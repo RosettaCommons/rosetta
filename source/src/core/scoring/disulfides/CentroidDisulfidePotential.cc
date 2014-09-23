@@ -215,24 +215,26 @@ CentroidDisulfidePotential::disulfide_params(
 {
 	using numeric::constants::d::radians_to_degrees;
 
-	conformation::ResidueCAP res1_ptr(&res1);
-	conformation::ResidueCAP res2_ptr(&res2);
+	conformation::ResidueCOP res1_ptr = res1.get_self_ptr();
+	conformation::ResidueCOP res2_ptr = res2.get_self_ptr();
 	// Glycines pose a problem because they have no CB atom.
 	// Therefor mutate Gly to Ala first
 	if(res1.aa() == chemical::aa_gly) {
 		//dummy conformation; would only be used if bb atoms missing, e.g. Pro
-		conformation::Conformation conformation;
-		chemical::ResidueTypeSetCAP restype_set =
+		conformation::ConformationOP conformation_op = new conformation::Conformation();
+		conformation::Conformation & conformation = *conformation_op;
+		chemical::ResidueTypeSetCOP restype_set =
 			chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID );
-		res1_ptr = conformation::ResidueCAP(new conformation::Residue(
+		res1_ptr = conformation::ResidueCOP(new conformation::Residue(
 			restype_set->name_map("ALA"), res1, conformation) );
 	}
 	if(res2.aa() == chemical::aa_gly) {
 		//dummy conformation; would only be used if bb atoms missing, e.g. Pro
-		conformation::Conformation conformation;
-		chemical::ResidueTypeSetCAP restype_set =
+		conformation::ConformationOP conformation_op = new conformation::Conformation();
+		conformation::Conformation & conformation = *conformation_op;
+		chemical::ResidueTypeSetCOP restype_set =
 			chemical::ChemicalManager::get_instance()->residue_type_set( chemical::CENTROID );
-		res2_ptr = conformation::ResidueCAP(new conformation::Residue(
+		res2_ptr = conformation::ResidueCOP(new conformation::Residue(
 			restype_set->name_map("ALA"), res2, conformation) );
 	}
 	//Make sure they both have CB now

@@ -50,6 +50,8 @@ const core::Size JUMP_START = 3;
 const core::Size JUMP_END = 7;
 const core::Size CUT_POS = 5;
 
+using namespace protocols::environment;
+
 class EnvironmentJump : public CxxTest::TestSuite {
 public:
 
@@ -88,14 +90,21 @@ public:
     using namespace protocols::environment::claims;
     using namespace core::environment;
 
-    TesterOP allowed_mover = new Tester( new JumpClaim( *standard_claim_ ) );
-    TesterOP duplicate_claim_mover = new Tester( new JumpClaim( *standard_claim_ ) );
-    TesterOP no_claim_mover = new Tester();
-    TesterOP unreg_mover = new Tester( new JumpClaim( *standard_claim_ ) );
+    TesterOP allowed_mover = new Tester;
+    allowed_mover->init( protocols::environment::claims::EnvClaimOP( new JumpClaim( *standard_claim_ ) ) );
+
+    TesterOP duplicate_claim_mover = new Tester;
+    duplicate_claim_mover->init( protocols::environment::claims::EnvClaimOP( new JumpClaim( *standard_claim_ ) ) );
+    
+    TesterOP no_claim_mover = new Tester;
+
+    TesterOP unreg_mover = new Tester;
+    unreg_mover->init( protocols::environment::claims::EnvClaimOP( new JumpClaim( *standard_claim_ ) ) );
 
     static_cast< JumpClaim* >( duplicate_claim_mover->claim().get() )->cut( core::environment::LocalPosition( "BASE", CUT_POS ) );
 
-    protocols::environment::Environment env( "env" );
+    EnvironmentOP env_op = new Environment( "env" );
+    Environment & env = *env_op;
 
     env.auto_cut( true );
 
@@ -163,9 +172,11 @@ public:
     using namespace protocols::environment::claims;
     using namespace core::environment;
 
-    TesterOP allowed_mover = new Tester( new JumpClaim(*standard_claim_ ) );
+    TesterOP allowed_mover = new Tester;
+    allowed_mover->init( protocols::environment::claims::EnvClaimOP( new JumpClaim(*standard_claim_ ) ) );
 
-    protocols::environment::Environment env( "env" );
+    EnvironmentOP env_op = new Environment( "env" );
+    Environment & env = *env_op;
 
     env.register_mover( allowed_mover );
     TS_ASSERT_THROWS( core::pose::Pose ppose = env.start( pose ), utility::excn::EXCN_BadInput );
@@ -203,9 +214,11 @@ public:
     new_fts.insert_jump( 1, pose.total_residue() );
     pose.fold_tree( *new_fts.render() );
 
-    TesterOP allowed_mover = new Tester( new JumpClaim( *standard_claim_ ) );
+    TesterOP allowed_mover = new Tester;
+    allowed_mover->init( protocols::environment::claims::EnvClaimOP( new JumpClaim( *standard_claim_ ) ) );
 
-    protocols::environment::Environment env( "env" );
+    EnvironmentOP env_op = new Environment( "env" );
+    Environment & env = *env_op;
     env.inherit_cuts( false );
 
     env.register_mover( allowed_mover );
@@ -245,11 +258,12 @@ public:
     using namespace core::pose::datacache;
     using namespace basic::datacache;
 
-    pose.data().set( CacheableDataType::WRITEABLE_DATA, new WriteableCacheableMap() );
+    pose.data().set( CacheableDataType::WRITEABLE_DATA, DataCache_CacheableData::DataOP( new WriteableCacheableMap() ) );
     core::pose::Pose protected_pose;
     core::pose::Pose final_pose;
 
-    protocols::environment::Environment env( "env" );
+    EnvironmentOP env_op = new Environment( "env" );
+    Environment & env = *env_op;
 
     TS_ASSERT_THROWS_NOTHING( protected_pose = env.start( pose ) );
     TS_ASSERT_THROWS_NOTHING( final_pose = env.end( protected_pose ) );
@@ -266,7 +280,8 @@ public:
     info->set_chains( 'A' );
     pose.pdb_info( info );
 
-    protocols::environment::Environment env( "env" );
+    EnvironmentOP env_op = new Environment( "env" );
+    Environment & env = *env_op;
 
     core::pose::Pose protected_pose;
     TS_ASSERT_THROWS_NOTHING( protected_pose = env.start( pose ) );

@@ -62,7 +62,7 @@ DistanceChainbreakEnergyCreator::score_types_for_method() const {
 
 
 DistanceChainbreakEnergy::DistanceChainbreakEnergy() :
-	parent( new DistanceChainbreakEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new DistanceChainbreakEnergyCreator ) )
 {}
 
 /// called at the end of energy evaluation

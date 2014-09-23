@@ -26,6 +26,8 @@
 #ifdef WIN32
 #include <windows.h>  // for sleep()
 #include <ctime>      // for clock()
+#else
+#include <unistd.h>
 #endif
 
 namespace protocols {

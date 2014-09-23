@@ -697,7 +697,7 @@ SeedFoldTree::apply( core::pose::Pose & pose )
 		utility_exit_with_message( "more than 2 chains as input are currently not supported" );
 	}
 
-	runtime_assert( fold_tree_ );
+	runtime_assert( fold_tree_ != 0 );
 
 	TR<<"Previous fold tree: "<< pose.fold_tree()<<'\n';
 	pose.fold_tree( *fold_tree_ );

@@ -107,7 +107,7 @@ MetricValueGetter::get(
 	core::pose::Pose const & pose
 ) const
 {
-	runtime_assert(metric_value_template_);
+	runtime_assert(metric_value_template_ != 0);
 	basic::MetricValueBaseOP new_metric_value(metric_value_template_->clone());
 	pose.metric(calculator_, key_, *new_metric_value);
 	return new_metric_value;

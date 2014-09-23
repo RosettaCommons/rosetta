@@ -167,6 +167,7 @@ void
 LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 {
 	using namespace protocols::loops;
+	using core::pack::task::operation::TaskOperationCOP;
 	pose.conformation().detect_disulfides(); // I don't think that this is important but just in case
 	core::pose::Pose native_pose = pose;
 	loops::set_secstruct_from_psipred_ss2( pose );

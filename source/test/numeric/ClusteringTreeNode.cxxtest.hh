@@ -36,11 +36,11 @@ public:
 
 	    core::Size result[] = {1,2,4,5,3};
 	    core::Size result_leaves[] = {4,5,3};
-	    ClusteringTreeNodeOP lower_left_left = new ClusteringTreeNode(4);
-	    ClusteringTreeNodeOP lower_left_right = new ClusteringTreeNode(5);
-	    ClusteringTreeNodeOP left = new ClusteringTreeNode(2,lower_left_left,lower_left_right);
-	    ClusteringTreeNodeOP right = new ClusteringTreeNode(3);
-	    ClusteringTreeNodeOP root = new ClusteringTreeNode(1,left,right);
+	    ClusteringTreeNodeOP lower_left_left = ClusteringTreeNode::newClusteringTreeNode(4);
+	    ClusteringTreeNodeOP lower_left_right = ClusteringTreeNode::newClusteringTreeNode(5);
+	    ClusteringTreeNodeOP left = ClusteringTreeNode::newClusteringTreeNode(2,lower_left_left,lower_left_right);
+	    ClusteringTreeNodeOP right = ClusteringTreeNode::newClusteringTreeNode(3);
+	    ClusteringTreeNodeOP root = ClusteringTreeNode::newClusteringTreeNode(1,left,right);
 
     	    utility::vector1<Size> ids;
 	    root->copy_member_ids(ids);

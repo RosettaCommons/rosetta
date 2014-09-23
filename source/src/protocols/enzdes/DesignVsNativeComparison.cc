@@ -101,7 +101,7 @@ DesignVsNativeComparison::compare_to_native(
 	//arrghh, bug, when scoring a pose where one of the deleted residues was constrained, program crashes
 	//because the deleted residue survives in the long range energy containers:(
 	//temporary hack workaround: put an empty constraint set into the pureprotpose
-	pureprotpose->constraint_set( new core::scoring::constraints::ConstraintSet() );
+	pureprotpose->constraint_set( core::scoring::constraints::ConstraintSetOP( new core::scoring::constraints::ConstraintSet() ) );
 	core::Real pose_totalE = (*scorefxn)(*pureprotpose );
 
 	//ok, we have our native, now use each of the calculators to compare

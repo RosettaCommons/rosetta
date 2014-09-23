@@ -47,7 +47,7 @@ namespace grafting {
     using core::Size;
     
 CCDEndsGraftMover::CCDEndsGraftMover():
-	AnchoredGraftMover(0, 0)
+	AnchoredGraftMover(0u, 0u) // 0u to avoid spurious rewrite
 {
 	Nter_overhang_length(2);
 	Cter_overhang_length(2);

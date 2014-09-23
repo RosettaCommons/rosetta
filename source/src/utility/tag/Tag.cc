@@ -77,7 +77,6 @@
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 #include <boost/spirit/include/classic_position_iterator.hpp> // for reporting where errors occur
 #include <boost/spirit/include/classic_functor_parser.hpp>
@@ -103,14 +102,16 @@ using namespace std;
 
 utility::vector0<TagCOP> const Tag::vEmpty_; // need to return this from getTags
 
-Tag::Tag() {}
+Tag::Tag() :
+	parentTag_(NULL)
+{}
 
 void Tag::clear() {
 	name_.clear();
 	mOptions_.clear();
 	vTags_.clear();
 	mvTags_.clear();
-	parentTag_ = NULL;
+	parentTag_.reset();
 }
 
 Tag::options_t const&
@@ -125,6 +126,22 @@ TagCOP const &
 Tag::operator[](std::string const& key) const {
 	return getTag(key);
 } // operator[]
+
+Tag &
+Tag::operator=(Tag const &other) {
+
+	clear();
+	name_ = other.name_;
+	mOptions_ = other.mOptions_;
+
+	for( size_t i = 0; i < other.vTags_.size(); ++i ) {
+		TagOP tag = new Tag();
+		*tag = *other.vTags_[i];
+		addTag( tag );
+	}
+
+	return *this;
+}
 
 void Tag::die_for_unaccessed_options() const {
 	options_t::const_iterator option= mOptions_.begin();
@@ -161,7 +178,7 @@ Tag::hasOption( string const& key ) const {
 }
 
 void Tag::addTag( TagOP tag ) {
-	tag->parentTag_ = this;
+	tag->parentTag_ = get_self_weak_ptr();
 	vTags_.push_back(tag);
 	mvTags_[ tag->getName() ].push_back( tag );
 }
@@ -306,7 +323,7 @@ struct tag_closure : public boost::spirit::classic::closure< tag_closure,TagOP >
 
 void set_name_and_options( TagOP & tag, name_and_options_value_type const & v )
 {
-	tag = TagOP( new Tag() );
+	tag = new Tag();
 	tag->setName( v.first );
 	for(  map<string,string>::const_iterator i = v.second.begin(), end_i = v.second.end(); i != end_i ; ++i ) {
 		tag->setOption( i->first, i->second );
@@ -525,7 +542,7 @@ else {
 
 TagOP
 Tag::create(std::istream& in) {
-	TagOP tag( new Tag() );
+	TagOP tag = new Tag();
 	tag->read(in);
 	return tag;
 } // creates a new tag and reads into it
@@ -540,15 +557,8 @@ Tag::create(std::string instring) {
 TagOP
 Tag::clone() const {
 
-	TagOP rval = new Tag;
-
-	rval->name_ = name_;
-	rval->mOptions_ = mOptions_;
-
-	for( size_t i = 0; i < vTags_.size(); ++i ) {
-		rval->addTag( vTags_[i]->clone() );
-	}
-
+	TagOP rval = new Tag();
+	*rval = *this;
 	return rval;
 
 } // Tag::clone

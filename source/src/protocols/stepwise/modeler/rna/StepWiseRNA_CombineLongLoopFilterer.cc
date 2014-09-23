@@ -327,8 +327,9 @@ namespace rna {
 			num_struct_in_range++;
 
 			PoseOP pose_op( new Pose );
-
-			silent_struct->fill_pose( *pose_op, *( rsd_set_ )  );
+			core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_ );
+			
+			silent_struct->fill_pose( *pose_op, *( rsd_set )  );
 
 			Real score( 0.0 );
 			getPoseExtraScore( *pose_op, "score", score );

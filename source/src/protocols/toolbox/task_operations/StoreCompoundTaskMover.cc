@@ -223,7 +223,7 @@ StoreCompoundTaskMover::apply( core::pose::Pose & pose )
 		task_pair.second = it->second;
 		core::pack::task::PackerTaskOP new_packer_task = it->first->create_task_and_apply_taskoperations( pose );
 		task_pair.first = new_packer_task->clone(); //clone?
-		runtime_assert( new_packer_task );
+		runtime_assert( new_packer_task != 0 );
 		compound_task_.push_back( task_pair );
 	}
 
@@ -337,13 +337,13 @@ StoreCompoundTaskMover::parse_my_tag(
   	for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
   	      t_o_key != end; ++t_o_key ) {
     	if ( data_map.has( "task_operations", *t_o_key ) ) {
-      	new_task_factory->push_back( data_map.get< core::pack::task::operation::TaskOperation * >( "task_operations", *t_o_key ) );
+      	new_task_factory->push_back( data_map.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", *t_o_key ) );
     	} else {
       	utility_exit_with_message("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
     	}
   	}
 		factory_pair.first = new_task_factory->clone(); //clone?
-		runtime_assert( new_task_factory );
+		runtime_assert( new_task_factory != 0 );
 		compound_factory_.push_back( factory_pair );
 	}
 }

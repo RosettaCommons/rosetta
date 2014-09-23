@@ -83,7 +83,7 @@ methods::EnergyMethodOP XtalMLEnergyCreator::create_energy_method( methods::Ener
 }
 
 XtalMLEnergy::XtalMLEnergy() :
-	parent( new XtalMLEnergyCreator ) {
+	parent( methods::EnergyMethodCreatorOP( new XtalMLEnergyCreator ) ) {
 	ml=0;
 	dml_dx.clear();
 }

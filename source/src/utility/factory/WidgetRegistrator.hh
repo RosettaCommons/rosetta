@@ -15,6 +15,7 @@
 #ifndef INCLUDED_utility_factory_WidgetRegistrator_hh
 #define INCLUDED_utility_factory_WidgetRegistrator_hh
 
+#include <utility/pointer/owning_ptr.hh>
 
 namespace utility {
 namespace factory {
@@ -28,10 +29,12 @@ namespace factory {
 template< class FACTORY, class CREATOR >
 class WidgetRegistrator
 {
+	typedef utility::pointer::owning_ptr< CREATOR > CREATOROP;
+
 public:
 
 	WidgetRegistrator() {
-		FACTORY::get_instance()->factory_register( new CREATOR );
+		FACTORY::get_instance()->factory_register( CREATOROP( new CREATOR ) );
 	}
 
 };

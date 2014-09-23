@@ -102,7 +102,7 @@ void ClusterPoseSelector::parse_my_tag(
 			protocols::rosetta_scripts::PosePropertyReporterFactory::get_instance()->
 				newPosePropertyReporter( curr_tag, data, filters, movers, pose )
 		);
-		runtime_assert( new_reporter );
+		runtime_assert( new_reporter != 0 );
 		reporter_ = new_reporter;
 		TR << "Defined pose property reporter of type " << curr_tag->getName() << std::endl;
 		// Only first reporter used -- add warning when multiple defined?

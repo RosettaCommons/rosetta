@@ -83,7 +83,8 @@ SetAtomTree::SetAtomTree() :
 	anchor_res_( "" ),
 	connect_from_( "" ),
 	host_chain_( 2 ),
-	fold_tree_( NULL )
+	fold_tree_( NULL ),
+	ab_fold_tree_( false )
 {
 	start_tree_at_chain_ = '\0';
 }
@@ -260,7 +261,7 @@ SetAtomTree::apply( core::pose::Pose & pose )
 	if( simple_ft() ){
 		core::kinematics::FoldTree new_ft;
 		new_ft.clear();
-		core::conformation::Conformation const conf( pose.conformation() );
+		core::conformation::Conformation const & conf = pose.conformation();
 		core::Size jump( 1 );
 		for( core::Size chain = 1; chain <= conf.num_chains(); ++chain ){
 			new_ft.add_edge( conf.chain_begin( chain ), conf.chain_end( chain ), -1 );

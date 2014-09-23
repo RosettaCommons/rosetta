@@ -61,7 +61,7 @@ public:
 	/// @brief Creates an appropriate TaskFactory based on command line options and attach it to a DockingHighResOP
 	///		Two arguments: DockingHighResOP and a pose.
 	void create_and_attach_task_factory(
-		DockingHighResOP docker,
+		DockingHighRes * docker,
 		core::pose::Pose const & pose
 	) const;
 	/// @brief Sets booleans to default values

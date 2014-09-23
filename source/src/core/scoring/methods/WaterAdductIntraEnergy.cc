@@ -53,7 +53,7 @@ WaterAdductIntraEnergyCreator::score_types_for_method() const {
 
 /// ctor
 WaterAdductIntraEnergy::WaterAdductIntraEnergy() :
-	parent( new WaterAdductIntraEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new WaterAdductIntraEnergyCreator ) )
 {}
 
 /// clone

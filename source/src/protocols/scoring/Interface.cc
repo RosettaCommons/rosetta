@@ -460,9 +460,9 @@ Interface::symmetric_protein_calculate( core::pose::Pose const & pose )
 	SymmetricConformation const & SymmConf (
     dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );
   SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() );
-	core::scoring::symmetry::SymmetricEnergiesCOP energies
+	core::scoring::symmetry::SymmetricEnergies const & energies
 					( dynamic_cast< core::scoring::symmetry::SymmetricEnergies const & > ( pose.energies() ) );
-	core::scoring::EnergyGraph const & energy_graph( energies()->energy_graph() );
+	core::scoring::EnergyGraph const & energy_graph( energies.energy_graph() );
 
 	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 		if ( symm_info->bb_is_independent(i) ) {

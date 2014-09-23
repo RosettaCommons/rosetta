@@ -266,7 +266,7 @@ void CircularPermutation::apply( Pose & pose )
 	MoveMap movemap;
 	Size nt = chain_end - ( new_terminal_pos_ - chain_begin ) + 1;
 	BuildManager manager;
-	manager.add( new SegmentSwap( Interval( nt, nt+2 ), movemap, swap_in ) );
+	manager.add( forge::build::BuildInstructionOP( new SegmentSwap( Interval( nt, nt+2 ), movemap, swap_in ) ) );
 	manager.modify( pose );
 
 	// delete the final residues added at the terminal of the chain

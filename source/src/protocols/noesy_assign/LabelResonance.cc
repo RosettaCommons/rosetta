@@ -81,7 +81,8 @@ bool LabelResonance::match2D(
 
 	// does the label match?
 	for ( ResonanceAPs::const_iterator pit = connected_resonances().begin(); pit != connected_resonances().end(); ++pit ) {
-		Resonance const& proton( **pit );
+		ResonanceOP r( *pit );
+		Resonance const& proton( *r );
 		matches.push_back( std::make_pair( proton.label(), label() ) );
 	}
 	return true;

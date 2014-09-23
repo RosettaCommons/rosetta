@@ -149,7 +149,7 @@ SecondaryMatchProtocol::do_matching(
 	poses_to_process.clear();
 
 	//this might be a little iffy, come back to this if it causes problems
-	poses_to_process.push_back( & start_pose );
+	poses_to_process.push_back( start_pose.get_self_ptr() );
 
 	core::pose::PoseCOP ref_pose( new core::pose::Pose( start_pose ) );
 	//core::pose::Pose ref_pose = start_pose;
@@ -171,7 +171,8 @@ SecondaryMatchProtocol::do_matching(
 	//first we'll clone the missing params
 	for( utility::vector1< toolbox::match_enzdes_util::EnzConstraintParametersCOP >::const_iterator tmp_it = tmp_params.begin();
 			 tmp_it != tmp_params.end(); ++tmp_it) {
-		match_params_.push_back( new toolbox::match_enzdes_util::EnzConstraintParameters( **tmp_it) );
+		toolbox::match_enzdes_util::EnzConstraintParametersOP p = new toolbox::match_enzdes_util::EnzConstraintParameters( **tmp_it );
+		match_params_.push_back( p );
 	}
 
 	core::Size num_res_to_match = match_params_.size();
@@ -264,12 +265,13 @@ SecondaryMatchProtocol::add_enz_cst_interaction_to_pose(
 
 	//create poly A pose of neighbors
 	protocols::toolbox::pose_manipulation::construct_poly_ala_pose( pose, trial_positions_, true, true, true );
+	core::chemical::ResidueTypeSetCOP restype_set_op( restype_set() );
 
-	core::conformation::Residue ala_res( restype_set()->name_map("ALA"), true );
+	core::conformation::Residue ala_res( restype_set_op->name_map("ALA"), true );
 
 	for( utility::vector1< std::string >::const_iterator resi_it = trial_restypes.begin(); resi_it != trial_restypes.end(); ++resi_it ){
 
-		core::conformation::Residue trial_res( restype_set()->name_map( *resi_it ), true );
+		core::conformation::Residue trial_res( restype_set_op->name_map( *resi_it ), true );
 
 		tr << "starting search for restype " << *resi_it << "... ";
 
@@ -277,7 +279,7 @@ SecondaryMatchProtocol::add_enz_cst_interaction_to_pose(
 
 			tr << "searching position " << *pos_try_it << "... ";
 
-			if( ! restype_possible_at_position( pose, & trial_res.type(), & pose.residue( target_residue ), *pos_try_it ) ) continue;
+			if( ! restype_possible_at_position( pose, trial_res.type().get_self_ptr(), pose.residue( target_residue ).get_self_ptr(), *pos_try_it ) ) continue;
 
 			utility::vector1< std::string > current_variants;
 			bool match = variants_match( pose.residue_type( *pos_try_it ), trial_res.type() );
@@ -300,7 +302,7 @@ SecondaryMatchProtocol::add_enz_cst_interaction_to_pose(
 			//gotta mark the new residue in the constraint object
 			cstio->set_position_for_missing_res_in_parameter_block( pose, params->cst_block(), *pos_try_it );
 
-			cstio()->add_constraints_to_pose_for_block_without_clearing_and_header_processing( pose, reduced_scofx_, params->cst_block() );
+			cstio->add_constraints_to_pose_for_block_without_clearing_and_header_processing( pose, reduced_scofx_, params->cst_block() );
 
 
 			core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
@@ -427,7 +429,9 @@ SecondaryMatchProtocol::generate_and_dump_pose_found_residues_combinations( core
 
 	//process_poses.push_back( ref_poseCOP );
 
-	process_combos.push_back( new PoseFoundResiduesCombination( ref_poseCOP, this ) );
+	process_combos.push_back( new PoseFoundResiduesCombination( ref_poseCOP,
+		SecondaryMatchProtocolCAP( utility::pointer::dynamic_pointer_cast< SecondaryMatchProtocol const >( get_self_ptr() ) )
+	) );
 
 
 	for( utility::vector1< utility::vector1< core::conformation::ResidueOP > >::iterator param_it = found_resis_.begin();
@@ -634,6 +638,8 @@ PoseFoundResiduesCombination::construct_and_dump_outpose(
 	if( num_resis_to_combine != match_params.size() ){
 		utility_exit_with_message("ERROR: number of matching parameters doesn't fit number of residues.\n");
 	}
+	
+	SecondaryMatchProtocolCOP secmatch_prot( secmatch_prot_ );
 
 	for( core::Size i = 1; i <= num_resis_to_combine; ++i){
 
@@ -693,7 +699,7 @@ PoseFoundResiduesCombination::construct_and_dump_outpose(
 		for( core::Size j = i + 1; j <= num_resis_to_combine; ++j){
 
 			//if( ! residues_compatible_without_checking( combine_resis_[i], combine_resis_[j] ) ){
-			if( secmatch_prot_->residues_compatible( combine_resis_[i], combine_resis_[j] ) == 0 ) {
+			if( secmatch_prot->residues_compatible( combine_resis_[i], combine_resis_[j] ) == 0 ) {
 				all_residues_compatible = false;
 				return false;
 			}

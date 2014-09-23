@@ -78,6 +78,9 @@ void set_rb_constraints(
 	core::Real cst_stdev,
 	core::Size cst_seqwidth
                    ) {
+					   
+	using core::scoring::constraints::ConstraintCOP;
+	
 	core::scoring::constraints::ConstraintSetOP new_csts =	new core::scoring::constraints::ConstraintSet;
 
 	for (int i =  1; i <= (int)rbsegs.size(); ++i) {
@@ -95,11 +98,12 @@ void set_rb_constraints(
 					// only constrain protein residues
 					if (!cst_pose.residue(cst_ij).is_protein()) continue;
 
+					core::scoring::func::FuncOP fx( new core::scoring::constraints::BoundFunc(0,cst_width,cst_stdev,"xyz") );
 					core::scoring::constraints::ConstraintOP newcst_ij = new core::scoring::constraints::CoordinateConstraint(
 											 core::id::AtomID( pose.residue(resmap[cst_i]).atom_index("CA"), resmap[cst_i]),
 											 core::id::AtomID( pose.residue(pose.total_residue()).atom_index("ORIG"), pose.total_residue()),
 											 cst_pose.residue(cst_ij).xyz( "CA" ),
-											 new core::scoring::constraints::BoundFunc(0,cst_width,cst_stdev,"xyz") );
+											  fx );
 
 
 					// make sure not randomized <<<< kind of hacky
@@ -131,6 +135,9 @@ void set_constraints(
 	core::Real cst_stdev,
 	core::Size cst_seqwidth
                    ) {
+
+	using core::scoring::constraints::ConstraintCOP;
+
 	if (pose.total_residue() != cst_pose.total_residue()) {
 		TR.Warning << "set_constraints() error: #res in cst_pose (" << cst_pose.total_residue()
 		            << ") != #res in pose (" << pose.total_residue() << ").  Continuing..." << std::endl;
@@ -147,11 +154,12 @@ void set_constraints(
 			// only constrain protein residues
 			if (!cst_pose.residue(cst_ij).is_protein()) continue;
 
+			core::scoring::func::FuncOP fx( new core::scoring::constraints::BoundFunc(0,cst_width,cst_stdev,"xyz") );
 			core::scoring::constraints::ConstraintOP newcst_ij = new core::scoring::constraints::CoordinateConstraint(
 				core::id::AtomID( pose.residue(cst_i               ).atom_index("CA"  ), cst_i),
 				core::id::AtomID( pose.residue(pose.total_residue()).atom_index("ORIG"), pose.total_residue()),
 				cst_pose.residue(cst_ij).xyz( "CA" ),
-				new core::scoring::constraints::BoundFunc(0,cst_width,cst_stdev,"xyz")
+				fx
 			);
 
 			// make sure not randomized <<<< kind of hacky

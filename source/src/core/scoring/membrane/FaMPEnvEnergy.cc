@@ -77,8 +77,8 @@ FaMPEnvEnergyCreator::score_types_for_method() const {
 FaMPEnvEnergy::FaMPEnvEnergy( etable::MembEtableCAP memb_etable_in ) :
 	parent( new FaMPEnvEnergyCreator ),
 	memb_etable_( memb_etable_in ),
-	lk_dgrefce_( memb_etable_->lk_dgrefce() ),
-	memb_lk_dgrefce_( memb_etable_->memb_lk_dgrefce() )
+	lk_dgrefce_( memb_etable_.lock()->lk_dgrefce() ), // FIXME: check lock() success
+	memb_lk_dgrefce_( memb_etable_.lock()->memb_lk_dgrefce() ) // FIXME: check lock() success
 {}
 
 /// @brief Clone Energy Method

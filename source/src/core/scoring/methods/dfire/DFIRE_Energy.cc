@@ -62,7 +62,7 @@ DFIRE_EnergyCreator::score_types_for_method() const {
 
 /// ctor
 DFIRE_Energy::DFIRE_Energy() :
-	parent( new DFIRE_EnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new DFIRE_EnergyCreator ) )
 {
 	potential_is_loaded_ = core::scoring::methods::dfire::get_DFIRE_potential().is_loaded();
 }

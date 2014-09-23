@@ -118,7 +118,7 @@ bool pose_to_binary_silent_file( std::ostream &output, const std::string &tag, c
 
 bool pose_from_binary_silent_file( const std::string &filename, const std::string &tag, pose::Pose &pose, bool fullatom ){
 	using namespace core::chemical;
-	ResidueTypeSetCAP residue_set;
+	ResidueTypeSetCOP residue_set;
 	pose::Pose tmppose;
 	if( fullatom ) residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 	else           residue_set = ChemicalManager::get_instance()->residue_type_set( CENTROID );
@@ -347,7 +347,7 @@ bool CheckPointer::recover_checkpoint(
 	if( fullatom ) checkpoint_id += "_fa";
 
 
-	ResidueTypeSetCAP residue_set;
+	ResidueTypeSetCOP residue_set;
 
 
 	// Make sure the check point exists - presence of the silent file indicates so.

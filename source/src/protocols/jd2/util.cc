@@ -212,7 +212,7 @@ void set_native_in_mover( protocols::moves::Mover &mover ){
 
 	if ( option[ in::file::native ].user() ) {
 		core::pose::PoseOP native_pose = new core::pose::Pose;
-		core::chemical::ResidueTypeSetCAP rsd_set;
+		core::chemical::ResidueTypeSetCOP rsd_set;
  		if ( option[ in::file::fullatom ]() ) {
  			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
  		} else {

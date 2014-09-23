@@ -1637,7 +1637,7 @@ DynamicAggregateFunction::process_ENTITY_FUNCTION_line(
 	entfunc->initialize_from_input_file( iss );
 
 	save_scalar_variable( entityfunc_name, line_number );
-	entity_funcs_[ entityfunc_name ] = std::make_pair( entfunc, new SurrogateVariableExpression( entityfunc_name ) );
+	entity_funcs_[ entityfunc_name ] = std::make_pair( entfunc, SurrogateVariableExpressionOP( new SurrogateVariableExpression( entityfunc_name ) ) );
 	entity_funcs_dec_line_[ entityfunc_name ] = line_number;
 }
 

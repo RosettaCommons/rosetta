@@ -69,7 +69,7 @@ public:
 	void test_num_neighbors_selector_parse_my_tag_w_defaults() {
 		std::string tag_string = "<NumNeighbors name=nneighbs_rs/>";
 		std::stringstream ss( tag_string );
-		utility::tag::TagOP tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
@@ -90,7 +90,7 @@ public:
 	void test_num_neighbors_selector_parse_my_tag() {
 		std::string tag_string = "<NumNeighbors name=nneighbs_rs count_water=false threshold=8 distance_cutoff=5.5 />";
 		std::stringstream ss( tag_string );
-		utility::tag::TagOP tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 

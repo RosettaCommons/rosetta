@@ -181,7 +181,7 @@ main( int argc, char* argv [] ) {
 
 	core::import_pose::pose_stream::MetaPoseInputStream input
 		= core::import_pose::pose_stream::streams_from_cmd_line();
-	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
 
 	Pose native;
 	core::import_pose::pose_from_pdb(

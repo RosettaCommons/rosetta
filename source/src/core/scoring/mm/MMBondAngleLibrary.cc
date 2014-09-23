@@ -64,10 +64,12 @@ static thread_local basic::Tracer TR( "core.mm.MMBondAngleLibrary" );
 /// @details Construct a MMBondAngleLibrary instant from a filename string and constant access pointer to an MMAtomTypeSet
 MMBondAngleLibrary::MMBondAngleLibrary(
 	 std::string filename,
-	 core::chemical::MMAtomTypeSetCAP mm_atom_set
+	 core::chemical::MMAtomTypeSetCAP mm_atom_set_ap
 )
 {
-	mm_atom_set_ = mm_atom_set;
+	mm_atom_set_ = mm_atom_set_ap;
+
+	core::chemical::MMAtomTypeSetCOP mm_atom_set( mm_atom_set_ );
 
 	// read the file
 	std::string line;
@@ -95,14 +97,14 @@ MMBondAngleLibrary::MMBondAngleLibrary(
 			>> atom_type_string_3;
 
 		// skip the parameters if any of the atom types don't exist
-		if ( ! mm_atom_set_->contains_atom_type( atom_type_string_1 ) ) continue;
-		if ( ! mm_atom_set_->contains_atom_type( atom_type_string_2 ) ) continue;
-		if ( ! mm_atom_set_->contains_atom_type( atom_type_string_3 ) ) continue;
+		if ( ! mm_atom_set->contains_atom_type( atom_type_string_1 ) ) continue;
+		if ( ! mm_atom_set->contains_atom_type( atom_type_string_2 ) ) continue;
+		if ( ! mm_atom_set->contains_atom_type( atom_type_string_3 ) ) continue;
 
 		// get atom-type_index from atom set
-		int atom_type_int1 = mm_atom_set_->atom_type_index( atom_type_string_1 );
-		int atom_type_int2 = mm_atom_set_->atom_type_index( atom_type_string_2 );
-		int atom_type_int3 = mm_atom_set_->atom_type_index( atom_type_string_3 );
+		int atom_type_int1 = mm_atom_set->atom_type_index( atom_type_string_1 );
+		int atom_type_int2 = mm_atom_set->atom_type_index( atom_type_string_2 );
+		int atom_type_int3 = mm_atom_set->atom_type_index( atom_type_string_3 );
 
 		// get k_theta and minimum
 		Real k_theta, minimum;
@@ -128,7 +130,7 @@ MMBondAngleLibrary::MMBondAngleLibrary(
 	}
 
 	/// apl -- add "no-op" pair for virtual atoms
-	int const virt_type = mm_atom_set_->atom_type_index("VIRT");
+	int const virt_type = mm_atom_set->atom_type_index("VIRT");
 	Real const no_op_k_theta( 0.0 );
 	Real const no_op_minimum( 0.0 );
 	fully_assigned_mm_bondangle_library_.insert( std::make_pair(
@@ -163,7 +165,8 @@ MMBondAngleLibrary::lookup (
 			mm_bondangle_atom_tri( atom3, atom2, atom1 ) );
 	}
 
-	int const virt_atom_type = mm_atom_set_->atom_type_index( virt_string );
+	core::chemical::MMAtomTypeSetCOP mm_atom_set( mm_atom_set_ );
+	int const virt_atom_type = mm_atom_set->atom_type_index( virt_string );
 
 	// Virtual atoms get no mm-parameters.  Return the no-op torsion object
 	if ( atom1 == virt_atom_type ||
@@ -174,7 +177,7 @@ MMBondAngleLibrary::lookup (
 	}
 
 
-	int const wild_atom_type = mm_atom_set_->atom_type_index( x_string );
+	int const wild_atom_type = mm_atom_set->atom_type_index( x_string );
 
 	if( wildcard_mm_bondangle_library_.count(
 			mm_bondangle_atom_tri( wild_atom_type, atom2, wild_atom_type ) ) ) {
@@ -183,8 +186,8 @@ MMBondAngleLibrary::lookup (
 			mm_bondangle_atom_tri( wild_atom_type, atom2, wild_atom_type ) );
 	}
 
-	TR << "No parameters for " << (*mm_atom_set_)[atom1].name() << "-" << (*mm_atom_set_)[atom2].name() << "-"
-	   << (*mm_atom_set_)[atom3].name() << std::endl;
+	TR << "No parameters for " << (*mm_atom_set)[atom1].name() << "-" << (*mm_atom_set)[atom2].name() << "-"
+	   << (*mm_atom_set)[atom3].name() << std::endl;
 	//return fully_assigned_mm_bondangle_library_.equal_range(
 	//  mm_bondangle_atom_tri( virt_atom_type, virt_atom_type, virt_atom_type ));
 	if ( ! basic::options::option[ basic::options::OptionKeys::MM::ignore_missing_bondangle_params ]() )
@@ -204,9 +207,10 @@ MMBondAngleLibrary::lookup
  std::string atom3
 ) const
 {
-	return (*this).lookup( mm_atom_set_->atom_type_index( atom1 ),
-		mm_atom_set_->atom_type_index( atom2 ),
-		mm_atom_set_->atom_type_index( atom3 ) );
+	core::chemical::MMAtomTypeSetCOP mm_atom_set( mm_atom_set_ );
+	return (*this).lookup( mm_atom_set->atom_type_index( atom1 ),
+		mm_atom_set->atom_type_index( atom2 ),
+		mm_atom_set->atom_type_index( atom3 ) );
 }
 
 void

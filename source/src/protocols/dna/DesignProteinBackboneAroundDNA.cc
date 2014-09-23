@@ -180,7 +180,7 @@ DesignProteinBackboneAroundDNA::apply( Pose & pose )
 	//this 'second-shell' TaskFactory will be used for packer operations during the backbone protocols
 	TaskFactoryOP task_factory2 = new TaskFactory;
 
-	task_factory2->push_back( new IncludeCurrent );
+	task_factory2->push_back( operation::TaskOperationCOP( new IncludeCurrent ) );
 	// the following will disable packing outside of the neighborhood around design_positions
 
 	toolbox::task_operations::RestrictToNeighborhoodOperationOP nbop(
@@ -191,8 +191,7 @@ DesignProteinBackboneAroundDNA::apply( Pose & pose )
 	if ( ! designable_second_shell_ ) task_factory2->push_back( new RestrictToRepacking );
 
 	// prevent DNA packing/designing
-	task_factory2->push_back(
-		new OperateOnCertainResidues( new RestrictToRepackingRLT, new ResidueHasProperty("DNA") ) );
+	task_factory2->push_back( new OperateOnCertainResidues( ResLvlTaskOperationOP(new RestrictToRepackingRLT), ResFilterOP(new ResidueHasProperty("DNA")) ) );
 
 	// make loops
 	loops::LoopsOP loops_to_move = new Loops();
@@ -298,15 +297,15 @@ DesignProteinBackboneAroundDNA::ccd(
 	TaskFactoryCOP task_factory2
 )
 {
-	loops::loop_mover::refine::LoopMover_Refine_CCD refine_ccd( loops, score_function()->clone() );
-	refine_ccd.outer_cycles( cycles_outer_ );
-	refine_ccd.max_inner_cycles( cycles_inner_ );
-	refine_ccd.repack_period( repack_rate_ );
-	refine_ccd.temp_initial( temp_initial_ );
-	refine_ccd.temp_final( temp_final_ );
-	refine_ccd.set_native_pose( new Pose( pose ) );
-	refine_ccd.set_task_factory( task_factory2 );
-	refine_ccd.apply( pose );
+	loops::loop_mover::refine::LoopMover_Refine_CCDOP refine_ccd( new loops::loop_mover::refine::LoopMover_Refine_CCD( loops, score_function()->clone() ) );
+	refine_ccd->outer_cycles( cycles_outer_ );
+	refine_ccd->max_inner_cycles( cycles_inner_ );
+	refine_ccd->repack_period( repack_rate_ );
+	refine_ccd->temp_initial( temp_initial_ );
+	refine_ccd->temp_final( temp_final_ );
+	refine_ccd->set_native_pose( new Pose( pose ) );
+	refine_ccd->set_task_factory( task_factory2 );
+	refine_ccd->apply( pose );
 }
 
 void

@@ -31,7 +31,7 @@ WaterPackingInfo::WaterPackingInfo( WaterPackingInfo const & src ):
 	data_( src.data_ )
 {
 	for ( Size i=1; i<= data_.size(); ++i ) {
-		if ( data_[ i ] ) data_[i] = new WaterAnchorInfo( *data_[i] );
+		if ( data_[ i ] ) data_[i] = WaterAnchorInfoOP( new WaterAnchorInfo( *data_[i] ) );
 	}
 }
 
@@ -44,7 +44,7 @@ WaterAnchorInfo &
 WaterPackingInfo::operator[] ( Size const seqpos ) {
 	if ( seqpos > data_.size() ) data_.resize( seqpos, 0 );
 	if ( data_[seqpos] == 0 ) {
-		data_[seqpos] = new WaterAnchorInfo();
+		data_[seqpos] = WaterAnchorInfoOP( new WaterAnchorInfo() );
 	}
 	return *( data_[ seqpos ] );
 }

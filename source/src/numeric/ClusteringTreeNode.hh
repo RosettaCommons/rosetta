@@ -24,10 +24,14 @@
 
 #include <iostream>
 
+
 namespace numeric {
 
 
 class ClusteringTreeNode : public utility::pointer::ReferenceCount {
+
+private:
+    ClusteringTreeNode() {}
 
 public:
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
@@ -35,49 +39,63 @@ public:
 
     /// @brief Creates a node with no leaves
     /// @detailed leaves are NULLs, parent is set to this
-    ClusteringTreeNode(Size id) {
+    static ClusteringTreeNodeOP
+    newClusteringTreeNode() {
+      ClusteringTreeNodeOP new_node( new ClusteringTreeNode() );
+      new_node->this_weak_ptr_ = ClusteringTreeNodeAP( new_node );
+      return new_node;
+    }
 
-	id_ = id;
-	parent_ = this;
-	size_ = 1;
-	distance_ = 0.0;
-	left_ = right_ = 0;
+    static ClusteringTreeNodeOP
+    newClusteringTreeNode(Size id) {
+      ClusteringTreeNodeOP new_node = newClusteringTreeNode();
+      new_node->id_ = id;
+      new_node->parent_ = new_node->this_weak_ptr_;
+      new_node->size_ = 1;
+      new_node->distance_ = 0.0;
+      new_node->left_ = 0;
+      new_node->right_ = 0;
+      return new_node;
     }
 
     /// @brief Creates a node with given leaves
     /// @detailed parent of the newly created node is set to itself (this pointer); left and right nodes are also chilred of this
-    ClusteringTreeNode(Size id,ClusteringTreeNodeOP left,ClusteringTreeNodeOP right,Real distance = 0.0) {
-
-	parent_ = this;
-	left_ = left;
-	left_->parent_ = this;
-	right_ = right;
-	right_->parent_ = this;
-	id_ = id;
-	distance_ = distance;
-	size_ = left->size_ + right_->size_;
-//	std::cerr<< "Cluster "<<id_<<" created from "<<left_->id_<<" and "<<right_->id_<<" dist: "<<distance<<", size: "<<size_<<"\n";
+    static ClusteringTreeNodeOP
+    newClusteringTreeNode(Size id,ClusteringTreeNodeOP left,ClusteringTreeNodeOP right,Real distance = 0.0) {
+			ClusteringTreeNodeOP new_node = newClusteringTreeNode();
+      new_node->left_ = left;
+      new_node->right_ = right;
+      new_node->id_ = id;
+      new_node->distance_ = distance;
+      new_node->size_ = left->size_ + right->size_;
+      left->parent_ = new_node->this_weak_ptr_;
+      right->parent_ = new_node->this_weak_ptr_;
+//      std::cerr<< "Cluster "<<id_<<" created from "<<left_->id_<<" and "<<right_->id_<<" dist: "<<distance<<", size: "<<size_<<"\n";
+      return new_node;
     }
 
     void reset_all_flags() {
 
-	flag_ = 0;
-	if(left_) left_->reset_all_flags();
-	if(right_) right_->reset_all_flags();
+      flag_ = 0;
+
+		  ClusteringTreeNodeOP left_op = left(), right_op = right();
+      if(left_op) left_op->reset_all_flags();
+      if(right_op) right_op->reset_all_flags();
     }
 
     void set_all_flags(Size new_flag_value) {
 
-	if(left_) left_->set_all_flags(new_flag_value);
-	if(right_) right_->set_all_flags(new_flag_value);
-	flag_ = new_flag_value;
+		  ClusteringTreeNodeOP left_op = left(), right_op = right();
+      if(left_op) left_op->set_all_flags(new_flag_value);
+      if(right_op) right_op->set_all_flags(new_flag_value);
+      flag_ = new_flag_value;
     }
 
     ClusteringTreeNodeOP left() { return left_; }
 
     ClusteringTreeNodeOP right() { return right_; }
 
-    ClusteringTreeNodeOP parent() { return parent_; }
+    ClusteringTreeNodeOP parent() { return parent_.lock(); }
 
     Real distance() { return distance_; }
 
@@ -85,11 +103,11 @@ public:
 
     Size id() { return id_; }
 
-    void left(ClusteringTreeNodeOP new_left) { left_ = new_left; }
+    void left(ClusteringTreeNodeAP new_left) { left_ = new_left.lock(); }
 
-    void right(ClusteringTreeNodeOP new_right) { left_ = new_right; }
+    void right(ClusteringTreeNodeAP new_right) { left_ = new_right.lock(); }
 
-    void parent(ClusteringTreeNodeOP new_parent) { parent_ = new_parent; }
+    void parent(ClusteringTreeNodeAP new_parent) { parent_ = new_parent; }
 
     bool was_visited() { return flag_ == 2; }
 
@@ -99,23 +117,26 @@ public:
 
     void copy_member_ids(utility::vector1<Size> & dst) {
 
-	dst.push_back(id_);
-	if(left_) left_->copy_member_ids(dst);
-	if(right_) right_->copy_member_ids(dst);
+      dst.push_back(id_);
+		  ClusteringTreeNodeOP left_op = left(), right_op = right();
+      if(left_op) left_op->copy_member_ids(dst);
+      if(right_op) right_op->copy_member_ids(dst);
     }
 
     void copy_leaf_ids(utility::vector1<Size> & dst) {
 
-	if(left_ || right_) {
-	    if(left_) left_->copy_leaf_ids(dst);
-	    if(right_) right_->copy_leaf_ids(dst);
-	} else {
-	    dst.push_back(id_);
-	}
+      if(left_ || right_) {
+        ClusteringTreeNodeOP left_op = left(), right_op = right();
+        if(left_op) left_op->copy_leaf_ids(dst);
+        if(right_op) right_op->copy_leaf_ids(dst);
+      } else {
+        dst.push_back(id_);
+      }
     }
 
 private:
-    ClusteringTreeNodeOP parent_;
+    ClusteringTreeNodeAP this_weak_ptr_;
+    ClusteringTreeNodeAP parent_;
     ClusteringTreeNodeOP left_;
     ClusteringTreeNodeOP right_;
     Size flag_; /// 0 - not visited; 1 - visited 1; 2 - visited 1 & 2

@@ -12,6 +12,9 @@
 /// @author Phil Bradley
 /// @author Modified by Vikram K. Mulligan (vmullig@uw.edu) to try to start to remove the assumption that all polymer connections are to the i+1 and i-1 residues.
 
+/// Note: Don't use get_self_weak_ptr() here for Events as it causes
+/// seg faults, double free corruption or just won't compile with
+/// std:: pointers (can't use shared_from_this() in c'tor and d'tor).
 
 // Unit headers
 #include <core/conformation/Conformation.hh>
@@ -116,6 +119,9 @@ Conformation::Conformation() :
 // copy constructor
 Conformation::Conformation( Conformation const & src ) :
 	utility::pointer::ReferenceCount()
+#ifdef PTR_MODERN
+	, utility::pointer::enable_shared_from_this< Conformation >()
+#endif
 {
 	basic::ProfileThis doit( basic::CONFORMATION_COPY );
 	// residues
@@ -145,9 +151,7 @@ Conformation::Conformation( Conformation const & src ) :
 
 	dof_moved_ = src.dof_moved_;
 	xyz_moved_ = src.xyz_moved_;
-
 	structure_moved_ = src.structure_moved_;
-
 }
 
 // equals operator
@@ -211,7 +215,7 @@ Conformation::operator=( Conformation const & src )
 ConformationOP
 Conformation::clone() const
 {
-  return new Conformation( *this );
+	return new Conformation(*this);
 }
 
 // clear data
@@ -506,7 +510,6 @@ Conformation::set_membrane_info( membrane::MembraneInfoOP mem_info )
 	membrane_info_ = mem_info;
 }
 
-
 /// @brief Returns the MembraneInfo object in conformation
 /// @details Membrane Info contains information describing location of the
 /// membrane virtual residue in the pose sequence, membrane spanning region definitions
@@ -583,14 +586,14 @@ Conformation::fold_tree( FoldTree const & fold_tree_in )
 
 // Residues //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-ResidueCAPs
+ResidueCOPs
 Conformation::const_residues() const
 {
 	// setup ResidueCAPs object
 	conformation::ResidueCAPs const_rsds;
 	for ( Size i=1; i<= size(); ++i ) {
 		// pointer conversions are really annoying
-		const_rsds.push_back( &( *residues_[i] ) );
+		const_rsds.push_back( ResidueCAP( residues_[i] ) );
 	}
 	return const_rsds;
 }

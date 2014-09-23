@@ -546,23 +546,24 @@ OptEMultifunc::mpi_receive_dfunc(
 #endif
 }
 
-WrapperOptEMultifunc::WrapperOptEMultifunc(
+WrapperOptEMultifunc::WrapperOptEMultifunc() {}
+
+void WrapperOptEMultifunc::init(
 	ScoreTypes const & free_score_list,
 	Size free_count,
 	ScoreTypes const & fixed_score_list,
 	EnergyMap  const & fixed_scores,
 	OptEMultifuncOP optEfunc
-)
-:
-	free_score_list_( free_score_list ),
-	fixed_score_list_( fixed_score_list ),
-	fixed_scores_( fixed_scores ),
+) {
 	//optE_dof_expressions_( optEfunc->fix_reference_energies() ? free_count : free_count + chemical::num_canonical_aas, 0 ),
 	//active_variables_( optE_dof_expressions_.size() ),
-	multifunc_( optEfunc ),
-	// n_new_dofs_( 0 ),
-	n_real_dofs_( free_count )
-{
+	free_score_list_ = free_score_list;
+	n_real_dofs_ = free_count;
+	fixed_score_list_ = fixed_score_list;
+	fixed_scores_ = fixed_scores;
+	multifunc_ = optEfunc;
+	//n_new_dofs_ = 0;
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::scoring;
@@ -596,7 +597,7 @@ WrapperOptEMultifunc::WrapperOptEMultifunc(
 	/// This variable absolutely should not ever be held as an owning pointer
 	/// through a member variable of the class, or you will have a cycle
 	/// in the ownership graph and leak memory.
-	WrappedOptEExpressionCreator expression_creator( this );
+	WrappedOptEExpressionCreator expression_creator( get_self_weak_ptr() );
 
 	std::ifstream wrapper_file( option[ optE::wrap_dof_optimization ]()().c_str() );
 	bool finished_new_dof_header( false );
@@ -907,7 +908,8 @@ WrappedOptEExpressionCreator::~WrappedOptEExpressionCreator() {}
 numeric::expression_parser::ExpressionCOP
 WrappedOptEExpressionCreator::handle_variable_expression( ArithmeticASTValue const & node )
 {
-	return multifunc_->register_variable_expression( node.variable_name() );
+	WrapperOptEMultifuncOP multifunc( multifunc_ );
+	return multifunc->register_variable_expression( node.variable_name() );
 }
 
 numeric::expression_parser::ExpressionCOP

@@ -48,7 +48,7 @@ SA_EnergyCreator::score_types_for_method() const {
 
 /// c-tor
 SA_Energy::SA_Energy() :
-	parent( new SA_EnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new SA_EnergyCreator ) )
 {}
 
 

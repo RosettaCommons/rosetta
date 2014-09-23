@@ -53,7 +53,7 @@ DDPscoreCreator::score_types_for_method() const {
 
 
 DDPscore::DDPscore() :
-		parent( new DDPscoreCreator ),
+		parent( methods::EnergyMethodCreatorOP( new DDPscoreCreator ) ),
 		lookup_table_( core::scoring::ScoringManager::get_instance()->get_DDPLookupTable() )
 { }
 

@@ -167,10 +167,11 @@ claims::EnvClaims RigidChunkCM::yield_claims( core::pose::Pose const& in_p,
   }
 
   loops::Loop loop_prev;
+  ClaimingMoverOP this_ptr = utility::pointer::static_pointer_cast< ClaimingMover > ( get_self_ptr() );
 
   for ( loops::Loops::const_iterator loop_it = rigid_core_.begin();
         loop_it != rigid_core_.end(); ++loop_it ) {
-    XYZClaimOP xyz_claim = new XYZClaim( this,
+    XYZClaimOP xyz_claim = new XYZClaim( this_ptr,
                                          label(),
                                          std::make_pair( loop_it->start(),
                                                          loop_it->stop() ) );
@@ -179,27 +180,27 @@ claims::EnvClaims RigidChunkCM::yield_claims( core::pose::Pose const& in_p,
 
 
     if( loop_it->start() > 1 ){
-      XYZClaimOP support_claim = new XYZClaim( this,
+      XYZClaimOP support_claim = new XYZClaim( this_ptr,
                                                LocalPosition( label(), loop_it->start()-1 ) );
       support_claim->strength( DOES_NOT_CONTROL, MUST_CONTROL );
       claims.push_back( support_claim );
     }
 
     if( loop_it->stop() < template_->total_residue() ){
-      XYZClaimOP support_claim = new XYZClaim( this,
+      XYZClaimOP support_claim = new XYZClaim( this_ptr,
                                                LocalPosition( label(), loop_it->stop()+1 ) );
       support_claim->strength( DOES_NOT_CONTROL, MUST_CONTROL );
       claims.push_back( support_claim );
     }
 
-    claims.push_back( new CutBiasClaim( this, label(), std::make_pair( loop_it->start(), loop_it->stop() ), 0.0 ) );
+    claims.push_back( new CutBiasClaim( this_ptr, label(), std::make_pair( loop_it->start(), loop_it->stop() ), 0.0 ) );
 
     if( loop_prev.start() != 0 && loop_prev.stop() != 0 ){
       core::Size jump_start = loop_prev.start() + ( ( loop_prev.stop() - loop_prev.start() ) / 2 );
       core::Size jump_end   = loop_it->start() +  ( ( loop_it->stop()  - loop_it->start()  ) / 2 );
 
 
-      JumpClaimOP j_claim = new JumpClaim( this,
+      JumpClaimOP j_claim = new JumpClaim( this_ptr,
                                            "RigidChunkJump"+utility::to_string( claims.size()/4 ),
                                            LocalPosition( label(), jump_start ),
                                            LocalPosition( label(), jump_end ) );

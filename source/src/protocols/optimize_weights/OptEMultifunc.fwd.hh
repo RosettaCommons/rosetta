@@ -24,6 +24,8 @@ namespace optimize_weights {
 class OptEMultifunc;
 typedef utility::pointer::owning_ptr< OptEMultifunc > OptEMultifuncOP;
 typedef utility::pointer::owning_ptr< OptEMultifunc const > OptEMultifuncCOP;
+typedef utility::pointer::access_ptr< OptEMultifunc > OptEMultifuncAP;
+typedef utility::pointer::access_ptr< OptEMultifunc const > OptEMultifuncCAP;
 
 class WrapperOptEMultifunc;
 typedef utility::pointer::owning_ptr< WrapperOptEMultifunc > WrapperOptEMultifuncOP;

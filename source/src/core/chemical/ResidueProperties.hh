@@ -43,10 +43,12 @@ namespace chemical {
 class ResidueProperties : public utility::pointer::ReferenceCount {
 public:  // Standard methods //////////////////////////////////////////////////
 	/// @brief  Constructor with owning ResidueType
-	ResidueProperties( ResidueTypeCAP residue_type );
+	// Note: Can't use ResidueTypeCAP here because ResidueProperties is created in the ResidueType c'tor,
+	// where the self weak pointer is not available yet. residue_type_ here is used only for Tracer output.
+	ResidueProperties( ResidueType const * residue_type );
 
 	/// @brief  Copy constructor
-	ResidueProperties( ResidueProperties const & object_to_copy, ResidueTypeCAP new_owner );
+	ResidueProperties( ResidueProperties const & object_to_copy, ResidueType const * new_owner );
 
 	// Destructor
 	virtual ~ResidueProperties();
@@ -169,7 +171,7 @@ public:  // Other public methods //////////////////////////////////////////////
 
 private:  // Private methods //////////////////////////////////////////////////
 	// Initialize data members.
-	void init( ResidueTypeCAP residue_type );
+	void init( ResidueType const * residue_type );
 
 	// Copy all data members from <from> to <to>.
 	void copy_data( ResidueProperties & to, ResidueProperties const & from );
@@ -212,7 +214,7 @@ public:  // FIXME: Reset this to private; I made it public to work as a temp fix
 
 private:  // Private data /////////////////////////////////////////////////////
 	// Back pointer to the owning ResidueType
-	ResidueTypeCAP residue_type_;  // useful for tracer output
+	ResidueType const * residue_type_;  // useful for tracer output
 
 	// Storage of general properties.
 	utility::vector1< bool > general_property_status_;  // indexed by ResidueProperty

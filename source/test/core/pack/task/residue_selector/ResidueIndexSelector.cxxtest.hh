@@ -50,7 +50,7 @@ public:
 	void test_ResidueIndexSelector_parse_my_tag() {
 		std::string tag_string = "<Index name=index_rs resnums=5,7-8/>";
 		std::stringstream ss( tag_string );
-		utility::tag::TagPtr tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
@@ -79,7 +79,7 @@ public:
 	void test_ResidueIndexSelector_parse_my_tag_mixed_str() {
 		std::string tag_string = "<Index name=index_rs resnums=2,3-4A />";
 		std::stringstream ss( tag_string );
-		utility::tag::TagPtr tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
@@ -109,7 +109,7 @@ public:
 	void test_NeighbohoodResidueSelector_fail_no_resnums() {
 		std::string tag_string = "<Index name=index_rs />";
 		std::stringstream ss( tag_string );
-		utility::tag::TagPtr tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 

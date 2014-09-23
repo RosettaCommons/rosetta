@@ -87,7 +87,7 @@ poses_from_cmd_line(
 	using core::import_pose::pose_from_pdb;
 	using namespace core::chemical;
 
-	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
 	map< string, Pose > poses;
 
 	typedef vector1< string >::const_iterator iter;
@@ -218,7 +218,7 @@ main( int argc, char* argv [] ) {
 	bool have_native( false );
 	if ( option[ in::file::native ].user() ) {
 		core::import_pose::pose_from_pdb(
-			*native_pose, *(rsd_set_from_cmd_line()), option[ in::file::native ]()
+			*native_pose, *(rsd_set_from_cmd_line().lock()), option[ in::file::native ]()
 		);
 		have_native = true;
 	}
@@ -319,7 +319,7 @@ main( int argc, char* argv [] ) {
 					make_pose_from_sequence(
 						query_pose,
 						ungapped_query,
-						*(rsd_set_from_cmd_line())
+						*(rsd_set_from_cmd_line().lock())
 					);
 					template_pose = pose_it->second;
 					PartialThreadingMover mover(*it,template_pose);

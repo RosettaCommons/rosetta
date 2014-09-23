@@ -172,10 +172,10 @@ AddEncounterConstraintMover::generate_encounter_cst( pose::Pose & pose) {
 InterfaceInfo const &
 AddEncounterConstraintMover::interface_from_pose( pose::Pose const & pose ) const
 {
-  InterfaceInfo const* ptr = static_cast< InterfaceInfo const * >(
-	      pose.data().get_const_ptr( pose::datacache::CacheableDataType::INTERFACE_INFO )()
+  InterfaceInfoCOP ptr = utility::pointer::static_pointer_cast< InterfaceInfo const >(
+	      pose.data().get_const_ptr( pose::datacache::CacheableDataType::INTERFACE_INFO )
   );
-  if ( ptr == NULL ) {
+  if ( !ptr ) {
     utility_exit_with_message( "cannot find interface information !!!\nMake sure that docking::setup_foldtree()\
       has been called, for instance by using the DockSetupMover before the AddEncounterConstraintMover" );
   }

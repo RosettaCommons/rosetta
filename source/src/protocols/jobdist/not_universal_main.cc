@@ -105,7 +105,7 @@ int not_universal_main(
 	using std::string;
 	using utility::vector1;
 
-	core::chemical::ResidueTypeSetCAP rsd_set;
+	core::chemical::ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(
 		option[ in::file::residue_type_set ]()
 	);

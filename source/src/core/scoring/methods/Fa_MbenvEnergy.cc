@@ -56,7 +56,7 @@ methods::EnergyMethodOP
 Fa_MbenvEnergyCreator::create_energy_method(
   methods::EnergyMethodOptions const & options
 ) const {
-  return new Fa_MbenvEnergy(*( ScoringManager::get_instance()->memb_etable( options.etable_type() )) );
+  return new Fa_MbenvEnergy(*( ScoringManager::get_instance()->memb_etable( options.etable_type() ).lock() ) );
 }
 
 ScoreTypes
@@ -68,7 +68,7 @@ Fa_MbenvEnergyCreator::score_types_for_method() const {
 
 
 Fa_MbenvEnergy::Fa_MbenvEnergy( etable::MembEtable const & memb_etable_in):
-  parent( new Fa_MbenvEnergyCreator ),
+  parent( methods::EnergyMethodCreatorOP( new Fa_MbenvEnergyCreator ) ),
   memb_etable_(memb_etable_in),
   lk_dgrefce_(memb_etable_in.lk_dgrefce()),
   memb_lk_dgrefce_(memb_etable_in.memb_lk_dgrefce()),

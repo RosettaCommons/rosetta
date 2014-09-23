@@ -112,7 +112,7 @@ dna_test(){
 	using namespace core::pose;
 	using namespace core::id;
 
-	ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+	ResidueTypeSetCOP rsd_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
 	// Create an extended pose from scratch.
 	std::string sequence = "acgt";

@@ -114,25 +114,26 @@ SearchPatternOP PlaceSurfaceProbe::create_search_pattern(core::pose::Pose const 
 							search_density_));
 
 	core::Real expected_course_search_bound = std::sqrt(search_density_);
-	SearchPatternOP residue_sampling_pattern(
-			new ComposeSearchPatterns(
-				new SphericalRotationSearchPattern(
-					coarse_angle_sampling_,
-					coarse_angle_sampling_,
-					coarse_angle_sampling_,
-					0, 360,
-					0, 90,
-					0, 360),
-				new CartesianSearchPattern(
-					0,
-					coarse_sampling_,
-					coarse_sampling_,
-					0, 0,
-					-(expected_course_search_bound / 2),
-					expected_course_search_bound / 2,
-					-(expected_course_search_bound / 2),
-					expected_course_search_bound / 2)));
 
+	SearchPatternOP spherical_rotation_pattern( new SphericalRotationSearchPattern(
+		coarse_angle_sampling_,
+		coarse_angle_sampling_,
+		coarse_angle_sampling_,
+		0, 360,
+		0, 90,
+		0, 360) );
+
+	SearchPatternOP cartesian_pattern( new CartesianSearchPattern(
+		0,
+		coarse_sampling_,
+		coarse_sampling_,
+		0, 0,
+		-(expected_course_search_bound / 2),
+		expected_course_search_bound / 2,
+		-(expected_course_search_bound / 2),
+		expected_course_search_bound / 2) );
+		
+	SearchPatternOP residue_sampling_pattern( new ComposeSearchPatterns(spherical_rotation_pattern, cartesian_pattern) );
 	core::pose::Pose residue_pose;
 
 	ResidueOP virtual_bb_residue = core::pose::add_variant_type_to_residue(*target_residue_, core::chemical::VIRTUAL_BB, target_pose);
@@ -192,23 +193,27 @@ SearchPatternOP PlaceSurfaceProbe::create_refinement_pattern(core::pose::Pose co
 
 SearchPatternOP PlaceSurfaceProbe::initialize_refinement_pattern()
 {
-	return new ComposeSearchPatterns(
-				new SphericalRotationSearchPattern(
-					refinement_angle_sampling_,
-					refinement_angle_sampling_,
-					refinement_angle_sampling_,
-					0, coarse_angle_sampling_,
-					0, coarse_angle_sampling_,
-					0, coarse_angle_sampling_),
-				new CartesianSearchPattern(
-					refinement_sampling_,
-					refinement_sampling_,
-					refinement_sampling_,
-					-refinement_distance_, refinement_distance_,
-					-(coarse_sampling_ / 2),
-					coarse_sampling_ / 2,
-					-(coarse_sampling_ / 2),
-					coarse_sampling_ / 2));
+	SearchPatternOP spherical_rotation_pattern(
+	new SphericalRotationSearchPattern(
+		refinement_angle_sampling_,
+		refinement_angle_sampling_,
+		refinement_angle_sampling_,
+		0, coarse_angle_sampling_,
+		0, coarse_angle_sampling_,
+		0, coarse_angle_sampling_) );
+		
+	SearchPatternOP cartesian_pattern( 
+	new CartesianSearchPattern(
+		refinement_sampling_,
+		refinement_sampling_,
+		refinement_sampling_,
+		-refinement_distance_, refinement_distance_,
+		-(coarse_sampling_ / 2),
+		coarse_sampling_ / 2,
+		-(coarse_sampling_ / 2),
+		coarse_sampling_ / 2) );
+		
+	return new ComposeSearchPatterns(spherical_rotation_pattern, cartesian_pattern);
 }
 
 void

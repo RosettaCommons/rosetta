@@ -14,6 +14,7 @@
 
 // Unit headers
 #include <core/kinematics/AtomTree.hh>
+#include <core/kinematics/tree/Atom.fwd.hh>
 #include <core/kinematics/ResidueCoordinateChangeList.hh>
 
 // Package headers
@@ -108,7 +109,7 @@ AtomTree::AtomTree( AtomTree const & src ) :
 
 void AtomTree::set_weak_pointer_to_self( AtomTreeCAP self_pointer )
 {
-	assert( self_pointer() == this );
+	assert( utility::pointer::equal(self_pointer, this) );
 	this_weak_ptr_ = self_pointer;
 }
 
@@ -123,7 +124,7 @@ AtomTree::find_root_from_atom_pointer()
 			assert( atom_pointer_[i][j] && atom_pointer_[i][j]->id() == AtomID( j,i ) );
 			if ( atom_pointer_[i][j]->parent() == 0 ) {
 				assert( !root_ );
-				root_ = atom_pointer_[i][j]();
+				root_ = atom_pointer_[i][j];
 			}
 		}
 	}
@@ -364,7 +365,7 @@ AtomTree::replace_residue_subtree(
 	} else {
 		assert( root_ == old_root_atom );
 		root_ = new_root_atom;
-		new_root_atom->parent(0);
+		new_root_atom->parent(tree::AtomAP());
 	}
 
 
@@ -1140,7 +1141,7 @@ AtomTree::operator=( AtomTree const & src )
 		return *this;
 	}
 
-	if ( topological_match_to_() == &src || src.topological_match_to_() == this ) {
+	if ( utility::pointer::equal(topological_match_to_, &src) || utility::pointer::equal(src.topological_match_to_, this) ) {
 		/// Why include the second condition: src.topological_match_to_ == this ?
 		/// As an optimization for the common case when atom trees are being copied
 		/// back and forth into each other as happens in repeated calls to MC::boltzman.
@@ -1155,7 +1156,7 @@ AtomTree::operator=( AtomTree const & src )
 
 		// copy tree (recursive)
 		if ( src.root_ ) {
-			root_ = src.root_->clone( 0 /*parent=0*/, atom_pointer_ );
+			root_ = src.root_->clone( tree::AtomAP() /*parent=0*/, atom_pointer_ );
 		}
 
 		internal_coords_need_updating_ = src.internal_coords_need_updating_;
@@ -1166,15 +1167,16 @@ AtomTree::operator=( AtomTree const & src )
 
 	}
 
-	if ( topological_match_to_() != & src ) {
-		if ( topological_match_to_() != 0 ) {
-			assert( this_weak_ptr_ );
-			topological_match_to_->detatch_topological_observer( this_weak_ptr_ );
+	if ( !utility::pointer::equal(topological_match_to_, (&src)) ) {
+		AtomTreeCOP topological_match_to( topological_match_to_.lock() );
+		if ( topological_match_to ) {
+			assert( !this_weak_ptr_.expired() );
+			topological_match_to->detatch_topological_observer( this_weak_ptr_ );
 		}
 		/// topological observation only allowed if both this, and src hold weak pointers to themselves.
 		/// If either AtomTree had been declared on the stack, or if the code that instantiated either one
 		/// never gave them their weak-pointer-to-selves, then the observer system is bypassed.
-		if ( this_weak_ptr_ && src.this_weak_ptr_ ) {
+		if ( !this_weak_ptr_.expired() && !src.this_weak_ptr_.expired() ) {
 			src.attach_topological_observer( this_weak_ptr_ );
 		}
 	}
@@ -1352,28 +1354,29 @@ AtomTree::note_coordinate_change_registered() const
 /// tree may only be the topological copy of a single other atom tree, though several
 /// atom trees may be copies of a single atom tree.
 void
-AtomTree::attach_topological_observer( AtomTreeCAP observer ) const
+AtomTree::attach_topological_observer( AtomTreeCAP observer_ap ) const
 {
-	assert( observer->this_weak_ptr_ && this_weak_ptr_ );
-	assert( observer->topological_match_to_ == 0 );
+	AtomTreeCOP observer( observer_ap );
+	assert( !observer->this_weak_ptr_.expired() && !this_weak_ptr_.expired() );
+	assert( observer->topological_match_to_.expired() );
 	bool resize_topo_observers_array_( false );
 	for ( Size ii = 1; ii <= topological_observers_.size(); ++ii ) {
-		if ( topological_observers_[ ii ] == 0 ) {
+		if ( topological_observers_[ ii ].expired() ) {
 			resize_topo_observers_array_ = true;
 			/// Make sure the observer is not already observing me
-			assert( topological_observers_[ ii ] != observer );
+			assert( !utility::pointer::equal(topological_observers_[ ii ], observer) );
 		}
 	}
 
 	if ( resize_topo_observers_array_ ) {
 		Size n_valid( 0 );
 		for ( Size ii = 1; ii <= topological_observers_.size(); ++ii ) {
-			if ( topological_observers_[ ii ] != 0 ) ++n_valid;
+			if ( !topological_observers_[ ii ].expired() ) ++n_valid;
 		}
 		utility::vector1< AtomTreeCAP > valid_observers;
 		valid_observers.reserve( n_valid + 1 );
 		for ( Size ii = 1; ii <= topological_observers_.size(); ++ii ) {
-			if ( topological_observers_[ ii ] != 0 ) valid_observers.push_back( topological_observers_[ ii ] );
+			if ( !topological_observers_[ ii ].expired() ) valid_observers.push_back( topological_observers_[ ii ] );
 		}
 		topological_observers_.swap( valid_observers );
 	}
@@ -1390,7 +1393,7 @@ AtomTree::attach_topological_observer( AtomTreeCAP observer ) const
 void
 AtomTree::notify_topological_change( AtomTreeCAP ASSERT_ONLY( observee ) ) const
 {
-	assert( observee == topological_match_to_ );
+	assert( utility::pointer::equal(observee, topological_match_to_) );
 	topological_match_to_ = 0;
 }
 
@@ -1399,19 +1402,20 @@ AtomTree::notify_topological_change( AtomTreeCAP ASSERT_ONLY( observee ) ) const
 /// When this happens, this AtomTree marks the observer's position in
 /// its list of observers as null.
 void
-AtomTree::detatch_topological_observer( AtomTreeCAP observer ) const
+AtomTree::detatch_topological_observer( AtomTreeCAP observer_ap ) const
 {
-	assert( observer->topological_match_to_() == this );
+	AtomTreeCOP observer( observer_ap );
+	assert( utility::pointer::equal(observer->topological_match_to_, this) );
 #ifndef NDEBUG
 	bool found( false );
 #endif
 	for ( Size ii = 1; ii <= topological_observers_.size(); ++ii ) {
-		if ( topological_observers_[ ii ] == observer ) {
+		if ( utility::pointer::equal(topological_observers_[ ii ], observer) ) {
 #ifndef NDEBUG
 			found = true;
 #endif
-			topological_observers_[ ii ] = 0;
-			observer->topological_match_to_ = 0;
+			topological_observers_[ ii ].reset();
+			observer->topological_match_to_.reset();
 			break;
 		}
 	}
@@ -1426,12 +1430,14 @@ AtomTree::detatch_topological_observer( AtomTreeCAP observer ) const
 void
 AtomTree::set_new_topology()
 {
-	if ( topological_match_to_ != 0 ) {
-		topological_match_to_->detatch_topological_observer( this );
+	AtomTreeCOP topological_match_to = topological_match_to_.lock();
+	if ( topological_match_to ) {
+		topological_match_to->detatch_topological_observer( this_weak_ptr_ );
 	}
 	for ( Size ii = 1; ii <= topological_observers_.size(); ++ii ) {
-		if ( topological_observers_[ ii ] != 0 ) {
-			topological_observers_[ ii ]->notify_topological_change( this );
+		AtomTreeCOP topological_observers_ii = topological_observers_[ ii ].lock();
+		if ( topological_observers_ii ) {
+			topological_observers_ii->notify_topological_change( this_weak_ptr_ );
 		}
 	}
 	topological_observers_.clear();

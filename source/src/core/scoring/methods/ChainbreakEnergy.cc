@@ -52,7 +52,7 @@ ChainbreakEnergyCreator::score_types_for_method() const
 }
 
 
-ChainbreakEnergy::ChainbreakEnergy() : parent( new ChainbreakEnergyCreator )
+ChainbreakEnergy::ChainbreakEnergy() : parent( methods::EnergyMethodCreatorOP( new ChainbreakEnergyCreator ) )
 {}
 
 

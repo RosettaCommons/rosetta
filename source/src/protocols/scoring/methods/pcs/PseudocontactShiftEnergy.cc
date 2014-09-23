@@ -119,7 +119,7 @@ PCS_Energy::~PCS_Energy(){
 
 /// c-tor
 PCS_Energy::PCS_Energy() :
-	parent( new PseudocontactShiftEnergyCreator )
+	parent( core::scoring::methods::EnergyMethodCreatorOP( new PseudocontactShiftEnergyCreator ) )
 {}
 
 /// clone

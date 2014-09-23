@@ -98,7 +98,7 @@ MPI_WorkUnitManager_Slave::process_inbound_wus()
 	// for every workunit on the stack send execute it and transfer it to the outbound queue
 	while( inbound().size() > 0 ){
 		// run the WU
-		runtime_assert( inbound().next() );
+		runtime_assert( inbound().next() != 0 );
 		TRDEBUG << "Slave: " << mpi_rank() << " running WU..." << std::endl;
 
 		// special rule for wait workunit. Basically count execution of a wait workunit as

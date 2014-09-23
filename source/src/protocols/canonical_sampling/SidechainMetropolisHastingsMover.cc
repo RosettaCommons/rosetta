@@ -161,14 +161,14 @@ SidechainMetropolisHastingsMover::apply( core::pose::Pose & pose )
 	}
 
 
-	runtime_assert( ig );
+	runtime_assert( ig != 0 );
 
 	ig->initialize( pose );
 	Real last_accepted_prop_density( 1.0 );
 	Real last_accepted_dE( 0.0 );
 	for ( Size ct = 1; ct <= ntrials(); ct++) {
 		protocols::simple_moves::sidechain_moves::SidechainMoverBaseOP move = dynamic_cast< protocols::simple_moves::sidechain_moves::SidechainMoverBase* >( random_mover().get() );
-		runtime_assert( move ); //fow now only Sidechain Movers...
+		runtime_assert( move != 0 ); //fow now only Sidechain Movers...
 
 		Size resid = move->suggest_residue_number( pose );
 		conformation::ResidueOP new_state( new conformation::Residue( pose.residue( resid ) ) );

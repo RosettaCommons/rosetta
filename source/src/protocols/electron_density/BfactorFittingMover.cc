@@ -135,7 +135,7 @@ BfactorMultifunc::BfactorMultifunc(
 ///  pose with B factors --> multivec
 void
 BfactorMultifunc::poseBfacts2multivec( core::pose::Pose & pose, core::optimization::Multivec &y ) const {
-	runtime_assert( pose.pdb_info() );  // must exist
+	runtime_assert( pose.pdb_info() != 0 );  // must exist
 
 	core::Size natoms = moving_atoms_.size();
 	y.resize(natoms);
@@ -153,7 +153,7 @@ BfactorMultifunc::poseBfacts2multivec( core::pose::Pose & pose, core::optimizati
 ///   multivec ---> pose B factors
 void
 BfactorMultifunc::multivec2poseBfacts( core::optimization::Multivec const &y, core::pose::Pose & pose ) const {
-	runtime_assert( pose.pdb_info() );  // must exist
+	runtime_assert( pose.pdb_info() != 0 );  // must exist
 
 	core::Size natoms = moving_atoms_.size();
 	runtime_assert( y.size() == natoms );

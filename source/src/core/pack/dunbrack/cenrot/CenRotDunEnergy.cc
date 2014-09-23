@@ -108,12 +108,11 @@ void CenRotDunEnergy::residue_energy(
 	
 	//cal single residue cenrot lib
 	RotamerLibrary const & rotlibCAP = RotamerLibrary::get_instance();
-	SingleResidueRotamerLibraryCAP residue_rotamer_library(rotlibCAP.get_rsd_library(rsd.type()));
-
+	SingleResidueRotamerLibraryCOP residue_rotamer_library = rotlibCAP.get_rsd_library( rsd.type() ).lock();
 	if (residue_rotamer_library==0) return;
 
-	SingleResidueCenrotLibraryCAP residue_cenrot_library(
-		dynamic_cast< SingleResidueCenrotLibrary const * >(residue_rotamer_library.get())
+	SingleResidueCenrotLibraryCOP residue_cenrot_library(
+		utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >(residue_rotamer_library)
 	);
 
 	RotamerLibraryScratchSpace scratch; //dummy
@@ -150,15 +149,15 @@ Real CenRotDunEnergy::eval_residue_dof_derivative(
 		if ( rsd.is_virtual_residue() ) return 0.0;
 
 		RotamerLibrary const & rotlibCAP = RotamerLibrary::get_instance();
-		SingleResidueRotamerLibraryCAP residue_rotamer_library(rotlibCAP.get_rsd_library(rsd.type()));
+		SingleResidueRotamerLibraryCOP residue_rotamer_library = rotlibCAP.get_rsd_library(rsd.type()).lock();
 
 		if (residue_rotamer_library==0) return 0.0;
 
-		SingleResidueCenrotLibraryCAP residue_cenrot_library(
-			dynamic_cast< SingleResidueCenrotLibrary const * >(residue_rotamer_library.get())
+		SingleResidueCenrotLibraryCOP residue_cenrot_library(
+			utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >(residue_rotamer_library)
 		);
 
-		if ( residue_cenrot_library && rsd.is_protein() && tor_id.type() == id::BB ) {
+		if ( residue_cenrot_library != 0 && rsd.is_protein() && tor_id.type() == id::BB ) {
 			RotamerLibraryScratchSpace scratch;
 			residue_cenrot_library->eval_rotameric_energy_bb_dof_deriv(rsd, scratch);
 
@@ -192,12 +191,11 @@ Real CenRotDunEnergy::eval_dof_derivative(
 		if ( pose.residue( tor_id.rsd() ).is_virtual_residue() ) return 0.0;
 
 		RotamerLibrary const & rotlibCAP = RotamerLibrary::get_instance();
-		SingleResidueRotamerLibraryCAP residue_rotamer_library(rotlibCAP.get_rsd_library(pose.residue( tor_id.rsd() ).type()));
-
+		SingleResidueRotamerLibraryCOP residue_rotamer_library = rotlibCAP.get_rsd_library(pose.residue( tor_id.rsd() ).type()).lock();
 		if (residue_rotamer_library==0) return 0.0;
 
-		SingleResidueCenrotLibraryCAP residue_cenrot_library(
-			dynamic_cast< SingleResidueCenrotLibrary const * >(residue_rotamer_library.get())
+		SingleResidueCenrotLibraryCOP residue_cenrot_library(
+			utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >(residue_rotamer_library)
 		);
 
 		if (residue_cenrot_library && pose.residue_type( tor_id.rsd() ).is_protein() && tor_id.type() == id::BB) {
@@ -229,12 +227,11 @@ void CenRotDunEnergy::eval_residue_derivatives(
 	
 	//cal single residue cenrot lib
 	RotamerLibrary const & rotlibCAP = RotamerLibrary::get_instance();
-	SingleResidueRotamerLibraryCAP residue_rotamer_library(rotlibCAP.get_rsd_library(rsd.type()));
-
+	SingleResidueRotamerLibraryCOP residue_rotamer_library = rotlibCAP.get_rsd_library(rsd.type()).lock();
 	if (residue_rotamer_library==0) return;
 
-	SingleResidueCenrotLibraryCAP residue_cenrot_library(
-		dynamic_cast< SingleResidueCenrotLibrary const * >(residue_rotamer_library.get())
+	SingleResidueCenrotLibraryCOP residue_cenrot_library(
+		utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >(residue_rotamer_library)
 	);
 
 	//get xyz of all the 4 atoms

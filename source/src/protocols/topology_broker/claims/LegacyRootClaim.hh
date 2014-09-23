@@ -51,12 +51,12 @@ namespace claims {
 class LegacyRootClaim : public DofClaim {
 	//this class could also specify which atoms to use for the jumps --- but I never used this so far.... might be necessary for Zn jumps.
 public:
-	LegacyRootClaim( TopologyClaimer* tc, core::Size pos1, ClaimRight right = DofClaim::CAN_INIT ) :
+	LegacyRootClaim( TopologyClaimerAP tc, core::Size pos1, ClaimRight right = DofClaim::CAN_INIT ) :
 		DofClaim( tc, right ),
 		pos1_( pos1 )
 	{}
 
-	LegacyRootClaim( TopologyClaimer* tc, std::pair< std::string, core::Size > local_position, ClaimRight right = DofClaim::CAN_INIT ) :
+	LegacyRootClaim( TopologyClaimerAP tc, std::pair< std::string, core::Size > local_position, ClaimRight right = DofClaim::CAN_INIT ) :
 		DofClaim( tc, right ),
 		local_position_ ( local_position )
 	{}

@@ -1991,7 +1991,7 @@ ScoreFunction::set_weight( ScoreType const & t, Real const & setting )
 			}
 			if ( ! has_nonzero_weight ) {
 				score_function_info_current_ = false; // cached score_function_info_ object no longer up-to-date
-				remove_method( const_cast< EnergyMethod * > (method()) ); // cast to non-const, though, all this does is delete the object
+				remove_method( utility::pointer::const_pointer_cast< EnergyMethod > (method) ); // cast to non-const, though, all this does is delete the object
 			}
 		} else {
 			// Nothing needs doing.  Early return.  Be careful of intrares status and check_methods() for early returns!!!
@@ -2090,14 +2090,14 @@ ScoreFunction::update_intrares_energy_status()
 			iter_end = cd_2b_methods_.end(); iter != iter_end; ++iter ) {
 		if ( (*iter)->defines_intrares_energy(weights())) {
 			any_intrares_energies_ = true;
-			cd_2b_intrares_.push_back( (*iter)() );
+			cd_2b_intrares_.push_back( (*iter) );
 		}
 	}
 	for ( CD_LR_2B_Methods::const_iterator iter = cd_lr_2b_methods_.begin(),
 			iter_end = cd_lr_2b_methods_.end(); iter != iter_end; ++iter ) {
 		if ( (*iter)->defines_intrares_energy(weights())) {
 			any_intrares_energies_ = true;
-			cd_2b_intrares_.push_back( (*iter)() );
+			cd_2b_intrares_.push_back( (*iter) );
 		}
 	}
 
@@ -2105,14 +2105,14 @@ ScoreFunction::update_intrares_energy_status()
 			iter_end = ci_2b_methods_.end(); iter != iter_end; ++iter ) {
 		if ( (*iter)->defines_intrares_energy( weights() )) {
 			any_intrares_energies_ = true;
-			ci_2b_intrares_.push_back( (*iter)() );
+			ci_2b_intrares_.push_back( (*iter) );
 		}
 	}
 	for ( CI_LR_2B_Methods::const_iterator iter = ci_lr_2b_methods_.begin(),
 			iter_end = ci_lr_2b_methods_.end(); iter != iter_end; ++iter ) {
 		if ( (*iter)->defines_intrares_energy( weights() )) {
 			any_intrares_energies_ = true;
-			ci_2b_intrares_.push_back( (*iter)() );
+			ci_2b_intrares_.push_back( (*iter) );
 		}
 	}
 }

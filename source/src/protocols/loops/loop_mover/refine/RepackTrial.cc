@@ -136,8 +136,9 @@ void RepackTrial::apply( Pose & pose )
 	// show( TR );
 
 	//main_repack_trial
-	if ( (loop_mover()->current_cycle_number() % loop_mover()->repack_period() ) == 0 ||
-		loop_mover()->current_cycle_number() == loop_mover()->inner_cycles() )
+	LoopMover_Refine_CCDOP loop_mover_op( loop_mover() ); // lock AP
+	if ( (loop_mover_op->current_cycle_number() % loop_mover_op->repack_period() ) == 0 ||
+		loop_mover_op->current_cycle_number() == loop_mover_op->inner_cycles() )
 	{
 		// repack trial
 		pack::task::PackerTaskOP task = task_factory()->create_task_and_apply_taskoperations( pose );

@@ -75,7 +75,7 @@ FilterFactory::~FilterFactory(){}
 void
 FilterFactory::factory_register( FilterCreatorOP creator )
 {
-	runtime_assert( creator );
+	runtime_assert( creator != 0 );
 	std::string const filter_type( creator->keyname() );
 	if ( filter_type == "UNDEFINED NAME" ) {
 		utility_exit_with_message("Can't map derived Filter with undefined type name.");
@@ -135,7 +135,7 @@ FilterFactory::newFilter(
 	core::pose::Pose const & pose )
 {
   FilterOP filter( newFilter( tag->getName() ) );
-  runtime_assert( filter );
+  runtime_assert( filter != 0 );
   if ( ! tag->hasOption("name") )
     utility_exit_with_message("Can't define unnamed Filter");
   filter->set_user_defined_name( tag->getOption<std::string>("name") );

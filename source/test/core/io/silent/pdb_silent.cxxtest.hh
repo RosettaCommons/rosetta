@@ -67,7 +67,7 @@ void test_save_and_restore()
 	//core::import_pose::pose_from_pdb( start_pose, "core/io/test_in.pdb" );
 
 	// Serialize the modified structure as a silent file
-	core::chemical::ResidueTypeSetCAP	rsd_set
+	core::chemical::ResidueTypeSetCOP	rsd_set
 		= core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
 	core::io::silent::SilentFileData sfd;

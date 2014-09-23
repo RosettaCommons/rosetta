@@ -258,7 +258,7 @@ void MedalExchangeMover::apply(Pose& pose) {
   // Housekeeping
   pose.remove_constraints();
   builder->tear_down(&pose);
-  pose.set_new_energies_object(new Energies(energies));
+  pose.set_new_energies_object(core::scoring::EnergiesOP( new Energies(energies) ));
 }
 
 MedalExchangeMover::MedalExchangeMover() {

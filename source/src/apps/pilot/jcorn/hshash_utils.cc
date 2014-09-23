@@ -179,7 +179,7 @@ main( int argc, char * argv [] )
 				for( core::Size resnum = 1; resnum <= tgt_pose.total_residue(); ++resnum ) {
 					utility::vector1< Real > residue_rms;
 					//if( iface.is_interface( resnum ) ) {
-						ResidueCOP tgt_res( tgt_pose.residue( resnum ) );
+						ResidueCOP tgt_res( tgt_pose.residue( resnum ).get_self_ptr() );
 						std::multimap< Real, HotspotStubOP > res_stub_set( stubset.retrieve( tgt_res->name3() ) );
 
 						for (std::multimap<Real, HotspotStubOP >::const_iterator i = res_stub_set.begin(); i != res_stub_set.end(); ++i) {
@@ -201,7 +201,7 @@ main( int argc, char * argv [] )
 						if( option[ hotspot::rms_hotspot_res ].user() ) {
 							if( resnum != (core::Size)option[hotspot::rms_hotspot_res]() ) continue;
 						}
-						ResidueCOP tgt_res( tgt_pose.residue( resnum ) );
+						ResidueCOP tgt_res( tgt_pose.residue( resnum ).get_self_ptr() );
 						if( tgt_res->aa() != stub->aa() ) continue; // skip if we have diff resnames
 						Real const rms = residue_sc_rmsd_no_super( tgt_res, stub, fxnal_group ); // do rmsd based on functional group only
 						stub_rms.push_back( rms );
@@ -253,7 +253,7 @@ main( int argc, char * argv [] )
 				for( utility::vector1< std::string >::const_iterator aa_it=amino_acids.begin(); aa_it != amino_acids.end(); ++aa_it ) {
 
 					std::multimap< core::Real, protocols::hotspot_hashing::HotspotStubOP > const stubs = stubset.retrieve( *aa_it );
-					core::conformation::ResidueCOP res_target( tgt_pose.residue( i ) );
+					core::conformation::ResidueCOP res_target( tgt_pose.residue( i ).get_self_ptr() );
 
 					// for each hotspot of that residue type
 					for( std::multimap< core::Real, protocols::hotspot_hashing::HotspotStubOP >::const_iterator stub_it = stubs.begin(); stub_it != stubs.end(); ++stub_it ) {

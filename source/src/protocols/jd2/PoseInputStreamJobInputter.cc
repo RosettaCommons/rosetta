@@ -82,7 +82,7 @@ void PoseInputStreamJobInputter::fill_jobs( Jobs & jobs ) {
 	Size const nstruct( option[ out::nstruct ]() );
 	Size const shuffle_nstruct( option[ out::shuffle_nstruct ]() );
 	vector1< JobOP > inner_jobs;
-	rsd_set_ = rsd_set_from_cmd_line();
+	rsd_set_ = core::chemical::ResidueTypeSetCOP( rsd_set_from_cmd_line() );
 
 	for ( core::Size index = 1; index <= shuffle_nstruct; ++index ) {
 		InnerJobOP ijob( new InnerJob( "job_" + ObjexxFCL::string_of(index), nstruct ) );

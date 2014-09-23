@@ -133,7 +133,7 @@ main( int argc, char* argv[] )
 
 
 	//establish these ahead of time for convenience
-	core::chemical::ResidueTypeSetCAP typeset(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD));
+	core::chemical::ResidueTypeSetCOP typeset(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD));
 	core::chemical::ResidueType const & CYZ(typeset->name_map("CYZ"));
 
 

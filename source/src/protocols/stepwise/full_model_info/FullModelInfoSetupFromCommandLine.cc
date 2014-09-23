@@ -75,7 +75,8 @@ namespace full_model_info {
 	{
 		using namespace core::pose;
 		PoseOP input_pose = new Pose;
-		import_pose::pose_from_pdb( *input_pose, *rsd_set, input_file );
+		core::chemical::ResidueTypeSetCOP rsd_set_op( rsd_set );
+		import_pose::pose_from_pdb( *input_pose, *rsd_set_op, input_file );
 		cleanup( *input_pose );
 		make_sure_full_model_info_is_setup( *input_pose );
 		return input_pose;
@@ -128,8 +129,9 @@ namespace full_model_info {
 		for ( Size n = 1; n <= input_silent_files.size(); n++ ) {
 			PoseOP pose = new Pose;
 			SilentFileData silent_file_data;
+			core::chemical::ResidueTypeSetCOP rsd_set_op( rsd_set );
 			silent_file_data.read_file( input_silent_files[n] );
-			silent_file_data.begin()->fill_pose( *pose, *rsd_set );
+			silent_file_data.begin()->fill_pose( *pose, *rsd_set_op );
 			input_poses.push_back( pose );
 		}
 

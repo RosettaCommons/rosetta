@@ -77,7 +77,7 @@ void CreateDistanceConstraint::apply( core::pose::Pose & pose )
             Size atomno1 = pose.residue_type(res1_[i_cst]).atom_index(atom1_[i_cst]);
             Size atomno2 = pose.residue_type(res2_[i_cst]).atom_index(atom2_[i_cst]);
             pose.add_constraint(
-                new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(atomno1,res1_[i_cst]), core::id::AtomID(atomno2,res2_[i_cst]), func )
+                core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(atomno1,res1_[i_cst]), core::id::AtomID(atomno2,res2_[i_cst]), func ) )
                 );
         }
     }

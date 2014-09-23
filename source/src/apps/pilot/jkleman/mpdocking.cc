@@ -175,8 +175,8 @@ private: // data
 /// and lips from the command line interface.
 MPDockingMover::MPDockingMover() :
 protocols::moves::Mover(),
-center_(0, 0, 0),
-normal_(0, 0, 1)
+center_(0.0, 0.0, 0.0),
+normal_(0.0, 0.0, 1.0)
 {}
 
 /// @brief Copy Constructor

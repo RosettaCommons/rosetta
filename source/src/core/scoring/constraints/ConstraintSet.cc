@@ -82,7 +82,7 @@ ConstraintSet::ConstraintSet( ConstraintSet const & other )
 				iter_end = other.residue_pair_constraints_[ ii ]->end();
 				iter  != iter_end; ++iter ) {
 			if ( first_insert ) {
-				residue_pair_constraints_[ ii ] = new ResidueConstraints;
+				residue_pair_constraints_[ ii ] = ResidueConstraintsOP( new ResidueConstraints );
 				first_insert = false;
 			}
 			residue_pair_constraints_[ ii ]->insert( iter->first, iter->second->clone() );
@@ -131,7 +131,7 @@ ConstraintSet::ConstraintSet( ConstraintSet const & other,
 
 
 			if ( first_insert ) {
-				residue_pair_constraints_[ ii ] = new ResidueConstraints;
+				residue_pair_constraints_[ ii ] = ResidueConstraintsOP( new ResidueConstraints );
 				first_insert = false;
 			}
 			// All Constraints are now immutable, and so do not ever need to be cloned.
@@ -238,7 +238,7 @@ ConstraintSet::setup_for_minimizing_for_residue(
 {
 	ResidueConstraints::const_iterator iter = intra_residue_constraints_.find( rsd.seqpos() );
 	if ( iter != intra_residue_constraints_.end() ) {
-		res_data_cache.set_data( cst_res_data, new CstMinimizationData( iter->second )  );
+		res_data_cache.set_data( cst_res_data, basic::datacache::CacheableDataOP( new CstMinimizationData( iter->second ) ) );
 	}
 }
 
@@ -255,6 +255,7 @@ ConstraintSet::setup_for_minimizing_for_residue_pair(
 	ResPairMinimizationData & respair_data_cache
 ) const
 {
+	using basic::datacache::CacheableDataOP;
 	Size resno1 = rsd1.seqpos();
 	Size resno2 = rsd2.seqpos();
 	if ( ! residue_pair_constraints_[ resno1 ] ) return;
@@ -713,9 +714,8 @@ ConstraintSet::residue_pair_constraints_end( Size resid ) const
 void
 ConstraintSet::on_length_change( conformation::signals::LengthEvent const & event ) {
 
-	if( event.conformation != conformation_pt_ ) {
-		std::cerr << "HUH?!? weird stuff is going on. ConstraintSet is hearing length voices that it shouldn't" << std::endl;
-
+	if( ! utility::pointer::equal(conformation_pt_, event.conformation) ) {
+		std::cerr << "HUH?!? weird stuff is going on. ConstraintSet is hearing length voices that it shouldn't: " << conformation_pt_.lock() << " != " << event.conformation << std::endl;
 		return;
 	}
 
@@ -740,7 +740,7 @@ ConstraintSet::on_connection_change( core::conformation::signals::ConnectionEven
 	switch ( event.tag ) {
 
 		case ConnectionEvent::DISCONNECT:
-			if( event.conformation == conformation_pt_ ) {
+			if( utility::pointer::equal(conformation_pt_, event.conformation) ) {
 				this->detach_from_conformation();
 			} else {
 				tr.Error << "ERROR: HUH?!? weird stuff is going on. ConstraintSet is hearing disconnection voices that it shouldn't" << std::endl;
@@ -758,26 +758,42 @@ ConstraintSet::on_connection_change( core::conformation::signals::ConnectionEven
 }
 
 void
-ConstraintSet::attach_to_conformation( core::conformation::Conformation * conformation ) {
+ConstraintSet::attach_to_conformation( core::conformation::ConformationCAP conformation ) {
 
-	if( conformation_pt_ != 0 ) this->detach_from_conformation();
+	if( !conformation_pt_.expired() ) this->detach_from_conformation();
 
 	conformation_pt_ = conformation;
 
-	conformation_pt_->attach_length_obs( &ConstraintSet::on_length_change, this );
-	conformation_pt_->attach_connection_obs( &ConstraintSet::on_connection_change, this );
+	core::conformation::ConformationCOP conformation_pt( conformation_pt_ );
+	conformation_pt->attach_length_obs( &ConstraintSet::on_length_change, this );
+	conformation_pt->attach_connection_obs( &ConstraintSet::on_connection_change, this );
 
 }
 
 void
 ConstraintSet::detach_from_conformation() {
 
-	if( conformation_pt_ == 0 ) return;
+	if( conformation_pt_.expired() ) return;
 
+#ifdef PTR_MODERN
+	core::conformation::ConformationCOP conformation_pt( conformation_pt_ );
+	conformation_pt->detach_length_obs( &ConstraintSet::on_length_change, this );
+	conformation_pt->detach_connection_obs( &ConstraintSet::on_connection_change, this );
+	conformation_pt_.reset();
+#else
+	// With ReferenceCount, this gets interesting:
+	// This function is called from Conformation::~Conformation via
+	// notify_connection_obs() and then on_connection_change().
+	// The conformation_pt_->count_ is 0 at this point.
+	// Putting conformation_pt_ into an OP (as above) increments the
+	// counter again, which is decremented at the end of this function
+	// when conformation_pt expires and Conformation::~Conformation
+	// is called again, resulting in a call loop and stack overflow.
 	conformation_pt_->detach_length_obs( &ConstraintSet::on_length_change, this );
 	conformation_pt_->detach_connection_obs( &ConstraintSet::on_connection_change, this );
-
 	conformation_pt_ = NULL;
+#endif
+
 }
 
 

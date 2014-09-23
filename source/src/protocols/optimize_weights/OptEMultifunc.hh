@@ -53,6 +53,7 @@ enum OptEMultifuncMPIMessages {
 /// @brief OptE mode multifunction class
 class OptEMultifunc : public core::optimization::Multifunc
 {
+
 public:
 	typedef core::scoring::ScoreTypes ScoreTypes;
 	typedef core::scoring::EnergyMap EnergyMap;
@@ -286,7 +287,17 @@ private: // data
 /// class to create a call-back mechanism; this owning pointer will be invalid and
 /// result in stack corruption if this class is allocated on the stack.
 class WrapperOptEMultifunc : public core::optimization::Multifunc
+#ifdef PTR_MODERN
+	// New version
+	, public utility::pointer::enable_shared_from_this< WrapperOptEMultifunc >
 {
+#else
+{
+	// Old intrusive ref-counter version
+	inline WrapperOptEMultifuncCOP shared_from_this() const { return WrapperOptEMultifuncCOP( this ); }
+	inline WrapperOptEMultifuncOP shared_from_this() { return WrapperOptEMultifuncOP( this ); }
+#endif
+
 public:
 	typedef core::scoring::ScoreTypes ScoreTypes;
 	typedef core::scoring::EnergyMap EnergyMap;
@@ -295,7 +306,9 @@ public:
 	typedef core::Size Size;
 
 public:
-	WrapperOptEMultifunc(
+	WrapperOptEMultifunc();
+	
+	void init(
 		ScoreTypes const & free_score_list,
 		Size free_count, // the number of named dofs (score types) + the number of reference energies
 		ScoreTypes const & fixed_score_list,
@@ -304,6 +317,12 @@ public:
 	);
 
 	~WrapperOptEMultifunc();
+
+	/// self pointers
+	inline WrapperOptEMultifuncCOP get_self_ptr() const { return shared_from_this(); }
+	inline WrapperOptEMultifuncOP get_self_ptr() { return shared_from_this(); }
+	inline WrapperOptEMultifuncCAP get_self_weak_ptr() const { return WrapperOptEMultifuncCAP( shared_from_this() ); }
+	inline WrapperOptEMultifuncAP get_self_weak_ptr() { return WrapperOptEMultifuncAP( shared_from_this() ); }
 
 	// @brief OptE func
 	virtual

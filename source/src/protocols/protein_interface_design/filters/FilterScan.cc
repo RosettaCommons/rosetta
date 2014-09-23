@@ -318,7 +318,7 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 				 BOOST_FOREACH( protocols::simple_filters::DeltaFilterCOP const delta_filter, delta_filters_ ){
 					 triage_filter_pass = delta_filter->apply( pose );
 					 if( delta_filters_.size() == 1 )
-							residue_id_val_map[ std::pair< core::Size, AA >( resi, target_aa ) ] = std::pair< core::Real, bool >(delta_filter()->report_sm( pose ), triage_filter_pass);
+							residue_id_val_map[ std::pair< core::Size, AA >( resi, target_aa ) ] = std::pair< core::Real, bool >(delta_filter->report_sm( pose ), triage_filter_pass);
 
 					 if( !triage_filter_pass )
 						 break;

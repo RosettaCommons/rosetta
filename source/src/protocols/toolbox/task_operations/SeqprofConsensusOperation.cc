@@ -130,7 +130,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 		 BOOST_FOREACH( ConstraintCOP const c, constraints ){
 		   if( c->type() == "SequenceProfile" ){
 				 SequenceProfileConstraintCOP seqprof_cst( dynamic_cast< SequenceProfileConstraint const * >( c() ) );
-				 runtime_assert( seqprof_cst );
+				 runtime_assert( seqprof_cst != 0 );
 				 core::Size const seqpos( seqprof_cst->seqpos() );
 				 SequenceProfileCOP seqprof_pos( seqprof_cst->sequence_profile() );
 				 seqprof->prof_row( seqprof_pos->profile()[ seqpos ], seqpos );

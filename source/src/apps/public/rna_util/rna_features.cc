@@ -391,7 +391,7 @@ rhiju_pdbstats()
 	}
 
 	// later hope to replace this with fa_standard, which should soon include RNA, DNA, & protein.
-	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+	ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
 	Size count( 0 );
 	std::string outfile;

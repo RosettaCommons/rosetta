@@ -365,11 +365,11 @@ DnaInterfacePacker::init_standard( Pose & pose )
 	reference_residue_types_.clear();
 	if ( reference_pose_ ) {
 		for ( Size index(1), end( reference_pose_->total_residue() ); index <= end; ++index ) {
-			reference_residue_types_.push_back( &reference_pose_->residue_type(index) );
+			reference_residue_types_.push_back( reference_pose_->residue_type(index).get_self_ptr() );
 		}
 	} else {
 		for ( Size index(1), end( pose.total_residue() ); index <= end; ++index ) {
-			reference_residue_types_.push_back( & pose.residue_type(index) );
+			reference_residue_types_.push_back( pose.residue_type(index).get_self_ptr() );
 		}
 	}
 
@@ -510,8 +510,8 @@ void DnaInterfacePacker::parse_my_tag(
 void
 DnaInterfacePacker::make_dna_sequence_combinations()
 {
-	runtime_assert( task() );
-	runtime_assert( dna_chains_ );
+	runtime_assert( task() != 0 );
+	runtime_assert( dna_chains_ != 0 );
 	dna_sequences_.clear();
 	vector1< Size > seq_indices;
 	// search the rotamer set for rotable DNA residues
@@ -545,7 +545,7 @@ DnaInterfacePacker::make_dna_sequence_combinations()
 void
 DnaInterfacePacker::add_complementary_sequence( ResTypeSequence & sequence )
 {
-	runtime_assert( dna_chains_ );
+	runtime_assert( dna_chains_ != 0 );
 	// fill a temporary ResTypeSequence, in order to avoid iterator-related issues with std::map
 	ResTypeSequence complement;
 	for ( ResTypeSequence::iterator postype( sequence.begin() ), end( sequence.end() );
@@ -584,7 +584,7 @@ DnaInterfacePacker::unbound_score(
 	SeparateDnaFromNonDna unbind;
 	unbind.apply( unbound_pose );
 	// clone ScoreFunctionCOP so that we can score without distance constraints
-	runtime_assert( score_function() );
+	runtime_assert( score_function() != 0 );
 	ScoreFunctionOP nonconst_scorefxn( score_function()->clone() );
 	// set distance constraints weights to zero before scoring unbound structure
 	nonconst_scorefxn->set_weight( atom_pair_constraint, 0.0 );
@@ -782,7 +782,7 @@ DnaInterfacePacker::measure_specificities( Pose & pose, ResTypeSequences const &
 		utility::vector0< int > rot_to_pack;
 		vector1< ResidueTypeCOP > single_sequence;
 		for ( Size index(1), end( pose.total_residue() ); index <= end; ++index ) {
-			single_sequence.push_back( & pose.residue_type(index) );
+			single_sequence.push_back( pose.residue_type(index).get_self_ptr() );
 		}
 		// alter dna types according to this dna sequence
 		for ( ResTypeSequence::const_iterator it( dna_sequence->begin() ),
@@ -914,7 +914,7 @@ DnaInterfacePacker::reversion_scan(
 	vector1< ResidueTypeCOP > fixed_residue_types;
 
 	for ( Size index(1), end( pose.total_residue() ); index <= end; ++index ) {
-		fixed_residue_types.push_back( &pose.residue_type( index ) );
+		fixed_residue_types.push_back( pose.residue_type(index).get_self_ptr() );
 	}
 
 	// find mutations (positions to revert) based upon comparison to a starting sequence
@@ -1117,7 +1117,7 @@ DnaInterfacePacker::protein_scan( Pose & pose )
 
 	vector1< ResidueTypeCOP > pose_residue_types;
 	for ( Size index(1), end( pose.total_residue() ); index <= end; ++index ) {
-		pose_residue_types.push_back( &pose.residue_type(index) );
+		pose_residue_types.push_back( pose.residue_type(index).get_self_ptr() );
 	}
 
 	// get native energies
@@ -1286,8 +1286,8 @@ DnaInterfacePacker::dna_seq_tag( Pose const & pose, ResTypeSequence const & sequ
 ResTypeSequence
 DnaInterfacePacker::get_targeted_sequence( Pose const & pose ) const
 {
-	runtime_assert( task() );
-	runtime_assert( dna_chains_ );
+	runtime_assert( task() != 0 );
+	runtime_assert( dna_chains_ != 0 );
 	ResTypeSequence sequence;
 	for ( DnaPositions::const_iterator it( dna_chains_->begin() ), end( dna_chains_->end() );
 			it != end; ++it ) {
@@ -1299,14 +1299,14 @@ DnaInterfacePacker::get_targeted_sequence( Pose const & pose ) const
 			// if PackerTask indicates nucleotide type to target, add this to local targeted sequence
 			if ( rtask.target_type() != 0 ) sequence[ resid ] = rtask.target_type();
 			// otherwise use the residue type at this position in the current pose
-			else sequence[ resid ] = & pose.residue_type( resid );
+			else sequence[ resid ] = pose.residue_type( resid ).get_self_ptr();
 
 			if ( !pos.paired() ) continue;
 			// similar treatment for paired 'lower-strand' nucleotides
 			Size const comp_resid( pos.bottom() );
 			ResidueLevelTask const & comp_rtask( task()->residue_task(comp_resid) );
 			if ( comp_rtask.target_type() != 0 ) sequence[ comp_resid ] = comp_rtask.target_type();
-			else sequence[ comp_resid ] = & pose.residue_type( comp_resid );
+			else sequence[ comp_resid ] = pose.residue_type( comp_resid ).get_self_ptr();
 		}
 	}
 	return sequence;
@@ -1325,7 +1325,7 @@ DnaInterfacePacker::current_working_sequence( Pose const & pose ) const
 		Size const resid( it->first );
 		ResidueLevelTask const & rtask( task()->residue_task(resid) );
 		if ( !rtask.has_behavior("TARGET") && !rtask.has_behavior("SCAN") ) continue;
-		current_sequence[ resid ] = pose.residue( resid ).type();
+		current_sequence[ resid ] = pose.residue( resid ).type().get_self_ptr();
 	}
 	return current_sequence;
 }

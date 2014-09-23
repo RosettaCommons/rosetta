@@ -264,7 +264,7 @@ RotamerRecoveryFeatures::parse_my_tag(
 		}
 
 		ReportToDBOP report_to_db_ptr(
-			static_cast<ReportToDB &>(*report_to_db));
+			utility::pointer::static_pointer_cast<ReportToDB>(report_to_db));
 
 		reporter_->set_predicted_report_to_db(report_to_db_ptr);
 

@@ -209,7 +209,7 @@ void DbTrajectoryRecorder::write_cache_to_db() const { // {{{1
 
 void DbTrajectoryRecorder::write_model( // {{{1
 		core::pose::Pose const & pose,
-		MetropolisHastingsMoverCAP) {
+		MetropolisHastingsMover const *) {
 
 	Frame frame;
 	frame.iteration = step_count();

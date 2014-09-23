@@ -63,7 +63,7 @@ SolvationMetaGrid::~SolvationMetaGrid()
 
 void SolvationMetaGrid::initialize(core::Vector const & center, core::Real width, core::Real resolution)
 {
-    core::chemical::AtomTypeSetCAP atom_type_set(
+    core::chemical::AtomTypeSetCOP atom_type_set(
         core::chemical::ChemicalManager::get_instance()->atom_type_set("fa_standard"));
 
     core::ShortSize max_atom_type = atom_type_set->n_atomtypes();

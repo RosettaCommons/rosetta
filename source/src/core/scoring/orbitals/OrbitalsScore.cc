@@ -74,7 +74,7 @@ static thread_local basic::Tracer TR( "core.scoring.orbitals_hpol" );
 //Because we don't really use the energy method options anyways
 
 OrbitalsScore::OrbitalsScore() :
-	parent( new OrbitalsScoreCreator ),
+	parent( methods::EnergyMethodCreatorOP( new OrbitalsScoreCreator ) ),
 	lookup_table_(core::scoring::ScoringManager::get_instance()->get_OrbitalsLookupTable()),
 	max_orbital_dist_squared_(9),
 	max_dist_squared_(36)
@@ -85,7 +85,7 @@ OrbitalsScore::OrbitalsScore() :
 }
 
 OrbitalsScore::OrbitalsScore( methods::EnergyMethodOptions const & ) :
-	parent( new OrbitalsScoreCreator ),
+	parent( methods::EnergyMethodCreatorOP( new OrbitalsScoreCreator ) ),
 	lookup_table_(core::scoring::ScoringManager::get_instance()->get_OrbitalsLookupTable()),
 	max_orbital_dist_squared_(9),
 	max_dist_squared_(36)

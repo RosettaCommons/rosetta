@@ -16,6 +16,7 @@
 #define INCLUDED_utility_tag_Tag_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/access_ptr.hh>
 
 namespace utility {
 namespace tag {
@@ -24,6 +25,8 @@ class Tag;
 typedef utility::pointer::owning_ptr< Tag > TagPtr;
 typedef utility::pointer::owning_ptr< Tag > TagOP;
 typedef utility::pointer::owning_ptr< Tag const > TagCOP;
+typedef utility::pointer::access_ptr< Tag > TagAP;
+typedef utility::pointer::access_ptr< Tag const > TagCAP;
 
 }
 }

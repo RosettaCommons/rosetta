@@ -526,7 +526,8 @@ namespace protein {
 	void
 	StepWiseProteinPoseSetup::make_full_pose( pose::Pose & pose ){
 
-		make_pose_from_sequence( pose, desired_sequence_, *rsd_set_); //, false /*auto_termini*/);
+		core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_ );
+		make_pose_from_sequence( pose, desired_sequence_, *rsd_set ); //, false /*auto_termini*/);
 
 		if ( remove_nterminus_variant_ ) 	pose::remove_lower_terminus_type_from_pose_residue( pose, 1 );
 		if ( remove_cterminus_variant_ ) 	pose::remove_upper_terminus_type_from_pose_residue( pose, pose.total_residue() );
@@ -1221,7 +1222,8 @@ namespace protein {
 
 		if ( align_file_.size() > 0 ){
 			Pose full_align_pose;
-			import_pose::pose_from_pdb( full_align_pose, *rsd_set_, align_file_ );
+			core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_ );
+			import_pose::pose_from_pdb( full_align_pose, *rsd_set, align_file_ );
 
 			working_align_pose_ = new pose::Pose;
 			get_working_pose( full_align_pose, *working_align_pose_ );

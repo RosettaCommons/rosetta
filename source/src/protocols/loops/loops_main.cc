@@ -166,7 +166,7 @@ void read_loop_fragments(
 
 				for(int c=0; c< option[  OptionKeys::loops::stealfrags_times ](); c++ ){
 					//steal_constant_length_frag_set_from_pose ( stealpose, **it );
-					steal_frag_set_from_pose( stealpose, **it, new FragData( new BBTorsionSRFD, (*it)->max_frag_length() ) );
+					steal_frag_set_from_pose( stealpose, **it, new FragData( core::fragment::SingleResidueFragDataOP( new BBTorsionSRFD ), (*it)->max_frag_length() ) );
 				}
 			}
 		} // loop over input files

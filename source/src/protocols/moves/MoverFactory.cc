@@ -88,7 +88,7 @@ MoverFactory::~MoverFactory(){}
 void
 MoverFactory::factory_register( MoverCreatorOP creator )
 {
-	runtime_assert( creator );
+	runtime_assert( creator != 0 );
 	std::string const mover_type( creator->keyname() );
 	if ( mover_type == "UNDEFINED NAME" ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("Can't map derived Mover with undefined type name.");
@@ -137,7 +137,7 @@ MoverFactory::newMover(
 	Pose const & pose )
 {
 	MoverOP mover( newMover( tag->getName() ) );
-	runtime_assert( mover );
+	runtime_assert( mover != 0 );
 	mover->parse_my_tag( tag, data, filters, movers, pose );
 	return mover;
 }

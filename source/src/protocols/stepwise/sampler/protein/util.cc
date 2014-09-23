@@ -187,7 +187,7 @@ namespace protein {
 		using namespace core::io::silent;
 
 		static ScoreFunctionOP scorefxn = get_score_function();
-		ResidueTypeSetCAP rsd_set;
+		ResidueTypeSetCOP rsd_set;
 		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 		Pose pose, scratch_pose;
@@ -221,7 +221,7 @@ namespace protein {
 			(*scorefxn)(pose);
 			HBondOptionsOP hbond_options( new hbonds::HBondOptions() );
 			hbond_options->use_hb_env_dep( false );
-			HBondSetOP hbond_set( new hbonds::HBondSet( hbond_options ) );
+			HBondSetOP hbond_set( new hbonds::HBondSet( *hbond_options ) );
 
 			fill_hbond_set( pose, false /*calc deriv*/, *hbond_set );
 

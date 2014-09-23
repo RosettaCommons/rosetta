@@ -150,12 +150,12 @@ void AtomicContactCountFilter::parse_my_tag(
 	if( tag->hasOption( "taskA" ) ){
 		utility::vector1< std::string > taskA_names = utility::string_split( tag->getOption< std::string >( "taskA" ), ',' );
 		for(Size i = 1; i <= taskA_names.size(); i++) {
-			task_factoryA->push_back( data.get< core::pack::task::operation::TaskOperation * >( "task_operations", taskA_names[i] ) ); 
+			task_factoryA->push_back( data.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", taskA_names[i] ) ); 
 		}
 		if( tag->hasOption( "taskB" ) ){
 			utility::vector1< std::string > taskB_names = utility::string_split( tag->getOption< std::string >( "taskB" ), ',' );
 			for(Size i = 1; i <= taskB_names.size(); i++) {
-				task_factoryB->push_back( data.get< core::pack::task::operation::TaskOperation * >( "task_operations", taskB_names[i] ) ); 
+				task_factoryB->push_back( data.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", taskB_names[i] ) ); 
 			}
 		} else {
 			utility_exit_with_message("Must specify both TaskA and TaskB if using indivual tasks.");

@@ -527,6 +527,7 @@ CartesianHybridize::apply( Pose & pose ) {
 	// added by yuan 06-28-2013
 	// packer
 	using namespace core::pack::task;
+	using core::pack::task::operation::TaskOperationCOP;
 	simple_moves::PackRotamersMoverOP pack_rotamers;
 	pack_rotamers = new protocols::simple_moves::PackRotamersMover();
 	TaskFactoryOP main_task_factory = new TaskFactory;

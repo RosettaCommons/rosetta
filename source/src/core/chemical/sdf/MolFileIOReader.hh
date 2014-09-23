@@ -55,9 +55,9 @@ utility::vector1< ResidueTypeOP > convert_to_ResidueType( utility::vector1< MolF
 			std::string element_type_tag = "default",
 			std::string mm_atom_type_tag = "fa_standard" );
 utility::vector1< ResidueTypeOP > convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > molfile_data,
-			AtomTypeSetCAP atom_types,
-			ElementSetCAP element_types,
-			MMAtomTypeSetCAP mm_atom_types);
+			AtomTypeSetCOP atom_types,
+			ElementSetCOP element_types,
+			MMAtomTypeSetCOP mm_atom_types);
 
 }
 }

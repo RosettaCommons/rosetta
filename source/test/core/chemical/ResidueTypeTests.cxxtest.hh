@@ -60,12 +60,12 @@
 using std::endl;
 using std::string;
 using basic::Tracer;
-using core::chemical::AtomTypeSetCAP;
+using core::chemical::AtomTypeSetCOP;
 using core::chemical::AtomType;
 using core::chemical::ChemicalManager;
-using core::chemical::ElementSetCAP;
-using core::chemical::MMAtomTypeSetCAP;
-using core::chemical::orbitals::OrbitalTypeSetCAP;
+using core::chemical::ElementSetCOP;
+using core::chemical::MMAtomTypeSetCOP;
+using core::chemical::orbitals::OrbitalTypeSetCOP;
 using core::chemical::ResidueType;
 using core::chemical::ResidueTypeSet;
 using core::chemical::FA_STANDARD;
@@ -75,7 +75,7 @@ static Tracer TR("core.chemical.ResidueTypeTests.cxxtest");
 
 void add_atom(
 		ResidueType & rsd,
-		AtomTypeSetCAP & atom_types,
+		AtomTypeSetCOP & atom_types,
 		string const& name,
 		string const& type,
 		string const& mm_type,
@@ -130,10 +130,10 @@ public:
 	void test_residue_type_initialization() {
 		ChemicalManager * cm(ChemicalManager::get_instance());
 		string const tag(FA_STANDARD);
-		AtomTypeSetCAP atom_types = cm->atom_type_set(tag);
-		ElementSetCAP element_types = cm->element_set("default");
-		MMAtomTypeSetCAP mm_atom_types = cm->mm_atom_type_set(tag);
-		OrbitalTypeSetCAP orbital_types = cm->orbital_type_set(tag);
+		AtomTypeSetCOP atom_types = cm->atom_type_set(tag);
+		ElementSetCOP element_types = cm->element_set("default");
+		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
+		OrbitalTypeSetCOP orbital_types = cm->orbital_type_set(tag);
 
 		ResidueType rsd( atom_types, element_types, mm_atom_types, orbital_types);
 
@@ -328,10 +328,10 @@ public:
 		using namespace core::chemical;
 		ChemicalManager * cm(ChemicalManager::get_instance());
 		string const tag(FA_STANDARD);
-		AtomTypeSetCAP atom_types = cm->atom_type_set(tag);
-		ElementSetCAP element_types = cm->element_set("default");
-		MMAtomTypeSetCAP mm_atom_types = cm->mm_atom_type_set(tag);
-		OrbitalTypeSetCAP orbital_types = cm->orbital_type_set(tag);
+		AtomTypeSetCOP atom_types = cm->atom_type_set(tag);
+		ElementSetCOP element_types = cm->element_set("default");
+		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
+		OrbitalTypeSetCOP orbital_types = cm->orbital_type_set(tag);
 
 		core::chemical::ResidueType rsd(atom_types, element_types, mm_atom_types, orbital_types);
 		rsd.add_atom("ONE");
@@ -350,11 +350,11 @@ public:
 		using namespace core::chemical;
 		ChemicalManager * cm(ChemicalManager::get_instance());
 		string const tag(FA_STANDARD);
-		AtomTypeSetCAP atom_types = cm->atom_type_set(tag);
-		ElementSetCAP element_types = cm->element_set("default");
-		MMAtomTypeSetCAP mm_atom_types = cm->mm_atom_type_set(tag);
-		OrbitalTypeSetCAP orbital_types = cm->orbital_type_set(tag);
-		ResidueTypeSet rsd_types;
+		AtomTypeSetCOP atom_types = cm->atom_type_set(tag);
+		ElementSetCOP element_types = cm->element_set("default");
+		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
+		OrbitalTypeSetCOP orbital_types = cm->orbital_type_set(tag);
+		ResidueTypeSetOP rsd_types = new ResidueTypeSet;
 
 		utility::io::izstream paramslist("core/chemical/params/retype_list.txt");
 		std::string filename("params/type_test1.params");
@@ -362,7 +362,7 @@ public:
 		while( paramslist ) {
 			TR << "------- Redoing chis for " << filename << std::endl;
 			core::chemical::ResidueTypeOP rsd = read_topology_file("core/chemical/"+filename,
-					atom_types, element_types, mm_atom_types, orbital_types, &rsd_types);
+					atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
 			rsd->finalize();
 			if( TR.Debug.visible() ) {
 				print_chis(TR.Debug, *rsd);
@@ -412,11 +412,11 @@ public:
 
 		ChemicalManager * cm(ChemicalManager::get_instance());
 		string const tag(FA_STANDARD);
-		AtomTypeSetCAP atom_types = cm->atom_type_set(tag);
-		ElementSetCAP element_types = cm->element_set("default");
-		MMAtomTypeSetCAP mm_atom_types = cm->mm_atom_type_set(tag);
-		OrbitalTypeSetCAP orbital_types = cm->orbital_type_set(tag);
-		ResidueTypeSet rsd_types;
+		AtomTypeSetCOP atom_types = cm->atom_type_set(tag);
+		ElementSetCOP element_types = cm->element_set("default");
+		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
+		OrbitalTypeSetCOP orbital_types = cm->orbital_type_set(tag);
+		ResidueTypeSetOP rsd_types = new ResidueTypeSet;
 
 		utility::io::izstream paramslist("core/chemical/params/retype_list.txt");
 		std::string filename;
@@ -424,7 +424,7 @@ public:
 		while( paramslist ) {
 			TR << "Rebuilding Icoord from xyz " << filename << std::endl;
 			core::chemical::ResidueTypeOP restype = read_topology_file("core/chemical/"+filename,
-					atom_types, element_types, mm_atom_types, orbital_types, &rsd_types);
+					atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
 			core::chemical::ResidueTypeCOP restype_ref( new core::chemical::ResidueType(*restype) );
 			restype->name( restype_ref->name() + "_IcoorRedo"); // For debugging purposes.
 
@@ -498,10 +498,10 @@ public:
 
 		// Set up test ResidueTypes.
 		ChemicalManager * manager( ChemicalManager::get_instance() );
-		AtomTypeSetCAP atom_types = manager->atom_type_set( FA_STANDARD );
-		ElementSetCAP element_types = manager->element_set( "default" );
-		MMAtomTypeSetCAP mm_atom_types = manager->mm_atom_type_set( FA_STANDARD );
-		OrbitalTypeSetCAP orbital_types = manager->orbital_type_set( FA_STANDARD );
+		AtomTypeSetCOP atom_types = manager->atom_type_set( FA_STANDARD );
+		ElementSetCOP element_types = manager->element_set( "default" );
+		MMAtomTypeSetCOP mm_atom_types = manager->mm_atom_type_set( FA_STANDARD );
+		OrbitalTypeSetCOP orbital_types = manager->orbital_type_set( FA_STANDARD );
 
 		ResidueType res1( atom_types, element_types, mm_atom_types, orbital_types );
 		res1.add_variant_type( UPPER_TERMINUS_VARIANT );
@@ -567,10 +567,10 @@ public:
 	void test_odd_proline_ring_detection(){
 		ChemicalManager * cm(ChemicalManager::get_instance());
 		string const tag(FA_STANDARD);
-		AtomTypeSetCAP atom_types = cm->atom_type_set(tag);
-		ElementSetCAP element_types = cm->element_set("default");
-		MMAtomTypeSetCAP mm_atom_types = cm->mm_atom_type_set(tag);
-		OrbitalTypeSetCAP orbital_types = cm->orbital_type_set(tag);
+		AtomTypeSetCOP atom_types = cm->atom_type_set(tag);
+		ElementSetCOP element_types = cm->element_set("default");
+		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
+		OrbitalTypeSetCOP orbital_types = cm->orbital_type_set(tag);
 
 		ResidueType rsd( atom_types, element_types, mm_atom_types, orbital_types);
 

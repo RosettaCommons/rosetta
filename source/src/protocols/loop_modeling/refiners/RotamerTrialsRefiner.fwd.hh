@@ -17,10 +17,9 @@ namespace loop_modeling {
 namespace refiners {
 
 class RotamerTrialsRefiner;
-using utility::pointer::owning_ptr;
 
-typedef owning_ptr<RotamerTrialsRefiner> RotamerTrialsRefinerOP;
-typedef owning_ptr<RotamerTrialsRefiner const> RotamerTrialsRefinerCOP;
+typedef utility::pointer::owning_ptr<RotamerTrialsRefiner> RotamerTrialsRefinerOP;
+typedef utility::pointer::owning_ptr<RotamerTrialsRefiner const> RotamerTrialsRefinerCOP;
 
 }
 }

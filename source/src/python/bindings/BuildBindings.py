@@ -639,7 +639,7 @@ def getCompilerOptions():
     else:
         add_option = '-pipe -ffor-scope -ffast-math -funroll-loops -finline-functions -finline-limit=20000 -s -fPIC'
     #if Platform == 'cygwin' : add_option =''
-    add_option += ' -DBOOST_PYTHON_MAX_ARITY=32 -DPYROSETTA -DUNUSUAL_ALLOCATOR_DECLARATION'
+    add_option += ' -DBOOST_PYTHON_MAX_ARITY=32 -DPYROSETTA -DUNUSUAL_ALLOCATOR_DECLARATION -DPTR_REFCOUNT'
     add_option += (' -DDEBUG -O0 -g -ggdb' if Options.debug else ' -O3 -DNDEBUG')
 
     if Options.numpy_support: add_option += ' -DPYROSETTA_NUMPY'  # PYROSETTA_NO_NUMPY ← defines/variables with no negation in the name produce much more readable code
@@ -1550,7 +1550,7 @@ class ModuleBuilder:
         self.libpaths = ' -L'.join( ['', dest] + libpaths )
         self.runtime_libpaths = ' -Xlinker -rpath '.join( [''] + runtime_libpaths + ([] if Options.monolith else ['rosetta']) )
 
-        self.cpp_defines = '-DPYROSETTA -DBOOST_NO_MT -DBOOST_THREAD_DONT_USE_CHRONO -DBOOST_ERROR_CODE_HEADER_ONLY -DBOOST_SYSTEM_NO_DEPRECATED -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK'  # -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK  -DBOOST_LCAST_NO_COMPILE_TIME_PRECISION
+        self.cpp_defines = '-DPTR_REFCOUNT -DPYROSETTA -DBOOST_NO_MT -DBOOST_THREAD_DONT_USE_CHRONO -DBOOST_ERROR_CODE_HEADER_ONLY -DBOOST_SYSTEM_NO_DEPRECATED -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK'  # -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK  -DBOOST_LCAST_NO_COMPILE_TIME_PRECISION
         if Options.cross_compile: self.cpp_defines += ' -I../src/platform/windows/PyRosetta'
         elif Platform == "macos": self.cpp_defines += ' -I../src/platform/macos'
         else: self.cpp_defines += ' -I../src/platform/linux'

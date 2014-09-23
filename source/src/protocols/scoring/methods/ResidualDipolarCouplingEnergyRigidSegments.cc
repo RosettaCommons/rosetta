@@ -90,7 +90,7 @@ ResidualDipolarCouplingEnergyRigidSegmentsCreator::score_types_for_method() cons
 //@brief
 //////////////////////////////////////////////////////
 ResidualDipolarCouplingEnergyRigidSegments::ResidualDipolarCouplingEnergyRigidSegments() :
-	parent( new ResidualDipolarCouplingEnergyRigidSegmentsCreator )
+	parent( core::scoring::methods::EnergyMethodCreatorOP( new ResidualDipolarCouplingEnergyRigidSegmentsCreator ) )
 {}
 
 

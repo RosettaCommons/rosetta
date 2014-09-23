@@ -439,6 +439,7 @@ remodel_generic_taskfactory(){
   using core::pack::task::operation::IncludeCurrent;
   using core::pack::task::operation::InitializeFromCommandline;
   using core::pack::task::operation::NoRepackDisulfides;
+  using core::pack::task::operation::TaskOperationCOP;
   using protocols::toolbox::task_operations::LimitAromaChi2Operation;
 
   core::pack::task::TaskFactoryOP TF = new core::pack::task::TaskFactory();
@@ -486,7 +487,8 @@ fill_non_loop_cst_set(
 			Residue const & i_rsd( pose.residue(i));
 
 			for (core::Size ii = 1; ii <= i_rsd.nheavyatoms(); ++ii) {
-				cst_set->add_constraint( new CoordinateConstraint(AtomID(ii,i), AtomID(1, my_anchor), i_rsd.xyz(ii), new core::scoring::func::HarmonicFunc(0.0, coord_sdev)));
+				core::scoring::func::FuncOP fx = new core::scoring::func::HarmonicFunc(0.0, coord_sdev);
+				cst_set->add_constraint( new CoordinateConstraint(AtomID(ii,i), AtomID(1, my_anchor), i_rsd.xyz(ii), fx ));
 			}
 		}
 	}
@@ -644,9 +646,12 @@ void cyclize_pose(core::pose::Pose & pose) {
   AtomID b1( pose.residue(1).atom_index(  "CA"), 1 ), b2( pose.residue(pose.n_residue()).atom_index("OVL2"), pose.n_residue() );
   AtomID c1( pose.residue(1).atom_index("OVU1"), 1 ), c2( pose.residue(pose.n_residue()).atom_index(   "C"), pose.n_residue() );
 //  pose.remove_constraints();
-  pose.add_constraint(new AtomPairConstraint(a1,a2,new core::scoring::func::HarmonicFunc(0.0,0.1)));
-  pose.add_constraint(new AtomPairConstraint(b1,b2,new core::scoring::func::HarmonicFunc(0.0,0.1)));
-  pose.add_constraint(new AtomPairConstraint(c1,c2,new core::scoring::func::HarmonicFunc(0.0,0.1)));
+  core::scoring::func::FuncOP fx1 = new core::scoring::func::HarmonicFunc(0.0,0.1);
+  pose.add_constraint(new AtomPairConstraint(a1,a2,fx1));
+  core::scoring::func::FuncOP fx2 = new core::scoring::func::HarmonicFunc(0.0,0.1);
+  pose.add_constraint(new AtomPairConstraint(b1,b2,fx2));
+  core::scoring::func::FuncOP fx3 = new core::scoring::func::HarmonicFunc(0.0,0.1);
+  pose.add_constraint(new AtomPairConstraint(c1,c2,fx3));
 }
 
 

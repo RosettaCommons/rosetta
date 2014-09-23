@@ -50,13 +50,13 @@ AACompositionEnergyCreator::score_types_for_method() const
 
 /// @brief default constructor
 AACompositionEnergy::AACompositionEnergy() :
-	parent( new AACompositionEnergyCreator )
+	parent( core::scoring::methods::EnergyMethodCreatorOP( new AACompositionEnergyCreator ) )
 {}
 
 
 /// @brief default constructor
 	AACompositionEnergy::AACompositionEnergy( std::map< AA, std::pair< Real, Real > > const & comp_constraint_aas ) :
-	parent( new AACompositionEnergyCreator ),
+	parent( core::scoring::methods::EnergyMethodCreatorOP( new AACompositionEnergyCreator ) ),
 	comp_constraint_aas_( comp_constraint_aas )
 {
 	initialize();

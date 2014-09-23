@@ -157,7 +157,7 @@ GoapEnergy::GoapEnergy( GoapEnergy const & src ):
 }
 
 GoapEnergy::GoapEnergy( EnergyMethodOptions const & ):
-		parent( new GoapEnergyCreator ),
+		parent( methods::EnergyMethodCreatorOP( new GoapEnergyCreator ) ),
 		continuous_ ( false )
 {
 	set_default();
@@ -263,7 +263,7 @@ GoapEnergy::read_angle_definitions( std::string const connection_file )
 {
 	Size i1;
 
-	chemical::ResidueTypeSetCAP rsdtypeset =
+	chemical::ResidueTypeSetCOP rsdtypeset =
 	chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
 	utility::io::izstream instream;
@@ -303,7 +303,7 @@ GoapEnergy::read_angle_definitions( std::string const connection_file )
 			if( it == rsdtypemap_.end() ){
 				GoapRsdTypeOP rsdtypeinfo = new GoapRsdType;
 				//std::cout << "Adding new residue info for " << rsdtype.name() << std::endl;
-				rsdtypeinfo->setup_rsdtype( &rsdtype );
+				rsdtypeinfo->setup_rsdtype( rsdtype.get_self_ptr() );
 				rsdtypemap_[ s1 ] = rsdtypeinfo;
 				it = rsdtypemap_.find( s1 );
 			}

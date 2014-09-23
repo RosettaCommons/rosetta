@@ -90,14 +90,14 @@ NMerPSSMEnergy::initialize_from_options()
 }
 
 NMerPSSMEnergy::NMerPSSMEnergy() :
-	parent( new NMerPSSMEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new NMerPSSMEnergyCreator ) )
 {
 	NMerPSSMEnergy::initialize_from_options();
 	read_nmer_pssms_from_options();
 }
 
 NMerPSSMEnergy::NMerPSSMEnergy( utility::vector1< std::map< chemical::AA, utility::vector1< core::Real > > > const & all_nmer_pssms_in ):
-	parent( new NMerPSSMEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new NMerPSSMEnergyCreator ) )
 {
 	//TODO: make this an argument of the function call
 	NMerPSSMEnergy::initialize_from_options();

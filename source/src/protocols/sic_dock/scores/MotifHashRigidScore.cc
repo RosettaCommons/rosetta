@@ -153,7 +153,7 @@ MotifHashRigidScore::score_meta( Xforms const & x1s, Xforms const & x2s, int & n
 				Xform const x = ~xb1 * xb2;
 				if( x.t.length_squared() <= 49.0 ) tres1.insert(ir);
 				if( x.t.length_squared() <= 49.0 ) tres2.insert(jr);
-				protocols::motif_hash::XformScoreCAP xscore_for_this_ss = xs_;
+				protocols::motif_hash::XformScoreCOP xscore_for_this_ss = xs_;
 				if(option[mh::score::noloops]() && ss1_[ir-1]=='L') continue;
 				if(option[mh::score::noloops]() && ss2_[jr-1]=='L') continue;
 				if(ss1_[ir-1]=='H'&&ss2_[jr-1]=='H') xscore_for_this_ss = xshh_;
@@ -230,12 +230,12 @@ MotifHashRigidScore::score( Xforms const & x1, Xforms const & x2 ) const {
 }
 
 int
-MotifHashRigidScore::dump_matching_motifs( Pose const & pose1, Pose const & pose2, std::ostream & out, int & count, xyzStripeHashPoseCAP clash_check, bool print ) const {
+MotifHashRigidScore::dump_matching_motifs( Pose const & pose1, Pose const & pose2, std::ostream & out, int & count, xyzStripeHashPoseCOP clash_check, bool print ) const {
 	return mh_->dump_matching_motifs(pose1,pose2,option[mh::motif_match_radius](),out,count,clash_check,print) +
 	       mh_->dump_matching_motifs(pose2,pose1,option[mh::motif_match_radius](),out,count,clash_check,print) ;
 }
 int
-MotifHashRigidScore::dump_matching_motifs( Xforms const & x1s, Xforms const & x2s, std::ostream & out, xyzStripeHashPoseCAP clash_check, bool print ) const {
+MotifHashRigidScore::dump_matching_motifs( Xforms const & x1s, Xforms const & x2s, std::ostream & out, xyzStripeHashPoseCOP clash_check, bool print ) const {
 	if(!mh_) mh_ = protocols::motif_hash::MotifHashManager::get_instance()->motif_hash_from_cli();
 	int nhit = 0;
 	BOOST_FOREACH(Xform const & x1,x1s){
@@ -282,7 +282,7 @@ MotifHashRigidScore::show(
 	std::ostream & out,
 	Xforms const & x1s,
 	Xforms const & x2s,
-	xyzStripeHashPoseCAP clash_check,
+	xyzStripeHashPoseCOP clash_check,
 	int width
 ) const {
 	if(!mh_) mh_ = protocols::motif_hash::MotifHashManager::get_instance()->motif_hash_from_cli();

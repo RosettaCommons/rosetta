@@ -82,10 +82,10 @@ public:
 		assert( glycines.size() > 1 );
 		gly_ = glycines[1];
 
-		ResidueTypeSet rsd_types;
-
+		ResidueTypeSetOP rsd_types = new ResidueTypeSet;
+		
 		std::string filename("core/chemical/params/1aq1.mol2.params");
-		rsd_ = read_topology_file(filename, atom_types, element_types, mm_atom_types, orbital_types, &rsd_types);
+		rsd_ = read_topology_file(filename, atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
 
 		main_rinfo_ = create_ResidueInfo(
 "HETATM    1  O2  LG1 X 299      -0.058   0.605   0.915  1.00  0.00           O  \n"

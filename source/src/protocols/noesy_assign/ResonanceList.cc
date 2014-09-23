@@ -493,7 +493,7 @@ void ResonanceList::update_bond_connections() {
 	}
 	for ( const_iterator it = begin(); it != end(); ++it ) {
 		if ( !it->second->is_proton() ) continue; //do this from the proton
-		ResonanceAP proton( *(it->second) );
+		ResonanceOP proton( it->second );
 		Size resid( it->second->atom().rsd() );
 		try {
 			id::NamedAtomID atomID( label_atom_name( proton->atom().atom(), aa_from_resid( resid ) ), resid );
@@ -501,8 +501,8 @@ void ResonanceList::update_bond_connections() {
 			if ( tr_labels.Trace.visible() ) {
 				tr_labels.Trace << it->second->atom() << " has label " << atomID << std::endl;
 			}
-			ResonanceAP label_reso_ptr( map_[ label_reso.label() ].get() );
-			proton->add_connected_resonance( label_reso_ptr );
+			ResonanceOP label_reso_ptr( map_[ label_reso.label() ] );
+			proton->add_connected_resonance( ResonanceAP( label_reso_ptr ) );
 			label_reso_ptr->add_connected_resonance( proton );
 		} catch ( EXCN_UnknownResonance& exception ) {
 			if ( !unknown_resonances_.count( exception.atom() ) ) {

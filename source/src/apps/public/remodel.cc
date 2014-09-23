@@ -276,6 +276,7 @@ core::Size load_loops_from_file(
 	using namespace basic::options::OptionKeys;
 	using core::Size;
 	using basic::options::option;
+	using protocols::forge::build::BuildInstructionOP;
 	using protocols::forge::build::Interval;
 	using protocols::forge::build::SegmentRebuild;
 	using std::istringstream;

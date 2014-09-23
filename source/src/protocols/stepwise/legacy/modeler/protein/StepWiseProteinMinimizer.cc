@@ -113,7 +113,7 @@ namespace protein {
 
 		utility::vector1< std::pair<core::Size,core::Size> > disulfides;
 		core::conformation::disulfide_bonds(pose.conformation(), disulfides);
-		runtime_assert( fa_scorefxn_ );
+		runtime_assert( fa_scorefxn_ != 0 );
 
 		CartesianMinimizer cart_minimizer;
 		AtomTreeMinimizer minimizer;

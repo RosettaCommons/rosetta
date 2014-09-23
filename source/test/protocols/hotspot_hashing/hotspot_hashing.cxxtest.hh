@@ -78,7 +78,7 @@ namespace
 
         // Initialize residue representation
         core::conformation::ResidueOP residue;
-				core::chemical::ResidueTypeSetCAP residue_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
+				core::chemical::ResidueTypeSetCOP residue_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
 				
 				Vector xunit = Vector(1, 0, 0);
 				Vector yunit = Vector(0, 1, 0);
@@ -129,7 +129,7 @@ namespace
 
         // Initialize residue representation
         core::conformation::ResidueOP residue;
-				core::chemical::ResidueTypeSetCAP residue_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
+				core::chemical::ResidueTypeSetCOP residue_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
 
 				{
 					core::chemical::ResidueType const & restype( residue_set->name_map( "ALA" ) );
@@ -592,7 +592,7 @@ namespace
 						jumpindex,
 						residueindex);
 
-				core::conformation::ResidueCOP placed_residue(targetPose.residue(residueindex));
+				core::conformation::ResidueCOP placed_residue(targetPose.residue(residueindex).get_self_ptr());
 
 				Vector residue_CA_location = placed_residue->xyz(placed_residue->atom_index("CA"));
 				TS_ASSERT_DELTA(residue_CA_location, transform.v, 1e-3);

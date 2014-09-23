@@ -84,7 +84,18 @@ private:
 /// This is necessary so that a node can point at its parent
 /// node in a tree without having to worry about whether that
 /// is a target or a regular node
-class InvrotTreeNodeBase : public utility::pointer::ReferenceCount {
+class InvrotTreeNodeBase : public utility::pointer::ReferenceCount
+#ifdef PTR_MODERN
+	// New version
+	, public utility::pointer::enable_shared_from_this< InvrotTreeNodeBase >
+{
+#else
+{
+	// Old intrusive ref-counter version
+	inline InvrotTreeNodeBaseCOP shared_from_this() const { return InvrotTreeNodeBaseCOP( this ); }
+	inline InvrotTreeNodeBaseOP shared_from_this() { return InvrotTreeNodeBaseOP( this ); }
+#endif
+
 
 public:
 
@@ -93,6 +104,12 @@ public:
   );
 
   virtual ~InvrotTreeNodeBase();
+
+	/// self pointers
+	inline InvrotTreeNodeBaseCOP get_self_ptr() const { return shared_from_this(); }
+	inline InvrotTreeNodeBaseOP get_self_ptr() { return shared_from_this(); }
+	inline InvrotTreeNodeBaseCAP get_self_weak_ptr() const { return InvrotTreeNodeBaseCAP( shared_from_this() ); }
+	inline InvrotTreeNodeBaseAP get_self_weak_ptr() { return InvrotTreeNodeBaseAP( shared_from_this() ); }
 
   InvrotTreeNodeBaseCAP
   parent_node() const {

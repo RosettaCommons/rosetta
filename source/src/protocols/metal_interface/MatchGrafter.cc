@@ -67,7 +67,7 @@ Pose
 MatchGrafter::graft( Pose & match,
 						Pose & partner_ungrafted ) {
 
-	core::chemical::ResidueTypeSetCAP typeset(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD));
+	core::chemical::ResidueTypeSetCOP typeset(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD));
 	core::chemical::ResidueType const & CYZ(typeset->name_map("CYZ"));
 
 	//graft match, excluding zinc, onto target

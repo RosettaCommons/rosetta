@@ -95,7 +95,7 @@ main( int argc, char * argv [] )
 	while( input.has_another_pose() )
 	{
 		// make a list of simple pointers. This should be safe since the input_structs will all remain in scope.
-		core::chemical::ResidueTypeSetCAP rsd_set;
+		core::chemical::ResidueTypeSetCOP rsd_set;
 		if ( option[ in::file::fullatom ]() ) {
 			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 		} else {

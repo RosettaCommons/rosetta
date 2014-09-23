@@ -204,8 +204,7 @@ void AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose ) 
 					if ( dist > max_distance_ ) continue;
 
 					pose.add_constraint(
-					    new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires), core::id::AtomID(jatom,jres),
-					            new core::scoring::func::ScalarWeightedFunc( cst_weight_, new core::scoring::func::SOGFunc( dist, coord_dev_ ) ) ) );
+					    new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires), core::id::AtomID(jatom,jres), core::scoring::func::FuncOP( new core::scoring::func::ScalarWeightedFunc( cst_weight_, core::scoring::func::FuncOP( new core::scoring::func::SOGFunc( dist, coord_dev_ ) ) ) ) ) );
 					TR.Debug << "atom_pair_constraint added to residue " << ires << ", atom " << iatom << " and residue " << jres << ", atom " << jatom << " with weight " << cst_weight_ << std::endl;
 				}}
 			}
@@ -280,7 +279,7 @@ AddConstraintsToCurrentConformationMover::parse_task_operations(
 }
 
 void AddConstraintsToCurrentConformationMover::task_factory( TaskFactoryCOP tf ) {
-	runtime_assert( tf );
+	runtime_assert( tf != 0 );
 	task_factory_ = tf;
 }
 

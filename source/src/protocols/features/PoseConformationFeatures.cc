@@ -81,7 +81,7 @@ using core::pose::Pose;
 using core::pose::PoseOP;
 using core::pose::PoseCOP;
 using core::pose::make_pose_from_sequence;
-using core::chemical::ResidueTypeSetCAP;
+using core::chemical::ResidueTypeSetCOP;
 using core::chemical::ResidueTypeCOPs;
 using core::chemical::ChemicalManager;
 using core::chemical::FA_STANDARD;
@@ -407,7 +407,7 @@ PoseConformationFeatures::load_sequence(
 		}
 		res >> annotated_sequence >> total_residue >> fullatom >> ideal;
 	}
-	ResidueTypeSetCAP residue_set(
+	ResidueTypeSetCOP residue_set(
 		ChemicalManager::get_instance()->residue_type_set(
 			fullatom ? FA_STANDARD : CENTROID));
 
@@ -430,7 +430,7 @@ PoseConformationFeatures::load_sequence(
 		while(res.next()){
 			string res_type;
 			res >> res_type;
-			requested_types.push_back( &residue_set->name_map( res_type ));
+			requested_types.push_back( residue_set->name_map( res_type ).get_self_ptr() );
 		}
 		make_pose_from_sequence(pose, requested_types);
 

@@ -59,11 +59,11 @@ MMTorsionLibrary::~MMTorsionLibrary() {}
 /// @details Constructs a MMTorsionLibrary instance from a filename string and constant access pointer to an MMAtomTypeSet
 MMTorsionLibrary::MMTorsionLibrary(
 	 std::string filename,
-	 core::chemical::MMAtomTypeSetCAP mm_atom_set
+	 core::chemical::MMAtomTypeSetCOP mm_atom_set
 )
 {
-	mm_atom_set_ = mm_atom_set;
-
+	mm_atom_set_ = core::chemical::MMAtomTypeSetCAP( mm_atom_set );
+	
 	// read the file
 	std::string line;
 	utility::vector1< std::string > lines;
@@ -87,10 +87,10 @@ MMTorsionLibrary::MMTorsionLibrary(
 			>> atom_type_string_3 >> atom_type_string_4;
 
 		// get atom-type_index from atom set
-		int atom_type_int1 = mm_atom_set_->atom_type_index( atom_type_string_1 );
-		int atom_type_int2 = mm_atom_set_->atom_type_index( atom_type_string_2 );
-		int atom_type_int3 = mm_atom_set_->atom_type_index( atom_type_string_3 );
-		int atom_type_int4 = mm_atom_set_->atom_type_index( atom_type_string_4 );
+		int atom_type_int1 = mm_atom_set->atom_type_index( atom_type_string_1 );
+		int atom_type_int2 = mm_atom_set->atom_type_index( atom_type_string_2 );
+		int atom_type_int3 = mm_atom_set->atom_type_index( atom_type_string_3 );
+		int atom_type_int4 = mm_atom_set->atom_type_index( atom_type_string_4 );
 
 		// get k_theta, multiplicty, and minimum
 		Real k_theta, minimum; int multiplicity;
@@ -113,7 +113,7 @@ MMTorsionLibrary::MMTorsionLibrary(
 	}
 
 	/// apl -- add "no-op" pair for virtual atoms
-	int const virt_type = mm_atom_set_->atom_type_index("VIRT");
+	int const virt_type = mm_atom_set->atom_type_index("VIRT");
 	Real const no_op_k_theta( 0.0 );
 	Real const no_op_minimum( 0.0 );
 	int const no_op_multiplicity( 0 );
@@ -151,7 +151,8 @@ MMTorsionLibrary::lookup(
 			mm_torsion_atom_quad( atom4, atom3, atom2, atom1 ) );
 	}
 
-	int const virt_atom_type = mm_atom_set_->atom_type_index( virt_string );
+	core::chemical::MMAtomTypeSetCOP mm_atom_set( mm_atom_set_ );
+	int const virt_atom_type = mm_atom_set->atom_type_index( virt_string );
 
 	// Virtual atoms get no mm-parameters.  Return the no-op torsion object
 	if ( atom1 == virt_atom_type ||
@@ -163,7 +164,7 @@ MMTorsionLibrary::lookup(
 	}
 
 
-	int const wild_atom_type = mm_atom_set_->atom_type_index( x_string );
+	int const wild_atom_type = mm_atom_set->atom_type_index( x_string );
 
 	// check to see if there are any wildcard params want to use the wild card with the most atoms defined
 	// this is totally ugly and needs to be changed, maybe some fast hash table based lookup would be faster
@@ -207,10 +208,10 @@ MMTorsionLibrary::lookup(
 	else if( wildcard_mm_torsion_library_.count( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, wild_atom_type, atom1 ) ) ) { return wildcard_mm_torsion_library_.equal_range( mm_torsion_atom_quad( wild_atom_type, wild_atom_type, wild_atom_type, atom1 ) ); }
 
 	TR << "No parameters for "
-		<< (*mm_atom_set_)[atom1].name() << "-"
-		<< (*mm_atom_set_)[atom2].name() << "-"
-		<< (*mm_atom_set_)[atom3].name() << "-"
-		<< (*mm_atom_set_)[atom4].name() << std::endl;
+		<< (*mm_atom_set)[atom1].name() << "-"
+		<< (*mm_atom_set)[atom2].name() << "-"
+		<< (*mm_atom_set)[atom3].name() << "-"
+		<< (*mm_atom_set)[atom4].name() << std::endl;
 
 	/// Arriving here, we've failed to find essential parameters
 	utility_exit_with_message("COULD NOT FIND TORSION PARAMS FOR " +
@@ -231,10 +232,11 @@ MMTorsionLibrary::lookup
  std::string atom4
 ) const
 {
-	return (*this).lookup( mm_atom_set_->atom_type_index( atom1 ),
-		mm_atom_set_->atom_type_index( atom2 ),
-		mm_atom_set_->atom_type_index( atom3 ),
-		mm_atom_set_->atom_type_index( atom4 ) );
+	core::chemical::MMAtomTypeSetCOP mm_atom_set( mm_atom_set_ );
+	return (*this).lookup( mm_atom_set->atom_type_index( atom1 ),
+		mm_atom_set->atom_type_index( atom2 ),
+		mm_atom_set->atom_type_index( atom3 ),
+		mm_atom_set->atom_type_index( atom4 ) );
 }
 
 } // namespace mm

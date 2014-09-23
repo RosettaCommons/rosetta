@@ -61,9 +61,10 @@ sources = {
 		"UserKey",
 	],
 	"pointer" : [
-		"access_ptr",
-		"owning_ptr",
-		"owning_ptr_MI",
+		# These tests will need to be rewritten for std::shared_ptr / weak_ptr
+		#"access_ptr",
+		#"owning_ptr",
+		#"owning_ptr_MI",
 	],
 	"signals" : [
 		"BufferedSignalHub",

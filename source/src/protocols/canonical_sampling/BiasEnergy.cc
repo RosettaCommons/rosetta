@@ -64,7 +64,9 @@ BiasEnergy::~BiasEnergy() {
 	if ( protocols::jd2::jd2_used() ) {
 		// I have to say, it makes me a bit nervous assuming that the BiasEnergy is going to be destroyed
 		// before the current_job is.
-		protocols::jd2::JobDistributor::get_instance()->current_job()->remove_output_observer( this );
+		// Should be now OK with proper weak pointers: if BiasEnergy is not longer valid,
+		// the AP lock will fail and the output observer will not be called... but not seg fault expected.
+		protocols::jd2::JobDistributor::get_instance()->current_job()->remove_output_observer( get_self_weak_ptr() );
 	}
 }
 
@@ -93,9 +95,9 @@ void BiasEnergy::initialize_simulation(
 	MetropolisHastingsMover const &,
 	core::Size //non-zero if trajectory is restarted
 ) {
-	runtime_assert( bias_grid_ );
+	runtime_assert( bias_grid_ != 0 );
 	if ( protocols::jd2::jd2_used() ) {
-		protocols::jd2::JobDistributor::get_instance()->current_job()->add_output_observer( this );
+		protocols::jd2::JobDistributor::get_instance()->current_job()->add_output_observer( get_self_weak_ptr() );
 	}
 	bias_grid_->reset();
 	count_grid_->reset();

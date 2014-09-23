@@ -30,9 +30,9 @@ namespace hbtrie {
 
 
 HBAtom::HBAtom() :
-	xyz_(0,0,0),
-	base_xyz_(0,0,0),
-	base2_xyz_(0,0,0),
+	xyz_(0.0,0.0,0.0),
+	base_xyz_(0.0,0.0,0.0),
+	base2_xyz_(0.0,0.0,0.0),
 	is_hydrogen_( false ),
 	is_backbone_( false ),
 	is_protein_( false ),

@@ -70,7 +70,7 @@ main( int argc, char * argv [] ) {
 	devel::init( argc, argv );
 
 	// setup residue types
-	ResidueTypeSetCAP rsd_set =
+	ResidueTypeSetCOP rsd_set =
 		ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
 	PoseInputStreamOP pdb_input(

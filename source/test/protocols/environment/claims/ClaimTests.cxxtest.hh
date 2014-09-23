@@ -69,13 +69,15 @@ public:
 
     core::Size const SEQPOS = 5;
 
-    protocols::environment::Environment env( "env" );
+    protocols::environment::EnvironmentOP env_op( new protocols::environment::Environment( "env" ) );
+    protocols::environment::Environment & env = *env_op;
 
     TorsionClaimOP claim = new TorsionClaim( NULL, core::environment::LocalPosition( "BASE", SEQPOS ) );
     claim->strength( CAN_CONTROL, DOES_NOT_CONTROL );
     claim->claim_sidechain( false );
     claim->claim_backbone( true );
-    TesterOP claim_test = new Tester( claim );
+    TesterOP claim_test = new Tester;
+    claim_test->init( claim );
 
     env.register_mover( claim_test );
 
@@ -114,7 +116,8 @@ public:
     core::Size const SEQPOS1 = 5;
     core::Size const SEQPOS2 = 7;
 
-    protocols::environment::Environment env( "env" );
+    protocols::environment::EnvironmentOP env_op( new protocols::environment::Environment( "env" ) );
+    protocols::environment::Environment & env = *env_op;
 
     LocalPositions envpos;
     envpos.push_back( new LocalPosition( "BASE", SEQPOS1 ) );
@@ -124,7 +127,8 @@ public:
     claim->strength( CAN_CONTROL, DOES_NOT_CONTROL );
     claim->claim_sidechain( false );
     claim->claim_backbone( true );
-    TesterOP claim_test = new Tester( claim );
+    TesterOP claim_test = new Tester();
+    claim_test->init( claim );
 
     env.register_mover( claim_test );
 
@@ -167,13 +171,15 @@ public:
     core::Size const SEQPOS_START = 4;
     core::Size const SEQPOS_END = 7;
 
-    protocols::environment::Environment env( "env" );
+    protocols::environment::EnvironmentOP env_op( new protocols::environment::Environment( "env" ) );
+    protocols::environment::Environment & env = *env_op;
 
     TorsionClaimOP claim = new TorsionClaim( NULL, "BASE", std::make_pair( SEQPOS_START, SEQPOS_END ) );
     claim->strength( CAN_CONTROL, DOES_NOT_CONTROL );
     claim->claim_sidechain( false );
     claim->claim_backbone( true );
-    TesterOP claim_test = new Tester( claim );
+    TesterOP claim_test = new Tester();
+    claim_test->init( claim );
 
     env.register_mover( claim_test );
 

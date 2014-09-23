@@ -112,7 +112,7 @@ read_biounit(
 	pdbres.clear();
 	try {
 		if(pose.n_residue()!=0) utility_exit_with_message("must fill empty pose");
-		core::chemical::ResidueTypeSetCAP fars = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+		core::chemical::ResidueTypeSetCOP fars = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 		utility::vector1<Pose> poses;
 		pose_from_pdb( poses, *fars, fname, false );
 		bool only_one_model = -12345==nresmodel1; nresmodel1 = 9999999;

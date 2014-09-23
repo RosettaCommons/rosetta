@@ -159,7 +159,7 @@ remove_upper_terminus_type_from_conformation_residue(
 void
 build_tree(
     kinematics::FoldTree const & fold_tree,
-	conformation::ResidueCAPs const & residues,
+	conformation::ResidueCOPs const & residues,
 	kinematics::AtomPointer2D & atom_pointer
 	);
 
@@ -167,7 +167,7 @@ build_tree(
 void
 build_jump_edge(
 	kinematics::Edge const & edge,
-	conformation::ResidueCAPs const & residues,
+	conformation::ResidueCOPs const & residues,
 	kinematics::AtomPointer2D & atom_pointer
 	);
 
@@ -175,7 +175,7 @@ build_jump_edge(
 void
 build_polymer_edge(
 	kinematics::Edge const & edge,
-	conformation::ResidueCAPs const & residues,
+	conformation::ResidueCOPs const & residues,
 	kinematics::AtomPointer2D & atom_pointer
 	);
 
@@ -183,7 +183,7 @@ build_polymer_edge(
 void
 build_chemical_edge(
 	kinematics::Edge const & edge,
-	conformation::ResidueCAPs const & residues,
+	conformation::ResidueCOPs const & residues,
 	kinematics::AtomPointer2D & atom_pointer
 	);
 
@@ -202,7 +202,7 @@ build_residue_tree(
 /// @brief  also used in build_tree to build the residue tree for the root residue
 void
 build_residue_tree(
-	conformation::ResidueCAPs const & residues,
+	conformation::ResidueCOPs const & residues,
 	conformation::Residue const & rsd,
 	kinematics::FoldTree const & fold_tree,
 	kinematics::AtomPointer1D & atom_ptr
@@ -213,7 +213,7 @@ void
 replace_residue_in_atom_tree(
 	conformation::Residue const & new_rsd,
 	kinematics::FoldTree const & fold_tree,
-	conformation::ResidueCAPs const & residues,
+	conformation::ResidueCOPs const & residues,
 	kinematics::AtomTree & atom_tree
 	);
 
@@ -225,7 +225,7 @@ void
 insert_residue_into_atom_tree(
 	conformation::Residue const & new_rsd,
 	kinematics::FoldTree const & fold_tree,
-	conformation::ResidueCAPs const & residues,
+	conformation::ResidueCOPs const & residues,
 	kinematics::AtomTree & atom_tree
 	);
 
@@ -271,7 +271,7 @@ get_anchor_and_root_atoms(
 void
 promote_sameresidue_child_of_jump_atom(
 	kinematics::Edge const & edge,
-	conformation::ResidueCAPs const & residues,
+	conformation::ResidueCOPs const & residues,
 	kinematics::AtomPointer2D const & atom_pointer
 	);
 
@@ -280,7 +280,7 @@ promote_sameresidue_child_of_jump_atom(
 void
 promote_sameresidue_child_of_jump_atom(
 	kinematics::Edge const & edge,
-	conformation::ResidueCAPs const & residues,
+	conformation::ResidueCOPs const & residues,
 	kinematics::AtomTree & atom_tree
 	);
 

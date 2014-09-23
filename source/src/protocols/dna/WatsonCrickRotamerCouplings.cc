@@ -92,9 +92,9 @@ WatsonCrickRotamerCouplings::apply(
 			<< "." << pose.pdb_info()->number(bot) << "." << dna_full_name3( pose.residue_type(bot).name3() )
 			<< std::endl;
 		(*couplings)[ top ].first = bot;
-		(*couplings)[ top ].second = new conformation::WatsonCrickResidueMatcher();
+		(*couplings)[ top ].second = ResidueMatcherCOP( new conformation::WatsonCrickResidueMatcher() );
 		(*couplings)[ bot ].first = top;
-		(*couplings)[ bot ].second = new conformation::WatsonCrickResidueMatcher();
+		(*couplings)[ bot ].second = ResidueMatcherCOP( new conformation::WatsonCrickResidueMatcher() );
 	}
 	ptask.rotamer_couplings( couplings );
 }

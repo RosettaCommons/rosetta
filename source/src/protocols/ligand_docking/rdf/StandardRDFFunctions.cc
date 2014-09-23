@@ -69,9 +69,9 @@ void RDFEtableFunction::parse_my_tag(utility::tag::TagCOP tag, basic::datacache:
 	}
 
 	std::string scorefxn_name = tag->getOption<std::string>("scorefxn");
-	core::scoring::ScoreFunctionOP scorefxn(data_map.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name));
+	core::scoring::ScoreFunctionOP scorefxn(data_map.get_ptr< core::scoring::ScoreFunction >( "scorefxns", scorefxn_name));
 	core::scoring::methods::EnergyMethodOptions options(scorefxn->energy_method_options());
-	core::scoring::etable::EtableCAP etable(core::scoring::ScoringManager::get_instance()->etable( options.etable_type()));
+	core::scoring::etable::EtableCOP etable(core::scoring::ScoringManager::get_instance()->etable( options.etable_type()));
 	etable_evaluator_ = new core::scoring::etable::AnalyticEtableEvaluator(*etable);
 
 }
@@ -129,7 +129,7 @@ void RDFElecFunction::parse_my_tag(
 	}
 
 	std::string scorefxn_name = tag->getOption<std::string>("scorefxn");
-	core::scoring::ScoreFunctionOP scorefxn(data_map.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name));
+	core::scoring::ScoreFunctionOP scorefxn(data_map.get_ptr< core::scoring::ScoreFunction >( "scorefxns", scorefxn_name));
 	core::scoring::methods::EnergyMethodOptions options(scorefxn->energy_method_options());
 	coloumb_ = new core::scoring::etable::coulomb::Coulomb(options);
 	coloumb_->initialize();
@@ -419,16 +419,18 @@ void RDFOrbitalFunction::parse_my_tag(
 
 RDFResultList RDFOrbitalFunction::operator()(AtomPairData const & atom_data )
 {
+	core::pose::PoseOP pose( pose_ );
+
 	core::scoring::EnergyMap emap;
 	emap.clear();
-	orbital_score_->get_E_haro_one_way(*pose_,atom_data.protein_atom_id,atom_data.ligand_atom_id,emap);
-	orbital_score_->get_E_haro_one_way(*pose_,atom_data.ligand_atom_id,atom_data.protein_atom_id,emap);
+	orbital_score_->get_E_haro_one_way(*pose,atom_data.protein_atom_id,atom_data.ligand_atom_id,emap);
+	orbital_score_->get_E_haro_one_way(*pose,atom_data.ligand_atom_id,atom_data.protein_atom_id,emap);
 
-	orbital_score_->get_E_hpol_one_way(*pose_,atom_data.protein_atom_id,atom_data.ligand_atom_id,emap);
-	orbital_score_->get_E_hpol_one_way(*pose_,atom_data.ligand_atom_id,atom_data.protein_atom_id,emap);
+	orbital_score_->get_E_hpol_one_way(*pose,atom_data.protein_atom_id,atom_data.ligand_atom_id,emap);
+	orbital_score_->get_E_hpol_one_way(*pose,atom_data.ligand_atom_id,atom_data.protein_atom_id,emap);
 
-	orbital_score_->get_orb_orb_E(*pose_,atom_data.protein_atom_id,atom_data.ligand_atom_id,emap);
-	orbital_score_->get_orb_orb_E(*pose_,atom_data.ligand_atom_id,atom_data.protein_atom_id,emap);
+	orbital_score_->get_orb_orb_E(*pose,atom_data.protein_atom_id,atom_data.ligand_atom_id,emap);
+	orbital_score_->get_orb_orb_E(*pose,atom_data.ligand_atom_id,atom_data.protein_atom_id,emap);
 
 	RDFResultList results;
 
@@ -444,7 +446,7 @@ RDFResultList RDFOrbitalFunction::operator()(AtomPairData const & atom_data )
 
 void RDFOrbitalFunction::preamble(core::pose::Pose & pose)
 {
-	pose_ = pose;
+	pose_ = pose.get_self_ptr();
 	orbital_score_ = new core::scoring::orbitals::OrbitalsScore();
 	pose.update_residue_neighbors();
 }
@@ -479,8 +481,9 @@ void RDFBinaryOrbitalFunction::parse_my_tag(utility::tag::TagCOP, basic::datacac
 
 RDFResultList RDFBinaryOrbitalFunction::operator()(AtomPairData const & atom_data )
 {
-	core::conformation::Residue const & protein_residue(pose_->conformation().residue(atom_data.protein_atom_id.rsd()));
-	core::conformation::Residue const & ligand_residue(pose_->conformation().residue(atom_data.ligand_atom_id.rsd()));
+	core::pose::PoseOP pose( pose_ );
+	core::conformation::Residue const & protein_residue(pose->conformation().residue(atom_data.protein_atom_id.rsd()));
+	core::conformation::Residue const & ligand_residue(pose->conformation().residue(atom_data.ligand_atom_id.rsd()));
 
 	utility::vector1< core::Size > const & protein_orbitals(protein_residue.bonded_orbitals(atom_data.protein_atom_id.atomno()));
 	utility::vector1< core::Size > const & ligand_orbitals(ligand_residue.bonded_orbitals(atom_data.ligand_atom_id.atomno()));
@@ -585,7 +588,7 @@ RDFResultList RDFBinaryOrbitalFunction::operator()(AtomPairData const & atom_dat
 
 void RDFBinaryOrbitalFunction::preamble(core::pose::Pose & pose)
 {
-	pose_ = pose;
+	pose_ = pose.get_self_ptr();
 }
 
 }

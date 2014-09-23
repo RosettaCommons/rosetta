@@ -115,7 +115,7 @@ RestrictNativeResiduesOperation::prevent_repacking( bool const prev )
 void
 RestrictNativeResiduesOperation::apply( Pose const & pose, PackerTask & task ) const
 {
-	runtime_assert( reference_pose() );
+	runtime_assert( reference_pose() != 0 );
 	core::Size total_residue_ref;
 	core::pose::Pose asym_ref_pose;
 	if(core::pose::symmetry::is_symmetric( *reference_pose() )) {

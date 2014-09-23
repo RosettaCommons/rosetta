@@ -91,6 +91,7 @@ settings = {
             "defines" : [
                 "BOOST_ERROR_CODE_HEADER_ONLY",
                 "BOOST_SYSTEM_NO_DEPRECATED",
+                "PTR_REFCOUNT",
             ],
         },
     },
@@ -1160,6 +1161,20 @@ settings = {
         },
     },
 
+    "gcc, ptr_boost" : {
+        "appends" : {
+            "defines" : [
+                "PTR_BOOST",
+                "PTR_MODERN"
+            ],
+        },
+        "removes" : {
+            "defines" : [
+                "PTR_REFCOUNT"
+            ],
+        },
+    },
+
     "gcc, cxx11" : {
         "appends" : {
             "flags" : {
@@ -1167,6 +1182,8 @@ settings = {
             },
             "defines" : [
                 "CXX11",
+                "PTR_STD",
+                "PTR_MODERN"
             ],
         },
         "removes" : {
@@ -1174,6 +1191,7 @@ settings = {
                 "cxx" : [ "std=c++98", "std=c++0x" ],
             },
             "defines" : [
+                "PTR_REFCOUNT"
             ]
         },
     },
@@ -1959,6 +1977,19 @@ settings = {
 
     # extras ##################################################################
 
+    "clang, ptr_boost" : {
+        "appends" : {
+            "defines" : [
+                "PTR_BOOST",
+                "PTR_MODERN"
+            ],
+        },
+        "removes" : {
+            "defines" : [
+                "PTR_REFCOUNT"
+            ],
+        }
+    },
 
     "clang, cxx11thread" : {
         "appends" : {
@@ -1985,6 +2016,8 @@ settings = {
             },
             "defines" : [
                 "CXX11",
+                "PTR_STD",
+                "PTR_MODERN"
             ],
         },
         "removes" : {
@@ -1992,6 +2025,7 @@ settings = {
                 "cxx" : [ "std=c++98", "std=c++0x" ],
             },
             "defines" : [
+                "PTR_REFCOUNT"
             ],
         },
     },

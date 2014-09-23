@@ -234,7 +234,7 @@ public:
 			//TS_ASSERT( constraints_orig[i] != constraints_copy[i] );
 			// Objects are identical (same place in memory)
 			TS_ASSERT( constraints_orig[i] == constraints_copy[i] );
-			TS_ASSERT( constraints_orig[i]() == constraints_copy[i]() );
+			TS_ASSERT( constraints_orig[i].get() == constraints_copy[i].get() );
 			TS_ASSERT( constraints_orig[i]->to_string() == "DihedralConstraint 116 2 116 6 116 7 116 8 CircularHarmonicFunc 2.44839 0.0872665" );
 			TS_ASSERT( constraints_orig[i]->to_string() == constraints_copy[i]->to_string() );
 		}

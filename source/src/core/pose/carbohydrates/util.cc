@@ -75,13 +75,13 @@ find_seqpos_of_parent_residue(conformation::Residue const & residue) {
 
 // Return pointers to the two residues of the glycosidic bond.
 /// @return  Pointers to the residue at <sequence_position> and its parent or else the same pointer twice if undefined.
-std::pair<conformation::ResidueCAP, conformation::ResidueCAP>
+std::pair<conformation::ResidueCOP, conformation::ResidueCOP>
 get_glycosidic_bond_residues(Pose const & pose, uint const sequence_position)
 {
 	using namespace conformation;
 
 	// Get the 1st residue of interest.
-	ResidueCAP res_n = & pose.residue(sequence_position);
+	ResidueCOP res_n = pose.residue(sequence_position).get_self_ptr();
 
 	if (res_n->is_lower_terminus()) {
 		TR.Warning << "Glycosidic torsions are undefined for the first polysaccharide residue of a chain unless part of"
@@ -91,7 +91,7 @@ get_glycosidic_bond_residues(Pose const & pose, uint const sequence_position)
 
 	// Get the 2nd residue of interest.
 	// (res_n_minus_1 is a misnomer for the lower termini of branches.)
-	ResidueCAP res_n_minus_1 = & pose.residue(find_seqpos_of_parent_residue(*res_n));
+	ResidueCOP res_n_minus_1 = pose.residue(find_seqpos_of_parent_residue(*res_n)).get_self_ptr();
 
 	return make_pair(res_n, res_n_minus_1);
 }
@@ -135,7 +135,7 @@ get_reference_atoms_for_phi(Pose const & pose, uint const sequence_position)
 	vector1<AtomID> ids;
 
 	// Get the two residues.  (The first is the "current" residue; the second is the parent.)
-	pair<ResidueCAP, ResidueCAP> const residues = get_glycosidic_bond_residues(pose, sequence_position);
+	pair<ResidueCOP, ResidueCOP> const residues = get_glycosidic_bond_residues(pose, sequence_position);
 
 	if (residues.first->seqpos() == residues.second->seqpos()) {  // This occurs when there is no parent residue.
 		return ids;
@@ -185,7 +185,7 @@ get_reference_atoms_for_psi(Pose const & pose, uint const sequence_position)
 	vector1<AtomID> ids;
 
 	// Get the two residues.  (The first is the "current" residue; the second is the parent.)
-	pair<ResidueCAP, ResidueCAP> const residues = get_glycosidic_bond_residues(pose, sequence_position);
+	pair<ResidueCOP, ResidueCOP> const residues = get_glycosidic_bond_residues(pose, sequence_position);
 
 	if (residues.first->seqpos() == residues.second->seqpos()) {  // This occurs when there is no parent residue.
 		return ids;
@@ -233,7 +233,7 @@ get_reference_atoms_for_1st_omega(Pose const & pose, uint const sequence_positio
 	vector1<AtomID> ids;
 
 	// Get the two residues.  (The first is the "current" residue; the second is the parent.)
-	pair<ResidueCAP, ResidueCAP> const residues = get_glycosidic_bond_residues(pose, sequence_position);
+	pair<ResidueCOP, ResidueCOP> const residues = get_glycosidic_bond_residues(pose, sequence_position);
 
 	if (residues.first->seqpos() == residues.second->seqpos()) {  // This occurs when there is no parent residue.
 		return ids;
@@ -317,7 +317,7 @@ align_virtual_atoms_in_carbohydrate_residue(conformation::Conformation & conf, u
 
 	TR.Debug << " Aligning virtual atoms on residue " << sequence_position << "..." << endl;
 
-	ResidueCAP res = & conf.residue(sequence_position);
+	ResidueCOP res = conf.residue(sequence_position).get_self_ptr();
 
 	// Find and align VOX, if applicable.
 	if (res->carbohydrate_info()->is_cyclic()) {
@@ -338,7 +338,7 @@ align_virtual_atoms_in_carbohydrate_residue(conformation::Conformation & conf, u
 		uint HOY = res->atom_index("HO" + string(1, y + '0'));
 
 		uint parent_res_seqpos = find_seqpos_of_parent_residue(*res);
-		ResidueCAP parent_res = & conf.residue(parent_res_seqpos);
+		ResidueCOP parent_res = conf.residue(parent_res_seqpos).get_self_ptr();
 		uint OY_ref = parent_res->connect_atom(*res);
 		uint HOY_ref = atom_next_to_connect_atom(*parent_res, OY_ref);
 
@@ -347,7 +347,7 @@ align_virtual_atoms_in_carbohydrate_residue(conformation::Conformation & conf, u
 				" of residue " << parent_res_seqpos << endl;
 
 		TR.Debug << "   Updating torsions..." << endl;
-		ResidueCAP dummy = & conf.residue(sequence_position);  // to trigger private method commented below
+		ResidueCOP dummy = conf.residue(sequence_position).get_self_ptr();  // to trigger private method commented below
 		//conf.update_residue_torsions(res->seqpos(), false);
 		TR.Debug << "   Torsions updated." << endl;
 
@@ -363,7 +363,7 @@ align_virtual_atoms_in_carbohydrate_residue(conformation::Conformation & conf, u
 		uint HOZ = res->atom_index("HO" + string(1, z + '0'));
 
 		uint downstream_res_seqpos = sequence_position + 1;
-		ResidueCAP downstream_res = & conf.residue(downstream_res_seqpos);
+		ResidueCOP downstream_res = conf.residue(downstream_res_seqpos).get_self_ptr();
 		uint HOZ_ref = downstream_res->atom_index(downstream_res->carbohydrate_info()->anomeric_carbon_name());
 
 		conf.set_xyz(AtomID(HOZ, sequence_position), conf.xyz(AtomID(HOZ_ref, downstream_res_seqpos)));
@@ -377,7 +377,7 @@ align_virtual_atoms_in_carbohydrate_residue(conformation::Conformation & conf, u
 
 		uint branch_connection_id = res->type().residue_connection_id_for_atom(OZ);
 		uint branch_res_seqpos = res->residue_connection_partner(branch_connection_id);
-		ResidueCAP branch_res = & conf.residue(branch_res_seqpos);
+		ResidueCOP branch_res = conf.residue(branch_res_seqpos).get_self_ptr();
 		uint HOZ_ref = branch_res->atom_index(branch_res->carbohydrate_info()->anomeric_carbon_name());
 
 		conf.set_xyz(AtomID(HOZ, sequence_position), conf.xyz(AtomID(HOZ_ref, branch_res_seqpos)));

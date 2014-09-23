@@ -354,7 +354,8 @@ loop_mover::LoopResult LoopMover_Perturb_CCD::model_loop(
 	float const dummy_tol( 0.001 ); // linmin sets tol internally
 	bool const use_nblist( false ), deriv_check( false ); // true ); // false );
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		minimizer = dynamic_cast<AtomTreeMinimizer*> (new core::optimization::symmetry::SymAtomTreeMinimizer);
+		// minimizer = dynamic_cast<AtomTreeMinimizer*> (new core::optimization::symmetry::SymAtomTreeMinimizer);
+		minimizer = new core::optimization::symmetry::SymAtomTreeMinimizer;
 	} else {
 		minimizer = new core::optimization::AtomTreeMinimizer;
 	}

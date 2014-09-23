@@ -163,7 +163,7 @@ DesignBySecondaryStructureOperation::get_residues_to_design( core::pose::Pose co
 	std::string pred_ss( "" );
 	utility::vector1< core::Real > psipred_prob;
 	if ( ! psipred_interface_ ) {
-		runtime_assert( ss_predictor_ );
+		runtime_assert( ss_predictor_ != 0 );
 		std::string sequence( "" );
 		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
 			if ( pose.residue( i ).is_protein() )

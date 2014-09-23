@@ -173,7 +173,7 @@ public:
 	void test_ChainSelector_parse_my_tag() {
 		std::string tag_string = "<Chain name=chain_rs chains=A/>";
 		std::stringstream ss( tag_string );
-		utility::tag::TagOP tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
@@ -198,7 +198,7 @@ public:
 	void test_ChainSelector_parse_my_tag_w_two_chains() {
 		std::string tag_string = "<Chain name=chain_rs chains=\"1,2\"/>";
 		std::stringstream ss( tag_string );
-		utility::tag::TagOP tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
@@ -237,7 +237,7 @@ public:
 	void test_ChainSelector_parse_my_tag_no_provided_chains() {
 		std::string tag_string = "<Chain name=chain_A_rs />";
 		std::stringstream ss( tag_string );
-		utility::tag::TagOP tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 

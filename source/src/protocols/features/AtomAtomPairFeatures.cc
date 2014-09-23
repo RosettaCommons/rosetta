@@ -61,7 +61,7 @@ using std::string;
 using std::endl;
 using std::upper_bound;
 using core::chemical::num_canonical_aas;
-using core::chemical::AtomTypeSetCAP;
+using core::chemical::AtomTypeSetCOP;
 using core::chemical::AtomIndices;
 using core::chemical::ChemicalManager;
 using core::pose::Pose;
@@ -118,7 +118,7 @@ AtomAtomPairFeatures::AtomAtomPairFeatures() :
 	relevant_atom_names_.push_back("HOH" );
 	relevant_atom_names_.push_back("S"   );
 
-	AtomTypeSetCAP atom_type_set(ChemicalManager::get_instance()->atom_type_set("fa_standard"));
+	AtomTypeSetCOP atom_type_set(ChemicalManager::get_instance()->atom_type_set("fa_standard"));
 
 	for(Size i=1; i <= relevant_atom_names_.size(); ++i){
 		atom_index_to_relevant_atom_index_[

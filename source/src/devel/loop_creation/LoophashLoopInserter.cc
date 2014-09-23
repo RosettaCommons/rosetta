@@ -377,7 +377,7 @@ LoophashLoopInserter::build_loop(
 	
 	//append idealized residues to the pose
 	//TODO: use the rotamer id from the backbone db extra data
-	chemical::ResidueTypeSetCAP restype_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+	chemical::ResidueTypeSetCOP restype_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	for(core::Size i=0; i<n_term_append_size; ++i){
 		
 		core::Size append_seqpos = loop_anchor()+i;

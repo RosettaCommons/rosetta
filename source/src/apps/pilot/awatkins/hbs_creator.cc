@@ -326,6 +326,7 @@ HbsCreatorMover::apply(
 	{
 
 		// create a task factory and task operations
+		using core::pack::task::operation::TaskOperationCOP;
 		TaskFactoryOP tf(new TaskFactory());
 		tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
 

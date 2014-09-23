@@ -81,6 +81,7 @@ public: // typedefs
 	typedef core::Real Real;
 	typedef core::chemical::ResidueTypeSet ResidueTypeSet;
 	typedef core::chemical::ResidueTypeSetCAP ResidueTypeSetCAP;
+	typedef core::chemical::ResidueTypeSetCOP ResidueTypeSetCOP;
 	typedef core::conformation::signals::LengthEvent LengthEvent;
 	typedef core::kinematics::MoveMap MoveMap;
 	typedef core::pose::Pose Pose;
@@ -228,7 +229,8 @@ public: // accessors
 	/// @brief the residue type set being used
 	inline
 	ResidueTypeSet const & residue_type_set() const {
-		return *rts_;
+		ResidueTypeSetCOP rts( rts_ ); // Fix me: returning reference to temporairly locked pointer
+		return *rts;
 	}
 
 

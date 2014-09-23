@@ -142,7 +142,7 @@ SilentTrajectoryRecorder::parse_my_tag(
 void
 SilentTrajectoryRecorder::write_model(
 	core::pose::Pose const & pose,
-	protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
+	protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover //= 0
 ) {
 	runtime_assert( jd2::jd2_used() );
 	std::string filename( metropolis_hastings_mover ? metropolis_hastings_mover->output_file_name(file_name(), cumulate_jobs(), cumulate_replicas()) : file_name() );

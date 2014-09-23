@@ -117,27 +117,28 @@ fix_with_coord_cst( Loops const& rigid, core::pose::Pose& pose, bool bCstAllAtom
 				coord_sdev = ( 1.0/seq_dist ); //or something else?
 				weights[ pos ] = coord_sdev;
 			}
-      conformation::Residue const & rsd( pose.residue( pos ) );
+			core::scoring::func::FuncOP fx( new scoring::func::HarmonicFunc( 0.0, coord_sdev ) );
+			conformation::Residue const & rsd( pose.residue( pos ) );
 			if ( bCstAllAtom ) {
 				for ( Size ii = 1; ii<= rsd.natoms(); ++ii ) {
 					pose.add_constraint( new scoring::constraints::CoordinateConstraint(
-	      id::AtomID( ii, pos),
-	      id::AtomID( 1, pos ) /*this is completely ignored! */,
-	      rsd.xyz( ii ),
-	      new scoring::func::HarmonicFunc( 0.0, coord_sdev )
-						) );
+						id::AtomID( ii, pos),
+						id::AtomID( 1, pos ) /*this is completely ignored! */,
+						rsd.xyz( ii ),
+						fx
+					) );
 				}
-      } else {
+			} else {
 				id::AtomID atomID( pose.residue_type(pos).atom_index("CA"), pos );
 				pose.add_constraint( new scoring::constraints::CoordinateConstraint(
-						atomID,
-						id::AtomID( 1, pos ) /*this is completely ignored! */,
-						rsd.xyz( atomID.atomno() ),
-						new scoring::func::HarmonicFunc( 0.0, coord_sdev )
-					) );
-      }
-    }
-  }
+					atomID,
+					id::AtomID( 1, pos ) /*this is completely ignored! */,
+					rsd.xyz( atomID.atomno() ),
+					fx
+				) );
+			}
+		}
+	}
 }
 
 ///@brief get frags that are fully within the Loop --- shorten(=true/false) frags that are close to the end of loops.
@@ -373,6 +374,8 @@ void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::po
 
   Size nres = pose.total_residue();
   Real const coord_sdev( 0.5 );
+  core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) );
+  
   for ( Size i = 1; i<= (Size)nres; ++i ) {
     if ( i==(Size)pose.fold_tree().root() ) continue;
     if( coordconstraint_segments.is_loop_residue( i ) ) {
@@ -380,7 +383,7 @@ void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::po
       for ( Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
         pose.add_constraint( new CoordinateConstraint(
           AtomID(ii,i), AtomID(1,nres), nat_i_rsd.xyz( ii ),
-          new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) ) );
+          fx ) );
       }
     }
   }

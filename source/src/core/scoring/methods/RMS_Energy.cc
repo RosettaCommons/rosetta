@@ -70,7 +70,7 @@ RMS_EnergyCreator::score_types_for_method() const {
 
 /// c-tor
 RMS_Energy::RMS_Energy() :
-	parent( new RMS_EnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new RMS_EnergyCreator ) )
 {
 	// configure native pose. Not perfect, ideally we should have some way of
 	// guaranteeing that the native pose and pose provided for scoring have

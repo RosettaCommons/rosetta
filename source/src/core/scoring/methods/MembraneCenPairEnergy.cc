@@ -73,7 +73,7 @@ MembraneCenPairEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 MembraneCenPairEnergy::MembraneCenPairEnergy() :
-	parent( new MembraneCenPairEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new MembraneCenPairEnergyCreator ) ),
 	potential_( ScoringManager::get_instance()->get_MembranePotential() )
 {}
 

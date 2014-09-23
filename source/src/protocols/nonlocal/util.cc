@@ -222,7 +222,7 @@ protocols::comparative_modeling::ThreadingJob const * /*const*/ current_job() {
 
   JobDistributor* jd2 = JobDistributor::get_instance();
   InnerJobCOP inner = jd2->current_job()->inner_job();
-  return (protocols::comparative_modeling::ThreadingJob const * const) inner();
+  return (protocols::comparative_modeling::ThreadingJob const * const) inner.get();
 }
 
 core::Real get_per_residue_score(

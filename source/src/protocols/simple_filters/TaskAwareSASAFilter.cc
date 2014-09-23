@@ -117,7 +117,7 @@ core::Real TaskAwareSASAFilter::compute( Pose const & p, bool const verbose ) co
 
 	core::pose::Pose pose = p;
 
-	runtime_assert( task_factory() );
+	runtime_assert( task_factory() != 0 );
   core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 
 	// If a jump has been provided by the user, separate the pose by that jump.

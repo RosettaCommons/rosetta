@@ -64,7 +64,7 @@ RNA_ChemicalMappingEnergyCreator::score_types_for_method() const {
 	return sts;
 }
 RNA_ChemicalMappingEnergy::RNA_ChemicalMappingEnergy():
-	parent( new RNA_ChemicalMappingEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new RNA_ChemicalMappingEnergyCreator ) ),
 	DMS_potential_( ScoringManager::get_instance()->get_RNA_DMS_Potential() ),
 	DMS_low_resolution_potential_( ScoringManager::get_instance()->get_RNA_DMS_LowResolutionPotential() )
 {

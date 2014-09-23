@@ -74,7 +74,7 @@ FACTSEnergy::FACTSEnergy( FACTSEnergy const & src ):
 	max_dis_ ( src.max_dis_ ) {}
 
 FACTSEnergy::FACTSEnergy( EnergyMethodOptions const & options ):
-		parent( new FACTSEnergyCreator ),
+		parent( methods::EnergyMethodCreatorOP( new FACTSEnergyCreator ) ),
 		potential_( ScoringManager::get_instance()->get_FACTSPotential() ),
 		exclude_DNA_DNA_( options.exclude_DNA_DNA() ) {
 	//fpd  this should be in energymethodoptions

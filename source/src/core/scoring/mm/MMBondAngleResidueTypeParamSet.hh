@@ -24,6 +24,7 @@
 // AUTO-REMOVED #include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/mm/MMBondAngleLibrary.hh>
 
 // Utility header
 #include <utility/pointer/access_ptr.hh>
@@ -59,7 +60,7 @@ public:
 	virtual ~MMBondAngleResidueTypeParamSet();
 
 	/// @brief get bond angle library for newly created ResidueTypeParam objects
-	MMBondAngleLibraryCAP
+	MMBondAngleLibrary const *
 	mm_bondangle_library() const
 	{
 		return mm_bondangle_library_;
@@ -68,7 +69,7 @@ public:
 	/// @brief set bond angle library for newly created ResidueTypeParam objects
 	void
 	mm_bondangle_library(
-		MMBondAngleLibraryCAP value
+		MMBondAngleLibrary const * value
 	)
 	{
 		mm_bondangle_library_ = value;
@@ -155,7 +156,7 @@ private:
 	) const;
 
 	/// @brief bond angle library for deriving new ResidueTypeParam objects
-	MMBondAngleLibraryCAP mm_bondangle_library_;
+	MMBondAngleLibrary const * mm_bondangle_library_;
 
 	/// @brief use ResidueType defined theta0 in newly created ResidueTypeParam objects
 	bool use_residue_type_theta0_;

@@ -158,7 +158,7 @@ void NormalizedEvaluatedArchive::save_to_file( std::string suffix ) {
 bool NormalizedEvaluatedArchive::restore_from_file() {
 	bool b_have_restored = Parent::restore_from_file();
 	if ( use_variance_archive_ ) {
-		runtime_assert( variance_archive_ );
+		runtime_assert( variance_archive_ != 0 );
 		variance_archive_->restore_from_file();
 	}
 	score_variations_are_clean_ = false;

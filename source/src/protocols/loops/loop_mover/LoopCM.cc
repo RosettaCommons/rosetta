@@ -147,7 +147,7 @@ bool ang_delta( core::Real const& a, core::Real const& b ){
 void LoopCM::apply( core::pose::Pose& in_pose ){
 
   core::pose::Pose tmp_pose( in_pose );
-  tmp_pose.set_new_conformation( new core::conformation::Conformation( tmp_pose.conformation() ) );
+  tmp_pose.set_new_conformation( core::conformation::ConformationOP( new core::conformation::Conformation( tmp_pose.conformation() ) ) );
   mover_->apply( tmp_pose );
 
   // Copy result into protected conformation in in_pose
@@ -211,7 +211,8 @@ environment::claims::EnvClaims LoopCM::yield_claims( core::pose::Pose const& pos
     }
   }
 
-  TorsionClaimOP torsion = new TorsionClaim( this, pos_list );
+  environment::ClaimingMoverOP this_ptr = utility::pointer::static_pointer_cast< ClaimingMover >( get_self_ptr() );
+  TorsionClaimOP torsion = new TorsionClaim( this_ptr, pos_list );
   torsion->claim_backbone( true );
   torsion->claim_sidechain( true );
   torsion->strength( MUST_CONTROL, DOES_NOT_CONTROL );
@@ -220,7 +221,7 @@ environment::claims::EnvClaims LoopCM::yield_claims( core::pose::Pose const& pos
 
   for( Size i = 1; i <= loops->num_loop(); ++i ){
     Loop const& loop = loops->loops()[i];
-    JumpClaimOP jump = new JumpClaim( this,
+    JumpClaimOP jump = new JumpClaim( this_ptr,
                                       get_name()+"_"+utility::to_string( i ),
                                       LocalPosition( "BASE", loop.start() ),
                                       LocalPosition( "BASE", loop.stop() ),

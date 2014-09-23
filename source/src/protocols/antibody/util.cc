@@ -481,7 +481,7 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in ) {
 	core::pack::task::TaskFactoryOP tf = new TaskFactory;
 	tf->clear();
 
-	tf->push_back(new OperateOnCertainResidues(new PreventRepackingRLT, new ResidueLacksProperty("PROTEIN") ));
+	tf->push_back(new OperateOnCertainResidues(ResLvlTaskOperationOP(new PreventRepackingRLT), ResFilterOP(new ResidueLacksProperty("PROTEIN")) ));
 	tf->push_back(new InitializeFromCommandline );
 	tf->push_back(new IncludeCurrent );
 	tf->push_back(new RestrictToRepacking );

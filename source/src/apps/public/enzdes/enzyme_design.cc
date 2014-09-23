@@ -178,7 +178,8 @@ main( int argc, char * argv [])
 				continue;
 			}
 
-			(poses_to_process[ pose_count ])->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, new basic::datacache::CacheableString( outtag ) );
+			using namespace basic::datacache;
+			(poses_to_process[ pose_count ])->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, DataCache_CacheableData::DataOP( new basic::datacache::CacheableString( outtag ) ) );
 			enzdes_protocol->apply( *(poses_to_process[ pose_count ]) );
 
 				//in case we're only interested in scoring and there is an output

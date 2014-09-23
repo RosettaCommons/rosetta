@@ -117,7 +117,7 @@ void update_pdb_info( core::pose::PDBInfoCOP input_pdb_info, core::pose::Pose& p
 
 void safe_set_conf( core::pose::Pose& pose, core::conformation::ConformationOP conf ){
   if( pose.data().has( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) ){
-    basic::datacache::WriteableCacheableMapOP data_map = dynamic_cast< basic::datacache::WriteableCacheableMap* >( pose.data().get_raw_ptr( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) );
+    basic::datacache::WriteableCacheableMapOP data_map = utility::pointer::dynamic_pointer_cast< basic::datacache::WriteableCacheableMap > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) );
     assert( data_map );
     pose.set_new_conformation( conf );
     pose.data().set( core::pose::datacache::CacheableDataType::WRITEABLE_DATA, data_map );
@@ -126,7 +126,7 @@ void safe_set_conf( core::pose::Pose& pose, core::conformation::ConformationOP c
   }
 }
 
-EnvClaimBroker::EnvClaimBroker( Environment const& env,
+EnvClaimBroker::EnvClaimBroker( EnvironmentCAP env,
                                 MoverPassMap const& movers_and_passes,
                                 core::pose::Pose const& in_pose,
                                 SequenceAnnotationOP ann ):
@@ -134,19 +134,20 @@ EnvClaimBroker::EnvClaimBroker( Environment const& env,
   ann_( ann ),
   env_( env )
 {
-  core::conformation::ConformationCOP in_conf = &in_pose.conformation();
+  core::conformation::Conformation const & in_conf = in_pose.conformation();
   core::pose::Pose pose( in_pose );
   claims_ = collect_claims( movers_and_passes, pose );
   BOOST_FOREACH( EnvClaimOP claim, claims_ ){ claim->annotate( pose, ann ); }
 
   // Build a temporary conformation for which we manipulate the fold tree. After the fold tree is set,
   // we "seal it" as a ProtectedConformation for initializing DoFs.
-  Conformation tmp_conf( *in_conf );
+  ConformationOP tmp_conf_op = new Conformation( in_conf );
+  Conformation & tmp_conf = *tmp_conf_op;
 
   broker_fold_tree( tmp_conf, pose.data() );
   result_.ann = ann_;
 
-  ProtectedConformationOP conf = new ProtectedConformation( &env, tmp_conf );
+  ProtectedConformationOP conf = new ProtectedConformation( env, tmp_conf );
   conf->attach_annotation( ann_ );
 
   BOOST_FOREACH( MoverPassMap::value_type pair, movers_and_passes ){
@@ -165,7 +166,7 @@ EnvClaimBroker::EnvClaimBroker( Environment const& env,
     pair.first->broking_finished( result() );
   }
 
-  assert( dynamic_cast< basic::datacache::WriteableCacheableMap* >( pose.data().get_raw_ptr( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) ) );
+  assert( utility::pointer::dynamic_pointer_cast< basic::datacache::WriteableCacheableMap >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) ) );
 }
 
 EnvClaimBroker::~EnvClaimBroker() {}
@@ -241,10 +242,10 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
                                                     boost::hash_value( utility::join( jump_points, "," ) );
 
   if( !datacache.has( CacheableDataType::WRITEABLE_DATA ) ){
-    datacache.set( CacheableDataType::WRITEABLE_DATA, new WriteableCacheableMap() );
+    datacache.set( CacheableDataType::WRITEABLE_DATA, DataCache_CacheableData::DataOP( new WriteableCacheableMap() ) );
   }
 
-  WriteableCacheableMapOP datamap = dynamic_cast< WriteableCacheableMap* >( datacache.get_raw_ptr( CacheableDataType::WRITEABLE_DATA ) );
+  WriteableCacheableMapOP datamap = utility::pointer::dynamic_pointer_cast< WriteableCacheableMap >( datacache.get_ptr( CacheableDataType::WRITEABLE_DATA ) );
   bool found_data = false;
 
   if( datamap && datamap->find( "AutoCutData" ) != datamap->end() ){
@@ -272,9 +273,10 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
   }
 
   utility::vector1< Size > cycle = fts.cycle();
+  EnvironmentCOP env( env_ );
   while( !cycle.empty() ){
     bool made_cut = false;
-    if( env_.inherit_cuts() ){
+    if( env->inherit_cuts() ){
       for( int i = 1; i <= input_ft.num_cutpoint(); ++i ){
         if( std::find( cycle.begin(), cycle.end(), input_ft.cutpoint( i ) ) != cycle.end() ){
           tr.Debug << "  Inheriting cut at " << input_ft.cutpoint( i ) << " to close ft cycle." << std::endl;
@@ -290,7 +292,7 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
 
     if( !made_cut ) tr.Debug << "  Cut inheritance failed for the cycle '" << cycle << "'." << std::endl;
 
-    if( !made_cut && !found_data && env_.auto_cut() ){
+    if( !made_cut && !found_data && env->auto_cut() ){
         utility::vector1< core::Real > masked_bias( bias.size(), 0 );
       // k must be strictly less than cycle.size() so that the automatic
       // cut doesn't get placed at the end of the cycle.
@@ -304,11 +306,11 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
       std::ostringstream ss;
       ss << "Brokering failed (" << __FILE__ << ":" << __LINE__ << ") because the broker couldn't construct a fold tree. "
          << "It could not find a way to resolve the fold tree cycle: "  << cycle <<". Inherited cuts were "
-         << ( env_.inherit_cuts() ? "on" : "off" ) << " and automatic cuts were " << ( env_.auto_cut() ? "on" : "off" )
+         << ( env->inherit_cuts() ? "on" : "off" ) << " and automatic cuts were " << ( env->auto_cut() ? "on" : "off" )
          << ". At the point of failure were " << fts.num_jumps() << " jumps and "<< fts.num_cuts() << " cuts in the FoldTreeSketch.";
-      if( env_.inherit_cuts() ){
+      if( env->inherit_cuts() ){
         ss << " Availiable inherited cuts are: " << input_ft.cutpoints() << ".";
-      } if( env_.auto_cut() ){
+      } if( env->auto_cut() ){
         ss << " Cut bias was " << bias << "." << std::endl;
       }
       throw utility::excn::EXCN_BadInput( ss.str() );
@@ -481,7 +483,7 @@ void EnvClaimBroker::grant_access( DOFElement const& e, ClaimingMoverOP owner ) 
   using namespace core::id;
   using namespace core::kinematics::tree;
 
-  core::environment::DofPassportOP pass = movers_and_passes_.find( owner.get() )->second;
+  core::environment::DofPassportOP pass = movers_and_passes_.find( owner )->second;
 
   pass->add_dof_access( e.id );
 }
@@ -523,7 +525,7 @@ EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const& movers_and_passes,
 
   WriteableCacheableMapOP bk_map;
   if( !pose.data().has( CacheableDataType::WRITEABLE_DATA ) ){
-    pose.data().set( CacheableDataType::WRITEABLE_DATA, new WriteableCacheableMap() );
+    pose.data().set( CacheableDataType::WRITEABLE_DATA, DataCache_CacheableData::DataOP( new WriteableCacheableMap() ) );
   }
 
   // Create a sandboxed copy of the map
@@ -546,8 +548,9 @@ EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const& movers_and_passes,
         claims.push_back( claim );
       } else {
         std::ostringstream ss;
+	EnvironmentCOP env = this->env_.lock();
         ss << "The mover '" << claim->owner() << "' yielded a null pointer as one of its "
-           << in_claims.size() << " claims during broking of the environment '" << this->env_.name()
+           << in_claims.size() << " claims during broking of the environment '" << (env ? env->name() : "(Unknown)")
            << "'." << std::endl;
         throw utility::excn::EXCN_NullPointer( ss.str() );
       }
@@ -573,7 +576,7 @@ EnvClaims EnvClaimBroker::collect_claims( MoverPassMap const& movers_and_passes,
     }
   }
 
-  this->result_.cached_data = WriteableCacheableMapCOP( new_cached_data.get() );
+  this->result_.cached_data = new_cached_data;
 
   tr.Debug << "collected " << claims.size() << " DoFClaims from "
            << movers_and_passes.size() << " movers." << std::endl;
@@ -692,7 +695,8 @@ void EnvClaimBroker::process_elements( CutElemVect const& elems,
       fts.insert_cut( abs_p );
     } catch ( core::environment::EXCN_FTSketchGraph& excn ){
       std::ostringstream ss;
-      ss << "The Environment '" << env_.name() << "' had more than one"
+      EnvironmentCOP env = env_.lock();
+      ss << "The Environment '" << (env ? env->name() : "(Unknown)" ) << "' had more than one"
          << " cut placed at absolute position " << abs_p << "." << std::endl;
       excn.add_msg( ss.str() );
       throw excn;

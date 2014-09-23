@@ -61,7 +61,7 @@ namespace claims {
 class CutClaim : public DofClaim {
 	//this class could also specify which atoms to use for the jumps --- but I never used this so far.... might be necessary for Zn jumps.
 public:
-	CutClaim( TopologyClaimer* tc, std::pair< std::string, core::Size > position,
+	CutClaim( TopologyClaimerAP tc, std::pair< std::string, core::Size > position,
 						ClaimRight right = DofClaim::CAN_INIT ) :
 		DofClaim( tc, right ),
 		position_( position )
@@ -74,7 +74,8 @@ public:
 	}
 
 	virtual void show(std::ostream& os) const {
-		os << "DofClaim-" << str_type() << " owned by a " << owner()->type() << "  at pos";
+		TopologyClaimerCOP owner_op( owner() );
+		os << "DofClaim-" << str_type() << " owned by a " << (owner_op ? owner_op->type() : "(Unknown)") << "  at pos";
 		os << " ('" << position_.first << "'," << position_.second << ")";
 	}
 

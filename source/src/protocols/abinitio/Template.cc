@@ -377,10 +377,10 @@ void Template::_read_constraints( std::string const& cst_file ) const {
   FlatList all_cst = cstset->get_all_constraints();
   for ( FlatList::const_iterator it = all_cst.begin(),
 	  eit = all_cst.end(); it!=eit; ++it ) {
-    ConstraintCOP ptr = it->get();
+    ConstraintCOP ptr = *it;
     AtomPairConstraintCOP ptr2 = dynamic_cast< AtomPairConstraint const * > ( ptr.get() );
     if ( ptr2 ) {
-      AtomPairConstraintOP valued_cst = const_cast< AtomPairConstraint * > (ptr2.get());
+      AtomPairConstraintOP valued_cst = utility::pointer::const_pointer_cast< AtomPairConstraint >(ptr2);
       cstset_.push_back( new Obsolet_NamedAtomPairConstraint( valued_cst, *pose_ ) );
     } else {
       tr.Warning << "WARNING: constraint found that is not AtomPairConstraint... will be ignored by Template" << std::endl;

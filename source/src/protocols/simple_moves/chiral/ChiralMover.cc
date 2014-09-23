@@ -407,7 +407,7 @@ ResidueType const & get_chiral_residue_type( ResidueType const & rt, Chirality c
 		TR << "chiral_name: " << chiral_name << std::endl;
 		chiral_name.append( patch_name );
 		TR << "chiral_name(patched): " << chiral_name << std::endl;
-		ResidueTypeSetCAP fa_standard(ChemicalManager::get_instance()->residue_type_set(FA_STANDARD));
+		ResidueTypeSetCOP fa_standard(ChemicalManager::get_instance()->residue_type_set(FA_STANDARD));
 		ResidueType const & d_rsd_type( fa_standard->name_map( chiral_name ) );
 		return d_rsd_type;
 	}
@@ -421,7 +421,7 @@ ResidueType const & get_chiral_residue_type( ResidueType const & rt, Chirality c
 			TR << "chiral_name: " << chiral_name << std::endl;
 			chiral_name.append( patch_name );
 			TR << "chiral_name(patched): " << chiral_name << std::endl;
-			ResidueTypeSetCAP fa_standard(ChemicalManager::get_instance()->residue_type_set(FA_STANDARD));
+			ResidueTypeSetCOP fa_standard(ChemicalManager::get_instance()->residue_type_set(FA_STANDARD));
 			ResidueType const & d_rsd_type( fa_standard->name_map( chiral_name ) );
 			return d_rsd_type;
 		}

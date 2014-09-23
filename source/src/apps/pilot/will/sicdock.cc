@@ -198,7 +198,7 @@ void
 dock(
 	Pose const & init_pose,
 	std::string const & fn,
-	basic::sampling::orientations::QuaternionGridCAP qgrid,
+	basic::sampling::orientations::QuaternionGridCOP qgrid,
 	Pose const & /*native_olig*/,
 	int native_nfold = 1,
 	Vec cen=Vec(0,0,0)
@@ -462,7 +462,7 @@ dock(
 				if(NAT) rms = core::scoring::CA_rmsd(olig,native);
 
 				using namespace protocols::sic_dock;
-				xyzStripeHashPoseCAP clash_checker = NULL;
+				xyzStripeHashPoseCOP clash_checker = NULL;
 				if(nout < nstruct){
 					if(mhscore_){
 						utility::io::ozstream out(outdir+tag+"_motifs.pdb");
@@ -497,7 +497,7 @@ dock(
 				cout << F(5,3,h.ddis);;
 				cbscore_->show(cout,x1s,x2s); cout << " ";
 				if(bpy3_sc_) bpy3_sc_->show(cout,x1s,x2s);
-				if(mhscore_) mhscore_->show(cout,x1s,x2s,clash_checker);
+				if(mhscore_) mhscore_->show(cout,x1s,x2s,clash_checker,10);
 				cout << endl;
 				++nout;
 			}
@@ -552,7 +552,7 @@ int main(int argc, char *argv[]) {
 	using namespace basic::options::OptionKeys;
 
 	std::cout << "reading quaternion grid data" << endl;
-	basic::sampling::orientations::QuaternionGridCAP qgrid; {
+	basic::sampling::orientations::QuaternionGridCOP qgrid; {
 		basic::sampling::orientations::QuaternionGridManager *m = basic::sampling::orientations::QuaternionGridManager::get_instance();
 		if( option[sicdock::sample_number].user() && option[sicdock::sample_radius].user() ){
 			utility_exit_with_message("cant specify both -sicdock::sample_radius and -sicdock::sample_number");

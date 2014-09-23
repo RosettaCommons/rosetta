@@ -67,7 +67,7 @@ public:
 	extrachi_sample_level(
 		bool buried,
 		int chi,
-		chemical::ResidueTypeCOP concrete_residue
+		chemical::ResidueType const & concrete_residue
 	) const = 0;
 
 	virtual void initialize_from_command_line() = 0;
@@ -255,7 +255,17 @@ public:
 
 /// @brief  Task class that gives instructions to the packer
 class PackerTask : public utility::pointer::ReferenceCount
+#ifdef PTR_MODERN
+	// New version
+	, public utility::pointer::enable_shared_from_this< PackerTask >
 {
+#else
+{
+	// Old intrusive ref-counter version
+	inline PackerTaskCOP shared_from_this() const { return PackerTaskCOP( this ); }
+	inline PackerTaskOP shared_from_this() { return PackerTaskOP( this ); }
+#endif
+
 public:
 	typedef chemical::AA AA;
 	typedef rotamer_set::RotamerCouplingsCOP RotamerCouplingsCOP;
@@ -266,6 +276,12 @@ public:
 	virtual ~PackerTask() = 0;
 
 	virtual PackerTaskOP clone() const = 0;
+
+	/// self pointers
+	inline PackerTaskCOP get_self_ptr() const { return shared_from_this(); }
+	inline PackerTaskOP get_self_ptr() { return shared_from_this(); }
+	//inline PackerTaskCAP get_self_weak_ptr() const { return PackerTaskCAP( shared_from_this() ); }
+	//inline PackerTaskAP get_self_weak_ptr() { return PackerTaskAP( shared_from_this() ); }
 
 	virtual void clean_residue_task( conformation::Residue const & original_residue, Size const seqpos ) = 0;
 

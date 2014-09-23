@@ -67,7 +67,7 @@ static thread_local basic::Tracer TR( "core.scoring.disulfides.CentroidDisulfide
 CentroidDisulfideEnergy::CentroidDisulfideEnergy(
 	CentroidDisulfidePotential const & potential
 ) :
-	parent( new CentroidDisulfideEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( methods::EnergyMethodCreatorOP( new CentroidDisulfideEnergyCreator ) ) ),
 	potential_( potential )
 {}
 

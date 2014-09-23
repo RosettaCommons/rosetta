@@ -98,8 +98,8 @@ AddMembraneMover::AddMembraneMover() :
 	include_lips_( false ),
 	view_in_pymol_( false ),
 	anchored_foldtree_( false ),
-	center_(0, 0, 0),
-	normal_(0, 0, 10)
+	center_(0.0, 0.0, 0.0),
+	normal_(0.0, 0.0, 10.0)
 {
 	register_options();
 	init_from_cmd();
@@ -409,7 +409,7 @@ AddMembraneMover::setup_anchoring_virtual( Pose & pose ) {
 	using namespace core::kinematics;
 	
 	// Grab the current residue typeset and create a new residue
-	ResidueTypeSetCAP const & residue_set(
+	ResidueTypeSetCOP const & residue_set(
 	  ChemicalManager::get_instance()->residue_type_set( fullatom_ ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
 	  );
 	  
@@ -447,7 +447,7 @@ AddMembraneMover::setup_membrane_virtual( Pose & pose ) {
 	using namespace core::chemical;
 	
 	// Grab the current residue typeset and create a new residue
-	ResidueTypeSetCAP const & residue_set(
+	ResidueTypeSetCOP const & residue_set(
 		ChemicalManager::get_instance()->residue_type_set( fullatom_ ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
 		);
 		

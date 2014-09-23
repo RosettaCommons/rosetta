@@ -97,7 +97,7 @@ Rama2BOffsetEnergyCreator::score_types_for_method() const {
 
 
 Rama2BOffsetEnergy::Rama2BOffsetEnergy( ) :
-	parent( new Rama2BOffsetEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new Rama2BOffsetEnergyCreator ) ),
 	potential_( ScoringManager::get_instance()->get_Rama2BOffset() )
 {}
 

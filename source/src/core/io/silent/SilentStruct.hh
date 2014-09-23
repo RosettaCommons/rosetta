@@ -51,7 +51,17 @@ namespace silent {
 
 	//////////////////////////////////////////////////////////////////////
 	// holds all the data for a silent-structure
-	class SilentStruct : public utility::pointer::ReferenceCount {
+	class SilentStruct : public utility::pointer::ReferenceCount
+#ifdef PTR_MODERN
+		// New version
+		, public utility::pointer::enable_shared_from_this< SilentStruct >
+{
+#else
+{
+		// Old intrusive ref-counter version
+		inline SilentStructCOP shared_from_this() const { return SilentStructCOP( this ); }
+		inline SilentStructOP shared_from_this() { return SilentStructOP( this ); }
+#endif
 
 		typedef std::string string;
 
@@ -66,6 +76,12 @@ namespace silent {
 		SilentStruct& operator= ( SilentStruct const & );
 
 		virtual SilentStructOP clone() const = 0;
+
+		/// self pointers
+		inline SilentStructCOP get_self_ptr() const { return shared_from_this(); }
+		inline SilentStructOP get_self_ptr() { return shared_from_this(); }
+		//inline SilentStructCAP get_self_weak_ptr() const { return SilentStructCAP( shared_from_this() ); }
+		//inline SilentStructAP get_self_weak_ptr() { return SilentStructAP( shared_from_this() ); }
 
 		// @brief Fill a Pose with the conformation information in this
 		// SilentStruct and the FA_STANDARD ResidueTypeSet.

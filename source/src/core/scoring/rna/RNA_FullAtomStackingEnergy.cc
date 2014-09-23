@@ -77,7 +77,7 @@ RNA_FullAtomStackingEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 RNA_FullAtomStackingEnergy::RNA_FullAtomStackingEnergy() :
-	parent( new RNA_FullAtomStackingEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new RNA_FullAtomStackingEnergyCreator ) ),
 	//Parameters are totally arbitrary and made up!
 	prefactor_ ( 0.2 ),
 	full_stack_cutoff_ ( 4.0 ), //Encompass next base stack

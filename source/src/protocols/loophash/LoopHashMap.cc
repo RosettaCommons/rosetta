@@ -364,7 +364,7 @@ LoopHashMap::LoopHashMap( core::Size loop_size){
 }
 
 LoopHashMap::LoopHashMap(LoopHashMap const & other ) :
-	hash_(*other.hash_),
+	hash_(other.hash_),
 	backbone_index_map_(other.backbone_index_map_),
 	loopdb_(other.loopdb_),
 	loop_size_(other.loop_size_)
@@ -373,7 +373,7 @@ LoopHashMap::LoopHashMap(LoopHashMap const & other ) :
 
 LoopHashMap LoopHashMap::operator=(LoopHashMap const & other)
 {
-	hash_ = *other.hash_;
+	hash_ = other.hash_;
 	backbone_index_map_ = other.backbone_index_map_;
 	loopdb_ = other.loopdb_;
 	loop_size_ = other.loop_size_;

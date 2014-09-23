@@ -261,11 +261,14 @@ void add_cmdline_claims( TopologyBroker& broker, bool const do_I_need_frags ) {
 
 		tr.Info << " Adding claimers for fragments with label '" << i->label() << "'." <<std::endl;
 
-		simple_moves::ClassicFragmentMoverOP bms, bml, sms;
-
-		broker.add( new FragmentClaimer(bml = new ClassicFragmentMover(i->frags_large()), "LargeFrags", new LargeFragWeight, i->label(), i->frags_large()));
-		broker.add( new FragmentClaimer(bms = new ClassicFragmentMover(i->frags_small()), "SmallFrags", new SmallFragWeight, i->label(), i->frags_small()) );
-		broker.add( new FragmentClaimer(sms = new SmoothFragmentMover (i->frags_small(), /*dummy -*/ new GunnCost), "SmoothFrags", new SmoothFragWeight, i->label(), i->frags_small() ));
+		simple_moves::ClassicFragmentMoverOP
+			bml( new ClassicFragmentMover(i->frags_large()) ),
+			bms( new ClassicFragmentMover(i->frags_small()) ),
+			sms( new SmoothFragmentMover (i->frags_small(), simple_moves::FragmentCostOP( new GunnCost ) ) );
+			
+		broker.add( new FragmentClaimer( bml, "LargeFrags", weights::AbinitioMoverWeightOP( new LargeFragWeight ), i->label(), i->frags_large() ) );
+		broker.add( new FragmentClaimer( bms, "SmallFrags", weights::AbinitioMoverWeightOP( new SmallFragWeight ), i->label(), i->frags_small() ) );
+		broker.add( new FragmentClaimer( sms, "SmoothFrags", weights::AbinitioMoverWeightOP( new SmoothFragWeight ), i->label(), i->frags_small() ) );
 		broker.add( new LoopFragmentClaimer( i->frags_small(), i->label() ));
 		core::fragment::SecondaryStructureOP ss_def = new core::fragment::SecondaryStructure(*(i->frags_small()), false /*no JustUseCentralResidue */ );
 		broker.add( new CutBiasClaimer( *ss_def, i->label() ) );

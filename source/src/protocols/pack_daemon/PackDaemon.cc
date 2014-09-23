@@ -151,7 +151,7 @@ void PackDaemon::setup()
 	InteractionGraphBaseOP ig;
 	core::pack::pack_rotamers_setup( *pose_, *score_function_, task_, rot_sets_, ig );
 
-	ig_ = dynamic_cast< core::pack::interaction_graph::FixedBBInteractionGraph * > ( ig.get() );
+	ig_ = utility::pointer::dynamic_pointer_cast< core::pack::interaction_graph::FixedBBInteractionGraph > ( ig );
 	if ( ! ig_ )  {
 		throw utility::excn::EXCN_Msg_Exception( "Interaction graph returned by pack_rotamers_setup is not a"
 			" fixed-backbone interaction graph.  Cannot continue" );
@@ -1133,7 +1133,7 @@ BasicSimAnnealerRepacker::BasicSimAnnealerRepacker(
 ) :
 	parent( pose, task, ig, rotsets )
 {
-	ig()->prepare_for_simulated_annealing();
+	ig->prepare_for_simulated_annealing();
 }
 
 BasicSimAnnealerRepacker::~BasicSimAnnealerRepacker() {}
@@ -1189,7 +1189,7 @@ DenseIGRepacker::DenseIGRepacker(
 ) :
 	parent( pose, task, ig, rotsets )
 {
-	ig()->prepare_for_simulated_annealing();
+	ig->prepare_for_simulated_annealing();
 }
 
 DenseIGRepacker::~DenseIGRepacker() {}
@@ -1345,7 +1345,7 @@ DoubleDenseIGRepacker::DoubleDenseIGRepacker(
 ) :
 	parent( pose, task, ig, rotsets )
 {
-	ig()->prepare_for_simulated_annealing();
+	ig->prepare_for_simulated_annealing();
 }
 
 DoubleDenseIGRepacker::~DoubleDenseIGRepacker() {}
@@ -1455,7 +1455,7 @@ FASTER_IG_Repacker::FASTER_IG_Repacker(
 	sa_scale_( 0.05 ),
 	ciBR_only_( false )
 {
-	ig()->prepare_for_simulated_annealing();
+	ig->prepare_for_simulated_annealing();
 }
 
 FASTER_IG_Repacker::~FASTER_IG_Repacker() {}
@@ -1493,7 +1493,7 @@ FASTER_IG_Repacker::repack( utility::vector0< int > const & rot_to_pack )
 		bool start_with_current = false;
 		FArray1D_int current_rot_index( pose()->total_residue(), 0 );
 		bool calc_rot_freq = false;
-		FArray1D< core::PackerEnergy > rot_freq( faster_ig()->get_num_total_states(), 0.0 );
+		FArray1D< core::PackerEnergy > rot_freq( faster_ig->get_num_total_states(), 0.0 );
 
 		FASTERAnnealer fa( rotamer_assignment, rotamer_energy, start_with_current,
 			faster_ig, rsubset(), current_rot_index, calc_rot_freq, rot_freq );

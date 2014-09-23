@@ -256,7 +256,7 @@ public: // observer interface
 	/// See also:
 	///     Pose
 	///     PDBInfo
-	core::conformation::Conformation const *
+	core::conformation::ConformationCAP
 	is_observing();
 
 
@@ -559,7 +559,7 @@ public: // pdb-wide accessors/mutators
 	/// Generally this requires using the -run:preserve_header options flag.
 	inline
 	void
-	header_information(io::pdb::HeaderInformation * header_information){
+	header_information(io::pdb::HeaderInformationOP header_information){
 		header_information_ = header_information;
 	}
 
@@ -1273,7 +1273,7 @@ private: // data
 
 
 	/// @brief Conformation being observed, NULL if not attached
-	core::conformation::Conformation const * conf_;
+	core::conformation::ConformationCAP conf_;
 
 
 	// added by sheffler

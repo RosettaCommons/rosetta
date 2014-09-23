@@ -98,10 +98,12 @@ public:
 	}//decompose_restypes_list
 
 	//extracts the extrachi levels into a string for ease of comparison; format in test function
-	string decompose_EX_info( Size resid, ResidueTypeCOP const phe, ResidueTypeCOP const ala){
+	string decompose_EX_info( Size resid, ResidueTypeCOP const phe_op, ResidueTypeCOP const ala_op){
 		//stringstreams allow coercion of ExtraRotSample -> int -> char -> string for ease of comparison
 		//each position in the returned string represents a different query (see below)
 		std::ostringstream EXstream;
+		ResidueType const & phe = *phe_op;
+		ResidueType const & ala = *ala_op;
 
 		EXstream << the_task->residue_task( resid ).extrachi_sample_level(true, 1, phe) //position 0 in string
 						 << the_task->residue_task( resid ).extrachi_sample_level(false, 1, phe)//1
@@ -209,8 +211,8 @@ public:
 
 		//we need instances of an aromatic and nonaromatic residue
 		//fastest route is filching ResidueTypeSet reference out of pose
-		ResidueTypeCOP phe = &pose.residue_type(1).residue_type_set().name_map("PHE");
-		ResidueTypeCOP ala = &pose.residue_type(1).residue_type_set().name_map("ALA");
+		ResidueTypeCOP phe = pose.residue_type(1).residue_type_set().name_map("PHE").get_self_ptr();
+		ResidueTypeCOP ala = pose.residue_type(1).residue_type_set().name_map("ALA").get_self_ptr();
 
 		//the "magic number" strings represent the expected data
 		//the format, presented as (position indexed from 0, meaning) is as follows:

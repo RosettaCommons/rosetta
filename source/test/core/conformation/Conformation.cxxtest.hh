@@ -158,7 +158,7 @@ void test_simple_conformation()
 	UTRACE << pose.fold_tree() << "\n";
 
 	// prepend an alanine residue
-	ResidueTypeSetCAP residue_set
+	ResidueTypeSetCOP residue_set
 		( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 	ResidueOP ala_rsd( ResidueFactory::create_residue( residue_set->name_map( "ALA" ) ) );
 
@@ -203,19 +203,20 @@ void test_Conformation_observer() {
 	using test_conf::Obs;
 
 	// grab alanine residue
-	ResidueTypeSetCAP residue_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+	ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 	ResidueOP ala_rsd( ResidueFactory::create_residue( residue_set->name_map( "ALA" ) ) );
 
 	//Pose pose;
 	//pose_from_pdb( pose, "core/conformation/test_in.pdb" );
 	pose::Pose pose( create_test_in_pdb_pose());
-	Conformation conf = pose.conformation();
-
+	ConformationOP conf_op = pose.conformation().clone();
+	Conformation & conf = *conf_op;
 	Obs obs;
 
 	// connection observers
 	{ // begin scope
-		Conformation c2 = conf;
+		ConformationOP c2_op = conf.clone();
+		Conformation & c2 = *c2_op;
 		TS_ASSERT( c2.attach_connection_obs( &Obs::on_connection_change, &obs ).valid() );
 		TS_ASSERT( c2.detach_connection_obs( &Obs::on_connection_change, &obs ) );
 		TS_ASSERT( c2.attach_connection_obs( &Obs::on_connection_change, &obs ).valid() );

@@ -86,7 +86,7 @@ DipolarCouplingEnergyCreator::score_types_for_method() const {
 //@brief
 //////////////////////////////////////////////////////
 DipolarCouplingEnergy::DipolarCouplingEnergy() :
-	parent( new DipolarCouplingEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new DipolarCouplingEnergyCreator ) )
 {}
 
 //////////////////////////////////////////////////////

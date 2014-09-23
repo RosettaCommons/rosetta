@@ -582,7 +582,7 @@ SingleResiduePeptoidLibrary::hokey_template_workaround()
 	RotamericSingleResiduePeptoidLibrary< THREE > rsrdl_3;
 	RotamericSingleResiduePeptoidLibrary< FOUR >  rsrdl_4;
 
-	chemical::ResidueType rt( 0, 0, 0, 0 );
+	chemical::ResidueType rt( NULL, NULL, NULL, NULL );
 	conformation::Residue rsd( rt, true );
 	RotamerLibraryScratchSpace scratch;
 

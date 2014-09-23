@@ -369,7 +369,7 @@ ExactOccludedHbondSolEnergy::ExactOccludedHbondSolEnergy(
 	core::Real const occ_radius_scaling,
 	bool const verbose
 ) :
-	parent( new ExactOccludedHbondSolEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new ExactOccludedHbondSolEnergyCreator ) ),
 	exact_occ_skip_Hbonders_( exact_occ_skip_Hbonders ),
 	exact_occ_include_Hbond_contribution_( exact_occ_include_Hbond_contribution ),
 	exact_occ_pairwise_( exact_occ_pairwise ),
@@ -485,6 +485,7 @@ void ExactOccludedHbondSolEnergy::residue_energy(
 
 	core::Size polar_resnum = (core::Size) polar_rsd.seqpos();
 	core::Real residue_geosol(0.);
+	chemical::AtomTypeSetCOP atom_type_set_ptr( atom_type_set_ptr_ );
 
 	// loop over donors in polar_rsd
 	for ( chemical::AtomIndices::const_iterator
@@ -496,7 +497,7 @@ void ExactOccludedHbondSolEnergy::residue_energy(
 
 		// Figure out max LK energy
 		std::string const base_atom_name = polar_rsd.atom_name( base_atom );
-		core::Real max_possible_LK = (*atom_type_set_ptr_)[polar_rsd.atom_type_index(base_atom)].lj_radius();
+		core::Real max_possible_LK = (*atom_type_set_ptr)[polar_rsd.atom_type_index(base_atom)].lj_radius();
 		if ( ( base_atom_name == " N  " ) && polar_rsd.is_lower_terminus() ) max_possible_LK /= 3; // charged N-terminus
 		if ( base_atom_name == " NZ " ) max_possible_LK /= 3; // Lys
 		if ( base_atom_name == " ND2" ) max_possible_LK /= 2; // Asn
@@ -567,7 +568,7 @@ void ExactOccludedHbondSolEnergy::residue_energy(
 
 		// Figure out max LK energy
 		std::string const base_atom_name = polar_rsd.atom_name( base_atom );
-		core::Real max_possible_LK = (*atom_type_set_ptr_)[ polar_rsd.atom_type_index( polar_atom ) ].lk_dgfree();
+		core::Real max_possible_LK = (*atom_type_set_ptr)[ polar_rsd.atom_type_index( polar_atom ) ].lk_dgfree();
 		//			TR << "jk max LK for acceptor " << polar_rsd.atom_name(polar_atom) << " is  " << max_possible_LK << std::endl;
 
 		// jk INSTEAD OF USING LK dG FREE, SET THEM ALL TO -5.0. THIS IS ALMOST TRUE ANYWAY, AND THE ONES THAT AREN'T SHOULD PROBABLY BE...
@@ -779,6 +780,8 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 		}
 	}
 
+	chemical::AtomTypeSetCOP atom_type_set_ptr( atom_type_set_ptr_ );
+
 	for ( Size occ_inx = 1; occ_inx <= neighborlist.size(); ++occ_inx ) {
 		core::Size const occ_resnum( neighborlist[occ_inx] );
 		if ( ! exact_occ_self_res_occ_ && ( polar_resnum == occ_resnum ) ) {
@@ -809,7 +812,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 				if ( base_atomno == occ_atomno ) continue;
 			}
 
-			core::Real occ_radius = (*atom_type_set_ptr_)[occ_rsd.atom_type_index( occ_atomno )].lj_radius();
+			core::Real occ_radius = (*atom_type_set_ptr)[occ_rsd.atom_type_index( occ_atomno )].lj_radius();
 			// catch proline NV here (and other virtual atoms, etc.)
 			if ( occ_radius < 0.1 ) continue;
 			occ_radius *= occ_radius_scaling_;

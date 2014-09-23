@@ -52,6 +52,7 @@ namespace screener {
 	/////////////////////////////////////////
 	void
 	ProteinCCD_ClosureScreener::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
+		using protocols::moves::MoverOP;
 		update_mover->add_mover(  new TorsionSetMover( ccd_closer_->which_torsions(), ccd_closer_->main_chain_torsion_set() ) );
 		restore_mover->add_mover( new TorsionSetMover( ccd_closer_->which_torsions(), ccd_closer_->main_chain_torsion_set_save() ) );
 	}

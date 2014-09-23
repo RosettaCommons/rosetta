@@ -109,7 +109,7 @@ PDBTrajectoryRecorder::parse_my_tag(
 void
 PDBTrajectoryRecorder::reset(
 	protocols::moves::MonteCarlo const & mc,
-	protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
+	protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover //= 0
 )
 {
 	Parent::reset(mc, metropolis_hastings_mover);
@@ -119,7 +119,7 @@ PDBTrajectoryRecorder::reset(
 void
 PDBTrajectoryRecorder::write_model(
 	core::pose::Pose const & pose,
-	protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover //= 0
+	protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover //= 0
 )
 {
 	if (trajectory_stream_.filename() == "") {
@@ -132,9 +132,9 @@ PDBTrajectoryRecorder::write_model(
 	std::string job( metropolis_hastings_mover ? metropolis_hastings_mover->output_name() : "" );
 	core::Size replica = protocols::jd2::current_replica();
 
-	TemperingBaseCAP tempering = 0;
+	TemperingBase const * tempering = 0;
 	if (metropolis_hastings_mover) {
-		tempering = dynamic_cast< TemperingBase const * >( metropolis_hastings_mover->tempering()() );
+		tempering = dynamic_cast< TemperingBase const * >( metropolis_hastings_mover->tempering().get() );
 	}
 
 	std::map < std::string, core::Real > score_map;

@@ -55,19 +55,19 @@ public:
     static std::string fa_cfg_file_;
     static std::string cen_cfg_file_;
 
-    SAXSEnergy(std::string &,core::chemical::ResidueTypeSetCAP, ScoreType, SAXSEnergyCreator*);
+    SAXSEnergy(std::string &,core::chemical::ResidueTypeSetCAP, ScoreType, methods::EnergyMethodCreatorOP);
 
     SAXSEnergy(const std::string &,const utility::vector1<Real> &,const utility::vector1<Real> &,
-	    ScoreType,SAXSEnergyCreator*);
+	    ScoreType, methods::EnergyMethodCreatorOP);
 
     virtual ~SAXSEnergy() {}
 
     virtual methods::EnergyMethodOP clone() const {
 
 	if(saxs_score_variant_ == saxs_fa_score)
-	    return new SAXSEnergy(the_config_file_,q_, reference_intensities_,saxs_score_variant_,new SAXSEnergyCreatorFA);
+	    return new SAXSEnergy(the_config_file_,q_, reference_intensities_,saxs_score_variant_, methods::EnergyMethodCreatorOP( new SAXSEnergyCreatorFA ) );
 	else
-	    return new SAXSEnergy(the_config_file_,q_, reference_intensities_,saxs_score_variant_,new SAXSEnergyCreatorCEN);
+	    return new SAXSEnergy(the_config_file_,q_, reference_intensities_,saxs_score_variant_, methods::EnergyMethodCreatorOP( new SAXSEnergyCreatorCEN ) );
     }
 
     virtual void finalize_total_energy(pose::Pose & pose,ScoreFunction const &,EnergyMap & totals) const;
@@ -78,9 +78,9 @@ public:
     methods::EnergyMethodOP create_energy_method(methods::EnergyMethodOptions const &) const {
 
 	if(saxs_score_variant_ == saxs_fa_score)
-	    return new SAXSEnergy(the_config_file_,q_, reference_intensities_,saxs_score_variant_,new SAXSEnergyCreatorFA);
+	    return new SAXSEnergy(the_config_file_,q_, reference_intensities_,saxs_score_variant_, methods::EnergyMethodCreatorOP( new SAXSEnergyCreatorFA ) );
 	else
-	    return new SAXSEnergy(the_config_file_,q_, reference_intensities_,saxs_score_variant_,new SAXSEnergyCreatorCEN);
+	    return new SAXSEnergy(the_config_file_,q_, reference_intensities_,saxs_score_variant_, methods::EnergyMethodCreatorOP( new SAXSEnergyCreatorCEN ) );
     }
 
     utility::vector1<Real>& get_reference_intensities() { return reference_intensities_; }

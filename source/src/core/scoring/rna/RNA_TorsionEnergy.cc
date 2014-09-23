@@ -54,7 +54,7 @@ RNA_TorsionEnergyCreator::score_types_for_method() const {
 
 /// ctor
 RNA_TorsionEnergy::RNA_TorsionEnergy() :
-	parent( new RNA_TorsionEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new RNA_TorsionEnergyCreator ) ),
 	rna_torsion_potential_( ScoringManager::get_instance()->get_RNA_TorsionPotential() )
 {}
 

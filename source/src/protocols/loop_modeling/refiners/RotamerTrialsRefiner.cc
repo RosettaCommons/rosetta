@@ -47,7 +47,8 @@ std::string RotamerTrialsRefinerCreator::keyname() const {
 }
 
 RotamerTrialsRefiner::RotamerTrialsRefiner() {
-	using core::pack::task::TaskFactory;
+	using namespace core::pack::task;
+	using namespace core::pack::task::operation;
 	using core::pack::task::operation::InitializeFromCommandline;
 	using core::pack::task::operation::IncludeCurrent;
 

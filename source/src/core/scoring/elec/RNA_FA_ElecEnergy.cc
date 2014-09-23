@@ -98,7 +98,7 @@ RNA_FA_ElecEnergy::RNA_FA_ElecEnergy(
 ):
 	parent( options )
 {  
-	set_score_types( new RNA_FA_ElecEnergyCreator );
+	set_score_types( methods::EnergyMethodCreatorOP( new RNA_FA_ElecEnergyCreator ) );
 }
 
 
@@ -106,7 +106,7 @@ RNA_FA_ElecEnergy::RNA_FA_ElecEnergy(
 RNA_FA_ElecEnergy::RNA_FA_ElecEnergy( RNA_FA_ElecEnergy const & src ):
 	parent( src )
 {
-	set_score_types( new RNA_FA_ElecEnergyCreator );
+	set_score_types( methods::EnergyMethodCreatorOP( new RNA_FA_ElecEnergyCreator ) );
 }
 
 /// clone

@@ -257,7 +257,7 @@ Size
 FullModelInfo::find_index_in_other_pose_list( pose::Pose const & pose) const {
 
 	for ( Size n = 1; n <= other_pose_list_.size(); n++ ){
-		if ( other_pose_list_[ n ] == & pose ) return n;
+		if ( other_pose_list_[ n ].get() == & pose ) return n;
 	}
 	return 0;
 }

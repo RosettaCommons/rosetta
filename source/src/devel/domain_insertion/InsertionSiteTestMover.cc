@@ -317,6 +317,8 @@ InsertionSiteTestMover::relax_raw_insert_pose(
 	core::Size const
 )
 {
+	using core::pack::task::operation::TaskOperationCOP;
+	
 	Size repeats(2); //only very few repeats to iron out the worst transgressions
 	protocols::relax::FastRelaxOP frelax(new protocols::relax::FastRelax( sfxn_, repeats ) );
 

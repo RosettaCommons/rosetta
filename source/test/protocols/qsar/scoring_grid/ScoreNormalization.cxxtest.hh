@@ -68,7 +68,7 @@ public:
 		using namespace protocols::qsar::scoring_grid;
 
 		core::conformation::ResidueCOPs residue_list;
-		core::chemical::ResidueTypeSetCAP fa_std_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
+		core::chemical::ResidueTypeSetCOP fa_std_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 		core::chemical::ResidueType ser_type = fa_std_set->name_map("SER");
 		core::chemical::ResidueType gly_type = fa_std_set->name_map("GLY");
 
@@ -91,7 +91,7 @@ public:
 		using namespace protocols::qsar::scoring_grid;
 
 		core::conformation::ResidueCOPs residue_list;
-		core::chemical::ResidueTypeSetCAP fa_std_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
+		core::chemical::ResidueTypeSetCOP fa_std_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 		core::chemical::ResidueType ser_type = fa_std_set->name_map("SER");
 		core::chemical::ResidueType gly_type = fa_std_set->name_map("GLY");
 
@@ -114,7 +114,7 @@ public:
 		using namespace protocols::qsar::scoring_grid;
 
 		core::conformation::ResidueCOPs residue_list;
-		core::chemical::ResidueTypeSetCAP fa_std_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
+		core::chemical::ResidueTypeSetCOP fa_std_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 		core::chemical::ResidueType ser_type = fa_std_set->name_map("SER");
 		core::chemical::ResidueType gly_type = fa_std_set->name_map("GLY");
 
@@ -137,7 +137,7 @@ public:
 		using namespace protocols::qsar::scoring_grid;
 
 		core::conformation::ResidueCOPs residue_list;
-		core::chemical::ResidueTypeSetCAP fa_std_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
+		core::chemical::ResidueTypeSetCOP fa_std_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 		core::chemical::ResidueType ser_type = fa_std_set->name_map("SER");
 		core::chemical::ResidueType gly_type = fa_std_set->name_map("GLY");
 

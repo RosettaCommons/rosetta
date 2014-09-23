@@ -91,7 +91,7 @@ methods::LongRangeEnergyType
 FastDensEnergy::long_range_type() const { return elec_dens_fast_energy; }
 
 /// c-tor
-FastDensEnergy::FastDensEnergy() : parent( new FastDensEnergyCreator ) {}
+FastDensEnergy::FastDensEnergy() : parent( methods::EnergyMethodCreatorOP( new FastDensEnergyCreator ) ) {}
 
 
 /// clone

@@ -53,7 +53,7 @@ RNA_JR_SuiteEnergyCreator::score_types_for_method() const {
 
 /// ctor
 RNA_JR_SuiteEnergy::RNA_JR_SuiteEnergy() :
-	parent( new RNA_JR_SuiteEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new RNA_JR_SuiteEnergyCreator ) )
 {}
 
 /// clone

@@ -57,7 +57,7 @@ BiasedMonteCarlo::BiasedMonteCarlo(
 ) : Parent( init_pose, scorefxn, temperature ),
 		bias_energy_( bias_energy )
 {
-	runtime_assert( bias_energy_ );
+	runtime_assert( bias_energy_ != 0 );
 	bias_energy_->set_temperature( temperature );
 }
 
@@ -68,7 +68,7 @@ BiasedMonteCarlo::BiasedMonteCarlo(
 ) : Parent( scorefxn, temperature ),
 		bias_energy_( bias_energy )
 {
-	runtime_assert( bias_energy_ );
+	runtime_assert( bias_energy_ != 0 );
 	bias_energy_->set_temperature( temperature );
 }
 

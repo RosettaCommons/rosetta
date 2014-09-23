@@ -192,6 +192,7 @@ public:
 	setup_taskfactory_scorefunction_movers( Pose & pose ){
 
 		using namespace core::pack::task;
+		using namespace core::pack::task::operation;
 		using namespace basic::options;
 		using namespace core::scoring;
 		using namespace core::scoring::constraints;

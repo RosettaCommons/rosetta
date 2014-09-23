@@ -63,7 +63,7 @@ public:
 	typedef core::scoring::constraints::AmbiguousNMRDistanceConstraintOP NmrConstraintOP;
 	typedef core::scoring::constraints::AmbiguousNMRDistanceConstraint NmrConstraint;
 
-  PeakAssignment( CrossPeakAP const&, core::Size assign_spin1, core::Size assign_spin2 );
+  PeakAssignment( CrossPeak *, core::Size assign_spin1, core::Size assign_spin2 );
 
   core::Size spin_id( core::Size select ) const {
     runtime_assert( select == 1 || select == 2 );
@@ -126,7 +126,7 @@ public:
   }
 
   bool operator==( PeakAssignment const& other ) const {
-    return crosspeak_.get() == other.crosspeak_.get() && spin_id( 1 ) == other.spin_id( 1 ) && spin_id( 2 ) == other.spin_id( 2 );
+    return crosspeak_ == other.crosspeak_ && spin_id( 1 ) == other.spin_id( 1 ) && spin_id( 2 ) == other.spin_id( 2 );
   }
 
   bool is_symmetric_partner_of( PeakAssignment const& other ) const;
@@ -202,7 +202,7 @@ private:
   	core::pose::Pose const& pose,
 		core::scoring::func::FuncOP = NULL  ) const;
 
-  CrossPeakAP crosspeak_;
+  CrossPeak * crosspeak_;
   core::Size spin_assign_index1_; //points to assignment of spin1 and spin2
   core::Size spin_assign_index2_; //points to assignment of spin1 and spin2
   core::Size resonance1_; //the spin1 and spin2 resonance (short cut to avoid lengthy access thru CrossPeak)

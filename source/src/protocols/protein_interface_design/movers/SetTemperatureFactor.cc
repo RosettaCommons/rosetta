@@ -73,7 +73,7 @@ SetTemperatureFactor::~SetTemperatureFactor() {}
 void
 SetTemperatureFactor::apply( core::pose::Pose & pose )
 {
-	ResId * resid = dynamic_cast< ResId *>( filter_() );
+	ResId * resid = dynamic_cast< ResId *>( filter_.get() );
 	runtime_assert( resid );
 
 	for( core::Size resi = 1; resi <= pose.total_residue(); ++resi ){
@@ -108,7 +108,7 @@ SetTemperatureFactor::clone() const {
 void
 SetTemperatureFactor::filter( protocols::filters::FilterOP filter )
 {
-	ResId * resid = dynamic_cast< ResId *>( filter() );
+	ResId * resid = dynamic_cast< ResId *>( filter.get() );
 	if( !resid )
 		utility_exit_with_message( "filter must be derived from ResId class for this to work." );
 	filter_ = filter;

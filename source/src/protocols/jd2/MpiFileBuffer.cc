@@ -200,7 +200,7 @@ void MpiFileBuffer::block_file( Size from_node, std::string const& filename ) {
 	if ( iter != open_files_.end() ) {
 		channel = iter->second;
 		SingleFileBufferOP buf = open_buffers_[ channel ];
-		runtime_assert( buf ); //consistent?
+		runtime_assert( buf != 0 ); //consistent?
 		buf->block( from_node ); //closes-file, sends MPI signal back and forth and hangs until release, reopens file
 		tr.Debug << "block released... for file " << filename << std::endl;
 	} else {
@@ -360,7 +360,7 @@ void MpiFileBuffer::open_channel( Size , std::string const&, bool, Size& status 
 void MpiFileBuffer::store_to_channel( Size slave, Size channel, std::string const& line ) {
 	//tr.Debug << "store channel for slave " << slave << " channel: " << channel << " length: " << line.length() << std::endl;
 	SingleFileBufferOP buf = open_buffers_[ channel ];
-	runtime_assert( buf ); //writing to open file ?
+	runtime_assert( buf != 0 ); //writing to open file ?
 	buf->store_line( slave, channel, line );
 	if (buf->length(slave) > 5e6) {
 		tr.Info << "autoflush threshold (5 MB) triggered for slave " << slave << " channel: " << channel << std::endl;
@@ -371,13 +371,13 @@ void MpiFileBuffer::store_to_channel( Size slave, Size channel, std::string cons
 void MpiFileBuffer::flush_channel( Size slave, Size channel_id ) {
 	tr.Debug << "flush channel for slave " << slave << " channel: " << channel_id << std::endl;
 	SingleFileBufferOP buf = open_buffers_[ channel_id ];
-	runtime_assert( buf ); //writing to open file ?
+	runtime_assert( buf != 0 ); //writing to open file ?
 	buf->flush( slave );
 }
 
 void MpiFileBuffer::close_channel( Size slave, Size channel_id ) {
 	SingleFileBufferOP buf = open_buffers_[ channel_id ];
-	runtime_assert( buf ); //writing to open file ?
+	runtime_assert( buf != 0 ); //writing to open file ?
 	buf->close( slave );
 	tr.Debug << "close channel "<< channel_id <<" for slave " << slave
 					 << " currently " << buf->nr_open_slaves() << " open slave buffers; open files: " << open_buffers_.size() << std::endl;

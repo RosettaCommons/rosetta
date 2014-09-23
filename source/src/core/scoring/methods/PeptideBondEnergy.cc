@@ -53,7 +53,7 @@ PeptideBondEnergyCreator::score_types_for_method() const {
 }
 
 
-PeptideBondEnergy::PeptideBondEnergy() : parent( new PeptideBondEnergyCreator ) {}
+PeptideBondEnergy::PeptideBondEnergy() : parent( methods::EnergyMethodCreatorOP( new PeptideBondEnergyCreator ) ) {}
 
 /// called at the end of energy evaluation
 /// In this case (PeptideBondEnergy), all the calculation is done here

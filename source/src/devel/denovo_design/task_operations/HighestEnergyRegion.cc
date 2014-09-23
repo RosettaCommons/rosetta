@@ -168,7 +168,7 @@ HighestEnergyRegionOperation::get_residues_to_design( core::pose::Pose const & p
 
 		// work on a copy of the pose
 		core::pose::Pose posecopy( pose );
-		runtime_assert( scorefxn_ );
+		runtime_assert( scorefxn_ != 0 );
 		(*scorefxn_)( posecopy );
 
 		for ( core::Size resi=1; resi<=posecopy.total_residue(); ++resi ) {

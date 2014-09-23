@@ -260,12 +260,17 @@ FragSetOP FragmentIO::read_data( std::string const& filename ) {
 }
 
 void FragmentIO::clean_frag_cache() {
+	/// FIX ME: this will not work with std::shared_ptr as the reference
+	/// count is not stored with the object, but with the owning_ptr.
+	/// Commenting out for now.
+	/*
 	for ( FragFileCache::iterator it = frag_cache_.begin(); it != frag_cache_.end();  ) {
 		if ( it->second->ref_count() == 1 ) {
 			tr.Info << "GARBAGE COLLECTION: remove " << it->first << " from frag_cache " << std::endl;
 			frag_cache_.erase( it++ ); //doesn't return iterator ... help with post-fix iterator
 		} else ++it;
 	}
+	*/
 }
 
 void FragmentIO::read_data( std::string const& filename, FrameList& frames ) {

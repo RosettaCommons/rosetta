@@ -127,7 +127,7 @@ bool MultipleOutputWrapper::generate_pose(core::pose::Pose & pose)
 		mover = MoverFactory::get_instance()->newMover(mover_tag_, data, filters, movers, pose );
 	}
 
-	runtime_assert( mover );
+	runtime_assert( mover != 0 );
 
 	core::Size attempts;
 	for(attempts = 1; attempts <= max_attempts_; ++attempts) {
@@ -145,11 +145,12 @@ bool MultipleOutputWrapper::generate_pose(core::pose::Pose & pose)
 
 		if( ! pose.data().has( core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG ) ) {
 			// Add new output tag
+			using basic::datacache::DataCache_CacheableData;
 			std::ostringstream tag;
 			tag << name_ << "_" << (n_poses_+1);
 			pose.data().set(
 				core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG,
-				new basic::datacache::CacheableString( tag.str() )
+				DataCache_CacheableData::DataOP( new basic::datacache::CacheableString( tag.str() ) )
 			);
 		}
 

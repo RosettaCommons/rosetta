@@ -178,6 +178,7 @@ ClassicAbinitio::ClassicAbinitio(
 	get_checkpoints().set_type("ClassicAbinitio");
 	using namespace basic::options;
 	simple_moves::ClassicFragmentMoverOP bms, bml, sms;
+	using simple_moves::FragmentCostOP;
 	using simple_moves::ClassicFragmentMover;
 	using simple_moves::SymmetricFragmentMover;
 	using simple_moves::SmoothFragmentMover;
@@ -187,16 +188,16 @@ ClassicAbinitio::ClassicAbinitio(
 		if ( !option[ OptionKeys::abinitio::debug ] ) utility_exit_with_message( "apply option abinitio::log_frags always together with abinitio::debug!!!");
 		bms  = new simple_moves::LoggedFragmentMover( fragset_small, movemap );
 		bml  = new simple_moves::LoggedFragmentMover( fragset_large, movemap );
-		sms  = new SmoothFragmentMover( fragset_small, movemap, new GunnCost );
+		sms  = new SmoothFragmentMover( fragset_small, movemap, FragmentCostOP( new GunnCost ) );
 	} else if ( option[ OptionKeys::abinitio::symmetry_residue ].user() ) {
 		Size const sr (  option[ OptionKeys::abinitio::symmetry_residue ] );
 		bms = new SymmetricFragmentMover( fragset_small, movemap, sr );
 		bml = new SymmetricFragmentMover( fragset_large, movemap, sr );
-		sms = new SmoothSymmetricFragmentMover( fragset_small, movemap, new GunnCost, sr );
+		sms = new SmoothSymmetricFragmentMover( fragset_small, movemap, FragmentCostOP( new GunnCost ), sr );
 	} else {
 		bms  = new ClassicFragmentMover( fragset_small, movemap );
 		bml  = new ClassicFragmentMover( fragset_large, movemap );
-		sms = new SmoothFragmentMover ( fragset_small, movemap, new GunnCost );
+		sms = new SmoothFragmentMover ( fragset_small, movemap, FragmentCostOP( new GunnCost ) );
 	}
 
 	bms->set_end_bias( option[ OptionKeys::abinitio::end_bias ] ); //default is 30.0
@@ -211,7 +212,7 @@ ClassicAbinitio::ClassicAbinitio(
 	//init the packer
 	pack_rotamers_ = new protocols::simple_moves::PackRotamersMover();
 	TaskFactoryOP main_task_factory = new TaskFactory;
-	main_task_factory->push_back( new operation::RestrictToRepacking );
+	main_task_factory->push_back( operation::TaskOperationCOP( new operation::RestrictToRepacking ) );
 	//main_task_factory->push_back( new operation::PreserveCBeta );
 	pack_rotamers_->task_factory(main_task_factory);
 
@@ -618,17 +619,17 @@ void ClassicAbinitio::update_moves() {
 //@detail create instances of TrialMover for our FragmentMover objects
 void ClassicAbinitio::set_trials() {
 	// setup loop1
-	runtime_assert( brute_move_large_ );
+	runtime_assert( brute_move_large_ != 0 );
 	trial_large_ = new moves::TrialMover( brute_move_large_, mc_ );
 	//trial_large_->set_keep_stats( true );
 	trial_large_->keep_stats_type( moves::accept_reject );
 
-	runtime_assert( brute_move_small_ );
+	runtime_assert( brute_move_small_ != 0 );
 	trial_small_ = new moves::TrialMover( brute_move_small_, mc_ );
 	//trial_small_->set_keep_stats( true );
 	trial_small_->keep_stats_type( moves::accept_reject );
 
-	runtime_assert( smooth_move_small_ );
+	runtime_assert( smooth_move_small_ != 0 );
 	smooth_trial_small_ = new moves::TrialMover( smooth_move_small_, mc_ );
 	//smooth_trial_small_->set_keep_stats( true );
 	smooth_trial_small_->keep_stats_type( moves::accept_reject );
@@ -852,7 +853,7 @@ bool hConvergenceCheck::operator() ( const core::pose::Pose & pose ) {
 		very_old_pose_ = pose;
 		return true;
 	}
-	runtime_assert( trials_ );
+	runtime_assert( trials_ != 0 );
 	tr.Trace << "TrialCounter in hConvergenceCheck: " << trials_->num_accepts() << std::endl;
 	if ( numeric::mod(trials_->num_accepts(),100) != 0 ) return true;
 	if ( (Size) trials_->num_accepts() <= last_move_ ) return true;

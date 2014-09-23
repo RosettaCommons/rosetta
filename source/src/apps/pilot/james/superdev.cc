@@ -216,7 +216,7 @@ main( int argc, char * argv [] ) {
 	devel::init( argc, argv );
 
 	// setup residue types
-	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
 	// read in a native pose
 	core::pose::Pose native_pose;
 	core::import_pose::pose_from_pdb(

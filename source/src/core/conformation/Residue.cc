@@ -182,6 +182,9 @@ Residue::Residue(
 
 Residue::Residue( Residue const & src ) :
 	utility::pointer::ReferenceCount(),
+#ifdef PTR_MODERN
+	utility::pointer::enable_shared_from_this< Residue >(),
+#endif
 	rsd_type_(src.rsd_type_),
 	atoms_(src.atoms_),
 	orbitals_(src.orbitals_),
@@ -1334,8 +1337,8 @@ void add_cloned_ligand_rotamer_library( core::chemical::ResidueType & new_res, c
 
 	SingleLigandRotamerLibraryOP new_lrots = new SingleLigandRotamerLibrary;
 	SingleLigandRotamerLibraryCAP old_lrots(
-		static_cast< SingleLigandRotamerLibrary const * >
-		( RotamerLibrary::get_instance().get_rsd_library( base_res )() ));
+		utility::pointer::static_pointer_cast< SingleLigandRotamerLibraryCAP >
+		( RotamerLibrary::get_instance().get_rsd_library( base_res ) ));
 	if( old_lrots != 0 ) {
 		utility::vector1< ResidueOP > new_rotamers;
 		utility::vector1< ResidueOP > const old_rotamers = old_lrots->get_rotamers();

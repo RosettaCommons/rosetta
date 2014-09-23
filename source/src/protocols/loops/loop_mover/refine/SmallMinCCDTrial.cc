@@ -151,12 +151,13 @@ void SmallMinCCDTrial::apply( Pose & pose )
 	PackerTaskOP task_before_bb_perturbation = task_factory()->create_task_and_apply_taskoperations( pose );
 	task_before_bb_perturbation->set_bump_check( true );
 
-	LoopsOP all_loops = loop_mover()->loops();
+	LoopMover_Refine_CCDOP loop_mover_op( loop_mover() ); // lock AP
+	LoopsOP all_loops = loop_mover_op->loops();
 	Loops one_loop = get_one_random_loop();
 	
 	// set up movemap for one loop
 	MoveMapOP one_loop_movemap = movemap();
-	loop_mover()->setup_movemap( pose, one_loop, task_before_bb_perturbation->repacking_residues(), one_loop_movemap );
+	loop_mover_op->setup_movemap( pose, one_loop, task_before_bb_perturbation->repacking_residues(), one_loop_movemap );
 
 	debug_zero( pose );
 	
@@ -179,9 +180,9 @@ void SmallMinCCDTrial::apply( Pose & pose )
 
 
 	MoveMapOP all_loops_movemap = movemap();
-	loop_mover()->setup_movemap( pose, *all_loops, task_after_bb_perturbation->repacking_residues(), all_loops_movemap );
+	loop_mover_op->setup_movemap( pose, *all_loops, task_after_bb_perturbation->repacking_residues(), all_loops_movemap );
 
-	if ( loop_mover()->flank_residue_min() )
+	if ( loop_mover_op->flank_residue_min() )
 	{
 		add_loop_flank_residues_bb_to_movemap(*all_loops, *all_loops_movemap);
 	}
@@ -239,7 +240,8 @@ core::optimization::AtomTreeMinimizerOP SmallMinCCDTrial::minimizer( core::pose:
 	// minimizer
 	if (! minimizer_){
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
-			minimizer_ = dynamic_cast<core::optimization::AtomTreeMinimizer*>( new core::optimization::symmetry::SymAtomTreeMinimizer );
+			// minimizer_ = dynamic_cast<core::optimization::AtomTreeMinimizer>( new core::optimization::symmetry::SymAtomTreeMinimizer );
+			minimizer_ = new core::optimization::symmetry::SymAtomTreeMinimizer;
 		} else {
 			minimizer_ = new core::optimization::AtomTreeMinimizer;
 		}
@@ -285,9 +287,10 @@ std::ostream & operator<<(std::ostream& out, SmallMinCCDTrial const & small_min_
 void SmallMinCCDTrial::debug_zero( Pose & pose )
 {
 	if ( debug() ) {
+		LoopMover_Refine_CCDOP loop_mover_op( loop_mover() ); // lock AP
 		TR << "chutmp-debug small_move-0: " << "  " << (*scorefxn())(pose) << std::endl;
 		TR << "small_move-0: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() )
-		<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *loop_mover()->loops() )) << std::endl;
+		<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *loop_mover_op->loops() )) << std::endl;
 		pose.dump_pdb("small_move-0.pdb");
 	}
 
@@ -296,9 +299,10 @@ void SmallMinCCDTrial::debug_zero( Pose & pose )
 void SmallMinCCDTrial::debug_one( Pose & pose )
 {
 	if ( debug() ) {
+		LoopMover_Refine_CCDOP loop_mover_op( loop_mover() ); // lock AP
 		TR << "chutmp-debug small_move-1: " << "  " << (*scorefxn())(pose) << std::endl;
 		TR << "small_move-1: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() )
-		<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *loop_mover()->loops() )) << std::endl;
+		<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *(loop_mover_op->loops()) )) << std::endl;
 		pose.dump_pdb("small_move-1.pdb");
 		std::ofstream out("score.small_move_1");
 		out << "scoring of input_pose " << (*scorefxn())(pose) << std::endl;
@@ -310,9 +314,10 @@ void SmallMinCCDTrial::debug_one( Pose & pose )
 void SmallMinCCDTrial::debug_two( Pose & pose )
 {
 	if ( debug() ) {
+		LoopMover_Refine_CCDOP loop_mover_op( loop_mover() ); // lock AP
 		TR << "chutmp-debug small_move-2: " << "  " << (*scorefxn())(pose) << std::endl;
 		TR << "small_move-2: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() )
-		<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *loop_mover()->loops() )) << std::endl;
+		<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *(loop_mover_op->loops()) )) << std::endl;
 		pose.dump_pdb("small_move-2.pdb");
 		std::ofstream out("score.small_move_2");
 		out << "scoring of input_pose " << (*scorefxn())(pose) << std::endl;
@@ -324,9 +329,10 @@ void SmallMinCCDTrial::debug_two( Pose & pose )
 void SmallMinCCDTrial::debug_three( Pose & pose )
 {
 	if ( debug() ) {
+		LoopMover_Refine_CCDOP loop_mover_op( loop_mover() ); // lock AP
 		TR << "chutmp-debug small_move-3: " << "  " << (*scorefxn())(pose) << std::endl;
 		TR << "small_move-3: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() )
-		<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *loop_mover()->loops() )) << std::endl;
+		<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *(loop_mover_op->loops()) )) << std::endl;
 		pose.dump_pdb("small_move-3.pdb");
 	}
 }
@@ -334,9 +340,10 @@ void SmallMinCCDTrial::debug_three( Pose & pose )
 void SmallMinCCDTrial::debug_four( Pose & pose )
 {
 	if ( debug() ) {
+		LoopMover_Refine_CCDOP loop_mover_op( loop_mover() ); // lock AP
 		TR << "chutmp-debug small_move-4: " << "  " << (*scorefxn())(pose) << std::endl;
 		TR << "small_move-4: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() )
-		<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *loop_mover()->loops() )) << std::endl;
+		<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *(loop_mover_op->loops()) )) << std::endl;
 		pose.dump_pdb("small_move-4.pdb");
 	}
 }
@@ -344,9 +351,10 @@ void SmallMinCCDTrial::debug_four( Pose & pose )
 void SmallMinCCDTrial::debug_five( Pose & pose )
 {
 	if ( debug() ) {
+		LoopMover_Refine_CCDOP loop_mover_op( loop_mover() ); // lock AP
 		TR << "chutmp-debug small_move-5: " << "  " << (*scorefxn())(pose) << std::endl;
 		TR << "small_move-5: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() )
-		<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *loop_mover()->loops() )) << std::endl;
+		<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *(loop_mover_op->loops()) )) << std::endl;
 		pose.dump_pdb("small_move-5.pdb");
 	}
 }

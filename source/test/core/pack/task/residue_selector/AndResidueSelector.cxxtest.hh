@@ -60,7 +60,7 @@ public:
 	void test_AndResidueSelector_parse_my_tag() {
 		std::string tag_string = "<And name=and_rs selectors=odd,one_mod_five/>";
 		std::stringstream ss( tag_string );
-		utility::tag::TagOP tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 		ResidueSelectorOP odd_rs = new OddResidueSelector;
@@ -89,7 +89,7 @@ public:
 	void test_AndResidueSelector_parse_my_tag_no_provided_selectors() {
 		std::string tag_string = "<And name=and_rs/>";
 		std::stringstream ss( tag_string );
-		utility::tag::TagOP tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
@@ -109,7 +109,7 @@ public:
 	void test_AndResidueSelector_parse_my_tag_selectors_not_in_datamap() {
 		std::string tag_string = "<And name=and_rs selectors=odd,one_mod_five/>";
 		std::stringstream ss( tag_string );
-		utility::tag::TagOP tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
@@ -126,7 +126,7 @@ public:
 	void test_AndResidueSelector_parse_subtag() {
 		std::string tag_string = "<And name=and_rs>\n\t<Index resnums=2-4 />\n\t<Index resnums=3-5 />\n</And>";
 		std::stringstream ss( tag_string );
-		utility::tag::TagOP tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
@@ -148,7 +148,7 @@ public:
 	void test_AndResidueSelector_fail_parse_subtag() {
 		std::string tag_string = "<And name=and_rs>\n\t<Index resnums=2-4 />\n\t<Bogus />\n</And>";
 		std::stringstream ss( tag_string );
-		utility::tag::TagOP tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 

@@ -88,7 +88,7 @@ main( int argc, char* argv [] ) {
 	using namespace ObjexxFCL;
 
 	MetaPoseInputStream input = streams_from_cmd_line();
-	core::chemical::ResidueTypeSetCAP rsd_set;
+	core::chemical::ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(
 		option[ in::file::residue_type_set ]()
 	);

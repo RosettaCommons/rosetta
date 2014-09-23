@@ -37,8 +37,8 @@ namespace build {
 
 /// @brief default constructor
 SegmentSwap::SegmentSwap() :
-	Super( Interval( 0, 0 ) ),
-	interval_( 0, 0 )
+	Super( Interval( 0.0, 0.0 ) ),
+	interval_( 0.0, 0.0 )
 {}
 
 
@@ -56,7 +56,7 @@ SegmentSwap::SegmentSwap(
 	MoveMap const & swap_in_movemap,
 	Pose const & swap_in
 ) :
-	Super( i, &swap_in.residue( 1 ).residue_type_set() ),
+	Super( i, swap_in.residue( 1 ).residue_type_set().get_self_ptr() ),
 	interval_( i ),
 	swap_in_movemap_( swap_in_movemap ),
 	swap_in_( swap_in )
@@ -269,6 +269,7 @@ SegmentSwap::Positions SegmentSwap::original_mutable_positions() const {
 void SegmentSwap::modify_impl( Pose & pose ) {
 	using core::kinematics::FoldTree;
 	using core::pose::PDBInfo;
+	using core::pose::PDBInfoOP;
 	using protocols::forge::methods::replace;
 
 	// save interim FoldTree for passing into replace() later

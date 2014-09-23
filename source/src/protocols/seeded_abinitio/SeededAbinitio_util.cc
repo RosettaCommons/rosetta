@@ -172,7 +172,7 @@ combine_two_poses( core::pose::Pose design_pose , core::pose::PoseOP target_chai
 	TR<<"new poseOP total number should contain the additional target chain number: " << combo_pose->total_residue();
 
 	core::pose::PDBInfoOP pdb_info_design( new core::pose::PDBInfo( design_pose ) );
-	core::pose::PDBInfoOP pdb_info_target( new core::pose::PDBInfo( target_chain ) );
+	core::pose::PDBInfoOP pdb_info_target( new core::pose::PDBInfo( *target_chain ) );
 	pdb_info_target->set_chains( 'A');
 	pdb_info_design->set_chains('B');
 

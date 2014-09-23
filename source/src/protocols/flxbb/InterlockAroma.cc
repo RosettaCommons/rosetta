@@ -148,7 +148,7 @@ InterlockAroma::apply( Pose & pose )
 	// create packer task
 	TaskFactory taskf;
 	if( limit_aroma_chi2_ ) {  // default is true
-		taskf.push_back( new LimitAromaChi2Operation );
+		taskf.push_back( core::pack::task::operation::TaskOperationOP( new LimitAromaChi2Operation ) );
 	}
 	PackerTaskOP ptask( taskf.create_task_and_apply_taskoperations( pose ) );
 
@@ -185,7 +185,7 @@ InterlockAroma::apply( Pose & pose )
 		RotamerSetFactory rsf;
 		RotamerSetOP rotset = rsf.create_rotamer_set( polyala_pose.residue( ii ) );
 		rotset->set_resid( ii );
-		rotset->build_rotamers( polyala_pose, *scorefxn_, *ptask, new core::graph::Graph( polyala_pose.total_residue() ), false );
+		rotset->build_rotamers( polyala_pose, *scorefxn_, *ptask, core::graph::GraphCOP( new core::graph::Graph( polyala_pose.total_residue() ) ), false );
 
 		Size rotnum( 0 );
 		for( Rotamers::const_iterator rotamer = rotset->begin(); rotamer != rotset->end(); ++rotamer ) {

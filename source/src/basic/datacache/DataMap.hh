@@ -59,6 +59,7 @@ public:
 	);
 	bool has( std::string const type, std::string const name="" ) const;
 	template< class Ty > Ty get( std::string const type, std::string const name ) const;
+	template< class Ty > utility::pointer::owning_ptr< Ty > get_ptr( std::string const type, std::string const name ) const;
 	std::map< std::string, utility::pointer::ReferenceCountOP > & operator [](
 		std::string const & type
 	);
@@ -101,20 +102,52 @@ DataMap::get( std::string const type, std::string const name ) const {
 	return( ret );
 }
 
+/// @details a template utility function to grab any type of object from the
+/// Data_map. Downcasts the owning pointer in map to the template data
+/// type using dynamic_pointer_cast to ensure type-correctness
+/// @throws Throws a utility::excn::EXCN_Msg_Exception in the event that
+/// the requested object cannot be found in the DataMap.
+template< class Ty >
+utility::pointer::owning_ptr< Ty >
+DataMap::get_ptr( std::string const type, std::string const name ) const {
+	using namespace utility::pointer;
+	utility::pointer::owning_ptr< Ty > ret( 0 );
+
+	if( !has( type, name ) ){
+		std::stringstream error_message;
+		error_message << "ERROR: Could not find "<<type<<" and name "<<name<<" in Datamap\n";
+		throw utility::excn::EXCN_Msg_Exception( error_message.str() );
+	}
+
+	std::map< std::string, utility::pointer::ReferenceCountOP > const dm( data_map_.find( type )->second );
+	for( std::map< std::string, ReferenceCountOP >::const_iterator it=dm.begin(); it!=dm.end(); ++it ) {
+		if( it->first == name ) {
+			ret = utility::pointer::dynamic_pointer_cast< Ty >( it->second );
+			break;
+		}
+	}
+	if( ret==0 ) {
+		std::stringstream error_message;
+		error_message << "ERROR: Dynamic_cast failed for type "<<type<<" and name "<<name<<'\n';
+		throw utility::excn::EXCN_Msg_Exception( error_message.str() );
+	}
+	return( ret );
+}
+
 
 /// @brief templated function for adding or getting an item from the datamap. Automatically checks whether an item
 /// of the requested type and name exists on the datamap. If so, returns the OP for that item, if not, instantiates
 /// that item on the datamap and returns the OP for it.
 template < class Ty >
-Ty *
+utility::pointer::owning_ptr< Ty >
 get_set_from_datamap( std::string const type, std::string const name, basic::datacache::DataMap & data ){
-	Ty *obj;
+	utility::pointer::owning_ptr< Ty > obj;
 	if( data.has( type, name ) ){
-		obj = data.get< Ty * >( type, name );
+		obj = data.get_ptr< Ty >( type, name );
 		TR_hh<<"Getting object-type, name "<<type<<' '<<name<<" from datamap"<<std::endl;
 	}
 	else{
-		obj = new Ty;
+		obj = utility::pointer::owning_ptr< Ty >( new Ty );
 		data.add( type, name, obj );
 		TR_hh<<"Adding object-type, name "<<type<<' '<<name<<" to datamap"<<std::endl;
 	}

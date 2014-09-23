@@ -422,7 +422,7 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 
 	ConstraintCOPs skipped_list;
 	if ( pose.constraint_set()->has_residue_pair_constraints() ) {
-		evaluator()->add_evaluation( new constraints_additional::ConstraintEvaluator( "total_cst", *pose.constraint_set() ) );
+		evaluator()->add_evaluation( evaluation::PoseEvaluatorOP( new constraints_additional::ConstraintEvaluator( "total_cst", *pose.constraint_set() ) ) );
 		if ( option[ fold_cst::constraint_skip_rate ].user() ) {
 			orig_constraints = pose.constraint_set()->clone();
 			Real const skip_rate( option[ fold_cst::constraint_skip_rate ]() );
@@ -589,9 +589,9 @@ moves::MoverOP KinematicAbinitio::create_bb_moves(
   if ( !option[ jumps::no_wobble ]() ) {
     // and why not throwing in a wobble ?!
     if ( bLargeWobble ) {
-      cycle->add_mover( new simple_moves::WobbleMover( brute_move_large()->fragments(), movemap() ) );
+      cycle->add_mover( moves::MoverOP( new simple_moves::WobbleMover( brute_move_large()->fragments(), movemap() ) ) );
     } else {
-      cycle->add_mover( new simple_moves::WobbleMover( brute_move_small()->fragments(), movemap() ) );
+      cycle->add_mover( moves::MoverOP( new simple_moves::WobbleMover( brute_move_small()->fragments(), movemap() ) ) );
     }
   }
   return cycle;
@@ -693,8 +693,8 @@ JumpingFoldConstraintsWrapper::apply( core::pose::Pose& pose ) {
 	kc->set_jump_mover( jump_mover );
 	kc->set_movemap( new_movemap );
   // run protocol
-	if ( jump_mover() && option[ jumps::no_sample_ss_jumps ] ) {
-		jump_mover()->apply_at_all_positions( pose ); //make sure each jump is initialized
+	if ( jump_mover && option[ jumps::no_sample_ss_jumps ] ) {
+		jump_mover->apply_at_all_positions( pose ); //make sure each jump is initialized
 		kc->set_jump_mover( NULL ); //but no sampling
 	}
 

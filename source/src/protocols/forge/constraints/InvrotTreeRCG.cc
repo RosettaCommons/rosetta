@@ -130,9 +130,9 @@ InvrotTreeRCG::apply( core::pose::Pose & pose )
 	init( pose );
 	setup_align_pose_->apply( pose );
 
-	runtime_assert( invrot_tree_ );
-	runtime_assert( geomcst_seqpos_ );
-	runtime_assert( setup_align_pose_ );
+	runtime_assert( invrot_tree_ != 0 );
+	runtime_assert( geomcst_seqpos_ != 0 );
+	runtime_assert( setup_align_pose_ != 0 );
 
 	//tr << "now id=" << id() << std::endl;
 	// generate and add constraints
@@ -197,10 +197,12 @@ InvrotTreeRCG::init( core::pose::Pose const & pose )
 	// if a VLB is going on, this one can be called as a user-provided mover
 	run_align_pose_ = new toolbox::match_enzdes_util::AlignPoseToInvrotTreeMover( invrot_tree_, geomcst_seqpos_ );
 	run_align_pose_->set_geomcst_for_superposition_from_enz_io( enzcst_io_ );
-	if ( vlb() ) {
-		vlb()->loop_mover_fold_tree_constant( true ); //we're taking care of the fold tree through the above align movers
-		vlb()->add_setup_mover( setup_align_pose_ );
-		vlb()->add_user_provided_mover( run_align_pose_ );
+	
+	protocols::forge::components::VarLengthBuildOP vlbop = vlb().lock();
+	if ( vlbop ) {
+		vlbop->loop_mover_fold_tree_constant( true ); //we're taking care of the fold tree through the above align movers
+		vlbop->add_setup_mover( setup_align_pose_ );
+		vlbop->add_user_provided_mover( run_align_pose_ );
 	}
 }
 

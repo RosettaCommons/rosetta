@@ -178,7 +178,7 @@ class SurfacePotentialTests : public CxxTest::TestSuite {
 
 	void test_compute_pose_surface_energy_fragment() {
 
-		chemical::ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+		chemical::ResidueTypeSetCOP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 		core::pose::make_pose_from_sequence( pose, "DFGLKANM", *rsd_set );
 
 		for ( Size ii=1; ii <= pose.n_residue(); ii+=3 ) {

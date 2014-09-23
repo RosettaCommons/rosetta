@@ -60,7 +60,7 @@ MMLJEnergyTable::MMLJEnergyTable() :
   using namespace chemical;
 
   // get MMAtomTypeSet associated with the library
-  MMAtomTypeSetCAP mm_atom_set( mm_lj_score_.mm_lj_library().mm_atom_set() );
+  MMAtomTypeSetCOP mm_atom_set( mm_lj_score_.mm_lj_library().mm_atom_set() );
   Size natomtypes( mm_atom_set->n_atomtypes() );
 
   TR << "Initializing MM LJ Energy Tables with " << natomtypes << " atom types" << std::endl;

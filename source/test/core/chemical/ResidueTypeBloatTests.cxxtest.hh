@@ -61,7 +61,7 @@ public:
 		TR << A(width,"ResidueTypeSet") << A(width,"NumResTypes") << endl;
 
 		string rss;
-		ResidueTypeSetCAP rs;
+		ResidueTypeSetCOP rs;
 
 		rss = FA_STANDARD;
 		rs = ChemicalManager::get_instance()->residue_type_set(rss );

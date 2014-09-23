@@ -41,13 +41,13 @@ using namespace core;
 // Public methods /////////////////////////////////////////////////////////////
 // Standard methods ///////////////////////////////////////////////////////////
 // Constructor with owning ResidueType
-ResidueProperties::ResidueProperties( ResidueTypeCAP residue_type ) : utility::pointer::ReferenceCount()
+ResidueProperties::ResidueProperties( ResidueType const * residue_type ) : utility::pointer::ReferenceCount()
 {
 	init( residue_type );
 }
 
 // "Copy constructor"
-ResidueProperties::ResidueProperties( ResidueProperties const & object_to_copy, ResidueTypeCAP new_owner ) :
+ResidueProperties::ResidueProperties( ResidueProperties const & object_to_copy, ResidueType const * new_owner ) :
 		utility::pointer::ReferenceCount( object_to_copy )
 {
 	residue_type_ = new_owner;
@@ -237,7 +237,7 @@ ResidueProperties::get_list_of_variants() const
 // Private methods ////////////////////////////////////////////////////////////
 // Initialize data members.
 void
-ResidueProperties::init( ResidueTypeCAP residue_type )
+ResidueProperties::init( ResidueType const * residue_type )
 {
 	residue_type_ = residue_type;
 	general_property_status_.resize( N_PROPERTIES, false );

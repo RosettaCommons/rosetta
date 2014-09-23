@@ -214,7 +214,7 @@ core::Real GridManager::total_score(core::conformation::UltraLightResidue const 
 	for(;map_iterator != grid_map_.end();++map_iterator)
 	{
 		core::Real component_score =0;
-		GridBaseOP current_grid(*map_iterator->second);
+		GridBaseOP current_grid(map_iterator->second);
 
 		//for(core::Size atom_index = 1; atom_index <= residue.nheavyatoms();++atom_index)
 		//{
@@ -247,7 +247,7 @@ core::Real GridManager::total_score(core::conformation::Residue const & residue)
 	for(;map_iterator != grid_map_.end();++map_iterator)
 	{
 		core::Real component_score =0;
-		GridBaseOP current_grid(*map_iterator->second);
+		GridBaseOP current_grid(map_iterator->second);
 
 		//for(core::Size atom_index = 1; atom_index <= residue.nheavyatoms();++atom_index)
 		//{
@@ -284,7 +284,7 @@ core::Real GridManager::total_score(core::pose::Pose const & pose, core::Size co
 	for(;map_iterator != grid_map_.end();++map_iterator)
 	{
 		core::Real component_score = 0;
-		GridBaseOP current_grid(*map_iterator->second);
+		GridBaseOP current_grid(map_iterator->second);
 		core::Real weight(grid_weights_[map_iterator->first]);
 		for(core::Size residue_count = 1; residue_count <= residue_vector.size(); ++residue_count )
 		{
@@ -315,7 +315,7 @@ std::map<std::string,core::Real> GridManager::atom_score(core::pose::Pose const 
 	std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
 	for(;map_iterator != grid_map_.end();++map_iterator)
 	{
-		GridBaseOP current_grid(*map_iterator->second);
+		GridBaseOP current_grid(map_iterator->second);
 		core::Real weight(grid_weights_[map_iterator->first]);
 		core::Real atom_score = current_grid->atom_score(residue,atomindex,qsar_map_);
 		std::string grid_type = current_grid->get_type();
@@ -329,7 +329,7 @@ void GridManager::update_grids(core::pose::Pose const & pose, core::Vector const
 	std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
 	for(;map_iterator != grid_map_.end(); ++map_iterator)
 	{
-		GridBaseOP current_grid(*map_iterator->second);
+		GridBaseOP current_grid(map_iterator->second);
 		current_grid->initialize(center,width_,resolution_);
 		current_grid->set_chain(chain_);
 		current_grid->refresh(pose,center,ligand_chain_ids_to_exclude);
@@ -342,7 +342,7 @@ void GridManager::update_grids(core::pose::Pose const & pose, core::Vector const
 	std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
 	for(;map_iterator != grid_map_.end();++map_iterator)
 	{
-		GridBaseOP current_grid(*map_iterator->second);
+		GridBaseOP current_grid(map_iterator->second);
 		current_grid->initialize(center,width_,resolution_);
 		current_grid->set_chain(chain_);
 		current_grid->refresh(pose,center,ligand_chain_id_to_exclude);
@@ -399,7 +399,7 @@ void GridManager::update_grids(core::pose::Pose const & pose,  core::Vector cons
 		for(;map_iterator != grid_map_.end();++map_iterator)
 		{
 
-			GridBaseOP current_grid(*map_iterator->second);
+			GridBaseOP current_grid(map_iterator->second);
 			GridManagerTracer.Debug <<"updating grid " << map_iterator->first << std::endl;
 			current_grid->initialize(center,width_,resolution_);
 			current_grid->set_chain(chain_);
@@ -450,7 +450,7 @@ void GridManager::initialize_all_grids(core::Vector const & center)
 		std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
 		for(;map_iterator != grid_map_.end();++map_iterator)
 		{
-			GridBaseOP current_grid(*map_iterator->second);
+			GridBaseOP current_grid(map_iterator->second);
 			current_grid->initialize(center,width_,resolution_);
 		}
 		initialized_ = true;
@@ -529,7 +529,7 @@ bool GridManager::is_in_grid(core::conformation::UltraLightResidue const & resid
     std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
     for(;map_iterator != grid_map_.end();++map_iterator)
     {
-        GridBaseOP current_grid(*map_iterator->second);
+        GridBaseOP current_grid(map_iterator->second);
         if(!current_grid->is_in_grid(residue))
         {
             return false;
@@ -543,7 +543,7 @@ bool GridManager::is_in_grid(core::conformation::Residue const & residue)
     std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
     for(;map_iterator != grid_map_.end();++map_iterator)
     {
-        GridBaseOP current_grid(*map_iterator->second);
+        GridBaseOP current_grid(map_iterator->second);
         if(!current_grid->is_in_grid(residue))
         {
             return false;

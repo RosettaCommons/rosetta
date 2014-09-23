@@ -77,12 +77,16 @@ static thread_local basic::Tracer tr( "core.chemical.ResidueTypeSet" );
 /// @brief c-tor from directory
 ResidueTypeSet::ResidueTypeSet(
 		std::string const & name,
-		std::string const & directory,
-		std::vector< std::string > const & extra_res_param_files, // defaults to empty
-		std::vector< std::string > const & extra_patch_files // defaults to empty
+		std::string const & directory
 ) :
 	name_( name ),
 	database_directory_(directory)
+{}
+
+void ResidueTypeSet::init(
+		std::vector< std::string > const & extra_res_param_files, // defaults to empty
+		std::vector< std::string > const & extra_patch_files // defaults to empty
+)
 {
 	using namespace basic::options;
 
@@ -93,7 +97,7 @@ ResidueTypeSet::ResidueTypeSet(
 
 	// read ResidueTypes
 	{
-		std::string const list_filename( directory + "residue_types.txt" );
+		std::string const list_filename( database_directory_ + "residue_types.txt" );
 		utility::io::izstream data( list_filename.c_str() );
 		if ( !data.good() ) {
 			utility_exit_with_message( "Unable to open file: " + list_filename + '\n' );
@@ -149,10 +153,10 @@ ResidueTypeSet::ResidueTypeSet(
 				l >> tag;
 				orbital_types_ = ChemicalManager::get_instance()->orbital_type_set(tag);
 			} else {
-				std::string const filename( directory + line );
+				std::string const filename( database_directory_ + line );
 
 				ResidueTypeOP rsd_type( read_topology_file(
-						filename, atom_types_, elements_, mm_atom_types_, orbital_types_, this ) );
+						filename, atom_types_, elements_, mm_atom_types_, orbital_types_, get_self_weak_ptr() ) );
 
 				residue_types_.push_back( rsd_type );
 			}
@@ -160,7 +164,7 @@ ResidueTypeSet::ResidueTypeSet(
 
 		BOOST_FOREACH(std::string filename, extra_res_param_files){
 			ResidueTypeOP rsd_type( read_topology_file(
-					filename, atom_types_, elements_, mm_atom_types_, orbital_types_, this ) );
+					filename, atom_types_, elements_, mm_atom_types_, orbital_types_, get_self_weak_ptr() ) );
 
 			if (option[ OptionKeys::in::add_orbitals]) {
 				orbitals::AssignOrbitals add_orbitals_to_residue(rsd_type);
@@ -174,7 +178,7 @@ ResidueTypeSet::ResidueTypeSet(
 
 	// now apply patches
 	{
-		std::string const list_filename( directory+"/patches.txt" );
+		std::string const list_filename( database_directory_+"/patches.txt" );
 		utility::io::izstream data( list_filename.c_str() );
 
 		if ( !data.good() ) {
@@ -214,12 +218,12 @@ ResidueTypeSet::ResidueTypeSet(
 			// Skip this patch if the "patches_to_avoid" set contains the named patch.
 			utility::file::FileName fname( line );
 			if ( patches_to_avoid.find( fname.base() ) != patches_to_avoid.end() ) {
-				tr << "While generating ResidueTypeSet " << name <<
+				tr << "While generating ResidueTypeSet " << name_ <<
 						": Skipping patch " << fname.base() << " as requested" << std::endl;
 				continue;
 			}
 
-			patch_filenames.push_back( directory + line );
+			patch_filenames.push_back( database_directory_ + line );
 		}
 
 		// kdrew: include list allows patches to be included while being commented out in patches.txt,
@@ -231,12 +235,12 @@ ResidueTypeSet::ResidueTypeSet(
 					option[ OptionKeys::chemical::include_patches ];
 			for ( Size ii = 1; ii <= includelist.size(); ++ii ) {
 				utility::file::FileName fname( includelist[ ii ] );
-				if ( !utility::file::file_exists( directory + includelist[ ii ] ) ) {
-					tr.Warning << "Could not find: " << directory+includelist[ii]  << std::endl;
+				if ( !utility::file::file_exists( database_directory_ + includelist[ ii ] ) ) {
+					tr.Warning << "Could not find: " << database_directory_+includelist[ii]  << std::endl;
 					continue;
 				}
-				patch_filenames.push_back( directory + includelist[ ii ]);
-				tr << "While generating ResidueTypeSet " << name <<
+				patch_filenames.push_back( database_directory_ + includelist[ ii ]);
+				tr << "While generating ResidueTypeSet " << name_ <<
 						": Including patch " << fname << " as requested" << std::endl;
 			}
 		}
@@ -244,12 +248,12 @@ ResidueTypeSet::ResidueTypeSet(
 		//fpd  if missing density is to be read correctly, we will have to also load the terminal truncation variants
 		if ( option[ OptionKeys::in::missing_density_to_jump ]()
 				|| option[ OptionKeys::in::use_truncated_termini ]() ) {
-			if ( std::find( patch_filenames.begin(), patch_filenames.end(), directory + "patches/NtermTruncation.txt" )
+			if ( std::find( patch_filenames.begin(), patch_filenames.end(), database_directory_ + "patches/NtermTruncation.txt" )
 					== patch_filenames.end())
-				patch_filenames.push_back( directory + "patches/NtermTruncation.txt" );
-			if ( std::find( patch_filenames.begin(), patch_filenames.end(), directory + "patches/CtermTruncation.txt" )
+				patch_filenames.push_back( database_directory_ + "patches/NtermTruncation.txt" );
+			if ( std::find( patch_filenames.begin(), patch_filenames.end(), database_directory_ + "patches/CtermTruncation.txt" )
 					== patch_filenames.end())
-				patch_filenames.push_back( directory + "patches/CtermTruncation.txt" );
+				patch_filenames.push_back( database_directory_ + "patches/CtermTruncation.txt" );
 
 				// we'll assume user wants this
 				option[ OptionKeys::chemical::override_rsd_type_limit ].value(true);
@@ -268,7 +272,7 @@ ResidueTypeSet::ResidueTypeSet(
 		}
 	}
 
-	tr << "Finished initializing " << name << " residue type set.  ";
+	tr << "Finished initializing " << name_ << " residue type set.  ";
 	tr << "Created " << residue_types_.size() << " residue types" << std::endl;
 
 	// Sanity check. Might be good to tighten this limit -- fa_standard appears under 1500 residue types in most use cases.
@@ -316,7 +320,7 @@ ResidueTypeSet::read_files(
 )
 {
 	for ( Size ii=1; ii<= filenames.size(); ++ii ) {
-		ResidueTypeOP rsd_type( read_topology_file( filenames[ii], atom_types_, elements_, mm_atom_types_,orbital_types_, this ) );
+		ResidueTypeOP rsd_type( read_topology_file( filenames[ii], atom_types_, elements_, mm_atom_types_,orbital_types_, get_self_weak_ptr() ) );
 		residue_types_.push_back( rsd_type );
 	}
 
@@ -478,7 +482,7 @@ ResidueTypeSet::add_residue_type_to_maps( ResidueTypeOP rsd_ptr )
 		err_msg << "Please check your residue parameter files." << std::endl;
 		utility_exit_with_message(err_msg.str());
 	}
-	name_map_[ rsd_ptr->name() ] = rsd_ptr();
+	name_map_[ rsd_ptr->name() ] = rsd_ptr;
 	nonconst_name_map_[ rsd_ptr->name() ] = rsd_ptr;
 
 	// map by AA
@@ -597,7 +601,7 @@ ResidueTypeSet::select_residues(
 {
 	for ( ResidueTypeOPs::const_iterator iter=residue_types_.begin(), iter_end = residue_types_.end(); iter!= iter_end; ++iter ) {
 		if ( selector[ **iter ] ) {
-			matches.push_back( (*iter)() );
+			matches.push_back( *iter );
 		}
 	}
 }
@@ -757,7 +761,7 @@ ResidueTypeSet::add_residue_type( ResidueTypeOP new_type )
 void
 ResidueTypeSet::add_residue_type(std::string const & filename)
 {
-	ResidueTypeOP rsd_type( read_topology_file( filename, atom_types_, elements_, mm_atom_types_, orbital_types_, this ) );
+	ResidueTypeOP rsd_type( read_topology_file( filename, atom_types_, elements_, mm_atom_types_, orbital_types_, get_self_weak_ptr() ) );
 	add_residue_type(rsd_type);
 }
 

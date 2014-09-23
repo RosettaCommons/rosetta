@@ -173,7 +173,7 @@ SSPredictionFilter::compute( core::pose::Pose const & pose ) const {
 	}
 
 	if ( use_svm_ ) {
-		runtime_assert( ss_predictor_ );
+		runtime_assert( ss_predictor_ != 0 );
 		std::string sequence;
 		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
 			if ( pose.residue( i ).is_protein() ) sequence += pose.residue( i ).name1();
@@ -197,7 +197,7 @@ SSPredictionFilter::compute( core::pose::Pose const & pose ) const {
 			return count / sequence.size();
 		}
 	} else {
-		runtime_assert( psipred_interface_ );
+		runtime_assert( psipred_interface_ != 0 );
 		PsiPredResult const psipred_result = psipred_interface_->run_psipred( pose, wanted_ss );
 		if ( use_probability_ ) {
 			TR << "Blueprint SS = " << wanted_ss << std::endl;

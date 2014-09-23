@@ -96,7 +96,7 @@ public:
 	Hotspots retrieve( std::string const & residue_name3 );
 
 	/// @brief gets a stub from the stub_set_. A version returning an OP is private
-	HotspotStubOP get_stub( std::string const residue_name3, core::Real const score ) const;
+	Hotspots::const_iterator get_stub( std::string const residue_name3, core::Real const score ) const;
 	// @brief build a new stubset containing stubs with a given residue name3 and score cutoff
 	HotspotStubSetOP subset( std::string const & residue_name3, core::Real const scorecut );
 	/// @brief build a new stubset containing stubs that pass a score cutoff

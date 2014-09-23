@@ -33,6 +33,7 @@
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -47,21 +48,32 @@
 namespace protocols {
 namespace environment {
 
-class Environment : public core::environment::EnvCore {
+class Environment : public core::environment::EnvCore
+#ifdef PTR_MODERN
+	// New version
+	, public utility::pointer::enable_shared_from_this< Environment >
+{
+#else
+{
+	// Old intrusive ref-counter version
+	inline EnvironmentCOP shared_from_this() const { return EnvironmentCOP( this ); }
+	inline EnvironmentOP shared_from_this() { return EnvironmentOP( this ); }
+#endif
+
   typedef core::environment::EnvCore Parent;
   typedef core::environment::SequenceAnnotationCOP SequenceAnnotationCOP;
   typedef core::environment::SequenceAnnotationOP SequenceAnnotationOP;
   typedef core::environment::SequenceAnnotation SequenceAnnotation;
 
   typedef core::conformation::Conformation Conformation;
+  typedef core::conformation::ConformationAP ConformationAP;
   typedef core::conformation::ConformationOP ConformationOP;
   typedef core::conformation::ConformationCOP ConformationCOP;
 
 public:
   Environment( std::string name );
-
   virtual ~Environment();
-
+  
   //@brief register the given mover and, recursively, and submovers yielded by yield_submovers.
   void register_mover( moves::MoverOP );
 
@@ -92,16 +104,22 @@ public:
   void auto_cut( bool );
   void inherit_cuts( bool );
 
-  void pconf_destruction( ProtectedConformationAP ptr ) const {
+  void pconf_destruction( Conformation * ptr ) const {
     pconfs_.erase( ptr );
   }
 
-  void pconf_creation( ProtectedConformationAP ptr ) const {
+  void pconf_creation( Conformation * ptr ) const {
     pconfs_.insert( ptr );
   }
 
-private:
+  /// self pointers
+  inline EnvironmentCOP get_self_ptr() const { return shared_from_this(); }
+  inline EnvironmentOP get_self_ptr() { return shared_from_this(); }
+  inline EnvironmentCAP get_self_weak_ptr() const { return EnvironmentCAP( shared_from_this() ); }
+  inline EnvironmentAP get_self_weak_ptr() { return EnvironmentAP( shared_from_this() ); }
 
+private:
+  
   core::conformation::ConformationOP end( ProtectedConformationCOP );
 
   core::pose::Pose broker( core::pose::Pose const& );
@@ -123,7 +141,8 @@ private:
   bool bAutoCut_;
   bool bInheritCuts_;
 
-  mutable std::set< ProtectedConformationAP > pconfs_;
+  mutable std::set< Conformation * > pconfs_;
+
 
 }; // end Environment base class
 

@@ -125,11 +125,19 @@ private:
 
   class Node : public ReferenceCount {
   public:
-    typedef std::set< NodeOP > EdgeList;
+#ifdef CXX11
+    typedef std::set< NodeCAP, utility::pointer::owner_less< NodeCAP > > EdgeList;
+#else
+    typedef std::set< NodeCAP > EdgeList;
+#endif
 
+  private:
     Node( core::Size i );
 
-    void add_peptide_neighbor( NodeAP n );
+  public:
+    static NodeOP newNode( core::Size i);
+
+    void add_peptide_neighbor( NodeOP n );
 
     void add_jump_neighbor( NodeAP n );
 
@@ -149,9 +157,9 @@ private:
 
     core::Size seqid() const;
 
-    void unvisit() const { parent_ = 0; }
+    void unvisit() const { parent_.reset(); }
 
-    bool visited() const { return ( parent_ != 0 ); }
+    bool visited() const { return !parent_.expired(); }
 
   private:
 
@@ -166,6 +174,9 @@ private:
     mutable NodeCAP parent_;
 
     EdgeList jump_neighbors_;
+
+    NodeAP this_weak_ptr_;
+
   };
 
 }; // end FoldTreeSketch base class

@@ -386,7 +386,7 @@ public:
 	);
 
 	void
-	attach_to_conformation( core::conformation::Conformation * conformation );
+	attach_to_conformation( core::conformation::ConformationCAP conformation );
 
 	void
 	detach_from_conformation();
@@ -510,7 +510,7 @@ private:
 	mutable Size revision_id_;
 	mutable bool revision_id_current_;
 
-	core::conformation::Conformation * conformation_pt_;
+	core::conformation::ConformationCAP conformation_pt_;
 };
 
 std::ostream & operator << (std::ostream & os, ConstraintSet const & set);

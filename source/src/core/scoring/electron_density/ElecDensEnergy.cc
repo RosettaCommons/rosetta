@@ -93,7 +93,7 @@ methods::LongRangeEnergyType
 ElecDensEnergy::long_range_type() const { return elec_dens_energy; }
 
 /// c-tor
-ElecDensEnergy::ElecDensEnergy() : parent( new ElecDensEnergyCreator ) {}
+ElecDensEnergy::ElecDensEnergy() : parent( methods::EnergyMethodCreatorOP( new ElecDensEnergyCreator ) ) {}
 
 
 /// clone

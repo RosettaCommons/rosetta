@@ -126,9 +126,9 @@ CarbonHBondPotential::read_potential()
 	//	for (Size i = 1; i <= num_carbon_donor_atoms_; i++ ) carbon_hbond_parameter_[i]( num_bins_ ) = 0.0;
 
 	//Now read in atom type set, and lookup strings.
-	core::chemical::AtomTypeSetCAP atom_type_set_cap =
+	core::chemical::AtomTypeSetCOP atom_type_set_cop =
 		core::chemical::ChemicalManager::get_instance()->atom_type_set("fa_standard");
-	chemical::AtomTypeSet const & atom_type_set = *atom_type_set_cap;
+	chemical::AtomTypeSet const & atom_type_set = *atom_type_set_cop;
 
 	standard_atomtype_to_carbon_donor_index_.dimension( atom_type_set.n_atomtypes() );
 	standard_atomtype_to_carbon_donor_index_ = 0;

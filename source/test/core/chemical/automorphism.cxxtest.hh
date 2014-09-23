@@ -33,7 +33,7 @@ public:
 		// the ResidueTypeSet is already initialized.
 		using namespace core::chemical;
 		utility::vector1< std::string > params_files;
-		ResidueTypeSetCAP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+		ResidueTypeSetCOP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
 		if(!residue_set.has_name("QC1"))   params_files.push_back("core/chemical/1pqc.params");
 		if(!residue_set.has_name("UK002")) params_files.push_back("core/chemical/uk002.params");
@@ -44,9 +44,9 @@ public:
 
 	void test_automorphism_counts() {
 		using namespace core::chemical;
-		ResidueTypeSetCAP residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-		TS_ASSERT_EQUALS(3456, count_automorphisms( &(residue_set->name_map("QC1")) ));
-		TS_ASSERT_EQUALS(8, count_automorphisms( &(residue_set->name_map("UK002")) ));
+		ResidueTypeSetCOP residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+		TS_ASSERT_EQUALS(3456, count_automorphisms( residue_set->name_map("QC1").get_self_ptr()) );
+		TS_ASSERT_EQUALS(8, count_automorphisms( residue_set->name_map("UK002").get_self_ptr()) );
 	}
 
 	core::Size count_automorphisms(core::chemical::ResidueTypeCOP rsdtype)

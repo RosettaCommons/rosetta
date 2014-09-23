@@ -507,8 +507,7 @@ void read_H3_cter_fragment(
 			if( res_name != aa_1name[aa_1name.size() - 5 + i] )
 				seq_match = false;
 
-			utility::pointer::owning_ptr< BBTorsionSRFD > res_torsions(
-			    new BBTorsionSRFD( 3, 'L', res_name ) ); // 3 protein torsions
+			BBTorsionSRFDOP res_torsions( new BBTorsionSRFD( 3, 'L', res_name ) ); // 3 protein torsions
 			// ugly numbers 1-3, but pose.set_phi also uses explicit numbers
 			res_torsions->set_torsion   ( 1, phi   );
 			res_torsions->set_torsion   ( 2, psi   );
@@ -1526,8 +1525,7 @@ CDRH3Modeler::setup_packer_task(
 
 	TR << "CDRH3Modeler Setting Up Packer Task" << std::endl;
 
-	tf_->push_back( new OperateOnCertainResidues( new PreventRepackingRLT,
-	                new ResidueLacksProperty("PROTEIN") ) );
+	tf_->push_back( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueLacksProperty("PROTEIN") ) ) );
 	tf_->push_back( new InitializeFromCommandline );
 	tf_->push_back( new IncludeCurrent );
 	tf_->push_back( new RestrictToRepacking );

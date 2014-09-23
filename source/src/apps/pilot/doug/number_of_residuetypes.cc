@@ -39,8 +39,8 @@ main( int argc, char * argv [] )
 
 		devel::init( argc, argv );
 
-		ResidueTypeSetCAP rts_fa_std( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
-		ResidueTypeSetCAP rts_centroid( ChemicalManager::get_instance()->residue_type_set( CENTROID ) );
+		ResidueTypeSetCOP rts_fa_std( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+		ResidueTypeSetCOP rts_centroid( ChemicalManager::get_instance()->residue_type_set( CENTROID ) );
 
 		TR << "The FA_STANDARD ResidueTypeSet contains " << rts_fa_std->residue_types().size() << " ResidueTypes" << std::endl;
 		TR << "The CENTROID ResidueTypeSet contains " << rts_centroid->residue_types().size() << " ResidueTypes" << std::endl;

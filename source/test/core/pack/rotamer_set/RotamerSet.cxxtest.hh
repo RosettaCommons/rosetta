@@ -209,7 +209,7 @@ public:
 
 				Size this_res = pose.pdb_info()->pdb2pose( pdb_chain, pdb_res );
 
-				ResidueCOP res = &(ref_poses[i].residue( j ) );
+				ResidueCOP res = ref_poses[i].residue( j ).get_self_ptr();
 				ref_rotset[ this_res ].push_back( res );
 			}
 

@@ -61,7 +61,7 @@ ContactOrderEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 ContactOrderEnergy::ContactOrderEnergy() :
-	parent( new ContactOrderEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new ContactOrderEnergyCreator ) )
 {}
 
 /// clone

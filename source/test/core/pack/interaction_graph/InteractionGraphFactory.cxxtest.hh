@@ -151,9 +151,9 @@ public:
 		make_rotset();
 
 		//TEST that the IGFactory returns a linmem_ig
-		TS_ASSERT( dynamic_cast<LinearMemoryInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn )()) ));
+		TS_ASSERT( dynamic_cast<LinearMemoryInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn ).get()) ));
 		//let's test a random fail state for kicks
-		TS_ASSERT( !(dynamic_cast<PDInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn )()) )) );
+		TS_ASSERT( !(dynamic_cast<PDInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn ).get()) )) );
 
 		return;
 	}
@@ -172,9 +172,9 @@ public:
 		make_rotset();
 
 		//TEST what the IGFactory returns
-		TS_ASSERT( dynamic_cast<LinearMemorySurfaceInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn )()) ));
+		TS_ASSERT( dynamic_cast<LinearMemorySurfaceInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn ).get()) ));
 		//let's test a random fail state for kicks
-		TS_ASSERT( !(dynamic_cast<PDInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn )()) )) );
+		TS_ASSERT( !(dynamic_cast<PDInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn ).get()) )) );
 
 		return;
 	}
@@ -192,9 +192,9 @@ public:
 		make_rotset();
 
 		//TEST what the IGFactory returns
-		TS_ASSERT( dynamic_cast<PDSurfaceInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn )()) ));
+		TS_ASSERT( dynamic_cast<PDSurfaceInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn ).get()) ));
 		//let's test a random fail state for kicks
-		TS_ASSERT( !(dynamic_cast<LinearMemoryInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn )()) )) );
+		TS_ASSERT( !(dynamic_cast<LinearMemoryInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn ).get()) )) );
 
 		return;
 	}
@@ -212,9 +212,9 @@ public:
 		make_rotset();
 
 		//TEST what the IGFactory returns
-		TS_ASSERT( dynamic_cast<PDInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn )()) ));
+		TS_ASSERT( dynamic_cast<PDInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn ).get()) ));
 		//let's test a random fail state for kicks
-		TS_ASSERT( !(dynamic_cast<LinearMemoryInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn )()) )) );
+		TS_ASSERT( !(dynamic_cast<LinearMemoryInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn ).get()) )) );
 
 		return;
 	}
@@ -233,9 +233,9 @@ public:
 		make_rotset();
 
 		//TEST what the IGFactory returns
-		TS_ASSERT( dynamic_cast<LazyInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn )()) ));
+		TS_ASSERT( dynamic_cast<LazyInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn ).get()) ));
 		//let's test a random fail state for kicks
-		TS_ASSERT( !(dynamic_cast<LinearMemoryInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn )()) )) );
+		TS_ASSERT( !(dynamic_cast<LinearMemoryInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn ).get()) )) );
 
 		return;
 	}
@@ -254,9 +254,9 @@ public:
 		make_rotset();
 
 		//TEST what the IGFactory returns
-		TS_ASSERT( dynamic_cast<DoubleLazyInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn )()) ));
+		TS_ASSERT( dynamic_cast<DoubleLazyInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn ).get()) ));
 		//let's test a random fail state for kicks
-		TS_ASSERT( !(dynamic_cast<LinearMemoryInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn )()) )) );
+		TS_ASSERT( !(dynamic_cast<LinearMemoryInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn ).get()) )) );
 
 		return;
 	}
@@ -276,9 +276,9 @@ public:
 		make_rotset();
 
 		//TEST what the IGFactory returns
-		TS_ASSERT( dynamic_cast<DensePDInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn )()) ));
+		TS_ASSERT( dynamic_cast<DensePDInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn ).get()) ));
 		//let's test a random fail state for kicks
-		TS_ASSERT( !(dynamic_cast<LinearMemoryInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn )()) )) );
+		TS_ASSERT( !(dynamic_cast<LinearMemoryInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn ).get()) )) );
 
 
 		//TEST 2: no rotamers
@@ -295,9 +295,9 @@ public:
 		make_rotset();
 
 		//TEST what the IGFactory returns
-		TS_ASSERT( dynamic_cast<DensePDInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn )()) ));
+		TS_ASSERT( dynamic_cast<DensePDInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn ).get()) ));
 		//let's test a random fail state for kicks
-		TS_ASSERT( !(dynamic_cast<LinearMemoryInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn )()) )) );
+		TS_ASSERT( !(dynamic_cast<LinearMemoryInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn ).get()) )) );
 
 		//TEST 3: CENTROID!  whoo
 		core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
@@ -313,9 +313,9 @@ public:
 		make_rotset();
 
 		//TEST what the IGFactory returns
-		TS_ASSERT( dynamic_cast<DensePDInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn )()) ));
+		TS_ASSERT( dynamic_cast<DensePDInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn ).get()) ));
 		//let's test a random fail state for kicks
-		TS_ASSERT( !(dynamic_cast<LinearMemoryInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn )()) )) );
+		TS_ASSERT( !(dynamic_cast<LinearMemoryInteractionGraph*>( (InteractionGraphFactory::create_interaction_graph( *packertask, *rotsets, pose, *scorefxn ).get()) )) );
 
 		return;
 	}

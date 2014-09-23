@@ -400,7 +400,7 @@ LigandMotifSearch::incorporate_motifs(
 		core::conformation::ResidueOP ligres = new core::conformation::Residue (pose.residue( lig_pos ) );
 
 // This is to make an atomtypeset to get atomtype integers
-					core::chemical::AtomTypeSetCAP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
+					core::chemical::AtomTypeSetCOP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
 
 		for(core::Size atom_i = 1; atom_i <= ligres->natoms(); ++atom_i) {
 

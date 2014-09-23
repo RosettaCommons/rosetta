@@ -52,7 +52,7 @@ using namespace core;
 class Resfile_Silent : public CxxTest::TestSuite{
 
 	pack::task::operation::ReadResfileOP rrop;
-	chemical::ResidueTypeSetCAP residue_set;
+	chemical::ResidueTypeSetCOP residue_set;
 
 public:
 

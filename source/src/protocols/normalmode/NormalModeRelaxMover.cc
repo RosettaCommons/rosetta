@@ -339,11 +339,11 @@ CartesianNormalModeMover::gen_coord_constraint( pose::Pose &pose,
 	// make sure there is no other constraint
 	//pose.remove_constraints();
 
+  core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, cst_sdev() ) );
   for( Size i_atm = 1; i_atm <= NM().natm(); ++i_atm ){
     pose.add_constraint(
 		new core::scoring::constraints::CoordinateConstraint
-	  ( NM().get_atomID()[i_atm], NM().get_atomID()[i_atm], excrd[ i_atm ],
-			new core::scoring::func::HarmonicFunc( 0.0, cst_sdev() ) ) );
+	  ( NM().get_atomID()[i_atm], NM().get_atomID()[i_atm], excrd[ i_atm ], fx ) );
   }
 }
 
@@ -527,6 +527,7 @@ TorsionNormalModeMover::gen_coord_constraint( pose::Pose &pose,
 	// make sure there is no other constraint
 	//pose.remove_constraints();
 
+  core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, cst_sdev() ) );
   for( Size i_atm = 1; i_atm <= NM().natm(); ++i_atm ){
     Size resno( NM().get_atomID()[i_atm].rsd() );
     Size atmno( NM().get_atomID()[i_atm].atomno() );
@@ -535,8 +536,7 @@ TorsionNormalModeMover::gen_coord_constraint( pose::Pose &pose,
     pose.add_constraint(
 		new core::scoring::constraints::CoordinateConstraint
 	  ( NM().get_atomID()[i_atm], NM().get_atomID()[i_atm],
-			pose.residue(resno).xyz(atmno),
-			new core::scoring::func::HarmonicFunc( 0.0, cst_sdev() ) ) );
+			pose.residue(resno).xyz(atmno), fx ) );
   }
 }
 

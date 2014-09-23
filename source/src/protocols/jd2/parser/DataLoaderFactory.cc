@@ -68,7 +68,7 @@ DataLoaderFactory::factory_register( DataLoaderCreatorOP creator )
 {
 	//std::cout << "DataLoaderFactory::factory_register of " << creator->keyname() << std::endl;
 
-	runtime_assert( creator );
+	runtime_assert( creator != 0 );
 	std::string const loader_type( creator->keyname() );
 	if ( loader_type == "UNDEFINED NAME" ) {
 		utility_exit_with_message("Can't map derived DataLoader with undefined type name.");

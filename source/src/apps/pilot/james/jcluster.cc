@@ -102,9 +102,10 @@ main( int argc, char* argv [] ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	core::chemical::ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(
-		option[ in::file::residue_type_set ]()
+	core::chemical::ResidueTypeSetCOP rsd_set(
+		core::chemical::ChemicalManager::get_instance()->residue_type_set(
+			option[ in::file::residue_type_set ]()
+		)
 	);
 
 	MetaPoseInputStream input = streams_from_cmd_line();

@@ -73,7 +73,7 @@ void FavorSymmetricSequence::apply(core::pose::Pose & pose)
 		{
 			if(rsd1_index % (residue_count/symmetric_units_) == rsd2_index % (residue_count/symmetric_units_) && rsd1_index != rsd2_index)
 			{
-				pose.add_constraint(new core::scoring::constraints::ResidueTypeLinkingConstraint(pose,rsd1_index,rsd2_index,penalty_));
+				pose.add_constraint(core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::ResidueTypeLinkingConstraint(pose,rsd1_index,rsd2_index,penalty_) ));
 				if(TR.visible(basic::t_debug))
 				{
 					TR.Debug << "Enforcing Sequence Symmetry between residues: " << rsd1_index << " and " << rsd2_index << std::endl;
@@ -107,7 +107,7 @@ void FavorSymmetricSequence::parse_my_tag(
 	}
 
 	for( std::map< std::string, utility::pointer::ReferenceCountOP >::const_iterator it = (data)[ "scorefxns" ].begin(); it!=(data)[ "scorefxns" ].end(); ++it ){
-		core::scoring::ScoreFunctionOP scorefxn( *data.get< core::scoring::ScoreFunction * >( "scorefxns", it->first ) );
+		core::scoring::ScoreFunctionOP scorefxn( data.get_ptr< core::scoring::ScoreFunction >( "scorefxns", it->first ) );
 		if( scorefxn->get_weight( core::scoring::res_type_linking_constraint ) == 0.0 ){
 			scorefxn->set_weight( core::scoring::res_type_linking_constraint, 1.0 );
 			TR<<"Setting res_type_linking_constraint weight in scorefxn "<<it->first<<" to "<<1.0<<'\n';

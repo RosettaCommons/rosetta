@@ -1115,7 +1115,7 @@ initialize_atomtype_2_probe_radius_map()
 	using namespace core;
 	using namespace core::chemical;
 
-	AtomTypeSetCAP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
+	AtomTypeSetCOP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
 	utility::vector1< ProbeRadius > attype_2_radtype( atset->n_atomtypes(), ZERO );
 	for ( Size ii = 1; ii <= atset->n_atomtypes(); ++ii ) {
 		ProbeRadius ii_probe_radius( ZERO );

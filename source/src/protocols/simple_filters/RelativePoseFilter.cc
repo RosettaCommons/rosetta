@@ -220,7 +220,7 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 		else
 			prm = new PackRotamersMover( scorefxn(), pack );
 		prm->apply( *copy_pose );
-		if( rtmin() ){
+		if( rtmin.get() ){
 			rtmin = new RotamerTrialsMinMover( scorefxn(), *pack );
 			rtmin->apply( *copy_pose );
 			TR<<"finished rtmin"<<std::endl;

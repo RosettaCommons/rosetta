@@ -240,8 +240,8 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 
 	using namespace basic::options;
 
-	runtime_assert( sampling_protocol() );
-	runtime_assert( topology_broker() );
+	runtime_assert( sampling_protocol() != 0 );
+	runtime_assert( topology_broker() != 0 );
 
 	tr.Info << "AbrelaxMover: " << get_current_tag() << std::endl;
 	basic::mem_tr << "AbrelaxMover::apply" << std::endl;
@@ -308,7 +308,8 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 	protocols::boinc::Boinc::attach_graphics_current_pose_observer( pose );
 #endif
 
-	scoring::ScoreFunctionCOP last_scorefxn ( sampling_protocol()->current_scorefxn() );
+	scoring::ScoreFunctionCOP last_scorefxn_cop(NULL); // holding handle for clone
+	scoring::ScoreFunction const * last_scorefxn ( & sampling_protocol()->current_scorefxn() );
 
 	// Make sure score columns always the same.
 	relax::ClassicRelax().setPoseExtraScore( pose );
@@ -406,8 +407,9 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 		}
 
 		protocols::relax::RelaxProtocolBaseCOP relax_prot = relax_protocol();
-		core::scoring::ScoreFunctionCOP last_scorefxn_cop = relax_prot->get_scorefxn();
-		last_scorefxn = last_scorefxn_cop->clone();
+		last_scorefxn_cop = relax_prot->get_scorefxn();
+		last_scorefxn = last_scorefxn_cop.get();
+		
 	} //switched to fullatom
 
 

@@ -106,7 +106,7 @@ void StartStructClaimer::generate_init_frags( core::pose::Pose const& pose ) {
 
 	using namespace fragment;
 	ConstantLengthFragSetOP fragset = new ConstantLengthFragSet( 1 );
-	steal_frag_set_from_pose( pose, *fragset, new FragData( new BBTorsionSRFD, 1 ), start_region );
+	steal_frag_set_from_pose( pose, *fragset, new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), 1 ), start_region );
 	simple_moves::ClassicFragmentMoverOP mover = new simple_moves::ClassicFragmentMover( fragset );
 	mover->set_check_ss( false ); /* not good if we want to initialize from 1mer fragments */
 	set_mover( mover );
@@ -116,7 +116,7 @@ void StartStructClaimer::generate_init_frags( core::pose::Pose const& pose ) {
 
 void StartStructClaimer::generate_claims( claims::DofClaims& new_claims ){
 	for( Size i=1; i <= broker().resolve_sequence_label( label() ).length(); ++i){
-		new_claims.push_back( new claims::BBClaim( this, std::make_pair( label(), i ), claims::DofClaim::INIT ) );
+		new_claims.push_back( new claims::BBClaim( get_self_weak_ptr(), std::make_pair( label(), i ), claims::DofClaim::INIT ) );
 	}
 }
 
@@ -143,7 +143,7 @@ void StartStructClaimer::initialize_dofs(
 				it != eit; ++it ) {
 		//don't really know how this looks for jumps
 
-		claims::BBClaimOP bb_ptr( dynamic_cast< claims::BBClaim* >( it->get() ) );
+		claims::BBClaimOP bb_ptr( utility::pointer::dynamic_pointer_cast< claims::BBClaim >( *it ) );
 
 		if ( bb_ptr ) {
 			Size pos( (platform::Size) bb_ptr->global_position() );

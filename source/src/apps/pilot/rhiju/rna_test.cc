@@ -348,7 +348,7 @@ figure_out_icoord_test( ){
 	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
 	// Create an extended pose from scratch.
@@ -453,7 +453,7 @@ rna_fullatom_score_test()
 	using namespace core::scoring;
 	using namespace core::io::silent;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 	if (option[fa_standard]) rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
@@ -603,9 +603,8 @@ add_coordinate_constraints( pose::Pose & pose ) {
 		Residue const & i_rsd( pose.residue(i) );
 
 		for ( Size ii = 1; ii<= i_rsd.natoms(); ++ii ) {
-
-			cst_set->add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii),
-																												 new HarmonicFunc( 0.0, coord_sdev ) ) );
+			core::scoring::func::FuncOP fx( new HarmonicFunc( 0.0, coord_sdev ) );
+			cst_set->add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii), fx ) );
 		}
 	}
 
@@ -810,7 +809,7 @@ rna_fullatom_minimize_test()
 	using namespace core::optimization;
 	using namespace core::io::silent;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 	if (option[fa_standard]) rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
@@ -915,7 +914,7 @@ rna_fullatom_multiscore_test()
 	using namespace core::pose;
 	using namespace core::id;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 	if (option[fa_standard]) rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
@@ -991,7 +990,7 @@ convert_to_native_test()
 	using namespace core::optimization;
 	using namespace core::io::silent;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 	if (option[fa_standard]) rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
@@ -1028,7 +1027,7 @@ rna_fullatom_minimize_silent_test()
 	using namespace core::optimization;
 	using namespace core::io::silent;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
 	std::string const infile  = option[ in::file::silent  ][1];
@@ -1120,7 +1119,7 @@ rna_o2prime_test()
 	using namespace core::optimization;
 	using namespace core::io::silent;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
 	std::string const silent_file = option[ out::file::silent  ]();
@@ -1177,7 +1176,7 @@ rna_lores_score_test()
 	using namespace core::chemical;
 	using namespace core::scoring;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
 
@@ -1213,7 +1212,7 @@ rna_lores_score_silent_test()
 	using namespace core::scoring;
 	using namespace core::io::silent;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
 	//Score these suckers.
@@ -1307,7 +1306,7 @@ pymol_struct_type_test()
 	using namespace core::chemical;
 	using namespace core::scoring;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
 	pose::Pose pose;
@@ -1359,7 +1358,7 @@ rna_design_gap_test()
 	using namespace core::scoring;
 	using namespace core::scoring::methods;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
@@ -1445,7 +1444,7 @@ print_internal_coord_test()
 	using namespace core::id;
 	using numeric::conversions::degrees;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( option[ rsd_type_set]()  );
 
 	pose::Pose pose;
@@ -1521,7 +1520,7 @@ print_internal_coord_test()
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void
-set_ideal_geometry( pose::Pose & pose, pose::Pose const & extended_pose, chemical::ResidueTypeSetCAP & rsd_set ) {
+set_ideal_geometry( pose::Pose & pose, pose::Pose const & extended_pose, chemical::ResidueTypeSetCOP & rsd_set ) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -1585,7 +1584,7 @@ rna_assemble_test() {
 	using namespace core::chemical;
 	using namespace core::scoring;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
 	pose::Pose extended_pose;
@@ -1766,7 +1765,7 @@ rna_idealize_test() {
 	pose::Pose pose;
 	utility::vector1 <std::string> pdb_files ( option[ in::file::s ]() );
 
-	core::chemical::ResidueTypeSetCAP rsd_set;
+	core::chemical::ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
 	bool const close_chainbreaks = option[ idl_close_chainbreaks ];
@@ -1850,7 +1849,7 @@ rna_torsion_check_test(){
 	using namespace core::chemical;
 	using namespace core::scoring;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
 	pose::Pose pose;
@@ -1902,7 +1901,7 @@ rna_close_chainbreaks_test(){
 	using namespace core::kinematics;
 	using namespace core::optimization;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = ChemicalManager::get_instance()->residue_type_set( "rna" );
 
 	// Just a check.
@@ -1976,7 +1975,7 @@ rna_jumping_test(){
 	using namespace core::chemical;
 	using namespace core::scoring;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
 	pose::PoseOP native_pose_OP = new pose::Pose;
@@ -2474,7 +2473,7 @@ create_rna_benchmark_test(){
 
 	initialize_pymol_colors();
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	utility::vector1< std::string > const infiles( option[ in::file::s ]() );
@@ -2555,7 +2554,7 @@ rna_chain_closure_test()
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	std::string infile  = option[ in::file::s ][1];
@@ -2627,7 +2626,7 @@ get_jump_distance( kinematics::Jump const & jump1, kinematics::Jump const & jump
 
 //////////////////////////////////////////////////////////////////////////////////////
 void
-setup_crazy_fold_tree( pose::Pose & pose, core::chemical::ResidueTypeSetCAP & rsd_set )
+setup_crazy_fold_tree( pose::Pose & pose, core::chemical::ResidueTypeSetCOP & rsd_set )
 {
 	using namespace chemical;
 	using namespace core::scoring;
@@ -2691,7 +2690,7 @@ rna_backbone_rebuild_test()
 	using namespace core::kinematics;
 	using namespace core::id;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	std::string infile  = option[ in::file::s ][1];
@@ -2787,13 +2786,13 @@ rna_backbone_rebuild_test()
 		mini_pose.fold_tree( mini_f );
 
 		id::AtomID base_atom1_id(       mini_pose.residue(1).atom_index( " C1'" ), 1 );
-		tree::AtomCOP base_atom1 ( & mini_pose.atom_tree().atom( base_atom1_id ) );
+		tree::AtomCOP base_atom1 ( mini_pose.atom_tree().atom( base_atom1_id ).get_self_ptr() );
 
 		id::AtomID forward_connect1_id( mini_pose.residue(1).atom_index( " O3'" ), 1 );
-		tree::AtomCOP forward_connect1 ( & mini_pose.atom_tree().atom( forward_connect1_id ) );
+		tree::AtomCOP forward_connect1 ( mini_pose.atom_tree().atom( forward_connect1_id ).get_self_ptr() );
 
 		id::AtomID base_atom2_id(       mini_pose.residue(2).atom_index( " C1'" ), 2 );
-		tree::AtomCOP base_atom2 ( & mini_pose.atom_tree().atom( base_atom2_id ) );
+		tree::AtomCOP base_atom2 ( mini_pose.atom_tree().atom( base_atom2_id ).get_self_ptr() );
 
 		base_base_jumps.push_back( Jump( base_atom1->get_stub(), base_atom2->get_stub() ) );
 		forwardconnect_base_jumps.push_back( Jump( forward_connect1->get_stub(), base_atom2->get_stub() ) );
@@ -2806,9 +2805,9 @@ rna_backbone_rebuild_test()
 		Size const i( 1 );
 
 		id::AtomID base_atom1_id(       pose.residue(i).atom_index( " C1'" ), i );
-		tree::AtomCOP base_atom1 ( & pose.atom_tree().atom( base_atom1_id ) );
+		tree::AtomCOP base_atom1 ( pose.atom_tree().atom( base_atom1_id ).get_self_ptr() );
 		id::AtomID base_atom2_id(       pose.residue(i+1).atom_index( " C1'" ), i+1 );
-		tree::AtomCOP base_atom2 ( & pose.atom_tree().atom( base_atom2_id ) );
+		tree::AtomCOP base_atom2 ( pose.atom_tree().atom( base_atom2_id ).get_self_ptr() );
 		Jump current_jump( base_atom1->get_stub(), base_atom2->get_stub() );
 
 		Real best_jump_distance( 999.9 );
@@ -2843,9 +2842,9 @@ rna_backbone_rebuild_test()
 	for (Size i = 2; i < nres_real; i++ ){
 
 		id::AtomID base_atom1_id(       pose.residue(i).atom_index( " O3'" ), i );
-		tree::AtomCOP base_atom1 ( & pose.atom_tree().atom( base_atom1_id ) );
+		tree::AtomCOP base_atom1 ( pose.atom_tree().atom( base_atom1_id ).get_self_ptr() );
 		id::AtomID base_atom2_id(       pose.residue(i+1).atom_index( " C1'" ), i+1 );
-		tree::AtomCOP base_atom2 ( & pose.atom_tree().atom( base_atom2_id ) );
+		tree::AtomCOP base_atom2 ( pose.atom_tree().atom( base_atom2_id ).get_self_ptr() );
 		Jump current_jump( base_atom1->get_stub(), base_atom2->get_stub() );
 
 		Real best_jump_distance( 999.9 );
@@ -2898,7 +2897,7 @@ rna_filter_base_pairs_test()
 	using namespace basic::options::OptionKeys;
 	using namespace core::io::silent;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	std::string const infile  = option[ in::file::silent  ][1];
@@ -2961,7 +2960,7 @@ crazy_minimize_test()
 	using namespace core::io::silent;
 	using namespace protocols::farna;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
 	std::string const silent_file = option[ out::file::silent  ]();
@@ -3079,7 +3078,7 @@ sasa_test()
 	using namespace core::io::silent;
 	using namespace protocols::farna;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 
@@ -3162,7 +3161,7 @@ env_sugar_test()
 	using namespace core::io::silent;
 	using namespace protocols::farna;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( option[ rsd_type_set ]()  );
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 
@@ -3272,7 +3271,7 @@ print_hbonds_test()
 	using namespace core::io::silent;
 	using namespace protocols::farna;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( option[ rsd_type_set]() );
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 
@@ -3287,7 +3286,7 @@ print_hbonds_test()
 		(*scorefxn)(pose);
 		hbonds::HBondOptionsOP hbond_options( new hbonds::HBondOptions() );
 		hbond_options->use_hb_env_dep( false );
-		hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( hbond_options ) );
+		hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( *hbond_options ) );
 
 		hbonds::fill_hbond_set( pose, false /*calc deriv*/, *hbond_set );
 
@@ -3508,7 +3507,7 @@ dinucleotide_test()
 	using namespace core::id;
 	using namespace protocols::farna;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
 	pose::Pose pose;
@@ -3616,8 +3615,8 @@ vary_bond_length( pose::Pose & pose,
 	bool const failure = pose.conformation().get_torsion_angle_atom_ids( tor_id, id1, id2, id3, id4 );
 	if (failure) return;
 
- 	core::kinematics::tree::AtomCOP atom2 ( & pose.atom_tree().atom( id2 ) );
-	core::kinematics::tree::AtomCOP atom3 ( & pose.atom_tree().atom( id3 ) );
+ 	core::kinematics::tree::AtomCOP atom2 ( pose.atom_tree().atom( id2 ).get_self_ptr() );
+	core::kinematics::tree::AtomCOP atom3 ( pose.atom_tree().atom( id3 ).get_self_ptr() );
 
 	DOF_ID dof_id;
 	if ( atom2->parent() == atom3 ) {
@@ -3689,7 +3688,7 @@ build_next_nucleotide_test()
 	using namespace core::id;
 	using namespace protocols::farna;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
 	// Read in reference
@@ -4025,7 +4024,7 @@ rotamerize_rna_test()
 	using namespace protocols::farna;
 	using namespace core::chemical::rna;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
 	pose::Pose source_pose,pose;
@@ -4158,7 +4157,7 @@ calc_rmsd_test()
 	using namespace core::io::silent;
 	using namespace protocols::farna;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 
@@ -4324,7 +4323,7 @@ output_sugar_internal_dof( pose::Pose & pose, utility::vector1< std::string > co
 
 			Size const j = rsd.atom_index( atom_name );
 
-			core::kinematics::tree::AtomCOP current_atom ( & pose.atom_tree().atom( AtomID(j,i) ) );
+			core::kinematics::tree::AtomCOP current_atom ( pose.atom_tree().atom( AtomID(j,i) ).get_self_ptr() );
 
 			std::cout << A( 5, rsd.atom_name( j )) << " " <<
 			F(11,6, degrees(	pose.atom_tree().dof( DOF_ID( current_atom->id(), id::PHI ) ) ) )  << " " <<
@@ -4432,7 +4431,7 @@ fix_sugar_bond_angles_EMPIRICAL( pose::Pose & pose )
 		{
 			std::string const atom_name = " C2'";
 			Size const j = rsd.atom_index( atom_name );
-			core::kinematics::tree::AtomCOP current_atom ( & pose.atom_tree().atom( AtomID(j,i) ) );
+			core::kinematics::tree::AtomCOP current_atom ( pose.atom_tree().atom( AtomID(j,i) ).get_self_ptr() );
 			if (delta < 100.0 ) {
 				theta  = -0.138 * delta + 89.4;
 			} else {
@@ -4445,7 +4444,7 @@ fix_sugar_bond_angles_EMPIRICAL( pose::Pose & pose )
 		{
 			std::string const atom_name = " O4'";
 			Size const j = rsd.atom_index( atom_name );
-			core::kinematics::tree::AtomCOP current_atom ( & pose.atom_tree().atom( AtomID(j,i) ) );
+			core::kinematics::tree::AtomCOP current_atom ( pose.atom_tree().atom( AtomID(j,i) ).get_self_ptr() );
 			if (delta < 100.0 ) {
 				theta  =  0.132 * delta + 59.5;
 				phi = 0.0118 * delta - 118.0;
@@ -4524,7 +4523,7 @@ fix_sugar_bond_angles_CLOSE_BOND( pose::Pose & pose )
 		}
 
 		{
-			core::kinematics::tree::AtomCOP current_atom ( & pose.atom_tree().atom( AtomID(j,i) ) );
+			core::kinematics::tree::AtomCOP current_atom ( pose.atom_tree().atom( AtomID(j,i) ).get_self_ptr() );
 			core::kinematics::tree::AtomCOP input_stub_atom1( current_atom->input_stub_atom1() );
 			core::kinematics::tree::AtomCOP input_stub_atom2( current_atom->input_stub_atom2() );
 			core::kinematics::tree::AtomCOP input_stub_atom3( current_atom->input_stub_atom3() );
@@ -4569,7 +4568,7 @@ sugar_geometry_RNA_test()
 	using namespace core::io::silent;
 	using namespace protocols::farna;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 
@@ -4625,7 +4624,7 @@ sugar_frag_RNA_test()
 	using namespace core::io::silent;
 	using namespace protocols::farna;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
 
@@ -4672,7 +4671,7 @@ color_by_geom_sol_RNA_test()
 	using namespace core::kinematics;
 	using namespace protocols::farna;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 
@@ -4720,7 +4719,7 @@ color_by_lj_base_RNA_test()
 	using namespace protocols::farna;
 	using namespace core::scoring::etable;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( option[ rsd_type_set ] );
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 
@@ -4774,7 +4773,7 @@ rna_stats_test()
 	using namespace core::kinematics;
 	using namespace protocols::farna;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 
@@ -4823,7 +4822,7 @@ files_for_openMM_test(){
 	using namespace core::kinematics;
 	using namespace protocols::farna;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
@@ -4948,7 +4947,7 @@ print_secstruct_test(){
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose;
 
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	pose::Pose pose;
@@ -4975,8 +4974,7 @@ print_all_torsions_test(){
 	using namespace core::id;
 	using namespace chemical::rna;
 
-	ResidueTypeSetCAP rsd_set;
-	rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	ResidueTypeSetCOP rsd_set( ChemicalManager::get_instance()->residue_type_set( FA_RNA ) );
 
 	pose::Pose pose;
 	std::string infile  = option[ in ::file::s ][1];

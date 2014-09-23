@@ -354,8 +354,8 @@ void ContactMap::apply(Pose & pose) {
 
 	// Iterate over contacts
 	for (utility::vector1<Contact>::iterator it = contacts_.begin(); it != contacts_.end(); it++){
-		ContactPartnerAP p1(it->partner1());
-		ContactPartnerAP p2(it->partner2());
+		ContactPartner * p1(it->partner1());
+		ContactPartner * p2(it->partner2());
 		// Get coordinates of both contact partners and calculate distance
 		numeric::xyzVector<core::Real> v1 = pose.residue(p1->seqpos()).atom(p1->atomname()).xyz();
 		numeric::xyzVector<core::Real> v2 = pose.residue(p2->seqpos()).atom(p2->atomname()).xyz();

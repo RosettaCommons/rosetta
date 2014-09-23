@@ -189,7 +189,7 @@ void Matcher::add_upstream_restype_for_constraint(
 	if ( ! upstream_builders_[ cst_id ] ) {
 		upstream::ProteinUpstreamBuilderOP prot_sc_builder = new upstream::ProteinUpstreamBuilder;
 		/// default to dunbrack sampler
-		prot_sc_builder->set_sampler( new upstream::DunbrackSCSampler );
+		prot_sc_builder->set_sampler( upstream::ProteinSCSamplerCOP( new upstream::DunbrackSCSampler ) );
 		prot_sc_builder->set_use_input_sidechain( use_input_sc_ );
 		upstream_builders_[ cst_id ] = prot_sc_builder;
 	}
@@ -209,7 +209,7 @@ void Matcher::desymmeterize_upstream_restype_for_constraint(
 	Size cst_id
 )
 {
-	upstream::ProteinUpstreamBuilderOP prot_sc_builder = dynamic_cast< upstream::ProteinUpstreamBuilder * > ( upstream_builders_[ cst_id ]() );
+	upstream::ProteinUpstreamBuilderOP prot_sc_builder = utility::pointer::dynamic_pointer_cast< upstream::ProteinUpstreamBuilder > ( upstream_builders_[ cst_id ] );
 	if ( ! prot_sc_builder ) {
 		utility_exit_with_message( "Could not desymmeterize the upstream builder for geometric constraint " + utility::to_string( cst_id ) + ".  Desymmeterization is only available for protein residues." );
 	}
@@ -689,8 +689,8 @@ void Matcher::initialize_from_file(
 	//std::cout << "APL DEBUG Matcher.cc::initialize_from_file begin" << std::endl;
 	using namespace toolbox::match_enzdes_util;
 
-	runtime_assert( upstream_pose_ );
-	runtime_assert( downstream_pose_ );
+	runtime_assert( upstream_pose_ != 0 );
+	runtime_assert( downstream_pose_ != 0 );
 	TR << "Matcher::initialize_from_file: n geometric constraints: " << enz_data.mcfi_lists_size() << std::endl;
 
 	set_n_geometric_constraints( enz_data.mcfi_lists_size() );
@@ -878,11 +878,11 @@ void Matcher::initialize_from_file(
 								using namespace core::scoring;
 								using namespace core::pack::dunbrack;
 								RotamerLibrary const & rotlib( core::pack::dunbrack::RotamerLibrary::get_instance() );
-								SingleResidueRotamerLibraryCAP res_rotlib( rotlib.get_rsd_library( *upres[ jj ] ) );
+								SingleResidueRotamerLibraryCOP res_rotlib( rotlib.get_rsd_library( *upres[ jj ] ) );
 
 								if ( res_rotlib != 0 ) {
 
-									SingleResidueDunbrackLibraryCAP dun_rotlib(
+									SingleResidueDunbrackLibraryCOP dun_rotlib(
 										dynamic_cast< SingleResidueDunbrackLibrary const * >
 										( res_rotlib.get() ));
 
@@ -1670,7 +1670,7 @@ Matcher::create_ds_builder(
 	runtime_assert( build_set.has_restype() );
 
 	/// Only supports rigid-ligand builders for now... This code will expand in the future.
-	runtime_assert( downstream_pose_ );
+	runtime_assert( downstream_pose_ != 0 );
 	runtime_assert( downstream_pose_->total_residue() == 1 );
 
 	for ( Size ii = 1; ii <= 3; ++ii ) {
@@ -1709,9 +1709,9 @@ Matcher::create_ds_builder(
 			/// atoms that are 3 bonds apart
 			cpgen->set_crossover( 3 );
 
-			rigid_builder->initialize_upstream_residue( & build_set.restype(), cpgen );
+			rigid_builder->initialize_upstream_residue( build_set.restype().get_self_ptr(), cpgen );
 		} else {
-			rigid_builder->initialize_upstream_residue( & build_set.restype() );
+			rigid_builder->initialize_upstream_residue( build_set.restype().get_self_ptr() );
 		}
 		builder = rigid_builder;
 	} else {
@@ -1756,9 +1756,9 @@ Matcher::create_ds_builder(
 			/// atoms that are 3 bonds apart
 			cpgen->set_crossover( 3 );
 
-			ligand_rotamer_builder->initialize_upstream_residue( & build_set.restype(), cpgen );
+			ligand_rotamer_builder->initialize_upstream_residue( build_set.restype().get_self_ptr(), cpgen );
 		} else {
-			ligand_rotamer_builder->initialize_upstream_residue( & build_set.restype() );
+			ligand_rotamer_builder->initialize_upstream_residue( build_set.restype().get_self_ptr() );
 		}
 
 		builder = ligand_rotamer_builder;

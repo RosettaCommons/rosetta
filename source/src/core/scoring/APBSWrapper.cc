@@ -131,9 +131,9 @@ int APBSWrapper::count_atoms( core::pose::Pose const & pose ) const
 	int nres = pose.total_residue();
 	int cntAtoms=0;
 	for ( int i=1; i<= nres; ++i ) {
-		conformation::ResidueCAP rsd = &pose.residue(i);
-		for ( Size j=1; j<= rsd->natoms(); ++j ) {
-			if ( rsd->atom_type(j).is_virtual() ) continue;
+		conformation::Residue const & rsd = pose.residue(i);
+		for ( Size j=1; j<= rsd.natoms(); ++j ) {
+			if ( rsd.atom_type(j).is_virtual() ) continue;
 			++cntAtoms;
 		}
 	}
@@ -148,23 +148,23 @@ PQR::PQR(core::pose::Pose const & pose, int natoms,
 	int cntAtoms = 0;
  
 	for ( int i=1; i<= nres; ++i ) {
-		conformation::ResidueCAP rsd = &pose.residue(i);
-		bool residue_charged = const_cast<std::map<std::string,bool>&>(charged_residues)[rsd->type().name()];
-		for ( Size j=1; j<=rsd->natoms(); ++j ) {
-			conformation::Atom const & atom( rsd->atom(j) );
+		conformation::Residue const & rsd = pose.residue(i);
+		bool residue_charged = const_cast<std::map<std::string,bool>&>(charged_residues)[rsd.type().name()];
+		for ( Size j=1; j<=rsd.natoms(); ++j ) {
+			conformation::Atom const & atom( rsd.atom(j) );
 			
 			//skip outputing virtual atom unless specified.
 			//fixed so that the last atom in atom type set can be 
 			//something other than a virtual atom --steven combs
-			if ( rsd->atom_type(j).is_virtual() ) continue;
+			if ( rsd.atom_type(j).is_virtual() ) continue;
 			
-			runtime_assert( rsd->chain() < chains.size() ); // silly restriction
+			runtime_assert( rsd.chain() < chains.size() ); // silly restriction
 			
 			x.push_back(atom.xyz()(1));
 			y.push_back(atom.xyz()(2));
 			z.push_back(atom.xyz()(3));
 			charge.push_back(residue_charged? pose.residue_type(i).atom(j).charge() : 0.);
-			radius.push_back(rsd->atom_type(j).lj_radius());
+			radius.push_back(rsd.atom_type(j).lj_radius());
 			++cntAtoms;
 		}
 	}

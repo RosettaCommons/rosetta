@@ -97,7 +97,7 @@ TaskAwareSymMinMover::fresh_instance() const {
 void
 TaskAwareSymMinMover::apply(Pose & pose) {
 
-	runtime_assert( task_factory_ );
+	runtime_assert( task_factory_ != 0 );
 
 	// Initialize a MoveMap, set all moves to false
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;

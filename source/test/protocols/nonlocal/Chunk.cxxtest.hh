@@ -34,6 +34,7 @@ using core::kinematics::MoveMap;
 using core::kinematics::MoveMapOP;
 using protocols::nonlocal::Chunk;
 using protocols::nonlocal::Region;
+using protocols::nonlocal::RegionOP;
 
 class ChunkTest : public CxxTest::TestSuite {
  public:

@@ -130,7 +130,7 @@ SetupForSymmetryMover::apply( core::pose::Pose & pose )
 	// If we are alredy symmetric do nothing
 	if ( core::pose::symmetry::is_symmetric( pose ) ) return;
 
-	if(!symmdef_()){
+	if(!symmdef_){
 		if(option[ OptionKeys::symmetry::symmetry_definition].user()){
 			symmdef_ = new core::conformation::symmetry::SymmData();
 			symmdef_->read_symmetry_data_from_file(

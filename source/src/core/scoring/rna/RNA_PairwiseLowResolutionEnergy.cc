@@ -90,7 +90,7 @@ typedef  numeric::xyzMatrix< Real > Matrix;
 
 /// c-tor
 RNA_PairwiseLowResolutionEnergy::RNA_PairwiseLowResolutionEnergy() :
-	parent( new RNA_PairwiseLowResolutionEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new RNA_PairwiseLowResolutionEnergyCreator ) ),
 	rna_low_resolution_potential_( ScoringManager::get_instance()->get_RNA_LowResolutionPotential() )
 {}
 
@@ -116,7 +116,7 @@ RNA_PairwiseLowResolutionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunc
 	rna_low_resolution_potential_.update_rna_centroid_info( pose );
 
 	rna::RNA_ScoringInfo & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
-	rna_raw_base_base_info_ = rna::RNA_RawBaseBaseInfoAP( rna_scoring_info.rna_raw_base_base_info() );
+	rna_raw_base_base_info_ = &rna_scoring_info.rna_raw_base_base_info();
 
 	// Use mini's residue_pair_energy to keep track of the book-keeping, instead of this...
 	//rna_low_resolution_potential_.update_rna_base_base_interactions( pose );
@@ -133,7 +133,7 @@ RNA_PairwiseLowResolutionEnergy::setup_for_derivatives( pose::Pose & pose, Score
 	rna_low_resolution_potential_.update_rna_centroid_info( pose );
 
 	rna::RNA_ScoringInfo & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
-	rna_raw_base_base_info_ = rna::RNA_RawBaseBaseInfoAP( rna_scoring_info.rna_raw_base_base_info() );
+	rna_raw_base_base_info_ = &rna_scoring_info.rna_raw_base_base_info();
 
 	// Just make sure that everything has been calculated. This doesn't use residue_pair_energy for bookkeeping,
 	//  it just chugs through all the residue pairs.
@@ -155,7 +155,7 @@ RNA_PairwiseLowResolutionEnergy::setup_for_packing(
 	rna_low_resolution_potential_.update_rna_centroid_info( pose );
 
 	rna::RNA_ScoringInfo & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
-	rna_raw_base_base_info_ = rna::RNA_RawBaseBaseInfoAP( rna_scoring_info.rna_raw_base_base_info() );
+	rna_raw_base_base_info_ = &rna_scoring_info.rna_raw_base_base_info();
 
 	might_be_designing_ = false;
 	for ( Size ii = 1; ii <= designing_residues.size(); ++ii ) {

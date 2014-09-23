@@ -18,9 +18,8 @@ namespace openers {
 
 class RamachandranOpener;
 
-using utility::pointer::owning_ptr;
-typedef owning_ptr<RamachandranOpener> RamachandranOpenerOP;
-typedef owning_ptr<RamachandranOpener const> RamachandranOpenerCOP;
+typedef utility::pointer::owning_ptr<RamachandranOpener> RamachandranOpenerOP;
+typedef utility::pointer::owning_ptr<RamachandranOpener const> RamachandranOpenerCOP;
 
 }
 }

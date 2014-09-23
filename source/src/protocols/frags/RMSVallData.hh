@@ -307,7 +307,7 @@ public:
 
 			core::fragment::FragDataOP current_fragment = new core::fragment::FragData;
 			for ( Size k=0; k< frag_size; ++k ) {
-				utility::pointer::owning_ptr< core::fragment::BBTorsionSRFD > res_torsions(
+				core::fragment::BBTorsionSRFDOP res_torsions(
 				                new core::fragment::BBTorsionSRFD( 3 ,secstruct_[ vall_pos + k ], sequence_ [ vall_pos+k ] ) ); // 3 protein torsions
 				res_torsions->set_torsion   ( 1, phi_   [ vall_pos + k ]  ); // ugly numbers 1-3, but pose.set_phi also uses explicit numbers
 				res_torsions->set_torsion   ( 2, psi_   [ vall_pos + k ]  );

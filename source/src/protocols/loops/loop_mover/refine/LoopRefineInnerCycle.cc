@@ -125,14 +125,14 @@ void LoopRefineInnerCycle::setup_objects( Pose const & /* pose */ )
 		throw EXCN_Msg_Exception( "No MonteCarlo instance available in " + get_name() + "." );
 	}
 	
-	if (!loop_mover_that_owns_me_) {
+	if (loop_mover_that_owns_me_.expired()) {
 		throw EXCN_Msg_Exception( "No parent LoopMover available in " + get_name() + ". This is needed to provide information on the progress of the simulation." );
 	}
 }
 
 void LoopRefineInnerCycle::init()
 {
-	init( NULL, NULL, NULL, NULL );
+	init( LoopMover_Refine_CCDAP(), NULL, NULL, NULL );
 }
 
 void LoopRefineInnerCycle::init(
@@ -226,7 +226,8 @@ void LoopRefineInnerCycle::set_movemap( core::kinematics::MoveMapOP movemap )
 
 Loops LoopRefineInnerCycle::get_one_random_loop() const
 {
-	Loops::const_iterator it( loop_mover()->loops()->one_random_loop() );
+	LoopMover_Refine_CCDOP loop_mover_op( loop_mover() ); // lock AP
+	Loops::const_iterator it( loop_mover_op->loops()->one_random_loop() );
 	Loops one_loop;
 	one_loop.add_loop( it );
 	return one_loop;

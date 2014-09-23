@@ -182,7 +182,7 @@ void CartesianMD::get_native_info( pose::Pose const &pose )
 	native_given_ = true;
 
 	std::string nativepdb = basic::options::option[ basic::options::OptionKeys::in::file::native ]();
-	core::chemical::ResidueTypeSetCAP rsd_set
+	core::chemical::ResidueTypeSetCOP rsd_set
 		= core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 	core::import_pose::pose_from_pdb( native_, *rsd_set, nativepdb );
 

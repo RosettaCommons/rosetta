@@ -121,7 +121,7 @@ FA_ElecEnergyCreator::score_types_for_method() const {
 
 ////////////////////////////////////////////////////////////////////////////
 FA_ElecEnergy::FA_ElecEnergy( methods::EnergyMethodOptions const & options ):
-	parent( new FA_ElecEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new FA_ElecEnergyCreator ) ),
 	coulomb_( options ),
 	exclude_protein_protein_( options.exclude_protein_protein_fa_elec() ),
 	exclude_monomer_( options.exclude_monomer_fa_elec() ),
@@ -464,7 +464,7 @@ FA_ElecEnergy::residue_pair_energy_ext(
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
 	assert( rsd1.seqpos() < rsd2.seqpos() );
-	assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( elec_pair_nblist )() ));
+	assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( elec_pair_nblist ) ));
 	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( elec_pair_nblist ) ) );
 	Real dsq, score( 0.0 );
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
@@ -523,7 +523,7 @@ FA_ElecEnergy::eval_residue_pair_derivatives(
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
 	assert( rsd1.seqpos() < rsd2.seqpos() );
-	assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( elec_pair_nblist )() ));
+	assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( elec_pair_nblist ) ));
 
 	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( elec_pair_nblist ) ) );
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );

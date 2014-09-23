@@ -77,17 +77,20 @@ ScoreTypes SAXSEnergyCreator::score_types_for_method() const {
 
 methods::EnergyMethodOP SAXSEnergyCreator::create_energy_method( methods::EnergyMethodOptions const &) const {
 
+	methods::EnergyMethodCreatorOP creator( new SAXSEnergyCreatorCEN );
 	return new SAXSEnergy(SAXSEnergy::cen_cfg_file_,
 	    chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID),
-	    saxs_cen_score, new SAXSEnergyCreatorCEN);
+	    saxs_cen_score, creator );
 }
 
 /// c-tor
-SAXSEnergy::SAXSEnergy(std::string & config_file,core::chemical::ResidueTypeSetCAP rsd_set,
-		ScoreType the_variant,SAXSEnergyCreator* creator) : WholeStructureEnergy( creator ) {
+SAXSEnergy::SAXSEnergy(std::string & config_file,core::chemical::ResidueTypeSetCAP rsd_set_ap,
+		ScoreType the_variant, methods::EnergyMethodCreatorOP creator) : WholeStructureEnergy( creator ) {
 
     using namespace basic::options;
     using namespace basic::options::OptionKeys;
+    
+    core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_ap );
 
     saxs_score_variant_ = the_variant;
     trSAXSEnergy.Warning << "SAXS score setup : " << the_variant << std::endl;
@@ -120,7 +123,7 @@ SAXSEnergy::SAXSEnergy(const std::string & config_file,
 		const utility::vector1<Real> & source_q,
 		const utility::vector1<Real> & reference_spectrum,
 		ScoreType score_variant,
-		SAXSEnergyCreator*  the_creator) :
+		methods::EnergyMethodCreatorOP the_creator) :
 		WholeStructureEnergy( the_creator ) {
 
     saxs_score_variant_ = score_variant;

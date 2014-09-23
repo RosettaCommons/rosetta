@@ -134,6 +134,7 @@ public:
 		using core::scoring::get_score_function;
 		using core::pack::task::TaskFactory;
 		using core::pack::task::operation::RestrictToRepacking;
+		using core::pack::task::operation::TaskOperationCOP;
 
 		core_init_with_additional_options( "-patch_selectors VIRTUAL_BB" );
 		pose_1ten_ = fullatom_pose_from_string( pdb_string_1ten() );

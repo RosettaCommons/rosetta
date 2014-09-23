@@ -286,7 +286,7 @@ namespace data {
 		//
 		hbonds::HBondOptionsOP hbond_options( new hbonds::HBondOptions() );
 		hbond_options->use_hb_env_dep( false );
-		hbond_set_ = new hbonds::HBondSet( hbond_options );
+		hbond_set_ = new hbonds::HBondSet( *hbond_options );
 		hbonds::fill_hbond_set( pose, false /*calc deriv*/, *hbond_set_ );
 
 		// setup poses in which one residue base can be virtualized, and
@@ -593,8 +593,8 @@ RNA_DMS_Potential::get_binding_energy( Size const i,
 utility::vector1< Real >
 RNA_DMS_Potential::get_logL_values( pose::Pose const & pose, Size const i /*, utility::vector1< Real > const & DMS_values */  ){
 
-	runtime_assert( working_pose_ );
-	runtime_assert( working_pose_with_probe_ );
+	runtime_assert( working_pose_ != 0 );
+	runtime_assert( working_pose_with_probe_ != 0 );
 
 	if ( pose.aa( i ) != chemical::na_rad ){
 		return vector1< Real >( DMS_values_.size(), 0.0 );

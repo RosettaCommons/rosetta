@@ -60,7 +60,7 @@ class SequenceClaim : public DofClaim {
 
 public:
 	SequenceClaim(
-		TopologyClaimer* tc,
+		TopologyClaimerAP tc,
 		std::string const& annotated_sequence,
 		std::string const& label,
 		core::Real priority = 0.0

@@ -34,6 +34,7 @@
 namespace protocols {
 namespace ligand_docking {
 
+typedef utility::pointer::owning_ptr<core::grid::CartGrid<int> > CartGridIntOP;
 
 static thread_local basic::Tracer TR( "protocols.ligand_docking.grid_functions", basic::t_debug );
 
@@ -214,7 +215,7 @@ void rotamers_for_trials(
 
 	core::graph::GraphCOP empty_graph = new core::graph::Graph();
 	// Retrieve conformers
-	core::pack::dunbrack::SingleResidueRotamerLibraryCAP reslib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( pose.residue_type(rsd_no) );
+	core::pack::dunbrack::SingleResidueRotamerLibraryCOP reslib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( pose.residue_type(rsd_no) ).lock();
 	if( reslib.get() == NULL ) return;
 
 	core::chemical::ResidueType const & res_type =  pose.residue_type(rsd_no);
@@ -226,7 +227,7 @@ void rotamers_for_trials(
 		dummy_sfxn,
 		*dummy_task,
 		empty_graph,
-		&pose.residue_type(rsd_no), //ResidueTypeCOP
+		pose.residue_type(rsd_no).get_self_ptr(), //ResidueTypeCOP
 		pose.residue(rsd_no),
 		empty_extra_chi_steps,
 		true /* sure, let's pretend it's buried */,
@@ -300,7 +301,7 @@ utility::pointer::owning_ptr<core::grid::CartGrid<int> > make_atr_rep_grid(
 	Real const rep_rad = 2.25; // don't want to exclude H-bonds (~2.8A heavy-heavy) or make clefts too narrow
 
 	// Designer of this class did not believe in RAII:
-	utility::pointer::owning_ptr<core::grid::CartGrid<int> >  grid = new core::grid::CartGrid<int>();
+	CartGridIntOP grid = new core::grid::CartGrid<int>();
 	grid->setBase(
 		center.x() - grid_halfwidth,
 		center.y() - grid_halfwidth,
@@ -364,7 +365,7 @@ utility::pointer::owning_ptr<core::grid::CartGrid<int> > make_atr_rep_grid_witho
 	Real const rep_rad = 2.25; // don't want to exclude H-bonds (~2.8A heavy-heavy) or make clefts too narrow
 
 	// Designer of this class did not believe in RAII:
-	utility::pointer::owning_ptr<core::grid::CartGrid<int> > grid = new grid::CartGrid<int>();
+	CartGridIntOP grid = new grid::CartGrid<int>();
 	grid->setBase(
 		center.x() - grid_halfwidth,
 		center.y() - grid_halfwidth,

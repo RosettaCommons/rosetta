@@ -47,7 +47,7 @@ JumpAtom::keep_dof_fixed(
 ) const
 {
 	// the root jump is not flexible (currently)
-	return ( parent() == 0 );
+	return ! parent();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -86,7 +86,7 @@ JumpAtom::set_dof(
 	Real const value
 )
 {
-	assert( parent() );
+	assert( parent().get() != 0 );
 	int const n2c(1);
 	int const rb_no( get_rb_number( type ) );
 	if ( rb_no == 0 ) {
@@ -232,7 +232,6 @@ JumpAtom::clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const
 {
 
 	JumpAtomOP new_me = new JumpAtom(*this);
-	new_me->set_weak_ptr_to_self( new_me() );
 
 	atom_pointer[ id() ] = new_me;
 
@@ -248,7 +247,7 @@ JumpAtom::clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const
 	// copy atoms
 	for ( Atoms_ConstIterator it= atoms_begin(), it_end= atoms_end();
 				it != it_end; ++it ) {
-		new_me->append_atom( (*it)->clone( new_me(), atom_pointer ) );
+		new_me->append_atom( (*it)->clone( AtomAP(new_me), atom_pointer ) );
 	}
 
 	return new_me;
@@ -273,7 +272,7 @@ JumpAtom::setup_min_map(
 		DOF_Type const & type( id::get_rb_type(k) );
 		DOF_ID rb_torsion( id(), type );
 		if ( allow_move[ rb_torsion ] && !keep_dof_fixed( type ) ) {
-			assert( parent() ); // root DOFs don't move
+			assert( parent().get() != 0 ); // root DOFs don't move
 			min_map.add_torsion( rb_torsion, last_torsion_local );
 			last_torsion_local = rb_torsion;
 		}

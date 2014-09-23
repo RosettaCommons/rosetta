@@ -78,7 +78,9 @@ SymRestrictTaskForDocking::apply(
 	protocols::scoring::Interface interface( 1 );
 	interface.distance( distance_ );
 	interface.calculate( pose );
-	interface.set_symmetric_pack( pose, &task );
+	
+	core::pack::task::PackerTaskOP task_copy = task.get_self_ptr();
+	interface.set_symmetric_pack( pose, task_copy );
 }
 
 } // namespace symmetric_docking

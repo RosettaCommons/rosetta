@@ -58,8 +58,11 @@ Environment::Environment( std::string name ):
 {}
 
 Environment::~Environment() {
-  BOOST_FOREACH( ProtectedConformationAP pconf, pconfs_ ){
-    pconf->env_destruction();
+  BOOST_FOREACH( Conformation * conf, pconfs_ ){
+    ProtectedConformation * pconf = dynamic_cast< ProtectedConformation * >( conf );
+    if(pconf) {
+      pconf->env_destruction();
+    }
   }
 }
 
@@ -96,17 +99,18 @@ core::pose::Pose Environment::start( core::pose::Pose const& in_pose ){
   this->input_pose_ = in_pose;
 
   // This cast of reference to OP is ok because we know that Conformations are stored as pointers anyway.
-  ConformationCOP in_conf = &in_pose.conformation();
+  // ^^ not OK with std::shared_ptr; changing to const*.
+  Conformation const* in_conf = &in_pose.conformation();
 
   //figure out if we've got a superenvironment... also initialize Annotations object
-  ProtectedConformation const* conf_ptr = dynamic_cast<ProtectedConformation const*>( in_conf.get() );
+  ProtectedConformation const* conf_ptr = dynamic_cast<ProtectedConformation const*>( in_conf );
   if( conf_ptr ) {
-    set_superenv( conf_ptr->environment().get() );
+    set_superenv( conf_ptr->environment() );
 
     // Keep old annotations by copy-constructing a new annotations object.
     ann_ = new SequenceAnnotation( *( conf_ptr->annotations() ) );
   } else {
-    set_superenv( NULL );
+    set_superenv( core::environment::EnvCoreCAP() );
 
     // Unprotected Conformation objects don't have annotations (yet?). We then build the annotation object.
     ann_ = new SequenceAnnotation( in_conf->size() );
@@ -122,7 +126,7 @@ core::pose::Pose Environment::start( core::pose::Pose const& in_pose ){
 }
 
 core::pose::Pose Environment::end( core::pose::Pose const& pose ){
-  ProtectedConformationCOP conf = dynamic_cast< ProtectedConformation const* >( &pose.conformation() );
+  ProtectedConformationCOP conf = utility::pointer::dynamic_pointer_cast< ProtectedConformation const >( pose.conformation_ptr() );
   if( !conf ){
     tr.Error << "[ERROR] Environment::end recieved a pose that contains an unprotcted Conformation."
              << std::endl;
@@ -142,7 +146,7 @@ core::pose::Pose Environment::end( core::pose::Pose const& pose ){
                  << name() << "' are nonfunctional." << std::endl;
     }
 
-    basic::datacache::WriteableCacheableMapOP data_map = dynamic_cast< basic::datacache::WriteableCacheableMap* >( new_pose.data().get_raw_ptr( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) );
+    basic::datacache::WriteableCacheableMapOP data_map = utility::pointer::dynamic_pointer_cast< basic::datacache::WriteableCacheableMap >( new_pose.data().get_ptr( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) );
     new_pose.set_new_conformation( end( conf ) );
     new_pose.data().set( core::pose::datacache::CacheableDataType::WRITEABLE_DATA, data_map );
   } else {
@@ -156,7 +160,7 @@ core::pose::Pose Environment::end( core::pose::Pose const& pose ){
     tr.Trace << "  Applying old PDBInfo object with " << input_pose_.pdb_info()->nres() << " residues to pose with "
              << new_pose.total_residue() << " residues." << std::endl;
 
-    new_pose.pdb_info( new core::pose::PDBInfo( *( input_pose_.pdb_info() ) ) );
+    new_pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( *( input_pose_.pdb_info() ) ) ) );
   } else {
     tr.Trace << "  No PDBInfo object being built in to Environment's output pose, "
              << "as it appears the input pose didn't have one." << std::endl;
@@ -186,7 +190,7 @@ core::conformation::ConformationOP Environment::end( ProtectedConformationCOP co
   }
 
   // Reprotect Conformation if there's a superenvironment.
-  if( superenv() ){
+  if( ! superenv().expired() ){
     ret_conf = new ProtectedConformation( superenv(), pose.conformation() );
   } else {
     ret_conf = new Conformation( pose.conformation() );
@@ -198,13 +202,13 @@ core::conformation::ConformationOP Environment::end( ProtectedConformationCOP co
 }
 
 void Environment::assign_passport( ClaimingMoverOP mover, core::environment::DofPassportCOP passport ){
-  mover->push_passport( this , passport );
+  mover->push_passport( get_self_weak_ptr() , passport );
 }
 
 void Environment::cancel_passports(){
   BOOST_FOREACH( ClaimingMoverOP mover, registered_movers_ ){
     tr.Error << "stripping passport from " << mover->get_name() << std::endl;
-    mover->pop_passport( this );
+    mover->pop_passport( get_self_weak_ptr() );
   }
 }
 
@@ -286,7 +290,7 @@ core::pose::Pose Environment::broker( core::pose::Pose const& in_pose ){
 
   core::pose::Pose out_pose;
   try{
-    broker_ = new EnvClaimBroker( *this, mover_passports, in_pose, ann_ );
+    broker_ = new EnvClaimBroker( get_self_weak_ptr(), mover_passports, in_pose, ann_ );
     out_pose = broker_->result().pose;
   } catch ( ... ){
     // For exception safety. Revoke (possibly unfinished and/or now invalid) passports
@@ -327,10 +331,10 @@ bool Environment::is_registered( ClaimingMoverOP mover ) const {
 }
 
 EnvironmentCAP Environment::superenv() const{
-  if( Parent::superenv() ){
-    EnvironmentCAP env = dynamic_cast< Environment const* >( Parent::superenv().get() );
+  if( ! Parent::superenv().expired() ){
+    EnvironmentCOP env = utility::pointer::dynamic_pointer_cast< Environment const >( Parent::superenv().lock() );
     assert( env != 0 );
-    return env;
+    return EnvironmentCAP( env );
   } else {
     return 0;
   }

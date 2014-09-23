@@ -100,13 +100,18 @@ class GraphTests : public CxxTest::TestSuite {
 		platform::Size const mem(g->getTotalMemoryUsage());
 		//this code attempts to account for the memory variability of platform::Size across platforms
 		platform::Size const num_var(74);
+#ifdef PTR_MODERN
+		platform::Size const oldsize_64(2296);
+		platform::Size const oldsize_32(1296);
+#else
 		platform::Size const oldsize_64(2288);
+		platform::Size const oldsize_32(1292);
+#endif
 		platform::Size const newsize_64(oldsize_64 + num_var*(sizeof(platform::Size)-4));
 
-		platform::Size const oldsize_32(1292);
 		platform::Size const newsize_32(oldsize_32 + num_var*(sizeof(platform::Size)-4));
 
-		//std::cout << newsize_64 << " " << newsize_32 << std::endl;
+		//std::cout << mem << " " << newsize_64 << " " << newsize_32 << std::endl;
 		TS_ASSERT((mem == newsize_32) || (mem == newsize_64));
 		//TS_ASSERT((mem == 1292) || (mem == 2288)); //32 and 64 bits, respectively //old
 		//TS_ASSERT((mem == 1292) || (mem == 2584)); //32 and 64 bits, respectively //new
@@ -136,13 +141,18 @@ class GraphTests : public CxxTest::TestSuite {
 		platform::Size const mem(g->getTotalMemoryUsage());
 		//this code attempts to account for the memory variability of platform::Size across platforms
 		platform::Size const num_var(30);
+#ifdef PTR_MODERN
+		platform::Size const oldsize_64(656);
+		platform::Size const oldsize_32(388);
+#else
 		platform::Size const oldsize_64(648);
+		platform::Size const oldsize_32(384);
+#endif
 		platform::Size const newsize_64(oldsize_64 + num_var*(sizeof(platform::Size)-4));
 
-		platform::Size const oldsize_32(384);
 		platform::Size const newsize_32(oldsize_32 + num_var*(sizeof(platform::Size)-4));
 
-		//std::cout << newsize_64 << " " << newsize_32 << std::endl;
+		//std::cout << mem << " " << newsize_64 << " " << newsize_32 << std::endl;
 		TS_ASSERT((mem == newsize_32) || (mem == newsize_64));
 		//TS_ASSERT((mem == 384) || (mem == 648)); //32 and 64 bits, respectively //old
 		//TS_ASSERT((mem == 384) || (mem == 768)); //32 and 64 bits, respectively //new

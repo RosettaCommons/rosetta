@@ -426,7 +426,7 @@ LigandConformerBuilder::initialize_from_residue(
 	if ( natoms < 3 ) {
 		utility_exit_with_message( "ERROR in LigandConformerBuilder: cannot build a residue with fewer than three atoms" );
 	}
-	downstream_restype_ = & residue.type();
+	downstream_restype_ = residue.type().get_self_ptr();
 	atom_radii_.resize( natoms );
 	atom_required_in_active_site_.resize( natoms, false );
 
@@ -651,7 +651,7 @@ void
 LigandConformerBuilder::initialize_upstream_nonbonded_min_separation_d2()
 {
 	runtime_assert( bbgrid_set() );
-	runtime_assert( lig_conformers_[ 1 ] );
+	runtime_assert( lig_conformers_[ 1 ] != 0 );
 
 	for ( Size ii = 1; ii <= lig_conformers_[ 1 ]->n_collision_check_atoms(); ++ii ) {
 		Size ii_restype_id = lig_conformers_[ 1 ]->collision_check_id_2_restype_id( ii );
@@ -681,13 +681,13 @@ LigandConformerBuilder::initialize_conformers( core::conformation::Residue const
 	using namespace core::pack::dunbrack;
 
 	RotamerLibrary const & rotlib( core::pack::dunbrack::RotamerLibrary::get_instance() );
-	SingleResidueRotamerLibraryCAP res_rotlib( rotlib.get_rsd_library( residue.type() ) );
+	SingleResidueRotamerLibraryCOP res_rotlib = rotlib.get_rsd_library( residue.type() ).lock();
 
 	if ( res_rotlib != 0 ) {
 		/// stoopid
 		/// typedef utility::pointer::access_ptr< SingleLigandRotamerLibrary const > SingleLigandRotamerLibraryCAP;
 
-		SingleLigandRotamerLibraryCAP lig_rotlib( dynamic_cast< SingleLigandRotamerLibrary const * > ( res_rotlib.get() ));
+		SingleLigandRotamerLibraryCOP lig_rotlib( dynamic_cast< SingleLigandRotamerLibrary const * > ( res_rotlib.get() ));
 
 		if ( lig_rotlib == 0 ) {
 			utility_exit_with_message( "Failed to retrieve a ligand rotamer library for "

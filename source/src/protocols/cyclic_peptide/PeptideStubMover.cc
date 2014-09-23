@@ -51,7 +51,7 @@ void PeptideStubMover::init() {
     
 void PeptideStubMover::apply( core::pose::Pose & pose )
 {
-	core::chemical::ResidueTypeSetCAP standard_residues = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+	core::chemical::ResidueTypeSetCOP standard_residues = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
     if (reset_) {
         pose.clear();
     }

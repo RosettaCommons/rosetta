@@ -51,7 +51,7 @@ struct CountFromLeft : public RelativeSequencePosition {
 
 	inline
 	virtual core::Size operator ()( BuildInstructionCAP i ) const {
-		return i->interval().left + left_skip + p - 1;
+		return i.lock()->interval().left + left_skip + p - 1;
 	}
 
 	/// @brief the position to re-compute using the instruction's interval: 1-based indexing

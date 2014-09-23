@@ -67,7 +67,17 @@ namespace match_enzdes_util {
 //it also checks whether the information that was gathered from two different locations
 //is consistent and then adds a constraint set to an input pose
 
-class EnzConstraintIO : public utility::pointer::ReferenceCount{
+class EnzConstraintIO : public utility::pointer::ReferenceCount
+#ifdef PTR_MODERN
+	// New version
+	, public utility::pointer::enable_shared_from_this< EnzConstraintIO >
+{
+#else
+{
+	// Old intrusive ref-counter version
+	inline EnzConstraintIOCOP shared_from_this() const { return EnzConstraintIOCOP( this ); }
+	inline EnzConstraintIOOP shared_from_this() { return EnzConstraintIOOP( this ); }
+#endif
 
 
 public:
@@ -76,6 +86,12 @@ public:
 	virtual ~EnzConstraintIO();
 
 	static EnzConstraintIO* get_instance();
+
+	/// self pointers
+	inline EnzConstraintIOCOP get_self_ptr() const { return shared_from_this(); }
+	inline EnzConstraintIOOP get_self_ptr() { return shared_from_this(); }
+	inline EnzConstraintIOCAP get_self_weak_ptr() const { return EnzConstraintIOCAP( shared_from_this() ); }
+	inline EnzConstraintIOAP get_self_weak_ptr() { return EnzConstraintIOAP( shared_from_this() ); }
 
 	void
 	read_enzyme_cstfile(std::string fname );

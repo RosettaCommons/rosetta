@@ -194,7 +194,7 @@ dump_loophash_linkers(
 
 		Pose tmp;
 		{
-			core::chemical::ResidueTypeSetCAP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
+			core::chemical::ResidueTypeSetCOP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 			for(Size i = 1; i <= loopsize+1; ++i){
 				core::conformation::ResidueOP new_rsd( NULL );
 				new_rsd = core::conformation::ResidueFactory::create_residue( rs->name_map("ALA") );

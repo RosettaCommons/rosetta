@@ -142,10 +142,10 @@ class MetricValueIOTest : public CxxTest::TestSuite {
 		std::istringstream real_iss2(real_s_);
 		MetricValueBaseOP real_mvop_from_iss(read_metric_value(real_iss2));
 		TS_ASSERT(real_mvop_from_iss);
-		TS_ASSERT(check_cast<Real>(real_mvop_from_iss()));
+		TS_ASSERT(check_cast<Real>(real_mvop_from_iss.get()));
 		TS_ASSERT_EQUALS(
 			real_mv_.value(),
-			static_cast<MetricValue<Real> *> (real_mvop_from_iss())->value()
+			static_cast<MetricValue<Real> *> (real_mvop_from_iss.get())->value()
 		);
 
 		// reading a Real vector string into a MetricValue<Real> (should fail)
@@ -171,10 +171,10 @@ class MetricValueIOTest : public CxxTest::TestSuite {
 		std::istringstream vector1_real_iss2(vector1_real_s_);
 		MetricValueBaseOP vector1_real_mvop_from_iss(read_metric_value(vector1_real_iss2));
 		TS_ASSERT(vector1_real_mvop_from_iss);
-		TS_ASSERT(check_cast<vector1<Real> >(vector1_real_mvop_from_iss()));
+		TS_ASSERT(check_cast<vector1<Real> >(vector1_real_mvop_from_iss.get()));
 		TS_ASSERT_EQUALS(
 			vector1_real_mv_.value(),
-			static_cast<MetricValue<vector1<Real> > *> (vector1_real_mvop_from_iss())->value()
+			static_cast<MetricValue<vector1<Real> > *> (vector1_real_mvop_from_iss.get())->value()
 		);
 
 		// reading a Real string into a MetricValue<vector1<Real> > (should fail)
@@ -200,10 +200,10 @@ class MetricValueIOTest : public CxxTest::TestSuite {
 		std::istringstream vector1_real_empty_iss2(vector1_real_empty_s_);
 		MetricValueBaseOP vector1_real_empty_mvop_from_iss(read_metric_value(vector1_real_empty_iss2));
 		TS_ASSERT(vector1_real_empty_mvop_from_iss);
-		TS_ASSERT(check_cast<vector1<Real> >(vector1_real_empty_mvop_from_iss()));
+		TS_ASSERT(check_cast<vector1<Real> >(vector1_real_empty_mvop_from_iss.get()));
 		TS_ASSERT_EQUALS(
 			vector1_real_empty_mv_.value(),
-			static_cast<MetricValue<vector1<Real> > *> (vector1_real_empty_mvop_from_iss())->value()
+			static_cast<MetricValue<vector1<Real> > *> (vector1_real_empty_mvop_from_iss.get())->value()
 		);
 	}
 
@@ -224,10 +224,10 @@ class MetricValueIOTest : public CxxTest::TestSuite {
 		std::istringstream int_iss2(int_s_);
 		MetricValueBaseOP int_mvop_from_iss(read_metric_value(int_iss2));
 		TS_ASSERT(int_mvop_from_iss);
-		TS_ASSERT(check_cast<int>(int_mvop_from_iss()));
+		TS_ASSERT(check_cast<int>(int_mvop_from_iss.get()));
 		TS_ASSERT_EQUALS(
 			int_mv_.value(),
-			static_cast<MetricValue<int> *> (int_mvop_from_iss())->value()
+			static_cast<MetricValue<int> *> (int_mvop_from_iss.get())->value()
 		);
 
 		// reading a int vector string into a MetricValue<int> (should fail)
@@ -253,10 +253,10 @@ class MetricValueIOTest : public CxxTest::TestSuite {
 		std::istringstream vector1_int_iss2(vector1_int_s_);
 		MetricValueBaseOP vector1_int_mvop_from_iss(read_metric_value(vector1_int_iss2));
 		TS_ASSERT(vector1_int_mvop_from_iss);
-		TS_ASSERT(check_cast<vector1<int> >(vector1_int_mvop_from_iss()));
+		TS_ASSERT(check_cast<vector1<int> >(vector1_int_mvop_from_iss.get()));
 		TS_ASSERT_EQUALS(
 			vector1_int_mv_.value(),
-			static_cast<MetricValue<vector1<int> > *> (vector1_int_mvop_from_iss())->value()
+			static_cast<MetricValue<vector1<int> > *> (vector1_int_mvop_from_iss.get())->value()
 		);
 
 		// reading a int string into a MetricValue<vector1<int> > (should fail)
@@ -282,10 +282,10 @@ class MetricValueIOTest : public CxxTest::TestSuite {
 		std::istringstream size_iss2(size_s_);
 		MetricValueBaseOP size_mvop_from_iss(read_metric_value(size_iss2));
 		TS_ASSERT(size_mvop_from_iss);
-		TS_ASSERT(check_cast<Size>(size_mvop_from_iss()));
+		TS_ASSERT(check_cast<Size>(size_mvop_from_iss.get()));
 		TS_ASSERT_EQUALS(
 			size_mv_.value(),
-			static_cast<MetricValue<Size> *> (size_mvop_from_iss())->value()
+			static_cast<MetricValue<Size> *> (size_mvop_from_iss.get())->value()
 		);
 
 		// reading a Size vector string into a MetricValue<Size> (should fail)
@@ -311,10 +311,10 @@ class MetricValueIOTest : public CxxTest::TestSuite {
 		std::istringstream vector1_size_iss2(vector1_size_s_);
 		MetricValueBaseOP vector1_size_mvop_from_iss(read_metric_value(vector1_size_iss2));
 		TS_ASSERT(vector1_size_mvop_from_iss);
-		TS_ASSERT(check_cast<vector1<Size> >(vector1_size_mvop_from_iss()));
+		TS_ASSERT(check_cast<vector1<Size> >(vector1_size_mvop_from_iss.get()));
 		TS_ASSERT_EQUALS(
 			vector1_size_mv_.value(),
-			static_cast<MetricValue<vector1<Size> > *> (vector1_size_mvop_from_iss())->value()
+			static_cast<MetricValue<vector1<Size> > *> (vector1_size_mvop_from_iss.get())->value()
 		);
 
 		// reading a Size string into a MetricValue<vector1<Size> > (should fail)
@@ -340,10 +340,10 @@ class MetricValueIOTest : public CxxTest::TestSuite {
 		std::istringstream bool_iss2(bool_s_);
 		MetricValueBaseOP bool_mvop_from_iss(read_metric_value(bool_iss2));
 		TS_ASSERT(bool_mvop_from_iss);
-		TS_ASSERT(check_cast<bool>(bool_mvop_from_iss()));
+		TS_ASSERT(check_cast<bool>(bool_mvop_from_iss.get()));
 		TS_ASSERT_EQUALS(
 			bool_mv_.value(),
-			static_cast<MetricValue<bool> *> (bool_mvop_from_iss())->value()
+			static_cast<MetricValue<bool> *> (bool_mvop_from_iss.get())->value()
 		);
 
 		// reading a bool vector string into a MetricValue<bool> (should fail)
@@ -369,10 +369,10 @@ class MetricValueIOTest : public CxxTest::TestSuite {
 		std::istringstream vector1_bool_iss2(vector1_bool_s_);
 		MetricValueBaseOP vector1_bool_mvop_from_iss(read_metric_value(vector1_bool_iss2));
 		TS_ASSERT(vector1_bool_mvop_from_iss);
-		TS_ASSERT(check_cast<vector1<bool> >(vector1_bool_mvop_from_iss()));
+		TS_ASSERT(check_cast<vector1<bool> >(vector1_bool_mvop_from_iss.get()));
 		TS_ASSERT_EQUALS(
 			vector1_bool_mv_.value(),
-			static_cast<MetricValue<vector1<bool> > *> (vector1_bool_mvop_from_iss())->value()
+			static_cast<MetricValue<vector1<bool> > *> (vector1_bool_mvop_from_iss.get())->value()
 		);
 
 		// reading a bool string into a MetricValue<vector1<bool> > (should fail)

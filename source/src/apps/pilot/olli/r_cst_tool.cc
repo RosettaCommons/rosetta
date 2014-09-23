@@ -237,7 +237,7 @@ void run() {
 
 	if ( option[ OptionKeys::constraints::no_linearize_bounded ] ) {
 		tr.Info << "use fully harmonic potential for BOUNDED " << std::endl;
-		ConstraintIO::get_func_factory().add_type("BOUNDED", new scoring::constraints::BoundFunc(0,0,0,1000,"dummy") );
+		ConstraintIO::get_func_factory().add_type("BOUNDED", scoring::func::FuncOP( new scoring::constraints::BoundFunc(0,0,0,1000,"dummy") ) );
 	}
 	if ( option[ OptionKeys::constraints::named ] ) {
 		tr.Info << "use named constraints in AtomPairConstraint to avoid problems with cutpoint-variants " << std::endl;
@@ -246,7 +246,7 @@ void run() {
 	}
 
 	ConstraintToolMoverOP cst_tool =  new ConstraintToolMover;
-	protocols::jd2::JobDistributor::get_instance()->go( cst_tool, new jd2::NoOutputJobOutputter );
+	protocols::jd2::JobDistributor::get_instance()->go( cst_tool, jd2::JobOutputterOP( new jd2::NoOutputJobOutputter ) );
 
 
 	if ( option[ out::cst ].user() ) {

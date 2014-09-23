@@ -14,6 +14,7 @@
 #include <protocols/sic_dock/RigidScore.hh>
 
 #include <protocols/motif_hash/motif_hash_stuff.fwd.hh>
+#include <protocols/motif_hash/motif_hash_stuff.hh>
 
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
@@ -42,16 +43,16 @@ class MotifHashRigidScore : public RigidScore {
 	core::Real score     ( Xforms const & x1, Xforms const & x2 ) const;
 	core::Real score_meta( Xforms const & x1, Xforms const & x2, int & nsheet, Real & rawscore, Real & sselem_score , Real & coverage , Real & res_score, Real & sheetsc, int & nres, int &Nhh, int &Nee, int &Neh, int &Nh, int &Ne, int &Nl ) const;
 
-	int dump_matching_motifs( Pose   const & pose1, Pose   const & pose2, std::ostream & out, int & count, xyzStripeHashPoseCAP clash_check=NULL, bool print=false ) const;
-	int dump_matching_motifs( Xforms const & x1s  , Xforms const & x2s  , std::ostream & out, xyzStripeHashPoseCAP clash_check=NULL, bool print=false ) const;
+	int dump_matching_motifs( Pose   const & pose1, Pose   const & pose2, std::ostream & out, int & count, xyzStripeHashPoseCOP clash_check=NULL, bool print=false ) const;
+	int dump_matching_motifs( Xforms const & x1s  , Xforms const & x2s  , std::ostream & out, xyzStripeHashPoseCOP clash_check=NULL, bool print=false ) const;
 
 	std::string type() const { return "MotifHash"; }
 
 	void show(std::ostream & out                                      , int width=10) const;
 	void show(std::ostream & out, Xforms const & x1, Xforms const & x2, int width=10) const;
-	void show(std::ostream & out, Xforms const & x1, Xforms const & x2, xyzStripeHashPoseCAP clash_check, int width=10) const;
+	void show(std::ostream & out, Xforms const & x1, Xforms const & x2, xyzStripeHashPoseCOP clash_check, int width=10) const;
 
-	protocols::motif_hash::MotifHashCAP motif_hash() const { return mh_; }
+	protocols::motif_hash::MotifHashCOP motif_hash() const { return mh_; }
 
 	core::Size nhashlookups() const { return nhashlookups_; }
 
@@ -60,8 +61,8 @@ private:
 
 	Pose pose1_,pose2_;
 	numeric::Xforms bbx1_,bbx2_;
-	mutable protocols::motif_hash::MotifHashCAP mh_;
-	protocols::motif_hash::XformScoreCAP xs_, xsee_, xseh_, xshe_, xshh_, xspp_;
+	mutable protocols::motif_hash::MotifHashCOP mh_;
+	protocols::motif_hash::XformScoreCOP xs_, xsee_, xseh_, xshe_, xshh_, xspp_;
 	protocols::fldsgn::topology::SS_Info2 *ssinfo1_, *ssinfo2_;
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
 	// core::Size nss1_,nss2_;

@@ -74,10 +74,12 @@ void PDBPoseInputStream::fill_pose(
 	}
 
 	core::import_pose::pose_from_pdb( pose, residue_set, *current_position_ );
+	
 	// set up a tag using input filename.
+	using namespace basic::datacache;
 	pose.data().set(
 		core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG,
-		new basic::datacache::CacheableString( *current_position_ )
+		DataCache_CacheableData::DataOP( new basic::datacache::CacheableString( *current_position_ ) )
 	);
 	++current_position_;
 	preprocess_pose( pose );
@@ -94,10 +96,12 @@ void PDBPoseInputStream::fill_pose(
 	}
 
 	core::import_pose::pose_from_pdb( pose, *current_position_ );
+
 	// set up a tag using input filename.
+	using namespace basic::datacache;
 	pose.data().set(
 		core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG,
-		new basic::datacache::CacheableString( *current_position_ )
+		DataCache_CacheableData::DataOP( new basic::datacache::CacheableString( *current_position_ ) )
 	);
 	++current_position_;
 	preprocess_pose( pose );

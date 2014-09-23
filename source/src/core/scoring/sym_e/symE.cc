@@ -21,6 +21,7 @@
 //#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/DenseEnergyContainer.hh>
+#include <core/scoring/methods/EnergyMethodCreator.fwd.hh>
 
 // Project headers
 // AUTO-REMOVED #include <core/conformation/Conformation.hh>
@@ -63,7 +64,7 @@ symECreator::score_types_for_method() const {
 
 
 symEnergy::symEnergy() :
-	parent( new symECreator )
+	parent( core::scoring::methods::EnergyMethodCreatorOP( new symECreator ) )
 {}
 
 methods::EnergyMethodOP symEnergy::clone() const

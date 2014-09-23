@@ -213,8 +213,8 @@ void ModelCDRH3::apply( pose::Pose & pose_in ) {
 		pass_loops->set_extended(true); // the IndepdentLoopMover will extend the loop
 
 		// create a LoopMover type based on the string remode_
-		remodel_mover_ = static_cast< loops::loop_mover::IndependentLoopMover * >
-		                 ( loops::LoopMoverFactory::get_instance()->create_loop_mover(remodel_, pass_loops).get() ) ;
+		remodel_mover_ = utility::pointer::static_pointer_cast< loops::loop_mover::IndependentLoopMover >
+		                 ( loops::LoopMoverFactory::get_instance()->create_loop_mover(remodel_, pass_loops) ) ;
 		if ( !remodel_mover_ ) {
 			utility_exit_with_message( "Error: no remodel mover defined!" );
 		}

@@ -89,7 +89,7 @@ main( int argc, char* argv [] )
 	core::Real frac_rigid = option[ loops_from_density::frac_rigid ]();
 
 	// setup residue types
-	core::chemical::ResidueTypeSetCAP rsd_set;
+	core::chemical::ResidueTypeSetCOP rsd_set;
 	if ( option[ in::file::fullatom ]() ) {
 		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 	} else {

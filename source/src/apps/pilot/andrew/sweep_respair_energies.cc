@@ -1163,7 +1163,7 @@ sweep_params_from_match_constraint_file(
 		basic::options::option[ basic::options::OptionKeys::sweep_respair_energies::output_bestpose_only ] ||
 		basic::options::option[ basic::options::OptionKeys::sweep_respair_energies::find_local_minima ] );
 
-	ResidueTypeSetCAP fa_restypeset( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+	ResidueTypeSetCOP fa_restypeset( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 
 	/// Read in the match constraint file info (list)
 	MatchConstraintFileInfoList mcfil( fa_restypeset );

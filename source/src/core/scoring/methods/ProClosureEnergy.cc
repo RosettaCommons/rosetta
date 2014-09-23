@@ -70,7 +70,7 @@ using namespace numeric::constants::d;
 
 /// ctor
 ProClosureEnergy::ProClosureEnergy() :
-	parent( new ProClosureEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new ProClosureEnergyCreator ) ),
 	n_nv_dist_sd_( basic::options::option[ basic::options::OptionKeys::score::pro_close_planar_constraint ] ), // totally fictional
 
 	/// measured from 4745 prolines from 1.25 A and higher resolution protein structures

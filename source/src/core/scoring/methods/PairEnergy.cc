@@ -69,7 +69,7 @@ PairEnergyCreator::score_types_for_method() const {
 
 
 PairEnergy::PairEnergy() :
-	parent( new PairEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new PairEnergyCreator ) ),
 	potential_( ScoringManager::get_instance()->get_PairEPotential() )
 {}
 

@@ -873,7 +873,7 @@ namespace protein {
 	{
 		using namespace core::chemical;
 		using namespace core::pose;
-		static const ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( CENTROID );
+		static const ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( CENTROID ) );
 
 		ghost_pose = new Pose;
 		make_pose_from_sequence( *ghost_pose, desired_sequence, *rsd_set );

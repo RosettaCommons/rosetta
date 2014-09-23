@@ -881,8 +881,8 @@ parse_database_connection(
 				( "You specified a database_resource_tag of '" + database_resource_tag +
 					"', but the ResourceManager doesn't have a resource with that tag." );
 		}
-		utility::sql_database::session * db_session(dynamic_cast< utility::sql_database::session * > (
-				ResourceManager::get_instance()->find_resource(database_resource_tag)()));
+		utility::sql_database::sessionOP db_session(utility::pointer::dynamic_pointer_cast< utility::sql_database::session > (
+				ResourceManager::get_instance()->find_resource(database_resource_tag)));
 		if(!db_session){
 			stringstream err_msg;
 			err_msg

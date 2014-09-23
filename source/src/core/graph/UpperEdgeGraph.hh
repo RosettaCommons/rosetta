@@ -517,7 +517,7 @@ private:
 	}
 
 	// called by edge class
-	VertexClass * get_vertex_ptr( int index ) { return vertices_[ index ](); }
+	VertexClass * get_vertex_ptr( int index ) { return vertices_[ index ].get(); }
 
 	// called by edge class
 	void note_edge_deleted() { --num_edges_; }

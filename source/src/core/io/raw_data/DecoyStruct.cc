@@ -92,7 +92,7 @@ void DecoyStruct::fill_pose(
 	core::pose::Pose & pose
 ) {
 	using namespace core::chemical;
-	ResidueTypeSetCAP residue_set;
+	ResidueTypeSetCOP residue_set;
 	if ( fullatom() ) {
 		residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 	} else {

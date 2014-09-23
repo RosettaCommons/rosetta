@@ -115,7 +115,7 @@ void steal_constant_length_frag_set_from_pose ( pose::Pose const& pose_in, Const
 
 		//steal backbone torsion fragment
 		if ( free_of_cut ) {
-			frame = new Frame( pos, new FragData( new BBTorsionSRFD, len) );
+			frame = new Frame( pos, FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), len ) ) );
 			frame->steal( pose );
 			fragset.add( frame );
 		}
@@ -451,11 +451,11 @@ void read_std_frags_from_cmd( FragSetOP& fragset_large, FragSetOP& fragset_small
 		//		utility_exit_with_message(" stealing fragments from pose: currently not supported! ask Oliver " );
 		if ( option[ OptionKeys::abinitio::steal_9mers ]() ) {
 			if ( !fragset_large ) fragset_large = new ConstantLengthFragSet( 9 );
-			steal_frag_set_from_pose( *native_pose, *fragset_large,	new FragData( new BBTorsionSRFD, fragset_large->max_frag_length() ) );
+			steal_frag_set_from_pose( *native_pose, *fragset_large,	new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large->max_frag_length() ) );
 		}
 		if ( option[ OptionKeys::abinitio::steal_3mers ]() ) {
 			if ( !fragset_small ) fragset_small = new ConstantLengthFragSet( 3 );
-			steal_frag_set_from_pose( *native_pose, *fragset_small,	new FragData( new BBTorsionSRFD, fragset_small->max_frag_length() ) );
+			steal_frag_set_from_pose( *native_pose, *fragset_small,	new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small->max_frag_length() ) );
 		}
 	}
 
@@ -669,9 +669,9 @@ void make_pose_from_frags( pose::Pose & pose, std::string sequence, utility::vec
 		FragDataCOP frag = frags[i];
 		// Construct stubs from the 3 central CA atoms
 		Size central_residue = static_cast< Size >(ceil(frag->size() / 2.0));
-		BBTorsionSRFDCOP f1 = reinterpret_cast< BBTorsionSRFD const * >(frag->get_residue(central_residue - 1)());
-		BBTorsionSRFDCOP f2 = reinterpret_cast< BBTorsionSRFD const * >(frag->get_residue(central_residue)());
-		BBTorsionSRFDCOP f3 = reinterpret_cast< BBTorsionSRFD const * >(frag->get_residue(central_residue + 1)());
+		BBTorsionSRFDCOP f1 = utility::pointer::static_pointer_cast< BBTorsionSRFD const >(frag->get_residue(central_residue - 1));
+		BBTorsionSRFDCOP f2 = utility::pointer::static_pointer_cast< BBTorsionSRFD const >(frag->get_residue(central_residue    ));
+		BBTorsionSRFDCOP f3 = utility::pointer::static_pointer_cast< BBTorsionSRFD const >(frag->get_residue(central_residue + 1));
 		numeric::xyzVector<Real> fa1(f1->x(), f1->y(), f1->z());
 		numeric::xyzVector<Real> fa2(f2->x(), f2->y(), f2->z());
 		numeric::xyzVector<Real> fa3(f3->x(), f3->y(), f3->z());

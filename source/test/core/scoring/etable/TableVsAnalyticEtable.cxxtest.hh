@@ -120,9 +120,9 @@ public:
 		Pose pose = create_trpcage_ideal_pose();
 		EnergyMethodOptions options; // default is fine
 
-		Etable const & etable( *( ScoringManager::get_instance()->etable( options.etable_type() )) );
-		AnalyticEtableEnergy ana_lj_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
-		TableLookupEtableEnergy tab_lj_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
+		Etable const & etable( *( ScoringManager::get_instance()->etable( options.etable_type() ).lock()) );
+		AnalyticEtableEnergy ana_lj_energy( *( ScoringManager::get_instance()->etable( options.etable_type() ).lock()), options );
+		TableLookupEtableEnergy tab_lj_energy( *( ScoringManager::get_instance()->etable( options.etable_type() ).lock()), options );
 
 		conformation::Atom at1, at2;
 		at1.type(1); at2.type(2);
@@ -138,7 +138,7 @@ public:
 			at1.type(ii);
 			for ( Size jj = 1; jj <= etable.n_atomtypes(); ++jj ) {
 				at2.type(jj);
-				//std::cout << "looking at " << (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << std::endl;
+				//std::cout << "looking at " << (*etable.atom_set().lock())[ii].name() << " " << (*etable.atom_set())[jj].name() << std::endl;
 
 
 				for ( Size kk = 2; kk <= nsteps; ++kk ) { // skip d = 0.01; this is etable.min_dis and messes up derivative calculations
@@ -153,16 +153,16 @@ public:
 					TS_ASSERT( normalized_difference( dljrep_ana, dljrep_num ) < tolerance || dljrep_ana - dljrep_num < tolerance );
 					TS_ASSERT( normalized_difference( dfasol_ana, dfasol_num ) < tolerance || dfasol_ana - dfasol_num < tolerance );
 					if ( normalized_difference( dljatr_ana, dljatr_num ) > tolerance && dljatr_ana - dljatr_num > tolerance ) {
-						std::cout << (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << " " << step * kk <<
+						std::cout << (*etable.atom_set().lock())[ii].name() << " " << (*etable.atom_set().lock())[jj].name() << " " << step * kk <<
 							"   Atr: " << dljatr_ana << " " << dljatr_num << " diff: " << dljatr_ana - dljatr_num << std::endl;
 					}
 					if ( normalized_difference( dljrep_ana, dljrep_num  ) > tolerance && dljrep_ana - dljrep_num > tolerance ) {
-						std::cout << (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << " " << step * kk <<
+						std::cout << (*etable.atom_set().lock())[ii].name() << " " << (*etable.atom_set().lock())[jj].name() << " " << step * kk <<
 							"   Rep: " << dljrep_ana << " " << dljrep_num << " diff: " << dljrep_ana - dljrep_num << std::endl;
 						std::cout << "atr: " << dljatr_ana << " rep: " << dljrep_ana << " sol: " << dfasol_ana << std::endl;
 					}
 					if ( normalized_difference( dfasol_ana, dfasol_num  ) > tolerance && dfasol_ana - dfasol_num > tolerance ) {
-						std::cout << (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << " " << step * kk <<
+						std::cout << (*etable.atom_set().lock())[ii].name() << " " << (*etable.atom_set().lock())[jj].name() << " " << step * kk <<
 							"   Sol: " << dfasol_ana << " " << dfasol_num << " diff: " << dfasol_ana - dfasol_num << std::endl;
 					}
 
@@ -182,7 +182,7 @@ public:
 		Pose pose = create_trpcage_ideal_pose();
 		EnergyMethodOptions options; // default is fine
 
-		Etable const & etable( *( ScoringManager::get_instance()->etable( options.etable_type() )) );
+		Etable const & etable( *( ScoringManager::get_instance()->etable( options.etable_type() ).lock()) );
 
 		conformation::Atom at1, at2;
 		at1.type(1); at2.type(2);
@@ -198,7 +198,7 @@ public:
 			at1.type(ii);
 			for ( Size jj = 1; jj <= etable.n_atomtypes(); ++jj ) {
 				at2.type(jj);
-				//std::cout << "looking at " << (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << std::endl;
+				//std::cout << "looking at " << (*etable.atom_set().lock())[ii].name() << " " << (*etable.atom_set())[jj].name() << std::endl;
 
 
 				for ( Size kk = 2; kk <= nsteps; ++kk ) { // skip d = 0.01; this is etable.min_dis and messes up derivative calculations
@@ -232,9 +232,9 @@ public:
 		Pose pose = create_trpcage_ideal_pose();
 		EnergyMethodOptions options; // default is fine
 
-		Etable const & etable( *( ScoringManager::get_instance()->etable( options.etable_type() )) );
-		TableLookupEtableEnergy tab_lj_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
-		AnalyticEtableEnergy    ana_lj_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
+		Etable const & etable( *( ScoringManager::get_instance()->etable( options.etable_type() ).lock()) );
+		TableLookupEtableEnergy tab_lj_energy( *( ScoringManager::get_instance()->etable( options.etable_type() ).lock()), options );
+		AnalyticEtableEnergy    ana_lj_energy( *( ScoringManager::get_instance()->etable( options.etable_type() ).lock()), options );
 		EnergyMap emap, emap2;
 
 		conformation::Atom at1, at2;
@@ -246,8 +246,8 @@ public:
 		Size nsteps = Size( range / step ) + 1;
 		Real d2;
 		//int const OCbb_idx = etable.atom_set()->atom_type_index("OCbb");
-		int const Hha_idx = etable.atom_set()->atom_type_index("Hha" );
-		int const HREPS_idx = etable.atom_set()->atom_type_index("HREPS" );
+		int const Hha_idx = etable.atom_set().lock()->atom_type_index("Hha" );
+		int const HREPS_idx = etable.atom_set().lock()->atom_type_index("HREPS" );
 
 		Size count_failures = 0;
 		ifstream infile( "save_etable_values.txt"  );
@@ -255,7 +255,7 @@ public:
 			at1.type(ii);
 			for ( Size jj = ii; jj <= etable.n_atomtypes(); ++jj ) {
 				at2.type(jj);
-				//std::cout << "looking at " << (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << std::endl;
+				//std::cout << "looking at " << (*etable.atom_set().lock())[ii].name() << " " << (*etable.atom_set())[jj].name() << std::endl;
 
 				for ( Size kk = 1; kk <= nsteps; ++kk ) {
 					bool failed = false;
@@ -295,20 +295,20 @@ public:
 
 					if ( ! (( emap[ fa_atr ] < 0.01 && emap_ana[ fa_atr ] < 0.01 ) ||
 							( std::abs( emap[ fa_atr ] - emap_ana[ fa_atr ] ) / std::max( std::abs( emap[ fa_atr ]), std::abs(emap_ana[ fa_atr ])) < ana_vs_table_percent_diff_tolerance )) ) {
-						std::cout <<  (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << " " << step * kk << " fa_atr " <<
+						std::cout <<  (*etable.atom_set().lock())[ii].name() << " " << (*etable.atom_set().lock())[jj].name() << " " << step * kk << " fa_atr " <<
 							emap[ fa_atr ] << " " << emap_ana[ fa_atr ] << " " <<
 							std::abs( emap[ fa_atr ] - emap_ana[ fa_atr ] ) / std::max( std::abs( emap[ fa_atr ]), std::abs(emap_ana[ fa_atr ])) << std::endl;
 					}
 
 					if ( ! ( ( emap[ fa_rep ] < 0.01 && emap_ana[ fa_rep ] < 0.01 ) ||
 							std::abs( emap[ fa_rep ] - emap_ana[ fa_rep ] ) / std::max( std::abs( emap[ fa_rep ]), std::abs(emap_ana[ fa_rep ])) < ana_vs_table_percent_diff_tolerance )) {
-						std::cout <<  (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << " " << step * kk << " fa_rep " <<
+						std::cout <<  (*etable.atom_set().lock())[ii].name() << " " << (*etable.atom_set().lock())[jj].name() << " " << step * kk << " fa_rep " <<
 							emap[ fa_rep ] << " " << emap_ana[ fa_rep ] << " " <<
 							std::abs( emap[ fa_rep ] - emap_ana[ fa_rep ] ) / std::max( std::abs( emap[ fa_rep ]), std::abs(emap_ana[ fa_rep ])) << std::endl;
           }
 					if ( ! ( ( emap[ fa_sol ] < 0.01 && emap_ana[ fa_sol ] < 0.01 ) ||
 							std::abs( emap[ fa_sol ] - emap_ana[ fa_sol ] ) / std::max( std::abs( emap[ fa_sol ]), std::abs(emap_ana[ fa_sol ])) < ana_vs_table_percent_diff_tolerance ) ) {
-						std::cout <<  (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << " " << step * kk << " fa_sol " <<
+						std::cout <<  (*etable.atom_set().lock())[ii].name() << " " << (*etable.atom_set().lock())[jj].name() << " " << step * kk << " fa_sol " <<
 							emap[ fa_sol ] << " " << emap_ana[ fa_sol ] << " " <<
 							std::abs( emap[ fa_sol ] - emap_ana[ fa_sol ] ) / std::max( std::abs( emap[ fa_sol ]), std::abs(emap_ana[ fa_sol ])) << std::endl;
 					}
@@ -320,20 +320,20 @@ public:
 					etable.interpolated_analytic_etable_evaluation( at1, at2, an_ljatrE, an_ljrepE, an_fasolE, dummy );
 					if ( std::abs( an_ljatrE - emap[ fa_atr ]) > 1e-6 ) {
 						failed = true;
-						std::cout << (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << " " << step * kk <<
+						std::cout << (*etable.atom_set().lock())[ii].name() << " " << (*etable.atom_set().lock())[jj].name() << " " << step * kk <<
 							"   Atr: " << an_ljatrE << " " << emap[ fa_atr ] << " diff: " << an_ljatrE - emap[ fa_atr ] << std::endl;
 						//std::cout << (*etable.atom_set())[jj].name() << " " <<  (*etable.atom_set())[jj].name() << " e.ljatr_final_weight " << etable.ljatr_final_weight(ii,jj) <<  std::endl;
 					}
 					if ( std::abs( an_ljrepE - emap[ fa_rep ]) > 1e-6 ) {
 						failed = true;
-						std::cout << (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << " " << step * kk <<
+						std::cout << (*etable.atom_set().lock())[ii].name() << " " << (*etable.atom_set().lock())[jj].name() << " " << step * kk <<
 							"   Rep: " << an_ljrepE << " " << emap[ fa_rep ] << " diff: " << an_ljrepE - emap[ fa_rep ] << std::endl;
 					}
 					if ( std::abs( an_fasolE - emap[ fa_sol ]) > 1e-4 ) {
 						failed = true;
-						std::cout << (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << " " << step * kk <<
+						std::cout << (*etable.atom_set().lock())[ii].name() << " " << (*etable.atom_set().lock())[jj].name() << " " << step * kk <<
 							"   Sol: " << an_fasolE << " " << emap[ fa_sol ] << " diff: " << an_fasolE - emap[ fa_sol ] << std::endl;
-						//std::cout << (*etable.atom_set())[ii].name() << " " <<  (*etable.atom_set())[jj].name() << " e.fasol_final_weight " << etable.fasol_final_weight(ii,jj) << std::endl;
+						//std::cout << (*etable.atom_set().lock())[ii].name() << " " <<  (*etable.atom_set())[jj].name() << " e.fasol_final_weight " << etable.fasol_final_weight(ii,jj) << std::endl;
 					}
 					if ( failed ) ++count_failures;
 				}

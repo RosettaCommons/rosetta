@@ -233,7 +233,7 @@ VarLengthBuild::add_rcg( RemodelConstraintGeneratorOP rcg )
 {
 
 	//we should probably also clone this
-	rcg->set_vlb( this );
+	rcg->set_vlb( VarLengthBuildAP( utility::pointer::static_pointer_cast< VarLengthBuild >( get_self_ptr() ) ) );
 
 	rcgs_.push_back( rcg );
 }
@@ -266,10 +266,10 @@ VarLengthBuild::add_user_provided_mover( moves::MoverOP mover_in )
 /// @brief clear any currently cached fragments
 void VarLengthBuild::clear_fragments() {
 	fragments_picked_ = false;
-	fragfull_.reset_to_null();
-	frag9_.reset_to_null();
-	frag3_.reset_to_null();
-	frag1_.reset_to_null();
+	fragfull_.reset(); // to NULL
+	frag9_.reset(); // to NULL
+	frag3_.reset(); // to NULL
+	frag1_.reset(); // to NULL
 }
 
 
@@ -389,7 +389,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 			// append a tail of the same length
 			for (Size i = 1; i<= len_diff; i++){
 				//core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(2).residue_type_set());
-				core::chemical::ResidueTypeSetCAP const & rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
+				core::chemical::ResidueTypeSetCOP const & rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map("VAL") ) );
 				pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
 				pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
@@ -411,7 +411,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 			// append a tail of the same length
 			for (Size i = 1; i<= len_diff; i++){
 				//core::chemical::ResidueTypeSet const & rsd_set = (archive_pose.residue(2).residue_type_set());
-				core::chemical::ResidueTypeSetCAP const & rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
+				core::chemical::ResidueTypeSetCOP const & rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set->name_map("VAL") ) );
 				archive_pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,archive_pose.total_residue(), true);
 				archive_pose.conformation().insert_ideal_geometry_at_polymer_bond(archive_pose.total_residue()-1);

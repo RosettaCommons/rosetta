@@ -51,7 +51,7 @@ public:
 	SymmetricConformation( Conformation const & conf, SymmetryInfo const & symm_info );
 
 	/// @brief copy constructor
-	SymmetricConformation( SymmetricConformation const & src );
+	//SymmetricConformation( SymmetricConformation const & src );
 
 	/// @brief operator
 	Conformation &
@@ -62,8 +62,8 @@ public:
 	Conformation &
 	operator=( Conformation const & src );
 
-  ConformationOP
-  clone() const;
+	ConformationOP
+	clone() const;
 
 	virtual
 	bool
@@ -80,22 +80,22 @@ public:
 	/// DOF
 	virtual
 	void
-	set_dof( DOF_ID const & id, Real const setting );
+	set_dof( DOF_ID const & id, Real setting );
 
 	void
-	set_secstruct( Size const seqpos, char const setting );
+	set_secstruct( Size seqpos, char setting );
 
 	/// BONDS/TORSIONS
 	virtual
 	void
-	set_torsion( TorsionID const & id, Real const setting );
+	set_torsion( TorsionID const & id, Real setting );
 
 	/// JUMPS
 	/// @brief set a jump
   virtual
   void
   set_jump(
-    int const jump_number,
+    int jump_number,
     Jump const & new_jump
   );
 
@@ -114,7 +114,7 @@ public:
 		AtomID const & atom1,
 		AtomID const & atom2,
 		AtomID const & atom3,
-		Real const setting
+		Real setting
 	);
 
 	///
@@ -123,7 +123,7 @@ public:
 	set_bond_length(
 		AtomID const & atom1,
 		AtomID const & atom2,
-		Real const setting
+		Real setting
 	);
 
 	///
@@ -134,8 +134,8 @@ public:
 		AtomID const & atom2,
 		AtomID const & atom3,
 		AtomID const & atom4,
-		Real const setting,
-		bool const quiet=false
+		Real setting,
+		bool quiet=false
 	);
 
 	virtual utility::vector1<bool>
@@ -147,14 +147,14 @@ public:
 	/// @brief replace residue
 	virtual void
 	replace_residue(
-		Size const seqpos,
+		Size seqpos,
 		Residue const & new_rsd,
-		bool const orient_backbone
+		bool orient_backbone
 	);
 
 	virtual void
 	replace_residue(
-		Size const seqpos,
+		Size seqpos,
 		Residue const & new_rsd,
 		utility::vector1< std::pair< std::string, std::string > > const & atom_pairs
 	);
@@ -206,20 +206,20 @@ public:
 	void
 	append_residue_by_jump(
 		conformation::Residue const & new_rsd,
-		Size const anchor_residue,
+		Size anchor_residue,
 		std::string const& anchor_atom = "", // the atom in the anchor_residue
 		std::string const& root_atom = "", // the atom in the new residue
-		bool const start_new_chain = false
+		bool start_new_chain = false
 	);
 
 	/// @brief Append a new conformation by a jump; clones this append to all copies
   void
   insert_conformation_by_jump(
     Conformation const & conf,             // the conformation to be inserted
-    Size const insert_seqpos,              // rsd 1 in conf goes here
-    Size const insert_jumppos,             // jump#1 in conf goes here, see insert_fold_tree_by_jump
-    Size const anchor_pos,                 // in the current sequence numbering, ie before insertion of conf
-    Size const anchor_jump_number = 0,     // the desired jump number of the anchoring jump, default=0
+    Size insert_seqpos,              // rsd 1 in conf goes here
+    Size insert_jumppos,             // jump#1 in conf goes here, see insert_fold_tree_by_jump
+    Size anchor_pos,                 // in the current sequence numbering, ie before insertion of conf
+    Size anchor_jump_number = 0,     // the desired jump number of the anchoring jump, default=0
     std::string const & anchor_atom = "",  // "" means take default anchor atom
     std::string const & root_atom   = ""   // "" means take default root   atom
   );
@@ -247,7 +247,7 @@ private:
 	friend class boost::serialization::access;
 
 	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version){
+	void serialize(Archive & ar, unsigned int version){
 		ar & boost::serialization::base_object<Conformation>(*this);
 		ar & symm_info_;
 	}

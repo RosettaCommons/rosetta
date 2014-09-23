@@ -20,6 +20,8 @@
 #include <core/fragment/picking_old/vall/VallLibrary.hh>
 #include <core/fragment/picking_old/vall/eval/ABEGOEval.hh>
 #include <core/fragment/picking_old/vall/eval/IdentityEval.hh>
+#include <core/fragment/picking_old/vall/eval/VallFragmentEval.fwd.hh>
+#include <core/fragment/picking_old/vall/gen/VallFragmentGen.fwd.hh>
 #include <core/fragment/picking_old/vall/gen/LengthGen.hh>
 
 #include <utility/vector1.hh>
@@ -48,6 +50,8 @@ pick_fragments_by_ss(
 {
 	using eval::IdentityEval;
 	using gen::LengthGen;
+	using eval::VallFragmentEvalCOP;
+	using gen::VallFragmentGenCOP;
 
 	VallLibrary const & library = FragmentLibraryManager::get_instance()->get_Vall();
 
@@ -81,6 +85,8 @@ pick_fragments_by_ss_plus_aa(
 {
 	using eval::IdentityEval;
 	using gen::LengthGen;
+	using eval::VallFragmentEvalCOP;
+	using gen::VallFragmentGenCOP;
 
 	VallLibrary const & library = FragmentLibraryManager::get_instance()->get_Vall();
 
@@ -117,6 +123,8 @@ pick_fragments(
 	using eval::IdentityEval;
 	using eval::ABEGOEval;
 	using gen::LengthGen;
+	using eval::VallFragmentEvalCOP;
+	using gen::VallFragmentGenCOP;
 
 	VallLibrary const & library = FragmentLibraryManager::get_instance()->get_Vall();
 

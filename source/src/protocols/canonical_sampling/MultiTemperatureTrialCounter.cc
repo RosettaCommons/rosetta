@@ -32,14 +32,14 @@ namespace canonical_sampling {
 using namespace core;
 using namespace ObjexxFCL;
 
-MultiTemperatureTrialCounter::MultiTemperatureTrialCounter( TemperatureControllerCOP temp_in ) :
+MultiTemperatureTrialCounter::MultiTemperatureTrialCounter( TemperatureController const * temp_in ) :
 	tempering_( temp_in )
 {
 	reset();
 }
 
 void
-MultiTemperatureTrialCounter::set_temperature_observer( TemperatureControllerCOP temp_in ) {
+MultiTemperatureTrialCounter::set_temperature_observer( TemperatureController const * temp_in ) {
 	tempering_ = temp_in;
 	reset();
 }
@@ -49,7 +49,7 @@ MultiTemperatureTrialCounter::set_temperature_observer( TemperatureControllerCOP
 void
 MultiTemperatureTrialCounter::reset()
 {
-	runtime_assert( tempering_ );
+	runtime_assert( tempering_ != 0 );
 	counters_.clear();
 	counters_.resize( tempering_->n_temp_levels() );
 }

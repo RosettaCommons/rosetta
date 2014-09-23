@@ -84,6 +84,7 @@ public:
     
 		
 		using protocols::toolbox::task_operations::RestrictToCDRH3Loop;
+		using core::pack::task::operation::TaskOperationCOP;
 		//using namespace ObjexxFCL::format;
 
 		TR << "Running test_RestrictNonSurfaceToRepackingOperation..." << std::endl;

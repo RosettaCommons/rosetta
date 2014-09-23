@@ -99,8 +99,8 @@ TaskAwareMinMover::~TaskAwareMinMover(){}
 
 ///@details apply will extract the movemap from your minmover, modify it to include sidechain DOFs that are packable according to some TaskFactory, run the minmover with this movemap, and revert the minmover to its original movemap.
 void TaskAwareMinMover::apply( core::pose::Pose & pose ){
-	runtime_assert( minmover_ );
-	runtime_assert( factory_ );
+	runtime_assert( minmover_ != 0 );
+	runtime_assert( factory_ != 0 );
 
   using core::kinematics::MoveMapOP;
   using core::kinematics::MoveMap;

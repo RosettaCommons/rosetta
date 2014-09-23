@@ -57,7 +57,7 @@ FreeMoietyEnergyCreator::score_types_for_method() const {
 
 /// ctor
 FreeMoietyEnergy::FreeMoietyEnergy() :
-	parent( new FreeMoietyEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new FreeMoietyEnergyCreator ) ),
 	free_suite_bonus_( basic::options::option[ basic::options::OptionKeys::score::free_suite_bonus ] ),
 	free_2HOprime_bonus_( basic::options::option[ basic::options::OptionKeys::score::free_2HOprime_bonus ] ),
 	free_sugar_bonus_( basic::options::option[ basic::options::OptionKeys::score::free_sugar_bonus ] ), // this is -1.0 by default (also ad hoc)

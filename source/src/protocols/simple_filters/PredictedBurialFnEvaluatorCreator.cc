@@ -70,6 +70,7 @@ void PredictedBurialFnEvaluatorCreator::add_evaluators( evaluation::MetaPoseEval
 	using namespace core;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	using protocols::evaluation::PoseEvaluatorOP;
 
 
 	if ( option[ OptionKeys::evaluation::predicted_burial_fn ].user() ) {

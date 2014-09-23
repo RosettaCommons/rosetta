@@ -73,7 +73,7 @@ RNA_DataBackboneEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 RNA_DataBackboneEnergy::RNA_DataBackboneEnergy() :
-	parent( new RNA_DataBackboneEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new RNA_DataBackboneEnergyCreator ) ),
 	dist_cutoff_( 9.0 ),
 	dist_fade_( 1.0  ),
 	well_depth_burial_( -0.05 ),
@@ -96,7 +96,7 @@ void
 RNA_DataBackboneEnergy::initialize_atom_numbers_sugar() {
 
 	using namespace core::chemical;
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 	ResidueTypeCOP const & rsd_type( rsd_set->aa_map( na_rad )[ 1 ] ); //Check out adenine.
 

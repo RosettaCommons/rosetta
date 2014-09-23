@@ -188,9 +188,10 @@ SidechainMCMover::apply(
 	runtime_assert(packed_residues().size() > 0);
 
 	if (inherit_scorefxn_temperature_) {
-		runtime_assert(metropolis_hastings_mover_);
+		protocols::canonical_sampling::MetropolisHastingsMoverOP metropolis_hastings_mover( metropolis_hastings_mover_ );
+		runtime_assert(metropolis_hastings_mover != 0);
 		// update temperature every time in case temperature changes are implemented in the future
-		set_temperature(metropolis_hastings_mover_->monte_carlo()->temperature());
+		set_temperature(metropolis_hastings_mover->monte_carlo()->temperature());
 	}
 
 	 // for debugging
@@ -310,7 +311,7 @@ SidechainMCMover::apply(
 	}
 
 	score_post_apply_ = current_energy;
-	if (metropolis_hastings_mover_) {
+	if (!metropolis_hastings_mover_.expired()) {
 		score_post_apply_ = sfxn_->score(pose);
 		//TR << "Score Actual: " << score_post_apply_ << " Accumulated: " << current_energy << " Delta: " << current_energy - score_post_apply_ << std::endl;
 	}
@@ -360,7 +361,7 @@ SidechainMCMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Data
 		for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
 					t_o_key != end; ++t_o_key ) {
 			if ( data.has( "task_operations", *t_o_key ) ) {
-				new_task_factory->push_back( data.get< core::pack::task::operation::TaskOperation* >( "task_operations", *t_o_key ) );
+				new_task_factory->push_back( data.get_ptr< core::pack::task::operation::TaskOperation >( "task_operations", *t_o_key ) );
 			} else {
 				throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
 			}
@@ -409,9 +410,10 @@ SidechainMCMover::initialize_simulation(
 	SidechainMover::initialize_simulation(pose, metropolis_hastings_mover,cycle);
 
 	if (inherit_scorefxn_temperature_) {
-		runtime_assert(metropolis_hastings_mover_);
-		set_scorefunction(metropolis_hastings_mover_->monte_carlo()->score_function());
-		set_temperature(metropolis_hastings_mover_->monte_carlo()->temperature());
+		protocols::canonical_sampling::MetropolisHastingsMoverOP metropolis_hastings_mover( metropolis_hastings_mover_ );
+		runtime_assert(metropolis_hastings_mover != 0);
+		set_scorefunction(metropolis_hastings_mover->monte_carlo()->score_function());
+		set_temperature(metropolis_hastings_mover->monte_carlo()->temperature());
 	}
 }
 

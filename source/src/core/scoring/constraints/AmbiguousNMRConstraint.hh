@@ -123,7 +123,7 @@ public:
 	/// @brief Returns the func::Func object associated with this Constraint object.
 	virtual
 	func::Func const & get_func() const {
-		runtime_assert( func_ );
+		runtime_assert( func_ != 0 );
 		return *func_;
 	}
 

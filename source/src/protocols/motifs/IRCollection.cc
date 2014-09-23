@@ -250,7 +250,7 @@ static thread_local basic::Tracer irt( "protocols.motifs.IRCollection", basic::t
 						std::map< core::Size, MotifCOP > new_setpos( setpos );
 						new_setpos[ this_pos ] = motif_source_[ index ];
 						std::map< core::Size, core::conformation::ResidueCOP > new_setpos_ir( setpos_ir );
-						new_setpos_ir[ this_pos ] = this_rotamer;
+						new_setpos_ir[ this_pos ] = this_rotamer.get_self_ptr();
 						std::map< core::Size, bool > new_setpos_forward_info( setpos_forward_info );
 						new_setpos_forward_info[ this_pos ] = motif_forward_[ index ];
 

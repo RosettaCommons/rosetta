@@ -83,6 +83,8 @@ using namespace core::pack::task;
 ///@details
 void DesignRelaxMover::apply( core::pose::Pose & pose )
 {
+	using core::pack::task::operation::TaskOperationCOP;
+	
 	bool debug( false );
 	if( basic::options::option[ basic::options::OptionKeys::run::debug ].user() ){
 		debug = true;

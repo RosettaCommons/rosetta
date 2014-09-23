@@ -468,7 +468,7 @@ select_coord_for_residue(core::conformation::Residue & res){
 		HTReal input_frame( N_xyz, halfpoint_input, CA_xyz );
 		//now find CB position in ideal space
 		//lets use alanine as the ideal here
-		chemical::ResidueTypeSetCAP rts = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+		chemical::ResidueTypeSetCOP rts = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 		chemical::ResidueType const & restype= rts->name_map("ALA");//define ala
 		xyzVector< core::Real > idealN  =  (  restype.atom( restype.atom_index("N" ) ).ideal_xyz() );
 		xyzVector< core::Real > idealCA =  (  restype.atom( restype.atom_index("CA") ).ideal_xyz() );

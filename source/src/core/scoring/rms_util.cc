@@ -584,8 +584,8 @@ CA_rmsd(
 	int natoms;
 	FArray2D< core::Real > p1a;
 	FArray2D< core::Real > p2a;
-	PredicateOP pred( new ResRangePredicate( start, calc_end, new IsProteinCAPredicate ) );
-	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred() );
+	PredicateOP pred( new ResRangePredicate( start, calc_end, PredicateCOP( new IsProteinCAPredicate ) ) );
+	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
 	if ( end != 0 && (int) (calc_end - start + 1) > natoms ) { tr.Warning << "WARNING: In CA_rmsd, residue range " << start << " to " << end
 			<< " requested but only " << natoms << " protein CA atoms found." << std::endl; }
@@ -686,8 +686,8 @@ CA_rmsd(
 	int natoms;
 	FArray2D< core::Real > p1a;//( 3, pose1.total_residue() );
 	FArray2D< core::Real > p2a;//( 3, pose2.total_residue() );
-	PredicateOP pred( new ResRangePredicate( start, end, new ExcludedResPredicate( exclude, new IsProteinCAPredicate )) );
-	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred() );
+	PredicateOP pred( new ResRangePredicate( start, end, PredicateCOP( new ExcludedResPredicate( exclude, PredicateCOP( new IsProteinCAPredicate ) ) ) ) );
+	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
 	// Calc rms
 	Real rms = numeric::model_quality::rms_wrapper( natoms, p1a, p2a );
@@ -729,8 +729,8 @@ CA_rmsd(
 	int natoms;
 	FArray2D< core::Real > p1a;//( 3, pose1.total_residue() );
 	FArray2D< core::Real > p2a;//( 3, pose2.total_residue() );
-	PredicateOP pred( new SelectedResPredicate( residue_selection, new IsProteinCAPredicate ) );
-	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred() );
+	PredicateOP pred( new SelectedResPredicate( residue_selection, PredicateCOP( new IsProteinCAPredicate ) ) );
+	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
 	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "WARNING: In CA_rmsd " << residue_selection.size()
 				<< " residues selected but only " << natoms << " protein CA atoms found." << std::endl; }
@@ -834,8 +834,8 @@ CA_maxsub(
 	int natoms;
 	FArray2D< core::Real > p1a;//( 3, pose1.total_residue() );
 	FArray2D< core::Real > p2a;//( 3, pose2.total_residue() );
-	PredicateOP pred( new SelectedResPredicate( residue_selection, new IsProteinCAPredicate ) );
-	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred() );
+	PredicateOP pred( new SelectedResPredicate( residue_selection, PredicateCOP( new IsProteinCAPredicate ) ) );
+	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
 	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "WARNING: In CA_maxsub " << residue_selection.size()
 			<< " residues selected but only " << natoms << " protein CA atoms found." << std::endl; }
@@ -895,8 +895,8 @@ CA_gdtmm(
 	int natoms;
 	FArray2D< core::Real > p1a( 3, pose1.total_residue() );
 	FArray2D< core::Real > p2a( 3, pose2.total_residue() );
-	PredicateOP pred( new SelectedResPredicate( residue_selection, new IsProteinCAPredicate ) );
-	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred() );
+	PredicateOP pred( new SelectedResPredicate( residue_selection, PredicateCOP( new IsProteinCAPredicate ) ) );
+	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
 	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "WARNING: In CA_gdtmm " << residue_selection.size()
 			<< " residues selected but only " << natoms << " protein CA atoms found." << std::endl; }
@@ -1014,8 +1014,8 @@ CA_gdttm(
 	int natoms;
 	FArray2D< core::Real > p1a( 3, pose1.total_residue() );
 	FArray2D< core::Real > p2a( 3, pose2.total_residue() );
-	PredicateOP pred( new SelectedResPredicate( residue_selection, new IsProteinCAPredicate ) );
-	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred() );
+	PredicateOP pred( new SelectedResPredicate( residue_selection, PredicateCOP( new IsProteinCAPredicate ) ) );
+	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
 	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "WARNING: In CA_gdtmm " << residue_selection.size()
 			<< " residues selected but only " << natoms << " protein CA atoms found." << std::endl; }

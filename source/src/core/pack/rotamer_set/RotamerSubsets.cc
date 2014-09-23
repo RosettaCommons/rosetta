@@ -77,10 +77,10 @@ RotamerSubsets::RotamerSubsets(
 	}
 
 	for ( Size ii = 1; ii <= nmoltenres_; ++ii ) {
-		set_of_rotamer_sets_[ ii ] = new RotamerSubset(
+		set_of_rotamer_sets_[ ii ] = RotamerSetOP( new RotamerSubset(
 			*source.rotamer_set_for_moltenresidue( ii ),
 			moltenres_subsets[ ii ]
-		);
+		) );
 	}
 }
 

@@ -69,7 +69,7 @@ pHEnergyCreator::score_types_for_method() const {
 
 //ctor
 pHEnergy::pHEnergy() :
-	parent( new pHEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new pHEnergyCreator ) )
 {
 	using namespace basic::options;
 	pH_ = option[ OptionKeys::pH::value_pH ]();

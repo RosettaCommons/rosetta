@@ -67,7 +67,7 @@ RDCScore::RDCScore(
 } 
 
 void RDCScore::do_caching(VallChunkOP current_chunk) {
-	std::string ctmp = current_chunk()->chunk_key();
+	std::string ctmp = current_chunk->chunk_key();
 	if (ctmp.compare("change to 'cached_scores_id_' when ready") != 0) {
 		return; // CACHING NOT BUILT IN YET
 	}
@@ -95,7 +95,7 @@ bool RDCScore::score(
 	Size offset_vall  = fragment->get_first_index_in_vall();  //index of the 1st rsd in a vall chunk covered by this fragment
 
   core::pose::Pose frag_pose;
-  core::chemical::ResidueTypeSetCAP rsd_set 
+  core::chemical::ResidueTypeSetCOP rsd_set 
 		= core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );    
 
 	//get the whole vall chunk where the fragment from

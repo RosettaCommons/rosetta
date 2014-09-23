@@ -333,7 +333,7 @@ ShowMembranePlanesMover::create_membrane_virtual( Vector pos, bool fullatom ) {
 	int center = 2;
 	
 	// Grab the current residue typeset and create a new residue
-	ResidueTypeSetCAP const & residue_set(
+	ResidueTypeSetCOP const & residue_set(
 										  core::chemical::ChemicalManager::get_instance()->residue_type_set( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
 										  );
 	
@@ -370,7 +370,7 @@ ShowMembranePlanesMover::select_plane_points(
 	// Pick an arbitrary orthogonal Unit Vector
 	core::Real tolerance = pow(10, -7);
 	core::Vector p( 0, 0, 0 );
-	if ( abs(normal.x() + normal.y()) < tolerance ) {
+	if ( fabs(normal.x() + normal.y()) < tolerance ) {
 		p.x() = -normal.y() - normal.z();
 		p.y() = normal.x();
 		p.z() = normal.x();

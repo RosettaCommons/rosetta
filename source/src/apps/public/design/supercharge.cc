@@ -429,6 +429,7 @@ public:
 	design_supercharge_AvNAPSA( Pose const & starting_pose, Pose & pose ) { //there are no choices, either NATRO or the only PIKAA residue from the AvNAPSA resfile
 
 		using namespace core::pack::task;
+		using namespace core::pack::task::operation;
 		using namespace basic::options;
 		TaskFactoryOP task_factory = new TaskFactory();
 		task_factory->push_back(new operation::InitializeFromCommandline()); //ex1, ex1, minimize sidechains, use_input_sc
@@ -496,6 +497,7 @@ public:
 		prepack_input_structure( Pose & pose ) {
 
 		using namespace core::pack::task;
+		using namespace core::pack::task::operation;
 		using namespace basic::options;
 		TaskFactoryOP task_factory = new TaskFactory();
     task_factory->push_back(new operation::InitializeFromCommandline()); //use_input_sc
@@ -570,6 +572,7 @@ public:
 						basic::Warning() << "Calculator " << calcname.str()	<< " already exists, this is hopefully correct for your purposes" << std::endl;
 					}
 					else {
+						using pose::metrics::PoseMetricCalculatorOP;
 						pose::metrics::CalculatorFactory::Instance().register_calculator( calcname.str(), new protocols::toolbox::pose_metric_calculators::NeighborsByDistanceCalculator(res) );
 					}
 					calcname.str("");
@@ -708,7 +711,7 @@ public:
 				bool found_sc_hbond( false );
 
 				for (Size i = 1; i<= hbond_set.nhbonds(); i++) {
-					core::scoring::hbonds::HBondCOP hbond(hbond_set.hbond(i));
+					core::scoring::hbonds::HBondCOP hbond(hbond_set.hbond(i).get_self_ptr());
 					if(hbond->energy() > -0.5) { // a fun semi-arbitrary value for hbond strength cutoff
 						continue;
 					}
@@ -793,6 +796,7 @@ public:
 	design_supercharge( Pose const & starting_pose, Pose & pose ){
 
 		using namespace core::pack::task;
+		using namespace core::pack::task::operation;
 		using namespace basic::options;
 		TaskFactoryOP task_factory = new TaskFactory();
 		task_factory->push_back(new operation::InitializeFromCommandline()); //ex1, ex1, minimize sidechains, use_input_sc
@@ -1074,6 +1078,7 @@ public:
 		assert(native.total_residue() == pose.total_residue());
 
     using namespace core::pack::task;
+    using namespace core::pack::task::operation;
     using namespace basic::options;
     TaskFactoryOP task_factory = new TaskFactory();
     task_factory->push_back(new operation::InitializeFromCommandline()); //need for use_input_sc

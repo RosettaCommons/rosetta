@@ -1579,7 +1579,7 @@ build_pose_as_is1(
 
 	if( options.preserve_header() == true ) {
 		pdb_info->remarks( *fd.remarks );
-		pdb_info->header_information( fd.header_information()() );
+		pdb_info->header_information( fd.header_information() );
 	}
 
 	// set residue level pdb information
@@ -1806,7 +1806,7 @@ pose_from_pose(
 	FileDataOptions const & options
 ){
 	using namespace chemical;
-	ResidueTypeSetCAP residue_set(
+	ResidueTypeSetCOP residue_set(
 		ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )
 	);
 	pose_from_pose( new_pose, old_pose, *residue_set,  residue_indices, options);

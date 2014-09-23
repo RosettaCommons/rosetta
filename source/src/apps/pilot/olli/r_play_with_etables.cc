@@ -86,10 +86,10 @@ void make_etable( float weight, std::string const& name ) {
   using namespace scoring;
   using namespace etable;
 	EtableOptions options;
-  chemical::AtomTypeSetCAP cptr_atom_type_set( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ) );
-  chemical::AtomTypeSetAP local_atom_type_set( const_cast< chemical::AtomTypeSet* >( cptr_atom_type_set() ));
+  chemical::AtomTypeSetCOP cptr_atom_type_set( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ) );
+  chemical::AtomTypeSetOP local_atom_type_set( utility::pointer::const_pointer_cast< chemical::AtomTypeSet >( cptr_atom_type_set ));
   local_atom_type_set->add_parameters_from_file(basic::database::full_name("chemical/atom_type_sets/fa_standard/extras/extra_soft_rep_params.txt"));
-  chemical::AtomTypeSetCAP ptr_atom_type_set( local_atom_type_set.get() );
+  chemical::AtomTypeSetCOP ptr_atom_type_set( local_atom_type_set );
 	options.lj_switch_dis2sigma = 0.6*(1.0-weight)+weight*0.91;
 	scoring::etable::EtableOP etable0( new Etable( ptr_atom_type_set, options, name ) );
 	scoring::ScoringManager::get_instance()->add_etable( "FA_STANDARD_"+name, etable0 );

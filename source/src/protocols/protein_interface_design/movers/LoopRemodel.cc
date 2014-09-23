@@ -164,6 +164,8 @@ void
 LoopRemodel::apply( core::pose::Pose & pose )
 {
 	using namespace protocols::loops;
+	using core::pack::task::operation::TaskOperationCOP;
+	
 	core::pose::Pose native_pose = pose;
 
 	LoopsOP loops = new protocols::loops::Loops( *loops_ ); // loops_ gets set in parse_my_tag

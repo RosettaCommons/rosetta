@@ -327,7 +327,7 @@ void VarSolDistSasaCalculator::initialize_sasa_arrays() {
 
 	using namespace core::chemical;
 
-	AtomTypeSetCAP atset = ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
+	AtomTypeSetCOP atset = ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
 	core::Size const SASA_RADIUS_INDEX = atset->extra_parameter_index( "REDUCE_SASA_RADIUS" );
 
 	radii_.resize( atset->n_atomtypes() );
@@ -725,7 +725,7 @@ VarSolDistSasaCalculator::clone() const{
 void VarSolDistSasaCalculator::set_atom_type_radii(std::string atype_name, Real coll_radius, Real int_radius, Size nshells) {
 
 	using namespace core::chemical;
-	AtomTypeSetCAP atset = ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
+	AtomTypeSetCOP atset = ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
 	Size i = atset->atom_type_index(atype_name);
 	radii_[i].resize( nshells );
 	if (nshells > 0) {
@@ -754,7 +754,7 @@ void VarSolDistSasaCalculator::set_atom_type_radii(std::string atype_name, Real 
 void VarSolDistSasaCalculator::set_element_radii(std::string elem, Real coll_radius, Real int_radius, Size nshells) {
 
 	using namespace core::chemical;
-	AtomTypeSetCAP atset = ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
+	AtomTypeSetCOP atset = ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
 	// find index of atomtype
 	for (Size i=1; i <= atset->n_atomtypes(); i++) {
 		if ( (*atset)[i].element() == elem ) {
@@ -820,8 +820,7 @@ VarSolDistSasaCalculator::recompute( core::pose::Pose const & this_pose )
 	residue_sasa_.resize( this_pose.total_residue() );
 	// TR << "Initializing vSASA arrays with probe radius = " << probe_radius_ << " and wobble = " << wobble_ << std::endl;
 	for ( Size ii = 1; ii <= this_pose.total_residue(); ++ii ) {
-		rotamer_dots_vec_[ ii ] = new VarSolDRotamerDots(
-				new core::conformation::Residue(this_pose.residue( ii ) ), *this );
+		rotamer_dots_vec_[ ii ] = new VarSolDRotamerDots( core::conformation::ResidueOP( new core::conformation::Residue(this_pose.residue( ii ) ) ), *this );
 		rotamer_dots_vec_[ ii ]->increment_self_overlap();
 	}
 	core::scoring::EnergyGraph const & energy_graph( this_pose.energies().energy_graph() );
@@ -878,7 +877,7 @@ LoadVarSolDistSasaCalculatorMover::apply( core::pose::Pose & )
 	if ( CalculatorFactory::Instance().check_calculator_exists( "bur_unsat_calc_default_sasa_calc" ) ) {
 		CalculatorFactory::Instance().remove_calculator( "bur_unsat_calc_default_sasa_calc" );
 	}
-	CalculatorFactory::Instance().register_calculator( "bur_unsat_calc_default_sasa_calc", new VarSolDistSasaCalculator() );
+	CalculatorFactory::Instance().register_calculator( "bur_unsat_calc_default_sasa_calc", core::pose::metrics::PoseMetricCalculatorOP( new VarSolDistSasaCalculator() ) );
 }
 
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)

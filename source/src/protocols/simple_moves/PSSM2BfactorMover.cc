@@ -90,8 +90,8 @@ PSSM2BfactorMover::apply( Pose & pose )
 	BOOST_FOREACH( ConstraintCOP const c, constraints ){
 		if( c->type() == "SequenceProfile" ){
 			SequenceProfileConstraintCOP seqprof_cst( dynamic_cast< SequenceProfileConstraint const * >( c() ) );
-			runtime_assert( seqprof_cst );
-			runtime_assert( seqprof_cst->profile_mapping() );
+			runtime_assert( seqprof_cst != 0 );
+			runtime_assert( seqprof_cst->profile_mapping() != 0 );
 			core::Size const seqpos( seqprof_cst->seqpos() );
 			TR<<"sepos="<<seqpos<<std::endl;
 			core::id::SequenceMappingCOP SM = seqprof_cst->profile_mapping();

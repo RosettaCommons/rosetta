@@ -125,7 +125,7 @@ class JumpingFrame : public NonContinuousFrame {
 public:
 
 	JumpingFrame()
-		: NonContinuousFrame( 0, 0, 0 ) {};
+		: NonContinuousFrame( 0.0, 0.0, 0.0 ) {};
 
   JumpingFrame( Size start, Size end, Size length )
 		: NonContinuousFrame( start, end, length ) {};

@@ -60,14 +60,14 @@ void RandomConformerMover::apply( core::pose::Pose & pose )
 	utility::vector1< utility::vector1< core::Real > > dummy_extra_chi_steps;
 	core::graph::GraphCOP dummy_graph = new core::graph::Graph();
 	// Retrieve conformers
-	core::pack::dunbrack::SingleResidueRotamerLibraryCAP reslib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( pose.residue_type(resid_) );
-	if( reslib.get() == NULL ) return;
+	core::pack::dunbrack::SingleResidueRotamerLibraryCOP reslib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( pose.residue_type(resid_) ).lock();
+	if( ! reslib ) return;
 	reslib->fill_rotamer_vector(
 		pose,
 		dummy_scorefxn,
 		*dummy_pack_task,
 		dummy_graph,
-		&pose.residue_type(resid_), //ResidueTypeCOP
+		pose.residue_type(resid_).get_self_ptr(), //ResidueTypeCOP
 		pose.residue(resid_),
 		dummy_extra_chi_steps,
 		true /* sure, let's pretend it's buried */,

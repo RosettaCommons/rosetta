@@ -53,6 +53,7 @@ public:
 	// typedefs
 	typedef core::Size Size;
 	typedef core::conformation::Conformation Conformation;
+	typedef core::conformation::ConformationOP ConformationOP;
 	typedef core::conformation::ResidueOP ResidueOP;
 	typedef core::pose::PDBInfo PDBInfo;
 	typedef core::pose::PDBPoseMap PDBPoseMap;
@@ -70,7 +71,7 @@ public:
 		core_init();
 		core::import_pose::pose_from_pdb( pose, "core/pose/pdbinfo_test_in.pdb" );
 
-		ResidueTypeSetCAP residue_set
+		ResidueTypeSetCOP residue_set
 			( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 		ala_rsd = ResidueFactory::create_residue( residue_set->name_map( "ALA" ) );
 	}
@@ -247,17 +248,17 @@ public:
 
 	/// @brief test observer attach to/detach from Conformation
 	void test_PDBInfo_observe_attach_detach() {
-		Conformation conf = pose.conformation();
+		Conformation & conf = pose.conformation();
 		PDBInfo info = *pose.pdb_info();
 
 		info.attach_to( conf );
-		TS_ASSERT_EQUALS( info.is_observing(), &conf );
+		TS_ASSERT_EQUALS( info.is_observing().lock().get(), &conf );
 		info.detach_from();
 	}
 
 	/// @brief test Conformation observer behavior on append
 	void test_PDBInfo_observe_append() {
-		Conformation conf = pose.conformation();
+		Conformation & conf = pose.conformation();
 		PDBInfo info = *pose.pdb_info();
 		Size ori_nres = conf.size();
 
@@ -274,7 +275,7 @@ public:
 
 	/// @brief test Conformation observer behavior on prepend
 	void test_PDBInfo_observe_prepend() {
-		Conformation conf = pose.conformation();
+		Conformation & conf = pose.conformation();
 		PDBInfo info = *pose.pdb_info();
 		Size ori_nres = conf.size();
 
@@ -291,7 +292,7 @@ public:
 
 	/// @brief test Conformation observer behavior on delete
 	void test_PDBInfo_observe_delete() {
-		Conformation conf = pose.conformation();
+		Conformation & conf = pose.conformation();
 		PDBInfo info = *pose.pdb_info();
 		Size ori_nres = conf.size();
 
@@ -309,11 +310,12 @@ public:
 		using namespace core::chemical;
 		using namespace core::conformation;
 
-		ResidueTypeSetCAP residue_set
+		ResidueTypeSetCOP residue_set
 			( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 		ResidueOP nt_ala_rsd = ResidueFactory::create_residue( residue_set->name_map( "ALA:NtermProteinFull" ) );
 
-		Conformation conf = pose.conformation();
+		ConformationOP conf_op = pose.conformation().clone();
+		Conformation & conf = *conf_op;
 		conf.fold_tree( core::kinematics::FoldTree( 4 ) );
 		PDBInfo info = *pose.pdb_info();
 
@@ -326,13 +328,13 @@ public:
 
 	/// @brief test observer auto-detach when Conformation is destroyed
 	void test_PDBInfo_detach_on_destroy() {
-		Conformation * conf = new Conformation( pose.conformation() );
+		ConformationOP conf = new Conformation( pose.conformation() );
 		PDBInfo info = *pose.pdb_info();
 
 		info.attach_to( *conf );
-		delete conf;
+		conf = NULL;
 
-		TS_ASSERT( !info.is_observing() );
+		TS_ASSERT( !info.is_observing().lock() );
 	}
 
 };

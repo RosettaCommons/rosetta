@@ -144,7 +144,7 @@ StemFinder::apply( core::pose::Pose const & pose ) const {
 	using namespace core::pose;
 	vector1< PoseOP > poses( load_poses( filenames_ ) );
 
-	core::conformation::Conformation const conf( pose.conformation() );
+	core::conformation::Conformation const & conf( pose.conformation() );
 	std::string const template_dssp( dssp( pose ) );
 //	for( core::Size i = 1; i <= pose.total_residue(); ++i ){
 //		TR<<pose.conformation().residue( i ).name1()<<i<<' '<<template_dssp[ i - 1 ]<<'\n';

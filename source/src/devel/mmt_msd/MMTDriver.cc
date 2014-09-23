@@ -68,12 +68,13 @@ sequence_from_entity(
 )
 {
 	using protocols::multistate_design::PosType;
+	using protocols::multistate_design::PosTypeCOP;
 	core::Size length = entity.traits().size();
 	std::string sequence;
 	sequence.reserve( length );
 	for ( core::Size ii = 1; ii <= length; ++ii ) {
 		protocols::genetic_algorithm::EntityElementCOP iiee = entity.traits()[ ii ];
-		PosType const * ii_pos_type = dynamic_cast< PosType const * > ( iiee() );
+		PosTypeCOP ii_pos_type = dynamic_cast< PosType const * > ( iiee() );
 		if ( ! ii_pos_type ) {
 			throw utility::excn::EXCN_Msg_Exception( "Position " + utility::to_string( ii ) + " of entity " + entity.to_string() + " could not be dynamically casted to PosType" );
 		}

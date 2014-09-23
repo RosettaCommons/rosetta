@@ -82,7 +82,18 @@ private:
 ///      All other query data must be loaded directly to the relevant scoring methods
 ///    - provide slots for 'plugable' parts of the machinery, like chunk filters, scoring methods and so on.
 ///    - pick fragments
-class FragmentPicker: public utility::pointer::ReferenceCount {
+class FragmentPicker: public utility::pointer::ReferenceCount
+#ifdef PTR_MODERN
+	// New version
+	, public utility::pointer::enable_shared_from_this< FragmentPicker >
+{
+#else
+{
+	// Old intrusive ref-counter version
+	inline FragmentPickerCOP shared_from_this() const { return FragmentPickerCOP( this ); }
+	inline FragmentPickerOP shared_from_this() { return FragmentPickerOP( this ); }
+#endif
+
 public:
 
 // constructors
@@ -101,7 +112,7 @@ public:
 
 	FragmentPicker(std::string fragment_score_manager_type) {
 		if (fragment_score_manager_type.compare("PValuedFragmentScoreManager") == 0)
-			scores_.push_back( static_cast< scores::FragmentScoreManager * > ( new scores::PValuedFragmentScoreManager()));
+			scores_.push_back(new scores::PValuedFragmentScoreManager());
 		else
 			scores_.push_back(new scores::FragmentScoreManager());
 		CandidatesSink storage;
@@ -117,6 +128,12 @@ public:
 // destructor
 
 	virtual ~FragmentPicker();
+
+public:
+	inline FragmentPickerCOP get_self_ptr() const { return shared_from_this(); }
+	inline FragmentPickerOP  get_self_ptr() { return shared_from_this(); }
+	inline FragmentPickerCAP get_self_weak_ptr() const { return FragmentPickerCAP( shared_from_this() ); }
+	inline FragmentPickerAP  get_self_weak_ptr() { return FragmentPickerAP( shared_from_this() ); }
 
 public:
 

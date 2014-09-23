@@ -74,11 +74,11 @@ namespace mover {
 			new_sequence += newrestype;
 		}
 
-		ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-		Pose new_pose;
-		make_pose_from_sequence( new_pose, new_sequence, *rsd_set );
+		ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+		PoseOP new_pose( new Pose );
+		make_pose_from_sequence( *new_pose, new_sequence, *rsd_set );
 
-		update_full_model_info_and_switch_focus_to_new_pose( pose, new_pose, resnum );
+		update_full_model_info_and_switch_focus_to_new_pose( pose, *new_pose, resnum );
 		fix_up_jump_atoms_and_residue_type_variants( pose );
 
     sample_by_swa( pose, 2 );

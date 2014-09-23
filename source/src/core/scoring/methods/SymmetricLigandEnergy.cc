@@ -57,7 +57,7 @@ SymmetricLigandEnergyCreator::score_types_for_method() const {
 ////////////////////////////////////////////////////////////////////////////
 
 SymmetricLigandEnergy::SymmetricLigandEnergy() :
-	parent( new SymmetricLigandEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new SymmetricLigandEnergyCreator ) )
 {}
 
 

@@ -88,7 +88,7 @@ ResLvlTaskOperationFactory::~ResLvlTaskOperationFactory(){}
 void
 ResLvlTaskOperationFactory::add_creator( ResLvlTaskOperationCreatorOP rltoc )
 {
-	runtime_assert( rltoc );
+	runtime_assert( rltoc != 0 );
 	rltoc_map_[ rltoc->keyname() ] = rltoc;
 }
 

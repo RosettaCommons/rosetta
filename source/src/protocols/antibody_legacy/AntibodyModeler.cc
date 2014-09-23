@@ -363,8 +363,8 @@ void AntibodyModeler::apply( pose::Pose & pose_in ) {
 	score_map_[ "AF_constraint" ] = constraint_score;
 
 	//using pose::datacache::CacheableDataType::SCORE_MAP;
-	pose_in.data().set( core::pose::datacache::CacheableDataType::SCORE_MAP, new basic::datacache::
-	                    DiagnosticData(score_map_));
+	using namespace basic::datacache;
+	pose_in.data().set( core::pose::datacache::CacheableDataType::SCORE_MAP, DataCache_CacheableData::DataOP( new basic::datacache::DiagnosticData(score_map_) ));
 }// end apply
 
 std::string
@@ -972,8 +972,7 @@ AntibodyModeler::setup_packer_task(
 
 	TR << "AbModeler Setting Up Packer Task" << std::endl;
 
-	tf_->push_back( new OperateOnCertainResidues( new PreventRepackingRLT,
-	                new ResidueLacksProperty("PROTEIN") ) );
+	tf_->push_back( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueLacksProperty("PROTEIN") ) ) );
 	tf_->push_back( new InitializeFromCommandline );
 	tf_->push_back( new IncludeCurrent );
 	tf_->push_back( new RestrictToRepacking );

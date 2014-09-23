@@ -73,7 +73,7 @@ SequenceMapping::SequenceMapping(
 		);
 	}
 
-	old_num_res = event.conformation->size() - event.length_change;
+	old_num_res = (event.conformation)->size() - event.length_change;
 
 	for ( Size i = 1; i <= upstream_res; ++i ) mapping_.push_back( i );
 

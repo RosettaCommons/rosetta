@@ -130,7 +130,7 @@ MPI_LoopHashRefine_Emperor::process_inbound_wus(){
 	while( inbound().size() > 0 )
 	{
 		WorkUnitBaseOP  next_wu =  inbound().pop_next();
-		runtime_assert( next_wu );
+		runtime_assert( next_wu != 0 );
 		WorkUnit_SilentStructStoreOP structure_wu = dynamic_cast<  WorkUnit_SilentStructStore * > ( next_wu() );
 
 		if ( structure_wu.get() == NULL ){
@@ -184,7 +184,7 @@ MPI_LoopHashRefine_Emperor::add_structures_to_library( SilentStructStore &new_st
 	for( SilentStructStore::const_iterator it = new_structs.begin();
 		 it != new_structs.end(); ++it )
 	{
-		runtime_assert( *it );
+		runtime_assert( *it != 0 );
 		core::io::silent::SilentStruct *pss = &(*(*it));
 
 		// Filter for max_emperor_lib_round_

@@ -94,7 +94,7 @@ TrialCounterObserver::initialize_simulation(
 	core::Size //default=0; non-zero if trajectory is restarted
 )
 {
-	counters_.set_temperature_observer( mhm.tempering() );
+	counters_.set_temperature_observer( mhm.tempering().get() );
 	counters_.reset();
 }
 

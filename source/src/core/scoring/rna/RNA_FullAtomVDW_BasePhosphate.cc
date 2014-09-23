@@ -61,7 +61,8 @@ RNA_FullAtomVDW_BasePhosphateCreator::create_energy_method(
 ) const {
 
 
-	etable::Etable const & etable_in = *( ScoringManager::get_instance()->etable( options.etable_type() ) );
+	etable::EtableCOP etable_in_cop( ScoringManager::get_instance()->etable( options.etable_type() ) );
+	etable::Etable const & etable_in = *etable_in_cop;
 
 	etable::TableLookupEtableEnergy etable_energy_in( etable_in, options );
 
@@ -95,7 +96,7 @@ RNA_FullAtomVDW_BasePhosphate::RNA_FullAtomVDW_BasePhosphate(
 	etable::TableLookupEtableEnergy const & etable_energy_in,
 	etable::Etable const & etable_in
 ):
-	parent( new RNA_FullAtomVDW_BasePhosphateCreator ),
+	parent( methods::EnergyMethodCreatorOP( new RNA_FullAtomVDW_BasePhosphateCreator ) ),
 	etable_energy_( etable_energy_in ), //Hacky thing, created the etable_energy_ energy_method to get access to its function.
 	//etable_energy_( *(new etable::EtableEnergy(etable_energy_in)) ),
 	//etable_energy_( *( new etable::EtableEnergy( etable_in, opts ) ) ),
@@ -103,8 +104,8 @@ RNA_FullAtomVDW_BasePhosphate::RNA_FullAtomVDW_BasePhosphate(
 {
 
 	//etable_energy_.set_scoretypes( fa_intra_RNA_base_phos_atr, fa_intra_RNA_base_phos_rep, unfolded);
-	//	etable_energy_( *( new etable::BaseEtableEnergy< etable::EtableEnergy >(new etable::EtableEnergyCreator, etable_in, options, fa_atr, fa_rep, fa_sol ) ) ),
-	//	etable_energy_( etable::BaseEtableEnergy< etable::EtableEnergy > (new etable::EtableEnergyCreator, etable_in, options, unfolded, unfolded, unfolded ) )
+	//	etable_energy_( *( methods::EnergyMethodCreatorOP( new etable::BaseEtableEnergy< etable::EtableEnergy >(new etable::EtableEnergyCreator ), etable_in, options, fa_atr, fa_rep, fa_sol ) ) ),
+	//	etable_energy_( etable::BaseEtableEnergy< etable::EtableEnergy > (methods::EnergyMethodCreatorOP( new etable::EtableEnergyCreator ), etable_in, options, unfolded, unfolded, unfolded ) )
 	//etable_energy_( etable::EtableEnergyCreator::create_energy_method(options) )
 
 	if ( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] ){
@@ -383,7 +384,7 @@ RNA_FullAtomVDW_BasePhosphate::setup_for_scoring( pose::Pose & pose, scoring::Sc
 
 
 	if ( pose.total_residue() > 0 ) {
-		if ( pose.residue( 1 ).type().atom_type_set_ptr() != etable_.atom_set() ) {
+		if ( pose.residue( 1 ).type().atom_type_set_ptr() != etable_.atom_set().lock() ) {
 			utility_exit_with_message( "Illegal attempt to score with non - identical atom set between pose and etable " );
 		}
 	}
@@ -397,7 +398,7 @@ RNA_FullAtomVDW_BasePhosphate::setup_for_derivatives( pose::Pose & pose, scoring
 {
 
 	if ( pose.total_residue() > 0 ) {
-		if ( pose.residue( 1 ).type().atom_type_set_ptr() != etable_.atom_set() ) {
+		if ( pose.residue( 1 ).type().atom_type_set_ptr() != etable_.atom_set().lock() ) {
 			utility_exit_with_message( "Illegal attempt to score with non - identical atom set between pose and etable " );
 		}
 	}

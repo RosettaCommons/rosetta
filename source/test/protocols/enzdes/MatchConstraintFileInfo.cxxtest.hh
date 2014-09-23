@@ -89,13 +89,13 @@ public:
 		// the ResidueTypeSet is already initialized.
 		using namespace core::chemical;
 		utility::vector1< std::string > params_files;
-		ResidueTypeSetCAP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+		ResidueTypeSetCOP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
 		if(!residue_set.has_name("D2MX")) params_files.push_back("protocols/enzdes/D2MX.params");
 		residue_set.read_files(params_files);
 		basic::options::option[basic::options::OptionKeys::run::preserve_header ].value(true);
 
-		enz_io = new protocols::toolbox::match_enzdes_util::EnzConstraintIO(& residue_set);
+		enz_io = new protocols::toolbox::match_enzdes_util::EnzConstraintIO(residue_set.get_self_weak_ptr());
 
 
   }
@@ -108,7 +108,7 @@ public:
   {
 		using namespace protocols::toolbox::match_enzdes_util;
 
-		core::chemical::ResidueTypeSetCAP const_residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+		core::chemical::ResidueTypeSetCOP const_residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	  //typedef core::id::AtomID AtomID;
 
 	  //now let's use the enzdes machinery to read in a cstfile and generate
@@ -160,7 +160,7 @@ public:
 		TS_ASSERT_EQUALS( algo_strings[2], "  not so fat after all" );
 
 		utility::vector1< core::Size > const & at_ind_upres2_ser
-			= mcfil2->mcfi(1)->enz_cst_template_res( 2 )->atom_inds_for_restype( 2, &(const_residue_set->name_map("SER")) );
+			= mcfil2->mcfi(1)->enz_cst_template_res( 2 )->atom_inds_for_restype( 2, const_residue_set->name_map("SER").get_self_ptr() );
 
 		TS_ASSERT_EQUALS( at_ind_upres2_ser.size(), 1 );
 		TS_ASSERT_EQUALS( at_ind_upres2_ser[1], const_residue_set->name_map("SER").atom_index("CB")  );
@@ -170,7 +170,7 @@ public:
 		//3. asserting stuff for residue 3
 		MatchConstraintFileInfoListCOP mcfil3 = enz_io->mcfi_list( 3 );
 
-		TS_ASSERT_EQUALS( mcfil3->mcfi(1)->create_exgs(), 0 );
+		TS_ASSERT( mcfil3->mcfi(1)->create_exgs().get() == NULL );
 
 		TS_ASSERT_EQUALS( mcfil3->mcfi(2)->tor_U1D3()->num_steps(), 4 );
 		TS_ASSERT_EQUALS( mcfil3->mcfi(2)->template_atom_inds( 2, 1, const_residue_set->name_map("THR") )[1], const_residue_set->name_map("THR").atom_index("OG1") );
@@ -192,7 +192,7 @@ public:
 
 		TS_ASSERT_EQUALS( down_res4_at1[1], const_residue_set->name_map("D2MX").atom_index("X1") );
 
-		utility::vector1< core::Size > const & at_ind_upres4_phe = mcfil4->mcfi(1)->enz_cst_template_res( 2 )->atom_inds_for_restype( 1, &(const_residue_set->name_map("PHE")) );
+		utility::vector1< core::Size > const & at_ind_upres4_phe = mcfil4->mcfi(1)->enz_cst_template_res( 2 )->atom_inds_for_restype( 1, const_residue_set->name_map("PHE").get_self_ptr() );
 
 		TS_ASSERT_EQUALS( at_ind_upres4_phe.size(), 6 );
 

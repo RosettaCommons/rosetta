@@ -554,6 +554,9 @@ Graph::Graph( platform::Size num_nodes ) :
 /// the base class assignment operator once the initial construction has been completed.
 Graph::Graph( Graph const & source ) :
 	parent(),
+#ifdef PTR_MODERN
+	utility::pointer::enable_shared_from_this< Graph >(),
+#endif
 	num_nodes_( source.num_nodes_ ),
 	nodes_( num_nodes_, (Node *) 0 ),
 	num_edges_( 0 ),

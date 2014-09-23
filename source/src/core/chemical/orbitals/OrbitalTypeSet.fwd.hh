@@ -22,7 +22,7 @@ class OrbitalTypeSet;
 typedef  utility::pointer::access_ptr< OrbitalTypeSet > OrbitalTypeSetAP;
 typedef  utility::pointer::access_ptr< OrbitalTypeSet const > OrbitalTypeSetCAP;
 typedef  utility::pointer::owning_ptr< OrbitalTypeSet > OrbitalTypeSetOP;
-	//typedef  utility::pointer::owning_ptr< AtomTypeSet const > AtomTypeSetCOP;
+typedef  utility::pointer::owning_ptr< OrbitalTypeSet const > OrbitalTypeSetCOP;
 
 }
 }

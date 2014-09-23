@@ -194,10 +194,12 @@ EnzCstTemplateRes::read_params(std::istringstream & line_stream)
 	//3. if this is an identical line, make sure that the two residues declared identical
 	//   have the same allowed res types
 
+	core::chemical::ResidueTypeSetCOP restype_set( restype_set_ );
+
    //first process 3-letter code input
 	for (std::vector< std::string >::iterator it = allowed_3res_raw.begin(); it != allowed_3res_raw.end(); ++it) {
 		if( it->size() == 2 ) *it = " " + *it;
-		if( restype_set_->has_name3( *it ) ) {
+		if( restype_set->has_name3( *it ) ) {
 			allowed_res_types_.push_back( *it );
 		}
 		else{
@@ -210,7 +212,7 @@ EnzCstTemplateRes::read_params(std::istringstream & line_stream)
 		if( oneletter_code_specifies_aa( allowed_1res_raw[ii] ) ){
 
 			std::string cur_res_name3 = name_from_aa( aa_from_oneletter_code( allowed_1res_raw[ii] ) );
-			if( restype_set_->has_name3( cur_res_name3 ) ) allowed_res_types_.push_back( cur_res_name3 );
+			if( restype_set->has_name3( cur_res_name3 ) ) allowed_res_types_.push_back( cur_res_name3 );
 			else{
 				utility_exit_with_message("Unexpected error in program: Residue "+cur_res_name3+" is unknown. ResidueTypeSet setup seems to not have worked properly.");
 			}
@@ -251,7 +253,7 @@ void EnzCstTemplateRes::show_params() const
 void EnzCstTemplateRes::get_pose_data(core::pose::Pose & pose) const {
 
   using namespace core::chemical;
-	EnzCstTemplateResCacheOP template_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( enz_io_param_->cst_block() )->template_res_cache( param_index_ ) );
+	EnzCstTemplateResCacheOP template_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( enz_io_param_.lock()->cst_block() )->template_res_cache( param_index_ ) );
 
    //first check whether we actually have a residue to process new
   if(template_cache->seqpos_map_.size() == 0){
@@ -267,7 +269,7 @@ void EnzCstTemplateRes::get_pose_data(core::pose::Pose & pose) const {
   //and for each residue, check whether the atoms specified in the cst file actually match atoms in this residue type
 	for (std::map< Size, EnzCstTemplateResAtomsOP >::iterator respos_it = template_cache->seqpos_map_.begin(); respos_it != template_cache->seqpos_map_.end(); ++respos_it){
 
-    ResidueTypeCOP cur_res =  & pose.residue_type( respos_it->first );
+    ResidueTypeCOP cur_res = pose.residue_type( respos_it->first ).get_self_ptr();
 		std::string cur_res_name3 = pose.residue( respos_it->first ).name3();
 		//utility::trim( cur_res_name3 );
 
@@ -321,7 +323,7 @@ EnzCstTemplateResAtomsCOP
 EnzCstTemplateRes::get_template_atoms_at_pos( core::pose::Pose const & pose, core::Size seqpos ) const
 {
 
-	EnzCstTemplateResCacheCOP template_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( enz_io_param_->cst_block() )->template_res_cache( param_index_ ) );
+	EnzCstTemplateResCacheCOP template_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( enz_io_param_.lock()->cst_block() )->template_res_cache( param_index_ ) );
 
 	std::map< Size, EnzCstTemplateResAtomsOP >::const_iterator at_it = template_cache->seqpos_map_.find( seqpos );
 
@@ -335,7 +337,7 @@ EnzCstTemplateRes::get_template_atoms_at_pos( core::pose::Pose const & pose, cor
 bool
 EnzCstTemplateRes::find_in_pose_if_missing_from_header( core::pose::Pose & pose)
 {
-	EnzCstTemplateResCacheOP template_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( enz_io_param_->cst_block() )->template_res_cache( param_index_ ) );
+	EnzCstTemplateResCacheOP template_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( enz_io_param_.lock()->cst_block() )->template_res_cache( param_index_ ) );
 	//there are three strategies to find a residue that wasn't mentioned in the PDB REMARKs
 	//1. if it was given externally, i.e. through a 'seqpos' entry in the cst file or
 	// through being speficially set through the accessor function
@@ -366,12 +368,12 @@ EnzCstTemplateRes::find_in_pose_if_missing_from_header( core::pose::Pose & pose)
 
 		EnzCstTemplateResCOP corresponding_res;
 		if(corresponding_res_num_in_block_ == 1){
-			corresponding_res = enz_io_param_->enz_io()->enz_cst_params( corresponding_res_block_ )->resA();
+			corresponding_res = enz_io_param_.lock()->enz_io().lock()->enz_cst_params( corresponding_res_block_ )->resA();
 		}
 		else{
-			corresponding_res = enz_io_param_->enz_io()->enz_cst_params( corresponding_res_block_ )->resB();
+			corresponding_res = enz_io_param_.lock()->enz_io().lock()->enz_cst_params( corresponding_res_block_ )->resB();
 		}
-		EnzCstTemplateResCacheCOP corresponding_res_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( corresponding_res->enz_io_param_->cst_block() )->template_res_cache( corresponding_res->param_index_ ) );
+		EnzCstTemplateResCacheCOP corresponding_res_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( corresponding_res->enz_io_param_.lock()->cst_block() )->template_res_cache( corresponding_res->param_index_ ) );
 
 		//found the right template residue, now get the positions in the pose where it is
 		for( std::map< Size, EnzCstTemplateResAtomsOP >::const_iterator pos_it = corresponding_res_cache->seqpos_map_begin();
@@ -396,7 +398,7 @@ EnzCstTemplateRes::find_in_pose_if_missing_from_header( core::pose::Pose & pose)
 	}
 	if( found_positions.size() == 1){
 		template_cache->add_position_in_pose( found_positions[1] );
-		tr << "Found residue " << pose.residue( found_positions[1] ).name3() << " for CstBlock " << enz_io_param_->cst_block() << " without REMARK line in pose at position " << found_positions[1] << "." << std::endl;
+		tr << "Found residue " << pose.residue( found_positions[1] ).name3() << " for CstBlock " << enz_io_param_.lock()->cst_block() << " without REMARK line in pose at position " << found_positions[1] << "." << std::endl;
 		template_cache->not_in_pose_ = false;
 		return true;
 	}
@@ -609,7 +611,7 @@ EnzCstTemplateRes::residue_conformations_redundant(
 ) const {
 	core::Real const sqdist_cutoff(0.2*0.2); //hardcoded for now
 
-	RestypeToTemplateAtomsMap::const_iterator res1_it(atom_inds_for_restype_.find( &(res1.type()) ) ), res2_it(atom_inds_for_restype_.find( &(res2.type()) ) );
+	RestypeToTemplateAtomsMap::const_iterator res1_it(atom_inds_for_restype_.find( res1.type().get_self_ptr() ) ), res2_it(atom_inds_for_restype_.find( res2.type().get_self_ptr() ) );
 	if( res1_it == atom_inds_for_restype_.end() ) utility_exit_with_message("Residue of type "+res1.type().name()+" is not part of EnzCstTemplateRes.");
 	if( res2_it == atom_inds_for_restype_.end() ) utility_exit_with_message("Residue of type "+res2.type().name()+" is not part of EnzCstTemplateRes.");
 
@@ -656,16 +658,16 @@ EnzCstTemplateRes::identical_info_consistency_check() const
 
 	//first some safety checks
 	if( (corresponding_res_block_ == 0) || ( ( corresponding_res_num_in_block_ != 1) && ( corresponding_res_num_in_block_ != 2) )
-		|| ( enz_io_param_->cst_block() == corresponding_res_block_ ) ) {
+		|| ( enz_io_param_.lock()->cst_block() == corresponding_res_block_ ) ) {
 
-		utility_exit_with_message("Cstfile has wrong format: 'identical' tag for Cstblock "+utility::to_string( enz_io_param_->cst_block() ) + " not formatted properly.\n");
+		utility_exit_with_message("Cstfile has wrong format: 'identical' tag for Cstblock "+utility::to_string( enz_io_param_.lock()->cst_block() ) + " not formatted properly.\n");
 	}
 
-	if( enz_io_param_->cst_block() < corresponding_res_block_) {
-		utility_exit_with_message("Cstfile has wrong format: 'identical' tag for Cstblock "+utility::to_string( enz_io_param_->cst_block() ) + " is referring to a block of higher number. Please rewrite Cstfile such that identity tags only refer to blocks of higher numbers.\n");
+	if( enz_io_param_.lock()->cst_block() < corresponding_res_block_) {
+		utility_exit_with_message("Cstfile has wrong format: 'identical' tag for Cstblock "+utility::to_string( enz_io_param_.lock()->cst_block() ) + " is referring to a block of higher number. Please rewrite Cstfile such that identity tags only refer to blocks of higher numbers.\n");
 	}
 
-	EnzConstraintParametersCOP corresponding_pair = enz_io_param_->enz_io()->enz_cst_params( corresponding_res_block_);
+	EnzConstraintParametersCOP corresponding_pair = enz_io_param_.lock()->enz_io().lock()->enz_cst_params( corresponding_res_block_);
 
 	utility::vector1< std::string > residue_names_to_match;
 
@@ -676,7 +678,7 @@ EnzCstTemplateRes::identical_info_consistency_check() const
 		utility::vector1< std::string >::const_iterator resfind = find(residue_names_to_match.begin(), residue_names_to_match.end(), *restype_it );
 
 		if( resfind == residue_names_to_match.end() ){
-			utility_exit_with_message("Error in cstfile 'identical' tag for Cstblock "+utility::to_string( enz_io_param_->cst_block() ) + " Allowed residue types for this cst block is not identical to the allowed residue types for the other cst_block.\n");
+			utility_exit_with_message("Error in cstfile 'identical' tag for Cstblock "+utility::to_string( enz_io_param_.lock()->cst_block() ) + " Allowed residue types for this cst block is not identical to the allowed residue types for the other cst_block.\n");
 		}
 	}
 }

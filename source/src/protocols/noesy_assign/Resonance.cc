@@ -144,7 +144,8 @@ void Resonance::combine( std::deque< ResonanceOP >& last_resonances, bool drain=
 	intensity_ = intensity_sum;
 }
 
-void Resonance::add_connected_resonance( ResonanceAP ptr ) {
+void Resonance::add_connected_resonance( ResonanceAP ptr_ap ) {
+	ResonanceOP ptr( ptr_ap );
 	assert( ptr );
 	connected_resonance_ids_.push_back( ptr->label() );
 	connected_resonance_ptrs_.push_back( ptr );
@@ -157,7 +158,8 @@ void Resonance::clear_connected_resonances() {
 
 Resonance const& Resonance::first_connected_resonance() const {
 	runtime_assert( connected_resonance_ptrs_.size() );
-	return *connected_resonance_ptrs_.front();
+	ResonanceOP r( connected_resonance_ptrs_.front() );
+	return *r; // FIXME: returning reference to temporairly locked OP
 }
 
 Resonance::ResonanceAPs const& Resonance::connected_resonances() const {

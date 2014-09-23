@@ -165,7 +165,7 @@ RestrictRegion::parse_my_tag(
 		max_trp_ = tag->getOption< core::Size >( "max_trp", max_trp_ );
 	}
 	if ( tag->hasOption( "scorefxn" ) ) {
-		scorefxn_ = data.get< core::scoring::ScoreFunction * >( "scorefxns",
+		scorefxn_ = data.get_ptr< core::scoring::ScoreFunction >( "scorefxns",
 																														tag->getOption< std::string >( "scorefxn" ) )->clone();
 		assert( scorefxn_ );
 	}

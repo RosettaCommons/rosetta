@@ -114,7 +114,7 @@ PCS_Energy_Ts2::~PCS_Energy_Ts2(){
 
 /// c-tor
 PCS_Energy_Ts2::PCS_Energy_Ts2() :
-	parent( new PseudocontactShiftEnergyCreator_Ts2 )
+	parent( core::scoring::methods::EnergyMethodCreatorOP( new PseudocontactShiftEnergyCreator_Ts2 ) )
 {}
 
 /// clone

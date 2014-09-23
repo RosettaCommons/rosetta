@@ -561,7 +561,7 @@ void AnchoredDesignMover::delete_interface_native_sidechains(core::pose::Pose & 
 	}
 
 	//we DO NOT WANT design
-	tf->push_back(new operation::RestrictToRepacking());
+	tf->push_back(operation::TaskOperationCOP( new operation::RestrictToRepacking() ));
 
 	//print a copy of the task for double checking
 	//T_shared << *(tf->create_task_and_apply_taskoperations(pose)) << std::endl;
@@ -978,7 +978,7 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 			using protocols::loops::loop_closure::kinematic_closure::KinematicMoverCAP;
 			using protocols::loops::loop_closure::kinematic_closure::KinematicMover;
 			KinematicMoverOP kin_mover( new KinematicMover() );//temperature, default 0.8
-			KinematicMoverCAP kin_mover_cap(*kin_mover);
+			KinematicMoverCAP kin_mover_cap(kin_mover);
 			kin_mover->set_temperature( perturb_temp_ );
 
 			//set up kinematic mover - this is borrowed from loops_main.cc, perturb_one_loop_with_alc(), SVN 24219, #932-946
@@ -1038,7 +1038,7 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 			if( internal && !perturb_CCD_off_ ){
 				///////////////////////////generate CCD close mover///////////////////////////////
 				using protocols::loops::loop_closure::ccd::CCDLoopClosureMover;
-				oneloop_subsequence->add_mover(new CCDLoopClosureMover(interface_->loop(i), interface_->movemap_cen_omegafixed(i)));
+				oneloop_subsequence->add_mover(moves::MoverOP( new CCDLoopClosureMover(interface_->loop(i), interface_->movemap_cen_omegafixed(i)) ));
 				T_perturb << "creating CCD-closure after perturbation for loop " << loop_start << " " << loop_end << std::endl;
 
 				if( debug_ ){
@@ -1119,7 +1119,7 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 	/////////////////////////////generate full repack&minimize mover//////////////////////////////
 	using core::pack::task::TaskFactoryOP; using core::pack::task::TaskFactory;
 	TaskFactoryOP task_factory = new TaskFactory(*(interface_->get_late_factory())); //late factory = more rotamers
-	task_factory->push_back( new core::pack::task::operation::RestrictToRepacking );
+	task_factory->push_back(core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ));
 
 	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
 	pack_mover->task_factory( task_factory );
@@ -1338,7 +1338,7 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 			using protocols::loops::loop_closure::kinematic_closure::KinematicMoverCAP;
 			using protocols::loops::loop_closure::kinematic_closure::KinematicMover;
 			KinematicMoverOP kin_mover( new KinematicMover() );//temperature, default 0.8
-			KinematicMoverCAP kin_mover_cap(*kin_mover);
+			KinematicMoverCAP kin_mover_cap(kin_mover);
 			kin_mover->set_temperature( refine_temp_ );
 
 			//set up kinematic mover - this is borrowed from loops_main.cc, perturb_one_loop_with_alc(), SVN 24219, #932-946
@@ -1425,7 +1425,7 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 	using core::pack::task::TaskFactoryOP;
 	using core::pack::task::TaskFactory;
 	TaskFactoryOP rt_task_factory = new TaskFactory(*(interface_->get_task_factory())); //local copy so we can modify it
-	rt_task_factory->push_back( new core::pack::task::operation::RestrictToRepacking );
+	rt_task_factory->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
 
 	using protocols::simple_moves::RotamerTrialsMoverOP;
 	using protocols::simple_moves::EnergyCutRotamerTrialsMover;
@@ -1474,7 +1474,7 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 			pack_mover->task_factory(interface_->get_late_factory());
 			//RT still needs restrict to repacking
 			TaskFactoryOP rt_late_factory = new TaskFactory(*(interface_->get_late_factory()));
-			rt_late_factory->push_back( new core::pack::task::operation::RestrictToRepacking );
+			rt_late_factory->push_back( core::pack::task::operation::TaskOperationCOP( new core::pack::task::operation::RestrictToRepacking ) );
 			rt_mover->task_factory(rt_late_factory);
 		}
 

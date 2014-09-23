@@ -143,7 +143,7 @@ SymmetricRotamerSet_::compute_one_body_energies(
 			// and calculated interaction energies with translated copies of itself
 			for ( int jj = 1; jj <= nrotamers; ++jj ) {
 				// make a new rotamer set that is going to be translated to the neighbor interation residue
-				conformation::ResidueOP sym_rsd( *this->rotamer( jj )->clone() );
+				conformation::ResidueOP sym_rsd( this->rotamer( jj )->clone() );
 				RotamerSetOP one_rotamer_set = rsf.create_rotamer_set( *sym_rsd );
 			  one_rotamer_set->set_resid( theresid );
 			  one_rotamer_set->add_rotamer( *sym_rsd );
@@ -200,7 +200,7 @@ SymmetricRotamerSet_::compute_one_body_energies(
 				//Residue const & neighbor( pose.residue( neighbor_id ) );
 				for ( int jj = 1; jj <= nrotamers; ++jj ) {
 					// make a new rotamer set that is going to be translated to the neighbor interation residue
-					conformation::ResidueOP sym_rsd( *this->rotamer( jj )->clone() );
+					conformation::ResidueOP sym_rsd( this->rotamer( jj )->clone() );
 					RotamerSetOP one_rotamer_set = rsf.create_rotamer_set( *sym_rsd );
 					one_rotamer_set->set_resid( theresid );
 					one_rotamer_set->add_rotamer( *sym_rsd );

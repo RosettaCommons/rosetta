@@ -78,7 +78,7 @@ CustomAtomPairEnergyCreator::score_types_for_method() const {
 }
 
 CustomAtomPairEnergy::CustomAtomPairEnergy( Size const max_cst_seq_sep ) :
-	parent( new CustomAtomPairEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new CustomAtomPairEnergyCreator ) ),
 	max_cst_seq_sep_( max_cst_seq_sep )
 {}
 

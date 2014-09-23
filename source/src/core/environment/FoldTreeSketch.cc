@@ -109,7 +109,7 @@ bool FoldTreeSketch::has_cut( Size const p ) const {
     return false;
   }
 
-  bool has_neighbor = nodes_[p]->has_peptide_neighbor( nodes_[p+1].get() );
+  bool has_neighbor = nodes_[p]->has_peptide_neighbor( NodeCAP( nodes_[p+1] ) );
 
   return !has_neighbor;
 }
@@ -117,7 +117,7 @@ bool FoldTreeSketch::has_cut( Size const p ) const {
 bool FoldTreeSketch::has_jump( Size const p1, Size const p2 ) const {
   range_check( p1 );
   range_check( p2 );
-  return nodes_[p1]->has_jump_neighbor( nodes_[p2].get() );
+  return nodes_[p1]->has_jump_neighbor( NodeCAP( nodes_[p2] ) );
 }
 
 void FoldTreeSketch::insert_cut( Size const seqid ) {
@@ -130,7 +130,7 @@ void FoldTreeSketch::insert_cut( Size const seqid ) {
                               + " because no edge to cut exists." );
   }
 
-  nodes_[seqid]->rm_peptide_neighbor( nodes_[ seqid+1 ].get() );
+  nodes_[seqid]->rm_peptide_neighbor( NodeAP( nodes_[ seqid+1 ] ) );
   n_cuts_ += 1;
 }
 
@@ -148,7 +148,7 @@ void FoldTreeSketch::insert_jump( Size const p1, Size const p2 ) {
                                + " because the jump already exists." );
   }
 
-  nodes_[p1]->add_jump_neighbor( nodes_[p2].get() );
+  nodes_[p1]->add_jump_neighbor( NodeAP( nodes_[p2] ) );
   n_jumps_ += 1;
 }
 
@@ -159,12 +159,14 @@ void FoldTreeSketch::append_peptide( Size length ){
 
   Size old_size = nodes_.size();
 
-  nodes_.push_back( new Node( 1 + old_size ) );
+  NodeOP node = FoldTreeSketch::Node::newNode( 1 + old_size );
+  nodes_.push_back( node );
 
   // If a peptide with more than one residue is being appended, connect them with a single peptide edge
   for( Size i = old_size + 2; i <= old_size + length; ++i ){
-    nodes_.push_back( new Node( i ) );
-    nodes_[ i ]->add_peptide_neighbor( nodes_[ i - 1 ].get() );
+    NodeOP node = FoldTreeSketch::Node::newNode( i );
+    nodes_.push_back( node );
+    nodes_[ i ]->add_peptide_neighbor( nodes_[ i - 1 ] );
   }
 
   n_cuts_ += 1;
@@ -178,7 +180,7 @@ void FoldTreeSketch::render( core::kinematics::FoldTree& ft ) const{
 
   // Run through the graph and pull out jumps and cuts.
   for( Size i = 1; i <= nodes_.size() - 1; ++i ){
-    if( !nodes_[i]->has_peptide_neighbor( nodes_[i+1].get() ) ){
+    if( !nodes_[i]->has_peptide_neighbor( NodeCAP( nodes_[i+1] ) ) ){
       cuts.insert( i );
     }
     nodes_[i]->collect_jumps( jumps );
@@ -251,7 +253,7 @@ utility::vector1< Size > const FoldTreeSketch::cycle( core::Size const start_res
   std::stack< NodeCAP > cycle_path;
 
   range_check( start_resid );
-  NodeCAP start = nodes_[ start_resid ].get();
+  NodeCOP start( nodes_[ start_resid ] );
 
   start->has_cycle( cycle_path, start );
 
@@ -268,7 +270,8 @@ utility::vector1< Size > const FoldTreeSketch::cycle( core::Size const start_res
 
   utility::vector1< Size > out_vect;
   while( !cycle_path.empty() ){
-    out_vect.push_back( cycle_path.top()->seqid() );
+    NodeCOP n( cycle_path.top() );
+    out_vect.push_back( n->seqid() );
     cycle_path.pop();
   }
 
@@ -344,8 +347,8 @@ std::set< core::Size > FoldTreeSketch::remove_cycles( utility::vector1< Real > c
         // Verify that this seqpos and the next seqpos is in the cycle, and that
         // there is a peptide bond between them.
         if( std::find( cycle.begin(), cycle.end(), seqpos+1 ) != cycle.end() &&
-            nodes_[seqpos]->has_peptide_neighbor( nodes_[ seqpos + 1 ].get() ) ){
-          nodes_[seqpos]->rm_peptide_neighbor( nodes_[ seqpos + 1 ].get() );
+            nodes_[seqpos]->has_peptide_neighbor( NodeCAP( nodes_[ seqpos + 1 ] ) ) ){
+          nodes_[seqpos]->rm_peptide_neighbor( NodeAP( nodes_[ seqpos + 1 ] ) );
           new_cuts.insert( seqpos );
           tr.Debug << "removing cycle by cutting at " << seqpos << std::endl;
         } else {
@@ -365,7 +368,7 @@ bool FoldTreeSketch::cuttable( utility::vector1< Size > const& cycle ) const {
   for( Size cycle_id = 1; cycle_id <= cycle.size(); ++cycle_id ){
     Size seqpos = cycle[cycle_id];
     Size next_seqpos = cycle[ ( cycle_id % cycle.size() )+1 ];
-    if( nodes_[ seqpos ]->has_peptide_neighbor( nodes_[next_seqpos].get() ) ){
+    if( nodes_[ seqpos ]->has_peptide_neighbor( NodeCAP( nodes_[next_seqpos] ) ) ){
       return true;
     }
   }
@@ -384,53 +387,61 @@ FoldTreeSketch::Node::Node( Size i ):
   parent_( NULL )
 {}
 
-void FoldTreeSketch::Node::add_peptide_neighbor( NodeAP n ){
+FoldTreeSketch::NodeOP FoldTreeSketch::Node::newNode( Size i ) {
+	NodeOP node( new Node(i) );
+	node->this_weak_ptr_ = NodeAP( node );
+	return node;
+}
+
+void FoldTreeSketch::Node::add_peptide_neighbor( NodeOP n ){
   assert( n );
-  assert( n != this );
+  assert( n.get() != this );
 
   if ( ( this->seqid() - n->seqid() ) == 1 ) {
-    if ( pep_prev_ &&
-         pep_prev_ != this ) {
+    if ( !pep_prev_.expired() && 
+         !utility::pointer::equal(pep_prev_, this) ) {
       throw EXCN_FTSketchGraph( this->seqid(), n->seqid(), "add_pep_neighbor",
                                 "Node already has a previous peptide member." );
     }
     pep_prev_ = n;
-    assert( !n->pep_next_ || n->pep_next_ == this );
-    n->pep_next_ = this;
+    assert( n->pep_next_.expired() || utility::pointer::equal(n->pep_next_, this) );
+    n->pep_next_ = this_weak_ptr_;
   } else if ( ( (int) this->seqid() - (int) n->seqid() ) == -1 ){
-    if( pep_next_ &&
-        pep_next_ != this ){
+    if( !pep_next_.expired() &&
+        !utility::pointer::equal(pep_next_, this) ) {
       throw EXCN_FTSketchGraph( this->seqid(), n->seqid(), "add_pep_neighbor",
                                "Node already has a next peptide member." );
     }
     pep_next_ = n;
-    assert( !n->pep_prev_ || n->pep_prev_ == this );
-    n->pep_prev_ = this;
+    assert( n->pep_prev_.expired() || n->pep_prev_.lock().get() == this );
+    n->pep_prev_ = this_weak_ptr_;
   } else {
     throw EXCN_FTSketchGraph( this->seqid(), n->seqid(), "add_pep_neighbor",
                               "Peptide connections exist only between sequence-adacjent nodes." );
   }
 }
 
-void FoldTreeSketch::Node::add_jump_neighbor( NodeAP n ){
+void FoldTreeSketch::Node::add_jump_neighbor( NodeAP _n ){
+	NodeOP n = _n.lock();
   assert( n );
-  assert( n != this );
+  assert( n.get() != this );
 
-  jump_neighbors_.insert( n.get() );
-  n->jump_neighbors_.insert( this );
+  jump_neighbors_.insert( _n );
+  n->jump_neighbors_.insert( this_weak_ptr_ );
 }
 
 bool FoldTreeSketch::Node::has_jump_neighbor( NodeCAP n ) const {
-  assert( n );
-  return jump_neighbors_.find( const_cast< Node* >( n.get() ) ) != jump_neighbors_.end();
+  assert( !n.expired() );
+  return jump_neighbors_.find( n ) != jump_neighbors_.end();
 }
 
-bool FoldTreeSketch::Node::has_peptide_neighbor( NodeCAP n ) const {
-  assert( n );
+bool FoldTreeSketch::Node::has_peptide_neighbor( NodeCAP _n ) const {
+  assert( !_n.expired() );
   // For some reason, raw pointer comparison doesn't work here. Use id instead.
 
-  bool is_next = ( pep_next_ && n->seqid() == pep_next_->seqid() );
-  bool is_prev = ( pep_prev_ && n->seqid() == pep_prev_->seqid() );
+  NodeCOP n = _n.lock();
+  bool is_next = ( !pep_next_.expired() && n && n->seqid() == pep_next_.lock()->seqid() ); // FIXME: lock() assert?
+  bool is_prev = ( !pep_prev_.expired() && n && n->seqid() == pep_prev_.lock()->seqid() ); // FIXME: lock() assert?
 
   return ( is_prev || is_next );
 }
@@ -439,24 +450,32 @@ bool FoldTreeSketch::Node::has_neighbor( NodeCAP n ) const {
   return has_peptide_neighbor( n ) || has_jump_neighbor( n );
 }
 
-void FoldTreeSketch::Node::rm_jump_neighbor( NodeAP n ){
+void FoldTreeSketch::Node::rm_jump_neighbor( NodeAP _n ){
+  NodeOP n = _n.lock();
   assert( n );
-  assert( n != this );
+  assert( n.get() != this );
 
-  jump_neighbors_.erase( n.get() );
-  n->jump_neighbors_.erase( this );
+  jump_neighbors_.erase( _n );
+  n->jump_neighbors_.erase( this_weak_ptr_ );
 }
 
-void FoldTreeSketch::Node::rm_peptide_neighbor( NodeAP n ){
-  assert( n );
-  assert( n != this );
+void FoldTreeSketch::Node::rm_peptide_neighbor( NodeAP _n ){
 
-  if( pep_next_ == n ){
-    pep_next_->pep_prev_ = NULL;
-    pep_next_ = NULL;
-  } else if ( pep_prev_ == n ){
-    pep_prev_->pep_next_ = NULL;
-    pep_next_ = NULL;
+  NodeOP n = _n.lock();
+  NodeOP pep_prev = pep_prev_.lock();
+  NodeOP pep_next = pep_next_.lock();
+
+  assert( n );
+  assert( n.get() != this );
+  assert( pep_prev );
+  assert( pep_next );
+
+  if( pep_next.get() == n.get() ){
+    pep_next->pep_prev_.reset();
+    pep_next_.reset();
+  } else if ( pep_prev.get() == n.get() ){
+    pep_prev->pep_next_.reset();
+    pep_next_.reset();
   } else {
     throw EXCN_FTSketchGraph( this->seqid(), n->seqid(), "rm_peptide_neighbor",
                               "Neighbor does not exist to be removed." );
@@ -468,14 +487,14 @@ Size FoldTreeSketch::Node::seqid() const {
 }
 
 bool FoldTreeSketch::Node::has_cycle( std::stack< NodeCAP >& path, NodeCAP caller ) const {
-  assert( caller );
+  assert( !caller.expired() );
 
   // Base case: if we've been visited before, there's a cycle.
-  if( parent_ != 0 ){
+  if( !parent_.expired() ){
     NodeCAP p = caller;
-    while( p != parent_ ){
+    while( !utility::pointer::equal(p, parent_) ){
       path.push( p );
-      p = p->parent_;
+      p = p.lock()->parent_; // FIXME: lock() assert?
     }
     return true;
   }
@@ -484,22 +503,22 @@ bool FoldTreeSketch::Node::has_cycle( std::stack< NodeCAP >& path, NodeCAP calle
   // now been visited by caller.
   parent_ = caller;
 
-  if( pep_next_ != caller &&
-      pep_next_ != 0 ) {
-    if( pep_next_->has_cycle( path, this ) )
-      return true;
-  }
-
-  if( pep_prev_ != caller &&
-      pep_prev_ != 0 ) {
-    if( pep_prev_->has_cycle( path, this ) ){
+  if( !pep_next_.expired() && !utility::pointer::equal(pep_next_, caller) ) {
+    if( pep_next_.lock()->has_cycle( path, this_weak_ptr_ ) ) { // FIXME: lock() assert?
       return true;
     }
   }
 
-  for( EdgeList::const_iterator it = jump_neighbors_.begin(); it != jump_neighbors_.end(); ++it ){
-    if( it->get() != caller.get() ){
-      if( (*it)->has_cycle(path, this) ){
+  if( !pep_prev_.expired() && !utility::pointer::equal(pep_prev_, caller) ) {
+    if( pep_prev_.lock()->has_cycle( path, this_weak_ptr_ ) ) { // FIXME: lock() assert?
+      return true;
+    }
+  }
+
+  NodeCOP caller_op = caller.lock();
+  BOOST_FOREACH( NodeCAP n, jump_neighbors_ ) {
+    if( !n.expired() && !utility::pointer::equal(n, caller) ){
+      if( n.lock()->has_cycle(path, this_weak_ptr_) ){ // FIXME: lock() assert?
         return true;
       }
     }
@@ -509,9 +528,9 @@ bool FoldTreeSketch::Node::has_cycle( std::stack< NodeCAP >& path, NodeCAP calle
 }
 
 void FoldTreeSketch::Node::collect_jumps( std::set< std::pair< Size, Size > >& jumps ) const {
-  for( EdgeList::const_iterator it = jump_neighbors_.begin(); it != jump_neighbors_.end(); ++it ){
+  BOOST_FOREACH( NodeCAP n, jump_neighbors_ ) {
     Size seqid1 = seqid();
-    Size seqid2 = (*it)->seqid();
+    Size seqid2 = n.lock()->seqid(); // FIXME: lock() assert?
 
     if( seqid1 > seqid2 ){
       jumps.insert( std::make_pair( seqid2, seqid1 ) );

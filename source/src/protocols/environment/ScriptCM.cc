@@ -60,7 +60,7 @@ ScriptCMCreator::keyname() const {
 
 protocols::moves::MoverOP
 ScriptCMCreator::create_mover() const {
-  return ClaimingMoverOP( new ScriptCM );
+  return new ScriptCM;
 }
 
 std::string
@@ -114,13 +114,13 @@ void ScriptCM::parse_my_tag( utility::tag::TagCOP tag,
       tr.Debug << " Interpreting tag with name " << subtag->getName() << " as existing mover with name '"
                << client_name << "'" << std::endl;
       if( mover_map.find( client_name ) != mover_map.end() ){
-        set_client( mover_map.find( client_name )->second.get() );
+        set_client( mover_map.find( client_name )->second );
       } else {
         throw utility::excn::EXCN_RosettaScriptsOption( "Undefined mover '"+client_name+"'." );
       }
     } else if( claims::EnvClaim::is_claim( subtag->getName() ) ) {
       tr.Debug << " Interpreting tag with name " << subtag->getName() << " as new claim." << std::endl;
-      add_claim( claims::EnvClaim::make_claim( subtag->getName(), this, subtag, datamap ) );
+      add_claim( claims::EnvClaim::make_claim( subtag->getName(), utility::pointer::static_pointer_cast< ClaimingMover >( get_self_ptr() ), subtag, datamap ) );
     } else {
       tr.Debug << " Interpreting tag with name " << subtag->getName() << " as a new mover." << std::endl;
 

@@ -307,7 +307,7 @@ int main( int argc, char * argv [] )
 		//go through all residues
 		for( core::Size j=1, m=pose.n_residue(); j<=m; j++)
 		{
-			core::conformation::ResidueCOP res( &pose.residue(j) );
+			core::conformation::ResidueCOP res( pose.residue(j).get_self_ptr() );
 			//go through all atoms
 			for( core::Size k=1, n=res->atoms().size(); k<=n; k++)
 			{

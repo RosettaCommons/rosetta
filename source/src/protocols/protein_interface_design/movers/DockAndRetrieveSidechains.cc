@@ -134,8 +134,8 @@ DockAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::Dat
 
 	if ( symmetry_ ) {
 		using namespace core::scoring::symmetry;
-		ScoreFunctionOP scorelo = core::scoring::symmetry::symmetrize_scorefunction( *data.get< ScoreFunction * >( "scorefxns", score_low ) );
-		ScoreFunctionOP scorehi = core::scoring::symmetry::symmetrize_scorefunction( *data.get< ScoreFunction * >( "scorefxns", score_high ));
+		ScoreFunctionOP scorelo = core::scoring::symmetry::symmetrize_scorefunction( *data.get_ptr< ScoreFunction >( "scorefxns", score_low ) );
+		ScoreFunctionOP scorehi = core::scoring::symmetry::symmetrize_scorefunction( *data.get_ptr< ScoreFunction >( "scorefxns", score_high ));
 
 		sym_docking_mover_ = new protocols::symmetric_docking::SymDockProtocol( !low_res_protocol_only_, local_refine, view, scorelo, scorehi );
 

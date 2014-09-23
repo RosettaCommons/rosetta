@@ -45,7 +45,18 @@
 namespace protocols {
 namespace match {
 
-class MatcherTask : public utility::pointer::ReferenceCount {
+class MatcherTask : public utility::pointer::ReferenceCount
+#ifdef PTR_MODERN
+	// New version
+	, public utility::pointer::enable_shared_from_this< MatcherTask >
+{
+#else
+{
+	// Old intrusive ref-counter version
+	inline MatcherTaskCOP shared_from_this() const { return MatcherTaskCOP( this ); }
+	inline MatcherTaskOP shared_from_this() { return MatcherTaskOP( this ); }
+#endif
+
 public:
 	typedef core::Real                               Real;
 	typedef core::Size                               Size;
@@ -60,6 +71,11 @@ public:
 
 	virtual ~MatcherTask();
 
+	/// self pointers
+	inline MatcherTaskCOP get_self_ptr() const { return shared_from_this(); }
+	inline MatcherTaskOP get_self_ptr() { return shared_from_this(); }
+	//inline MatcherTaskCAP get_self_weak_ptr() const { return MatcherTaskCAP( shared_from_this() ); }
+	//inline MatcherTaskAP get_self_weak_ptr() { return MatcherTaskAP( shared_from_this() ); }
 
 public:
 

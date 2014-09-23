@@ -412,7 +412,7 @@ void Frame::fragment_as_pose(
 	//my_static_pose_for_testing_=new pose::Pose;
 	pose.clear();
 	make_pose_from_sequence_( frag_list_[ frag_num ]->sequence(),
-		*restype_set,
+		*(restype_set.lock()),
 		pose );
 		//		core::import_pose::pose_from_pdb( *my_static_pose_for_testing_, pdbfile );
 	fragment( frag_num ).apply( pose, 1, length() );
@@ -458,7 +458,7 @@ void Frame::read( std::istream &in ) {
 
 void Frame::show_fragments( std::ostream& out ) const {
 	for ( Size nr = 1; nr <= nr_frags(); nr ++ ) {
-		runtime_assert( fragment_ptr( nr ) );
+		runtime_assert( fragment_ptr( nr ) != 0 );
 		//		std::cerr << "FRAME::show_fragments " << nr << " seqpos:" << start() << std::endl;
 		fragment( nr ).show( out, *this );
 		out << std::endl << std::endl;

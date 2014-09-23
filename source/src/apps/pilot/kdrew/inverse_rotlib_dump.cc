@@ -149,7 +149,7 @@ InverseRotlibDumpMover::apply(core::pose::Pose& pose)
 
 	// the hotspot residue is the final one in the file, i.e. primary_hs_pose.residue(primary_hs_pose.total_residue())
 
-	core::conformation::ResidueCOP primary_hs_residue  =  &primary_hs_pose.residue(primary_hs_pose.total_residue());
+	core::conformation::ResidueCOP primary_hs_residue  =  primary_hs_pose.residue(primary_hs_pose.total_residue()).get_self_ptr();
 
 	// structure sort of cobbled together from Florian's bb independent rotamers and invrottree dumping logic
 	utility::vector1< core::conformation::ResidueCOP > primary_rots = core::pack::rotamer_set::bb_independent_rotamers (&primary_hs_residue->type());

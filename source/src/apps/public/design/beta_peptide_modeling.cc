@@ -143,7 +143,7 @@ minimize_test()
 	std::string const & force_field_name = option[force_field];
 	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( force_field_name );
 
-	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+	ResidueTypeSetCOP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 	Pose pose;
 	std::string pdbname = option[in::file::native]();
 	pdbname.replace( pdbname.rfind(".pdb", pdbname.length() ), 4, "" );
@@ -213,8 +213,8 @@ minimize_test()
 	for ( Size i=1; i<= nres; ++i ) {
 		Residue const & i_rsd( pose.residue(i) );
 		for ( Size ii = 1; ii<= i_rsd.natoms(); ++ii ) {
-			cst_set->add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii),
-															   new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) ) );
+			core::scoring::func::FuncOP fx = new core::scoring::func::HarmonicFunc( 0.0, coord_sdev );
+			cst_set->add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii), fx ) );
 		}
 	}
 
@@ -228,7 +228,7 @@ minimize_test()
 		Residue const & i_rsd( pose.residue(i) );
 		for ( Size ii = 1; ii<= i_rsd.natoms(); ++ii ) {
 
-			kinematics::tree::AtomCOP current_atom ( & pose.atom_tree().atom( AtomID(ii,i) ) );
+			kinematics::tree::AtomCOP current_atom ( pose.atom_tree().atom( AtomID(ii,i) ).get_self_ptr() );
 			if ( current_atom->is_jump() ) continue;
 
 			kinematics::tree::AtomCOP stub_atom1( current_atom->input_stub_atom1() );
@@ -242,9 +242,9 @@ minimize_test()
 				( current_atom->xyz(), stub_atom1->xyz(),
 					stub_atom2->xyz(), stub_atom3->xyz() );
 
+			core::scoring::func::FuncOP fx = new core::scoring::func::HarmonicFunc( angle, dihedral_sdev );
 			cst_set->add_constraint( new DihedralConstraint( current_atom->id(), stub_atom1->id(),
-															 stub_atom2->id(), stub_atom3->id(),
-															 new core::scoring::func::HarmonicFunc( angle, dihedral_sdev ) ) );
+															 stub_atom2->id(), stub_atom3->id(), fx ) );
 
 		}
 
@@ -327,7 +327,7 @@ repack_test () {
 	std::string const & force_field_name = option[force_field];
 	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( force_field_name );
 
-	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+	ResidueTypeSetCOP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 	Pose pose;
 	std::string pdbname = option[in::file::native]();
 	pdbname.replace( pdbname.rfind(".pdb", pdbname.length() ), 4, "" );

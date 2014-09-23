@@ -70,6 +70,7 @@ public:
 		core_init_with_additional_options( "-in:add_orbitals -chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer protein_cutpoint_upper protein_cutpoint_lower VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm" );
 		if ( ! orbitals_residue_type_set_ ) {
 			orbitals_residue_type_set_ = new core::chemical::ResidueTypeSet( "ORBITALS_FA_STANDARD", basic::database::full_name("chemical/residue_type_sets/fa_standard/") );
+			orbitals_residue_type_set_->init();
 		}
 	}
 	void tearDown() {

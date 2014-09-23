@@ -301,7 +301,7 @@ ParetoOptMutationMover::apply( core::pose::Pose & pose )
 	//this is now but a hollow shell of a mover
 	design_opt::GreedyOptMutationMoverOP greedy_opt( new design_opt::GreedyOptMutationMover(
 				task_factory(), scorefxn(), relax_mover(), filters(), sample_types(), filter_deltas(), dump_pdb(), dump_table(),
-						parallel(), stop_before_condition(), skip_best_check(), rtmin(), shuffle_order(), stopping_condition() ) );
+						parallel(), stop_before_condition(), skip_best_check(), rtmin(), shuffle_order(), false /* diversify */, false /* incl_nonopt */, stopping_condition() ) );
 	greedy_opt->apply( pose );
 }
 

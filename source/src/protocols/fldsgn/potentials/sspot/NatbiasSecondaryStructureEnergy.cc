@@ -69,7 +69,7 @@ NatbiasSecondaryStructureEnergyCreator::score_types_for_method() const
 
 /// @brief default constructor
 NatbiasSecondaryStructureEnergy::NatbiasSecondaryStructureEnergy() :
-	parent( new NatbiasSecondaryStructureEnergyCreator ),
+	parent( core::scoring::methods::EnergyMethodCreatorOP( new NatbiasSecondaryStructureEnergyCreator ) ),
 	native_secstruct_( "" ),
 	use_sspot_( false ),
 	use_hhpot_( false ),

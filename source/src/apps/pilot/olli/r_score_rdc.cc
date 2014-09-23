@@ -216,7 +216,7 @@ void run() {
 	}
 
 	RDCToolMoverOP cst_tool =  new RDCToolMover;
-	protocols::jd2::JobDistributor::get_instance()->go( cst_tool, new jd2::NoOutputJobOutputter );
+	protocols::jd2::JobDistributor::get_instance()->go( cst_tool, jd2::JobOutputterOP( new jd2::NoOutputJobOutputter ) );
 
 
 	if ( option[ average ].user() ) {

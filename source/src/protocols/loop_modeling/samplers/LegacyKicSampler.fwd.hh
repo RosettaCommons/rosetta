@@ -18,9 +18,8 @@ namespace samplers {
 
 class LegacyKicSampler;
 
-using utility::pointer::owning_ptr;
-typedef owning_ptr<LegacyKicSampler> LegacyKicSamplerOP;
-typedef owning_ptr<LegacyKicSampler const> LegacyKicSamplerCOP;
+typedef utility::pointer::owning_ptr<LegacyKicSampler> LegacyKicSamplerOP;
+typedef utility::pointer::owning_ptr<LegacyKicSampler const> LegacyKicSamplerCOP;
 
 }
 }

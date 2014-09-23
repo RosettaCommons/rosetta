@@ -108,6 +108,7 @@ class Splice : public protocols::moves::Mover
 public:
 	typedef core::pose::Pose Pose;
 	typedef utility::vector1< ResidueBBDofs >::const_iterator dbase_const_iterator;
+	typedef utility::pointer::owning_ptr< basic::datacache::DataMapObj< bool > > DataccacheBoolDataOP;
 public:
 	Splice();
 	void apply( Pose & pose );
@@ -324,7 +325,7 @@ private:
 	utility::vector1< core::Size >::const_iterator current_dbase_entry_;
 
 	// dflt false; this is a weird construct to allow placing the variable on the basic::datacache::DataMap
-	utility::pointer::owning_ptr< basic::datacache::DataMapObj< bool > > end_dbase_subset_;
+	DataccacheBoolDataOP end_dbase_subset_;
 
 	// dflt NULL; a residue that serves as the root for a fold tree jump to the other chain.
 	// This residue is expected to be within the loop span, and allows the loop to be refined while keeping the rigid

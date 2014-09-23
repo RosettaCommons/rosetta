@@ -77,7 +77,7 @@ utility::vector1<ContactMap> processRegions(std::string region_def, core::pose::
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		using namespace utility::tag;
-		TagOP tag = TagOP( new Tag() );;
+		TagOP tag( new Tag() );
 		core::Size pos = region_def.find(',');
 		if (pos == std::string::npos){
 			current_region = region_def;
@@ -166,7 +166,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	// initialize variables
-	core::chemical::ResidueTypeSetCAP rsd_set =
+	core::chemical::ResidueTypeSetCOP rsd_set =
 			ChemicalManager::get_instance()->residue_type_set(
 					option[in::file::residue_type_set]());
 

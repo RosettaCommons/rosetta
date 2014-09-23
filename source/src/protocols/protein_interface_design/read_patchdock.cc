@@ -275,8 +275,9 @@ PatchdockReader::read_poses( core::pose::Pose & input_pose, core::pose::Pose & n
 			core::import_pose::centroid_pose_from_pdb( input_pose, input_tag );
 			core::import_pose::centroid_pose_from_pdb( native_pose,  native_tag );
 		} else {
-			core::chemical::ResidueTypeSetCAP rsd_set;
-			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+			core::chemical::ResidueTypeSetCOP rsd_set(
+				core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" )
+			);
 
 			core::import_pose::pose_from_pdb( input_pose, *rsd_set, input_tag );
 			core::import_pose::pose_from_pdb( native_pose, *rsd_set, native_tag );

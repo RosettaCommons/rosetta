@@ -51,7 +51,6 @@ protected: // Creation
 	/// @brief Default constructor
 	inline
 	Atom_() :
-		this_weak_ptr_( 0 ),
 		dof_refold_index_( 0 )
 	{
 		atoms_.reserve( 4 );
@@ -62,7 +61,6 @@ protected: // Creation
 	inline
 	Atom_( Atom_ const & atom ) :
 		Super( atom ),
-		this_weak_ptr_( 0 ),
 		position_( atom.position_ ),
 		dof_refold_index_( atom.dof_refold_index_ )
 	{
@@ -96,10 +94,6 @@ protected: // Assignment
 
 
 public: // Methods
-
-	virtual
-	void
-	set_weak_ptr_to_self(AtomAP weak_ptr	);
 
 	// assumes coords for our input stub are good
 	/// @brief update xyz position of this atom and its offspring atoms
@@ -364,10 +358,19 @@ public: // Properties
 
 	/// @brief Parent atom pointer
 	inline
+	AtomOP
+	parent()
+	{
+		return parent_.lock();
+	}
+
+
+	/// @brief Parent atom pointer
+	inline
 	AtomCOP
 	parent() const
 	{
-		return parent_();
+		return parent_.lock();
 	}
 
 
@@ -378,14 +381,6 @@ public: // Properties
 		parent_ = parent_in;
 	}
 
-
-	/// @brief Parent atom pointer
-	inline
-	AtomOP
-	parent()
-	{
-		return parent_();
-	}
 
 	/// @brief stub centerd at this atom
 	Stub
@@ -400,7 +395,8 @@ public: // Properties
 	AtomID const &
 	stub_atom1_id() const
 	{
-		return stub_atom1()->id();
+		AtomCOP op( stub_atom1() );
+		return op->id();
 	}
 
 	/// @brief stub atom2's id
@@ -408,7 +404,8 @@ public: // Properties
 	AtomID const &
 	stub_atom2_id() const
 	{
-		return stub_atom2()->id();
+		AtomCOP op( stub_atom2() );
+		return op->id();
 	}
 
 	/// @brief stub atom3's id
@@ -416,7 +413,8 @@ public: // Properties
 	AtomID const &
 	stub_atom3_id() const
 	{
-		return stub_atom3()->id();
+		AtomCOP op( stub_atom3() );
+		return op->id();
 	}
 
 	/// @brief the center of the input stub for refolding this atom
@@ -425,8 +423,7 @@ public: // Properties
 	AtomCOP
 	input_stub_atom0() const
 	{
-		assert( parent_ );
-		return parent_();
+		return parent();
 	}
 
 	/// @brief the first atom to construct the input stub for refolding this atom
@@ -435,8 +432,9 @@ public: // Properties
 	AtomCOP
 	input_stub_atom1() const
 	{
-		assert( parent_ );
-		return parent_->stub_atom1();
+		AtomCOP p = parent();
+		assert( p != 0 );
+		return p->stub_atom1();
 	}
 
 	/// @brief the second atom to construct the input stub for refolding this atom
@@ -445,8 +443,9 @@ public: // Properties
 	AtomCOP
 	input_stub_atom2() const
 	{
-		assert( parent_ );
-		return parent_->stub_atom2();
+		AtomCOP p = parent();
+		assert( p != 0 );
+		return p->stub_atom2();
 	}
 
 	/// @brief the third atom to construct the input stub for refolding this atom
@@ -455,13 +454,13 @@ public: // Properties
 	AtomCOP
 	input_stub_atom3() const
 	{
-		assert( parent_ );
-		AtomCOP sibling( previous_sibling() );
-		if ( is_jump() || sibling == 0 || sibling->is_jump() ||
-		 ( parent_->is_jump() && sibling->id() == parent_->stub_atom2_id() ) ) {
-			return parent_->stub_atom3();
+		AtomCOP parent_op = parent();
+		AtomCOP sibling_op( previous_sibling() );
+		if ( is_jump() || !sibling_op || sibling_op->is_jump() ||
+		 ( parent_op->is_jump() && sibling_op->id() == parent_op->stub_atom2_id() ) ) {
+			return parent_op->stub_atom3();
 		} else {
-			return sibling;
+			return sibling_op;
 		}
 	}
 
@@ -522,12 +521,6 @@ public: // Properties
 
 protected: // Methods
 
-	/// @brief Read access to the replacement "this" pointer
-	AtomAP this_weak_ptr() { return this_weak_ptr_; }
-
-	/// @brief Read access to the replacement "this" pointer
-	AtomCAP this_weak_ptr() const { return this_weak_ptr_; }
-
 	/// @brief when subtrees have changed their coordinates
 	void
 	update_child_torsions(
@@ -560,7 +553,7 @@ protected: // Methods
 	///
 	//virtual
 	void
-	get_path_from_root( utility::vector1< AtomCOP > & path ) const;
+	get_path_from_root( utility::vector1< AtomCAP > & path ) const;
 
 
 	///
@@ -611,10 +604,6 @@ protected:
 
 protected: // Fields -- should be private...
 // private: // Fields
-
-	/// @brief Each atom must hold a weak pointer to itself, and this weak pointer must
-	/// be given to the atom at its construction
-	AtomAP this_weak_ptr_;
 
 	/// @brief Atom ID
 	AtomID atom_id_;

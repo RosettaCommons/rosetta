@@ -154,7 +154,7 @@ LoopMover_Refine_KIC::set_default_settings(){
 }
 
 void LoopMover_Refine_KIC::set_task_factory( core::pack::task::TaskFactoryOP value ){ task_factory = value; }
-bool LoopMover_Refine_KIC::get_task_factory(){ return task_factory; }
+bool LoopMover_Refine_KIC::get_task_factory(){ return task_factory != 0; }
 
 
 /// detailed
@@ -179,6 +179,7 @@ void LoopMover_Refine_KIC::apply(
 	using namespace optimization;
 	using namespace scoring;
 	using namespace basic::options;
+	using namespace loop_closure::kinematic_closure;
 
 	// Set the native pose if provided
 	core::pose::Pose native_pose;
@@ -319,11 +320,11 @@ void LoopMover_Refine_KIC::apply(
 		task_factory = new TaskFactory;
 		// TaskOperations replace the following kind of code:
 		// base_packer_task->initialize_from_command_line().or_include_current( true );
-		task_factory->push_back( new operation::InitializeFromCommandline );
-		task_factory->push_back( new operation::IncludeCurrent );
+		task_factory->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
+		task_factory->push_back( operation::TaskOperationCOP( new operation::IncludeCurrent ) );
 		if ( option[ OptionKeys::packing::resfile ].user() ) {
 			// Note - resfile is obeyed, so use NATAA as default to maintain protocol behavior
-			task_factory->push_back( new core::pack::task::operation::ReadResfile );
+			task_factory->push_back( operation::TaskOperationCOP( new core::pack::task::operation::ReadResfile ) );
 			redesign_loop_ = true;
 		}
 	}
@@ -350,12 +351,14 @@ void LoopMover_Refine_KIC::apply(
 
 	// setup kinematic mover
 	//protocols::loops::kinematic_closure::KinematicMover myKinematicMover( init_temp );
-	loop_closure::kinematic_closure::KinematicMover myKinematicMover;
+	KinematicMoverOP myKinematicMover_op( new loop_closure::kinematic_closure::KinematicMover );
+	KinematicMoverCAP myKinematicMover_cap( myKinematicMover_op );
+	KinematicMover & myKinematicMover = *myKinematicMover_op;
 
 	// AS Oct 3, 2012: create appropriate perturber here, depending on input flags
 	if (option[ OptionKeys::loops::vicinity_sampling ]()) {
 		loop_closure::kinematic_closure::VicinitySamplingKinematicPerturberOP perturber =
-		new loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber( &myKinematicMover );
+		new loop_closure::kinematic_closure::VicinitySamplingKinematicPerturber( myKinematicMover_cap );
 		perturber->set_vary_ca_bond_angles(  ! option[OptionKeys::loops::fix_ca_bond_angles ]()  );
 		myKinematicMover.set_perturber( perturber );
 		perturber->set_degree_vicinity( option[ OptionKeys::loops::vicinity_degree ]() );
@@ -381,7 +384,7 @@ void LoopMover_Refine_KIC::apply(
 		//runtime_assert(torsion_bins.size() != loop_end - loop_begin + 1);
 
 		loop_closure::kinematic_closure::TorsionRestrictedKinematicPerturberOP perturber =
-			new loop_closure::kinematic_closure::TorsionRestrictedKinematicPerturber ( &myKinematicMover, torsion_bins );
+			new loop_closure::kinematic_closure::TorsionRestrictedKinematicPerturber ( myKinematicMover_cap, torsion_bins );
 		// to make the code cleaner this should really be a generic function, even though some classes may not use it
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
@@ -391,23 +394,23 @@ void LoopMover_Refine_KIC::apply(
 		// only be active during the first half of the full-atom stage, after that we follow the energy
 		// landscape / Monte Carlo
 		loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturberOP perturber =
-			new loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturber( &myKinematicMover );
+			new loop_closure::kinematic_closure::NeighborDependentTabooSamplingKinematicPerturber( myKinematicMover_cap );
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	} else if ( basic::options::option[ basic::options::OptionKeys::loops::taboo_in_fa ] ) { // TabooSampling (std rama) -- note that Taboo Sampling will only be active during the first half of the full-atom stage, after that we follow the energy landscape / Monte Carlo
-		loop_closure::kinematic_closure::TabooSamplingKinematicPerturberOP perturber = new loop_closure::kinematic_closure::TabooSamplingKinematicPerturber ( &myKinematicMover );
+		loop_closure::kinematic_closure::TabooSamplingKinematicPerturberOP perturber = new loop_closure::kinematic_closure::TabooSamplingKinematicPerturber ( myKinematicMover_cap );
 
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	} else if ( basic::options::option[ basic::options::OptionKeys::loops::kic_rama2b ]() ) { // neighbor-dependent phi/psi selection
 		loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturberOP
 		perturber =
-        new loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturber( &myKinematicMover );
+        new loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturber( myKinematicMover_cap );
 		perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 		myKinematicMover.set_perturber( perturber );
 	} else { // standard KIC
 		loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP perturber =
-		new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( &myKinematicMover );
+		new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( myKinematicMover_cap );
 		perturber->set_vary_ca_bond_angles(  ! option[OptionKeys::loops::fix_ca_bond_angles ]()  );
 		myKinematicMover.set_perturber( perturber );
 	}
@@ -543,12 +546,12 @@ void LoopMover_Refine_KIC::apply(
 			if ( basic::options::option[ basic::options::OptionKeys::loops::kic_rama2b ]() ) { // neighbor-dependent phi/psi selection
 				loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturberOP
 				perturber =
-				new loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturber( &myKinematicMover );
+				new loop_closure::kinematic_closure::NeighborDependentTorsionSamplingKinematicPerturber( myKinematicMover_cap );
 				perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 				myKinematicMover.set_perturber( perturber );
 			} else { // standard KIC
 				loop_closure::kinematic_closure::TorsionSamplingKinematicPerturberOP perturber =
-				new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( &myKinematicMover );
+				new loop_closure::kinematic_closure::TorsionSamplingKinematicPerturber( myKinematicMover_cap );
 				perturber->set_vary_ca_bond_angles(  ! option[OptionKeys::loops::fix_ca_bond_angles ]()  );
 				myKinematicMover.set_perturber( perturber );
 			}

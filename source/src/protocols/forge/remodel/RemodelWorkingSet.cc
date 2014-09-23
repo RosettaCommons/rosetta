@@ -341,6 +341,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	using protocols::forge::build::SegmentRebuild;
 	using protocols::forge::build::SegmentInsert;
 	using protocols::forge::build::SegmentInsertOP;
+	using protocols::forge::build::BuildInstructionOP;
 	typedef std::string String;
 	typedef core::Size Size;
 
@@ -350,6 +351,7 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	using core::fragment::OrderedFragSet;
 	using core::fragment::Frame;
 	using core::fragment::FrameOP;
+	using build::BuildInstructionOP;
 
 	SegmentInsertOP segIns;
 

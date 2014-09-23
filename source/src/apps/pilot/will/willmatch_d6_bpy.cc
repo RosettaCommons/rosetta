@@ -218,9 +218,11 @@ void refine(Pose & pose, ScoreFunctionOP sf, Size r1, Size r2, Size r3, Size r4 
 void run() {
   using namespace basic::options::OptionKeys;
   using namespace core::id;
+  using namespace core;
+  using core::scoring::func::FuncOP;
 
-  core::chemical::ResidueTypeSetCAP cen_residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );
-  core::chemical::ResidueTypeSetCAP  fa_residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+  core::chemical::ResidueTypeSetCOP cen_residue_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID ) );
+  core::chemical::ResidueTypeSetCOP  fa_residue_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
   Real tmpdis = option[willmatch::max_dis_metal]();
   Real const MXDSMTL = tmpdis*tmpdis;
   Real const MXAGMTL = option[willmatch::max_ang_metal]();

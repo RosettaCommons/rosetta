@@ -122,7 +122,7 @@ parse_resnum(
 	if( chain.size() == 1 ) { // PDB Number
 		TR.Trace << "Interpretting " << n << chain << " as a pdb number." << std::endl;
 		pose::PDBInfoCOP info = pose.pdb_info();
-		runtime_assert(info);
+		runtime_assert(info != 0);
 		return info->pdb2pose( chain[0], n );
 	}
 	else { // Rosetta Number

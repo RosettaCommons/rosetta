@@ -870,8 +870,8 @@ void run(std::string fname) {
   //const Real PI = numeric::NumericTraits<Real>::pi();  // unused ~Labonte
 
   // setup stuff
-  ResidueTypeSetCAP frs=ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-  ResidueTypeSetCAP crs=ChemicalManager::get_instance()->residue_type_set( CENTROID );
+  ResidueTypeSetCOP frs( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+  ResidueTypeSetCOP crs( ChemicalManager::get_instance()->residue_type_set( CENTROID ) );
   ScoreFunctionOP sfstd=get_score_function();
   ScoreFunctionOP sfcen=ScoreFunctionFactory::create_score_function("score3");
 

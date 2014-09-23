@@ -270,7 +270,7 @@ void CreateStartingStructureMover::apply( core::pose::Pose & pose ){
 		shear_mover->angle_max( 'L', 10.0 );
 
 
-		protocols::simple_moves::SmoothFragmentMoverOP smooth_frag_mover ( new protocols::simple_moves::SmoothFragmentMover( fragset3mer, movemap, new protocols::simple_moves::GunnCost ) );
+		protocols::simple_moves::SmoothFragmentMoverOP smooth_frag_mover ( new protocols::simple_moves::SmoothFragmentMover( fragset3mer, movemap, protocols::simple_moves::FragmentCostOP( new protocols::simple_moves::GunnCost ) ) );
 
 
 		protocols::moves::RandomMoverOP Moveset = new protocols::moves::RandomMover();

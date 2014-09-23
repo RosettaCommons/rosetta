@@ -152,7 +152,7 @@ void MinimizeBackbone::reorder_foldtree_around_mobile_regions(
 	core::kinematics::FoldTree const & fold_tree_copy = pose.fold_tree();
 	assert(fold_tree_copy.check_edges_for_atom_info());
 	minimize_backbone_tracer.Debug << "Initial foldtree " << fold_tree_copy << std::endl;
-	core::kinematics::FoldTreeOP better_ligand_jumps = create_fold_tree_with_ligand_jumps_from_attach_pts(&fold_tree_copy, interface, pose);
+	core::kinematics::FoldTreeOP better_ligand_jumps = create_fold_tree_with_ligand_jumps_from_attach_pts(fold_tree_copy, interface, pose);
 	assert(better_ligand_jumps->check_edges_for_atom_info());
 	minimize_backbone_tracer.Debug << "foldtree with ligand jumps from attach pts" << *better_ligand_jumps << std::endl;
 	core::kinematics::FoldTreeOP with_cutpoints = create_fold_tree_with_cutpoints(better_ligand_jumps, interface, pose);
@@ -281,7 +281,7 @@ utility::vector1< protocols::loops::Loop> MinimizeBackbone::add_cut_points(
 
 core::kinematics::FoldTreeOP
 MinimizeBackbone::create_fold_tree_with_ligand_jumps_from_attach_pts(
-		core::kinematics::FoldTreeCAP f_const,
+		core::kinematics::FoldTree const & f_const,
 		ligand_options::Interface const & interface,
 		core::pose::Pose & pose
 
@@ -292,8 +292,8 @@ MinimizeBackbone::create_fold_tree_with_ligand_jumps_from_attach_pts(
 			new core::kinematics::FoldTree();
 
 	for (
-			core::kinematics::FoldTree::const_iterator e = f_const->begin(),
-			edge_end = f_const->end();
+			core::kinematics::FoldTree::const_iterator e = f_const.begin(),
+			edge_end = f_const.end();
 			e != edge_end;
 			++e
 	) {
@@ -321,9 +321,9 @@ MinimizeBackbone::create_fold_tree_with_ligand_jumps_from_attach_pts(
 		utility_exit_with_message("Fold tree did not pass check!");
 	if (!new_fold_tree->check_edges_for_atom_info())
 		utility_exit_with_message("Fold tree has chemical edge problems!");
-	if (f_const->nres() != new_fold_tree->nres())
+	if (f_const.nres() != new_fold_tree->nres())
 		utility_exit_with_message("Number of residues changed?!");
-	if (f_const->num_jump() != new_fold_tree->num_jump())
+	if (f_const.num_jump() != new_fold_tree->num_jump())
 		utility_exit_with_message("Number of jumps changed?!");
 	if (!new_fold_tree->connected())
 		utility_exit_with_message("Fold tree not connected?!");

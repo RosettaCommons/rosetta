@@ -27,6 +27,7 @@
 
 // Platform Headers
 #include <utility/factory/WidgetRegistrator.hh>
+#include <utility/pointer/ReferenceCount.fwd.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers
@@ -64,9 +65,10 @@ public:
 
 	static RotamerRecoveryFactory * get_instance();
 
-	void factory_register( RRProtocolCreatorCOP creator );
-	void factory_register( RRComparerCreatorCOP creator );
-	void factory_register( RRReporterCreatorCOP creator );
+	void factory_register( utility::pointer::ReferenceCountOP creator );
+	//void factory_register( RRProtocolCreatorCOP creator );
+	//void factory_register( RRComparerCreatorCOP creator );
+	//void factory_register( RRReporterCreatorCOP creator );
 	RRProtocolOP get_rotamer_recovery_protocol( std::string const & type_name );
 	RRComparerOP get_rotamer_recovery_comparer( std::string const & type_name );
 	RRReporterOP get_rotamer_recovery_reporter( std::string const & type_name );

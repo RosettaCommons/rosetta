@@ -367,12 +367,13 @@ void FoldTreeHybridize::add_gap_constraints_to_pose(core::pose::Pose & pose, Loo
 		Size jatom = pose.residue_type(gap_stop ).atom_index("CA");
 
 		TR << "Add constraint to residue " << I(4,gap_start) << " and residue " << I(4,gap_stop) << std::endl;
-		pose.add_constraint(
-							new core::scoring::constraints::AtomPairConstraint(
-																				 core::id::AtomID(iatom,gap_start),
-																				 core::id::AtomID(jatom,gap_stop),
-																				 new core::scoring::constraints::BoundFunc( 0, gap_distance(gap_size), stdev, "gap" ) )
-							);
+		core::scoring::func::FuncOP fx = new core::scoring::constraints::BoundFunc( 0, gap_distance(gap_size), stdev, "gap" );
+		pose.add_constraint( core::scoring::constraints::ConstraintCOP(
+			new core::scoring::constraints::AtomPairConstraint(
+				core::id::AtomID(iatom,gap_start),
+				core::id::AtomID(jatom,gap_stop),
+				fx )
+		) );
 
 	}
 }
@@ -1211,7 +1212,7 @@ bool hConvergenceCheck::operator() ( const core::pose::Pose & pose ) {
     very_old_pose_ = pose;
     return true;
   }
-  runtime_assert( trials_ );
+  runtime_assert( trials_ != 0 );
   TR.Trace << "TrialCounter in hConvergenceCheck: " << trials_->num_accepts() << std::endl;
   if ( numeric::mod(trials_->num_accepts(),200) != 0 ) return true;
   if ( (Size) trials_->num_accepts() <= last_move_ ) return true;
@@ -1336,7 +1337,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	WeightedFragmentTrialMoverOP small_frag_gaps_mover( new WeightedFragmentTrialMover( frag_libs_small_, residue_weights_small_frags, jump_anchors, top_n_big_frag_) );
 	WeightedFragmentTrialMoverOP top_big_frag_mover( new WeightedFragmentTrialMover( frag_libs_big_, residue_weights, jump_anchors, top_n_big_frag_) );
 	WeightedFragmentTrialMoverOP small_frag_mover( new WeightedFragmentTrialMover( frag_libs_small_, residue_weights, jump_anchors, 0) );
-	WeightedFragmentSmoothTrialMoverOP small_frag_smooth_mover( new WeightedFragmentSmoothTrialMover( frag_libs_small_, residue_weights, jump_anchors, 0, new GunnCost) );
+	WeightedFragmentSmoothTrialMoverOP small_frag_smooth_mover( new WeightedFragmentSmoothTrialMover( frag_libs_small_, residue_weights, jump_anchors, 0, simple_moves::FragmentCostOP( new GunnCost ) ) );
 
 	// automatically re-weight the fragment insertions if desired
 	auto_frag_insertion_weight(frag_1mer_mover, small_frag_gaps_mover, top_big_frag_mover);
@@ -1659,7 +1660,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		simple_moves::PackRotamersMoverOP pack_rotamers;
 		pack_rotamers = new protocols::simple_moves::PackRotamersMover();
 		TaskFactoryOP main_task_factory = new TaskFactory;
-		main_task_factory->push_back( new operation::RestrictToRepacking );
+		main_task_factory->push_back( operation::TaskOperationCOP( new operation::RestrictToRepacking ) );
 		pack_rotamers->task_factory(main_task_factory);
 		pack_rotamers->score_function(score_cenrot);
 		pack_rotamers->apply(pose);

@@ -54,13 +54,13 @@ namespace claims {
 
 class BBClaim : public DofClaim {
 public:
-	BBClaim( TopologyClaimer* tc, Size pos, ClaimRight right = DofClaim::CAN_INIT ) :
+	BBClaim( TopologyClaimerAP tc, Size pos, ClaimRight right = DofClaim::CAN_INIT ) :
 		DofClaim( tc, right)
 	{
 		local_pos_ = std::make_pair( "DEFAULT", pos );
 	}
 
-	BBClaim( TopologyClaimer* tc, std::pair< std::string, core::Size > local_pos, ClaimRight right = DofClaim::CAN_INIT ) :
+	BBClaim( TopologyClaimerAP tc, std::pair< std::string, core::Size > local_pos, ClaimRight right = DofClaim::CAN_INIT ) :
 		DofClaim( tc, right),
 		local_pos_( local_pos )
 	{}
@@ -76,16 +76,19 @@ public:
 	}
 
 	core::Size global_position() const {
-		return owner()->broker().sequence_number_resolver().find_global_pose_number( local_pos_ );
+		TopologyClaimerCOP owner_op( owner() );
+		return owner_op->broker().sequence_number_resolver().find_global_pose_number( local_pos_ );
 	}
 
 	virtual void toggle( core::kinematics::MoveMap& mm, bool new_setting ) const {
-		core::Size pos = owner()->broker().sequence_number_resolver().find_global_pose_number( local_pos_ );
+		TopologyClaimerCOP owner_op( owner() );
+		core::Size pos = owner_op->broker().sequence_number_resolver().find_global_pose_number( local_pos_ );
 		mm.set_bb( pos, new_setting );
 	}
 
 	virtual void show(std::ostream& os) const {
-		os << "DofClaim-" << str_type() << " owned by a " << owner()->type() << " at ("
+		TopologyClaimerCOP owner_op( owner() );
+		os << "DofClaim-" << str_type() << " owned by a " << (owner_op ? owner_op->type() : "(Unknown)") << " at ("
 			 << local_pos_.first << ", " << local_pos_.second << ")";
 	}
 

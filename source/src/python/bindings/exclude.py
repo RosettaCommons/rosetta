@@ -56,7 +56,8 @@ BannedFiles = [
     # 'protocols/features/RotamerFeatures.hh',  # array with negative size
 
 
-    'utility/PyHelper.hh', 'utility/keys', 'utility/options', 'utility/options/keys', 'utility/pointer', #'utility/sql_database/sqlite3_interface.hh',
+    'utility/PyHelper.hh', 'utility/keys', 'utility/options', 'utility/options/keys',
+    'utility/pointer', 'utility/pointer/boost', 'utility/pointer/std', #'utility/pointer/refcount',
     'basic/options/keys', 'utility/exit.hh',
     'numeric/xyzVector.hh',
 

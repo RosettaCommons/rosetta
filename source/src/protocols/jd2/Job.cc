@@ -165,7 +165,6 @@ void Job::set_bad(bool value)  {
 }
 
 
-
 void Job::add_output_observer( JobOutputterObserverAP an_observer ) {
 	output_observers_.insert( an_observer );
 }
@@ -219,7 +218,7 @@ Job::show(
 ) const {
 	out
 		<< "Inner Job:";
-	if(inner_job_()){
+	if(inner_job_){
 		out << std::endl << *inner_job_ << std::endl;
 	} else {
 		out << " NULL" << std::endl;

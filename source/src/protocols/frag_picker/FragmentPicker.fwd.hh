@@ -25,6 +25,8 @@ class FragmentPicker;
 
 typedef utility::pointer::owning_ptr<FragmentPicker> FragmentPickerOP;
 typedef utility::pointer::owning_ptr<FragmentPicker const> FragmentPickerCOP;
+typedef utility::pointer::access_ptr<FragmentPicker> FragmentPickerAP;
+typedef utility::pointer::access_ptr<FragmentPicker const> FragmentPickerCAP;
 } // frag_picker
 } // protocols
 

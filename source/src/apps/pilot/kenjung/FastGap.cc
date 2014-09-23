@@ -73,7 +73,7 @@ std::map< std::string, core::pose::Pose > poses_from_cmd_line(utility::vector1< 
   using utility::file::file_exists;
   using core::import_pose::pose_from_pdb;
 
-  ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+  ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
   std::map< std::string, core::pose::Pose > poses;
   typedef utility::vector1< std::string >::const_iterator iter;
   for ( iter it = fn_list.begin(), end = fn_list.end(); it != end; ++it ) {

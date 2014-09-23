@@ -101,8 +101,9 @@ HolesEnergyRes::setup_for_derivatives(
 	using namespace datacache;
 	using namespace id;
 	using namespace numeric;
+	using basic::datacache::DataCache_CacheableData;
 	if( !pose.data().has( core::pose::datacache::CacheableDataType::HOLES_POSE_INFO ) ) {
-		pose.data().set( core::pose::datacache::CacheableDataType::HOLES_POSE_INFO, new CacheableAtomID_MapVector );
+		pose.data().set( core::pose::datacache::CacheableDataType::HOLES_POSE_INFO, DataCache_CacheableData::DataOP( new CacheableAtomID_MapVector ) );
 	}
 	CacheableDataOP dat( pose.data().get_ptr( core::pose::datacache::CacheableDataType::HOLES_POSE_INFO ) );
 	CacheableAtomID_MapVectorOP cachemap = static_cast< CacheableAtomID_MapVector * >(dat());

@@ -138,6 +138,7 @@ PlaceOnLoop::minimize_toward_stub( core::pose::Pose & pose ) const
 	loop_mover::refine::LoopMover_Refine_KIC refine( loops, hires_scorefxn_ );
 	using namespace core::pack::task;
 	using namespace protocols::toolbox::task_operations;
+	using core::pack::task::operation::TaskOperationCOP;
 	core::pack::task::TaskFactoryOP tf = new TaskFactory;
 	tf->push_back( new ProteinInterfaceDesignOperation );
 	tf->push_back( new RestrictChainToRepackingOperation( 1 ) );
@@ -245,7 +246,7 @@ PlaceOnLoop::position_stub( core::pose::Pose & ) const
 void
 PlaceOnLoop::set_kinematic_defaults()
 {
-	runtime_assert( kinematic_mover_ );
+	runtime_assert( kinematic_mover_ != 0 );
 	kinematic_mover_->set_idealize_loop_first( true );
 	kinematic_mover_->set_temperature( 0.6/*mc_kt*/ );
 	kinematic_mover_->set_sfxn(hires_scorefxn_);

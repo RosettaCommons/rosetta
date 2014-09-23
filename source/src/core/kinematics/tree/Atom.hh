@@ -54,7 +54,16 @@ namespace tree {
 
 /// Kinematics Atom interface class
 class Atom : public utility::pointer::ReferenceCount // So we can hold it in owning_ptr
+#ifdef PTR_MODERN
+	// New version
+	, public utility::pointer::enable_shared_from_this< Atom >
 {
+#else
+{
+	// Old intrusive ref-counter version
+	inline AtomCOP shared_from_this() const { return AtomCOP( this ); }
+	inline AtomOP shared_from_this() { return AtomOP( this ); }
+#endif
 
 public: // Types
 
@@ -99,6 +108,9 @@ protected: // Creation
 	inline
 	Atom( Atom const & /*atom*/ ) : // PBHACK!!!
 		ReferenceCount()
+#ifdef PTR_MODERN
+		, utility::pointer::enable_shared_from_this< Atom >()
+#endif
 	{}
 
 public: // Creation
@@ -108,6 +120,14 @@ public: // Creation
 	virtual
 	~Atom()
 	{}
+
+
+public: // self pointers
+
+	inline AtomCOP get_self_ptr() const { return shared_from_this(); }
+	inline AtomOP get_self_ptr() { return shared_from_this(); }
+	inline AtomCAP get_self_weak_ptr() const { return AtomCAP( shared_from_this() ); }
+	inline AtomAP get_self_weak_ptr() { return AtomAP( shared_from_this() ); }
 
 
 protected: // Assignment
@@ -123,15 +143,6 @@ protected: // Assignment
 
 
 public: // Methods
-
-	/// @brief Set the weak-pointer-to-self for this atom.  Must be called after the Atom is created and put inside of an owning_ptr.
-	/// Required for atoms to be able to hold pointers to their parents: parents must give child atoms weak pointers to themselves.
-	virtual
-	void
-	set_weak_ptr_to_self(
-		AtomAP weak_ptr
-	) = 0;
-
 
 	/// @brief Perform a depth-first traversal of the tree that would be effected by
 	/// a DOF change from this atom.  Stop at atoms that have already been traversed.
@@ -530,7 +541,7 @@ public: // Properties
 
 	virtual
 	void
-	get_path_from_root( utility::vector1< AtomCOP > & path ) const = 0;
+	get_path_from_root( utility::vector1< AtomCAP > & path ) const = 0;
 
 	virtual
 	bool

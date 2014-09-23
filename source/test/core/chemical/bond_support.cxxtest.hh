@@ -52,11 +52,11 @@ public:
 		using namespace core::chemical;
 		ChemicalManager * cm(ChemicalManager::get_instance());
 		std::string const tag(FA_STANDARD);
-		AtomTypeSetCAP atom_types = cm->atom_type_set(tag);
-		ElementSetCAP element_types = cm->element_set("default");
-		MMAtomTypeSetCAP mm_atom_types = cm->mm_atom_type_set(tag);
+		AtomTypeSetCOP atom_types = cm->atom_type_set(tag);
+		ElementSetCOP element_types = cm->element_set("default");
+		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
 
-		ResidueType res( atom_types, element_types, mm_atom_types, 0);
+		ResidueType res( atom_types, element_types, mm_atom_types, NULL );
 
 		TR << "Testing Biphenyl" << std::endl;
 		//Biphenyl - we want the ring bonds but not the connecting or hygrogen bond to be rings
@@ -146,13 +146,13 @@ public:
 		using namespace core::chemical;
 		ChemicalManager * cm(ChemicalManager::get_instance());
 		std::string const tag(FA_STANDARD);
-		AtomTypeSetCAP atom_types = cm->atom_type_set(tag);
-		ElementSetCAP elements = cm->element_set("default");
-		MMAtomTypeSetCAP mm_atom_types = cm->mm_atom_type_set(tag);
-		ResidueTypeSetCAP restypeset = cm->residue_type_set(tag);
+		AtomTypeSetCOP atom_types = cm->atom_type_set(tag);
+		ElementSetCOP elements = cm->element_set("default");
+		MMAtomTypeSetCOP mm_atom_types = cm->mm_atom_type_set(tag);
+		ResidueTypeSetCOP restypeset = cm->residue_type_set(tag);
 
 		ResidueTypeOP res( read_topology_file( "core/chemical/params/U26.params",
-				atom_types, elements, mm_atom_types, 0, restypeset ) );
+				atom_types, elements, mm_atom_types, core::chemical::orbitals::OrbitalTypeSetCAP(), restypeset ) );
 
 		TR << "Testing U26" << std::endl;
 

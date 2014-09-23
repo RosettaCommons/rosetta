@@ -83,8 +83,9 @@ basic::options::RealOptionKey const tetrahedral_angle_sumsq_cutoff( "tetrahedral
 class zinc2_homodimer_setup : public protocols::moves::Mover {
 public:
 
-  zinc2_homodimer_setup()
-    : msr_1_(5, new protocols::metal_interface::MetalSiteResidue), msr_2_(5, new protocols::metal_interface::MetalSiteResidue)
+  zinc2_homodimer_setup() : 
+    msr_1_(5, protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue )),
+    msr_2_(5, protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ))
   {
     core::import_pose::pose_from_pdb( match1_, basic::options::option[match1].value() );
     core::import_pose::pose_from_pdb( match2_, basic::options::option[match2].value() );

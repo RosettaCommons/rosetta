@@ -60,7 +60,7 @@ void TaskOperationLoader::load_data(
 			utility_exit_with_message("Duplicate definition of TaskOperation with name " + name);
 		}
 		TaskOperationOP new_t_o( TaskOperationFactory::get_instance()->newTaskOperation( type, data, tag ) );
-		runtime_assert( new_t_o );
+		runtime_assert( new_t_o != 0 );
 		data.add("task_operations", name, new_t_o );
 		TR << "Defined TaskOperation named \"" << name << "\" of type " << type << std::endl;
 	}

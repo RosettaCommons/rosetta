@@ -67,7 +67,7 @@ DirectReadoutEnergyCreator::score_types_for_method() const {
 
 /// @details  C-TOR
 DirectReadoutEnergy::DirectReadoutEnergy() :
-	parent( new DirectReadoutEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new DirectReadoutEnergyCreator ) ),
 	potential_( ScoringManager::get_instance()->get_DirectReadoutPotential() )
 {}
 

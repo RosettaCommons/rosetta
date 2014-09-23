@@ -35,7 +35,7 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-
+#include <boost/foreach.hpp>
 
 namespace protocols {
 namespace forge {
@@ -220,7 +220,8 @@ void BuildInstruction::reset_accounting() {
 ///  prior to running modify_impl().
 bool BuildInstruction::dependencies_satisfied() const {
 	for ( BuildInstructionCAPs::const_iterator i = dependencies_.begin(), ie = dependencies_.end(); i != ie; ++i ) {
-		if ( !(**i).modify_was_successful() ) { // some instruction has not completed yet
+		protocols::forge::build::BuildInstructionCOP instruction(*i);
+		if ( !instruction->modify_was_successful() ) { // some instruction has not completed yet
 			return false;
 		}
 	}
@@ -235,14 +236,20 @@ bool BuildInstruction::dependencies_satisfied() const {
 ///  instructions in the dependency list must have completed modify() first
 void BuildInstruction::add_dependency_to( BuildInstructionCAP i ) {
 	if ( !dependent_on( i ) ) {
-		dependencies_.push_back( i.get() );
+		dependencies_.push_back( i );
 	}
 }
 
 
 /// @brief is this instruction dependent upon the given instruction?
 bool BuildInstruction::dependent_on( BuildInstructionCAP i ) const {
-	return std::find( dependencies_.begin(), dependencies_.end(), i ) != dependencies_.end();
+	// Doesn't work with weak_ptr:
+	// return std::find( dependencies_.begin(), dependencies_.end(), i ) != dependencies_.end();
+	BOOST_FOREACH( BuildInstructionCAP d, dependencies_ ) {
+		if( utility::pointer::equal(d, i) )
+			return true;
+	}
+	return false;
 }
 
 
@@ -256,7 +263,13 @@ bool BuildInstruction::compatible_with( BuildInstruction const & rval ) const {
 	// First check residue type sets are equivalent via their names.
 	// This check should be performed unless mixing-matching of different
 	// residue type sets within a Conformation is implemented.
-	if ( rts_->name() != rval.rts_->name() ) {
+
+	// Compare by name:
+	// if ( rts_.lock()->name() != rval.rts_.lock()->name() )
+
+	// Compare pointers (faster):
+	if ( !utility::pointer::equal(rts_, rval.rts_ ) )
+	{
 		TR.Error << "ResidueTypeSet incompatibility!" << std::endl;
 		return false;
 	}

@@ -35,7 +35,7 @@
 #include <test/UTracer.hh>
 
 
-#define TEST_MOVER(mover, fileIn, fileOut) one_mover_test(__FILE__, __LINE__, new mover(), fileIn, fileOut);
+#define TEST_MOVER(mover, fileIn, fileOut) one_mover_test(__FILE__, __LINE__, protocols::moves::MoverOP( new mover() ), fileIn, fileOut);
 #define TEST_MOVER_OP(mover_op, fileIn, fileOut) one_mover_test(__FILE__, __LINE__, mover, fileIn, fileOut);
 
 namespace test {

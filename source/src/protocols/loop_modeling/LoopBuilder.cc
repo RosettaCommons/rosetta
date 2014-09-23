@@ -65,6 +65,7 @@ string LoopBuilderCreator::keyname() const { // {{{1
 // }}}1
 
 LoopBuilder::LoopBuilder() { // {{{1
+	using namespace protocols::kinematic_closure;
 	using protocols::kinematic_closure::KicMover;
 	using protocols::kinematic_closure::perturbers::IdealizeNonPhiPsi;
 	using protocols::kinematic_closure::perturbers::RamaPerturber;
@@ -103,6 +104,7 @@ void LoopBuilder::use_fragments( // {{{1
 	using protocols::kinematic_closure::perturbers::IdealizeNonPhiPsi;
 	using protocols::kinematic_closure::perturbers::RamaPerturber;
 	using protocols::kinematic_closure::perturbers::FragmentPerturber;
+	using protocols::kinematic_closure::perturbers::PerturberOP;
 
 	// Note that a RamaPerturber is added just before the FragmentPerturber.
 	// This is very important for benchmark runs seeking to recover the input
@@ -118,9 +120,9 @@ void LoopBuilder::use_fragments( // {{{1
 	// in the production runs as in the benchmark runs.
 
 	kic_mover_->clear_perturbers();
-	kic_mover_->add_perturber(new IdealizeNonPhiPsi);
-	kic_mover_->add_perturber(new RamaPerturber);
-	kic_mover_->add_perturber(new FragmentPerturber(frag_libs));
+	kic_mover_->add_perturber(PerturberOP( new IdealizeNonPhiPsi ));
+	kic_mover_->add_perturber(PerturberOP( new RamaPerturber ));
+	kic_mover_->add_perturber(PerturberOP( new FragmentPerturber(frag_libs) ));
 }
 
 void LoopBuilder::parse_my_tag( // {{{1

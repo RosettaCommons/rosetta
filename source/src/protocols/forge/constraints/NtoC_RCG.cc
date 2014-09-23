@@ -137,7 +137,7 @@ NtoC_RCG::generate_remodel_constraints( Pose const & pose )
 	Real lb( 0.0 );
 	Real ub( dist_ );
 	Real sd( 1.0 );
-	core::scoring::func::ScalarWeightedFuncOP cstfunc = new core::scoring::func::ScalarWeightedFunc( coef_, new BoundFunc( lb, ub, sd, tag ) );
+	core::scoring::func::ScalarWeightedFuncOP cstfunc = new core::scoring::func::ScalarWeightedFunc( coef_, core::scoring::func::FuncOP( new BoundFunc( lb, ub, sd, tag ) ) );
 
 	Size last_residue = protocols::toolbox::match_enzdes_util::get_last_protein_residue( pose );
 	Size first_residue = protocols::toolbox::match_enzdes_util::get_first_protein_residue( pose );

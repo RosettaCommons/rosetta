@@ -323,7 +323,7 @@ CompoundFilter::parse_my_tag(
 			filter_pair.first = find_filter->second->clone();
 		else {
 			TR<<"***WARNING WARNING! Filter defined for CompoundStatement not found in filter_list!!!! Defaulting to truefilter***"<<std::endl;
-			filter_pair.first = new filters::TrueFilter;
+			filter_pair.first = FilterOP( new filters::TrueFilter );
 		}
 		runtime_assert( filter_found );
 		compound_statement_.push_back( filter_pair );

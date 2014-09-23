@@ -37,7 +37,7 @@ namespace scoring {
 namespace disulfides {
 
 DisulfResNeighbIterator::DisulfResNeighbIterator(
-		FullatomDisulfideEnergyContainerAP owner,
+		FullatomDisulfideEnergyContainer * owner,
 		Size focused_residue,
 		Size disulfide_index
 		) :
@@ -47,7 +47,7 @@ DisulfResNeighbIterator::DisulfResNeighbIterator(
 {}
 
 DisulfResNeighbIterator::DisulfResNeighbIterator(
-		FullatomDisulfideEnergyContainerAP owner
+		FullatomDisulfideEnergyContainer * owner
 		) :
 	owner_( owner ),
 	focused_residue_( FullatomDisulfideEnergyContainer::NO_DISULFIDE ),
@@ -177,7 +177,7 @@ DisulfResNeighbIterator::energy_computed() const
 ////////////////////////////////////////////////////////////////////////
 
 DisulfResNeighbConstIterator::DisulfResNeighbConstIterator(
-		FullatomDisulfideEnergyContainerCAP owner,
+		FullatomDisulfideEnergyContainer const * owner,
 		Size focused_residue,
 		Size disulfide_index
 		) :
@@ -187,7 +187,7 @@ DisulfResNeighbConstIterator::DisulfResNeighbConstIterator(
 {}
 
 DisulfResNeighbConstIterator::DisulfResNeighbConstIterator(
-		FullatomDisulfideEnergyContainerCAP owner
+		FullatomDisulfideEnergyContainer const * owner
 		) :
 	owner_( owner ),
 	focused_residue_( FullatomDisulfideEnergyContainer::NO_DISULFIDE ),
@@ -589,8 +589,8 @@ FullatomDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 
 			resid_2_disulfide_index_[ ii ] = count_disulfides;
 			resid_2_disulfide_index_[ other_res ] = count_disulfides;
-			disulfide_residue_types_[ ii ] = & ( pose.residue_type( ii ));
-			disulfide_residue_types_[ other_res ] = chemical::ResidueTypeCOP( & ( pose.residue_type( other_res )));
+			disulfide_residue_types_[ ii ] = pose.residue_type( ii ).get_self_ptr();
+			disulfide_residue_types_[ other_res ] = pose.residue_type( other_res ).get_self_ptr();
 			disulfide_partners_.push_back( std::pair< Size, Size >( ii, other_res ) );
 			disulfide_atom_indices_.push_back( std::pair< DisulfideAtomIndices, DisulfideAtomIndices > (
 						DisulfideAtomIndices( pose.residue(ii ) ), DisulfideAtomIndices( pose.residue( other_res ) ) ));
@@ -617,7 +617,7 @@ FullatomDisulfideEnergyContainer::disulfides_changed( pose::Pose const & pose )
 	for ( Size ii = 1; ii <= total_residue; ++ii ) {
 		if ( resid_2_disulfide_index_[ ii ] != NO_DISULFIDE ) {
 			if ( pose.residue( ii ).aa() != chemical::aa_cys ||
-					disulfide_residue_types_[ ii ]() != & (pose.residue_type( ii )) ||
+					disulfide_residue_types_[ ii ].get() != & (pose.residue_type( ii )) ||
 					/// subsumed by residue type check ! pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) ||
 					! pose.residue_type( ii ).has( "SG" ) || //no longer full atom
 					pose.residue( ii ).connect_map(

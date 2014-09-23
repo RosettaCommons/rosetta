@@ -176,13 +176,13 @@ TheozymeInvrotTree::generate_targets_and_inverse_rotamers()
 
 	utility::vector1< core::conformation::ResidueCOP > all_rots;
 	//amino acid target?
-	if( ligres->is_protein() ) all_rots = core::pack::rotamer_set::bb_independent_rotamers( &(ligres->type()) );
+	if( ligres->is_protein() ) all_rots = core::pack::rotamer_set::bb_independent_rotamers( ligres->type().get_self_ptr() );
 
 	//ligand?
 	else if( ligres->is_ligand() ){
 		//for now
 		//all_rots.push_back( ligres );
-		all_rots = core::pack::rotamer_set::bb_independent_rotamers( &(ligres->type()) );
+		all_rots = core::pack::rotamer_set::bb_independent_rotamers( ligres->type().get_self_ptr() );
 	}
 
 	else{

@@ -54,7 +54,7 @@ CenRotEnvEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 CenRotEnvEnergy::CenRotEnvEnergy() :
-	parent( new CenRotEnvEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new CenRotEnvEnergyCreator ) ),
 	potential_( ScoringManager::get_instance()->get_CenRotEnvPairPotential() ) {}
 
 

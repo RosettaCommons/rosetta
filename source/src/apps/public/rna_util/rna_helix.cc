@@ -114,7 +114,7 @@ rna_build_helix_test(){
 	SilentFileData silent_file_data;
 
 	bool const is_use_phenix_geo = option[ basic::options::OptionKeys::rna::corrected_geo] ();
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 
 	pose::Pose pose;

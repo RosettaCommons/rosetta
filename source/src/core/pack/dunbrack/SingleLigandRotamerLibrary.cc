@@ -102,7 +102,7 @@ SingleLigandRotamerLibrary::SingleLigandRotamerLibrary(
 void
 SingleLigandRotamerLibrary::init_from_file(
 	std::string const & filename,
-	chemical::ResidueTypeCOP restype
+	chemical::ResidueType const & restype
 )
 {
 	//std::cout << "Loading from: " << filename << "\n";
@@ -121,8 +121,8 @@ SingleLigandRotamerLibrary::init_from_file(
 	// left with their default values, leading to really weird bugs.
 	// We can do a limited building from ideal coordinates, for hydrogens and virtual atoms.
 	core::Size set_xyzs = 0;
-	utility::vector1< bool > missing(restype->natoms(),true);
-	utility::vector1< bool > missed(restype->natoms(),false); // Don't reset - only notify once, instead of for each library entry
+	utility::vector1< bool > missing(restype.natoms(),true);
+	utility::vector1< bool > missed(restype.natoms(),false); // Don't reset - only notify once, instead of for each library entry
 	while( std::getline( (std::istream&)data, line) ) {
 		if( utility::startswith(line, "ATOM  ") || utility::startswith(line, "HETATM") ) {
 			if( line.length() < 54 ) {
@@ -136,8 +136,8 @@ SingleLigandRotamerLibrary::init_from_file(
 			z = std::atof( line.substr(46,8).c_str() );
 			//std::cout << x << " " << y << " " << z << "\n";
 			if( rsd.get() == NULL ) {
-				rsd = conformation::ResidueFactory::create_residue( *restype );
-				missing.clear(); missing.resize( restype->natoms(), true );
+				rsd = conformation::ResidueFactory::create_residue( restype );
+				missing.clear(); missing.resize( restype.natoms(), true );
 				set_xyzs = 0;
 			}
 			if( rsd->has( atom_name ) ) {
@@ -145,7 +145,7 @@ SingleLigandRotamerLibrary::init_from_file(
 				missing[ rsd->atom_index(atom_name) ] = false;
 				set_xyzs += 1;
 			} else if( skipped_atom_names.count(atom_name) == 0 ) {
-				TR.Warning << "Skipping unrecognized atom '" << atom_name << "' in library for " << restype->name() << std::endl;
+				TR.Warning << "Skipping unrecognized atom '" << atom_name << "' in library for " << restype.name() << std::endl;
 				skipped_atom_names.insert(atom_name);
 			}
 		} else if( utility::startswith(line, "REF_EN") ) {
@@ -154,7 +154,7 @@ SingleLigandRotamerLibrary::init_from_file(
 			}
 			found_ref_energy = true;
 			ref_energy_ = std::atof( line.substr(6).c_str() );
-			TR << "Reference energy for " << restype->name() << " is " << ref_energy_ << std::endl;
+			TR << "Reference energy for " << restype.name() << " is " << ref_energy_ << std::endl;
 		} else { // e.g. TER lines
 			if( rsd.get() != NULL ) {
 				if( set_xyzs < rsd->natoms() ) { fill_missing_atoms( missing, rsd, missed ); }
@@ -176,7 +176,7 @@ SingleLigandRotamerLibrary::init_from_file(
 		//for(Size j = 1, j_end = rotamers_[i]->nchi(); j <= j_end; ++j) std::cout << rotamers_[i]->chi(j) << std::endl;
 	}
 
-	TR << "Read in " << rotamers_.size() << " rotamers for " << restype->name() << "!" << std::endl;
+	TR << "Read in " << rotamers_.size() << " rotamers for " << restype.name() << "!" << std::endl;
 	data.close();
 
 	// Breaking the ligand into rigid fragments that would supply (putative) pharamacophores
@@ -340,7 +340,7 @@ SingleLigandRotamerLibrary::fill_rotamer_vector(
 				task.residue_task( existing_residue.seqpos() ).extrachi_sample_level(
 					buried,
 					concrete_residue->proton_chi_2_chi( ii ),
-					concrete_residue ),
+					*concrete_residue ),
 				concrete_residue,
 				ii, proton_chi_chisets);
 			// In a pathological case, I've seen 30 rotamers * 20,000 proton chi variations = 600,000 rotamers = out of memory

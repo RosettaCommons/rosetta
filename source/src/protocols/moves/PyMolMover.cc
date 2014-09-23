@@ -14,6 +14,20 @@
 #ifndef INCLUDED_protocols_moves_PyMolMover_CC
 #define INCLUDED_protocols_moves_PyMolMover_CC
 
+/// Workaround for:
+/// external/boost_1_55_0/boost/bind/mem_fn_template.hpp:156:30: error: no matching function for call to 'get_pointer'
+///   BOOST_MEM_FN_RETURN (get_pointer(u)->*f_)(b1);
+/// Get pointer of owning_ptr: needed by boost::mem_fn
+#ifdef CXX11
+#ifdef __clang__
+#include <memory>
+namespace boost {
+	template<typename T>
+	inline T* get_pointer(const std::shared_ptr<T>& p) { return p.get(); }
+}
+#endif
+#endif
+
 // protocol headers
 #include <protocols/moves/PyMolMover.hh>
 #include <protocols/moves/PyMolMoverCreator.hh>

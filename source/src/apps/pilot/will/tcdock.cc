@@ -63,6 +63,7 @@
 	#include <core/scoring/methods/RG_Energy_Fast.hh>
 	#include <numeric/xyzTransform.hh>
 	#include <basic/database/open.hh>
+	#include <protocols/sic_dock/xyzStripeHashPose.hh>
 
 	#ifdef USE_OPENMP
 	#include <omp.h>

@@ -58,7 +58,7 @@ SurfaceEnergyCreator::score_types_for_method() const {
 
 
 SurfaceEnergy::SurfaceEnergy() :
-	parent( new SurfaceEnergyCreator )
+	parent( scoring::methods::EnergyMethodCreatorOP( new SurfaceEnergyCreator ) )
 {}
 
 

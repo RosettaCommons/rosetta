@@ -253,7 +253,7 @@ FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ );
 			// resids refer to those in the loop-removed pose
 			for ( std::vector< RBSegmentMoverOP >::iterator it_mover = HelixMoveSet_.begin(),
 							it_mover_end = HelixMoveSet_.end(); it_mover != it_mover_end; ++it_mover ) {
-				RBSegmentMoverOP moverToAdd = dynamic_cast< RBSegmentMover * >((*it_mover)()->clone()());  // make a deep copy of the mover
+				RBSegmentMoverOP moverToAdd = utility::pointer::dynamic_pointer_cast< RBSegmentMover >((*it_mover)->clone());  // make a deep copy of the mover
 				moverToAdd->setResidueRange( *it_seg );
 				if ( it_seg->initialized() ) moverToAdd->set_movement(*it_seg);  // override default movement params
 				SegmentRandomizeMover->add_mover( moverToAdd );
@@ -267,7 +267,7 @@ FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ );
 			// resids refer to those in the loop-removed pose
 			for ( std::vector< RBSegmentMoverOP >::iterator it_mover = StrandMoveSet_.begin(),
 							it_mover_end = StrandMoveSet_.end(); it_mover != it_mover_end; ++it_mover ) {
-				RBSegmentMoverOP moverToAdd = dynamic_cast< RBSegmentMover * >((*it_mover)()->clone()()); // make a deep copy of the mover
+				RBSegmentMoverOP moverToAdd = utility::pointer::dynamic_pointer_cast< RBSegmentMover >((*it_mover)->clone()); // make a deep copy of the mover
 				if ( it_seg->initialized() ) moverToAdd->set_movement(*it_seg);  // override default movement params
 				moverToAdd->setResidueRange( *it_seg );
 				SegmentRandomizeMover->add_mover( moverToAdd );
@@ -282,7 +282,7 @@ FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ );
 			// resids refer to those in the loop-removed pose
 			for ( std::vector< RBSegmentMoverOP >::iterator it_mover = GenericRBMoveSet_.begin(),
 							it_mover_end = GenericRBMoveSet_.end(); it_mover != it_mover_end; ++it_mover ) {
-				RBSegmentMoverOP moverToAdd = dynamic_cast< RBSegmentMover * >((*it_mover)()->clone()());  // make a deep copy of the mover
+				RBSegmentMoverOP moverToAdd = utility::pointer::dynamic_pointer_cast< RBSegmentMover >((*it_mover)->clone());  // make a deep copy of the mover
 				moverToAdd->setResidueRange( *it_seg );
 				if ( it_seg->initialized() ) moverToAdd->set_movement(*it_seg);  // override default movement params
 				SegmentRandomizeMover->add_mover( moverToAdd );
@@ -299,7 +299,7 @@ FragInsertAndAlignMover(rbsegs_remap_, pose_noloops, randomness_ );
 			// resids refer to those in the loop-removed pose
 			for ( std::vector< RBSegmentMoverOP >::iterator it_mover = CompositeSegmentMoveSet_.begin(),
 							it_mover_end = CompositeSegmentMoveSet_.end(); it_mover != it_mover_end; ++it_mover ) {
-				RBSegmentMoverOP moverToAdd = dynamic_cast< RBSegmentMover * >((*it_mover)()->clone()()); // make a deep copy of the mover
+				RBSegmentMoverOP moverToAdd = utility::pointer::dynamic_pointer_cast< RBSegmentMover >((*it_mover)->clone()); // make a deep copy of the mover
 				moverToAdd->setResidueRange( *it_seg );
 				if ( it_seg->initialized() ) moverToAdd->set_movement(*it_seg);  // override default movement params
 				SegmentRandomizeMover->add_mover( moverToAdd );

@@ -245,8 +245,8 @@ void SetSecStructEnergies::apply( Pose & pose )
 
 	if( loaded_ ) return;
 
-	runtime_assert( blueprint_ );
-	runtime_assert( sfx_ );
+	runtime_assert( blueprint_ != 0 );
+	runtime_assert( sfx_ != 0 );
 
 	// assign secondary structure
 	if( !ss_from_blueprint_ ){

@@ -584,6 +584,12 @@ HBondSet::hbond( Size const number ) const
 	return *(hbonds_[ number ]);
 }
 
+HBondCOP
+HBondSet::hbond_cop( Size const number ) const
+{
+	return hbonds_[ number ];
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 /// \brief  Add a new hbond to the list
 /// updates the "hbchk" array as necessary
@@ -724,10 +730,10 @@ HBondSet::residue_hbonds(const Size seqpos, bool include_only_allowed /* true */
 	utility::vector1< HBondCOP > bonds;
 
 	for ( Size i=1; i<= nhbonds(); ++i ) {
-		HBond const & bond(hbond(i));
-		if ((bond.don_res() == seqpos || bond.acc_res() == seqpos)
+		HBondCOP bond( hbond_cop(i) );
+		if ((bond->don_res() == seqpos || bond->acc_res() == seqpos)
 		&& ((include_only_allowed && allow_hbond(*bonds[i])) || !include_only_allowed) ){
-			bonds.push_back( &bond );
+			bonds.push_back( bond );
 		}
 	}
 	return bonds;
@@ -782,9 +788,9 @@ HBondSet::setup_atom_map() const // lazy updating
 	if ( atom_map_init_ ) return;
 	atom_map_init_ = true;
 	for ( Size i=1; i<= hbonds_.size(); ++i ) {
-		HBond const & hb( hbond(i) );
-		AtomID const don_atom( hb.don_hatm(), hb.don_res() );
-		AtomID const acc_atom( hb.acc_atm() , hb.acc_res() );
+		HBondCOP hb( hbond_cop(i) );
+		AtomID const don_atom( hb->don_hatm(), hb->don_res() );
+		AtomID const acc_atom( hb->acc_atm() , hb->acc_res() );
 		for ( Size r=1; r<= 2; ++r ) {
 			AtomID const & atom( r == 1 ? don_atom : acc_atom );
 			HBondAtomMap::iterator iter( atom_map_.find( atom ) );
@@ -793,7 +799,7 @@ HBondSet::setup_atom_map() const // lazy updating
 					( std::make_pair( atom, utility::vector1< HBondCOP >() ));
 				iter = atom_map_.find( atom );
 			} // atom not already present
-			iter->second.push_back( &hb );
+			iter->second.push_back( hb );
 		} // repeat for donor and acceptor
 	} // i=1.nhbonds
 }

@@ -123,8 +123,9 @@ void FragmentPicker::quota_protocol() {
 	const bool skip_merge = (candidates_sinks_.size() == 1) ? true : false;
 	for (Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize) { // Loop over various sizes of fragments
 		Size fragment_size = frag_sizes_[iFragSize];
-		quota::QuotaCollectorOP c = (skip_merge) ? dynamic_cast<quota::QuotaCollector*> (candidates_sinks_[1][fragment_size]()) :
-				dynamic_cast<quota::QuotaCollector*> (candidates_sink_[fragment_size]()); // merged storage
+		quota::QuotaCollectorOP c = (skip_merge) ? 
+			utility::pointer::dynamic_pointer_cast<quota::QuotaCollector> (candidates_sinks_[1][fragment_size]) :
+			utility::pointer::dynamic_pointer_cast<quota::QuotaCollector> (candidates_sink_[fragment_size]); // merged storage
 		if (c == 0)
 			utility_exit_with_message("Cant' cast candidates' collector to QuotaCollector. Is quota set up correctly?");
 		log_25_.setup_summary(*c);
@@ -1526,7 +1527,7 @@ void FragmentPicker::parse_command_line() {
 	if (option[frags::scoring::config].user()) {
 		// todo:  the create scores method should be improved so the score files aren't read more than once -dk
 		for (Size i = 1; i <= scores_.size(); ++i)
-			scores_[i]->create_scores(option[frags::scoring::config](), this);
+			scores_[i]->create_scores(option[frags::scoring::config](), get_self_ptr());
 	}
 
 	// -------- how many fragments and candidates
@@ -1547,7 +1548,7 @@ void FragmentPicker::parse_command_line() {
 	FragmentScoreManagerOP selection_scoring;
 	if (option[frags::picking::selecting_scorefxn].user()) {
 		selection_scoring  = new FragmentScoreManager();
-		selection_scoring->create_scores(option[frags::picking::selecting_scorefxn](), this);
+		selection_scoring->create_scores(option[frags::picking::selecting_scorefxn](), get_self_ptr());
 		selector_ = new CustomScoreSelector(n_frags_, selection_scoring);
 	} else {
 		// note: The selector is based on the first score manager so the score managers have to have the same scoring scheme! -dk

@@ -260,11 +260,11 @@ HighResDocker::apply(core::pose::Pose & pose) {
 
 		if(cycle % repack_every_Nth_ == 1){
 			high_res_docker_tracer.Debug << "making PackRotamersMover" << std::endl;
-			pack_mover= (protocols::moves::Mover *) new protocols::simple_moves::PackRotamersMover(score_fxn_, packer_task);
+			pack_mover= moves::MoverOP( new protocols::simple_moves::PackRotamersMover(score_fxn_, packer_task) );
 		}
 		else{
 			high_res_docker_tracer.Debug << "making RotamerTrialsMover" << std::endl;
-			pack_mover= (protocols::moves::Mover *) new protocols::simple_moves::RotamerTrialsMover(score_fxn_, *packer_task);
+			pack_mover= moves::MoverOP( new protocols::simple_moves::RotamerTrialsMover(score_fxn_, *packer_task) );
 		}
 
 		// Wrap it in something to disable the torsion constraints before packing!

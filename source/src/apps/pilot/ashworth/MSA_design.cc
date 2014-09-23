@@ -122,7 +122,7 @@ MSA_design(
 	if ( option[ OptionKeys::packing::resfile ].user() ) {
 		tf.push_back( new ReadResfile );
 	}
-	tf.push_back( new OperateOnCertainResidues( new PreventRepackingRLT, new ResidueHasProperty("DNA") ) );
+	tf.push_back( new OperateOnCertainResidues( ResLvlTaskOperationOP( new PreventRepackingRLT ), ResFilterOP( new ResidueHasProperty("DNA") ) ) );
 	PackerTaskCOP ptask = tf.create_task_and_apply_taskoperations( *pose );
 
 	// run the "Packer" (design sidechains)

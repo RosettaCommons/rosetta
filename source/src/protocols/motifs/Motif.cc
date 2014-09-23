@@ -257,7 +257,7 @@ Motif::Motif(
 	//int res1_atom1_int_ = rsd_type.atom_type_index( res1_atom1_index_);
 	//int res1_atom2_int_ = rsd_type.atom_type_index( res1_atom2_index_ );
 	//int res1_atom3_int_ = rsd_type.atom_type_index( res1_atom3_index_ );
-  core::chemical::AtomTypeSetCAP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( core::chemical::FA_STANDARD );
+  core::chemical::AtomTypeSetCOP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( core::chemical::FA_STANDARD );
 	res2_atom1_int_ = atset->atom_type_index(res2_atom1_name_);
 	res2_atom2_int_ = atset->atom_type_index(res2_atom2_name_);
 	res2_atom3_int_ = atset->atom_type_index(res2_atom3_name_);

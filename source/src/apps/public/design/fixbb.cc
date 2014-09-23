@@ -81,6 +81,7 @@ main( int argc, char * argv [] )
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//create a task factory: this will create a new PackerTask for each input pose
+	using core::pack::task::operation::TaskOperationCOP;
 	core::pack::task::TaskFactoryOP main_task_factory = new core::pack::task::TaskFactory;
 	main_task_factory->push_back( new core::pack::task::operation::InitializeFromCommandline );
 
@@ -121,6 +122,7 @@ main( int argc, char * argv [] )
 
 	// make symmetric pose if necessary
 	if ( option[ symmetry::symmetry_definition ].user() )  {
+		using protocols::moves::MoverOP;
 	    seq_mover->add_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
 	}
 

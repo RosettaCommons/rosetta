@@ -127,6 +127,7 @@ AutoRBMover::AutoRBMover() {
 	allowSSFragInserts_ = false;
 
 	// fa stuff
+	using core::pack::task::operation::TaskOperationCOP;
 	tf_ = new core::pack::task::TaskFactory();
 	tf_->push_back( new core::pack::task::operation::RestrictToRepacking );
 	tf_->push_back( new core::pack::task::operation::InitializeFromCommandline );
@@ -192,6 +193,7 @@ AutoRBMover::apply( core::pose::Pose & pose ) {
 		float delta_weight( final_chain_break_weight/nouter_cycles_ );
 
 		// random mover
+		using protocols::moves::MoverOP;
 		protocols::moves::RandomMover random_move;
 
 		// loop fragment insertion

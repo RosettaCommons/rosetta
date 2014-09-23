@@ -580,7 +580,7 @@ classify_base_pairs(
 
 	hbonds::HBondOptionsOP hbond_options( new hbonds::HBondOptions() );
 	hbond_options->use_hb_env_dep( false );
-	hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( hbond_options ));
+	hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( *hbond_options ));
 
 	hbonds::fill_hbond_set( pose, false /*calc deriv*/, *hbond_set );
 

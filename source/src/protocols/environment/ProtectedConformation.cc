@@ -48,8 +48,10 @@ using namespace core;
 using core::environment::DofPassport;
 using core::environment::DofPassportCOP;
 using core::conformation::Conformation;
+using core::conformation::ConformationAP;
 using core::environment::SequenceAnnotation;
 using core::environment::SequenceAnnotationCOP;
+using core::conformation::Residue;
 
 std::string get_mover_name( std::stack< DofPassportCOP > const& unlocks ){
   if( unlocks.empty() ){
@@ -59,12 +61,13 @@ std::string get_mover_name( std::stack< DofPassportCOP > const& unlocks ){
   }
 }
 
-ProtectedConformation::ProtectedConformation( EnvironmentCAP env, Conformation const& src ):
+ProtectedConformation::ProtectedConformation( EnvironmentCAP env_ap, Conformation const& src ):
   Conformation( src ),
-  env_( env ),
+  env_( env_ap ),
   environment_exists_( true )
 {
-  environment()->pconf_creation( this );
+  EnvironmentCOP env( environment() );
+  env->pconf_creation( this );
 }
 
 ProtectedConformation::ProtectedConformation( ProtectedConformation const& src ):
@@ -74,12 +77,14 @@ ProtectedConformation::ProtectedConformation( ProtectedConformation const& src )
   env_( src.environment() ),
   environment_exists_( true )
 {
-  environment()->pconf_creation( this );
+  EnvironmentCOP env( environment() );
+  env->pconf_creation( this );
 }
 
 ProtectedConformation::~ProtectedConformation() {
   if( environment_exists_ ){
-    environment()->pconf_destruction( this );
+    EnvironmentCOP env( environment() );
+    env->pconf_destruction( this ); // Can't use get_self_weak_ptr() in d'tor
   }
 }
 
@@ -99,7 +104,7 @@ core::conformation::ConformationOP ProtectedConformation::clone() const {
 //// SECURITY OVERLOADS 	///////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 Conformation& ProtectedConformation::operator=( Conformation const& src ){
-  ProtectedConformationCOP conf = dynamic_cast< ProtectedConformation const* >( &src );
+  ProtectedConformation const * conf = dynamic_cast< ProtectedConformation const* >( &src );
 
   unlocks_ = conf->unlocks_;
   annotations_ = conf->annotations_;
@@ -259,7 +264,7 @@ void jump_dofs( std::map< core::id::DOF_ID, core::Real >& dofs,
 }
 
 /// @brief The plan here is to collect all the DoFs in the residue at 'seqpos' and on either side.
-std::map< core::id::DOF_ID, core::Real > collect_dofs( core::Size const seqpos, core::conformation::ConformationCOP conf ){
+std::map< core::id::DOF_ID, core::Real > collect_dofs( core::Size const seqpos, core::conformation::Conformation const * conf ){
   using namespace core::id;
 
   typedef std::map< core::id::DOF_ID, core::Real > DofMap;
@@ -509,7 +514,8 @@ bool ProtectedConformation::verify( TorsionID const& id ){
 }
 
 bool ProtectedConformation::verify( core::id::DOF_ID const& id ){
-  return ( !unlocks_.empty() && unlocks_.top()->dof_access( *environment(), id ) );
+  EnvironmentCOP env( environment() );
+  return ( !unlocks_.empty() && unlocks_.top()->dof_access( *env, id ) );
 }
 
 void ProtectedConformation::fail_verification( std::string const& str ){

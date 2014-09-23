@@ -96,7 +96,8 @@ UniformRigidBodyCM::UniformRigidBodyCM( std::string const& name,
 
 void UniformRigidBodyCM::passport_updated(){
   if( has_passport() ){
-    SequenceAnnotationCOP ann = active_environment()->annotations();
+	environment::EnvironmentCOP env( active_environment() );
+    SequenceAnnotationCOP ann = env->annotations();
     int dockjump = (int) ann->resolve_jump( name() + DOCKJUMP_TAG );
 
     // if the mover's not initialized or it's got a different dockjump
@@ -146,7 +147,8 @@ claims::EnvClaims UniformRigidBodyCM::yield_claims( core::pose::Pose const&,
   using core::pack::task::residue_selector::ResidueSubset;
   claims::EnvClaims claim_list;
 
-  claims::JumpClaimOP jclaim = new claims::JumpClaim( this,
+  ClaimingMoverOP this_ptr( utility::pointer::static_pointer_cast< ClaimingMover >( get_self_ptr() ) );
+  claims::JumpClaimOP jclaim = new claims::JumpClaim( this_ptr,
                                                       name() + DOCKJUMP_TAG,
                                                       mobile_label_,
                                                       stationary_label_ );

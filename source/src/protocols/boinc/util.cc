@@ -85,7 +85,7 @@ void boincOutputFilter(core::Real runTime, core::Real minTimePerModel){
 	Real scoreCutPct = option[OptionKeys::boinc::score_cut_pct]();
 	vector1<Real> scores;
 	//step1: read in poses and output them to temp file.
-	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
 	SilentStructOP localOutputSS(new core::io::silent::BinarySilentStruct);
 	SilentFileData sfd;
 	string outputFileName = option[out::file::silent]();

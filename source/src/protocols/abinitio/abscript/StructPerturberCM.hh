@@ -36,7 +36,7 @@ namespace abscript {
 class StructPerturberCM : public protocols::environment::ClaimingMover {
   typedef ClaimingMover Parent;
   typedef environment::claims::EnvClaims EnvClaims;
-
+	
 public:
 
   StructPerturberCM();

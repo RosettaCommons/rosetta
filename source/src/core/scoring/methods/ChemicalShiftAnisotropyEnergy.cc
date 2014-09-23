@@ -86,7 +86,7 @@ ChemicalShiftAnisotropyEnergyCreator::score_types_for_method() const {
 //@brief
 //////////////////////////////////////////////////////
 ChemicalShiftAnisotropyEnergy::ChemicalShiftAnisotropyEnergy() :
-	parent( new ChemicalShiftAnisotropyEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new ChemicalShiftAnisotropyEnergyCreator ) )
 {}
 
 //////////////////////////////////////////////////////

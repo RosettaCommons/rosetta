@@ -910,7 +910,7 @@ make_extended_coarse_pose( pose::Pose & coarse_pose, std::string const & full_se
  	using namespace core::chemical;
  	using namespace core::id;
 
-	ResidueTypeSetCAP rsd_set_coarse = ChemicalManager::get_instance()->residue_type_set( COARSE_RNA );
+	ResidueTypeSetCOP rsd_set_coarse = ChemicalManager::get_instance()->residue_type_set( COARSE_RNA );
 
 	make_pose_from_sequence( coarse_pose, full_sequence, *rsd_set_coarse );
 
@@ -1065,7 +1065,7 @@ print_internal_coords( core::pose::Pose const & pose ) {
 		std::cout << "RESIDUE: " << rsd.name3() << " " << rsd.seqpos() << std::endl;
 
 		for (Size j = 1; j <= rsd.natoms(); j++ ){
-			core::kinematics::tree::AtomCOP current_atom ( & pose.atom_tree().atom( AtomID(j,i) ) );
+			core::kinematics::tree::AtomCOP current_atom ( pose.atom_tree().atom( AtomID(j,i) ).get_self_ptr() );
 			core::kinematics::tree::AtomCOP input_stub_atom1( current_atom->input_stub_atom1() );
 			core::kinematics::tree::AtomCOP input_stub_atom2( current_atom->input_stub_atom2() );
 			core::kinematics::tree::AtomCOP input_stub_atom3( current_atom->input_stub_atom3() );
@@ -1305,7 +1305,7 @@ process_input_file( std::string const & input_file,
 	using namespace core::io::silent;
 	using namespace protocols::farna;
 
-	core::chemical::ResidueTypeSetCAP rsd_set;
+	core::chemical::ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_RNA );
 
 	if ( is_pdb ){
@@ -1359,7 +1359,7 @@ print_hbonds( pose::Pose & pose ){
 
 	hbonds::HBondOptionsOP hbond_options( new hbonds::HBondOptions() );
 	hbond_options->use_hb_env_dep( false );
-	hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( hbond_options ) );
+	hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( *hbond_options ) );
 
 	hbonds::fill_hbond_set( pose, false /*calc deriv*/, *hbond_set );
 

@@ -49,7 +49,7 @@ static thread_local basic::Tracer TR( "core.mm.MMLJLibrary" );
 
 /// @details Constructs a MMLJLibrary instance from a filename string and constant access pointer to an MMAtomTypeSet
 MMLJLibrary::MMLJLibrary(
-			 core::chemical::MMAtomTypeSetCAP mm_atom_set
+			 core::chemical::MMAtomTypeSetCOP mm_atom_set
 ):
 	// hard coding these here for now
 //  nblist_dis2_cutoff_XX_( 60.0 ),
@@ -61,17 +61,18 @@ MMLJLibrary::MMLJLibrary(
 	nblist_dis2_cutoff_HH_( 19.36 )
 {
 	// set the MM atom type set
-  mm_atom_set_ = mm_atom_set;
+  mm_atom_set_ = core::chemical::MMAtomTypeSetCAP( mm_atom_set );
+  core::chemical::MMAtomTypeSetCOP mm_atom_set_op( mm_atom_set_ );
 
 	// add the lj params
-  for( Size i = 1; i <= mm_atom_set_->n_atomtypes(); ++i )
+  for( Size i = 1; i <= mm_atom_set_op->n_atomtypes(); ++i )
 		{
 
 			// get lj radius and well depth
-			Real radius = (*mm_atom_set_)[ i ].lj_radius();
-			Real wdepth = (*mm_atom_set_)[ i ].lj_wdepth();
-			Real radius_3b = (*mm_atom_set_)[ i ].lj_three_bond_radius();
-      Real wdepth_3b = (*mm_atom_set_)[ i ].lj_three_bond_wdepth();
+			Real radius = (*mm_atom_set_op)[ i ].lj_radius();
+			Real wdepth = (*mm_atom_set_op)[ i ].lj_wdepth();
+			Real radius_3b = (*mm_atom_set_op)[ i ].lj_three_bond_radius();
+      Real wdepth_3b = (*mm_atom_set_op)[ i ].lj_three_bond_wdepth();
 
 			// add to correct library
 			mm_lj_library_.push_back( mm_lj_param_set( radius, wdepth ) );

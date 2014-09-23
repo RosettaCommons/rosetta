@@ -49,6 +49,7 @@ namespace claims {
 
 using core::environment::LocalPosition;
 using core::environment::LocalPositions;
+using core::conformation::Conformation;
 
 TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
                             core::pack::task::residue_selector::ResidueSelectorCOP selector ) :
@@ -71,13 +72,14 @@ TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
   claim_backbone_ = tag->getOption< bool >( "backbone", false );
   claim_sidechain_ = tag->getOption< bool >( "sidechain", false );
   if( !claim_sidechain_ && !claim_backbone_ ){
+    utility::tag::TagCOP tag_parent = tag->getParent().lock();
     tr.Warning << type() << " owned by mover named "
-               << tag->getParent()->getOption< std::string >( "name" )
+               << tag_parent->getOption< std::string >( "name" )
                << " was not configured to claim neither sidechains nor backbone torsions."
                << " Are you sure this is what you wanted?" << std::endl;
   }
 
-  selector_ = datamap.get< core::pack::task::residue_selector::ResidueSelector const* >( "ResidueSelector", tag->getOption<std::string>( "selector" ) );
+  selector_ = datamap.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) );
 }
 
 TorsionClaim::TorsionClaim( ClaimingMoverOP owner,

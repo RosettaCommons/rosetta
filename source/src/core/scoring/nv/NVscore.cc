@@ -67,7 +67,7 @@ static thread_local basic::Tracer TR( "core.scoring.NVscore" );
 
 
 NVscore::NVscore() :
-	parent( new NVscoreCreator ),
+	parent( methods::EnergyMethodCreatorOP( new NVscoreCreator ) ),
 	lookup_table_(ScoringManager::get_instance()->get_NVLookupTable() )
 {
 	//lbound defaults to 3.3 and ubound defaults to 11.1.  If you change these values the lookup table may no longer be accurate
@@ -156,10 +156,10 @@ void NVscore::residue_energy( conformation::Residue const &current_residue,  pos
 	{
 		//get the residue to compare to the current residue
 		core::Size comparison_residue_index((*node_index)->get_other_ind(current_residue.seqpos()));
-		conformation::ResidueCOP comparison_residue(&pose.residue(comparison_residue_index));
+		conformation::Residue const & comparison_residue = pose.residue(comparison_residue_index);
 		//you don't want to compare a residue to itself
-		if(current_residue.seqpos() == comparison_residue->seqpos()) continue;
-		Vector const & comparison_vector(comparison_residue->nbr_atom_xyz());
+		if(current_residue.seqpos() == comparison_residue.seqpos()) continue;
+		Vector const & comparison_vector(comparison_residue.nbr_atom_xyz());
 		//calculate the distance between the two residues
 		Vector::Value distance2 = current_vector.distance_squared(comparison_vector);
 		//get the weighted neighbor count

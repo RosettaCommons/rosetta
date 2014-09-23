@@ -39,7 +39,7 @@ namespace carbohydrates {
 core::uint find_seqpos_of_parent_residue(conformation::Residue const & residue);
 
 /// @brief  Return pointers to the two residues of the glycosidic bond.
-std::pair<conformation::ResidueCAP, conformation::ResidueCAP> get_glycosidic_bond_residues(Pose const & pose,
+std::pair<conformation::ResidueCOP, conformation::ResidueCOP> get_glycosidic_bond_residues(Pose const & pose,
 		uint const sequence_position);
 
 /// @brief  Scan through the list of atoms connected to a given "connect_atom" and return the first heavy atom found.

@@ -290,6 +290,7 @@ BackrubProtocol::BackrubProtocol(): Mover(),
 	using namespace basic::options::OptionKeys;
 
 	using namespace core::pack::task;
+	using namespace core::pack::task::operation;
 
 	main_task_factory_->push_back( new operation::InitializeFromCommandline );
 	if ( option[ packing::resfile ].user() ) {

@@ -285,7 +285,8 @@ StepWiseRNA_PoseSetup::Import_pose( Size const & i, core::pose::Pose & import_po
 		if ( found == std::string::npos ) pose_name.append( ".pdb" );
 
 		//  if(verbose) TR.Debug << "	The following pose will be imported :" << pose_name << std::endl;
-		import_pose::pose_from_pdb( import_pose, *rsd_set_, pose_name );
+		core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_ );
+		import_pose::pose_from_pdb( import_pose, *rsd_set, pose_name );
 		protocols::farna::make_phosphate_nomenclature_matches_mini( import_pose );
 	} else {
 		import_pose_from_silent_file( import_pose, silent_files_in_[ i ], input_tags_[i] );
@@ -312,8 +313,9 @@ StepWiseRNA_PoseSetup::Import_pose( Size const & i, core::pose::Pose & import_po
 ////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseRNA_PoseSetup::make_extended_pose( pose::Pose & pose ){
+	core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_ );
 	make_pose_from_sequence( pose, working_parameters_->working_sequence(),
-													 *rsd_set_, false /*auto_termini*/ );
+													 *rsd_set, false /*auto_termini*/ );
 	if ( output_pdb_ ){
 		TR.Debug << "outputting extended_chain.pdb" << std::endl;
 		pose.dump_pdb( "extended_chain.pdb" );

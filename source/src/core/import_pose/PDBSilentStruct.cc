@@ -181,7 +181,7 @@ void PDBSilentStruct::fill_pose(
 ) const {
 
 	using namespace core::chemical;
-	ResidueTypeSetCAP residue_set;
+	ResidueTypeSetCOP residue_set;
 	residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 	fill_pose( pose, *residue_set );
 	finish_pose( pose );

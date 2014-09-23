@@ -20,6 +20,7 @@
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/SilentFileJobOutputter.hh>
+#include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.hh>
 // Package headers
 
@@ -36,7 +37,13 @@
 
 using namespace protocols::jd2;
 
-class DummyObserver : public protocols::jd2::JobOutputterObserver {
+class DummyObserver;
+typedef utility::pointer::owning_ptr< DummyObserver > DummyObserverOP;
+typedef utility::pointer::access_ptr< DummyObserver > DummyObserverAP;
+
+class DummyObserver :
+	public protocols::moves::Mover, // For OP
+	public protocols::jd2::JobOutputterObserver {
 public:
 	DummyObserver() {
 		call_counter_ = 0;
@@ -54,6 +61,12 @@ public:
 	}
 
 	mutable core::Size call_counter_;
+	
+	// Dummy for OP
+	void apply( Pose & ) {}
+	virtual std::string get_name() const { return "DummyObserver"; }
+	void add_ref() const {}
+	void remove_ref() const {}
 };
 
 class JobOutputterTests : public CxxTest::TestSuite {
@@ -68,25 +81,28 @@ public:
 
 	// @brief test default options and default locator
 	void test_Observer_add_remove() {
-		DummyObserver observer1;
-		DummyObserver observer2;
-		DummyObserver observer3;
+		DummyObserverOP observer1_op = new DummyObserver;
+		DummyObserverOP observer2_op = new DummyObserver;
+		DummyObserverOP observer3_op = new DummyObserver;
+		DummyObserver & observer1 = *observer1_op;
+		DummyObserver & observer2 = *observer2_op;
+		DummyObserver & observer3 = *observer3_op;
 		SilentFileJobOutputter job_outputter;
 		core::pose::Pose pose;
-		JobOP job = new Job( new InnerJob( "job", 1 ) , 1 );
+		JobOP job = new Job( InnerJobOP( new InnerJob( "job", 1 ) ), 1 );
 		job_outputter.call_output_observers( pose, job  );
 		TS_ASSERT( observer1.call_counter_ == 0 );
-		job->add_output_observer( &observer1 );
-		job->add_output_observer( &observer2 );
-		job->add_output_observer( &observer3 );
+		job->add_output_observer( DummyObserverAP(observer1_op) );
+		job->add_output_observer( DummyObserverAP(observer2_op) );
+		job->add_output_observer( DummyObserverAP(observer3_op) );
 		job_outputter.call_output_observers( pose, job  );
 		TS_ASSERT( observer1.call_counter_ == 1 );
 		TS_ASSERT( observer2.call_counter_ == 1 );
 		TS_ASSERT( observer3.call_counter_ == 1 );
 		//adding them twice should still only lead to a single call
-		job->add_output_observer( &observer1 );
-		job->add_output_observer( &observer2 );
-		job->add_output_observer( &observer3 );
+		job->add_output_observer( DummyObserverAP(observer1_op) );
+		job->add_output_observer( DummyObserverAP(observer2_op) );
+		job->add_output_observer( DummyObserverAP(observer3_op) );
 		job_outputter.call_output_observers( pose, job  );
 		TS_ASSERT( observer1.call_counter_ == 2 );
 		TS_ASSERT( observer2.call_counter_ == 2 );
@@ -98,9 +114,9 @@ public:
 		TS_ASSERT( observer2.call_counter_ == 0 );
 		TS_ASSERT( observer3.call_counter_ == 0 );
 		//removing them should stop them from being called
-		job->remove_output_observer( &observer1 );
-		job->remove_output_observer( &observer2 );
-		job->remove_output_observer( &observer3 );
+		job->remove_output_observer( DummyObserverAP(observer1_op) );
+		job->remove_output_observer( DummyObserverAP(observer2_op) );
+		job->remove_output_observer( DummyObserverAP(observer3_op) );
 		job_outputter.call_output_observers( pose, job  );
 		TS_ASSERT( observer1.call_counter_ == 0 );
 		TS_ASSERT( observer2.call_counter_ == 0 );

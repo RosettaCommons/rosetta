@@ -101,7 +101,8 @@ WorkUnit_BatchRelax::run(){
 	core::pose::Pose pose;
 	core::io::silent::SilentStructOP ss = decoys().get_struct(0);
 	ss->fill_pose( pose );
-			core::scoring::constraints::ConstraintSetOP cstset = core::scoring::constraints::ConstraintIO::get_instance()->read_constraints( core::scoring::constraints::get_cst_fa_file_option(), new core::scoring::constraints::ConstraintSet, pose  ); 
+			using namespace core::scoring::constraints;
+			ConstraintSetOP cstset = ConstraintIO::get_instance()->read_constraints( get_cst_fa_file_option(), new ConstraintSet, pose  ); 
 			relax.batch_apply( decoys().store(), cstset );
 	} else {
 			relax.batch_apply( decoys().store() );

@@ -89,6 +89,54 @@ RotamerRecoveryFactory::RotamerRecoveryFactory(
 
 RotamerRecoveryFactory::~RotamerRecoveryFactory() {}
 
+/*
+ 20140630: Additional factory_register() methods disabled because of ambiguouity below.
+
+src/utility/factory/WidgetRegistrator.hh:37:28: error: call to member function 'factory_register' is ambiguous
+                FACTORY::get_instance()->factory_register( CREATOROP( new CREATOR ) );
+                ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+src/protocols/rotamer_recovery/RotamerRecoveryFactory.hh:122:33: note: in instantiation of member function
+      'utility::factory::WidgetRegistrator<protocols::rotamer_recovery::RotamerRecoveryFactory, protocols::rotamer_recovery::RRReporterHumanCreator>::WidgetRegistrator' requested here
+        RotamerRecoveryRegistrator() : parent() {}
+                                       ^
+src/protocols/init/init.RotamerRecoveryRegistrators.ihh:32:61: note: in instantiation of member function
+      'protocols::rotamer_recovery::RotamerRecoveryRegistrator<protocols::rotamer_recovery::RRReporterHumanCreator>::RotamerRecoveryRegistrator' requested here
+static RotamerRecoveryRegistrator< RRReporterHumanCreator > RRReporterHumanCreator_registrator;
+                                                            ^
+src/protocols/rotamer_recovery/RotamerRecoveryFactory.hh:66:7: note: candidate function
+        void factory_register( RRProtocolCreatorCOP creator );
+             ^
+src/protocols/rotamer_recovery/RotamerRecoveryFactory.hh:67:7: note: candidate function
+        void factory_register( RRComparerCreatorCOP creator );
+             ^
+src/protocols/rotamer_recovery/RotamerRecoveryFactory.hh:68:7: note: candidate function
+        void factory_register( RRReporterCreatorCOP creator );
+*/
+
+void
+RotamerRecoveryFactory::factory_register( utility::pointer::ReferenceCountOP creator ) {
+
+	{
+	RRProtocolCreatorCOP p( utility::pointer::dynamic_pointer_cast< RRProtocolCreator const >( creator ) );
+	if(p)
+		protocol_types_[ p->type_name() ] = p;
+	}
+
+	{
+	RRComparerCreatorCOP p( utility::pointer::dynamic_pointer_cast< RRComparerCreator const >( creator ) );
+	if(p)
+		comparer_types_[ p->type_name() ] = p;
+	}
+
+	{
+	RRReporterCreatorCOP p( utility::pointer::dynamic_pointer_cast< RRReporterCreator const >( creator ) );
+	if(p)
+		reporter_types_[ p->type_name() ] = p;
+	}
+
+}
+
+/*
 void
 RotamerRecoveryFactory::factory_register(
 	RRProtocolCreatorCOP creator
@@ -109,7 +157,7 @@ RotamerRecoveryFactory::factory_register(
 ) {
 	reporter_types_[ creator->type_name() ] = creator;
 }
-
+*/
 
 RRProtocolOP
 RotamerRecoveryFactory::get_rotamer_recovery_protocol(

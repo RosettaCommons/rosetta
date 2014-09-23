@@ -48,7 +48,7 @@ public:
 	void test_JumpDownstreamSelector_parse_my_tag() {
 		std::string tag_string = "<JumpDown name=jump_d_rs jump=1/>";
 		std::stringstream ss( tag_string );
-		utility::tag::TagPtr tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
@@ -79,7 +79,7 @@ public:
 	void test_NeighbohoodResidueSelector_fail_no_resnums() {
 		std::string tag_string = "<JumpDown name=jump_d_rs />";
 		std::stringstream ss( tag_string );
-		utility::tag::TagPtr tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 

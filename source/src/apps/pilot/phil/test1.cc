@@ -500,7 +500,7 @@ set_fullatom_flag_test()
 		core::import_pose::centroid_pose_from_pdb( pose, "input/test_in.pdb" );
 
 		// now convert to fullatom:
-		ResidueTypeSetCAP fullatom_residue_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+		ResidueTypeSetCOP fullatom_residue_set( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 		for ( Size i=1; i<= pose.total_residue(); ++i ) {
 			Residue const & rsd( pose.residue(i) );
 			utility::vector1< std::string > const & variant_types( rsd.type().properties().get_list_of_variants() );
@@ -1184,7 +1184,7 @@ simple_centroid_test()
 	using namespace chemical;
 
 	// read centroid residue set
-	ResidueTypeSetCAP rsd_set( ChemicalManager::get_instance()->residue_type_set( "centroid" ) );
+	ResidueTypeSetCOP rsd_set( ChemicalManager::get_instance()->residue_type_set( "centroid" ) );
 
 	pose::Pose pose;
 	//core::import_pose::pose_from_pdb( pose, *rsd_set, "input/test_in_cen.pdb" );
@@ -1234,7 +1234,7 @@ simple_frag_test()
 
 
 	// read centroid residue set
-	chemical::ResidueTypeSetCAP rsd_set( chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" ) );
+	chemical::ResidueTypeSetCOP rsd_set( chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" ) );
 
 	pose::Pose pose;
 	core::import_pose::pose_from_pdb( pose, *rsd_set, "input/test_in.pdb" );
@@ -1395,7 +1395,7 @@ dna_coupled_rotamer_design_test()
 			for ( Size i=1;i<= nres; ++i ){
 				if ( partner[i] ) {
 					(*couplings)[i].first = partner[i];
-					(*couplings)[i].second = new conformation::WatsonCrickResidueMatcher();
+					(*couplings)[i].second = core::conformation::ResidueMatcherOP( new conformation::WatsonCrickResidueMatcher() );
 				}
 			}
 			task->rotamer_couplings( couplings );
@@ -2019,7 +2019,7 @@ rb_test()
 // 	exit(0);
 
 	{ // now add a pseudo residue at the end
-		ResidueTypeSetCAP residue_set
+		ResidueTypeSetCOP residue_set
 			( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 		ResidueOP rsd( ResidueFactory::create_residue( residue_set->name_map( "VRT" ) ) );
 		pose.append_residue_by_jump( *rsd, 1 );
@@ -2370,7 +2370,7 @@ ss_test()
 	utility::vector1< std::string > pdbnames( basic::options::start_files() );
 
 	// Centroid! Affects the neighbor list.
-	ResidueTypeSetCAP rsd_set( ChemicalManager::get_instance()->residue_type_set( "centroid" ) );
+	ResidueTypeSetCOP rsd_set( ChemicalManager::get_instance()->residue_type_set( "centroid" ) );
 
 	for ( Size ii = 1; ii < pdbnames.size(); ++ii ) {
 		pose::Pose pose;

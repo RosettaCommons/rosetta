@@ -41,7 +41,7 @@ IdealBondLengthSet::~IdealBondLengthSet() {}
 
 bool IdealBondLengthSet::contains_bond_length(std::string const & atom_type_name1, std::string const & atom_type_name2) const{
 	core::chemical::ChemicalManager *cm= core::chemical::ChemicalManager::get_instance();
-	core::chemical::AtomTypeSetCAP atom_type_set= cm->atom_type_set( core::chemical::FA_STANDARD );
+	core::chemical::AtomTypeSetCOP atom_type_set= cm->atom_type_set( core::chemical::FA_STANDARD );
 
 	AtomTypeIndex atom_type_index1 = atom_type_set->atom_type_index(atom_type_name1);
 	AtomTypeIndex atom_type_index2 = atom_type_set->atom_type_index(atom_type_name2);
@@ -63,7 +63,7 @@ bool IdealBondLengthSet::contains_bond_length(AtomTypeIndex atom_type_index1, At
 BondLength
 IdealBondLengthSet::get_bond_length( std::string const & atom_type_name1, std::string const & atom_type_name2) const{
 	core::chemical::ChemicalManager *cm= core::chemical::ChemicalManager::get_instance();
-	core::chemical::AtomTypeSetCAP atom_type_set= cm->atom_type_set( core::chemical::FA_STANDARD );
+	core::chemical::AtomTypeSetCOP atom_type_set= cm->atom_type_set( core::chemical::FA_STANDARD );
 
 	Size atom_type_index1 = atom_type_set->atom_type_index(atom_type_name1);
 	Size atom_type_index2 = atom_type_set->atom_type_index(atom_type_name2);
@@ -93,7 +93,7 @@ IdealBondLengthSet::add_bond_length(
 ){
 
 	core::chemical::ChemicalManager *cm= core::chemical::ChemicalManager::get_instance();
-	core::chemical::AtomTypeSetCAP atom_type_set= cm->atom_type_set( core::chemical::FA_STANDARD );
+	core::chemical::AtomTypeSetCOP atom_type_set= cm->atom_type_set( core::chemical::FA_STANDARD );
 
 	Size atom_type_index1 = atom_type_set->atom_type_index(atom_type_name1);
 	Size atom_type_index2 = atom_type_set->atom_type_index(atom_type_name2);

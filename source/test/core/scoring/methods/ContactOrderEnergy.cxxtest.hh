@@ -49,7 +49,7 @@ class ContactOrderEnergy_Tests : public CxxTest::TestSuite {
 	Pose pose;
 	ContactOrderEnergy co_energy;
 	core::io::silent::SilentFileData sfd;
-	core::chemical::ResidueTypeSetCAP rsd_set;
+	core::chemical::ResidueTypeSetCOP rsd_set;
 	core::scoring::ScoreFunctionOP scorefxn;
 
 	// --------------- Fixtures --------------- //

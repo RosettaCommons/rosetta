@@ -339,6 +339,7 @@ FastRelax::parse_my_tag(
 	core::pose::Pose const & pose
 ) {
 	using namespace basic::options;
+	using core::pack::task::operation::TaskOperationCOP;
 	
 	set_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data )->clone() );
 
@@ -617,7 +618,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	ScoreFunctionOP local_scorefxn( get_scorefxn()->clone() );
 
 	// Remember the oroiginal weights - we're gonna be changing these during the ramp ups/downs
-	core::scoring::EnergyMap full_weights = local_scorefxn()->weights();
+	core::scoring::EnergyMap full_weights = local_scorefxn->weights();
 
 	// Make DNA Rigid or setup DNA-specific relax settings.  Use the orbitals scorefunction when relaxing with DNA
 	if (dna_move_){
@@ -1223,7 +1224,8 @@ void FastRelax::batch_apply(
 	if ( input_structs.size()  < 1 ) return;
 
 	ScoreFunctionOP local_scorefxn( get_scorefxn()->clone() );
-	core::scoring::EnergyMap full_weights = local_scorefxn()->weights();
+
+	core::scoring::EnergyMap full_weights = local_scorefxn->weights();
 	if ( dry_run() ) {
 		return;
 	}

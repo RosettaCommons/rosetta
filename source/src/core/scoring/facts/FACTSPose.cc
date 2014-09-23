@@ -96,7 +96,7 @@ void FACTSPoseInfo::initialize( pose::Pose const & pose, FACTSRsdTypeMap &rsdtyp
   
   for ( Size i=1; i<= nres; ++i ) {
     if ( !residue_info_[i] ) {
-      residue_info_[i] = new FACTSResidueInfo();
+      residue_info_[i] = FACTSResidueInfoOP( new FACTSResidueInfo() );
       residue_info_[i]->set_enumeration_shell( true );
     }
     

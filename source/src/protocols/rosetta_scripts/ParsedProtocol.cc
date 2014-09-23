@@ -112,6 +112,10 @@ ParsedProtocol::~ParsedProtocol() {
 void
 ParsedProtocol::apply( Pose & pose )
 {
+	ParsedProtocolAP this_weak_ptr(
+		utility::pointer::dynamic_pointer_cast< ParsedProtocol >( get_self_ptr() )
+	);
+	
 	if ( protocols::jd2::jd2_used() ) {
 		protocols::jd2::JobDistributor::get_instance()->current_job()->add_output_observer( this );
 	}
@@ -346,11 +350,12 @@ parse_mover_subtag( utility::tag::TagCOP const tag_ptr,
     mover_name = "NULL_MOVER";
   }
 
-  if( data.has( "stopping_condition", mover_name ) && tag_ptr->getParent()->hasOption( "name" ) ){
+  utility::tag::TagCOP tag_parent( tag_ptr->getParent() );
+  if( data.has( "stopping_condition", mover_name ) && tag_parent->hasOption( "name" ) ){
     TR.Info << "ParsedProtocol's mover " << mover_name
             << " requests its own stopping condition. This ParsedProtocol's stopping_condition will point at the mover's"
             << std::endl;
-    data.add( "stopping_condition", tag_ptr->getParent()->getOption< std::string >( "name" ), data.get< basic::datacache::DataMapObj< bool > * >( "stopping_condition", mover_name ) );
+    data.add( "stopping_condition", tag_parent->getOption< std::string >( "name" ), data.get_ptr< basic::datacache::DataMapObj< bool > >( "stopping_condition", mover_name ) );
   }
   
   return std::make_pair( mover_to_add, mover_name );
@@ -504,17 +509,12 @@ ParsedProtocol::apply_mover( Pose & pose, MoverFilterPair const & mover_pair ) {
 	TR.Debug << "apply_mover_filter_pair: Last mover: " << ( last_mover_ ? last_mover_->get_name() : "(None)" ) << std::endl;
 	TR.Debug << "apply_mover_filter_pair: This mover: " << ( mover_pair.first.first ? mover_pair.first.first->get_name() : "(None)" ) << std::endl;
 
-	if(last_mover_ &&
-		mover_pair.first.first &&
-		mover_pair.first.first->get_name() == "MultiplePoseMover"
-	) {
-		// Is there a better way of handling this cast?
-		protocols::moves::Mover & mover ( *mover_pair.first.first );
-		protocols::rosetta_scripts::MultiplePoseMoverOP mp_mover ( dynamic_cast< protocols::rosetta_scripts::MultiplePoseMover * >( &mover ) );
+	if(last_mover_ && mover_pair.first.first) {
+		protocols::rosetta_scripts::MultiplePoseMoverOP mp_mover(
+			utility::pointer::dynamic_pointer_cast< protocols::rosetta_scripts::MultiplePoseMover >( mover_pair.first.first )
+		);
 		if(mp_mover)
 			mp_mover->set_previous_mover(last_mover_);
-		else
-			throw utility::excn::EXCN_Msg_Exception("Dynamic cast of MultiplePoseMover failed; this should not happen");
 	}
 
 	mover_pair.first.first->set_native_pose( get_native_pose() );

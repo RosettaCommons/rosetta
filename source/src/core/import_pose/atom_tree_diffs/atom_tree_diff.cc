@@ -172,7 +172,7 @@ void AtomTreeDiff::sort_by(
 
 void AtomTreeDiff::read_pose(std::string const & tag, core::pose::Pose & pose_out)
 {
-	if( ref_poses_.find(tag) == ref_poses_.end() || ref_poses_[tag]() == NULL ) {
+	if( ref_poses_.find(tag) == ref_poses_.end() || ref_poses_[tag].get() == NULL ) {
 		utility_exit_with_message("No reference pose available for "+tag);
 	}
 	read_pose( tag, pose_out, *(ref_poses_[tag]) );
@@ -199,7 +199,7 @@ void AtomTreeDiff::read_pose(std::string const & tag, core::pose::Pose & pose_ou
 // For reasons I don't understand, GCC will not compile this if I mark this "const":
 core::pose::PoseCOP AtomTreeDiff::ref_pose_for(std::string const & tag)
 {
-	if( ref_poses_.find(tag) == ref_poses_.end() || ref_poses_[tag]() == NULL ) {
+	if( ref_poses_.find(tag) == ref_poses_.end() || ref_poses_[tag].get() == NULL ) {
 		utility_exit_with_message("No reference pose available for "+tag);
 	}
 	return ref_poses_[tag];

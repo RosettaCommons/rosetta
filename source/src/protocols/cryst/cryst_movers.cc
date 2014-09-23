@@ -342,7 +342,7 @@ void SetCrystWeightMover::parse_my_tag(
 		std::string const scorefxn_key( tag->getOption<std::string>("scorefxn_ref") );
 		if ( ! data.has( "scorefxns", scorefxn_key ) )
 			utility_exit_with_message("ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap.");
-		score_function_ref_ = data.get< ScoreFunction* >( "scorefxns", scorefxn_key );
+		score_function_ref_ = data.get_ptr< ScoreFunction >( "scorefxns", scorefxn_key );
 	} else {
 		score_function_ref_ = score_function_->clone();
 	}

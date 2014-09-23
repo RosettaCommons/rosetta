@@ -66,7 +66,7 @@ public:
 		core::Real original_score = scorefxn_->score(pose);
 
 		core::pose::Pose unboundrot_pose(pose);
-		core::pose::PoseCOPs poselist( 1, new core::pose::Pose(pose));
+		core::pose::PoseCOPs poselist( 1, core::pose::PoseOP( new core::pose::Pose(pose) ));
 		load_unboundrot(unboundrot_pose, poselist);
 		core::Real unboundrot_score = scorefxn_->score(unboundrot_pose);
 
@@ -91,7 +91,7 @@ public:
 		core::pose::Pose pose;
 		core::io::pdb::build_pose_from_pdb_as_is(pose, filename_);
 
-		core::pose::PoseCOPs poselist( 1, new core::pose::Pose(pose));
+		core::pose::PoseCOPs poselist( 1, core::pose::PoseOP( new core::pose::Pose(pose) ));
 		load_unboundrot(pose, poselist);
 
 		core::Real score1 = scorefxn_->score(pose);

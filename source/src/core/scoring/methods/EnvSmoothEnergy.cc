@@ -133,7 +133,7 @@ core::Real const envdata[20][40] = {
 
 /// c-tor
 EnvSmoothEnergy::EnvSmoothEnergy() :
-	parent( new EnvSmoothEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new EnvSmoothEnergyCreator ) )
 {}
 
 

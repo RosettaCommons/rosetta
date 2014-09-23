@@ -18,9 +18,8 @@ namespace perturbers {
 
 class Perturber;
 
-using utility::pointer::owning_ptr;
-typedef owning_ptr<Perturber> PerturberOP;
-typedef owning_ptr<Perturber const> PerturberCOP;
+typedef utility::pointer::owning_ptr<Perturber> PerturberOP;
+typedef utility::pointer::owning_ptr<Perturber const> PerturberCOP;
 
 }
 }

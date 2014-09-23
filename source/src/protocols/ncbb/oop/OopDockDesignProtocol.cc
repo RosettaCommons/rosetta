@@ -333,6 +333,7 @@ OopDockDesignProtocol::apply(
 	*******************************************************************************/
 
 	// create a task factory and task operations
+	using core::pack::task::operation::TaskOperationCOP;
 	TaskFactoryOP pert_tf(new TaskFactory());
 	pert_tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
 
@@ -536,7 +537,7 @@ OopDockDesignProtocol::apply(
 	if ( final_design_min_ )
 	{
 		// get packer task from task factory
-		PackerTaskOP final_desn_pt( *(desn_tf->create_task_and_apply_taskoperations( pose )) );
+		PackerTaskOP final_desn_pt( desn_tf->create_task_and_apply_taskoperations( pose ) );
 
 		// add extra chi and extra chi cut off to pt
 		for ( Size i = 1; i <= pose.total_residue(); ++i ) {

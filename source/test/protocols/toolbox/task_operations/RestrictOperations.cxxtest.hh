@@ -95,6 +95,7 @@ public:
 		//set up test
 		using namespace core::pack::task;
 		using protocols::toolbox::task_operations::RestrictToInterfaceOperation;
+		using core::pack::task::operation::TaskOperationCOP;
 		TaskFactory RTIO_factory;
 		RTIO_factory.push_back( new RestrictToInterfaceOperation() ); //defaults to interface between chains 1 and 2
 
@@ -112,6 +113,7 @@ public:
 
 		using namespace core::pack::task;
 		using protocols::toolbox::task_operations::RestrictToNeighborhoodOperation;
+		using core::pack::task::operation::TaskOperationCOP;
 		TaskFactory RTNO_factory;
 		RTNO_factory.push_back( new RestrictToNeighborhoodOperation( crset ) );
 
@@ -120,7 +122,8 @@ public:
 	}
 
 	void test_RestrictByCalculatorsOperation() {
-
+		using core::pose::metrics::PoseMetricCalculatorOP;
+		
 		//first we set up the calculators that the Operation will use
 		std::string const interface_calc("interface"), neighborhood_calc("neighborhood");
 		std::set< core::Size > crset_RBC;
@@ -134,6 +137,7 @@ public:
 		calcs_and_calcns.push_back(std::make_pair(neighborhood_calc, "neighbors"));
 
 		using protocols::toolbox::task_operations::RestrictByCalculatorsOperation;
+		using core::pack::task::operation::TaskOperationCOP;
 		core::pack::task::TaskFactory RBC_factory;
 		RBC_factory.push_back( new RestrictByCalculatorsOperation( calcs_and_calcns ) );
 
@@ -147,6 +151,7 @@ public:
 		//set up test
 		using namespace core::pack::task;
 		using protocols::toolbox::task_operations::RestrictToInterfaceVectorOperation;
+		using core::pack::task::operation::TaskOperationCOP;
 		TaskFactory RTIVO_factory;
 		//these are the default values but hard code anyway, test for chain #s
 		RTIVO_factory.push_back( new RestrictToInterfaceVectorOperation(1,2,10,5.5,75,9.0) );
@@ -172,6 +177,7 @@ public:
 		//set up test
 		using namespace core::pack::task;
 		using protocols::toolbox::task_operations::RestrictInterGroupVectorOperation;
+		using core::pack::task::operation::TaskOperationCOP;
 		TaskFactory RIGV_factory;
 		test::UTracer UT_RIGV("protocols/toolbox/task_operations/RestrictInterGroupVector.u");
 		//make a few groups
@@ -207,6 +213,7 @@ public:
 		using namespace core::pack::task;
 		using namespace core::kinematics;
 		using namespace protocols::toolbox::task_operations;
+		using core::pack::task::operation::TaskOperationCOP;
 		using utility::vector1;
 		
 		MoveMapOP mm = new MoveMap();

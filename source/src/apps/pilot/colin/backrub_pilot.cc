@@ -267,6 +267,7 @@ my_main( void* )
 
 	// create a TaskFactory with the resfile
 	using namespace core::pack::task;
+	using namespace core::pack::task::operation;
 	TaskFactoryOP main_task_factory = new TaskFactory;
 	main_task_factory->push_back( new operation::InitializeFromCommandline );
 	if ( option[ packing::resfile ].user() ) {

@@ -175,7 +175,7 @@ namespace symmetry {
         s->set_weight(core::scoring::score_type_from_name("omega"), 1.0);
         s->set_weight(core::scoring::score_type_from_name("fa_dun"), 1.0);
         s->set_weight(core::scoring::score_type_from_name("p_aa_pp"), 2.0);
-        set_scorefunction(*s);
+        set_scorefunction(s);
       }
       setup_ca_constraints(p,(*get_scorefunction() ),9.0,get_harmonic_ca_cst_std_dev() );
 

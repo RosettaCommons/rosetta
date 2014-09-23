@@ -135,16 +135,16 @@ MolFileIOMolecule::normalize() {
 	// TODO: Does anything need to go here?
 }
 
-ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(chemical::AtomTypeSetCAP atom_types,
-		chemical::ElementSetCAP elements,
-		chemical::MMAtomTypeSetCAP mm_atom_types
+ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(chemical::AtomTypeSetCOP atom_types,
+		chemical::ElementSetCOP elements,
+		chemical::MMAtomTypeSetCOP mm_atom_types
 	) {
 	assert( elements );
 
 	// Make sure we're up to date first.
 	normalize();
 
-	ResidueTypeOP restype = new core::chemical::ResidueType( atom_types, elements, mm_atom_types, 0);
+	ResidueTypeOP restype = new core::chemical::ResidueType( atom_types, elements, mm_atom_types, NULL );
 
 	// Reasonable defaults for:
 	// aa_, rotamer_aa_, <properties suite>, variant_types_,

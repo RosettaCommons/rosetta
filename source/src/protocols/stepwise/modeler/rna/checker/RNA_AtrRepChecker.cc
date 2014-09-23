@@ -250,7 +250,7 @@ namespace checker {
 	RNA_AtrRepChecker::output_rep( pose::Pose const & pose, std::string const tag ){
 
 		core::scoring::methods::EnergyMethodOptions options(atr_rep_screening_scorefxn_->energy_method_options());
-		core::scoring::etable::EtableCAP etable(core::scoring::ScoringManager::get_instance()->etable( options.etable_type()));
+		core::scoring::etable::EtableCOP etable(core::scoring::ScoringManager::get_instance()->etable( options.etable_type()));
 		core::scoring::etable::AnalyticEtableEvaluator eval(*etable);
 		for ( Size i = 1; i <= pose.total_residue(); i++ ){
 			for ( Size ii = 1; ii <= pose.residue( i ).natoms(); ii++ ){

@@ -40,7 +40,7 @@ namespace methods {
 
 class RG_MinData:  public basic::datacache::CacheableData {
 public:
-	RG_MinData(): com(0,0,0), rg(0), nres_scored(0) {}
+	RG_MinData(): com(0.0,0.0,0.0), rg(0), nres_scored(0) {}
 
 	basic::datacache::CacheableDataOP clone() const {
 		return new RG_MinData(*this);

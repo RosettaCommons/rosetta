@@ -64,7 +64,7 @@ namespace devel {
 					const Ints ints = tag->getOption<Ints>(which);
 					const int  nres = ints.getRandomInt();
 					cout << "InvKinLig:LoopDesign::set_nres - setting " << tag->getName() << "-" << tag->getOption<string>("name","<unnamed>") << " " << ints << " => " << nres << endl;
-					const_cast< utility::tag::Tag * >(tag())->setOption(which,nres);
+					utility::pointer::const_pointer_cast< utility::tag::Tag >(tag)->setOption(which,nres);
 				}
       }  // set_nres
 
@@ -331,7 +331,7 @@ namespace devel {
       string s;
 
       for( int i = sp_lo; i <= sp_hi; ++i ) {
-				seq.push_back( core::chemical::ResidueTypeCOP( pose0.residue_type(i) ) );
+				seq.push_back( pose0.residue_type(i).get_self_ptr() );
 				s.push_back( pose0.residue(i).name1() );
       }
 
@@ -341,7 +341,7 @@ namespace devel {
 
     utility::vector1< core::chemical::ResidueTypeCOP > get_seq_from_aas( vector< core::chemical::AA > const& aas ) {
 
-      core::chemical::ResidueTypeSetCAP residue_set
+      core::chemical::ResidueTypeSetCOP residue_set
 				( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
 
       utility::vector1< core::chemical::ResidueTypeCOP > rval;

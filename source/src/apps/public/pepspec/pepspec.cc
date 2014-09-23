@@ -950,7 +950,7 @@ set_pep_csts(
 		pep_cst_vector.x( pep_cst.x );
 		pep_cst_vector.y( pep_cst.y );
 		pep_cst_vector.z( pep_cst.z );
-		ConstraintCOP this_cst( new CoordinateConstraint( AtomID( pose.residue( seqpos ).atom_index( pep_cst.atom_name ), seqpos ), AtomID( pose.residue( prot_anchor ).atom_index( "CA" ), prot_anchor ), pep_cst_vector, new core::scoring::func::FlatHarmonicFunc( pep_cst.x0, pep_cst.sd, pep_cst.tol ) ) );
+		ConstraintCOP this_cst( new CoordinateConstraint( AtomID( pose.residue( seqpos ).atom_index( pep_cst.atom_name ), seqpos ), AtomID( pose.residue( prot_anchor ).atom_index( "CA" ), prot_anchor ), pep_cst_vector, core::scoring::func::FuncOP( new core::scoring::func::FlatHarmonicFunc( pep_cst.x0, pep_cst.sd, pep_cst.tol ) ) ) );
 //		ConstraintCOP cst( new CoordinateConstraint( AtomID( pose.residue( i ).atom_index( "CA" ), i ), AtomID( pose.residue( pep_anchor ).atom_index( "CA" ), pep_anchor ), pose.residue( i ).xyz( "CA" ), new FlatHarmonicFunc( 0.0, 0.1, 2.0 ) ) );
 		pose.add_constraint( this_cst );
 	}
@@ -1066,6 +1066,7 @@ gen_pep_bb_sequential(
 	using namespace scoring::methods;
 	using namespace scoring::etable;
 	using namespace scoring::etable::count_pair;
+	using core::pack::task::operation::TaskOperationCOP;
 
 	Size n_build_loop( option[ pepspec::n_build_loop ] );
 	Size n_prepend( option[ pepspec::n_prepend ] );
@@ -1351,6 +1352,7 @@ mutate_random_residue(
 	make_sequence_change( seqpos, chemical::AA( static_cast< int > ( 20 * numeric::random::rg().uniform() + 1 ) ), pose );
 
 	//rottrial seqpos only
+	using core::pack::task::operation::TaskOperationCOP;
 	pack::task::TaskFactoryOP mut_task_factory( new pack::task::TaskFactory );
 	{
 		pack::task::operation::RestrictResidueToRepackingOP restrict_to_repack_taskop( new pack::task::operation::RestrictResidueToRepacking() );
@@ -1906,6 +1908,7 @@ RunPepSpec()
 						prevent_repack_taskop->include_residue( i );
 					}
 				}
+				using core::pack::task::operation::TaskOperationCOP;
 				if( !option[ pepspec::diversify_pep_seqs ].user() ) dz_task_factory->push_back( new pack::task::operation::InitializeFromCommandline() );
 				dz_task_factory->push_back( new pack::task::operation::IncludeCurrent() );
 				dz_task_factory->push_back( restrict_to_repack_taskop );

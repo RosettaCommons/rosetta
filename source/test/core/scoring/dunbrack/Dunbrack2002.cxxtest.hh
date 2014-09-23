@@ -145,9 +145,9 @@ public:
 			// generate empty list of extra_chi_steps
 			utility::vector1< utility::vector1< Real > > extra_chi_steps( residue.nchi() );
 
-			SingleResidueRotamerLibraryCAP rotlib = RotamerLibrary::get_instance().get_rsd_library( residue.type() );
+			SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance().get_rsd_library( residue.type() ).lock();
 			if (rotlib) {
-				rotlib->fill_rotamer_vector( pose, dummy_scorefxn, *task, dummy_graph, &( residue.type() ), residue, extra_chi_steps, false /*buried*/, suggested_rotamers);
+				rotlib->fill_rotamer_vector( pose, dummy_scorefxn, *task, dummy_graph, residue.type().get_self_ptr(), residue, extra_chi_steps, false /*buried*/, suggested_rotamers);
 			}
 
 			bool bOut ( false  );//switch to true to produce a new test_input file
@@ -206,8 +206,8 @@ public:
 
 		for (Size pos = 1; pos <= pose.total_residue(); pos++ ) {
 			Residue const & residue( pose.residue( pos ) );
-			SingleResidueRotamerLibraryCAP rotlib = RotamerLibrary::get_instance().get_rsd_library( residue.type() );
-			if( rotlib() == NULL ) continue;
+			SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance().get_rsd_library( residue.type() ).lock();
+			if( rotlib.get() == NULL ) continue;
 
 			RotamerLibraryScratchSpace scratch;
 			Real const this_rotamerE = rotlib->best_rotamer_energy(residue, true /*current well only*/, scratch);
@@ -235,8 +235,8 @@ public:
 
 			if ( AA( ii ) == aa_ala || AA( ii ) == aa_gly ) continue;
 
-			SingleResidueRotamerLibraryCAP aa_rotlib = rotlib.get_library_by_aa( (AA) ii );
-			SingleResidueDunbrackLibraryCAP aa_dunlib( dynamic_cast< SingleResidueDunbrackLibrary const * > ( aa_rotlib.get() ) );
+			SingleResidueRotamerLibraryCOP aa_rotlib = rotlib.get_library_by_aa( (AA) ii ).lock();
+			SingleResidueDunbrackLibraryCOP aa_dunlib( dynamic_cast< SingleResidueDunbrackLibrary const * > ( aa_rotlib.get() ) );
 			TS_ASSERT( aa_dunlib );
 			if ( ! aa_dunlib ) {
 				std::cerr << "Failed to find dunbrack library for aa " << (AA) ii << std::endl;

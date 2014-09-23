@@ -66,7 +66,7 @@ extract_pdbs_test()
 	using namespace core::io::silent;
 
 	// setup residue types
-	core::chemical::ResidueTypeSetCAP rsd_set;
+	core::chemical::ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_RNA );
 
 	// configure silent-file data object

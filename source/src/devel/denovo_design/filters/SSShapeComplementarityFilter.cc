@@ -163,7 +163,7 @@ core::Real
 SSShapeComplementarityFilter::compute( core::pose::Pose const & pose ) const
 {
 	// if scc_ is not set, something horrible has happened
-	runtime_assert( scc_ );
+	runtime_assert( scc_ != 0 );
 	if ( !scc_->Init() ) {
 		TR.Error << "Failed to initialize ShapeComplementarityCalculator!" << std::endl;
 		return -1;

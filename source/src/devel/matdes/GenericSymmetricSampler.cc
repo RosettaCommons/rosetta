@@ -198,7 +198,7 @@ GenericSymmetricSampler::parse_my_tag( TagCOP const tag,
 	Filters_map::const_iterator find_filter( filters.find( filter_name ));
 	runtime_assert( find_filter!=filters.end() );
 	filter_ = find_filter->second;
-	runtime_assert( filter_ );
+	runtime_assert( filter_ != 0 );
 
 
 	// optional scorefunction ... overrides filter

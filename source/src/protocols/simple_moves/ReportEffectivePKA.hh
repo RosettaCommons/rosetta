@@ -81,8 +81,8 @@ public:
 
 	std::string get_name() const { return "ReportEffectivePKA"; }
 
-	moves::MoverOP clone() const { return new ReportEffectivePKA( *this ); }
-	moves::MoverOP fresh_instance() const { return new ReportEffectivePKA; }
+	moves::MoverOP clone() const { return moves::MoverOP( new ReportEffectivePKA( *this ) ); }
+	moves::MoverOP fresh_instance() const { return moves::MoverOP( new ReportEffectivePKA ); }
 
     void task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
     core::pack::task::TaskFactoryOP task_factory() const { return task_factory_; }

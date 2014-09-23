@@ -55,7 +55,7 @@ class JumpClaim : public DofClaim {
 	//this class could also specify which atoms to use for the jumps --- but I never used this so far.... might be necessary for Zn jumps.
 public:
 
-	JumpClaim( TopologyClaimer* tc,
+	JumpClaim( TopologyClaimerAP tc,
 						 core::Size pos1,
 						 core::Size pos2,
 						 std::string atom1,
@@ -70,7 +70,7 @@ public:
 		local_pos2_ = std::make_pair( "DEFAULT", pos2 );
 	}
 
-	JumpClaim( TopologyClaimer* tc,
+	JumpClaim( TopologyClaimerAP tc,
 						 core::Size pos1,
 						 core::Size pos2,
 						 ClaimRight right = DofClaim::CAN_INIT ) :
@@ -83,7 +83,7 @@ public:
 		local_pos2_ = std::make_pair( "DEFAULT", pos2 );
 	}
 
-	JumpClaim( TopologyClaimer* tc,
+	JumpClaim( TopologyClaimerAP tc,
 						 LocalPosition pos1,
 						 LocalPosition pos2,
 						 ClaimRight right = DofClaim::CAN_INIT ) :
@@ -95,7 +95,7 @@ public:
 		atom2_( "" )
 	{}
 
-	JumpClaim( TopologyClaimer* tc,
+	JumpClaim( TopologyClaimerAP tc,
 						 LocalPosition pos1,
 						 LocalPosition pos2,
 						 std::string atom1,
@@ -120,22 +120,26 @@ public:
 	}
 
 	virtual void show(std::ostream& os) const {
-		os << "DofClaim-" << str_type() << " owned by a " << owner()->type() << " from ("
+		TopologyClaimerCOP owner_op( owner() );
+		os << "DofClaim-" << str_type() << " owned by a " << (owner_op ? owner_op->type() : "(Unknown)") << " from ("
 			 << local_pos1_.first << ", " << local_pos1_.second << ") to ("
 			 << local_pos2_.first   << ", " << local_pos2_.second <<").";
 	}
 
 	core::Size global_pos1() const {
-		return owner()->broker().sequence_number_resolver().find_global_pose_number( local_pos1_);
+		TopologyClaimerCOP owner_op( owner() );
+		return owner_op->broker().sequence_number_resolver().find_global_pose_number( local_pos1_);
 	}
 
 	core::Size global_pos2() const {
-		return owner()->broker().sequence_number_resolver().find_global_pose_number( local_pos2_ );
+		TopologyClaimerCOP owner_op( owner() );
+		return owner_op->broker().sequence_number_resolver().find_global_pose_number( local_pos2_ );
 	}
 
 	virtual void toggle( core::kinematics::MoveMap& mm, bool new_setting ) const {
-		core::Size pos1 = owner()->broker().sequence_number_resolver().find_global_pose_number( local_pos1_ );
-		core::Size pos2 = owner()->broker().sequence_number_resolver().find_global_pose_number( local_pos2_ );
+		TopologyClaimerCOP owner_op( owner() );
+		core::Size pos1 = owner_op->broker().sequence_number_resolver().find_global_pose_number( local_pos1_ );
+		core::Size pos2 = owner_op->broker().sequence_number_resolver().find_global_pose_number( local_pos2_ );
 		mm.set_jump( pos1, pos2, new_setting );
 	}
 

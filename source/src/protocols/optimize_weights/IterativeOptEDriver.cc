@@ -235,6 +235,7 @@ IterativeOptEDriver::IterativeOptEDriver() :
 		read_tagfile_to_taskfactory( tagfile_name, task_factory_ );
 	// else use default TaskOperation(s)
 	} else if ( ! option[ optE::design_with_minpack ] ) {
+		using core::pack::task::operation::TaskOperationCOP;
 		task_factory_->push_back( new pack::task::operation::InitializeFromCommandline );
 	}
 
@@ -1411,9 +1412,9 @@ IterativeOptEDriver::collect_decoy_discrimination_data()
 			utility::vector1< Real > new_nats_scores, new_decs_scores;
 
 			++count;
-			runtime_assert( dynamic_cast< PNatStructureOptEData * > ( (*iter)() ) );
+			runtime_assert( dynamic_cast< PNatStructureOptEData * > ( (*iter).get() ) );
 			PNatStructureOptEDataOP structure_data(
-				static_cast< PNatStructureOptEData * > ( (*iter)() ) );
+				utility::pointer::static_pointer_cast< PNatStructureOptEData > ( (*iter) ) );
 			/// Create new natives
 			for ( Size ii = 1, iie = decdisc_native_poses_[ count ].size(); ii <= iie; ++ii ) {
 				core::pose::Pose pose = decdisc_native_poses_[ count ][ ii ];
@@ -2046,7 +2047,8 @@ void IterativeOptEDriver::optimize_weights()
 		Size ndofs = start_dofs.size();
 		if ( option[ optE::wrap_dof_optimization ].user() ) {
 			if ( outer_loop_counter_ == 1 ) {
-				wrapped_opt_min_ = new WrapperOptEMultifunc(
+				wrapped_opt_min_ = new WrapperOptEMultifunc();
+				wrapped_opt_min_->init(
 					free_score_list_, (int) free_count_,
 					fixed_score_list_, fixed_parameters_,
 					opt_min_ptr );
@@ -3866,11 +3868,11 @@ IterativeOptEDriver::get_nat_rot_opte_data(
 
 		if ( rot_wells.size()  == 0 ) continue;
 
-		SingleResidueRotamerLibraryCAP srlib(
+		SingleResidueRotamerLibraryCOP srlib(
 			core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( pose.residue_type( resi ) ) );
 
-		runtime_assert( dynamic_cast< SingleResidueDunbrackLibrary const * > ( srlib() ) );
-		SingleResidueDunbrackLibraryCAP srdlib( static_cast< SingleResidueDunbrackLibrary const * > ( srlib() ));
+		runtime_assert( dynamic_cast< SingleResidueDunbrackLibrary const * > ( srlib.get() ) );
+		SingleResidueDunbrackLibraryCOP srdlib( static_cast< SingleResidueDunbrackLibrary const * > ( srlib() ));
 
 
 		PNatRotOptEPositionDataOP this_pos_data = new PNatRotOptEPositionData;
@@ -4279,7 +4281,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 						}
 					}else{
 						core::io::silent::SilentStructOP ss = sfd_wt[wt_pdb_names[ jj ]];
-						core::chemical::ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+						core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 						ss->fill_pose(wt_structure,*rsd_set);
 					}
 
@@ -4851,7 +4853,7 @@ IterativeOptEDriver::measure_sequence_recovery(
 	nresidues_recovered = 0;
 
 	//ScoreFunctionOP sfxn2 = ScoreFunctionFactory::create_score_function( get_scorefile_name() );
-
+	using core::pack::task::operation::TaskOperationCOP;
 	TaskFactoryOP task_factory_for_design = new TaskFactory( *task_factory_ );
 	task_factory_for_design->push_back( new ScaleAnnealerTemperatureOperation( sfxn->weights()[ fa_atr ] / 0.8 ) );
 
@@ -5002,6 +5004,7 @@ IterativeOptEDriver::measure_rotamer_recovery(
 	//ScoreFunctionOP sfxn2 = ScoreFunctionFactory::create_score_function( get_scorefile_name() );
 
 	using namespace core::pack::task;
+	using core::pack::task::operation::TaskOperationCOP;
 	TaskFactoryOP task_factory_for_repacking = new TaskFactory( *task_factory_ );
 	task_factory_for_repacking->push_back( new operation::RestrictToRepacking );
 
@@ -5345,7 +5348,8 @@ IterativeOptEDriver::repack_and_minimize_pose(
 {
 	using namespace moves;
 	using namespace core::pack::task;
-
+	using core::pack::task::operation::TaskOperationCOP;
+	
 	protocols::simple_moves::PackRotamersMover packer( sfxn );
 	TaskFactoryOP factory = new TaskFactory;
 	factory->push_back( new operation::RestrictToRepacking );

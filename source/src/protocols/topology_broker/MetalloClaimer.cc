@@ -153,7 +153,7 @@ bool MetalloClaimer::read_tag( std::string tag, std::istream& is ) {
 	} else if ( tag == "aa" ) {
 		for ( int i = 1; i <= 2; ++i ) {
 			std::string name;
-			core::chemical::ResidueTypeSetCAP residue_type_set(
+			core::chemical::ResidueTypeSetCOP residue_type_set(
 					core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
 			is >> name;
 			if ( residue_type_set->name_map(name).is_protein() )

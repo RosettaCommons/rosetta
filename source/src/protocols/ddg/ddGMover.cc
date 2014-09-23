@@ -460,10 +460,11 @@ ddGMover::setup_constraints(
 						Vector const CA_j(pose.residue(j).xyz(" CA "));
 						Real const CA_dist = (CA_i - CA_j).length();
 						if(CA_dist < CA_cutoff){
+							core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc(CA_dist, cst_tol));
 							ConstraintCOP cst( new AtomPairConstraint(
 								core::id::AtomID(pose.residue(i).atom_index(" CA "),i),
 								core::id::AtomID(pose.residue(j).atom_index(" CA "),j),
-								new core::scoring::func::HarmonicFunc(CA_dist, cst_tol)));
+								fx));
 							pose.add_constraint(cst);
 						}
 					}
@@ -599,7 +600,7 @@ ddGMover::set_minimization_score_function( core::scoring::ScoreFunctionOP s){
 
 void
 ddGMover::score_function( core::scoring::ScoreFunctionOP s){
-	scorefxn_=*s;
+	scorefxn_=s;
 }
 
 void

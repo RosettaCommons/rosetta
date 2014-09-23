@@ -55,7 +55,17 @@ namespace core {
 namespace scoring {
 namespace hbonds {
 
-class HBond : public utility::pointer::ReferenceCount {
+class HBond : public utility::pointer::ReferenceCount
+#ifdef PTR_MODERN
+	// New version
+	, public utility::pointer::enable_shared_from_this< HBond >
+{
+#else
+{
+	// Old intrusive ref-counter version
+	inline HBondCOP shared_from_this() const { return HBondCOP( this ); }
+	inline HBondOP shared_from_this() { return HBondOP( this ); }
+#endif
 
 public:
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
@@ -78,6 +88,12 @@ public:
 		Real const weight_in,
 		HBondDerivs const & derivs_in
 	);
+
+	/// self pointers
+	inline HBondCOP get_self_ptr() const { return shared_from_this(); }
+	inline HBondOP get_self_ptr() { return shared_from_this(); }
+	//inline HBondCAP get_self_weak_ptr() const { return HBondCAP( shared_from_this() ); }
+	//inline HBondAP get_self_weak_ptr() { return HBondAP( shared_from_this() ); }
 
 	///
 	Size
@@ -303,6 +319,10 @@ public:
 	///@brief  Access hbond
 	HBond const &
 	hbond( Size const number ) const;
+
+	///@brief  Access hbond
+	HBondCOP
+	hbond_cop( Size const number ) const;
 
 	///@brief  Get a vector of all the hbonds involving this atom
 	///@details Excludes 'not allowed' bonds by default.  See hbond_allowed function for more info)

@@ -18,9 +18,8 @@ namespace openers {
 
 class IdealGeometryOpener;
 
-using utility::pointer::owning_ptr;
-typedef owning_ptr<IdealGeometryOpener> IdealGeometryOpenerOP;
-typedef owning_ptr<IdealGeometryOpener const> IdealGeometryOpenerCOP;
+typedef utility::pointer::owning_ptr<IdealGeometryOpener> IdealGeometryOpenerOP;
+typedef utility::pointer::owning_ptr<IdealGeometryOpener const> IdealGeometryOpenerCOP;
 
 }
 }

@@ -213,12 +213,17 @@ int universal_main(
 	using namespace protocols::jobdist;
 	using namespace protocols::moves;
 	using namespace core::scoring;
+	using namespace basic::datacache;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace utility::file;
+	
+	using core::pose::PoseCOP;
+	using core::pose::PoseOP;
+
 	//using core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG;
 	//using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
-	using basic::datacache::CacheableString;
+	//using basic::datacache::CacheableString;
 
 	// open native pose if it exists
 	core::pose::Pose native_pose;
@@ -237,7 +242,7 @@ int universal_main(
 	if( option[ in::file::silent ].user() ||  option[ in::file::silent_list ].user()  ){
 
 		// setup residue types
-		core::chemical::ResidueTypeSetCAP rsd_set;
+		core::chemical::ResidueTypeSetCOP rsd_set;
 		if ( option[ in::file::fullatom ]() ) {
 			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 		} else if ( option[ in::file::residue_type_set ]() == "rna"  || option[ out::file::residue_type_set ]() == "rna"  ) {
@@ -422,7 +427,7 @@ int universal_main(
 				core::pose::PoseOP the_pose = new core::pose::Pose( input_pose );
 				if( the_pose->is_fullatom() ) core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose( *the_pose );
 				else                     core::scoring::constraints::add_constraints_from_cmdline_to_pose( *the_pose );
-				the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, new CacheableString(curr_job->output_tag(curr_nstruct)));
+				the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, DataCache_CacheableData::DataOP( new CacheableString(curr_job->output_tag(curr_nstruct)) ));
 
 				// Membrane protein specific scoring - only centroid score function here:
 				if ( option[ OptionKeys::score::weights ]() == "score_membrane" && option[in::file::spanfile].user() && option[ in::file::centroid_input ].user() )	{
@@ -590,7 +595,7 @@ int universal_main(
 			if( the_pose->is_fullatom() ) core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose( *the_pose );
 			else                          core::scoring::constraints::add_constraints_from_cmdline_to_pose( *the_pose );
 
-			the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, new CacheableString(curr_job->output_tag(curr_nstruct)));
+			the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, DataCache_CacheableData::DataOP( new CacheableString(curr_job->output_tag(curr_nstruct)) ));
 
 			// Membrane protein specific scoring - only centroid score function here:
 			if ( option[ OptionKeys::score::weights ]() == "score_membrane" && option[in::file::spanfile].user() && option[ in::file::centroid_input ].user() )	{
@@ -687,7 +692,8 @@ int main_plain_mover(
 #endif
 
 	//using core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG;
-	using basic::datacache::CacheableString;
+	//using basic::datacache::CacheableString;
+	using namespace basic::datacache;
 
 	time_t overall_start_time = time(NULL);
 	utility::vector1< BasicJobOP > input_jobs = load_s_and_l();
@@ -750,7 +756,7 @@ int main_plain_mover(
 
 		// Make a modifiable copy of the pose read from disk
 		core::pose::PoseOP the_pose = new core::pose::Pose( *input_pose );
-		the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, new CacheableString(curr_job->output_tag(curr_nstruct)));
+		the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, DataCache_CacheableData::DataOP( new CacheableString(curr_job->output_tag(curr_nstruct)) ));
 
 		mover.apply( *the_pose );
 
@@ -791,7 +797,8 @@ int main_plain_pdb_mover(
 )
 {
 	//using core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG;
-	using basic::datacache::CacheableString;
+	//using basic::datacache::CacheableString;
+	using namespace basic::datacache;
 
 	time_t overall_start_time = time(NULL);
 	utility::vector1< BasicJobOP > input_jobs = load_s_and_l();
@@ -848,7 +855,7 @@ int main_plain_pdb_mover(
 
 		// Make a modifiable copy of the pose read from disk
 		core::pose::PoseOP the_pose = new core::pose::Pose( *input_pose );
-		the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, new CacheableString(curr_job->output_tag(curr_nstruct)));
+		the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, DataCache_CacheableData::DataOP( new CacheableString(curr_job->output_tag(curr_nstruct)) ));
 
 		for(int repeat = 0; repeat < int(option[ run::repeat ]()); ++repeat ){
 			mover.apply( *the_pose );
@@ -904,7 +911,8 @@ int main_atom_tree_diff_mover(
 )
 {
 	//using core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG;
-	using basic::datacache::CacheableString;
+	//using basic::datacache::CacheableString;
+	using namespace basic::datacache;
 
 	time_t overall_start_time = time(NULL);
 	utility::vector1< BasicJobOP > input_jobs = load_s_and_l();
@@ -928,7 +936,7 @@ int main_atom_tree_diff_mover(
 
 		// Make a modifiable copy of the pose read from disk
 		core::pose::PoseOP the_pose = new core::pose::Pose( *input_pose );
-		the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, new CacheableString(curr_job->output_tag(curr_nstruct)));
+		the_pose->data().set(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG, DataCache_CacheableData::DataOP( new CacheableString(curr_job->output_tag(curr_nstruct)) ));
 		mover.apply( *the_pose );
 
 		// Score new structure and add to silent file

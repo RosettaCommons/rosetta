@@ -199,7 +199,7 @@ public:
 
 		//strip C-term from UBQ - best to do this with a full replace to re-draw the carboxyl oxygen
 		//UBQ.dump_pdb("pre-removeUQB.pdb");
-		core::chemical::ResidueTypeSetCAP fa_standard(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD));
+		core::chemical::ResidueTypeSetCOP fa_standard(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD));
 		UBQ.conformation().delete_residue_slow( UBQ_term );
 		UBQ.append_residue_by_bond( *(core::conformation::ResidueFactory::create_residue(fa_standard->name_map("GLY")) ) );
 		UBQ.conformation().insert_ideal_geometry_at_polymer_bond( UBQ_term-1 );
@@ -402,7 +402,9 @@ public:
 		task_factory_->push_back(prevent);
 
 		//old way - this is not wrong, but it is inferior to the method below
+		using core::pose::metrics::PoseMetricCalculatorOP;
 		if(basic::options::option[basic::options::OptionKeys::chemically_conjugated_docking::publication].value()){
+			using core::pose::metrics::PoseMetricCalculatorOP;
 			std::string const interface_calc("UBQE2_InterfaceNeighborDefinitionCalculator");
 			std::string const neighborhood_calc("UBQE2_NeighborhoodByDistanceCalculator");
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc, new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( core::Size(1), core::Size(2)) );

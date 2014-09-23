@@ -466,7 +466,7 @@ HotspotStubSet::get_best_energy_stub() const {
 			}
 		}
 	}
-	runtime_assert( ret );
+	runtime_assert( ret != 0 );
 	return( ret );
 }
 
@@ -490,7 +490,7 @@ HotspotStubSet::get_nearest_stub( core::conformation::ResidueCOP residue ) const
 			}
 		}
 	}
-	runtime_assert( nearest_stub );
+	runtime_assert( nearest_stub != 0 );
 	return( nearest_stub );
 }
 
@@ -522,12 +522,11 @@ HotspotStubSet::find_neighboring_stubs( HotspotStubCOP stub ) const {
 	return( stub_subset );
 }
 
-// dangerous to return an OP. Any ideas?
-HotspotStubOP
+HotspotStubSet::Hotspots::const_iterator
 HotspotStubSet::get_stub( std::string const residue_name3, core::Real const score ) const
 {
 	Hs_map::const_iterator hs_it( stub_set_.find( residue_name3 ) );
-	return( hs_it->second.find( score )->second );
+	return( hs_it->second.find( score ) );
 }
 
 ///@details removes the first occurence of stub in the stubset
@@ -552,7 +551,7 @@ void
 HotspotStubSet::remove_stubs_from_set( std::set< std::pair< std::string, core::Real > > const stubs ) {
 	for( std::set< std::pair< std::string, core::Real > >::const_iterator stub_it=stubs.begin(); stub_it!=stubs.end(); ++stub_it ){
 		Hs_map::iterator hs_it( stub_set_.find( stub_it->first ) );
-		hs_it->second.erase( get_stub( stub_it->first, stub_it->second ) );
+		hs_it->second.erase( get_stub( stub_it->first, stub_it->second )->first );
 	}
 	handshake_stub_sets();
 }
@@ -570,7 +569,7 @@ void HotspotStubSet::add_stub_( HotspotStubCOP stub ) {
 		stub_set_.insert( std::make_pair( resname, empty_set ) );
 		ss_iter = stub_set_.find( resname );
 	}
-	(ss_iter->second).insert( std::make_pair(stub->bonus_value(), new HotspotStub( *stub ) ) );
+	(ss_iter->second).insert( std::make_pair(stub->bonus_value(), HotspotStubOP( new HotspotStub( *stub ) ) ) );
 	handshake_stub_sets();
 }
 
@@ -730,7 +729,7 @@ void HotspotStubSet::fill( core::pose::Pose const & reference_pose, core::scorin
 		index << i;
 
 		// Keep docking until we get a good score
-		runtime_assert( score_threshold_ );
+		runtime_assert( score_threshold_ != 0 );
 		while( score > score_threshold_ ) {
 
 			pose = reference_pose;
@@ -783,8 +782,8 @@ void HotspotStubSet::fill( core::pose::Pose const & reference_pose, core::scorin
 			// check initial distance to target
 			if( target_resnum_ && target_distance_ ) {
 				// convenience pointers
-				core::conformation::ResidueCOP const res_target( pose.residue( target_resnum_ ) );
-				core::conformation::ResidueCOP const stub( pose.residue( placed_seqpos ) );
+				core::conformation::ResidueCOP const res_target( pose.residue( target_resnum_ ).get_self_ptr() );
+				core::conformation::ResidueCOP const stub( pose.residue( placed_seqpos ).get_self_ptr() );
 				// distance check
 				core::Real distance( res_target->xyz( res_target->nbr_atom() ).distance( stub->xyz( stub->nbr_atom() )) );
 				TR << "InitDist: " << distance << "A from res " << target_resnum_;
@@ -801,8 +800,8 @@ void HotspotStubSet::fill( core::pose::Pose const & reference_pose, core::scorin
 			// check final distance to target
 			if( target_resnum_ && target_distance_ ) {
 				// convenience pointers
-				core::conformation::ResidueCOP const res_target( pose.residue( target_resnum_ ) );
-				core::conformation::ResidueCOP const stub( pose.residue( placed_seqpos ) );
+				core::conformation::ResidueCOP const res_target( pose.residue( target_resnum_ ).get_self_ptr() );
+				core::conformation::ResidueCOP const stub( pose.residue( placed_seqpos ).get_self_ptr() );
 				// distance check
 				core::Real distance( res_target->xyz( res_target->nbr_atom() ).distance( stub->xyz( stub->nbr_atom() )) );
 				TR << "FinalDist: " << distance << "A from res " << target_resnum_;
@@ -815,7 +814,7 @@ void HotspotStubSet::fill( core::pose::Pose const & reference_pose, core::scorin
 
 			// check angle towards CoM
 			if( basic::options::option[ basic::options::OptionKeys::hotspot::angle ].user() ) {
-				core::conformation::ResidueCOP const stub( pose.residue( placed_seqpos ) );
+				core::conformation::ResidueCOP const stub( pose.residue( placed_seqpos ).get_self_ptr() );
 				core::Real const threshold = basic::options::option[ basic::options::OptionKeys::hotspot::angle ].value();
 				runtime_assert( threshold > 0 );
 				// angle_res defaults to 0, which causes stub_tgt_angle() to calc and use target center of mass

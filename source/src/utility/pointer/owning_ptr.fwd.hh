@@ -8,28 +8,17 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   utility/pointer/owning_ptr.fwd.hh
-/// @brief  utility::pointer::owning_ptr forward declarations
-/// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
+/// @brief  Non-owning owning smart pointer -- dispatch class
+/// @author Luki Goldschmidt <lugo@uw.edu>
 
-
-#ifndef INCLUDED_utility_pointer_owning_ptr_fwd_hh
-#define INCLUDED_utility_pointer_owning_ptr_fwd_hh
-
-
-namespace utility {
-namespace pointer {
-
-
-// Forward
-template< typename T > class owning_ptr;
-
-
-} // namespace pointer
-} // namespace utility
-
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/split_member.hpp>
+#ifdef PTR_REFCOUNT
+#include <utility/pointer/refcount/owning_ptr.fwd.hh>
 #endif
 
-#endif // INCLUDED_utility_pointer_owning_ptr_FWD_HH
+#ifdef PTR_STD
+#include <utility/pointer/std/owning_ptr.hh>
+#endif
+
+#ifdef PTR_BOOST
+#include <utility/pointer/boost/owning_ptr.hh>
+#endif

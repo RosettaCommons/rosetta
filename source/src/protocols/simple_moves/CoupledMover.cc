@@ -330,7 +330,7 @@ CoupledMover::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	Pose const & pose)
 {
-	short_backrub_mover_ = new protocols::simple_moves::ShortBackrubMover(new core::pose::Pose(pose));
+	short_backrub_mover_ = new protocols::simple_moves::ShortBackrubMover(core::pose::PoseOP(new core::pose::Pose(pose)));
 }
 
 } // moves

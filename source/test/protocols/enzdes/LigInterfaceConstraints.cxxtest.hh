@@ -99,13 +99,13 @@ public:
 		// the ResidueTypeSet is already initialized.
 		using namespace core::chemical;
 		utility::vector1< std::string > params_files;
-		ResidueTypeSetCAP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+		ResidueTypeSetCOP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
 		if(!residue_set.has_name("D2N")) params_files.push_back("protocols/enzdes/D2N.params");
 		residue_set.read_files(params_files);
 		basic::options::option[basic::options::OptionKeys::run::preserve_header ].value(true);
 
-		enz_io = new protocols::toolbox::match_enzdes_util::EnzConstraintIO(& residue_set);
+		enz_io = new protocols::toolbox::match_enzdes_util::EnzConstraintIO(residue_set.get_self_weak_ptr());
   }
 
   // Shared finalization goes here.
@@ -219,7 +219,7 @@ public:
 		}
 
 		protocols::moves::MoverOP newcstmover = parser_movers.find("cstaddnew")->second;
-		runtime_assert( newcstmover );
+		runtime_assert( newcstmover != 0 );
 		TR << "parser testing setup done, beginning testing....   " << std::endl;
 
 		newcstmover->apply( parser_pose );
@@ -232,7 +232,7 @@ public:
 
 		//then testing if removing works
 		protocols::moves::MoverOP remcstmover = parser_movers.find("cstremove")->second;
-		runtime_assert( remcstmover );
+		runtime_assert( remcstmover != 0 );
 		remcstmover->apply( parser_pose );
 		(*scorefxn)(parser_pose);
 
@@ -243,7 +243,7 @@ public:
 
 		//removing testing done, now testing whether adding pregenerated csts works
 		protocols::moves::MoverOP pregencstmover = parser_movers.find("cstaddpreg")->second;
-		runtime_assert( pregencstmover );
+		runtime_assert( pregencstmover != 0 );
 		pregencstmover->apply( parser_pose );
 		(*scorefxn)(parser_pose);
 

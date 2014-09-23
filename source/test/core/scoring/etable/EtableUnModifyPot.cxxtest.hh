@@ -87,12 +87,12 @@ public:
 		Pose pose = create_trpcage_ideal_pose();
 		EnergyMethodOptions options; // default is fine
 
-		Etable const & etable( *( ScoringManager::get_instance()->etable( options.etable_type() )) );
+		Etable const & etable( *( ScoringManager::get_instance()->etable( options.etable_type() ).lock()) );
 
-		AnalyticEtableEnergy ana_lj_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
-		TableLookupEtableEnergy tab_lj_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
+		AnalyticEtableEnergy ana_lj_energy( *( ScoringManager::get_instance()->etable( options.etable_type() ).lock()), options );
+		TableLookupEtableEnergy tab_lj_energy( *( ScoringManager::get_instance()->etable( options.etable_type() ).lock()), options );
 
-		Size const OCbb_idx = etable.atom_set()->atom_type_index("OCbb");
+		Size const OCbb_idx = etable.atom_set().lock()->atom_type_index("OCbb");
 		EtableParamsOnePair const & p = etable.analytic_params_for_pair( OCbb_idx, OCbb_idx );
 		TS_ASSERT_EQUALS( p.ljrep_extra_repulsion.xlo, 0.0 );
 		TS_ASSERT_EQUALS( p.ljrep_extra_repulsion.xhi, 0.0 );

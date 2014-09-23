@@ -72,7 +72,7 @@ using namespace ObjexxFCL;
 SameStrand::SameStrand( core::fragment::SecondaryStructureOP ss ) :
 	secondary_structure_( ss )
 {
-	runtime_assert( ss );
+	runtime_assert( ss != 0 );
 
   // set total_residue
   total_residue_ = ss->total_residue();
@@ -106,7 +106,7 @@ bool SameStrand::eval( Size i, Size j ) const {
 
 void
 SameStrand::redo() const {
-	runtime_assert( secondary_structure_ );
+	runtime_assert( secondary_structure_ != 0 );
 
 	do_same_strand( );
 	//	compute( *secondary_structure_ );

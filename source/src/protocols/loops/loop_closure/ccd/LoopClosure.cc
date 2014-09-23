@@ -108,9 +108,9 @@ void LoopClosure::set_movemap( core::kinematics::MoveMapCOP mm ) { movemap_ = mm
 void LoopClosure::set_fragset( core::fragment::FragSetCOP frags ) { fragset_ = frags; }
 
 void LoopClosure::init() {
-	runtime_assert( fragset_ );
-	runtime_assert( movemap_ );
-	runtime_assert( scorefxn_ );
+	runtime_assert( fragset_ != 0 );
+	runtime_assert( movemap_ != 0 );
+	runtime_assert( scorefxn_ != 0 );
 
 	//make movemap that only allows bb moves within loop ( if master movemap allows the move, too ).
 	kinematics::MoveMapOP loop_movemap = new kinematics::MoveMap;
@@ -131,7 +131,7 @@ void LoopClosure::init() {
   init_mc();
   // put a template frame at top of list -- will always catch the fragments according to closure_frames.front()
   using namespace fragment;
-  closure_frame_ = new Frame( loop_.start(), new FragData( new BBTorsionSRFD, loop_.size() ) );
+  closure_frame_ = new Frame( loop_.start(), FragDataCOP( new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), loop_.size() ) ) );
 }
 
 LoopClosure::~LoopClosure() {}

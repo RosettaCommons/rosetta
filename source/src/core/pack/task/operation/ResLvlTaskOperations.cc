@@ -91,7 +91,7 @@ void RestrictAbsentCanonicalAASRLT::aas_to_keep( std::string const & aastring )
 
 void RestrictAbsentCanonicalAASRLT::parse_tag( TagCOP tag )
 {
-	runtime_assert( tag );
+	runtime_assert( tag != 0 );
 	if ( tag->hasOption("aas") ) aas_to_keep( tag->getOption<std::string>("aas") );
 	else utility_exit_with_message("no aas tag option by which restrict absent canonical aas.");
 }
@@ -162,7 +162,7 @@ void DisallowIfNonnativeRLT::disallow_aas( std::string const & aa_string ){
 
 void DisallowIfNonnativeRLT::parse_tag( TagCOP tag )
 {
-	runtime_assert( tag );
+	runtime_assert( tag != 0 );
 	if ( tag->hasOption("disallow_aas") )
 		disallow_aas( tag->getOption< std::string >( "disallow_aas" ) );
 	else utility_exit_with_message("no aas tag option by which restrict absent canonical aas.");
@@ -209,7 +209,7 @@ void AddBehaviorRLT::apply( ResidueLevelTask & rlt ) const
 
 void AddBehaviorRLT::parse_tag( TagCOP tag )
 {
-	runtime_assert( tag );
+	runtime_assert( tag != 0 );
 	if ( tag->hasOption("behavior") ) behavior_ = tag->getOption<std::string>("behavior");
 	else utility_exit_with_message("AddBehaviorRLT tag needs to define option \"behavior\".");
 }

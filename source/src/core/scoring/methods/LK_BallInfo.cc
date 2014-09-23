@@ -314,7 +314,7 @@ LKB_ResidueInfo::initialize_residue_type( ResidueType const & rsd_type ) const
 	bool const sidechain_only( true ); // consider making this option-configurable
 	// bool const sidechain_only( ! basic::options::option[ basic::options::OptionKeys::dna::specificity::lk_ball_for_bb ] );
 
-	ResidueTypeCOP const address( &rsd_type );
+	ResidueTypeCOP const address( rsd_type.get_self_ptr() );
 	assert( ! water_builder_map_.count( address ) );
 
 	water_builder_map_[ address ]; // create entry in map
@@ -462,7 +462,7 @@ LKB_ResidueInfo::build_waters( Residue const & rsd )
 	if ( !has_waters_ ) return;
 
 	// waters_ array has already been dimensioned properly
-	ResidueTypeCOP const address( &( rsd.type() ) );
+	ResidueTypeCOP const address( rsd.type().get_self_ptr() );
 
 	WaterBuilderMap::const_iterator it( water_builder_map_.find( address ) );
 	if ( it == water_builder_map_.end() ) {
@@ -487,7 +487,7 @@ LKB_ResidueInfo::initialize( ResidueType const & rsd )
 	waters_.clear(); waters_.resize( rsd.nheavyatoms() );
 	has_waters_ = false;
 
-	ResidueTypeCOP const address( &rsd );
+	ResidueTypeCOP const address( rsd.get_self_ptr() );
 
 	WaterBuilderMap::const_iterator it( water_builder_map_.find( address ) );
 	if ( it == water_builder_map_.end() ) {

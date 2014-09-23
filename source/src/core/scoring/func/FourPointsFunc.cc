@@ -57,11 +57,7 @@ FourPointsFunc::residue( Size ) const
 	utility_exit_with_message( "FourPointsFunc does not implement a residue() method" );
 
 	// unreachable -- appease compiler
-	chemical::AtomTypeSetCAP atset( 0 );
-	chemical::ElementSetCAP elements( 0 );
-	chemical::MMAtomTypeSetCAP mmset( 0 );
-	chemical::orbitals::OrbitalTypeSetCAP otset(0);
-	chemical::ResidueType rt( atset, elements, mmset, otset );
+	chemical::ResidueType rt( NULL, NULL, NULL, NULL );
 	static conformation::Residue r( rt, true );
 	return r;
 }

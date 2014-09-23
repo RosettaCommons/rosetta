@@ -118,6 +118,7 @@ SidechainMoverBase::parse_my_tag(
 	pose::Pose const & /*pose*/
 )
 {
+	using core::pack::task::operation::TaskOperationCOP;
 	pack::task::TaskFactoryOP new_task_factory( new pack::task::TaskFactory );
 
 	if ( tag->hasOption("task_operations") ) {
@@ -127,7 +128,7 @@ SidechainMoverBase::parse_my_tag(
 		for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
 					t_o_key != end; ++t_o_key ) {
 			if ( data.has( "task_operations", *t_o_key ) ) {
-				new_task_factory->push_back( data.get< pack::task::operation::TaskOperation* >( "task_operations", *t_o_key ) );
+				new_task_factory->push_back( data.get_ptr< pack::task::operation::TaskOperation >( "task_operations", *t_o_key ) );
 			} else {
 				throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
 			}
@@ -151,6 +152,7 @@ SidechainMoverBase::set_defaults() {
 void
 SidechainMoverBase::init_from_options() {
 	using namespace basic::options;
+	using core::pack::task::operation::TaskOperationCOP;
 	core::pack::task::TaskFactoryOP new_task_factory = new pack::task::TaskFactory;
 	new_task_factory->push_back( new pack::task::operation::InitializeFromCommandline );
 	// design is not supported yet !!!
@@ -230,7 +232,7 @@ SidechainMoverBase::make_move( conformation::ResidueOP old_res )
 	using numeric::conversions::radians;
 	using namespace ObjexxFCL;
 	chemical::ResidueType  const& old_res_type( old_res->type() );
-	chemical::ResidueTypeCOP new_res_type( &( old_res->type() ) ); //for now until we fix the design stuff back in...
+	chemical::ResidueTypeCOP new_res_type( old_res->type().get_self_ptr() ); //for now until we fix the design stuff back in...
 	utility::vector1<Real> const old_chi( old_res->chi() );
 	Size resnum = old_res->seqpos();
 	Size nchi( old_chi.size() );

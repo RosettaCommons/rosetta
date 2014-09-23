@@ -57,7 +57,7 @@ public:
 	void
 	init_from_file(
 		std::string const & filename,
-		chemical::ResidueTypeCOP restype
+		chemical::ResidueType const & restype
 	);
 
 	/// @brief Adheres to the contract from SingleLigandRotamerLibrary

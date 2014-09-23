@@ -132,7 +132,7 @@ min_rotamers( RotVec & rotamers, 	core::scoring::ScoreFunctionOP scrfxn, std::st
 
 		// make a pose, residue, and append residue to pose
 		Pose pose;
-		ResidueTypeSetCAP RTS( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+		ResidueTypeSetCOP RTS( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 		ResidueType const & RT( RTS->name_map( aa_name ) );
 		Residue R( RT, true );
 		pose.append_residue_by_jump( R, 1 );
@@ -642,7 +642,7 @@ calc_std_dev (RotVec & final_rotamers, core::scoring::ScoreFunctionOP scrfxn, st
 
 	// make a pose, residue, and append residue to pos
 	Pose pose;
-	ResidueTypeSetCAP RTS( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+	ResidueTypeSetCOP RTS( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 	ResidueType const & RT( RTS->name_map( aa_name ) );
 	Residue R( RT, true );
 	pose.append_residue_by_jump( R, 1 );

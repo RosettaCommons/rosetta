@@ -294,7 +294,7 @@ WorkUnit_MoverWrapper::run(){
 		TR.Debug << "Applying the mover .. " << std::endl;
 		for( SilentStructStore::const_iterator it = decoys().begin() ; it != decoys().end(); ++it ){
 			Pose pose;
-			runtime_assert(*it);
+			runtime_assert(*it != 0);
 			(*it)->fill_pose( pose );
 			the_mover_->apply( pose );
 			result_store.add( pose );

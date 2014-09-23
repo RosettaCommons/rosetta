@@ -90,13 +90,13 @@ LoopLengthChange::apply( core::pose::Pose & pose )
     
   runtime_assert( loop_end() >= loop_start() );
   //runtime_assert( loop_end() + delta() >= loop_start() );
-	core::kinematics::FoldTreeCOP ft( pose.fold_tree() );
+	core::kinematics::FoldTree const & ft = pose.fold_tree();
 	core::Size jump_count( 0 );
   if( delta() < 0 ){
     //TR << "DEBUG: I will try to delete residues" << std::endl;
 		for( int del(0); del>delta(); --del ){
     	//TR<<"loop_end -delta()+ del =" <<loop_end()-delta()+ del<<std::endl;
-    	if( ft->is_jump_point( loop_end() + del ) ){
+    	if( ft.is_jump_point( loop_end() + del ) ){
     					TR<<"LoopLengthChange called across a jump. I'm skipping the jump residue"<<std::endl;
     					jump_count++;
     				}

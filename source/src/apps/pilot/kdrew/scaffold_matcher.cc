@@ -231,6 +231,7 @@ HotspotPlacementMover::apply(
 	}
 
 	//kdrew: packer used before final scoring of scaffold placement
+	using core::pack::task::operation::TaskOperationCOP;
 	core::pack::task::TaskFactoryOP tf(new core::pack::task::TaskFactory());
 	tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
 	//kdrew: do not do design, makes NATAA if res file is not specified
@@ -256,7 +257,7 @@ HotspotPlacementMover::apply(
 
 	//kdrew: setup default packer task for both L and D residues
 	utility::vector1< bool > aas(20,false);
-	core::chemical::ResidueTypeSetCAP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+	core::chemical::ResidueTypeSetCOP rs( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
 	core::pack::task::PackerTaskOP packer_task = core::pack::task::TaskFactory::create_packer_task( start_pose );
 	for ( core::Size resnum=pep_start; resnum <= pep_end; ++resnum )
 	{

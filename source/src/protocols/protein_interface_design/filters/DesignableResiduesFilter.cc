@@ -110,7 +110,7 @@ DesignableResiduesFilter::apply(core::pose::Pose const & ) const
 
 core::Size
 DesignableResiduesFilter::compute( core::pose::Pose const & pose ) const{
-	runtime_assert( task_factory() );
+	runtime_assert( task_factory() != 0 );
 	runtime_assert( packable() || designable() );
 	core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 	core::Size total_residue;

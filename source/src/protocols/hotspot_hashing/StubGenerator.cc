@@ -47,7 +47,7 @@ core::conformation::ResidueOP StubGenerator::getStubByName( std::string name )
   using namespace core::chemical;
   
   ResidueOP residue = ResidueFactory::create_residue(
-      rsd_set_from_cmd_line()->name_map( name ) );
+      rsd_set_from_cmd_line().lock()->name_map( name ) ); // FIXME: potential null pointer from lock()
 
   moveFromStubFrame(residue, residueStubCentroidFrame(residue));
 

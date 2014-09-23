@@ -155,7 +155,7 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 		if ( index ) { // fullname defined and get it directly from name_map
 			// The next call requires reference -> CAP because ResidueTypeSet's
 			// methods are not yet consistent in handing out ref vs CAP.
-			requested_types.push_back( &residue_set.name_map( fullname_list[ index ] ) );
+			requested_types.push_back( residue_set.name_map( fullname_list[ index ] ).get_self_ptr() );
 			is_lower_terminus = ( *requested_types.back() ).is_lower_terminus();
 			is_upper_terminus = ( *requested_types.back() ).is_upper_terminus();
 		} else {
@@ -326,7 +326,7 @@ residue_types_from_saccharide_sequence(std::string const & sequence,
 				}
 
 				// Select a matching ResidueType and add to list (or exit without a match).
-				residue_types.push_back(& residue_set.name_map(residue_type_name));
+				residue_types.push_back( chemical::ResidueTypeCOP( residue_set.name_map(residue_type_name).get_self_ptr() ) );
 
 				// Reset variables.
 				morpheme = "";
@@ -454,7 +454,7 @@ void make_pose_from_sequence(
 	//chemical::ResidueTypeSet const & residue_set,
 	bool const auto_termini /* true */
 ) {
-	chemical::ResidueTypeSetCAP residue_set( chemical::ChemicalManager::get_instance()->residue_type_set( type_set_name ) );
+	chemical::ResidueTypeSetCOP residue_set( chemical::ChemicalManager::get_instance()->residue_type_set( type_set_name ) );
 	core::pose::make_pose_from_sequence( pose, sequence_in, *residue_set, auto_termini );
 }
 
@@ -547,7 +547,7 @@ make_pose_from_saccharide_sequence(pose::Pose & pose,
 {
 	using namespace chemical;
 
-	ResidueTypeSetCAP type_set(ChemicalManager::get_instance()->residue_type_set(type_set_name));
+	ResidueTypeSetCOP type_set(ChemicalManager::get_instance()->residue_type_set(type_set_name));
 	make_pose_from_saccharide_sequence(pose, sequence, *type_set, auto_termini);
 }
 

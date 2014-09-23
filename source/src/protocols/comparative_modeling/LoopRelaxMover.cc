@@ -309,6 +309,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	using namespace core;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	using protocols::evaluation::PoseEvaluatorOP;
 	// this typedef belongs in its own .fwd.hh file.
 	//typedef utility::pointer::owning_ptr< loops::IndependentLoopMover > loops::IndependentLoopMoverOP;
 
@@ -568,14 +569,17 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					using namespace std;
 					using protocols::loop_modeling::LoopBuilder;
 					using protocols::loop_modeling::LoopBuilderOP;
+					using protocols::loop_modeling::LoopMoverOP;
 					using protocols::loop_modeling::LoopProtocol;
 					using protocols::loop_modeling::LoopProtocolOP;
 					using protocols::loop_modeling::loggers::ProgressBar;
+					using protocols::loop_modeling::loggers::LoggerOP;
 					using protocols::loop_modeling::refiners::MinimizationRefiner;
 					using protocols::kinematic_closure::KicMover;
 					using protocols::kinematic_closure::KicMoverOP;
 					using protocols::kinematic_closure::perturbers::BondAnglePerturber;
 					using protocols::kinematic_closure::perturbers::FragmentPerturber;
+					using protocols::evaluation::PoseEvaluatorOP;
 
 					bool const build_only =
 						option[ OptionKeys::loops::kic_leave_centroid_after_initial_closure ]();
@@ -633,8 +637,8 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 						if (kic_with_fragments) {
 							kic_mover->clear_perturbers();
-							kic_mover->add_perturber(new BondAnglePerturber);
-							kic_mover->add_perturber(new FragmentPerturber(frag_libs()));
+							kic_mover->add_perturber(kinematic_closure::perturbers::PerturberOP( new BondAnglePerturber ));
+							kic_mover->add_perturber(kinematic_closure::perturbers::PerturberOP( new FragmentPerturber(frag_libs()) ));
 						}
 
 						protocol->set_loops(*loops);
@@ -644,7 +648,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 						protocol->set_mover_cycles(1);
 						protocol->add_mover(kic_mover);
 						protocol->add_mover(new MinimizationRefiner);
-						protocol->add_logger(new ProgressBar("Perturb: "));
+						protocol->add_logger(LoggerOP( new ProgressBar("Perturb: ") ));
 						protocol->apply(pose);
 					}
 
@@ -799,7 +803,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
 				// if remodelling was done, repack the loops - otherwise leave it.
 				if ( remodel() != "no" ) {
-					for( loops::Loops::const_iterator it=loops()->begin(), it_end=loops()->end(); it != it_end; ++it ) {
+					for( loops::Loops::const_iterator it=loops->begin(), it_end=loops->end(); it != it_end; ++it ) {
 						if (    i >= core::Size( it->start() ) - 3
 								&& i <= core::Size( it->stop() ) + 3 ) {
 							// allow 3-residue leeway on either side for 'random_loops'
@@ -891,8 +895,8 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					if ( coordconstraint_segments.is_loop_residue( i ) ) {
 						Residue const & nat_i_rsd( constraint_target_pose.residue(i) );
 						for ( Size ii = 1; ii<=nat_i_rsd.last_backbone_atom(); ++ii ) {
-							pose.add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,rootres), nat_i_rsd.xyz( ii ),
-							                     new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) ) );
+							core::scoring::func::FuncOP fx = new core::scoring::func::HarmonicFunc( 0.0, coord_sdev );
+							pose.add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,rootres), nat_i_rsd.xyz( ii ), fx ) );
 						}
 
 						// now cst symmetry mates
@@ -915,8 +919,8 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					if( coordconstraint_segments.is_loop_residue( i ) ) {
 						Residue const & nat_i_rsd( constraint_target_pose.residue(i) );
 						for ( Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
-							pose.add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,rootres), nat_i_rsd.xyz( ii ),
-							                     new BoundFunc( 0, cst_width, coord_sdev, "xyz" )) );
+							core::scoring::func::FuncOP fx = new BoundFunc( 0, cst_width, coord_sdev, "xyz" );
+							pose.add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,rootres), nat_i_rsd.xyz( ii ), fx ) );
 						}
 						// now cst symmetry mates
 						// if (symm_info) {
@@ -1133,6 +1137,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			} else
 			if ( refine() == "refine_kic_refactor" || refine() == "refine_kic_with_fragments") {
 				using namespace std;
+				using protocols::loop_modeling::LoopMoverOP;
 				using protocols::loop_modeling::LoopProtocol;
 				using protocols::loop_modeling::LoopProtocolOP;
 				using protocols::loop_modeling::refiners::RepackingRefiner;
@@ -1178,8 +1183,8 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 				KicMoverOP kic_mover = new KicMover;
 
 				if (kic_with_fragments) {
-					kic_mover->add_perturber(new BondAnglePerturber);
-					kic_mover->add_perturber(new FragmentPerturber(frag_libs()));
+					kic_mover->add_perturber(kinematic_closure::perturbers::PerturberOP( new BondAnglePerturber ));
+					kic_mover->add_perturber(kinematic_closure::perturbers::PerturberOP( new FragmentPerturber(frag_libs()) ));
 				}
 
 				protocol->set_loops(*loops);
@@ -1188,10 +1193,10 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 				protocol->set_temp_cycles(temp_cycles);
 				protocol->set_mover_cycles(2);
 				protocol->add_mover(kic_mover);
-				protocol->add_mover(new PeriodicMover(new RepackingRefiner, repack_period));
+				protocol->add_mover(new PeriodicMover(LoopMoverOP( new RepackingRefiner ), repack_period));
 				protocol->add_mover(new RotamerTrialsRefiner);
 				protocol->add_mover(new MinimizationRefiner);
-				protocol->add_logger(new ProgressBar("Refine:  "));
+				protocol->add_logger(LoggerOP( new ProgressBar("Refine:  ") ));
 				protocol->apply(pose);
 			}
 

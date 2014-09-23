@@ -60,13 +60,13 @@ DunbrackSCSampler::samples(
 	using namespace core::pack::dunbrack;
 
 	RotamerLibrary const & rotlib( RotamerLibrary::get_instance() );
-	SingleResidueRotamerLibraryCAP res_rotlib( rotlib.get_rsd_library( restype ) );
+	SingleResidueRotamerLibraryCOP res_rotlib = rotlib.get_rsd_library( restype ).lock();
 
 	if ( res_rotlib != 0 ) {
 
-		SingleResidueDunbrackLibraryCAP dun_rotlib(
-			dynamic_cast< SingleResidueDunbrackLibrary const * >
-			( res_rotlib.get() ));
+		SingleResidueDunbrackLibraryCOP dun_rotlib(
+			utility::pointer::dynamic_pointer_cast< SingleResidueDunbrackLibrary const >
+			( res_rotlib ));
 
 		if ( dun_rotlib == 0 ) {
 			utility_exit_with_message( "ERROR: Failed to retrieve a Dunbrack rotamer library for AA: " +

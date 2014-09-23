@@ -30,7 +30,7 @@ utility::vector1<ClusteringTreeNodeOP>
 
     for(Size i=1;i<=distance_matrix.size();i++) {
 	active_indexes.push_back(i);
-	nodes.push_back( new ClusteringTreeNode(i) );
+	nodes.push_back( ClusteringTreeNode::newClusteringTreeNode(i) );
 	cluster_id++;
     }
 
@@ -62,7 +62,7 @@ utility::vector1<ClusteringTreeNodeOP>
 		}
 	    }
 	}
-	root = new ClusteringTreeNode(cluster_id,nodes[min_i],nodes[min_j],min);
+	root = ClusteringTreeNode::newClusteringTreeNode(cluster_id,nodes[min_i],nodes[min_j],min);
 	cluster_id++;
 	nodes.push_back(root);
 	active_indexes.remove(min_i);
@@ -90,7 +90,7 @@ utility::vector1<ClusteringTreeNodeOP>
 
     for(Size i=1;i<=distance_matrix.size();i++) {
 	active_indexes.push_back(i);
-	nodes.push_back( new ClusteringTreeNode(i) );
+	nodes.push_back( ClusteringTreeNode::newClusteringTreeNode(i) );
 	cluster_id++;
     }
 
@@ -127,7 +127,7 @@ utility::vector1<ClusteringTreeNodeOP>
 		}
 	    }
 	}
-	root = new ClusteringTreeNode(cluster_id,nodes[min_i],nodes[min_j],min);
+	root = ClusteringTreeNode::newClusteringTreeNode(cluster_id,nodes[min_i],nodes[min_j],min);
 	cluster_id++;
 	nodes.push_back(root);
 	active_indexes.remove(min_i);
@@ -154,7 +154,7 @@ utility::vector1<ClusteringTreeNodeOP>
 
     for(Size i=1;i<=distance_matrix.size();i++) {
 	active_indexes.push_back(i);
-	nodes.push_back( new ClusteringTreeNode(i) );
+	nodes.push_back( ClusteringTreeNode::newClusteringTreeNode(i) );
 	cluster_id++;
     }
 
@@ -190,7 +190,7 @@ utility::vector1<ClusteringTreeNodeOP>
 		}
 	    }
 	}
-	root = new ClusteringTreeNode(cluster_id,nodes[min_i],nodes[min_j],min);
+	root = ClusteringTreeNode::newClusteringTreeNode(cluster_id,nodes[min_i],nodes[min_j],min);
 	cluster_id++;
 	nodes.push_back(root);
 	active_indexes.remove(min_i);

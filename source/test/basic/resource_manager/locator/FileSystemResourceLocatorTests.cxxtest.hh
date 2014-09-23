@@ -49,7 +49,7 @@ public:
     std::getline( rstream->stream(), test_contents );
     TS_ASSERT_EQUALS( test_contents, "FileSystemResourceLocator test" );
 
-    TS_ASSERT( dynamic_cast< FileStream * > ( rstream() ) )
+    TS_ASSERT( dynamic_cast< FileStream * > ( rstream.get() ) )
 	}
 
 

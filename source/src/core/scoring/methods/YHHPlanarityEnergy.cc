@@ -60,7 +60,7 @@ YHHPlanarityEnergyCreator::score_types_for_method() const {
 
 /// ctor
 YHHPlanarityEnergy::YHHPlanarityEnergy() :
-	parent( new YHHPlanarityEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new YHHPlanarityEnergyCreator ) )
 {}
 
 /// clone

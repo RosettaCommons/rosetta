@@ -60,7 +60,7 @@ SmoothCenPairEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 SmoothCenPairEnergy::SmoothCenPairEnergy() :
-	parent( new SmoothCenPairEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new SmoothCenPairEnergyCreator ) ),
 	potential_( ScoringManager::get_instance()->get_SmoothEnvPairPotential() )
 {}
 

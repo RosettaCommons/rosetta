@@ -245,7 +245,7 @@ AlignPoseToInvrotTreeMover::switch_residue_type_set(
     core::pose::PoseOP temp_pose = new core::pose::Pose();
     temp_pose->append_residue_by_jump( *residue, (Size) 0 );
     core::util::switch_to_residue_type_set( *temp_pose, desired_restype_set_name );
-    residue = &(temp_pose->residue(1));
+    residue = temp_pose->residue(1).get_self_ptr();
   }
   return residue;
 }

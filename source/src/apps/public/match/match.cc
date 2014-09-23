@@ -190,15 +190,12 @@ set_ligpose_rotamer( core::pose::Pose & ligpose )
 	}
 
 	RotamerLibrary const & rotlib( core::pack::dunbrack::RotamerLibrary::get_instance() );
-	SingleResidueRotamerLibraryCAP res_rotlib( rotlib.get_rsd_library( ligpose.residue_type( 1 ) ) );
+	SingleResidueRotamerLibraryCOP res_rotlib( rotlib.get_rsd_library( ligpose.residue_type( 1 ) ) );
 
 	if ( res_rotlib != 0 ) {
-		/// stoopid
-		typedef utility::pointer::access_ptr< SingleLigandRotamerLibrary const > SingleLigandRotamerLibraryCAP;
-
-		SingleLigandRotamerLibraryCAP lig_rotlib(
-			dynamic_cast< SingleLigandRotamerLibrary const * >
-			( res_rotlib.get() ));
+		SingleLigandRotamerLibraryCOP lig_rotlib(
+			utility::pointer::dynamic_pointer_cast< SingleLigandRotamerLibrary const >
+			( res_rotlib ));
 
 		if ( lig_rotlib == 0 ) {
 			utility_exit_with_message( "Failed to retrieve a ligand rotamer library for "

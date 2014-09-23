@@ -196,9 +196,9 @@ MembraneAbinitio::MembraneAbinitio(
 
 		using namespace protocols::simple_moves;
 	  bms25  = new ClassicFragmentMover( fragset_small_top25, movemap );
-    bms  = new ClassicFragmentMover( fragset_small, movemap );
+	  bms  = new ClassicFragmentMover( fragset_small, movemap );
 	  bml  = new ClassicFragmentMover( fragset_large, movemap );
-	  sms  = new SmoothFragmentMover ( fragset_small, movemap, new GunnCost );
+	  sms  = new SmoothFragmentMover ( fragset_small, movemap, FragmentCostOP( new GunnCost ) );
 //	}
 /*
 	bms->set_end_bias( option[ OptionKeys::abinitio::end_bias_2 ] ); //default is 30.0

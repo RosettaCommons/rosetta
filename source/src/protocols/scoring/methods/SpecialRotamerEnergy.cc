@@ -50,7 +50,7 @@ SpecialRotamerEnergyCreator::score_types_for_method() const {
 
 /// ctor
 SpecialRotamerEnergy::SpecialRotamerEnergy() :
-	parent( new SpecialRotamerEnergyCreator )
+	parent( core::scoring::methods::EnergyMethodCreatorOP( new SpecialRotamerEnergyCreator ) )
 {}
 
 /// clone

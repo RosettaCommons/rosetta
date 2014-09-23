@@ -153,16 +153,16 @@ MembraneTopologyClaimer::generate_claims( claims::DofClaims& dof_claims )
 	{
 		if(static_cast<int>(i) == pose.fold_tree().root())
 		{
-			dof_claims.push_back(new claims::LegacyRootClaim(this,i,claims::DofClaim::CAN_INIT));
-			dof_claims.push_back(new claims::BBClaim(this,i,claims::DofClaim::CAN_INIT));
+			dof_claims.push_back(new claims::LegacyRootClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT));
+			dof_claims.push_back(new claims::BBClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT));
 		}else if(pose.residue(i).is_virtual_residue() || pose.residue(i).name3() == "XXX" || pose.residue(i).name3() == "VRT")
 		{
-			dof_claims.push_back(new claims::BBClaim(this,i,claims::DofClaim::CAN_INIT));
+			dof_claims.push_back(new claims::BBClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT));
 		}
 	}
 	for(Size jump_num = 1; jump_num <= pose.fold_tree().num_jump(); ++jump_num)
 	{
-		dof_claims.push_back(new claims::JumpClaim(this,jump_array(1,jump_num),jump_array(2,jump_num),claims::DofClaim::CAN_INIT));
+		dof_claims.push_back(new claims::JumpClaim(get_self_weak_ptr(),jump_array(1,jump_num),jump_array(2,jump_num),claims::DofClaim::CAN_INIT));
 	}
 }
 
@@ -213,7 +213,7 @@ void MembraneTopologyClaimer::addVirtualResAsRootMembrane( core::pose::Pose & po
 
 	// create a virtual residue, fullatom or centroid
 	bool fullatom = pose.is_fullatom();
-	core::chemical::ResidueTypeSetCAP const &residue_set(
+	core::chemical::ResidueTypeSetCOP const &residue_set(
 		core::chemical::ChemicalManager::get_instance()->residue_type_set
 		( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
 		);

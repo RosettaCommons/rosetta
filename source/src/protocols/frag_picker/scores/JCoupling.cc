@@ -65,7 +65,7 @@ JCoupling::JCoupling(Size priority, Real lowest_acceptable_value, bool use_lowes
 }
 
 void JCoupling::do_caching(VallChunkOP current_chunk) {
-	std::string ctmp = current_chunk()->chunk_key();
+	std::string ctmp = current_chunk->chunk_key();
 	if (ctmp.compare("change to 'cached_scores_id_' when ready") != 0) {
 		return; // CACHING NOT BUILT IN YET
 	}

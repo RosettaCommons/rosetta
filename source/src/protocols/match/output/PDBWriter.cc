@@ -737,7 +737,7 @@ PoseMatchOutputWriter::insert_match_into_pose(
 		utility::vector1< core::conformation::ResidueCOP > additional_lig_confs;
 		for( core::Size i = 1; i <= num_geom_cst(); ++i ){
 			for( std::set< downstream_hit >::const_iterator ds_hits_it( match_groups_dshits()[match_group][i].begin()), ds_hits_end( match_groups_dshits()[match_group][i].end() ); ds_hits_it != ds_hits_end; ++ds_hits_it){
-				additional_lig_confs.push_back( &(dsbuilders()[i]->downstream_pose_from_hit( fake_hit(*(ds_hits_it)) )->residue(1) ) );
+				additional_lig_confs.push_back( dsbuilders()[i]->downstream_pose_from_hit( fake_hit(*(ds_hits_it)) )->residue(1).get_self_ptr() );
 				if( additional_lig_confs.size() > 99 ) break;
 			}
 			if( additional_lig_confs.size() > 99 ) break;

@@ -33,14 +33,13 @@ namespace basic {
 namespace resource_manager {
 
 using std::stringstream;
-using utility::pointer::owning_ptr;
 
 template< class ResourceType >
-owning_ptr< ResourceType >
+utility::pointer::owning_ptr< ResourceType >
 get_resource(
 	ResourceDescription const & resource_description
 ) {
-	owning_ptr< ResourceType > resource(
+	utility::pointer::owning_ptr< ResourceType > resource(
 		dynamic_cast< ResourceType * >(
 			ResourceManager::get_instance()->get_resource(resource_description)() ));
 

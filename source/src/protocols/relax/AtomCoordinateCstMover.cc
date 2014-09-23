@@ -236,8 +236,10 @@ void AtomCoordinateCstMover::apply( core::pose::Pose & pose) {
 							core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( atom2 ), function ) );
 					pose.add_constraint( amb_constr );
 				} else {
-					pose.add_constraint( new CoordinateConstraint(	core::id::AtomID(ii,i),
-							core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( jj ), function ) );
+					pose.add_constraint( core::scoring::constraints::ConstraintCOP(
+						new CoordinateConstraint( core::id::AtomID(ii,i),
+							core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( jj ), function ) 
+					) );
 				}
 			} // for atom
 		} // if(loop)

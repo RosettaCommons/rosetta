@@ -543,7 +543,7 @@ DougsDockDesignMinimizeMagicMover::apply(
 
 		if ( k % 10 == 0 ) {
 			// get packer task from task factory
-			PackerTaskOP final_desn_pt( *(desn_tf->create_task_and_apply_taskoperations( pose )) );
+			PackerTaskOP final_desn_pt( desn_tf->create_task_and_apply_taskoperations( pose ) );
 
 			// add extra chi and extra chi cut off to pt
 			for ( Size i = 1; i <= pose.total_residue(); ++i ) {
@@ -599,7 +599,7 @@ DougsDockDesignMinimizeMagicMover::apply(
 		TR << "Energy less than cutoff, doing final design and running filters..." << std::endl;
 
 		// get packer task from task factory
-		PackerTaskOP final_desn_pt( *(desn_tf->create_task_and_apply_taskoperations( pose )) );
+		PackerTaskOP final_desn_pt( desn_tf->create_task_and_apply_taskoperations( pose ) );
 
 		// add extra chi and extra chi cut off to pt
 		for ( Size i = 1; i <= pose.total_residue(); ++i ) {

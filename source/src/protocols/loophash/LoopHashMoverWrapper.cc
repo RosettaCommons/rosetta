@@ -122,7 +122,7 @@ void
 LoopHashMoverWrapper::apply( Pose & pose )
 {
 	using namespace core::io::silent;
-	runtime_assert( library_ );
+	runtime_assert( library_ != 0 );
 	Pose const saved_pose( pose );
 
 	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
@@ -346,7 +346,7 @@ LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
 	nprefilter_ = tag->getOption< Size >( "nprefilter", 0 );
 	if ( tag->hasOption( "prefilter_scorefxn" )) {
 		string const prefilter_scorefxn_name( tag->getOption< string >( "prefilter_scorefxn" ) );
-		prefilter_scorefxn_ = ScoreFunctionOP( data.get< ScoreFunction * >( "scorefxns", prefilter_scorefxn_name ) );
+		prefilter_scorefxn_ = data.get_ptr< ScoreFunction >( "scorefxns", prefilter_scorefxn_name );
 	}
 
 	// FILTERING STEP 2 --- filter after idealization (+symmetrization)

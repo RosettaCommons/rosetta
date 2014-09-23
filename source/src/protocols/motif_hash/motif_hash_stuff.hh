@@ -396,7 +396,7 @@ public:
 		typedef boost::unordered_set<Key> KeySet;
 		// typedef std::tr1::unordered_multimap< Key, ResPairMotif , bin_index_hasher > MotifMap;
 		// typedef std::tr1::unordered_map    < Key,       float , bin_index_hasher > ScoreMap;
-		typedef protocols::sic_dock::xyzStripeHashPoseCAP ClashChecker;
+		typedef protocols::sic_dock::xyzStripeHashPoseCOP ClashChecker;
 		double const cart_size_,cart_resl_,angle_resl_;
 		SixDCoordinateBinner hasher_;
 		MotifMap motif_hash_;
@@ -459,18 +459,18 @@ public:
 class MotifHashManager {
 public:
 	static MotifHashManager * get_instance();
-	MotifHashCAP motif_hash_from_cli();
-	XformScoreCAP xform_score_from_cli();
-	XformScoreCAP xform_score_sspair_from_cli();
-	XformScoreCAP xform_score_he_from_cli();
-	XformScoreCAP xform_score_eh_from_cli();
-	XformScoreCAP xform_score_ee_from_cli();
-	XformScoreCAP xform_score_hh_from_cli();
+	MotifHashCOP motif_hash_from_cli();
+	XformScoreCOP xform_score_from_cli();
+	XformScoreCOP xform_score_sspair_from_cli();
+	XformScoreCOP xform_score_he_from_cli();
+	XformScoreCOP xform_score_eh_from_cli();
+	XformScoreCOP xform_score_ee_from_cli();
+	XformScoreCOP xform_score_hh_from_cli();
 private:
 	MotifHashManager():cli_motif_hash_(NULL),cli_xform_score_(NULL),cli_xform_score_ee_(NULL),cli_xform_score_eh_(NULL),cli_xform_score_he_(NULL),cli_xform_score_hh_(NULL),cli_xform_score_sspair_(NULL) {}
 	static MotifHashManager * instance_;
-	MotifHash * cli_motif_hash_;
-	XformScore * cli_xform_score_,*cli_xform_score_ee_,*cli_xform_score_eh_,*cli_xform_score_he_,*cli_xform_score_hh_,*cli_xform_score_sspair_;
+	MotifHashOP cli_motif_hash_;
+	XformScoreOP cli_xform_score_, cli_xform_score_ee_, cli_xform_score_eh_, cli_xform_score_he_, cli_xform_score_hh_, cli_xform_score_sspair_;
 };
 
 struct MotifHit {

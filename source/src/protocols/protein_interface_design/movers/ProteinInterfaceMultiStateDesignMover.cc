@@ -611,9 +611,9 @@ ProteinInterfaceMultiStateDesignMover::add_states(
 	using namespace core::pose;
 	using namespace protocols::multistate_design;
 
-	runtime_assert( multistate_packer_ );
+	runtime_assert( multistate_packer_ != 0 );
 
-	runtime_assert( task_factory() );
+	runtime_assert( task_factory() != 0 );
 	PackerTaskCOP ptask = task_factory()->create_task_and_apply_taskoperations( pose );
 
 	Pose const bound( pose );

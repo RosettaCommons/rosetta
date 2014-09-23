@@ -212,7 +212,7 @@ RNA_HelixAssembler::build_helix( core::pose::Pose & pose, std::string const & fu
 		if ( dump_ ) pose.dump_pdb( "helix_min" + string_of(n) + ".pdb" );
 	}
 
-	if ( finish_scorefxn_ > 0 )  minimize_base_step( pose, 0, finish_scorefxn_ );
+	if ( finish_scorefxn_ )  minimize_base_step( pose, 0, finish_scorefxn_ );
 
 	if 	( model_and_remove_capping_residues_ ){
 		TR << "removing capping residues" << std::endl;
@@ -232,7 +232,8 @@ RNA_HelixAssembler::build_init_pose( std::string const & seq1, std::string const
 	using namespace core::chemical::rna;
 
 	PoseOP pose( new Pose() );
-	make_pose_from_sequence( *pose, seq1 + seq2,	*rsd_set_ );
+	core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_ );
+	make_pose_from_sequence( *pose, seq1 + seq2, *rsd_set );
 	for ( Size i = 1; i <= pose->n_residue(); ++i ) set_Aform_torsions( *pose, i );
 	if ( seq1 == "" || seq2 == "" ) return pose;
 	Size const len1( get_sequence_len( seq1 ) );
@@ -261,7 +262,7 @@ RNA_HelixAssembler::build_init_pose( std::string const & seq1, std::string const
 
 	path += first_bp + "_std.pdb";
 	Pose ref_pose;
-	core::io::pdb::build_pose_from_pdb_as_is( ref_pose, *rsd_set_, path );
+	core::io::pdb::build_pose_from_pdb_as_is( ref_pose, *rsd_set, path );
 	FoldTree f1( 2 );
 	f1.new_jump( 1, 2, 1 );
 	f1.set_jump_atoms(
@@ -539,7 +540,8 @@ RNA_HelixAssembler::append_Aform_residue( pose::Pose & pose, Size const & n, cha
 	runtime_assert( pose.fold_tree().is_cutpoint(n) || n == pose.total_residue() );
 
 	/////////////////////////////////////
-	ResidueOP rsd1( ResidueFactory::create_residue( *(rsd_set_->aa_map( aa_from_oneletter_code( nt ) )[1] ) ) );
+	core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_ );
+	ResidueOP rsd1( ResidueFactory::create_residue( *(rsd_set->aa_map( aa_from_oneletter_code( nt ) )[1] ) ) );
 	pose.append_polymer_residue_after_seqpos( *rsd1, n, true /*build_ideal_geometry*/ );
 
 	pose.set_torsion( TorsionID( n, BB, 5), torsion_info_.epsilon_aform());
@@ -572,7 +574,8 @@ RNA_HelixAssembler::prepend_Aform_residue( pose::Pose & pose, Size const & n, ch
 
 	runtime_assert( n == 1 || pose.fold_tree().is_cutpoint(n-1) );
 
-	ResidueOP rsd2( ResidueFactory::create_residue( *(rsd_set_->aa_map( aa_from_oneletter_code( nt ) )[1] ) ) );
+	core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_ );
+	ResidueOP rsd2( ResidueFactory::create_residue( *(rsd_set->aa_map( aa_from_oneletter_code( nt ) )[1] ) ) );
 	pose.prepend_polymer_residue_before_seqpos( *rsd2, n, true /*build_ideal_geometry*/ );
 
 	set_Aform_torsions( pose, n );

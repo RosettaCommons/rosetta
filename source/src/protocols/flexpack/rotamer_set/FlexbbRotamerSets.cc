@@ -65,8 +65,8 @@ using namespace ObjexxFCL;
 
 static thread_local basic::Tracer TR( "protocols.flexpack.rotamer_set.FlexbbRotamerSets" );
 
-FlexbbRotamerSets::FlexbbRotamerSets( core::pack::task::PackerTaskCOP task )
-	: task_( task )
+FlexbbRotamerSets::FlexbbRotamerSets( core::pack::task::PackerTaskCOP task ) :
+	task_( task )
 {
 }
 
@@ -252,11 +252,11 @@ FlexbbRotamerSets::build_rotamers(
 				 res_it != conformations_for_flexible_segments_[ ii ].end(); ++res_it){
 
 			FlexbbRotamerSetOP rotset = new FlexbbRotamerSet();
-			rotset->set_owner( this );
+			rotset->set_owner( get_self_weak_ptr() );
 			rotset->set_resid( cur_resid );
 			rotset->set_existing_residue( *res_it );
 
-			rotset->build_rotamers(pose, sfxn, *task_, &flexpack_neighbor_graph );
+			rotset->build_rotamers(pose, sfxn, *task_, flexpack_neighbor_graph.get_self_ptr() );
 
 			rotamers_[ ii ].push_back( rotset );
 			//TR << "Built: " << rotset->num_rotamers() << " for moltenres " << ii
@@ -713,8 +713,8 @@ FlexbbRotamerSets::compute_one_body_energies_for_otf_ig(
 		using namespace platform;
 		#endif
 
-		for ( uint ii = 1; ii <= nmoltenres_; ++ ii ) {
-			uint const ii_resid = moltenres_2_resid_[ ii ];
+		for ( core::Size ii = 1; ii <= nmoltenres_; ++ ii ) {
+			core::Size const ii_resid = moltenres_2_resid_[ ii ];
 
 			for ( ResidueNeighborConstIteratorOP
 					rni = lrec->const_upper_neighbor_iterator_begin( ii_resid ),
@@ -722,7 +722,7 @@ FlexbbRotamerSets::compute_one_body_energies_for_otf_ig(
 					(*rni) != (*rniend); ++(*rni) ) {
 				Size const jj_resid = rni->upper_neighbor_id();
 
-				uint const jj = resid_2_moltenres_[ jj_resid ];
+				core::Size const jj = resid_2_moltenres_[ jj_resid ];
 				if ( ii > jj ) continue; // compute against upper, moltenres neighbors only
 				assert( jj != 0 );
 

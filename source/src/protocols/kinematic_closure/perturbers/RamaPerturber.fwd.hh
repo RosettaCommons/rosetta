@@ -18,9 +18,8 @@ namespace perturbers {
 
 class RamaPerturber;
 
-using utility::pointer::owning_ptr;
-typedef owning_ptr<RamaPerturber> RamaPerturberOP;
-typedef owning_ptr<RamaPerturber const> RamaPerturberCOP;
+typedef utility::pointer::owning_ptr<RamaPerturber> RamaPerturberOP;
+typedef utility::pointer::owning_ptr<RamaPerturber const> RamaPerturberCOP;
 
 }
 }

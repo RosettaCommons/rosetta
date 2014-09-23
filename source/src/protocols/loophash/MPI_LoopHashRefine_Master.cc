@@ -156,7 +156,7 @@ MPI_LoopHashRefine_Master::process_inbound_wus(){
 	while( inbound().size() > 0 )
 	{
 		WorkUnitBaseOP  next_wu =  inbound().pop_next();
-		runtime_assert( next_wu );
+		runtime_assert( next_wu != 0 );
 
 		// skip returning waiting WUs
 		if ( next_wu->get_wu_type() == "waitwu" ) continue;
@@ -268,7 +268,7 @@ MPI_LoopHashRefine_Master::process_outbound_wus(){
 void
 MPI_LoopHashRefine_Master::create_loophash_WUs( const core::io::silent::SilentStructOP &start_struct ){
 
-		runtime_assert( start_struct );
+		runtime_assert( start_struct != 0 );
 		core::pose::Pose start_pose;
 		start_struct->fill_pose( start_pose );
   	core::util::switch_to_residue_type_set( start_pose, core::chemical::CENTROID);
@@ -424,7 +424,7 @@ MPI_LoopHashRefine_Master::check_library_expiry_dates(){
 		for( WorkUnitQueue::iterator iter = outbound().begin(); iter != outbound().end();) {
 				if( (*iter)->get_wu_type() == "loophasher" && ssid == (*iter)->extra_data_3() ) {
 					TRDEBUG<<"erasing wu" <<std::endl;
-					iter->reset_to_null();
+					iter->reset(); // to NULL
 					TRDEBUG<<"erasing wu from list" <<std::endl;
 					iter = outbound().erase( iter );
 					TRDEBUG<<"erasing done" <<std::endl;

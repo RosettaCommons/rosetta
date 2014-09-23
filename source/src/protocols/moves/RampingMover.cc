@@ -170,7 +170,7 @@ RampingMover::RampingMover(
 {
 	start_weights_[ score_type_ ] = 0.2;
 	end_weights_[   score_type_ ] = 1.0;
-	ramping_funcs_for_weights_[ score_type_ ] = geometric_in ? (RampingFunc * ) new GeometricFunc : (RampingFunc * )  new LinearFunc;
+	ramping_funcs_for_weights_[ score_type_ ] = protocols::moves::RampingFuncOP( geometric_in ? (RampingFunc * ) new GeometricFunc : (RampingFunc * )  new LinearFunc );
 }
 
 RampingMover::RampingMover(
@@ -251,7 +251,7 @@ RampingMover::parse_my_tag(
 	
 	//get the montecarlo object out of the datamap
 	if ( montecarlo_name != "none" ) {
-		mc_ = *datamap.get<protocols::moves::MonteCarlo *>("montecarlos", montecarlo_name);
+		mc_ = datamap.get_ptr<protocols::moves::MonteCarlo>("montecarlos", montecarlo_name);
 	}
 
 	// Two modes for the Ramping mover:
@@ -304,7 +304,7 @@ RampingMover::parse_my_tag(
 			if ( ! datamap.has( "scorefxns", scorefxn_key ) ) {
 				throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap.");
 			}
-			core::scoring::ScoreFunctionCOP sfxn = datamap.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_key );
+			core::scoring::ScoreFunctionCOP sfxn = datamap.get_ptr< core::scoring::ScoreFunction >( "scorefxns", scorefxn_key );
 			start_weights_ = end_weights_ = sfxn->weights();
 
 		}

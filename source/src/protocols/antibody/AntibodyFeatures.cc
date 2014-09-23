@@ -681,7 +681,7 @@ AntibodyFeatures::parse_my_tag(
 	
 	if(tag->hasOption("scorefxn")){
 		std::string const scorefxn_name(tag->getOption<std::string>("scorefxn"));
-		scorefxn_ = data.get<core::scoring::ScoreFunction*>("scorefxns", scorefxn_name);
+		scorefxn_ = data.get_ptr<core::scoring::ScoreFunction>("scorefxns", scorefxn_name);
 	}
 	
 	if (tag->hasOption("interfaces") && tag->hasOption("interface")){

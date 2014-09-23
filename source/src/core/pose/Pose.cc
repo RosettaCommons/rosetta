@@ -73,6 +73,8 @@
 namespace core {
 namespace pose {
 
+using namespace core::conformation;
+
 /// @details default init function
 void Pose::init(void)
 {
@@ -118,6 +120,9 @@ Pose::~Pose()
 /// @brief copy constructor
 Pose::Pose( Pose const & src ) :
 	ReferenceCount ( src )
+#ifdef PTR_MODERN
+	, utility::pointer::enable_shared_from_this< Pose >()
+#endif
 {
 	*this = src;
 }
@@ -172,7 +177,7 @@ Pose::operator=( Pose const & src )
 
 	if ( src.constraint_set_ ) {
 		constraint_set_ = src.constraint_set_->clone();
-		constraint_set_->attach_to_conformation( conformation_.get() );
+		constraint_set_->attach_to_conformation( ConformationAP( conformation_ ) );
 	} else {
 		constraint_set_ = 0;
 	}
@@ -183,7 +188,7 @@ Pose::operator=( Pose const & src )
 	// event after everything else is done
 	if ( old_conf ) {
 		conformation_->receive_observers_from( *old_conf );
-		old_conf.reset_to_null(); // force clear
+		old_conf.reset(); // force clear
 	}
 
 	PROF_STOP ( basic::POSE_COPY );
@@ -237,8 +242,8 @@ Pose::set_new_conformation( conformation::ConformationCOP new_conformation )
 {
 
 	/// drop stuff
-	pdb_info_.reset_to_null();
-	constraint_set_.reset_to_null();
+	pdb_info_.reset(); // set to NULL
+	constraint_set_.reset(); // set to NULL
 	observer_cache_->detach();
 
 	// initialize new
@@ -1398,7 +1403,7 @@ Pose::add_constraint( scoring::constraints::ConstraintCOP cst )
 	energies_->clear();
 	if ( constraint_set_ == 0 ) {
 		constraint_set_ = new scoring::constraints::ConstraintSet; // create an empty constraint set the first time it's asked for
-		constraint_set_->attach_to_conformation( conformation_.get() );
+		constraint_set_->attach_to_conformation( ConformationAP( conformation_ ) );
 	}
 	scoring::constraints::ConstraintCOP new_cst( cst->clone() );
 	constraint_set_->add_constraint( new_cst );
@@ -1411,7 +1416,7 @@ Pose::add_constraints( scoring::constraints::ConstraintCOPs csts )
 	energies_->clear();
 	if ( constraint_set_ == 0 ) {
 		constraint_set_ = new scoring::constraints::ConstraintSet; // create an empty constraint set the first time it's asked for
-		constraint_set_->attach_to_conformation( conformation_.get() );
+		constraint_set_->attach_to_conformation( ConformationAP( conformation_ ) );
 	}
 	using namespace scoring::constraints;
 	ConstraintCOPs new_csts;
@@ -1458,7 +1463,7 @@ Pose::constraint_set( ConstraintSetOP constraint_set )
 
 	if( constraint_set != 0 ){
 		constraint_set_ = constraint_set->clone();
-		constraint_set_->attach_to_conformation( conformation_.get() );
+		constraint_set_->attach_to_conformation( ConformationAP( conformation_ ) );
 	}
 	else constraint_set_ = constraint_set;
 }
@@ -1470,7 +1475,7 @@ void Pose::transfer_constraint_set( const pose::Pose &pose ){
 
 	if( pose.constraint_set_ != 0 ){
 		constraint_set_ = pose.constraint_set_->clone();
-		constraint_set_->attach_to_conformation( conformation_.get() );
+		constraint_set_->attach_to_conformation( ConformationAP( conformation_ ) );
 	}
 	else constraint_set_ = pose.constraint_set_;
 }
@@ -1533,7 +1538,7 @@ Pose::pdb_info( PDBInfoOP new_info )
 		pdb_info_ = new PDBInfo( *new_info ); // make a copy
 		pdb_info_->attach_to( *conformation_ );
 	} else {
-		pdb_info_.reset_to_null();
+		pdb_info_.reset(); // set to NULL
 	}
 
 	PyAssert( pdb_info_ ? pdb_info_->nres() == total_residue() : true, "Invalid PDBInfo, pdb_info_->nres() != total_residue()" );

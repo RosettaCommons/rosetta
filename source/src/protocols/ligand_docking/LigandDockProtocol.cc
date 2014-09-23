@@ -352,7 +352,11 @@ LigandDockProtocol::classic_protocol(
 	for( core::Size cycle = 1; cycle <= num_cycles; ++cycle ) {
 		// RotamerTrialsMover actually asks for a non-const OP to scorefxn, sadly.
 		// this problem did not manifest until I fixed the ScoreFunctionCOP definition in ScoreFunction.fwd.hh
-		MoverOP pack_mover = ( (cycle % repack_every_Nth == 1) ? (Mover *) new protocols::simple_moves::PackRotamersMover(scorefxn, repack_task) : (Mover *) new protocols::simple_moves::RotamerTrialsMover(scorefxn, *rottrials_task) );
+		MoverOP pack_mover(
+			(cycle % repack_every_Nth == 1) ? 
+			(Mover *) new protocols::simple_moves::PackRotamersMover(scorefxn, repack_task) : 
+			(Mover *) new protocols::simple_moves::RotamerTrialsMover(scorefxn, *rottrials_task)
+		);
 		// Wrap it in something to disable the torsion constraints before packing!
 		pack_mover = new protocols::ligand_docking::UnconstrainedTorsionsMover( pack_mover, ligand_torsion_restraints_ );
 
@@ -705,18 +709,20 @@ LigandDockProtocol::make_dockmcm_mover(
 	protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( movemap, scorefxn, "dfpmin_armijo_nonmonotone_atol", 1.0, true /*use_nblist*/ );
 	min_mover->min_options()->nblist_auto_update(true); // does this cost us lots of time in practice?
 
-	TrialMoverOP mctrial = new TrialMover(
-		new JumpOutMover(
-			new SequenceMover(
-				rigbod_mover,
-				repack_mover
-			),
-			min_mover,
-			scorefxn,
-			15.0 // energy units, taken from Rosetta++ docking_minimize.cc
-		),
-		monteCarlo
+	MoverOP sequence_mover = new SequenceMover(
+		rigbod_mover,
+		repack_mover
 	);
+	
+	MoverOP jump_out_mover = new JumpOutMover(
+		sequence_mover,
+		min_mover,
+		scorefxn,
+		15.0 // energy units, taken from Rosetta++ docking_minimize.cc
+	);
+	
+	TrialMoverOP mctrial = new TrialMover( jump_out_mover, monteCarlo );
+	
 	//mctrial->set_keep_stats(false); // big time sink for MC
 	mctrial->keep_stats_type( no_stats );
 	return mctrial;

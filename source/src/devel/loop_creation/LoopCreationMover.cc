@@ -534,7 +534,7 @@ LoopCreationMover::refine_loop(
 	{
 		string const nb_calc("neighbor_calculator");
 		pose::metrics::CalculatorFactory::Instance().register_calculator( nb_calc,
-			new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_residues ) );
+			core::pose::metrics::PoseMetricCalculatorOP( new protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( loop_residues ) ) );
 
 		basic::MetricValue< set< Size > > neighbor_mv;
 		pose.metric( nb_calc, "neighbors", neighbor_mv);

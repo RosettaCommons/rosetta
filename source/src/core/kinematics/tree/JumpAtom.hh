@@ -230,7 +230,7 @@ public: // Properties
 	AtomCOP
 	stub_atom1() const
 	{
-		return ( stub_defined() ? this : parent() );
+		return ( stub_defined() ? get_self_ptr() : parent() );
 	}
 
 
@@ -244,11 +244,12 @@ public: // Properties
 	{
 		if ( stub_defined() ) {
 			return get_nonjump_atom(0);
-		} else if ( parent() ){
-			return parent()->stub_atom2();
-		} else {
-			return 0;
 		}
+		AtomCOP parent_op = parent();
+		if(parent_op) {
+			return parent_op->stub_atom2();
+		}
+		return 0;
 	}
 	/////////////////////////////////////////////////////////////////////////////
 	/// @brief stub_atom3 of a jump atom
@@ -262,16 +263,17 @@ public: // Properties
 		if ( stub_defined() ) {
 			AtomCOP first( get_nonjump_atom(0) );
 			AtomCOP second( first->get_nonjump_atom(0) );
-			if ( second != 0 ) {
+			if ( second ) {
 				return second;
 			} else {
 				return get_nonjump_atom(1);
 			}
-		} else if( parent() ) {
-			return parent()->stub_atom3();
-		} else {
-			return 0;
 		}
+		AtomCOP parent_op = parent();
+		if( parent_op ) {
+			return parent_op->stub_atom3();
+		}
+		return 0;
 	}
 
 

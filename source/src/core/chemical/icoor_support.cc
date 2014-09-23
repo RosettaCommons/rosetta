@@ -60,7 +60,6 @@ public:
 	void initialize_vertex(Vertex u, const Graph& /*g*/) {
 		if( treeatom_map_.count(u) == 0 ) {
 			treeatom_map_[ u ] = new core::kinematics::tree::BondedAtom;
-			treeatom_map_[ u ]->set_weak_ptr_to_self( treeatom_map_[ u ].get() );
 		}
 		treeatom_map_[ u ]->xyz( restype_.atom( u ).ideal_xyz() );
 		// Fill in vertex identity for debugging purposes:
@@ -205,7 +204,6 @@ reroot_restype( core::chemical::ResidueType & restype, core::chemical::ResidueGr
 	// The root of the atom tree needs to be a jump atom,
 	// as opposed to the Bonded atom that would be initialized by default in the DFS
 	core::kinematics::tree::AtomOP rootatom = new core::kinematics::tree::JumpAtom;
-	rootatom->set_weak_ptr_to_self( rootatom() );
 	treeatom_map[ root ] = rootatom;
 	TR << "Rooting on atom: " << restype.atom_name(root) << std::endl;
 
@@ -235,7 +233,7 @@ reroot_restype( core::chemical::ResidueType & restype, core::chemical::ResidueGr
 		parent = atom->parent();
 		if( parent ) {
 			// Regular, non-root atom
-			assert( dynamic_cast< core::kinematics::tree::BondedAtom const * >( atom() ) );
+			assert( utility::pointer::dynamic_pointer_cast< core::kinematics::tree::BondedAtom const >( atom ) );
 
 			// parent = atom->input_stub_atom1();
 			angle = atom->input_stub_atom2();

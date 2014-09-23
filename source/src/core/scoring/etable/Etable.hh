@@ -686,7 +686,8 @@ private:
 	chemical::AtomType const &
 	atom_type( int const type )
 	{
-		return (*atom_set_)[ type ];
+		chemical::AtomTypeSetCOP atom_set( atom_set_ );
+		return (*atom_set)[ type ];
 	}
 
 	//void smooth_etables();

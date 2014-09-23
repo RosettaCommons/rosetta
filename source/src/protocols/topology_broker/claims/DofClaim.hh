@@ -73,7 +73,7 @@ public:
 		REJECTED
 	};
 
-	DofClaim( TopologyClaimer* tc, ClaimRight right ) :
+	DofClaim( TopologyClaimerAP tc, ClaimRight right ) :
 		claim_source_( tc ),
 		right_( right ),
 		approved_( false )
@@ -84,8 +84,8 @@ public:
 
 	ClaimRight right() const { return right_; };
 
-	TopologyClaimer const* owner() const { return claim_source_; }
-	TopologyClaimer* owner() { return claim_source_; }
+	TopologyClaimerCAP owner() const { return claim_source_; }
+	TopologyClaimerAP owner() { return claim_source_; }
 
 	virtual void toggle( core::kinematics::MoveMap&, bool /*new_setting*/ ) const {};
 
@@ -115,7 +115,7 @@ public:
 		approved_ = true;
 	}
 private:
-	TopologyClaimer* claim_source_; //NEVER Make this OP --- circularity in smart-pointers   (wanted this reference but there was some kind of problem ... what was it ?
+	TopologyClaimerAP claim_source_; //NEVER Make this OP --- circularity in smart-pointers   (wanted this reference but there was some kind of problem ... what was it ?
 	ClaimRight right_;
 	bool approved_; //keep track of this ?
 }; //class DofClaim

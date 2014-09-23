@@ -92,7 +92,7 @@ protocols::make_rot_lib::MakeRotLibJobInputter::pose_from_job( core::pose::Pose 
 		fullname << mrlod_->get_name() << patch_name;
 
 		// make single residue pose
-		ResidueTypeSetCAP RTS( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+		ResidueTypeSetCOP RTS( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 		ResidueType const & RT( RTS->name_map( fullname.str() ) );
 		Residue R( RT, true );
 		pose.append_residue_by_jump( R, 1 );

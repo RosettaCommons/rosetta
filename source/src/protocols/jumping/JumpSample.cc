@@ -200,7 +200,7 @@ JumpSample::correct_jump_atoms_for_fragments() const {
 	//this method could also live in the FoldTree
 	using namespace kinematics;
 	if ( !bValidTree_ ) return;
-	runtime_assert( fold_tree_ );
+	runtime_assert( fold_tree_ != 0 );
 	for ( Size i = 1; i <= njump_; ++i ) {
 		fold_tree_->set_jump_atoms( i, jump_atoms_(1,i), jump_atoms_(2,i) );
 	}
@@ -296,14 +296,14 @@ JumpSample::resize( Size njump ) {
 
 void
 JumpSample::set_fold_tree_in_pose( pose::Pose &pose ) const {
-	runtime_assert( fold_tree_ );
-	runtime_assert( bValidTree_ );
+	runtime_assert( fold_tree_ != 0 );
+	runtime_assert( bValidTree_ != 0 );
   pose.fold_tree( *fold_tree_ );
 }
 
 void
 JumpSample::safe_secstruct( pose::Pose &pose ) const {
-	runtime_assert( fold_tree_ );
+	runtime_assert( fold_tree_ != 0 );
 	runtime_assert( total_residue_ == pose.total_residue() );
 	runtime_assert( *fold_tree_ == pose.fold_tree() );
 
@@ -538,11 +538,12 @@ using namespace scoring::constraints;
 void
 JumpSample::add_chainbreaks_as_distance_constraint( pose::Pose &pose ) const {
   for ( Size i = 1; i<= njump_; i++ ) {
+		core::scoring::func::FuncOP f( new ChainbreakDistFunc( 1.7424 ) );
 		pose.add_constraint(
 			new AtomPairConstraint(
 				id::AtomID( pose.residue(cuts_(i)    ).atom_index("C"), cuts_(i)    ),
 				id::AtomID( pose.residue(cuts_(i) + 1).atom_index("N"), cuts_(i) + 1),
-  				new ChainbreakDistFunc( 1.7424 )
+  				f
 			)
 		);
 	}
@@ -558,11 +559,12 @@ JumpSample::add_chainbreaks_as_distance_constraint(
   for ( Size i = 1; i<= njump_; i++ ) {
     if ( sp.dist( cuts_(i), cuts_(i)+1 ) <= max_dist ) {
       tr.Debug << "add chainbreak as distance constraint to residues " << cuts_(i) << " and " << cuts_(i)+1 << std::endl;
+			core::scoring::func::FuncOP f( new ChainbreakDistFunc( 1.7424 ) );
 			pose.add_constraint( new AtomPairConstraint(
 				id::AtomID( pose.residue(cuts_(i)    ).atom_index("C"), cuts_(i)    ),
 				id::AtomID( pose.residue(cuts_(i) + 1).atom_index("N"), cuts_(i) + 1),
-				new ChainbreakDistFunc( 1.7424 )
-				) );
+				f
+			) );
 		}
   }
 }

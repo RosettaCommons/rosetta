@@ -87,7 +87,7 @@ class GasteigerAtomTyperTests : public CxxTest::TestSuite {
 
 	void test_safety() {
 		// The Gasteiger typing should not crash when presented with any of the standard residue types.
-		core::chemical::ResidueTypeSetCAP residue_set( ChemicalManager::get_instance()->residue_type_set("fa_standard") );
+		core::chemical::ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set("fa_standard") );
 		utility::vector1< ResidueTypeCOP > const & residues( residue_set->residue_types() );
 		for( core::Size ii(1); ii <= residues.size(); ++ii ) {
 			core::chemical::ResidueTypeOP restype( new core::chemical::ResidueType( *(residues[ii]) ) );
@@ -101,7 +101,7 @@ class GasteigerAtomTyperTests : public CxxTest::TestSuite {
 	}
 
 	void test_cannonicals() {
-		core::chemical::ResidueTypeSetCAP residue_set( ChemicalManager::get_instance()->residue_type_set("fa_standard") );
+		core::chemical::ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set("fa_standard") );
 		core::chemical::ResidueTypeOP restype;
 
 		restype = new core::chemical::ResidueType( residue_set->name_map( "ASP" ) );
@@ -213,7 +213,7 @@ class GasteigerAtomTyperTests : public CxxTest::TestSuite {
 	}
 
 	void test_virtuals() {
-		core::chemical::ResidueTypeSetCAP residue_set( ChemicalManager::get_instance()->residue_type_set("fa_standard") );
+		core::chemical::ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set("fa_standard") );
 		core::chemical::ResidueTypeOP restype;
 
 		restype = new core::chemical::ResidueType( residue_set->name_map( "NA" ) );

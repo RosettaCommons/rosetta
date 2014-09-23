@@ -24,18 +24,22 @@
 #include <core/chemical/ResidueGraphTypes.hh>
 
 // Package headers
+#include <core/chemical/Atom.hh> // Needed by GCC 4.2
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.fwd.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/Adduct.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
+#include <core/chemical/AtomType.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
+#include <core/chemical/ElementSet.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/MMAtomType.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
 #include <core/chemical/ResidueProperties.fwd.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.fwd.hh>
+
 #ifdef WIN32
 #include <core/chemical/Orbital.hh>
 #include <core/chemical/ResidueConnection.hh>
@@ -131,7 +135,17 @@ typedef utility::keys::Key4Tuple< Size, Size, Size, Size > dihedral_atom_set;
 /// haven't figured out how to get the reverse to work because of the separate indices.)  Orbital xyz coordinates are
 /// not updated when atom coordinates are.  This is to keep speed consistent with just having atoms.  To output the
 /// orbitals, use the flag -output_orbitals.
-class ResidueType : public utility::pointer::ReferenceCount {
+class ResidueType : public utility::pointer::ReferenceCount
+#ifdef PTR_MODERN
+	// New version
+	, public utility::pointer::enable_shared_from_this< ResidueType >
+{
+#else
+{
+	// Old intrusive ref-counter version
+	inline ResidueTypeCOP shared_from_this() const { return ResidueTypeCOP( this ); }
+	inline ResidueTypeOP shared_from_this() { return ResidueTypeOP( this ); }
+#endif
 
 public:
 	/// @brief destructor
@@ -141,10 +155,10 @@ public:
 	/// @details We use the AtomTypeSet object to assign atom_types to atoms inside add_atom,
 	/// and to identify (polar) hydrogens, acceptors, etc.
 	ResidueType(
-			AtomTypeSetCAP atom_types,
-			ElementSetCAP element_types,
-			MMAtomTypeSetCAP mm_atom_types,
-			orbitals::OrbitalTypeSetCAP orbital_types//,
+			AtomTypeSetCOP atom_types,
+			ElementSetCOP element_types,
+			MMAtomTypeSetCOP mm_atom_types,
+			orbitals::OrbitalTypeSetCOP orbital_types//,
 	);
 
 	ResidueType(ResidueType const & residue_type);
@@ -152,6 +166,11 @@ public:
 	/// @brief make a copy
 	ResidueTypeOP clone() const;
 
+	/// self pointers
+	inline ResidueTypeCOP get_self_ptr() const { return shared_from_this(); }
+	inline ResidueTypeOP get_self_ptr() { return shared_from_this(); }
+	inline ResidueTypeCAP get_self_weak_ptr() const { return ResidueTypeCAP( shared_from_this() ); }
+	inline ResidueTypeAP get_self_weak_ptr() { return ResidueTypeAP( shared_from_this() ); }
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -163,18 +182,20 @@ public:
 	AtomTypeSet const &
 	atom_type_set() const
 	{
-		return *atom_types_;
+		AtomTypeSetCOP op( atom_types_ );
+		return *op;
 	}
 
 	/// @brief access by reference the atomset for which this residue is constructed
 	ElementSet const &
 	element_set() const
 	{
-		return *elements_;
+		ElementSetCOP op( elements_ );
+		return *op;
 	}
 
 	/// @brief access by const pointer the atomset for which this residue is constructed
-	AtomTypeSetCAP
+	AtomTypeSetCOP
 	atom_type_set_ptr() const
 	{
 		return atom_types_;
@@ -1413,8 +1434,8 @@ public:
 	/// false otherwise.
 	bool is_metalbinding() const;
 
-	/// @brief is membrane? 
-	bool is_membrane() const; 
+	/// @brief is membrane?
+	bool is_membrane() const;
 
 	/// @brief is surface? (e.g. enamel)
 	bool is_surface() const;
@@ -2043,19 +2064,19 @@ private:
 	///	used to define the set of allowed atomtypes for this residue and
 	///	their properties
 	/// Needs to be non-null by the time finalize() is called.
-	AtomTypeSetCAP atom_types_;
+	AtomTypeSetCOP atom_types_;
 
 	/// @brief The set for element objects. -- Primary, can be null.
-	ElementSetCAP elements_;
+	ElementSetCOP elements_;
 
 	/// @brief The set for MMAtomTypes. -- Primary, can be null.
-	MMAtomTypeSetCAP mm_atom_types_;
+	MMAtomTypeSetCOP mm_atom_types_;
 
 	/// @brief The set for GasteigerAtomTypes. -- Primary, can be null.
 	gasteiger::GasteigerAtomTypeSetCOP gasteiger_atom_types_;
 
 	/// @brief The set for OrbitalTypes. -- Primary, can be null.
-	orbitals::OrbitalTypeSetCAP orbital_types_;
+	orbitals::OrbitalTypeSetCOP orbital_types_;
 
 	/// @brief The set of all possible ring conformers -- Derived, can be null
 	RingConformerSetOP conformer_set_;

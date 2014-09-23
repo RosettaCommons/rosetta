@@ -28,7 +28,7 @@ namespace scores {
 //static const core::Real PSI_MIN_CONF = 0.5;
 
 void Psi::do_caching(VallChunkOP current_chunk) {
-  std::string ctmp = current_chunk()->chunk_key();
+  std::string ctmp = current_chunk->chunk_key();
   if (ctmp.compare("change to 'cached_scores_id_' when ready") != 0) {
     return; // CACHING NOT BUILT IN YET
   }

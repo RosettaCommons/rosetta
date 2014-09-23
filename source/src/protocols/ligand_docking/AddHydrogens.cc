@@ -110,7 +110,7 @@ AddHydrogens::apply( core::pose::Pose & pose )
 
 	BOOST_FOREACH(core::Size unconnected_id, unconnected_ids){
 		core::conformation::Residue const & res_to_fix= pose.residue(unconnected_id);
-		utility::vector1<core::Size> connect_ids= get_incomplete_connections(&res_to_fix);
+		utility::vector1<core::Size> connect_ids= get_incomplete_connections(res_to_fix.get_self_ptr());
 
 		BOOST_FOREACH(core::Size connect_id, connect_ids){
 			AddHydrogen AH(unconnected_id, connect_id);

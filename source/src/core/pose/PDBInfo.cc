@@ -177,7 +177,7 @@ PDBInfo::operator =( PDBInfo const & info )
 
 /// @brief is this PDBInfo currently observing a conformation?
 /// @return the Conformation being observed, otherwise NULL
-core::conformation::Conformation const *
+core::conformation::ConformationCAP
 PDBInfo::is_observing() {
 	return conf_;
 }
@@ -187,7 +187,7 @@ PDBInfo::is_observing() {
 void
 PDBInfo::attach_to( core::conformation::Conformation & conf ) {
 	// detach from prior Conformation if necessary
-	if ( conf_ ) {
+	if ( !conf_.expired() ) {
 		detach_from();
 	}
 
@@ -195,7 +195,7 @@ PDBInfo::attach_to( core::conformation::Conformation & conf ) {
 	conf.attach_identity_obs( &PDBInfo::on_identity_change, this );
 	conf.attach_length_obs( &PDBInfo::on_length_change, this );
 
-	conf_ = &conf;
+	conf_ = conf.get_self_weak_ptr();
 }
 
 
@@ -204,13 +204,21 @@ PDBInfo::attach_to( core::conformation::Conformation & conf ) {
 ///  Conformation at a time
 void
 PDBInfo::detach_from() {
-	if ( conf_ ) {
-		conf_->detach_connection_obs( &PDBInfo::on_connection_change, this );
-		conf_->detach_identity_obs( &PDBInfo::on_identity_change, this );
-		conf_->detach_length_obs( &PDBInfo::on_length_change, this );
+#ifdef PTR_REFCOUNT
+	// This is called from Conformation::~Conformation and which point the
+	// reference count is 0; it gets incremented here and results
+	// in duplicate calls to Conformation::~Conformation.
+	core::conformation::ConformationCAP & conf = conf_;
+#else
+	core::conformation::ConformationCOP conf = conf_.lock();
+#endif
+	if ( conf ) {
+		conf->detach_connection_obs( &PDBInfo::on_connection_change, this );
+		conf->detach_identity_obs( &PDBInfo::on_identity_change, this );
+		conf->detach_length_obs( &PDBInfo::on_length_change, this );
 	}
 
-	conf_ = NULL;
+	conf_.reset(); // to NULL
 }
 
 

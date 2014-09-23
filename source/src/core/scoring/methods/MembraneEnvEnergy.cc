@@ -62,7 +62,7 @@ MembraneEnvEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 MembraneEnvEnergy::MembraneEnvEnergy() :
-	parent( new MembraneEnvEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new MembraneEnvEnergyCreator ) ),
 	potential_( ScoringManager::get_instance()->get_MembranePotential() )
 {}
 

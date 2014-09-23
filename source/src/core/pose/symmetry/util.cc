@@ -134,7 +134,7 @@ make_symmetric_pose(
 {
 	using namespace basic::options;
 
-	conformation::symmetry::SymmetricConformationOP symm_conf ( new core::conformation::symmetry::SymmetricConformation( pose.conformation(), symmetry_info ) ) ;
+	conformation::symmetry::SymmetricConformationOP symm_conf = new core::conformation::symmetry::SymmetricConformation( pose.conformation(), symmetry_info );
 
 	scoring::symmetry::SymmetricEnergiesOP symm_energy( new scoring::symmetry::SymmetricEnergies( pose.energies()) );
 
@@ -252,8 +252,8 @@ make_asymmetric_pose(
 {
 	// we need to cast the objects statically to get this working
 	scoring::Energies asym_energies( static_cast< scoring::Energies const & >( ( pose.energies()  ) ) );
-	conformation::Conformation asym_conformation( static_cast< conformation::Conformation const & >( ( pose.conformation() ) ) );
-	conformation::ConformationOP conformation = new conformation::Conformation( asym_conformation );
+	conformation::Conformation const & asym_conformation = static_cast< conformation::Conformation const & >( ( pose.conformation() ) );
+	conformation::ConformationCOP conformation = asym_conformation.get_self_ptr();
 	scoring::EnergiesOP energies = new scoring::Energies( asym_energies );
 	pose.set_new_conformation( conformation );
 	// Necessary to reinitialize the energy_graph

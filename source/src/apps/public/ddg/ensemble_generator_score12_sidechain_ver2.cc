@@ -219,7 +219,7 @@ setup_ca_constraints(pose::Pose & pose, ScoreFunction & s, float const CA_cutoff
 			Vector const CA_j(pose.residue(j).xyz(" CA "));
 			Real const CA_dist = (CA_i - CA_j).length();
 			if(CA_dist < CA_cutoff && i != j){
-				ConstraintCOP cst(new AtomPairConstraint( AtomID(pose.residue(i).atom_index(" CA "),i),AtomID(pose.residue(j).atom_index(" CA "),j),new BoundFunc(CA_dist-0.5,CA_dist+0.5,0.1,10,"BoundFunc"))); //bounded func
+				ConstraintCOP cst(new AtomPairConstraint( AtomID(pose.residue(i).atom_index(" CA "),i),AtomID(pose.residue(j).atom_index(" CA "),j),core::scoring::func::FuncOP(new BoundFunc(CA_dist-0.5,CA_dist+0.5,0.1,10,"BoundFunc")))); //bounded func
 				pose.add_constraint(cst);
 			}
 		}

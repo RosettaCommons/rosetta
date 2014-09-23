@@ -925,7 +925,7 @@ RNA_LowResolutionPotential::setup_precise_zeta_cutoffs( chemical::AA const & na_
 	using namespace core::chemical;
 	using namespace core::conformation;
 
-	ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_RNA );
+	ResidueTypeSetCOP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 	RNA_CentroidInfo rna_centroid_info;
 
 	ResidueOP rsd = ResidueFactory::create_residue( *( rsd_set->aa_map( na_rad ) )[1] );
@@ -2175,7 +2175,7 @@ RNA_LowResolutionPotential::fill_atom_numbers_for_backbone_oxygens( chemical::Re
 {
 	using namespace core::chemical;
 
-	ResidueTypeCOPs const & rsd_types( rsd_set->aa_map( aa ) );
+	ResidueTypeCOPs const & rsd_types( rsd_set.lock()->aa_map( aa ) );
 	ResidueTypeCOP const & rsd_type = rsd_types[ 1 ]; //This better work.
 
 	for ( Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ) {
@@ -2190,7 +2190,7 @@ RNA_LowResolutionPotential::check_atom_numbers_for_backbone_oxygens( chemical::R
 {
 	using namespace core::chemical;
 
-	ResidueTypeCOPs const & rsd_types( rsd_set->aa_map( aa ) );
+	ResidueTypeCOPs const & rsd_types( rsd_set.lock()->aa_map( aa ) );
 	ResidueTypeCOP const &  rsd_type = rsd_types[ 1 ]; //This better work.
 
 	for ( Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ) {

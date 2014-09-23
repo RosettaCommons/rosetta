@@ -347,7 +347,7 @@ core::Real ExposedStrandMover::bb_score(pose::Pose & pose, core::Size aligned_ch
   //NOW SCORE!
   // get instance of etable energy method
   core::scoring::methods::EnergyMethodOptions const & emo(scorefxn->energy_method_options());
-  core::scoring::etable::Etable const & et(*(core::scoring::ScoringManager::get_instance()->etable(emo.etable_type())));
+  core::scoring::etable::Etable const & et(*(core::scoring::ScoringManager::get_instance()->etable(emo.etable_type()).lock()));
   core::scoring::etable::TableLookupEtableEnergy ete( et, emo );
 
   // iterate over both sets of atom and add into one emapvector

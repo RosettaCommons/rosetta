@@ -340,7 +340,7 @@ void MultiplePoseMover::parse_my_tag(
 					PoseSelectorFactory::get_instance()->
 						newPoseSelector( curr_tag, data, selector_filters_, movers, pose )
 				);
-				runtime_assert( new_selector );
+				runtime_assert( new_selector != 0 );
 				selectors_.push_back( new_selector );
 				TR << "Defined selector of type " << curr_tag->getName() << std::endl;
 			}

@@ -95,7 +95,7 @@ TaskOperationFactory::factory_register( TaskOperationCreatorOP creator )
 void
 TaskOperationFactory::add_creator( TaskOperationCreatorOP creator )
 {
-	runtime_assert( creator );
+	runtime_assert( creator != 0 );
 	task_operation_creator_map_[ creator->keyname() ] = creator;
 }
 
@@ -168,7 +168,7 @@ TaskOperationFactory::newTaskOperations( TaskOperationOPs & tops, basic::datacac
 		for( TagCOPs::const_iterator tp( subtags.begin() ), tp_e( subtags.end() ); tp != tp_e; ++tp ) {
 			std::string const type( (*tp)->getName() );
 			TaskOperationOP new_to = newTaskOperation( type, datamap, *tp );
-			runtime_assert( new_to );
+			runtime_assert( new_to != 0 );
 			tops.push_back( new_to );
 			TR << "Created and parsed anonymous TaskOperation of type " << type << std::endl;
 		}

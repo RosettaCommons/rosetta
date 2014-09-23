@@ -312,8 +312,8 @@ check_if_really_connected (
   core::id::AtomID const & atom_id2 ) {
 	if ( atom_id1.rsd() == atom_id2.rsd() ) return true;
 
-	core::kinematics::tree::AtomCOP atom1 ( & pose.atom_tree().atom ( atom_id1 ) );
-	core::kinematics::tree::AtomCOP atom2 ( & pose.atom_tree().atom ( atom_id2 ) );
+	core::kinematics::tree::AtomCOP atom1 ( pose.atom_tree().atom ( atom_id1 ).get_self_ptr() );
+	core::kinematics::tree::AtomCOP atom2 ( pose.atom_tree().atom ( atom_id2 ).get_self_ptr() );
 
 	if ( atom1->parent() == atom2 ) return true;
 
@@ -359,7 +359,7 @@ create_pose_reference (
   pose::Pose const & pose,
   pose::Pose & pose_reference ) {
 	using namespace core::chemical;
-	ResidueTypeSetCAP rsd_set;
+	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set ( FA_RNA );
 	make_pose_from_sequence ( pose_reference, pose.sequence(),	*rsd_set );
 	apply_ideal_coordinates ( pose, pose_reference );
@@ -396,7 +396,7 @@ vary_bond_geometry (
 
 			if ( !is_atom_exist_in_reference ( pose, pose_reference , AtomID ( j, i ) ) )  continue;
 
-			core::kinematics::tree::AtomCOP current_atom ( & pose.atom_tree().atom ( AtomID ( j, i ) ) );
+			core::kinematics::tree::AtomCOP current_atom ( pose.atom_tree().atom ( AtomID ( j, i ) ).get_self_ptr() );
 
 			if ( current_atom->is_jump() ) continue;
 
@@ -658,7 +658,7 @@ pdb_minimizer() {
 	using namespace core::id;
 	using namespace protocols::stepwise::modeler::rna;
 
-	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->
+	ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->
 	          									residue_type_set ( FA_RNA );
 	bool const vary_bond_geometry_ =  option[ vary_geometry ];
 	bool const constrain_phosphate =  option[ constrain_P ];
@@ -807,11 +807,11 @@ pdb_minimizer() {
 			utility_exit_with_message("Fixed residue is not a RNA residue!!!!");
 		}
 
-		cst_set -> add_constraint ( new CoordinateConstraint ( AtomID ( atm_indexP, fixed_res_num ), AtomID ( 1, my_anchor ), rsd.xyz ( atm_indexP ), new core::scoring::func::HarmonicFunc ( 0.0, coord_sdev ) ) );
-		cst_set -> add_constraint ( new CoordinateConstraint ( AtomID ( atm_indexO3, fixed_res_num ), AtomID ( 1, my_anchor ), rsd.xyz ( atm_indexO3 ), new core::scoring::func::HarmonicFunc ( 0.0, coord_sdev ) ) );
-		cst_set -> add_constraint ( new CoordinateConstraint ( AtomID ( atm_indexBase, fixed_res_num ), AtomID ( 1, my_anchor ), rsd.xyz ( atm_indexBase ), new core::scoring::func::HarmonicFunc ( 0.0, coord_sdev ) ) );
-		cst_set -> add_constraint ( new CoordinateConstraint ( AtomID ( atm_indexC6, fixed_res_num ), AtomID ( 1, my_anchor ), rsd.xyz ( atm_indexC6 ), new core::scoring::func::HarmonicFunc ( 0.0, coord_sdev ) ) );
-		cst_set -> add_constraint ( new CoordinateConstraint ( AtomID ( atm_indexOP2, fixed_res_num ), AtomID ( 1, my_anchor ), rsd.xyz ( atm_indexOP2 ), new core::scoring::func::HarmonicFunc ( 0.0, coord_sdev ) ) );
+		cst_set -> add_constraint ( new CoordinateConstraint ( AtomID ( atm_indexP, fixed_res_num ), AtomID ( 1, my_anchor ), rsd.xyz ( atm_indexP ), core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc ( 0.0, coord_sdev ) ) ) );
+		cst_set -> add_constraint ( new CoordinateConstraint ( AtomID ( atm_indexO3, fixed_res_num ), AtomID ( 1, my_anchor ), rsd.xyz ( atm_indexO3 ), core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc ( 0.0, coord_sdev ) ) ) );
+		cst_set -> add_constraint ( new CoordinateConstraint ( AtomID ( atm_indexBase, fixed_res_num ), AtomID ( 1, my_anchor ), rsd.xyz ( atm_indexBase ), core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc ( 0.0, coord_sdev ) ) ) );
+		cst_set -> add_constraint ( new CoordinateConstraint ( AtomID ( atm_indexC6, fixed_res_num ), AtomID ( 1, my_anchor ), rsd.xyz ( atm_indexC6 ), core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc ( 0.0, coord_sdev ) ) ) );
+		cst_set -> add_constraint ( new CoordinateConstraint ( AtomID ( atm_indexOP2, fixed_res_num ), AtomID ( 1, my_anchor ), rsd.xyz ( atm_indexOP2 ), core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc ( 0.0, coord_sdev ) ) ) );
 		pose.constraint_set ( cst_set );
 		scorefxn->set_weight ( coordinate_constraint, 10 );
 
@@ -854,7 +854,7 @@ pdb_minimizer() {
 			ConstraintSetOP cst_set = pose.constraint_set()->clone();
 			Residue const & rsd ( pose.residue ( i ) );
 			Size const atm_indexP = rsd.atom_index ( "P" );
-			cst_set -> add_constraint ( new CoordinateConstraint ( AtomID ( atm_indexP, i ), AtomID ( 1, my_anchor ), rsd.xyz ( atm_indexP ), new core::scoring::func::HarmonicFunc ( 0.0, coord_sdev ) ) );
+			cst_set -> add_constraint ( new CoordinateConstraint ( AtomID ( atm_indexP, i ), AtomID ( 1, my_anchor ), rsd.xyz ( atm_indexP ), core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc ( 0.0, coord_sdev ) ) ) );
 			pose.constraint_set ( cst_set );
 			scorefxn->set_weight ( coordinate_constraint, 10 );
 		}

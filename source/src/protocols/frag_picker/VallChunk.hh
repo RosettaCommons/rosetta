@@ -34,12 +34,28 @@ namespace frag_picker {
 
 /// @brief  represents a chunk of residues extracted from a vall.
 /// @detailed VallChunk contains a vector of VallResidue objects and provides a basic ways to access them
-class VallChunk: public utility::pointer::ReferenceCount {
+class VallChunk: public utility::pointer::ReferenceCount
+#ifdef PTR_MODERN
+	// New version
+	, public utility::pointer::enable_shared_from_this< VallChunk >
+{
+#else
+{
+	// Old intrusive ref-counter version
+	inline VallChunkCOP shared_from_this() const { return VallChunkCOP( this ); }
+	inline VallChunkOP shared_from_this() { return VallChunkOP( this ); }
+#endif
+
 public:
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~VallChunk();
 
 	VallChunk(VallProviderAP provider);
+
+	inline VallChunkCOP get_self_ptr() const { return shared_from_this(); }
+	inline VallChunkOP  get_self_ptr() { return shared_from_this(); }
+	inline VallChunkCAP get_self_weak_ptr() const { return VallChunkCAP( shared_from_this() ); }
+	inline VallChunkAP  get_self_weak_ptr() { return VallChunkAP( shared_from_this() ); }
 
 	/// @brief  returns a PDB id (a string of four letters, e.g. "4mba")
 	inline std::string get_pdb_id() const {

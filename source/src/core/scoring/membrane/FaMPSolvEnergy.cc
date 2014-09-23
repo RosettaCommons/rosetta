@@ -92,19 +92,22 @@ FaMPSolvEnergy::FaMPSolvEnergy(
 	parent( new FaMPSolvEnergyCreator ),
 	etable_( etable_in ),
 	memb_etable_( memb_etable_in ),
-	solv1_( memb_etable_in->solv1() ),
-	solv2_( memb_etable_in->solv2() ),
-	dsolv1_( memb_etable_in->dsolv1() ),
-	dsolv2_( memb_etable_in->dsolv2() ),
-	dsolv_( etable_in->dsolv() ),
-	memb_solv1_( memb_etable_in->memb_solv1() ),
-	memb_solv2_( memb_etable_in->memb_solv2() ),
-	memb_dsolv1_( memb_etable_in->memb_dsolv1() ),
-	memb_dsolv2_( memb_etable_in->memb_dsolv2() ),
-	safe_max_dis2_( etable_in->get_safe_max_dis2() ),
-	get_bins_per_A2_( etable_in->get_bins_per_A2() ),
+	// FIXME: move inside with lock() success check?
+	solv1_( memb_etable_in.lock()->solv1() ),
+	solv2_( memb_etable_in.lock()->solv2() ),
+	dsolv1_( memb_etable_in.lock()->dsolv1() ),
+	dsolv2_( memb_etable_in.lock()->dsolv2() ),
+	dsolv_( etable_in.lock()->dsolv() ),
+	memb_solv1_( memb_etable_in.lock()->memb_solv1() ),
+	memb_solv2_( memb_etable_in.lock()->memb_solv2() ),
+	memb_dsolv1_( memb_etable_in.lock()->memb_dsolv1() ),
+	memb_dsolv2_( memb_etable_in.lock()->memb_dsolv2() ),
+	safe_max_dis2_( etable_in.lock()->get_safe_max_dis2() ),
+	get_bins_per_A2_( etable_in.lock()->get_bins_per_A2() ),
 	verbose_( false )
-{}
+{
+	// etable::MembEtableCOP memb_etable( memb_etable_in ); 
+}
 
 
 
@@ -245,7 +248,8 @@ FaMPSolvEnergy::eval_intrares_energy(
 /// @brief Specify Interaction Cutoff for computing pair energies
 Distance
 FaMPSolvEnergy::atomic_interaction_cutoff() const {
-	return etable_->max_dis();
+	etable::EtableCOP etable( etable_ );
+	return etable->max_dis();
 }
 
 /// @brief Provide context graphs

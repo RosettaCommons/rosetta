@@ -61,12 +61,14 @@ std::string& VallChunk::get_sequence() {
 
 core::sequence::SequenceProfileOP VallChunk::get_profile() {
 
-	return my_provider_->cache_profile(this);
+	VallProviderOP my_provider( my_provider_ );
+	return my_provider->cache_profile( get_self_ptr() );
 }
 
 core::pose::PoseOP VallChunk::get_pose() {
 
-	return my_provider_->cache_pose(this);
+	VallProviderOP my_provider( my_provider_ );
+	return my_provider->cache_pose( get_self_ptr() );
 }
 
 } // frag_picker

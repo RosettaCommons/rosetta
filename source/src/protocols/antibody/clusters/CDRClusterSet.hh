@@ -35,7 +35,7 @@ class CDRClusterSet : public utility::pointer::ReferenceCount {
 public:
 
 	///@brief Constructor should only be used within AntibodyInfo, as it requires and is part of AbInfo.
-	CDRClusterSet(AntibodyInfoAP ab_info);
+	CDRClusterSet(AntibodyInfo * ab_info);
 	
 	virtual ~CDRClusterSet();
 	
@@ -81,7 +81,7 @@ private:
 
 private:
 	
-	AntibodyInfoAP ab_info_;
+	AntibodyInfo * ab_info_;
 	CDRClusterMatcherOP cluster_matcher_;
 	
 	vector1<CDRClusterOP> clusters_; //One cluster per CDR as we assume the max we have is one L and one H from AntibodyInfo. The trick to have more than one LH will be to have a composite of AntibodyInfo objects and mutable AbChains.

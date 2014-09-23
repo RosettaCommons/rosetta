@@ -185,7 +185,7 @@ ProteinAssemblyGraph::bb_score(
 	
 	// get instance of etable energy method
 	core::scoring::methods::EnergyMethodOptions const & emo(scorefxn_->energy_method_options());
-	core::scoring::etable::Etable const & et(*(core::scoring::ScoringManager::get_instance()->etable(emo.etable_type())));
+	core::scoring::etable::Etable const & et(*(core::scoring::ScoringManager::get_instance()->etable(emo.etable_type()).lock()));
 	core::scoring::etable::AnalyticEtableEvaluator ete(et);
 	
 	// iterate over both sets of atom and add into one emapvector

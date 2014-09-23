@@ -54,7 +54,7 @@ using namespace core;
 UniformPositionRotationMover::UniformPositionRotationMover() :
 	Mover(),
 	alpha_( 0.0 ),
-	axis_( 0, 0, 1 ),
+	axis_( 0.0, 0.0, 1.0 ),
 	rb_jump_( 1 )
 {}
 
@@ -142,7 +142,7 @@ UniformPositionRotationMover::apply( Pose & pose ) {
 /// @brief Construct a Default Membrane Position Mover
 UniformPositionTranslationMover::UniformPositionTranslationMover() :
 	Mover(),
-	new_position_( 0, 0, 0 ),
+	new_position_( 0.0, 0.0, 0.0 ),
 	rb_jump_( 1 )
 {}
 

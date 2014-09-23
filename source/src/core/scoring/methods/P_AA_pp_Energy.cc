@@ -61,7 +61,7 @@ P_AA_pp_EnergyCreator::score_types_for_method() const {
 
 /// ctor
 P_AA_pp_Energy::P_AA_pp_Energy() :
-	parent( new P_AA_pp_EnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new P_AA_pp_EnergyCreator ) ),
 	p_aa_( ScoringManager::get_instance()->get_P_AA() )
 {}
 

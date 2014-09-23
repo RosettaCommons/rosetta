@@ -67,7 +67,17 @@ namespace core {
 namespace conformation {
 
 /// @brief A container of Residues and the kinematics to manage them
-class Conformation : public utility::pointer::ReferenceCount {
+class Conformation : public utility::pointer::ReferenceCount
+#ifdef PTR_MODERN
+	// New C++11 version
+	, public utility::pointer::enable_shared_from_this< Conformation >
+{
+#else
+{
+	// Old intrusive ref-counter version
+	inline ConformationCOP shared_from_this() const { return ConformationCOP( this ); }
+	inline ConformationOP shared_from_this() { return ConformationOP( this ); }
+#endif
 
 public:  // typedefs
 
@@ -123,6 +133,12 @@ public:  // standard class methods
 	/// @brief clear data
 	void
 	clear();
+
+	/// self pointers
+	inline ConformationCOP get_self_ptr() const { return shared_from_this(); }
+	inline ConformationOP get_self_ptr() { return shared_from_this(); }
+	inline ConformationCAP get_self_weak_ptr() const { return ConformationCAP( shared_from_this() ); }
+	inline ConformationAP get_self_weak_ptr() { return ConformationAP( shared_from_this() ); }
 
 
 public:  // Debugging
@@ -192,7 +208,7 @@ public:  // General Properties
 
 	/// @brief Set whether this conformation contains any carbohydrate residues.
 	void
-	contains_carbohydrate_residues(bool const setting)
+	contains_carbohydrate_residues(bool setting)
 	{
 		contains_carbohydrate_residues_ = setting;
 	}
@@ -202,7 +218,7 @@ public:  // Chains
 
 	/// @brief Returns the position number of the last residue in  <chain>
 	Size
-	chain_end( Size const chain ) const
+	chain_end( Size chain ) const
 	{
 		if ( chain <= chain_endings_.size() ) return chain_endings_[chain];
 		else return size();
@@ -210,7 +226,7 @@ public:  // Chains
 
 	/// @brief Returns the position number of the first residue in  <chain>
 	Size
-	chain_begin( Size const chain ) const
+	chain_begin( Size chain ) const
 	{
 		if ( chain == 1 ) return 1;
 		else return chain_endings_[ chain-1 ]+1;
@@ -233,11 +249,11 @@ public:  // Chains
 
 	/// @brief Marks  <seqpos>  as the end of a new chain
 	void
-	insert_chain_ending( Size const seqpos );
+	insert_chain_ending( Size seqpos );
 
 	/// @brief Deletes  <seqpos>  from the list of chain endings
 	void
-	delete_chain_ending( Size const seqpos );
+	delete_chain_ending( Size seqpos );
 
 	/// @brief Resets chain data so that the Conformation is marked as a single chain
 	void
@@ -254,7 +270,7 @@ public:  // Secondary Structure
 	/// @return character representing secondary structure; returns 'L' if the
 	/// requested sequence position is larger than the length in the
 	/// secondary structure array
-	char secstruct( Size const seqpos ) const
+	char secstruct( Size seqpos ) const
 	{
 		if ( Size(seqpos) > secstruct_.size() ) return 'L';
 		return secstruct_[seqpos];
@@ -265,7 +281,7 @@ public:  // Secondary Structure
 	/// Will resize the secondary structure array if the requested sequence
 	/// position is larger than the length of the array.
 	virtual void
-	set_secstruct( Size const seqpos, char const setting )
+	set_secstruct( Size seqpos, char setting )
 	{
 		if ( secstruct_.size() < Size(seqpos) ) secstruct_.resize( seqpos, 'L' );
 		secstruct_[seqpos] = setting;
@@ -292,31 +308,31 @@ public: // membrane
 	/// and list of spanning topology objects by chain.
 	void
 	set_membrane_info( membrane::MembraneInfoOP mem_info );
-	
+
 	/// @brief Returns the const MembraneInfo object in conformation
 	/// @details Membrane Info contains information describing location of the
 	/// membrane virtual residue in the pose sequence, membrane spanning region definitions
 	/// and lipid exposure/burial data
 	membrane::MembraneInfoOP membrane_info();
-	
+
 	/// @brief Returns the const MembraneInfo object in conformation
 	/// @details Membrane Info contains information describing location of the
 	/// membrane virtual residue in the pose sequence, membrane spanning region definitions
 	/// and lipid exposure/burial data
 	membrane::MembraneInfoOP membrane_info() const;
-	
+
 	/// @brief Update Normal, Center in the Membrane
 	/// @details Sets the center and normal coordinates to the appropriate
 	/// parameters and checks for a valid stub prior to returning.
 	void
 	update_membrane_position( Vector center, Vector normal );
-	
+
 	/// @brief Check that a new membrane position is valid
 	/// @details Given a new membrane normal/center pair, check that the newly constructed stub represents
 	/// an orthogonal coordinate frame
 	void
 	check_valid_membrane() const;
-	
+
 public:  // Trees
 
 	/// @brief Returns the conformation's FoldTree
@@ -342,7 +358,7 @@ public:  // Residues
 
 	/// @brief Returns the AA enum for position  <seqpos>
 	chemical::AA const &
-	aa( Size const seqpos ) const {
+	aa( Size seqpos ) const {
 		assert( seqpos >= 1 );
 		assert( seqpos <= size() );
 		return residues_[seqpos]->aa();
@@ -356,17 +372,24 @@ public:  // Residues
 	/// allowing read access
 	inline
 	Residue const &
-	residue( Size const seqpos ) const {
+	residue( Size seqpos ) const {
+		return *residue_cop( seqpos );
+	}
+
+	/// @brief access one of the residues, using OP
+	inline
+	ResidueCOP
+	residue_cop( Size seqpos ) const {
 		runtime_assert( seqpos >= 1 );
 		runtime_assert( seqpos <= size() );
 		if ( residue_coordinates_need_updating_ ) update_residue_coordinates();
 		if ( residue_torsions_need_updating_ )    update_residue_torsions();
-		return *( residues_[ seqpos ] );
+		return residues_[ seqpos ];
 	}
 
 	/// @brief access one of the residue's types -- avoids coord/torsion update
 	chemical::ResidueType const &
-	residue_type( Size const seqpos ) const
+	residue_type( Size seqpos ) const
 	{
 		assert( seqpos >=1 );
 		assert( seqpos <= size() );
@@ -374,7 +397,7 @@ public:  // Residues
 	}
 
 	/// @brief  Inefficient -- constructs copy of residues_
-	ResidueCAPs
+	ResidueCOPs
 	const_residues() const;
 
 
@@ -389,10 +412,10 @@ public:  // Residues
 	void
 	append_residue_by_jump(
 		conformation::Residue const & new_rsd,
-		Size const anchor_residue,
+		Size anchor_residue,
 		std::string const& anchor_atom = "", // the atom in the anchor_residue
 		std::string const& root_atom = "", // the atom in the new residue
-		bool const start_new_chain = false
+		bool start_new_chain = false
 	);
 
 
@@ -401,7 +424,7 @@ public:  // Residues
 	void
 	insert_residue_by_jump(
 		Residue const & new_rsd_in,
-		Size const seqpos, // desired seqpos of new_rsd
+		Size seqpos, // desired seqpos of new_rsd
 		Size anchor_pos, // in the current sequence numbering, ie before insertion of seqpos
 		std::string const& anchor_atom = "",
 		std::string const& root_atom = "",
@@ -413,86 +436,86 @@ public:  // Residues
 	void
 	insert_residue_by_bond(
                            Residue const & new_rsd_in,
-                           Size const seqpos, // desired seqpos of new_rsd
+                           Size seqpos, // desired seqpos of new_rsd
                            Size anchor_pos, // in the current sequence numbering, ie before insertion of seqpos
-                           bool const build_ideal_geometry = false,
+                           bool build_ideal_geometry = false,
                            std::string const& anchor_atom = "",
                            std::string const& root_atom = "",
                            bool new_chain = false, // insert this residue as a new chain, displacing all downstream chains
-                           bool const lookup_bond_length = false
+                           bool lookup_bond_length = false
 	);
 
 	/// @brief Append a new residue by a bond.
 	void
 	append_residue_by_bond(
 		conformation::Residue const & new_rsd,
-		bool const build_ideal_geometry = false,
+		bool build_ideal_geometry = false,
 		int connection_index = 0,
 		Size anchor_residue = 0,
 		int anchor_connection_index = 0,
-		bool const start_new_chain = false,
-		bool const lookup_bond_length = false
+		bool start_new_chain = false,
+		bool lookup_bond_length = false
 	);
 
 	/// @brief glues to seqpos and perhaps also seqpos+1
 	void
 	append_polymer_residue_after_seqpos(
 		Residue const & new_rsd,
-		Size const seqpos,
-		bool const build_ideal_geometry
+		Size seqpos,
+		bool build_ideal_geometry
 	);
 
 	/// @brief glues to seqpos and perhaps also seqpos+1, removes termini variants if necessary
 	void
 	safely_append_polymer_residue_after_seqpos(
 		Residue const & new_rsd,
-		Size const seqpos,
-		bool const build_ideal_geometry
+		Size seqpos,
+		bool build_ideal_geometry
 	);
 
 	/// @brief glues to seqpos and perhaps also seqpos-1
 	void
 	prepend_polymer_residue_before_seqpos(
 		Residue const & new_rsd,
-		Size const seqpos,
-		bool const build_ideal_geometry
+		Size seqpos,
+		bool build_ideal_geometry
 	);
 
 	/// @brief glues to seqpos and perhaps also seqpos-1, removes termini variants if necessary
 	void
 	safely_prepend_polymer_residue_before_seqpos(
 		Residue const & new_rsd,
-		Size const seqpos,
-		bool const build_ideal_geometry
+		Size seqpos,
+		bool build_ideal_geometry
 	);
 
 	/// @brief replace residue
 	virtual void
 	replace_residue(
-		Size const seqpos,
+		Size seqpos,
 		Residue const & new_rsd,
-		bool const orient_backbone
+		bool orient_backbone
 	);
 
 	/// @brief function to replace a residue based on superposition on the specified input atom pairs
 	virtual void
 	replace_residue(
-		Size const seqpos,
+		Size seqpos,
 		Residue const & new_rsd,
 		utility::vector1< std::pair< std::string, std::string > > const & atom_pairs
 	);
 
 	/// @brief Delete polymer residue at the given sequence position
 	void
-	delete_polymer_residue( Size const seqpos );
+	delete_polymer_residue( Size seqpos );
 
 	/// @brief Slow method that relies on FoldTree::delete_seqpos, rebuilds atomtree, can handle jumps/root residue
 	void
-	delete_residue_slow( Size const seqpos );
+	delete_residue_slow( Size seqpos );
 
 	/// @brief Slow method that relies on FoldTree::delete_seqpos, rebuilds atomtree, can handle jumps/root residue
 	void
-	delete_residue_range_slow( Size const range_begin, Size const range_end );
+	delete_residue_range_slow( Size range_begin, Size range_end );
 
 
 	/// @brief returns a mask of residues to be used in scoring
@@ -516,31 +539,31 @@ public:  // Bonds, Connections, Atoms, & Stubs
 	/// @brief Declare that a chemical bond exists between two residues
 	void
 	declare_chemical_bond(
-		Size const seqpos1,
+		Size seqpos1,
 		std::string const & atom_name1,
-		Size const seqpos2,
+		Size seqpos2,
 		std::string const & atom_name2
 	);
 
 
 	/// @brief Rebuilds the atoms that are depenent on polymer bonds for the specified residue only.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void rebuild_polymer_bond_dependent_atoms_this_residue_only ( Size const seqpos );
+	void rebuild_polymer_bond_dependent_atoms_this_residue_only ( Size seqpos );
 
 	/// @brief Rebuild the atoms ( like HN(seqpos), OC(seqpos+1) ) that are dependent on the polymer bond between seqpos and seqpos+1
 	void
-	rebuild_polymer_bond_dependent_atoms( Size const seqpos );
+	rebuild_polymer_bond_dependent_atoms( Size seqpos );
 
 	void
-	rebuild_residue_connection_dependent_atoms( Size const seqpos, Size const connid );
+	rebuild_residue_connection_dependent_atoms( Size seqpos, Size connid );
 
 
 	/// @brief  This returns the AtomID of the atom in the other residue to which the "connection_index"-th
 	/// connection of residue seqpos is connected to.
 	AtomID
 	inter_residue_connection_partner(
-		Size const seqpos,
-		int const connection_index
+		Size seqpos,
+		int connection_index
 	) const;
 
 	/// @brief get all atoms bonded to another
@@ -557,7 +580,7 @@ public:  // Bonds, Connections, Atoms, & Stubs
 
 	/// @brief returns true if atom is part of backbone.
 	bool
-	atom_is_backbone_norefold( Size const pos, Size const atomno ) const;
+	atom_is_backbone_norefold( Size pos, Size atomno ) const;
 
 
 	/// @brief  Set the transform between two stubs -- only works if there's a jump between the two sets of stubatoms
@@ -585,11 +608,11 @@ public:  // Bonds, Connections, Atoms, & Stubs
 
 	/// @brief The upstream and downstream Stubs are the coordinate frames between which this jump is transforming
 	kinematics::Stub
-	upstream_jump_stub( int const jump_number ) const;
+	upstream_jump_stub( int jump_number ) const;
 
 	/// @brief  The upstream and downstream Stubs are the coordinate frames between which this jump is transforming
 	kinematics::Stub
-	downstream_jump_stub( int const jump_number ) const;
+	downstream_jump_stub( int jump_number ) const;
 
 
 	/// @brief identify polymeric connections
@@ -599,9 +622,9 @@ public:  // Bonds, Connections, Atoms, & Stubs
 		Size res_id_lower,
 		Size res_id_upper
 	);
-  
+
 	/// @brief Create an arbitrary covalent connection between two residues.
-	///  
+	///
   void
   set_noncanonical_connection(
           Size res_id_lower,
@@ -615,15 +638,15 @@ public:  // Bonds, Connections, Atoms, & Stubs
   /// based on chainID's and termini.  If update_connection_dep_atoms is true, positions of
   /// atoms dependent on the polymer connection are updated.
   void
-  update_polymeric_connection( Size const lower_seqpos, bool const update_connection_dep_atoms=false );
+  update_polymeric_connection( Size lower_seqpos, bool update_connection_dep_atoms=false );
 
 	/// @brief Update the connection status between the lower_seqpos residue's lr_conn_id connection ID and
 	/// the upper_seqpos residue's ur_conn_id connection ID.
   void
-  update_noncanonical_connection(Size const lower_seqpos,
-                                 Size const lr_conn_id,
-                                 Size const upper_seqpos,
-                                 Size const ur_conn_id);
+  update_noncanonical_connection(Size lower_seqpos,
+                                 Size lr_conn_id,
+                                 Size upper_seqpos,
+                                 Size ur_conn_id);
 
 	/// @brief Detect existing disulfides from the protein structure.
   ///
@@ -644,10 +667,10 @@ public:  // Conformation Cutting/Pasting
 	void
 	insert_conformation_by_jump(
 			Conformation const & conf,             // the conformation to be inserted
-			Size const insert_seqpos,              // rsd 1 in conf goes here
-			Size const insert_jumppos,             // jump#1 in conf goes here, see insert_fold_tree_by_jump
-			Size const anchor_pos,                 // in the current sequence numbering, ie before insertion of conf
-			Size const anchor_jump_number = 0,     // the desired jump number of the anchoring jump, default=0
+			Size insert_seqpos,              // rsd 1 in conf goes here
+			Size insert_jumppos,             // jump#1 in conf goes here, see insert_fold_tree_by_jump
+			Size anchor_pos,                 // in the current sequence numbering, ie before insertion of conf
+			Size anchor_jump_number = 0,     // the desired jump number of the anchoring jump, default=0
 			std::string const & anchor_atom = "",  // "" means take default anchor atom
 			std::string const & root_atom   = ""   // "" means take default root   atom
 	);
@@ -655,10 +678,10 @@ public:  // Conformation Cutting/Pasting
 	/// @brief copy a stretch of coordinates/torsions from another Conformation
 	void
 	copy_segment(
-		Size const size,
+		Size size,
 		Conformation const & src,
-		Size const begin,
-		Size const src_begin
+		Size begin,
+		Size src_begin
 	);
 
 	void
@@ -678,7 +701,7 @@ public:  // DoFs/xyzs
 	/// @brief Sets the AtomTree degree of freedom (DOF)  <id>  to  <setting>
 	virtual
 	void
-	set_dof( DOF_ID const & id, Real const setting );
+	set_dof( DOF_ID const & id, Real setting );
 
 
 	/// @brief Returns the torsion angle  <id>
@@ -688,7 +711,7 @@ public:  // DoFs/xyzs
 	/// @brief Sets the AtomTree DOF and the torsion in the corresponding Residue
 	virtual
 	void
-	set_torsion( TorsionID const & id, Real const setting );
+	set_torsion( TorsionID const & id, Real setting );
 
 	/// @brief Returns the torsion angle defined by  <atom[1-4]>
 	Real
@@ -707,8 +730,8 @@ public:  // DoFs/xyzs
 		AtomID const & atom2,
 		AtomID const & atom3,
 		AtomID const & atom4,
-		Real const setting,
-		bool const quiet=false
+		Real setting,
+		bool quiet=false
 	);
 
 
@@ -727,7 +750,7 @@ public:  // DoFs/xyzs
 		AtomID const & atom1,
 		AtomID const & atom2,
 		AtomID const & atom3,
-		Real const setting
+		Real setting
 	);
 
 
@@ -744,12 +767,12 @@ public:  // DoFs/xyzs
 	set_bond_length(
 		AtomID const & atom1,
 		AtomID const & atom2,
-		Real const setting
+		Real setting
 	);
 
 	/// @brief Returns the Jump with jump number  <jump_number>
 	const Jump &
-	jump( int const jump_number ) const;
+	jump( int jump_number ) const;
 
 	/// @brief access a jump
 	const Jump &
@@ -759,7 +782,7 @@ public:  // DoFs/xyzs
 	virtual
 	void
 	set_jump(
-		int const jump_number,
+		int jump_number,
 		Jump const & new_jump
 	);
 
@@ -789,10 +812,10 @@ public:  // DoFs/xyzs
 
 
 	void
-	insert_ideal_geometry_at_polymer_bond( Size const seqpos );
+	insert_ideal_geometry_at_polymer_bond( Size seqpos );
 
 	void
-	insert_ideal_geometry_at_residue_connection( Size const pos1, Size const connid1 );
+	insert_ideal_geometry_at_residue_connection( Size pos1, Size connid1 );
 
 
 	void
@@ -813,7 +836,7 @@ public:  // ID access and conversions
 	dof_id_from_torsion_id( TorsionID const & id ) const;
 
 	id::AtomID
-	jump_atom_id( int const jump_number ) const;
+	jump_atom_id( int jump_number ) const;
 
 	///@brief get four atoms which defined this torsion
 	bool
@@ -828,7 +851,7 @@ public:  // ID access and conversions
 	///@brief get two atoms connect by jump
 	bool
 	get_jump_atom_ids(
-		core::Size const jump_number,
+		core::Size jump_number,
 		AtomID & upstream_id,
 		AtomID & downstream_id
 	) const;
@@ -1015,7 +1038,7 @@ public: // additional observer behavior
 
 	/// @brief wait for stdin after sending a GeneralEvent signal
 	void
-	debug_pause( bool const flag ) const;
+	debug_pause( bool flag ) const;
 
 	/// @brief waiting for stdin after sending a GeneralEvent signal?
 	bool
@@ -1109,7 +1132,7 @@ private:
 	/// about a given residue but don't want to trigger the coordinate/torsion updates that go along
 	/// with a call to residue(seqpos)
 	Residue const &
-	residue_( Size const seqpos ) const
+	residue_( Size seqpos ) const
 	{
 		assert( seqpos >=1 );
 		assert( seqpos <= size() );
@@ -1119,21 +1142,21 @@ private:
 	/// @brief remap *_moved arrays, sequence numbering in the residues_ arrays, etc, after insertion or deletion of rsds
 	void
 	update_sequence_numbering(
-		Size const new_size,
+		Size new_size,
 		utility::vector1< Size > const & old2new
 	);
 
 	/// @brief rebuild atoms in residue seqpos dependent on either the lower (-1) or upper(1) polymer residue
 	void
-	rebuild_polymer_bond_dependent_atoms( Size const seqpos, int const upper_lower );
+	rebuild_polymer_bond_dependent_atoms( Size seqpos, int upper_lower );
 
 	///
 	void
 	insert_polymer_residue(
 		Residue const & new_rsd_in,
-		Size const seqpos, // desired seqpos of new_rsd
-		bool const join_lower,
-		bool const join_upper
+		Size seqpos, // desired seqpos of new_rsd
+		bool join_lower,
+		bool join_upper
 	);
 
 	/// @brief  Now a private method
@@ -1142,10 +1165,10 @@ private:
 	void
 	append_residue(
 		Residue const & new_rsd_in,
-		bool const attach_by_jump,
+		bool attach_by_jump,
 		std::string const& root_atom,
 		id::NamedAtomID anchor_id,
-		bool const start_new_chain
+		bool start_new_chain
 	);
 
 
@@ -1153,27 +1176,27 @@ private:
 	/// @brief wrap direct access to the Residues container
 	void
 	residues_replace(
-		Size const seqpos,
+		Size seqpos,
 		Residue const & new_rsd
 	);
 
 	///
 	void
 	residues_insert(
-		Size const seqpos,
+		Size seqpos,
 		Residue const & new_rsd,
-		bool const use_lower_chain = false,
-		bool const new_chain = false
+		bool use_lower_chain = false,
+		bool new_chain = false
 	);
 
 	///
 	void
-	residues_append( Residue const & new_rsd, bool const start_new_chain, bool const by_jump = false,
+	residues_append( Residue const & new_rsd, bool start_new_chain, bool by_jump = false,
         std::string const & root_atom = "", id::NamedAtomID anchor_id = id::BOGUS_NAMED_ATOM_ID);
 
 	///
 	void
-	residues_delete( Size const seqpos );
+	residues_delete( Size seqpos );
 	//////////////////////////////////////////////////////////////////////////////
 
 
@@ -1253,7 +1276,7 @@ private:  // setting the moved data
 
 	// called by above
 	void
-	update_residue_coordinates( Size const seqpos, bool const fire_signal = true ) const;
+	update_residue_coordinates( Size seqpos, bool fire_signal = true ) const;
 
 	void
 	rederive_chain_endings();
@@ -1267,7 +1290,7 @@ private:  // setting the moved data
 
 	// called by above
 	void
-	update_residue_torsions( Size const seqpos, bool const fire_signal = true ) const;
+	update_residue_torsions( Size seqpos, bool fire_signal = true ) const;
 
 
 	void
@@ -1306,17 +1329,17 @@ private: // observer notifications
 
 	/// @brief notify IdentityEvent observers
 	void
-	notify_identity_obs( IdentityEvent const & e, bool const fire_general = true ) const;
+	notify_identity_obs( IdentityEvent const & e, bool fire_general = true ) const;
 
 
 	/// @brief notify LengthEvent observers
 	void
-	notify_length_obs( LengthEvent const & e, bool const fire_general = true ) const;
+	notify_length_obs( LengthEvent const & e, bool fire_general = true ) const;
 
 
 	/// @brief notify XYZEvent observers
 	void
-	notify_xyz_obs( XYZEvent const & e, bool const fire_general = true ) const;
+	notify_xyz_obs( XYZEvent const & e, bool fire_general = true ) const;
 
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -1330,6 +1353,7 @@ protected:
 	ResidueOPs residues_;
 
 private:
+
 	/// ResidueCOPs const_residues_; // mirrors residues_ allowing const access -- this will be reinstated soon.
 
 	/// @brief chain number for each position

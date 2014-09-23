@@ -59,7 +59,7 @@ public:
 	void test_NotResidueSelector_parse_my_tag() {
 		std::string tag_string = "<Not name=not_rs selector=odd/>";
 		std::stringstream ss( tag_string );
-		utility::tag::TagPtr tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 		ResidueSelectorOP odd_rs = new OddResidueSelector;
@@ -87,7 +87,7 @@ public:
 	void test_NotResidueSelector_parse_my_tag_no_provided_selectors() {
 		std::string tag_string = "<Not name=not_rs />";
 		std::stringstream ss( tag_string );
-		utility::tag::TagPtr tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
@@ -106,7 +106,7 @@ public:
 	void test_NotResidueSelector_parse_my_tag_selectors_not_in_datamap() {
 		std::string tag_string = "<Not name=not_rs selector=odd/>";
 		std::stringstream ss( tag_string );
-		utility::tag::TagPtr tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 

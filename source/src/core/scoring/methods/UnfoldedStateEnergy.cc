@@ -71,7 +71,7 @@ UnfoldedStateEnergyCreator::score_types_for_method() const {
 ///
 
 UnfoldedStateEnergy::UnfoldedStateEnergy( std::string const & type ) :
-	parent( new UnfoldedStateEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new UnfoldedStateEnergyCreator ) ),
 	type_( type ),
 	unf_state_potential_( ScoringManager::get_instance()->get_UnfoldedStatePotential( type ) ),
 	score_type_weights_( unf_state_potential_.get_unfoled_potential_file_weights() )
@@ -80,7 +80,7 @@ UnfoldedStateEnergy::UnfoldedStateEnergy( std::string const & type ) :
 }
 
 UnfoldedStateEnergy::UnfoldedStateEnergy( std::string const & type, const EnergyMap & emap_in ):
-	parent( new UnfoldedStateEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new UnfoldedStateEnergyCreator ) ),
 	type_( type ),
 	unf_state_potential_( ScoringManager::get_instance()->get_UnfoldedStatePotential( type ) ),
 	score_type_weights_( emap_in )

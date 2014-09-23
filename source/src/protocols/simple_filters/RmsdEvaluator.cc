@@ -103,7 +103,7 @@ RmsdEvaluator::apply( core::pose::Pose& pose, std::string tag, core::io::silent:
 }
 
 Real RmsdEvaluator::apply( core::pose::Pose& pose ) const {
-	runtime_assert( rmsd_pose_ );
+	runtime_assert( rmsd_pose_ != 0 );
 	core::Real rmsd;
   if ( start_ == 1 && end_ == rmsd_pose_->total_residue() ) {
     runtime_assert( pose.total_residue() >= end_ );
@@ -272,7 +272,7 @@ SelectMaxsubEvaluator::SelectMaxsubEvaluator( core::pose::Pose const& pose, std:
 
 Real
 SelectMaxsubEvaluator::apply( core::pose::Pose& pose ) const {
-  runtime_assert( rmsd_pose_ );
+  runtime_assert( rmsd_pose_ != 0 );
 	//  core::Real m_1_1, m_2_2, m_3_3, m_4_3, m_7_4;
 	core::Real maxsub = core::scoring::CA_maxsub( *rmsd_pose_, pose, selection_, rmsd_threshold_ );
 	return maxsub;

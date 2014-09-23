@@ -452,10 +452,11 @@ using namespace basic::options::OptionKeys;
 				Real const lb( sqrt( ivm( i,j ) )*option[ dist_cst::lb_fact ] );
 				Real const ub( sqrt( ivm( i,j ) )*option[ dist_cst::ub_fact ] );
 				Real const sd( option[ dist_cst::sd ] );
+				core::scoring::func::FuncOP fx( new BoundFunc( av - lb, av + ub, sd, "CM_DECOYS" ) );
 				NamedAtomPairConstraint cst(
 						id::NamedAtomID( "CA", i ),
 						id::NamedAtomID( "CA", j ),
-						new BoundFunc( av - lb, av + ub, sd, "CM_DECOYS" )
+						fx
 				);
 				cst_set.add_constraint( cst.clone() );
 				pose::Pose dummy_pose;
@@ -524,10 +525,11 @@ using namespace basic::options::OptionKeys;
 					}
 					Real const sd( option[ dist_cst::sd ] );
 					using namespace scoring::constraints;
+					core::scoring::func::FuncOP fx( new BoundFunc( lb, ub, sd, "CM_DECOYS" ) );
 					NamedAtomPairConstraint cst(
 																			id::NamedAtomID( "CA", i ),
 																			id::NamedAtomID( "CA", j ),
-																			new BoundFunc( lb, ub, sd, "CM_DECOYS" )
+																			fx
 					);
 					cst_set.add_constraint( cst.clone() );
 					pose::Pose dummy_pose;
@@ -614,11 +616,12 @@ using namespace basic::options::OptionKeys;
 		ub = ub - ub*grow_fact;
 		if ( ub <= min_ub ) ub = min_ub;
 		using namespace scoring::constraints;
+		core::scoring::func::FuncOP fx( new BoundFunc( lb, ub, 1.0, "CM_DECOYS" ) );
 		LocalCoordinateConstraint cst(
 				id::AtomID( ref_pose.residue(pos).atom_index("CA"), pos),
 					core::pose::named_stub_id_to_stub_id( id::NamedStubID( "N", "CA", "C", root ), ref_pose ),
 				xyz_av,
-				new BoundFunc( lb, ub, 1.0, "CM_DECOYS" )
+				fx
 		);
 		cst_set.add_constraint( cst.clone() );
 	}

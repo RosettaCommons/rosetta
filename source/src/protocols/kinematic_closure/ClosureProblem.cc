@@ -544,7 +544,7 @@ void ClosureProblem::frame_lower_pivot( // {{{1
 	// ideal coordinates.
 
 	if (pivot_residue.is_lower_terminus()) {
-		core::conformation::Conformation buffer;
+		core::conformation::ConformationOP buffer = new core::conformation::Conformation();
 
 		// Make a copy of the N-terminal residue.
 		Residue pivot_residue_copy = core::conformation::Residue(
@@ -556,20 +556,20 @@ void ClosureProblem::frame_lower_pivot( // {{{1
 				pivot_residue.type(), true /* dummy argument to pick constructor. */);
 
 		// Store the N-terminus in a temporary conformation.
-		buffer.append_residue_by_bond(
+		buffer->append_residue_by_bond(
 				pivot_residue_copy);
 
 		// Attach the pseudo-residue before the N-terminus in the copy.
-		buffer.safely_prepend_polymer_residue_before_seqpos(
+		buffer->safely_prepend_polymer_residue_before_seqpos(
 				pseudo_residue, 1, true);
 
 		// Set the junction omega angle to its ideal value.
-		buffer.set_torsion(
+		buffer->set_torsion(
 				core::id::TorsionID(1, core::id::BB, 3),
 				IdealParameters::omega_dihedral);
 
 		// Get a pointer to the pseudo-residue.
-		frame_residue = buffer.residue(1).clone();
+		frame_residue = buffer->residue(1).clone();
 	}
 
 	// If the lower pivot isn't the N-terminus, then simply identify the frame
@@ -608,7 +608,7 @@ void ClosureProblem::frame_upper_pivot( // {{{1
 	// artificially build with ideal coordinates.
 
 	if (pivot_residue.is_upper_terminus()) {
-		core::conformation::Conformation buffer;
+		core::conformation::ConformationOP buffer = new core::conformation::Conformation();
 
 		// Make a copy of the N-terminal residue.
 		Residue pivot_residue_copy = core::conformation::Residue(
@@ -620,20 +620,20 @@ void ClosureProblem::frame_upper_pivot( // {{{1
 				pivot_residue.type(), true /* dummy argument to pick constructor. */);
 
 		// Store the N-terminus in a temporary conformation.
-		buffer.append_residue_by_bond(
+		buffer->append_residue_by_bond(
 				pivot_residue_copy);
 
 		// Attach the pseudo-residue before the N-terminus in the copy.
-		buffer.safely_append_polymer_residue_after_seqpos(
+		buffer->safely_append_polymer_residue_after_seqpos(
 				pseudo_residue, 1, true);
 
 		// Set the junction omega angle to its ideal value.
-		buffer.set_torsion(
+		buffer->set_torsion(
 				core::id::TorsionID(2, core::id::BB, 3),
 				IdealParameters::omega_dihedral);
 
 		// Get a pointer to the pseudo-residue.
-		frame_residue = buffer.residue(2).clone();
+		frame_residue = buffer->residue(2).clone();
 	}
 
 	// If the upper pivot isn't the C-terminus, then simply identify the frame

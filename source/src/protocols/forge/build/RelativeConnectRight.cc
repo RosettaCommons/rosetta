@@ -50,7 +50,7 @@ RelativeConnectRight::RelativeConnectRight(
 	Size const right_position,
 	Pose const & pose_right
 ) :
-	Super( 0, right_position, pose_right ),
+	Super( 0u, right_position, pose_right ),
 	rp_( rp->clone() )
 {}
 

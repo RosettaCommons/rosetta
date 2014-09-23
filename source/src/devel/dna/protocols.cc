@@ -288,7 +288,7 @@ packing_specificity_test_fast(
 			for ( Size i=1;i<= nres; ++i ){
 				if ( partner[i] ) {
 					(*couplings)[i].first = partner[i];
-					(*couplings)[i].second = new conformation::WatsonCrickResidueMatcher();
+					(*couplings)[i].second = conformation::ResidueMatcherOP( new conformation::WatsonCrickResidueMatcher() );
 				}
 			}
 			task->rotamer_couplings( couplings );

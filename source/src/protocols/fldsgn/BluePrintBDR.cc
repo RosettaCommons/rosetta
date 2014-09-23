@@ -507,7 +507,7 @@ BluePrintBDR::apply( Pose & pose )
 
 	//fpd reinitialize PDBinfo
 	if (!pose.pdb_info() || pose.pdb_info()->obsolete()) {
-		pose.pdb_info( new core::pose::PDBInfo(pose, true) );
+		pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo(pose, true) ) );
 	}
 }
 

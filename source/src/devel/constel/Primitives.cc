@@ -475,8 +475,8 @@ core::scoring::hbonds::HBondDatabaseCOP HBondCommon::hb_database;
 ///
 void HBondCommon::init() {
 
-	hb_database = &(*core::scoring::hbonds::HBondDatabase::get_database
-                 (core::scoring::hbonds::HBondOptions().params_database_tag()));
+	hb_database = core::scoring::hbonds::HBondDatabase::get_database
+                 (core::scoring::hbonds::HBondOptions().params_database_tag());
 }
 
 

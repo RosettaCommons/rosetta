@@ -56,7 +56,7 @@ namespace noesy_assign {
 PeakAssignment::~PeakAssignment() {}
 using namespace core;
 
-PeakAssignment::PeakAssignment( CrossPeakAP const& cp, core::Size assign_spin1, core::Size assign_spin2 )
+PeakAssignment::PeakAssignment( CrossPeak * cp, core::Size assign_spin1, core::Size assign_spin2 )
   : crosspeak_( cp ),
     spin_assign_index1_( assign_spin1 ),
     spin_assign_index2_( assign_spin2 ),

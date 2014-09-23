@@ -17,9 +17,8 @@ namespace kinematic_closure {
 
 class BalancedKicMover;
 
-using utility::pointer::owning_ptr;
-typedef owning_ptr<BalancedKicMover> BalancedKicMoverOP;
-typedef owning_ptr<BalancedKicMover const> BalancedKicMoverCOP;
+typedef utility::pointer::owning_ptr<BalancedKicMover> BalancedKicMoverOP;
+typedef utility::pointer::owning_ptr<BalancedKicMover const> BalancedKicMoverCOP;
 
 }
 }

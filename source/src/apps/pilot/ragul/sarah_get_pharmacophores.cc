@@ -242,7 +242,7 @@ int main( int argc, char * argv [] ){
 	assert( complex_pose.energies().residue_neighbors_updated() );
 	core::scoring::EnergyGraph const & energy_graph( complex_pose.energies().energy_graph() );
 	core::scoring::TenANeighborGraph const & tenA_neighbor_graph( complex_pose.energies().tenA_neighbor_graph() );
-	core::scoring::hbonds::HBondDatabaseCOP hb_database = &(*core::scoring::hbonds::HBondDatabase::get_database(core::scoring::hbonds::HBondOptions().params_database_tag()));
+	core::scoring::hbonds::HBondDatabaseCOP hb_database( core::scoring::hbonds::HBondDatabase::get_database(core::scoring::hbonds::HBondOptions().params_database_tag()) );
 
 	rna_hb_set.clear();
 

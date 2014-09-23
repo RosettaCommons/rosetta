@@ -410,7 +410,7 @@ TMHTopologySamplerClaimer::generate_claims(claims::DofClaims &dof_claims)
 {
 	for(Size jump_num = 1; jump_num <= njumps_; ++jump_num)
 	{
-		dof_claims.push_back(new claims::JumpClaim(this,jump_array_(1,jump_num),jump_array_(2,jump_num),claims::DofClaim::CAN_INIT));
+		dof_claims.push_back(new claims::JumpClaim(get_self_weak_ptr(),jump_array_(1,jump_num),jump_array_(2,jump_num),claims::DofClaim::CAN_INIT));
 	}
 	for(int i=1;i<=nres_;++i)
 	{
@@ -418,12 +418,12 @@ TMHTopologySamplerClaimer::generate_claims(claims::DofClaims &dof_claims)
 		{
 			if(cuts_(cut_index)==i)
 			{
-					dof_claims.push_back(new claims::CutClaim(this,std::make_pair(TopologyClaimer::label(),i),claims::DofClaim::CAN_INIT));
+					dof_claims.push_back(new claims::CutClaim(get_self_weak_ptr(),std::make_pair(TopologyClaimer::label(),i),claims::DofClaim::CAN_INIT));
 			}
 			if(i == topology_root_res_)
 			{
-				dof_claims.push_back(new claims::BBClaim(this,i,claims::DofClaim::CAN_INIT));
-				dof_claims.push_back(new claims::LegacyRootClaim(this,i,claims::DofClaim::CAN_INIT));
+				dof_claims.push_back(new claims::BBClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT));
+				dof_claims.push_back(new claims::LegacyRootClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT));
 			}
 		}
 	}
@@ -439,7 +439,7 @@ TMHTopologySamplerClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofC
 
 	for ( claims::DofClaims::const_iterator it = init_dofs.begin(), eit = init_dofs.end(); it != eit; ++it )
 	{
-		if ( (*it)->owner()==this && (*it)->str_type() == "JUMP") {
+		if ( (*it)->owner().lock().get() == this && (*it)->str_type() == "JUMP") {
 			if(tr.Trace.visible())
 			{
 				(*it)->show(tr.Trace);
@@ -580,7 +580,7 @@ TMHTopologySamplerClaimer::output_membrane_vector(core::pose::Pose& pose)
 
 	//virtual residues stuff
 	bool fullatom = pose.is_fullatom();
-	core::chemical::ResidueTypeSetCAP const &residue_set( core::chemical::ChemicalManager::get_instance()->residue_type_set
+	core::chemical::ResidueTypeSetCOP const &residue_set( core::chemical::ChemicalManager::get_instance()->residue_type_set
 		( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID ));
 	core::chemical::ResidueTypeCOPs const & rsd_type_list( residue_set->name3_map("VRT") );
 	core::conformation::ResidueOP membrane_center_res = core::conformation::ResidueFactory::create_residue( *(rsd_type_list[1]) ) ;
@@ -711,7 +711,7 @@ TMHTopologySamplerClaimer::add_mover(
 		//Use the RigidBodyRandomTMHMover to move TMHs.  The mover chooses a random jump from the pose and does a RB perturb on it given the rotation and translation
 		//If the helix moves too far away from starting position, moves it back to initial position so it doesnt escape out into space
 		core::Real max_trans = (6*tmhelix_)+10;
-		RigidBodyRandomTMHMoverOP RBMover = new RigidBodyRandomTMHMover(max_trans,rotation_mag_,translation_mag_,tmhelix_,this);
+		RigidBodyRandomTMHMoverOP RBMover = new RigidBodyRandomTMHMover(max_trans,rotation_mag_,translation_mag_,tmhelix_,get_self_ptr());
 		//Add RBMover to the random_mover, which is then passed on to TopologyBroker::mover(pose, stageID, scorefxn, progress)
 		random_mover.add_mover(RBMover,weight);
 	}else{

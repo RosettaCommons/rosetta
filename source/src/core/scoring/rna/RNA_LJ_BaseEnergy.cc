@@ -53,7 +53,8 @@ methods::EnergyMethodOP
 RNA_LJ_BaseEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return new RNA_LJ_BaseEnergy( *ScoringManager::get_instance()->etable( options.etable_type() ) );
+	etable::EtableCOP etable( ScoringManager::get_instance()->etable( options.etable_type() ) );
+	return new RNA_LJ_BaseEnergy( *etable );
 }
 
 ScoreTypes
@@ -66,7 +67,7 @@ RNA_LJ_BaseEnergyCreator::score_types_for_method() const {
 
 
 RNA_LJ_BaseEnergy::RNA_LJ_BaseEnergy( etable::Etable const & etable_in ) :
-	parent( new RNA_LJ_BaseEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new RNA_LJ_BaseEnergyCreator ) ),
 	etable_( etable_in ),
 	ljatr_( etable_in.ljatr() ),
 	ljrep_( etable_in.ljrep() ),

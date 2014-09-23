@@ -143,7 +143,7 @@ HitHasher::initialize()
 
 		BoundingBox bb( xyz_lower, bb_.upper() );
 
-		hit_hashes_[ count ].first = new numeric::geometry::hashing::SixDCoordinateBinner( bb, euler_offsets, bin_widths );
+		hit_hashes_[ count ].first = numeric::geometry::hashing::SixDCoordinateBinnerOP( new numeric::geometry::hashing::SixDCoordinateBinner( bb, euler_offsets, bin_widths ) );
 		++lex;
 		++count;
 	}

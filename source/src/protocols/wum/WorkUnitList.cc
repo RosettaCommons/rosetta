@@ -43,7 +43,7 @@ const WorkUnitBaseCOP WorkUnitList::get_work_unit( const std::string &name ) con
 void WorkUnitList::merge( const WorkUnitList & source ){
 	for( std::map< std::string, WorkUnitBaseCOP >::const_iterator it = source.work_unit_list_.begin();
 			 it != source.work_unit_list_.end(); it ++ ){
-		work_unit_list_[ it->first ] = it->second();
+		work_unit_list_[ it->first ] = it->second;
 	}
 }
 

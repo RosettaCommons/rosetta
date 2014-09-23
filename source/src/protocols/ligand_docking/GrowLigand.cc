@@ -98,7 +98,7 @@ GrowLigand::set_fragments(){
 	core::chemical::ResidueSelector rs;
 	rs.set_property("FRAGMENT");
 	core::chemical::ChemicalManager *cm= core::chemical::ChemicalManager::get_instance();
-	core::chemical::ResidueTypeSetCAP rsd_set= cm->residue_type_set( core::chemical::FA_STANDARD );
+	core::chemical::ResidueTypeSetCOP rsd_set= cm->residue_type_set( core::chemical::FA_STANDARD );
 	core::chemical::ResidueTypeCOPs fragment_types= rs.select( *rsd_set );
 	grow_ligand_tracer<< fragment_types.size()<< " fragment_types"<< std::endl;
 

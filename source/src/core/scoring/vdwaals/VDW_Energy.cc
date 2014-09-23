@@ -83,7 +83,7 @@ VDW_EnergyCreator::score_types_for_method() const {
 
 /// @details  C-TOR with method options object
 VDW_Energy::VDW_Energy( methods::EnergyMethodOptions const & options ):
-	parent( new VDW_EnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new VDW_EnergyCreator ) ),
 	atom_vdw_( ScoringManager::get_instance()->get_AtomVDW( options.atom_vdw_atom_type_set_name() ) ),
 	atom_type_set_name_( options.atom_vdw_atom_type_set_name() ),
 	vdw_scale_factor_( 0.8 ) // hack from rosetta++

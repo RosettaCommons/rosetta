@@ -47,7 +47,8 @@ namespace screener {
 	/////////////////////////////////////////
 	void
 	PackScreener::add_mover( moves::CompositionMoverOP update_mover, moves::CompositionMoverOP restore_mover ){
-		update_mover->add_mover(  new modeler::packer::SideChainCopier( pose_,
+		using protocols::moves::MoverOP;
+		update_mover->add_mover( new modeler::packer::SideChainCopier( pose_,
 																																		 stepwise_packer_->previous_working_pack_res(),
 																																		 stepwise_packer_->pack_o2prime_hydrogens() )  );
 		restore_mover->add_mover( 0 ); // original choice.

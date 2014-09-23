@@ -206,7 +206,7 @@ atom_tree_dfunc(
 		if ( symm_min_map.new_sym_min() ) { // new way
 			Real sfxn_dof_deriv(0.0);
 			if ( !dof_node.dependent() ) {
-				sfxn_dof_deriv = symm_info()->score_multiply_factor() *
+				sfxn_dof_deriv = symm_info->score_multiply_factor() *
 					scorefxn.eval_dof_derivative( dof_node.dof_id(), dof_node.torsion_id(), pose );
 			}
 			Real const scale = symm_min_map.torsion_scale_factor( dof_node ); // dont divide by score_multiply_factor

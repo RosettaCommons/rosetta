@@ -102,7 +102,7 @@ BackboneStubLinearConstraint::BackboneStubLinearConstraint(
 	if ( ang_cst_ == 0 ) {
 		// note: PeriodicFunc has functional form y = ( k * cos(n * (x - x0) ) ) + C
 		func::FuncOP cos_func = new func::PeriodicFunc(0., 1., 1., 0.);
-		ang_cst_ = new AngleConstraint( cos_func );
+		ang_cst_ = AngleConstraintOP( new AngleConstraint( cos_func ) );
 	}
 }
 
@@ -468,7 +468,7 @@ ConstraintOP BackboneStubLinearConstraint::remapped_clone( pose::Pose const& /*s
 	}
 
 	// make an alanine
-	core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+	core::chemical::ResidueTypeSetCOP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 	core::chemical::ResidueType const & alatype( residue_set->name_map( "ALA" ) );
 	core::conformation::ResidueOP ala = core::conformation::ResidueFactory::create_residue( alatype );
 	ala->set_xyz("CB",CB_target_);

@@ -105,9 +105,9 @@ string LoopModelerCreator::keyname() const { // {{{1
 LoopModeler::LoopModeler() { // {{{1
 	dont_manage_score_function();
 
-	build_stage_ = register_nested_loop_mover(new LoopBuilder);
-	centroid_stage_ = register_nested_loop_mover(new LoopProtocol);
-	fullatom_stage_ = register_nested_loop_mover(new LoopProtocol);
+	build_stage_ = utility::pointer::static_pointer_cast< LoopBuilder >( register_nested_loop_mover( LoopMoverOP(new LoopBuilder) ) );
+	centroid_stage_ = utility::pointer::static_pointer_cast< LoopProtocol >( register_nested_loop_mover( LoopMoverOP(new LoopProtocol) ) );
+	fullatom_stage_ = utility::pointer::static_pointer_cast< LoopProtocol >( register_nested_loop_mover( LoopMoverOP(new LoopProtocol) ) );
 
 	is_build_stage_enabled_ = true;
 	is_centroid_stage_enabled_ = true;
@@ -333,7 +333,7 @@ void LoopModeler::setup_kic_config() { // {{{1
 	add_shared_mover(new KicMover);
 
 	centroid_stage_->add_refiner(new MinimizationRefiner);
-	fullatom_stage_->add_refiner(new PeriodicMover(new RepackingRefiner, 20));
+	fullatom_stage_->add_refiner(new PeriodicMover(LoopMoverOP( new RepackingRefiner ), 20));
 	fullatom_stage_->add_refiner(new RotamerTrialsRefiner);
 	fullatom_stage_->add_refiner(new MinimizationRefiner);
 

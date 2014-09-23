@@ -39,7 +39,7 @@ DockDesignFilterFactory::~DockDesignFilterFactory(){}
 void
 DockDesignFilterFactory::add_type( FilterOP dock_design_filter )
 {
-	runtime_assert( dock_design_filter );
+	runtime_assert( dock_design_filter != 0 );
 	std::string const type( dock_design_filter->get_type() );
 	if ( type == "UNDEFINED TYPE" ) {
 		utility_exit_with_message("Can't map derived Filter with undefined type name.");
@@ -51,7 +51,7 @@ DockDesignFilterFactory::add_type( FilterOP dock_design_filter )
 void
 DockDesignFilterFactory::add_type( std::string const & type, FilterOP dock_design_filter )
 {
-	runtime_assert( dock_design_filter );
+	runtime_assert( dock_design_filter != 0 );
 	dock_design_filter_map_[ type ] = dock_design_filter;
 }
 
@@ -82,7 +82,7 @@ DockDesignFilterFactory::newFilter(
 	Pose const & pose )
 {
 	FilterOP filter( newFilter( tag->getName() ) );
-	runtime_assert( filter );
+	runtime_assert( filter != 0 );
 	if ( ! tag->hasOption("name") )
 		utility_exit_with_message("Can't define unnamed Filter");
 	filter->set_user_defined_name( tag->getOption<std::string>("name") );

@@ -39,6 +39,7 @@ using core::pose::Pose;
 using core::scoring::ScoreFunction;
 using core::scoring::get_score_function;
 using core::pack::task::PackerTask;
+using core::pack::task::PackerTaskOP;
 using basic::Tracer;
 
 namespace protocols {
@@ -77,7 +78,7 @@ RRProtocolMinPack::run(
 	// Assume score_function.setup_for_scoring(pose) has already been called.
 
 	Pose working_pose = pose; // deep copy
-	min_pack(working_pose, score_function, &packer_task);
+	min_pack(working_pose, score_function, packer_task.get_self_ptr());
 
 	for(Size ii = 1; ii <= pose.total_residue(); ++ii){
 		if (!packer_task.pack_residue(ii)) continue;

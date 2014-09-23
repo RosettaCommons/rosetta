@@ -321,8 +321,7 @@ mg_pdbstats_test()
 
 	Size total_residues( 0 );
 
-	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	ResidueTypeSetCOP rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" ) );
 
 	std::string line;
 	while ( 	getline( instream, line )  ) {

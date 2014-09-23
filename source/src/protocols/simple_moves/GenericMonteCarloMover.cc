@@ -728,7 +728,7 @@ GenericMonteCarloMover::load_trial_number_from_checkpoint( core::pose::Pose & po
 			}// fi Operator
 			else if( filter->get_type() == "CompoundStatement" ){ /// User defined filters with confidence!=1 in RosettaScripts are all CompoundFilter, so poke inside...
 				CompoundFilterOP comp_filt_op( dynamic_cast< CompoundFilter * >( filter() ) );
-				runtime_assert( comp_filt_op );
+				runtime_assert( comp_filt_op != 0 );
 				for( CompoundFilter::CompoundStatement::iterator cs_it = comp_filt_op->begin(); cs_it != comp_filt_op->end(); ++cs_it ){
 					FilterOP filt( cs_it->first );
 					if( filt->get_type() == "Operator" ){
@@ -850,7 +850,7 @@ GenericMonteCarloMover::apply( Pose & pose )
 	utility::vector1< core::Size > mover_accepts;// count how many accepts each mover in the parsedprotocol made
 	mover_accepts.clear();
 	if( adaptive_movers() ){
-		runtime_assert( mover_pp );
+		runtime_assert( mover_pp != 0 );
 		runtime_assert( mover_pp->mode() == "single_random" );
 		mover_accepts = utility::vector1< core::Size >( mover_pp->size(), 1 ); /// each mover gets a pseudocount of 1. This ensures that the running probability of each mover never goes to 0
 	}
@@ -965,7 +965,7 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 	String const  user_defined_mover_name_( tag->getOption< String >( "mover_name" ,""));
 	if( data.has( "stopping_condition", user_defined_mover_name_ ) ){
 		TR<<user_defined_mover_name_<<" defines its own stopping condition, and GenericMC will respect this stopping condition"<<std::endl;
-		mover_stopping_condition_ = data.get< basic::datacache::DataMapObj< bool > * >( "stopping_condition", user_defined_mover_name_ );
+		mover_stopping_condition_ = data.get_ptr< basic::datacache::DataMapObj< bool > >( "stopping_condition", user_defined_mover_name_ );
 	}
 
 	String const filter_name( tag->getOption< String >( "filter_name", "true_filter" ) );
@@ -983,7 +983,7 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
 		mover_ = find_mover->second;
 
 	if( adaptive_movers() ) /// adaptive movers only works if the mover being called is of type parsedprotocol
-		runtime_assert( dynamic_cast< protocols::rosetta_scripts::ParsedProtocol * >( mover_() ));
+		runtime_assert( utility::pointer::dynamic_pointer_cast< protocols::rosetta_scripts::ParsedProtocol >( mover_ ) != 0 );
 
 	bool const adaptive( tag->getOption< bool >( "adaptive", true ) );
 	sample_type_ = tag->getOption< String >( "sample_type", "low" );

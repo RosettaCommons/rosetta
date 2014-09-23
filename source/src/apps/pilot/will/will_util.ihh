@@ -162,7 +162,7 @@ add_favor_native_cst(
   // std::cout << "favor_native_res: adding a bonus of " << bonus << " for native residues to pose." << std::endl;
   utility::vector1< core::scoring::constraints::ConstraintCOP > favor_native_constraints;
   for( core::Size i = 1; i <= pose.total_residue(); ++i) {
-    ConstraintOP resconstraint = new ResidueTypeConstraint( pose, i, bonus );
+    ConstraintOP resconstraint( new ResidueTypeConstraint( pose, i, bonus ) );
     favor_native_constraints.push_back( resconstraint );
   }
   return pose.add_constraints( favor_native_constraints );

@@ -440,13 +440,13 @@ void EvaluatedArchive::set_scorefxn( core::scoring::ScoreFunctionOP scorefxn ) {
 
 core::scoring::ScoreFunction const &
 EvaluatedArchive::scorefxn() const {
-	runtime_assert( scorefxn_ );
+	runtime_assert( scorefxn_ != 0 );
 	return *scorefxn_;
 }
 
 core::scoring::ScoreFunctionOP
 EvaluatedArchive::scorefxn_non_const() {
-	runtime_assert( scorefxn_ );
+	runtime_assert( scorefxn_ != 0 );
 	return scorefxn_;
 }
 

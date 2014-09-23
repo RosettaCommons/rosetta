@@ -81,10 +81,12 @@ static thread_local basic::Tracer TR( "app.sequence_tolerance" );
 #include <utility/excn/Exceptions.hh>
 
 using namespace core;
+	using namespace pose::metrics;
 using namespace conformation;
 using namespace chemical;
 using namespace pack;
 	using namespace task;
+		using namespace operation;
 using namespace scoring;
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;

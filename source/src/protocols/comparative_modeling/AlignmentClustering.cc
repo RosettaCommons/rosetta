@@ -234,9 +234,10 @@ AlignmentClustering::AlignmentClustering(){
       std::cout << msg << std::endl;
       continue;
     } else {
+      core::chemical::ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
       core::pose::Pose query_pose;
       core::pose::make_pose_from_sequence(
-			      query_pose, query_sequence, *(rsd_set_from_cmd_line())
+			      query_pose, query_sequence, *(rsd_set)
 			      );
       core::pose::Pose template_pose = pose_it->second;
       using namespace protocols::comparative_modeling;
@@ -417,7 +418,7 @@ map< string, Pose > AlignmentClustering::poses_from_cmd_line(utility::vector1< s
   using core::import_pose::pose_from_pdb;
   using namespace core::chemical;
 
-  ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+  ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
   map< string, Pose > poses;
   typedef vector1< string >::const_iterator iter;
   for ( iter it = fn_list.begin(), end = fn_list.end(); it != end; ++it ) {

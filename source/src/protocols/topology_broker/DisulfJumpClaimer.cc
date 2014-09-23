@@ -187,7 +187,7 @@ void DisulfJumpClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	//Initialize all_jump_pairings_ list with the data gathered during read_tag
 	for( utility::vector1< claims::JumpClaimOP >::iterator bond_it = local_disulf_data_.begin();
 			 bond_it != local_disulf_data_.end(); ++bond_it ) {
-		claims::JumpClaimOP claim = bond_it->get();
+		claims::JumpClaimOP claim( *bond_it );
 
 		core::Size pos1 = claim->global_pos1();
 		core::Size pos2 = claim->global_pos2();
@@ -202,7 +202,7 @@ void DisulfJumpClaimer::generate_claims( claims::DofClaims& new_claims ) {
 
 		all_jump_pairings_.push_back( dis_pair );
 
-		new_claims.push_back( new claims::JumpClaim( this,
+		new_claims.push_back( new claims::JumpClaim( get_self_weak_ptr(),
 																								 claim->local_pos1(),
 																								 claim->local_pos2(),
 																								 claims::DofClaim::INIT ) );
@@ -246,7 +246,7 @@ bool DisulfJumpClaimer::read_tag( std::string tag, std::istream& is ) {
 		claims::LocalPosition local_pos2 = std::make_pair( label2, pos2 );
 
 		//Use jump claim's atom to keep track of the secondary structure (a bit hacky, I know)
-		claims::JumpClaimOP disulf_bond = new claims::JumpClaim( this,
+		claims::JumpClaimOP disulf_bond = new claims::JumpClaim( get_self_weak_ptr(),
 																														 std::make_pair( label1, pos1 ),
 																														 std::make_pair( label2, pos2 ),
 																														 ss1,

@@ -60,18 +60,18 @@ ResetBaselineMover::apply( Pose & pose )
 	if( filter_type == "Operator" ){
 		TR<<"resetting Operator filter's baseline"<<std::endl;
 		OperatorOP operator_filter( dynamic_cast< Operator * >( filter()() )) ;
-		runtime_assert( operator_filter );
+		runtime_assert( operator_filter != 0 );
 		operator_filter->reset_baseline( pose, false/*reset baselines from checkpoint*/ );
 	}
 	else if( filter_type == "CompoundStatement" ){
 		CompoundFilterOP comp_filt_op( dynamic_cast< CompoundFilter *>( filter()() ) );
-		runtime_assert( comp_filt_op );
+		runtime_assert( comp_filt_op != 0 );
     for( CompoundFilter::CompoundStatement::iterator cs_it = comp_filt_op->begin(); cs_it != comp_filt_op->end(); ++cs_it ){
       FilterOP filt( cs_it->first );
       if( filt->get_type() == "Operator" ){
         TR<<"Resetting Operator filter's baseline"<<std::endl;
         OperatorOP operator_filter( dynamic_cast< Operator * >( filt() ) );
-				runtime_assert( operator_filter );
+				runtime_assert( operator_filter != 0 );
         operator_filter->reset_baseline( pose, false/*read baselines from checkpoint*/ );
       }// fi Operator
     }// for cs_it

@@ -104,6 +104,9 @@ MatcherTask::MatcherTask() :
 
 MatcherTask::MatcherTask( MatcherTask const & other ) :
 	ReferenceCount()
+#ifdef PTR_MODERN
+	, utility::pointer::enable_shared_from_this< MatcherTask >()
+#endif
 {
 	(*this) = other;
 }
@@ -244,8 +247,8 @@ void
 MatcherTask::modify_pose_build_resids_from_endes_input()
 {
 
-	runtime_assert( enz_input_data_ );
-	runtime_assert( upstream_pose_ );
+	runtime_assert( enz_input_data_ != 0 );
+	runtime_assert( upstream_pose_ != 0 );
 	bool switch_to_per_cst_resids_necessary( share_build_points_for_geomcsts_ );
 
 	for( core::Size i =1; i<= enz_input_data_->num_mcfi_lists(); ++i ){
@@ -269,7 +272,7 @@ MatcherTask::modify_pose_build_resids_from_endes_input()
 			tokens = utility::split( map_it->second[mpm_string] );
 			MatchPositionModifierCOP mpm( create_match_position_modifier( tokens[1], i, tokens ) );
 			if( !mpm ) utility_exit_with_message("Could not create a MatchPositionModifier based on name "+tokens[1]+".");
-			per_cst_pose_build_resids_[i] = mpm->modified_match_positions( per_cst_pose_build_resids_[ i ], *upstream_pose_, this );
+			per_cst_pose_build_resids_[i] = mpm->modified_match_positions( per_cst_pose_build_resids_[ i ], *upstream_pose_, get_self_ptr() );
 		}
 
 		TR << "Match position modifiers changed match positions for geomcst " << i << " to the following: " << std::endl;
@@ -1136,7 +1139,7 @@ MatcherTask::initialize_enzdes_input_data_from_command_line()
 	using namespace core::chemical;
 	/// create a local non-const version of the input data.
 	EnzConstraintIOOP enz_input_data = new EnzConstraintIO(
-		& ChemicalManager::get_instance()->nonconst_residue_type_set( FA_STANDARD ));
+		ChemicalManager::get_instance()->nonconst_residue_type_set( FA_STANDARD ).get_self_weak_ptr() );
 	if ( ! option[ geometric_constraint_file ].user() ) {
 		utility_exit_with_message( "Option match::geometric_constraint_file must be specified on the command line" );
 	}
@@ -1155,7 +1158,7 @@ MatcherTask::initialize_enzdes_input_data_from_command_line()
 void
 MatcherTask::determine_all_match_relevant_downstream_atoms()
 {
-	runtime_assert( enz_input_data_ );
+	runtime_assert( enz_input_data_ != 0 );
 	relevant_downstream_atoms_.clear();
 	std::set< core::id::AtomID > seen_atoms;
 

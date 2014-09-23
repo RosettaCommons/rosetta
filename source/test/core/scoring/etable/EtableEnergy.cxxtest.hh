@@ -91,7 +91,7 @@ public:
 		EnergyMethodOptions options;
 		options.analytic_etable_evaluation( false );
 
-		TableLookupEtableEnergy etab_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
+		TableLookupEtableEnergy etab_energy( *( ScoringManager::get_instance()->etable( options.etable_type() ).lock()), options );
 
 		EnergyMap emap;
 		ScoreFunction sfxn;
@@ -119,7 +119,7 @@ public:
 		EnergyMethodOptions options;
 		options.analytic_etable_evaluation( true );
 
-		AnalyticEtableEnergy etab_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
+		AnalyticEtableEnergy etab_energy( *( ScoringManager::get_instance()->etable( options.etable_type() ).lock()), options );
 
 		EnergyMap emap;
 		ScoreFunction sfxn;
@@ -146,7 +146,7 @@ public:
 		Pose pose = create_trpcage_ideal_pose();
 		EnergyMethodOptions options; // default is fine
 
-		TableLookupEtableEnergy etab_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
+		TableLookupEtableEnergy etab_energy( *( ScoringManager::get_instance()->etable( options.etable_type() ).lock()), options );
 
 		EnergyMap emap;
 		ScoreFunction sfxn;
@@ -176,7 +176,7 @@ public:
 		Pose pose = create_trpcage_ideal_pose();
 		EnergyMethodOptions options; // default is fine
 
-		TableLookupEtableEnergy etab_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
+		TableLookupEtableEnergy etab_energy( *( ScoringManager::get_instance()->etable( options.etable_type() ).lock()), options );
 
 		EnergyMap emap;
 		ScoreFunction sfxn;
@@ -205,7 +205,7 @@ public:
 		Pose pose = create_trpcage_ideal_pose();
 		EnergyMethodOptions options; // default is fine
 
-		AnalyticEtableEnergy etab_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
+		AnalyticEtableEnergy etab_energy( *( ScoringManager::get_instance()->etable( options.etable_type() ).lock()), options );
 
 		EnergyMap emap;
 		ScoreFunction sfxn;
@@ -1068,7 +1068,7 @@ public:
 		sfxn( pose );
 
 		EnergyMethodOptions options; // default is fine
-		TableLookupEtableEnergy etab_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
+		TableLookupEtableEnergy etab_energy( *( ScoringManager::get_instance()->etable( options.etable_type() ).lock()), options );
 
 		PackerTaskOP task = TaskFactory::create_packer_task( pose );
 		for ( Size ii = 1; ii <= 7; ++ii ) task->nonconst_residue_task(ii).prevent_repacking();
@@ -1082,7 +1082,7 @@ public:
 
 		// Create tries for each of the three rotamer sets
 		for ( Size ii = 8; ii <= 11; ++ii ) etab_energy.prepare_rotamers_for_packing( pose, *rotsets.rotamer_set_for_residue( ii ) );
-		for ( Size ii = 8; ii <= 11; ++ii )	TS_ASSERT( rotsets.rotamer_set_for_residue(ii)->get_trie( etable_method )() != 0 );
+		for ( Size ii = 8; ii <= 11; ++ii )	TS_ASSERT( rotsets.rotamer_set_for_residue(ii)->get_trie( etable_method ).get() != 0 );
 
 		Size count_comparisons( 0 );
 		for ( Size ii = 8; ii <= 11; ++ii ) {

@@ -84,7 +84,7 @@ SurfEnergyCreator::score_types_for_method() const {
 //@brief
 //////////////////////////////////////////////////////
 SurfEnergy::SurfEnergy() :
-	parent( new SurfEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new SurfEnergyCreator ) )
 {}
 
 
@@ -112,10 +112,11 @@ SurfEnergy::setup_for_derivatives(
 	using namespace basic::datacache;
 	using namespace id;
 	using namespace numeric;
+	using basic::datacache::DataCache_CacheableData;
 
 	if( !pose.data().has( core::pose::datacache::CacheableDataType::DAB_SASA_POSE_INFO ) ) {
-		pose.data().set( core::pose::datacache::CacheableDataType::DAB_SASA_POSE_INFO, new CacheableAtomID_MapVector );
-		pose.data().set(  core::pose::datacache::CacheableDataType::DAB_SEV_POSE_INFO, new CacheableAtomID_MapVector );
+		pose.data().set( core::pose::datacache::CacheableDataType::DAB_SASA_POSE_INFO, DataCache_CacheableData::DataOP( new CacheableAtomID_MapVector ) );
+		pose.data().set(  core::pose::datacache::CacheableDataType::DAB_SEV_POSE_INFO, DataCache_CacheableData::DataOP( new CacheableAtomID_MapVector ) );
 	}
 
 	CacheableDataOP dat1( pose.data().get_ptr( core::pose::datacache::CacheableDataType::DAB_SASA_POSE_INFO ) );

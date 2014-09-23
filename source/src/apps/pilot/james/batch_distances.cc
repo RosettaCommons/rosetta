@@ -80,7 +80,7 @@ int main( int argc, char* argv [] ) {
 
 	core::import_pose::pose_stream::MetaPoseInputStream input
 		= core::import_pose::pose_stream::streams_from_cmd_line();
-	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
 
 	output 	<< A( 10, "resi_idx" )
 					<< A( 10, "resj_idx" )

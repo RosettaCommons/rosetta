@@ -75,7 +75,7 @@ TemplateJumpSetup::create_jump_sample() const {
 	if ( templates_ ) {
 		tr.Debug << "create JumpSample from Templates: nres = " << templates_->target_total_residue() << "\n" << templates_->pairings() << std::endl;
 	}
-	runtime_assert( strand_stats_ );
+	runtime_assert( strand_stats_ != 0 );
 
 	if ( !strand_stats_->nr_models() ) {
 		core::scoring::dssp::PairingList no_jumps; //create empty pairing list
@@ -197,7 +197,7 @@ TemplateJumpSetup::create_jump_sample() const {
 
 jumping::JumpSample
 TemplateJumpSetup::clean_jumps( JumpSample const& target_jumps ) const {
-	runtime_assert( strand_stats_ );
+	runtime_assert( strand_stats_ != 0 );
 
 	if ( !strand_stats_->nr_models() ) {
 		core::scoring::dssp::PairingList no_jumps; //create empty pairing list

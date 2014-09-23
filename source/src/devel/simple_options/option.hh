@@ -194,7 +194,7 @@ class OptionBlock : public utility::pointer::ReferenceCount {
 		void set_descr(const std::string& descr) {block_description=descr;};
 		void reg_opt(base_optOP opt);
 		bool isKnown() const {return bKnown;};
-	void register_module( OptionModuleOP mm) { my_module =mm;} ;
+	void register_module( OptionModule * mm) { my_module =mm;} ;
 	protected:
 		std::string block_name;
 		std::string block_description;
@@ -205,7 +205,7 @@ private:
 	// OptionBlock& operator= (const OptionBlock&) {};
 	int  number_of_known_entries;
 	bool bKnown;
-	OptionModuleOP my_module;
+	OptionModule * my_module;
 };
 
 class OptionFileBlock : public OptionBlock {

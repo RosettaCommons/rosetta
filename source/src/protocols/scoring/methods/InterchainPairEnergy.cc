@@ -63,7 +63,7 @@ InterchainPairEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 InterchainPairEnergy::InterchainPairEnergy() :
-	parent( new InterchainPairEnergyCreator ),
+	parent( core::scoring::methods::EnergyMethodCreatorOP( new InterchainPairEnergyCreator ) ),
 	potential_( InterchainPotential::get_instance() )
 {}
 

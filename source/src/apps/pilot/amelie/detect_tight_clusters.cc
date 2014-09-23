@@ -974,6 +974,7 @@ int main( int argc, char * argv [] )
 
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
+		using core::pack::task::operation::TaskOperationCOP;
 
 		// register specific options
 		OPT(packing::resfile);

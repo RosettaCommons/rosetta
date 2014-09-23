@@ -80,7 +80,7 @@ InterfaceBuilder::parse_my_tag(
 	utility::vector1<std::string> ligand_area_strings= utility::string_split(ligand_areas_string, ',');
 
 	BOOST_FOREACH(std::string ligand_area_string, ligand_area_strings){
-		LigandAreaOP ligand_area = datamap.get< protocols::ligand_docking::LigandArea * >( "ligand_areas", ligand_area_string);
+		LigandAreaOP ligand_area = datamap.get_ptr< protocols::ligand_docking::LigandArea >( "ligand_areas", ligand_area_string);
 		ligand_areas_[ ligand_area->chain_ ] = ligand_area;
 	}
 }

@@ -140,10 +140,12 @@ void SilentFilePoseInputStream::fill_pose(
 	}
 
 	current_position_->fill_pose( pose, residue_set );
+
 	// set up a tag using decoy_tag from SilentStruct
+	using namespace basic::datacache;
 	pose.data().set(
 		core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG,
-		new basic::datacache::CacheableString( current_position_->decoy_tag() )
+		DataCache_CacheableData::DataOP( new basic::datacache::CacheableString( current_position_->decoy_tag() ) )
 	);
 	tr.Debug << "decoy_tag() == " << current_position_->decoy_tag() << std::endl;
 
@@ -173,10 +175,12 @@ void SilentFilePoseInputStream::fill_pose(
 	}
 
 	current_position_->fill_pose( pose );
+
 	// set up a tag using decoy_tag from SilentStruct
+	using namespace basic::datacache;
 	pose.data().set(
 		core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG,
-		new basic::datacache::CacheableString( current_position_->decoy_tag() )
+		DataCache_CacheableData::DataOP( new basic::datacache::CacheableString( current_position_->decoy_tag() ) )
 	);
 	tr.Debug << "decoy_tag() == " << current_position_->decoy_tag() << std::endl;
 

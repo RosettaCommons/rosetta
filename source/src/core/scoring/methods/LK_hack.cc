@@ -52,7 +52,8 @@ methods::EnergyMethodOP
 LK_hackCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return new LK_hack( *( ScoringManager::get_instance()->etable( options.etable_type() )) );
+	etable::EtableCOP etable( ScoringManager::get_instance()->etable( options.etable_type() ) );
+	return new LK_hack( *etable );
 }
 
 ScoreTypes

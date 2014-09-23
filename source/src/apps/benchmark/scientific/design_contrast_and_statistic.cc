@@ -44,6 +44,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 // AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 // AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
+#include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
@@ -335,6 +336,7 @@ int main( int argc, char * argv [] )
 	pdb_codes = dc.getPdbCodes();
 	// Initialize and use the mover
 	using namespace core::pack::task;
+	using namespace core::pack::task::operation;
 	TaskFactoryOP main_task_factory = new TaskFactory;
 	main_task_factory->push_back( new operation::InitializeFromCommandline );
 	if ( option[ packing::resfile ].user() ) {

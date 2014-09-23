@@ -43,7 +43,7 @@ OtherPoseEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 OtherPoseEnergy::OtherPoseEnergy() :
-	parent( new OtherPoseEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new OtherPoseEnergyCreator ) )
 {}
 
 

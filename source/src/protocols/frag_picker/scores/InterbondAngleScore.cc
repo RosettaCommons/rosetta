@@ -56,6 +56,7 @@ InterbondAngleScore::InterbondAngleScore(Size priority,
 
 	utility::vector1<Real> x0(2);
 	utility::vector1<Real> sd(2);
+	using core::scoring::func::FuncOP;
 	factory_.add_type("MINMULTIHARMONIC", new core::scoring::func::MinMultiHarmonicFunc(
 			x0,sd));
 
@@ -71,6 +72,7 @@ InterbondAngleScore::InterbondAngleScore(Size priority,
 
 	utility::vector1<Real> x0(2);
 	utility::vector1<Real> sd(2);
+	using core::scoring::func::FuncOP;
 	factory_.add_type("MINMULTIHARMONIC", new core::scoring::func::MinMultiHarmonicFunc(
 			x0,sd));
 

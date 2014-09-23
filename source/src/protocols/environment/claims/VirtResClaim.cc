@@ -70,7 +70,7 @@ VirtResClaim::VirtResClaim( ClaimingMoverOP owner,
 {
   if( datamap.has( "ResidueSelector", j_claim_.pos2().label() ) ){
     using core::pack::task::residue_selector::ResidueSelector;
-    this->queue_for_annotation( j_claim_.pos2().label(), datamap.get< ResidueSelector const* >( "ResidueSelector", j_claim_.pos2().label() ) );
+    this->queue_for_annotation( j_claim_.pos2().label(), datamap.get_ptr< ResidueSelector const >( "ResidueSelector", j_claim_.pos2().label() ) );
   }
 
   j_claim_.physical( true );

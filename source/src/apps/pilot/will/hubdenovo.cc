@@ -256,7 +256,7 @@ struct ConstraintConfig {
 	vector1<CST> cst_sc,cst_bb;
 	vector1<DCST> dcst;
 	Size ncst,nintracst,nintercst;
-	core::chemical::ResidueTypeSetCAP crs,frs;
+	core::chemical::ResidueTypeSetCOP crs,frs;
 	virtual ~ConstraintConfig() {}
 	ConstraintConfig()
 	: nres(0),nsub(0),nhub(0),CSTSDMULT(1),fname("NONE"),ss(0),templates_fname(0),templates_fa(0),templates_cen(0),
@@ -409,6 +409,7 @@ struct ConstraintConfig {
 		//		if(nsub > 11) utility_exit_with_message("residue mapping unclear!!!!!!!!");
 		//TR << "add sym cst " << id1 << " " << id2 << endl;
 		using namespace core::scoring::constraints;
+		using namespace core;
 		if(id1.rsd() > id2.rsd()) {
 			AtomID tmp(id1);
 			id1 = id2;
@@ -417,19 +418,19 @@ struct ConstraintConfig {
 		if(id2.rsd() > nsub*nres) utility_exit_with_message("2nd constraint rsd "+str(id2.rsd())+" outside of nres*nsub");
 		if(id1.rsd() > nres     ) return;//utility_exit_with_message("1st constraint rsd "+str(id1.rsd())+" outside of primary subunit");
 		//TR << "SYMCST " << id1.rsd() << "-" << id2.rsd() << endl;
-		p.add_constraint( new AtomPairConstraint( id1 , id2 , new core::scoring::func::HarmonicFunc(d,sd) ) );
+		p.add_constraint( new AtomPairConstraint( id1 , id2 , core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(d,sd) ) ) );
 		int sub2 = (id2.rsd()-1)/nres + 1;
 		if(sub2 > 1 && sub2 <= (int)nhub) {
 			AtomID id1B( id2.atomno(), id2.rsd() - nres * (sub2-1)             );
 			AtomID id2B( id1.atomno(), id1.rsd() - nres * (sub2-1) + nhub*nres );
 			//TR << "SYMCST " << id1.rsd() << "-" << id2.rsd() << " " << id1B.rsd() << "-" << id2B.rsd() << endl;
-			p.add_constraint( new AtomPairConstraint( id1B, id2B, new core::scoring::func::HarmonicFunc(d,sd) ) );
+			p.add_constraint( new AtomPairConstraint( id1B, id2B, core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(d,sd) ) ) );
 		}
 		if(sub2 > (int)nhub) { // !!!!!!!!!!!!!! assuming dimer cst on higher sym!
 			AtomID id1B( id2.atomno(), id2.rsd() - nres * (sub2-1) );
 			AtomID id2B( id1.atomno(), id1.rsd() + nres * (sub2-1) );
 			//TR << "SYMCST " << id1.rsd() << "-" << id2.rsd() << " " << id1B.rsd() << "-" << id2B.rsd() << endl;
-			p.add_constraint( new AtomPairConstraint( id1B, id2B, new core::scoring::func::HarmonicFunc(d,sd) ) );
+			p.add_constraint( new AtomPairConstraint( id1B, id2B, core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(d,sd) ) ) );
 		}
 	}
 	int hub_seq_sep(int r1, int r2) const {
@@ -767,6 +768,7 @@ struct ConstraintConfig {
 	}
 	void apply_fa_csts(Pose & p, Size ssep=0) {
 		using namespace core::scoring::constraints;
+		using namespace core;
 		if(p.is_centroid()) utility_exit_with_message("apply_fa_csts called on cen pose!");
 		for(CSTs::iterator i = cst_sc.begin(); i != cst_sc.end(); ++i) {
 			if(ssep && (hub_seq_sep(i->dres1,i->dres2) != (int)ssep) ) continue;
@@ -792,7 +794,7 @@ struct ConstraintConfig {
 					AtomID id2( p.residue(i->dres2).atom_index(aname2), i->dres2 );
 						//TR << "constraint: " << ssep << " " << i->dres1 << "," << aname1 << " " << i->dres2 << "," << aname2 << " " << d << endl;
 					add_sym_cst( p, id1, id2, d, CSTSDMULT/2.0*sqrt(d) );
-					p.add_constraint( new AtomPairConstraint( id1, id2, new core::scoring::func::HarmonicFunc(d,CSTSDMULT/2.0*sqrt(d)) ) );
+					p.add_constraint( new AtomPairConstraint( id1, id2, core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc(d,CSTSDMULT/2.0*sqrt(d)) ) ) );
 				}
 			}
 		}
@@ -920,7 +922,7 @@ struct HubDenovo {
 		sfsymnocst  = get_score_function();
 		sfasym = core::scoring::symmetry::asymmetrize_scorefunction(*sfsym);
 		sfsym->set_weight(atom_pair_constraint,4*cstwt);
-		core::chemical::ResidueTypeSetCAP rtsfa = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
+		core::chemical::ResidueTypeSetCOP rtsfa( core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard") );
 
 		std::map<string, vector1<core::fragment::FragDataCOP> > fds( get_frags_map() );
 		core::fragment::FragSetOP frags3 = make_frag_set(cfg.ss                 ,fds,hub_.n_residue()+1);

@@ -76,7 +76,7 @@ private:
 
 	core::kinematics::FoldTreeOP
 	create_fold_tree_with_ligand_jumps_from_attach_pts(
-		core::kinematics::FoldTreeCAP,
+		core::kinematics::FoldTree const &,
 		ligand_options::Interface const & interface,
 		core::pose::Pose & pose
 	)const;

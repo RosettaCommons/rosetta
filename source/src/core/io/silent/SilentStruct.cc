@@ -94,6 +94,9 @@ SilentStruct::~SilentStruct() {}
 
 SilentStruct::SilentStruct( SilentStruct const& src ) :
 	ReferenceCount()
+#ifdef PTR_MODERN
+	, utility::pointer::enable_shared_from_this< SilentStruct >()
+#endif
 {
 	*this = src;
 }
@@ -120,7 +123,7 @@ void SilentStruct::fill_pose(
 ) const {
 	runtime_assert( nres_ != 0 );
 	using namespace core::chemical;
-	ResidueTypeSetCAP residue_set
+	ResidueTypeSetCOP residue_set
 		= ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 	fill_pose( pose, *residue_set );
 }
@@ -185,7 +188,7 @@ void SilentStruct::finish_pose(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	pose.pdb_info( new core::pose::PDBInfo(pose) );
+	pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo(pose) ) );
 
 	if ( option[ in::file::keep_input_scores ]() ) {
 		tr.Debug << "keep input scores... call energies into pose " << std::endl;
@@ -198,8 +201,9 @@ void SilentStruct::finish_pose(
 
   if( !cache_remarks_.empty() &&
       !cache.has( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) ){
+    using namespace basic::datacache;
     cache.set( core::pose::datacache::CacheableDataType::WRITEABLE_DATA,
-               new basic::datacache::WriteableCacheableMap() );
+               DataCache_CacheableData::DataOP( new basic::datacache::WriteableCacheableMap() ) );
   }
 
   for( utility::vector1< std::string >::const_iterator comment_it = cache_remarks_.begin();
@@ -655,8 +659,8 @@ void SilentStruct::energies_from_pose( core::pose::Pose const & pose ) {
 	// get arbitrary floating point scores from the map stored in the Pose data cache
 	if ( pose.data().has( CacheableDataType::ARBITRARY_FLOAT_DATA ) ) {
 		basic::datacache::CacheableStringFloatMapCOP data
-			= dynamic_cast< basic::datacache::CacheableStringFloatMap const * >
-			( pose.data().get_raw_const_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA) );
+			= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringFloatMap const >
+			( pose.data().get_const_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA) );
 
 		using std::map;
 		using std::string;
@@ -706,15 +710,16 @@ void SilentStruct::energies_into_pose( core::pose::Pose & pose ) const {
 	using utility::vector1;
 	// make sure that the pose has ARBITRARY_FLOAT_DATA in the DataCache
 	if ( !pose.data().has( ( CacheableDataType::ARBITRARY_FLOAT_DATA ) ) ){
+		using namespace basic::datacache;
 		pose.data().set(
 			CacheableDataType::ARBITRARY_FLOAT_DATA,
-			new basic::datacache::CacheableStringFloatMap()
+			DataCache_CacheableData::DataOP( new basic::datacache::CacheableStringFloatMap() )
 		);
 	}
 
 	basic::datacache::CacheableStringFloatMapOP data
-		= dynamic_cast< basic::datacache::CacheableStringFloatMap * >
-		( pose.data().get_raw_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA) );
+		= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringFloatMap >
+		( pose.data().get_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA) );
 
 	runtime_assert( data.get() != NULL );
 

@@ -59,16 +59,16 @@ using namespace basic::options::OptionKeys;
 
 ///  constructor
 MembEtable::MembEtable(
-	chemical::AtomTypeSetCAP atom_set_in, // like etable namespace
+	chemical::AtomTypeSetCAP atom_set_in_ap, // like etable namespace
 	EtableOptions const & options,
 	std::string const alternate_parameter_set // = ""
 ):
 
-	Etable( atom_set_in, options, alternate_parameter_set ),
+	Etable( atom_set_in_ap, options, alternate_parameter_set ),
 
 	// from atop_props_in:
-	atom_set_                 ( atom_set_in ),
-	n_atomtypes               ( atom_set_in->n_atomtypes() ),
+	atom_set_                 ( atom_set_in_ap ),
+	n_atomtypes               ( atom_set_in_ap.lock()->n_atomtypes() ),
 
 	// from options
 	max_dis_                  ( options.max_dis ),
@@ -110,6 +110,7 @@ MembEtable::MembEtable(
 	max_hydrogen_lj_radius_( 0.0 )
 
 {
+	chemical::AtomTypeSetCOP atom_set_in( atom_set_in_ap );
 
 	// size the arrays
 
@@ -404,14 +405,15 @@ MembEtable::modify_pot()
 		Real const bin = ( 4.2 * 4.2 / .05 ) + 1.0; // SGM Off-by-1 bug fix: Add + 1.0: Index 1 is at distance^2==0
 		Real dis;
 		int const ibin( static_cast< int >( bin ) );
+		chemical::AtomTypeSetCOP atom_set( atom_set_ );
 		for ( int k = 1; k <= etable_disbins; ++k ) {
 			dis = std::sqrt( ( k - 1 ) * .05f ); //SGM Off-by-1 bug fix: k -> ( k - 1 )
 		
 			utility::vector1<int> carbon_types;
-			carbon_types.push_back( atom_set_->atom_type_index("CH1") );
-			carbon_types.push_back( atom_set_->atom_type_index("CH2") );
-			carbon_types.push_back( atom_set_->atom_type_index("CH3") );
-			carbon_types.push_back( atom_set_->atom_type_index("aroC") );
+			carbon_types.push_back( atom_set->atom_type_index("CH1") );
+			carbon_types.push_back( atom_set->atom_type_index("CH2") );
+			carbon_types.push_back( atom_set->atom_type_index("CH3") );
+			carbon_types.push_back( atom_set->atom_type_index("aroC") );
 			
 			if ( dis < 4.2 ) {
 				for ( int i = 1, i_end = carbon_types.size(); i <= i_end; ++i ) {

@@ -27,6 +27,7 @@ class FlexbbRotamerSets;
 
 typedef utility::pointer::owning_ptr< FlexbbRotamerSets > FlexbbRotamerSetsOP;
 typedef utility::pointer::owning_ptr< FlexbbRotamerSets const > FlexbbRotamerSetsCOP;
+typedef utility::pointer::access_ptr< FlexbbRotamerSets > FlexbbRotamerSetsAP;
 typedef utility::pointer::access_ptr< FlexbbRotamerSets const > FlexbbRotamerSetsCAP;
 
 

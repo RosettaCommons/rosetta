@@ -129,13 +129,24 @@ KinematicMover::KinematicMover() :
 	taboo_map_max_capacity_(0.95) // how full can the taboo map get before we re-set it? --> the higher, the more likely are almost-endless loops -- but if the value is too low it's not actual taboo sampling
 
 	{
-		perturber_ = new kinematic_closure::TorsionSamplingKinematicPerturber( this );
+		// Cannot initialize perturber_ here -- get_self_ptr() can't be used in c'tor
 		Mover::type( "KinematicMover" );
 		set_defaults(); // doesn't do anything in this implementation
 	}
 
 // default destructor
 KinematicMover::~KinematicMover() {}
+
+
+KinematicPerturberOP KinematicMover::perturber() {
+	
+	if(!perturber_) {
+		perturber_ = new kinematic_closure::TorsionSamplingKinematicPerturber(
+			kinematic_closure::KinematicMoverCAP( utility::pointer::dynamic_pointer_cast< KinematicMover const >( get_self_ptr() ) ) 
+		);
+	}
+	return perturber_;
+}
 
 void KinematicMover::set_pivots( Size start_res, Size middle_res, Size end_res )
 {
@@ -174,7 +185,9 @@ void
 KinematicMover::set_perturber( KinematicPerturberOP perturber_in )
 {
 	perturber_ = perturber_in;
-	perturber_->set_kinmover( this );
+	perturber_->set_kinmover(
+		kinematic_closure::KinematicMoverCAP( utility::pointer::dynamic_pointer_cast< KinematicMover const >( get_self_ptr() ) )
+	);
 }
 
 void KinematicMover::set_sample_nonpivot_torsions( bool sample )
@@ -400,7 +413,8 @@ void KinematicMover::apply( core::pose::Pose & pose )
 		conformation::ResidueOP pre_nterm( conformation::ResidueFactory::create_residue(
 																						pose.residue(start_res_).type() ) );
 		// create a new conformation containing the n-term copy
-		conformation::Conformation extn;
+		conformation::ConformationOP extn_op = new conformation::Conformation();
+		conformation::Conformation & extn = *extn_op;
 		extn.append_residue_by_bond( *nterm_copy );
 		// attached the pre_nterm residue to the nterm copy
 		extn.safely_prepend_polymer_residue_before_seqpos( *pre_nterm, 1, true );
@@ -431,7 +445,8 @@ void KinematicMover::apply( core::pose::Pose & pose )
 		conformation::ResidueOP post_cterm( conformation::ResidueFactory::create_residue(
 																						 pose.residue(end_res_).type() ) );
 		// create a new conformation containing the c-term copy
-		conformation::Conformation extn;
+		conformation::ConformationOP extn_op = new conformation::Conformation();
+		conformation::Conformation & extn = *extn_op;
 		extn.append_residue_by_bond( *cterm_copy );
 		// attached the post_cterm residue to the cterm copy
 		extn.safely_append_polymer_residue_after_seqpos( *post_cterm, 1, true );
@@ -567,13 +582,13 @@ void KinematicMover::apply( core::pose::Pose & pose )
 	// someone uncomments it in the future, be sure to check compatibility with nonstandard backbones.
 
 	using namespace std;
-
-	for (Size nits=1; nits <= perturber_->max_sample_iterations(); ++nits ) { // try these pivots until a solution passes all filters or nits > perturber_->max_sample_iterations()
+	KinematicPerturberOP perturber = this->perturber();
+	for (Size nits=1; nits <= perturber->max_sample_iterations(); ++nits ) { // try these pivots until a solution passes all filters or nits > perturber_->max_sample_iterations()
 
 		//make sure the perturber can still generate solutions
-		if( perturber_->perturber_exhausted() ) break;
+		if( perturber->perturber_exhausted() ) break;
 
-		perturber_->perturb_chain( pose, dt_ang, db_ang, db_len );
+		perturber->perturb_chain( pose, dt_ang, db_ang, db_len );
 
 		// Perform loop closure
 		//TR.Debug << "calling bridgeObjects" << std::endl;
@@ -622,7 +637,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 
 			// place the solution into the pose and bump check+eventual filters
 			// set the torsions
-			perturber_->set_pose_after_closure( pose, t_ang[pos[i]], b_ang[pos[i]], b_len[pos[i]], true /* closure successful? */);
+			perturber->set_pose_after_closure( pose, t_ang[pos[i]], b_ang[pos[i]], b_len[pos[i]], true /* closure successful? */);
 
 			// AS: fetch & set the torsion string for Taboo Sampling
 			insert_sampled_torsion_string_into_taboo_map( torsion_features_string( pose ) ); //VKM, 27 Aug 2013: This won't work properly with beta-amino acids, but won't crash, either...
@@ -1058,7 +1073,7 @@ KinematicMover::update_sequence( utility::vector1< core::chemical::AA > const & 
 			taboo_map_ = taboo_master_map_[sequence]; // reload from previous use, if possible
 		}
 		//random_torsion_strings_.clear();
-		perturber_->clear_torsion_string_stack(); // only affects the TabooSampling perturber for now
+		perturber()->clear_torsion_string_stack(); // only affects the TabooSampling perturber for now
 	}
 }
 

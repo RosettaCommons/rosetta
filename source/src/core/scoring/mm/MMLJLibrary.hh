@@ -52,7 +52,7 @@ public:
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~MMLJLibrary();
   /// @brief ctor
-  MMLJLibrary( core::chemical::MMAtomTypeSetCAP mm_atom_set );
+  MMLJLibrary( core::chemical::MMAtomTypeSetCOP mm_atom_set );
 
   /// @brief blah
 	inline
@@ -64,7 +64,7 @@ public:
 	inline
   mm_lj_param_set
   lookup_three_bond( std::string atom ) const
-	{ return mm_lj_three_bond_library_[ mm_atom_set_->atom_type_index( atom ) ]; }
+	{ return mm_lj_three_bond_library_[ mm_atom_set_.lock()->atom_type_index( atom ) ]; }
 
   /// @brief blah
 	inline
@@ -76,7 +76,7 @@ public:
 	inline
 	mm_lj_param_set
   lookup( std::string atom ) const
-	{ return mm_lj_library_[ mm_atom_set_->atom_type_index( atom ) ]; }
+	{ return mm_lj_library_[ mm_atom_set_.lock()->atom_type_index( atom ) ]; }
 
 	/// @brief blah
 	core::chemical::MMAtomTypeSetCAP

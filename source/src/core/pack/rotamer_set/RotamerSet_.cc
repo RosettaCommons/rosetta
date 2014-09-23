@@ -312,7 +312,7 @@ RotamerSet_::build_rotamers_for_concrete(
 		bump_selector_.set_max_rot_bumpenergy( task.max_rotbump_energy() );
 
 		utility::vector1< ResidueOP > suggested_rotamers;
-		dunbrack::SingleResidueRotamerLibraryCAP rotlib = dunbrack::RotamerLibrary::get_instance().get_rsd_library( *concrete_residue ); //For D-amino acids, returns the rotamer library for the corresponding L-amino acid
+		dunbrack::SingleResidueRotamerLibraryCOP rotlib = dunbrack::RotamerLibrary::get_instance().get_rsd_library( *concrete_residue ).lock(); //For D-amino acids, returns the rotamer library for the corresponding L-amino acid
 		if (rotlib) {
 			/// DOUG DOUG DOUG DEBUG OUTPUT
 			//std::cout << "EXTRA_CHI_STEPS::build_rotamers_for_concrete\t" << extra_chi_steps.size() << std::endl;
@@ -347,7 +347,7 @@ RotamerSet_::build_rotamers_for_concrete(
 						task.residue_task( resid() ).extrachi_sample_level(
 							( (Size) nneighbs >=  task.residue_task( resid() ).extrachi_cutoff() ),
 							concrete_residue->proton_chi_2_chi( ii ),
-							concrete_residue ),
+							*concrete_residue ),
 						concrete_residue,
 						ii, proton_chi_chisets);
 				}
@@ -566,7 +566,7 @@ RotamerSet_::build_optimize_H_rotamers(
 					task.residue_task( resid() ).extrachi_sample_level(
 						true, // ignore buriedness when adding extra proton chi rotamers
 						concrete_residue->proton_chi_2_chi( ii ),
-						concrete_residue ),
+						*concrete_residue ),
 					concrete_residue,
 					ii, proton_chi_chisets);
 			}
@@ -606,7 +606,7 @@ RotamerSet_::set_extra_samples(
 {
 	using namespace task;
 	bool buried = ( num_10A_neighbors >= int(task.residue_task( resid()).extrachi_cutoff()) );
-	switch ( task.residue_task( resid() ).extrachi_sample_level( buried, chi, concrete_residue ) ) {
+	switch ( task.residue_task( resid() ).extrachi_sample_level( buried, chi, *concrete_residue ) ) {
 		case NO_EXTRA_CHI_SAMPLES :
 		break;
 		case EX_ONE_STDDEV :

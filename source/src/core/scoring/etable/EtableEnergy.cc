@@ -48,10 +48,11 @@ EtableEnergyCreator::create_energy_method(
 	/// The command line option needs to override the EnergyMethodOptions because an Etable initialized with
 	/// the analytic_etable_evaluation flag on will not have allocated the large etables necessary for the
 	/// TableLookupEtableEnergy class.
+	// NEEDS FIXING?: using reference of temporary locked weak_ptr
 	if ( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] || options.analytic_etable_evaluation() ) {
-		return new AnalyticEtableEnergy( *( ScoringManager::get_instance()->etable( options )), options );
+		return new AnalyticEtableEnergy( *( ScoringManager::get_instance()->etable( options ).lock() ), options );
 	} else {
-		return new TableLookupEtableEnergy( *( ScoringManager::get_instance()->etable( options )), options );
+		return new TableLookupEtableEnergy( *( ScoringManager::get_instance()->etable( options ).lock() ), options );
 	}
 }
 
@@ -74,7 +75,7 @@ TableLookupEtableEnergy::TableLookupEtableEnergy(
 	methods::EnergyMethodOptions const & options
 )
 :
-	BaseEtableEnergy< TableLookupEtableEnergy > ( new EtableEnergyCreator, etable_in, options ),
+	BaseEtableEnergy< TableLookupEtableEnergy > ( methods::EnergyMethodCreatorOP( new EtableEnergyCreator ), etable_in, options ),
 	intrares_evaluator_( etable_in ),
 	interres_evaluator_( etable_in )
 {
@@ -100,12 +101,12 @@ void
 TableLookupEtableEnergy::setup_for_scoring_( pose::Pose const &pose, scoring::ScoreFunction const& ) const
 {
 	if (pose.total_residue()) {
-		if ( pose.residue(1).type().atom_type_set_ptr() != etable().atom_set() ) {
+		if ( pose.residue(1).type().atom_type_set_ptr() != etable().atom_set().lock() ) {
 			std::stringstream err_msg;
 			err_msg
 				<< "Illegal attempt to score with non-identical atom set between pose and etable" << std::endl
 				<< "	pose   atom_type_set: '" << pose.residue(1).type().atom_type_set_ptr()->name() << "'" << std::endl
-				<< "	etable atom_type_set: '" << etable().atom_set()->name() << "'" << std::endl;
+				<< "	etable atom_type_set: '" << etable().atom_set().lock()->name() << "'" << std::endl;
 			utility_exit_with_message( err_msg.str());
 		}
 	}
@@ -168,7 +169,7 @@ AnalyticEtableEnergy::AnalyticEtableEnergy(
 	Etable const & etable_in,
 	methods::EnergyMethodOptions const & options
 ) :
-	BaseEtableEnergy< AnalyticEtableEnergy > ( new EtableEnergyCreator, etable_in, options ),
+	BaseEtableEnergy< AnalyticEtableEnergy > ( methods::EnergyMethodCreatorOP( new EtableEnergyCreator ), etable_in, options ),
 	intrares_evaluator_( etable_in ),
 	interres_evaluator_( etable_in )
 {
@@ -194,7 +195,7 @@ void
 AnalyticEtableEnergy::setup_for_scoring_( pose::Pose const &pose, scoring::ScoreFunction const& ) const
 {
 	if (pose.total_residue()) {
-		if ( pose.residue(1).type().atom_type_set_ptr() != etable().atom_set() ) {
+		if ( pose.residue(1).type().atom_type_set_ptr() != etable().atom_set().lock() ) {
 			utility_exit_with_message( "Illegal attempt to score with non-identical atom set between pose and etable " );
 		}
 	}

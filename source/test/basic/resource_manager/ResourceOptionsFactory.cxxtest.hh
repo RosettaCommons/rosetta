@@ -77,8 +77,8 @@ public:
 		factory->set_throw_on_double_registration();
 		factory->factory_register( new DummyResourceOptionsCreator );
 		ResourceOptionsOP resource = factory->create_resource_options( "DummyResourceOptions", tag );
-		TS_ASSERT( resource() ); // make sure we got back a non-null pointer
-		DummyResourceOptions * dresource = dynamic_cast< DummyResourceOptions * > ( resource() );
+		TS_ASSERT( resource.get() ); // make sure we got back a non-null pointer
+		DummyResourceOptions * dresource = dynamic_cast< DummyResourceOptions * > ( resource.get() );
 		TS_ASSERT( dresource ); // make sure we got back the right resource kind
 		TS_ASSERT( dresource->somevar_ == 5 );
 	}

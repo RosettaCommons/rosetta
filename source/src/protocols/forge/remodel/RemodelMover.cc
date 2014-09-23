@@ -491,6 +491,9 @@ void RemodelMover::apply( Pose & pose ) {
 	using namespace chemical;
 
 	using core::pose::metrics::CalculatorFactory;
+	using core::pose::metrics::PoseMetricCalculatorOP;
+	using core::pose::PDBInfoOP;
+	using core::pack::task::operation::TaskOperationCOP;
 	using protocols::moves::MS_SUCCESS;
 	using protocols::moves::FAIL_DO_NOT_RETRY;
 	using protocols::moves::FAIL_RETRY;
@@ -1855,6 +1858,8 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 	using namespace core;
 	using namespace protocols;
 	using namespace protocols::toolbox::task_operations;
+	using core::pack::task::operation::TaskOperationCOP;
+	using core::pack::task::operation::ResLvlTaskOperationCOP;
 
 	//using core::pack::task::operation::RestrictResidueToRepacking;
 	//using core::pack::task::operation::RestrictResidueToRepackingOP;
@@ -2013,6 +2018,7 @@ bool RemodelMover::confirm_sequence( core::pose::Pose & pose ) {
 	using namespace protocols::forge::methods;
  	using protocols::forge::build::Interval;
 	using protocols::toolbox::task_operations::RestrictToNeighborhoodOperation;
+	using core::pack::task::operation::TaskOperationCOP;
 	using pack::task::operation::RestrictToRepacking;
 
 	pose::Pose archive_pose = pose;  //for rmsd
@@ -2184,6 +2190,7 @@ void RemodelMover::process_continuous_design_string( Interval const & original_i
 	Original2Modified const & original2modified_interval_endpoints, TaskFactoryOP design_tf ) {
 
 	using namespace core;
+	using core::pack::task::operation::TaskOperationCOP;
 
 	Size const offset = original2modified_interval_endpoints.find( original_interval.left )->second;
 	for ( Size i = 0, ie = design_str.length(); i < ie; ++i ) {
@@ -2215,6 +2222,7 @@ void RemodelMover::process_insert_design_string( Interval const & original_inter
 	Original2Modified const & original2modified_interval_endpoints, TaskFactoryOP design_tf ) {
 
 	using namespace core;
+	using core::pack::task::operation::TaskOperationCOP;
 
 	char const insert_char = forge::build::SegmentInsert::insertion_char();
 

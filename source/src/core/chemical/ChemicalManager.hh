@@ -51,6 +51,14 @@
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
+#include <core/chemical/AtomTypeSet.hh>
+#include <core/chemical/ElementSet.hh>
+#include <core/chemical/IdealBondLengthSet.hh>
+#include <core/chemical/MMAtomTypeSet.hh>
+#include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
+#include <core/chemical/orbitals/OrbitalTypeSet.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers
@@ -78,21 +86,22 @@ public:
 	static ChemicalManager * get_instance();
 
 	/// @brief query atom_type_set by a name tag
-	AtomTypeSetCAP
+	AtomTypeSetCOP
 	atom_type_set( std::string const & tag );
 
 	/// @brief query atom_type_set by a name tag
-	ElementSetCAP
+	ElementSetCOP
 	element_set( std::string const & tag );
 
 	//ElementSetCOP
 	//gasteiger_element_type_set(std::string const & tag);
 
 	/// @brief query ideal_bond_lengths
-	IdealBondLengthSetCAP ideal_bond_length_set(std::string const & tag);
+	IdealBondLengthSetCOP
+	ideal_bond_length_set(std::string const & tag);
 
 	/// @brief query mm_atom_type_set by a name tag
-	MMAtomTypeSetCAP
+	MMAtomTypeSetCOP
 	mm_atom_type_set( std::string const & tag );
 
 	/// @brief query gasteiger_atom_type_set by a name tag
@@ -100,16 +109,19 @@ public:
 	gasteiger_atom_type_set( std::string const & tag = "default" );
 
 	/// @brief query orbital_type_set by a name tag
-	orbitals::OrbitalTypeSetCAP
+	orbitals::OrbitalTypeSetCOP
 	orbital_type_set(std::string const & tag);
 
 	/// @brief query residue_type_set by a name tag
-	ResidueTypeSetCAP
+	ResidueTypeSetCOP
 	residue_type_set( std::string tag );
 
 	/// @brief query residue_type_set by a name tag
 	ResidueTypeSet &
 	nonconst_residue_type_set( std::string const & tag );
+
+	ResidueTypeSetOP
+	nonconst_residue_type_set_op( std::string const & tag );
 
 private:
 	typedef std::map< std::string, AtomTypeSetOP > AtomTypeSets;

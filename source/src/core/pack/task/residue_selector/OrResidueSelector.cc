@@ -85,7 +85,7 @@ void OrResidueSelector::parse_my_tag(
 	
 		for ( core::Size ii = 1; ii <= selector_names.size(); ++ii ) {
 			try {
-				ResidueSelectorCOP selector = datamap.get< ResidueSelector const * >( "ResidueSelector", selector_names[ ii ] );
+				ResidueSelectorCOP selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_names[ ii ] );
 				local_selectors.push_back( selector );
 			} catch ( utility::excn::EXCN_Msg_Exception e ) {
 				std::stringstream error_msg;

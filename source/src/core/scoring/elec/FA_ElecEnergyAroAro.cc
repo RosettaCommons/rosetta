@@ -92,7 +92,7 @@ FA_ElecEnergyAroAro::FA_ElecEnergyAroAro(
 ):
 	parent( options )
 {
-	set_score_types( new FA_ElecEnergyAroAroCreator );
+	set_score_types( methods::EnergyMethodCreatorOP( new FA_ElecEnergyAroAroCreator ) );
 }
 
 
@@ -100,7 +100,7 @@ FA_ElecEnergyAroAro::FA_ElecEnergyAroAro(
 FA_ElecEnergyAroAro::FA_ElecEnergyAroAro( FA_ElecEnergyAroAro const & src ):
 	parent( src )
 {
-	set_score_types( new FA_ElecEnergyAroAroCreator );
+	set_score_types( methods::EnergyMethodCreatorOP( new FA_ElecEnergyAroAroCreator ) );
 }
 
 /// clone

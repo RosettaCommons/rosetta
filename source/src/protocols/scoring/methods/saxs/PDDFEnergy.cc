@@ -75,7 +75,7 @@ core::scoring::methods::EnergyMethodOP PDDFEnergyCreator::create_energy_method( 
 }
 
 /// c-tors
-PDDFEnergy::PDDFEnergy(utility::vector1<core::Real> const & reference_d,utility::vector1<core::Real> const & reference_pddf) : WholeStructureEnergy( new PDDFEnergyCreator ) {
+PDDFEnergy::PDDFEnergy(utility::vector1<core::Real> const & reference_d,utility::vector1<core::Real> const & reference_pddf) : WholeStructureEnergy( core::scoring::methods::EnergyMethodCreatorOP( new PDDFEnergyCreator ) ) {
 
 	if_fit_area_ = false;
 	d_.clear();
@@ -92,7 +92,7 @@ PDDFEnergy::PDDFEnergy(utility::vector1<core::Real> const & reference_d,utility:
 	    max_bin_ = reference_pddf_.size();
 }
 
-PDDFEnergy::PDDFEnergy() : WholeStructureEnergy( new PDDFEnergyCreator ) {
+PDDFEnergy::PDDFEnergy() : WholeStructureEnergy( core::scoring::methods::EnergyMethodCreatorOP( new PDDFEnergyCreator ) ) {
 
     using namespace basic::options;
     using namespace basic::options::OptionKeys;
@@ -133,7 +133,7 @@ PDDFEnergy::PDDFEnergy() : WholeStructureEnergy( new PDDFEnergyCreator ) {
 
 	    core::pose::Pose reference_pose;
 	    trPDDFEnergy << "Using "<<basic::options::option[in::file::native]()<<" as a reference"<<std::endl;
-    	    core::chemical::ResidueTypeSetCAP rsd_set;
+    	    core::chemical::ResidueTypeSetCOP rsd_set;
             rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(
 	                      basic::options::option[ in::file::residue_type_set ]());
 

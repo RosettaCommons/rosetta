@@ -102,7 +102,18 @@ add_constraints
 namespace protocols {
 namespace topology_broker {
 
-class TopologyBroker : public utility::pointer::ReferenceCount {
+class TopologyBroker : public utility::pointer::ReferenceCount
+#ifdef PTR_MODERN
+	// New version
+	, public utility::pointer::enable_shared_from_this< TopologyBroker >
+{
+#else
+{
+	// Old intrusive ref-counter version
+	inline TopologyBrokerCOP shared_from_this() const { return TopologyBrokerCOP( this ); }
+	inline TopologyBrokerOP shared_from_this() { return TopologyBrokerOP( this ); }
+#endif
+
 	typedef core::Size StageID;
 	typedef utility::vector1< TopologyClaimerOP > TopologyClaimers;
 public:
@@ -112,6 +123,12 @@ public:
 	virtual ~TopologyBroker();
 	TopologyBroker( TopologyBroker const& );
 	TopologyBroker const& operator = ( TopologyBroker const& );
+
+	/// self pointers
+	inline TopologyBrokerCOP get_self_ptr() const { return shared_from_this(); }
+	inline TopologyBrokerOP get_self_ptr() { return shared_from_this(); }
+	inline TopologyBrokerCAP get_self_weak_ptr() const { return TopologyBrokerCAP( shared_from_this() ); }
+	inline TopologyBrokerAP get_self_weak_ptr() { return TopologyBrokerAP( shared_from_this() ); }
 
 	/// ---------------- Application Setup ------------------------------------
 	///@brief add new Claimers to the broker ---- useful before a job is started
@@ -195,7 +212,7 @@ public:
 	core::kinematics::FoldTree& final_fold_tree() const {
 		//std::cout << "Broker FinalFoldTree is:  ";
 		//final_fold_tree_->show(std::cout);
-		runtime_assert( final_fold_tree_ );
+		runtime_assert( final_fold_tree_ != 0 );
 		return *final_fold_tree_;
 	};
 
@@ -206,7 +223,7 @@ public:
 	//core::Size resolve_residue( std::string const& chain_label, core::Size pos ) const;
 
 	const SequenceNumberResolver& sequence_number_resolver() const {
-		runtime_assert( sequence_number_resolver_ );
+		runtime_assert( sequence_number_resolver_ != 0 );
 		return *sequence_number_resolver_;
 	}
 

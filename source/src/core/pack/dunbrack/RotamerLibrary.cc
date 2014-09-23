@@ -115,9 +115,9 @@ rotamer_from_chi(
 {
 	assert( rsd.aa() <= chemical::num_canonical_aas );
 
-	SingleResidueRotamerLibraryCAP rotlib = RotamerLibrary::get_instance().get_rsd_library( rsd.type() );
+	SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance().get_rsd_library( rsd.type() ).lock();
 	if ( rotlib ) {
-		SingleResidueDunbrackLibraryCAP dunlib( static_cast< SingleResidueDunbrackLibrary const * > ( rotlib() ));
+		SingleResidueDunbrackLibraryCOP dunlib( utility::pointer::static_pointer_cast< SingleResidueDunbrackLibrary const > ( rotlib ) );
 		dunlib->get_rotamer_from_chi( rsd.chi(), rot );
 	} else { rot.resize( 0 ); }
 }
@@ -131,9 +131,9 @@ rotamer_from_chi(
 	RotVector & rot
 )
 {
-	SingleResidueRotamerLibraryCAP rotlib = RotamerLibrary::get_instance().get_rsd_library( rsd_type );
+	SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance().get_rsd_library( rsd_type ).lock();
 	if ( rotlib ) {
-		SingleResidueDunbrackLibraryCAP dunlib( static_cast< SingleResidueDunbrackLibrary const * > ( rotlib() ));
+		SingleResidueDunbrackLibraryCOP dunlib( utility::pointer::static_pointer_cast< SingleResidueDunbrackLibrary const > ( rotlib ) );
 		dunlib->get_rotamer_from_chi( chi, rot );
 	} else { rot.resize( 0 ); }
 }
@@ -360,9 +360,12 @@ RotamerLibrary::create_singleton_instance()
 RotamerLibrary::RotamerLibrary():
 	reslibraries_(),
 	libraries_(),
-	aa_libraries_( chemical::num_canonical_aas, 0 ), // for the canonical aa's, fast access
+	aa_libraries_(),
 	libraries_ops_()
-{}
+{
+	SingleResidueRotamerLibraryCAP x;
+	aa_libraries_.resize(chemical::num_canonical_aas, x); // for the canonical aa's, fast access
+}
 
 RotamerLibrary::~RotamerLibrary()
 {}
@@ -373,7 +376,7 @@ RotamerLibrary::rotamer_energy(
 	RotamerLibraryScratchSpace & scratch
 ) const
 {
-	SingleResidueRotamerLibraryCAP const library( get_rsd_library( rsd.type() ) );
+	SingleResidueRotamerLibraryCOP const library( get_rsd_library( rsd.type() ).lock() );
 
 	if ( library ) {
 		return library->rotamer_energy( rsd, scratch );
@@ -388,7 +391,7 @@ RotamerLibrary::best_rotamer_energy(
   RotamerLibraryScratchSpace & scratch
 ) const
 {
-  SingleResidueRotamerLibraryCAP const library( get_rsd_library( rsd.type() ) );
+  SingleResidueRotamerLibraryCOP const library( get_rsd_library( rsd.type() ).lock() );
 
   if ( library ) {
 		if ( curr_rotamer_only )
@@ -406,7 +409,7 @@ RotamerLibrary::rotamer_energy_deriv(
 	RotamerLibraryScratchSpace & scratch
 ) const
 {
-	SingleResidueRotamerLibraryCAP const library( get_rsd_library( rsd.type() ) );
+	SingleResidueRotamerLibraryCOP const library( get_rsd_library( rsd.type() ).lock() );
 
 	if ( library ) {
 		return library->rotamer_energy_deriv( rsd, scratch );
@@ -452,9 +455,9 @@ RotamerLibrary::add_residue_library(
 	if ( libraries_.find(aa) != libraries_.end() ) {
 		utility_exit_with_message("cant add rsd library twice");
 	}
-	libraries_.insert( std::make_pair( aa, rot_lib() ) );
+	libraries_.insert( std::make_pair( aa, SingleResidueRotamerLibraryCAP(rot_lib) ) );
 	if ( aa <= chemical::num_canonical_aas ) {
-		aa_libraries_[ aa ] = rot_lib(); // ASSUMPTION -- only fullatom rotamer libraries are added; centroid restypes don't have rotlibs.
+		aa_libraries_[ aa ] = SingleResidueRotamerLibraryCAP(rot_lib); // ASSUMPTION -- only fullatom rotamer libraries are added; centroid restypes don't have rotlibs.
 	}
 	libraries_ops_.push_back( rot_lib );
 }
@@ -471,8 +474,8 @@ RotamerLibrary::add_residue_library(
 	//	utility_exit_with_message("cant add rsd library twice");
 	//}
 	std::string const key( rsd_type.name()+"@"+rsd_type.residue_type_set().name() );
-	reslibraries_.insert( std::make_pair( key, rot_lib() ) );
-	reslibraries_.insert( std::make_pair( rsd_type.name(), rot_lib() ) );
+	reslibraries_.insert( std::make_pair( key, SingleResidueRotamerLibraryCAP(rot_lib) ) );
+	reslibraries_.insert( std::make_pair( rsd_type.name(), SingleResidueRotamerLibraryCAP(rot_lib) ) );
 	libraries_ops_.push_back( rot_lib );
 }
 
@@ -490,7 +493,7 @@ RotamerLibrary::rsd_library_already_loaded( chemical::ResidueType const & rsd_ty
 
 	if ( rsd_type.residue_type_set().name() == chemical::FA_STANDARD &&
 			rsd_type.rotamer_aa() <= chemical::num_canonical_aas ) {
-		return aa_libraries_[ rsd_type.rotamer_aa() ] != 0;
+		return ! aa_libraries_[ rsd_type.rotamer_aa() ].expired();
 	}
 
 	std::string const key( rsd_type.name()+"@"+rsd_type.residue_type_set().name() );
@@ -555,7 +558,7 @@ RotamerLibrary::get_rsd_library( chemical::ResidueType const & rsd_type ) const
 
 		TR.Debug << "Initializing conformer library for " << rsd_type.get_RotamerLibraryName() << std::endl;
 		SingleLigandRotamerLibraryOP pdb_rotamers = new SingleLigandRotamerLibrary();
-		pdb_rotamers->init_from_file( rsd_type.get_RotamerLibraryName(), &rsd_type );
+		pdb_rotamers->init_from_file( rsd_type.get_RotamerLibraryName(), rsd_type );
 		add_residue_library( rsd_type, pdb_rotamers );
 		return pdb_rotamers();
 	}
@@ -947,7 +950,7 @@ void RotamerLibrary::create_centroid_rotamer_libraries_from_ASCII()
     clock_t starttime = clock();
     utility::io::izstream libstream(basic::database::full_name("rotamer/cenrot_dunbrack.lib"));
     //std::cout << basic::database::full_name("rotamer/centroid_rotlibs") << std::endl;
-    ResidueTypeSetCAP rsd_set=ChemicalManager::get_instance()->residue_type_set( "centroid_rot" );
+    ResidueTypeSetCOP rsd_set=ChemicalManager::get_instance()->residue_type_set( "centroid_rot" );
 
     chemical::AA aan = chemical::aa_unk;
     std::string nextaa;
@@ -1012,8 +1015,8 @@ RotamerLibrary::create_fa_dunbrack_libraries_02_from_ASCII()
 			aan, nchi_for_aa[ aan ], libstream, true /*dun02*/, nextaa, true /*first aa string already read*/ );
 		++count_libraries_read;
 
-		libraries_[ aan ] = newlib();
-		aa_libraries_[ aan ] = newlib();
+		libraries_[ aan ] = SingleResidueDunbrackLibraryCAP( newlib );
+		aa_libraries_[ aan ] = SingleResidueDunbrackLibraryCAP( newlib );
 		libraries_ops_.push_back( newlib );
 		memory_use_rotameric[ aan ] = newlib->memory_usage_in_bytes();
 
@@ -1163,8 +1166,8 @@ RotamerLibrary::create_fa_dunbrack_libraries_10_from_ASCII()
 
 		memory_use_rotameric.push_back( newlib->memory_usage_in_bytes() );
 
-		libraries_[ ii_aa ] = newlib();
-		aa_libraries_[ ii_aa ] = newlib();
+		libraries_[ ii_aa ] = SingleResidueDunbrackLibraryCAP( newlib );
+		aa_libraries_[ ii_aa ] = SingleResidueDunbrackLibraryCAP( newlib );
 		libraries_ops_.push_back( newlib );
 	}
 
@@ -1224,8 +1227,8 @@ RotamerLibrary::create_fa_dunbrack_libraries_10_from_ASCII()
 
 		memory_use_semirotameric.push_back( newlib->memory_usage_in_bytes() );
 
-		libraries_[ ii_aa ] = newlib();
-		aa_libraries_[ ii_aa ] = newlib();
+		libraries_[ ii_aa ] = SingleResidueDunbrackLibraryCAP( newlib );
+		aa_libraries_[ ii_aa ] = SingleResidueDunbrackLibraryCAP( newlib );
 		libraries_ops_.push_back( newlib );
 	}
 	TR << "Finished reading Dunbrack Libraries" << std::endl;
@@ -1506,28 +1509,28 @@ RotamerLibrary::create_rotameric_dunlib(
 			RotamericSingleResidueDunbrackLibrary< ONE > * r1 =
 				new RotamericSingleResidueDunbrackLibrary< ONE >( aa, dun02 );
 			next_aa_in_library = r1->read_from_file( library, first_three_letter_code_already_read );
-			rotlib = r1;
+			rotlib = SingleResidueDunbrackLibraryOP(r1);
 			break;
 		}
 		case 2: {
 			RotamericSingleResidueDunbrackLibrary< TWO > * r2 =
 				new RotamericSingleResidueDunbrackLibrary< TWO >( aa, dun02 );
 			next_aa_in_library = r2->read_from_file( library, first_three_letter_code_already_read );
-			rotlib = r2;
+			rotlib = SingleResidueDunbrackLibraryOP(r2);
 			break;
 		}
 		case 3: {
 			RotamericSingleResidueDunbrackLibrary< THREE > * r3 =
 				new RotamericSingleResidueDunbrackLibrary< THREE >( aa, dun02 );
 			next_aa_in_library = r3->read_from_file( library, first_three_letter_code_already_read );
-			rotlib = r3;
+			rotlib = SingleResidueDunbrackLibraryOP(r3);
 			break;
 		}
 		case 4: {
 			RotamericSingleResidueDunbrackLibrary< FOUR > * r4 =
 				new RotamericSingleResidueDunbrackLibrary< FOUR >( aa, dun02 );
 			next_aa_in_library = r4->read_from_file( library, first_three_letter_code_already_read );
-			rotlib = r4;
+			rotlib = SingleResidueDunbrackLibraryOP(r4);
 			break;
 		}
 		default:
@@ -1592,7 +1595,7 @@ RotamerLibrary::create_semi_rotameric_dunlib(
 				new SemiRotamericSingleResidueDunbrackLibrary< ONE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling );
 			initialize_and_read_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle,
 				rotamer_definitions, regular_library, continuous_minimization_bbdep );
-			rotlib = r1;
+			rotlib = SingleResidueDunbrackLibraryOP(r1);
 			break;
 		}
 		case 2: {
@@ -1600,7 +1603,7 @@ RotamerLibrary::create_semi_rotameric_dunlib(
 				new SemiRotamericSingleResidueDunbrackLibrary< TWO >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling );
 			initialize_and_read_srsrdl( *r2, nrchi_is_symmetric, nrchi_start_angle,
 				rotamer_definitions, regular_library, continuous_minimization_bbdep );
-			rotlib = r2;
+			rotlib = SingleResidueDunbrackLibraryOP(r2);
 			break;
 		}
 
@@ -1630,14 +1633,14 @@ RotamerLibrary::create_semi_rotameric_dunlib(
 			SemiRotamericSingleResidueDunbrackLibrary< ONE > * r1 =
 				new SemiRotamericSingleResidueDunbrackLibrary< ONE >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling );
 			initialize_srsrdl( *r1, nrchi_is_symmetric, nrchi_start_angle );
-			rotlib = r1;
+			rotlib = SingleResidueDunbrackLibraryOP(r1);
 			break;
 		}
 		case 2: {
 			SemiRotamericSingleResidueDunbrackLibrary< TWO > * r2 =
 				new SemiRotamericSingleResidueDunbrackLibrary< TWO >( aa, use_bbind_rnchi_scoring, use_bbind_rnchi_sampling );
 			initialize_srsrdl( *r2, nrchi_is_symmetric, nrchi_start_angle );
-			rotlib = r2;
+			rotlib = SingleResidueDunbrackLibraryOP(r2);
 			break;
 		}
 
@@ -1887,7 +1890,7 @@ RotamerLibrary::write_to_binary( utility::io::ozstream & out ) const
 	Size count_libraries( 0 );
 	for ( library_iterator it=libraries_.begin(), eit=libraries_.end(); it!=eit; ++it ) {
 		SingleResidueDunbrackLibraryCOP srdl =
-			dynamic_cast< SingleResidueDunbrackLibrary const * > ( it->second() );
+			utility::pointer::dynamic_pointer_cast< SingleResidueDunbrackLibrary const > ( it->second.lock() );
 
 		if ( srdl ) ++count_libraries; /// write out only the dunbrack libraries.
 
@@ -1899,7 +1902,7 @@ RotamerLibrary::write_to_binary( utility::io::ozstream & out ) const
 
 	for ( library_iterator it=libraries_.begin(), eit=libraries_.end(); it!=eit; ++it ) {
 		SingleResidueDunbrackLibraryCOP srdl =
-			dynamic_cast< SingleResidueDunbrackLibrary const * > ( it->second() );
+			utility::pointer::dynamic_pointer_cast< SingleResidueDunbrackLibrary const > ( it->second.lock() );
 
 		if ( ! srdl ) continue; /// write out only the dunbrack libraries.
 
@@ -1989,7 +1992,7 @@ RotamerLibrary::get_NCAA_rotamer_library( chemical::ResidueType const & rsd_type
 				new RotamericSingleResidueDunbrackLibrary< ONE >( aan, dun02 );
 			r1->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
 			r1->read_from_file( rotlib_in, false );
-			ncaa_rotlib = r1;
+			ncaa_rotlib = SingleResidueRotamerLibraryOP(r1);
 			break;
 		}
 		case 2: {
@@ -1997,7 +2000,7 @@ RotamerLibrary::get_NCAA_rotamer_library( chemical::ResidueType const & rsd_type
 				new RotamericSingleResidueDunbrackLibrary< TWO >( aan, dun02 );
 			r2->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
 			r2->read_from_file( rotlib_in, false );
-			ncaa_rotlib = r2;
+			ncaa_rotlib = SingleResidueRotamerLibraryOP(r2);
 			break;
 		}
 		case 3: {
@@ -2005,7 +2008,7 @@ RotamerLibrary::get_NCAA_rotamer_library( chemical::ResidueType const & rsd_type
 				new RotamericSingleResidueDunbrackLibrary< THREE >( aan, dun02 );
 			r3->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
 			r3->read_from_file( rotlib_in, false );
-			ncaa_rotlib = r3;
+			ncaa_rotlib = SingleResidueRotamerLibraryOP(r3);
 			break;
 		}
 		case 4: {
@@ -2013,7 +2016,7 @@ RotamerLibrary::get_NCAA_rotamer_library( chemical::ResidueType const & rsd_type
 				new RotamericSingleResidueDunbrackLibrary< FOUR >( aan, dun02 );
 			r4->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
 			r4->read_from_file( rotlib_in, false );
-			ncaa_rotlib = r4;
+			ncaa_rotlib = SingleResidueRotamerLibraryOP(r4);
 			break;
 		}
 		default:
@@ -2073,7 +2076,7 @@ RotamerLibrary::get_peptoid_rotamer_library( chemical::ResidueType const & rsd_t
 				new RotamericSingleResiduePeptoidLibrary< ONE >();
 			r1->set_n_chi_bins( rsd_type.get_peptoid_rotlib_n_bin_per_rot() );
 			r1->read_from_file( rotlib_in );
-			peptoid_rotlib = r1;
+			peptoid_rotlib = SingleResidueRotamerLibraryOP(r1);
 			break;
 		}
 		case 2: {
@@ -2081,7 +2084,7 @@ RotamerLibrary::get_peptoid_rotamer_library( chemical::ResidueType const & rsd_t
 				new RotamericSingleResiduePeptoidLibrary< TWO >();
 			r2->set_n_chi_bins( rsd_type.get_peptoid_rotlib_n_bin_per_rot() );
 			r2->read_from_file( rotlib_in );
-			peptoid_rotlib = r2;
+			peptoid_rotlib = SingleResidueRotamerLibraryOP(r2);
 			break;
 		}
 		case 3: {
@@ -2089,7 +2092,7 @@ RotamerLibrary::get_peptoid_rotamer_library( chemical::ResidueType const & rsd_t
 				new RotamericSingleResiduePeptoidLibrary< THREE >();
 			r3->set_n_chi_bins( rsd_type.get_peptoid_rotlib_n_bin_per_rot() );
 			r3->read_from_file( rotlib_in );
-			peptoid_rotlib = r3;
+			peptoid_rotlib = SingleResidueRotamerLibraryOP(r3);
 			break;
 		}
 		case 4: {
@@ -2097,7 +2100,7 @@ RotamerLibrary::get_peptoid_rotamer_library( chemical::ResidueType const & rsd_t
 				new RotamericSingleResiduePeptoidLibrary< FOUR >();
 			r4->set_n_chi_bins( rsd_type.get_peptoid_rotlib_n_bin_per_rot() );
 			r4->read_from_file( rotlib_in );
-			peptoid_rotlib = r4;
+			peptoid_rotlib = SingleResidueRotamerLibraryOP(r4);
 			break;
 		}
 		default:

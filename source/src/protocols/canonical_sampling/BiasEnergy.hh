@@ -97,6 +97,16 @@ class BiasEnergy : public ThermodynamicObserver, public protocols::jd2::JobOutpu
 	virtual ~BiasEnergy();
 	virtual core::Real evaluate( core::pose::Pose const& ) const;
 
+#ifndef PTR_MODERN
+	// Old intrusive ref-counter version
+	inline BiasEnergyCOP shared_from_this() const { return BiasEnergyCOP( this ); }
+	inline BiasEnergyOP  shared_from_this() { return BiasEnergyOP( this ); }
+	inline BiasEnergyCOP get_self_ptr() const { return shared_from_this(); }
+	inline BiasEnergyOP  get_self_ptr() { return shared_from_this(); }
+	inline BiasEnergyCAP get_self_weak_ptr() const { return BiasEnergyCAP( shared_from_this() ); }
+	inline BiasEnergyAP  get_self_weak_ptr() { return BiasEnergyAP( shared_from_this() ); }
+#endif
+
 	//for trajectory output...
 	virtual
 	void add_values_to_job( core::pose::Pose const& pose, protocols::jd2::Job & ) const;
@@ -151,8 +161,13 @@ class BiasEnergy : public ThermodynamicObserver, public protocols::jd2::JobOutpu
 	virtual core::Real extract_collective_var( core::pose::Pose const& ) const = 0;
 
  private:
-	Histogram<float>::OP bias_grid_;
-	Histogram<int>::OP count_grid_;
+	//Histogram<float>::OP bias_grid_;
+	//Histogram<int>::OP count_grid_;
+	// To help with auto code rewriting:
+	typedef Histogram<float>::OP HistogramFloatOP;
+	typedef Histogram<int>::OP HistogramIntOP;
+	HistogramFloatOP bias_grid_;
+	HistogramIntOP count_grid_;
 
 	core::Size step_counter_;
 

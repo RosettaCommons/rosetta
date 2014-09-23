@@ -410,6 +410,7 @@ class DoubleLazyInteractionGraph : public OnTheFlyInteractionGraph
 {
 public:
 	typedef OnTheFlyInteractionGraph parent;
+	typedef utility::pointer::owning_ptr< utility::in_place_list< int > > InPlaceIntListOP;
 
 public:
 	DoubleLazyInteractionGraph( int numNodes );
@@ -534,7 +535,7 @@ private:
 
 	/// initialized in prepare_for_simulated_annealing();
 	utility::vector0< DoubleLazyEdge * > dlazy_edge_vector_;
-	mutable utility::pointer::owning_ptr< utility::in_place_list< int > > aa_submatrix_history_list_;
+	mutable InPlaceIntListOP aa_submatrix_history_list_;
 
 	//no default constructor, uncopyable
 	DoubleLazyInteractionGraph();

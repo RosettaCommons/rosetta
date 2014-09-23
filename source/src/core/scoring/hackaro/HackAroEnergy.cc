@@ -77,7 +77,7 @@ HackAroEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 HackAroEnergy::HackAroEnergy() :
-	parent( new HackAroEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new HackAroEnergyCreator ) )
 {}
 
 //clone

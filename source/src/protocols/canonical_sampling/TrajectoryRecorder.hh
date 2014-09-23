@@ -139,13 +139,13 @@ public:
 	/// @brief Callback executed whenever the simulation is initialized or reset.
 	virtual void reset(
 		protocols::moves::MonteCarlo const& mc,
-		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
+		protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover = 0
 	);
 
 	/// @copydoc ThermodynamicObserver::apply
 	void update_after_boltzmann(
 		core::pose::Pose const & pose,
-		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
+		protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover = 0
 	);
 
 	/// @copydoc ThermodynamicObserver::apply
@@ -173,7 +173,7 @@ protected:
 	/// @brief Pure virtual method called to write a model to the output file.
 	virtual void 	write_model(
 		core::pose::Pose const & pose,
-		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
+		protocols::canonical_sampling::MetropolisHastingsMover const * metropolis_hastings_mover = 0
 	) = 0;
 
 private:

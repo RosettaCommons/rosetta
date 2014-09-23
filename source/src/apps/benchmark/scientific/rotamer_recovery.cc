@@ -100,6 +100,7 @@ main( int argc, char * argv [] )
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using namespace basic::options::OptionKeys::out::file;
+  using namespace core::pack::task::operation;
 
 	string const & protocol( option[ rotamer_recovery::protocol ].value() );
 	string const & reporter( option[ rotamer_recovery::reporter ].value() );

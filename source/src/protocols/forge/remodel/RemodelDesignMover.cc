@@ -73,6 +73,7 @@ RemodelDesignMover::RemodelDesignMover( RemodelData const & remodel_data,
 {
 
 	using core::pose::metrics::CalculatorFactory;
+	using core::pose::metrics::PoseMetricCalculatorOP;
 	using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator;
 
 	remodel_data_ = remodel_data;
@@ -300,6 +301,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 
   // setup calculators
 	using core::pose::metrics::CalculatorFactory;
+	using core::pose::metrics::PoseMetricCalculatorOP;
   using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator;
 	using core::pack::task::ResfileCommandOP;
 

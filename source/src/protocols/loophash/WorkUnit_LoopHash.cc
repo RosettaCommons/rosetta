@@ -122,7 +122,7 @@ WorkUnit_LoopHash::run()
 	// clear the sotre of structures
 	decoys().clear();
 
-	runtime_assert( library_ );
+	runtime_assert( library_ != 0 );
 
 	TR << "Executing WorkUnit_LoopHash_Mover..." << std::endl;
 	LocalInserter_SimpleMinOP simple_inserter( new LocalInserter_SimpleMin() );

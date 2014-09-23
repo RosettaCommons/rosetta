@@ -40,9 +40,26 @@ namespace datacache {
 
 
 /// @brief base class for data storable within a DataCache
-class CacheableData : public utility::pointer::ReferenceCount {
+class CacheableData : public utility::pointer::ReferenceCount
+#ifdef PTR_MODERN
+	// New version
+	, public utility::pointer::enable_shared_from_this< CacheableData >
+{
+#else
+{
+	// Old intrusive ref-counter version
+	inline CacheableDataCOP shared_from_this() const { return CacheableDataCOP( this ); }
+	inline CacheableDataOP shared_from_this() { return CacheableDataOP( this ); }
+#endif
+
 
 public:
+	/// self pointers
+	inline CacheableDataCOP get_self_ptr() const { return shared_from_this(); }
+	inline CacheableDataOP get_self_ptr() { return shared_from_this(); }
+	inline CacheableDataCAP get_self_weak_ptr() const { return CacheableDataCAP( shared_from_this() ); }
+	inline CacheableDataAP get_self_weak_ptr() { return CacheableDataAP( shared_from_this() ); }
+
 	virtual
 	~CacheableData() {}
 

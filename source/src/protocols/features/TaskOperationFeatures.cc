@@ -206,7 +206,7 @@ TaskOperationFeatures::parse_my_tag(
 		taskop_id++;
 		if ( data.has( "task_operations", *taskop_key ) ) {
 			TaskFactoryOP new_task_factory( new TaskFactory );
-  	    	new_task_factory->push_back( data.get< TaskOperation * >
+			new_task_factory->push_back( data.get_ptr< TaskOperation >
 					( "task_operations", *taskop_key ) );
 			taskops_.push_back(Taskop_id_name_factory_(taskop_id, *taskop_key, new_task_factory) );
 //			taskop_keys_factories_.insert(

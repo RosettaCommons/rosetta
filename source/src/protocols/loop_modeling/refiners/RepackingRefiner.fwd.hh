@@ -17,10 +17,9 @@ namespace loop_modeling {
 namespace refiners {
 
 class RepackingRefiner;
-using utility::pointer::owning_ptr;
 
-typedef owning_ptr<RepackingRefiner> RepackingRefinerOP;
-typedef owning_ptr<RepackingRefiner const> RepackingRefinerCOP;
+typedef utility::pointer::owning_ptr<RepackingRefiner> RepackingRefinerOP;
+typedef utility::pointer::owning_ptr<RepackingRefiner const> RepackingRefinerCOP;
 
 }
 }

@@ -84,13 +84,13 @@ SameChiBinComboGrouper::assign_group_for_match(
 
 		rot_vector[	n_geometric_constraints_ + ii ] = iires->aa();
 
-		SingleResidueRotamerLibraryCAP srrl( rotlib.get_rsd_library( iires->type() ) );
+		SingleResidueRotamerLibraryCOP srrl = rotlib.get_rsd_library( iires->type() ).lock();
 		if ( ! srrl ) {
 			/// ?!?! What do we without a library?
 			rot_vector[	2*n_geometric_constraints_ + ii ] = 1;
 		} else {
-			SingleResidueDunbrackLibraryCAP srdl(
-				dynamic_cast< SingleResidueDunbrackLibrary const * > ( srrl.get() ));
+			SingleResidueDunbrackLibraryCOP srdl(
+				utility::pointer::dynamic_pointer_cast< SingleResidueDunbrackLibrary const > ( srrl ) );
 			if ( srdl ) {
 				RotVector rotvect;
 				srdl->get_rotamer_from_chi( iires->chi(), rotvect );

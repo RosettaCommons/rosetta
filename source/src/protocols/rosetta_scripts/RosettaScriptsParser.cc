@@ -38,6 +38,7 @@
 #include <core/types.hh>
 
 // Utility Headers
+#include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/Tag.hh>
 #include <boost/foreach.hpp>
 
@@ -91,8 +92,11 @@ RosettaScriptsParser::RosettaScriptsParser() :
 
 RosettaScriptsParser::~RosettaScriptsParser(){}
 
-typedef utility::tag::TagCOP TagCOP;
-typedef utility::tag::TagOP TagOP;
+using utility::tag::TagOP;
+using utility::tag::TagCOP;
+using utility::tag::TagCAP;
+
+typedef utility::vector0< TagCOP > TagCOPs;
 
 /// @details Uses the Tag interface to the xml reader library in boost to parse
 /// an xml file that contains design protocol information. A sample protocol
@@ -340,7 +344,7 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(
 			BOOST_FOREACH( TagCOP apply_tag_ptr, apply_tags ) {
 				std::string const mover_type( apply_tag_ptr->getName() );
 				MoverOP new_mover( MoverFactory::get_instance()->newMover( apply_tag_ptr, data, filters, movers, pose ) );
-				runtime_assert( new_mover );
+				runtime_assert( new_mover != 0 );
 				new_mover->apply( pose );
 				TR << "Defined and applied mover of type " << mover_type << std::endl;
 				bool const name_exists( movers.find( mover_type ) != movers.end() );
@@ -513,7 +517,7 @@ void RosettaScriptsParser::instantiate_filter(
 		throw utility::excn::EXCN_RosettaScriptsOption("Filter of name \"" + user_defined_name + "\" (of type " + type + ") already exists.");
 
 	protocols::filters::FilterOP new_filter( protocols::filters::FilterFactory::get_instance()->newFilter( tag_ptr, data, filters, movers, pose ) );
-	runtime_assert( new_filter );
+	runtime_assert( new_filter != 0 );
 	filters.insert( std::make_pair( user_defined_name, new_filter ) );
 	TR << "Defined filter named \"" << user_defined_name << "\" of type " << type << std::endl;
 }
@@ -536,7 +540,7 @@ void RosettaScriptsParser::instantiate_mover(
 		throw utility::excn::EXCN_RosettaScriptsOption("Mover of name \"" + user_defined_name + "\" (of type " + type + ") already exists.");
 
 	MoverOP new_mover( MoverFactory::get_instance()->newMover( tag_ptr, data, filters, movers, pose ) );
-	runtime_assert( new_mover );
+	runtime_assert( new_mover != 0 );
 	movers.insert( std::make_pair( user_defined_name, new_mover ) );
 	TR << "Defined mover named \"" << user_defined_name << "\" of type " << type << std::endl;
 }
@@ -561,24 +565,28 @@ void RosettaScriptsParser::instantiate_taskoperation(
 		throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation with name \"" + user_defined_name + "\" (of type " + type + ") already exists.");
 
 	TaskOperationOP new_t_o( TaskOperationFactory::get_instance()->newTaskOperation( type, data, tag_ptr ) );
-	runtime_assert( new_t_o );
+	runtime_assert( new_t_o != 0 );
 	data.add("task_operations", user_defined_name, new_t_o );
 	TR << "Defined TaskOperation named \"" << user_defined_name << "\" of type " << type << std::endl;
 }
 
 ///@brief Recursively find a specific tag by option name and valie in any ROSETTASCRIPTS tag that's a child of rootTag
 TagCOP RosettaScriptsParser::find_rosettascript_tag(
-	TagCOP tag,
+	TagCOP tag_in,
 	const std::string & section_name,
 	const std::string & option_name,
 	const std::string & option_value
 ) {
 
+	TagCAP tag_ap(tag_in);
+
 	// Find the next higher ROSETTASCRIPTS block
 	do {
-		tag = tag->getParent();
-	} while(tag && tag->getName() != "ROSETTASCRIPTS");
+		TagCOP tag = tag_ap.lock();
+		tag_ap = tag ? tag->getParent() : TagCAP();
+	} while(!tag_ap.expired() && tag_ap.lock()->getName() != "ROSETTASCRIPTS");
 
+	TagCOP tag( tag_ap.lock() );
 	if(!tag)
 		return NULL;
 
@@ -594,8 +602,9 @@ TagCOP RosettaScriptsParser::find_rosettascript_tag(
 	}
 
 	// No match, walk up another level
-	if(tag->getParent())
-		return find_rosettascript_tag(tag->getParent(), section_name, option_name, option_value);
+	TagCOP tagParent( tag->getParent().lock() );
+	if(tagParent)
+		return find_rosettascript_tag(tagParent, section_name, option_name, option_value);
 
 	return NULL;
 }
@@ -611,14 +620,17 @@ void RosettaScriptsParser::import_tags(
 	core::pose::Pose & pose
 ) {
 	// Process all parent ROSETTASCRIPTS tags, one at a time
-	TagCOP curr_level_tag(my_tag);
-	do {
+	TagCAP curr_level_tag_ap(my_tag);
+
+	while( !curr_level_tag_ap.expired() ) {
 
 		// Find direct parent ROSETTASCRIPTS tag
 		do {
-			curr_level_tag = curr_level_tag->getParent();
-		} while(curr_level_tag && curr_level_tag->getName() != "ROSETTASCRIPTS");
-
+			TagCOP curr_level_tag = curr_level_tag_ap.lock();
+			curr_level_tag_ap = curr_level_tag ? curr_level_tag->getParent() : TagCAP();
+		} while(!curr_level_tag_ap.expired() && curr_level_tag_ap.lock()->getName() != "ROSETTASCRIPTS");
+		
+		TagCOP curr_level_tag( curr_level_tag_ap.lock() );
 		if(!curr_level_tag)
 			break; // No ROSETTASCRIPTS tag to import from
 
@@ -656,7 +668,8 @@ void RosettaScriptsParser::import_tags(
 					ImportTagName key( std::make_pair( tag->getName(), mover_name ) );
 					bool const need_import( import_tag_names.find( key ) != import_tag_names.end() );
 					if(need_import) {
-						if(mover_tag == my_tag->getParent()) {
+						TagCAP parent = my_tag->getParent();
+						if( utility::pointer::equal(parent, mover_tag) ) {
 							// Current mover_tag is our parent, i.e. same ROSETTASCRIPTS tag
 							throw utility::excn::EXCN_RosettaScriptsOption("Cannot import mover " + mover_name + " into itself; recursion detected");
 						}
@@ -674,7 +687,7 @@ void RosettaScriptsParser::import_tags(
 		// Go up the tree
 		curr_level_tag = curr_level_tag->getParent();
 
-	} while( curr_level_tag ); //do
+	} // while
 
 	// Check if there are any remaining imports that could not be satisfied
 	BOOST_FOREACH( ImportTagName import_tag, import_tag_names ) {

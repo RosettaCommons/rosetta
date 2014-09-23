@@ -49,7 +49,7 @@ public:
 	void test_NeighborhoodResidueSelector_parse_my_tag_selector() {
 		std::string tag_string = "<Neighborhood name=neighbor_rs selector=odd distance=5.2/>";
 		std::stringstream ss( tag_string );
-		utility::tag::TagPtr tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 		ResidueSelectorOP odd_rs = new OddResidueSelector;
@@ -81,7 +81,7 @@ public:
 	void test_NeighborhoodResidueSelector_fail_resnum_and_selector_set() {
 		std::string tag_string = "<Neighborhood name=neighbor_rs selector=odd resnums=2,4,6 distance=5.2/>";
 		std::stringstream ss( tag_string );
-		utility::tag::TagPtr tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 		ResidueSelectorOP odd_rs = new OddResidueSelector;
@@ -101,7 +101,7 @@ public:
 	void test_NeighborhoodResidueSelector_parse_my_tag_str() {
 		std::string tag_string = "<Neighborhood name=neighbor_rs resnums=2,3,5 distance=5.2/>";
 		std::stringstream ss( tag_string );
-		utility::tag::TagPtr tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
@@ -130,7 +130,7 @@ public:
 	void test_NeighbohoodResidueSelector_fail_no_focus() {
 		std::string tag_string = "<Neighborhood name=neighbor_rs distance=5.2/>";
 		std::stringstream ss( tag_string );
-		utility::tag::TagPtr tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
@@ -168,7 +168,7 @@ public:
 	void test_NeighborhoodResidueSelector_parse_my_tag_selector_not_in_datamap() {
 		std::string tag_string = "<Neighborhood name=neighbor_rs selector=odd/>";
 		std::stringstream ss( tag_string );
-		utility::tag::TagPtr tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
@@ -221,7 +221,7 @@ public:
 	void test_NeighborhoodSelector_fail_subtag_and_resnums() {
 		std::string tag_string = "<Neighborhood name=neighbor_rs resnums=4-8>\n\t<Index resnums=2-3 />\n</Neighborhood>";
 		std::stringstream ss( tag_string );
-		utility::tag::TagPtr tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 
@@ -239,7 +239,7 @@ public:
 	void test_NeighborhoodSelector_fail_subtag_and_selector() {
 		std::string tag_string = "<Neighborhood name=neighbor_rs selector=odd>\n\t<Index resnums=2-3 />\n</Neighborhood>";
 		std::stringstream ss( tag_string );
-		utility::tag::TagPtr tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 

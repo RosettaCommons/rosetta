@@ -40,6 +40,7 @@ namespace enzdes{
 
 class EnzdesFlexBBProtocol;
 typedef utility::pointer::owning_ptr< EnzdesFlexBBProtocol > EnzdesFlexBBProtocolOP;
+typedef utility::pointer::owning_ptr< EnzdesFlexBBProtocol const > EnzdesFlexBBProtocolCOP;
 typedef utility::pointer::access_ptr< EnzdesFlexBBProtocol const > EnzdesFlexBBProtocolCAP;
 typedef utility::pointer::access_ptr< EnzdesFlexBBProtocol > EnzdesFlexBBProtocolAP;
 

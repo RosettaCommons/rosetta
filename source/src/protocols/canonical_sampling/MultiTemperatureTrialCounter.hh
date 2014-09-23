@@ -39,7 +39,7 @@ public:
   MultiTemperatureTrialCounter() {};
 
 	/// @brief Fully construct the counter with a temperature controller.
-  MultiTemperatureTrialCounter( TemperatureControllerCOP );
+  MultiTemperatureTrialCounter( TemperatureController const * );
 
 	/// @brief Set all counters for all temperatures to zero.
   void reset();
@@ -74,7 +74,7 @@ public:
   void write_to_file( std::string const& file, std::string const& tag ) const;
 
 	/// @brief Set the temperature controller.
-  void set_temperature_observer( TemperatureControllerCOP );
+  void set_temperature_observer( TemperatureController const * );
 
 private:
 
@@ -83,7 +83,7 @@ private:
 	/// @see write_to_file()
 	void _write_to_stream( std::ostream&, std::string const& tag ) const;
 
-  TemperatureControllerCOP tempering_;
+  TemperatureController const * tempering_;
   utility::vector1< protocols::moves::TrialCounter > counters_;
 };
 

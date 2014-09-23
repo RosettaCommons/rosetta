@@ -95,7 +95,7 @@ void LoopBuildMover::apply(core::pose::Pose & pose){
 	evaluation::MetaPoseEvaluatorOP evaluator = new evaluation::MetaPoseEvaluator;
 	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluator);
 	evaluator->add_evaluation(
-		new simple_filters::SelectRmsdEvaluator( native_pose, "_native" )
+		evaluation::PoseEvaluatorOP( new simple_filters::SelectRmsdEvaluator( native_pose, "_native" ) )
 	);
 
 static thread_local basic::Tracer TR( "protocols.loop_build.LoopBuildMover" );

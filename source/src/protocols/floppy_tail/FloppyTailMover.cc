@@ -162,8 +162,8 @@ FloppyTailMover & FloppyTailMover::operator=( FloppyTailMover const & rhs ){
 	task_factory_						= rhs.task_factory_->clone();
 	movemap_								= rhs.movemap_->clone();
 	movemap_lesstail_				= rhs.movemap_lesstail_->clone();
-	foldtree_								= new core::kinematics::FoldTree(rhs.foldtree_); //no clone operation, and no proper copy ctor
-	fragset3mer_            = new core::fragment::ConstantLengthFragSet(rhs.fragset3mer_);//clone useless
+	foldtree_								= new core::kinematics::FoldTree(*rhs.foldtree_); //no clone operation, and no proper copy ctor
+	fragset3mer_            = new core::fragment::ConstantLengthFragSet(*rhs.fragset3mer_);//clone useless
 
 	return *this;
 }
@@ -305,9 +305,9 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 	//command line and resfile options
 	using namespace core::pack::task;
 	task_factory_ = new TaskFactory;
-	task_factory_->push_back( new operation::InitializeFromCommandline );
+	task_factory_->push_back( operation::TaskOperationOP( new operation::InitializeFromCommandline ) );
 	if ( option[ packing::resfile ].user() ) {
-		task_factory_->push_back( new operation::ReadResfile );
+		task_factory_->push_back( operation::TaskOperationOP( new operation::ReadResfile ) );
 	}
 
 	//iterate through movemap, determining where regions of flexibility and inflexibility are
@@ -376,13 +376,13 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 		core::pose::metrics::CalculatorFactory::Instance().remove_calculator(calc);
 		TR << "removed a PoseMetricCalculator " << calc << ", hopefully this is due to multiple inputs to FloppyTail and not a name clash" << std::endl;
 	}
-	core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc, new protocols::toolbox::pose_metric_calculators::InterGroupNeighborsCalculator(vector_of_pairs) );
+	core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc, core::pose::metrics::PoseMetricCalculatorOP( new protocols::toolbox::pose_metric_calculators::InterGroupNeighborsCalculator(vector_of_pairs) ) );
 
 	//now that calculator exists, add the sucker to the TaskFactory via RestrictByCalculatorsOperation
 	utility::vector1< std::pair< std::string, std::string> > calculators_used;
 	std::pair< std::string, std::string> IGNC_cmd( calc, "neighbors" );
 	calculators_used.push_back( IGNC_cmd );
-	task_factory_->push_back( new protocols::toolbox::task_operations::RestrictByCalculatorsOperation( calculators_used ) );
+	task_factory_->push_back( operation::TaskOperationOP( new protocols::toolbox::task_operations::RestrictByCalculatorsOperation( calculators_used ) ) );
 
 	//debugging: print PackerTask
 	//TR << *(task_factory_->create_task_and_apply_taskoperations( pose )) << std::endl;

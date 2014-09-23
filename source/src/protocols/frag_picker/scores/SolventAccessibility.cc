@@ -29,7 +29,7 @@ namespace frag_picker {
 namespace scores {
 
 void SolventAccessibility::do_caching(VallChunkOP current_chunk) {
-  std::string ctmp = current_chunk()->chunk_key();
+  std::string ctmp = current_chunk->chunk_key();
   if (ctmp.compare("change to 'cached_scores_id_' when ready") != 0) {
     return; // CACHING NOT BUILT IN YET
   }

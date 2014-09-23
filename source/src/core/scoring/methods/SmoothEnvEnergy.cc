@@ -63,7 +63,7 @@ SmoothEnvEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 SmoothEnvEnergy::SmoothEnvEnergy() :
-	parent( new SmoothEnvEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new SmoothEnvEnergyCreator ) ),
 	potential_( ScoringManager::get_instance()->get_SmoothEnvPairPotential() )
 {}
 

@@ -75,6 +75,7 @@ void CamShiftEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & e
 	using namespace core;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	using protocols::evaluation::PoseEvaluatorOP;
 
 
   if ( option[ OptionKeys::evaluation::cam_shifts ].user() ) {

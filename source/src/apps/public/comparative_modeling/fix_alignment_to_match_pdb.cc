@@ -84,7 +84,7 @@ poses_from_cmd_line(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
+	ResidueTypeSetCOP rsd_set( rsd_set_from_cmd_line() );
 	map< string, Pose > poses;
 
 	typedef vector1< string >::const_iterator iter;

@@ -84,7 +84,7 @@ void CSScore::do_caching(VallChunkOP current_chunk) {
 	                        << " of size " << current_chunk->size() << std::endl;
 
 	//Check to see if the cache needs to be recalculated
-	std::string & tmp = current_chunk()->chunk_key();
+	std::string & tmp = current_chunk->chunk_key();
 	if (tmp.compare(cached_scores_id_) == 0)
 		return;
 	cached_scores_id_ = tmp;

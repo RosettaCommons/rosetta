@@ -479,7 +479,7 @@ expand_proton_chi_oldversion(
 	for ( Size ii = 1; ii <= nsamples; ++ii ) {
 		Size offset = (ii-1) * chi_set_vector.size();
 		for ( Size jj = 1; jj <= chi_set_vector.size(); ++jj ) {
-			newchi_vect[ jj + offset ] = new pack::dunbrack::ChiSet( *(chi_set_vector[ jj ]) );
+			newchi_vect[ jj + offset ] = ChiSetOP( new pack::dunbrack::ChiSet( *(chi_set_vector[ jj ]) ) );
 		}
 	}
 

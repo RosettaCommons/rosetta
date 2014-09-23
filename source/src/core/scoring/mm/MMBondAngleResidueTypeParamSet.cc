@@ -52,7 +52,7 @@ namespace mm {
 static thread_local basic::Tracer TR( "core.mm.MMBondAngleResidueTypeParamSet" );
 
 MMBondAngleResidueTypeParamSet::MMBondAngleResidueTypeParamSet() :
-	mm_bondangle_library_( scoring::ScoringManager::get_instance()->get_MMBondAngleLibrary() ),
+	mm_bondangle_library_( &scoring::ScoringManager::get_instance()->get_MMBondAngleLibrary() ),
 	use_residue_type_theta0_( false )
 { }
 
@@ -260,9 +260,8 @@ mm_bond_angle_residue_type_param_set(
 	for (core::scoring::ScoreFunction::TWO_B_MethodIterator iter(scorefxn.ci_2b_intrares_begin());
 	     iter != scorefxn.ci_2b_intrares_end(); ++iter) {
 
-		core::scoring::methods::MMBondAngleEnergyCAP bond_angle_energy_method;
-
-		bond_angle_energy_method = dynamic_cast<core::scoring::methods::MMBondAngleEnergy const *>((*iter)());
+		core::scoring::methods::MMBondAngleEnergyCOP bond_angle_energy_method =
+			utility::pointer::dynamic_pointer_cast<core::scoring::methods::MMBondAngleEnergy const>( *iter );
 
 		if (bond_angle_energy_method) {
 			return bond_angle_energy_method->residue_type_param_set();

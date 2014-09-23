@@ -205,7 +205,7 @@ int main( int argc, char * argv [] )
     //for each residue
     for ( core::Size j=1; j<=scaffold.n_residue(); j++)
     {
-        core::conformation::ResidueCOP res( &scaffold.residue(j) );
+        core::conformation::ResidueCOP res( scaffold.residue(j).get_self_ptr() );
         bool flag=true;
 
         //for each atom
@@ -280,7 +280,7 @@ int main( int argc, char * argv [] )
                 for ( core::Size m=1; m <= active_res_ndx.size() && flag; m++ )
                 {
                     //for each active res
-                    core::conformation::ResidueCOP res( &scaffold.residue(active_res_ndx[m]) );
+                    core::conformation::ResidueCOP res( scaffold.residue(active_res_ndx[m]).get_self_ptr() );
                     //for each atom
                     for ( core::Size n=1; n <= res->atoms().size() && flag; n++ )
                     {

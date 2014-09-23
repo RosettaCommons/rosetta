@@ -443,6 +443,7 @@ void AbrelaxApplication::add_evaluation( evaluation::PoseEvaluatorOP eval ) {
 /// this is mainly stuff for scoring and evaluation ( process_decoys(), evaluator_ )
 void AbrelaxApplication::setup() {
 	using namespace basic::options::OptionKeys;
+	using core::scoring::func::FuncOP;
 
 	if ( option[ constraints::no_linearize_bounded ] ) {
 		tr.Info << "use fully harmonic potential for BOUNDED " << std::endl;
@@ -821,7 +822,7 @@ void AbrelaxApplication::do_rerun() {
 				scorefxn->set_weight( core::scoring::overlap_chainbreak, 1.0 );
 
 				if ( option[ OptionKeys::abinitio::close_loops ] ) {
-					add_evaluation( new simple_filters::RmsdEvaluator( new pose::Pose( pose ), std::string("closure"), option[ OptionKeys::abinitio::bGDT ]() ) );
+					add_evaluation( new simple_filters::RmsdEvaluator( pose::PoseOP( new pose::Pose( pose ) ), std::string("closure"), option[ OptionKeys::abinitio::bGDT ]() ) );
 					close_loops( pose, scorefxn, tag );
 				}
 
@@ -856,7 +857,7 @@ void AbrelaxApplication::do_rerun() {
 		scorefxn->set_weight( core::scoring::overlap_chainbreak, 1.0 );
 
 		if ( option[ OptionKeys::abinitio::close_loops ] ) { //otherwise the column (needed for non-native decoys) doesn't show up in score-file
-			add_evaluation( new simple_filters::RmsdEvaluator( new pose::Pose( *native_pose_ ), std::string("closure"), option[ OptionKeys::abinitio::bGDT ]() ) );
+			add_evaluation( new simple_filters::RmsdEvaluator( pose::PoseOP( new pose::Pose( *native_pose_ ) ), std::string("closure"), option[ OptionKeys::abinitio::bGDT ]() ) );
 		}
 
 		process_decoy( *native_pose_, *scorefxn,  "NATIVE", *ss );
@@ -1003,7 +1004,7 @@ void AbrelaxApplication::do_distributed_rerun() {
 
 		bool loop_closure_failed( false );
 		if ( option[ OptionKeys::abinitio::close_loops ] ) {
-			add_evaluation( new simple_filters::RmsdEvaluator( new pose::Pose( pose ), std::string("closure"), option[ OptionKeys::abinitio::bGDT ]() ) );
+			add_evaluation( new simple_filters::RmsdEvaluator( pose::PoseOP( new pose::Pose( pose ) ), std::string("closure"), option[ OptionKeys::abinitio::bGDT ]() ) );
 			loop_closure_failed = !close_loops( pose, centroid_scorefxn, tag );
 		}
 
@@ -1190,22 +1191,22 @@ void AbrelaxApplication::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& f
 				Size const nr_large_copies( option[ templates::nr_large_copies ] );
 				fragset_large_ = templates_->pick_frags(
 								fragset_large_,
-								new FragData( new BBTorsionSRFD, fragset_large_->max_frag_length() ),
+								new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large_->max_frag_length() ),
 								min_nr_frags,
 								nr_large_copies );
 			} else {
-				Size nr = templates_->pick_frags( *fragset_large_, new FragData( new BBTorsionSRFD, fragset_large_->max_frag_length() ) );
+				Size nr = templates_->pick_frags( *fragset_large_, new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large_->max_frag_length() ) );
 				tr.Info << nr << " " << fragset_large_->max_frag_length() << "mer fragments picked from homolog structures" << std::endl;
 			}
 			if ( option[ templates::pick_multiple_sizes ] ) {
 				Size nr = templates_->pick_frags(
 								*fragset_large_,
-								new FragData( new BBTorsionSRFD, 18 )
+								new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), 18 )
 				);
 				tr.Info << nr << " 18mer fragments picked from homolog structures" << std::endl;
 				nr = templates_->pick_frags(
 								*fragset_large_,
-								new FragData( new BBTorsionSRFD, 24 )
+								new FragData( SingleResidueFragDataOP(  new BBTorsionSRFD ), 24 )
 				);
 				tr.Info << nr << " 27mer fragments picked from homolog structures" << std::endl;
 			}
@@ -1216,12 +1217,12 @@ void AbrelaxApplication::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& f
 			Size const nr_small_copies( option[ templates::nr_small_copies ] );
 			fragset_small_ = templates_->pick_frags(
 								fragset_small_,
-								new FragData( new BBTorsionSRFD, fragset_small_->max_frag_length() ),
+								new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small_->max_frag_length() ),
 									min_nr_frags,
 								nr_small_copies );
 		} else {
 			//pick torsion fragments fragset_small
-			Size nr2 = templates_->pick_frags( *fragset_small_, new FragData( new BBTorsionSRFD, fragset_small_->max_frag_length() ) );
+			Size nr2 = templates_->pick_frags( *fragset_small_, new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small_->max_frag_length() ) );
 			tr.Info << nr2 << " " << fragset_small_->max_frag_length() << "mer fragments picked from homolog structures" << std::endl;
 		}
 	} // templates && !templates:no_pick_fragments
@@ -1229,9 +1230,9 @@ void AbrelaxApplication::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& f
 	if ( native_pose_ && ( option[ OptionKeys::abinitio::steal_3mers ]() || option[ OptionKeys::abinitio::steal_9mers ]() )) {
 		tr.Info << " stealing fragments from native pose: ATTENTION: native pose has to be IDEALIZED!!! " << std::endl;
 		if ( option[ OptionKeys::abinitio::steal_9mers ]() ) steal_frag_set_from_pose( *native_pose_, *fragset_large_,
-			new FragData( new BBTorsionSRFD, fragset_large_->max_frag_length() ) );
+			new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_large_->max_frag_length() ) );
 		if ( option[ OptionKeys::abinitio::steal_3mers ]() ) steal_frag_set_from_pose( *native_pose_, *fragset_small_,
-			new FragData( new BBTorsionSRFD, fragset_small_->max_frag_length() ) );
+			new FragData( SingleResidueFragDataOP( new BBTorsionSRFD ), fragset_small_->max_frag_length() ) );
 	} else if ( ( option[ OptionKeys::abinitio::steal_3mers ]() || option[ OptionKeys::abinitio::steal_9mers ]() ) && !native_pose_ && !templates_ ) {
 		tr.Warning << "cannot steal fragments without native pose or homologue structures " << std::endl;
 	}
@@ -1315,7 +1316,7 @@ void AbrelaxApplication::setup_templates() {
 		bDoubleDef = jump_def_ != 0;
 
 		// get secondary structure info
-		runtime_assert( fragset_small_ );
+		runtime_assert( fragset_small_ != 0 );
 
 		ss_def_->show( tr.Trace );
 		// get pairings file
@@ -1498,16 +1499,15 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 		if ( option[  OptionKeys::loops::loop_file ].user() ) {
 			loops_in_ = protocols::loops::Loops( true );
 		}
-		core::chemical::ResidueTypeSetCAP rsd_set;
 		// if full-atom load starting structure as full-atom to recover sidechains later
 		if ( option[ OptionKeys::loops::input_pdb ].user() ) {
 			if ( option[ in::file::fullatom ]() ) {
-				rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+				core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 				core::import_pose::pose_from_pdb( extended_pose, *rsd_set, option[ OptionKeys::loops::input_pdb ]().name() );
 				if ( !extended_pose.is_fullatom() ) utility_exit_with_message(" this full-atom pose should be a full-atom pose, no? ");
 			} else {
 				// centroid starting structure for loop-modeling
-				rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );
+				core::chemical::ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );
 				core::import_pose::pose_from_pdb( extended_pose, *rsd_set, option[ OptionKeys::loops::input_pdb ]().name() );
 				if ( extended_pose.is_fullatom() ) utility_exit_with_message(" this centroid pose should not be a full-atom pose, no? ");
 			}
@@ -1822,7 +1822,8 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 		// kill hairpins
 		//using core::pose::datacache::CacheableDataType::SS_KILLHAIRPINS_INFO;
 		if ( option[ OptionKeys::abinitio::kill_hairpins ].user() ) {
-			fold_pose.data().set( core::pose::datacache::CacheableDataType::SS_KILLHAIRPINS_INFO, new core::scoring::SS_Killhairpins_Info);
+			using namespace basic::datacache;
+			fold_pose.data().set( core::pose::datacache::CacheableDataType::SS_KILLHAIRPINS_INFO, DataCache_CacheableData::DataOP( new core::scoring::SS_Killhairpins_Info) );
 			runtime_assert( fold_pose.data().has( core::pose::datacache::CacheableDataType::SS_KILLHAIRPINS_INFO ) );
 			core::scoring::SS_Killhairpins_Info & hairpins=*( static_cast< core::scoring::SS_Killhairpins_Info * >( fold_pose.data().get_ptr( core::pose::datacache::CacheableDataType::SS_KILLHAIRPINS_INFO )() ));
 			hairpins.setup_killhairpins();

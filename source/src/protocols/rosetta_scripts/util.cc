@@ -86,7 +86,7 @@ parse_task_operations( std::string const task_list, basic::datacache::DataMap co
   for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
         t_o_key != end; ++t_o_key ) {
     if ( data.has( "task_operations", *t_o_key ) ) {
-      new_task_factory->push_back( data.get< TaskOperation * >( "task_operations", *t_o_key ) );
+      new_task_factory->push_back( data.get_ptr< TaskOperation >( "task_operations", *t_o_key ) );
 			TR<<*t_o_key<<' ';
     } else {
       throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
@@ -131,7 +131,7 @@ parse_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap & dat
      t_o_key != end; ++t_o_key ) {
 
     if ( data.has( "task_operations", *t_o_key ) ) {
-      task_factory->push_back( data.get< TaskOperation * >( "task_operations", *t_o_key ) );
+      task_factory->push_back( data.get_ptr< TaskOperation >( "task_operations", *t_o_key ) );
       TR<<*t_o_key<<' ';
     }
     else {
@@ -156,7 +156,7 @@ get_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const &
 		for ( utility::vector1< String >::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
 				t_o_key != end; ++t_o_key ) {
 			if ( data.has( "task_operations", *t_o_key ) ) {
-				task_operations.push_back( data.get< TaskOperation* >( "task_operations", *t_o_key ) );
+				task_operations.push_back( data.get_ptr< TaskOperation >( "task_operations", *t_o_key ) );
 			} else {
 				throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
 			}
@@ -209,7 +209,7 @@ parse_score_function(
 			<< "ERROR MESSAGE: " << e << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption(err_msg.str());
 	}
-	return data.get< ScoreFunction* >( "scorefxns", scorefxn_key );
+	return data.get_ptr< ScoreFunction >( "scorefxns", scorefxn_key );
 }
 
 

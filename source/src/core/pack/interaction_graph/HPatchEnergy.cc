@@ -52,7 +52,7 @@ HPatchEnergyCreator::score_types_for_method() const {
 
 
 HPatchEnergy::HPatchEnergy() :
-	parent( new HPatchEnergyCreator )
+	parent( scoring::methods::EnergyMethodCreatorOP( new HPatchEnergyCreator ) )
 {}
 
 

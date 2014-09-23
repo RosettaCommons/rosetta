@@ -56,6 +56,7 @@ public:
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		using namespace core::pack::task;
+		using namespace core::pack::task::operation;
 		main_task_factory = new TaskFactory;
 		main_task_factory->push_back( new operation::InitializeFromCommandline );
 		if ( option[ packing::resfile ].user() ) {

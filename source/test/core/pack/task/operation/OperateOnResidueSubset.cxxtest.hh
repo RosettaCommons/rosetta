@@ -84,7 +84,7 @@ public:
 	void test_oors_parse_tag_1() {
 		std::string tag_string = "<OperateOnResidueSubset name=disable_odd selector=odd> <PreventRepackingRLT/> </OperateOnResidueSubset>";
 		std::stringstream ss( tag_string );
-		utility::tag::TagOP tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 		ResidueSelectorOP odd_rs = new OddResidueSelector;
@@ -111,7 +111,7 @@ public:
 	void test_oors_parse_tag_2() {
 		std::string tag_string = "<OperateOnResidueSubset name=disable_1to10> <Index resnums=\"1-10\"/> <PreventRepackingRLT/> </OperateOnResidueSubset>";
 		std::stringstream ss( tag_string );
-		utility::tag::TagOP tag = new utility::tag::Tag;
+		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss );
 		basic::datacache::DataMap dm;
 

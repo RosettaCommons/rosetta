@@ -41,7 +41,7 @@ static thread_local basic::Tracer TR( "core.scoring.disulfides.DisulfideMatching
 
 /// @brief constructor
 DisulfideMatchingNeighborIterator::DisulfideMatchingNeighborIterator(
-		DisulfideMatchingEnergyContainerAP owner,
+		DisulfideMatchingEnergyContainer * owner,
 		Size focused_residue,
 		Size disulfide_index
 		) :
@@ -52,7 +52,7 @@ DisulfideMatchingNeighborIterator::DisulfideMatchingNeighborIterator(
 
 /// @brief constructor, default to no disulfide bond
 DisulfideMatchingNeighborIterator::DisulfideMatchingNeighborIterator(
-		DisulfideMatchingEnergyContainerAP owner
+		DisulfideMatchingEnergyContainer * owner
 		)
 :
 	owner_( owner ),
@@ -189,7 +189,7 @@ DisulfideMatchingNeighborIterator::energy_computed() const
 ////////////////////////////////////////////////////////////////////////
 
 DisulfideMatchingNeighborConstIterator::DisulfideMatchingNeighborConstIterator(
-		DisulfideMatchingEnergyContainerCAP owner,
+		DisulfideMatchingEnergyContainer const * owner,
 		Size focused_residue,
 		Size disulfide_index
 		) :
@@ -199,7 +199,7 @@ DisulfideMatchingNeighborConstIterator::DisulfideMatchingNeighborConstIterator(
 {}
 
 DisulfideMatchingNeighborConstIterator::DisulfideMatchingNeighborConstIterator(
-		DisulfideMatchingEnergyContainerCAP owner
+		DisulfideMatchingEnergyContainer const * owner
 		) :
 	owner_( owner ),
 	focused_residue_( DisulfideMatchingEnergyContainer::NO_DISULFIDE ),
@@ -595,8 +595,8 @@ DisulfideMatchingEnergyContainer::find_disulfides( pose::Pose const & pose )
 
 			resid_2_disulfide_index_[ ii ] = count_disulfides;
 			resid_2_disulfide_index_[ other_res_ii ] = count_disulfides;
-			disulfide_residue_types_[ ii ] = & ( pose.residue_type( ii ));
-			disulfide_residue_types_[ other_res_ii ] = chemical::ResidueTypeCOP( & ( pose.residue_type( other_res_ii )));
+			disulfide_residue_types_[ ii ] = pose.residue_type( ii ).get_self_ptr();
+			disulfide_residue_types_[ other_res_ii ] = pose.residue_type( other_res_ii ).get_self_ptr();
 			disulfide_partners_.push_back( std::pair< Size, Size >( ii, other_res_ii ) );
 			disulfide_atom_indices_.push_back( std::pair< DisulfideAtomIndices, DisulfideAtomIndices > (
 						DisulfideAtomIndices( pose.residue(ii ) ), DisulfideAtomIndices( pose.residue( other_res_ii ) ) ));
@@ -621,7 +621,7 @@ DisulfideMatchingEnergyContainer::disulfides_changed( pose::Pose const & pose )
 		if ( resid_2_disulfide_index_[ ii ] != NO_DISULFIDE ) {
 			conformation::Residue res = pose.residue( ii );
 			if ( res.aa() != chemical::aa_cys ||
-					disulfide_residue_types_[ ii ]() != & (pose.residue_type( ii )) ||
+					disulfide_residue_types_[ ii ].get() != & (pose.residue_type( ii )) ||
 					/// subsumed by residue type check ! pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) ||
 					! pose.residue_type( ii ).has( "CEN" ) || // not centroid
 					res.connect_map(

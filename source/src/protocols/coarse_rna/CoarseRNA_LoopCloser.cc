@@ -244,13 +244,13 @@ CoarseRNA_LoopCloser::remove_res( utility::vector1< core::Size > & res_vector, c
 // backtrack through atom_tree to figure out which torsions control each end of the cutpoint.
 // Keep track of controlling phosphates (potential "pivots")
 void
-CoarseRNA_LoopCloser::backtrack( core::kinematics::tree::AtomCOP current_atom,
+CoarseRNA_LoopCloser::backtrack( core::kinematics::tree::Atom const * current_atom,
 																 utility::vector1< core::Size > & upstream_res,
 																 utility::vector1< bool > & is_upstream_res,
 																 pose::Pose const & pose ){
 	while ( current_atom->parent() ){
 
-		current_atom = ( current_atom->parent() );
+		current_atom = ( current_atom->parent().get() );
 		AtomID const & atom_id( current_atom->id() );
 		if ( pose.residue_type( atom_id.rsd() ).atom_name( atom_id.atomno() ) == " P  " ) {
 			upstream_res.push_back( current_atom->id().rsd() );
@@ -276,7 +276,7 @@ CoarseRNA_LoopCloser::figure_out_forward_backward_res_by_backtracking( pose::Pos
 
 	//Backtrack from sugar before chainbreak -- could generalize this to be the atom immediately before chainbreak.
 	core::id::AtomID const ref_atom_id( 2, cutpos_ );
-	core::kinematics::tree::AtomCOP current_atom ( & pose.atom_tree().atom_dont_do_update( ref_atom_id ) );
+	core::kinematics::tree::Atom const * current_atom ( & pose.atom_tree().atom_dont_do_update( ref_atom_id ) );
 	backtrack( current_atom, backward_res_, is_backward_res_, pose );
 
 	// Backtrack from phosphate after chainbreak -- again, could generalize.

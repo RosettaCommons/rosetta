@@ -55,7 +55,7 @@ P_AA_EnergyCreator::score_types_for_method() const {
 /// reads in the three database files: p_aa, p_aa_pp, and p_aa_n.  That object is returned and then stored as a private member
 /// variable here.
 P_AA_Energy::P_AA_Energy() :
-	parent( new P_AA_EnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new P_AA_EnergyCreator ) ),
 	p_aa_( ScoringManager::get_instance()->get_P_AA() )
 {}
 

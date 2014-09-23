@@ -265,7 +265,7 @@ ProcessorFactory::create_output_writer(
 			/// DIRTY ASSUMPTION -- SINGLE RESIDUE IN DOWNSTREAM PARTNER
 			if ( matcher->downstream_builder( ii ) ) {
 				SingleDownstreamResidueWriterOP downstream_writer = new SingleDownstreamResidueWriter;
-				downstream_writer->set_restype( & (mtask->downstream_pose()->residue(1).type()) );
+				downstream_writer->set_restype( mtask->downstream_pose()->residue(1).type().get_self_ptr() );
 				downstream_writer->set_downstream_builder( matcher->downstream_builder( ii ) );
 				downstream_writer->set_downstream_master( mtask->downstream_pose()->residue(1).name3() );
 
@@ -295,7 +295,7 @@ ProcessorFactory::create_output_writer(
 				"_" );
 		}
 
-		runtime_assert( matcher->downstream_builder( 1 /* wrong */ ) );
+		runtime_assert( matcher->downstream_builder( 1 /* wrong */ ) != 0 );
 		for ( Size ii = 1; ii <= matcher->n_geometric_constraints() ; ++ii ) {
 			pdb_writer->set_downstream_builder( ii, matcher->downstream_builder( ii ) );
 		}

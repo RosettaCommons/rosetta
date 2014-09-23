@@ -25,7 +25,7 @@ class MMAtomTypeSet;
 typedef  utility::pointer::access_ptr< MMAtomTypeSet > MMAtomTypeSetAP;
 typedef  utility::pointer::access_ptr< MMAtomTypeSet const > MMAtomTypeSetCAP;
 typedef  utility::pointer::owning_ptr< MMAtomTypeSet > MMAtomTypeSetOP;
-	//typedef  utility::pointer::owning_ptr< MMAtomTypeSet const > MMAtomTypeSetCOP;
+typedef  utility::pointer::owning_ptr< MMAtomTypeSet const > MMAtomTypeSetCOP;
 
 }
 }

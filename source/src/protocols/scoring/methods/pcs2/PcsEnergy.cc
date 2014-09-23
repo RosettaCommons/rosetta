@@ -121,7 +121,7 @@ PcsEnergy::~PcsEnergy(){
 
 /// c-tor
 PcsEnergy::PcsEnergy() :
-	parent( new PcsEnergyCreator )
+	parent( core::scoring::methods::EnergyMethodCreatorOP( new PcsEnergyCreator ) )
 {
 	//	TR_PcsEnergy << "constructor called" << std::endl;
 }

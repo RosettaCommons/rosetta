@@ -78,10 +78,10 @@ public:
     ChainSelectorOP chain1 = new ChainSelector();
     chain1->set_chain_strings( utility::vector1< std::string >( 1, "1" ) );
     CoMTrackerCMOP tracker = new CoMTrackerCM( "com", chain1 );
-
     StructPerturberCMOP perturb = new StructPerturberCM( "BASE" , 15.0 );
 
-    Environment env( "env" );
+    EnvironmentOP env_op = new Environment( "env" );
+    Environment & env = *env_op;
 
     env.register_mover( tracker );
     env.register_mover( perturb );
@@ -146,7 +146,8 @@ public:
 
     CoMTrackerCMOP tracker = new CoMTrackerCM( "com", chain1 );
 
-    Environment env( "env" );
+    EnvironmentOP env_op = new Environment( "env" );
+    Environment & env = *env_op;
 
     env.register_mover( tracker );
 
@@ -213,7 +214,9 @@ public:
 
     UniformRigidBodyCMOP rigpert = new UniformRigidBodyCM( "perturb", LocalPosition( com1, 1 ), LocalPosition( com2, 1 ) );
 
-    Environment env( "env" );
+    EnvironmentOP env_op = new Environment( "env" );
+    Environment & env = *env_op;
+    
     env.register_mover( rigpert );
     env.register_mover( tracker1 );
     env.register_mover( tracker2 );

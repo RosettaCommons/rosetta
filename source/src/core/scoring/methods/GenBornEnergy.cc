@@ -88,7 +88,7 @@ GenBornEnergy::GenBornEnergy( GenBornEnergy const & src ):
 
 
 GenBornEnergy::GenBornEnergy( EnergyMethodOptions const & options ):
-	parent( new GenBornEnergyCreator ),
+	parent( methods::EnergyMethodCreatorOP( new GenBornEnergyCreator ) ),
 	potential_( ScoringManager::get_instance()->get_GenBornPotential() ),
 	exclude_DNA_DNA_( options.exclude_DNA_DNA() )
 {}

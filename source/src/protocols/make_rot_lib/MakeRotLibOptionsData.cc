@@ -138,7 +138,7 @@ MakeRotLibOptionsData::MakeRotLibOptionsData( std::string filename ) :
 
 	// lastly get the polymer type
 	using namespace core::chemical;
-	ResidueTypeSetCAP RTS( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+	ResidueTypeSetCOP RTS( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 	ResidueType const & RT( RTS->name_map( name_ ) );
 
 	if ( RT.is_protein() ) {

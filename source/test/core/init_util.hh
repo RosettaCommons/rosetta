@@ -16,6 +16,7 @@
 
 #include <core/init/init.hh>
 
+#include <string.h> // strncpy
 #include <string>
 #include <fstream>
 #include <iostream>

@@ -331,7 +331,7 @@ void Bridge::modify_impl( Pose & pose ) {
 		// Grow out the new section from interval_.left using GrowRight.
 		// GrowRight will also handle setting proper omega and secondary
 		// structure.
-		GrowRight grow( interval_.left, ss_, aa_, &residue_type_set() );
+		GrowRight grow( interval_.left, ss_, aa_, residue_type_set().get_self_ptr() );
 		grow.modify( pose );
 	}
 

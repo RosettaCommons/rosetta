@@ -26,6 +26,8 @@ class VallChunk;
 
 typedef utility::pointer::owning_ptr<VallChunk> VallChunkOP;
 typedef utility::pointer::owning_ptr<VallChunk const> VallChunkCOP;
+typedef utility::pointer::access_ptr<VallChunk> VallChunkAP;
+typedef utility::pointer::access_ptr<VallChunk const> VallChunkCAP;
 
 } // frag_picker
 } // protocols

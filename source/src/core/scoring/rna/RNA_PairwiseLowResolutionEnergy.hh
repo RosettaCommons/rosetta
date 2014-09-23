@@ -175,7 +175,7 @@ private:
 
 	// const-ref to scoring database
 	rna::RNA_LowResolutionPotential const & rna_low_resolution_potential_;
-	mutable rna::RNA_RawBaseBaseInfoAP rna_raw_base_base_info_;
+	mutable rna::RNA_RawBaseBaseInfo * rna_raw_base_base_info_;
 	mutable bool might_be_designing_;
 virtual
 core::Size version() const;

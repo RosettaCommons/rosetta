@@ -303,6 +303,7 @@ OopDesignMover::apply(
 	Design Setup
 	**********************************************************/
 
+	using core::pack::task::operation::TaskOperationCOP;
 	TaskFactoryOP desn_tf( new TaskFactory() );
 	desn_tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
 

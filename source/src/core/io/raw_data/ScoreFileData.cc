@@ -56,7 +56,7 @@ namespace raw_data {
 		bool success = false;
 		utility::io::ozstream output;
 
-		runtime_assert( s );
+		runtime_assert( s != 0 );
 		
 		if ( ! utility::file::file_exists( filename_ ) ) {
 			output.open( filename_ );

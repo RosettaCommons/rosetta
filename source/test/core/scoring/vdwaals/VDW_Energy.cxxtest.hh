@@ -112,7 +112,7 @@ public:
 		// Create tries for each of the three rotamer sets
 		for ( Size ii = 8; ii <= 11; ++ii ) vdw_energy.prepare_rotamers_for_packing( pose, *rotsets.rotamer_set_for_residue( ii ) );
 		for ( Size ii = 8; ii <= 11; ++ii )	{
-			TS_ASSERT( rotsets.rotamer_set_for_residue(ii)->get_trie( vdw_method )() != 0 );
+			TS_ASSERT( rotsets.rotamer_set_for_residue(ii)->get_trie( vdw_method ).get() != 0 );
 			//std::cout << "trie: " << ii << " ";
 			//static_cast< core::scoring::trie::RotamerTrieBase const & > (*rotsets.rotamer_set_for_residue(ii)->get_trie( vdw_method ) ).print();
 			//std::cout << std::endl;

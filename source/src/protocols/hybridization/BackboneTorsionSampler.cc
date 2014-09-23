@@ -324,7 +324,7 @@ void BackboneTorsionSampler::apply( core::pose::Pose & pose ) {
 
 void BackboneTorsionSampler::task_factory( core::pack::task::TaskFactoryCOP tf )
 {
-    runtime_assert( tf );
+    runtime_assert( tf != 0 );
     task_factory_ = tf;
 }
 

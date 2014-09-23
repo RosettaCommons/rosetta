@@ -19,8 +19,10 @@ class Tester : public protocols::environment::ClaimingMover {
 public:
 
   Tester() : claim_( NULL ) {}
-  Tester( protocols::environment::claims::EnvClaimOP claim ): claim_( claim ) {
-    claim_->set_owner( this );
+  
+  void init( protocols::environment::claims::EnvClaimOP claim ) {
+	claim_ = claim;
+    claim_->set_owner( utility::pointer::dynamic_pointer_cast< protocols::environment::ClaimingMover >(get_self_ptr()) );
   }
 
   virtual void apply( core::pose::Pose& ){}

@@ -15,6 +15,7 @@
 #define INCLUDED_protocols_moves_Mover_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/access_ptr.hh>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 
@@ -29,6 +30,8 @@ namespace moves {
 class Mover;
 typedef utility::pointer::owning_ptr< Mover > MoverOP;
 typedef utility::pointer::owning_ptr< Mover const > MoverCOP;
+typedef utility::pointer::access_ptr< Mover > MoverAP;
+typedef utility::pointer::access_ptr< Mover const > MoverCAP;
 typedef boost::shared_ptr< Mover> MoverSP;
 
 typedef std::map< std::string const, MoverOP > Movers_map;

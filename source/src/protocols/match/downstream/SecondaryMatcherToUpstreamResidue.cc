@@ -290,7 +290,7 @@ SecondaryMatcherToUpstreamResidue::build(
 	for ( Size ii = 1; ii <= target_geomcst_coords_->n_restypes(); ++ii ) {
 		core::conformation::Residue target_residue( *target_geomcst_coords_->restype( ii ), false );
 		Size const ii_natoms = target_geomcst_coords_->n_atoms_for_restype( ii );
-    core::chemical::ResidueTypeCOP us_res_type = & upstream_residue.type();
+    core::chemical::ResidueTypeCOP us_res_type = upstream_residue.type().get_self_ptr();
     //TR << " sec. matched  residue type:  " << us_res_type->name() << std::endl;
 
 		for ( Size jj = 1; jj <= target_geomcst_coords_->n_rotamers_for_restype( ii ); ++jj ) {
@@ -471,8 +471,8 @@ SecondaryMatcherToUpstreamResidue::prepare_for_hit_generation(
 	for ( std::list< DownstreamAlgorithmOP >::const_iterator iter = dsalgs.begin(),
 			iter_end = dsalgs.end(); iter != iter_end; ++iter ) {
 		SecondaryMatcherToUpstreamResidueOP secmatcher =
-			dynamic_cast< SecondaryMatcherToUpstreamResidue * > ( iter->get() );
-		runtime_assert( secmatcher );
+			utility::pointer::dynamic_pointer_cast< SecondaryMatcherToUpstreamResidue > ( *iter );
+		runtime_assert( secmatcher != 0 );
 		secmatcher->smUR_pose_build_resids_ = matcher.get_pose_build_resids();
 		secmatch_algs.push_back( secmatcher );
 		secmatcher->reorder_restypes( *usbuilder );
@@ -595,9 +595,9 @@ SecondaryMatcherToUpstreamResidue::prepare_for_hit_generation_at_target_build_po
 			iter = dsalgs.begin(), iter_end = dsalgs.end();
 			iter != iter_end; ++iter ) {
 		if ( iter->get() != this ) {
-			SecondaryMatcherToUpstreamResidueOP other = dynamic_cast< SecondaryMatcherToUpstreamResidue * >
-				( iter->get() );
-			runtime_assert( other );
+			SecondaryMatcherToUpstreamResidueOP other = 
+				utility::pointer::dynamic_pointer_cast< SecondaryMatcherToUpstreamResidue > ( *iter );
+			runtime_assert( other != 0 );
 			//TR << "SecondaryMatcherToUpstreamResidue * other" << other << std::endl;
 			other->set_target_rotamer_coords( target_geomcst_coords_ );
 		}
@@ -633,7 +633,7 @@ SecondaryMatcherToUpstreamResidue::count_rotamer(
 			++last_seen_restype_index_;
 		}
 		runtime_assert( last_seen_restype_index_ <= target_restypes_.size() );
-		last_seen_restype_ = & upstream_conformation.type();
+		last_seen_restype_ = upstream_conformation.type().get_self_ptr();
 	}
 	++n_rotamers_per_target_restype_[ last_seen_restype_index_ ];
 }
@@ -655,7 +655,7 @@ SecondaryMatcherToUpstreamResidue::store_rotamer_coords(
 			++last_seen_restype_index_;
 		}
 		runtime_assert( last_seen_restype_index_ <= target_restypes_.size() );
-		last_seen_restype_ = & upstream_conformation.type();
+		last_seen_restype_ = upstream_conformation.type().get_self_ptr();
 		count_rotamer_for_lastseen_restype_ = 1;
 
 	}

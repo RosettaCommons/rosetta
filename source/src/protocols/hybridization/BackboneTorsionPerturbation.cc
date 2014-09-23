@@ -89,6 +89,7 @@ void BackboneTorsionPerturbation::init() {
 }
 
 void add_constraints(core::pose::Pose & pose, Size rsd1, Size rsd2) {
+	using namespace core::scoring::func;
     TR << "constrain " << rsd1 << " " << rsd2 << std::endl;
     for (Size ires=1; ires<rsd1-1; ++ires) {
         if (!pose.residue_type(ires).is_protein()) continue;
@@ -97,11 +98,10 @@ void add_constraints(core::pose::Pose & pose, Size rsd1, Size rsd2) {
 
             core::Real COORDDEV = 1.0;
             core::Real dist = pose.residue(ires).xyz(2).distance( pose.residue(jres).xyz(2) );
+            FuncOP fx = new ScalarWeightedFunc( 1.0, FuncOP( new USOGFunc( dist, COORDDEV ) ) );
             pose.add_constraint(
-                                new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(2,ires), core::id::AtomID(2,jres),
-                                                       new core::scoring::func::ScalarWeightedFunc( 1.0, new core::scoring::func::USOGFunc( dist, COORDDEV )  )
-                                                       )
-                                );
+                new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(2,ires), core::id::AtomID(2,jres), fx )
+			);
         }
     }
 }
@@ -337,7 +337,7 @@ void BackboneTorsionPerturbation::apply( core::pose::Pose & pose ) {
 
 void BackboneTorsionPerturbation::task_factory( core::pack::task::TaskFactoryCOP tf )
 {
-    runtime_assert( tf );
+    runtime_assert( tf != 0 );
     task_factory_ = tf;
 }
 

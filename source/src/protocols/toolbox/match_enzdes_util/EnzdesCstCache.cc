@@ -282,7 +282,7 @@ EnzCstTemplateResCache::EnzCstTemplateResCache( EnzCstTemplateResCache const & o
 {
 	seqpos_map_.clear();
 	for( SeqposTemplateAtomsMap::const_iterator map_it(other.seqpos_map_.begin()), map_end(other.seqpos_map_.end()); map_it != map_end; ++map_it ){
-		seqpos_map_.insert( std::pair< core::Size, EnzCstTemplateResAtomsOP >( map_it->first, new EnzCstTemplateResAtoms( *(map_it->second) ) ) );
+		seqpos_map_.insert( std::pair< core::Size, EnzCstTemplateResAtomsOP >( map_it->first, EnzCstTemplateResAtomsOP( new EnzCstTemplateResAtoms( *(map_it->second) ) ) ) );
 	}
 }
 
@@ -291,14 +291,14 @@ EnzCstTemplateResCache::~EnzCstTemplateResCache(){}
 void
 EnzCstTemplateResCache::set_position_in_pose( core::Size seqpos ){
 	seqpos_map_.clear();
-	seqpos_map_.insert( std::pair<core::Size,EnzCstTemplateResAtomsOP>(seqpos, new EnzCstTemplateResAtoms() ) );
+	seqpos_map_.insert( std::pair<core::Size,EnzCstTemplateResAtomsOP>(seqpos, EnzCstTemplateResAtomsOP( new EnzCstTemplateResAtoms() ) ) );
 	not_in_pose_ = false;
 	pose_data_uptodate_ = false;
 }
 
 void
 EnzCstTemplateResCache::add_position_in_pose( core::Size seqpos ){
-	seqpos_map_.insert( std::pair<core::Size,EnzCstTemplateResAtomsOP>(seqpos, new EnzCstTemplateResAtoms() ) );
+	seqpos_map_.insert( std::pair<core::Size,EnzCstTemplateResAtomsOP>(seqpos, EnzCstTemplateResAtomsOP( new EnzCstTemplateResAtoms() ) ) );
 	not_in_pose_ = false;
 	pose_data_uptodate_ = false;
 }

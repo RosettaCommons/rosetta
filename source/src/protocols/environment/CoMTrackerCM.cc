@@ -115,7 +115,8 @@ CoMTrackerCM::CoMTrackerCM( std::string const& name,
 
 void CoMTrackerCM::passport_updated(){
   if( this->has_passport() ){
-    SequenceAnnotationCOP ann = active_environment()->annotations();
+    EnvironmentCOP env( active_environment() );
+    SequenceAnnotationCOP ann = env->annotations();
 
     // utility::vector1< core::Size > mobile_residues = ann->resolve_seq( mobile_label_ );
     // com_residues_ = std::set< core::Size >( mobile_residues.begin(), mobile_residues.end() );
@@ -222,7 +223,8 @@ void CoMTrackerCM::update_com( core::pose::Pose& pose ) const {
   using core::kinematics::RT;
 
   // active_environment() returns NULL without a valid Passport!
-  SequenceAnnotationCOP ann = active_environment()->annotations();
+  EnvironmentCOP env( active_environment() );
+  SequenceAnnotationCOP ann = env->annotations();
 
   // get the sequence number of the virtual residue that should track the CoM
   core::Size const vrt_resid = ann->resolve_seq( LocalPosition( com_name_, 1 ) );
@@ -256,7 +258,7 @@ void CoMTrackerCM::parse_my_tag( utility::tag::TagCOP tag,
 
   // the mobile selector is inverted during brokering to determine which residues are stationary
   using namespace core::pack::task::residue_selector;
-  mobile_selector_ = datamap.get< ResidueSelector const* >( "ResidueSelector", tag->getOption<std::string>( "mobile_selector" ) );
+  mobile_selector_ = datamap.get_ptr< ResidueSelector >( "ResidueSelector", tag->getOption<std::string>( "mobile_selector" ) );
 
 
 }
@@ -278,7 +280,8 @@ claims::EnvClaims CoMTrackerCM::yield_claims( core::pose::Pose const& pose,
 
   assert( std::find( mobile_residues_.begin(), mobile_residues_.end(), true ) != mobile_residues_.end() );
 
-  claims::VirtResClaimOP vclaim = new claims::VirtResClaim( this,
+  moves::MoverOP this_ptr = get_self_ptr();
+  claims::VirtResClaimOP vclaim = new claims::VirtResClaim( utility::pointer::static_pointer_cast< ClaimingMover >(this_ptr),
                                                             LocalPosition( "BASE", mobile_connection_point ),
                                                             com_jump_name_,
                                                             com_name_ );

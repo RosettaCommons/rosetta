@@ -51,8 +51,8 @@ public:
 		nonzero_deriv_only_( false )
 	{}
 	inline void set_score_function( core::scoring::symmetry::SymmetricScoreFunction const & sfxn ) { sfxn_ = core::scoring::symmetry::symmetrize_scorefunction(sfxn); }
-	inline void set_pose( core::pose::Pose const & p ) { pose_ = new core::pose::Pose( p ); }
-	inline void set_movemap( core::kinematics::MoveMap const & mm ) { move_map_ = new core::kinematics::MoveMap( mm ); }
+	inline void set_pose( core::pose::Pose const & p ) { pose_ = core::pose::PoseOP( new core::pose::Pose( p ) ); }
+	inline void set_movemap( core::kinematics::MoveMap const & mm ) { move_map_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap( mm ) ); }
 	inline void set_nonzero_deriv_only( bool setting ) { nonzero_deriv_only_ = setting; }
 	inline void add_res_for_deriv( core::Size resid ) { res_for_derivs_list_.push_back( resid ); }
 
@@ -393,7 +393,7 @@ public:
 		SymmetricConformation const & symm_conf ( dynamic_cast<SymmetricConformation const &> ( pose_->conformation()) );
 		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
-		sym_min_map_ = new core::optimization::symmetry::SymMinimizerMap( *pose_, semisym_move_map, symm_info );
+		sym_min_map_ = core::optimization::symmetry::SymMinimizerMapOP( new core::optimization::symmetry::SymMinimizerMap( *pose_, semisym_move_map, symm_info ) );
 
 		pose_->energies().set_use_nblist( *pose_, sym_min_map_->domain_map(), false );
 		sfxn_->setup_for_minimizing( *pose_, *sym_min_map_ );

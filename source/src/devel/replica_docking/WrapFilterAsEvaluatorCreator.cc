@@ -79,6 +79,8 @@ void WrapFilterAsEvaluatorCreator::add_evaluators( protocols::evaluation::MetaPo
 	using namespace core;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	using protocols::evaluation::PoseEvaluatorOP;
+	using protocols::filters::FilterOP;
 
 
 	if ( option[ OptionKeys::evaluation::I_sc ].user() || option[ OptionKeys::evaluation::DockMetrics ].user() ) {
@@ -88,24 +90,24 @@ void WrapFilterAsEvaluatorCreator::add_evaluators( protocols::evaluation::MetaPo
 	}
 	if ( option[ OptionKeys::evaluation::Irms ].user() || option[ OptionKeys::evaluation::DockMetrics ].user() ) {
 		tr << "Add Irms evaluator " << std::endl;
-		eval.add_evaluation( new WrapFilterAsEvaluator( new devel::replica_docking::IrmsdFilter(), "Irms" ) );
+		eval.add_evaluation( new WrapFilterAsEvaluator( FilterOP( new devel::replica_docking::IrmsdFilter() ), "Irms" ) );
 	}
 
 	if ( option[ OptionKeys::evaluation::Ca_Irms ].user() || option[ OptionKeys::evaluation::DockMetrics ].user() ) {
 		tr << "Add Irms evaluator " << std::endl;
-		eval.add_evaluation( new WrapFilterAsEvaluator( new devel::replica_docking::CaIrmsdFilter(), "Ca_Irms" ) );
+		eval.add_evaluation( new WrapFilterAsEvaluator( FilterOP( new devel::replica_docking::CaIrmsdFilter() ), "Ca_Irms" ) );
 	}
 	if ( option[ OptionKeys::evaluation::Fnat ].user() || option[ OptionKeys::evaluation::DockMetrics ].user() ) {
 		tr << "Add evaluator of Fnat " << std::endl;
-		eval.add_evaluation( new WrapFilterAsEvaluator( new FnatFilter(), "Fnat_n" ) );
+		eval.add_evaluation( new WrapFilterAsEvaluator( FilterOP( new FnatFilter() ), "Fnat_n" ) );
 	}
 	if ( option[ OptionKeys::evaluation::Lrmsd ].user() || option[ OptionKeys::evaluation::DockMetrics ].user() ) {
 		tr << "Add Lrmsd evaluator " << std::endl;
-		eval.add_evaluation( new WrapFilterAsEvaluator( new devel::replica_docking::LrmsdFilter(), "Lrmsd" ) );
+		eval.add_evaluation( new WrapFilterAsEvaluator( FilterOP( new devel::replica_docking::LrmsdFilter() ), "Lrmsd" ) );
 	}
 	if ( option[ OptionKeys::evaluation::Fnonnat ].user() || option[ OptionKeys::evaluation::DockMetrics ].user() ) {
 		tr << "Add evaluator of Fnonnat " << std::endl;
-		eval.add_evaluation( new WrapFilterAsEvaluator( new FnonnatFilter(), "Fnonnat" ) );
+		eval.add_evaluation( new WrapFilterAsEvaluator( FilterOP( new FnonnatFilter() ), "Fnonnat" ) );
 	}
 }
 

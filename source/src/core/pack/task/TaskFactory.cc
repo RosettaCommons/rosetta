@@ -53,7 +53,7 @@ TaskFactory::operator = ( TaskFactory const & rhs )
 void
 TaskFactory::modify_task( core::pose::Pose const & pose, PackerTaskOP task ) const
 {
-	runtime_assert( task );
+	runtime_assert( task != 0 );
 	BOOST_FOREACH( TaskOperationOP const taskop, *this )
 		taskop->apply( pose, *task );
 }
@@ -70,12 +70,6 @@ TaskFactory::create_task_and_apply_taskoperations( pose::Pose const & pose ) con
 // clones the input task, and pushes it back into the list
 void
 TaskFactory::push_back( TaskOperationCOP taskop )
-{
-	operations_.push_back( taskop->clone() );
-}
-
-void
-TaskFactory::push_back( TaskOperationSP taskop )
 {
 	operations_.push_back( taskop->clone() );
 }

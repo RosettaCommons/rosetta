@@ -92,7 +92,7 @@ using namespace ObjexxFCL;
 
 class FragmentConstantLengthTest : public CxxTest::TestSuite
 {
-	chemical::ResidueTypeSetCAP residue_set_;
+	chemical::ResidueTypeSetCOP residue_set_;
 	pose::Pose pose_random_, pose_;
 public:
 	FragmentConstantLengthTest() {};

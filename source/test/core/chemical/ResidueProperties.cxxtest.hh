@@ -45,14 +45,14 @@ public:  // Standard methods //////////////////////////////////////////////////
 		core_init();
 
 		ChemicalManager * manager( ChemicalManager::get_instance() );
-		AtomTypeSetCAP atom_types = manager->atom_type_set( FA_STANDARD );
-		ElementSetCAP element_types = manager->element_set( "default" );
-		MMAtomTypeSetCAP mm_atom_types = manager->mm_atom_type_set( FA_STANDARD );
-		orbitals::OrbitalTypeSetCAP orbital_types = manager->orbital_type_set( FA_STANDARD );
-		ResidueTypeAP residue_type = new ResidueType( atom_types, element_types, mm_atom_types, orbital_types );
-		residue_type->name( "test_residue" );
+		AtomTypeSetCOP atom_types = manager->atom_type_set( FA_STANDARD );
+		ElementSetCOP element_types = manager->element_set( "default" );
+		MMAtomTypeSetCOP mm_atom_types = manager->mm_atom_type_set( FA_STANDARD );
+		orbitals::OrbitalTypeSetCOP orbital_types = manager->orbital_type_set( FA_STANDARD );
+		residue_type_ = ResidueTypeOP( new ResidueType( atom_types, element_types, mm_atom_types, orbital_types ) );
+		residue_type_->name( "test_residue" );
 
-		test_properties_ = new ResidueProperties( residue_type );
+		test_properties_ = core::chemical::ResiduePropertiesOP( new ResidueProperties( residue_type_.get() ) );
 	}
 
 	// Destruction
@@ -133,6 +133,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 
 
 private:  // Private data /////////////////////////////////////////////////////
+	core::chemical::ResidueTypeOP residue_type_;
 	core::chemical::ResiduePropertiesOP test_properties_;
 
 };  // class ResiduePropertiesTests

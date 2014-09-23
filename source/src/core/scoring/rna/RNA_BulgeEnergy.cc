@@ -50,7 +50,7 @@ RNA_BulgeEnergyCreator::score_types_for_method() const {
 
 /// ctor
 RNA_BulgeEnergy::RNA_BulgeEnergy() :
-	parent( new RNA_BulgeEnergyCreator )
+	parent( methods::EnergyMethodCreatorOP( new RNA_BulgeEnergyCreator ) )
 {}
 
 RNA_BulgeEnergy::~RNA_BulgeEnergy() {}
