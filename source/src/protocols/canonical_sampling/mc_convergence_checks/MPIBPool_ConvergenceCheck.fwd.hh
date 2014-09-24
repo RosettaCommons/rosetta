@@ -24,8 +24,8 @@ namespace protocols {
 namespace canonical_sampling {
 namespace mc_convergence_checks{
 class MPIBPool_RMSD;
-typedef utility::pointer::owning_ptr< MPIBPool_RMSD > MPIBPool_RMSD_OP;
-typedef utility::pointer::owning_ptr< MPIBPool_RMSD const > MPIBPool_RMSD_COP;
+typedef utility::pointer::shared_ptr< MPIBPool_RMSD > MPIBPool_RMSD_OP;
+typedef utility::pointer::shared_ptr< MPIBPool_RMSD const > MPIBPool_RMSD_COP;
 }
 } // moves
 } // protocols
