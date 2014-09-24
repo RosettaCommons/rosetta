@@ -26,7 +26,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/AA.hh>
-#include <core/conformation/ResidueFactory.hh>
+#include <core/chemical/ResidueProperties.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
@@ -432,33 +432,39 @@ PyObject* PhenixInterface::pose_to_pycoords( core::pose::Pose const & pose ) {
 				coords.push_back( rsd_i.xyz( j ) );
 			}
 
-			if (add_cys_hg) {
-				TR.Debug << "Warning: Correcting disulfide (symmetric?)  at residue " << i << std::endl;
+			if (add_cys_hg) { // disulfide accross symm interface
+				TR.Debug << "Warning: Correcting disulfide at residue " << i << std::endl;
 
 				// convert CYS->CYD
 				core::conformation::Residue newCys = rsd_i;
 				chemical::ResidueTypeSet const & residue_type_set = newCys.type().residue_type_set();
 				chemical::ResidueTypeCOPs const & possible_types = residue_type_set.name3_map( "CYS" );
-				utility::vector1< chemical::VariantType > variant_types = newCys.type().variant_types();
-				variant_types.erase( std::find( variant_types.begin(), variant_types.end(), chemical::DISULFIDE ) );
+				utility::vector1< std::string > variant_types = newCys.type().properties().get_list_of_variants();
+				variant_types.erase( std::find( variant_types.begin(), variant_types.end(), "DISULFIDE" ) );
 
-				bool matched = false;
+				// Run through all possible new residue types.
 				chemical::ResidueTypeCOP matchedRes;
-				for ( chemical::ResidueTypeCOPs::const_iterator type_iter = possible_types.begin(), type_end = possible_types.end();
-				      type_iter != type_end && !matched ; ++type_iter ) {
+				bool matched;
+				for ( chemical::ResidueTypeCOPs::const_iterator
+					type_iter = possible_types.begin(), type_end = possible_types.end();
+					type_iter != type_end; ++type_iter ) {
+
+					matched = true;
 					for ( Size kk = 1; kk <= variant_types.size(); ++kk ) {
 						if ( ! (*type_iter)->has_variant_type( variant_types[ kk ] ) ) {
-							matched = true;
-							matchedRes = (*type_iter);
+							matched = false;
 							break;
 						}
 					}
+
+					if ( matched ) { // Do replacement.
+						core::conformation::ResidueOP new_res = core::conformation::ResidueFactory::create_residue( **type_iter, newCys, pose.conformation()  );
+						copy_residue_coordinates_and_rebuild_missing_atoms( newCys, *new_res, pose.conformation() );
+						coords.push_back( new_res->xyz( new_res->atom_index(" HG ")) );
+						break;
+					}
 				}
-				if ( matched ) { // Do replacement.
-					core::conformation::ResidueOP new_res = core::conformation::ResidueFactory::create_residue( *matchedRes, newCys, pose.conformation()  );
-					copy_residue_coordinates_and_rebuild_missing_atoms( newCys, *new_res, pose.conformation() );
-					coords.push_back( new_res->xyz( new_res->atom_index(" HG ")) );
-				} else {
+				if (!matched) {
 					// fallback: just copy ref_pose_
 					coords.push_back( ref_pose_->residue(i).xyz( ref_pose_->residue(i).atom_index(" HG ")) );
 				}
@@ -921,7 +927,7 @@ void PhenixInterface::initialize_target_evaluator(
 	//fix_bfactorsH( pose_asu );
 	//fix_bfactorsMissing( pose_asu );
 
-	ref_pose_ = new core::pose::Pose( pose_asu );
+	ref_pose_ = core::pose::PoseOP( new core::pose::Pose( pose_asu ) );
 	//ref_pose_->conformation().detect_disulfides();
 
 	chdir(tempdir_.c_str());
@@ -1020,7 +1026,7 @@ void PhenixInterface::initialize_target_evaluator(
 	{ // grab stdout from the python script
 		const int MAXLEN=16000;
 		char buffer[MAXLEN+1] = {0};
-		int out_pipe[2], saved_stdout;
+		//int out_pipe[2], saved_stdout;
 
 		char run_str[] = "run";
 		char s9_str[] = "([sssssssss])";
@@ -1062,8 +1068,8 @@ void PhenixInterface::initialize_target_evaluator(
 		}
 	}
 
-	core::Real rwork = getR();
-	core::Real rfree = getRfree();
+	//core::Real rwork = getR();
+	//core::Real rfree = getRfree();
 
 	//
 	Py_XDECREF(pModule);
