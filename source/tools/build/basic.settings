@@ -1186,18 +1186,22 @@ settings = {
     "gcc, cxx11thread" : {
         "appends" : {
             "flags" : {
-                "cxx" : [ "std=c++0x" ],
+                "cxx" : [ "std=c++11" ],
             },
             "defines" : [
-                "MULTI_THREADED",
-                "CXX11"
+                "CXX11",
+                "PTR_STD",
+                "MULTI_THREADED"
             ],
             "libraries" : [ "pthread" ]
         },
         "removes" : {
             "flags" : {
-                "cxx" : [ "std=c++98" ],
+                "cxx" : [ "std=c++98", "std=c++0x" ],
             },
+            "defines" : [
+                "PTR_BOOST"
+            ]
         },
     },
 

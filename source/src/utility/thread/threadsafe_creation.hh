@@ -112,20 +112,20 @@ safely_create_singleton(
 ///
 /// This function returns an iterator for the newly-inserted map element.
 template < class T >
-typename std::map< std::string, utility::pointer::owning_ptr< T > >::const_iterator
+typename std::map< std::string, utility::pointer::shared_ptr< T > >::const_iterator
 create_and_insert(
-	typename boost::function< utility::pointer::owning_ptr< T > () > builder,
+	typename boost::function< utility::pointer::shared_ptr< T > () > builder,
 	utility::thread::ReadWriteMutex & wrm,
 	std::string const & tname,
-	typename std::map< std::string, utility::pointer::owning_ptr< T > > & tmap
+	typename std::map< std::string, utility::pointer::shared_ptr< T > > & tmap
 )
 {
 	utility::thread::WriteLockGuard lock( wrm );
-	typename std::map< std::string, utility::pointer::owning_ptr< T > >::const_iterator iter;
+	typename std::map< std::string, utility::pointer::shared_ptr< T > >::const_iterator iter;
 
 	iter = tmap.find( tname );
 	if ( iter == tmap.end() ) {
-		utility::pointer::owning_ptr< T > newT = builder();
+		utility::pointer::shared_ptr< T > newT = builder();
 		iter = tmap.insert( std::make_pair( tname, newT )).first;
 	}
 	return iter;

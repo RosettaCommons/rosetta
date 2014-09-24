@@ -26,14 +26,14 @@ class MTJobGroup;
 
 class MultiThreadedJobDistributor;
 
-typedef utility::pointer::owning_ptr< MTJob > MTJobOP;
-typedef utility::pointer::owning_ptr< MTJob const > MTJobCOP;
+typedef utility::pointer::shared_ptr< MTJob > MTJobOP;
+typedef utility::pointer::shared_ptr< MTJob const > MTJobCOP;
 
-typedef utility::pointer::owning_ptr< MTJobGroup > MTJobGroupOP;
-typedef utility::pointer::owning_ptr< MTJobGroup const > MTJobGroupCOP;
+typedef utility::pointer::shared_ptr< MTJobGroup > MTJobGroupOP;
+typedef utility::pointer::shared_ptr< MTJobGroup const > MTJobGroupCOP;
 
-typedef utility::pointer::owning_ptr< RunningJob > RunningJobOP;
-typedef utility::pointer::owning_ptr< RunningJob const > RunningJobCOP;
+typedef utility::pointer::shared_ptr< RunningJob > RunningJobOP;
+typedef utility::pointer::shared_ptr< RunningJob const > RunningJobCOP;
 
 }//jd2
 }//protocols

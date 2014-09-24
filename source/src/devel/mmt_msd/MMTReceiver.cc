@@ -356,7 +356,7 @@ MMTReceiver::receive_new_job()
 	//TR << "Launching job in separate thread" << std::endl;
 
 	// launch the job in a new thread and let that thread run in the background
-	std::thread jobthread( &MMTPackingJob::go, job() );
+	std::thread jobthread( &MMTPackingJob::go, job );
 	jobthread.detach();
 
 	//TR << "Launched job in separate thread" << std::endl;

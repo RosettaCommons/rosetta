@@ -70,7 +70,7 @@ thread_local RunningJobOP running_job_;
 
 void
 set_running_job( RunningJob const & job ) {
-	running_job_ = new RunningJob( job );
+	running_job_ = RunningJobOP( new RunningJob( job ) );
 }
 
 RunningJob const &
@@ -369,17 +369,17 @@ void MultiThreadedJobDistributor::initialize_jobs_list() {
 
 	// Group together all the jobs with the same output_name() (i.e. that have different nstruct indices).
 	// These jobs share a single counter for how many retries have been attempted for the job.
-	MTJobGroupOP group = new MTJobGroup;
+	MTJobGroupOP group( new MTJobGroup );
 	mt_job_groups_.push_back( group );
 
 	for ( core::Size ii = 1; ii <= parent_jobs_list.size(); ++ii ) {
-		MTJobOP mtjob = new MTJob();
+		MTJobOP mtjob( new MTJob );
 		mtjob->index( ii );
 		mtjob->rng_seed( seed + ii );
 		mtjob->job( parent_jobs_list[ ii ] );
 		mtjob->output_name( job_outputter()->output_name( parent_jobs_list[ ii ] ));
 		if ( ii != 1 && job_outputter()->output_name( parent_jobs_list[ ii-1 ] ) != job_outputter()->output_name( parent_jobs_list[ ii ] ) ) {
-			group = new MTJobGroup;
+			group = MTJobGroupOP( new MTJobGroup );
 			mt_job_groups_.push_back( group );
 		}
 		mtjob->mtjob_group( group );
@@ -405,7 +405,7 @@ void MultiThreadedJobDistributor::launch_new_job( protocols::moves::MoverOP move
 	MTJobOP mtjob = mt_jobs_queue_.front();
 	mt_jobs_queue_.pop_front();
 
-	core::pose::PoseOP pose = new core::pose::Pose;
+	core::pose::PoseOP pose( new core::pose::Pose );
 	job_inputter()->pose_from_job( *pose, mtjob->job() );
 
 	if ( using_parser() ) {
