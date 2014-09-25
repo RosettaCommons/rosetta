@@ -669,20 +669,6 @@ ResidueType::residue_connection( Size const i )
 	return residue_connections_[ i ];
 }
 
-///////////////////////////////////////////////////////////////////////////////
-///
-/// @brief Get the chemical atom_type for this atom by it index number in this residue
-///
-/// @details If we want the atom_type index (integer), we get this from
-/// the conformation::Atom itself, as seen in the code below
-AtomType const &
-ResidueType::atom_type( Size const atomno ) const
-{
-	PyAssert((atomno > 0) && (atomno <= ordered_atoms_.size()), "ResidueType::atom_type( Size const atomno ): atomno is not in this ResidueType!");
-	assert( (atomno > 0) && (atomno <= ordered_atoms_.size()) );
-	AtomTypeSetCOP atom_types( atom_types_ );
-	return ( *atom_types )[ graph_[ ordered_atoms_[atomno] ].atom_type_index() ];
-}
 
 AtomType const &
 ResidueType::atom_type( VD const vd ) const
@@ -693,8 +679,7 @@ ResidueType::atom_type( VD const vd ) const
 			"ResidueType::atom_type( VD const vd ): vd is not in this ResidueType!");
 	assert( (vd != ResidueGraph::null_vertex()) &&
 			( std::find(ordered_atoms_.begin(), ordered_atoms_.end(), vd) != ordered_atoms_.end()) );
-	AtomTypeSetCOP atom_types( atom_types_ );
-	return ( *atom_types )[ graph_[ vd ].atom_type_index() ];
+	return ( *atom_types_ )[ graph_[ vd ].atom_type_index() ];
 }
 
 /// @brief Get the atom name by index

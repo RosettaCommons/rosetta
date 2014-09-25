@@ -67,6 +67,7 @@
 #include <utility/keys/Key4Tuple.hh>
 #include <utility/keys/Key3Tuple.hh>
 #include <utility/excn/Exceptions.hh>
+#include <utility/PyAssert.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -161,16 +162,16 @@ public:
 			orbitals::OrbitalTypeSetCOP orbital_types//,
 	);
 
-	ResidueType(ResidueType const & residue_type);
+	ResidueType( ResidueType const & residue_type );
 
 	/// @brief make a copy
 	ResidueTypeOP clone() const;
 
 	/// self pointers
-	inline ResidueTypeCOP get_self_ptr() const { return shared_from_this(); }
-	inline ResidueTypeOP get_self_ptr() { return shared_from_this(); }
+	inline ResidueTypeCOP get_self_ptr() const      { return shared_from_this(); }
+	inline ResidueTypeOP  get_self_ptr()            { return shared_from_this(); }
 	inline ResidueTypeCAP get_self_weak_ptr() const { return ResidueTypeCAP( shared_from_this() ); }
-	inline ResidueTypeAP get_self_weak_ptr() { return ResidueTypeAP( shared_from_this() ); }
+	inline ResidueTypeAP  get_self_weak_ptr()       { return ResidueTypeAP( shared_from_this() ); }
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -182,16 +183,14 @@ public:
 	AtomTypeSet const &
 	atom_type_set() const
 	{
-		AtomTypeSetCOP op( atom_types_ );
-		return *op;
+		return *atom_types_;
 	}
 
 	/// @brief access by reference the atomset for which this residue is constructed
 	ElementSet const &
 	element_set() const
 	{
-		ElementSetCOP op( elements_ );
-		return *op;
+		return *elements_;
 	}
 
 	/// @brief access by const pointer the atomset for which this residue is constructed
@@ -217,8 +216,16 @@ public:
 	Bond const & bond(std::string const & atom1, std::string const & atom2) const;
 
 	/// @brief Get the chemical atom_type for this atom by it index number in this residue
+	/// @details If we want the atom_type index (integer), we get this from
+	/// the conformation::Atom itself, as seen in the code below
 	AtomType const &
-	atom_type( Size const atomno ) const;
+	atom_type( Size const atomno ) const
+	{
+		PyAssert((atomno > 0) && (atomno <= ordered_atoms_.size()), "ResidueType::atom_type( Size const atomno ): atomno is not in this ResidueType!");
+		assert( (atomno > 0) && (atomno <= ordered_atoms_.size()) );
+		return ( *atom_types_ )[ graph_[ ordered_atoms_[atomno] ].atom_type_index() ];
+	}
+
 
 	/// @brief Get the chemical atom_type for this atom by it index number in this residue
 	AtomType const &

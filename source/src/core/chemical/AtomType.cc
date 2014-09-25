@@ -86,12 +86,11 @@ operator<< (std::ostream & out, const AtomType & atom_type ){
 }
 
 
-///@brief is atom type virtual?
-bool AtomType::is_virtual() const
-{
-	assert( (name_ == "VIRT") ? atom_is_virtual_ : true ); // Raise an error if an atom type named VIRT is not virtual.
-  return (atom_is_virtual_);
-}
+// ///@brief is atom type virtual?
+// bool AtomType::is_virtual() const
+// {
+//   return (atom_is_virtual_);
+// }
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief set LJ and LK solvation parameter for this atom type
