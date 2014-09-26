@@ -109,7 +109,7 @@ sources = {
 	"membrane/io" : [
         #fails on testing server but not on my machine
         #"SpanFileLoader",
-		"LipsFileLoader",
+		#"LipsFileLoader",
 	],
     "membrane" : [
        # "MPDatabaseIO",
