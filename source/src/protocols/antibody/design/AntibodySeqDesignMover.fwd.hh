@@ -7,8 +7,7 @@
 // (c) members of the Rosetta Commons. For more information, see
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
-
-/// @file protocols/antibody/design/AntibodyGraftDesignMover.fwd.hh
+/// @file protocols/antibody_design/AntibodySeqDesignMover.fwd.hh
 /// @brief 
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
@@ -37,5 +36,7 @@ typedef utility::pointer::shared_ptr< AntibodySeqDesignMover const > AntibodySeq
 } //namespace protocols
 
 
-#endif	//INCLUDED_protocols_antibody_design_AntibodyGraftDesignMover.fwd.hh
+#endif	//INCLUDED_protocols_antibody_design_AntibodySeqDesignMover.fwd.hh
+
+
 

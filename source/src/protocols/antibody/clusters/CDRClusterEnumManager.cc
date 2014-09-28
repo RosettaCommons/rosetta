@@ -26,7 +26,7 @@
 namespace protocols {
 namespace antibody {
 namespace clusters {
-	
+
 
 CDRClusterEnumManager::CDRClusterEnumManager() {
 	setup();
@@ -151,7 +151,7 @@ CDRClusterEnumManager::setup() {
 	enum_to_string_[L3_9_cis7_2] = "L3-9-cis7-2";
 	enum_to_string_[L3_9_cis7_3] = "L3-9-cis7-3";
 	enum_to_string_[L3_10_cis8_1] = "L3-10-cis8-1";
-	enum_to_string_[L3_10_cis7_8_1] = "L3-10-cis7-8-1";
+	enum_to_string_[L3_10_cis7_8_1] = "L3-10-cis7,8-1";
 	enum_to_string_[L3_11_cis7_1] = "L3-11-cis7-1";
 	enum_to_string_[NA] = "NA";
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -268,7 +268,7 @@ CDRClusterEnumManager::setup() {
 	string_to_enum_["L3-9-cis7-2"] = L3_9_cis7_2;
 	string_to_enum_["L3-9-cis7-3"] = L3_9_cis7_3;
 	string_to_enum_["L3-10-cis8-1"] = L3_10_cis8_1;
-	string_to_enum_["L3-10-cis7-8-1"] = L3_10_cis7_8_1;
+	string_to_enum_["L3-10-cis7,8-1"] = L3_10_cis7_8_1;
 	string_to_enum_["L3-11-cis7-1"] = L3_11_cis7_1;
 	string_to_enum_["NA"] = NA;
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

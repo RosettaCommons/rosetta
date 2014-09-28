@@ -77,11 +77,19 @@ public:
 	bool ramp_down_constraints() const { return ramp_down_constraints_; }
 	bool constrain_relax_segments() const { return constrain_relax_segments_; }
 	
+	bool minimize_bond_lengths() const { return minimize_bond_lengths_; }
+	bool minimize_bond_angles() const { return minimize_bond_angles_; }
+	
 	// Public mutators
 	void set_movemap( core::kinematics::MoveMapOP movemap ) { movemap_ = movemap; }
 	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn ) { scorefxn_ = scorefxn; }
 	void set_task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
 
+	///@brief Use cartesian (minimization step)
+	///@details
+	/// Sets to use the lbfgs_armijo_nonmonotone if true or FR default if false
+	/// Recommended to set max_iter to 200.
+	/// Requires scorefunction setup for non-ideal minimization.
 	void cartesian( bool newval ) { cartesian_ = newval; }
 	void min_type( std::string min_type ) { min_type_ = min_type; }
 	void max_iter( Size max_iter ) { max_iter_ = max_iter; }
@@ -96,14 +104,14 @@ public:
 		ramp_down_constraints_ =  ramp_down_constraints;
 	}
 
+	void minimize_bond_lengths( bool minimize_bond_lengths ) { minimize_bond_lengths_ = minimize_bond_lengths; }
+	void minimize_bond_angles( bool minimize_bond_angles ) { minimize_bond_angles_ = minimize_bond_angles; }
 
 protected:
 	core::scoring::ScoreFunctionOP get_scorefxn() { return scorefxn_; }
 
 	// Accessors -------------------------------------
 	bool fix_omega() const { return fix_omega_; }
-	bool minimize_bond_lengths() const { return minimize_bond_lengths_; }
-	bool minimize_bond_angles() const { return minimize_bond_angles_; }
 	int minimize_bondlength_subset() const { return minimize_bondlength_subset_; }
 	int minimize_bondangle_subset() const { return minimize_bondangle_subset_; }
 	bool limit_aroma_chi2() const { return limit_aroma_chi2_; }
@@ -111,10 +119,9 @@ protected:
 
 	// Mutators -------------------------------------
 	void fix_omega( bool fix_omega ) { fix_omega_ = fix_omega; }
-  void minimize_bond_lengths( bool minimize_bond_lengths ) { minimize_bond_lengths_ = minimize_bond_lengths; }
-  void minimize_bond_angles( bool minimize_bond_angles ) { minimize_bond_angles_ = minimize_bond_angles; }
-  void minimize_bondangle_subset( int minimize_bondangle_subset ) { minimize_bondangle_subset_ = minimize_bondangle_subset; }
-  void minimize_bondlength_subset( int minimize_bondlength_subset ) { minimize_bondlength_subset_ = minimize_bondlength_subset; }
+  
+	void minimize_bondangle_subset( int minimize_bondangle_subset ) { minimize_bondangle_subset_ = minimize_bondangle_subset; }
+	void minimize_bondlength_subset( int minimize_bondlength_subset ) { minimize_bondlength_subset_ = minimize_bondlength_subset; }
 	
 
 	void initialize_movemap( core::pose::Pose const & pose, core::kinematics::MoveMap & movemap );

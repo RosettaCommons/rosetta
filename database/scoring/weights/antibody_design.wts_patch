@@ -1,0 +1,17 @@
+#Weights for RosettaAntibodyDesign
+
+#Jared Adolf-Bryfogle June 2014
+#Dunbrak Lab
+
+#Weight set based on talaris2013 with dihedral, coordinate, and atom_pair constraints
+#The atom_pair constraints are there for SiteConstraints between the epitope and paratope.
+#They have been optimized (by eye) to not dominate the scorefunction as there are many. This is still not optimum, and may have to be done dynamically based on the number of constraints.   
+
+#Reference energies will be reweighted to capitulate native CDR sequence recoveries
+
+
+chainbreak = 100
+linear_chainbreak = 100
+dihedral_constraint = 1.0
+coordinate_constraint = 1.0
+atom_pair_constraint = .01

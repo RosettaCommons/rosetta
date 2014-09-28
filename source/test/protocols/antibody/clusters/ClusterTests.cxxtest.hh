@@ -19,11 +19,13 @@
 // Project Headers
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/util.hh>
+#include <protocols/antibody/constraints/util.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
 #include <protocols/antibody/clusters/util.hh>
 #include <protocols/antibody/clusters/CDRClusterFeatures.hh>
 #include <protocols/antibody/clusters/CDRCluster.hh>
+#include <protocols/antibody/constraints/util.hh>
 #include <protocols/features/StructureFeatures.hh>
 #include <protocols/features/FeaturesReporter.hh>
 
@@ -43,8 +45,11 @@
 
 using namespace protocols::antibody;
 using namespace protocols::antibody::clusters;
+using namespace protocols::antibody::constraints;
 using namespace protocols::features;
-static basic::Tracer TR("protocols.antibody.clusters.ClusterTests");
+
+static thread_local basic::Tracer TR("protocols.antibody.clusters.ClusterTests");
+
 class ClusterTests : public CxxTest::TestSuite {
 	core::pose::Pose ab_pose; //Full PDB
 	AntibodyInfoOP ab_info;
@@ -96,7 +101,7 @@ public:
 		TS_ASSERT_EQUALS("L2-8-1", ab_info->get_cluster_name(ab_info->get_CDR_cluster(l2)->cluster()));
 		TS_ASSERT_EQUALS("L3-8-1", ab_info->get_cluster_name(ab_info->get_CDR_cluster(l3)->cluster()));
 
-		CDRClusterOP cluster_L1 = ab_info->get_CDR_cluster(l1);
+		CDRClusterCOP cluster_L1 = ab_info->get_CDR_cluster(l1);
 		TS_ASSERT_EQUALS(l1, cluster_L1->cdr());
 		TS_ASSERT_EQUALS('L', cluster_L1->chain());
 		TS_ASSERT_EQUALS(24, cluster_L1->pdb_start());
@@ -124,7 +129,7 @@ public:
 		ab_pose.remove_constraints();
 
 		utility::vector1< core::scoring::constraints::ConstraintCOP > constraints;
-		result = protocols::antibody::add_harmonic_cluster_constraints(ab_info, ab_pose, constraints);
+		result = protocols::antibody::constraints::add_harmonic_cluster_constraints(ab_info, ab_pose, constraints);
 		for (core::Size i = 1; i <= core::Size(ab_info->get_total_num_CDRs()); ++i){
 			CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
 			TS_ASSERT(result[cdr_name]);

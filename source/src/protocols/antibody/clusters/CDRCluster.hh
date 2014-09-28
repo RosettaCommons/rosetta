@@ -35,6 +35,10 @@ class CDRCluster : public utility::pointer::ReferenceCount {
 public:
 	CDRCluster(core::pose::Pose const & pose, CDRNameEnum const cdr, core::Size const cdr_length, CDRClusterEnum const cluster, core::Size const start, core::Real const distance);
 	
+	CDRCluster(CDRCluster const & src);
+	
+	CDRClusterOP clone() const;
+	
 	virtual ~CDRCluster();
 	
 	CDRNameEnum

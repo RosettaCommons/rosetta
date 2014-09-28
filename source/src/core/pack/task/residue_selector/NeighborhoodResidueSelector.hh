@@ -8,7 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/pack/task/residue_selector/NeighborhoodResidueSelector.hh
-/// @brief  The NeighborhoodResidueSelector selects residues in a given proximity of set focus residues
+/// @brief  The NeighborhoodResidueSelector selects residues in a given proximity of set focus residues.
+///  Clears the Passed ResidueSubset.
 /// @author Robert Lindner (rlindner@mpimf-heidelberg.mpg.de)
 
 #ifndef INCLUDED_core_pack_task_residue_selector_NeighborhoodResidueSelector_HH

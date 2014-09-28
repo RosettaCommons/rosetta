@@ -28,6 +28,16 @@ sources = {
 		"ClusterTests",
 	],
 
+	"antibody/constraints" : [
+		"AntibodyConstraintTests",
+	],
+	"antibody/database":[
+		"AntibodyDatabase",
+	],
+	"antibody/design":[
+		"AntibodyDesignOptions",
+		"AntibodySeqDesign",
+	],
 	"branch_angle" : [
 		"BranchAngleOptimizer",
 	],
@@ -385,6 +395,12 @@ testinputfiles = [
 	"antibody/2j88.pdb",
 	"antibody/1bln_AB_chothia.pdb",
 	"antibody/1bln_AB_aho.pdb",
+	 "antibody/aho_with_antigen.pdb",
+	 "antibody/database/cdr_set_instructions.txt",
+	"antibody/database/cdr_set_instructions_load_test.txt",
+	 "antibody/design/graft_des_instructions.txt",
+	 "antibody/design/seq_des_instructions.txt",
+	
 	"branch_angle/BranchAngleOptimizer.u",
 	"branch_angle/branch_angle_1.txt",
 	"branch_angle/branch_angle_2.txt",

@@ -1,0 +1,35 @@
+
+
+
+
+#Fix all Heavy chain to shorten test
+H1 FIX
+H2 FIX
+H3 FIX
+
+#Test L3 conservative design works
+#L3 GRAFT FIX
+L3 SeqDESIGN PROFILES CONSERVATIVE
+
+#Test only using Human grafts
+ALL CDR_SET INCLUDEONLY SPECIES Hu Mo
+
+#Test excluding certain PDBs and setting minimizer and types
+L1 CDR_SET EXCLUDE PDBIDs 1A0Q 1A2Y 1A3R 1A6T 1A7Q
+L1 CDR_SET INCLUDEONLY TYPES 1 2 3
+
+L1 GraftDesign MINTYPE relax
+#L1 GraftDesign MIN_NEIGHBORS L3 L2
+
+L3 GraftDesign MINTYPE min
+L3 GraftDesign MIN_NEIGHBORS L1 H3
+
+L2 GraftDesign MINTYPE repack
+L2 GraftDesign MIN_NEIGHBORS L1 L3
+
+L1 GraftDesign WEIGHT 2
+L2 GraftDesign WEIGHT .5
+L3 GRAFTDESIGN WEIGHT 2
+
+#L1 CDR_SET LENGTH MIN 14
+

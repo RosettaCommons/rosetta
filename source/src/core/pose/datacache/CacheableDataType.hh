@@ -85,13 +85,14 @@ enum Enum {
 	FULL_MODEL_INFO, // pose/full_model_info/FullModelInfo.cc [map residues/chains to full model, for stepwise buildup]
 	MULTIPLE_POSE_INFO, // pose/multiple_pose_info/MultiplePoseInfo.cc [info on sister poses, for stepwise buildup]
 	NCS_RESIDUE_MAPPING,
-  WRITEABLE_DATA,
+	WRITEABLE_DATA,
+	CDR_CLUSTER_INFO, // antibody/clusters/CDRClusterSet.cc ( Cacheable Antibody CDR Cluster Information)
 
 	// *** IMPORTANT ***
 	// The 'num_cacheable_data_types' below must be the last enum, and must
 	// always be set equal to the (last-1) enum.  If you append a new enum
 	// to the list, remember to change the value below!
-  num_cacheable_data_types = WRITEABLE_DATA
+	num_cacheable_data_types = CDR_CLUSTER_INFO
 };
 
 static std::string get_name( CacheableDataType::Enum datatype);

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/toolbox/task_operations/DesignAroundOperation.hh
-/// @brief  TaskOperation class that restricts a chain to repacking
+/// @brief 
 /// @author Sarel Fleishman sarelf@uw.edu
 
 #ifndef INCLUDED_protocols_toolbox_task_operations_DesignAroundOperation_hh
@@ -37,7 +37,7 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-///@details this class is a TaskOperation to prevent repacking of residues not near an interface.
+
 class DesignAroundOperation : public RestrictOperationsBase
 {
 public:

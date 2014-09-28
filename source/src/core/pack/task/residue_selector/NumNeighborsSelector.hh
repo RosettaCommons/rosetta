@@ -8,7 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/pack/task/residue_selector/NumNeighborsSelector.hh
-/// @brief  The NumNeighborsSelector identifies residues that have at least X neighbors within a distance Y
+/// @brief  The NumNeighborsSelector identifies residues that have at least X neighbors within a distance Y.
+///  Clears the given ResidueSubset.
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
 
 #ifndef INCLUDED_core_pack_task_residue_selector_NumNeighborsSelector_HH

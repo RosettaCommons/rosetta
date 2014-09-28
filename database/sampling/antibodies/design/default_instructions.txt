@@ -2,47 +2,63 @@
 #Format of this file will be explained in the documentation of the Rosetta Antibody Designer.
 #Until then, to play around with this, see protocols/antibody/design/GraftInstructionsParser.hh
 
+#General
+ALL GraftDesign ALLOW
+ALL SeqDesign ALLOW
+
 #Types
-L1 TYPES INCLUDEONLY 1
-L2 TYPES INCLUDEONLY 1
-L3 TYPES INCLUDEONLY 1 2
-H1 TYPES INCLUDEONLY 1
-H2 TYPES INCLUDEONLY 1
+L1 CDR_SET INCLUDEONLY LENGTH_TYPES 1 2 3
+L2 CDR_SET INCLUDEONLY LENGTH_TYPES 1 2 3
+L3 CDR_SET INCLUDEONLY LENGTH_TYPES 1 2 3
+H1 CDR_SET INCLUDEONLY LENGTH_TYPES 1 2 3
+H2 CDR_SET INCLUDEONLY LENGTH_TYPES 1 2 3
+H3 CDR_SET INCLUDEONLY LENGTH_TYPES 1 2 3
 
 #Minimization - Options: min, relax, centroidrelax, repack, none
-L1 MINTYPE minimizer
-L2 MINTYPE minimizer
-L3 MINTYPE minimizer
-H1 MINTYPE minimizer
-H2 MINTYPE minimizer
-H3 MINTYPE relax
-
-L1 INCLUDE_NEIGHBOR_SC True
-L2 INCLUDE_NEIGHBOR_SC True
-L3 INCLUDE_NEIGHBOR_SC True
-H1 INCLUDE_NEIGHBOR_SC True
-H2 INCLUDE_NEIGHBOR_SC True
-H3 INCLUDE_NEIGHBOR_SC True
+L1 GraftDesign MINTYPE relax
+L2 GraftDesign MINTYPE minimizer
+L3 GraftDesign MINTYPE relax
+H1 GraftDesign MINTYPE minimizer
+H2 GraftDesign MINTYPE minimizer
+H3 GraftDesign MINTYPE relax
 
 #Length
-L3 LENGTH MAX 16
-H3 LENGTH MAX 16
+ALL CDR_SET LENGTH MAX 30
+ALL CDR_SET LENGTH MIN 1
+
+#H3 CDR_SET LENGTH MAX 20
+
+#Profile Design
+L1 SeqDesign PROFILES PROFILE
+L2 SeqDesign PROFILES PROFILE
+L3 SeqDesign PROFILES PROFILE
+H1 SeqDesign PROFILES PROFILE
+H2 SeqDesign PROFILES PROFILE
+H3 SeqDesign PROFILES CONSERVATIVE
 
 
-#####Examples for user files########:
+##################################Examples for user files############################################
+
 #L1 FIX #Global Fix:
-#L3 FIX GRAFT #Fix for low-res Graft step
-#L2 FIX DESIGN #Fix for high-res Design step
+#L3 GraftDesign FIX #Fix for Graft step
+#L2 SeqDesign FIX #Fix for  Design step
 
 
-#L1 STAY_NATIVE_CLUSTER #Only sample in the identified cluster of the CDR.
+###Additional includes/excludes
+#ALL CDR_SET INCLUDEONLY SPECIES Hu #Limit to human cdrs for grafting
+#ALL CDR_SET INCLUDEONLY GERMLINE IGKV1 #Limit to only IGKV1 germlines for grafting
+#H1 CDR_SET INCLUDEONLY PDBIDS 1HIL 2J88
+#L1 CDR_SET INCLUDEONLY CLUSTERS L1-11-1
+#L3 CDR_SET EXCLUDE PDBIDS 2J88
 
-#L1 CENTER_CLUSTERS_ONLY #Only sample on the center cluster members.
+###Additional general options
+#L1 CDR_SET ONLY_CURRENT_CLUSTER #Only sample in the identified cluster of the CDR.
+#ALL CDR_SET CENTER_CLUSTERS_ONLY #Only sample on the center cluster members.
 
-#L3 DESIGN CONSERVATIVE #Use basic conservative design for this CDR during high-res Design step:
+#Profile design - conservative vs cluster profiles.  Normal cluster-based.  Changing not for general use.
+#L3 SeqDesign PROFILES CONSERVATIVE #Use basic conservative design for this CDR during high-res Design step:
 
-#Exclude or include only these PDBids for graft-design.
-#L3 PDBIDS EXCLUDE 2J88
-#H1 PDBIDS INCLUDEONLY 1HIL 2J88
-#L1 CLUSTERS INCLUDEONLY L1-11-1
+#H3 GraftDesign WEIGHTS 3.0 #Make H3 sampling at a weight of 3 (3 times al other CDRs)
+#ALL GraftDesign WEIGHTS 1.0 #Make sampling of all CDRs at equivalent weight.
+
 

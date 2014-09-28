@@ -146,6 +146,7 @@ AnchoredGraftMover::set_defaults(){
 	scaffold_movemap_ =NULL;
 	insert_movemap_ = NULL;
 	tag_ = NULL;
+	loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops() );
 	
 	idealize_insert(false);
 	set_skip_sampling(false);
@@ -491,6 +492,11 @@ AnchoredGraftMoverCreator::mover_name(){
 }
 
 void
+AnchoredGraftMover::set_loops(protocols::loops::LoopsOP loops){
+	loops_ = loops;
+}
+
+void
 AnchoredGraftMover::apply(Pose & pose){
 	using core::pose::add_variant_type_to_pose_residue;
 	using namespace core::id;
@@ -520,16 +526,18 @@ AnchoredGraftMover::apply(Pose & pose){
 	///Add variants, create the loops and set the foldtree that will be used for CCD.
 	
 	
-	Loops loops;
 	
 	setup_single_loop_single_arm_remodeling_foldtree(combined, Nter_loop_start_, Cter_loop_end_);
-	Loop Cter_loop = Loop(Nter_loop_start_, Cter_loop_end_, Cter_loop_end_-1);      
-	loops.add_loop(Cter_loop);
+	Loop Cter_loop = Loop(Nter_loop_start_, Cter_loop_end_, Cter_loop_end_-1);
 	
+	loops_->clear();
+	loops_->add_loop(Cter_loop);
+	
+	TR << "Loops: " << *loops_ << std::endl;
 	loop_closure::ccd::CCDLoopClosureMoverOP ccd_mover( new loop_closure::ccd::CCDLoopClosureMover(Cter_loop, movemap_) );
-        
-	add_cutpoint_variants_for_ccd(combined, loops);
 	
+	add_cutpoint_variants_for_ccd(combined, *loops_);
+
 	idealize_combined_pose(combined, movemap_, start(), insert_start, insert_end, Nter_loop_start_, Cter_loop_end_, idealize_insert());
 	movemap_->set( TorsionID(insert_start, BB, phi_torsion), true);
 	movemap_->set( TorsionID(insert_end, BB, psi_torsion), true);
@@ -563,7 +571,7 @@ AnchoredGraftMover::apply(Pose & pose){
 		min_mover->apply(combined);
 		combined.conformation().insert_ideal_geometry_at_polymer_bond(Cter_loop.cut());
 		
-		if (stop_at_closure() && graft_closed(combined, loops)){
+		if (stop_at_closure() && graft_closed(combined, *loops_)){
 			TR << "Graft Closed early - returning" << std::endl;
 			skip_mc = true;
 			TR << i << " " << ((*cen_scorefxn()))(combined) << std::endl;
@@ -582,14 +590,14 @@ AnchoredGraftMover::apply(Pose & pose){
 	return_sidechains->apply( combined );
 	
 	//Remove cutpoints that were required for CCD.
-	remove_cutpoint_variants_for_ccd(combined, loops);
+	remove_cutpoint_variants_for_ccd(combined, *loops_);
 	combined.fold_tree(original_ft);
 	
 	if (final_repack_){
 		repack_connection_and_residues_in_movemap_and_piece_and_neighbors( pose, fa_scorefxn_, 
 			start(), end(), movemap_, neighbor_dis());
 	}
-	TR <<"Graft meets ideal geometry " << std::boolalpha << graft_closed(combined, loops) << std::endl;
+	TR <<"Graft meets ideal geometry " << std::boolalpha << graft_closed(combined, *loops_) << std::endl;
 	
 	TR << "Complete"<<std::endl;
 	pose = combined;

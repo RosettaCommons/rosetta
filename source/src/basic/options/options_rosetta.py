@@ -2960,62 +2960,67 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='The CDR definition to use.  Current Options are: Chothia, Aroop, North, Kabat, Martin',
 			default='Aroop'
 			),
+		Option('light_chain', 'String',
+			desc='Type of light chain if known.  Only used for design for now.',
+			legal = ['unknown', 'lambda', 'kappa'],			
+			default='unknown'
+			),
 		Option('check_cdr_chainbreaks', 'Boolean',
 			desc='Check CDRs of input antibody for chainbreaks upon initializing RosettaAntibody and RosettaAntibodyDesign.  Chainbreaks found will result in the model not proceeding. A peptide bond in the loop is considered broken if its C-N bond is > 2.0 A',
-			default='true',
+			default='true'
 			),
 		Option('check_cdr_pep_bond_geom', 'Boolean',
 			desc='Check CDRs of input antibody for bad peptide bond geometry.  This checks Ca-C-N and C-N-Ca bond angles for -large- deviations from the min max values found in a recent analysis of protein geometry  - Conformation dependence of backbone geometry in proteins. Structure -.  If found, the model will not proceed.  Use FastRelax with bond angle min to fix issues.  These issues usually arise from poorly resolved crystal loops or incorrectly solved structures.  Many older antibody structures have some of these issues.',
-			default='false',
+			default='false'
 			),
 		Option( 'graft_l1', 'Boolean',
 			desc='Graft CDR L1 from template',
 			default='false'
 			),
-#		Option('l1_template', 'String',
-#			desc='Choose specified template for CDR L1 grafting',
-#			default='l1.pdb'
-#			),
+		Option('l1_template', 'String',
+			desc='Choose specified template for CDR L1 grafting',
+			default='l1.pdb'
+			),
 		Option( 'graft_l2', 'Boolean',
 			desc='Graft CDR L2 from template',
 			default='false'
 			),
-#		Option('l2_template', 'String',
-#			desc='Choose specified template for CDR L2 grafting',
-#			default='l2.pdb'
-#			),
+		Option('l2_template', 'String',
+			desc='Choose specified template for CDR L2 grafting',
+			default='l2.pdb'
+			),
 		Option( 'graft_l3', 'Boolean',
 			desc='Graft CDR L3 from template',
 			default='false'
 			),
-#		Option('l3_template', 'String',
-#			desc='Choose specified template for CDR L3 grafting',
-#			default='l3.pdb'
-#			),
+		Option('l3_template', 'String',
+			desc='Choose specified template for CDR L3 grafting',
+			default='l3.pdb'
+			),
 		Option( 'graft_h1', 'Boolean',
 			desc='Graft CDR H1 from template',
 			default='false'
 			),
-#		Option('h1_template', 'String',
-#			desc='Choose specified template for CDR H1 grafting',
-#			default='h1.pdb'
-#			),
+		Option('h1_template', 'String',
+			desc='Choose specified template for CDR H1 grafting',
+			default='h1.pdb'
+			),
 		Option( 'graft_h2', 'Boolean',
 			desc='Graft CDR H2 from template',
 			default='false'
 			),
-#		Option('h2_template', 'String',
-#			desc='Choose specified template for CDR H2 grafting',
-#			default='h2.pdb'
-#			),
+		Option('h2_template', 'String',
+			desc='Choose specified template for CDR H2 grafting',
+			default='h2.pdb'
+			),
 		Option( 'graft_h3', 'Boolean',
 			desc='Graft CDR H3 from template',
 			default='false'
 			),
-#		Option('h3_template', 'String',
-#			desc='Choose specified template for CDR H3 grafting',
-#			default='h3.pdb'
-#			),
+		Option('h3_template', 'String',
+			desc='Choose specified template for CDR H3 grafting',
+			default='h3.pdb'
+			),
 		Option( 'h3_no_stem_graft', 'Boolean',
 			desc='Graft CDR H3 from template, use stem to superimpose, but do not copy the stem',
 			default='false'
@@ -3104,118 +3109,199 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='The option to turn on/off the VL-VH QQ H-bond in docking scoring function',
 			default='false'
 			),
-#		Option( 'snug_loops', 'Boolean',
-#			desc='Allow CDR loop backbone flexibility during minimization',
-#			default='false'
-#			),
-#		Option( 'input_fv','File',
-#			desc='input antibody variable (Fv) region',
-#			default='FR02.pdb' ),
+		Option( 'snug_loops', 'Boolean',
+			desc='Allow CDR loop backbone flexibility during minimization',
+			default='false'
+			),
+		Option( 'input_fv','File',
+			desc='input antibody variable (Fv) region',
+			default='FR02.pdb' 
+			),
 		Option( 'camelid','Boolean',
 			desc='Camelid input with only heavy (VH) chain',
-			default='false' ),
+			default='false' 
+			),
 		Option( 'camelid_constraints','Boolean',
 			desc='Display constraints file for use with camelid H3 modeler',
-			default='false' ),
+			default='false' 
+			),
+
+		##############################################################################
+		# Rosetta AntibodyDesign Options -----------------------------------------------
 		Option_Group( 'design',
+			Option('base_instructions', 'String',
+				desc='The Default/Baseline instructions file. Should not need to be changed.',
+				default='/sampling/antibodies/design/default_instructions.txt'
+				), 
+
 			Option('instructions', 'String',
 				desc='Path for instruction file',
-				default='/sampling/antibodies/design/default_instructions.txt'),
+				),
 			Option('antibody_database', 'String',
-				desc='Path to the Antibody Database.  Download from dunbrack.fccc.edu',
-				default='/sampling/antibodies/antibody_database_rosetta.db'),
-			Option('design_cdrs', 'StringVector',
-				desc = "Design these CDRs in graft and sequence design steps (if enabled).  Use instead of an instruction file.  If an instruction file is given, will override FIX options for both stages."),
-			Option('do_graft_design', 'Boolean',
-				desc='Run the GraftDesign step for low-resolution cluster-based CDR structural sampling. Overrides instruction file.',
-				default='true'),
-			Option('do_post_graft_design_modeling', 'Boolean',
-				desc='Run dock/min modeling step after the graft design step if run.',
-				default='false'),
-			Option('do_sequence_design', 'Boolean',
-				desc='Run the CDRDesign step for high-resolution cluster-based CDR sequence design. Overrides instruction file.',
-				default='true'),
-			Option('do_post_design_modeling', 'Boolean',
-				desc='Run dock/min modeling step after the sequence design step if run',
+				desc='Path to the current Antibody Database, updated weekly.  Download from http://dunbrack2.fccc.edu/PyIgClassify/ ',
+				default='/sampling/antibodies/antibody_database_rosetta_design.db'
+				),
+			Option('paper_ab_db', 'Boolean',
+				desc='Use the Antibody Database from the North clustering paper.  This is included in Rosetta, but is not recommended for general use. The full ab db is available at http://dunbrack2.fccc.edu/PyIgClassify/',
 				default='false'
 				),
-			Option('graft_rounds', 'Integer',
-				desc='Rounds for graft_design.  Each round is one CDR graft from set',
-				default='1000'),
+			Option('paper_ab_db_path', 'String',
+				desc='Path to the North paper ab_db path.  Only used if -paper_ab_db option is passed',
+				default='/sampling/antibodies/antibody_database_rosetta_design_north_paper.db'
+				),
+			Option('design_cdrs', 'StringVector',
+				legal = ['L1', 'L2', 'L3', 'H1', 'H2', 'H3', 'l1', 'l2', 'l3', 'h1', 'h2', 'h3'],
+				desc = "Design these CDRs in graft and sequence design steps (if enabled).  Use to override instructions file"
+				),
 			Option('top_graft_designs', 'Integer',
 				desc='Number of top graft designs to keep (ensemble).  These will be written to a PDB and each move onto the next step in the protocol.',
 				default='10'
 				),
-			Option('initial_perturb', 'Boolean',
-				desc='Run the docking perturber post graft.  Controlled by command-line flags.  See docking manual.  It will at least slide into contact.',
-				default='false'),
-			Option('use_deterministic', 'Boolean',
-				desc='Use the deterministic algorithm if graft rounds is <= number of possible permutations.  This involves multiple grafts per permutation in random CDR order, but always starts with the starting structure.  You only try each full permutation once, but no monte carlo boltzmann propagation of good models or designs occur.  Will still, however, keep the top x best structures found after each graft round has completed.',
-				default='false'),
 			Option('dump_post_graft_designs', 'Boolean',
 				desc='Write the top ensembles to file directly after the graft-design step and after any optional modeling.',
 				default='false'
 				),
+			###### Paratope + Epitope
+			Option('paratope', 'StringVector',
+				desc = "Use these CDRs as the paratope. Default is all of them.  Currently only used for constraints.",
+				legal = ['L1', 'L2', 'L3', 'H1', 'H2', 'H3', 'l1', 'l2', 'l3', 'h1', 'h2', 'h3'],
+				),
+			Option('epitope', 'StringVector',
+				desc = "Use these residues as the antigen epitope.  Default is to auto-identify them within the set interface distance at protocol start if epitope constraints are enabled. Currently only used for constraints.  PDB Numbering. Optional insertion code. Example: 1A 1B 1B:A", default = []
+  			),
+			Option('epitope_file', 'File',
+				desc = "A file which lists the epitope residues in PDB numbering one per line.  Example - 1A or 1A:A for insertion code. Not currently implemented."
+				),
+			Option('use_epitope_constraints', 'Boolean',
+				default = 'false',
+				desc = "Enable use of epitope constraints to add SiteConstraints between the epitope and paratope.  Note that paratope constraints are always used."
+				),
+			###### Protocol Steps
+            Option('do_graft_design', 'Boolean',
+      		    desc='Run the GraftDesign step for low-resolution cluster-based CDR structural sampling.',
+				default='true'
+				),
+			Option('do_post_graft_design_modeling', 'Boolean',
+				desc='Run dock/min modeling step after the graft design step if run.',
+				default='false'
+				),
+			Option('do_sequence_design', 'Boolean',
+				desc='Run the CDRDesign step for high-resolution cluster-based CDR sequence design.',
+				default='true'
+				),
+			Option('do_post_design_modeling', 'Boolean',
+				desc='Run dock/min modeling step after the sequence design step if run',
+				default='false'
+				),
+            ###### Regional Sequence Design
+            Option('design_antigen', 'Boolean',
+                desc='Design antigen residues during sequence design.  Intelligently.  Typically, only the neighbor antigen residues of designing cdrs or interfaces will be co-designed.  Useful for specific applications.',
+                default = 'false'
+                ),
+            Option('design_framework', 'Boolean',
+                desc='Design framework residues during sequence design.  Typically done with only neighbor residues of designing CDRs or during interface minimization.',
+                default = 'false'
+                ),
+			###### Post-Graft Optimizations
+			Option('post_graft_dock', 'Boolean',
+				desc='Run a short lowres + highres docking step after each graft and before any minimization. Inner/Outer loops for highres are hard coded, while low-res can be changed through regular low_res options.',
+				default='false'
+				),
+			Option('post_graft_rb_min', 'Boolean',
+				desc='Minimize the ab-ag interface post graft and any docking/cdr min by minimizing the jump',
+				default='false'
+				),
+			Option('post_graft_seq_design', 'Boolean',
+				desc='Design any time the packer is called post graft according to instructions file.  This includes relax, high-res docking, etc.  Will only attempt to design those CDRs that are set to SeqDesign in the instructions file as well as already being minimized/repacked. Used to increasing sampling of potential designs. See Sequence Design options for more control.',
+				default='false'
+				),
+            Option('post_graft_seq_design_framework_only', 'Boolean',
+                desc='Design ONLY the neighbor framework of the just-grafted CDR.  Not currently implemented.',
+                default='false'
+                ),
+			###### Protocol Rounds
+			Option('graft_rounds', 'Integer',
+				desc='Rounds for graft_design.  Each round is one CDR graft from set',
+				default='1000'
+				),
+			Option('dock_rounds', 'Integer',
+				desc='Number of rounds for any post_graft docking.  If you are seeing badly docked structures, increase this value.',
+				default='1'
+				),
+			Option('design_rounds', 'Integer',
+				desc="Number of CDRDesign rounds.  If using relaxed_design, only one round recommended.",
+				default='3'
+				),
+			##### Distance Detection
 			Option('interface_dis', 'Real',
 				desc='Interface distance cutoff.  Used for repacking of interface, etc.',
-				default='6.0'),
+				default='6.0'
+				),
 			Option('neighbor_dis', 'Real',
 				desc='Neighbor distance cutoff.  Used for repacking after graft, minimization, etc.',
 				default='4.0'
 				),
-			Option('dock_post_graft', 'Boolean',
-				desc='Run a short lowres + highres docking step after each graft and before any minimization. Inner/Outer loops for highres are hard coded, while low-res can be changed through regular low_res options.',
-				default='false'),
-			Option('pack_post_graft', 'Boolean',
-				desc='Pack CDR and neighbors after each graft.  Before any docking or minimization.',
-				default='true'),
-			Option('rb_min_post_graft', 'Boolean',
-				desc='Minimize the ab-ag interface post graft and any docking/cdr min by minimizing the jump',
-				default='false'),
-#			Option('design_post_graft', 'Boolean',
-#				desc='Design during any time the packer is called post graft.  This includes relax, high-res docking, etc.  Used to increasing sampling of potential designs.',
-#				default='false'
-#				),
-			Option('dock_rounds', 'Integer',
-				desc='Number of rounds for post_graft docking.  If you are seeing badly docked structures, increase this value.',
-				default='2'),
-			Option('ab_dock_chains', 'String',
-				desc='Override the antibody dock chains.  Used for if your creating a bivalent antibody where only L or H is docking antigen.  Also used if you are creating an antibody where you are only interested in L or H primarily being the binding site.  Changing the default is not recommended for general use.',
-				default='LH'
+			##### Fine Control
+			Option('use_light_chain_type','Boolean',
+				default='true',
+				desc='Use the light chain type, lambda or kappa IF given via option -antibody:light_chain.  This limits any aspect of the design protocol to use only data and cdrs for the given antibody type.  It (will) also add lambda vs kappa optimization steps such as L4 optimization.  Extremely useful for denovo design as lambda/kappa mixing can result in lower stability and non-expression of designs.  Failed mixed designs would then require manual framework mutations, framework switching, or other optimizations for succes.  Use PyIgClassify (see docs) to identify your framework as lambda or kappa.  Switch this to false or do not pass the -light_chain option to increase sampling with a greater risk of failed designs.'
 				),
+			Option('initial_perturb', 'Boolean',
+				desc='Run the docking perturber post graft.  Controlled by command-line flags.  See docking manual.  It will at least slide into contact.',
+				default='false'
+				),
+			Option('use_deterministic', 'Boolean',
+				desc='Use the deterministic algorithm if graft rounds is <= number of possible permutations.  This involves multiple grafts per permutation in random CDR order, but always starts with the starting structure.  You only try each full permutation once, but no monte carlo boltzmann propagation of good models or designs occur.  Will still, however, keep the top x best structures found after each graft round has completed.',
+				default='false'
+				),
+			Option('use_filters', 'Boolean',
+				desc='Use filters after graft step and design step.  Defaults false for now to optimize sensitivity. Not Implemented',
+				default='false'
+				),
+			Option('disable_full_cdr_min', 'Boolean',
+				desc='Disable the use of all CDRs during any minimization/Repacking steps.  Currently all CDRs are minimized only during the SeqDesign phase.',
+				default = 'false'
+				),
+			###### Seq Design Control
 			Option('design_method', 'String',
 				desc='Design method to use.',
 				legal = ['fixbb', 'flxbb', 'relaxed_design'],
-				default='fixbb'),
-			Option('design_rounds', 'Integer',
-				desc="Number of CDRDesign rounds.  If using relaxed_design, only one round recommended.",
-				default='3'),
+				default='fixbb'
+				),
 			Option('design_scorefxn', 'String',
 				desc="Scorefunction to use during design.  Orbitals_talaris2013_softrep works well for fixedbb, orbitals_talaris2013 works well for relaxed design. If not set will use the main scorefunction set."
 				),
-			Option('benchmark_basic_design', 'Boolean',
-				desc="Used to benchmark basic design vs probabilistic vs conservative.  Not for general use.",
-				default = 'false'),
-#			Option('use_filters', 'Boolean',
-#				desc='Use filters after graft step and design step.  Defaults false for now to optimize sensitivity',
-#				default='false'),
 			Option('stats_cutoff', 'Integer',
 				desc='Value for probabilistic -> conservative design switch.  If number of total sequences used for probabilistic design for a particular cdr cluster being designed is less than this value, conservative design will occur.  This is why the default graft settings are type 1 clusters.  More data = better predictability.',
-				default='10'),
+				default='10'
+				),
+            Option('conservative_framework_design', 'Boolean',
+                desc='If designing Framework positions, use conservative mutations instead of all of them.',
+                default='true'
+                ),
 			Option('sample_zero_probs_at', 'Integer',
 				desc='Value for probabilstic design.  Probability that a normally zero prob will be chosen as a potential residue each time packer task is called.  Increase to increase variablility of positions.  Use with caution.',
-				default='0'),
-			Option('conservative_h3_design', 'Boolean',
-				desc='Use a conservative strategy for H3 design. Instructions file overwrites this setting',
-				default='true'),
+				default='0'
+				),
 			Option('turn_conservation', 'Boolean',
-				desc='try to conserve turn structure using known turn-based conservative mutations during conservative design.',
-				default='true'),
-			Option('extend_native_cdrs', 'Boolean',
-				desc = 'extend native CDRs as part of the graft design step.  Used for benchmarking',
-				default='false'),
-		), # -antibody:design
-	), # -antibody
+				desc='try to conserve turn structure using known turn-based conservative mutations during conservative design. Not Implemented',
+				default='true'
+				),
+			###### Benchmarking
+			Option('benchmark_basic_design', 'Boolean',
+				desc="Used to benchmark basic design vs probabilistic vs conservative.  Not for general use.",
+				default = 'false'
+				),
+			Option('benchmark_graft_design', 'Boolean',
+				desc = 'Start graft design with a new set of CDRs as to not bias the run with native CDRs.',
+				default='false'
+				),
+			Option('adapt_graft', 'Boolean',
+				desc = 'Adapt the grafting algorithm to ensure a closed graft.  Takes more time.  Grafts that cannot be closed may not be very compatable with the framework in the first place.',
+				default='false'
+				),
+		), #design
+	), # antibody
 
 	Option_Group( 'assembly',
 		Option( 'pdb1','File', desc='pdb1 file' ),

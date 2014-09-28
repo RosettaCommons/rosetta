@@ -55,13 +55,13 @@ RestrictToLoops::RestrictToLoops() : parent() {
 	init();
 }
 
-RestrictToLoops::RestrictToLoops(RestrictToLoops const & rhs) : parent(rhs) {
+RestrictToLoops::RestrictToLoops( RestrictToLoops const & rhs ) : parent(rhs) {
 	copy(*this, rhs);
 }
 
 RestrictToLoops::~RestrictToLoops() {}
 
-RestrictToLoops & RestrictToLoops::operator = (RestrictToLoops const & rhs) {
+RestrictToLoops & RestrictToLoops::operator = ( RestrictToLoops const & rhs ) {
 	if ( this == &rhs ) return *this;
 	parent::operator=(rhs);
 	copy(*this, rhs);
@@ -72,40 +72,46 @@ TaskOperationOP RestrictToLoops::clone() const {
 	return TaskOperationOP( new RestrictToLoops(*this) );
 }
 
-void RestrictToLoops::parse_tag(TagCOP tag, DataMap &) {
+void RestrictToLoops::parse_tag( TagCOP tag, DataMap & ) {
 
 	// Parse the 'design' option.
 
 	set_design_loop(
-			tag->getOption<bool>("design", design_loop()));
+			tag->getOption<bool>( "design", design_loop() ));
+
+	set_restrict_only_design_to_loops(
+			tag->getOption<bool>( "restrict_only_design_to_loops", restrict_only_design_to_loops() ));
 
 	// Parse the 'loops_file' option.
 
-	if (tag->hasOption("loops_file")) {
+	if (tag->hasOption( "loops_file" )) {
 		set_loops_from_file(
-				tag->getOption<string>("loops_file"));
+				tag->getOption<string>( "loops_file" ));
 	}
 }
 
 void RestrictToLoops::init() {
-	set_design_loop(false);
-	set_loops(NULL);
+	set_design_loop( false );
+	set_restrict_only_design_to_loops( false );
+	set_loops( NULL );
 }
 
-void RestrictToLoops::copy(RestrictToLoops & lhs, RestrictToLoops const & rhs) {
-	lhs.design_loop_ = rhs.design_loop_;
-	lhs.loops_ = loops::LoopsCOP( new Loops(*rhs.loops_) );
+void RestrictToLoops::copy( RestrictToLoops & lhs, RestrictToLoops const & rhs ) {
+	lhs.design_loops_ = rhs.design_loops_;
+	lhs.restrict_only_design_ = rhs.restrict_only_design_;
+	lhs.loops_ = loops::LoopsCOP( new Loops( *rhs.loops_ ) );
 }
 
-void RestrictToLoops::apply(Pose const & pose, PackerTask & task) const {
-	apply_helper(pose, task, false, 0);
+void RestrictToLoops::apply( Pose const & pose, PackerTask & task ) const {
+	apply_helper( pose, task, false, 0, false );
 }
 
 void RestrictToLoops::apply_helper(
 		Pose const & pose,
 		PackerTask & task,
 		bool include_neighbors,
-		Real cutoff_distance) const {
+		Real cutoff_distance,
+		bool design_neighbors ) const {
 
 	if (! loops()) { return; }
 
@@ -114,50 +120,69 @@ void RestrictToLoops::apply_helper(
 
 	// Decide which residues should be packed.
 
-	utility::vector1<bool> is_packable(pose.total_residue(), false);
-	select_loop_residues(pose, *loops(), include_neighbors, is_packable, cutoff_distance);
-	core::pose::symmetry::make_residue_mask_symmetric(pose, is_packable);
+	utility::vector1<bool> is_packable( pose.total_residue(), false );
+	select_loop_residues( pose, *loops(), include_neighbors, is_packable, cutoff_distance );
+	core::pose::symmetry::make_residue_mask_symmetric( pose, is_packable );
 
 	// Decide which residues should be designed.
-
-	utility::vector1<bool> is_designable(pose.total_residue(), false);
-	if (design_loop()) {
-		loops()->transfer_to_residue_vector(is_designable, true);
+	utility::vector1<bool> is_designable;
+	if (design_neighbors){
+		is_designable = is_packable;
+	}
+	else if ( restrict_only_design_ || design_loop() ) {
+		is_designable.resize( pose.total_residue(), false );
+		loops()->transfer_to_residue_vector( is_designable, true );
+	}
+	else {
+		is_designable.resize( pose.total_residue(), false );
 	}
 
 	// Update the packer task.
-
 	for (Size i = 1; i <= pose.total_residue(); ++i) {
-		if (is_packable[i] && ! is_designable[i]) {
-			turn_off_design.include_residue(i);
+		if (! is_designable[ i ]) {
+			turn_off_design.include_residue( i );
 		}
-		else if (! is_packable[i]) {
-			turn_off_packing.include_residue(i);
+		if (! is_packable[ i ]) {
+			turn_off_packing.include_residue( i );
 		}
 	}
 
 	turn_off_design.apply( pose, task );
-	turn_off_packing.apply( pose, task );
+
+	if ( ! restrict_only_design_ ){
+		turn_off_packing.apply( pose, task );
+	}
+
 }
 
 bool RestrictToLoops::design_loop() const {
-	return design_loop_;
+	return design_loops_;
 }
 
-void RestrictToLoops::set_design_loop(bool design_loop) {
-	design_loop_ = design_loop;
+void RestrictToLoops::set_design_loop( bool design_loop ) {
+	design_loops_ = design_loop;
 }
 
 LoopsCOP RestrictToLoops::loops() const {
 	return loops_;
 }
 
-void RestrictToLoops::set_loops(LoopsCOP loops) {
+bool RestrictToLoops::restrict_only_design_to_loops() const {
+	return restrict_only_design_;
+}
+
+void RestrictToLoops::set_restrict_only_design_to_loops( bool restrict_only_design ) {
+	restrict_only_design_ = restrict_only_design;
+
+}
+
+void RestrictToLoops::set_loops( LoopsCOP loops ) {
 	loops_ = loops;
 }
 
-void RestrictToLoops::set_loops_from_file(string loops_file) {
-	loops_ = loops::LoopsCOP( new Loops(loops_file) );
+
+void RestrictToLoops::set_loops_from_file( string loops_file ) {
+	loops_ = loops::LoopsCOP( new Loops( loops_file ) );
 }
 
 

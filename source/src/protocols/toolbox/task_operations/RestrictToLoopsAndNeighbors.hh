@@ -36,6 +36,8 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
+/// @brief  This class allows the selection for packing (and possibly design) of residues contained in a Loops object as
+///         well as the neighbors within a specified cutoff distance, with the default and maximum cutoff at 10.0 A.
 class RestrictToLoopsAndNeighbors : public RestrictToLoops
 {
 public:
@@ -58,7 +60,7 @@ public:
 	virtual core::pack::task::operation::TaskOperationOP clone() const;
 
 	/// @copydoc RestrictToLoops::parse_tag
-  void parse_tag(
+	void parse_tag(
 			utility::tag::TagCOP tag,
 			basic::datacache::DataMap & );
 
@@ -69,6 +71,9 @@ public:
 	bool include_neighbors() const;
 	void set_include_neighbors( bool include_neighbors );
 
+	bool design_neighbors() const;
+	void set_design_neighbors( bool design_neighbors );
+	
 	core::Real cutoff_distance() const;
 	void set_cutoff_distance( core::Real cutoff_distance );
 
@@ -78,6 +83,7 @@ private:
 	
 private:
 	bool include_neighbors_;
+	bool design_neighbors_;
 	core::Real cutoff_distance_;
 
 };

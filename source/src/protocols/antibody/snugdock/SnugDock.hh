@@ -78,6 +78,7 @@ public: // boiler plate / virtuals
 	static void register_options();
 
 public:
+	void debug(); //Enables debug of the mover components of Snugdock - switches the random mover to sequence mover.
 	Size number_of_high_resolution_cycles() const;
 	void number_of_high_resolution_cycles( Size const number_of_high_resolution_cycles );
 	void set_antibody_info( AntibodyInfoOP antibody_info );
@@ -96,17 +97,18 @@ private: // data
 	moves::MonteCarloOP mc_;
 
 	// Movers
-	moves::RandomMoverOP high_resolution_step_;
+	moves::MoverContainerOP high_resolution_step_;
 	std::string loop_refinement_method_;
 	antibody::CDRsMinPackMinOP pre_minimization_;
 	
 	// H3 filter options
 	bool h3_filter_;
+	bool debug_;
 	Size h3_filter_tolerance_;
 
 private:
 	Size number_of_high_resolution_cycles_;
-
+	
 }; // class SnugDock
 
 } // namespace antibody

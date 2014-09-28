@@ -20,6 +20,7 @@
 #include <protocols/grafting/GraftMoverBase.hh>
 #include <protocols/grafting/AnchoredGraftMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
+
 //Core
 #include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -29,7 +30,7 @@
 //Protocols
 #include <protocols/simple_moves/MinMover.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
-
+#include <protocols/loops/Loops.hh>
 #include <utility/tag/Tag.hh>
 
 namespace protocols {
@@ -187,6 +188,11 @@ public:
 	///@returns the Cterminal loop end (Last flexible residue).  Useful to use after insertion.
 	Size get_Cter_loop_end();
 
+	protocols::loops::Loops
+	get_loops() {
+		return *loops_;
+	};
+	
 protected:
 	
 	//ScoreFunction Setup
@@ -200,6 +206,8 @@ protected:
 	virtual void
 	set_default_cen_scorefunction();
 	
+	void
+	set_loops(protocols::loops::LoopsOP loops);
 	
 protected:
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -303,6 +311,8 @@ private:
 	core::Real neighbor_dis_;
 	TagCOP tag_; //This is so pdb_num can be parsed at apply time instead of construction time.
 	bool idealize_insert_;
+	
+	protocols::loops::LoopsOP loops_;
 	
 }; //Class AnchoredGraftMover
 

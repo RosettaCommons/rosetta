@@ -17,9 +17,16 @@
 
 #include <protocols/antibody/design/AntibodyDesignMover.fwd.hh>
 #include <protocols/antibody/design/AntibodyDesignModeler.hh>
-#include <protocols/antibody/design/AntibodyDatabaseManager.hh>
+#include <protocols/antibody/database/AntibodyDatabaseManager.hh>
 #include <protocols/antibody/design/AntibodyGraftDesignMover.hh>
 #include <protocols/antibody/design/AntibodySeqDesignMover.hh>
+
+#include <protocols/antibody/database/CDRSetOptions.hh>
+#include <protocols/antibody/design/CDRGraftDesignOptions.hh>
+#include <protocols/antibody/design/CDRSeqDesignOptions.hh>
+
+#include <protocols/antibody/design/util.hh>
+
 #include <protocols/antibody/AntibodyInfo.hh>
 
 #include <protocols/moves/Mover.hh>
@@ -60,15 +67,6 @@ public:
 	//
 	
 	void
-	set_graft_designer(AntibodyGraftDesignMoverOP graft_designer);
-	
-	void
-	set_sequence_designer(AntibodySeqDesignMoverOP seq_designer);
-	
-	void
-	set_modeler(AntibodyDesignModelerOP modeler);
-	
-	void
 	set_scorefxn(ScoreFunctionOP scorefxn);
 	
 	void
@@ -99,6 +97,9 @@ public:
 	void
 	set_do_post_design_modeling(bool setting);
 	
+	protocols::moves::MoverOP
+	fresh_instance() const;
+
 	////////////////////////////////////////////////////////////////////////////
 	// Main Method.  All options read from cmd-line or set through individual classes.
 	//
@@ -107,48 +108,84 @@ public:
 	virtual void 
 	apply( core::pose::Pose & pose );
 	
-	
 private:
+	
+	void
+	read_cmd_line_options();
 	
 	///@brief Sets command line driven CDR design.   This is mainly for testing, but makes the whole algorithm controllable without a specific instruction file.
 	void
-	read_command_line_design_options();
+	setup_options_classes();
+	
+	void
+	setup_design_classes();
 	
 	///@brief Set constraint and chainbreak score on scorefunction if not already set.
-	void setup_scorefxn(ScoreFunctionOP scorefxn);
+	void
+	setup_scorefxns();
+	
+	void
+	setup_constraints(core::pose::Pose & pose);
+	
+	////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////
+	
 	
 	///@brief Post-graft step modeling.  If no graft step, no need to do post-graft modeling.  Default false.
-	void model_post_graft(core::pose::Pose & pose);
+	void
+	model_post_graft(core::pose::Pose & pose);
 	
 	///@brief Post-design step modeling.  Less aggressive, more high resolution.  Default false.
-	void model_post_design(core::pose::Pose & pose);
+	void
+	model_post_design(core::pose::Pose & pose);
 	
-	void read_options();
 	
-	void init_on_new_input( core::pose::Pose const & pose );
+	void
+	init_on_new_input( core::pose::Pose const & pose );
 	
 	///@brief Used to output ongoing current ensembles during the protocol.  Specify a range in the vector to output
-	void output_ensemble( vector1< core::pose::PoseOP > ensemble, Size range_start, Size range_end, std::string prefix);
+	void
+	output_ensemble( vector1< core::pose::PoseOP > ensemble, Size range_start, Size range_end, std::string prefix);
 	
 	///@brief add cluster info to the pose.  Needs to go into pose and not jd2 due to Ensemble generation.
-	void add_cluster_comments_to_pose(core::pose::Pose & pose);
+	void
+	add_cluster_comments_to_pose(core::pose::Pose & pose);
+	
+	void
+	setup_epitope_residues(core::pose::Pose const & pose);
+	
+        void
+	reorder_poses(utility::vector1<core::pose::PoseOP> & poses);
+        
+private:
 	
 	AntibodyGraftDesignMoverOP graft_designer_;
 	AntibodySeqDesignMoverOP seq_designer_;
 	AntibodyDesignModelerOP modeler_;
+	
+	AntibodyCDRSetOptions cdr_set_options_;
+	AntibodyCDRGraftDesignOptions cdr_graft_design_options_;
+	AntibodyCDRSeqDesignOptions cdr_seq_design_options_;
 	
 	ScoreFunctionOP scorefxn_;
 	ScoreFunctionOP design_scorefxn_;
 	
 	AntibodyInfoOP ab_info_;
 
-	AntibodyDatabaseManagerOP cdr_db_parser_;
+	//AntibodyDatabaseManagerOP cdr_db_parser_;
 
 	bool run_graft_designer_;
 	bool run_sequence_designer_;
 	bool run_post_graft_modeling_;
 	bool run_post_design_modeling_;
 	bool post_graft_ensemble_output_;
+	
+	
+	utility::vector1<bool> paratope_cdrs_;
+	utility::vector1<PDBNumbering > epitope_residues_; //Vector of resnum, chain pairs.
+	
+	core::Real interface_distance_;
+	
 };
 } //design
 } //antibody

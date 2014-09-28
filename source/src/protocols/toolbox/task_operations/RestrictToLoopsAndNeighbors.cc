@@ -91,20 +91,25 @@ void RestrictToLoopsAndNeighbors::parse_tag(TagCOP tag, DataMap & data)
 	set_include_neighbors(
 			tag->getOption<bool>("include_neighbors", include_neighbors()));
 
+	set_design_neighbors(
+			tag->getOption<bool>("design_neighbors", design_neighbors()));
+	
 	set_cutoff_distance(
 			tag->getOption<Real>("cutoff_dist", cutoff_distance()));
+
 
 }
 
 void RestrictToLoopsAndNeighbors::apply( Pose const & pose, PackerTask & task ) const
 {
-	apply_helper(pose, task, include_neighbors(), cutoff_distance());
+	apply_helper(pose, task, include_neighbors(), cutoff_distance(), design_neighbors());
 }
 
 void RestrictToLoopsAndNeighbors::init()
 {
 	parent::init();
 	set_include_neighbors( true );
+	set_design_neighbors( false );
 	set_cutoff_distance( 10.0 );
 }
 
@@ -113,6 +118,7 @@ void RestrictToLoopsAndNeighbors::init_for_copy( RestrictToLoopsAndNeighbors & l
 	parent::copy(lhs, rhs);
 	lhs.include_neighbors_ = rhs.include_neighbors_;
 	lhs.cutoff_distance_ = rhs.cutoff_distance_;
+	lhs.design_neighbors_ = rhs.design_neighbors_;
 }
 
 bool RestrictToLoopsAndNeighbors::include_neighbors() const
@@ -123,6 +129,16 @@ bool RestrictToLoopsAndNeighbors::include_neighbors() const
 void RestrictToLoopsAndNeighbors::set_include_neighbors( bool include_neighbors )
 {
 	include_neighbors_ = include_neighbors;
+}
+
+bool RestrictToLoopsAndNeighbors::design_neighbors() const 
+{
+	return design_neighbors_;
+}
+
+void RestrictToLoopsAndNeighbors::set_design_neighbors(bool design_neighbors) 
+{
+	design_neighbors_ = design_neighbors;
 }
 
 core::Real RestrictToLoopsAndNeighbors::cutoff_distance() const

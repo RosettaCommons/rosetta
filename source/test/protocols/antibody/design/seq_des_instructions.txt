@@ -1,0 +1,8 @@
+
+ALL SeqDesign ALLOW
+L3 SeqDesign FIX
+
+#Profile Design
+ALL SeqDesign PROFILES Profile
+L2 SeqDesign PROFILES Conservative
+L3 SeqDesign PROFILES Basic

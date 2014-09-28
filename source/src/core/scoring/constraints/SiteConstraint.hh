@@ -9,7 +9,7 @@
 
 /// @file src/core/scoring/constraints/SiteConstraint.hh
 /// @brief This class is an AmbiguousConstraint in which the set is comprised of AtomPairConstraints
-/// @brief of an atom of interest in one chain versus the CA of all residues in another chain.
+/// @brief of an atom of interest in one chain versus the CA of all residues in another chain or subset of that chain.
 /// @author Brian Weitzner (brian.weitzner@jhu.edu, May 2011)
 
 #ifndef INCLUDED_core_scoring_constraints_SiteConstraint_hh
@@ -67,8 +67,13 @@ public:
     read_def( std::istream& data, pose::Pose const& pose,func::FuncFactory const& func_factory );
 
     void show( std::ostream& out) const;
+	
+    ///@brief Sets up SiteConstaint between the residue of interest and a chain
     void setup_csts( Size res, std::string name, std::string chain, core::pose::Pose const & pose, func::FuncOP const & func );
-
+	
+    ///@brief Sets up SiteConstraint between the residue of interest and a subset of residues
+    void setup_csts(Size res, std::string name, utility::vector1<bool> const & residues, core::pose::Pose const & pose, func::FuncOP const & func);
+	
 private:
 
 

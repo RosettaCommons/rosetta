@@ -47,14 +47,20 @@ namespace moves {
 class ChangeFoldTreeMover : public Mover {
 public:
 	// default constructor
-	ChangeFoldTreeMover();
+	ChangeFoldTreeMover():
+		Mover()
+	{};
 
 	ChangeFoldTreeMover(
 		core::kinematics::FoldTree fold_tree
 	) :
 		Mover(), fold_tree_(fold_tree)
 	{}
-
+	
+	void set_foldtree(core::kinematics::FoldTree fold_tree){
+		fold_tree_ = fold_tree;
+	}
+	
 	/// @brief Apply the stored fold tree to the pose
 	virtual void apply( core::pose::Pose & pose ) { pose.fold_tree( fold_tree_ ); }
 	virtual std::string get_name() const { return "ChangeFoldTreeMover"; }

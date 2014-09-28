@@ -11,6 +11,7 @@
 /// @file protocols/antibody/util.cc
 /// @brief
 /// @author Jianqing Xu (xubest@gmail.com)
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 // Project Headers
 #include <protocols/antibody/util.hh>
@@ -44,6 +45,7 @@
 // Protocol Headers
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <protocols/docking/util.hh>
+#include <protocols/interface/util.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
@@ -392,7 +394,7 @@ bool CDR_H3_filter_legacy_code_with_old_rule(const pose::Pose & pose_in, loops::
 
 bool CDR_H3_cter_filter(const pose::Pose & pose_in, AntibodyInfoOP ab_info) {
 
-	TR.Debug <<  "Checking Kink/Extended CDR H3 Base Angle" << std::endl;
+	TR <<  "Checking Kink/Extended CDR H3 Base Angle" << std::endl;
 
 	if(ab_info->is_camelid() ) {
 		return( true );
@@ -467,10 +469,29 @@ bool CDR_H3_cter_filter(const pose::Pose & pose_in, AntibodyInfoOP ab_info) {
 		passed=false;
 	}
 
-	TR.Debug <<  "Finished Checking Kink/Extended CDR H3 Base Angle: " << passed << std::endl;
+	TR <<  "Finished Checking Kink/Extended CDR H3 Base Angle: " << passed << std::endl;
 
 	return passed;
 }
+
+protocols::loops::LoopsOP
+get_cdr_loops(
+	AntibodyInfoCOP ab_info,
+	core::pose::Pose const & pose,
+	utility::vector1<bool> cdrs,
+	core::Size stem_size /* 0 */ ) {
+	
+	assert( cdrs.size() == 6 );
+	protocols::loops::LoopsOP cdr_loops( new protocols::loops::Loops() );
+	for ( core::Size i = 1; i <= 6; ++i ){
+		if (cdrs[ i ]){
+			CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+			cdr_loops->add_loop(ab_info->get_CDR_loop(cdr, pose, stem_size));
+		}
+	}
+	return cdr_loops;
+}
+
 
 core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in ) {
 	using namespace pack::task;
@@ -678,97 +699,27 @@ void align_to_native( core::pose::Pose & pose,
 
 } // align_to_native()
 
-std::map< CDRNameEnum, bool>
-add_harmonic_cluster_constraints(AntibodyInfoOP ab_info, core::pose::Pose & pose){
-	std::map< CDRNameEnum, bool> result;
-	for (core::Size i = 1; i <= core::Size(ab_info->get_total_num_CDRs()); ++i){
-		CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
-		result[cdr_name] = add_harmonic_cluster_constraint(ab_info, pose, ab_info->get_CDR_cluster(cdr_name)->cluster());
+vector1<bool>
+select_epitope_residues(AntibodyInfoCOP ab_info, core::pose::Pose const & pose, core::Size const interface_distance) {
+	vector1<bool> epitope(pose.total_residue(), false);
+	if (! ab_info->antigen_present()) return epitope;
+	
+	std::string interface = ab_info->get_antibody_chain_string()+"_"+ab_info->get_antigen_chain_string();
+	
+	//I really should have just used a TF and operation.  Oh well.  Now we have an interface namespace...
+	
+	vector1<bool> interface_residues = protocols::interface::select_interface_residues(pose, interface, interface_distance);
+	
+	//Turn off L or H residues at the interface
+	for (core::Size i = 1; i <= pose.total_residue(); ++i){
+		char chain = core::pose::get_chain_from_chain_id(pose.chain(i), pose);
+		if (chain == 'L' || chain == 'H'){
+			interface_residues[i] = false;
+		}
 	}
-	return result;
-}
-
-std::map< CDRNameEnum, bool>
-add_harmonic_cluster_constraints(AntibodyInfoOP ab_info, core::pose::Pose & pose, utility::vector1< core::scoring::constraints::ConstraintCOP > constraints){
-
-	std::map< CDRNameEnum, bool> result;
-	for (core::Size i = 1; i <= core::Size(ab_info->get_total_num_CDRs()); ++i){
-		CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
-		result[cdr_name] = add_harmonic_cluster_constraint(ab_info, pose, ab_info->get_CDR_cluster(cdr_name)->cluster(), constraints);
-	}
-	return result;
-}
-
-bool
-add_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, core::pose::Pose & pose, CDRClusterEnum const cluster){
-
-	using namespace core::scoring::constraints;
-
-
-	std::string fname = get_harmonic_cluster_constraint_filename(ab_info, cluster);
-	if (fname=="NA"){return false;}
-	try {
-		ConstraintSetOP cst = ConstraintIO::get_instance()->read_constraints(fname, ConstraintSetOP( new ConstraintSet ), pose);
-
-		pose.add_constraints(cst->get_all_constraints());
-		return true;
-	}
-	catch(utility::excn::EXCN_Exception &excn){
-		TR<< "Problem adding dihedral constraints for CDR cluster." <<std::endl;
-		return false;
-	}
+	return interface_residues;
 
 }
-
-bool
-add_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, core::pose::Pose & pose, CDRClusterEnum const cluster, utility::vector1< core::scoring::constraints::ConstraintCOP > constraints){
-
-	using namespace core::scoring::constraints;
-
-	if (cluster==NA) return false;
-
-	std::string fname = get_harmonic_cluster_constraint_filename(ab_info, cluster);
-	if (fname=="NA"){return false;}
-
-	try {
-		ConstraintSetOP cst = ConstraintIO::get_instance()->read_constraints(fname, ConstraintSetOP( new ConstraintSet ), pose);
-
-		vector1< ConstraintCOP > local_csts = cst->get_all_constraints();
-		pose.add_constraints(local_csts);
-
-		constraints.insert(constraints.end(), local_csts.begin(), local_csts.end());
-		return true;
-	} catch (utility::excn::EXCN_Exception &excn){
-		TR<< "Problem adding dihedral constraints for CDR cluster." <<std::endl;
-		return false;
-	}
-
-}
-
-
-std::string
-get_harmonic_cluster_constraint_filename(AntibodyInfoCOP ab_info, CDRClusterEnum const cluster ){
-
-	using namespace basic::options;
-
-	std::string fname;
-	std::string cluster_type = ab_info->get_cluster_name(cluster);
-	if (cluster_type=="NA") {
-		TR<< "Cannot add constraint to cluster of type NA.  Skipping."<<std::endl;
-		return "NA";
-	}
-	std::string path = "sampling/antibodies/cluster_based_constraints/CircularHarmonic/";
-	std::string extension = ".txt";
-	std::string specific_path = path + cluster_type + extension;
-	fname = basic::database::full_name( specific_path );
-	if( !utility::file::file_exists(fname)) {
-		TR<< "Fname "<<fname<<" Does not exist.  No constraint will be added."<<std::endl;
-		return "NA";
-	}
-	return fname;
-}
-
-
 
 } // namespace antibody
 } // namespace protocols

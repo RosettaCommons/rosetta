@@ -16,8 +16,10 @@
 
 #include <protocols/antibody/design/AntibodyDesignModeler.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
-#include <protocols/antibody/util.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
+#include <protocols/antibody/util.hh>
+#include <protocols/antibody/constraints/util.hh>
+
 
 #include <protocols/moves/Mover.hh>
 
@@ -34,6 +36,8 @@
 
 using namespace protocols::antibody;
 using namespace protocols::antibody::design;
+using namespace protocols::antibody::constraints;
+
 //using namespace basic::options;
 //using namespace basic::options::OptionKeys;
 
@@ -58,7 +62,7 @@ public:
 	apply(core::pose::Pose & pose){
 
 		//Setup Instances
-		AntibodyInfoOP ab_info = new AntibodyInfo(pose, AHO_Scheme, North);
+		AntibodyInfoOP ab_info( new AntibodyInfo(pose, AHO_Scheme, North) );
 		ScoreFunctionOP scorefxn = core::scoring::get_score_function(true);
 		AntibodyDesignModeler modeler = AntibodyDesignModeler(ab_info);
 
@@ -77,7 +81,7 @@ int main(int argc, char* argv[]){
 		//Make option for centroid or not.
 		devel::init(argc, argv);
 
-		protocols::jd2::JobDistributor::get_instance()->go( new RelaxCDRsMover );
+		protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new RelaxCDRsMover ) );
 
 		std::cout << "Done! -------------------------------\n";
 

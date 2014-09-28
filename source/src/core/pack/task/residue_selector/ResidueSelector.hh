@@ -43,6 +43,7 @@ public:
 
 	/// @brief Make modifications to the subset vector given an input pose.
 	/// The input ResidueSubset should already be of size pose.total_residue()
+	/// Unless explicitly combining the subset such as AND OR, should clear the given subset.
 	virtual void apply(
 		core::pose::Pose const & pose,
 		ResidueSubset & subset

@@ -359,6 +359,7 @@ sources = {
 	],
 	"pilot/jadolfbr/testing" : [
 		#"class_tests",
+		#"test_grafting",
 		],
         "pilot/james" : [
 		"analyze_casp9",

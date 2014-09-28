@@ -37,6 +37,7 @@
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/MoverContainer.hh>
+#include <protocols/scoring/InterfaceInfo.hh>
 
 // Utility Headers
 #include <utility/tools/make_vector1.hh>
@@ -57,6 +58,8 @@
 #include <basic/Tracer.hh>
 
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
+#include <basic/datacache/BasicDataCache.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -190,6 +193,19 @@ void DockingLowRes::finalize_setup( core::pose::Pose & pose){
 
 	docking_lowres_protocol_ = protocols::moves::SequenceMoverOP( new SequenceMover );
 	docking_lowres_protocol_->add_mover( rb_mover_ );
+	
+	//JAB - moved from setup_foldtree.  It should be here.
+	
+	//set up InterfaceInfo object in pose to specify which interface(s)
+	//to calculate docking centroid mode scoring components from
+	using namespace core::scoring;
+	using namespace protocols::scoring;
+	//using core::pose::datacache::CacheableDataType::INTERFACE_INFO;
+
+	InterfaceInfoOP docking_interface( new InterfaceInfo( movable_jumps_ ) );
+	pose.data().set(
+		core::pose::datacache::CacheableDataType::INTERFACE_INFO,
+		docking_interface);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

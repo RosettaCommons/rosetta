@@ -282,6 +282,7 @@
 #include <protocols/simple_moves/AddChainMoverCreator.hh>
 #include <protocols/simple_moves/AddJobPairDataCreator.hh>
 #include <protocols/simple_moves/BackboneMoverCreator.hh>
+#include <protocols/simple_moves/ChangeAndResetFoldTreeMoverCreator.hh>
 #include <protocols/simple_moves/BoltzmannRotamerMoverCreator.hh>
 #include <protocols/simple_moves/ClearConstraintsMoverCreator.hh>
 #include <protocols/simple_moves/ConsensusDesignMoverCreator.hh>
@@ -355,10 +356,10 @@
 #include <protocols/abinitio/abscript/StructPerturberCMCreator.hh>
 #include <protocols/abinitio/abscript/RigidChunkCMCreator.hh>
 
-#include <protocols/membrane/AddMembraneMoverCreator.hh> 
-//#include <protocols/membrane/InitialMembranePositionMoverCreator.hh> 
-//#include <protocols/membrane/TransformIntoMembraneMoverCreator.hh> 
-//#include <protocols/membrane/MembranePositionRTMoverCreator.hh> 
-//#include <protocols/membrane/MembranePositionPerturbMoverCreator.hh> 
+#include <protocols/membrane/AddMembraneMoverCreator.hh>
+//#include <protocols/membrane/InitialMembranePositionMoverCreator.hh>
+//#include <protocols/membrane/TransformIntoMembraneMoverCreator.hh>
+//#include <protocols/membrane/MembranePositionRTMoverCreator.hh>
+//#include <protocols/membrane/MembranePositionPerturbMoverCreator.hh>
 
-#include <protocols/membrane/visualize/VisualizeMembraneMoverCreator.hh> 
+#include <protocols/membrane/visualize/VisualizeMembraneMoverCreator.hh>

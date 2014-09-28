@@ -18,27 +18,27 @@
 
 #include <protocols/antibody/design/AntibodySeqDesignMover.fwd.hh>
 #include <protocols/antibody/design/AntibodyDesignEnum.hh>
+#include <protocols/antibody/design/AntibodyDesignModeler.fwd.hh>
+#include <protocols/antibody/design/CDRSeqDesignOptions.hh>
+#include <protocols/antibody/design/util.hh>
 
 #include <protocols/antibody/AntibodyEnum.hh>
-#include <protocols/antibody/AntibodyInfo.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/antibody/AntibodyInfo.fwd.hh>
+#include <protocols/antibody/constraints/ParatopeEpitopeSiteConstraintMover.fwd.hh>
+#include <protocols/antibody/constraints/ParatopeSiteConstraintMover.fwd.hh>
 
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
+
+#include <protocols/moves/Mover.hh>
 
 namespace protocols {
 namespace antibody {
 namespace design {
-	using namespace protocols::antibody;
-	using namespace protocols::antibody::clusters;
-	using namespace core::scoring;
-	
-	struct CDRDesignInstructions{
-		bool design;
-		bool conservative_design;
-	};
 
 ///@brief Designs antibody CDR structures using a variety of different methods.  Main methods involve using cluster-based sequence probability statistics and conservative design strategies 
 /// to limit unknown structural effects caused by aggressive design.  Uses North_AHO numbering and cluster-based design.  Part of Rosetta Antibody Designer.
+/// ->  Will be replaced by SnugDesign Mover in the application, but still useful in it's own right.
 ///
 class AntibodySeqDesignMover : public protocols::moves::Mover {
 
@@ -53,6 +53,14 @@ public:
 	
 	virtual ~AntibodySeqDesignMover();
 	
+	///@brief Sets defaults, Reads defaultInstruction file, read user-passed instruction file.
+	void
+	set_defaults();
+	
+	virtual
+	void
+	apply(core::pose::Pose & pose);
+	
 	virtual
 	std::string
 	get_name() const;
@@ -65,69 +73,31 @@ public:
 	//
 	//
 	
-	///@brief Set to design CDRs.  Default is all of them true.
+	///@brief Set the CDR-specific settings for SeqDesign
 	void
-	set_cdr(CDRNameEnum const cdr, const bool setting);
+	set_seq_designer_options(AntibodyCDRSeqDesignOptions options);
 	
-	///@brief Set to model only one cdr, or all others but one.
-	void
-	set_cdr_only(CDRNameEnum const cdr, bool const setting);
 	
-	///@brief Set a range of CDRs.
+	///@brief Set any paratope CDRs.  If not set, will use all CDRs as the paratope where needed.
 	void
-	set_cdr_range(CDRNameEnum const cdr_start, CDRNameEnum const cdr_end, bool const setting);
+	set_paratope_cdrs(utility::vector1<bool> const & cdrs);
+	
+	///@brief Set any epitope residues in PDB numbering.  If not set, they will be detected automatically.
+	void
+	set_epitope_residues(utility::vector1<PDBNumbering > epitope_residues);
+	
 	
 	///@brief Repack neighbors of CDR's being designed within this distance.
 	void
-	set_neighbor_detection_dis(core::Real const neighbor_distance);
+	neighbor_detection_dis(core::Real const neighbor_distance);
 	
 	void
 	set_scorefxn(core::scoring::ScoreFunctionCOP scorefxn);
-
-	////////////////////////////////////////////////////////////////////////////
-	// Accessors
-	//
-	//
-	
-	//core::pack::task::TaskFactoryOP
-	//get_task_factory();
-	
-	////////////////////////////////////////////////////////////////////////////
-	// Tweaking Settings
-	//
-	//
 	
 	
 	void
 	set_rounds(core::Size const rounds);
 	
-	///@brief Set a conservative method for design, including only using general conserved aminoacids, and specific amino acids for identified turn types.
-	/// Default true for H3.  Any probabilities not found for a particular cluster will result in conservative design.
-	///
-	void
-	set_use_conservative_design(CDRNameEnum const cdr, bool const setting);
-	
-	void
-	set_use_conservative_design_range(CDRNameEnum const cdr_start, CDRNameEnum const cdr_end, bool const setting);
-	
-	
-	///@brief Try to conserve turn structure using known turn-based conservative mutations during conservative design.
-	void
-	set_use_turn_conservation(bool const setting);
-	
-	
-	///@brief Use conservative mutations (or alternative method) instead of using cluster sequence probabilities for design
-	/// if the number of sequences in the particular CDR's cluster probability data is lower than this cutoff. Default is 10.  This is why we try and stay in type 1 clusters during graft.
-	void
-	set_probability_data_cutoff(core::Size const cutoff);
-	
-	///@brief Use these weights during probabilistic design for data that is normally zero.
-	void
-	set_zero_prob_weight_at(core::Real const weight);
-	
-	///@brief keep proline fixed.  Maybe should be not an option - and just do it.
-	void
-	no_design_proline(bool const setting);
 	
 	////////////////////////////////////////////////////////////////////////////
 	// Design Type Settings
@@ -147,74 +117,52 @@ public:
 	void
 	set_use_cluster_constraints(bool const setting);
 	
-public:
-	
-	virtual
-	void
-	apply(core::pose::Pose & pose);
-
-private:
-	
-	///@brief Reads from database, gets prob_set for ResidueProbDesignOperation + sets cdrs_wo_prob_data_.
-	std::map< core::Size, std::map< core::chemical::AA, core::Real > >
-	setup_probability_data(core::pose::Pose & pose);
-	
-	///@brief Setup the Designer's taskfactory.
-	core::pack::task::TaskFactoryOP
-	setup_task_factory(core::pose::Pose & pose);
-	
-	///@brief Get a list of residues where conservative design will be used. 
-	vector1<core::Size>
-	get_conservative_design_residues(core::pose::Pose & pose);
-	
-	///@brief Turns off CDRs for design that are set to off.
-	void
-	disable_design_cdrs(core::pack::task::TaskFactoryOP tf, core::pose::Pose & pose);
-	
-	void
-	disable_design_cdr(CDRNameEnum cdr, core::pack::task::TaskFactoryOP tf, core::pose::Pose & pose);
-	
-	//void
-	//disable_packing_cdr(CDRNameEnum cdr, core::pack::task::TaskFactoryOP tf);
 	
 private:
 	
 	///@brief Set cluster-based harmonic dihedral constraints if known cluster or set coordinate constraints.
 	void
-	setup_constraints(core::pose::Pose & pose);
-	
-	///@Does The CDR have constraints of this type.  A bit hacky.  Used for going form graftdesigner to this, without regenerating the 'wrong' constraints.
-	///@details probably only works 'correctly' for dihedral/coordinate constraints.  THe function assumes that constraints were set for the whole CDR.
-	bool
-	cdr_has_constraints(core::pose::Pose const & pose, CDRNameEnum const cdr, std::string const constraint_type);
+	setup_cdr_constraints(core::pose::Pose & pose);
 	
 	void
 	read_command_line_options();
 	
 	///@brief Call DesignInstructionParser to determine settings for the design run.
 	void
-	read_instructions(std::string instruction_path);
+	setup_options_classes();
 	
-	///@brief Removes  residues from prob_set from instruction settings.  Used so that we speed task generation instead of overwriting these residues.
 	void
-	remove_conservative_design_residues_from_prob_set(vector1<core::Size> const & positions, std::map< core::Size, std::map< core::chemical::AA, core::Real > > & prob_set);
+	setup_paratope_epitope_constraints(core::pose::Pose & pose);
+	
+	void
+	setup_scorefxn();
+	
+private:
+	AntibodyCDRSeqDesignOptions cdr_seq_design_options_;
 	
 	AntibodyInfoOP ab_info_;
 	DesignTypeEnum design_method_;
-	ScoreFunctionOP scorefxn_;
-	core::Real zero_prob_weight_;
+	core::scoring::ScoreFunctionOP scorefxn_;
 	core::Real neighbor_dis_;
 	
-	core::Size prob_cutoff_;
 	core::Size rounds_;
 	
-	bool turn_conservation_; //Setting to use turn-based conservation during conservative design
-	bool no_design_proline_;
 	bool basic_design_; //Do not use fancy taskops and data.  Simply design the CDRs using chosen method.
+	bool full_cdr_min_;
 	bool use_cluster_constraints_;
+	bool use_epitope_constraints_;
 	
-	std::map<CDRNameEnum, CDRDesignInstructions> instructions_;
+	//std::map<CDRNameEnum, CDRDesignInstructions> instructions_;
 	std::string instruction_path_;
+	std::string default_instruction_path_;
+	
+	AntibodyDesignModelerOP modeler_;
+	protocols::antibody::constraints::ParatopeEpitopeSiteConstraintMoverOP paratope_epitope_cst_mover_;
+	protocols::antibody::constraints::ParatopeSiteConstraintMoverOP paratope_cst_mover_;
+	
+	vector1<bool> paratope_cdrs_;
+	utility::vector1<PDBNumbering > epitope_residues_; //Vector of resnum, chain pairs.
+	
 	
 	//vector1 <bool> cdrs_;
 	

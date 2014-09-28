@@ -131,8 +131,8 @@ namespace relax {
         set_cartesian(option[OptionKeys::relax::cartesian]());
         set_fa_score_function(core::scoring::get_score_function());
         set_use_rama2b(option [OptionKeys::score::ramaneighbors]());
-	set_use_increased_vdw_radii(option [OptionKeys::relax::centroid::increase_vdw_radii]());
-	do_final_repack(option [OptionKeys::relax::centroid::do_final_repack]());
+		set_use_increased_vdw_radii(option [OptionKeys::relax::centroid::increase_vdw_radii]());
+		do_final_repack(option [OptionKeys::relax::centroid::do_final_repack]());
         read_default_parameters();
     }
     
@@ -290,7 +290,9 @@ namespace relax {
             fa_scorefxn_->show(TR, pose);
             
             recover_sc = ReturnSidechainMoverOP( new ReturnSidechainMover(pose) );
-	    SwitchResidueTypeSetMoverOP to_cen( new SwitchResidueTypeSetMover("centroid") );
+
+			SwitchResidueTypeSetMoverOP to_cen( new SwitchResidueTypeSetMover("centroid") );
+
             to_cen->apply(pose);
             
             passed_centroid = false;
@@ -317,7 +319,10 @@ namespace relax {
         else {
             minmover = MinMoverOP( new MinMover( movemap_, cen_scorefxn_, min_type(), def_parameters.min_params[1], true ) );
         }
-	minmover->cartesian( cartesian() );
+		if (cartesian()){
+			minmover->cartesian( true );
+			minmover->min_type("lbfgs_armijo_nonmonotone");
+		}
 	
         //Test to make sure something is ramped - If not, run basic.
         if (!ramp_vdw_ && !ramp_rama_){

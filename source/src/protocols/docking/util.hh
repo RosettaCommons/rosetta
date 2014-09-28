@@ -12,12 +12,12 @@
 /// @detailed
 /// @author Brian Weitzner
 
-
 #ifndef INCLUDED_protocols_docking_util_hh
 #define INCLUDED_protocols_docking_util_hh
 
 #include <protocols/docking/types.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <utility/vector1.fwd.hh>
 
 #include <map>
@@ -39,7 +39,15 @@ void
 setup_foldtree(
 	core::pose::Pose & pose,
 	std::string const & partner_chainID,
-	DockJumps & movable_jumps);
+	DockJumps & movable_jumps );
+
+void
+setup_foldtree(
+	core::pose::Pose const & pose,
+	std::string const & partner_chainID,
+	DockJumps & movable_jumps,
+	core::kinematics::FoldTree & ft);
+
 
 /// @brief Sets up a docking fold tree based on looking up the
 /// interface in a database
@@ -48,7 +56,16 @@ setup_foldtree(
 	core::pose::Pose & pose,
 	core::Size interface_id,
 	utility::sql_database::sessionOP db_session,
-	DockJumps & movable_jumps);
+	DockJumps & movable_jumps );
+
+void
+setup_foldtree(
+	core::pose::Pose const & pose,
+	core::Size interface_id,
+	utility::sql_database::sessionOP db_session,
+	DockJumps & movable_jumps,
+	core::kinematics::FoldTree & ft);
+
 
 /// @brief Sets up a docking fold tree based on a map of which chains
 /// are part of which partner
@@ -58,6 +75,13 @@ setup_foldtree(
 	std::map< core::Size, utility::vector1< core::Size > > const & partner_to_chains,
 	DockJumps & movable_jumps );
 
+void
+setup_foldtree(
+	core::pose::Pose const & pose,
+	std::map< core::Size, utility::vector1< core::Size > > const & partner_to_chains,
+	DockJumps & movable_jumps,
+	core::kinematics::FoldTree & ft);
+
 
 /// @brief Sets up a docking fold tree based on user-specified chains for the first and second partner
 void
@@ -66,8 +90,14 @@ setup_foldtree(
 	core::Size cutpoint,
 	DockJumps & movable_jumps );
 
+void
+setup_foldtree(
+	core::pose::Pose const & pose,
+	core::Size cutpoint,
+	DockJumps & movable_jumps,
+	core::kinematics::FoldTree & ft);
 
-
+	
 } // docking
 } // protocols
 

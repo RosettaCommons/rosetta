@@ -90,8 +90,9 @@ void compute_jump_rmsd(const core::pose::Pose& reference,
                        boost::unordered_map<core::Size, core::Real>* rmsds);
 
 /// @brief RMSD between residues, accounting for automorphisms
-/// (symmetries).  Does NOT include H atoms -- they add lots of extra
-/// symmetries.
+/// (symmetries).  For example if you have something like a tyrosine, 
+/// you won't get a higher rmsd just because you flipped the ring 180 degrees (Rocco).
+/// Does NOT include H atoms -- they add lots of extra symmetries.
 core::Real
 automorphic_rmsd(
 	core::conformation::Residue const & rsd1,

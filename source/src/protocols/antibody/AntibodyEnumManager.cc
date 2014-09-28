@@ -38,12 +38,15 @@ AntibodyEnumManager::setup() {
 	cdr_name_to_string_.resize(num_cdr_loops);
 	numbering_scheme_to_string_.resize(AntibodyNumberingSchemeEnum_total);
 	cdr_definition_to_string_.resize(CDRDefinitionEnum_total);
+	light_chain_type_to_string_.resize(LightChainTypeEnum_total);
 	h3_base_type_to_string_.resize(H3BaseTypeEnum_total);
 	packing_angle_to_string_.resize(PackingAngleEnum_total);
 	cdr_landmark_to_string_.resize(CDRLandmarkEnum_total);
+	antibody_region_to_string_.resize(AntibodyRegionEnum_total);
 	
 	///Manually construct the variables
-
+	
+	////////////////// CDR names ///////////////////////////////////////////////
 	cdr_name_to_string_[h1] = "H1";
 	cdr_name_to_string_[h2] = "H2";
 	cdr_name_to_string_[h3] = "H3";
@@ -66,6 +69,7 @@ AntibodyEnumManager::setup() {
 	cdr_name_to_enum_["l2"] = l2;
 	cdr_name_to_enum_["l3"] =l3;
 
+	////////////////// Numbering Schemes ///////////////////////////////////////
 	numbering_scheme_to_string_[Chothia_Scheme] = "Chothia_Scheme";
 	numbering_scheme_to_string_[Kabat_Scheme] ="Kabat_Scheme";
 	numbering_scheme_to_string_[Enhanced_Chothia_Scheme] = "Enhanced_Chothia_Scheme";
@@ -78,6 +82,7 @@ AntibodyEnumManager::setup() {
 	numbering_scheme_to_enum_["AHO_Scheme"] = AHO_Scheme;
 	numbering_scheme_to_enum_["IMGT_Scheme"] = IMGT_Scheme;
 
+	////////////////// CDR Definitions  ///////////////////////////////////////
 	cdr_definition_to_string_[Chothia] = "Chothia";
 	cdr_definition_to_string_[Aroop] = "Aroop";
 	cdr_definition_to_string_[North] = "North";
@@ -90,6 +95,16 @@ AntibodyEnumManager::setup() {
 	cdr_definition_to_enum_["Kabat"] = Kabat;
 	cdr_definition_to_enum_["Martin"] = Martin;
 	
+	///////////////// LightChain Types ////////////////////////////////////////////
+	light_chain_type_to_string_[lambda] = "lambda";
+	light_chain_type_to_string_[kappa] = "kappa";
+	light_chain_type_to_string_[unknown] = "unknown";
+	
+	light_chain_type_to_enum_["lambda"] = lambda;
+	light_chain_type_to_enum_["kappa"] = kappa;
+	light_chain_type_to_enum_["unknown"] = unknown;
+	
+	////////////////// H3 Base Type ////////////////////////////////////////////
 	h3_base_type_to_string_[Kinked] = "KINKED";
 	h3_base_type_to_string_[Extended] = "EXTENDED";
 	h3_base_type_to_string_[Neutral] = "NEUTRAL";
@@ -100,6 +115,7 @@ AntibodyEnumManager::setup() {
 	h3_base_type_to_enum_["NEUTRAL"] = Neutral;
 	h3_base_type_to_enum_["UNKNOWN"] = Unknown;
 
+	///////////////// Packing Angle ////////////////////////////////////////////
 	packing_angle_to_string_[VL_sheet_1] = "VL_sheet_1";
 	packing_angle_to_string_[VL_sheet_2] = "VL_sheet_2";
 	packing_angle_to_string_[VH_sheet_1] = "VH_sheet_1";
@@ -110,6 +126,7 @@ AntibodyEnumManager::setup() {
 	packing_angle_to_enum_["VH_sheet_1"] = VH_sheet_1;
 	packing_angle_to_enum_["VH_sheet_2"] = VH_sheet_2;
 	
+	///////////////// Antibody Landmarks ////////////////////////////////////////////
 	cdr_landmark_to_enum_["cdr_start"] = cdr_start;
 	cdr_landmark_to_enum_["CDR_START"] =  cdr_start;
 	cdr_landmark_to_enum_["cdr_stop"] = cdr_end;
@@ -118,6 +135,15 @@ AntibodyEnumManager::setup() {
 	cdr_landmark_to_string_[cdr_start] = "cdr_start";
 	cdr_landmark_to_string_[cdr_end] = "cdr_end";
 
+	///////////////// Antibody Regions ////////////////////////////////////////////
+	antibody_region_to_enum_["antigen_region"] = antigen_region;
+	antibody_region_to_enum_["cdr_region"] = cdr_region;
+	antibody_region_to_enum_["framework_region"] = framework_region;
+	
+	antibody_region_to_string_[antigen_region] = "antigen_region";
+	antibody_region_to_string_[cdr_region] = "cdr_region";
+	antibody_region_to_string_[framework_region] = "framework_region";
+	
 }
 
 CDRNameEnum
@@ -141,6 +167,8 @@ AntibodyEnumManager::cdr_name_is_present(std::string const & cdr_name) const {
 	return iter != cdr_name_to_enum_.end();
 }
 
+
+////////////////// Numbering Schemes ///////////////////////////////////////
 AntibodyNumberingSchemeEnum
 AntibodyEnumManager::numbering_scheme_string_to_enum(std::string const & numbering_scheme) const {
 
@@ -161,6 +189,8 @@ AntibodyEnumManager::numbering_scheme_is_present(std::string numbering_scheme) c
 	return iter != numbering_scheme_to_enum_.end();
 }
 
+
+////////////////// CDR Definitions  ///////////////////////////////////////
 CDRDefinitionEnum
 AntibodyEnumManager::cdr_definition_string_to_enum(std::string const & cdr_definition) const {
 
@@ -181,6 +211,27 @@ AntibodyEnumManager::cdr_definition_is_present(std::string const & cdr_definitio
 	return iter != cdr_definition_to_enum_.end();
 }
 
+
+///////////////// LightChain Types ////////////////////////////////////////////
+LightChainTypeEnum
+AntibodyEnumManager::light_chain_type_string_to_enum(const std::string& light_chain) const {
+	std::map< std::string, LightChainTypeEnum>::const_iterator iter( light_chain_type_to_enum_.find( light_chain ) );
+	return iter->second;
+}
+
+std::string
+AntibodyEnumManager::light_chain_type_enum_to_string(const LightChainTypeEnum light_chain) const {
+	return light_chain_type_to_string_[light_chain];
+}
+
+bool
+AntibodyEnumManager::light_chain_type_is_present(const std::string& light_chain) const {
+	std::map< std::string, LightChainTypeEnum >::const_iterator iter( light_chain_type_to_enum_.find( light_chain) );
+	return iter != light_chain_type_to_enum_.end();
+}
+
+
+////////////////// H3 Base Type ////////////////////////////////////////////
 H3BaseTypeEnum
 AntibodyEnumManager::h3_base_type_string_to_enum(std::string const & base_type) const {
 
@@ -195,6 +246,8 @@ AntibodyEnumManager::h3_base_type_enum_to_string(H3BaseTypeEnum const base_type)
 	return h3_base_type_to_string_[base_type];
 }
 
+
+///////////////// Packing Angle ////////////////////////////////////////////
 PackingAngleEnum
 AntibodyEnumManager::packing_angle_string_to_enum(std::string const & angle_type) const {
 
@@ -209,6 +262,8 @@ AntibodyEnumManager::packing_angle_enum_to_string(PackingAngleEnum const angle_t
 	return packing_angle_to_string_[angle_type];
 }
 
+
+///////////////// Antibody Landmarks ////////////////////////////////////////////
 std::string
 AntibodyEnumManager::cdr_landmark_enum_to_string(CDRLandmarkEnum const landmark) const {
 	return cdr_landmark_to_string_[landmark];

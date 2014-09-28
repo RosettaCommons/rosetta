@@ -116,7 +116,7 @@ return_region(Pose & pose, Size const start, Size const end){
 
 	core::pose::create_subpose(pose, positions, new_foldtree, piece);
 
-	//Create subpose results in a NULL PDBInfo.  We now need a new one.
+	//Create subpose results in a NULL PDB_Info.  We now need a new one.
 	core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo(piece.total_residue()) );
 	piece.pdb_info(pdb_info);
 
@@ -486,7 +486,8 @@ add_cutpoint_variants_for_ccd(Pose & pose, Loops const & loops){
 	core::Size i = 0;
 	for (protocols::loops::Loops::const_iterator it = loops.begin(); it != loops.end(); ++it){
 		++i;
-		TR <<i << std::endl;
+		TR <<"Loop: "<< i << std::endl;
+		TR << "Add variant to: " << it->cut() << std::endl;
 		core::pose::add_variant_type_to_pose_residue(pose, core::chemical::CUTPOINT_LOWER, it->cut());
 		core::pose::add_variant_type_to_pose_residue(pose, core::chemical::CUTPOINT_UPPER, it->cut()+1);
 	}

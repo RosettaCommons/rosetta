@@ -112,7 +112,11 @@ initialize_command_line_options <- function() {
 	option_list <- c(option_list, list(
 		make_option(c("-o", "--output_dir"), type="character", default="build", dest="output_dir",
 			help="Directory where the output plots and statistics will be generated.  [Default \"%default\"]")))
-
+  
+  option_list <- c(option_list, list(
+    make_option(c("--out_disable_ss_names"), action="store_true", default=FALSE, dest="out_disable_ss_names",
+      help="Disable concatonating the ss names for output.  Be sure to combine this with out_dir or all plots will go to build. [Default \"%default\"]")))
+  
 	option_list <- c(option_list, make_output_formats_options_list(all_output_formats))
 
 	opt <- parse_args(OptionParser(option_list=option_list), positional_arguments=TRUE)
@@ -324,11 +328,14 @@ initialize_output_dir <- function(work_dir, opt, ss_cmp){
 		output_dir <- file.path(work_dir, opt$options$output_dir)
 	}
 
-	file.path(
-		output_dir,
-		paste(
-			llply(ss_cmp$sample_sources, function(ss) ss$id),
-			sep="/", collapse="_"))
+  if(! opt$options$out_disable_ss_names){
+	  file.path(
+		  output_dir,
+		  paste(
+			  llply(ss_cmp$sample_sources, function(ss) ss$id),
+			  sep="/", collapse="_"))
+  }
+  output_dir
 }
 
 summarize_configuration <- function(

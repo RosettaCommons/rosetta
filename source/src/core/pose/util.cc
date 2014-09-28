@@ -193,6 +193,7 @@ bool is_position_conserved_residue(const Pose& pose, core::Size residue) {
       utility::pointer::static_pointer_cast<PositionConservedResiduesStore const>(
           cache.get_const_ptr(core::pose::datacache::CacheableDataType::POSITION_CONSERVED_RESIDUES));
 
+
   return store->is_conserved(residue);
 }
 
@@ -645,6 +646,7 @@ void setPoseExtraScore(
 		pose.data().set(
 			core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA,
 			DataCache_CacheableData::DataOP( new CacheableStringFloatMap() )
+
 		);
 	}
 
@@ -671,6 +673,7 @@ void setPoseExtraScore(
 		pose.data().set(
 			core::pose::datacache::CacheableDataType::ARBITRARY_STRING_DATA,
 			DataCache_CacheableData::DataOP( new CacheableStringMap() )
+
 		);
 	}
 
@@ -697,6 +700,7 @@ void add_comment(
 		pose.data().set(
 			core::pose::datacache::CacheableDataType::STRING_MAP,
 			DataCache_CacheableData::DataOP( new CacheableStringMap() )
+
 		);
 	}
 
@@ -761,6 +765,7 @@ void clearPoseExtraScores(
 		pose.data().set(
 			core::pose::datacache::CacheableDataType::STRING_MAP,
 			DataCache_CacheableData::DataOP( new CacheableStringMap() )
+
 		);
 	}
 
@@ -769,6 +774,7 @@ void clearPoseExtraScores(
 		pose.data().set(
 			core::pose::datacache::CacheableDataType::SCORE_LINE_STRINGS,
 			DataCache_CacheableData::DataOP( new CacheableStringMap() )
+
 		);
 	}
 }
@@ -1872,7 +1878,7 @@ get_chain_id_from_chain(char const & chain, core::pose::Pose const & pose){
 	utility::vector1<core::Size> chain_ids = get_chain_ids_from_chain(chain, pose);
 	if(chain_ids.size() != 1)
 	{
-		throw utility::excn::EXCN_RangeError("chain_id "+utility::to_string(chain)+" does not exist");
+		throw utility::excn::EXCN_RangeError(" chain_id "+utility::to_string(chain)+" does not exist");
 	}
 	return chain_ids[1];
 }

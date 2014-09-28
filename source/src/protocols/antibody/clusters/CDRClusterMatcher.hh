@@ -9,7 +9,7 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file protocols/antibody/clusters/CDRClusterMatcher.hh
-/// @brief Simple class for identifying CDR cluster of an antibody
+/// @brief Simple class for identifying CDR clusters of an antibody
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_antibody_clusters_CDRCLUSTERMATCHER_HH
@@ -40,7 +40,7 @@ namespace clusters {
 	};
 	
 	
-///@brief Simple class for identifying CDR cluster of an antibody or protein structure. 
+///@brief Simple class for identifying CDR clusters of an antibody or protein structure. 
 ///@details Main interface is through CDRClusterSet/AntibodyInfo.  That is where AntibodyNumbering can be used to access specific CDRs and numbering scheme transformations.
 class CDRClusterMatcher: public utility::pointer::ReferenceCount {
 public:

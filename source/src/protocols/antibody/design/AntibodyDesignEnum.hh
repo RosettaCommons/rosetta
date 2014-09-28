@@ -24,6 +24,8 @@ enum MinTypeEnum{
 	relax = 1,
 	centroid_relax,
 	minimize,
+	minimize_cartesian,
+	dualspace,
 	repack,
 	no_min,
 	MinTypeEnum_total = no_min
@@ -39,7 +41,17 @@ enum DesignTypeEnum{
 	DesignTypeEnum_total = flxbb
 			
 };
+
+//Can be moved generally somewhere else
+enum SeqDesignStrategyEnum {
+	seq_design_profiles = 1,
+	seq_design_conservative,
+	seq_design_basic,
 	
+	SeqDesignStrategyEnum_total = seq_design_basic
+};
+
+
 }
 }
 }

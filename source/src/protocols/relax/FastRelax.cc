@@ -12,7 +12,7 @@
 /// @detailed
 /// @author Mike Tyka
 /// @author Roland A. Pache
-/// @author Jared Adolf-Bryfogle (design)
+/// @author Jared Adolf-Bryfogle
 /*
 Format for relax script file
 
@@ -331,6 +331,16 @@ FastRelax::clone() const {
 }
 
 void
+FastRelax::dualspace(bool val){
+	dualspace_ = val;
+}
+
+bool
+FastRelax::dualspace() {
+	return dualspace_;
+}
+
+void
 FastRelax::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
@@ -372,7 +382,10 @@ FastRelax::parse_my_tag(
 	if( cstfile != "" )	add_cst_files( cstfile );
 
 	bool batch = tag->getOption< bool >( "batch", false );
+	
 	cartesian (tag->getOption< bool >( "cartesian", false ) );
+	dualspace (tag->getOption< bool >( "dualspace", false) );
+	
 	ramp_down_constraints( tag->getOption< bool >( "ramp_down_constraints", ramp_down_constraints() ) );
 
 	if ( tag->getOption< bool >( "bondangle", false ) ) {
@@ -471,7 +484,9 @@ void FastRelax::set_to_default( )
 	ramady_cutoff_ = basic::options::option[ OptionKeys::relax::ramady_cutoff ]();
 	ramady_force_ = basic::options::option[ OptionKeys::relax::ramady_force ]();
 	ramady_rms_limit_ = basic::options::option[ OptionKeys::relax::ramady_rms_limit ]();
-
+	dualspace_ = basic::options::option[ basic::options::OptionKeys::relax::dualspace ]();
+	
+	
 	// cartesian
 
 	// dumpall
@@ -484,7 +499,13 @@ void FastRelax::set_to_default( )
 	delete_virtual_residues_after_FastRelax_	=	false;
 }	//set_to_default
 
-
+///Make sure correct mintype for cartesian or dualspace during apply
+void FastRelax::check_nonideal_mintype(){
+	if (dualspace() || cartesian() || minimize_bond_lengths() || minimize_bond_angles())
+		if (!basic::options::option[ basic::options::OptionKeys::relax::min_type ].user()){
+			min_type("lbfgs_armijo_nonmonotone");
+	}
+}
 
 // grab the score and remember the pose if the score is better then ever before.
 void FastRelax::cmd_accept_to_best(
@@ -521,23 +542,26 @@ void FastRelax::cmd_accept_to_best(
 
 
 void FastRelax::do_minimize(
-  core::pose::Pose &pose,
-  core::Real tolerance,
-  core::kinematics::MoveMapOP local_movemap,
+	core::pose::Pose &pose,
+	core::Real tolerance,
+	core::kinematics::MoveMapOP local_movemap,
 	core::scoring::ScoreFunctionOP local_scorefxn
 ){
 	using namespace core::scoring;
 	using namespace core::conformation;
 
-  protocols::simple_moves::MinMoverOP min_mover;
-  if ( core::pose::symmetry::is_symmetric( pose ) )  {
-    min_mover = protocols::simple_moves::MinMoverOP( new simple_moves::symmetry::SymMinMover( local_movemap, local_scorefxn, min_type(), tolerance, true ) );
-  } else {
-    min_mover = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover( local_movemap, local_scorefxn, min_type(), tolerance, true ) );
-  }
+	//Why create a new min_mover every time we minimize?
+	protocols::simple_moves::MinMoverOP min_mover;
+	if ( core::pose::symmetry::is_symmetric( pose ) )  {
+		min_mover = protocols::simple_moves::MinMoverOP( new simple_moves::symmetry::SymMinMover( local_movemap, local_scorefxn, min_type(), tolerance, true ) );
+	} else {
+		min_mover = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover( local_movemap, local_scorefxn, min_type(), tolerance, true ) );
+	}
+	
 	min_mover->cartesian( cartesian() );
 	if (max_iter() > 0) min_mover->max_iter( max_iter() );
-  min_mover->apply( pose );
+	
+	min_mover->apply( pose );
   
 	// If relax membrane, update structure based embeddings
 	bool membrane = pose.conformation().is_membrane();
@@ -548,21 +572,21 @@ void FastRelax::do_minimize(
 }
 
 void FastRelax::do_md(
-  core::pose::Pose &pose,
+	core::pose::Pose &pose,
 	core::Real nstep,
-  core::Real temp0,
-  core::kinematics::MoveMapOP movemap_in,
+	core::Real temp0,
+	core::kinematics::MoveMapOP movemap_in,
 	core::scoring::ScoreFunctionOP local_scorefxn
 ){
 
-  core::kinematics::MoveMapOP local_movemap = movemap_in;
+	core::kinematics::MoveMapOP local_movemap = movemap_in;
 
-  protocols::md::CartesianMD MD_mover( pose, local_scorefxn, local_movemap );
+	protocols::md::CartesianMD MD_mover( pose, local_scorefxn, local_movemap );
 
 	MD_mover.set_nstep( (Size)(nstep) );
 	MD_mover.set_temperature( temp0 );
 
-  MD_mover.apply( pose );
+	MD_mover.apply( pose );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -609,7 +633,8 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	initialize_movemap( pose, *local_movemap );
 
 	set_movemap(local_movemap);
-
+	check_nonideal_mintype();
+	
 	// Deal with constraint options and add coodrinate constraints for all or parts of the structure.
 	set_up_constraints( pose, *local_movemap );
 
@@ -853,7 +878,9 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			// The fourth paramter is the minimization
 			if( cmd.nparams >= 4 ){
 				Size const iter_cmd = (Size)(cmd.param4);
+				Size const original_iter = max_iter();
 				max_iter( iter_cmd );
+				max_iter( original_iter );
 			}
 
 			// decide when to call ramady repair code
@@ -869,7 +896,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			std::string checkpoint_id = "chk" + string_of( chk_counter );
 			if (!checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true )){
 				pack_full_repack_->apply( pose );
-        do_minimize( pose, cmd.param2, local_movemap, local_scorefxn );
+				do_minimize( pose, cmd.param2, local_movemap, local_scorefxn );
 				checkpoints_.checkpoint( pose, get_current_tag(), checkpoint_id,  true );
 			}
 
@@ -1046,7 +1073,7 @@ void FastRelax::read_script_file( const std::string &script_file, core::Size sta
 	std::string line;
 
 	runtime_assert( standard_repeats > 0 );
-	if( script_file == "" && basic::options::option[ basic::options::OptionKeys::relax::dualspace ]() ){
+	if( script_file == "" && dualspace_ ){
     TR << "================== Using dualspace script ==================" << std::endl;
     filelines.push_back( "switch:torsion"  								 );
     filelines.push_back( "repeat " + string_of( standard_repeats - 1 ) );
@@ -1208,7 +1235,7 @@ void FastRelax::batch_apply(
 	using namespace protocols;
 
 
-
+	check_nonideal_mintype();
 	PackerTaskOP task_;
 	protocols::simple_moves::PackRotamersMoverOP pack_full_repack_;
 	core::kinematics::MoveMapOP local_movemap = get_movemap()->clone();

@@ -39,6 +39,11 @@ namespace residue_selector {
 AndResidueSelector::AndResidueSelector() {}
 AndResidueSelector::~AndResidueSelector() {}
 
+AndResidueSelector::AndResidueSelector(ResidueSelectorCOP selector1)
+{
+	add_residue_selector( selector1 );
+}
+
 AndResidueSelector::AndResidueSelector( ResidueSelectorCOP selector1, ResidueSelectorCOP selector2 )
 {
 	add_residue_selector( selector1 );

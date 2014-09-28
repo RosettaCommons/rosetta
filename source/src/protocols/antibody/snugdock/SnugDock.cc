@@ -101,6 +101,11 @@ bool SnugDock::reinitialize_for_new_input() const {
 	return true;
 }
 
+void SnugDock::debug() {
+	debug_ = true;
+	number_of_high_resolution_cycles_ = 1;
+}
+
 void SnugDock::register_options() {
 	moves::RandomMover::register_options();
 	moves::SequenceMover::register_options();
@@ -227,12 +232,22 @@ void SnugDock::setup_objects( Pose const & pose ) {
 
 	/// This is a very succinct description of what this mover does.  For a description in words, see the implementation
 	/// of the streaming operator.
-	high_resolution_step_ = moves::RandomMoverOP( new RandomMover );
-	high_resolution_step_->add_mover( antibody_antigen_dock_cycle, 0.4 );
-	high_resolution_step_->add_mover( vH_vL_dock_cycle, 0.4 );
-	high_resolution_step_->add_mover( minimize_all_cdr_loops, 0.1 );
-	high_resolution_step_->add_mover( refine_cdr_h2, 0.05 );
-	high_resolution_step_->add_mover( refine_cdr_h3, 0.05 );
+	if (debug_){
+		high_resolution_step_ = moves::MoverContainerOP( new SequenceMover );
+		high_resolution_step_->add_mover( antibody_antigen_dock_cycle );
+		high_resolution_step_->add_mover( vH_vL_dock_cycle);
+		high_resolution_step_->add_mover( minimize_all_cdr_loops);
+		high_resolution_step_->add_mover( refine_cdr_h2 );
+		high_resolution_step_->add_mover( refine_cdr_h3 );
+	}
+	else{
+		high_resolution_step_ = moves::MoverContainerOP( new RandomMover );
+		high_resolution_step_->add_mover( antibody_antigen_dock_cycle, 0.4 );
+		high_resolution_step_->add_mover( vH_vL_dock_cycle, 0.4 );
+		high_resolution_step_->add_mover( minimize_all_cdr_loops, 0.1 );
+		high_resolution_step_->add_mover( refine_cdr_h2, 0.05 );
+		high_resolution_step_->add_mover( refine_cdr_h3, 0.05 );
+	}
 }
 
 void SnugDock::init() {

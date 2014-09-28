@@ -180,7 +180,7 @@ public:
 		cdr_grafter->set_cycles(5);
 		cdr_grafter->apply(scaffold_copy);
 		
-		//scaffold_copy.dump_pdb("/home/jadolfbr/Documents/modeling/rosetta/Rosetta/main/source/test.pdb");
+		scaffold_copy.dump_pdb("/home/jadolfbr/Documents/modeling/rosetta/Rosetta/main/source/ccd_ends.pdb");
 		
 		
 		TS_ASSERT_EQUALS(scaffold_copy.total_residue(), starting_residues - L1_2j88_size + insert_size);
@@ -203,7 +203,7 @@ public:
 		anchored_grafter->set_cycles(2);
 		anchored_grafter->copy_pdbinfo(true);
 		anchored_grafter->apply(scaffold_copy);
-		//scaffold_copy.dump_pdb("/home/jadolfbr/Documents/modeling/rosetta/Rosetta/main/source/test2.pdb");
+		scaffold_copy.dump_pdb("/home/jadolfbr/Documents/modeling/rosetta/Rosetta/main/source/anchored.pdb");
 		
 		TS_ASSERT_EQUALS(scaffold_copy.total_residue(), starting_residues - L1_2j88_size + insert_size);
 		TS_ASSERT_EQUALS(anchored_grafter->start(), start);

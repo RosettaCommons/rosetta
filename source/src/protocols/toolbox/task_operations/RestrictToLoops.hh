@@ -46,13 +46,13 @@ public:
 	RestrictToLoops();
 
 	/// @brief Copy constructor.
-	RestrictToLoops(RestrictToLoops const & src);
+	RestrictToLoops( RestrictToLoops const & src );
 
 	/// @brief Default destructor.
 	virtual ~RestrictToLoops();
 
 	/// @brief Assignment operator.
-	RestrictToLoops & operator= (RestrictToLoops const & rhs);
+	RestrictToLoops & operator= ( RestrictToLoops const & rhs );
 
 	/// @brief Return a deep-copied OP.
 	core::pack::task::operation::TaskOperationOP clone() const;
@@ -68,30 +68,39 @@ protected:
 	virtual void init();
 
 	/// @brief Help copy instances of this class.
-	virtual void copy(RestrictToLoops & lhs, RestrictToLoops const & rhs);
+	virtual void copy( RestrictToLoops & lhs, RestrictToLoops const & rhs );
 	
 public:
 
 	/// @brief Apply this operation to the packer task.
 	void apply(
 			core::pose::Pose const & pose,
-			core::pack::task::PackerTask & task) const;
+			core::pack::task::PackerTask & task ) const;
 
 	/// @brief Return true if design is allowed.
 	bool design_loop() const;
 
 	/// @brief Specify whether or not design is allowed.
-	void set_design_loop(bool design_loop);
+	void set_design_loop( bool design_loop );
 
 	/// @brief Return the loops allowed to pack.
 	loops::LoopsCOP loops() const;
 
 	/// @brief Specify the loops that will be allowed to pack.
-	void set_loops(loops::LoopsCOP loops);
+	void set_loops( loops::LoopsCOP loops );
 
 	/// @brief Specify the loops that will be allowed to pack.
-	void set_loops_from_file(std::string loops_file);
-
+	void set_loops_from_file( std::string loops_file );
+	
+	/// @brief Return true if we are restricting to only design. 
+	///  AKA RestrictDesignToLoops.
+	bool restrict_only_design_to_loops() const;
+	
+	/// @brief Specify whether to restrict only design to loops/neighbors
+	///  AKA RestrictDesignToLoops.  Does not disable packing for any residue.
+	///  Implies and sets design_loop to true.
+	void set_restrict_only_design_to_loops( bool restrict_only_design );
+	
 protected:
 
 	/// @brief Helper function to prevent code duplication in subclasses.
@@ -99,10 +108,12 @@ protected:
 			core::pose::Pose const & pose,
 			core::pack::task::PackerTask & task,
 			bool include_neighbors,
-			core::Real cutoff_distance) const;
+			core::Real cutoff_distance,
+			bool design_neighbors ) const;
 
 private:
-	bool design_loop_;
+	bool design_loops_;
+	bool restrict_only_design_;
 	loops::LoopsCOP loops_;
 
 };

@@ -9,7 +9,7 @@
 
 /// @file   core/pack/task/residue_selector/ChainSelector.hh
 /// @brief  The ChainSelector selects all the residues from a given chain, given either as a number
-///         or a character.
+///         or a character.  Clears the passed ResidueSubset.
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
 
 #ifndef INCLUDED_core_pack_task_residue_selector_ChainSelector_HH

@@ -1,0 +1,11 @@
+
+#General
+ALL GraftDesign ALLOW
+L3 GraftDesign FIX
+
+#Types
+ALL GraftDesign MINTYPE relax
+
+ALL GraftDesign WEIGHTS 1.0
+L3 GraftDesign WEIGHTS 2.0
+

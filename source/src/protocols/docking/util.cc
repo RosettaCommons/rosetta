@@ -33,10 +33,12 @@
 #include <core/types.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
+#include <core/pose/util.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/string_util.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -97,9 +99,21 @@ void
 setup_foldtree(
 	Pose & pose,
 	string const & partner_chainID,
-	DockJumps & movable_jumps
-) {
+	DockJumps & movable_jumps) 
+{
+	core::kinematics::FoldTree f;
+	setup_foldtree(pose, partner_chainID, movable_jumps, f);
+	pose.fold_tree(f);
 
+}
+
+void
+setup_foldtree(
+	core::pose::Pose const & pose,
+	std::string const & partner_chainID,
+	DockJumps & movable_jumps,
+	core::kinematics::FoldTree & ft)
+{
 	PDBInfoCOP pdb_info = pose.pdb_info();
 	movable_jumps.clear(); //Why is this required and then cleared?
 
@@ -121,10 +135,22 @@ setup_foldtree(
 	} else {
 		char first_chain_second_partner = char();
 		for ( Size i=1; i<=partner_chainID.length()-1; i++ ) {
+			
 			if (partner_chainID[i-1] == '_') {
 				first_chain_second_partner = partner_chainID[i];
 			}
 		}
+		
+		cutpoint = pose.conformation().chain_begin(core::pose::get_chain_id_from_chain(first_chain_second_partner, pose)) - 1;
+		
+		if (cutpoint == 0){
+			utility_exit_with_message(
+				"Attempting to setup foldtree between interface partners, "
+				"however, the cutpoint could not be identified because "
+				"the first chain second partner cannot currently be the first chain in the PDB: " +utility::to_string(first_chain_second_partner));
+		}
+		
+		/*
 		for ( Size i=2; i<= pose.total_residue(); ++i ) {
 			if ( pdb_info->chain( i ) == first_chain_second_partner ) {
 				cutpoint = i-1;
@@ -138,6 +164,7 @@ setup_foldtree(
 				"the pdb chain identifier could not be found for "
 				"the first chain of the second partner");
 		}
+		*/
 
 		// Specifying chains overrides movable_jumps
 		for (Size i=1; i<=f.num_jump(); ++i) {
@@ -150,7 +177,7 @@ setup_foldtree(
 
 	}
 
-	setup_foldtree(pose, cutpoint, movable_jumps);
+	setup_foldtree(pose, cutpoint, movable_jumps, ft);
 }
 
 /// Here is the protocol that the database should have:
@@ -178,8 +205,21 @@ setup_foldtree(
 	Pose & pose,
 	Size const interface_id,
 	sessionOP db_session,
-	DockJumps & movable_jumps
-) {
+	DockJumps & movable_jumps) 
+{
+	core::kinematics::FoldTree f;
+	setup_foldtree(pose, interface_id, db_session, movable_jumps, f);
+	pose.fold_tree(f);
+}
+
+void
+setup_foldtree(
+	core::pose::Pose const & pose,
+	core::Size interface_id,
+	utility::sql_database::sessionOP db_session,
+	DockJumps & movable_jumps,
+	core::kinematics::FoldTree & ft)
+{
 	string const sele(
 		"SELECT\n"
 		"	partner.partner_id AS partner,\n"
@@ -202,7 +242,7 @@ setup_foldtree(
 		partner_to_chains[partner].push_back(chain);
 	}
 
-	setup_foldtree(pose, partner_to_chains, movable_jumps);
+	setup_foldtree(pose, partner_to_chains, movable_jumps, ft);
 }
 
 
@@ -210,9 +250,20 @@ void
 setup_foldtree(
 	Pose & pose,
 	map< Size, vector1< Size > > const & partner_to_chains,
-	DockJumps & movable_jumps
-) {
+	DockJumps & movable_jumps) 
+{
+	core::kinematics::FoldTree f;
+	setup_foldtree(pose, partner_to_chains, movable_jumps, f);
+	pose.fold_tree(f);
+}
 
+void
+setup_foldtree(
+	core::pose::Pose const & pose,
+	std::map< core::Size, utility::vector1< core::Size > > const & partner_to_chains,
+	DockJumps & movable_jumps,
+	core::kinematics::FoldTree & ft)
+{
 	if(partner_to_chains.size() != 2){
 		stringstream error_msg;
 		error_msg
@@ -274,8 +325,7 @@ setup_foldtree(
 		}
 	}
 
-	setup_foldtree(pose, cutpoint, movable_jumps);
-
+	setup_foldtree(pose, cutpoint, movable_jumps, ft);
 }
 
 void
@@ -284,12 +334,22 @@ setup_foldtree(
 	Size const cutpoint,
 	DockJumps & movable_jumps
 ){
+	core::kinematics::FoldTree f;
+	setup_foldtree(pose, cutpoint, movable_jumps);
+	pose.fold_tree(f);
+}
 
+void
+setup_foldtree(
+	core::pose::Pose const & pose,
+	core::Size cutpoint,
+	DockJumps & movable_jumps,
+	core::kinematics::FoldTree & ft)
+{
 	runtime_assert_string_msg(
 		movable_jumps.size() > 0,
 		"Unable to set up interface foldtree because there are no movable jumps");
 
-	FoldTree f(pose.fold_tree());
 	Conformation const & conformation(pose.conformation());
 
 	// first case: two-body docking, one jump movable
@@ -310,9 +370,9 @@ setup_foldtree(
 		TR.Debug << "jump2: " << jump_pos2 << std::endl;
 
 		//setup fold tree based on cutpoints and jump points
-		f.clear();
-		f.simple_tree( pose.total_residue() );
-		f.new_jump( jump_pos1, jump_pos2, cutpoint);
+		ft.clear();
+		ft.simple_tree( pose.total_residue() );
+		ft.new_jump( jump_pos1, jump_pos2, cutpoint);
 		movable_jumps.clear();
 		movable_jumps.push_back( 1 );
 
@@ -323,7 +383,7 @@ setup_foldtree(
 		chain_begin = conformation.chain_begin( pose.chain(chain_end) );
 		while (chain_begin != 1){
 			chain_end = chain_begin-1;
-			f.new_jump( chain_end, chain_begin, chain_end);
+			ft.new_jump( chain_end, chain_begin, chain_end);
 			chain_begin = conformation.chain_begin( pose.chain(chain_end) );
 		}
 
@@ -332,7 +392,7 @@ setup_foldtree(
 		chain_end = conformation.chain_end( pose.chain(chain_begin) );
 		while (chain_end != pose.total_residue()){
 			chain_begin = chain_end+1;
-			f.new_jump( chain_end, chain_begin, chain_end);
+			ft.new_jump( chain_end, chain_begin, chain_end);
 			chain_end = conformation.chain_end( pose.chain(chain_begin) );
 		}
 	}
@@ -353,7 +413,7 @@ setup_foldtree(
 					curr_jump = movable_jumps.begin(),
 					last_movable_jump = movable_jumps.end();
 				curr_jump != last_movable_jump; ++curr_jump ) {
-			Size const curr_cutpoint = f.cutpoint_by_jump( *curr_jump ); // used to get the index of a residue in the moving chain (curr_cutpoint+1)
+			Size const curr_cutpoint = ft.cutpoint_by_jump( *curr_jump ); // used to get the index of a residue in the moving chain (curr_cutpoint+1)
 			Size const chain_begin = conformation.chain_begin( pose.chain(curr_cutpoint+1) );
 			Size const chain_end = conformation.chain_end( pose.chain(curr_cutpoint+1) );
 			Size const moving_jump_pos( core::pose::residue_center_of_mass( pose, chain_begin, chain_end ) );
@@ -365,14 +425,15 @@ setup_foldtree(
 				<< "      base_cutpoint " << base_cutpoint
 				<< "         base_jump_pos " << base_jump_pos
 				<< "      moving_jump_pos " << moving_jump_pos << endl;
-			f.slide_jump( *curr_jump, base_jump_pos, moving_jump_pos );
+			ft.slide_jump( *curr_jump, base_jump_pos, moving_jump_pos );
 		}
 	}
 
 	// set docking fold tree to the pose
-	f.reorder( 1 );
-	runtime_assert( f.check_fold_tree() );
-	pose.fold_tree( f );
+	ft.reorder( 1 );
+	runtime_assert( ft.check_fold_tree() );
+	
+	/* Moved to DockLowRes!!! If it is 2015+, delete me!!
 
 	//set up InterfaceInfo object in pose to specify which interface(s)
 	//to calculate docking centroid mode scoring components from
@@ -384,6 +445,7 @@ setup_foldtree(
 	pose.data().set(
 		core::pose::datacache::CacheableDataType::INTERFACE_INFO,
 		docking_interface);
+	 */
 }
 
 } //docking

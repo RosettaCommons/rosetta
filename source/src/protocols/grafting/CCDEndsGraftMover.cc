@@ -26,7 +26,9 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/loops/loops_main.hh>
 #include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
+
 #include <protocols/loops/FoldTreeFromLoopsWrapper.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
@@ -173,9 +175,16 @@ CCDEndsGraftMover::apply(Pose & pose){
 	
 	protocols::grafting::superimpose_overhangs_heavy(pose, *piece(), true, start(), end(), Nter_overhang_length(), Cter_overhang_length() );
 	
+
 	Pose combined = insert_piece(pose);
+	
 	setup_movemap_and_regions(pose);
     
+	TR << "Start: "<<start() << std::endl;
+	TR << "Original End: " << original_end() << std::endl;
+	TR << "End: " << end() << std::endl;
+	TR << "Insert Length: " << insertion_length() << std::endl;
+	
 	core::kinematics::FoldTree original_ft = combined.fold_tree();
 	//Setup for the remodeling
 	core::Size const insert_start(start()+1); //this will be the first residue of the insert
@@ -195,16 +204,20 @@ CCDEndsGraftMover::apply(Pose & pose){
 	Nter_loop = Loop(Nter_loop_start(), Nter_loop_end()+1, Nter_loop_end());//(LEFT LOOP)
 	Cter_loop = Loop(Cter_loop_start()-1, Cter_loop_end(), Cter_loop_start()-1);//(RIGHT LOOP)
 	
-	
-
-
 	loop_set->add_loop(Nter_loop);
 	loop_set->add_loop(Cter_loop);
-	add_cutpoint_variants_for_ccd(combined, *loop_set);
 	
-	FoldTreeFromLoops ft_loop = FoldTreeFromLoops();
-	ft_loop.loops(loop_set);
-	ft_loop.apply(combined);
+	movemap()->show(TR);
+	TR << "Loops: " << *loop_set << std::endl;
+	//combined.dump_pdb("combined_pose.pdb");
+	
+    FoldTreeFromLoops ft_loop = FoldTreeFromLoops();
+    ft_loop.loops(loop_set);
+    ft_loop.apply(combined);
+	
+	set_loops(loop_set);
+	
+	add_cutpoint_variants_for_ccd(combined, *loop_set);
 
 	loop_set_map[Nter_loop] = protocols::loops::loop_closure::ccd::CCDLoopClosureMoverOP( new loop_closure::ccd::CCDLoopClosureMover(Nter_loop, movemap()) );
 	loop_set_map[Cter_loop] = protocols::loops::loop_closure::ccd::CCDLoopClosureMoverOP( new loop_closure::ccd::CCDLoopClosureMover(Cter_loop, movemap()) );
@@ -214,6 +227,8 @@ CCDEndsGraftMover::apply(Pose & pose){
 	idealize_combined_pose(combined, movemap(), start(), insert_start, insert_end, Nter_loop_start(), Cter_loop_end(), idealize_insert());
 	movemap()->set( TorsionID(insert_start, BB, phi_torsion), true);
 	movemap()->set( TorsionID(insert_end, BB, psi_torsion), true);
+	
+	//combined.dump_pdb("after_idealize.pdb");
 	
 	//centroidize the pose before we do stuff to it - sidechains are expensive and unnecessary
 	protocols::simple_moves::SwitchResidueTypeSetMover typeset_swap(core::chemical::CENTROID);
@@ -249,7 +264,7 @@ CCDEndsGraftMover::apply(Pose & pose){
 			combined.conformation().insert_ideal_geometry_at_polymer_bond(it->cut());
 
 		}
-        		if (stop_at_closure() && graft_closed(combined, *loop_set)){
+        if (stop_at_closure() && graft_closed(combined, *loop_set)){
 			TR << "Graft Closed early - returning" << std::endl;
 			skip_mc = true;
 			TR << i << " " << ((*cen_scorefxn()))(combined) << std::endl;
@@ -276,7 +291,6 @@ CCDEndsGraftMover::apply(Pose & pose){
 	TR <<"Graft meets ideal geometry " << std::boolalpha << graft_closed(combined, *loop_set) << std::endl;
 	TR << "Complete"<<std::endl;
 	pose = combined;
-
 
 }
 

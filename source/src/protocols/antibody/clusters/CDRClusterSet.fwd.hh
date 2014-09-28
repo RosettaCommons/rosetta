@@ -29,6 +29,10 @@ class CDRClusterSet;
 typedef utility::pointer::shared_ptr< CDRClusterSet > CDRClusterSetOP;
 typedef utility::pointer::shared_ptr< CDRClusterSet const > CDRClusterSetCOP;
 
+class BasicCDRClusterSet;
+
+typedef utility::pointer::shared_ptr< BasicCDRClusterSet > BasicCDRClusterSetOP;
+typedef utility::pointer::shared_ptr< BasicCDRClusterSet  const > BasicCDRClusterSetCOP;
 
 } //namespace clusters
 } //namespace antibody

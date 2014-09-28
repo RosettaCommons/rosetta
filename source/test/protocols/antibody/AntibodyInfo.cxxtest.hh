@@ -29,6 +29,8 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
+
 #include <utility/vector1.hh>
 
 // Protocol Headers
@@ -39,13 +41,16 @@
 using namespace protocols::antibody;
 using utility::vector1;
 
-static basic::Tracer TR("protocols.antibody.AntibodyInfoTest");
+static thread_local basic::Tracer TR("protocols.antibody.AntibodyInfoTest");
 class AntibodyInfoTests : public CxxTest::TestSuite {
 	core::pose::Pose ab_pose_aho; //Full PDB
 	core::pose::Pose ab_pose_chothia;
+	core::pose::Pose ab_pose_aho_antigen;
 	AntibodyInfoOP ab_info_north_aho;
 	AntibodyInfoOP ab_info_chothia;
 	AntibodyInfoOP ab_info_aroop;
+	AntibodyInfoOP ab_info_aho_antigen;
+	
 	std::map< core::Size,  std::map< core::Size,  vector1< core::Size > > > numbering;//[scheme][start/end][cdr][pose number].  Used to test numbering and transforms.
 	typedef std::map<CDRDefinitionEnum, std::pair< core::pose::Pose, AntibodyInfoOP> >  AbInfos;
 	AbInfos infos;
@@ -57,10 +62,12 @@ public:
 		core_init();
 		core::import_pose::pose_from_pdb(ab_pose_aho, "protocols/antibody/1bln_AB_aho.pdb");
 		core::import_pose::pose_from_pdb(ab_pose_chothia, "protocols/antibody/1bln_AB_chothia.pdb");
-		ab_info_north_aho = AntibodyInfoOP( new AntibodyInfo(ab_pose_aho, AHO_Scheme, North) );
-		ab_info_chothia = AntibodyInfoOP( new AntibodyInfo(ab_pose_chothia, Chothia_Scheme, Chothia) );
+		core::import_pose::pose_from_pdb(ab_pose_aho_antigen, "protocols/antibody/aho_with_antigen.pdb");
+		ab_info_north_aho = AntibodyInfoOP(new AntibodyInfo(ab_pose_aho, AHO_Scheme, North));
+		ab_info_chothia = AntibodyInfoOP( new AntibodyInfo(ab_pose_chothia, Chothia_Scheme, Chothia));
 		ab_info_aroop = AntibodyInfoOP( new AntibodyInfo(ab_pose_chothia, Chothia_Scheme, Aroop) );
-		
+		ab_info_aho_antigen = AntibodyInfoOP( new AntibodyInfo(ab_pose_aho_antigen, AHO_Scheme, North));
+
 		infos[North] = std::make_pair(ab_pose_aho, ab_info_north_aho);
 		infos[Chothia] = std::make_pair(ab_pose_chothia, ab_info_chothia);
 		infos[Aroop] = std::make_pair(ab_pose_chothia, ab_info_aroop);
@@ -192,26 +199,33 @@ public:
 		TS_ASSERT_EQUALS("L1-16-1", ab_info_chothia->get_cluster_name(ab_info_chothia->get_CDR_cluster(l1)->cluster()));
 		TS_ASSERT_EQUALS("L2-8-1", ab_info_chothia->get_cluster_name(ab_info_chothia->get_CDR_cluster(l2)->cluster()));
 		TS_ASSERT_EQUALS("L3-9-2", ab_info_chothia->get_cluster_name(ab_info_chothia->get_CDR_cluster(l3)->cluster()));
-		//CDR Sequence + Antibody Sequence
 		
-	}
-	void test_movemaps(){
-		return;
-	}
-	
-	void test_foldtrees(){
-		return;
-	}
-	
-	void test_loop_functions(){
-		return;
-	}
-	
-	void test_tf_functions(){
-		return;
-	}
-	void test_numbering_transform(){
+		//Regional tests:
+		TR << "Testing regions " << std::endl;
+		//Test correct identification of CDR regions
+		for (core::Size i = 1; i <= 6; ++i){
+			CDRNameEnum cdr = static_cast< CDRNameEnum >(i);
+			for ( core::Size cdr_res = ab_info_north_aho->get_CDR_start( cdr, ab_pose_aho ); cdr_res <= ab_info_north_aho->get_CDR_end( cdr, ab_pose_aho ); ++ cdr_res ) {
+				TS_ASSERT_EQUALS(cdr_region, ab_info_north_aho->get_region_of_residue( ab_pose_aho, cdr_res ) );
+			}
+		}
+		//Test correct identification of framework regions
+		assert(ab_info_north_aho->antigen_present() == false);
+		for ( core::Size i = 1; i <= ab_pose_aho.total_residue(); ++i ){
+			if ( ab_info_north_aho->get_region_of_residue( ab_pose_aho, i ) != cdr_region ){
+				TS_ASSERT_EQUALS( framework_region, ab_info_north_aho->get_region_of_residue( ab_pose_aho, i ) );
+			}
+		}
+		//Test correct identification of antigen regions
+		utility::vector1<core::Size> ids = ab_info_aho_antigen->get_antigen_chain_ids(ab_pose_aho_antigen);
 		
+		for ( core::Size i = 1; i <= ids.size(); ++i ){
+			core::Size res_start = ab_pose_aho_antigen.conformation().chain_begin( ids[ i ] );
+			core::Size res_end = ab_pose_aho_antigen.conformation().chain_end( ids[ i ] );
+			for (core::Size res = res_start; res <= res_end; ++res ){
+				TS_ASSERT_EQUALS(antigen_region, ab_info_aho_antigen->get_region_of_residue( ab_pose_aho_antigen, res ) );
+			}
+		}
 	}
 	void test_kink_functions(){
 		// Aroop

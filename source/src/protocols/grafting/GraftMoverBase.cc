@@ -138,6 +138,7 @@ GraftMoverBase::set_piece(Pose const & piece, Size Nter_overhang_length, Size Ct
 	Nter_overhang_length_ = Nter_overhang_length;
 	Cter_overhang_length_=Cter_overhang_length;
 	insertion_length_ = piece.total_residue()-Cter_overhang_length_-Nter_overhang_length_;
+
 }
 
 Pose
@@ -146,7 +147,7 @@ GraftMoverBase::insert_piece(Pose const & pose){
 	//Delete overhang if necessary.
 	insertion_length_ = piece_->total_residue()-Cter_overhang_length_-Nter_overhang_length_;
 	delete_overhang_residues(*piece_, Nter_overhang_length_, Cter_overhang_length_);
-	
+
 	//strip termini variants from insert if necessary
 	core::pose::remove_variant_type_from_pose_residue(*piece_, core::chemical::LOWER_TERMINUS_VARIANT, 1);
 	core::pose::remove_variant_type_from_pose_residue(*piece_, core::chemical::UPPER_TERMINUS_VARIANT, insertion_length_);
@@ -156,7 +157,7 @@ GraftMoverBase::insert_piece(Pose const & pose){
 	delete_region(final_pose, start_+1, end_-1);
 	//Pose insert(piece_); Does the piece still exist afterward?
 	final_pose = insert_pose_into_pose(final_pose, *piece_, start_, start_+1, copy_pdbinfo_);
-
+	
 	//Update end residue number.
 	end_ = start_+insertion_length_+1;
 	TR <<"Insertion complete."<<std::endl;

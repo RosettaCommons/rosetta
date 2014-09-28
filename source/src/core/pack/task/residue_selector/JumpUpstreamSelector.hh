@@ -8,7 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/pack/task/residue_selector/JumpUpstreamSelector.hh
-/// @brief  The JumpUpstreamSelector selects residues downstream of a given jump in a FoldTree 
+/// @brief  The JumpUpstreamSelector selects residues downstream of a given jump in a FoldTree. 
+///  Clears the passed ResidueSubset.
 /// @author Robert Lindner (rlindner@mpimf-heidelberg.mpg.de)
 
 #ifndef INCLUDED_core_pack_task_residue_selector_JumpUpstreamSelector_HH
@@ -36,7 +37,7 @@ namespace residue_selector {
 
 /// @brief The JumpUpstreamSelector returns a ResidueSubset, i.e. a utility::vector1< bool > containing
 /// 'true' for residue positions which lie upstream of a given jump in the FoldTree. The jump is
-/// specified by its integer index.
+/// specified by its integer index.  Clears the passed ResidueSubset.
 class JumpUpstreamSelector : public ResidueSelector {
 public:
 	// derived from base class

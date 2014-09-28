@@ -40,7 +40,7 @@ namespace residue_selector {
 /// residues in the first group point toward the c-alphas of the other group.  Each group may be
 /// specified either explicitly through a std::set of residue indices, through a string of
 /// comma-separated values giving either residue indices or PDB ids (e.g. 13B for residue
-/// 13 on chain B) or through a ResidueSelector.
+/// 13 on chain B) or through a ResidueSelector.  Clears the passed ReisueSubset.
 class InterGroupInterfaceByVectorSelector : public ResidueSelector {
 public:
 	// derived from base class

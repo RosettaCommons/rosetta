@@ -42,7 +42,9 @@ class AndResidueSelector : public ResidueSelector {
 public:
 	// derived from base class
 	AndResidueSelector();
+	AndResidueSelector( ResidueSelectorCOP selector1);
 	AndResidueSelector( ResidueSelectorCOP selector1, ResidueSelectorCOP selector2 );
+	
 	virtual ~AndResidueSelector();
 
 	virtual void apply( core::pose::Pose const & pose, ResidueSubset & subset ) const;

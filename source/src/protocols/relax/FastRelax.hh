@@ -36,7 +36,7 @@
 
 #include <core/io/silent/silent.fwd.hh>
 #include <utility/vector1.hh>
-
+#include <utility/tag/Tag.fwd.hh>
 
 
 namespace protocols {
@@ -63,22 +63,22 @@ struct RelaxScriptCommand {
 class FastRelax : public RelaxProtocolBase {
 public:
 
-  /// @brief Initialize FastRelax with a specific script file, which encodes the script of steps
-  ///  the is to be applied
-  FastRelax(
+	/// @brief Initialize FastRelax with a specific script file, which encodes the script of steps
+	///  the is to be applied
+	FastRelax(
 		core::Size                     standard_repeats = 0
 	);
 
-  /// @brief Initialize FastRelax using the default script with a varying number of rounds,
-  ///  defined by the standard_repeats repeats paramter. By default, 5.
+	/// @brief Initialize FastRelax using the default script with a varying number of rounds,
+	///  defined by the standard_repeats repeats paramter. By default, 5.
 	FastRelax(
 		core::scoring::ScoreFunctionOP scorefxn_in,
 		core::Size                     standard_repeats = 0
 	);
 
 	/// @brief Initialize FastRelax with a specific script file, which encodes the script of steps
-  ///  the is to be applied
-  FastRelax(
+	///  the is to be applied
+	FastRelax(
 		core::scoring::ScoreFunctionOP scorefxn_in,
 		std::string const &            script_file
 	);
@@ -98,10 +98,19 @@ public:
 	/// @brief Force us to batchrelax with nonideal geometry (using additional memory)
 	void set_force_nonideal( bool val ) { force_nonideal_ = val; }
 
-  /// @brief virtual constructor to allow derivation
+	///@brief Use the dualspace (Dihedral + Cartesian) relax protocol (Default false)
+	///@details
+	/// Sets to use the lbfgs_armijo_nonmonotone if true or FR default if false
+	/// Recommended to set max_iter to 200.
+	/// Recommended to set minimize_bond_angles to true as well.
+	/// Requires scorefunction setup for non-ideal minimization.
+	void dualspace( bool val );
+	bool dualspace();
+	
+	/// @brief virtual constructor to allow derivation
 	virtual ~FastRelax();
 
-  /// @brief Parses the FastRelaxTags
+	/// @brief Parses the FastRelaxTags
 	void parse_my_tag(
 	  utility::tag::TagCOP tag,
 	  basic::datacache::DataMap & data,
@@ -110,49 +119,51 @@ public:
 	  core::pose::Pose const &
 	);
 
-  virtual void parse_def( utility::lua::LuaObject const & def,
+	virtual void parse_def( utility::lua::LuaObject const & def,
 		utility::lua::LuaObject const & score_fxns,
 		utility::lua::LuaObject const & tasks,
 		protocols::moves::MoverCacheSP cache );
 
-  /// @brief Initializes class using option system. This is called by the constructors
+	/// @brief Initializes class using option system. This is called by the constructors
 	void set_to_default();
 
-  /// @brief Return the name of this mover.
-  virtual std::string get_name() const;
+	/// @brief Return the name of this mover.
+	virtual std::string get_name() const;
 
-  /// @brief return a fresh instance of this class in an owning pointer
+	/// @brief return a fresh instance of this class in an owning pointer
 	virtual protocols::moves::MoverOP clone() const;
 
-  /// @brief Apply the FastRelax. Overloaded apply function from mover base class.
+	/// @brief Apply the FastRelax. Overloaded apply function from mover base class.
 	virtual void apply( core::pose::Pose & pose );
 
-  /// @brief Batch Relax, a new even faster way to relax entire batches of structures.
+	/// @brief Batch Relax, a new even faster way to relax entire batches of structures.
 	void batch_apply(
 		std::vector < core::io::silent::SilentStructOP > &  input_structs,
 		core::scoring::constraints::ConstraintSetOP input_csts = NULL,
 		core::Real decay_rate = 0.5 );
 
-	/// @brief sets the enable_design option
+	/// @brief sets the enable_design option.
+	///  Note - (Only used by ParseMyTag! Class will respect the passed TF otherwise, as it should.)
+	///
 	inline void set_enable_design( bool const val ) { enable_design_ = val; }
 
 protected:
 
-  void cmd_accept_to_best(
-    const core::scoring::ScoreFunctionOP local_scorefxn,
-    core::pose::Pose &pose,
-    core::pose::Pose &best_pose,
-    const core::pose::Pose &start_pose,
-    core::Real       &best_score,
-    core::Size       &accept_count
-  );
+	void cmd_accept_to_best(
+		const core::scoring::ScoreFunctionOP local_scorefxn,
+		core::pose::Pose &pose,
+		core::pose::Pose &best_pose,
+		const core::pose::Pose &start_pose,
+		core::Real       &best_score,
+		core::Size       &accept_count
+	);
 
-  void do_minimize(
-    core::pose::Pose &pose,
-    core::Real tolerance,
-    core::kinematics::MoveMapOP local_movemap,
-    core::scoring::ScoreFunctionOP local_scorefxn
-  );
+	void do_minimize(
+		core::pose::Pose &pose,
+		core::Real tolerance,
+		core::kinematics::MoveMapOP local_movemap,
+		core::scoring::ScoreFunctionOP local_scorefxn
+	);
 
 	/// @brief Use for constraint scaling -- sets the coordinate constraint weight given a scorefxn, energy map, and weight.
 	/// TL - Derived classes which may want to scale more than coordinate constraints can override this without forking apply()
@@ -160,7 +171,7 @@ protected:
 	set_constraint_weight( core::scoring::ScoreFunctionOP local_scorefxn,
 												 core::scoring::EnergyMap const & full_weights,
 												 core::Real const weight ) const;
-  void do_md(
+	void do_md(
 		core::pose::Pose &pose,
 		core::Real nstep,
 		core::Real temp0,
@@ -171,31 +182,34 @@ protected:
 private:
 
 	void read_script_file( const std::string &script_file, core::Size standard_repeats = 5  );
+	
+	void check_nonideal_mintype();
 
 private:   // options
 
 	/// @brief Number of repeats if using default script
-  core::Size default_repeats_;
+	core::Size default_repeats_;
 
-  /// @brief If true, delete virtual residues at the end of FastRelax for smooth rmsd calculation later 
-	bool	delete_virtual_residues_after_FastRelax_;
 
-  /// @brief Apply Ramady(tm) fix to residues with bad rama scores ?
-  bool ramady_;
+	/// @brief If true, delete virtual residues at the end of FastRelax for smooth rmsd calculation later 
+	bool delete_virtual_residues_after_FastRelax_;
 
-  /// @brief Number of bad ramas to fix per call to 'fix_worst_bad_ramas'
+	/// @brief Apply Ramady(tm) fix to residues with bad rama scores ?
+	bool ramady_;
+
+	/// @brief Number of bad ramas to fix per call to 'fix_worst_bad_ramas'
 	core::Size ramady_num_rebuild_;
 
-  /// @brief Reject ramady changes perturbing structure more than this amount
+	/// @brief Reject ramady changes perturbing structure more than this amount
 	core::Real ramady_rms_limit_;
 
-  /// @brief Cutoff for calling a rama 'bad'
+	/// @brief Cutoff for calling a rama 'bad'
 	core::Real ramady_cutoff_;
 
-  /// @brief Force ramady to be run (normally skip rate of 10%)
+	/// @brief Force ramady to be run (normally skip rate of 10%)
 	bool ramady_force_;
 
-  /// @brief Allow Chi angles to move ?
+	/// @brief Allow Chi angles to move ?
 	bool repack_;
 
 	/// @brief Allow DNA to move?  default is False.  If True will setup DNA-specific relax settings.
@@ -210,14 +224,17 @@ private:   // options
 	/// @brief Dump pdb after repack, min, or ramp_repack_min?
 	bool dumpall_;
 
+	/// @brief Use dualspace (Dihedral + Cartesian) Relax?
+	bool dualspace_;
+
 	/// @brief Enable design -- if false, a RestrictToRepacking task will be added to the TaskFactory
 	bool enable_design_;
 
-  /// @brief Quit after this many accepts ?// limits themaximum number of accepts, default is 1000000
+	/// @brief Quit after this many accepts ?// limits themaximum number of accepts, default is 1000000
 	core::Size script_max_accept_;
 
-  /// @brief Do a symmetric RMSD calculation rather then a monomeric one.
-  bool symmetric_rmsd_;
+	/// @brief Do a symmetric RMSD calculation rather then a monomeric one.
+	bool symmetric_rmsd_;
 
 private:   // other data
 

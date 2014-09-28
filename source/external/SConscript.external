@@ -102,6 +102,9 @@ def build_cppdb(current_project):
     env.Append(CPPDEFINES=['CPPDB_PATCH=0'])
     env.Append(CPPDEFINES=['CPPDB_VERSION=\\"0.3.0\\"'])
     env.Append(CPPDEFINES=['CPPDB_WITH_SQLITE3'])
+    #if "mpi" in build.options.extras:
+    #    env.Append(LIBS=File('/usr/lib64/libstdc++.so.6.0.16'))
+    #    env.Append(LIBS=File('/usr/local/lib/libmpichcxx.a'))
     if "postgres" in build.options.extras:
     	env.Append(CPPDEFINES=['CPPDB_WITH_PQ'])
     if "mysql" in build.options.extras:

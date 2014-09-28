@@ -410,11 +410,11 @@ public:
 	/// @brief Sets the weight for ScoreType  <t>  to  <setting> if weight is originally zero
 	///
 	/// example(s):
-	///     scorefxn.set_weight(fa_sol,.5)
+	///     scorefxn.set_weight_if_zero(fa_sol,.5)
 	/// See also:
 	///     ScoreFunction
 	///     ScoreFunction.get_weight
-	///     ScoreFunction.weights
+	///     ScoreFunction.set_weight
 	///     ScoreType
 	///     create_score_function
 	///     name_from_score_type

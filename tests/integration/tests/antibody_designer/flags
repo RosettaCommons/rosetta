@@ -2,28 +2,46 @@
 #These flags are meant for a very quick run, as turning all of the modeling on during the design protocol will result in a very long integration test.
 
 
+#-rb_min_post_graft
+
+#-show_simulation_in_pymol 2
+#-update_pymol_on_energy_changes_only
+#-update_pymol_on_conformation_changes_only
+
+-keep_pymol_simulation_history
+
 -restore_pre_talaris_2013_behavior #Speed
 -ignore_unrecognized_res
 
 -pdb_comments
+#-in:file:s mis_start_no_antigen.pdb
 -in:file:s mis_start.pdb
 -run:debug
 -mute core.util.prof # dont show timing info
 -mute core.io.database
 -antibody:design:instructions design_instructions.txt
--antibody:design:antibody_database /sampling/antibodies/ab_db_for_tests.db
+#-antibody:design:antibody_database antibody_database_rosetta_design.db
+-antibody:design:paper_ab_db
 
 -antibody:design:do_post_design_modeling false
 -antibody:design:do_post_graft_design_modeling false
-#-antibody:design:randomize_graft_cdrs true
--antibody:design:dock_post_graft false
+-antibody:design:benchmark_graft_design
+-antibody:design:adapt_graft
+
 -antibody:design:top_graft_designs 2
 
--antibody:design:graft_rounds 1
+-antibody:design:graft_rounds 2
 -antibody:design:design_rounds 1
+-antibody:design:design_method fixbb
+-antibody:design:paratope L1 L2 L3
+-antibody:design:use_epitope_constraints
 
--antibody:design:interface_dis 1.0
--antibody:design:neighbor_dis 1.0
+#-antibody:design:dock_post_graft
+#-antibody:design:top_graft_designs 2
+
+
+-antibody:light_chain lambda
+
 
 -antibody:design:dump_post_graft_designs
 -run:test_cycles # reduce the number of high resolution snugdock cycles

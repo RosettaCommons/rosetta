@@ -11,6 +11,7 @@
 /// @brief This class is an AmbiguousConstraint in which the set is comprised of AtomPairConstraints
 /// @brief of an atom of interest in one chain versus the CA of all residues in another chain.
 /// @author Brian Weitzner (brian.weitzner@jhu.edu, May 2011)
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com) - residue subsetting
 
 #include <core/scoring/constraints/SiteConstraint.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
@@ -105,23 +106,45 @@ SiteConstraint::read_def(
 } // read_def
 void
 SiteConstraint::setup_csts(
-    Size res,
-    std::string name,
-    std::string chain,
-    core::pose::Pose const & pose,
-    func::FuncOP const & func
+	Size res,
+	std::string name,
+	std::string chain,
+	core::pose::Pose const & pose,
+	func::FuncOP const & func
 ) {
-    id::AtomID target_atom( pose.residue_type( res ).atom_index( name ), res );
-    //Size target_chain = pose.chain( res );
-    Size constraint_chain = pose::get_chain_id_from_chain( chain, pose );
+	//Size target_chain = pose.chain( res );
+	Size constraint_chain = pose::get_chain_id_from_chain( chain, pose );
 
-    Size start_res = pose.conformation().chain_begin( constraint_chain );
-    Size end_res = pose.conformation().chain_end( constraint_chain );
+	Size start_res = pose.conformation().chain_begin( constraint_chain );
+	Size end_res = pose.conformation().chain_end( constraint_chain );
+	utility::vector1<bool> residues(pose.total_residue(), false);
+	
+	for (Size j = start_res ; j < end_res ; ++j ) {
+		residues[j] = true;
+	}
+	setup_csts(res, name, residues, pose, func);
 
-    for (Size j = start_res ; j < end_res ; ++j ) {
-                id::AtomID atom2( pose.residue_type( j ).atom_index( "CA" ), j );
-                runtime_assert( target_atom.valid() && atom2.valid() );
-                add_individual_constraint( ConstraintCOP( new AtomPairConstraint( target_atom, atom2, func ) ) );
+} // setup_csts
+
+void
+SiteConstraint::setup_csts(
+	Size res,
+	std::string name,
+	utility::vector1<bool> const & residues,
+	core::pose::Pose const & pose,
+	func::FuncOP const & func
+) {
+	assert(pose.total_residue() == residues.size());
+	id::AtomID target_atom( pose.residue_type( res ).atom_index( name ), res );
+
+	for (Size i = 1 ; i < pose.total_residue() ; ++i ) {
+		
+		if (residues[i])
+		{
+			id::AtomID atom2( pose.residue_type( i ).atom_index( "CA" ), i );
+			runtime_assert( target_atom.valid() && atom2.valid() );
+			add_individual_constraint( ConstraintCOP( new AtomPairConstraint( target_atom, atom2, func ) ) );
+		}
     }
 
 } // setup_csts

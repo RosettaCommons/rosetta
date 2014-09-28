@@ -10,8 +10,8 @@
 
 /// @file protocols/antibody/AntibodyEnum.hh
 /// @brief Enumerators + TypeDefs for Antibody namespace
-/// @author Jianqing Xu (xubest@gmail.com)
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+/// @author Jianqing Xu (xubest@gmail.com)
 
 #ifndef  INCLUDED_protocols_antibody_AntibodyEnum_hh
 #define INCLUDED_protocols_antibody_AntibodyEnum_hh
@@ -19,6 +19,7 @@
 #include <utility/vector1.hh>
 #include <core/types.hh>
 #include <iostream>
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // A collection of Enumerators + TypeDefs to the Antibody Namespace.
 // These keep AntibodyInfo light, allow the use of vectors instead of maps, and keep us from passing around strings.
@@ -73,6 +74,25 @@ enum CDRDefinitionEnum {
 	
 };
 
+//Light chain types
+enum LightChainTypeEnum {
+	lambda =1,
+	kappa,
+	unknown,
+	LightChainTypeEnum_start = lambda,
+	LightChainTypeEnum_total = unknown
+};
+
+//Overall region of the antibody.
+// Note: 
+//  _region designation helps for unique variable naming (aka cdr variable is passed around all over)
+enum AntibodyRegionEnum {
+	antigen_region = 1,
+	cdr_region,
+	framework_region,
+	AntibodyRegionEnum_start = antigen_region,
+	AntibodyRegionEnum_total = framework_region
+};
 
 ///Main enumerator for AntibodyNumbering.
 enum CDRLandmarkEnum {

@@ -44,7 +44,7 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-
+///@brief Nested constraint  where only the one with  lowest energy is considered.
 class AmbiguousConstraint : public MultiConstraint {
 public:
 

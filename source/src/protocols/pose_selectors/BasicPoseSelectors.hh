@@ -39,7 +39,6 @@ namespace protocols {
 namespace pose_selectors {
 
 /// @brief Logical boolean selector base class
-
 class LogicalSelector : public protocols::rosetta_scripts::PoseSelector {
 
 protected:
@@ -75,7 +74,6 @@ private:
 
 
 /// @brief AND Selector: select poses that were selected by all child selectors
-
 class AndSelector : public LogicalSelector {
 
 public:
@@ -93,7 +91,6 @@ protected:
 
 
 /// @brief OR Selector: select poses that were selected by any child selectors
-
 class OrSelector : public LogicalSelector {
 
 public:
@@ -111,7 +108,6 @@ protected:
 
 
 /// @brief Select top N poses by a specific pose property
-
 class TopNByProperty : public protocols::rosetta_scripts::PoseSelector {
 
 public:

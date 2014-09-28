@@ -23,6 +23,9 @@
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/pack/task/residue_selector/AndResidueSelector.hh>
+#include <core/pack/task/residue_selector/NotResidueSelector.hh>
+#include <core/pack/task/residue_selector/ChainSelector.hh>
 
 //Protocol Headers
 #include <protocols/loops/Loop.hh>
@@ -53,11 +56,11 @@ simple_fold_tree(
     core::Size cutpoint,
     core::Size jumppoint2);
 
-///@brief Setup LH_A foldtree.  Return dock_chains string.
+///@brief Setup LH_A foldtree via docking.  Return dock_chains string.
 std::string
 setup_LH_A_foldtree(AntibodyInfoCOP ab_info, core::pose::Pose & pose);
 
-///@brief Setup A_LH foldtree. Return dock_chains string.
+///@brief Setup A_LH foldtree via docking. Return dock_chains string.
 std::string
 setup_A_LH_foldtree(AntibodyInfoCOP ab_info, core::pose::Pose & pose);
 
@@ -87,6 +90,14 @@ CDR_H3_cter_filter(
     const core::pose::Pose & pose_in,
     AntibodyInfoOP ab_info);
 
+///@brief Get a set of loops for a boolean vector of CDRNameEnums including any stem residues.
+protocols::loops::LoopsOP
+get_cdr_loops(
+	AntibodyInfoCOP ab_info,
+	core::pose::Pose const & pose,
+	utility::vector1<bool> cdrs,
+	core::Size stem_size = 0 );
+
 
 ////////////////////////////////////////// things to compare to native //////////////////////////////////////////
 core::Real
@@ -94,8 +105,6 @@ global_loop_rmsd ( const core::pose::Pose & pose_in,
                    const core::pose::Pose & native_pose,
                    loops::LoopsOP current_loop );
 
-
-////////////////////////////////////////// antibody metrics //////////////////////////////////////////
 
 /// @brief return false if any cdr cutpoint is broken
 bool
@@ -107,36 +116,11 @@ cutpoints_separation( core::pose::Pose & pose, AntibodyInfoOP & antibody_info );
 core::Real
 cutpoint_separation(core::pose::Pose & pose_in, Size cutpoint);
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// CDR Clusters
-//
-//
+/////////////////////////////////// Epitope + Paratope ////////////////////////////////////////////////////////////////////
 
-
-/// @brief Adds dihedral harmonic constraints to Pose CDRs using cluster info in AntibodyInfo
-/// @details Currently requires North_AHO numbering. Returns map of success/failure
-std::map<CDRNameEnum, bool>
-add_harmonic_cluster_constraints(AntibodyInfoOP ab_info, pose::Pose & pose);
-
-///@brief Same as above, but adds constraints to the vector so they can be identified and removed from the pose if needed.
-///@details Returns map of success/failure
-std::map<CDRNameEnum, bool>
-add_harmonic_cluster_constraints(AntibodyInfoOP ab_info, pose::Pose & pose, utility::vector1< core::scoring::constraints::ConstraintCOP > constraints);
-
-
-/// @brief Adds a harmonic constraint to a Pose CDR based on cluster type
-/// @details Currently requires North_AHO numbering.
-bool
-add_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, pose::Pose & pose, CDRClusterEnum const cluster);
-
-///@brief Same as above, but adds constraints to the vector so they can be identified and removed from the pose if needed.
-///@details Returns true or false depending on success
-bool
-add_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, pose::Pose & pose, CDRClusterEnum const cluster, utility::vector1< core::scoring::constraints::ConstraintCOP > constraints);
-
-/// @brief Gets the cluster constraint name.  Returns NA if not found.
-std::string
-get_harmonic_cluster_constraint_filename(AntibodyInfoCOP ab_info, CDRClusterEnum const cluster);
+///@brief Get the epitope residues using the InterGroupNeighborsCalculator.  
+vector1<bool>
+select_epitope_residues(AntibodyInfoCOP ab_info, core::pose::Pose const & pose, core::Size const interface_distance = 10.0);
 
 } //namespace antibody
 } //namespace protocols
