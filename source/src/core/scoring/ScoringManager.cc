@@ -361,7 +361,7 @@ AtomVDW const &
 ScoringManager::get_AtomVDW( std::string const & atom_type_set_name ) const
 {
 	if ( atom_vdw_.count( atom_type_set_name ) == 0 ) {
-		atom_vdw_[ atom_type_set_name ] = utility::pointer::shared_ptr<class core::scoring::AtomVDW>( new AtomVDW( atom_type_set_name ) );
+		atom_vdw_[ atom_type_set_name ] = AtomVDWOP( new AtomVDW( atom_type_set_name ) );
 	}
 	return * ( atom_vdw_[ atom_type_set_name ] );
 }

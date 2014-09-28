@@ -498,7 +498,7 @@ void
 ConstraintSet::add_residue_pair_constraint( Size const pos1, Size const pos2, ConstraintCOP cst )
 {
 	if (  residue_pair_constraints_.size() < pos1 ) residue_pair_constraints_.resize( pos1, 0 );
-	if ( !residue_pair_constraints_[ pos1 ] ) residue_pair_constraints_[ pos1 ] = utility::pointer::shared_ptr<class core::scoring::constraints::ResidueConstraints>( new ResidueConstraints() );
+	if ( !residue_pair_constraints_[ pos1 ] ) residue_pair_constraints_[ pos1 ] = ResidueConstraintsOP( new ResidueConstraints() );
 
 	add_constraint_to_residue_constraints( pos2, cst, *(residue_pair_constraints_[ pos1 ] ) );
 }
@@ -653,7 +653,7 @@ void
 ConstraintSet::add_dof_constraint( DOF_ID const & id, func::FuncOP func, ScoreType const & t )
 {
 	mark_revision_id_expired();
-	dof_constraints_.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::DOF_Constraint>( new DOF_Constraint( id, func, t ) ) );
+	dof_constraints_.push_back( DOF_ConstraintOP( new DOF_Constraint( id, func, t ) ) );
 }
 
 

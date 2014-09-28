@@ -231,7 +231,7 @@ TorsionFragmentLibrary::shift( int const current2desired_offset )
 		if ( j >=1 && j <= int( oldsize ) ) {
 			new_fragments[ i ] = fragments_[ j ];
 		} else {
-			new_fragments[ i ] = utility::pointer::shared_ptr<class protocols::frags::SingleResidueTorsionFragmentLibrary>( new SingleResidueTorsionFragmentLibrary() );
+			new_fragments[ i ] = protocols::frags::SingleResidueTorsionFragmentLibraryOP( new SingleResidueTorsionFragmentLibrary() );
 		}
 	}
 	fragments_.swap( new_fragments );
@@ -420,7 +420,7 @@ FragLib::library( Size const size )
 {
 	if ( frag_map_.count( size ) == 0 ) {
 		TR.Info << "Creating new fragment library for frag_size " << size << endl;
-		frag_map_[ size ] = utility::pointer::shared_ptr<class protocols::frags::TorsionFragmentLibrary>( new TorsionFragmentLibrary() );
+		frag_map_[ size ] = protocols::frags::TorsionFragmentLibraryOP( new TorsionFragmentLibrary() );
 	}
 	return *( frag_map_.find( size )->second );
 }

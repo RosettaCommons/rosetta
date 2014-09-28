@@ -135,8 +135,8 @@ ResiduePairJump::ResiduePairJump(
 	core::chemical::ResidueType const & residue2
 )
 {
-	residues_.push_back( utility::pointer::shared_ptr<class protocols::jumping::ResiduePairJumpSingle>( new ResiduePairJumpSingle( residue1 ) ) );
-	residues_.push_back( utility::pointer::shared_ptr<class protocols::jumping::ResiduePairJumpSingle>( new ResiduePairJumpSingle( residue2 ) ) );
+	residues_.push_back( ResiduePairJumpSingleOP( new ResiduePairJumpSingle( residue1 ) ) );
+	residues_.push_back( ResiduePairJumpSingleOP( new ResiduePairJumpSingle( residue2 ) ) );
 }
 
 void
@@ -147,8 +147,8 @@ ResiduePairJump::add_residue_pair(
 {
 	residues_.clear();
 	cstInfoMap_.clear();
-	residues_.push_back( utility::pointer::shared_ptr<class protocols::jumping::ResiduePairJumpSingle>( new ResiduePairJumpSingle( residue1 ) ) );
-	residues_.push_back( utility::pointer::shared_ptr<class protocols::jumping::ResiduePairJumpSingle>( new ResiduePairJumpSingle( residue2 ) ) );
+	residues_.push_back( ResiduePairJumpSingleOP( new ResiduePairJumpSingle( residue1 ) ) );
+	residues_.push_back( ResiduePairJumpSingleOP( new ResiduePairJumpSingle( residue2 ) ) );
 }
 /////////////////////////////////////////////////////////////////////
 void
@@ -158,7 +158,7 @@ ResiduePairJump::add_residue_single(
 {
 	if ( residues_.size() < 2 ) {
 		cstInfoMap_.clear();
-		residues_.push_back( utility::pointer::shared_ptr<class protocols::jumping::ResiduePairJumpSingle>( new ResiduePairJumpSingle(residue) ) );
+		residues_.push_back( ResiduePairJumpSingleOP( new ResiduePairJumpSingle(residue) ) );
 	} else {
 		utility_exit_with_message("ResiduePairJump can only take two residues\n");
 	}

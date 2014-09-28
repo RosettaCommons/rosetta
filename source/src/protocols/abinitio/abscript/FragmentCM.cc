@@ -177,7 +177,7 @@ claims::EnvClaims FragmentCM::yield_claims( core::pose::Pose const& pose,
 
   if( yield_cut_bias() ){
     core::fragment::SecondaryStructureOP ss( new core::fragment::SecondaryStructure( *( mover()->fragments() ) ) );
-    claim_list.push_back( utility::pointer::shared_ptr<class protocols::environment::claims::EnvClaim>( new environment::claims::CutBiasClaim(
+    claim_list.push_back( protocols::environment::claims::EnvClaimOP( new environment::claims::CutBiasClaim(
 		utility::pointer::static_pointer_cast< ClaimingMover > ( get_self_ptr() ),
 		"BASE",
 		*ss ) ) );

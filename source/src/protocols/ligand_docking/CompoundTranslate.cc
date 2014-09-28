@@ -156,7 +156,7 @@ CompoundTranslate::parse_my_tag(
 					else if(tag->getOption<std::string>("force") != "false")
 						throw utility::excn::EXCN_RosettaScriptsOption("'force' option is true or false");
 				}
-				translates_.push_back(utility::pointer::shared_ptr<class protocols::ligand_docking::Translate>( new Translate(translate_info) ));
+				translates_.push_back(protocols::ligand_docking::TranslateOP( new Translate(translate_info) ));
 			}
 		}
 		else{

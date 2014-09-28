@@ -332,7 +332,7 @@ Real ik_arg_glu_frnt(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 					#ifdef USE_OPENMP
 					#pragma omp critical
 					#endif
-					hits.push_back( utility::pointer::shared_ptr<struct Hit>( new Hit( pose.residue(rsd1), pose.residue(rsd2), lcstub, -phidiff, 0.0, true, negori ) ) );
+					hits.push_back( HitOP( new Hit( pose.residue(rsd1), pose.residue(rsd2), lcstub, -phidiff, 0.0, true, negori ) ) );
 
 					// ozstream out("ikrs_arg_frnt_glu_"+lzs(rsd1,3)+"_"+lzs(rsd2,3)+"_"+lzs(idh,3)+"_"+str(ichi2)+"_"+str(isol)+"_"+str(negori)+"_res.pdb");
 					// Size ano = 0;
@@ -495,7 +495,7 @@ Real ik_arg_glu_side(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 					#ifdef USE_OPENMP
 					#pragma omp critical
 					#endif
-					hits.push_back( utility::pointer::shared_ptr<struct Hit>( new Hit( pose.residue(rsd1), pose.residue(rsd2), lcstub, -phidiff, 0.0, false, negori ) ) );
+					hits.push_back( HitOP( new Hit( pose.residue(rsd1), pose.residue(rsd2), lcstub, -phidiff, 0.0, false, negori ) ) );
 
 					// ozstream out("ikrs_arg_side_glu_"+lzs(rsd1,3)+"_"+lzs(rsd2,3)+"_"+lzs(idh,3)+"_"+str(ichi2)+"_"+str(isol)+"_"+str(negori)+"_res.pdb");
 					// Size ano = 0;
@@ -651,7 +651,7 @@ Real ik_arg_asp_frnt(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 					#ifdef USE_OPENMP
 					#pragma omp critical
 					#endif
-					hits.push_back( utility::pointer::shared_ptr<struct Hit>( new Hit( pose.residue(rsd1), pose.residue(rsd2), lcstub, -phidiff, -ph2diff, true, negori ) ) );
+					hits.push_back( HitOP( new Hit( pose.residue(rsd1), pose.residue(rsd2), lcstub, -phidiff, -ph2diff, true, negori ) ) );
 
 					// ozstream out("ikrs_arg_frnt_asp_"+lzs(rsd1,3)+"_"+lzs(rsd2,3)+"_"+lzs(idh,3)+"_"+str(ichi2)+"_"+str(isol)+"_"+str(negori)+"_res.pdb");
 					// Size ano = 0;
@@ -796,7 +796,7 @@ Real ik_arg_asp_side(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 				#ifdef USE_OPENMP
 				#pragma omp critical
 				#endif
-				hits.push_back( utility::pointer::shared_ptr<struct Hit>( new Hit( pose.residue(rsd1), pose.residue(rsd2), lcstub, -phidiff, 0.0, false, negori ) ) );
+				hits.push_back( HitOP( new Hit( pose.residue(rsd1), pose.residue(rsd2), lcstub, -phidiff, 0.0, false, negori ) ) );
 
 				// ozstream out("ikrs_arg_side_asp_"+lzs(rsd1,3)+"_"+lzs(rsd2,3)+"_"+str(ichi2)+"_"+str(isol)+"_"+str(negori)+"_res.pdb");
 				// Size ano = 0;

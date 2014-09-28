@@ -513,7 +513,7 @@ StepWiseRNA_VirtualSugarSampler::bulge_chain_closure_legacy( utility::vector1< P
 	Size num_closed_chain_pose = 0;
 
 	utility::vector1< RNA_AtrRepCheckerOP > atr_rep_checkers_;
-	for ( Size n = 1; n <= pose_list.size(); n++ )	atr_rep_checkers_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::modeler::rna::checker::RNA_AtrRepChecker>( new RNA_AtrRepChecker( *(pose_list[n]), bulge_suite, bulge_rsd, 0 /*gap_size*/ ) ) );
+	for ( Size n = 1; n <= pose_list.size(); n++ )	atr_rep_checkers_.push_back( rna::checker::RNA_AtrRepCheckerOP( new RNA_AtrRepChecker( *(pose_list[n]), bulge_suite, bulge_rsd, 0 /*gap_size*/ ) ) );
 
 	RNA_ChainClosableGeometryCheckerOP chain_closable_geometry_checker_( new RNA_ChainClosableGeometryChecker( sugar_modeling_.five_prime_chain_break, 0 /*gap_size*/ ) );
 	RNA_ChainClosureCheckerOP chain_closure_checker_( new RNA_ChainClosureChecker( screening_pose, sugar_modeling_.five_prime_chain_break ) );

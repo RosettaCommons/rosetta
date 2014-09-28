@@ -80,7 +80,7 @@ PBLifetimeCache::set_conformational_data( const std::string& energy_state,
 																					const core::pose::Pose & pose,
 																					PoissonBoltzmannPotentialOP pbp )
 {
-	pose_by_state_[energy_state] = utility::pointer::shared_ptr<const class core::pose::Pose>( new core::pose::Pose(pose) );
+	pose_by_state_[energy_state] = core::pose::PoseOP( new core::pose::Pose(pose) );
 	pb_by_state_[energy_state] = pbp;
 }
 std::map<std::string, bool> & 

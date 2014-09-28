@@ -327,7 +327,7 @@ EnzConstraintParameters::generate_active_pose_constraints(
 	//sequentially process the six possible constraints
 	bool all_constraints_empty = true;
 
-	EnzdesCstParamCacheOP param_cache(protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ ) );
+	EnzdesCstParamCacheOP param_cache(get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ ) );
 	runtime_assert( param_cache != 0 );
 	param_cache->active_pose_constraints_.clear();
 	if( param_cache->covalent_connections_.size() != 0 ) remove_covalent_connections_from_pose( pose );
@@ -361,7 +361,7 @@ EnzConstraintParameters::generate_active_pose_constraints(
 
 					if(disAB_ != 0){
 						all_constraints_empty = false;
-						this_pair_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new AtomPairConstraint( resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], disAB_) ) );
+						this_pair_csts.push_back( core::scoring::constraints::ConstraintOP( new AtomPairConstraint( resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], disAB_) ) );
 						number_constraints_added++;
 
 						if(basic::options::option[basic::options::OptionKeys::enzdes::enz_debug] )
@@ -375,7 +375,7 @@ EnzConstraintParameters::generate_active_pose_constraints(
 
 					if(angleA_ != 0){
 						all_constraints_empty = false;
-						this_pair_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new AngleConstraint( resApos_it->second->atom2_[ambig_resA_count], resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], angleA_) ) );
+						this_pair_csts.push_back( core::scoring::constraints::ConstraintOP( new AngleConstraint( resApos_it->second->atom2_[ambig_resA_count], resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], angleA_) ) );
 						number_constraints_added++;
 
 						//debug stuff
@@ -391,7 +391,7 @@ EnzConstraintParameters::generate_active_pose_constraints(
 
 					if(angleB_ != 0){
 						all_constraints_empty = false;
-						this_pair_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new AngleConstraint( resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], resBpos_it->second->atom2_[ambig_resB_count], angleB_) ) );
+						this_pair_csts.push_back( core::scoring::constraints::ConstraintOP( new AngleConstraint( resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], resBpos_it->second->atom2_[ambig_resB_count], angleB_) ) );
 						number_constraints_added++;
 
 						//debug stuff
@@ -408,7 +408,7 @@ EnzConstraintParameters::generate_active_pose_constraints(
 
 					if(torsionA_ != 0){
 						all_constraints_empty = false;
-						this_pair_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new DihedralConstraint( resApos_it->second->atom3_[ambig_resA_count], resApos_it->second->atom2_[ambig_resA_count], resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], torsionA_) ) );
+						this_pair_csts.push_back( core::scoring::constraints::ConstraintOP( new DihedralConstraint( resApos_it->second->atom3_[ambig_resA_count], resApos_it->second->atom2_[ambig_resA_count], resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], torsionA_) ) );
 						number_constraints_added++;
 
 						//debug stuff
@@ -426,7 +426,7 @@ EnzConstraintParameters::generate_active_pose_constraints(
 
 					if(torsionB_ != 0){
 						all_constraints_empty = false;
-						this_pair_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new DihedralConstraint( resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], resBpos_it->second->atom2_[ambig_resB_count], resBpos_it->second->atom3_[ambig_resB_count], torsionB_) ) );
+						this_pair_csts.push_back( core::scoring::constraints::ConstraintOP( new DihedralConstraint( resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], resBpos_it->second->atom2_[ambig_resB_count], resBpos_it->second->atom3_[ambig_resB_count], torsionB_) ) );
 						number_constraints_added++;
 
 						//debug stuff
@@ -443,16 +443,16 @@ EnzConstraintParameters::generate_active_pose_constraints(
 
 					if(torsionAB_ != 0){
 						all_constraints_empty = false;
-						this_pair_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new DihedralConstraint( resApos_it->second->atom2_[ambig_resA_count], resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], resBpos_it->second->atom2_[ambig_resB_count], torsionAB_) ) );
+						this_pair_csts.push_back( core::scoring::constraints::ConstraintOP( new DihedralConstraint( resApos_it->second->atom2_[ambig_resA_count], resApos_it->second->atom1_[ambig_resA_count], resBpos_it->second->atom1_[ambig_resB_count], resBpos_it->second->atom2_[ambig_resB_count], torsionAB_) ) );
 						number_constraints_added++;
 					}
 
 					if( (this_pair_csts.size() > 0 ) && ( number_ambiguous_constraints == 1) ){
 
-						param_cache->active_pose_constraints_.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new MultiConstraint(this_pair_csts) ) );
+						param_cache->active_pose_constraints_.push_back( core::scoring::constraints::ConstraintOP( new MultiConstraint(this_pair_csts) ) );
 					}
 					else if( (this_pair_csts.size() > 0) && ( number_ambiguous_constraints > 1) ) {
-						ambig_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new MultiConstraint(this_pair_csts) ) );
+						ambig_csts.push_back( core::scoring::constraints::ConstraintOP( new MultiConstraint(this_pair_csts) ) );
 					}
 				} //ambig_resB_count
 			} //ambig_resA_count
@@ -489,7 +489,7 @@ EnzConstraintParameters::generate_active_pose_constraints(
 					if(basic::options::option[basic::options::OptionKeys::enzdes::enz_debug] ){
 						tr.Info << "Adding an ambiguous constraint containing " << ambig_csts.size() << "constraints." << std::endl;
 					}
-					param_cache->active_pose_constraints_.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new AmbiguousConstraint(ambig_csts) ) );
+					param_cache->active_pose_constraints_.push_back( core::scoring::constraints::ConstraintOP( new AmbiguousConstraint(ambig_csts) ) );
 				}
 			}
 			else if( is_covalent_ ){
@@ -547,9 +547,9 @@ EnzConstraintParameters::make_constraint_covalent(
 		resA_pos, resA_atomname,
 		resB_pos, resB_atomname
 	);
-	EnzdesCstParamCacheOP param_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ ) );
+	EnzdesCstParamCacheOP param_cache( get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ ) );
 
-	param_cache->covalent_connections_.push_back( utility::pointer::shared_ptr<const class protocols::toolbox::match_enzdes_util::CovalentConnectionReplaceInfo>( new CovalentConnectionReplaceInfo(resA_base, resB_base, resA_var, resB_var, resA_pos, resB_pos, restype_set_.lock() ) ) ); //new
+	param_cache->covalent_connections_.push_back( CovalentConnectionReplaceInfoOP( new CovalentConnectionReplaceInfo(resA_base, resB_base, resA_var, resB_var, resA_pos, resB_pos, restype_set_.lock() ) ) ); //new
 
 } //make_constraint_covalent
 
@@ -792,7 +792,7 @@ bool
 EnzConstraintParameters::missing_in_pose( core::pose::Pose const & pose ) const
 {
 	utility::vector1< EnzCstTemplateResCacheOP > const & template_res_cache(
-		protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ )->template_res_cache_ );
+		get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ )->template_res_cache_ );
 
 	for( core::Size i = 1; i <= template_res_cache.size(); ++i ){
 		if( template_res_cache[i]->not_in_pose() )return true;
@@ -829,7 +829,7 @@ EnzConstraintParameters::update_pdb_remarks(
 
 	core::pose::PDBInfo & pdbinfo( *(pose.pdb_info() ) );
 	Remarks & rems(pose.pdb_info()->remarks() );
-	EnzdesCstParamCacheOP param_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ ) );
+	EnzdesCstParamCacheOP param_cache( get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ ) );
 
 	for( std::vector< core::pose::RemarkInfo >::iterator remark_it = rems.begin(); remark_it != rems.end(); remark_it++) {
 
@@ -920,7 +920,7 @@ EnzConstraintParameters::get_missing_template_res( core::pose::Pose const & pose
 {
 
 	utility::vector1< EnzCstTemplateResCacheOP > const &  template_res_cache =
-		protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ )->template_res_cache_;
+		get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ )->template_res_cache_;
 
 	if( template_res_cache.size() != 2 ) utility_exit_with_message( "More or less than 2 template res caches detected in enzdes cst param cache");
 	if( template_res_cache[1]->not_in_pose() && template_res_cache[2]->not_in_pose() ) utility_exit_with_message("Error: Both template residues are missing in the pose. This shouldn't happen...\n");
@@ -938,7 +938,7 @@ EnzCstTemplateResCOP
 EnzConstraintParameters::get_missing_template_other_res( core::pose::Pose const & pose ) const
 {
 	utility::vector1< EnzCstTemplateResCacheOP > const &  template_res_cache =
-		protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ )->template_res_cache_;
+		get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ )->template_res_cache_;
 
 	if( template_res_cache.size() != 2 ) utility_exit_with_message( "More or less than 2 template res caches detected in enzdes cst param cache");
 	if( template_res_cache[1]->not_in_pose() && template_res_cache[2]->not_in_pose() ) utility_exit_with_message("Error: Both template residues are missing in the pose. This shouldn't happen...\n");
@@ -961,7 +961,7 @@ EnzConstraintParameters::allowed_res_name3_at_position(
 {
 
 	EnzCstTemplateResCOP template_res;
-	EnzdesCstParamCacheCOP param_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ ) );
+	EnzdesCstParamCacheCOP param_cache( get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ ) );
 
 	std::set< std::string > to_return;
 
@@ -994,7 +994,7 @@ EnzConstraintParameters::set_external_position_for_resB( core::Size pos )
 void
 EnzConstraintParameters::remove_covalent_connections_from_pose( core::pose::Pose & pose ) const {
 
-	EnzdesCstParamCacheOP param_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ ) );
+	EnzdesCstParamCacheOP param_cache( get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ ) );
 	for( utility::vector1< CovalentConnectionReplaceInfoCOP >::iterator cov_it = param_cache->covalent_connections_.begin();
 			 cov_it != param_cache->covalent_connections_.end(); ++cov_it ){
 		(*cov_it)->remove_covalent_connection_from_pose( pose );

@@ -219,7 +219,7 @@ ConsensusDesignMover::create_sequence_profile_constraints(
 	core::sequence::SequenceProfileOP temp_sp( new core::sequence::SequenceProfile(*seqprof_) ); //dumb nonconstness of seqprofile in SequenceProfileConstraint makes this necessary :(
 	for( core::Size i = 1; i <= pose.total_residue(); ++i){
 		if( pose.residue_type(i).is_protein() && task.residue_task(i).being_designed() )
-			csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new core::scoring::constraints::SequenceProfileConstraint( pose, i, temp_sp ) ) );
+			csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( pose, i, temp_sp ) ) );
 	}
 	return csts;
 }

@@ -409,7 +409,7 @@ TMHTopologySamplerClaimer::generate_claims(claims::DofClaims &dof_claims)
 {
 	for(Size jump_num = 1; jump_num <= njumps_; ++jump_num)
 	{
-		dof_claims.push_back(utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::JumpClaim(get_self_weak_ptr(),jump_array_(1,jump_num),jump_array_(2,jump_num),claims::DofClaim::CAN_INIT) ));
+		dof_claims.push_back( claims::DofClaimOP( new claims::JumpClaim(get_self_weak_ptr(),jump_array_(1,jump_num),jump_array_(2,jump_num),claims::DofClaim::CAN_INIT) ) );
 	}
 	for(int i=1;i<=nres_;++i)
 	{
@@ -417,12 +417,12 @@ TMHTopologySamplerClaimer::generate_claims(claims::DofClaims &dof_claims)
 		{
 			if(cuts_(cut_index)==i)
 			{
-					dof_claims.push_back(utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::CutClaim(get_self_weak_ptr(),std::make_pair(TopologyClaimer::label(),i),claims::DofClaim::CAN_INIT) ));
+					dof_claims.push_back( claims::DofClaimOP( new claims::CutClaim(get_self_weak_ptr(),std::make_pair(TopologyClaimer::label(),i),claims::DofClaim::CAN_INIT) ) );
 			}
 			if(i == topology_root_res_)
 			{
-				dof_claims.push_back(utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::BBClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ));
-				dof_claims.push_back(utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::LegacyRootClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ));
+				dof_claims.push_back( claims::DofClaimOP( new claims::BBClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ) );
+				dof_claims.push_back( claims::DofClaimOP( new claims::LegacyRootClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ) );
 			}
 		}
 	}

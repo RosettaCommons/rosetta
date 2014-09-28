@@ -334,7 +334,7 @@ SingleLigandRotamerLibrary::fill_rotamer_vector(
 	// Logic for creating proton_chi rotamers copied from APL (RotamerSet_.cc)
 	utility::vector1< pack::dunbrack::ChiSetOP > proton_chi_chisets;
 	if ( expand_proton_chi ) {
-		proton_chi_chisets.push_back( utility::pointer::shared_ptr<class core::pack::dunbrack::ChiSet>( new pack::dunbrack::ChiSet( concrete_residue->nchi() ) ) );
+		proton_chi_chisets.push_back( dunbrack::ChiSetOP( new pack::dunbrack::ChiSet( concrete_residue->nchi() ) ) );
 		for ( Size ii = 1; ii <= concrete_residue->n_proton_chi(); ++ii ) {
 			pack::dunbrack::expand_proton_chi(
 				task.residue_task( existing_residue.seqpos() ).extrachi_sample_level(

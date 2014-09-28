@@ -89,7 +89,7 @@ LigandConformerBuilder::LigandConformerBuilder( LigandConformerBuilder const & o
 	min_sep_d2_from_upstream_atoms_( other.min_sep_d2_from_upstream_atoms_ )
 {
 	for ( Size ii = 1; ii <= lig_conformers_.size(); ++ii ) {
-		lig_conformers_[ ii ] = utility::pointer::shared_ptr<class protocols::toolbox::match_enzdes_util::LigandConformer>( new toolbox::match_enzdes_util::LigandConformer( * other.lig_conformers_[ ii ] ) );
+		lig_conformers_[ ii ] = toolbox::match_enzdes_util::LigandConformerOP( new toolbox::match_enzdes_util::LigandConformer( * other.lig_conformers_[ ii ] ) );
 	}
 	//std::cout << "APL DEBUG LigandConformerBuilder copy ctor " << this << std::endl;
 }
@@ -717,7 +717,7 @@ LigandConformerBuilder::initialize_conformers( core::conformation::Residue const
 				conformer_group_indices_[ ii ].resize( 1 );
 				conformer_group_indices_[ ii ][ 1 ] = ii;
 				conformer_group_for_conformer_[ii] = ii;
-				lig_conformers_[ ii ] = utility::pointer::shared_ptr<class protocols::toolbox::match_enzdes_util::LigandConformer>( new toolbox::match_enzdes_util::LigandConformer );
+				lig_conformers_[ ii ] = protocols::toolbox::match_enzdes_util::LigandConformerOP( new toolbox::match_enzdes_util::LigandConformer );
 				lig_conformers_[ ii ]->ignore_h_collisions( ignore_h_collisions_ );
 
 				ligpose.replace_residue( 1, *lig_rotlib->get_rotamers()[ ii ], false );
@@ -747,7 +747,7 @@ LigandConformerBuilder::initialize_conformers( core::conformation::Residue const
 				conformer_group_indices_[ ii ].resize( 1 );
 				conformer_group_indices_[ ii ][ 1 ] = ii;
 				conformer_group_for_conformer_[ii] = ii;
-				lig_conformers_[ ii ] = utility::pointer::shared_ptr<class protocols::toolbox::match_enzdes_util::LigandConformer>( new toolbox::match_enzdes_util::LigandConformer );
+				lig_conformers_[ ii ] = protocols::toolbox::match_enzdes_util::LigandConformerOP( new toolbox::match_enzdes_util::LigandConformer );
 				lig_conformers_[ ii ]->ignore_h_collisions( ignore_h_collisions_ );
 				lig_conformers_[ ii ]->initialize_from_residue(
 					atoms_123_[ 1 ], atoms_123_[ 2 ], atoms_123_[ 3 ],
@@ -837,7 +837,7 @@ LigandConformerBuilder::initialize_conformers( core::conformation::Residue const
 		conformer_group_indices_[ 1 ].resize( 1 );
 		conformer_group_indices_[ 1 ][ 1 ] = 1;
 		conformer_group_for_conformer_[1] = 1;
-		lig_conformers_[ 1 ] = utility::pointer::shared_ptr<class protocols::toolbox::match_enzdes_util::LigandConformer>( new toolbox::match_enzdes_util::LigandConformer );
+		lig_conformers_[ 1 ] = protocols::toolbox::match_enzdes_util::LigandConformerOP( new toolbox::match_enzdes_util::LigandConformer );
 		lig_conformers_[ 1 ]->ignore_h_collisions( ignore_h_collisions_ );
 		lig_conformers_[ 1 ]->initialize_from_residue(
 					atoms_123_[ 1 ], atoms_123_[ 2 ], atoms_123_[ 3 ],

@@ -124,7 +124,7 @@ Rotates::parse_my_tag(
 			rotate_info.distribution= distribution;
 			rotate_info.degrees = degrees;
 			rotate_info.cycles = cycles;
-			rotates_.push_back( utility::pointer::shared_ptr<class protocols::ligand_docking::Rotate>( new Rotate(rotate_info) ) );
+			rotates_.push_back( protocols::ligand_docking::RotateOP( new Rotate(rotate_info) ) );
 		}
 	}
 }

@@ -475,7 +475,7 @@ HBondSet::HBondSet( HBondSet const & src ):
 	options_( HBondOptionsCOP( new HBondOptions( *src.options_ ) ))
 {
 	for ( Size i=1; i<= src.hbonds_.size(); ++i ) {
-		hbonds_.push_back( utility::pointer::shared_ptr<class core::scoring::hbonds::HBond>( new HBond( *src.hbonds_[i] ) ) );
+		hbonds_.push_back( HBondOP( new HBond( *src.hbonds_[i] ) ) );
 	}
 	backbone_backbone_donor_ = src.backbone_backbone_donor_;
 	backbone_backbone_acceptor_ = src.backbone_backbone_acceptor_;
@@ -502,7 +502,7 @@ HBondSet::HBondSet( HBondSet const & src, utility::vector1< core::Size > exclude
 		}
 		if( exclude ) continue;
 
-		hbonds_.push_back( utility::pointer::shared_ptr<class core::scoring::hbonds::HBond>( new HBond( *src.hbonds_[i] ) ) );
+		hbonds_.push_back( HBondOP( new HBond( *src.hbonds_[i] ) ) );
 	}
 	backbone_backbone_donor_ = src.backbone_backbone_donor_;
 	backbone_backbone_acceptor_ = src.backbone_backbone_acceptor_;
@@ -521,7 +521,7 @@ HBondSet::HBondSet( HBondSet const & src, utility::vector1< bool > residue_mask 
 	for ( Size i=1; i<= src.nhbonds(); ++i ) {
 		HBond const & hbond(src.hbond(i));
 		if(residue_mask[hbond.don_res()] & residue_mask[hbond.acc_res()]){
-			hbonds_.push_back( utility::pointer::shared_ptr<class core::scoring::hbonds::HBond>( new HBond( *src.hbonds_[i] ) ) );
+			hbonds_.push_back( HBondOP( new HBond( *src.hbonds_[i] ) ) );
 		}
 	}
 	backbone_backbone_donor_ = src.backbone_backbone_donor_;
@@ -544,7 +544,7 @@ HBondSet::HBondSet(
 	for ( Size i=1; i<= src.nhbonds(); ++i ) {
 		HBond const & hbond(src.hbond(i));
 		if (hbond.don_res() == seqpos || hbond.acc_res() == seqpos ){
-			hbonds_.push_back( utility::pointer::shared_ptr<class core::scoring::hbonds::HBond>( new HBond( *src.hbonds_[i] ) ));
+			hbonds_.push_back( HBondOP( new HBond( *src.hbonds_[i] ) ));
 		}
 	}
 	backbone_backbone_donor_ = src.backbone_backbone_donor_;
@@ -620,7 +620,7 @@ HBondSet::append_hbond(
 	Size const don_pos( don_rsd.seqpos() );
 	Size const acc_pos( acc_rsd.seqpos() );
 
-	hbonds_.push_back( utility::pointer::shared_ptr<class core::scoring::hbonds::HBond>( new HBond(
+	hbonds_.push_back( HBondOP( new HBond(
 		dhatm, dhatm_is_protein_backbone, don_rsd.is_protein(), don_rsd.is_DNA(),
 		dhatm_is_backbone, don_pos,
 		aatm , aatm_is_protein_backbone, acc_rsd.is_protein(),

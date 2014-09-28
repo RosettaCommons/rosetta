@@ -636,7 +636,7 @@ void PairingLibrary::create_jump_fragments(
 	frags.reserve( ntemplates );
 	for ( PairingTemplateList::const_iterator it=templates.begin(),	eit=templates.end();
 				it!=eit; ++it ) {
-		frags.push_back( utility::pointer::shared_ptr<class core::fragment::FragData>( new FragData ) );
+		frags.push_back( core::fragment::FragDataOP( new FragData ) );
 		if ( bWithTorsion ) {
 			BBTorsionSRFDOP start( new BBTorsionSRFD( 3, 'E', 'X' ) );
 			start->set_torsion( 1, it->phi( iStart ) );

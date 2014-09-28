@@ -206,8 +206,8 @@ CCDEndsGraftMover::apply(Pose & pose){
 	ft_loop.loops(loop_set);
 	ft_loop.apply(combined);
 
-	loop_set_map[Nter_loop] = utility::pointer::shared_ptr<class protocols::loops::loop_closure::ccd::CCDLoopClosureMover>( new loop_closure::ccd::CCDLoopClosureMover(Nter_loop, movemap()) );
-	loop_set_map[Cter_loop] = utility::pointer::shared_ptr<class protocols::loops::loop_closure::ccd::CCDLoopClosureMover>( new loop_closure::ccd::CCDLoopClosureMover(Cter_loop, movemap()) );
+	loop_set_map[Nter_loop] = protocols::loops::loop_closure::ccd::CCDLoopClosureMoverOP( new loop_closure::ccd::CCDLoopClosureMover(Nter_loop, movemap()) );
+	loop_set_map[Cter_loop] = protocols::loops::loop_closure::ccd::CCDLoopClosureMoverOP( new loop_closure::ccd::CCDLoopClosureMover(Cter_loop, movemap()) );
 	
 	//combined.dump_pdb("before_idealize.pdb");
 

@@ -119,18 +119,18 @@ namespace packer {
 																							pose::PoseOP sugar_instantiation_pose ){
 
 		// testing -- OK to move down here? No won't be inherited by the actual pose, right?
-		if ( options_->sampler_perform_phosphate_pack() ) screeners.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new PhosphateScreener( phosphate_sampler_ ) ) );
+		if ( options_->sampler_perform_phosphate_pack() ) screeners.push_back( screener::StepWiseScreenerOP( new PhosphateScreener( phosphate_sampler_ ) ) );
 
 		if ( options_->sampler_try_sugar_instantiation() &&
-				 working_parameters_->floating_base() )	screeners.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new SugarInstantiator( *sugar_instantiation_pose, working_parameters_->working_moving_res() ) ) );
+				 working_parameters_->floating_base() )	screeners.push_back( stepwise::screener::StepWiseScreenerOP( new SugarInstantiator( *sugar_instantiation_pose, working_parameters_->working_moving_res() ) ) );
 
 		if ( options_->o2prime_legacy_mode() ){
-			screeners.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new O2PrimeScreener( o2prime_packer_ ) ) );
+			screeners.push_back( screener::StepWiseScreenerOP( new O2PrimeScreener( o2prime_packer_ ) ) );
 			if ( !protein::contains_protein( pose ) ) return; // don't put in PackScreener below.
 		}
 
 		packer_pose_ = pose.clone();
-		screeners.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new PackScreener( *packer_pose_, packer_ ) ) );
+		screeners.push_back( screener::StepWiseScreenerOP( new PackScreener( *packer_pose_, packer_ ) ) );
 	}
 
 	///////////////////////////////////////////////////////////////////////////

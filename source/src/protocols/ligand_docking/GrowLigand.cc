@@ -103,7 +103,7 @@ GrowLigand::set_fragments(){
 	grow_ligand_tracer<< fragment_types.size()<< " fragment_types"<< std::endl;
 
 	BOOST_FOREACH(core::chemical::ResidueTypeCOP fragment_type, fragment_types){
-		fragments_.push_back( utility::pointer::shared_ptr<const class core::conformation::Residue>( new core::conformation::Residue(*fragment_type, true) ) );
+		fragments_.push_back( core::conformation::ResidueCOP( new core::conformation::Residue(*fragment_type, true) ) );
 		grow_ligand_tracer<< "frag_name: "<< fragment_type->name()<< std::endl;
 	}
 }

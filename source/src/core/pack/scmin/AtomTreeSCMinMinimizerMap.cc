@@ -167,7 +167,7 @@ AtomTreeSCMinMinimizerMap::add_torsion(
 	}
 
 	if ( n_active_dof_nodes_ >= dof_nodes_.size() ) {
-		dof_nodes_.push_back( utility::pointer::shared_ptr<class core::optimization::DOF_Node>( new optimization::DOF_Node( new_torsion_corrected, pnode ) ) );
+		dof_nodes_.push_back( optimization::DOF_NodeOP( new optimization::DOF_Node( new_torsion_corrected, pnode ) ) );
 		++n_active_dof_nodes_;
 	} else {
 		++n_active_dof_nodes_;

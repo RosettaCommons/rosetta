@@ -250,31 +250,31 @@ StepWiseConnectionSampler::initialize_residue_level_screeners( pose::Pose & pose
 
 	runtime_assert( rigid_body_rotamer_ != 0 );
 
-	screeners_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new StubApplier( moving_res_base_stub_ ) ) ); // will pull stub out of the sampler
+	screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new StubApplier( moving_res_base_stub_ ) ) ); // will pull stub out of the sampler
 
-	screeners_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new StubDistanceScreener( moving_res_base_stub_, rigid_body_rotamer_->reference_stub(),	max_distance_squared_ ) ) );
+	screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new StubDistanceScreener( moving_res_base_stub_, rigid_body_rotamer_->reference_stub(),	max_distance_squared_ ) ) );
 
-	if ( base_centroid_checker_ && !protein_connection_ ) screeners_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new BaseCentroidScreener( base_centroid_checker_,
+	if ( base_centroid_checker_ && !protein_connection_ ) screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new BaseCentroidScreener( base_centroid_checker_,
 																																																				moving_res_base_stub_ ) ) );
 
 	tag_definition_ = screener::TagDefinitionOP( new TagDefinition( pose, screeners_[ screeners_.size() ] ) );
 	screeners_.push_back( tag_definition_ );
 
 	for ( Size n = 1; n <= rna_five_prime_chain_breaks_.size(); n++ ){
-		screeners_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new RNA_ChainClosableGeometryResidueBasedScreener( rna_chain_closable_geometry_checkers_[ n ] ) ) );
+		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new RNA_ChainClosableGeometryResidueBasedScreener( rna_chain_closable_geometry_checkers_[ n ] ) ) );
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	// clash checks
 	ResidueCOP screening_moving_rsd_at_origin = rigid_body_rotamer_->get_residue_at_origin( moving_res_ ).clone();
 	if ( VDW_bin_checker_ != 0 && !protein_connection_ ){
-		screeners_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new VDW_BinScreener( VDW_bin_checker_, *virt_sugar_screening_pose_, moving_res_,
+		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new VDW_BinScreener( VDW_bin_checker_, *virt_sugar_screening_pose_, moving_res_,
 																							 screening_moving_rsd_at_origin, moving_res_base_stub_ ) ) );
 	}
 	// User-input VDW: Does not work for chain_closure move and is_internal_ move yet, since the checker does not know that
 	// moving residue atoms can bond to previous or next residues.
 	if ( user_input_VDW_bin_checker_ && user_input_VDW_bin_checker_->user_inputted_VDW_screen_pose() ) {
-		screeners_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new VDW_BinScreener( user_input_VDW_bin_checker_, *virt_sugar_screening_pose_, moving_res_,
+		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new VDW_BinScreener( user_input_VDW_bin_checker_, *virt_sugar_screening_pose_, moving_res_,
 																							 screening_moving_rsd_at_origin, moving_res_base_stub_ ) ) );
 	}
 }
@@ -293,7 +293,7 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 	// finally copy in the base conformation into the pose for RMSD and VDW screens
 	// at first, don't copy in dofs for sugar/backbone (i.e., residue alternative), because those copy_dofs take extra computation;
 	//  just apply rigid_body transformation.
-	screeners_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new SampleApplier( *screening_pose_, false /*apply_residue_alternative_sampler*/ ) ) );
+	screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new SampleApplier( *screening_pose_, false /*apply_residue_alternative_sampler*/ ) ) );
 	NativeRMSD_ScreenerOP native_rmsd_screener;
 	if ( ( get_native_pose() != 0 ) && (moving_res_ != 0) ){
 		bool do_screen = ( ( options_->rmsd_screen() > 0.0 ) && !options_->integration_test_mode() ); // gets toggled to true in integration tests.
@@ -305,7 +305,7 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 
 	// For KIC closure, immediate check that a closed loop solution was actually found.
 	if ( kic_modeler_ ) {
-		screeners_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new RNA_ChainClosureScreener( rna_chain_closure_checkers_[ 1 ], *screening_pose_, true /*just do closure check*/ ) ) );
+		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new RNA_ChainClosureScreener( rna_chain_closure_checkers_[ 1 ], *screening_pose_, true /*just do closure check*/ ) ) );
 	}
 
 	// Following may still work, but has not been tested.
@@ -316,14 +316,14 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 	if ( !rigid_body_modeler_ && base_centroid_checker_ && !protein_connection_ ){
 		bool const force_centroid_interaction = ( rigid_body_modeler_ || options_->force_centroid_interaction()
 																							|| ( rna_cutpoints_closed_.size() == 0 ) );
-		screeners_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new BaseCentroidScreener( base_centroid_checker_, screening_pose_, force_centroid_interaction ) ) );
+		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new BaseCentroidScreener( base_centroid_checker_, screening_pose_, force_centroid_interaction ) ) );
 	}
 
 	if ( VDW_bin_checker_ ){
-		screeners_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new VDW_BinScreener( VDW_bin_checker_, *screening_pose_, moving_res_ ) ) );
+		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new VDW_BinScreener( VDW_bin_checker_, *screening_pose_, moving_res_ ) ) );
 	}
 	if ( user_input_VDW_bin_checker_ && user_input_VDW_bin_checker_->user_inputted_VDW_screen_pose() ){
-		screeners_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new VDW_BinScreener( user_input_VDW_bin_checker_, *screening_pose_, moving_res_ ) ) );
+		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new VDW_BinScreener( user_input_VDW_bin_checker_, *screening_pose_, moving_res_ ) ) );
 	}
 
 	// This one can actually filters out models compared to the other atr-rep screener below -- since it
@@ -331,17 +331,17 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 	bool const use_loose_rep_cutoff = ( kic_modeler_ || moving_partition_res_.size() > 1 /* is_internal */ );
 	if ( rigid_body_modeler_ && virt_sugar_atr_rep_screen_ &&
 			 moving_res_list_.size() > 0 && options_->atr_rep_screen() ) {
-		screeners_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new SampleApplier( *virt_sugar_screening_pose_, false /*apply_residue_alternative_sampler*/ ) ) );
-		screeners_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new PartitionContactScreener( *virt_sugar_screening_pose_, working_parameters_, use_loose_rep_cutoff ) ) );
+		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new SampleApplier( *virt_sugar_screening_pose_, false /*apply_residue_alternative_sampler*/ ) ) );
+		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new PartitionContactScreener( *virt_sugar_screening_pose_, working_parameters_, use_loose_rep_cutoff ) ) );
 		//		screeners_.push_back( new RNA_AtrRepScreener( virt_sugar_atr_rep_checker_, *virt_sugar_screening_pose_ ) );
 	}
 
-	screeners_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new SampleApplier( *screening_pose_, true /*apply_residue_alternative_sampler*/ ) ) );
-	for ( Size n = 1; n <= rna_cutpoints_closed_.size(); n++ ) screeners_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new RNA_ChainClosableGeometryScreener( rna_chain_closable_geometry_checkers_[ n ], screening_pose_ ) ) );
+	screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new SampleApplier( *screening_pose_, true /*apply_residue_alternative_sampler*/ ) ) );
+	for ( Size n = 1; n <= rna_cutpoints_closed_.size(); n++ ) screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new RNA_ChainClosableGeometryScreener( rna_chain_closable_geometry_checkers_[ n ], screening_pose_ ) ) );
 
 	for ( Size n = 1; n <= rna_five_prime_chain_breaks_.size(); n++ ) {
 		bool strict = rigid_body_modeler_ && rna_cutpoints_closed_.has_value( rna_five_prime_chain_breaks_[n] ) && (rna_cutpoints_closed_.size() < 3);
-		screeners_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new RNA_ChainClosableGeometryScreener( rna_chain_closable_geometry_checkers_[ n ], screening_pose_, strict  /*strict*/ ) ) );
+		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new RNA_ChainClosableGeometryScreener( rna_chain_closable_geometry_checkers_[ n ], screening_pose_, strict  /*strict*/ ) ) );
 	}
 
 	// RNA_AtrRepScreenerOP atr_rep_screener;
@@ -358,10 +358,10 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 
 	for ( Size n = 1; n <= rna_cutpoints_closed_.size(); n++ ) {
 		if ( kic_modeler_ && n == 1 ) continue; // if KIC, first one is screened above, actually.
-		screeners_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new RNA_ChainClosureScreener( rna_chain_closure_checkers_[ n ] ) ) );
+		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new RNA_ChainClosureScreener( rna_chain_closure_checkers_[ n ] ) ) );
 	}
 
-	for ( Size n = 1; n <= protein_ccd_closers_.size(); n++ )  screeners_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new ProteinCCD_ClosureScreener( protein_ccd_closers_[n], *protein_ccd_poses_[n] ) ) );
+	for ( Size n = 1; n <= protein_ccd_closers_.size(); n++ )  screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new ProteinCCD_ClosureScreener( protein_ccd_closers_[n], *protein_ccd_poses_[n] ) ) );
 
 	//	screeners_.push_back( atr_rep_screener ); // really should be higher.
 
@@ -369,7 +369,7 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 	master_packer_->add_packer_screeners( screeners_, pose, screening_pose_ );
 
 	/////////////////////////////////////////////////////
-	screeners_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new SampleApplier( pose ) ) );
+	screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new SampleApplier( pose ) ) );
 
 	// could be way earlier, and unified with RNA. Just ignore atoms at cutpoints that will be closed, and at moving suite.
 	// if ( protein_connection_ /*&& !master_packer_->pack_all_side_chains()*/ && !protein_cutpoints_closed_.size() &&
@@ -388,23 +388,23 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 	if ( !rigid_body_modeler_ && !working_parameters_->rebuild_bulge_mode() &&
 			 options_->allow_bulge_at_chainbreak() && moving_partition_res_.size() == 1 &&
 			 ( rna_cutpoints_closed_.size() > 0 )  ) {
-		screeners_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new BulgeApplier( atr_rep_checker_, base_centroid_checker_, moving_res_ ) ) ); // apply bulge at the last minute.
+		screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new BulgeApplier( atr_rep_checker_, base_centroid_checker_, moving_res_ ) ) ); // apply bulge at the last minute.
 	}
 
-	screeners_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new PoseSelectionScreener( pose, scorefxn_, clusterer_ ) ) );
+	screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new PoseSelectionScreener( pose, scorefxn_, clusterer_ ) ) );
 
 	if ( rigid_body_modeler_ ) {
 		// As long as we're not instantiating any sugars in the final pose, break once we find any valid sugar rotamer [really?]
 		if ( rna_chain_closure_checkers_.size() == 0 && !options_->sampler_try_sugar_instantiation() ) {
-			screeners_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new FastForwardToNextRigidBody ) ); // generalize to non-rigid-body rotamer case.
+			screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new FastForwardToNextRigidBody ) ); // generalize to non-rigid-body rotamer case.
 		} else {
-			screeners_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new FastForwardToNextResidueAlternative( moving_res_ ) ) ); // generalize -- should fast forward past all virtual residue alternatives.
+			screeners_.push_back( protocols::stepwise::screener::StepWiseScreenerOP( new FastForwardToNextResidueAlternative( moving_res_ ) ) ); // generalize -- should fast forward past all virtual residue alternatives.
 		}
 	}
 
 	if ( options_->integration_test_mode() ) {
 		screeners_.insert( screeners_.begin() /*right at beginning!*/,
-											 utility::pointer::shared_ptr<class protocols::stepwise::screener::StepWiseScreener>( new IntegrationTestBreaker( atr_rep_screener, screeners_[ screeners_.size() ], native_rmsd_screener ) ) );
+											 protocols::stepwise::screener::StepWiseScreenerOP( new IntegrationTestBreaker( atr_rep_screener, screeners_[ screeners_.size() ], native_rmsd_screener ) ) );
 	}
 
 }
@@ -486,13 +486,13 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 	}
 
 	for ( Size n = 1; n <= rna_five_prime_chain_breaks_.size(); n++ ) {
-		rna_chain_closable_geometry_checkers_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::modeler::rna::checker::RNA_ChainClosableGeometryChecker>( new checker::RNA_ChainClosableGeometryChecker(
+		rna_chain_closable_geometry_checkers_.push_back( rna::checker::RNA_ChainClosableGeometryCheckerOP( new checker::RNA_ChainClosableGeometryChecker(
 				rna_five_prime_chain_breaks_[n], rna_three_prime_chain_breaks_[n], rna_chain_break_gap_sizes_[n] ) ) );
 	}
 
 	screening_pose_->remove_constraints(); // chain closure actually assumes no constraints in pose -- it sets up its own constraints.
 	for ( Size n = 1; n <= rna_cutpoints_closed_.size(); n++ ) {
-		rna_chain_closure_checkers_.push_back( utility::pointer::shared_ptr<class protocols::stepwise::modeler::rna::checker::RNA_ChainClosureChecker>( new checker::RNA_ChainClosureChecker( *screening_pose_, rna_cutpoints_closed_[n] ) ) );
+		rna_chain_closure_checkers_.push_back( rna::checker::RNA_ChainClosureCheckerOP( new checker::RNA_ChainClosureChecker( *screening_pose_, rna_cutpoints_closed_[n] ) ) );
 		rna_chain_closure_checkers_[n]->set_reinitialize_CCD_torsions( options_->reinitialize_CCD_torsions() );
 	}
 

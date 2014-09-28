@@ -1389,10 +1389,10 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 					// Build a BackboneStubConstraint from this stub
 					if ( apply_ambiguous_constraints ) {
 						// Push it onto ambig_csts for this residue
-						ambig_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant ) ) );
+						ambig_csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant ) ) );
 					} else {
 						// Apply it directly
-						constraints_.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant ) ) );
+						constraints_.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant ) ) );
 					}
 				}	else hs_stub->second->set_scaffold_status( resnum, protocols::hotspot_hashing::reject );
 				//else TR << " FailSelfEnergy=" << stub_bonus_value << std::endl;
@@ -1403,7 +1403,7 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 
 		// Finally, add the constraint corresponding to this resnum to the main set
 		if ( ( apply_ambiguous_constraints ) && ( ambig_csts.size() > 0 ) ) {
-			constraints_.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new core::scoring::constraints::AmbiguousConstraint(ambig_csts) ) );
+			constraints_.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AmbiguousConstraint(ambig_csts) ) );
 		}
 	}
 
@@ -1562,10 +1562,10 @@ HotspotStubSet::add_hotspot_constraints_to_wholepose(
 					// Build a BackboneStubLinearConstraint from this stub
 					if ( apply_ambiguous_constraints ) {
 						// Push it onto ambig_csts for this residue
-						ambig_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new core::scoring::constraints::BackboneStubLinearConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant ) ) );
+						ambig_csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubLinearConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant ) ) );
 					} else {
 						// Apply it directly
-						constraints_.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new core::scoring::constraints::BackboneStubLinearConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant ) ) );
+						constraints_.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubLinearConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant ) ) );
 					}
 				}	else hs_stub->second->set_scaffold_status( resnum, protocols::hotspot_hashing::reject );
 				//else TR << " FailSelfEnergy=" << stub_bonus_value << std::endl;
@@ -1580,7 +1580,7 @@ HotspotStubSet::add_hotspot_constraints_to_wholepose(
 		if ( ( apply_ambiguous_constraints ) && ( ambig_csts.size() > 0 ) ) {
       //TR << "Add ambiguous cst of size: " << ambig_csts.size() << std::endl;
       //TR << "Add ambiguous cst of size for all stubs and all residues: " << ambig_csts.size() << std::endl;
-			constraints_.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new core::scoring::constraints::AmbiguousConstraint(ambig_csts) ) );
+			constraints_.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AmbiguousConstraint(ambig_csts) ) );
 		}
 
 	constraints_ = pose.add_constraints( constraints_ );

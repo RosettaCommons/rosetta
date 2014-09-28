@@ -120,8 +120,8 @@ public:
     protocols::environment::Environment & env = *env_op;
 
     LocalPositions envpos;
-    envpos.push_back( utility::pointer::shared_ptr<class core::environment::LocalPosition>( new LocalPosition( "BASE", SEQPOS1 ) ) );
-    envpos.push_back( utility::pointer::shared_ptr<class core::environment::LocalPosition>( new LocalPosition( "BASE", SEQPOS2 ) ) );
+    envpos.push_back( core::environment::LocalPositionOP( new LocalPosition( "BASE", SEQPOS1 ) ) );
+    envpos.push_back( core::environment::LocalPositionOP( new LocalPosition( "BASE", SEQPOS2 ) ) );
 
     TorsionClaimOP claim( new TorsionClaim( NULL, envpos ) );
     claim->strength( CAN_CONTROL, DOES_NOT_CONTROL );

@@ -521,7 +521,7 @@ GreenPacker::create_reference_rotamers(
 
 		for ( Size jj = 1; jj <= ii_nrots; ++jj ) {
 			original_rotamers_[ ii_resid ].push_back(
-				utility::pointer::shared_ptr<class protocols::simple_moves::MinimalRotamer>( new protocols::simple_moves::MinimalRotamer(
+				MinimalRotamerOP( new MinimalRotamer(
 				*reference_rotamer_sets_->rotamer_set_for_moltenresidue( ii )->rotamer( jj ) ) ) );
 		}
 	}
@@ -660,7 +660,7 @@ GreenPacker::create_fresh_rotamers(
 
 		for ( Size jj = 1; jj <= ii_nrots; ++jj ) {
 			current_rotamers_[ ii_resid ].push_back(
-				utility::pointer::shared_ptr<class protocols::simple_moves::MinimalRotamer>( new protocols::simple_moves::MinimalRotamer(
+				MinimalRotamerOP( new MinimalRotamer(
 				*current_rotamer_sets_->rotamer_set_for_moltenresidue( ii )->rotamer( jj ) ) ) );
 		}
 	}

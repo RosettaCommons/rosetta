@@ -316,11 +316,11 @@ SetupHotspotConstraintsLoopsMover::generate_csts(
 					if ( apply_ambiguous_constraints_ ) {
 						// Push it onto ambig_csts for this residue
 						ct_cst++;
-						ambig_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant_ ) ) );
+						ambig_csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant_ ) ) );
 					} else {
 						ct_cst++;
 						// Apply it directly
-						constraints.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant_ ) ) );
+						constraints.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant_ ) ) );
 					}
 				}	else hs_stub->second->set_scaffold_status( resnum, protocols::hotspot_hashing::reject );
 				//else tr.Info << " FailSelfEnergy=" << stub_bonus_value << std::endl;
@@ -331,7 +331,7 @@ SetupHotspotConstraintsLoopsMover::generate_csts(
 
 		// Finally, add the constraint corresponding to this resnum to the main set
 		if ( ( apply_ambiguous_constraints_ ) && ( ambig_csts.size() > 0 ) )
-			constraints.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new core::scoring::constraints::AmbiguousConstraint(ambig_csts) ) );
+			constraints.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AmbiguousConstraint(ambig_csts) ) );
 	}
 	return ct_cst;
 }

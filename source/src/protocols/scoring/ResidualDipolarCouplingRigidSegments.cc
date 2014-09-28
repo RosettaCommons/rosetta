@@ -255,7 +255,7 @@ extern ResidualDipolarCouplingRigidSegmentsOP retrieve_RDC_segments_from_pose(co
 
 		//create new RDC objects for all Segments
 		for ( RDC_lines_collection::iterator it=rdc_segm_data.begin(); it!=rdc_segm_data.end(); ++it ) {
-			rdc_segments_.push_back( utility::pointer::shared_ptr<class core::scoring::ResidualDipolarCoupling>( new core::scoring::ResidualDipolarCoupling( *it ) ) );
+			rdc_segments_.push_back( core::scoring::ResidualDipolarCouplingOP( new core::scoring::ResidualDipolarCoupling( *it ) ) );
 		}
 	}
 

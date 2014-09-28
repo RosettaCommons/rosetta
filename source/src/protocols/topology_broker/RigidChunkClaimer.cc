@@ -227,7 +227,7 @@ void RigidChunkClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	//	new_claims.push_back( new CutBiasClaim( *this ) ); we don't need this claim type --- always call manipulate_cut_bias
 	for ( Loops::const_iterator loop_it = current_rigid_core_.begin(); loop_it != current_rigid_core_.end(); ++loop_it ) {
 		for ( Size pos = loop_it->start(); pos <= loop_it->stop(); ++pos ) {
-			new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::BBClaim( get_self_weak_ptr(),
+			new_claims.push_back( claims::DofClaimOP( new claims::BBClaim( get_self_weak_ptr(),
 																								 std::make_pair( label(), pos ),
 																								 claims::DofClaim::EXCLUSIVE ) ) );
 		}
@@ -288,7 +288,7 @@ bool RigidChunkClaimer::allow_claim( claims::DofClaim const& foreign_claim ) {
 			return false;
 		} else if ( bExclusive_ ) { // but probably a good jump --- since it has a physical reason.
 			//reclaim the claim
-			current_jumps_.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::JumpClaim( get_self_weak_ptr(), jump_ptr->local_pos1(), jump_ptr->local_pos2(), claims::DofClaim::EXCLUSIVE ) ) );
+			current_jumps_.push_back( claims::DofClaimOP( new claims::JumpClaim( get_self_weak_ptr(), jump_ptr->local_pos1(), jump_ptr->local_pos2(), claims::DofClaim::EXCLUSIVE ) ) );
 			return false;
 		} else {
 			current_jumps_.push_back( foreign_claim.clone() ); //ok - remember this jump, since it connects rigid1 and rigid2
@@ -696,7 +696,7 @@ RigidChunkClaimer::JumpCalculator::generate_rigidity_jumps( RigidChunkClaimer* p
 			Size target_pos (	rigid_loops[ region ].start()
 							 + static_cast< Size >( 0.5*( rigid_loops[ region ].stop()-rigid_loops[ region ].start() ) ) );
 
-			extra_jumps.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::JumpClaim( parent_claimer ? parent_claimer->get_self_weak_ptr() : TopologyClaimerAP(),
+			extra_jumps.push_back( claims::DofClaimOP( new claims::JumpClaim( parent_claimer ? parent_claimer->get_self_weak_ptr() : TopologyClaimerAP(),
 																										std::make_pair( label, anchor),
 																										std::make_pair( label, target_pos),
 																										claims::DofClaim::EXCLUSIVE ) ) );

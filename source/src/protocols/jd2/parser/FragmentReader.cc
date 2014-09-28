@@ -234,11 +234,11 @@ FragmentReader::apply( FragSetOP & fragset )
 		FrameList frames;
 		if ( cf.get() != NULL && of.get() == NULL ) {
 			for( ConstFrameIterator it=cf->begin(), end( cf->end() ); it!=end; ++it ) {
-				frames.push_back( utility::pointer::shared_ptr<class core::fragment::Frame>( new Frame( **it ) ) );
+				frames.push_back( core::fragment::FrameOP( new Frame( **it ) ) );
 			}
 		} else if ( of.get() != NULL && cf.get() == NULL ) {
 			for( ConstFrameIterator it=of->begin(), end( of->end() ); it!=end; ++it ) {
-				frames.push_back( utility::pointer::shared_ptr<class core::fragment::Frame>( new Frame( **it ) ) );
+				frames.push_back( core::fragment::FrameOP( new Frame( **it ) ) );
 			}
 		} else {
 			TR << "[ ERROR ] FragmentIO returned not proper fragset. See the code." << std::endl;

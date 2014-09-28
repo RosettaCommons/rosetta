@@ -86,7 +86,7 @@ TaskAwareCsts::apply( core::pose::Pose & pose )
 	BOOST_FOREACH( core::Size const resid, designable ){
 		core::conformation::Residue const rsd_i( pose.residue( resid ) );
 		if( cst_type_ == "coordinate" ){
-			cst.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new CoordinateConstraint( AtomID( rsd_i.atom_index( "CA" ), resid ), anchor_atom, rsd_i.xyz( "CA" ), coord_cst_func ) ) );
+			cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( AtomID( rsd_i.atom_index( "CA" ), resid ), anchor_atom, rsd_i.xyz( "CA" ), coord_cst_func ) ) );
 			TR<<resid<<',';
 		}
 	}

@@ -412,7 +412,7 @@ HotspotPlacementMover::apply(
 									stub2_pose.append_residue_by_bond( *(hs_stub2->second->residue()) );
 									core::Real stub_bonus_value2 = hs_stub2->second->bonus_value();
 									ambig_csts.push_back(
-												utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new core::scoring::constraints::BackboneStubConstraint( pose,
+												core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::BackboneStubConstraint( pose,
 																		resnum2,
 																		fixed_atom,
 																		stub2_pose,
@@ -426,7 +426,7 @@ HotspotPlacementMover::apply(
 							if ( ambig_csts.size() > 0 )
 							{
 								TR << "adding ambiguous constraints to resnum: "<<resnum2<<std::endl;
-								additional_hs_constraints.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new core::scoring::constraints::AmbiguousConstraint(ambig_csts) ) );
+								additional_hs_constraints.push_back( core::scoring::constraints::ConstraintCOP( new core::scoring::constraints::AmbiguousConstraint(ambig_csts) ) );
 							}
 					}
 				}

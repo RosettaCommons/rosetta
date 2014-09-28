@@ -416,7 +416,7 @@ FlxbbDesign::build_design_taskset( Pose const & pose )
 	}
 
 	if( layer_mode_ == "" ){
-		dts.push_back( utility::pointer::shared_ptr<class protocols::flxbb::DesignTask>( new DesignTask_Normal( nflxbb_cycles_, scorefxn_design_, rlx_mover, filter_during_design_ ) ) );
+		dts.push_back( DesignTaskOP( new DesignTask_Normal( nflxbb_cycles_, scorefxn_design_, rlx_mover, filter_during_design_ ) ) );
 	}else{
 
 		utility::vector1< String > layers( utility::string_split( layer_mode_, '_' ) );
@@ -427,17 +427,17 @@ FlxbbDesign::build_design_taskset( Pose const & pose )
 			FilterStructs_TotalChargeOP filter2( new FilterStructs_TotalCharge( pose ) );
 
 			// 1st stage: 2 cycles of the fixbb designinig only core and boundary and relax
-			dts.push_back( utility::pointer::shared_ptr<class protocols::flxbb::DesignTask>( new DesignTask_Layer( true, true, false,	false,
+			dts.push_back( DesignTaskOP( new DesignTask_Layer( true, true, false,	false,
 																					 2, scorefxn_design_, rlx_mover, filter1 ) ));
 			// 2nd stage: 2 cycles of design all and relax
-			dts.push_back( utility::pointer::shared_ptr<class protocols::flxbb::DesignTask>( new DesignTask_Layer( true, true, true, false,
+			dts.push_back( DesignTaskOP( new DesignTask_Layer( true, true, true, false,
 																					 2, scorefxn_design_, rlx_mover, filter1 ) ));
 			// 3rd stage: design only surface without relax and filter sequence of which totalcharge is non-zero
-			dts.push_back( utility::pointer::shared_ptr<class protocols::flxbb::DesignTask>( new DesignTask_Layer( false, false, true,	true,
+			dts.push_back( DesignTaskOP( new DesignTask_Layer( false, false, true,	true,
 																					 1, scorefxn_design_, 0, filter2 ) ));
 
 		}else if( layers.size() == 1 && layer_mode_ == "all" ){
-			dts.push_back( utility::pointer::shared_ptr<class protocols::flxbb::DesignTask>( new DesignTask_Layer( true, true, true, false,
+			dts.push_back( DesignTaskOP( new DesignTask_Layer( true, true, true, false,
 																					 nflxbb_cycles_, scorefxn_design_, rlx_mover, filter_during_design_ ) ));
 		}else if( layers.size() >= 1 ){
 			bool dcore( false );
@@ -459,7 +459,7 @@ FlxbbDesign::build_design_taskset( Pose const & pose )
 					boundary = true;
 				}
 			} // utility::vector1
-			dts.push_back( utility::pointer::shared_ptr<class protocols::flxbb::DesignTask>( new DesignTask_Layer( dcore, boundary, surface,
+			dts.push_back( DesignTaskOP( new DesignTask_Layer( dcore, boundary, surface,
 																					 use_origseq_for_not_dsgned_layer_,
 																					 nflxbb_cycles_, scorefxn_design_, rlx_mover, filter_during_design_ ) ));
 		}

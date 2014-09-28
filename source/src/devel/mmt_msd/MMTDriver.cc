@@ -458,7 +458,7 @@ MMTDriver::optimize_generation()
 	this_gen_results_.clear();
 	this_gen_results_.resize( this_gen_work_->n_new_sequences() );
 	for ( core::Size ii = 1; ii <= this_gen_work_->n_new_sequences(); ++ii ) {
-		this_gen_results_[ ii ] = utility::pointer::shared_ptr<class devel::mmt_msd::JobsForSequence>( new JobsForSequence( daf_->num_states(), daf_->num_npd_properties() ) );
+		this_gen_results_[ ii ] = JobsForSequenceOP( new JobsForSequence( daf_->num_states(), daf_->num_npd_properties() ) );
 	}
 
 	// broadcast that we're starting a new generation

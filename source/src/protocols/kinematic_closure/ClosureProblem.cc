@@ -123,7 +123,7 @@ SolutionList ClosureProblem::solve() const { // {{{1
 	SolutionList solutions(num_solutions);
 
 	for (Size index = 1; index <= (Size) num_solutions; index++) {
-		solutions[index] = utility::pointer::shared_ptr<const class protocols::kinematic_closure::ClosureSolution>( new ClosureSolution(
+		solutions[index] = protocols::kinematic_closure::ClosureSolutionOP( new ClosureSolution(
 				this, index,
 				solution_torsions[index],
 				solution_angles[index],

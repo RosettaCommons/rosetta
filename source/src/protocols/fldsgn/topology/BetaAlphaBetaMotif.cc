@@ -606,7 +606,7 @@ BetaAlphaBetaMotifSet::set_babmotifs( SS_Info2_COP const ssinfo, SheetSetCOP con
 		if( helix_num == 1 ) {
 			runtime_assert( ihelix != 0 );
 			Size cross_over = Size ( std::abs( Real(ord1) - Real(ord2) ) ) - 1;
-			bab_motifs_.push_back( utility::pointer::shared_ptr<class protocols::fldsgn::topology::BetaAlphaBetaMotif>( new BetaAlphaBetaMotif( ist1, ist2, ihelix, cross_over ) ) );
+			bab_motifs_.push_back( BetaAlphaBetaMotifOP( new BetaAlphaBetaMotif( ist1, ist2, ihelix, cross_over ) ) );
 			TR.Debug << ist1 << " " << ist2 << " " << ihelix << " " << cross_over << std::endl;
 		}
 

@@ -299,7 +299,7 @@ void SAXSEnergy::rehash_form_factors(const core::pose::Pose & pose) const {
       utility::vector1<DistanceHistogramOP> row;
       dhist_.push_back( row );
       for(Size j=1;j<=ff_ops_.size();j++) {
-        dhist_[i].push_back( utility::pointer::shared_ptr<class core::scoring::saxs::DistanceHistogram>( new DistanceHistogram() ) );
+        dhist_[i].push_back( DistanceHistogramOP( new DistanceHistogram() ) );
       }
     }
 

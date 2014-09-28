@@ -159,7 +159,7 @@ namespace full_model_info {
 			runtime_assert( input_res_count == input_res_list.size() );
 		}
 
-		if ( input_poses.size() == 0 ) input_poses.push_back( utility::pointer::shared_ptr<class core::pose::Pose>( new Pose ) ); // just a blank pose for now.
+		if ( input_poses.size() == 0 ) input_poses.push_back( core::pose::PoseOP( new Pose ) ); // just a blank pose for now.
 
 		if ( option[ full_model::other_poses ].user() ) {
 			get_other_poses( input_poses, option[ full_model::other_poses ](), rsd_set );

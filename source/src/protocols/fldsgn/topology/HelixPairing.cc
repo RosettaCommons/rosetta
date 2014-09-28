@@ -221,7 +221,7 @@ HelixPairingSet::HelixPairingSet( String const & helix_pairings ):
 
 	utility::vector1< String > hpairs( utility::string_split( helix_pairings, ';' ) );
 	for( utility::vector1< String >::const_iterator iter = hpairs.begin(); iter != hpairs.end() ; ++iter) {
-		helix_pairings_.push_back( utility::pointer::shared_ptr<class protocols::fldsgn::topology::HelixPairing>( new HelixPairing( *iter ) ) );
+		helix_pairings_.push_back( protocols::fldsgn::topology::HelixPairingOP( new HelixPairing( *iter ) ) );
 	}
 }
 

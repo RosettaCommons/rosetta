@@ -98,7 +98,7 @@ FoldTreeSketch::FoldTreeSketch( FoldTreeSketch const& rhs ):
 {
 
   for ( core::Size i = 1; i <= rhs.nodes_.size(); ++i ) {
-    nodes_.push_back( utility::pointer::shared_ptr<class core::environment::FoldTreeSketch::Node>( new Node( *rhs.nodes_[ i ] ) ) );
+    nodes_.push_back( NodeOP( new Node( *rhs.nodes_[ i ] ) ) );
   }
   n_jumps_ = rhs.n_jumps_;
 }

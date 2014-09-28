@@ -247,14 +247,14 @@ void FragmentJumpClaimer::generate_claims( claims::DofClaims& new_claims,
 			if ( 2 == (*it)->nr_res_affected( jump_mm ) ) {
 				//that is our jump-fragment
 				found_frame = true;
-				new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::JumpClaim( get_self_weak_ptr(), local_up, local_dn, up_atom, down_atom, claims::DofClaim::INIT ) ) );
+				new_claims.push_back( claims::DofClaimOP( new claims::JumpClaim( get_self_weak_ptr(), local_up, local_dn, up_atom, down_atom, claims::DofClaim::INIT ) ) );
 				kinematics::MoveMap bb_mm;
 				bb_mm.set_bb( false );
 				bb_mm.set_bb( up, true );
-				if ( 2 == (*it)->nr_res_affected( bb_mm ) ) 	new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::BBClaim( get_self_weak_ptr(), local_up ) ) ); //up jump always counted
+				if ( 2 == (*it)->nr_res_affected( bb_mm ) ) 	new_claims.push_back( claims::DofClaimOP( new claims::BBClaim( get_self_weak_ptr(), local_up ) ) ); //up jump always counted
 				bb_mm.set_bb( down, true );
 				bb_mm.set_bb( up, false);
-				if ( 2 == (*it)->nr_res_affected( bb_mm ) ) 	new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::BBClaim( get_self_weak_ptr(), local_dn ) ) ); //up jump always counted
+				if ( 2 == (*it)->nr_res_affected( bb_mm ) ) 	new_claims.push_back( claims::DofClaimOP( new claims::BBClaim( get_self_weak_ptr(), local_dn ) ) ); //up jump always counted
 				break;
 			}
 		}

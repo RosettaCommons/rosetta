@@ -182,7 +182,7 @@ void BackboneTorsionSampler::apply( core::pose::Pose & pose ) {
 
     perturbed_res_ = 0;
     for (core::Size i_nest=1; i_nest<=n_nested_+1; ++i_nest) {
-        mc[i_nest] = utility::pointer::shared_ptr<class protocols::moves::MonteCarlo>( new protocols::moves::MonteCarlo( pose, *scorefxn_, temperature_ ) );
+        mc[i_nest] = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( pose, *scorefxn_, temperature_ ) );
         mc[i_nest]->set_autotemp( false, temperature_ );
         if (i_nest == 1) {
             ncycles[i_nest] = 10 * pose.total_residue() * increase_cycles_;

@@ -176,29 +176,29 @@ AddZincSiteConstraints::add_constraints( pose::Pose & pose ) {
 		TR << "RES NAME " << resn << std::endl;
 		if ( resn == "CYS" ) { // CYS
 			TR << "Adding Cys atom_pair_constraint " << atom_ids[i] << " " << zinc_id << std::endl;
-			distance_constraints_.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::AtomPairConstraint>( new AtomPairConstraint( atom_ids[i], zinc_id, S_dist_func ) ) );
+			distance_constraints_.push_back( core::scoring::constraints::AtomPairConstraintCOP( new AtomPairConstraint( atom_ids[i], zinc_id, S_dist_func ) ) );
 			pose.add_constraint( distance_constraints_[ distance_constraints_.size() ] );
 
 			TR << "Adding Cys angle_constraint " << pre_atom_ids[i] << " " << atom_ids[i] << " " << zinc_id << std::endl;
-			angle_constraints_.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::AngleConstraint>( new AngleConstraint( pre_atom_ids[i], atom_ids[i], zinc_id, S_angle_func ) ) );
+			angle_constraints_.push_back( core::scoring::constraints::AngleConstraintCOP( new AngleConstraint( pre_atom_ids[i], atom_ids[i], zinc_id, S_angle_func ) ) );
 			pose.add_constraint( angle_constraints_[ angle_constraints_.size() ] );
 		}
 		else if ( resn == "HIS") { // HIS
 			TR << "Adding His atom_pair_constraint " << atom_ids[i] << " " << zinc_id << std::endl;
-			distance_constraints_.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::AtomPairConstraint>( new AtomPairConstraint( atom_ids[i], zinc_id, N_dist_func ) ) );
+			distance_constraints_.push_back( core::scoring::constraints::AtomPairConstraintCOP( new AtomPairConstraint( atom_ids[i], zinc_id, N_dist_func ) ) );
 			pose.add_constraint( distance_constraints_[ distance_constraints_.size() ] );
 
 			TR << "Adding His angle_constraint " << pre_atom_ids[i] << " " << atom_ids[i] << " " << zinc_id << std::endl;
-			angle_constraints_.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::AngleConstraint>( new AngleConstraint( pre_atom_ids[i], atom_ids[i], zinc_id, N_angle_func ) ) );
+			angle_constraints_.push_back( core::scoring::constraints::AngleConstraintCOP( new AngleConstraint( pre_atom_ids[i], atom_ids[i], zinc_id, N_angle_func ) ) );
 			pose.add_constraint( angle_constraints_[ angle_constraints_.size() ] );
 		}
 		else if ( resn == "ASP" || resn == "GLU" ) { // ASP/GLU
 			TR << "Adding Asp/Glu atom_pair_constraint " << atom_ids[i] << " " << zinc_id << std::endl;
-			distance_constraints_.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::AtomPairConstraint>( new AtomPairConstraint( atom_ids[i], zinc_id, O_dist_func ) ) );
+			distance_constraints_.push_back( core::scoring::constraints::AtomPairConstraintCOP( new AtomPairConstraint( atom_ids[i], zinc_id, O_dist_func ) ) );
 			pose.add_constraint( distance_constraints_[ distance_constraints_.size() ] );
 
 			TR << "Adding Asp/Glu angle_constraint " << pre_atom_ids[i] << " " << atom_ids[i] << " " << zinc_id << std::endl;
-			angle_constraints_.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::AngleConstraint>( new AngleConstraint( pre_atom_ids[i], atom_ids[i], zinc_id, O_angle_func ) ) );
+			angle_constraints_.push_back( core::scoring::constraints::AngleConstraintCOP( new AngleConstraint( pre_atom_ids[i], atom_ids[i], zinc_id, O_angle_func ) ) );
 			pose.add_constraint( angle_constraints_[ angle_constraints_.size() ] );
 		}
 	}
@@ -272,13 +272,13 @@ AddZincSiteConstraints::add_constraints( pose::Pose & pose ) {
 		if ( msr_[i]->get_ligand_atom_name() == " ND1" ) {
 			TR << "Adding dihedral constraint for ND1 His" << std::endl;
 			dihedral_func = core::scoring::func::FuncOP( new core::scoring::func::CircularHarmonicFunc( ND1_dihedral, ND1_dev ) );
-			dihedral_constraints_.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::DihedralConstraint>( new DihedralConstraint( id1, id2, id3, id4, dihedral_func ) ) );
+			dihedral_constraints_.push_back( core::scoring::constraints::DihedralConstraintCOP( new DihedralConstraint( id1, id2, id3, id4, dihedral_func ) ) );
 			pose.add_constraint( dihedral_constraints_[ dihedral_constraints_.size() ] );
 		}
 		else if ( msr_[i]->get_ligand_atom_name() == " NE2" ) {
 			TR << "Adding dihedral constraint for NE2 His" << std::endl;
 			dihedral_func = core::scoring::func::FuncOP( new core::scoring::func::CircularHarmonicFunc( NE2_dihedral, NE2_dev ) );
-			dihedral_constraints_.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::DihedralConstraint>( new DihedralConstraint( id1, id2, id3, id4, dihedral_func ) ) );
+			dihedral_constraints_.push_back( core::scoring::constraints::DihedralConstraintCOP( new DihedralConstraint( id1, id2, id3, id4, dihedral_func ) ) );
 			pose.add_constraint( dihedral_constraints_[ dihedral_constraints_.size() ] );
 		}
 		else if ( msr_[i]->get_resname() == "ASP" || msr_[i]->get_resname() == "GLU" ) {
@@ -291,21 +291,21 @@ AddZincSiteConstraints::add_constraints( pose::Pose & pose ) {
 			if(dihed_diff_180 < dihed_diff_0) {
 				TR << "Adding dihedral constraint for Oxy_anti" << std::endl;
 				dihedral_func = core::scoring::func::FuncOP( new core::scoring::func::CircularHarmonicFunc( NE2_dihedral, NE2_dev ) );
-				dihedral_constraints_.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::DihedralConstraint>( new DihedralConstraint( id1, id2, id3, id4, dihedral_func ) ) );
+				dihedral_constraints_.push_back( core::scoring::constraints::DihedralConstraintCOP( new DihedralConstraint( id1, id2, id3, id4, dihedral_func ) ) );
 				pose.add_constraint( dihedral_constraints_[ dihedral_constraints_.size() ] );
 			}
 
  			else if(dihed_diff_0 < dihed_diff_180) {
 				TR << "Adding dihedral constraint for Oxy_syn" << std::endl;
 				dihedral_func = core::scoring::func::FuncOP( new core::scoring::func::CircularHarmonicFunc( ND1_dihedral, ND1_dev ) );
-				dihedral_constraints_.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::DihedralConstraint>( new DihedralConstraint( id1, id2, id3, id4, dihedral_func ) ) );
+				dihedral_constraints_.push_back( core::scoring::constraints::DihedralConstraintCOP( new DihedralConstraint( id1, id2, id3, id4, dihedral_func ) ) );
 				pose.add_constraint( dihedral_constraints_[ dihedral_constraints_.size() ] );
 			}
 		}
 		else if ( msr_[i]->get_ligand_atom_name() == " SG " ) {
 			TR << "Adding dihedral constraint for SG Cys" << std::endl;
 			dihedral_func = core::scoring::func::FuncOP( new core::scoring::func::MinMultiHarmonicFunc( SG_dihedrals, SG_devs ) );
-			dihedral_constraints_.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::DihedralConstraint>( new DihedralConstraint( id1, id2, id3, id4, dihedral_func ) ) );
+			dihedral_constraints_.push_back( core::scoring::constraints::DihedralConstraintCOP( new DihedralConstraint( id1, id2, id3, id4, dihedral_func ) ) );
 			pose.add_constraint( dihedral_constraints_[ dihedral_constraints_.size() ] );
 		}
 

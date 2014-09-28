@@ -96,9 +96,9 @@ ligand_dock_main_jd1()
 				core::Size tag_as_int = 0;
 				if( is_int(tags[i]) ) tag_as_int = int_of(tags[i]);
 				if( atdiff->has_tag( tags[i] ) ) {
-					input_jobs.push_back(utility::pointer::shared_ptr<class protocols::jobdist::BasicJob>( new BasicJob( tags[i], tags[i], nstruct ) ));
+					input_jobs.push_back( protocols::jobdist::BasicJobOP( new BasicJob( tags[i], tags[i], nstruct ) ) );
 				} else if( 0 < tag_as_int && tag_as_int <= atdiff->scores().size() ) {
-					input_jobs.push_back(utility::pointer::shared_ptr<class protocols::jobdist::BasicJob>( new BasicJob( atdiff->scores()[tag_as_int].first, atdiff->scores()[tag_as_int].first, nstruct ) ));
+					input_jobs.push_back( protocols::jobdist::BasicJobOP( new BasicJob( atdiff->scores()[tag_as_int].first, atdiff->scores()[tag_as_int].first, nstruct ) ) );
 				} else {
 					utility_exit_with_message("Can't find tag "+tags[i]);
 				}
@@ -106,7 +106,7 @@ ligand_dock_main_jd1()
 		} else {
 			// Just do them all!
 			for(core::Size i = 1; i <= atdiff->scores().size(); ++i) {
-				input_jobs.push_back(utility::pointer::shared_ptr<class protocols::jobdist::BasicJob>( new BasicJob( atdiff->scores()[i].first, atdiff->scores()[i].first, nstruct ) ));
+				input_jobs.push_back( protocols::jobdist::BasicJobOP( new BasicJob( atdiff->scores()[i].first, atdiff->scores()[i].first, nstruct ) ) );
 			}
 		}
 	} else {

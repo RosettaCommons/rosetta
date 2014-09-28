@@ -315,7 +315,7 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 		// I'm circumventing add_hotspot_constraints to pose and adding the constraint directly
 		// since there's no ambiguity here and no need to switch to ala pose etc. And I don't
 		// want all the quality control machinery to be applied to this stub; I know it's good.
-		stub_constraints.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new BackboneStubConstraint( pose, host_residue, fixed_atom_id, host_res, bonus, cb_force ) ) );
+		stub_constraints.push_back( core::scoring::constraints::ConstraintOP( new BackboneStubConstraint( pose, host_residue, fixed_atom_id, host_res, bonus, cb_force ) ) );
 		stub_constraints = pose.add_constraints( stub_constraints );
 	}// stub() != NULL
 	else{ //multiple stubs

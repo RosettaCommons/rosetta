@@ -154,7 +154,7 @@ vector1< SequenceOP > read_fasta_file( std::string const & filename ) {
 			if ( current_sequence != "" ) {
 				ObjexxFCL::strip_whitespace( current_id );
 				ObjexxFCL::strip_whitespace( current_sequence );
-				sequences.push_back( utility::pointer::shared_ptr<class core::sequence::Sequence>( new Sequence( current_sequence, current_id ) ) );
+				sequences.push_back( SequenceOP( new Sequence( current_sequence, current_id ) ) );
 				current_sequence = "";
 			}
 			current_id = line.substr(1,line.size());
@@ -165,7 +165,7 @@ vector1< SequenceOP > read_fasta_file( std::string const & filename ) {
 	if ( current_sequence != "" ) {
 		ObjexxFCL::strip_whitespace( current_id );
 		ObjexxFCL::strip_whitespace( current_sequence );
-		sequences.push_back( utility::pointer::shared_ptr<class core::sequence::Sequence>( new Sequence( current_sequence, current_id ) ) );
+		sequences.push_back( SequenceOP( new Sequence( current_sequence, current_id ) ) );
 	}
 
 	return sequences;

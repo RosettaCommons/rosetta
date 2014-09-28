@@ -45,7 +45,7 @@ EnzdesCstCache::EnzdesCstCache(
 {
 	param_cache_.clear();
 	for( core::Size i = 1; i <= num_cst_blocks; ++i){
-		param_cache_.push_back( utility::pointer::shared_ptr<class protocols::toolbox::match_enzdes_util::EnzdesCstParamCache>( new EnzdesCstParamCache() ) );
+		param_cache_.push_back( EnzdesCstParamCacheOP( new EnzdesCstParamCache() ) );
 	}
 }
 
@@ -54,7 +54,7 @@ EnzdesCstCache::EnzdesCstCache( EnzdesCstCache const & other )
 {
 	param_cache_.clear();
 	for( utility::vector1< EnzdesCstParamCacheOP >::const_iterator param_it( other.param_cache_.begin()), param_end(other.param_cache_.end()); param_it != param_end; ++param_it ){
-		param_cache_.push_back( utility::pointer::shared_ptr<class protocols::toolbox::match_enzdes_util::EnzdesCstParamCache>( new EnzdesCstParamCache( **param_it ) ) );
+		param_cache_.push_back( EnzdesCstParamCacheOP( new EnzdesCstParamCache( **param_it ) ) );
 	}
 }
 
@@ -156,8 +156,8 @@ EnzdesCstCache::remap_resid(
 /// thing using this at the moment
 EnzdesCstParamCache::EnzdesCstParamCache()
 {
-	template_res_cache_.push_back( utility::pointer::shared_ptr<class protocols::toolbox::match_enzdes_util::EnzCstTemplateResCache>( new EnzCstTemplateResCache() ) );
-	template_res_cache_.push_back( utility::pointer::shared_ptr<class protocols::toolbox::match_enzdes_util::EnzCstTemplateResCache>( new EnzCstTemplateResCache() ) );
+	template_res_cache_.push_back( EnzCstTemplateResCacheOP( new EnzCstTemplateResCache() ) );
+	template_res_cache_.push_back( EnzCstTemplateResCacheOP( new EnzCstTemplateResCache() ) );
 }
 
 EnzdesCstParamCache::EnzdesCstParamCache( EnzdesCstParamCache const & other )
@@ -167,7 +167,7 @@ EnzdesCstParamCache::EnzdesCstParamCache( EnzdesCstParamCache const & other )
 {
 	template_res_cache_.clear();
 	for( core::Size i = 1; i <= other.template_res_cache_.size(); ++i ){
-		template_res_cache_.push_back( utility::pointer::shared_ptr<class protocols::toolbox::match_enzdes_util::EnzCstTemplateResCache>( new EnzCstTemplateResCache( *(other.template_res_cache_[i] ) ) ) );
+		template_res_cache_.push_back( EnzCstTemplateResCacheOP( new EnzCstTemplateResCache( *(other.template_res_cache_[i] ) ) ) );
 	}
 }
 

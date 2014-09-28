@@ -177,7 +177,7 @@ void chop_fragments( core::fragment::FragSet& source, core::fragment::FragSet& d
 	runtime_assert( tlen < slen );
 	FrameList dest_frames;
 	for ( Size pos = 1; pos <= source.max_pos() + slen - tlen; pos++ ) {
-		dest_frames.push_back( utility::pointer::shared_ptr<class core::fragment::Frame>( new Frame( pos, tlen ) ) );
+		dest_frames.push_back( core::fragment::FrameOP( new Frame( pos, tlen ) ) );
 	}
 	for ( ConstFrameIterator it=source.begin(), eit=source.end(); it!=eit; ++it ) {
 		Frame const& fr( **it );

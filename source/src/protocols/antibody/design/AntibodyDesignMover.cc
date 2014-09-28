@@ -326,7 +326,7 @@ AntibodyDesignMover::apply(core::pose::Pose& pose){
 	else{
 		//ab_info_->setup_CDR_clusters(pose);
 		//current_constraint_result = protocols::antibody::add_harmonic_cluster_constraints(ab_info_, pose);
-		final_pose_ensemble.push_back( utility::pointer::shared_ptr<class core::pose::Pose>( new Pose() ));
+		final_pose_ensemble.push_back( core::pose::PoseOP( new Pose() ));
 		*(final_pose_ensemble[1]) = pose;
 	}
 	

@@ -52,7 +52,7 @@ SSFeature::values_from_pose( core::pose::Pose & pose ) const {
 	string const & secstruct( pose.secstruct() );
 	for ( Size ii = 1; ii <= secstruct.size(); ++ii ) {
 		features.push_back(
-			utility::pointer::shared_ptr<class protocols::comparative_modeling::features::SSFeature>( new SSFeature( char2ss_type(secstruct.at(ii)) ) )
+			protocols::comparative_modeling::features::SSFeatureOP( new SSFeature( char2ss_type(secstruct.at(ii)) ) )
 		);
 	}
 

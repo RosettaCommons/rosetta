@@ -142,7 +142,7 @@ composite_sequences_from_cmd_line(
 		container::const_iterator iter = seqs.find(name);
 		if ( iter == seqs.end() ) {
 			//std::cout << "making new composite sequence for " << name << std::endl;
-			seqs[name] = utility::pointer::shared_ptr<class core::sequence::CompositeSequence>( new CompositeSequence );
+			seqs[name] = core::sequence::CompositeSequenceOP( new CompositeSequence );
 		}
 		seqs[name]->add_sequence(seq);
 	}

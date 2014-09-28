@@ -200,7 +200,7 @@ SidechainMCMover::apply(
 	 //
 
 	for(core::Size itr = 1; itr <= pose.total_residue(); itr++){
-		current_[ itr ] = utility::pointer::shared_ptr<class core::conformation::Residue>( new core::conformation::Residue(pose.residue( itr )) );
+		current_[ itr ] = core::conformation::ResidueOP( new core::conformation::Residue(pose.residue( itr )) );
 	}
 
 	//	PROF_START( SIMPLEINTGRAPH );

@@ -124,7 +124,7 @@ GenBornPoseInfo::initialize( pose::Pose const & pose )
 	placeholder_info_.resize( nres, 0 );
 
 	for ( Size i=1; i<= nres; ++i ) {
-		if ( !residue_info_[i] ) residue_info_[i] = utility::pointer::shared_ptr<class core::scoring::GenBornResidueInfo>( new GenBornResidueInfo( pose.residue(i) ) );
+		if ( !residue_info_[i] ) residue_info_[i] = GenBornResidueInfoOP( new GenBornResidueInfo( pose.residue(i) ) );
 		else  residue_info_[i]->initialize( pose.residue(i) );
 	}
 
@@ -158,7 +158,7 @@ GenBornRotamerSetInfo::initialize( RotamerSetBase const & rotamer_set )
 	Size const nrot( rotamer_set.num_rotamers() );
 	residue_info_.resize( nrot );
 	for ( Size i=1; i<= nrot; ++i ) {
-		residue_info_[i] = utility::pointer::shared_ptr<class core::scoring::GenBornResidueInfo>( new GenBornResidueInfo( *rotamer_set.rotamer(i) ) );
+		residue_info_[i] = GenBornResidueInfoOP( new GenBornResidueInfo( *rotamer_set.rotamer(i) ) );
 	}
 }
 

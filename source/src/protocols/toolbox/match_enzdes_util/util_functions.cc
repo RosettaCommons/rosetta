@@ -130,15 +130,15 @@ constrain_pose_res_to_invrots(
 		for( std::list< core::conformation::ResidueCOP >::const_iterator invrot_it( invrots.begin() ), invrot_end( invrots.end() ); invrot_it != invrot_end; ++invrot_it ){
 
 			utility::vector1< ConstraintCOP > cur_res_invrot_csts;
-			cur_res_invrot_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new BackboneStubConstraint( pose, seqpos[i], fixed_pt, **invrot_it, -20.0, 0.8) ) );
+			cur_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new BackboneStubConstraint( pose, seqpos[i], fixed_pt, **invrot_it, -20.0, 0.8) ) );
 
 			//old style: coordinate constraints for all atoms, backbone stub csts
 			// might be working better
-			cur_res_invrot_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new CoordinateConstraint( rem_CA, fixed_pt, (*invrot_it)->xyz("CA"), constraint_func ) ) );
-				cur_res_invrot_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new CoordinateConstraint( rem_CB, fixed_pt, (*invrot_it)->xyz("CB"), constraint_func ) ) );
-				cur_res_invrot_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new CoordinateConstraint( rem_N, fixed_pt, (*invrot_it)->xyz("N"), constraint_func ) ) );
+			cur_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( rem_CA, fixed_pt, (*invrot_it)->xyz("CA"), constraint_func ) ) );
+				cur_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( rem_CB, fixed_pt, (*invrot_it)->xyz("CB"), constraint_func ) ) );
+				cur_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint( rem_N, fixed_pt, (*invrot_it)->xyz("N"), constraint_func ) ) );
 
-				all_res_invrot_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new MultiConstraint( cur_res_invrot_csts ) ) );
+				all_res_invrot_csts.push_back( core::scoring::constraints::ConstraintOP( new MultiConstraint( cur_res_invrot_csts ) ) );
 		}// loop over invrots
 	}//loop over seqpos
 

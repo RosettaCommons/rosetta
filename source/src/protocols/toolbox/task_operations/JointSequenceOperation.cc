@@ -269,7 +269,7 @@ JointSequenceOperation::add_pose( Pose const & pose )
 	if( new_pose.pdb_info() ) {
 		name = new_pose.pdb_info()->name();
 	}
-	sequences_.push_back( utility::pointer::shared_ptr<class core::sequence::Sequence>( new core::sequence::Sequence(new_pose.sequence(), name) ) );
+	sequences_.push_back( core::sequence::SequenceOP( new core::sequence::Sequence(new_pose.sequence(), name) ) );
 
 }
 
@@ -323,7 +323,7 @@ JointSequenceOperation::add_native_fasta( std::string fasta_file ) {
 
   //core::sequence::SequenceOPSequenceOP native_sequence = new Sequence(fasta_file,"fasta",1);
 	std::string name("unknown");
-  sequences_.push_back( utility::pointer::shared_ptr<class core::sequence::Sequence>( new core::sequence::Sequence(fasta_file, name) ) );
+  sequences_.push_back( core::sequence::SequenceOP( new core::sequence::Sequence(fasta_file, name) ) );
 
   //string query_sequence ( read_fasta_file( option[ in::file::fasta ]()[1])[1]->sequence() );
   //core::pose::PoseOP poseop(new core::pose::Pose);

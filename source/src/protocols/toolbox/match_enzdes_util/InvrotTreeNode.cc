@@ -244,7 +244,7 @@ InvrotTreeNode::generate_constraints(
 
 		//1c.
 		if( constraints_this_invrot_node_pair.size() == 1 ) constraints_this_node.push_back( constraints_this_invrot_node_pair[1] );
-		else if( constraints_this_invrot_node_pair.size() > 1 ) constraints_this_node.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new core::scoring::constraints::MultiConstraint( constraints_this_invrot_node_pair ) ) );
+		else if( constraints_this_invrot_node_pair.size() > 1 ) constraints_this_node.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::MultiConstraint( constraints_this_invrot_node_pair ) ) );
 
 	}//loop over node_pointer_pairs_
 

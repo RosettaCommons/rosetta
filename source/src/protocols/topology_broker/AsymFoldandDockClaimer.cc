@@ -205,7 +205,7 @@ void AsymFoldandDockClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	utility::vector1< int > cuts( input_pose_.conformation().fold_tree().cutpoints() );
 	for ( Size i = 1; i <= cuts.size(); ++i ) {
 
-		new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::CutClaim( get_self_weak_ptr(), std::make_pair( Parent::label(), cuts[i]),
+		new_claims.push_back( claims::DofClaimOP( new claims::CutClaim( get_self_weak_ptr(), std::make_pair( Parent::label(), cuts[i]),
 																								claims::DofClaim::INIT // for now... eventually CAN_INIT ?
 																								) ) );
 	}

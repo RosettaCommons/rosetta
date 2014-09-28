@@ -160,7 +160,7 @@ class EntityTests : public CxxTest::TestSuite {
 		utility::vector1< EntityElementOP > traits;
 		traits.reserve(10);
 		for ( Size ii = 1; ii <= 10; ++ii ) {
-			traits.push_back( utility::pointer::shared_ptr<class protocols::genetic_algorithm::EntityElement>( new DummyEntityElement( ii, 2 * ii ) ));
+			traits.push_back( EntityElementOP( new DummyEntityElement( ii, 2 * ii ) ));
 		}
 		e.set_traits( traits );
 		return e;

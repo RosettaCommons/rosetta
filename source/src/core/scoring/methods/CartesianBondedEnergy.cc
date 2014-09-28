@@ -663,18 +663,18 @@ IdealParametersDatabase::read_bbdep_table(
 	}
 
 	// make the database entries
-	bondlengths[boost::make_tuple("N","C")] = bondlengths[boost::make_tuple("C","N")] = utility::pointer::shared_ptr<class core::scoring::methods::CartBondedParameters>( new BBDepCartBondedParameters(CNavg_tbl, CNdev_tbl ,"C-N") );
-	bondlengths[boost::make_tuple("CA","N")] = bondlengths[boost::make_tuple("N","CA")] = utility::pointer::shared_ptr<class core::scoring::methods::CartBondedParameters>( new BBDepCartBondedParameters(NCAavg_tbl, NCAdev_tbl,"CA-N") );
-	bondlengths[boost::make_tuple("CB","CA")] = bondlengths[boost::make_tuple("CA","CB")] = utility::pointer::shared_ptr<class core::scoring::methods::CartBondedParameters>( new BBDepCartBondedParameters(CACBavg_tbl, CACBdev_tbl,"CB-CA") );
-	bondlengths[boost::make_tuple("C","CA")] = bondlengths[boost::make_tuple("CA","C")] = utility::pointer::shared_ptr<class core::scoring::methods::CartBondedParameters>( new BBDepCartBondedParameters(CACavg_tbl, CACdev_tbl,"C-CA") );
-	bondlengths[boost::make_tuple("O","C")] = bondlengths[boost::make_tuple("C","O")] = utility::pointer::shared_ptr<class core::scoring::methods::CartBondedParameters>( new BBDepCartBondedParameters(COavg_tbl, COdev_tbl,"C-O") );
-	bondangles[boost::make_tuple("CA","N","C")] = bondangles[boost::make_tuple("C","N","CA")] = utility::pointer::shared_ptr<class core::scoring::methods::CartBondedParameters>( new BBDepCartBondedParameters(CNCAavg_tbl, CNCAdev_tbl, "C-N-CA") );
-	bondangles[boost::make_tuple("CB","CA","N")] = bondangles[boost::make_tuple("N","CA","CB")] = utility::pointer::shared_ptr<class core::scoring::methods::CartBondedParameters>( new BBDepCartBondedParameters(NCACBavg_tbl, NCACBdev_tbl, "N-CA-CB") );
-	bondangles[boost::make_tuple("C","CA","N")] = bondangles[boost::make_tuple("N","CA","C")] = utility::pointer::shared_ptr<class core::scoring::methods::CartBondedParameters>( new BBDepCartBondedParameters(NCACavg_tbl, NCACdev_tbl, "N-CA-C") );
-	bondangles[boost::make_tuple("C","CA","CB")] = bondangles[boost::make_tuple("CB","CA","C")] = utility::pointer::shared_ptr<class core::scoring::methods::CartBondedParameters>( new BBDepCartBondedParameters(CBCACavg_tbl, CBCACdev_tbl, "CB-CA-C") );
-	bondangles[boost::make_tuple("O","C","CA")] = bondangles[boost::make_tuple("CA","C","O")] = utility::pointer::shared_ptr<class core::scoring::methods::CartBondedParameters>( new BBDepCartBondedParameters(CACOavg_tbl, CACOdev_tbl, "CA-C-O") );
-	bondangles[boost::make_tuple("N","C","CA")] = bondangles[boost::make_tuple("CA","C","N")] = utility::pointer::shared_ptr<class core::scoring::methods::CartBondedParameters>( new BBDepCartBondedParameters(CACNavg_tbl, CACNdev_tbl, "CA-C-N") );
-	bondangles[boost::make_tuple("N","C","O")] = bondangles[boost::make_tuple("O","C","N")] = utility::pointer::shared_ptr<class core::scoring::methods::CartBondedParameters>( new BBDepCartBondedParameters(OCNavg_tbl, OCNdev_tbl, "O-C-N") );
+	bondlengths[boost::make_tuple("N","C")] = bondlengths[boost::make_tuple("C","N")] = CartBondedParametersOP( new BBDepCartBondedParameters(CNavg_tbl, CNdev_tbl ,"C-N") );
+	bondlengths[boost::make_tuple("CA","N")] = bondlengths[boost::make_tuple("N","CA")] = CartBondedParametersOP( new BBDepCartBondedParameters(NCAavg_tbl, NCAdev_tbl,"CA-N") );
+	bondlengths[boost::make_tuple("CB","CA")] = bondlengths[boost::make_tuple("CA","CB")] = CartBondedParametersOP( new BBDepCartBondedParameters(CACBavg_tbl, CACBdev_tbl,"CB-CA") );
+	bondlengths[boost::make_tuple("C","CA")] = bondlengths[boost::make_tuple("CA","C")] = CartBondedParametersOP( new BBDepCartBondedParameters(CACavg_tbl, CACdev_tbl,"C-CA") );
+	bondlengths[boost::make_tuple("O","C")] = bondlengths[boost::make_tuple("C","O")] = CartBondedParametersOP( new BBDepCartBondedParameters(COavg_tbl, COdev_tbl,"C-O") );
+	bondangles[boost::make_tuple("CA","N","C")] = bondangles[boost::make_tuple("C","N","CA")] = CartBondedParametersOP( new BBDepCartBondedParameters(CNCAavg_tbl, CNCAdev_tbl, "C-N-CA") );
+	bondangles[boost::make_tuple("CB","CA","N")] = bondangles[boost::make_tuple("N","CA","CB")] = CartBondedParametersOP( new BBDepCartBondedParameters(NCACBavg_tbl, NCACBdev_tbl, "N-CA-CB") );
+	bondangles[boost::make_tuple("C","CA","N")] = bondangles[boost::make_tuple("N","CA","C")] = CartBondedParametersOP( new BBDepCartBondedParameters(NCACavg_tbl, NCACdev_tbl, "N-CA-C") );
+	bondangles[boost::make_tuple("C","CA","CB")] = bondangles[boost::make_tuple("CB","CA","C")] = CartBondedParametersOP( new BBDepCartBondedParameters(CBCACavg_tbl, CBCACdev_tbl, "CB-CA-C") );
+	bondangles[boost::make_tuple("O","C","CA")] = bondangles[boost::make_tuple("CA","C","O")] = CartBondedParametersOP( new BBDepCartBondedParameters(CACOavg_tbl, CACOdev_tbl, "CA-C-O") );
+	bondangles[boost::make_tuple("N","C","CA")] = bondangles[boost::make_tuple("CA","C","N")] = CartBondedParametersOP( new BBDepCartBondedParameters(CACNavg_tbl, CACNdev_tbl, "CA-C-N") );
+	bondangles[boost::make_tuple("N","C","O")] = bondangles[boost::make_tuple("O","C","N")] = CartBondedParametersOP( new BBDepCartBondedParameters(OCNavg_tbl, OCNdev_tbl, "O-C-N") );
 }
 
 
@@ -874,7 +874,7 @@ IdealParametersDatabase::lookup_angle(
 	// 3 build from ideal, add to bb-indep table
 	Real Ktheta, theta0;
 	lookup_bondangle_buildideal( restype, atm1idx, atm2idx, atm3idx, Ktheta, theta0 );
-	bondangles_indep_[ tuple ] = utility::pointer::shared_ptr<class core::scoring::methods::CartBondedParameters>( new BBIndepCartBondedParameters( theta0, Ktheta ) );
+	bondangles_indep_[ tuple ] = CartBondedParametersOP( new BBIndepCartBondedParameters( theta0, Ktheta ) );
 	TR << "Adding undefined angle "
 	   << restype.name() << ": " << tuple.get<1>() << "," << tuple.get<2>() << "," << tuple.get<3>() << " to DB with"
 	   << " theta0 = " << theta0 << " , Ktheta = " << Ktheta << std::endl;
@@ -934,7 +934,7 @@ IdealParametersDatabase::lookup_length(
 	// 3 build from ideal, add to bb-indep table
 	Real Kd, d0;
 	lookup_bondlength_buildideal( restype, atm1idx, atm2idx, Kd, d0 );
-	bondlengths_indep_[ tuple ] = utility::pointer::shared_ptr<class core::scoring::methods::CartBondedParameters>( new BBIndepCartBondedParameters( d0, Kd ) );
+	bondlengths_indep_[ tuple ] = CartBondedParametersOP( new BBIndepCartBondedParameters( d0, Kd ) );
 	TR << "Adding undefined length "
 	   << restype.name() << ": " << tuple.get<1>() << "," << tuple.get<2>() << "," << " to DB with"
 	   << " d0 = " << d0 << " , Kd = " << Kd << std::endl;

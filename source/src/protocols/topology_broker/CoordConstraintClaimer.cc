@@ -141,7 +141,7 @@ void CoordConstraintClaimer::generate_claims( claims::DofClaims& new_claims ) {
 		}
 		runtime_assert( root_ != 0 );
 	}
-	if ( !bLocal_ ) new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::LegacyRootClaim( get_self_weak_ptr(), root_, claims::DofClaim::NEED_TO_KNOW ) ) );
+	if ( !bLocal_ ) new_claims.push_back( claims::DofClaimOP( new claims::LegacyRootClaim( get_self_weak_ptr(), root_, claims::DofClaim::NEED_TO_KNOW ) ) );
 }
 
 void CoordConstraintClaimer::read_cst_pose() {

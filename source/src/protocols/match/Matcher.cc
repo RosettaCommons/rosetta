@@ -1486,7 +1486,7 @@ Matcher::initialize_scaffold_build_points()
 	for ( Size ii = 1; ii <= pose_build_resids_.size(); ++ii ) {
 		runtime_assert_msg( pose_build_resids_[ ii ] <= upstream_pose_->n_residue(),
 		                    "pos file contains position outside of valid range.");
-		all_build_points_[ ii ] = utility::pointer::shared_ptr<class protocols::match::upstream::ScaffoldBuildPoint>( new upstream::OriginalBackboneBuildPoint(
+		all_build_points_[ ii ] = protocols::match::upstream::ScaffoldBuildPointOP( new upstream::OriginalBackboneBuildPoint(
 			upstream_pose_->residue( pose_build_resids_[ ii ] ), ii ) );
 	}
 	return true;

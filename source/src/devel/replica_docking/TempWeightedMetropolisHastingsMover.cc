@@ -121,11 +121,11 @@ TempWeightedMetropolisHastingsMover::add_mover(
 	}
 	tr.Debug << "added_1 " << added_1 << " added_2 " << added_2 << std::endl;
 	if ( !added_1 ) {
-		weight_contro_1_.push_back( utility::pointer::shared_ptr<class devel::replica_docking::TempInterpolatorBase>( new devel::replica_docking::TempFixValue( 1 ) ) );
+		weight_contro_1_.push_back( devel::replica_docking::TempInterpolatorBaseOP( new devel::replica_docking::TempFixValue( 1 ) ) );
 		tr.Debug << "added fix value interpolator to 1st dimension " << std::endl;
 	}
 	if ( !added_2 ) {
-		weight_contro_2_.push_back( utility::pointer::shared_ptr<class devel::replica_docking::TempInterpolatorBase>( new devel::replica_docking::TempFixValue( 1 ) ) );
+		weight_contro_2_.push_back( devel::replica_docking::TempInterpolatorBaseOP( new devel::replica_docking::TempFixValue( 1 ) ) );
 		tr.Debug << "added fix value interpolator to 2nd dimension " << std::endl;
 	}
 

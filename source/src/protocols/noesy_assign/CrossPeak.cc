@@ -108,7 +108,7 @@ void CrossPeak::add_full_assignment( Size res_ids[] ) {
 	Size ind1 = assign_spin( 1, res_ids );
 	Size ind2 = assign_spin( 2, res_ids );
 #ifndef WIN32
-	assignments_.push_back( utility::pointer::shared_ptr<class protocols::noesy_assign::PeakAssignment>( new PeakAssignment( this, ind1, ind2 ) ) );
+	assignments_.push_back( protocols::noesy_assign::PeakAssignmentOP( new PeakAssignment( this, ind1, ind2 ) ) );
 #endif
 	//	for ( Size i = 1;
 	//need to find resonances in Spins and add them if they are still missing.
@@ -135,7 +135,7 @@ void CrossPeak::find_assignments( ) {
   for ( Size ct1 = 1; ct1 <= n_assigned_1; ++ct1 ) {
     for ( Size ct2 = 1; ct2 <= n_assigned_2; ++ct2 ) {
 #ifndef WIN32
-      assignments_.push_back( utility::pointer::shared_ptr<class protocols::noesy_assign::PeakAssignment>( new PeakAssignment( this, ct1, ct2 ) ) );
+      assignments_.push_back( protocols::noesy_assign::PeakAssignmentOP( new PeakAssignment( this, ct1, ct2 ) ) );
 #endif
 	}
   }

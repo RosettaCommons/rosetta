@@ -207,7 +207,7 @@ environment::claims::EnvClaims LoopCM::yield_claims( core::pose::Pose const& pos
              << "-" << std::min( pose.total_residue(), loop->stop() + LOOP_EXTEND ) << "." << std::endl;
     for( Size i = std::max( (Size) 1, loop->start()-LOOP_EXTEND );
          i <= std::min( pose.total_residue(), loop->stop()+LOOP_EXTEND ); ++i ){
-      pos_list.push_back( utility::pointer::shared_ptr<class core::environment::LocalPosition>( new core::environment::LocalPosition( "BASE", i ) ) );
+      pos_list.push_back( core::environment::LocalPositionOP( new core::environment::LocalPosition( "BASE", i ) ) );
     }
   }
 

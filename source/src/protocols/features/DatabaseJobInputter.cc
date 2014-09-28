@@ -344,7 +344,7 @@ void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::Jobs &
 		<< " InnerJob Objects" << endl;
 
 	for(std::map<std::string, StructureID>::const_iterator iter=tag_structures_.begin(); iter!=tag_structures_.end(); ++iter){
-		inner_jobs.push_back(utility::pointer::shared_ptr<class protocols::jd2::InnerJob>( new protocols::jd2::InnerJob(iter->first, nstruct) ));
+		inner_jobs.push_back(protocols::jd2::InnerJobOP( new protocols::jd2::InnerJob(iter->first, nstruct) ));
 	}
 
 	tr.Debug
@@ -356,7 +356,7 @@ void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::Jobs &
 	tr.Debug << "fill job list with... " << endl;
 	for ( Size index = 1; index <= nstruct; ++index ) {
 		BOOST_FOREACH(protocols::jd2::InnerJobOP ijob, inner_jobs){
-			jobs.push_back(utility::pointer::shared_ptr<class protocols::jd2::Job>( new protocols::jd2::Job(ijob, index) ));
+			jobs.push_back(protocols::jd2::JobOP( new protocols::jd2::Job(ijob, index) ));
 			tr.Trace
 				<< "pushing " << ijob->input_tag() << " nstruct index " << index	<< std::endl;
 		}

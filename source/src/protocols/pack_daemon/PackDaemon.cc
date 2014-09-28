@@ -689,7 +689,7 @@ DaemonSet::add_pack_daemon(
 	}
 
 	daemons_.push_back( std::make_pair( daemon_index, daemon ));
-	daemon_poses_.push_back( utility::pointer::shared_ptr<class core::pose::Pose>( new core::pose::Pose( pose ) ));
+	daemon_poses_.push_back( core::pose::PoseOP( new core::pose::Pose( pose ) ));
 	daemon_tasks_.push_back( task );
 	npd_calcs_for_poses_.resize( daemon_tasks_.size() );
 	++ndaemons_;

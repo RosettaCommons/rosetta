@@ -820,7 +820,7 @@ VarSolDistSasaCalculator::recompute( core::pose::Pose const & this_pose )
 	residue_sasa_.resize( this_pose.total_residue() );
 	// TR << "Initializing vSASA arrays with probe radius = " << probe_radius_ << " and wobble = " << wobble_ << std::endl;
 	for ( Size ii = 1; ii <= this_pose.total_residue(); ++ii ) {
-		rotamer_dots_vec_[ ii ] = utility::pointer::shared_ptr<class devel::vardist_solaccess::VarSolDRotamerDots>( new VarSolDRotamerDots( core::conformation::ResidueOP( new core::conformation::Residue(this_pose.residue( ii ) ) ), *this ) );
+		rotamer_dots_vec_[ ii ] = VarSolDRotamerDotsOP( new VarSolDRotamerDots( core::conformation::ResidueOP( new core::conformation::Residue(this_pose.residue( ii ) ) ), *this ) );
 		rotamer_dots_vec_[ ii ]->increment_self_overlap();
 	}
 	core::scoring::EnergyGraph const & energy_graph( this_pose.energies().energy_graph() );

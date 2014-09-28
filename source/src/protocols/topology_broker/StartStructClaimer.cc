@@ -116,7 +116,7 @@ void StartStructClaimer::generate_init_frags( core::pose::Pose const& pose ) {
 
 void StartStructClaimer::generate_claims( claims::DofClaims& new_claims ){
 	for( Size i=1; i <= broker().resolve_sequence_label( label() ).length(); ++i){
-		new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::BBClaim( get_self_weak_ptr(), std::make_pair( label(), i ), claims::DofClaim::INIT ) ) );
+		new_claims.push_back( claims::DofClaimOP( new claims::BBClaim( get_self_weak_ptr(), std::make_pair( label(), i ), claims::DofClaim::INIT ) ) );
 	}
 }
 

@@ -183,27 +183,27 @@ AbscriptMover::AbscriptMover():
 
   core::scoring::ScoreFunctionOP tmp_score = setup_score( "score0", OptionKeys::abinitio::stage1_patch );
   tmp_score->set_weight( core::scoring::linear_chainbreak, option[ jumps::chainbreak_weight_stage1 ]() );
-  stage_movers_[ I ] = utility::pointer::shared_ptr<class protocols::abinitio::abscript::AbscriptStageMover>( new AbscriptStageMover( I, mc_, tmp_score, 2000 ) );
+  stage_movers_[ I ] = AbscriptStageMoverOP( new AbscriptStageMover( I, mc_, tmp_score, 2000 ) );
 
   tmp_score = setup_score( "score1", OptionKeys::abinitio::stage2_patch );
   tmp_score->set_weight( core::scoring::linear_chainbreak, option[ jumps::chainbreak_weight_stage2 ]() );
-  stage_movers_[ II ] = utility::pointer::shared_ptr<class protocols::abinitio::abscript::AbscriptStageMover>( new AbscriptStageMover( II, mc_, tmp_score, 2000 ) );
+  stage_movers_[ II ] = AbscriptStageMoverOP( new AbscriptStageMover( II, mc_, tmp_score, 2000 ) );
 
   tmp_score = setup_score( "score2", OptionKeys::abinitio::stage3a_patch );
   tmp_score->set_weight( core::scoring::linear_chainbreak, option[ jumps::chainbreak_weight_stage3 ]() );
-  stage_movers_[ IIIa ] = utility::pointer::shared_ptr<class protocols::abinitio::abscript::AbscriptStageMover>( new AbscriptStageMover( IIIa, mc_, tmp_score, 2000 ) );
+  stage_movers_[ IIIa ] = AbscriptStageMoverOP( new AbscriptStageMover( IIIa, mc_, tmp_score, 2000 ) );
 
   tmp_score = setup_score( "score5", OptionKeys::abinitio::stage3b_patch );
   tmp_score->set_weight( core::scoring::linear_chainbreak, option[ jumps::chainbreak_weight_stage3 ]() );
-  stage_movers_[ IIIb ] = utility::pointer::shared_ptr<class protocols::abinitio::abscript::AbscriptStageMover>( new AbscriptStageMover( IIIb, mc_, tmp_score, 2000 ) );
+  stage_movers_[ IIIb ] = AbscriptStageMoverOP( new AbscriptStageMover( IIIb, mc_, tmp_score, 2000 ) );
 
   tmp_score = setup_score( "score3", OptionKeys::abinitio::stage4_patch );
   tmp_score->set_weight( core::scoring::linear_chainbreak, option[ jumps::chainbreak_weight_stage4 ]() );
-  stage_movers_[ IVa ] = utility::pointer::shared_ptr<class protocols::abinitio::abscript::AbscriptStageMover>( new AbscriptStageMover( IVa, mc_, tmp_score, 4000 ) );
+  stage_movers_[ IVa ] = AbscriptStageMoverOP( new AbscriptStageMover( IVa, mc_, tmp_score, 4000 ) );
 
   tmp_score = setup_score( "score3", OptionKeys::abinitio::stage4_patch );
   tmp_score->set_weight( core::scoring::linear_chainbreak, option[ jumps::chainbreak_weight_stage4 ]() );
-  stage_movers_[ IVb ] = utility::pointer::shared_ptr<class protocols::abinitio::abscript::AbscriptStageMover>( new AbscriptStageMover( IVb, mc_, tmp_score, 4000 ) );
+  stage_movers_[ IVb ] = AbscriptStageMoverOP( new AbscriptStageMover( IVb, mc_, tmp_score, 4000 ) );
 
   core::Real seqsep_stage1 = 0.15;
   core::Real seqsep_stage3 = 1.0; //have basically all but the furthest chainbreaks active at end of stage3.

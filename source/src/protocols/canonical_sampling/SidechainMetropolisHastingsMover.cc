@@ -157,7 +157,7 @@ SidechainMetropolisHastingsMover::apply( core::pose::Pose & pose )
 	//	chi_vectors.resize( pose.total_residue() );
 
 	for ( core::Size i = 1; i <= pose.total_residue(); i++ ){
-		current[ i ] = utility::pointer::shared_ptr<class core::conformation::Residue>( new core::conformation::Residue( pose.residue( i ) ) );
+		current[ i ] = core::conformation::ResidueOP( new core::conformation::Residue( pose.residue( i ) ) );
 	}
 
 

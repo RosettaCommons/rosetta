@@ -525,7 +525,7 @@ JD2ResourceManagerJobInputter::record_job(
 
 		InnerJobOP inner_job( new InnerJob( job_name, nstruct ) );
 		for ( Size ii = 1; ii <= nstruct; ++ii ) {
-			jobs.push_back( utility::pointer::shared_ptr<class protocols::jd2::Job>( new Job( inner_job, ii ) ));
+			jobs.push_back( protocols::jd2::JobOP( new Job( inner_job, ii ) ));
 		}
 	} else {
 		if(job_options->has_option(OptionKeys::out::nstruct)){

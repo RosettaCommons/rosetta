@@ -891,7 +891,7 @@ LigandDockProtocol::restrain_ligand_chis(
 	} else {
 		for(core::Size i = 1; i <= pose.total_residue(); ++i ) {
 			if( pose.residue(i).is_polymer() ) continue;
-			ligand_torsion_restraints_.push_back( utility::pointer::shared_ptr<class protocols::ligand_docking::ResidueTorsionRestraints>( new protocols::ligand_docking::ResidueTorsionRestraints(pose, i, ligand_chi_stddev_deg_) ) );
+			ligand_torsion_restraints_.push_back( protocols::ligand_docking::ResidueTorsionRestraintsOP( new protocols::ligand_docking::ResidueTorsionRestraints(pose, i, ligand_chi_stddev_deg_) ) );
 		}
 	}
 }

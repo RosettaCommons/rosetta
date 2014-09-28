@@ -1153,7 +1153,7 @@ DynamicAggregateFunction::process_POSE_ENERGY_line(
 	// ok -- go ahead and score the pose
 	TR << "  Scoring pose from pdb file '" << pdb_name << "'" << std::endl;
 	core::Real score = (*sfxn_)( pose );
-	scalar_expression_map_[ varname ] = utility::pointer::shared_ptr<const class numeric::expression_parser::VariableExpression>( new VariableExpression( varname, score ) );
+	scalar_expression_map_[ varname ] = numeric::expression_parser::VariableExpressionCOP( new VariableExpression( varname, score ) );
 	save_scalar_variable( varname, line_number );
 
 	TR << "Saving POSE_ENERGY of " << score << " in variable " << varname << std::endl;
@@ -1241,11 +1241,11 @@ DynamicAggregateFunction::process_POSE_ENERGY_VECTOR_line(
 		core::Real score = (*sfxn_)( pose );
 		std::string newvar = varname + "_" + *iter;
 		TR << "  Saving score of " << score << " in variable " << newvar << std::endl;
-		pose_energy_variables[ count_pdbs ] = utility::pointer::shared_ptr<class numeric::expression_parser::VariableExpression>( new VariableExpression( newvar, score ) );;
+		pose_energy_variables[ count_pdbs ] = numeric::expression_parser::VariableExpressionOP( new VariableExpression( newvar, score ) );;
 	}
 
 	save_vector_variable( varname, line_number );
-	vector_expression_map_[ varname ] = utility::pointer::shared_ptr<const class protocols::pack_daemon::VectorExpression>( new VariableVectorExpression( varname, pose_energy_variables ) );
+	vector_expression_map_[ varname ] = protocols::pack_daemon::VectorExpressionCOP( new VariableVectorExpression( varname, pose_energy_variables ) );
 
 
 }
@@ -1786,7 +1786,7 @@ DynamicAggregateFunction::create_state_variable_expressions(
 			iter != iter_end; ++iter ) {
 		++count_state;
 		++count_variable_index;
-		variable_expressions_for_states_[ count_state ] = utility::pointer::shared_ptr<class numeric::expression_parser::VariableExpression>( new VariableExpression( iter->first, 0.0 ) );
+		variable_expressions_for_states_[ count_state ] = numeric::expression_parser::VariableExpressionOP( new VariableExpression( iter->first, 0.0 ) );
 		variable_expressions_[ count_variable_index ] = variable_expressions_for_states_[ count_state ];
 		files_for_state_[ count_state ] = iter->second;
 		named_state_expression_map_[ iter->first ] = variable_expressions_for_states_[ count_state ];
@@ -1846,7 +1846,7 @@ DynamicAggregateFunction::create_variable_vector_expressions(
 			++count_variable_index;
 			std::string ii_varname( iter->first + "_" + utility::to_string( ii ) );
 			TR << "Adding state " << ii_varname << " with state index " << count_state << std::endl;
-			variable_expressions_for_states_[ count_state ] = utility::pointer::shared_ptr<class numeric::expression_parser::VariableExpression>( new VariableExpression( ii_varname, 0.0 ) );
+			variable_expressions_for_states_[ count_state ] = numeric::expression_parser::VariableExpressionOP( new VariableExpression( ii_varname, 0.0 ) );
 			indices[ ii ] = count_state;
 			variable_expressions_[ count_variable_index ] = variable_expressions_for_states_[ count_state ];
 			files_for_state_[ count_state ] = iter->second[ ii ];
@@ -1873,7 +1873,7 @@ DynamicAggregateFunction::create_variable_vector_expressions(
 				}
 			}
 		}
-		vector_expression_map_[ iter->first ] = state_vector_variables_[ iter->first ] = utility::pointer::shared_ptr<class protocols::pack_daemon::VariableVectorExpression>( new VariableVectorExpression( iter->first, variables ) );
+		vector_expression_map_[ iter->first ] = state_vector_variables_[ iter->first ] = protocols::pack_daemon::VariableVectorExpressionOP( new VariableVectorExpression( iter->first, variables ) );
 		if ( has_npd_properties ) {
 			std::list< std::pair< std::string, std::string > > const & npdlist( npd_properties_for_state_variables_[ iter->first ]);
 			for ( std::list< std::pair< std::string, std::string > >::const_iterator
@@ -1881,7 +1881,7 @@ DynamicAggregateFunction::create_variable_vector_expressions(
 					npditer != npditer_end; ++npditer ) {
 				//std::string ii_npd_varname = npditer->second + "_" + utility::to_string( ii );
 				//npd_property_variables[ npditer->first ].push_back( new VariableExpressin( ii_npd_varname, 0.0 ) );
-				vector_expression_map_[ npditer->second ] = utility::pointer::shared_ptr<const class protocols::pack_daemon::VectorExpression>( new VariableVectorExpression( npditer->second, npd_property_variables[ npditer->first ] ) );
+				vector_expression_map_[ npditer->second ] = protocols::pack_daemon::VectorExpressionCOP( new VariableVectorExpression( npditer->second, npd_property_variables[ npditer->first ] ) );
 			}
 		}
 		state_indices_for_state_vector_[ iter->first ] = indices;
@@ -1926,7 +1926,7 @@ DynamicAggregateFunction::create_scalar_and_vector_expression_variable_expressio
 			}
 			variables.push_back( scvar->second );
 		}
-		vector_expression_map_[ vvar_iter->first ] = utility::pointer::shared_ptr<const class protocols::pack_daemon::VectorExpression>( new VariableVectorExpression( vvar_iter->first, variables ) );
+		vector_expression_map_[ vvar_iter->first ] = protocols::pack_daemon::VectorExpressionCOP( new VariableVectorExpression( vvar_iter->first, variables ) );
 	}
 }
 

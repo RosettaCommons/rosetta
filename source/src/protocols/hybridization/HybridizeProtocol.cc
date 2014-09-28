@@ -681,7 +681,7 @@ void HybridizeProtocol::read_template_structures(utility::vector1 < utility::fil
 	core::chemical::ResidueTypeSetCOP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 
 	for (core::Size i_ref=1; i_ref<= template_filenames.size(); ++i_ref) {
-		templates_[i_ref] = utility::pointer::shared_ptr<class core::pose::Pose>( new core::pose::Pose() );
+		templates_[i_ref] = core::pose::PoseOP( new core::pose::Pose() );
 		core::import_pose::pose_from_pdb( *(templates_[i_ref]), *residue_set, template_filenames[i_ref].name() );
 		core::scoring::dssp::Dssp dssp_obj( *templates_[i_ref] );
 		dssp_obj.insert_ss_into_pose( *templates_[i_ref] );

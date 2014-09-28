@@ -133,11 +133,11 @@ ModulatedMover::parse_my_tag(
 		tr.Debug << "check if key " << *key_it << " is provided" << std::endl;
 
 		if ( interps_1_.find( *key_it ) == interps_1_.end() ) {
-			interps_1_[ *key_it ] = utility::pointer::shared_ptr<class devel::replica_docking::TempInterpolatorBase>( new devel::replica_docking::TempFixValue( 1 ) );
+			interps_1_[ *key_it ] = devel::replica_docking::TempInterpolatorBaseOP( new devel::replica_docking::TempFixValue( 1 ) );
 			tr.Debug << "parameter for " << *key_it << " not provided for 1st dim, will use fix value 1" << std::endl;
 		}
 		if ( interps_2_.find( *key_it ) == interps_2_.end() ) {
-			interps_2_[ *key_it ] = utility::pointer::shared_ptr<class devel::replica_docking::TempInterpolatorBase>( new devel::replica_docking::TempFixValue( 1 ) );
+			interps_2_[ *key_it ] = devel::replica_docking::TempInterpolatorBaseOP( new devel::replica_docking::TempFixValue( 1 ) );
 			tr.Debug << "parameter for " << *key_it << " not provided for 2nd dim, will use fix value 1" << std::endl;
 		}
 	}

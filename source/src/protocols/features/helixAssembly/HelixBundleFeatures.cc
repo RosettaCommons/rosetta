@@ -234,13 +234,13 @@ utility::vector1<HelicalFragmentOP> HelixBundleFeatures::get_helix_fragments(Str
 		if(residue_begin - prev_residue_end == 2 && all_helices.size() > 0)
 		{
 			all_helices.pop_back();
-			all_helices.push_back(utility::pointer::shared_ptr<class protocols::features::helixAssembly::HelicalFragment>( new HelicalFragment(prev_residue_begin, residue_end) ));
+			all_helices.push_back(protocols::features::helixAssembly::HelicalFragmentOP( new HelicalFragment(prev_residue_begin, residue_end) ));
 			TR  << "combining helix segments: " << prev_residue_begin << "-" << prev_residue_end
 				<< " and " << residue_begin << "-" << residue_end << std::endl;
 		}
 		else
 		{
-			all_helices.push_back(utility::pointer::shared_ptr<class protocols::features::helixAssembly::HelicalFragment>( new HelicalFragment(residue_begin, residue_end) ));
+			all_helices.push_back(protocols::features::helixAssembly::HelicalFragmentOP( new HelicalFragment(residue_begin, residue_end) ));
 		}
 		prev_residue_begin=residue_begin;
 		prev_residue_end=residue_end;

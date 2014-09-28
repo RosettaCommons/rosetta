@@ -166,13 +166,13 @@ void SequenceClaimer::init_after_reading() {
 void SequenceClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	//Make a new cut at the end of this sequence.
 	//TODO: Make TopologyBroker get rid of cuts outside valid sequence.
-	new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::CutClaim( get_self_weak_ptr(), std::make_pair( label(), sequence_claim_->length() ) ) ) );
+	new_claims.push_back( claims::DofClaimOP( new claims::CutClaim( get_self_weak_ptr(), std::make_pair( label(), sequence_claim_->length() ) ) ) );
 
 	//special --- if only 1 residue chain... the torsion will be irrelvant and probably unclaimed
 	// ... make broker happy but don't do anything...
 	if ( sequence_claim_->length() == 1 ) {
 
-		new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::BBClaim( get_self_weak_ptr(), std::make_pair( label(), 1 ) ) ) );
+		new_claims.push_back( claims::DofClaimOP( new claims::BBClaim( get_self_weak_ptr(), std::make_pair( label(), 1 ) ) ) );
 	}
 }
 

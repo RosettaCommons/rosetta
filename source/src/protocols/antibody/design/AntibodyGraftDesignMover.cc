@@ -586,7 +586,7 @@ AntibodyGraftDesignMover::check_for_top_designs(pose::Pose & pose){
 
 	if (top_scores_.size()==0){
 		top_scores_.push_back(score);
-		top_designs_.push_back(utility::pointer::shared_ptr<class core::pose::Pose>( new Pose() ));
+		top_designs_.push_back(core::pose::PoseOP( new Pose() ));
 		*(top_designs_[top_designs_.size()]) = pose;
 	}
 	else{
@@ -594,7 +594,7 @@ AntibodyGraftDesignMover::check_for_top_designs(pose::Pose & pose){
 		for (core::Size i = 1; i<=top_scores_.size(); ++i){
 			if (score <= top_scores_[i]){
 				top_scores_.insert(score_it+i-1, score);
-				top_designs_.insert(pose_it+i-1, utility::pointer::shared_ptr<class core::pose::Pose>( new Pose() ));
+				top_designs_.insert(pose_it+i-1, core::pose::PoseOP( new Pose() ));
 				*(top_designs_[i]) = pose;
 				inserted = true;
 				break;
@@ -602,7 +602,7 @@ AntibodyGraftDesignMover::check_for_top_designs(pose::Pose & pose){
 		}
 		if (! inserted && top_scores_.size() < num_top_designs_){
 			top_scores_.push_back(score);
-			top_designs_.push_back(utility::pointer::shared_ptr<class core::pose::Pose>( new Pose() ));
+			top_designs_.push_back(core::pose::PoseOP( new Pose() ));
 			*(top_designs_[top_designs_.size()]) = pose;
 		}
 		else if ( inserted && top_scores_.size() > num_top_designs_){
@@ -637,7 +637,7 @@ AntibodyGraftDesignMover::run_basic_mc_algorithm(pose::Pose& pose, vector1<CDRNa
 	TR << "Running basic monte carlo algorithm " << std::endl;
 
 	top_scores_.push_back((*scorefxn_)(pose));
-	top_designs_.push_back(utility::pointer::shared_ptr<class core::pose::Pose>( new Pose() ));
+	top_designs_.push_back(core::pose::PoseOP( new Pose() ));
 	*(top_designs_[1]) = pose;
 	mc_->set_last_accepted_pose(pose);
 

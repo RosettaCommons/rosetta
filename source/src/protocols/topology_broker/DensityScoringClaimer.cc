@@ -78,7 +78,7 @@ DensityScoringClaimer::DensityScoringClaimer()
 
 void DensityScoringClaimer::generate_sequence_claims( claims::DofClaims& new_claims ){
 	//SequenceClaim for ElectronDensityCenter
-	new_claims.push_back ( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::SequenceClaim( get_self_weak_ptr(), "X", label() ) ));
+	new_claims.push_back ( claims::DofClaimOP( new claims::SequenceClaim( get_self_weak_ptr(), "X", label() ) ));
 }
 
 
@@ -86,11 +86,11 @@ void DensityScoringClaimer::generate_claims( claims::DofClaims& new_claims ) {
 
 	std::pair < std::string, core::Size> local_vrt_pos ( label() ,1);
 	std::pair < std::string, core::Size> local_anchor_pos ( anchor_chain_, anchor_residue_ );
-	new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::LegacyRootClaim( get_self_weak_ptr(), local_vrt_pos, claims::DofClaim::EXCLUSIVE) ) );
-	new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::JumpClaim( get_self_weak_ptr(), local_vrt_pos, local_anchor_pos, "ORIG", "CA", claims::DofClaim::EXCLUSIVE ) ) );
+	new_claims.push_back( claims::DofClaimOP( new claims::LegacyRootClaim( get_self_weak_ptr(), local_vrt_pos, claims::DofClaim::EXCLUSIVE) ) );
+	new_claims.push_back( claims::DofClaimOP( new claims::JumpClaim( get_self_weak_ptr(), local_vrt_pos, local_anchor_pos, "ORIG", "CA", claims::DofClaim::EXCLUSIVE ) ) );
 
 	//Claim the BB torsion for the virtual residue, which shouldn't be modified anyway, to make the Broker happy
-	new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::BBClaim( get_self_weak_ptr(), std::make_pair( label(), 1 ) ) ) );
+	new_claims.push_back( claims::DofClaimOP( new claims::BBClaim( get_self_weak_ptr(), std::make_pair( label(), 1 ) ) ) );
 
 }
 

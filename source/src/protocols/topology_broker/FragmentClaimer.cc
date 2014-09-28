@@ -199,10 +199,10 @@ void FragmentClaimer::generate_claims( claims::DofClaims& new_claims ) {
 				it != eit; ++it ) {
 		Size const start ( *it - fragment_offset );
 		Size const length( insert_size[ *it ] );
-		new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::BBClaim( get_self_weak_ptr(), std::make_pair( label(), start ), claim_right_) ) );
+		new_claims.push_back( claims::DofClaimOP( new claims::BBClaim( get_self_weak_ptr(), std::make_pair( label(), start ), claim_right_) ) );
 		//new_claims.push_back( new claims::BBClaim( this, *it, claim_right_ ) );
 		for ( Size i = start + 1; i < start+length && insert_size[ i + fragment_offset ] == 0; i++ ) {
-			new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::BBClaim( get_self_weak_ptr(), std::make_pair( label(), i), claim_right_ ) ));
+			new_claims.push_back( claims::DofClaimOP( new claims::BBClaim( get_self_weak_ptr(), std::make_pair( label(), i), claim_right_ ) ));
 			//new_claims.push_back( new claims::BBClaim( this, i, claim_right_ ) );
 		}
 	}

@@ -214,7 +214,7 @@ void add_coordinate_constraints(
 		TR<<"Coordinate-constraining residue " << pose.residue( res ).name() << " " << res <<std::endl;
 		///core::chemical::ResidueType rsd_type( pose.residue( res ).type() );
 		Size atomindex =  pose.residue( res ).atom_index( atom_name );
-		cst.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new CoordinateConstraint(
+		cst.push_back( core::scoring::constraints::ConstraintOP( new CoordinateConstraint(
 			core::id::AtomID( atomindex, res ),
 			anchor_atom,
 			pose.residue( res ).xyz( atomindex ),

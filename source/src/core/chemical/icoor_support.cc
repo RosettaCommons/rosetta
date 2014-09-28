@@ -59,7 +59,7 @@ public:
 	template <class Vertex, class Graph>
 	void initialize_vertex(Vertex u, const Graph& /*g*/) {
 		if( treeatom_map_.count(u) == 0 ) {
-			treeatom_map_[ u ] = utility::pointer::shared_ptr<class core::kinematics::tree::Atom>( new core::kinematics::tree::BondedAtom );
+			treeatom_map_[ u ] = core::kinematics::tree::AtomOP( new core::kinematics::tree::BondedAtom );
 		}
 		treeatom_map_[ u ]->xyz( restype_.atom( u ).ideal_xyz() );
 		// Fill in vertex identity for debugging purposes:

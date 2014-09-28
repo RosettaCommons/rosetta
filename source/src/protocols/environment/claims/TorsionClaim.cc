@@ -104,7 +104,7 @@ TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
   LocalPositions local_positions = LocalPositions();
 
   for( Size i = range.first; i <= range.second; ++i){
-    local_positions.push_back( utility::pointer::shared_ptr<class core::environment::LocalPosition>( new LocalPosition( label, i ) ) );
+    local_positions.push_back( core::environment::LocalPositionOP( new LocalPosition( label, i ) ) );
   }
 
   selector_ = ResidueSelectorCOP( new EnvLabelSelector( local_positions ) );

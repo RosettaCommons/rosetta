@@ -2617,7 +2617,7 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 						core::scoring::func::FuncOP coor_cont_fun( new core::scoring::func::HarmonicFunc(0.0, 1) );
 						TR_constraints<<"Applying constraints to atom:"<<pose.residue(i).atom_name(atmnum)<<",of residue "<<pose.residue(i).name3()<<i;
 						TR_constraints<<"Taking xyz coordinates from atom:"<<source_pose.residue(i + res_diff).xyz(atmnum)[0]<<"(x),"<<source_pose.residue(i + res_diff).xyz(atmnum)[1]<<"(y),"<<source_pose.residue(i + res_diff).xyz(atmnum)[2]<<"(z), pose atom xyz: "<<pose.residue(i).xyz(atmnum)[0]<<std::endl;
-						cst.push_back(utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::CoordinateConstraint(core::id::AtomID(atmnum, i),anchor_atom, source_pose.residue(i + res_diff).xyz(atmnum), coor_cont_fun) ));
+						cst.push_back(core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint(core::id::AtomID(atmnum, i),anchor_atom, source_pose.residue(i + res_diff).xyz(atmnum), coor_cont_fun) ));
 						pose.add_constraints(cst);
 					}//for atom_it
 				using namespace std;
@@ -2634,7 +2634,7 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 					utility::vector1< core::Size > const chiAtoms=pose.residue(i).chi_atoms(chi);//get chi atoms from chi angle so we can apply coordiante constraints
 					for (core::Size chiAtom=1;chiAtom<=4; chiAtom++){
 						core::scoring::func::FuncOP coor_cont_fun( new core::scoring::func::HarmonicFunc(0.0, 1) );
-						cst.push_back(utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::CoordinateConstraint(core::id::AtomID(chiAtoms[chiAtom], i),anchor_atom, source_pose.residue(i + res_diff).xyz(chiAtoms[chiAtom]), coor_cont_fun) ));
+						cst.push_back(core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint(core::id::AtomID(chiAtoms[chiAtom], i),anchor_atom, source_pose.residue(i + res_diff).xyz(chiAtoms[chiAtom]), coor_cont_fun) ));
 						TR<<"Applying constraints to chi_atom:"<<chiAtoms[chiAtom]<<pose.residue(i).atom_name(chiAtoms[chiAtom])<<",of residue "<<pose.residue(i).name3()<<i<<std::endl;
 						pose.add_constraints(cst);
 					}//for chiAtom
@@ -2648,7 +2648,7 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 		}
 		core::scoring::func::FuncOP coor_cont_fun( new core::scoring::func::HarmonicFunc(0.0, 1) );
 		cst.push_back(
-				utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::CoordinateConstraint(core::id::AtomID(pose.residue(i).atom_index(atom_type), i),
+				core::scoring::constraints::ConstraintOP( new core::scoring::constraints::CoordinateConstraint(core::id::AtomID(pose.residue(i).atom_index(atom_type), i),
 						anchor_atom, source_pose.residue(i + res_diff).atom(atom_type).xyz(), coor_cont_fun) ));
 //Print xyz coor of current pose CA atoms vs. source pose
 		TR_constraints << i << pose.aa(i) << " " << pose.residue(i).atom(atom_type).xyz()[0] << "," << pose.residue(i).atom(atom_type).xyz()[1]
@@ -2695,7 +2695,7 @@ void Splice::add_dihedral_constraints(core::pose::Pose & pose, core::pose::Pose 
 		core::scoring::func::FuncOP di_const_func_phi( new core::scoring::func::CircularHarmonicFunc(
 				(source_pose.phi(i) * numeric::constants::d::pi_2) / 360, 1) );
 		csts.push_back(
-				utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::DihedralConstraint(pose_phi_resj_c, pose_phi_resi_n, pose_phi_resi_ca, pose_phi_resi_co,
+				core::scoring::constraints::ConstraintOP( new core::scoring::constraints::DihedralConstraint(pose_phi_resj_c, pose_phi_resi_n, pose_phi_resi_ca, pose_phi_resi_co,
 						di_const_func_phi) ));
 
 //Set up constraints for the psi angle
@@ -2719,7 +2719,7 @@ void Splice::add_dihedral_constraints(core::pose::Pose & pose, core::pose::Pose 
 		core::scoring::func::FuncOP di_const_func_psi( new core::scoring::func::CircularHarmonicFunc(
 				(source_pose.psi(i) * numeric::constants::d::pi_2) / 360, 1) );
 		csts.push_back(
-				utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::DihedralConstraint(pose_psi_resi_n, pose_psi_resi_ca, pose_psi_resi_co, pose_psi_resj_n,
+				core::scoring::constraints::ConstraintOP( new core::scoring::constraints::DihedralConstraint(pose_psi_resi_n, pose_psi_resi_ca, pose_psi_resi_co, pose_psi_resj_n,
 						di_const_func_psi) ));
 		TR_constraints << "Psi: " << i - residue_diff << pose.aa(i - residue_diff) << ":" << pose.psi(i - residue_diff)
 				<< " / " << i << source_pose.aa(i) << ":" << numeric::dihedral_degrees(xyz_Ni, xyz_Cai, xyz_Ci, xyz_Nj)
@@ -2747,7 +2747,7 @@ void Splice::add_dihedral_constraints(core::pose::Pose & pose, core::pose::Pose 
 		core::scoring::func::FuncOP di_const_func_omega( new core::scoring::func::CircularHarmonicFunc(
 				(source_pose.omega(i) * numeric::constants::d::pi_2) / 360, 1) );
 		csts.push_back(
-				utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::DihedralConstraint(pose_omega_resi_ca, pose_omega_resi_co, pose_omega_resj_n, pose_omega_resj_ca,
+				core::scoring::constraints::ConstraintOP( new core::scoring::constraints::DihedralConstraint(pose_omega_resi_ca, pose_omega_resi_co, pose_omega_resj_n, pose_omega_resj_ca,
 						di_const_func_omega) ));
 
 		pose.add_constraints(csts);

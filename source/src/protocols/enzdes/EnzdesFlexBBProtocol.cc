@@ -516,7 +516,7 @@ EnzdesFlexBBProtocol::add_flexible_region(
 {
 	if( clear_existing ) flex_regions_.clear();
 	core::Size length( end - start +1 );
-	flex_regions_.push_back( utility::pointer::shared_ptr<class protocols::enzdes::EnzdesFlexibleRegion>( new EnzdesFlexibleRegion( flex_regions_.size() + 1, start, end, length, pose,
+	flex_regions_.push_back( protocols::enzdes::EnzdesFlexibleRegionOP( new EnzdesFlexibleRegion( flex_regions_.size() + 1, start, end, length, pose,
 		EnzdesFlexBBProtocolCAP( utility::pointer::dynamic_pointer_cast< EnzdesFlexBBProtocol >( get_self_ptr() ) )
 	) ) );
 }
@@ -588,7 +588,7 @@ EnzdesFlexBBProtocol::determine_flexible_regions(
 
 			core::Size length( lstop - lstart +1 );
 
-			flex_regions_.push_back( utility::pointer::shared_ptr<class protocols::enzdes::EnzdesFlexibleRegion>( new EnzdesFlexibleRegion( i, lstart, lstop, length, pose, 
+			flex_regions_.push_back( protocols::enzdes::EnzdesFlexibleRegionOP( new EnzdesFlexibleRegion( i, lstart, lstop, length, pose, 
 				EnzdesFlexBBProtocolCAP( utility::pointer::dynamic_pointer_cast< EnzdesFlexBBProtocol >( get_self_ptr() ) )
 			) ) );
 			tr << " " << lstart << "-" << lstop;
@@ -616,7 +616,7 @@ EnzdesFlexBBProtocol::determine_flexible_regions(
 		for( utility::vector1< loops::Loop >::const_iterator lit = loops_helper.v_begin(); lit != loops_helper.v_end(); ++lit){
 			no_flex_regions++;
 			core::Size lstart( lit->start() ), lstop( lit->stop() );
-			flex_regions_.push_back( utility::pointer::shared_ptr<class protocols::enzdes::EnzdesFlexibleRegion>( new EnzdesFlexibleRegion( no_flex_regions, lstart, lstop, lstop - lstart + 1, pose, 
+			flex_regions_.push_back( protocols::enzdes::EnzdesFlexibleRegionOP( new EnzdesFlexibleRegion( no_flex_regions, lstart, lstop, lstop - lstart + 1, pose, 
 				EnzdesFlexBBProtocolCAP( utility::pointer::dynamic_pointer_cast< EnzdesFlexBBProtocol >( get_self_ptr() ) )
 			) ) );
 			tr << " " << lstart << "-" << lstop;
@@ -664,7 +664,7 @@ EnzdesFlexBBProtocol::determine_flexible_regions(
 				while( flex_res[j] && (j <= pose.total_residue()) ) j++;
 
 				no_flex_regions++;
-				flex_regions_.push_back( utility::pointer::shared_ptr<class protocols::enzdes::EnzdesFlexibleRegion>( new EnzdesFlexibleRegion( no_flex_regions, i, j - 1, (j - i), pose, 
+				flex_regions_.push_back( protocols::enzdes::EnzdesFlexibleRegionOP( new EnzdesFlexibleRegion( no_flex_regions, i, j - 1, (j - i), pose, 
 					EnzdesFlexBBProtocolCAP( utility::pointer::dynamic_pointer_cast< EnzdesFlexBBProtocol >( get_self_ptr() ) )
 				) ) );
 				//fragment_counters_.push_back( 1 );
@@ -1929,7 +1929,7 @@ EnzdesFlexibleRegion::examine_new_loopconf(
 	if ( frag_unique && frag_close_to_native && frag_close_to_another_fragment ){
 		this->add_fragment( newfrag );
 		rmsd_to_native.push_back( core::scoring::rmsd_no_super( *compare_poses[1], template_pose, core::scoring::is_protein_backbone ) );
-		compare_poses.push_back( utility::pointer::shared_ptr<class core::pose::Pose>( new core::pose::Pose( template_pose ) ) );
+		compare_poses.push_back( core::pose::PoseOP( new core::pose::Pose( template_pose ) ) );
 
 		return true;
 

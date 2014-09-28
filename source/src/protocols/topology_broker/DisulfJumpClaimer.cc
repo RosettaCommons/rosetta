@@ -201,7 +201,7 @@ void DisulfJumpClaimer::generate_claims( claims::DofClaims& new_claims ) {
 
 		all_jump_pairings_.push_back( dis_pair );
 
-		new_claims.push_back( utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::JumpClaim( get_self_weak_ptr(),
+		new_claims.push_back( claims::DofClaimOP( new claims::JumpClaim( get_self_weak_ptr(),
 																								 claim->local_pos1(),
 																								 claim->local_pos2(),
 																								 claims::DofClaim::INIT ) ) );

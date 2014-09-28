@@ -737,7 +737,7 @@ load_dna_design_defs_from_strings(
 {
 	for ( Strings::const_iterator str_def( str_defs.begin() ), end( str_defs.end() );
 	      str_def != end; ++str_def ) {
-		defs.push_back( utility::pointer::shared_ptr<class protocols::dna::DnaDesignDef>( new DnaDesignDef( *str_def ) ) );
+		defs.push_back( DnaDesignDefOP( new DnaDesignDef( *str_def ) ) );
 	}
 }
 

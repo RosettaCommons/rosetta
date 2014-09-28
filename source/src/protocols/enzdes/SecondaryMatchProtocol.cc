@@ -429,7 +429,7 @@ SecondaryMatchProtocol::generate_and_dump_pose_found_residues_combinations( core
 
 	//process_poses.push_back( ref_poseCOP );
 
-	process_combos.push_back( utility::pointer::shared_ptr<class protocols::enzdes::PoseFoundResiduesCombination>( new PoseFoundResiduesCombination( ref_poseCOP,
+	process_combos.push_back( protocols::enzdes::PoseFoundResiduesCombinationOP( new PoseFoundResiduesCombination( ref_poseCOP,
 		SecondaryMatchProtocolCAP( utility::pointer::dynamic_pointer_cast< SecondaryMatchProtocol const >( get_self_ptr() ) )
 	) ) );
 

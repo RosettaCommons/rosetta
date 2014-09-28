@@ -193,7 +193,7 @@ claims::EnvClaims RigidChunkCM::yield_claims( core::pose::Pose const& in_p,
       claims.push_back( support_claim );
     }
 
-    claims.push_back( utility::pointer::shared_ptr<class protocols::environment::claims::EnvClaim>( new CutBiasClaim( this_ptr, label(), std::make_pair( loop_it->start(), loop_it->stop() ), 0.0 ) ) );
+    claims.push_back( protocols::environment::claims::EnvClaimOP( new CutBiasClaim( this_ptr, label(), std::make_pair( loop_it->start(), loop_it->stop() ), 0.0 ) ) );
 
     if( loop_prev.start() != 0 && loop_prev.stop() != 0 ){
       core::Size jump_start = loop_prev.start() + ( ( loop_prev.stop() - loop_prev.start() ) / 2 );

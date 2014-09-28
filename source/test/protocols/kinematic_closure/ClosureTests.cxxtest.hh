@@ -54,10 +54,10 @@ public:
 	void setUp() {
 		core_init();
 
-		test_helpers.push_back(utility::pointer::shared_ptr<class ClosureTest>( new DebuggingHelper ));
-		test_helpers.push_back(utility::pointer::shared_ptr<class ClosureTest>( new BigLoopTest ));
-		test_helpers.push_back(utility::pointer::shared_ptr<class ClosureTest>( new NoSolutionsTest ));
-		test_helpers.push_back(utility::pointer::shared_ptr<class ClosureTest>( new PoseWithLigandTest ));
+		test_helpers.push_back(ClosureTestOP( new DebuggingHelper ));
+		test_helpers.push_back(ClosureTestOP( new BigLoopTest ));
+		test_helpers.push_back(ClosureTestOP( new NoSolutionsTest ));
+		test_helpers.push_back(ClosureTestOP( new PoseWithLigandTest ));
 	}
 
 	void test_with_simple_fold_tree() {

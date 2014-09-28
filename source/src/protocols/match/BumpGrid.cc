@@ -929,7 +929,7 @@ BumpGrid::BumpGrid() :
 	general_permit_overlap_( 0.0 )
 {
 	for ( Size ii = 1; ii <= n_probe_radii; ++ii ) {
-		grids_[ ii ] = utility::pointer::shared_ptr<class protocols::match::Bool3DGrid>( new Bool3DGrid );
+		grids_[ ii ] = protocols::match::Bool3DGridOP( new Bool3DGrid );
 		pair_permit_overlap_[ ii ].resize( n_probe_radii );
 		std::fill ( pair_permit_overlap_[ ii ].begin(), pair_permit_overlap_[ ii ].end(), 0.0 );
 	}
@@ -960,7 +960,7 @@ BumpGrid::BumpGrid( BumpGrid const & rhs ) :
 	general_permit_overlap_( rhs.general_permit_overlap_ )
 {
 	for ( Size ii = 1; ii <= n_probe_radii; ++ii ) {
-		grids_[ ii ] = utility::pointer::shared_ptr<class protocols::match::Bool3DGrid>( new Bool3DGrid( *rhs.grids_[ ii ] ) );
+		grids_[ ii ] = protocols::match::Bool3DGridOP( new Bool3DGrid( *rhs.grids_[ ii ] ) );
 	}
 }
 
@@ -969,7 +969,7 @@ BumpGrid::~BumpGrid() {}
 BumpGrid const & BumpGrid::operator = ( BumpGrid const & rhs )
 {
 	for ( Size ii = 1; ii <= n_probe_radii; ++ii ) {
-		grids_[ ii ] = utility::pointer::shared_ptr<class protocols::match::Bool3DGrid>( new Bool3DGrid( *rhs.grids_[ ii ] ) );
+		grids_[ ii ] = protocols::match::Bool3DGridOP( new Bool3DGrid( *rhs.grids_[ ii ] ) );
 	}
 	pair_permit_overlap_ = rhs.pair_permit_overlap_;
 	general_permit_overlap_ = rhs.general_permit_overlap_;
@@ -991,7 +991,7 @@ void BumpGrid::set_bounding_box( BoundingBox const & bb )
 		lower.z() = static_cast< Real > ( static_cast< int > ( lower.z() ));
 		Vector upper = bb.upper() + probe_radius( (ProbeRadius) ii );
 		BoundingBox iibb( lower, upper );
-		grids_[ ii ] = utility::pointer::shared_ptr<class protocols::match::Bool3DGrid>( new Bool3DGrid );
+		grids_[ ii ] = protocols::match::Bool3DGridOP( new Bool3DGrid );
 		grids_[ ii ]->set_bin_width( 0.25 ); /// HARD CODED HACK!
 		grids_[ ii ]->set_bounding_box( iibb );
 	}

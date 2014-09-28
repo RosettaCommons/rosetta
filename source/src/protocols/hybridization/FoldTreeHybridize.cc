@@ -174,7 +174,7 @@ FoldTreeHybridize::FoldTreeHybridize (
 	// abinitio frags
 	frag_libs_small_.push_back(fragments_small_in);
 	frag_libs_big_.push_back(fragments_big_in);
-	frag_libs_1mer_.push_back( utility::pointer::shared_ptr<class core::fragment::FragSet>( new core::fragment::ConstantLengthFragSet( 1 ) ) );
+	frag_libs_1mer_.push_back( core::fragment::FragSetOP( new core::fragment::ConstantLengthFragSet( 1 ) ) );
 	chop_fragments( *frag_libs_small_[1], *frag_libs_1mer_[1] );
 }
 
@@ -189,7 +189,7 @@ void FoldTreeHybridize::setup_for_parser()
 
 
 	for (core::Size ipose=1; ipose<=hybridize_setup_->template_poses().size(); ++ipose) {
-		template_poses_.push_back( utility::pointer::shared_ptr<class core::pose::Pose>( new core::pose::Pose( *(hybridize_setup_->template_poses()[ipose]) ) ) );
+		template_poses_.push_back( core::pose::PoseOP( new core::pose::Pose( *(hybridize_setup_->template_poses()[ipose]) ) ) );
 	}
 	template_wts_ = hybridize_setup_->template_wts();
 	template_chunks_ = hybridize_setup_->template_chunks();
@@ -201,7 +201,7 @@ void FoldTreeHybridize::setup_for_parser()
 	// abinitio frags
 	frag_libs_small_ = hybridize_setup_->fragments_small();
 	frag_libs_big_ = hybridize_setup_->fragments_big();
-	frag_libs_1mer_.push_back( utility::pointer::shared_ptr<class core::fragment::FragSet>( new core::fragment::ConstantLengthFragSet( 1 ) ) );
+	frag_libs_1mer_.push_back( core::fragment::FragSetOP( new core::fragment::ConstantLengthFragSet( 1 ) ) );
 	chop_fragments( *frag_libs_small_[1], *frag_libs_1mer_[1] );
 
 	std::string cst_fn = hybridize_setup_->template_cst_fn()[initial_template_index_];

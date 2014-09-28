@@ -718,7 +718,7 @@ std::vector< PoseOP >  ClusterBase::return_lowest_poses_in_clusters() {
  	std::vector< PoseOP > templist;
  	for ( i=0;i<(int)clusterlist.size();i++ ) {
  	 	PoseOP tempPointer;
- 		if (clusterlist[i].size() > 0) templist.push_back( utility::pointer::shared_ptr<class core::pose::Pose>( new Pose(poselist[ clusterlist[i][0] ]) ) );
+ 		if (clusterlist[i].size() > 0) templist.push_back( core::pose::PoseOP( new Pose(poselist[ clusterlist[i][0] ]) ) );
  	}
  	return templist;
 }

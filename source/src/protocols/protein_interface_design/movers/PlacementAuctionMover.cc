@@ -217,13 +217,13 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 				ConstraintCOPs stub_constraints;
 				core::conformation::Residue const host_res( pose.conformation().residue( host_residue ) );
   				if ( stub_energy_fxn_ == "backbone_stub_constraint" ) {
-						stub_constraints.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new BackboneStubConstraint( pose, host_residue, fixed_atom_id, host_res, bonus, cb_force_ ) ) );
+						stub_constraints.push_back( core::scoring::constraints::ConstraintOP( new BackboneStubConstraint( pose, host_residue, fixed_atom_id, host_res, bonus, cb_force_ ) ) );
 						stub_constraints = pose.add_constraints( stub_constraints );
 						core::Real const bb_cst_score( stf->report_sm( pose ) );
 						if( bb_cst_score <= -0.5 ) // take only residues that make some appreciable contribution
 							insert( std::make_pair( bb_cst_score, std::make_pair( host_residue, std::make_pair( stub_set, stub ) ) ) );
 				} else if ( stub_energy_fxn_ == "backbone_stub_linear_constraint" ) {
-						stub_constraints.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new BackboneStubLinearConstraint( pose, host_residue, fixed_atom_id, *(stub->residue()), bonus, cb_force_ ) ) );
+						stub_constraints.push_back( core::scoring::constraints::ConstraintOP( new BackboneStubLinearConstraint( pose, host_residue, fixed_atom_id, *(stub->residue()), bonus, cb_force_ ) ) );
 						stub_constraints = pose.add_constraints( stub_constraints );
         		core::Real const bb_cst_score( stf->report_sm( pose ) );
 						insert( std::make_pair( bonus+bb_cst_score, std::make_pair( host_residue, std::make_pair( stub_set, stub ) ) ) );

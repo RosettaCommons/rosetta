@@ -125,15 +125,15 @@ void RBSegmentRelax::initialize( utility::vector1< core::fragment::FragSetOP > c
 
 	// set up default movesets ( start and end positions are set in apply() )
 	if (! option[ OptionKeys::RBSegmentRelax::skip_seqshift_moves ]() ) {
-		HelixMoveSet_.push_back( utility::pointer::shared_ptr<class protocols::rbsegment_relax::RBSegmentMover>( new SequenceShiftMover(  ) ) );
-		StrandMoveSet_.push_back( utility::pointer::shared_ptr<class protocols::rbsegment_relax::RBSegmentMover>( new SequenceShiftMover(  ) ) );
+		HelixMoveSet_.push_back( RBSegmentMoverOP( new SequenceShiftMover(  ) ) );
+		StrandMoveSet_.push_back( RBSegmentMoverOP( new SequenceShiftMover(  ) ) );
 	}
 
 	if (! option[ OptionKeys::RBSegmentRelax::skip_rb_moves ]() ) {
-		HelixMoveSet_.push_back( utility::pointer::shared_ptr<class protocols::rbsegment_relax::RBSegmentMover>( new HelicalGaussianMover( helical_sigR, helical_sigT, helical_sigOffAxisR, helical_sigOffAxisT ) ) );
-		StrandMoveSet_.push_back( utility::pointer::shared_ptr<class protocols::rbsegment_relax::RBSegmentMover>( new StrandTwistingMover( strand_sigR, strand_sigT, strand_sigOffAxisR, strand_sigOffAxisT ) ) );
-		GenericRBMoveSet_.push_back( utility::pointer::shared_ptr<class protocols::rbsegment_relax::RBSegmentMover>( new GaussianRBSegmentMover( genericRB_sigR , genericRB_sigT ) ) );
-		CompositeSegmentMoveSet_.push_back( utility::pointer::shared_ptr<class protocols::rbsegment_relax::RBSegmentMover>( new GaussianRBSegmentMover( genericRB_sigR , genericRB_sigT ) ) );
+		HelixMoveSet_.push_back( RBSegmentMoverOP( new HelicalGaussianMover( helical_sigR, helical_sigT, helical_sigOffAxisR, helical_sigOffAxisT ) ) );
+		StrandMoveSet_.push_back( RBSegmentMoverOP( new StrandTwistingMover( strand_sigR, strand_sigT, strand_sigOffAxisR, strand_sigOffAxisT ) ) );
+		GenericRBMoveSet_.push_back( RBSegmentMoverOP( new GaussianRBSegmentMover( genericRB_sigR , genericRB_sigT ) ) );
+		CompositeSegmentMoveSet_.push_back( RBSegmentMoverOP( new GaussianRBSegmentMover( genericRB_sigR , genericRB_sigT ) ) );
 	}
 
 	// frags

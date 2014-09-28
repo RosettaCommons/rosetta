@@ -1408,7 +1408,7 @@ SimpleExpressionCreator::add_variable( std::string const & varname )
 	if ( variables_.find( varname ) != variables_.end() ) {
 		utility_exit_with_message( "Error adding variable: '" + varname + "'; already present in variables_ map." );
 	}
-	variables_[ varname ] = utility::pointer::shared_ptr<class numeric::expression_parser::VariableExpression>( new VariableExpression( varname ) );
+	variables_[ varname ] = VariableExpressionOP( new VariableExpression( varname ) );
 }
 
 

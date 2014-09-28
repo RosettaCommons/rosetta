@@ -234,7 +234,7 @@ int main( int argc, char * argv [] ) {
 		if(option[ darc_score_only ]()){
 			utility::vector1< core::pose::PoseOP > rot_poses(small_mol_pose.total_residue());
 			for (Size ii = 1; ii <= small_mol_pose.total_residue(); ++ii){
-				rot_poses[ii] = utility::pointer::shared_ptr<class core::pose::Pose>( new core::pose::Pose(small_mol_pose, ii, ii) );
+				rot_poses[ii] = core::pose::PoseOP( new core::pose::Pose(small_mol_pose, ii, ii) );
 				protocols::pockets::PlaidFingerprint conf_pf( *rot_poses[ii], npf );
 				std::cout << "DARC SCORE (unaligned) :" <<  conf_pf.fp_compare( npf, missing_pt_wt, steric_wt, extra_pt_wt ) <<std::endl;
 			}
@@ -274,7 +274,7 @@ int main( int argc, char * argv [] ) {
 			p_max[7] = 0.00001;
 			utility::vector1< core::pose::PoseOP > rot_poses(small_mol_pose.total_residue());
 			for (Size ii = 1; ii <= small_mol_pose.total_residue(); ++ii){
-				rot_poses[ii] = utility::pointer::shared_ptr<class core::pose::Pose>( new core::pose::Pose(small_mol_pose, ii, ii) );
+				rot_poses[ii] = core::pose::PoseOP( new core::pose::Pose(small_mol_pose, ii, ii) );
 				protocols::pockets::PlaidFingerprint conf_pf( *rot_poses[ii], npf );
 				//std::cout << "DARC SCORE (unaligned) :" <<  conf_pf.fp_compare( npf, missing_pt_wt, steric_wt, extra_pt_wt ) <<std::endl;
 				protocols::pockets::FingerprintMultifunc fpm(npf, conf_pf, missing_pt_wt, steric_wt, extra_pt_wt, 1);

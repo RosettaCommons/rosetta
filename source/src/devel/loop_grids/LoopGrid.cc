@@ -61,7 +61,7 @@ LoopGrid::LoopGrid( Pose const &pose, Loop const &loop ) :
         Real r1 = loop_length_cutoff[n1];
         Real r2 = loop_length_cutoff[n2];
         TR << "Grid " << i << " : init ...  " << "r1=" << r1 << ", r2=" << r2 << endl;
-        grids_[i] = utility::pointer::shared_ptr<class protocols::match::Bool3DGrid>( new Bool3DGrid );
+        grids_[i] = protocols::match::Bool3DGridOP( new Bool3DGrid );
         create_grid_and_by_two_sphere(grids_[i], center1, r1 , center2, r2);
 
         //output

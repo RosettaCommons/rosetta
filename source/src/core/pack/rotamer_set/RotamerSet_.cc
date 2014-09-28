@@ -341,7 +341,7 @@ RotamerSet_::build_rotamers_for_concrete(
 			// ligands get their own rotamer libraries.
 			if ( concrete_residue->n_proton_chi() != 0 ) {
 				utility::vector1< pack::dunbrack::ChiSetOP > proton_chi_chisets;
-				proton_chi_chisets.push_back( utility::pointer::shared_ptr<class core::pack::dunbrack::ChiSet>( new pack::dunbrack::ChiSet( concrete_residue->nchi() ) ) );
+				proton_chi_chisets.push_back( dunbrack::ChiSetOP( new pack::dunbrack::ChiSet( concrete_residue->nchi() ) ) );
 				for ( Size ii = 1; ii <= concrete_residue->n_proton_chi(); ++ii ) {
 					pack::dunbrack::expand_proton_chi(
 						task.residue_task( resid() ).extrachi_sample_level(
@@ -560,7 +560,7 @@ RotamerSet_::build_optimize_H_rotamers(
 		if ( concrete_residue->n_proton_chi() != 0 ) {
 			utility::vector1< pack::dunbrack::ChiSetOP > proton_chi_chisets;
 			proton_chi_chisets.push_back(
-				utility::pointer::shared_ptr<class core::pack::dunbrack::ChiSet>( new pack::dunbrack::ChiSet( concrete_residue->nchi() ) ) );
+				dunbrack::ChiSetOP( new pack::dunbrack::ChiSet( concrete_residue->nchi() ) ) );
 			for ( Size ii = 1; ii <= concrete_residue->n_proton_chi(); ++ii ) {
 				pack::dunbrack::expand_proton_chi(
 					task.residue_task( resid() ).extrachi_sample_level(

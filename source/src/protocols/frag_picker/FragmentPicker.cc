@@ -238,11 +238,11 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 	for (it=contact_types_.begin(); it!=contact_types_.end(); it++) {
 		if (*it == CEN) {
 			std::pair<Real,ContactType> p(0,*it);
-			contact_counts[p] = utility::pointer::shared_ptr<class protocols::frag_picker::ContactCounts>( new ContactCounts() );
+			contact_counts[p] = protocols::frag_picker::ContactCountsOP( new ContactCounts() );
 		} else {
 			for (Size i=1; i<=contacts_dist_cutoffs_squared_.size();++i) {
 				std::pair<Real,ContactType> p(contacts_dist_cutoffs_squared_[i],*it);
-				contact_counts[p] = utility::pointer::shared_ptr<class protocols::frag_picker::ContactCounts>( new ContactCounts() );
+				contact_counts[p] = protocols::frag_picker::ContactCountsOP( new ContactCounts() );
 			}
 		}
 	}
@@ -505,7 +505,7 @@ void FragmentPicker::nonlocal_pairs_at_positions( utility::vector1<Size> const &
 										has_good_constraint = true;
 									}
 								}
-								if (dist_squared <= cutoff_dist_squared) contacts.push_back(utility::pointer::shared_ptr<class protocols::frag_picker::Contact>( new Contact( qpi, qpj, dist_squared, *it ) ));
+								if (dist_squared <= cutoff_dist_squared) contacts.push_back(ContactOP( new Contact( qpi, qpj, dist_squared, *it ) ));
 							}
 							qpj++;
 						}
@@ -627,11 +627,11 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 	for (it=contact_types_.begin(); it!=contact_types_.end(); it++) {
 		if (*it == CEN) {
 			std::pair<Real,ContactType> p(0,*it);
-			contact_counts[p] = utility::pointer::shared_ptr<class protocols::frag_picker::ContactCounts>( new ContactCounts() );
+			contact_counts[p] = protocols::frag_picker::ContactCountsOP( new ContactCounts() );
 		} else {
 			for (Size i=1; i<=contacts_dist_cutoffs_squared_.size();++i) {
 				std::pair<Real,ContactType> p(contacts_dist_cutoffs_squared_[i],*it);
-				contact_counts[p] = utility::pointer::shared_ptr<class protocols::frag_picker::ContactCounts>( new ContactCounts() );
+				contact_counts[p] = protocols::frag_picker::ContactCountsOP( new ContactCounts() );
 			}
 		}
 	}
@@ -1413,7 +1413,7 @@ void FragmentPicker::parse_command_line() {
 #endif
 	// score with multiple threads
 	while (max_threads_ > scores_.size())
-		scores_.push_back(utility::pointer::shared_ptr<class protocols::frag_picker::scores::FragmentScoreManager>( new scores::FragmentScoreManager() ));
+		scores_.push_back(scores::FragmentScoreManagerOP( new scores::FragmentScoreManager() ));
 	while (max_threads_ > candidates_sinks_.size()) {
 		CandidatesSink storage;
 		candidates_sinks_.push_back(storage);

@@ -164,29 +164,29 @@ void test_constraint_set_remapping()
 	utility::vector1< ConstraintCOP > multi_csts;
 	utility::vector1< ConstraintCOP > ambig_csts;
 
-	multi_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new AngleConstraint( AtomID(6, 15), AtomID(1, 15), AtomID(3, 3 ), some_func ) ) );
-	multi_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new AtomPairConstraint( AtomID(2, 15), AtomID(2, 3),  some_func ) ) );
-	multi_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new DihedralConstraint( AtomID(2, 15), AtomID(7, 15), AtomID(1, 65), AtomID(3, 65 ),  some_func ) ) );
+	multi_csts.push_back( ConstraintCOP( new AngleConstraint( AtomID(6, 15), AtomID(1, 15), AtomID(3, 3 ), some_func ) ) );
+	multi_csts.push_back( ConstraintCOP( new AtomPairConstraint( AtomID(2, 15), AtomID(2, 3),  some_func ) ) );
+	multi_csts.push_back( ConstraintCOP( new DihedralConstraint( AtomID(2, 15), AtomID(7, 15), AtomID(1, 65), AtomID(3, 65 ),  some_func ) ) );
 
-	ambig_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new AngleConstraint( AtomID(6, 33), AtomID(1, 33), AtomID(3, 30 ), some_func ) ) );
-	ambig_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new AtomPairConstraint( AtomID(2, 35), AtomID(2, 13),  some_func ) ) );
-	ambig_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new DihedralConstraint( AtomID(2, 35), AtomID(7, 35), AtomID(1, 45), AtomID(3, 65 ),  some_func ) ) );
+	ambig_csts.push_back( ConstraintCOP( new AngleConstraint( AtomID(6, 33), AtomID(1, 33), AtomID(3, 30 ), some_func ) ) );
+	ambig_csts.push_back( ConstraintCOP( new AtomPairConstraint( AtomID(2, 35), AtomID(2, 13),  some_func ) ) );
+	ambig_csts.push_back( ConstraintCOP( new DihedralConstraint( AtomID(2, 35), AtomID(7, 35), AtomID(1, 45), AtomID(3, 65 ),  some_func ) ) );
 
 	ConstraintCOP posemulticst = pose.add_constraint( scoring::constraints::ConstraintCOP( new MultiConstraint( multi_csts ) ) );
 	ConstraintCOP poseambigcst = pose.add_constraint( scoring::constraints::ConstraintCOP( new AmbiguousConstraint( ambig_csts ) ) );
 
 	//first test whether constraint == operators work
 	utility::vector1< ConstraintCOP > testeq_csts;
-	testeq_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new AngleConstraint(AtomID(6, 15), AtomID(1, 15), AtomID(3, 3 ), some_func ) ) );
-	testeq_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new AtomPairConstraint( AtomID(2, 15), AtomID(2, 3),  some_func ) ) );
-	testeq_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new DihedralConstraint( AtomID(2, 15), AtomID(7, 15), AtomID(1, 65), AtomID(3, 65 ),  some_func ) ) );
+	testeq_csts.push_back( ConstraintCOP( new AngleConstraint(AtomID(6, 15), AtomID(1, 15), AtomID(3, 3 ), some_func ) ) );
+	testeq_csts.push_back( ConstraintCOP( new AtomPairConstraint( AtomID(2, 15), AtomID(2, 3),  some_func ) ) );
+	testeq_csts.push_back( ConstraintCOP( new DihedralConstraint( AtomID(2, 15), AtomID(7, 15), AtomID(1, 65), AtomID(3, 65 ),  some_func ) ) );
 	MultiConstraint testeq_mult( testeq_csts );
 	AmbiguousConstraint testeq_ambig1( testeq_csts );
 
 	utility::vector1< ConstraintCOP > testeq_ambig_csts;
-	testeq_ambig_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new AngleConstraint( AtomID(6, 33), AtomID(1, 33), AtomID(3, 30 ), some_func ) ) );
-	testeq_ambig_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new AtomPairConstraint( AtomID(2, 35), AtomID(2, 13),  some_func ) ) );
-	testeq_ambig_csts.push_back( utility::pointer::shared_ptr<const class core::scoring::constraints::Constraint>( new DihedralConstraint( AtomID(2, 35), AtomID(7, 35), AtomID(1, 45), AtomID(3, 65 ),  some_func ) ) );
+	testeq_ambig_csts.push_back( ConstraintCOP( new AngleConstraint( AtomID(6, 33), AtomID(1, 33), AtomID(3, 30 ), some_func ) ) );
+	testeq_ambig_csts.push_back( ConstraintCOP( new AtomPairConstraint( AtomID(2, 35), AtomID(2, 13),  some_func ) ) );
+	testeq_ambig_csts.push_back( ConstraintCOP( new DihedralConstraint( AtomID(2, 35), AtomID(7, 35), AtomID(1, 45), AtomID(3, 65 ),  some_func ) ) );
 	AmbiguousConstraint testeq_ambig2( testeq_ambig_csts );
 
 	TS_ASSERT( *(testeq_csts[1]) == *(multi_csts[1]) );

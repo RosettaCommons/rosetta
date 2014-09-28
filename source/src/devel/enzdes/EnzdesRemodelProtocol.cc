@@ -1257,7 +1257,7 @@ EnzdesRemodelMover::setup_rcgs(
 	if( cen_rv_infos.size() != 0 ){
 		using namespace protocols::forge::remodel;
 		vlb.add_rcg( RemodelConstraintGeneratorOP( new ResidueVicinityRCG( flex_region_->start(), flex_region_->stop(), cen_rv_infos ) ) );
-		rcgs_.push_back( utility::pointer::shared_ptr<class protocols::forge::remodel::RemodelConstraintGenerator>( new ResidueVicinityRCG( flex_region_->start(), flex_region_->stop(), fa_rv_infos ) ) );
+		rcgs_.push_back( protocols::forge::remodel::RemodelConstraintGeneratorOP( new ResidueVicinityRCG( flex_region_->start(), flex_region_->stop(), fa_rv_infos ) ) );
 	}
 }
 
@@ -1271,7 +1271,7 @@ EnzdesRemodelMover::setup_rcgs_from_inverse_rotamers(
 		using namespace protocols::forge::constraints;
 		using namespace protocols::forge::remodel;
 		vlb.add_rcg( RemodelConstraintGeneratorOP( new InverseRotamersRCG( flex_region_->start(), flex_region_->stop(),target_inverse_rotamers_[i] ) ) );
-		rcgs_.push_back( utility::pointer::shared_ptr<class protocols::forge::remodel::RemodelConstraintGenerator>( new InverseRotamersRCG( flex_region_->start(), flex_region_->stop(), target_inverse_rotamers_[i] ) ) );
+		rcgs_.push_back( protocols::forge::remodel::RemodelConstraintGeneratorOP( new InverseRotamersRCG( flex_region_->start(), flex_region_->stop(), target_inverse_rotamers_[i] ) ) );
 	}
 }
 
@@ -1336,7 +1336,7 @@ EnzdesRemodelMover::create_target_inverse_rotamers(
 						if( (corresponding_res_block == 0 ) || ( corresponding_res_block > i ) ){
 							tr << "Catalytic residue for MatchConstraint " << i << " at position " << seqpos << " is in remodeled region, building inverse rotamers... " << std::endl;
 							target_inverse_rotamers_.push_back( std::list<core::conformation::ResidueCOP> () );
-							if( include_existing_conf_as_invrot_target_) target_inverse_rotamers_[ target_inverse_rotamers_.size() ].push_back( utility::pointer::shared_ptr<const class core::conformation::Residue>( new core::conformation::Residue( pose.residue( seqpos ) ) ) );
+							if( include_existing_conf_as_invrot_target_) target_inverse_rotamers_[ target_inverse_rotamers_.size() ].push_back( core::conformation::ResidueCOP( new core::conformation::Residue( pose.residue( seqpos ) ) ) );
 							invrots_build = true;
 							std::list< core::conformation::ResidueCOP > cur_inv_rots( enzcst_io->mcfi_list( i )->inverse_rotamers_against_residue( other_res, pose.residue( other_seqpos ).get_self_ptr() ) );
 							if( cur_inv_rots.size() != 0 ) target_inverse_rotamers_[ target_inverse_rotamers_.size() ].splice( target_inverse_rotamers_[ target_inverse_rotamers_.size() ].end(), cur_inv_rots );

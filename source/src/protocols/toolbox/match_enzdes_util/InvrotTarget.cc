@@ -127,7 +127,7 @@ InvrotTarget::collect_all_inverse_rotamers(
 	//1. make space
 	Size num_residue_lists( representative_target_res_for_geom_cst_.size() + 1 ); //+1 bc we're also counting the ligand now
 	Size input_size( invrot_collectors.size() );
-	invrot_collectors.push_back(  utility::pointer::shared_ptr<class protocols::toolbox::match_enzdes_util::InvrotCollector>( new InvrotCollector( num_residue_lists ) ) );
+	invrot_collectors.push_back(  protocols::toolbox::match_enzdes_util::InvrotCollectorOP( new InvrotCollector( num_residue_lists ) ) );
 
 	//2. put target res into 0th element
 	invrot_collectors[ invrot_collectors.size() ]->set_invrots_for_listnum( 0, all_target_res_, get_self_ptr(), 1 );

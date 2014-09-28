@@ -145,7 +145,7 @@ RampingMover::RampingMover() :
 	inner_cycles_( 0 ),
 	mc_( /* 0 */ )
 {
-	ramping_funcs_for_weights_[ score_type_ ] = utility::pointer::shared_ptr<const class protocols::moves::RampingFunc>( new LinearFunc );
+	ramping_funcs_for_weights_[ score_type_ ] = protocols::moves::RampingFuncOP( new LinearFunc );
 }
 
 RampingMover::RampingMover(
@@ -197,7 +197,7 @@ RampingMover::RampingMover(
 	for ( Size ii = 1; ii <= core::scoring::n_score_types; ++ii ) {
 		core::scoring::ScoreType iist = (core::scoring::ScoreType) ii;
 		if ( start_weights_[ iist ] != end_weights_[ iist ] ) {
-			ramping_funcs_for_weights_[ iist ] = utility::pointer::shared_ptr<const class protocols::moves::RampingFunc>( new LinearFunc );
+			ramping_funcs_for_weights_[ iist ] = protocols::moves::RampingFuncCOP( new LinearFunc );
 		}
 	}
 }

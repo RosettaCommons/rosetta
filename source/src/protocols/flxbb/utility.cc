@@ -116,7 +116,7 @@ constraints_sheet( Pose const & pose, BluePrintOP const & blueprint, Real const 
 			TR << iaa << ' ' << jaa << std::endl;
 			core::id::AtomID atom1( pose.residue_type( iaa ).atom_index( "CA" ), iaa );
 			core::id::AtomID atom2( pose.residue_type( jaa ).atom_index( "CA" ), jaa );
-			csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new AtomPairConstraint( atom1, atom2, cstfunc ) ) );
+			csts.push_back( core::scoring::constraints::ConstraintOP( new AtomPairConstraint( atom1, atom2, cstfunc ) ) );
 			//flo sep '12: constrain dihedral, might be more accurate
 			if( basic::options::option[ basic::options::OptionKeys::flxbb::constraints_sheet_include_cacb_pseudotorsion ].value() ){
 				core::id::AtomID resi_n( pose.residue_type( iaa ).atom_index( "N" ), iaa );
@@ -125,20 +125,20 @@ constraints_sheet( Pose const & pose, BluePrintOP const & blueprint, Real const 
         core::id::AtomID resj_n( pose.residue_type( jaa ).atom_index( "N" ), jaa );
         core::id::AtomID resj_c( pose.residue_type( jaa ).atom_index( "C" ), jaa );
         core::id::AtomID resj_o( pose.residue_type( jaa ).atom_index( "O" ), jaa );
-				csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::DihedralConstraint( resi_o, resi_n, resi_c, resj_c, bb_dihedral_func ) ) );
-				csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::DihedralConstraint( resj_o, resj_n, resj_c, resi_c, bb_dihedral_func ) ) );
+				csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::DihedralConstraint( resi_o, resi_n, resi_c, resj_c, bb_dihedral_func ) ) );
+				csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::DihedralConstraint( resj_o, resj_n, resj_c, resi_c, bb_dihedral_func ) ) );
 				if( spair.orient() == 'P' ){
-					csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::AngleConstraint( resi_n, resi_c, resj_c, bb_angle_func ) ) );
-					csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::AngleConstraint( resj_n, resj_c, resi_c, bb_angle_func ) ) );
+					csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AngleConstraint( resi_n, resi_c, resj_c, bb_angle_func ) ) );
+					csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AngleConstraint( resj_n, resj_c, resi_c, bb_angle_func ) ) );
 				}
 				else if( spair.orient() == 'A' ){
-          csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::AngleConstraint( resi_n, resi_c, resj_n, bb_angle_func ) ) );
-          csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::AngleConstraint( resj_n, resj_c, resi_n, bb_angle_func ) ) );
+          csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AngleConstraint( resi_n, resi_c, resj_n, bb_angle_func ) ) );
+          csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::AngleConstraint( resj_n, resj_c, resi_n, bb_angle_func ) ) );
 				}
 				if( (pose.residue_type( iaa ).name3() == "GLY") || (pose.residue_type( jaa ).name3() == "GLY" ) ) continue; // don't bother restraining cacb dihedral with gly
 				core::id::AtomID resi_cb( pose.residue_type( iaa ).atom_index( "CB" ), iaa );
       	core::id::AtomID resj_cb( pose.residue_type( jaa ).atom_index( "CB" ), jaa );
-				csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new core::scoring::constraints::DihedralConstraint( resi_cb, atom1, atom2, resj_cb, cacb_dihedral_func ) ) );
+				csts.push_back( core::scoring::constraints::ConstraintOP( new core::scoring::constraints::DihedralConstraint( resi_cb, atom1, atom2, resj_cb, cacb_dihedral_func ) ) );
 			}
 			// flo sep '12 over
 		} // for( Size i=1 )
@@ -173,7 +173,7 @@ constraints_NtoC( Pose const & pose, Real const coef, Real const condist )
   Size nres( pose.total_residue() );
 	core::id::AtomID atom1( pose.residue_type( 1 ).atom_index( "CA" ), 1 );
 	core::id::AtomID atom2( pose.residue_type( nres ).atom_index( "CA" ), nres );
-	csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new AtomPairConstraint( atom1, atom2, cstfunc ) ) );
+	csts.push_back( core::scoring::constraints::ConstraintOP( new AtomPairConstraint( atom1, atom2, cstfunc ) ) );
 
 	TR << "Constraints between N- and C- terminal: 1-" << nres << ", dist=" << condist << ", coef=" << coef << std::endl;
 
@@ -244,7 +244,7 @@ constraints_sheet( Pose const & pose, Real const coef, Real const condist )
 						TR << iresid << ' ' << jresid << std::endl;
 						core::id::AtomID atom1( pose.residue_type( iresid ).atom_index( "CA" ), iresid );
 						core::id::AtomID atom2( pose.residue_type( jresid ).atom_index( "CA" ), jresid );
-						csts.push_back( utility::pointer::shared_ptr<class core::scoring::constraints::Constraint>( new AtomPairConstraint( atom1, atom2, cstfunc ) ) );
+						csts.push_back( core::scoring::constraints::ConstraintOP( new AtomPairConstraint( atom1, atom2, cstfunc ) ) );
 					}
 
 				}// jresid

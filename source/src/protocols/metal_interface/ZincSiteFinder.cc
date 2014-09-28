@@ -83,7 +83,7 @@ ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 	if(zinc_res_ > 0 && zinc_res_ <= pose_length) {
 		std::string name3 = pose.residue(zinc_res_).name3();
 		assert( name3 == " ZN" || name3 == "ZN " || name3 == "ZN" || name3 == "ZNX" || name3 == "HIZ");
-		msr_.push_back( utility::pointer::shared_ptr<class protocols::metal_interface::MetalSiteResidue>( new protocols::metal_interface::MetalSiteResidue ) );
+		msr_.push_back( protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ) );
 		index++;
 		zinc = pose.residue(zinc_res_).atom(1).xyz();
 		msr_[1]->set_seqpos( zinc_res_ );
@@ -97,7 +97,7 @@ ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 		for ( Size i(1); i <= pose_length; ++i ) {
 			std::string name3 = pose.residue(i).name3();
 			if ( name3 == " ZN" || name3 == "ZN " || name3 == "ZN" || name3 == "ZNX" ) {
-				msr_.push_back( utility::pointer::shared_ptr<class protocols::metal_interface::MetalSiteResidue>( new protocols::metal_interface::MetalSiteResidue ) );
+				msr_.push_back( protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ) );
 				index++;
 				zinc = pose.residue(i).atom(1).xyz();
 				msr_[1]->set_seqpos( i );
@@ -109,7 +109,7 @@ ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 			}
 			//HIZ contains a histidine + zinc, I used this as the transition state in RosettaMatch
 			else if ( pose.residue(i).name3() == "HIZ" ) {
-				msr_.push_back( utility::pointer::shared_ptr<class protocols::metal_interface::MetalSiteResidue>( new protocols::metal_interface::MetalSiteResidue ) );
+				msr_.push_back( protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ) );
 				index++;
 				zinc = pose.residue(i).atom(5).xyz(); //ZN1 is atom 5 of the HIZ residue
 				msr_[1]->set_seqpos( i );
@@ -129,7 +129,7 @@ ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 			point p = pose.residue(i).atom(" SG ").xyz();
 			Real dist = zinc.distance( p );
 			if ( dist * dist < 9.0 ) {
-				msr_.push_back( utility::pointer::shared_ptr<class protocols::metal_interface::MetalSiteResidue>( new protocols::metal_interface::MetalSiteResidue ) );
+				msr_.push_back( protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ) );
 				++index;
 				msr_[index]->set_resname("CYS");
 				msr_[index]->set_seqpos( i );
@@ -150,7 +150,7 @@ ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 				point p = pose.residue(i).atom(" ND1").xyz();
 				Real dist = zinc.distance( p );
 				if ( dist * dist < 9.0 ) {
-					msr_.push_back( utility::pointer::shared_ptr<class protocols::metal_interface::MetalSiteResidue>( new protocols::metal_interface::MetalSiteResidue ) );
+					msr_.push_back( protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ) );
 					++index;
 					msr_[index]->set_resname("HIS");
 					msr_[index]->set_seqpos( i );
@@ -167,7 +167,7 @@ ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 				point p = pose.residue(i).atom(" NE2").xyz();
 				Real dist = zinc.distance( p );
 				if ( dist * dist < 9.0 ) {
-					msr_.push_back( utility::pointer::shared_ptr<class protocols::metal_interface::MetalSiteResidue>( new protocols::metal_interface::MetalSiteResidue ) );
+					msr_.push_back( protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ) );
 					++index;
 					msr_[index]->set_resname("HIS");
 					msr_[index]->set_seqpos( i );
@@ -189,7 +189,7 @@ ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 				point p = pose.residue(i).atom(" OD1").xyz();
 				Real dist = zinc.distance( p );
 				if ( dist * dist < 9.0 ) {
-					msr_.push_back( utility::pointer::shared_ptr<class protocols::metal_interface::MetalSiteResidue>( new protocols::metal_interface::MetalSiteResidue ) );
+					msr_.push_back( protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ) );
 					++index;
 					msr_[index]->set_resname("ASP");
 					msr_[index]->set_seqpos( i );
@@ -206,7 +206,7 @@ ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 				point p = pose.residue(i).atom(" OD2").xyz();
 				Real dist = zinc.distance( p );
 				if ( dist * dist < 9.0 ) {
-					msr_.push_back( utility::pointer::shared_ptr<class protocols::metal_interface::MetalSiteResidue>( new protocols::metal_interface::MetalSiteResidue ) );
+					msr_.push_back( protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ) );
 					++index;
 					msr_[index]->set_resname("ASP");
 					msr_[index]->set_seqpos( i );
@@ -226,7 +226,7 @@ ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 				point p = pose.residue(i).atom(" OE1").xyz();
 				Real dist = zinc.distance( p );
 				if ( dist * dist < 9.0 ) {
-					msr_.push_back( utility::pointer::shared_ptr<class protocols::metal_interface::MetalSiteResidue>( new protocols::metal_interface::MetalSiteResidue ) );
+					msr_.push_back( protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ) );
 					++index;
 					msr_[index]->set_resname("GLU");
 					msr_[index]->set_seqpos( i );
@@ -243,7 +243,7 @@ ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 				point p = pose.residue(i).atom(" OE2").xyz();
 				Real dist = zinc.distance( p );
 				if ( dist * dist < 9.0 ) {
-					msr_.push_back( utility::pointer::shared_ptr<class protocols::metal_interface::MetalSiteResidue>( new protocols::metal_interface::MetalSiteResidue ) );
+					msr_.push_back( protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ) );
 					++index;
 					msr_[index]->set_resname("GLU");
 					msr_[index]->set_seqpos( i );

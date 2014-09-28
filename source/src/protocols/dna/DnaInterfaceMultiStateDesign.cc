@@ -216,7 +216,7 @@ DnaInterfaceMultiStateDesign::initialize( Pose & pose )
 				if ( aaset.find( aa ) != aaset.end() ) continue;
 				aaset.insert(aa);
 				TR(t_debug) << "adding choice " << aa << std::endl;
-				choices.push_back( utility::pointer::shared_ptr<class protocols::genetic_algorithm::EntityElement>( new PosType( i, aa ) ) );
+				choices.push_back( protocols::genetic_algorithm::EntityElementOP( new PosType( i, aa ) ) );
 			}
 			rand->append_choices( choices );
 		}

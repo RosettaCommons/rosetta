@@ -95,7 +95,7 @@ class AtomTypeDatabaseIOTests : public CxxTest::TestSuite {
 		// create atom type sets from the rosetta_database
 		vector1<AtomTypeSetOP> atss;  // "Atom Type SetS"
 		foreach(string ats_directory, ats_directories){
-			atss.push_back(utility::pointer::shared_ptr<class core::chemical::AtomTypeSet>( new AtomTypeSet(ats_directory) ));
+			atss.push_back(AtomTypeSetOP( new AtomTypeSet(ats_directory) ));
 		}
 
 		// save atom type set to ats_test_database.db3
@@ -107,7 +107,7 @@ class AtomTypeDatabaseIOTests : public CxxTest::TestSuite {
 		vector1<AtomTypeSetOP> atss_from_db;
 		foreach(AtomTypeSetOP ats, atss){
 			string const & ats_name(ats->name());
-			atss_from_db.push_back(utility::pointer::shared_ptr<class core::chemical::AtomTypeSet>( new AtomTypeSet(ats_name, db_session_) ));
+			atss_from_db.push_back(AtomTypeSetOP( new AtomTypeSet(ats_name, db_session_) ));
 		}
 
 		// test that the atom type set has been preserved after reading

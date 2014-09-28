@@ -331,7 +331,7 @@ ProteinInterfaceMultiStateDesignMover::initialize( Pose & pose )
 				if ( aaset.find( aa ) != aaset.end() ) continue;
 				aaset.insert(aa);
 				TR(t_debug) << "adding choice " << aa << std::endl;
-				choices.push_back( utility::pointer::shared_ptr<class protocols::genetic_algorithm::EntityElement>( new PosType( i, aa ) ) );
+				choices.push_back( protocols::genetic_algorithm::EntityElementOP( new PosType( i, aa ) ) );
 			}
 			rand->append_choices( choices );
 		}
@@ -378,7 +378,7 @@ ProteinInterfaceMultiStateDesignMover::initialize( Pose & pose )
 			for ( vector1<Size>::const_iterator i( design_positions.begin() ),
 						end( design_positions.end() ); i != end; ++i ) {
 				PosType pt( *i, (*s)->pose().residue_type(*i).aa() );
-				traits.push_back( utility::pointer::shared_ptr<class protocols::genetic_algorithm::EntityElement>( new PosType( pt ) ));
+				traits.push_back( protocols::genetic_algorithm::EntityElementOP( new PosType( pt ) ));
 				TR(t_info) << pt.to_string() << " ";
 			}
 			gen_alg_->add_entity( traits );
@@ -568,7 +568,7 @@ void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
 		core::pose::PoseOP new_pose( new core::pose::Pose );
 		state_poses_.push_back( new_pose );
 		core::import_pose::pose_from_pdb( *new_pose, fname );
-		saved_state_poses_.push_back( utility::pointer::shared_ptr<class core::pose::Pose>( new core::pose::Pose( *new_pose ) ) ); //deep copying new pose so that its saved throughout the run
+		saved_state_poses_.push_back( core::pose::PoseOP( new core::pose::Pose( *new_pose ) ) ); //deep copying new pose so that its saved throughout the run
 		state_unbound_.push_back( unbound );
 		state_unfolded_.push_back( unfolded );
 

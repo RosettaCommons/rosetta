@@ -153,16 +153,16 @@ MembraneTopologyClaimer::generate_claims( claims::DofClaims& dof_claims )
 	{
 		if(static_cast<int>(i) == pose.fold_tree().root())
 		{
-			dof_claims.push_back(utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::LegacyRootClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ));
-			dof_claims.push_back(utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::BBClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ));
+			dof_claims.push_back(claims::DofClaimOP( new claims::LegacyRootClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ));
+			dof_claims.push_back(claims::DofClaimOP( new claims::BBClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ));
 		}else if(pose.residue(i).is_virtual_residue() || pose.residue(i).name3() == "XXX" || pose.residue(i).name3() == "VRT")
 		{
-			dof_claims.push_back(utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::BBClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ));
+			dof_claims.push_back(claims::DofClaimOP( new claims::BBClaim(get_self_weak_ptr(),i,claims::DofClaim::CAN_INIT) ));
 		}
 	}
 	for(Size jump_num = 1; jump_num <= pose.fold_tree().num_jump(); ++jump_num)
 	{
-		dof_claims.push_back(utility::pointer::shared_ptr<class protocols::topology_broker::claims::DofClaim>( new claims::JumpClaim(get_self_weak_ptr(),jump_array(1,jump_num),jump_array(2,jump_num),claims::DofClaim::CAN_INIT) ));
+		dof_claims.push_back(claims::DofClaimOP( new claims::JumpClaim(get_self_weak_ptr(),jump_array(1,jump_num),jump_array(2,jump_num),claims::DofClaim::CAN_INIT) ));
 	}
 }
 

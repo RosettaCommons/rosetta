@@ -199,7 +199,7 @@ sequence_tolerance_main( void * )
 				if ( aaset.find( aa ) != aaset.end() ) continue;
 				aaset.insert(aa);
 				TR(t_debug) << "adding choice " << aa << std::endl;
-				choices.push_back( utility::pointer::shared_ptr<class protocols::genetic_algorithm::EntityElement>( new PosType( i, aa ) ) );
+				choices.push_back( protocols::genetic_algorithm::EntityElementOP( new PosType( i, aa ) ) );
 			}
 			rand->append_choices( choices );
 		}
@@ -286,7 +286,7 @@ sequence_tolerance_main( void * )
 			for ( utility::vector1<Size>::const_iterator i( design_positions.begin() ),
 						end( design_positions.end() ); i != end; ++i ) {
 				PosType pt( *i, (*s)->pose().residue_type(*i).aa() );
-				traits.push_back( utility::pointer::shared_ptr<class protocols::genetic_algorithm::EntityElement>( new PosType( pt ) ) );
+				traits.push_back( protocols::genetic_algorithm::EntityElementOP( new PosType( pt ) ) );
 				TR(t_info) << pt.to_string() << " ";
 			}
 			ga.add_entity( traits );
