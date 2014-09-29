@@ -47,15 +47,17 @@ void wrap_access_pointer(std::string class_name)
 }
 
 
-// template< class T>
-// struct COP_to_Python_converter
-// {
-// 	static PyObject *convert( utility::pointer::owning_ptr< T const > const & o ) {
-// 		return  boost::python::incref(
-// 									  boost::python::object( new utility::pointer::owning_ptr< T > ( (T*)o.get() ) ).ptr()
-// 		);
-// 	}
-// };
+template< class T>
+struct COP_to_Python_converter
+{
+	// static PyObject *convert( utility::pointer::owning_ptr< T const > const & o ) {
+	// 	return  boost::python::incref( boost::python::object( new utility::pointer::owning_ptr< T > ( (T*)o.get() ) ).ptr() );
+	// }
+
+	static PyObject *convert( utility::pointer::shared_ptr< T const > const & o ) {
+		return boost::python::incref( boost::python::object( boost::const_pointer_cast< T >(o) ).ptr() );
+	}
+};
 
 
 /*

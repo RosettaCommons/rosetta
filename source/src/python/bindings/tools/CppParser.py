@@ -940,6 +940,10 @@ class CppClass:
             #     r += '  boost::python::implicitly_convertible< utility::pointer::owning_ptr< %(callback)s >\n' % D
             #     r += '                                       , utility::pointer::owning_ptr< %(context)s%(name)s > >();\n\n' % D
 
+
+            # Adding COP → OP conversion
+            r += '  boost::python::to_python_converter< utility::pointer::shared_ptr< %(context)s%(name)s const >, utility::COP_to_Python_converter< %(context)s%(name)s >, false >();\n\n' % D
+
             for i in convert_to:
                 r += '  boost::python::implicitly_convertible< ::boost::shared_ptr< %(context)s%(name)s >\n' % D
                 r += '                                       , ::boost::shared_ptr< %s > >();\n\n' % i

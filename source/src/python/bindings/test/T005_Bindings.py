@@ -18,22 +18,27 @@ print rosetta.version()
 
 print rosetta.protocols.toolbox.PyReturnValuePolicyTest_PoseOP()
 print rosetta.protocols.toolbox.PyReturnValuePolicyTest_PoseCOP()
-print rosetta.protocols.toolbox.PyReturnValuePolicyTest_PoseAP()
-print rosetta.protocols.toolbox.PyReturnValuePolicyTest_PoseCAP()
+# print rosetta.protocols.toolbox.PyReturnValuePolicyTest_PoseAP()
+# print rosetta.protocols.toolbox.PyReturnValuePolicyTest_PoseCAP()
 
 
 print rosetta.protocols.toolbox.PyReturnValuePolicyTest_ScoreFunctionOP()
+print 'rosetta.protocols.toolbox.PyReturnValuePolicyTest_ScoreFunctionOP() PASSED'
+
 print rosetta.protocols.toolbox.PyReturnValuePolicyTest_ScoreFunctionCOP()
+print 'rosetta.protocols.toolbox.PyReturnValuePolicyTest_ScoreFunctionCOP() PASSED'
+
 print rosetta.protocols.toolbox.PyReturnValuePolicyTest_ScoreFunctionCOP2()
+print 'rosetta.protocols.toolbox.PyReturnValuePolicyTest_ScoreFunctionCOP2() PASSED'
 
 
 print rosetta.protocols.toolbox.PyReturnValuePolicyTest_SF_ReplicaOP()
 print rosetta.protocols.toolbox.PyReturnValuePolicyTest_SF_ReplicaCOP()
-print rosetta.protocols.toolbox.PyReturnValuePolicyTest_SF_ReplicaAP()
-print rosetta.protocols.toolbox.PyReturnValuePolicyTest_SF_ReplicaCAP()
+# print rosetta.protocols.toolbox.PyReturnValuePolicyTest_SF_ReplicaAP()
+# print rosetta.protocols.toolbox.PyReturnValuePolicyTest_SF_ReplicaCAP()
 
 
 print rosetta.protocols.toolbox.PyReturnValuePolicyTest_DummyClassOP()
 print rosetta.protocols.toolbox.PyReturnValuePolicyTest_DummyClassCOP()
-print rosetta.protocols.toolbox.PyReturnValuePolicyTest_DummyClassAP()
-print rosetta.protocols.toolbox.PyReturnValuePolicyTest_DummyClassCAP()
+# print rosetta.protocols.toolbox.PyReturnValuePolicyTest_DummyClassAP()
+# print rosetta.protocols.toolbox.PyReturnValuePolicyTest_DummyClassCAP()
