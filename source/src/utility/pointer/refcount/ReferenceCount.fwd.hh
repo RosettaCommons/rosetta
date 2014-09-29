@@ -15,6 +15,8 @@
 #ifndef INCLUDED_utility_pointer_refcount_ReferenceCount_fwd_hh
 #define INCLUDED_utility_pointer_refcount_ReferenceCount_fwd_hh
 
+#ifdef PTR_REFCOUNT
+
 #include <utility/pointer/owning_ptr.hh>
 
 namespace utility {
@@ -30,5 +32,7 @@ typedef owning_ptr< ReferenceCount const > ReferenceCountCOP;
 } // namespace pointer
 } // namespace utility
 
+
+#endif // PTR_REFCOUNT
 
 #endif // INCLUDED_utility_pointer_refcount_ReferenceCount_FWD_HH

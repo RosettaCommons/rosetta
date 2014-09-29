@@ -20,12 +20,15 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
+//#include <boost/utility.hpp>
+
 #include <string>
 
 namespace utility {
 
+
 /// This class for holding callback function.
-class PyExitCallback : public utility::pointer::ReferenceCount
+class PyExitCallback : public utility::pointer::ReferenceCount //, boost::noncopyable
 {
 public:
 	virtual ~PyExitCallback() {}

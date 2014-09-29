@@ -31,12 +31,10 @@ void __protocols_by_hand_beginning__()
 	//boost::python::class_< protocols::loop_modeling::loggers::Logger, boost::noncopyable >( "__protocols_loop_modeling_loggers_Logger", boost::python::no_init );
 
     // Dummy bindings to simplify import orders
-	boost::python::class_< protocols::loop_modeling::LoopMover, utility::pointer::owning_ptr< protocols::loop_modeling::LoopMover >, boost::noncopyable >( "__protocols_loop_modeling_LoopMover");
+	boost::python::class_< protocols::loop_modeling::LoopMover, boost::noncopyable >( "__protocols_loop_modeling_LoopMover");
 
-	boost::python::class_< protocols::kinematic_closure::perturbers::Perturber, utility::pointer::owning_ptr< protocols::kinematic_closure::perturbers::Perturber >, boost::noncopyable >( "__protocols_kinematic_closure_perturbers_Perturber", boost::python::no_init);
+	boost::python::class_< protocols::kinematic_closure::perturbers::Perturber, boost::noncopyable >( "__protocols_kinematic_closure_perturbers_Perturber", boost::python::no_init);
 
-    typedef boost::python::class_< ::protocols::stepwise::options::StepWiseBasicOptions, boost::python::bases< ::basic::resource_manager::ResourceOptions >, ::utility::pointer::owning_ptr< ::protocols::stepwise::options::StepWiseBasicOptions >, boost::noncopyable > StepWiseBasicOptions_exposer_type;
+    typedef boost::python::class_< ::protocols::stepwise::options::StepWiseBasicOptions, boost::python::bases< ::basic::resource_manager::ResourceOptions >, boost::noncopyable > StepWiseBasicOptions_exposer_type;
     StepWiseBasicOptions_exposer_type StepWiseBasicOptions_exposer("StepWiseBasicOptions", "protocols/stepwise/options/StepWiseBasicOptions.hh:33", boost::python::init <  >() );
-
-
 }

@@ -11,8 +11,8 @@
 
 #include "core/conformation/Atom.hh"
 
-#include "core/coarse/Translator.hh"
-#include "core/coarse/CoarseEtable.hh"
+//#include "core/coarse/Translator.hh"
+//#include "core/coarse/CoarseEtable.hh"
 
 // for AP wrapping
 #include <core/pose/Pose.hh>
@@ -60,11 +60,11 @@ namespace bp = boost::python;
 
 
 
-#ifndef _MSC_VER
-	template< class T >  T * wrap_access_pointer_get_function( utility::pointer::access_ptr<T> rs ) {  return rs.get(); }
-#else
-	template< class T >  T * wrap_access_pointer_get_function( utility::pointer::access_ptr<T> const & rs ) {  return rs.get(); }
-#endif
+// #ifndef _MSC_VER
+// 	template< class T >  T * wrap_access_pointer_get_function( utility::pointer::access_ptr<T> rs ) {  return rs.get(); }
+// #else
+// 	template< class T >  T * wrap_access_pointer_get_function( utility::pointer::access_ptr<T> const & rs ) {  return rs.get(); }
+// #endif
 
 
 #ifdef PYROSETTA_NUMPY
@@ -222,12 +222,12 @@ struct array_scalar_converter
 #endif
 
 
-template< class T >
-T * getCAP( utility::pointer::access_ptr<T> rs ) {
-  T & rs_ref( *rs );
-  T * rs_ptr = &rs_ref;
-  return rs_ptr;
-}
+//template< class T >
+// T * getCAP( utility::pointer::access_ptr<T> rs ) {
+//   T & rs_ref( *rs );
+//   T * rs_ptr = &rs_ref;
+//   return rs_ptr;
+// }
 
 // std::pair ---------------------------------------------------------------------------------------------------
 //
@@ -600,27 +600,28 @@ void __core_by_hand_beginning__()
     // bp::class_< access_ptr< core::coarse::CoarseEtable const    > >("core___coarse___CoarseEtableCAP");
 
     using namespace core::chemical;
-    using namespace core::coarse;
+    //using namespace core::coarse;
 
-    // old code - only for compatibility with previous verisons - deprecated, will be removed in the future...
-    bp::def("utility___getCAP"
-         , (  ResidueTypeSet const * (*)( access_ptr<ResidueTypeSet const> )  )( & getCAP<ResidueTypeSet const> )
-         , bp::return_value_policy< bp::reference_existing_object >() );
-    bp::def("utility___getCAP"
-         , (  AtomTypeSet const * (*)( access_ptr<AtomTypeSet const> )  )( & getCAP<AtomTypeSet const> )
-         , bp::return_value_policy< bp::reference_existing_object >() );
-    bp::def("utility___getCAP"
-         , (  ResidueType const * (*)( access_ptr<ResidueType const> )  )( & getCAP<ResidueType const> )
-         , bp::return_value_policy< bp::reference_existing_object >() );
-    bp::def("utility___getCAP"
-         , (  MMAtomTypeSet const * (*)( access_ptr<MMAtomTypeSet const> )  )( & getCAP<MMAtomTypeSet const> )
-         , bp::return_value_policy< bp::reference_existing_object >() );
-    bp::def("utility___getCAP"
-         , (  Translator const * (*)( access_ptr<Translator const> )  )( & getCAP<Translator const> )
-         , bp::return_value_policy< bp::reference_existing_object >() );
-    bp::def("utility___getCAP"
-         , (  CoarseEtable const * (*)( access_ptr<CoarseEtable const> )  )( & getCAP<CoarseEtable const> )
-         , bp::return_value_policy< bp::reference_existing_object >() );
+    // // old code - only for compatibility with previous verisons - deprecated, will be removed in the future...
+    // bp::def("utility___getCAP"
+    //      , (  ResidueTypeSet const * (*)( access_ptr<ResidueTypeSet const> )  )( & getCAP<ResidueTypeSet const> )
+    //      , bp::return_value_policy< bp::reference_existing_object >() );
+    // bp::def("utility___getCAP"
+    //      , (  AtomTypeSet const * (*)( access_ptr<AtomTypeSet const> )  )( & getCAP<AtomTypeSet const> )
+    //      , bp::return_value_policy< bp::reference_existing_object >() );
+    // bp::def("utility___getCAP"
+    //      , (  ResidueType const * (*)( access_ptr<ResidueType const> )  )( & getCAP<ResidueType const> )
+    //      , bp::return_value_policy< bp::reference_existing_object >() );
+    // bp::def("utility___getCAP"
+    //      , (  MMAtomTypeSet const * (*)( access_ptr<MMAtomTypeSet const> )  )( & getCAP<MMAtomTypeSet const> )
+    //      , bp::return_value_policy< bp::reference_existing_object >() );
+    // bp::def("utility___getCAP"
+    //      , (  Translator const * (*)( access_ptr<Translator const> )  )( & getCAP<Translator const> )
+    //      , bp::return_value_policy< bp::reference_existing_object >() );
+    // bp::def("utility___getCAP"
+    //      , (  CoarseEtable const * (*)( access_ptr<CoarseEtable const> )  )( & getCAP<CoarseEtable const> )
+    //      , bp::return_value_policy< bp::reference_existing_object >() );
+
     /*
     //wrap_access_pointer<  >("AP");
     wrap_access_pointer< core::chemical::AtomTypeSet >("core_chemical_AtomTypeSet");

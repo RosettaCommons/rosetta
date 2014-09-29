@@ -39,31 +39,31 @@
 //// C++ headers
 #include <list>
 
-namespace protocols {
-namespace simple_filters {
+// namespace protocols {
+// namespace simple_filters {
 
-template< class T >
-class MinValueEvaluator : public evaluation::SingleValuePoseEvaluator<T> {
-public:
-  MinValueEvaluator( utility::pointer::owning_ptr< evaluation::SingleValuePoseEvaluator<T> const > eval_in ) :
-		evaluation::SingleValuePoseEvaluator< T > ( "min_"+eval_in->name() ),
-		evaluator_( eval_in ),
-		min_value_( 1000000 )
-  {};
+// template< class T >
+// class MinValueEvaluator : public evaluation::SingleValuePoseEvaluator<T> {
+// public:
+//   MinValueEvaluator( utility::pointer::owning_ptr< evaluation::SingleValuePoseEvaluator<T> const > eval_in ) :
+// 		evaluation::SingleValuePoseEvaluator< T > ( "min_"+eval_in->name() ),
+// 		evaluator_( eval_in ),
+// 		min_value_( 1000000 )
+//   {};
 
-  virtual
-  T apply( core::pose::Pose& pose ) const {
-    T val = evaluator_->apply( pose );
-    if ( min_value_ > val ) min_value_ = val;
-    return min_value_;
-  }
+//   virtual
+//   T apply( core::pose::Pose& pose ) const {
+//     T val = evaluator_->apply( pose );
+//     if ( min_value_ > val ) min_value_ = val;
+//     return min_value_;
+//   }
 
-private:
-  utility::pointer::owning_ptr< evaluation::SingleValuePoseEvaluator<T> const > evaluator_;
-  mutable T min_value_;
-};
+// private:
+//   utility::pointer::owning_ptr< evaluation::SingleValuePoseEvaluator<T> const > evaluator_;
+//   mutable T min_value_;
+// };
 
-}
-}
+// }
+// }
 
 #endif

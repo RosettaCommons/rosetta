@@ -19,12 +19,12 @@
 
 #include <core/chemical/orbitals/OrbitalTypeSet.hh>
 
-template< class T >
-T * getCAP( utility::pointer::access_ptr<T> rs ) {
-  T & rs_ref( *rs );
-  T * rs_ptr = &rs_ref;
-  return rs_ptr;
-}
+// template< class T >
+// T * getCAP( utility::pointer::access_ptr<T> rs ) {
+//   T & rs_ref( *rs );
+//   T * rs_ptr = &rs_ref;
+//   return rs_ptr;
+// }
 
 
 void __orbitals_by_hand_beginning__()

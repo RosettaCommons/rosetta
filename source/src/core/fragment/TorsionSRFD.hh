@@ -48,7 +48,7 @@ typedef std::pair < id::TorsionType, Size > TorsionInfo;
 typedef utility::vector1 < TorsionInfo > TorsionInfoList;
 
 class TorsionInfoSet;
-typedef utility::pointer::owning_ptr< TorsionInfoSet const > TorsionInfoSetCOP;
+	//typedef utility::pointer::owning_ptr< TorsionInfoSet const > TorsionInfoSetCOP;
 
 class TorsionInfoSet : public utility::pointer::ReferenceCount {
 public:

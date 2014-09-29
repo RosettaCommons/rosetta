@@ -36,8 +36,9 @@ def _logging_callback(logstring):
 
 def set_logging_handler():
     """Redirect all rosetta trace output through the logging.Logger 'rosetta'."""
-    global _logging_tracer
+    #global _logging_tracer
     _logging_tracer = rosetta.basic.PyTracer()
+    rosetta.utility.py_xinc_ref(_logging_tracer)
     _logging_tracer.output_callback = _logging_callback
 
     # Set the tracer hook, do not enable 'raw' in order to

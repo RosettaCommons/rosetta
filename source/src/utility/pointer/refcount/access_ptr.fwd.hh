@@ -15,6 +15,8 @@
 #ifndef INCLUDED_utility_pointer_refcount_access_ptr_fwd_hh
 #define INCLUDED_utility_pointer_refcount_access_ptr_fwd_hh
 
+#ifdef PTR_REFCOUNT
+
 
 // C++ headers
 #include <cstddef>
@@ -47,6 +49,9 @@ typedef  access_ptr< signed char >         access_ptr_schar;
 
 } // namespace pointer
 } // namespace utility
+
+
+#endif // PTR_REFCOUNT
 
 
 #endif // INCLUDED_utility_pointer_refcount_access_ptr_FWD_HH

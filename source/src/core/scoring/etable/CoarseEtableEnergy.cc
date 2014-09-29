@@ -24,7 +24,7 @@
 #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/ContextGraphTypes.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/coarse/CoarseEtable.hh>
+//#include <core/coarse/CoarseEtable.hh>
 
 // Project headers
 #include <core/conformation/Atom.hh>

@@ -24,10 +24,10 @@ namespace sequence {
 
 
 class CacheableSequenceProfile;
-typedef utility::pointer::owning_ptr< CacheableSequenceProfile > CacheableSequenceProfileOP;
-typedef utility::pointer::owning_ptr< CacheableSequenceProfile const > CacheableSequenceProfileCOP;
-typedef utility::pointer::access_ptr< CacheableSequenceProfile > CacheableSequenceProfileAP;
-typedef utility::pointer::access_ptr< CacheableSequenceProfile const > CacheableSequenceProfileCAP;
+// typedef utility::pointer::owning_ptr< CacheableSequenceProfile > CacheableSequenceProfileOP;
+// typedef utility::pointer::owning_ptr< CacheableSequenceProfile const > CacheableSequenceProfileCOP;
+// typedef utility::pointer::access_ptr< CacheableSequenceProfile > CacheableSequenceProfileAP;
+// typedef utility::pointer::access_ptr< CacheableSequenceProfile const > CacheableSequenceProfileCAP;
 
 
 } // namespace sequence

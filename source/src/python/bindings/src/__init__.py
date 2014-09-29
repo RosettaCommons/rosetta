@@ -232,11 +232,12 @@ class PyRosettaException(Exception):
 
 
 class PythonPyExitCallback(rosetta.utility.PyExitCallback):
+    def __init__(self):
+        rosetta.utility.PyExitCallback.__init__(self)
+
     def exit_callback(self):
         raise PyRosettaException()
 
-    def __init__(self):
-        rosetta.utility.PyExitCallback.__init__(self)
 
 
 ###############################################################################
@@ -307,10 +308,11 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=True):
 
     if config['basic']: logging_support.initialize_logging()
 
-    global _python_py_exit_callback
+    #global _python_py_exit_callback
     _python_py_exit_callback = PythonPyExitCallback()
-
+    rosetta.utility.py_xinc_ref(_python_py_exit_callback)
     rosetta.utility.PyExitCallback.set_PyExitCallBack(_python_py_exit_callback)
+    #rosetta.utility.set_pyexit_callback()
 
     if set_logging_handler: logging_support.set_logging_handler()
 

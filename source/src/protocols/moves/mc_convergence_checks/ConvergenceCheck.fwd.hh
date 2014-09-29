@@ -24,10 +24,10 @@ namespace protocols {
 namespace moves {
 namespace mc_convergence_checks {
 
-class ConvergenceCheck;
+// class ConvergenceCheck;
 
-typedef utility::pointer::owning_ptr< ConvergenceCheck > ConvergenceCheckOP;
-typedef utility::pointer::owning_ptr< ConvergenceCheck const > ConvergenceCheckCOP;
+// typedef utility::pointer::owning_ptr< ConvergenceCheck > ConvergenceCheckOP;
+// typedef utility::pointer::owning_ptr< ConvergenceCheck const > ConvergenceCheckCOP;
 
 }
 } // moves

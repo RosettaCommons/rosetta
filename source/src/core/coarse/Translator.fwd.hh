@@ -14,26 +14,25 @@
 #define INCLUDED_core_coarse_Translator_fwd_hh
 
 // Package headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/access_ptr.hh>
+// #include <utility/pointer/owning_ptr.hh>
+// #include <utility/pointer/access_ptr.hh>
 
 //Auto Headers
 
 
-namespace core {
-namespace coarse {
+// namespace core {
+// namespace coarse {
 
-class Translator;
-typedef utility::pointer::owning_ptr< Translator > TranslatorOP;
-typedef utility::pointer::owning_ptr< Translator const > TranslatorCOP;
-typedef utility::pointer::access_ptr< Translator const > TranslatorCAP;
+// class Translator;
+// typedef utility::pointer::owning_ptr< Translator > TranslatorOP;
+// typedef utility::pointer::owning_ptr< Translator const > TranslatorCOP;
+// typedef utility::pointer::access_ptr< Translator const > TranslatorCAP;
 
-class TranslatorSet;
-typedef utility::pointer::owning_ptr< TranslatorSet > TranslatorSetOP;
-typedef utility::pointer::owning_ptr< TranslatorSet const > TranslatorSetCOP;
+// class TranslatorSet;
+// typedef utility::pointer::owning_ptr< TranslatorSet > TranslatorSetOP;
+// typedef utility::pointer::owning_ptr< TranslatorSet const > TranslatorSetCOP;
 
-}
-}
+// }
+// }
 
 #endif
-

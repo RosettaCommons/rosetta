@@ -26,36 +26,37 @@
 namespace utility {
 
 /// @brief Function to create argument for Python subclassing
-template< class T > utility::pointer::access_ptr<T> PyAP( T & o) { return utility::pointer::access_ptr<T> ( & o ); }
+// template< class T > utility::pointer::access_ptr<T> PyAP( T & o) { return utility::pointer::access_ptr<T> ( & o ); }
 
 
-template< class T >  T * wrap_access_pointer_get_function( pointer::access_ptr<T> rs ) {  return rs.get(); }
+// template< class T >  T * wrap_access_pointer_get_function( pointer::access_ptr<T> rs ) {  return rs.get(); }
 
 template< class T >
 void wrap_access_pointer(std::string class_name)
 {
-    //boost::python::implicitly_convertible< utility::pointer::access_ptr< T >
-    //                                     , utility::pointer::access_ptr< T const > >();
+    // //boost::python::implicitly_convertible< utility::pointer::access_ptr< T >
+    // //                                     , utility::pointer::access_ptr< T const > >();
 
-    boost::python::class_< utility::pointer::access_ptr< T > >( std::string(class_name+"AP").c_str() )
-        .def("get", (  T * (*)( utility::pointer::access_ptr<T> )  )( & wrap_access_pointer_get_function<T> )
-             , boost::python::return_value_policy< boost::python::reference_existing_object >() );
+    // boost::python::class_< utility::pointer::access_ptr< T > >( std::string(class_name+"AP").c_str() )
+    //     .def("get", (  T * (*)( utility::pointer::access_ptr<T> )  )( & wrap_access_pointer_get_function<T> )
+    //          , boost::python::return_value_policy< boost::python::reference_existing_object >() );
 
-    boost::python::class_< utility::pointer::access_ptr< T const > >( std::string(class_name+"CAP").c_str() )
-        .def("get", (  T const * (*)( utility::pointer::access_ptr<T const > )  )( & wrap_access_pointer_get_function<T const> )
-             , boost::python::return_value_policy< boost::python::reference_existing_object >() );
+    // boost::python::class_< utility::pointer::access_ptr< T const > >( std::string(class_name+"CAP").c_str() )
+    //     .def("get", (  T const * (*)( utility::pointer::access_ptr<T const > )  )( & wrap_access_pointer_get_function<T const> )
+    //          , boost::python::return_value_policy< boost::python::reference_existing_object >() );
 }
 
 
-template< class T>
-struct COP_to_Python_converter
-{
-	static PyObject *convert( utility::pointer::owning_ptr< T const > const & o ) {
-		return  boost::python::incref(
-									  boost::python::object( new utility::pointer::owning_ptr< T > ( (T*)o.get() ) ).ptr()
-		);
-	}
-};
+// template< class T>
+// struct COP_to_Python_converter
+// {
+// 	static PyObject *convert( utility::pointer::owning_ptr< T const > const & o ) {
+// 		return  boost::python::incref(
+// 									  boost::python::object( new utility::pointer::owning_ptr< T > ( (T*)o.get() ) ).ptr()
+// 		);
+// 	}
+// };
+
 
 /*
 // COP_OP_convertor
@@ -69,6 +70,3 @@ operator utility::pointer::access_ptr< T > (utility::pointer::access_ptr< T cons
 } // namespace utility
 
 #endif // INCLUDED_utility_PyHelper_hh
-
-
-

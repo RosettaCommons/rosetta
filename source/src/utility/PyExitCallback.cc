@@ -36,7 +36,6 @@ void PyExitCallback::exit_callback()
 	throw "PyRosetta Exception!";
 }
 
-
 void PyExitCallback::set_PyExitCallBack(PyExitCallbackOP exit_callback_object)
 {
 	current_callback_object() = exit_callback_object;

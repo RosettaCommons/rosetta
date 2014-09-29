@@ -36,19 +36,19 @@ namespace bp = boost::python;
 
 void __scoring_by_hand_beginning__()
 {
-    bp::def("create_score_function", create_scoring_function);
-    bp::def("create_score_function_ws_patch", create_scoring_function_ws_patch);
+    // bp::def("create_score_function", create_scoring_function);
+    // bp::def("create_score_function_ws_patch", create_scoring_function_ws_patch);
 
 
-    bp::implicitly_convertible< core::scoring::ScoreFunction const &, core::scoring::ScoreFunctionInfo >();
+    // bp::implicitly_convertible< core::scoring::ScoreFunction const &, core::scoring::ScoreFunctionInfo >();
 
-    bp::implicitly_convertible< utility::pointer::owning_ptr< ::core::scoring::ScoreFunction >
-                              , utility::pointer::owning_ptr< ::core::scoring::ScoreFunction const > >();
-    bp::implicitly_convertible< utility::pointer::owning_ptr< ::core::scoring::NeighborList >
-                              , utility::pointer::owning_ptr< ::core::scoring::NeighborList const > >();
-    bp::implicitly_convertible< utility::pointer::owning_ptr< ::core::scoring::ScoreFunctionInfo >
-                              , utility::pointer::owning_ptr< ::core::scoring::ScoreFunctionInfo const > >();
-    bp::implicitly_convertible< utility::pointer::owning_ptr< ::core::scoring::SecondaryStructureWeights >
-                              , utility::pointer::owning_ptr< ::core::scoring::SecondaryStructureWeights const > >();
+    // bp::implicitly_convertible< utility::pointer::owning_ptr< ::core::scoring::ScoreFunction >
+    //                           , utility::pointer::owning_ptr< ::core::scoring::ScoreFunction const > >();
+    // bp::implicitly_convertible< utility::pointer::owning_ptr< ::core::scoring::NeighborList >
+    //                           , utility::pointer::owning_ptr< ::core::scoring::NeighborList const > >();
+    // bp::implicitly_convertible< utility::pointer::owning_ptr< ::core::scoring::ScoreFunctionInfo >
+    //                           , utility::pointer::owning_ptr< ::core::scoring::ScoreFunctionInfo const > >();
+    // bp::implicitly_convertible< utility::pointer::owning_ptr< ::core::scoring::SecondaryStructureWeights >
+    //                           , utility::pointer::owning_ptr< ::core::scoring::SecondaryStructureWeights const > >();
 
 }

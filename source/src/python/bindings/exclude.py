@@ -55,9 +55,13 @@ BannedFiles = [
 
     # 'protocols/features/RotamerFeatures.hh',  # array with negative size
 
+    # Temporary, remove after transition to SP
+    'utility/query', 'core/coarse',
+
 
     'utility/PyHelper.hh', 'utility/keys', 'utility/options', 'utility/options/keys',
-    'utility/pointer', 'utility/pointer/boost', 'utility/pointer/std', #'utility/pointer/refcount',
+    #'utility/pointer', 'utility/pointer/boost', 'utility/pointer/std',
+    #'utility/pointer/std', 'utility/pointer/refcount',
     'basic/options/keys', 'utility/exit.hh',
     'numeric/xyzVector.hh',
 

@@ -16,13 +16,12 @@ namespace protocols {
 namespace loop_modeling {
 namespace openers {
 
-class NullOpener;
-typedef utility::pointer::owning_ptr<NullOpener> NullOpenerOP;
-typedef utility::pointer::owning_ptr<NullOpener const> NullOpenerCOP;
+// class NullOpener;
+// typedef utility::pointer::owning_ptr<NullOpener> NullOpenerOP;
+// typedef utility::pointer::owning_ptr<NullOpener const> NullOpenerCOP;
 
 }
 }
 }
 
 #endif
-

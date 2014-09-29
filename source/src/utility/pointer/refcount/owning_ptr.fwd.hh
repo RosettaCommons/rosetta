@@ -15,6 +15,8 @@
 #ifndef INCLUDED_utility_pointer_refcount_owning_ptr_fwd_hh
 #define INCLUDED_utility_pointer_refcount_owning_ptr_fwd_hh
 
+#ifdef PTR_REFCOUNT
+
 
 namespace utility {
 namespace pointer {
@@ -31,5 +33,8 @@ template< typename T > class owning_ptr;
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/split_member.hpp>
 #endif
+
+#endif // PTR_REFCOUNT
+
 
 #endif // INCLUDED_utility_pointer_refcount_owning_ptr_FWD_HH

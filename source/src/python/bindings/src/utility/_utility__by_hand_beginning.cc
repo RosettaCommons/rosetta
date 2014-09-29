@@ -2,6 +2,7 @@
 #include "utility/vector1.hh"
 #include "utility/pointer/access_ptr.hh"
 
+#include <utility/excn/Exceptions.hh>
 #include <utility/stream_util.hh>
 #include "utility/exit.hh"
 
@@ -580,12 +581,12 @@ struct python_istream_wrapper
 
 
 
-template< class T >
-T * getCAP( utility::pointer::access_ptr<T> rs ) {
-  T & rs_ref( *rs );
-  T * rs_ptr = &rs_ref;
-  return rs_ptr;
-}
+// template< class T >
+// T * getCAP( utility::pointer::access_ptr<T> rs ) {
+//   T & rs_ref( *rs );
+//   T * rs_ptr = &rs_ref;
+//   return rs_ptr;
+// }
 
 // std::pair ---------------------------------------------------------------------------------------------------
 //
@@ -919,9 +920,11 @@ void expose_basic_type(std::string name)
 
 
 
+
 void pyexit_callback(void)
 {
-    throw "RosettaException";
+    //throw "RosettaException";
+	throw utility::excn::EXCN_Msg_Exception("PyExitCallbackException");
 }
 
 void set_pyexit_callback(void)
@@ -929,6 +932,8 @@ void set_pyexit_callback(void)
 	utility::set_main_exit_callback(pyexit_callback);
 }
 
+void py_xinc_ref(PyObject *o) { Py_XINCREF(o); };
+void py_xdec_ref(PyObject *o) { Py_XDECREF(o); };
 
 // Static int test for Windows DLL's
 static int __static_int_ = 42;
@@ -945,8 +950,13 @@ void __utility_by_hand_beginning__()
     bp::def("__static_string_test", __static_string_test);
 
     bp::def("set_pyexit_callback", set_pyexit_callback);
-    //bp::def("set_main_exit_callback", set_main_exit_callback);
-    bp::def("pyexit_callback", pyexit_callback);
+
+    bp::def("py_xinc_ref", py_xinc_ref);
+    bp::def("py_xdec_ref", py_xdec_ref);
+
+
+    // //bp::def("set_main_exit_callback", set_main_exit_callback);
+    // bp::def("pyexit_callback", pyexit_callback);
 
     //wrap_owning_pointer<core::pack::task::PackerTaskOP>("PackerTaskOP");
 

@@ -19,8 +19,8 @@
 
 #include <string>
 
-#include "utility/pointer/ReferenceCount.hh"
-#include "utility/pointer/owning_ptr.hh"
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace utility {
 namespace query {
@@ -67,4 +67,3 @@ struct ImplicitConverter : public Converter<T,N> {
 
 
 #endif
-

@@ -9,11 +9,13 @@
 
 /// @file   utility/pointer/std/ReferenceCount.hh
 /// @brief  Dummy base class
-/// @author 
+/// @author
 
 
 #ifndef INCLUDED_utility_pointer_std_ReferenceCount_hh
 #define INCLUDED_utility_pointer_std_ReferenceCount_hh
+
+#ifdef PTR_STD
 
 #include <platform/types.hh>
 
@@ -57,5 +59,6 @@ public: // Creation
 } // namespace pointer
 } // namespace utility
 
+#endif // PTR_STD
 
 #endif // INCLUDED_utility_pointer_std_ReferenceCount_HH

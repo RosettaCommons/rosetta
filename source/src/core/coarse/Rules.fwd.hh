@@ -15,23 +15,23 @@
 
 
 
-// Package headers
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/access_ptr.hh>
+// // Package headers
+// #include <utility/pointer/owning_ptr.hh>
+// #include <utility/pointer/access_ptr.hh>
 
-namespace core {
-	namespace coarse {
-	class Rule;
-typedef utility::pointer::owning_ptr< Rule > RuleOP;
-typedef utility::pointer::owning_ptr< Rule const > RuleCOP;
-typedef utility::pointer::access_ptr< Rule > RuleAP;
-typedef utility::pointer::access_ptr< Rule const > RuleCAP;
+// namespace core {
+// 	namespace coarse {
+// 	class Rule;
+// typedef utility::pointer::owning_ptr< Rule > RuleOP;
+// typedef utility::pointer::owning_ptr< Rule const > RuleCOP;
+// typedef utility::pointer::access_ptr< Rule > RuleAP;
+// typedef utility::pointer::access_ptr< Rule const > RuleCAP;
 
-	class RuleSet;
-	typedef utility::pointer::owning_ptr< RuleSet > RuleSetOP;
-	typedef utility::pointer::owning_ptr< RuleSet const > RuleSetCOP;
+// 	class RuleSet;
+// 	typedef utility::pointer::owning_ptr< RuleSet > RuleSetOP;
+// 	typedef utility::pointer::owning_ptr< RuleSet const > RuleSetCOP;
 
-	}
-}
+// 	}
+// }
 
 #endif

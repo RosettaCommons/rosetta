@@ -160,7 +160,7 @@ void __pose_by_hand_beginning__()
 
     //boost::python::class_<PosePyObserver, Wrapper_PosePyObserver, boost::noncopyable>( "PosePyObserver" )
     //boost::python::class_<Wrapper_PosePyObserver, boost::noncopyable>( "PosePyObserver" )
-	boost::python::class_<Wrapper_PosePyObserver, utility::pointer::owning_ptr<Wrapper_PosePyObserver>, boost::noncopyable>( "PosePyObserver" )
+	boost::python::class_<Wrapper_PosePyObserver, boost::noncopyable>( "PosePyObserver" )
  		.def("add_observer", &PosePyObserver::add_observer)
 		.def("remove_observer", &PosePyObserver::remove_observer)
 
@@ -169,7 +169,7 @@ void __pose_by_hand_beginning__()
 
     bp::def("QQQ_PosePyObserverTesterFunction", PosePyObserverTesterFunction);
 
-	boost::python::class_< basic::datacache::DataCache< core::pose::datacache::CacheableObserver >, utility::pointer::owning_ptr< basic::datacache::DataCache< core::pose::datacache::CacheableObserver > > >( "Py_basic_datacache_DataCache_CacheableObserver" );
+	boost::python::class_< basic::datacache::DataCache< core::pose::datacache::CacheableObserver > >( "Py_basic_datacache_DataCache_CacheableObserver" );
 
 	//boost::python::class_<Py_basic_datacache_DataCache_CacheableObserver, utility::pointer::owning_ptr<> >( "Py_basic_datacache_DataCache_CacheableObserver" );
 

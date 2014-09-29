@@ -25,6 +25,7 @@
 #ifndef INCLUDED_utility_pointer_refcount_owning_ptr_hh
 #define INCLUDED_utility_pointer_refcount_owning_ptr_hh
 
+#ifdef PTR_REFCOUNT
 
 // Unit headers
 #include <utility/pointer/owning_ptr.fwd.hh>
@@ -515,5 +516,6 @@ operator <<( std::basic_ostream< CharT, CharTraits > & os, owning_ptr< T > const
 } // namespace pointer
 } // namespace utility
 
+#endif // PTR_REFCOUNT
 
 #endif // INCLUDED_utility_pointer_refcount_owning_ptr_HH

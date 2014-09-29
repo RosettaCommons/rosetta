@@ -513,7 +513,7 @@ class CppFunction:
         #if (self.virtual and self.public and not self.const_overloaded) or  (self.constructor and self.public):  # for now we allow to overload only non-const functions in Python...
         if self.isCallbackStructNeeded() or  (self.constructor and self.public):  # for now we allow to overload only non-const functions in Python...
             def foo( (i, a) ):
-                if (not self.constructor) and a.type_.T()[-1] == '&': return 'utility::PyAP( __a%s )' % i
+                if (not self.constructor) and a.type_.T()[-1] == '&'  and False: return 'utility::PyAP( __a%s )' % i
                 else: return '__a%s' % i
 
             args = ', '.join( map(lambda (i, x): '__a%s' % i, enumerate(self.argsTypes)) )
@@ -886,6 +886,7 @@ class CppClass:
 
         bases = ''
         for b in self.bases:
+            #print b.type_.T()
             # Special cases...
             #if b.type_.T() == '::core::scoring::etable::BaseEtableEnergy<core::scoring::etable::EtableEnergy>': continue
             if b.type_.T() == self.isSelfInherit(): continue
@@ -895,16 +896,20 @@ class CppClass:
             if b.type_.T().startswith('::utility::vector'): continue
             if b.type_.T().startswith('::std::iterator'): continue
             if b.type_.T().startswith('::std::'): continue
+            if b.type_.T().startswith('::boost::enable_shared_from_this<'): continue
+            #print b.type_.T()
+
             bases += b.type_.T() + ', '
 
         if bases: r += ', boost::python::bases< %s >' % bases[:-2]
 
-        if self.isHeldTypeOP(): r+=  ', ::utility::pointer::owning_ptr< %s >' % heldTypeBase #(self.context, self.name)
+        #if self.isHeldTypeOP(): r+=  ', ::utility::pointer::shared_ptr< %s >' % heldTypeBase #(self.context, self.name)
+        r+=  ', ::boost::shared_ptr< %s >' % heldTypeBase  # now we want all objects to held in SP
         return r
 
 
     def markConstOverloaded(self):
-        ''' function.const_overloaded → True/False for all coonst member functions if the same non-const function present
+        ''' function.const_overloaded → True/False for all const member functions if the same non-const function present
         '''
         for f in self.functions:
             if f.const:
@@ -925,15 +930,23 @@ class CppClass:
             r += '\n'
 
             # Adding COP → OP conversion
-            r += '  boost::python::to_python_converter< utility::pointer::owning_ptr< %(context)s%(name)s const >, utility::COP_to_Python_converter< %(context)s%(name)s >, false >();\n\n' % D
+            # r += '  boost::python::to_python_converter< utility::pointer::owning_ptr< %(context)s%(name)s const >, utility::COP_to_Python_converter< %(context)s%(name)s >, false >();\n\n' % D
+
+            # for i in convert_to:
+            #     r += '  boost::python::implicitly_convertible< utility::pointer::owning_ptr< %(context)s%(name)s >\n' % D
+            #     r += '                                       , utility::pointer::owning_ptr< %s > >();\n\n' % i
+
+            # if use_callback_struct:
+            #     r += '  boost::python::implicitly_convertible< utility::pointer::owning_ptr< %(callback)s >\n' % D
+            #     r += '                                       , utility::pointer::owning_ptr< %(context)s%(name)s > >();\n\n' % D
 
             for i in convert_to:
-                r += '  boost::python::implicitly_convertible< utility::pointer::owning_ptr< %(context)s%(name)s >\n' % D
-                r += '                                       , utility::pointer::owning_ptr< %s > >();\n\n' % i
+                r += '  boost::python::implicitly_convertible< ::boost::shared_ptr< %(context)s%(name)s >\n' % D
+                r += '                                       , ::boost::shared_ptr< %s > >();\n\n' % i
 
             if use_callback_struct:
-                r += '  boost::python::implicitly_convertible< utility::pointer::owning_ptr< %(callback)s >\n' % D
-                r += '                                       , utility::pointer::owning_ptr< %(context)s%(name)s > >();\n\n' % D
+                r += '  boost::python::implicitly_convertible< ::boost::shared_ptr< %(callback)s >\n' % D
+                r += '                                       , ::boost::shared_ptr< %(context)s%(name)s > >();\n\n' % D
 
         return r
 
@@ -1010,8 +1023,7 @@ class CppClass:
 
         r += self.write_implicitly_convertible_code(use_callback_struct, D)
 
-        #r += '  utility::wrap_access_pointer< %(context)s%(name)s >("%(class_name)s");\n' % D
-        r += '  utility::wrap_access_pointer< %(context)s%(name)s >("%(mangled_class_name)s");\n' % D
+        #r += '  utility::wrap_access_pointer< %(context)s%(name)s >("%(mangled_class_name)s");\n' % D
 
         if use_callback_struct: r += '  boost::python::class_< %s, boost::noncopyable >("__CPP_%s__", "", boost::python::no_init);\n\n' % (self.getHeldType(), self.name)
 

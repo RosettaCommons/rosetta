@@ -15,6 +15,7 @@
 #ifndef INCLUDED_utility_pointer_std_access_ptr_hh
 #define INCLUDED_utility_pointer_std_access_ptr_hh
 
+#ifdef PTR_STD
 
 // Unit headers
 #include <utility/pointer/owning_ptr.hh>
@@ -66,5 +67,8 @@ equal( weak_ptr< T > & a,  U* const b )
 
 } // namespace pointer
 } // namespace utility
+
+#endif // PTR_STD
+
 
 #endif // INCLUDED_utility_pointer_std_access_ptr_HH

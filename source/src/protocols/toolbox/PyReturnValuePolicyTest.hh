@@ -22,98 +22,91 @@
 
 #include <core/types.hh>
 
-namespace protocols {
-namespace toolbox {
+// namespace protocols {
+// namespace toolbox {
 
-class DummyClass;
+// class DummyClass;
 
-typedef utility::pointer::owning_ptr< DummyClass > DummyClassOP;
-typedef utility::pointer::owning_ptr< DummyClass const > DummyClassCOP;
+// typedef utility::pointer::owning_ptr< DummyClass > DummyClassOP;
+// typedef utility::pointer::owning_ptr< DummyClass const > DummyClassCOP;
 
-typedef utility::pointer::access_ptr< DummyClass > DummyClassAP;
-typedef utility::pointer::access_ptr< DummyClass const > DummyClassCAP;
-
-
-class DummyClass : public utility::pointer::ReferenceCount {
-public:
-	DummyClass() {};
-	DummyClass(int) {};
-	~DummyClass() {};
-
-	DummyClass(DummyClass const &) {};
-
-	DummyClass & operator=( DummyClass const & ) { return *this; };
-
-	static DummyClass * create() { return new DummyClass(); };
-
-	virtual DummyClassOP clone() const { return new DummyClass(); };
-
-	void test() {};
-
-private:
-};
-
-inline DummyClassOP PyReturnValuePolicyTest_DummyClassOP(void) { return DummyClass::create(); };
-inline DummyClassCOP PyReturnValuePolicyTest_DummyClassCOP(void) { return DummyClass::create(); };
-inline DummyClassAP PyReturnValuePolicyTest_DummyClassAP(void)  { return DummyClass::create(); };
-inline DummyClassCAP PyReturnValuePolicyTest_DummyClassCAP(void)  { return DummyClass::create(); };
+// typedef utility::pointer::access_ptr< DummyClass > DummyClassAP;
+// typedef utility::pointer::access_ptr< DummyClass const > DummyClassCAP;
 
 
-class SF_Replica;
+// class DummyClass : public utility::pointer::ReferenceCount {
+// public:
+// 	DummyClass() {};
+// 	DummyClass(int) {};
+// 	~DummyClass() {};
 
-typedef utility::pointer::owning_ptr< SF_Replica > SF_ReplicaOP;
-typedef utility::pointer::owning_ptr< SF_Replica const > SF_ReplicaCOP;
+// 	DummyClass(DummyClass const &) {};
 
-typedef utility::pointer::access_ptr< SF_Replica > SF_ReplicaAP;
-typedef utility::pointer::access_ptr< SF_Replica const > SF_ReplicaCAP;
+// 	DummyClass & operator=( DummyClass const & ) { return *this; };
 
+// 	static DummyClass * create() { return new DummyClass(); };
 
-// SF_Replica
-class SF_Replica : public utility::pointer::ReferenceCount
-{
-public:
+// 	virtual DummyClassOP clone() const { return new DummyClass(); };
 
-	SF_Replica() {};
+// 	void test() {};
 
-	~SF_Replica() {};
+// private:
+// };
 
-	SF_Replica &
-	operator=( SF_Replica const & ) { return *this; };
-
-	SF_Replica( SF_Replica const & ) {};
-
-	virtual SF_ReplicaOP clone() const { return 0; };
-
-	virtual core::Real operator ()( core::pose::Pose & pose ) const { return 0.0; };
-
-	//core::Real operator []( ScoreType const & t ) const
-	//{ return weights_[ t ]; }
-
-	//void show( std::ostream & out ) const;
-
-private:
-	int some_private_int_;
-};
-
-inline SF_ReplicaOP PyReturnValuePolicyTest_SF_ReplicaOP(void) { return new SF_Replica; };
-inline SF_ReplicaCOP PyReturnValuePolicyTest_SF_ReplicaCOP(void) { return new SF_Replica; };
-inline SF_ReplicaAP PyReturnValuePolicyTest_SF_ReplicaAP(void)  { return new SF_Replica; };
-inline SF_ReplicaCAP PyReturnValuePolicyTest_SF_ReplicaCAP(void)  { return new SF_Replica; };
+// inline DummyClassOP PyReturnValuePolicyTest_DummyClassOP(void) { return DummyClass::create(); };
+// inline DummyClassCOP PyReturnValuePolicyTest_DummyClassCOP(void) { return DummyClass::create(); };
+// inline DummyClassAP PyReturnValuePolicyTest_DummyClassAP(void)  { return DummyClass::create(); };
+// inline DummyClassCAP PyReturnValuePolicyTest_DummyClassCAP(void)  { return DummyClass::create(); };
 
 
-inline core::pose::PoseOP PyReturnValuePolicyTest_PoseOP(void) { return new core::pose::Pose(); };
-inline core::pose::PoseCOP PyReturnValuePolicyTest_PoseCOP(void) { return new core::pose::Pose(); };
-inline core::pose::PoseAP PyReturnValuePolicyTest_PoseAP(void)  { return new core::pose::Pose(); };
-inline core::pose::PoseCAP PyReturnValuePolicyTest_PoseCAP(void)  { return new core::pose::Pose(); };
+// class SF_Replica;
 
-	inline core::scoring::ScoreFunctionOP PyReturnValuePolicyTest_ScoreFunctionOP(void) { return core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ); };
-	inline core::scoring::ScoreFunctionCOP PyReturnValuePolicyTest_ScoreFunctionCOP(void) { return core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ); };
-inline core::scoring::ScoreFunctionCOP PyReturnValuePolicyTest_ScoreFunctionCOP2(void) { return new core::scoring::ScoreFunction(); };
+// typedef utility::pointer::owning_ptr< SF_Replica > SF_ReplicaOP;
+// typedef utility::pointer::owning_ptr< SF_Replica const > SF_ReplicaCOP;
 
-//core::scoring::ScoreFunctionAP PyReturnValuePolicyTest_ScoreFunctionAP(void) { return core::scoring::get_score_function(); };
-//core::scoring::ScoreFunctionCAP PyReturnValuePolicyTest_ScoreFunctionCOP(void) { return core::scoring::get_score_function(); };
+// typedef utility::pointer::access_ptr< SF_Replica > SF_ReplicaAP;
+// typedef utility::pointer::access_ptr< SF_Replica const > SF_ReplicaCAP;
 
-} //toolbox
-} //protocols
+
+// // SF_Replica
+// class SF_Replica : public utility::pointer::ReferenceCount
+// {
+// public:
+
+// 	SF_Replica() {};
+
+// 	~SF_Replica() {};
+
+// 	SF_Replica &
+// 	operator=( SF_Replica const & ) { return *this; };
+
+// 	SF_Replica( SF_Replica const & ) {};
+
+// 	virtual SF_ReplicaOP clone() const { return 0; };
+
+// 	virtual core::Real operator ()( core::pose::Pose & pose ) const { return 0.0; };
+
+// private:
+// 	int some_private_int_;
+// };
+
+// inline SF_ReplicaOP PyReturnValuePolicyTest_SF_ReplicaOP(void) { return new SF_Replica; };
+// inline SF_ReplicaCOP PyReturnValuePolicyTest_SF_ReplicaCOP(void) { return new SF_Replica; };
+// inline SF_ReplicaAP PyReturnValuePolicyTest_SF_ReplicaAP(void)  { return new SF_Replica; };
+// inline SF_ReplicaCAP PyReturnValuePolicyTest_SF_ReplicaCAP(void)  { return new SF_Replica; };
+
+
+// inline core::pose::PoseOP PyReturnValuePolicyTest_PoseOP(void) { return new core::pose::Pose(); };
+// inline core::pose::PoseCOP PyReturnValuePolicyTest_PoseCOP(void) { return new core::pose::Pose(); };
+// inline core::pose::PoseAP PyReturnValuePolicyTest_PoseAP(void)  { return new core::pose::Pose(); };
+// inline core::pose::PoseCAP PyReturnValuePolicyTest_PoseCAP(void)  { return new core::pose::Pose(); };
+
+// inline core::scoring::ScoreFunctionOP PyReturnValuePolicyTest_ScoreFunctionOP(void) { return core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ); };
+// inline core::scoring::ScoreFunctionCOP PyReturnValuePolicyTest_ScoreFunctionCOP(void) { return core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ); };
+// inline core::scoring::ScoreFunctionCOP PyReturnValuePolicyTest_ScoreFunctionCOP2(void) { return new core::scoring::ScoreFunction(); };
+
+
+// } //toolbox
+// } //protocols
 
 #endif  // INCLUDED_protocols_toolbox_PyReturnValuePolicyTest_hh

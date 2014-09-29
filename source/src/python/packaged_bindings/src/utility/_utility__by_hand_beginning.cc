@@ -11,8 +11,8 @@
 
 #include "core/conformation/Atom.hh"
 
-#include "core/coarse/Translator.hh"
-#include "core/coarse/CoarseEtable.hh"
+//#include "core/coarse/Translator.hh"
+//#include "core/coarse/CoarseEtable.hh"
 
 // for AP wrapping
 #include <core/pose/Pose.hh>

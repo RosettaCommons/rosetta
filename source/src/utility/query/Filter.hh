@@ -17,10 +17,10 @@
 #ifndef INCLUDED_utility_query_Filter_HH
 #define INCLUDED_utility_query_Filter_HH
 
-#include "utility/query/types.hh"
+#include <utility/query/types.hh>
 
-#include "utility/pointer/owning_ptr.hh"
-#include "utility/pointer/ReferenceCount.hh"
+#include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 #include <iostream>
 #include <vector>
@@ -30,7 +30,6 @@
 namespace utility {
 namespace query {
 
-	using utility::pointer::owning_ptr;
 	using utility::pointer::ReferenceCount;
 
 
@@ -213,4 +212,3 @@ using namespace filter_operators;
 
 
 #endif
-

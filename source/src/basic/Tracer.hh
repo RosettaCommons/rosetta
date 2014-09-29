@@ -189,7 +189,7 @@ public:
 	/// @brief set ios hook for all tracer io operation.
 	/// @param monitoring_channels_list is space separated list of channels.
 	//static void set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list);
-	static void set_ios_hook( otstreamOP tr, std::string const & monitoring_channels_list, bool raw=true );
+	static void set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list, bool raw=true);
 
 	static std::string const & get_all_channels_string();  // PyRosetta helper function
 

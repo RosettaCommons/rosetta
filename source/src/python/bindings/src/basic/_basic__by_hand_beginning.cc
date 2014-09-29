@@ -8,6 +8,7 @@
 #include "boost/python.hpp"
 
 #include <basic/options/option.hh>
+//#include <basic/datacache/CacheableData.hh>
 
 #include <utility/keys/KeyLookup.hh>
 #include <utility/options/keys/BooleanOptionKey.hh>
@@ -81,4 +82,8 @@ void __basic_by_hand_beginning__()
 	bp::def("set_real_option",           &set_option< utility::vector1<platform::Real>,  utility::options::RealVectorOptionKey> );
 	bp::def("set_string_vector_option",  &set_option< utility::vector1<std::string>, utility::options::StringVectorOptionKey> );
 	bp::def("set_file_vector_option",    &set_option< utility::vector1<std::string>, utility::options::FileVectorOptionKey> );
+
+	// Dimmy imports to simplify monolith build imports logic
+	//typedef boost::python::class_< ::basic::datacache::DataCache<basic::datacache::CacheableData> > DataCache_T_basic_datacache_CacheableData_T_exposer_type;
+    //DataCache_T_basic_datacache_CacheableData_T_exposer_type DataCache_T_basic_datacache_CacheableData_T_exposer("__DataCache_T_basic_datacache_CacheableData_T", "Indexed storage for objects derived from a ReferenceCountable\n data type.\nIntended for use as a generic data cache by storing objects\n derived from a ReferenceCountable data type in a unique slot designated\n by an integer id (enum, size index, etc.). The DataCache will only store\n one object per slot/id.  For example, see the PoseDataCache used in\n core::pose::Pose, which is indexed by the enum basic::pose::datacache:CacheableDataType.\n Currently when data is set(), it is not cloned -- classes deriving from\n DataCache should remember to overload set() if they need cloning behavior.\n@tparam Data Class derived from utility::pointer::ReferenceCount that\n defines a virtual clone() method.\n", boost::python::init <  >() );
 }

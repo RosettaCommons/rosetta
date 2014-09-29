@@ -25,6 +25,8 @@
 #ifndef INCLUDED_utility_pointer_refcount_ReferenceCount_hh
 #define INCLUDED_utility_pointer_refcount_ReferenceCount_hh
 
+#ifdef PTR_REFCOUNT
+
 #include <platform/types.hh>
 
 // Unit headers
@@ -169,5 +171,7 @@ private: // Fields
 } // namespace pointer
 } // namespace utility
 
+
+#endif // PTR_REFCOUNT
 
 #endif // INCLUDED_utility_pointer_refcount_ReferenceCount_HH

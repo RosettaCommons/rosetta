@@ -25,7 +25,7 @@ namespace numeric {
 namespace kdtree {
 
 typedef WrappedPrimitive< char > WrappedChar;
-typedef utility::pointer::owning_ptr< WrappedChar > WrappedCharOP;
+	//typedef utility::pointer::owning_ptr< WrappedChar > WrappedCharOP;
 
 } // kdtree
 } // numeric

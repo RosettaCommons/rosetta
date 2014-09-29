@@ -25,6 +25,9 @@
 #define INCLUDED_utility_pointer_ReferenceCountMI__hh
 
 
+#ifdef PTR_REFCOUNT
+
+
 // Unit headers
 #include <utility/pointer/refcount/ReferenceCountMI.hh>
 
@@ -150,6 +153,8 @@ private: // Fields
 
 } // namespace pointer
 } // namespace utility
+
+#endif // PTR_REFCOUNT
 
 
 #endif // INCLUDED_utility_pointer_ReferenceCountMI__HH

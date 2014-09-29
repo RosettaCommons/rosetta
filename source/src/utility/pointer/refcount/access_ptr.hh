@@ -22,6 +22,8 @@
 #ifndef INCLUDED_utility_pointer_refcount_access_ptr_hh
 #define INCLUDED_utility_pointer_refcount_access_ptr_hh
 
+#ifdef PTR_REFCOUNT
+
 
 // Unit headers
 #include <utility/pointer/access_ptr.fwd.hh>
@@ -472,5 +474,6 @@ equal( access_ptr< T > & a,  U* const b )
 } // namespace pointer
 } // namespace utility
 
+#endif // PTR_REFCOUNT
 
 #endif // INCLUDED_utility_pointer_refcount_access_ptr_HH

@@ -19,6 +19,8 @@
 #ifndef INCLUDED_utility_pointer_refcount_owning_ptr_functions_hh
 #define INCLUDED_utility_pointer_refcount_owning_ptr_functions_hh
 
+#ifdef PTR_REFCOUNT
+
 
 namespace utility {
 namespace pointer {
@@ -47,5 +49,6 @@ owning_ptr_release( T * p )
 } // namespace pointer
 } // namespace utility
 
+#endif // PTR_REFCOUNT
 
 #endif // INCLUDED_utility_pointer_refcount_owning_ptr_functions_HH

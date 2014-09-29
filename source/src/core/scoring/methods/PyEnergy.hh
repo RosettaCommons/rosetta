@@ -26,6 +26,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
+/*
 template< class T > utility::pointer::access_ptr<T>         _AP( T & o)        { return utility::pointer::access_ptr<T>        ( & o ); }
 template< class T > utility::pointer::access_ptr<T const > _CAP( T const & o ) { return utility::pointer::access_ptr<T const > ( & o ); }
 
@@ -94,7 +95,7 @@ public:
     virtual void Py_indicate_required_context_graphs( utility::pointer::access_ptr<  utility::vector1< bool > > const & context_graphs_required ) const = 0;
 
 };
-
+*/
 
 }
 }

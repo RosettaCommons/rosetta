@@ -24,6 +24,9 @@
 #ifndef INCLUDED_utility_pointer_ReferenceCountMI_hh
 #define INCLUDED_utility_pointer_ReferenceCountMI_hh
 
+#ifdef PTR_REFCOUNT
+
+
 #include "platform/types.hh"
 
 // Unit headers
@@ -126,5 +129,6 @@ public: // Properties
 } // namespace pointer
 } // namespace utility
 
+#endif // PTR_REFCOUNT
 
 #endif // INCLUDED_utility_pointer_ReferenceCountMI_HH

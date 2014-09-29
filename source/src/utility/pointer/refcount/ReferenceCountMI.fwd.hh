@@ -16,6 +16,8 @@
 #define INCLUDED_utility_pointer_ReferenceCountMI_fwd_hh
 
 
+#ifdef PTR_REFCOUNT
+
 namespace utility {
 namespace pointer {
 
@@ -27,5 +29,6 @@ class ReferenceCountMI;
 } // namespace pointer
 } // namespace utility
 
+#endif // PTR_REFCOUNT
 
 #endif // INCLUDED_utility_pointer_ReferenceCountMI_FWD_HH

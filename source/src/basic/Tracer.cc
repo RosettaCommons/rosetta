@@ -612,11 +612,7 @@ T(std::string const & channel, TracerPriority priority)
 /// useful to get the non-raw output in applications like using the
 /// jd2 with MPI, where the output each job should match the output if
 /// it was run on a single processor.
-void Tracer::set_ios_hook(
-	otstreamOP tr,
-	std::string const & monitoring_channels_list,
-	bool raw
-)
+void Tracer::set_ios_hook(otstreamOP tr, std::string const & monitoring_channels_list, bool raw)
 {
 	ios_hook() = tr;
 	monitoring_list_ = utility::split(monitoring_channels_list);

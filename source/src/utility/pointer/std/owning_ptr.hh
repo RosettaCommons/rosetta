@@ -15,6 +15,8 @@
 #ifndef INCLUDED_utility_pointer_std_owning_ptr_hh
 #define INCLUDED_utility_pointer_std_owning_ptr_hh
 
+#ifdef PTR_STD
+
 #include <memory>
 
 namespace utility {
@@ -28,5 +30,8 @@ namespace pointer {
 
 }
 }
+
+#endif // PTR_STD
+
 
 #endif // INCLUDED_utility_pointer_std_owning_ptr_hh
