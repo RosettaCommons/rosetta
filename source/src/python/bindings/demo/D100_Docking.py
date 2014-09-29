@@ -99,6 +99,10 @@ init(extra_options = "-constant_seed")
 #    seed for more information)
 # some options can be set after initialization, please see PyRosetta.org FAQs
 #    for more information
+# WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+
+import os; os.chdir('.test.output')
+
 
 #########
 # Methods
@@ -317,7 +321,7 @@ protocol without the PyMOL_Observer.
 #    cycles/jobs to provide results quickly
 parser = optparse.OptionParser()
 parser.add_option('--pdb_filename', dest = 'pdb_filename',
-    default = 'test/data/test_dock.pdb',    # default example PDB
+    default = '../test/data/test_dock.pdb',    # default example PDB
     help = 'the PDB file containing the proteins to dock')
 # for more information on "partners", see sample_docking step 2.
 parser.add_option('--partners', dest = 'partners',
@@ -473,4 +477,3 @@ antibody docking           AntibodyModeler     no
 water placement            -                   tools, no direct protocol
 
 """
-

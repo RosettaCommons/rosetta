@@ -15,8 +15,11 @@ import rosetta
 T = rosetta.basic.PyTracer()
 rosetta.basic.Tracer.set_ios_hook(T, rosetta.basic.Tracer.get_all_channels_string(), False)
 
-rosetta.init()
-pose = rosetta.pose_from_pdb("test/data/test_in.pdb")
+rosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+import os; os.chdir('.test.output')
+
+
+pose = rosetta.pose_from_pdb("../test/data/test_in.pdb")
 
 print '\nCaptured IO:'
 print T.buf()

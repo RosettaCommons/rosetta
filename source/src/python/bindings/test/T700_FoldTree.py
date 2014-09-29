@@ -8,12 +8,12 @@
 ## @author Sergey Lyskov
 
 from rosetta import *
-rosetta.init()
-
+rosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+import os; os.chdir('.test.output')
 
 print 'Fold tree --------------------------------------------------'
 
-pose = pose_from_pdb("test/data/test_in.pdb")
+pose = pose_from_pdb("../test/data/test_in.pdb")
 
 
 #NEEDED: Fold tree, getting, printing, setting jumps and cuts

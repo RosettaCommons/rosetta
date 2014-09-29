@@ -7,7 +7,9 @@
 import random, math
 
 from rosetta import *
-init()
+
+init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+import os; os.chdir('.test.output')
 
 # constants
 PHI = 0
@@ -84,7 +86,7 @@ low_pose.dump_pdb("poly-A_low.pdb")
 
 
 # Low-Resolution (Centroid) Scoring
-ras = pose_from_pdb("test/data/workshops/6Q21.clean.pdb")
+ras = pose_from_pdb("../test/data/workshops/6Q21.clean.pdb")
 score2 = get_score_function()
 print score2(ras)
 print ras.residue(5)
@@ -102,7 +104,7 @@ print ras.residue(5)
 
 # Protein Fragments
 fragset = ConstantLengthFragSet(3)
-fragset.read_fragment_file("test/data/workshops/aat000_03_05.200_v1_3")
+fragset.read_fragment_file("../test/data/workshops/aat000_03_05.200_v1_3")
 
 movemap = MoveMap()
 movemap.set_bb(True)
@@ -114,4 +116,3 @@ for res in range(1, p.total_residue() + 1):
     pose.set_omega(res, 180)
 
 mover_3mer.apply(pose)
-

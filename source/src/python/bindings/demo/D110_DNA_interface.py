@@ -20,7 +20,7 @@ Instructions:
 1) ensure that your PDB file is in the current directory
 2) run the script:
     from commandline                        >python D110_DNA_interface.py
-    
+
     from within python/ipython              [1]: run D110_DNA_interface.py
 
 Author: Evan H. Baugh
@@ -33,7 +33,7 @@ Simplified special constant seed initialization ~ Labonte
 References:
     J. J. Gray, "High-resolution protein-protein docking," Curr. Opinions in
         Struct. Bio. 16 (2) 183-193 (2006).
-        
+
 """
 
 ################################################################################
@@ -63,7 +63,7 @@ The method sample_dna_interface:
         c. output the decoy structure
             -to PyMOL using the PyMOL_Observer.pymol.apply
             -to a PDB file using the PyJobDistributor.output_decoy
-            
+
 """
 
 import optparse    # for sorting options
@@ -79,6 +79,10 @@ init(extra_options = "-constant_seed")
 #    seed for more information)
 # some options can be set after initialization, please see PyRosetta.org FAQs
 #    for more information
+# WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+
+import os; os.chdir('.test.output')
+
 
 #########
 # Methods
@@ -91,7 +95,7 @@ def sample_dna_interface(pdb_filename, partners,
         <partners>  .
         <jobs>  trajectories are performed with output structures named
         <job_output>_(job#).pdb.
-        
+
     """
     # 1. creates a pose from the desired PDB file
     pose = Pose()
@@ -156,7 +160,7 @@ def sample_dna_interface(pdb_filename, partners,
     jd = PyJobDistributor( job_output , jobs , scorefxn )
 
     # 7. setup a PyMOL_Observer (optional)
-    # the PyMOL_Observer object owns a PyMOL_Mover and monitors pose objects for 
+    # the PyMOL_Observer object owns a PyMOL_Mover and monitors pose objects for
     #    structural changes, when changes are detected the new structure is
     #    sent to PyMOL
     # fortunately, this allows investigation of full protocols since
@@ -180,7 +184,7 @@ def sample_dna_interface(pdb_filename, partners,
         # -change the pose name, for pretty output to PyMOL
         counter += 1
         test_pose.pdb_info().name(job_output + '_' + str(counter))
-        
+
         # b. perform docking
         docking.apply(test_pose)
 
@@ -238,7 +242,7 @@ indicate the strength of the bonding interaction.
 #    cycles/jobs to provide results quickly
 parser = optparse.OptionParser()
 parser.add_option('--pdb_filename', dest = 'pdb_filename',
-    default = 'test/data/dna_test.pdb',    # default example PDB
+    default = '../test/data/dna_test.pdb',    # default example PDB
     help = 'the PDB file containing the DNA and protein to dock')
 # for more information on "partners", see sample_docking step 2.
 parser.add_option( '--partners', dest = 'partners',
@@ -476,4 +480,3 @@ antibody docking           AntibodyModeler     no
 water placement            -                   tools, no direct protocol
 
 """
-

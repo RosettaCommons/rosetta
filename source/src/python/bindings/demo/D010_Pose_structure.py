@@ -55,7 +55,8 @@ import optparse    # for option sorting
 from rosetta import *
 from rosetta.PyMolLink import *
 
-init()
+init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+import os; os.chdir('.test.output')
 
 def pose_structure(pose, display_residues = []):
     """
@@ -163,7 +164,7 @@ problems could be:
 #    cycles/jobs to provide results quickly
 parser = optparse.OptionParser()
 parser.add_option('--pdb_filename', dest = 'pdb_filename',
-    default = 'test/data/test_in.pdb',    # default example PDB
+    default = '../test/data/test_in.pdb',    # default example PDB
     help = 'the PDB file containing the loop to remodel')
 parser.add_option('--residues', dest = 'residues',
     default = '',    # default to the median residue number
@@ -211,4 +212,3 @@ PDB file:
 Methods for downloading and generically "cleaning" PDB files should accompany
 future PyRosetta releases.
 """
-

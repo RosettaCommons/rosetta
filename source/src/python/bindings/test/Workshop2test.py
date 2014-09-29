@@ -7,9 +7,12 @@ from math import *
 from rosetta import *
 from toolbox import *
 
-init()
 
-pose = pose_from_pdb("test/data/workshops/1YY8.clean.pdb")
+init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+import os; os.chdir('.test.output')
+
+
+pose = pose_from_pdb("../test/data/workshops/1YY8.clean.pdb")
 
 # Commenting out this for now to allow tests pass without net connection
 #pose2 = pose_from_rcsb("1YY8")

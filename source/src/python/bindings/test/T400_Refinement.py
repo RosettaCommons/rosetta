@@ -8,16 +8,17 @@
 ## @author Sergey Lyskov
 
 from rosetta import *
-rosetta.init()
 
+rosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+import os; os.chdir('.test.output')
 
 print 'Refinement ----------------------------------------------'
 
 kT=1.0
 n_moves=10
 
-pose = pose_from_pdb("test/data/test_fragments.pdb")
-pose_frag = pose_from_pdb("test/data/test_fragments.pdb")
+pose = pose_from_pdb("../test/data/test_fragments.pdb")
+pose_frag = pose_from_pdb("../test/data/test_fragments.pdb")
 
 
 print 'setting up a move map'
@@ -29,8 +30,8 @@ print 'outputting movemap'
 movemap.show(pose.total_residue())
 
 
-fragset3mer = ConstantLengthFragSet(3, "test/data/test3_fragments")# "aatestA03_05.200_v1_3")
-fragset9mer = ConstantLengthFragSet(9, "test/data/test9_fragments")# "aatestA09_05.200_v1_3")
+fragset3mer = ConstantLengthFragSet(3, "../test/data/test3_fragments")# "aatestA03_05.200_v1_3")
+fragset9mer = ConstantLengthFragSet(9, "../test/data/test9_fragments")# "aatestA09_05.200_v1_3")
 print 'mover: ClassicFragmentMover, 3mer'
 movemap.set_bb(1)
 mover_3mer = ClassicFragmentMover(fragset3mer,movemap)
@@ -108,4 +109,3 @@ trialmover.apply(pose)
 trialmover.num_accepts()
 trialmover.acceptance_rate()
 mc.show_state() # this should have breakdown by mover type now
-

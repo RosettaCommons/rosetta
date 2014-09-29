@@ -16,7 +16,9 @@ import rosetta.core.pose
 import rosetta.core.scoring
 import rosetta.core.scoring.methods
 
-rosetta.init()
+rosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+import os; os.chdir('.test.output')
+
 
 # Mover sub-classing -----------------------------------
 class My_New_Mover(rosetta.protocols.moves.Mover):
@@ -37,7 +39,7 @@ class My_New_Mover(rosetta.protocols.moves.Mover):
 
 new_mover = My_New_Mover()
 
-pose = rosetta.pose_from_pdb("test/data/test_in.pdb")
+pose = rosetta.pose_from_pdb("../test/data/test_in.pdb")
 sf_new = rosetta.core.scoring.ScoreFunction()
 
 seq = rosetta.protocols.moves.SequenceMover()

@@ -2,9 +2,12 @@
 # List of commands used in PyRosetts Workshop #5
 
 from rosetta import *
-init()
 
-start = pose_from_pdb("test/data/workshops/1YY8.clean.pdb")
+init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+import os; os.chdir('.test.output')
+
+
+start = pose_from_pdb("../test/data/workshops/1YY8.clean.pdb")
 test = Pose()
 test.assign(start)
 

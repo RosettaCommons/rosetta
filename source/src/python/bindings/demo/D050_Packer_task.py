@@ -66,7 +66,10 @@ import optparse    # for option sorting
 import rosetta.core.pack.task    # for using resfiles
 
 from rosetta import *
-init()
+
+init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+import os; os.chdir('.test.output')
+
 
 def packer_task(pose, PDB_out = False):
     """
@@ -315,7 +318,7 @@ indicating that the new rotamer has the lowest score of all available rotamers.
 # all defaults are for the example using "test_in.pdb"
 parser = optparse.OptionParser()
 parser.add_option('--pdb_filename', dest = 'pdb_filename',
-    default = 'test/data/test_in.pdb',    # default example PDB
+    default = '../test/data/test_in.pdb',    # default example PDB
     help = 'the PDB file containing the loop to remodel' )
 parser.add_option('--PDB_out', dest = 'PDB_out',
     default = '',    # default to False

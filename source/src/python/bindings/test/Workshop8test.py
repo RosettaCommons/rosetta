@@ -7,9 +7,10 @@ from rosetta.protocols.loops.loop_mover.refine import *
 from rosetta.protocols.loops.loop_mover.perturb import *
 from rosetta.protocols.loops.loop_closure.kinematic_closure import *
 
-init()
+init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+import os; os.chdir('.test.output')
 
-pose = pose_from_pdb("test/data/test_in.pdb")
+pose = pose_from_pdb("../test/data/test_in.pdb")
 
 # Fold Tree
 ft = FoldTree()
@@ -57,7 +58,7 @@ loops.add_loop(loop1)
 loops.add_loop(loop2)
 
 # Loop Building
-reference_pose = pose_from_pdb("test/data/test_in.pdb")
+reference_pose = pose_from_pdb("../test/data/test_in.pdb")
 score = get_score_function()
 
 import tempfile
@@ -95,7 +96,3 @@ sw_low.apply(pose)
 kic_mover = KinematicMover()
 kic_mover.set_pivots(16, 20, 24)
 kic_mover.apply(pose)
-
-
-
-

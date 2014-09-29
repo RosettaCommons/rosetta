@@ -27,6 +27,9 @@ tests = dict(
     release   = NT(command='./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}', incremental=True),
     static    = NT(command='./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}', incremental=True),
 
+    ninja_debug   = NT(command='./ninja_build.py debug -remake -j{jobs}', incremental=True),
+    ninja_release = NT(command='./ninja_build.py release -remake -j{jobs}', incremental=True),
+
     PyRosetta = NT(command='BuildPyRosetta.sh -u --monolith -j{jobs}', incremental=True),
 
     header    = NT(command='cd src && python ./../../../tools/python_cc_reader/test_all_headers_compile_w_fork.py -n {jobs}', incremental=False),

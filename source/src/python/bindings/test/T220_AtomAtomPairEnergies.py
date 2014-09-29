@@ -5,9 +5,10 @@ import sys
 import rosetta
 from rosetta import *
 
+init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+import os; os.chdir('.test.output')
 
-rosetta.init()
-test_pose = pose_from_pdb('test/data/test_dock.pdb')
+test_pose = pose_from_pdb('../test/data/test_dock.pdb')
 residue_1 = test_pose.residue(275)
 residue_2 = test_pose.residue(55)
 
@@ -53,4 +54,3 @@ if ( abs(emap[fa_atr] - atr_total) +
     sys.exit(1)
 else:
     print 'Score did match, yay...'
-

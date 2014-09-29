@@ -59,8 +59,8 @@ rosetta.init()
 
 pose = rosetta.Pose();  pose.name = 'CustomNamedPose'
 pose_s = rosetta.Pose()
-rosetta.pose_from_pdb(pose, "test/data/test_in.pdb")
-rosetta.pose_from_pdb(pose_s, "test/data/test_in_short.pdb")
+rosetta.pose_from_pdb(pose, "../test/data/test_in.pdb")
+rosetta.pose_from_pdb(pose_s, "../test/data/test_in_short.pdb")
 
 scorefxn = rosetta.create_score_function('standard')
 scorefxn(pose)

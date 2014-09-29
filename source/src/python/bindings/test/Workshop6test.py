@@ -4,10 +4,12 @@
 from rosetta import *
 from toolbox import *
 
-init()
+init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+import os; os.chdir('.test.output')
+
 
 # Side Chain Conformations, the Rotamer Library, and Dunbrack Energies
-pose = pose_from_pdb("test/data/workshops/1YY8.clean.pdb")
+pose = pose_from_pdb("../test/data/workshops/1YY8.clean.pdb")
 scorefxn = create_score_function("talaris2013")
 
 for i in range(1, 3):
@@ -33,7 +35,7 @@ import os, tempfile
 YY8_resfile1 = tempfile.mkstemp()[1]
 YY8_resfile2 = tempfile.mkstemp()[1]
 
-generate_resfile_from_pdb("test/data/workshops/1YY8.clean.pdb", YY8_resfile1)
+generate_resfile_from_pdb("../test/data/workshops/1YY8.clean.pdb", YY8_resfile1)
 generate_resfile_from_pose(pose, YY8_resfile2)
 
 task_design = TaskFactory.create_packer_task(pose)

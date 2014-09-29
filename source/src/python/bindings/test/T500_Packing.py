@@ -8,13 +8,15 @@
 ## @author Sergey Lyskov
 
 from rosetta import *
-rosetta.init()
+rosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+import os; os.chdir('.test.output')
+
 
 
 print 'Packing and Design ----------------------------------------------'
 
 print 'mover: PackRotamersMover'
-pose = pose_from_pdb("test/data/test_in.pdb")
+pose = pose_from_pdb("../test/data/test_in.pdb")
 scorefxn = get_fa_scorefxn() #  create_score_function('standard')
 #task_pack = TaskFactory.create_packer_task(pose)
 task_pack = standard_packer_task(pose)
@@ -38,8 +40,8 @@ print pack
 task_design = TaskFactory.create_packer_task(pose)
 
 # mjo -> in refactoring the resfile reader I modified this to use parse_resfile
-#task_design.read_resfile("test/data/test_in.resfile")
-parse_resfile(pose, task_design, "test/data/test_in.resfile")# TODO this hard-crashes if file is not a resfile
+#task_design.read_resfile("../test/data/test_in.resfile")
+parse_resfile(pose, task_design, "../test/data/test_in.resfile")# TODO this hard-crashes if file is not a resfile
 
 
 # BUG reported on jenkins machine: comments before 'start' line cause crash

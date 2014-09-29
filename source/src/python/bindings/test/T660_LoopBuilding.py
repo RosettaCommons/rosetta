@@ -11,14 +11,13 @@ from rosetta import *
 
 import rosetta.protocols.loops.loop_mover.refine
 
-rosetta.init()
-
+rosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+import os; os.chdir('.test.output')
 
 print 'Loop building --------------------------------------------------'
 
-
 #loop functions
-loop_p =  pose_from_pdb("test/data/test_in.pdb")
+loop_p =  pose_from_pdb("../test/data/test_in.pdb")
 
 loop = Loop(70,80,75)
 loops = Loops()

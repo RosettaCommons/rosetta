@@ -27,9 +27,11 @@ MAX_KIC_BUILD_ATTEMPTS = 10000
 
 
 # Kale: to reduce test time even further try options: -loops:outer_cycles 1 -loops:max_inner_cycles 1
-init(extra_options='-run:test_cycles True')  # -loops:test_cycles is only needed for self-test, please make sure to remove it on production run
+init(extra_options='-constant_seed -run:test_cycles True')  # -loops:test_cycles is only needed for self-test, please make sure to remove it on production run
+# WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+import os; os.chdir('.test.output')
 
-p = pose_from_pdb( "test/data/2cpl_min.pdb" )
+p = pose_from_pdb( "../test/data/2cpl_min.pdb" )
 
 starting_p = Pose()
 starting_p.assign( p )

@@ -22,14 +22,14 @@ from tests import *  # Tests states and key names
 
 # Calculating value of Platform dict
 Platform = {}
-if sys.platform.startswith("linux"): Platform['os'] = 'Linux'  # can be linux1, linux2, etc
-elif sys.platform == "darwin" :      Platform['os'] = 'Mac'
-elif sys.platform == "cygwin" :      Platform['os'] = 'Cygwin'
-elif sys.platform == "win32" :       Platform['os'] = 'Windows'
-else:                                Platform['os'] = '_unknown_'
+if sys.platform.startswith("linux"): Platform['os'] = 'linux'  # can be linux1, linux2, etc
+elif sys.platform == "darwin" :      Platform['os'] = 'mac'
+elif sys.platform == "cygwin" :      Platform['os'] = 'cygwin'
+elif sys.platform == "win32" :       Platform['os'] = 'windows'
+else:                                Platform['os'] = 'unknown'
 
 #Platform['arch'] = platform.architecture()[0][:2]  # PlatformBits
-Platform['compiler'] = 'gcc'
+Platform['compiler'] = 'gcc' if Platform['os'] == 'linux' else 'clang'
 
 
 
@@ -69,8 +69,8 @@ def main(args):
     Platform['extras'] = Options.extras.split(',') if Options.extras else []
 
     if Options.memory: memory = Options.memory
-    elif Platform['os'] == 'Linux': memory = float(commands.getoutput('free -m').split('\n')[1].split()[1]) / 1024
-    elif Platform['os'] == 'Mac':   memory = float(commands.getoutput('sysctl -a | grep hw.memsize').split()[2]) / 1024 / 1024 / 1024
+    elif Platform['os'] == 'linux': memory = float(commands.getoutput('free -m').split('\n')[1].split()[1]) / 1024
+    elif Platform['os'] == 'mac':   memory = float(commands.getoutput('sysctl -a | grep hw.memsize').split()[2]) / 1024 / 1024 / 1024
 
 
     if os.path.isfile('benchmark.ini'):

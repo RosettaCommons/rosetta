@@ -11,7 +11,7 @@
 ## @author Sergey Lyskov
 
 
-import os, os.path, sys, json, commands, datetime, subprocess, argparse, time, glob, signal
+import os, os.path, sys, json, commands, datetime, subprocess, argparse, time, glob, signal, shutil
 
 
 def execute(message, commandline, return_=False, untilSuccesses=False):
@@ -64,9 +64,12 @@ def mfork():
     return pid
 
 
+
+_test_output_ = '.test.output/'  # dir to store test results
+
 def test_name(test): return os.path.basename(test)[:-3]
 
-def json_file_name(test): return '.test.' + test_name(test) + '.json'
+def json_file_name(test): return _test_output_+ '.test.' + test_name(test) + '.json'
 
 
 def run_test(test):
@@ -98,6 +101,8 @@ def main(args):
       help="Number of processors to use on when building. (default: use all avaliable memory)",
     )
 
+    parser.add_argument("--delete-tests-output", action="store_true", default=False, help="Do not run tests, instead delete tests output files and exit. [off by default]" )
+
     parser.add_argument('args', nargs=argparse.REMAINDER)
 
     global Options;
@@ -109,18 +114,21 @@ def main(args):
 
     tests = Options.args or sorted( get_py_files('test') + get_py_files('demo') )
 
-    print 'Preparing to run:\n%s\n' % '\n'.join(tests)
+    print 'Preparing to run:\n%s' % '\n'.join(tests)
 
     # removing previous output files if any...
-    for f in '.test_kic.pdb _.pdb ddG_out_1.txt dna_output.fasc dna_output_1.pdb dock_output.fasc dock_output_1.pdb fold_output.fasc fold_output_1.pdb loop10.pdb loop13.pdb loop16.pdb loop23.pdb loop26.pdb loop30.pdb loop_output.fasc loop_output_1.pdb poly-A_final.pdb poly-A_low.pdb refine_output.fasc refine_output_1.pdb sample_resfile'.split():
-        if os.path.isfile(f): os.remove(f)
+    if os.path.isdir(_test_output_): print 'Removing old test dir {0}...'.format(_test_output_);  shutil.rmtree(_test_output_)  # remove old dir if any
+    if Options.delete_tests_output: return
+    os.mkdir(_test_output_)
 
-    for f in glob.iglob('.test.*.json'):
-        if os.path.isfile(f): os.remove(f)
+    #for f in 'aa.test_kic.pdb aa_.pdb ddG_out_1.txt dna_output.fasc dna_output_1.pdb dock_output.fasc dock_output_1.pdb fold_output.fasc fold_output_1.pdb loop10.pdb loop13.pdb loop16.pdb loop23.pdb loop26.pdb loop30.pdb loop_output.fasc loop_output_1.pdb poly-A_final.pdb poly-A_low.pdb refine_output.fasc refine_output_1.pdb sample_resfile'.split():
+    #    if os.path.isfile(f): os.remove(f)
 
-    json_file = '.test_bindings.json'
-    if os.path.isfile(json_file): os.remove(json_file)
+    #for f in glob.iglob(_test_output_+'.test.*.json'):
+    #    if os.path.isfile(f): os.remove(f)
 
+
+    json_file = _test_output_ + '.test.results.json'
 
     if Options.jobs>1:
         def signal_handler(signal_, f):

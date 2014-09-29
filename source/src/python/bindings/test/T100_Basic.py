@@ -8,7 +8,9 @@
 ## @author Sergey Lyskov
 
 from rosetta import *
-rosetta.init()
+
+rosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+import os; os.chdir('.test.output')
 
 
 print 'General testing ----------------------------------------------'
@@ -17,7 +19,7 @@ print 'Creating Pose object...'
 pose = Pose()
 
 print 'Pose from PDB...'
-pose = pose_from_pdb("test/data/test_in.pdb")
+pose = pose_from_pdb("../test/data/test_in.pdb")
 
 # TODO: rename pose_from_pdb or make_pose_from_sequence to be parallel
 
@@ -31,7 +33,7 @@ make_pose_from_sequence(pose4, "ARNDCEQGHILKMFPSTWYV", 'fa_standard')
 
 
 print 'Dump PDB...'
-dump_pdb(pose, "_.pdb")
+dump_pdb(pose, ".test.output/T110_Basic._.pdb")
 
 print 'accessing pose attributes'
 print pose

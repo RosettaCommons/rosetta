@@ -15,7 +15,7 @@ Instructions:
 1) ensure that your PDB file is in the current directory
 2) run the script:
     from commandline                        >python D030_Fold_tree.py
-    
+
     from within python/ipython              [1]: run D030_Fold_tree.py
 
 Author: Evan H. Baugh
@@ -26,7 +26,7 @@ Last updated by Boon Uranukul, 6/9/12
 References:
     C. Wang, P. Bradley, and D. Baker, "Protein-protein docking with backbone
         flexibility," Jour. Mol. Bio. 373 (2) 503-519 (2007)
-        
+
 """
 
 ################################################################################
@@ -55,22 +55,24 @@ The method pose_parallel_objects:
         c.  make a change in the "first" jump edge (early_in_jump.pdb)
         d.  make a change in the "second" jump edge (late_in_jump.pdb)
         e.  make a change after the last jump point (post_jump.pdb)
-        
+
 """
 
 import optparse    # for option sorting
 
 from rosetta import *
-init()
+
+init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+import os; os.chdir('.test.output')
 
 def fold_tree(PDB_out = False):
     """
     Demonstrates the syntax necessary for basic usage of the FoldTree object
         performs these changes with a demonstrative pose example and writes
         structures to PDB files if  <PDB_out>  is True
-        
+
     """
-    
+
     ##########
     # FoldTree
     # a FoldTree encodes the internal coordinate dependencies of a Pose
@@ -96,7 +98,7 @@ def fold_tree(PDB_out = False):
     #    empty FoldTree (no input arguments) and using the method
     #    FoldTree.simple_tree with an input integer equal to the size of the
     #    FoldTree
-    
+
     # 1. create the example pose
     test_pose = pose_from_sequence('ACDEFGHIKLMNPQRSTVWY'*3)
 
@@ -173,7 +175,7 @@ def fold_tree(PDB_out = False):
     if PDB_out:
         test_pose.dump_pdb('early_in_jump.pdb')
     print 'first internal jump edge perturbed structure output'
-    
+
     # d. make a change in the second edge created by the jump
     test_pose.set_phi(high_jump_point - 5, 50)
     test_pose.pdb_info().name('late_in_jump')    # for PyMOL_Mover
@@ -181,7 +183,7 @@ def fold_tree(PDB_out = False):
     if PDB_out:
         test_pose.dump_pdb('late_in_jump.pdb')
     print 'second internal jump edge perturbed structure output'
-    
+
     # e. make a late change
     test_pose.set_phi(high_jump_point + 10, 50)
     test_pose.pdb_info().name('post_jump')    # for PyMOL_Mover
@@ -249,5 +251,4 @@ parser.add_option('--PDB_out', dest = 'PDB_out',
 # PDB_out flag
 PDB_out = bool(options.PDB_out)
 
-fold_tree(PDB_out)    
-
+fold_tree(PDB_out)

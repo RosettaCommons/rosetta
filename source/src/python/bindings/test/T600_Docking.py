@@ -9,11 +9,12 @@
 
 from rosetta import *
 from rosetta.protocols.rigid import *
-rosetta.init()
+rosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+import os; os.chdir('.test.output')
 
 print 'Docking ----------------------------------------------------'
 
-dock_p = pose_from_pdb("test/data/test_dock.pdb")
+dock_p = pose_from_pdb("../test/data/test_dock.pdb")
 dock_jump = 1
 #DockingProtocol().setup_foldtree(dock_p)
 
@@ -51,4 +52,3 @@ recover_side_chain_mover.apply(dock_p)
 # NEEDED: access and print interface
 # TODO: Fix print fold_tree to avoid -1/1 codes
 # TODO: Make jump_num default to 1 in all docking movers
-

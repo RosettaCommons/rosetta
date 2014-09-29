@@ -3,12 +3,12 @@ from rosetta import *
 
 import rosetta.core.scoring.func
 
-rosetta.init()
-
+rosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+import os; os.chdir('.test.output')
 
 print 'constraints ----------------------------------------------'
 
-pose = pose_from_pdb("test/data/test_in.pdb")
+pose = pose_from_pdb("../test/data/test_in.pdb")
 
 scorefxn = get_fa_scorefxn() #  create_score_function('standard')
 scorefxn.set_weight( atom_pair_constraint, 10 )

@@ -129,6 +129,10 @@ init(extra_options = "-constant_seed")
 #    seed for more information)
 # some options can be set after initialization, please see PyRosetta.org FAQs
 #    for more information
+# WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
+
+import os; os.chdir('.test.output')
+
 
 #########
 # Methods
@@ -429,7 +433,7 @@ will likely discard the proposed structure if it increases the score).
 #    cycles/jobs to provide results quickly
 parser = optparse.OptionParser()
 parser.add_option('--pdb_filename', dest = 'pdb_filename',
-    default = 'test/data/test_in.pdb',    # default example PDB
+    default = '../test/data/test_in.pdb',    # default example PDB
     help = 'the PDB file containing the loop to remodel')
 # the loop options
 parser.add_option('--loop_begin', dest = 'loop_begin',
@@ -443,7 +447,7 @@ parser.add_option('--loop_cutpoint' , dest = 'loop_cutpoint',
     help = 'the cutpoint residue for the loop region')
 # the fragment file options
 parser.add_option('--frag_filename', dest = 'frag_filename',
-    default = 'test/data/test3_fragments',    # specific to each PDB (test_in.pdb here)
+    default = '../test/data/test3_fragments',    # specific to each PDB (test_in.pdb here)
     help = 'the file containing fragments corresponding to the PDB')
 parser.add_option('--frag_length', dest = 'frag_length',
     default = '3',    # must match the frag_filename
