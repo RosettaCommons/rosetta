@@ -7,22 +7,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file MinMover.cc
-/// @brief
+/// @file   protocols/simple_moves/MinMover.cc
+/// @brief  method definitions for MinMover
 /// @author ashworth
 
 // Unit headers
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/MinMoverCreator.hh>
-#include <core/conformation/Residue.hh>
-#include <core/id/TorsionID.hh>
-#include <core/id/types.hh>
 
-// Project headers
-#include <core/kinematics/MoveMap.hh>
+// Package headers
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/CartesianMinimizer.hh>
+
+// Project headers
+#include <core/id/TorsionID.hh>
+#include <core/id/types.hh>
+#include <core/conformation/Residue.hh>
+#include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -170,11 +172,14 @@ MinMover::score_function( ScoreFunctionCOP scorefxn_in )
 	scorefxn_ = scorefxn_in;
 }
 
-void
+// Why would you want a deep copy of the ScoreFunction here?
+// In any case, commenting this out, because PyRosetta cannot distinguish between these two function signature, always
+// chosing this one and leading to unexpected behavior. ~Labonte
+/*void
 MinMover::score_function( ScoreFunction const & scorefxn_in )
 {
 	scorefxn_ = scorefxn_in.clone();
-}
+}*/
 
 ScoreFunctionCOP
 MinMover::score_function() const
@@ -500,5 +505,5 @@ std::ostream &operator<< (std::ostream &os, MinMover const &mover)
 	return os;
 }
 
-} // moves
-} // protocols
+}  // simple_moves
+}  // protocols

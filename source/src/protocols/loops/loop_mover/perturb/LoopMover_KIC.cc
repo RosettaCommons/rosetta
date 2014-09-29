@@ -446,7 +446,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 		if ( local_debug ) // AS
 			tr() << " minimization next " << std::endl;
 
-		min_mover->score_function( *scorefxn() ); // at the moment this doesn't change, but if we ever implemented ramp it would
+		//min_mover->score_function( scorefxn() ); // at the moment this doesn't change, but if we ever implemented ramp it would
 		min_mover->apply( pose ); // the other options were already registered in setup
 
 
@@ -548,7 +548,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 					tr() << " minimization next " << std::endl;
 
 
-				min_mover->score_function( *scorefxn() );
+				//min_mover->score_function( scorefxn() );
 				min_mover->apply( pose ); // the other options were already registered in setup
 
 				std::string move_type = "kinematic_perturb";

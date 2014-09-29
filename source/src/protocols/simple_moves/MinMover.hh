@@ -5,12 +5,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @brief
+/// @file   protocols/simple_moves/MinMover.hh
+/// @brief  class definition for MinMover
 /// @author Monica Berrondo
 
-#ifndef INCLUDED_protocols_simple_moves_MinMover_hh
-#define INCLUDED_protocols_simple_moves_MinMover_hh
+#ifndef INCLUDED_protocols_simple_moves_MinMover_HH
+#define INCLUDED_protocols_simple_moves_MinMover_HH
 
 // Unit headers
 #include <protocols/simple_moves/MinMover.fwd.hh>
@@ -19,24 +19,20 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoveMapMover.hh>
 
-#include <protocols/filters/Filter.fwd.hh>
-
+// Project headers
+#include <core/types.hh>
+#include <core/id/types.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/optimization/MinimizerOptions.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/types.hh>
-#include <core/id/types.hh>
 
-#include <utility/vector1.hh>
-
-
-// ObjexxFCL Headers
-
-// C++ Headers
+#include <protocols/filters/Filter.fwd.hh>
 
 // Utility Headers
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace simple_moves {
@@ -168,7 +164,7 @@ public:
 	///     MinMover.score_function
 	///     MoveMap
 	virtual void movemap( core::kinematics::MoveMapCOP movemap_in );
-  virtual void set_movemap( core::kinematics::MoveMapCOP movemap_in );
+	virtual void set_movemap( core::kinematics::MoveMapCOP movemap_in );
 	virtual core::kinematics::MoveMapCOP movemap() const;
 
 	/// @brief Sets the ScoreFunction to  <scorefxn_in>
@@ -182,7 +178,7 @@ public:
 	///     MinMover.movemap
 	///     ScoreFunction
 	virtual void score_function( ScoreFunctionCOP scorefxn_in );
-	virtual void score_function( core::scoring::ScoreFunction const & scorefxn_in );
+	//virtual void score_function( core::scoring::ScoreFunction const & scorefxn_in );
 	virtual ScoreFunctionCOP score_function() const;
 
 	virtual void min_type( std::string min_type_in );
@@ -233,7 +229,7 @@ private:
 
 std::ostream &operator<< (std::ostream &os, MinMover const &mover);
 
-} // moves
-} // rosetta
+}  // simple_moves
+}  // protocols
 
-#endif
+#endif  // INCLUDED_protocols_simple_moves_MinMover_HH

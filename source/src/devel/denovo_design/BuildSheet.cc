@@ -440,7 +440,7 @@ BuildSheet::minimize_residues( core::pose::Pose & pose,
 	protocols::simple_moves::MinMover minimize;
 	minimize.cartesian( true );
 	minimize.movemap( mm );
-	minimize.score_function( *scorefxn_ );
+	minimize.score_function( scorefxn_ );
 	minimize.min_type( "lbfgs_armijo_nonmonotone" );
 	minimize.tolerance( 0.00001 );
 	scorefxn->show( TR, pose ); TR.flush();
