@@ -17,6 +17,7 @@
 
 #include <protocols/canonical_sampling/BiasEnergy.hh>
 
+#include <ObjexxFCL/string.functions.hh>
 #include <utility/exit.hh>
 #include <math.h>
 #include <iomanip>
@@ -158,6 +159,16 @@ void BiasEnergy::Histogram<T>::write_to_stream( std::ostream& os ) const {
 		os << std::setprecision( 4 ) << at( index ) << " ";
 	}
 	os << "GRID_END" << std::endl;
+}
+
+template< typename T >
+void BiasEnergy::Histogram<T>::write_to_string( std::string& str ) const {
+	using namespace ObjexxFCL;
+	str = str + "HISTOGRAM " + string_of( ngrid_cells_ ) + " " + string_of( grid_min_ ) + " " + string_of( grid_max_ ) + " GRID_START ";
+	for ( core::Size index=1; index <= ngrid_cells_; ++index ) {
+		str = str + string_of( at(index), 4 ) + " ";
+	}
+	str = str+"GRID_END ";
 }
 
 }

@@ -98,6 +98,17 @@ ModulatedMover::parse_my_tag(
 		set_type( mover_name_ ); //for proper reporting in trial_counters
   }
 
+	std::map< std::string, std::string > common_options;
+	if ( tag->hasTag( "common" ) ) {
+		utility::tag::TagCOP common_tag( tag->getTag( "common" ) );
+		common_options = common_tag->getOptions();
+		// have to go through all the options in this tag, otherwise Tag::die_for_unaccessed_options()
+		std::map< std::string, std::string >::const_iterator option=common_options.begin();
+		for ( ; option != common_options.end(); ++option ) {
+			common_tag->getOption< std::string>( option->first );
+		}
+	}
+
 	//  utility::vector1< std::string > interpolated_options;
   utility::vector0< utility::tag::TagCOP > const subtags( tag->getTags() );
 	utility::vector1< std::string > keys;
@@ -107,7 +118,7 @@ ModulatedMover::parse_my_tag(
     utility::tag::TagCOP const subtag = *subtag_it;
 		Interpolators interpolators;
     tr.Debug << "subtag->getName() " << subtag->getName() << std::endl;
-    if ( subtag->getName() == "Interp" && subtag->getOption< std::string >("key")!="weight" ) {
+    if ( subtag->getName() == "Interp" && subtag->getOption< std::string >("key")!="weight" ) { //// weight is interpreted in TempWeightedMetropolisHastingsMover
 			core::Size dim = subtag->getOption< core::Size >( "dim", 1);
 			tr.Debug << "dim "<< dim << " nlevels_per_dim " << tempering_->nlevels_per_dim( dim ) << std::endl;
 			if (tempering_->exchange_grid_dim()==1 || dim==1 ) {
@@ -117,18 +128,11 @@ ModulatedMover::parse_my_tag(
 			}
 
 			keys.push_back( subtag->getOption< std::string >( "key" ) );
-//       //      interpolator_[ ]=InterpolatorFactory->new_interpolator( subtag );
-//       if ( tag->hasOption( "const" ) ) {
-// 	//	interpolators_[ subtag->getOption< std::string >( "key" ) ] = new TempFixValue( subtag->getOption<core::Real>("const") );
-//       } else {
-// 	interpolators_[ subtag->getOption< std::string >( "key" ) ] = new TempInterpolator( subtag, tempering_ );
-//       }
-//      interpolators_[ subtag->getOption< std::string >( "key" ) ] = TempInterpolatorFactory::get_instance()->new_tempInterpolator( subtag, tempering_->n_temp_levels() );
     } else {
       tr.Warning << "Cannot interpret subtag "<<subtag->getName() << std::endl;
     }
   }
-
+	/// for debug
 	for ( utility::vector1< std::string >::iterator key_it = keys.begin(); key_it != keys.end(); ++key_it ) {
 		tr.Debug << "check if key " << *key_it << " is provided" << std::endl;
 
@@ -151,7 +155,7 @@ ModulatedMover::parse_my_tag(
   for ( core::Size temp_level = 1; temp_level <= tempering_->n_temp_levels(); ++temp_level ) {
 		tr.Debug << "generating mover tag for level " << temp_level << std::endl;
     //have a method that creates a tag for a certain temperature level
-    utility::tag::TagCOP mover_tag = generate_mover_tag( temp_level, our_name );
+    utility::tag::TagCOP mover_tag = generate_mover_tag( temp_level, our_name, common_options );
     using namespace protocols::moves;
     using namespace protocols::canonical_sampling;
     MoverOP new_mover( MoverFactory::get_instance()->newMover( mover_tag, data_map, filters, movers, pose ) );
@@ -167,10 +171,11 @@ ModulatedMover::parse_my_tag(
 }
 
 utility::tag::TagCOP
-ModulatedMover::generate_mover_tag( core::Size temp_level, std::string const& prefix ) const {
+ModulatedMover::generate_mover_tag( core::Size temp_level, std::string const& prefix, std::map< std::string, std::string > const& common_options ) const {
   using namespace utility::tag;
   TagOP tag( new Tag() );
   tag->setName(mover_name_);
+	tag->setOptions( common_options );
 
 	GridCoord grid_coord( tempering_->level_2_grid_coord( temp_level ) );
 	if ( grid_coord.size()==1 ) grid_coord.push_back(1);

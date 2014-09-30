@@ -135,6 +135,9 @@ protected:
 	/// @brief initialize temperatures and weights from file, return false if IO error occurrs
 	virtual bool initialize_from_file( std::string const& filename );
 
+	/// @brief initialize exchange schedule from file, return false if IO error occurrs
+	virtual bool initialize_exchange_schedule_from_file( std::string const& filename );
+
 	virtual
 	core::Size next_exchange_level() const;
 
@@ -172,6 +175,7 @@ private:
 	core::Size exchange_grid_dimension_;
 	bool successfully_initialized_;
 	GridCoord max_coord_;
+	std::string exchange_schedule_file_;
 
 	BiasEnergyOP bias_energy_;
 }; //end HamiltonianExchange

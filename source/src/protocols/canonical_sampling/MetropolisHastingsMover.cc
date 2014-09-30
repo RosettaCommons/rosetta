@@ -19,8 +19,11 @@
 
 // protocols headers
 #include <protocols/backrub/BackrubMover.hh>
+#include <protocols/jd2/SilentFileJobOutputter.hh>
 #include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/Job.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/checkpoint/Checkpoint.hh>
 #include <protocols/kinematic_closure/BalancedKicMover.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -31,6 +34,7 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/canonical_sampling/ThermodynamicMover.hh>
 #include <protocols/canonical_sampling/ThermodynamicObserver.hh>
+#include <protocols/canonical_sampling/TrajectoryRecorder.hh>
 #include <protocols/canonical_sampling/BiasEnergy.hh>
 #include <protocols/canonical_sampling/WTEBiasEnergy.hh>
 #include <protocols/canonical_sampling/BiasedMonteCarlo.hh>
@@ -45,6 +49,8 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
+#include <core/pose/util.hh>
+#include <core/io/silent/SilentFileData.hh>
 #include <basic/Tracer.hh>
 
 // numeric headers
@@ -53,6 +59,7 @@
 // utility headers
 #include <utility/file/file_sys_util.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/io/izstream.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.hh>
 
@@ -60,11 +67,15 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+#include <ObjexxFCL/format.hh>
+
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
 #include <basic/options/option.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 // C++ Headers
+#include <vector>
 
 using basic::T;
 using basic::Error;
@@ -91,9 +102,17 @@ MetropolisHastingsMoverCreator::mover_name() {
 }
 
 MetropolisHastingsMover::MetropolisHastingsMover() :
-	monte_carlo_(/* 0 */),
-	ntrials_(1000)
-{}
+	monte_carlo_(/*0*/),
+	ntrials_(1000),
+	checkpoint_count_(0)
+{
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	if ( option[ run::checkpoint_interval ].user() ) {
+		protocols::checkpoint::checkpoint_with_interval( option[ run::checkpoint_interval ] );
+		job_outputter_ = jd2::SilentFileJobOutputterOP( new jd2::SilentFileJobOutputter() ); // only required when writing out checkpoints
+	}
+}
 
 MetropolisHastingsMover::MetropolisHastingsMover(
 	MetropolisHastingsMover const & metropolis_hastings_mover
@@ -103,7 +122,9 @@ MetropolisHastingsMover::MetropolisHastingsMover(
 	monte_carlo_( metropolis_hastings_mover.monte_carlo_->clone() ),
 	ntrials_(metropolis_hastings_mover.ntrials_),
 	output_name_(metropolis_hastings_mover.output_name_),
-	weighted_sampler_(metropolis_hastings_mover.weighted_sampler_)
+	weighted_sampler_(metropolis_hastings_mover.weighted_sampler_),
+	job_outputter_(metropolis_hastings_mover.job_outputter_),
+	checkpoint_count_(metropolis_hastings_mover.checkpoint_count_)
 {
 	for (core::Size i = 1; i <= metropolis_hastings_mover.movers_.size(); ++i) {
 		movers_.push_back(utility::pointer::dynamic_pointer_cast<ThermodynamicMover>(metropolis_hastings_mover.movers_[i]));
@@ -117,14 +138,15 @@ MetropolisHastingsMover::MetropolisHastingsMover(
 		tempering_ = utility::pointer::dynamic_pointer_cast<TemperatureController>(metropolis_hastings_mover.tempering_);
 		if (monte_carlo_) tempering_->set_monte_carlo(monte_carlo_);
 	}
+
 }
 
 MetropolisHastingsMover::~MetropolisHastingsMover(){}
 
-/// @details The return value indicates the number of cycles that have already 
-/// been run, if the simulation is not being started or restarted.  I'm not 
-/// totally sure what this means though, and I couldn't see any way for this 
-/// function to return anything other than 0.  The necessary logic might be 
+/// @details The return value indicates the number of cycles that have already
+/// been run, if the simulation is not being started or restarted.  I'm not
+/// totally sure what this means though, and I couldn't see any way for this
+/// function to return anything other than 0.  The necessary logic might be
 /// commented out right now.
 core::Size
 MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
@@ -152,6 +174,25 @@ MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
 // 		restart = observers_[i]->restart_simulation(pose, *this, cycle_number, temp_level, temperature );
 // 		if ( restart ) tr.Info<< "Restarted using " << observers_[i]->get_name() << std::endl;
 // 	}
+
+	if ( get_checkpoints() ) {
+		for (core::Size i = 1; i <= observers_.size() && !restart; ++i) {
+			if ( utility::pointer::dynamic_pointer_cast< TrajectoryRecorder >( observers_[i] ) ) { // first get the silent struct and cycle info
+				tr.Info<< "Attempting restart using " << observers_[i]->get_name() << std::endl;
+				restart = observers_[i]->restart_simulation(pose, *this, cycle_number, temp_level, temperature );
+				if ( restart ) tr.Info<< "Restarted using " << observers_[i]->get_name() << " cycle_number " << cycle_number << " temp_level " << temp_level << std::endl;
+			}
+		}
+
+		for (core::Size i = 1; i <= observers_.size() && restart; ++i) { // if restart-able from silent trajectory file, collect BiasEnergy info
+			BiasEnergyOP bias_energy( utility::pointer::dynamic_pointer_cast< BiasEnergy >( observers_[i] ));
+			if ( bias_energy ) {
+				tr.Debug << "bias energy used " << std::endl;
+				restart = bias_energy->restart_simulation( pose, *this, cycle_number, temp_level, temperature );
+				if ( restart ) tr.Info << "grid info collected, restart now!" << std::endl;
+			}
+		}
+	}
 
 	if ( !restart ) {
 		cycle_number = 0; //make sure this is zero if we don't have a restart.
@@ -191,6 +232,7 @@ MetropolisHastingsMover::apply( core::pose::Pose& pose ) {
 	Size start_cycle = prepare_simulation( pose );
 
 	for ( current_trial_ = start_cycle+1; !tempering_->finished_simulation( current_trial_, ntrials() ); ++current_trial_ ) {
+		write_checkpoint( pose );
 		ThermodynamicMoverOP mover(random_mover());
 		mover->apply(pose);
 		bool accepted = monte_carlo_->boltzmann(
@@ -211,6 +253,105 @@ MetropolisHastingsMover::apply( core::pose::Pose& pose ) {
 		tempering_->observe_after_metropolis(*this);
 	}
 	wind_down_simulation( pose );
+}
+
+void
+MetropolisHastingsMover::write_checkpoint( core::pose::Pose const & pose ) {
+	using namespace ObjexxFCL;
+	using namespace protocols::checkpoint;
+
+	if ( !Timer::is_on() ) return;
+	if ( !Timer::time_to_checkpoint() ) return;
+
+	checkpoint_count_++;
+	std::string const & checkpoint_id( jd2::current_output_name() + "_" + string_of( jd2::current_replica() ) + "_" + string_of( checkpoint_count_ ) ); // protAB_0001_3_N
+	utility::file::FileName jd2_filename( jd2::current_output_filename() );
+	checkpoint_ids_.push_back( jd2_filename.base()+"_"+checkpoint_id );
+	//	tr.Debug << "checkpoint_id: " << checkpoint_id << std::endl;  // "decoys_protAB_0001_3_n"
+	core::pose::Pose tmp_pose( pose );
+
+	BiasedMonteCarloOP biased_mc = utility::pointer::dynamic_pointer_cast< protocols::canonical_sampling::BiasedMonteCarlo > ( monte_carlo_ );
+	if ( biased_mc ) { // if BiasedMonteCarlo, write out bias grid info
+		std::string str="";
+		biased_mc->bias_energy()->write_to_string( str );
+		core::pose::Pose tmp_pose( pose );
+		core::pose::add_comment( tmp_pose, "BIASENERGY", str );
+	}
+	// write out snapshots for the replica
+ 	job_outputter_->other_pose( jd2::get_current_job(), tmp_pose, checkpoint_id, current_trial_, false );
+
+	Timer::reset();
+	//	tr.Debug << "have done writing checkpoint " << checkpoint_ids_.back() << std::endl;
+
+	/// maintain 5 snapshots for each replica, delete the rest
+	if ( checkpoint_ids_.size() > 5 ) { ///keep 5 snapshots for each replica
+		//		tr.Debug << "deleting old checkpoints, only keep the last 5... " << std::endl;
+		utility::file::file_delete( checkpoint_ids_.front()+".out" );
+		checkpoint_ids_.erase( checkpoint_ids_.begin() ); ///each time delete one
+	}
+}
+
+bool
+MetropolisHastingsMover::get_checkpoints() {
+	using namespace utility::file;
+
+	utility::file::FileName jd2_filename( jd2::current_output_filename() );
+	std::string filename_base( jd2_filename.base()+"_"+jd2::current_output_name() );
+	std::string filename_pattern( filename_base+"_"+ObjexxFCL::string_of( jd2::current_replica()) +"_");
+
+	utility::vector1< std::string > names;
+	std::vector< int > checkpoint_indics;
+	utility::file::list_dir( ".", names );
+	for ( core::Size i=1; i<=names.size(); ++i ) {
+		if ( names[i].find( filename_pattern ) != std::string::npos ) {
+			FileName found_name( names[i] );
+			core::Size ind = found_name.base().find_last_of('_');
+			checkpoint_indics.push_back( utility::string2int( found_name.base().substr(ind+1) ) );
+		}
+	}
+	tr.Debug << "found " << checkpoint_indics.size() << " checkpoints" << std::endl;
+	if ( checkpoint_indics.size()==0 ) return false; // no checkpoint found
+	std::sort( checkpoint_indics.begin(), checkpoint_indics.end() ); // sort by checkpoint index
+
+	// starting from the last checkpoint, if all temp_levels are collected, then return
+	std::vector< int >::reverse_iterator rit = checkpoint_indics.rbegin();
+	for ( ; rit != checkpoint_indics.rend(); ++rit ) {
+		tr.Debug << "checkpoint_indics: " << *rit << std::endl;
+		utility::vector1< core::Size > found_levels;
+		// collect all the temp_levels from the file of this checkpoint
+		for ( core::Size replica=1; replica <= tempering_->n_temp_levels(); ++replica ) {
+			core::io::silent::SilentFileData sfd( filename_base+"_"+ObjexxFCL::string_of( replica )+"_"+ObjexxFCL::string_of( *rit )+".out");
+			if ( utility::file::file_exists( sfd.filename() ) ) {
+				sfd.read_file( sfd.filename() );
+				found_levels.push_back( sfd.begin()->get_energy( "temp_level" ));
+			} else break;
+		}
+		// check if any temp_level is missing, if not, then return.
+		for ( core::Size replica=1; replica <= tempering_->n_temp_levels(); ++replica ) {
+			if ( !found_levels.has_value( replica ) ) { // certain level missing
+				tr.Debug << "temp_level: " << replica << " is missing" << std::endl;
+				break;
+			}
+			if ( replica == tempering_->n_temp_levels() ) {
+				checkpoint_ids_.push_back( filename_pattern + ObjexxFCL::string_of( *rit ) );
+				checkpoint_count_ = *rit;
+				// delete any checkpoint file before the successfully collected checkpoint
+				std::vector< int >::reverse_iterator d_rit = ++rit;
+				for ( ; d_rit != checkpoint_indics.rend(); ++d_rit ) utility::file::file_delete( filename_pattern+ObjexxFCL::string_of( *d_rit )+".out" );
+				tr.Debug << "checkpoint for restart: " << checkpoint_ids_.front() << std::endl;
+				return true;
+			}
+		}
+	}
+	std::cout << "complete restart info not collected from checkpoint, start from the begining..." << std::endl;
+	return false; // if runs to here, then not found for sure;
+}
+
+std::string
+MetropolisHastingsMover::get_last_checkpoint() const{
+	if ( checkpoint_ids_.size()==0 )
+		return "";
+	return checkpoint_ids_.back();
 }
 
 void
@@ -270,6 +411,13 @@ MetropolisHastingsMover::parse_my_tag(
 ) {
 	///ntrials
 	ntrials_ = tag->getOption< core::Size >( "trials", ntrials_ );
+
+	///checkpoint interval
+	if ( tag->hasOption("checkpoint_interval") ) {
+		core::Size const checkpoint_interval( tag->getOption< core::Size >( "checkpoint_interval")); // every 6 minutes
+		protocols::checkpoint::checkpoint_with_interval( checkpoint_interval );
+		job_outputter_ = jd2::SilentFileJobOutputterOP( new jd2::SilentFileJobOutputter() );
+	}
 
 	//monte-carlo
 	//read tag scorefxn
@@ -421,16 +569,16 @@ MetropolisHastingsMover::last_move() const {
 	return *last_move_;
 }
 
-/// @details You can control the probability of selecting a particular mover 
+/// @details You can control the probability of selecting a particular mover
 /// via the weight argument to the @ref add_mover() method.
 ThermodynamicMoverOP
 MetropolisHastingsMover::random_mover() const {
 	return movers_[weighted_sampler_.random_sample(numeric::random::rg())];
 }
 
-/// @details Specify a weight to control how often this mover should be 
-/// invoked.  The weight does not have to be in any particular range.  The 
-/// probability of choosing any particular move will be the weight of that 
+/// @details Specify a weight to control how often this mover should be
+/// invoked.  The weight does not have to be in any particular range.  The
+/// probability of choosing any particular move will be the weight of that
 /// sampler divided by the sum of the weights of all the moves.
 void
 MetropolisHastingsMover::add_mover(
@@ -442,7 +590,7 @@ MetropolisHastingsMover::add_mover(
 	weighted_sampler_.add_weight(weight);
 }
 
-/// @details In principle, information about the mover could be extracted from 
+/// @details In principle, information about the mover could be extracted from
 /// the given XML tag, but currently this function is a simple alias for @ref
 /// add_mover().
 void

@@ -70,7 +70,11 @@ public:
        core::pose::Pose const &
   );
 
-  utility::tag::TagCOP generate_mover_tag( core::Size temp_level, std::string const& prefix ) const;
+  utility::tag::TagCOP generate_mover_tag(
+			 core::Size temp_level,
+			 std::string const& prefix,
+			 std::map< std::string, std::string > const& common_options
+	) const;
 
   virtual void
   initialize_simulation(

@@ -161,10 +161,8 @@ SilentTrajectoryRecorder::restart_simulation(
 ) {
 	core::scoring::constraints::ConstraintCOPs csts = pose.constraint_set()->get_all_constraints(); // copy cst info before restart
 
-	std::string filename( metropolis_hastings_mover.output_file_name(file_name(), cumulate_jobs(), cumulate_replicas()) );
-	utility::file::FileName jd2_filename( jd2::current_output_filename() );
-	utility::file::FileName physical_filename( jd2_filename );
-	physical_filename.base( jd2_filename.base()+"_"+filename );
+	utility::file::FileName physical_filename( metropolis_hastings_mover.get_last_checkpoint()+".out" );
+	tr.Debug << "restarting from checkpoing file " << physical_filename << std::endl;
 
 	//check existence of file
 	temp_level = 1;
@@ -192,7 +190,8 @@ SilentTrajectoryRecorder::restart_simulation(
 		std::string decoy_tag=matched_tags_in_file.front();
 		tr.Info << "decoy_tag matched: " << decoy_tag << std::endl;
 		Size ind=decoy_tag.find_last_of( '_' );
-		cycle = utility::string2int(decoy_tag.substr( ind+1 ) )*stride();
+		//		cycle = utility::string2int(decoy_tag.substr( ind+1 ) )*stride();
+		cycle = utility::string2int( decoy_tag.substr( ind+1 )); // the actual trial_number is stored in the decoy tag of the checkpoint file
 		tr.Info << "cycle number got from the decoy_tag: " << cycle << std::endl;
 		if ( sfd.begin()->has_energy( "temp_level" ) ) {
 			temp_level = (Size) sfd.begin()->get_energy( "temp_level" );

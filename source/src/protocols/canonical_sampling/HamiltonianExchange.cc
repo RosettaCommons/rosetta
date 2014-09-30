@@ -172,6 +172,8 @@ HamiltonianExchange::parse_my_tag(
 	protocols::moves::Movers_map const & movers,
 	pose::Pose const & pose
 ) {
+	exchange_schedule_file_ = tag->getOption< std::string >( "exchange_schedule", "");
+
 	Parent::parse_my_tag( tag, data, filters, movers, pose );
 	if ( !successfully_initialized_ ) {
 		throw utility::excn::EXCN_RosettaScriptsOption( "Initialization of HamiltonianExchange Module failed! " );
@@ -272,6 +274,8 @@ void HamiltonianExchange::setup_exchange_schedule() {
 	}
 	max_coord_ = max_coord;
 
+	if ( ! initialize_exchange_schedule_from_file( exchange_schedule_file_ ) ) { // if not initialize from file, do the next
+
 	for ( Size dim=1; (int)dim<=n_dim; ++dim ) {
 		//make list of uniqe groups: if dim==2 (1,1,1), (1,2,1), (1,3,1), ... (1, N, 1) should be one group
 		typedef std::list< std::pair< core::Size, core::Size > > Level2GridpointList;
@@ -306,6 +310,7 @@ void HamiltonianExchange::setup_exchange_schedule() {
 			exchange_schedules_.push_back(list);
 		} // phase
 	} // per dimension
+	} // !initialize_exchange_schedule_from_file
 }
 
 Size
@@ -431,6 +436,7 @@ void HamiltonianExchange::clear() {
 	exchange_schedules_.clear();
 	exchange_grid_.clear();
 	hamiltonians_.clear();
+	max_coord_.clear();
 	Parent::clear();
 }
 
@@ -472,6 +478,43 @@ private:
 	bool is_file_;
 };
 
+///brief: when an exchange schedule is given in a file, initialize from the file, instead of generate it by setup_exchange_schedule()
+///each exchange pairs are specified with their temp_level, all pairs in one phase make one line in the input file
+bool HamiltonianExchange::initialize_exchange_schedule_from_file( std::string const& filename ) {
+	exchange_schedules_.clear();
+	ExchangeSchedule list;
+	utility::io::izstream in( filename );
+	if ( !filename.size() ) {
+		tr.Error << "no input file" << std::endl;
+		return false;
+	}
+	if ( !in.good() ) {
+		tr.Error << "cannot open file " << filename << ", will generate exchange schedule with setup_exchange_schedule()!"<<std::endl;
+		return false;
+	}
+	std::string line;
+	tr.Info << "reading exchange schedule file " << "..." << std::endl;
+	while ( getline( in, line ) ) {
+		list.clear();
+		std::istringstream line_stream( line );
+		Size grid1;
+		Size grid2;
+		line_stream >> grid1 >> grid2;
+		std::pair<int, int> elem( grid1, grid2);
+		list.push_back( elem );
+		while ( line_stream.good() ) {
+			line_stream >> grid1 >> grid2;
+			if ( !line_stream.fail() ) {
+				std::pair< int, int> elem( grid1, grid2);
+				list.push_back( elem );
+			}
+		}
+		exchange_schedules_.push_back( list );
+	}
+	if ( exchange_schedules_.size() ) {
+		return true;
+	} else { return false; }
+}
 
 bool HamiltonianExchange::initialize_from_file( std::string const& filename ) {
 	typedef utility::vector1< PatchOperation > PatchOperationList;

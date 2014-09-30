@@ -79,6 +79,7 @@ class BiasEnergy : public ThermodynamicObserver, public protocols::jd2::JobOutpu
 		void reset();
 
 		void write_to_stream( std::ostream& ) const;
+		void write_to_string( std::string& ) const;
 
 	private:
 		void copy_data( Histogram const& );
@@ -124,6 +125,9 @@ class BiasEnergy : public ThermodynamicObserver, public protocols::jd2::JobOutpu
 
 	void swap_replicas();
 
+	//write to string instead of stream to reduce buffer caused delay
+	void write_to_string( std::string & str ) const;
+
 	void set_temperature( core::Real setting );
 
 	virtual
@@ -155,6 +159,16 @@ class BiasEnergy : public ThermodynamicObserver, public protocols::jd2::JobOutpu
 	finalize_simulation(
 		core::pose::Pose &,
 		MetropolisHastingsMover const &
+	);
+
+	virtual
+	bool
+	restart_simulation(
+	  core::pose::Pose &,
+		MetropolisHastingsMover &,
+		core::Size& cycle,
+		core::Size& temp_level,
+		core::Real& temperature
 	);
 
  protected:

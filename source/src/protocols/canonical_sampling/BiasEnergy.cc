@@ -27,6 +27,7 @@
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/io/izstream.hh>
 
 //#include <math.h>
 //#include <iomanip>
@@ -121,6 +122,81 @@ BiasEnergy::finalize_simulation(
 	count_grid_->write_to_stream( os );
 }
 
+bool
+BiasEnergy::restart_simulation(
+	core::pose::Pose &,
+	MetropolisHastingsMover & metropolis_hastings_mover,
+	core::Size& cycle,
+	core::Size&,
+	core::Real& temperature
+) {
+	utility::io::izstream in( metropolis_hastings_mover.get_last_checkpoint()+".out" );
+	tr.Debug << "restarting from checkpoint file " << in.filename() << std::endl;
+	if ( !in.good() ) {
+		tr.Error << "cannot open checkpoint file " << metropolis_hastings_mover.get_last_checkpoint() << ".out" << std::endl;
+		return false;
+	}
+
+	std::string line;
+	while ( getline( in, line ) ) {
+		if ( line.substr(0, 17) != "REMARK BIASENERGY" ) continue;
+		std::istringstream line_stream( line );
+		std::string tag_remark, tag_key;
+		line_stream >> tag_remark >> tag_key;
+		if ( line_stream.good() ) {
+			std::string tag, tag_hist, tag_grid_start, tag_grid_end;
+			core::Real grid_min, grid_max;
+			core::Size ngrid_cells;
+
+			// read in WTE_Bias_Energy_Grid
+			line_stream >> tag >> tag_hist >> ngrid_cells >> grid_min >> grid_max >> tag_grid_start;
+			tr.Debug << tag <<" "<<tag_hist<<" "<<ngrid_cells<<" "<<grid_min<<" "<<grid_max<<" "<<tag_grid_start<< std::endl;
+			if ( line_stream.fail() ) {
+				tr.Debug << "bias energy grid is not complete in checkpoint file, restart from checkpoint abort!" << std::endl;
+				return false;
+			}
+			for ( core::Size i=1; i<= bias_grid_->size(); ++i ) {
+				line_stream >> ( bias_grid_->at(i) );
+				if ( line_stream.fail() ) {
+					tr.Debug << "bias energy grid is not complete in checkpoint file, restart from checkpoint abort!" << std::endl;
+					return false;
+				}
+			}
+			line_stream >> tag_grid_end;
+			if ( line_stream.fail() ) {
+				tr.Debug << "count grid is not complete in checkpoint file, restart from checkpoint abort!" << std::endl;
+				return false;
+			}
+
+			// read in WTE_Count_Grid
+			line_stream >> tag >> tag_hist >> ngrid_cells >> grid_min >> grid_max >> tag_grid_start;
+			tr.Debug << tag <<" "<<tag_hist<<" "<<ngrid_cells<<" "<<grid_min<<" "<<grid_max<<" "<<tag_grid_start<< std::endl;
+			if ( line_stream.fail() ) {
+				tr.Debug << "count grid is not complete in checkpoint file, restart from checkpoint abort!" << std::endl;
+				return false;
+			}
+			for ( core::Size i=1; i<= count_grid_->size(); ++i ) {
+				line_stream >> ( count_grid_->at(i) );
+				if ( line_stream.fail() ) {
+					tr.Debug << "i= "<< i <<std::endl;
+					tr.Debug << "count grid is not complete in checkpoint file, restart from checkpoint abort!" << std::endl;
+					return false;
+				}
+			}
+			std::string tag_end;
+			line_stream >> tag_end;
+			if ( line_stream.fail() || (tag_end != "GRID_END") ) {
+				tr.Debug << "grid info format error, restart from checkpoint abort!" << std::endl;
+				return false;
+			}
+		}
+		step_counter_ = cycle;
+		temperature_ = temperature;
+		return true;
+	}
+	return false; // it should never reach here if complete info has been obtained from checkpoint file
+}
+
 void BiasEnergy::add_values_to_job( core::pose::Pose const & pose, protocols::jd2::Job & job ) const {
 	job.add_string_real_pair( "bias", evaluate( pose ) );
 }
@@ -163,6 +239,13 @@ void BiasEnergy::swap_replicas() {
 	count_grid_->toggle();
 }
 
+void BiasEnergy::write_to_string( std::string& str ) const{
+	/// current_output_name current_replica trial_count temp_level all in checkpoint_id
+	str = "WTE_Bias_Energy_Grid ";
+	bias_grid_->write_to_string( str );
+	str = str + " WTE_Count_Grid ";
+	count_grid_->write_to_string( str );
+}
 void
 BiasEnergy::parse_my_tag(
 	utility::tag::TagCOP tag,

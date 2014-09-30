@@ -22,6 +22,7 @@
 // Project Headers
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/loops/Loop.fwd.hh>
+#include <protocols/jd2/SilentFileJobOutputter.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <numeric/random/WeightedSampler.hh>
 
@@ -29,7 +30,7 @@
 #include <core/types.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
+#include <vector>
 #include <protocols/canonical_sampling/ThermodynamicMover.fwd.hh>
 #include <protocols/canonical_sampling/ThermodynamicObserver.fwd.hh>
 
@@ -256,6 +257,9 @@ public:
 		return last_accepted_;
 	}
 
+	std::string
+	get_last_checkpoint() const;
+
 protected:
 
 	/// @brief Protected non-const access to the TemperatureController.
@@ -268,6 +272,14 @@ protected:
 	{
 		return movers_[idx];
 	}
+
+	/// @brief write checkpoint snapshots for restarting
+	void
+	write_checkpoint( core::pose::Pose const & pose );
+
+	/// @brief get checkpoint_id for restarting
+	bool
+	get_checkpoints();
 
 	/// @brief Finalize all the movers and observers used in this simulation, and
 	/// write some debrief statistics to the tracer.
@@ -312,6 +324,10 @@ private:
 
 	// Internal book keeping
 	bool output_name_from_job_distributor_;
+
+	protocols::jd2::SilentFileJobOutputterOP job_outputter_;
+	core::Size checkpoint_count_;
+	std::vector< std::string > checkpoint_ids_;
 
 }; //end MetropolisHastingsMover
 

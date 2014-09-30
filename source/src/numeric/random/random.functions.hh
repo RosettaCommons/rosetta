@@ -16,6 +16,7 @@
 
 #include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
+#include <numeric/xyzVector.hh>
 
 namespace numeric {
 namespace random {
@@ -23,13 +24,29 @@ namespace random {
 /// @detail generate uniformly distributed vector on the unit sphere
 /// @author Zhe Zhang
 /// @author Justin R. Porter
+// template< typename T >
+// inline
+// xyzVector< T >
+// random_point_on_unit_sphere( RandomGenerator& RG ){
+//   T phi = RG.uniform() * NumericTraits< T >::pi_2();
+//   T theta = std::acos( sin_cos_range( 1-2*RG.uniform() ) );
+//   return spherical_to_xyz( sphericalVector<T>( phi, theta, 1 ) );
+// }
+
+/// @detail generate uniformly distributed unit vector
+/// @detail a random normal distribution of coordinates gives a uniform distribution of directions.
+/// @detail same functionality as the commented random_point_on_unit_sphere(), but simpler algorithm
+/// @detail rename as random_uniform_distributed_direction()?
+/// @author Zhe Zhang
 template< typename T >
 inline
 xyzVector< T >
 random_point_on_unit_sphere( RandomGenerator& RG ){
-  T phi = RG.uniform() * NumericTraits< T >::pi_2();
-  T theta = std::acos( sin_cos_range( 1-2*RG.uniform() ) );
-  return spherical_to_xyz( sphericalVector<T>( phi, theta, 1 ) );
+	xyzVector< T > vec( RG.gaussian(), RG.gaussian(), RG.gaussian() );
+	while ( vec.length() == 0 ) {
+		vec = xyzVector< T >( RG.gaussian(), RG.gaussian(), RG.gaussian() );
+	}
+	return vec.normalized();
 }
 
 /// @detail generate axis and angle for axis-angle rotation for random rotation move in R/RT degrees of
