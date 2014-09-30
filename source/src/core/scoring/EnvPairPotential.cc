@@ -505,8 +505,7 @@ CenListInfo const &
 EnvPairPotential::cenlist_from_pose( pose::Pose const & pose ) const
 {
 	using namespace core::pose::datacache;
-	return *( utility::pointer::static_pointer_cast< core::scoring::CenListInfo const > ( pose.data().get_const_ptr( CacheableDataType::CEN_LIST_INFO ) ));
-
+	return static_cast< core::scoring::CenListInfo const & > ( pose.data().get( CacheableDataType::CEN_LIST_INFO ) );
 }
 
 /// @details Either returns a non-const reference to the cenlist object already stored
@@ -515,10 +514,9 @@ EnvPairPotential::cenlist_from_pose( pose::Pose const & pose ) const
 CenListInfo &
 EnvPairPotential::nonconst_cenlist_from_pose( pose::Pose & pose ) const
 {
-	// ////using core::pose::datacache::CacheableDataType::CEN_LIST_INFO;
 
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::CEN_LIST_INFO ) ) {
-		return *( utility::pointer::static_pointer_cast< core::scoring::CenListInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::CEN_LIST_INFO ) ));
+		return static_cast< core::scoring::CenListInfo & > ( pose.data().get( core::pose::datacache::CacheableDataType::CEN_LIST_INFO ));
 	}
 	// else
 	CenListInfoOP cenlist( new CenListInfo );

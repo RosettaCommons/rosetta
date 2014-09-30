@@ -1207,9 +1207,9 @@ get_branching_atoms2(
 	runtime_assert(branch_atom2 != 0);
 
 	// get dihedral offsets of the two branching atoms adjusted to [0, 2*pi)
-	Real dihedral1(parent->dihedral_between_bonded_children(main_atom2, branch_atom1));
+	Real dihedral1(parent->dihedral_between_bonded_children(*main_atom2, *branch_atom1));
 	if (dihedral1 < 0) dihedral1 += pi_2;
-	Real dihedral2(parent->dihedral_between_bonded_children(main_atom2, branch_atom2));
+	Real dihedral2(parent->dihedral_between_bonded_children(*main_atom2, *branch_atom2));
 	if (dihedral2 < 0) dihedral2 += pi_2;
 
 	// switch the atoms if their dihedral offsets are in the wrong order

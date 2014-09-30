@@ -356,6 +356,46 @@ JumpAtom::get_dof_axis_and_end_pos(
 	}
 }
 
+Atom const *
+JumpAtom::raw_stub_atom1() const
+{
+	return ( stub_defined() ? this : raw_parent() );
+}
+
+Atom const *
+JumpAtom::raw_stub_atom2() const
+{
+	if ( stub_defined() ) {
+		return raw_get_nonjump_atom(0);
+	}
+	Atom const * parent_ptr = raw_parent();
+	if ( parent_ptr ) {
+		return parent_ptr->raw_stub_atom2();
+	}
+	return 0;
+}
+
+Atom const *
+JumpAtom::raw_stub_atom3() const
+{
+	//std::cout << "stub_atom3: " << this << ' ' << parent_ << std::endl();
+	if ( stub_defined() ) {
+		Atom const * first( raw_get_nonjump_atom(0) );
+		Atom const * second( first->raw_get_nonjump_atom(0) );
+		if ( second ) {
+			return second;
+		} else {
+			return raw_get_nonjump_atom(1);
+		}
+	}
+	Atom const * parent_ptr = raw_parent();
+	if ( parent_ptr ) {
+		return parent_ptr->raw_stub_atom3();
+	}
+	return 0;
+}
+
+
 } // namespace tree
 } // namespace kinematics
 } // namespace core

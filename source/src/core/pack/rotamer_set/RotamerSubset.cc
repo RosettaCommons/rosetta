@@ -154,6 +154,12 @@ RotamerSubset::rotamer( Size rot_id ) const
 	return rotamers_[ rot_id ];
 }
 
+conformation::Residue const &
+RotamerSubset::rotamer_ref( Size rot_id ) const
+{
+	return *rotamers_[ rot_id ];
+}
+
 
 /// @details In handing out non-const data, the guarantee of rotamer-type contiguity
 /// within the rotamers_ array, and the correspondence of the rotamer offset

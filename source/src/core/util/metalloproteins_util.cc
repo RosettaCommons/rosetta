@@ -305,7 +305,7 @@ add_covalent_linkage_helper(
 		//and last but not least we have to regenerate the rotamer library for the ligand
 		if( pose.residue_type( res_pos ).is_ligand() ) {
 
-			SingleResidueRotamerLibraryCOP old_rrots = RotamerLibrary::get_instance().get_rsd_library( pose.residue_type( res_pos ) ).lock();
+			SingleResidueRotamerLibraryCOP old_rrots = RotamerLibrary::get_instance().get_rsd_library( pose.residue_type( res_pos ) );
 			SingleLigandRotamerLibraryCOP old_lrots = utility::pointer::static_pointer_cast< SingleLigandRotamerLibrary const >( old_rrots );
 
 			if( old_lrots != 0 ){

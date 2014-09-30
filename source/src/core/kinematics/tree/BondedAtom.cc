@@ -482,6 +482,39 @@ BondedAtom::copy_coords( Atom const & src )
 	}
 }
 
+Atom const *
+BondedAtom::raw_stub_atom1() const
+{
+	return this;
+}
+
+Atom const *
+BondedAtom::raw_stub_atom2() const
+{
+	return raw_parent();
+}
+
+Atom const *
+BondedAtom::raw_stub_atom3() const
+{
+	//std::cout << "stub_atom3: " << this << ' ' << parent_ << std::endl();
+	Atom const * parent_ptr = raw_parent(); // must have parent
+	if ( parent_ptr->is_jump() ) {
+		assert( parent_ptr->stub_defined() ); // weird behavior otherwise
+		Atom const * p_stub2( parent_ptr->raw_stub_atom2() );
+		AtomID const & p_stub2_id( p_stub2->id() );
+		if ( id() == p_stub2_id ) {
+			// very special case!!
+			return parent_ptr->raw_stub_atom3();
+		} else {
+			return p_stub2;
+		}
+	} else {
+		return parent_ptr->raw_stub_atom2();
+	}
+}
+
+
 ///
 Jump BOGUS_JUMP;
 

@@ -876,8 +876,8 @@ ScoreFunction::get_sub_score(
 
 		// Potentially O(N^2) operation...
 		for( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-			if(!residue_mask[ii]) continue;
-
+			if ( ! residue_mask[ii] ) continue;
+			if ( ! lrec->any_upper_neighbors_for_residue( ii ) ) continue;
 			for( ResidueNeighborConstIteratorOP
 						 rni = lrec->const_upper_neighbor_iterator_begin( ii ),
 						 rniend = lrec->const_upper_neighbor_iterator_end( ii );

@@ -93,7 +93,7 @@ public:
 	typedef utility::OrderedTuple< ResAtomIndex > ResAtomIndexTuple;
 	typedef std::map< ResAtomIndexTuple, std::list< resatom_and_func_struct > > ResAtomIndexFuncMap;
 
-	typedef utility::fixedsizearray1< chemical::ResidueTypeCOP, 2 > ResTypePair;
+	typedef utility::fixedsizearray1< chemical::ResidueType const * , 2 > ResTypePair;
 	typedef utility::OrderedTuple< ResTypePair > ResTypePairTuple;
 
 	typedef std::map< ResTypePairTuple, AtomPairFuncListOP > PairFuncMap;

@@ -84,7 +84,7 @@ SameChiBinComboGrouper::assign_group_for_match(
 
 		rot_vector[	n_geometric_constraints_ + ii ] = iires->aa();
 
-		SingleResidueRotamerLibraryCOP srrl = rotlib.get_rsd_library( iires->type() ).lock();
+		SingleResidueRotamerLibraryCOP srrl = rotlib.get_rsd_library( iires->type() );
 		if ( ! srrl ) {
 			/// ?!?! What do we without a library?
 			rot_vector[	2*n_geometric_constraints_ + ii ] = 1;

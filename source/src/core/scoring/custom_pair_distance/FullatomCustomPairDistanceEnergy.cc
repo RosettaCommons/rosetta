@@ -319,13 +319,13 @@ FullatomCustomPairDistanceEnergy::setup_for_minimizing(
 	     respairiter_end = pair_and_func_map_.end();
 			 respairiter != respairiter_end; ++respairiter) {
 		ResTypePair respair = (*respairiter).first.data();
-		for (Size i=1; i<=pose.total_residue(); ++i) {
-			if (chemical::ResidueTypeCOP( & (pose.residue_type(i))) == respair[1]) {
-				for (Size j=1; j<=pose.total_residue(); ++j) {
-						if (chemical::ResidueTypeCOP( & (pose.residue_type(j))) == respair[2]) {
+		for ( Size i=1; i<=pose.total_residue(); ++i ) {
+			if ( & (pose.residue_type(i)) == respair[1] ) {
+				for ( Size j=1; j<=pose.total_residue(); ++j ) {
+						if ( & (pose.residue_type(j)) == respair[2] ) {
 							for ( std::list<atoms_and_func_struct>::const_iterator iter_a = (*respairiter).second.begin(),
 										iter_end_a = (*respairiter).second.end(); iter_a != iter_end_a; ++iter_a) {
-								if (i == j && (*iter_a).resA_atom_index_ == (*iter_a).resB_atom_index_) continue; // skip same atom
+								if ( i == j && (*iter_a).resA_atom_index_ == (*iter_a).resB_atom_index_ ) continue; // skip same atom
 								// add pair
 								resatom_and_func_struct resatom_b;
 								ResAtomIndex rai_a;
@@ -390,8 +390,8 @@ FullatomCustomPairDistanceEnergy::find(
 ) const
 {
 	ResTypePair respair;
-	respair[1] = chemical::ResidueTypeCOP( rsd1.type().get_self_ptr() );
-	respair[2] = chemical::ResidueTypeCOP( rsd2.type().get_self_ptr() );
+	respair[1] = & rsd1.type();
+	respair[2] = & rsd2.type();
 	return pair_and_func_map_.find( respair );
 }
 
@@ -477,8 +477,8 @@ FullatomCustomPairDistanceEnergy::set_pair_and_func_map()
 						Size atom_index_b = rsd_type_b->atom_index( atomB[i] );
 						ResTypePair respair;
 
-						respair[1] = rsd_type_a;
-						respair[2] = rsd_type_b;
+						respair[1] = rsd_type_a.get();
+						respair[2] = rsd_type_b.get();
 						pair_func.resA_atom_index_ =  atom_index_a;
 						pair_func.resB_atom_index_ =  atom_index_b;
 						AtomPairFuncListOP atpairlist = pair_and_func_map_[ respair ];
@@ -496,8 +496,8 @@ FullatomCustomPairDistanceEnergy::set_pair_and_func_map()
 						// I tried to prevent having to do this by sorting the pair but
 						// couldn't get it to work
 						if (rsd_type_a != rsd_type_b) {
-							respair[1] = rsd_type_b;
-							respair[2] = rsd_type_a;
+							respair[1] = rsd_type_b.get();
+							respair[2] = rsd_type_a.get();
 							pair_func.resA_atom_index_ =  atom_index_b;
 							pair_func.resB_atom_index_ =  atom_index_a;
 							atpairlist =  pair_and_func_map_[ respair ];

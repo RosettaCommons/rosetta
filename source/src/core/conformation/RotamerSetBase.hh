@@ -85,6 +85,10 @@ public:
 	conformation::ResidueCOP
 	rotamer( Size rot_id ) const = 0;
 
+	virtual
+	conformation::Residue const &
+	rotamer_ref( Size rot_id ) const = 0;
+
 	/// @brief mutatable access to a single rotamer in the set.
 	virtual
 	conformation::ResidueOP

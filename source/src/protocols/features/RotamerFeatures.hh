@@ -60,7 +60,7 @@ public:
 		using namespace core::pack::dunbrack;
 
 		SingleResidueRotamerLibraryCOP generic_rotlib =
-			RotamerLibrary::get_instance().get_rsd_library( residue.type() ).lock();
+			RotamerLibrary::get_instance().get_rsd_library( residue.type() );
 
 		if(!generic_rotlib){
 			return false;

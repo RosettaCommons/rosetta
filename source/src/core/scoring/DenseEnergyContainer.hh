@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/LongRangeEnergyContainer.hh
-/// @brief  A container interface for storing and scoring long range energies
+/// @file   core/scoring/DenseEnergyContainer.hh
+/// @brief  A container for storing all-against-all energies as the upper triangle of a matrix
 /// @author Andrew Leaver-Fay
 
 #ifndef INCLUDED_core_scoring_DenseEnergyContainer_hh
@@ -40,7 +40,7 @@ namespace scoring {
 class DenseNeighborIterator : public ResidueNeighborIterator
 {
 public:
-	virtual ~DenseNeighborIterator(){}
+	virtual ~DenseNeighborIterator();
 
 	DenseNeighborIterator(
 		Size const pos1_in,
@@ -48,96 +48,35 @@ public:
 		ScoreType const st,
 		ObjexxFCL::FArray2D< Real > * table_in,
 		ObjexxFCL::FArray2D< bool > * computed_in
-	):
-		pos1_( pos1_in ),
-		pos2_( pos2_in ),
-		score_type_( st ),
-		table_( table_in ),
-		computed_( computed_in )
-	{}
+	);
 
-	virtual ResidueNeighborIterator const & operator = ( ResidueNeighborIterator const & src )
-	{
-		assert( dynamic_cast< DenseNeighborIterator const * >( &src ) );
-		DenseNeighborIterator const & my_src( static_cast< DenseNeighborIterator const & >( src ) );
-		pos1_ = my_src.pos1_;
-		pos2_ = my_src.pos2_;
-		table_ = my_src.table_;
-		computed_ = my_src.computed_;
-		return *this;
-	}
+	virtual ResidueNeighborIterator const & operator = ( ResidueNeighborIterator const & src );
 
-	virtual ResidueNeighborIterator const & operator ++ ()
-	{
-		++pos2_;
-		if ( pos2_ == pos1_ ) ++pos2_;
-		return *this;
-	}
+	virtual ResidueNeighborIterator const & operator ++ ();
 
-	virtual bool operator == ( ResidueNeighborIterator const & other ) const
-	{
-		return ( residue_iterated_on() == other.residue_iterated_on() &&
-						 neighbor_id() == other.neighbor_id() );
-	}
+	virtual bool operator == ( ResidueNeighborIterator const & other ) const;
 
-	virtual bool operator != ( ResidueNeighborIterator const & other ) const
-	{
-		return !( *this == other );
-	}
+	virtual bool operator != ( ResidueNeighborIterator const & other ) const;
 
-	virtual Size upper_neighbor_id() const
-	{
-		return std::max( pos1_, pos2_ );
-	}
+	virtual Size upper_neighbor_id() const;
 
-	virtual Size lower_neighbor_id() const
-	{
-		return std::min( pos1_, pos2_ );
-	}
+	virtual Size lower_neighbor_id() const;
 
-	virtual Size residue_iterated_on() const
-	{
-		return pos1_;
-	}
+	virtual Size residue_iterated_on() const;
 
-	virtual Size neighbor_id() const
-	{
-		return pos2_;
-	}
+	virtual Size neighbor_id() const;
 
-	virtual void save_energy( EnergyMap const & emap )
-	{
-		Real const energy( emap[ score_type_ ] );
-		(*table_)( pos1_, pos2_ ) = energy;
-		(*table_)( pos2_, pos1_ ) = energy;
-	}
+	virtual void save_energy( EnergyMap const & emap );
 
-	virtual void retrieve_energy( EnergyMap & emap ) const
-	{
-		emap[ score_type_ ] = (*table_)(pos1_,pos2_);
-	}
+	virtual void retrieve_energy( EnergyMap & emap ) const;
 
-	virtual void accumulate_energy( EnergyMap & emap ) const
-	{
-		emap[ score_type_ ] += (*table_)(pos1_, pos2_);
-	}
+	virtual void accumulate_energy( EnergyMap & emap ) const;
 
-	virtual void mark_energy_computed()
-	{
-		(*computed_)( pos1_, pos2_ ) = true;
-		(*computed_)( pos2_, pos1_ ) = true;
-	}
+	virtual void mark_energy_computed();
 
-	virtual void mark_energy_uncomputed()
-	{
-		(*computed_)( pos1_, pos2_ ) = false;
-		(*computed_)( pos2_, pos1_ ) = false;
-	}
+	virtual void mark_energy_uncomputed();
 
-	virtual bool energy_computed() const
-	{
-		return (*computed_)( pos1_, pos2_ );
-	}
+	virtual bool energy_computed() const;
 
 private:
 	Size pos1_;
@@ -153,7 +92,7 @@ private:
 class DenseNeighborConstIterator : public ResidueNeighborConstIterator
 {
 public:
-	virtual ~DenseNeighborConstIterator(){}
+	virtual ~DenseNeighborConstIterator();
 
 	DenseNeighborConstIterator(
 		Size const pos1_in,
@@ -161,96 +100,29 @@ public:
 		ScoreType const st,
 		ObjexxFCL::FArray2D< Real > const * table_in,
 		ObjexxFCL::FArray2D< bool > const * computed_in
-	):
-		pos1_( pos1_in ),
-		pos2_( pos2_in ),
-		score_type_( st ),
-		table_( table_in ),
-		computed_( computed_in )
-	{}
+	);
 
-	virtual ResidueNeighborConstIterator const & operator = ( ResidueNeighborConstIterator const & src )
-	{
-		assert( dynamic_cast< DenseNeighborConstIterator const * >( &src ) );
-		DenseNeighborConstIterator const & my_src( static_cast< DenseNeighborConstIterator const & >( src ) );
-		pos1_ = my_src.pos1_;
-		pos2_ = my_src.pos2_;
-		table_ = my_src.table_;
-		computed_ = my_src.computed_;
-		return *this;
-	}
+	virtual ResidueNeighborConstIterator const & operator = ( ResidueNeighborConstIterator const & src );
 
-	virtual ResidueNeighborConstIterator const & operator ++ ()
-	{
-		++pos2_;
-		if ( pos2_ == pos1_ ) ++pos2_;
-		return *this;
-	}
+	virtual ResidueNeighborConstIterator const & operator ++ ();
 
-	virtual bool operator == ( ResidueNeighborConstIterator const & other ) const
-	{
-		return ( residue_iterated_on() == other.residue_iterated_on() &&
-						 neighbor_id() == other.neighbor_id() );
-	}
+	virtual bool operator == ( ResidueNeighborConstIterator const & other ) const;
 
-	virtual bool operator != ( ResidueNeighborConstIterator const & other ) const
-	{
-		return !( *this == other );
-	}
+	virtual bool operator != ( ResidueNeighborConstIterator const & other ) const;
 
-	virtual Size upper_neighbor_id() const
-	{
-		return std::max( pos1_, pos2_ );
-	}
+	virtual Size upper_neighbor_id() const;
 
-	virtual Size lower_neighbor_id() const
-	{
-		return std::min( pos1_, pos2_ );
-	}
+	virtual Size lower_neighbor_id() const;
 
-	virtual Size residue_iterated_on() const
-	{
-		return pos1_;
-	}
+	virtual Size residue_iterated_on() const;
 
-	virtual Size neighbor_id() const
-	{
-		return pos2_;
-	}
+	virtual Size neighbor_id() const;
 
-// 	virtual void save_energy( EnergyMap const & emap )
-// 	{
-// 		Real const energy( emap[ score_type_ ] );
-// 		(*table_)( pos1_, pos2_ ) = energy;
-// 		(*table_)( pos2_, pos1_ ) = energy;
-// 	}
+	virtual void retrieve_energy( EnergyMap & emap ) const;
 
-	virtual void retrieve_energy( EnergyMap & emap ) const
-	{
-		emap[ score_type_ ] = (*table_)(pos1_,pos2_);
-	}
+	virtual void accumulate_energy( EnergyMap & emap ) const;
 
-	virtual void accumulate_energy( EnergyMap & emap ) const
-	{
-		emap[ score_type_ ] += (*table_)(pos1_, pos2_);
-	}
-
-// 	virtual void mark_energy_computed()
-// 	{
-// 		(*computed_)( pos1_, pos2_ ) = true;
-// 		(*computed_)( pos2_, pos1_ ) = true;
-// 	}
-
-// 	virtual void mark_energy_uncomputed()
-// 	{
-// 		(*computed_)( pos1_, pos2_ ) = false;
-// 		(*computed_)( pos2_, pos1_ ) = false;
-// 	}
-
-	virtual bool energy_computed() const
-	{
-		return (*computed_)( pos1_, pos2_ );
-	}
+	virtual bool energy_computed() const;
 
 private:
 	Size pos1_;
@@ -265,99 +137,64 @@ private:
 class DenseEnergyContainer : public LREnergyContainer
 {
 public:
-	virtual
-	~DenseEnergyContainer(){};
+	virtual	~DenseEnergyContainer();
 
 	virtual
-	LREnergyContainerOP clone() const
-	{
-		return LREnergyContainerOP( new DenseEnergyContainer( *this ) );
-	}
+	LREnergyContainerOP clone() const;
 
-	DenseEnergyContainer( Size const size_in, ScoreType const score_type_in ):
-		size_( size_in ),
-		score_type_( score_type_in ),
-		table_( size_, size_, 0.0 ),
-		computed_( size_, size_, false )
-	{}
+	DenseEnergyContainer( Size const size_in, ScoreType const score_type_in );
 
 	virtual
-	bool empty() const
-	{
-		return ( size_ == 0 );
-	}
+	bool empty() const;
 
 	virtual
 	void
-	set_num_nodes( Size size_in ) {
-		size_ = size_in;
-		table_.dimension( size_ , size_, 0.0 );
-		computed_.dimension( size_, size_, false );
-	}
+	set_num_nodes( Size size_in );
+
+	virtual
+	bool
+	any_neighbors_for_residue( int ) const;
+
+	virtual
+	bool
+	any_upper_neighbors_for_residue( int resid ) const;
 
 	Size
-	size() const
-	{
-		return size_;
-	}
+	size() const;
 
 	//////////////////// const versions
 	virtual
 	ResidueNeighborConstIteratorOP
-	const_neighbor_iterator_begin( int resid ) const
-	{
-		return ResidueNeighborConstIteratorOP( new DenseNeighborConstIterator( resid, resid==1 ? 2 : 1, score_type_, &table_, &computed_ ) );
-	}
+	const_neighbor_iterator_begin( int resid ) const;
 
 	virtual
 	ResidueNeighborConstIteratorOP
-	const_neighbor_iterator_end( int resid ) const
-	{
-		return ResidueNeighborConstIteratorOP( new DenseNeighborConstIterator( resid, size_ + 1, score_type_, &table_, &computed_ ) );
-	}
+	const_neighbor_iterator_end( int resid ) const;
 
 	virtual
 	ResidueNeighborConstIteratorOP
-	const_upper_neighbor_iterator_begin( int resid ) const
-	{
-		return ResidueNeighborConstIteratorOP( new DenseNeighborConstIterator( resid, resid+1, score_type_, &table_, &computed_ ) );
-	}
+	const_upper_neighbor_iterator_begin( int resid ) const;
 
 	virtual
 	ResidueNeighborConstIteratorOP
-	const_upper_neighbor_iterator_end( int resid ) const
-	{
-		return const_neighbor_iterator_end( resid );
-	}
+	const_upper_neighbor_iterator_end( int resid ) const;
 
 	//////////////////// non-const versions
 	virtual
 	ResidueNeighborIteratorOP
-	neighbor_iterator_begin( int resid )
-	{
-		return ResidueNeighborIteratorOP( new DenseNeighborIterator( resid, 1, score_type_, &table_, &computed_ ) );
-	}
+	neighbor_iterator_begin( int resid );
 
 	virtual
 	ResidueNeighborIteratorOP
-	neighbor_iterator_end( int resid )
-	{
-		return ResidueNeighborIteratorOP( new DenseNeighborIterator( resid, size_ + 1, score_type_, &table_, &computed_ ) );
-	}
+	neighbor_iterator_end( int resid );
 
 	virtual
 	ResidueNeighborIteratorOP
-	upper_neighbor_iterator_begin( int resid )
-	{
-		return ResidueNeighborIteratorOP( new DenseNeighborIterator( resid, resid+1, score_type_, &table_, &computed_ ) );
-	}
+	upper_neighbor_iterator_begin( int resid );
 
 	virtual
 	ResidueNeighborIteratorOP
-	upper_neighbor_iterator_end( int resid )
-	{
-		return neighbor_iterator_end( resid );
-	}
+	upper_neighbor_iterator_end( int resid );
 
 private:
 	Size /*const*/ size_;

@@ -355,6 +355,20 @@ CstEnergyContainer::set_num_nodes( Size newsize )
 	}
 }
 
+bool
+CstEnergyContainer::any_neighbors_for_residue( int resid ) const
+{
+	assert( !empty() );
+	return cst_graph_->get_node( resid )->num_edges() != 0;
+}
+
+bool
+CstEnergyContainer::any_upper_neighbors_for_residue( int resid ) const
+{
+	assert( !empty() );
+	return cst_graph_->get_node( resid )->get_num_edges_to_larger_indexed_nodes() != 0;
+}
+
 
 ResidueNeighborConstIteratorOP
 CstEnergyContainer::const_neighbor_iterator_begin( int resid ) const

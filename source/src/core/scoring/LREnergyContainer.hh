@@ -93,6 +93,14 @@ public:
 	set_num_nodes( Size ) { }
 
 	virtual
+	bool
+	any_neighbors_for_residue( int resid ) const = 0;
+
+	virtual
+	bool
+	any_upper_neighbors_for_residue( int resid ) const = 0;
+
+	virtual
 	ResidueNeighborConstIteratorOP
 	const_neighbor_iterator_begin( int resid ) const = 0;
 

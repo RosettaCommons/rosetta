@@ -373,7 +373,11 @@ public:  // Residues
 	inline
 	Residue const &
 	residue( Size seqpos ) const {
-		return *residue_cop( seqpos );
+		runtime_assert( seqpos >= 1 );
+		runtime_assert( seqpos <= size() );
+		if ( residue_coordinates_need_updating_ ) update_residue_coordinates();
+		if ( residue_torsions_need_updating_ )    update_residue_torsions();
+		return *residues_[ seqpos ];
 	}
 
 	/// @brief access one of the residues, using OP

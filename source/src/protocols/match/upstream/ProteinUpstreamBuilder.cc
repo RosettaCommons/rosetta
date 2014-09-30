@@ -817,7 +817,7 @@ ProteinUpstreamBuilder::build(
 		// Warning: rotlib is assumed to be always valid, yet it throws a bad_weak_ptr exception in the match integration test -- what should it be?
 		// Do we expect the rotamer library to be always there? Was:
 		// core::pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib(  core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( rescoords.type() ) );
-		core::pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( rescoords.type() ).lock();
+		core::pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( rescoords.type() );
 		bool check_fa_dun( build_sets_[ii].check_fa_dun() );
 		core::Real fa_dun_cutoff( build_sets_[ii].fa_dun_cutoff() );
 		if( check_fa_dun ){

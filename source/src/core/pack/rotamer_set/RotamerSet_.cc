@@ -312,7 +312,7 @@ RotamerSet_::build_rotamers_for_concrete(
 		bump_selector_.set_max_rot_bumpenergy( task.max_rotbump_energy() );
 
 		utility::vector1< ResidueOP > suggested_rotamers;
-		dunbrack::SingleResidueRotamerLibraryCOP rotlib = dunbrack::RotamerLibrary::get_instance().get_rsd_library( *concrete_residue ).lock(); //For D-amino acids, returns the rotamer library for the corresponding L-amino acid
+		dunbrack::SingleResidueRotamerLibraryCOP rotlib = dunbrack::RotamerLibrary::get_instance().get_rsd_library( *concrete_residue ); //For D-amino acids, returns the rotamer library for the corresponding L-amino acid
 		if (rotlib) {
 			/// DOUG DOUG DOUG DEBUG OUTPUT
 			//std::cout << "EXTRA_CHI_STEPS::build_rotamers_for_concrete\t" << extra_chi_steps.size() << std::endl;
@@ -870,6 +870,14 @@ RotamerSet_::rotamer( Size rot_id ) const
 {
 	return rotamers_[ rot_id ];
 }
+
+
+conformation::Residue const &
+RotamerSet_::rotamer_ref( Size rot_id ) const
+{
+	return *rotamers_[ rot_id ];
+}
+
 
 /// @details In handing out non-const data, the guarantee of rotamer-type contiguity
 /// within the rotamers_ array, and the correspondence of the rotamer offset

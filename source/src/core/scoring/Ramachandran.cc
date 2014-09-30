@@ -391,13 +391,12 @@ Ramachandran::eval_rama_score_residue(
 {
 	using namespace numeric;
 
-	//assert( pose.residue(res).is_protein() );
 	assert( rsd.is_protein() );
 
-	//Determine whether connections are incomplete:
-	//bool incomplete_connections = (rsd.has_incomplete_connection(rsd.lower_connect_atom()) || rsd.has_incomplete_connection(rsd.upper_connect_atom()));
-
-	if ( 0.0 == nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1)) || 0.0 == nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2)) || rsd.is_terminus() || rsd.is_virtual_residue() /*|| incomplete_connections*/) { // begin or end of chain -- don't calculate rama score
+	if ( 0.0 == nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1) ) ||
+			0.0 == nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2) ) ||
+			rsd.is_terminus() ||
+			rsd.is_virtual_residue() ) { // begin or end of chain -- don't calculate rama score
 		rama = 0.0;
 		drama_dphi = 0.0;
 		drama_dpsi = 0.0;
@@ -408,11 +407,13 @@ Ramachandran::eval_rama_score_residue(
 	Real psi=0.0;
 
 
-	if(is_normally_connected(rsd)) { //If this residue is conventionally connected
-		phi = nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1));
-		psi = nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2));
+	if ( is_normally_connected(rsd) ) { //If this residue is conventionally connected
+		phi = nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1) );
+		psi = nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2) );
 		core::chemical::AA ref_aa = rsd.aa();
-		if(rsd.backbone_aa() != core::chemical::aa_unk) ref_aa = rsd.backbone_aa(); //If this is a noncanonical that specifies a canonical to use as a Rama template, use the template.
+		if ( rsd.backbone_aa() != core::chemical::aa_unk ) {
+			ref_aa = rsd.backbone_aa(); //If this is a noncanonical that specifies a canonical to use as a Rama template, use the template.
+		}
 
 		eval_rama_score_residue( ref_aa, phi, psi, rama, drama_dphi, drama_dpsi );
 	} else { //If this residue is unconventionally connected (should be handled elsewhere)
@@ -506,8 +507,8 @@ Ramachandran::eval_rama_score_residue(
 	core::Real psi2 = psi;
 	core::Real d_multiplier=1.0; //A multiplier for derivatives: 1.0 for L-amino acids, -1.0 for D-amino acids.
 
-	if(is_canonical_d_aminoacid(res_aa)) { //If this is a D-amino acid, invert phi and psi and use the corresponding L-amino acid for the calculation
-		res_aa2 = get_l_equivalent(res_aa);
+	if ( is_canonical_d_aminoacid( res_aa ) ) { //If this is a D-amino acid, invert phi and psi and use the corresponding L-amino acid for the calculation
+		res_aa2 = get_l_equivalent( res_aa );
 		phi2 = -phi;
 		psi2 = -psi;
 		d_multiplier = -1.0;
@@ -580,7 +581,10 @@ bool
 Ramachandran::is_normally_connected (
 	conformation::Residue const & res
 ) const {
-	if(res.is_upper_terminus() || res.is_lower_terminus() || res.connect_map_size()<2 ) return true; //Termini register as normally connected since they're not to be scored by rama.
+
+	if ( res.is_upper_terminus() || res.is_lower_terminus() || res.connect_map_size() < 2 ) {
+		return true; //Termini register as normally connected since they're not to be scored by rama.
+	}
 
 	bool firstconn = true, secondconn=true;
 

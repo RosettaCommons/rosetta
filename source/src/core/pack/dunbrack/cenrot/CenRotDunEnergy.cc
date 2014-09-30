@@ -105,10 +105,10 @@ void CenRotDunEnergy::residue_energy(
 
 	/// accumulate total energies
 	Real dun_score( 0.0 );
-	
+
 	//cal single residue cenrot lib
-	RotamerLibrary const & rotlibCAP = RotamerLibrary::get_instance();
-	SingleResidueRotamerLibraryCOP residue_rotamer_library = rotlibCAP.get_rsd_library( rsd.type() ).lock();
+	RotamerLibrary const & rotlib = RotamerLibrary::get_instance();
+	SingleResidueRotamerLibraryCOP residue_rotamer_library = rotlib.get_rsd_library( rsd.type() );
 	if (residue_rotamer_library==0) return;
 
 	SingleResidueCenrotLibraryCOP residue_cenrot_library(
@@ -121,7 +121,7 @@ void CenRotDunEnergy::residue_energy(
 	emap[ cen_rot_dun ] += dun_score;
 } // residue_energy
 
-// dunbrack term not only contains dU/dr but also 
+// dunbrack term not only contains dU/dr but also
 // has dU/dphi and dU/dpsi term, cz it's bb dependent
 
 bool CenRotDunEnergy::defines_dof_derivatives( pose::Pose const & ) const { return true; }
@@ -148,8 +148,8 @@ Real CenRotDunEnergy::eval_residue_dof_derivative(
 		assert( rsd.seqpos() == tor_id.rsd() );
 		if ( rsd.is_virtual_residue() ) return 0.0;
 
-		RotamerLibrary const & rotlibCAP = RotamerLibrary::get_instance();
-		SingleResidueRotamerLibraryCOP residue_rotamer_library = rotlibCAP.get_rsd_library(rsd.type()).lock();
+		RotamerLibrary const & rotlib = RotamerLibrary::get_instance();
+		SingleResidueRotamerLibraryCOP residue_rotamer_library = rotlib.get_rsd_library(rsd.type());
 
 		if (residue_rotamer_library==0) return 0.0;
 
@@ -190,8 +190,8 @@ Real CenRotDunEnergy::eval_dof_derivative(
 
 		if ( pose.residue( tor_id.rsd() ).is_virtual_residue() ) return 0.0;
 
-		RotamerLibrary const & rotlibCAP = RotamerLibrary::get_instance();
-		SingleResidueRotamerLibraryCOP residue_rotamer_library = rotlibCAP.get_rsd_library(pose.residue( tor_id.rsd() ).type()).lock();
+		RotamerLibrary const & rotlib = RotamerLibrary::get_instance();
+		SingleResidueRotamerLibraryCOP residue_rotamer_library = rotlib.get_rsd_library(pose.residue( tor_id.rsd() ).type());
 		if (residue_rotamer_library==0) return 0.0;
 
 		SingleResidueCenrotLibraryCOP residue_cenrot_library(
@@ -201,7 +201,7 @@ Real CenRotDunEnergy::eval_dof_derivative(
 		if (residue_cenrot_library && pose.residue_type( tor_id.rsd() ).is_protein() && tor_id.type() == id::BB) {
 			RotamerLibraryScratchSpace scratch;
 			residue_cenrot_library->eval_rotameric_energy_bb_dof_deriv(pose.residue( tor_id.rsd() ), scratch);
-			
+
 			if ( tor_id.torsion() <= DUNBRACK_MAX_BBTOR ) {
 				//for backbone torsion angles: phi, psi, omega?
 				deriv = scratch.dE_dbb()[tor_id.torsion()];
@@ -224,10 +224,10 @@ void CenRotDunEnergy::eval_residue_derivatives(
 	assert(rsd.residue_type_set().name()==chemical::CENTROID_ROT);
 
 	Real weight = weights[ cen_rot_dun ];
-	
+
 	//cal single residue cenrot lib
-	RotamerLibrary const & rotlibCAP = RotamerLibrary::get_instance();
-	SingleResidueRotamerLibraryCOP residue_rotamer_library = rotlibCAP.get_rsd_library(rsd.type()).lock();
+	RotamerLibrary const & rotlib = RotamerLibrary::get_instance();
+	SingleResidueRotamerLibraryCOP residue_rotamer_library = rotlib.get_rsd_library(rsd.type());
 	if (residue_rotamer_library==0) return;
 
 	SingleResidueCenrotLibraryCOP residue_cenrot_library(

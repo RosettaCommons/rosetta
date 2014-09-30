@@ -88,13 +88,6 @@ public: // Types
 	typedef  void  iterator_category;
 	typedef  void  difference_type;
 
-
-private: // Friends
-
-
-	//friend class AtomTree;
-
-
 protected: // Creation
 
 
@@ -325,8 +318,8 @@ public: // Methods
 	virtual
 	Real
 	dihedral_between_bonded_children(
-		AtomCOP child1,
-		AtomCOP child2
+		Atom const & child1,
+		Atom const & child2
 	) const = 0;
 
 
@@ -434,6 +427,11 @@ public: // Methods
 	virtual
 	Size
 	child_index( AtomCOP child ) const = 0;
+
+	/// @brief the atom-index of this child
+	virtual
+	Size
+	raw_child_index( Atom const * child ) const = 0;
 
 	virtual
 	bool
@@ -552,93 +550,75 @@ public: // Properties
 	void
 	parent( AtomAP parent_in ) = 0;
 
-
 	/// @brief Parent atom pointer, NULL for root atom
 	virtual
 	AtomOP
 	parent() = 0;
-
 
 	/// @brief Get stub information
 	virtual
 	Stub
 	get_stub() const = 0;
 
-
 	virtual
 	Stub
 	get_input_stub() const = 0;
-
 
 	virtual
 	AtomCOP
 	stub_atom1() const = 0;
 
-
 	virtual
 	AtomCOP
 	stub_atom2() const = 0;
-
 
 	virtual
 	AtomCOP
 	stub_atom3() const = 0;
 
-
 	virtual
 	AtomID const &
 	stub_atom1_id() const = 0;
-
 
 	virtual
 	AtomID const &
 	stub_atom2_id() const = 0;
 
-
 	virtual
 	AtomID const &
 	stub_atom3_id() const = 0;
-
 
 	virtual
 	AtomCOP
 	input_stub_atom0() const = 0;
 
-
 	virtual
 	AtomCOP
 	input_stub_atom1() const = 0;
-
 
 	virtual
 	AtomCOP
 	input_stub_atom2() const = 0;
 
-
 	virtual
 	AtomCOP
 	input_stub_atom3() const = 0;
-
 
 	virtual
 	AtomID const &
 	input_stub_atom0_id() const = 0;
 
-
 	virtual
 	AtomID const &
 	input_stub_atom1_id() const = 0;
-
 
 	virtual
 	AtomID const &
 	input_stub_atom2_id() const = 0;
 
-
 	virtual
 	AtomID const &
 	input_stub_atom3_id() const = 0;
-
 
 	// routines for navigating the tree
 	virtual
@@ -651,12 +631,90 @@ public: // Properties
 		AtomCOP child
 	) const = 0;
 
-
 	virtual
 	AtomOP
 	next_child(
 		AtomCOP child
 	) = 0;
+
+public:
+
+	// The "raw" functions below are meant to be used only by AtomTree and only in performance critical
+	// code where one is merely looking up data from the AtomTree, where the cost to increment the
+	// reference count for each smart pointer in its constructor becomes prohibitive.  For example, the
+	// AtomTree::torsion_angle function invokes stub_atom1, stub_atom2, and stub_atom3 creating dozens
+	// of smart pointers.  This function is used following refold to copy data from the AtomTree into
+	// the Residues; it suddenly started to take up a large percentage of the minimizer following the
+	// move to smart pointers.  Why?  Atomic operations are much more expensive (which are what underlie
+	// the boost::shared_ptr reference count data member) than simply incrementing and decrementing an
+	// integer.  As a result, code that had not shown up in the profiler before now occupies much more
+	// time than it used to.  It would be a misuse of these following functions to request and then hold
+	// on to a raw pointer they returned.  They are meant for the lifetime of short, constant operations in
+	// class AtomTree where nothing about the trees topology is changing.
+
+	/// @brief Rapid (increment-of-reference-count-avoiding) access to the parent atom pointer
+	virtual
+	Atom const *
+	raw_parent() const = 0;
+
+	/// @brief Rapid (increment-of-reference-count-avoiding) access to the previous sibling pointer,
+	/// i.e. the first child in the parent's children list to precede this atom.
+	virtual
+	Atom const *
+	raw_previous_sibling() const = 0;
+
+	/// @brief Rapid (increment-of-reference-count-avoiding) access to the previous child pointer;
+	virtual
+	Atom const *
+	raw_previous_child(
+		Atom const * child
+	) const = 0;
+
+	/// @brief Rapid (increment-of-reference-count-avoiding) access to the fist stub atom
+	virtual
+	Atom const *
+	raw_stub_atom1() const = 0;
+
+	/// @brief Rapid (increment-of-reference-count-avoiding) access to the second stub atom
+	virtual
+	Atom const *
+	raw_stub_atom2() const = 0;
+
+	/// @brief Rapid (increment-of-reference-count-avoiding) access to the third stub atom
+	virtual
+	Atom const *
+	raw_stub_atom3() const = 0;
+
+
+	/// @brief Rapid (increment-of-reference-count-avoiding) access to the 0th input stub atom;
+	virtual
+	Atom const *
+	raw_input_stub_atom0() const = 0;
+
+	/// @brief Rapid (increment-of-reference-count-avoiding) access to the 1st input stub atom;
+	virtual
+	Atom const *
+	raw_input_stub_atom1() const = 0;
+
+	/// @brief Rapid (increment-of-reference-count-avoiding) access to the 2nd input stub atom;
+	virtual
+	Atom const *
+	raw_input_stub_atom2() const = 0;
+
+
+	/// @brief Rapid (increment-of-reference-count-avoiding) access to the 3rd input stub atom;
+	virtual
+	Atom const *
+	raw_input_stub_atom3() const = 0;
+
+
+	/// @brief Rapid (increment-of-reference-count-avoiding) access to the ith non-jump atom in this atom's
+	/// list of children.
+	virtual
+	Atom const *
+	raw_get_nonjump_atom(
+		Size const i
+	) const = 0;
 
 
 	virtual
@@ -683,7 +741,6 @@ protected: // Methods
 	virtual
 	Atoms_Iterator
 	nonjump_atoms_begin() = 0;
-
 
 }; // Atom
 

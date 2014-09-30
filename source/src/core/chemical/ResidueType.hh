@@ -36,7 +36,7 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/MMAtomType.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
-#include <core/chemical/ResidueProperties.fwd.hh>
+#include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.fwd.hh>
 
@@ -1488,7 +1488,10 @@ public:
 
 
 	/// @brief  Generic property access.
-	bool has_property( std::string const & property ) const;
+	bool has_property( std::string const & property ) const
+	{
+		return properties_->has_property( property );
+	}
 
 
 	///@brief Get a numeric property, if it exists.
@@ -1505,11 +1508,18 @@ public:
 	void add_variant_type( std::string const & variant_type );
 
 	/// @brief  Generic variant access.
-	bool has_variant_type( VariantType const variant_type ) const;
+	bool has_variant_type( VariantType const variant_type ) const
+	{
+		return properties_->is_variant_type( variant_type );
+	}
 
 	// TODO: Find a way to remove this; it only exists because of how ResidueSelectors are currently written. ~Labonte
 	/// @brief  Generic variant access by string.
-	bool has_variant_type( std::string const & variant_type ) const;
+	bool has_variant_type( std::string const & variant_type ) const
+	{
+		return properties_->is_variant_type( variant_type );
+	}
+
 
 	/// @brief  Turn on the ability to create VariantTypes "on-the-fly".
 	void enable_custom_variant_types();

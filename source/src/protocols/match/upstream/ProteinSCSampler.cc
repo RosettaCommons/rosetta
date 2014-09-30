@@ -60,7 +60,7 @@ DunbrackSCSampler::samples(
 	using namespace core::pack::dunbrack;
 
 	RotamerLibrary const & rotlib( RotamerLibrary::get_instance() );
-	SingleResidueRotamerLibraryCOP res_rotlib = rotlib.get_rsd_library( restype ).lock();
+	SingleResidueRotamerLibraryCOP res_rotlib = rotlib.get_rsd_library( restype );
 
 	if ( res_rotlib != 0 ) {
 

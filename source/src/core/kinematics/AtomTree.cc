@@ -475,25 +475,28 @@ AtomTree::torsion_angle_dof_id(
 	// TODO: STUART -- (low priority) I'd like to be able to cache the results of this calculation
 	// to allow faster access.
 
-	AtomCOP
-			atom1_in( atom_pointer( atom1_in_id ) ),
-			atom2_in( atom_pointer( atom2_in_id ) ),
-			atom3_in( atom_pointer( atom3_in_id ) ),
-			atom4_in( atom_pointer( atom4_in_id ) );
-	AtomCOP atom1( atom1_in ), atom2( atom2_in ), atom3( atom3_in ), atom4( atom4_in );
+	Atom const * atom1_in( atom_pointer_( atom1_in_id ).get() );
+	Atom const * atom2_in( atom_pointer_( atom2_in_id ).get() );
+	Atom const * atom3_in( atom_pointer_( atom3_in_id ).get() );
+	Atom const * atom4_in( atom_pointer_( atom4_in_id ).get() );
+
+	Atom const * atom1( atom1_in );
+	Atom const * atom2( atom2_in );
+	Atom const * atom3( atom3_in );
+	Atom const * atom4( atom4_in );
 
 	// Reorder the atoms if necessary.
 	// We want it to be the case that atom4 has input_stub_atom1 == atom3 and input_stub_atom2 == atom2.
 
 	if ( !atom4->is_jump() &&
 			!atom4->keep_dof_fixed( id::PHI ) && // not stub atom3 of a jump
-			atom4->input_stub_atom1() == atom3 &&
-			atom4->input_stub_atom2() == atom2 ) {
+			atom4->raw_input_stub_atom1() == atom3 &&
+			atom4->raw_input_stub_atom2() == atom2 ) {
 		// pass -- this is what we want, not quite as perfect as 1st case though
 	} else if ( !atom1->is_jump() &&
 			!atom1->keep_dof_fixed( id::PHI ) && // not stub atom3 of a jump
-			atom1->input_stub_atom1() == atom2 &&
-			atom1->input_stub_atom2() == atom3 ) {
+			atom1->raw_input_stub_atom1() == atom2 &&
+			atom1->raw_input_stub_atom2() == atom3 ) {
 		// reverse the order of the atoms
 		atom1 = atom4_in;
 		atom2 = atom3_in;
@@ -506,23 +509,23 @@ AtomTree::torsion_angle_dof_id(
 
 	offset = 0.0; // initialize
 
-	if ( atom4->input_stub_atom3() == atom1 ) {
+	if ( atom4->raw_input_stub_atom3() == atom1 ) {
 		// perfect match
 		return DOF_ID( atom4->id(), id::PHI );
 	}
 
 	assert( !atom4->is_jump() &&
-			atom4->input_stub_atom0() == atom3 &&
-			atom4->input_stub_atom1() == atom3 &&
-			atom4->input_stub_atom2() == atom2 &&
-			atom4->parent() == atom3 );
+			atom4->raw_input_stub_atom0() == atom3 &&
+			atom4->raw_input_stub_atom1() == atom3 &&
+			atom4->raw_input_stub_atom2() == atom2 &&
+			atom4->raw_parent() == atom3 );
 
 	// special case if atoms 1 and 4 are siblings -- not really well defined!
-	if ( atom1->parent() == atom3 ) {
-		Size const atom1_index( atom3->child_index( atom1 ) ),
-				atom4_index( atom3->child_index( atom4 ) );
+	if ( atom1->raw_parent() == atom3 ) {
+		Size const atom1_index( atom3->raw_child_index( atom1 ) ),
+			atom4_index( atom3->raw_child_index( atom4 ) );
 		if ( atom1_index < atom4_index ) {
-			Real const current_value( atom3->dihedral_between_bonded_children( atom1, atom4 ) );
+			Real const current_value( atom3->dihedral_between_bonded_children( *atom1, *atom4 ) );
 			offset = current_value - atom4->dof(id::PHI); // since torsion(id1...id4) = dof + offset;
 
 			ASSERT_ONLY( Real const actual_current_value
@@ -532,7 +535,7 @@ AtomTree::torsion_angle_dof_id(
 
 			return DOF_ID( atom4->id(), id::PHI );
 		} else {
-			Real const current_value( atom3->dihedral_between_bonded_children( atom1, atom4 ) );
+			Real const current_value( atom3->dihedral_between_bonded_children( *atom1, *atom4 ) );
 			offset = current_value - atom1->dof( id::PHI ); // since torsion(id1...id4) = dof + offset;
 			ASSERT_ONLY( Real const actual_current_value
 					( dihedral_radians( atom4->xyz(), atom3->xyz(), atom2->xyz(), atom1->xyz() ) );)
@@ -542,9 +545,9 @@ AtomTree::torsion_angle_dof_id(
 		}
 	}
 	// atom4 is not the first sibling of atom3, get offset for that.
-	if ( atom4 != atom3->get_nonjump_atom(0) ) {
-		AtomCOP new_atom4( atom3->get_nonjump_atom(0) );
-		offset += atom3->dihedral_between_bonded_children( new_atom4, atom4 );
+	if ( atom4 != atom3->raw_get_nonjump_atom(0) ) {
+		Atom const * new_atom4( atom3->raw_get_nonjump_atom(0) );
+		offset += atom3->dihedral_between_bonded_children( *new_atom4, *atom4 );
 
 		/* if ( debug ) { // debugging
 			ASSERT_ONLY( Real const actual_dihedral
@@ -559,12 +562,12 @@ AtomTree::torsion_angle_dof_id(
 
 	DOF_ID dof_id( atom4->id(), id::PHI );
 
-	AtomCOP dof_atom1( atom4->input_stub_atom3() );
+	Atom const * dof_atom1( atom4->raw_input_stub_atom3() );
 
 	if ( dof_atom1 == atom1 ) {
 		return dof_id;
-	} else if ( atom1->parent() == atom2 && !atom1->is_jump() &&
-		atom3->parent() == atom2 && !atom3->is_jump() ) {
+	} else if ( atom1->raw_parent() == atom2 && !atom1->is_jump() &&
+		atom3->raw_parent() == atom2 && !atom3->is_jump() ) {
 
 		// handle offset between atom1 and dof_atom1
 		// the only case we can do is if atom1->parent() == atom2
@@ -596,7 +599,7 @@ AtomTree::torsion_angle_dof_id(
 		Real
 			theta1( pi - atom3->dof( id::THETA ) ),
 			theta3( pi - atom1->dof( id::THETA ) ),
-			phi2( atom2->dihedral_between_bonded_children( atom1, atom3 ) ),
+			phi2( atom2->dihedral_between_bonded_children( *atom1, *atom3 ) ),
 			sign_factor( 1.0 );
 		phi2 = basic::periodic_range( phi2, pi_2 );
 		if ( phi2 < 0 ) {

@@ -46,8 +46,6 @@ namespace tree {
 ///
 class JumpAtom : public Atom_
 {
-
-
 private: // Types
 
 
@@ -276,6 +274,19 @@ public: // Properties
 		return 0;
 	}
 
+public:
+
+	virtual
+	Atom const *
+	raw_stub_atom1() const;
+
+	virtual
+	Atom const *
+	raw_stub_atom2() const;
+
+	virtual
+	Atom const *
+	raw_stub_atom3() const;
 
 private: // Fields
 

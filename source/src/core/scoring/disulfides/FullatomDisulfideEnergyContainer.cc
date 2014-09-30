@@ -349,6 +349,28 @@ FullatomDisulfideEnergyContainer::set_num_nodes( Size newsize )
 	resid_2_disulfide_index_.resize( newsize, NO_DISULFIDE );
 }
 
+bool
+FullatomDisulfideEnergyContainer::any_neighbors_for_residue( int resid ) const
+{
+	return resid <= (int) resid_2_disulfide_index_.size() && resid_2_disulfide_index_[ resid ] != NO_DISULFIDE;
+}
+
+bool
+FullatomDisulfideEnergyContainer::any_upper_neighbors_for_residue( int resid ) const
+{
+	if ( resid <= (int) resid_2_disulfide_index_.size() ) {
+		if ( resid_2_disulfide_index_[ resid ] != NO_DISULFIDE ) {
+			// disulfide_partners_ stores an ordered pair s.t. the first index is to the
+			// lower residue and thes second index is to the upper residue; if we want to
+			// know whether resid has an upper neighbor, what we need to know is if
+			// it's the lower residue.
+			return disulfide_partners_[ resid_2_disulfide_index_[ resid ] ].first == (Size) resid;
+		}
+	}
+	return false;
+}
+
+
 ResidueNeighborConstIteratorOP
 FullatomDisulfideEnergyContainer::const_neighbor_iterator_begin( int resid ) const
 {

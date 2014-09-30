@@ -1934,12 +1934,11 @@ ResidueType::is_adduct() const
 }
 
 
-bool
-ResidueType::has_property( std::string const & property ) const
-{
-	return properties_->has_property( property );
-}
-
+//bool
+//ResidueType::has_property( std::string const & property ) const
+//{
+//	return properties_->has_property( property );
+//}
 
 core::Real
 ResidueType::get_numeric_property(std::string const & tag) const
@@ -1981,17 +1980,17 @@ ResidueType::add_variant_type( std::string const & variant_type )
 	properties_->set_variant_type( variant_type, true );
 }
 
-bool
-ResidueType::has_variant_type( VariantType const variant_type ) const
-{
-	return properties_->is_variant_type( variant_type );
-}
-
-bool
-ResidueType::has_variant_type( std::string const & variant_type ) const
-{
-	return properties_->is_variant_type( variant_type );
-}
+//bool
+//ResidueType::has_variant_type( VariantType const variant_type ) const
+//{
+//	return properties_->is_variant_type( variant_type );
+//}
+//
+//bool
+//ResidueType::has_variant_type( std::string const & variant_type ) const
+//{
+//	return properties_->is_variant_type( variant_type );
+//}
 
 /// @details Custom" VariantTypes as strings are permitted for the enzdes and metalloproteins cases.
 /// Do not enable unless you have a good reason to, as string look-ups are less efficient and more error-prone.

@@ -40,7 +40,6 @@ extern Jump BOGUS_JUMP; // for return statement to keep compiler happy
 ///
 class BondedAtom : public Atom_
 {
-
 public:
 
 	// default constructor
@@ -268,6 +267,20 @@ public: // Properties
 			return parent_op->stub_atom2();
 		}
 	}
+
+public:
+
+	virtual
+	Atom const *
+	raw_stub_atom1() const;
+
+	virtual
+	Atom const *
+	raw_stub_atom2() const;
+
+	virtual
+	Atom const *
+	raw_stub_atom3() const;
 
 
 private: // Fields

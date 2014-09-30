@@ -51,6 +51,7 @@ protected: // Creation
 	/// @brief Default constructor
 	inline
 	Atom_() :
+		raw_parent_( 0 ),
 		dof_refold_index_( 0 )
 	{
 		atoms_.reserve( 4 );
@@ -61,6 +62,7 @@ protected: // Creation
 	inline
 	Atom_( Atom_ const & atom ) :
 		Super( atom ),
+		raw_parent_( 0 ),
 		position_( atom.position_ ),
 		dof_refold_index_( atom.dof_refold_index_ )
 	{
@@ -121,8 +123,8 @@ public: // Methods
 	/// @brief dihedral angle between two bonded children to this atom
 	Real
 	dihedral_between_bonded_children(
-		AtomCOP child1,
-		AtomCOP child2
+		Atom const & child1,
+		Atom const & child2
 	) const;
 
 	/// @brief dump out AtomID for this atom, its parent and all its offspring
@@ -240,6 +242,10 @@ public: // Methods
 	/// @brief the atom-index of this child
 	Size
 	child_index( AtomCOP child ) const;
+
+	/// @brief the atom-index of this child
+	Size
+	raw_child_index( Atom const * child ) const;
 
 	/// @brief whether atom1 is downstream of this atom.
 	bool
@@ -379,6 +385,8 @@ public: // Properties
 	parent( AtomAP parent_in )
 	{
 		parent_ = parent_in;
+		AtomOP parent_op = parent_.lock();
+		raw_parent_ = parent_op.get();
 	}
 
 
@@ -395,8 +403,7 @@ public: // Properties
 	AtomID const &
 	stub_atom1_id() const
 	{
-		AtomCOP op( stub_atom1() );
-		return op->id();
+		return stub_atom1()->id();
 	}
 
 	/// @brief stub atom2's id
@@ -404,8 +411,7 @@ public: // Properties
 	AtomID const &
 	stub_atom2_id() const
 	{
-		AtomCOP op( stub_atom2() );
-		return op->id();
+		return raw_stub_atom2()->id();
 	}
 
 	/// @brief stub atom3's id
@@ -413,8 +419,7 @@ public: // Properties
 	AtomID const &
 	stub_atom3_id() const
 	{
-		AtomCOP op( stub_atom3() );
-		return op->id();
+		return stub_atom3()->id();
 	}
 
 	/// @brief the center of the input stub for refolding this atom
@@ -469,7 +474,7 @@ public: // Properties
 	AtomID const &
 	input_stub_atom0_id() const
 	{
-		return input_stub_atom0()->id();
+		return raw_input_stub_atom0()->id();
 	}
 
 	/// @brief input stub atom1's id
@@ -477,7 +482,7 @@ public: // Properties
 	AtomID const &
 	input_stub_atom1_id() const
 	{
-		return input_stub_atom1()->id();
+		return raw_input_stub_atom1()->id();
 	}
 
 	/// @brief input stub atom2's id
@@ -485,7 +490,7 @@ public: // Properties
 	AtomID const &
 	input_stub_atom2_id() const
 	{
-		return input_stub_atom2()->id();
+		return raw_input_stub_atom2()->id();
 	}
 
 	/// @brief input stub atom3's id
@@ -614,11 +619,54 @@ protected: // Fields -- should be private...
 	/// @brief Parent atom pointer
 	AtomAP parent_;
 
+	/// @brief Workaround copy of the parent pointer for use in functions
+	/// where locking and unlocking the parent_ pointer would be
+	/// prohibitively slow
+	Atom * raw_parent_;
+
 	/// @brief xyz
 	PointPosition position_;
 
 	/// @brief Children atom pointers
 	Atoms atoms_;
+
+public:
+
+	virtual
+	Atom const *
+	raw_parent() const;
+
+	virtual
+	Atom const *
+	raw_previous_sibling() const;
+
+	virtual
+	Atom const *
+	raw_previous_child(
+		Atom const * child
+	) const;
+
+	virtual
+	Atom const *
+	raw_input_stub_atom0() const;
+
+	virtual
+	Atom const *
+	raw_input_stub_atom1() const;
+
+	virtual
+	Atom const *
+	raw_input_stub_atom2() const;
+
+	virtual
+	Atom const *
+	raw_input_stub_atom3() const;
+
+	virtual
+	Atom const *
+	raw_get_nonjump_atom(
+		Size const i
+	) const;
 
 
 private:

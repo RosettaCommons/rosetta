@@ -179,6 +179,14 @@ public:
 	LREnergyContainerOP clone() const;
 
 	virtual
+	bool
+	any_neighbors_for_residue( int resid ) const;
+
+	virtual
+	bool
+	any_upper_neighbors_for_residue( int resid ) const;
+
+	virtual
 	ResidueNeighborConstIteratorOP
 	const_neighbor_iterator_begin( int resid ) const;
 

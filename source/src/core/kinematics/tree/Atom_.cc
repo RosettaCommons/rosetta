@@ -357,6 +357,17 @@ Atom_::child_index( AtomCOP child ) const
 	return Size(-1);
 }
 
+Size
+Atom_::raw_child_index( Atom const * child ) const
+{
+	assert( child->raw_parent() == this );
+	for ( Size k=0; k < atoms_.size(); ++k ) {
+		if ( atoms_[k].get() == child ) return k;
+	}
+	utility_exit_with_message( "problemo in Atom_'s atom list" );
+	return Size(-1);
+}
+
 /////////////////////////////////////////////////////////////////////////////
 /// @details the improper dihedral from child1 to child2 about my x-axis
 /// (ie, axis defined by me and my parent for nonjump atoms). Since phi_ for
@@ -365,33 +376,34 @@ Atom_::child_index( AtomCOP child ) const
 /// between them.
 Real
 Atom_::dihedral_between_bonded_children(
-	AtomCOP child1,
-	AtomCOP child2
+	Atom const & child1,
+	Atom const & child2
 ) const
 {
 	// debug args
-	if ( child1->parent().get() != this || child2->parent().get() != this ) {
+	if ( child1.raw_parent() != this || child2.raw_parent() != this ) {
 		utility_exit_with_message("Atom_::dihedral_between_bonded_children: atoms are not both my children!");
 	}
-	if ( child1->is_jump() || child2->is_jump() ) {
+	if ( child1.is_jump() || child2.is_jump() ) {
 		utility_exit_with_message("Atom_::dihedral_between_bonded_children: one of the atoms is a JumpAtom!");
 	}
 
 	// keep track of which atoms we've seen and in what order
-	AtomCOP first_atom( 0 ), second_atom( 0 );
+	Atom const * first_atom( 0 );
+	Atom const * second_atom( 0 );
 
 	Real phi_offset(0.0);
 
 	for ( Atoms_ConstIterator it=nonjump_atoms_begin(),
-					it_end=atoms_end(); it != it_end; ++it ) {
+			it_end=atoms_end(); it != it_end; ++it ) {
 		if ( first_atom ) phi_offset += (*it)->dof(PHI);
 
-		if ( *it == child1 || *it == child2 ) {
+		if ( (*it).get() == &child1 || (*it).get() == &child2 ) {
 			if ( first_atom ) {
-				second_atom = *it; // seen both
+				second_atom = (*it).get(); // seen both
 				break;
 			} else {
-				first_atom = *it;
+				first_atom = (*it).get();
 			}
 		}
 	} // loop over nonjump atoms
@@ -399,7 +411,7 @@ Atom_::dihedral_between_bonded_children(
 	if ( !second_atom ) {
 		utility_exit_with_message("Atom_::dihedral_between_bonded_children: atoms not found!");
 	}
-	if ( second_atom == child1 ) phi_offset *= -1.0;
+	if ( second_atom == &child1 ) phi_offset *= -1.0;
 	return phi_offset;
 }
 
@@ -723,6 +735,88 @@ Atom_::abort_bad_call() const
 {
 	std::cerr << "kinematics::Atom bad method call in Atom hierarchy!" << std::endl;
 	utility_exit();
+}
+
+Atom const *
+Atom_::raw_parent() const
+{
+	return raw_parent_;
+}
+
+Atom const *
+Atom_::raw_previous_sibling() const
+{
+	if ( raw_parent_ ) {
+		return raw_parent_->raw_previous_child( this );
+	} else {
+		return 0;
+	}
+}
+
+Atom const *
+Atom_::raw_previous_child(
+	Atom const * child
+) const
+{
+	for ( Size ii = 0; ii < atoms_.size(); ++ii ) {
+		if ( atoms_[ ii ].get() == child ) {
+			if ( ii == 0 ) {
+				return 0;
+			} else {
+				return atoms_[ ii-1 ].get();
+			}
+		}
+	}
+	std::cerr << "child not present in atoms list! " << atoms_.size() << std::endl;
+	utility_exit();
+	return 0;
+}
+
+
+Atom const *
+Atom_::raw_input_stub_atom0() const {
+	return raw_parent();
+}
+
+
+Atom const *
+Atom_::raw_input_stub_atom1() const
+{
+	return raw_parent()->raw_stub_atom1();
+}
+
+
+Atom const *
+Atom_::raw_input_stub_atom2() const {
+	return raw_parent()->raw_stub_atom2();
+}
+
+
+Atom const *
+Atom_::raw_input_stub_atom3() const
+{
+	Atom const * parent_ptr = raw_parent();
+	Atom const * sibling_ptr = raw_previous_sibling();
+	if ( is_jump() || ! sibling_ptr || sibling_ptr->is_jump() ||
+			( parent_ptr->is_jump() && sibling_ptr->id() == parent_ptr->stub_atom2_id() )) {
+		return parent_ptr->raw_stub_atom3();
+	} else {
+		return sibling_ptr;
+	}
+}
+
+Atom const *
+Atom_::raw_get_nonjump_atom(
+	Size const i
+) const
+{
+	Atoms::const_iterator iter( nonjump_atoms_begin() );
+	iter += i;
+	if ( iter >= atoms_.end() ) {
+		return 0;
+	} else {
+		return iter->get();
+	}
 }
 
 

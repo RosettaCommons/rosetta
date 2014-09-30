@@ -35,7 +35,7 @@ namespace scoring {
 class OneToAllNeighborIterator : public ResidueNeighborIterator
 {
 public:
-	virtual ~OneToAllNeighborIterator(){}
+	virtual ~OneToAllNeighborIterator();
 
 	OneToAllNeighborIterator(
 		Size const pos1_in,
@@ -44,96 +44,35 @@ public:
 		ScoreType const st,
 		utility::vector1< Real > * table_in,
 		utility::vector1< bool > * computed_in
-	):
-		pos1_( pos1_in ),
-		pos2_( pos2_in ),
-		operating_on_pos1_(operating_on_pos1_in),
-		score_type_( st ),
-		table_( table_in ),
-		computed_( computed_in )
-	{}
+	);
 
-	virtual ResidueNeighborIterator const & operator = ( ResidueNeighborIterator const & src )
-	{
-		assert( dynamic_cast< OneToAllNeighborIterator const * >( &src ) );
-		OneToAllNeighborIterator const & my_src( static_cast< OneToAllNeighborIterator const & >( src ) );
-		pos1_ = my_src.pos1_;
-		pos2_ = my_src.pos2_;
-		table_ = my_src.table_;
-		computed_ = my_src.computed_;
-		return *this;
-	}
+	virtual ResidueNeighborIterator const & operator = ( ResidueNeighborIterator const & src );
 
-	virtual ResidueNeighborIterator const & operator ++ ()
-	{
-		++pos2_;
-		if ( pos2_ == pos1_ ) ++pos2_;
-		return *this;
-	}
+	virtual ResidueNeighborIterator const & operator ++ ();
 
-	virtual bool operator == ( ResidueNeighborIterator const & other ) const
-	{
-		return ( residue_iterated_on() == other.residue_iterated_on() &&
-						 neighbor_id() == other.neighbor_id() );
-	}
+	virtual bool operator == ( ResidueNeighborIterator const & other ) const;
 
-	virtual bool operator != ( ResidueNeighborIterator const & other ) const
-	{
-		return !( *this == other );
-	}
+	virtual bool operator != ( ResidueNeighborIterator const & other ) const;
 
-	virtual Size upper_neighbor_id() const
-	{
-		return pos1_;  // "upper" is always the fixed res, which is pos1_
-	}
+	virtual Size upper_neighbor_id() const;
 
-	virtual Size lower_neighbor_id() const
-	{
-		return pos2_;
-	}
+	virtual Size lower_neighbor_id() const;
 
-	virtual Size residue_iterated_on() const
-	{
-		return operating_on_pos1_? pos1_ : pos2_;
-	}
+	virtual Size residue_iterated_on() const;
 
-	virtual Size neighbor_id() const
-	{
-		return operating_on_pos1_? pos2_ : pos1_;
-	}
+	virtual Size neighbor_id() const;
 
-	virtual void save_energy( EnergyMap const & emap )
-	{
-		Real const energy( emap[ score_type_ ] );
-		(*table_)[ pos2_ ] = energy;
-	}
+	virtual void save_energy( EnergyMap const & emap );
 
-	virtual void retrieve_energy( EnergyMap & emap ) const
-	{
-		emap[ score_type_ ] = (*table_)[pos2_];
-	}
+	virtual void retrieve_energy( EnergyMap & emap ) const;
 
-	virtual void accumulate_energy( EnergyMap & emap ) const
-	{
-		emap[ score_type_ ] += (*table_)[pos2_];
-	}
+	virtual void accumulate_energy( EnergyMap & emap ) const;
 
-	virtual void mark_energy_computed()
-	{
-		//std::cerr << "OO  mark_energy_computed( " << pos2_ << " )\n";
-		(*computed_)[ pos2_ ] = true;
-	}
+	virtual void mark_energy_computed();
 
-	virtual void mark_energy_uncomputed()
-	{
-		//std::cerr << "XX  mark_energy_uncomputed( " << pos2_ << " )\n";
-		(*computed_)[ pos2_ ] = false;
-	}
+	virtual void mark_energy_uncomputed();
 
-	virtual bool energy_computed() const
-	{
-		return (*computed_)[ pos2_ ];
-	}
+	virtual bool energy_computed() const;
 
 private:
 	Size pos1_;
@@ -150,7 +89,7 @@ private:
 class OneToAllNeighborConstIterator : public ResidueNeighborConstIterator
 {
 public:
-	virtual ~OneToAllNeighborConstIterator(){}
+	virtual ~OneToAllNeighborConstIterator();
 
 	OneToAllNeighborConstIterator(
 		Size const pos1_in,
@@ -159,78 +98,29 @@ public:
 		ScoreType const st,
 		utility::vector1< Real > const * table_in,
 		utility::vector1< bool > const * computed_in
-	):
-		pos1_( pos1_in ),
-		pos2_( pos2_in ),
-		operating_on_pos1_(operating_on_pos1_in),
-		score_type_( st ),
-		table_( table_in ),
-		computed_( computed_in )
-	{}
+	);
 
-	virtual ResidueNeighborConstIterator const & operator = ( ResidueNeighborConstIterator const & src )
-	{
-		assert( dynamic_cast< OneToAllNeighborConstIterator const * >( &src ) );
-		OneToAllNeighborConstIterator const & my_src( static_cast< OneToAllNeighborConstIterator const & >( src ) );
-		pos1_ = my_src.pos1_;
-		pos2_ = my_src.pos2_;
-		table_ = my_src.table_;
-		computed_ = my_src.computed_;
-		return *this;
-	}
+	virtual ResidueNeighborConstIterator const & operator = ( ResidueNeighborConstIterator const & src );
 
-	virtual ResidueNeighborConstIterator const & operator ++ ()
-	{
-		++pos2_;
-		if ( pos2_ == pos1_ ) ++pos2_;
-		return *this;
-	}
+	virtual ResidueNeighborConstIterator const & operator ++ ();
 
-	virtual bool operator == ( ResidueNeighborConstIterator const & other ) const
-	{
-		return ( residue_iterated_on() == other.residue_iterated_on() &&
-						 neighbor_id() == other.neighbor_id() );
-	}
+	virtual bool operator == ( ResidueNeighborConstIterator const & other ) const;
 
-	virtual bool operator != ( ResidueNeighborConstIterator const & other ) const
-	{
-		return !( *this == other );
-	}
+	virtual bool operator != ( ResidueNeighborConstIterator const & other ) const;
 
-	virtual Size upper_neighbor_id() const
-	{
-		return pos1_;  // "upper" is always the fixed res, which is pos1_
-	}
+	virtual Size upper_neighbor_id() const;
 
-	virtual Size lower_neighbor_id() const
-	{
-		return pos2_;
-	}
+	virtual Size lower_neighbor_id() const;
 
-	virtual Size residue_iterated_on() const
-	{
-		return operating_on_pos1_? pos1_ : pos2_;
-	}
+	virtual Size residue_iterated_on() const;
 
-	virtual Size neighbor_id() const
-	{
-		return operating_on_pos1_? pos2_ : pos1_;
-	}
+	virtual Size neighbor_id() const;
 
-	virtual void retrieve_energy( EnergyMap & emap ) const
-	{
-		emap[ score_type_ ] = (*table_)[pos2_];
-	}
+	virtual void retrieve_energy( EnergyMap & emap ) const;
 
-	virtual void accumulate_energy( EnergyMap & emap ) const
-	{
-		emap[ score_type_ ] += (*table_)[pos2_];
-	}
+	virtual void accumulate_energy( EnergyMap & emap ) const;
 
-	virtual bool energy_computed() const
-	{
-		return (*computed_)[ pos2_ ];
-	}
+	virtual bool energy_computed() const;
 
 private:
 	Size pos1_;
@@ -247,155 +137,71 @@ class OneToAllEnergyContainer : public LREnergyContainer
 {
 public:
 	virtual
-	~OneToAllEnergyContainer(){};
+	~OneToAllEnergyContainer();
 
 	virtual
-	LREnergyContainerOP clone() const
-	{
-		return LREnergyContainerOP( new OneToAllEnergyContainer( *this ) );
-	}
+	LREnergyContainerOP clone() const;
 
-	OneToAllEnergyContainer( int const fixed_res_idx, Size const size_in, ScoreType const score_type_in ):
-		fixed_( fixed_res_idx ),
-		size_( size_in ),
-		score_type_( score_type_in ),
-		table_( size_, 0.0 ),
-		computed_( size_, false )
-	{}
+	OneToAllEnergyContainer( int const fixed_res_idx, Size const size_in, ScoreType const score_type_in );
 
 	virtual
-	bool empty() const
-	{
-		return ( size_ == 0 );
-	}
+	bool empty() const;
 
 	virtual
 	void
-	set_num_nodes( Size size_in ) {
-		size_ = size_in;
-		table_.clear(); table_.resize( size_ , 0.0 );
-		computed_.clear(); computed_.resize( size_,  false );
-	}
+	set_num_nodes( Size size_in );
+
+	virtual
+	bool
+	any_neighbors_for_residue( int ) const;
+
+	virtual
+	bool
+	any_upper_neighbors_for_residue( int resid ) const;
 
 	Size
-	size() const
-	{
-		return size_;
-	}
+	size() const;
 
 	int
-	fixed() const
-	{
-		return fixed_;
-	}
+	fixed() const;
 
 	//////////////////// const versions
 	virtual
 	ResidueNeighborConstIteratorOP
-	const_neighbor_iterator_begin( int resid ) const
-	{
-		if (resid == fixed_) {
-			// loop over ALL tgts
-			return ResidueNeighborConstIteratorOP( new OneToAllNeighborConstIterator( fixed_ , 1, true, score_type_, &table_, &computed_ ) );
-		} else {
-			// loop over fixed only
-			//std::cerr << "START fixed " << fixed_ << " , resid " << resid << std::endl;
-			return ResidueNeighborConstIteratorOP( new OneToAllNeighborConstIterator( fixed_ , resid, false, score_type_, &table_, &computed_ ) );
-		}
-	}
+	const_neighbor_iterator_begin( int resid ) const;
 
 	virtual
 	ResidueNeighborConstIteratorOP
-	const_neighbor_iterator_end( int resid ) const
-	{
-		if (resid == fixed_) {
-			// loop over ALL tgts
-			return ResidueNeighborConstIteratorOP( new OneToAllNeighborConstIterator( fixed_ , size_ + 1, true, score_type_, &table_, &computed_ ) );
-		} else {
-			// loop over fixed only
-			if (resid+1 == fixed_) {
-				//std::cerr << "END fixed " << fixed_ << " , resid " << resid+2 << std::endl;
-				return ResidueNeighborConstIteratorOP( new OneToAllNeighborConstIterator( fixed_ , resid + 2, false, score_type_, &table_, &computed_ ) );
-			} else  {
-				//std::cerr << "END fixed " << fixed_ << " , resid " << resid+1 << std::endl;
-				return ResidueNeighborConstIteratorOP( new OneToAllNeighborConstIterator( fixed_ , resid + 1, false, score_type_, &table_, &computed_ ) );
-			}
-		}
-	}
+	const_neighbor_iterator_end( int resid ) const;
 
 	virtual
 	ResidueNeighborConstIteratorOP
-	const_upper_neighbor_iterator_begin( int resid ) const
-	{
-		if (resid == fixed_) {
-			// loop over NOTHING
-			return ResidueNeighborConstIteratorOP( new OneToAllNeighborConstIterator( fixed_ , size_ + 1, true, score_type_, &table_, &computed_ ) );
-		} else {
-			// loop over fixed only
-			return ResidueNeighborConstIteratorOP( new OneToAllNeighborConstIterator( fixed_ , resid, false, score_type_, &table_, &computed_ ) );
-		}
-	}
+	const_upper_neighbor_iterator_begin( int resid ) const;
 
 	virtual
 	ResidueNeighborConstIteratorOP
-	const_upper_neighbor_iterator_end( int resid ) const
-	{
-		return const_neighbor_iterator_end( resid );
-	}
+	const_upper_neighbor_iterator_end( int resid ) const;
 
 	//////////////////// non-const versions
 	virtual
 	ResidueNeighborIteratorOP
-	neighbor_iterator_begin( int resid )
-	{
-		if (resid == fixed_) {
-			// loop over ALL tgts
-			return ResidueNeighborIteratorOP( new OneToAllNeighborIterator( fixed_ , 1, true, score_type_, &table_, &computed_ ) );
-		} else {
-			// loop over fixed only
-			return ResidueNeighborIteratorOP( new OneToAllNeighborIterator( fixed_ , resid, false, score_type_, &table_, &computed_ ) );
-		}
-	}
+	neighbor_iterator_begin( int resid );
 
 	virtual
 	ResidueNeighborIteratorOP
-	neighbor_iterator_end( int resid )
-	{
-		if (resid == fixed_) {
-			// loop over ALL tgts
-			return ResidueNeighborIteratorOP( new OneToAllNeighborIterator( fixed_ , size_ + 1, true, score_type_, &table_, &computed_ ) );
-		} else {
-			// loop over fixed only
-			if (resid+1 == fixed_)
-				return ResidueNeighborIteratorOP( new OneToAllNeighborIterator( fixed_ , resid + 2, false, score_type_, &table_, &computed_ ) );
-			else
-				return ResidueNeighborIteratorOP( new OneToAllNeighborIterator( fixed_ , resid + 1, false, score_type_, &table_, &computed_ ) );
-		}
-	}
+	neighbor_iterator_end( int resid );
 
 	virtual
 	ResidueNeighborIteratorOP
-	upper_neighbor_iterator_begin( int resid )
-	{
-		if (resid == fixed_) {
-			// loop over NOTHING
-			return ResidueNeighborIteratorOP( new OneToAllNeighborIterator( fixed_ , size_ + 1, true, score_type_, &table_, &computed_ ) );
-		} else {
-			// loop over fixed only
-			return ResidueNeighborIteratorOP( new OneToAllNeighborIterator( fixed_ , resid, false, score_type_, &table_, &computed_ ) );
-		}
-	}
+	upper_neighbor_iterator_begin( int resid );
 
 	virtual
 	ResidueNeighborIteratorOP
-	upper_neighbor_iterator_end( int resid )
-	{
-		return neighbor_iterator_end( resid );
-	}
+	upper_neighbor_iterator_end( int resid );
 
 private:
 	int fixed_;
-	Size /*const*/ size_;
+	Size size_;
 	ScoreType score_type_;
 
 	utility::vector1< Real > table_;

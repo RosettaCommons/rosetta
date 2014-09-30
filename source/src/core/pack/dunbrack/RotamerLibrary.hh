@@ -164,10 +164,10 @@ public:
 	bool
 	rsd_library_already_loaded( chemical::ResidueType const & rsd_type ) const;
 
-	SingleResidueRotamerLibraryCAP
+	SingleResidueRotamerLibraryCOP
 	get_rsd_library( chemical::ResidueType const & rsd_type ) const;
 
-	SingleResidueRotamerLibraryCAP
+	SingleResidueRotamerLibraryCOP
 	get_library_by_aa( chemical::AA const & aa ) const;
 
 	//output dunbrack library  -- coarse rotamers can be cached on disk
@@ -180,12 +180,12 @@ public:
 
 	/// @brief Get the rotamer library specified by the NCAA_ROTLIB flag in the residue type paramater file
 	/// in the residue type paramater file if it exists
-	SingleResidueRotamerLibraryCAP
+	SingleResidueRotamerLibraryCOP
 	get_NCAA_rotamer_library( chemical::ResidueType const & rsd_type ) const;
 
 	/// @brief Get the rotamer library specified by the PEPTOID_ROTLIB flag in the residue type paramater file
 	/// in the residue type paramater file if it exists
-	SingleResidueRotamerLibraryCAP
+	SingleResidueRotamerLibraryCOP
 	get_peptoid_rotamer_library( chemical::ResidueType const & rsd_type ) const;
 
 	static
@@ -384,23 +384,17 @@ private:
 
 private:
 
-	// For thread safety, store the OPs in an unchanging and never-used vector;
-	// keep copies of the APs in a map for actual use.
-	// (OPs cannot be shared across threads because copying them onto the stack
-	// results in increment / decrement operations on the reference count.)
-	// If this doesn't make you weep for a language with real garbage collection,
-	// I don't know what would.
-	typedef std::map< AA, SingleResidueRotamerLibraryCAP > LibraryMap;
+	typedef std::map< AA, SingleResidueRotamerLibraryCOP > LibraryMap;
 	typedef LibraryMap::const_iterator library_iterator;
 
 	// These entries take precedence over the entries for an amino acid.
 	// The string used for the key is ResidueType.name()
-	typedef std::map< std::string, SingleResidueRotamerLibraryCAP > ResLibraryMap;
+	typedef std::map< std::string, SingleResidueRotamerLibraryCOP > ResLibraryMap;
 	typedef ResLibraryMap::const_iterator reslibrary_iterator;
 
 	mutable ResLibraryMap reslibraries_;
 	mutable LibraryMap libraries_;
-	mutable utility::vector1< SingleResidueRotamerLibraryCAP > aa_libraries_;
+	mutable utility::vector1< SingleResidueRotamerLibraryCOP > aa_libraries_;
 	mutable utility::vector1< SingleResidueRotamerLibraryCOP > libraries_ops_;
 
 	/// DOUG DOUG DOUG Should this be done in the "threadsafe" way above?

@@ -212,7 +212,7 @@ PairEnergy::evaluate_rotamer_pair_energies(
 	for ( Size ii = 1; ii <= set1.get_n_residue_types(); ++ii ) {
 		if ( set1.get_n_rotamers_for_residue_type( ii ) == 0 ) continue;
 		Size const ii_offset = set1.get_residue_type_begin( ii );
-		Residue const & ii_example_rotamer( *set1.rotamer( ii_offset ));
+		Residue const & ii_example_rotamer( set1.rotamer_ref( ii_offset ));
 		if ( ! ii_example_rotamer.is_protein() || ! ( ii_example_rotamer.is_polar() || (any_aro && ii_example_rotamer.is_aromatic()) ) ) continue;
 
 
@@ -222,7 +222,7 @@ PairEnergy::evaluate_rotamer_pair_energies(
 		for ( Size jj = 1; jj <= set2.get_n_residue_types(); ++jj ) {
 			if ( set2.get_n_rotamers_for_residue_type( jj ) == 0 ) continue;
 			Size const jj_offset = set2.get_residue_type_begin( jj );
-			Residue const & jj_example_rotamer( *set2.rotamer( jj_offset ));
+			Residue const & jj_example_rotamer( set2.rotamer_ref( jj_offset ));
 
 			if ( ! jj_example_rotamer.is_protein() || ! ( jj_example_rotamer.is_polar() || (any_aro &&  jj_example_rotamer.is_aromatic()) )) continue;
 
@@ -241,7 +241,7 @@ PairEnergy::evaluate_rotamer_pair_energies(
 						emap[ fa_pair_aro_aro ] = 0;
 						emap[ fa_pair_aro_pol ] = 0;
 						emap[ fa_pair_pol_pol ] = 0;
-						PairEnergy::residue_pair_energy( *set1.rotamer( kk_rot_id ), *set2.rotamer( ll_rot_id ), pose, sfxn, emap );
+						PairEnergy::residue_pair_energy( set1.rotamer_ref( kk_rot_id ), set2.rotamer_ref( ll_rot_id ), pose, sfxn, emap );
 						energy_table( ll_rot_id, kk_rot_id ) += static_cast< core::PackerEnergy > (
 							weights[ fa_pair ] * emap[ fa_pair ] +
 							weights[ fa_pair_aro_aro ] * emap[ fa_pair_aro_aro ] +

@@ -60,13 +60,13 @@ ShortRangeTwoBodyEnergy::evaluate_rotamer_pair_energies(
 
 	for ( Size ii = 1; ii <= set1.get_n_residue_types(); ++ii ) {
 		Size const ii_offset = set1.get_residue_type_begin( ii );
-		Residue const & ii_example_rotamer( *set1.rotamer( ii_offset ));
+		Residue const & ii_example_rotamer( set1.rotamer_ref( ii_offset ));
 		Vector const & ii_coord( ii_example_rotamer.atom( ii_example_rotamer.type().nbr_atom() ).xyz());
 		Real const ii_radius( ii_example_rotamer.type().nbr_radius() );
 
 		for ( Size jj = 1; jj <= set2.get_n_residue_types(); ++jj ) {
 			Size const jj_offset = set2.get_residue_type_begin( jj );
-			Residue const & jj_example_rotamer( *set2.rotamer( jj_offset ));
+			Residue const & jj_example_rotamer( set2.rotamer_ref( jj_offset ));
 			Vector const & jj_coord( jj_example_rotamer.atom( jj_example_rotamer.type().nbr_atom() ).xyz());
 			Real const jj_radius( jj_example_rotamer.type().nbr_radius() );
 
@@ -77,7 +77,7 @@ ShortRangeTwoBodyEnergy::evaluate_rotamer_pair_energies(
 						Size const ll_rot_id = jj_offset + ll - 1;
 
 						emap.zero( score_types() );
-						residue_pair_energy( *set1.rotamer( kk_rot_id ), *set2.rotamer( ll_rot_id ), pose, sfxn, emap );
+						residue_pair_energy( set1.rotamer_ref( kk_rot_id ), set2.rotamer_ref( ll_rot_id ), pose, sfxn, emap );
 						energy_table( ll_rot_id, kk_rot_id ) += static_cast< core::PackerEnergy > (weights.dot( emap, score_types() ));
 					}
 				}
@@ -100,7 +100,7 @@ ShortRangeTwoBodyEnergy::evaluate_rotamer_background_energies(
 	EnergyMap emap;
 	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
 		emap.zero( score_types() );
-		residue_pair_energy( *set.rotamer( ii ), residue, pose, sfxn, emap );
+		residue_pair_energy( set.rotamer_ref( ii ), residue, pose, sfxn, emap );
 		energy_vector[ ii ] += static_cast< core::PackerEnergy > (weights.dot( emap, score_types() ));
 	}
 }
@@ -118,7 +118,7 @@ ShortRangeTwoBodyEnergy::evaluate_rotamer_background_energy_maps(
 	EnergyMap emap;
 	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
 		emap.zero();
-		residue_pair_energy( *set.rotamer( ii ), residue, pose, sfxn, emap );
+		residue_pair_energy( set.rotamer_ref( ii ), residue, pose, sfxn, emap );
 		emaps[ ii ] += emap;
 	}
 }

@@ -667,7 +667,7 @@ EnzConstraintParameters::make_constraint_covalent_helper(
 
 			SingleLigandRotamerLibraryCOP old_lrots(
 				utility::pointer::static_pointer_cast< SingleLigandRotamerLibrary const >
-				( RotamerLibrary::get_instance().get_rsd_library( pose.residue_type( res_pos )).lock() ));
+				( RotamerLibrary::get_instance().get_rsd_library( pose.residue_type( res_pos )) ));
 
 			if( old_lrots != 0 ){
 

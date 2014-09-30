@@ -126,6 +126,10 @@ public:
 	conformation::ResidueCOP
 	rotamer( Size rot_id ) const;
 
+	virtual
+	conformation::Residue const &
+	rotamer_ref( Size rot_id ) const;
+
 	virtual Rotamers::const_iterator begin() const { return rotamers_.begin(); }
 	virtual Rotamers::const_iterator end() const { return rotamers_.end(); }
 

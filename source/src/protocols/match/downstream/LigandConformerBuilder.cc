@@ -681,7 +681,7 @@ LigandConformerBuilder::initialize_conformers( core::conformation::Residue const
 	using namespace core::pack::dunbrack;
 
 	RotamerLibrary const & rotlib( core::pack::dunbrack::RotamerLibrary::get_instance() );
-	SingleResidueRotamerLibraryCOP res_rotlib = rotlib.get_rsd_library( residue.type() ).lock();
+	SingleResidueRotamerLibraryCOP res_rotlib = rotlib.get_rsd_library( residue.type() );
 
 	if ( res_rotlib != 0 ) {
 		/// stoopid

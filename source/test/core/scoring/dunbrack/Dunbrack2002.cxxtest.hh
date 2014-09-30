@@ -145,7 +145,7 @@ public:
 			// generate empty list of extra_chi_steps
 			utility::vector1< utility::vector1< Real > > extra_chi_steps( residue.nchi() );
 
-			SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance().get_rsd_library( residue.type() ).lock();
+			SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance().get_rsd_library( residue.type() );
 			if (rotlib) {
 				rotlib->fill_rotamer_vector( pose, dummy_scorefxn, *task, dummy_graph, residue.type().get_self_ptr(), residue, extra_chi_steps, false /*buried*/, suggested_rotamers);
 			}
@@ -206,7 +206,7 @@ public:
 
 		for (Size pos = 1; pos <= pose.total_residue(); pos++ ) {
 			Residue const & residue( pose.residue( pos ) );
-			SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance().get_rsd_library( residue.type() ).lock();
+			SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance().get_rsd_library( residue.type() );
 			if( rotlib.get() == NULL ) continue;
 
 			RotamerLibraryScratchSpace scratch;
@@ -235,7 +235,7 @@ public:
 
 			if ( AA( ii ) == aa_ala || AA( ii ) == aa_gly ) continue;
 
-			SingleResidueRotamerLibraryCOP aa_rotlib = rotlib.get_library_by_aa( (AA) ii ).lock();
+			SingleResidueRotamerLibraryCOP aa_rotlib = rotlib.get_library_by_aa( (AA) ii );
 			SingleResidueDunbrackLibraryCOP aa_dunlib( utility::pointer::dynamic_pointer_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const > ( aa_rotlib ) );
 			TS_ASSERT( aa_dunlib );
 			if ( ! aa_dunlib ) {

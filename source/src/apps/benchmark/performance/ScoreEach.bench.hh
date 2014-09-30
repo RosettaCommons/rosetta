@@ -237,6 +237,7 @@ public:
 		for ( Size ii = 1; ii <= reps; ++ii ) {
 			emap.zero( e2b.score_types() );
 			for ( Size jj = 1; jj <= pose_->total_residue(); ++jj ) {
+				if ( ! lrec->any_upper_neighbors_for_residue( jj ) ) continue;
 				for ( ResidueNeighborIteratorOP
 						rni = lrec->upper_neighbor_iterator_begin( jj ),
 						rniend = lrec->upper_neighbor_iterator_end( jj );

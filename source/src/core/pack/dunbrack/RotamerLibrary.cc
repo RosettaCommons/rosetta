@@ -115,7 +115,7 @@ rotamer_from_chi(
 {
 	assert( rsd.aa() <= chemical::num_canonical_aas );
 
-	SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance().get_rsd_library( rsd.type() ).lock();
+	SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance().get_rsd_library( rsd.type() );
 	if ( rotlib ) {
 		SingleResidueDunbrackLibraryCOP dunlib( utility::pointer::static_pointer_cast< SingleResidueDunbrackLibrary const > ( rotlib ) );
 		dunlib->get_rotamer_from_chi( rsd.chi(), rot );
@@ -131,7 +131,7 @@ rotamer_from_chi(
 	RotVector & rot
 )
 {
-	SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance().get_rsd_library( rsd_type ).lock();
+	SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance().get_rsd_library( rsd_type );
 	if ( rotlib ) {
 		SingleResidueDunbrackLibraryCOP dunlib( utility::pointer::static_pointer_cast< SingleResidueDunbrackLibrary const > ( rotlib ) );
 		dunlib->get_rotamer_from_chi( chi, rot );
@@ -363,7 +363,7 @@ RotamerLibrary::RotamerLibrary():
 	aa_libraries_(),
 	libraries_ops_()
 {
-	SingleResidueRotamerLibraryCAP x;
+	SingleResidueRotamerLibraryCOP x;
 	aa_libraries_.resize(chemical::num_canonical_aas, x); // for the canonical aa's, fast access
 }
 
@@ -376,7 +376,7 @@ RotamerLibrary::rotamer_energy(
 	RotamerLibraryScratchSpace & scratch
 ) const
 {
-	SingleResidueRotamerLibraryCOP const library( get_rsd_library( rsd.type() ).lock() );
+	SingleResidueRotamerLibraryCOP const library( get_rsd_library( rsd.type() ) );
 
 	if ( library ) {
 		return library->rotamer_energy( rsd, scratch );
@@ -391,7 +391,7 @@ RotamerLibrary::best_rotamer_energy(
   RotamerLibraryScratchSpace & scratch
 ) const
 {
-  SingleResidueRotamerLibraryCOP const library( get_rsd_library( rsd.type() ).lock() );
+  SingleResidueRotamerLibraryCOP const library( get_rsd_library( rsd.type() ) );
 
   if ( library ) {
 		if ( curr_rotamer_only )
@@ -409,7 +409,7 @@ RotamerLibrary::rotamer_energy_deriv(
 	RotamerLibraryScratchSpace & scratch
 ) const
 {
-	SingleResidueRotamerLibraryCOP const library( get_rsd_library( rsd.type() ).lock() );
+	SingleResidueRotamerLibraryCOP const library( get_rsd_library( rsd.type() ) );
 
 	if ( library ) {
 		return library->rotamer_energy_deriv( rsd, scratch );
@@ -455,9 +455,9 @@ RotamerLibrary::add_residue_library(
 	if ( libraries_.find(aa) != libraries_.end() ) {
 		utility_exit_with_message("cant add rsd library twice");
 	}
-	libraries_.insert( std::make_pair( aa, SingleResidueRotamerLibraryCAP(rot_lib) ) );
+	libraries_.insert( std::make_pair( aa, rot_lib ) );
 	if ( aa <= chemical::num_canonical_aas ) {
-		aa_libraries_[ aa ] = SingleResidueRotamerLibraryCAP(rot_lib); // ASSUMPTION -- only fullatom rotamer libraries are added; centroid restypes don't have rotlibs.
+		aa_libraries_[ aa ] = rot_lib; // ASSUMPTION -- only fullatom rotamer libraries are added; centroid restypes don't have rotlibs.
 	}
 	libraries_ops_.push_back( rot_lib );
 }
@@ -474,8 +474,8 @@ RotamerLibrary::add_residue_library(
 	//	utility_exit_with_message("cant add rsd library twice");
 	//}
 	std::string const key( rsd_type.name()+"@"+rsd_type.residue_type_set().name() );
-	reslibraries_.insert( std::make_pair( key, SingleResidueRotamerLibraryCAP(rot_lib) ) );
-	reslibraries_.insert( std::make_pair( rsd_type.name(), SingleResidueRotamerLibraryCAP(rot_lib) ) );
+	reslibraries_.insert( std::make_pair( key, rot_lib ) );
+	reslibraries_.insert( std::make_pair( rsd_type.name(), rot_lib ) );
 	libraries_ops_.push_back( rot_lib );
 }
 
@@ -493,7 +493,7 @@ RotamerLibrary::rsd_library_already_loaded( chemical::ResidueType const & rsd_ty
 
 	if ( rsd_type.residue_type_set().name() == chemical::FA_STANDARD &&
 			rsd_type.rotamer_aa() <= chemical::num_canonical_aas ) {
-		return ! aa_libraries_[ rsd_type.rotamer_aa() ].expired();
+		return ! aa_libraries_[ rsd_type.rotamer_aa() ];
 	}
 
 	std::string const key( rsd_type.name()+"@"+rsd_type.residue_type_set().name() );
@@ -513,7 +513,7 @@ RotamerLibrary::rsd_library_already_loaded( chemical::ResidueType const & rsd_ty
 /// @details returns NULL if no library is available for the given residue type
 /// and no pdb rotamers have been defined for the given residue; if PDB rotamers HAVE
 /// been defined, then
-SingleResidueRotamerLibraryCAP
+SingleResidueRotamerLibraryCOP
 RotamerLibrary::get_rsd_library( chemical::ResidueType const & rsd_type ) const
 {
 	/// intercept, in case the residue type would prefer using the NCAA rotamer library
@@ -562,16 +562,16 @@ RotamerLibrary::get_rsd_library( chemical::ResidueType const & rsd_type ) const
 		add_residue_library( rsd_type, pdb_rotamers );
 		return pdb_rotamers;
 	}
-	return SingleResidueRotamerLibraryCAP();
+	return SingleResidueRotamerLibraryCOP();
 }
 
-SingleResidueRotamerLibraryCAP
+SingleResidueRotamerLibraryCOP
 RotamerLibrary::get_library_by_aa( chemical::AA const & aa ) const
 {
 	if ( (Size) aa <= aa_libraries_.size() ) {
 		return aa_libraries_[ aa ];
 	}
-	return SingleResidueRotamerLibraryCAP();
+	return SingleResidueRotamerLibraryCOP();
 }
 
 
@@ -1015,8 +1015,8 @@ RotamerLibrary::create_fa_dunbrack_libraries_02_from_ASCII()
 			aan, nchi_for_aa[ aan ], libstream, true /*dun02*/, nextaa, true /*first aa string already read*/ );
 		++count_libraries_read;
 
-		libraries_[ aan ] = SingleResidueDunbrackLibraryCAP( newlib );
-		aa_libraries_[ aan ] = SingleResidueDunbrackLibraryCAP( newlib );
+		libraries_[ aan ] = newlib;
+		aa_libraries_[ aan ] = newlib;
 		libraries_ops_.push_back( newlib );
 		memory_use_rotameric[ aan ] = newlib->memory_usage_in_bytes();
 
@@ -1166,8 +1166,8 @@ RotamerLibrary::create_fa_dunbrack_libraries_10_from_ASCII()
 
 		memory_use_rotameric.push_back( newlib->memory_usage_in_bytes() );
 
-		libraries_[ ii_aa ] = SingleResidueDunbrackLibraryCAP( newlib );
-		aa_libraries_[ ii_aa ] = SingleResidueDunbrackLibraryCAP( newlib );
+		libraries_[ ii_aa ] = newlib;
+		aa_libraries_[ ii_aa ] = newlib;
 		libraries_ops_.push_back( newlib );
 	}
 
@@ -1227,8 +1227,8 @@ RotamerLibrary::create_fa_dunbrack_libraries_10_from_ASCII()
 
 		memory_use_semirotameric.push_back( newlib->memory_usage_in_bytes() );
 
-		libraries_[ ii_aa ] = SingleResidueDunbrackLibraryCAP( newlib );
-		aa_libraries_[ ii_aa ] = SingleResidueDunbrackLibraryCAP( newlib );
+		libraries_[ ii_aa ] = newlib;
+		aa_libraries_[ ii_aa ] = newlib;
 		libraries_ops_.push_back( newlib );
 	}
 	TR << "Finished reading Dunbrack Libraries" << std::endl;
@@ -1890,7 +1890,7 @@ RotamerLibrary::write_to_binary( utility::io::ozstream & out ) const
 	Size count_libraries( 0 );
 	for ( library_iterator it=libraries_.begin(), eit=libraries_.end(); it!=eit; ++it ) {
 		SingleResidueDunbrackLibraryCOP srdl =
-			utility::pointer::dynamic_pointer_cast< SingleResidueDunbrackLibrary const > ( it->second.lock() );
+			utility::pointer::dynamic_pointer_cast< SingleResidueDunbrackLibrary const > ( it->second );
 
 		if ( srdl ) ++count_libraries; /// write out only the dunbrack libraries.
 
@@ -1902,7 +1902,7 @@ RotamerLibrary::write_to_binary( utility::io::ozstream & out ) const
 
 	for ( library_iterator it=libraries_.begin(), eit=libraries_.end(); it!=eit; ++it ) {
 		SingleResidueDunbrackLibraryCOP srdl =
-			utility::pointer::dynamic_pointer_cast< SingleResidueDunbrackLibrary const > ( it->second.lock() );
+			utility::pointer::dynamic_pointer_cast< SingleResidueDunbrackLibrary const > ( it->second );
 
 		if ( ! srdl ) continue; /// write out only the dunbrack libraries.
 
@@ -1946,7 +1946,7 @@ RotamerLibrary::read_from_binary( utility::io::izstream & in )
 	}
 }
 
-SingleResidueRotamerLibraryCAP
+SingleResidueRotamerLibraryCOP
 RotamerLibrary::get_NCAA_rotamer_library( chemical::ResidueType const & rsd_type ) const
 {
 	using namespace utility::options;
@@ -2033,7 +2033,7 @@ RotamerLibrary::get_NCAA_rotamer_library( chemical::ResidueType const & rsd_type
 }
 
 /// DOUG DOUG DOUG a good bit of this will need to change for the new RT based system
-SingleResidueRotamerLibraryCAP
+SingleResidueRotamerLibraryCOP
 RotamerLibrary::get_peptoid_rotamer_library( chemical::ResidueType const & rsd_type ) const
 {
 	using namespace utility::options;
