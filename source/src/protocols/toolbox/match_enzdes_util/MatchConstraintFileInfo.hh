@@ -57,7 +57,7 @@ namespace match_enzdes_util{
 /// i.e. this function gets rid of the variant redundancy
 void
 add_relevant_restypes_to_subset(
-	std::set< core::chemical::ResidueTypeCOP > & restype_subset,
+	utility::vector1< core::chemical::ResidueTypeCOP > & restype_subset,
 	utility::vector1< core::chemical::ResidueTypeCOP > const & restypes,
 	core::chemical::ResidueTypeSetCAP restype_set
 );
