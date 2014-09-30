@@ -126,7 +126,8 @@ protected:
 private:
 	utility::vector1< utility::vector1< EntityOP > > generations_;
 	utility::vector1< EntityCOP > parent_entities_;
-	TraitEntityHashMap entity_cache_;
+	TraitEntityHashMap entity_cache_; // the set of all entity traits ever seen by the GA and their fitnesses
+	TraitEntityHashMap curr_gen_entities_; // the set of entities in the current generation
 	EntityRandomizerOP entity_randomizer_;
 	EntityCOP entity_template_;
 	core::Size current_generation_;

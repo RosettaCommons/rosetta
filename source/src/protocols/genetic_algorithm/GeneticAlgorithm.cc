@@ -86,6 +86,7 @@ GeneticAlgorithmBase::add_entity( EntityElements const & traits )
 	}
 	//TR << "Adding entity " << entity.get() << " to the current generation " << std::endl;
 	generations_[current_generation_].push_back( entity );
+	curr_gen_entities_[ entity->traits() ] = entity;
 	return entity;
 }
 
@@ -106,6 +107,7 @@ GeneticAlgorithmBase::add_entity( EntityOP entity )
 	}
 	//TR << "Adding entity " << entity.get() << " to the current generation " << std::endl;
 	generations_[current_generation_].push_back( entity );
+	curr_gen_entities_[ entity->traits() ] = entity;
 	return entity;
 }
 
@@ -207,7 +209,12 @@ GeneticAlgorithmBase::fill_with_random_entities( core::Size size /* = 0 */ )
 {
 	if ( size == 0 ) size = max_population_size_;
 	while ( generations_[current_generation_].size() < size ) {
-		add_entity( entity_randomizer_->random_entity() );
+		EntityOP rand_ent = entity_randomizer_->random_entity();
+
+		// Do not add an entity to the current generation if it is already a part of the current generation
+		if ( curr_gen_entities_.find( rand_ent->traits() ) != curr_gen_entities_.end() ) continue;
+
+		add_entity( rand_ent );
 	}
 }
 
@@ -247,9 +254,11 @@ GeneticAlgorithmBase::fill_by_crossover( core::Size size /* = 0 */ )
 		EntityOP child1 = tournament_select( parent_entities_ ).clone();
 		EntityOP child2 = tournament_select( parent_entities_ ).clone();
 		entity_randomizer_->crossover( *child1, *child2 );
+
+		// Do not add an entity to the current generation if it is already a part of the current generation
+		if ( curr_gen_entities_.find( child1->traits() ) != curr_gen_entities_.end() ) continue;
+
 		add_entity( child1 );
-		// rosetta++ only produced one child upon recombination
-		//if ( generations_[current_generation_].size() < size ) add_entity( child2 );
 	}
 }
 
@@ -264,6 +273,10 @@ GeneticAlgorithmBase::fill_by_mutation( core::Size size /* = 0 */ )
 	while ( generations_[current_generation_].size() < size ) {
 		EntityOP child = tournament_select( parent_entities_ ).clone();
 		entity_randomizer_->mutate( *child );
+
+		// Do not add an entity to the current generation if it is already a part of the current generation
+		if ( curr_gen_entities_.find( child->traits() ) != curr_gen_entities_.end() ) continue;
+
 		add_entity( child );
 	}
 }
@@ -281,12 +294,17 @@ GeneticAlgorithmBase::fill_by_mutation( core::Size size /* = 0 */ )
 void
 GeneticAlgorithmBase::evolve_next_generation()
 {
+
 	// if parents were not already added, use the current generation as parents
 	if (parent_entities_.size() == 0) add_parents_from_current_generation();
-	// increment the generation counter
+
+	// increment the generation counter and clear out the curr_gen_entities_ hash
 	++current_generation_;
+	curr_gen_entities_.clear();
+
 	// copy the best scoring entities to the next generation
 	propagate_best_from_previous_generation(number_to_propagate_);
+
 	// add entities via crossover and mutation
 	core::Size pop_size = generations_[current_generation_].size();
 	fill_by_crossover( static_cast<core::Size>( fraction_by_recombination_*(max_population_size_-pop_size)+pop_size ) );
