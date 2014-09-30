@@ -79,7 +79,7 @@ static thread_local basic::Tracer tr( "protocols.environment.EnvClaimBroker", ba
 namespace protocols {
 namespace environment {
 
-using namespace core; 
+using namespace core;
 using namespace protocols::environment::claims;
 
 using core::environment::LocalPosition;

@@ -50,8 +50,10 @@ public:
 	void test_num_neighbors_selector_1() {
 		NumNeighborsSelectorOP nneighbs_rs( new NumNeighborsSelector( 12, 10.0 ) );
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		ResidueSubset subset( trpcage.total_residue(), false );
-		nneighbs_rs->apply( trpcage, subset );
+
+		ResidueSubset subset = nneighbs_rs->apply( trpcage );
+		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
+
 		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
 			core::conformation::Residue const & iires = trpcage.residue(ii);
 			core::Size count_neighbs = 0;

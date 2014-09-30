@@ -65,15 +65,15 @@ EnvLabelSelector::EnvLabelSelector( std::string const& label,
 
 EnvLabelSelector::~EnvLabelSelector() {}
 
-void EnvLabelSelector::apply(
-  core::pose::Pose const & pose,
-  ResidueSubset& subset
+
+core::pack::task::residue_selector::ResidueSubset
+EnvLabelSelector::apply(
+  core::pose::Pose const & pose
 ) const
 {
   using core::environment::LocalPositionOP;
-  assert( subset.size() == pose.total_residue() );
 
-  subset = ResidueSubset( subset.size(), false );
+  ResidueSubset subset( pose.total_residue(), false );
 
   ProtectedConformationCOP conf = utility::pointer::dynamic_pointer_cast< protocols::environment::ProtectedConformation const > ( pose.conformation_ptr() );
   core::environment::SequenceAnnotationCOP ann = conf->annotations();
@@ -83,6 +83,7 @@ void EnvLabelSelector::apply(
     core::Size const seqpos = ann->resolve_seq( **pos_it );
     subset[ seqpos ] = true;
   }
+	return subset;
 }
 
 void EnvLabelSelector::parse_my_tag(

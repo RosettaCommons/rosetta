@@ -45,25 +45,24 @@ ResidueIndexSelector::ResidueIndexSelector( std::string const & index_str )
 
 ResidueIndexSelector::~ResidueIndexSelector() {}
 
-void
-ResidueIndexSelector::apply( core::pose::Pose const & pose, ResidueSubset & subset ) const
+ResidueSubset
+ResidueIndexSelector::apply( core::pose::Pose const & pose ) const
 {
-	assert( subset.size() == pose.total_residue() );
 	assert( !index_str_.empty() );
 
-	subset = ResidueSubset(pose.total_residue(), false);
+	ResidueSubset subset( pose.total_residue(), false );
 	std::set< Size > const res_set( get_resnum_list( index_str_, pose ) );
 
-	for( std::set< Size >::const_iterator it = res_set.begin();
-			it != res_set.end(); ++it )
-	{
-			if(*it == 0 || *it > subset.size()) {
-				std::stringstream err_msg;
-				err_msg << "Residue " << *it << " not found in pose!\n";
-				throw utility::excn::EXCN_Msg_Exception( err_msg.str() );
-			}
-			subset.at(*it) = true; // may want to use a tmp subset so we don't wind up with a half-set subset
+	for ( std::set< Size >::const_iterator it = res_set.begin();
+			it != res_set.end(); ++it ) {
+		if ( *it == 0 || *it > subset.size() ) {
+			std::stringstream err_msg;
+			err_msg << "Residue " << *it << " not found in pose!\n";
+			throw utility::excn::EXCN_Msg_Exception( err_msg.str() );
+		}
+		subset[ *it ] = true;
 	}
+	return subset;
 }
 
 void

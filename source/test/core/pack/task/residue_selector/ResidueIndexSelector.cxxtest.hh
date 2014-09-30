@@ -63,8 +63,8 @@ public:
 		}
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		ResidueSubset subset( trpcage.total_residue(), false );
-		index_rs->apply( trpcage, subset );
+		ResidueSubset subset = index_rs->apply( trpcage );
+		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
 
 		// test
 		std::set < core::Size > acceptTrue;
@@ -92,9 +92,9 @@ public:
 		}
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		ResidueSubset subset( trpcage.total_residue(), false );
-		index_rs->apply( trpcage, subset );
+		ResidueSubset subset = index_rs->apply( trpcage );
 
+		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
 		std::set< core::Size > acceptTrue;
 		acceptTrue.insert(2);
 		acceptTrue.insert( trpcage.pdb_info()->pdb2pose('A', 3) );
@@ -133,9 +133,8 @@ public:
 
 		ResidueSelectorOP index_rs( new ResidueIndexSelector( bad_index.str() ) );
 
-		ResidueSubset subset( trpcage.total_residue(), false );
 		try {
-			index_rs->apply( trpcage, subset );
+			index_rs->apply( trpcage );
 			TS_ASSERT( false );
 		} catch( utility::excn::EXCN_Msg_Exception e) {
 			//std::cerr << "Exception (fail_index_out_of_range): '" << e.msg() << "'";
@@ -152,9 +151,8 @@ public:
 
 		ResidueSelectorOP index_rs( new ResidueIndexSelector( bad_index ) );
 
-		ResidueSubset subset( trpcage.total_residue(), false );
 		try {
-			index_rs->apply( trpcage, subset );
+			index_rs->apply( trpcage );
 			TS_ASSERT( false );
 		} catch( utility::excn::EXCN_Msg_Exception e) {
 			//std::cerr << "Exception (fail_chain_out_of_range): " << e.msg();

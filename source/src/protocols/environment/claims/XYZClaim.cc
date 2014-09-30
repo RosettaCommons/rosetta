@@ -104,8 +104,7 @@ void XYZClaim::yield_elements( core::pose::Pose const& pose, DOFElements& elemen
                << "  Did you forget to set these values?" << std::endl;
   }
 
-  utility::vector1< bool > selection( pose.total_residue(), false );
-  selector()->apply( pose, selection );
+  utility::vector1< bool > selection = selector()->apply( pose );
 
   for( Size seqpos = 1; seqpos <= selection.size(); ++seqpos ){
     if( selection[seqpos] ){

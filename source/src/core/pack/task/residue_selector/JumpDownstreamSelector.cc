@@ -48,11 +48,12 @@ JumpDownstreamSelector::JumpDownstreamSelector( int jump )
 
 JumpDownstreamSelector::~JumpDownstreamSelector() {}
 
-void
-JumpDownstreamSelector::apply( core::pose::Pose const & pose, ResidueSubset & subset ) const
+ResidueSubset
+JumpDownstreamSelector::apply( core::pose::Pose const & pose ) const
 {
-	assert( subset.size() == pose.total_residue() );
 	assert( jump_ > 0 );
+
+	ResidueSubset subset( pose.total_residue(), false );
 
 	ObjexxFCL::FArray1D_bool upstream( pose.total_residue() );
 	pose.fold_tree().partition_by_jump( jump_, upstream );
@@ -60,6 +61,7 @@ JumpDownstreamSelector::apply( core::pose::Pose const & pose, ResidueSubset & su
 	for( core::Size ii = 1; ii < upstream.size(); ++ii ) {
 		subset[ ii ] = !upstream( ii );
 	}
+	return subset;
 }
 
 void

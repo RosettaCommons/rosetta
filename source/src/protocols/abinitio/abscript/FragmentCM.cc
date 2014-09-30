@@ -185,8 +185,7 @@ claims::EnvClaims FragmentCM::yield_claims( core::pose::Pose const& pose,
 
   int shift = 0;
   if( selector() ){
-    utility::vector1< bool > torsion_mask( pose.total_residue(), 0 );
-    selector()->apply( pose, torsion_mask );
+    utility::vector1< bool > torsion_mask = selector()->apply( pose );
     shift = torsion_mask.index( true )-1;
     mover()->set_fragments( mover()->fragments()->clone_shifted( shift ) );
   }

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/pack/task/residue_selector/JumpDownstreamSelector.hh
-/// @brief  The JumpDownstreamSelector selects residues downstream of a given jump in a FoldTree 
+/// @brief  The JumpDownstreamSelector selects residues downstream of a given jump in a FoldTree
 /// @author Robert Lindner (rlindner@mpimf-heidelberg.mpg.de)
 
 #ifndef INCLUDED_core_pack_task_residue_selector_JumpDownstreamSelector_HH
@@ -44,12 +44,12 @@ public:
 	JumpDownstreamSelector( int jump );
 	virtual ~JumpDownstreamSelector();
 
-	virtual void apply( core::pose::Pose const & pose, ResidueSubset & subset ) const;
+	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
 	virtual void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &
 	);
-	
+
 	virtual
 	std::string
 	get_name() const;

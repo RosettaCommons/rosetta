@@ -50,20 +50,21 @@ AndResidueSelector::AndResidueSelector( ResidueSelectorCOP selector1, ResidueSel
 	add_residue_selector( selector2 );
 }
 
-void AndResidueSelector::apply( core::pose::Pose const & pose, ResidueSubset & subset ) const
+ResidueSubset
+AndResidueSelector::apply( core::pose::Pose const & pose ) const
 {
-	assert( subset.size() == pose.total_residue() );
 	assert( num_selectors() > 0 );
 
 	// make subset neutral for AND operations
-	subset = ResidueSubset( pose.total_residue(), true );
-	for(std::list< ResidueSelectorCOP >::const_iterator rs = selectors_.begin();
+	ResidueSubset subset( pose.total_residue(), true );
+	for ( std::list< ResidueSelectorCOP >::const_iterator
+			rs = selectors_.begin();
 			rs != selectors_.end();
 			++rs) {
-		ResidueSubset tmp(subset.size());
-		(*rs)->apply(pose, tmp);
+		ResidueSubset tmp = (*rs)->apply( pose );
 		apply_and_to_subset(tmp, subset);
 	}
+	return subset;
 }
 
 void AndResidueSelector::parse_my_tag(

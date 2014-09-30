@@ -44,7 +44,7 @@ public:
 	NotResidueSelector( ResidueSelectorCOP selector );
 	virtual ~NotResidueSelector();
 
-	virtual void apply( core::pose::Pose const & pose, ResidueSubset & subset ) const;
+	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
 	virtual void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & datamap

@@ -36,7 +36,6 @@
 using namespace core::pack::task::residue_selector;
 
 class OrResidueSelectorTests : public CxxTest::TestSuite {
-
 public:
 
 	void setUp() {
@@ -49,8 +48,9 @@ public:
 		ResidueSelectorOP one_mod_5_rs( new XModYResidueSelector( 1, 5 ) );
 		ResidueSelectorOP or_rs( new OrResidueSelector( odd_rs, one_mod_5_rs ) );
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		ResidueSubset subset( trpcage.total_residue(), false );
-		or_rs->apply( trpcage, subset );
+
+		ResidueSubset subset = or_rs->apply( trpcage );
+		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
 		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
 			TS_ASSERT_EQUALS( subset[ ii ], (ii % 5 == 1 || ii % 2 == 1) );
 		}
@@ -77,8 +77,8 @@ public:
 		}
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		ResidueSubset subset( trpcage.total_residue(), false );
-		or_rs->apply( trpcage, subset );
+		ResidueSubset subset = or_rs->apply( trpcage );
+		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
 		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
 			TS_ASSERT_EQUALS( subset[ ii ], (ii % 5 == 1 || ii % 2 == 1) );
 		}
@@ -135,12 +135,12 @@ public:
 		try {
 			or_rs->parse_my_tag( tag, dm );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			TS_ASSERT( false ); 
+			TS_ASSERT( false );
 		}
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		ResidueSubset subset( trpcage.total_residue(), false );
-		or_rs->apply( trpcage, subset );
+		ResidueSubset subset = or_rs->apply( trpcage );
+		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
 		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
 			TS_ASSERT_EQUALS( subset[ ii ], (ii >= 2 && ii <= 5) );
 		}

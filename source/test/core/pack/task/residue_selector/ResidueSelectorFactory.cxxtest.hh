@@ -37,9 +37,9 @@ public:
 	DummyResidueSelector() {}
 
 	virtual
-	void apply( core::pose::Pose const &, ResidueSubset & ) const
+	ResidueSubset apply( core::pose::Pose const & ) const
 	{
-		return;
+		return ResidueSubset( 10, true );
 	}
 
 	virtual std::string get_name() const { return "DummyResidueSelector"; }

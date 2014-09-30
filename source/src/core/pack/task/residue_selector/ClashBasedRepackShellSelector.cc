@@ -58,9 +58,9 @@ ClashBasedRepackShellSelector::ClashBasedRepackShellSelector()
 
 ClashBasedRepackShellSelector::~ClashBasedRepackShellSelector() {}
 
-ClashBasedRepackShellSelector::ClashBasedRepackShellSelector( 
-	core::pack::task::PackerTaskOP packer_task, 
-	core::scoring::ScoreFunctionOP score_fxn 
+ClashBasedRepackShellSelector::ClashBasedRepackShellSelector(
+	core::pack::task::PackerTaskOP packer_task,
+	core::scoring::ScoreFunctionOP score_fxn
 )
 {
 	packer_task_ = packer_task;
@@ -148,13 +148,12 @@ utility::vector1<core::Size> ClashBasedRepackShellSelector::get_clashing_positio
 	return clash_positions;
 }
 
-void ClashBasedRepackShellSelector::apply( core::pose::Pose const & pose, ResidueSubset & subset ) const
+ResidueSubset
+ClashBasedRepackShellSelector::apply( core::pose::Pose const & pose ) const
 {
-	assert( subset.size() == pose.total_residue() );
-	std::fill( subset.begin(), subset.end(), false );
-	
+	ResidueSubset subset( pose.total_residue(), false );
 	core::pose::PoseOP mypose( new core::pose::Pose(pose) );
-	
+
 	// determine design positions based on the packer task
 	std::set<core::Size> design_shell;
 	for(core::Size i = 1; i <= mypose->total_residue(); ++i) {
@@ -165,7 +164,7 @@ void ClashBasedRepackShellSelector::apply( core::pose::Pose const & pose, Residu
 
 	// determine clash-based repack shell around the design shell
 	std::set<core::Size> repack_shell;
-	
+
 	for(std::set<core::Size>::const_iterator cit = design_shell.begin(); cit != design_shell.end(); ++cit) {
 		core::Size design_pos = *cit;
 
@@ -207,6 +206,7 @@ void ClashBasedRepackShellSelector::apply( core::pose::Pose const & pose, Residu
 		}
 	}
 
+	return subset;
 }
 
 void ClashBasedRepackShellSelector::parse_my_tag(
@@ -249,4 +249,3 @@ ClashBasedRepackShellSelectorCreator::keyname() const {
 } //namespace task
 } //namespace pack
 } //namespace core
-

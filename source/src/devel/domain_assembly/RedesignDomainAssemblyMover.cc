@@ -285,8 +285,7 @@ void RedesignDomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) 
 	// Add the constraints, if any, to the score function
 	core::scoring::constraints::add_fa_constraints_from_cmdline(pose, *scorefxn);
 
-	utility::vector1< bool > to_repack(false, pose.total_residue() );
-	interface_or_linker_rs->apply( pose, to_repack );
+	utility::vector1< bool > to_repack = interface_or_linker_rs->apply( pose );
 
 	// allow minimazion of residues in the linker and the interdomain interface
 	core::kinematics::MoveMapOP movemap_local( new core::kinematics::MoveMap( move_map() ) );
@@ -304,7 +303,7 @@ void RedesignDomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) 
 		for( Size i_inner = 1; i_inner <= inner_iterations; ++i_inner ) {
 			core::Real fa_rep_weight = ( 0.1 + 0.9/(inner_iterations-1) * (i_inner-1) ) * final_fa_rep;
 			scorefxn->set_weight( core::scoring::fa_rep , fa_rep_weight );
-			interface_or_linker_rs->apply( pose, to_repack );
+			to_repack = interface_or_linker_rs->apply( pose );
 			movemap_local->set_chi( to_repack );
 			movemap_local->set_bb( to_repack );
 
@@ -313,10 +312,10 @@ void RedesignDomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) 
 
 			// redesign of residues on the LOV-side of the interface
 			core::pack::task::PackerTaskOP design_packer_task( core::pack::task::TaskFactory::create_packer_task( pose ));
-			design_packer_task -> initialize_from_command_line();
-			design_packer_task -> set_bump_check( true );
-			design_packer_task -> or_include_current( true );
-			block_outside_interface_operation -> apply( pose, *design_packer_task );
+			design_packer_task->initialize_from_command_line();
+			design_packer_task->set_bump_check( true );
+			design_packer_task->or_include_current( true );
+			block_outside_interface_operation->apply( pose, *design_packer_task );
 			block_design_operation -> apply( pose, *design_packer_task );
 			core::pack::pack_rotamers( pose, *scorefxn, design_packer_task );
 		}

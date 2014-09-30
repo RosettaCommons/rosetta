@@ -153,11 +153,12 @@ claims::EnvClaims FragmentJumpCM::yield_claims( core::pose::Pose const& pose,
   using namespace core::pose::datacache;
   using namespace basic::datacache;
 
-  utility::vector1< bool > selection( pose.total_residue(), 0 );
-  if( selector() )
-    selector()->apply( pose, selection );
-  else
+  utility::vector1< bool > selection;
+	if( selector() ) {
+		selection = selector()->apply( pose );
+	} else {
 		selection = utility::vector1< bool >( pose.total_residue(), true );
+	}
 
   if( map->find( "JumpSampleData") != map->end() ){
     std::set< WriteableCacheableDataOP > const& data_set = map->find( "JumpSampleData" )->second;

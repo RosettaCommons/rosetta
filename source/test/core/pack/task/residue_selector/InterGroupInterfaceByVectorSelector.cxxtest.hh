@@ -42,10 +42,12 @@ public:
 	ResRangeSelector( Size lower, Size upper ) : lower_( lower ), upper_( upper ) {}
 
 	virtual
-	void apply( core::pose::Pose const &, ResidueSubset & subset ) const
+	ResidueSubset
+	apply( core::pose::Pose const & pose ) const
 	{
-		std::fill( subset.begin(), subset.end(), false );
+		ResidueSubset subset( pose.total_residue(), false );
 		for ( core::Size ii = lower_; ii <= upper_; ++ii ) subset[ ii ] = true;
+		return subset;
 	}
 
 	virtual std::string get_name() const { return "ResRange"; }
@@ -94,11 +96,10 @@ public:
 		igibv_rs->group2_set( both_sets.second );
 
 		core::pose::Pose pose = create_test_in_pdb_pose();
-		ResidueSubset subset( pose.total_residue(), false );
-		igibv_rs->apply( pose, subset );
+		ResidueSubset subset = igibv_rs->apply( pose );
 
 		ResidueSubset ground_truth = gold_result( pose );
-
+		TS_ASSERT_EQUALS( subset.size(), ground_truth.size() );
 		for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			//std::cout << ii << " subset[" << ii << "] = " << subset[ ii ] << " ground_truth[ " << ii << " ] = " << ground_truth[ ii ] << std::endl;
 			TS_ASSERT_EQUALS( subset[ ii ], ground_truth[ ii ] );
@@ -114,8 +115,7 @@ public:
 		igibv_rs->group2_selector( ResidueSelectorCOP( new ResRangeSelector( 45, 66 ) ) );
 
 		core::pose::Pose pose = create_test_in_pdb_pose();
-		ResidueSubset subset( pose.total_residue(), false );
-		igibv_rs->apply( pose, subset );
+		ResidueSubset subset = igibv_rs->apply( pose );
 
 		ResidueSubset ground_truth = gold_result( pose );
 
@@ -147,8 +147,7 @@ public:
 		}
 
 		core::pose::Pose pose = create_test_in_pdb_pose();
-		ResidueSubset subset( pose.total_residue(), false );
-		igibv_rs->apply( pose, subset );
+		ResidueSubset subset =  igibv_rs->apply( pose );
 
 		ResidueSubset ground_truth = gold_result( pose );
 

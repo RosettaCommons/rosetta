@@ -114,8 +114,7 @@ public:
     Environment & env = *env_op;
     env.register_mover( fragmover );
 
-    utility::vector1< bool > selection( pose.total_residue(), false );
-    selector->apply( pose, selection );
+    utility::vector1< bool > selection = selector->apply( pose );
     core::Size const ch2_begin = selection.index( true );
     TS_ASSERT( std::find( selection.begin(), selection.end(), true ) != selection.end() );
     core::Size const ch2_end = pose.total_residue();

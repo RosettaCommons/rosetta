@@ -41,12 +41,14 @@ public:
 	ResidueSelector();
 	virtual ~ResidueSelector();
 
-	/// @brief Make modifications to the subset vector given an input pose.
-	/// The input ResidueSubset should already be of size pose.total_residue()
-	/// Unless explicitly combining the subset such as AND OR, should clear the given subset.
-	virtual void apply(
-		core::pose::Pose const & pose,
-		ResidueSubset & subset
+	/// @brief Return a ResidueSubset indicating a selection of Residues from the
+	/// input Pose; the ResidueSubset is an array of booleans where a value of
+	/// "true" for position i indicates that residue i is a part of the selected
+	/// subset -- and a value of "false" would indicate that it is not.
+	virtual
+	ResidueSubset
+	apply(
+		core::pose::Pose const & pose
 	) const = 0;
 
 	/// @brief Initialize any data members of this instance from an input tag

@@ -48,13 +48,12 @@ NeighborhoodResidueSelector::NeighborhoodResidueSelector( std::set<core::Size> c
 
 NeighborhoodResidueSelector::~NeighborhoodResidueSelector() {}
 
-void
-NeighborhoodResidueSelector::apply( core::pose::Pose const & pose, ResidueSubset & subset ) const
+ResidueSubset
+NeighborhoodResidueSelector::apply( core::pose::Pose const & pose ) const
 {
-	assert( subset.size() == pose.total_residue() );
 	assert( focus_set_ );
 
-	subset = ResidueSubset(pose.total_residue(), false);
+	ResidueSubset subset( pose.total_residue(), false );
 	std::set< Size > focus_tmp;
 
 	// set subset to focus.
@@ -76,6 +75,7 @@ NeighborhoodResidueSelector::apply( core::pose::Pose const & pose, ResidueSubset
 		} // focus set
 	} // subset
 
+	return subset;
 }
 
 void
@@ -151,10 +151,14 @@ NeighborhoodResidueSelector::parse_my_tag(
 }
 
 void
-NeighborhoodResidueSelector::get_focus( core::pose::Pose const & pose, ResidueSubset & subset, std::set< Size > & focus ) const
+NeighborhoodResidueSelector::get_focus(
+	core::pose::Pose const & pose,
+	ResidueSubset & subset,
+	std::set< Size > & focus
+) const
 {
-	if(focus_selector_ && use_focus_selector_) {
-		focus_selector_->apply( pose, subset);
+	if ( focus_selector_ && use_focus_selector_ ) {
+		subset = focus_selector_->apply( pose );
 
 		for( Size ii = 1; ii <= subset.size(); ++ii ) {
 			if( subset[ ii ] ) {
@@ -173,7 +177,7 @@ NeighborhoodResidueSelector::get_focus( core::pose::Pose const & pose, ResidueSu
 				err_msg << "Residue " << *it << " not found in pose!\n";
 				throw utility::excn::EXCN_Msg_Exception( err_msg.str() );
 			}
-			subset.at(*it) = true; // may want to use a tmp subset so we don't wind up with a half-set subset
+			subset[ *it ] = true; // may want to use a tmp subset so we don't wind up with a half-set subset
 		}
 	}
 }

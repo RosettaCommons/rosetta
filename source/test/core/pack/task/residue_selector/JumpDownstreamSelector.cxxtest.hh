@@ -66,10 +66,10 @@ public:
 		core::kinematics::FoldTree ft(trpcage.fold_tree());
 		ft.new_jump(3, 7, 5);
 		trpcage.fold_tree(ft);
-		
-		ResidueSubset subset( trpcage.total_residue(), false );
-		jump_d_rs->apply( trpcage, subset );
-		
+
+		ResidueSubset subset = jump_d_rs->apply( trpcage );
+		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
+
 		for( core::Size ii = 1; ii <= subset.size(); ++ii ) {
 			TS_ASSERT( !subset[ ii ] || ii >= 6 )
 		}

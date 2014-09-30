@@ -46,20 +46,21 @@ OrResidueSelector::OrResidueSelector( ResidueSelectorCOP selector1, ResidueSelec
 	add_residue_selector( selector2 );
 }
 
-void OrResidueSelector::apply( core::pose::Pose const & pose, ResidueSubset & subset ) const
+ResidueSubset
+OrResidueSelector::apply( core::pose::Pose const & pose ) const
 {
-	assert( subset.size() == pose.total_residue() );
 	assert( num_selectors() > 0 );
 
 	// make subset neutral for OR operations
-	subset = ResidueSubset( pose.total_residue(), false );
-	for(std::list< ResidueSelectorCOP >::const_iterator rs = selectors_.begin();
+	ResidueSubset subset( pose.total_residue(), false );
+	for ( std::list< ResidueSelectorCOP >::const_iterator
+			rs = selectors_.begin();
 			rs != selectors_.end();
 			++rs) {
-		ResidueSubset tmp(subset.size());
-		(*rs)->apply(pose, tmp);
+		ResidueSubset tmp = (*rs)->apply( pose );
 		apply_or_to_subset(tmp, subset);
 	}
+	return subset;
 }
 
 void OrResidueSelector::parse_my_tag(

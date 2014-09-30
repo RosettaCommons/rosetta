@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/pack/task/residue_selector/ResidueIndexSelector.hh
-/// @brief  The ResidueIndexSelector selects residues using a string containing pose indices 
+/// @brief  The ResidueIndexSelector selects residues using a string containing pose indices
 /// @author Robert Lindner (rlindner@mpimf-heidelberg.mpg.de)
 
 #ifndef INCLUDED_core_pack_task_residue_selector_ResidueIndexSelector_HH
@@ -45,12 +45,12 @@ public:
 	ResidueIndexSelector( std::string const & index_str );
 	virtual ~ResidueIndexSelector();
 
-	virtual void apply( core::pose::Pose const & pose, ResidueSubset & subset ) const;
+	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
 	virtual void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &
 	);
-	
+
 	virtual
 	std::string
 	get_name() const;

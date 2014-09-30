@@ -83,7 +83,7 @@ TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
 }
 
 TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
-                            LocalPosition const& local_pos):
+                            LocalPosition const & local_pos):
   EnvClaim( owner ),
   selector_( ResidueSelectorCOP( new EnvLabelSelector( local_pos ) ) ),
   c_str_( MUST_CONTROL ),
@@ -93,8 +93,8 @@ TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
 {}
 
 TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
-                            std::string const& label,
-                            std::pair< core::Size, core::Size > const& range ):
+                            std::string const & label,
+                            std::pair< core::Size, core::Size > const & range ):
   EnvClaim( owner ),
   c_str_( MUST_CONTROL ),
   i_str_( DOES_NOT_CONTROL ),
@@ -111,7 +111,7 @@ TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
 }
 
 TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
-                            LocalPositions const& positions ):
+                            LocalPositions const & positions ):
   EnvClaim( owner ),
   selector_( ResidueSelectorCOP( new EnvLabelSelector( positions ) ) ),
   c_str_( MUST_CONTROL ),
@@ -121,7 +121,7 @@ TorsionClaim::TorsionClaim( ClaimingMoverOP owner,
 {}
 
 
-DOFElement TorsionClaim::wrap_dof_id( core::id::DOF_ID const& id ) const {
+DOFElement TorsionClaim::wrap_dof_id( core::id::DOF_ID const & id ) const {
   DOFElement e = Parent::wrap_dof_id( id );
 
   e.c_str = ctrl_strength();
@@ -130,7 +130,7 @@ DOFElement TorsionClaim::wrap_dof_id( core::id::DOF_ID const& id ) const {
   return e;
 }
 
-void TorsionClaim::insert_dof_element( core::conformation::Conformation const& conf,
+void TorsionClaim::insert_dof_element( core::conformation::Conformation const & conf,
                                        DOFElements& elements,
                                        core::Size seqpos,
                                        core::id::TorsionType type,
@@ -146,14 +146,13 @@ void TorsionClaim::insert_dof_element( core::conformation::Conformation const& c
   }
 }
 
-void TorsionClaim::yield_elements( core::pose::Pose const& pose, DOFElements& elements ) const {
+void TorsionClaim::yield_elements( core::pose::Pose const & pose, DOFElements& elements ) const {
 
   using namespace core::id;
 
-  utility::vector1< bool > subset( pose.total_residue(), false );
-  selector_->apply( pose, subset );
+  utility::vector1< bool > subset = selector_->apply( pose );
 
-  Conformation const& conf = pose.conformation();
+  Conformation const & conf = pose.conformation();
 
   for( Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ){
     if( !subset[seqpos] ){

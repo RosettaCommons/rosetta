@@ -64,8 +64,8 @@ public:
 		}
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		ResidueSubset subset( trpcage.total_residue(), false );
-		neighbor_rs->apply( trpcage, subset );
+		ResidueSubset subset = neighbor_rs->apply( trpcage );
+		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
 
 		// check the result
 		// 1. generate fake focus
@@ -114,9 +114,7 @@ public:
 		}
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		ResidueSubset subset( trpcage.total_residue(), false );
-		neighbor_rs->apply( trpcage, subset );
-
+		ResidueSubset subset = neighbor_rs->apply( trpcage );
 
 		std::set< core::Size > testFocus;
 		testFocus.insert(2);
@@ -155,7 +153,7 @@ public:
 
 		ResidueSubset subset( trpcage.total_residue(), false );
 		try {
-			neighbor_rs->apply( trpcage, subset );
+			neighbor_rs->apply( trpcage );
 			TS_ASSERT( false );
 		} catch( utility::excn::EXCN_Msg_Exception e) {
 			std::string expected_err = "Residue 21 not found in pose!\n";
@@ -193,6 +191,7 @@ public:
 		ResidueSelectorOP odd_rs( new OddResidueSelector );
 
 		ResidueSubset subset( trpcage.total_residue(), false );
+		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
 
 		std::set< core::Size > testFocus_odd;
 		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ii += 2 ) {
@@ -200,15 +199,15 @@ public:
 		}
 
 		try {
-			neighbor_rs->apply( trpcage, subset );
+			subset = neighbor_rs->apply( trpcage );
 			TS_ASSERT( check_calculation( trpcage, subset, focus_set, 5.0 ) );
 
 			neighbor_rs->set_focus_selector( odd_rs );
-			neighbor_rs->apply( trpcage, subset );
+			subset = neighbor_rs->apply( trpcage );
 			TS_ASSERT( check_calculation( trpcage, subset, testFocus_odd, 5.0 ) );
 
 			neighbor_rs->set_focus( focus_set );
-			neighbor_rs->apply( trpcage, subset );
+			subset = neighbor_rs->apply( trpcage );
 			TS_ASSERT( check_calculation( trpcage, subset, focus_set, 5.0 ) );
 
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {

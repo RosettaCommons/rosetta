@@ -24,12 +24,14 @@ public:
 	OddResidueSelector() {}
 
 	virtual
-	void apply( core::pose::Pose const &, ResidueSubset & subset ) const
+	ResidueSubset
+	apply( core::pose::Pose const & pose ) const
 	{
-		std::fill( subset.begin(), subset.end(), false );
+		ResidueSubset subset( pose.total_residue(), false );
 		for ( core::Size ii = 1; ii <= subset.size(); ii += 2 ) {
 			subset[ ii ] = true;
 		}
+		return subset;
 	}
 
 	virtual std::string get_name() const { return "Odd"; }
@@ -43,12 +45,14 @@ public:
 	{}
 
 	virtual
-	void apply( core::pose::Pose const &, ResidueSubset & subset ) const
+	ResidueSubset apply( core::pose::Pose const & pose ) const
 	{
+		ResidueSubset subset( pose.total_residue(), false );
 		std::fill( subset.begin(), subset.end(), false );
 		for ( core::Size ii = x_; ii <= subset.size(); ii += y_ ) {
 			subset[ ii ] = true;
 		}
+		return subset;
 	}
 	virtual std::string get_name() const { return "XModY"; }
 

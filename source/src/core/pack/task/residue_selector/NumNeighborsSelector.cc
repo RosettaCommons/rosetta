@@ -50,10 +50,10 @@ NumNeighborsSelector::NumNeighborsSelector( Size threshold, Real distance_cutoff
 	distance_cutoff_( distance_cutoff )
 {}
 
-void NumNeighborsSelector::apply( core::pose::Pose const & pose, ResidueSubset & subset ) const
+ResidueSubset
+NumNeighborsSelector::apply( core::pose::Pose const & pose ) const
 {
-	assert( subset.size() == pose.total_residue() );
-	std::fill( subset.begin(), subset.end(), false );
+	ResidueSubset subset( pose.total_residue(), false );
 
 	conformation::PointGraphOP pg( new conformation::PointGraph );
 	conformation::residue_point_graph_from_conformation( pose.conformation(), *pg );
@@ -83,6 +83,7 @@ void NumNeighborsSelector::apply( core::pose::Pose const & pose, ResidueSubset &
 			}
 		}
 	}
+	return subset;
 }
 
 void NumNeighborsSelector::parse_my_tag(

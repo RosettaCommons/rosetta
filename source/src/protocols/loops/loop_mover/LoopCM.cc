@@ -188,8 +188,7 @@ environment::claims::EnvClaims LoopCM::yield_claims( core::pose::Pose const& pos
   using namespace core::environment;
   EnvClaims claims;
 
-  utility::vector1< bool > selection( pose.total_residue(), false );
-  selector_->apply( pose, selection );
+  utility::vector1< bool > selection = selector_->apply( pose );
 
   LoopsOP loops( new Loops( selection ) );
   if( loops->empty() ){

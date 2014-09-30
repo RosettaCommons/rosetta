@@ -45,13 +45,14 @@ NotResidueSelector::NotResidueSelector( ResidueSelectorCOP selector )
 	set_residue_selector( selector );
 }
 
-void NotResidueSelector::apply( core::pose::Pose const & pose, ResidueSubset & subset ) const
+ResidueSubset
+NotResidueSelector::apply( core::pose::Pose const & pose ) const
 {
-	assert( subset.size() == pose.total_residue() );
 	assert( selector_ );
 
-	selector_->apply(pose, subset);
+	ResidueSubset subset = selector_->apply( pose );
 	subset.flip();
+	return subset;
 }
 
 void NotResidueSelector::parse_my_tag(

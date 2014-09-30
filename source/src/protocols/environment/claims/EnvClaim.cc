@@ -119,8 +119,7 @@ void EnvClaim::annotate( core::pose::Pose const& pose, core::environment::Sequen
     std::string const& label = pair.first;
     ResidueSelectorCOP selector = pair.second;
 
-    utility::vector1< bool > subset( pose.total_residue(), false );
-    selector->apply( pose, subset );
+    utility::vector1< bool > subset = selector->apply( pose );
 
     utility::vector1< Size > trues;
     for( Size i = 1; i <= subset.size(); ++i ){

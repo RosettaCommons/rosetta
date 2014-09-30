@@ -53,8 +53,9 @@ public:
 
   virtual ~EnvLabelSelector();
 
-  virtual void apply( core::pose::Pose const & pose,
-                      core::pack::task::residue_selector::ResidueSubset & subset ) const;
+  virtual
+	core::pack::task::residue_selector::ResidueSubset
+	apply( core::pose::Pose const & pose ) const;
 
   virtual void parse_my_tag(
     utility::tag::TagCOP tag,

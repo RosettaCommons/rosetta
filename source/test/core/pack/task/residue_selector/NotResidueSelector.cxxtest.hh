@@ -48,8 +48,7 @@ public:
 		ResidueSelectorOP odd_rs( new OddResidueSelector );
 		ResidueSelectorOP not_rs( new NotResidueSelector( odd_rs ) );
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		ResidueSubset subset( trpcage.total_residue(), false );
-		not_rs->apply( trpcage, subset );
+		ResidueSubset subset = not_rs->apply( trpcage );
 		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
 			TS_ASSERT_EQUALS( subset[ ii ], (ii % 2 == 0) );
 		}
@@ -74,8 +73,7 @@ public:
 		}
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
-		ResidueSubset subset( trpcage.total_residue(), false );
-		not_rs->apply( trpcage, subset );
+		ResidueSubset subset = not_rs->apply( trpcage );
 		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
 			TS_ASSERT_EQUALS( subset[ ii ], (ii % 2 == 0) );
 		}

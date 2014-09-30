@@ -40,7 +40,7 @@ namespace residue_selector {
 JumpUpstreamSelector::JumpUpstreamSelector():
 jump_(0) {}
 
-JumpUpstreamSelector::JumpUpstreamSelector( int jump ) 
+JumpUpstreamSelector::JumpUpstreamSelector( int jump )
 {
 	jump_ = jump;
 }
@@ -48,18 +48,19 @@ JumpUpstreamSelector::JumpUpstreamSelector( int jump )
 
 JumpUpstreamSelector::~JumpUpstreamSelector() {}
 
-void
-JumpUpstreamSelector::apply( core::pose::Pose const & pose, ResidueSubset & subset ) const 
+ResidueSubset
+JumpUpstreamSelector::apply( core::pose::Pose const & pose ) const
 {
-	assert( subset.size() == pose.total_residue() );
 	assert( jump_ > 0 );
- 
+	ResidueSubset subset( pose.total_residue(), false );
+
 	ObjexxFCL::FArray1D_bool upstream( pose.total_residue() );
 	pose.fold_tree().partition_by_jump( jump_, upstream );
 
 	for( core::Size ii = 1; ii < upstream.size(); ++ii ) {
 		subset[ ii ] = upstream( ii );
 	}
+	return subset;
 }
 
 void
@@ -78,7 +79,7 @@ JumpUpstreamSelector::parse_my_tag(
 }
 
 void
-JumpUpstreamSelector::set_jump( int jump ) 
+JumpUpstreamSelector::set_jump( int jump )
 {
 	jump_ = jump;
 }

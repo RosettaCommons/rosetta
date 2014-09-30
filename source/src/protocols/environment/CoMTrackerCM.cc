@@ -274,8 +274,7 @@ claims::EnvClaims CoMTrackerCM::yield_claims( core::pose::Pose const& pose,
   com_jump_name_ = name() + "_jump";
 
   // Get the position of the first residue in the "Mobile Selection"
-  mobile_residues_ = utility::vector1_bool( pose.total_residue(), false );
-  mobile_selector_->apply( pose, mobile_residues_);
+	mobile_residues_ = mobile_selector_->apply( pose );
   Size mobile_connection_point = mobile_residues_.index( true )+1;
 
   assert( std::find( mobile_residues_.begin(), mobile_residues_.end(), true ) != mobile_residues_.end() );

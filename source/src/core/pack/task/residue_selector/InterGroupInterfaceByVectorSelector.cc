@@ -47,7 +47,8 @@ InterGroupInterfaceByVectorSelector::InterGroupInterfaceByVectorSelector() :
 
 InterGroupInterfaceByVectorSelector::~InterGroupInterfaceByVectorSelector() {}
 
-void InterGroupInterfaceByVectorSelector::apply( core::pose::Pose const & pose, ResidueSubset & subset ) const
+ResidueSubset
+InterGroupInterfaceByVectorSelector::apply( core::pose::Pose const & pose ) const
 {
 	std::set< Size > local_set1, local_set2;
 
@@ -68,7 +69,9 @@ void InterGroupInterfaceByVectorSelector::apply( core::pose::Pose const & pose, 
 	std::set< Size > const & set1( group1_selector_ || ! group1_resstring_.empty() ? local_set1 : group1_set_ );
 	std::set< Size > const & set2( group2_selector_ || ! group2_resstring_.empty() ? local_set2 : group2_set_ );
 
-	subset = operation::util::calc_interacting_vector( pose, set1, set2, cb_dist_cut_, nearby_atom_cut_, vector_angle_cut_, vector_dist_cut_ );
+	ResidueSubset subset = operation::util::calc_interacting_vector(
+		pose, set1, set2, cb_dist_cut_, nearby_atom_cut_, vector_angle_cut_, vector_dist_cut_ );
+	return subset;
 }
 
 /// @brief Initialize this object from a Tag.
@@ -87,7 +90,7 @@ InterGroupInterfaceByVectorSelector::parse_my_tag(
 
 	// add selectors from tags if any are present
 	utility::vector0< utility::tag::TagCOP > const & subtags = tag->getTags();
-	
+
 	if( subtags.size() == 2 ) {
 		ResidueSelectorCOP rs1 = ResidueSelectorFactory::get_instance()->new_residue_selector(
 					subtags[0]->getName(),
@@ -112,7 +115,7 @@ InterGroupInterfaceByVectorSelector::parse_my_tag(
 			std::string error_message = "InterGroupInterfaceByVectorSelector::parse_my_tag requires either grp1_selector or grp1_residues to be specified\n";
 			throw utility::excn::EXCN_Msg_Exception( error_message );
 		}
-		
+
 		if ( tag->hasOption( "grp2_selector" )) {
 			grp2_selector_name = tag->getOption< std::string >( "grp2_selector" );
 		} else if ( tag->hasOption( "grp2_residues" ) ) {
@@ -246,8 +249,7 @@ InterGroupInterfaceByVectorSelector::set_from_residue_selector(
 ) const
 {
 	subset.clear();
-	ResidueSubset ressubset( pose.total_residue(), false );
-	selector.apply( pose, ressubset );
+	ResidueSubset ressubset = selector.apply( pose );
 	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		if ( ressubset[ ii ] ) {
 			subset.insert( ii );

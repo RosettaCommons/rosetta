@@ -45,7 +45,7 @@ public:
 
 	virtual ~ClashBasedRepackShellSelector();
 
-	virtual void apply( core::pose::Pose const & pose, ResidueSubset & subset ) const;
+	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
 	virtual void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & datamap
@@ -62,23 +62,23 @@ public:
 		core::conformation::Residue const & rsd1,
 		core::conformation::Residue const & rsd2
 	) const;
-	
+
 	bool is_sc_bb_clash(
 		core::conformation::Residue const & rsd1,
 		core::conformation::Residue const & rsd2
 	) const;
-	
+
 	utility::vector1<core::Size> get_clashing_positions(
 		core::pose::Pose const & pose,
 		core::conformation::Residue const & rsd1,
 		core::Size const resnum
 	) const;
-	
+
 	// setters
 	void set_packer_task( core::pack::task::PackerTaskOP packer_task );
 	void set_score_fxn( core::scoring::ScoreFunctionOP score_fxn );
 	void set_bump_overlap_factor( core::Real set_bump_overlap_factor );
-	
+
 	// getters
 	core::pack::task::PackerTaskOP get_packer_task() const;
 	core::scoring::ScoreFunctionOP get_score_fxn() const;
@@ -89,7 +89,7 @@ private:
 	core::pack::task::PackerTaskOP packer_task_;
 	core::scoring::ScoreFunctionOP score_fxn_;
 	core::Real bump_overlap_factor_;
-	
+
 };
 
 

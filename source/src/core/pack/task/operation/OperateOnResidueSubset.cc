@@ -92,8 +92,7 @@ OperateOnResidueSubset::apply( Pose const & pose, PackerTask & ptask ) const
 	Size const nres( pose.total_residue() );
 	runtime_assert( nres == ptask.total_residue() );
 
-	residue_selector::ResidueSubset subset( pose.total_residue(), false );
-	residue_selector_->apply( pose, subset );
+	residue_selector::ResidueSubset subset = residue_selector_->apply( pose );
 
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		if ( subset[ ii ] ) op_->apply( ptask.nonconst_residue_task( ii ) );

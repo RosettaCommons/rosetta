@@ -462,8 +462,8 @@ void DomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) {
 	// Add the constraints, if any, to the score function
 	core::scoring::constraints::add_fa_constraints_from_cmdline(pose, *scorefxn);
 
-	utility::vector1< bool > to_repack(false, pose.total_residue() );
-	or_rs->apply( pose, to_repack );
+	utility::vector1< bool > to_repack = or_rs->apply( pose );
+
 
 	// allow minimazion of residues in the linker and the interdomain interface
 	movemap_->set_chi( to_repack );
@@ -483,7 +483,7 @@ void DomainAssemblyMover::run_fullatom_relax( core::pose::Pose & pose ) {
 		for( Size i_inner = 1; i_inner <= inner_iterations; ++i_inner ) {
 			core::Real fa_rep_weight = (0.1 + 0.9/(inner_iterations-1) * (i_inner-1)) * final_fa_rep;
 			scorefxn->set_weight( core::scoring::fa_rep , fa_rep_weight );
-			or_rs->apply( pose, to_repack );
+			to_repack = or_rs->apply( pose );
 			movemap_->set_chi( to_repack );
 			//movemap_->set_bb( to_repack );
 

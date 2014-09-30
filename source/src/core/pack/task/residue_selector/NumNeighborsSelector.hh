@@ -43,7 +43,7 @@ public:
 	//// Undefined, commenting out to fix PyRosetta build  NumNeighborsSelector( bool count_water, Size threshold, core::Real distance_cutoff );
 	virtual ~NumNeighborsSelector();
 
-	virtual void apply( core::pose::Pose const & pose, ResidueSubset & subset ) const;
+	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;
 	virtual void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & datamap
