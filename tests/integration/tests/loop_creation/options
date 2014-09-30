@@ -1,8 +1,6 @@
 -s tree_1.pdb
 -parser:protocol parser_script.xml
 
--no_frags #for speed in the integration test
--loops:frag_files valid_frags.15mers
 -nstruct 1
 
 -mute core.util.prof ## dont show timing info
