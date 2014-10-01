@@ -89,6 +89,7 @@ void
 figure_out_reasonable_rna_fold_tree( pose::Pose & pose )
 {
 	using namespace core::conformation;
+	using namespace core::chemical;
 
 	//Look for chainbreaks in PDB.
 	Size const nres = pose.total_residue();
@@ -100,7 +101,8 @@ figure_out_reasonable_rna_fold_tree( pose::Pose & pose )
 
 		if ( (  pose.residue(i).is_RNA() != pose.residue(i+1).is_RNA() ) ||
 				 (  pose.residue(i).is_protein() != pose.residue(i+1).is_protein() ) ||
-				 ( pose.pdb_info() && ( pose.pdb_info()->chain( i ) != pose.pdb_info()->chain( i+1 ) ) ) ){
+				 (  pose.pdb_info() && ( pose.pdb_info()->chain( i ) != pose.pdb_info()->chain( i+1 ) ) ) ||
+				 (  pose.residue(i).has_variant_type( CUTPOINT_LOWER ) && pose.residue(i+1).has_variant_type( CUTPOINT_UPPER ) ) ){
 			f.new_jump( i, i+1, i );
 			m++;
 			continue;
@@ -640,7 +642,7 @@ apply_pucker(
 		conformation::Residue const & rsd_4 = pose.residue( id4.rsd() );
 
 		if ( !rsd_1.is_RNA() || !rsd_2.is_RNA() ||
-				!rsd_3.is_RNA() || !rsd_4.is_RNA() ) return false;
+				 !rsd_3.is_RNA() || !rsd_4.is_RNA() ) return false;
 
 		bool is_virtual_torsion = (
 			rsd_1.is_virtual( id1.atomno() ) ||
