@@ -448,7 +448,7 @@ SS_Info2::identify_ss( String const & secstruct )
 	bool flag_L( false );
 	bool flag_E( false );
 	bool flag_H( false );
-	Size beginE, beginH, beginL;
+	Size beginE( 0 ), beginH( 0 ), beginL( 0 );
 	Size istrand( 0 ), ihelix( 0 ), iloop( 0 ), iss( 0 );
 
 	String prev( "" );
