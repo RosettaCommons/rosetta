@@ -906,7 +906,7 @@ SilentFileData::reverse_score_filter(
 	tr.Debug << "filtering for decoys with score worse than " << boundary << std::endl;
 
 	Structure_Map new_structure_map_;
-	utility::vector1 < SilentStructOP > new_structure_list_; 
+	utility::vector1 < SilentStructOP > new_structure_list_;
 	for ( iterator iter = begin(), it_end = end(); iter != it_end; ++iter ) {
 		if ( !iter->has_energy( "score" ) ) {
 			std::string msg(
@@ -959,7 +959,7 @@ SilentFileData::score_filter(
 	tr.Debug << "filtering for decoys with score worse than " << boundary << std::endl;
 
 	Structure_Map new_structure_map_;
-	utility::vector1 < SilentStructOP > new_structure_list_; 
+	utility::vector1 < SilentStructOP > new_structure_list_;
 	for ( iterator iter = begin(), it_end = end(); iter != it_end; ++iter ) {
 		if ( !iter->has_energy( "score" ) ) {
 			std::string msg(
@@ -1000,17 +1000,18 @@ SilentFileData::order_by_energy()
 	using namespace core::io::silent;
 
 	// go through all of the scores, and then order.
-	typedef std::list< std::pair< Real, SilentStructOP > > 	ScoreTagList;
+	// inclusion of std::string tag helps break degeneracies in energy.
+	typedef std::list< std::pair< std::pair< Real, std::string >, SilentStructOP > > 	ScoreTagList;
 	ScoreTagList score_tag_list;
 	for ( iterator iter = begin(), it_end = end(); iter != it_end; ++iter ) {
 		Real const & silent_score = (*iter)->get_energy( "score" );
-		score_tag_list.push_back( std::make_pair( silent_score, *iter /*SilentStructOP*/ ) );
+		score_tag_list.push_back( std::make_pair( std::make_pair( silent_score, (*iter)->decoy_tag() ), *iter /*SilentStructOP*/ ) );
 	}
 
 	score_tag_list.sort();
 
 	Structure_Map new_structure_map_;
-	utility::vector1 < SilentStructOP > new_structure_list_; 
+	utility::vector1 < SilentStructOP > new_structure_list_;
 	Size count( 0 );
 	for ( ScoreTagList::const_iterator iter = score_tag_list.begin();
 				iter != score_tag_list.end(); ++iter ) {
