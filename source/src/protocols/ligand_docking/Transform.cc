@@ -195,6 +195,7 @@ void Transform::apply(core::pose::Pose & pose)
 	transform_tracer << "Considering " << ligand_conformers_.size() << " conformers during sampling" << std::endl;
 	core::Size accepted_moves = 0;
 	core::Size rejected_moves = 0;
+	core::Size outside_grid_moves = 0;
 
 
 	utility::io::ozstream sampled_space;
@@ -259,6 +260,7 @@ void Transform::apply(core::pose::Pose & pose)
 			{
 				ligand_residue = last_accepted_ligand_residue;
 				rejected_moves++;
+				outside_grid_moves++;
 				//transform_tracer.Trace << "probability: " << probability << " rejected (out of grid)"<<std::endl;
 				continue;
 			}
@@ -311,9 +313,12 @@ void Transform::apply(core::pose::Pose & pose)
 			}
 
 		}
-		core::Real accept_ratio =(core::Real)accepted_moves/((core::Real)accepted_moves
-		+(core::Real)rejected_moves);
+		core::Real accept_ratio =(core::Real)accepted_moves/((core::Real)accepted_moves+(core::Real)rejected_moves);
 		transform_tracer <<"percent acceptance: "<< accepted_moves << " " << accept_ratio<<" " << rejected_moves <<std::endl;
+		if( outside_grid_moves > 0 ) {
+			core::Real outside_grid_ratio = (core::Real)outside_grid_moves/((core::Real)accepted_moves+(core::Real)rejected_moves);
+			transform_tracer << "Moves rejected for being outside of grid: " << outside_grid_moves << "  " << outside_grid_ratio << std::endl;
+		}
 
 		jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("Transform_accept_ratio", accept_ratio);
 		best_ligand.update_conformation(best_pose.conformation());

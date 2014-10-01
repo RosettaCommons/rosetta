@@ -36,7 +36,7 @@ UltraLightResidue::UltraLightResidue(ResidueCOP residue)
 }
 
 UltraLightResidue::UltraLightResidue(UltraLightResidue const & src) : ReferenceCount(),
-		atom_ids_(src.atom_ids_), coords_(src.coords_),residue_(src.residue_)
+		atom_ids_(src.atom_ids_), coords_(src.coords_), center_(src.center_), residue_(src.residue_)
 {}
 
 void UltraLightResidue::update_conformation(Conformation & conformation) const
