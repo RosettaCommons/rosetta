@@ -181,7 +181,7 @@ scan_rotamer( pose::Pose const &pose,
 	      Size const &ir ){
 
   pack::dunbrack::RotamerLibrary const & rotamer_library_ 
-    = pack::dunbrack::RotamerLibrary::get_instance();
+    = * pack::dunbrack::RotamerLibrary::get_instance();
 
   pack::dunbrack::SingleResidueRotamerLibraryCAP 
     residue_rotamer_library( rotamer_library_.get_rsd_library(pose.residue( ir ).type()) );

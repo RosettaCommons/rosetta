@@ -19,25 +19,21 @@
 #include <core/io/silent/SilentStructCreator.fwd.hh>
 
 // Utility headers
+#include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
 // C++ headers
 #include <map>
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
-
 namespace core {
 namespace io {
 namespace silent {
 
-class SilentStructFactory {
+class SilentStructFactory : public utility::SingletonBase< SilentStructFactory > {
+public:
+	friend class utility::SingletonBase< SilentStructFactory >;
+
 private:
 	SilentStructFactory();
 
@@ -48,15 +44,7 @@ private:
 	/// utility::thread::threadsafe_singleton
 	static SilentStructFactory * create_singleton_instance();
 
-	/// @brief static data member holding pointer to the singleton class itself
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< SilentStructFactory * > instance_;
-#else
-	static SilentStructFactory * instance_;
-#endif
-
 public:
-	static SilentStructFactory * get_instance();
 
 	void factory_register( SilentStructCreatorCOP creator );
 
@@ -74,29 +62,12 @@ public:
 	io::silent::SilentStructOP get_silent_struct( std::string const & type_name );
 	utility::vector1< std::string > get_ss_names() const;
 
-	/// @brief Replace the load-time SilentStructCreator with another creator.
-	void replace_creator( SilentStructCreatorCOP creator );
-
 	SilentStructCreatorCOP
 	get_creator( std::string const & type_name );
 
 	SilentStructOP get_silent_struct_in();
 	SilentStructOP get_silent_struct_out();
 	SilentStructOP get_silent_struct_out( core::pose::Pose const & pose );
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
 
 private:
 	typedef std::map< std::string, io::silent::SilentStructCreatorCOP > SilentStructCreatorMap;

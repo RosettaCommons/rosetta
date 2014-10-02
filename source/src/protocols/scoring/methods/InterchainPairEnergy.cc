@@ -20,7 +20,9 @@
 
 // Package headers
 #include <protocols/scoring/InterchainPotential.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
+#include <core/scoring/EnvPairPotential.hh>
+#include <core/scoring/ScoringManager.hh>
+
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -64,7 +66,8 @@ InterchainPairEnergyCreator::score_types_for_method() const {
 /// c-tor
 InterchainPairEnergy::InterchainPairEnergy() :
 	parent( core::scoring::methods::EnergyMethodCreatorOP( new InterchainPairEnergyCreator ) ),
-	potential_( InterchainPotential::get_instance() )
+	interchain_potential_( * InterchainPotential::get_instance() ),
+	env_potential_( core::scoring::ScoringManager::get_instance()->get_EnvPairPotential() )
 {}
 
 
@@ -80,8 +83,8 @@ void
 InterchainPairEnergy::setup_for_scoring( core::pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	// compute interpolated number of neighbors at various distance cutoffs
-	potential_->compute_centroid_environment( pose );
-	potential_->compute_interface( pose );
+	env_potential_.compute_centroid_environment( pose );
+	interchain_potential_.compute_interface( pose );
 	pose.update_residue_neighbors();
 }
 
@@ -105,7 +108,7 @@ InterchainPairEnergy::residue_pair_energy(
 	Real pair_score ( 0.0 ), vdw_score ( 0.0 );
 
 	/// this is probably really slow, interface should probably be kept track of in the interaction graph
-	potential_->evaluate_pair_and_vdw_score( pose, rsd1, rsd2, pair_score, vdw_score );
+	interchain_potential_.evaluate_pair_and_vdw_score( pose, rsd1, rsd2, pair_score, vdw_score );
 
 	/// divide by two to account for double counting that will occur
 	emap[ interchain_pair ] += pair_score;
@@ -121,7 +124,7 @@ InterchainPairEnergy::finalize_total_energy(
 ) const
 {
 	// sets calculated from the CenPairInfo to false
-	potential_->finalize( pose );
+	interchain_potential_.finalize( pose );
 }
 
 /// @brief Energy distance cutoff

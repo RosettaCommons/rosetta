@@ -22,6 +22,7 @@
 #include <core/types.hh>
 
 // Utility Headers
+#include <utility/SingletonBase.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
 
@@ -30,22 +31,15 @@
 #include <set>
 #include <utility/vector1.hh>
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
-
 namespace devel {
 namespace replica_docking {
 
 
-class TempInterpolatorFactory : public utility::pointer::ReferenceCount
+class TempInterpolatorFactory : public utility::SingletonBase< TempInterpolatorFactory >
 {
 public:
-	//	typedef std::map< std::string, MoverCreatorOP > MoverMap;
+	friend class utility::SingletonBase< TempInterpolatorFactory >;
+
 	typedef utility::tag::Tag Tag;
 	typedef utility::tag::TagCOP TagCOP;
 	typedef core::pose::Pose Pose;
@@ -53,24 +47,7 @@ public:
 public:
 	virtual ~TempInterpolatorFactory();
 
-	static
-	TempInterpolatorFactory * get_instance();
-
 	TempInterpolatorBaseOP new_tempInterpolator( utility::tag::TagCOP tag, core::Size n_level );
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
 
 private:
 
@@ -83,13 +60,6 @@ private:
 	// Unimplemented -- uncopyable
 	TempInterpolatorFactory( TempInterpolatorFactory const & );
 	TempInterpolatorFactory const & operator = ( TempInterpolatorFactory const & );
-
-private:
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< TempInterpolatorFactory * > instance_;
-#else
-	static TempInterpolatorFactory * instance_;
-#endif
 
 };
 

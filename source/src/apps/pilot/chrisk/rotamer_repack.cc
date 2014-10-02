@@ -559,7 +559,7 @@ split_fa_dun(
 	conformation::Residue const & rsd( pose.residue( seqpos ) );
 	bool is_dun02( true );
         if( option[ corrections::correct ].user() || option[ corrections::score::dun10 ].user() ) is_dun02 = false;
-	RotamerLibrary const & rlib( RotamerLibrary::get_instance() );
+	RotamerLibrary const & rlib( * RotamerLibrary::get_instance() );
 	RotamerLibraryScratchSpace scratch;
 
 	Real fa_dun_tot = rlib.rotamer_energy( rsd, scratch );

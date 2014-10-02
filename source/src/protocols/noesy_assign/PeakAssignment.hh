@@ -56,6 +56,8 @@ namespace noesy_assign {
 
 
 ///@brief fast access to assignments that are stored in CrossPeak -- similar to FragID
+/// WARNING WARNING WARNING THREAD UNSAFE.  THIS CLASS USES THE FUNCTION covalent_compliance
+/// WHICH RELIES ON THREAD-UNSAFE SINGLETON CovalentCompliance
 class PeakAssignment : public utility::pointer::ReferenceCount {
 public:
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount

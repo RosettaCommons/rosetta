@@ -20,20 +20,13 @@
 #include <basic/resource_manager/ResourceLoader.fwd.hh>
 
 //utility headers
+#include <utility/SingletonBase.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 //C++ headers
 #include <list>
 #include <map>
 #include <string>
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
 
 namespace basic {
 namespace resource_manager {
@@ -43,8 +36,10 @@ namespace resource_manager {
 /// at load time.  If two Creators are registered and they both give the
 /// same name for the ResourceLoader they say they will instantiate, then
 /// the Factory will exit with an error message.
-class ResourceLoaderFactory
+class ResourceLoaderFactory : public utility::SingletonBase< ResourceLoaderFactory >
 {
+public:
+	friend class utility::SingletonBase< ResourceLoaderFactory >;
 public:
 	/// @brief Instantiates a resource loader ofa  given type; throws
 	/// an exception if no loader with this type has been previously
@@ -64,12 +59,6 @@ public:
 	/// @brief Return a list of all the resource loaders available
 	std::list< std::string >
 	available_resource_loaders() const;
-
-	/// @brief Singleton accessor: ask for the one global instance of the
-	/// ResourceLoaderFactory.
-	static
-	ResourceLoaderFactory *
-	get_instance();
 
 	/// @brief Register a ResourceLoaderCreator with the factory.  The factory
 	/// asks the Creator for the name of the ResourceLoader that it will create;

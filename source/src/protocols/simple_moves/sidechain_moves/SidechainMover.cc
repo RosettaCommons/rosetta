@@ -84,7 +84,7 @@ SidechainMoverCreator::mover_name() {
 }
 
 SidechainMover::SidechainMover():
-		rotamer_library_( core::pack::dunbrack::RotamerLibrary::get_instance() ),
+		rotamer_library_( * core::pack::dunbrack::RotamerLibrary::get_instance() ),
 		pose_(/* 0 */),
 		prob_uniform_(0.1),
 		prob_withinrot_(0.0),

@@ -61,7 +61,7 @@ SameChiBinComboGrouper::assign_group_for_match(
 
 	runtime_assert( m.upstream_hits.size() == n_geometric_constraints_ );
 
-	RotamerLibrary const & rotlib( RotamerLibrary::get_instance() );
+	RotamerLibrary const & rotlib( * RotamerLibrary::get_instance() );
 
 	utility::vector1< Size > rot_vector( n_geometric_constraints_ * 3, 0 );
 	for ( Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {

@@ -78,10 +78,38 @@
 
 static thread_local basic::Tracer TR( "core.scoring.geometric_solvation.ExactOccludedHbondSolEnergy" );
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using core::scoring::geometric_solvation::GridInfo;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< GridInfo > ::singleton_mutex_;
+template <> std::atomic< GridInfo * > utility::SingletonBase< GridInfo >::instance_( 0 );
+#else
+template <> GridInfo * utility::SingletonBase< GridInfo >::instance_( 0 );
+#endif
+
+}
+
+// Singleton instance and mutex static data members
+namespace utility {
+
+using core::scoring::geometric_solvation::WaterWeightGridSet;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< WaterWeightGridSet > ::singleton_mutex_;
+template <> std::atomic< WaterWeightGridSet * > utility::SingletonBase< WaterWeightGridSet >::instance_( 0 );
+#else
+template <> WaterWeightGridSet * utility::SingletonBase< WaterWeightGridSet >::instance_( 0 );
+#endif
+
+}
+
+
 namespace core {
 namespace scoring {
 namespace geometric_solvation {
-
 
 /// @details This must return a fresh instance of the ExactOccludedHbondSolEnergy class,
 /// never an instance already in use
@@ -121,41 +149,12 @@ core::Real const max_possible_LK = { -5 };
 core::Real const LK_MATCHING_WEIGHT_EXACT = { 0.387829 };
 core::Real const SKIP_HBONDER_CUT = { -0.1 };
 
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< GridInfo * > GridInfo::instance_( 0 );
-#else
-GridInfo * GridInfo::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-	std::mutex GridInfo::singleton_mutex_;
-
-	std::mutex & GridInfo::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-	/// @brief static function to get the instance of ( pointer to) this singleton class
-	GridInfo * GridInfo::get_instance()
-	{
-		boost::function< GridInfo * () > creator = boost::bind( &GridInfo::create_singleton_instance );
-		utility::thread::safely_create_singleton( creator, instance_ );
-		return instance_;
-	}
 
 GridInfo *
 GridInfo::create_singleton_instance()
 {
 	return new GridInfo;
 }
-
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< WaterWeightGridSet * > WaterWeightGridSet::instance_( 0 );
-#else
-WaterWeightGridSet * WaterWeightGridSet::instance_( 0 );
-#endif
 
 // private constructor
 GridInfo::GridInfo() {
@@ -182,30 +181,11 @@ GridInfo::GridInfo() {
 
 }
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex WaterWeightGridSet::singleton_mutex_;
-
-std::mutex & WaterWeightGridSet::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-WaterWeightGridSet * WaterWeightGridSet::get_instance()
-{
-	boost::function< WaterWeightGridSet * () > creator = boost::bind( &WaterWeightGridSet::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
-
 WaterWeightGridSet *
 WaterWeightGridSet::create_singleton_instance()
 {
 	return new WaterWeightGridSet;
 }
-
 
 // private constructor
 WaterWeightGridSet::WaterWeightGridSet() :

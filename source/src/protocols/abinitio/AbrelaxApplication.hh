@@ -75,7 +75,8 @@ namespace protocols {
 namespace abinitio {
 
 /// @brief application level code  for Abrelax, Foldconstraints and JumpingFoldconstraints
-
+/// WARNING WARNING WARNING. THREAD UNSAFE. INVOKES ConstraintFactory::replace_creator.
+/// CODE THAT ABUSES SINGLETONS LIKE THIS OUGHT TO BE SHOT.
 class AbrelaxApplication  {
 public:
 	AbrelaxApplication();

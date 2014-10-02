@@ -189,7 +189,7 @@ set_ligpose_rotamer( core::pose::Pose & ligpose )
 			+ utility::to_string( option[ match::ligand_rotamer_index ]() ) + ").  Must be greater than 0." );
 	}
 
-	RotamerLibrary const & rotlib( core::pack::dunbrack::RotamerLibrary::get_instance() );
+	RotamerLibrary const & rotlib( * core::pack::dunbrack::RotamerLibrary::get_instance() );
 	SingleResidueRotamerLibraryCOP res_rotlib( rotlib.get_rsd_library( ligpose.residue_type( 1 ) ) );
 
 	if ( res_rotlib != 0 ) {

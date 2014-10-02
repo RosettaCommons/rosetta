@@ -27,36 +27,24 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using basic::datacache::WriteableCacheableDataFactory;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< WriteableCacheableDataFactory > ::singleton_mutex_;
+template <> std::atomic< WriteableCacheableDataFactory * > utility::SingletonBase< WriteableCacheableDataFactory >::instance_( 0 );
+#else
+template <> WriteableCacheableDataFactory * utility::SingletonBase< WriteableCacheableDataFactory >::instance_( 0 );
+#endif
+
+}
 
 namespace basic {
 namespace datacache {
 
-
 static thread_local basic::Tracer tr( "basic.datacache.WriteableCacheableDataFactory", t_trace );
-
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< WriteableCacheableDataFactory * > WriteableCacheableDataFactory::instance_( 0 );
-#else
-WriteableCacheableDataFactory * WriteableCacheableDataFactory::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex WriteableCacheableDataFactory::singleton_mutex_;
-
-std::mutex & WriteableCacheableDataFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-WriteableCacheableDataFactory * WriteableCacheableDataFactory::get_instance()
-{
-  boost::function< WriteableCacheableDataFactory * () > creator = boost::bind( &WriteableCacheableDataFactory::create_singleton_instance );
-  utility::thread::safely_create_singleton( creator, instance_ );
-  return instance_;
-}
 
 WriteableCacheableDataFactory *
 WriteableCacheableDataFactory::create_singleton_instance()

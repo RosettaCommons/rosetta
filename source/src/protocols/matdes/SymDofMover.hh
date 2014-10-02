@@ -1,4 +1,3 @@
-
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
@@ -36,6 +35,9 @@
 namespace protocols {
 namespace matdes {
 
+/// @details WARNING WARNING WARNING THIS IS A THREAD-UNSAFE CLASS SINCE IT USES THE
+/// SymDofMoverSampler, A NON-CONSTANT SINGLETON.  ANY PROTOCOL THAT RELIES ON THIS
+/// MOVER IS THREAD-UNSAFE.
 class SymDofMover : public protocols::moves::Mover {
 	typedef core::pose::Pose Pose;
 	typedef core::Real Real;
@@ -50,12 +52,12 @@ class SymDofMover : public protocols::moves::Mover {
 	typedef utility::tag::TagCOP TagCOP;
 
 public:
-  SymDofMover();
+	SymDofMover();
 	//SymDofMover(const SymDofMover& rval);
 
-  // --- virtual functions from mover ---
-  virtual std::string get_name() const { return "SymDofMover"; }
-  virtual void apply(Pose& pose);
+ 	// --- virtual functions from mover ---
+	 virtual std::string get_name() const { return "SymDofMover"; }
+	 virtual void apply(Pose& pose);
 	// virtual void trans_pose( Pose & pose, numeric::xyzVector<Real> const & trans, Size start, Size end );
 	// virtual void rot_pose( Pose & pose, numeric::xyzMatrix<Real> const & rot, Size start, Size end );
 	// virtual void rot_pose( Pose & pose, numeric::xyzMatrix<Real> const & rot, numeric::xyzVector<Real> const & cen, Size start, Size end );
@@ -71,11 +73,12 @@ public:
 	virtual MoverOP fresh_instance() const;
 
 
-	virtual void parse_my_tag( TagCOP tag,
-														 DataMap &,
-														 Filters_map const &,
-														 Movers_map const &,
-														 Pose const & );
+	virtual void parse_my_tag(
+		TagCOP tag,
+		DataMap &,
+		Filters_map const &,
+		Movers_map const &,
+		Pose const & );
 
 	void add_components_to_pose_if_necessary(Pose & pose);
 

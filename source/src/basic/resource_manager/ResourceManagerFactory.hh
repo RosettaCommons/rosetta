@@ -21,19 +21,12 @@
 #include <basic/resource_manager/ResourceManagerCreator.fwd.hh>
 
 // Utility headers
+#include <utility/SingletonBase.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
 //C++ headers
 #include <map>
 #include <string>
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
 
 namespace basic {
 namespace resource_manager {
@@ -43,7 +36,11 @@ namespace resource_manager {
 /// Currently, it asks for the JD2ResourceManager; in the future, this should be
 /// fixed so that it reads from the options system to figure out which ResourceManager
 /// to instantiate.
-class ResourceManagerFactory {
+class ResourceManagerFactory : public utility::SingletonBase< ResourceManagerFactory >
+{
+public:
+	friend class utility::SingletonBase< ResourceManagerFactory >;
+
 private:
 	ResourceManagerFactory(); // singleton, private constructor
 
@@ -57,31 +54,10 @@ public:
 	ResourceManager *
 	create_resource_manager_from_options_system() const;
 
-	static ResourceManagerFactory * get_instance();
-
 	void
 	factory_register( ResourceManagerCreatorOP creator );
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
 private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
-private:
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< ResourceManagerFactory * > instance_;
-#else
-	static ResourceManagerFactory * instance_;
-#endif
 
 	typedef std::map< std::string, ResourceManagerCreatorOP > ResourceManagerCreatorsMap;
 	ResourceManagerCreatorsMap creators_map_;

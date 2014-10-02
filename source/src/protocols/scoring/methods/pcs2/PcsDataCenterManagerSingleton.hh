@@ -39,6 +39,7 @@
 #include <core/types.hh>
 
 // Utility headers
+#include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
 
 #ifdef MULTI_THREADED

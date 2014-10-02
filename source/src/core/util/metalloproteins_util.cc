@@ -194,11 +194,11 @@ add_covalent_linkage_helper(
 
 		//the following line is necessary to ensure that a ligand rotamer library exists
 		//if this function is called before any scoring happened
-		RotamerLibrary::get_instance().get_rsd_library( pose.residue_type( res_pos ));
+		RotamerLibrary::get_instance()->get_rsd_library( pose.residue_type( res_pos ));
 
 		SingleLigandRotamerLibraryOP new_lrots = NULL;
 		if( pose.residue_type(res_pos).is_ligand() &&
-				RotamerLibrary::get_instance().rsd_library_already_loaded( pose.residue_type(res_pos) ) ) {
+				RotamerLibrary::get_instance()->rsd_library_already_loaded( pose.residue_type(res_pos) ) ) {
 			new_lrots = SingleLigandRotamerLibraryOP( new SingleLigandRotamerLibrary() );
 		}
 
@@ -290,7 +290,7 @@ add_covalent_linkage_helper(
 
 				//new_lrots is empty at the moment, but will be filled a couple of lines down
 				if( pose.residue_type( res_pos ).is_ligand() ) {
-					RotamerLibrary::get_instance().add_residue_library( *mod_res, new_lrots );
+					RotamerLibrary::get_instance()->add_residue_library( *mod_res, new_lrots );
 				}
 
 				//finalize again just to make sure
@@ -305,7 +305,7 @@ add_covalent_linkage_helper(
 		//and last but not least we have to regenerate the rotamer library for the ligand
 		if( pose.residue_type( res_pos ).is_ligand() ) {
 
-			SingleResidueRotamerLibraryCOP old_rrots = RotamerLibrary::get_instance().get_rsd_library( pose.residue_type( res_pos ) );
+			SingleResidueRotamerLibraryCOP old_rrots = RotamerLibrary::get_instance()->get_rsd_library( pose.residue_type( res_pos ) );
 			SingleLigandRotamerLibraryCOP old_lrots = utility::pointer::static_pointer_cast< SingleLigandRotamerLibrary const >( old_rrots );
 
 			if( old_lrots != 0 ){

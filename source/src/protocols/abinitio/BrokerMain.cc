@@ -206,6 +206,7 @@ void common_setup() {
 
 	if ( option[ constraints::named ] ) {
 		tr.Info << "use named constraints in AtomPairConstraint to avoid problems with cutpoint-variants " << std::endl;
+		/// WARNING WARNING WARNING. THREAD UNSAFE. DO NOT USE SINGLETONS THIS WAY.
 		ConstraintFactory::get_instance()->replace_creator(
 			ConstraintCreatorCOP( new NamedAtomPairConstraintCreator() ));
 	}

@@ -40,6 +40,20 @@
 // C++ Headers
 #include <sstream>
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using protocols::loops::loop_mover::refine::LoopRefineInnerCycleFactory;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< LoopRefineInnerCycleFactory > ::singleton_mutex_;
+template <> std::atomic< LoopRefineInnerCycleFactory * > utility::SingletonBase< LoopRefineInnerCycleFactory >::instance_( 0 );
+#else
+template <> LoopRefineInnerCycleFactory * utility::SingletonBase< LoopRefineInnerCycleFactory >::instance_( 0 );
+#endif
+
+}
+
 namespace protocols {
 namespace loops {
 namespace loop_mover {
@@ -50,7 +64,6 @@ using utility::tools::make_vector1;
 using utility::vector1;
 
 static thread_local basic::Tracer TR( "protocols.loops.loop_mover.refine.LoopRefineInnerCycleFactory" );
-vector1< vector1< string > > LoopRefineInnerCycleFactory::loop_refine_inner_cycle_name_to_string_;
 
 void LoopRefineInnerCycleFactory::setup_known_types()
 {
@@ -71,29 +84,6 @@ void LoopRefineInnerCycleFactory::setup_known_types()
 ////////////////////////////////////////////// BOILER PLATE CODE //////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< LoopRefineInnerCycleFactory * > LoopRefineInnerCycleFactory::instance_( 0 );
-#else
-LoopRefineInnerCycleFactory * LoopRefineInnerCycleFactory::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex LoopRefineInnerCycleFactory::singleton_mutex_;
-
-std::mutex & LoopRefineInnerCycleFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-LoopRefineInnerCycleFactory * LoopRefineInnerCycleFactory::get_instance()
-{
-	boost::function< LoopRefineInnerCycleFactory * () > creator = boost::bind( &LoopRefineInnerCycleFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
 
 LoopRefineInnerCycleFactory *
 LoopRefineInnerCycleFactory::create_singleton_instance()
@@ -106,8 +96,6 @@ LoopRefineInnerCycleFactory::LoopRefineInnerCycleFactory()
 {
 	setup_known_types();
 }
-
-LoopRefineInnerCycleFactory::LoopRefineInnerCycleFactory( const LoopRefineInnerCycleFactory & ) {}
 
 LoopRefineInnerCycleFactory::~LoopRefineInnerCycleFactory() {}
 

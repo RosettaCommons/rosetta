@@ -1338,7 +1338,7 @@ void add_cloned_ligand_rotamer_library( core::chemical::ResidueType & new_res, c
 	SingleLigandRotamerLibraryOP new_lrots = new SingleLigandRotamerLibrary;
 	SingleLigandRotamerLibraryCAP old_lrots(
 		utility::pointer::static_pointer_cast< SingleLigandRotamerLibraryCAP >
-		( RotamerLibrary::get_instance().get_rsd_library( base_res ) ));
+		( RotamerLibrary::get_instance()->get_rsd_library( base_res ) ));
 	if( old_lrots != 0 ) {
 		utility::vector1< ResidueOP > new_rotamers;
 		utility::vector1< ResidueOP > const old_rotamers = old_lrots->get_rotamers();
@@ -1359,7 +1359,7 @@ void add_cloned_ligand_rotamer_library( core::chemical::ResidueType & new_res, c
 		new_lrots->set_reference_energy( old_lrots->get_reference_energy() );
 		new_lrots->set_rotamers( new_rotamers );
 	} // no fallback if there isnt a reference rotamer library
-	RotamerLibrary::get_instance().add_residue_library( new_res, new_lrots );
+	RotamerLibrary::get_instance()->add_residue_library( new_res, new_lrots );
 }
 #endif
 

@@ -37,36 +37,24 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using core::pack::task::operation::ResLvlTaskOperationFactory;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< ResLvlTaskOperationFactory > ::singleton_mutex_;
+template <> std::atomic< ResLvlTaskOperationFactory * > utility::SingletonBase< ResLvlTaskOperationFactory >::instance_( 0 );
+#else
+template <> ResLvlTaskOperationFactory * utility::SingletonBase< ResLvlTaskOperationFactory >::instance_( 0 );
+#endif
+
+}
+
 namespace core {
 namespace pack {
 namespace task {
 namespace operation {
-
-// special singleton functions
-// initialize
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< ResLvlTaskOperationFactory * > ResLvlTaskOperationFactory::instance_( 0 );
-#else
-ResLvlTaskOperationFactory * ResLvlTaskOperationFactory::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex ResLvlTaskOperationFactory::singleton_mutex_;
-
-std::mutex & ResLvlTaskOperationFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-ResLvlTaskOperationFactory * ResLvlTaskOperationFactory::get_instance()
-{
-	boost::function< ResLvlTaskOperationFactory * () > creator = boost::bind( &ResLvlTaskOperationFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
 
 ResLvlTaskOperationFactory *
 ResLvlTaskOperationFactory::create_singleton_instance()

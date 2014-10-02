@@ -21,13 +21,27 @@
 #include <utility/static_database.hh>
 #include <utility/exit.hh>
 
+// Singleton instance and mutex static data members
 namespace utility {
 
+using utility::Inline_File_Provider;
 
-Inline_File_Provider* Inline_File_Provider::get_instance(){
-	if(!instance_) instance_ = new Inline_File_Provider();
-	return instance_;
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< Inline_File_Provider > ::singleton_mutex_;
+template <> std::atomic< Inline_File_Provider * > utility::SingletonBase< Inline_File_Provider >::instance_( 0 );
+#else
+template <> Inline_File_Provider * utility::SingletonBase< Inline_File_Provider >::instance_( 0 );
+#endif
+
 }
+
+namespace utility {
+
+Inline_File_Provider * Inline_File_Provider::create_singleton_instance()
+{
+	return new Inline_File_Provider;
+}
+
 
 void Inline_File_Provider::show_contents(){
 
@@ -224,7 +238,5 @@ bool Inline_File_Provider::get_sstream( const std::string& filename, std::string
 void Inline_File_Provider::add_file_provider_hook( const Inline_File_Provider_HookOP &new_hook ){
   file_provider_hooks_.push_back( new_hook );
 }
-
-Inline_File_Provider* Inline_File_Provider::instance_ = NULL;
 
 }

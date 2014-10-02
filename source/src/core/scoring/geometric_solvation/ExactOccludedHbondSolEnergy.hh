@@ -16,32 +16,24 @@
 
 #include <core/types.hh>
 
-// Project headers
+// Package headers
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
+
+// Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/hbonds/HBEvalTuple.fwd.hh>
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
-// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
-
-// Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ headers
 #include <map>
 
 #include <core/chemical/AtomTypeSet.fwd.hh>
-#include <utility/vector1.hh>
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
+// Utility headers
+#include <utility/SingletonBase.hh>
+#include <utility/vector1.hh>
 
 namespace core {
 namespace scoring {
@@ -49,11 +41,12 @@ namespace geometric_solvation {
 
 
 // singleton class
-class GridInfo {
+class GridInfo : public utility::SingletonBase< GridInfo >
+{
+public:
+	friend class utility::SingletonBase< GridInfo >;
 
 public:
-	static GridInfo * get_instance();
-
 	// accessors
 	core::Size xnum_points() const { return xnum_points_; };
 	core::Size ynum_points() const { return ynum_points_; };
@@ -65,20 +58,6 @@ public:
 	core::Real yorigin() const { return yorigin_; };
 	core::Real zorigin() const { return zorigin_; };
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
 private:
 	//private constructor
 	GridInfo();
@@ -87,13 +66,6 @@ private:
 	static GridInfo * create_singleton_instance();
 
 private:
-	/// @brief static data member holding pointer to the singleton class itself
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< GridInfo * > instance_;
-#else
-	static GridInfo * instance_;
-#endif
-
 	// private member data
 	core::Size xnum_points_, ynum_points_, znum_points_;
 	core::Real xstep_, ystep_, zstep_;
@@ -104,30 +76,18 @@ private:
 
 
 // singleton class
-class WaterWeightGridSet {
+class WaterWeightGridSet : public utility::SingletonBase< WaterWeightGridSet >
+{
+public:
+	friend class utility::SingletonBase< WaterWeightGridSet >;
 
 public:
-	static WaterWeightGridSet * get_instance();
 
 	std::vector < std::vector < std::vector <core::Real> > > const &
 	get_water_weight_grid( hbonds::HBEvalType const & hbond_eval_type ) const;
 
 	core::Real
 	get_sum_water_weight_grid( hbonds::HBEvalType const & hbond_eval_type ) const;
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
 
 private:
 	//private constructor
@@ -141,13 +101,6 @@ private:
 	static WaterWeightGridSet * create_singleton_instance();
 
 private:
-	/// @brief static data member holding pointer to the singleton class itself
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< WaterWeightGridSet * > instance_;
-#else
-	static WaterWeightGridSet * instance_;
-#endif
-
 
 	// private member data
 	std::map< hbonds::HBEvalType, std::vector < std::vector < std::vector <core::Real> > > > all_water_weights_;

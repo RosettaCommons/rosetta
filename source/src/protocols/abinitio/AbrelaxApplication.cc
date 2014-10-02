@@ -449,8 +449,10 @@ void AbrelaxApplication::setup() {
 		tr.Info << "use fully harmonic potential for BOUNDED " << std::endl;
 		ConstraintIO::get_func_factory().add_type("BOUNDED", FuncOP( new BoundFunc(0,0,0,1000,"dummy") ) );
 	}
+
 	if ( option[ constraints::named ] ) {
 		tr.Info << "use named constraints in AtomPairConstraint to avoid problems with cutpoint-variants " << std::endl;
+		/// WARNING WARNING WARNING. THREAD UNSAFE. DO NOT USE SINGLETONS THIS WAY.
 		core::scoring::constraints::ConstraintFactory::get_instance()->replace_creator(
 			ConstraintCreatorCOP( new constraints_additional::NamedAtomPairConstraintCreator ) );
 	}

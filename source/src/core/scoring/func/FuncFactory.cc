@@ -51,6 +51,8 @@ namespace core {
 namespace scoring {
 namespace func {
 
+FuncFactory::~FuncFactory() {}
+
 void FuncFactory::add_type( std::string type_name, FuncOP new_func ) {
 	func_types_[ type_name ] = new_func;
 }

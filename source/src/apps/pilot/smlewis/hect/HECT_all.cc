@@ -106,6 +106,7 @@ public:
 		fragset3mer_ubq_tail_ = make_frags(utail_start_, ubqchain_end_-1, seq);
 
 		TR << "recovering memory?" << std::endl;
+		// WARNING WARNING WARNING! THREAD UNSAFE!  WHY WOULD YOU THINK THIS IS A GOOD IDEA?
 		core::fragment::picking_old::FragmentLibraryManager::get_instance()->clear_Vall();
 
 		//build internal AtomID vector for TorsionDOFs later

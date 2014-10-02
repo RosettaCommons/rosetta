@@ -21,19 +21,12 @@
 //project headers
 
 //utility headers
+#include <utility/SingletonBase.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 //C++ headers
 #include <map>
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
 
 namespace basic {
 namespace resource_manager {
@@ -44,8 +37,11 @@ namespace resource_manager {
 /// is a singleton class.  It is initialized at load time -- or at least after the call to
 /// devel::init( argc, argv ) -- and populated with the help of ResourceOptionsRegistrator
 /// instances.
-class ResourceOptionsFactory
+class ResourceOptionsFactory : public utility::SingletonBase< ResourceOptionsFactory >
 {
+public:
+	friend class utility::SingletonBase< ResourceOptionsFactory >;
+
 public:
 	virtual ~ResourceOptionsFactory();
 
@@ -58,11 +54,6 @@ public:
 		utility::tag::TagCOP tag
 	) const;
 
-	/// @brief Singleton accessor function.  Return the globally-unique instance of the class.
-	static
-	ResourceOptionsFactory *
-	get_instance();
-
 	/// @brief Register the given ResourceOptionsCreator object with the factory.  Invoked by an
 	/// instance of the templated ResourceOptionsRegistrator class.
 	void
@@ -74,20 +65,6 @@ public:
 	void
 	set_throw_on_double_registration();
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
 private:
 
 	/// @brief Singleton private constructor
@@ -98,12 +75,6 @@ private:
 	static ResourceOptionsFactory * create_singleton_instance();
 
 private:
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< ResourceOptionsFactory * > instance_;
-#else
-	static ResourceOptionsFactory * instance_;
-#endif
-
 	bool throw_on_double_registration_;
 
 	typedef std::map< std::string, ResourceOptionsCreatorOP > ResourceOptionsCreatorMap;

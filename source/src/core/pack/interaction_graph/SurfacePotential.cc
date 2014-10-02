@@ -68,7 +68,19 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+// Singleton instance and mutex static data members
+namespace utility {
 
+using core::pack::interaction_graph::SurfacePotential;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< SurfacePotential > ::singleton_mutex_;
+template <> std::atomic< SurfacePotential * > utility::SingletonBase< SurfacePotential >::instance_( 0 );
+#else
+template <> SurfacePotential * utility::SingletonBase< SurfacePotential >::instance_( 0 );
+#endif
+
+}
 
 namespace core {
 namespace pack {
@@ -88,31 +100,6 @@ const core::Size SurfacePotential::BURIED_RESIDUE_NO_HSASA_CUTOFF = 24;
 const core::Size SurfacePotential::MAX_HPATCH_AREA = 1000;
 const core::Real SurfacePotential::MAX_HPATCH_SCORE = 100.0;
 const core::Size SurfacePotential::HPATCH_SCORE_BIN_SIZE = 50;
-
-/// @brief set initial value as no instance
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< SurfacePotential * > SurfacePotential::instance_( 0 );
-#else
-SurfacePotential * SurfacePotential::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex SurfacePotential::singleton_mutex_;
-
-std::mutex & SurfacePotential::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-SurfacePotential * SurfacePotential::get_instance()
-{
-	boost::function< SurfacePotential * () > creator = boost::bind( &SurfacePotential::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
 
 SurfacePotential *
 SurfacePotential::create_singleton_instance()

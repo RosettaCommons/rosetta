@@ -103,10 +103,10 @@ RigidBodyMoveBaseRSO::alter_rotamer_set(
 		}
 	}
 	//RotamerSet_ duplicate lines over
-	
+
 	// Attempt to create rotamer library for the given type.
 	core::pack::dunbrack::SingleResidueRotamerLibraryCAP rotlib =
-		core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( *concrete_residue );
+		core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( *concrete_residue );
 
 	if(!rotlib.expired())
 	{
@@ -176,7 +176,7 @@ RigidBodyMoveBaseRSO::alter_rotamer_set(
 	{
 		rotamer_set.add_rotamer( *new_rots[i] );
 	}
-		
+
 	tr.Debug <<
 		"At seqpos " << sequence_position << " " <<
 		new_rots.size() << " rotamers were added to rotamer set that now contains " <<
@@ -256,5 +256,3 @@ RigidBodyMoveRSO::set_rigid_body_confs(
 } //namespace protocols
 } //namespace toolbox
 } //namespace rotamer_set_operations
-
-

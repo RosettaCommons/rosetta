@@ -215,7 +215,8 @@ void rotamers_for_trials(
 
 	core::graph::GraphCOP empty_graph( new core::graph::Graph() );
 	// Retrieve conformers
-	core::pack::dunbrack::SingleResidueRotamerLibraryCOP reslib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( pose.residue_type(rsd_no) );
+	core::pack::dunbrack::SingleResidueRotamerLibraryCOP reslib =
+		core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue_type(rsd_no) );
 	if( reslib.get() == NULL ) return;
 
 	core::chemical::ResidueType const & res_type =  pose.residue_type(rsd_no);

@@ -875,7 +875,7 @@ void Matcher::initialize_from_file(
 
 								using namespace core::scoring;
 								using namespace core::pack::dunbrack;
-								RotamerLibrary const & rotlib( core::pack::dunbrack::RotamerLibrary::get_instance() );
+								RotamerLibrary const & rotlib( * core::pack::dunbrack::RotamerLibrary::get_instance() );
 								SingleResidueRotamerLibraryCOP res_rotlib( rotlib.get_rsd_library( *upres[ jj ] ) );
 
 								if ( res_rotlib != 0 ) {

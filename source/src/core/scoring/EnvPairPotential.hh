@@ -178,12 +178,13 @@ public:
 		Real & cenpack_contribution
 	) const;
 
-protected:
+private:
+	// this shouldn't be protected
 	Real const cen_dist_cutoff2;
 
-
-	CenListInfo const & cenlist_from_pose( pose::Pose const & ) const;
-	CenListInfo & nonconst_cenlist_from_pose( pose::Pose & ) const;
+public:
+	static CenListInfo const & cenlist_from_pose( pose::Pose const & );
+	static CenListInfo & nonconst_cenlist_from_pose( pose::Pose & );
 
 private:
 

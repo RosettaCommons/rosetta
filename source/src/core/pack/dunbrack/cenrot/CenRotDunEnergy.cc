@@ -107,8 +107,9 @@ void CenRotDunEnergy::residue_energy(
 	Real dun_score( 0.0 );
 
 	//cal single residue cenrot lib
-	RotamerLibrary const & rotlib = RotamerLibrary::get_instance();
+	RotamerLibrary const & rotlib = * RotamerLibrary::get_instance();
 	SingleResidueRotamerLibraryCOP residue_rotamer_library = rotlib.get_rsd_library( rsd.type() );
+
 	if (residue_rotamer_library==0) return;
 
 	SingleResidueCenrotLibraryCOP residue_cenrot_library(
@@ -148,7 +149,7 @@ Real CenRotDunEnergy::eval_residue_dof_derivative(
 		assert( rsd.seqpos() == tor_id.rsd() );
 		if ( rsd.is_virtual_residue() ) return 0.0;
 
-		RotamerLibrary const & rotlib = RotamerLibrary::get_instance();
+		RotamerLibrary const & rotlib = * RotamerLibrary::get_instance();
 		SingleResidueRotamerLibraryCOP residue_rotamer_library = rotlib.get_rsd_library(rsd.type());
 
 		if (residue_rotamer_library==0) return 0.0;
@@ -190,8 +191,9 @@ Real CenRotDunEnergy::eval_dof_derivative(
 
 		if ( pose.residue( tor_id.rsd() ).is_virtual_residue() ) return 0.0;
 
-		RotamerLibrary const & rotlib = RotamerLibrary::get_instance();
+		RotamerLibrary const & rotlib = * RotamerLibrary::get_instance();
 		SingleResidueRotamerLibraryCOP residue_rotamer_library = rotlib.get_rsd_library(pose.residue( tor_id.rsd() ).type());
+
 		if (residue_rotamer_library==0) return 0.0;
 
 		SingleResidueCenrotLibraryCOP residue_cenrot_library(
@@ -226,8 +228,9 @@ void CenRotDunEnergy::eval_residue_derivatives(
 	Real weight = weights[ cen_rot_dun ];
 
 	//cal single residue cenrot lib
-	RotamerLibrary const & rotlib = RotamerLibrary::get_instance();
+	RotamerLibrary const & rotlib = * RotamerLibrary::get_instance();
 	SingleResidueRotamerLibraryCOP residue_rotamer_library = rotlib.get_rsd_library(rsd.type());
+
 	if (residue_rotamer_library==0) return;
 
 	SingleResidueCenrotLibraryCOP residue_cenrot_library(

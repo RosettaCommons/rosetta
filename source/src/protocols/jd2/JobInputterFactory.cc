@@ -31,35 +31,25 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+
+// Singleton instance and mutex static data members
+namespace utility {
+
+using protocols::jd2::JobInputterFactory;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< JobInputterFactory > ::singleton_mutex_;
+template <> std::atomic< JobInputterFactory * > utility::SingletonBase< JobInputterFactory >::instance_( 0 );
+#else
+template <> JobInputterFactory * utility::SingletonBase< JobInputterFactory >::instance_( 0 );
+#endif
+
+}
+
 namespace protocols {
 namespace jd2 {
 
 static thread_local basic::Tracer TR( "protocols.jd2.JobInputterFactory" );
-
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< JobInputterFactory * > JobInputterFactory::instance_( 0 );
-#else
-JobInputterFactory * JobInputterFactory::instance_( 0 );
-#endif
-
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex JobInputterFactory::singleton_mutex_;
-
-std::mutex & JobInputterFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-JobInputterFactory * JobInputterFactory::get_instance()
-{
-	boost::function< JobInputterFactory * () > creator = boost::bind( &JobInputterFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
 
 JobInputterFactory *
 JobInputterFactory::create_singleton_instance()

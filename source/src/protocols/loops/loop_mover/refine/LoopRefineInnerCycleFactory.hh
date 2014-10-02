@@ -28,18 +28,12 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
+#include <utility/SingletonBase.hh>
+#include <utility/vector1.hh>
 
 // C++ Headers
 #include <map>
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
+#include <string>
 
 namespace protocols {
 namespace loops {
@@ -59,14 +53,14 @@ enum LoopRefineInnerCycleName {
 };
 
 /// Create LoopMover Reporters
-class LoopRefineInnerCycleFactory {
+class LoopRefineInnerCycleFactory : public utility::SingletonBase< LoopRefineInnerCycleFactory >
+{
+public:
+	friend class utility::SingletonBase< LoopRefineInnerCycleFactory >;
 
 public:
-
 	// Warning this is not called because of the singleton pattern
 	virtual ~LoopRefineInnerCycleFactory();
-
-	static LoopRefineInnerCycleFactory * get_instance();
 
 	/// @brief Create a LoopRefineInnerCycle giving it a pointer to the data it needs to function
 	LoopRefineInnerCycleOP create_inner_cycle(
@@ -93,30 +87,10 @@ private: // methods
 	void setup_known_types();
 
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
 private:
 
-	/// @brief static data member holding pointer to the singleton class itself
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< LoopRefineInnerCycleFactory * > instance_;
-#else
-	static LoopRefineInnerCycleFactory * instance_;
-#endif
+	utility::vector1< utility::vector1< std::string > > loop_refine_inner_cycle_name_to_string_;
 
-	static utility::vector1< utility::vector1< std::string > > loop_refine_inner_cycle_name_to_string_;
 	// TODO: Add a std::map< std::string, LoopRefineInnerCycleName > to allow for commandline or RosettaScripts based selection.
 	//       core/scoring/ScoreTypeManager.cc has an example of setting something like this up
 

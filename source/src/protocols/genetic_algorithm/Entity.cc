@@ -36,6 +36,20 @@ using namespace ObjexxFCL;
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using protocols::genetic_algorithm::EntityElementFactory;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< EntityElementFactory > ::singleton_mutex_;
+template <> std::atomic< EntityElementFactory * > utility::SingletonBase< EntityElementFactory >::instance_( 0 );
+#else
+template <> EntityElementFactory * utility::SingletonBase< EntityElementFactory >::instance_( 0 );
+#endif
+
+}
+
 namespace protocols {
 namespace genetic_algorithm {
 
@@ -96,31 +110,7 @@ std::string EntityElement::to_string() const
 
 EntityElementCreator::~EntityElementCreator() {}
 
-/// Entity Element Factory
-
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< EntityElementFactory * > EntityElementFactory::instance_( 0 );
-#else
-EntityElementFactory * EntityElementFactory::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex EntityElementFactory::singleton_mutex_;
-
-std::mutex & EntityElementFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-EntityElementFactory * EntityElementFactory::get_instance()
-{
-	boost::function< EntityElementFactory * () > creator = boost::bind( &EntityElementFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
+//////////// Entity Element Factory ////////////
 
 EntityElementFactory *
 EntityElementFactory::create_singleton_instance()
@@ -158,23 +148,13 @@ EntityElementFactory::element_from_string( std::string const & entity_element_na
 	return iter->second->new_entity( desc );
 }
 
-/*
-void EntityElementFactory::register_creator( EntityElementCreatorOP creator )
-{
-	CreatorMap::const_iterator iter = creators_.find( creator->entity_type() );
-	if ( iter != creators_.end() ) {
-		std::cerr << "ERROR: EntityElement type " << creator->entity_type() << " has already been registered in the EntityElementFactory" << std::endl;
-		utility_exit_with_message( "EntityElementFactory type duplication failure" );
-	}
-	creators_[ creator->entity_type() ] = creator;
-}*/
-
-
 std::string EntityElementFactory::factory_name() const {
 	return "EntityElementFactory";
 }
 
 EntityElementFactory::EntityElementFactory() {}
+
+//////////// Entity ////////////
 
 Entity::Entity() :
 	utility::pointer::ReferenceCount(),

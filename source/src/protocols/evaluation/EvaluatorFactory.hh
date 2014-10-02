@@ -27,6 +27,9 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
+
+// Utility headers
+#include <utility/SingletonBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
@@ -35,46 +38,46 @@
 
 #include <utility/vector1.hh>
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
-
 namespace protocols {
 namespace evaluation {
 
 /// Create Evaluator Reporters
-class EvaluatorFactory {
+class EvaluatorFactory : public utility::SingletonBase< EvaluatorFactory >
+{
+public:
+	friend class utility::SingletonBase< EvaluatorFactory >;
+
 private:
 
 	/// @brief private singleton creation function to be used with
 	/// utility::thread::threadsafe_singleton
 	static EvaluatorFactory * create_singleton_instance();
 
-	// Private constructor to make it singleton managed
+	/// @brief Private constructor to make it singleton managed
 	EvaluatorFactory();
-	EvaluatorFactory(const EvaluatorFactory & src); // unimplemented
 
+	/// @brief Private unimplemented copy constructor -- uncopyable.
+	EvaluatorFactory(const EvaluatorFactory & src);
+
+	/// @brief Private unimplemented assignment operator -- uncopyable.
 	EvaluatorFactory const &
-	operator=( EvaluatorFactory const & ); // unimplemented
+	operator = ( EvaluatorFactory const & );
 
 public:
 
 	// Warning this is not called because of the singleton pattern
 	virtual ~EvaluatorFactory();
 
-	static EvaluatorFactory * get_instance();
-
 	void factory_register( EvaluatorCreatorCOP creator );
+
 	void add_evaluators(
 		std::string const & type_name,
-		MetaPoseEvaluator & eval);
+		MetaPoseEvaluator & eval
+	);
 
 	void add_all_evaluators(
-		MetaPoseEvaluator & eval);
+		MetaPoseEvaluator & eval
+	);
 
 	/// @brief Replace the load-time EvaluatorCreator with another creator.
 	// undefined, commenting out to fix PyRosetta build  void replace_creator( EvaluatorCreatorCOP creator );
@@ -82,27 +85,7 @@ public:
 	// undefined, commenting out to fix PyRosetta build  EvaluatorCreatorCOP
 	// get_creator( std::string const & type_name );
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
 private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
-private:
-
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< EvaluatorFactory * > instance_;
-#else
-	static EvaluatorFactory * instance_;
-#endif
 
 	// This is a vector rather than a map so the canonical order of the
 	// evaluators is determined by how they are inserted.

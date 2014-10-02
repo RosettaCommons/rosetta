@@ -24,16 +24,11 @@
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/func/FuncFactory.fwd.hh>
-#include <utility/vector1.hh>
+#include <core/scoring/func/FuncFactory.hh>
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
+// Utility headers
+#include <utility/SingletonBase.hh>
+#include <utility/vector1.hh>
 
 namespace core {
 namespace scoring {
@@ -42,9 +37,12 @@ namespace constraints {
 ////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-class ConstraintIO {
+class ConstraintIO : public utility::SingletonBase< ConstraintIO >
+{
 public:
-	static ConstraintIO* get_instance();
+	friend class utility::SingletonBase< ConstraintIO >;
+
+public:
 	static ConstraintSetOP read_constraints(
 		std::string const & filename,
 		ConstraintSetOP cst_set,
@@ -59,8 +57,8 @@ public:
 	static void write_constraints( std::ostream&, ConstraintSet const& cst_set, core::pose::Pose const& );
 	static void write_constraints( std::string const& filename, ConstraintSet const& cst_set, core::pose::Pose const& );
 
-	static func::FuncFactory& get_func_factory(void);
-	static ConstraintFactory& get_cst_factory(void);
+	static func::FuncFactory & get_func_factory();
+	static ConstraintFactory & get_cst_factory();
 
 	static ConstraintOP parse_atom_pair_constraint(
 		std::istream & data,
@@ -112,30 +110,11 @@ protected:
 	static void read_cst_coordinates( std::istream &data, std::string& next_section,  ConstraintSet&, pose::Pose const&  );
 	static void read_cst_angles( std::istream &data, std::string& next_section,  ConstraintSet&, pose::Pose const&  );
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
 private:
 	ConstraintIO () {};
-	/// @brief static data member holding pointer to the singleton class itself
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< ConstraintIO * > instance_;
-#else
-	static ConstraintIO * instance_;
-#endif
 
-	static func::FuncFactory func_factory_;
+	// should the func_factory_ just be a singleton instead of being held inside this class?
+	func::FuncFactory func_factory_;
 	//static ConstraintFactory cst_factory_;
 
 	/// @brief private singleton creation function to be used with

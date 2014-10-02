@@ -21,24 +21,21 @@
 #include <core/scoring/constraints/ConstraintCreator.fwd.hh>
 
 // Utility headers
+#include <utility/SingletonBase.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
 // C++ Headers
 #include <map>
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
-
 namespace core {
 namespace scoring {
 namespace constraints {
 
-class ConstraintFactory {
+class ConstraintFactory : public utility::SingletonBase< ConstraintFactory >
+{
+public:
+	friend class utility::SingletonBase< ConstraintFactory >;
+
 private:
 	ConstraintFactory();
 
@@ -50,43 +47,19 @@ private:
 	static ConstraintFactory * create_singleton_instance();
 
 public:
-	static ConstraintFactory * get_instance();
-
-	//void add_type( std::string const & type_name, ConstraintOP new_cst );
-	//void add_type( ConstraintOP new_cst );
 
 	void factory_register( ConstraintCreatorCOP creator );
 	scoring::constraints::ConstraintOP newConstraint( std::string const & type_name );
 	utility::vector1< std::string > get_cst_names() const;
 
 	/// @brief Replace the load-time ConstraintCreator with another creator.
+	/// WARNING WARNING WARNING THREAD UNSAFE!!! DO NOT USE THIS!!!
 	void replace_creator( ConstraintCreatorCOP creator );
 
 	ConstraintCreatorCOP
 	get_creator( std::string const & type_name );
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
 private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
-private:
-	/// @brief static data member holding pointer to the singleton class itself
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< ConstraintFactory * > instance_;
-#else
-	static ConstraintFactory * instance_;
-#endif
-
 	typedef std::map< std::string, scoring::constraints::ConstraintCreatorCOP > ConstraintCreatorMap;
 	ConstraintCreatorMap cst_types_;
 };

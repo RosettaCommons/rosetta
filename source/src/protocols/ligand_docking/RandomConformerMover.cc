@@ -59,8 +59,10 @@ void RandomConformerMover::apply( core::pose::Pose & pose )
 	dummy_pack_task->initialize_from_command_line(); // -ex1 -ex2  etc.
 	utility::vector1< utility::vector1< core::Real > > dummy_extra_chi_steps;
 	core::graph::GraphCOP dummy_graph( new core::graph::Graph() );
+
 	// Retrieve conformers
-	core::pack::dunbrack::SingleResidueRotamerLibraryCOP reslib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( pose.residue_type(resid_) );
+	core::pack::dunbrack::SingleResidueRotamerLibraryCOP reslib = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue_type(resid_) );
+
 	if( ! reslib ) return;
 	reslib->fill_rotamer_vector(
 		pose,

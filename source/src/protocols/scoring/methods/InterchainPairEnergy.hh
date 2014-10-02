@@ -19,6 +19,7 @@
 
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <protocols/scoring/InterchainPotential.hh>
+#include <core/scoring/EnvPairPotential.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 
@@ -104,7 +105,9 @@ public:
 private:
 
 	// const-ref to scoring database
-	protocols::scoring::InterchainPotential const * potential_;
+	protocols::scoring::InterchainPotential const & interchain_potential_;
+	core::scoring::EnvPairPotential const & env_potential_;
+
 virtual
 core::Size version() const;
 };

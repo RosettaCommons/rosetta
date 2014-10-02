@@ -27,35 +27,24 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using basic::resource_manager::ResourceLocatorFactory;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< ResourceLocatorFactory > ::singleton_mutex_;
+template <> std::atomic< ResourceLocatorFactory * > utility::SingletonBase< ResourceLocatorFactory >::instance_( 0 );
+#else
+template <> ResourceLocatorFactory * utility::SingletonBase< ResourceLocatorFactory >::instance_( 0 );
+#endif
+
+}
+
 namespace basic {
 namespace resource_manager {
 
-/// @details Auto-generated virtual destructor
 ResourceLocatorFactory::~ResourceLocatorFactory() {}
-
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< ResourceLocatorFactory * > ResourceLocatorFactory::instance_( 0 );
-#else
-ResourceLocatorFactory * ResourceLocatorFactory::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex ResourceLocatorFactory::singleton_mutex_;
-
-std::mutex & ResourceLocatorFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-ResourceLocatorFactory * ResourceLocatorFactory::get_instance()
-{
-	boost::function< ResourceLocatorFactory * () > creator = boost::bind( &ResourceLocatorFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
 
 ResourceLocatorFactory *
 ResourceLocatorFactory::create_singleton_instance()

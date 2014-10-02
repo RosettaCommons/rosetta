@@ -25,34 +25,23 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using core::scoring::constraints::ConstraintFactory;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< ConstraintFactory > ::singleton_mutex_;
+template <> std::atomic< ConstraintFactory * > utility::SingletonBase< ConstraintFactory >::instance_( 0 );
+#else
+template <> ConstraintFactory * utility::SingletonBase< ConstraintFactory >::instance_( 0 );
+#endif
+
+}
 
 namespace core {
 namespace scoring {
 namespace constraints {
-
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< ConstraintFactory * > ConstraintFactory::instance_( 0 );
-#else
-ConstraintFactory * ConstraintFactory::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex ConstraintFactory::singleton_mutex_;
-
-std::mutex & ConstraintFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-ConstraintFactory * ConstraintFactory::get_instance()
-{
-	boost::function< ConstraintFactory * () > creator = boost::bind( &ConstraintFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
 
 ConstraintFactory *
 ConstraintFactory::create_singleton_instance()

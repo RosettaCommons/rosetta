@@ -26,17 +26,10 @@
 #include <core/id/NamedAtomID.hh>
 
 // Utility headers
+#include <utility/SingletonBase.hh>
 
 // C++ headers
 #include <string>
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
 
 namespace protocols {
 namespace noesy_assign {
@@ -85,7 +78,10 @@ private:
   NameTable nmr2rosetta_;
 };
 
-class MethylNameLibrary {
+class MethylNameLibrary : public utility::SingletonBase< MethylNameLibrary > {
+public:
+	friend class utility::SingletonBase< MethylNameLibrary >;
+
 private:
   //Singleton Class
   MethylNameLibrary();
@@ -95,32 +91,11 @@ private:
 	static MethylNameLibrary * create_singleton_instance();
 
 public:
-  static MethylNameLibrary const* get_instance();
+
   MethylNames const& operator[]( core::chemical::AA ) const;
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
 
 private:
   void load_database_table();
-
-	/// Singleton instance pointer
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< MethylNameLibrary * > instance_;
-#else
-	static MethylNameLibrary * instance_;
-#endif
 
   typedef std::map< core::chemical::AA, MethylNames > MethylNameTable;
 

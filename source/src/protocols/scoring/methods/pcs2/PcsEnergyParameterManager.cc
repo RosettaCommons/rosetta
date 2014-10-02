@@ -57,30 +57,26 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using protocols::scoring::methods::pcs2::PcsEnergyParameterManager;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< PcsEnergyParameterManager > ::singleton_mutex_;
+template <> std::atomic< PcsEnergyParameterManager * > utility::SingletonBase< PcsEnergyParameterManager >::instance_( 0 );
+#else
+template <> PcsEnergyParameterManager * utility::SingletonBase< PcsEnergyParameterManager >::instance_( 0 );
+#endif
+
+}
+
 namespace protocols {
 namespace scoring {
 namespace methods {
 namespace pcs2 {
 
 static thread_local basic::Tracer TR_PcsEnergyParameterManager( "protocols.scoring.methods.pcs.PcsEnergyParameterManager" );
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex PcsEnergyParameterManager::singleton_mutex_;
-
-std::mutex & PcsEnergyParameterManager::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-PcsEnergyParameterManager * PcsEnergyParameterManager::get_instance()
-{
-	boost::function< PcsEnergyParameterManager * () > creator = boost::bind( &PcsEnergyParameterManager::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
 
 PcsEnergyParameterManager *
 PcsEnergyParameterManager::create_singleton_instance()
@@ -131,7 +127,7 @@ PcsEnergyParameterManager::re_init(){
 // singletons shouldn't have assignment operators }
 
 std::ostream &
-operator<<(std::ostream& out, const PcsEnergyParameterManager &me){
+operator << ( std::ostream& out, const PcsEnergyParameterManager &me ){
 	core::Size i;
 
 	out << "************************ Printing PcsEnergyParameterManager" << std::endl;
@@ -178,13 +174,6 @@ PcsEnergyParameterManager::get_PcsEnergyParameter_for(core::Size i_multi_data){
 	}
 	return(pcs_e_p_all_[i_multi_data]);
 }
-
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< PcsEnergyParameterManager * > PcsEnergyParameterManager::instance_( 0 );
-#else
-PcsEnergyParameterManager * PcsEnergyParameterManager::instance_( 0 );
-#endif
-
 
 } // PCS
 } // methods

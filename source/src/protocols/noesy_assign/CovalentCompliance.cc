@@ -20,6 +20,20 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using protocols::noesy_assign::CovalentCompliance;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< CovalentCompliance > ::singleton_mutex_;
+template <> std::atomic< CovalentCompliance * > utility::SingletonBase< CovalentCompliance >::instance_( 0 );
+#else
+template <> CovalentCompliance * utility::SingletonBase< CovalentCompliance >::instance_( 0 );
+#endif
+
+}
+
 namespace protocols {
 namespace noesy_assign {
 
@@ -88,30 +102,6 @@ bool fall_back( core::id::NamedAtomID const& _atom1, core::id::NamedAtomID const
   // should be pretty good and we will see those NOEs recommended from there.
 }
 
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< CovalentCompliance * > CovalentCompliance::instance_( 0 );
-#else
-CovalentCompliance * CovalentCompliance::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex CovalentCompliance::singleton_mutex_;
-
-std::mutex & CovalentCompliance::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-CovalentCompliance const * CovalentCompliance::get_instance()
-{
-	boost::function< CovalentCompliance * () > creator = boost::bind( &CovalentCompliance::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
-
 CovalentCompliance *
 CovalentCompliance::create_singleton_instance()
 {
@@ -122,10 +112,7 @@ CovalentCompliance::CovalentCompliance() :
   covalent_distances_( /* NULL */ )
 {}
 
-CovalentCompliance* CovalentCompliance::get_nonconst_instance() {
-  return const_cast< CovalentCompliance * > ( get_instance() );
-}
-
+/// @details WARNING WARNING WARNING! THREAD UNSAFE!
 void CovalentCompliance::load_dist_table( std::string const& file ) {
   covalent_distances_ = FragsToAtomDistOP( new FragsToAtomDist( file ) );
 }

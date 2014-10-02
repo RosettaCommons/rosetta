@@ -300,7 +300,7 @@ test_dunbrack_io()
 	using namespace scoring;
 	using namespace pack::dunbrack;
 
-	RotamerLibrary const & rot_lib( RotamerLibrary::get_instance() );
+	RotamerLibrary const & rot_lib( *RotamerLibrary::get_instance() );
 
 	pose::Pose pose;
 	core::import_pose::pose_from_pdb( pose, "input/test_in.pdb" );

@@ -22,19 +22,12 @@
 #include <basic/resource_manager/FallbackConfigurationCreator.fwd.hh>
 
 // Utility headers
+#include <utility/SingletonBase.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
 //C++ headers
 #include <map>
 #include <string>
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
 
 namespace basic {
 namespace resource_manager {
@@ -57,7 +50,11 @@ namespace resource_manager {
 /// often read from the command line, and it's possible that the required
 /// flags have not been put on the command line), and if so, then request data
 /// from the FallbackConfiguration needed to contruct that resource.
-class FallbackConfigurationFactory {
+class FallbackConfigurationFactory : public utility::SingletonBase< FallbackConfigurationFactory >
+{
+public:
+	friend class utility::SingletonBase< FallbackConfigurationFactory >;
+
 private:
 	FallbackConfigurationFactory(); // singleton, private constructor
 
@@ -69,8 +66,6 @@ public:
 
 	FallbackConfigurationOP
 	create_fallback_configuration( std::string const & resource_description	) const;
-
-	static FallbackConfigurationFactory * get_instance();
 
 	void
 	factory_register( FallbackConfigurationCreatorOP creator );
@@ -84,26 +79,7 @@ public:
 	void
 	set_throw_on_double_registration();
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
 private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
-private:
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< FallbackConfigurationFactory * > instance_;
-#else
-	static FallbackConfigurationFactory * instance_;
-#endif
 
 	typedef std::map< std::string, FallbackConfigurationCreatorOP > FallbackConfigurationCreatorsMap;
 	bool throw_on_double_registration_;

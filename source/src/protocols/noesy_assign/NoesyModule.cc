@@ -63,7 +63,7 @@ OPT_2GRP_KEY( FileVector, noesy, in, peaks )
 OPT_2GRP_KEY( FileVector, noesy, in, peak_resonance_pairs )
 OPT_2GRP_KEY( Boolean, noesy, in, use_assignments )
 OPT_2GRP_KEY( File, noesy, in, decoys )
-OPT_2GRP_KEY( File, noesy, in, local_dist_table )
+OPT_2GRP_KEY( File, noesy, in, local_dist_table ) /// WARNING WARNING WARNING THIS CODE IS THREAD-UNSAFE!
 
 OPT_2GRP_KEY( File, noesy, out, resonances )
 OPT_2GRP_KEY( File, noesy, out, peaks )
@@ -240,7 +240,8 @@ void NoesyModule::read_input_files() {
 	} // scope end
 
 	if ( option[ OptionKeys::noesy::in::local_dist_table ].user() ) {
-		CovalentCompliance::get_nonconst_instance()->load_dist_table( option[ OptionKeys::noesy::in::local_dist_table ]() );
+		// WARNING WARNING WARNING! THREAD UNSAFE!
+		CovalentCompliance::get_instance()->load_dist_table( option[ OptionKeys::noesy::in::local_dist_table ]() );
 	}
 }
 

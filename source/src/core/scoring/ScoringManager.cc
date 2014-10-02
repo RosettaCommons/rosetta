@@ -97,34 +97,22 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using core::scoring::ScoringManager;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< ScoringManager > ::singleton_mutex_;
+template <> std::atomic< ScoringManager * > utility::SingletonBase< ScoringManager >::instance_( 0 );
+#else
+template <> ScoringManager * utility::SingletonBase< ScoringManager >::instance_( 0 );
+#endif
+
+}
+
 namespace core {
 namespace scoring {
-
-
-///////////////////////////////////////////////////////////////////////////////
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< ScoringManager * > ScoringManager::instance_( 0 );
-#else
-ScoringManager * ScoringManager::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex ScoringManager::singleton_mutex_;
-
-std::mutex & ScoringManager::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-ScoringManager * ScoringManager::get_instance()
-{
-	boost::function< ScoringManager * () > creator = boost::bind( &ScoringManager::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
 
 ScoringManager *
 ScoringManager::create_singleton_instance()

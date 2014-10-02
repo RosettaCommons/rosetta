@@ -25,22 +25,22 @@
 #include <core/id/NamedAtomID.hh>
 
 // Utility headers
+#include <utility/SingletonBase.hh>
 
 // C++ headers
 #include <string>
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
-
 namespace protocols {
 namespace noesy_assign {
 
-class CovalentCompliance {
+/// @brief WARNING WARNING WARNING THIS SINGLETON CLASS HOLDS NON-CONST
+/// JOB-SPECIFIC DATA AND MAKES EVERYTHING THAT RELIES ON IT THREAD-UNSAFE.
+/// THIS IS NOT HOW SINGLETONS SHOULD BE USED.
+class CovalentCompliance : public utility::SingletonBase< CovalentCompliance >
+{
+public:
+	friend class utility::SingletonBase< CovalentCompliance >;
+
 private:
   /// @breif Private constructor for singleton class
   CovalentCompliance();
@@ -50,34 +50,13 @@ private:
 	static CovalentCompliance * create_singleton_instance();
 
 public:
-  static CovalentCompliance const* get_instance();
-  static CovalentCompliance * get_nonconst_instance();
+
+	/// @brief This is clearly thread-unsafe.
   void load_dist_table( std::string const& file );
   bool is_compliant( core::id::NamedAtomID const& atom1, core::id::NamedAtomID const& atom2, core::Real cutoff = 5.0 ) const;
   core::Real distance( core::id::NamedAtomID const& atom1, core::id::NamedAtomID const& atom2 ) const;
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
 private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
-private:
-	/// Singleton instance pointer
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< CovalentCompliance * > instance_;
-#else
-	static CovalentCompliance * instance_;
-#endif
-
   FragsToAtomDistOP covalent_distances_;
 };
 

@@ -38,6 +38,7 @@
 namespace protocols {
 namespace noesy_assign {
 
+/// @brief WARNING WARNING WARNING THREAD UNSAFE covalent_compliance RELIES ON THREAD-UNSAFE SINGLETON CovalentCompliance
 bool covalent_compliance( core::id::NamedAtomID const& atom1, core::id::NamedAtomID const& atom2);
 //, core::pose::Pose const& pose, Real dmax );
 //core::Real compute_RPF_score( CrossPeakList const& cpl, core::pose::Pose const& pose, core::Real dcut = 5 );

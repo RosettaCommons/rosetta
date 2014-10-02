@@ -31,42 +31,28 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-static thread_local basic::Tracer tr( "devel.replica_docking.TempInterpolatorFactory" );
+// Singleton instance and mutex static data members
+namespace utility {
+
+using devel::replica_docking::TempInterpolatorFactory;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< TempInterpolatorFactory > ::singleton_mutex_;
+template <> std::atomic< TempInterpolatorFactory * > utility::SingletonBase< TempInterpolatorFactory >::instance_( 0 );
+#else
+template <> TempInterpolatorFactory * utility::SingletonBase< TempInterpolatorFactory >::instance_( 0 );
+#endif
+
+}
 
 namespace devel {
 namespace replica_docking {
-
 
 static thread_local basic::Tracer TR( "devel.replica_docking.TempInterpolatorFactory" );
 
 TempInterpolatorFactory::TempInterpolatorFactory(){}
 
 TempInterpolatorFactory::~TempInterpolatorFactory(){}
-
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< TempInterpolatorFactory * > TempInterpolatorFactory::instance_( 0 );
-#else
-TempInterpolatorFactory* TempInterpolatorFactory::instance_( 0 );
-#endif
-
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex TempInterpolatorFactory::singleton_mutex_;
-
-std::mutex & TempInterpolatorFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-TempInterpolatorFactory * TempInterpolatorFactory::get_instance()
-{
-	boost::function< TempInterpolatorFactory * () > creator = boost::bind( &TempInterpolatorFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
 
 TempInterpolatorFactory *
 TempInterpolatorFactory::create_singleton_instance()

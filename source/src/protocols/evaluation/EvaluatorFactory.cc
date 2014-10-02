@@ -36,6 +36,20 @@
 #include <boost/function.hpp>
 #include <boost/foreach.hpp>
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using protocols::evaluation::EvaluatorFactory;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< EvaluatorFactory > ::singleton_mutex_;
+template <> std::atomic< EvaluatorFactory * > utility::SingletonBase< EvaluatorFactory >::instance_( 0 );
+#else
+template <> EvaluatorFactory * utility::SingletonBase< EvaluatorFactory >::instance_( 0 );
+#endif
+
+}
+
 namespace protocols {
 namespace evaluation {
 
@@ -52,30 +66,6 @@ using utility::tag::TagCOP;
 
 static thread_local basic::Tracer tr( "protocols.evaluator.EvaluatorFactory" );
 
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< EvaluatorFactory * > EvaluatorFactory::instance_( 0 );
-#else
-EvaluatorFactory * EvaluatorFactory::instance_( 0 );
-#endif
-
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex EvaluatorFactory::singleton_mutex_;
-
-std::mutex & EvaluatorFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-EvaluatorFactory * EvaluatorFactory::get_instance()
-{
-	boost::function< EvaluatorFactory * () > creator = boost::bind( &EvaluatorFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
 
 EvaluatorFactory *
 EvaluatorFactory::create_singleton_instance()
@@ -86,10 +76,6 @@ EvaluatorFactory::create_singleton_instance()
 
 /// @details Private constructor insures correctness of singleton.
 EvaluatorFactory::EvaluatorFactory() {}
-
-EvaluatorFactory::EvaluatorFactory(
-	const EvaluatorFactory &
-) {}
 
 EvaluatorFactory::~EvaluatorFactory() {}
 

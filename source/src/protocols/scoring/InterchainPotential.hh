@@ -22,11 +22,11 @@
 #include <core/scoring/AtomVDW.fwd.hh>
 #include <protocols/scoring/InterchainPotential.fwd.hh>
 // AUTO-REMOVED #include <protocols/scoring/InterfaceInfo.hh>
-#include <core/scoring/EnvPairPotential.hh>
 
 // Package headers
 // AUTO-REMOVED #include <protocols/scoring/Interface.hh>
 #include <core/conformation/Residue.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <basic/datacache/CacheableData.hh>
 
@@ -37,30 +37,25 @@
 #include <protocols/scoring/InterfaceInfo.fwd.hh>
 
 // Utility headers
+#include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
-
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
 
 namespace protocols {
 namespace scoring {
 
 using namespace core::conformation;
 
-class InterchainPotential : public core::scoring::EnvPairPotential {
+/// @brief Singleton class to hold the interface-derived statistics for residue-pair
+/// scores at protein/protein interfaces.
+/// @details This previously derived from the EnvPairPotential, which is in no way
+/// necessary because the two classes have nothing in common; rather, the
+/// InterchainPairEnergy and InterchainEnvEnergy classes can hold a pointer to both
+/// the InterchainPotential and the EnvPairPotential.
+class InterchainPotential : public utility::SingletonBase< InterchainPotential > {
+public:
+	friend class utility::SingletonBase< InterchainPotential >;
 
 public:
-
-	static InterchainPotential * get_instance();
-
-public:
-
 	void
 	compute_interface( core::pose::Pose & pose ) const;
 
@@ -98,20 +93,6 @@ public:
 	InterfaceInfo const & interface_from_pose( core::pose::Pose const & ) const;
 	InterfaceInfo & nonconst_interface_from_pose( core::pose::Pose & ) const;
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
 private:
 
 	/// @brief private singleton creation function to be used with
@@ -121,12 +102,6 @@ private:
 	InterchainPotential();
 	InterchainPotential( InterchainPotential const & src );
 	InterchainPotential & operator = ( InterchainPotential const & rhs );
-
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< InterchainPotential * > instance_;
-#else
-	static InterchainPotential * instance_;
-#endif
 
 	// const-ref to scoring database
 	core::scoring::AtomVDW const & atom_vdw_;

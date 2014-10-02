@@ -36,36 +36,27 @@
 #include <sstream>
 #include <iomanip>
 
+
+// Singleton instance and mutex static data members
+namespace utility {
+
+using basic::resource_manager::ResourceManager;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< ResourceManager > ::singleton_mutex_;
+template <> std::atomic< ResourceManager * > utility::SingletonBase< ResourceManager >::instance_( 0 );
+#else
+template <> ResourceManager * utility::SingletonBase< ResourceManager >::instance_( 0 );
+#endif
+
+}
+
 namespace basic {
 namespace resource_manager {
 
 using std::stringstream;
 using std::endl;
 using std::setw;
-
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< ResourceManager * > ResourceManager::instance_( 0 );
-#else
-ResourceManager * ResourceManager::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex ResourceManager::singleton_mutex_;
-
-std::mutex & ResourceManager::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-ResourceManager * ResourceManager::get_instance()
-{
-	boost::function< ResourceManager * () > creator = boost::bind( &ResourceManager::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
 
 ResourceManager *
 ResourceManager::create_singleton_instance()

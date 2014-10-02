@@ -22,6 +22,7 @@
 #include <basic/resource_manager/ResourceOptions.hh>
 
 //utility headers
+#include <utility/SingletonBase.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/options/keys/BooleanOptionKey.fwd.hh>
 #include <utility/options/keys/BooleanVectorOptionKey.fwd.hh>
@@ -43,16 +44,6 @@
 //C++ headers
 #include <map>
 #include <string>
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-
-#endif
-#endif
 
 namespace basic {
 namespace resource_manager {
@@ -78,13 +69,12 @@ namespace resource_manager {
 /// should be instantiated depends on the options system, the ResourceManager should
 /// not be requested until after core::init::init() has been called (i.e. it should not
 /// be requested at load time.)
-class ResourceManager {
+class ResourceManager : public utility::SingletonBase< ResourceManager >
+{
 public:
-	/// @brief Singleton accessor: request access to the resource manager.
-	static ResourceManager * get_instance();
-
+	friend class utility::SingletonBase< ResourceManager >;
 protected:
-	/// @brief singleton, private constructor
+	/// @brief singleton, protected constructor for derived types instances
 	ResourceManager();
 
 private:
@@ -321,26 +311,7 @@ public: // Options interface
 	has_option(
 		utility::options::StringVectorOptionKey key ) const = 0;
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
 private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
-private:
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< ResourceManager * > instance_;
-#else
-	static ResourceManager * instance_;
-#endif
 
 	typedef std::map< ResourceTag, ResourceOP > ResourcesMap;
 	ResourcesMap resources_;

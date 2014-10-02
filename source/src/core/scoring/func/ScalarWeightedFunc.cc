@@ -59,7 +59,7 @@ namespace func {
 		FuncFactory func_factory;
 		std::string func_type;
 		in >> func_type;
-		func_to_weight_ = func_factory.func_types_[ func_type ]->clone();
+		func_to_weight_ = func_factory.new_func( func_type );
 		func_to_weight_->read_data( in );
 	}
 

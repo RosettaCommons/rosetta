@@ -32,11 +32,16 @@ namespace scoring {
 namespace func {
 
 class FuncFactory {
- public:
-	FuncFactory(void);
+public:
+	typedef std::map< std::string, scoring::func::FuncOP > FuncTypes;
+
+public:
+	FuncFactory();
+	~FuncFactory();
 	void add_type( std::string type_name, FuncOP new_func );
 	FuncOP new_func( std::string const& type ) const;
-	typedef std::map< std::string, scoring::func::FuncOP > FuncTypes;
+
+private:
 	FuncTypes func_types_;
 };
 

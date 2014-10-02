@@ -26,6 +26,7 @@
 #include <protocols/rotamer_recovery/RotamerRecoveryCreator.fwd.hh>
 
 // Platform Headers
+#include <utility/SingletonBase.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 #include <utility/pointer/ReferenceCount.fwd.hh>
 #include <utility/vector1.hh>
@@ -33,19 +34,15 @@
 // C++ Headers
 #include <map>
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
-
 namespace protocols {
 namespace rotamer_recovery {
 
 /// Create Rotamer_Recovery Reporters
-class RotamerRecoveryFactory {
+class RotamerRecoveryFactory : public utility::SingletonBase< RotamerRecoveryFactory >
+{
+public:
+	friend class utility::SingletonBase< RotamerRecoveryFactory >;
+
 private:
 	// Private constructor to make it singleton managed
 	RotamerRecoveryFactory();
@@ -63,8 +60,6 @@ public:
 	// Warning this is not called because of the singleton pattern
 	virtual ~RotamerRecoveryFactory();
 
-	static RotamerRecoveryFactory * get_instance();
-
 	void factory_register( utility::pointer::ReferenceCountOP creator );
 	//void factory_register( RRProtocolCreatorCOP creator );
 	//void factory_register( RRComparerCreatorCOP creator );
@@ -79,27 +74,7 @@ public:
 		std::string const & comparer,
 		std::string const & reporter);
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
 private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
-private:
-
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< RotamerRecoveryFactory * > instance_;
-#else
-	static RotamerRecoveryFactory * instance_;
-#endif
 
 	typedef std::map< std::string, protocols::rotamer_recovery::RRProtocolCreatorCOP > RRProtocolCreatorMap;
 	RRProtocolCreatorMap protocol_types_;

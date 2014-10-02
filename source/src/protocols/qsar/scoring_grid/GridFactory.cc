@@ -24,34 +24,23 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using protocols::qsar::scoring_grid::GridFactory;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< GridFactory > ::singleton_mutex_;
+template <> std::atomic< GridFactory * > utility::SingletonBase< GridFactory >::instance_( 0 );
+#else
+template <> GridFactory * utility::SingletonBase< GridFactory >::instance_( 0 );
+#endif
+
+}
+
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {
-
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< GridFactory * > GridFactory::instance_( 0 );
-#else
-GridFactory * GridFactory::instance_( 0 );
-#endif
-
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-	std::mutex GridFactory::singleton_mutex_;
-
-	std::mutex & GridFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-	/// @brief static function to get the instance of ( pointer to) this singleton class
-	GridFactory * GridFactory::get_instance()
-	{
-		boost::function< GridFactory * () > creator = boost::bind( &GridFactory::create_singleton_instance );
-		utility::thread::safely_create_singleton( creator, instance_ );
-		return instance_;
-	}
 
 GridFactory *
 GridFactory::create_singleton_instance()

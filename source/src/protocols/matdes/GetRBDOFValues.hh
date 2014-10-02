@@ -43,6 +43,8 @@
 namespace protocols {
 namespace matdes {
 
+/// @brief WARNING WARNING WARNING THIS CLASS USES THE THREAD UNSAFE SymDofMoverSampler
+/// AND MAKES ANY PROTOCOL THAT USES THIS CLASS THREAD UNSAFE.
 class GetRBDOFValues : public protocols::filters::Filter {
 public:
 

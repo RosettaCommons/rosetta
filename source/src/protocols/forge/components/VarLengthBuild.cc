@@ -758,10 +758,12 @@ bool VarLengthBuild::centroid_build( Pose & pose ) {
 			break;
 		case VLB_VallMemoryUsage::CLEAR_IF_CACHING_FRAGMENTS:
 			if ( cache_fragments_ ) {
+				/// WARNING WARNING WARNING! THREAD UNSAFE!  WHY WOULD YOU THINK THIS IS A GOOD IDEA?
 				FragmentLibraryManager::get_instance()->clear_Vall();
 			}
 			break;
 		case VLB_VallMemoryUsage::ALWAYS_CLEAR:
+			/// WARNING WARNING WARNING! THREAD UNSAFE!  WHY WOULD YOU THINK THIS IS A GOOD IDEA?
 			FragmentLibraryManager::get_instance()->clear_Vall();
 			break;
 		default:

@@ -27,30 +27,20 @@
 #include <core/types.hh>
 
 // Utility headers
+#include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
 
 namespace protocols{
 namespace scoring{
 namespace methods{
 namespace pcs2{
 
-class PcsGridSearchParameterManager{
+class PcsGridSearchParameterManager : public utility::SingletonBase< PcsGridSearchParameterManager >
+{
+public:
+	friend class utility::SingletonBase< PcsGridSearchParameterManager >;
 
 private:
-
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< PcsGridSearchParameterManager * > instance_;
-#else
-	static PcsGridSearchParameterManager * instance_;
-#endif
 
 	utility::vector1<PcsGridSearchParameter> grid_s_p_all_;
 
@@ -61,11 +51,6 @@ private:
 	static PcsGridSearchParameterManager * create_singleton_instance();
 
 public:
-
-	/// @brief give me the instance of the singleton
-	static
-	PcsGridSearchParameterManager *
-	get_instance();
 
 	/// @brief give me the number of paramagnetic center
 	core::Size
@@ -82,20 +67,6 @@ public:
 	/// @ Re init the singleton to default value
 	void
 	re_init();
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
 
 };
 

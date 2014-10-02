@@ -72,7 +72,7 @@ namespace func {
 			in >> func_type;
 			FuncOP current_func;
 
-			current_func = func_factory.func_types_[ func_type ]->clone();
+			current_func = func_factory.new_func( func_type );
     	current_func->read_data( in );
 			add_func( current_func );
 		}

@@ -12,8 +12,6 @@
 /// @brief
 /// @author Tim Jacobs
 
-
-
 #ifndef INCLUDED_basic_message_listening_MessageListenerFactory_HH
 #define INCLUDED_basic_message_listening_MessageListenerFactory_HH
 
@@ -22,57 +20,33 @@
 // C++ headers
 #include <map>
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-
-#endif
-#endif
+// Utility headers
+#include <utility/SingletonBase.hh>
 
 namespace basic {
 namespace message_listening {
 
-class MessageListenerFactory {
+class MessageListenerFactory : public utility::SingletonBase< MessageListenerFactory >
+{
+public:
+	friend class utility::SingletonBase< MessageListenerFactory >;
 
 public:
-
-	static MessageListenerFactory* get_instance();
-
-	MessageListenerOP get_listener(listener_tags tag);
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
+	MessageListenerOP get_listener( listener_tags tag );
 
 private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
 
-private:
 	MessageListenerFactory();
 	MessageListenerFactory(MessageListenerFactory const &);
 	MessageListenerFactory const & operator = (MessageListenerFactory const &);
+
 	/// @brief private singleton creation function to be used with
 	/// utility::thread::threadsafe_singleton
 	static MessageListenerFactory * create_singleton_instance();
 
 private:
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< MessageListenerFactory * > instance_;
-#else
-	static MessageListenerFactory * instance_;
-#endif
 
-	std::map<listener_tags, MessageListenerOP> listeners_;
+	std::map< listener_tags, MessageListenerOP > listeners_;
 
 };
 

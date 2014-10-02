@@ -63,7 +63,7 @@ scan_Evalue( chemical::AA aa,
 
   printf("AA  %6s %6s %8s %8s %8s\n", "phi", "psi", "Erama", "Epaapp", "Mindun" );
 
-  pack::dunbrack::RotamerLibrary const &rotlib = pack::dunbrack::RotamerLibrary::get_instance();
+  pack::dunbrack::RotamerLibrary const &rotlib = * pack::dunbrack::RotamerLibrary::get_instance();
 
   pack::dunbrack::SingleResidueRotamerLibraryCAP 
     residue_rotamer_library( rotlib.get_rsd_library( pose.residue( 2 ).type() ) );

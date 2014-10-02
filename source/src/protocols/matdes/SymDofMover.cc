@@ -117,12 +117,14 @@ SymDofMover::get_sym_dof_names() {
 	return sym_dof_names_;
 }
 
+/// @details WARNING WARNING WARNING THIS IS A THREAD-UNSAFE FUNCTION SINCE IT USES THE
+/// SymDofMoverSampler, A NON-CONSTANT SINGLETON.
 utility::vector1<Real>
 SymDofMover::get_angles() {
 	utility::vector1< std::string > sym_dof_names = get_sym_dof_names();
 	utility::vector1<Real> angles;
 	if(sampling_mode_ == "grid" ) {
-		utility::vector1<Real> angle_diffs = SymDofMoverSampler::get_instance().get_angle_diffs();
+		utility::vector1<Real> angle_diffs = SymDofMoverSampler::get_instance()->get_angle_diffs();
 		for (Size i = 1; i <= sym_dof_names.size(); i++) {
 			angles.push_back(angles_[i] + angle_diffs[i]);
 		}
@@ -139,17 +141,19 @@ SymDofMover::get_angles() {
 		}
 	}
 	if( set_sampler_ ) {
-		SymDofMoverSampler::get_instance().set_angles(angles);
+		SymDofMoverSampler::get_instance()->set_angles(angles);
 	}
 	return angles;
 }
 
+/// @details WARNING WARNING WARNING THIS IS A THREAD-UNSAFE FUNCTION SINCE IT USES THE
+/// SymDofMoverSampler, A NON-CONSTANT SINGLETON.
 utility::vector1<Real>
 SymDofMover::get_radial_disps() {
 	utility::vector1< std::string > sym_dof_names = get_sym_dof_names();
 	utility::vector1<Real> radial_disps;
 	if(sampling_mode_ == "grid" ) {
-		utility::vector1<Real> radial_diffs = SymDofMoverSampler::get_instance().get_radial_disp_diffs();
+		utility::vector1<Real> radial_diffs = SymDofMoverSampler::get_instance()->get_radial_disp_diffs();
 		for (Size i = 1; i <= sym_dof_names.size(); i++) {
 			radial_disps.push_back(radial_disps_[i] + radial_offsets_[i] + radial_diffs[i]);
 		}
@@ -166,7 +170,7 @@ SymDofMover::get_radial_disps() {
 		}
 	}
 	if( set_sampler_ ) {
-		SymDofMoverSampler::get_instance().set_radial_disps(radial_disps);
+		SymDofMoverSampler::get_instance()->set_radial_disps(radial_disps);
 	}
 	return radial_disps;
 }
@@ -283,6 +287,8 @@ SymDofMover::add_components_to_pose_if_necessary(Pose & pose){
 	}
 }
 
+/// @details WARNING WARNING WARNING THIS IS A THREAD-UNSAFE FUNCTION SINCE IT USES THE
+/// SymDofMoverSampler, A NON-CONSTANT SINGLETON.
 void
 SymDofMover::apply(Pose & pose) {
 	using core::pose::Pose;
@@ -485,7 +491,7 @@ SymDofMover::apply(Pose & pose) {
 		}
 	}
 	if( sampling_mode_ == "grid" ) {
-		SymDofMoverSampler::get_instance().step();
+		SymDofMoverSampler::get_instance()->step();
 	}
 
 }
@@ -507,7 +513,7 @@ SymDofMover::parse_my_tag( TagCOP tag,
 	auto_range_ = tag->getOption<bool>( "auto_range", false );
 	symm_file_ = tag->getOption<string>( "symm_file", "");
 	sym_dof_names_ = utility::string_split( tag->getOption< std::string >( "sym_dof_names","" ), ',' );
-	SymDofMoverSampler::get_instance().set_sym_dof_names(sym_dof_names_);
+	SymDofMoverSampler::get_instance()->set_sym_dof_names(sym_dof_names_);
 	sampling_mode_ = tag->getOption<std::string>("sampling_mode", "single_dock");
 	if( tag->hasOption( "flip_input_about_axes")) {
 		flip_input_about_axes_ = utility::string_split( tag->getOption<std::string>( "flip_input_about_axes"), ',' );
@@ -658,9 +664,8 @@ SymDofMover::parse_my_tag( TagCOP tag,
 
 		TR << "Setting the exploration grid." << std::endl;
 
-		SymDofMoverSampler::get_instance().set_angle_ranges(angles_range_min_, angles_range_max_, angle_steps);
-
-		SymDofMoverSampler::get_instance().set_radial_disp_ranges(radial_disps_range_min_, radial_disps_range_max_, radial_disp_steps);
+		SymDofMoverSampler::get_instance()->set_angle_ranges(angles_range_min_, angles_range_max_, angle_steps);
+		SymDofMoverSampler::get_instance()->set_radial_disp_ranges(radial_disps_range_min_, radial_disps_range_max_, radial_disp_steps);
 
 	}
 

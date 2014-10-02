@@ -16,50 +16,31 @@
 ///
 /// @author Oliver Lange
 
-
-
 #ifndef INCLUDED_protocols_jumping_DisulfPairingLibrary_hh
 #define INCLUDED_protocols_jumping_DisulfPairingLibrary_hh
 
 // Unit Headers
-
-// Package Headers
+#include <protocols/jumping/DisulfPairingsList.fwd.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-
 #include <core/fragment/FragData.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
-
-// AUTO-REMOVED #include <protocols/jumping/DisulfPairingsList.hh>
-// AUTO-REMOVED #include <core/scoring/dssp/PairingsList.hh>
+#include <core/kinematics/RT.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 
 // Utility headers
+#include <utility/SingletonBase.hh>
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
-#include <core/kinematics/RT.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
+#include <utility/vector1.hh>
 
 //// C++ headers
 #include <cstdlib>
 #include <string>
 #include <map>
-// AUTO-REMOVED #include <vector>
-
-#include <protocols/jumping/DisulfPairingsList.fwd.hh>
-#include <utility/vector1.hh>
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
 
 namespace protocols {
 namespace jumping {
@@ -117,9 +98,9 @@ public:
 
 	void
 	create_jump_fragments(
-															 bool bWithTorsion,
-															 core::fragment::FragDataOPs& frags
-															 ) const;
+		bool bWithTorsion,
+		core::fragment::FragDataOPs& frags
+	) const;
 
 	core::Size
 	size() const {
@@ -132,7 +113,7 @@ public:
 		core::kinematics::MoveMap const & mm,
 		bool bWithTorsion,
 		core::fragment::FragSet & frags_accumulator
-	);
+	) const; // APL TESTING -- CAN THIS BE CONST?
 
 private:
   DisulfTemplateMap pairings_;
@@ -140,24 +121,16 @@ private:
   core::Size num_of_pairings_;
 };
 
-
-class StandardDisulfPairingLibrary : public DisulfPairingLibrary {
+/// @brief The %StandardDisulfPairingsLibrary initializes itself in its constructor
+/// from the sampling/disulfide_jump_database_wip.dat file in the database.  Users
+/// should not in any circumstance invoke any of its non-const methods that are defined
+/// in the subclass.  This class ought to be reworked to ensure that it is threadsafe.
+class StandardDisulfPairingLibrary :
+	public DisulfPairingLibrary,
+	public utility::SingletonBase< StandardDisulfPairingLibrary >
+{
 public:
-	static StandardDisulfPairingLibrary* get_instance();
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
+	friend class utility::SingletonBase< StandardDisulfPairingLibrary >;
 
 private:
 	StandardDisulfPairingLibrary() {};
@@ -167,11 +140,6 @@ private:
 	static StandardDisulfPairingLibrary * create_singleton_instance();
 private:
 	/// @brief static data member holding pointer to the singleton class itself
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< StandardDisulfPairingLibrary * > instance_;
-#else
-	static StandardDisulfPairingLibrary * instance_;
-#endif
 
 };
 

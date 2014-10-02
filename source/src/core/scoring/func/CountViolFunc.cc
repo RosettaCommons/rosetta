@@ -31,46 +31,48 @@ namespace core {
 namespace scoring {
 namespace func {
 
-	Real
-	CountViolFunc::func( Real const x ) const
-	{
-		return func_to_weight_->func( x ) * weight_;
-	}
+Real
+CountViolFunc::func( Real const x ) const
+{
+	return func_to_weight_->func( x ) * weight_;
+}
 
-	Real
-	CountViolFunc::dfunc( Real const x ) const
-	{
-		return func_to_weight_->dfunc( x ) * weight_;
-	}
+Real
+CountViolFunc::dfunc( Real const x ) const
+{
+	return func_to_weight_->dfunc( x ) * weight_;
+}
 
-	void
-	CountViolFunc::read_data( std::istream& in )
-	{
-		in >> count_viols_;
-		weight_ = 1.0;
-		FuncFactory func_factory;
-		std::string func_type;
-		in >> func_type;
-		func_to_weight_ = func_factory.func_types_[ func_type ]->clone();
-    func_to_weight_->read_data( in );
-	}
+void
+CountViolFunc::read_data( std::istream & in )
+{
+	in >> count_viols_;
+	weight_ = 1.0;
+	FuncFactory func_factory;
+	std::string func_type;
+	in >> func_type;
+	func_to_weight_ = func_factory.new_func( func_type );
+  func_to_weight_->read_data( in );
+}
 
    /// @brief show some sort of stringified representation of the violations for this constraint.
 core::Size CountViolFunc::show_violations(
-			std::ostream& out,
-			Real r,
-			Size verbose_level,
-			Real threshold
-) const {
+	std::ostream& out,
+	Real r,
+	Size verbose_level,
+	Real threshold
+) const
+{
 	Size ct ( func_to_weight_->show_violations( out, r, verbose_level, threshold ) );
 	//	if ( verbose_level == 100 ) {
-		count_viols_ += ct;
-		//	}
+	count_viols_ += ct;
+	//	}
 	return ct;
 }
 
 void
-CountViolFunc::show_definition( std::ostream &out ) const {
+CountViolFunc::show_definition( std::ostream &out ) const
+{
 	using namespace ObjexxFCL::format;
 	out << "COUNTVIOLFUNC" << RJ( 7, count_viols_ ) << " ";
 	func_to_weight_->show_definition( out );

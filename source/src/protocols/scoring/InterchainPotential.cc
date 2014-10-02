@@ -55,34 +55,23 @@ using basic::Warning;
 
 static thread_local basic::Tracer TC( "protocols.scoring.InterchainPotential" );
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using protocols::scoring::InterchainPotential;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< InterchainPotential > ::singleton_mutex_;
+template <> std::atomic< InterchainPotential * > utility::SingletonBase< InterchainPotential >::instance_( 0 );
+#else
+template <> InterchainPotential * utility::SingletonBase< InterchainPotential >::instance_( 0 );
+#endif
+
+}
+
 
 namespace protocols {
 namespace scoring {
-
-
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< InterchainPotential * > InterchainPotential::instance_( 0 );
-#else
-InterchainPotential * InterchainPotential::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex InterchainPotential::singleton_mutex_;
-
-std::mutex & InterchainPotential::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-InterchainPotential * InterchainPotential::get_instance()
-{
-	boost::function< InterchainPotential * () > creator = boost::bind( &InterchainPotential::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
 
 InterchainPotential *
 InterchainPotential::create_singleton_instance()
@@ -90,8 +79,7 @@ InterchainPotential::create_singleton_instance()
 	return new InterchainPotential;
 }
 
-InterchainPotential::InterchainPotential():
-	core::scoring::EnvPairPotential(),
+InterchainPotential::InterchainPotential() :
 	atom_vdw_( core::scoring::ScoringManager::get_instance()->get_AtomVDW( core::chemical::CENTROID ) ) // need to make the table choice configurable
 {
 
@@ -158,7 +146,7 @@ void
 InterchainPotential::finalize( core::pose::Pose & pose ) const
 {
 	using core::scoring::CenListInfo;
-	CenListInfo & cenlist( nonconst_cenlist_from_pose( pose ));
+	CenListInfo & cenlist( core::scoring::EnvPairPotential::nonconst_cenlist_from_pose( pose ));
 	cenlist.calculated() = false;
 
 	InterfaceInfo & interface( nonconst_interface_from_pose( pose ) );
@@ -175,7 +163,7 @@ InterchainPotential::evaluate_env_score(
 {
 	int env;
 	using core::Real;
-	Real const fcen10 ( cenlist_from_pose( pose ).fcen10(rsd.seqpos()) );
+	Real const fcen10( core::scoring::EnvPairPotential::cenlist_from_pose( pose ).fcen10(rsd.seqpos()) );
 
 	InterfaceInfo const & interface( interface_from_pose( pose ) );
 

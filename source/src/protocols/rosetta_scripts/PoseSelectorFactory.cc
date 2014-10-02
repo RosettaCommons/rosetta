@@ -29,34 +29,24 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using protocols::rosetta_scripts::PoseSelectorFactory;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< PoseSelectorFactory > ::singleton_mutex_;
+template <> std::atomic< PoseSelectorFactory * > utility::SingletonBase< PoseSelectorFactory >::instance_( 0 );
+#else
+template <> PoseSelectorFactory * utility::SingletonBase< PoseSelectorFactory >::instance_( 0 );
+#endif
+
+}
+
 namespace protocols {
 namespace rosetta_scripts {
 
 static thread_local basic::Tracer TR( "protocols.rosetta_scripts.PoseSelectorFactory" );
-
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< PoseSelectorFactory * > PoseSelectorFactory::instance_( 0 );
-#else
-PoseSelectorFactory * PoseSelectorFactory::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex PoseSelectorFactory::singleton_mutex_;
-
-std::mutex & PoseSelectorFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-PoseSelectorFactory * PoseSelectorFactory::get_instance()
-{
-	boost::function< PoseSelectorFactory * () > creator = boost::bind( &PoseSelectorFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
 
 PoseSelectorFactory *
 PoseSelectorFactory::create_singleton_instance()

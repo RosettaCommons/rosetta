@@ -37,16 +37,24 @@
 
 static thread_local basic::Tracer TR( "protocols.matdes.SymDofMoverSampler" );
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using protocols::matdes::SymDofMoverSampler;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< SymDofMoverSampler > ::singleton_mutex_;
+template <> std::atomic< SymDofMoverSampler * > utility::SingletonBase< SymDofMoverSampler >::instance_( 0 );
+#else
+template <> SymDofMoverSampler * utility::SingletonBase< SymDofMoverSampler >::instance_( 0 );
+#endif
+
+}
+
 namespace protocols {
 namespace matdes {
 
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< SymDofMoverSampler * > SymDofMoverSampler::instance_( 0 );
-#else
-SymDofMoverSampler * SymDofMoverSampler::instance_( 0 );
-#endif
-
-SymDofMoverSampler::SymDofMoverSampler():
+SymDofMoverSampler::SymDofMoverSampler() :
 	sym_dof_names_(),
 	angles_(),
 	radial_disps_(),
@@ -58,26 +66,7 @@ SymDofMoverSampler::SymDofMoverSampler():
 	radial_disp_steps_(),
 	current_angles_(),
 	current_radial_disps_()
-	{ }
-
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex SymDofMoverSampler::singleton_mutex_;
-
-std::mutex & SymDofMoverSampler::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-SymDofMoverSampler & SymDofMoverSampler::get_instance()
-{
-	boost::function< SymDofMoverSampler * () > creator = boost::bind( &SymDofMoverSampler::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return *instance_;
-}
+{}
 
 SymDofMoverSampler *
 SymDofMoverSampler::create_singleton_instance()

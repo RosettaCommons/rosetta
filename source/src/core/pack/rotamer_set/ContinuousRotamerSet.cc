@@ -100,7 +100,8 @@ void ContinuousRotamerSet::build_rotamers(
 		aa_for_rotblock_[ count_restype_ind ] = (*allowed_iter)->aa();
 		restype_for_rotblock_[ count_restype_ind ] = (*allowed_iter);
 		dunbrack::SingleResidueRotamerLibraryCOP rotlib =
-			dunbrack::RotamerLibrary::get_instance().get_rsd_library( **allowed_iter );
+			dunbrack::RotamerLibrary::get_instance()->get_rsd_library( **allowed_iter );
+
 		if ( rotlib ) {
 			// OK -- two options -- we're dealing with a Dunbrack library, in which case, we should
 			// store DunbrackRotamerSampleData, or, we're dealing with some other kind of library,

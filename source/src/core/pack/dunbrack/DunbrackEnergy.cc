@@ -107,7 +107,8 @@ DunbrackEnergy::residue_energy(
 
 	/* old		emap[ fa_dun ] = rot_lib_.rotamer_energy( rsd ); */
 	//Returns the equivalent L-amino acid library if a D-amino acid is provided
-	pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance().get_rsd_library( rsd.type() );
+	pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance()->get_rsd_library( rsd.type() );
+
 	if ( rotlib ) {
 		dunbrack::RotamerLibraryScratchSpace scratch;
 		emap[ fa_dun ] += rotlib->rotamer_energy( rsd, scratch );
@@ -147,7 +148,7 @@ DunbrackEnergy::eval_residue_dof_derivative(
 		//utility::vector1< Real > dE_dbb, dE_dchi;
 		//		std::cerr << __FILE__<< ' ' << __LINE__ << ' ' << tor_id.rsd() << std::endl;
 		pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib =
-			RotamerLibrary::get_instance().get_rsd_library( rsd.type() );
+			RotamerLibrary::get_instance()->get_rsd_library( rsd.type() );
 		if ( rsd.is_protein() && rotlib ) {
 			dunbrack::RotamerLibraryScratchSpace scratch;
 			rotlib->rotamer_energy_deriv( rsd, scratch );
@@ -195,7 +196,7 @@ DunbrackEnergy::eval_dof_derivative(
 		//utility::vector1< Real > dE_dbb, dE_dchi;
 		//		std::cerr << __FILE__<< ' ' << __LINE__ << ' ' << tor_id.rsd() << std::endl;
 		pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib =
-			RotamerLibrary::get_instance().get_rsd_library( pose.residue( tor_id.rsd() ).type() );
+			RotamerLibrary::get_instance()->get_rsd_library( pose.residue( tor_id.rsd() ).type() );
 
 		if ( pose.residue( tor_id.rsd() ).is_virtual_residue() ) return 0.0;
 

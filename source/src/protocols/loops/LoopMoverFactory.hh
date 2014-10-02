@@ -27,25 +27,23 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
+#include <utility/SingletonBase.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers
 #include <map>
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
-
 namespace protocols {
 namespace loops {
 
 /// Create LoopMover Reporters
-class LoopMoverFactory {
+class LoopMoverFactory : public utility::SingletonBase< LoopMoverFactory>
+{
+public:
+	friend class utility::SingletonBase< LoopMoverFactory >;
+
+private:
 
 	// Private constructor to make it singleton managed
 	LoopMoverFactory();
@@ -62,8 +60,6 @@ public:
 
 	// Warning this is not called because of the singleton pattern
 	virtual ~LoopMoverFactory();
-
-	static LoopMoverFactory * get_instance();
 
 	/// @brief Create a loop mover giving it a pointer to a loops object.
 	/// This loop mover will not be in charge of resolving loop indices.
@@ -97,28 +93,6 @@ private:
 	create_loop_mover(
 		std::string const & type_name
 	);
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
-private:
-	/// @brief static data member holding pointer to the singleton class itself
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< LoopMoverFactory * > instance_;
-#else
-	static LoopMoverFactory * instance_;
-#endif
 
 };
 

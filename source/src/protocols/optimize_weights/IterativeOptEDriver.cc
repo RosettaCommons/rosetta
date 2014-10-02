@@ -3869,7 +3869,7 @@ IterativeOptEDriver::get_nat_rot_opte_data(
 		if ( rot_wells.size()  == 0 ) continue;
 
 		SingleResidueRotamerLibraryCOP srlib(
-			core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( pose.residue_type( resi ) ) );
+			core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue_type( resi ) ) );
 
 		runtime_assert( dynamic_cast< SingleResidueDunbrackLibrary const * > ( srlib.get() ) );
 		SingleResidueDunbrackLibraryCOP srdlib( utility::pointer::static_pointer_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const > ( srlib ));

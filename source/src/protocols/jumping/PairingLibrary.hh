@@ -38,6 +38,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 // Utility headers
+#include <utility/SingletonBase.hh>
 #include <utility/pointer/ReferenceCount.hh>
 // AUTO-REMOVED #include <utility/vector1.hh>
 #include <core/kinematics/RT.hh>
@@ -51,14 +52,6 @@
 
 #include <core/scoring/dssp/PairingsList.fwd.hh>
 #include <utility/vector1.hh>
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <mutex>
-#include <atomic>
-#endif
-#endif
 
 namespace protocols {
 namespace jumping {
@@ -106,31 +99,40 @@ public:
 };
 
 class PairingLibrary : public BasePairingLibrary {
+public:
   typedef std::vector< PairingTemplate > PairingTemplateList;
   typedef std::map< std::pair< int, int >, PairingTemplateList > PairingTemplateMap;
+
 public:
-	PairingLibrary():num_of_pairings_(0) {};
-	void read_from_file( std::string const& fn);
-	void read_from_file_no_filters( std::string const& fn); /*Version which does not assume the jump is a beta sheet */
+	PairingLibrary() : num_of_pairings_(0) {}
+	void read_from_file( std::string const& fn );
+	void read_from_file_no_filters( std::string const& fn ); /*Version which does not assume the jump is a beta sheet */
 	//void read_from_database();
 
 	/// @brief classic rosetta++ accessor
-	core::kinematics::RT get_random_beta_sheet_jump(
+	core::kinematics::RT
+	get_random_beta_sheet_jump(
 		int const orientation,
 		int const pleating
 	) const;
+
 	/// @brief classic rosetta++ accessor
-	core::kinematics::RT get_random_tmh_jump(int const orientation,
-											 int const pos1,
-											 int const pos2
-											) const;
-	void
-	set_tmh_jump(core::pose::Pose pose,
-				int const jump_number,
-				int const orientation,
-				int const pos1,
-				int const pos2
+	core::kinematics::RT
+	get_random_tmh_jump(
+		int const orientation,
+		int const pos1,
+		int const pos2
 	) const;
+
+	void
+	set_tmh_jump(
+		core::pose::Pose pose,
+		int const jump_number,
+		int const orientation,
+		int const pos1,
+		int const pos2
+	) const;
+
 	/// @brief puts all jump-geometries that fit the orientation and pleating into
 	/// list of FragData's. Try to reuse these FragData for different Frames that have same orientation and pleating
 	/// This creates Fragments with single JumpSRFD --- PairingLibrary also stores phi/psi/omega of start and end residue
@@ -171,39 +173,20 @@ public:
 private:
 };
 
-class StandardPairingLibrary : public PairingLibrary {
+/// @brief This class is thread-unsafe, though, if perhaps none of its non-const
+/// functions were accessible, then it wouldn't be.
+class StandardPairingLibrary :
+		public PairingLibrary,
+		public utility::SingletonBase< StandardPairingLibrary > {
 public:
-	static StandardPairingLibrary* get_instance();
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
+	friend class utility::SingletonBase< StandardPairingLibrary >;
 
 private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
-private:
-	StandardPairingLibrary() {};
+	StandardPairingLibrary() {}
 
 	/// @brief private singleton creation function to be used with
 	/// utility::thread::threadsafe_singleton
 	static StandardPairingLibrary * create_singleton_instance();
-
-private:
-
-	/// @brief static data member holding pointer to the singleton class itself
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< StandardPairingLibrary * > instance_;
-#else
-	static StandardPairingLibrary * instance_;
-#endif
 
 };
 

@@ -43,6 +43,7 @@
 #include <core/scoring/ScoreType.hh>
 
 // Utility headers
+#include <utility/SingletonBase.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.fwd.hh>

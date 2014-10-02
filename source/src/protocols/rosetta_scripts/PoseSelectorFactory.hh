@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/rosetta_scripts/PoseSelectorFactory.hh
-/// @brief	
+/// @brief
 /// @author Luki Goldschmidt <lugo@uw.edu>
 
 #ifndef INCLUDED_protocols_moves_PoseSelectorFactory_hh
@@ -24,6 +24,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
+#include <utility/SingletonBase.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -33,15 +34,6 @@
 // c++ headers
 #include <map>
 #include <set>
-
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
 
 namespace protocols {
 namespace rosetta_scripts {
@@ -61,9 +53,11 @@ public:
 };
 
 
-class PoseSelectorFactory // Singleton: should not derive from ReferenceCount
+class PoseSelectorFactory : public utility::SingletonBase< PoseSelectorFactory >
 {
 public:
+	friend class utility::SingletonBase< PoseSelectorFactory >;
+
 	typedef std::map< std::string, PoseSelectorCreatorOP > PoseSelectorMap;
 	typedef utility::tag::Tag Tag;
 	typedef utility::tag::TagCOP TagCOP;
@@ -71,9 +65,6 @@ public:
 
 public:
 	virtual ~PoseSelectorFactory();
-
-	static
-	PoseSelectorFactory * get_instance();
 
 	void factory_register( PoseSelectorCreatorOP creator );
 
@@ -101,26 +92,7 @@ private:
 	/// utility::thread::threadsafe_singleton
 	static PoseSelectorFactory * create_singleton_instance();
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
 private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
-private:
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< PoseSelectorFactory * > instance_;
-#else
-	static PoseSelectorFactory * instance_;
-#endif
 
 	PoseSelectorMap poseselector_creator_map_;
 };

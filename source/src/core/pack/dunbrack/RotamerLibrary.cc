@@ -95,15 +95,24 @@ static thread_local basic::Tracer TR( "core.pack.dunbrack" );
 
 	 rotamer_data: probability, chi-mean, chi-sd
 */
+
+// Singleton instance and mutex static data members
+namespace utility {
+
+using core::pack::dunbrack::RotamerLibrary;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< RotamerLibrary > ::singleton_mutex_;
+template <> std::atomic< RotamerLibrary * > utility::SingletonBase< RotamerLibrary >::instance_( 0 );
+#else
+template <> RotamerLibrary * utility::SingletonBase< RotamerLibrary >::instance_( 0 );
+#endif
+
+}
+
 namespace core {
 namespace pack {
 namespace dunbrack {
-
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< RotamerLibrary * > RotamerLibrary::instance_( 0 );
-#else
-RotamerLibrary * RotamerLibrary::instance_( 0 );
-#endif
 
 /// @brief helper that'll determine the rotamer bins for a residue by asking its associated
 /// rotamer library for that information.
@@ -115,7 +124,7 @@ rotamer_from_chi(
 {
 	assert( rsd.aa() <= chemical::num_canonical_aas );
 
-	SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance().get_rsd_library( rsd.type() );
+	SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance()->get_rsd_library( rsd.type() );
 	if ( rotlib ) {
 		SingleResidueDunbrackLibraryCOP dunlib( utility::pointer::static_pointer_cast< SingleResidueDunbrackLibrary const > ( rotlib ) );
 		dunlib->get_rotamer_from_chi( rsd.chi(), rot );
@@ -131,7 +140,7 @@ rotamer_from_chi(
 	RotVector & rot
 )
 {
-	SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance().get_rsd_library( rsd_type );
+	SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance()->get_rsd_library( rsd_type );
 	if ( rotlib ) {
 		SingleResidueDunbrackLibraryCOP dunlib( utility::pointer::static_pointer_cast< SingleResidueDunbrackLibrary const > ( rotlib ) );
 		dunlib->get_rotamer_from_chi( chi, rot );
@@ -325,24 +334,6 @@ rotamer_from_chi_02(
 //
 // removed pser and rna
 //
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex RotamerLibrary::singleton_mutex_;
-
-std::mutex & RotamerLibrary::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-RotamerLibrary & RotamerLibrary::get_instance()
-{
-	boost::function< RotamerLibrary * () > creator = boost::bind( &RotamerLibrary::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return *instance_;
-}
 
 RotamerLibrary *
 RotamerLibrary::create_singleton_instance()

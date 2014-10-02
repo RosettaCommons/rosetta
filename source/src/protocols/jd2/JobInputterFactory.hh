@@ -21,21 +21,13 @@
 #include <protocols/jd2/JobInputter.fwd.hh>
 
 // Utility Headers
+#include <utility/SingletonBase.hh>
+#include <utility/vector1.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // c++ headers
 #include <map>
-
-#include <utility/vector1.hh>
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
 
 namespace protocols {
 namespace jd2 {
@@ -54,36 +46,19 @@ public:
 	JobInputterRegistrator() : parent() {}
 };
 
-
-class JobInputterFactory
+class JobInputterFactory : public utility::SingletonBase< JobInputterFactory >
 {
 public:
 	typedef std::map< std::string, JobInputterCreatorOP > JobInputterMap;
+	friend class utility::SingletonBase< JobInputterFactory >;
 
 public:
 	virtual ~JobInputterFactory();
-
-	static
-	JobInputterFactory * get_instance();
 
 	void factory_register( JobInputterCreatorOP creator );
 
 	///@brief return JobInputter defined by input parameters (contained in option system and #defines for MPI, etc)
 	JobInputterOP get_new_JobInputter();
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
 
 private:
 	JobInputterOP get_JobInputter_from_string( std::string const & job_inputter_type );
@@ -95,16 +70,11 @@ private:
 	JobInputterFactory const & operator = ( JobInputterFactory const & );
 
 	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
+	/// utility::thread::threadsafe_singleton; used by the base class
+	/// utility::SingletonBase
 	static JobInputterFactory * create_singleton_instance();
 
 private:
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< JobInputterFactory * > instance_;
-#else
-	static JobInputterFactory * instance_;
-#endif
-
 
 	JobInputterMap job_inputter_creator_map_;
 

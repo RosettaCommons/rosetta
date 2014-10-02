@@ -125,13 +125,13 @@ GeomSampleInfo::read_data( std::istringstream & line_stream )
 
 	std::string buffer("");
 
-	while( true ){
+	while ( true ) {
 		line_stream >> buffer;
 		if ( line_stream.fail() ) break;
 		fields.push_back( buffer );
 	}
 
-	if( fields.size() < 4 ){
+	if ( fields.size() < 4 ) {
 
 		tr << "Not enough fields detected for constraint " << tag_ << "." << std::endl;
 		return false;
@@ -143,12 +143,12 @@ GeomSampleInfo::read_data( std::istringstream & line_stream )
 	force_const_ = (core::Real ) atof( fields[3].c_str() );
 	periodicity_ = (core::Real ) atof( fields[4].c_str() );
 
-	if( (tag_ != "distanceAB:") && ((periodicity_ < 1.0) || (periodicity_ > 360.0)) ){  //safeguard against stupid input
+	if ( (tag_ != "distanceAB:") && ((periodicity_ < 1.0) || (periodicity_ > 360.0)) ) {  //safeguard against stupid input
 		std::cerr << "Error: illegal periodicity value of " << periodicity_ << " requested for degree of freedom " << tag_ << "." << std::endl;
  		utility_exit_with_message("Illegal periodicity value given. Value must be between 1.0 and 360.0 degrees.");
 	}
 
-	if( fields.size() > 4 ){
+	if ( fields.size() > 4 ) {
 
 		//we have to test if fields[5] is an integer
 		std::istringstream f5;
@@ -156,21 +156,21 @@ GeomSampleInfo::read_data( std::istringstream & line_stream )
 		f5.str( fields[5] );
 
 		f5 >> num_steps_;
-		if( f5.bad() ) num_steps_ = 0;
+		if ( f5.bad() ) num_steps_ = 0;
 
 		//num_steps_ = (core::Size ) atoi( fields[5].c_str() );
 		//tr << "for tag " << tag_ << "fields[5] is |" << fields[5] << "| and num_steps is " << num_steps_ << std::endl;
 	}
 
-	if( fields[ fields.size() ] == "PERIODIC" ) function_tag_ = "PERIODIC";
+	if ( fields[ fields.size() ] == "PERIODIC" ) function_tag_ = "PERIODIC";
 
-	if( num_steps_ != 0 ) step_size_ = tolerance_ / num_steps_;
+	if ( num_steps_ != 0 ) step_size_ = tolerance_ / num_steps_;
 
 	tr.Debug  << "data read for GeomSampleInfo with tag " << tag_ << ": ideal_value(" << ideal_val_ << "), tolerance(" << tolerance_ << "), force_k(" << force_const_ << "), periodicity(" << periodicity_ << "), num_steps(" << num_steps_ << "), step size(" << step_size_ << "), function_tag(" << function_tag_ << ")." << std::endl;
 
 
 	//some safeguards against retared user input
-	if( (tolerance_ == 0.0 ) && (num_steps_ != 0 ) ){
+	if ( (tolerance_ == 0.0 ) && (num_steps_ != 0 ) ) {
 
 		num_steps_ = 0;
 
@@ -203,13 +203,13 @@ GeomSampleInfo::create_sample_vector() const
 	//through user input of unforeseen weirdness
 	std::set< core::Real > seen_values;
 
-	for( int i =  (int) -( num_ideal_val/2) ; i <= (int) ( num_ideal_val/2); ++i ){
+	for ( int i =  (int) -( num_ideal_val/2) ; i <= (int) ( num_ideal_val/2); ++i ) {
 
 		core::Real val = ideal_val_ + ( i * periodicity_ );
 
-		if( !distance) val = basic::unsigned_periodic_range( val, 360.0 );
+		if ( !distance) val = basic::unsigned_periodic_range( val, 360.0 );
 
-		if( seen_values.find( val ) == seen_values.end() ){
+		if ( seen_values.find( val ) == seen_values.end() ) {
 			ideal_values.push_back( val );
 			seen_values.insert( val );
 		}
@@ -227,18 +227,18 @@ GeomSampleInfo::create_sample_vector() const
 
 	tr.Debug << "ideal values for gsi with tag " << tag_ << ", ideal_val " << ideal_val_ << ", and periodicity " << periodicity_ << "are :";
 
-	for( std::list< core::Real >::const_iterator val_it = ideal_values.begin();
-			 val_it != ideal_values.end(); ++val_it ){
+	for ( std::list< core::Real >::const_iterator val_it = ideal_values.begin();
+			 val_it != ideal_values.end(); ++val_it ) {
 
 		tr.Debug << *val_it << ", ";
 
-		for( int i = (int) -num_steps_; i <= (int) num_steps_; ++i ){
+		for ( int i = (int) -num_steps_; i <= (int) num_steps_; ++i ) {
 
 			core::Real val =  *val_it + ( i * step_size_ );
 
-			if( !distance) val = basic::unsigned_periodic_range( val, 360.0 );
+			if ( !distance) val = basic::unsigned_periodic_range( val, 360.0 );
 
-			if( seen_values.find( val ) == seen_values.end() ){
+			if ( seen_values.find( val ) == seen_values.end() ) {
 				samples.push_back( val );
 				seen_values.insert( val );
 			}
@@ -247,7 +247,7 @@ GeomSampleInfo::create_sample_vector() const
 
 	tr.Debug << std::endl << " the generated samples are: ";
 
-	for( core::Size i = 1; i <= samples.size(); ++i ){
+	for ( core::Size i = 1; i <= samples.size(); ++i ) {
 		tr.Debug << samples[i] << ", ";
 	}
 	tr.Debug << std::endl;
@@ -281,8 +281,8 @@ MatchConstraintFileInfo::allowed_restypes( core::Size which_cstres ) const
 
 	EnzCstTemplateResCOP template_res = this->enz_cst_template_res( which_cstres );
 
-	for( EnzCstTemplateRes::RestypeToTemplateAtomsMap::const_iterator restype_it = template_res->atom_inds_for_restype_begin(), restype_end = template_res->atom_inds_for_restype_end();
-			 restype_it != restype_end; ++restype_it ){
+	for ( EnzCstTemplateRes::RestypeToTemplateAtomsMap::const_iterator restype_it = template_res->atom_inds_for_restype_begin(), restype_end = template_res->atom_inds_for_restype_end();
+			 restype_it != restype_end; ++restype_it ) {
 
 		to_return.push_back( restype_it->first );
 	}
@@ -299,7 +299,7 @@ MatchConstraintFileInfo::template_atom_inds(
 
 	std::map< core::Size, EnzCstTemplateResOP >::const_iterator map_it =  enz_template_res_.find( which_cstres );
 
-	if ( map_it == enz_template_res_.end() ){
+	if ( map_it == enz_template_res_.end() ) {
 		utility_exit_with_message( "template res with code blabla not found in MatchConstraintFileInfo ");
 	}
 
@@ -313,7 +313,7 @@ MatchConstraintFileInfo::enz_cst_template_res( core::Size template_res ) const
 
 	std::map< core::Size, EnzCstTemplateResOP >::const_iterator map_it =  enz_template_res_.find( template_res );
 
-	if ( map_it == enz_template_res_.end() ){
+	if ( map_it == enz_template_res_.end() ) {
 		utility_exit_with_message( "template res with code blabla not found in MatchConstraintFileInfo ");
 	}
 
@@ -338,32 +338,32 @@ MatchConstraintFileInfo::read_data( utility::io::izstream & data )
 
 	//std::cerr << "calling read data for mcfi " << std::endl;
 
-	while( !data.eof() ){
+	while ( !data.eof() ) {
 
 		key = ""; tag = "";
 		getline(data,line);
 
 		utility::vector1< std::string > comment_split = utility::string_split( line, '#' );
-		if( comment_split[1] == "" ) continue;
+		if ( comment_split[1] == "" ) continue;
 		line_stream.clear();
 		line_stream.str( comment_split[1] );
 		line_stream >> key;
 
 		//std::cerr << "reading shit, line is " << line << ", key is " << key;
 		//Kui Native 110809
-		if ( key == "NATIVE"){
+		if ( key == "NATIVE") {
 			native_ = true;
 		}
 		else if ( key == "TEMPLATE::" ) {
 			line_stream >> tag;
 			//tr.Info << "tag is: " << tag << " ";
-			if( tag == "ATOM_MAP:") {
+			if ( tag == "ATOM_MAP:") {
 
 				line_stream >> map_id;
 
 				std::map< core::Size, EnzCstTemplateResOP >::iterator map_it = enz_template_res_.find( map_id );
 
-				if( map_it == enz_template_res_.end() ){
+				if ( map_it == enz_template_res_.end() ) {
 
 					std::pair< core::Size, EnzCstTemplateResOP > to_insert( map_id, EnzCstTemplateResOP( new EnzCstTemplateRes( restype_set_ ) ) );
 
@@ -385,14 +385,14 @@ MatchConstraintFileInfo::read_data( utility::io::izstream & data )
 
 			GeomSampleInfoOP gs_info( new GeomSampleInfo( tag ) );
 
-			if( !gs_info->read_data( line_stream ) ) return false;
+			if ( !gs_info->read_data( line_stream ) ) return false;
 
-			if (tag == "distanceAB:"){
+			if (tag == "distanceAB:") {
 
 				dis_U1D1_ = gs_info;
 
 				//old convention to declare covalency in file
-				if( dis_U1D1_->periodicity() == 1.0 ) is_covalent_ = true;
+				if ( dis_U1D1_->periodicity() == 1.0 ) is_covalent_ = true;
 				else is_covalent_ = false;
 			}
 
@@ -418,13 +418,13 @@ MatchConstraintFileInfo::read_data( utility::io::izstream & data )
 
 			line_stream >> tag;
 
-			if( !this->process_algorithm_info( tag, data ) ) return false;
+			if ( !this->process_algorithm_info( tag, data ) ) return false;
 
 		}
 
 		else if ( key == "CST::END") return true;
 
-		else if ( key != "" ){
+		else if ( key != "" ) {
 			std::cerr << "The following line in the cst file with key " << key << " was not recognized and will be ignored: " << std::endl << line << std::endl;
 		}
 
@@ -443,27 +443,27 @@ MatchConstraintFileInfo::process_data()
 
 	core::chemical::ResidueTypeSetCOP restype_set( restype_set_ );
 
-	for( std::map< core::Size, EnzCstTemplateResOP >::iterator map_it = enz_template_res_.begin();
+	for ( std::map< core::Size, EnzCstTemplateResOP >::iterator map_it = enz_template_res_.begin();
 			 map_it != enz_template_res_.end(); ++map_it ) {
 
 		utility::vector1< std::string > const & res_name3s =
 			map_it->second->allowed_res_types();
 		utility::vector1< core::chemical::ResidueTypeCOP > restypes_this_res;
-		for( core::Size j = 1; j <= res_name3s.size(); ++j ) {
+		for ( core::Size j = 1; j <= res_name3s.size(); ++j ) {
 			utility::vector1< core::chemical::ResidueTypeCOP > all_restypes_this_name3 =
 				restype_set->name3_map( res_name3s[j] );
 			add_relevant_restypes_to_subset( restypes_this_res, all_restypes_this_name3, restype_set_ );
 		}
 
-		for( utility::vector1< core::chemical::ResidueTypeCOP >::iterator
+		for ( utility::vector1< core::chemical::ResidueTypeCOP >::iterator
 				set_it  = restypes_this_res.begin();
-				set_it != restypes_this_res.end(); ++set_it ){
+				set_it != restypes_this_res.end(); ++set_it ) {
 			if ( map_it->second->compatible_restype( *set_it ) ) {
 				map_it->second->determine_atom_inds_for_restype( *set_it );
 			}
 		}
 
-		if( map_it->second->atom_inds_for_restype_begin() == map_it->second->atom_inds_for_restype_end() ) {
+		if ( map_it->second->atom_inds_for_restype_begin() == map_it->second->atom_inds_for_restype_end() ) {
 			tr.Warning << "WARNING: No appropriate atoms found for entry " << map_it->first << " in constraint " << index_ << std::endl;
 		}
 	} //loop over all Enz_cst_template-res
@@ -483,7 +483,7 @@ MatchConstraintFileInfo::inverse_rotamers_against_residue(
 	//the exgs created based on the cst file info might be wrong if we have to create inverse rotamers
 	//of a residue that is the upstream residue in the cstfile
 	bool flip_exgs_upstream_downstream_samples( false );
-	if( invrot_template == this->upstream_res() ) flip_exgs_upstream_downstream_samples = true;
+	if ( invrot_template == this->upstream_res() ) flip_exgs_upstream_downstream_samples = true;
 
 	std::list< core::conformation::ResidueCOP > to_return;
 	core::Size rotcount_buffer(0);
@@ -493,28 +493,28 @@ MatchConstraintFileInfo::inverse_rotamers_against_residue(
 
 	//if we're dealing with backbone interaction, only build glycine rotamers
 	bool backbone_interaction(false);
-	if( this->is_backbone( invrot_template ) ){
+	if ( this->is_backbone( invrot_template ) ) {
 		core::chemical::ResidueTypeSetCOP restype_set( restype_set_ );
 		backbone_interaction = true;
 		invrot_restypes.clear();
 		invrot_restypes.push_back( restype_set->name_map("ALA").get_self_ptr() );
 		tr << "Only Ala inverse rotamers will be built because it is a backbone interaction." << std::endl;
 	}
-	for( core::Size ii =1; ii <= invrot_restypes.size(); ++ii ){
+	for ( core::Size ii =1; ii <= invrot_restypes.size(); ++ii ) {
 
 		//2 get the relevant atoms through wich the orientation of the two residues
 		//is defined in the constraint file
 		utility::vector1< utility::vector1< core::Size > > target_template_atom_inds(3), invrot_template_atom_inds(3);
-		for( core::Size atct = 1; atct <= 3; ++atct ){
+		for ( core::Size atct = 1; atct <= 3; ++atct ) {
 			target_template_atom_inds[atct] = this->template_atom_inds( target_template, atct, target_conf->type() );
 			invrot_template_atom_inds[atct] = this->template_atom_inds( invrot_template, atct, *(invrot_restypes[ii]) );
 		}
 
 		//3. loop over all possible combinations of atoms in the present residue and the inverse rotamer
-		for( core::Size jj = 1; jj <= target_template_atom_inds[1].size(); ++jj ){
+		for ( core::Size jj = 1; jj <= target_template_atom_inds[1].size(); ++jj ) {
 			utility::vector1< core::Size > targ_ats(3);
 			targ_ats[1] = target_template_atom_inds[1][jj]; targ_ats[2] = target_template_atom_inds[2][jj]; targ_ats[3] = target_template_atom_inds[3][jj];
-			for( core::Size kk = 1; kk <= invrot_template_atom_inds[1].size(); ++kk ){
+			for ( core::Size kk = 1; kk <= invrot_template_atom_inds[1].size(); ++kk ) {
 
 				utility::vector1< core::Size > invrot_ats(3);
 				invrot_ats[1] = invrot_template_atom_inds[1][kk]; invrot_ats[2] = invrot_template_atom_inds[2][kk]; invrot_ats[3] = invrot_template_atom_inds[3][kk];
@@ -548,14 +548,14 @@ MatchConstraintFileInfo::inverse_rotamers_against_residue(
 	utility::vector1< core::conformation::ResidueCOP > rotamers( core::pack::rotamer_set::bb_independent_rotamers( invrot_restype, true ) ); //This is getting the residue specific inverse rotamers
 
 //	bool no_theozyme_inverse_rotamers( basic::options::option[ basic::options::OptionKeys::enzdes::no_theozyme_inverse_rotamers ]() );
-//	if( no_theozyme_inverse_rotamers ) get rid of rotamers ;
+//	if ( no_theozyme_inverse_rotamers ) get rid of rotamers ;
 
 	runtime_assert( rotamers.size() > 0 );
 	tr << rotamers.size() << " bbindependent rotamers for Residue " << rotamers[1]->type().name() << "." << std::endl;
 
 	//note: if we have a backbone interaction, this means we need to diversify
 	//the phi value of the rotamer
-	if( backbone_interaction ){
+	if ( backbone_interaction ) {
 		runtime_assert( (rotamers.size() == 1) && (rotamers[1]->name3() == "ALA") );
 		this->diversify_backbone_only_rotamers( rotamers );
 	}
@@ -563,7 +563,7 @@ MatchConstraintFileInfo::inverse_rotamers_against_residue(
 	rotamers[1]->select_orient_atoms( inv_oat1, inv_oat2, inv_oat3 );
 
 	utility::vector1< LigandConformer > invrot_conformers;
-	for( core::Size rotcount(1); rotcount <= rotamers.size(); ++rotcount ){
+	for ( core::Size rotcount(1); rotcount <= rotamers.size(); ++rotcount ) {
 		invrot_conformers.push_back( LigandConformer() );
 		invrot_conformers[ rotcount ].initialize_from_residue( invrot_ats[1], invrot_ats[2], invrot_ats[3], inv_oat1, inv_oat2, inv_oat3, *(rotamers[rotcount]));
 	}
@@ -575,7 +575,7 @@ MatchConstraintFileInfo::inverse_rotamers_against_residue(
 	exgs.set_dis_D1D2(   invrot_conformers[1].atom1_atom2_distance() );
 	exgs.set_dis_D2D3(   invrot_conformers[1].atom2_atom3_distance() );
 	exgs.set_ang_D1D2D3( invrot_conformers[1].atom1_atom2_atom3_angle() );
-	if( flip_exgs_upstream_downstream_samples ) exgs.flip_upstream_downstream_samples();
+	if ( flip_exgs_upstream_downstream_samples ) exgs.flip_upstream_downstream_samples();
 	exgs.precompute_transforms();
 
 	HTReal ht_start( target_conf.xyz(target_ats[3]), target_conf.xyz(target_ats[2]), target_conf.xyz(target_ats[1]) );
@@ -594,9 +594,9 @@ MatchConstraintFileInfo::inverse_rotamers_against_residue(
 						for ( Size nn = 1; nn <= exgs.n_tor_U1D3_samples(); ++nn ) {
 							HTReal ht_nn = ht_mm * exgs.transform( HT_tor_U1D3, nn );
 
-							for( core::Size rotcount(1); rotcount <= rotamers.size(); ++rotcount ){
+							for ( core::Size rotcount(1); rotcount <= rotamers.size(); ++rotcount ) {
 								core::conformation::ResidueOP rot( new core::conformation::Residue( *(rotamers[rotcount]) ) );
-								for( core::Size atm = 1; atm <= rot->natoms(); ++atm ){
+								for ( core::Size atm = 1; atm <= rot->natoms(); ++atm ) {
 									rot->set_xyz( atm, invrot_conformers[rotcount].coordinate_in_D3_frame( atm, ht_nn ) );
 								}
 								to_return.push_back( rot );
@@ -640,47 +640,39 @@ bool
 MatchConstraintFileInfo::process_algorithm_info(
 	std::string tag,
 	utility::io::izstream & data
-){
+) {
 
 	// according to apl's request, only allow prespecified tags
 	// if you want to read in data for additional tags, you have
 	// to specify those here
-	if( ( tag != "match") && ( tag != "match_positions" ) && ( tag != "test") && ( tag != "invrot_tree" ) ){
+	if ( ( tag != "match") && ( tag != "match_positions" ) && ( tag != "test") && ( tag != "invrot_tree" ) ) {
 		utility_exit_with_message("Tag "+tag+" not a legal option for ALGORITHM_INFO block.");
 	}
 
-	if( algorithm_inputs_.find( tag ) != algorithm_inputs_.end() ){
+	if ( algorithm_inputs_.find( tag ) != algorithm_inputs_.end() ) {
 		tr << "Error: tag " << tag << " was found twice in the same cstfile block." << std::endl;
 		return false;
 	}
 
 	utility::vector1< std::string > alg_strings;
 
-	while( !data.eof() ){
+	while ( !data.eof() ) {
 
 		std::string line("");
-
 		getline(data,line);
 
-		//if ( line == "ALGORITHM_INFO::END"){
-		if( utility::trimmed_compare( line, "ALGORITHM_INFO::END") ){
-
-			if( alg_strings.size() != 0 ){
-
+		//if ( line == "ALGORITHM_INFO::END") {
+		if ( utility::trimmed_compare( line, "ALGORITHM_INFO::END") ) {
+			if ( alg_strings.size() != 0 ) {
 				algorithm_inputs_.insert( std::pair< std::string, utility::vector1< std::string > >( tag, alg_strings ) );
-
 			}
-
 			else tr << "WARNING: ALGORITHM_INFO block for " << tag << " seemed to contain no information." << std::endl;
-
 			return true;
 		}
-
 		utility::vector1< std::string > comment_split = utility::string_split( line, '#' );
+		if ( comment_split[1] != "" ) alg_strings.push_back( comment_split[1] );
 
-		if( comment_split[1] != "" ) alg_strings.push_back( comment_split[1] );
-
-	} //while( !data.eof() ){
+	} //while ( !data.eof() ) {
 
 	tr << "Error, when reading algorithm info block with tag " << tag << ", no ALGORITHM_INFO::END line was found." << std::endl;
 
@@ -699,29 +691,29 @@ MatchConstraintFileInfo::create_exgs() const
 
 	utility::vector1< std::string > tags_undefined_gsi;
 
-	if( dis_U1D1_ ) exgs->set_dis_U1D1_samples( dis_U1D1_->create_sample_vector() );
+	if ( dis_U1D1_ ) exgs->set_dis_U1D1_samples( dis_U1D1_->create_sample_vector() );
 	else tags_undefined_gsi.push_back( "distanceAB:" );
 
-	if( ang_U1D2_ ) exgs->set_ang_U1D2_samples( ang_U1D2_->create_sample_vector() );
+	if ( ang_U1D2_ ) exgs->set_ang_U1D2_samples( ang_U1D2_->create_sample_vector() );
 	else tags_undefined_gsi.push_back( "angle_A:" );
 
-	if( ang_U2D1_ ) exgs->set_ang_U2D1_samples( ang_U2D1_->create_sample_vector() );
+	if ( ang_U2D1_ ) exgs->set_ang_U2D1_samples( ang_U2D1_->create_sample_vector() );
 	else tags_undefined_gsi.push_back( "angle_B:" );
 
-	if( tor_U1D3_ ) exgs->set_tor_U1D3_samples( tor_U1D3_->create_sample_vector() );
+	if ( tor_U1D3_ ) exgs->set_tor_U1D3_samples( tor_U1D3_->create_sample_vector() );
 	else tags_undefined_gsi.push_back( "torsion_A:" );
 
-	if( tor_U2D2_ ) exgs->set_tor_U2D2_samples( tor_U2D2_->create_sample_vector() );
+	if ( tor_U2D2_ ) exgs->set_tor_U2D2_samples( tor_U2D2_->create_sample_vector() );
 	else tags_undefined_gsi.push_back( "torsion_AB:" );
 
-	if( tor_U3D1_ ) exgs->set_tor_U3D1_samples( tor_U3D1_->create_sample_vector() );
+	if ( tor_U3D1_ ) exgs->set_tor_U3D1_samples( tor_U3D1_->create_sample_vector() );
 	else tags_undefined_gsi.push_back( "torsion_B:" );
 
-	if( tags_undefined_gsi.size() != 0 ){
+	if ( tags_undefined_gsi.size() != 0 ) {
 
 		tr << "WARNING: could not create external geom sampler from file input because not all 6 necessary degrees of freedom are specified.\n The following DOFs are missing specifications: ";
 
-		for( core::Size i = 1; i <= tags_undefined_gsi.size(); ++i ){
+		for ( core::Size i = 1; i <= tags_undefined_gsi.size(); ++i ) {
 			tr << tags_undefined_gsi[i] << ", ";
 		}
 		tr << "." << std::endl;
@@ -759,7 +751,7 @@ MatchConstraintFileInfoList::read_data( utility::io::izstream & data )
 
 	MatchConstraintFileInfoOP mcfi( new MatchConstraintFileInfo( new_index, restype_set_ ) );
 
-	if( mcfi->read_data( data ) ){
+	if ( mcfi->read_data( data ) ) {
 
 		mcfi->process_data();
 
@@ -779,7 +771,7 @@ MatchConstraintFileInfoList::mcfis_for_upstream_restype( core::chemical::Residue
 
 	std::map< core::chemical::ResidueTypeCOP, utility::vector1< MatchConstraintFileInfoCOP > >::const_iterator mcfi_it = mcfis_for_restype_.find( restype );
 
-	if( mcfi_it == mcfis_for_restype_.end() ){
+	if ( mcfi_it == mcfis_for_restype_.end() ) {
 		utility_exit_with_message( " could not find mcfi list for given restype" );
 	}
 
@@ -793,13 +785,13 @@ MatchConstraintFileInfoList::inverse_rotamers_against_residue(
 	core::conformation::ResidueCOP target_conf ) const
 {
 	std::list< core::conformation::ResidueCOP > to_return;
-	for( core::Size i = 1; i <= mcfis_.size(); ++i ){
-		if( mcfis_[i]->num_enz_cst_template_res() != 2 ){
+	for ( core::Size i = 1; i <= mcfis_.size(); ++i ) {
+		if ( mcfis_[i]->num_enz_cst_template_res() != 2 ) {
 			tr << "Can't create inverse rotamers for mcfi " << i << " because it has more or less than 2 template res." << std::endl;
 			continue;
 		}
 		//core::Size const invrot_template( target_template == 1 ? 2 : 1 );
-		if( std::find( mcfis_[i]->allowed_res_name3s( target_template ).begin(), mcfis_[i]->allowed_res_name3s( target_template ).end(), target_conf->name3() ) == mcfis_[i]->allowed_res_name3s( target_template ).end() ){
+		if ( std::find( mcfis_[i]->allowed_res_name3s( target_template ).begin(), mcfis_[i]->allowed_res_name3s( target_template ).end(), target_conf->name3() ) == mcfis_[i]->allowed_res_name3s( target_template ).end() ) {
 			tr << "Can't create inverse rotamers for mcfi " << i << " because it doesn't contain target template for residue " << target_conf->name3() << "." << std::endl;
 			continue;
 		}
@@ -821,10 +813,10 @@ MatchConstraintFileInfoList::determine_upstream_restypes()
 	utility::vector1< std::string > gly_vec;
 	gly_vec.push_back("GLY");
 
-	std::set< core::chemical::ResidueTypeCOP > restype_temp_set;
+	utility::vector1< core::chemical::ResidueTypeCOP > restype_temp_set;
 	core::chemical::ResidueTypeSetCOP restype_set( restype_set_ );
 
-	for( core::Size i =1 ; i <= mcfis_.size(); ++i){
+	for ( core::Size i =1 ; i <= mcfis_.size(); ++i) {
 
 		bool is_backbone( mcfis_[i]->is_backbone( mcfis_[i]->upstream_res() ) );
 
@@ -832,7 +824,7 @@ MatchConstraintFileInfoList::determine_upstream_restypes()
 		//for this mcfi
 		utility::vector1< std::string > const & res_name3s( is_backbone ? gly_vec : mcfis_[i]->allowed_res_name3s( mcfis_[i]->upstream_res() ) );
 		utility::vector1< core::chemical::ResidueTypeCOP > restypes_this_mcfi;
-		for( core::Size j = 1; j <= res_name3s.size(); ++j ) {
+		for ( core::Size j = 1; j <= res_name3s.size(); ++j ) {
 			utility::vector1< core::chemical::ResidueTypeCOP > all_restypes_this_name3 =
 				restype_set->name3_map( res_name3s[j] );
 			add_relevant_restypes_to_subset( restypes_this_mcfi, all_restypes_this_name3, restype_set_ );
@@ -840,12 +832,12 @@ MatchConstraintFileInfoList::determine_upstream_restypes()
 
 		//add the restypes_this_mcfi to the total set of upstream residue
 		//(if they haven't already been added)
-		for( utility::vector1< core::chemical::ResidueTypeCOP >::iterator set_it = restypes_this_mcfi.begin();
-				 set_it != restypes_this_mcfi.end(); ++set_it ){
+		for ( utility::vector1< core::chemical::ResidueTypeCOP >::iterator set_it = restypes_this_mcfi.begin();
+				 set_it != restypes_this_mcfi.end(); ++set_it ) {
 			//build the restype_to_mcfi mapping
 			std::map< core::chemical::ResidueTypeCOP, utility::vector1< MatchConstraintFileInfoCOP > >::iterator
 				res_mcfi_it = mcfis_for_restype_.find( *set_it );
-			if( res_mcfi_it == mcfis_for_restype_.end() ){
+			if ( res_mcfi_it == mcfis_for_restype_.end() ) {
 				std::pair<core::chemical::ResidueTypeCOP, utility::vector1< MatchConstraintFileInfoCOP > >
 					to_insert ( *set_it, utility::vector1< MatchConstraintFileInfoCOP >() );
 				mcfis_for_restype_.insert( to_insert );
@@ -855,8 +847,8 @@ MatchConstraintFileInfoList::determine_upstream_restypes()
 			res_mcfi_it->second.push_back( mcfis_[i] );
 			//restype_to_mcfi mapping updated
 
-			if( restype_temp_set.find( *set_it ) == restype_temp_set.end() ){
-				restype_temp_set.insert( *set_it );
+			if ( std::find( restype_temp_set.begin(), restype_temp_set.end(), *set_it ) == restype_temp_set.end() ) {
+				restype_temp_set.push_back( *set_it );
 			}
 
 		} //loop over restypes this mcfi
@@ -865,11 +857,10 @@ MatchConstraintFileInfoList::determine_upstream_restypes()
 
 
 	//finally put all the restypes into the storage vector
-	for( std::set< core::chemical::ResidueTypeCOP >::iterator set_it = restype_temp_set.begin();
-			 set_it != restype_temp_set.end(); ++set_it ){
-
+	for ( utility::vector1< core::chemical::ResidueTypeCOP >::iterator
+			set_it = restype_temp_set.begin();
+			set_it != restype_temp_set.end(); ++set_it ) {
 		upstream_restypes_.push_back( *set_it );
-
 	}
 }
 

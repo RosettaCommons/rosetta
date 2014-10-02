@@ -62,10 +62,23 @@ static thread_local basic::Tracer TR_RDRD( "core.pack.interaction_graph.RotamerD
 
 using namespace ObjexxFCL::format;
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using core::pack::interaction_graph::RotamerDotsRadiusData;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< RotamerDotsRadiusData > ::singleton_mutex_;
+template <> std::atomic< RotamerDotsRadiusData * > utility::SingletonBase< RotamerDotsRadiusData >::instance_( 0 );
+#else
+template <> RotamerDotsRadiusData * utility::SingletonBase< RotamerDotsRadiusData >::instance_( 0 );
+#endif
+
+}
+
 namespace core {
 namespace pack {
 namespace interaction_graph {
-
 
 bool unpack_ubyte( ObjexxFCL::ubyte const & value, core::Size which_bit ) {
 
@@ -504,7 +517,6 @@ std::ostream & operator<< ( std::ostream & os, DotSphere const & ds ) {
 
 Size const RotamerDots::num_bytes_ = 21;
 Real RotamerDots::probe_radius_ = 1.4;
-Real RotamerDots::polar_expansion_radius_ = 1.0;
 
 bool RotamerDots::sasa_arrays_initialized_ = false;
 utility::vector1< core::Vector > RotamerDots::dot_coords_( 0 );
@@ -560,7 +572,7 @@ RotamerDots::RotamerDots(
 	// every instance needs to have the radii_ pointer set. radii_ can't be static because two RotamerDots objects may
 	// want to use different atom radii for calculating SASA.
 	if ( use_expanded_polar_atom_radii ) {
-		radii_ = RotamerDotsRadiusData::get_instance()->get_NACCESS_SASA_radii_with_expanded_polars( polar_expansion_radius_ );
+		radii_ = RotamerDotsRadiusData::get_instance()->get_NACCESS_SASA_radii_with_expanded_polars();
 	} else {
 		radii_ = RotamerDotsRadiusData::get_instance()->get_NACCESS_SASA_radii();
 	}
@@ -805,7 +817,7 @@ RotamerDots::max_atom_radius() {
 /// @brief
 /// Returns a pointer to the radii vector. Used only by the InvRotamerDots class.
 ///
-utility::vector1< Real >*
+utility::vector1< Real > const *
 RotamerDots::get_radii() const {
 	return radii_;
 }
@@ -1612,31 +1624,6 @@ RotamerDots::initialize_dot_coords( utility::vector1< core::Vector > & dot_coord
 //------------------------- RotamerDotsRadiusData  ---------------------------//
 //----------------------------------------------------------------------------//
 
-/// @brief set initial value as no instance
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< RotamerDotsRadiusData * > RotamerDotsRadiusData::instance_( 0 );
-#else
-RotamerDotsRadiusData * RotamerDotsRadiusData::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex RotamerDotsRadiusData::singleton_mutex_;
-
-std::mutex & RotamerDotsRadiusData::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-RotamerDotsRadiusData * RotamerDotsRadiusData::get_instance()
-{
-	boost::function< RotamerDotsRadiusData * () > creator = boost::bind( &RotamerDotsRadiusData::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
-
 RotamerDotsRadiusData *
 RotamerDotsRadiusData::create_singleton_instance()
 {
@@ -1644,95 +1631,83 @@ RotamerDotsRadiusData::create_singleton_instance()
 }
 
 /// @brief private constructor to guarantee the singleton
-RotamerDotsRadiusData::RotamerDotsRadiusData() {}
+RotamerDotsRadiusData::RotamerDotsRadiusData()
+{
+	// Previously this was a static data member of class RotamerDots
+	polar_expansion_radius_ = 1.0;
 
-utility::vector1< Real >*
-RotamerDotsRadiusData::get_ROSETTA_SASA_radii() {
-
+	// 1. Initialize SASA radii
 	using namespace core::chemical;
+	TR_RDRD << "RotamerDotsRadiusData::RotamerDotsRadiusData(): reading in sasa radii database file" << std::endl;
 
-	if ( ROSETTA_SASA_radii_.size() == 0 ) {
-		// need to size and set the values in the vector
+	//j setup the radii array, indexed by the atom type int. atom index for looking up an extra data type stored in the AtomTypes
+	//ronj reads the values out of the database file sasa_radii.txt in the extras folder of atom_type_sets and stores the values
+	//ronj for each atom type into the radii array. each index of the radii array corresponds to some atom type.
+	AtomTypeSet const & atom_type_set = * ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
+	ROSETTA_SASA_radii_.resize( atom_type_set.n_atomtypes(), 0.0 );
 
-		TR_RDRD << "get_ROSETTA_SASA_radii(): reading in sasa radii database file" << std::endl;
+	core::Size SASA_RADIUS_INDEX = atom_type_set.extra_parameter_index( "SASA_RADIUS_LEGACY" );
 
-		//j setup the radii array, indexed by the atom type int. atom index for looking up an extra data type stored in the AtomTypes
-		//ronj reads the values out of the database file sasa_radii.txt in the extras folder of atom_type_sets and stores the values
-		//ronj for each atom type into the radii array. each index of the radii array corresponds to some atom type.
-		AtomTypeSet const & atom_type_set = * ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
-		ROSETTA_SASA_radii_.resize( atom_type_set.n_atomtypes(), 0.0 );
-
-		core::Size SASA_RADIUS_INDEX = atom_type_set.extra_parameter_index( "SASA_RADIUS_LEGACY" );
-
-		TR_RDRD << "ROSETTA_SASA_radii_: [ ";
-		for ( core::Size ii=1; ii <= atom_type_set.n_atomtypes(); ++ii ) {
-			ROSETTA_SASA_radii_[ ii ] = atom_type_set[ ii ].extra_parameter( SASA_RADIUS_INDEX );
-			TR_RDRD << ROSETTA_SASA_radii_[ ii ] << ", ";
-		}
-		TR_RDRD << "]" << std::endl;
+	TR_RDRD << "ROSETTA_SASA_radii_: [ ";
+	for ( core::Size ii=1; ii <= atom_type_set.n_atomtypes(); ++ii ) {
+		ROSETTA_SASA_radii_[ ii ] = atom_type_set[ ii ].extra_parameter( SASA_RADIUS_INDEX );
+		TR_RDRD << ROSETTA_SASA_radii_[ ii ] << ", ";
 	}
+	TR_RDRD << "]" << std::endl;
 
+	// 2. Initialize the Naccess radii
+	TR_RDRD << "RotamerDotsRadiusData::RotamerDotsRadiusData(): reading in sasa radii database file" << std::endl;
+
+	//AtomTypeSet const & atom_type_set = * ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
+	NACCESS_SASA_radii_.resize( atom_type_set.n_atomtypes(), 0.0 );
+
+	core::Size NACCESS_SASA_RADIUS_INDEX = atom_type_set.extra_parameter_index( "NACCESS_SASA_RADIUS" );
+
+	TR_RDRD << "NACCESS_SASA_radii_: [ ";
+	for ( core::Size ii=1; ii <= atom_type_set.n_atomtypes(); ++ii ) {
+		NACCESS_SASA_radii_[ ii ] = atom_type_set[ ii ].extra_parameter( NACCESS_SASA_RADIUS_INDEX );
+		TR_RDRD << NACCESS_SASA_radii_[ ii ] << ", ";
+	}
+	TR_RDRD << "]" << std::endl;
+
+	// 3. Initialize the expanded-polar Naccess radii
+	TR_RDRD << "get_NACCESS_SASA_radii_with_expanded_polars(): reading in sasa radii database file" << std::endl;
+
+	NACCESS_SASA_radii_with_expanded_polars_.resize( NACCESS_SASA_radii_.size() );
+
+	// used to figure out what atom_type a given index is
+	//AtomTypeSet const & atom_type_set = * ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
+
+	TR_RDRD << "NACCESS_SASA_radii_with_expanded_polars_: [ ";
+	for ( Size ii=1; ii <= NACCESS_SASA_radii_.size(); ++ii ) {
+		NACCESS_SASA_radii_with_expanded_polars_[ ii ] = NACCESS_SASA_radii_[ ii ];
+
+		core::chemical::AtomType const & at( atom_type_set[ ii ] );
+		if ( at.element() == "N" || at.element() == "O" ) {
+			NACCESS_SASA_radii_with_expanded_polars_[ ii ] += polar_expansion_radius_;
+		}
+		TR_RDRD << NACCESS_SASA_radii_with_expanded_polars_[ ii ] << ", ";
+	}
+	TR_RDRD << "]" << std::endl;
+
+}
+
+utility::vector1< Real > const *
+RotamerDotsRadiusData::get_ROSETTA_SASA_radii() const
+{
 	return &ROSETTA_SASA_radii_;
-
 }
 
-utility::vector1< Real >*
-RotamerDotsRadiusData::get_NACCESS_SASA_radii() {
-
-	using namespace core::chemical;
-
-	if ( NACCESS_SASA_radii_.size() == 0 ) {
-		// need to size and set the values in the vector
-
-		TR_RDRD << "get_NACCESS_SASA_radii(): reading in sasa radii database file" << std::endl;
-
-		AtomTypeSet const & atom_type_set = * ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
-		NACCESS_SASA_radii_.resize( atom_type_set.n_atomtypes(), 0.0 );
-
-		core::Size NACCESS_SASA_RADIUS_INDEX = atom_type_set.extra_parameter_index( "NACCESS_SASA_RADIUS" );
-
-		TR_RDRD << "NACCESS_SASA_radii_: [ ";
-		for ( core::Size ii=1; ii <= atom_type_set.n_atomtypes(); ++ii ) {
-			NACCESS_SASA_radii_[ ii ] = atom_type_set[ ii ].extra_parameter( NACCESS_SASA_RADIUS_INDEX );
-			TR_RDRD << NACCESS_SASA_radii_[ ii ] << ", ";
-		}
-		TR_RDRD << "]" << std::endl;
-	}
-
+utility::vector1< Real > const *
+RotamerDotsRadiusData::get_NACCESS_SASA_radii() const
+{
 	return &NACCESS_SASA_radii_;
-
 }
 
-utility::vector1< Real >*
-RotamerDotsRadiusData::get_NACCESS_SASA_radii_with_expanded_polars( Real polar_expansion_radius ) {
-
-	using namespace core::chemical;
-
-	if ( NACCESS_SASA_radii_with_expanded_polars.size() == 0 ) {
-
-		TR_RDRD << "get_NACCESS_SASA_radii_with_expanded_polars(): reading in sasa radii database file" << std::endl;
-
-		utility::vector1< Real >* radii = get_NACCESS_SASA_radii();
-		NACCESS_SASA_radii_with_expanded_polars.resize( (*radii).size() );
-
-		// used to figure out what atom_type a given index is
-		AtomTypeSet const & atom_type_set = * ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
-
-		TR_RDRD << "NACCESS_SASA_radii_with_expanded_polars_: [ ";
-		for ( Size ii=1; ii <= radii->size(); ++ii ) {
-			NACCESS_SASA_radii_with_expanded_polars[ ii ] = (*radii)[ ii ];
-
-			core::chemical::AtomType const & at( atom_type_set[ ii ] );
-			if ( at.element() == "N" || at.element() == "O" ) {
-				NACCESS_SASA_radii_with_expanded_polars[ ii ] += polar_expansion_radius;
-			}
-			TR_RDRD << NACCESS_SASA_radii_with_expanded_polars[ ii ] << ", ";
-		}
-		TR_RDRD << "]" << std::endl;
-
-	}
-
-	return &NACCESS_SASA_radii_with_expanded_polars;
+utility::vector1< Real > const *
+RotamerDotsRadiusData::get_NACCESS_SASA_radii_with_expanded_polars() const
+{
+	return &NACCESS_SASA_radii_with_expanded_polars_;
 
 }
 
@@ -2209,3 +2184,5 @@ void InvRotamerDots::print_dot_bit_string( utility::vector1< ObjexxFCL::ubyte > 
 } // pack
 } // core
 
+
+//  LocalWords:  endl

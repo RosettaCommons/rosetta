@@ -15,27 +15,29 @@
 #define INCLUDED_protocols_matdes_SymDofMoverSampler_HH
 
 #include <core/types.hh>
-#include <utility/vector1.hh>
-#include <string>
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
+// Utility headers
+#include <utility/SingletonBase.hh>
+#include <utility/vector1.hh>
+
+// C++ headers
+#include <string>
 
 namespace protocols {
 namespace matdes {
 
-class SymDofMoverSampler
+/// @brief WARNING WARNING WARNING THIS SINGLETON CLASS HOLDS NON-CONST, JOB SPECIFIC DATA
+/// AND MAKES EVERY CLASS THAT USES THIS DATA THREAD UNSAFE.  THIS IS NOT HOW SINGLETONS
+/// SHOULD BE USED.
+class SymDofMoverSampler : public utility::SingletonBase< SymDofMoverSampler >
 {
+public:
+	friend class utility::SingletonBase< SymDofMoverSampler >;
+
 	typedef core::Real Real;
 	typedef core::Size Size;
 
 public:
-	static SymDofMoverSampler& get_instance();
 	void set_angle_ranges(utility::vector1<Real> angles_range_min, utility::vector1<Real> angles_range_max, utility::vector1<Real> angle_steps);
 	void set_radial_disp_ranges(utility::vector1<Real> radial_disps_range_min, utility::vector1<Real> radial_disps_range_max, utility::vector1<Real> radial_disp_steps );
 	void set_sym_dof_names(utility::vector1<std::string> sym_dof_names );
@@ -58,26 +60,7 @@ private:
 	/// utility::thread::threadsafe_singleton
 	static SymDofMoverSampler * create_singleton_instance();
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
 private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
-private:
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< SymDofMoverSampler * > instance_;
-#else
-	static SymDofMoverSampler * instance_;
-#endif
 
 	utility::vector1<std::string> sym_dof_names_;
 	utility::vector1<Real> angles_;

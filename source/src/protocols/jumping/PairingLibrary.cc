@@ -62,6 +62,19 @@
 #include <cstdlib>
 #include <string>
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using protocols::jumping::StandardPairingLibrary;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< StandardPairingLibrary > ::singleton_mutex_;
+template <> std::atomic< StandardPairingLibrary * > utility::SingletonBase< StandardPairingLibrary >::instance_( 0 );
+#else
+template <> StandardPairingLibrary * utility::SingletonBase< StandardPairingLibrary >::instance_( 0 );
+#endif
+
+}
 
 static thread_local basic::Tracer tr( "protocols.jumping" );
 
@@ -72,7 +85,6 @@ using namespace ObjexxFCL;
 
 namespace protocols {
 namespace jumping {
-
 
 BasePairingLibrary::~BasePairingLibrary() {}
 
@@ -713,30 +725,6 @@ PairingLibrary::generate_jump_frags(
 		} // loop over orientations and pleatings
 } // method
 
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< StandardPairingLibrary * > StandardPairingLibrary::instance_( 0 );
-#else
-StandardPairingLibrary * StandardPairingLibrary::instance_( 0 );
-#endif
-
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex StandardPairingLibrary::singleton_mutex_;
-
-std::mutex & StandardPairingLibrary::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-StandardPairingLibrary * StandardPairingLibrary::get_instance()
-{
-	boost::function< StandardPairingLibrary * () > creator = boost::bind( &StandardPairingLibrary::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
 
 StandardPairingLibrary *
 StandardPairingLibrary::create_singleton_instance()

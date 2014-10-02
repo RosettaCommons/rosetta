@@ -33,7 +33,7 @@
 #include <core/scoring/CenHBPotential.fwd.hh>
 #include <core/scoring/MembranePotential.fwd.hh>
 #include <core/scoring/Membrane_FAPotential.fwd.hh> //pba
-#include <core/scoring/membrane/MembraneData.hh> 
+#include <core/scoring/membrane/MembraneData.hh>
 //#include <core/scoring/InterchainPotential.fwd.hh>
 #include <core/scoring/ProQPotential.fwd.hh>
 #include <core/scoring/SecondaryStructurePotential.fwd.hh>
@@ -93,31 +93,19 @@
 #include <map>
 
 // Utility headers
+#include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
 
 namespace core {
 namespace scoring {
 
 //singelton class
-class ScoringManager
+class ScoringManager : public utility::SingletonBase< ScoringManager >
 {
 public:
-	//typedef core::scoring::mm::MMLJLibrary MMLJLibrary;
-	//typedef core::scoring::mm::MMLJEnergyTable MMLJEnergyTable;
-	//typedef core::scoring::mm::MMTorsionLibrary MMTorsionLibrary;
-	//typedef core::scoring::mm::MMBondAngleLibrary MMBondAngleLibrary;
-	//typedef core::scoring::mm::MMBondLengthLibrary MMBondLengthLibrary;
+	friend class utility::SingletonBase< ScoringManager >;
 
 public:
-	static ScoringManager * get_instance();
 
 	void factory_register( methods::EnergyMethodCreatorOP creator );
 
@@ -207,7 +195,7 @@ public:
 	WaterAdductHBondPotential const & get_WaterAdductHBondPotential() const;
 
 	MembranePotential const & get_MembranePotential() const;
-	
+
 	membrane::MembraneData const & get_MembraneData() const;
 
 	Membrane_FAPotential const & get_Membrane_FAPotential() const; //pba
@@ -237,12 +225,6 @@ public:
 	void
 	add_etable( std::string const & name, etable::EtableOP etable );
 
-	//XRW_B_T1
-	///
-	//void
-	//add_coarse_etable( std::string const & name, coarse::CoarseEtableOP etable );
-	//XRW_E_T1
-
 	///pba
 	void
 	add_memb_etable( std::string const & name, etable::MembEtableOP etable );
@@ -259,44 +241,13 @@ public:
 	etable::EtableCAP
 	etable( std::string const & etable_id ) const;
 
-	//XRW_B_T1
-	/*
-	coarse::CoarseEtableCAP
-	coarse_etable( std::string const & etable_id ) const;
-	*/
-	//XRW_E_T1
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
 private:
 
-	/// @brief static data member holding pointer to the singleton class itself
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< ScoringManager * > instance_;
-#else
-	static ScoringManager * instance_;
-#endif
-
+	static ScoringManager * create_singleton_instance();
 
 	//private constructor
 	ScoringManager();
 	~ScoringManager();
-
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static ScoringManager * create_singleton_instance();
 
 private:
 

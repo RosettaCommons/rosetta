@@ -145,7 +145,7 @@ public:
 			// generate empty list of extra_chi_steps
 			utility::vector1< utility::vector1< Real > > extra_chi_steps( residue.nchi() );
 
-			SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance().get_rsd_library( residue.type() );
+			SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance()->get_rsd_library( residue.type() );
 			if (rotlib) {
 				rotlib->fill_rotamer_vector( pose, dummy_scorefxn, *task, dummy_graph, residue.type().get_self_ptr(), residue, extra_chi_steps, false /*buried*/, suggested_rotamers);
 			}
@@ -206,7 +206,7 @@ public:
 
 		for (Size pos = 1; pos <= pose.total_residue(); pos++ ) {
 			Residue const & residue( pose.residue( pos ) );
-			SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance().get_rsd_library( residue.type() );
+			SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance()->get_rsd_library( residue.type() );
 			if( rotlib.get() == NULL ) continue;
 
 			RotamerLibraryScratchSpace scratch;
@@ -226,7 +226,7 @@ public:
 
 		//mjo commenting out 'sc_manager' because it is unused and causes a warning
 		//ScoringManager * sc_manager = ScoringManager::get_instance();
-		RotamerLibrary & rotlib = RotamerLibrary::get_instance();
+		RotamerLibrary & rotlib = *RotamerLibrary::get_instance();
 
 		Real const phi_example = -59;
 		Real const psi_example =  61;

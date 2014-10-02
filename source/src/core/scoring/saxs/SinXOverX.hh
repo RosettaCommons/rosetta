@@ -15,43 +15,26 @@
 #define INCLUDED_core_scoring_saxs_SinXOverX_hh
 
 #include <core/types.hh>
-#include <utility/vector1.hh>
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
+// utility headers
+#include <utility/SingletonBase.hh>
+#include <utility/vector1.hh>
 
 namespace core {
 namespace scoring {
 namespace saxs {
 
-class SinXOverX {
+class SinXOverX : public utility::SingletonBase< SinXOverX >
+{
 public:
+	friend class utility::SingletonBase< SinXOverX >;
 
-	static SinXOverX* get_instance();
+public:
 
 	core::Real evaluate(core::Real x) const {
 		core::Size tmp_i = ((Size) (x * 100) + 1);
 		return sin_x_over_x_[tmp_i];
 	}
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
 
 private:
 
@@ -63,14 +46,8 @@ private:
 	static SinXOverX * create_singleton_instance();
 
 private:
-	/// @brief static data member holding pointer to the singleton class itself
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< SinXOverX * > instance_;
-#else
-	static SinXOverX * instance_;
-#endif
 
-	static utility::vector1<Real> sin_x_over_x_;
+	utility::vector1<Real> sin_x_over_x_;
 
 };
 

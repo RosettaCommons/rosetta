@@ -74,7 +74,7 @@ using namespace chemical;
 using namespace conformation;
 
 SidechainMoverBase::SidechainMoverBase():
-	rotamer_library_( pack::dunbrack::RotamerLibrary::get_instance() )
+	rotamer_library_( * pack::dunbrack::RotamerLibrary::get_instance() )
 {
 	set_defaults();
 	init_from_options();

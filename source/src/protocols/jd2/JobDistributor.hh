@@ -23,16 +23,16 @@
 #include <protocols/jd2/JobInputter.fwd.hh>
 #include <protocols/jd2/JobOutputter.fwd.hh>
 #include <protocols/jd2/Parser.fwd.hh>
+#include <protocols/jd2/Job.fwd.hh>
 
+// Project headers
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverStatus.hh>
-
+#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-#include <core/types.hh>
-
-#include <protocols/jd2/Job.fwd.hh>
+#include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -41,14 +41,6 @@
 
 #ifdef WIN32
 	#include <protocols/jd2/Job.hh>
-#endif
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
 #endif
 
 namespace protocols {

@@ -369,6 +369,7 @@ Real PeakAssignmentResidueMap::compute_Nk(
 // 	}
 
 	//( ag_or_bg.atom( gamma_ind ) );
+	/// WARNING WARNING WARNING THREAD UNSAFE covalent_compliance RELIES ON THREAD-UNSAFE SINGLETON CovalentCompliance
 	bool const is_covalent_ag( covalent_compliance( alpha_beta.atom( 1 ), gamma_atom ) );
 	bool const is_covalent_bg( covalent_compliance( gamma_atom, alpha_beta.atom( 2 ) ) );
 	Real const Vcc_ag( is_covalent_ag ? vmax : ( ( connect_in_i || sequential ) ? vmin : 0 ) );
@@ -428,6 +429,7 @@ void PeakAssignmentResidueMap::network_analysis2() { // ResonanceList const& res
 				core::Size const j( (*ait)->resonance_id( 2 ) );
 				bool covalent( false );
 				if ( sequential ) {
+					/// WARNING WARNING WARNING THREAD UNSAFE covalent_compliance RELIES ON THREAD-UNSAFE SINGLETON CovalentCompliance
 					covalent = covalent_compliance( (*ait)->atom(1), (*ait)->atom(2) );
 				}
 				ResonancePair ij( i,j );
@@ -504,6 +506,7 @@ void PeakAssignmentResidueMap::network_analysis2() { // ResonanceList const& res
 						bool sequential = std::abs( (int) resi - (int) (*itK)->resid() ) <= 1;
 						bool covalent( false );
 						if ( sequential ) {
+							/// WARNING WARNING WARNING THREAD UNSAFE covalent_compliance RELIES ON THREAD-UNSAFE SINGLETON CovalentCompliance
 							covalent = covalent_compliance( (*ait)->atom(1), (*itK)->atom() );
 						}
 						wik = covalent ? params.vmax_ : ( sequential ? params.vmin_ : 0 );
@@ -519,6 +522,7 @@ void PeakAssignmentResidueMap::network_analysis2() { // ResonanceList const& res
 						bool sequential = std::abs( (int) resj - (int) (*itK)->resid() ) <= 1;
 						bool covalent( false );
 						if ( sequential ) {
+							/// WARNING WARNING WARNING THREAD UNSAFE covalent_compliance RELIES ON THREAD-UNSAFE SINGLETON CovalentCompliance
 							covalent = covalent_compliance( (*ait)->atom(2), (*itK)->atom() );
 						}
 						wkj = covalent ? params.vmax_ : ( sequential ? params.vmin_ : 0 );

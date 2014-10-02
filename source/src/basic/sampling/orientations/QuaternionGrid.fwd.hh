@@ -22,11 +22,11 @@ namespace sampling {
 namespace orientations {
 
 class QuaternionGrid;
-typedef utility::pointer::shared_ptr<QuaternionGrid const> QuaternionGridCOP;
-typedef utility::pointer::weak_ptr<QuaternionGrid const> QuaternionGridCAP;
+typedef utility::pointer::shared_ptr< QuaternionGrid const > QuaternionGridCOP;
+typedef utility::pointer::weak_ptr< QuaternionGrid const > QuaternionGridCAP;
 
 class QuaternionGridManager;
-typedef utility::pointer::weak_ptr<QuaternionGridManager const> QuaternionGridManagerCAP;
+typedef utility::pointer::weak_ptr< QuaternionGridManager const > QuaternionGridManagerCAP;
 
 }
 }

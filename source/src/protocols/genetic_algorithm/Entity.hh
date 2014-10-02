@@ -20,7 +20,7 @@
 #include <core/types.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/exit.hh>
+#include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
 #include <utility/factory/WidgetFactory.hh>
 #include <utility/factory/WidgetRegistrator.hh>
@@ -36,14 +36,6 @@
 // C++ headers
 // AUTO-REMOVED #include <iostream>
 #include <map>
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
 
 namespace protocols {
 namespace genetic_algorithm {
@@ -88,45 +80,28 @@ public:
 	virtual EntityElementOP new_entity( std::string const & word ) = 0;
 };
 
-/// Entity element factory
+/// @brief The %EntityElementFactory is responsible for instantiating entity elements
+/// from strings.
+class EntityElementFactory :
+	public utility::factory::WidgetFactory< EntityElementCreator >,
+	public utility::SingletonBase< EntityElementFactory >
+{
+public:
+	friend class utility::SingletonBase< EntityElementFactory >;
 
-class EntityElementFactory : public utility::factory::WidgetFactory< EntityElementCreator > {
 public:
 	virtual ~EntityElementFactory() {};
-
-	static EntityElementFactory * get_instance();
 
 	EntityElementOP element_from_string( std::string const & );
 
 	virtual std::string factory_name() const;
 
-	//void register_creator( EntityElementCreatorOP creator );
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
 private:
 	EntityElementFactory();
+
 	/// @brief private singleton creation function to be used with
 	/// utility::thread::threadsafe_singleton
 	static EntityElementFactory * create_singleton_instance();
-private:
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< EntityElementFactory * > instance_;
-#else
-	static EntityElementFactory * instance_;
-#endif
 
 };
 

@@ -33,32 +33,22 @@
 //C++ headers
 #include <sstream>
 
-namespace basic {
-namespace resource_manager {
+// Singleton instance and mutex static data members
+namespace utility {
+
+using basic::resource_manager::ResourceOptionsFactory;
 
 #if defined MULTI_THREADED && defined CXX11
-std::atomic< ResourceOptionsFactory * > ResourceOptionsFactory::instance_( 0 );
+template <> std::mutex utility::SingletonBase< ResourceOptionsFactory > ::singleton_mutex_;
+template <> std::atomic< ResourceOptionsFactory * > utility::SingletonBase< ResourceOptionsFactory >::instance_( 0 );
 #else
-ResourceOptionsFactory * ResourceOptionsFactory::instance_( 0 );
+template <> ResourceOptionsFactory * utility::SingletonBase< ResourceOptionsFactory >::instance_( 0 );
 #endif
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex ResourceOptionsFactory::singleton_mutex_;
-
-std::mutex & ResourceOptionsFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-ResourceOptionsFactory * ResourceOptionsFactory::get_instance()
-{
-	boost::function< ResourceOptionsFactory * () > creator = boost::bind( &ResourceOptionsFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
 }
+
+namespace basic {
+namespace resource_manager {
 
 ResourceOptionsFactory *
 ResourceOptionsFactory::create_singleton_instance()

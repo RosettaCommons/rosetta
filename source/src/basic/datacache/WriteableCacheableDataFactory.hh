@@ -21,6 +21,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
+#include <utility/SingletonBase.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
 // c++ headers
@@ -29,14 +30,6 @@
 #include <utility/vector1.hh>
 
 #include <boost/utility.hpp>
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
 
 namespace basic {
 namespace datacache {
@@ -50,57 +43,38 @@ template < class T >
 class WriteableCacheableDataRegistrator : public utility::factory::WidgetRegistrator< WriteableCacheableDataFactory, T >
 {
 public:
-  typedef utility::factory::WidgetRegistrator< WriteableCacheableDataFactory, T > parent;
+	typedef utility::factory::WidgetRegistrator< WriteableCacheableDataFactory, T > parent;
 public:
-  WriteableCacheableDataRegistrator() : parent() {}
+	WriteableCacheableDataRegistrator() : parent() {}
 };
 
-class WriteableCacheableDataFactory : boost::noncopyable { // Singleton: should not derive from ReferenceCount
+class WriteableCacheableDataFactory : public utility::SingletonBase< WriteableCacheableDataFactory >
+{
+public:
+	friend class utility::SingletonBase< WriteableCacheableDataFactory >;
+	typedef std::map< std::string, WriteableCacheableDataCreatorOP > WriteableCacheableDataMap;
 
 public:
-  typedef std::map< std::string, WriteableCacheableDataCreatorOP > WriteableCacheableDataMap;
+	virtual ~WriteableCacheableDataFactory() {}
 
-public:
-  virtual ~WriteableCacheableDataFactory() {};
 
-  static
-  WriteableCacheableDataFactory * get_instance();
-
-  void factory_register( WriteableCacheableDataCreatorOP creator );
+	void factory_register( WriteableCacheableDataCreatorOP creator );
 
   /// @brief Create a data instance given its identifying string
-  WriteableCacheableDataOP new_data_instance( std::string const& data_type_name,
-                                              std::istream &in );
+  WriteableCacheableDataOP new_data_instance(
+		std::string const& data_type_name,
+		std::istream &in
+	);
 
 private:
-  WriteableCacheableDataFactory() {};
+	WriteableCacheableDataFactory() {};
 
-  /// @brief private singleton creation function to be used with
-  /// utility::thread::threadsafe_singleton
-  static WriteableCacheableDataFactory* create_singleton_instance();
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-  /// @brief This public method is meant to be used only by the
-  /// utility::thread::safely_create_singleton function and not meant
-  /// for any other purpose.  Do not use.
-  static std::mutex & singleton_mutex();
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static WriteableCacheableDataFactory* create_singleton_instance();
 
 private:
-  static std::mutex singleton_mutex_;
-#endif
-#endif
-
-private:
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< WriteableCacheableDataFactory * > instance_;
-#else
-	static WriteableCacheableDataFactory * instance_;
-#endif
-
-  WriteableCacheableDataMap data_creator_map_;
+	WriteableCacheableDataMap data_creator_map_;
 
 };
 

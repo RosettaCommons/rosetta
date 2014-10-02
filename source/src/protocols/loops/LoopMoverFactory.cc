@@ -39,6 +39,20 @@
 #include <sstream>
 
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using protocols::loops::LoopMoverFactory;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< LoopMoverFactory > ::singleton_mutex_;
+template <> std::atomic< LoopMoverFactory * > utility::SingletonBase< LoopMoverFactory >::instance_( 0 );
+#else
+template <> LoopMoverFactory * utility::SingletonBase< LoopMoverFactory >::instance_( 0 );
+#endif
+
+}
+
 namespace protocols {
 namespace loops {
 
@@ -50,30 +64,6 @@ using core::pose::Pose;
 
 static thread_local basic::Tracer tr( "protocols.loops.LoopMoverFactory" );
 
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< LoopMoverFactory * > LoopMoverFactory::instance_( 0 );
-#else
-LoopMoverFactory * LoopMoverFactory::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex LoopMoverFactory::singleton_mutex_;
-
-std::mutex & LoopMoverFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-LoopMoverFactory * LoopMoverFactory::get_instance()
-{
-	boost::function< LoopMoverFactory * () > creator = boost::bind( &LoopMoverFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
-
 LoopMoverFactory *
 LoopMoverFactory::create_singleton_instance()
 {
@@ -82,10 +72,6 @@ LoopMoverFactory::create_singleton_instance()
 
 /// @details Private constructor insures correctness of singleton.
 LoopMoverFactory::LoopMoverFactory() {}
-
-LoopMoverFactory::LoopMoverFactory(
-	const LoopMoverFactory &
-) {}
 
 LoopMoverFactory::~LoopMoverFactory() {}
 

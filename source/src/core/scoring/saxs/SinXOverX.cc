@@ -25,35 +25,23 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using core::scoring::saxs::SinXOverX;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< SinXOverX > ::singleton_mutex_;
+template <> std::atomic< SinXOverX * > utility::SingletonBase< SinXOverX >::instance_( 0 );
+#else
+template <> SinXOverX * utility::SingletonBase< SinXOverX >::instance_( 0 );
+#endif
+
+}
+
 namespace core {
 namespace scoring {
 namespace saxs {
-
-utility::vector1<Real> SinXOverX::sin_x_over_x_;
-
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< SinXOverX * > SinXOverX::instance_( 0 );
-#else
-SinXOverX * SinXOverX::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex SinXOverX::singleton_mutex_;
-
-std::mutex & SinXOverX::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-SinXOverX * SinXOverX::get_instance()
-{
-	boost::function< SinXOverX * () > creator = boost::bind( &SinXOverX::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
 
 SinXOverX *
 SinXOverX::create_singleton_instance()

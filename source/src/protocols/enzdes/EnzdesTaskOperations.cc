@@ -378,10 +378,9 @@ PackerTask & task) const
 						if( pose.residue( i ).aa() != core::chemical::aa_cys ) keep_aas[ core::chemical::aa_cys ] = false;
 						task.nonconst_residue_task(i).restrict_absent_canonical_aas( keep_aas );
 					}
-				} else if( repack_res[i] == true ){
+				} else if ( repack_res[i] == true ) {
 					task.nonconst_residue_task(i).restrict_to_repacking();
-				} else if( pose.residue(i).is_ligand() && ( core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( pose.residue_type(i) ) ) ){
-					// ! expired() check previously; I'm not sure what's going on there...
+				} else if ( pose.residue(i).is_ligand() && ( ! core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue_type(i) )) ) {
 					task.nonconst_residue_task(i).restrict_to_repacking();
 				} else {
 					task.nonconst_residue_task( i ).prevent_repacking();

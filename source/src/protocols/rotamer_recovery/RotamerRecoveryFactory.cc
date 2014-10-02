@@ -39,6 +39,20 @@
 #include <boost/function.hpp>
 #include <boost/foreach.hpp>
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using protocols::rotamer_recovery::RotamerRecoveryFactory;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< RotamerRecoveryFactory > ::singleton_mutex_;
+template <> std::atomic< RotamerRecoveryFactory * > utility::SingletonBase< RotamerRecoveryFactory >::instance_( 0 );
+#else
+template <> RotamerRecoveryFactory * utility::SingletonBase< RotamerRecoveryFactory >::instance_( 0 );
+#endif
+
+}
+
 namespace protocols {
 namespace rotamer_recovery {
 
@@ -50,30 +64,6 @@ using core::scoring::ScoreFunctionCOP;
 
 static thread_local basic::Tracer tr( "protocols.rotamer_recovery.RotamerRecoveryFactory" );
 
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< RotamerRecoveryFactory * > RotamerRecoveryFactory::instance_( 0 );
-#else
-RotamerRecoveryFactory * RotamerRecoveryFactory::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex RotamerRecoveryFactory::singleton_mutex_;
-
-std::mutex & RotamerRecoveryFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-RotamerRecoveryFactory * RotamerRecoveryFactory::get_instance()
-{
-	boost::function< RotamerRecoveryFactory * () > creator = boost::bind( &RotamerRecoveryFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
-
 RotamerRecoveryFactory *
 RotamerRecoveryFactory::create_singleton_instance()
 {
@@ -82,10 +72,6 @@ RotamerRecoveryFactory::create_singleton_instance()
 
 /// @details Private constructor insures correctness of singleton.
 RotamerRecoveryFactory::RotamerRecoveryFactory() {}
-
-RotamerRecoveryFactory::RotamerRecoveryFactory(
-	const RotamerRecoveryFactory &
-) {}
 
 RotamerRecoveryFactory::~RotamerRecoveryFactory() {}
 

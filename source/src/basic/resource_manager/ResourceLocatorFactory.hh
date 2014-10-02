@@ -20,19 +20,12 @@
 #include <basic/resource_manager/ResourceLocator.fwd.hh>
 
 //utility headers
+#include <utility/SingletonBase.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 //C++ headers
 #include <map>
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
 
 namespace basic {
 namespace resource_manager {
@@ -43,8 +36,11 @@ namespace resource_manager {
 /// "factory_register" method.  Templated instances of the ResourceLocatorRegistrator classes should
 /// be placed in the library init.cc files  (e.g. core/init/init.cc or
 /// protocols/init/init.ResourceLocatorRegistrators.ihh)
-class ResourceLocatorFactory
+class ResourceLocatorFactory : public utility::SingletonBase< ResourceLocatorFactory >
 {
+public:
+	friend class utility::SingletonBase< ResourceLocatorFactory >;
+
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~ResourceLocatorFactory();
@@ -56,11 +52,6 @@ public:
 		std::string const & locator_tag,
 		utility::tag::TagCOP tags
 	) const;
-
-	/// @brief Singleton access method; return the single instance of the object
-	static
-	ResourceLocatorFactory *
-	get_instance();
 
 	/// @brief This function is called on the singleton instance to give a ResourceLocatorCreator to the
 	/// factory, usually through the constructor of a ResourceLocatorRegistrator class.
@@ -78,31 +69,11 @@ private:
 	/// @brief Singleton has a private constructor
 	ResourceLocatorFactory();
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
 private:
 
 	/// @brief private singleton creation function to be used with
 	/// utility::thread::threadsafe_singleton
 	static ResourceLocatorFactory * create_singleton_instance();
-
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< ResourceLocatorFactory * > instance_;
-#else
-	static ResourceLocatorFactory * instance_;
-#endif
 
 	bool throw_on_double_registration_;
 	std::map< std::string, ResourceLocatorCreatorOP > creator_map_;

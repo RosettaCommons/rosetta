@@ -61,16 +61,21 @@
 
 #ifdef MULTI_THREADED
 #ifdef CXX11
+
 // C++11 Headers
 #include <atomic>
 #include <mutex>
 
 // Utility thread headers
 #include <utility/thread/ReadWriteMutex.hh>
+
 #endif
 #endif
 
-// C++
+// Utility headers
+#include <utility/SingletonBase.hh>
+
+// C++ headers
 #include <map>
 
 namespace core {
@@ -80,11 +85,12 @@ namespace chemical {
 ///
 /// @details make it as a singleton class so that atom_type_set and residue_type_set are only
 ///input and initialized once. They can be later retrieved by querying this class.
-class ChemicalManager
+class ChemicalManager : public utility::SingletonBase< ChemicalManager >
 {
 public:
-	static ChemicalManager * get_instance();
+	friend class utility::SingletonBase< ChemicalManager >;
 
+public:
 	/// @brief query atom_type_set by a name tag
 	AtomTypeSetCOP
 	atom_type_set( std::string const & tag );
@@ -134,12 +140,6 @@ private:
 
 #ifdef MULTI_THREADED
 #ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
 
 private:
 	utility::thread::ReadWriteMutex elem_mutex_;
@@ -160,13 +160,6 @@ private:
 	/// @brief private singleton creation function to be used with
 	/// utility::thread::threadsafe_singleton
 	static ChemicalManager * create_singleton_instance();
-
-	/// @brief static data member holding pointer to the singleton class itself
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< ChemicalManager * > instance_;
-#else
-	static ChemicalManager * instance_;
-#endif
 
 	/// @brief Go and create an atom type set.  Should be called only after it's been
 	/// determined safe (and neccessary) to construct it.

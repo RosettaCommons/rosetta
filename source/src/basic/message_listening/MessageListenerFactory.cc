@@ -30,34 +30,24 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using basic::message_listening::MessageListenerFactory;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< MessageListenerFactory > ::singleton_mutex_;
+template <> std::atomic< MessageListenerFactory * > utility::SingletonBase< MessageListenerFactory >::instance_( 0 );
+#else
+template <> MessageListenerFactory * utility::SingletonBase< MessageListenerFactory >::instance_( 0 );
+#endif
+
+}
+
 namespace basic{
 namespace message_listening{
 
 static thread_local basic::Tracer TR( "basic.message_listening.MessageListenerFactory" );
-
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< MessageListenerFactory * > MessageListenerFactory::instance_( 0 );
-#else
-MessageListenerFactory * MessageListenerFactory::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex MessageListenerFactory::singleton_mutex_;
-
-std::mutex & MessageListenerFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-MessageListenerFactory * MessageListenerFactory::get_instance()
-{
-	boost::function< MessageListenerFactory * () > creator = boost::bind( &MessageListenerFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
 
 MessageListenerFactory *
 MessageListenerFactory::create_singleton_instance()

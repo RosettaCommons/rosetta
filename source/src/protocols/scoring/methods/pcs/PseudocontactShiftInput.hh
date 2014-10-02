@@ -48,15 +48,8 @@
 #include <string>
 #include <map>
 
+#include <utility/SingletonBase.hh>
 #include <utility/vector1_bool.hh>
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
 
 namespace protocols{
 namespace scoring{
@@ -174,7 +167,10 @@ public:
 
 };
 
-class PCS_data_input_manager {
+class PCS_data_input_manager : public utility::SingletonBase< PCS_data_input_manager >
+{
+public:
+	friend class utility::SingletonBase< PCS_data_input_manager >;
 
 private:
 	PCS_data_input_manager();
@@ -184,32 +180,10 @@ private:
 	static PCS_data_input_manager * create_singleton_instance();
 
 private:
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< PCS_data_input_manager * > instance_;
-#else
-	static PCS_data_input_manager * instance_;
-#endif
 
 	std::map<std::string, PCS_data_input> file_2_data_map_;
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
 public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
-public:
-	static
-	PCS_data_input_manager *
-	get_instance();
 
 	PCS_data_input
 	get_input_data(utility::vector1<std::string> const & filenames, utility::vector1<core::Real> const & vec_weight);

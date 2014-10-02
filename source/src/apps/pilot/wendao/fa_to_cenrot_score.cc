@@ -38,7 +38,7 @@
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 
-// 
+//
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -114,9 +114,9 @@ utility::vector1<core::Size> n_total(20);
 void *my_main( void* );
 //void switch_to_residue_type_set_cenrot( core::pose::Pose & pose );
 void fit_centroid_to_the_best_rot( core::pose::Pose & pose, utility::vector1<Size> &rotlist );
-void process_the_pose(core::pose::PoseOP &native_pose, 
+void process_the_pose(core::pose::PoseOP &native_pose,
 	core::pose::Pose & p, std::string const &tag);
-void relax_cenrot_pose(core::pose::PoseOP &native_pose, 
+void relax_cenrot_pose(core::pose::PoseOP &native_pose,
 	core::pose::Pose & p, std::string const &tag);
 void rescore_pose(
 	core::scoring::ScoreFunctionOP score_fxn,
@@ -141,7 +141,7 @@ void rescore_pose(
 // 			//check current restype
 // 			std::string const & current_type_set_name ( rsd.type().residue_type_set().name() );
 // 			if ( current_type_set_name == "centroid_rot" ) {
-// 				TR.Warning << "core::util::switch_to_residue_type_set: residue " << i 
+// 				TR.Warning << "core::util::switch_to_residue_type_set: residue " << i
 // 				<< " already in centroid_rot residue_type_set" << std::endl;
 // 				continue;
 // 			}
@@ -194,7 +194,7 @@ void rescore_pose(
 // 			if ( ! new_rsd ) {
 // 				TR.Warning << "Did not find perfect match for residue: "  << rsd.name()
 // 				<< " at position " << i << ". Trying to find acceptable match. " << std::endl;
-				
+
 // 				core::chemical::ResidueTypeCOPs const & rsd_types( rsd_set->name3_map( rsd.name3() ) );
 // 				for ( core::Size j=1; j<= rsd_types.size(); ++j ) {
 // 					core::chemical::ResidueType const & new_rsd_type( *rsd_types[j] );
@@ -223,7 +223,7 @@ void rescore_pose(
 // 			}
 // 			else {
 // 				//std::cout<<rsd.name()<<std::endl;
-// 				for (	Size na=rsd.type().first_sidechain_atom(); 
+// 				for (	Size na=rsd.type().first_sidechain_atom();
 // 						na<=rsd.type().nheavyatoms();
 // 						na++) {
 // 					if (rsd.atom_name(na)==" CB ") continue;
@@ -335,7 +335,7 @@ void * my_main( void* ) {
 	protocols::simple_moves::SwitchResidueTypeSetMover to_centroid("centroid");
 	//SwitchResidueTypeSetCenrot to_cenrot;
 	protocols::simple_moves::SwitchResidueTypeSetMover to_cenrot("centroid_rot");
-	
+
 	//load native pdb
 	PoseOP native_pose;
 	if (option[in::file::native].user()) {
@@ -355,9 +355,9 @@ void * my_main( void* ) {
 		TR << "Reading Silent file" << std::endl;
 		silent_file_data_in.read_file( infile );
 
-		for ( core::io::silent::SilentFileData::iterator 
-			iter = silent_file_data_in.begin(), 
-			end = silent_file_data_in.end(); 
+		for ( core::io::silent::SilentFileData::iterator
+			iter = silent_file_data_in.begin(),
+			end = silent_file_data_in.end();
 			iter != end; ++iter ) {
 			Pose p;
 			iter->fill_pose( p, *fa_rsd_set ); // reading fa silent structure as decoys
@@ -403,7 +403,7 @@ void * my_main( void* ) {
 				rescore_pose(score_fxn, native_pose, p, option[ in::file::l ]()[npdb]);
 				continue;
 			}
-			
+
 			if (!option[input_cenrot_pdb]) to_cenrot.apply(p); //switch_to_residue_type_set_cenrot(p);
 
 			if (option[relax_cenrot]) {
@@ -424,7 +424,7 @@ void * my_main( void* ) {
 		// 	for ( int i=core::chemical::aa_ala;
 		// 		i <= core::chemical::num_canonical_aas; i++ ) {
 		// 		core::chemical::AA aa=static_cast<core::chemical::AA>(i);
-		// 		TR << aa << ": " << std::fixed 
+		// 		TR << aa << ": " << std::fixed
 		// 		<< std::setw(6) << std::setprecision(3)
 		// 		<< core::Real(nrecovery[aa])/n_total[aa]*100
 		// 		<< "% of " << n_total[aa] << std::endl;
@@ -435,7 +435,7 @@ void * my_main( void* ) {
 		// 	for ( int i=core::chemical::aa_ala;
 		// 		i <= core::chemical::num_canonical_aas; i++ ) {
 		// 		core::chemical::AA aa=static_cast<core::chemical::AA>(i);
-		// 		TR << aa << ": " << err_buried[aa]/n_total[aa] << std::fixed 
+		// 		TR << aa << ": " << err_buried[aa]/n_total[aa] << std::fixed
 		// 		<< std::setw(4) << std::setprecision(3) << std::endl;
 		// 	}
 		// }
@@ -446,14 +446,14 @@ void * my_main( void* ) {
 			i <= core::chemical::num_canonical_aas; i++ ) {
 			core::chemical::AA aa=static_cast<core::chemical::AA>(i);
 			if (n_total[aa]==0) continue;
-			TR << aa << ": " << std::fixed 
+			TR << aa << ": " << std::fixed
 			<< std::setw(6) << std::setprecision(3)
 			<< core::Real(nrecovery[aa])/n_total[aa]*100
 			<< " % of " << n_total[aa] << std::endl;
 			sum_re += nrecovery[aa];
 			sum_all += n_total[aa];
 		}
-		TR << "_ALL_: " << std::fixed 
+		TR << "_ALL_: " << std::fixed
 			<< std::setw(6) << std::setprecision(3)
 			<< core::Real(sum_re)/sum_all*100
 			<< " % of " << sum_all << std::endl;
@@ -578,7 +578,7 @@ void process_the_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, std
 			id::DOF_ID id_dih(id::AtomID(p.residue(i).atom_index("CEN"), i), id::PHI);
 
 			//output internal coordinates of centroids
-			//as well as phi/psi angle 
+			//as well as phi/psi angle
 			if ( !rsd.is_terminus() ) {
 				TR << "CEN-INT: " << rsd.name3() << " " << i << " "
 				<< p.dof(id_dis) << " "
@@ -603,7 +603,7 @@ void process_the_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, std
 		TaskFactoryOP main_task_factory = new TaskFactory;
 		operation::RestrictToRepackingOP rtrop = new operation::RestrictToRepacking;
 		main_task_factory->push_back( rtrop );
-		
+
 		// C-beta atoms should not be altered during packing because branching atoms are optimized
 		// main_task_factory->push_back( new operation::PreserveCBeta );
 
@@ -623,7 +623,7 @@ void process_the_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, std
 
 			if (option[min_after_repack]) {
 				core::kinematics::MoveMap mm;
-				mm.set_bb  ( false ); 
+				mm.set_bb  ( false );
 				mm.set_chi ( false );
 
 				Size const n_res( p.n_residue() );
@@ -754,8 +754,8 @@ void fit_centroid_to_the_best_rot( core::pose::Pose & p, utility::vector1<Size> 
 
 	rotlist.clear();
 	//get rotamerlib
-	RotamerLibrary const & rlcap = RotamerLibrary::get_instance();
-	
+	RotamerLibrary const & rlcap = * RotamerLibrary::get_instance();
+
 	for ( core::Size i=1; i<= p.total_residue(); ++i ) {
 		//fit to the closest rotamer
 		SingleResidueRotamerLibraryCAP residue_rotamer_library(

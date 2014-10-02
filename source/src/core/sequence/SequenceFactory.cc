@@ -27,34 +27,24 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using core::sequence::SequenceFactory;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< SequenceFactory > ::singleton_mutex_;
+template <> std::atomic< SequenceFactory * > utility::SingletonBase< SequenceFactory >::instance_( 0 );
+#else
+template <> SequenceFactory * utility::SingletonBase< SequenceFactory >::instance_( 0 );
+#endif
+
+}
+
 namespace core {
 namespace sequence {
 
 static thread_local basic::Tracer tr( "core.sequence.SequenceFactory" );
-
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< SequenceFactory * > SequenceFactory::instance_( 0 );
-#else
-SequenceFactory * SequenceFactory::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex SequenceFactory::singleton_mutex_;
-
-std::mutex & SequenceFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-SequenceFactory * SequenceFactory::get_instance()
-{
-	boost::function< SequenceFactory * () > creator = boost::bind( &SequenceFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
 
 SequenceFactory *
 SequenceFactory::create_singleton_instance()
@@ -113,6 +103,8 @@ SequenceFactory::get_sequence( std::string const & type_name )
 }
 
 /// @details DANGER DANGER DANGER: NOT THREADSAFE!
+/// This could be make threadsafe so long as seq_types_
+/// is properly locked.
 utility::vector1< std::string >
 SequenceFactory::get_seq_names() const {
 	using std::string;
@@ -125,12 +117,6 @@ SequenceFactory::get_seq_names() const {
 	}
 
 	return seq_names;
-}
-
-/// @details DANGER DANGER DANGER: NOT THREADSAFE!
-void SequenceFactory::replace_creator( SequenceCreatorCOP creator )
-{
-	seq_types_[ creator->keyname() ] = creator;
 }
 
 SequenceCreatorCOP

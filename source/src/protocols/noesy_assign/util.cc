@@ -63,6 +63,8 @@ namespace noesy_assign {
 
 using namespace core;
 
+
+/// WARNING WARNING WARNING THE COVALENTCOMPLIANCE CLASS IS THREAD UNSAFE
 bool covalent_compliance( core::id::NamedAtomID const& atom1, core::id::NamedAtomID const& atom2 ) {
 	return CovalentCompliance::get_instance()->is_compliant( atom1, atom2 );
 }

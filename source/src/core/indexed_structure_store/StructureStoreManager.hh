@@ -14,12 +14,15 @@
 #ifndef INCLUDED_core_indexed_structure_store_StructureStoreManager_hh
 #define INCLUDED_core_indexed_structure_store_StructureStoreManager_hh
 
-// Utility Headers
-#include <platform/types.hh>
-
+// Project headers
+#include <core/types.hh>
 #include <core/indexed_structure_store/StructureStoreManager.fwd.hh>
 #include <core/indexed_structure_store/FragmentLookup.fwd.hh>
 
+// Utility Headers
+#include <utility/SingletonBase.hh>
+
+// C++ headers
 #include <string>
 
 namespace core
@@ -29,11 +32,12 @@ namespace indexed_structure_store
 
 // @brief Core database handle.
 // Encapsulates reading Structure/Residue data from data store and manages retrieval on indices on store.
-class StructureStoreManager
+class StructureStoreManager : public utility::SingletonBase< StructureStoreManager >
 {
 public:
-  static StructureStoreManager * get_instance();
+	friend class utility::SingletonBase< StructureStoreManager >;
 
+public:
   // @brief Load fragment lookup from the default structure store. Default store is defined
 	// via indexed_structure_store:fragment_store option.
 	FragmentLookupOP load_fragment_lookup(std::string lookup_name);
@@ -50,9 +54,10 @@ public:
 	std::string resolve_store_path(std::string store_path);
 
 private:
-	StructureStoreManager();
 
-  static StructureStoreManager * instance_;
+	StructureStoreManager();
+	static StructureStoreManager * create_singleton_instance();
+
 };
 
 }

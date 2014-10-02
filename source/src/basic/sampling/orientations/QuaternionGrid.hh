@@ -23,6 +23,7 @@
 #include <iosfwd>
 
 // Utility headers
+#include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -33,14 +34,6 @@
 
 // C++ headers
 #include <map>
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
 
 namespace basic {
 namespace sampling {
@@ -170,7 +163,8 @@ private:
 
 
 class QuaternionGrid : public utility::pointer::ReferenceCount {
-public: // types
+public:
+
  	QuaternionGrid(std::string const & name, std::istream & in);
  	void print() const;
  	long num_samples() const { return ntot; }
@@ -195,26 +189,14 @@ public:
 	numeric::Real radius,cover,delta;
 };
 
-class QuaternionGridManager : public utility::pointer::ReferenceCount {
+class QuaternionGridManager : public utility::SingletonBase< QuaternionGridManager >
+{
 public:
-	static QuaternionGridManager * get_instance();
+	friend class utility::SingletonBase< QuaternionGridManager >;
+
 	QuaternionGridCOP request_by_name(std::string const & name);
 	QuaternionGridCOP request_by_size(long target_size);
 	QuaternionGridCOP request_by_radius(numeric::Real target_radius);
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
 
 private:
 	QuaternionGridManager();
@@ -224,11 +206,6 @@ private:
 	void fill_metadata();
 
 private:
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< QuaternionGridManager * > instance_;
-#else
-	static QuaternionGridManager * instance_;
-#endif
 
 	utility::vector1<QuatDBMetadata> by_size_,by_radius_,by_cover_;
 	std::map<std::string,QuaternionGridCOP> grids_;

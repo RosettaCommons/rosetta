@@ -696,6 +696,7 @@ core::fragment::FragSetCOP protocols::anchored_design::AnchorMoversData::autogen
 	}//for each loop
 
 	TR << "recovering memory?" << std::endl;
+	// WARNING WARNING WARNING! THREAD UNSAFE!  WHY WOULD YOU THINK THIS IS A GOOD IDEA?
 	core::fragment::picking_old::FragmentLibraryManager::get_instance()->clear_Vall();
 
 	set_frags(fragset);
@@ -730,6 +731,7 @@ core::fragment::FragSetCOP protocols::anchored_design::AnchorMoversData::autogen
 	}//for each loop
 
 	TR << "recovering memory?" << std::endl;
+	// WARNING WARNING WARNING! THREAD UNSAFE!  WHY WOULD YOU THINK THIS IS A GOOD IDEA?
 	core::fragment::picking_old::FragmentLibraryManager::get_instance()->clear_Vall();
 
 	set_frags(fragset);

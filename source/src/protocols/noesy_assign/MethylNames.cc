@@ -32,34 +32,24 @@
 
 static thread_local basic::Tracer tr( "protocols.noesy_assign.crosspeaks" );
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using protocols::noesy_assign::MethylNameLibrary;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< MethylNameLibrary > ::singleton_mutex_;
+template <> std::atomic< MethylNameLibrary * > utility::SingletonBase< MethylNameLibrary >::instance_( 0 );
+#else
+template <> MethylNameLibrary * utility::SingletonBase< MethylNameLibrary >::instance_( 0 );
+#endif
+
+}
+
 namespace protocols {
 namespace noesy_assign {
 
 using namespace core;
-
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< MethylNameLibrary * > MethylNameLibrary::instance_( 0 );
-#else
-MethylNameLibrary * MethylNameLibrary::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex MethylNameLibrary::singleton_mutex_;
-
-std::mutex & MethylNameLibrary::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-MethylNameLibrary const * MethylNameLibrary::get_instance()
-{
-	boost::function< MethylNameLibrary * () > creator = boost::bind( &MethylNameLibrary::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
 
 MethylNameLibrary *
 MethylNameLibrary::create_singleton_instance()

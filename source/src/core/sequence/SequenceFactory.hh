@@ -18,32 +18,29 @@
 #include <core/sequence/Sequence.fwd.hh>
 #include <core/sequence/SequenceCreator.fwd.hh>
 
+// Utility headers
+#include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
 // C++ Headers
 #include <map>
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
-
 namespace core {
 namespace sequence {
 
-class SequenceFactory {
+class SequenceFactory : public utility::SingletonBase< SequenceFactory >
+{
+public:
+	friend class utility::SingletonBase< SequenceFactory >;
+
 private:
 	SequenceFactory();
 
 	SequenceFactory(SequenceFactory const &); // unimplemented
 	SequenceFactory const & operator=( SequenceFactory const & ); // unimplemented
-public:
-	static SequenceFactory * get_instance();
 
+public:
 	void factory_register( SequenceCreatorCOP creator );
 	SequenceOP get_sequence( std::string const & type_name );
 	SequenceOP seq_from_file(
@@ -52,25 +49,8 @@ public:
 	);
 	utility::vector1< std::string > get_seq_names() const;
 
-	/// @brief Replace the load-time SequenceCreator with another creator.
-	void replace_creator( SequenceCreatorCOP creator );
-
 	SequenceCreatorCOP
 	get_creator( std::string const & type_name );
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
 
 private:
 
@@ -79,15 +59,10 @@ private:
 	static SequenceFactory * create_singleton_instance();
 
 private:
-	/// @brief static data member holding pointer to the singleton class itself
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< SequenceFactory * > instance_;
-#else
-	static SequenceFactory * instance_;
-#endif
 
 	typedef std::map< std::string, SequenceCreatorCOP > SequenceCreatorMap;
 	SequenceCreatorMap seq_types_;
+
 };
 
 /// @brief This templated class will register an instance of an

@@ -56,27 +56,23 @@
 
 static thread_local basic::Tracer tr( "core.scoring.constraints.ConstraintsIO" );
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using core::scoring::constraints::ConstraintIO;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< ConstraintIO > ::singleton_mutex_;
+template <> std::atomic< ConstraintIO * > utility::SingletonBase< ConstraintIO >::instance_( 0 );
+#else
+template <> ConstraintIO * utility::SingletonBase< ConstraintIO >::instance_( 0 );
+#endif
+
+}
+
 namespace core {
 namespace scoring {
 namespace constraints {
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex ConstraintIO::singleton_mutex_;
-
-std::mutex & ConstraintIO::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-ConstraintIO * ConstraintIO::get_instance()
-{
-	boost::function< ConstraintIO * () > creator = boost::bind( &ConstraintIO::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
 
 ConstraintIO *
 ConstraintIO::create_singleton_instance()
@@ -84,23 +80,13 @@ ConstraintIO::create_singleton_instance()
 	return new ConstraintIO;
 }
 
-func::FuncFactory & ConstraintIO::get_func_factory(void) {
-	return func_factory_;
+func::FuncFactory & ConstraintIO::get_func_factory() {
+	return get_instance()->func_factory_;
 }
 
-ConstraintFactory & ConstraintIO::get_cst_factory(void) {
+ConstraintFactory & ConstraintIO::get_cst_factory() {
 	return * ConstraintFactory::get_instance();
 }
-
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< ConstraintIO * > ConstraintIO::instance_( 0 );
-#else
-ConstraintIO * ConstraintIO::instance_( 0 );
-#endif
-
-func::FuncFactory ConstraintIO::func_factory_;
-//ConstraintFactory ConstraintIO::cst_factory_;
-
 
 void
 ConstraintIO::read_cst_atom_pairs(
@@ -149,7 +135,7 @@ ConstraintIO::read_cst_atom_pairs(
 		id::AtomID atom1( pose.residue_type( res1 ).atom_index( name1 ), res1 );
 		id::AtomID atom2( pose.residue_type( res2 ).atom_index( name2 ), res2 );
 
-		func::FuncOP aFunc = func_factory_.func_types_[ func_type ]->clone();
+		func::FuncOP aFunc = get_instance()->func_factory_.new_func( func_type );
 		aFunc->read_data( line_stream );
 
 		if ( tr.Debug.visible() ) {
@@ -192,7 +178,7 @@ ConstraintOP ConstraintIO::parse_atom_pair_constraint(
 	id::AtomID atom1( pose.residue_type( res1 ).atom_index( name1 ), res1 );
 	id::AtomID atom2( pose.residue_type( res2 ).atom_index( name2 ), res2 );
 
-	func::FuncOP aFunc = func_factory_.func_types_[ func_type ]->clone();
+	func::FuncOP aFunc = get_instance()->func_factory_.new_func( func_type );
 	aFunc->read_data( data );
 
 	if ( tr.Debug.visible() ) {
@@ -254,7 +240,7 @@ ConstraintIO::read_cst_coordinates(
 		id::AtomID atom1( pose.residue_type( res1 ).atom_index( name1 ), res1 );
 		id::AtomID atom2( pose.residue_type( res2 ).atom_index( name2 ), res2 );
 
-		func::FuncOP aFunc = func_factory_.func_types_[ func_type ]->clone();
+		func::FuncOP aFunc = get_instance()->func_factory_.new_func( func_type );
 		aFunc->read_data( line_stream );
 
 		//		if ( tr.Debug.visible() ) {
@@ -301,7 +287,7 @@ ConstraintOP ConstraintIO::parse_coordinate_constraint(
 	id::AtomID atom1( pose.residue_type( fixed_res ).atom_index( fixed_res_name ), fixed_res );
 	id::AtomID atom2( pose.residue_type( other_res ).atom_index( other_res_name ), other_res );
 
-	func::FuncOP aFunc = func_factory_.func_types_[ func_type ]->clone();
+	func::FuncOP aFunc = get_instance()->func_factory_.new_func( func_type );
 	aFunc->read_data( data );
 
 	if ( tr.Debug.visible() ) {
@@ -351,7 +337,7 @@ ConstraintIO::read_cst_angles(
 
 		tr.Debug	<< "read: " << name1 << " " << res1 << " "  <<  name2 << " "
 							<< res2 << " " << name3 << " " << res3 << std::endl;
-		func::FuncOP aFunc = func_factory_.func_types_[ func_type ]->clone();
+		func::FuncOP aFunc = get_instance()->func_factory_.new_func( func_type );
 		aFunc->read_data( line_stream );
 
 		if ( tr.Debug.visible() ) {

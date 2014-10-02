@@ -324,7 +324,7 @@ dock(Pose & init, string /*fname*/) {
 
   vector1<Size> scanres = get_scanres(pose);
 
-  core::pack::dunbrack::SingleResidueRotamerLibraryCAP dunlib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( rs->name_map("CYS") );
+  core::pack::dunbrack::SingleResidueRotamerLibraryCAP dunlib = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( rs->name_map("CYS") );
   core::pack::dunbrack::RotamerLibraryScratchSpace scratch;
 
   vector1<Hit> hits,allhits;

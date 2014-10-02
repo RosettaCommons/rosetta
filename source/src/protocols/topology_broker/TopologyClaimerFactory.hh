@@ -17,6 +17,9 @@
 // Project headers
 #include <protocols/topology_broker/TopologyClaimer.fwd.hh>
 
+// Utility headers
+#include <utility/SingletonBase.hh>
+
 // External headers
 #include <boost/utility.hpp>
 

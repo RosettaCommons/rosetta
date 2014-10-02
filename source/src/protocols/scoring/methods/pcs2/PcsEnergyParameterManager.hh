@@ -35,44 +35,21 @@
 // Package headers
 #include <protocols/scoring/methods/pcs2/PcsEnergyParameter.hh>
 
+#include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
 
 namespace protocols {
 namespace scoring {
 namespace methods {
 namespace pcs2 {
 
-class PcsEnergyParameterManager {
-
+class PcsEnergyParameterManager : public utility::SingletonBase< PcsEnergyParameterManager >
+{
 public:
-	static PcsEnergyParameterManager *
-	get_instance();
+	friend class utility::SingletonBase< PcsEnergyParameterManager >;
 
 	friend std::ostream &
 	operator<<(std::ostream& out, const PcsEnergyParameterManager &me);
-
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
 
 private:
 
@@ -88,12 +65,6 @@ private:
 
 	PcsEnergyParameterManager&
 	operator=( PcsEnergyParameterManager const & other );
-
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< PcsEnergyParameterManager * > instance_;
-#else
-	static PcsEnergyParameterManager * instance_;
-#endif
 
 	utility::vector1<PcsEnergyParameter> pcs_e_p_all_;
 	utility::vector1<std::string> vec_filename_all_;

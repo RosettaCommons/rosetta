@@ -178,10 +178,11 @@ void FragsToAtomDist::DistanceRecord::record( core::Real dist ) {
 
 
 void initialize_group_list(
-  	 GroupList& grp_list,
- 		 core::pose::Pose const& pose )
+	GroupList& grp_list,
+	core::pose::Pose const& pose
+)
 {
-	MethylNameLibrary const& methyl_lib( *MethylNameLibrary::get_instance() );
+	MethylNameLibrary const & methyl_lib( *MethylNameLibrary::get_instance() );
 	for ( core::Size pos =1; pos<=pose.total_residue(); pos++) {
 		core::chemical::ResidueType const& rsd(pose.residue_type( pos ));
 		//		std::string name( utility::trim( pose.residue_type( pos ).atom_name( iatom1 ) ) );

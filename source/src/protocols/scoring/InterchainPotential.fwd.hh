@@ -16,22 +16,11 @@
 #ifndef INCLUDED_protocols_scoring_InterchainPotential_fwd_hh
 #define INCLUDED_protocols_scoring_InterchainPotential_fwd_hh
 
-
-// Unit headers
-
-// Package headers
-
-// Project headers
-
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-// C++
-
-
-namespace core {
+namespace protocols {
 namespace scoring {
-
 
 class InterchainPotential;
 

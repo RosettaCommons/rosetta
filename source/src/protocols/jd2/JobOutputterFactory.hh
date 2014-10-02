@@ -21,6 +21,7 @@
 #include <protocols/jd2/JobOutputter.fwd.hh>
 
 // Utility Headers
+#include <utility/SingletonBase.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -28,14 +29,6 @@
 #include <map>
 
 #include <utility/vector1.hh>
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
 
 namespace protocols {
 namespace jd2 {
@@ -55,16 +48,15 @@ public:
 };
 
 
-class JobOutputterFactory
+class JobOutputterFactory : public utility::SingletonBase< JobOutputterFactory >
 {
 public:
+	friend class utility::SingletonBase< JobOutputterFactory >;
 	typedef std::map< std::string, JobOutputterCreatorOP > JobOutputterMap;
 
 public:
 	virtual ~JobOutputterFactory();
 
-	static
-	JobOutputterFactory * get_instance();
 
 	void factory_register( JobOutputterCreatorOP creator );
 
@@ -73,20 +65,6 @@ public:
 
 	///@brief return JobOutputter defined by output parameters (contained in option system and #defines for MPI, etc).  The difference is that if the option system, etc, says nothing about output (which as of this writing defaults to PDBJobOutputter), this function leaves the input Outputter unchanged.  This allows overriding the default outputter choice in your executable (without abusing the mutability of the options system)
 	JobOutputterOP get_new_JobOutputter( JobOutputterOP default_jobout );
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
 
 private:
 	JobOutputterOP get_JobOutputter_from_string( std::string const & job_outputter_type );
@@ -102,11 +80,6 @@ private:
 	static JobOutputterFactory * create_singleton_instance();
 
 private:
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< JobOutputterFactory * > instance_;
-#else
-	static JobOutputterFactory * instance_;
-#endif
 
 	JobOutputterMap job_outputter_creator_map_;
 

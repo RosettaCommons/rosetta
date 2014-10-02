@@ -19,6 +19,7 @@
 #include <protocols/jd2/parser/DataLoaderCreator.hh>
 
 // Utility Headers
+#include <utility/SingletonBase.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 #include <utility/pointer/ReferenceCount.hh>
 

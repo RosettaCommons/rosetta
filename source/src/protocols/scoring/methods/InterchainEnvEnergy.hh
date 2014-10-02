@@ -21,7 +21,8 @@
 
 // Package headers
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
-#include <protocols/scoring/InterchainPotential.hh>
+#include <protocols/scoring/InterchainPotential.fwd.hh>
+#include <core/scoring/EnvPairPotential.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Project headers
@@ -90,7 +91,10 @@ public:
 private:
 
 	// const-ref to scoring database
-	protocols::scoring::InterchainPotential const * potential_;
+	protocols::scoring::InterchainPotential const & interchain_potential_;
+	core::scoring::EnvPairPotential const & env_potential_;
+
+
 virtual
 core::Size version() const;
 

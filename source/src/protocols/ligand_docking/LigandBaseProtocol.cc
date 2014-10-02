@@ -988,7 +988,7 @@ LigandBaseProtocol::get_non_bb_clashing_rotamers(
 
 	utility::vector1< utility::vector1< Real > > extra_chi_steps( res_type->nchi() );
 
-	pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib( core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( *res_type ) );
+	pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib( core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( *res_type ) );
 
 	if( rotlib ){
 		rotlib->fill_rotamer_vector( pose, *scofx, *help_task, neighbor_graph, res_type, existing_residue, extra_chi_steps, true /*buried*/, suggested_rotamers );

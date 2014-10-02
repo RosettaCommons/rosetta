@@ -34,6 +34,20 @@
 #include <string>
 #include <sstream>
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using protocols::loops::loops_definers::LoopsDefinerFactory;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< LoopsDefinerFactory > ::singleton_mutex_;
+template <> std::atomic< LoopsDefinerFactory * > utility::SingletonBase< LoopsDefinerFactory >::instance_( 0 );
+#else
+template <> LoopsDefinerFactory * utility::SingletonBase< LoopsDefinerFactory >::instance_( 0 );
+#endif
+
+}
+
 namespace protocols {
 namespace loops {
 namespace loops_definers {
@@ -46,30 +60,6 @@ using utility::vector1;
 
 static thread_local basic::Tracer tr( "protocols.loops.loops_definers.LoopsDefinerFactory" );
 
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< LoopsDefinerFactory * > LoopsDefinerFactory::instance_( 0 );
-#else
-LoopsDefinerFactory * LoopsDefinerFactory::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex LoopsDefinerFactory::singleton_mutex_;
-
-std::mutex & LoopsDefinerFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-LoopsDefinerFactory * LoopsDefinerFactory::get_instance()
-{
-	boost::function< LoopsDefinerFactory * () > creator = boost::bind( &LoopsDefinerFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
-
 LoopsDefinerFactory *
 LoopsDefinerFactory::create_singleton_instance()
 {
@@ -78,10 +68,6 @@ LoopsDefinerFactory::create_singleton_instance()
 
 /// @details Private constructor insures correctness of singleton.
 LoopsDefinerFactory::LoopsDefinerFactory() {}
-
-LoopsDefinerFactory::LoopsDefinerFactory(
-	const LoopsDefinerFactory &
-) {}
 
 LoopsDefinerFactory::~LoopsDefinerFactory() {}
 

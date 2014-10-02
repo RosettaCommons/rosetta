@@ -80,6 +80,20 @@
 
 static thread_local basic::Tracer tr( "protocols.jumping" );
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using protocols::jumping::StandardDisulfPairingLibrary;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< StandardDisulfPairingLibrary > ::singleton_mutex_;
+template <> std::atomic< StandardDisulfPairingLibrary * > utility::SingletonBase< StandardDisulfPairingLibrary >::instance_( 0 );
+#else
+template <> StandardDisulfPairingLibrary * utility::SingletonBase< StandardDisulfPairingLibrary >::instance_( 0 );
+#endif
+
+}
+
 using core::Real;
 using namespace core;
 using namespace basic;
@@ -91,8 +105,6 @@ namespace jumping {
 
 /// @details Auto-generated virtual destructor
 BaseDisulfPairingLibrary::~BaseDisulfPairingLibrary() {}
-
-	// P.S. I GOT DIBBS ON 12345 SO IT IS ALL MINE - Robert
 
 //------------------------------------------------------------------------------
 // the x-axis of this coordinate system is along the p(*,2) -> p(*,1) bond vector
@@ -448,7 +460,8 @@ DisulfPairingLibrary::generate_jump_frags(
 	kinematics::MoveMap const& mm,
 	bool bWithTorsion,
 	core::fragment::FragSet& frags_accumulator
-) {
+) const
+{
 
 	fragment::FragDataOPs frag_data;
 	create_jump_fragments( bWithTorsion, frag_data );
@@ -473,30 +486,6 @@ DisulfPairingLibrary::generate_jump_frags(
 	}
 } // method
 
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< StandardDisulfPairingLibrary * > StandardDisulfPairingLibrary::instance_( 0 );
-#else
-StandardDisulfPairingLibrary * StandardDisulfPairingLibrary::instance_( 0 );
-#endif
-
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex StandardDisulfPairingLibrary::singleton_mutex_;
-
-std::mutex & StandardDisulfPairingLibrary::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-StandardDisulfPairingLibrary * StandardDisulfPairingLibrary::get_instance()
-{
-	boost::function< StandardDisulfPairingLibrary * () > creator = boost::bind( &StandardDisulfPairingLibrary::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
 
 StandardDisulfPairingLibrary *
 StandardDisulfPairingLibrary::create_singleton_instance()

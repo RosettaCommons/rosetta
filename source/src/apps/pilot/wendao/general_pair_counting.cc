@@ -137,7 +137,7 @@ Size get_best_rotamer_index(Pose &p, Size ndx)
 {
 	if (!option[restype_rot_dependent]) return 0;
 
-	RotamerLibrary const & rotamerlibCAP = RotamerLibrary::get_instance();
+	RotamerLibrary const & rotamerlibCAP = * RotamerLibrary::get_instance();
 
 	SingleResidueRotamerLibraryCAP residue_rotamer_library(
 		rotamerlibCAP.get_rsd_library(p.residue(ndx).type()));

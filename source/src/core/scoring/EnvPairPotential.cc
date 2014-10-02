@@ -502,7 +502,7 @@ EnvPairPotential::evaluate_pair_and_cenpack_score(
 
 /// @details Pose must already contain a cenlist object or this method will fail.
 CenListInfo const &
-EnvPairPotential::cenlist_from_pose( pose::Pose const & pose ) const
+EnvPairPotential::cenlist_from_pose( pose::Pose const & pose )
 {
 	using namespace core::pose::datacache;
 	return static_cast< core::scoring::CenListInfo const & > ( pose.data().get( CacheableDataType::CEN_LIST_INFO ) );
@@ -512,7 +512,7 @@ EnvPairPotential::cenlist_from_pose( pose::Pose const & pose ) const
 /// in the pose, or creates a new cenist object, places it in the pose, and returns
 /// a non-const reference to it.
 CenListInfo &
-EnvPairPotential::nonconst_cenlist_from_pose( pose::Pose & pose ) const
+EnvPairPotential::nonconst_cenlist_from_pose( pose::Pose & pose )
 {
 
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::CEN_LIST_INFO ) ) {

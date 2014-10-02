@@ -27,19 +27,12 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
+#include <utility/SingletonBase.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers
 #include <map>
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
 
 namespace protocols {
 namespace loops {
@@ -47,10 +40,11 @@ namespace loops_definers {
 
 
 /// Create LoopsDefiner Reporters
-class LoopsDefinerFactory {
-
+class LoopsDefinerFactory : public utility::SingletonBase< LoopsDefinerFactory >
+{
 public: // types
 
+	friend class utility::SingletonBase< LoopsDefinerFactory >;
 	typedef std::map< std::string, LoopsDefinerCreatorCOP > LoopsDefinerCreatorMap;
 
 private: // constructors
@@ -72,10 +66,6 @@ public:
 	virtual
 	~LoopsDefinerFactory();
 
-	static
-	LoopsDefinerFactory *
-	get_instance();
-
 	void
 	factory_register(
 		LoopsDefinerCreatorOP);
@@ -91,28 +81,7 @@ public:
 	create_loops_definer(
 		std::string const & type_name);
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
 private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
-private:
-
-	/// @brief static data member holding pointer to the singleton class itself
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< LoopsDefinerFactory * > instance_;
-#else
-	static LoopsDefinerFactory * instance_;
-#endif
 
 	LoopsDefinerCreatorMap types_;
 };

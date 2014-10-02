@@ -278,7 +278,7 @@ initialize_data(){
   Real psi;
   data.resize(18*36*36);
 
-  pack::dunbrack::RotamerLibrary const & rotlib = pack::dunbrack::RotamerLibrary::get_instance();
+  pack::dunbrack::RotamerLibrary const & rotlib = * pack::dunbrack::RotamerLibrary::get_instance();
 
   chemical::ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
   

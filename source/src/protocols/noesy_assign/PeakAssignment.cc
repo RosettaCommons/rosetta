@@ -122,6 +122,7 @@ void PeakAssignment::update_chemshiftscore_from_peak() {
 	chemshift_overlap_ = exp( -0.5*sum );
 }
 
+/// @details WARNING WARNING WARNING THREAD UNSAFE covalent_compliance RELIES ON THREAD-UNSAFE SINGLETON CovalentCompliance
 void PeakAssignment::update_upperdistance_score(/*dmax*/ ) {
 	core::id::NamedAtomID const& atom1( atom( 1 ) );
 	core::id::NamedAtomID const& atom2( atom( 2 ) );

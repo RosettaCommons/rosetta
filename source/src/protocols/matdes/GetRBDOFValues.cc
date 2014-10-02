@@ -163,16 +163,18 @@ core::Real GetRBDOFValues::compute(
 	utility::vector1<std::string> sym_dof_names;
 	if (get_init) {
 		if ( dof_name == "" ) utility_exit_with_message("A sym_dof_name must be specified in order to access the initial values from the SymDofSampler.");
-		sym_dof_names = SymDofMoverSampler::get_instance().get_sym_dof_names();
+		/// WARNING WARNING WARNING THREAD UNSAFE!
+		sym_dof_names = SymDofMoverSampler::get_instance()->get_sym_dof_names();
 		for (Size i = 1; i <= sym_dof_names.size(); i++) {
 			if ( dof_name == sym_dof_names[i] ) index = i;
 		}
 	}
 
 	// Get the radial displacement or angle for the user specified jump.
-	if ( disp && !ang ) {	
+	if ( disp && !ang ) {
 		Real starting_disp = 0;
-		if ( get_init ) starting_disp = SymDofMoverSampler::get_instance().get_radial_disps()[index];
+		/// WARNING WARNING WARNING THREAD UNSAFE!
+		if ( get_init ) starting_disp = SymDofMoverSampler::get_instance()->get_radial_disps()[index];
 		TR.Debug << "starting disp " << sym_dof_names[index] << ": " << init_d + starting_disp << std::endl;
 		if ( ax == 'x' ) value = -pose.jump(sym_aware_jump_id).get_translation().x() + init_d + starting_disp; // note: negative
 		else if ( ax == 'y' ) value = -pose.jump(sym_aware_jump_id).get_translation().y() + init_d + starting_disp; // note: negative
@@ -194,7 +196,8 @@ core::Real GetRBDOFValues::compute(
 		else utility_exit_with_message("The axis specified for GetRBDOFValues does not match with x, y, or z.");
 		TR.Debug << "sign: " << sym_dof_names[index] << ": " << sign << std::endl;
 		Real starting_angle = 0;
-		if ( get_init ) starting_angle = SymDofMoverSampler::get_instance().get_angles()[index];
+		/// WARNING WARNING WARNING THREAD UNSAFE!
+		if ( get_init ) starting_angle = SymDofMoverSampler::get_instance()->get_angles()[index];
 		TR.Debug << "starting angle " << sym_dof_names[index] << ": " << starting_angle + init_a << std::endl;
 		value = numeric::conversions::degrees(sign*theta) + init_a + starting_angle;
 		val_string << std::fixed << std::setprecision(1) << value;
@@ -217,7 +220,7 @@ bool GetRBDOFValues::apply( Pose const & pose ) const
 	compute(pose, verbose(), sym_dof_name(), jump_id(), axis(), radial_disp(), angle(), init_disp(), init_angle(), get_init_value() );
 	// );
   return( true );
-} 
+}
 
 /// @brief parse xml
 void
@@ -243,7 +246,7 @@ core::Real
 GetRBDOFValues::report_sm( Pose const & pose ) const
 {
   return( compute( pose, false, sym_dof_name(), jump_id(), axis(), radial_disp(), angle(), init_disp(), init_angle(), get_init_value() ) );
-} 
+}
 
 void
 GetRBDOFValues::report( std::ostream & out, Pose const & pose ) const

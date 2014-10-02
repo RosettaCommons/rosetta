@@ -234,7 +234,7 @@ int main( int argc, char * argv [] )
   devel::init(argc, argv);
 
   chemical::ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-  pack::dunbrack::RotamerLibrary const &rotlib = pack::dunbrack::RotamerLibrary::get_instance();
+  pack::dunbrack::RotamerLibrary const &rotlib = * pack::dunbrack::RotamerLibrary::get_instance();
 
   // Score setup
   scoring::ScoreFunctionOP score_in 

@@ -54,34 +54,24 @@
 
 static thread_local basic::Tracer TR_PcsGridSearchParameterManager( "protocols.scoring.methods.pcs.PcsGridSearchParameterManager" );
 
-namespace protocols{
-namespace scoring{
-namespace methods{
-namespace pcs2{
+// Singleton instance and mutex static data members
+namespace utility {
+
+using protocols::scoring::methods::pcs2::PcsGridSearchParameterManager;
 
 #if defined MULTI_THREADED && defined CXX11
-std::atomic< PcsGridSearchParameterManager * > PcsGridSearchParameterManager::instance_( 0 );
+template <> std::mutex utility::SingletonBase< PcsGridSearchParameterManager > ::singleton_mutex_;
+template <> std::atomic< PcsGridSearchParameterManager * > utility::SingletonBase< PcsGridSearchParameterManager >::instance_( 0 );
 #else
-PcsGridSearchParameterManager * PcsGridSearchParameterManager::instance_( 0 );
+template <> PcsGridSearchParameterManager * utility::SingletonBase< PcsGridSearchParameterManager >::instance_( 0 );
 #endif
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex PcsGridSearchParameterManager::singleton_mutex_;
-
-std::mutex & PcsGridSearchParameterManager::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-PcsGridSearchParameterManager * PcsGridSearchParameterManager::get_instance()
-{
-	boost::function< PcsGridSearchParameterManager * () > creator = boost::bind( &PcsGridSearchParameterManager::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
 }
+
+namespace protocols {
+namespace scoring {
+namespace methods {
+namespace pcs2 {
 
 PcsGridSearchParameterManager *
 PcsGridSearchParameterManager::create_singleton_instance()
@@ -92,6 +82,7 @@ PcsGridSearchParameterManager::create_singleton_instance()
 
 PcsGridSearchParameterManager::PcsGridSearchParameterManager() {}
 
+/// @brief WARNING WARNING WARNING! THREAD UNSAFE!
 void
 PcsGridSearchParameterManager::re_init(){
 
@@ -111,12 +102,15 @@ PcsGridSearchParameterManager::get_n_multi_data() const{
 	return(grid_s_p_all_.size());
 }
 
+/// @brief WARNING WARNING WARNING! THREAD UNSAFE!
 void
 PcsGridSearchParameterManager::incremente_n_multi_data(){
 	PcsGridSearchParameter g;
 	grid_s_p_all_.push_back(g);
 }
 
+/// @brief WARNING WARNING WARNING! THREAD UNSAFE!
+/// THIS CODE COULD INSTEAD RETURN A CONST REFERENCE
 PcsGridSearchParameter &
 PcsGridSearchParameterManager::get_grid_search_parameters(core::Size i_multi_data){
 

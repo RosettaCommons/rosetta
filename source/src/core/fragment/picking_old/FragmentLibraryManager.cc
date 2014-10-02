@@ -30,36 +30,23 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using core::fragment::picking_old::FragmentLibraryManager;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< FragmentLibraryManager > ::singleton_mutex_;
+template <> std::atomic< FragmentLibraryManager * > utility::SingletonBase< FragmentLibraryManager >::instance_( 0 );
+#else
+template <> FragmentLibraryManager * utility::SingletonBase< FragmentLibraryManager >::instance_( 0 );
+#endif
+
+}
 
 namespace core {
 namespace fragment {
 namespace picking_old {
-
-
-// static initialization
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< FragmentLibraryManager * > FragmentLibraryManager::instance_( 0 );
-#else
-FragmentLibraryManager * FragmentLibraryManager::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex FragmentLibraryManager::singleton_mutex_;
-
-std::mutex & FragmentLibraryManager::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-FragmentLibraryManager * FragmentLibraryManager::get_instance()
-{
-	boost::function< FragmentLibraryManager * () > creator = boost::bind( &FragmentLibraryManager::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
 
 FragmentLibraryManager *
 FragmentLibraryManager::create_singleton_instance()
@@ -73,6 +60,8 @@ FragmentLibraryManager::FragmentLibraryManager() :
 {}
 
 /// @brief return instance of standard Vall library
+/// This should be called in the constructor, and the Vall should
+/// not be cleared from memory after it's loaded.
 vall::VallLibrary const & FragmentLibraryManager::get_Vall() const {
 	using namespace basic::options::OptionKeys;
 	using basic::options::option;
@@ -89,6 +78,7 @@ vall::VallLibrary const & FragmentLibraryManager::get_Vall() const {
 
 
 /// @brief clear standard Vall library from memory
+/// WARNING WARNING WARNING! THREAD UNSAFE!
 void FragmentLibraryManager::clear_Vall() {
 	if ( vall_ != NULL ) {
 		delete vall_;

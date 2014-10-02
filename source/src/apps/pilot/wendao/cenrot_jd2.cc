@@ -340,7 +340,7 @@ private:
 	}
 
 public:
-	CenRotSidechainMover(): rotamer_library_( RotamerLibrary::get_instance() ) {}
+	CenRotSidechainMover(): rotamer_library_( * RotamerLibrary::get_instance() ) {}
 
 	virtual std::string get_name() const {return "CenRotSidechainMover";}
 

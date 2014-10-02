@@ -16,30 +16,23 @@
 
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
+#include <core/id/AtomID.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/types.hh>
 
 // Utility headers
-
-#include <core/id/AtomID.fwd.hh>
+#include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
-#include <map>
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
+// C++ headers
+#include <map>
 
 namespace core {
 namespace pack {
 namespace interaction_graph {
 
-/// With the traditional scoring hierarchy, classes like this one are created and accessed via the ScoringManager, which
+/// @brief With the traditional scoring hierarchy, classes like this one are created and accessed via the ScoringManager, which
 /// is itself a Singleton class.  These "potential" classes are only created and initialized when the use of the EnergyMethod
 /// these classes correspond is encountered.  No point in reading database files for a term if that term is not being used
 /// in some score function.  However, the surface energy is used when users specify they want to use it on the command
@@ -49,19 +42,33 @@ namespace interaction_graph {
 /// Scoring doesn't use interaction graphs, so if the code for that was located there, these values would not be read in.
 /// Instead, I've decided to implement this as its own separate class.  It uses the Singleton design pattern so the database
 /// will only get read in once during a run.
-
-class SurfacePotential {
+class SurfacePotential : public utility::SingletonBase< SurfacePotential >
+{
+public:
+	friend class utility::SingletonBase< SurfacePotential >;
 
 public:
-	static SurfacePotential* get_instance();
 	Real average_residue_hASA( chemical::AA aa_type, Size num_nbs );
 	Real hASA_patch_energy( Real patch_area, Size num_nbs );
 
-	void compute_residue_surface_energy( conformation::Residue const & rsd, pose::Pose const & pose, scoring::EnergyMap & emap,
-		Size resid, utility::vector1< Size > num_neighbors_ );
+	void compute_residue_surface_energy(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		scoring::EnergyMap & emap,
+		Size resid,
+		utility::vector1< Size > num_neighbors_
+	);
 
-	void compute_pose_surface_energy( pose::Pose const & pose, Real & surface_energy_ );
-	void compute_pose_surface_energy( pose::Pose const & pose, Real & total_surface_energy_, utility::vector1< Real > & residue_surface_energy_ );
+	void compute_pose_surface_energy(
+		pose::Pose const & pose,
+		Real & surface_energy_
+	);
+
+	void compute_pose_surface_energy(
+		pose::Pose const & pose,
+		Real & total_surface_energy_,
+		utility::vector1< Real > & residue_surface_energy_
+	);
 
 	core::Real hpatch_score( core::Real patch_area );
 
@@ -81,20 +88,6 @@ public:
 	static const core::Real MAX_HPATCH_SCORE;
 	static const core::Size HPATCH_SCORE_BIN_SIZE;
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
 private:
 	/// @brief private constructor
 	SurfacePotential();
@@ -108,12 +101,6 @@ private:
 	void read_hpatch_score_database_file();
 
 private:
-	/// @brief static data member holding pointer to the singleton class itself
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< SurfacePotential * > instance_;
-#else
-	static SurfacePotential * instance_;
-#endif
 
 	// outer vector holds AA's; inner vector holds neighbor counts. Residues always have at least 1 neighbor because
 	// num_neighbors_counting_self() is always used to determine number of neighbors

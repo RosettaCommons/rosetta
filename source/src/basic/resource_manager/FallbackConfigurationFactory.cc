@@ -27,31 +27,22 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-namespace basic {
-namespace resource_manager {
+// Singleton instance and mutex static data members
+namespace utility {
+
+using basic::resource_manager::FallbackConfigurationFactory;
 
 #if defined MULTI_THREADED && defined CXX11
-std::atomic< FallbackConfigurationFactory * > FallbackConfigurationFactory::instance_( 0 );
+template <> std::mutex utility::SingletonBase< FallbackConfigurationFactory > ::singleton_mutex_;
+template <> std::atomic< FallbackConfigurationFactory * > utility::SingletonBase< FallbackConfigurationFactory >::instance_( 0 );
 #else
-FallbackConfigurationFactory * FallbackConfigurationFactory::instance_( 0 );
+template <> FallbackConfigurationFactory * utility::SingletonBase< FallbackConfigurationFactory >::instance_( 0 );
 #endif
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex FallbackConfigurationFactory::singleton_mutex_;
-std::mutex & FallbackConfigurationFactory::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-FallbackConfigurationFactory * FallbackConfigurationFactory::get_instance()
-{
-	boost::function< FallbackConfigurationFactory * () > creator = boost::bind( &FallbackConfigurationFactory::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
 }
+
+namespace basic {
+namespace resource_manager {
 
 FallbackConfigurationFactory *
 FallbackConfigurationFactory::create_singleton_instance()

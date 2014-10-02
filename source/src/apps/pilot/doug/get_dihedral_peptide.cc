@@ -169,7 +169,7 @@ PeptoidDihedralGrabber::apply( core::pose::Pose & pose )
 	using namespace chemical;
 
 	// get a rotlib
-	core::pack::dunbrack::RotamerLibrary const & rl( core::pack::dunbrack::RotamerLibrary::get_instance() );
+	core::pack::dunbrack::RotamerLibrary const & rl( * core::pack::dunbrack::RotamerLibrary::get_instance() );
 
 	// setup patcker task
 	core::pack::task::TaskFactoryOP tf = new core::pack::task::TaskFactory;

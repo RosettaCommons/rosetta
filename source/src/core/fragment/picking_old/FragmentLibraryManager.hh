@@ -20,13 +20,8 @@
 // package headers
 #include <core/fragment/picking_old/vall/VallLibrary.fwd.hh>
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
+// Utility headers
+#include <utility/SingletonBase.hh>
 
 namespace core {
 namespace fragment {
@@ -34,8 +29,10 @@ namespace picking_old {
 
 
 /// @brief  singleton class for accessing fragment libraries
-class FragmentLibraryManager {
-
+class FragmentLibraryManager : public utility::SingletonBase< FragmentLibraryManager >
+{
+public:
+	friend class utility::SingletonBase< FragmentLibraryManager >;
 
 private: // constructor
 
@@ -49,11 +46,6 @@ private: // constructor
 
 public: // access
 
-
-	/// @brief return singleton instance of manager
-	static FragmentLibraryManager * get_instance();
-
-
 	/// @brief return instance of standard Vall library
 	vall::VallLibrary const & get_Vall() const;
 
@@ -62,30 +54,10 @@ public: // memory management
 
 
 	/// @brief clear standard Vall library from memory
+	/// WARNING WARNING WARNING. THREAD UNSAFE!
 	void clear_Vall();
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
 private: // data
-
-	/// @brief static data member holding pointer to the singleton class itself
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< FragmentLibraryManager * > instance_;
-#else
-	static FragmentLibraryManager * instance_;
-#endif
 
 	// *** WARNING -- pointers for all libraries below must be
 	// initialized to NULL in constructor ***

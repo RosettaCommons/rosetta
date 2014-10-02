@@ -65,41 +65,6 @@ namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< EnzConstraintIO * > EnzConstraintIO::instance_( 0 );
-#else
-EnzConstraintIO * EnzConstraintIO::instance_( 0 );
-#endif
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex EnzConstraintIO::singleton_mutex_;
-
-std::mutex & EnzConstraintIO::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-EnzConstraintIO * EnzConstraintIO::get_instance()
-{
-	boost::function< EnzConstraintIO * () > creator = boost::bind( &EnzConstraintIO::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
-
-EnzConstraintIO *
-EnzConstraintIO::create_singleton_instance()
-{
-	using namespace core::chemical;
-
-	EnzConstraintIO * instance = new EnzConstraintIO( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
-	instance->read_enzyme_cstfile( basic::options::option[basic::options::OptionKeys::enzdes::cstfile]);
-
-	return instance;
-}
-
 ///@ brief constructor for EnzConstraintIO class, builds up function types
 EnzConstraintIO::EnzConstraintIO (core::chemical::ResidueTypeSetCAP src_restype_set) {
 	restype_set_ = src_restype_set;

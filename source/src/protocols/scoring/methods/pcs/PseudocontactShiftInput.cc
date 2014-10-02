@@ -52,6 +52,19 @@
 #include <iostream>
 #include <iomanip>
 
+// Singleton instance and mutex static data members
+namespace utility {
+
+using protocols::scoring::methods::pcs::PCS_data_input_manager;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< PCS_data_input_manager > ::singleton_mutex_;
+template <> std::atomic< PCS_data_input_manager * > utility::SingletonBase< PCS_data_input_manager >::instance_( 0 );
+#else
+template <> PCS_data_input_manager * utility::SingletonBase< PCS_data_input_manager >::instance_( 0 );
+#endif
+
+}
 
 namespace protocols{
 namespace scoring{
@@ -307,31 +320,6 @@ PCS_data_input_manager::get_input_data(utility::vector1<std::string> const & fil
 	TR_PCS_d_i << pcs_d_i << std::endl;
 
 	return(pcs_d_i);
-}
-
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< PCS_data_input_manager * > PCS_data_input_manager::instance_( 0 );
-#else
-PCS_data_input_manager * PCS_data_input_manager::instance_( 0 );
-#endif
-
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-std::mutex PCS_data_input_manager::singleton_mutex_;
-
-std::mutex & PCS_data_input_manager::singleton_mutex() { return singleton_mutex_; }
-
-#endif
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-PCS_data_input_manager * PCS_data_input_manager::get_instance()
-{
-	boost::function< PCS_data_input_manager * () > creator = boost::bind( &PCS_data_input_manager::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
 }
 
 PCS_data_input_manager *

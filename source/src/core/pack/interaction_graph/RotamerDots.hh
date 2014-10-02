@@ -34,6 +34,7 @@
 // AUTO-REMOVED #include <numeric/xyzVector.hh>
 
 //Utilitiy Headers
+#include <utility/SingletonBase.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
@@ -44,14 +45,6 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray2D.fwd.hh>
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
 
 namespace core {
 namespace pack {
@@ -173,7 +166,7 @@ public:
 	core::Real get_atom_radius( Size atom_index ) const;
 	core::Real radius_for_attype( Size const attype_index );
 	core::Real max_atom_radius();
-	utility::vector1< Real >* get_radii() const;
+	utility::vector1< Real > const * get_radii() const;
 
 	// add rotamer coverage counts produced by self overlap.
 	void increment_self_overlap();
@@ -245,7 +238,6 @@ private:
 public:
 	static core::Size const num_bytes_;
 	static core::Real probe_radius_;
-	static core::Real polar_expansion_radius_;
 
 private:
 	core::conformation::ResidueCOP rotamer_;
@@ -257,12 +249,15 @@ private:
 	mutable bool sasa_is_current_;
 	mutable utility::vector1< core::Real > atom_sasa_;
 
-	utility::vector1< Real >* radii_;
+	utility::vector1< Real > const * radii_;
+
+	// APL FIX THIS: This belongs in its own singleton
 	static utility::vector1< core::Vector > dot_coords_;
 
 	static void initialize_dot_coords( utility::vector1< core::Vector > & dot_coords );
 
 public:	/// TEMP!
+
 	static ObjexxFCL::FArray2D_int const *   lg_angles_;
 	static ObjexxFCL::FArray2D_ubyte const * lg_masks_;
 
@@ -300,33 +295,20 @@ std::ostream & operator<< ( std::ostream & os, RotamerDots const & rd );
 /// right radius. This structure is similar to how the ChemicalManager works. But, in that class, the functions return
 /// AtomTypeSet objects.
 ///
-class RotamerDotsRadiusData {
+class RotamerDotsRadiusData : public utility::SingletonBase< RotamerDotsRadiusData >
+{
+public:
+	friend class utility::SingletonBase< RotamerDotsRadiusData >;
 
 public:
-	static RotamerDotsRadiusData * get_instance();
-
 	/// @brief return a pointer to the standard Rosetta SASA radii
-	utility::vector1< Real >* get_ROSETTA_SASA_radii();
+	utility::vector1< Real > const * get_ROSETTA_SASA_radii() const;
 
 	/// @brief return a pointer to the SASA radii used by NACCESS
-	utility::vector1< Real >* get_NACCESS_SASA_radii();
+	utility::vector1< Real > const * get_NACCESS_SASA_radii() const;
 
 	/// @brief return a pointer to the SASA radii used by NACCESS, with polar atom radii expanded
-	utility::vector1< Real >* get_NACCESS_SASA_radii_with_expanded_polars( Real polar_expansion_radius = 1.0 );
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
+	utility::vector1< Real > const * get_NACCESS_SASA_radii_with_expanded_polars() const;
 
 private:
 	/// @brief private constructor
@@ -337,16 +319,12 @@ private:
 	static RotamerDotsRadiusData * create_singleton_instance();
 
 private:
-	/// @brief static data member holding pointer to the singleton class itself
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< RotamerDotsRadiusData * > instance_;
-#else
-	static RotamerDotsRadiusData * instance_;
-#endif
+
+	core::Real polar_expansion_radius_;
 
 	utility::vector1< Real > ROSETTA_SASA_radii_;
 	utility::vector1< Real > NACCESS_SASA_radii_;
-	utility::vector1< Real > NACCESS_SASA_radii_with_expanded_polars;
+	utility::vector1< Real > NACCESS_SASA_radii_with_expanded_polars_;
 
 };
 
@@ -451,7 +429,7 @@ private:
 	core::conformation::ResidueCOP rotamer_;
 	utility::vector1< utility::vector1< ObjexxFCL::ubyte > > inv_dots_;
 	static Real const max_dist_from_dot_to_intersection;
-	utility::vector1< Real >* radii_;
+	utility::vector1< Real > const * radii_;
 
 };
 

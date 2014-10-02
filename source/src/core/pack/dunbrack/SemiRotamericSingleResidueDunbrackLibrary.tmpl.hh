@@ -812,7 +812,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::best_rotamer_energy(
 
 		//// WHO WROTE THIS?  WHAT ARE YOU DOING?
 		//// WHAT IS THIS CODE?  Why are you obtaining a pointer to the residue's rotamer library?  THIS is the residue's rotamer library!
-		core::pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance().get_rsd_library( rsd.type() );
+		core::pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance()->get_rsd_library( rsd.type() );
 		core::pack::dunbrack::SingleResidueDunbrackLibraryCOP dunlib( utility::pointer::static_pointer_cast< SingleResidueDunbrackLibrary const > ( rotlib ));
 
 		Real const phi( parent::get_phi_from_rsd( rsd ) );

@@ -48,6 +48,7 @@
 namespace protocols {
 namespace noesy_assign {
 
+/// WARNING WARNING WARNING THREAD UNSAFE FOR USING THE COVALENTCOMPLIANCE CLASS IN A NON-CONST WAY
 class NoesyModule : public utility::pointer::ReferenceCount {
 
 private:

@@ -45,6 +45,7 @@
 #endif
 
 // Utility headers
+#include <utility/SingletonBase.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/io/ozstream.fwd.hh>
 #include <utility/io/izstream.fwd.hh>
@@ -56,14 +57,6 @@
 #include <map>
 
 #include <utility/vector1.hh>
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
 
 namespace core {
 namespace pack {
@@ -112,10 +105,11 @@ subtract_chi_angles(
 );
 
 ///////////////////////////////////////////////////////////////////////////////
-class RotamerLibrary // singleton -- no need to derive from RefCount : public utility::pointer::ReferenceCount
+class RotamerLibrary : public utility::SingletonBase< RotamerLibrary >
 {
-
 public:
+	friend class utility::SingletonBase< RotamerLibrary >;
+
 	typedef chemical::AA AA;
 	typedef conformation::Residue Residue;
 	typedef chemical::ResidueType ResidueType;
@@ -187,9 +181,6 @@ public:
 	/// in the residue type paramater file if it exists
 	SingleResidueRotamerLibraryCOP
 	get_peptoid_rotamer_library( chemical::ResidueType const & rsd_type ) const;
-
-	static
-	RotamerLibrary & get_instance();
 
 
 private:
@@ -343,20 +334,6 @@ public:
 		Size & n_rotameric_aas
 	);
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
 private:
 	void
 	write_to_binary( utility::io::ozstream & out ) const;
@@ -376,14 +353,6 @@ private:
 
 private:
 
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< RotamerLibrary * > instance_;
-#else
-	static RotamerLibrary * instance_;
-#endif
-
-private:
-
 	typedef std::map< AA, SingleResidueRotamerLibraryCOP > LibraryMap;
 	typedef LibraryMap::const_iterator library_iterator;
 
@@ -392,32 +361,23 @@ private:
 	typedef std::map< std::string, SingleResidueRotamerLibraryCOP > ResLibraryMap;
 	typedef ResLibraryMap::const_iterator reslibrary_iterator;
 
+	// APL NOTE: All the mutable data in this class will need a ReadWriteMutex to
+	// be made threadsafe.
+
 	mutable ResLibraryMap reslibraries_;
 	mutable LibraryMap libraries_;
 	mutable utility::vector1< SingleResidueRotamerLibraryCOP > aa_libraries_;
 	mutable utility::vector1< SingleResidueRotamerLibraryCOP > libraries_ops_;
 
-	/// DOUG DOUG DOUG Should this be done in the "threadsafe" way above?
 	/// @brief Map that associates three letter codes with SRRLCOPs for the
 	/// noncanonical alpha-amino acid sidechain rotamer libraries
 	mutable std::map< std::string, SingleResidueRotamerLibraryCOP > ncaa_rotlibs_;
 
-	/// DOUG DOUG DOUG Should this be done in the "threadsafe" way above?
 	/// @brief Map that associates three letter codes with SRRLCOPs for the
 	/// peptoid sidechain rotamer libraries
 	mutable std::map< std::string, SingleResidueRotamerLibraryCOP > peptoid_rotlibs_;
 
 };
-
-// Unsure -- do the following methods really belong in this file?
-
-// XRW if coarse is removed than this functions signature will have to chanhge
-/* SingleResidueDunbrackLibraryOP
-read_single_dunbrack_library(
-	 utility::io::izstream &iunit,
-	 bool coarse
-); */
-
 
 void
 read_dunbrack_library(

@@ -78,47 +78,25 @@
 #include <boost/function.hpp>
 
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
+// Singleton instance and mutex static data members
+namespace utility {
+
+using core::chemical::ChemicalManager;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< ChemicalManager > ::singleton_mutex_;
+template <> std::atomic< ChemicalManager * > utility::SingletonBase< ChemicalManager >::instance_( 0 );
+#else
+template <> ChemicalManager * utility::SingletonBase< ChemicalManager >::instance_( 0 );
 #endif
-#endif
+
+}
 
 
 namespace core {
 namespace chemical {
 
 static thread_local basic::Tracer TR( "core.chemical.ChemicalManager" );
-
-//
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-
-
-std::mutex & ChemicalManager::singleton_mutex()
-{
-	static std::mutex singleton_mutex_;
-	return singleton_mutex_;
-}
-
-#endif
-#endif
-
-#if defined MULTI_THREADED && defined CXX11
-std::atomic< ChemicalManager * > ChemicalManager::instance_( 0 );
-#else
-ChemicalManager* ChemicalManager::instance_( 0 );
-#endif
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-ChemicalManager * ChemicalManager::get_instance()
-{
-	boost::function< ChemicalManager * () > creator = boost::bind( &ChemicalManager::create_singleton_instance );
-	utility::thread::safely_create_singleton( creator, instance_ );
-	return instance_;
-}
-
-
 
 /// @brief private constructor to guarantee the singleton
 ChemicalManager::ChemicalManager(){}

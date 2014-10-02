@@ -18,6 +18,9 @@
 #include <map>
 #include <string>
 
+// Utility headers
+#include <utility/SingletonBase.hh>
+
 #ifdef MULTI_THREADED
 #ifdef CXX11
 // C++11 Headers

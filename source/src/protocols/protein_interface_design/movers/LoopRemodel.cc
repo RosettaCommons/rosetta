@@ -433,6 +433,7 @@ LoopRemodel::pick_loop_frags( protocols::loops::LoopsCOP loops_in, std::string c
 		frag1_->add( *protocols::forge::methods::smallmer_from_largemer( frag3_->begin(), frag3_->end(), 1 ) );
 	}
 
+	// WARNING WARNING WARNING! THREAD UNSAFE!  WHY WOULD YOU THINK THIS IS A GOOD IDEA?
 	picking_old::FragmentLibraryManager::get_instance()->clear_Vall();
 	if( (frag1_->size() > 0) || (frag3_->size() > 0) || (frag9_->size() > 0) ) return true;
 	else return false;

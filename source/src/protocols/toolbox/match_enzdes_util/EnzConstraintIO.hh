@@ -40,17 +40,10 @@
 
 
 // Utility Headers
+#include <utility/SingletonBase.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/vector1.hh>
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
 
 namespace protocols {
 namespace toolbox {
@@ -61,12 +54,14 @@ namespace match_enzdes_util {
 /////////////////////////////////////////////////////////////////////////////
 
 
-//interface class to process enzyme design constraints format, links information in
-//constraint file containg constraint parameters and in pdb file containing
-//the relevant residue numbers
-//it also checks whether the information that was gathered from two different locations
-//is consistent and then adds a constraint set to an input pose
-
+// @brief interface class to process enzyme design constraints format, links information
+// in the constraint file containg constraint parameters and in the pdb file containing
+// the relevant residue numbers.
+// it also checks whether the information that was gathered from two different locations
+// is consistent and then adds a constraint set to an input pose
+// This class had previously been a singleton, but it is terribly thread unsafe to have
+// it behave that way; it looks like no one is using it as a singleton, fortunately, so
+// as of 9/2014 it is no longer a singleton.
 class EnzConstraintIO : public utility::pointer::ReferenceCount
 #ifdef PTR_MODERN
 	// New version
@@ -84,8 +79,6 @@ public:
 
 	EnzConstraintIO (core::chemical::ResidueTypeSetCAP src_restype_set);
 	virtual ~EnzConstraintIO();
-
-	static EnzConstraintIO* get_instance();
 
 	/// self pointers
 	inline EnzConstraintIOCOP get_self_ptr() const { return shared_from_this(); }
@@ -257,25 +250,7 @@ protected:
 
 	utility::vector1< EnzConstraintParametersOP > cst_pairs_; // contains information about the residue pair constraints
 
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
 private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
-
-private:
-
-	/// @brief private singleton creation function to be used with
-	/// utility::thread::threadsafe_singleton
-	static EnzConstraintIO * create_singleton_instance();
 
 	//void
 	//clear_pose_specific_data();
@@ -309,12 +284,6 @@ private:
 
 	//utility::vector1< core::scoring::constraints::ConstraintCOP > favor_native_constraints_;
 
-	//a static version for generic access
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< EnzConstraintIO * > instance_;
-#else
-	static EnzConstraintIO * instance_;
-#endif
 
 };  // class EnzConstraintIO
 

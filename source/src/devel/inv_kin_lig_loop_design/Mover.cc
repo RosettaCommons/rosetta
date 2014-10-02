@@ -172,7 +172,8 @@ Mover::~Mover()
 			cout << "inserting a random rotamer into " << res_type.name() << ":" << seqpos << endl;
 
 			core::pack::dunbrack::SingleResidueRotamerLibraryCOP rotamer_library =
-				core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( res_type );
+				core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( res_type );
+
 			if( ! rotamer_library ) return;
 
 			core::pack::dunbrack::SingleResidueDunbrackLibraryCOP dun_rotlib =

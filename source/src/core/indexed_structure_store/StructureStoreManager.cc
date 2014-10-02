@@ -25,34 +25,33 @@
 #include <core/indexed_structure_store/FragmentStore.hh>
 #include <core/indexed_structure_store/FragmentLookup.hh>
 
-// H5-based backend declarations are guarded by #ifdef USEHDF5 
+// H5-based backend declarations are guarded by #ifdef USEHDF5
 #include <core/indexed_structure_store/H5FragmentStoreBackend.hh>
 #include <core/indexed_structure_store/BinaryFragmentStoreBackend.hh>
 
-namespace core
-{
-namespace indexed_structure_store
-{
+// Singleton instance and mutex static data members
+namespace utility {
 
-using namespace basic::options;
+using core::indexed_structure_store::StructureStoreManager;
+
+#if defined MULTI_THREADED && defined CXX11
+template <> std::mutex utility::SingletonBase< StructureStoreManager > ::singleton_mutex_;
+template <> std::atomic< StructureStoreManager * > utility::SingletonBase< StructureStoreManager >::instance_( 0 );
+#else
+template <> StructureStoreManager * utility::SingletonBase< StructureStoreManager >::instance_( 0 );
+#endif
+
+}
+
+namespace core {
+namespace indexed_structure_store {
 
 static thread_local basic::Tracer TR( "core.indexed_structure_store.StructureStoreManager" );
 
-StructureStoreManager::StructureStoreManager() 
-{
-} 
+using namespace basic::options;
 
-/// @brief set initial value as no instance
-StructureStoreManager* StructureStoreManager::instance_( 0 );
-
-/// @brief static function to get the instance of ( pointer to) this singleton class
-StructureStoreManager * StructureStoreManager::get_instance()
+StructureStoreManager::StructureStoreManager()
 {
-	if ( instance_ == 0 )
-	{
-		 instance_ = new StructureStoreManager();
-	}
-	return instance_;
 }
 
 FragmentLookupOP StructureStoreManager::load_fragment_lookup(std::string lookup_name)
@@ -130,6 +129,11 @@ std::string StructureStoreManager::resolve_store_path(std::string target_path)
 	}
 
 	return "";
+}
+
+StructureStoreManager * StructureStoreManager::create_singleton_instance()
+{
+	return new StructureStoreManager;
 }
 
 }

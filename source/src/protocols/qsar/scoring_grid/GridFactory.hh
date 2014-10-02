@@ -19,20 +19,13 @@
 #include <utility/json_spirit/json_spirit_reader.h>
 
 // Utility Headers
+#include <utility/SingletonBase.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 // c++ headers
 #include <map>
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-// C++11 Headers
-#include <atomic>
-#include <mutex>
-#endif
-#endif
 
 namespace protocols {
 namespace qsar {
@@ -50,9 +43,10 @@ public:
 	GridRegistrator() : parent() {}
 };
 
-class GridFactory
+class GridFactory : public utility::SingletonBase< GridFactory >
 {
 public:
+	friend class utility::SingletonBase< GridFactory >;
 
 	typedef std::map<std::string, GridCreatorOP > GridMap;
 	typedef utility::tag::Tag Tag;
@@ -61,9 +55,6 @@ public:
 public:
 	virtual ~GridFactory();
 
-	static
-	GridFactory * get_instance();
-
 	void factory_register(GridCreatorOP creator);
 
 	///@brief create Grid given grid tag
@@ -71,20 +62,6 @@ public:
 
 	///@brief create Grid given a serialized grid object
 	GridBaseOP new_grid(utility::json_spirit::mObject data ) const;
-
-#ifdef MULTI_THREADED
-#ifdef CXX11
-public:
-
-	/// @brief This public method is meant to be used only by the
-	/// utility::thread::safely_create_singleton function and not meant
-	/// for any other purpose.  Do not use.
-	static std::mutex & singleton_mutex();
-
-private:
-	static std::mutex singleton_mutex_;
-#endif
-#endif
 
 private:
 	GridFactory();
@@ -97,11 +74,6 @@ private:
 	static GridFactory * create_singleton_instance();
 
 private:
-#if defined MULTI_THREADED && defined CXX11
-	static std::atomic< GridFactory * > instance_;
-#else
-	static GridFactory * instance_;
-#endif
 
 	GridMap grid_creator_map_;
 
