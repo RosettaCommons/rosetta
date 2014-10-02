@@ -205,6 +205,18 @@ rm -r ref/; ./ScoreVersion.py    # create reference results using only default s
         # Wait for them to finish
         queue.join()
 
+
+    # removing absolute paths to root Rosetta checkout from tests results and replacing it with 'ROSETTA'
+    rosetta_dir = os.path.abspath('../..')
+    for test in tests:
+        for dir_, _, files in os.walk( path.join("new", test) ):
+            for f in files:
+                if f == 'command.sh': continue
+                fname = dir_ + '/' + f
+                data = file(fname).read()
+                if rosetta_dir in data:
+                    with file(fname, 'w') as f: f.write( data.replace(rosetta_dir, 'ROSETTA_MAIN') )
+
     # Analyze results
     print
 
