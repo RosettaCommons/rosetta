@@ -22,6 +22,8 @@
 #include <numeric/conversions.hh>
 #include <utility/assert.hh>
 
+#include <float.h>
+
 namespace numeric {
 namespace deriv   {
 
@@ -116,6 +118,7 @@ dihedral_p1_cosine_deriv_first(
 	xyzVector< P > const & p3,
 	xyzVector< P > const & p4,
 	P & x,
+	bool & colinearity_flag,
 	xyzVector< P > & F1,
 	xyzVector< P > & F2
 )
@@ -125,6 +128,7 @@ dihedral_p1_cosine_deriv_first(
 
 	F1 = 0.0;
 	F2 = 0.0;
+	colinearity_flag = false;
 
 	Vector v1( p1-p2 );
 	Vector v2( p2-p3 );
@@ -136,7 +140,10 @@ dihedral_p1_cosine_deriv_first(
 	Real const n12( v12.length() );
 	Real const n23( v23.length() );
 
-	if ( n12 < Real(1e-9) || n23 < Real(1e-9) ) return;
+	if ( n12 < Real(1e-9) || n23 < Real(1e-9) ) {
+		colinearity_flag = true;
+		return;
+	}
 
 	x = dot( v12, v23 ) / ( n12 * n23 );
 
@@ -190,8 +197,9 @@ dihedral_p1_cosine_deriv(
 {
 	typedef P Real;
 
-	Real x( 0.0 );
-	dihedral_p1_cosine_deriv_first( p1, p2, p3, p4, x, f1, f2 );
+	Real x( 0.0 ); bool colinearity;
+	dihedral_p1_cosine_deriv_first( p1, p2, p3, p4, x, colinearity, f1, f2 );
+	if ( colinearity ) return;
 	dihedral_deriv_second( p1, p2, p3, p4, x, theta, f1, f2 );
 
 }
@@ -209,6 +217,7 @@ dihedral_p2_cosine_deriv_first(
 	xyzVector< P > const & p3,
 	xyzVector< P > const & p4,
 	P & x,
+	bool & colinearity_flag,
 	xyzVector< P > & F1,
 	xyzVector< P > & F2
 )
@@ -220,6 +229,7 @@ dihedral_p2_cosine_deriv_first(
 
 	F1 = Real(0.0);
 	F2 = Real(0.0);
+	colinearity_flag = false;
 
 	Vector v1( p1-p2 );
 	Vector v2( p2-p3 );
@@ -231,7 +241,10 @@ dihedral_p2_cosine_deriv_first(
 	Real const n12( v12.length() );
 	Real const n23( v23.length() );
 
-	if ( n12 < Real(1e-9) || n23 < Real(1e-9) ) return;
+	if ( n12 < Real(1e-9) || n23 < Real(1e-9) ) {
+		colinearity_flag = true;
+		return;
+	}
 
 	x = dot( v12, v23) / ( n12 * n23 );
 
@@ -310,8 +323,9 @@ dihedral_p2_cosine_deriv(
 {
 	typedef P Real;
 
-	Real x( 0.0 );
-	dihedral_p2_cosine_deriv_first( p1, p2, p3, p4, x, f1, f2 );
+	Real x( 0.0 ); bool colinearity;
+	dihedral_p2_cosine_deriv_first( p1, p2, p3, p4, x, colinearity, f1, f2 );
+	if ( colinearity ) return;
 	dihedral_deriv_second( p1, p2, p3, p4, x, theta, f1, f2 );
 
 }

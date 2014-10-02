@@ -97,7 +97,7 @@ int main( int argc, char * argv [] ) {
 
 	NEW_OPT( central_relax_pdb_num, "target residue(s)", "-1");
 
-	TR << "Calling init" << std::endl;
+	// APL NOTE: Tracers cannot be written to before devel::init gets called. TR << "Calling init" << std::endl;
 	//initializes Rosetta functions
 	devel::init(argc, argv);
 
