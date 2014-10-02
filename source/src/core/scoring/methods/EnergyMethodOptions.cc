@@ -123,6 +123,7 @@ EnergyMethodOptions::operator=(EnergyMethodOptions const & src) {
 		cartbonded_ang_ = src.cartbonded_ang_;
 		cartbonded_tors_ = src.cartbonded_tors_;
 		cartbonded_proton_ = src.cartbonded_proton_;
+		cartbonded_improper_ = src.cartbonded_improper_;
 		cartbonded_linear_ = src.cartbonded_linear_;
 		pb_bound_tag_ = src.pb_bound_tag_;
 		pb_unbound_tag_ = src.pb_unbound_tag_;
@@ -421,6 +422,7 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.cartbonded_ang_ == b.cartbonded_ang_ ) &&
 		( a.cartbonded_tors_ == b.cartbonded_tors_ ) &&
 		( a.cartbonded_proton_ == b.cartbonded_proton_ ) &&
+		( a.cartbonded_improper_ == b.cartbonded_improper_ ) &&
 		( a.cartbonded_linear_ == b.cartbonded_linear_ ) &&
 		( a.bond_angle_central_atoms_to_score_ == b.bond_angle_central_atoms_to_score_ ) &&
 		( a.bond_angle_residue_type_param_set_ == b.bond_angle_residue_type_param_set_ ) &&
@@ -581,6 +583,9 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 
 	option_keys.push_back("cartbonded_tors");
 	option_values.push_back(boost::lexical_cast<std::string>(cartbonded_tors_));
+
+	option_keys.push_back("cartbonded_improper");
+	option_values.push_back(boost::lexical_cast<std::string>(cartbonded_improper_));
 
 	option_keys.push_back("cartbonded_proton");
 	option_values.push_back(boost::lexical_cast<std::string>(cartbonded_proton_));
