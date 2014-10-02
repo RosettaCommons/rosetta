@@ -287,7 +287,7 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::semiexpl_water_hbgeom_score(
   vector1< id::AtomID > clash_check_atids;
   for( Size iat = 1; iat <= new_rsd.natoms(); ++iat ){
     clash_check_atids.push_back( id::AtomID( iat, new_seqpos ) ); 
-  }
+ }
 
   //which is acceptor, donor?
   Size aatm( 0 ), acc_pos( 0 ), hatm( 0 ), don_pos( 0 ); 

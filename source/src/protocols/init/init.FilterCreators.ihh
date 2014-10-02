@@ -36,6 +36,7 @@
 #include <protocols/fldsgn/filters/ParallelBetaPairingPreferenceFilterCreator.hh>
 #include <protocols/fldsgn/filters/SecondaryStructureFilterCreator.hh>
 #include <protocols/fldsgn/filters/SecondaryStructureCountFilterCreator.hh>
+#include <protocols/fldsgn/filters/SecondaryStructureHasResidueFilterCreator.hh>
 #include <protocols/fldsgn/filters/SheetTopologyFilterCreator.hh>
 
 #include <protocols/denovo_design/filters/ExposedHydrophobicsFilterCreator.hh>

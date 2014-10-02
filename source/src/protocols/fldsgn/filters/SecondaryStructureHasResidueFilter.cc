@@ -1,0 +1,237 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file protocols/filters/SecondaryStructureHasResidueFilter.cc
+/// @brief filter structures by number of secondary structures
+/// @detailed use this filter to insure that each secondary element has one or more of a given set of residues
+///  motivated by observation that alpha,beta elements without at least 1 h'phobic residue often do not fold in simulation
+///  reports fraction of 2' struct elements that contain N or more residues from given residue list (default VILMFYM)
+/// @author Chris King ( chrisk1@uw.edu )
+
+// Unit Headers
+#include <protocols/fldsgn/filters/SecondaryStructureHasResidueFilter.hh>
+#include <protocols/fldsgn/filters/SecondaryStructureHasResidueFilterCreator.hh>
+
+// Project Headers
+#include <protocols/jd2/parser/BluePrint.hh>
+#include <core/conformation/Residue.hh>
+#include <core/types.hh>
+#include <core/pose/Pose.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <protocols/rosetta_scripts/util.hh>
+// AUTO-REMOVED #include <protocols/fldsgn/topology/HSSTriplet.hh> // REQUIRED FOR WINDOWS
+
+// Utility headers
+#include <basic/Tracer.hh>
+
+// Parser headers
+#include <protocols/filters/Filter.hh>
+#include <utility/tag/Tag.hh>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <core/scoring/dssp/Dssp.hh>
+
+
+//// C++ headers
+static basic::Tracer tr("protocols.fldsgn.filters.SecondaryStructureHasResidueFilter");
+
+namespace protocols {
+namespace fldsgn {
+namespace filters {
+
+// @brief default constructor
+SecondaryStructureHasResidueFilter::SecondaryStructureHasResidueFilter( ): Filter( "SecondaryStructureHasResidue" )
+{}
+
+// @brief returns true if the given pose passes the filter, false otherwise.
+bool SecondaryStructureHasResidueFilter::apply( core::pose::Pose const & pose ) const
+{
+
+	if( compute( pose ) >= threshold_ )
+			return true;
+	else
+			return false;
+} // apply_filter
+
+/// @brief parse xml
+void
+SecondaryStructureHasResidueFilter::parse_my_tag(
+	TagCOP tag,
+	basic::datacache::DataMap & data,
+	Filters_map const &,
+	Movers_map const &,
+	Pose const & )
+{
+	using protocols::jd2::parser::BluePrint;
+	//TODO: add taskop option to only operate on certain residues
+  min_helix_length_ = tag->getOption<core::Size>( "min_helix_length", 4 );
+  min_sheet_length_ = tag->getOption<core::Size>( "min_sheet_length", 3 );
+  min_loop_length_ = tag->getOption<core::Size>( "min_loop_length", 1 );
+	max_helix_length_ = tag->getOption<core::Size>( "max_helix_length", 9999 );
+	max_sheet_length_ = tag->getOption<core::Size>( "max_sheet_length", 9999 );
+	max_loop_length_ = tag->getOption<core::Size>( "max_loop_length", 9999 );
+	filter_helix_ = tag->getOption<bool>( "filter_helix", 1 );
+	filter_sheet_ = tag->getOption<bool>( "filter_sheet", 1 );
+	filter_loop_ = tag->getOption<bool>( "filter_loop", 0 );
+	//chrisk get aa1 res list string here
+	req_residue_str_ = tag->getOption< std::string >( "required_restypes", "VILMFYW" );
+	threshold_ = tag->getOption< core::Real >( "secstruct_fraction_threshold", 1.0 );
+	nres_req_per_secstruct_ = tag->getOption< core::Size >( "nres_required_per_secstruct", 1.0 );
+
+	if (filter_helix_) {
+		tr << "filter on helix with length: "<<min_helix_length_<<"-"<< max_helix_length_ << std::endl;
+	}
+
+  if (filter_sheet_) {
+    tr << "filter on sheet with length: "<<min_sheet_length_<<"-"<< max_sheet_length_ << std::endl;
+  }
+
+  if (filter_loop_) {
+    tr << "filter on loop with length: "<<min_loop_length_<<"-"<< max_loop_length_ << std::endl;
+  }
+
+	task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
+}
+
+core::Size
+SecondaryStructureHasResidueFilter::n_req_res_in_seq(
+	std::string const & seq
+) const {
+	if( seq.size() == 0 || req_residue_str_.size() == 0 ) return 0;
+	core::Size rescount = 0;
+	//strings are indexed from 0, derpface!
+	for( core::Size i=0; i<=seq.size() - 1; ++i ){
+		for( core::Size j=0; j<=req_residue_str_.size() - 1; ++j ){
+			if( seq[ i ] == req_residue_str_[ j ] ){
+				++rescount;
+				break; //we can stop looking once we found a match
+			}
+		}
+	}
+	return rescount;
+}
+
+core::Real SecondaryStructureHasResidueFilter::compute( core::pose::Pose const & pose ) const {
+
+
+	core::pose::Pose pose_copy=pose;
+	core::scoring::dssp::Dssp dssp( pose_copy );
+	std::string dssp_ss=dssp.get_dssp_secstruct();
+	tr << dssp_ss << std::endl;
+
+	core::Size num_helix_has_residue=0;
+	core::Size num_sheet_has_residue=0;
+	core::Size num_loop_has_residue=0;
+	core::Size num_helix=0;
+	core::Size num_sheet=0;
+	core::Size num_loop=0;
+
+	core::pack::task::PackerTaskOP task( task_factory_->create_task_and_apply_taskoperations( pose_copy ) );
+
+	std::string ss_seq;
+	core::Size ss_len( 0 );
+	std::string::const_iterator iter=dssp_ss.begin();
+	while (iter< dssp_ss.end()) {
+		if (*iter=='H') {
+				ss_seq.clear();
+				ss_len = 0;
+				int ss_chain( pose_copy.chain( iter - dssp_ss.begin() + 1 ) ); //get chain of this ss element
+				//keep iterating until we fall off the end of the helix, accounts for chain endings
+				while (*iter=='H' && iter < dssp_ss.end() && ss_chain == pose_copy.chain( iter - dssp_ss.begin() + 1 ) ) {
+					++ss_len;
+					core::Size iter_index( iter - dssp_ss.begin() + 1 ); 
+					//cache aa1 sequence of residue where iterator is pointing only if designable in taskop
+					if( task->residue_task( iter_index ).being_designed() && pose_copy.residue( iter_index ).is_protein() )
+							ss_seq += pose_copy.sequence()[ iter_index - 1 ];
+					++iter;
+				}
+        if ( ss_len >= min_helix_length_ && ss_len <= max_helix_length_ && ss_seq.length() > 0 ) {
+					++num_helix;
+					//how many instances of requires restype(s) is in this sestruct element?
+					if( n_req_res_in_seq( ss_seq ) >= nres_req_per_secstruct_ ) ++num_helix_has_residue;
+				}
+		} else if ( *iter=='E') {
+				ss_seq.clear();
+				ss_len = 0;
+				int ss_chain( pose_copy.chain( iter - dssp_ss.begin() + 1 ) ); //get chain of this ss element
+				//keep iterating until we fall off the end of the sheet, accounts for chain endings
+				while (*iter=='E' && iter < dssp_ss.end() && ss_chain == pose_copy.chain( iter - dssp_ss.begin() + 1 ) ) {
+					++ss_len;
+					core::Size iter_index( iter - dssp_ss.begin() + 1 ); 
+					//cache aa1 sequence of residue where iterator is pointing only if designable in taskop
+					if( task->residue_task( iter_index ).being_designed() && pose_copy.residue( iter_index ).is_protein() )
+							ss_seq += pose_copy.sequence()[ iter_index - 1 ];
+					++iter;
+				}
+        if ( ss_len >= min_sheet_length_ && ss_len <= max_sheet_length_ && ss_seq.length() > 0 ) {
+					++num_sheet;
+					//how many instances of requires restype(s) is in this sestruct element?
+					if( n_req_res_in_seq( ss_seq ) >= nres_req_per_secstruct_ ) ++num_sheet_has_residue;
+				}
+		} else if ( *iter=='L') {
+				ss_seq.clear();
+				ss_len = 0;
+				int ss_chain( pose_copy.chain( iter - dssp_ss.begin() + 1 ) ); //get chain of this ss element
+				//keep iterating until we fall off the end of the loop, accounts for chain endings
+				while (*iter=='L' && iter < dssp_ss.end() && ss_chain == pose_copy.chain( iter - dssp_ss.begin() + 1 ) ) {
+					++ss_len;
+					core::Size iter_index( iter - dssp_ss.begin() + 1 ); 
+					//cache aa1 sequence of residue where iterator is pointing only if designable in taskop
+					if( task->residue_task( iter_index ).being_designed() && pose_copy.residue( iter_index ).is_protein() )
+							ss_seq += pose_copy.sequence()[ iter_index - 1 ];
+					++iter;
+				}
+        if ( ss_len >= min_loop_length_ && ss_len <= max_loop_length_ && ss_seq.length() > 0 ) {
+					++num_loop;
+					//how many instances of requires restype(s) is in this sestruct element?
+					if( n_req_res_in_seq( ss_seq ) >= nres_req_per_secstruct_ ) ++num_loop_has_residue;
+				}
+		}
+	}
+
+	tr << " Pose has " << num_helix_has_residue << " / " << num_helix << " helix, " << num_sheet_has_residue  << " / " << num_sheet << " sheet, " << num_loop_has_residue << " / " << num_loop << " loop with enough required residues, according to dssp_reduced definition" <<  std::endl;
+	//compute fraction of total ss elements with enough required residue
+	Size num_secstruct( 0 );
+	Size num_secstruct_has_residue( 0 ); 
+	if( filter_helix_ ){
+		num_secstruct_has_residue += num_helix_has_residue; 
+		num_secstruct += num_helix;
+	}
+	if( filter_sheet_ ){
+		num_secstruct_has_residue += num_sheet_has_residue; 
+		num_secstruct += num_sheet;
+	}
+	if( filter_loop_ ){
+		num_secstruct_has_residue += num_loop_has_residue; 
+		num_secstruct += num_loop;
+	}
+	return ( static_cast< core::Real >( num_secstruct_has_residue ) / static_cast< core::Real >( num_secstruct ) ); 
+}
+
+core::Real SecondaryStructureHasResidueFilter::report_sm( core::pose::Pose const & pose ) const {
+	return compute( pose );
+}
+
+void SecondaryStructureHasResidueFilter::report( std::ostream & out, core::pose::Pose const & pose ) const {
+	//report message is inside compute function already
+	compute( pose );
+}
+
+protocols::filters::FilterOP
+SecondaryStructureHasResidueFilterCreator::create_filter() const { return protocols::filters::FilterOP( new SecondaryStructureHasResidueFilter ); }
+
+std::string
+SecondaryStructureHasResidueFilterCreator::keyname() const { return "SecondaryStructureHasResidue"; }
+
+
+} // filters
+} // fldsgn
+} // protocols

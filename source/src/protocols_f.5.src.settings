@@ -29,6 +29,7 @@ sources = {
 		"ParallelBetaPairingPreferenceFilter",
 		"SecondaryStructureFilter",
 		"SecondaryStructureCountFilter",
+		"SecondaryStructureHasResidueFilter",
 		"SheetTopologyFilter",
 	],
 	"protocols/fldsgn/potentials": [

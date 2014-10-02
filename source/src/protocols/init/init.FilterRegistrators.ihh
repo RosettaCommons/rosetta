@@ -52,6 +52,7 @@ static FilterRegistrator< protocols::fldsgn::filters::NcontactsFilterCreator > r
 static FilterRegistrator< protocols::fldsgn::filters::ParallelBetaPairingPreferenceFilterCreator > reg_ParallelBetaPairingPreferenceFilterCreator;
 static FilterRegistrator< protocols::fldsgn::filters::SecondaryStructureFilterCreator > reg_SecondaryStructureFilterCreator;
 static FilterRegistrator< protocols::fldsgn::filters::SecondaryStructureCountFilterCreator > reg_SecondaryStructureFilterCountCreator;
+static FilterRegistrator< protocols::fldsgn::filters::SecondaryStructureHasResidueFilterCreator > reg_SecondaryStructureFilterHasResidueCreator;
 static FilterRegistrator< protocols::fldsgn::filters::SheetTopologyFilterCreator > reg_SheetTopologyFilterCreator;
 
 static FilterRegistrator< protocols::denovo_design::filters::ExposedHydrophobicsFilterCreator > reg_ExposedHydrophobicsFilterCreator;

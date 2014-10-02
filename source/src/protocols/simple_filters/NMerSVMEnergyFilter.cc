@@ -40,6 +40,7 @@
 #include <core/pose/selection.hh>
 #include <protocols/jd2/util.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/string_util.hh>
 
 namespace protocols{
 namespace simple_filters {
@@ -187,7 +188,8 @@ NMerSVMEnergyFilter::compute(
 		Real rsd_energy( 0. );
 		vector1< Real > rsd_svm_energies( energy_method_.n_svms(), Real( 0. ) );
 		energy_method_.get_residue_energy_by_svm( pose, seqpos, rsd_energy, rsd_svm_energies );
-		std::string pdb_seqpos( pose.pdb_info()->pose2pdb( seqpos ) );
+		std::string pdb_seqpos( utility::to_string( seqpos ) );
+		if( pose.pdb_info().get() != NULL ) pdb_seqpos = pose.pdb_info()->pose2pdb( seqpos );
 		//get this nmer sequence, just ignore if we fall off the end
 		std::string nmer_seq( "" );
 		if( seqpos <= pose.total_residue() - energy_method_.nmer_length() + 1 )

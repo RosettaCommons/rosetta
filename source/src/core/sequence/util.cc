@@ -173,9 +173,13 @@ vector1< SequenceOP > read_fasta_file( std::string const & filename ) {
 
 
 std::string read_fasta_file_return_str( std::string const & filename ) {
+	/* who the fuck added this utility_exit? if you see a problem someone creeated either 1) fix it or 2) ignore it
+		you know what's worse than code dupliucation? BROKEN CODE.
+		I didn't write this code either, but you just fucked some peoples' workflow for no reason.
 	utility_exit_with_message(
 		"This function is redundant with the functions above it. Ask for help with C++ if you need it, but this is really embarassing duplication."
 	);
+	*/
 	std::string sequences;
 
 	utility::io::izstream input( filename.c_str() );
