@@ -223,6 +223,7 @@ core::Real SecondaryStructureHasResidueFilter::report_sm( core::pose::Pose const
 void SecondaryStructureHasResidueFilter::report( std::ostream & out, core::pose::Pose const & pose ) const {
 	//report message is inside compute function already
 	compute( pose );
+	out << "See SecondaryStructureHasResidueFilter tracer log for report" << std::endl;
 }
 
 protocols::filters::FilterOP
