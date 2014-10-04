@@ -2,6 +2,7 @@
          <TASKOPERATIONS>
 				 	<ProteinInterfaceDesign name=pido design_chain1=1 design_chain2=1/>
     		<InitializeFromCommandline name=init/>
+		<RestrictToRepacking name=rtr/>
   	</TASKOPERATIONS>
         <SCOREFXNS>
 		<talaris_cal weights=talaris2013_calibrated>
@@ -25,8 +26,7 @@
 		<AtomTree name=hotspot_tree pdb_num=163B anchor_res=50A connect_to=CA connect_from=CA/>
 
 		<PackRotamersMover name=design task_operations=init,pido scorefxn=talaris_cal/>
-		<Splice name=splice use_sequence_profiles=0 skip_alignment=true  loop_pdb_source="%%source%%" source_pdb="%%source%%" loop_dbase_file_name="%%dbase%%_hlh.db" scorefxn=talaris_cal ccd=1 res_move=100 randomize_cut=1 cut_secondarystruc=0 from_res=%%from_res%% to_res=%%to_res%% rms_cutoff=100 restrict_to_repacking_chain2=0 design_shell=10.0
-splice_filter=chainbreak_val thread_ala=0 template_file="%%start_pdb%%" design_task_operations=init design=1 debug=1> Phe 15 -> Glu 41 very conserved positions when aligning the complexes with respect to the immunity proteins. Add restrict_to_repacking_chain2=0 o/w it doesn't design the endonuclease
+		<Splice name=splice use_sequence_profiles=0 skip_alignment=true  loop_pdb_source="%%source%%" source_pdb="%%source%%" loop_dbase_file_name="%%dbase%%_hlh.db" scorefxn=talaris_cal ccd=1 res_move=100 randomize_cut=1 cut_secondarystruc=0 from_res=%%from_res%% to_res=%%to_res%% rms_cutoff=100 restrict_to_repacking_chain2=0 design_shell=10.0 splice_filter=chainbreak_val thread_ala=0 template_file="%%start_pdb%%" design_task_operations=init,rtr design=1 debug=1 thread_original_sequence=1> 
       <Segments current_segment=endo/>
 			    </Splice>
 

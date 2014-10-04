@@ -569,8 +569,8 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					TR<<"from_res()"<<from_res()<<"nearest_to_from: "<<nearest_to_from<<std::endl;
 				}
 				else{
-					nearest_to_from = find_nearest_res(*source_pose_, pose, from_res(), 1/*chain*/);
-					nearest_to_to = find_nearest_res(*source_pose_, pose, to_res(), 1/*chain*/);
+					nearest_to_from = find_nearest_res(*source_pose_, pose, from_res(), 0/*chain*/);
+					nearest_to_to = find_nearest_res(*source_pose_, pose, to_res(), 0/*chain*/);
 
 				}
 
@@ -2663,10 +2663,17 @@ void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pos
 void Splice::add_dihedral_constraints(core::pose::Pose & pose, core::pose::Pose const & source_pose, core::Size start_res_on_pose, core::Size end_res_on_pose) {
 
 	int residue_diff( 0 );
-
-	core::Size nearest_from_res_source_pdb(protocols::rosetta_scripts::find_nearest_res(source_pose,pose,start_res_on_pose,1));
+	TR<<"start_res_on_pose:"<<start_res_on_pose<<std::endl;
+	core::Size nearest_from_res_source_pdb(0);
+	if (boost::iequals(tail_segment_, "n")) {
+		nearest_from_res_source_pdb=protocols::rosetta_scripts::find_nearest_res(source_pose,pose,end_res_on_pose,0);
+		residue_diff = nearest_from_res_source_pdb - end_res_on_pose;
+	}
+	else{
+		nearest_from_res_source_pdb=protocols::rosetta_scripts::find_nearest_res(source_pose,pose,start_res_on_pose,0);
+		residue_diff = nearest_from_res_source_pdb - start_res_on_pose;
+	}
 	runtime_assert(nearest_from_res_source_pdb); //if find_nearest_res fails it return 0
-	residue_diff = nearest_from_res_source_pdb - start_res_on_pose;
 	TR_constraints<<"Residue diff is:"<<residue_diff<<std::endl;
 	//inorder to compare the angles we keep track of the corresponding residues in the template pose
 	TR_constraints << "Applying dihedral constraints to pose, Pose/Source PDB:" << std::endl;

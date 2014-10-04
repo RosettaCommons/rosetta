@@ -28,7 +28,7 @@
 
 	</FILTERS>
 	<MOVERS>
-		<Splice name=splice loop_pdb_source="%%source%%" source_pdb="%%source%%" loop_dbase_file_name="H3.db" scorefxn=sc12_w_correction ccd=1  randomize_cut=1 cut_secondarystruc=0 rms_cutoff=0.5 splice_filter=chainbreak_val thread_ala=0 template_file="%%source_pdb%%" design_task_operations=init,seqprofcons design_shell=2 repack_shell=2 design=1 protein_family="antibodies" segment=H3 tail_segment="c" CG_const=1 thread_original_sequence=1> //using the disulfide as start and end points for the segment
+		<Splice name=splice loop_pdb_source="%%source%%" source_pdb="%%source%%" loop_dbase_file_name="H3.db" scorefxn=sc12_w_correction ccd=1  randomize_cut=1 cut_secondarystruc=0 rms_cutoff=0.5 splice_filter=chainbreak_val thread_ala=0 template_file="%%source_pdb%%" design_task_operations=init,seqprofcons design_shell=0 repack_shell=0 design=1 protein_family="antibodies" segment=H3 tail_segment="c" CG_const=1 thread_original_sequence=1> //using the disulfide as start and end points for the segment
 		</Splice>
 	</MOVERS>
 	<APPLY_TO_POSE>

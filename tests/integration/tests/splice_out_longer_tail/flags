@@ -1,24 +1,16 @@
--constant_seed 1
 -nodelay
+-constant_seed
+-TailSegment::refine_cycles 2
+-linmem_ig 10
 -use_input_sc
--extrachi_cutoff 15
+-extrachi_cutoff 5
 -ignore_unrecognized_res
 -chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm
-
-
+-s 4HPO.ppk.pdb
 -jd2:ntrials 1
+-max_retry_job 2
+-parser:protocol splice_out_L3.xml
 -overwrite
 
--loops:outer_cycles    1
--loops:max_inner_cycles 1
--out:file:fullatom
-
--pdb_comments true ## this is the mover reades the comments in the input pdb file. The comments contain the pdb segments comprising the input pdb
--use_occurrence_data ## restrict PSSM choice only to possition that acctually appear in the msa
-
--parser:script_vars source_pdb=2BRR.ppk.pdb"
--parser:script_vars source=4HBC.pdb"
--parser:protocol splice_out.xml
--TailSegment::refine_cycles 2
--s 2BRR.ppk.pdb
-
+-pdb_comments true
+-parser:script_vars source_pdb=4HPO.ppk.pdb source=1A8J.pdb
