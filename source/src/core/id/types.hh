@@ -10,7 +10,7 @@
 /// @file   core/id/types.hh
 /// @brief  core::id package type declarations
 /// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
-
+/// @author Modified by Vikram K. Mulligan (vmullig@uw.edu)
 
 #ifndef INCLUDED_core_id_types_hh
 #define INCLUDED_core_id_types_hh
@@ -102,6 +102,13 @@ to_string( TorsionType const & type ) {
 static Size const   phi_torsion( 1 );
 static Size const   psi_torsion( 2 );
 static Size const omega_torsion( 3 );
+
+//Torsion ids for beta-amino acids:
+static Size const phi_torsion_beta_aa( 1 );
+static Size const theta_torsion_beta_aa( 2 );
+static Size const psi_torsion_beta_aa( 3 );
+static Size const omega_torsion_beta_aa( 4 );
+
 
 } // namespace id
 } // namespace core

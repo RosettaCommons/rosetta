@@ -25,6 +25,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/filters/ContingentFilter.fwd.hh>
 #include <protocols/filters/ContingentFilter.hh>
 
@@ -413,6 +414,14 @@ private:
 	bool rosettascripts_filter_exists_;
 
 	///
+	/// @brief Owning pointer for a pre-selection mover applied to all solutions that will be passed to the selector.
+	protocols::moves::MoverOP pre_selection_mover_;
+
+	///
+	/// @brief Bool determining whether there exists a pre-selection mover that wlil be applied.
+	bool pre_selection_mover_exists_;
+
+	///
 	/// @brief The number of tries to make before giving up if no solution has been found yet.
 	/// @details If this is set to 0, then no such check is made.
 	/// The algorithm tries n_closure_attempts_ times if and only if at least one solution is found in the first
@@ -616,6 +625,14 @@ private:
 	/// @brief Trims extra atoms from the start and end of the atom list, if the first and last pivots are not the fifth and fifth-last atoms, respectively.
   ///
 	void prune_extra_atoms( utility::vector1 <core::Size> &pivots );
+
+	/// @brief Sets the mover that will be applied to all solutions that pass filters prior to applying the selector.
+	///
+	void set_preselection_mover ( protocols::moves::MoverOP mover );
+
+	/// @brief Returns whether a preselection mover has been specified.
+	///
+  bool preselection_mover_exists() const { return pre_selection_mover_exists_; }
 
 };
 

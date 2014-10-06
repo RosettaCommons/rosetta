@@ -91,8 +91,10 @@ GeneralizedKIC::GeneralizedKIC():
 		selector_( selector::GeneralizedKICselectorOP( new selector::GeneralizedKICselector ) ),
 		n_closure_attempts_(2000),
 		n_closure_attempts_is_a_maximum_(false),
-		rosettascripts_filter_(/* NULL */),
+		rosettascripts_filter_(),
 		rosettascripts_filter_exists_(false),
+		pre_selection_mover_(),
+		pre_selection_mover_exists_(false),
 		ntries_before_giving_up_(0)
 		//TODO -- make sure above data are copied properly when duplicating this mover.
 {}
@@ -148,6 +150,10 @@ void GeneralizedKIC::apply (core::pose::Pose & pose)
 		TR << "Closure successful." << std::endl; TR.flush();
 		//perturbedloop_pose.dump_pdb("temp.pdb"); //DELETE ME -- for debugging only
 		copy_loop_pose_to_original( pose, perturbedloop_pose, residue_map, tail_residue_map);
+		if(preselection_mover_exists()) {
+			TR << "Re-applying preselection mover." << std::endl; TR.flush();
+			pre_selection_mover_->apply(pose);
+		}
 	} else {
 		TR << "Closure unsuccessful." << std::endl; TR.flush();
 	}
@@ -173,7 +179,7 @@ GeneralizedKIC::parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data_map,
 		protocols::filters::Filters_map const &filters,
-		protocols::moves::Movers_map const & /*movers*/,
+		protocols::moves::Movers_map const &movers,
 		core::pose::Pose const & /*pose*/
 ) {
 	using namespace core::id;
@@ -196,6 +202,11 @@ GeneralizedKIC::parse_my_tag(
 	set_ntries_before_giving_up(tag->getOption<core::Size>("stop_if_no_solution", 0)); //Number of tries to make before stopping if no solution has been found yet.
 	if( tag->hasOption("closure_attempts") ) set_closure_attempts( tag->getOption<core::Size>("closure_attempts", 2000) );
 	if( tag->hasOption("stop_when_solution_found") ) set_n_closure_attempts_is_a_maximum( tag->getOption<bool>("stop_when_solution_found", false) );
+	if( tag->hasOption("pre_selection_mover") ) {
+		protocols::moves::MoverOP curmover = protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "pre_selection_mover" ), movers );
+		set_preselection_mover(curmover);
+		TR << "GeneralizedKIC mover \"" << tag->getOption< std::string >("name", "") << "\" has been assigned mover \"" << tag->getOption< std::string >("pre_selection_mover") << "\" as a pre-selection mover that will be applied to all solutions prior to applying the selector." << std::endl;
+	}
 	if( tag->hasOption( "contingent_filter" )) {
 		FilterOP curfilter = protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "contingent_filter" ), filters  );
 		runtime_assert_string_msg( curfilter != 0, "Invalid filter specified with contingent_filter tag in GeneralizedKIC." );
@@ -1177,6 +1188,7 @@ bool GeneralizedKIC::doKIC(
 	} //End loop for closure attempts
 
 	// Apply the selector here.  This ultimately picks a single solution and sets pose (the loop pose) to the conformation for that solution, but doesn't touch the original pose.
+	// Preselection movers are also applied by select_solution(), though the loop pose returned will NOT have this applied.
 	if(total_solution_count>0) select_solution ( pose, original_pose, residue_map, tail_residue_map, atomlist_, t_ang, b_ang, b_len, nsol_for_attempt, total_solution_count );
 
 	return (total_solution_count>0);
@@ -1476,7 +1488,7 @@ void GeneralizedKIC::select_solution (
 	utility::vector1 <core::Size> const &nsol_for_attempt,
 	core::Size const total_solutions
 ) const {
-	selector_->apply(pose, original_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths, nsol_for_attempt, total_solutions);
+	selector_->apply(pose, original_pose, residue_map, tail_residue_map, atomlist, torsions, bondangles, bondlengths, nsol_for_attempt, total_solutions, pre_selection_mover_, preselection_mover_exists());
 	return;
 }
 
@@ -1507,6 +1519,15 @@ void GeneralizedKIC::prune_extra_atoms( utility::vector1 <core::Size> &pivots )
 	//}
 	//TR.Debug.flush();
 
+	return;
+}
+
+/// @brief Sets the mover that will be applied to all solutions that pass filters prior to applying the selector.
+///
+void GeneralizedKIC::set_preselection_mover ( protocols::moves::MoverOP mover )
+{
+	pre_selection_mover_ = mover;
+	pre_selection_mover_exists_ = true;
 	return;
 }
 

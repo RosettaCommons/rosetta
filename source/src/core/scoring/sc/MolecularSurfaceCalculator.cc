@@ -170,6 +170,7 @@ int MolecularSurfaceCalculator::Calc(core::pose::Pose const & pose, core::Size j
 		core::conformation::Residue const & residue = pose.residue(i);
 		if(residue.type().name() == "VRT")
 			continue;
+		if(residue.type().is_metal()) continue;
 		if(!AddResidue(is_upstream(i) ? 0 : 1, residue))
 			return 0;
 	}
@@ -313,6 +314,9 @@ core::Size MolecularSurfaceCalculator::AddResidue(
 		// Skip virtual atoms
 		if(residue.is_virtual(i))
 			continue;
+
+		// Skip metal atoms (for now -- add support later):
+		if( residue.type().is_metal() ) continue;
 
 		Atom scatom;
 		numeric::xyzVector<Real> xyz = residue.xyz(i);

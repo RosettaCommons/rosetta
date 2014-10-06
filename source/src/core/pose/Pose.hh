@@ -824,7 +824,7 @@ public:
 	/// @note  <setting>  must be in degrees, assumes residue is an amino acid or monosaccharide
 	///
 	/// example(s):
-	///     pose.set_phi(1)
+	///     pose.set_phi(1, -23.7)
 	/// See also:
 	///     Pose
 	///     Pose.phi
@@ -850,7 +850,7 @@ public:
 	/// @note  <setting>  must be in degrees, assumes residue is an amino acid or monosaccharide
 	///
 	/// example(s):
-	///     pose.set_psi(2)
+	///     pose.set_psi(2, 45.3)
 	/// See also:
 	///     Pose
 	///     Pose.psi
@@ -875,7 +875,7 @@ public:
 	/// @note  <setting>  must be in degrees, assumes residue is an amino acid or monosaccharide
 	///
 	/// example(s):
-	///     pose.set_omega(3)
+	///     pose.set_omega(3, 180.0)
 	/// See also:
 	///     Pose
 	///     Pose.omega
@@ -884,6 +884,33 @@ public:
 	void
 	set_omega( Size const seqpos, Real const setting );
 
+	/// @brief Returns the theta torsion angle of beta-amino acid residue  <seqpos>
+	/// @note  assumes residue is a beta-amino acid.
+	///
+	/// example(s):
+	///     pose.theta(21)
+	/// See also:
+	///     Pose
+	///     Pose.set_theta
+	///     Pose.residue
+	///     Residue
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	Real
+	theta( Size const seqpos ) const;
+
+	/// @brief Sets the theta torsion angle of beta-amino acid residue  <seqpos>  to  <setting>
+	/// @note  <setting>  must be in degrees, assumes residue is a beta-amino acid.
+	///
+	/// example(s):
+	///     pose.set_theta(21, 58.9)
+	/// See also:
+	///     Pose
+	///     Pose.theta
+	///     Pose.residue
+	///     Residue
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void
+	set_theta( Size const seqpos, Real const setting );
 
 	// nucleic acids
 

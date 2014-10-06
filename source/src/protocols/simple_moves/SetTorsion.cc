@@ -199,17 +199,22 @@ void SetTorsion::apply( Pose & pose ) {
                 Size resnum = residue_list(iset, pose)[ires];
                 
                 if( torsion_name(iset) == "phi" ) {
-                    if (pose.residue(resnum).type().is_alpha_aa()) {
+                    if ( pose.residue(resnum).type().is_alpha_aa() || pose.residue(resnum).type().is_beta_aa() ) {
                         pose.set_phi( resnum, angle(iset) );
                     }
                 }
+								else if( torsion_name(iset) == "theta" ) {
+									if ( pose.residue(resnum).type().is_beta_aa() ) {
+										pose.set_theta( resnum, angle(iset) );
+									}
+								}
                 else if( torsion_name(iset) == "psi" ) {
-                    if (pose.residue(resnum).type().is_alpha_aa()) {
+                    if ( pose.residue(resnum).type().is_alpha_aa() || pose.residue(resnum).type().is_beta_aa() ) {
                         pose.set_psi( resnum, angle(iset) );
                     }
                 }
                 else if( torsion_name(iset) == "omega" ) {
-                    if (pose.residue(resnum).type().is_alpha_aa()) {
+                    if ( pose.residue(resnum).type().is_alpha_aa() || pose.residue(resnum).type().is_beta_aa() ) {
                         pose.set_omega( resnum, angle(iset) );
                     } //TODO -- beta-amino acids.
                 }
@@ -225,6 +230,7 @@ void SetTorsion::apply( Pose & pose ) {
                         else {
                             pose.set_phi( resnum, angle(iset) );
                             pose.set_psi( resnum, angle(iset) );
+														if( pose.residue(resnum).type().is_beta_aa() ) pose.set_theta( resnum, angle(iset) );
                         }
                     }
                 }

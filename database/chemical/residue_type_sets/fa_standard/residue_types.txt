@@ -99,6 +99,7 @@ residue_types/staple/08B.params
 #residue_types/crosslinker/1.2_bisbromomethylbenzene.params
 #residue_types/crosslinker/1.3_bisbromomethylbenzene.params
 #residue_types/crosslinker/1.4_bisbromomethylbenzene.params
+#residue_types/crosslinker/1.3.5_trisbromomethylbenzene.params
 #residue_types/crosslinker/BoronateLDopa.params
 
 ## Sidechain Conjugation Types
@@ -390,6 +391,7 @@ residue_types/l-ncaa/cyclohexyl-glycine_chair.params
 
 ## Metal-binding NCAA types
 #residue_types/metal_binding_ncaa/BPY.params
+#residue_types/metal_binding_ncaa/6-mercapto-norleucine.params
 
 ## Peptoid Types
 ##residue_types/peptoids/sar.params

@@ -23,6 +23,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
+#include <protocols/moves/Mover.fwd.hh>
 
 //// Project Headers
 // AUTO-REMOVED #include <core/pose/Pose.hh>
@@ -124,6 +125,8 @@ public:
 	/// @param[in] bondlengths -- Matrix of [closure attempt #][solution #][bondlength #] with bond length for each bond in the chain.  A selector will pick one solution.
 	/// @param[in] nsol_for_attempt -- List of the number of solutions for each attempt.
 	/// @param[in] total_solutions -- Total number of solutions found.
+	/// @param[in] pre_selectoin_mover -- Pointer to a mover applied to each solution before applying the selector.
+	/// @param[in] preselection_mover_exists -- Boolean that determines whether a mover has been specified.
 	void apply (
 		core::pose::Pose &pose,
 		core::pose::Pose const &original_pose, //The original pose
@@ -134,7 +137,9 @@ public:
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles, //bond angle for each atom
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths, //bond length for each atom
 		utility::vector1 <core::Size> const &nsol_for_attempt,
-		core::Size const total_solutions
+		core::Size const total_solutions,
+		protocols::moves::MoverOP pre_selection_mover,
+		bool const preselection_mover_exists
 	) const;
 
 
@@ -192,6 +197,8 @@ private:
 		core::pose::Pose const &ref_loop_pose,
 		core::pose::Pose const &ref_pose,
 		core::Real const &boltzmann_kbt,
+		protocols::moves::MoverOP pre_selection_mover,
+		bool const preselection_mover_exists, 
 		bool const use_boltzmann
 	) const;
 
@@ -207,7 +214,8 @@ private:
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions, 
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondangles, 
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &bondlengths, 
-		core::pose::Pose const &ref_loop_pose
+		core::pose::Pose const &ref_loop_pose,
+		bool const preselection_mover_exists 
 	) const;
 
 	/// @brief Applies a lowest_delta_torsion_selector.
@@ -219,7 +227,8 @@ private:
 		core::Size &chosen_solution,
 		utility::vector1 <std::pair <core::id::AtomID, numeric::xyzVector<core::Real> > > const &atomlist,
 		utility::vector1 <utility::vector1 <utility::vector1<core::Real> > > const &torsions, 
-		core::pose::Pose const &pose
+		core::pose::Pose const &pose,
+		bool const preselection_mover_exists
 	) const;
 
 }; //GeneralizedKICselector class

@@ -1199,7 +1199,7 @@ void mutate_to_sequence (
 		} else {
 			if(!mypose.residue(ir).type().is_polymer()) continue_on=true; //Don't mutate non-polymer positions.
 			if(!mypose.residue(ir).type().is_alpha_aa() && !mypose.residue(ir).type().is_beta_aa()) continue_on=true; //Don't mutate positions that aren't alpha or beta amino acids, for now.
-			if(mypose.residue(ir).name3()=="CYX" || mypose.residue(ir).name3()=="ASX" || mypose.residue(ir).name3()=="LYX" || mypose.residue(ir).name3()=="ORX" || mypose.residue(ir).name3()=="GLX") continue_on=true; //Ugly hack.  Fix this with something more general!
+			if(sequence[ir-1]=='X' || mypose.residue(ir).name3()=="KCX" || mypose.residue(ir).name3()=="CYX" || mypose.residue(ir).name3()=="ASX" || mypose.residue(ir).name3()=="LYX" || mypose.residue(ir).name3()=="ORX" || mypose.residue(ir).name3()=="GLX") continue_on=true; //Ugly hack.  Fix this with something more general!
 		}
 		if(continue_on) continue;
 
@@ -1892,7 +1892,7 @@ int main(int argc, char *argv[]) {
 	MPI_Init(&argc, &argv); //Initialize
 	MPI_Comm_rank(MPI_COMM_WORLD, &procnum); //Get the current process number.
 	MPI_Comm_size(MPI_COMM_WORLD, &totalprocs); //Get the total number of processes.
-	char currentseq [256];
+	char currentseq [1024];
 
 	//The following few lines are only for debugging with gdb.  Comment these out otherwise.
 	/*if(procnum==1) {
@@ -2069,7 +2069,7 @@ int main(int argc, char *argv[]) {
 	//The FastRelax mover that I'll use:
 	protocols::relax::FastRelax frlx(sfxn, option[v_relaxrounds]()); //Create the FastRelax mover and set it to do a number of repeats given by option[v_relaxrounds]() (and give it the score function).
 
-	{	// Add a taskoperation to frlx indicating which residues can be moved if the
+		// Add a taskoperation to frlx indicating which residues can be moved if the
 		// -v_norepack_positions option has been used.
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;
@@ -2084,7 +2084,7 @@ int main(int argc, char *argv[]) {
 			frlx_tasks->push_back( norepack );
 		}
 		frlx.set_task_factory( frlx_tasks );
-	}
+	
 
 	//Out file prefix:
 	string outprefix;
@@ -2604,7 +2604,7 @@ int main(int argc, char *argv[]) {
 			for(core::Size i=1, imax=energyvals_initial.size(); i<=imax; ++i) {
 				printf("%s_rep%lu\t%.6f\t%.6f\n", utility::file_basename(allfiles[j]).c_str(), k, rmsvals_initial[i], energyvals_initial[i]);
 				++k;
-				if((i-1) % (core::Size)option[v_MCminimize_replicates]() == 0) { ++j; k=1; }
+				if((i) % (core::Size)option[v_MCminimize_replicates]() == 0) { ++j; k=1; }
 			}
 		} else {
 			for(core::Size i=1; i<=allfiles.size(); i++) printf("%s\t%.6f\t%.6f\n", utility::file_basename(allfiles[i]).c_str(), rmsvals_initial[i], energyvals_initial[i]);
@@ -2737,8 +2737,9 @@ int main(int argc, char *argv[]) {
 							for(core::Size i=1, imax=energyvals_current.size(); i<=imax; ++i) {
 								printf("%s_rep%lu\t%.6f\t%.6f\n", utility::file_basename(allfiles[j]).c_str(), k, rmsvals_current[i], energyvals_current[i]);
 								++k;
-								if((i-1) % (core::Size)option[v_MCminimize_replicates]() == 0) { ++j; k=1; }
+								if((i) % (core::Size)option[v_MCminimize_replicates]() == 0) { ++j; k=1; }
 							}
+						} else {
 							for(core::Size i=1; i<=allfiles.size(); i++) printf("%s\t%.6f\t%.6f\n", utility::file_basename(allfiles[i]).c_str(), rmsvals_current[i], energyvals_current[i]);
 						}
 						printf("\n"); fflush(stdout);

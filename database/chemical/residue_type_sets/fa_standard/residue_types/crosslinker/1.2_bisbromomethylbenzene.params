@@ -5,14 +5,14 @@ NAME orthoBBMB
 IO_STRING BB2 X
 TYPE LIGAND
 AA UNK
-ATOM  CM1 CH2  CT2  0.02
-ATOM  C1  aroC CA   -0.03
-ATOM  C2  aroC CA   -0.03
-ATOM  C3  aroC CA   -0.06
-ATOM  C4  aroC CA   -0.06
-ATOM  C5  aroC CA   -0.06
-ATOM  C6  aroC CA   -0.06
-ATOM  CM2 CH2  CT2  0.02
+ATOM  CM1 CH2  CT2  0.01
+ATOM  C1  aroC CA   -0.07
+ATOM  C2  aroC CA   -0.07
+ATOM  C3  aroC CA   -0.07
+ATOM  C4  aroC CA   -0.07
+ATOM  C5  aroC CA   -0.07
+ATOM  C6  aroC CA   -0.07
+ATOM  CM2 CH2  CT2  0.07
 ATOM  1HM Hapo HA   0.04
 ATOM  2HM Hapo HA   0.04
 ATOM  H6  Haro HP   0.06

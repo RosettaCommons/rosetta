@@ -11,6 +11,7 @@
 /// @brief  Pose class
 /// @author Phil Bradley
 /// @author Modified by Sergey Lyskov
+/// @author Modified by Vikram K. Mulligan (vmullig@uw.edu)
 
 // Unit headers
 #include <core/pose/Pose.hh>
@@ -728,12 +729,14 @@ Pose::residue_type(
 // backbone torsions
 // peptides and saccharides
 
-/// @details  For proteins and peptoids, phi is defined as C(n-1)-N(n)-CA(n)-C(n).\n
+/// @brief Returns the value of the phi backbone dihedral angle.
+/// @details  For proteins and peptoids, phi is defined as C(n-1)-N(n)-CA(n)-C(n).
+/// For beta-amino acids, phi is defined as C(n-1)-N(n)-CA(n)-CM(n).
 /// For aldopyranoses, phi is defined as O5(n)-C1(n)-OX(n-1)-CX(n-1),
-/// where X is the position of the glycosidic linkage.\n
-/// For aldofuranoses, phi is defined as O4(n)-C1(n)-OX(n-1)-CX(n-1).\n
-/// For 2-ketopyranoses, phi is defined as O6(n)-C2(n)-OX(n-1)-CX(n-1).\n
-/// For 2-ketofuranoses, phi is defined as O5(n)-C2(n)-OX(n-1)-CX(n-1).\n
+/// where X is the position of the glycosidic linkage.
+/// For aldofuranoses, phi is defined as O4(n)-C1(n)-OX(n-1)-CX(n-1).
+/// For 2-ketopyranoses, phi is defined as O6(n)-C2(n)-OX(n-1)-CX(n-1).
+/// For 2-ketofuranoses, phi is defined as O5(n)-C2(n)-OX(n-1)-CX(n-1).
 /// Et cetera...
 Real
 Pose::phi( Size const seqpos ) const
@@ -746,18 +749,24 @@ Pose::phi( Size const seqpos ) const
 		"Pose::phi( Size const seqpos ): residue seqpos is not part of a protein, peptoid, or carbohydrate!" );
 
 	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
-		return residue(seqpos).mainchain_torsion(phi_torsion);
+		if( residue_type(seqpos).is_beta_aa()) {
+			return residue(seqpos).mainchain_torsion(phi_torsion_beta_aa);
+		} else { //Default case, including peptoids and alpha-amino acids:
+			return residue(seqpos).mainchain_torsion(phi_torsion);
+		}
 	} else /*is carbohydrate*/ {
 		return carbohydrates::get_glycosidic_torsion(phi_torsion, *this, seqpos);
 	}
 }
 
-/// @details  For proteins, phi is defined as C(n-1)-N(n)-CA(n)-C(n).\n
+/// @brief Sets the value of the phi backbone dihedral angle.
+/// @details  For proteins, phi is defined as C(n-1)-N(n)-CA(n)-C(n).
+/// For beta-amino acids, phi is defined as C(n-1)-N(n)-CA(n)-CM(n).
 /// For aldopyranoses, phi is defined as O5(n)-C1(n)-OX(n-1)-CX(n-1),
-/// where X is the position of the glycosidic linkage.\n
-/// For aldofuranoses, phi is defined as O4(n)-C1(n)-OX(n-1)-CX(n-1).\n
-/// For 2-ketopyranoses, phi is defined as O6(n)-C2(n)-OX(n-1)-CX(n-1).\n
-/// For 2-ketofuranoses, phi is defined as O5(n)-C2(n)-OX(n-1)-CX(n-1).\n
+/// where X is the position of the glycosidic linkage.
+/// For aldofuranoses, phi is defined as O4(n)-C1(n)-OX(n-1)-CX(n-1).
+/// For 2-ketopyranoses, phi is defined as O6(n)-C2(n)-OX(n-1)-CX(n-1).
+/// For 2-ketofuranoses, phi is defined as O5(n)-C2(n)-OX(n-1)-CX(n-1).
 /// Et cetera...
 void
 Pose::set_phi( Size const seqpos, Real const setting )
@@ -770,14 +779,20 @@ Pose::set_phi( Size const seqpos, Real const setting )
 		"Pose::set_phi( Size const seqpos , Real const setting ): residue seqpos is not part of a protein, peptoid, or carbohydrate!" );
 
 	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
-		conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion ), setting );
+		if( residue_type(seqpos).is_beta_aa()) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion_beta_aa ), setting );
+		} else { //Default case, including peptoids and alpha-amino acids:
+			conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion ), setting );
+		}
 	} else /*is carbohydrate*/ {
 		carbohydrates::set_glycosidic_torsion(phi_torsion, *this, seqpos, setting);
 	}
 }
 
-/// @details  For proteins, psi is defined as N(n)-CA(n)-C(n)-N(n+1).\n
-/// For saccharides, psi is defined as: C(anomeric)(n)-OX(n-1)-CX(n-1)-CX-1(n-1),\n
+/// @brief Returns the value of the psi backbone dihedral angle.
+/// @details  For proteins, psi is defined as N(n)-CA(n)-C(n)-N(n+1).
+/// For beta-amino acids, psi is defined as CA(n)-CM(n)-C(n)-N(n+1).
+/// For saccharides, psi is defined as: C(anomeric)(n)-OX(n-1)-CX(n-1)-CX-1(n-1),
 /// where X is the position of the glycosidic linkage.
 Real
 Pose::psi( Size const seqpos ) const
@@ -790,14 +805,20 @@ Pose::psi( Size const seqpos ) const
 		"Pose::psi( Size const seqpos ): residue seqpos is not part of a protein, peptoid, or carbohydrate!" );
 
 	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
-		return residue(seqpos).mainchain_torsion(psi_torsion);
+		if ( residue_type(seqpos).is_beta_aa() ) {
+			return residue(seqpos).mainchain_torsion(psi_torsion_beta_aa);	
+		} else { //Default case, including peptoids and alpha-amino acids:
+			return residue(seqpos).mainchain_torsion(psi_torsion);
+		}
 	} else /*is carbohydrate*/ {
 		return carbohydrates::get_glycosidic_torsion(psi_torsion, *this, seqpos);
 	}
 }
 
-/// @details  For proteins, psi is defined as N(n)-CA(n)-C(n)-N(n+1).\n
-/// For saccharides, psi is defined as: C(anomeric)(n)-OX(n-1)-CX(n-1)-CX-1(n-1),\n
+/// @brief Sets the value of the psi backbone dihedral angle.
+/// @details  For proteins, psi is defined as N(n)-CA(n)-C(n)-N(n+1).
+/// For beta-amino acids, psi is defined as CA(n)-CM(n)-C(n)-N(n+1).
+/// For saccharides, psi is defined as: C(anomeric)(n)-OX(n-1)-CX(n-1)-CX-1(n-1),
 /// where X is the position of the glycosidic linkage.
 void
 Pose::set_psi( Size const seqpos, Real const setting )
@@ -811,13 +832,19 @@ Pose::set_psi( Size const seqpos, Real const setting )
 		"Pose::set_psi( Size const seqpos , Real const setting ): residue seqpos is not part of a protein, peptoid, or carbohydrate!" );
 
 	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
-		conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion ), setting);
+		if ( residue_type(seqpos).is_beta_aa() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion_beta_aa ), setting);
+		} else { //Default case, including peptoids and alpha-amino acids:
+			conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion ), setting );
+		}
 	} else /*is carbohydrate*/ {
 		carbohydrates::set_glycosidic_torsion(psi_torsion, *this, seqpos, setting);
 	}
 }
 
+/// @brief Returns the value of the omega backbone dihedral angle.
 /// @details  For proteins, omega is defined as CA(n)-C(n)-N(n+1)-CA(n+1).
+/// For beta-amino acids, omega is defined as CM(n)-C(n)-N(n+1)-CA(n+1).
 /// For carbohydrates glycosylated at an exocyclic position,
 /// omega of residue n is defined as OX(n-1)-CX(n-1)-CX-1(n-1)-CX-2(n-1),
 /// where X is the position of the glycosidic linkage.  (Note that every atom
@@ -832,13 +859,19 @@ Real Pose::omega( Size const seqpos ) const
 		"Pose::omega( Size const seqpos ): residue seqpos is not part of a protein,peptoid, or carbohydrate!" );
 
 	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
-		return residue(seqpos).mainchain_torsion(omega_torsion);
+		if( residue_type(seqpos).is_beta_aa()) {
+			return residue(seqpos).mainchain_torsion(omega_torsion_beta_aa);
+		} else { //Default case, including peptoids and alpha-amino acids:
+			return residue(seqpos).mainchain_torsion(omega_torsion);
+		}
 	} else /*is carbohydrate*/ {
 		return carbohydrates::get_glycosidic_torsion(omega_torsion, *this, seqpos);
 	}
 }
 
+/// @brief Sets the value of the omega backbone dihedral angle.
 /// @details  For proteins, omega is defined as CA(n)-C(n)-N(n+1)-CA(n+1).
+/// For beta-amino acids, omega is defined as CM(n)-C(n)-N(n+1)-CA(n+1).
 /// For carbohydrates glycosylated at an exocyclic position,
 /// omega of residue n is defined as OX(n-1)-CX(n-1)-CX-1(n-1)-OX-1(n-1),
 /// where X is the position of the glycosidic linkage.  (Note that every atom
@@ -854,10 +887,44 @@ Pose::set_omega( Size const seqpos, Real const setting )
 		"Pose::set_omega( Size const seqpos , Real const setting ): residue seqpos is not part of a protein, peptoid, or carbohydrate!" );
 
 	if ( residue_type(seqpos).is_protein() || residue_type(seqpos).is_peptoid() ) {
-		conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion ),  setting);
+		if( residue_type(seqpos).is_beta_aa() ) {
+			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion_beta_aa ),  setting);
+		} else { //Default case, including peptoids and alpha-amino acids:
+			conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion ),  setting );
+		}
 	} else /*is carbohydrate*/ {
 		carbohydrates::set_glycosidic_torsion(omega_torsion, *this, seqpos, setting);
 	}
+}
+
+///@brief For a beta-amino acid, get the theta backbone dihedral angle.
+///@details Theta is defined as N(n)-CA(n)-CM(n)-C(n).
+Real
+Pose::theta( Size const seqpos ) const
+{
+	using namespace id;
+
+	assert( residue_type(seqpos).is_beta_aa() );
+	PyAssert( (seqpos<=total_residue()), "Pose::theta( Size const seqpos ): variable seqpos is out of range!" );
+	PyAssert( residue_type(seqpos).is_beta_aa(), "Pose::theta( Size const seqpos ): residue seqpos is not a beta-amino acid!" );
+	if( residue_type(seqpos).is_beta_aa() ) {
+		return residue(seqpos).mainchain_torsion(theta_torsion_beta_aa);
+	} else {
+		return 0.0; //This shouldn't happen -- in debug mode, the assert above would be tripped.
+	}
+}
+
+///@brief For a beta-amino acid, set the theta backbone dihedral angle.
+///@details Theta is defined as N(n)-CA(n)-CM(n)-C(n).
+void
+Pose::set_theta( Size const seqpos, Real const setting)
+{
+	using namespace id;
+
+	assert( residue_type(seqpos).is_beta_aa() );
+	PyAssert( (seqpos<=total_residue()), "Pose::set_theta( Size const seqpos, Real const setting ): variable seqpos is out of range!" );
+	PyAssert( residue_type(seqpos).is_beta_aa(), "Pose::set_theta( Size const seqpos, Real const setting ): residue seqpos is not a beta-amino acid!" );
+	if( residue_type(seqpos).is_beta_aa() /*Should be true -- assertion above for debug mode.*/ ) conformation_->set_torsion( TorsionID( seqpos, BB, theta_torsion_beta_aa ), setting );
 }
 
 // nucleic acids
