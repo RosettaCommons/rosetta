@@ -192,8 +192,10 @@ BluePrint::buildtype( core::Size seqpos ) const
 BluePrint::String
 BluePrint::extra( core::Size seqpos ) const
 {
-	assert( seqpos >= 1 && seqpos <= extra_.size() );
-	return extra_[ seqpos ];
+	if( seqpos >= 1 && seqpos <= extra_.size() )
+		return extra_[ seqpos ];
+	else 
+		return "";
 }
 
 /// @brief build type at each position in blueprint

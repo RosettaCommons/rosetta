@@ -751,6 +751,7 @@ sources = {
 		"CrystalContactsOperation",
 		"DatabaseThread",
 		"DesignAroundOperation",
+		"DsspDesignOperation",
 		"ImportUnboundRotamersOperation",
 		"InteractingRotamerExplosion",
 		"InterfaceTaskOperation",

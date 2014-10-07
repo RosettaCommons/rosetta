@@ -35,6 +35,7 @@ static TaskOperationRegistrator< protocols::matdes::BuildingBlockInterfaceOperat
 static TaskOperationRegistrator< protocols::toolbox::task_operations::CrystalContactsOperationCreator > CrystalContactsOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::DatabaseThreadCreator > DatabaseThreadCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::DesignAroundOperationCreator > DesignAroundOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::DsspDesignOperationCreator > DsspDesignOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::ImportUnboundRotamersOperationCreator > ImportUnboundRotamersOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::InteractingRotamerExplosionCreator > InteractingRotamerExplosionCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::JointSequenceOperationCreator > JointSequenceOperationCreator_registrator;

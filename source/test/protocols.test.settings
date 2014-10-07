@@ -326,6 +326,7 @@ sources = {
 	],
 
 	"toolbox/task_operations" : [
+		"DsspDesignOperationTests",
 		"LimitAromaChi2Operation",
 		"ProteinInterfaceDesignOperation",
 		"RestrictOperations",
@@ -536,6 +537,9 @@ testinputfiles = [
 	"sparta/solution_0022372568.ir_solution.pdb",
 	"sparta/SAM-T08-server_TS3.pdb",
 	"sparta/17280_trim.tab",
+	"toolbox/task_operations/dssp_in.pdb",
+	"toolbox/task_operations/dssp_in.blueprint",
+	"toolbox/task_operations/DsspDesignOperation.u",
 	"toolbox/task_operations/loops.txt",
 	"toolbox/task_operations/RestrictToInterfaceOperation.u",
 	"toolbox/task_operations/RestrictToInterfaceVectorOperation.u",
