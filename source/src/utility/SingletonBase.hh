@@ -63,7 +63,7 @@ public:
 		if ( ! local_instance ) {
 			std::lock_guard< std::mutex > lock( singleton_mutex_ );
 			local_instance = instance_.load( std::memory_order_relaxed );
-			if ( ! instance ) {
+			if ( ! local_instance ) {
 				local_instance = T::create_singleton_instance();
 				instance_.store( local_instance, std::memory_order_relaxed );
 				std::atomic_thread_fence( std::memory_order_release );
@@ -97,7 +97,7 @@ private:
 
 #if defined MULTI_THREADED && defined CXX11
 	static std::mutex singleton_mutex_;
-	static std::atomic< typename T * > instance_;
+	static std::atomic< T * > instance_;
 #else
 	static T * instance_;
 #endif
