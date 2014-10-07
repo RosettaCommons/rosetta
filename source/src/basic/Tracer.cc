@@ -189,7 +189,7 @@ Tracer::TracerProxy::calculate_visibility()
 /// Flush inner buffer: send it to bound Tracer object, and clean it.
 void Tracer::TracerProxy::t_flush(std::string const & s)
 {
-	assert( visibility_calculated_ );
+	assert( ! initial_tracers_visibility_calculated_ || visibility_calculated_ );
 
 	int pr = tracer_.priority();
 	tracer_.priority(priority_);
@@ -565,7 +565,7 @@ void Tracer::prepend_channel_name( out_stream & sout, std::string const &str )
 /// @details Inform Tracer that is contents was modified, and IO is in order.
 void Tracer::t_flush(std::string const &str)
 {
-	assert( visibility_calculated_ );
+	assert( ! initial_tracers_visibility_calculated_ || visibility_calculated_ );
 	if( ios_hook() && ios_hook().get()!=this &&
 		( in(monitoring_list_, channel_, false) || in(monitoring_list_, get_all_channels_string(), true ) ) ) {
 		if (ios_hook_raw_() || visible() ){
