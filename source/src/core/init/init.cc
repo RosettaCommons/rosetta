@@ -674,7 +674,7 @@ init_tracers(){
 
 		std::stringstream outfilename;
 		outfilename << option[ out::mpi_tracer_to_file ]() << "_" << mpi_rank;
-		basic::otstreamOP redirect_tracer = new basic::TracerToFile( outfilename.str() );
+		basic::otstreamOP redirect_tracer( new basic::TracerToFile( outfilename.str() ));
 		basic::Tracer::set_ios_hook( redirect_tracer, basic::Tracer::get_all_channels_string(), false );
 		basic::Tracer::super_mute( true );
 	}
