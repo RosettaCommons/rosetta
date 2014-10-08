@@ -1,0 +1,13 @@
+-s input/1ZK4.pdb.gz
+-extra_res_fa input/NAP.params
+-resfile input/no_ligand.resfile
+-mute protocols.backrub.BackrubMover
+-ex1
+-ex2
+-extrachi_cutoff 0
+-nstruct 1
+-coupled_moves::mc_kt 1.0
+-coupled_moves::initial_repack false
+-coupled_moves::ntrials 100
+-coupled_moves::ligand_mode false
+-overwrite

@@ -88,6 +88,9 @@ sources = {
 		"super_aln",
 		"validate_silent",
 	],
+	"public/coupled_moves": [
+		"coupled_moves",
+	],
         "public/darc": [
                 "DARC",
                 "make_ray_files",
