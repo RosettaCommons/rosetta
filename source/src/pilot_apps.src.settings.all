@@ -746,6 +746,7 @@ sources = {
                 "generate_matcher_constraints",
 		"calibrate_pdb_via_sidechain_optimization",
 		"score_protein_ligand_interactions",
+		"create_clash-based_repack_shell",
 	],
 	"pilot/rvernon" : [
 		#"calc_pair_stats", # /* Rob Vernon,Documentation Location,Demo Location */
