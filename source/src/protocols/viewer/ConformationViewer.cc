@@ -237,7 +237,7 @@ ConformationViewer::on_xyz_change(
 	residues_.resize( res_caps.size() );
 	secstruct_.resize( res_caps.size() );
 	for ( core::Size i = 1, ie = res_caps.size(); i <= ie; ++i ) {
-		residues_[ i ] = core::conformation::ResidueCOP( res_caps[ i ] );
+		residues_[ i ] = res_caps[ i ].get();
 		secstruct_[ i ] = event.conformation->secstruct( i );
 	}
 
