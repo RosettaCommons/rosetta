@@ -19,6 +19,11 @@ patches/nucleic/dna/LowerDNA.txt
 patches/nucleic/dna/UpperDNA.txt
 patches/nucleic/dna/VirtualDNAPhosphate.txt
 
+## RNA
+patches/nucleic/rna/LowerRNA.txt
+patches/nucleic/rna/UpperRNA.txt
+patches/nucleic/rna/Virtual_Phosphate.txt
+
 ##fpd
 #patches/CtermTruncation.txt
 #patches/NtermTruncation.txt

@@ -34,6 +34,10 @@ residue_types/nucleic/dna/ADE.params
 residue_types/nucleic/dna/THY.params
 residue_types/nucleic/dna/CYT.params
 residue_types/nucleic/dna/GUA.params
+residue_types/nucleic/rna_phenix/RAD_n.params
+residue_types/nucleic/rna_phenix/RCY_n.params
+residue_types/nucleic/rna_phenix/RGU_n.params
+residue_types/nucleic/rna_phenix/URA_n.params
 
 ## Metal Ion Types
 residue_types/metal_ions/ZN.params
