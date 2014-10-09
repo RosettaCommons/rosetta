@@ -33,7 +33,7 @@ namespace viewer {
 // base class
 class ConformationViewer;
 
-typedef utility::pointer::owning_ptr< ConformationViewer > ConformationViewerOP;
+typedef utility::pointer::shared_ptr< ConformationViewer > ConformationViewerOP;
 
 } // viewer
 } // protocols

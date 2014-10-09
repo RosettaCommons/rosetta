@@ -1938,7 +1938,7 @@ void draw_pose(
 
 	for (int i=1; i<=(int)pose.total_residue(); ++i) {
 		ss[i] = pose.secstruct(i);
-		residues[i] = pose.residue(i);
+		residues[i] = pose.residue(i).get_self_ptr();
 	}
 
 	Vector center_of_mass = get_center( residues );
