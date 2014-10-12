@@ -98,10 +98,10 @@ interp_dspline( ObjexxFCL::FArray3D< double > & coeffs ,
                 numeric::xyzVector<core::Real> const & idxX );
 
 /// @brief precompute spline coefficients (float array => double coeffs)
-void spline_coeffs( ObjexxFCL::FArray3D< double > &data, ObjexxFCL::FArray3D< double > & coeffs);
+void spline_coeffs( ObjexxFCL::FArray3D< double > const &data, ObjexxFCL::FArray3D< double > & coeffs);
 
 /// @brief precompute spline coefficients (double array => double coeffs)
-void spline_coeffs( ObjexxFCL::FArray3D< float > &data, ObjexxFCL::FArray3D< double > & coeffs);
+void spline_coeffs( ObjexxFCL::FArray3D< float > const &data, ObjexxFCL::FArray3D< double > & coeffs);
 
 void conj_map_times(ObjexxFCL::FArray3D< std::complex<double> > & map_product, ObjexxFCL::FArray3D< std::complex<double> > const & mapA, ObjexxFCL::FArray3D< std::complex<double> > const & mapB);
 
@@ -121,10 +121,10 @@ void interp_dspline(
 					numeric::xyzVector< core::Real > & gradX,
 					core::Real & gradSlab );
 void spline_coeffs(
-           ObjexxFCL::FArray4D< double > & data ,
+           ObjexxFCL::FArray4D< double > const & data ,
            ObjexxFCL::FArray4D< double > & coeffs);
 void spline_coeffs(
-           ObjexxFCL::FArray4D< float > & data ,
+           ObjexxFCL::FArray4D< float > const & data ,
            ObjexxFCL::FArray4D< double > & coeffs);
 
 

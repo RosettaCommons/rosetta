@@ -414,6 +414,7 @@ public:
 	inline core::Real getResolution( ) const { return this->reso; }
 	inline numeric::xyzVector<core::Real> getCoM() const { return centerOfMass; }
 	inline numeric::xyzVector<core::Real> getOrigin() const { return origin; }
+	inline numeric::xyzVector<int> getGrid() const { return grid; }
 	inline numeric::xyzVector<core::Real> getEffOrigin() const { return efforigin; }
 	inline utility::vector1< core::kinematics::RT > getsymmOps() const { return symmOps; }
 
@@ -504,6 +505,23 @@ public:
 	void get_R(int subunit, numeric::xyzMatrix<core::Real> &R) {
 		runtime_assert( symmap.find( -subunit ) != symmap.end() );
 		R = symmap[ -subunit ].second;
+	}
+
+	// accessor
+	core::Real
+	get(int i, int j, int k) { return density(i,j,k); }
+
+	//void
+	//set(int i, int j, int k, core::Real val) {
+	//	density(i,j,k) = val;
+	//	density_change_trigger();
+	//}
+
+	void
+	set (ObjexxFCL::FArray3D< float > const &dens_new) {
+		runtime_assert( dens_new.u1() == density.u1() && dens_new.u2() == density.u2() && dens_new.u3() == density.u3());
+		density = dens_new;
+		density_change_trigger();
 	}
 
 ///////////

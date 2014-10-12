@@ -108,15 +108,15 @@ numeric::xyzVector<core::Real> interp_dspline(
 }
 
 void spline_coeffs(
-           ObjexxFCL::FArray3D< double > & data ,
+           ObjexxFCL::FArray3D< double > const & data ,
            ObjexxFCL::FArray3D< double > & coeffs) {
 	int dims[3] = { data.u3(), data.u2(), data.u1() };
 	coeffs = data;
-	SplineInterp::compute_coefficients3( &coeffs[0] , dims );
+	SplineInterp::compute_coefficients3( const_cast<double*>(&coeffs[0]) , dims );  // external code wants nonconst even though array is unchanged
 }
 
 void spline_coeffs(
-                         ObjexxFCL::FArray3D< float > & data ,
+                         ObjexxFCL::FArray3D< float > const & data ,
                          ObjexxFCL::FArray3D< double > & coeffs) {
 	int N = data.u3()*data.u2()*data.u1();
 	ObjexxFCL::FArray3D< double > data_d(data.u1(),data.u2(),data.u3()) ;
@@ -190,16 +190,16 @@ void interp_dspline(
 }
 
 void spline_coeffs(
-           ObjexxFCL::FArray4D< double > & data ,
+           ObjexxFCL::FArray4D< double > const & data ,
            ObjexxFCL::FArray4D< double > & coeffs)
 {
 	int dims[4] = { coeffs.u4(), coeffs.u3(), coeffs.u2(), coeffs.u1() };
 	coeffs = data;
-	SplineInterp::compute_coefficients4( &coeffs[0] , dims );
+	SplineInterp::compute_coefficients4( const_cast<double*>(&coeffs[0]) , dims );
 }
 
 void spline_coeffs(
-           ObjexxFCL::FArray4D< float > & data ,
+           ObjexxFCL::FArray4D< float > const & data ,
            ObjexxFCL::FArray4D< double > & coeffs)
 {
  	int N = data.u4()*data.u3()*data.u2()*data.u1();
