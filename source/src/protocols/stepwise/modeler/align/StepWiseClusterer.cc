@@ -16,6 +16,7 @@
 #include <protocols/stepwise/modeler/align/StepWiseClusterer.hh>
 #include <protocols/stepwise/modeler/align/util.hh>
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.hh>
+#include <protocols/stepwise/modeler/align/StepWisePoseAligner.hh>
 #include <protocols/stepwise/monte_carlo/util.hh> // for output_to_silent_file
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -61,6 +62,8 @@ namespace align {
 		rmsd_( 0.0 ),
 		cluster_rmsd_( 0.0 ), // will be reset below.
 		score_diff_cut_( 0.0 ),
+		do_checks_( true ),
+		assume_atom_ids_invariant_( false ),
 		initialized_( false ),
 		count_( 0 )
 	{
@@ -71,6 +74,8 @@ namespace align {
 		rmsd_( 0.0 ),
 		cluster_rmsd_( options->cluster_rmsd() ),
 		score_diff_cut_( 0.0 ),
+		do_checks_( true ),
+		assume_atom_ids_invariant_( false ),
 		initialized_( false ),
 		count_( 0 ),
 		silent_file_( options->sampler_silent_file() )
@@ -149,7 +154,7 @@ namespace align {
 
 		// made it here -- pose has low enough energy to merit going on the list.
 		// if we've got a full list,  kick out the worse scoring pose to make room.
-		if ( size() == max_decoys_ ) kick_out_pose_at_idx( size() );
+		if ( size() > max_decoys_ ) kick_out_pose_at_idx( size() );
 		return true;
 	}
 
@@ -170,12 +175,28 @@ namespace align {
   //////////////////////////////////////////////////////////////////////////
 	bool
 	StepWiseClusterer::check_for_closeness( pose::Pose const & pose1, pose::Pose const & pose2 ) {
-		rmsd_ = get_rmsd( pose1, pose2, calc_rms_res_,
-											true /*check align at superimpose res*/,
-											true /*check switch*/ );
+		bool set_rmsd( false );
+		if ( assume_atom_ids_invariant_ ) {
+			if ( pose_aligner_ == 0 ) {
+			 	pose_aligner_ = StepWisePoseAlignerOP( new StepWisePoseAligner( pose2 ) );
+			 	pose_aligner_->set_user_defined_calc_rms_res( calc_rms_res_ );
+				pose_aligner_->initialize( pose1 );
+			}
+			if ( pose_aligner_->check_matching_atom_names( pose1, pose2, false /*verbose*/ ) ) { // terminal phosphate variants can reorder atom order...
+				rmsd_ = pose_aligner_->get_rmsd_no_superimpose( pose1, pose2, do_checks_ /*check_align_at_superimpose_res*/ );
+				set_rmsd = true;
+			}
+		}
+
+		if ( !set_rmsd ) {
+			// this is the super-robust way to calculate RMSD.
+			rmsd_ = get_rmsd( pose1, pose2, calc_rms_res_,
+												do_checks_ /*check align at superimpose res*/,
+												do_checks_ /*check switch*/ );
+		}
+
 		if ( rmsd_ <= cluster_rmsd_ ) return true;
 		return false;
-
 	}
 
   //////////////////////////////////////////////////////////////////////////

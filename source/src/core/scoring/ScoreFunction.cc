@@ -3029,6 +3029,11 @@ ScoreFunction::ready_for_nonideal_scoring() const
 		has_nonzero_weight( mm_stretch ) )
 			return true;
 
+	// if any of the mm_ terms are on, return true
+	if ( has_nonzero_weight( bond_geometry ) ||
+			 has_nonzero_weight( rna_bond_geometry ) )
+			return true;
+
 	return false;
 }
 

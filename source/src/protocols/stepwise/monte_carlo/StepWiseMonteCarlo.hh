@@ -31,6 +31,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
 #include <core/pose/Pose.hh>
+#include <ctime>
 
 /*
 using namespace core;
@@ -79,13 +80,20 @@ namespace monte_carlo {
 
 		void set_enumerate( bool const setting ){ enumerate_ = setting; }
 
-		void set_just_preminimize( bool const setting ){	just_preminimize_ = setting; }
+		void set_do_preminimize_move( bool const setting ){	do_preminimize_move_ = setting; }
+
+		AddOrDeleteMoverOP add_or_delete_mover();
+
+		void
+		build_full_model( core::pose::Pose const & start_pose, core::pose::Pose & full_model_pose );
 
 	private:
 
-		void initialize_scorefunction();
+		void initialize();
 
 		void initialize_movers();
+
+		void initialize_scorefunction();
 
 		void initialize_for_movie( pose::Pose const & pose );
 
@@ -146,8 +154,10 @@ namespace monte_carlo {
 		// for testing individual moves
 		SWA_Move move_;
 		bool enumerate_;
-		bool just_preminimize_;
+		bool do_preminimize_move_;
 
+		// timing poses
+		std::clock_t start_time_;
 	};
 
 } //monte_carlo

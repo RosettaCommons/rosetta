@@ -103,6 +103,13 @@ namespace sugar {
 																	core::scoring::ScoreFunctionCOP scorefxn,
 																	options::StepWiseModelerOptionsCOP options );
 
+	utility::vector1< bool >
+	detect_sugar_contacts( pose::Pose const & pose );
+
+	bool
+	detect_sugar_contacts( pose::Pose const & pose, Size const moving_res,
+												 Distance const o2prime_contact_distance_cutoff_ = 3.2 /*hydrogen bond*/ );
+
 } //sugar
 } //rna
 } //modeler

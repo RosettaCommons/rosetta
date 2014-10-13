@@ -28,6 +28,7 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/copydofs/util.hh>
 #include <core/pose/util.hh>
 #include <ObjexxFCL/format.hh>
@@ -510,6 +511,51 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 		return virtual_sugar_just_in_time_instantiator;
 	}
 
+	///////////////////////////////////////////////////////////////////////////
+	utility::vector1< bool >
+	detect_sugar_contacts( pose::Pose const & pose ) {
+		utility::vector1< bool > sugar_makes_contact( pose.total_residue(), false );
+		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+			if ( !pose.residue_type( i ).is_RNA() ) continue;
+			sugar_makes_contact[ i ] = detect_sugar_contacts( pose, i );
+		}
+		return sugar_makes_contact;
+	}
+
+
+	///////////////////////////////////////////////////////////////////////////
+	bool
+	detect_sugar_contacts( pose::Pose const & pose, Size const moving_res,
+												 Distance o2prime_contact_distance_cutoff_ ) {
+
+		bool found_contact( false );
+		Vector const & moving_O2prime_xyz = pose.residue( moving_res ).xyz( " O2'" );
+		core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
+		for ( Size i = 1; i <= pose.total_residue(); i++ ){
+			if ( i == moving_res ) continue;
+
+			// sometimes see artifactual H-bonds of O2' to next phosphate or sugar.
+			if ( i > 1 &&
+					 pdb_info->number( i )-1 == pdb_info->number( moving_res ) &&
+					 pdb_info->chain( i ) == pdb_info->chain( moving_res ) ) continue;
+
+			if ( pose.residue( i ).is_virtual_residue() ) continue;
+			for ( Size j = 1; j <= pose.residue( i ).nheavyatoms(); j++ ){
+				if ( pose.residue_type( i ).is_virtual( j ) ) continue;
+				if ( pose.residue_type( i ).heavyatom_is_an_acceptor( j ) ||
+						 pose.residue_type( i ).heavyatom_has_polar_hydrogens( j )  ){
+					Distance dist = ( pose.residue(i).xyz( j ) - moving_O2prime_xyz ).length();
+					//std::cout << "Distance to rsd " << i << "  atom " << pose.residue_type( i ).atom_name( j ) << ": " << dist << std::endl;
+					if ( dist < o2prime_contact_distance_cutoff_ ) {
+						found_contact = true; break;
+					}
+				}
+			} // atoms j
+			if ( found_contact ) break;
+		} // residues i
+
+		return found_contact;
+	}
 
 } //sugar
 } //rna

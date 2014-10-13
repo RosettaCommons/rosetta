@@ -46,23 +46,21 @@
 #include <core/chemical/ChemicalManager.hh>
 
 #include <core/conformation/Conformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/symmetry/SymDof.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/NamedStubID.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/annotated_sequence.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/symmetry/util.hh>
 
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
 #include <numeric/model_quality/rms.hh>
-
-#include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
-
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/SymDof.hh>
 
 // option key includes
 #include <basic/options/option.hh>
@@ -71,7 +69,6 @@
 
 #include <boost/lexical_cast.hpp>
 
-#include <core/pose/annotated_sequence.hh>
 #include <utility/vector1.hh>
 #include <utility/Binary_Util.hh>
 
@@ -81,8 +78,6 @@ static thread_local basic::Tracer tr( "core.io.silent" );
 namespace core {
 namespace io {
 namespace silent {
-
-
 
 /// @brief Constructors.
 BinarySilentStruct::BinarySilentStruct( Size const nres_in )
@@ -121,6 +116,10 @@ BinarySilentStruct::BinarySilentStruct(
 	symminfo_->set_use_symmetry(false);
 	fill_struct( pose, tag );
 } // BinarySilentStruct
+
+BinarySilentStruct::~BinarySilentStruct()
+{
+}
 
 void
 BinarySilentStruct::fill_struct(
@@ -192,9 +191,9 @@ BinarySilentStruct::fill_struct(
 	chain_endings( pose.conformation().chain_endings() );
 
 	fill_struct_with_residue_numbers( pose ); // grabs residue numbers from pose PDBInfo object.
+	fill_other_struct_list( pose );
 
 } // BinarySilentStruct
-
 
 void BinarySilentStruct::add_chain_ending( Size const seqpos ) {
 	core::Size nres_pose = nres();
@@ -344,18 +343,19 @@ bool BinarySilentStruct::init_from_lines(
 			add_comment( comment, value );
 			continue;  // skip comments
 		}
-		if ( iter->substr(0,7) == "SCORE: " ) {
+		if ( iter->substr(0,7) == "SCORE: " || iter->substr(0,7) == "OTHER: " ) {
 			// SCORE: line with values from this structure.
 			Size nres = one_letter_sequence().length();
 			resize( nres );
 
 			std::string tag;
 			line_stream >> tag;
-			if ( line_stream.fail() || tag != "SCORE:" ) {
+			if ( line_stream.fail() || ( tag != "SCORE:" && tag != "OTHER:" ) ) {
 				tr.Error << "bad format in first score line of silent file" << std::endl;
 				tr.Error << "line = " << *iter << std::endl;
 				tr.Error << "tag = " << tag << std::endl;
 			}
+			scoreline_prefix( tag );
 
 			parse_energies( line_stream, energy_names_ );
 
@@ -530,6 +530,7 @@ bool BinarySilentStruct::init_from_lines(
 
 	//tr.Debug << "(TEX) FOLD TREE: " << fold_tree();
 	if ( !fullatom_well_defined ) fullatom_ = option[ in::file::fullatom ]();
+
 	return true;
 } // init_from_lines
 
@@ -663,28 +664,41 @@ void BinarySilentStruct::fill_pose (
 		utility_exit_with_message( "RuntimeAssert failed: nres() == one_letter_sequence().length()" );
 	}
 
-
   if ( !chain_endings().empty() ) {
     pose.conformation().chain_endings( chain_endings() );
   }
 
-
 	core::pose::initialize_disulfide_bonds(pose);
 
 	finish_pose( pose );
+
+	setup_other_poses( pose, residue_set );
+
 } // fill_pose
+
+/// @details  for stepwise modeling, setup other_poses inside full_model_info. this could go into SilentStruct parent class, if needed.
+void
+BinarySilentStruct::setup_other_poses( pose::Pose & pose, core::chemical::ResidueTypeSet const & residue_set ) const {
+	for ( Size n = 1; n <= other_struct_list().size(); n++ ) {
+		core::pose::PoseOP other_pose( new core::pose::Pose );
+		other_struct_list()[n]->fill_pose( *other_pose, residue_set );
+		core::pose::full_model_info::nonconst_full_model_info( pose ).add_other_pose( other_pose );
+	}
+}
 
 void
 BinarySilentStruct::print_header( std::ostream & out ) const
 {
 	SilentStruct::print_header( out );
+	out << "REMARK BINARY SILENTFILE";
+	if ( full_model_parameters() != 0 ) out << "    " << *full_model_parameters();
+	out << std::endl;
 }
 
 
 void BinarySilentStruct::print_conformation(
 	std::ostream & output
 ) const {
-	output << "REMARK BINARY SILENTFILE\n";
 
 	// fold tree
 	// assume non-trivial fold_tree only if more than one edge, i.e., EDGE 1 <nres> -1?

@@ -167,8 +167,10 @@ enum ScoreType {
 
 	// High resolution
 	rna_torsion,       // RNA torsional potential.
-	rna_suite,			 // RNA Suite Score
-	rna_jr_suite,			 // RNA Suite Score, Jane Richardson style
+	rna_torsion_sc,    // RNA torsional potential, just side-chain component.
+	rna_suite,			   // RNA suite torsional potential -- 0.0 at suite centers, specified in suite_torsion/ files
+	rna_jr_suite,			 // RNA suite torsional potential based on distance to closest suite, hard-coded in RNA_SuiteName
+	suiteness_bonus,	 // Energy bonuses for suites specified in a file; suite centers hard-coded in RNA_SuiteName
 	rna_sugar_close,   // constraints to keep RNA sugar closed, and with reasonably ideal geometry
 	fa_stack,          // stacking interaction modeled as pairwise atom-atom interactions
 	fa_stack_aro,
@@ -312,7 +314,9 @@ enum ScoreType {
 	dunbrack_constraint,
 	site_constraint,
 	metalhash_constraint, // Rigid body, metal binding constraints for centroid mode
-	rna_bond_geometry, // deviations from ideal geometry
+	Hpol_bond_geometry, // deviations from ideal geometry for just polar hydrogens. [PolarHydrogenBondGeometryEnergy.hh]
+	bond_geometry,      // deviations from ideal geometry [accessed through constraints framework]
+	rna_bond_geometry,  // deviations from ideal geometry -- rna-backbone specific [accessed through constraints framework]
 
 	rama,
 	omega,
@@ -382,7 +386,7 @@ enum ScoreType {
 	MPTMProj,
 	FaMPEnv,
 	FaMPEnvSmooth,
-	
+
 	/// Whole structure energies, centroid score
 	// secondary structure scores
 	natbias_ss,

@@ -23,15 +23,13 @@
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SharedSilentData.hh>
+#include <core/pose/full_model_info/FullModelParameters.hh>
 
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ Headers
 #include <string>
 #include <map>
-
-// AUTO-REMOVED #include <utility/options/keys/BooleanOptionKey.hh>
-// AUTO-REMOVED #include <iostream>
 
 #include <utility/vector1.hh>
 
@@ -62,6 +60,7 @@ private:
 	bool strict_column_mode_;
 	bool record_source_;
 	std::string silent_struct_type_;
+	core::pose::full_model_info::FullModelParametersOP full_model_parameters_;
 
 public:
 	///////////////////////////////////////////////////////////////////////////
@@ -218,6 +217,9 @@ public:
 	utility::vector1 <SilentStructOP> structure_list() { return structure_list_; }
 
 	void
+	setup_extra_res( utility::vector1< std::string > & all_res ) const;
+
+	void
 	setup_extra_patches( utility::vector1< std::string > & all_patches ) const;
 
 	/// @brief quickly read a list of tags from a silent-input file. Only checks
@@ -305,6 +307,9 @@ public:
 	/// SilentStruct later, it will change your already stored structures.
 	void add_structure( SilentStructOP const & new_struct );
 
+	/// @brief In stepwise modeling, sometimes poses carry refs to 'other poses'
+	bool add_as_other_struct_if_relevant( SilentStructOP const & new_struct );
+
 	/// @brief push_back to provide compatibility with other std containers.
 	void push_back( SilentStructOP const & new_struct ) {
 		add_structure( new_struct );
@@ -368,7 +373,10 @@ public:
 
 private:
 		//some utility function for the reading process --- returns bool if new type
-	bool read_silent_struct_type_from_remark( std::string const& line, bool header=false /*make true if this is one of the first 3 lines*/ );
+	bool read_silent_struct_type_from_remark( std::string const& line, bool const header = false /*make true if this is one of the first 3 lines*/ );
+
+	bool read_full_model_parameters_from_remark( std::string const& line,	bool const header = false );
+
 
 	bool check_if_rna_from_sequence_line( std::string const& sequence_line );
 

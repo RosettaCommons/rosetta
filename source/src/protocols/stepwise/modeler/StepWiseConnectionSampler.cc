@@ -131,7 +131,8 @@ using namespace protocols::stepwise::modeler::rna;
 // As in other stepwise code,
 //   StepWiseWorkingParameters holds information about this particular modeling job.
 //   options::StepWiseModelerOptions holds information that is const across all of stepwise monte carlo.
-// And, there are some 'useful info' varaibles derived below that are inferred from pose and above information -- use of KIC, etc. --
+//
+// And, there are some 'useful info' variables derived below that are inferred from pose and above information -- use of KIC, etc. --
 //   they are set at the beginning and should not change again (perhaps should store them together as a COP).
 //
 // Did not carry over:
@@ -430,8 +431,8 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 
 	// RNA Base Centroid stuff -- could soon generalize to find protein partners too. That would be cool.
 	if ( working_parameters_->working_moving_partition_res().size() > 0 ){
-		base_centroid_checker_ = rna::checker::RNA_BaseCentroidCheckerOP( new RNA_BaseCentroidChecker ( pose, working_parameters_,
-																													 options_->tether_jump()) );
+		base_centroid_checker_ = rna::checker::RNA_BaseCentroidCheckerOP(new RNA_BaseCentroidChecker ( pose, working_parameters_,
+																																																	 ( working_parameters_->floating_base() /*rigid body*/ && options_->tether_jump() ) ) );
 		base_centroid_checker_->set_floating_base( working_parameters_->floating_base() &&
 																							 working_parameters_->working_moving_partition_res().size() == 1  );
 		base_centroid_checker_->set_allow_base_pair_only_screen( options_->allow_base_pair_only_centroid_screen() );
@@ -520,6 +521,10 @@ StepWiseConnectionSampler::initialize_checkers( pose::Pose const & pose  ){
 	clusterer_ = align::StepWiseClustererOP( new align::StepWiseClusterer( options_ ) );
 	clusterer_->set_max_decoys( get_num_pose_kept() );
 	clusterer_->set_calc_rms_res( moving_res_list_ );
+	if ( !options_->choose_random() ) {
+		clusterer_->set_do_checks( false ); // for speed!
+		clusterer_->set_assume_atom_ids_invariant( true ); // for speed!
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////

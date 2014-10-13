@@ -1,0 +1,30 @@
+# putting in terms like AFK.
+# first 20 reference weights are protein; then four for DNA; then four for RNA [G,A,C,U]
+METHOD_WEIGHTS ref 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0   0 0 0 0    4.14  3.58  2.82  3.76
+NO_HB_ENV_DEP
+INCLUDE_INTRA_RES_RNA_HB
+fa_atr          0.21
+fa_rep          0.20
+fa_intra_rep    0.0029
+fa_stack        0.13
+rna_torsion     1.5
+rna_sugar_close 0.82
+hbond_sc        2.0
+hbond_sr_bb_sc  2.0
+hbond_lr_bb_sc  2.0
+lk_nonpolar     0.25
+geom_sol_fast   0.17
+fa_elec_rna_phos_phos 1.7
+stack_elec      0.76
+intermol        2.3
+loop_close      1.0
+free_suite      2.0 # should be less than each ref
+free_2HOprime   1.0 # should be 1.0 to maintain kT scale
+ref             1.0
+linear_chainbreak 5.0
+other_pose      1.0
+hbond_intra                  2.0
+fa_intra_RNA_base_phos_atr   0.21
+fa_intra_RNA_base_phos_rep   0.10
+geom_sol_fast_intra_RNA      0.17
+lk_nonpolar_intra_RNA        0.25

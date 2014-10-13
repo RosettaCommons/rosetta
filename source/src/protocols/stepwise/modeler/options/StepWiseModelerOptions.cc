@@ -110,7 +110,7 @@ namespace options {
 		if ( sampler_options->choose_random() )	sampler_options->set_cluster_rmsd( 0.0 ); // don't cluster.
 		if ( sampler_options->integration_test_mode() ){
 			sampler_options->set_sampler_num_pose_kept( 2 );
-		 sampler_options->set_rmsd_screen( 1.0 ); // RNA_ConnectionSampler will initially have this off, but toggle true later in integration test.
+			sampler_options->set_rmsd_screen( 1.0 ); // RNA_ConnectionSampler will initially have this off, but toggle true later in integration test.
 		}
 		return sampler_options;
 	}

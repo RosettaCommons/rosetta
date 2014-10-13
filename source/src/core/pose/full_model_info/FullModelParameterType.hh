@@ -17,6 +17,7 @@
 #define INCLUDED_core_pose_full_model_info_FullModelParameterType_HH
 
 #include <core/pose/full_model_info/FullModelParameters.fwd.hh>
+#include <string>
 
 namespace core {
 namespace pose {
@@ -48,13 +49,13 @@ namespace full_model_info {
 	// -- rhiju, 2014.
 
 	//
-	// IF YOU ADD A TYPE, please also update initialize_parameters() in FullModelParameterType.cc
-	//
+	// IF YOU ADD A TYPE, please also update initialize_parameters() in FullModelParameterType.cc,
+	//  as well as 	initialize_full_model_parameter_type_name().
 
 	enum FullModelParameterType {
 		NO_TYPE = 0,
 		CALC_RMS,
-		CHAIN,          // Starts with 1 for first chain, then 2, ... note must agree with CUTPOINT_OPEN.
+		//		CHAIN,          // Starts with 1 for first chain, then 2, ... note must agree with CUTPOINT_OPEN.
 		CUTPOINT_OPEN,  // Just points where a full pose would have fold-tree cutpoints.
 		FIXED_DOMAIN,   // Non-zero over residues that are fixed (e.g., from input pdbs). Cannot delete or split these.
 		EXTRA_MINIMIZE, // Specified by user for job -- can go into 'fixed domains'
@@ -66,6 +67,7 @@ namespace full_model_info {
 		RNA_NORTH_SUGAR,
 		RNA_SOUTH_SUGAR,
 		RNA_TERMINAL, // base pairs on which new bases cannot stack/pair.
+		RNA_BULGE, // nucleotides that should not be instantiated.
 
 		// next-section: anything protein-specific
 
@@ -75,6 +77,11 @@ namespace full_model_info {
 
 	void
 	initialize_parameters( FullModelParameters & full_model_parameters );
+
+	std::string to_string( FullModelParameterType const & type );
+
+	FullModelParameterType
+	full_model_parameter_type_from_string( std::string const name );
 
 } //full_model_info
 } //pose

@@ -236,7 +236,8 @@ SpliceSegment::all_pdb_profile( string const Protein_family_path, string const s
 		if ( !data )
 			utility_exit_with_message( "File not found " + fileName );
 		std::string line;
-		TR<<"Loading pdb profile pairs from file "<<fileName<<std::endl;
+		// commenting out with gideon's permission -- producing silly changes in integration tests due to path differences.
+		// TR<<"Loading pdb profile pairs from file "<<fileName<<std::endl;
 		while (getline( data, line )){
 			istringstream line_stream( line );
 			while( !line_stream.eof() ){

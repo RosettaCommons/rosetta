@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/pack/rotamer_set/RotamerSet_.cc
-/// @brief  amino acid rotamer set class implementation
-/// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
+/// @file   core/pack/rotamer_set/rna_rotamer_building_functions.cc
+/// @brief  RNA nucleotide rotamer set class implementation
+/// @author Rhiju Das (rhiju@stanford.edu), Andrew Leaver-Fay (leaverfa@email.unc.edu)
 
 // Unit Headers
 #include <core/pack/rotamer_set/rotamer_building_functions.hh>
@@ -80,7 +80,7 @@ namespace core {
 namespace pack {
 namespace rotamer_set {
 
-using namespace core::conformation; 
+using namespace core::conformation;
 
 static thread_local basic::Tracer TR( "core.pack.rotamer_set.rna_rotamer_building_functions", basic::t_info );
 
@@ -295,7 +295,7 @@ build_proton_chi_rotamers(
 												proton_chi_chisets[ ii ]->chi[ jj_protchi ] );
 
 					if ( include_virtual_side_chain ) {
-						runtime_assert( !rot->has_variant_type( chemical::VIRTUAL_SIDE_CHAIN ) );
+						runtime_assert( !rot->has_variant_type( chemical::VIRTUAL_O2PRIME_HYDROGEN ) );
 						static core::scoring::rna::RNA_TorsionPotential rna_torsion_potential; // I think this is OK.
 						Real const rna_torsion = rna_torsion_potential.eval_intrares_energy( *rot, pose );
 						if ( n_min == 0 || rna_torsion < rna_torsion_min ){
@@ -424,7 +424,7 @@ build_rna_rotamers(
 	// include current... this doesn't use ideal bond lengths/angles.
 	Residue const & existing_residue( pose.residue( resid ));
 	if ( task.include_current( resid ) && existing_residue.aa() == concrete_residue->aa() ) {
-		ResidueOP rot = existing_residue.create_rotamer();
+		ResidueOP rot =  remove_variant_type_from_residue( existing_residue, chemical::VIRTUAL_O2PRIME_HYDROGEN, pose );
 		new_rotamers.push_back( rot );
 		id_for_current_rotamer = new_rotamers.size();
 	}

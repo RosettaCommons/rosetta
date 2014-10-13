@@ -60,6 +60,7 @@ public:
 	virtual Size count_static_memory() const;
 	virtual Size count_dynamic_memory() const;
 
+	void bond_geometry_energy( Energy );
 	void rna_bond_geometry_energy( Energy );
 	void atom_pair_constraint_energy( Energy );
 	void coordinate_constraint_energy( Energy );
@@ -70,6 +71,7 @@ public:
 	void res_type_linking_constraint_energy( Energy );
 
 
+	Energy bond_geometry_energy() const;
 	Energy rna_bond_geometry_energy() const;
 	Energy atom_pair_constraint_energy() const;
 	Energy coordinate_constraint_energy() const;
@@ -84,6 +86,7 @@ public:
 
 private:
 
+	Energy bond_geometry_energy_;
 	Energy rna_bond_geometry_energy_;
 	Energy atom_pair_constraint_energy_;
 	Energy coordinate_constraint_energy_;

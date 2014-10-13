@@ -108,6 +108,7 @@ CstResNeighbIterator::neighbor_id() const
 void
 CstResNeighbIterator::save_energy( EnergyMap const & emap )
 {
+	downcast_cstedge(*edge_iter_)->bond_geometry_energy( emap[ bond_geometry ] );
 	downcast_cstedge(*edge_iter_)->rna_bond_geometry_energy( emap[ rna_bond_geometry ] );
 	downcast_cstedge(*edge_iter_)->atom_pair_constraint_energy( emap[ atom_pair_constraint ] );
 	downcast_cstedge(*edge_iter_)->coordinate_constraint_energy( emap[ coordinate_constraint ] );
@@ -123,6 +124,7 @@ CstResNeighbIterator::save_energy( EnergyMap const & emap )
 void
 CstResNeighbIterator::retrieve_energy( EnergyMap & emap ) const
 {
+	emap[ bond_geometry ] = downcast_cstedge(*edge_iter_)->bond_geometry_energy();
 	emap[ rna_bond_geometry ] = downcast_cstedge(*edge_iter_)->rna_bond_geometry_energy();
 	emap[ atom_pair_constraint ] = downcast_cstedge(*edge_iter_)->atom_pair_constraint_energy();
 	emap[ coordinate_constraint ] = downcast_cstedge(*edge_iter_)->coordinate_constraint_energy();
@@ -137,6 +139,7 @@ CstResNeighbIterator::retrieve_energy( EnergyMap & emap ) const
 void
 CstResNeighbIterator::accumulate_energy( EnergyMap & emap ) const
 {
+	emap[ bond_geometry ] += downcast_cstedge(*edge_iter_)->bond_geometry_energy();
 	emap[ rna_bond_geometry ] += downcast_cstedge(*edge_iter_)->rna_bond_geometry_energy();
 	emap[ atom_pair_constraint ] += downcast_cstedge(*edge_iter_)->atom_pair_constraint_energy();
 	emap[ coordinate_constraint ] += downcast_cstedge(*edge_iter_)->coordinate_constraint_energy();
@@ -256,6 +259,7 @@ CstResNeighbConstIterator::neighbor_id() const
 void
 CstResNeighbConstIterator::retrieve_energy( EnergyMap & emap ) const
 {
+	emap[ bond_geometry ] = downcast_cstedge(*edge_iter_)->bond_geometry_energy();
 	emap[ rna_bond_geometry ] = downcast_cstedge(*edge_iter_)->rna_bond_geometry_energy();
 	emap[ atom_pair_constraint ] = downcast_cstedge(*edge_iter_)->atom_pair_constraint_energy();
 	emap[ coordinate_constraint ] = downcast_cstedge(*edge_iter_)->coordinate_constraint_energy();
@@ -273,6 +277,7 @@ CstResNeighbConstIterator::retrieve_energy( EnergyMap & emap ) const
 void
 CstResNeighbConstIterator::accumulate_energy( EnergyMap & emap ) const
 {
+	emap[ bond_geometry ] += downcast_cstedge(*edge_iter_)->bond_geometry_energy();
 	emap[ rna_bond_geometry ] += downcast_cstedge(*edge_iter_)->rna_bond_geometry_energy();
 	emap[ atom_pair_constraint ] += downcast_cstedge(*edge_iter_)->atom_pair_constraint_energy();
 	emap[ coordinate_constraint ] += downcast_cstedge(*edge_iter_)->coordinate_constraint_energy();

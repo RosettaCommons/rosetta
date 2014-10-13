@@ -37,6 +37,7 @@
 #include <core/io/silent/EnergyNames.hh>
 #include <core/io/silent/SharedSilentData.hh>
 #include <core/pose/annotated_sequence.hh>
+#include <core/pose/full_model_info/FullModelParameters.hh>
 
 #include <basic/Tracer.hh>
 #include <utility/io/izstream.hh>
@@ -83,6 +84,19 @@ utility::vector1< std::string > SilentFileData::tags() const {
 	return tag_list;
 } // tags
 
+///////////////////////////////////////////////////////////////
+// although I set up what follows, its kind of embarrassing.
+//  should not be using options system as a kind of 'global variable'
+//  setting. A better idea (suggested by Andrew Leaver-Fay) would
+//  be to have a ResidueTypeSet that is *not* const, but can be
+//  updated after silent file readin, and then used for
+//  fill_pose().
+//
+// If someone carries out the fix, with an example in, say, extract_pdbs.cc,
+//  please update this comment.
+//
+// -- rhiju, 2014.
+//
 bool SilentFileData::setup_include_patches(
 	std::string const & filename
 ) const {
@@ -98,7 +112,7 @@ bool SilentFileData::setup_include_patches(
 	getline( data, line ); // sequence line
 	getline( data, line ); // score line
 
-	utility::vector1< std::string > all_patches;
+	utility::vector1< std::string > all_res, all_patches;
 	while( getline(data,line) ) {
 		if ( line.substr(0,19) == "ANNOTATED_SEQUENCE:"  ) {
 			std::istringstream l( line );
@@ -116,16 +130,41 @@ bool SilentFileData::setup_include_patches(
 				Size index = oneletter_to_fullname_index[ seqpos-1 ];
 				if ( index == 0 ) continue; // no patches.
 				std::string const fullname = fullname_list[ index ];
-				utility::vector1< std::string > const patches = utility::string_split( fullname, ':' );
-				for ( Size n = 2; n <= patches.size(); n++ ){ // might be better to make all_patches a set.
-					if ( !all_patches.has_value( patches[n] ) ) all_patches.push_back( patches[n] );
+				utility::vector1< std::string > const cols = utility::string_split( fullname, ':' );
+				if ( !all_res.has_value( cols[1] ) ) all_res.push_back( cols[1] );
+				for ( Size n = 2; n <= cols.size(); n++ ){ // might be better to make all_cols a set.
+					if ( !all_patches.has_value( cols[n] ) ) all_patches.push_back( cols[n] );
 				}
 			}
 		}
 	} // while( getline(data,line) )
 
+	setup_extra_res( all_res );
 	setup_extra_patches( all_patches );
 	return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// might be useful in a util somewhere if other objects want to tell ResidueTypeSet
+// that we need more residues
+void
+SilentFileData::setup_extra_res( utility::vector1< std::string > & all_res ) const {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	std::map< std::string, std::string > extra_res_tag;
+	extra_res_tag[ "ICY" ] = "nucleic/rna_nonnatural/ICY.params";
+	extra_res_tag[ "IGU" ] = "nucleic/rna_nonnatural/IGU.params";
+
+	FileVectorOption & extra_res_fa = option[ OptionKeys::in::file::extra_res_fa ];
+	for ( Size n = 1; n <= all_res.size(); n++ ) {
+		std::string const & patch_name = all_res[n];
+		if ( extra_res_tag.find( patch_name ) != extra_res_tag.end() ){
+			std::string const & tag = extra_res_tag[ patch_name ];
+			if ( !extra_res_fa.value().has_value( tag ) ) extra_res_fa.push_back( tag );
+		}
+	}
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -303,6 +342,8 @@ void SilentFileData::add_structure(
 	SilentStructOP const & new_struct
 ) {
 
+	if ( add_as_other_struct_if_relevant( new_struct ) ) return;
+
 	std::string const & new_tag( new_struct->decoy_tag() );
 
 	if ( !has_tag( new_tag ) ) {
@@ -325,6 +366,25 @@ void SilentFileData::add_structure(
 ) {
 	add_structure( new_struct.clone() );
 } // add_structure
+
+/// @details stepwise modeling can involve holding references to 'other poses' which, taken together
+///    correspond to the full model of the pose.
+bool
+SilentFileData::add_as_other_struct_if_relevant( SilentStructOP const & new_struct ) {
+
+	std::string const & new_tag( new_struct->decoy_tag() );
+
+	std::map< std::string, std::string > const & comments = new_struct->get_all_comments();
+	if ( comments.find( "OTHER_POSE" ) == comments.end() ) return false;
+	Size const other_pose_idx = ObjexxFCL::int_of( comments.find( "OTHER_POSE" )->second );
+	runtime_assert( new_struct->scoreline_prefix() == "OTHER:" );
+	runtime_assert( has_tag( new_tag ) );
+	SilentStructOP parent_silent_struct = structure_map_.find( new_tag )->second;
+	parent_silent_struct->add_other_struct( new_struct );
+	runtime_assert( parent_silent_struct->other_struct_list().size() == other_pose_idx );
+	return true;
+}
+
 
 void SilentFileData::renumber_all_decoys() {
 	utility::vector1< SilentStructOP > silent_structs;
@@ -449,6 +509,14 @@ bool SilentFileData::write_silent_struct(
 	if ( !bWriteScoreOnly ) {
 		s.print_residue_numbers( out );
 		s.print_conformation( out );
+	}
+
+	if ( !bWriteScoreOnly ) { // other silent structs (used in stepwise modeling)
+		for ( Size n = 1; n <= s.other_struct_list().size(); n++ ) {
+			SilentStructOP other_struct = s.nonconst_other_struct_list()[n];
+			other_struct->set_valid_energies( enames->energy_names() ); // prevents rewrite of score header, etc.
+			write_silent_struct( *other_struct, out, false );
+		}
 	}
 
 	// the following code was written to satisfy the American No Child
@@ -637,7 +705,6 @@ SilentFileData::read_stream(
 		tr.Error << sequence_line << std::endl;
 		return success;
 	}
-
 	check_if_rna_from_sequence_line( sequence_line );
 
 	// read header SCORE line
@@ -661,9 +728,9 @@ SilentFileData::read_stream(
 	// fixed a bug when reading silent-files with lines like this:
 	// SCORE: score template description
 	// SCORE: -2.00 1ERNA.pdb S_000000001
+	read_silent_struct_type_from_remark( line, true /* header */);
+	read_full_model_parameters_from_remark( line, true /* header */ );
 
-
-	read_silent_struct_type_from_remark( line, true );
 	SilentStructOP tmp_struct = create_SilentStructOP();
 	if(filename != "suppress_bitflip" && option[in::file::force_silent_bitflip_on_read].user()) {
 		tmp_struct->set_force_bitflip(true); //Option to force flipping from big-endian to little-endian or the converse.
@@ -695,7 +762,7 @@ SilentFileData::read_stream(
 			//we have just read the two SEQUENCE: and SCORE: header lines and a new header starts... ignore this
 			mylines.clear();
 		}
-		if ( ( line.substr(0,7) == "SCORE: " || line.substr(0,10) == "SEQUENCE: " ) && mylines.size() > 3 ) {
+		if ( ( line.substr(0,7) == "SCORE: " || line.substr(0,10) == "SEQUENCE: " || line.substr(0,7) == "OTHER: " ) && mylines.size() > 3 ) {
 
 			bool init_good = tmp_struct->init_from_lines( mylines, *this );
 
@@ -791,11 +858,11 @@ SilentFileData::read_stream(
 
 ///@detail The first remarks line in a silent file block
 ///described the type of silent file that is comming. For example,
-///
+/// REMARK BINARY SILENTFILE
 bool
 SilentFileData::read_silent_struct_type_from_remark(
 	std::string const& line,
-	bool header
+	bool const header
 ) {
 
 	using namespace basic::options;
@@ -804,7 +871,8 @@ SilentFileData::read_silent_struct_type_from_remark(
 	bool changed( false );
 
 	if ( line.substr(0,6) != "SCORE:" ) {
-		if (( line.find( "BINARY_SILENTFILE" ) != std::string::npos ) || ( line.find ("BINARY SILENTFILE" ) != std::string::npos )) {
+		if (( line.find( "BINARY_SILENTFILE" ) != std::string::npos ) ||
+				( line.find ("BINARY SILENTFILE" ) != std::string::npos )) {
 			silent_struct_type_ = "binary";
 			changed = true;
 		} else if ( header && ( line.find( "RNA" ) != std::string::npos || option[ in::file::residue_type_set ]() == "rna") &&
@@ -829,6 +897,23 @@ SilentFileData::read_silent_struct_type_from_remark(
 	return changed;
 }
 
+/// @brief Look for FULL_MODEL_PARAMETERS in REMARK line from header.
+bool
+SilentFileData::read_full_model_parameters_from_remark(
+	std::string const& line,
+	bool const header
+) {
+	runtime_assert( header );
+	Size pos = line.find( "FULL_MODEL_PARAMETERS" );
+	if ( pos == std::string::npos ) return false;
+
+	using namespace core::pose::full_model_info;
+	std::istringstream ss( line.substr( pos ) );
+	FullModelParametersOP full_model_parameters_from_line( new FullModelParameters );
+	ss >> *full_model_parameters_from_line;
+	full_model_parameters_ = full_model_parameters_from_line;
+	return true;
+}
 
 /// @brief This is somewhat redundant if the silent file has a "REMARK RNA" line, but some older silent files didn't do that.
 bool SilentFileData::check_if_rna_from_sequence_line( std::string const& line ){
@@ -861,6 +946,8 @@ SilentStructOP SilentFileData::create_SilentStructOP() {
 	//else                          	new_ss_op	= ssf.get_silent_struct( silent_struct_type_ );
 	if( silent_struct_type_ == "" )	new_ss_op	= SilentStructFactory::get_instance()->get_silent_struct_in();
 	else                          	new_ss_op	= SilentStructFactory::get_instance()->get_silent_struct( silent_struct_type_ );
+
+	if ( full_model_parameters_ ) new_ss_op->set_full_model_parameters( full_model_parameters_ );
 
 	return new_ss_op;
 }
@@ -1000,19 +1087,19 @@ SilentFileData::order_by_energy()
 	using namespace core::io::silent;
 
 	// go through all of the scores, and then order.
-	// inclusion of std::string tag helps break degeneracies in energy.
-	typedef std::list< std::pair< std::pair< Real, std::string >, SilentStructOP > > 	ScoreTagList;
+	typedef std::list< std::pair< std::pair< Real, Size >, SilentStructOP > >	ScoreTagList;
 	ScoreTagList score_tag_list;
+	Size count( 0 ); // to break ties in energies.
 	for ( iterator iter = begin(), it_end = end(); iter != it_end; ++iter ) {
 		Real const & silent_score = (*iter)->get_energy( "score" );
-		score_tag_list.push_back( std::make_pair( std::make_pair( silent_score, (*iter)->decoy_tag() ), *iter /*SilentStructOP*/ ) );
+		score_tag_list.push_back( std::make_pair( std::make_pair( silent_score, ++count) , *iter /*SilentStructOP*/ ) );
 	}
 
 	score_tag_list.sort();
 
 	Structure_Map new_structure_map_;
 	utility::vector1 < SilentStructOP > new_structure_list_;
-	Size count( 0 );
+	count = 0;
 	for ( ScoreTagList::const_iterator iter = score_tag_list.begin();
 				iter != score_tag_list.end(); ++iter ) {
 		SilentStructOP const & silent_struct_op( iter->second );

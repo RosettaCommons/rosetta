@@ -16,6 +16,7 @@
 //////////////////////////////////
 #include <protocols/stepwise/legacy/modeler/protein/util.hh>
 #include <protocols/stepwise/modeler/protein/util.hh>
+#include <protocols/stepwise/modeler/file_util.hh>
 #include <protocols/stepwise/modeler/util.hh>
 
 //////////////////////////////////
@@ -91,8 +92,12 @@ namespace protein {
 	output_pose_list( utility::vector1< core::pose::PoseOP > pose_list,
 										core::pose::PoseCOP native_pose,
 										std::string const & silent_file,
-										utility::vector1< Size > const & working_calc_rms_res	){
+										utility::vector1< Size > const & working_calc_rms_res,
+										bool const overwrite /* = true */ ){
+
 		core::io::silent::SilentFileDataOP sfd( new core::io::silent::SilentFileData ); // silly
+		if ( overwrite ) remove_silent_file_if_it_exists( silent_file );
+
 		for ( Size n = 1; n <= pose_list.size(); n++ ){
 			Pose & pose = *pose_list[ n ];
 			std::string const tag = "S_"+ ObjexxFCL::string_of( n-1 /* start with zero */);

@@ -1255,13 +1255,13 @@ namespace protein {
 			for ( Size i = 1; i <= pose.total_residue(); i++ ) superimpose_res.push_back( i );
 		}
 
-		alignment_atom_id_map_ = align::create_alignment_id_map( pose, *working_align_pose_, superimpose_res );
+		alignment_atom_id_map_ = align::create_aligment_id_map_legacy( pose, *working_align_pose_, superimpose_res );
 		ready_to_align_ = true;
 		align_pose( pose );
 
 		if ( get_native_pose() ) {
 			id::AtomID_Map< id::AtomID > const & alignment_atom_id_map_native =
-				align::create_alignment_id_map( *working_native_pose, *working_align_pose_, superimpose_res );
+				align::create_aligment_id_map_legacy( *working_native_pose, *working_align_pose_, superimpose_res );
 			core::scoring::superimpose_pose( *working_native_pose, *working_align_pose_, alignment_atom_id_map_native );
 		}
 
@@ -1560,7 +1560,7 @@ namespace protein {
 		// New virtualize terminal res.
 		//   keep the hydrogens in there though -- they supply sterics.
 		//		for ( Size i = 1; i <= working_terminal_res.size(); i++ ) {
-		//			pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_BASE_HEAVY_ATOM", working_terminal_res[ i ] );
+		//			pose::add_variant_type_to_pose_residue( pose, chemical::VIRTUAL_BASE_HEAVY_ATOM, working_terminal_res[ i ] );
 		//		}
 
 

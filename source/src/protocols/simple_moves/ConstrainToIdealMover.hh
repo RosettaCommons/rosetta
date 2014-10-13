@@ -23,7 +23,7 @@
 
 #include <core/id/AtomID.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-
+#include <core/scoring/ScoreType.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 
 #include <protocols/toolbox/AllowInsert.fwd.hh> //need to move AllowInsert to toolbox XRW2
@@ -47,53 +47,45 @@ namespace simple_moves {
 //make_pose_from_sequence from annotated sequence (?)
 //test with cen and fa poses
 //check RNA assumptions in i_want_this_atom_to_move
-//remap which score term these appear in (so it's not rna_bond_geometry)
 
 ///@details Idealization is generally performed by adding constraints to the Pose that keep bond lengths and angles within the appropriate ranges; then freeing those DOFs and performing minimization or sampling.  This protocols::moves::Mover creates bond and angle constraints compatible with idealization; it does not modify the input Pose other than by adding constraints.  If your pose is already ideal, this is likely to unidealize it.  Also, it will add a LOT of degrees of freedom to your minimization, which may lead to significant slowdowns!
+
 class ConstrainToIdealMover : public protocols::moves::Mover {
 
 public:
 
 	ConstrainToIdealMover();
-	ConstrainToIdealMover(ConstrainToIdealMover const & rhs);
-	ConstrainToIdealMover & operator=(ConstrainToIdealMover const & rhs);
+	//	ConstrainToIdealMover(ConstrainToIdealMover const & rhs);
+	ConstrainToIdealMover & operator = ( ConstrainToIdealMover const & rhs );
 	virtual ~ConstrainToIdealMover();
 
 	using Mover::apply;
 	virtual void apply( core::pose::Pose & pose );
+	void apply( core::pose::Pose & pose, core::kinematics::MoveMap & mm );
+
 	virtual std::string get_name() const;
 
 	virtual moves::MoverOP fresh_instance() const;
 	virtual moves::MoverOP clone() const;
 
-	///@brief supply a MoveMap to be further modified by this mover; otherwise it will modify a blank one
-	void set_movemap( core::kinematics::MoveMapOP movemap );
-
-	///@brief get the MoveMap last created during apply()
-	core::kinematics::MoveMapOP get_movemap() const;
-
 	///@brief setter for AllowInsert; makes a shallow copy
-	void set_AllowInsert(protocols::toolbox::AllowInsertOP allow_insert);
+	void set_allow_insert( protocols::toolbox::AllowInsertCOP allow_insert );
 
 	///@brief getter for AllowInsert
-	protocols::toolbox::AllowInsertOP get_AllowInsert() const;
+	protocols::toolbox::AllowInsertCOP get_allow_insert() const;
 
-	///@brief parse XML (specifically in the context of the parser/scripting scheme)
-	// virtual void parse_my_tag(
-	// 	TagCOP,
-	// 	basic::datacache::DataMap &,
-	// 	Filters_map const &,
-	// 	protocols::moves::Movers_map const &,
-	// 	Pose const & );
+	void set_score_type( core::scoring::ScoreType const setting );
+	void set_just_rna_backbone( bool const setting ){ just_rna_backbone_ = setting; }
+	void set_just_polar_hydrogens( bool const setting ){ just_polar_hydrogens_ = setting; }
 
 private:
 
-	///@most of the work happens here.  This modifies the movemap (member variable) and adds constraints to the Pose that will gently idealize angles and bond lengths
+	///@most of the work happens here.  This modifies the movemap and adds constraints to the Pose that will gently idealize angles and bond lengths
 	void
 	vary_bond_geometry(
-		//core::kinematics::MoveMap & mm, //now a member variable
 		core::pose::Pose & pose,
-		core::pose::Pose const & pose_reference );
+		core::kinematics::MoveMap & mm,
+		core::pose::Pose const & pose_reference ) const;
 
 	///@brief this function generates a "reference pose" for the input pose that has the same chemistry (as best as possible), but has ideal angles and bond lengths.  These are then used to generate the constraints later.  Virtual in case you want to make the reference in a different fashion.
 	virtual
@@ -105,31 +97,31 @@ private:
 	///@brief maps to other version of function; should this type of atom be moved during idealization?
 	virtual
 	bool
-	i_want_this_atom_to_move( core::pose::Pose const & pose, core::id::AtomID const & atom_id);
+	i_want_this_atom_to_move( core::pose::Pose const & pose, core::id::AtomID const & atom_id ) const;
 
 	///@brief returns whether or not this atom should move during idealiation categorically; mostly boils down to "don't move the sidechains".  Virtual in case you want to deny using a different metric.
 	virtual
 	bool
-	i_want_this_atom_to_move( core::conformation::Residue const & residue2, core::Size const & k );
+	i_want_this_atom_to_move( core::conformation::Residue const & residue2, core::Size const & k ) const;
 
 	bool
 	check_if_really_connected(
 		core::pose::Pose const & pose,
 		core::id::AtomID const & atom_id1,
-		core::id::AtomID const & atom_id2);
+		core::id::AtomID const & atom_id2 ) const;
 
 	bool
 	check_in_bonded_list(
 		core::id::AtomID const & atom_id1,
 		core::id::AtomID const & atom_id2,
-		utility::vector1< std::pair< core::id::AtomID, core::id::AtomID > > & bonded_atom_list );
+		utility::vector1< std::pair< core::id::AtomID, core::id::AtomID > > & bonded_atom_list ) const;
 
 	bool
 	check_in_bond_angle_list(
 		core::id::AtomID const & atom_id1,
 		core::id::AtomID const & atom_id2,
 		core::id::AtomID const & atom_id3,
-		utility::vector1< std::pair< core::id::AtomID, std::pair< core::id::AtomID, core::id::AtomID > > > & bond_angle_list );
+		utility::vector1< std::pair< core::id::AtomID, std::pair< core::id::AtomID, core::id::AtomID > > > & bond_angle_list ) const;
 
 	void
 	add_bond_angle_constraint(
@@ -139,34 +131,57 @@ private:
 		utility::vector1< std::pair < core::id::AtomID, std::pair< core::id::AtomID, core::id::AtomID > > > & bond_angle_list,
 		core::pose::Pose const & pose,
 		core::pose::Pose const & pose_reference,
-		core::scoring::constraints::ConstraintSetOP & cst_set );
+		core::scoring::constraints::ConstraintSetOP & cst_set ) const;
 
 	void
-	add_bond_constraint(
+	add_bond_dihedral_constraint(
+															 core::id::AtomID const & atom_id1,
+															 core::id::AtomID const & atom_id2,
+															 core::id::AtomID const & atom_id3,
+															 core::id::AtomID const & atom_id4,
+															 core::pose::Pose const & pose,
+															 core::pose::Pose const & pose_reference,
+															 core::scoring::constraints::ConstraintSetOP & cst_set ) const;
+
+	void
+	add_bond_length_constraint(
 		core::id::AtomID const & atom_id1,
 		core::id::AtomID const & atom_id2,
 		utility::vector1< std::pair< core::id::AtomID, core::id::AtomID > > & bonded_atom_list,
 		core::pose::Pose const & pose,
 		core::pose::Pose const & pose_reference,
-		core::scoring::constraints::ConstraintSetOP & cst_set );
+		core::scoring::constraints::ConstraintSetOP & cst_set ) const;
 
 private:
-	///@brief sort of like a MoveMap?  Allowed to maintain use w/Rhiju's RNA code.
-	protocols::toolbox::AllowInsertOP allow_insert_;
+	///@brief allow_insert has info on which atoms should move; complementary to move_map (which instead focuses on DOFs).
+	protocols::toolbox::AllowInsertCOP allow_insert_;
 
-	///@brief MoveMap used to allow bond and angle torsions
-	core::kinematics::MoveMapOP mm_;
+	core::Real const bond_length_sd_;
+	core::Real const bond_length_sd_polar_hydrogen_;
+	core::Real const bond_angle_sd_;
+	core::Real const bond_angle_sd_polar_hydrogen_;
+	core::Real const bond_torsion_sd_;
+	core::Real const bond_torsion_sd_polar_hydrogen_;
 
-	///@brief does the mm_ variable contain a movemap filled by apply(), or a movemap supplied to be modified?
-	///Necessary to know if a self-generated movemap needs to be tossed out at the beginning of apply()
-	bool supplied_movemap_;
+	core::scoring::ScoreType score_type_;
+	bool just_rna_backbone_;
+	bool just_polar_hydrogens_;
 
-	//Not stored locally (not reusable, no reason (?) not to save the memory by leaving it on the stack)
-	//core::pose::PoseOP pose_reference_;
+	bool const legacy_dof_allow_move_;
+	bool const verbose_;
 
-};//end ConstrainToIdealMover
+}; //end ConstrainToIdealMover
 
-}//namespace moves
-}//namespace protocols
+void
+setup_vary_rna_bond_geometry( core::kinematics::MoveMap & mm, core::pose::Pose & pose,
+															protocols::toolbox::AllowInsertCOP allow_insert,
+															core::scoring::ScoreType score_type = core::scoring::rna_bond_geometry );
+
+void
+setup_vary_polar_hydrogen_geometry( core::kinematics::MoveMap & mm,
+																		core::pose::Pose & pose, toolbox::AllowInsertCOP allow_insert );
+
+} //namespace moves
+} //namespace protocols
 
 #endif // INCLUDED_protocols_simple_moves_ConstrainToIdealMover_HH

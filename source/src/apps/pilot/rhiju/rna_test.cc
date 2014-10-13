@@ -2098,7 +2098,7 @@ is_regular_helix( pose::Pose const & pose,
 				 {
 
 			std::string atom1, atom2;
-			get_watson_crick_base_pair_atoms( rsd_i.aa(), rsd_j.aa(), atom1, atom2 );
+			get_watson_crick_base_pair_atoms( rsd_i, rsd_j, atom1, atom2 );
 			if ( ( rsd_i.xyz( atom1 ) - rsd_j.xyz( atom2 ) ).length() < 3.5 ) {
 				forms_canonical_base_pair = true;
 				canonical_partner = partner;
@@ -4072,7 +4072,7 @@ rotamerize_rna_test()
 	utility::vector1< std::string > atom_ids1, atom_ids2;
 	Size i( 1 );
 	Size j( pose.total_residue() );
-	get_watson_crick_base_pair_atoms( pose.residue(i).aa(), pose.residue(j).aa(), atom_ids1, atom_ids2 );
+	get_watson_crick_base_pair_atoms( pose.residue(i), pose.residue(j), atom_ids1, atom_ids2 );
 
 	for (Size p = 1; p <= atom_ids1.size(); p++ ){
 

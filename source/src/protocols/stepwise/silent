@@ -1,0 +1,229 @@
+.//legacy/modeler/protein/StepWiseProteinConnectionSampler.cc:		sample_and_screen.set_num_random_samples( options_->num_random_samples() );
+.//legacy/modeler/protein/StepWiseProteinConnectionSampler.cc:		if ( !options_->kic_modeler_if_relevant() ){
+.//legacy/modeler/protein/StepWiseProteinConnectionSampler.cc:		pack_all_side_chains_ = ( options_->global_optimize() || ( moving_res_list_.size() == 0 ) );
+.//legacy/modeler/protein/StepWiseProteinConnectionSampler.cc:	 	if ( !pack_all_side_chains_ && options_->prepack() ) stepwise_packer_->do_prepack( pose, moving_res_list_, working_obligate_pack_res_ );
+.//legacy/modeler/protein/StepWiseProteinConnectionSampler.cc:		if ( protein_cutpoints_closed_.size() > 0 && options_->kic_modeler_if_relevant() && !skip_modeler_ ) {
+.//legacy/modeler/protein/StepWiseProteinConnectionSampler.cc:		if ( options_->rmsd_screen() > 0.0 ){
+.//legacy/modeler/protein/StepWiseProteinConnectionSampler.cc:																										 options_->rmsd_screen() ) );
+.//legacy/modeler/protein/StepWiseProteinConnectionSampler.cc:  	if ( !pack_all_side_chains_ && (protein_cutpoints_closed_.size() == 0)  && options_->atr_rep_screen() ) {
+.//legacy/modeler/protein/StepWiseProteinModeler.cc:		align_pose_and_add_rmsd_constraints( pose, get_native_pose(), moving_res_list_, options_->rmsd_screen() );
+.//legacy/modeler/protein/StepWiseProteinModeler.cc:		if ( options_->cart_min() && ( minimize_scorefxn->get_weight( cart_bonded ) == 0.0 ) ) minimize_scorefxn->set_weight( cart_bonded, 1.0 );
+.//legacy/modeler/protein/StepWiseProteinModeler.cc:		if ( options_->mapfile_activated() && minimize_scorefxn->get_weight( elec_dens_atomwise ) == 0.0 ) minimize_scorefxn->set_weight( elec_dens_atomwise, 10.0 );
+.//legacy/modeler/protein/StepWiseProteinModeler.cc:		std::string const silent_file_minimize = get_file_name( options_->silent_file(), "_minimize" );
+.//legacy/modeler/protein/StepWiseProteinModeler.cc:		stepwise_pose_minimizer->set_move_jumps_between_chains( options_->move_jumps_between_chains() );
+.//legacy/modeler/protein/StepWiseProteinModeler.cc:		stepwise_pose_minimizer->set_move_takeoff_torsions( !options_->disable_sampling_of_loop_takeoff() );
+.//legacy/modeler/protein/StepWiseProteinModeler.cc:		stepwise_pose_minimizer->set_rescore_only( options_->rescore_only() );
+.//legacy/modeler/protein/StepWiseProteinModeler.cc:		stepwise_pose_minimizer->set_cartesian( options_->cart_min() );
+.//legacy/modeler/protein/StepWiseProteinModeler.cc:		stepwise_pose_minimizer->set_min_type( options_->min_type() );
+.//legacy/modeler/protein/StepWiseProteinModeler.cc:		stepwise_pose_minimizer->set_min_tolerance( options_->min_tolerance() );
+.//legacy/modeler/protein/StepWiseProteinModeler.cc:		stepwise_pose_minimizer->set_use_coordinate_constraints( !options_->skip_coord_constraints() );
+.//legacy/modeler/protein/StepWiseProteinModeler.cc:		stepwise_pose_minimizer->set_num_pose_minimize( options_->num_pose_minimize() );
+.//legacy/modeler/protein/StepWiseProteinModeler.cc:		if ( !options_->skip_minimize() ){
+.//legacy/modeler/protein/StepWiseProteinModeler.cc:		if ( options_->output_minimized_pose_list() ) {
+.//legacy/modeler/protein/StepWiseProteinModeler.cc:				protocols::stepwise::modeler::protein::output_silent_struct( pose, get_native_pose(), options_->silent_file(),
+.//legacy/modeler/protein/StepWiseProteinModeler.cc:	if( options_->disallow_backbone_modeler() != setting ){
+.//legacy/modeler/protein/StepWiseProteinModeler.cc:		modeler::options::StepWiseModelerOptionsOP new_options = options_->clone();
+.//legacy/modeler/protein/StepWiseProteinModeler.cc:		if ( !options_->output_minimized_pose_list() ) return false; // don't do a minimize...
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:	bool const verbose = ( !options_->choose_random() || options_->integration_test_mode() );
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:	sample_and_screen.set_num_random_samples( options_->num_random_samples() );
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:	if ( rigid_body_modeler_ && options_->verbose() ) analyze_base_bin_map( base_bin_map_, "test/" );
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:		bool do_screen = ( ( options_->rmsd_screen() > 0.0 ) && !options_->integration_test_mode() ); // gets toggled to true in integration tests.
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:																										working_parameters_, options_->rmsd_screen(),
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:	//	if ( options_->combine_long_loop_mode()  && ( cutpoints_closed_.size() == 0 ) ) {
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:		bool const force_centroid_interaction = ( rigid_body_modeler_ || options_->force_centroid_interaction()
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:	if ( rigid_body_modeler_ && virt_sugar_atr_rep_screen_ && options_->atr_rep_screen() ) {
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:	if ( options_->atr_rep_screen() ) atr_rep_screener = new RNA_AtrRepScreener( atr_rep_checker_, *screening_pose_ );
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:	if ( options_->sampler_perform_phosphate_pack() ) screeners_.push_back( new PhosphateScreener( phosphate_sampler_ ) );
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:	if ( options_->sampler_perform_o2prime_pack() )	screeners_.push_back( new O2PrimeScreener( o2prime_packer_ ) );
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:		tag_definition_ = new TagDefinition( pose, screeners_[1], options_->sampler_include_torsion_value_in_tag(),
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:			 options_->allow_bulge_at_chainbreak() && moving_partition_res_.size() == 1 &&
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:																									 options_->verbose(), silent_file_, get_native_pose(), working_parameters_ ) );
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:	if ( options_->integration_test_mode() ) {
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:	if ( options_->sampler_perform_phosphate_pack() ){
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:	if ( options_->sampler_perform_o2prime_pack() ) {
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:																												 options_->tether_jump());
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:	base_centroid_checker_->set_allow_base_pair_only_screen( options_->allow_base_pair_only_centroid_screen() );
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:	kic_modeler_ = ( !rigid_body_modeler_ && options_->kic_modeler_if_relevant() && ( cutpoints_closed_.size() > 0 ) );
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:	if ( !options_->choose_random() ){
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:		if ( options_->VDW_rep_screen_info().size() > 0 ){
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:			options_->setup_options_for_VDW_bin_checker( user_input_VDW_bin_checker_ );
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:			user_input_VDW_bin_checker_->setup_using_user_input_VDW_pose( options_->VDW_rep_screen_info(),
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:		chain_closure_checkers_[n]->set_reinitialize_CCD_torsions( options_->reinitialize_CCD_torsions() );
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:	if ( options_->cluster_rmsd() > 0.0 ) pose_selection_->set_cluster_rmsd( options_->cluster_rmsd() );
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:	pose_selection_->set_PBP_clustering_at_chain_closure( options_->PBP_clustering_at_chain_closure() );
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:	pose_selection_->set_distinguish_pucker( options_->distinguish_pucker() );
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:		max_ntries = std::max( 100000, 1000 * int( options_->num_random_samples() ) );
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:		if ( options_->rmsd_screen() && !options_->integration_test_mode() ) max_ntries *= 10;
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:		max_ntries = std::max( 10000, 100 * int( options_->num_random_samples() ) );
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:		if ( kic_modeler_ ) max_ntries = 5 * options_->num_random_samples(); // some chains just aren't closable.
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:	if ( options_->sampler_num_pose_kept() > 0 ) num_pose_kept = options_->sampler_num_pose_kept();
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:		pose_list = setup_pose_with_moving_residue_alternative_list( pose, moving_res_, options_->extra_chi(), options_->use_phenix_geo() );
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:	if ( options_->integration_test_mode() ){ // use coarser search for speed
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:	Distance max_distance = options_->sampler_max_centroid_distance(); // if unspecified (0.0), will be replaced
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:	if ( options_->tether_jump() && max_distance == 0.0 ) max_distance = 8.0;
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:	sampler->set_random( options_->choose_random() );
+.//legacy/modeler/rna/connection/StepWiseRNA_ConnectionSampler.cc:	sampler_->set_random( options_->choose_random() );
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:	perform_electron_density_screen_ = ( options_->native_edensity_score_cutoff() > -0.99999 || options_->native_edensity_score_cutoff() < -1.00001 );
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:	bool o2prime_pack_verbose( options_->verbose() );
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:	if ( ! options_->minimize_and_score_sugar() )	freeze_sugar_torsions( *move_map_, nres );
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:		if ( options_->num_pose_minimize() > 0 &&
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:				 minimized_pose_list_.size() >= options_->num_pose_minimize() ){
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:			TR.Debug << "WARNING MAX options_->num_pose_minimize()( " << options_->num_pose_minimize() << " ) EXCEEDED, EARLY BREAK." << std::endl;
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:		if ( options_->rm_virt_phosphate() ){ //Fang's electron density code
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:		if ( options_->verbose() && options_->minimizer_output_before_o2prime_pack() ) output_pose_wrapper( tag, 'B', pose, silent_file_data, silent_file_ + "_before_o2prime_pack" );
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:		if ( options_->minimizer_perform_o2prime_pack() ) o2prime_trials( pose, scorefxn_, get_surrounding_O2prime_hydrogen( pose, working_moving_res, o2prime_pack_verbose ) );
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:		if ( options_->verbose() && !options_->minimizer_output_before_o2prime_pack() ) output_pose_wrapper( tag, 'B', pose, silent_file_data, silent_file_ + "_before_minimize" );
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:			if ( options_->verbose() ) output_pose_wrapper( tag, 'C', pose, silent_file_data, silent_file_ + "_after_loop_closure_before_minimize" );
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:			if ( !options_->skip_minimize() ) minimizer.run( pose, new_mm, *(scorefxn_vbg ), options );
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:		if ( !options_->skip_minimize() ) minimizer.run( pose, mm, *( scorefxn_ ), options );
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:		if ( options_->minimizer_perform_o2prime_pack() ) o2prime_trials( pose, scorefxn_, get_surrounding_O2prime_hydrogen( pose, working_moving_res, o2prime_pack_verbose ) );
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:			if ( options_->minimizer_perform_o2prime_pack() ) o2prime_trials( pose, scorefxn_, get_surrounding_O2prime_hydrogen( pose, working_moving_res, o2prime_pack_verbose ) );
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:			if ( !options_->skip_minimize() ) minimizer.run( pose, mm, *( scorefxn_ ), options );
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:	if ( options_->output_minimized_pose_list() ) output_minimized_pose_list();
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:		if ( options_->rmsd_screen() && get_native_pose() ){	//Before have the (&& !is_chain_break condition). Parin Dec 21, 2009
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:			if ( rmsd > options_->rmsd_screen() || loop_rmsd > options_->rmsd_screen() ){
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:				TR.Debug << in_tag << " discarded: fail rmsd_screen. rmsd = " << rmsd << " loop_rmsd = " << loop_rmsd << " options_->sampler_native_screen_rmsd_cutoff() = " << options_->rmsd_screen() << std::endl;
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:	if ( options_->verbose() ) output_pose_wrapper( temp_tag, 'S', pose, silent_file_data, silent_file_ + "_screen" );
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:	( 1 - options_->native_edensity_score_cutoff() );
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:		if ( options_->minimizer_rename_tag() ){
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:	output_boolean( " verbose = ", options_->verbose(), TR.Debug ); TR.Debug << std::endl;
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:	output_boolean( " sampler_native_rmsd_screen = ", options_->rmsd_screen(), TR.Debug ); TR.Debug << std::endl;
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:	TR.Debug << " sampler_native_screen_rmsd_cutoff = " << options_->rmsd_screen() << std::endl;
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:	output_boolean( " rm_virt_phosphate = ", options_->rm_virt_phosphate(), TR.Debug ); TR.Debug << std::endl;
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:	TR.Debug << " native_edensity_score_cutoff = " << options_->native_edensity_score_cutoff() << std::endl;
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:	output_boolean( " minimizer_perform_o2prime_pack = ", options_->minimizer_perform_o2prime_pack(), TR.Debug ); TR.Debug << std::endl;
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:	output_boolean( " minimizer_output_before_o2prime_pack = ", options_->minimizer_output_before_o2prime_pack(), TR.Debug ); TR.Debug << std::endl;
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:	TR.Debug << " ( Upper_limit ) num_pose_minimize = " << options_->num_pose_minimize() << " pose_list.size() = " << pose_list_.size() <<  std::endl;
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:	output_boolean( " minimize_and_score_sugar = ", options_->minimize_and_score_sugar(), TR.Debug ); TR.Debug << std::endl;
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:	output_boolean( " perform_minimize = ", !options_->skip_minimize(), TR.Debug ); TR.Debug << std::endl;
+.//legacy/modeler/rna/StepWiseRNA_Minimizer.cc:	output_boolean( " minimizer_rename_tag = ", options_->minimizer_rename_tag(), TR.Debug ); TR.Debug << std::endl;
+.//legacy/modeler/StepWiseLegacyConnectionSampler.cc:		stepwise_rna_sampler.set_silent_file ( options_->silent_file() + "_modeler" );
+.//legacy/modeler/StepWiseLegacyConnectionSampler.cc:		stepwise_rna_sampler.set_options( options_->get_sampler_options() );
+.//legacy/modeler/StepWiseLegacyMinimizer.cc:		std::string const silent_file_minimize = get_file_name( options_->silent_file(), "_minimize" );
+.//legacy/modeler/StepWiseLegacyMinimizer.cc:		stepwise_protein_minimizer->set_move_jumps_between_chains( options_->move_jumps_between_chains() );
+.//legacy/modeler/StepWiseLegacyMinimizer.cc:		stepwise_protein_minimizer->set_move_takeoff_torsions( !options_->disable_sampling_of_loop_takeoff() );
+.//legacy/modeler/StepWiseLegacyMinimizer.cc:		stepwise_protein_minimizer->set_rescore_only( options_->rescore_only() );
+.//legacy/modeler/StepWiseLegacyMinimizer.cc:		stepwise_protein_minimizer->set_cartesian( options_->cart_min() );
+.//legacy/modeler/StepWiseLegacyMinimizer.cc:		stepwise_protein_minimizer->set_min_type( options_->min_type() );
+.//legacy/modeler/StepWiseLegacyMinimizer.cc:		stepwise_protein_minimizer->set_min_tolerance( options_->min_tolerance() );
+.//legacy/modeler/StepWiseLegacyMinimizer.cc:		stepwise_protein_minimizer->set_use_coordinate_constraints( !options_->skip_coord_constraints() );
+.//legacy/modeler/StepWiseLegacyMinimizer.cc:		stepwise_protein_minimizer->set_num_pose_minimize( options_->num_pose_minimize() );
+.//legacy/modeler/StepWiseLegacyMinimizer.cc:		if ( !options_->skip_minimize() ){
+.//legacy/modeler/StepWiseLegacyMinimizer.cc:		if ( options_->output_minimized_pose_list() ) output_pose_list( pose_list_, working_parameters_->working_native_pose(),
+.//legacy/modeler/StepWiseLegacyMinimizer.cc:																																						options_->silent_file(), working_parameters_->working_calc_rms_res() );
+.//legacy/modeler/StepWiseLegacyMinimizer.cc:		if ( options_->minimize_and_score_native_pose() ) {
+.//legacy/modeler/StepWiseLegacyMinimizer.cc:		stepwise_rna_minimizer_->set_silent_file( options_->silent_file() );
+.//legacy/modeler/StepWiseLegacyMinimizer.cc:		options::StepWiseModelerOptionsOP minimizer_options = options_->clone();
+.//legacy/modeler/StepWiseLegacyMinimizer.cc:		if ( options_->rmsd_screen() > 0.0 )	minimizer_options->set_rmsd_screen( options_->rmsd_screen() + 1.0 );
+.//modeler/packer/StepWiseMasterPacker.cc:		if ( options_->sampler_perform_phosphate_pack() ){
+.//modeler/packer/StepWiseMasterPacker.cc:		if ( options_->o2prime_legacy_mode() ) { // this is the only action that is non-const for the pose... deprecate?
+.//modeler/packer/StepWiseMasterPacker.cc:		if ( options_->o2prime_legacy_mode() )	packer_->set_pack_o2prime_hydrogens( false ); // currently handled by separate packer -- will unify soon.
+.//modeler/packer/StepWiseMasterPacker.cc:		if ( options_->sampler_perform_phosphate_pack() ) screeners.push_back( new PhosphateScreener( phosphate_sampler_ ) );
+.//modeler/packer/StepWiseMasterPacker.cc:		if ( options_->sampler_try_sugar_instantiation() &&
+.//modeler/packer/StepWiseMasterPacker.cc:		if ( options_->o2prime_legacy_mode() ){
+.//modeler/polar_hydrogens/PolarHydrogenPacker.cc:		hbond_options_->use_hb_env_dep( false );
+.//modeler/polar_hydrogens/PolarHydrogenPacker.cc:		hbond_database_ = HBondDatabase::get_database( hbond_options_->params_database_tag() );
+.//modeler/protein/loop_close/util.cc:		runtime_assert( options_->kic_modeler_if_relevant() );
+.//modeler/protein/loop_close/util.cc:		if ( options_->dump() ) pose.dump_pdb("before_loop_close.pdb");
+.//modeler/protein/loop_close/util.cc:		if  ( !options_->disable_sampling_of_loop_takeoff() ) enable_sampling_of_loop_takeoff( sampler, kic_sampler_pose, working_parameters_, options_ );
+.//modeler/protein/loop_close/util.cc:																																				 options_->choose_random() );
+.//modeler/protein/loop_close/util.cc:		backbone_sampler.set_n_sample( options_->n_sample() );
+.//modeler/rna/helix/RNA_HelixAssembler.cc:	minimizer_options_->nblist_auto_update( true );
+.//modeler/rna/sugar/StepWiseRNA_VirtualSugarJustInTimeInstantiator.cc:	virtual_sugar_sampler.set_integration_test_mode( options_->integration_test_mode() );
+.//modeler/rna/sugar/StepWiseRNA_VirtualSugarJustInTimeInstantiator.cc:	virtual_sugar_sampler.set_do_minimize( options_->virtual_sugar_do_minimize() );
+.//modeler/rna/sugar/StepWiseRNA_VirtualSugarJustInTimeInstantiator.cc:	if ( options_->integration_test_mode() ) 	virtual_sugar_sampler.set_do_minimize( false ); // override.
+.//modeler/rna/sugar/StepWiseRNA_VirtualSugarJustInTimeInstantiator.cc:	virtual_sugar_sampler.set_use_phenix_geo( options_->use_phenix_geo() );
+.//modeler/rna/sugar/StepWiseRNA_VirtualSugarJustInTimeInstantiator.cc:	virtual_sugar_sampler.set_legacy_mode( options_->virtual_sugar_legacy_mode() );
+.//modeler/rna/sugar/StepWiseRNA_VirtualSugarJustInTimeInstantiator.cc:	virtual_sugar_sampler.set_keep_base_fixed( options_->virtual_sugar_keep_base_fixed() );
+.//modeler/rna/sugar/StepWiseRNA_VirtualSugarJustInTimeInstantiator.cc:	virtual_sugar_sampler.set_choose_random( options_->choose_random() );
+.//modeler/rna/sugar/StepWiseRNA_VirtualSugarJustInTimeInstantiator.cc:		if ( options_->virtual_sugar_legacy_mode() ) minimize_sugar_sets_legacy( pose, pose_data_list  );
+.//modeler/StepWiseConnectionSampler.cc:	sample_and_screen.set_verbose( !options_->choose_random() || options_->integration_test_mode() );
+.//modeler/StepWiseConnectionSampler.cc:	sample_and_screen.set_num_random_samples( options_->num_random_samples() );
+.//modeler/StepWiseConnectionSampler.cc:	kic_modeler_ = ( !rigid_body_modeler_ && options_->kic_modeler_if_relevant() && ( rna_cutpoints_closed_.size() > 0 ) );
+.//modeler/StepWiseConnectionSampler.cc:		bool do_screen = ( ( options_->rmsd_screen() > 0.0 ) && !options_->integration_test_mode() ); // gets toggled to true in integration tests.
+.//modeler/StepWiseConnectionSampler.cc:																										working_parameters_->working_moving_res_list(), options_->rmsd_screen(),
+.//modeler/StepWiseConnectionSampler.cc:	//	if ( options_->combine_long_loop_mode()  && ( rna_cutpoints_closed_.size() == 0 ) ) {
+.//modeler/StepWiseConnectionSampler.cc:		bool const force_centroid_interaction = ( rigid_body_modeler_ || options_->force_centroid_interaction()
+.//modeler/StepWiseConnectionSampler.cc:			 moving_res_list_.size() > 0 && options_->atr_rep_screen() ) {
+.//modeler/StepWiseConnectionSampler.cc:	// if ( options_->atr_rep_screen() && atr_rep_checker_ ) {
+.//modeler/StepWiseConnectionSampler.cc:	if ( options_->atr_rep_screen() && moving_res_list_.size() > 0 ) {
+.//modeler/StepWiseConnectionSampler.cc:	// 		 options_->atr_rep_screen() ) {
+.//modeler/StepWiseConnectionSampler.cc:		tag_definition_ = new TagDefinition( pose, screeners_[1], options_->sampler_include_torsion_value_in_tag(),
+.//modeler/StepWiseConnectionSampler.cc:			 options_->allow_bulge_at_chainbreak() && moving_partition_res_.size() == 1 &&
+.//modeler/StepWiseConnectionSampler.cc:		if ( rna_chain_closure_checkers_.size() == 0 && !options_->sampler_try_sugar_instantiation() ) {
+.//modeler/StepWiseConnectionSampler.cc:	if ( options_->integration_test_mode() ) {
+.//modeler/StepWiseConnectionSampler.cc:																													( working_parameters_->floating_base() /*rigid body*/ && options_->tether_jump() ) );
+.//modeler/StepWiseConnectionSampler.cc:		base_centroid_checker_->set_allow_base_pair_only_screen( options_->allow_base_pair_only_centroid_screen() );
+.//modeler/StepWiseConnectionSampler.cc:	if ( options_->o2prime_legacy_mode() ) add_virtual_O2Prime_hydrogen( *screening_pose_ );
+.//modeler/StepWiseConnectionSampler.cc:	if ( !options_->choose_random() && !protein_connection_ && moving_res_ > 0 ){
+.//modeler/StepWiseConnectionSampler.cc:	if ( !user_input_VDW_bin_checker_ /* could be externally defined for speed */ && options_->VDW_rep_screen_info().size() > 0 ) {
+.//modeler/StepWiseConnectionSampler.cc:		options_->setup_options_for_VDW_bin_checker( user_input_VDW_bin_checker_ );
+.//modeler/StepWiseConnectionSampler.cc:		user_input_VDW_bin_checker_->setup_using_user_input_VDW_pose( options_->VDW_rep_screen_info(),
+.//modeler/StepWiseConnectionSampler.cc:		rna_chain_closure_checkers_[n]->set_reinitialize_CCD_torsions( options_->reinitialize_CCD_torsions() );
+.//modeler/StepWiseConnectionSampler.cc:	if ( !options_->kic_modeler_if_relevant() ){
+.//modeler/StepWiseConnectionSampler.cc:		max_ntries = std::max( 100000, 1000 * int( options_->num_random_samples() ) );
+.//modeler/StepWiseConnectionSampler.cc:		if ( options_->rmsd_screen() && !options_->integration_test_mode() ) max_ntries *= 10;
+.//modeler/StepWiseConnectionSampler.cc:		max_ntries = std::max( 10000, 100 * int( options_->num_random_samples() ) );
+.//modeler/StepWiseConnectionSampler.cc:		if ( kic_modeler_ ) max_ntries = 5 * options_->num_random_samples(); // some chains just aren't closable.
+.//modeler/StepWiseConnectionSampler.cc:	if ( options_->sampler_num_pose_kept() > 0 ) num_pose_kept = options_->sampler_num_pose_kept();
+.//modeler/StepWiseConnectionSampler.cc:		pose_list = setup_pose_with_moving_residue_alternative_list( pose, moving_res_, options_->extra_chi(), options_->use_phenix_geo() );
+.//modeler/StepWiseConnectionSampler.cc:	if ( options_->integration_test_mode() ){ // use coarser search for speed
+.//modeler/StepWiseConnectionSampler.cc:	Distance max_distance = options_->sampler_max_centroid_distance(); // if unspecified (0.0), will be replaced
+.//modeler/StepWiseConnectionSampler.cc:	if ( options_->tether_jump() && max_distance == 0.0 ) max_distance = 8.0;
+.//modeler/StepWiseConnectionSampler.cc:	if ( protein_cutpoints_closed_.size() > 0 && options_->kic_modeler_if_relevant() ) {
+.//modeler/StepWiseConnectionSampler.cc:	sampler->set_random( options_->choose_random() );
+.//modeler/StepWiseConnectionSampler.cc:	sampler_->set_random( options_->choose_random() );
+.//modeler/StepWiseMinimizer.cc:		num_pose_minimize_( options_->num_pose_minimize() ),
+.//modeler/StepWiseMinimizer.cc:		allow_virtual_o2prime_hydrogens_( options->allow_virtual_side_chains() && !options_->o2prime_legacy_mode() ),
+.//modeler/StepWiseMinimizer.cc:		runtime_assert( !options_->skip_coord_constraints() );
+.//modeler/StepWiseMinimizer.cc:		runtime_assert( !options_->skip_minimize() );
+.//modeler/StepWiseMinimizer.cc:		runtime_assert( !options_->move_jumps_between_chains() );
+.//modeler/StepWiseMinimizer.cc:		if ( pose_list_.size() > 0 && options_->choose_random() && num_pose_minimize_ == 0 /*asking this class for default*/ ) {
+.//modeler/StepWiseMinimizer.cc:		if ( options_->output_minimized_pose_list() ) {
+.//modeler/StepWiseMinimizer.cc:																														options_->silent_file(), working_calc_rms_res_ );
+.//modeler/StepWiseMinimizer.cc:			if ( options_->rm_virt_phosphate() ) rna::remove_all_virtual_phosphates( pose ); // ERRASER.
+.//modeler/StepWiseMinimizer.cc:    minimizer_options_ = new MinimizerOptions( options_->min_type(), options_->min_tolerance(), use_nblist, false, false );
+.//modeler/StepWiseMinimizer.cc:    minimizer_options_->nblist_auto_update( true );
+.//modeler/StepWiseMinimizer.cc:		if ( options_->vary_polar_hydrogen_geometry() ) {
+.//modeler/StepWiseMinimizer.cc:		if ( options_->cart_min() ) {
+.//modeler/StepWiseMinimizer.cc:		bool const move_takeoff_torsions = !options_->disable_sampling_of_loop_takeoff();
+.//modeler/StepWiseMinimizer.cc:		if ( options_->global_optimize() ) working_pack_res_ = get_all_residues( pose );
+.//modeler/StepWiseMinimizer.cc:		if ( options_->vary_polar_hydrogen_geometry() ){
+.//modeler/StepWiseMinimizer.cc: 		if ( options_->vary_rna_bond_geometry() ) {
+.//modeler/StepWiseMinimizer.cc:		if ( options_->vary_polar_hydrogen_geometry() ){
+.//modeler/StepWiseModeler.cc:		master_packer_ = new packer::StepWiseMasterPacker( working_parameters_, options_->get_sampler_options() );
+.//modeler/StepWiseModeler.cc:		stepwise_sampler.set_options( options_->get_sampler_options() ); // careful!
+.//modeler/StepWiseModeler.cc:		Real const rmsd_screen = options_->rmsd_screen();
+.//modeler/StepWiseModeler.cc:		if ( !options_->disallow_realign() ) align::align_pose_and_add_rmsd_constraints( pose, get_native_pose(), moving_res_list_, rmsd_screen );
+.//modeler/StepWiseModeler.cc:																																								options_->bridge_res(), working_minimize_res_  );
+.//modeler/StepWiseModeler.cc:			if ( options_ && !options_->output_minimized_pose_list() ) return false; // don't do a minimize...
+.//monte_carlo/mover/AddOrDeleteMover.cc:		if ( options_->skip_deletions() || 	options_->rebuild_bulge_mode() ) disallow_delete = true;
+.//monte_carlo/mover/AddOrDeleteMover.cc:		swa_move_selector_->set_allow_skip_bulge( options_->allow_skip_bulge() );
+.//monte_carlo/mover/AddOrDeleteMover.cc:		swa_move_selector_->set_from_scratch_frequency( options_->from_scratch_frequency() );
+.//monte_carlo/mover/AddOrDeleteMover.cc:		swa_move_selector_->set_intermolecular_frequency( options_->intermolecular_frequency() );
+.//monte_carlo/mover/AddOrDeleteMover.cc:			if ( options_->bulge_res().has_value( sample_res[n] ) ) continue;
+.//monte_carlo/mover/DeleteMover.cc:						 ( ( (options_->from_scratch_frequency() > 0.0) || options_->allow_split_off() ) && pose.total_residue() > 1 ) );
+.//monte_carlo/mover/DeleteMover.cc:		if ( options_->sampler_perform_phosphate_pack() ){
+.//monte_carlo/mover/ResampleMover.cc:		swa_move_selector_->set_allow_internal_hinge( options_->allow_internal_hinge_moves() );
+.//monte_carlo/mover/ResampleMover.cc:		swa_move_selector_->set_allow_internal_local( options_->allow_internal_local_moves() );
+.//monte_carlo/mover/ResampleMover.cc:		swa_move_selector_->set_intermolecular_frequency( options_->intermolecular_frequency() );
+.//monte_carlo/mover/ResampleMover.cc:		bool just_min_after_mutation = ( did_mutation && ( RG.uniform() < options_->just_min_after_mutation_frequency() ) );
+.//monte_carlo/mover/ResampleMover.cc:			runtime_assert( options_->allow_internal_local_moves() );
+.//monte_carlo/mover/ResampleMover.cc:		if ( options_->local_redock_only() ){
+.//monte_carlo/StepWiseMonteCarlo.cc:	MonteCarloOP monte_carlo = new MonteCarlo( pose, *scorefxn_, options_->temperature() );
+.//monte_carlo/StepWiseMonteCarlo.cc:	while ( k < Size( options_->cycles() ) ){
+.//monte_carlo/StepWiseMonteCarlo.cc:		if ( RG.uniform() < options_->switch_focus_frequency() ) switch_focus_among_poses_randomly( pose );
+.//monte_carlo/StepWiseMonteCarlo.cc:		set_minimize_single_res( RG.uniform() <= options_->minimize_single_res_frequency() );
+.//monte_carlo/StepWiseMonteCarlo.cc:		if ( RG.uniform() < options_->add_delete_frequency() ) {
+.//monte_carlo/StepWiseMonteCarlo.cc:	if ( options_->recover_low() ) monte_carlo->recover_low( pose );
+.//monte_carlo/StepWiseMonteCarlo.cc:	if ( options_->save_times() ) setPoseExtraScore( pose, "time", static_cast< Real >( clock() - start_time_ ) / CLOCKS_PER_SEC );
+.//monte_carlo/StepWiseMonteCarlo.cc:	missing_weight_interval_ = max_missing_weight_ / static_cast<Real>( options_->cycles() );
+.//monte_carlo/StepWiseMonteCarlo.cc:	if ( options_->rebuild_bulge_mode() ){
+.//monte_carlo/StepWiseMonteCarlo.cc:	protocols::stepwise::modeler::options::StepWiseModelerOptionsOP options = options_->setup_modeler_options();
+.//monte_carlo/StepWiseMonteCarlo.cc:		if ( options_->num_pose_minimize() == 0 ) options->set_num_pose_minimize( 0 );
+.//monte_carlo/StepWiseMonteCarlo.cc:	runtime_assert( options_->from_scratch_frequency() > 0.0 );
+.//monte_carlo/StepWiseMonteCarlo.cc:	if ( !options_->make_movie() ) return;
+.//monte_carlo/StepWiseMonteCarlo.cc:	if ( !options_->make_movie() ) return;
+.//monte_carlo/StepWiseMonteCarlo.cc:	TR << std::endl << TR.Blue << "Embarking on cycle " << cycle_num << " of " << options_->cycles() << TR.Reset << std::endl;
+.//monte_carlo/StepWiseMonteCarlo.cc:	if ( options_->verbose_scores() ) {
+.//monte_carlo/StepWiseMonteCarlo.cc:	runtime_assert( options_->skip_deletions() ); // totally inelegant, must be set outside.

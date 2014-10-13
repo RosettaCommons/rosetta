@@ -213,12 +213,15 @@ std::string get_WC_atom( core::chemical::AA const & res_type ){
 ///////////////////////////////////////////////////////////////////////////////
 void
 get_watson_crick_base_pair_atoms(
-	 chemical::AA const & aa1,
-	 chemical::AA const & aa2,
+	 conformation::Residue const & rsd_type1,
+	 conformation::Residue const & rsd_type2,
 	 std::string & atom1,
 	 std::string & atom2 ) {
 
 	using namespace core::chemical;
+
+	AA const & aa1 = rsd_type1.aa();
+	AA const & aa2 = rsd_type2.aa();
 
 	if ( aa1 == na_rad && aa2 == na_ura ) {
 		atom1 = " N1 ";
@@ -259,8 +262,8 @@ get_watson_crick_base_pair_atoms(
 /////////////////////////////////////////////////////////////////////
 void
 get_watson_crick_base_pair_atoms(
-	 chemical::AA const & aa1,
-	 chemical::AA const & aa2,
+	 conformation::Residue const & rsd_type1,
+	 conformation::Residue const & rsd_type2,
 	 utility::vector1< std::string > & atom_ids1,
 	 utility::vector1< std::string > & atom_ids2	 )
 {
@@ -270,11 +273,19 @@ get_watson_crick_base_pair_atoms(
 	atom_ids1.clear();
 	atom_ids2.clear();
 
+	AA const & aa1 = rsd_type1.aa();
+	AA const & aa2 = rsd_type2.aa();
+
 	if ( aa1 == na_rad && aa2 == na_ura ) {
 		atom_ids1.push_back( " N1 " );		atom_ids2.push_back( " H3 " );
 		atom_ids1.push_back( " H61" );		atom_ids2.push_back( " O4 " );
 		return;
 	} else if ( aa1 == na_rgu && aa2 == na_rcy ) {
+		if ( rsd_type1.name3() == "IGU" && rsd_type2.name3() == "ICY" ){ // special case -- isoG/isoC
+			atom_ids1.push_back( " H61" );		atom_ids2.push_back( " O4 " );
+			atom_ids1.push_back( " H1 " );		atom_ids2.push_back( " N3 " );
+			atom_ids1.push_back( " O2 " );		atom_ids2.push_back( " H21" );
+		}
 		atom_ids1.push_back( " H1 " );		atom_ids2.push_back( " N3 " );
 		atom_ids1.push_back( " H21" );		atom_ids2.push_back( " O2 " );
 		atom_ids1.push_back( " O6 " );		atom_ids2.push_back( " H41" );
@@ -288,6 +299,11 @@ get_watson_crick_base_pair_atoms(
 		atom_ids2.push_back( " H61" );		atom_ids1.push_back( " O4 " );
 		return;
 	} else if ( aa2 == na_rgu && aa1 == na_rcy ) {
+		if ( rsd_type2.name3() == "IGU" && rsd_type2.name3() == "ICY" ){ // special case -- isoG/isoC
+			atom_ids2.push_back( " H61" );		atom_ids1.push_back( " O4 " );
+			atom_ids2.push_back( " H1 " );		atom_ids1.push_back( " N3 " );
+			atom_ids2.push_back( " O2 " );		atom_ids1.push_back( " H21" );
+		}
 		atom_ids2.push_back( " H1 " );		atom_ids1.push_back( " N3 " );
 		atom_ids2.push_back( " H21" );		atom_ids1.push_back( " O2 " );
 		atom_ids2.push_back( " O6 " );		atom_ids1.push_back( " H41" );

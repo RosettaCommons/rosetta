@@ -65,7 +65,7 @@ enum SecondaryStructureType {
 ///  2) Add cutpoint variants to the loop cutpoint
 ///
 /// The original description of the CCD algorithm in relation to protein loop closure can be found here:
-///  Canutescu AA, Dunbrack RL Jr: Cyclic coordinate descent: a robotics algorithm for protein loop closure. 
+///  Canutescu AA, Dunbrack RL Jr: Cyclic coordinate descent: a robotics algorithm for protein loop closure.
 ///  Protein Sci 2003, 12:963-972.
 ///
 class CCDLoopClosureMover : public moves::Mover {
@@ -217,6 +217,9 @@ public:  // Accessors/Mutators ////////////////////////////////////////////////
 	/// @brief  Set whether or not two-body (neighbor-dependent) Ramachandran maps should be used.
 	void use_rama_2B( bool setting ) { use_rama_2b_ = setting; }
 
+	/// @brief  Set whether or not to output loop start/end points at beginning of Mover apply().
+	void set_verbose( bool setting ) { verbose_ = setting; }
+
 	/// @brief  Get the RMS deviation of the target atoms after completion of loop closure.
 	/// @details sqrt( dev / number_of_atoms )
 	core::Real deviation() const { return deviation_; }
@@ -254,7 +257,7 @@ private:  // Private methods //////////////////////////////////////////////////
 	// Return a the coordinates of the atoms to be overlapped for a given residue.
 	utility::vector1< core::PointPosition > get_anchors( core::conformation::Residue const & residue ) const;
 
-	// Adjust the residue number and atom number if necessary when determining the connectivity across a torsion 
+	// Adjust the residue number and atom number if necessary when determining the connectivity across a torsion
 	void index_pair_in_range( core::uint & pos, core::uint & atom, core::Size const n_mainchain_atoms ) const;
 
 	void get_torsion_axis(
@@ -315,7 +318,7 @@ private:  // Private data /////////////////////////////////////////////////////
 	core::Real average_change_in_rama_score_;
 
 	Size actual_cycles_;
-
+	bool verbose_;
 
 private:  // Constants ////////////////////////////////////////////////////////
 	static utility::vector1< core::SSize > const STEP_SIZE;  // indexed by ChainDirection

@@ -21,6 +21,7 @@
 #include <protocols/stepwise/modeler/options/StepWiseModelerOptions.fwd.hh>
 #include <protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.fwd.hh>
 #include <protocols/stepwise/modeler/protein/loop_close/StepWiseProteinCCD_Closer.fwd.hh>
+#include <protocols/toolbox/AllowInsert.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -81,7 +82,7 @@ namespace modeler {
 		void
 		do_clustering( core::pose::Pose & pose );
 
-		void get_move_map( core::kinematics::MoveMap & mm, core::pose::Pose const & pose );
+		void get_move_map_and_allow_insert( core::kinematics::MoveMap & mm, core::pose::Pose const & pose );
 
 		void close_chainbreaks( core::pose::Pose & pose, core::kinematics::MoveMap & mm );
 
@@ -91,6 +92,10 @@ namespace modeler {
 		move_side_chain( core::kinematics::MoveMap & mm,
 										 core::pose::Pose const & pose,
 										 core::Size const j );
+
+		void
+		setup_vary_bond_geometry( core::pose::Pose & pose, core::kinematics::MoveMap & mm );
+
 	private:
 
 		utility::vector1< core::pose::PoseOP > pose_list_;
@@ -111,6 +116,8 @@ namespace modeler {
 		bool const allow_virtual_o2prime_hydrogens_;
 
 		protein::loop_close::StepWiseProteinCCD_CloserOP protein_ccd_closer_;
+
+		protocols::toolbox::AllowInsertOP allow_insert_; // a atom-centric version of the DOF-centric movemap.
 	};
 
 } //modeler

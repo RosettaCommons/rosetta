@@ -52,7 +52,8 @@ namespace monte_carlo {
 		intermolecular_frequency_( 0.0 ),
 		only_dock_preexisting_chunks_( false ),
 		allow_shared_chains_in_dock_poses_( false ),
-		remodeler_( false )
+		remodeler_( false ),
+		choose_random_( true )
 	{}
 
 	//Destructor
@@ -69,9 +70,9 @@ namespace monte_carlo {
 	//  I have worked this out, but will need to implement carefully. -- rhiju, march 2014.
 	//
 	void
-	SWA_MoveSelector::get_random_add_or_delete_element( pose::Pose const & pose,
-																											SWA_Move & swa_move,
-																											utility::vector1< Size > const & sample_res /*leave empty if no filter*/) {
+	SWA_MoveSelector::get_add_or_delete_element( pose::Pose const & pose,
+																							 SWA_Move & swa_move,
+																							 utility::vector1< Size > const & sample_res /*leave empty if no filter*/) {
 		using namespace core::pose::full_model_info;
 
 		utility::vector1< SWA_Move > swa_moves;
@@ -93,17 +94,22 @@ namespace monte_carlo {
 			return;
 		}
 
-		swa_move = numeric::random::rg().random_element( swa_moves );
+		if ( choose_random_ ) {
+			swa_move = numeric::random::rg().random_element( swa_moves );
+		} else  {
+			swa_move = swa_moves[ 1 ];
+		}
+
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	SWA_MoveSelector::get_random_add_or_delete_element( pose::Pose const & pose,
-																											SWA_Move & swa_move ){
+	SWA_MoveSelector::get_add_or_delete_element( pose::Pose const & pose,
+																							 SWA_Move & swa_move ){
 
 		utility::vector1< Size > sample_res; /*leave empty if no filter*/
-		get_random_add_or_delete_element( pose, swa_move,
-																			sample_res );
+		get_add_or_delete_element( pose, swa_move,
+															 sample_res );
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -116,9 +122,8 @@ namespace monte_carlo {
 		} else {
 			get_resample_terminal_move_elements( pose, swa_moves );
 		}
-		for ( Size n = 1; n <= swa_moves.size(); n++ ){
-			TR.Debug  << swa_moves[ n ] << std::endl;
-		}
+		for ( Size n = 1; n <= swa_moves.size(); n++ )	TR.Debug << TR.Green  << swa_moves[ n ] << TR.Reset << std::endl;
+
 		if ( allow_internal_local_ ){
 			get_resample_internal_local_move_elements( pose, swa_moves );
 		}
@@ -483,7 +488,7 @@ namespace monte_carlo {
 																																utility::vector1< Size > const & sample_res /*leave empty if no filter*/) {
 
 		get_intermolecular_add_move_elements( pose, swa_moves );
-		get_intermolecular_delete_move_elements( pose, swa_moves );
+		if ( allow_delete_ ) get_intermolecular_delete_move_elements( pose, swa_moves );
 		if ( sample_res.size() > 0 ) filter_by_sample_res( swa_moves, sample_res );
 	}
 

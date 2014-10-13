@@ -19,7 +19,7 @@
 -bridge_res 207 
 -cutpoint_closed 207 
 -ccd_close 
--global_optimize 
+#-global_optimize # stepwise now encodes smarter choice of residues to pack -- don't have to pack everything
 -out:file:silent region_207_206_sample.out
 
 # following flags turn off new defaults, set in stepwise monte carlo

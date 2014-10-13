@@ -28,9 +28,10 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
-#include <core/pose/Pose.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -57,7 +58,13 @@ using ObjexxFCL::lead_zero_string_of;
 // StepWiseMonteCarlo -- monte carlo minimization framework for
 //  modeler RNA and moves that delete or add residues at chain termini.
 //
-// This is the master Mover.
+// This is the master Mover, and can run the full MonteCarlo or
+//  a single move [through the set_move() option].
+//
+// This also handles preminimizing. But it may be better to move the
+//  preminimizer out of here -- it can have a different setting
+//  (e.g. use_packer_instead_of_rotamer_trials) and perhaps should
+//  not output to silent file if there's going to be a subsequent move.
 //
 //////////////////////////////////////////////////////////////////////////
 
@@ -78,7 +85,8 @@ StepWiseMonteCarlo::StepWiseMonteCarlo( core::scoring::ScoreFunctionCOP scorefxn
 	movie_file_trial_( "" ),
 	movie_file_accepted_( "" ),
 	enumerate_( false ),
-	just_preminimize_( false )
+	do_preminimize_move_( false ),
+	start_time_( clock() )
 {
 }
 
@@ -89,9 +97,7 @@ StepWiseMonteCarlo::~StepWiseMonteCarlo()
 ////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseMonteCarlo::apply( core::pose::Pose & pose ) {
-
-	initialize_scorefunction();
-	initialize_movers();
+	initialize();
 
 	if ( pose.total_residue() > 0 ) show_scores( pose, "Initial score:" );
 	if ( do_test_move( pose ) ) return;
@@ -99,6 +105,14 @@ StepWiseMonteCarlo::apply( core::pose::Pose & pose ) {
 	initialize_pose_if_empty( pose );
 	preminimize_pose( pose );
 	do_main_loop( pose );
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void
+StepWiseMonteCarlo::initialize() {
+	initialize_scorefunction();
+	initialize_movers();
+	start_time_ = clock();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -149,8 +163,11 @@ StepWiseMonteCarlo::do_main_loop( pose::Pose & pose ){
 		output_movie( pose, k, "ACCEPTED", movie_file_accepted_ );
 	}
 
-	monte_carlo->recover_low( pose );
+	if ( options_->recover_low() ) monte_carlo->recover_low( pose );
 	show_scores( pose, "Final score:" );
+
+	clearPoseExtraScores( pose );
+	if ( options_->save_times() ) setPoseExtraScore( pose, "time", static_cast< Real >( clock() - start_time_ ) / CLOCKS_PER_SEC );
 
 }
 
@@ -216,11 +233,8 @@ StepWiseMonteCarlo::setup_unified_stepwise_modeler(){
 
  	StepWiseModelerOP stepwise_modeler( new StepWiseModeler( scorefxn_ ) );
 	protocols::stepwise::modeler::options::StepWiseModelerOptionsOP options = options_->setup_modeler_options();
-	if ( enumerate_ ) {
-		options->set_choose_random( false );
-		if ( options_->num_pose_minimize() == 0 ) options->set_num_pose_minimize( 0 );
-	}
-	if ( just_preminimize_ ) options->set_use_packer_instead_of_rotamer_trials( true ); // for proteins.
+	if ( enumerate_ ) options->set_choose_random( false );
+	if ( do_preminimize_move_ ) options->set_use_packer_instead_of_rotamer_trials( true ); // for proteins.
 	stepwise_modeler->set_options( options );
 
  	return stepwise_modeler;
@@ -328,11 +342,8 @@ StepWiseMonteCarlo::set_options( options::StepWiseMonteCarloOptionsCOP options )
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
 StepWiseMonteCarlo::do_test_move( pose::Pose & pose ){
-	if ( just_preminimize_ ) {
-		preminimize_pose( pose );
-		return true;
-	}
-	if ( move_.move_type() == NO_MOVE ) return false;
+	if ( do_preminimize_move_ ) preminimize_pose( pose );
+	if ( move_.move_type() == NO_MOVE ) return do_preminimize_move_;
 	if ( move_.move_type() == ADD || move_.move_type() == DELETE || move_.move_type() == FROM_SCRATCH ){
 		add_or_delete_mover_->apply( pose, move_ );
 	} else {
@@ -355,6 +366,31 @@ StepWiseMonteCarlo::preminimize_pose( pose::Pose & pose ) {
 		preminimize_pose( *( other_pose_list[ n ] ) );
 	}
 }
+
+
+/////////////////////////////////////////////////////////
+AddOrDeleteMoverOP
+StepWiseMonteCarlo::add_or_delete_mover(){ return add_or_delete_mover_; }
+
+/////////////////////////////////////////////////////////
+// Called by build_full_model() in stepwise/monte_carlo/util.cc
+void
+StepWiseMonteCarlo::build_full_model( pose::Pose const & start_pose, Pose & full_model_pose ){
+	using namespace options;
+	full_model_pose = start_pose;
+	runtime_assert( options_->skip_deletions() ); // totally inelegant, must be set outside.
+	initialize();
+	add_or_delete_mover_->set_choose_random( false );
+	add_mover_->set_start_added_residue_in_aform( true  );
+	add_mover_->set_presample_added_residue(      false );
+
+	std::string move_type;
+	while( add_or_delete_mover_->apply( full_model_pose, move_type ) ){
+		TR.Debug << "Building full model: " << move_type << std::endl;
+	}
+}
+
+
 
 } //monte_carlo
 } //stepwise

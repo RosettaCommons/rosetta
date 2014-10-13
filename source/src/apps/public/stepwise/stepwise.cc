@@ -90,31 +90,30 @@ stepwise_monte_carlo()
 
 	PoseOP native_pose, align_pose;
 	initialize_native_and_align_pose( native_pose, align_pose, rsd_set );
-
 	PoseOP pose_op = initialize_pose_and_other_poses_from_command_line( rsd_set );
 	pose::Pose & pose = *pose_op;
-	core::io::rna::get_rna_data_info( pose, option[ basic::options::OptionKeys::rna::data_file ](), scorefxn ); // temporary, for scoring RNA chemical mapping data. Move into initalize_pose?
+	// temporary, for scoring RNA chemical mapping data. Move into initalize_pose?
+	core::io::rna::get_rna_data_info( pose, option[ basic::options::OptionKeys::rna::data_file ](), scorefxn );
 
-	// a unit test specific for two helix test case. leave this in here for now.
+	// Get rid of this commented code when it is incorporated into a unit test.
 	//	test_merge_and_slice_with_two_helix_test_case( input_poses, scorefxn ); exit( 0 );
 
 	// actual pose to be sampled...
 	if ( pose.total_residue() > 0 ) ( *scorefxn )( pose );
 	Vector center_vector = ( align_pose != 0 ) ? get_center_of_mass( *align_pose ) : Vector( 0.0 );
-protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 500, 500, false, ( align_pose != 0 ), center_vector );
-
+	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 500, 500, false, ( align_pose != 0 ), center_vector );
 
 	StepWiseMonteCarlo stepwise_monte_carlo( scorefxn );
 	protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptionsOP options( new protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptions );
-	bool const just_preminimize = option[ OptionKeys::stepwise::preminimize ]();
-	bool const test_move = option[ OptionKeys::stepwise::move ].user() || just_preminimize;
+	bool const do_preminimize_move = option[ OptionKeys::stepwise::preminimize ]();
+	bool const test_move = option[ OptionKeys::stepwise::move ].user() || do_preminimize_move;
 	if ( test_move ) options->set_output_minimized_pose_list( true );
 	options->initialize_from_command_line();
 	stepwise_monte_carlo.set_options( options );
 	stepwise_monte_carlo.set_native_pose( align_pose ); //allows for alignment to be to non-native
 	stepwise_monte_carlo.set_move( SWA_Move( option[ OptionKeys::stepwise::move ]() ) );
 	stepwise_monte_carlo.set_enumerate( option[ OptionKeys::stepwise::enumerate ]());
-	stepwise_monte_carlo.set_just_preminimize( just_preminimize );
+	stepwise_monte_carlo.set_do_preminimize_move( do_preminimize_move );
 
 	std::string const silent_file = option[ out::file::silent ]();
 	if ( option[ out::overwrite ]() ) remove_silent_file_if_it_exists( silent_file );
@@ -130,10 +129,10 @@ protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 500
 		pose = start_pose;
 		stepwise_monte_carlo.set_model_tag( out_tag );
  		stepwise_monte_carlo.apply( pose );
-		if (!options->output_minimized_pose_list()) output_to_silent_file( out_tag, silent_file, pose, native_pose );
+		if (!options->output_minimized_pose_list()) output_to_silent_file( out_tag, silent_file, pose, native_pose, option[ OptionKeys::stepwise::superimpose_over_all ](), true /*rms_fill*/ );
 	}
 
-	if ( just_preminimize ) pose.dump_pdb( "PREPACK.pdb" );
+	if ( do_preminimize_move ) pose.dump_pdb( "PREPACK.pdb" );
 }
 
 ///////////////////////////////////////////////////////////////
@@ -171,6 +170,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::full_model::cutpoint_open );
 		option.add_relevant( OptionKeys::full_model::cutpoint_closed );
 		option.add_relevant( OptionKeys::full_model::sample_res );
+		option.add_relevant( OptionKeys::stepwise::superimpose_over_all );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::cycles );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::skip_deletions );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::add_delete_frequency );
@@ -189,10 +189,10 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::enumerate );
 		option.add_relevant( OptionKeys::stepwise::preminimize );
 		option.add_relevant( OptionKeys::stepwise::rna::erraser );
-		option.add_relevant( OptionKeys::full_model::rna::force_syn_chi_res_list );
 		option.add_relevant( OptionKeys::stepwise::rna::force_centroid_interaction );
 		option.add_relevant( OptionKeys::stepwise::rna::rebuild_bulge_mode );
-		option.add_relevant( OptionKeys::stepwise::rna::bulge_res );
+		option.add_relevant( OptionKeys::full_model::rna::force_syn_chi_res_list );
+		option.add_relevant( OptionKeys::full_model::rna::bulge_res );
 		option.add_relevant( OptionKeys::full_model::rna::terminal_res );
 		option.add_relevant( OptionKeys::stepwise::atr_rep_screen );
 		option.add_relevant( OptionKeys::stepwise::protein::allow_virtual_side_chains );
@@ -201,9 +201,10 @@ main( int argc, char * argv [] )
 
 		core::init::init(argc, argv);
 
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_SIDE_CHAIN" );
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RIBOSE" );
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" ); // for chemical mapping.
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_SIDE_CHAIN" ); // for protein side-chain packing/virtualization
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RIBOSE" ); // for skip-nucleotide moves.
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" ); // for chemical mapping & bulge.
+		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RNA_RESIDUE" ); // for bulge
 		option[ OptionKeys::chemical::patch_selectors ].push_back( "PEPTIDE_CAP" ); // N_acetylated.txt and C_methylamidated.txt
 		option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" ); // 5prime_phosphate and 3prime_phosphate
 

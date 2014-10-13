@@ -4,16 +4,16 @@
 ../fa_standard/patches/nucleic/rna/rna_cutpoint_upper.txt
 ../fa_standard/patches/nucleic/rna/Virtual_Phosphate.txt
 ../fa_standard/patches/nucleic/rna/Virtual_O2prime_hydrogen.txt
-#../fa_standard/patches/nucleic/rna/BulgeRNA.txt
-../fa_standard/patches/nucleic/rna/Virtual_RNA_Residue.txt
-../fa_standard/patches/nucleic/rna/Virtual_RNA_Residue_Upper.txt
+../fa_standard/patches/nucleic/rna/Virtual_RNA_Residue.txt  # VIRTUAL_RNA_RESIDUE
+../fa_standard/patches/nucleic/rna/Virtual_RNA_Residue_Upper.txt # VIRTUAL_RNA_RESIDUE_UPPER
 ../fa_standard/patches/nucleic/rna/Virtual_Ribose.txt
 ../fa_standard/patches/nucleic/rna/Protonated_H1_Adenosine.txt
+../fa_standard/patches/nucleic/rna/5prime_phosphate.txt
+../fa_standard/patches/nucleic/rna/3prime_phosphate.txt
+../fa_standard/patches/nucleic/rna/VirtualBase.txt           # VIRTUAL_BASE
+#../fa_standard/patches/nucleic/rna/BulgeRNA.txt
 #../fa_standard/patches/nucleic/rna/Virtual_Backbone_Except_C1prime.txt
 #../fa_standard/patches/nucleic/rna/3prime_end_OH.txt
 #../fa_standard/patches/nucleic/rna/5prime_end_OH.txt
 #../fa_standard/patches/nucleic/rna/5prime_packable_phosphate.txt
 #../fa_standard/patches/nucleic/rna/3prime_packable_phosphate.txt
-../fa_standard/patches/nucleic/rna/5prime_phosphate.txt
-../fa_standard/patches/nucleic/rna/3prime_phosphate.txt
-../fa_standard/patches/nucleic/rna/VirtualBase.txt # VIRTUAL_BASE
