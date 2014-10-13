@@ -91,7 +91,7 @@ FlxbbDesignCreator::mover_name()
 
 /// @brief default constructor
 FlxbbDesignPack::FlxbbDesignPack() :
-	protocols::simple_moves::PackRotamersMover("FlxbbDesignPack")
+	protocols::simple_moves::PackRotamersMover( std::string("FlxbbDesignPack") )
 {}
 
 FlxbbDesignPack::FlxbbDesignPack(

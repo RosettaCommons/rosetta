@@ -58,7 +58,7 @@ PackRotamersMoverLazy::PackRotamersMoverLazy(
 	) : protocols::simple_moves::PackRotamersMover(scorefxn,task,nloop)
 {}
 
-PackRotamersMoverLazy::PackRotamersMoverLazy() : protocols::simple_moves::PackRotamersMover("PackRotamersMoverLazy")
+PackRotamersMoverLazy::PackRotamersMoverLazy() : protocols::simple_moves::PackRotamersMover( std::string("PackRotamersMoverLazy") )
 {}
 
 PackRotamersMoverLazy::~PackRotamersMoverLazy(){}

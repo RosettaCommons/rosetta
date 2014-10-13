@@ -246,11 +246,11 @@ void
 MinMover::apply(pose::Pose & pose) {
 	// lazy default initialization
 	MoveMapOP active_movemap;
-	if ( ! movemap() ) movemap() = MoveMapOP( new MoveMap );
-	else active_movemap = movemap()->clone();
+	if ( ! movemap() ) set_movemap( MoveMapOP( new MoveMap ) );
+
+	active_movemap = movemap()->clone();
 
 	apply_dof_tasks_to_movemap(pose, *active_movemap);
-
 
 	if ( ! scorefxn_ ) scorefxn_ = get_score_function(); // get a default (INITIALIZED!) ScoreFunction
 

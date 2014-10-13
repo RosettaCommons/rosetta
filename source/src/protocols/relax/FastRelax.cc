@@ -259,8 +259,8 @@ FastRelaxCreator::mover_name()
 FastRelax::FastRelax(
 	core::Size                     standard_repeats
 ) :
-	RelaxProtocolBase("FastRelax" ),
-	checkpoints_("FastRelax"),
+	RelaxProtocolBase( std::string("FastRelax" ) ),
+	checkpoints_( std::string("FastRelax") ),
 	movemap_tag_( /* NULL */ )
 {
 	set_to_default();
@@ -350,7 +350,7 @@ FastRelax::parse_my_tag(
 ) {
 	using namespace basic::options;
 	using core::pack::task::operation::TaskOperationCOP;
-	
+
 	set_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data )->clone() );
 
 	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
@@ -361,7 +361,7 @@ FastRelax::parse_my_tag(
 
 	//Make sure we have a taskfactory before we overwrite our null in the base class.
 	set_enable_design( !( tag->getOption<bool>("disable_design", !enable_design_ ) ) );
-	
+
 	core::pack::task::TaskFactoryOP tf = protocols::rosetta_scripts::parse_task_operations( tag, data );
 	if ( tf->size() > 0){
 		if (!enable_design_){
@@ -373,7 +373,7 @@ FastRelax::parse_my_tag(
 	// initially, all backbone torsions are movable
 	protocols::rosetta_scripts::parse_movemap( tag, pose, mm, data, false);
 
-	
+
 	default_repeats_ = tag->getOption< int >( "repeats", option[ OptionKeys::relax::default_repeats ]() );
 	std::string script_file = tag->getOption< std::string >("relaxscript", "" );
 
@@ -382,10 +382,10 @@ FastRelax::parse_my_tag(
 	if( cstfile != "" )	add_cst_files( cstfile );
 
 	bool batch = tag->getOption< bool >( "batch", false );
-	
+
 	cartesian (tag->getOption< bool >( "cartesian", false ) );
 	dualspace (tag->getOption< bool >( "dualspace", false) );
-	
+
 	ramp_down_constraints( tag->getOption< bool >( "ramp_down_constraints", ramp_down_constraints() ) );
 
 	if ( tag->getOption< bool >( "bondangle", false ) ) {
@@ -485,8 +485,8 @@ void FastRelax::set_to_default( )
 	ramady_force_ = basic::options::option[ OptionKeys::relax::ramady_force ]();
 	ramady_rms_limit_ = basic::options::option[ OptionKeys::relax::ramady_rms_limit ]();
 	dualspace_ = basic::options::option[ basic::options::OptionKeys::relax::dualspace ]();
-	
-	
+
+
 	// cartesian
 
 	// dumpall
@@ -557,12 +557,12 @@ void FastRelax::do_minimize(
 	} else {
 		min_mover = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover( local_movemap, local_scorefxn, min_type(), tolerance, true ) );
 	}
-	
+
 	min_mover->cartesian( cartesian() );
 	if (max_iter() > 0) min_mover->max_iter( max_iter() );
-	
+
 	min_mover->apply( pose );
-  
+
 	// If relax membrane, update structure based embeddings
 	bool membrane = pose.conformation().is_membrane();
 	if ( membrane ) {
@@ -634,7 +634,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 	set_movemap(local_movemap);
 	check_nonideal_mintype();
-	
+
 	// Deal with constraint options and add coodrinate constraints for all or parts of the structure.
 	set_up_constraints( pose, *local_movemap );
 
@@ -1666,5 +1666,3 @@ FastRelax::set_constraint_weight( core::scoring::ScoreFunctionOP local_scorefxn,
 } // namespace relax
 
 } // namespace protocols
-
-

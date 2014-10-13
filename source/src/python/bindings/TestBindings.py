@@ -166,9 +166,12 @@ def main(args):
     else:
         for t in results['tests']:
             if results['tests'][t]['state'] == 'finished': print t, '- passed'
+
         print '\nFollowing PyRosetta Tests FAILED:'
         for t in results['tests']:
             if results['tests'][t]['state'] != 'finished': print t, '- FAILED'
+
+        sys.exit(1)
 
 
 

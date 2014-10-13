@@ -22,7 +22,7 @@
 
 // In order to avoid circular dependencies with Boost.TR1
 // we make sure that our include of <memory> doesn't try to
-// pull in the TR1 headers: that's why we use this header 
+// pull in the TR1 headers: that's why we use this header
 // rather than including <memory> directly:
 #include <boost/config/no_tr1/memory.hpp>  // std::auto_ptr
 
@@ -247,7 +247,7 @@ template< class T, class R > struct sp_enable_if_auto_ptr
 template< class T, class R > struct sp_enable_if_auto_ptr< std::auto_ptr< T >, R >
 {
     typedef R type;
-}; 
+};
 
 #endif
 
@@ -345,6 +345,21 @@ public:
     {
 	assert(i == NULL);
     }
+
+#ifdef WIN_PYROSETTA
+    // Rosetta customization to handle 0 assignments and initialization under MSVC
+    shared_ptr(int i) BOOST_NOEXCEPT : px( 0 ), pn()
+    {
+	assert(i == 0);
+    }
+
+    // Rosetta customization to handle 0 assignments and initialization under MSVC
+    shared_ptr(unsigned int i) BOOST_NOEXCEPT : px( 0 ), pn()
+    {
+	assert(i == 0);
+    }
+
+#endif
 
 #if !defined( BOOST_NO_CXX11_NULLPTR )
 
@@ -645,21 +660,21 @@ public:
     {
         this_type( r, p ).swap( *this );
     }
-    
+
     // never throws (but has a BOOST_ASSERT in it, so not marked with BOOST_NOEXCEPT)
     typename boost::detail::sp_dereference< T >::type operator* () const
     {
         BOOST_ASSERT( px != 0 );
         return *px;
     }
-    
+
     // never throws (but has a BOOST_ASSERT in it, so not marked with BOOST_NOEXCEPT)
-    typename boost::detail::sp_member_access< T >::type operator-> () const 
+    typename boost::detail::sp_member_access< T >::type operator-> () const
     {
         BOOST_ASSERT( px != 0 );
         return px;
     }
-    
+
     // never throws (but has a BOOST_ASSERT in it, so not marked with BOOST_NOEXCEPT)
     typename boost::detail::sp_array_access< T >::type operator[] ( std::ptrdiff_t i ) const
     {

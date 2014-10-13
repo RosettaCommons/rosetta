@@ -143,8 +143,8 @@ ClassicRelax::ClassicRelax( core::scoring::ScoreFunctionOP scorefxn_in, core::ki
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ClassicRelax::ClassicRelax() :
-	parent("ClassicRelax"),
-	checkpoints_("ClassicRelax")
+	parent( std::string("ClassicRelax") ),
+	checkpoints_( std::string("ClassicRelax") )
 {
 	set_default();
 
@@ -424,17 +424,17 @@ void ClassicRelax::set_mc ( moves::MonteCarloOP new_mc_ ){
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void ClassicRelax::check_default_full_repacker( core::pose::Pose & pose, core::kinematics::MoveMap & movemap ){
-	
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::pack::task::operation;
-	
+
 	if( use_default_pack_full_repack_ ){
-		
-		// Add TF behavior Jadolfbr 5/2/2013 
-		
+
+		// Add TF behavior Jadolfbr 5/2/2013
+
 		core::pack::task::TaskFactoryOP local_tf( new core::pack::task::TaskFactory() );
-	
+
 		//If a user gives a TaskFactory, completely respect it.
 		if (get_task_factory()){
 			local_tf = get_task_factory()->clone();
@@ -446,9 +446,9 @@ void ClassicRelax::check_default_full_repacker( core::pose::Pose & pose, core::k
 				TR << "Using Resfile for packing step. " <<std::endl;
 			}
 			else {
-				//Keep the same behavior as before if no resfile given for design.  
+				//Keep the same behavior as before if no resfile given for design.
 				//Though, as mentioned in the doc, movemap now overrides chi_move as it should.
-				
+
 				local_tf->push_back(TaskOperationCOP( new RestrictToRepacking() ));
 				PreventRepackingOP turn_off_packing( new PreventRepacking() );
 				for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
@@ -461,18 +461,18 @@ void ClassicRelax::check_default_full_repacker( core::pose::Pose & pose, core::k
 		}
 		//Include current rotamer by default - as before.
 		local_tf->push_back(TaskOperationCOP( new IncludeCurrent() ));
-	
+
 		if( limit_aroma_chi2() ) {
 			local_tf->push_back(TaskOperationCOP( new protocols::toolbox::task_operations::LimitAromaChi2Operation() ));
 		}
-	
+
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 			pack_full_repack_ = protocols::simple_moves::PackRotamersMoverOP( new simple_moves::symmetry::SymPackRotamersMover( get_scorefxn()) );
 		} else {
 			pack_full_repack_ = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover( get_scorefxn()) );
 		}
 		pack_full_repack_->task_factory(local_tf);
-		
+
 		(*get_scorefxn())( pose );
 	}
 
@@ -485,17 +485,17 @@ void ClassicRelax::set_full_repack( protocols::simple_moves::PackRotamersMoverOP
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void ClassicRelax::check_default_rottrial( core::pose::Pose & pose, core::kinematics::MoveMap & movemap ) {
-	
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::pack::task::operation;
-	
+
 	if ( use_default_pack_full_repack_ ) {
-		
-		// Add TF behavior Jadolfbr 5/2/2013 
-		
+
+		// Add TF behavior Jadolfbr 5/2/2013
+
 		core::pack::task::TaskFactoryOP local_tf( new core::pack::task::TaskFactory() );
-	
+
 		//If a user gives a TaskFactory, completely respect it.
 		if (get_task_factory()){
 			local_tf = get_task_factory()->clone();
@@ -507,9 +507,9 @@ void ClassicRelax::check_default_rottrial( core::pose::Pose & pose, core::kinema
 				TR << "Using Resfile for packing step. " <<std::endl;
 			}
 			else {
-				//Keep the same behavior as before if no resfile given for design.  
+				//Keep the same behavior as before if no resfile given for design.
 				//Though, as mentioned in the doc, movemap now overrides chi_move as it should.
-				
+
 				local_tf->push_back(TaskOperationCOP( new RestrictToRepacking() ));
 				PreventRepackingOP turn_off_packing( new PreventRepacking() );
 				for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
@@ -522,7 +522,7 @@ void ClassicRelax::check_default_rottrial( core::pose::Pose & pose, core::kinema
 		}
 		//Include current rotamer by default - as before.
 		local_tf->push_back(TaskOperationCOP( new IncludeCurrent() ));
-	
+
 		if( limit_aroma_chi2() ) {
 			local_tf->push_back(TaskOperationCOP( new protocols::toolbox::task_operations::LimitAromaChi2Operation() ));
 		}
@@ -820,5 +820,3 @@ ClassicRelax::get_name() const {
 
 }
 } // namespace protocols
-
-

@@ -39,7 +39,9 @@
 //Auto Headers
 #include <core/chemical/Adduct.fwd.hh>
 
-
+#ifdef WIN32
+	#include <core/chemical/Adduct.hh>
+#endif
 
 namespace core {
 namespace chemical {

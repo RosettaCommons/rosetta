@@ -354,7 +354,7 @@ def main(args):
 
     #execute('Copy init script and additional files...', 'cp src/*.py %s/' % bindings_path, verbose=False)  # ← not compatible with Windows
     for f in glob.iglob('src/*.py'): shutil.copyfile(f, bindings_path + '/' + os.path.split(f)[1] )
-    if not os.path.islink(bindings_path + '/../database'): os.symlink('../../../../../../database', bindings_path + '/../database')  # creating link to Rosetta database dir
+    if Platform not in ['windows', 'cygwin'] and (not os.path.islink(bindings_path + '/../database')): os.symlink('../../../../../../database', bindings_path + '/../database')  # creating link to Rosetta database dir
 
     os.chdir( './../../' )
 
@@ -533,22 +533,26 @@ def mFork(tag=None, overhead=0):
     #print_('Groups:%s' % os.getgroups(), color='cyan')
     while len(Jobs) >= Options.jobs + overhead:
         for j in Jobs[:] :
-            r = os.waitpid(j.pid, os.WNOHANG)
-            if r == (j.pid, 0):  # process have ended without error
-                Jobs.remove(j)
+            r = os.waitpid(j.pid, 0 if Platform == 'cygwin' else os.WNOHANG)
+            if r == (j.pid, 0): Jobs.remove(j) # process have ended without error
+            #elif Platform == 'cygwin' and  (r[0], r[1]/256) == (j.pid, 0):  Jobs.remove(j)  # on Windows returned status is shifted left by 8 bits
             elif r[0] == j.pid :  # process ended but with error, special case we will have to wait for all process to terminate and call system exit.
+                #print_('[0] os.waitpid:{0}'.format(r), color='yellow', bright=True)
                 for j in Jobs:
                     try:
                         os.waitpid(j.pid, 0)
                     except OSError: pass
 
-                print_('Some of the build scripts return an error, PyRosetta build failed!', color='red', bright=True)
+                print_('[0] Some of the build scripts return an error, PyRosetta build failed!', color='red', bright=True)
                 sys.exit(1)
 
         if len(Jobs) >= Options.jobs + overhead: time.sleep(.2)
 
     sys.stdout.flush()
-    pid = os.fork()
+    try:
+        pid = os.fork()
+    except OSError as e: print_('Error: os.fork() failure: {0}'.format(e), color='red', bright=True);  sys.exit(1)
+
     if pid: Jobs.append( NT(pid=pid, tag=tag) )  # We are parent!
     return pid
 
@@ -569,7 +573,7 @@ def mWait(tag=None, all_=False):
                         os.waitpid(j.pid, 0)
                     except OSError: pass
 
-                print_('Some of the build scripts return an error, PyRosetta build failed!', color='red', bright=True)
+                print_('[1] Some of the build scripts return an error, PyRosetta build failed!', color='red', bright=True)
                 sys.exit(1)
             else: time.sleep(.2);  break
             '''
@@ -627,9 +631,11 @@ _SC_ = SubCall()
 
 
 def get_compiler_defines():
-    d = 'PTR_MODERN PTR_BOOST BOOST_PYTHON_MAX_ARITY=32 PYROSETTA UNUSUAL_ALLOCATOR_DECLARATION'.split()
+    d = 'PTR_MODERN PTR_BOOST BOOST_PYTHON_MAX_ARITY=32 PYROSETTA UNUSUAL_ALLOCATOR_DECLARATION'.split()  # PTR_STD
     if Options.numpy_support: d.append('PYROSETTA_NUMPY')  # PYROSETTA_NO_NUMPY ← defines/variables with no negation in the name produce much more readable code
     d.append( 'DEBUG' if Options.debug else 'NDEBUG')
+
+    if Platform == "windows": d += 'BOOST_NO_MT WIN_PYROSETTA'.split()
 
     sign = ' /D'if Platform == "windows" else ' -D'
 
@@ -650,6 +656,8 @@ def getCompilerOptions():
     else:
         add_option = '-pipe -ffor-scope -ffast-math -funroll-loops -finline-functions -finline-limit=20000 -s -fPIC'
     #if Platform == 'cygwin' : add_option =''
+
+    #add_option += ' -std=c++11'
 
     add_option += (' -O0 -g -ggdb' if Options.debug else ' -O3')
 
@@ -1055,7 +1063,9 @@ def calculate_source_modification_date(source, binding_source_path, ignore=set()
 def get_vc_compile_options():
     #common = '/DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /DBOOST_THREAD_DONT_USE_CHRONO /DBOOST_ERROR_CODE_HEADER_ONLY /DBOOST_SYSTEM_NO_DEPRECATED' # -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK'
     #/env x64 /D "_WINDLL"
-    common = '/DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA ' # -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK' /DUNUSUAL_ALLOCATOR_DECLARATION
+
+    # old, before get_compiler_defines was implemented: common = '/DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA ' # -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK' /DUNUSUAL_ALLOCATOR_DECLARATION
+    common = get_compiler_defines()
 
     if Options.debug:
         # Windows MSVC compiler common options (no optimization, but it works)
@@ -1579,6 +1589,8 @@ class ModuleBuilder:
             if platform.release()[:2] == '13': self.gccxml_options += '--gccxml-compiler gcc'  #  --gccxml-cxxflags "-stdlib=libstdc++"
             else: self.gccxml_options += '--gccxml-compiler llvm-g++-4.2'
         if Platform == 'macos': self.gccxml_options += ' -march=nocona'
+
+        #self.gccxml_options += ' --gccxml-cxxflags -std=c++11'
 
         self.cc_files = []
         self.add_option  = getCompilerOptions()

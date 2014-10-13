@@ -9,7 +9,7 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file Centroid-based relax, using Frank Dimaio's updated centroid stats
-/// @brief CentroidRelax Protocol.  
+/// @brief CentroidRelax Protocol.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 //Project Headers
@@ -64,20 +64,20 @@ namespace relax {
     using core::pose::Pose;
     using core::Real;
     using std::string;
-    
+
 
     CentroidRelax::CentroidRelax():
-        RelaxProtocolBase("CentroidRelax")
+        RelaxProtocolBase( std::string("CentroidRelax") )
     {
         string def_score = option [OptionKeys::relax::centroid::weights]();
         ScoreFunctionOP score(ScoreFunctionFactory::create_score_function(def_score));
         set_score_function(score);
         set_defaults();
-        
+
     }
-    
+
     CentroidRelax::CentroidRelax(MoveMapOP mm):
-        RelaxProtocolBase("CentroidRelax")
+        RelaxProtocolBase( std::string("CentroidRelax") )
     {
         string def_score = option [OptionKeys::relax::centroid::weights]();
         ScoreFunctionOP score(ScoreFunctionFactory::create_score_function(def_score));
@@ -85,29 +85,29 @@ namespace relax {
         set_defaults();
         set_movemap(mm);
     }
-    
+
     CentroidRelax::CentroidRelax(MoveMapOP mm, ScoreFunctionOP cen_scorefxn_in):
-        RelaxProtocolBase("CentroidRelax")
+        RelaxProtocolBase( std::string("CentroidRelax") )
     {
         set_score_function(cen_scorefxn_in);
         set_defaults();
         set_movemap(mm);
-        
+
     }
-    
+
     //Mover Methods
     CentroidRelax::~CentroidRelax(){}
-    
+
     protocols::moves::MoverOP
     CentroidRelax::clone() const {
         return protocols::moves::MoverOP( new CentroidRelax(*this) );
     }
-    
+
     string
     CentroidRelax::get_name() const {
         return "CentroidRelax";
     }
-    
+
     void
     CentroidRelax::set_score_function(ScoreFunctionOP cen_score){
         ScoreFunctionOP score = cen_score->clone();
@@ -116,7 +116,7 @@ namespace relax {
 	cen_scorefxn_=get_scorefxn();
         cen_scorefxn_->set_weight(chainbreak, 100.00); //I hate chainbreaks.
     }
-    
+
     void
     CentroidRelax::set_fa_score_function(ScoreFunctionOP fa_score){
         ScoreFunctionOP score = fa_score->clone();
@@ -124,7 +124,7 @@ namespace relax {
     }
     void
     CentroidRelax::set_defaults(){
-        
+
         set_rounds(option [OptionKeys::relax::default_repeats]());
         set_ramp_vdw(option [OptionKeys::relax::centroid::ramp_vdw]());
         set_ramp_rama(option [OptionKeys::relax::centroid::ramp_rama]());
@@ -135,24 +135,24 @@ namespace relax {
 		do_final_repack(option [OptionKeys::relax::centroid::do_final_repack]());
         read_default_parameters();
     }
-    
-    
+
+
     void
     CentroidRelax::set_rounds(core::Size rounds){
         rounds_ = rounds;
     }
-    
+
     void
     CentroidRelax::set_use_increased_vdw_radii(bool use){
 	use_increased_vdw_radii_ = use;
     }
-    
+
     void
     CentroidRelax::set_use_rama2b(bool use){
         //Should be already in score function - But it's not.
         Real rama_weight = cen_scorefxn_->get_weight(rama);
         Real rama2b_weight = cen_scorefxn_->get_weight(rama2b);
-        
+
         if (use){
             rama_type_=rama2b;
             if (rama2b_weight==0){
@@ -168,27 +168,27 @@ namespace relax {
             }
         }
     }
-        
+
     void
     CentroidRelax::set_ramp_rama(bool use){
         ramp_rama_ = use;
     }
     void
     CentroidRelax::setup_class_movemap_and_constraints(Pose & pose){
-        
+
         movemap_= get_movemap()->clone();
         if ( core::pose::symmetry::is_symmetric( pose )  )  {
             core::pose::symmetry::make_symmetric_movemap( pose, *movemap_ );
         }
-        
-        initialize_movemap(pose, *movemap_); 
+
+        initialize_movemap(pose, *movemap_);
 	make_dna_rigid(pose, *movemap_);
         set_movemap(movemap_);
 	set_up_constraints(pose, *movemap_);
 	cen_scorefxn_->show(TR, pose);
-        
+
     }
-    
+
     void
     CentroidRelax::setup_increased_vdw_radii(){
 	///Courtesy of Frank Dimaio:
@@ -197,7 +197,7 @@ namespace relax {
         lowres_options.atom_vdw_atom_type_set_name("centroid_min");
         cen_scorefxn_->set_energy_method_options(lowres_options);
     }
-    
+
     void
     CentroidRelax::set_ramp_vdw(bool use){
         ramp_vdw_ = use;
@@ -206,7 +206,7 @@ namespace relax {
     void
     CentroidRelax::set_cartesian(bool cart){
         cartesian( cart );
-        
+
         if (cart){
             set_min_type("lbfgs_armijo_nonmonotone");
             ScoreFunctionOP score(ScoreFunctionFactory::create_score_function("score4_smooth_cart"));
@@ -221,9 +221,9 @@ namespace relax {
     }
     void
     CentroidRelax::set_min_type(string min){
-        min_type( min ); 
+        min_type( min );
     }
-    
+
     void
     CentroidRelax::read_default_parameters(){
         string const fname = option [ OptionKeys::relax::centroid::parameters]();
@@ -238,27 +238,27 @@ namespace relax {
             def_parameters.rama_params.push_back(rama_ramp);
             def_parameters.min_params.push_back(min);
             def_parameters.cst_params.push_back(cst);
-            
+
         }
         param_stream.close();
- 
+
     }
-    
+
     void
     CentroidRelax::do_final_repack(bool repack_sc){
 	repack_sc_=repack_sc;
     }
-    
+
     void
     CentroidRelax::apply(Pose& pose){
-	
-        
-	
+
+
+
 	if (use_increased_vdw_radii_){
 	    setup_increased_vdw_radii();
 	}
-	
-	
+
+
         //Get the rama_weight.  If it's rama2b, get that.
         Real rama_weight = cen_scorefxn_->get_weight(rama);
         if (rama_weight==0){
@@ -267,51 +267,51 @@ namespace relax {
                 set_ramp_rama(false);
             }
         }
-        
+
         //Get vdw weight.
         Real vdw_weight = cen_scorefxn_->get_weight(vdw);
         if (vdw_weight==0){
             set_ramp_vdw(false);
         }
-        
 
-        
-        
+
+
+
         MonteCarloOP cen_mc;
-        
-        
+
+
 	ReturnSidechainMoverOP recover_sc;
-        
-	
+
+
 	bool passed_centroid;
         if (! pose.is_centroid()){
             TR << "FullAtom Score::"<<std::endl;
-            
+
             fa_scorefxn_->show(TR, pose);
-            
+
             recover_sc = ReturnSidechainMoverOP( new ReturnSidechainMover(pose) );
 
 			SwitchResidueTypeSetMoverOP to_cen( new SwitchResidueTypeSetMover("centroid") );
 
             to_cen->apply(pose);
-            
+
             passed_centroid = false;
-            
+
             TR << "Centroid Score::"<<std::endl;
             //cen_scorefxn_->show(TR, pose);
             cen_mc = MonteCarloOP( new MonteCarlo(pose, *cen_scorefxn_, 1.0) );
-        
+
         } else {
-            
+
             passed_centroid = true;
             cen_scorefxn_->show(TR, pose);
             cen_mc = MonteCarloOP( new MonteCarlo(pose, *cen_scorefxn_, 1.0) );
-	    
+
         }
-        
-	
+
+
         setup_class_movemap_and_constraints(pose);
-	
+
         //Initialize MinMover
         MinMoverOP minmover;
         if ( core::pose::symmetry::is_symmetric( pose ) )  {
@@ -323,7 +323,7 @@ namespace relax {
 			minmover->cartesian( true );
 			minmover->min_type("lbfgs_armijo_nonmonotone");
 		}
-	
+
         //Test to make sure something is ramped - If not, run basic.
         if (!ramp_vdw_ && !ramp_rama_){
             TR << "Running BASIC Relax" <<std::endl;
@@ -332,7 +332,7 @@ namespace relax {
                 TR <<"Cen Score: "<<(*cen_scorefxn_)(pose)<<std::endl;
 		cen_mc->boltzmann(pose);
 	    }
-	    
+
             cen_mc->recover_low(pose);
         }
         else{
@@ -343,10 +343,10 @@ namespace relax {
             //Outer loop
             for (core::Size i=1; i<= rounds_; i++){
                 TR <<"Starting Round "<<i<<std::endl;
-                
+
                 //Inner loop
                 for (core::Size i2 = 1; i2 <=def_parameters.vdw_params.size(); i2++){
-                    
+
                     //Set Weights
                     TR<< "Ramp "<<i2<<std::endl;
                     if (ramp_vdw_){
@@ -363,7 +363,7 @@ namespace relax {
                     minmover->apply(pose);
                     TR << (*cen_scorefxn_)(pose) << std::endl;
                     //Use MC on last run->Check how many times we ramp from the vdw_params ->Doesn't matter which param we check.
-                    if (i2==def_parameters.vdw_params.size()){ 
+                    if (i2==def_parameters.vdw_params.size()){
 			TR <<"Cen Energy with full weights :"<<(*cen_scorefxn_)(pose)<<std::endl;
 			cen_scorefxn_->show(TR, pose);
                         cen_mc->boltzmann(pose);
@@ -395,19 +395,18 @@ namespace relax {
 		packer->apply(pose);
 		fa_scorefxn_->show(TR, pose);
 	    }
-	    
+
             TR << "Centroid relax complete.  Returning all-atom Structure."<<std::endl;
             return;
-	} 
+	}
 	else {
-            
+
             TR << "Centroid relax complete.  Returning centroid Structure." <<std::endl;
             cen_scorefxn_->show(TR, pose);
             return;
 	}
-        
+
 
     }//END apply method
 }
 }
-

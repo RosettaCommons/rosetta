@@ -904,7 +904,7 @@ class CppClass:
         if bases: r += ', boost::python::bases< %s >' % bases[:-2]
 
         #if self.isHeldTypeOP(): r+=  ', ::utility::pointer::shared_ptr< %s >' % heldTypeBase #(self.context, self.name)
-        r+=  ', ::boost::shared_ptr< %s >' % heldTypeBase  # now we want all objects to held in SP
+        r+=  ', ::utility::pointer::shared_ptr< %s >' % heldTypeBase  # now we want all objects to held in SP
         return r
 
 
@@ -945,12 +945,12 @@ class CppClass:
             r += '  boost::python::to_python_converter< utility::pointer::shared_ptr< %(context)s%(name)s const >, utility::COP_to_Python_converter< %(context)s%(name)s >, false >();\n\n' % D
 
             for i in convert_to:
-                r += '  boost::python::implicitly_convertible< ::boost::shared_ptr< %(context)s%(name)s >\n' % D
-                r += '                                       , ::boost::shared_ptr< %s > >();\n\n' % i
+                r += '  boost::python::implicitly_convertible< ::utility::pointer::shared_ptr< %(context)s%(name)s >\n' % D
+                r += '                                       , ::utility::pointer::shared_ptr< %s > >();\n\n' % i
 
             if use_callback_struct:
-                r += '  boost::python::implicitly_convertible< ::boost::shared_ptr< %(callback)s >\n' % D
-                r += '                                       , ::boost::shared_ptr< %(context)s%(name)s > >();\n\n' % D
+                r += '  boost::python::implicitly_convertible< ::utility::pointer::shared_ptr< %(callback)s >\n' % D
+                r += '                                       , ::utility::pointer::shared_ptr< %(context)s%(name)s > >();\n\n' % D
 
         return r
 

@@ -57,7 +57,7 @@ using namespace basic;
 
 static thread_local basic::Tracer tr( "protocols.simple_moves.ResTypeFragmentMover" );
 
-ResTypeFragmentMover::ResTypeFragmentMover(core::fragment::FragSetCOP fragset):ClassicFragmentMover(fragset, "ResTypeFragmentMover"){}
+ResTypeFragmentMover::ResTypeFragmentMover(core::fragment::FragSetCOP fragset):ClassicFragmentMover(fragset, std::string("ResTypeFragmentMover") ){}
 
 ResTypeFragmentMover::ResTypeFragmentMover(core::fragment::FragSetCOP fragset,	core::kinematics::MoveMapCOP movemap):ClassicFragmentMover( fragset, movemap, "ResTypeFragmentMover"){}
 
