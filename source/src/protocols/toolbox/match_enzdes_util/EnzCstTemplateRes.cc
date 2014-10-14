@@ -105,10 +105,13 @@ EnzCstTemplateRes::EnzCstTemplateRes(
 	core::chemical::ResidueTypeSetCAP src_restype_set,
 	EnzConstraintParametersCAP src_enzio_param )
 :
-	rb_minimizable_(true), is_backbone_(false),
-	identical_tag_found_(false), corresponding_res_block_(0),
+	rb_minimizable_(true),
+	is_backbone_(false),
+	identical_tag_found_(false),
+	corresponding_res_block_(0),
 	corresponding_res_num_in_block_(0),
-	restype_set_(src_restype_set), enz_io_param_( src_enzio_param)
+	restype_set_(src_restype_set),
+	enz_io_param_( src_enzio_param)
 {
 	clear_all();
 }
@@ -127,6 +130,7 @@ EnzCstTemplateRes::EnzCstTemplateRes(
 	at2_type_(other->at2_type_),
 	at3_type_(other->at3_type_),
 	allowed_res_types_(other->allowed_res_types_),
+	allowed_res_types_pointers_(other->allowed_res_types_pointers_),
 	atom_inds_for_restype_( other->atom_inds_for_restype_),
 	rb_minimizable_( other->rb_minimizable_ ),
 	is_backbone_( other->is_backbone_ ),
@@ -415,6 +419,7 @@ EnzCstTemplateRes::clear_all(){
 	atom1_.clear(); atom2_.clear(); atom3_.clear();
 	at1_type_ = ""; at2_type_ = ""; at3_type_ = "";
 	allowed_res_types_.clear();
+	allowed_res_types_pointers_.clear();
 	corresponding_res_block_ = 0;
 	corresponding_res_num_in_block_ = 0;
 	respos_from_external_.clear();
@@ -559,7 +564,8 @@ EnzCstTemplateRes::determine_atom_inds_for_restype(
 	at_ids.push_back( at2_ids );
 	at_ids.push_back( at3_ids );
 
-	atom_inds_for_restype_.insert( std::pair< core::chemical::ResidueTypeCOP, utility::vector1< utility::vector1< core::Size > > > ( restype, at_ids ) );
+	atom_inds_for_restype_[ restype ] = at_ids;
+	allowed_res_types_pointers_.push_back( restype );
 
 
 } //determine_atom_ids_for_restype

@@ -187,9 +187,8 @@ public:  //atom and residue accessors
 		return this->enz_cst_template_res( which_cstres )->is_backbone(); }
 
 
-	/// @brief all chemically non-redundant restypes
-	/// of the given restypes
-	utility::vector1< core::chemical::ResidueTypeCOP >
+	/// @brief all chemically non-redundant restypes of the given restypes
+	utility::vector1< core::chemical::ResidueTypeCOP > const &
 	allowed_restypes( core::Size which_cstres ) const;
 
 	/// @brief which one of the residues (1 or 2 ) in this block
@@ -332,7 +331,7 @@ private:
 
 	core::chemical::ResidueTypeSetCAP restype_set_;
 
-        //Kui Native 110809
+	//Kui Native 110809
 	bool native_;
 };
 
@@ -342,8 +341,8 @@ private:
 /// restypes and put all their geomsamples into one list
 class MatchConstraintFileInfoList : public utility::pointer::ReferenceCount
 {
-
 public:
+
 	MatchConstraintFileInfoList(
 		core::chemical::ResidueTypeSetCAP restype_set );
 
@@ -351,25 +350,19 @@ public:
 
 public: //accessors
 
-	utility::vector1< core::chemical::ResidueTypeCOP> const &
+	utility::vector1< core::chemical::ResidueTypeCOP > const &
 	upstream_restypes() const {
 		return upstream_restypes_; }
 
 	utility::vector1< MatchConstraintFileInfoCOP > const &
 	mcfis_for_upstream_restype( core::chemical::ResidueTypeCOP restype ) const;
 
-	//utility::vector1< protocols::match::ExternalGeomSampler >
-	//exgs_for_upstream_restype( std::string upstream_name3 ) const;
-
 	//also functions for downstream builders and launch points
 
 	MatchConstraintFileInfoCOP
 	mcfi( core::Size which_mcfi ) const {
-		return mcfis_[ which_mcfi ]; }
-
-	//MatchConstraintFileInfoCOP
-	//active_mcfi() const {
-	//return mcfis_[ active_mcfi_ ]; }
+		return mcfis_[ which_mcfi ];
+	}
 
 	core::Size
 	num_mcfis() const {
@@ -404,11 +397,8 @@ private:
 	//core::Size active_mcfi_;
 
 	utility::vector1< MatchConstraintFileInfoOP > mcfis_;
-
 	utility::vector1< core::chemical::ResidueTypeCOP > upstream_restypes_;
-
 	std::map< core::chemical::ResidueTypeCOP, utility::vector1< MatchConstraintFileInfoCOP > > mcfis_for_restype_;
-
 	core::chemical::ResidueTypeSetCAP restype_set_;
 
 };

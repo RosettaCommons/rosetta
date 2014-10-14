@@ -111,8 +111,14 @@ GeomSampleInfo::GeomSampleInfo(
 	core::Real force_k,
 	core::Real periodicity
 ) :
-tag_(""), function_tag_("default"), ideal_val_(ideal_val), tolerance_(tolerance),
-periodicity_(periodicity), force_const_(force_k), num_steps_(0), step_size_(0.0)
+	tag_(""),
+	function_tag_("default"),
+	ideal_val_(ideal_val),
+	tolerance_(tolerance),
+	periodicity_(periodicity),
+	force_const_(force_k),
+	num_steps_(0),
+	step_size_(0.0)
 {}
 
 GeomSampleInfo::~GeomSampleInfo() {}
@@ -144,7 +150,8 @@ GeomSampleInfo::read_data( std::istringstream & line_stream )
 	periodicity_ = (core::Real ) atof( fields[4].c_str() );
 
 	if ( (tag_ != "distanceAB:") && ((periodicity_ < 1.0) || (periodicity_ > 360.0)) ) {  //safeguard against stupid input
-		std::cerr << "Error: illegal periodicity value of " << periodicity_ << " requested for degree of freedom " << tag_ << "." << std::endl;
+		std::cerr << "Error: illegal periodicity value of " << periodicity_ <<
+			" requested for degree of freedom " << tag_ << "." << std::endl;
  		utility_exit_with_message("Illegal periodicity value given. Value must be between 1.0 and 360.0 degrees.");
 	}
 
@@ -261,10 +268,17 @@ GeomSampleInfo::create_sample_vector() const
 MatchConstraintFileInfo::MatchConstraintFileInfo(
 	core::Size index,
 	core::chemical::ResidueTypeSetCAP restype_set )
-: index_( index ), is_covalent_(false),
-	dis_U1D1_( /* NULL */ ), ang_U1D2_(NULL), ang_U2D1_(NULL),
-	tor_U1D3_(/* NULL */), tor_U3D1_(NULL), tor_U2D2_(NULL),
-	restype_set_( restype_set ), native_ (false)
+:
+	index_( index ),
+	is_covalent_(false),
+	dis_U1D1_( /* NULL */ ),
+	ang_U1D2_(NULL),
+	ang_U2D1_(NULL),
+	tor_U1D3_(/* NULL */),
+	tor_U3D1_(NULL),
+	tor_U2D2_(NULL),
+	restype_set_( restype_set ),
+	native_ (false)
 {
 	allowed_seqpos_.clear();
 	enz_template_res_.clear();
@@ -273,50 +287,34 @@ MatchConstraintFileInfo::MatchConstraintFileInfo(
 MatchConstraintFileInfo::~MatchConstraintFileInfo() {}
 
 
-utility::vector1< core::chemical::ResidueTypeCOP >
+utility::vector1< core::chemical::ResidueTypeCOP > const &
 MatchConstraintFileInfo::allowed_restypes( core::Size which_cstres ) const
 {
-
-	utility::vector1< core::chemical::ResidueTypeCOP > to_return;
-
 	EnzCstTemplateResCOP template_res = this->enz_cst_template_res( which_cstres );
-
-	for ( EnzCstTemplateRes::RestypeToTemplateAtomsMap::const_iterator restype_it = template_res->atom_inds_for_restype_begin(), restype_end = template_res->atom_inds_for_restype_end();
-			 restype_it != restype_end; ++restype_it ) {
-
-		to_return.push_back( restype_it->first );
-	}
-
-	return to_return;
+	return template_res->allowed_res_types_pointers();
 }
 
 utility::vector1< core::Size > const &
 MatchConstraintFileInfo::template_atom_inds(
 		core::Size which_cstres,
 		core::Size which_template_atom,
-		core::chemical::ResidueType const & restype ) const
+		core::chemical::ResidueType const & restype
+) const
 {
-
 	std::map< core::Size, EnzCstTemplateResOP >::const_iterator map_it =  enz_template_res_.find( which_cstres );
-
 	if ( map_it == enz_template_res_.end() ) {
 		utility_exit_with_message( "template res with code blabla not found in MatchConstraintFileInfo ");
 	}
-
 	return map_it->second->atom_inds_for_restype( which_template_atom, restype.get_self_ptr() );
-
 }
 
 EnzCstTemplateResCOP
 MatchConstraintFileInfo::enz_cst_template_res( core::Size template_res ) const
 {
-
 	std::map< core::Size, EnzCstTemplateResOP >::const_iterator map_it =  enz_template_res_.find( template_res );
-
 	if ( map_it == enz_template_res_.end() ) {
 		utility_exit_with_message( "template res with code blabla not found in MatchConstraintFileInfo ");
 	}
-
 	return map_it->second;
 }
 
@@ -325,7 +323,6 @@ MatchConstraintFileInfo::enz_cst_template_res( core::Size template_res ) const
 //MatchConstraintFileInfo::exgs() const {
 //	return exgs_;
 //}
-
 
 
 bool
@@ -729,8 +726,9 @@ MatchConstraintFileInfo::create_exgs() const
 
 
 MatchConstraintFileInfoList::MatchConstraintFileInfoList(
-	core::chemical::ResidueTypeSetCAP restype_set )
-	: restype_set_( restype_set )
+	core::chemical::ResidueTypeSetCAP restype_set
+) :
+	restype_set_( restype_set )
 {
 	mcfis_.clear();
 }
@@ -748,35 +746,27 @@ MatchConstraintFileInfoList::read_data( utility::io::izstream & data )
 	//mcfis_.clear();
 
 	core::Size new_index = mcfis_.size() + 1;
-
 	MatchConstraintFileInfoOP mcfi( new MatchConstraintFileInfo( new_index, restype_set_ ) );
 
 	if ( mcfi->read_data( data ) ) {
-
 		mcfi->process_data();
-
 		mcfis_.push_back( mcfi );
-
 		determine_upstream_restypes();
-
 		return true;
 	}
-
 	return false;
 }
 
 
 utility::vector1< MatchConstraintFileInfoCOP > const &
-MatchConstraintFileInfoList::mcfis_for_upstream_restype( core::chemical::ResidueTypeCOP restype ) const {
-
-	std::map< core::chemical::ResidueTypeCOP, utility::vector1< MatchConstraintFileInfoCOP > >::const_iterator mcfi_it = mcfis_for_restype_.find( restype );
-
+MatchConstraintFileInfoList::mcfis_for_upstream_restype( core::chemical::ResidueTypeCOP restype ) const
+{
+	std::map< core::chemical::ResidueTypeCOP, utility::vector1< MatchConstraintFileInfoCOP > >::const_iterator
+		mcfi_it = mcfis_for_restype_.find( restype );
 	if ( mcfi_it == mcfis_for_restype_.end() ) {
 		utility_exit_with_message( " could not find mcfi list for given restype" );
 	}
-
 	return mcfi_it->second;
-
 }
 
 std::list< core::conformation::ResidueCOP >
@@ -791,11 +781,16 @@ MatchConstraintFileInfoList::inverse_rotamers_against_residue(
 			continue;
 		}
 		//core::Size const invrot_template( target_template == 1 ? 2 : 1 );
-		if ( std::find( mcfis_[i]->allowed_res_name3s( target_template ).begin(), mcfis_[i]->allowed_res_name3s( target_template ).end(), target_conf->name3() ) == mcfis_[i]->allowed_res_name3s( target_template ).end() ) {
+		if ( std::find(
+				mcfis_[i]->allowed_res_name3s( target_template ).begin(),
+				mcfis_[i]->allowed_res_name3s( target_template ).end(),
+				target_conf->name3() )
+				== mcfis_[i]->allowed_res_name3s( target_template ).end() ) {
 			tr << "Can't create inverse rotamers for mcfi " << i << " because it doesn't contain target template for residue " << target_conf->name3() << "." << std::endl;
 			continue;
 		}
-		std::list< core::conformation::ResidueCOP > mcfi_invrots( mcfis_[i]->inverse_rotamers_against_residue( target_template, target_conf ) );
+		std::list< core::conformation::ResidueCOP > mcfi_invrots(
+			mcfis_[i]->inverse_rotamers_against_residue( target_template, target_conf ) );
 		to_return.splice( to_return.end(), mcfi_invrots  );
 	}
 	return to_return;
@@ -807,7 +802,6 @@ MatchConstraintFileInfoList::determine_upstream_restypes()
 {
 
 	upstream_restypes_.clear();
-
 	mcfis_for_restype_.clear();
 
 	utility::vector1< std::string > gly_vec;
@@ -817,7 +811,6 @@ MatchConstraintFileInfoList::determine_upstream_restypes()
 	core::chemical::ResidueTypeSetCOP restype_set( restype_set_ );
 
 	for ( core::Size i =1 ; i <= mcfis_.size(); ++i) {
-
 		bool is_backbone( mcfis_[i]->is_backbone( mcfis_[i]->upstream_res() ) );
 
 		//in case the mcfi is a backbone interaction, only allow glycine as the restype

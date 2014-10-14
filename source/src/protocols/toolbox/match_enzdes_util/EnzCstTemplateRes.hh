@@ -160,13 +160,26 @@ public:
 		return allowed_res_types_;
 	}
 
+	utility::vector1< core::chemical::ResidueTypeCOP > const &
+	allowed_res_types_pointers() const {
+		return allowed_res_types_pointers_;
+	}
+
+	/// @brief Iterator to the map from ResidueType pointers (addresses) to the set of atoms
+	/// that are used to build from; this returns ResidueTypes in an indeterminant order
+	/// as they are going to be sorted based on where in memory the ResidueTypes happened
+	/// to be allocated.
 	RestypeToTemplateAtomsMap::const_iterator
 	atom_inds_for_restype_begin() const {
-		return atom_inds_for_restype_.begin(); }
+		return atom_inds_for_restype_.begin();
+	}
 
+	/// @brief End iterator to the map from ResidueType pointers to the set of atoms
+	/// that are used to build from.
 	RestypeToTemplateAtomsMap::const_iterator
 	atom_inds_for_restype_end() const {
-		return atom_inds_for_restype_.end(); }
+		return atom_inds_for_restype_.end();
+	}
 
 	void
 	clear_all();
@@ -207,6 +220,9 @@ private:
 
 	//contains the names of allowed res types as specified by cst file
 	utility::vector1< std::string > allowed_res_types_;
+
+	//contains pointers to the allowed residue types that were specified in the cst file
+	mutable utility::vector1< core::chemical::ResidueTypeCOP > allowed_res_types_pointers_;
 
 	//contains all allowed atoms for a certain residue type
 	//represents the translation of the above cst file info (allowed_res_types_, atom1_, at1_type_, etc )
