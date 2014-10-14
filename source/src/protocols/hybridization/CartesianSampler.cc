@@ -38,6 +38,13 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loops.hh>
 
+#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/JobDistributorFactory.hh>
+#include <protocols/jd2/util.hh>
+#include <protocols/jd2/JobOutputter.hh>
+#include <protocols/jd2/SilentFileJobOutputter.hh>
+#include <protocols/jd2/Job.hh>
+
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
@@ -122,11 +129,13 @@
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 #include <basic/Tracer.hh>
+#include <ObjexxFCL/format.hh>
 
 #include <boost/unordered/unordered_map.hpp>
 
@@ -176,6 +185,7 @@ CartesianSampler::init() {
 	nminsteps_ = 10;
 	nfrags_=25;
 	ref_cst_weight_ = 1.0;
+	debug_ = false;
 	input_as_ref_ = false;
 	fullatom_ = false;
 	bbmove_ = false;
@@ -339,7 +349,7 @@ CartesianSampler::apply_transform( core::pose::Pose &frag, core::Vector const &p
 bool
 CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &frame ) {
 	using core::pack::task::operation::TaskOperationCOP;
-	
+
 	core::Size start = frame.start(),len = frame.length();
 	runtime_assert( overlap_>=1 && overlap_<=len/2);
 
@@ -632,7 +642,11 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 		(*myscore)(pose);
 
 		for (int r=1; r<=(int)nres; ++r) {
-			per_resCC[r] = core::scoring::electron_density::getDensityMap().matchRes( r , pose.residue(r), pose, symminfo , false);
+			int rsrc = r;
+			if (symminfo && !symminfo->bb_is_independent(r))
+				rsrc = symminfo->bb_follows(r);
+
+			per_resCC[r] = core::scoring::electron_density::getDensityMap().matchRes( rsrc , pose.residue(rsrc), pose, symminfo , false);
 			CCsum += per_resCC[r];
 			CCsum2 += per_resCC[r]*per_resCC[r];
 		}
@@ -831,6 +845,13 @@ CartesianSampler::apply( Pose & pose ) {
 		scorefxn_->show_line(TR,pose);
 	}
 
+	// for dubug name, grab the out tag from jd2
+	std::string base_name = protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag();
+	utility::vector1< std::string > temp_out_names= utility::split( base_name );
+	utility::file::FileName out_name = utility::file::combine_names( temp_out_names );
+	base_name = out_name.base();
+	std::string outname = option[ out::prefix ]()+base_name+option[ out::suffix ]();
+
 	for (int n=1; n<=(int)ncycles_; ++n) {
 		bool success=false;
 		int try_count=1000;
@@ -895,6 +916,11 @@ CartesianSampler::apply( Pose & pose ) {
 		mc->show_scores();
 		if (accept) {
 			TR << "Insert at " << insert_pos << " accepted!" << std::endl;
+			if (debug_) {
+				static int ctr=1;
+				pose.dump_pdb( outname+"_acc_"+ObjexxFCL::right_string_of( ctr, 6, '0' )+".pdb" );
+				ctr++;
+			}
 		} else {
 			TR << "Insert at " << insert_pos << " rejected!" << std::endl;
 		}
@@ -943,6 +969,9 @@ CartesianSampler::parse_my_tag(
 	}
 
 	// options
+	if( tag->hasOption( "debug" ) ) {
+		debug_ = tag->getOption<bool >( "debug" );
+	}
 	if( tag->hasOption( "fullatom" ) ) {
 		fullatom_ = tag->getOption<bool >( "fullatom" );
 	}

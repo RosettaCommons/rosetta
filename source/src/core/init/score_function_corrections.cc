@@ -382,9 +382,10 @@ init_crystal_refinement_correction() {
 	//fpd  crystal-refinement specific changes
 	if( option[cryst::crystal_refine]) {
 		// use -correct icoor
-		if ( ! option[ corrections::chemical::icoor_05_2009 ].user() ) {
-			option[corrections::chemical::icoor_05_2009].value( true );
-		}
+		//fpd talaris now has these corrections
+		//if ( ! option[ corrections::chemical::icoor_05_2009 ].user() ) {
+		//	option[corrections::chemical::icoor_05_2009].value( true );
+		//}
 
 		// use -correct rama fixes
 		if ( ! option[ corrections::score::rama_not_squared ].user() ) {
@@ -395,14 +396,14 @@ init_crystal_refinement_correction() {
 		}
 
 		// use dun10
-		if ( ! option[ corrections::score::dun10 ].user() ) {
-			option[corrections::score::dun10].value( true );
-		}
-
+		//fpd talaris now has these corrections
+		//if ( ! option[ corrections::score::dun10 ].user() ) {
+		//	option[corrections::score::dun10].value( true );
+		//}
 		// use bicubic interpolation
-		if ( ! option[ corrections::score::use_bicubic_interpolation ].user() ) {
-			option[corrections::score::use_bicubic_interpolation].value( true );
-		}
+		//if ( ! option[ corrections::score::use_bicubic_interpolation ].user() ) {
+		//	option[corrections::score::use_bicubic_interpolation].value( true );
+		//}
 
 		// read pdbs properly
 		if ( ! option[ in::missing_density_to_jump ].user() ) {
@@ -412,12 +413,12 @@ init_crystal_refinement_correction() {
 			option[in::preserve_crystinfo].value( true );
 		}
 
-		// special case for centroid scoring
+		// hacky way of letting centroid structures be scored against crystal data
 		if ( ! option[ out::file::no_output_cen ].user() ) {
 			option[out::file::no_output_cen].value( true );
 		}
 
-		// internal coordinate minimization: behave properly
+		// internal coordinate minimization change: don't dampen RB movement
 		if ( ! option[ optimization::scale_rb ].user() ) {
 			option[optimization::scale_rb].value( 1.0 );
 		}
@@ -462,15 +463,15 @@ init_beta_correction() {
 		// overrides weight files set in the other options - make sure all of these previous options are happy!
     if ( ! option[ score::weights ].user() ) {
       option[ score::weights ].value( "talaris2013_beta.wts" );
-    }	
+    }
 	}
 }
 
 void
 init_nonideal_correction() {
-	//PTC set up for flexible bond geometries 
+	//PTC set up for flexible bond geometries
 	if( option[optimization::nonideal]) {
-		// add jumps to missing densities so cart_bonded_length behaves correctly 
+		// add jumps to missing densities so cart_bonded_length behaves correctly
 		if ( ! option[ in::missing_density_to_jump ].user() ) {
 			option[ in::missing_density_to_jump ].value( true );
 		}
@@ -485,7 +486,7 @@ init_nonideal_correction() {
 			option[ relax::minimize_bond_angles ].value( true );
 		}
 
-		// limit default_max_cycles 
+		// limit default_max_cycles
 		if ( ! option[ optimization::default_max_cycles ].user() ) {
 			option[ optimization::default_max_cycles ].value( 200 );
 		}
@@ -495,7 +496,7 @@ init_nonideal_correction() {
 			option[ optimization::scmin_nonideal ].value( true );
 		}
 
-		// talaris2013_cart.wts - enables cart_bonded, disables pro_close, new reference weights 
+		// talaris2013_cart.wts - enables cart_bonded, disables pro_close, new reference weights
 		if ( ! option[ score::weights ].user() ) {
 			option[ score::weights ].value( "talaris2013_cart.wts" );
 		}

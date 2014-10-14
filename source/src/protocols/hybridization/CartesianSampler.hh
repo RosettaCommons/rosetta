@@ -146,6 +146,7 @@ private:
 	core::Real ref_cst_weight_;
 	bool input_as_ref_;
 	bool restore_csts_;
+	bool debug_;
 	bool fullatom_, bbmove_, recover_low_;
 	char force_ss_;
 	LoopsOP loops_;
