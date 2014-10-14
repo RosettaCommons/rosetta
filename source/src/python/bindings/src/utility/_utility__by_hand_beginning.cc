@@ -19,6 +19,11 @@
 #include <map>
 
 
+
+// Includes for dummy bindings to simplify import orders
+#include <utility/inline_file_provider.hh>
+
+
 namespace bp = boost::python;
 
 
@@ -992,4 +997,8 @@ void __utility_by_hand_beginning__()
 
 
     utility::wrap_access_pointer< utility::vector1< bool > >("utility_vector1_bool");
+
+
+	// Dummy bindings to simplify import orders
+	boost::python::class_< utility::SingletonBase<utility::Inline_File_Provider>, boost::noncopyable >( "__utility_SingletonBase_utility_Inline_File_Provider__");
 }

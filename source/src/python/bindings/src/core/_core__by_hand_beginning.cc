@@ -51,12 +51,24 @@
 #endif
 
 
-namespace bp = boost::python;
-
-
 #include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/methods/EnergyMethodCreator.hh>
+
+
+// Includes for dummy bindings to simplify import orders
+#include <core/chemical/ChemicalManager.hh>
+#include <core/scoring/ScoringManager.hh>
+#include <core/scoring/constraints/ConstraintIO.hh>
+#include <core/scoring/constraints/ConstraintFactory.hh>
+#include <core/io/silent/SilentStructFactory.hh>
+#include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
+
+
+
+namespace bp = boost::python;
+
+
 
 
 
@@ -668,4 +680,14 @@ void __core_by_hand_beginning__()
     boost::python::scope within(my_obj);
     bp::def("Q_Test_CI1B", Q_Test_CI1B);
     bp::def("Q_Test_EnergyMethodCreator", Q_Test_EnergyMethodCreator);
+
+
+	// Dummy bindings to simplify import orders
+	boost::python::class_< utility::SingletonBase<core::chemical::ChemicalManager>, boost::noncopyable >( "__utility_SingletonBase_core_chemical_ChemicalManager__");
+	boost::python::class_< utility::SingletonBase<core::scoring::ScoringManager>, boost::noncopyable >( "__utility_SingletonBase_core_scoring_ScoringManager__");
+	boost::python::class_< utility::SingletonBase<core::scoring::constraints::ConstraintIO>, boost::noncopyable >( "__utility_SingletonBase_core_scoring_constraints_ConstraintIO__");
+	boost::python::class_< utility::SingletonBase<core::scoring::constraints::ConstraintFactory>, boost::noncopyable >( "__utility_SingletonBase_core_scoring_constraints_ConstraintFactory__");
+	boost::python::class_< utility::SingletonBase<core::io::silent::SilentStructFactory>, boost::noncopyable >( "__utility_SingletonBase_core_io_silent_SilentStructFactory__");
+	boost::python::class_< utility::SingletonBase<core::pack::task::operation::ResLvlTaskOperationFactory>, boost::noncopyable >( "__utility_SingletonBase_core_pack_task_operation_ResLvlTaskOperationFactory__");
+
 }

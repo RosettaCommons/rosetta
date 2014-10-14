@@ -16,12 +16,18 @@
 #include <protocols/kinematic_closure/perturbers/Perturber.hh>
 #include <protocols/stepwise/options/StepWiseBasicOptions.hh>
 
-
-//#include <protocols/loop_modeling/loggers/Logger.hh>
-
-
-
 #include <utility/factory/WidgetFactory.hh>
+
+
+// Includes for dummy bindings to simplify import orders
+#include <protocols/jd2/JobOutputterFactory.hh>
+#include <protocols/jd2/JobInputterFactory.hh>
+#include <protocols/jumping/DisulfPairingLibrary.hh>
+#include <protocols/jumping/PairingLibrary.hh>
+#include <protocols/loops/loop_mover/refine/LoopRefineInnerCycleFactory.hh>
+#include <protocols/loops/LoopMoverFactory.hh>
+
+
 
 void __protocols_by_hand_beginning__()
 {
@@ -37,4 +43,13 @@ void __protocols_by_hand_beginning__()
 
     typedef boost::python::class_< ::protocols::stepwise::options::StepWiseBasicOptions, boost::python::bases< ::basic::resource_manager::ResourceOptions >, boost::noncopyable > StepWiseBasicOptions_exposer_type;
     StepWiseBasicOptions_exposer_type StepWiseBasicOptions_exposer("StepWiseBasicOptions", "protocols/stepwise/options/StepWiseBasicOptions.hh:33", boost::python::init <  >() );
+
+
+	boost::python::class_< utility::SingletonBase<protocols::jd2::JobOutputterFactory>, boost::noncopyable >( "__utility_SingletonBase_protocols_jd2_JobOutputterFactory__");
+	boost::python::class_< utility::SingletonBase<protocols::jd2::JobInputterFactory>, boost::noncopyable >( "__utility_SingletonBase_protocols_jd2_JobInputterFactory__");
+	boost::python::class_< utility::SingletonBase<protocols::jumping::StandardDisulfPairingLibrary>, boost::noncopyable >( "__utility_SingletonBase_protocols_jumping_StandardDisulfPairingLibrary__");
+	boost::python::class_< utility::SingletonBase<protocols::jumping::StandardPairingLibrary>, boost::noncopyable >( "__utility_SingletonBase_protocols_jumping_StandardPairingLibrary__");
+	boost::python::class_< utility::SingletonBase<protocols::loops::loop_mover::refine::LoopRefineInnerCycleFactory>, boost::noncopyable >( "__utility_SingletonBase_protocols_loops_loop_mover_refine_LoopRefineInnerCycleFactory__");
+	boost::python::class_< utility::SingletonBase<protocols::loops::LoopMoverFactory>, boost::noncopyable >( "__utility_SingletonBase_protocols_loops_LoopMoverFactory__");
+
 }
