@@ -117,7 +117,7 @@ SecondaryStructureCountFilter::parse_my_tag(
 	filter_helix_sheet_ = tag->getOption<bool>( "filter_helix_sheet", 1 );
 
 	if (filter_helix_) {
-		tr << "filter on "<< num_helix_ << " helics with length: "<<min_helix_length_<<"-"<< max_helix_length_ << std::endl;
+		tr << "filter on "<< num_helix_ << " helix with length: "<<min_helix_length_<<"-"<< max_helix_length_ << std::endl;
 		runtime_assert( num_helix_ > 0 );
 	}
 
@@ -132,7 +132,7 @@ SecondaryStructureCountFilter::parse_my_tag(
   }
 
   if (filter_helix_sheet_) {
-		tr << "filter on Sum of"<< num_helix_sheet_ << " helics with length: "<<min_helix_length_<<"-"<< max_helix_length_ << " AND sheet with length: "<<min_sheet_length_<<"-"<< max_sheet_length_ << std::endl;
+		tr << "filter on Sum of"<< num_helix_sheet_ << " helix with length: "<<min_helix_length_<<"-"<< max_helix_length_ << " AND sheet with length: "<<min_sheet_length_<<"-"<< max_sheet_length_ << std::endl;
 		runtime_assert( num_helix_sheet_ > 0 );
 	}
 

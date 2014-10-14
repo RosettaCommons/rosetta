@@ -31,6 +31,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/vector0.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -97,7 +98,7 @@ public:// main operation
 	core::Real report_sm( Pose const & pose ) const;
 	void report( std::ostream & out,  Pose const & pose ) const;
 	core::Real compute( Pose const & pose ) const;
-	core::Size n_req_res_in_seq( std::string const & ) const;
+	core::Size n_req_res_in_seq( std::string const &, utility::vector0< bool > const & is_checked ) const;
 private:
 
 	core::Size min_helix_length_;
@@ -110,7 +111,8 @@ private:
 	core::Real threshold_;
 	std::string req_residue_str_;
 	core::Size nres_req_per_secstruct_;
-	core::pack::task::TaskFactoryOP task_factory_;
+	core::pack::task::TaskFactoryOP res_check_task_factory_;
+	core::pack::task::TaskFactoryOP ss_select_task_factory_;
 
 	bool filter_helix_;
 	bool filter_sheet_;

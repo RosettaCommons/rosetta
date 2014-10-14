@@ -71,7 +71,6 @@ SecondaryStructureHasResidueFilter::parse_my_tag(
 	Pose const & )
 {
 	using protocols::jd2::parser::BluePrint;
-	//TODO: add taskop option to only operate on certain residues
   min_helix_length_ = tag->getOption<core::Size>( "min_helix_length", 4 );
   min_sheet_length_ = tag->getOption<core::Size>( "min_sheet_length", 3 );
   min_loop_length_ = tag->getOption<core::Size>( "min_loop_length", 1 );
@@ -98,17 +97,26 @@ SecondaryStructureHasResidueFilter::parse_my_tag(
     tr << "filter on loop with length: "<<min_loop_length_<<"-"<< max_loop_length_ << std::endl;
   }
 
-	task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
+	std::string const res_taskop_str( tag->getOption< std::string >( "res_check_task_operations", "" ) );
+	if( res_taskop_str.empty() ) res_check_task_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory );
+	else res_check_task_factory_ = protocols::rosetta_scripts::parse_task_operations( res_taskop_str, data );
+	std::string const ss_taskop_str( tag->getOption< std::string >( "ss_select_task_operations", "" ) );
+	if( ss_taskop_str.empty() ) ss_select_task_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory );
+	else ss_select_task_factory_ = protocols::rosetta_scripts::parse_task_operations( ss_taskop_str, data );
 }
 
 core::Size
 SecondaryStructureHasResidueFilter::n_req_res_in_seq(
-	std::string const & seq
+	std::string const & seq,
+	utility::vector0< bool > const & is_checked
 ) const {
+	assert( seq.size() == is_checked.size() );
 	if( seq.size() == 0 || req_residue_str_.size() == 0 ) return 0;
 	core::Size rescount = 0;
 	//strings are indexed from 0, derpface!
 	for( core::Size i=0; i<=seq.size() - 1; ++i ){
+		//skip if we're ignoring this residue because taskop
+		if( !is_checked[ i ] ) continue;
 		for( core::Size j=0; j<=req_residue_str_.size() - 1; ++j ){
 			if( seq[ i ] == req_residue_str_[ j ] ){
 				++rescount;
@@ -134,65 +142,91 @@ core::Real SecondaryStructureHasResidueFilter::compute( core::pose::Pose const &
 	core::Size num_sheet=0;
 	core::Size num_loop=0;
 
-	core::pack::task::PackerTaskOP task( task_factory_->create_task_and_apply_taskoperations( pose_copy ) );
+	//this task selects which residues are to be checked for having the right restype
+	core::pack::task::PackerTaskOP task( res_check_task_factory_->create_task_and_apply_taskoperations( pose_copy ) );
+	//TODO need another task to select secstruct elements considered
+	core::pack::task::PackerTaskOP ss_select_task( ss_select_task_factory_->create_task_and_apply_taskoperations( pose_copy ) );
 
 	std::string ss_seq;
 	core::Size ss_len( 0 );
 	std::string::const_iterator iter=dssp_ss.begin();
+	//boolean mask indexed from 0 to match seq which is a string
+	utility::vector0< bool > is_checked;
 	while (iter< dssp_ss.end()) {
 		if (*iter=='H') {
 				ss_seq.clear();
 				ss_len = 0;
+				is_checked.clear();
 				int ss_chain( pose_copy.chain( iter - dssp_ss.begin() + 1 ) ); //get chain of this ss element
 				//keep iterating until we fall off the end of the helix, accounts for chain endings
 				while (*iter=='H' && iter < dssp_ss.end() && ss_chain == pose_copy.chain( iter - dssp_ss.begin() + 1 ) ) {
 					++ss_len;
 					core::Size iter_index( iter - dssp_ss.begin() + 1 ); 
-					//cache aa1 sequence of residue where iterator is pointing only if designable in taskop
-					if( task->residue_task( iter_index ).being_designed() && pose_copy.residue( iter_index ).is_protein() )
-							ss_seq += pose_copy.sequence()[ iter_index - 1 ];
+					//TODO skip this res if not in ss selector task
+					if( ss_select_task->residue_task( iter_index ).being_designed() && pose_copy.residue( iter_index ).is_protein() ){
+						//cache aa1 sequence of residue where iterator is pointing only if designable in taskop
+						ss_seq += pose_copy.sequence()[ iter_index - 1 ];
+						//push_back yes consider this res or no to ss seq bool mask based on taskop
+						if( task->residue_task( iter_index ).being_designed() && pose_copy.residue( iter_index ).is_protein() )
+								is_checked.push_back( true );
+						else is_checked.push_back( false );
+					}
 					++iter;
 				}
         if ( ss_len >= min_helix_length_ && ss_len <= max_helix_length_ && ss_seq.length() > 0 ) {
 					++num_helix;
 					//how many instances of requires restype(s) is in this sestruct element?
-					if( n_req_res_in_seq( ss_seq ) >= nres_req_per_secstruct_ ) ++num_helix_has_residue;
+					if( n_req_res_in_seq( ss_seq, is_checked ) >= nres_req_per_secstruct_ ) ++num_helix_has_residue;
 				}
 		} else if ( *iter=='E') {
 				ss_seq.clear();
 				ss_len = 0;
+				is_checked.clear();
 				int ss_chain( pose_copy.chain( iter - dssp_ss.begin() + 1 ) ); //get chain of this ss element
 				//keep iterating until we fall off the end of the sheet, accounts for chain endings
 				while (*iter=='E' && iter < dssp_ss.end() && ss_chain == pose_copy.chain( iter - dssp_ss.begin() + 1 ) ) {
 					++ss_len;
 					core::Size iter_index( iter - dssp_ss.begin() + 1 ); 
-					//cache aa1 sequence of residue where iterator is pointing only if designable in taskop
-					if( task->residue_task( iter_index ).being_designed() && pose_copy.residue( iter_index ).is_protein() )
-							ss_seq += pose_copy.sequence()[ iter_index - 1 ];
+					//TODO skip this res if not in ss selector task
+					if( ss_select_task->residue_task( iter_index ).being_designed() && pose_copy.residue( iter_index ).is_protein() ){
+						//cache aa1 sequence of residue where iterator is pointing only if designable in taskop
+						ss_seq += pose_copy.sequence()[ iter_index - 1 ];
+						//push_back yes consider this res or no to ss seq bool mask based on taskop
+						if( task->residue_task( iter_index ).being_designed() && pose_copy.residue( iter_index ).is_protein() )
+								is_checked.push_back( true );
+						else is_checked.push_back( false );
+					}
 					++iter;
 				}
         if ( ss_len >= min_sheet_length_ && ss_len <= max_sheet_length_ && ss_seq.length() > 0 ) {
 					++num_sheet;
 					//how many instances of requires restype(s) is in this sestruct element?
-					if( n_req_res_in_seq( ss_seq ) >= nres_req_per_secstruct_ ) ++num_sheet_has_residue;
+					if( n_req_res_in_seq( ss_seq, is_checked ) >= nres_req_per_secstruct_ ) ++num_sheet_has_residue;
 				}
 		} else if ( *iter=='L') {
 				ss_seq.clear();
 				ss_len = 0;
+				is_checked.clear();
 				int ss_chain( pose_copy.chain( iter - dssp_ss.begin() + 1 ) ); //get chain of this ss element
 				//keep iterating until we fall off the end of the loop, accounts for chain endings
 				while (*iter=='L' && iter < dssp_ss.end() && ss_chain == pose_copy.chain( iter - dssp_ss.begin() + 1 ) ) {
 					++ss_len;
 					core::Size iter_index( iter - dssp_ss.begin() + 1 ); 
-					//cache aa1 sequence of residue where iterator is pointing only if designable in taskop
-					if( task->residue_task( iter_index ).being_designed() && pose_copy.residue( iter_index ).is_protein() )
-							ss_seq += pose_copy.sequence()[ iter_index - 1 ];
+					//TODO skip this res if not in ss selector task
+					if( ss_select_task->residue_task( iter_index ).being_designed() && pose_copy.residue( iter_index ).is_protein() ){
+						//cache aa1 sequence of residue where iterator is pointing only if designable in taskop
+						ss_seq += pose_copy.sequence()[ iter_index - 1 ];
+						//push_back yes consider this res or no to ss seq bool mask based on taskop
+						if( task->residue_task( iter_index ).being_designed() && pose_copy.residue( iter_index ).is_protein() )
+								is_checked.push_back( true );
+						else is_checked.push_back( false );
+					}
 					++iter;
 				}
         if ( ss_len >= min_loop_length_ && ss_len <= max_loop_length_ && ss_seq.length() > 0 ) {
 					++num_loop;
 					//how many instances of requires restype(s) is in this sestruct element?
-					if( n_req_res_in_seq( ss_seq ) >= nres_req_per_secstruct_ ) ++num_loop_has_residue;
+					if( n_req_res_in_seq( ss_seq, is_checked ) >= nres_req_per_secstruct_ ) ++num_loop_has_residue;
 				}
 		}
 	}
