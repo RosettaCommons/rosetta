@@ -1332,6 +1332,7 @@ def sortObjects(l):
     ''' sort list of C++ objects for wrapping
     '''
     def swap(i, j):
+        #print l[i], l[j]
         a = l[i];  l[i]=l[j];  l[j]=a
 
     f = True
@@ -1339,8 +1340,17 @@ def sortObjects(l):
         f = False
         for i in range( len(l) ):
             for j in range( i, len(l) ):
+                if isinstance(l[i], CppClass) and isinstance(l[j], CppClass) and 'utility::SingletonBase' in l[i].context+l[i].name and 'utility::SingletonBase' in l[j].context+l[j].name:
+                    if l[i].context+l[i].name > l[j].context+l[j].name: swap(i, j); f = True;
+                    continue
+
+                if isinstance(l[j], CppClass) and 'utility::SingletonBase' in l[j].context+l[j].name: swap(i, j); f = True; continue
+                if isinstance(l[i], CppClass) and 'utility::SingletonBase' in l[i].context+l[i].name: continue
+                    #if isinstance(l[j], CppClass): # some special cases (default parameter bechavor)
+
                 if isinstance(l[i], CppClass) and isinstance(l[j], CppClass):
                     if l[i].isNeeded(l[j]) and not l[j].isNeeded(l[i]):  swap(i, j); f = True; break
+                    #if 'utility::SingletonBase' in l[j].context+l[j].name: break
 
                 if isinstance(l[i], CppClass) and isinstance(l[j], CppEnum): swap(i, j); f = True; break
 
@@ -1349,6 +1359,11 @@ def sortObjects(l):
                 if isinstance(l[i], CppClass) and isinstance(l[j], CppClass): # some special cases (default parameter bechavor)
                     #print l[i].getChildrenContext(), l[j].getChildrenContext()
                     if l[i].getChildrenContext()=='::core::chemical::Atom::' and l[j].getChildrenContext()=='::core::chemical::AtomICoor::': swap(i, j); f = True; break
+
+                    #if 'utility::SingletonBase' in l[i].context+l[i].name  and  'utility::SingletonBase' not in l[j].context+l[j].name: swap(i, j); f = True; break
+                    #if 'utility::SingletonBase' in l[i].context+l[i].name  and  'utility::SingletonBase' in l[j].context+l[j].name:
+                    #   if l[i].context+l[i].name > l[j].context+l[j].name: swap(i, j); f = True; break
+
 
 
 def wrapModule(name, name_spaces, context, relevant_files_list, max_funcion_size, by_hand_beginning='', by_hand_ending='', monolith=False):
@@ -1362,8 +1377,16 @@ def wrapModule(name, name_spaces, context, relevant_files_list, max_funcion_size
 
     objects = []
     for n in name_spaces:
-        if n in context:
-            objects.extend( context[n] )
+        if n in context: objects.extend( context[n] )
+
+    if '::utility::' not in name_spaces:
+        for n in context:
+            if n.startswith('::u'):
+                for o in context[n]:
+                    if isinstance(o, CppClass):
+                        if '::utility::SingletonBase<' in o.context+o.name:
+                            print 'Adding SingletonBase instance:', o.context+o.name
+                            objects.extend( [o] )
 
     if name_spaces == ['::core::conformation::']:  # work-aroung for GCCXML template-misplace-bug
         for o in context['::core::graph::']:
@@ -1424,6 +1447,7 @@ def wrapModule(name, name_spaces, context, relevant_files_list, max_funcion_size
 def parseAndWrapModule(module_name, namespaces_to_wrap, xml_source, relevant_files_list, ParserType=GccXML, max_funcion_size=1024*1024*1024,
                        by_hand_beginning='', by_hand_ending='', monolith=False):
     print 'Wrapping %s... with file list as: %s...' % (namespaces_to_wrap, relevant_files_list)
+    relevant_files_list.append('utility/SingletonBase.hh')  # special case: self self-inheritance template
     for f in relevant_files_list[:] :  relevant_files_list.append('./'+f)
 
     print 'Parse XML using mini dom...'
