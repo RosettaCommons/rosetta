@@ -185,6 +185,9 @@ namespace options {
 		bool const & filter_native_big_bins() const { return filter_native_big_bins_; }
 		void set_filter_native_big_bins( bool const & setting ){ filter_native_big_bins_ = setting; }
 
+		bool const & allow_virtual_o2prime_hydrogens() const { return allow_virtual_o2prime_hydrogens_; }
+		void set_allow_virtual_o2prime_hydrogens( bool const & setting ){ allow_virtual_o2prime_hydrogens_ = setting; }
+
 		bool const & allow_virtual_side_chains() const { return allow_virtual_side_chains_; }
 		void set_allow_virtual_side_chains( bool const & setting ){ allow_virtual_side_chains_ = setting; }
 
@@ -238,6 +241,7 @@ namespace options {
 		bool local_redock_only_;
 		bool skip_coord_constraints_;
 		bool filter_native_big_bins_;
+		bool allow_virtual_o2prime_hydrogens_;
 		bool allow_virtual_side_chains_;
 		Size n_sample_;
 		bool protein_prepack_;

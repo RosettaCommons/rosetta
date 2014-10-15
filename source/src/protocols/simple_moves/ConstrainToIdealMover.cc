@@ -205,8 +205,11 @@ ConstrainToIdealMover::add_bond_length_constraint(
 	std::string const & atom_name1 = pose.residue( atom_id1.rsd() ).atom_name( atom_id1.atomno() );
 	std::string const & atom_name2 = pose.residue( atom_id2.rsd() ).atom_name( atom_id2.atomno() );
 
-	if ( !pose_reference.residue( atom_id1.rsd() ).has( atom_name1 ) ) return;
-	if ( !pose_reference.residue( atom_id2.rsd() ).has( atom_name2 ) ) return;
+	//	if ( !pose_reference.residue( atom_id1.rsd() ).has( atom_name1 ) ) return;
+	//	if ( !pose_reference.residue( atom_id2.rsd() ).has( atom_name2 ) ) return;
+
+	runtime_assert( pose_reference.residue( atom_id1.rsd() ).has( atom_name1 ) );
+	runtime_assert( pose_reference.residue( atom_id2.rsd() ).has( atom_name2 ) );
 
 	if ( pose.residue( atom_id1.rsd() ).is_virtual( atom_id1.atomno() ) ) return;
 	if ( pose.residue( atom_id2.rsd() ).is_virtual( atom_id2.atomno() ) ) return;
@@ -262,9 +265,13 @@ ConstrainToIdealMover::add_bond_angle_constraint(
 	std::string const & atom_name2 = pose.residue( atom_id2.rsd() ).atom_name( atom_id2.atomno() );
 	std::string const & atom_name3 = pose.residue( atom_id3.rsd() ).atom_name( atom_id3.atomno() );
 
-	if ( !pose_reference.residue( atom_id1.rsd() ).has( atom_name1 ) ) return;
-	if ( !pose_reference.residue( atom_id2.rsd() ).has( atom_name2 ) ) return;
-	if ( !pose_reference.residue( atom_id3.rsd() ).has( atom_name3 ) ) return;
+	//	if ( !pose_reference.residue( atom_id1.rsd() ).has( atom_name1 ) ) return;
+	//	if ( !pose_reference.residue( atom_id2.rsd() ).has( atom_name2 ) ) return;
+	//	if ( !pose_reference.residue( atom_id3.rsd() ).has( atom_name3 ) ) return;
+
+	runtime_assert( pose_reference.residue( atom_id1.rsd() ).has( atom_name1 ) );
+	runtime_assert( pose_reference.residue( atom_id2.rsd() ).has( atom_name2 ) );
+	runtime_assert( pose_reference.residue( atom_id3.rsd() ).has( atom_name3 ) );
 
 	if ( pose.residue( atom_id1.rsd() ).is_virtual( atom_id1.atomno() ) ) return;
 	if ( pose.residue( atom_id2.rsd() ).is_virtual( atom_id2.atomno() ) ) return;
@@ -324,10 +331,15 @@ ConstrainToIdealMover::add_bond_dihedral_constraint(
 	std::string const & atom_name3 = pose.residue( atom_id3.rsd() ).atom_name( atom_id3.atomno() );
 	std::string const & atom_name4 = pose.residue( atom_id4.rsd() ).atom_name( atom_id4.atomno() );
 
-	if ( !pose_reference.residue( atom_id1.rsd() ).has( atom_name1 ) ) return;
-	if ( !pose_reference.residue( atom_id2.rsd() ).has( atom_name2 ) ) return;
-	if ( !pose_reference.residue( atom_id3.rsd() ).has( atom_name3 ) ) return;
-	if ( !pose_reference.residue( atom_id4.rsd() ).has( atom_name4 ) ) return;
+	//	if ( !pose_reference.residue( atom_id1.rsd() ).has( atom_name1 ) ) return;
+	//	if ( !pose_reference.residue( atom_id2.rsd() ).has( atom_name2 ) ) return;
+	//	if ( !pose_reference.residue( atom_id3.rsd() ).has( atom_name3 ) ) return;
+	//	if ( !pose_reference.residue( atom_id4.rsd() ).has( atom_name4 ) ) return;
+
+	runtime_assert( pose_reference.residue( atom_id1.rsd() ).has( atom_name1 ) );
+	runtime_assert( pose_reference.residue( atom_id2.rsd() ).has( atom_name2 ) );
+	runtime_assert( pose_reference.residue( atom_id3.rsd() ).has( atom_name3 ) );
+	runtime_assert( pose_reference.residue( atom_id4.rsd() ).has( atom_name4 ) );
 
 	if ( pose.residue( atom_id1.rsd() ).is_virtual( atom_id1.atomno() ) ) return;
 	if ( pose.residue( atom_id2.rsd() ).is_virtual( atom_id2.atomno() ) ) return;
@@ -460,7 +472,7 @@ ConstrainToIdealMover::vary_bond_geometry(
 
 		for ( core::Size j = 1; j <= residue.natoms(); j++ ) {
 
-			//TR << "checking: res " << i << " atom " << j << " " << residue.atom_name( j ) << " " << i_want_this_atom_to_move( residue, j ) << std::endl;
+			//			TR << "checking: res " << i << " atom " << j << " " << residue.atom_name( j ) << " " << i_want_this_atom_to_move( residue, j ) << std::endl;
 			if ( !i_want_this_atom_to_move( residue, j ) ) continue;
 
 			core::kinematics::tree::AtomCOP current_atom ( pose.atom_tree().atom( AtomID(j,i) ).get_self_ptr() );
@@ -571,9 +583,11 @@ ConstrainToIdealMover::vary_bond_geometry(
 
 			for ( core::Size j = 1; j <= residue.natoms(); j++ ) {
 
+				//			TR << "checking: res " << i << " atom " << j << " " << residue.atom_name( j ) << " " << i_want_this_atom_to_move( residue, j ) << std::endl;
+
 			if ( !i_want_this_atom_to_move( residue, j ) ) continue;
 
-			core::kinematics::tree::AtomCOP current_atom ( & pose.atom_tree().atom( AtomID( j, i ) ) );
+			core::kinematics::tree::AtomCOP current_atom ( pose.atom_tree().atom( AtomID( j, i ) ).get_self_ptr() );
 			if ( current_atom->is_jump() ) continue;
 
 			///////////////////
@@ -583,7 +597,6 @@ ConstrainToIdealMover::vary_bond_geometry(
 			if ( input_stub_atom1->is_jump() ) continue;
 
 			core::kinematics::tree::AtomCOP input_stub_atom2( current_atom->input_stub_atom2() );
-
 			if ( !input_stub_atom2 ) continue;
 			if ( input_stub_atom2 == current_atom ) continue;
 			if ( legacy_dof_allow_move_ && !i_want_this_atom_to_move( pose, input_stub_atom2->id() ) ) continue;
@@ -657,7 +670,7 @@ ConstrainToIdealMover::create_pose_reference(
 	using namespace core::chemical;
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD /*"rna"*/ );
-	make_pose_from_sequence( pose_reference, pose.sequence(),	*rsd_set );
+	make_pose_from_sequence( pose_reference, pose.annotated_sequence(),	*rsd_set );
 	apply_ideal_coordinates_for_alternative_pucker( pose, pose_reference );
 }
 

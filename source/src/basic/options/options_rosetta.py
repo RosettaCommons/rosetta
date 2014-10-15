@@ -2965,7 +2965,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			),
 		Option('light_chain', 'String',
 			desc='Type of light chain if known.  Only used for design for now.',
-			legal = ['unknown', 'lambda', 'kappa'],			
+			legal = ['unknown', 'lambda', 'kappa'],
 			default='unknown'
 			),
 		Option('check_cdr_chainbreaks', 'Boolean',
@@ -3118,15 +3118,15 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			),
 		Option( 'input_fv','File',
 			desc='input antibody variable (Fv) region',
-			default='FR02.pdb' 
+			default='FR02.pdb'
 			),
 		Option( 'camelid','Boolean',
 			desc='Camelid input with only heavy (VH) chain',
-			default='false' 
+			default='false'
 			),
 		Option( 'camelid_constraints','Boolean',
 			desc='Display constraints file for use with camelid H3 modeler',
-			default='false' 
+			default='false'
 			),
 
 		##############################################################################
@@ -3135,7 +3135,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option('base_instructions', 'String',
 				desc='The Default/Baseline instructions file. Should not need to be changed.',
 				default='/sampling/antibodies/design/default_instructions.txt'
-				), 
+				),
 
 			Option('instructions', 'String',
 				desc='Path for instruction file',
@@ -5893,15 +5893,15 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'sampler_num_pose_kept', 'Integer', desc="set_num_pose_kept by ResidueSampler )", default='108' ),
 			Option( 'native_edensity_score_cutoff', 'Real', desc= "native_edensity_score_cutoff", default='-1.0' ), #Fang's electron density code,
 			Option( 'o2prime_legacy_mode', 'Boolean', desc="complete virtualization of O2' hydrogen during sampling, and then complete restoration and packing", default='false' ),
-#			Option( 'allow_virtual_o2prime', 'Boolean', desc= "allow O2' to be virtualized during packing.", default='false' ),
+			Option( 'allow_virtual_o2prime_hydrogens', 'Boolean', desc= "allow O2' hydrogen to be virtualized during packing.", default='true' ),
 			Option( 'sampler_perform_phosphate_pack', 'Boolean', desc= "perform terminal phosphate packing inside StepWiseRNA_ResidueSampler", default='true' ),
 			Option( 'distinguish_pucker', 'Boolean', desc= "distinguish pucker when cluster:both in sampler and clusterer", default='true' ),
-			Option( 'finer_sampling_at_chain_closure', 'Boolean', desc= "Samplerer: finer_sampling_at_chain_closure", default='false' ), #Jun 9, 201,
-			Option( 'PBP_clustering_at_chain_closure', 'Boolean', desc= "Samplerer: PBP_clustering_at_chain_closure", default='false' ),
+			Option( 'finer_sampling_at_chain_closure', 'Boolean', desc= "Sampler: finer_sampling_at_chain_closure", default='false' ), #Jun 9, 201,
+			Option( 'PBP_clustering_at_chain_closure', 'Boolean', desc= "Sampler: PBP_clustering_at_chain_closure", default='false' ),
 			Option( 'sampler_allow_syn_pyrimidine', 'Boolean', desc="sampler_allow_syn_pyrimidine", default='false' ), #Nov 15, 2010
-			Option( 'sampler_extra_chi_rotamer', 'Boolean', desc="Samplerer: extra_syn_chi_rotamer", default='false' ),
-			Option( 'sampler_extra_beta_rotamer', 'Boolean', desc="Samplerer: extra_beta_rotamer", default='false' ),
-			Option( 'sampler_extra_epsilon_rotamer', 'Boolean', desc="Samplerer: extra_epsilon_rotamer", default='true' ), #Change this to true on April 9, 2011
+			Option( 'sampler_extra_chi_rotamer', 'Boolean', desc="Sampler: extra_syn_chi_rotamer", default='false' ),
+			Option( 'sampler_extra_beta_rotamer', 'Boolean', desc="Sampler: extra_beta_rotamer", default='false' ),
+			Option( 'sampler_extra_epsilon_rotamer', 'Boolean', desc="Sampler: extra_epsilon_rotamer", default='true' ), #Change this to true on April 9, 2011
 			Option( 'force_centroid_interaction', 'Boolean', desc="Require base stack or pair even for single residue loop closed (which could also be bulges!)", default='false' ), #for SWM
 			Option( 'virtual_sugar_legacy_mode', 'Boolean', desc="In virtual sugar sampling, use legacy protocol to match Parin's original workflow", default='false' ),
 			Option( 'erraser', 'Boolean', desc="Use KIC sampling", default='false' ),
@@ -5916,13 +5916,13 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'integration_test', 'Boolean', desc=" integration_test ", default='false' ), #March 16, 2012
 			Option( 'allow_bulge_at_chainbreak', 'Boolean', desc="Allow sampler to replace chainbreak res with virtual_rna_variant if it looks have bad fa_atr score.", default='true' ),
 			Option( 'parin_favorite_output', 'Boolean', desc=" parin_favorite_output ", default='true' ), #Change to true on Oct 10, 2010
-			Option( 'reinitialize_CCD_torsions', 'Boolean', desc="Samplerer: reinitialize_CCD_torsions: Reinitialize_CCD_torsion to zero before every CCD chain closure", default='false' ),
-			Option( 'sample_both_sugar_base_rotamer', 'Boolean', desc="Samplerer: Super hacky for SQUARE_RNA", default='false' ),
-			Option( 'sampler_include_torsion_value_in_tag', 'Boolean', desc="Samplerer:include_torsion_value_in_tag", default='true' ),
+			Option( 'reinitialize_CCD_torsions', 'Boolean', desc="Sampler: reinitialize_CCD_torsions: Reinitialize_CCD_torsion to zero before every CCD chain closure", default='false' ),
+			Option( 'sample_both_sugar_base_rotamer', 'Boolean', desc="Sampler: Super hacky for SQUARE_RNA", default='false' ),
+			Option( 'sampler_include_torsion_value_in_tag', 'Boolean', desc="Sampler:include_torsion_value_in_tag", default='true' ),
 			Option( 'sampler_assert_no_virt_sugar_sampling', 'Boolean', desc="sampler_assert_no_virt_sugar_sampling", default='false' ), #July 28, 2011
 			Option( 'sampler_try_sugar_instantiation', 'Boolean', desc="for floating base sampling, try to instantiate sugar if it looks promising", default='false' ), #July 28, 2011
-			Option( 'do_not_sample_multiple_virtual_sugar', 'Boolean', desc=" Samplerer: do_not_sample_multiple_virtual_sugar ", default='false' ),
-			Option( 'sample_ONLY_multiple_virtual_sugar', 'Boolean', desc=" Samplerer: sample_ONLY_multiple_virtual_sugar ", default='false' ),
+			Option( 'do_not_sample_multiple_virtual_sugar', 'Boolean', desc=" Sampler: do_not_sample_multiple_virtual_sugar ", default='false' ),
+			Option( 'sample_ONLY_multiple_virtual_sugar', 'Boolean', desc=" Sampler: sample_ONLY_multiple_virtual_sugar ", default='false' ),
 			Option( 'allow_base_pair_only_centroid_screen', 'Boolean', desc="allow_base_pair_only_centroid_screen", default='false' ), #This only effect floating base sampling + dinucleotide.. deprecate option
 			Option( 'minimizer_rename_tag', 'Boolean', desc="Reorder and rename the tag by the energy_score", default='true' ), #March 15, 2012
 			Option( 'minimize_res', 'IntegerVector', desc='alternative to fixed_res', default=[] ),

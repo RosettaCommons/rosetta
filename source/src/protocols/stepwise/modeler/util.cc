@@ -280,23 +280,70 @@ find_root_without_virtual_ribose( kinematics::FoldTree const & f, pose::Pose con
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 bool
+effective_lower_terminus_based_on_working_res( Size const i,
+																				utility::vector1< Size > const & working_res,
+																				utility::vector1< Size > const & res_list,
+																				utility::vector1< Size > const & cutpoint_open_in_full_model ){
+
+	if ( working_res.size() == 0 ) return false; // not defined
+
+	// decrement to the nearest cutpoint -- anything planning to be sampled along the way?
+	for ( Size n = res_list[ i ] - 1; n >= 1; n-- ){
+		if ( cutpoint_open_in_full_model.has_value( n ) ) {
+			return true;
+		} else { // not a cutpoint yet.
+			if ( working_res.has_value( n ) ) return false;
+		}
+	}
+	return true;
+
+	// this was a problem when skip_bulge was activated.
+	//	return ( working_res.size() > 0 && !sample_res.has_value( res_list[ i ] - 1 ) &&
+	//					 ( i == 1 || ( res_list[i - 1] < res_list[i] - 1 ) ) );
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+effective_upper_terminus_based_on_working_res( Size const i,
+																							utility::vector1< Size > const & working_res,
+																							utility::vector1< Size > const & res_list,
+																							utility::vector1< Size > const & cutpoint_open_in_full_model,
+																							Size const nres_full){
+
+	if ( working_res.size() == 0 ) return false; // not defined
+
+	// increment to the nearest cutpoint -- anything planning to be sampled along the way?
+	for ( Size n = res_list[ i ]; n <= nres_full; n++ ){
+		if ( cutpoint_open_in_full_model.has_value( n ) ) {
+			return true;
+		} else { // not a cutpoint yet.
+			if ( working_res.has_value( n ) ) return false;
+		}
+	}
+	return true;
+
+	// this was a problem when skip_bulge was activated.
+	//			 ( sample_res.size() > 0 && !sample_res.has_value( res_list[i] + 1 ) &&
+	//				 ( i == pose.total_residue() || ( res_list[i + 1] > res_list[i] + 1 ) ) ) ){
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+bool
 definite_terminal_root( pose::Pose const & pose, Size const i ){
 	using namespace core::pose::full_model_info;
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
 	utility::vector1< Size > const & res_list = full_model_info.res_list();
 	utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
-	utility::vector1< Size > const & sample_res = full_model_info.sample_res();
+	utility::vector1< Size > const & working_res = full_model_info.working_res();
 	if ( res_list[ i ] == 1 ||
 			 cutpoint_open_in_full_model.has_value( res_list[ i ] - 1 ) ||
-			 ( sample_res.size() > 0 && !sample_res.has_value( res_list[ i ] - 1 ) &&
-				 ( i == 1 || ( res_list[i - 1] < res_list[i] - 1 ) ) ) ){
+			 effective_lower_terminus_based_on_working_res( i, working_res, res_list, cutpoint_open_in_full_model ) ){
 		// great, nothing will ever get prepended here.
 		return true;
 	}
 	if ( res_list[ i ] == full_model_info.size() ||
 			 cutpoint_open_in_full_model.has_value( res_list[ i ] ) ||
-			 ( sample_res.size() > 0 && !sample_res.has_value( res_list[i] + 1 ) &&
-				 ( i == pose.total_residue() || ( res_list[i + 1] > res_list[i] + 1 ) ) ) ){
+			 effective_upper_terminus_based_on_working_res( i, working_res, res_list, cutpoint_open_in_full_model, full_model_info.size() ) ){
 		// great, nothing will ever get appended here.
 		return true;
 	}

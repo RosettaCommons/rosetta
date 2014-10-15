@@ -389,6 +389,13 @@ set_full_model_info( pose::Pose & pose, FullModelInfoOP & full_model_info ){
 	update_pdb_info_from_full_model_info( pose );
 }
 
+//////////////////////////////////////////////////////////////////////////////
+void
+update_full_model_info_from_pose( pose::Pose & pose ){
+	FullModelInfoOP full_model_info( new FullModelInfo( pose ) );
+	set_full_model_info( pose, full_model_info );
+}
+
 } //full_model_info
 } //pose
 } //core

@@ -50,7 +50,9 @@ namespace packer {
 		stepwise_packer->set_scorefxn( pack_scorefxn );
 		stepwise_packer->set_use_packer_instead_of_rotamer_trials( options->use_packer_instead_of_rotamer_trials() );
 		stepwise_packer->set_allow_virtual_side_chains( options->allow_virtual_side_chains() );
-		if ( !options->o2prime_legacy_mode() ) stepwise_packer->set_allow_virtual_o2prime_hydrogens( options->allow_virtual_side_chains() );
+		if ( !options->o2prime_legacy_mode() ) {
+			stepwise_packer->set_allow_virtual_o2prime_hydrogens( options->allow_virtual_o2prime_hydrogens() );
+		}
 		stepwise_packer->set_pack_all_side_chains( options->global_optimize() );
 		return stepwise_packer;
 	}

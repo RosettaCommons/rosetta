@@ -74,6 +74,9 @@ namespace options {
 		bool const & o2prime_legacy_mode() const { return o2prime_legacy_mode_; }
 		void set_o2prime_legacy_mode( bool const & setting ){ o2prime_legacy_mode_ = setting; }
 
+		bool const & allow_virtual_o2prime_hydrogens() const { return allow_virtual_o2prime_hydrogens_; }
+		void set_allow_virtual_o2prime_hydrogens( bool const & setting ){ allow_virtual_o2prime_hydrogens_ = setting; }
+
 		bool const & sampler_perform_phosphate_pack() const { return sampler_perform_phosphate_pack_; }
 		void set_sampler_perform_phosphate_pack( bool const & setting ){ sampler_perform_phosphate_pack_ = setting; }
 
@@ -197,6 +200,7 @@ namespace options {
 
 		core::Real native_edensity_score_cutoff_;
 		bool o2prime_legacy_mode_;
+		bool allow_virtual_o2prime_hydrogens_;
 		bool sampler_perform_phosphate_pack_;
 		bool distinguish_pucker_;
 		bool finer_sampling_at_chain_closure_;

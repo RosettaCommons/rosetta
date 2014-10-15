@@ -67,6 +67,7 @@ namespace options {
 
 		native_edensity_score_cutoff_ = -1;
 		o2prime_legacy_mode_ = false;
+		allow_virtual_o2prime_hydrogens_ = false;
 		sampler_perform_phosphate_pack_ = true;
 		distinguish_pucker_ = true;
 		finer_sampling_at_chain_closure_ = false;
@@ -118,6 +119,7 @@ namespace options {
 	{
 		native_edensity_score_cutoff_ = src.native_edensity_score_cutoff_;
 		o2prime_legacy_mode_ = src.o2prime_legacy_mode_;
+		allow_virtual_o2prime_hydrogens_ = src.allow_virtual_o2prime_hydrogens_;
 		sampler_perform_phosphate_pack_ = src.sampler_perform_phosphate_pack_;
 		distinguish_pucker_ = src.distinguish_pucker_;
 		finer_sampling_at_chain_closure_ = src.finer_sampling_at_chain_closure_;
@@ -166,6 +168,7 @@ namespace options {
 
 		native_edensity_score_cutoff_ = option[ OptionKeys::stepwise::rna::native_edensity_score_cutoff]();
 		o2prime_legacy_mode_ = option[ OptionKeys::stepwise::rna::o2prime_legacy_mode ]();
+		allow_virtual_o2prime_hydrogens_ = option[ OptionKeys::stepwise::rna::allow_virtual_o2prime_hydrogens ]();
 		sampler_perform_phosphate_pack_ = option[ OptionKeys::stepwise::rna::sampler_perform_phosphate_pack ]();
 		distinguish_pucker_ = option[ OptionKeys::stepwise::rna::distinguish_pucker]();
 		finer_sampling_at_chain_closure_ = option[ OptionKeys::stepwise::rna::finer_sampling_at_chain_closure]();

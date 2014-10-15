@@ -167,6 +167,9 @@ full_model_info_defined( pose::Pose const & pose );
 void
 set_full_model_info( pose::Pose & pose, FullModelInfoOP & full_model_info );
 
+void
+update_full_model_info_from_pose( pose::Pose & pose );
+
 } //full_model_info
 } //pose
 } //core

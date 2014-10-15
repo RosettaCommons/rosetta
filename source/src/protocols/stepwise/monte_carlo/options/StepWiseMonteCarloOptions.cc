@@ -67,6 +67,7 @@ namespace options {
 		local_redock_only_( true ),
 		skip_coord_constraints_( false ),
 		filter_native_big_bins_( false ),
+		allow_virtual_o2prime_hydrogens_( false ),
 		allow_virtual_side_chains_( false ),
 		n_sample_( 18 ),
 		protein_prepack_( false ),
@@ -214,7 +215,8 @@ namespace options {
 		// protein-specific
 		options->set_skip_coord_constraints( skip_coord_constraints() );
 		options->set_filter_native_big_bins( filter_native_big_bins() );
-		options->set_allow_virtual_side_chains( allow_virtual_side_chains() );
+		options->set_allow_virtual_o2prime_hydrogens( allow_virtual_o2prime_hydrogens() ); // RNA
+		options->set_allow_virtual_side_chains( allow_virtual_side_chains() ); // protein
 		options->set_n_sample( n_sample() );
 		options->set_prepack( protein_prepack() );
 		options->set_expand_loop_takeoff( true );

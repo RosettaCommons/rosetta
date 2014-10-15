@@ -59,7 +59,7 @@
 //
 // Purpose: create an RNA helix with A-form torsions, but low in Rosetta energy.
 //
-//  * Uses a hacky weights file with high rna_torsion, otherwise helix gets wonky.
+//  * Uses a hacky weights file with high rna_torsion, otherwise short helices gets wonky.
 //  * Updated to allow modeling of bulges & dangling ends.
 //  * Typically called through rna_helix.py available in Rosetta/tools/rna_tools/
 //
@@ -116,7 +116,6 @@ RNA_HelixAssembler::RNA_HelixAssembler():
 	full_sequence_( "" )
 {
 	Mover::type("RNA_HelixAssembler");
-	//	scorefxn_->set_weight( core::scoring::atom_pair_constraint, 5.0 );
 	//	scorefxn_->set_weight( core::scoring::rna_torsion, 20.0 );
 	// why are we getting clashes?
 	//	scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );
@@ -338,18 +337,9 @@ RNA_HelixAssembler::set_Aform_torsions( pose::Pose & pose, Size const & n ) cons
 /////////////////////////////////////////////////
 void
 RNA_HelixAssembler::build_on_base_pair( pose::Pose & pose, Size const & n, std::string const & seq1, std::string const & seq2 ) const {
-
- 	using namespace core::conformation;
- 	using namespace core::chemical;
- 	using namespace core::id;
-
 	append_Aform_residue(  pose, n - 1, seq1 );
 	prepend_Aform_residue( pose, n + 1, seq2 );
-
-	using namespace core::pose::full_model_info;
-	FullModelInfoOP full_model_info( new FullModelInfo( pose ) );
-	set_full_model_info( pose, full_model_info );
-
+	core::pose::full_model_info::update_full_model_info_from_pose( pose );
 }
 
 
@@ -373,6 +363,11 @@ RNA_HelixAssembler::minimize_base_step( pose::Pose & pose, Size const n, core::s
 
 	using namespace core::scoring;
 	using namespace core::optimization;
+
+	if ( !scorefxn_->has_nonzero_weight( core::scoring::atom_pair_constraint ) ){
+		TR << TR.Magenta << "Scorefunction does not have atom_pair_constraint on -- setting weight to 5.0." << TR.Reset << std::endl;
+		scorefxn_->set_weight( core::scoring::atom_pair_constraint, 5.0 );
+	}
 
 	Real const cst_weight = scorefxn->get_weight( atom_pair_constraint );
 	//runtime_assert( cst_weight != 0 );
@@ -401,6 +396,7 @@ RNA_HelixAssembler::minimize_base_step( pose::Pose & pose, Size const n, core::s
 	scorefxn->set_weight( atom_pair_constraint, cst_weight );
 	(*scorefxn)( pose );
 
+
 }
 
 //////////////////////////////////////////////////////////////////
@@ -414,6 +410,7 @@ RNA_HelixAssembler::put_constraints_on_base_step( pose::Pose & pose, Size const 
 	pose.constraint_set( new_cst_set ); //blank out cst set.
 
 	protocols::farna::setup_base_pair_constraints( pose, pairings );
+
 }
 
 //////////////////////////////////////////////////////
@@ -663,6 +660,8 @@ RNA_HelixAssembler::append_Aform_residue( pose::Pose & pose, Size const & n, std
 		id_list.push_back( TorsionID( n+1, id::CHI, 1) );
 		perturb_torsion(pose, id_list);
 	}
+
+	core::pose::full_model_info::update_full_model_info_from_pose( pose );
 }
 
 
@@ -701,6 +700,8 @@ RNA_HelixAssembler::prepend_Aform_residue( pose::Pose & pose, Size const & n, st
 		id_list.push_back( TorsionID( n+1, BB, 3) );
 		perturb_torsion(pose, id_list);
 	}
+
+	core::pose::full_model_info::update_full_model_info_from_pose( pose );
 }
 
 //////////////////////////////////////////////////////////////////////////////////
