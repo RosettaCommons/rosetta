@@ -12,6 +12,9 @@
 """Brief:   This PyRosetta script performs a bound-bound dock between an
          oligosaccharide and a carbohydrate-binding protein.
 
+Example: ./dock_glycans.py MBP.pdb G4.pdb --local --overwrite --prepack 
+        --ref MBP-G4_ref.pdb --output_folder output/docking/ --mute --n_decoys 100
+
 Author:  Jason W. Labonte
 
 """
@@ -19,6 +22,7 @@ Author:  Jason W. Labonte
 # Imports
 from argparse import ArgumentParser
 from os import remove, listdir
+from os.path import isfile
 from math import exp
 from random import random
 
@@ -29,7 +33,9 @@ from rosetta import init, Pose, pose_from_pdb, PyMOL_Mover, setup_foldtree, \
                     hbond_sr_bb, hbond_lr_bb, hbond_bb_sc, hbond_sc, fa_elec, \
                     fa_sol, fa_atr, fa_rep, standard_packer_task, \
                     TaskFactory, InitializeFromCommandline, IncludeCurrent, \
-                    RestrictToRepacking, PackRotamersMover
+                    RestrictToRepacking, PackRotamersMover, calc_Irmsd, \
+                    calc_interaction_energy, calc_Fnat
+from rosetta.core.scoring import non_peptide_heavy_atom_RMSD
 from rosetta.protocols.rigid import RigidBodyPerturbMover, \
                                     RigidBodyRandomizeMover, \
                                     partner_upstream, partner_downstream
@@ -83,7 +89,7 @@ def parse_arguments():
                         help='the filename of one of the PDB structures to ' +
                              'be docked')
     parser.add_argument('--output_folder', type=str,
-                        default='output/docking/global/',
+                        default='output/docking/',
                         help='the directory name where output files should ' +
                              'be saved')
     parser.add_argument('--local', action='store_true',
@@ -138,7 +144,8 @@ def parse_arguments():
 def clrdir(directory):
     """Delete all files in the given directory."""
     for f in listdir(directory):
-        remove(directory + f)
+        if isfile(directory + f):
+            remove(directory + f)
 
 
 def merge_pdb_files(filename1, filename2, output_folder):
@@ -181,6 +188,28 @@ def ramp_score_weight(score_function, method, target, fraction_completion):
     score_function.set_weight(method, new_weight)
 
 
+def get_pose_metrics(pose, ref, sf, jump):
+    ligand_rmsd = str(round(non_peptide_heavy_atom_RMSD(pose, ref), 2))
+    #interface_rmsd = str(round(calc_Irmsd(pose, ref, sf, Vector1([jump])), 2))
+    interaction_energy = \
+              str(round(calc_interaction_energy(pose, sf, Vector1([jump])), 2))
+    fraction_native_contacts = \
+                       str(round(calc_Fnat(pose, ref, sf, Vector1([jump])), 2))
+
+    if not args.mute:
+        print '  Metrics for this decoy:'
+        print '   Ligand RMSD:                ', ligand_rmsd
+        #print '   Interface RMSD:             ', interface_rmsd
+        print '   Interaction Energy:         ', interaction_energy
+        print '   Fraction of native contacts:', fraction_native_contacts
+
+    metrics = 'ligand_rmsd: ' + ligand_rmsd
+    #metrics += ' I_rmsd: ' + interface_rmsd
+    metrics += ' interaction_energy: ' + interaction_energy
+    metrics += ' Fnat: ' + fraction_native_contacts
+    return metrics
+
+
 if __name__ == '__main__':
     # Parse arguments.
     args = parse_arguments()
@@ -202,6 +231,7 @@ if __name__ == '__main__':
     init(extra_options='-include_sugars -include_lipids ' +
                        '-read_pdb_link_records -write_pdb_link_records ' +
                        '-override_rsd_type_limit -mute basic -mute numeric ' +
+                       #'-mute utility -mute core -run:constant_seed -out:levels protocols.simple_moves.MinMover:500')
                        '-mute utility -mute core -mute protocols')
 
     # Create pose.
@@ -216,17 +246,22 @@ if __name__ == '__main__':
     visualize(starting_pose)
 
     # Prepare foldtree
+    # Currently, this assumes that the ligand is the final chain.
     chain_endings = starting_pose.conformation().chain_endings()
-    partners = starting_pose.pdb_info().chain(chain_endings[JUMP_NUM]) + \
-              "_" + starting_pose.pdb_info().chain(chain_endings[JUMP_NUM] + 1)
+    last_cut_point = chain_endings[len(chain_endings)]
+    upstream_chains = ''
+    for cut_point in chain_endings:
+        upstream_chains += starting_pose.pdb_info().chain(cut_point)
+    downstream_chain = starting_pose.pdb_info().chain(last_cut_point + 1)
+    partners = upstream_chains + "_" + downstream_chain
 
     setup_foldtree(starting_pose, partners, Vector1([JUMP_NUM]))
 
     # Print some information about the starting pose.
     print "", starting_pose.fold_tree(),
-    print 'Ligand center is',
+    print 'Ligand (chain ' + downstream_chain + ') center is',
     print starting_pose.jump(JUMP_NUM).get_translation().length,
-    print 'Angstroms from protein center.'
+    print 'Angstroms from protein center (chain(s) ' + upstream_chains + ').'
 
     # Prepare scoring function.
     #sf = get_fa_scorefxn()
@@ -325,10 +360,17 @@ if __name__ == '__main__':
             distance = pose.jump(JUMP_NUM).get_translation().length
             last_pose.assign(pose)
             perturber.apply(pose)
+            slider.apply(pose)
             visualize(pose)
-            #jump_minimizer.apply(pose)  # Seg-faults; why?
-            #visualize(pose)
+            #print 'SCORE BEFORE MIN:', sf(pose), 'DISTANCE:', pose.jump(JUMP_NUM).get_translation().length
+            #print 'SF ATR WEIGHT:', sf.get_weight(fa_atr)
+            #jump_minimizer.score_function(sf)
+            #print 'MIN SF ATR WEIGHT:', jump_minimizer.score_function().get_weight(fa_atr)
+            #jump_minimizer.apply(pose)  # Never finishes; why?
+            #print 'FINISHED MIN'
+            visualize(pose)
             #print '    Score changed from', old_score, 'to', sf(pose), ':',
+            #mc.boltzmann(pose)
             if mc.boltzmann(pose):
                 # Only perform a distance acceptance check if the new pose is
                 # accepted.
@@ -340,9 +382,9 @@ if __name__ == '__main__':
                 print '   Cycle', cycle, '  Current Score:', sf(pose)
             visualize(pose)
 
-        print '  Final Score for decoy', jd.current_num, ':', sf(pose)
+        print '  Final Score for decoy', jd.current_num, ":", sf(pose)
         #sf.show(pose)  # TEMP
         if args.ref:
-            rmsd = non_peptide_heavy_atom_RMSD(pose, ref_pose)
-            jd.additional_decoy_info = 'ligand_rmsd: ' + str(round(rmsd, 2))
+            jd.additional_decoy_info = \
+                                 get_pose_metrics(pose, ref_pose, sf, JUMP_NUM)
         jd.output_decoy(pose)

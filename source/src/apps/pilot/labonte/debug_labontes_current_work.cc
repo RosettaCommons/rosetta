@@ -29,17 +29,18 @@
 //#include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
 //#include <core/kinematics/FoldTree.hh>
-//#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.hh>
 //#include <core/id/TorsionID.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
-//#include <core/scoring/ScoreFunction.hh>
-//#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 //#include <core/pack/task/PackerTask.hh>
 //#include <core/pack/task/TaskFactory.hh>
 
+#include <protocols/simple_moves/MinMover.hh>
 //#include <protocols/simple_moves/BackboneMover.hh>
 //#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
+#include <protocols/docking/util.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -58,10 +59,14 @@ int main(int argc, char *argv[])
 {
     try {
 		using namespace std;
+		using namespace utility;
 		using namespace core;
+		using namespace kinematics;
 		using namespace scoring;
 		using namespace import_pose;
 		using namespace pose;
+		using namespace protocols;
+		using namespace simple_moves;
 
 		// initialize core
 		devel::init(argc, argv);
@@ -71,18 +76,36 @@ int main(int argc, char *argv[])
 
 		// Make a test pose.
 		//make_pose_from_sequence( pose, "AAAAAAAAAA", "fa_standard" );
-		pose_from_pdb( ref, "/home/labonte/Workspace/Carbohydrates/MBP-G4_ref.pdb" );
-		pose = ref;
+		pose_from_pdb( pose, "/home/labonte/Workspace/Carbohydrates/MBP-G4_ref.pdb" );
+
+		vector1< int > movable_jumps( 1, 1 );
+		docking::setup_foldtree( pose, "A_B", movable_jumps );
 
 		cout << pose << endl << endl;
 
-		cout << "CA RMSD: " << CA_rmsd( pose, ref ) << endl;
-		cout << "Heavy-atom ligand RMSD: " << non_peptide_heavy_atom_RMSD( pose, ref ) << endl;
+		ScoreFunctionOP sf( get_score_function() );
 
-		pose.set_phi( 372, 180.0 );
+		cout << "Initial Score: " << (*sf)( pose ) << endl;
 
-		cout << "CA RMSD: " << CA_rmsd( pose, ref ) << endl;
-		cout << "Heavy-atom ligand RMSD: " << non_peptide_heavy_atom_RMSD( pose, ref ) << endl;
+		MoveMapOP mm( MoveMapOP( new MoveMap() ) );
+		mm->set_jump( 1, true );
+
+		MinMover jump_minimizer;
+		jump_minimizer.movemap( mm );
+		jump_minimizer.score_function( sf );
+
+		rigid::RigidBodyPerturbMover perturber( 1, 2.0, 0.5 );
+
+		jump_minimizer.apply( pose );
+
+		cout << "Minimization Score Before Any Moves: " << (*sf)( pose ) << endl;
+
+		for ( core::uint i = 1; i <= 100; ++i ) {
+			perturber.apply( pose );
+			jump_minimizer.apply( pose );
+
+			cout << "Minimization Score After Rigid Move " << i << ": " << (*sf)( pose ) << endl;
+		}
 
 		//pose.dump_pdb( "" );
    } catch ( utility::excn::EXCN_Base const & e ) {

@@ -563,9 +563,21 @@ def fragment_ligand(molfile): #{{{
     print "(Proteins average 15.5 atoms (7.8 non-H atoms) per residue)"
     return num_frag_id
 #}}}
-def build_fragment_trees(molfile): #{{{
+def build_fragment_trees(molfile, options): #{{{
     '''Assigns a root atom for each fragment and parents and children.'''
-    # Assign root atoms based on instructions in the molfile
+    # Assign root and nbr atoms based on instructions in the molfile or the command line
+    if options.root_atom is not None:
+        if 0 < options.root_atom < len(molfile.atoms):
+            molfile.atoms[options.root_atom - 1].is_root = True
+        else:
+            raise ValueError("--root_atom option must be from 1 to the number "
+                             "of atoms in the molfile.")
+    if options.nbr_atom is not None:
+        if 0 < options.nbr_atom < len(molfile.atoms):
+            molfile.atoms[options.nbr_atom - 1].is_nbr = True
+        else:
+            raise ValueError("--nbr_atom option must be from 1 to the number "
+                             "of atoms in the molfile.")
     for line in molfile.footer:
         # Standard MDL style is with a space, but KWK has used "MROOT" in the past.
         if line.startswith("M ROOT"):  molfile.atoms[ int(line.split()[2]) - 1 ].is_root = True
@@ -579,12 +591,14 @@ def build_fragment_trees(molfile): #{{{
         # If we want to have a default way of choosing the root atom, this is the place:
         root_atoms = [a for a in molfile.atoms if a.fragment_id == frag_id and a.is_root]
         if len(root_atoms) == 0:
-            print "WARNING:  no root atom specified, using auto-selected NBR atom instead."
+            print "WARNING:  no root atom specified, using NBR atom instead."
             (nbr, nbr_dist) = choose_neighbor_atom(molfile, frag_id)
             nbr.is_root = True
             root_atoms = [nbr]
         elif len(root_atoms) != 1:
-            raise ValueError("You must have no more than one 'M ROOT' record in the molfile per ligand fragment")
+            raise ValueError("You must have no more than one root atom, "
+                             "specified either at the command line or by an "
+                             "'M ROOT' record in the molfile, per ligand fragment")
         root_atom = root_atoms[0]
         # Protein residues appear to go depth first, so that all chi angles ride on each other.
         # Depth first assignment -- leads to very deep trees
@@ -1288,6 +1302,16 @@ and for visualizing exactly what was done to the ligand.
         help="don't expand proton chis if above this many total confs",
         metavar="MAX"
     )
+    parser.add_option("--root_atom",
+        type="int",
+        help="which atom in the molfile is the root? (indexed from 1)",
+        metavar="ATOM_NUM"
+    )
+    parser.add_option("--nbr_atom",
+        type="int",
+        help="which atom in the molfile is the nbr atom? (indexed from 1)",
+        metavar="ATOM_NUM"
+    )
     parser.add_option("-k", "--kinemage",
         default=None,
         help="write ligand topology to FILE",
@@ -1441,7 +1465,7 @@ and for visualizing exactly what was done to the ligand.
     assign_rotatable_bonds(m.bonds)
     assign_rigid_ids(m.atoms)
     num_frags = fragment_ligand(m)
-    build_fragment_trees(m)
+    build_fragment_trees(m, options)
     assign_internal_coords(m)
     #uniquify_atom_names(m.atoms)
 
@@ -1456,7 +1480,7 @@ and for visualizing exactly what was done to the ligand.
     if options.centroid:
         strip_H(m, lambda a: a.cen_type is None)
         for a in m.atoms: a.ros_type, a.cen_type = a.cen_type, a.ros_type
-        build_fragment_trees(m)
+        build_fragment_trees(m, options)
         assign_internal_coords(m)
         ret = write_all_files(m, molfiles, num_frags, options, suffix=".cen")
         if ret != 0: return ret

@@ -36,3 +36,7 @@ framework as here described.
 
 ~Labonte
 <JWLabonte@jhu.edu>
+
+PS/Note to Self: I am not certain this is the IUPAC standard, but hydrogens are
+numbered such that L-Hs have lower numbers than R-Hs and methyl Hs are numbered
+in a clockwise manner.

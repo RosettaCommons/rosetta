@@ -61,7 +61,7 @@ ATOM 3H18 Hapo  HA   0.02
 CONNECT  C1  CAN_ROTATE   # CONN1  A fatty acyl group will always be an UPPER_TERMINUS of its BRANCH; there is no UPPER_CONNECT or LOWER_CONNECT.  If one wants the free acid, he or she will need to write a patch file for that.
 
 BOND  C1   C2
-BOND  C1   O1
+BOND_TYPE  C1   O1  DOUBLE
 BOND  C2  1H2
 BOND  C2   C3
 BOND  C2  2H2
@@ -84,13 +84,13 @@ BOND  C8  1H8
 BOND  C8  2H8
 BOND  C8   C9
 BOND  C9   H9
-BOND  C9   C10
+BOND_TYPE  C9   C10 DOUBLE
 BOND  C10  C11
 BOND  C10  H10
 BOND  C11  C12
 BOND  C11 2H11
 BOND  C11 1H11
-BOND  C12  C13
+BOND_TYPE  C12  C13 DOUBLE
 BOND  C12  H12
 BOND  C13  H13
 BOND  C13  C14

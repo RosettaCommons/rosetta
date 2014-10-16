@@ -1,7 +1,7 @@
 NAME sphingosine           # trans-(2S,3R)-2-amino-4-octadec-4-ene-1,3-diol
 IO_STRING SPH Z            # SPH in the PDB is shown as cis, but in actual PDB files and in nature, it is trans.
 TYPE POLYMER               # POLYMER is selected here, because this is a "cap" for polymers such as glycolipids.
-VARIANT LOWER_TERMINUS BRANCH_POINT
+VARIANT LOWER_TERMINUS_VARIANT BRANCH_POINT_VARIANT
 AA UNK
 
 # Main-chain atoms:
@@ -108,7 +108,7 @@ BOND  C6  1H6
 BOND  C6  2H6
 BOND  C6   C5
 BOND  C5   H5
-BOND  C5   C4
+BOND_TYPE  C5   C4  DOUBLE
 BOND  C4   H4
 BOND  C4   C3
 BOND  C3   O3
