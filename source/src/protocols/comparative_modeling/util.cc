@@ -78,30 +78,6 @@ using std::string;
 
 static thread_local basic::Tracer tr( "protocols.comparative_modeling.util" );
 
-core::sequence::SequenceAlignment alignment_from_cmd_line() {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::sequence;
-
-	utility::vector1< core::sequence::SequenceAlignment > alns;
-	utility::file::FileName const fn( option[ in::file::alignment ]()[1] );
-
-	if ( option[ cm::aln_format ]() == "mini" ) {
-		alns = read_grishin_aln_file( static_cast< std::string > (fn) );
-	} else if ( option[ cm::aln_format ]() == "grishin" ) {
-		alns = read_general_aln_file( static_cast< std::string > (fn) );
-	} else {
-		std::string const msg(
-			"Error: don't recognize alignment format " +
-			option[ cm::aln_format ]() + "!"
-		);
-		utility_exit_with_message( msg );
-	}
-
-	runtime_assert( alns.size() > 0 );
-	return alns[1];
-}
-
 /// @detail The premise underlying this tortuous method is simple--
 /// identify aligned/unaligned regions in a sequence alignment with
 /// the constraint that each region has a certain minimum length.
