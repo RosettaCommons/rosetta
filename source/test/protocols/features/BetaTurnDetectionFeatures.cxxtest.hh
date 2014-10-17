@@ -16,11 +16,7 @@
 #include <test/protocols/init_util.hh>
 
 // Project headers
-
-/// This thing I am doing here is a nasty little hack, but I want to test some private methods.
-#define private public
-	#include <protocols/features/BetaTurnDetectionFeatures.hh>
-#undef private
+#include <protocols/features/BetaTurnDetection.hh>
 
 // Utility headers
 #include <utility/excn/Exceptions.hh>
@@ -39,7 +35,7 @@ public:
 
 	void test_ramachandran_hashes() {
 		using namespace protocols::features;
-		BetaTurnDetectionFeaturesOP beta_turns( new BetaTurnDetectionFeatures );
+		BetaTurnDetectionOP beta_turns( new BetaTurnDetection );
 		
 		// Test edge cases and more normal bounds for trans peptide planes for the case of phi <= 0
 		TS_ASSERT( beta_turns->determine_ramachandran_hash_for_residue_with_dihedrals( 0., 50., 180. ) == "A" );
@@ -77,7 +73,7 @@ public:
 	
 	void test_validate_ramachandran_hash() {
 		using namespace protocols::features;
-		BetaTurnDetectionFeaturesOP beta_turns( new BetaTurnDetectionFeatures );
+		BetaTurnDetectionOP beta_turns( new BetaTurnDetection );
 		
 		std::string test_string;
 		
