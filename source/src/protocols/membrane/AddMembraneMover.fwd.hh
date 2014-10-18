@@ -18,7 +18,7 @@
 ///				return true.
 ///
 /// @author     Rebecca Alford (rfalford12@gmail.com)
-/// @note       Last Modified (6/21/14)
+/// @note       Last Modified: 6/21/14
 
 #ifndef INCLUDED_protocols_membrane_AddMembraneMover_fwd_hh
 #define INCLUDED_protocols_membrane_AddMembraneMover_fwd_hh

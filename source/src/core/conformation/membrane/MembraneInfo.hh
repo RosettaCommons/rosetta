@@ -37,8 +37,6 @@
 #include <core/conformation/membrane/SpanningTopology.fwd.hh>
 #include <core/conformation/membrane/LipidAccInfo.fwd.hh>
 
-#include <core/conformation/membrane/MembranePlanes.fwd.hh>
-
 // Package Headers
 #include <core/types.hh>
 
@@ -87,8 +85,7 @@ public:
 		Conformation & conformation,
 		core::Size membrane_pos,
 		SpanningTopologyOP topology,
-		core::SSize membrane_jump = 2,
-		bool view_in_pymol = false
+		core::SSize membrane_jump = 2
 	);
 	
 	/// @brief Custom Constructor - Membrane pos, topology & lips
@@ -102,9 +99,7 @@ public:
 		core::Size membrane_pos,
 		SpanningTopologyOP topology,
 		LipidAccInfoOP lips,
-		core::SSize membrane_jump = 2,
-		bool view_in_pymol = false
-	);
+		core::SSize membrane_jump = 2	);
 		
 	/// @brief Copy Constructor
 	/// @details Create a deep copy of this object
@@ -192,26 +187,6 @@ public:
 	/// of the fold tree in addition to maintaining a reasonable fold tree
 	bool check_membrane_fold_tree( FoldTree const & ft_in ) const;
 	
-	/////////////////////
-	/// Visualizaiton ///
-	/////////////////////
-	
-	/// @brief Check Membrane Planes initialized for visualization
-	bool
-	view_in_pymol() const;
-	
-	/// @brief Setup Planes Info Object
-	void
-	setup_plane_visualization(
-	  utility::vector1< Size > top_points,
-	  utility::vector1< Size > bottom_points
-	  );
-	
-	/// @brief Membrane Planes Points
-	/// @details Return object containing membrane planes info. Initialized at setup
-	MembranePlanesOP plane_info();
-
-	
 private: // data
 
 	// Keep track of the Pose's conformation
@@ -223,8 +198,6 @@ private: // data
 	
 	// membrane residue number in the pose
 	core::Size membrane_rsd_num_;
-	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
-	// core::Size anchoring_rsd_num_;
 	
 	// membrane jump position
 	core::SSize membrane_jump_;
@@ -232,10 +205,6 @@ private: // data
 	// Lipit Accessibility and Topology Info
 	LipidAccInfoOP lipid_acc_data_;
 	SpanningTopologyOP spanning_topology_;
-	
-	// Allow visualization
-	bool view_in_pymol_;
-	MembranePlanesOP plane_info_;
 	
 }; // MembraneInfo
 	

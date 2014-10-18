@@ -1,0 +1,7 @@
+# Basic Options & Membranes
+-in:file:s inputs/1afo_tr_input.pdb
+-membrane_new:setup:spanfiles inputs/1afo_tr.span
+-membrane_new:scoring:hbond
+
+# Symmetry Options
+-symmetry:symmetry_definition inputs/1afo_tr.c2.symm  # Symmetry Definition file

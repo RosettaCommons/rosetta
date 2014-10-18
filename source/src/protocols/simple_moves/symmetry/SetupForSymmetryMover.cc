@@ -111,6 +111,12 @@ SetupForSymmetryMover::SetupForSymmetryMover() :
 {
 }
 
+SetupForSymmetryMover::SetupForSymmetryMover( core::conformation::symmetry::SymmDataOP symmdata ) :
+	protocols::moves::Mover("SetupForSymmetryMover"),
+	slide_(false),
+	symmdef_( symmdata )
+{}
+
 SetupForSymmetryMover::SetupForSymmetryMover( std::string const & symmdef_file) :
 	protocols::moves::Mover("SetupForSymmetryMover"),
 	slide_(false),

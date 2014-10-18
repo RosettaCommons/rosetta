@@ -21,8 +21,8 @@
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/util.hh>
-#include <core/membrane/geometry/util.hh>
-#include <core/membrane/geometry/EmbeddingDef.hh>
+#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/geometry/EmbeddingDef.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/MembranePositionFromTopologyMover.hh>
 //#include <protocols/membrane/OptimizeMembraneMover.hh>
@@ -62,11 +62,10 @@ using namespace core;
 using namespace core::pose;
 using namespace core::conformation;
 using namespace core::conformation::membrane;
-using namespace core::membrane::geometry;
+using namespace protocols::membrane::geometry;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace protocols::membrane;
-using namespace core::membrane::geometry;
 
 static thread_local basic::Tracer TR( "apps.pilot.jkleman.mpdocking_setup" );
 

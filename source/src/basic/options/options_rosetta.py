@@ -156,7 +156,7 @@ Options = Option_Group( '',
 #				default="false"),
 
 		## Membrane JD2 Option
-		## Last Modified: 1/12/14
+		## Last Modified: 8/23/14
 		## Author: Rebecca Alford
 		Option("membrane", "Boolean",
 			desc="Initialize pose as a membrane protein using specified membrane parameters. Default is false",
@@ -2435,9 +2435,6 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	#New Membrane Protein Option group
 	Option_Group( 'membrane_new',
 
-		# Include a VRT anchored foldtree
-		Option( 'anchored_foldtree', 'Boolean', desc="Build a fold tree anchored by a VRT so the membrane and protein have explicit jumps to modify" ),
-
 		#Membrane options
 		Option( 'thickness', 'Real', desc='User-defined membrane thickness. Overwrites default thickness of 60A.'),
 
@@ -2468,9 +2465,6 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'spanning', 'Boolean', desc='Penalty if structure-based spanning doesn\'t match spanfile - on/off.'),
 		Option( 'wt_spanning', 'Real', desc='Weight for spanning penalty.'),
 
-		# Visualize in PyMol (PyMolMover)
-		Option( 'view_in_pymol', 'Boolean', desc="When the PyMol viewer is enabled, add points to explicitly define the membrane planes and view during the simulation" ),
-
 		Option_Group( 'viewer',
 			Option( 'thickness', 'Real', desc="Thicnkess of membrane to visualize", default='12.5' ),
 			Option( 'num_points', 'Integer', desc="Number of points to define the membrane planes. x >= 3" ),
@@ -2496,6 +2490,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'lipsfile', 'String', desc="List of lips files by chain", default='mypdb.lips4' ),
 			Option( 'center', 'RealVector', desc="membrane center x,y,z" ),
 			Option( 'normal', 'RealVector', desc="membrane normal x,y,z" ),
+			Option( 'membrane_rsd', 'Real', desc="membrane residue position" ),
 		),
 
 	),

@@ -177,7 +177,13 @@ void SilentFileJobOutputter::final_pose(
 
 	// only write a scorefile if specified by the user
 	if ( write_separate_scorefile_ ) {
-		scorefile(job, pose, "", (tag.empty() ? "" : std::string("_") + tag));
+		
+		// Adding Luki & Brian's JD2 Patch (@ralford 8/23/14)
+		core::pose::Pose pose_copy( pose );
+		ss->energies_into_pose( pose_copy );
+		scorefile(job, pose_copy, "", (tag.empty() ? "" : std::string("_") + tag));
+		
+		//scorefile(job, pose, "", (tag.empty() ? "" : std::string("_") + tag));
 	}
 }
 

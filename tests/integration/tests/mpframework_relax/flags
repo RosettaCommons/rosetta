@@ -1,0 +1,11 @@
+-parser:protocol membrane_relax.xml
+-in:file:s inputs/1afo_tr_native.pdb
+-in:ignore_unrecognized_res
+-membrane_new:setup:spanfiles inputs/1afo_tr.span
+-membrane_new:scoring:hbond
+-relax:fast
+-relax:jump_move true
+-score:weights fa_menv_smooth_2014
+-out:pdb
+-out:file:scorefile 2bs2_scored.sc
+-packing:pack_missing_sidechains false 

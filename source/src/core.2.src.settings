@@ -113,7 +113,6 @@ sources = {
 		"SpanningTopology",
 		"LipidAccInfo",
 		"MembraneInfo",
-		"MembranePlanes",
 		"util",
 	],
 	"core/conformation/orbitals": [

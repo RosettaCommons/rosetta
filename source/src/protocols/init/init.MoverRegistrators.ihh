@@ -373,11 +373,10 @@ static MoverRegistrator< abinitio::abscript::AbscriptLoopCloserCMCreator > reg_A
 static MoverRegistrator< abinitio::abscript::StructPerturberCMCreator > reg_StructPerturberCMCreator;
 static MoverRegistrator< abinitio::abscript::RigidChunkCMCreator > reg_RigidChunkCMCreator;
 
-static MoverRegistrator< membrane::AddMembraneMoverCreator > reg_AddMembraneMoverCreator;
-//static MoverRegistrator< membrane::InitialMembranePositionMoverCreator > reg_InitialMembranePositionMoverCreator;
-//static MoverRegistrator< membrane::TransformIntoMembraneMoverCreator > reg_TransformIntoMembraneMoverCreator;
-//static MoverRegistrator< membrane::MembranePositionRTMoverCreator > reg_MembranePositionRTMoverCreator;
-//static MoverRegistrator< membrane::MembranePositionPerturbMoverCreator > reg_MembranePositionPerturbMoverCreator;
+static MoverRegistrator< membrane::AddMembraneMoverCreator > reg_AddMembraneMoverCreator; 
+static MoverRegistrator< membrane::MembranePositionFromTopologyMoverCreator > reg_MembranePositionFromTopologyMoverCreator;
+static MoverRegistrator< membrane::SetMembranePositionMoverCreator > reg_SetMembranePositionMoverCreator; 
+static MoverRegistrator< membrane::symmetry::SetupForMembraneSymmetryCreator > reg_SetupForMembraneSymmetryCreator; 
 
 static MoverRegistrator< membrane::visualize::VisualizeMembraneMoverCreator > reg_VisualizeMembraneMoverCreator;
 

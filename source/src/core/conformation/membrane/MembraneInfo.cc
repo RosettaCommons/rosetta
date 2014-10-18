@@ -33,8 +33,7 @@
 #include <core/conformation/membrane/Span.hh>
 #include <core/conformation/membrane/LipidAccInfo.hh>
 
-#include <core/conformation/membrane/MembraneParams.hh>
-#include <core/conformation/membrane/MembranePlanes.hh>
+#include <core/conformation/membrane/MembraneParams.hh> 
 
 // Package Headers
 #include <core/conformation/Conformation.hh>
@@ -78,14 +77,11 @@ using namespace core::kinematics;
 /// of fullatom membrane transition = 10A and no spanning topology or
 /// lips info defined
 MembraneInfo::MembraneInfo() :
-	utility::pointer::ReferenceCount(),
 	conformation_( *(new Conformation()) ),
 	thickness_( 15.0 ),
 	steepness_( 10.0 ),
 	membrane_rsd_num_( 1 ),
-	membrane_jump_( 2 ),
-	view_in_pymol_( false ),
-	plane_info_( /* 0 */ )
+	membrane_jump_( 2 )
 {}
 
 /// @brief Custom Constructor - Membrane pos & topology
@@ -97,18 +93,14 @@ MembraneInfo::MembraneInfo(
 	Conformation & conformation,
 	core::Size membrane_pos,
 	SpanningTopologyOP topology,
-	core::SSize membrane_jump,
-	bool view_in_pymol
+	core::SSize membrane_jump
 	) :
-	utility::pointer::ReferenceCount(),
 	conformation_( conformation ),
 	thickness_( 15.0 ),
 	steepness_( 10.0 ),
 	membrane_rsd_num_( membrane_pos ),
 	membrane_jump_( membrane_jump ),
-	spanning_topology_( topology ),
-	view_in_pymol_( view_in_pymol ),
-	plane_info_( /* 0 */ )
+	spanning_topology_( topology )
 {}
 
 /// @brief Custom Constructor - Membrane pos, topology & lips
@@ -122,34 +114,27 @@ MembraneInfo::MembraneInfo(
 	core::Size membrane_pos,
 	SpanningTopologyOP topology,
 	LipidAccInfoOP lips,
-	core::SSize membrane_jump,
-	bool view_in_pymol
+	core::SSize membrane_jump
 	) :
-	utility::pointer::ReferenceCount(),
 	conformation_( conformation ),
 	thickness_( 15.0 ),
 	steepness_( 10.0 ),
 	membrane_rsd_num_( membrane_pos ),
 	membrane_jump_( membrane_jump ),
 	lipid_acc_data_( lips ),
-	spanning_topology_( topology ),
-	view_in_pymol_( view_in_pymol ),
-	plane_info_( /* 0 */ )
+	spanning_topology_( topology )
 {}
 
 /// @brief Copy Constructor
 /// @details Create a deep copy of this object
 MembraneInfo::MembraneInfo( MembraneInfo const & src ) :
-	utility::pointer::ReferenceCount(),
 	conformation_( src.conformation_ ),
 	thickness_( src.thickness_ ),
 	steepness_( src.steepness_ ),
 	membrane_rsd_num_( src.membrane_rsd_num_ ),
 	membrane_jump_( src.membrane_jump_ ),
 	lipid_acc_data_( src.lipid_acc_data_ ),
-	spanning_topology_( src.spanning_topology_ ),
-	view_in_pymol_( src.view_in_pymol_ ),
-	plane_info_( src.plane_info_ )
+	spanning_topology_( src.spanning_topology_ )
 {}
 
 /// @brief Assignment Operator
@@ -317,34 +302,6 @@ MembraneInfo::check_membrane_fold_tree( FoldTree const & ft_in ) const {
 	
 	// Otherwise, looks reasonable!
 	return true;
-}
-
-/////////////////////
-/// Visualizaiton ///
-/////////////////////
-
-/// @brief Check membrane planes are initialized for visualization
-bool
-MembraneInfo::view_in_pymol() const {
-	return plane_info_ != 0;
-}
-
-/// @brief Setup Planes Info Object
-void
-MembraneInfo::setup_plane_visualization(
-	utility::vector1< Size > top_points,
-	utility::vector1< Size > bottom_points
-	) {
-	
-	using namespace core::conformation::membrane;
-	plane_info_ = MembranePlanesOP( new MembranePlanes( top_points, bottom_points ) );
-}
-
-/// @brief Membrane Planes Points
-/// @details Return object containing membrane planes info. Initialized at setup
-MembranePlanesOP
-MembraneInfo::plane_info() {
-	return plane_info_;
 }
 	
 } // membrane

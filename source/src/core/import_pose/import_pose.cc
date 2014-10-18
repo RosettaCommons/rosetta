@@ -635,7 +635,7 @@ void build_pose_as_is2(
 	// optimize H if using a full-atom residue type set, and no_optH is not specified
 	if ( residue_set.name() == FA_STANDARD ) {
 		//if pack_missing_density specified, repack residues w/ missing density
-		if( options.pack_missing_sidechains() ) {
+		if( options.pack_missing_sidechains()  && ! options.membrane() ) {
 			pack::pack_missing_sidechains( pose, missing );
 		}
 		// optimize H if using a fullatom residue type set, and no_optH is not specified

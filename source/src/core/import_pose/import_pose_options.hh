@@ -49,6 +49,7 @@ public:
 	// accessors
 	bool centroid() const;
 	bool fold_tree_io() const;
+	bool membrane() const;
 	bool no_optH() const;
 	bool pack_missing_sidechains() const;
 	bool read_fold_tree() const;
@@ -64,6 +65,7 @@ public:
 	// mutators
 	void set_centroid( bool centroid );
 	void set_fold_tree_io( bool fold_tree_io );
+	void set_membrane( bool membrane );
 	void set_no_optH( bool no_optH );
 	void set_pack_missing_sidechains( bool pack_missing_sidechains );
 	void set_read_fold_tree( bool read_fold_tree );
@@ -82,6 +84,7 @@ private:
 private:
 	bool centroid_;
 	bool fold_tree_io_;
+	bool membrane_;
 	bool no_optH_;
 	bool pack_missing_sidechains_;
 	bool read_fold_tree_;

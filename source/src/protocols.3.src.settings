@@ -305,16 +305,22 @@ sources = {
 		"MembranePositionFromTopologyMover",
 		"RandomMembranePositionMover",
     ],
-    "protocols/membrane/ddG": [
-    	"MembraneDDGMover",
-    	"Mutation",
+    "protocols/membrane/io": [
+         "SpanFileOptions",
+         "SpanFileLoader",
+         "LipoFileOptions",
+         "LipoFileLoader",
+     ],
+    "protocols/membrane/geometry" :[
+		"util",
+		"EmbeddingDef",
+		"Embedding",	
     ],
-    "protocols/membrane/relax": [
-    	#"MPFastRelaxMover",
+    "protocols/membrane/symmetry" : [
+    	"SetupForMembraneSymmetry",
     ],
     "protocols/membrane/visualize": [
     	"VisualizeMembraneMover",
-    	"ShowMembranePlanesMover",
     ],
 	"protocols/normalmode": [
 		"NormalMode",

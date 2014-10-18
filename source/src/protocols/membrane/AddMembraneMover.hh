@@ -66,6 +66,11 @@ public:
 	/// and lips from the command line interface.
 	AddMembraneMover();
 	
+	/// @brief Custom Constructor - Create membrane pose from existing membrane resnum
+	/// @details Loads in membrane information from the commandline. Just needs a
+	/// membrane residue number (application is symmetry)
+	AddMembraneMover( core::SSize membrane_rsd );
+	
 	/// @brief Custom Constructor - mainly for PyRosetta
 	/// @details Creates a membrane pose setting the membrane
 	/// center at emb_center and normal at emb_normal and will load
@@ -74,7 +79,7 @@ public:
 		Vector emb_center,
 		Vector emb_normal,
 		std::string spanfile,
-		bool view_in_pymol = false
+		core::SSize membrane_rsd=0
 	);
 				
 	/// @brief Custorm Constructur with lips info - mainly for PyRosetta
@@ -87,7 +92,7 @@ public:
 		Vector emb_normal,
 		std::string spanfile,
 		std::string lipsfile,
-		bool view_in_pymol = false
+		core::SSize membrane_rsd=0
 	);
 	
 	/// @brief Copy Constructor
@@ -147,12 +152,6 @@ private:
 	/// spanfiles and lipsfiles paths
 	void init_from_cmd();
 	
-	/// @brief Helper method - Setup anchored virtual residue - origin
-	/// @details Create a new virtual residue of type VRT to root the
-	/// membrane and protein in the system. This scenario is analagous
-	/// to docking, except both partners are moveable
-	core::Size setup_anchoring_virtual( Pose & pose );
-	
 	/// @brief Helper Method - Setup Membrane Virtual
 	/// @details Create a new virtual residue of type MEM from
 	/// the pose typeset (fullatom or centroid). Add this virtual
@@ -160,18 +159,18 @@ private:
 	/// this position as the root of the fold tree.
 	core::Size setup_membrane_virtual( Pose & pose );
 	
+	/// @brief Helper Method - Check for Membrane residue already in the PDB
+	/// @details If there is an MEM residue in the PDB at the end of the pose
+	/// with property MEMBRANE, return it's residue number. In the control flow of the
+	/// apply method, if this returns non-zero, a new membrane residue will not be added.
+	bool check_pdb_for_mem( Pose & pose );
+	
 private:
 
 	// Pose residye typeset & include lips
 	bool fullatom_;
 	bool include_lips_;
 	
-	// Visualization
-	bool view_in_pymol_;
-	
-	// Anchored fold tree
-	bool anchored_foldtree_; 
-
 	// Membrane Center/Normal pair used for setup
 	Vector center_;
 	Vector normal_;
@@ -181,6 +180,10 @@ private:
 
 	// Lipid Accessibility Info - Lips Files
 	std::string lipsfile_;
+	
+	// Symm membrane residue number (when applicable)
+	core::SSize membrane_rsd_;
+
 	
 };
 

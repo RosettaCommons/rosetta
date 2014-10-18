@@ -60,18 +60,7 @@ sources = {
 		"SilentStructFactory",
 		"util",
 	],
-	"core/membrane/io": [
-		"SpanFileOptions",
-		"SpanFileLoader",
-		"LipoFileOptions",
-		"LipoFileLoader",
-	],
-	"core/membrane/geometry" :[
-		"util",
-		"EmbeddingDef",
-		"Embedding",
-	],
-		"core/scoring/loop_graph": [
+	"core/scoring/loop_graph": [
 		"Loop",
 		"LoopCycle",
 		"LoopCloseEnergy",

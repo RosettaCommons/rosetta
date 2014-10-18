@@ -19,7 +19,7 @@
 #include <protocols/moves/Mover.hh>
 #include <core/conformation/membrane/Span.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
-#include <core/membrane/geometry/util.hh>
+#include <protocols/membrane/geometry/util.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/membrane_new.OptionKeys.gen.hh>
@@ -56,7 +56,7 @@ using namespace core;
 using namespace core::pose;
 using namespace core::conformation;
 using namespace core::conformation::membrane;
-using namespace core::membrane::geometry;
+using namespace protocols::membrane::geometry;
 
 static thread_local basic::Tracer TR( "apps.pilot.jkleman.spanfile_from_pdb" );
 

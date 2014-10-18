@@ -37,7 +37,7 @@ namespace boost {
 // core headers
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
-#include <core/conformation/membrane/MembranePlanes.hh>
+#include <core/scoring/methods/RG_Energy_Fast.hh>
 
 #include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/Energies.hh>
@@ -301,7 +301,7 @@ void PyMolMover::apply( Pose const & pose)
 	TR.Trace << "PyMOL_Mover::apply name:" << name << std::endl;
 
 	// Check if pose is a membrane pose
-	if ( pose.conformation().is_membrane() && pose.conformation().membrane_info()->view_in_pymol() ) {
+	if ( pose.conformation().is_membrane() ) {
 		update_membrane_ = true;
 	}
 
@@ -454,50 +454,58 @@ void PyMolMover::send_membrane_planes( Pose const & pose ) {
 
 #ifndef __native_client__
 
+	using namespace core::scoring::methods;
+
 	if ( !is_it_time() ) return;
 
 	// Check the membrane planes can be visualized
-	if (!pose.conformation().is_membrane() || !pose.conformation().membrane_info()->view_in_pymol() ) return;
+	if ( !pose.conformation().is_membrane() ) return;
+	
+	// Grab a list of relevant residues and go
+	// Compute radius of gyration of the pose
+	utility::vector1< bool > relevant_residues;
+	relevant_residues.resize( pose.total_residue() );
+	for ( Size i = 1; i < relevant_residues.size(); ++i ) {
+		relevant_residues[i] = true;
+	}
 
-	// Get the upper & lower plane points
-	utility::vector1< Size > top_points = pose.conformation().membrane_info()->plane_info()->top_points();
-	utility::vector1< Size > bottom_points = pose.conformation().membrane_info()->plane_info()->bottom_points();
+	// Compute Radius of Gyration
+	RG_Energy_Fast rg_method;
+	core::Real rg =  2*rg_method.calculate_rg_score( pose, relevant_residues );
 
-	// Get the normal vector
+	// Get the normal vector and center position
 	core::Vector normal( pose.conformation().membrane_info()->membrane_normal() );
+	core::Vector center( pose.conformation().membrane_info()->membrane_center() );
+	
+	// Get the plane thickness used by Rosetta
+	core::Real thickness( pose.conformation().membrane_info()->membrane_thickness() );
 
-	// Check top and bottom planes are of equal size
-	if ( top_points.size() != bottom_points.size() ) {
-		utility_exit_with_message( "Cannot have unequal defined planes" );
-	}
-
-	// Size to iterate over
-	std::string npoints = utility::to_string( top_points.size() );
-
-	// Encode top point residue positions
-	std::string top_msg = ",";
-	for ( Size i = 1; i <= top_points.size(); ++i ) {
-		top_msg += utility::to_string( top_points[i] );
-		top_msg += ",";
-	}
-
-	// Encode bottom point residue positions
-	std::string bottom_msg = "";
-	for ( Size i = 1; i <= bottom_points.size(); ++i ) {
-		bottom_msg += utility::to_string( bottom_points[i] );
-		bottom_msg += ",";
-	}
+	// Encode the Center vector
+	std::string center_msg = "";
+	center_msg += utility::to_string( center.x() );
+	center_msg += ",";
+	center_msg += utility::to_string( center.y() );
+	center_msg += ",";
+	center_msg += utility::to_string( center.z() );
 
 	// Encode normal vector
-	std::string normal_msg = "";
+	std::string normal_msg = ",";
 	normal_msg += utility::to_string( normal.x() );
 	normal_msg += ",";
 	normal_msg += utility::to_string( normal.y() );
 	normal_msg += ",";
 	normal_msg += utility::to_string( normal.z() );
-
+	
+	// Encode the thickness
+	std::string thickness_msg = ",";
+	thickness_msg += utility::to_string( thickness );
+	
+	// Encode the radius of gyration
+	std::string rg_msg = ",";
+	rg_msg += utility::to_string( rg );
+	
 	// Construct full message
-	std::string msg = npoints + top_msg + bottom_msg + normal_msg;
+	std::string msg = center_msg + normal_msg + thickness_msg + rg_msg;
 
 	// Compressing message
 	std::ostringstream zmsg;
@@ -511,9 +519,7 @@ void PyMolMover::send_membrane_planes( Pose const & pose ) {
 	std::string message =  std::string("Mem.gzip") + char(keep_history_) \
 	+ char(name.size()) + name \
 	+ char(sname.size()) + sname + zmsg.str();
-
-	//TR << "Sending message: " << message << std::endl << "Size:" << message.size() << std::endl;
-
+	
 	link_.sendMessage(message);
 
 #endif

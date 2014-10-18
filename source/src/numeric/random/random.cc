@@ -22,9 +22,15 @@
 // Utility headers
 #include <utility/exit.hh>
 
+// C++ 11 Compatibility
+#include <utility/thread/backwards_thread_local.hh>
+
 // C++ headers
 #include <iostream>
 #include <cmath>
+
+// C++ 11 support
+#include <utility/thread/backwards_thread_local.hh>
 
 
 namespace numeric {

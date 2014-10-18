@@ -6,7 +6,7 @@
 	<MOVERS>
 
 		<AtomTree name=ab_fold_tree ab_fold_tree=1/>
-		<TaskAwareMinMover name=hard_min bb=1 jump=0 chi=0 />
+		<TaskAwareMinMover name=hard_min bb=1 jump=1 chi=0 />
 	</MOVERS>
 	<APPLY_TO_POSE>
 	</APPLY_TO_POSE>

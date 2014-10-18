@@ -16,7 +16,7 @@
 
 @author  Sergey Lyskov, Johns Hopkins University
 
-@edits   Evan Baugh & Jason Labonte
+@edits   Evan Baugh, Rebecca Alford & Jason Labonte
 
 @details This is the script to run to let you view PyRosetta runs inside PyMOL.
          To run it:
@@ -421,33 +421,29 @@ class PR_PyMOLServer:
                 # Read top points, bottom points, and normal coordinate
                 mem_data = s.split(',')
 
-                # Plane points defined is the first element
-                npoints = int(mem_data[0])
+                # Read in center position
+                center = XYZCoord()
+                center.x = float(mem_data[0])
+                center.y = float(mem_data[1])
+                center.z = float(mem_data[2])
 
-                # Read in top positions
-                top_positions = []
-                for x in range(1, npoints+1):
-                    top_positions.append( mem_data[x] )
-
-                # Read in bottom positions
-                bottom_positions = []
-                for x in range(npoints+1, (npoints*2+1)):
-                    bottom_positions.append( mem_data[x] )
-
-                # Convert top positions to xyz coordinates (assumes CA position)
-                top_plane_coords = extract_CNTR_coords( name, "C", top_positions )
-
-                # Convert bottom positions to xyz coordiantes (assumes CA position)
-                bottom_plane_coords = extract_CNTR_coords( name, "D", bottom_positions )
-
-                # Read in normal coordinate
+                # Read in normal vector
                 normal = XYZCoord()
-                normal.x = float(mem_data[npoints*2 + 1])
-                normal.y = float(mem_data[npoints*2 + 2])
-                normal.z = float(mem_data[npoints*2 + 3])
+                normal.x = float(mem_data[3])
+                normal.y = float(mem_data[4])
+                normal.z = float(mem_data[5])
 
-                # Create planes from current
-                draw_membrane_planes( top_plane_coords, bottom_plane_coords, normal )
+                # Read in thickness
+                thickness = float(mem_data[6])
+
+                # Read in radius of gyration
+                rg = float(mem_data[7])
+
+                # Compute position of membrane planes
+                planes = compute_plane_positions( center, normal, thickness, rg )
+
+                # Draw membrane planes from points
+                draw_membrane_planes( planes, normal )
 
         #######################################################################
         # Display hydrogen bonds.
@@ -744,29 +740,42 @@ class XYZCoord():
     def __str__(self):
         return "(%8.3f, %8.3f, %8.3f)" % (self.x, self.y, self.z)
 
-def extract_CNTR_coords( name, chain, points ):
+class PlanePoints(): 
     """
-    Use the cmd.get_atom_coords method in the PyMol API to grab the center
-    coordinate of the virtual atom. This will eventually define the membrane plane
+    Class for storing position of membrane planes
     """
 
-    # Create pymol selection
-    id = "/" + name + "//" + chain + "/" + "MEM`"
-    id_end = "/CNTR"
+    def __init__(self): 
+        self.upper_points = []
+        self.lower_points = []
 
-    coords = []
-    for point in points:
+class Matrix(): 
+    """ 
+    Class for storing a 3x3 matrix (used for rotation matrices
+    in membranes)
+    """
 
-        cntr_coord = cmd.get_atom_coords( id + str(point) + id_end )
+    def __init__(self, row1=[], row2=[], row3=[]):
+        self.row1 = row1
+        self.row2 = row2
+        self.row3 = row3
 
-        new_coord = XYZCoord();
-        new_coord.x = cntr_coord[0]
-        new_coord.y = cntr_coord[1]
-        new_coord.z = cntr_coord[2]
+def add_vectors( v1, v2 ): 
+    """
+    Add a pair of vectors represented as XYZcoord classes (see above)
+    """
+    x = v1.x + v2.x
+    y = v1.y + v2.y
+    z = v1.z + v2.z
 
-        coords.append(new_coord)
+    vf = XYZCoord( x, y, z)
+    return vf
 
-    return coords
+def scalar_multiply( v, n ): 
+    """
+    Multiply a vector by some scalar factor
+    """
+    return XYZCoord( v.x*n, v.y*n, v.z*n )
 
 def normalize( normal ):
     """
@@ -780,15 +789,100 @@ def normalize( normal ):
 
     return XYZCoord(x, y, z)
 
+def rotation_matrix_radians( axis, theta ):
+    """
+    Compute and return the rotation matrix associated with rotation about
+    the given axis by theta radians
+    """
+    x = math.sqrt( math.pow(axis.x, 2) + math.pow(axis.y, 2) + math.pow(axis.z, 2) )
+  
+    a = math.cos(theta/2.0)
+    b = -axis.x/x * math.sin(theta/2.0)
+    c = -axis.y/x * math.sin(theta/2.0)
+    d = -axis.z/x * math.sin(theta/2.0)
+ 
+    aa, bb, cc, dd = a*a, b*b, c*c, d*d
+    bc, ad, ac, ab, bd, cd = b*c, a*d, a*c, a*b, b*d, c*d
 
-def draw_membrane_planes( top_coords, bottom_coords, normal_vector ):
+    row1 = [ aa++bb-cc-dd, 2*(bc-ad), 2*(bd+ac) ]
+    row2 = [ 2*(bc+ad), aa+cc-bb-dd, 2*(cd-ab) ]
+    row3 = [ 2*(bd-ac), 2*(cd+ab), aa+dd-bb-cc ]
+
+    return Matrix( row1, row2, row3 )
+
+def multiply_matrix( matrix, vector ): 
+    """
+    multiply matrix by 3D vector
+    """
+
+    x = matrix.row1[0]*vector.x + matrix.row1[1]*vector.y + matrix.row1[2]*vector.z
+    y = matrix.row2[0]*vector.x + matrix.row2[1]*vector.y + matrix.row2[2]*vector.z
+    z = matrix.row3[0]*vector.x + matrix.row3[1]*vector.y + matrix.row3[2]*vector.z
+
+    vf = XYZCoord( x, y, z )
+    return vf
+
+def rotate_vector( vector, theta, axis ):
+    """
+    Rotate some vector about a specified axis by some angle theta
+    """
+
+    rot_matrix = rotation_matrix_radians( axis, theta )
+    rotated_vec = multiply_matrix( rot_matrix, vector )
+    return rotated_vec
+
+def compute_plane_positions( center, normal, thickness, rg, npoints=4 ): 
+    """
+    Compute the position of the membrane planes based on provided
+    normal, center, thickness, and radius of gyration
+    """
+    # Create a new class to store plane points
+    plane_position = PlanePoints()
+
+    # Pick a set of angles defining the planes based on number of desired points
+    angles = []
+    for i in range(npoints): 
+        angle = ((i+1)*2*math.pi)/npoints
+        angles.append( angle )
+
+    # Pick an arbitrary orthogonal unit vector
+    tolerance = math.pow(10, -7)
+    p = XYZCoord( 0, 0, 0 )
+    if ( math.fabs( normal.x + normal.y ) < tolerance ): 
+        p.x = -normal.y - normal.z
+        p.y = normal.x
+        p.z = normal.x
+    else: 
+        p.x = normal.z
+        p.y = normal.z
+        p.z = -normal.x - normal.y
+
+    # Scale point by radius of gyration
+    p = XYZCoord( 2*rg*p.x, 2*rg*p.y, 2*rg*p.z )
+
+    # Project center onto the normal by thickness to compute upper and lower
+    t = thickness
+    upper = add_vectors( center, XYZCoord( normal.x*t, normal.y*t, normal.z*t ) )
+    lower = add_vectors( center, XYZCoord( -normal.x*t, -normal.y*t, -normal.z*t ) )
+
+    # For remaining angles, rotate p about the normal vector
+    for i in range( len(angles) ): 
+        new_point = add_vectors( rotate_vector( p, angles[i], normal ), upper )
+        plane_position.upper_points.append( new_point )
+
+    for i in range( len(angles) ): 
+        new_point = add_vectors( rotate_vector( p, angles[i], normal ), lower )
+        plane_position.lower_points.append( new_point )
+
+    return plane_position
+
+def draw_membrane_planes( plane_points, normal_vector ):
     """
     Draw CGO Planes Representing the upper & lower membrane planes
     Adapted from Evan Baugh's Draw Object code by Rebecca Alford to work
     with the framework
 
     """
-
     # Settings
     name = 'membrane_planes'
     color = XYZCoord( 0.50 , 0.50 , 0.50 )
@@ -804,7 +898,7 @@ def draw_membrane_planes( top_coords, bottom_coords, normal_vector ):
         NORMAL, normal.x, normal.y, normal.z,
         ]
 
-    for i in top_coords:
+    for i in plane_points.upper_points:
 
         top_plane.append( VERTEX )
         top_plane.append( i.x )
@@ -823,7 +917,7 @@ def draw_membrane_planes( top_coords, bottom_coords, normal_vector ):
         NORMAL, normal.x, normal.y, normal.z,
         ]
 
-    for i in bottom_coords:
+    for i in plane_points.lower_points:
         bottom_plane.append( VERTEX )
         bottom_plane.append( i.x )
         bottom_plane.append( i.y )

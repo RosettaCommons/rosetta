@@ -71,6 +71,7 @@ void ImportPoseOptions::parse_my_tag( utility::tag::TagCOP tag )
 
 	set_centroid( tag->getOption< bool >( "centroid", 0 ));
 	set_fold_tree_io( tag->getOption< bool >( "fold_tree_io", 0 ));
+	set_membrane( tag->getOption< bool >( "membrane", 0 ));
 	set_no_optH( tag->getOption< bool >( "no_optH", 0 ));
 	set_pack_missing_sidechains( tag->getOption< bool >( "pack_missing_sidechains", 1 ));
 	set_read_fold_tree( tag->getOption< bool >( "read_fold_tree", 0 ));
@@ -86,6 +87,7 @@ void ImportPoseOptions::parse_my_tag( utility::tag::TagCOP tag )
 // accessors
 bool ImportPoseOptions::centroid() const { return centroid_; }
 bool ImportPoseOptions::fold_tree_io() const { return fold_tree_io_; }
+bool ImportPoseOptions::membrane() const { return membrane_; }
 bool ImportPoseOptions::no_optH() const { return no_optH_; }
 bool ImportPoseOptions::pack_missing_sidechains() const { return pack_missing_sidechains_; }
 bool ImportPoseOptions::read_fold_tree() const { return read_fold_tree_; }
@@ -102,6 +104,7 @@ std::string const & ImportPoseOptions::residue_type_set() const { return residue
 // mutators
 void ImportPoseOptions::set_centroid( bool centroid ) { centroid_ = centroid; }
 void ImportPoseOptions::set_fold_tree_io( bool fold_tree_io ) { fold_tree_io_ = fold_tree_io; }
+void ImportPoseOptions::set_membrane( bool membrane ) { membrane_ = membrane; }
 void ImportPoseOptions::set_no_optH( bool no_optH ) { no_optH_ = no_optH; }
 void ImportPoseOptions::set_pack_missing_sidechains( bool pack_missing_sidechains ) { pack_missing_sidechains_ = pack_missing_sidechains; }
 void ImportPoseOptions::set_read_fold_tree( bool read_fold_tree ) { read_fold_tree_ = read_fold_tree; }
@@ -133,6 +136,7 @@ void ImportPoseOptions::init_from_options()
 		set_centroid( false );
 	}
 	set_fold_tree_io( option[ inout::fold_tree_io ].user());
+	set_membrane( option[ in::membrane ].user() );
 	set_no_optH( option[ packing::no_optH ]());
 	set_pack_missing_sidechains( option[ packing::pack_missing_sidechains ].value());
 	set_read_fold_tree( false ); // no option for this parameter - it can only be set to true if you call pose_from_pdd.

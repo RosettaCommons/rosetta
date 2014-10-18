@@ -26,10 +26,13 @@
 // Unit Headers
 #include <protocols/membrane/AddMembraneMover.hh> 
 #include <protocols/membrane/AddMembraneMoverCreator.hh>
+
 #include <protocols/moves/Mover.hh>
 
 // Project Headers
-#include <protocols/membrane/visualize/ShowMembranePlanesMover.hh>
+#include <protocols/membrane/geometry/util.hh>
+
+#include <core/pose/PDBInfo.hh>
 
 #include <core/conformation/Conformation.hh>
 
@@ -46,6 +49,9 @@
 
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
+
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/kinematics/FoldTree.hh>
 
@@ -96,15 +102,29 @@ AddMembraneMover::AddMembraneMover() :
 	protocols::moves::Mover(),
 	fullatom_( true ), 
 	include_lips_( false ),
-	view_in_pymol_( false ),
-	anchored_foldtree_( false ),
 	center_(0.0, 0.0, 0.0),
-	normal_(0.0, 0.0, 10.0)
+	normal_(0.0, 0.0, 10.0),
+	membrane_rsd_( 0 )
 {
 	register_options();
 	init_from_cmd();
 }
 
+/// @brief Custom Constructor - Create membrane pose from existing membrane resnum
+/// @details Loads in membrane information from the commandline. Just needs a
+/// membrane residue number (application is symmetry)
+AddMembraneMover::AddMembraneMover( core::SSize membrane_rsd ) :
+	protocols::moves::Mover(),
+	fullatom_( true ),
+	include_lips_( false ),
+	center_(0.0, 0.0, 0.0),
+	normal_(0.0, 0.0, 10.0),
+	membrane_rsd_( membrane_rsd )
+{
+	register_options();
+	init_from_cmd();
+}
+	
 /// @brief Custom Constructor - for PyRosetta
 /// @details Creates a membrane pose setting the membrane
 /// center at emb_center and normal at emb_normal and will load
@@ -113,16 +133,15 @@ AddMembraneMover::AddMembraneMover(
 	 Vector emb_center,
 	 Vector emb_normal,
 	 std::string spanfile,
-	 bool view_in_pymol
+	 core::SSize membrane_rsd
 	 ) :
 	 protocols::moves::Mover(),
 	 fullatom_( true ), 
 	 include_lips_( false ),
-	 view_in_pymol_( view_in_pymol ),
-	 anchored_foldtree_( false ),
 	 center_( emb_center ),
 	 normal_( emb_normal ),
-	 spanfile_( spanfile )
+	 spanfile_( spanfile ),
+	 membrane_rsd_( membrane_rsd )
 {
 	register_options();
 	init_from_cmd();
@@ -138,17 +157,16 @@ AddMembraneMover::AddMembraneMover(
 	Vector emb_normal,
 	std::string spanfile,
 	std::string lips_acc,
-	bool view_in_pymol
+	core::SSize membrane_rsd
 	) :
 	protocols::moves::Mover(),
 	fullatom_( true ),
 	include_lips_( true ),
-	view_in_pymol_( view_in_pymol ),
-	anchored_foldtree_( false ),
 	center_( emb_center ),
 	normal_( emb_normal ),
 	spanfile_( spanfile ),
-	lipsfile_( lips_acc )
+	lipsfile_( lips_acc ),
+	membrane_rsd_( membrane_rsd )
 {
 	register_options();
 	init_from_cmd();
@@ -160,12 +178,11 @@ AddMembraneMover::AddMembraneMover( AddMembraneMover const & src ) :
 	protocols::moves::Mover( src ), 
 	fullatom_( src.fullatom_ ), 
 	include_lips_( src.include_lips_ ),
-	view_in_pymol_( src.view_in_pymol_ ),
-	anchored_foldtree_( src.anchored_foldtree_ ),
 	center_( src.center_ ), 
 	normal_( src.normal_ ),
 	spanfile_( src.spanfile_ ),
-	lipsfile_( src.lipsfile_ )
+	lipsfile_( src.lipsfile_ ),
+	membrane_rsd_( src.membrane_rsd_ )
 {}
 
 /// @brief Destructor
@@ -207,14 +224,19 @@ AddMembraneMover::parse_my_tag(
 		include_lips_ = tag->getOption< bool >( "include_lips" );
 	}
 	
-	// View in Pymol option
-	if ( tag->hasOption( "view_in_pymol" ) ) {
-		view_in_pymol_ = tag->getOption< bool >( "view_in_pymol" );
-	}
-	
 	// Read in spanfile information
 	if ( tag->hasOption( "spanfile" ) ) {
 		spanfile_ = tag->getOption< std::string >( "spanfile" );
+	}
+
+	// Read in lipsfile information
+	if ( tag->hasOption( "lipsfile" ) ) {
+		lipsfile_ = tag->getOption< std::string >( "lipsfile" );
+	}
+	
+	// Read in membrane residue position where applicable
+	if ( tag->hasOption( "membrane_rsd" ) ) {
+		membrane_rsd_ = tag->getOption< core::SSize >( "membrane_rsd" );
 	}
 	
 	// Read in membrane center & normal
@@ -282,14 +304,27 @@ AddMembraneMover::get_name() const {
 void
 AddMembraneMover::apply( Pose & pose ) {
 	
+	using namespace core::scoring;
+	using namespace core::pack::task; 
 	using namespace core::conformation::membrane;
-	using namespace protocols::membrane::visualize;
 	
-	TR << "Adding membrane to pose" << std::endl;
+	// If there is a membrane residue in the PDB, take total resnum as the membrane_pos
+	// Otherwise, setup a new membrane virtual
+	core::SSize membrane_pos(0);
+	if ( membrane_rsd_ != 0 &&
+		 (core::SSize) pose.total_residue() > membrane_rsd_ &&
+		 pose.residue( membrane_rsd_ ).has_property( "MEMBRANE" ) ) {
+		TR << "Adding membrane residue from user specified position" << std::endl;
+		membrane_pos = membrane_rsd_;
+	} else if ( check_pdb_for_mem( pose ) ) {
+		// TODO: Strenghten MEM search criteria in check pdb for mem
+		TR << "Adding membrane from PDB to the pose" << std::endl;
+		membrane_pos = pose.conformation().chain_end(1);
+	} else {
+		TR << "Adding a new membrane residue to the pose" << std::endl;
+		membrane_pos = setup_membrane_virtual( pose );
+	}
 	
-	// Add a new membrane residue containing the pose normal/center
-	core::Size membrane_pos = setup_membrane_virtual( pose );
-
  	// Load spanning topology objects
 	SpanningTopologyOP spans( new SpanningTopology( spanfile_, pose.total_residue()-1 ) );
 	
@@ -304,15 +339,6 @@ AddMembraneMover::apply( Pose & pose ) {
 	
 	// Add Membrane Info Object to conformation
 	pose.conformation().set_membrane_info( mem_info );
-	
-	// Setup for viewing in pymol if user-specified
-	if ( view_in_pymol_ ) {
-	
-		TR << "Setting up membrane visualization in PyMol" << std::endl;
-		ShowMembranePlanesMoverOP show_planes( new ShowMembranePlanesMover() );
-		show_planes->apply( pose );
-		
-	}
 	
 }
 
@@ -333,8 +359,7 @@ AddMembraneMover::register_options() {
 	option.add_relevant( OptionKeys::membrane_new::setup::normal );
 	option.add_relevant( OptionKeys::membrane_new::setup::spanfiles );
 	option.add_relevant( OptionKeys::membrane_new::setup::lipsfile );
-	option.add_relevant( OptionKeys::membrane_new::view_in_pymol );
-	option.add_relevant( OptionKeys::membrane_new::anchored_foldtree );
+	option.add_relevant( OptionKeys::membrane_new::setup::membrane_rsd );
 	
 }
 
@@ -366,14 +391,10 @@ AddMembraneMover::init_from_cmd() {
 
 	}
 	
-	// Read in visualize in Pymol option
-	if ( option[ OptionKeys::membrane_new::view_in_pymol ].user() ) {
-		view_in_pymol_ = option[ OptionKeys::membrane_new::view_in_pymol ]();
-	}
-	
-	// Read in option for anchored foldtree
-	if ( option[ OptionKeys::membrane_new::anchored_foldtree ].user() ) {
-		anchored_foldtree_ = option[ OptionKeys::membrane_new::anchored_foldtree ]();
+	// Read in user-provided membrane residue position
+	// TODO: Add better error checking
+	if ( option[ OptionKeys::membrane_new::setup::membrane_rsd ].user() ) {
+		membrane_rsd_ = option[ OptionKeys::membrane_new::setup::membrane_rsd ]();
 	}
 	
 	// Read in Center Parameter
@@ -391,43 +412,6 @@ AddMembraneMover::init_from_cmd() {
 		normal_.y() = option[ OptionKeys::membrane_new::setup::normal ]()[2];
 		normal_.z() = option[ OptionKeys::membrane_new::setup::normal ]()[3];
 	}
-
-	
-}
-
-/// @brief Helper method - Setup anchored virtual residue - origin
-/// @details Create a new virtual residue of type VRT to root the
-/// membrane and protein in the system. This scenario is analagous
-/// to docking, except both partners are moveable
-core::Size
-AddMembraneMover::setup_anchoring_virtual( Pose & pose ) {
-
-	TR << "Adding an anchoring virtual residue as the root at residue " << pose.total_residue() << std::endl;
-	
-	using namespace core::conformation;
-	using namespace core::chemical;
-	using namespace core::kinematics;
-	
-	// Grab the current residue typeset and create a new residue
-	ResidueTypeSetCOP const & residue_set(
-	  ChemicalManager::get_instance()->residue_type_set( fullatom_ ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
-	  );
-	  
-	// Create a new Residue from rsd typeset of type VRT
-	ResidueTypeCOPs const & rsd_type_list( residue_set->name3_map("VRT") );
-	ResidueType const & virt( *rsd_type_list[1] );
-	ResidueOP rsd( ResidueFactory::create_residue( virt ) );
-	
-	// Append residue by jump, creating a new chain
-	pose.append_residue_by_jump( *rsd, 1, "", "", true );
-	
-	// Make the anchoring residue the root of the fold tree
-	core::Size const nres = pose.total_residue();
-	FoldTree newF( pose.fold_tree() );
-	newF.reorder( nres );
-	pose.fold_tree( newF );
-
-	return (core::Size) pose.fold_tree().root();
 }
 
 /// @brief Helper Method - Setup Membrane Virtual
@@ -443,6 +427,7 @@ AddMembraneMover::setup_membrane_virtual( Pose & pose ) {
 	
 	TR << "Adding a membrane residue representing the position of the membrane at " << pose.total_residue() << std::endl;
 	
+	using namespace protocols::membrane::geometry;
 	using namespace core::conformation;
 	using namespace core::chemical;
 	
@@ -456,10 +441,43 @@ AddMembraneMover::setup_membrane_virtual( Pose & pose ) {
 	ResidueType const & membrane( *rsd_type_list[1] );
 	ResidueOP rsd( ResidueFactory::create_residue( membrane ) );
 	
+	// Compute residue COM of the subunit
+	core::SSize rsd_com = residue_center_of_mass( pose, 1, pose.total_residue() );
+	
 	// Append residue by jump, creating a new chain
-	pose.append_residue_by_jump( *rsd, 1, "", "", true );
+	pose.append_residue_by_jump( *rsd, rsd_com, "", "", true );
+	FoldTreeOP ft( new FoldTree( pose.fold_tree() ) );
+	ft->reorder( rsd_com );
+	pose.fold_tree( *ft );
+	
+	pose.fold_tree().show( std::cout );
+
+	// Updating Chain Record in PDB Info
+	char curr_chain = pose.pdb_info()->chain( pose.total_residue()-1 );
+	char new_chain = (char)((int) curr_chain + 1);
+	pose.pdb_info()->number( pose.total_residue(), (int) pose.total_residue() );
+	pose.pdb_info()->chain( pose.total_residue(), new_chain ); 
+	pose.pdb_info()->obsolete(false);
 	
 	return pose.total_residue();
+}
+
+/// @brief Helper Method - Check for Membrane residue already in the PDB
+/// @details If there is an MEM residue in the PDB at the end of the pose
+/// with property MEMBRANE, return it's residue number. In the control flow of the
+/// apply method, if this returns non-zero, a new membrane residue will not be added.
+bool
+AddMembraneMover::check_pdb_for_mem( Pose & pose ) {
+
+	// Uses the invarant that the membrane residue is always located in the n+1 chain
+	// when initialized (not always true...?)
+	core::Size rsdnum = pose.conformation().chain_end( 1 );
+	if ( pose.residue( rsdnum ).name3() == "MEM" &&
+		pose.residue( rsdnum ).has_property( "MEMBRANE" ) ) {
+		return true;
+	}
+	return false;
+	
 }
 
 } // membrane

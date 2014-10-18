@@ -215,7 +215,10 @@ sources = {
 		"SetMembranePositionMover",
 		"MembranePositionFromTopologyMover",
     ],
-
+    "membrane/io" : [
+        #"SpanFileLoader",
+		#"LipsFileLoader",
+	],
 	"motif_grafting" : [
 		"MotifGraftMover"
 	],
@@ -301,7 +304,7 @@ sources = {
 	"simple_moves" : [
 		"ddG",
 		"FavorSequenceProfile",
-		"UniformPositionMover",
+		#"UniformPositionMover",
 	],
 
 	#"simple_moves/chiral" : [

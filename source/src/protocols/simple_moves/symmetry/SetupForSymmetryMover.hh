@@ -37,6 +37,8 @@ public:
 	// default constructor
 	SetupForSymmetryMover();
 
+	SetupForSymmetryMover( core::conformation::symmetry::SymmDataOP symmdata ); 
+
 	SetupForSymmetryMover( std::string const & );
 
 	~SetupForSymmetryMover();

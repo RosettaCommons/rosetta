@@ -22,6 +22,7 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/membrane/AddMembraneMover.hh>
 
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
@@ -41,8 +42,6 @@
 #include <utility/exit.hh>
 
 // C++ headers
-//#include <cstdlib>
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
 
@@ -217,6 +216,14 @@ main( int argc, char * argv [] )
 	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 		protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
 		seqmov->add_mover( MoverOP( new protocols::simple_moves::symmetry::SetupForSymmetryMover ) );
+		seqmov->add_mover( scoremover );
+		scoremover = seqmov;
+	}
+	
+	// set pose for membranes
+	if ( option[ OptionKeys::in::membrane ].user() ) {
+		protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
+		seqmov->add_mover( protocols::moves::MoverOP( new protocols::membrane::AddMembraneMover ) );
 		seqmov->add_mover( scoremover );
 		scoremover = seqmov;
 	}
