@@ -108,7 +108,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverStatus.hh>
-#include <utility/PyAssert.hh>
+#include <utility/py/PyAssert.hh>
 #include <utility/down_cast.hh>
 #include <utility/exit.hh>
 #include <utility/fix_boinc_read.hh>

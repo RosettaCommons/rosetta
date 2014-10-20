@@ -12,13 +12,13 @@
 /// @brief  Class to specify utility_exit callback in PyRosetta.
 /// @author Sergey Lyskov
 
-#include <utility/PyExitCallback.hh>
+#include <utility/py/PyExitCallback.hh>
 
 #include <utility/exit.hh>
 
 //#include <iostream>
 
-namespace utility {
+namespace utility { namespace py {
 
 PyExitCallbackOP & PyExitCallback::current_callback_object()
 {
@@ -49,4 +49,4 @@ void PyExitCallback::global_exit_callback(void)
 }
 
 
-} // namespace utility
+} } // namespace py namespace utility

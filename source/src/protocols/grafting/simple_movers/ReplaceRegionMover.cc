@@ -22,7 +22,7 @@
 
 
 #include <protocols/grafting/util.hh>
-#include <utility/PyAssert.hh>
+#include <utility/py/PyAssert.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataCache.hh>
 

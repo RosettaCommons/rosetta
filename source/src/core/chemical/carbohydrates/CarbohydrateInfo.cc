@@ -20,7 +20,7 @@
 #include <core/chemical/ResidueProperties.hh>
 
 // Utility headers
-#include <utility/PyAssert.hh>
+#include <utility/py/PyAssert.hh>
 #include <utility/exit.hh>
 
 // Basic headers

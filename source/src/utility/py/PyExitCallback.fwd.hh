@@ -18,13 +18,13 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace utility {
+namespace utility { namespace py {
 
 class PyExitCallback;
 
 typedef utility::pointer::shared_ptr< PyExitCallback > PyExitCallbackOP;
 typedef utility::pointer::shared_ptr< PyExitCallback const > PyExitCallbackCOP;
 
-} // namespace utility
+} } // namespace py namespace utility
 
 #endif // INCLUDED_utility_PyExitCallback_fwd_hh

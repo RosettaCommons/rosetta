@@ -21,7 +21,7 @@
 
 // Utility Headers
 #include <utility/exit.hh>
-#include <utility/PyAssert.hh>
+#include <utility/py/PyAssert.hh>
 
 // Third-party Headers
 #include <boost/functional/hash.hpp>

@@ -26,7 +26,7 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <utility/PyAssert.hh>
+#include <utility/py/PyAssert.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 

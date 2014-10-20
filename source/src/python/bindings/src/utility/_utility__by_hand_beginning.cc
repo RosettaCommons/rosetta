@@ -4,7 +4,9 @@
 
 #include <utility/excn/Exceptions.hh>
 #include <utility/stream_util.hh>
-#include "utility/exit.hh"
+#include <utility/exit.hh>
+
+#include <utility/py/PyHelper.hh>
 
 #include <platform/types.hh>
 
@@ -996,7 +998,7 @@ void __utility_by_hand_beginning__()
 	// bp::class_< std::_Ios_Openmode, boost::noncopyable >("std__Ios_Openmode");
 
 
-    utility::wrap_access_pointer< utility::vector1< bool > >("utility_vector1_bool");
+    utility::py::wrap_access_pointer< utility::vector1< bool > >("utility_vector1_bool");
 
 
 	// Dummy bindings to simplify import orders

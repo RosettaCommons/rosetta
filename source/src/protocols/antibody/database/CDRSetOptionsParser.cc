@@ -20,7 +20,7 @@
 #include <protocols/antibody/AntibodyEnum.hh>
 
 #include <utility/string_util.hh>
-#include <utility/PyAssert.hh>
+#include <utility/py/PyAssert.hh>
 #include <basic/Tracer.hh>
 //#include <utility/io/izstream.hh>
 

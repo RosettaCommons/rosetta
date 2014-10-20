@@ -261,7 +261,7 @@
 #include <core/scoring/trie/trie.functions.fwd.hh>
 #include <utility/Bound.fwd.hh>
 #include <utility/Bound.hh>
-#include <utility/PyAssert.hh>
+#include <utility/py/PyAssert.hh>
 #include <utility/assert.hh>
 #include <utility/down_cast.hh>
 #include <utility/exit.hh>

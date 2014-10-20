@@ -30,7 +30,7 @@
 #include <core/id/DOF_ID_Mask.fwd.hh>
 
 // Utility headers
-#include <utility/PyAssert.hh>
+#include <utility/py/PyAssert.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>

@@ -67,7 +67,7 @@
 #include <utility/keys/Key4Tuple.hh>
 #include <utility/keys/Key3Tuple.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/PyAssert.hh>
+#include <utility/py/PyAssert.hh>
 #include <utility/vector1.hh>
 
 // C++ headers

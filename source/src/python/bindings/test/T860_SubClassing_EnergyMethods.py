@@ -28,7 +28,7 @@ class MyCI1B_Method(rosetta.core.scoring.methods.ContextIndependentOneBodyEnergy
         rosetta.core.scoring.methods.ContextIndependentOneBodyEnergy.__init__(self, self.creator() )
 
     def residue_energy(self, rsd, pose, emap):
-        emap.get().set( self.scoreType, 2.0)
+        emap.set( self.scoreType, 2.0)
 
     # you can define this functions by hand. And if you don't @EnergyMethod will do that for you
     #def clone(self):

@@ -40,7 +40,7 @@ class MySquare(MyShape):
         # This overrides the __init__() method inherited
         # from MyShape.
         MyShape.__init__(self)
-        self.side_length = 1    
+        self.side_length = 1
 
     def area(self):
         """Return the area of the square."""
@@ -73,7 +73,6 @@ class PhiNByXDegreesMover(rosetta.protocols.moves.Mover):
 
     def apply(self, pose):
         """Applies move to pose."""
-        pose = pose.get()
         print "Incrementing phi of residue", self.N, "by",
         print self.X, "degrees...."
         pose.set_phi(self.N, pose.phi(self.N) + self.X)
@@ -93,7 +92,7 @@ class LengthScoreMethod(ContextIndependentOneBodyEnergy):
     def residue_energy(self, res, pose, emap):
         """Calculate energy of res of pose and set emap"""
         # 1 energy unit per residue
-        emap.get().set(self.scoreType, -1.0)
+        emap.set(self.scoreType, -1.0)
 
 from rosetta.core.scoring.methods import ContextIndependentTwoBodyEnergy
 
@@ -112,7 +111,7 @@ class CI2BScoreMethod(ContextIndependentTwoBodyEnergy):
         # A real method would calculate a value for score
         # from res1 and res2.
         score = 1.0
-        emap.get().set(self.scoreType, score)
+        emap.set(self.scoreType, score)
 
     def atomic_interaction_cutoff(self):
         """Get the cutoff."""
@@ -126,9 +125,3 @@ class CI2BScoreMethod(ContextIndependentTwoBodyEnergy):
     def eval_intrares_energy(self, res, pose, sf, emap):
         """Calculate intra-residue energy if defined."""
         pass
-
-
-
-
-
-

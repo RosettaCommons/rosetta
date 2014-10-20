@@ -61,7 +61,7 @@
 
 //Utility Headers
 #include <utility/basic_sys_util.hh>
-#include <utility/PyAssert.hh>
+#include <utility/py/PyAssert.hh>
 
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>

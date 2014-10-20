@@ -39,7 +39,7 @@
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/PyAssert.hh>
+#include <utility/py/PyAssert.hh>
 #include <utility/pointer/ReferenceCount.hh>
 // AUTO-REMOVED
 #include <utility/vector1.hh>

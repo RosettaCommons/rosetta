@@ -59,7 +59,7 @@ BannedFiles = [
     'utility/query', 'core/coarse',
 
 
-    'utility/PyHelper.hh', 'utility/keys', 'utility/options', 'utility/options/keys',
+    'utility/py/PyHelper.hh', 'utility/keys', 'utility/options', 'utility/options/keys',
     #'utility/pointer', 'utility/pointer/boost', 'utility/pointer/std',
     #'utility/pointer/std', 'utility/pointer/refcount',
     'basic/options/keys', 'utility/exit.hh',

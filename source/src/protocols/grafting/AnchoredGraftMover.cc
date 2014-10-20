@@ -60,7 +60,7 @@
 #include <basic/Tracer.hh>
 #include <core/scoring/rms_util.hh>
 #include <map>
-#include <utility/PyAssert.hh>
+#include <utility/py/PyAssert.hh>
 #include <utility/tag/Tag.hh>
 
 static thread_local basic::Tracer TR( "protocols.grafting.AnchoredGraftMover" );

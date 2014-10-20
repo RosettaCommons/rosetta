@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   utility/PyAssert.hh
+/// @file   utility/py/PyAssert.hh
 /// @author Sergey Lyskov
 ///
 /// @note Defining special assert version for PyRosetta build. It will allow to perform some additional
 ///       verification for PyRosetta build.
 
 
-#ifndef INCLUDED_utility_PyAssert_hh
-#define INCLUDED_utility_PyAssert_hh
+#ifndef INCLUDED_utility_py_PyAssert_hh
+#define INCLUDED_utility_py_PyAssert_hh
 
 #include <utility/exit.hh>
 
@@ -32,6 +32,8 @@
 #endif
 
 namespace utility {
+namespace py {
+} // namespace py
 } // namespace utility
 
-#endif // INCLUDED_utility_PyAssert_HH
+#endif // INCLUDED_utility_py_PyAssert_HH

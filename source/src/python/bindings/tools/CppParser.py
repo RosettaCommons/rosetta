@@ -513,7 +513,13 @@ class CppFunction:
         #if (self.virtual and self.public and not self.const_overloaded) or  (self.constructor and self.public):  # for now we allow to overload only non-const functions in Python...
         if self.isCallbackStructNeeded() or  (self.constructor and self.public):  # for now we allow to overload only non-const functions in Python...
             def foo( (i, a) ):
-                if (not self.constructor) and a.type_.T()[-1] == '&'  and False: return 'utility::PyAP( __a%s )' % i
+                #if (not self.constructor) and a.type_.T()[-1] == '&'  and False: return 'utility::PyAP( __a%s )' % i
+                #if (not self.constructor) and a.type_.T()[-1] == '&': return 'utility::py::to_py_object( __a%s )' % i
+                #if (not self.constructor) and a.type_.T()[-1] == '&' and False: return 'boost::python::ptr( & __a%s )' % i
+                # and  not a.type_.T().endswith(' const &') \
+                if (not self.constructor) and a.type_.T()[-1] == '&' \
+                   and a.type_.T() not in 'bool &  ::platform::Size &  ::platform::Size const &  ::numeric::Real &  ::core::Size &  ::core::Size const &  ::core::Real &  ::core::chemical::AA const &':
+                    return 'boost::python::ptr( & __a%s )' % i
                 else: return '__a%s' % i
 
             args = ', '.join( map(lambda (i, x): '__a%s' % i, enumerate(self.argsTypes)) )
@@ -942,7 +948,7 @@ class CppClass:
 
 
             # Adding COP → OP conversion
-            r += '  boost::python::to_python_converter< utility::pointer::shared_ptr< %(context)s%(name)s const >, utility::COP_to_Python_converter< %(context)s%(name)s >, false >();\n\n' % D
+            r += '  boost::python::to_python_converter< utility::pointer::shared_ptr< %(context)s%(name)s const >, utility::py::COP_to_Python_converter< %(context)s%(name)s >, false >();\n\n' % D
 
             for i in convert_to:
                 r += '  boost::python::implicitly_convertible< ::utility::pointer::shared_ptr< %(context)s%(name)s >\n' % D
@@ -1027,7 +1033,7 @@ class CppClass:
 
         r += self.write_implicitly_convertible_code(use_callback_struct, D)
 
-        #r += '  utility::wrap_access_pointer< %(context)s%(name)s >("%(mangled_class_name)s");\n' % D
+        r += '  utility::py::wrap_access_pointer< %(context)s%(name)s >("%(mangled_class_name)s");\n' % D
 
         if use_callback_struct: r += '  boost::python::class_< %s, boost::noncopyable >("__CPP_%s__", "", boost::python::no_init);\n\n' % (self.getHeldType(), self.name)
 
@@ -1398,7 +1404,7 @@ def wrapModule(name, name_spaces, context, relevant_files_list, max_funcion_size
 
     code = []
 
-    module_addon = '#include <utility/PyHelper.hh>\n'
+    module_addon = '#include <utility/py/PyHelper.hh>\n'
 
     r  = module_addon+'\n'
 

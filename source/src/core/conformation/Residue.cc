@@ -40,7 +40,7 @@
 
 // Utility Headers
 #include <utility/assert.hh>
-#include <utility/PyAssert.hh>
+#include <utility/py/PyAssert.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers

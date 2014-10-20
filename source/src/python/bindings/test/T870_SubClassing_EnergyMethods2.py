@@ -26,7 +26,7 @@ class CI1B_Method(ContextIndependentOneBodyEnergy):
         ContextIndependentOneBodyEnergy.__init__(self, self.creator() )
 
     def residue_energy(self, rsd, pose, emap):
-        emap.get().set( self.scoreType, 2.0)
+        emap.set( self.scoreType, 2.0)
 
     # you can define this functions by hand. And if you don't @EnergyMethod will do that for you
     #def clone(self): return MyNewCI1B();
@@ -48,7 +48,7 @@ class CI2B_Method(ContextIndependentTwoBodyEnergy):
         ContextIndependentTwoBodyEnergy.__init__(self, self.creator() )
 
     def residue_pair_energy(self, rsd1, rsd2, pose, sfxn, emap):
-        emap.get().set( self.scoreType, 1.0)
+        emap.set( self.scoreType, 1.0)
 
     def atomic_interaction_cutoff(self): return 0.0
 
@@ -71,7 +71,7 @@ class CD2B_Method(ContextDependentTwoBodyEnergy):
         ContextDependentTwoBodyEnergy.__init__(self, self.creator() )
 
     def residue_pair_energy(self, rsd1, rsd2, pose, sfxn, emap):
-        emap.get().set( self.scoreType, 1.0)
+        emap.set( self.scoreType, 1.0)
 
     def atomic_interaction_cutoff(self): return 0.0
 

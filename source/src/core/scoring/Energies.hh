@@ -50,7 +50,7 @@
 #include <core/kinematics/DomainMap.fwd.hh>
 
 // Utility Headers
-#include <utility/PyAssert.hh>
+#include <utility/py/PyAssert.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // STL Headers

@@ -1050,6 +1050,10 @@ def calculate_source_modification_date(source, binding_source_path, ignore=set()
                             latest = time.time()
                             print '______________________', os.path.relpath(include), line
 
+                for f in 'python/bindings/BuildBindings.py python/bindings/exclude.py python/bindings/tools/CppParser.py'.split():  # checking if file is older then our building scripts...
+                    f = os.path.abspath( os.path.join(binding_source_path, './../../' + f) )
+                    latest = max(latest, calculate_source_modification_date(f, binding_source_path, ignore.union([source]) ) )
+
         else:
             latest = time.time()  # file does not exist - recompiling
             print '~~~~~~~~~~~~~~~~~~', os.path.relpath(include), line

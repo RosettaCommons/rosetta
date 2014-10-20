@@ -21,7 +21,7 @@
 #include <core/id/TorsionID.hh>
 
 // Utility headers
-#include <utility/PyAssert.hh>
+#include <utility/py/PyAssert.hh>
 #include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>

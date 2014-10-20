@@ -55,7 +55,7 @@
 #include <basic/options/keys/pH.OptionKeys.gen.hh>
 
 // Utility headers
-#include <utility/PyAssert.hh>
+#include <utility/py/PyAssert.hh>
 #include <utility/vector1.hh>
 #include <utility/graph/ring_detection.hh>
 

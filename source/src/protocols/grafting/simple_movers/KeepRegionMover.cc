@@ -21,7 +21,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <utility/tag/Tag.hh>
-#include <utility/PyAssert.hh>
+#include <utility/py/PyAssert.hh>
 #include <basic/Tracer.hh>
 
 static thread_local basic::Tracer TR( "protocols.grafting.simple_movers.KeepRegionMover" );

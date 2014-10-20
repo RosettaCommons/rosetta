@@ -31,7 +31,7 @@
 // Utility Headers
 #include <utility/assert.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/PyAssert.hh>
+#include <utility/py/PyAssert.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/vector1.hh>

@@ -43,7 +43,7 @@
 #include <basic/Tracer.hh>
 
 //Utility Headers
-#include <utility/PyAssert.hh>
+#include <utility/py/PyAssert.hh>
 #include <protocols/grafting/util.hh>
 
 

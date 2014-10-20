@@ -19,7 +19,7 @@
 #include <string>
 
 #include <utility/vector1.hh>
-#include <utility/PyAssert.hh>
+#include <utility/py/PyAssert.hh>
 
 namespace protocols {
 namespace antibody {

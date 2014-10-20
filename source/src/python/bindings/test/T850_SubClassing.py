@@ -12,12 +12,62 @@
 import sys
 
 import rosetta
+import rosetta.utility.py
 import rosetta.core.pose
 import rosetta.core.scoring
 import rosetta.core.scoring.methods
 
 rosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
 import os; os.chdir('.test.output')
+
+
+class PyValue(rosetta.utility.py.Value):
+    def __init__(self, v='PyUnknown'):
+        print 'PyValue.__init__...'
+        rosetta.utility.py.Value.__init__(self, v)
+
+
+# Dummy C++ class sub-classing
+class A(rosetta.utility.py.Base):
+    def __init__(self):
+        print 'A.__init__...'
+        rosetta.utility.py.Base.__init__(self)
+
+    def foo_int(self, i):    print "A.foo_int({})".format(i)
+    def foo_string(self, s): print "A.foo_string({})".format(s)
+
+    def foo_value(self, v):     print "A.foo_value({})".format(v.s());    v.s('A.foo_value!')
+    def foo_value_sp(self, v):  print "A.foo_value_sp({})".format(v.s()); v.s('A.foo_value_sp!')
+
+
+a = A()
+v = rosetta.utility.py.Value()
+pv = PyValue()
+
+v.s('wrong...')
+rosetta.utility.py.foo_all(a, 1, v, "qwerty" )
+print 'New Value[1]:', v.s(), '\n'
+assert v.s() == 'A.foo_value!'
+
+pv.s('wrong...')
+a.foo_value(pv)
+print 'New Value[2]:', pv.s(), '\n'
+assert pv.s() == 'A.foo_value!'
+
+v.s('wrong...')
+a.foo_value_sp(v)
+print 'New Value[3]:', v.s(), '\n'
+assert v.s() == 'A.foo_value_sp!'
+
+pv.s('wrong...')
+rosetta.utility.py.foo_all(a, 1, pv, "qwerty" )
+print 'New Value[4]:', pv.s(), '\n'
+assert pv.s() == 'A.foo_value!'
+
+pv.s('wrong...')
+rosetta.utility.py.foo_all_sp(a, 1, pv, "qwerty" )
+print 'New Value[5]:', pv.s(), '\n'
+assert pv.s() == 'A.foo_value!'
 
 
 # Mover sub-classing -----------------------------------
@@ -29,9 +79,10 @@ class My_New_Mover(rosetta.protocols.moves.Mover):
     def get_name(self): return 'My_New_Mover'
 
     def apply(self, p):
-        if isinstance(p, rosetta.core.pose.PoseAP):
-            print 'Got rosetta.core.pose.PoseAP!'
-            p = p.get()
+        print 'My_New_Mover.apply:', type(p)
+        # if isinstance(p, rosetta.core.pose.PoseAP):
+        #     print 'Got rosetta.core.pose.PoseAP!'
+        #     p = p.get()
 
         print 'This My_New_Mover apply...'
         p.set_phi(1, p.phi(1)+1)
@@ -41,6 +92,8 @@ new_mover = My_New_Mover()
 
 pose = rosetta.pose_from_pdb("../test/data/test_in.pdb")
 sf_new = rosetta.core.scoring.ScoreFunction()
+
+#new_mover.apply(pose)
 
 seq = rosetta.protocols.moves.SequenceMover()
 seq.add_mover( new_mover )
@@ -80,7 +133,7 @@ class MyNewCI1B(rosetta.core.scoring.methods.ContextIndependentOneBodyEnergy):
 
     def residue_energy(self, rsd, pose, emap):
         #print 'residue_energy:', type(emap)
-        emap.get().set(rosetta.core.scoring.PyRosettaEnergy_last, 2.0)
+        emap.set(rosetta.core.scoring.PyRosettaEnergy_last, 2.0)
 
 
     def clone(self): return MyNewCI1B();

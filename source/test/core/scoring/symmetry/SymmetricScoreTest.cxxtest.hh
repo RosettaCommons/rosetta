@@ -88,7 +88,7 @@
 #include <core/scoring/methods/TwoBodyEnergy.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.fwd.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
-#include <utility/PyAssert.hh>
+#include <utility/py/PyAssert.hh>
 #include <utility/down_cast.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.fwd.hh>

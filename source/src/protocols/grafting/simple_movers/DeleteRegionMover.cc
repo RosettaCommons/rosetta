@@ -21,7 +21,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
-#include <utility/PyAssert.hh>
+#include <utility/py/PyAssert.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataCache.hh>
 #include <utility>

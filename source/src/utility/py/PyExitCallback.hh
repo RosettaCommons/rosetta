@@ -16,7 +16,7 @@
 #ifndef INCLUDED_utility_PyExitCallback_hh
 #define INCLUDED_utility_PyExitCallback_hh
 
-#include <utility/PyExitCallback.fwd.hh>
+#include <utility/py/PyExitCallback.fwd.hh>
 
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -24,7 +24,7 @@
 
 #include <string>
 
-namespace utility {
+namespace utility { namespace py {
 
 
 /// This class for holding callback function.
@@ -55,6 +55,6 @@ private:
 };
 
 
-} // namespace utility
+} } // namespace py namespace utility
 
 #endif // INCLUDED_utility_PyExitCallback_hh

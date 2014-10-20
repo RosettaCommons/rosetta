@@ -654,7 +654,7 @@ void instantiate_numeric_functions(std::string type_name)
   }
 
   { // ::numeric::EulerAngles<T>
-    utility::wrap_access_pointer< ::numeric::EulerAngles<T> >(("EulerAngles_" + type_name).c_str());
+	utility::py::wrap_access_pointer< ::numeric::EulerAngles<T> >(("EulerAngles_" + type_name).c_str());
     typedef boost::python::class_< ::numeric::EulerAngles<T>, boost::python::bases< ::numeric::xyzVector<T> > > EulerAngles_typename_exposer_type;
     EulerAngles_typename_exposer_type EulerAngles_typename_exposer(("EulerAngles_" + type_name).c_str(), "Euler angles 3-D orientation representation\n@remarks\nThe three euler angles (in radians) that describing a rotation operation\nof a Z axis rotation by the angle phi (position 1), followed by\nan X axis rotation by the angle theta (position 3), followed by another\nZ axis rotation by the angle psi (position 2).\nthis->code is a modified version of Alex Z's code from r++.\n@details\nThe range of phi is [ -pi, pi ];\nThe range of psi is [ -pi, pi ];\nThe range of theta is [ 0, pi ];\n", boost::python::init <  >() );
     EulerAngles_typename_exposer.def( boost::python::init< ::numeric::EulerAngles<T> const & > ( (boost::python::arg("")) , "Euler angles 3-D orientation representation\n@remarks\nThe three euler angles (in radians) that describing a rotation operation\nof a Z axis rotation by the angle phi (position 1), followed by\nan X axis rotation by the angle theta (position 3), followed by another\nZ axis rotation by the angle psi (position 2).\nthis->code is a modified version of Alex Z's code from r++.\n@details\nThe range of phi is [ -pi, pi ];\nThe range of psi is [ -pi, pi ];\nThe range of theta is [ 0, pi ];\n" ) );

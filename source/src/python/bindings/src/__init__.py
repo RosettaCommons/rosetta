@@ -89,6 +89,7 @@ if '__file__' in vars():
 
 # Double-checked right order...
 import rosetta.utility
+import rosetta.utility.py
 import rosetta.utility.excn
 import rosetta.utility.file
 
@@ -231,9 +232,9 @@ class PyRosettaException(Exception):
         return 'PyRosettaException'
 
 
-class PythonPyExitCallback(rosetta.utility.PyExitCallback):
+class PythonPyExitCallback(rosetta.utility.py.PyExitCallback):
     def __init__(self):
-        rosetta.utility.PyExitCallback.__init__(self)
+        rosetta.utility.py.PyExitCallback.__init__(self)
 
     def exit_callback(self):
         raise PyRosettaException()
@@ -311,7 +312,7 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=True):
     #global _python_py_exit_callback
     _python_py_exit_callback = PythonPyExitCallback()
     rosetta.utility.py_xinc_ref(_python_py_exit_callback)
-    rosetta.utility.PyExitCallback.set_PyExitCallBack(_python_py_exit_callback)
+    rosetta.utility.py.PyExitCallback.set_PyExitCallBack(_python_py_exit_callback)
     #rosetta.utility.set_pyexit_callback()
 
     if set_logging_handler: logging_support.set_logging_handler()
@@ -575,9 +576,8 @@ def etable_atom_pair_energies(atom1, atom2, sfxn):
         'etable' to return LJ attractive, LJ repulsive, and LK solvation energies
     """
     score_manager = rosetta.core.scoring.ScoringManager.get_instance()
-    etable_ptr = score_manager.etable(
-                                    sfxn.energy_method_options().etable_type())
-    etable=etable_ptr.get()
+    etable_ptr = score_manager.etable( sfxn.energy_method_options().etable_type() )
+    etable = etable_ptr.get()
     etable_energy = rosetta.core.scoring.etable.AnalyticEtableEnergy(etable,
                                                   sfxn.energy_method_options())
 

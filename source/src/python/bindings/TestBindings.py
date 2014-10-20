@@ -162,16 +162,15 @@ def main(args):
     with file(json_file, 'w') as f: json.dump(dict(state=state, results=results, log=''), f, sort_keys=True, indent=2)
 
 
+    for t in sorted(results['tests']):
+        if results['tests'][t]['state'] == 'finished': print t, '- passed'
+
+    print '\nFollowing PyRosetta Tests FAILED:'
+    for t in results['tests']:
+        if results['tests'][t]['state'] != 'finished': print t, '- FAILED'
+
     if state == 'finished': print '\nAll PyRosetta Tests passed!\n'
-    else:
-        for t in results['tests']:
-            if results['tests'][t]['state'] == 'finished': print t, '- passed'
-
-        print '\nFollowing PyRosetta Tests FAILED:'
-        for t in results['tests']:
-            if results['tests'][t]['state'] != 'finished': print t, '- FAILED'
-
-        sys.exit(1)
+    else: sys.exit(1)
 
 
 

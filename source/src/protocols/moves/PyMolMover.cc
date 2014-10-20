@@ -49,7 +49,7 @@ namespace boost {
 #include <utility/vector1.hh>
 #include <utility/io/zipstream.ipp>
 
-#include <utility/PyAssert.hh>
+#include <utility/py/PyAssert.hh>
 #include <utility/tag/Tag.hh>
 
 // numeric headers

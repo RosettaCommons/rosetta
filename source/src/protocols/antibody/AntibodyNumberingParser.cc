@@ -16,7 +16,7 @@
 #include <protocols/antibody/AntibodyEnumManager.hh>
 
 #include <utility/string_util.hh>
-#include <utility/PyAssert.hh>
+#include <utility/py/PyAssert.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 #include <iostream>

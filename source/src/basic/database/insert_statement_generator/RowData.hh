@@ -35,7 +35,7 @@ public:
 	virtual ~RowDataBase();
 
 	std::string get_column_name() const;
-	virtual void bind_data(platform::Size const & index, cppdb::statement & statement) = 0;
+	virtual void bind_data(platform::Size index, cppdb::statement & statement) = 0;
 
 
 private:
@@ -50,7 +50,7 @@ public:
 		T const & data) : RowDataBase(column_name),data_(data)
 	{}
 	virtual void bind_data(
-		platform::Size const & index,
+		platform::Size index,
 		cppdb::statement & statement)
 	{
 		statement.bind(index,data_);

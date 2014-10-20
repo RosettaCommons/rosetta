@@ -20,7 +20,6 @@ sources = {
 		"LexicographicalIterator",
 		"mpi_util",
 		"SimulateMPI",
-		"PyExitCallback",
 		"recent_history_queue",
 		"static_database",
 		"string_util",
@@ -72,6 +71,9 @@ sources = {
 	"utility/pointer": [
 		"ReferenceCount",
 		"ReferenceCountMI_",
+	],
+	"utility/py": [
+		"PyExitCallback",
 	],
 	"utility/sql_database": [
 		"DatabaseSessionManager",
