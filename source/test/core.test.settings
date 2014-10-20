@@ -106,14 +106,6 @@ sources = {
 		# Linux 3.2.0-31-generic x86_64
 		#"silent_file_loader",
 	],
-	"membrane/io" : [
-        #fails on testing server but not on my machine
-        #"SpanFileLoader",
-		#"LipsFileLoader",
-	],
-    "membrane" : [
-       # "MPDatabaseIO",
-    ],
 	"kinematics" : [
 		"FoldTree",
 		"MoveMap",
