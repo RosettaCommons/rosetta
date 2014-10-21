@@ -75,7 +75,7 @@ main( int argc, char * argv [] )
 	utility::vector1< bool > to_repack = cbrss->apply( *pose_copy );
 
 	// print list of positions to repack
-	std::cout << "Clash-based repack shell:" << std::endl;
+	std::cout << std::endl << "Clash-based repack shell:" << std::endl;
 	core::Size num_positions_to_repack=0;
 	for(core::Size i = 1; i <= to_repack.size(); ++i) {
 		if (to_repack[i]) {
@@ -84,11 +84,15 @@ main( int argc, char * argv [] )
 			++num_positions_to_repack;
 		}
 	}
+	std::cout << std::endl << "For highlighting in pymol:" << std::endl;
+	std::stringstream for_pymol;
 	for(core::Size i = 1; i <= to_repack.size(); ++i) {
 		if (to_repack[i]) {
-			std::cout << pose_copy->pdb_info()->number(i) << "+";
+			for_pymol << "chain " << pose_copy->pdb_info()->chain(i) << " and resi " << pose_copy->pdb_info()->number(i) << " or ";
 		}
 	}
+	std::string for_pymol_string=for_pymol.str();
+	std::cout << for_pymol_string.substr(0,for_pymol_string.size()-4) << std::endl;
 	std::cout << std::endl << "Found " << num_positions_to_repack << " positions to repack" << std::endl;
 
 	// append list of repack positions to resfile
