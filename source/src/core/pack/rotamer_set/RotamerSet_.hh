@@ -132,6 +132,18 @@ public:
 		graph::GraphCOP packer_neighbor_graph,
 		utility::vector1< core::PackerEnergy > & energies ) const;
 
+	/// @brief Computes the packers one body energies for the set of rotamers as well
+	/// as two body energies for neighboring positions defined as packable by the task.
+	virtual
+	void
+	compute_one_and_two_body_energies(
+		pose::Pose const & pose,
+		scoring::ScoreFunction const & scorefxn,
+		task::PackerTask const & task,
+		graph::GraphCOP packer_neighbor_graph,		
+		utility::vector1< core::PackerEnergy > & one_body_energies,
+		utility::vector1< utility::vector1< core::PackerEnergy > > & two_body_energies,
+		utility::vector1< core::Size > & packable_neighbors ) const;
 
 	/// for OPTE
 	virtual

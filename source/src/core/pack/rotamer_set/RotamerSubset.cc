@@ -443,6 +443,18 @@ RotamerSubset::compute_one_body_energies(
 {}
 
 void
+RotamerSubset::compute_one_and_two_body_energies(
+	pose::Pose const &,
+	scoring::ScoreFunction const &,
+	task::PackerTask const &,
+	graph::GraphCOP,
+	utility::vector1< core::PackerEnergy > &,
+	utility::vector1< utility::vector1< core::PackerEnergy > > &,
+	utility::vector1< core::Size > &
+) const
+{}
+
+void
 RotamerSubset::compute_one_body_energy_maps(
 	pose::Pose const &,
 	scoring::ScoreFunction const &,

@@ -22,6 +22,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/InnerJob.hh>
+#include <protocols/toolbox/IGEdgeReweighters.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>
@@ -46,6 +47,7 @@
 #include <numeric/NumericTraits.hh>
 #include <numeric/xyz.functions.hh>
 
+
 // option key includes
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -57,6 +59,7 @@ static thread_local basic::Tracer TR( "apps.coupled_moves" );
 
 OPT_1GRP_KEY(Integer, coupled_moves, ntrials)
 OPT_1GRP_KEY(Real, coupled_moves, mc_kt)
+OPT_1GRP_KEY(Real, coupled_moves, boltzmann_kt)
 OPT_1GRP_KEY(Real, coupled_moves, mm_bend_weight)
 OPT_1GRP_KEY(Boolean, coupled_moves, trajectory)
 OPT_1GRP_KEY(Boolean, coupled_moves, trajectory_gz)
@@ -69,7 +72,10 @@ OPT_1GRP_KEY(Boolean, coupled_moves, initial_repack)
 OPT_1GRP_KEY(Boolean, coupled_moves, save_sequences)
 OPT_1GRP_KEY(Real, coupled_moves, ligand_prob)
 OPT_1GRP_KEY(Boolean, coupled_moves, fix_backbone)
+OPT_1GRP_KEY(Boolean, coupled_moves, uniform_backrub)
 OPT_1GRP_KEY(Boolean, coupled_moves, bias_sampling)
+OPT_1GRP_KEY(Boolean, coupled_moves, bump_check)
+OPT_1GRP_KEY(Real, coupled_moves, ligand_weight)
 
 void *
 my_main( void* );
@@ -86,6 +92,7 @@ main( int argc, char * argv [] )
 	OPT(in::file::native);
 	NEW_OPT(coupled_moves::ntrials, "number of Monte Carlo trials to run", 1000);
 	NEW_OPT(coupled_moves::mc_kt, "value of kT for Monte Carlo", 0.6);
+	NEW_OPT(coupled_moves::boltzmann_kt, "value of kT for Boltzmann weighted moves", 0.6);
 	NEW_OPT(coupled_moves::mm_bend_weight, "weight of mm_bend bond angle energy term", 1.0);
 	NEW_OPT(coupled_moves::trajectory, "record a trajectory", false);
 	NEW_OPT(coupled_moves::trajectory_gz, "gzip the trajectory", false);
@@ -98,7 +105,10 @@ main( int argc, char * argv [] )
 	NEW_OPT(coupled_moves::save_sequences, "save all unique sequences", true);
 	NEW_OPT(coupled_moves::ligand_prob, "probability of making a ligand move", 0.1);
 	NEW_OPT(coupled_moves::fix_backbone, "do not make any backbone moves", false);
+	NEW_OPT(coupled_moves::uniform_backrub, "select backrub rotation angle from uniform distribution", false);
 	NEW_OPT(coupled_moves::bias_sampling, "if true, bias rotamer selection based on energy", true);
+	NEW_OPT(coupled_moves::bump_check, "if true, use bump check in generating rotamers", true);
+	NEW_OPT(coupled_moves::ligand_weight, "weight for residue - ligand interactions", 1.0);
 	
 	// initialize Rosetta
 	devel::init(argc, argv);
@@ -129,9 +139,15 @@ public:
 		return protocols::moves::MoverOP( new CoupledMovesProtocol );
 	}
 
+	core::Real compute_ligand_score_bonus(
+		core::pose::PoseOP pose,
+		core::Size ligand_resnum,
+		core::Real ligand_weight);
+
 private:
 	core::scoring::ScoreFunctionOP score_fxn_;
 	core::pack::task::TaskFactoryOP main_task_factory_;
+	
 };
 
 CoupledMovesProtocol::CoupledMovesProtocol(): Mover(),
@@ -170,6 +186,34 @@ CoupledMovesProtocol::CoupledMovesProtocol(CoupledMovesProtocol const & cmp): Mo
 		main_task_factory_(cmp.main_task_factory_)
 {}
 
+core::Real CoupledMovesProtocol::compute_ligand_score_bonus(
+	core::pose::PoseOP pose,
+	core::Size ligand_resnum,
+	core::Real ligand_weight) {
+			
+	core::scoring::EnergyMap weights = pose->energies().weights();	
+	core::scoring::EnergyGraph const & energy_graph( pose->energies().energy_graph() );
+	core::scoring::EnergyMap ligand_two_body_energies;
+	
+	for(core::Size i = 1; i <= pose->total_residue(); i++) {
+		for ( core::graph::Graph::EdgeListConstIter
+			iru  = energy_graph.get_node(i)->const_edge_list_begin(),
+			irue = energy_graph.get_node(i)->const_edge_list_end();
+			iru != irue; ++iru ) {
+			const core::scoring::EnergyEdge * edge( static_cast< const core::scoring::EnergyEdge *> (*iru) );
+			core::Size const j( edge->get_first_node_ind() );
+			core::Size const k( edge->get_second_node_ind() );
+			if (j == ligand_resnum || k == ligand_resnum) {
+				ligand_two_body_energies += edge->fill_energy_map();
+			}
+		}
+	}
+			
+	core::Real ligand_score_bonus = ligand_two_body_energies.dot(weights) * (ligand_weight - 1.0);
+	
+	return ligand_score_bonus;
+}
+	
 void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -234,18 +278,25 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	TR << std::endl;
 	
 	// ASSUMPTION: the ligand is the last residue in the given PDB
-	core::Size lig_res = pose_copy->total_residue();
-	
+	core::Size ligand_resnum = pose_copy->total_residue();
+	core::Real ligand_weight = option[coupled_moves::ligand_weight];
 	protocols::simple_moves::CoupledMoverOP coupled_mover;
 	
 	if ( option[coupled_moves::ligand_mode] ) {
-		coupled_mover = protocols::simple_moves::CoupledMoverOP(new protocols::simple_moves::CoupledMover(pose_copy, score_fxn_, task, lig_res));
+		coupled_mover = protocols::simple_moves::CoupledMoverOP(new protocols::simple_moves::CoupledMover(pose_copy, score_fxn_, task, ligand_resnum));
+		coupled_mover->set_ligand_resnum( ligand_resnum );
+		coupled_mover->set_ligand_weight( ligand_weight );
+		core::pack::task::IGEdgeReweighterOP reweight_ligand( new protocols::toolbox::IGLigandDesignEdgeUpweighter( ligand_weight ) );
+		task->set_IGEdgeReweights()->add_reweighter( reweight_ligand );
 	} else {
 		coupled_mover = protocols::simple_moves::CoupledMoverOP(new protocols::simple_moves::CoupledMover(pose_copy, score_fxn_, task));
 	}
 	
 	coupled_mover->set_fix_backbone( option[coupled_moves::fix_backbone] );
 	coupled_mover->set_bias_sampling( option[coupled_moves::bias_sampling] );
+	coupled_mover->set_temperature( option[coupled_moves::boltzmann_kt] );
+	coupled_mover->set_bump_check( option[coupled_moves::bump_check] );
+	coupled_mover->set_uniform_backrub( option[coupled_moves::uniform_backrub] );
 	
 	protocols::simple_moves::PackRotamersMoverOP pack(new protocols::simple_moves::PackRotamersMover( score_fxn_, task, 1 ));		
 
@@ -262,13 +313,22 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	
 	std::string resfile_name = option[packing::resfile]()[1];
 	
+	(*score_fxn_)(*pose_copy);
+	core::Real current_score = pose_copy->energies().total_energy();
+	
+	if ( option[coupled_moves::ligand_mode] ) {
+		core::Real ligand_score_bonus = compute_ligand_score_bonus(pose_copy, ligand_resnum, ligand_weight);
+		current_score += ligand_score_bonus;
+		mc.set_last_accepted_pose(*pose_copy, current_score);
+	}
+		
 	for (core::Size i = 1; i <= ntrials; ++i) {
 		core::Size random = numeric::random::random_range(1, move_positions.size());
 		core::Size resnum = move_positions[random];
 		std::string move_type;
 		core::Real move_prob = numeric::random::uniform();
 		if (move_prob < option[coupled_moves::ligand_prob]) {
-			resnum = lig_res;
+			resnum = ligand_resnum;
 			move_type = "LIGAND";
 		} else {
 			move_type = "RESIDUE";
@@ -277,17 +337,27 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 		coupled_mover->set_resnum(resnum);
 		coupled_mover->apply(*pose_copy);
 		
-		bool accepted = mc.boltzmann(*pose_copy, move_type);
+		(*score_fxn_)(*pose_copy);
+		current_score = pose_copy->energies().total_energy();
+		core::Real ligand_score_bonus = 0.0;
+		
+		if ( option[coupled_moves::ligand_mode] ) {
+			ligand_score_bonus = compute_ligand_score_bonus(pose_copy, ligand_resnum, ligand_weight);
+		}
+		
+		current_score += ligand_score_bonus;
+		core::Real lowest_score = mc.lowest_score();
+		bool accepted = mc.boltzmann(current_score, move_type);
 		
 		if (accepted) {
-			core::Real current_score = mc.last_accepted_score();
+			if (current_score < lowest_score)
+				mc.set_lowest_score_pose(*pose_copy, current_score);
+			mc.set_last_accepted_pose(*pose_copy, current_score);
 			std::string sequence = "";
 			for(core::Size index = 1; index <= design_positions.size(); index++) {
 				sequence += pose_copy->residue(design_positions[index]).name1();
 			}
-			
-			TR << i << " " << sequence << " " << pose_copy->energies().total_energy() << std::endl;
-			
+			TR << i << " " << sequence << " " << current_score << std::endl;
 			if (option[coupled_moves::save_sequences]) {
 				if (unique_sequences.find(sequence) == unique_sequences.end()) {
 					unique_sequences.insert(std::make_pair(sequence,current_score));
@@ -299,9 +369,10 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 					}
 				}
 			}
-			
+		} else {
+			(*pose_copy) = mc.last_accepted_pose();
 		}
-				
+		
 		if (option[ coupled_moves::trajectory ]) trajectory.update_after_boltzmann(mc);
 		
 	}

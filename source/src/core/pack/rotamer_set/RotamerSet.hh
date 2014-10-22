@@ -142,6 +142,17 @@ public:
 		graph::GraphCOP packer_neighbor_graph,
 		utility::vector1< core::PackerEnergy > & energies ) const = 0;
 
+	virtual
+	void
+	compute_one_and_two_body_energies(
+		pose::Pose const & pose,
+		scoring::ScoreFunction const & scorefxn,
+		task::PackerTask const & task,
+		graph::GraphCOP packer_neighbor_graph,
+		utility::vector1< core::PackerEnergy > & one_body_energies,
+		utility::vector1< utility::vector1< core::PackerEnergy > > & two_body_energies,
+		utility::vector1< core::Size > & packable_neighbors ) const = 0;
+		
 	/// for OptE
 	virtual
 	void

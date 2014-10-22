@@ -65,12 +65,14 @@ public:
 	void set_resnum( core::Size resnum );
 	void set_rotation_std_dev( core::Real rotation_std_dev );
 	void set_randomize_resnum( bool randomize_resnum );
+	void set_uniform_backrub( bool uniform_backrub );
 	virtual void set_input_pose( core::pose::PoseCOP pose );
 	
 	// getters
 	core::Size get_resnum() const;
 	core::Real get_rotation_std_dev() const;
 	bool get_randomize_resnum() const;
+	bool get_uniform_backrub() const;
 	protocols::backrub::BackrubMoverOP get_backrubmover() const;
 
 	void parse_my_tag(
@@ -93,6 +95,9 @@ private:
 	
 	/// @brief if true, choose a random residue for the next move
 	bool randomize_resnum_;
+	
+	/// @brief if true, sample rotation angle from a uniform distribution from -20 to 20
+	bool uniform_backrub_;
 	
 };  // class ShortBackrubMover
 

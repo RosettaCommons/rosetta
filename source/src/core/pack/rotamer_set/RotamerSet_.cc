@@ -746,6 +746,97 @@ RotamerSet_::compute_one_body_energies(
 
 }
 
+/// @details This function is similar to compute_one_body_energies but it also returns
+/// a 2D vector of two body energies for all neighboring positions that are defined
+/// as packable by the task. The list of neighboring, packable positions is stored in
+/// packable_neighbors.
+void
+RotamerSet_::compute_one_and_two_body_energies(
+	pose::Pose const & pose,
+	scoring::ScoreFunction const & sf,
+	task::PackerTask const & task,
+	graph::GraphCOP packer_neighbor_graph,
+	utility::vector1< core::PackerEnergy > & one_body_energies,
+	utility::vector1< utility::vector1< core::PackerEnergy > > & two_body_energies,
+	utility::vector1< core::Size > & packable_neighbors
+) const
+{
+	using namespace conformation;
+	using namespace scoring;
+
+	std::fill( one_body_energies.begin(), one_body_energies.end(), core::PackerEnergy( 0.0 ) );
+	
+	int const nrotamers = num_rotamers(); // does not change in this function
+	Size const theresid = resid();
+
+	sf.evaluate_rotamer_intrares_energies( *this, pose, one_body_energies );
+	
+	for ( graph::Graph::EdgeListConstIter
+			ir  = packer_neighbor_graph->get_node( theresid )->const_edge_list_begin(),
+			ire = packer_neighbor_graph->get_node( theresid )->const_edge_list_end();
+			ir != ire; ++ir ) {
+
+		int const neighbor_id( (*ir)->get_other_ind( theresid ) );
+
+		if ( task.pack_residue( neighbor_id ) ) {
+			packable_neighbors.push_back(neighbor_id);
+			continue;
+		}
+		
+		Residue const & neighbor( pose.residue( neighbor_id ) );
+		sf.evaluate_rotamer_background_energies( *this, neighbor, pose, one_body_energies );
+
+	}
+	
+	core::Size num_packable_neighbors = packable_neighbors.size();
+	
+	for ( int ii = 1; ii <= nrotamers; ++ii ) {
+		EnergyMap emap1b;
+		sf.eval_ci_1b( *rotamers_[ ii ], pose, emap1b );
+		sf.eval_cd_1b( *rotamers_[ ii ], pose, emap1b );
+		one_body_energies[ ii ] += static_cast< core::PackerEnergy > (sf.weights().dot( emap1b )); // precision loss here.
+		two_body_energies[ ii ].resize(num_packable_neighbors);
+		for (core::Size jj = 1; jj <= packable_neighbors.size(); jj++) {
+			Residue const & neighbor( pose.residue( packable_neighbors[jj] ) );
+			EnergyMap emap2b;
+			sf.eval_ci_2b( neighbor, *rotamers_[ ii ], pose, emap2b );
+			sf.eval_cd_2b( neighbor, *rotamers_[ ii ], pose, emap2b );
+			core::PackerEnergy neighbor_energy = static_cast< core::PackerEnergy > (sf.weights().dot( emap2b ));
+			one_body_energies[ ii ] += neighbor_energy;
+			two_body_energies[ ii ][ jj ] = neighbor_energy;
+		}
+	}
+	
+	// long-range energy interactions with background
+	// Iterate across the long range energy functions and use the iterators generated
+	// by the LRnergy container object
+	for ( ScoreFunction::LR_2B_MethodIterator
+			lr_iter = sf.long_range_energies_begin(),
+			lr_end  = sf.long_range_energies_end();
+			lr_iter != lr_end; ++lr_iter ) {
+		LREnergyContainerCOP lrec = pose.energies().long_range_container( (*lr_iter)->long_range_type() );
+		if ( !lrec || lrec->empty() ) continue; // only score non-emtpy energies.
+
+		// Potentially O(N) operation leading to O(N^2) behavior
+		for ( ResidueNeighborConstIteratorOP
+				rni = lrec->const_neighbor_iterator_begin( theresid ),
+				rniend = lrec->const_neighbor_iterator_end( theresid );
+				(*rni) != (*rniend); ++(*rni) ) {
+			Size const neighbor_id = rni->neighbor_id();
+			
+			//assert( neighbor_id != theresid );
+			//if ( task.pack_residue( neighbor_id ) ) continue;
+			if (theresid == neighbor_id) continue;
+			
+			(*lr_iter)->evaluate_rotamer_background_energies(
+				*this, pose.residue( neighbor_id ), pose, sf,
+				sf.weights(), one_body_energies );
+
+		} // (potentially) long-range neighbors of theresid [our resid()]
+	} // long-range energy functions
+
+}
+
 /// @details Used in OptE.  Based on the function compute_one_body_energies().  OptE needs to store the energies for all score terms for each rotamer separately.  In this context there are only rotamers at a single position, with all other positions fixed.
 void
 RotamerSet_::compute_one_body_energy_maps(

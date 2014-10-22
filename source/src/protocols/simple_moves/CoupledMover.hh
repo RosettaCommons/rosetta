@@ -82,11 +82,14 @@ public:
 	void set_randomize_resnum( bool randomize_resnum );
 	void set_fix_backbone( bool fix_backbone );
 	void set_rotation_std_dev( core::Real rotation_std_dev );
+	void set_uniform_backrub( bool uniform_backrub );
 	virtual void set_input_pose( core::pose::PoseCOP pose );
 	void set_temperature( core::Real temperature );
 	void set_bias_sampling( bool bias_sampling );
+	void set_bump_check( bool bump_check );
 	void set_ligand_resnum( core::Size ligand_resnum );
 	void set_ligand_jump_id( core::Size ligand_jump_id );
+	void set_ligand_weight( core::Real ligand_weight );
 	void set_rotation_magnitude( core::Real rotation_magnitude );
 	void set_translation_magnitude( core::Real translation_magnitude );
 	void set_short_backrub_mover( protocols::simple_moves::ShortBackrubMoverOP short_backrub_mover );
@@ -100,10 +103,13 @@ public:
 	bool get_randomize_resnum() const;
 	bool get_fix_backbone() const;
 	core::Real get_rotation_std_dev() const;
+	bool get_uniform_backrub() const;
 	core::Real get_temperature() const;
 	bool get_bias_sampling() const;
+	bool get_bump_check() const;
 	core::Size get_ligand_resnum() const;
 	core::Size get_ligand_jump_id() const;
+	core::Real get_ligand_weight() const;
 	core::Real get_rotation_magnitude() const;
 	core::Real get_translation_magnitude() const;
 	protocols::simple_moves::ShortBackrubMoverOP get_short_backrub_mover() const;
@@ -133,11 +139,17 @@ private:
 	/// @brief standard deviation of rotation angle (degrees) used for ShortBackrubMover
 	core::Real rotation_std_dev_;
 	
+	/// @brief if true, sample rotation angle from a uniform distribution from -20 to 20
+	bool uniform_backrub_;
+	
 	/// @brief kT value used for Boltzmann probability calculation
 	core::Real temperature_;
 	
 	/// @brief if true, bias rotamer selection based on energy
 	bool bias_sampling_;
+	
+	/// @brief if true, use bump check when generating rotamers
+	bool bump_check_;
 	
 	/// @brief residue number specifying the ligand (set to zero if there is no ligand)
 	core::Size ligand_resnum_;
@@ -145,6 +157,9 @@ private:
 	/// @brief jump id specifying the ligand jump (set to zero if there is no ligand)
 	core::Size ligand_jump_id_;
 	
+	/// @brief weight of interaction between resnum_ and ligand_resnum_
+	core::Real ligand_weight_;
+
 	/// @brief the magnitude of ligand rotation used by the RigidBodyMover (in degrees)
 	core::Real rotation_magnitude_;
 	

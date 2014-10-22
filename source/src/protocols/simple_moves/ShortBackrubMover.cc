@@ -78,6 +78,7 @@ ShortBackrubMover::ShortBackrubMover() : protocols::moves::Mover(),
 	resnum_ = 0;
 	rotation_std_dev_ = 4.572016;
 	randomize_resnum_ = false;
+	uniform_backrub_ = false;
 }
 
 // constructor that sets the input pose for the BackrubMover
@@ -94,6 +95,7 @@ ShortBackrubMover::ShortBackrubMover( core::pose::PoseOP pose ) : protocols::mov
 	resnum_ = 0;
 	rotation_std_dev_ = 4.572016;
 	randomize_resnum_ = false;
+	uniform_backrub_ = false;
 }
 
 
@@ -104,7 +106,8 @@ ShortBackrubMover::ShortBackrubMover( ShortBackrubMover const & rval ):
 	backrubmover_( rval.backrubmover_ ),
 	resnum_( rval.resnum_ ),
 	rotation_std_dev_( rval.rotation_std_dev_ ),
-	randomize_resnum_( rval.randomize_resnum_ )
+	randomize_resnum_( rval.randomize_resnum_ ),
+	uniform_backrub_( rval.uniform_backrub_ )
 {}
 
 // destructor
@@ -183,6 +186,8 @@ ShortBackrubMover::apply( core::pose::Pose & pose )
 		// apply the rotation to the pose
 		if (backrubmover_->num_segments() == 1) {
 			core::Real rotation_angle = rotation_std_dev_ * numeric::random::rg().gaussian();
+			if (uniform_backrub_)
+				rotation_angle = 20 - numeric::random::rg().uniform() * 40;
 			backrubmover_->set_next_angle(numeric::conversions::radians(rotation_angle));
 			backrubmover_->set_next_segment_id(1);
 			backrubmover_->apply(pose);
@@ -194,6 +199,8 @@ ShortBackrubMover::apply( core::pose::Pose & pose )
 		// adjust the peptide bonds to minimize the movement of carbonyl oxygens
 		else if (backrubmover_->num_segments() == 3) {
 			core::Real rotation_angle = rotation_std_dev_ * numeric::random::rg().gaussian();
+			if (uniform_backrub_)
+				rotation_angle = 20 - numeric::random::rg().uniform() * 40;
 			backrubmover_->set_next_angle(numeric::conversions::radians(rotation_angle));
 			backrubmover_->set_next_segment_id(2);
 			backrubmover_->apply(pose);
@@ -218,6 +225,7 @@ ShortBackrubMover::get_name() const {
 void ShortBackrubMover::set_resnum( core::Size resnum ) { resnum_ = resnum; }
 void ShortBackrubMover::set_rotation_std_dev( core::Real rotation_std_dev ) { rotation_std_dev_ = rotation_std_dev; }
 void ShortBackrubMover::set_randomize_resnum( bool randomize_resnum ) { randomize_resnum_ = randomize_resnum; }
+void ShortBackrubMover::set_uniform_backrub( bool uniform_backrub ) { uniform_backrub_ = uniform_backrub; }
 void ShortBackrubMover::set_input_pose( core::pose::PoseCOP pose ) {
 	backrubmover_->set_input_pose(pose);
 }
@@ -234,6 +242,10 @@ ShortBackrubMover::get_rotation_std_dev() const {
 bool
 ShortBackrubMover::get_randomize_resnum() const {
 	return randomize_resnum_;
+}
+bool
+ShortBackrubMover::get_uniform_backrub() const {
+	return uniform_backrub_;
 }
 protocols::backrub::BackrubMoverOP ShortBackrubMover::get_backrubmover() const{
 	return backrubmover_;

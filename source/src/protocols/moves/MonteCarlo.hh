@@ -221,10 +221,24 @@ public:
 	set_last_accepted_pose(
 		Pose const & pose
 	);
+	
+	/// @brief Sets the last accepted pose and last accepted score
+	/// @note (does not reset counters)
+	void
+	set_last_accepted_pose(
+    core::pose::Pose const& pose,
+		core::Real score
+	);
 
 	void
 	set_lowest_score_pose(
 		core::pose::Pose const& pose
+	);
+	
+	void
+	set_lowest_score_pose(
+		core::pose::Pose const& pose,
+		core::Real score
 	);
 
 	/// @brief Returns the last accepted pose
@@ -582,22 +596,11 @@ private:
 
 
 protected:
-	void set_last_accepted_pose(
-    core::pose::Pose const& pose,
-		core::Real score
-	);
-
 	void set_last_accepted_score(
 		core::Real score
 	) {
 		last_accepted_score_ = score;
 	};
-
-	void
-	set_lowest_score_pose(
-		core::pose::Pose const& pose,
-		core::Real score
-	);
 
 	void
 	set_mc_accepted( MCA value ) {

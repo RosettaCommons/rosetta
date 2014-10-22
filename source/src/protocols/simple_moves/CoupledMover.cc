@@ -75,9 +75,13 @@ CoupledMover::CoupledMover() : protocols::moves::Mover()
 	randomize_resnum_ = false;
 	fix_backbone_ = false;
 	rotation_std_dev_ = 4.572016;
+	uniform_backrub_ = false;
 	temperature_ = 1.0;
 	bias_sampling_ = true;
+	bump_check_ = true;
 	ligand_resnum_ = 0;
+	ligand_jump_id_ = 0;
+	ligand_weight_ = 1.0;
 	rotation_magnitude_ = 1;
 	translation_magnitude_ = 0.1;
 	short_backrub_mover_ = protocols::simple_moves::ShortBackrubMoverOP( new protocols::simple_moves::ShortBackrubMover() );
@@ -85,6 +89,8 @@ CoupledMover::CoupledMover() : protocols::moves::Mover()
 	boltzmann_rotamer_mover_ = protocols::simple_moves::BoltzmannRotamerMoverOP( new protocols::simple_moves::BoltzmannRotamerMover() );
 	boltzmann_rotamer_mover_->set_temperature(temperature_);
 	boltzmann_rotamer_mover_->set_bias_sampling(bias_sampling_);
+	boltzmann_rotamer_mover_->set_ligand_resnum(ligand_resnum_);
+	boltzmann_rotamer_mover_->set_ligand_weight(ligand_weight_);
 	rigid_body_mover_ = protocols::rigid::RigidBodyPerturbMoverOP( new protocols::rigid::RigidBodyPerturbMover() );
 	rigid_body_mover_->rot_magnitude(rotation_magnitude_);
 	rigid_body_mover_->trans_magnitude(translation_magnitude_);
@@ -101,10 +107,13 @@ CoupledMover::CoupledMover(
 	randomize_resnum_ = false;
 	fix_backbone_ = false;
 	rotation_std_dev_ = 4.572016;
+	uniform_backrub_ = false;
 	temperature_ = 1.0;
 	bias_sampling_ = true;
+	bump_check_ = true;
 	ligand_resnum_ = 0;
 	ligand_jump_id_ = 0;
+	ligand_weight_ = 1.0;
 	rotation_magnitude_ = 1;
 	translation_magnitude_ = 0.1;
 	short_backrub_mover_ = protocols::simple_moves::ShortBackrubMoverOP( new protocols::simple_moves::ShortBackrubMover(pose) );
@@ -112,6 +121,8 @@ CoupledMover::CoupledMover(
 	boltzmann_rotamer_mover_ = protocols::simple_moves::BoltzmannRotamerMoverOP( new protocols::simple_moves::BoltzmannRotamerMover(score_fxn, packer_task) );
 	boltzmann_rotamer_mover_->set_temperature(temperature_);
 	boltzmann_rotamer_mover_->set_bias_sampling(bias_sampling_);
+	boltzmann_rotamer_mover_->set_ligand_resnum(ligand_resnum_);
+	boltzmann_rotamer_mover_->set_ligand_weight(ligand_weight_);
 	rigid_body_mover_ = protocols::rigid::RigidBodyPerturbMoverOP( new protocols::rigid::RigidBodyPerturbMover() );
 	rigid_body_mover_->rot_magnitude(rotation_magnitude_);
 	rigid_body_mover_->trans_magnitude(translation_magnitude_);
@@ -131,10 +142,13 @@ CoupledMover::CoupledMover(
 	randomize_resnum_ = false;
 	fix_backbone_ = false;
 	rotation_std_dev_ = 4.572016;
+	uniform_backrub_ = false;
 	temperature_ = 1.0;
 	bias_sampling_ = true;
+	bump_check_ = true;
 	ligand_resnum_ = ligand_resnum;
 	ligand_jump_id_ = pose->fold_tree().get_jump_that_builds_residue(ligand_resnum);
+	ligand_weight_ = 1.0;
 	rotation_magnitude_ = 1;
 	translation_magnitude_ = 0.1;
 	short_backrub_mover_ = protocols::simple_moves::ShortBackrubMoverOP( new protocols::simple_moves::ShortBackrubMover(pose) );
@@ -142,6 +156,8 @@ CoupledMover::CoupledMover(
 	boltzmann_rotamer_mover_ = protocols::simple_moves::BoltzmannRotamerMoverOP( new protocols::simple_moves::BoltzmannRotamerMover(score_fxn, packer_task) );
 	boltzmann_rotamer_mover_->set_temperature(temperature_);
 	boltzmann_rotamer_mover_->set_bias_sampling(bias_sampling_);
+	boltzmann_rotamer_mover_->set_ligand_resnum(ligand_resnum_);
+	boltzmann_rotamer_mover_->set_ligand_weight(ligand_weight_);
 	rigid_body_mover_ = protocols::rigid::RigidBodyPerturbMoverOP( new protocols::rigid::RigidBodyPerturbMover(ligand_jump_id_, rotation_magnitude_, translation_magnitude_) );
 	score_fxn_ = score_fxn;
 	packer_task_ = packer_task;
@@ -154,10 +170,13 @@ CoupledMover::CoupledMover( CoupledMover const & rval ):
 	randomize_resnum_( rval.randomize_resnum_ ),
 	fix_backbone_( rval.fix_backbone_ ),
 	rotation_std_dev_( rval.rotation_std_dev_ ),
+	uniform_backrub_( rval.uniform_backrub_ ),
 	temperature_( rval.temperature_ ),
 	bias_sampling_( rval.bias_sampling_ ),
+	bump_check_( rval.bump_check_ ),
 	ligand_resnum_( rval.ligand_resnum_ ),
 	ligand_jump_id_( rval.ligand_jump_id_ ),
+	ligand_weight_( rval.ligand_weight_ ),
 	rotation_magnitude_( rval.rotation_magnitude_ ),
 	translation_magnitude_( rval.translation_magnitude_ ),
 	short_backrub_mover_( rval.short_backrub_mover_ ),
@@ -199,7 +218,7 @@ CoupledMover::apply( core::pose::Pose & pose )
 		core::Size random_index = numeric::random::rg().random_range(1, move_positions.size());
 		resnum_ = move_positions[random_index];
 	}
-
+	
 	if (pose.residue(resnum_).is_protein()) {
 		if (fix_backbone_ == false) {
 			short_backrub_mover_->set_resnum(resnum_);
@@ -208,10 +227,10 @@ CoupledMover::apply( core::pose::Pose & pose )
 	} else {
 		rigid_body_mover_->apply(pose);
 	}
-
+	
 	boltzmann_rotamer_mover_->set_resnum(resnum_);
 	boltzmann_rotamer_mover_->apply(pose);
-
+		
 }
 
 std::string
@@ -227,6 +246,10 @@ void CoupledMover::set_rotation_std_dev( core::Real rotation_std_dev ) {
 	rotation_std_dev_ = rotation_std_dev;
 	short_backrub_mover_->set_rotation_std_dev(rotation_std_dev);
 }
+void CoupledMover::set_uniform_backrub( bool uniform_backrub ) {
+	uniform_backrub_ = uniform_backrub;
+	short_backrub_mover_->set_uniform_backrub(uniform_backrub);
+}
 void CoupledMover::set_input_pose( core::pose::PoseCOP pose ) {
 	short_backrub_mover_->set_input_pose(pose);
 }
@@ -238,12 +261,21 @@ void CoupledMover::set_bias_sampling( bool bias_sampling ) {
 	bias_sampling_ = bias_sampling;
 	boltzmann_rotamer_mover_->set_bias_sampling(bias_sampling);
 }
+void CoupledMover::set_bump_check( bool bump_check ) {
+	bump_check_ = bump_check;
+	boltzmann_rotamer_mover_->set_bump_check(bump_check);
+}
 void CoupledMover::set_ligand_resnum( core::Size ligand_resnum ) {
 	ligand_resnum_ = ligand_resnum;
+	boltzmann_rotamer_mover_->set_ligand_resnum(ligand_resnum);
 }
 void CoupledMover::set_ligand_jump_id( core::Size ligand_jump_id ) {
 	ligand_jump_id_ = ligand_jump_id;
 	rigid_body_mover_ = protocols::rigid::RigidBodyPerturbMoverOP( new protocols::rigid::RigidBodyPerturbMover(ligand_jump_id_, rotation_magnitude_, translation_magnitude_) );
+}
+void CoupledMover::set_ligand_weight( core::Real ligand_weight ) {
+	ligand_weight_ = ligand_weight;
+	boltzmann_rotamer_mover_->set_ligand_weight(ligand_weight);
 }
 void CoupledMover::set_rotation_magnitude( core::Real rotation_magnitude ) {
 	rotation_magnitude_ = rotation_magnitude;
@@ -276,6 +308,10 @@ core::Real
 CoupledMover::get_rotation_std_dev() const {
 	return rotation_std_dev_;
 }
+bool
+CoupledMover::get_uniform_backrub() const {
+	return uniform_backrub_;
+}
 core::Real
 CoupledMover::get_temperature() const {
 	return temperature_;
@@ -284,6 +320,10 @@ bool
 CoupledMover::get_bias_sampling() const {
 	return bias_sampling_;
 }
+bool
+CoupledMover::get_bump_check() const {
+	return bump_check_;
+}
 core::Size
 CoupledMover::get_ligand_resnum() const {
 	return ligand_resnum_;
@@ -291,6 +331,10 @@ CoupledMover::get_ligand_resnum() const {
 core::Size
 CoupledMover::get_ligand_jump_id() const {
 	return ligand_jump_id_;
+}
+core::Real
+CoupledMover::get_ligand_weight() const {
+	return ligand_weight_;
 }
 core::Real
 CoupledMover::get_rotation_magnitude() const {

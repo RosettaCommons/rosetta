@@ -92,15 +92,21 @@ public:
 	void set_score_function( core::scoring::ScoreFunctionCOP sf );
 	void set_task_factory( core::pack::task::TaskFactoryCOP tf );
 	void set_resnum( core::Size resnum );
+	void set_ligand_resnum( core::Size ligand_resnum );
+	void set_ligand_weight( core::Real ligand_weight );
 	void set_temperature( core::Real temperature );
 	void set_bias_sampling( bool bias_sampling );
 	void set_randomize_resnum( bool randomize_resnum );
+	void set_bump_check( bool bump_check );
 	
 	// getters
 	core::Size get_resnum() const;
+	core::Size get_ligand_resnum() const;
+	core::Real get_ligand_weight() const;
 	core::Real get_temperature() const;
 	bool get_bias_sampling() const;
 	bool get_randomize_resnum() const;
+	bool get_bump_check() const;
 
 public:
 
@@ -134,6 +140,12 @@ private:
 	/// @brief residue number specifying the next residue to move
 	core::Size resnum_;
 	
+	/// @brief residue number specifying the ligand residue (0 if no ligand)
+	core::Size ligand_resnum_;
+	
+	/// @brief weight for interaction between resnum_ and ligand_resnum_
+	core::Real ligand_weight_;
+	
 	/// @brief kT value used for Boltzmann probability calculation
 	core::Real temperature_;
 	
@@ -142,6 +154,9 @@ private:
 	
 	/// @brief if true, choose a random residue for the next move
 	bool randomize_resnum_;
+	
+	/// @brief if true, use bump check when generating rotamers
+	bool bump_check_;
 	
 };  // class BoltzmannRotamerMover
 

@@ -49,7 +49,7 @@ using basic::Error;
 using basic::Warning;
 
 static thread_local basic::Tracer TR( "protocols.simple_moves.BoltzmannRotamerMover" );
-//static numeric::random::RandomGenerator RG(415608);
+
 bool compare_values(
 	const std::pair<core::Size, core::Real> &lhs,
 	const std::pair<core::Size, core::Real> &rhs) {
@@ -79,9 +79,12 @@ BoltzmannRotamerMover::BoltzmannRotamerMover() : protocols::moves::Mover()
 {
 	protocols::moves::Mover::type( "BoltzmannRotamer" );
 	resnum_ = 0;
+	ligand_resnum_ = 0;
+	ligand_weight_ = 1.0;
 	temperature_ = 1.0;
 	bias_sampling_ = true;
 	randomize_resnum_ = false;
+	bump_check_ = true;
 }
 
 // constructor with arguments
@@ -93,9 +96,12 @@ BoltzmannRotamerMover::BoltzmannRotamerMover(
 	protocols::moves::Mover::type( "BoltzmannRotamer" );
 	task_ = task_in->clone();
 	resnum_ = 0;
+	ligand_resnum_ = 0;
+	ligand_weight_ = 1.0;
 	temperature_ = 1.0;
 	bias_sampling_ = true;
 	randomize_resnum_ = false;
+	bump_check_ = true;
 }
 
 // constructor with arguments
@@ -106,9 +112,12 @@ BoltzmannRotamerMover::BoltzmannRotamerMover(
 {
 	protocols::moves::Mover::type( "BoltzmannRotamer" );
 	resnum_ = 0;
+	ligand_resnum_ = 0;
+	ligand_weight_ = 1.0;
 	temperature_ = 1.0;
 	bias_sampling_ = true;
 	randomize_resnum_ = false;
+	bump_check_ = true;
 }
 
 // copy constructor
@@ -120,9 +129,12 @@ BoltzmannRotamerMover::BoltzmannRotamerMover( BoltzmannRotamerMover const & rval
 	factory_( rval.factory_ ),
 	show_packer_task_( rval.show_packer_task_ ),
 	resnum_( rval.resnum_ ),
+	ligand_resnum_( rval.ligand_resnum_ ),
+	ligand_weight_( rval.ligand_weight_ ),
 	temperature_( rval.temperature_ ),
 	bias_sampling_( rval.bias_sampling_ ),
-	randomize_resnum_( rval.randomize_resnum_ )
+	randomize_resnum_( rval.randomize_resnum_ ),
+	bump_check_( rval.bump_check_ )
 {}
 
 // destructor
@@ -145,6 +157,7 @@ BoltzmannRotamerMover::fresh_instance() const
 void
 BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 {
+	core::pack::task::PackerTaskOP unedited_task( task(pose)->clone() );
 	core::pack::task::PackerTaskOP ptask( task(pose)->clone() );
 	if( show_packer_task_ ) {
 		TR << *ptask;
@@ -165,7 +178,7 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 
 	// generate rotamers for position resnum_
 	pose.update_residue_neighbors();
-	ptask->set_bump_check( true );
+	ptask->set_bump_check( bump_check_ );
 	ptask->or_include_current( true );
 	ptask->temporarily_fix_everything();
 	ptask->temporarily_set_pack_residue( resnum_, true );
@@ -177,11 +190,25 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 	core::graph::GraphOP packer_graph = core::pack::create_packer_graph( pose, *scorefxn_, ptask );
 	rotset->build_rotamers( pose, *scorefxn_, *ptask, packer_graph );
 	utility::vector1< core::PackerEnergy > one_body_energies( rotset->num_rotamers() );
+	utility::vector1< utility::vector1< core::PackerEnergy > > two_body_energies( rotset->num_rotamers() );
+	utility::vector1< core::Size > packable_neighbors;
 	scorefxn_->prepare_rotamers_for_packing( pose, *rotset );
-	rotset->compute_one_body_energies(pose, *scorefxn_, *ptask, packer_graph, one_body_energies);
+	
+	rotset->compute_one_and_two_body_energies(
+		pose, *scorefxn_, *unedited_task, packer_graph, 
+		one_body_energies, two_body_energies, packable_neighbors);
+
+	core::Size ligand_neighbor_index = 0;
+	for(core::Size i = 1; i <= packable_neighbors.size(); i++) {
+		if (packable_neighbors[i] == ligand_resnum_)
+			ligand_neighbor_index = i;
+	}
+			
 	utility::vector1< utility::vector1<std::pair<core::Size, core::Real> > > boltzmann_factors;
 	utility::vector1<core::Real> rotamer_partition_funtions;
 	core::Real final_rot_id = 1;
+	utility::vector1< core::Real > ligand_bonuses;
+	ligand_bonuses.resize( rotset->num_rotamers() );
 
 	// if resnum_ is in a protein, do the following:
 	// 1) calculate boltzmann weighted probability for each rotamer
@@ -193,13 +220,22 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 
 		boltzmann_factors.resize( core::chemical::num_canonical_aas );
 		rotamer_partition_funtions.resize( core::chemical::num_canonical_aas, 0.0 );
-		core::PackerEnergy init_score = one_body_energies[rotset->id_for_current_rotamer()];
 
 		// iterator over each rotamer
 		for(core::Size i = 1; i <= one_body_energies.size(); i++) {
 			core::chemical::AA aa_type = (*rotset->rotamer(i)).type().aa();
+			core::PackerEnergy init_score = one_body_energies[rotset->id_for_current_rotamer()];
 			core::PackerEnergy move_score = one_body_energies[i];
+			
+			ligand_bonuses[i] = 0.0;
+			if (ligand_neighbor_index != 0) {
+				init_score += two_body_energies[rotset->id_for_current_rotamer()][ligand_neighbor_index] * (ligand_weight_ - 1.0);
+				move_score += two_body_energies[i][ligand_neighbor_index] * (ligand_weight_ - 1.0);
+				ligand_bonuses[i] = two_body_energies[i][ligand_neighbor_index] * (ligand_weight_ - 1.0);
+			}
+			
 			core::Real boltzmann_factor = std::exp((init_score - move_score) / temperature_);
+				
 			if (boltzmann_factor > 0) {
 				rotamer_partition_funtions[aa_type] += boltzmann_factor;
 				boltzmann_factors[aa_type].push_back(std::make_pair(i, boltzmann_factor));
@@ -223,7 +259,6 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 		// select an amino acid and get the id of its selected rotamer
 		core::Real final_aa = select_rotamer(selected_rotamers, amino_acid_partition_function);
 		final_rot_id = selected_rotamers[final_aa].first;
-
 	}
 
 	// if resnum_ is not in a protein, do the following:
@@ -233,11 +268,14 @@ BoltzmannRotamerMover::apply( core::pose::Pose & pose )
 	else {
 		boltzmann_factors.resize( 1 );
 		rotamer_partition_funtions.resize( 1, 0.0 );
-		core::PackerEnergy init_score = one_body_energies[rotset->id_for_current_rotamer()];
 
 		// iterator over rotamers
 		for(core::Size i = 1; i <= one_body_energies.size(); i++) {
-			core::Real boltzmann_factor = std::exp((init_score - one_body_energies[i]) / temperature_);
+			core::PackerEnergy init_score = one_body_energies[rotset->id_for_current_rotamer()];
+			core::PackerEnergy move_score = one_body_energies[i];
+			
+			ligand_bonuses[i] = 0.0;
+			core::Real boltzmann_factor = std::exp((init_score - move_score) / temperature_);
 			if (boltzmann_factor > 0) {
 				rotamer_partition_funtions[1] += boltzmann_factor;
 				boltzmann_factors[1].push_back(std::make_pair(i, boltzmann_factor));
@@ -301,14 +339,25 @@ BoltzmannRotamerMover::select_rotamer(
 void BoltzmannRotamerMover::set_score_function( core::scoring::ScoreFunctionCOP sf ) { scorefxn_ = sf; }
 void BoltzmannRotamerMover::set_task_factory( core::pack::task::TaskFactoryCOP tf ) { factory_ = tf; }
 void BoltzmannRotamerMover::set_resnum( core::Size resnum ) { resnum_ = resnum; }
+void BoltzmannRotamerMover::set_ligand_resnum( core::Size ligand_resnum ) { ligand_resnum_ = ligand_resnum; }
+void BoltzmannRotamerMover::set_ligand_weight( core::Real ligand_weight ) { ligand_weight_ = ligand_weight; }
 void BoltzmannRotamerMover::set_temperature( core::Real temperature ) { temperature_ = temperature; }
 void BoltzmannRotamerMover::set_bias_sampling( bool bias_sampling ) { bias_sampling_ = bias_sampling; }
 void BoltzmannRotamerMover::set_randomize_resnum( bool randomize_resnum ) { randomize_resnum_ = randomize_resnum; }
+void BoltzmannRotamerMover::set_bump_check( bool bump_check ) { bump_check_ = bump_check; }
 
 // getters
 core::Size
 BoltzmannRotamerMover::get_resnum() const {
 	return resnum_;
+}
+core::Size
+BoltzmannRotamerMover::get_ligand_resnum() const {
+	return ligand_resnum_;
+}
+core::Real
+BoltzmannRotamerMover::get_ligand_weight() const {
+	return ligand_weight_;
 }
 core::Real
 BoltzmannRotamerMover::get_temperature() const {
@@ -321,6 +370,10 @@ BoltzmannRotamerMover::get_bias_sampling() const {
 bool
 BoltzmannRotamerMover::get_randomize_resnum() const {
 	return randomize_resnum_;
+}
+bool
+BoltzmannRotamerMover::get_bump_check() const {
+	return bump_check_;
 }
 
 
