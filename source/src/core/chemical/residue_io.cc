@@ -36,6 +36,7 @@
 // Basic headers
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
+#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
@@ -501,6 +502,7 @@ read_topology_file(
 	std::string line;
 	utility::vector1< std::string > lines;
 
+	std::string myname;
 	while ( getline( data, line ) ) {
 		std::istringstream l( line );
 		//if ( line.size() < 1 || line[0] == '#' ) continue;
@@ -512,9 +514,17 @@ read_topology_file(
 			std::string no_comment_line= line.substr(0, pound);
 			lines.push_back(no_comment_line);
 		}
+		if ( line.size() > 5 && line.substr(0,5)=="NAME " ) {
+			std::istringstream l( line );
+			std::string tag;
+			l >> tag >> myname;
+			if ( l.fail() ) myname.clear();
+		}
 	}
 	data.close();
 
+	std::map< std::string, std::string > atom_type_reassignments;
+	setup_atom_type_reassignments_from_commandline( myname, rsd_type_set->name(), atom_type_reassignments );
 
 	// Decide what type of Residue to instantiate.
 	// would scan through for the TYPE line, to see if polymer or ligand...
@@ -557,7 +567,7 @@ read_topology_file(
 		// the atom type name -- must match one of the atom types
 		// for which force-field parameters exist
 		// std::string const atom_type_name( line.substr(10,4) );
-		l >> tag; std::string const atom_type_name( tag );
+		l >> tag; std::string atom_type_name( tag ); // non-const in case of atomtype reassignment
 
 		// read in the Molecular mechanics atom type
 		// std::string const mm_atom_type_name( line.substr(15,4) );
@@ -570,6 +580,12 @@ read_topology_file(
 		float parse_charge(charge);
 		if (!l.eof()) {
 			l >> parse_charge;
+		}
+
+		if ( atom_type_reassignments.find( stripped( atom_name ) ) != atom_type_reassignments.end() ) {
+			tr.Trace << "reassigning atom " << atom_name << " atomtype: " << atom_type_name << " --> " <<
+				atom_type_reassignments.find( stripped( atom_name ) )->second << ' ' << filename << std::endl;
+			atom_type_name = atom_type_reassignments.find( stripped( atom_name ) )->second;
 		}
 
 		if ( ! basic::options::option[ basic::options::OptionKeys::corrections::chemical::parse_charge ]() ) {
@@ -885,6 +901,8 @@ read_topology_file(
 	// set icoor coordinates, store information about polymer links
 	// also sets up base_atom
 	{
+		std::map< std::string, utility::vector1< std::string > > icoor_reassignments;
+		setup_icoor_reassignments_from_commandline( myname, rsd_type_set->name(), icoor_reassignments );
 
 		std::map< std::string, Vector > rsd_xyz;  // The coordinates of each atom in the residue.
 
@@ -900,6 +918,19 @@ read_topology_file(
 			if ( tag != "ICOOR_INTERNAL" ) continue;
 
 			l >> child_atom >> phi >> theta >> d >> parent_atom >> angle_atom >> torsion_atom;
+
+			if ( icoor_reassignments.find( child_atom ) != icoor_reassignments.end() ) {
+				utility::vector1< std::string > const & new_params( icoor_reassignments.find( child_atom )->second );
+				phi   = ObjexxFCL::float_of( new_params[1] );
+				theta = ObjexxFCL::float_of( new_params[2] );
+				d     = ObjexxFCL::float_of( new_params[3] );
+				parent_atom  = new_params[4];
+				angle_atom   = new_params[5];
+				torsion_atom = new_params[6];
+				tr.Trace << "reassigning icoor: " << myname << ' ' << child_atom << ' ' <<
+					phi << ' ' << theta << ' ' << d  << ' ' <<
+					parent_atom << ' ' << angle_atom<< ' ' << torsion_atom << std::endl;
+			}
 
 			phi = radians(phi); theta = radians(theta); // in degrees in the file for human readability
 
@@ -1187,6 +1218,109 @@ write_topology_file(
 	out.close();
 
 } // write_topology_file
+
+////////////////////////////////////////////////////////
+void
+setup_atom_type_reassignments_from_commandline(
+																							 std::string const & rsd_type_name,
+																							 std::string const & rsd_type_set_name,
+																							 std::map< std::string, std::string > & atom_type_reassignments
+																							 )
+{
+	if ( !basic::options::option[ basic::options::OptionKeys::chemical::reassign_atom_types ].user() ) return;
+
+	if ( rsd_type_name.empty() ) {
+		utility_exit_with_message("setup_atom_type_reassignments_from_commandline, empty rsd_type_name");
+	}
+
+	utility::vector1< std::string > mods
+		( basic::options::option[ basic::options::OptionKeys::chemical::reassign_atom_types ] );
+
+	std::string const errmsg( "-reassign_atom_types format should be:: -reassign_atom_types <rsd-type-set1-name>:<rsd-type1-name>:<atom1-name>:<new-atom-type1-name>   <rsd-type-set2-name>:<rsd-type2-name>:<atom2-name>:<new-atom-type2-name> ...; for example: '-chemical:reassign_atom_types fa_standard:ARG:NE:NtpR' ");
+
+	for ( Size i=1; i<= mods.size(); ++i ) {
+		///
+		/// mod should look like (for example):  "fa_standard:OOC:LK_RADIUS:4.5"
+		///
+		std::string const & mod( mods[i] );
+
+		Size const pos1( mod.find(":") );
+		if ( pos1 == std::string::npos ) utility_exit_with_message(errmsg);
+		std::string const mod_rsd_type_set_name( mod.substr(0,pos1) );
+		if ( mod_rsd_type_set_name != rsd_type_set_name ) continue;
+
+		Size const pos2( mod.substr(pos1+1).find(":") );
+		if ( pos2 == std::string::npos ) utility_exit_with_message(errmsg);
+		std::string const mod_rsd_type_name( mod.substr(pos1+1,pos2) );
+		if ( mod_rsd_type_name != rsd_type_name ) continue;
+
+		Size const pos3( mod.substr(pos1+1+pos2+1).find(":") );
+		if ( pos3 == std::string::npos ) utility_exit_with_message(errmsg);
+		std::string const atom_name( mod.substr(pos1+1+pos2+1,pos3) );
+
+		std::string const new_atom_type_name( mod.substr(pos1+1+pos2+1+pos3+1) );
+
+		tr.Trace << "setup_atom_type_reassignments_from_commandline: reassigning " << rsd_type_set_name << ' ' << rsd_type_name << ' ' << atom_name << " to new atomtype: " << new_atom_type_name << std::endl;
+
+		atom_type_reassignments[ atom_name ] = new_atom_type_name;
+	}
+
+
+}
+////////////////////////////////////////////////////////
+void
+setup_icoor_reassignments_from_commandline(
+																					 std::string const & rsd_type_name,
+																					 std::string const & rsd_type_set_name,
+																					 std::map< std::string, utility::vector1< std::string > > & icoor_reassignments
+																					 )
+{
+	if ( !basic::options::option[ basic::options::OptionKeys::chemical::reassign_icoor ].user() ) return;
+
+	if ( rsd_type_name.empty() ) {
+		utility_exit_with_message("setup_icoor_reassignments_from_commandline, empty rsd_type_name");
+	}
+
+	utility::vector1< std::string > mods
+		( basic::options::option[ basic::options::OptionKeys::chemical::reassign_icoor ] );
+
+	std::string const errmsg( "-reassign_icoor format should be:: -reassign_icoor <rsd-type-set1-name>:<rsd-type1-name>:<atom1-name>:<the-six-icoor-params-as-a-comma-separated-list>   <rsd-type-set2-name>:<rsd-type2-name>:<atom2-name>:<icoorparams2> ...; for example: -chemical:reassign_icoor fa_standard:ADE:UPPER:-180,60,1.6,O3',C3',C4' ");
+
+	for ( Size i=1; i<= mods.size(); ++i ) {
+		///
+		///
+		std::string const mod( stripped( mods[i] ) );
+
+		Size const pos1( mod.find(":") );
+		if ( pos1 == std::string::npos ) utility_exit_with_message(errmsg);
+		std::string const mod_rsd_type_set_name( mod.substr(0,pos1) );
+		if ( mod_rsd_type_set_name != rsd_type_set_name ) continue;
+
+		Size const pos2( mod.substr(pos1+1).find(":") );
+		if ( pos2 == std::string::npos ) utility_exit_with_message(errmsg);
+		std::string const mod_rsd_type_name( mod.substr(pos1+1,pos2) );
+		if ( mod_rsd_type_name != rsd_type_name ) continue;
+
+		Size const pos3( mod.substr(pos1+1+pos2+1).find(":") );
+		if ( pos3 == std::string::npos ) utility_exit_with_message(errmsg);
+		std::string const atom_name( mod.substr(pos1+1+pos2+1,pos3) );
+
+		utility::vector1< std::string > const new_icoor_params(utility::string_split( mod.substr(pos1+1+pos2+1+pos3+1),','));
+		runtime_assert( new_icoor_params.size() == 6 );
+		runtime_assert( ObjexxFCL::is_float( new_icoor_params[1] ) );
+		runtime_assert( ObjexxFCL::is_float( new_icoor_params[2] ) );
+		runtime_assert( ObjexxFCL::is_float( new_icoor_params[3] ) );
+
+		tr.Trace << "setup_icoor_reassignments_from_commandline: reassigning " << rsd_type_set_name << ' ' <<
+			rsd_type_name << ' ' << atom_name << " to new icoor params: ";
+		for ( Size i=1; i<= 6; ++i ) tr.Trace << ' ' << new_icoor_params[i];
+		tr.Trace << std::endl;
+
+		icoor_reassignments[ atom_name ] = new_icoor_params;
+	}
+
+
+}
 
 } // chemical
 } // core

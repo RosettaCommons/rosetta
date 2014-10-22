@@ -1743,6 +1743,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'set_atom_properties', 'StringVector', desc="Modify atom properties (the ones in <atom-set>/atom_properties.txt) from the command line. Happens at time of AtomTypeSet creation inside ChemicalManager.cc. Format is: -chemical:set_atom_properties <atom-set1>:<atom_name1>:<param1>:<setting1> <atom-set2>:<atom2>:<param2>:<setting2> ... For example: '-chemical:set_atom_properties fa_standard:OOC:LK_DGFREE:-5 fa_standard:ONH2:LJ_RADIUS:0.5' " ),
 		Option( 'patch_selectors', 'StringVector', desc = 'allow patch files that have CMDLINE_SELECTOR tags can be switched on with this option',default=[] ),
 		Option( 'override_rsd_type_limit', 'Boolean', desc="over-ride cap on number of residue types.", default='false'),
+		Option( 'clone_atom_types', 'StringVector', desc="Optionally clone atom types; copies all properties, which can then be diverged via -set_atom_properties. -clone_atom_types format should be:: -clone_atom_types <set1>:<atomname1>:<cloned-atomname1> <set2>:<atomname2>:<cloned-atomname2> ...; for example: '-chemical:clone_atom_types fa_standard:OOC:OOC2' " ),
+		Option( 'reassign_atom_types', 'StringVector', desc="Switch the atomtype assignments for atoms in specified residue types. Useful along with -clone_atom_types. -reassign_atom_types format should be:: -reassign_atom_types <rsd-type-set1-name>:<rsd-type1-name>:<atom-type1-name>:<new-atom-type1-name>   <rsd-type-set2-name>:<rsd-type2-name>:<atom-type2-name>:<new-atom-type2-name> ...; for example: '-chemical:reassign_atom_types fa_standard:ARG:NE:NtpR' " ),
+		Option( 'reassign_icoor', 'StringVector', desc="Update icoor parameters for specified atom types. -reassign_icoor format should be:: -reassign_icoor <rsd-type-set1-name>:<rsd-type1-name>:<atom1-name>:<the-six-icoor-params-as-a-comma-separated-list>   <rsd-type-set2-name>:<rsd-type2-name>:<atom2-name>:<icoorparams2> ...; for example: -chemical:reassign_icoor fa_standard:ADE:UPPER:-180,60,1.6,O3',C3',C4' " ),
 	), #-chemical
 
 	# Coarse options
@@ -1793,6 +1796,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	# correction for testing ------------------------------------------------------------
 	Option_Group( 'corrections',
 		Option( 'beta', 'Boolean', desc='use beta score function', default='false'),
+		Option( 'newdna', 'Boolean', desc='Apply some dna-specific mods to chemical/scoring (for testing)',
+						default='false'),
 		Option( 'correct', 'Boolean',
 			desc="turn on default corrections:"
 			"-corrections::chemical:icoor_05_2009"

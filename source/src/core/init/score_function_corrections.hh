@@ -44,7 +44,7 @@ void init_beta_correction();
 /// @brief Initialize the crystal refinement correction
 void init_crystal_refinement_correction();
 
-/// @brief Initialize nonideal bond geometry correction 
+/// @brief Initialize nonideal bond geometry correction
 void init_nonideal_correction();
 
 /// @brief restore the the score function to the Score12prime version
@@ -57,6 +57,11 @@ void init_score_function_corrections();
 void check_score_function_sanity(
 	std::string const & scorefxn_key,
 	bool warn_only=false);
+
+/// @brief  Apply some DNA-specific mods that are still in testing phase; only if -corrections::newdna present
+void
+init_dna_correction();
+
 
 } // namespace
 } // namespace

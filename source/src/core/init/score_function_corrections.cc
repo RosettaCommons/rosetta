@@ -563,6 +563,7 @@ init_score_function_corrections(){
 	init_crystal_refinement_correction();
 	init_beta_correction();
 	init_nonideal_correction();
+	init_dna_correction();
 }
 
 void
@@ -604,5 +605,132 @@ check_score_function_sanity(
 
 }
 
+void
+init_dna_correction()
+{
+
+	utility::vector1< std::string > dna_residue_types;
+	dna_residue_types.push_back("ADE");
+	dna_residue_types.push_back("CYT");
+	dna_residue_types.push_back("GUA");
+	dna_residue_types.push_back("THY");
+
+	if ( option[ corrections::newdna ] ) {
+
+		{ // cloning atomtypes
+			utility::vector1< std::string > mods;
+
+			/// reassign the N9/N1 atoms from Ntrp atomtype to Npro atomtype
+			// mods.push_back( "fa_standard:OOC:OPdd" ); // phosphate oxygens
+			// mods.push_back( "fa_standard:OH:OEdd" ); // phosphate ester oxygens, was ONH2, doesnt make much difference
+			// mods.push_back( "fa_standard:OH:ORdd" ); // ribose oxygen
+			mods.push_back( "fa_standard:Phos:Pdna" ); // Phos in phosphate backbone
+			mods.push_back( "fa_standard:OCbb:OBdd" ); // carbonyl oxygens in the bases
+
+			if ( basic::options::option[ basic::options::OptionKeys::chemical::clone_atom_types ].user() ) {
+				/// add these at the end so they take precedence
+				utility::vector1< std::string > const user_mods
+					( basic::options::option[ basic::options::OptionKeys::chemical::clone_atom_types ]() );
+				for ( Size i=1; i<= user_mods.size(); ++i ) {
+					if ( std::find( mods.begin(), mods.end(), user_mods[i] ) == mods.end() ) {
+						mods.push_back( user_mods[i] );
+					}
+				}
+			}
+			basic::options::option[ basic::options::OptionKeys::chemical::clone_atom_types ].value( mods );
+
+		}
+
+		{ // reassigning atomtype properties
+			utility::vector1< std::string > mods;
+			mods.push_back( "fa_standard:Pdna:LK_DGFREE:-4.1" ); // from way back, Jim H., based on S
+			mods.push_back( "fa_standard:Pdna:LK_VOLUME:14.7" ); // -- ditto --
+
+			if ( basic::options::option[ basic::options::OptionKeys::chemical::set_atom_properties ].user() ) {
+				/// add these at the end so they take precedence
+				utility::vector1< std::string > const user_mods
+					( basic::options::option[ basic::options::OptionKeys::chemical::set_atom_properties ]() );
+				for ( Size i=1; i<= user_mods.size(); ++i ) {
+					if ( std::find( mods.begin(), mods.end(), user_mods[i] ) == mods.end() ) {
+						mods.push_back( user_mods[i] );
+					}
+				}
+			}
+			basic::options::option[ basic::options::OptionKeys::chemical::set_atom_properties ].value( mods );
+		}
+
+
+		{ // reassigning atomtypes
+
+			utility::vector1< std::string > mods;
+
+			/// reassign the N9/N1 atoms from Ntrp atomtype to Npro atomtype
+			mods.push_back( "fa_standard:ADE:N9:Npro" );
+			mods.push_back( "fa_standard:GUA:N9:Npro" );
+			mods.push_back( "fa_standard:THY:N1:Npro" );
+			mods.push_back( "fa_standard:CYT:N1:Npro" );
+
+			for ( Size ii=1; ii<= dna_residue_types.size(); ++ii ) {
+				std::string const & resname( dna_residue_types[ii] );
+				/// phosphate Phos
+				mods.push_back( "fa_standard:"+resname+":P:Pdna" );
+			}
+
+			/// the OCbb atomtypes in the bases; Etable.cc:modify_pot_one_pair does funny things to OCbb atomtype-- trouble?
+			mods.push_back( "fa_standard:GUA:O6:OBdd" );
+			mods.push_back( "fa_standard:CYT:O2:OBdd" );
+			mods.push_back( "fa_standard:THY:O2:OBdd" );
+			mods.push_back( "fa_standard:THY:O4:OBdd" );
+
+			if ( basic::options::option[ basic::options::OptionKeys::chemical::reassign_atom_types ].user() ) {
+				/// add these at the end so they take precedence
+				utility::vector1< std::string > const user_mods
+					( basic::options::option[ basic::options::OptionKeys::chemical::reassign_atom_types ]() );
+				for ( Size i=1; i<= user_mods.size(); ++i ) {
+					if ( std::find( mods.begin(), mods.end(), user_mods[i] ) == mods.end() ) {
+						mods.push_back( user_mods[i] );
+					}
+				}
+			}
+			basic::options::option[ basic::options::OptionKeys::chemical::reassign_atom_types ].value( mods );
+		}
+
+		{ // reassigning icoor values
+
+			utility::vector1< std::string > mods;
+
+			for( Size ii=1; ii<= dna_residue_types.size(); ++ii ) {
+				std::string const & resname( dna_residue_types[ii]);
+				/// the default way is to have O4 as the torsion atom for H2'' but that's not as good as this:
+				/// not sure why H2' follows H2'' but this is how it is in the params files right now...
+				mods.push_back( "fa_standard:"+resname+":H2'':120.0,68.0,1.1,C2',C1',C3'" );
+				mods.push_back( "fa_standard:"+resname+ ":H2':120.0,68.0,1.1,C2',C1',H2''" );
+
+				/// it might be useful to standardize the backbone geometry across residue types,
+				/// for when we are making mutations
+				/// these are some of the changes from the blab branch
+				mods.push_back( "fa_standard:"+resname+":UPPER:-180.0,60.2,1.608,O3',C3',C4'");
+				mods.push_back( "fa_standard:"+resname+":LOWER:-64.0,76.3,1.608,P,O5',C5'");
+			}
+
+
+			if ( basic::options::option[ basic::options::OptionKeys::chemical::reassign_icoor ].user() ) {
+				/// add these at the end so they take precedence
+				utility::vector1< std::string > const user_mods
+					( basic::options::option[ basic::options::OptionKeys::chemical::reassign_icoor ]() );
+				for ( Size i=1; i<= user_mods.size(); ++i ) {
+					if ( std::find( mods.begin(), mods.end(), user_mods[i] ) == mods.end() ) {
+						mods.push_back( user_mods[i] );
+					}
+				}
+			}
+			basic::options::option[ basic::options::OptionKeys::chemical::reassign_icoor ].value( mods );
+		}
+
+
+	}
+
+
+}
 } // namespace
 } // namespace

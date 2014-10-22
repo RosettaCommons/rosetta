@@ -182,6 +182,9 @@ private: // helper methods for creating an atom type set from a database
 		chemical::AtomType & atom_type,
 		utility::sql_database::sessionOP db_session);
 
+	void
+	clone_atom_types_from_commandline();
+
 private:
 	/// lookup map: get atom_type_index by atom_type_name
 	std::map< std::string, int > atom_type_index_;

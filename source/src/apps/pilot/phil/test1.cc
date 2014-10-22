@@ -2899,6 +2899,43 @@ lk_ball_wtd_deriv_test()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+void
+atom_types_test()
+{
+	using namespace std;
+	using namespace core;
+	using namespace chemical;
+
+	///
+	ResidueTypeSet const & rsd_set( *ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+	AtomTypeSet const & atom_set( *ChemicalManager::get_instance()->atom_type_set( FA_STANDARD ) );
+
+	for ( Size i=1; i<= atom_set.n_atomtypes(); ++i ) {
+		cout << "atom_set: " << I(4,i) << ' ' << atom_set[i].name() <<
+			F(9,3,atom_set[i].lj_radius()) <<
+			F(9,3,atom_set[i].lk_dgfree()) << std::endl;
+	}
+
+	{
+		ResidueType const & rsd( rsd_set.name_map("ARG") );
+		for ( Size i=1; i<= rsd.natoms(); ++i ) {
+			cout << rsd.name() << I(3,i) << ' ' << rsd.atom_name(i) << ' ' <<
+				rsd.atom_type(i).name() << endl;
+		}
+	}
+
+	{
+		ResidueType const & rsd( rsd_set.name_map("ADE") );
+		for ( Size i=1; i<= rsd.natoms(); ++i ) {
+			cout << rsd.name() << I(3,i) << ' ' << rsd.atom_name(i) << ' ' <<
+				rsd.atom_type(i).name() << endl;
+		}
+	}
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 ///////////////////////////////////////////////////////////////////////////////
 int
@@ -2926,6 +2963,9 @@ main( int argc, char * argv [] )
 		exit(0);
 	}
 	/////////////////////////////////////
+
+	atom_types_test();
+	exit(0);
 
 	lk_ball_wtd_deriv_test();
 	exit(0);

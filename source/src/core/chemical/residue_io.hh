@@ -25,6 +25,7 @@
 
 // C++ headers
 #include <string>
+#include <map>
 
 namespace core {
 namespace chemical {
@@ -61,6 +62,22 @@ write_topology_file(
 	ResidueType const & rsd,
 	std::string filename = ""
 );
+
+void
+setup_atom_type_reassignments_from_commandline(
+	std::string const & rsd_type_name,
+	std::string const & rsd_type_set_name,
+	std::map< std::string, std::string > & atom_type_reassignments
+);
+
+
+void
+setup_icoor_reassignments_from_commandline(
+	std::string const & rsd_type_name,
+	std::string const & rsd_type_set_name,
+	std::map< std::string, utility::vector1< std::string > > & icoor_reassignments
+);
+
 
 } // chemical
 } // core

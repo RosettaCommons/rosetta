@@ -69,6 +69,8 @@ AtomTypeSet::AtomTypeSet( std::string const & directory )
 	if ( basic::options::option[ basic::options::OptionKeys::chemical::enlarge_H_lj ] ) {
 		enlarge_h_lj_wdepth();
 	}
+
+	clone_atom_types_from_commandline();
 }
 
 AtomTypeSet::AtomTypeSet(
@@ -535,6 +537,54 @@ AtomTypeSet::enlarge_h_lj_wdepth()
 		Size const index = atom_type_index( H_names[i] );
 		atoms_[index] -> set_parameter( "LJ_WDEPTH", lj_wdepth );
 	}
+}
+
+void
+AtomTypeSet::clone_atom_types_from_commandline()
+{
+	using std::string;
+	using utility::vector1;
+
+	if ( !basic::options::option[ basic::options::OptionKeys::chemical::clone_atom_types ].user() ) return;
+
+
+	vector1< string > const clone_strings
+		( basic::options::option[ basic::options::OptionKeys::chemical::clone_atom_types ]() );
+
+	std::string const errmsg( "-clone_atom_types format should be:: -clone_atom_types <set1>:<atomname1>:<cloned-atomname1> <set2>:<atomname2>:<cloned-atomname2> ...; for example: '-chemical:clone_atom_types fa_standard:OOC:OOC2' ");
+
+
+	for ( Size i=1; i<= clone_strings.size(); ++i ) {
+
+		std::string const & mod( clone_strings[i] );
+
+		Size const pos1( mod.find(":") );
+		if ( pos1 == std::string::npos ) utility_exit_with_message(errmsg);
+		std::string const atomset_tag( mod.substr(0,pos1) );
+		if ( atomset_tag != name() ) continue;
+
+		Size const pos2( mod.substr(pos1+1).find(":") );
+		if ( pos2 == std::string::npos ) utility_exit_with_message(errmsg);
+		std::string const atom_name( mod.substr(pos1+1,pos2) );
+		if ( !has_atom( atom_name ) ) utility_exit_with_message(errmsg+". Nonexistent atomname: "+atom_name);
+
+		std::string const new_atom_name( mod.substr(pos1+1+pos2+1) );
+		if ( has_atom( new_atom_name ) ) {
+			utility_exit_with_message(errmsg+". Duplicate atomname: "+new_atom_name);
+		}
+
+		tr.Trace << "clone_atom_types_from_commandline:: cloning " << atomset_tag << ' ' << atom_name <<
+			" to " << new_atom_name << std::endl;
+
+		Size const atom_index( atom_type_index( atom_name ) );
+
+		AtomType* new_atom_type_ptr( new AtomType( *atoms_[ atom_index ] ) );
+		new_atom_type_ptr->name( new_atom_name );
+		atoms_.push_back( new_atom_type_ptr );
+		atom_type_index_[ new_atom_name ] = atoms_.size();
+	}
+
+
 }
 
 } // chemical

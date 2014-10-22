@@ -79,6 +79,12 @@ public:
 	AtomType(AtomType const & src) :
 		name_(src.name_ ),
 		element_(src.element_),
+		lj_radius_(src.lj_radius_),
+		lj_wdepth_(src.lj_wdepth_),
+		lk_lambda_(src.lk_lambda_),
+		lk_volume_(src.lk_volume_),
+		lk_dgfree_(src.lk_dgfree_),
+		extra_parameters_(src.extra_parameters_),
 		is_acceptor_(src.is_acceptor_),
 		is_donor_(src.is_donor_),
 		is_polar_hydrogen_(src.is_polar_hydrogen_),
@@ -269,13 +275,20 @@ public:
 	void
 	set_all_extra_parameters(utility::vector1< Real > const & extra_parameters);
 
+	// used after we clone an atomtype
+	void
+	name( std::string const & setting )
+	{
+		name_ = setting;
+	}
+
 	std::string const& name() const { return name_; };
 
 	// data
 private:
 
 	// name
-	std::string const name_;
+	std::string name_; // non-const for use in cloning at time of atomtypeset creation...
 
 	// element
 	std::string const element_;
