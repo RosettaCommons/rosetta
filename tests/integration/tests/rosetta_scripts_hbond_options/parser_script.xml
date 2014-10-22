@@ -10,7 +10,6 @@
 			<Set hbonds:exclude_self_hbonds=true/>
 			<Set hbonds:smooth_hb_env_dep=true/>
 			<Set hbonds:bb_donor_acceptor_check=true/>
-			<Set hbonds:use_incorrect_deriv=false/>
 
 			Scoring options
 			<Set hbonds:decompose_bb_hb_into_pair_energies=false/>

@@ -1120,6 +1120,7 @@ Options = Option_Group( '',
 		Option( 'resource_definition_files', 'FileVector', desc = 'Specify all the jobs and all of their resources to the new JD2ResourceManager system', ),
 		Option( 'checkpoint_file', 'File', desc='write/read nstruct-based checkpoint files to the desired filename.' ),
 		Option( 'nthreads', 'Integer', desc='The maximum number of threads to run at once using the MultiThreadedJobDistributor' ),
+		Option( 'failed_job_exception', 'Boolean', default = 'true', desc = 'If JD2 encounters an error during job execution, raise an exception at the end of the run', ),
 	), # jd2
 
 	# score function settings  -----------------------------------------------------------

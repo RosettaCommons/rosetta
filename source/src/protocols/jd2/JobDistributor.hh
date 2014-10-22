@@ -199,10 +199,13 @@ protected:
 	job_succeeded_additional_output( core::pose::Pose & pose, std::string const & tag );
 
 	/// @brief This function is called when we give up on the job;  it has been virtualized so BOINC and MPI can delay/protect output
-	///base implementation is just a call to the job outputter
+	/// @details Mark job as bad, so at the end of execution we know definitively how many jobs failed for any reason
+	/// This function (in this classes implementation) increments the number_failed_jobs_ class variable.
+	/// If you write a child JobDistributor and do not want an exception to be thrown at the end of execution if some jobs
+	///   failed, be sure to override this function so that it does not increment number_failed_jobs_.
 	virtual
 	void
-	job_failed( core::pose::Pose & /*pose*/, bool /*will_retry*/ );
+	job_failed( core::pose::Pose & /*pose*/, bool will_retry );
 
 	/// @brief this function is called whenever a job "soft-fails" and needs to be retried.  Generally it should ensure
 	///that the subsequent call to obtain_new_job returns this job over again.
@@ -289,6 +292,9 @@ private:
 
 	/// @brief access into jobs_ bector indicating the previous job.  Used with the -jd2:delete_old_poses option for deleting unnecessary poses
 	core::Size last_completed_job_;
+
+	/// @brief Number of failed jobs - kept track of so we can exit properly at the end of execution
+	core::Size number_failed_jobs_;
 
 #if defined MULTI_THREADED && defined CXX11
 	static std::atomic< JobDistributor * > instance_;

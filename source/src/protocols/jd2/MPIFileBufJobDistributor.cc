@@ -206,7 +206,7 @@ MPIFileBufJobDistributor::process_message( Size msg_tag, Size slave_rank, Size s
 		break;
 	case BAD_INPUT: //slave reports failed job
 		tr.Debug << "Master Node: Received job failure message for job id " << slave_job_id << " from node " << slave_rank << std::endl;
-		++bad_jobs_;
+		++bad_input_jobs_;
 		mark_job_as_bad( slave_job_id, slave_batch_id );
 		++jobs_returned_;
 		break;
@@ -292,7 +292,7 @@ MPIFileBufJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 	// initialize some statistics  -- these are member variables, since they are also used in process_messages()
 	jobs_assigned_ = 0;
 	jobs_returned_ = 0;
-	bad_jobs_ = 0;
+	bad_input_jobs_ = 0;
 	tr.Info << "Starting JobDistribution with " << n_worker() << " worker processes " << std::endl;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -337,7 +337,7 @@ MPIFileBufJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 
 	//finished
 	tr.Info << "Master Node: Finished sending spin down signals to slaves" << std::endl;
-	tr.Info << "Master Node stats: jobs-send out: " << jobs_assigned_ << "  returned: " << jobs_returned_ << "  bad jobs: " << bad_jobs_ << std::endl;
+	tr.Info << "Master Node stats: jobs-send out: " << jobs_assigned_ << "  returned: " << jobs_returned_ << "  bad input jobs: " << bad_input_jobs_ << std::endl;
 
 	if ( option[ OptionKeys::jd2::mpi_nowait_for_remaining_jobs ]() ) {
 		utility_exit_with_message("quick exit from job-distributor due to flag jd2::mpi_nowait_for_remaining_jobs --- this is not an error " );
@@ -477,7 +477,7 @@ MPIFileBufJobDistributor::master_remove_bad_inputs_from_job_list()
 						 << " failed, reporting bad input; other jobs of same input will be canceled: " <<  bad_job_id_input_tag << std::endl;
 	}
 
-	Parent::mark_job_as_bad( bad_job_id_ );//this sets all jobs with this input_tag to bad!
+	Parent::mark_job_as_bad( bad_job_id_ ); // this sets all jobs with this input_tag to bad!
 	obtain_new_job( true /*re_consider_current_job*/ );
 }
 

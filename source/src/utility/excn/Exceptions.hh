@@ -121,6 +121,13 @@ public:
 private:
 };
 
+class EXCN_JD2Failure : public EXCN_Msg_Exception {
+public:
+	EXCN_JD2Failure( std::string const& msg ) :
+		EXCN_Msg_Exception( msg ) {};
+private:
+};
+
 }
 }
 

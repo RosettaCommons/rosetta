@@ -250,8 +250,8 @@ private:
 	///@brief jobs that have returned (either, bad or good )
 	core::Size jobs_returned_;
 
-	///@brief jobs that have returned bad
-	core::Size bad_jobs_;
+	///@brief jobs that have returned bad due to status BAD_INPUT
+	core::Size bad_input_jobs_;
 
 	///@brief how many more to spin down
 	core::Size n_nodes_left_to_spin_down_;

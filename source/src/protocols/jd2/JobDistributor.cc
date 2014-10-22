@@ -153,8 +153,11 @@ JobDistributor::JobDistributor() :
 		// JobDistributor safe even when not inside go() (of course you will get a
 		// stupid object, but at least it won't segfault).  This object deliberately
 		// goes away once it's not used.
-		current_job_(JD2_BOGUS_JOB->copy_without_output()), current_job_id_(0), last_completed_job_(0), current_batch_id_(
-				0)
+		current_job_(JD2_BOGUS_JOB->copy_without_output()),
+		current_job_id_(0),
+		last_completed_job_(0),
+		number_failed_jobs_(0),
+		current_batch_id_(0)
 {
 	init_jd();
 }
@@ -165,8 +168,11 @@ JobDistributor::JobDistributor(bool empty) :
 		// JobDistributor safe even when not inside go() (of course you will get a
 		// stupid object, but at least it won't segfault).  This object deliberately
 		// goes away once it's not used.
-		current_job_(JD2_BOGUS_JOB->copy_without_output()), current_job_id_(0), last_completed_job_(0), current_batch_id_(
-				0)
+		current_job_(JD2_BOGUS_JOB->copy_without_output()),
+		current_job_id_(0),
+		last_completed_job_(0),
+		number_failed_jobs_(0),
+		current_batch_id_(0)
 {
 	if (!empty)
 	{
@@ -304,6 +310,15 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 
 	job_outputter_->flush(); //This call forces out any unprinted data
 
+	// If some jobs have failed, we throw an exception here
+	// The result in most applications will be a non-zero exit code
+	// In the MPI case, number_failed_jobs_ will stay zero because MPI overrides job_failed()
+	if ( option[OptionKeys::jd2::failed_job_exception] && (number_failed_jobs_ > 0) ) {
+		throw( utility::excn::EXCN_JD2Failure(
+				utility::to_string(number_failed_jobs_) + " jobs failed; check output for error messages"
+			));
+	}
+
 	basic::prof_show();
 	if ( tried_jobs != 0 ) {
 		// We had a successful run - show any options which were set by the user, but not accessed.
@@ -375,10 +390,13 @@ void JobDistributor::job_succeeded_additional_output(core::pose::Pose & pose, st
 	job_outputter_->final_pose(current_job_, pose, tag);
 }
 
-/// @details no-op implementation in the base class
+/// @details Mark job as bad, so at the end of execution we know definitively how many jobs failed for any reason
 void JobDistributor::job_failed(core::pose::Pose & /*pose*/,
-		bool /*will_retry*/)
+		bool will_retry)
 {
+	if ( ! will_retry ) {
+		number_failed_jobs_++;
+	}
 }
 
 void JobDistributor::mark_job_as_completed(core::Size job_id,

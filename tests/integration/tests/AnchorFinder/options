@@ -18,6 +18,9 @@
 #Prevents wasted memory from already-processed structures
 -jd2:delete_old_poses
 
+#Tell JD2 not to throw an exception on a failed job as this test intentionally fails on one input
+-jd2:failed_job_exception false
+
 #settings for AnchorFinder
 -window_size 5
 -loopness 1

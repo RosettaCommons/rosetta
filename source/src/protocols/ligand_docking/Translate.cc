@@ -125,7 +125,13 @@ Translate::parse_my_tag(
 	//if ( ! tag->hasOption("force") ) throw utility::excn::EXCN_RosettaScriptsOption("'Translate' mover requires force tag"); optional. default is don't force, meaning ligand stays put if it can't find somewhere to go.
 
 	std::string chain = tag->getOption<std::string>("chain");
-	translate_info_.chain_id = core::pose::get_chain_id_from_chain(chain, pose);
+	utility::vector1< core::Size > chain_ids( core::pose::get_chain_ids_from_chain(chain, pose) );
+	if( chain_ids.size() == 0 ) {
+		throw utility::excn::EXCN_RosettaScriptsOption("'Translate' mover: chain '"+chain+"' does not exist.");
+	} else if ( chain_ids.size() > 1 ) {
+		throw utility::excn::EXCN_RosettaScriptsOption("'Translate' mover: chain letter '"+chain+"' represents more than one chain. Consider the 'Translates' mover (with an 's') instead.");
+	}
+	translate_info_.chain_id = chain_ids[1];
 	translate_info_.jump_id = core::pose::get_jump_id_from_chain_id(translate_info_.chain_id, pose);
 	std::string distribution_str= tag->getOption<std::string>("distribution");
 	translate_info_.distribution= get_distribution(distribution_str);

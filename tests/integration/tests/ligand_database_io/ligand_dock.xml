@@ -37,7 +37,7 @@ It will also report the binding energy (ddg) and buried-surface area (sasa) in t
 		</StartFrom>
 		<CompoundTranslate name=compound_translate randomize_order=false allow_overlap=false>
 			<Translate chain=X distribution=uniform angstroms=5.0 cycles=50/>
-			<Translate chain=W distribution=gaussian angstroms=1.3 cycles=20/>
+			<Translates chain=W distribution=gaussian angstroms=1.3 cycles=20/>
 		</CompoundTranslate>
 		<Rotate name=rotate chain=X distribution=uniform degrees=360 cycles=500/>
 		<Rotates name=rotates chain=W distribution=uniform degrees=360 cycles=15/> rotate each water molecule

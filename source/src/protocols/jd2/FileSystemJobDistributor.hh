@@ -81,7 +81,6 @@ protected:
 	job_succeeded( core::pose::Pose & pose, core::Real run_time, std::string const & tag );
 
 	///@brief This function is called when we five up on the job;  it has been virtualized so BOINC and MPI can delay/protect output
-	///base implementation is just a call to the job outputter
 	virtual
 	void
 	job_failed( core::pose::Pose & pose, bool will_retry );

@@ -20,6 +20,8 @@
 // AUTO-REMOVED #include <core/pose/util.hh>
 
 #include <basic/options/option.hh>
+#include <basic/options/util.hh>
+#include <basic/options/option_macros.hh>
 
 #include <devel/init.hh>
 
@@ -41,8 +43,8 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-
-
+OPT_1GRP_KEY( Boolean, jd2test, set_fail_no_retry )
+OPT_1GRP_KEY( Boolean, jd2test, set_fail_bad_input )
 
 static thread_local basic::Tracer TR( "jd2test" );
 
@@ -72,6 +74,9 @@ public:
 		//set up another mover
 		sc_mover = protocols::simple_moves::sidechain_moves::SidechainMoverOP( new protocols::simple_moves::sidechain_moves::SidechainMover() );
 		sc_mover->set_task_factory( main_task_factory );
+
+	  set_fail_no_retry_ = false;
+	  set_fail_bad_input_ = false;
 	}
 
 	virtual ~JDtestmover(){};
@@ -130,9 +135,9 @@ public:
 		job_me->add_string_real_pair("thequestion", 42.0);
 
 		//test mover reporting
- 		if(counter == 2) set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
- 		if(counter == 4) set_last_move_status(protocols::moves::FAIL_RETRY);
- 		if(counter == 8) set_last_move_status(protocols::moves::FAIL_BAD_INPUT);
+ 		if(counter == 1 && set_fail_no_retry_) set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
+ 		if(counter == 3) set_last_move_status(protocols::moves::FAIL_RETRY);
+ 		if(counter == 1 && set_fail_bad_input_) set_last_move_status(protocols::moves::FAIL_BAD_INPUT);
 		//MPI testing
  		//if(me == "1UBQ_0002") set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
  		//if(me == "1EM7_0003" && counter <= 40) set_last_move_status(protocols::moves::FAIL_RETRY);
@@ -165,6 +170,10 @@ public:
 	virtual
 	bool
 	reinitialize_for_new_input() const { return false; }
+
+	bool set_fail_no_retry_;
+	bool set_fail_bad_input_;
+
 private:
 	//original holdovers
 	core::scoring::ScoreFunctionOP score_fxn;
@@ -187,13 +196,35 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	devel::init(argc, argv);
+		NEW_OPT( jd2test::set_fail_no_retry, "Set mover status to fail_no_retry", false );
+		NEW_OPT( jd2test::set_fail_bad_input, "Set mover status to fail_bad_input", false );
 
-	JDtestmoverOP test_mover( new JDtestmover );
+		devel::init(argc, argv);
 
-	protocols::jd2::JobDistributor::get_instance()->go(test_mover);
+		bool set_fail_no_retry = basic::options::option[ basic::options::OptionKeys::jd2test::set_fail_no_retry ];
+		bool set_fail_bad_input = basic::options::option[ basic::options::OptionKeys::jd2test::set_fail_bad_input ];
 
-	TR << "*********************successful completion**************************" << std::endl;
+		JDtestmoverOP test_mover(new JDtestmover);
+
+
+		if ( set_fail_no_retry ) {
+			test_mover->set_fail_no_retry_ = true;
+			try {
+				protocols::jd2::JobDistributor::get_instance()->go(test_mover);
+			} catch( utility::excn::EXCN_JD2Failure const & e ) {
+				TR << "successfully caught JD2 exception after fail_no_retry" << std::endl;
+			}
+		} else if ( set_fail_bad_input ) {
+			test_mover->set_fail_bad_input_ = true;
+			try {
+				protocols::jd2::JobDistributor::get_instance()->go(test_mover);
+			} catch( utility::excn::EXCN_JD2Failure const & e ) {
+				TR << "successfully caught JD2 exception after fail_bad_input" << std::endl;
+			}
+		} else {
+			protocols::jd2::JobDistributor::get_instance()->go(test_mover);
+			TR << "*********************successful completion**************************" << std::endl;
+		}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
