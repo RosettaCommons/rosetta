@@ -26,6 +26,7 @@
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pose/Pose.hh>
+#include <core/scoring/Energies.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 
 //Utility Headers
