@@ -1,4 +1,4 @@
--s input/1ZK4.pdb.gz
+-s input/1ZK4_ligand.pdb.gz
 -extra_res_fa input/NAP.params
 -resfile input/ligand.resfile
 -mute protocols.backrub.BackrubMover
