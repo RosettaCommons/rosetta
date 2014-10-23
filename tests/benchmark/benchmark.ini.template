@@ -5,5 +5,12 @@
 
 [config]  # additional config-options for various tests. All this fields will be pass as keys in 'config' function argument
 
+# when running by daemons branch:revision will be set to appropriate values to represent currently checked version of main repository
+branch = unknown
+revision = 42
+
 # Path to boost python library (Required for most PyRosetta builds and tests)
 boost_python_library = /Users/benchmark/G/PyRosetta.develop.boost-1.55/PyRosetta.Develop.64/lib/libboost_python.dylib
+
+# Path to release's dir-tree
+release_dir = ./results/_release_

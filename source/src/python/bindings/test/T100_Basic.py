@@ -33,7 +33,7 @@ make_pose_from_sequence(pose4, "ARNDCEQGHILKMFPSTWYV", 'fa_standard')
 
 
 print 'Dump PDB...'
-dump_pdb(pose, ".test.output/T110_Basic._.pdb")
+dump_pdb(pose, "T110_Basic._.pdb")
 
 print 'accessing pose attributes'
 print pose

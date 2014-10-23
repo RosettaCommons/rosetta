@@ -12,12 +12,14 @@
 ## @brief  PyRosetta binding self tests
 ## @author Sergey Lyskov
 
-import os, os.path, json, commands, shutil
+import os, os.path, json, commands, shutil, tarfile
 
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
 _api_version_ = '1.0'  # api version
+
+_number_of_py_rosetta_revisions_to_keep_in_git_ = 4
 
 
 def py_rosetta_release(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
@@ -32,7 +34,7 @@ def py_rosetta_release(rosetta_dir, working_dir, platform, config, hpc_driver=No
     extras   = ','.join(platform['extras'])
     command_line = 'cd {rosetta_dir}/source && BuildPyRosetta.sh -u --monolith -j{jobs}'.format(rosetta_dir=rosetta_dir, compiler=compiler, jobs=jobs, extras=extras)
 
-    if debug: res, output = 0, 'build.py: debug is enabled, skippig build phase...\n'
+    if debug: res, output = 0, 'release.py: debug is enabled, skippig build phase...\n'
     else:
         res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, command_line), return_='tuple')
         if res:  res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, command_line.format(compiler=compiler, jobs=1, extras=extras)), return_='tuple')
@@ -50,32 +52,95 @@ def py_rosetta_release(rosetta_dir, working_dir, platform, config, hpc_driver=No
         if not (buildings_path  and  os.path.isdir(buildings_path) ): raise BenchmarkError('Could not retrieve valid PyRosetta bindings binary path!\nCommand line:{}\nResult:{}\n'.format(command_line, buildings_path_output))
         TR('Bindings build path is:{}'.format(buildings_path))
 
-        shutil.copy(config['boost_python_library'], buildings_path)  # Copying boost python library
+        shutil.copy(config['boost_python_library'], buildings_path)
 
         memory = config['memory'];  jobs = config['cpu_count']
         if platform['os'] != 'windows': jobs = jobs if memory/jobs >= 2.0 else max(1, int(memory/2) )  # PyRosetta tests require at least 2Gb per memory per thread
 
-        distr_file_list = os.listdir(buildings_path)
+        #distr_file_list = os.listdir(buildings_path)
 
-        if not res: res, output = execute('Running PyRosetta tests...', 'cd {buildings_path} && python TestBindings.py -j{jobs}'.format(buildings_path=buildings_path, jobs=jobs), return_='tuple')
+        if debug: res, output = 0, 'release.py: debug is enabled, skippig test phase...\n'
+        else:
+            res, output = execute('Running PyRosetta tests...', 'cd {buildings_path} && python TestBindings.py -j{jobs}'.format(buildings_path=buildings_path, jobs=jobs), return_='tuple')
 
-        json_file = buildings_path + '/.test_bindings.json'
-        results = json.load( file(json_file) )
+        # json_file = buildings_path + '/.test_bindings.json'
+        # results = json.load( file(json_file) )
 
-        execute('Deleting PyRosetta tests output...', 'cd {buildings_path} && python TestBindings.py --delete-tests-output'.format(buildings_path=buildings_path), return_='tuple')
-        extra_files = [f for f in os.listdir(buildings_path) if f not in distr_file_list]  # not f.startswith('.test.')  and
-        if extra_files:
-            results['results']['tests']['TestBindings'] = dict(state='failed', log='TestBindings.py scripts failed to delete files: ' + ' '.join(extra_files))
-            results[_StateKey_] = 'failed'
+        # execute('Deleting PyRosetta tests output...', 'cd {buildings_path} && python TestBindings.py --delete-tests-output'.format(buildings_path=buildings_path), return_='tuple')
+        # extra_files = [f for f in os.listdir(buildings_path) if f not in distr_file_list]  # not f.startswith('.test.')  and
+        # if extra_files:
+        #     results['results']['tests']['TestBindings'] = dict(state='failed', log='TestBindings.py scripts failed to delete files: ' + ' '.join(extra_files))
+        #     results[_StateKey_] = 'failed'
 
         if not res: output = '...\n'+'\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
         output = 'Running: {}\n'.format(command_line) + output  # Making sure that exact command line used is stored
 
-        #r = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
-        results[_LogKey_] = output
+        if res:
+            res_code = _S_build_failed_
+            results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
+            json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
+        else:
+            release_name = 'PyRosetta.{}:{}'.format(config['branch'], config['revision'])
+            archive = working_dir + '/' + release_name + '.tar.bz2'
 
-        # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
-        json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
+            file_list = 'app database demo test toolbox PyMOLPyRosettaServer.py SetPyRosettaEnvironment.sh TestBindings.py libboost_python rosetta.so'.split()  #  ignore_list: _build_ .test.output
+            # debug: file_list = 'app demo test toolbox PyMOLPyRosettaServer.py SetPyRosettaEnvironment.sh TestBindings.py libboost_python'.split()  #  ignore_list: _build_ .test.output
+
+            # Creating tar.bz2 archive with binaries
+            def arch_filter(tar_info):
+                if tar_info.name == release_name: return tar_info
+                if tar_info.name == release_name+ '/database': tar_info.type = tarfile.DIRTYPE
+                for e in file_list:
+                    if tar_info.name.startswith(release_name+'/'+e): return tar_info
+                return None
+            with tarfile.open(archive, "w:bz2") as t: t.add(buildings_path, arcname=release_name, filter=arch_filter)
+
+            release_path = '{}/PyRosetta/archive/{}/{}/'.format(config['release_dir'], config['branch'], platform['os'])
+            if not os.path.isdir(release_path): os.makedirs(release_path)
+            shutil.move(archive, release_path+release_name+'.tar.bz2')
+
+
+            # Creating git repository with binaries, only for named branches
+            if config['branch']:
+                git_repository_name = 'PyRosetta.{}.{}.monolith'.format(config['branch'], platform['os'])
+                release_path = '{}/PyRosetta/git/{}/'.format(config['release_dir'], config['branch'])
+                git_origin = os.path.abspath(release_path + git_repository_name + '.git')  # bare repositiry
+                git_working_dir = working_dir + '/' + git_repository_name
+                if not os.path.isdir(release_path): os.makedirs(release_path)
+                if not os.path.isdir(git_origin): execute('Origin git repository is not present, initializing...', 'git init --bare {git_origin} && cd {git_origin} && git update-server-info'.format(**vars()) )
+
+                execute('Clonning origin...', 'cd {working_dir} && git clone {git_origin}'.format(**vars()))
+
+                # Removing all old files but preserve .git dir...
+                execute('Removing previous files...', 'cd {working_dir}/{git_repository_name} && mv .git .. && rm -r * .* ; mv ../.git .'.format(**vars()), return_='tuple')
+
+                for f in os.listdir(buildings_path):
+                    if f in file_list:
+                        src = buildings_path+'/'+f;  dest = working_dir+'/'+git_repository_name+'/'+f
+                        if os.path.isfile(src): shutil.copy(src, dest)
+                        elif os.path.isdir(src): shutil.copytree(src, dest)
+                        execute('Git add {f}...', 'cd {working_dir}/{git_repository_name} && git add {f}'.format(**vars()))
+
+                res, output = execute('Git commiting changes...', 'cd {working_dir}/{git_repository_name} && git commit -a -m "{release_name}"'.format(**vars()), return_='tuple')
+                if res  and 'nothing to commit, working directory clean' not in output: raise BenchmarkError('Could not commit changess to: {}!'.format(git_origin))
+
+                res, oldest_sha = execute('Getting HEAD~N old commit...', 'cd {working_dir}/{git_repository_name} && git rev-parse HEAD~{_number_of_py_rosetta_revisions_to_keep_in_git_}'.format(_number_of_py_rosetta_revisions_to_keep_in_git_=_number_of_py_rosetta_revisions_to_keep_in_git_, **vars()), return_='tuple')
+                if not res:  # if there is no histore error would be raised, but that also mean that rebase is not needed...
+                    git_truncate = 'git checkout --orphan _temp_ {oldest_sha} && git commit -m "Truncating git history" && git rebase --onto _temp_ {oldest_sha} master && git checkout master && git branch -D _temp_'.format(**vars())  #
+                    execute('Trimming git history...', 'cd {working_dir}/{git_repository_name} && {git_truncate}'.format(**vars()))
+
+                execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git push -f'.format(**vars()))
+
+
+
+
+
+            #r = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
+            #results[_LogKey_] = output
+
+            res_code = _S_finished_
+            results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
+            json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
 
     return results
 
