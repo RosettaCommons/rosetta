@@ -15,7 +15,7 @@
 import os
 uname = os.uname()
 
-if uname[0] == "Darwin" and uname[2][0:2] == "13":
+if uname[0] == "Darwin" and uname[2][0:2] == "13" or uname[2][0:2] == "14":
     cxx = "clang"
 else:
     cxx     = "gcc"
