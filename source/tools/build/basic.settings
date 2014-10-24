@@ -2076,6 +2076,24 @@ settings = {
         },
     },
 
+    "clang, macos, opencl" : {
+        "appends" : {
+            "defines"  : [
+                "USEOPENCL",
+                "MACOPENCL"
+            ],
+            "flags" : {
+                "link" : [ "framework OpenCL" ],
+                "shlink" : [ "framework OpenCL" ],
+                # GPU code needs to cast into to void pointer
+                "warn" : [ "Wno-int-to-void-pointer-cast" ],
+            },
+        },
+        "removes" : {
+          "libraries" : [ "OpenCL" ]
+        },
+    },
+
     "clang, boost_mpi" : {
         "overrides" : {
             "cc" : "mpicc",
