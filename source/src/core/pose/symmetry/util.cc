@@ -267,6 +267,7 @@ make_asymmetric_pose(
 void extract_asymmetric_unit(core::pose::Pose const& pose_in, core::pose::Pose & pose_out, bool with_virtual_atoms) {
 	using core::conformation::Residue;
 	using core::chemical::aa_vrt;
+	using core::chemical::aa_h2o;
 	using core::chemical::aa_unk;
 	using namespace core::conformation::symmetry;
 
@@ -286,9 +287,9 @@ void extract_asymmetric_unit(core::pose::Pose const& pose_in, core::pose::Pose &
 
 		Residue residue( pose_in.residue( i ) );
 		if(residue.type().is_lower_terminus() ||
-				residue.aa() == aa_unk || residue.aa() == aa_vrt || jump_to_next ) {
+				residue.aa() == aa_unk || residue.aa() == aa_h2o || residue.aa() == aa_vrt || jump_to_next ) {
 
-			if( residue.aa() == aa_unk || residue.aa() == aa_vrt ) {
+			if( residue.aa() == aa_unk || residue.aa() == aa_vrt || residue.aa() == aa_h2o ) {
 				jump_to_next = true;
 			} else if( jump_to_next ) {
 				jump_to_next = false;
