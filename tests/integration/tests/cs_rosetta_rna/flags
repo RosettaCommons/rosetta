@@ -1,0 +1,6 @@
+-s 1MIS_NMR.pdb
+-out:file:silent SCORE.out
+-score:rna_chemical_shift_exp_data 1MIS_exp_1H_chem_shifts.str
+-weights stepwise/rna/rna_hires_07232011_with_intra_base_phosphate.wts
+-set_weights rna_chem_shift 1.0
+-analytic_etable_evaluation false
