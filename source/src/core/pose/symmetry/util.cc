@@ -250,15 +250,15 @@ make_asymmetric_pose(
 	pose::Pose & pose
 )
 {
-	// we need to cast the objects statically to get this working
-	scoring::Energies asym_energies( static_cast< scoring::Energies const & >( ( pose.energies()  ) ) );
-	conformation::Conformation const & asym_conformation = static_cast< conformation::Conformation const & >( ( pose.conformation() ) );
-	conformation::ConformationCOP conformation = asym_conformation.get_self_ptr();
-	scoring::EnergiesOP energies( new scoring::Energies( asym_energies ) );
+	conformation::ConformationOP conformation (
+		new conformation::Conformation(static_cast< conformation::Conformation const & >( ( pose.conformation() ) ) ) );
 	pose.set_new_conformation( conformation );
-	// Necessary to reinitialize the energy_graph
+
+	scoring::EnergiesOP energies( new scoring::Energies( static_cast< scoring::Energies const & >( pose.energies() ) ) );
+
 	energies->clear_energies();
 	pose.set_new_energies_object( energies );
+
 	assert( !is_symmetric( pose ) );
 }
 
