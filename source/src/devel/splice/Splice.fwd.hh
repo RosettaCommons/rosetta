@@ -24,6 +24,8 @@ class Splice;
 typedef utility::pointer::shared_ptr< Splice > SpliceOP;
 typedef utility::pointer::shared_ptr< Splice const > SpliceCOP;
 
+class ResidueBBDofs;
+
 } //splice
 } //devel
 

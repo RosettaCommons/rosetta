@@ -122,6 +122,7 @@ static core::pack::task::operation::TaskOperationRegistrator< devel::splice::Des
 static core::pack::task::operation::TaskOperationRegistrator< devel::splice::FindEndpointsOperationCreator > reg_FindEndpointsOperationCreator;
 static protocols::moves::MoverRegistrator< devel::splice::AlignEndsMoverCreator > reg_AlignEndsMoverCreator;
 static protocols::moves::MoverRegistrator< devel::splice::AddFoldUnitMoverCreator > reg_AddFoldUnitCreator;
+static protocols::moves::MoverRegistrator< devel::splice::StartFreshMoverCreator > reg_StartFreshMoverCreator;
 static protocols::moves::MoverRegistrator< devel::cutoutdomain::CutOutDomainCreator > reg_CutOutDomainCreator;
 
 // Task creators

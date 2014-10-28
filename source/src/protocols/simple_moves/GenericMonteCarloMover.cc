@@ -438,7 +438,10 @@ GenericMonteCarloMover::reset( Pose & pose )
 	last_accepted_scores_.clear();
 	lowest_scores_.clear();
   if( filters_.size() == 0 ) {
-    lowest_score_ = scoring( pose );
+		if( pose.total_residue() > 0 )
+    	lowest_score_ = scoring( pose );
+		else
+			lowest_score_ = 999999999.99;
 		last_accepted_scores_.push_back( lowest_score_ );
 		lowest_scores_.push_back( lowest_score_ );
 	} else {

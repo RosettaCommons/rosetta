@@ -115,7 +115,7 @@ ParsedProtocol::apply( Pose & pose )
 	ParsedProtocolAP this_weak_ptr(
 		utility::pointer::dynamic_pointer_cast< ParsedProtocol >( get_self_ptr() )
 	);
-	
+
 	if ( protocols::jd2::jd2_used() ) {
 		protocols::jd2::JobDistributor::get_instance()->current_job()->add_output_observer( this_weak_ptr );
 	}
@@ -123,7 +123,7 @@ ParsedProtocol::apply( Pose & pose )
 	try {
 
 		protocols::moves::Mover::set_last_move_status( protocols::moves::FAIL_RETRY );
-		pose.update_residue_neighbors();
+//		pose.update_residue_neighbors();
 
 		//fpd search the mover-filter pairs backwards for movers that have remaining poses
 		MoverFilterVector::const_reverse_iterator rmover_it = movers_.rbegin();
@@ -357,7 +357,7 @@ parse_mover_subtag( utility::tag::TagCOP const tag_ptr,
             << std::endl;
     data.add( "stopping_condition", tag_parent->getOption< std::string >( "name" ), data.get_ptr< basic::datacache::DataMapObj< bool > >( "stopping_condition", mover_name ) );
   }
-  
+
   return std::make_pair( mover_to_add, mover_name );
 }
 
@@ -532,7 +532,7 @@ ParsedProtocol::apply_filter( Pose & pose, MoverFilterPair const & mover_pair) {
 
   TR << "=======================BEGIN FILTER " << filter_name << "=======================" << std::endl;
 	info().insert( info().end(), mover_pair.first.first->info().begin(), mover_pair.first.first->info().end() );
-	pose.update_residue_neighbors();
+//	pose.update_residue_neighbors();
 	moves::MoverStatus status( mover_pair.first.first->get_last_move_status() );
   bool const pass( status==protocols::moves::MS_SUCCESS  && mover_pair.filter().apply( pose ) );
   if ( !mover_pair.report_filter_at_end_ ) { //report filter now
