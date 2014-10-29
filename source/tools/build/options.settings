@@ -41,6 +41,7 @@ options = {
         "debug",
         "release",
         "release_debug",
+        "release_debug_no_symbols",
         "profile",
         "coverage",
         "pyrosetta",
