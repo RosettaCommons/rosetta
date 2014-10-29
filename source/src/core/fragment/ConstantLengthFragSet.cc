@@ -28,6 +28,7 @@
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FragData.hh>
 #include <core/fragment/ConstantLengthFragSetIterator_.hh>
+#include <core/fragment/FrameIterator.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -36,7 +37,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
+#include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <basic/Tracer.hh>
@@ -47,9 +48,6 @@
 #include <ostream>
 #include <sstream>
 #include <string>
-
-#include <core/fragment/FrameIterator.hh>
-#include <utility/vector1.hh>
 
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format;
 
@@ -96,38 +94,40 @@ Size ConstantLengthFragSet::region(
 
 	return count;
 }
-    
+
 ///@brief returns the number and list of all fragment alignment frames that somehow overlap with the given region
 ///(also allows those frames that start before the region and reach into it)
 Size ConstantLengthFragSet::overlapping_with_region(
-    kinematics::MoveMap const& mm,
-    core::Size start,
-    core::Size end,
-    core::Size min_overlap,
-    core::Size min_length,
-    FrameList &frames
+		kinematics::MoveMap const& mm,
+		core::Size start,
+		core::Size end,
+		core::Size min_overlap,
+		core::Size min_length,
+		FrameList &frames
 ) const {
-    Size count(0);
-    //determine frame length of this FragSet
-    const Size frame_length = frames_.front()->length();//since all frames here have the same length
-    //tr << "frame length: " << frame_length << endl;
-    if (frame_length < min_length) {
-        return count;
-    }
-    //check if requested min overlap is too large for this region
-    if (min_overlap>end-start+1) {
-        return count;
-    }
-    //determine min and max start positions of frames, considering the given min region overlap and any global offset
-    const Size min_start_pos = start - frame_length + min_overlap - global_offset();
-    const Size max_start_pos = end + 1 - min_overlap - global_offset();
-    //tr << "sampling frames from " << min_start_pos << " to " << max_start_pos << endl;
-    //collect all frames that start between min_start_pos and max_start_pos
+		Size count(0);
+		// Frames at the front may have been truncated to save space, but the last 
+		// frame should always be real.  That's why we use back() here.  Note that 
+		// all the non-truncated frames should have the same length.
+		const Size frame_length = frames_.back()->length();
+		//tr << "frame length: " << frame_length << endl;
+		if (frame_length < min_length) {
+			return count;
+		}
+		//check if requested min overlap is too large for this region
+		if (min_overlap>end-start+1) {
+			return count;
+		}
+		//determine min and max start positions of frames, considering the given min region overlap and any global offset
+		const Size min_start_pos = start - frame_length + min_overlap - global_offset();
+		const Size max_start_pos = end + 1 - min_overlap - global_offset();
+		//tr << "sampling frames from " << min_start_pos << " to " << max_start_pos << endl;
+		//collect all frames that start between min_start_pos and max_start_pos
 	for (Size pos=min_start_pos; pos<=frames_.size() && pos<=max_start_pos; pos++) {
 		if (frames_[pos] && frames_[pos]->is_valid() && frames_[pos]->is_applicable(mm)) {
-            frames.push_back(frames_[pos]);
-            count++;
-        }
+			frames.push_back(frames_[pos]);
+			count++;
+		}
 	}
 	return count;
 }
