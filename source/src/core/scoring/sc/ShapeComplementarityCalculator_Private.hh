@@ -18,6 +18,8 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#include <utility/excn/Exceptions.hh>
+
 namespace core {
 namespace scoring {
 namespace sc {
@@ -45,12 +47,14 @@ enum __ATTEN_ENUM__ {
 
 ////////////////////////////////////////////////////////////
 
-class ShapeComplementarityCalculatorException {
+class ShapeComplementarityCalculatorException : public utility::excn::EXCN_Msg_Exception {
 
 	public:
 	std::string error;
 
-	ShapeComplementarityCalculatorException(const char *err, ...) {
+	ShapeComplementarityCalculatorException(const char *err, ...) :
+		utility::excn::EXCN_Msg_Exception( error )
+	{
 		va_list p;
 		char buf[256];
 		va_start(p, err);

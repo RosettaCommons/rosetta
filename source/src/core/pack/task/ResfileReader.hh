@@ -30,7 +30,7 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
-
+#include <utility/excn/Exceptions.hh>
 
 // STL Headers
 #include <iosfwd>
@@ -46,21 +46,19 @@ namespace task {
 
 
 
-class ResfileReaderException
+class ResfileReaderException: public utility::excn::EXCN_Msg_Exception
 {
 
 public:
 
-	ResfileReaderException( std::string message){
-		message_ = message;
-	}
+	ResfileReaderException( std::string message):
+		utility::excn::EXCN_Msg_Exception( message )
+	{}
 
 	std::string get_message(){
-		return message_;
+		return msg();
 	}
 
-private:
-	std::string message_;
 };
 
 class ResfileContents : public utility::pointer::ReferenceCount

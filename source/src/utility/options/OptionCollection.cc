@@ -45,9 +45,11 @@ namespace options {
 
 
 	void std_exit_wrapper( const int error_code ){
-		  throw( std::string( "std::exit() was called" ) );
-			return;
-		std::exit( error_code );
+		// Don't raise an exception if we're exiting successfully.
+		if( error_code == EXIT_SUCCESS) {
+			std::exit( error_code );
+		}
+		throw utility::excn::EXCN_Msg_Exception( "std::exit() was called" );
 	}
 
 
