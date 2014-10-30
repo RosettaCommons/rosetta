@@ -115,14 +115,21 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 		////
 		//// use model
 		////
-		core::scoring::electron_density::getDensityMap().calcRhoC( litePose );
-		core::scoring::electron_density::getDensityMap().getIntensities( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, modelI, bin_squared_ );
+		ObjexxFCL::FArray3D< double > rhoC, rhoMask;
+		ObjexxFCL::FArray3D< std::complex<double> > Frho;
+		core::scoring::electron_density::getDensityMap().calcRhoC( litePose, 0, rhoC, rhoMask );
+		numeric::fourier::fft3(rhoC, Frho);
 
+		core::scoring::electron_density::getDensityMap().getIntensities( Frho, nresbins_, 1.0/res_low_, 1.0/res_high_, modelI, bin_squared_ );
+
+		// reuse rhoC
 		if (mask_) {
-			mapI = core::scoring::electron_density::getDensityMap().getIntensitiesMasked( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, bin_squared_);
+			for (int i=0; i<rhoC.u1()*rhoC.u2()*rhoC.u3(); ++i) rhoC[i] = rhoMask[i] * core::scoring::electron_density::getDensityMap().data()[i];
 		} else {
-			mapI = core::scoring::electron_density::getDensityMap().getIntensities( nresbins_, 1.0/res_low_, 1.0/res_high_, bin_squared_);
+			for (int i=0; i<rhoC.u1()*rhoC.u2()*rhoC.u3(); ++i) rhoC[i] = core::scoring::electron_density::getDensityMap().data()[i];
 		}
+		numeric::fourier::fft3(rhoC, Frho);
+		core::scoring::electron_density::getDensityMap().getIntensities( Frho, nresbins_, 1.0/res_low_, 1.0/res_high_, modelI, bin_squared_ );
 
 		if (res_fade_ > 0 && res_high_ > res_fade_) {
 			core::Real inv_fade_s = 0.5/(res_fade_) + 0.5/(res_high_);
@@ -141,7 +148,9 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 		////
 		//// bfactor sharpen
 		////
- 		mapI = core::scoring::electron_density::getDensityMap().getIntensities( nresbins_, 1.0/res_low_, 1.0/res_high_, bin_squared_);
+		ObjexxFCL::FArray3D< std::complex<double> > Frho;
+		numeric::fourier::fft3(core::scoring::electron_density::getDensityMap().data(), Frho);
+ 		core::scoring::electron_density::getDensityMap().getIntensities( Frho, nresbins_, 1.0/res_low_, 1.0/res_high_, mapI, bin_squared_);
 
 		if (res_fade_ > 0 && res_high_ < res_fade_) {
 			core::Real inv_fade_s = 0.5/(res_fade_) + 0.5/(res_high_);

@@ -208,8 +208,9 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 				litePose.push_back( coord_j );
 			}
 		}
-		core::scoring::electron_density::getDensityMap().calcRhoC( litePose );
-		dens_score -= (moving_atoms_.size()/10.0) * core::scoring::electron_density::getDensityMap().getRSCC(litePose);
+
+		core::scoring::electron_density::getDensityMap().calcRhoC( litePose, 0.0, rhoC_, rhoMask_ );
+		dens_score -= (moving_atoms_.size()/10.0) * core::scoring::electron_density::getDensityMap().getRSCC(rhoC_);
 	}
 
 
@@ -434,7 +435,6 @@ void BfactorFittingMover::init() {
 	minimizer_ = "lbfgs_armijo_nonmonotone_atol";
 	init_ = true;
 	exact_ = false;
-	opt_to_fsc_ = false;
 	verbose_ = false;
 	deriv_check_ = false;
 
@@ -493,42 +493,7 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 	core::Size nvalues = weights_to_scan_.size();
 	core::Real bestVal = 0, bestScore = 0;
 
-	if (opt_to_fsc_) {
-		// pose->poseCoords
-		poseCoords litePose;
-		for (core::Size i = 1; i <= pose.total_residue(); ++i) {
-			core::conformation::Residue const & rsd_i ( pose.residue(i) );
-			if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
-			core::Size natoms = rsd_i.nheavyatoms();
-			for (core::Size j = 1; j <= natoms; ++j) {
-				core::chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
-				poseCoord coord_j;
-				coord_j.x_ = rsd_i.xyz( j );
-				coord_j.elt_ = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
-				litePose.push_back( coord_j );
-			}
-		}
-
-		for (core::Size j=1; j<=nvalues; ++j) {
-			for (core::Size i = 1; i <= litePose.size(); ++i) litePose[i].B_ = weights_to_scan_[j];
-
-			utility::vector1< core::Real > modelmapFSC(nresbins_,1.0), modelmapError(nresbins_,1.0);
-			core::scoring::electron_density::getDensityMap().getFSC(
-				litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, modelmapFSC );
-			core::Real thisScore = 0;
-			for (Size i=1; i<=modelmapFSC.size(); ++i) thisScore+=modelmapFSC[i];
-			thisScore /= modelmapFSC.size();
-
-			TR << "B=" << weights_to_scan_[j] << ": FSC=" << thisScore << std::endl;
-
-			if (thisScore > bestScore || j==1) {
-				bestScore = thisScore;
-				bestVal = weights_to_scan_[j];
-			}
-		}
-
-		for (core::Size i = 1; i <= y.size(); ++i) y[i] = bestVal;
-	} else if (init_) {
+	if (init_) {
 		for (core::Size j=1; j<=nvalues; ++j) {
 			for (core::Size i = 1; i <= y.size(); ++i)
 				y[i] = log( weights_to_scan_[j] );
@@ -540,10 +505,6 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 			}
 		}
 		for (core::Size i = 1; i <= y.size(); ++i) y[i] = log(bestVal);
-	}
-
-	if (!opt_to_fsc_) {
-		minimizer.run( y );
 	}
 
 	f_b.multivec2poseBfacts( y, pose );
@@ -592,9 +553,6 @@ BfactorFittingMover::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &,
 	}
 
 	//
-	if ( tag->hasOption("opt_to_fsc") ) {
-		opt_to_fsc_ = tag->getOption<bool>("opt_to_fsc");
-	}
 	if ( tag->hasOption("res_low") ) {
 		res_low_ = tag->getOption<core::Real>("res_low");
 	}

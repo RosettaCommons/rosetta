@@ -21,6 +21,7 @@
 
 #include <core/optimization/Multifunc.hh>
 #include <core/optimization/Minimizer.hh>
+#include <ObjexxFCL/FArray3D.hh>
 
 namespace protocols {
 namespace electron_density {
@@ -71,6 +72,8 @@ private:
 	core::id::AtomID_Map< core::Size > atom_indices_;
 	utility::vector1< core::id::AtomID > moving_atoms_;
 
+	mutable ObjexxFCL::FArray3D< double > rhoC_, rhoMask_;  // temp storage avoids reallocation
+
 	//
 	core::Real B_EPS;
 };
@@ -106,7 +109,6 @@ private:
 	bool exact_;
 	bool verbose_, deriv_check_;
 
-	bool opt_to_fsc_;
 	core::Real res_low_,res_high_;
 	core::Size nresbins_;
 

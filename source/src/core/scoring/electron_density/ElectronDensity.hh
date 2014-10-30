@@ -133,13 +133,11 @@ public:
 	);
 
 
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
 	/////  "Density tools"
 	/////    -- all use "light pose" representation
 	/////
-	/// @brief  mask the density map (like chimera 'zone' but sigmoidal mask)
-	void
-	maskDensityMap( poseCoords const &pose, core::Real radius );
-
 	/// @brief get resolution bins (informational)
 	void
 	getResolutionBins(
@@ -148,76 +146,56 @@ public:
 		 	utility::vector1< core::Size > &,
 			bool S2_bin=false );
 
-	/// @brief Compute map intensities
-	utility::vector1< core::Real >
-	getIntensities( core::Size nbuckets, core::Real maxreso, core::Real minreso, bool S2_bin=false );
-
-	/// @brief Compute map intensities, masked by a pose
-	utility::vector1< core::Real >
-	getIntensitiesMasked( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso, bool S2_bin=false );
-
-	/// @brief Compute intensities from a pose
+	/// @brief Compute map intensities, masked by a pose.  Also compute mask intensities
 	void
-	getIntensities( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso, utility::vector1< core::Real > &Imodel, bool S2_bin=false);
-
-	/// @brief Compute map-map FSC & errors
-	void
-	getMapMapError(
-			ObjexxFCL::FArray3D< float > const &map2,
-			core::Size nbuckets, core::Real maxreso, core::Real minreso,
-			utility::vector1< core::Real >& FSC,
-			utility::vector1< core::Real >& phaseError,
-			utility::vector1< core::Real >& complexPlaneError,
-			bool S2_bin=false);
-
-	/// @brief Compute model-map FSC & errors
-	void
-	getModelMapError(
-			poseCoords const &pose,
-			core::Size nbuckets, core::Real maxreso, core::Real minreso,
-			utility::vector1< core::Real > const &mapmapPhaseError,
-			utility::vector1< core::Real > const &mapmapComplexPlaneError,
-			utility::vector1< core::Real >& FSC,
-			utility::vector1< core::Real >& phaseError,
-			core::Real &phaseErrorSum,
-			core::Real &complexPlaneErrorK,
-			core::Real &complexPlaneErrorProb,
-			bool masked=false, bool S2_bin=false, core::Real mask_radius=0);
+	getIntensities(
+			ObjexxFCL::FArray3D< std::complex<double> > const &FrhoC,
+			core::Size nbuckets,
+			core::Real maxreso,
+			core::Real minreso,
+			utility::vector1< core::Real > &Imap,
+			bool S2_bin=false );
 
 	/// @brief Compute model-map FSC & errors
 	void
 	getFSC(
-			poseCoords const &pose,
+			ObjexxFCL::FArray3D< std::complex<double> > const &Frho1,
+			ObjexxFCL::FArray3D< std::complex<double> > const &Frho2,
 			core::Size nbuckets, core::Real maxreso, core::Real minreso,
 			utility::vector1< core::Real >& FSC,
-			bool masked=false, bool S2_bin=false, core::Real mask_radius=0) {
-		utility::vector1< core::Real > mapmapPhaseError(nbuckets,0.1);
-		utility::vector1< core::Real > mapmapComplexPlaneError(nbuckets,0.1);
-		utility::vector1< core::Real > phaseError;
-		core::Real phaseErrorSum, complexPlaneErrorK, complexPlaneErrorProb;
-		getModelMapError(
-				pose, nbuckets, maxreso, minreso,
-				mapmapPhaseError, mapmapComplexPlaneError,
-				FSC, phaseError, phaseErrorSum, complexPlaneErrorK, complexPlaneErrorProb, masked, S2_bin, mask_radius );
+			bool S2_bin=false);
+
+	void
+	getPhaseError(
+			ObjexxFCL::FArray3D< std::complex<double> > const &Frho1,
+			ObjexxFCL::FArray3D< std::complex<double> > const &Frho2,
+			core::Size nbuckets, core::Real maxreso, core::Real minreso,
+			utility::vector1< core::Real >& phaseError,
+			bool S2_bin=false);
+
+	/// @brief Real-space correlation
+	core::Real
+	getRSCC( ObjexxFCL::FArray3D< double > const &density2,  ObjexxFCL::FArray3D< double > const &mask);
+
+	core::Real
+	getRSCC( ObjexxFCL::FArray3D< double > &rhoC ) {
+		ObjexxFCL::FArray3D< double > nullmask;
+		return getRSCC( rhoC, nullmask );
 	}
-
-	/// @brief Compute model-map RSCC
-	core::Real
-	getRSCC( poseCoords const &pose );
-
-	/// @brief Compute map-map RSCC
-	core::Real
-	getRSCC( ObjexxFCL::FArray3D< float > const &map2 );
 
 	/// @brief Compute intensities, update density
 	void
 	scaleIntensities( utility::vector1< core::Real > I_tgt, core::Real maxreso, core::Real minreso, bool S2_bin=false );
 
+	/// @brief get Rho Calc
 	void
-	calcRhoC( poseCoords const &pose );
+	calcRhoC( poseCoords const &pose, core::Real radius, ObjexxFCL::FArray3D< double > &rhoC, ObjexxFCL::FArray3D< double > &mask );
 
 	core::Real
 	maxNominalRes();
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+
 
 	/////
 	/////  Scorefunction stuff
@@ -482,12 +460,6 @@ public:
 
 	numeric::xyzMatrix<core::Real> get_f2c() { return f2c; }
 	numeric::xyzMatrix<core::Real> get_c2f() { return c2f; }
-
-
-	numeric::xyzVector<core::Real> delt_cart(numeric::xyzVector<core::Real> const & cartX1, numeric::xyzVector<core::Real> const & cartX2);
-	numeric::xyzVector<core::Real> get_cart_unitCell(numeric::xyzVector<core::Real> const & cartX);
-	numeric::xyzVector<core::Real> get_nearest_UC(numeric::xyzVector<core::Real> const & cartX_in, numeric::xyzVector<core::Real> const & cartX_ref);
-
 
 	numeric::xyzVector<core::Real> dens_grad ( numeric::xyzVector<core::Real> const & idxX ) const;
 

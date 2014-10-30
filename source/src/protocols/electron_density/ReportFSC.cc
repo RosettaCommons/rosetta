@@ -100,15 +100,20 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 	core::Real fsc1=0.0, fsc2=0.0;
 
 	// train map
-	core::scoring::electron_density::getDensityMap().calcRhoC( litePose );
-	core::scoring::electron_density::getDensityMap().getFSC( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, modelmap1FSC, mask_, bin_squared_ );
+	ObjexxFCL::FArray3D< double > rhoC, rhoMask;
+	ObjexxFCL::FArray3D< std::complex<double> > FrhoC, FrhoO;
+	core::scoring::electron_density::getDensityMap().calcRhoC( litePose, 0, rhoC, rhoMask );
+	numeric::fourier::fft3(rhoC, FrhoC);
 
+	numeric::fourier::fft3(core::scoring::electron_density::getDensityMap().data(), FrhoO);
+
+	core::scoring::electron_density::getDensityMap().getFSC( FrhoC, FrhoO, nresbins_, 1.0/res_low_, 1.0/res_high_, modelmap1FSC, bin_squared_ );
 	for (Size i=1; i<=modelmap1FSC.size(); ++i) fsc1+=modelmap1FSC[i];
 	fsc1 /= modelmap1FSC.size();
 
 	if (testmap_ && testmap_->isMapLoaded()) {
-		testmap_->calcRhoC( litePose );  // this is redundant
-		testmap_->getFSC( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, modelmap2FSC, mask_, bin_squared_ );
+		numeric::fourier::fft3(testmap_->data(), FrhoO);
+		testmap_->getFSC( FrhoC, FrhoO, nresbins_, 1.0/res_low_, 1.0/res_high_, modelmap2FSC, bin_squared_ );
 		for (Size i=1; i<=modelmap2FSC.size(); ++i) fsc2+=modelmap2FSC[i];
 		fsc2 /= modelmap2FSC.size();
 	}

@@ -55,28 +55,30 @@ OneGaussianScattering get_A( std::string elt ) {
 	static std::map< std::string, OneGaussianScattering > elt_db;
 
 	// fit to parameters from Doyle and Turner, Acta Cryst A, 1968
-	//   --> single gaussiansfit in reciprocal space
+	//   --> single gaussians fit in reciprocal space fom 20A-2A resolution
 	//   --> TODO .. move to database, make parameters selectable
 	if (elt_db.size() == 0) {
 		if (basic::options::option[ basic::options::OptionKeys::edensity::cryoem_scatterers ]()) {
 			// [1] electron scattering
-			elt_db["C"] = OneGaussianScattering( 6, 7.10668);  // 20-2A
-			elt_db["N"] = OneGaussianScattering( 5, 6.03448);
-			elt_db["O"] = OneGaussianScattering( 4, 5.17616);
-			elt_db["S"] = OneGaussianScattering( 12, 7.05366);
+			elt_db["C"] = OneGaussianScattering( 6.00000, 7.10668);
+			elt_db["N"] = OneGaussianScattering( 5.28737, 6.03448);
+			elt_db["O"] = OneGaussianScattering( 4.74213, 5.17616);
+			elt_db["P"] = OneGaussianScattering( 13.12395, 7.48955);
+			elt_db["S"] = OneGaussianScattering( 12.34197, 7.05366);
 			elt_db["X"] = OneGaussianScattering(
 					static_cast<int>(
-							6*basic::options::option[ basic::options::OptionKeys::edensity::centroid_density_mass ]()),
+							6.0*basic::options::option[ basic::options::OptionKeys::edensity::centroid_density_mass ]()),
 					4.88284);  // centroid
 		} else {
 			// [2] xray scattering
-			elt_db["C"] = OneGaussianScattering( 6, 4.88398);  // 20-2A
-			elt_db["N"] = OneGaussianScattering( 7, 5.08400);
-			elt_db["O"] = OneGaussianScattering( 8, 4.92866);
-			elt_db["S"] = OneGaussianScattering(16, 2.92593);
+			elt_db["C"] = OneGaussianScattering( 6.0, 4.88398);
+			elt_db["N"] = OneGaussianScattering( 7.0, 5.08400);
+			elt_db["O"] = OneGaussianScattering( 8.0, 4.92866);
+			elt_db["P"] = OneGaussianScattering( 15.0, 2.89121);
+			elt_db["S"] = OneGaussianScattering( 16.0, 3.03431);
 			elt_db["X"] = OneGaussianScattering(
 					static_cast<int>(
-							6*basic::options::option[ basic::options::OptionKeys::edensity::centroid_density_mass ]()),
+							6.0*basic::options::option[ basic::options::OptionKeys::edensity::centroid_density_mass ]()),
 					4.88284);  // centroid
 		}
 	}

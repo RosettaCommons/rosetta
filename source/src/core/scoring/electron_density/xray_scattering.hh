@@ -70,7 +70,7 @@ public:
 		weight_ = 0;
 		sigma_ = 3.0;
 	}
-	OneGaussianScattering(int w, float s) {
+	OneGaussianScattering(float w, float s) {
 		sigma_ = s;
 		weight_ = w;
 	}
@@ -129,7 +129,7 @@ public:
 
 private:
 	float sigma_;
-	int weight_;
+	float weight_;
 };
 
 
