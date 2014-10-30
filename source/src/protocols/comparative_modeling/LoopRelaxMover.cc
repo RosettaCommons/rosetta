@@ -1124,15 +1124,16 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 			if ( debug ) pose.dump_pdb(curr_job_tag + "_before_refine.pdb");
 			if ( refine() == "refine_ccd" ) {
-				loops::loop_mover::refine::LoopMover_Refine_CCD refine_ccd( loops, fa_scorefxn_ );
-				refine_ccd.set_native_pose( PoseCOP( new core::pose::Pose ( native_pose ) ) );
-				refine_ccd.apply( pose );
+				// heap allocation needed for internal shared_from_this call.
+				moves::MoverOP refine_ccd( new loops::loop_mover::refine::LoopMover_Refine_CCD( loops, fa_scorefxn_ ) );
+				refine_ccd->set_native_pose( PoseCOP( new core::pose::Pose ( native_pose ) ) );
+				refine_ccd->apply( pose );
 			} else
 			if ( refine() == "refine_kic" ) {
 				//loops.remove_terminal_loops( pose );
-				loops::loop_mover::refine::LoopMover_Refine_KIC refine_kic( loops, fa_scorefxn_ );
-				refine_kic.set_native_pose( PoseCOP( new core::pose::Pose ( native_pose ) ) );
-				refine_kic.apply( pose );
+				moves::MoverOP refine_kic( new loops::loop_mover::refine::LoopMover_Refine_KIC( loops, fa_scorefxn_ ) );
+				refine_kic->set_native_pose( PoseCOP( new core::pose::Pose ( native_pose ) ) );
+				refine_kic->apply( pose );
 			} else
 			if ( refine() == "refine_kic_refactor" || refine() == "refine_kic_with_fragments") {
 				using namespace std;
