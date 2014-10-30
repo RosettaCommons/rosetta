@@ -408,7 +408,6 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "pocket_constraint" ] = pocket_constraint;
 	name2score_type_[ "backbone_stub_constraint" ] = backbone_stub_constraint;
 	name2score_type_[ "backbone_stub_linear_constraint" ] = backbone_stub_linear_constraint;
-	name2score_type_[ "suck" ] = suck;
 	name2score_type_[ "pack_stat" ] = pack_stat;
 
 	name2score_type_[ "surface" ] = surface;
