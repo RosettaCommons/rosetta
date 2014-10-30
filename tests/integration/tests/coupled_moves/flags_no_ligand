@@ -5,6 +5,7 @@
 -ex1
 -ex2
 -extrachi_cutoff 0
+-use_input_sc
 -nstruct 1
 -coupled_moves::mc_kt 1.0
 -coupled_moves::initial_repack false

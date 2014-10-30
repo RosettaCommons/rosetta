@@ -76,6 +76,7 @@ OPT_1GRP_KEY(Boolean, coupled_moves, uniform_backrub)
 OPT_1GRP_KEY(Boolean, coupled_moves, bias_sampling)
 OPT_1GRP_KEY(Boolean, coupled_moves, bump_check)
 OPT_1GRP_KEY(Real, coupled_moves, ligand_weight)
+OPT_1GRP_KEY(String, coupled_moves, output_prefix)
 
 void *
 my_main( void* );
@@ -109,6 +110,7 @@ main( int argc, char * argv [] )
 	NEW_OPT(coupled_moves::bias_sampling, "if true, bias rotamer selection based on energy", true);
 	NEW_OPT(coupled_moves::bump_check, "if true, use bump check in generating rotamers", true);
 	NEW_OPT(coupled_moves::ligand_weight, "weight for residue - ligand interactions", 1.0);
+	NEW_OPT(coupled_moves::output_prefix, "prefix for output files", "");
 	
 	// initialize Rosetta
 	devel::init(argc, argv);
@@ -218,6 +220,7 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	
+	TR << "Initial Score:" << std::endl;
 	score_fxn_->show(TR, pose);
 	TR.flush();
 
@@ -228,22 +231,13 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	////////////////// Material above is scheduled for constructor //////////////////
 
 	std::string output_tag(protocols::jd2::current_output_name());
-
+	output_tag += option[coupled_moves::output_prefix];
+	
 	// start with a fresh copy of the optimized pose
 	core::pose::PoseOP pose_copy(new core::pose::Pose(pose));
 
-	// reset the Monte Carlo object
-	mc.reset(*pose_copy);
-	
 	core::pack::task::PackerTaskOP task( main_task_factory_->create_task_and_apply_taskoperations( *pose_copy ) );
 	
-	protocols::canonical_sampling::PDBTrajectoryRecorder trajectory;
-	if (option[ coupled_moves::trajectory ]) {
-		trajectory.file_name(output_tag + "_traj.pdb" + (option[ coupled_moves::trajectory_gz ] ? ".gz" : ""));
-		trajectory.stride(option[ coupled_moves::trajectory_stride ]);
-		trajectory.reset(mc);
-	}
-
 	utility::vector1<core::Size> move_positions;
 	utility::vector1<core::Size> design_positions;
 	
@@ -304,8 +298,28 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 		pack->apply(*pose_copy);
 	}
 	
-	TR << "Running " << option[ coupled_moves::ntrials ] << " trials..." << std::endl;
+	// reset the Monte Carlo object
+	mc.reset(*pose_copy);
+	
+	protocols::canonical_sampling::PDBTrajectoryRecorder trajectory;
+	if (option[ coupled_moves::trajectory ]) {
+		trajectory.file_name(output_tag + "_traj.pdb" + (option[ coupled_moves::trajectory_gz ] ? ".gz" : ""));
+		trajectory.stride(option[ coupled_moves::trajectory_stride ]);
+		trajectory.reset(mc);
+	}
 
+	std::string initial_sequence = "";
+	for(core::Size index = 1; index <= design_positions.size(); index++) {
+		initial_sequence += pose_copy->residue(design_positions[index]).name1();
+	}
+	TR << "Starting Sequence " << initial_sequence << std::endl;
+	
+	TR << "Starting Score:" << std::endl;
+	score_fxn_->show(TR, pose);
+	TR.flush();
+	
+	TR << "Running " << option[ coupled_moves::ntrials ] << " trials..." << std::endl;
+	
 	std::map<std::string,core::Real> unique_sequences;
 	std::map<std::string,core::scoring::EnergyMap> unique_scores;
 	
@@ -384,17 +398,18 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	TR << "Last Score:" << std::endl;
 	score_fxn_->show(TR, *pose_copy);
 	TR.flush();
-
+	
+	pose_copy->dump_scored_pdb(output_tag + "_last.pdb", *score_fxn_);
+	
 	*pose_copy = mc.lowest_score_pose();
 
 	TR << "Low Score:" << std::endl;
 	score_fxn_->show(TR, *pose_copy);
 	TR.flush();
 
+	pose_copy->dump_scored_pdb(output_tag + "_low.pdb", *score_fxn_);
+	
 	pose = mc.lowest_score_pose();
-
-	mc.last_accepted_pose().dump_pdb(output_tag + "_last.pdb");
-	mc.lowest_score_pose().dump_pdb(output_tag + "_low.pdb");
 
 	if (option[coupled_moves::save_sequences]) {
 		std::ofstream out_fasta( (output_tag + ".fasta").c_str() );
