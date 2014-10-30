@@ -1,0 +1,15 @@
+
+cd %(workdir)s
+
+
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -database %(database)s 2>&1 \
+    | egrep -v 'seconds' \
+    | egrep -v 'core.init'\
+    | egrep -vf ../../ignore_list \
+    > log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
+
+
+

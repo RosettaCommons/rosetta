@@ -1,0 +1,38 @@
+<dock_design>
+	<SCOREFXNS>
+		<tal weights=talaris2013_calibrated/>
+	</SCOREFXNS>
+  <TASKOPERATIONS>
+  	<InitializeFromCommandline name=init/>
+		<DesignAround name=design_positions resnums=21A design_shell=0/>
+		<RestrictToRepacking name=rtr/>
+	</TASKOPERATIONS>
+  <MOVERS>
+		<SwitchChainOrder name=chain1 chain_order=1 scorefxn=tal/>
+	</MOVERS>
+	<FILTERS>
+	  <Ddg name=ddg scorefxn=tal repeats=1 confidence=0/>
+		<RelativePose name=ddg_1k8r pdb_name="%%source%%" alignment=A:A scorefxn=tal baseline=0 filter=ddg/>
+ 		<ScoreType name=total_score scorefxn=tal score_type=total_score threshold=100/>
+		<MoveBeforeFilter name=score_chain1 mover=chain1 filter=total_score/>
+
+		<RelativePose name=score_1k8r pdb_name="%%source%%" alignment=A:A scorefxn=tal baseline=0 filter=score_chain1/>
+		<Sigmoid name=sig_score_1k8r filter=score_1k8r steepness=0.6 offset=-120 negate=0/>
+		<Sigmoid name=sig_ddg_1k8r steepness=1.5 offset=-13 negate=0 filter=ddg_1k8r/>
+		<Operator name=objective_function filters=sig_score_1k8r,sig_ddg_1k8r operation=PRODUCT negate=1 logarithm=1 threshold=10000000/>
+	</FILTERS>
+	<MOVERS>
+	   	<AtomTree name=docking_ft docking_ft=1/>
+			<MinMover name=hard_min scorefxn=tal bb=0 jump=1 chi=1 scorefxn=tal/>
+			<RandomMutation name=mut task_operations=design_positions,init scorefxn=tal/>
+			<ParsedProtocol name=mut_min>
+				<Add mover=mut/>
+				<Add mover=hard_min/>
+			</ParsedProtocol>
+			<GenericMonteCarlo name=mut_mc1 mover_name=mut_min preapply=0 drift=1 filter_name=objective_function reset_baselines=0 trials=1 temperature=1/>
+  </MOVERS>
+	<PROTOCOLS>
+	  <Add mover=docking_ft/>
+		<Add mover=mut_mc1/>
+	</PROTOCOLS>
+</dock_design>
