@@ -19,6 +19,7 @@ imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py') 
 
 _api_version_ = '1.0'  # api version
 
+_number_of_rosetta_binary_revisions_to_keep_in_git_ = 4
 _number_of_py_rosetta_revisions_to_keep_in_git_ = 4
 
 
@@ -36,7 +37,7 @@ def rosetta_source_release(rosetta_dir, working_dir, platform, config, hpc_drive
 
     # Creating git repository with source code, only for regular (not 'commits') branches
     #if config['branch'] != 'commits':
-    git_repository_name = 'rosetta.{}.source'.format(config['branch']) # , platform['os']
+    git_repository_name = 'rosetta.source.{}'.format(config['branch']) # , platform['os']
     release_path = '{}/rosetta/git/{}/'.format(config['release_dir'], config['branch'])
     git_origin = os.path.abspath(release_path + git_repository_name + '.git')  # bare repositiry
     git_working_dir = working_dir + '/' + git_repository_name
@@ -52,7 +53,6 @@ def rosetta_source_release(rosetta_dir, working_dir, platform, config, hpc_drive
     execute('Clonning current checkout of rosetta tools...', 'cd {working_dir}/{git_repository_name} && git clone {rosetta_dir}/../tools tools'.format(**vars()))
     execute('Clonning current checkout of rosetta demos...', 'cd {working_dir}/{git_repository_name} && git clone {rosetta_dir}/../demos demos'.format(**vars()))
     execute('Clonning current checkout of rosetta documentation...', 'cd {working_dir}/{git_repository_name} && git clone {rosetta_dir}/../documentation documentation'.format(**vars()))
-
 
     # DANGER DANGER DANGER     DEBUG ONLY, REMOVE LINES BELOW BEFORE COMMITING!!!!!
     #execute('Copying convert_to_release script...', 'cp {rosetta_dir}/../tools/release/convert_to_release.bash {working_dir}/{git_repository_name}/tools/release'.format(**vars()))
@@ -72,6 +72,73 @@ def rosetta_source_release(rosetta_dir, working_dir, platform, config, hpc_drive
     execute('Building release...', 'cd {working_dir}/{git_repository_name}/main/source && ./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}'.format(**vars()))
     execute('Running unit tests...', 'cd {working_dir}/{git_repository_name}/main/source && ./test/run.py --compiler={compiler} --extras={extras} -j{jobs} --mute all'.format(**vars()))
 
+    # We moving archive and pushing new revision to upstream only *after* all test runs passed
+    shutil.move(archive, release_path+release_name+'.tar.bz2')
+    execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git push -f'.format(**vars()))
+
+    results = {_StateKey_ : _S_finished_,  _ResultsKey_ : {},  _LogKey_ : '' }
+    json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+
+    return results
+
+
+def rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+    memory = config['memory'];  jobs = config['cpu_count']
+    compiler = platform['compiler']
+    extras   = ','.join(platform['extras'])
+
+    TR = Tracer(verbose)
+    TR('Running Rosetta source release: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
+
+    release_name = 'rosetta.binary.{}:{}'.format(config['branch'], config['revision'])
+    archive = working_dir + '/' + release_name + '.tar.bz2'
+
+
+    # Creating git repository with source code, only for regular (not 'commits') branches
+    #if config['branch'] != 'commits':
+    git_repository_name = 'rosetta.binary.{}'.format(config['branch']) # , platform['os']
+    release_path = '{}/rosetta/git/{}/'.format(config['release_dir'], config['branch'])
+    git_origin = os.path.abspath(release_path + git_repository_name + '.git')  # bare repositiry
+    git_working_dir = working_dir + '/' + git_repository_name
+    if not os.path.isdir(release_path): os.makedirs(release_path)
+    if not os.path.isdir(git_origin): execute('Origin git repository is not present, initializing...', 'git init --bare {git_origin} && cd {git_origin} && git update-server-info'.format(**vars()) )
+
+    execute('Clonning origin...', 'cd {working_dir} && git clone {git_origin}'.format(**vars()))
+
+    # Removing all old files but preserve .git dir...
+    execute('Removing previous files...', 'cd {working_dir}/{git_repository_name} && mv .git .. && rm -r * .*'.format(**vars()), return_='tuple')
+
+    execute('Clonning current checkout of rosetta main...', 'cd {working_dir}/{git_repository_name} && git clone {rosetta_dir} main'.format(**vars()))
+    execute('Clonning current checkout of rosetta tools...', 'cd {working_dir}/{git_repository_name} && git clone {rosetta_dir}/../tools tools'.format(**vars()))
+    execute('Clonning current checkout of rosetta demos...', 'cd {working_dir}/{git_repository_name} && git clone {rosetta_dir}/../demos demos'.format(**vars()))
+    execute('Clonning current checkout of rosetta documentation...', 'cd {working_dir}/{git_repository_name} && git clone {rosetta_dir}/../documentation documentation'.format(**vars()))
+
+    # DANGER DANGER DANGER     DEBUG ONLY, REMOVE LINE BELOW BEFORE COMMITING!!!!!
+    #execute('Copying convert_to_release script...', 'cp {rosetta_dir}/../tools/release/convert_to_release.bash {working_dir}/{git_repository_name}/tools/release'.format(**vars()))
+    #execute('Copying convert_to_release script...', 'cp {rosetta_dir}/../tools/release/detect_itest_exes.bash {working_dir}/{git_repository_name}/tools/release'.format(**vars()))
+
+    execute('Convertion sources to release form...', 'cd {working_dir}/{git_repository_name} && ./tools/release/convert_to_release.bash'.format(**vars()))
+
+    execute('Building release...', 'cd {working_dir}/{git_repository_name}/main/source && ./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}'.format(**vars()))
+
+    # Creating tar.bz2 archive with sources
+    with tarfile.open(archive, "w:bz2") as t: t.add(working_dir+'/'+git_repository_name, arcname=release_name)
+    release_path = '{}/rosetta/archive/{}/{}/'.format(config['release_dir'], config['branch'], platform['os'])
+    if not os.path.isdir(release_path): os.makedirs(release_path)
+
+    execute('Moving back upstream .git dir and commiting new release...', 'cd {working_dir}/{git_repository_name} && mv ../.git . && git add * && git ci -a -m "{release_name}"'.format(**vars()))
+
+    res, oldest_sha = execute('Getting HEAD~N old commit...', 'cd {working_dir}/{git_repository_name} && git rev-parse HEAD~{_number_of_rosetta_binary_revisions_to_keep_in_git_}'.format(_number_of_rosetta_binary_revisions_to_keep_in_git_=_number_of_rosetta_binary_revisions_to_keep_in_git_, **vars()), return_='tuple')
+    if not res:  # if there is no histore error would be raised, but that also mean that rebase is not needed...
+        git_truncate = 'git checkout --orphan _temp_ {oldest_sha} && git commit -m "Truncating git history" && git rebase --onto _temp_ {oldest_sha} master && git checkout master && git branch -D _temp_'.format(**vars())
+        execute('Trimming git history...', 'cd {working_dir}/{git_repository_name} && {git_truncate}'.format(**vars()))
+
+    # Running extra test to make sure our release is good...
+    execute('Building debug build...', 'cd {working_dir}/{git_repository_name}/main/source && ./scons.py cxx={compiler} extras={extras} -j{jobs}'.format(**vars()))
+    execute('Building unit tests...', 'cd {working_dir}/{git_repository_name}/main/source && ./scons.py cxx={compiler} extras={extras} cat=test -j{jobs}'.format(**vars()))
+    execute('Running unit tests...', 'cd {working_dir}/{git_repository_name}/main/source && ./test/run.py --compiler={compiler} --extras={extras} -j{jobs} --mute all'.format(**vars()))
+
+    # We moving archive and pushing new revision to upstream only *after* all test runs passed
     shutil.move(archive, release_path+release_name+'.tar.bz2')
     execute('Pushing changes...', 'cd {working_dir}/{git_repository_name} && git push -f'.format(**vars()))
 
@@ -209,6 +276,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     '''
 
     if   test =='source':    return rosetta_source_release(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    if   test =='binary':    return rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test =='PyRosetta': return py_rosetta_release(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     #elif test =='unit':  return run_unit_tests(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     else: raise BenchmarkError('Unknow PyRosetta test: {}!'.format(test))
