@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/* This file is contains all the same functions as `bridgeObjects.cc', but 
- * radians are assumed for all angles.  Although this is easier to use in most 
- * cases, it is not backwards compatible.  That's why a new file was created.  
+/* This file is contains all the same functions as `bridgeObjects.cc', but
+ * radians are assumed for all angles.  Although this is easier to use in most
+ * cases, it is not backwards compatible.  That's why a new file was created.
  */
 
 /// @file   bridge_objects.cc
@@ -38,6 +38,7 @@ namespace kinematic_closure {
 namespace radians {
 
 using namespace std;
+using std::abs;
 using numeric::constants::r::pi;
 
 void triangle ( // {{{1
@@ -95,18 +96,18 @@ void sincos ( // {{{1
  */
 
 void triaxialCoefficients(
-		const utility::vector1<Real>& vb, 
-		const utility::vector1<Real>& xi, 
-		const utility::vector1<Real>& eta, 
-		const utility::vector1<Real>& delta, 
-		const utility::vector1<Real>& theta, 
-		const utility::vector1<int>& order, 
-		utility::vector1<utility::vector1<Real> >& A, 
-		utility::vector1<utility::vector1<Real> >& B, 
-		utility::vector1<utility::vector1<Real> >& C, 
-		utility::vector1<utility::vector1<Real> >& D, 
-		utility::vector1<Real>& cal, 
-		utility::vector1<Real>& sal, 
+		const utility::vector1<Real>& vb,
+		const utility::vector1<Real>& xi,
+		const utility::vector1<Real>& eta,
+		const utility::vector1<Real>& delta,
+		const utility::vector1<Real>& theta,
+		const utility::vector1<int>& order,
+		utility::vector1<utility::vector1<Real> >& A,
+		utility::vector1<utility::vector1<Real> >& B,
+		utility::vector1<utility::vector1<Real> >& C,
+		utility::vector1<utility::vector1<Real> >& D,
+		utility::vector1<Real>& cal,
+		utility::vector1<Real>& sal,
 		bool& feasible_triangle) {
 
   utility::vector1<Real> ctheta (4), calpha (4), salpha (4), cxi (3), sxi (3), ceta (4), seta (4), cdelta (3), sdelta (3), caceta (4), caseta (4), saceta (4), saseta (4), capeta (4), sapeta (4), cameta (4), sameta (4);
@@ -638,7 +639,7 @@ void chainTORS (
 }
 
 void rotateX( // {{{1
-		const utility::vector1<utility::vector1<Real> >& R, 
+		const utility::vector1<utility::vector1<Real> >& R,
 		const Real& c,
 		const Real& s,
 		utility::vector1<utility::vector1<Real> >& Rx) {
@@ -713,7 +714,7 @@ void to_degrees ( // {{{1
 ///
 /// @detailed
 ///
-/// @param[in] atoms - matrix of cartesian coordinates of N-CA-C atoms indexed 
+/// @param[in] atoms - matrix of cartesian coordinates of N-CA-C atoms indexed
 /// as atoms[atom][dimension]
 /// @param[in] dt - desired torsions for each atom (radians)
 /// @param[in] da - desired bond angle for each atom (radians)
@@ -790,7 +791,7 @@ void bridge_objects (
 	b_len1.resize(l1);
 	b_len2.resize(l2);
 
-	// break the designed torsions, angles, and lengths into 3 chains (3rd 
+	// break the designed torsions, angles, and lengths into 3 chains (3rd
 	// chain's coords set directly)
 	ind=1;
 	for (int i=pivots[1]; i<=pivots[2]; i++) {
@@ -925,8 +926,8 @@ void bridge_objects (
 			}
 		}
 
-		// calculate the 6 closure torsions and place them (with Real precision) 
-		// into the output vector together with the designed torsions, angles, and 
+		// calculate the 6 closure torsions and place them (with Real precision)
+		// into the output vector together with the designed torsions, angles, and
 		// lengths (which are copied directly from the input)
 		int pivots2m1 = pivots[2]-1, pivots2p1 = pivots[2]+1,
 			pivots3m1 = pivots[3]-1, pivots3p1 = pivots[3]+1;
