@@ -342,7 +342,7 @@ void setup_interface_atompair_constraints(
     utility::vector1<bool> ignore_res )
 {
   using namespace core::scoring::func;
-  
+
   TR.Debug << " Add partial atom-pair constraints for non-interface residues" << std::endl;
 
   core::conformation::symmetry::SymmetryInfoCOP symm_info;
@@ -439,7 +439,7 @@ void add_strand_pairs_cst(core::pose::Pose & pose, utility::vector1< std::pair< 
 	}
 }
 
-void add_non_protein_cst(core::pose::Pose & pose, core::Real const self_cst_weight, core::Real const het_prot_cst_weight) {
+void add_non_protein_cst(core::pose::Pose & pose, core::pose::Pose & tmpl, core::Real const self_cst_weight, core::Real const het_prot_cst_weight) {
 	//symmetry
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
@@ -448,66 +448,90 @@ void add_non_protein_cst(core::pose::Pose & pose, core::Real const self_cst_weig
 		symm_info = SymmConf.Symmetry_Info();
 	}
 
-	core::Real MAXDIST = 12.0;
+	core::Real MAXDIST = 8.0;
 	core::Real COORDDEV = 3.0;
 
+	//fpd -- generate constraints between the residues in tmpl with the hetatms in pose
 	if ( het_prot_cst_weight > 1e-7) {
-	// constraints protein<->substrate
-	for (Size ires=1; ires<=pose.total_residue(); ++ires) {
-		if (!pose.residue(ires).is_protein()) continue;
-		if (symm_info && !symm_info->bb_is_independent(ires)) continue;
+		// constraints protein<->substrate
+		for (Size ires=1; ires<=tmpl.total_residue(); ++ires) {
+			if (!tmpl.residue(ires).is_protein()) continue;
 
-		core::Size iatom;
-		if (pose.residue(ires).aa() == core::chemical::aa_gly) {
-			iatom = pose.residue_type(ires).atom_index(" CA ");
-		} else {
-			iatom = pose.residue_type(ires).atom_index(" CB ");
-		}
+			core::Size iatom;
+			if (tmpl.residue(ires).aa() == core::chemical::aa_gly) {
+				iatom = tmpl.residue_type(ires).atom_index(" CA ");
+			} else {
+				iatom = tmpl.residue_type(ires).atom_index(" CB ");
+			}
 
-		for (Size jres=1; jres<=pose.total_residue(); ++jres) {
-			if (pose.residue(jres).is_protein() || pose.residue(jres).aa() == core::chemical::aa_vrt) continue;
-			if (symm_info && !symm_info->bb_is_independent(jres)) continue;
+			core::Size ires_tgt = (tmpl.pdb_info()) ? tmpl.pdb_info()->number(ires) : ires;
+			if (symm_info && !symm_info->bb_is_independent(ires_tgt))
+				ires_tgt = symm_info->bb_follows( ires_tgt );
 
-			for (Size jatom=1; jatom<=pose.residue(jres).nheavyatoms(); ++jatom) {
-				core::Real dist = pose.residue(ires).xyz(iatom).distance( pose.residue(jres).xyz(jatom) );
-				if ( dist <= MAXDIST ) {
-					using namespace core::scoring::func;
-					FuncOP fx( new ScalarWeightedFunc( het_prot_cst_weight, FuncOP( new USOGFunc( dist, COORDDEV ) ) ) );
-					pose.add_constraint(
-						scoring::constraints::ConstraintCOP( new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires), core::id::AtomID(jatom,jres), fx ) )
-					);
+			for (Size jres=1; jres<=tmpl.total_residue(); ++jres) {
+				if (tmpl.residue(jres).is_protein() || tmpl.residue(jres).aa() == core::chemical::aa_vrt) continue;
+
+				core::Size jres_tgt = (tmpl.pdb_info()) ? tmpl.pdb_info()->number(ires) : ires;
+				if (symm_info && !symm_info->bb_is_independent(jres_tgt))
+					jres_tgt = symm_info->bb_follows( jres_tgt );
+
+				for (Size jatom=1; jatom<=tmpl.residue(jres).nheavyatoms(); ++jatom) {
+					core::Real dist = tmpl.residue(ires).xyz(iatom).distance( tmpl.residue(jres).xyz(jatom) );
+
+					if ( dist <= MAXDIST ) {
+						using namespace core::scoring::func;
+						FuncOP fx( new ScalarWeightedFunc( het_prot_cst_weight, FuncOP( new USOGFunc( dist, COORDDEV ) ) ) );
+						pose.add_constraint(
+							scoring::constraints::ConstraintCOP(
+								new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires_tgt), core::id::AtomID(jatom,jres_tgt), fx ) )
+						);
+					}
+
 				}
 			}
 		}
 	}
-	}
 
-	MAXDIST = 12.0;
+	MAXDIST = 8.0;
 	COORDDEV = 1.0;
 
 	if (self_cst_weight > 1e-7) {
-	// constraints within substrate
-	for (Size ires=1; ires<=pose.total_residue(); ++ires) {
-		if (pose.residue(ires).is_protein() || pose.residue(ires).aa() == core::chemical::aa_vrt) continue;
-		if (symm_info && !symm_info->bb_is_independent(ires)) continue;
-		for (Size iatom=1; iatom<=pose.residue(ires).nheavyatoms(); ++iatom) {
-			for (Size jres=1; jres<=pose.total_residue(); ++jres) {
-				if (pose.residue(jres).is_protein() || pose.residue(jres).aa() == core::chemical::aa_vrt) continue;
-				if (symm_info && !symm_info->bb_is_independent(jres)) continue;
-				for (Size jatom=1; jatom<=pose.residue(jres).nheavyatoms(); ++jatom) {
-					if ( ires == jres && iatom <= jatom) continue;
-					core::Real dist = pose.residue(ires).xyz(iatom).distance( pose.residue(jres).xyz(jatom) );
-					if ( dist <= MAXDIST ) {
-						using namespace core::scoring::func;
-						FuncOP fx( new ScalarWeightedFunc( self_cst_weight, FuncOP( new USOGFunc( dist, COORDDEV ) ) ) );
-						pose.add_constraint(
-							scoring::constraints::ConstraintCOP( new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires), core::id::AtomID(jatom,jres), fx ) )
-						);
+		// constraints within substrate
+		for (Size ires=1; ires<=tmpl.total_residue(); ++ires) {
+			if (tmpl.residue(ires).is_protein() || tmpl.residue(ires).aa() == core::chemical::aa_vrt) continue;
+
+			core::Size ires_tgt = (tmpl.pdb_info()) ? tmpl.pdb_info()->number(ires) : ires;
+			if (symm_info && !symm_info->bb_is_independent(ires_tgt))
+				ires_tgt = symm_info->bb_follows( ires_tgt );
+
+			for (Size iatom=1; iatom<=tmpl.residue(ires).nheavyatoms(); ++iatom) {
+				for (Size jres=1; jres<=tmpl.total_residue(); ++jres) {
+					if (tmpl.residue(jres).is_protein() || tmpl.residue(jres).aa() == core::chemical::aa_vrt) continue;
+
+					core::Size jres_tgt = (tmpl.pdb_info()) ? tmpl.pdb_info()->number(ires) : ires;
+					if (symm_info && !symm_info->bb_is_independent(jres_tgt))
+						jres_tgt = symm_info->bb_follows( jres_tgt );
+
+					for (Size jatom=1; jatom<=tmpl.residue(jres).nheavyatoms(); ++jatom) {
+						if ( ires == jres && iatom <= jatom) continue;
+
+						core::Real dist1 = tmpl.residue(ires).xyz(iatom).distance( tmpl.residue(jres).xyz(jatom) );
+						core::Real dist2 = pose.residue(ires_tgt).xyz(iatom).distance( pose.residue(jres_tgt).xyz(jatom) );
+
+TR << ires_tgt << "." << iatom << " to " << jres_tgt << "." << jatom << " : " << dist1 << " v " << dist2 << std::endl;
+
+						if ( dist1 <= MAXDIST ) {
+							using namespace core::scoring::func;
+							FuncOP fx( new ScalarWeightedFunc( self_cst_weight, FuncOP( new USOGFunc( dist1, COORDDEV ) ) ) );
+							pose.add_constraint(
+								scoring::constraints::ConstraintCOP(
+									new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires_tgt), core::id::AtomID(jatom,jres_tgt), fx ) )
+							);
+						}
 					}
 				}
 			}
 		}
-	}
 	}
 }
 

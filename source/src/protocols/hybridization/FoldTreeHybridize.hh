@@ -179,7 +179,7 @@ private:
 
 private:
 	HybridizeSetupOP hybridize_setup_;
-	
+
 	core::Real increase_cycles_;
 	core::Size stage1_1_cycles_;
 	core::Size stage1_2_cycles_;
@@ -203,7 +203,7 @@ private:
 	bool auto_frag_insertion_weight_; // automatically set the fragment insertion weight
 	core::Size max_registry_shift_;
 	std::string cst_file_;
-	
+
 	bool initialize_pose_by_templates_;
 	bool realign_domains_;
 	core::Size initial_template_index_;
@@ -240,14 +240,14 @@ private:
 
 	core::pose::PoseOP native_;
 
-    // per-residue controls
-    utility::vector1<bool> residue_sample_template_; // using template fragments
-    utility::vector1<bool> residue_sample_abinitio_; // using torsion-based ab initio fragments
-    utility::vector1<core::Size> residue_max_registry_shift_; // restraints between chains
-    //utility::vector1<bool> residue_cst_in_domain_; // restraints within the domain
-    //utility::vector1<bool> residue_cst_cross_domain_; // restraints between domains, within a chain
-    //utility::vector1<bool> residue_cst_cross_chain_; // restraints between chains
-    
+	// per-residue controls
+	utility::vector1<bool> residue_sample_template_; // using template fragments
+	utility::vector1<bool> residue_sample_abinitio_; // using torsion-based ab initio fragments
+	utility::vector1<core::Size> residue_max_registry_shift_; // restraints between chains
+	//utility::vector1<bool> residue_cst_in_domain_; // restraints within the domain
+	//utility::vector1<bool> residue_cst_cross_domain_; // restraints between domains, within a chain
+	//utility::vector1<bool> residue_cst_cross_chain_; // restraints between chains
+
 	// task operations
 	//utility::vector1<bool> allowed_to_move_;
 	core::pack::task::TaskFactoryOP task_factory_;

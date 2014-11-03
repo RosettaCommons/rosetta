@@ -983,7 +983,8 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 						mm->set_bb( false ); mm->set_chi( false ); mm->set_jump( true );
 						core::pose::symmetry::make_symmetric_movemap( pose, *mm );
 
-						protocols::simple_moves::symmetry::SymMinMoverOP min_mover( new protocols::simple_moves::symmetry::SymMinMover( mm, stage1_scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true ) );
+						protocols::simple_moves::symmetry::SymMinMoverOP min_mover(
+							new protocols::simple_moves::symmetry::SymMinMover( mm, stage1_scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true ) );
 						min_mover->apply(pose);
 
 						core::pose::PoseOP stage1pose( new core::pose::Pose() );
@@ -1033,7 +1034,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			if (!keep_pose_constraint_ )
 					setup_centroid_constraints( pose, templates_, template_weights_, cst_fn );
 			if (add_hetatm_)
-				add_non_protein_cst(pose, hetatm_self_cst_weight_, hetatm_prot_cst_weight_);
+				add_non_protein_cst(pose, *templates_[initial_template_index], hetatm_self_cst_weight_, hetatm_prot_cst_weight_);
 			if (strand_pairs_.size())
 				add_strand_pairs_cst(pose, strand_pairs_);
 			if ( task_factory_ )
@@ -1131,7 +1132,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 							pose.constraint_set(save_pose_constraint_set);
 					}
 				if (add_hetatm_) {
-					add_non_protein_cst(pose, hetatm_self_cst_weight_, hetatm_prot_cst_weight_);
+					add_non_protein_cst(pose, *templates_[initial_template_index], hetatm_self_cst_weight_, hetatm_prot_cst_weight_);
 				}
 				if (strand_pairs_.size()) {
 					add_strand_pairs_cst(pose, strand_pairs_);

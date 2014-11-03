@@ -591,8 +591,9 @@ CartesianHybridize::apply( Pose & pose ) {
 	}
 	while (pose.residue(nres).aa() == core::chemical::aa_vrt) nres--;
 
-	core::Size n_prot_res = pose.total_residue();
+	core::Size n_prot_res = nres;
 	while (!pose.residue(n_prot_res).is_protein()) n_prot_res--;
+	TR << "   nprotres=" << n_prot_res << " totalres=" << pose.total_residue() << std::endl;
 
 	// 10% of the time, skip moves in the global frame
 	bool no_ns_moves = no_global_frame_; // (numeric::random::uniform() <= 0.1);
@@ -736,7 +737,7 @@ sampler:
 				utility::vector1<int> max_poses(4,-1);
 				if (!nofragbias_) {
 					for (int i=1; i<(int)n_prot_res; ++i) {
-						if (!pose.residue_type(i).is_protein()){
+						if (!pose.residue_type(i).is_protein() || !pose.residue_type(i+1).is_protein()){
 							residuals[i] = -1;
 						} else if (pose.fold_tree().is_cutpoint(i+1)) {
 							residuals[i] = -1;

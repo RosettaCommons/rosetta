@@ -1261,7 +1261,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	if ( scorefxn_->get_weight( core::scoring::atom_pair_constraint ) != 0 ) {
 		setup_centroid_constraints( pose, template_poses_, template_wts_, cst_file_, get_pairings_residues() );
 		if (add_hetatm_) {
-			add_non_protein_cst(pose, hetatm_self_cst_weight_, hetatm_prot_cst_weight_);
+			add_non_protein_cst(pose, *template_poses_[initial_template_index_], hetatm_self_cst_weight_, hetatm_prot_cst_weight_);
 		}
 	}
 
@@ -1278,7 +1278,8 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 			protocols::simple_moves::ClassicFragmentMoverOP jump_mover = get_pairings_jump_mover();
 			jump_mover->apply_at_all_positions( pose );
 			// insert strand pairing template chunks (to place template pairs)
-			for (std::set<core::Size>::iterator pairings_iter = strand_pairings_template_indices_.begin(); pairings_iter != strand_pairings_template_indices_.end(); ++pairings_iter) {
+			for (std::set<core::Size>::iterator pairings_iter = strand_pairings_template_indices_.begin();
+					pairings_iter != strand_pairings_template_indices_.end(); ++pairings_iter) {
 				if (floating_pairs_.count(*pairings_iter)) continue;
 				initialize_chunk_mover.set_template(*pairings_iter);
 				initialize_chunk_mover.apply(pose);
