@@ -209,8 +209,8 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 			}
 		}
 
-		core::scoring::electron_density::getDensityMap().calcRhoC( litePose, 0.0, rhoC_, rhoMask_ );
-		dens_score -= (moving_atoms_.size()/10.0) * core::scoring::electron_density::getDensityMap().getRSCC(rhoC_);
+		core::scoring::electron_density::getDensityMap().calcRhoC( litePose, 0.0, rhoC_, rhoMask_, 600.0 );
+		dens_score -= (moving_atoms_.size()/10.0) * core::scoring::electron_density::getDensityMap().getRSCC(rhoC_, rhoMask_);
 	}
 
 
@@ -278,7 +278,7 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 	if (verbose_) {
 		//core::optimization::Multivec varsCopy = vars;
 		//std::cerr << "[score] evaluated " << natom << " atoms and " << nedge << " edges" << std::endl;
-		std::cerr << "[score] score = " << scorescale_* (wt_dens_*dens_score + wt_adp_*cst_score) << " [ " << dens_score << " , " << cst_score << " ] " << std::endl;
+		std::cerr << "[score] score = " << scorescale_* (wt_dens_*dens_score + wt_adp_*cst_score) << " [ " << dens_score*10.0/moving_atoms_.size() << " , " << cst_score << " ] " << std::endl;
 	}
 
 	return ( scorescale_* (wt_dens_*dens_score + wt_adp_*cst_score) );
@@ -300,7 +300,7 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 			dE_dvars[ i ] = -scorescale_*wt_dens_*dCCdb * exp(vars[i]);
 		}
 	} else {
-		core::scoring::electron_density::getDensityMap().dCCdBs( pose_copy, dE_dvars );
+		core::scoring::electron_density::getDensityMap().dCCdBs( pose_copy, dE_dvars, rhoMask_ );
 		for (core::Size i = 1; i <= vars.size(); ++i)
 			dE_dvars[i] *= -(moving_atoms_.size()/10.0)*scorescale_*wt_dens_ * exp(vars[i]);
 	}
@@ -506,6 +506,9 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 		}
 		for (core::Size i = 1; i <= y.size(); ++i) y[i] = log(bestVal);
 	}
+
+	// MAIN LOOP
+	minimizer.run( y );
 
 	f_b.multivec2poseBfacts( y, pose );
 	core::scoring::cryst::fix_bfactorsH( pose ); // fix hydrogen B's to riding atoms

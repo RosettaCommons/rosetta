@@ -189,7 +189,12 @@ public:
 
 	/// @brief get Rho Calc
 	void
-	calcRhoC( poseCoords const &pose, core::Real radius, ObjexxFCL::FArray3D< double > &rhoC, ObjexxFCL::FArray3D< double > &mask );
+	calcRhoC(
+			poseCoords const &pose,
+			core::Real radius,
+			ObjexxFCL::FArray3D< double > &rhoC,
+			ObjexxFCL::FArray3D< double > &mask,
+			core::Real forceB = -1.0 );
 
 	core::Real
 	maxNominalRes();
@@ -285,7 +290,8 @@ public:
 	void
 	dCCdBs(
 		core::pose::Pose const &pose,
-		utility::vector1< core::Real>  & dE_dvars
+		utility::vector1< core::Real>  & dE_dvars,
+		ObjexxFCL::FArray3D< double > &maskC
 	);
 
 	//@brief Called to initialize scorefunction scaling for B-factor refinement
