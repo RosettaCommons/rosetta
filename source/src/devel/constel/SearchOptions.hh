@@ -27,16 +27,19 @@ namespace constel {
 
 	class NeighTeller;
 
-	/// @brief Search pair-constellations by target residue.
+	/// @brief Searches pair-constellations by target residue.
 	void pair_constel_set(int const target_pdb_number, char const target_pdb_chain,
 		Pose& pose_init);
 
-	/// @brief Search pair-constellations by mutation pair.
+	/// @brief Searches pair-constellations by mutation pair.
 	void pair_constel_set( std::string const& tgtmuts, Pose& pose_init );
 
-	/// @brief Search triple-constellations by target residue.
+	/// @brief Searches triple-constellations by target residue.
 	void triple_constel_set(int const target_pdb_number, char const target_pdb_chain,
 		Pose& pose_init);
+
+	/// @brief Searches a single, target constellation.
+	void target_constel(std::string &tgtcnl_fil, Pose& ps);
 
 } // constel
 } // devel

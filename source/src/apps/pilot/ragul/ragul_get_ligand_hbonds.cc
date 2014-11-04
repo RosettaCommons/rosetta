@@ -140,6 +140,7 @@ core::Real get_RNAring_sasa( core::conformation::Residue const & rsd, int rsdno,
 }
 
 int main( int argc, char * argv [] ){
+
   try {
 
 	NEW_OPT( input_rna, "rna file name", "rna.pdb" );
@@ -224,7 +225,9 @@ int main( int argc, char * argv [] ){
 
 	//find Hbond interactions and include it to the pharmacophore list
 	core::scoring::hbonds::HBondSet rna_hb_set;
+
 	scoring::ScoreFunctionOP scorefxn = get_score_function();
+
 	(*scorefxn)(temp_protein_rnabase_pose);
 
 	assert( temp_protein_rnabase_pose.energies().residue_neighbors_updated() );
@@ -318,10 +321,10 @@ int main( int argc, char * argv [] ){
   outPDB_stream.close();
 	complexrna_sasa_ofile.close();
 
-        } catch ( utility::excn::EXCN_Base const & e ) {
-                std::cout << "caught exception " << e.msg() << std::endl;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-        }
-	return 0;
+	}
 
+	return 0;
 }

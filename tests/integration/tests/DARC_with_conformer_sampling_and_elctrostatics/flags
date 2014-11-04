@@ -1,0 +1,15 @@
+-protein input/rosetta_1YSI.pdb
+-ray_file input/eggshell_rosetta_1YSI_101.txt
+-ligand input/000_conformers.pdb
+-extra_res_fa input/000.params
+-num_particles 5
+-num_runs 5
+-steric_weight 1.1
+-missing_point_weight 4.3
+-extra_point_weight 3.2
+-esp_weight 0.2
+-include_hydrogens false
+-atom_radius_buffer 0
+-atom_radius_scale 1
+-espGrid_file input/new_1YSI.agd
+-search_conformers true

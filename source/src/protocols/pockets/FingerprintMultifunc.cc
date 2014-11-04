@@ -14,6 +14,7 @@
 /// Unit headers
 #include <protocols/pockets/FingerprintMultifunc.hh>
 #include <protocols/pockets/Fingerprint.hh>
+#include <protocols/pockets/PocketGrid.hh>
 
 #include <cmath>
 
@@ -64,7 +65,7 @@ FingerprintMultifunc::dfunc( core::optimization::Multivec const & vars, core::op
 	origin_offset.y() = vars[2];
 	origin_offset.z() = vars[3];
 
-	pfp_.move_ligand_and_update_rhos_( nfp_, origin_offset, vars[4], vars[5], vars[6], vars[7] );
+	pfp_.move_ligand_and_update_rhos_( nfp_, origin_offset, vars[4], vars[5], vars[6], (core::Size)vars[7] );
 
 	pfp_.fp_compare_deriv( nfp_, missing_pt_, steric_, extra_pt_, dE_dvars[1], dE_dvars[2], dE_dvars[3], dE_dvars[4], dE_dvars[5], dE_dvars[6] );
 

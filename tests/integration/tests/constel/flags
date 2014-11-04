@@ -1,0 +1,7 @@
+-s input/1vii.pdb
+-suppress_zero_occ_pdb_output
+-ignore_zero_occupancy false
+-pair_all_res
+-max_atom_sasa 10
+-aromatic
+-cnl_stripped

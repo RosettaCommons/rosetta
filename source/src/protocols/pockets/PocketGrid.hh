@@ -46,6 +46,7 @@ class PCluster
 	friend class PocketGrid;
 	friend class TargetPocketGrid;
 	friend class EggshellGrid;
+	friend class ElectrostaticpotentialGrid;
 	friend class ComparisonGrid;
 	friend class PClusterSet;
 
@@ -82,6 +83,7 @@ class PClusterSet
 	friend class PocketGrid;
 	friend class TargetPocketGrid;
 	friend class EggshellGrid;
+	friend class ElectrostaticpotentialGrid;
 	friend class ComparisonGrid;
 
 public:
@@ -103,15 +105,16 @@ private:
 	///@ Cluster of exemplar points
 	class CCluster
 	{
-
+		
 		friend class PocketGrid;
 		friend class TargetPocketGrid;
 		friend class EggshellGrid;
+		friend class ElectrostaticpotentialGrid;
 		friend class ComparisonGrid;
 		friend class CClusterSet;
-
+		
 	public:
-
+		
 		CCluster(core::Size x, core::Size y, core::Size z, std::string atype, core::Real step_, core::Real absX=0., core::Real absY=0., core::Real absZ=0.);
 		CCluster(const CCluster& old);
 		~CCluster() {};
@@ -131,24 +134,25 @@ private:
 			std::string atom_type;
 		} Cxyz;
 		std::list < Cxyz > points_;
-
+		
 	private:
 		int count_;
 		bool target_, subtarget_, solventExposed_;
 		core::Size maxX, minX, maxY, minY, maxZ, minZ;
 		core::Real step;
-
+		
 	}; //CCluster
-
+	
 	///@ Set of clusters of exemplar points
 	class CClusterSet
 	{
-
+		
 		friend class PocketGrid;
 		friend class TargetPocketGrid;
 		friend class EggshellGrid;
+		friend class ElectrostaticpotentialGrid;
 		friend class ComparisonGrid;
-
+		
 	public:
 		CClusterSet();
 		CClusterSet& operator= (const CClusterSet& old);
@@ -159,19 +163,21 @@ private:
 		core::Real getLargestClusterSize( core::Real const & stepSize, core::Real const & minClusterSize, core::Size const & numTargets, bool ignoreBuried, bool ignoreSurface );
 		core::Real getNetClusterSize( core::Real const & stepSize, core::Real const & minClusterSize, core::Size const & numTargets, bool ignoreBuried, bool ignoreSurface );
 		core::Size size() { return clusters_.size(); }
-
+		
 	private:
 		std::list <CCluster> clusters_;
-
+		
 	}; //CClusterSet
-
+	
 ///@
 class PocketGrid : public utility::pointer::ReferenceCount
 {
 
 	friend class EggshellGrid;
+	friend class ElectrostaticpotentialGrid;
 	friend class TargetPocketGrid;
 	friend class ComparisonGrid;
+	friend class NonPlaidFingerprint;
 
 protected:
   enum PtType {EMPTY, PROTEIN, TARGET, SUBTARGET, HSURFACE, PSURFACE, POCKET, PO_SURF, PO_BURIED,T_SURFACE, ST_SURFACE, TP_POCKET, TP_SURF, TP_BURIED, PO_EDGE, TP_EDGE,PSP, EGGSHELL, EGGSHELL_SURROUNDING };
@@ -184,7 +190,10 @@ protected:
   core::Real xcorn_;
   core::Real ycorn_;
   core::Real zcorn_;
+  core::Real spacing_;
   core::Real stepSize_;
+  numeric::xyzVector<core::Real> mid_;
+	numeric::xyzVector<core::Size> dim_;
   core::Real maxLen_;
   std::string tag_;
   void init();
@@ -207,11 +216,9 @@ protected:
   static const core::Size MAX_TARGETS=2;
 	PClusterSet clusters_;
 	CClusterSet c_clusters_;
-
   core::Real size_x_;
   core::Real size_y_;
   core::Real size_z_;
-  core::Real spacing_;
   core::Real limit_x_;
   core::Real limit_y_;
   core::Real limit_z_;
@@ -239,7 +246,8 @@ public:
 	virtual ~PocketGrid();
   PocketGrid(const PocketGrid& gr);
   PocketGrid& operator= (const PocketGrid& gr);
-
+	numeric::xyzVector<core::Real> dim() const { return dim_; };
+  core::Real spacing() const { return spacing_; };
   PocketGrid( core::conformation::Residue const & central_rsd );
   PocketGrid( std::vector< core::conformation::ResidueOP > const & central_rsd );
   PocketGrid( core::conformation::Residue const & central_rsd, core::Real x, core::Real y, core::Real z );
@@ -247,13 +255,11 @@ public:
   PocketGrid( core::Real const & xc, core::Real const & yc, core::Real const & zc, core::Real x, core::Real y, core::Real z, core::Real const & stepSize );
   PocketGrid( core::Real const & xc, core::Real const & yc, core::Real const & zc, core::Real x, core::Real y, core::Real z );
   PocketGrid( core::Real const & xc, core::Real const & yc, core::Real const & zc, core::Real x, core::Real y, core::Real z, core::Real const & stepSize, bool psp, bool sps);
-
   PocketGrid( core::Real const & xc, core::Real const & yc, core::Real const & zc, core::Real x, core::Real const & stepSize=1, bool psp=false, bool sps=false);
   PocketGrid( core::Vector const & center, core::Real x, core::Real const & stepSize=1, bool psp=false, bool sps=false);
   PocketGrid( core::Vector const & center, core::Real const & x, core::Real const & y, core::Real const & z, core::Real const & stepSize=1, bool psp=false, bool sps=false);
 
   void initialize( core::Real const & xc, core::Real const & yc, core::Real const & zc, core::Real const size_x, core::Real const size_y, core::Real const size_z, core::Real const & stepSize=1, bool psp=false, bool sps=false);
-
   void initialize( core::Real const & xc, core::Real const & yc, core::Real const & zc, core::Real x, core::Real const & stepSize=1, bool psp=false, bool sps=false);
   void initialize( core::Vector const & center, core::Real x, core::Real const & stepSize=1, bool psp=false, bool sps=false);
   void initialize( core::Vector const & center, core::Real const & x, core::Real const & y, core::Real const & z, core::Real const & stepSize=1, bool psp=false, bool sps=false);
@@ -315,17 +321,19 @@ public:
 	bool autoexpanding_pocket_eval( core::conformation::Residue const & central_rsd, core::pose::Pose const & inPose, bool center_target=true, core::Real x=0.0, core::Real y=0.0, core::Real z=0.0);
 
 	bool autoexpanding_pocket_eval( std::vector< core::conformation::ResidueOP > const & central_rsd, core::pose::Pose const & inPose, bool center_target=true, core::Real x=0.0, core::Real y=0.0, core::Real z=0.0);
-
 	void move_pose_to_standard_orie( core::Size const & central_seqpos, core::pose::Pose & pose );
   static std::vector< core::conformation::ResidueOP > getRelaxResidues( core::pose::Pose const & input_pose, std::string const & resids );
   void randomAngle();
   void zeroAngle();
-
 	core::Real get_pocket_distance( PocketGrid const & template_pocket ) const { return get_pocket_distance( template_pocket, ""); };
 	core::Real get_pocket_distance( PocketGrid const & template_pocket, std::string const & comparison_pdbname ) const;
-
   utility::vector1<core::Real> getBounds();
 
+	void write_pocketGrid_to_pdb( std::string const & output_filename );
+	void alter_espGrid( std::string const & espGrid_filename );
+	void alter_espGrid_with_bound_ligand( std::string const & espGrid_filename, core::pose::Pose const & protein_pose );
+	std::list< numeric::xyzVector<core::Real> > get_connolly_surfacePoints( core::pose::Pose const & protein_pose ) const;
+	std::list< numeric::xyzVector<core::Real> > get_connolly_surfacePoints_within_grid( std::list< numeric::xyzVector<core::Real> > const & surfacePoints_list);
 }; //class PocketGrid
 
 
@@ -364,23 +372,70 @@ public:
   EggshellGrid( const PocketGrid& gr );
 	EggshellGrid( const PocketGrid& grd, core::pose::Pose const & ligand_pose );
   EggshellGrid( const PocketGrid& ext_grd, std::list< numeric::xyzVector<core::Real> > const & eggshell_coord_list);
+	EggshellGrid( core::pose::Pose const & protein_pose, const PocketGrid& pocket_grid, const PocketGrid& grid_for_extshell );
   EggshellGrid( std::string const & fname );
-
 	std::list< numeric::xyzVector<core::Real> > const & eggshell_coord_list() const { return eggshell_coord_list_; };
 	std::list< numeric::xyzVector<core::Real> > const & extra_coord_list() const { return extra_coord_list_; };
-
+	void get_connolly_eggshell( std::list< numeric::xyzVector<core::Real> > const & surfacePoints_list, const PocketGrid& eggGrid, const PocketGrid& extGrid );
+	void get_connolly_eggshell_on_grid( std::list< numeric::xyzVector<core::Real> > const & surfacePoints_list, const PocketGrid& eggGrid, const PocketGrid& extGrid );
   void dump_eggshell( std::string const & fname ) const;
   void dump_eggshell( std::string const & fname, numeric::xyzMatrix<core::Real> rot1, numeric::xyzMatrix<core::Real> rot2, numeric::xyzMatrix<core::Real> rot3 ) const;
   void write_eggshell_to_pdb( std::string const & output_pdbname ) const;
   void write_eggshell_to_pdb( std::string const & output_pdbname, numeric::xyzMatrix<core::Real> rot1, numeric::xyzMatrix<core::Real> rot2, numeric::xyzMatrix<core::Real> rot3 ) const;
-  void write_grid_to_pdb( const PocketGrid& gr, std::string const & output_pdbname ) const;
-
+  void write_Grid_to_pdb( const PocketGrid& gr, std::string const & output_pdbname ) const;
 	numeric::xyzVector<core::Real> calculate_center_xyz (std::list< numeric::xyzVector<core::Real> > const & pocketshell_coord_list );
-
 	core::Real get_eggshell_distance( EggshellGrid const & template_eggshell ) const { return get_eggshell_distance( template_eggshell, ""); };
 	core::Real get_eggshell_distance( EggshellGrid const & template_eggshell, std::string const & comparison_pdbname ) const;
 
 }; //class EggshellGrid
+
+class ElectrostaticpotentialGrid : public PocketGrid
+{
+
+	friend class NonPlaidFingerprint;
+	friend class PocketGrid;
+
+private:
+
+	numeric::xyzVector<core::Size> espGrid_dim_;
+	numeric::xyzVector<core::Real> espGrid_mid_;
+	core::Real espGrid_spacing_;
+	std::list< utility::vector1<core::Real> > espGrid_points_list_;
+
+public:
+	std::vector < std::vector < std::vector <core::Real> > > espGrid_;
+  enum PtType {PROTEIN, SURFACE, SOLVENT, PSEUDO_PROTEIN};
+	std::vector < std::vector < std::vector <PtType> > > typGrid_;
+
+	ElectrostaticpotentialGrid(){};//empty default constructor
+	void 	initialize_espGrid();
+	void 	initialize_typGrid();
+  ElectrostaticpotentialGrid( std::string const & input_espGrid_filename, core::pose::Pose const & protein_pose, PocketGrid const & pocket_grid, bool delphi=false );
+	void mark_protein_espGrid_points( core::pose::Pose const & protein_pose );
+	void mark_atom_espGrid_points( numeric::xyzVector<core::Real> atom_coord, core::Real const & vdWd );
+	std::list< utility::vector1<core::Real> > const & espGrid_point_list() const { return espGrid_points_list_; };
+  void write_espGrid_to_pdb( std::string const & output_pdbname ) const;
+	void write_connollySurface_to_pdb( std::list< numeric::xyzVector<core::Real> > const & surfacePoints_list,  std::string const & output_pdbname ) const;
+	void get_oegrid_dimensions( std::string const & input_OEgrid_filename );
+	void fill_espGrid_values( std::string const & input_OEgrid_filename );
+	void fill_espGrid_values_with_type( std::string const & input_OEgrid_filename );
+	void print_to_oegrid( std::string const & output_OEgrid_filename );
+	void resize_espGrid_to_match_pocketGrid( std::string const & espGrid_filename, PocketGrid const & pg );
+	void assign_esp_for_protein_grid_points( core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & surfacePoints_list );
+	void assign_esp_for_atom_grid_points( numeric::xyzVector<core::Real> atom_coord, core::Real const & inflated_radius);
+	void assign_esp_for_surface_grid_points( std::list< numeric::xyzVector<core::Real> > const & surfacePoints_list );
+	void assign_esp_for_surface_grid_points_by_nn( std::list< numeric::xyzVector<core::Real> > const & surfacePoints_list );
+	core::Real get_atom_dist_from_connolly_surface( numeric::xyzVector<core::Real> atom_coord, std::list< numeric::xyzVector<core::Real> > const & surfacePoints_list );
+  void mark_buried_solvent_points( core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & surfacePoints_list );
+	void get_ZAP_espGrid_values( std::string const & input_espGrid_filename );
+	void get_ZAP_espGrid_values_with_type( std::string const & input_espGrid_filename );
+	void get_DELPHI_espGrid_values( std::string const & input_espGrid_filename );
+	void change_espGrid_for_darc( std::string const & espGrid_filename, core::pose::Pose const & protein_pose, PocketGrid const & pocket_grid );
+	void set_surface_esp_to_zero();
+	void set_protein_esp_to_zero();
+	void cap_espGrid();
+
+}; //class ElectrostaticpotentialGrid
 
 ///@
 class ComparisonGrid {
@@ -390,6 +445,7 @@ private:
 	enum PtType {EMPTY, PROTEIN, TARGET, SUBTARGET, HSURFACE, PSURFACE, POCKET, PO_SURF, PO_BURIED,T_SURFACE, ST_SURFACE, TP_POCKET, TP_SURF, TP_BURIED, PO_EDGE, TP_EDGE,PSP, EGGSHELL, EGGSHELL_SURROUNDING, LIGAND };
 	std::vector < std::vector < std::vector <PtType> > > grid_;
 	core::Size xdim_, ydim_, zdim_;
+	//core::Size midx_, midy_, midz_;
 	core::Real xcorn_;
 	core::Real ycorn_;
 	core::Real zcorn_;
@@ -402,6 +458,18 @@ public:
 	core::Real compareCoverage(const PocketGrid& gr);
 
 }; //class ComparisonGrid
+
+inline void convert_cartesian_to_grid( numeric::xyzVector<core::Real> const & cart_coord, numeric::xyzVector<core::Real> const & mid, numeric::xyzVector<core::Size> const & dim, core::Real const & spacing, numeric::xyzVector<core::Real> & grid_coord ) {
+    grid_coord.x() = (cart_coord.x() - ( mid.x() - ((static_cast<core::Real>(dim.x()-1)/2) * spacing) ))/spacing;
+    grid_coord.y() = (cart_coord.y() - ( mid.y() - ((static_cast<core::Real>(dim.y()-1)/2) * spacing) ))/spacing;
+    grid_coord.z() = (cart_coord.z() - ( mid.z() - ((static_cast<core::Real>(dim.z()-1)/2) * spacing) ))/spacing;
+  }
+
+inline void convert_grid_to_cartesian( numeric::xyzVector<core::Real> & grid_coord, numeric::xyzVector<core::Real> const & mid, numeric::xyzVector<core::Size> const & dim, core::Real const & spacing, numeric::xyzVector<core::Real> & cart_coord ) {
+    cart_coord.x() = grid_coord.x() * spacing + ( mid.x() - ((static_cast<core::Real>(dim.x()-1)/2) * spacing) );
+    cart_coord.y() = grid_coord.y() * spacing + ( mid.y() - ((static_cast<core::Real>(dim.y()-1)/2) * spacing) );
+    cart_coord.z() = grid_coord.z() * spacing + ( mid.z() - ((static_cast<core::Real>(dim.z()-1)/2) * spacing) );
+  }
 
 }//pockets
 }//protocols

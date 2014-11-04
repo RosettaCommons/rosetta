@@ -1,0 +1,1015 @@
+core.init: Constant seed mode, seed=1111111 seed_offset=0 real_seed=1111111
+core.init: found database environment variable ROSETTA3_DB: /Users/andreabazzoli/research/rosetta/main/database
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OXT on residue PHE:CtermProteinFull 26
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OXT on residue GLY:CtermProteinFull 141
+core.pack.task: Packer task: initialize from command line() 
+core.grid.Pockets.PocketGrid: Expanding PocketGrid in the X direction to fit target residues
+core.grid.Pockets.PocketGrid: 1 Donor SER:NtermProteinFull  N   H SASA 13.8509 Base SASA 4.72538
+core.grid.Pockets.PocketGrid: Optimal acceptor at -14.1225 -13.883 -13.2311
+core.grid.Pockets.PocketGrid: 1 Donor SER:NtermProteinFull  N   H SASA 1.34041 Base SASA 4.72538
+core.grid.Pockets.PocketGrid: Optimal acceptor at -10.6576 -14.1105 -10.3846
+core.grid.Pockets.PocketGrid: 1 Donor SER:NtermProteinFull  N   H SASA 7.14887 Base SASA 4.72538
+core.grid.Pockets.PocketGrid: Optimal acceptor at -9.97691 -12.9158 -14.6588
+core.grid.Pockets.PocketGrid: 1 Donor SER:NtermProteinFull  OG  H SASA 6.25526 Base SASA 31.0157
+core.grid.Pockets.PocketGrid: Optimal acceptor at -14.0291 -15.8855 -12.236
+core.grid.Pockets.PocketGrid: 1 Acceptor SER:NtermProteinFull  O   SASA 2.4326
+core.grid.Pockets.PocketGrid: Optimal donor at -11.2863 -18.3449 -10.7465
+core.grid.Pockets.PocketGrid: Optimal donor at -6.78016 -17.8703 -12.215
+core.grid.Pockets.PocketGrid: 1 Acceptor SER:NtermProteinFull  OG  SASA 31.0157
+core.grid.Pockets.PocketGrid: Optimal donor at -14.137 -14.4157 -16.5336
+core.grid.Pockets.PocketGrid: Optimal donor at -13.8508 -18.8306 -15.6909
+core.grid.Pockets.PocketGrid: 2 Donor GLN  N   H SASA 1.34041 Base SASA 0
+core.grid.Pockets.PocketGrid: Optimal acceptor at -9.96595 -13.8722 -15.8267
+core.grid.Pockets.PocketGrid: 2 Donor GLN  NE2 H SASA 18.7658 Base SASA 24.302
+core.grid.Pockets.PocketGrid: Optimal acceptor at -2.67784 -13.5402 -19.0823
+core.grid.Pockets.PocketGrid: 2 Donor GLN  NE2 H SASA 9.38289 Base SASA 24.302
+core.grid.Pockets.PocketGrid: Optimal acceptor at -2.7879 -13.9251 -14.3374
+core.grid.Pockets.PocketGrid: 2 Acceptor GLN  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 2 Acceptor GLN  OE1 SASA 33.4483
+core.grid.Pockets.PocketGrid: Optimal donor at -7.54646 -17.378 -18.036
+core.grid.Pockets.PocketGrid: Optimal donor at -4.31228 -14.7285 -20.318
+core.grid.Pockets.PocketGrid: 3 Donor SER  N   H SASA 0.893609 Base SASA 0
+core.grid.Pockets.PocketGrid: Optimal acceptor at -9.47884 -13.1167 -13.8682
+core.grid.Pockets.PocketGrid: 3 Donor SER  OG  H SASA 7.59567 Base SASA 24.326
+core.grid.Pockets.PocketGrid: Optimal acceptor at -6.24106 -12.6388 -14.2189
+core.grid.Pockets.PocketGrid: 3 Acceptor SER  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 3 Acceptor SER  OG  SASA 24.326
+core.grid.Pockets.PocketGrid: Optimal donor at -10.3077 -11.0284 -12.99
+core.grid.Pockets.PocketGrid: Optimal donor at -6.57002 -8.87515 -11.6954
+core.grid.Pockets.PocketGrid: 4 Donor ASN  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 4 Donor ASN  ND2 H SASA 2.23402 Base SASA 2.02516
+core.grid.Pockets.PocketGrid: Optimal acceptor at -11.0749 -11.2826 -6.94053
+core.grid.Pockets.PocketGrid: 4 Donor ASN  ND2 H SASA 0.446804 Base SASA 2.02516
+core.grid.Pockets.PocketGrid: Optimal acceptor at -7.06239 -13.6056 -8.03171
+core.grid.Pockets.PocketGrid: 4 Acceptor ASN  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 4 Acceptor ASN  OD1 SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 5 Donor ARG  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 5 Donor ARG  NE  H SASA 7.14887 Base SASA 1.35011
+core.grid.Pockets.PocketGrid: Optimal acceptor at -2.61721 -21.7672 -12.6942
+core.grid.Pockets.PocketGrid: 5 Donor ARG  NH1 H SASA 0 Base SASA 0.675055
+core.grid.Pockets.PocketGrid: Optimal acceptor at -8.10022 -22.2539 -9.76429
+core.grid.Pockets.PocketGrid: 5 Donor ARG  NH1 H SASA 0 Base SASA 0.675055
+core.grid.Pockets.PocketGrid: Optimal acceptor at -6.21675 -26.5619 -9.00231
+core.grid.Pockets.PocketGrid: 5 Donor ARG  NH2 H SASA 12.0637 Base SASA 7.4256
+core.grid.Pockets.PocketGrid: Optimal acceptor at -1.69083 -23.8093 -12.2937
+core.grid.Pockets.PocketGrid: 5 Donor ARG  NH2 H SASA 0 Base SASA 7.4256
+core.grid.Pockets.PocketGrid: Optimal acceptor at -4.13387 -27.0683 -9.8243
+core.grid.Pockets.PocketGrid: 5 Acceptor ARG  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 6 Donor GLU  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 6 Acceptor GLU  O   SASA 0.60815
+core.grid.Pockets.PocketGrid: Optimal donor at 0.0439251 -18.1373 -8.97854
+core.grid.Pockets.PocketGrid: Optimal donor at -1.75864 -16.2593 -4.9896
+core.grid.Pockets.PocketGrid: 6 Acceptor GLU  OE1 SASA 26.1505
+core.grid.Pockets.PocketGrid: Optimal donor at -2.40967 -16.401 -13.559
+core.grid.Pockets.PocketGrid: Optimal donor at -0.842873 -11.9523 -14.2237
+core.grid.Pockets.PocketGrid: 6 Acceptor GLU  OE2 SASA 6.68965
+core.grid.Pockets.PocketGrid: Optimal donor at -0.160808 -12.8547 -8.09536
+core.grid.Pockets.PocketGrid: Optimal donor at -0.0785341 -10.7472 -12.3661
+core.grid.Pockets.PocketGrid: 7 Donor LEU  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 7 Acceptor LEU  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 8 Donor VAL  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 8 Acceptor VAL  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 9 Donor VAL  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 9 Acceptor VAL  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 10 Donor ASP  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 10 Acceptor ASP  O   SASA 0.60815
+core.grid.Pockets.PocketGrid: Optimal donor at 3.82019 -18.6071 -4.19493
+core.grid.Pockets.PocketGrid: Optimal donor at 1.28814 -18.9659 -0.176533
+core.grid.Pockets.PocketGrid: 10 Acceptor ASP  OD1 SASA 9.12225
+core.grid.Pockets.PocketGrid: Optimal donor at 3.10321 -16.8775 -7.18885
+core.grid.Pockets.PocketGrid: Optimal donor at 4.50079 -14.2289 -3.48491
+core.grid.Pockets.PocketGrid: 10 Acceptor ASP  OD2 SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 11 Donor PHE  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 11 Acceptor PHE  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 12 Donor LEU  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 12 Acceptor LEU  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 13 Donor SER  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 13 Donor SER  OG  H SASA 0 Base SASA 2.4326
+core.grid.Pockets.PocketGrid: Optimal acceptor at 1.00782 -23.8429 -4.40502
+core.grid.Pockets.PocketGrid: 13 Acceptor SER  O   SASA 0.60815
+core.grid.Pockets.PocketGrid: Optimal donor at 5.47121 -24.2769 -2.49431
+core.grid.Pockets.PocketGrid: Optimal donor at 6.01016 -20.7679 0.68113
+core.grid.Pockets.PocketGrid: 13 Acceptor SER  OG  SASA 2.4326
+core.grid.Pockets.PocketGrid: Optimal donor at 1.13513 -19.9524 -6.74791
+core.grid.Pockets.PocketGrid: Optimal donor at 4.50092 -22.9164 -7.15842
+core.grid.Pockets.PocketGrid: 14 Donor TYR  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 14 Donor TYR  OH  H SASA 0 Base SASA 17.6364
+core.grid.Pockets.PocketGrid: Optimal acceptor at 2.62499 -15.2182 6.44164
+core.grid.Pockets.PocketGrid: 14 Acceptor TYR  O   SASA 0.60815
+core.grid.Pockets.PocketGrid: Optimal donor at 7.14308 -19.2995 0.892992
+core.grid.Pockets.PocketGrid: Optimal donor at 4.68553 -22.079 3.87998
+core.grid.Pockets.PocketGrid: 14 Acceptor TYR  OH  SASA 17.6364
+core.grid.Pockets.PocketGrid: Optimal donor at 6.97383 -15.8694 5.49438
+core.grid.Pockets.PocketGrid: Optimal donor at 4.74517 -12.4392 3.61036
+core.grid.Pockets.PocketGrid: 15 Donor LYS  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 15 Donor LYS  NZ  H SASA 0 Base SASA 0.675055
+core.grid.Pockets.PocketGrid: Optimal acceptor at -0.224372 -16.9702 5.89721
+core.grid.Pockets.PocketGrid: 15 Donor LYS  NZ  H SASA 0.893609 Base SASA 0.675055
+core.grid.Pockets.PocketGrid: Optimal acceptor at -0.0472276 -20.6675 8.43865
+core.grid.Pockets.PocketGrid: 15 Donor LYS  NZ  H SASA 0 Base SASA 0.675055
+core.grid.Pockets.PocketGrid: Optimal acceptor at 3.61568 -19.2696 6.25029
+core.grid.Pockets.PocketGrid: 15 Acceptor LYS  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 16 Donor LEU  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 16 Acceptor LEU  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 17 Donor SER  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 17 Donor SER  OG  H SASA 6.25526 Base SASA 27.9749
+core.grid.Pockets.PocketGrid: Optimal acceptor at 9.96331 -22.772 2.26351
+core.grid.Pockets.PocketGrid: 17 Acceptor SER  O   SASA 12.163
+core.grid.Pockets.PocketGrid: Optimal donor at 10.3842 -25.0308 1.29674
+core.grid.Pockets.PocketGrid: Optimal donor at 9.42061 -22.7053 5.34042
+core.grid.Pockets.PocketGrid: 17 Acceptor SER  OG  SASA 27.9749
+core.grid.Pockets.PocketGrid: Optimal donor at 10.5892 -21.0226 -1.88243
+core.grid.Pockets.PocketGrid: Optimal donor at 8.4136 -18.6239 1.24738
+core.grid.Pockets.PocketGrid: 18 Donor GLN  N   H SASA 0 Base SASA 0.675055
+core.grid.Pockets.PocketGrid: Optimal acceptor at 4.95422 -20.8452 1.33458
+core.grid.Pockets.PocketGrid: 18 Donor GLN  NE2 H SASA 0 Base SASA 8.77571
+core.grid.Pockets.PocketGrid: Optimal acceptor at 2.42306 -16.6542 7.04352
+core.grid.Pockets.PocketGrid: 18 Donor GLN  NE2 H SASA 9.38289 Base SASA 8.77571
+core.grid.Pockets.PocketGrid: Optimal acceptor at 7.08291 -16.6666 6.0636
+core.grid.Pockets.PocketGrid: 18 Acceptor GLN  O   SASA 25.5423
+core.grid.Pockets.PocketGrid: Optimal donor at 9.78568 -20.4642 6.42504
+core.grid.Pockets.PocketGrid: Optimal donor at 8.41444 -24.8438 7.7003
+core.grid.Pockets.PocketGrid: 18 Acceptor GLN  OE1 SASA 4.25705
+core.grid.Pockets.PocketGrid: Optimal donor at 3.71951 -22.7425 6.16449
+core.grid.Pockets.PocketGrid: Optimal donor at 1.29839 -18.7426 7.07385
+core.grid.Pockets.PocketGrid: 19 Donor LYS  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 19 Donor LYS  NZ  H SASA 6.70206 Base SASA 4.72538
+core.grid.Pockets.PocketGrid: Optimal acceptor at -0.277191 -22.7597 9.7564
+core.grid.Pockets.PocketGrid: 19 Donor LYS  NZ  H SASA 1.78722 Base SASA 4.72538
+core.grid.Pockets.PocketGrid: Optimal acceptor at 2.64137 -20.3567 7.33398
+core.grid.Pockets.PocketGrid: 19 Donor LYS  NZ  H SASA 1.78722 Base SASA 4.72538
+core.grid.Pockets.PocketGrid: Optimal acceptor at 0.0821963 -23.458 5.33586
+core.grid.Pockets.PocketGrid: 19 Acceptor LYS  O   SASA 21.2853
+core.grid.Pockets.PocketGrid: Optimal donor at 5.64548 -27.5746 7.83244
+core.grid.Pockets.PocketGrid: Optimal donor at 9.33473 -29.0542 5.20801
+core.grid.Pockets.PocketGrid: 20 Donor GLY  N   H SASA 0 Base SASA 0.675055
+core.grid.Pockets.PocketGrid: Optimal acceptor at 8.37796 -23.3086 3.03938
+core.grid.Pockets.PocketGrid: 20 Acceptor GLY  O   SASA 30.4075
+core.grid.Pockets.PocketGrid: Optimal donor at 12.0988 -29.0572 4.06867
+core.grid.Pockets.PocketGrid: Optimal donor at 9.01572 -30.5009 0.737312
+core.grid.Pockets.PocketGrid: 21 Donor TYR  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 21 Donor TYR  OH  H SASA 8.93609 Base SASA 14.5956
+core.grid.Pockets.PocketGrid: Optimal acceptor at 3.34461 -29.2258 7.93743
+core.grid.Pockets.PocketGrid: 21 Acceptor TYR  O   SASA 3.6489
+core.grid.Pockets.PocketGrid: Optimal donor at 8.31177 -24.9658 1.81796
+core.grid.Pockets.PocketGrid: Optimal donor at 8.49953 -25.7009 -2.88437
+core.grid.Pockets.PocketGrid: 21 Acceptor TYR  OH  SASA 14.5956
+core.grid.Pockets.PocketGrid: Optimal donor at 2.36028 -32.9553 5.62305
+core.grid.Pockets.PocketGrid: Optimal donor at 6.48244 -32.3945 7.34819
+core.grid.Pockets.PocketGrid: 22 Donor SER  N   H SASA 4.02124 Base SASA 3.37527
+core.grid.Pockets.PocketGrid: Optimal acceptor at 6.81922 -31.27 -0.646305
+core.grid.Pockets.PocketGrid: 22 Donor SER  OG  H SASA 0 Base SASA 6.68965
+core.grid.Pockets.PocketGrid: Optimal acceptor at 7.41239 -26.3873 -4.8285
+core.grid.Pockets.PocketGrid: 22 Acceptor SER  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 22 Acceptor SER  OG  SASA 6.68965
+core.grid.Pockets.PocketGrid: Optimal donor at 10.4581 -29.5848 -5.89669
+core.grid.Pockets.PocketGrid: Optimal donor at 6.06015 -30.5304 -6.11209
+core.grid.Pockets.PocketGrid: 23 Donor TRP  N   H SASA 0.446804 Base SASA 0
+core.grid.Pockets.PocketGrid: Optimal acceptor at 9.08911 -26.0357 -4.8206
+core.grid.Pockets.PocketGrid: 23 Donor TRP  NE1 H SASA 20.553 Base SASA 6.07549
+core.grid.Pockets.PocketGrid: Optimal acceptor at 9.80826 -22.5742 -8.69642
+core.grid.Pockets.PocketGrid: 23 Acceptor TRP  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 24 Donor SER  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 24 Donor SER  OG  H SASA 6.70206 Base SASA 27.3668
+core.grid.Pockets.PocketGrid: Optimal acceptor at 8.06399 -25.5102 -7.32387
+core.grid.Pockets.PocketGrid: 24 Acceptor SER  O   SASA 15.2038
+core.grid.Pockets.PocketGrid: Optimal donor at 7.19354 -27.9916 -11.2598
+core.grid.Pockets.PocketGrid: Optimal donor at 2.88134 -29.9535 -10.7663
+core.grid.Pockets.PocketGrid: 24 Acceptor SER  OG  SASA 27.3668
+core.grid.Pockets.PocketGrid: Optimal donor at 10.0978 -29.2062 -5.63719
+core.grid.Pockets.PocketGrid: Optimal donor at 10.2887 -28.3753 -10.0594
+core.grid.Pockets.PocketGrid: 25 Donor GLN  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 25 Donor GLN  NE2 H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 25 Donor GLN  NE2 H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 25 Acceptor GLN  O   SASA 11.5549
+core.grid.Pockets.PocketGrid: Optimal donor at 0.136928 -31.5279 -8.97057
+core.grid.Pockets.PocketGrid: Optimal donor at -0.526581 -27.2243 -10.9008
+core.grid.Pockets.PocketGrid: 25 Acceptor GLN  OE1 SASA 3.6489
+core.grid.Pockets.PocketGrid: Optimal donor at 3.93949 -33.5283 -3.73886
+core.grid.Pockets.PocketGrid: Optimal donor at 5.38255 -29.3428 -1.9818
+core.grid.Pockets.PocketGrid: 26 Donor PHE:CtermProteinFull  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 26 Acceptor PHE:CtermProteinFull  O   SASA 24.9342
+core.grid.Pockets.PocketGrid: Optimal donor at 5.24082 -25.8038 -9.17511
+core.grid.Pockets.PocketGrid: Optimal donor at 4.69276 -25.6015 -13.9023
+core.grid.Pockets.PocketGrid: 26 Acceptor PHE:CtermProteinFull  OXT SASA 36.489
+core.grid.Pockets.PocketGrid: Optimal donor at -0.982918 -26.7026 -11.9623
+core.grid.Pockets.PocketGrid: Optimal donor at 2.79989 -25.8758 -14.7362
+core.grid.Pockets.PocketGrid: 27 Donor PRO:NtermProteinFull  N   H SASA 0 Base SASA 7.4256
+core.grid.Pockets.PocketGrid: Optimal acceptor at -4.7587 -1.96375 -6.66838
+core.grid.Pockets.PocketGrid: 27 Donor PRO:NtermProteinFull  N   H SASA 12.5105 Base SASA 7.4256
+core.grid.Pockets.PocketGrid: Optimal acceptor at -4.35833 -3.44878 -10.8867
+core.grid.Pockets.PocketGrid: 27 Acceptor PRO:NtermProteinFull  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 28 Donor MET  N   H SASA 4.02124 Base SASA 0
+core.grid.Pockets.PocketGrid: Optimal acceptor at -2.99229 -5.94674 -10.9537
+core.grid.Pockets.PocketGrid: 28 Acceptor MET  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 29 Donor ALA  N   H SASA 2.68083 Base SASA 0
+core.grid.Pockets.PocketGrid: Optimal acceptor at 0.61039 -6.21575 -9.56548
+core.grid.Pockets.PocketGrid: 29 Acceptor ALA  O   SASA 2.4326
+core.grid.Pockets.PocketGrid: Optimal donor at 2.85072 -10.5303 -4.42858
+core.grid.Pockets.PocketGrid: Optimal donor at 0.732577 -7.4376 -1.48981
+core.grid.Pockets.PocketGrid: 30 Donor ALA  N   H SASA 0 Base SASA 0.675055
+core.grid.Pockets.PocketGrid: Optimal acceptor at -0.49812 -5.07823 -7.11918
+core.grid.Pockets.PocketGrid: 30 Acceptor ALA  O   SASA 1.82445
+core.grid.Pockets.PocketGrid: Optimal donor at 0.744206 -5.77717 -0.120293
+core.grid.Pockets.PocketGrid: Optimal donor at -3.02789 -8.65518 -0.539627
+core.grid.Pockets.PocketGrid: 31 Donor VAL  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 31 Acceptor VAL  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 32 Donor LYS  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 32 Donor LYS  NZ  H SASA 0.446804 Base SASA 10.1258
+core.grid.Pockets.PocketGrid: Optimal acceptor at -0.0110332 -13.987 -11.151
+core.grid.Pockets.PocketGrid: 32 Donor LYS  NZ  H SASA 12.5105 Base SASA 10.1258
+core.grid.Pockets.PocketGrid: Optimal acceptor at 2.76068 -11.1603 -9.03256
+core.grid.Pockets.PocketGrid: 32 Donor LYS  NZ  H SASA 12.5105 Base SASA 10.1258
+core.grid.Pockets.PocketGrid: Optimal acceptor at 2.60798 -15.4821 -7.82484
+core.grid.Pockets.PocketGrid: 32 Acceptor LYS  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 33 Donor GLN  N   H SASA 0 Base SASA 0.675055
+core.grid.Pockets.PocketGrid: Optimal acceptor at 0.81032 -8.27554 -3.67128
+core.grid.Pockets.PocketGrid: 33 Donor GLN  NE2 H SASA 15.1913 Base SASA 10.8009
+core.grid.Pockets.PocketGrid: Optimal acceptor at 5.93166 -11.9274 2.89608
+core.grid.Pockets.PocketGrid: 33 Donor GLN  NE2 H SASA 0 Base SASA 10.8009
+core.grid.Pockets.PocketGrid: Optimal acceptor at 2.9875 -8.39598 4.13536
+core.grid.Pockets.PocketGrid: 33 Acceptor GLN  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 33 Acceptor GLN  OE1 SASA 21.8934
+core.grid.Pockets.PocketGrid: Optimal donor at 4.45231 -9.26315 -2.60691
+core.grid.Pockets.PocketGrid: Optimal donor at 6.41285 -12.202 0.587921
+core.grid.Pockets.PocketGrid: 34 Donor ALA  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 34 Acceptor ALA  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 35 Donor LEU  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 35 Acceptor LEU  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 36 Donor ARG  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 36 Donor ARG  NE  H SASA 0 Base SASA 0.675055
+core.grid.Pockets.PocketGrid: Optimal acceptor at 1.08676 -14.6975 -3.05535
+core.grid.Pockets.PocketGrid: 36 Donor ARG  NH1 H SASA 4.02124 Base SASA 14.1761
+core.grid.Pockets.PocketGrid: Optimal acceptor at 5.53715 -13.7863 1.28719
+core.grid.Pockets.PocketGrid: 36 Donor ARG  NH1 H SASA 18.319 Base SASA 14.1761
+core.grid.Pockets.PocketGrid: Optimal acceptor at 8.06608 -15.173 -2.50347
+core.grid.Pockets.PocketGrid: 36 Donor ARG  NH2 H SASA 0 Base SASA 12.826
+core.grid.Pockets.PocketGrid: Optimal acceptor at 2.26786 -15.3062 -4.79511
+core.grid.Pockets.PocketGrid: 36 Donor ARG  NH2 H SASA 16.9786 Base SASA 12.826
+core.grid.Pockets.PocketGrid: Optimal acceptor at 7.00639 -15.664 -4.46975
+core.grid.Pockets.PocketGrid: 36 Acceptor ARG  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 37 Donor GLU  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 37 Acceptor GLU  O   SASA 2.4326
+core.grid.Pockets.PocketGrid: Optimal donor at 1.9124 -12.6975 8.70825
+core.grid.Pockets.PocketGrid: Optimal donor at -2.84054 -12.8009 9.00216
+core.grid.Pockets.PocketGrid: 37 Acceptor GLU  OE1 SASA 4.8652
+core.grid.Pockets.PocketGrid: Optimal donor at -0.77398 -8.80658 3.48931
+core.grid.Pockets.PocketGrid: Optimal donor at 1.95697 -4.92897 3.9293
+core.grid.Pockets.PocketGrid: 37 Acceptor GLU  OE2 SASA 37.7053
+core.grid.Pockets.PocketGrid: Optimal donor at 5.54344 -9.54953 6.12762
+core.grid.Pockets.PocketGrid: Optimal donor at 4.13275 -5.18666 4.83813
+core.grid.Pockets.PocketGrid: 38 Donor ALA  N   H SASA 0 Base SASA 0.675055
+core.grid.Pockets.PocketGrid: Optimal acceptor at -1.81448 -10.8397 3.15379
+core.grid.Pockets.PocketGrid: 38 Acceptor ALA  O   SASA 0.60815
+core.grid.Pockets.PocketGrid: Optimal donor at -4.16611 -11.6733 9.80274
+core.grid.Pockets.PocketGrid: Optimal donor at -3.49503 -16.3031 8.90707
+core.grid.Pockets.PocketGrid: 39 Donor GLY  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 39 Acceptor GLY  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 40 Donor ASP  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 40 Acceptor ASP  O   SASA 1.2163
+core.grid.Pockets.PocketGrid: Optimal donor at 1.19565 -18.3212 10.9098
+core.grid.Pockets.PocketGrid: Optimal donor at -1.14674 -14.9811 13.3683
+core.grid.Pockets.PocketGrid: 40 Acceptor ASP  OD1 SASA 2.4326
+core.grid.Pockets.PocketGrid: Optimal donor at 0.415928 -18.2378 8.35578
+core.grid.Pockets.PocketGrid: Optimal donor at 3.60048 -17.9554 4.825
+core.grid.Pockets.PocketGrid: 40 Acceptor ASP  OD2 SASA 10.9467
+core.grid.Pockets.PocketGrid: Optimal donor at 3.70321 -12.2752 7.37581
+core.grid.Pockets.PocketGrid: Optimal donor at 4.72121 -15.9249 4.48952
+core.grid.Pockets.PocketGrid: 41 Donor GLU  N   H SASA 0 Base SASA 0.675055
+core.grid.Pockets.PocketGrid: Optimal acceptor at -0.983379 -12.6829 7.55715
+core.grid.Pockets.PocketGrid: 41 Acceptor GLU  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 41 Acceptor GLU  OE1 SASA 31.6238
+core.grid.Pockets.PocketGrid: Optimal donor at 0.105014 -10.039 10.1311
+core.grid.Pockets.PocketGrid: 0.105014 -10.039 10.1311 51 32 28, Buriedness: 0/27
+core.grid.Pockets.PocketGrid: Optimal donor at 1.41494 -10.0494 14.7105
+core.grid.Pockets.PocketGrid: 41 Acceptor GLU  OE2 SASA 21.8934
+core.grid.Pockets.PocketGrid: Optimal donor at -4.40827 -12.3192 14.8107
+core.grid.Pockets.PocketGrid: Optimal donor at -0.142731 -10.8363 16.3252
+core.grid.Pockets.PocketGrid: 42 Donor PHE  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 42 Acceptor PHE  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 43 Donor GLU  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 43 Acceptor GLU  O   SASA 5.47335
+core.grid.Pockets.PocketGrid: Optimal donor at -2.43395 -22.1771 13.0669
+core.grid.Pockets.PocketGrid: Optimal donor at -0.0630983 -19.2778 16.0097
+core.grid.Pockets.PocketGrid: 43 Acceptor GLU  OE1 SASA 2.4326
+core.grid.Pockets.PocketGrid: Optimal donor at 0.713381 -20.6913 10.778
+core.grid.Pockets.PocketGrid: Optimal donor at 1.09848 -21.0919 6.04736
+core.grid.Pockets.PocketGrid: 43 Acceptor GLU  OE2 SASA 0.60815
+core.grid.Pockets.PocketGrid: Optimal donor at -4.92296 -19.7684 6.94041
+core.grid.Pockets.PocketGrid: Optimal donor at -0.823192 -20.7774 4.73558
+core.grid.Pockets.PocketGrid: 44 Donor LEU  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 44 Acceptor LEU  O   SASA 16.4201
+core.grid.Pockets.PocketGrid: Optimal donor at 1.5532 -18.6819 16.8183
+core.grid.Pockets.PocketGrid: Optimal donor at -2.75 -18.1129 18.7795
+core.grid.Pockets.PocketGrid: 45 Donor ARG  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 45 Donor ARG  NE  H SASA 0 Base SASA 0.675055
+core.grid.Pockets.PocketGrid: Optimal acceptor at -4.76685 -16.021 13.3171
+core.grid.Pockets.PocketGrid: 45 Donor ARG  NH1 H SASA 10.2765 Base SASA 22.2768
+core.grid.Pockets.PocketGrid: Optimal acceptor at -6.29325 -11.2015 17.0169
+core.grid.Pockets.PocketGrid: 45 Donor ARG  NH1 H SASA 16.9786 Base SASA 22.2768
+core.grid.Pockets.PocketGrid: Optimal acceptor at -8.04448 -9.85048 12.7985
+core.grid.Pockets.PocketGrid: 45 Donor ARG  NH2 H SASA 0 Base SASA 4.05033
+core.grid.Pockets.PocketGrid: Optimal acceptor at -5.57036 -15.3897 11.3754
+core.grid.Pockets.PocketGrid: 45 Donor ARG  NH2 H SASA 12.9573 Base SASA 4.05033
+core.grid.Pockets.PocketGrid: Optimal acceptor at -7.81052 -11.2054 10.9736
+core.grid.Pockets.PocketGrid: -7.81052 -11.2054 10.9736, -7.81052 -11.2054 10.9736 34 30 32, Buriedness: 18/27
+core.grid.Pockets.PocketGrid: 45 Acceptor ARG  O   SASA 21.2853
+core.grid.Pockets.PocketGrid: Optimal donor at -3.19825 -18.1434 19.8179
+core.grid.Pockets.PocketGrid: Optimal donor at -5.51952 -21.6026 17.5085
+core.grid.Pockets.PocketGrid: 46 Donor TYR  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 46 Donor TYR  OH  H SASA 0 Base SASA 0.60815
+core.grid.Pockets.PocketGrid: Optimal acceptor at -8.47321 -25.5613 10.1706
+core.grid.Pockets.PocketGrid: 46 Acceptor TYR  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 46 Acceptor TYR  OH  SASA 0.60815
+core.grid.Pockets.PocketGrid: Optimal donor at -8.01108 -27.0753 14.381
+core.grid.Pockets.PocketGrid: Optimal donor at -11.7613 -24.8969 13.1673
+core.grid.Pockets.PocketGrid: -11.7613 -24.8969 13.1673 25 2 36, Buriedness: 0/27
+core.grid.Pockets.PocketGrid: 47 Donor ARG  N   H SASA 4.91485 Base SASA 0
+core.grid.Pockets.PocketGrid: Optimal acceptor at -5.03704 -22.2032 18.0812
+core.grid.Pockets.PocketGrid: 47 Donor ARG  NE  H SASA 5.80846 Base SASA 3.37527
+core.grid.Pockets.PocketGrid: Optimal acceptor at -1.369 -26.1409 16.6358
+core.grid.Pockets.PocketGrid: 47 Donor ARG  NH1 H SASA 9.82969 Base SASA 23.6269
+core.grid.Pockets.PocketGrid: Optimal acceptor at 0.283361 -21.1344 20.0102
+core.grid.Pockets.PocketGrid: 47 Donor ARG  NH1 H SASA 16.9786 Base SASA 23.6269
+core.grid.Pockets.PocketGrid: Optimal acceptor at 3.53527 -24.3584 21.3212
+core.grid.Pockets.PocketGrid: 47 Donor ARG  NH2 H SASA 16.9786 Base SASA 26.3271
+core.grid.Pockets.PocketGrid: Optimal acceptor at 0.128749 -27.6455 17.2729
+core.grid.Pockets.PocketGrid: 47 Donor ARG  NH2 H SASA 16.5318 Base SASA 26.3271
+core.grid.Pockets.PocketGrid: Optimal acceptor at 3.48559 -26.4606 20.4376
+core.grid.Pockets.PocketGrid: 47 Acceptor ARG  O   SASA 18.8527
+core.grid.Pockets.PocketGrid: Optimal donor at -0.121149 -24.9494 14.7595
+core.grid.Pockets.PocketGrid: Optimal donor at -3.78284 -27.9957 14.7484
+core.grid.Pockets.PocketGrid: 48 Donor ARG  N   H SASA 0 Base SASA 0.675055
+core.grid.Pockets.PocketGrid: Optimal acceptor at -6.55522 -22.432 15.2318
+core.grid.Pockets.PocketGrid: 48 Donor ARG  NE  H SASA 1.78722 Base SASA 4.72538
+core.grid.Pockets.PocketGrid: Optimal acceptor at -10.5973 -24.1444 14.5335
+core.grid.Pockets.PocketGrid: 48 Donor ARG  NH1 H SASA 4.91485 Base SASA 6.75055
+core.grid.Pockets.PocketGrid: Optimal acceptor at -8.60002 -29.6699 16.6441
+core.grid.Pockets.PocketGrid: 48 Donor ARG  NH1 H SASA 0 Base SASA 6.75055
+core.grid.Pockets.PocketGrid: Optimal acceptor at -11.4001 -30.957 13.0122
+core.grid.Pockets.PocketGrid: 48 Donor ARG  NH2 H SASA 11.6169 Base SASA 6.07549
+core.grid.Pockets.PocketGrid: Optimal acceptor at -11.9073 -24.7461 12.8113
+core.grid.Pockets.PocketGrid: -11.9073 -24.7461 12.8113, -11.9073 -24.7461 12.8113 26 3 36, Buriedness: 0/27
+core.grid.Pockets.PocketGrid: 48 Donor ARG  NH2 H SASA 0 Base SASA 6.07549
+core.grid.Pockets.PocketGrid: Optimal acceptor at -12.4743 -29.3587 11.7673
+core.grid.Pockets.PocketGrid: 48 Acceptor ARG  O   SASA 4.25705
+core.grid.Pockets.PocketGrid: Optimal donor at -5.9161 -29.4416 15.5886
+core.grid.Pockets.PocketGrid: Optimal donor at -5.39579 -28.8692 10.8887
+core.grid.Pockets.PocketGrid: 49 Donor ALA  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 49 Acceptor ALA  O   SASA 3.6489
+core.grid.Pockets.PocketGrid: Optimal donor at -3.81725 -28.4342 8.79691
+core.grid.Pockets.PocketGrid: Optimal donor at -8.55311 -28.9381 8.72459
+core.grid.Pockets.PocketGrid: 50 Donor PHE  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 50 Acceptor PHE  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 51 Donor SER  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 51 Donor SER  OG  H SASA 1.78722 Base SASA 21.2853
+core.grid.Pockets.PocketGrid: Optimal acceptor at -5.76575 -29.3728 10.8421
+core.grid.Pockets.PocketGrid: 51 Acceptor SER  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 51 Acceptor SER  OG  SASA 21.2853
+core.grid.Pockets.PocketGrid: Optimal donor at -6.00193 -28.7983 15.3427
+core.grid.Pockets.PocketGrid: Optimal donor at -4.75727 -32.7877 13.6639
+core.grid.Pockets.PocketGrid: 52 Donor ASP  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 52 Acceptor ASP  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 52 Acceptor ASP  OD1 SASA 26.7586
+core.grid.Pockets.PocketGrid: Optimal donor at -12.98 -33.4985 14.0461
+core.grid.Pockets.PocketGrid: Optimal donor at -17.446 -32.1287 13.1158
+core.grid.Pockets.PocketGrid: 52 Acceptor ASP  OD2 SASA 20.069
+core.grid.Pockets.PocketGrid: Optimal donor at -14.0761 -26.918 12.3335
+core.grid.Pockets.PocketGrid: Optimal donor at -17.8243 -29.851 12.5231
+core.grid.Pockets.PocketGrid: 53 Donor LEU  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 53 Acceptor LEU  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 54 Donor THR  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 54 Donor THR  OG1 H SASA 0 Base SASA 3.6489
+core.grid.Pockets.PocketGrid: Optimal acceptor at -10.5254 -32.2903 10.177
+core.grid.Pockets.PocketGrid: 54 Acceptor THR  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 54 Acceptor THR  OG1 SASA 3.6489
+core.grid.Pockets.PocketGrid: Optimal donor at -6.53758 -33.9276 8.89356
+core.grid.Pockets.PocketGrid: Optimal donor at -6.99567 -29.533 9.76583
+core.grid.Pockets.PocketGrid: 55 Donor SER  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 55 Donor SER  OG  H SASA 9.38289 Base SASA 20.6771
+core.grid.Pockets.PocketGrid: Optimal acceptor at -8.34288 -34.7031 9.27718
+core.grid.Pockets.PocketGrid: 55 Acceptor SER  O   SASA 10.3386
+core.grid.Pockets.PocketGrid: Optimal donor at -11.1339 -38.0506 7.94497
+core.grid.Pockets.PocketGrid: Optimal donor at -15.4192 -36.359 6.73556
+core.grid.Pockets.PocketGrid: 55 Acceptor SER  OG  SASA 20.6771
+core.grid.Pockets.PocketGrid: Optimal donor at -10.0399 -32.7719 13.023
+core.grid.Pockets.PocketGrid: Optimal donor at -10.009 -37.2594 12.6433
+core.grid.Pockets.PocketGrid: 56 Donor GLN  N   H SASA 0 Base SASA 0.675055
+core.grid.Pockets.PocketGrid: Optimal acceptor at -12.7768 -31.5489 9.69257
+core.grid.Pockets.PocketGrid: 56 Donor GLN  NE2 H SASA 5.80846 Base SASA 10.8009
+core.grid.Pockets.PocketGrid: Optimal acceptor at -18.46 -28.0558 10.5287
+core.grid.Pockets.PocketGrid: 56 Donor GLN  NE2 H SASA 0 Base SASA 10.8009
+core.grid.Pockets.PocketGrid: Optimal acceptor at -14.8422 -30.7011 12.1376
+core.grid.Pockets.PocketGrid: 56 Acceptor GLN  O   SASA 10.9467
+core.grid.Pockets.PocketGrid: Optimal donor at -17.8316 -35.7348 7.04623
+core.grid.Pockets.PocketGrid: Optimal donor at -15.2655 -35.3712 3.04993
+core.grid.Pockets.PocketGrid: 56 Acceptor GLN  OE1 SASA 13.9875
+core.grid.Pockets.PocketGrid: Optimal donor at -18.4377 -33.02 6.66062
+core.grid.Pockets.PocketGrid: Optimal donor at -19.6723 -28.8735 8.65304
+core.grid.Pockets.PocketGrid: 57 Donor LEU  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 57 Acceptor LEU  O   SASA 2.4326
+core.grid.Pockets.PocketGrid: Optimal donor at -14.9203 -35.1985 1.45341
+core.grid.Pockets.PocketGrid: Optimal donor at -11.2962 -38.1414 2.39845
+core.grid.Pockets.PocketGrid: 58 Donor HIS  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 58 Donor HIS  NE2 H SASA 19.6594 Base SASA 8.77571
+core.grid.Pockets.PocketGrid: Optimal acceptor at -16.0862 -40.6836 2.37513
+core.grid.Pockets.PocketGrid: 58 Acceptor HIS  O   SASA 0.60815
+core.grid.Pockets.PocketGrid: Optimal donor at -12.5919 -39.5116 3.69388
+core.grid.Pockets.PocketGrid: Optimal donor at -10.5556 -37.8662 -0.285265
+core.grid.Pockets.PocketGrid: 58 Acceptor HIS  ND1 SASA 3.37527
+core.grid.Pockets.PocketGrid: Optimal donor at -13.6559 -35.904 7.36592
+core.grid.Pockets.PocketGrid: 59 Donor ILE  N   H SASA 0.446804 Base SASA 0
+core.grid.Pockets.PocketGrid: Optimal acceptor at -8.35558 -34.0686 4.16738
+core.grid.Pockets.PocketGrid: 59 Acceptor ILE  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 60 Donor THR  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 60 Donor THR  OG1 H SASA 0 Base SASA 13.9875
+core.grid.Pockets.PocketGrid: Optimal acceptor at -10.9084 -37.4747 -2.53434
+core.grid.Pockets.PocketGrid: 60 Acceptor THR  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 60 Acceptor THR  OG1 SASA 13.9875
+core.grid.Pockets.PocketGrid: Optimal donor at -10.6224 -41.8661 -3.4643
+core.grid.Pockets.PocketGrid: Optimal donor at -11.947 -40.508 0.620263
+core.grid.Pockets.PocketGrid: 61 Acceptor PRO  O   SASA 10.3386
+core.grid.Pockets.PocketGrid: Optimal donor at -7.80209 -36.9663 -8.28731
+core.grid.Pockets.PocketGrid: Optimal donor at -12.1419 -38.82 -7.64122
+core.grid.Pockets.PocketGrid: 62 Donor GLY  N   H SASA 0 Base SASA 2.02516
+core.grid.Pockets.PocketGrid: Optimal acceptor at -9.1712 -40.4046 -2.40187
+core.grid.Pockets.PocketGrid: 62 Acceptor GLY  O   SASA 23.7179
+core.grid.Pockets.PocketGrid: Optimal donor at -14.2842 -40.5487 -7.16665
+core.grid.Pockets.PocketGrid: Optimal donor at -15.3311 -36.7591 -4.47777
+core.grid.Pockets.PocketGrid: 63 Donor THR  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 63 Donor THR  OG1 H SASA 3.12763 Base SASA 3.6489
+core.grid.Pockets.PocketGrid: Optimal acceptor at -12.4229 -39.4073 -1.85276
+core.grid.Pockets.PocketGrid: 63 Acceptor THR  O   SASA 3.6489
+core.grid.Pockets.PocketGrid: Optimal donor at -9.90586 -36.2562 -5.27216
+core.grid.Pockets.PocketGrid: Optimal donor at -13.3832 -33.7759 -7.38019
+core.grid.Pockets.PocketGrid: 63 Acceptor THR  OG1 SASA 3.6489
+core.grid.Pockets.PocketGrid: Optimal donor at -8.99432 -36.6201 -1.01217
+core.grid.Pockets.PocketGrid: Optimal donor at -12.93 -36.0551 1.10291
+core.grid.Pockets.PocketGrid: 64 Donor ALA  N   H SASA 1.78722 Base SASA 0
+core.grid.Pockets.PocketGrid: Optimal acceptor at -16.2509 -36.5051 -2.54674
+core.grid.Pockets.PocketGrid: 64 Acceptor ALA  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 65 Donor TYR  N   H SASA 4.46804 Base SASA 0
+core.grid.Pockets.PocketGrid: Optimal acceptor at -15.17 -32.8871 -8.54101
+core.grid.Pockets.PocketGrid: 65 Donor TYR  OH  H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 65 Acceptor TYR  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 65 Acceptor TYR  OH  SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 66 Donor GLN  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 66 Donor GLN  NE2 H SASA 15.1913 Base SASA 11.4759
+core.grid.Pockets.PocketGrid: Optimal acceptor at -19.5171 -30.0774 -9.76913
+core.grid.Pockets.PocketGrid: 66 Donor GLN  NE2 H SASA 10.7233 Base SASA 11.4759
+core.grid.Pockets.PocketGrid: Optimal acceptor at -22.3466 -30.5413 -5.96742
+core.grid.Pockets.PocketGrid: 66 Acceptor GLN  O   SASA 0.60815
+core.grid.Pockets.PocketGrid: Optimal donor at -21.0227 -28.4801 -2.39886
+core.grid.Pockets.PocketGrid: Optimal donor at -18.7996 -31.0344 0.950949
+core.grid.Pockets.PocketGrid: 66 Acceptor GLN  OE1 SASA 13.9875
+core.grid.Pockets.PocketGrid: Optimal donor at -16.7964 -34.7055 -6.47776
+core.grid.Pockets.PocketGrid: Optimal donor at -17.6235 -31.5153 -9.91666
+core.grid.Pockets.PocketGrid: 67 Donor SER  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 67 Donor SER  OG  H SASA 7.59567 Base SASA 21.2853
+core.grid.Pockets.PocketGrid: Optimal acceptor at -19.963 -33.7102 -2.31313
+core.grid.Pockets.PocketGrid: 67 Acceptor SER  O   SASA 0.60815
+core.grid.Pockets.PocketGrid: Optimal donor at -18.9774 -32.0769 2.3619
+core.grid.Pockets.PocketGrid: Optimal donor at -15.4277 -28.9518 1.79496
+core.grid.Pockets.PocketGrid: 67 Acceptor SER  OG  SASA 21.2853
+core.grid.Pockets.PocketGrid: Optimal donor at -16.2067 -35.9261 -3.58638
+core.grid.Pockets.PocketGrid: Optimal donor at -18.1239 -36.8764 0.376418
+core.grid.Pockets.PocketGrid: 68 Donor PHE  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 68 Acceptor PHE  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 69 Donor GLU  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 69 Acceptor GLU  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 69 Acceptor GLU  OE1 SASA 13.9875
+core.grid.Pockets.PocketGrid: Optimal donor at -20.2779 -29.4381 -2.54869
+core.grid.Pockets.PocketGrid: Optimal donor at -22.8126 -27.4535 -6.05926
+core.grid.Pockets.PocketGrid: 69 Acceptor GLU  OE2 SASA 9.7304
+core.grid.Pockets.PocketGrid: Optimal donor at -19.8503 -22.6212 -3.50699
+core.grid.Pockets.PocketGrid: Optimal donor at -22.6692 -25.1673 -6.38079
+core.grid.Pockets.PocketGrid: 70 Donor GLN  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 70 Donor GLN  NE2 H SASA 9.82969 Base SASA 8.77571
+core.grid.Pockets.PocketGrid: Optimal acceptor at -23.8581 -27.8286 -2.1874
+core.grid.Pockets.PocketGrid: 70 Donor GLN  NE2 H SASA 0 Base SASA 8.77571
+core.grid.Pockets.PocketGrid: Optimal acceptor at -19.9095 -30.2188 -1.01689
+core.grid.Pockets.PocketGrid: 70 Acceptor GLN  O   SASA 3.6489
+core.grid.Pockets.PocketGrid: Optimal donor at -22.326 -26.8953 3.33211
+core.grid.Pockets.PocketGrid: Optimal donor at -18.4033 -27.2565 6.00957
+core.grid.Pockets.PocketGrid: 70 Acceptor GLN  OE1 SASA 34.0564
+core.grid.Pockets.PocketGrid: Optimal donor at -24.7576 -29.271 3.86885
+core.grid.Pockets.PocketGrid: Optimal donor at -25.4975 -27.5181 -0.497783
+core.grid.Pockets.PocketGrid: 71 Donor VAL  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 71 Acceptor VAL  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 72 Donor VAL  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 72 Acceptor VAL  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 73 Donor ASN  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 73 Donor ASN  ND2 H SASA 0 Base SASA 6.75055
+core.grid.Pockets.PocketGrid: Optimal acceptor at -20.8202 -22.9864 -1.87053
+core.grid.Pockets.PocketGrid: 73 Donor ASN  ND2 H SASA 0 Base SASA 6.75055
+core.grid.Pockets.PocketGrid: Optimal acceptor at -18.2802 -22.1139 2.06327
+core.grid.Pockets.PocketGrid: 73 Acceptor ASN  O   SASA 1.2163
+core.grid.Pockets.PocketGrid: Optimal donor at -21.2358 -20.7848 3.64156
+core.grid.Pockets.PocketGrid: Optimal donor at -20.2684 -22.2364 8.07374
+core.grid.Pockets.PocketGrid: 73 Acceptor ASN  OD1 SASA 13.9875
+core.grid.Pockets.PocketGrid: Optimal donor at -23.4378 -26.7687 2.41847
+core.grid.Pockets.PocketGrid: Optimal donor at -22.5732 -24.5791 -1.72226
+core.grid.Pockets.PocketGrid: 74 Donor GLU  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 74 Acceptor GLU  O   SASA 8.5141
+core.grid.Pockets.PocketGrid: Optimal donor at -20.895 -23.6891 10.0688
+core.grid.Pockets.PocketGrid: Optimal donor at -17.6329 -20.2523 9.58412
+core.grid.Pockets.PocketGrid: -17.6329 -20.2523 9.58412 16 13 30, Buriedness: 12/27
+core.grid.Pockets.PocketGrid: 74 Acceptor GLU  OE1 SASA 23.1097
+core.grid.Pockets.PocketGrid: Optimal donor at -20.835 -24.1746 6.59268
+core.grid.Pockets.PocketGrid: Optimal donor at -23.5002 -27.1378 9.20104
+core.grid.Pockets.PocketGrid: 74 Acceptor GLU  OE2 SASA 23.7179
+core.grid.Pockets.PocketGrid: Optimal donor at -18.0196 -30.0737 8.76262
+core.grid.Pockets.PocketGrid: Optimal donor at -22.5411 -29.148 9.94028
+core.grid.Pockets.PocketGrid: 75 Donor LEU  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 75 Acceptor LEU  O   SASA 6.68965
+core.grid.Pockets.PocketGrid: Optimal donor at -15.2481 -18.9387 9.45823
+core.grid.Pockets.PocketGrid: -15.2481 -18.9387 9.45823 20 14 29, Buriedness: 8/27
+core.grid.Pockets.PocketGrid: Optimal donor at -19.0275 -16.9783 7.32268
+core.grid.Pockets.PocketGrid: 76 Donor PHE  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 76 Acceptor PHE  O   SASA 8.5141
+core.grid.Pockets.PocketGrid: Optimal donor at -21.2227 -17.4707 3.4211
+core.grid.Pockets.PocketGrid: Optimal donor at -24.4634 -19.2637 6.41621
+core.grid.Pockets.PocketGrid: 77 Donor ARG  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 77 Donor ARG  NE  H SASA 16.085 Base SASA 3.37527
+core.grid.Pockets.PocketGrid: Optimal acceptor at -20.3632 -24.4077 13.2302
+core.grid.Pockets.PocketGrid: 77 Donor ARG  NH1 H SASA 0 Base SASA 8.10065
+core.grid.Pockets.PocketGrid: Optimal acceptor at -22.717 -19.0881 10.8854
+core.grid.Pockets.PocketGrid: 77 Donor ARG  NH1 H SASA 12.0637 Base SASA 8.10065
+core.grid.Pockets.PocketGrid: Optimal acceptor at -19.2283 -17.5175 13.7226
+core.grid.Pockets.PocketGrid: -19.2283 -17.5175 13.7226, -19.2283 -17.5175 13.7226 12 17 37, Buriedness: 0/27
+core.grid.Pockets.PocketGrid: 77 Donor ARG  NH2 H SASA 17.4254 Base SASA 24.302
+core.grid.Pockets.PocketGrid: Optimal acceptor at -18.734 -23.6787 14.4901
+core.grid.Pockets.PocketGrid: -18.734 -23.6787 14.4901, -18.734 -23.6787 14.4901 13 4 39, Buriedness: 0/27
+core.grid.Pockets.PocketGrid: 77 Donor ARG  NH2 H SASA 19.6594 Base SASA 24.302
+core.grid.Pockets.PocketGrid: Optimal acceptor at -17.943 -18.9984 14.8856
+core.grid.Pockets.PocketGrid: -17.943 -18.9984 14.8856, -17.943 -18.9984 14.8856 14 14 40, Buriedness: 0/27
+core.grid.Pockets.PocketGrid: 77 Acceptor ARG  O   SASA 24.9342
+core.grid.Pockets.PocketGrid: Optimal donor at -25.9841 -21.0897 7.54528
+core.grid.Pockets.PocketGrid: Optimal donor at -25.614 -16.5688 8.99846
+core.grid.Pockets.PocketGrid: 78 Donor ASP  N   H SASA 1.34041 Base SASA 0
+core.grid.Pockets.PocketGrid: Optimal acceptor at -19.6708 -18.4565 8.6974
+core.grid.Pockets.PocketGrid: 78 Acceptor ASP  O   SASA 18.2445
+core.grid.Pockets.PocketGrid: Optimal donor at -23.1362 -13.5602 10.6288
+core.grid.Pockets.PocketGrid: -23.1362 -13.5602 10.6288 4 25 31, Buriedness: 0/27
+core.grid.Pockets.PocketGrid: Optimal donor at -21.974 -12.7719 6.07735
+core.grid.Pockets.PocketGrid: 78 Acceptor ASP  OD1 SASA 29.7994
+core.grid.Pockets.PocketGrid: Optimal donor at -25.6409 -17.1561 9.46782
+core.grid.Pockets.PocketGrid: Optimal donor at -24.7082 -19.2658 13.6351
+core.grid.Pockets.PocketGrid: 78 Acceptor ASP  OD2 SASA 19.4608
+core.grid.Pockets.PocketGrid: Optimal donor at -19.4589 -16.2126 12.4146
+core.grid.Pockets.PocketGrid: -19.4589 -16.2126 12.4146 11 20 35, Buriedness: 0/27
+core.grid.Pockets.PocketGrid: Optimal donor at -22.6805 -18.9562 14.6013
+core.grid.Pockets.PocketGrid: 79 Donor GLY  N   H SASA 0 Base SASA 1.35011
+core.grid.Pockets.PocketGrid: Optimal acceptor at -22.3655 -18.9637 6.30694
+core.grid.Pockets.PocketGrid: 79 Acceptor GLY  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 80 Donor VAL  N   H SASA 1.78722 Base SASA 0
+core.grid.Pockets.PocketGrid: Optimal acceptor at -22.1715 -13.2578 2.90648
+core.grid.Pockets.PocketGrid: 80 Acceptor VAL  O   SASA 9.7304
+core.grid.Pockets.PocketGrid: Optimal donor at -21.7803 -12.0588 4.50842
+core.grid.Pockets.PocketGrid: Optimal donor at -18.2527 -9.46914 6.38916
+core.grid.Pockets.PocketGrid: 81 Donor ASN  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 81 Donor ASN  ND2 H SASA 10.7233 Base SASA 15.5263
+core.grid.Pockets.PocketGrid: Optimal acceptor at -15.6652 -13.7448 11.3564
+core.grid.Pockets.PocketGrid: -15.6652 -13.7448 11.3564, -15.6652 -13.7448 11.3564 19 25 33, Buriedness: 0/27
+core.grid.Pockets.PocketGrid: 81 Donor ASN  ND2 H SASA 12.0637 Base SASA 15.5263
+core.grid.Pockets.PocketGrid: Optimal acceptor at -18.8869 -10.5671 9.86969
+core.grid.Pockets.PocketGrid: 81 Acceptor ASN  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 81 Acceptor ASN  OD1 SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 82 Donor TRP  N   H SASA 0.446804 Base SASA 0
+core.grid.Pockets.PocketGrid: Optimal acceptor at -15.0997 -8.14591 6.31123
+core.grid.Pockets.PocketGrid: 82 Donor TRP  NE1 H SASA 8.04248 Base SASA 0
+core.grid.Pockets.PocketGrid: Optimal acceptor at -14.8906 -3.95682 3.80576
+core.grid.Pockets.PocketGrid: 82 Acceptor TRP  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 83 Donor GLY  N   H SASA 6.70206 Base SASA 1.35011
+core.grid.Pockets.PocketGrid: Optimal acceptor at -14.0484 -10.1263 8.40043
+core.grid.Pockets.PocketGrid: 83 Acceptor GLY  O   SASA 0.60815
+core.grid.Pockets.PocketGrid: Optimal donor at -8.454 -14.4613 8.57954
+core.grid.Pockets.PocketGrid: -8.454 -14.4613 8.57954 35 24 28, Buriedness: 5/27
+core.grid.Pockets.PocketGrid: Optimal donor at -11.532 -17.7024 6.9338
+core.grid.Pockets.PocketGrid: 84 Donor ARG  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 84 Donor ARG  NE  H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 84 Donor ARG  NH1 H SASA 11.1701 Base SASA 14.8512
+core.grid.Pockets.PocketGrid: Optimal acceptor at -15.9487 -15.4693 11.7945
+core.grid.Pockets.PocketGrid: -15.9487 -15.4693 11.7945, -15.9487 -15.4693 11.7945 19 21 34, Buriedness: 0/27
+core.grid.Pockets.PocketGrid: 84 Donor ARG  NH1 H SASA 16.085 Base SASA 14.8512
+core.grid.Pockets.PocketGrid: Optimal acceptor at -20.3158 -13.6229 12.2497
+core.grid.Pockets.PocketGrid: -20.3158 -13.6229 12.2497, -20.3158 -13.6229 12.2497 9 25 35, Buriedness: 0/27
+core.grid.Pockets.PocketGrid: 84 Donor ARG  NH2 H SASA 0 Base SASA 2.70022
+core.grid.Pockets.PocketGrid: Optimal acceptor at -20.0114 -14.4626 6.10491
+core.grid.Pockets.PocketGrid: 84 Donor ARG  NH2 H SASA 8.04248 Base SASA 2.70022
+core.grid.Pockets.PocketGrid: Optimal acceptor at -21.6042 -13.3019 10.4412
+core.grid.Pockets.PocketGrid: -21.6042 -13.3019 10.4412, -21.6042 -13.3019 10.4412 7 25 31, Buriedness: 0/27
+core.grid.Pockets.PocketGrid: 84 Acceptor ARG  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 85 Donor ILE  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 85 Acceptor ILE  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 86 Donor VAL  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 86 Acceptor VAL  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 87 Donor ALA  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 87 Acceptor ALA  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 88 Donor PHE  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 88 Acceptor PHE  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 89 Donor PHE  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 89 Acceptor PHE  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 90 Donor SER  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 90 Donor SER  OG  H SASA 1.78722 Base SASA 2.4326
+core.grid.Pockets.PocketGrid: Optimal acceptor at -3.85312 -23.1193 6.10827
+core.grid.Pockets.PocketGrid: 90 Acceptor SER  O   SASA 1.82445
+core.grid.Pockets.PocketGrid: Optimal donor at -2.44111 -22.6117 5.41063
+core.grid.Pockets.PocketGrid: Optimal donor at -5.9069 -25.8779 5.32209
+core.grid.Pockets.PocketGrid: 90 Acceptor SER  OG  SASA 2.4326
+core.grid.Pockets.PocketGrid: Optimal donor at -3.02654 -19.4803 8.69974
+core.grid.Pockets.PocketGrid: Optimal donor at -6.71878 -21.9521 9.43493
+core.grid.Pockets.PocketGrid: 91 Donor PHE  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 91 Acceptor PHE  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 92 Donor GLY  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 92 Acceptor GLY  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 93 Donor GLY  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 93 Acceptor GLY  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 94 Donor ALA  N   H SASA 0 Base SASA 3.37527
+core.grid.Pockets.PocketGrid: Optimal acceptor at -5.59056 -23.6279 4.95633
+core.grid.Pockets.PocketGrid: 94 Acceptor ALA  O   SASA 2.4326
+core.grid.Pockets.PocketGrid: Optimal donor at -1.45485 -29.1478 6.82353
+core.grid.Pockets.PocketGrid: Optimal donor at -4.02956 -31.4601 3.55066
+core.grid.Pockets.PocketGrid: 95 Donor LEU  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 95 Acceptor LEU  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 96 Donor CYS  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 96 Acceptor CYS  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 97 Donor VAL  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 97 Acceptor VAL  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 98 Donor GLU  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 98 Acceptor GLU  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 98 Acceptor GLU  OE1 SASA 15.2038
+core.grid.Pockets.PocketGrid: Optimal donor at -3.25687 -31.2578 8.37457
+core.grid.Pockets.PocketGrid: Optimal donor at -7.94143 -32.1148 8.46391
+core.grid.Pockets.PocketGrid: 98 Acceptor GLU  OE2 SASA 6.0815
+core.grid.Pockets.PocketGrid: Optimal donor at -5.87164 -35.7892 3.89837
+core.grid.Pockets.PocketGrid: Optimal donor at -8.81704 -33.6362 6.96054
+core.grid.Pockets.PocketGrid: 99 Donor SER  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 99 Donor SER  OG  H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 99 Acceptor SER  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 99 Acceptor SER  OG  SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 100 Donor VAL  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 100 Acceptor VAL  O   SASA 2.4326
+core.grid.Pockets.PocketGrid: Optimal donor at 3.66073 -36.1361 -1.07104
+core.grid.Pockets.PocketGrid: Optimal donor at 3.77286 -37.4759 3.49842
+core.grid.Pockets.PocketGrid: 101 Donor ASP  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 101 Acceptor ASP  O   SASA 24.9342
+core.grid.Pockets.PocketGrid: Optimal donor at 4.44129 -37.3876 6.13161
+core.grid.Pockets.PocketGrid: Optimal donor at 1.28907 -40.3752 4.17585
+core.grid.Pockets.PocketGrid: 101 Acceptor ASP  OD1 SASA 10.9467
+core.grid.Pockets.PocketGrid: Optimal donor at 4.6226 -35.254 3.71783
+core.grid.Pockets.PocketGrid: Optimal donor at 5.06073 -31.4108 6.4972
+core.grid.Pockets.PocketGrid: 101 Acceptor ASP  OD2 SASA 20.069
+core.grid.Pockets.PocketGrid: Optimal donor at -0.635866 -33.6004 7.82371
+core.grid.Pockets.PocketGrid: Optimal donor at 3.24476 -30.84 7.91522
+core.grid.Pockets.PocketGrid: 102 Donor LYS  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 102 Donor LYS  NZ  H SASA 0 Base SASA 2.02516
+core.grid.Pockets.PocketGrid: Optimal acceptor at -7.56086 -36.5156 2.14774
+core.grid.Pockets.PocketGrid: 102 Donor LYS  NZ  H SASA 8.93609 Base SASA 2.02516
+core.grid.Pockets.PocketGrid: Optimal acceptor at -6.13974 -40.574 3.44018
+core.grid.Pockets.PocketGrid: 102 Donor LYS  NZ  H SASA 9.38289 Base SASA 2.02516
+core.grid.Pockets.PocketGrid: Optimal acceptor at -6.49461 -37.2571 6.44556
+core.grid.Pockets.PocketGrid: 102 Acceptor LYS  O   SASA 10.3386
+core.grid.Pockets.PocketGrid: Optimal donor at -2.05759 -41.1384 2.45304
+core.grid.Pockets.PocketGrid: Optimal donor at 0.937133 -40.8461 -1.23934
+core.grid.Pockets.PocketGrid: 103 Donor GLU  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 103 Acceptor GLU  O   SASA 15.8119
+core.grid.Pockets.PocketGrid: Optimal donor at 2.49422 -41.707 -2.02881
+core.grid.Pockets.PocketGrid: Optimal donor at -1.17909 -39.4033 -4.00042
+core.grid.Pockets.PocketGrid: 103 Acceptor GLU  OE1 SASA 25.5423
+core.grid.Pockets.PocketGrid: Optimal donor at 3.44221 -41.1366 -2.75445
+core.grid.Pockets.PocketGrid: Optimal donor at 7.00447 -37.9747 -2.75532
+core.grid.Pockets.PocketGrid: 103 Acceptor GLU  OE2 SASA 37.7053
+core.grid.Pockets.PocketGrid: Optimal donor at 5.42821 -38.4088 3.24728
+core.grid.Pockets.PocketGrid: Optimal donor at 7.67677 -37.0516 -0.726323
+core.grid.Pockets.PocketGrid: 104 Donor MET  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 104 Acceptor MET  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 105 Donor GLN  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 105 Donor GLN  NE2 H SASA 0.446804 Base SASA 6.75055
+core.grid.Pockets.PocketGrid: Optimal acceptor at 4.16482 -38.2405 -0.377908
+core.grid.Pockets.PocketGrid: 105 Donor GLN  NE2 H SASA 8.48928 Base SASA 6.75055
+core.grid.Pockets.PocketGrid: Optimal acceptor at 5.43764 -34.1177 -2.39214
+core.grid.Pockets.PocketGrid: 105 Acceptor GLN  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 105 Acceptor GLN  OE1 SASA 9.7304
+core.grid.Pockets.PocketGrid: Optimal donor at 0.689813 -38.0352 -5.61497
+core.grid.Pockets.PocketGrid: Optimal donor at 2.54385 -39.5553 -1.49926
+core.grid.Pockets.PocketGrid: 106 Donor VAL  N   H SASA 0.446804 Base SASA 0
+core.grid.Pockets.PocketGrid: Optimal acceptor at -0.18178 -37.6688 -4.48817
+core.grid.Pockets.PocketGrid: 106 Acceptor VAL  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 107 Donor LEU  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 107 Acceptor LEU  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 108 Donor VAL  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 108 Acceptor VAL  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 109 Donor SER  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 109 Donor SER  OG  H SASA 0 Base SASA 19.4608
+core.grid.Pockets.PocketGrid: Optimal acceptor at -4.47478 -31.2957 -7.46692
+core.grid.Pockets.PocketGrid: 109 Acceptor SER  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 109 Acceptor SER  OG  SASA 19.4608
+core.grid.Pockets.PocketGrid: Optimal donor at -4.45526 -30.7253 -11.9742
+core.grid.Pockets.PocketGrid: Optimal donor at -0.684533 -32.0041 -9.86969
+core.grid.Pockets.PocketGrid: 110 Donor ARG  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 110 Donor ARG  NE  H SASA 4.91485 Base SASA 2.70022
+core.grid.Pockets.PocketGrid: Optimal acceptor at -6.77748 -32.455 -10.2668
+core.grid.Pockets.PocketGrid: 110 Donor ARG  NH1 H SASA 0 Base SASA 2.02516
+core.grid.Pockets.PocketGrid: Optimal acceptor at -10.0141 -34.9936 -5.55411
+core.grid.Pockets.PocketGrid: 110 Donor ARG  NH1 H SASA 0 Base SASA 2.02516
+core.grid.Pockets.PocketGrid: Optimal acceptor at -8.33189 -38.8396 -7.80497
+core.grid.Pockets.PocketGrid: 110 Donor ARG  NH2 H SASA 14.7445 Base SASA 12.151
+core.grid.Pockets.PocketGrid: Optimal acceptor at -5.97171 -34.2348 -11.2921
+core.grid.Pockets.PocketGrid: 110 Donor ARG  NH2 H SASA 11.6169 Base SASA 12.151
+core.grid.Pockets.PocketGrid: Optimal acceptor at -7.01409 -38.5923 -9.67548
+core.grid.Pockets.PocketGrid: 110 Acceptor ARG  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 111 Donor ILE  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 111 Acceptor ILE  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 112 Donor ALA  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 112 Acceptor ALA  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 113 Donor ALA  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 113 Acceptor ALA  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 114 Donor TRP  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 114 Donor TRP  NE1 H SASA 12.5105 Base SASA 0
+core.grid.Pockets.PocketGrid: Optimal acceptor at -12.7788 -31.7537 -9.44049
+core.grid.Pockets.PocketGrid: 114 Acceptor TRP  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 115 Donor MET  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 115 Acceptor MET  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 116 Donor ALA  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 116 Acceptor ALA  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 117 Donor THR  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 117 Donor THR  OG1 H SASA 8.48928 Base SASA 16.4201
+core.grid.Pockets.PocketGrid: Optimal acceptor at -12.1095 -22.1242 -10.8406
+core.grid.Pockets.PocketGrid: 117 Acceptor THR  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 117 Acceptor THR  OG1 SASA 16.4201
+core.grid.Pockets.PocketGrid: Optimal donor at -11.8229 -26.2581 -9.09154
+core.grid.Pockets.PocketGrid: Optimal donor at -15.3541 -25.1322 -11.65
+core.grid.Pockets.PocketGrid: 118 Donor TYR  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 118 Donor TYR  OH  H SASA 0 Base SASA 1.2163
+core.grid.Pockets.PocketGrid: Optimal acceptor at -19.6802 -24.2209 1.10589
+core.grid.Pockets.PocketGrid: 118 Acceptor TYR  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 118 Acceptor TYR  OH  SASA 1.2163
+core.grid.Pockets.PocketGrid: Optimal donor at -16.7112 -21.4601 3.05441
+core.grid.Pockets.PocketGrid: Optimal donor at -19.9244 -19.7888 0.377649
+core.grid.Pockets.PocketGrid: 119 Donor LEU  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 119 Acceptor LEU  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 120 Donor ASN  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 120 Donor ASN  ND2 H SASA 0 Base SASA 2.70022
+core.grid.Pockets.PocketGrid: Optimal acceptor at -10.2153 -17.4266 -11.331
+core.grid.Pockets.PocketGrid: 120 Donor ASN  ND2 H SASA 6.70206 Base SASA 2.70022
+core.grid.Pockets.PocketGrid: Optimal acceptor at -13.8252 -20.5339 -11.2977
+core.grid.Pockets.PocketGrid: 120 Acceptor ASN  O   SASA 10.3386
+core.grid.Pockets.PocketGrid: Optimal donor at -16.498 -13.9763 -9.06737
+core.grid.Pockets.PocketGrid: Optimal donor at -20.2746 -16.6412 -7.91714
+core.grid.Pockets.PocketGrid: 120 Acceptor ASN  OD1 SASA 0.60815
+core.grid.Pockets.PocketGrid: Optimal donor at -14.6549 -14.4855 -7.98459
+core.grid.Pockets.PocketGrid: Optimal donor at -10.5253 -15.367 -10.1884
+core.grid.Pockets.PocketGrid: 121 Donor ASP  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 121 Acceptor ASP  O   SASA 6.68965
+core.grid.Pockets.PocketGrid: Optimal donor at -21.2828 -16.7356 -8.65376
+core.grid.Pockets.PocketGrid: Optimal donor at -21.4558 -16.3388 -3.91033
+core.grid.Pockets.PocketGrid: 121 Acceptor ASP  OD1 SASA 26.7586
+core.grid.Pockets.PocketGrid: Optimal donor at -20.4989 -17.4127 -8.71085
+core.grid.Pockets.PocketGrid: Optimal donor at -23.9052 -20.4157 -7.27313
+core.grid.Pockets.PocketGrid: 121 Acceptor ASP  OD2 SASA 13.3793
+core.grid.Pockets.PocketGrid: Optimal donor at -18.6354 -23.4415 -5.94466
+core.grid.Pockets.PocketGrid: Optimal donor at -23.2776 -22.4505 -6.33928
+core.grid.Pockets.PocketGrid: 122 Donor HIS  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 122 Donor HIS  NE2 H SASA 16.085 Base SASA 4.05033
+core.grid.Pockets.PocketGrid: Optimal acceptor at -24.1862 -22.8415 -4.01306
+core.grid.Pockets.PocketGrid: 122 Acceptor HIS  O   SASA 7.2978
+core.grid.Pockets.PocketGrid: Optimal donor at -22.1228 -16.8737 -1.83325
+core.grid.Pockets.PocketGrid: Optimal donor at -18.5101 -13.8917 -0.971475
+core.grid.Pockets.PocketGrid: 122 Acceptor HIS  ND1 SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 123 Donor LEU  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 123 Acceptor LEU  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 124 Donor GLU  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 124 Acceptor GLU  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 124 Acceptor GLU  OE1 SASA 3.6489
+core.grid.Pockets.PocketGrid: Optimal donor at -16.8955 -10.6933 -7.9027
+core.grid.Pockets.PocketGrid: Optimal donor at -12.6958 -8.7964 -6.69785
+core.grid.Pockets.PocketGrid: 124 Acceptor GLU  OE2 SASA 1.2163
+core.grid.Pockets.PocketGrid: Optimal donor at -11.6518 -14.9053 -6.38791
+core.grid.Pockets.PocketGrid: Optimal donor at -10.9523 -10.1977 -6.19476
+core.grid.Pockets.PocketGrid: 125 Acceptor PRO  O   SASA 3.04075
+core.grid.Pockets.PocketGrid: Optimal donor at -20.9815 -8.57695 -6.47549
+core.grid.Pockets.PocketGrid: Optimal donor at -20.1079 -7.87922 -1.84544
+core.grid.Pockets.PocketGrid: 126 Donor TRP  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 126 Donor TRP  NE1 H SASA 17.4254 Base SASA 1.35011
+core.grid.Pockets.PocketGrid: Optimal acceptor at -21.5943 -8.45079 4.78245
+core.grid.Pockets.PocketGrid: 126 Acceptor TRP  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 127 Donor ILE  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 127 Acceptor ILE  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 128 Donor GLN  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 128 Donor GLN  NE2 H SASA 8.04248 Base SASA 5.40044
+core.grid.Pockets.PocketGrid: Optimal acceptor at -11.7821 -6.69947 -7.39328
+core.grid.Pockets.PocketGrid: 128 Donor GLN  NE2 H SASA 0 Base SASA 5.40044
+core.grid.Pockets.PocketGrid: Optimal acceptor at -14.0456 -10.8175 -6.62294
+core.grid.Pockets.PocketGrid: 128 Acceptor GLN  O   SASA 20.6771
+core.grid.Pockets.PocketGrid: Optimal donor at -16.3138 -4.13955 -6.91445
+core.grid.Pockets.PocketGrid: Optimal donor at -20.0016 -3.23436 -4.03892
+core.grid.Pockets.PocketGrid: 128 Acceptor GLN  OE1 SASA 23.1097
+core.grid.Pockets.PocketGrid: Optimal donor at -17.8443 -5.22249 -8.21928
+core.grid.Pockets.PocketGrid: Optimal donor at -13.1083 -4.79942 -7.93798
+core.grid.Pockets.PocketGrid: 129 Donor GLU  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 129 Acceptor GLU  O   SASA 16.4201
+core.grid.Pockets.PocketGrid: Optimal donor at -22.3977 -3.19913 -2.73773
+core.grid.Pockets.PocketGrid: Optimal donor at -18.914 -2.51158 0.436943
+core.grid.Pockets.PocketGrid: 129 Acceptor GLU  OE1 SASA 30.4075
+core.grid.Pockets.PocketGrid: Optimal donor at -22.036 -7.61043 -5.02873
+core.grid.Pockets.PocketGrid: Optimal donor at -24.4206 -3.56562 -5.82925
+core.grid.Pockets.PocketGrid: 129 Acceptor GLU  OE2 SASA 35.2727
+core.grid.Pockets.PocketGrid: Optimal donor at -23.2151 -3.3782 0.273847
+core.grid.Pockets.PocketGrid: Optimal donor at -24.819 -2.13492 -4.03533
+core.grid.Pockets.PocketGrid: 130 Donor ASN  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 130 Donor ASN  ND2 H SASA 15.6382 Base SASA 14.8512
+core.grid.Pockets.PocketGrid: Optimal acceptor at -21.6598 -5.90834 3.58408
+core.grid.Pockets.PocketGrid: 130 Donor ASN  ND2 H SASA 14.2977 Base SASA 14.8512
+core.grid.Pockets.PocketGrid: Optimal acceptor at -17.6412 -3.35494 3.44968
+core.grid.Pockets.PocketGrid: 130 Acceptor ASN  O   SASA 4.25705
+core.grid.Pockets.PocketGrid: Optimal donor at -15.9546 -4.98428 2.65988
+core.grid.Pockets.PocketGrid: Optimal donor at -13.0545 -2.68939 -0.341882
+core.grid.Pockets.PocketGrid: 130 Acceptor ASN  OD1 SASA 1.82445
+core.grid.Pockets.PocketGrid: Optimal donor at -18.6316 -8.20733 -1.41527
+core.grid.Pockets.PocketGrid: Optimal donor at -21.9735 -7.55852 1.91621
+core.grid.Pockets.PocketGrid: 131 Donor GLY  N   H SASA 1.34041 Base SASA 1.35011
+core.grid.Pockets.PocketGrid: Optimal acceptor at -18.0809 -3.77365 -3.8533
+core.grid.Pockets.PocketGrid: 131 Acceptor GLY  O   SASA 13.3793
+core.grid.Pockets.PocketGrid: Optimal donor at -12.8623 -0.169081 -3.40618
+core.grid.Pockets.PocketGrid: Optimal donor at -11.3696 -4.17385 -5.5088
+core.grid.Pockets.PocketGrid: 132 Donor GLY  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 132 Acceptor GLY  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 133 Donor TRP  N   H SASA 1.78722 Base SASA 0
+core.grid.Pockets.PocketGrid: Optimal acceptor at -11.3483 -7.21742 -6.75912
+core.grid.Pockets.PocketGrid: 133 Donor TRP  NE1 H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 133 Acceptor TRP  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 134 Donor ASP  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 134 Acceptor ASP  O   SASA 1.82445
+core.grid.Pockets.PocketGrid: Optimal donor at -5.56733 -1.77924 -2.15594
+core.grid.Pockets.PocketGrid: Optimal donor at -8.55825 -1.83013 1.55072
+core.grid.Pockets.PocketGrid: 134 Acceptor ASP  OD1 SASA 7.90595
+core.grid.Pockets.PocketGrid: Optimal donor at -6.11295 -3.27975 -3.71829
+core.grid.Pockets.PocketGrid: Optimal donor at -6.533 -2.26058 -8.35212
+core.grid.Pockets.PocketGrid: 134 Acceptor ASP  OD2 SASA 40.7461
+core.grid.Pockets.PocketGrid: Optimal donor at -11.8937 -0.25789 -5.96443
+core.grid.Pockets.PocketGrid: Optimal donor at -8.44983 -1.25852 -9.09903
+core.grid.Pockets.PocketGrid: 135 Donor THR  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 135 Donor THR  OG1 H SASA 7.59567 Base SASA 7.2978
+core.grid.Pockets.PocketGrid: Optimal acceptor at -10.9198 -0.263254 -1.69539
+core.grid.Pockets.PocketGrid: 135 Acceptor THR  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 135 Acceptor THR  OG1 SASA 7.2978
+core.grid.Pockets.PocketGrid: Optimal donor at -14.4718 -2.96816 -2.24058
+core.grid.Pockets.PocketGrid: Optimal donor at -14.1302 -0.411695 1.45137
+core.grid.Pockets.PocketGrid: 136 Donor PHE  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 136 Acceptor PHE  O   SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 137 Donor VAL  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 137 Acceptor VAL  O   SASA 2.4326
+core.grid.Pockets.PocketGrid: Optimal donor at -2.65918 -5.1387 2.67796
+core.grid.Pockets.PocketGrid: Optimal donor at -4.63833 -1.04592 4.0991
+core.grid.Pockets.PocketGrid: 138 Donor GLU  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 138 Acceptor GLU  O   SASA 27.3668
+core.grid.Pockets.PocketGrid: Optimal donor at -4.81168 1.39865 3.92152
+core.grid.Pockets.PocketGrid: Optimal donor at -6.53444 -1.67561 7.12598
+core.grid.Pockets.PocketGrid: 138 Acceptor GLU  OE1 SASA 37.0972
+core.grid.Pockets.PocketGrid: Optimal donor at -6.81652 2.1525 -0.291808
+core.grid.Pockets.PocketGrid: Optimal donor at -11.4134 3.38815 -0.119332
+core.grid.Pockets.PocketGrid: 138 Acceptor GLU  OE2 SASA 30.4075
+core.grid.Pockets.PocketGrid: Optimal donor at -10.6597 -0.112763 4.96449
+core.grid.Pockets.PocketGrid: Optimal donor at -12.7053 2.62665 1.64803
+core.grid.Pockets.PocketGrid: 139 Donor LEU  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 139 Acceptor LEU  O   SASA 28.5831
+core.grid.Pockets.PocketGrid: Optimal donor at -7.71101 -2.46422 8.61254
+core.grid.Pockets.PocketGrid: Optimal donor at -4.23236 -5.65867 7.99451
+core.grid.Pockets.PocketGrid: -4.23236 -5.65867 7.99451 43 40 27, Buriedness: 6/27
+core.grid.Pockets.PocketGrid: 140 Donor TYR  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 140 Donor TYR  OH  H SASA 8.04248 Base SASA 7.2978
+core.grid.Pockets.PocketGrid: Optimal acceptor at -8.12472 -11.9041 9.20171
+core.grid.Pockets.PocketGrid: -8.12472 -11.9041 9.20171, -8.12472 -11.9041 9.20171 34 28 28, Buriedness: 13/27
+core.grid.Pockets.PocketGrid: 140 Acceptor TYR  O   SASA 16.4201
+core.grid.Pockets.PocketGrid: Optimal donor at -2.65116 -7.72776 7.44525
+core.grid.Pockets.PocketGrid: -2.65116 -7.72776 7.44525 45 37 25, Buriedness: 10/27
+core.grid.Pockets.PocketGrid: Optimal donor at 0.190479 -5.42543 4.39371
+core.grid.Pockets.PocketGrid: 140 Acceptor TYR  OH  SASA 7.2978
+core.grid.Pockets.PocketGrid: Optimal donor at -10.9977 -8.47246 8.75021
+core.grid.Pockets.PocketGrid: Optimal donor at -10.4802 -11.4355 5.39829
+core.grid.Pockets.PocketGrid: 141 Donor GLY:CtermProteinFull  N   H SASA 0 Base SASA 0 being ignored
+core.grid.Pockets.PocketGrid: 141 Acceptor GLY:CtermProteinFull  O   SASA 36.489
+core.grid.Pockets.PocketGrid: Optimal donor at -3.82699 -1.92618 4.95808
+core.grid.Pockets.PocketGrid: Optimal donor at 0.581258 -1.87367 6.76143
+core.grid.Pockets.PocketGrid: 141 Acceptor GLY:CtermProteinFull  OXT SASA 27.9749
+core.grid.Pockets.PocketGrid: Optimal donor at 0.956967 -6.15367 2.43701
+core.grid.Pockets.PocketGrid: Optimal donor at 2.035 -3.1664 5.98688
+core.grid.Pockets.PocketGrid: 
+core.grid.Pockets.PocketGrid: After Donors/Acceptors
+core.grid.Pockets.PocketGrid: Be   -2.651  -7.728   7.445
+core.grid.Pockets.PocketGrid: Ne   -8.125 -11.904   9.202
+core.grid.Pockets.PocketGrid: Be   -3.868  -5.945   8.184
+core.grid.Pockets.PocketGrid: Ne  -21.604 -13.302  10.441
+core.grid.Pockets.PocketGrid: Ne  -20.316 -13.623  12.250
+core.grid.Pockets.PocketGrid: Ne  -15.949 -15.469  11.794
+core.grid.Pockets.PocketGrid: Be   -7.996 -14.341   8.739
+core.grid.Pockets.PocketGrid: Ne  -15.665 -13.745  11.356
+core.grid.Pockets.PocketGrid: Be  -19.459 -16.213  12.415
+core.grid.Pockets.PocketGrid: Be  -23.136 -13.560  10.629
+core.grid.Pockets.PocketGrid: Ne  -17.943 -18.998  14.886
+core.grid.Pockets.PocketGrid: Ne  -18.734 -23.679  14.490
+core.grid.Pockets.PocketGrid: Ne  -19.228 -17.517  13.723
+core.grid.Pockets.PocketGrid: Be  -15.248 -18.939   9.458
+core.grid.Pockets.PocketGrid: Be  -17.421 -19.830   9.748
+core.grid.Pockets.PocketGrid: Ne  -11.907 -24.746  12.811
+core.grid.Pockets.PocketGrid: Be  -11.761 -24.897  13.167
+core.grid.Pockets.PocketGrid: Ne   -7.811 -11.205  10.974
+core.grid.Pockets.PocketGrid: Be    0.209  -9.944   9.651
+core.grid.Pockets.PocketGrid: 
+core.grid.Pockets.PocketGrid: After shape
+core.grid.Pockets.PocketGrid: C    -3.000  -8.500   9.000
+core.grid.Pockets.PocketGrid: C    -4.500  -8.500  10.500
+core.grid.Pockets.PocketGrid: C   -12.000 -22.000  13.000
+core.grid.Pockets.PocketGrid: C   -12.500 -19.500  12.000
+core.grid.Pockets.PocketGrid: C   -13.500 -19.000  10.500
+core.grid.Pockets.PocketGrid: C   -13.500 -22.500  12.000
+core.grid.Pockets.PocketGrid: C   -14.000 -20.500  12.000
+core.grid.Pockets.PocketGrid: C   -15.000 -19.000  11.500
+core.grid.Pockets.PocketGrid: C   -15.500 -21.500  12.500
+core.grid.Pockets.PocketGrid: C   -16.500 -20.000  12.000
+core.grid.Pockets.PocketGrid: C   -17.000 -22.000  11.500
+core.grid.Pockets.PocketGrid: Be   -2.651  -7.728   7.445
+core.grid.Pockets.PocketGrid: Ne   -8.125 -11.904   9.202
+core.grid.Pockets.PocketGrid: Be   -3.868  -5.945   8.184
+core.grid.Pockets.PocketGrid: Ne  -21.604 -13.302  10.441
+core.grid.Pockets.PocketGrid: Ne  -20.316 -13.623  12.250
+core.grid.Pockets.PocketGrid: Ne  -15.949 -15.469  11.794
+core.grid.Pockets.PocketGrid: Be   -7.996 -14.341   8.739
+core.grid.Pockets.PocketGrid: Ne  -15.665 -13.745  11.356
+core.grid.Pockets.PocketGrid: Be  -19.459 -16.213  12.415
+core.grid.Pockets.PocketGrid: Be  -23.136 -13.560  10.629
+core.grid.Pockets.PocketGrid: Ne  -17.943 -18.998  14.886
+core.grid.Pockets.PocketGrid: Ne  -18.734 -23.679  14.490
+core.grid.Pockets.PocketGrid: Ne  -19.228 -17.517  13.723
+core.grid.Pockets.PocketGrid: Be  -15.248 -18.939   9.458
+core.grid.Pockets.PocketGrid: Be  -17.421 -19.830   9.748
+core.grid.Pockets.PocketGrid: Ne  -11.907 -24.746  12.811
+core.grid.Pockets.PocketGrid: Be  -11.761 -24.897  13.167
+core.grid.Pockets.PocketGrid: Ne   -7.811 -11.205  10.974
+core.grid.Pockets.PocketGrid: Be    0.209  -9.944   9.651
+core.grid.Pockets.PocketGrid: 
+core.grid.Pockets.PocketGrid: After clustering
+core.grid.Pockets.PocketGrid: Be  -11.761 -24.897  13.167
+core.grid.Pockets.PocketGrid: Ne  -11.907 -24.746  12.811
+core.grid.Pockets.PocketGrid: Be  -17.421 -19.830   9.748
+core.grid.Pockets.PocketGrid: Be  -15.248 -18.939   9.458
+core.grid.Pockets.PocketGrid: Ne  -19.228 -17.517  13.723
+core.grid.Pockets.PocketGrid: Ne  -18.734 -23.679  14.490
+core.grid.Pockets.PocketGrid: Ne  -17.943 -18.998  14.886
+core.grid.Pockets.PocketGrid: Be  -23.136 -13.560  10.629
+core.grid.Pockets.PocketGrid: Be  -19.459 -16.213  12.415
+core.grid.Pockets.PocketGrid: Ne  -20.316 -13.623  12.250
+core.grid.Pockets.PocketGrid: Ne  -21.604 -13.302  10.441
+core.grid.Pockets.PocketGrid: Ne  -15.665 -13.745  11.356
+core.grid.Pockets.PocketGrid: Ne  -15.949 -15.469  11.794
+core.grid.Pockets.PocketGrid: C   -17.000 -22.000  11.500
+core.grid.Pockets.PocketGrid: C   -16.500 -20.000  12.000
+core.grid.Pockets.PocketGrid: C   -15.500 -21.500  12.500
+core.grid.Pockets.PocketGrid: C   -15.000 -19.000  11.500
+core.grid.Pockets.PocketGrid: C   -14.000 -20.500  12.000
+core.grid.Pockets.PocketGrid: C   -13.500 -22.500  12.000
+core.grid.Pockets.PocketGrid: C   -13.500 -19.000  10.500
+core.grid.Pockets.PocketGrid: C   -12.500 -19.500  12.000
+core.grid.Pockets.PocketGrid: C   -12.000 -22.000  13.000
+core.grid.Pockets.PocketGrid: Be    0.209  -9.944   9.651
+core.grid.Pockets.PocketGrid: Ne   -7.811 -11.205  10.974
+core.grid.Pockets.PocketGrid: Be   -3.868  -5.945   8.184
+core.grid.Pockets.PocketGrid: Be   -2.651  -7.728   7.445
+core.grid.Pockets.PocketGrid: C    -4.500  -8.500  10.500
+core.grid.Pockets.PocketGrid: C    -3.000  -8.500   9.000
+core.grid.Pockets.PocketGrid: Be   -7.996 -14.341   8.739
+core.grid.Pockets.PocketGrid: Ne   -8.125 -11.904   9.202
+core.grid.Pockets.PocketGrid: 
+core.grid.Pockets.PocketGrid: End of findExemplars
+core.grid.Pockets.PocketGrid: Be  -11.761 -24.897  13.167
+core.grid.Pockets.PocketGrid: Ne  -11.907 -24.746  12.811
+core.grid.Pockets.PocketGrid: Be  -17.421 -19.830   9.748
+core.grid.Pockets.PocketGrid: Be  -15.248 -18.939   9.458
+core.grid.Pockets.PocketGrid: Ne  -19.228 -17.517  13.723
+core.grid.Pockets.PocketGrid: Ne  -18.734 -23.679  14.490
+core.grid.Pockets.PocketGrid: Ne  -17.943 -18.998  14.886
+core.grid.Pockets.PocketGrid: Be  -23.136 -13.560  10.629
+core.grid.Pockets.PocketGrid: Be  -19.459 -16.213  12.415
+core.grid.Pockets.PocketGrid: Ne  -20.316 -13.623  12.250
+core.grid.Pockets.PocketGrid: Ne  -21.604 -13.302  10.441
+core.grid.Pockets.PocketGrid: Ne  -15.665 -13.745  11.356
+core.grid.Pockets.PocketGrid: Ne  -15.949 -15.469  11.794
+core.grid.Pockets.PocketGrid: C   -17.000 -22.000  11.500
+core.grid.Pockets.PocketGrid: C   -16.500 -20.000  12.000
+core.grid.Pockets.PocketGrid: C   -15.500 -21.500  12.500
+core.grid.Pockets.PocketGrid: C   -15.000 -19.000  11.500
+core.grid.Pockets.PocketGrid: C   -14.000 -20.500  12.000
+core.grid.Pockets.PocketGrid: C   -13.500 -22.500  12.000
+core.grid.Pockets.PocketGrid: C   -13.500 -19.000  10.500
+core.grid.Pockets.PocketGrid: C   -12.500 -19.500  12.000
+core.grid.Pockets.PocketGrid: C   -12.000 -22.000  13.000
+core.grid.Pockets.PocketGrid: Be    0.209  -9.944   9.651
+core.grid.Pockets.PocketGrid: Ne   -7.811 -11.205  10.974
+core.grid.Pockets.PocketGrid: Be   -3.868  -5.945   8.184
+core.grid.Pockets.PocketGrid: Be   -2.651  -7.728   7.445
+core.grid.Pockets.PocketGrid: C    -4.500  -8.500  10.500
+core.grid.Pockets.PocketGrid: C    -3.000  -8.500   9.000
+core.grid.Pockets.PocketGrid: Be   -7.996 -14.341   8.739
+core.grid.Pockets.PocketGrid: Ne   -8.125 -11.904   9.202
+Pocket score (unweighted) is: 71

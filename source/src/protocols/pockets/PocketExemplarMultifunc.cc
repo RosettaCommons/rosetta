@@ -41,10 +41,10 @@ PocketExemplarMultifunc::PocketExemplarMultifunc(std::string const input_pdb_nam
   core::import_pose::pose_from_pdb( input_pose, input_pdb_name );
   residues = protocols::pockets::PocketGrid::getRelaxResidues(input_pose, resid);
   cRad = c_rad;
-  repW = rep_weight;
+  repW = rep_weight; 
   vdWpen = option[ OptionKeys::pocket_grid::pocket_exemplar_vdw_pen ]();
   optimal = cRad;
-  pg = protocols::pockets::PocketGrid( residues );
+  pg = protocols::pockets::PocketGrid( residues );  
   pg.autoexpanding_pocket_eval( residues, input_pose ) ;
   pg.dumpTargetPocketsToPDB("testpock.pdb");
   utility::vector1<core::Real> bounds = pg.getBounds();
@@ -55,9 +55,6 @@ PocketExemplarMultifunc::PocketExemplarMultifunc(std::string const input_pdb_nam
 	  }
   }
 }
-
-PocketExemplarMultifunc::~PocketExemplarMultifunc() {}
-
 
 //This is the objective function
 core::Real
@@ -86,16 +83,16 @@ PocketExemplarMultifunc::operator ()( core::optimization::Multivec const & vars 
 
 //This is not used in my project, is stubbd out because this can be used for other optimizations that use derivatives
 void
-PocketExemplarMultifunc::dfunc( core::optimization::Multivec const &, core::optimization::Multivec & ) const
+PocketExemplarMultifunc::dfunc( core::optimization::Multivec const &, core::optimization::Multivec &) const
 {
-	std::cerr << "PocketExemplarMultifunc cannot be used with derivative based optimization methods."<<std::endl;
-	exit(20);
+  std::cerr << "PocketExemplarMultifunc cannot be used with derivative based optimization methods."<<std::endl;
+  exit(20);
 }
 
 /// @details Useful debugging code that can be re-enabled by changing the boolean
 /// variables at the top of this file.
 void
-PocketExemplarMultifunc::dump( core::optimization::Multivec const & ) const {
+PocketExemplarMultifunc::dump( core::optimization::Multivec const &, core::optimization::Multivec const &) const {
   std::cout<< "In PocketExemplarMultifunc."<< std::endl;
 }
 

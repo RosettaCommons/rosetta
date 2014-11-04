@@ -82,7 +82,7 @@ sources = {
 		"PocketConstraint",
 		"PocketGrid",
     "PocketExemplarMultifunc",
-    "DarcElectrostatics",
+		"GenPharmacophore",
     "DarcParticleSwarmMinimizer",
 	],
 	"protocols/pose_reporters": [

@@ -299,6 +299,7 @@ Size nsat(std::map<AtomID, Size> const& counts) {
 int main( int argc, char * argv [] )
 {
   try {
+
 	devel::init(argc, argv);
 
 	// create pose
@@ -308,6 +309,7 @@ int main( int argc, char * argv [] )
 
 	// score pose
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
+
 	(*scorefxn)(ps);
 
 	// store hydrogen bond counts for ligand
@@ -338,9 +340,10 @@ int main( int argc, char * argv [] )
 
 	float frac = tot ? ns / float(tot) : 1.0F;
 	TR << "fraction of satisfied polar atoms: " << frac << std::endl;
-        } catch ( utility::excn::EXCN_Base const & e ) {
-                std::cout << "caught exception " << e.msg() << std::endl;
-		return -1;
-        }
 
+	}
+	catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+  }
 }

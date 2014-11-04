@@ -17,6 +17,7 @@
 
 // Package headers
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
 #include <core/optimization/types.hh>
 #include <core/optimization/Multifunc.hh>
 #include <protocols/pockets/PocketGrid.hh>
@@ -26,6 +27,8 @@
 
 
 using namespace core;
+using namespace std;
+
 
 namespace protocols {
 namespace pockets {
@@ -36,16 +39,13 @@ class PocketExemplarMultifunc : public core::optimization::Multifunc {
 public: // Constructor/Destructor
 
 	// Constructor
-	PocketExemplarMultifunc (std::string const input_pdb_name,
-			std::string const resid,
-			core::Real const c_rad,
-			core::Real const rep_weight,
-			utility::vector1<core::Real>& p_min,
-			utility::vector1<core::Real>& p_max);
+	PocketExemplarMultifunc(std::string const input_pdb_name, std::string const resid, core::Real const c_rad, core::Real const rep_weight, utility::vector1<core::Real>& p_min, utility::vector1<core::Real>& p_max);
 
 	/// @brief Destructor
+	inline
 	virtual
-	~PocketExemplarMultifunc();
+	~PocketExemplarMultifunc()
+	{}
 
 public: // Methods
 
@@ -59,13 +59,12 @@ public: // Methods
 	void
 	dfunc( core::optimization::Multivec const & vars, core::optimization::Multivec & dE_dvars ) const;
 
-	// This is required, otherwise you are shadowing a virtual function. ~Labonte
-	using core::optimization::Multifunc::dump;
+	//using core::optimization::Multifunc::dump;
 
 	/// @brief Error state reached; dump out current pdb.
 	virtual
 	void
-	dump( core::optimization::Multivec const & vars ) const;
+	dump( core::optimization::Multivec const & vars, core::optimization::Multivec const &) const;
 
 private:
 

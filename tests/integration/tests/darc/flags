@@ -1,5 +1,7 @@
--protein input/1T4E.pdb
--ligand input/DIZ_0001.fa.pdb
--extra_res_fa input/DIZ.fa.params
+-protein input/4ERF.pdb
+-ligand input/4ERF_XTL_0001.pdb
+-extra_res_fa input/4ERF_XTL.params
 -ray_file input/rays.txt
--num_runs 10
+-num_runs 5
+-num_particles 5
+-darc_shape_only true

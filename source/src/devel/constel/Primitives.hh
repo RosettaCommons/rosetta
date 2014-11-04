@@ -31,13 +31,6 @@ using core::pose::Pose;
 namespace devel {
 namespace constel {
 
-/// @brief Lists the amino acid types that a given amino acid type can be
-/// 	reduced to.
-utility::vector1<char> list_allowable_mutations( char const starting_aa );
-
-/// @brief Sets occupancy to zero for a residue's non-constellation atoms.
-void zero_occ_for_deleted_atoms(Pose & pose, core::Size seqpos,
-	char const target_aa);
 
 /// @brief Returns the residue number of a residue in a pose.
 core::Size get_pose_resnum(int const pdbnum, char const pdbchn, Pose& ps);

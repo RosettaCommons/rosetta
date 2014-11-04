@@ -14,17 +14,24 @@
 /// @author jk
 /// @author Andrea Bazzoli
 
+#include <devel/constel/SingResCnlCrea.hh>
 #include <devel/constel/MasterFilter.hh>
 #include <devel/constel/NeighTeller.hh>
 #include <devel/constel/Primitives.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/PDBInfo.hh>
+#include <basic/Tracer.hh>
 #include <core/chemical/AA.hh>
+#include <utility/vector1.hh>
 #include <core/types.hh>
+#include <iostream>
+#include <fstream>
 
 namespace devel {
 namespace constel {
+
+static thread_local basic::Tracer TR( "src.devel.constel.SearchOptions" );
 
 ///
 /// @brief Searches pair-constellations by target residue.
@@ -103,8 +110,8 @@ void pair_constel_set( std::string const& tgtmuts, Pose& pose_init ) {
 						char aaje = ( aai == saa1 ) ? tgtmuts[4] : tgtmuts[1];
 
 						Pose pose_mut = pose_init;
-						zero_occ_for_deleted_atoms( pose_mut, i, aaie );
-						zero_occ_for_deleted_atoms( pose_mut, j, aaje );
+						SingResCnlCrea::zero_occ_for_deleted_atoms( pose_mut, i, aaie );
+						SingResCnlCrea::zero_occ_for_deleted_atoms( pose_mut, j, aaje );
 						utility::vector1<Size> cnl;
 						cnl.push_back(i);
 						cnl.push_back(j);
@@ -163,23 +170,120 @@ void triple_constel_set(int const target_pdb_number,
 	// search for (target, neighbor, other) triples
 	NeighTeller ngbtel(pose_init);
 	UJ = UK;
-	for ( Size j = 1; j <= UJ; ++j ) {
+	for ( Size j = 1; j <= UJ; ++j )
 		if ( interacting_residue.at(j) ) {
 			core::conformation::Residue const& rj = pose_init.residue(j);
-			for ( Size k = 1; k <= UK; ++k ) {
-				if (k!=target_rosetta_resnum) {
-					if (!interacting_residue.at(k)) {
-						if (ngbtel.isneigh(rj, pose_init.residue(k), pose_init)) {
-							if (j<k) {
+			for ( Size k = 1; k <= UK; ++k )
+				if(k!=target_rosetta_resnum)
+					if(!interacting_residue.at(k))
+						if(ngbtel.isneigh(rj, pose_init.residue(k), pose_init)) {
+							if(j<k)
 								triple_constel_set_idx3(target_rosetta_resnum, j, k, pose_init );
-							} else {
+							else
 								triple_constel_set_idx3(target_rosetta_resnum, k, j, pose_init );
-							}
 						}
-					}
-				}
+		}
+}
+
+
+///
+/// @brief Searches for a target constellation
+///
+/// @param[in] tgtcnl_fil file specifying the target constellation.
+/// @param[in] ps the pose
+///
+/// @details The format	of the input file is as follows:
+///
+/// 	CID{1} RNU{1} ICO{1} AASTA{1} AAEND{1}
+/// 	...
+/// 	CID{N} RNU{N} ICO{N} AASTA{N} AAEND{N}
+///
+/// 	where N is the number of residues forming the constellation and CID{i},
+/// 	RNU{i}, ICO{i}, AASTA{i}, and AAEND{i} are the chain id, residue number,
+/// 	insertion code, start amino acid type, and end amino acid type of the ith
+/// 	residue contributing to the constellation (i=1,...,N). A blank chain
+/// 	identifier in the PDB file is denoted by ',' (comma); a blank insertion
+/// 	code in the PDB file is denoted by '_' (underscore).
+///
+/// @details The function exits if any input lines cannot identify any residue.
+///
+void target_constel(std::string &tgtcnl_fil, Pose & ps) {
+
+	using core::chemical::oneletter_code_from_aa;
+
+	// identify constellation according to input file
+	std::ifstream ifs(tgtcnl_fil.c_str());
+	if(!ifs) {
+		TR << "can't open " << tgtcnl_fil << std::endl;
+		return;
+	}
+
+	char cid;
+	int rnum;
+	char ico;
+	char aasta;
+	char aaend;
+
+	Size const NRES = ps.total_residue();
+	core::pose::PDBInfoCOP pdb_info = ps.pdb_info();
+
+	// cnl[i] and resmut[i] contain info about the contributing residue specified
+	// on input line i (i=1,...,N, where N is the number of lines; not tested).
+	utility::vector1<Size> cnl;
+	utility::vector1<ResMut> resmut;
+
+	while(ifs >> cid) { // (proved for any number of lines)
+
+		ifs >> rnum >> ico >> aasta >> aaend;
+
+		if(cid == ',')
+			cid = ' ';
+
+		if(ico == '_')
+			ico = ' ';
+
+		bool found=false;
+
+		// find residue that makes current contribution
+		for(Size i=1; i<=NRES; ++i) {
+			if(
+				(pdb_info->number(i) == rnum) &&
+				(pdb_info->chain(i) == cid) &&
+				(pdb_info->icode(i) == ico) &&
+				(oneletter_code_from_aa( ps.aa( i )) == aasta)
+				) {
+				SingResCnlCrea::zero_occ_for_deleted_atoms(ps, i, aaend);
+				cnl.push_back(i);
+				resmut.push_back(ResMut(aasta, aaend, cid, rnum, i));
+				found = true;
+				break;
 			}
 		}
+
+		if(!found) {
+			TR << "can't find residue contribution to constellation: " <<
+				cid << ' ' << rnum << ' ' << ico << ' ' << aasta << std::endl;
+			return;
+		}
+	}
+
+	// if constellation is valid, print it to file
+	Size const N = cnl.size();
+	if((N != 2) && (N != 3)) {
+		TR << "can only handle constellations of 2 or 3 residues" <<
+			std::endl;
+		return;
+	}
+
+	NeighTeller nt(ps);
+	if(!nt.is_neigh_tree(cnl, ps))
+		return;
+
+	if(MasterFilter::is_constel_valid(ps, cnl)) {
+		if(N==2)
+			out_pair_constel(resmut[1], resmut[2], -1, ps);
+		else
+			out_triple_constel(resmut[1], resmut[2], resmut[3], -1, ps);
 	}
 }
 

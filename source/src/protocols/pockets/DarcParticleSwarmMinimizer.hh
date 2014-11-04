@@ -10,6 +10,7 @@
 /// @file   protocols/pockets/DarcParticleSwarmMinimizer.hh
 /// @brief
 /// @author Karen R. Khar
+/// @author Ragul Gowthaman
 
 
 #ifndef INCLUDED_protocols_pockets_DarcParticleSwarmMinimizer_hh
@@ -18,6 +19,7 @@
 #include <core/optimization/ParticleSwarmMinimizer.hh>
 #include <protocols/pockets/DarcParticleSwarmMinimizer.fwd.hh>
 #include <protocols/pockets/Fingerprint.hh>
+#include <protocols/pockets/PocketGrid.hh>
 #include <core/optimization/Multifunc.hh>
 #include <core/optimization/types.hh>
 #include <core/conformation/Residue.hh>
@@ -46,17 +48,20 @@ public:
 
   void score_all_particles(core::optimization::Multifunc & f_fitness, core::optimization::ParticleOPs & particles);
 
-private:
+  private:
 
-  void fill_atom_arrays_( core::Size particle_inx, core::conformation::ResidueCOP ligand_rsd, std::vector<basic::gpu::float4> & atoms, std::vector<basic::gpu::float4> & atom_maxmin_phipsi, std::vector<basic::gpu::float4> & ligand_maxmin_phipsi );
-  core::Real DarcPSO_fp_compare_( core::Size particle_inx, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, std::vector<basic::gpu::float4> & atoms, std::vector<basic::gpu::float4> & atom_maxmin_phipsi );
+  void fill_atom_arrays_( core::Size particle_inx, core::conformation::ResidueCOP ligand_rsd, utility::vector1< std::vector<basic::gpu::float4> > & atoms, utility::vector1< std::vector<basic::gpu::float4> > & atom_maxmin_phipsi );
+	core::Real DarcPSO_fp_compare_( core::Size particle_inx, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, utility::vector1< std::vector<basic::gpu::float4> > & atoms, utility::vector1< std::vector<basic::gpu::float4> > & atom_maxmin_phipsi );
+  void fill_atom_arrays_for_electrostatics_( core::Size particle_inx, core::pose::Pose ligand_pose_for_elec_calc, std::vector<basic::gpu::float4> & atoms_coors_and_charge );
+	core::Real DarcPSO_elsts_score_( core::Size particle_inx, core::Size dim_x, core::Size dim_y, core::Size dim_z, core::Real mid_x, core::Real mid_y, core::Real mid_z, core::Real spacing, std::vector < std::vector < std::vector <core::Real> > > espGrid, std::vector < std::vector < std::vector <ElectrostaticpotentialGrid::PtType> > > typGrid, std::vector<basic::gpu::float4> & atom_coors_charge );
 
   NonPlaidFingerprint & nfp_;
   PlaidFingerprint & pfp_;
   core::Real missing_pt_;
   core::Real steric_;
   core::Real extra_pt_;
-  core::Size ligand_natoms_;
+  core::Size ligand_natoms_elstscalc_;
+  core::Size ligand_natoms_shapecalc_;
 
 }; // DarcParticleSwarmMinimizer
 
