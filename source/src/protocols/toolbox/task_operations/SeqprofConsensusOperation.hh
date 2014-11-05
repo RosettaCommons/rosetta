@@ -123,6 +123,7 @@ private:
 	core::Size chain_num_; //dflt set to 1
 
 	bool debug_; // dflt false; if true be more chatty
+	bool restrict_to_repacking_; // dflt true; if set to false then all the protein can go through design and not just residues with seqeunce constratins. Gideon Oct14
 };
 
 /// @brief a Task operation that will check whether the amino acid at a

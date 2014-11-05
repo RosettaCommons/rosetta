@@ -2493,7 +2493,7 @@ void Splice::add_sequence_constraints(core::pose::Pose & pose) {
 		TR << "Total number of constraints at start: " << constraints.size() << std::endl;
 		core::Size cst_num(0);
 		BOOST_FOREACH( ConstraintCOP const c, constraints ) {
-			if( c->type() == "SequenceProfile" ) { //only remove profile sequence constraints
+			if (( c->type() == "SequenceProfile" ) and (c->residues()[1]>=pose.conformation().chain_begin(chain_num_)) and (c->residues()[1]<=pose.conformation().chain_end(chain_num_))) { //only remove profile sequence constraints of pose that is being splice out
 				pose.remove_constraint( c );
 				cst_num++;
 			}

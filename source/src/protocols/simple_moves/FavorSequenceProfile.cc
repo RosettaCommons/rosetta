@@ -25,6 +25,8 @@
 #include <core/sequence/SequenceProfile.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
+#include <core/id/SequenceMapping.hh>
+
 
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
@@ -136,12 +138,13 @@ FavorSequenceProfile::apply( core::pose::Pose & pose )
 	//using varibles for start/stop in case a sequence for only one chain was specified
 	core::Size start_seq = 1;
 	core::Size stop_seq = pose.total_residue();
-
-	if( chain_ > 0 ){
-		start_seq = pose.conformation().chain_begin( chain_ );
-    stop_seq  =   pose.conformation().chain_end( chain_ );		
+  core::id::SequenceMappingOP smap( new core::id::SequenceMapping() );
+	if( chain_ > 1 ){
+		smap->set_offset(pose.conformation().chain_begin( chain_ ));
 	}
-	
+	else{//set smap to identity
+		*smap = core::id::SequenceMapping::identity( pose.total_residue() );
+	}
 	 utility::vector1<bool> use_all_residues;
    use_all_residues.resize(pose.total_residue(),true);
 
@@ -155,7 +158,7 @@ FavorSequenceProfile::apply( core::pose::Pose & pose )
 
 	for( core::Size seqpos( start_seq ), end( stop_seq ); seqpos <= end; ++seqpos ) {
 		if (use_all_residues[seqpos])
-				pose.add_constraint( scoring::constraints::ConstraintCOP( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile ) ) );
+				pose.add_constraint( scoring::constraints::ConstraintCOP( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile, smap ) ) );
 	}
 }
 

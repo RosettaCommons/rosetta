@@ -77,7 +77,8 @@ SeqprofConsensusOperation::SeqprofConsensusOperation():
 	conservation_cutoff_aligned_segments_( -100000 ),
 	protein_interface_design_( /* NULL */ ),
 	conservation_cutoff_protein_interface_design_( -100000 ),
-	debug_( false )
+	debug_( false ),
+	restrict_to_repacking_(true)
 {
 	if( basic::options::option[ basic::options::OptionKeys::in::file::pssm ].user() )
 		seqprof_filename_ = basic::options::option[ basic::options::OptionKeys::in::file::pssm ][1];
@@ -284,12 +285,13 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 	}
 	bool prot_res_without_profile_information_exist(false);
 	for( core::Size i = last_res + 1; i <= asymmetric_unit_res; ++i){
-		task.nonconst_residue_task(i).restrict_to_repacking();
+		if (restrict_to_repacking_)// Gideon Oct14, For cases where we want residues that don't have sequence constraints to design
+			task.nonconst_residue_task(i).restrict_to_repacking();
 		if( pose.residue_type( i ).is_protein() ) prot_res_without_profile_information_exist = true;
 	}
 
 	if( prot_res_without_profile_information_exist ){
-		if( ignore_pose_profile_length_mismatch_ ) tr << "WARNING WARNING: the passed in pose is longer than the sequence profile specified. Double check whether the used sequence profile is correct. Setting every excess pose residue to repacking."<<std::endl;
+		if( ignore_pose_profile_length_mismatch_ ) tr<< tr.bgRed << "WARNING WARNING: the passed in pose is longer than the sequence profile specified. Double check whether the used sequence profile is correct. Setting every excess pose residue to repacking."<<tr.Reset<<std::endl;
 
 		else utility_exit_with_message("The passed in pose is longer than the sequence profile specified. Double check whether the used sequence profile is correct.");
 	}
@@ -298,6 +300,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 void
 SeqprofConsensusOperation::parse_tag( TagCOP tag , DataMap & datamap )
 {
+	restrict_to_repacking_=tag->getOption< bool >("restrict_to_repacking", 1  );
 	convert_scores_to_probabilities( tag->getOption< bool >("convert_scores_to_probabilities", 1  ) );
 	if( tag->hasOption("filename") ){
 		seqprof_filename_ = tag->getOption< String >( "filename" );
@@ -337,8 +340,12 @@ SeqprofConsensusOperation::parse_tag( TagCOP tag , DataMap & datamap )
 			utility_exit_with_message( "SeqprofConsensus subtag not recognized: " + sub_tag->getName() );
 		}
 	}//foreach
-	runtime_assert( conservation_cutoff_protein_interface_design() <= conservation_cutoff_aligned_segments() );
-	runtime_assert( conservation_cutoff_aligned_segments() <= min_aa_probability_ );
+
+	if (!(conservation_cutoff_protein_interface_design() <= conservation_cutoff_aligned_segments() ))
+		tr<<tr.bgRed<<"WARNING! conservation_cutoff_protein_interface_design() > conservation_cutoff_aligned_segments() "<<tr.Reset<<std::endl;
+
+	if (!( conservation_cutoff_aligned_segments() <= min_aa_probability_ ))
+		tr<<tr.bgRed<<"WARNING!conservation_cutoff_aligned_segments()>min_aa_probability_ )"<<tr.Reset<<std::endl;
 	debug( tag->getOption< bool >( "debug", false ) );
 }
 

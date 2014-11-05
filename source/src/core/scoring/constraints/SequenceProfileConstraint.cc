@@ -190,7 +190,7 @@ SequenceProfileConstraint::show( std::ostream & os ) const {
 
 		if( profile_pos <= sequence_profile_->size() ) {
 			RealVec const & aa_scores( sequence_profile_->prof_row( profile_pos ) );
-			os << "SequenceProfile -1 " << profile_pos << " " << aa_scores.size() << " ";
+			os << "SequenceProfile -1 " << seqpos_ << " "<< profile_pos << " " << aa_scores.size() << " ";
 			for ( Size aa(1); aa <= aa_scores.size(); ++aa ) {
 				os << aa_scores[aa] << " ";
 			}
