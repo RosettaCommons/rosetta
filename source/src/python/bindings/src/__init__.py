@@ -287,6 +287,10 @@ def rosetta_database_from_env():
     # No database found.
     return None
 
+
+_ROSETTA_DATABASE_PATH_ = None
+def get_rosetta_database_path(): return _ROSETTA_DATABASE_PATH_
+
 # rosetta.init()
 def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=True):
     import rosetta
@@ -324,6 +328,8 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=True):
     if not "-database" in args:
         database = rosetta_database_from_env()
         if database is not None: args.extend(["-database", database])
+
+    _ROSETTA_DATABASE_PATH_ = database
 
     v = rosetta.utility.vector1_string()
     v.extend(args)

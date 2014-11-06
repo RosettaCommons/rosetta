@@ -59,6 +59,8 @@ def mfork():
                 sys.exit(1)
 
         if len(_jobs_) >= Options.jobs: time.sleep(.5)
+
+    sys.stdout.flush()
     pid = os.fork()
     if pid: _jobs_.append(pid) # We are parent!
     return pid
@@ -103,14 +105,26 @@ def main(args):
 
     parser.add_argument("--delete-tests-output", action="store_true", default=False, help="Do not run tests, instead delete tests output files and exit. [off by default]" )
 
+    parser.add_argument("--enable-gui",
+        help = "Also run GUI tests",
+        default = False,
+        action = "store_true")
+
+    parser.add_argument("--gui-only",
+        help = "Run only GUI tests",
+        default = False,
+        action = "store_true")
+
     parser.add_argument('args', nargs=argparse.REMAINDER)
 
     global Options;
     Options = parser.parse_args(args=args[1:])
 
+
     def get_py_files(dir_):
-	if not os.path.exists(dir_): return []
-	return [dir_ + '/' + f for f in os.listdir(dir_) if f.endswith('.py')  and  f!='__init__.py']
+	#if not os.path.exists(dir_): return []
+	return [dir_ + '/' + f for f in os.listdir(dir_) if f.endswith('.py')  and  f!='__init__.py'  and  \
+                ( f.startswith('G') if Options.gui_only else ( True if Options.enable_gui else not f.startswith('G')) )  ]
 
     tests = Options.args or sorted( get_py_files('test') + get_py_files('demo') )
 

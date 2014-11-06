@@ -87,7 +87,8 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
         distr_file_list = os.listdir(buildings_path)
 
-        if not res: res, output = execute('Running PyRosetta tests...', 'cd {buildings_path} && python TestBindings.py -j{jobs}'.format(buildings_path=buildings_path, jobs=jobs), return_='tuple')
+        gui_flag = '--enable-gui' if platform['os'] == 'mac' else ''
+        if not res: res, output = execute('Running PyRosetta tests...', 'cd {buildings_path} && python TestBindings.py {gui_flag} -j{jobs}'.format(buildings_path=buildings_path, jobs=jobs, gui_flag=gui_flag), return_='tuple')
 
         json_file = buildings_path + '/.test.output/.test.results.json'
         results = json.load( file(json_file) )

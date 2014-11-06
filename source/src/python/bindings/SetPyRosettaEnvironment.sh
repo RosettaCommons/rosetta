@@ -26,12 +26,15 @@ fi
 
 cd $PYROSETTA
 
-#echo "Setting PyRosetta root as:" $PYROSETTA
+echo "Setting PyRosetta root as:" $PYROSETTA
 
 export PYROSETTA
 export PYTHONPATH=$PYROSETTA${PYTHONPATH+:$PYTHONPATH}
 export DYLD_LIBRARY_PATH=$PYROSETTA:$PYROSETTA/rosetta${DYLD_LIBRARY_PATH+:$DYLD_LIBRARY_PATH}
 export LD_LIBRARY_PATH=$PYROSETTA/rosetta${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}
 export PYROSETTA_DATABASE=$PYROSETTA/database
+
+echo "Aliasing PyRosetta Toolkit GUI to pyrosetta_toolkit"
+alias pyrosetta_toolkit='python $PYROSETTA/app/pyrosetta_toolkit/pyrosetta_toolkit.py'
 
 cd $OLD_PATH
