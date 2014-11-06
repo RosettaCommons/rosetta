@@ -51,6 +51,8 @@ def main(args):
 
     parser.add_argument("--extras", default='', help="Specify scons extras separated by ',': like --extras=mpi,static" )
 
+    #parser.add_argument("--options", default='', help="""Specify JSON string of for platform options: like --options='{"py":"monolith"}'""" )
+
     parser.add_argument("--debug", action="store_true", dest="debug", default=False, help="Run specified test in debug mode (not with debug build!) this mean different things and depend on the test. Could be: skip the build phase, skip some of the test phases and so on. [off by default]" )
 
     parser.add_argument("--suffix", default='', help="Specify ending suffix for test output dir. This is useful when you want to save test results in different dir for later comparison." )
@@ -66,12 +68,12 @@ def main(args):
 
     if Options.suffix: Options.suffix = '.' + Options.suffix
 
-    Platform['extras'] = Options.extras.split(',') if Options.extras else []
+    Platform['extras']  = Options.extras.split(',') if Options.extras else []
+    #Platform['options'] = json.loads( Options.options ) if Options.options else {}
 
     if Options.memory: memory = Options.memory
     elif Platform['os'] == 'linux': memory = float(commands.getoutput('free -m').split('\n')[1].split()[1]) / 1024
     elif Platform['os'] == 'mac':   memory = float(commands.getoutput('sysctl -a | grep hw.memsize').split()[2]) / 1024 / 1024 / 1024
-
 
     if os.path.isfile('benchmark.ini'):
         Config = ConfigParser( dict(here=os.path.abspath('./') ) )
@@ -99,8 +101,9 @@ def main(args):
     for test in Options.args:
         if test.startswith('tests/'): test = test.partition('tests/')[2][:-3]  # removing dir prefix and .py suffix
 
-        if test.count('.'): suite_name, test_name = test.split('.')
-        else: suite_name, test_name = test, ''
+        #if test.count('.'): suite_name, _, test_name = test.partition('.')
+        #else: suite_name, test_name = test, ''
+        suite_name, _, test_name = test.partition('.')
 
         file_name = 'tests/' + suite_name + '.py'
         test_suite = imp.load_source('test_suite', file_name)

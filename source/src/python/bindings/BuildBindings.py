@@ -298,11 +298,10 @@ def main(args):
     bindings_path = os.path.join(bindings_path, 'debug' if Options.debug  else 'release')
     bindings_path = os.path.abspath( os.path.join(bindings_path, '_build_' if Options.monolith else 'rosetta') )
 
+    if not os.path.isdir(bindings_path): os.makedirs(bindings_path)
     if Options.print_build_path: print os.path.split(bindings_path)[0],; sys.exit(0)
 
     print 'Bindings path: {0}'.format(bindings_path)
-
-    if not os.path.isdir(bindings_path): os.makedirs(bindings_path)
 
     if Options.cross_compile:
         #bindings_path = os.path.abspath('rosetta.windows')

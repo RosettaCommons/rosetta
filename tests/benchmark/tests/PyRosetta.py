@@ -19,11 +19,9 @@ imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py') 
 
 _api_version_ = '1.0'  # api version
 
-unix_memory_requirement_per_cpu = 2.0  # Memory per sub-process in Gb's
-
 def run_build_test(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     memory = config['memory'];  jobs = config['cpu_count']
-    if platform['os'] != 'windows': jobs = jobs if memory/jobs >= unix_memory_requirement_per_cpu else max(1, int(memory/unix_memory_requirement_per_cpu) )  # PyRosetta require at least X Gb per memory per thread
+    if platform['os'] != 'windows': jobs = jobs if memory/jobs >= PyRosetta_unix_memory_requirement_per_cpu else max(1, int(memory/PyRosetta_unix_memory_requirement_per_cpu) )  # PyRosetta require at least X Gb per memory per thread
 
     TR = Tracer(verbose)
 
@@ -52,7 +50,7 @@ def run_build_test(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
 def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     memory = config['memory'];  jobs = config['cpu_count']
-    if platform['os'] != 'windows': jobs = jobs if memory/jobs >= unix_memory_requirement_per_cpu else max(1, int(memory/unix_memory_requirement_per_cpu) )  # PyRosetta require at least X Gb per memory per thread
+    if platform['os'] != 'windows': jobs = jobs if memory/jobs >= PyRosetta_unix_memory_requirement_per_cpu else max(1, int(memory/PyRosetta_unix_memory_requirement_per_cpu) )  # PyRosetta require at least X Gb per memory per thread
 
     TR = Tracer(verbose)
 
@@ -83,7 +81,7 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
         shutil.copy(config['boost_python_library'], buildings_path)  # Copying boost python library
 
         memory = config['memory'];  jobs = config['cpu_count']
-        if platform['os'] != 'windows': jobs = jobs if memory/jobs >= unix_memory_requirement_per_cpu else max(1, int(memory/unix_memory_requirement_per_cpu) )  # PyRosetta require at least X Gb per memory per thread
+        if platform['os'] != 'windows': jobs = jobs if memory/jobs >= PyRosetta_unix_memory_requirement_per_cpu else max(1, int(memory/PyRosetta_unix_memory_requirement_per_cpu) )  # PyRosetta require at least X Gb per memory per thread
 
         distr_file_list = os.listdir(buildings_path)
 

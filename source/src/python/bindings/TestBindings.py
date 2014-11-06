@@ -22,6 +22,7 @@ def execute(message, commandline, return_=False, untilSuccesses=False):
             po = subprocess.Popen(commandline, bufsize=0, shell=True, stdout=sys.stdout, stderr=sys.stderr)
             while po.returncode is None: po.wait()
             res = po.returncode
+            output = ''
 
         else:
             (res, output) = commands.getstatusoutput(commandline)
@@ -179,13 +180,14 @@ def main(args):
     for t in sorted(results['tests']):
         if results['tests'][t]['state'] == 'finished': print t, '- passed'
 
-    print '\nFollowing PyRosetta Tests FAILED:'
-    for t in results['tests']:
-        if results['tests'][t]['state'] != 'finished': print t, '- FAILED'
+    failed_tests = [ t for t in results['tests'] if results['tests'][t]['state'] != 'finished' ]
+
+    if failed_tests:
+        print '\nFollowing PyRosetta Tests FAILED:'
+        for t in failed_tests: print t, '- FAILED'
 
     if state == 'finished': print '\nAll PyRosetta Tests passed!\n'
     else: sys.exit(1)
-
 
 
 if __name__ == "__main__":

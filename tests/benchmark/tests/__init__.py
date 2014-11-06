@@ -36,6 +36,8 @@ _StateKey_    = 'state'
 _ResultsKey_  = 'results'
 _LogKey_      = 'log'
 
+PyRosetta_unix_memory_requirement_per_cpu = 2.0  # Memory per sub-process in Gb's
+
 
 # Standard funtions and classes below ---------------------------------------------------------------------------------
 
