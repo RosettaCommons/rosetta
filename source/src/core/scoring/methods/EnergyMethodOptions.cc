@@ -59,6 +59,7 @@ EnergyMethodOptions::EnergyMethodOptions():
 	smooth_fa_elec_( false ),
 	exclude_DNA_DNA_(true), // rosetta++ default
 	intrares_elec_correction_scale_( 0.0 ),
+	envsmooth_zero_negatives_( false ),
 	hbond_options_(hbonds::HBondOptionsOP( new hbonds::HBondOptions() )),
 	etable_options_(core::scoring::etable::EtableOptionsOP( new core::scoring::etable::EtableOptions() )),
 	cst_max_seq_sep_( std::numeric_limits<core::Size>::max() ),
@@ -84,6 +85,7 @@ void EnergyMethodOptions::initialize_from_options() {
 	smooth_fa_elec_ = basic::options::option[ basic::options::OptionKeys::score::smooth_fa_elec ]();
 	exclude_DNA_DNA_ = basic::options::option[basic::options::OptionKeys::dna::specificity::exclude_dna_dna]; // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
 	intrares_elec_correction_scale_ = basic::options::option[ basic::options::OptionKeys::score::intrares_elec_correction_scale ]();
+	envsmooth_zero_negatives_ = basic::options::option[ basic::options::OptionKeys::score::envsmooth_zero_negatives ]();
 }
 
 /// copy constructor
@@ -114,6 +116,7 @@ EnergyMethodOptions::operator=(EnergyMethodOptions const & src) {
 		smooth_fa_elec_ = src.smooth_fa_elec_;
 		exclude_DNA_DNA_ = src.exclude_DNA_DNA_;
 		intrares_elec_correction_scale_ = src.intrares_elec_correction_scale_;
+		envsmooth_zero_negatives_ = src.envsmooth_zero_negatives_;
 		hbond_options_ = hbonds::HBondOptionsOP( new hbonds::HBondOptions( *(src.hbond_options_) ) );
 		etable_options_ = core::scoring::etable::EtableOptionsOP( new etable::EtableOptions( *(src.etable_options_) ) );
 		cst_max_seq_sep_ = src.cst_max_seq_sep_;
@@ -243,6 +246,18 @@ EnergyMethodOptions::intrares_elec_correction_scale() const {
 void
 EnergyMethodOptions::intrares_elec_correction_scale( core::Real const setting ) {
   intrares_elec_correction_scale_ = setting;
+}
+
+bool
+EnergyMethodOptions::envsmooth_zero_negatives() const 
+{
+	return envsmooth_zero_negatives_;
+}
+
+void
+EnergyMethodOptions::envsmooth_zero_negatives( bool const setting )
+{
+	envsmooth_zero_negatives_ = setting;
 }
 
 hbonds::HBondOptions const &
@@ -414,6 +429,7 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.elec_no_dis_dep_die_ == b.elec_no_dis_dep_die_ ) &&
 		( a.smooth_fa_elec_ == b.smooth_fa_elec_ ) &&
 		( a.exclude_DNA_DNA_ == b.exclude_DNA_DNA_ ) &&
+		( a.envsmooth_zero_negatives_ == b.envsmooth_zero_negatives_ ) &&
 		( * (a.hbond_options_) == * (b.hbond_options_) ) &&
 		( * (a.etable_options_) == * (b.etable_options_) ) &&
 		( a.intrares_elec_correction_scale_ == b.intrares_elec_correction_scale_ ) &&
@@ -462,6 +478,8 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 	out << "EnergyMethodOptions::show: smooth_fa_elec: " << ( smooth_fa_elec_ ? "true" : "false" ) << std::endl;
 	out << "EnergyMethodOptions::show: exclude_DNA_DNA: "
 			<< (exclude_DNA_DNA_ ? "true" : "false") << std::endl;
+	out << "EnergyMethodOptions::show: envsmooth_zero_negatives: "
+			<< (envsmooth_zero_negatives_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: cst_max_seq_sep: " << cst_max_seq_sep_ << std::endl;
 	out << "EnergyMethodOptions::show: pb_bound_tag: " << pb_bound_tag_ << std::endl;
 	out << "EnergyMethodOptions::show: pb_unbound_tag: " << pb_unbound_tag_ << std::endl;
@@ -571,6 +589,9 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 
 	option_keys.push_back("intrares_elec_correction_scale");
 	option_values.push_back(boost::lexical_cast<std::string>(intrares_elec_correction_scale_));
+
+	option_keys.push_back("envsmooth_zero_negatives");
+	option_values.push_back(envsmooth_zero_negatives_ ? "1" : "0");
 
 	option_keys.push_back("cst_max_seq_sep");
 	option_values.push_back(boost::lexical_cast<std::string>(cst_max_seq_sep_));

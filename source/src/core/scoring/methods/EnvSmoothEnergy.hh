@@ -21,6 +21,7 @@
 
 // Package headers
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project headers
 #include <core/chemical/AA.hh>
@@ -29,6 +30,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <utility/vector1.hh>
+#include <utility/vector0.hh>
 
 
 // Utility headers
@@ -45,8 +47,11 @@ public:
 
 public:
 
-	///
-	EnvSmoothEnergy();
+	/// @brief default constructor
+	EnvSmoothEnergy( EnergyMethodOptions const & options );
+
+	/// @brief copy constructor
+	EnvSmoothEnergy( EnvSmoothEnergy const & src );
 
 	/// clone
 	virtual
@@ -100,6 +105,10 @@ public:
 
 private:
 
+	/// @brief read envdata from database
+	void 
+	initialize( EnergyMethodOptions const & options );
+
 	/// @brief returns the atom name for the atom used to represent the sidechain for
 	/// a particular amino acid; this atom was used to derive the statistics this potential
 	/// is based on.
@@ -139,6 +148,7 @@ private:
 	/////////////////////////////////////////////////////////////////////////////
 
 private:
+	utility::vector0< utility::vector0< Real > > envdata_;
 
 	mutable utility::vector1< Real > residue_N_;
 	mutable utility::vector1< Real > residue_E_;

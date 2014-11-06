@@ -1,0 +1,16 @@
+The envdata tables are formatted as whitespace-separated fields, organized as follows:
+20 rows for the 20 canonical residue types, such that the row number corresponds with the int representation of the residue type in chemical::AA.
+40 columns representing "environment" bins, corresponding to the number of heavy-atom neighbors (between 0 and 39) within 10A of a residue's neighbor atom.
+
+For example: 
+	An alanine (row 1) with 5 nighboring atoms (column 6) would look up a value of +1.30 in envdata.txt.
+
+Finally, note that the score provided in the table is multiplied by a factor of 2.019 when applied in Rosetta energy units.
+See src/core/scoring/methods/EnvSmoothEnergy.cc for more.
+
+
+Not sure how these data were generated...
+
+
+Brian Koepnick, 3 Nov 2014
+koepnick@uw.edu

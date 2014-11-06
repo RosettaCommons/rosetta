@@ -157,6 +157,12 @@ public:
 	void
 	intrares_elec_correction_scale( core::Real setting );
 
+	bool
+	envsmooth_zero_negatives() const;
+
+	void
+	envsmooth_zero_negatives( bool const setting );
+
  	/// @brief Read access to the hbond options object
  	hbonds::HBondOptions const &
  	hbond_options() const;
@@ -331,6 +337,7 @@ private:
 	bool smooth_fa_elec_;
 	bool exclude_DNA_DNA_;
 	core::Real intrares_elec_correction_scale_;
+	bool envsmooth_zero_negatives_;
 	hbonds::HBondOptionsOP hbond_options_;
 	core::scoring::etable::EtableOptionsOP etable_options_;
 	core::Size cst_max_seq_sep_;
