@@ -23,6 +23,10 @@ sources = {
 		"roc_curve",
 		"util",
 	],
+	"numeric/crick_equations":[
+		"BundleParams",
+		"HelixParams",
+	],
 	"numeric/expression_parser": [
 		"Arithmetic",
 	],

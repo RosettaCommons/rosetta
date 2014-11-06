@@ -41,6 +41,47 @@ public:
 
 	virtual void
 	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & );
+
+	///
+	/// @brief Reset mover data
+	void reset_mover_data()
+	{
+    stub_rsd_names_.clear();
+    stub_rsd_jumping_.clear();
+    stub_rsd_connecting_atom_.clear();
+    stub_anchor_rsd_.clear();
+    stub_anchor_rsd_connecting_atom_.clear();
+		return;
+	}
+
+	///
+	/// @brief Sets whether the pose gets reset (i.e. all residues deleted) or not.
+	void set_reset_mode( bool reset_mode )
+	{
+		reset_ = reset_mode;
+		return;
+	}
+
+	///
+	/// @brief Sets whether pdb numbering gets updated or not.
+	void set_update_pdb_numbering_mode( bool mode )
+	{
+		update_pdb_numbering_ = mode;
+		return;
+	}
+
+	///
+	/// @brief Adds a residue to the list of residues to be appended, prepended, or inserted.
+	void add_residue(
+		std::string const &stubmode,
+		std::string const &resname,
+		core::Size const position,
+		bool const jumpmode,
+		std::string const &connecting_atom,
+		core::Size const repeat,
+		core::Size const anchor_rsd,
+		std::string const &anchor_atom
+	);
     
 private:
     bool reset_;

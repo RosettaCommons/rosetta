@@ -7,7 +7,7 @@
 	--File created 4 January 2013 by Vikram K. Mulligan, Baker Laboratory.
 ****************************************************************************************************/
 
-#include <protocols/simple_moves/ScoreMover.hh>
+//#include <protocols/simple_moves/ScoreMover.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
@@ -31,7 +31,7 @@
 //#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <utility/vector1.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
+//#include <core/scoring/rms_util.tmpl.hh>
 #include <ObjexxFCL/format.hh>
 
 #include <stdio.h>
@@ -138,7 +138,7 @@ void perturb_bb (
 	core::pose::Pose& pose,
 	numeric::random::RandomGenerator &RG
 ) {
-	for (int ir=1; ir<=pose.n_residue(); ir++) {//loop through all residues
+	for (core::Size ir=1; ir<=pose.n_residue(); ir++) {//loop through all residues
 		if(pose.residue(ir).has("CM")) { //If this is a beta-amino acid, perturb phi, psi, and theta.
 			betapeptide_setphi(pose, ir, randangle(RG));
 			betapeptide_settheta(pose, ir, randangle(RG));
@@ -176,7 +176,7 @@ void jitter_and_minimize (
 		for (int istep=1; istep<=MCsteps_per_round; istep++) {
 			trialpose = lastacceptpose;
 			//Loop through all residues and wiggle all backbone dihedral angles except omega:
-			for(int ir=1; ir<=trialpose.n_residue(); ir++) {
+			for(core::Size ir=1; ir<=trialpose.n_residue(); ir++) {
 				if(trialpose.residue(ir).has("CM")) { //If this is a beta-amino acid, perturb phi, psi, and theta.
 					betapeptide_setphi(trialpose, ir, trialpose.torsion(TorsionID(ir, id::BB, 1))+(double)RG.gaussian()*anglepertsize );
 					betapeptide_settheta(trialpose, ir, trialpose.torsion(TorsionID(ir, id::BB, 2))+(double)RG.gaussian()*anglepertsize);
@@ -243,10 +243,10 @@ int main( int argc, char * argv [] ) {
 	protocols::simple_moves::RepackSidechainsMover repack_sc(sfxn); //Create the RepackSidechains mover and set the score function.
 	
 	core::pose::Pose mypose;
-	const string sequence = "GA[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]G";
+	const string sequence = "GA[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]G";
 
 	// grab residue types
-	chemical::ResidueTypeCAPs requested_types = core::pose::residue_types_from_sequence( sequence, *( chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" )), true );
+	chemical::ResidueTypeCOPs requested_types = core::pose::residue_types_from_sequence( sequence, *( chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )), true );
 	mypose.clear();
 
 	int n_struct = option[out::nstruct](); //Number of structures to generate
@@ -270,26 +270,26 @@ int main( int argc, char * argv [] ) {
 
 	core::pose::add_upper_terminus_type_to_pose_residue(mypose, mypose.n_residue());
 
-	double philist[] = {	-122.6,	-71.2,	58.9,	-53.6,	50.4,	64.8,	-175.1,	-110.4,	-67.2,	59.5,	83.5,	-171.8,	-161.9,	63.7,	59.6	};
-	double thetalist[] = {	-58.4,	134.0,	-121.4,	-47.7,	51.7,	63.3,	52.9,	60.5,	170.4,	166.2,	-53.0,	-70.6,	76.3,	76.7,	57.7	};
-	double psilist[] = {	-165.3,	-64.8,	78.3,	106.5,	-109.6,	-172.6,	107.0,	21.8,	-177.6,	168.4,	-92.7,	31.9,	-36.4,	-54.4,	84.7	};
+	double philist[] = {	-122.6,	-71.2,	58.9,	-53.6,	50.4,	64.8,	-175.1,	-110.4,	-67.2,	59.5,	83.5,	-171.8,	-161.9,	63.7,	59.6,	-135.5 };
+	double thetalist[] = {	-58.4,	134.0,	-121.4,	-47.7,	51.7,	63.3,	52.9,	60.5,	170.4,	166.2,	-53.0,	-70.6,	76.3,	76.7,	57.7,	55.6 };
+	double psilist[] = {	-165.3,	-64.8,	78.3,	106.5,	-109.6,	-172.6,	107.0,	21.8,	-177.6,	168.4,	-92.7,	31.9,	-36.4,	-54.4,	84.7,	-126.4 };
 
 	printf("\nFile\tphi\ttheta\tpsi\tEnergy\n----\t---\t-----\t---\t------\n"); fflush(stdout);
-	for (int iconf = 0; iconf<15; iconf++)
+	for (int iconf = 0; iconf<16; iconf++)
 	{
 		core::pose::Pose temppose=mypose;
 		temppose.set_omega(1,180);
-		for(int ir=2; ir<temppose.n_residue(); ir++) {
+		for(core::Size ir=2; ir<temppose.n_residue(); ir++) {
 			betapeptide_setphi(temppose, ir, philist[iconf]);
 			betapeptide_settheta(temppose, ir, thetalist[iconf]);
 			betapeptide_setpsi(temppose, ir, psilist[iconf]);
 			if (ir<temppose.n_residue()) betapeptide_setomega(temppose, ir, 180);
 		}
 		temppose.update_residue_neighbors();
-		repack_sc.apply(temppose); //Repack side-chains.
-		temppose.update_residue_neighbors();
-		frlx.apply(temppose);
-		jitter_and_minimize(temppose, RG, frlx, sfxn, option[v_MCrounds](), option[v_MCsteps_per_round](), option[v_MCanglepert](), option[v_MCtemperature]());
+		//repack_sc.apply(temppose); //Repack side-chains.
+		//temppose.update_residue_neighbors();
+		//frlx.apply(temppose);
+		//jitter_and_minimize(temppose, RG, frlx, sfxn, option[v_MCrounds](), option[v_MCsteps_per_round](), option[v_MCanglepert](), option[v_MCtemperature]());
 		(*sfxn)(temppose);
 		char curnum[8];
 		sprintf(curnum, "%02i", iconf+1);

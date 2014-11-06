@@ -31,6 +31,13 @@ sources = {
 		"selector/GeneralizedKICselector",
 		"util",
 	],
+        "protocols/helical_bundle": [
+                "FitSimpleHelix",
+		"FitSimpleHelixMultiFunc",
+		"MakeBundle",
+		"MakeBundleHelix",
+		"util",
+        ],
 }
 include_path = [
 ]

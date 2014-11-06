@@ -227,14 +227,19 @@ MinMover::apply_dof_tasks_to_movemap(
 		//modify movemap by task
 		Size const nres( task->total_residue() );
 
+		//Set DOFs by task operations:
 		for ( Size i(1); i <= nres; ++i ) {
-			if ( !task->pack_residue( i ) ){
 				if( t->first.first == core::id::PHI ){
-					movemap.set( t->first.second, false );
+					core::kinematics::MoveMap::MoveMapTorsionID mmid;
+					mmid.first = i;
+					mmid.second = t->first.second;
+					movemap.set( mmid, task->pack_residue( i ) );
 				} else {
-					movemap.set( t->first.first, false );
+					for( Size ia=1,iamax=pose.residue(i).natoms(); ia<=iamax; ++ia){
+						movemap.set( core::id::DOF_ID( core::id::AtomID(ia,i), t->first.first  ), task->pack_residue(i) );
+					}
+					//movemap.set( t->first.first, task->pack_residue( i ) );
 				}
-			}
 		}
 	}
 }

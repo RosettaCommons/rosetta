@@ -162,7 +162,7 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
             }
             
         }
-        TR << "Done appending " << stub_rsd_names_[istub] << std::endl;
+        if(TR.Debug.visible()) TR.Debug << "Done appending " << stub_rsd_names_[istub] << std::endl;
     }
 
     //protocols::loops::add_cutpoint_variants( pose );
@@ -184,8 +184,10 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
     }
 
     //pose.dump_pdb("test.pdb");
-    TR << pose.annotated_sequence() << std::endl;
-    pose.fold_tree().show(TR);
+    if(TR.Debug.visible()) {
+			TR << pose.annotated_sequence() << std::endl;
+			pose.fold_tree().show(TR.Debug);
+		}
     for (core::Size ires=1; ires<=pose.total_residue(); ++ires) {
         if (pose.fold_tree().is_jump_point(ires)) {
             TR.Debug << "jump: Residue " << ires << std::endl;
@@ -202,6 +204,7 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 		if(update_pdb_numbering_) update_pdb_numbering(pose); //If residues have been added, they need PDB chain IDs and numbers to be updated.
 }
 
+///
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 PeptideStubMover::parse_my_tag(
@@ -213,19 +216,25 @@ PeptideStubMover::parse_my_tag(
 )
 {
     using namespace core;
-    if( tag->hasOption( "reset" ) ) reset_ = tag->getOption< bool >( "reset" );
-    if( tag->hasOption( "update_pdb_numbering" ) ) reset_ = tag->getOption< bool >( "update_pdb_numbering" );
+    if( tag->hasOption( "reset" ) ) set_reset_mode( tag->getOption< bool >( "reset" ) );
+    if( tag->hasOption( "update_pdb_numbering" ) ) set_update_pdb_numbering_mode(tag->getOption< bool >( "update_pdb_numbering" ) );
     
-    stub_rsd_names_.clear();
-    stub_rsd_jumping_.clear();
-    stub_rsd_connecting_atom_.clear();
-    stub_anchor_rsd_.clear();
-    stub_anchor_rsd_connecting_atom_.clear();
+    reset_mover_data();
 
     utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
 	utility::vector1< utility::tag::TagCOP >::const_iterator tag_it;
 	for (tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it) {
-        if ( (*tag_it)->getName() == "Append" ) {
+		add_residue(
+			(*tag_it)->getName(),
+			(*tag_it)->getOption<std::string>( "resname", "" ),
+			(*tag_it)->getOption<Size>( "position", 0 ),
+			(*tag_it)->getOption<bool>( "jump", false ),
+			(*tag_it)->getOption<std::string>( "connecting_atom", "" ),
+			(*tag_it)->getOption<Size>( "repeat", 1 ),
+			(*tag_it)->getOption<core::Size>( "anchor_rsd", 0 ),
+			(*tag_it)->getOption<std::string>( "anchor_atom", "" )
+		);
+        /*if ( (*tag_it)->getName() == "Append" ) {
             stub_mode_.push_back(append);
         }
         else if ( (*tag_it)->getName() == "Prepend" ) {
@@ -240,9 +249,46 @@ PeptideStubMover::parse_my_tag(
         stub_rsd_connecting_atom_.push_back( (*tag_it)->getOption<std::string>( "connecting_atom", "" ) );
         stub_rsd_repeat_.push_back( (*tag_it)->getOption<Size>( "repeat", 1 ) );
         stub_anchor_rsd_.push_back( (*tag_it)->getOption<core::Size>( "anchor_rsd", 0 ) );
-        stub_anchor_rsd_connecting_atom_.push_back( (*tag_it)->getOption<std::string>( "anchor_atom", "" ) );
+        stub_anchor_rsd_connecting_atom_.push_back( (*tag_it)->getOption<std::string>( "anchor_atom", "" ) ); */
     }
 }
+
+///
+/// @brief Adds a residue to the list of residues to be appended, prepended, or inserted.
+void PeptideStubMover::add_residue(
+	std::string const &stubmode,
+	std::string const &resname,
+	core::Size const position,
+	bool const jumpmode,
+	std::string const &connecting_atom,
+	core::Size const repeat,
+	core::Size const anchor_rsd,
+	std::string const &anchor_atom
+) {
+
+	runtime_assert_string_msg( stubmode=="Append" || stubmode=="Prepend" || stubmode=="Insert", "In PeptideStubMover::add_residue(): unrecognized stub creation mode.  Mode must be one of \"Append\", \"Prepend\", or \"Insert\"." );
+
+	if ( stubmode == "Append" ) {
+    stub_mode_.push_back(append);
+  }
+  else if ( stubmode == "Prepend" ) {
+    stub_mode_.push_back(prepend);
+  }
+  else if ( stubmode == "Insert" ) {
+    stub_mode_.push_back(insert);
+  }
+
+  stub_rsd_names_.push_back( resname );
+  stub_insert_pos_.push_back( position );
+  stub_rsd_jumping_.push_back( jumpmode );
+  stub_rsd_connecting_atom_.push_back( connecting_atom );
+  stub_rsd_repeat_.push_back( repeat );
+  stub_anchor_rsd_.push_back( anchor_rsd );
+  stub_anchor_rsd_connecting_atom_.push_back( anchor_atom );
+
+	return;
+}
+
 	
 moves::MoverOP PeptideStubMover::clone() const { return moves::MoverOP( new PeptideStubMover( *this ) ); }
 moves::MoverOP PeptideStubMover::fresh_instance() const { return moves::MoverOP( new PeptideStubMover ); }
