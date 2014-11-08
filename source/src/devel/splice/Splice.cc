@@ -185,6 +185,9 @@ static thread_local basic::Tracer TR_min( "devel.splice.Splice_min" );
 			superimposed( true );
 			source_pdb_from_res( 0 );
 			source_pdb_to_res( 0 );
+			delete_hairpin( false );
+			delete_hairpin_c( 0 );
+			delete_hairpin_n( 0 );
 			}
 
 		Splice::~Splice() {
@@ -533,7 +536,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 			pose.conformation().detect_disulfides(); // just in case; but I think it's unnecessary
 
 			/// from_res/to_res can also be determined through task factory, by identifying the first and last residues that are allowed to design in this tf
-			
+
 			if (torsion_database_fname_ == "" && from_res() == 0 && to_res() == 0) { /// set the splice site dynamically according to the task factory
 				utility::vector1<core::Size> designable(
 						protocols::rosetta_scripts::residue_packer_states(pose, task_factory(), true/*designable*/,
@@ -587,7 +590,7 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 				protocols::simple_moves::CutChainMover ccm;
 				core::Size source_pdb_cut(ccm.chain_cut(*source_pose_,nearest_to_from,nearest_to_to));
 				if (source_pdb_cut!=0 && !ignore_chain_break_){//found cut site in source pose
-					//(*source_pose_).dump_pdb("chain_break.pdb");  
+					//(*source_pose_).dump_pdb("chain_break.pdb");
 					utility_exit_with_message("found chain break in source PDB "+source_pdb_+",exiting\n");
 				}
 				TR << "nearest_to_from: " << nearest_to_from << " nearest_to_to: " << nearest_to_to << std::endl;
@@ -787,8 +790,8 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 			core::Size cut_vl_vh_after_llc(from_res() < vl_vh_cut ? vl_vh_cut + residue_diff : vl_vh_cut); //update cut site between vl and vh after loop insertion, only if the loop was inserted to the vl.
 			TR << "Foldtree before loop length change: " << pose.fold_tree() << std::endl;
 			TR<<"cut_site:"<<cut_site<<std::endl;
-			
-			//TR << "DEBUG: About to apply llc with start" << from_res() << " end: " << cut_site << " residue_diff " << residue_diff << std::endl; 
+
+			//TR << "DEBUG: About to apply llc with start" << from_res() << " end: " << cut_site << " residue_diff " << residue_diff << std::endl;
 
 			llc.apply(pose);
 	  //	protocols::simple_moves::CutChainMover ccm;
@@ -1547,9 +1550,26 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 					add_sequence_constraints(pose);
 				}
 			}
+			remove_hairpin( pose );
 			saved_fold_tree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(pose.fold_tree()) );
 			retrieve_values();
 		}
+
+void
+Splice::remove_hairpin( core::pose::Pose & pose ) const{
+  if( !delete_hairpin() )
+    return;
+
+  using namespace protocols::rosetta_scripts;
+  using core::Size;
+  using core::Real;
+
+  Size const start = find_nearest_disulfide( pose, pose.conformation().chain_end( 1 ) ) + delete_hairpin_n();
+  Size const end   = pose.conformation().chain_end( 1 ) - delete_hairpin_c();
+  runtime_assert( start < end );
+  for( Size i = start + 1; i <= end - 1; ++i )
+    pose.delete_polymer_residue( start + 1 );
+}
 
 /// splice apply might change the from_res/to_res internals since they sometimes refer to the template file. If that happens, we want the values to
 /// revert to their original values before the end of the apply function (so retrieve_values) below must be called before return.
@@ -1580,6 +1600,12 @@ Splice::superimpose_source_on_pose( core::pose::Pose const & pose, core::pose::P
 			chain_num_ = tag->getOption<core::Size>("chain_num", 1);
 			tail_segment_ = tag->getOption<std::string>("tail_segment", "");
 			superimposed( tag->getOption< bool >( "superimposed", true ) );
+      delete_hairpin( tag->getOption< bool >( "delete_hairpin", false ) );
+      if( delete_hairpin() ){
+        delete_hairpin_n( tag->getOption< core::Size >( "delete_hairpin_n", 4 ) );
+        delete_hairpin_c( tag->getOption< core::Size >( "delete_hairpin_c", 13 ) );
+        TR<<"deleting the hairpin with parameters delete_hairpin_n: "<<delete_hairpin_n()<<" delete_hairpin_c: "<<delete_hairpin_c()<<std::endl;
+      }
 
 			if (tag->hasOption("source_pdb")){
         source_pdb(tag->getOption<std::string>("source_pdb"));
